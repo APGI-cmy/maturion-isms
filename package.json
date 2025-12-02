@@ -1,0 +1,23 @@
+{
+  "name": "maturion-isms",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Maturion ISMS monorepo - contains all ISMS/SRMF applications, shared libraries, and infrastructure",
+  "scripts": {
+    "dev": "echo 'Dev script to be configured'",
+    "build": "echo 'Build script to be configured'",
+    "test": "echo 'Test script to be configured'"
+  },
+  "keywords": [
+    "monorepo",
+    "isms",
+    "srmf"
+  ],
+  "author": "",
+  "license": "UNLICENSED",
+  "packageManager": "pnpm@8.0.0",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
