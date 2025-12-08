@@ -173,7 +173,11 @@ Deno.serve(async (req) => {
     // Load all criteria weights once (performance optimization)
     const { data: allCriteriaWeights } = await supabase
       .from("criteria_weights")
-      .select("*");
+      .select("*")
+      .in(
+        "criterion_id",
+        criteria.map((c) => c.id)
+      );
 
     for (const m of mps) {
       const { data: cs } = await supabase
@@ -224,7 +228,11 @@ Deno.serve(async (req) => {
     // Load all MPS weights once (performance optimization)
     const { data: allMpsWeights } = await supabase
       .from("mps_weights")
-      .select("*");
+      .select("*")
+      .in(
+        "mps_id",
+        mps.map((m) => m.id)
+      );
 
     for (const d of domains) {
       const { data: ms } = await supabase
@@ -304,8 +312,11 @@ Deno.serve(async (req) => {
       { status: 200 }
     );
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-    });
+    // Log error for debugging but return generic message for security
+    console.error("Scoring pipeline error:", err);
+    return new Response(
+      JSON.stringify({ error: "An error occurred while processing the scoring pipeline" }),
+      { status: 500 }
+    );
   }
 });
