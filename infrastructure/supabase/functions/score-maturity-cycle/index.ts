@@ -125,7 +125,7 @@ Deno.serve(async (req) => {
 
       if (!evidenceScores || evidenceScores.length === 0) {
         // Insert zero score
-        await supabase.from("criteria_scores").upsert({
+        const { error: upsertError } = await supabase.from("criteria_scores").upsert({
           criterion_id: c.id,
           cycle_id,
           numeric_score: 0,
@@ -135,6 +135,12 @@ Deno.serve(async (req) => {
           evidence_count: 0,
           avg_evidence_confidence: 0,
         });
+        if (upsertError) {
+          return new Response(
+            JSON.stringify({ error: `Failed to upsert criterion score for ${c.id}: ${upsertError.message}` }),
+            { status: 500 }
+          );
+        }
         continue;
       }
 
@@ -143,7 +149,7 @@ Deno.serve(async (req) => {
       const clamped = Math.max(0, Math.min(1, avg));
       const level = getLevel(clamped);
 
-      await supabase.from("criteria_scores").upsert({
+      const { error: upsertError } = await supabase.from("criteria_scores").upsert({
         criterion_id: c.id,
         cycle_id,
         numeric_score: clamped,
@@ -153,6 +159,12 @@ Deno.serve(async (req) => {
         evidence_count: values.length,
         avg_evidence_confidence: avg,
       });
+      if (upsertError) {
+        return new Response(
+          JSON.stringify({ error: `Failed to upsert criterion score for ${c.id}: ${upsertError.message}` }),
+          { status: 500 }
+        );
+      }
     }
 
     // ------------------------------------------------------------
@@ -204,7 +216,7 @@ Deno.serve(async (req) => {
       const score = weightedAverage(items);
       const level = getLevel(score);
 
-      await supabase.from("mps_scores").upsert({
+      const { error: upsertError } = await supabase.from("mps_scores").upsert({
         mps_id: m.id,
         cycle_id,
         numeric_score: score,
@@ -212,6 +224,12 @@ Deno.serve(async (req) => {
         target_level: m.target_level,
         gap: m.target_level - level,
       });
+      if (upsertError) {
+        return new Response(
+          JSON.stringify({ error: `Failed to upsert MPS score for ${m.id}: ${upsertError.message}` }),
+          { status: 500 }
+        );
+      }
     }
 
     // ------------------------------------------------------------
@@ -262,7 +280,7 @@ Deno.serve(async (req) => {
       const score = weightedAverage(items);
       const level = getLevel(score);
 
-      await supabase.from("domain_scores").upsert({
+      const { error: upsertError } = await supabase.from("domain_scores").upsert({
         domain_id: d.id,
         cycle_id,
         numeric_score: score,
@@ -270,6 +288,12 @@ Deno.serve(async (req) => {
         target_level: d.target_level,
         gap: d.target_level - level,
       });
+      if (upsertError) {
+        return new Response(
+          JSON.stringify({ error: `Failed to upsert domain score for ${d.id}: ${upsertError.message}` }),
+          { status: 500 }
+        );
+      }
     }
 
     // ------------------------------------------------------------
@@ -312,12 +336,19 @@ Deno.serve(async (req) => {
     const orgScore = weightedAverage(orgItems);
     const orgLevel = getLevel(orgScore);
 
-    await supabase.from("organization_maturity_scores").upsert({
+    const { error: orgUpsertError } = await supabase.from("organization_maturity_scores").upsert({
       org_id,
       cycle_id,
       numeric_score: orgScore,
       maturity_level: orgLevel,
     });
+
+    if (orgUpsertError) {
+      return new Response(
+        JSON.stringify({ error: `Failed to upsert organization maturity score: ${orgUpsertError.message}` }),
+        { status: 500 }
+      );
+    }
 
     return new Response(
       JSON.stringify({ message: "Scoring pipeline complete." }),
