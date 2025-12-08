@@ -81,12 +81,10 @@ The Maturity module generates work for PIT in these situations:
 2. **Domain / MPS Approval With Conditions**  
    Approver approves with conditions, which must be implemented.
 
-3. **The Maturity Roadmap**  
-   External Auditor Findings
+3. **External Auditor Findings**  
+   Independent auditor rejects evidence or requires specific remediation steps.
 
-4. **Independent auditor rejects evidence or requires specific remediation steps.**
-
-5. **Maturity Cycle Planning**  
+4. **Maturity Cycle Planning**  
    At the start of a yearly journey, PIT receives a batch of planned improvement projects derived from the gap analysis.
 
 ### 3.2 Event Definitions
