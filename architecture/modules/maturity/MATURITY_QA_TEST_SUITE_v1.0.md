@@ -95,7 +95,7 @@ packages/supabase/src/schema/maturity/
 ### Tests:
 
 - [ ] Folder structure exists
-- [ ] No legacy folders remain (`agents/`, old `components/ui`, etc.)
+- [ ] No legacy folders remain (e.g., `agents/`, deprecated component structures)
 - [ ] File count matches architecture (no missing required files)
 
 ---
@@ -418,11 +418,12 @@ Minimum coverage:
 
 ## Implementation Notes
 
-1. **Test Framework**: Use Vitest for unit tests, Playwright for E2E tests
+1. **Test Framework**: Use Vitest (latest stable) for unit tests, Playwright (latest stable) for E2E tests
 2. **CI/CD Integration**: All tests must pass before merge
 3. **Test Data**: Use factories for consistent test data generation
 4. **Mocking**: Mock Supabase and AI services for unit tests
 5. **Documentation**: Each test file must include clear descriptions
+6. **Version Compatibility**: Test framework versions should align with project dependencies in package.json
 
 ---
 
