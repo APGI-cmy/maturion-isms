@@ -171,13 +171,17 @@ Deno.serve(async (req) => {
     }
 
     // Load all criteria weights once (performance optimization)
-    const { data: allCriteriaWeights } = await supabase
+    const { data: allCriteriaWeights, error: criteriaWeightsError } = await supabase
       .from("criteria_weights")
       .select("*")
       .in(
         "criterion_id",
         criteria.map((c) => c.id)
       );
+
+    if (criteriaWeightsError) {
+      console.warn("Failed to load criteria weights, using default weight of 1.0:", criteriaWeightsError.message);
+    }
 
     for (const m of mps) {
       const { data: cs } = await supabase
@@ -226,13 +230,17 @@ Deno.serve(async (req) => {
     }
 
     // Load all MPS weights once (performance optimization)
-    const { data: allMpsWeights } = await supabase
+    const { data: allMpsWeights, error: mpsWeightsError } = await supabase
       .from("mps_weights")
       .select("*")
       .in(
         "mps_id",
         mps.map((m) => m.id)
       );
+
+    if (mpsWeightsError) {
+      console.warn("Failed to load MPS weights, using default weight of 1.0:", mpsWeightsError.message);
+    }
 
     for (const d of domains) {
       const { data: ms } = await supabase
@@ -284,13 +292,17 @@ Deno.serve(async (req) => {
     }
 
     // Load all domain weights once (performance optimization)
-    const { data: dWeights } = await supabase
+    const { data: dWeights, error: domainWeightsError } = await supabase
       .from("domain_weights")
       .select("*")
       .in(
         "domain_id",
         domains.map((d) => d.id)
       );
+
+    if (domainWeightsError) {
+      console.warn("Failed to load domain weights, using default weight of 1.0:", domainWeightsError.message);
+    }
 
     const orgItems = ds.map((entry) => ({
       score: entry.numeric_score,
