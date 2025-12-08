@@ -30,7 +30,7 @@ This file tracks all changes to the PIT Integration Requirements architecture do
   - **2.2:** Established origin linking model with origin_module, origin_type, origin_id, origin_path
 
 - **Section 3: Integration with Maturity Module**
-  - **3.1:** Documented 5 triggers from Maturity → PIT
+  - **3.1:** Documented 4 triggers from Maturity → PIT (Criteria Gap Detected, Domain/MPS Approval With Conditions, External Auditor Findings, Maturity Cycle Planning)
   - **3.2:** Defined 3 event specifications with complete JSON payloads:
     - `maturity.criteria_gap_detected`
     - `maturity.approval_with_conditions`
