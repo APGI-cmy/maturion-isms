@@ -4,7 +4,7 @@
 **Status:** Approved by Foreman  
 **Scope:** Defines the full architecture, flows, data models, AI usage, QA expectations, integration points, and UX patterns for the Maturity Module.  
 **Module Type:** Core ISMS Module  
-**Last Updated:** Today
+**Last Updated:** 2025-12-08
 
 ---
 
@@ -334,6 +334,3 @@ Roles enforced by RLS → defined in ISMS role model.
 ---
 
 ✔️ **End of Maturity Module Architecture v1.0**
-
-This is now ready to be placed in:  
-`architecture/modules/maturity/MATURITY_MODULE_ARCHITECTURE_v1.0.md`
