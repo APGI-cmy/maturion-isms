@@ -4,7 +4,6 @@
 // Version: 1.0
 // ===================================================================
 
-import { serve } from "https://deno.land/x/sift@0.6.0/mod.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.42.0";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
@@ -25,7 +24,7 @@ function weightedAverage(values: { score: number; weight: number }[]) {
 // ================================================================
 // Main scoring engine logic
 // ================================================================
-serve(async (req) => {
+Deno.serve(async (req) => {
   try {
     const { org_id, cycle_id } = await req.json();
 
@@ -76,22 +75,53 @@ serve(async (req) => {
     // ------------------------------------------------------------
     // 3. For each criterion, compute score
     // ------------------------------------------------------------
+    // Load all evidence for these criteria once (performance optimization)
+    const { data: allEvidence, error: evidenceError } = await supabase
+      .from("evidence")
+      .select("id, criteria_id")
+      .in(
+        "criteria_id",
+        criteria.map((c) => c.id)
+      );
+
+    if (evidenceError) {
+      return new Response(
+        JSON.stringify({ error: `Failed to load evidence: ${evidenceError?.message}` }),
+        { status: 500 }
+      );
+    }
+
+    // Build a map of criteria to evidence IDs for efficient lookup
+    const criteriaToEvidenceIds = new Map<string, string[]>();
+    if (allEvidence) {
+      for (const ev of allEvidence) {
+        if (!criteriaToEvidenceIds.has(ev.criteria_id)) {
+          criteriaToEvidenceIds.set(ev.criteria_id, []);
+        }
+        criteriaToEvidenceIds.get(ev.criteria_id)!.push(ev.id);
+      }
+    }
+
     for (const c of criteria) {
-      // Query evidence_ai_scores joined through evidence table
-      const { data: evidenceScores } = await supabase
-        .from("evidence_ai_scores")
-        .select("confidence, evidence_id")
-        .eq("cycle_id", cycle_id)
-        .in(
-          "evidence_id",
-          // Need to get evidence IDs that link to this criterion
-          // This requires a subquery or separate query
-          (await supabase
-            .from("evidence")
-            .select("id")
-            .eq("criteria_id", c.id))
-            .data?.map(e => e.id) || []
-        );
+      const evidenceIds = criteriaToEvidenceIds.get(c.id) || [];
+      
+      let evidenceScores = null;
+      if (evidenceIds.length > 0) {
+        // Query evidence_ai_scores for this criterion's evidence
+        const { data, error: scoresError } = await supabase
+          .from("evidence_ai_scores")
+          .select("confidence")
+          .eq("cycle_id", cycle_id)
+          .in("evidence_id", evidenceIds);
+
+        if (scoresError) {
+          return new Response(
+            JSON.stringify({ error: `Failed to load evidence scores for criterion ${c.id}: ${scoresError?.message}` }),
+            { status: 500 }
+          );
+        }
+        evidenceScores = data;
+      }
 
       if (!evidenceScores || evidenceScores.length === 0) {
         // Insert zero score
