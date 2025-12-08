@@ -195,17 +195,27 @@ Deno.serve(async (req) => {
       console.warn("Failed to load criteria weights, using default weight of 1.0:", criteriaWeightsError.message);
     }
 
-    for (const m of mps) {
-      const { data: cs } = await supabase
-        .from("criteria_scores")
-        .select("numeric_score, criterion_id")
-        .eq("cycle_id", cycle_id)
-        .in(
-          "criterion_id",
-          criteria.filter((c) => c.mps_id === m.id).map((c) => c.id)
-        );
+    // Load all criteria scores once (performance optimization)
+    const { data: allCriteriaScores } = await supabase
+      .from("criteria_scores")
+      .select("numeric_score, criterion_id")
+      .eq("cycle_id", cycle_id)
+      .in(
+        "criterion_id",
+        criteria.map((c) => c.id)
+      );
 
-      if (!cs || cs.length === 0) continue;
+    for (const m of mps) {
+      // Filter criteria scores for this MPS
+      const criteriaForMps = criteria.filter((c) => c.mps_id === m.id);
+      const cs = allCriteriaScores?.filter((score) => 
+        criteriaForMps.some((c) => c.id === score.criterion_id)
+      );
+
+      if (!cs || cs.length === 0) {
+        console.warn(`No criterion scores found for MPS ${m.id}, skipping`);
+        continue;
+      }
 
       const items = cs.map((entry) => ({
         score: entry.numeric_score,
@@ -260,17 +270,27 @@ Deno.serve(async (req) => {
       console.warn("Failed to load MPS weights, using default weight of 1.0:", mpsWeightsError.message);
     }
 
-    for (const d of domains) {
-      const { data: ms } = await supabase
-        .from("mps_scores")
-        .select("numeric_score, mps_id")
-        .eq("cycle_id", cycle_id)
-        .in(
-          "mps_id",
-          mps.filter((x) => x.domain_id === d.id).map((x) => x.id)
-        );
+    // Load all MPS scores once (performance optimization)
+    const { data: allMpsScores } = await supabase
+      .from("mps_scores")
+      .select("numeric_score, mps_id")
+      .eq("cycle_id", cycle_id)
+      .in(
+        "mps_id",
+        mps.map((m) => m.id)
+      );
 
-      if (!ms || ms.length === 0) continue;
+    for (const d of domains) {
+      // Filter MPS scores for this domain
+      const mpsForDomain = mps.filter((x) => x.domain_id === d.id);
+      const ms = allMpsScores?.filter((score) => 
+        mpsForDomain.some((m) => m.id === score.mps_id)
+      );
+
+      if (!ms || ms.length === 0) {
+        console.warn(`No MPS scores found for domain ${d.id}, skipping`);
+        continue;
+      }
 
       const items = ms.map((entry) => ({
         score: entry.numeric_score,
