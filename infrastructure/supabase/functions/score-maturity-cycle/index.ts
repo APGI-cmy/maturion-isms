@@ -16,6 +16,7 @@ const supabase = createClient(SUPABASE_URL!, SERVICE_KEY!);
 // Utility – weighted average
 // ================================================================
 function weightedAverage(values: { score: number; weight: number }[]) {
+  if (!values || values.length === 0) return 0;
   const wSum = values.reduce((acc, v) => acc + v.weight, 0);
   if (wSum === 0) return 0;
   return values.reduce((acc, v) => acc + v.score * v.weight, 0) / wSum;
@@ -35,13 +36,20 @@ serve(async (req) => {
     // ------------------------------------------------------------
     // 1. Load maturity thresholds
     // ------------------------------------------------------------
-    const { data: thresholds } = await supabase
+    const { data: thresholds, error: thresholdsError } = await supabase
       .from("maturity_score_thresholds")
       .select("*")
       .or(`org_id.eq.${org_id},org_id.is.null`);
 
+    if (thresholdsError || !thresholds) {
+      return new Response(
+        JSON.stringify({ error: `Failed to load thresholds: ${thresholdsError?.message}` }),
+        { status: 500 }
+      );
+    }
+
     const getLevel = (score: number) => {
-      const t = thresholds!.find(
+      const t = thresholds.find(
         (x) => score >= x.min_score && score <= x.max_score
       );
       if (t) return t.level;
@@ -53,20 +61,37 @@ serve(async (req) => {
     // ------------------------------------------------------------
     // 2. Load all criteria in org
     // ------------------------------------------------------------
-    const { data: criteria } = await supabase
+    const { data: criteria, error: criteriaError } = await supabase
       .from("criteria")
       .select("id, mps_id, target_level")
       .eq("org_id", org_id);
 
+    if (criteriaError || !criteria) {
+      return new Response(
+        JSON.stringify({ error: `Failed to load criteria: ${criteriaError?.message}` }),
+        { status: 500 }
+      );
+    }
+
     // ------------------------------------------------------------
     // 3. For each criterion, compute score
     // ------------------------------------------------------------
-    for (const c of criteria!) {
+    for (const c of criteria) {
+      // Query evidence_ai_scores joined through evidence table
       const { data: evidenceScores } = await supabase
         .from("evidence_ai_scores")
-        .select("confidence")
+        .select("confidence, evidence_id")
         .eq("cycle_id", cycle_id)
-        .eq("evidence_id", c.id);
+        .in(
+          "evidence_id",
+          // Need to get evidence IDs that link to this criterion
+          // This requires a subquery or separate query
+          (await supabase
+            .from("evidence")
+            .select("id")
+            .eq("criteria_id", c.id))
+            .data?.map(e => e.id) || []
+        );
 
       if (!evidenceScores || evidenceScores.length === 0) {
         // Insert zero score
@@ -103,28 +128,38 @@ serve(async (req) => {
     // ------------------------------------------------------------
     // 4. Score MPS
     // ------------------------------------------------------------
-    const { data: mps } = await supabase
+    const { data: mps, error: mpsError } = await supabase
       .from("mps")
       .select("id, domain_id, target_level")
       .eq("org_id", org_id);
 
-    for (const m of mps!) {
+    if (mpsError || !mps) {
+      return new Response(
+        JSON.stringify({ error: `Failed to load MPS: ${mpsError?.message}` }),
+        { status: 500 }
+      );
+    }
+
+    // Load all criteria weights once (performance optimization)
+    const { data: allCriteriaWeights } = await supabase
+      .from("criteria_weights")
+      .select("*");
+
+    for (const m of mps) {
       const { data: cs } = await supabase
         .from("criteria_scores")
         .select("numeric_score, criterion_id")
         .eq("cycle_id", cycle_id)
         .in(
           "criterion_id",
-          criteria!.filter((c) => c.mps_id === m.id).map((c) => c.id)
+          criteria.filter((c) => c.mps_id === m.id).map((c) => c.id)
         );
 
-      const { data: weights } = await supabase
-        .from("criteria_weights")
-        .select("*");
+      if (!cs || cs.length === 0) continue;
 
-      const items = cs!.map((entry) => ({
+      const items = cs.map((entry) => ({
         score: entry.numeric_score,
-        weight: weights!.find((w) => w.criterion_id === entry.criterion_id)
+        weight: allCriteriaWeights?.find((w) => w.criterion_id === entry.criterion_id)
           ?.weight ?? 1,
       }));
 
@@ -144,28 +179,38 @@ serve(async (req) => {
     // ------------------------------------------------------------
     // 5. Score Domains
     // ------------------------------------------------------------
-    const { data: domains } = await supabase
+    const { data: domains, error: domainsError } = await supabase
       .from("domains")
       .select("id, target_level")
       .eq("org_id", org_id);
 
-    for (const d of domains!) {
+    if (domainsError || !domains) {
+      return new Response(
+        JSON.stringify({ error: `Failed to load domains: ${domainsError?.message}` }),
+        { status: 500 }
+      );
+    }
+
+    // Load all MPS weights once (performance optimization)
+    const { data: allMpsWeights } = await supabase
+      .from("mps_weights")
+      .select("*");
+
+    for (const d of domains) {
       const { data: ms } = await supabase
         .from("mps_scores")
         .select("numeric_score, mps_id")
         .eq("cycle_id", cycle_id)
         .in(
           "mps_id",
-          mps!.filter((x) => x.domain_id === d.id).map((x) => x.id)
+          mps.filter((x) => x.domain_id === d.id).map((x) => x.id)
         );
 
-      const { data: weights } = await supabase
-        .from("mps_weights")
-        .select("*");
+      if (!ms || ms.length === 0) continue;
 
-      const items = ms!.map((entry) => ({
+      const items = ms.map((entry) => ({
         score: entry.numeric_score,
-        weight: weights!.find((w) => w.mps_id === entry.mps_id)?.weight ?? 1,
+        weight: allMpsWeights?.find((w) => w.mps_id === entry.mps_id)?.weight ?? 1,
       }));
 
       const score = weightedAverage(items);
@@ -187,16 +232,31 @@ serve(async (req) => {
     const { data: ds } = await supabase
       .from("domain_scores")
       .select("domain_id, numeric_score")
-      .eq("cycle_id", cycle_id);
+      .eq("cycle_id", cycle_id)
+      .in(
+        "domain_id",
+        domains.map((d) => d.id)
+      );
 
+    if (!ds || ds.length === 0) {
+      return new Response(
+        JSON.stringify({ error: "No domain scores found to compute organization score" }),
+        { status: 500 }
+      );
+    }
+
+    // Load all domain weights once (performance optimization)
     const { data: dWeights } = await supabase
       .from("domain_weights")
-      .select("*");
+      .select("*")
+      .in(
+        "domain_id",
+        domains.map((d) => d.id)
+      );
 
-    const orgItems = ds!.map((entry) => ({
+    const orgItems = ds.map((entry) => ({
       score: entry.numeric_score,
-      weight: dWeights!.find((w) => w.domain_id === entry.domain_id)?.weight ??
-        1,
+      weight: dWeights?.find((w) => w.domain_id === entry.domain_id)?.weight ?? 1,
     }));
 
     const orgScore = weightedAverage(orgItems);
