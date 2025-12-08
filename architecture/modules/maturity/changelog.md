@@ -18,6 +18,11 @@
   - Watchdog monitoring
   - Backoffice & admin specifications
   - Versioning process
+- Created Builder Agent Implementation Task Breakdown (MATURITY_BUILDER_TASKS_v1.0.md)
+  - 10-phase implementation plan for migrating legacy Maturity module
+  - Detailed task breakdown for code extraction, routing, AI integration, and Supabase integration
+  - QA and validation requirements
+  - Cleanup and final validation steps
 
 ### Approval
 - Foreman: Approved
