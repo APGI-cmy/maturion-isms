@@ -9,6 +9,9 @@
  * Architecture Reference: architecture/modules/pit/Architecture/GAP_PRIORITY_ENGINE_v1.0.md
  */
 
+// High-priority compliance frameworks that trigger minimum modifier of 1.3
+const HIGH_PRIORITY_FRAMEWORKS = ['ISO 27001', 'SOC 2', 'HIPAA', 'GDPR'];
+
 export interface GapPriorityInput {
   // Core gap metrics
   gap: number;                              // 0-4 levels
@@ -156,10 +159,9 @@ export function computeRegulatoryRelevanceModifier(
   let modifier = baseMapping[regulatory_relevance];
   
   // High-priority frameworks override
-  const highPriorityFrameworks = ['ISO 27001', 'SOC 2', 'HIPAA', 'GDPR'];
   if (compliance_frameworks && compliance_frameworks.length > 0) {
     const hasHighPriority = compliance_frameworks.some(fw => 
-      highPriorityFrameworks.includes(fw)
+      HIGH_PRIORITY_FRAMEWORKS.includes(fw)
     );
     if (hasHighPriority) {
       modifier = Math.max(modifier, 1.3);
