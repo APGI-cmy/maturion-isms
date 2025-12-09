@@ -175,13 +175,15 @@ Adjusts priority based on evidence quality. Higher confidence means more trust i
 
 ```
 evidence_modifier = 1.0 + (0.70 - avg_evidence_confidence) / 2
+// 0.70 is the neutral confidence point (acceptable quality)
+// Division by 2 provides gentle scaling: ±0.25 max adjustment
 ```
 
 **Clamped to:** `[0.75, 1.25]`
 
 **Logic:**
 - High confidence (0.90-1.00) → modifier ~0.80-0.90 → **reduces priority** (gap is well-documented, less urgent)
-- Medium confidence (0.60-0.70) → modifier ~1.00-1.05 → neutral
+- Medium confidence (0.60-0.70) → modifier ~1.00-1.05 → neutral (0.70 baseline)
 - Low confidence (0.00-0.50) → modifier 1.10-1.25 → **increases priority** (gap is uncertain, needs investigation)
 
 **Edge Cases:**
@@ -224,7 +226,9 @@ if (linked_risks.count === 0) {
   risk_modifier = 1.0
 } else {
   severity_score = mapSeverity(linked_risks.max_severity) // low=1, medium=2, high=3, critical=4
-  risk_count_factor = Math.min(linked_risks.count / 5, 0.5) // cap at 0.5 for 5+ risks
+  risk_count_factor = Math.min(linked_risks.count / 5, 0.5)
+  // 5 risks = typical threshold for "many risks" in risk management
+  // 0.5 cap prevents over-weighting quantity vs. quality
   risk_modifier = 1.0 + (severity_score / 10) + risk_count_factor
 }
 ```
@@ -271,24 +275,26 @@ Increases priority for long-standing gaps (gap fatigue prevention).
 
 ```
 if (time_exposed_days <= 30) {
-  time_modifier = 1.0
+  time_modifier = 1.0       // New gaps, normal priority
 } else if (time_exposed_days <= 90) {
-  time_modifier = 1.1
+  time_modifier = 1.1       // 1 quarter - slight increase
 } else if (time_exposed_days <= 180) {
-  time_modifier = 1.3
+  time_modifier = 1.3       // 2 quarters - moderate increase
 } else if (time_exposed_days <= 365) {
-  time_modifier = 1.5
+  time_modifier = 1.5       // 3-4 quarters - significant increase
 } else {
-  time_modifier = 2.0
+  time_modifier = 2.0       // > 1 year - chronic gap, double urgency
 }
 ```
 
 **Clamped to:** `[1.0, 2.0]`
 
 **Rationale:**
-- New gaps (< 30 days) are not yet urgent
-- Gaps persisting 3-6 months need attention
-- Gaps > 1 year are chronic and need escalation
+- New gaps (< 30 days) are not yet urgent - allow time for initial assessment
+- Gaps persisting 1 quarter (90 days) signal delayed action
+- Gaps persisting 2+ quarters (180+ days) indicate systemic barriers
+- Gaps > 1 year are chronic and need escalation to leadership
+- Thresholds align with quarterly planning cycles common in ISMS programs
 
 **Examples:**
 - Gap detected 15 days ago → modifier = 1.0
