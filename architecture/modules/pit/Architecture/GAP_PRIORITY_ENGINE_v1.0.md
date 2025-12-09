@@ -501,12 +501,15 @@ The **AI Reasoning Layer** provides:
 - Integration with PIT task creation
 - Complete audit trail and explainability
 
-**Part 3 of 4** will define **Recommended Handling & PIT Integration Rules**, including:
-- Task vs. project decision logic
-- Due date calculation
-- Owner assignment
-- Deduplication with existing tasks
-- Feedback loops
+**Part 3 of 4** — ✅ **COMPLETED** — See `GAP_PRIORITY_ENGINE_PIT_HANDLING_v1.0.md`
+
+The **PIT Handling Rules & Workflow** provides:
+- Task vs. project decision logic based on priority and origin type
+- Due date calculation and owner assignment rules
+- Deduplication logic to prevent duplicate tasks
+- Task lifecycle state machine with automatic transitions
+- Feedback loop from PIT task completion to maturity re-scoring
+- UI requirements for displaying linked tasks and improvement status
 
 **Part 4 of 4** will define **QA Tests & Validation Requirements**, including:
 - Unit test cases for each modifier
