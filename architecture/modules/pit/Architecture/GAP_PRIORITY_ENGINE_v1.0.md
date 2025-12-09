@@ -347,17 +347,16 @@ base_priority = 2 / 4 = 0.50
 
 evidence_modifier = 1.0 + (0.70 - 0.60) / 2 = 1.05
 criticality_modifier = 2.0
-risk_modifier = 1.0 + 0.3 + 0.4 = 1.7
+risk_modifier = 1.0 + (3/10) + (2/5) = 1.0 + 0.3 + 0.4 = 1.7  // high severity + 2 risks
 regulatory_modifier = 1.5
 time_modifier = 1.3
 existing_tasks_modifier = 0.9
 
 final_priority = 0.50 × 1.05 × 2.0 × 1.7 × 1.5 × 1.3 × 0.9
-               = 0.50 × 1.05 × 2.0 × 1.7 × 1.5 × 1.3 × 0.9
-               = 3.16
+               = 3.13
 ```
 
-**Result:** Priority score = **3.16** → **Critical** priority level
+**Result:** Priority score = **3.13** → **Critical** priority level
 
 ---
 
