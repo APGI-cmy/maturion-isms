@@ -6,7 +6,8 @@ This directory contains SQL migration files for the MATURION ISMS database schem
 
 ```
 migrations/
-├── 20250208_scoring_model.sql    # Scoring model tables and configurations
+├── 20250208_scoring_model.sql      # Scoring model tables and configurations
+├── 20250208_scoring_api_views.sql  # Scoring API RPCs and views
 └── [future migrations...]
 ```
 
@@ -48,6 +49,40 @@ This migration should be applied to a Supabase PostgreSQL database that already 
 - `evidence`
 - `maturity_cycles`
 
+### 20250208_scoring_api_views.sql
+
+**Purpose:** Implements read-only RPC functions and views for accessing maturity scoring results via the API.
+
+**Functions Created:**
+
+1. **get_criterion_score(c_id uuid, cycle uuid)** - Returns JSONB score for a specific criterion in a cycle
+2. **get_mps_score(m_id uuid, cycle uuid)** - Returns JSONB score for a specific MPS in a cycle
+3. **get_domain_score(d_id uuid, cycle uuid)** - Returns JSONB score for a specific domain in a cycle
+4. **get_organization_maturity(o_id uuid, cycle uuid)** - Returns JSONB maturity score for an organization in a cycle
+
+**Views Created:**
+
+1. **v_current_criterion_scores** - Criterion scores with org hierarchy context
+2. **v_current_mps_scores** - MPS scores with org hierarchy context
+3. **v_current_domain_scores** - Domain scores with org context
+4. **v_org_maturity_overview** - Organization maturity with domain breakdown as JSON array
+
+**Key Features:**
+
+- All RPCs are marked as `STABLE` for query optimization
+- Functions return JSONB for flexible API consumption
+- Permissions granted to `authenticated` and `service_role` roles
+- Views provide denormalized data for efficient querying
+- Organization maturity overview includes nested domain breakdown
+
+**Dependencies:**
+
+This migration requires `20250208_scoring_model.sql` to be applied first, as it depends on:
+- `criteria_scores`
+- `mps_scores`
+- `domain_scores`
+- `organization_maturity_scores`
+
 ## Applying Migrations
 
 For Supabase projects, migrations can be applied using the Supabase CLI:
@@ -61,3 +96,4 @@ Or by executing the SQL directly in the Supabase SQL Editor.
 ## Version History
 
 - **v1.0** (2025-02-08) - Initial scoring model schema by Foreman
+- **v1.0** (2025-02-08) - Scoring API RPCs and views migration
