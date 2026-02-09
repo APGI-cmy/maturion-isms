@@ -1,0 +1,5 @@
+2026-02-09T12:30:20+00:00: WARNING: Failed to fetch canonical TIER_0 version from https://github.com/APGI-cmy/maturion-foreman-governance/raw/main/governance/TIER_0_CANON_MANIFEST.json
+2026-02-09T12:30:20+00:00: TIER_0 version check (local: , canonical: unavailable)
+PENDING: governance/canon/FM_ROLE_CANON.md (not yet available)
+PENDING: governance/canon/WAVE_MODEL.md (not yet available)
+PENDING: governance/canon/LIVING_AGENT_SYSTEM.md (not yet available)
