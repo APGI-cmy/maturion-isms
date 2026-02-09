@@ -1,0 +1,10 @@
+2026-02-09T12:34:32+00:00: BATCH 1 STARTED - Constitutional Foundation
+2026-02-09T12:34:32+00:00: Created governance/ directory
+2026-02-09T12:34:32+00:00: ERROR: Failed to fetch BUILD_PHILOSOPHY.md
+2026-02-09T12:35:00+00:00: BATCH 1 STARTED - Constitutional Foundation
+2026-02-09T12:35:00+00:00: BUILD_PHILOSOPHY.md layered down (35004 bytes, SHA256: 0a95b7c6e56ab7d97b310b1496c14e3262fd7455c097d05c0d158df550f00e9b)
+2026-02-09T12:35:01+00:00: ERROR: Failed to fetch TIER_0_CANON_MANIFEST.json from https://github.com/APGI-cmy/maturion-foreman-governance/raw/main/governance/TIER_0_CANON_MANIFEST.json
+2026-02-09T12:36:17+00:00: PARTIAL ALIGNMENT STARTED - Only 2/22 files available in canonical
+2026-02-09T12:36:18+00:00: governance/canon/CONSTITUTIONAL_SANDBOX_PATTERN.md layered down (21095 bytes, SHA256: 25e88a801581b7358abd50b36d4c23a913f803b622cafc54078eee6a85d8f1d3)
+2026-02-09T12:36:18+00:00: PARTIAL ALIGNMENT COMPLETE - 2/22 files layered down
+2026-02-09T12:36:18+00:00: CRITICAL: Canonical governance repository incomplete (20/22 files missing)
