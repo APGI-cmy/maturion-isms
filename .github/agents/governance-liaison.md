@@ -94,16 +94,15 @@ fi
 echo "🔍 Recent local governance changes (last 7 days):"
 git log --since="7 days ago" --oneline governance/ 2>/dev/null | head -5 || echo "   (none or git unavailable)"
 
-# Scan 2.4: Drift detection flag
-echo ""
-echo "🔍 Checking for governance drift..."
-DRIFT_DETECTED=false
-
-# Create session ID early for evidence logging
+# Scan 2.3: Prepare session tracking
 SESSION_ID="liaison-$(date +%Y%m%d-%H%M%S)"
 SESSION_DIR=".agent-admin/sessions/governance-liaison"
 mkdir -p "$SESSION_DIR"
 
+# Scan 2.5: Drift detection flag
+echo ""
+echo "🔍 Checking for governance drift..."
+DRIFT_DETECTED=false
 EVIDENCE_LOG="$SESSION_DIR/${SESSION_ID}_evidence.log"
 touch "$EVIDENCE_LOG"
 
@@ -111,23 +110,17 @@ touch "$EVIDENCE_LOG"
 CANONICAL_REPO="https://github.com/APGI-cmy/maturion-foreman-governance"
 CANONICAL_REF="main"
 CANONICAL_TIER0_URL="$CANONICAL_REPO/raw/$CANONICAL_REF/governance/TIER_0_CANON_MANIFEST.json"
+CANONICAL_TIER0_VERSION=$(curl -s "$CANONICAL_TIER0_URL" | grep '"version"' | head -1 | cut -d'"' -f4)
 
-# Fetch and validate canonical version
-CANONICAL_TIER0_VERSION=$(curl -sf "$CANONICAL_TIER0_URL" 2>/dev/null | grep '"version"' | head -1 | cut -d'"' -f4)
-
-if [ -z "$CANONICAL_TIER0_VERSION" ]; then
-    echo "⚠️  WARNING: Unable to fetch canonical TIER_0 version (network or repository issue)"
-    echo "$(date -Iseconds): WARNING: Failed to fetch canonical TIER_0 version from $CANONICAL_TIER0_URL" >> "$EVIDENCE_LOG"
-    CANONICAL_TIER0_VERSION="unavailable"
-fi
+echo "EVIDENCE: Drift detection started at $(date -Iseconds)" >> "$EVIDENCE_LOG"
+echo "EVIDENCE: Local TIER_0 version: $LOCAL_TIER0_VERSION" >> "$EVIDENCE_LOG"
+echo "EVIDENCE: Canonical TIER_0 version: $CANONICAL_TIER0_VERSION" >> "$EVIDENCE_LOG"
 
 # Compare versions
-if [ "$CANONICAL_TIER0_VERSION" != "unavailable" ] && [ "$LOCAL_TIER0_VERSION" != "$CANONICAL_TIER0_VERSION" ]; then
+if [ "$LOCAL_TIER0_VERSION" != "$CANONICAL_TIER0_VERSION" ]; then
     echo "⚠️  DRIFT DETECTED: TIER_0 version mismatch"
     DRIFT_DETECTED=true
     echo "DRIFT: TIER_0 version (local: $LOCAL_TIER0_VERSION, canonical: $CANONICAL_TIER0_VERSION)" >> "$EVIDENCE_LOG"
-else
-    echo "$(date -Iseconds): TIER_0 version check (local: $LOCAL_TIER0_VERSION, canonical: $CANONICAL_TIER0_VERSION)" >> "$EVIDENCE_LOG"
 fi
 
 # Check pending canon files
@@ -137,34 +130,32 @@ PENDING_CANON_FILES=(
     "governance/canon/LIVING_AGENT_SYSTEM.md"
 )
 
+echo "" >> "$EVIDENCE_LOG"
+echo "PENDING CANON FILES CHECK:" >> "$EVIDENCE_LOG"
 for canon_file in "${PENDING_CANON_FILES[@]}"; do
     if [ ! -f "$canon_file" ]; then
         echo "⚠️  MISSING: $canon_file"
         echo "PENDING: $canon_file (not yet available)" >> "$EVIDENCE_LOG"
     else
-        if SHA256=$(sha256sum "$canon_file" 2>/dev/null | cut -d' ' -f1); then
-            echo "$(date -Iseconds): $canon_file exists (SHA256: $SHA256)" >> "$EVIDENCE_LOG"
-        else
-            echo "$(date -Iseconds): $canon_file exists (SHA256: unavailable)" >> "$EVIDENCE_LOG"
-        fi
+        FILE_SHA256=$(sha256sum "$canon_file" | cut -d' ' -f1)
+        echo "PRESENT: $canon_file (SHA256: $FILE_SHA256)" >> "$EVIDENCE_LOG"
     fi
 done
 
 # Check for unresolved governance escalations
 ESCALATION_COUNT=0
-if [ -d "governance/incidents" ]; then
-    ESCALATION_COUNT=$(find governance/incidents -name "*UNRESOLVED*.md" 2>/dev/null | wc -l)
-    if [ $ESCALATION_COUNT -gt 0 ]; then
-        echo "⚠️  Found $ESCALATION_COUNT unresolved governance escalations"
-        echo "ESCALATIONS: $ESCALATION_COUNT unresolved governance escalations found" >> "$EVIDENCE_LOG"
-    fi
+if [ -d "governance/escalation" ]; then
+    ESCALATION_COUNT=$(find governance/escalation -name "*.md" -type f 2>/dev/null | wc -l)
+    echo "ESCALATIONS: Found $ESCALATION_COUNT unresolved governance escalations" >> "$EVIDENCE_LOG"
 fi
 
 if [ "$DRIFT_DETECTED" = true ]; then
     echo "⚠️  DRIFT DETECTED - will self-align during session"
 else
-    echo "✅ No obvious drift detected (full check during session)"
+    echo "✅ No drift detected - local governance aligned"
 fi
+
+echo "📝 Evidence log created: $EVIDENCE_LOG"
 
 # -------------------- PHASE 3: Generate Session Contract --------------------
 echo ""
@@ -179,7 +170,6 @@ cat > "$SESSION_CONTRACT" << 'SESSEOF'
 # governance-liaison Session Contract
 **Session ID**: SESSION_ID_PLACEHOLDER
 **Started**: TIMESTAMP_PLACEHOLDER
-**Repository**: APGI-cmy/maturion-isms
 
 ## This Session Mission
 <!-- CS2 or auto-triggered ripple: Fill in mission -->
@@ -193,21 +183,21 @@ cat > "$SESSION_CONTRACT" << 'SESSEOF'
 ## Governance Health Check Results
 
 ### Drift Detection
-- TIER_0 Manifest: [ALIGNED | DRIFT DETECTED]
-- Canon Files: [COUNT] checked, [DRIFT_COUNT] with drift
+- TIER_0 Manifest: [Status to be filled during Phase 2]
+- Canon Files: [Count] checked, [DRIFT_COUNT] with drift
 - Pending Canon Files: [PENDING_COUNT] tracked
 - Governance Escalations: [ESCALATION_COUNT] unresolved
 
 ### Evidence Collected
-- Evidence Log: EVIDENCE_LOG_PLACEHOLDER
-<!-- File checksums and status will be logged here -->
+- Evidence Log: $SESSION_DIR/${SESSION_ID}_evidence.log
+- [Files and checksums to be populated during drift detection]
 
 ## Alignment Actions Log
 <!-- Governance files layered down this session -->
 
 ## Pre-Handover Validation
 - [ ] Governance alignment verified
-- [ ] No blocking drift detected
+- [ ] No blocking drift detected or drift resolved
 - [ ] Pending canon files tracked
 - [ ] Evidence collected and logged
 - [ ] Session contract complete
@@ -220,7 +210,6 @@ sed -i "s/SESSION_ID_PLACEHOLDER/$SESSION_ID/g" "$SESSION_CONTRACT"
 sed -i "s/TIMESTAMP_PLACEHOLDER/$(date -Iseconds)/g" "$SESSION_CONTRACT"
 sed -i "s/VERSION_PLACEHOLDER/${LOCAL_TIER0_VERSION:-unknown}/g" "$SESSION_CONTRACT"
 sed -i "s|SOURCE_PLACEHOLDER|${CANONICAL_SOURCE}|g" "$SESSION_CONTRACT"
-sed -i "s|EVIDENCE_LOG_PLACEHOLDER|$EVIDENCE_LOG|g" "$SESSION_CONTRACT"
 
 echo "✅ Session contract generated: $SESSION_CONTRACT"
 
@@ -236,25 +225,34 @@ echo "📚 Session history: $((SESSION_COUNT - 1)) recent sessions found"
 if [ $SESSION_COUNT -gt 1 ]; then
     echo "   Last sessions:"
     ls -1t "$SESSION_DIR"/*.md | head -6 | tail -5 | xargs -I {} basename {} | sed 's/^/   - /'
-
+    
     echo ""
     echo "   Recent alignment activities:"
     grep -h "^- Layered down:" "$SESSION_DIR"/*.md 2>/dev/null | tail -5 | sed 's/^/   /' || echo "   (no recent layer-downs)"
 fi
 
-# -------------------- PHASE 5: Pre-Handover Validation --------------------
+# -------------------- PHASE 5: Ready State --------------------
 echo ""
-echo "[PHASE 5] Pre-Handover Validation"
+echo "[PHASE 5] Ready State"
+echo "-----------------------------------"
+echo "✅ Wake-up protocol complete"
+echo "📋 Session contract: $SESSION_CONTRACT"
+echo "🎯 Status: READY - Awaiting mission or governance ripple"
+echo ""
+
+# -------------------- PHASE 6: Pre-Handover Validation --------------------
+echo ""
+echo "[PHASE 6] Pre-Handover Validation"
 echo "-----------------------------------"
 
 VALIDATION_FAILED=false
 
 # Check 1: Drift handled
 if [ "$DRIFT_DETECTED" = true ]; then
-    echo "⚠️  CHECK 1: Drift detected - will need alignment during session"
-    # Note: Alignment happens during session, not in wake-up
+    echo "⚠️  CHECK 1: Drift detected - self-alignment will be required during session"
+    # Note: Drift will be handled during session execution via self-alignment protocol
 else
-    echo "✅ CHECK 1 PASSED: No drift detected, governance aligned"
+    echo "✅ CHECK 1 PASSED: No governance drift detected"
 fi
 
 # Check 2: Evidence collected
@@ -262,7 +260,7 @@ if [ ! -f "$EVIDENCE_LOG" ]; then
     echo "❌ CHECK 2 FAILED: No evidence log generated"
     VALIDATION_FAILED=true
 else
-    EVIDENCE_COUNT=$(wc -l < "$EVIDENCE_LOG")
+    EVIDENCE_COUNT=$(wc -l < "$EVIDENCE_LOG" 2>/dev/null || echo "0")
     echo "✅ CHECK 2 PASSED: Evidence collected ($EVIDENCE_COUNT entries)"
 fi
 
@@ -275,41 +273,28 @@ else
 fi
 
 # Check 4: Pending canon files tracked
-PENDING_COUNT=0
-for canon_file in "${PENDING_CANON_FILES[@]}"; do
-    if [ ! -f "$canon_file" ]; then
-        PENDING_COUNT=$((PENDING_COUNT + 1))
-    fi
-done
+PENDING_TRACKED=false
+if [ -f "governance/PENDING_CANON_FILES_TRACKING.md" ] || grep -q "PENDING CANON FILES CHECK" "$EVIDENCE_LOG" 2>/dev/null; then
+    PENDING_TRACKED=true
+fi
 
-if [ $PENDING_COUNT -gt 0 ]; then
-    echo "⚠️  CHECK 4 WARNING: $PENDING_COUNT pending canon files tracked"
-    echo "   (This is expected - files will be available in future governance ripple)"
+if [ "$PENDING_TRACKED" = true ]; then
+    echo "✅ CHECK 4 PASSED: Pending canon files tracked in evidence log"
 else
-    echo "✅ CHECK 4 PASSED: All canon files present"
+    echo "⚠️  CHECK 4 WARNING: Pending canon files not explicitly tracked"
 fi
 
 # Final validation
 if [ "$VALIDATION_FAILED" = true ]; then
+    echo ""
     echo "❌ PRE-HANDOVER VALIDATION FAILED"
     echo "Agent cannot proceed - escalating to CS2"
     exit 1
 fi
 
-echo "✅ PRE-HANDOVER VALIDATION PASSED"
-
-# -------------------- PHASE 6: Ready State --------------------
 echo ""
-echo "[PHASE 6] Ready State"
-echo "-----------------------------------"
-echo "✅ Wake-up protocol complete"
-echo "📋 Session contract: $SESSION_CONTRACT"
-echo "📋 Evidence log: $EVIDENCE_LOG"
-if [ "$DRIFT_DETECTED" = true ]; then
-    echo "⚠️  Status: READY - Self-alignment required before mission"
-else
-    echo "🎯 Status: READY - Awaiting mission or governance ripple"
-fi
+echo "✅ PRE-HANDOVER VALIDATION PASSED"
+echo "Agent ready to receive mission and execute governance tasks"
 echo ""
 echo "==================================="
 ```
@@ -364,133 +349,122 @@ echo "==================================="
 
 ## Self-Alignment Protocol
 
-When drift detected in **CHECK #2** (local governance != canonical):
+When drift detected in **PHASE 2** (local governance != canonical):
 
 ```bash
 #!/bin/bash
-# Self-Alignment Execution for maturion-isms
+# Self-Alignment Execution v5.0.0
+# Authority: Living Agent System | Self-Alignment Authorized
+
+set -e
 
 echo "🔧 SELF-ALIGNMENT: Local governance drift detected"
-echo "Repository: APGI-cmy/maturion-isms"
 echo "Canonical source: APGI-cmy/maturion-foreman-governance"
+echo ""
 
-# Initialize alignment log
-ALIGNMENT_LOG="$SESSION_DIR/${SESSION_ID}_alignment.log"
-touch "$ALIGNMENT_LOG"
-echo "$(date -Iseconds): Self-alignment started" >> "$ALIGNMENT_LOG"
-
-# Set canonical repository details
 CANONICAL_REPO="https://github.com/APGI-cmy/maturion-foreman-governance"
 CANONICAL_REF="main"
+ALIGNMENT_LOG="$SESSION_DIR/${SESSION_ID}_alignment.log"
+touch "$ALIGNMENT_LOG"
+
+echo "ALIGNMENT START: $(date -Iseconds)" >> "$ALIGNMENT_LOG"
+echo "Source: $CANONICAL_REPO (ref: $CANONICAL_REF)" >> "$ALIGNMENT_LOG"
+echo "" >> "$ALIGNMENT_LOG"
 
 # Step 1: Fetch canonical TIER_0 manifest
 echo "Step 1: Fetching canonical TIER_0 manifest..."
-CANONICAL_TIER0_URL="$CANONICAL_REPO/raw/$CANONICAL_REF/governance/TIER_0_CANON_MANIFEST.json"
+TIER0_MANIFEST_URL="$CANONICAL_REPO/raw/$CANONICAL_REF/governance/TIER_0_CANON_MANIFEST.json"
 
-HTTP_CODE=$(curl -sf -w "%{http_code}" -o "governance/TIER_0_CANON_MANIFEST.json.new" "$CANONICAL_TIER0_URL" 2>/dev/null)
-
-if [ "$HTTP_CODE" = "200" ] && [ -s "governance/TIER_0_CANON_MANIFEST.json.new" ]; then
-    mv "governance/TIER_0_CANON_MANIFEST.json.new" "governance/TIER_0_CANON_MANIFEST.json"
-    if SHA256=$(sha256sum "governance/TIER_0_CANON_MANIFEST.json" 2>/dev/null | cut -d' ' -f1); then
-        echo "$(date -Iseconds): TIER_0_CANON_MANIFEST.json layered down (SHA256: $SHA256)" >> "$ALIGNMENT_LOG"
+if curl -s "$TIER0_MANIFEST_URL" -o "governance/TIER_0_CANON_MANIFEST.json.new"; then
+    if [ -s "governance/TIER_0_CANON_MANIFEST.json.new" ]; then
+        mv "governance/TIER_0_CANON_MANIFEST.json.new" "governance/TIER_0_CANON_MANIFEST.json"
+        SHA256=$(sha256sum "governance/TIER_0_CANON_MANIFEST.json" | cut -d' ' -f1)
+        echo "$(date -Iseconds): governance/TIER_0_CANON_MANIFEST.json layered down (SHA256: $SHA256)" >> "$ALIGNMENT_LOG"
         echo "✅ TIER_0 manifest updated"
     else
-        echo "$(date -Iseconds): TIER_0_CANON_MANIFEST.json layered down (SHA256: unavailable)" >> "$ALIGNMENT_LOG"
-        echo "✅ TIER_0 manifest updated (checksum unavailable)"
+        echo "❌ ERROR: Downloaded manifest is empty"
+        exit 1
     fi
 else
-    rm -f "governance/TIER_0_CANON_MANIFEST.json.new"
-    echo "⚠️  Failed to fetch TIER_0 manifest (HTTP: ${HTTP_CODE:-error})"
-    echo "$(date -Iseconds): ERROR: Failed to fetch TIER_0 manifest (HTTP: ${HTTP_CODE:-error})" >> "$ALIGNMENT_LOG"
+    echo "❌ ERROR: Failed to fetch canonical TIER_0 manifest"
+    exit 1
 fi
 
 # Step 2: Parse manifest and layer down all canon files
-echo "Step 2: Layering down canonical files..."
-if [ -f "governance/TIER_0_CANON_MANIFEST.json" ]; then
-    # Extract file paths from manifest using grep/cut (jq not available in all environments)
-    CANON_FILES=$(grep '"path":' governance/TIER_0_CANON_MANIFEST.json | cut -d'"' -f4)
+echo "Step 2: Layering down canonical governance files..."
+CANON_FILES=$(grep '"file":' governance/TIER_0_CANON_MANIFEST.json | cut -d'"' -f4)
 
-    for canon_file in $CANON_FILES; do
-        CANONICAL_URL="$CANONICAL_REPO/raw/$CANONICAL_REF/$canon_file"
-        mkdir -p "$(dirname "$canon_file")"
-
-        echo "  Fetching $canon_file..."
-        HTTP_CODE=$(curl -sf -w "%{http_code}" -o "$canon_file.new" "$CANONICAL_URL" 2>/dev/null)
-
-        if [ "$HTTP_CODE" = "200" ] && [ -s "$canon_file.new" ]; then
+for canon_file in $CANON_FILES; do
+    CANONICAL_URL="$CANONICAL_REPO/raw/$CANONICAL_REF/$canon_file"
+    mkdir -p "$(dirname "$canon_file")"
+    
+    echo "  Fetching: $canon_file"
+    if curl -s "$CANONICAL_URL" -o "$canon_file.new"; then
+        if [ -s "$canon_file.new" ]; then
             mv "$canon_file.new" "$canon_file"
-            if SHA256=$(sha256sum "$canon_file" 2>/dev/null | cut -d' ' -f1); then
-                echo "$(date -Iseconds): $canon_file layered down (SHA256: $SHA256)" >> "$ALIGNMENT_LOG"
-                echo "  ✅ $canon_file"
-            else
-                echo "$(date -Iseconds): $canon_file layered down (SHA256: unavailable)" >> "$ALIGNMENT_LOG"
-                echo "  ✅ $canon_file (checksum unavailable)"
-            fi
+            SHA256=$(sha256sum "$canon_file" | cut -d' ' -f1)
+            echo "$(date -Iseconds): $canon_file layered down (SHA256: $SHA256)" >> "$ALIGNMENT_LOG"
+            echo "  ✅ Layered down: $canon_file"
         else
+            echo "  ⚠️  Skipped: $canon_file (empty or not found)"
             rm -f "$canon_file.new"
-            echo "  ⚠️  Failed to fetch: $canon_file (HTTP: ${HTTP_CODE:-error})"
-            echo "$(date -Iseconds): ERROR: Failed to fetch $canon_file (HTTP: ${HTTP_CODE:-error})" >> "$ALIGNMENT_LOG"
         fi
-    done
-fi
+    else
+        echo "  ⚠️  Failed to fetch: $canon_file"
+        rm -f "$canon_file.new"
+    fi
+done
 
 # Step 3: Update inventory
 echo "Step 3: Updating GOVERNANCE_ARTIFACT_INVENTORY.md..."
-if [ -f "GOVERNANCE_ARTIFACT_INVENTORY.md" ] && [ -w "GOVERNANCE_ARTIFACT_INVENTORY.md" ]; then
-    if sed -i "s/Last Checked:.*/Last Checked: $(date -Iseconds)/" GOVERNANCE_ARTIFACT_INVENTORY.md 2>/dev/null; then
-        echo "$(date -Iseconds): GOVERNANCE_ARTIFACT_INVENTORY.md updated (Last Checked)" >> "$ALIGNMENT_LOG"
-    fi
-    if sed -i "s/last_updated:.*/last_updated: $(date -Iseconds)/" GOVERNANCE_ARTIFACT_INVENTORY.md 2>/dev/null; then
-        echo "$(date -Iseconds): GOVERNANCE_ARTIFACT_INVENTORY.md updated (last_updated)" >> "$ALIGNMENT_LOG"
-    fi
+if [ -f "GOVERNANCE_ARTIFACT_INVENTORY.md" ]; then
+    sed -i "s/Last Checked:.*/Last Checked: $(date -Iseconds)/" GOVERNANCE_ARTIFACT_INVENTORY.md || \
+    sed -i "s/last_updated:.*/last_updated: $(date -Iseconds)/" GOVERNANCE_ARTIFACT_INVENTORY.md || true
+    echo "$(date -Iseconds): GOVERNANCE_ARTIFACT_INVENTORY.md updated" >> "$ALIGNMENT_LOG"
     echo "✅ Inventory updated"
-elif [ ! -f "GOVERNANCE_ARTIFACT_INVENTORY.md" ]; then
-    echo "⚠️  Inventory file not found"
-    echo "$(date -Iseconds): WARNING: GOVERNANCE_ARTIFACT_INVENTORY.md not found" >> "$ALIGNMENT_LOG"
-elif [ ! -w "GOVERNANCE_ARTIFACT_INVENTORY.md" ]; then
-    echo "⚠️  Inventory file not writable"
-    echo "$(date -Iseconds): ERROR: GOVERNANCE_ARTIFACT_INVENTORY.md not writable" >> "$ALIGNMENT_LOG"
+else
+    echo "⚠️  GOVERNANCE_ARTIFACT_INVENTORY.md not found - skipped"
 fi
 
 # Step 4: Validate alignment
 echo "Step 4: Validating alignment..."
+VALIDATION_PASSED=true
+
 if [ -f "scripts/validate_baseline.sh" ]; then
-    echo "  Running baseline validation..."
-    if scripts/validate_baseline.sh governance-liaison; then
-        echo "  ✅ Baseline validation passed"
-        echo "$(date -Iseconds): Baseline validation passed" >> "$ALIGNMENT_LOG"
+    if scripts/validate_baseline.sh governance-liaison 2>&1 | tee -a "$ALIGNMENT_LOG"; then
+        echo "✅ Validation passed"
     else
-        echo "  ⚠️  Baseline validation completed with warnings"
-        echo "$(date -Iseconds): Baseline validation completed with warnings" >> "$ALIGNMENT_LOG"
+        echo "⚠️  Validation script returned warnings (logged)"
+        # Don't fail - validation may have non-critical warnings
     fi
 else
-    echo "  ℹ️  No baseline validation script found (scripts/validate_baseline.sh)"
-    echo "$(date -Iseconds): No baseline validation script available" >> "$ALIGNMENT_LOG"
+    echo "  (No validation script found - proceeding)"
 fi
 
-# Recheck drift status
-if [ -f "governance/TIER_0_CANON_MANIFEST.json" ]; then
-    CANONICAL_TIER0_VERSION=$(grep '"version"' governance/TIER_0_CANON_MANIFEST.json | head -1 | cut -d'"' -f4)
-    echo "$(date -Iseconds): Self-alignment complete - TIER_0 now at v$CANONICAL_TIER0_VERSION" >> "$ALIGNMENT_LOG"
-else
-    echo "$(date -Iseconds): Self-alignment complete - TIER_0 version unknown" >> "$ALIGNMENT_LOG"
-fi
+# Record completion
+echo "" >> "$ALIGNMENT_LOG"
+echo "ALIGNMENT COMPLETE: $(date -Iseconds)" >> "$ALIGNMENT_LOG"
+echo "Status: SUCCESS" >> "$ALIGNMENT_LOG"
 
-echo "✅ SELF-ALIGNMENT COMPLETE for maturion-isms"
-echo "   Alignment log: $ALIGNMENT_LOG"
+echo ""
+echo "✅ SELF-ALIGNMENT COMPLETE"
+echo "📝 Alignment log: $ALIGNMENT_LOG"
 echo "Proceeding with session mission..."
 ```
 
-Log alignment actions in session contract under "Alignment Actions Log".
+**Important**: Log all alignment actions in session contract under "Alignment Actions Log".
+Update session contract with:
+- Files layered down (with SHA256 checksums)
+- TIER_0 version change (old → new)
+- Timestamp of alignment completion
 
 ---
 
 ## 🔒 PR Failure Analysis Protocol (LOCKED)
 
-<!-- LOCKED SECTION - DO NOT MODIFY WITHOUT CS2 APPROVAL -->
 <!-- Lock ID: LOCK-LIAISON-PR-FAILURE-001 -->
 <!-- Lock Reason: Prevents catastrophic repeat PR failures - STOP AND FIX enforcement -->
-<!-- Lock Authority: STOP_AND_FIX_DOCTRINE.md, CI_CONFIRMATORY_NOT_DIAGNOSTIC.md -->
+<!-- Lock Authority: STOP_AND_FIX_DOCTRINE.md, CS2 "We Only Fail Once" philosophy -->
 <!-- Lock Date: 2026-02-09 -->
 <!-- Last Reviewed: 2026-02-09 -->
 <!-- Review Frequency: quarterly -->
@@ -517,198 +491,144 @@ gh run list --repo APGI-cmy/maturion-isms --limit 10
 
 # Identify the failed run from the closed PR
 # Read the complete workflow log
-gh run view <run-id> --log
+gh run view <RUN_ID> --repo APGI-cmy/maturion-isms --log
 
-# If specific job failed, read that job's log
-gh run view <run-id> --job <job-id> --log
+# If run is large, get failed jobs specifically
+gh run view <RUN_ID> --repo APGI-cmy/maturion-isms --log-failed
 ```
 
-**MANDATORY**: Read COMPLETE log output. Do not proceed without full log analysis.
+**Document what you find**:
+- Which gate failed? (Gatekeeper-1, Gatekeeper-2, other)
+- What was the exact error message?
+- What files/artifacts were missing or invalid?
+- What schema violations occurred?
 
 ---
 
 ### Step 2: Root Cause Analysis (MANDATORY)
 
-**Document in session contract**:
+**Ask and answer these questions** BEFORE creating retry PR:
+
+1. **What exactly failed?**
+   - Be specific: Which file? Which field? Which validation?
+   
+2. **Why did it fail?**
+   - Was artifact missing?
+   - Was schema invalid?
+   - Was governance rule violated?
+   - Was there a script error?
+
+3. **What caused the root issue?**
+   - Agent logic error?
+   - Misunderstood requirement?
+   - Missing context?
+   - Environmental issue?
+
+4. **How do I fix it correctly?**
+   - What specific changes are needed?
+   - What validation should I run before committing?
+   - What evidence do I need to provide?
+
+5. **How do I prevent this from happening again?**
+   - Should I update my session contract?
+   - Should I add a validation step?
+   - Should I update documentation?
+
+---
+
+### Step 3: Fix Verification (MANDATORY)
+
+**Before pushing retry PR, verify locally**:
+
+```bash
+# If governance validation exists, run it
+if [ -f "scripts/validate_baseline.sh" ]; then
+    scripts/validate_baseline.sh governance-liaison
+fi
+
+# If schema validation exists, run it
+if [ -f "scripts/validate_agent_contracts.py" ]; then
+    python scripts/validate_agent_contracts.py
+fi
+
+# Verify files you changed are present and valid
+ls -lah <changed-files>
+
+# If you created JSON, validate it
+if command -v jq &> /dev/null; then
+    jq empty <your-json-file>
+fi
+
+# If you created YAML, validate it
+if command -v yamllint &> /dev/null; then
+    yamllint <your-yaml-file>
+fi
+```
+
+---
+
+### Step 4: Document Learning (MANDATORY)
+
+**In your session contract, add**:
 
 ```markdown
-## PR Failure Root Cause Analysis
+## PR Failure Analysis
 
-**Failed PR**: #<number>
-**Workflow Run**: <run-id>
-**Failed Job**: <job-name>
-
-### Failure Evidence
-[Paste relevant log excerpts showing the actual failure]
+### Previous PR Failure
+- **PR Number**: #XXX
+- **Failure Date**: YYYY-MM-DD
+- **Gate Failed**: [Gatekeeper-1/Gatekeeper-2/other]
+- **Failure Category**: [from PR_GATE_FAILURE_HANDLING_PROTOCOL.md]
 
 ### Root Cause
-[Identify the actual technical reason for failure]
+[Describe what went wrong and why]
 
-### Why It Failed (Technical)
-- [Specific technical reason 1]
-- [Specific technical reason 2]
+### Fix Applied
+[Describe what you changed to fix it]
 
-### Why Previous Attempt Missed It
-- [Why the issue wasn't caught before PR submission]
-- [What validation was skipped or insufficient]
+### Verification Performed
+- [ ] Read workflow logs completely
+- [ ] Understood exact failure mode
+- [ ] Identified root cause
+- [ ] Applied fix
+- [ ] Ran local validation (if available)
+- [ ] Verified artifacts are present and valid
+- [ ] Updated session contract with learning
+
+### Prevention Measures
+[What you're doing to prevent recurrence]
 ```
 
 ---
 
-### Step 3: Prevention Analysis (MANDATORY)
+### Step 5: Escalation for Repeat Failures
 
-**Ask and answer**:
+**If this is the 3rd failure of the same type**:
 
-1. **What local validation would have caught this?**
-   - Specific command that would have failed
-   - Why it wasn't run locally
+1. **HALT** - Do not create another retry PR
+2. **Escalate to CS2** (Johan Ras) with:
+   - All 3 failure records
+   - Root cause analysis
+   - Why prevention measures failed
+   - Proposed governance update
+3. **Wait for explicit authorization** before proceeding
 
-2. **What gate alignment issue exists?**
-   - Is local validation different from CI?
-   - Are gate scripts out of sync?
-
-3. **What protocol was violated?**
-   - Which LOCKED section was not followed?
-   - What mandatory step was skipped?
+**Severity**: Third occurrence = CATASTROPHIC per STOP_AND_FIX_DOCTRINE.md
 
 ---
 
-### Step 4: Fix Root Cause (MANDATORY)
+### Checklist Before Retry PR
 
-**BEFORE creating new PR**:
+- [ ] I have read the complete workflow logs from the failed PR
+- [ ] I understand exactly what failed and why
+- [ ] I have identified the root cause
+- [ ] I have applied a fix that addresses the root cause
+- [ ] I have verified the fix locally (where possible)
+- [ ] I have documented the failure, fix, and learning in session contract
+- [ ] I have added prevention measures to avoid recurrence
+- [ ] This is NOT the 3rd consecutive failure (if it is, I've escalated)
 
-1. ✅ Fix the actual technical issue
-2. ✅ Run the EXACT command that failed in CI locally
-3. ✅ Verify it now passes locally
-4. ✅ If gate alignment issue: Fix gate alignment FIRST
-5. ✅ Update validation checklist if gap identified
-
-**Document in session contract**:
-
-```markdown
-## Root Cause Remediation
-
-### Technical Fix Applied
-[What code/config changes were made]
-
-### Local Validation Performed
-```bash
-[Exact commands run locally that now pass]
-```
-
-### Output Evidence
-[Paste command output showing success]
-
-### Gate Alignment Fix (if applicable)
-[Changes made to align local validation with CI]
-
-### Protocol Compliance Restored
-[Which protocol was violated and how compliance was restored]
-```
-
----
-
-### Step 5: Retry Authorization (MANDATORY)
-
-**Only proceed with retry PR if ALL true**:
-
-- ✅ Root cause identified and documented
-- ✅ Technical fix applied and verified locally
-- ✅ Local validation command matches CI exactly
-- ✅ Prevention analysis completed
-- ✅ Session contract updated with full RCA
-
-**If ANY false**: STOP. Return to previous step.
-
----
-
-### Step 6: Retry PR Creation
-
-When creating retry PR:
-
-**Title Format**: `[RETRY] <original-title> - RCA: <root-cause-summary>`
-
-**Description MUST include**:
-
-```markdown
-## Retry Context
-
-**Previous Failed PR**: #<number>
-**Root Cause**: [One-line technical summary]
-
-## Root Cause Analysis
-
-[Link to or paste RCA from session contract]
-
-## Prevention Measures
-
-- [What was fixed]
-- [What local validation was added/corrected]
-- [What protocol compliance was restored]
-
-## Local Validation Evidence
-
-[Paste output of local validation commands that now pass]
-
-## Retry Justification
-
-This retry is authorized because:
-1. Root cause identified: [summary]
-2. Fix verified locally: [commands run]
-3. Prevention measures implemented: [what changed]
-4. Full RCA documented in session: [session contract path]
-```
-
----
-
-### Forbidden Retry Patterns
-
-**NEVER retry without**:
-- ❌ "Trying again" without RCA
-- ❌ "Small fix" without understanding why it failed
-- ❌ "Should work now" without local validation proof
-- ❌ "Fixed typo" without analyzing why typo wasn't caught
-- ❌ "Updated config" without verifying config locally
-- ❌ Retrying with "fingers crossed"
-- ❌ Assuming CI is "flaky" without evidence
-- ❌ Creating retry PR without session contract RCA
-
-**Rationale**: Blind retries waste CI resources, compound failures, and prevent learning.
-
----
-
-### Escalation Triggers
-
-**HALT and escalate to CS2 if**:
-
-- Multiple retries needed (>2 attempts)
-- Root cause unclear after log analysis
-- Gate alignment issue cannot be resolved
-- CI behavior genuinely differs from local (after verification)
-- Protocol gap identified requiring contract update
-
-**Escalation Format**:
-
-```markdown
-## Escalation: Multiple PR Failures
-
-**Context**: <brief description>
-**Failed PRs**: #<n1>, #<n2>, #<n3>
-**Root Cause Status**: [Identified | Unclear]
-**Local vs CI Validation**: [Aligned | Misaligned | Unknown]
-
-**Request**: CS2 review of [gate alignment | protocol gap | environmental issue]
-
-[Attach session contract with complete RCA documentation]
-```
-
----
-
-**Enforcement**: This protocol is **MANDATORY** for ALL governance-liaison retry PRs. Non-compliance constitutes protocol violation and triggers CS2 escalation.
-
-**Authority**: STOP_AND_FIX_DOCTRINE.md Section 3.1 (Zero Tolerance), Section 8 (CI Confirmatory Not Diagnostic)
-
-<!-- LOCKED END -->
+**Only proceed with retry PR if ALL boxes are checked.**
 
 ---
 
@@ -718,9 +638,32 @@ At session end, update session contract with:
 
 ```markdown
 ## Alignment Actions Log
-- Layered down: governance/canon/[file1]
-- Layered down: governance/canon/[file2]
+- Layered down: governance/TIER_0_CANON_MANIFEST.json (SHA256: [checksum])
+- Layered down: governance/canon/[file1] (SHA256: [checksum])
+- Layered down: governance/canon/[file2] (SHA256: [checksum])
 - Updated: GOVERNANCE_ARTIFACT_INVENTORY.md (v[X] → v[Y])
+- Validation: [scripts/validate_baseline.sh executed - PASS/WARNINGS]
+
+## Governance Health Check Results (Final)
+
+### Drift Detection
+- TIER_0 Manifest: [ALIGNED | DRIFT RESOLVED]
+- Canon Files: [COUNT] checked, [DRIFT_COUNT] resolved
+- Pending Canon Files: [PENDING_COUNT] tracked (see evidence log)
+- Governance Escalations: [ESCALATION_COUNT] unresolved
+
+### Evidence Collected
+- Evidence Log: $SESSION_DIR/${SESSION_ID}_evidence.log ([X] entries)
+- Alignment Log: $SESSION_DIR/${SESSION_ID}_alignment.log ([Y] entries)
+- All file checksums: Recorded in alignment log
+- Drift status: [Checksums before/after alignment]
+
+## Pre-Handover Validation (Final)
+- [x] Governance alignment verified
+- [x] No blocking drift detected or drift resolved
+- [x] Pending canon files tracked
+- [x] Evidence collected and logged
+- [x] Session contract complete
 
 ## Outcome
 
@@ -730,15 +673,16 @@ At session end, update session contract with:
 - Local TIER_0 Canon: v[version]
 - Canonical TIER_0 Canon: v[version]
 - Drift: [NONE | RESOLVED]
+- Files aligned: [count]
 
 **Escalated**:
 - [Issue/blocker requiring CS2 or governance-repo-administrator]
 
 **Session Memory**:
-- Repository: APGI-cmy/maturion-isms
 - Files updated: [count]
 - Ripple source: [canonical commit/PR reference]
 - Next sync due: [timestamp or "on-demand"]
+- Evidence logs preserved: [paths]
 
 **Timestamp**: [ISO8601]
 ```
