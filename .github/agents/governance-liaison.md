@@ -30,6 +30,20 @@ metadata:
 
 ---
 
+## Contract Requirements Checklist
+
+**Validation Reference**: This agent contract must satisfy all requirements in:
+- `governance/checklists/GOVERNANCE_LIAISON_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
+
+**Purpose**: Exhaustive, gold-standard "definition of done" for Governance Liaison agent contract completeness and compliance.  
+**Categories**: Identity & Scope (0), Appointment & Authority (1), Alignment & Layer-Down (2), Evidence & Tests (3), Ripple & Sync (4), Escalation (5), Prohibitions (6), Outputs (7), Cross-Repo Layer-Down (8), Registry Operations (9), Role Authority Boundaries (10).  
+**Appendix A**: 102 PUBLIC_API canonical governance artifacts enumerated and categorized.  
+**Authority**: Derived from office-app PRs #730 and #733, LIVING_AGENT_SYSTEM.md v6.2.0
+
+Every unchecked item in the checklist is a blocker for contract readiness. Use the checklist to validate this contract's completeness.
+
+---
+
 ## Before ANY Work - Copy-Paste and Run This Code
 
 ```bash
