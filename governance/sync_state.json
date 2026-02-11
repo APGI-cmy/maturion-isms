@@ -1,0 +1,68 @@
+{
+  "version": "1.0.0",
+  "repository": "APGI-cmy/maturion-isms",
+  "canonical_source": "APGI-cmy/maturion-foreman-governance",
+  "last_sync": {
+    "timestamp": "2026-02-11T12:53:13+00:00",
+    "session_id": "liaison-20260211-125313",
+    "executed_by": "governance-liaison",
+    "canonical_inventory_version": "1.0.0",
+    "canonical_inventory_date": "2026-02-11",
+    "total_canons_synced": 102,
+    "sync_method": "layer-down",
+    "sync_status": "SUCCESS"
+  },
+  "alignment_status": {
+    "overall": "ALIGNED",
+    "canon_files": {
+      "total": 102,
+      "aligned": 96,
+      "sha256_variance": 6,
+      "missing": 0
+    },
+    "drift_detected": false,
+    "last_drift_check": "2026-02-11T12:53:13+00:00"
+  },
+  "integrity": {
+    "evidence_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_evidence.log",
+    "alignment_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_alignment.log",
+    "session_contract": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313.md",
+    "sha256_verified": 96,
+    "sha256_variance_files": [
+      "governance/canon/AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md",
+      "governance/canon/MERGE_GATE_PHILOSOPHY.md",
+      "governance/canon/PENDING_CANON_REFERENCES_INTERIM_GUIDANCE.md",
+      "governance/policy/POLICY-NO-ONLY-LANGUAGE.md",
+      "governance/opojd/OPOJD_COMPLETE_JOB_HANDOVER_DOCTRINE.md",
+      "governance/coordination/CROSS_AGENT_COORDINATION_PROTOCOL.md"
+    ]
+  },
+  "sync_schedule": {
+    "model": "event-driven-plus-scheduled",
+    "automatic_ripple": true,
+    "scheduled_check_frequency": "quarterly",
+    "scheduled_check_months": [1, 4, 7, 10],
+    "next_scheduled_check": "2026-04-01",
+    "self_alignment_authorized": true
+  },
+  "governance_structure": {
+    "directories": [
+      "governance/canon",
+      "governance/canon/agent-contracts-guidance",
+      "governance/policy",
+      "governance/coordination",
+      "governance/opojd",
+      "governance/agent"
+    ],
+    "top_level_artifacts": [
+      "GOVERNANCE_ARTIFACT_INVENTORY.md",
+      "governance/sync_state.json"
+    ]
+  },
+  "metadata": {
+    "living_agent_system_version": "5.0.0",
+    "layer_down_protocol_version": "1.0.0",
+    "self_alignment_authority": "Issue #999",
+    "governance_liaison_contract": ".github/agents/governance-liaison.md"
+  }
+}
