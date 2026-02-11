@@ -1,0 +1,11 @@
+EVIDENCE: Drift detection started at 2026-02-11T13:37:20+00:00
+EVIDENCE: Attempting to fetch TIER_0 from https://github.com/APGI-cmy/maturion-foreman-governance/raw/main/governance/TIER_0_CANON_MANIFEST.json
+EVIDENCE: TIER_0 fetch HTTP code: 404
+EVIDENCE: TIER_0 not found, trying CANON_INVENTORY.json
+EVIDENCE: No canonical inventory found (HTTP codes: 404, 302)
+EVIDENCE: Local TIER_0 version: none
+
+PENDING CANON FILES CHECK:
+PENDING: governance/canon/FM_ROLE_CANON.md (not yet available)
+PENDING: governance/canon/WAVE_MODEL.md (not yet available)
+PENDING: governance/canon/LIVING_AGENT_SYSTEM.md (not yet available)
