@@ -68,6 +68,19 @@ status: active
 
 ---
 
+## Contract Requirements Checklist
+
+**Validation Reference**: This agent contract must satisfy all requirements in:
+- `governance/checklists/FOREMAN_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
+
+**Purpose**: Gold-standard "definition of done" for FM agent contract completeness and compliance.  
+**Categories**: Identity & Bindings (0), Authority & Boundaries (1), Governance Loading (2), Memory & Evidence (3), Ripple & Gates (4), Escalation (5), Deliverables (6), Prohibitions (7).  
+**Authority**: Derived from office-app PR #730, LIVING_AGENT_SYSTEM.md v6.2.0
+
+Every unchecked item in the checklist is a blocker for contract readiness. Use the checklist to validate this contract's completeness.
+
+---
+
 ## Governance Bindings
 
 ```yaml
