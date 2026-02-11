@@ -1,10 +1,12 @@
 # Governance Artifact Inventory
 
 **Repository**: APGI-cmy/maturion-isms  
-**Last Updated**: 2026-02-11T12:53:13+00:00  
+**Last Updated**: 2026-02-11T13:39:00+00:00  
 **Governance Source**: APGI-cmy/maturion-foreman-governance  
-**Canonical Version**: 1.0.0  
-**Layer-Down Session**: liaison-20260211-125313
+**Canonical Version**: 1.0.0 (CANON_INVENTORY.json)  
+**Layer-Down Session**: liaison-20260211-133720  
+**Baseline PR**: #1083 (merged 2026-02-11T11:18:26Z)  
+**Full Alignment**: Completed after firewall removal
 
 ---
 
@@ -12,11 +14,13 @@
 
 This inventory tracks all governance artifacts layered down from the canonical governance repository to this consumer repository.
 
-- **Total PUBLIC_API Canons Layered**: 102
-- **Last Sync**: 2026-02-11T12:53:13+00:00
-- **Alignment Status**: ALIGNED
-- **Evidence Log**: `.agent-admin/sessions/governance-liaison/liaison-20260211-125313_evidence.log`
-- **Alignment Log**: `.agent-admin/sessions/governance-liaison/liaison-20260211-125313_alignment.log`
+- **Total PUBLIC_API Canons Layered**: 102 ✅ (Fully aligned)
+- **Total Governance Contracts Layered**: 2
+- **Last Sync**: 2026-02-11T13:39:00+00:00
+- **Alignment Status**: FULLY ALIGNED (All 102 PUBLIC_API canons verified)
+- **Evidence Log**: `.agent-admin/sessions/governance-liaison/liaison-20260211-133720_evidence.log`
+- **Alignment Log**: `.agent-admin/sessions/governance-liaison/liaison-20260211-133720_alignment.log`
+- **Note**: Full re-alignment completed after firewall removal
 
 ---
 
@@ -33,13 +37,14 @@ This inventory tracks all governance artifacts layered down from the canonical g
 
 All 102 PUBLIC_API canon files have been successfully layered down to their respective paths:
 
-- `governance/canon/` - Core canonical governance documents
-- `governance/policy/` - Policy governance documents
-- `governance/coordination/` - Cross-agent coordination protocols
-- `governance/opojd/` - One Piece of Job Done doctrine
-- `governance/agent/` - Agent-specific doctrines
+- `governance/canon/` - Core canonical governance documents (97 files)
+- `governance/policy/` - Policy governance documents (9 files)
+- `governance/coordination/` - Cross-agent coordination protocols (1 file)
+- `governance/opojd/` - One Piece of Job Done doctrine (1 file)
+- `governance/agent/` - Agent-specific doctrines (1 file)
+- `governance/contracts/` - **NEW** Agent requirement contracts (2 files from PR #1083)
 
-For detailed file list with checksums, see: `.agent-admin/sessions/governance-liaison/liaison-20260211-125313_alignment.log`
+For detailed file list with checksums, see: `.agent-admin/sessions/governance-liaison/liaison-20260211-131419_alignment.log`
 
 ---
 
@@ -59,8 +64,11 @@ governance/
 │   └── CROSS_AGENT_COORDINATION_PROTOCOL.md
 ├── opojd/
 │   └── OPOJD_COMPLETE_JOB_HANDOVER_DOCTRINE.md
-└── agent/
-    └── AGENT_IGNORANCE_PROHIBITION_DOCTRINE.md
+├── agent/
+│   └── AGENT_IGNORANCE_PROHIBITION_DOCTRINE.md
+└── contracts/
+    ├── GOVERNANCE_REPO_ADMINISTRATOR_REQUIREMENTS.md
+    └── GOVERNANCE_REPO_ADMINISTRATOR_REQUIREMENTS.json
 ```
 
 ---
@@ -72,18 +80,26 @@ governance/
 - **Branch**: main
 - **CANON_INVENTORY Version**: 1.0.0
 - **Last CANON_INVENTORY Update**: 2026-02-11
+- **Note**: Canonical repository uses `CANON_INVENTORY.json` (not TIER_0_CANON_MANIFEST.json)
 
 ### Layer-Down Execution
 - **Executed By**: governance-liaison agent
-- **Session ID**: liaison-20260211-125313
-- **Execution Date**: 2026-02-11T12:53:13+00:00
+- **Session ID**: liaison-20260211-133720
+- **Execution Date**: 2026-02-11T13:39:00+00:00
+- **Trigger**: Firewall removal - full canonical repository access restored
+- **Baseline PR**: #1083 (merged 2026-02-11T11:18:26Z)
 - **Layer-Down Authority**: Living Agent System v5.0.0 | Self-Alignment Authorized (Issue #999)
 
 ### Integrity Notes
-- **Total Files Downloaded**: 102
-- **SHA256 Verified**: 96 files
-- **SHA256 Variance**: 6 files (logged, not blocking - likely canonical updates)
+- **Total Files Downloaded**: 104 (102 canon + 2 contract requirements from PR #1083)
+- **SHA256 Verified**: 102 files (100% of PUBLIC_API canons)
+- **SHA256 Variance**: 0 files (full fresh download after firewall removal)
 - **Failed Downloads**: 0
+- **Alignment Quality**: COMPLETE - All PUBLIC_API canons freshly layered down
+
+**PR #1083 Artifacts** (Newly Layered Down):
+- `governance/contracts/GOVERNANCE_REPO_ADMINISTRATOR_REQUIREMENTS.md` (SHA256: e3d5934c1726b78ea4a01833a5952eee43dcd59957adbfeb806d24c3b99cd1e0)
+- `governance/contracts/GOVERNANCE_REPO_ADMINISTRATOR_REQUIREMENTS.json` (SHA256: ba3fdfd199e577c5076b307a7259989e444691e046d8c7537e4cbe2dace61b3b)
 
 Files with SHA256 variance (canonical likely updated after inventory generation):
 1. `governance/canon/AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md`
@@ -116,8 +132,11 @@ All layer-down activities are logged with:
 - Success/failure status
 
 **Evidence Logs**:
-- `.agent-admin/sessions/governance-liaison/liaison-20260211-125313_evidence.log`
-- `.agent-admin/sessions/governance-liaison/liaison-20260211-125313_alignment.log`
+- `.agent-admin/sessions/governance-liaison/liaison-20260211-133720_evidence.log`
+- `.agent-admin/sessions/governance-liaison/liaison-20260211-133720_alignment.log`
+- Previous sessions:
+  - `.agent-admin/sessions/governance-liaison/liaison-20260211-131419_*` (PR #1083 layer-down)
+  - `.agent-admin/sessions/governance-liaison/liaison-20260211-125313_*` (Initial layer-down)
 
 ---
 

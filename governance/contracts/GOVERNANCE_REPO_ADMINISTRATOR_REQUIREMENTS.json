@@ -1,0 +1,614 @@
+{
+    "metadata": {
+        "generated": "2026-02-11",
+        "authority": "Governance Canon + LCAS-001 Strategy",
+        "scope": "governance-repo-administrator agent in maturion-foreman-governance repository",
+        "version": "2.0.0",
+        "note": "CANON_INVENTORY-first approach; excludes .github/agents references",
+        "degraded_mode_warning": "CANON_INVENTORY.json contains placeholder/truncated hashes for PUBLIC_API artifacts. Per CANON_INVENTORY_INTEGRITY_REQUIREMENTS.md Section 4, alignment operates in DEGRADED mode. Consumer repos must be notified and governance change request escalated to CS2."
+    },
+    "summary": {
+        "total_requirements": 56,
+        "by_severity": {
+            "CRITICAL": 15,
+            "HIGH": 25,
+            "MEDIUM": 14,
+            "LOW": 2
+        },
+        "by_category": {
+            "canon_management": 5,
+            "evidence_and_records": 5,
+            "ripple_and_alignment": 6,
+            "gate_compliance": 5,
+            "authority_self_alignment_escalation": 5,
+            "execution_and_operations": 6,
+            "merge_gate_interface": 5,
+            "coordination_and_reporting": 5,
+            "security_and_safety": 5,
+            "ambiguities_and_gaps": 4
+        }
+    },
+    "requirements": [
+        {
+            "id": "REQ-CM-001",
+            "category": "canon_management",
+            "statement": "MUST maintain governance/CANON_INVENTORY.json with full sha256 hashes (no placeholders) for all PUBLIC_API artifacts.",
+            "source": {
+                "file": "governance/canon/CANON_INVENTORY_INTEGRITY_REQUIREMENTS.md",
+                "section": "Section 2"
+            },
+            "severity": "CRITICAL",
+            "validation_hook": "jq -e '.canons[] | select(.layer_down_status==\"PUBLIC_API\") | select(.file_hash==\"placeholder\" or (.file_hash|type==\"string\" and (.|length)<16))' governance/CANON_INVENTORY.json should return empty"
+        },
+        {
+            "id": "REQ-CM-002",
+            "category": "canon_management",
+            "statement": "Every CANON_INVENTORY.json entry MUST record canonical commit SHA and canon effective date.",
+            "source": {
+                "file": "governance/canon/CANON_INVENTORY_INTEGRITY_REQUIREMENTS.md",
+                "section": "Section 3"
+            },
+            "severity": "HIGH",
+            "validation_hook": "jq -e '.canons[] | select(.effective_date == null or .effective_date == \"\")' governance/CANON_INVENTORY.json should return empty"
+        },
+        {
+            "id": "REQ-CM-003",
+            "category": "canon_management",
+            "statement": "Constitutional canon semantic changes require CS2 approval; liaison may only correct syntax errors.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_ARTIFACT_TAXONOMY.md",
+                "section": "Section 4.5"
+            },
+            "severity": "CRITICAL",
+            "validation_hook": "PR description must contain CS2 approval reference for constitutional canon changes"
+        },
+        {
+            "id": "REQ-CM-004",
+            "category": "canon_management",
+            "statement": "All constitutional canon MUST include explicit version in document header.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_ARTIFACT_TAXONOMY.md",
+                "section": "Section 4.4"
+            },
+            "severity": "HIGH",
+            "validation_hook": "grep -L \"^\\*\\*Version\\*\\*:\" governance/canon/*_CANON.md should return empty"
+        },
+        {
+            "id": "REQ-CM-005",
+            "category": "canon_management",
+            "statement": "MUST NOT modify BUILD_PHILOSOPHY.md, FM_ROLE_CANON.md, WAVE_MODEL.md, LIVING_AGENT_SYSTEM.md, GOVERNANCE_PURPOSE_AND_SCOPE.md without CS2 approval.",
+            "source": {
+                "file": "governance/canon/SELF_ALIGNMENT_AUTHORITY_MODEL.md",
+                "section": "Section 9.1"
+            },
+            "severity": "CRITICAL",
+            "validation_hook": "Protected file change detection in PR diff with CS2 approval verification"
+        },
+        {
+            "id": "REQ-ER-001",
+            "category": "evidence_and_records",
+            "statement": "Governance evidence artifacts (Type 5) are immutable after generation; create new file for re-validation.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_ARTIFACT_TAXONOMY.md",
+                "section": "Section 8.5"
+            },
+            "severity": "HIGH",
+            "validation_hook": "Git history check for modifications to existing evidence files"
+        },
+        {
+            "id": "REQ-ER-002",
+            "category": "evidence_and_records",
+            "statement": "All evidence files MUST contain Date, Author, and required schema fields.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_VALIDATION_PROTOCOL.md",
+                "section": "Section 6.5"
+            },
+            "severity": "MEDIUM",
+            "validation_hook": "grep -L \"Date:\" governance/evidence/*.md && grep -L \"Author:\" governance/evidence/*.md"
+        },
+        {
+            "id": "REQ-ER-003",
+            "category": "evidence_and_records",
+            "statement": "MUST create session memory in .agent-workspace/governance-repo-administrator/memory/ with structured format per LIVING_AGENT_SYSTEM.md.",
+            "source": {
+                "file": "governance/canon/LIVING_AGENT_SYSTEM.md",
+                "section": "Section 5 (Memory Format)"
+            },
+            "severity": "MEDIUM",
+            "validation_hook": "Existence check for memory/session-*.md with required sections"
+        },
+        {
+            "id": "REQ-ER-004",
+            "category": "evidence_and_records",
+            "statement": "Maintain rolling 5-session memory window; archive older sessions to .archive/ with monthly summaries.",
+            "source": {
+                "file": "governance/canon/LIVING_AGENT_SYSTEM.md",
+                "section": "Section 3.3"
+            },
+            "severity": "LOW",
+            "validation_hook": "ls -1 .agent-workspace/governance-repo-administrator/memory/session-*.md | wc -l should be \u2264 5"
+        },
+        {
+            "id": "REQ-ER-005",
+            "category": "evidence_and_records",
+            "statement": "All governance changes MUST maintain git history audit trail; never force-push or rewrite history.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_RIPPLE_MODEL.md",
+                "section": "Section 8.1"
+            },
+            "severity": "CRITICAL",
+            "validation_hook": "Git reflog check for force-push or rebase operations"
+        },
+        {
+            "id": "REQ-RA-001",
+            "category": "ripple_and_alignment",
+            "statement": "Changes to constitutional canon MUST trigger governance ripple (layer-down) to all consumer repos.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_ARTIFACT_TAXONOMY.md",
+                "section": "Section 11"
+            },
+            "severity": "CRITICAL",
+            "validation_hook": "Ripple execution log in governance/ripple/ for constitutional changes"
+        },
+        {
+            "id": "REQ-RA-002",
+            "category": "ripple_and_alignment",
+            "statement": "MUST update GOVERNANCE_ARTIFACT_INVENTORY.md and CANON_INVENTORY.json when canon created/modified/removed.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_RIPPLE_MODEL.md",
+                "section": "Section 4.3"
+            },
+            "severity": "HIGH",
+            "validation_hook": "git diff --name-status | grep \"governance/canon/\" | wc -l vs git diff governance/CANON_INVENTORY.json | wc -l correlation"
+        },
+        {
+            "id": "REQ-RA-003",
+            "category": "ripple_and_alignment",
+            "statement": "Ripple log entries MUST be created atomically with issue creation, including issue numbers, timestamps, and status.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_RIPPLE_MODEL.md",
+                "section": "Section 8.3"
+            },
+            "severity": "HIGH",
+            "validation_hook": "Ripple log timestamp correlation with GitHub issue creation timestamp"
+        },
+        {
+            "id": "REQ-RA-004",
+            "category": "ripple_and_alignment",
+            "statement": "MUST process layer-up issues from consumer repos, validate evidence, classify severity (CRITICAL/HIGH/MEDIUM/LOW), and draft governance changes.",
+            "source": {
+                "file": "maturion/strategy/LIVING_CANON_ALIGNMENT_EXECUTION_PLAN.md + governance/canon/GOVERNANCE_RIPPLE_MODEL.md",
+                "section": "LCAS-001 Section 5.3 + GOVERNANCE_RIPPLE_MODEL Section 5.3"
+            },
+            "severity": "HIGH",
+            "validation_hook": "Layer-up issue label and processing documentation in governance PR"
+        },
+        {
+            "id": "REQ-RA-005",
+            "category": "ripple_and_alignment",
+            "statement": "MUST scan consumer repositories for drift and pending layer-up issues BEFORE making new canon changes.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_RIPPLE_MODEL.md",
+                "section": "Section 5.3 (Pre-Canon-Change Layer-Up Scan)"
+            },
+            "severity": "HIGH",
+            "validation_hook": "Scan evidence artifact in PR description for canon change PRs"
+        },
+        {
+            "id": "REQ-RA-006",
+            "category": "ripple_and_alignment",
+            "statement": "MUST maintain CONSUMER_REPO_REGISTRY.json as deterministic source of truth for ripple targeting.",
+            "source": {
+                "file": "maturion/strategy/LIVING_CANON_ALIGNMENT_EXECUTION_PLAN.md",
+                "section": "Section 5.2"
+            },
+            "severity": "HIGH",
+            "validation_hook": "jq empty governance/CONSUMER_REPO_REGISTRY.json syntax validation"
+        },
+        {
+            "id": "REQ-GC-001",
+            "category": "gate_compliance",
+            "statement": "Governance repo MUST expose standardized merge gate interface with exact contexts: 'Merge Gate Interface / merge-gate/verdict', 'Merge Gate Interface / governance/alignment', 'Merge Gate Interface / stop-and-fix/enforcement'.",
+            "source": {
+                "file": "governance/canon/MERGE_GATE_INTERFACE_STANDARD.md",
+                "section": "Section 2"
+            },
+            "severity": "CRITICAL",
+            "validation_hook": ".github/workflows/ contains workflow named \"Merge Gate Interface\" with three specified jobs"
+        },
+        {
+            "id": "REQ-GC-002",
+            "category": "gate_compliance",
+            "statement": "merge-gate/verdict MUST validate committed evidence artifacts exist, conform to schema, and contain no test-dodging language.",
+            "source": {
+                "file": "governance/canon/MERGE_GATE_INTERFACE_STANDARD.md",
+                "section": "Section 5"
+            },
+            "severity": "CRITICAL",
+            "validation_hook": "Verdict gate workflow validates .agent-admin/prehandover/, .agent-admin/gates/, .agent-admin/rca/"
+        },
+        {
+            "id": "REQ-GC-003",
+            "category": "gate_compliance",
+            "statement": "MUST maintain governance/GATE_REQUIREMENTS_INDEX.json as machine-readable requirements source for verdict gate runtime loading.",
+            "source": {
+                "file": "maturion/strategy/LIVING_CANON_ALIGNMENT_EXECUTION_PLAN.md",
+                "section": "Section 6.4"
+            },
+            "severity": "HIGH",
+            "validation_hook": "jq empty governance/GATE_REQUIREMENTS_INDEX.json syntax validation"
+        },
+        {
+            "id": "REQ-GC-004",
+            "category": "gate_compliance",
+            "statement": "governance/alignment gate MUST verify canonical governance alignment via sha256 comparison and fail if drift detected.",
+            "source": {
+                "file": "governance/canon/MERGE_GATE_INTERFACE_STANDARD.md",
+                "section": "Section 6"
+            },
+            "severity": "HIGH",
+            "validation_hook": "Alignment gate workflow performs hash comparison against CANON_INVENTORY.json"
+        },
+        {
+            "id": "REQ-GC-005",
+            "category": "gate_compliance",
+            "statement": "stop-and-fix/enforcement gate MUST fail if stop-and-fix condition unresolved and require RCA artifact.",
+            "source": {
+                "file": "governance/canon/MERGE_GATE_INTERFACE_STANDARD.md + governance/canon/STOP_AND_FIX_DOCTRINE.md",
+                "section": "MERGE_GATE_INTERFACE Section 7 + STOP_AND_FIX_DOCTRINE"
+            },
+            "severity": "HIGH",
+            "validation_hook": "Stop-and-fix gate validates RCA artifact presence when triggered"
+        },
+        {
+            "id": "REQ-AS-001",
+            "category": "authority_self_alignment_escalation",
+            "statement": "MAY self-align syntax corrections, cross-reference repairs, inventory updates, documentation clarity, runbook improvements, and organizational changes without CS2 approval.",
+            "source": {
+                "file": "governance/canon/SELF_ALIGNMENT_AUTHORITY_MODEL.md",
+                "section": "Section 4.2"
+            },
+            "severity": "MEDIUM",
+            "validation_hook": "PR description documents self-alignment rationale and authority reference"
+        },
+        {
+            "id": "REQ-AS-002",
+            "category": "authority_self_alignment_escalation",
+            "statement": "MUST escalate to CS2 for constitutional canon semantic changes, agent contract modifications, protected governance changes, authority boundary conflicts, and protected file modifications.",
+            "source": {
+                "file": "governance/canon/SELF_ALIGNMENT_AUTHORITY_MODEL.md",
+                "section": "Section 4.2"
+            },
+            "severity": "CRITICAL",
+            "validation_hook": "Escalation document in .agent-workspace/governance-repo-administrator/escalation-inbox/ or CS2 approval in PR"
+        },
+        {
+            "id": "REQ-AS-003",
+            "category": "authority_self_alignment_escalation",
+            "statement": "When escalating, MUST create escalation document in .agent-workspace/<agent-id>/escalation-inbox/ with context, decision point, options, recommendation, impact, and request sections.",
+            "source": {
+                "file": "governance/canon/SELF_ALIGNMENT_AUTHORITY_MODEL.md",
+                "section": "Section 6.3"
+            },
+            "severity": "MEDIUM",
+            "validation_hook": "Escalation document structure validation against template"
+        },
+        {
+            "id": "REQ-AS-004",
+            "category": "authority_self_alignment_escalation",
+            "statement": "For boundary-case decisions (non-canonical governance doc refinements, simple governance script fixes), MUST document rationale in PR description.",
+            "source": {
+                "file": "governance/canon/SELF_ALIGNMENT_AUTHORITY_MODEL.md",
+                "section": "Section 4.2"
+            },
+            "severity": "MEDIUM",
+            "validation_hook": "PR description contains rationale section for boundary decisions"
+        },
+        {
+            "id": "REQ-AS-005",
+            "category": "authority_self_alignment_escalation",
+            "statement": "MUST execute .github/scripts/wake-up-protocol.sh at session start to load identity, memory, governance, environment health, and generate working contract.",
+            "source": {
+                "file": "governance/canon/LIVING_AGENT_SYSTEM.md",
+                "section": "Section 2.1"
+            },
+            "severity": "HIGH",
+            "validation_hook": "environment-health.json timestamp within session start window"
+        },
+        {
+            "id": "REQ-EO-001",
+            "category": "execution_and_operations",
+            "statement": "MUST validate all JSON (jq empty), YAML (yamllint), and Markdown (markdownlint) files before merge.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_VALIDATION_PROTOCOL.md",
+                "section": "Section 5.2"
+            },
+            "severity": "HIGH",
+            "validation_hook": "CI workflow executes syntax validation steps"
+        },
+        {
+            "id": "REQ-EO-002",
+            "category": "execution_and_operations",
+            "statement": "MUST validate all file references and governance document cross-references are resolvable.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_VALIDATION_PROTOCOL.md",
+                "section": "Section 5.2"
+            },
+            "severity": "MEDIUM",
+            "validation_hook": "Cross-reference validation script execution in CI"
+        },
+        {
+            "id": "REQ-EO-003",
+            "category": "execution_and_operations",
+            "statement": "MUST ensure GOVERNANCE_ARTIFACT_INVENTORY.md reflects all governance artifacts; detect phantom entries and untracked files.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_VALIDATION_PROTOCOL.md",
+                "section": "Section 5.2"
+            },
+            "severity": "HIGH",
+            "validation_hook": "Inventory diff review with no discrepancies"
+        },
+        {
+            "id": "REQ-EO-004",
+            "category": "execution_and_operations",
+            "statement": "Governance scripts (Type 3) MUST have unit tests, integration tests, dry-run mode, error handling, idempotency, and logging.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_ARTIFACT_TAXONOMY.md",
+                "section": "Section 6.5"
+            },
+            "severity": "HIGH",
+            "validation_hook": "Script test execution in CI with pass/fail report"
+        },
+        {
+            "id": "REQ-EO-005",
+            "category": "execution_and_operations",
+            "statement": "MUST execute .github/scripts/session-closure.sh to create session memory, rotate old memories, capture lessons, create escalations, update environment health, and verify safe state.",
+            "source": {
+                "file": "governance/canon/LIVING_AGENT_SYSTEM.md",
+                "section": "Section 2.3"
+            },
+            "severity": "HIGH",
+            "validation_hook": "Session memory file created post-session with all required sections"
+        },
+        {
+            "id": "REQ-EO-006",
+            "category": "execution_and_operations",
+            "statement": "MUST generate session-specific working-contract.md from agent identity, last 5 memories, current governance bindings, environment state, big-picture context, and personal lessons.",
+            "source": {
+                "file": "governance/canon/LIVING_AGENT_SYSTEM.md",
+                "section": "Section 5 (Working Contract)"
+            },
+            "severity": "MEDIUM",
+            "validation_hook": "working-contract.md exists with timestamp matching session start"
+        },
+        {
+            "id": "REQ-MGI-001",
+            "category": "merge_gate_interface",
+            "statement": "MUST name workflow 'Merge Gate Interface' (exact) with jobs 'merge-gate/verdict', 'governance/alignment', 'stop-and-fix/enforcement' (exact).",
+            "source": {
+                "file": "governance/canon/MERGE_GATE_INTERFACE_STANDARD.md",
+                "section": "Section 2"
+            },
+            "severity": "CRITICAL",
+            "validation_hook": "yq '.name' .github/workflows/merge-gate-interface.yml == \"Merge Gate Interface\""
+        },
+        {
+            "id": "REQ-MGI-002",
+            "category": "merge_gate_interface",
+            "statement": "Merge gate workflow MUST trigger on pull_request event; on: push is optional and may not replace PR trigger.",
+            "source": {
+                "file": "governance/canon/MERGE_GATE_INTERFACE_STANDARD.md",
+                "section": "Section 3"
+            },
+            "severity": "CRITICAL",
+            "validation_hook": "yq '.on | has(\"pull_request\")' .github/workflows/merge-gate-interface.yml == true"
+        },
+        {
+            "id": "REQ-MGI-003",
+            "category": "merge_gate_interface",
+            "statement": "PR classification MUST be deterministic based on changed paths, labels, and branch patterns (label override \u2192 governance \u2192 docs-only \u2192 code).",
+            "source": {
+                "file": "governance/canon/MERGE_GATE_INTERFACE_STANDARD.md",
+                "section": "Section 4"
+            },
+            "severity": "HIGH",
+            "validation_hook": "Classification logic code review in verdict gate job"
+        },
+        {
+            "id": "REQ-MGI-004",
+            "category": "merge_gate_interface",
+            "statement": "Branch protection MUST require only the three standard contexts; no repo-specific checks as required.",
+            "source": {
+                "file": "governance/canon/MERGE_GATE_INTERFACE_STANDARD.md",
+                "section": "Section 8"
+            },
+            "severity": "HIGH",
+            "validation_hook": "GitHub branch protection settings API check"
+        },
+        {
+            "id": "REQ-MGI-005",
+            "category": "merge_gate_interface",
+            "statement": "Gate failures MUST produce short, evidence-first error messages; prohibited: log archaeology, manual inspection requirements, narrative-only claims.",
+            "source": {
+                "file": "governance/canon/MERGE_GATE_INTERFACE_STANDARD.md",
+                "section": "Section 5"
+            },
+            "severity": "MEDIUM",
+            "validation_hook": "Gate failure message format validation in workflow output"
+        },
+        {
+            "id": "REQ-CR-001",
+            "category": "coordination_and_reporting",
+            "statement": "All governance changes MUST be recorded in governance/CHANGELOG.md with version, date, type, description, affected artifacts, migration guidance, approval authority, effective date.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_RIPPLE_MODEL.md",
+                "section": "Section 8.1"
+            },
+            "severity": "HIGH",
+            "validation_hook": "CHANGELOG.md updated in PR diff for governance changes"
+        },
+        {
+            "id": "REQ-CR-002",
+            "category": "coordination_and_reporting",
+            "statement": "MUST track which repos received layer-down, when propagation occurred, validation status, completion status, inventory update status, coverage percentage, and ripple log entries.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_RIPPLE_MODEL.md",
+                "section": "Section 8.3"
+            },
+            "severity": "HIGH",
+            "validation_hook": "Ripple tracking artifact in governance/ripple/ with completion metrics"
+        },
+        {
+            "id": "REQ-CR-003",
+            "category": "coordination_and_reporting",
+            "statement": "MUST log both layer-up (app\u2192canon) and layer-down (canon\u2192app) ripple flows with issue numbers, timestamps, and status.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_RIPPLE_MODEL.md",
+                "section": "Section 8.3 (Bidirectional Ripple Log Format)"
+            },
+            "severity": "MEDIUM",
+            "validation_hook": "Ripple log format validation against specified structure"
+        },
+        {
+            "id": "REQ-CR-004",
+            "category": "coordination_and_reporting",
+            "statement": "For governance changes, MUST include impact analysis covering affected repositories, agents, gates, schemas, migration effort, and risk assessment.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_RIPPLE_MODEL.md",
+                "section": "Section 8.2"
+            },
+            "severity": "MEDIUM",
+            "validation_hook": "Impact analysis section in PR description or linked artifact"
+        },
+        {
+            "id": "REQ-CR-005",
+            "category": "coordination_and_reporting",
+            "statement": "MUST archive upward learning with original failure/learning records, promotion decision rationale, resulting governance changes, impact assessment, effectiveness validation.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_RIPPLE_MODEL.md",
+                "section": "Section 8.4"
+            },
+            "severity": "LOW",
+            "validation_hook": "Learning archive structure in governance/memory/canonical-lessons/"
+        },
+        {
+            "id": "REQ-SS-001",
+            "category": "security_and_safety",
+            "statement": "MUST use MATURION_BOT_TOKEN secret for all automated actions; token MUST be fine-grained with least privilege (Contents: RW, PRs: RW, Issues: RW).",
+            "source": {
+                "file": "maturion/strategy/LIVING_CANON_ALIGNMENT_EXECUTION_PLAN.md",
+                "section": "Section 3.2-3.3"
+            },
+            "severity": "CRITICAL",
+            "validation_hook": "Workflow uses secrets.MATURION_BOT_TOKEN and never pushes to main directly"
+        },
+        {
+            "id": "REQ-SS-002",
+            "category": "security_and_safety",
+            "statement": "MUST detect and block unauthorized changes to .github/workflows/, constitutional canon, agent contracts without CS2 approval.",
+            "source": {
+                "file": "governance/canon/SELF_ALIGNMENT_AUTHORITY_MODEL.md",
+                "section": "Section 9.1"
+            },
+            "severity": "CRITICAL",
+            "validation_hook": "Protected file change detection workflow with approval gate"
+        },
+        {
+            "id": "REQ-SS-003",
+            "category": "security_and_safety",
+            "statement": "MUST NOT push directly to main branch; all writes occur via PR branches.",
+            "source": {
+                "file": "maturion/strategy/LIVING_CANON_ALIGNMENT_EXECUTION_PLAN.md",
+                "section": "Section 3.4"
+            },
+            "severity": "CRITICAL",
+            "validation_hook": "Branch protection enforcement and bot workflow validation"
+        },
+        {
+            "id": "REQ-SS-004",
+            "category": "security_and_safety",
+            "statement": "When placeholder hashes detected in CANON_INVENTORY.json for PUBLIC_API artifacts, MUST mark alignment as DEGRADED, block merge gates, create CS2 escalation issue.",
+            "source": {
+                "file": "governance/canon/CANON_INVENTORY_INTEGRITY_REQUIREMENTS.md",
+                "section": "Section 4"
+            },
+            "severity": "CRITICAL",
+            "validation_hook": "Alignment gate detects placeholders and fails with escalation artifact"
+        },
+        {
+            "id": "REQ-SS-005",
+            "category": "security_and_safety",
+            "statement": "MUST implement token rotation policy with defined frequency and incident response; scheduled fallback alignment continues during token failure.",
+            "source": {
+                "file": "maturion/strategy/LIVING_CANON_ALIGNMENT_EXECUTION_PLAN.md",
+                "section": "Section 3.4"
+            },
+            "severity": "HIGH",
+            "validation_hook": "Token rotation documentation and incident response runbook existence"
+        },
+        {
+            "id": "REQ-AG-001",
+            "category": "ambiguities_and_gaps",
+            "statement": "MUST execute governance gap analysis scan during wake-up protocol and session work; auto-remediate known patterns, escalate novel gaps.",
+            "source": {
+                "file": "governance/canon/LIVING_AGENT_SYSTEM.md",
+                "section": "Section 6 (Gap Analyzer Integration)"
+            },
+            "severity": "MEDIUM",
+            "validation_hook": "Gap analysis artifact in session evidence"
+        },
+        {
+            "id": "REQ-AG-002",
+            "category": "ambiguities_and_gaps",
+            "statement": "When encountering conflicting governance directives, unclear authority boundaries, or missing governance coverage, MUST escalate to CS2 with structured escalation document.",
+            "source": {
+                "file": "governance/canon/SELF_ALIGNMENT_AUTHORITY_MODEL.md",
+                "section": "Section 6.1"
+            },
+            "severity": "HIGH",
+            "validation_hook": "Escalation document creation for ambiguity cases"
+        },
+        {
+            "id": "REQ-AG-003",
+            "category": "ambiguities_and_gaps",
+            "statement": "Upward ripple proposals MUST use schema at governance/schemas/GOVERNANCE_CHANGE_PROPOSAL.schema.md with trigger, evidence, proposal, impact, affected repos, migration plan, rationale.",
+            "source": {
+                "file": "governance/canon/GOVERNANCE_RIPPLE_MODEL.md",
+                "section": "Section 5.4"
+            },
+            "severity": "MEDIUM",
+            "validation_hook": "Layer-up issue conforms to governance change proposal schema"
+        },
+        {
+            "id": "REQ-AG-004",
+            "category": "ambiguities_and_gaps",
+            "statement": "For high-impact changes with uncertainty or precedent-setting decisions, MUST document decision rationale and escalate to CS2 for strategic judgment.",
+            "source": {
+                "file": "governance/canon/SELF_ALIGNMENT_AUTHORITY_MODEL.md",
+                "section": "Section 6.1"
+            },
+            "severity": "MEDIUM",
+            "validation_hook": "Decision rationale in PR description or escalation document"
+        }
+    ],
+    "canonical_sources": [
+        "governance/canon/CANON_INVENTORY_INTEGRITY_REQUIREMENTS.md",
+        "governance/canon/GOVERNANCE_ARTIFACT_TAXONOMY.md",
+        "governance/canon/GOVERNANCE_RIPPLE_MODEL.md",
+        "governance/canon/GOVERNANCE_VALIDATION_PROTOCOL.md",
+        "governance/canon/LIVING_AGENT_SYSTEM.md",
+        "governance/canon/MERGE_GATE_INTERFACE_STANDARD.md",
+        "governance/canon/SELF_ALIGNMENT_AUTHORITY_MODEL.md",
+        "governance/canon/STOP_AND_FIX_DOCTRINE.md",
+        "governance/canon/GOVERNANCE_PURPOSE_AND_SCOPE.md",
+        "maturion/strategy/LIVING_CANON_ALIGNMENT_EXECUTION_PLAN.md"
+    ],
+    "exclusions": {
+        "note": "All references to .github/agents/ agent contract files and non-canon sources excluded per directive",
+        "excluded_patterns": [
+            ".github/agents/**/*.md",
+            "Non-canonical governance files",
+            "Application-specific documentation"
+        ]
+    }
+}
