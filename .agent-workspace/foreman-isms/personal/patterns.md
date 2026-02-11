@@ -27,8 +27,8 @@
 - Observed: 2026-02-11 (Session 001)
 - Context: Agents need explicit format guidance for session memory, escalations, evidence bundles
 - Response: Embed complete templates in contract sections:
-  - Session Memory Template → Category 3.2 (lines 315-372)
-  - Escalation Template → Category 5.3 (lines 535-560)
+  - Session Memory Template → Category 3.2 (lines 289-352)
+  - Escalation Template → Category 5.3 (lines 474-503)
   - Include all required fields with placeholders
   - Provide examples and usage notes
   - Result: Self-contained contract requiring no external template lookups
