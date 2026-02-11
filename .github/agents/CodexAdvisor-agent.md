@@ -9,11 +9,9 @@ agent:
 
 governance:
   protocol: LIVING_AGENT_SYSTEM
-  canon_inventory: governance/CANON_INVENTORY.json
+  canon_inventory: .governance-pack/CANON_INVENTORY.json
   expected_artifacts:
-    - governance/CANON_INVENTORY.json
-    - governance/CONSUMER_REPO_REGISTRY.json
-    - governance/GATE_REQUIREMENTS_INDEX.json
+    - .governance-pack/CANON_INVENTORY.json
   degraded_on_placeholder_hashes: true
   execution_identity:
     name: "Maturion Bot"
@@ -30,10 +28,6 @@ merge_gate_interface:
 
 scope:
   repositories:
-    - APGI-cmy/maturion-foreman-governance
-    - APGI-cmy/maturion-foreman-office-app
-    - APGI-cmy/PartPulse
-    - APGI-cmy/R_Roster
     - APGI-cmy/maturion-isms
   agent_files_location: ".github/agents"
   approval_required: ALL_ACTIONS
@@ -60,10 +54,10 @@ capabilities:
     ripple:
       dispatch_from_governance: false  # consumer receives only
       listen_on_consumers: repository_dispatch
-      targets_from: governance/CONSUMER_REPO_REGISTRY.json
+      canonical_source: APGI-cmy/maturion-foreman-governance
     schedule_fallback: hourly
     evidence_paths:
-      - "governance/sync_state.json"
+      - ".agent-admin/governance/sync_state.json"
 
 escalation:
   authority: CS2
@@ -276,7 +270,7 @@ Generate or update agent files at:
 ### Requirements
 
 - Include valid YAML frontmatter.
-- Bind to `governance/CANON_INVENTORY.json`.
+- Bind to `.governance-pack/CANON_INVENTORY.json`.
 - Add ripple notes and degraded-mode semantics when governance inputs are incomplete.
 - Prefer PRs.
 - Issues allowed.
@@ -298,7 +292,7 @@ Auto-merge is allowed only when these checks are green.
 Alignment check compares local code/config against:
 
 ```
-governance/CANON_INVENTORY.json
+.governance-pack/CANON_INVENTORY.json
 ```
 
 ---
@@ -340,7 +334,7 @@ echo "$EVENT_PAYLOAD" > .agent-admin/governance/ripple-inbox/ripple-${DISPATCH_I
 jq --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
    --arg commit "$CANONICAL_COMMIT" \
    '.last_ripple_received = $ts | .canonical_commit = $commit | .sync_pending = true' \
-   governance/sync_state.json > tmp.$$ && mv tmp.$$ governance/sync_state.json
+   .agent-admin/governance/sync_state.json > tmp.$$ && mv tmp.$$ .agent-admin/governance/sync_state.json
 ```
 
 ---
@@ -348,8 +342,8 @@ jq --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
 ### Create Alignment PR
 
 1. Pull latest governance pack from canonical source.
-2. Compare hashes against local `governance/`.
-3. Create PR updating `governance/` with canonical versions.
+2. Compare hashes against local `.governance-pack/`.
+3. Create PR updating `.governance-pack/` with canonical versions.
 4. Include alignment report showing changes.
 5. Request CS2 review if constitutional changes are detected.
 
@@ -378,12 +372,12 @@ Run hourly (fallback if ripple missed):
 # Compare canonical inventory version against local sync state
 CANONICAL_INVENTORY=$(curl -sL https://raw.githubusercontent.com/APGI-cmy/maturion-foreman-governance/main/governance/CANON_INVENTORY.json)
 CANONICAL_VERSION=$(echo "$CANONICAL_INVENTORY" | jq -r '.version')
-LOCAL_VERSION=$(jq -r '.last_sync.canonical_inventory_version' governance/sync_state.json)
+LOCAL_VERSION=$(jq -r '.last_sync.canonical_inventory_version' .agent-admin/governance/sync_state.json)
 
 if [ "$LOCAL_VERSION" != "$CANONICAL_VERSION" ]; then
   echo "DRIFT DETECTED: Local governance out of sync (local: $LOCAL_VERSION, canonical: $CANONICAL_VERSION)"
   jq '.drift_detected = true | .drift_detected_at = "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"' \
-     governance/sync_state.json > tmp.$$ && mv tmp.$$ governance/sync_state.json
+     .agent-admin/governance/sync_state.json > tmp.$$ && mv tmp.$$ .agent-admin/governance/sync_state.json
   # Create issue for CS2 review
 fi
 ```
@@ -392,7 +386,7 @@ fi
 
 ## Consumer-Specific Prohibitions
 
-- ❌ No modification of `governance/` directory (receive-only from canonical source)
+- ❌ No modification of `.governance-pack/` directory (receive-only from canonical source)
 - ❌ No bypassing governance alignment gate (drift must be resolved)
 - ❌ No creating governance canon (consumer repositories do not author canon)
 - ❌ No dispatching ripple events (only canonical source dispatches)
@@ -403,7 +397,7 @@ fi
 
 - ✅ Receive and process governance ripple events
 - ✅ Detect drift between local and canonical governance
-- ✅ Create alignment PRs to sync `governance/`
+- ✅ Create alignment PRs to sync `.governance-pack/`
 - ✅ Report alignment status to canonical source (via `sync_state.json`)
 - ✅ Escalate constitutional governance changes for CS2 review
 
