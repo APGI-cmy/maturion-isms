@@ -112,7 +112,7 @@ Use the repository wake-up protocol (no embedded bash needed):
 
 **Template:**
 ```markdown
-# Session NNN - YYYYMMDD (Living Agent System v6.2.0)
+# Session NNN - YYYYMMDD (LIVING_AGENT_SYSTEM v6.2.0)
 
 ## Agent
 - Type: <agent-type>
@@ -375,12 +375,13 @@ Archive ripple inbox entry to:
 Run hourly (fallback if ripple missed):
 
 ```bash
-# Compare local pack hash against canonical
-LOCAL_HASH=$(sha256sum governance/sync_state.json | cut -d' ' -f1)
-CANONICAL_HASH=$(curl -sL https://raw.githubusercontent.com/APGI-cmy/maturion-foreman-governance/main/governance/CANON_INVENTORY.json | sha256sum | cut -d' ' -f1)
+# Compare canonical inventory version against local sync state
+CANONICAL_INVENTORY=$(curl -sL https://raw.githubusercontent.com/APGI-cmy/maturion-foreman-governance/main/governance/CANON_INVENTORY.json)
+CANONICAL_VERSION=$(echo "$CANONICAL_INVENTORY" | jq -r '.version')
+LOCAL_VERSION=$(jq -r '.last_sync.canonical_inventory_version' governance/sync_state.json)
 
-if [ "$LOCAL_HASH" != "$CANONICAL_HASH" ]; then
-  echo "DRIFT DETECTED: Local governance out of sync"
+if [ "$LOCAL_VERSION" != "$CANONICAL_VERSION" ]; then
+  echo "DRIFT DETECTED: Local governance out of sync (local: $LOCAL_VERSION, canonical: $CANONICAL_VERSION)"
   jq '.drift_detected = true | .drift_detected_at = "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"' \
      governance/sync_state.json > tmp.$$ && mv tmp.$$ governance/sync_state.json
   # Create issue for CS2 review
