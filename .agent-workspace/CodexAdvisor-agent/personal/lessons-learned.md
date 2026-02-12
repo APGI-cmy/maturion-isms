@@ -86,3 +86,47 @@
 - Pattern: YAML completeness + REQ mappings + Evidence automation + Validation hooks + Consolidated references = Gold Standard
 - Action: Gold standard upgrades require both content additions AND structural pattern implementation
 
+## Session 20260212 (Session 007 - OPOJD Violation Correction)
+
+### Lesson: Validate ALL Agent Files When Instructed, Not Just One
+- Context: Issue #79 required CodexAdvisor, Foreman, AND Governance Liaison validation; PR #80 only completed CodexAdvisor (33% complete)
+- Pattern: When task specifies "both agent files" or lists multiple agents, create explicit checklist of ALL files and verify each one is completed before claiming job done
+- Action: Never consider job complete until ALL specified artifacts are validated/updated with explicit checklist tracking
+- Example: This violation left 66% of agent files unvalidated (2 out of 3), WORSE than R_Roster PR #116 (50% incomplete)
+
+### Lesson: Version Check ≠ Checklist Validation
+- Context: PR #80 checked Foreman/Governance Liaison version numbers (v6.2.0) and paths but did NOT validate against checklists
+- Pattern: Checking version/paths is a quick sanity check, NOT a compliance validation; must load checklist and validate EVERY requirement
+- Action: Checklist validation = Load checklist → Validate category by category → Document compliance % → Identify gaps → Update if needed
+- Evidence: Foreman showed 100% compliance (113/113), Governance Liaison showed 88.5% (gaps in Categories 8, 9, 10)
+
+### Lesson: Path Check ≠ Gap Analysis
+- Context: Verifying that files exist and paths are correct is NOT the same as analyzing content completeness against requirements
+- Pattern: Gap analysis requires comparing actual content against required content from checklist; path check only verifies file exists
+- Action: After path verification, must perform content validation: Load canonical binding list → Compare against agent file bindings section → Document missing bindings
+- Example: Governance Liaison had correct governance/ paths but was missing CONSUMER_REPO_REGISTRY.json, CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md, and entire Category 9 section
+
+### Lesson: Partial Completion Severity Matters
+- Context: 33% completion (1/3 agent files) is objectively WORSE than 50% completion (1/2 agent files)
+- Pattern: When comparing OPOJD violations, completion percentage indicates severity; lower completion = higher severity
+- Action: Document comparative severity in incident reports to establish severity baselines and prevent recurrence
+- Evidence: PR #80 (33% complete) is worse than R_Roster PR #116 (50% complete)
+
+### Lesson: Create Explicit Completion Checklist for Multi-Item Tasks
+- Context: When given task like "review foreman and governance agent files," easy to lose track of which are complete
+- Pattern: Create explicit checklist at start: [ ] CodexAdvisor, [ ] Foreman, [ ] Governance Liaison; mark each complete as validated
+- Action: For ANY task specifying multiple artifacts, create completion tracker and verify ALL items marked before claiming done
+- Prevention: This pattern prevents "assumed complete" errors where partial work is mistaken for full completion
+
+### Lesson: Registry Operations Critical for Consumer Repository Liaisons
+- Context: Governance Liaison initial version was missing entire Category 9 (Consumer Repository Registry Operations) - 0/5 requirements
+- Pattern: Consumer repository governance liaisons MUST have registry-aware ripple capabilities (read CONSUMER_REPO_REGISTRY.json, validate ripple sources, deterministic targeting, escalation protocol, ripple inbox management)
+- Action: When creating/validating governance liaison contracts for consumer repositories, ensure Category 9 is complete
+- Authority: CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md Section 7 mandates registry operations
+
+### Lesson: OPOJD Violations Compound When Undetected
+- Context: If PR #80 incomplete work went undetected, subsequent work would build on incomplete foundation
+- Pattern: Incomplete checklist validation → Missing gaps propagate → Downstream work inherits incomplete governance
+- Action: Self-review sessions MUST catch incomplete work before merge; use explicit completion checklists to prevent propagation
+- Evidence: This corrective action prevented 66% incomplete validation from becoming canonical baseline
+
