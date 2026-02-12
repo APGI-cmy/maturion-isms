@@ -155,7 +155,7 @@ jobs:
 
             if [ -n "$PROOF_FILE" ]; then
               # Check for basic structure
-              if grep -qi "Pre-Gate Validation\|Gate.*Validation\|Evidence" "$PROOF_FILE"; then
+              if grep -qiE "Pre-Gate Validation|Gate.*Validation|Evidence" "$PROOF_FILE"; then
                 echo "✅ Evidence structure appears valid"
               else
                 echo "⚠️  Evidence file may be incomplete"
@@ -251,7 +251,7 @@ jobs:
               echo "✅ Evidence file found: $PROOF_FILE"
 
               # Check for stop-and-fix documentation
-              if grep -qi "stop.*fix\|preexisting\|discovered.*issue" "$PROOF_FILE"; then
+              if grep -qiE "stop.*fix|preexisting|discovered.*issue" "$PROOF_FILE"; then
                 echo "✅ Stop-and-Fix documentation found"
               else
                 echo "ℹ️  No stop-and-fix issues documented (none encountered)"

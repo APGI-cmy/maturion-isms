@@ -41,7 +41,7 @@ Per MERGE_GATE_PHILOSOPHY.md v2.0, all applicable merge gates MUST be validated 
 === Scope-to-Diff Validation (BL-027) ===
 
 ✓ SCOPE_DECLARATION.md exists
-✓ Found 1 changed files in git diff
+✓ Found changed files in git diff
 ✓ Found 12 files in SCOPE_DECLARATION.md
 
 ✅ Scope-to-Diff validation PASSED

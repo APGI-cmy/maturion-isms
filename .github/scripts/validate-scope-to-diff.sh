@@ -24,14 +24,17 @@ CHANGED_COUNT=$(echo "$CHANGED_FILES" | wc -l)
 
 echo "✓ Found $CHANGED_COUNT changed files in git diff"
 
-# Extract files from SCOPE_DECLARATION.md (lines starting with - or containing file paths)
-# This is a simplified check - actual implementation should parse the markdown structure
-SCOPE_FILES=$(grep -E '^\s*-\s+`.*`|^\s*-\s+\S+\.(md|ts|tsx|js|jsx|json|yml|yaml|sh)' SCOPE_DECLARATION.md | sed 's/.*`\(.*\)`.*/\1/' | sed 's/^.*- //' | sort || echo "")
+# Extract files from SCOPE_DECLARATION.md
+# Looks for lines with backtick-wrapped paths or common file extensions
+# NOTE: This is a simplified validation. For complete validation, consider:
+# - Exact diff matching (all files in diff must be in scope, vice versa)
+# - TODO: Track in issue for enhanced validation script
+SCOPE_FILES=$(grep -E '^\s*-\s+`.*`|^\s*-\s+.*\.(md|ts|tsx|js|jsx|json|yml|yaml|sh|py|toml|txt)' SCOPE_DECLARATION.md | sed 's/.*`\(.*\)`.*/\1/' | sed 's/^.*- //' | sort || echo "")
 SCOPE_COUNT=$(echo "$SCOPE_FILES" | grep -v '^$' | wc -l)
 
 echo "✓ Found $SCOPE_COUNT files in SCOPE_DECLARATION.md"
 
-# Basic validation - real implementation should do exact match
+# Basic validation - check that scope declaration is not empty
 if [ "$CHANGED_COUNT" -eq 0 ] && [ "$SCOPE_COUNT" -eq 0 ]; then
     echo "⚠️  No changes detected (empty PR)"
     exit 0

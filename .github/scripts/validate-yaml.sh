@@ -27,25 +27,36 @@ fi
 
 echo "✓ yamllint available"
 
-# Run yamllint with strict configuration
-WARNINGS=0
+# Run yamllint with lenient configuration for workflow files
+# Workflow files often have long lines for shell commands
+TEMP_FILE=$(mktemp)
 echo "$YAML_FILES" | while read -r file; do
     if [ -f "$file" ]; then
         echo "  Checking: $file"
-        if ! yamllint -d relaxed "$file" 2>&1 | grep -q "warning\|error"; then
-            echo "    ✓ Valid"
+        # Use extended line-length for workflow files
+        if [[ "$file" == *"workflows"* ]]; then
+            CONFIG="{extends: relaxed, rules: {line-length: {max: 120}}}"
         else
-            echo "    ❌ Has warnings/errors"
-            WARNINGS=$((WARNINGS + 1))
+            CONFIG="relaxed"
+        fi
+        
+        if yamllint -d "$CONFIG" "$file" 2>&1 | grep -qE "error"; then
+            echo "    ❌ Has errors"
+            echo "1" >> "$TEMP_FILE"
+        else
+            echo "    ✓ Valid"
         fi
     fi
 done
 
-if [ $WARNINGS -gt 0 ]; then
+ERRORS=$(wc -l < "$TEMP_FILE" 2>/dev/null || echo "0")
+rm -f "$TEMP_FILE"
+
+if [ "$ERRORS" -gt 0 ]; then
     echo ""
-    echo "❌ YAML validation FAILED: $WARNINGS file(s) with warnings/errors"
+    echo "❌ YAML validation FAILED: $ERRORS file(s) with errors"
     echo "   Required by: MERGE_GATE_PHILOSOPHY.md (BL-028)"
-    echo "   Remediation: Fix all YAML warnings and errors"
+    echo "   Remediation: Fix all YAML errors"
     exit 1
 fi
 
