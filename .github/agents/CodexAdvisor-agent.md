@@ -9,9 +9,9 @@ agent:
 
 governance:
   protocol: LIVING_AGENT_SYSTEM
-  canon_inventory: .governance-pack/CANON_INVENTORY.json
+  canon_inventory: governance/CANON_INVENTORY.json
   expected_artifacts:
-    - .governance-pack/CANON_INVENTORY.json
+    - governance/CANON_INVENTORY.json
   degraded_on_placeholder_hashes: true
   execution_identity:
     name: "Maturion Bot"
@@ -41,10 +41,10 @@ capabilities:
     create_or_update_agent_files: PR_PREFERRED
     locations: [".github/agents/"]
     required_checklists:
-      governance_liaison: .governance-pack/checklists/GOVERNANCE_LIAISON_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md
-      foreman: .governance-pack/checklists/FOREMAN_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md
-      builder: .governance-pack/checklists/BUILDER_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md
-      codex_advisor: .governance-pack/checklists/CODEX_ADVISOR_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md
+      governance_liaison: governance/checklists/GOVERNANCE_LIAISON_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md
+      foreman: governance/checklists/FOREMAN_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md
+      builder: governance/checklists/BUILDER_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md
+      codex_advisor: governance/checklists/CODEX_ADVISOR_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md
     enforcement: MANDATORY
     compliance_level: LIVING_AGENT_SYSTEM_v6_2_0
     file_size_limit:
@@ -73,7 +73,7 @@ capabilities:
     ripple:
       dispatch_from_governance: false  # consumer receives only
       listen_on_consumers: repository_dispatch
-      targets_from: .governance-pack/CONSUMER_REPO_REGISTRY.json
+      targets_from: governance/CONSUMER_REPO_REGISTRY.json
       canonical_source: APGI-cmy/maturion-foreman-governance
     schedule_fallback: hourly
     evidence_paths:
@@ -319,14 +319,14 @@ All agent file changes MUST:
 
 2. **Link to canonical documentation**:
    - ❌ BAD: Embed full LOCKED section template with examples
-   - ✅ GOOD: "See LOCKED section template in `.governance-pack/templates/LOCKED_SECTION_TEMPLATE.md`"
+   - ✅ GOOD: "See LOCKED section template in `governance/templates/LOCKED_SECTION_TEMPLATE.md`"
 
 3. **Use compact formatting**:
    - ❌ BAD: Verbose explanations for each component
    - ✅ GOOD: Concise requirement statements with canonical references
 
 4. **Externalize large templates**:
-   - Move session memory protocol templates to `.governance-pack/templates/`
+   - Move session memory protocol templates to `governance/templates/`
    - Move evidence artifact bundle scripts to `.github/scripts/`
    - Reference them instead of embedding
 
@@ -349,8 +349,8 @@ All agent file changes MUST:
 **This repository is a CONSUMER** of canonical governance from `APGI-cmy/maturion-foreman-governance`.
 
 **Key Differences from Canonical Mode**:
-- Checklist location: `.governance-pack/checklists/` (not `governance/checklists/`)
-- Canon inventory: `.governance-pack/CANON_INVENTORY.json` (not `governance/CANON_INVENTORY.json`)
+- Checklist location: `governance/checklists/` (consumer repositories use same path as canonical)
+- Canon inventory: `governance/CANON_INVENTORY.json` (layered down from canonical source)
 - Ripple: Receive-only (cannot dispatch)
 - Governance changes: Escalate to canonical source
 
@@ -363,18 +363,18 @@ All agent file changes MUST:
 1. **Receive CS2 authorization** for the specific agent file creation/modification
 
 2. **Load the appropriate checklist** based on agent role:
-   - Governance Liaison → `.governance-pack/checklists/GOVERNANCE_LIAISON_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
-   - Foreman → `.governance-pack/checklists/FOREMAN_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
-   - Builder → `.governance-pack/checklists/BUILDER_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
-   - CodexAdvisor (self) → `.governance-pack/checklists/CODEX_ADVISOR_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
+   - Governance Liaison → `governance/checklists/GOVERNANCE_LIAISON_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
+   - Foreman → `governance/checklists/FOREMAN_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
+   - Builder → `governance/checklists/BUILDER_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
+   - CodexAdvisor (self) → `governance/checklists/CODEX_ADVISOR_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
 
 3. **Verify checklist availability**:
-   - Confirm checklist file exists in `.governance-pack/checklists/`
+   - Confirm checklist file exists in `governance/checklists/`
    - If checklist missing → check if ripple pending → run alignment first
    - If still missing → STOP and escalate to CS2
 
 4. **Verify CANON_INVENTORY availability**:
-   - Confirm `.governance-pack/CANON_INVENTORY.json` accessible
+   - Confirm `governance/CANON_INVENTORY.json` accessible
    - Verify no placeholder hashes in PUBLIC_API artifacts
    - If degraded → STOP and escalate to CS2
 
@@ -408,8 +408,8 @@ agent:
   version: 6.2.0
 governance:
   protocol: LIVING_AGENT_SYSTEM
-  canon_inventory: .governance-pack/CANON_INVENTORY.json
-  expected_artifacts: [.governance-pack/CANON_INVENTORY.json]
+  canon_inventory: governance/CANON_INVENTORY.json
+  expected_artifacts: [governance/CANON_INVENTORY.json]
   degraded_on_placeholder_hashes: true
   execution_identity:
     name: "Maturion Bot"
@@ -477,7 +477,7 @@ Auto-merge is allowed only when these checks are green.
 Alignment check compares local code/config against:
 
 ```
-.governance-pack/CANON_INVENTORY.json
+governance/CANON_INVENTORY.json
 ```
 
 ---
@@ -527,8 +527,8 @@ jq --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
 ### Create Alignment PR
 
 1. Pull latest governance pack from canonical source.
-2. Compare hashes against local `.governance-pack/`.
-3. Create PR updating `.governance-pack/` with canonical versions.
+2. Compare hashes against local `governance/`.
+3. Create PR updating `governance/` with canonical versions.
 4. Include alignment report showing changes.
 5. Request CS2 review if constitutional changes are detected.
 
@@ -571,7 +571,7 @@ fi
 
 ## Consumer-Specific Prohibitions
 
-- ❌ No modification of `.governance-pack/` directory (receive-only from canonical source)
+- ❌ No modification of `governance/` directory (receive-only from canonical source via layer-down)
 - ❌ No bypassing governance alignment gate (drift must be resolved)
 - ❌ No creating governance canon (consumer repositories do not author canon)
 - ❌ No dispatching ripple events (only canonical source dispatches)
@@ -582,7 +582,7 @@ fi
 
 - ✅ Receive and process governance ripple events
 - ✅ Detect drift between local and canonical governance
-- ✅ Create alignment PRs to sync `.governance-pack/`
+- ✅ Create alignment PRs to sync `governance/`
 - ✅ Report alignment status to canonical source (via `sync_state.json`)
 - ✅ Escalate constitutional governance changes for CS2 review
 
