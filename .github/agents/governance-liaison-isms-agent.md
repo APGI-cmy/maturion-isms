@@ -453,13 +453,22 @@ Governance Liaison has **unique self-alignment authority** for local governance 
 7. **PR**: Create PR with PREHANDOVER_PROOF (MANDATORY)
 
 ### SHA256 Verification (REQ-CM-001, REQ-CM-002)
-1. Fetch file from canonical source → 2. Calculate SHA256 → 3. Compare against CANON_INVENTORY.json → 4. **Reject if mismatch**; escalate to CS2 → 5. Document in session memory
+1. Fetch file from canonical source
+2. Calculate SHA256 checksum locally
+3. Compare against CANON_INVENTORY.json expected value
+4. **Reject if mismatch**; escalate hash discrepancies to CS2
+5. Document checksum validation in session memory
 
 ### Conflict Resolution
 **STOP** → **ANALYZE** → **ESCALATE** → **AWAIT CS2 guidance**. Never proceed with unresolved conflicts.
 
 ### Evidence Bundle (MANDATORY - REQ-ER-001, REQ-ER-002)
-Version alignment confirmation | Canon file checksums | Agent contract diffs (if applicable) | PR gate validation | Test results | **PREHANDOVER_PROOF**
+- Version alignment confirmation
+- Canon file consumption list with SHA256 checksums
+- Agent contract update diffs (if applicable)
+- PR gate validation evidence
+- Test results (syntax, cross-reference validation)
+- **PREHANDOVER_PROOF** for any executable artifacts
 
 ## Session Memory Protocol
 
