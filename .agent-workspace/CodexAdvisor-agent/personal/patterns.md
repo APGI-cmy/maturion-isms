@@ -72,3 +72,58 @@
   - Structure: What organizational elements were preserved
   - Authority: Which governance protocols authorize this artifact
   - Result: Clear continuous improvement lineage across repositories
+
+## Pattern: REQ-* Requirement Mapping for Systematic Compliance
+- Observed: 2026-02-12 (Session 002)
+- Context: Gold standard contracts need systematic requirement tracking across all categories
+- Response: Add "Living Agent System Requirements Satisfied" section to each category with prefix-based REQ-* identifiers:
+  - Category 0: REQ-G-001 to REQ-G-005 (Governance/Identity requirements)
+  - Category 1: REQ-A-001 to REQ-A-005 (Appointment/Authority requirements)
+  - Category 2: REQ-L-001 to REQ-L-005 (Layer-down requirements)
+  - Pattern continues for all categories with semantic prefixes
+  - Result: 55 requirements mapped across 11 categories, providing audit trail and compliance verification
+
+## Pattern: Evidence Automation Script Embedding
+- Observed: 2026-02-12 (Session 002)
+- Context: Layer-down sessions require artifact validation; external tooling creates discoverability issues
+- Response: Embed 5-step evidence automation bash script directly in agent contract:
+  - Step 1: Collecting Artifact Inventory (file list + SHA256)
+  - Step 2: SHA256 Verification Against CANON_INVENTORY
+  - Step 3: Generating Evidence Bundle (markdown report)
+  - Step 4: Artifact Completeness Check (expected artifacts present)
+  - Step 5: Final Validation (pass/fail determination)
+  - Script outputs: evidence bundle, artifact list, verification log
+  - Result: Self-contained validation tooling with ~168 lines embedded after Escalation Protocol
+
+## Pattern: Validation Hooks as Dedicated Category
+- Observed: 2026-02-12 (Session 002)
+- Context: Quality control scattered across contract is hard to enforce; need consolidated checkpoints
+- Response: Add Category 11 (Validation Hooks) with 5 pre-defined hooks:
+  - VH-001: Pre-mission governance validation (5 checks before work)
+  - VH-002: Layer-down artifact completeness (5 checks after layer-down)
+  - VH-003: CANON_INVENTORY integrity validation (5 checks + degraded mode handling)
+  - VH-004: Session contract schema validation (5 checks for memory artifacts)
+  - VH-005: Post-mission alignment verification (5 checks after completion)
+  - Each hook: purpose, authority, validation checks, actions on failure
+  - Result: Clear quality gates throughout agent lifecycle
+
+## Pattern: Consolidated Reference Table for Large Artifact Sets
+- Observed: 2026-02-12 (Session 002)
+- Context: 102 canonical artifacts in flat list (Appendix A) overwhelming for quick reference
+- Response: Add "Consolidated Canonical Governance References" section with structured table:
+  - 76 key artifacts organized into 10 functional areas
+  - Table columns: Artifact, Role, Category, Required status
+  - Functional areas: Constitutional Authority, Agent Contract & Lifecycle, Liaison-Specific, Layer-Down & Ripple, etc.
+  - Positioned before Authority References for quick navigation
+  - Result: Easy lookup of critical governance artifacts by function
+
+## Pattern: YAML Structure Validation Before Commit
+- Observed: 2026-02-12 (Session 002)
+- Context: Complex nested YAML (contract, merge_gate_interface, prohibitions) prone to syntax errors
+- Response: Programmatic validation workflow:
+  1. Extract YAML frontmatter from agent contract markdown
+  2. Run Python yaml.safe_load() on extracted YAML
+  3. Verify expected sections present (contract, merge_gate_interface, etc.)
+  4. Commit only if validation passes
+  - Result: Prevents deployment failures from YAML syntax errors
+
