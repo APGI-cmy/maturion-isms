@@ -1,4 +1,28 @@
-## Session 20260211 (Session 001)
+## Session 20260212 (Session 006)
+
+### Lesson: Path Consistency Across Agent Contracts
+- Context: When agent contracts reference governance artifacts
+- Pattern: Watch for aspirational vs actual repository structure mismatches
+- Action: Always validate paths against actual repository structure, not documentation
+- Evidence: CodexAdvisor referenced `.governance-pack/` but repository uses `governance/`
+
+### Lesson: Evidence-Based Artifact Creation
+- Context: When creating missing governance artifacts like inventories
+- Pattern: Use authoritative evidence (alignment logs) rather than reconstruction
+- Action: Extract from `.agent-admin/sessions/` logs to ensure accuracy
+- Evidence: CANON_INVENTORY.json built from liaison-20260211-133720_alignment.log
+
+### Lesson: Cross-Agent Validation Reveals Truth
+- Context: When documentation conflicts with reality
+- Pattern: Compare multiple agent files to determine actual implementation
+- Action: Check Governance Liaison + CodexAdvisor + Foreman for consistency
+- Evidence: Governance Liaison correctly used `governance/` revealing true structure
+
+### Lesson: Character Count Management Strategy
+- Context: When creating/editing agent files with 30K GitHub UI selectability limit
+- Pattern: Target <25K (20% buffer), use references not duplication
+- Action: Link to canonical docs, externalize templates, use compact formatting
+- Evidence: CodexAdvisor reduced from potential bloat to 19,290 characters (Session 001)
 
 ### Lesson: Gold Standard Template First, Then Adapt
 - Context: When creating requirements checklists across repositories, analyzing reference implementation first saves significant time

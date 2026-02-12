@@ -127,3 +127,35 @@
   4. Commit only if validation passes
   - Result: Prevents deployment failures from YAML syntax errors
 
+
+## Pattern: Aspirational vs Actual Repository Structure
+- Observed: 2026-02-12 (Session 006)
+- Context: Agent contract references paths that don't exist in repository
+- Symptoms: References to `.governance-pack/` when repository uses `governance/`
+- Root Cause: Agent contract written for future/aspirational structure
+- Response: Cross-validate with other agents, check actual filesystem, update all references
+- Prevention: When creating agent contracts, validate all paths against actual repository structure
+
+## Pattern: Missing Foundational Governance Artifacts
+- Observed: 2026-02-12 (Session 006)
+- Context: CANON_INVENTORY.json completely missing despite agent references
+- Symptoms: Agent contracts reference inventory but file doesn't exist
+- Root Cause: Layer-down completed but inventory not generated
+- Response: Build from authoritative evidence (alignment logs with SHA256 hashes)
+- Prevention: Governance liaison should generate CANON_INVENTORY.json during layer-down
+
+## Pattern: Character Count Bloat in Agent Files
+- Observed: 2026-02-12 (Session 006)
+- Context: Agent files approaching 30K GitHub UI selectability limit
+- Symptoms: Excessive embedded templates, duplicated documentation
+- Root Cause: Embedding full protocols instead of referencing canonical sources
+- Response: Use references (e.g., "See PR #748"), externalize to governance/templates/
+- Prevention: Target <25K characters (20% buffer), pre-creation character estimation
+
+## Pattern: Cross-Agent Path Consistency Validation
+- Observed: 2026-02-12 (Session 006)
+- Context: Multiple agents must reference same governance structure
+- Symptoms: CodexAdvisor uses `.governance-pack/` while Governance Liaison uses `governance/`
+- Root Cause: Agents created at different times with different assumptions
+- Response: Check 3+ agents to determine actual vs aspirational structure
+- Prevention: Standardize paths in agent factory protocol, validate against actual structure
