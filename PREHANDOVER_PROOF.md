@@ -338,6 +338,7 @@ Per OPOJD v2.0, all jobs MUST generate improvement suggestions.
 - [x] `.github/workflows/merge-gate-interface.yml`
 - [x] `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md`
 - [x] `governance/templates/SCOPE_DECLARATION_TEMPLATE.md`
+- [x] `docs/MERGE_GATE_INTERFACE_GUIDE.md`
 - [x] Updated `.github/agents/foreman-isms-agent.md`
 
 **Artifact Locations**:

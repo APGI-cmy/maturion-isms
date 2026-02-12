@@ -19,6 +19,7 @@ The following files are modified, added, or deleted in this PR:
 - `.github/workflows/merge-gate-interface.yml` - Unified merge gate workflow implementing MERGE_GATE_INTERFACE_STANDARD.md
 - `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md` - Template for evidence capture per OPOJD v2.0
 - `governance/templates/SCOPE_DECLARATION_TEMPLATE.md` - Template for scope declaration per BL-027
+- `docs/MERGE_GATE_INTERFACE_GUIDE.md` - Implementation guide and troubleshooting
 - `SCOPE_DECLARATION.md` - This file
 - `PREHANDOVER_PROOF.md` - Evidence bundle for this PR
 
@@ -77,6 +78,7 @@ git diff --name-only origin/main...HEAD | sort
 .github/workflows/merge-gate-interface.yml
 PREHANDOVER_PROOF.md
 SCOPE_DECLARATION.md
+docs/MERGE_GATE_INTERFACE_GUIDE.md
 governance/templates/PREHANDOVER_PROOF_TEMPLATE.md
 governance/templates/SCOPE_DECLARATION_TEMPLATE.md
 ```
