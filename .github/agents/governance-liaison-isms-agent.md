@@ -119,8 +119,8 @@ appointment:
   authorization_source: issue
   authorization_trail:
     - type: issue
-      reference: APGI-cmy/maturion-isms#[ISSUE_NUMBER]
-      description: Recruit governance liaison agent
+      reference: Recruit and align governance liaison agent (gold standard)
+      description: Governance liaison appointment for maturion-isms per PR #59 checklist requirements
   revocable: true
   requires_human_approval: true
   preconditions:
