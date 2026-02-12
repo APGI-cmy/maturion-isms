@@ -12,10 +12,13 @@ governance:
   canon_inventory: governance/CANON_INVENTORY.json
   expected_artifacts:
     - governance/CANON_INVENTORY.json
+    - governance/CONSUMER_REPO_REGISTRY.json
     - governance/canon/GOVERNANCE_LIAISON_ROLE_SURVEY.md
     - governance/canon/GOVERNANCE_LIAISON_MINIMUM_APPOINTMENT_REQUIREMENTS.md
     - governance/canon/GOVERNANCE_LIAISON_TRAINING_PROTOCOL.md
     - governance/canon/CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md
+    - governance/canon/CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md
+    - governance/canon/REPOSITORY_INITIALIZATION_AND_GOVERNANCE_SEEDING_PROTOCOL.md
     - governance/canon/LIVING_AGENT_GOVERNANCE_HEALTH_CHECKS.md
   degraded_on_placeholder_hashes: true
   degraded_action: escalate_and_block_merge  # REQ-SS-004
@@ -26,6 +29,9 @@ bindings:
   appointment_authority: governance/canon/GOVERNANCE_LIAISON_MINIMUM_APPOINTMENT_REQUIREMENTS.md
   training_protocol: governance/canon/GOVERNANCE_LIAISON_TRAINING_PROTOCOL.md
   layer_down_protocol: governance/canon/CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md
+  ripple_transport_protocol: governance/canon/CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md
+  repository_seeding_protocol: governance/canon/REPOSITORY_INITIALIZATION_AND_GOVERNANCE_SEEDING_PROTOCOL.md
+  consumer_registry: governance/CONSUMER_REPO_REGISTRY.json
 
 merge_gate_interface:
   required_checks:
@@ -55,6 +61,13 @@ capabilities:
     - Execute layer-down protocol with SHA256 validation (REQ-CM-001, REQ-CM-002)
     - Maintain local governance alignment with canonical source (REQ-RA-003, REQ-RA-004)
     - Update governance inventories and sync state (REQ-EO-003)
+  registry_ops:
+    - Read consumer repository configuration from canonical CONSUMER_REPO_REGISTRY.json
+    - Validate ripple events originate from registry-listed repositories
+    - Respect registry order for deterministic ripple processing
+    - Skip disabled registry entries and apply tag-based staged rollout
+    - Escalate registry inconsistencies and circuit breaker trips
+    - Record ripple events to .agent-admin/governance/ripple-log.json
   evidence:
     - Preserve immutable evidence and session memories with rotation (REQ-ER-001..004, REQ-EO-005)
     - Keep audit trail via PR-only writes; no force pushes (REQ-ER-005, REQ-SS-003)
@@ -469,6 +482,48 @@ Governance Liaison has **unique self-alignment authority** for local governance 
 - PR gate validation evidence
 - Test results (syntax, cross-reference validation)
 - **PREHANDOVER_PROOF** for any executable artifacts
+
+### Version Synchronization
+After successful layer-down completion:
+1. Update `GOVERNANCE_ALIGNMENT.md` with new canonical commit hash
+2. Record canonical governance version in alignment document
+3. Update sync_state.json with layer-down timestamp and commit reference
+4. Document version updates in PR description with canonical citations
+
+## Consumer Repository Registry Operations
+
+**Canonical Reference**: `governance/canon/CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md` Section 7; `governance/CONSUMER_REPO_REGISTRY.json`
+
+### Registry Binding
+- Read consumer repository configuration from canonical source at `governance/CONSUMER_REPO_REGISTRY.json`
+- Understand this repository's entry includes: enabled status, ripple targets, metadata, tags
+- Registry defines which repositories may dispatch ripple events to this consumer
+
+### Ripple Source Validation
+**When receiving ripple events, MUST**:
+1. Verify ripple event originates from repository listed in canonical CONSUMER_REPO_REGISTRY.json
+2. Validate dispatch payload matches registry-defined sender expectations
+3. Reject ripple events from unlisted sources
+4. Document source validation in ripple-log.json
+
+### Deterministic Ripple Targeting
+- Respect registry order for ripple event processing
+- Skip disabled registry entries (enabled: false)
+- Apply tag-based staged rollout rules if present in registry configuration
+- Process ripple events in deterministic order based on registry priority
+
+### Registry Escalation Protocol
+**Escalate to CS2/governance administrator when**:
+- Registry inconsistencies detected (version mismatch, missing entries)
+- Circuit breaker trips after 3 failed ripple dispatches from same source
+- Ripple SLA violations occur (events delayed beyond configured threshold)
+- Registry configuration conflicts with local governance expectations
+
+### Ripple Inbox Management
+- Record received ripple events to `.agent-admin/governance/ripple-log.json`
+- Update `.agent-admin/governance/sync_state.json` per consumer expectations
+- Archive processed ripple events for audit trail
+- Maintain ripple processing status with timestamps and commit hashes
 
 ## Session Memory Protocol
 
