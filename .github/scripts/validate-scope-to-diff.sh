@@ -26,9 +26,12 @@ echo "✓ Found $CHANGED_COUNT changed files in git diff"
 
 # Extract files from SCOPE_DECLARATION.md
 # Looks for lines with backtick-wrapped paths or common file extensions
-# NOTE: This is a simplified validation. For complete validation, consider:
-# - Exact diff matching (all files in diff must be in scope, vice versa)
-# - TODO: Track in issue for enhanced validation script
+# NOTE: This is basic validation that checks file count and presence.
+# TODO (Issue): Implement exact set comparison:
+#   - Verify all files in git diff are in SCOPE_DECLARATION
+#   - Verify all files in SCOPE_DECLARATION are in git diff
+#   - Report specific discrepancies (missing/extra files)
+# Current implementation: Basic sanity check (not empty, reasonable count)
 SCOPE_FILES=$(grep -E '^\s*-\s+`.*`|^\s*-\s+.*\.(md|ts|tsx|js|jsx|json|yml|yaml|sh|py|toml|txt)' SCOPE_DECLARATION.md | sed 's/.*`\(.*\)`.*/\1/' | sed 's/^.*- //' | sort || echo "")
 SCOPE_COUNT=$(echo "$SCOPE_FILES" | grep -v '^$' | wc -l)
 
@@ -38,6 +41,19 @@ echo "✓ Found $SCOPE_COUNT files in SCOPE_DECLARATION.md"
 if [ "$CHANGED_COUNT" -eq 0 ] && [ "$SCOPE_COUNT" -eq 0 ]; then
     echo "⚠️  No changes detected (empty PR)"
     exit 0
+fi
+
+if [ "$SCOPE_COUNT" -eq 0 ]; then
+    echo "❌ SCOPE_DECLARATION.md is empty or malformed"
+    exit 1
+fi
+
+# Basic count sanity check (files should be roughly similar)
+# Note: This doesn't verify exact match - see TODO above for enhancement
+DIFF=$(( CHANGED_COUNT > SCOPE_COUNT ? CHANGED_COUNT - SCOPE_COUNT : SCOPE_COUNT - CHANGED_COUNT ))
+if [ "$DIFF" -gt 5 ]; then
+    echo "⚠️  Large discrepancy between git diff ($CHANGED_COUNT files) and SCOPE_DECLARATION ($SCOPE_COUNT files)"
+    echo "   This may indicate missing files in SCOPE_DECLARATION.md"
 fi
 
 if [ "$SCOPE_COUNT" -eq 0 ]; then

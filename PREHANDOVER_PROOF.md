@@ -50,12 +50,13 @@ Per MERGE_GATE_PHILOSOPHY.md v2.0, all applicable merge gates MUST be validated 
 
 **Timestamp**: 2026-02-12 16:30:00 UTC
 
-**Verification**: SCOPE_DECLARATION.md created with all 9 files explicitly declared:
+**Verification**: SCOPE_DECLARATION.md created with all 10 files explicitly declared:
 - `.github/scripts/*.sh` (3 validation scripts)
 - `.github/workflows/merge-gate-interface.yml` (unified workflow)
 - `.github/agents/foreman-isms-agent.md` (updated with gate declarations)
 - `governance/templates/*.md` (2 templates)
-- `SCOPE_DECLARATION.md` and `PREHANDOVER_PROOF.md` (evidence artifacts)
+- `docs/MERGE_GATE_INTERFACE_GUIDE.md` (implementation guide)
+- `SCOPE_DECLARATION.md`, `PREHANDOVER_PROOF.md`, `MERGE_GATE_IMPLEMENTATION.md` (3 evidence artifacts)
 
 ---
 

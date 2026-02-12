@@ -13,13 +13,11 @@ The following files are modified, added, or deleted in this PR:
 
 ### Modified Files
 
-- `.github/workflows/merge-gate-interface.yml`
-- `.github/scripts/validate-scope-to-diff.sh`
-- `.github/scripts/validate-yaml.sh`
-- `.github/scripts/check-evidence.sh`
-- `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md`
-- `governance/templates/SCOPE_DECLARATION_TEMPLATE.md`
-- `.github/agents/foreman-isms-agent.md`
+- [List any modified files here]
+
+Example format:
+- `.github/agents/foreman-isms-agent.md` - Updated with gate declarations
+- `package.json` - Added new dependencies
 
 ### Added Files
 
