@@ -2,7 +2,7 @@
 
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)  
 **Purpose**: Declare all files changed in this PR for scope-to-diff validation  
-**PR**: Enhance scope-to-diff validation with exact set comparison  
+**PR**: Normalize base reference and doc/script consistency for scope-to-diff validation (BL-027 follow-up)  
 **Date**: 2026-02-13
 
 ---
@@ -13,14 +13,14 @@ The following files are modified, added, or deleted in this PR:
 
 ### Added Files
 
+- `.github/scripts/validate-scope-to-diff.test.sh` - Test stubs for scope-to-diff validation script
 - `PREHANDOVER_PROOF.md` - Evidence bundle for this PR
 
 ### Modified Files
 
-- `.github/scripts/validate-scope-to-diff.sh` - Enhanced with exact set comparison logic
-- `docs/MERGE_GATE_INTERFACE_GUIDE.md` - Added detailed section on scope-to-diff validation
-- `governance/templates/SCOPE_DECLARATION_TEMPLATE.md` - Enhanced with examples and guidance
-- `SCOPE_DECLARATION.md` - Updated for this PR
+- `SCOPE_DECLARATION.md` - Updated for this PR (normalized base reference to origin/main)
+- `docs/MERGE_GATE_INTERFACE_GUIDE.md` - Updated command snippets to match script regex, added canonical base reference phrasing
+- `governance/templates/SCOPE_DECLARATION_TEMPLATE.md` - Added canonical base reference explanation and format requirements
 
 ### Deleted Files
 
@@ -30,30 +30,36 @@ None
 
 ## Scope Rationale
 
-**Task**: Enhance the scope-to-diff validation script to perform exact set comparison as required by MERGE_GATE_PHILOSOPHY.md (BL-027).
+**Task**: Normalize base reference and documentation/script consistency following PR #86 (BL-027 exact set comparison implementation).
 
 **Why these files**: 
-- `.github/scripts/validate-scope-to-diff.sh`: Core implementation of exact set comparison algorithm with detailed error reporting
-- `docs/MERGE_GATE_INTERFACE_GUIDE.md`: User-facing documentation with examples, troubleshooting, and best practices
-- `governance/templates/SCOPE_DECLARATION_TEMPLATE.md`: Template improvements to guide users in creating accurate scope declarations
-- `SCOPE_DECLARATION.md`: Required evidence artifact for this PR
+- `.github/scripts/validate-scope-to-diff.test.sh`: New test stubs to verify validation script behavior (empty file, missing/extra files, malformed bullets)
+- `SCOPE_DECLARATION.md`: Updated to use `origin/main...HEAD` consistently (was using `main...HEAD`)
+- `docs/MERGE_GATE_INTERFACE_GUIDE.md`: 
+  - Added canonical base reference explanation (`origin/main` with fallback to `main`)
+  - Updated command snippet to match script's actual parser regex (added `\s+-\s+` requirement)
+  - Added format enforcement details
+- `governance/templates/SCOPE_DECLARATION_TEMPLATE.md`: 
+  - Added canonical base reference explanation
+  - Clarified format requirements (backticks + description with dash separator)
 
 **Out of Scope**: 
-- No changes to workflow files (merge-gate-interface.yml already implements evidence-based validation pattern)
-- No changes to agent contract files (foreman-isms-agent.md already declares scope-to-diff gate in Category 4.5)
-- No changes to other validation scripts (yaml, evidence scripts work independently)
+- No changes to validation logic in `.github/scripts/validate-scope-to-diff.sh` (logic is correct as-is)
+- No changes to workflow files (not needed for documentation cleanup)
+- No changes to agent contracts (not needed for documentation cleanup)
+- No changes to application code or libraries
 
 ---
 
 ## Validation
 
-This scope declaration MUST match `git diff --name-only main...HEAD` exactly per BL-027.
+This scope declaration MUST match `git diff --name-only origin/main...HEAD` exactly per BL-027.
 
 **Validation Method**: Exact set comparison (no missing files, no extra files)
 
 **Step 1: Check Changed Files**
 ```bash
-git diff --name-only main...HEAD | sort
+git diff --name-only origin/main...HEAD | sort
 ```
 
 **Output**:
