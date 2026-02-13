@@ -13,7 +13,7 @@ The following files are modified, added, or deleted in this PR:
 
 ### Added Files
 
-None
+- `PREHANDOVER_PROOF.md` - Evidence bundle for this PR
 
 ### Modified Files
 
@@ -59,6 +59,7 @@ git diff --name-only main...HEAD | sort
 **Output**:
 ```
 .github/scripts/validate-scope-to-diff.sh
+PREHANDOVER_PROOF.md
 SCOPE_DECLARATION.md
 docs/MERGE_GATE_INTERFACE_GUIDE.md
 governance/templates/SCOPE_DECLARATION_TEMPLATE.md
@@ -72,8 +73,8 @@ governance/templates/SCOPE_DECLARATION_TEMPLATE.md
 **Expected Result**: 
 ```
 ✅ Exact set comparison PASSED
-  Changed files (git diff):     4
-  Declared files (SCOPE_DECLARATION): 4
+  Changed files (git diff):     5
+  Declared files (SCOPE_DECLARATION): 5
   Missing files:                0
   Extra files:                  0
 ```
