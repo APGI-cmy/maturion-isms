@@ -33,7 +33,7 @@ This tracker aligns with:
 
 | **Phase** | **Planned %** | **Actual %** | **Status** | **Deviations** |
 |-----------|---------------|--------------|------------|----------------|
-| 00. App Description | 100% | 20% | 🟡 IN PROGRESS | Added governance metadata, NFRs, data model |
+| 00. App Description | 100% | 25% | 🟡 IN PROGRESS | Added governance metadata, NFRs, data model, technical stack (Gap #8) |
 | 01. FRS | 0% | 0% | ⚪ NOT STARTED | — |
 | 02. Architecture | 0% | 0% | ⚪ NOT STARTED | — |
 | 03. Implementation Plan | 0% | 0% | ⚪ NOT STARTED | — |
@@ -42,7 +42,7 @@ This tracker aligns with:
 | 06. Evidence & QA | 0% | 0% | ⚪ NOT STARTED | — |
 | 07. Handover | 0% | 0% | ⚪ NOT STARTED | — |
 
-**Overall Completion**: **3% (1/8 phases in progress)**
+**Overall Completion**: **4% (1/8 phases in progress, 25% of Phase 00 complete)**
 
 **Status Legend**:
 - 🟢 **COMPLETE**: Phase finished, QA passed, evidence captured
@@ -86,6 +86,16 @@ This tracker aligns with:
   - [x] Add watchdog monitoring details
   - Actual: Added ~350 lines of governance-mandated content
 
+- [x] **00.2.1 Critical Gap #8 - Technical Stack & Deployment** (Completed: 2026-02-13)
+  - [x] Add Section 16: Technical Stack & Deployment Specifications (247 lines)
+  - [x] Include Anti-PIT-Failure Rule (tool validation protocol)
+  - [x] Specify mandatory technologies (Vercel, Next.js, PostgreSQL, FFmpeg)
+  - [x] List prohibited technologies (MongoDB, Firebase, CRA, Material UI)
+  - [x] Define responsive design requirements (Desktop/Laptop/Mobile)
+  - [x] Create architecture constraints summary table
+  - [x] Update version from v0.2 to v1.1
+  - Actual: Added 247 lines based on PIT build failure lessons
+
 - [ ] **00.3 Peer Review** (Planned: 2026-02-14)
   - [ ] Review by domain expert (audit/compliance background)
   - [ ] Review by technical architect
@@ -98,9 +108,9 @@ This tracker aligns with:
   - [ ] Update approval date
   - [ ] Create SHA-256 hash for version control
 
-### Actual % Complete: 20%
+### Actual % Complete: 25%
 
-**Rationale**: Initial draft complete (10%), governance enhancements complete (10%), peer review and finalization pending (70%)
+**Rationale**: Initial draft complete (10%), governance enhancements complete (10%), technical stack specification complete (5%), peer review and finalization pending (75%)
 
 ### Deviations from Plan
 
@@ -121,6 +131,12 @@ This tracker aligns with:
 - **Root Cause**: Assumed data model would be inferred from workflows
 - **Resolution**: Added explicit entity-relationship model with cardinality and constraints
 - **Learning**: Data model is foundational; must be frozen before FRS/Architecture
+
+**Deviation 04**: Technical stack and deployment specifications missing (Gap #8)
+- **Impact**: CRITICAL - Risk of PIT-scenario repeat (wrong tooling selected, weeks of lost work)
+- **Root Cause**: CS2 identified gap during review; lesson learned from PIT build failure where unsuitable tools were selected
+- **Resolution**: Added Section 16 with mandatory technologies (Vercel, Next.js, PostgreSQL, FFmpeg), prohibited technologies list, and Anti-PIT-Failure Rule requiring upfront tool validation
+- **Learning**: Technical stack must be specified in App Description to prevent architecture-phase tool selection failures; tool validation evidence must be mandatory before technology selection
 
 ### Lessons Learned
 

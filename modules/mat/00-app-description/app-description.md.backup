@@ -646,6 +646,169 @@ Metrics:
 
 ---
 
+## 17. QA and Acceptance Criteria
+
+### 17.1 Functional Acceptance Criteria
+
+**AC-F01: Criteria Compilation**
+- **Given**: User uploads arbitrary criteria document (Word/PDF/Excel)
+- **When**: Compilation is triggered
+- **Then**: 
+  - System extracts Domain → MPS → Criteria hierarchy
+  - Zero content loss (all source blocks mapped or flagged)
+  - Numbering follows N, N.N, N.N.N pattern
+  - Human review required if AI confidence < 0.85
+  - **Measurable**: 95% of source content automatically mapped correctly (validated by human review)
+
+**AC-F02: Evidence Collection**
+- **Given**: Auditor is reviewing a criterion
+- **When**: Evidence is captured (photo, voice, file)
+- **Then**:
+  - Evidence is associated with correct criterion
+  - Metadata captured: timestamp, user, location (if available)
+  - Offline evidence queued for sync
+  - **Measurable**: 100% of evidence items retrievable with correct associations
+
+**AC-F03: AI Scoring**
+- **Given**: Criterion has sufficient evidence
+- **When**: AI scoring is requested
+- **Then**:
+  - Maturity level proposed (Basic-Resilient)
+  - Confidence score provided (0.0-1.0)
+  - Rationale cites specific evidence items
+  - Gaps identified for next maturity level
+  - **Measurable**: AI refuses to score when evidence is insufficient (< 2 evidence items)
+
+**AC-F04: Human Confirmation**
+- **Given**: AI has scored a criterion
+- **When**: Human reviews the score
+- **Then**:
+  - Human can confirm or override
+  - Override requires justification (mandatory text field)
+  - Both AI and human decisions are stored
+  - **Measurable**: 100% of confirmed criteria have either confirmation or justified override
+
+**AC-F05: Dashboard Accuracy**
+- **Given**: Audit is in progress
+- **When**: Dashboard is viewed
+- **Then**:
+  - Metrics are real-time accurate (max 5 second lag)
+  - Completion % calculated correctly
+  - Status counts match actual criterion states
+  - **Measurable**: Zero discrepancies in spot-check validation
+
+**AC-F06: Offline Sync**
+- **Given**: Mobile app has offline-captured evidence
+- **When**: Connectivity is restored
+- **Then**:
+  - All offline items sync successfully
+  - Timestamps preserved from capture time
+  - No duplicates created
+  - **Measurable**: 100% sync success rate with zero duplicates
+
+**AC-F07: Report Generation**
+- **Given**: Audit is complete and confirmed
+- **When**: Report is generated
+- **Then**:
+  - Executive summary included
+  - All domains/MPS/criteria included
+  - Maturity definitions per criterion included
+  - Evidence embedded and referenced
+  - Recommendations categorized (short/medium/long-term)
+  - **Measurable**: Generated report passes schema validation 100%
+
+### 17.2 Non-Functional Acceptance Criteria
+
+**AC-NF01: Performance**
+- **Criterion modal load**: < 500ms (95th percentile)
+- **AI scoring generation**: < 30 seconds per criterion (100%)
+- **Report generation**: < 2 minutes for 500-page report (95th percentile)
+- **Dashboard refresh**: < 3 seconds (95th percentile)
+
+**AC-NF02: Security**
+- **Authentication**: MFA enforced for Lead Auditors (100%)
+- **Authorization**: RLS prevents unauthorized access (zero violations in penetration testing)
+- **Encryption**: All evidence files encrypted at rest (100%)
+- **Audit trail**: All actions logged with user/timestamp (100% coverage)
+
+**AC-NF03: Reliability**
+- **Uptime**: 99.9% measured monthly
+- **Offline capability**: App functions for 72+ hours offline
+- **Sync recovery**: 100% of offline data recovered on reconnect
+
+**AC-NF04: Usability**
+- **Mobile responsiveness**: All features functional on 320px-3840px width
+- **Accessibility**: WCAG 2.1 Level AA compliance (automated + manual testing)
+- **Touch targets**: Minimum 44x44px for all interactive elements
+
+### 17.3 AI Governance Acceptance Criteria
+
+**AC-AI01: No Hallucination**
+- **Measurable**: Zero invented criteria in 100 test compilations
+- **Test**: Compare AI output to source documents with human validation
+- **Pass threshold**: 100% (zero tolerance for hallucinations)
+
+**AC-AI02: Evidence-First Scoring**
+- **Measurable**: AI refuses to score if evidence < minimum threshold
+- **Test**: Submit criteria with 0, 1, 2, 3+ evidence items
+- **Pass threshold**: AI refuses for < 2 evidence items (100%)
+
+**AC-AI03: Schema Validation**
+- **Measurable**: All AI outputs pass schema validation
+- **Test**: Automated JSON schema validation on all AI responses
+- **Pass threshold**: 100% schema compliance
+
+**AC-AI04: Confidence Calibration**
+- **Measurable**: AI confidence correlates with human agreement
+- **Test**: Compare AI confidence scores to human override rates
+- **Pass threshold**: High confidence (>0.85) → <10% override rate
+
+---
+
+## 18. Watchdog and Continuous Improvement
+
+### 18.1 Watchdog Monitoring
+
+**Real-Time Metrics:**
+- AI refusal rate (% of criteria AI refuses to score)
+- AI override rate (% of AI scores overridden by humans)
+- Missing evidence trends (criteria with < 2 evidence items)
+- Sync failures (offline evidence that fails to sync)
+- Suspicious access patterns (unauthorized access attempts)
+- Performance and latency (response times, throughput)
+
+**Alert Thresholds:**
+- AI refusal rate > 15%: Investigate criteria complexity or evidence quality
+- AI override rate > 25%: Review AI model calibration
+- Sync failure rate > 5%: Check infrastructure and connectivity
+- Unauthorized access attempts > 0: Security incident investigation
+- Response time > 95th percentile: Performance optimization required
+
+### 18.2 Feedback Loop
+
+**Override Analysis:**
+- Override reasons captured in structured format
+- Categorized by: evidence quality, AI misinterpretation, domain-specific nuance, other
+- Quarterly review of override patterns
+- Feed anonymized override data to controlled model improvement pipeline
+
+**Continuous Learning:**
+- Successful AI scores (low override rate) reinforce model confidence
+- Systematic failures (high override rate for specific criterion types) trigger model review
+- Human override justifications used for model fine-tuning (with governance approval)
+- Privacy safeguards: client data anonymized before model training
+
+**Improvement Cycle:**
+1. **Detect**: Watchdog identifies patterns (e.g., high override rate for specific domain)
+2. **Analyze**: Human review of override reasons and evidence quality
+3. **Propose**: Improvement proposal (model tuning, criteria template update, training)
+4. **Approve**: Governance review and approval
+5. **Implement**: Controlled rollout with A/B testing
+6. **Validate**: Measure impact on override rate and user satisfaction
+7. **Document**: Update learning memory and governance artifacts
+
+---
+
 ## 16. Technical Stack & Deployment Specifications
 
 ### 16.1 Deployment Platform (MANDATORY)
@@ -893,166 +1056,6 @@ Before MAT goes to production, Builder MUST validate:
 - [ ] ✅ Export: PDF + Excel reports generated with embedded evidence + hyperlinks
 
 ---
-## 17. QA and Acceptance Criteria
-
-### 17.1 Functional Acceptance Criteria
-
-**AC-F01: Criteria Compilation**
-- **Given**: User uploads arbitrary criteria document (Word/PDF/Excel)
-- **When**: Compilation is triggered
-- **Then**: 
-  - System extracts Domain → MPS → Criteria hierarchy
-  - Zero content loss (all source blocks mapped or flagged)
-  - Numbering follows N, N.N, N.N.N pattern
-  - Human review required if AI confidence < 0.85
-  - **Measurable**: 95% of source content automatically mapped correctly (validated by human review)
-
-**AC-F02: Evidence Collection**
-- **Given**: Auditor is reviewing a criterion
-- **When**: Evidence is captured (photo, voice, file)
-- **Then**:
-  - Evidence is associated with correct criterion
-  - Metadata captured: timestamp, user, location (if available)
-  - Offline evidence queued for sync
-  - **Measurable**: 100% of evidence items retrievable with correct associations
-
-**AC-F03: AI Scoring**
-- **Given**: Criterion has sufficient evidence
-- **When**: AI scoring is requested
-- **Then**:
-  - Maturity level proposed (Basic-Resilient)
-  - Confidence score provided (0.0-1.0)
-  - Rationale cites specific evidence items
-  - Gaps identified for next maturity level
-  - **Measurable**: AI refuses to score when evidence is insufficient (< 2 evidence items)
-
-**AC-F04: Human Confirmation**
-- **Given**: AI has scored a criterion
-- **When**: Human reviews the score
-- **Then**:
-  - Human can confirm or override
-  - Override requires justification (mandatory text field)
-  - Both AI and human decisions are stored
-  - **Measurable**: 100% of confirmed criteria have either confirmation or justified override
-
-**AC-F05: Dashboard Accuracy**
-- **Given**: Audit is in progress
-- **When**: Dashboard is viewed
-- **Then**:
-  - Metrics are real-time accurate (max 5 second lag)
-  - Completion % calculated correctly
-  - Status counts match actual criterion states
-  - **Measurable**: Zero discrepancies in spot-check validation
-
-**AC-F06: Offline Sync**
-- **Given**: Mobile app has offline-captured evidence
-- **When**: Connectivity is restored
-- **Then**:
-  - All offline items sync successfully
-  - Timestamps preserved from capture time
-  - No duplicates created
-  - **Measurable**: 100% sync success rate with zero duplicates
-
-**AC-F07: Report Generation**
-- **Given**: Audit is complete and confirmed
-- **When**: Report is generated
-- **Then**:
-  - Executive summary included
-  - All domains/MPS/criteria included
-  - Maturity definitions per criterion included
-  - Evidence embedded and referenced
-  - Recommendations categorized (short/medium/long-term)
-  - **Measurable**: Generated report passes schema validation 100%
-
-### 17.2 Non-Functional Acceptance Criteria
-
-**AC-NF01: Performance**
-- **Criterion modal load**: < 500ms (95th percentile)
-- **AI scoring generation**: < 30 seconds per criterion (100%)
-- **Report generation**: < 2 minutes for 500-page report (95th percentile)
-- **Dashboard refresh**: < 3 seconds (95th percentile)
-
-**AC-NF02: Security**
-- **Authentication**: MFA enforced for Lead Auditors (100%)
-- **Authorization**: RLS prevents unauthorized access (zero violations in penetration testing)
-- **Encryption**: All evidence files encrypted at rest (100%)
-- **Audit trail**: All actions logged with user/timestamp (100% coverage)
-
-**AC-NF03: Reliability**
-- **Uptime**: 99.9% measured monthly
-- **Offline capability**: App functions for 72+ hours offline
-- **Sync recovery**: 100% of offline data recovered on reconnect
-
-**AC-NF04: Usability**
-- **Mobile responsiveness**: All features functional on 320px-3840px width
-- **Accessibility**: WCAG 2.1 Level AA compliance (automated + manual testing)
-- **Touch targets**: Minimum 44x44px for all interactive elements
-
-### 17.3 AI Governance Acceptance Criteria
-
-**AC-AI01: No Hallucination**
-- **Measurable**: Zero invented criteria in 100 test compilations
-- **Test**: Compare AI output to source documents with human validation
-- **Pass threshold**: 100% (zero tolerance for hallucinations)
-
-**AC-AI02: Evidence-First Scoring**
-- **Measurable**: AI refuses to score if evidence < minimum threshold
-- **Test**: Submit criteria with 0, 1, 2, 3+ evidence items
-- **Pass threshold**: AI refuses for < 2 evidence items (100%)
-
-**AC-AI03: Schema Validation**
-- **Measurable**: All AI outputs pass schema validation
-- **Test**: Automated JSON schema validation on all AI responses
-- **Pass threshold**: 100% schema compliance
-
-**AC-AI04: Confidence Calibration**
-- **Measurable**: AI confidence correlates with human agreement
-- **Test**: Compare AI confidence scores to human override rates
-- **Pass threshold**: High confidence (>0.85) → <10% override rate
-
----
-
-## 18. Watchdog and Continuous Improvement
-
-### 18.1 Watchdog Monitoring
-
-**Real-Time Metrics:**
-- AI refusal rate (% of criteria AI refuses to score)
-- AI override rate (% of AI scores overridden by humans)
-- Missing evidence trends (criteria with < 2 evidence items)
-- Sync failures (offline evidence that fails to sync)
-- Suspicious access patterns (unauthorized access attempts)
-- Performance and latency (response times, throughput)
-
-**Alert Thresholds:**
-- AI refusal rate > 15%: Investigate criteria complexity or evidence quality
-- AI override rate > 25%: Review AI model calibration
-- Sync failure rate > 5%: Check infrastructure and connectivity
-- Unauthorized access attempts > 0: Security incident investigation
-- Response time > 95th percentile: Performance optimization required
-
-### 18.2 Feedback Loop
-
-**Override Analysis:**
-- Override reasons captured in structured format
-- Categorized by: evidence quality, AI misinterpretation, domain-specific nuance, other
-- Quarterly review of override patterns
-- Feed anonymized override data to controlled model improvement pipeline
-
-**Continuous Learning:**
-- Successful AI scores (low override rate) reinforce model confidence
-- Systematic failures (high override rate for specific criterion types) trigger model review
-- Human override justifications used for model fine-tuning (with governance approval)
-- Privacy safeguards: client data anonymized before model training
-
-**Improvement Cycle:**
-1. **Detect**: Watchdog identifies patterns (e.g., high override rate for specific domain)
-2. **Analyze**: Human review of override reasons and evidence quality
-3. **Propose**: Improvement proposal (model tuning, criteria template update, training)
-4. **Approve**: Governance review and approval
-5. **Implement**: Controlled rollout with A/B testing
-6. **Validate**: Measure impact on override rate and user satisfaction
-7. **Document**: Update learning memory and governance artifacts
 
 ## 19. Foreman Deliverable Expectation
 
