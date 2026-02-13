@@ -138,6 +138,8 @@ Only after:
 
 The scope-to-diff validation script performs **exact set comparison** between files changed in git diff and files declared in SCOPE_DECLARATION.md. The validation succeeds ONLY when both sets match exactly.
 
+**Base Branch Reference**: The script uses `origin/main` as the base branch for comparison (with automatic fallback to `main` if `origin/main` doesn't exist locally). Always use `origin/main...HEAD` in documentation and commands.
+
 ### Validation Logic
 
 **Step 1: Extract Changed Files**
@@ -147,8 +149,13 @@ git diff --name-only origin/main...HEAD | sort
 
 **Step 2: Extract Declared Files**
 ```bash
-grep -E '^\s*-\s+`[^`]+`' SCOPE_DECLARATION.md | sed 's/.*`\([^`]*\)`.*/\1/' | sort
+grep -E '^\s*-\s+`[^`]+`\s+-\s+' SCOPE_DECLARATION.md | sed 's/.*`\([^`]*\)`.*/\1/' | sort
 ```
+
+**Note**: The regex `^\s*-\s+\`[^\`]+\`\s+-\s+` ensures the canonical format is used:
+- Line starts with optional whitespace and dash
+- File path enclosed in backticks
+- Followed by space, dash, space, and description
 
 **Step 3: Set Comparison**
 - **Missing files**: Files in git diff but NOT in SCOPE_DECLARATION.md
@@ -256,6 +263,13 @@ Remediation:
    ```markdown
    - `path/to/file.ext` - Brief description
    ```
+   
+   **Important**: The validation script requires:
+   - File path enclosed in backticks
+   - Space, dash, space after the closing backtick
+   - Then the description
+   
+   Format: `- \`path\` - Description` (the `\s+-\s+` pattern is enforced)
 
 3. **Copy paths from git diff** to avoid typos:
    ```bash

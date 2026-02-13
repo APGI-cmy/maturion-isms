@@ -60,6 +60,8 @@ Or simply: **None**
 
 This scope declaration MUST match `git diff --name-only origin/main...HEAD` exactly per BL-027.
 
+**Base Reference**: Always use `origin/main` as the base branch. The validation script automatically falls back to `main` if `origin/main` doesn't exist in your local repository.
+
 **Validation Method**: Exact set comparison (no missing files, no extra files)
 
 **Step 1: Check Changed Files**
@@ -94,10 +96,12 @@ git diff --name-only origin/main...HEAD | sort
    git diff --name-only origin/main...HEAD
    ```
 
-2. **Use backticks** around file paths (canonical format):
+2. **Use backticks** around file paths (canonical format with description):
    ```markdown
    - `path/to/file.ext` - Description
    ```
+   
+   **Note**: The validation script requires backticks around paths AND a dash before the description.
 
 3. **Include ALL changed files** (no exceptions):
    - Source code files

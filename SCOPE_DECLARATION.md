@@ -47,13 +47,13 @@ None
 
 ## Validation
 
-This scope declaration MUST match `git diff --name-only main...HEAD` exactly per BL-027.
+This scope declaration MUST match `git diff --name-only origin/main...HEAD` exactly per BL-027.
 
 **Validation Method**: Exact set comparison (no missing files, no extra files)
 
 **Step 1: Check Changed Files**
 ```bash
-git diff --name-only main...HEAD | sort
+git diff --name-only origin/main...HEAD | sort
 ```
 
 **Output**:
