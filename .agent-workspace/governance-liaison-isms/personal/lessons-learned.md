@@ -76,3 +76,24 @@
 **Version**: 1.0.0  
 **Last Updated**: 2026-02-12  
 **Authority**: LIVING_AGENT_SYSTEM.md v6.2.0
+
+## Session 003 - 20260213: Documentation Normalization
+
+### Lesson: Authority Boundaries for Documentation
+- **Context**: Script comments are documentation, not code logic
+- **Pattern**: Initially uncertain about authority for script comment changes
+- **Action**: Recognized comments as documentation; proceeded with normalization within governance scope
+
+### Lesson: Parser Regex Consistency
+- **Context**: Documentation code examples must match implementation
+- **Pattern**: Script comment showed simpler regex than actual parser
+- **Action**: Systematic verification of all three locations (comment, code, docs)
+
+### Lesson: Systematic Reference Search
+- **Context**: Multiple files referenced base branch (origin/main vs main)
+- **Pattern**: Use `grep -r "pattern" --include="*.md" .` to find all instances
+- **Action**: Systematic search prevents missing instances during normalization
+
+---
+
+**Last Updated**: 2026-02-13 (Session 003)

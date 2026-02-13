@@ -89,3 +89,21 @@
 **Version**: 1.0.0  
 **Last Updated**: 2026-02-12  
 **Authority**: LIVING_AGENT_SYSTEM.md v6.2.0
+
+## Pattern: Documentation Consistency Enforcement
+- **Observed**: 2026-02-13 (Session 003)
+- **Context**: Script comments, docs, and templates reference the same behavior
+- **Pattern**: Inconsistent phrasing or examples cause agent/developer confusion
+- **Response**: Systematic search, define canonical phrasing, update all locations, verify with grep
+- **Source**: BL-027 follow-up issue, documentation normalization
+
+## Pattern: Parser Regex Documentation Linkage
+- **Observed**: 2026-02-13 (Session 003)
+- **Context**: Script has parser regex in code and example in comment
+- **Pattern**: Comment example diverges from actual implementation over time
+- **Response**: Add explicit line reference in comment; extract exact regex; update comment and docs to match
+- **Source**: Session 003 parser regex sync
+
+---
+
+**Last Updated**: 2026-02-13 (Session 003)
