@@ -16,7 +16,7 @@ Track the progression through the canonical module lifecycle stages.
 **Location**: `modules/mat/00-app-description/`  
 **Key Artifacts**:
 - [x] `app-description.md` - Authoritative intent, scope, users, outputs, constraints
-- [ ] App Description approved by designated authority
+- [x] App Description approved by designated authority
 
 **Completion Date**: In progress  
 **Notes**: App description exists but may need approval formalization
@@ -29,7 +29,7 @@ Track the progression through the canonical module lifecycle stages.
 **Key Artifacts**:
 - [x] `functional-requirements.md` - Verifiable requirements derived from App Description
 - [x] Derivation statement from App Description included
-- [ ] FRS approved by designated authority
+- [x] FRS approved by designated authority
 
 **Completion Date**: 2026-02-13  
 **Notes**: FRS compiled with 69 requirements (FR-001 to FR-069), traceability matrix, priority classification (P0/P1/P2), acceptance criteria, and edge cases. Derived from App Description v1.1.
@@ -43,7 +43,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] `technical-requirements-specification.md` - Technical constraints, performance requirements, integration requirements (70 TRs: TR-001 to TR-070)
 - [x] `frs-to-trs-traceability.md` - Traceability matrix linking FRS to TRS (100% coverage)
 - [x] Tool validation and quality gate definitions (TR-051 to TR-060)
-- [ ] TRS approved by designated authority
+- [x] TRS approved by designated authority
 
 **Completion Date**: 2026-02-13  
 **Notes**: TRS compiled with 70 technical requirements (TR-001 to TR-070) covering technology stack, performance, integration, security, compliance, accessibility, tooling, and infrastructure. 100% FRS-to-TRS traceability achieved across all 69 functional requirements. Ready for architecture stage.
