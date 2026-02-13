@@ -6,7 +6,7 @@
 **Owner**: Foreman (FM)  
 **Created**: 2026-02-13  
 **Last Updated**: 2026-02-13  
-**Authority**: Derived from Implementation Plan (`modules/mat/03-implementation-plan/implementation-plan.md`), [BUILDER_CONTRACT_SCHEMA.md](https://github.com/APGI-cmy/maturion-foreman-office-app/blob/main/.github/agents/BUILDER_CONTRACT_SCHEMA.md)
+**Authority**: Derived from Implementation Plan (`modules/mat/03-implementation-plan/implementation-plan.md`), Architecture (`modules/mat/02-architecture/`), [BUILDER_CONTRACT_SCHEMA.md](https://github.com/APGI-cmy/maturion-foreman-office-app/blob/main/.github/agents/BUILDER_CONTRACT_SCHEMA.md)
 
 ---
 
