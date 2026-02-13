@@ -1,0 +1,50 @@
+name: Governance Ripple Sync
+
+on:
+  # Push-based listener (MANDATORY)
+  repository_dispatch:
+    types: [governance_ripple]
+  
+  # Scheduled fallback (MANDATORY)
+  schedule:
+    - cron: '0 * * * *'  # Every hour
+  
+  # Manual trigger (for testing)
+  workflow_dispatch:
+
+jobs:
+  sync-governance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for diff detection
+      
+      - name: Fetch governance repo
+        run: |
+          git clone https://github.com/APGI-cmy/maturion-foreman-governance.git /tmp/governance
+      
+      - name: Run governance gap analyzer
+        run: |
+          bash /tmp/governance/.github/scripts/governance-gap-analyzer.sh
+      
+      - name: Detect drift
+        id: drift
+        run: |
+          # Compare local governance/ with canonical governance/
+          # Exit code 0 = no drift, Exit code 1 = drift detected
+      
+      - name: Create alignment PR
+        if: steps.drift.outputs.drift_detected == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          title: "[Governance Ripple] Align with canonical governance"
+          body: |
+            Automated governance alignment PR triggered by ripple event.
+            
+            **Dispatch ID**: ${{ github.event.client_payload.dispatch_id }}
+            **Canonical Commit**: ${{ github.event.client_payload.canonical_commit }}
+            **Changed Paths**: ${{ github.event.client_payload.changed_paths }}
+          branch: governance-ripple-sync-${{ github.run_id }}
+          labels: governance, automated
