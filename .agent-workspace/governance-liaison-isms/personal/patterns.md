@@ -103,3 +103,65 @@
 - **Pattern**: Contract-required operational scripts can drift from consumer repository state
 - **Response**: Record blocker in escalation inbox and continue with manual evidence capture where possible
 - **Source**: governance-liaison-isms contract REQ-AS-005 / REQ-EO-005
+
+## Pattern: Module Lifecycle Gap-Filling (TRS Stage Insertion)
+- **Observed**: 2026-02-13 (Session 005)
+- **Context**: When module lifecycle has gap between FRS (functional) and Architecture (structural)
+- **Pattern**: Missing intermediate stage (technical requirements) causes downstream implementation failures
+- **Response**: Insert TRS stage (01.5-trs/) to capture technical constraints, performance requirements, integration specs
+- **Source**: Issue "Governance Upgrade: Insert TRS Step"; prevents implementation/integration failures
+
+## Pattern: Bash Heredoc for Template Generation
+- **Observed**: 2026-02-13 (Session 005)
+- **Context**: When creating identical structure files across multiple modules (8 BUILD_PROGRESS_TRACKER.md)
+- **Pattern**: Manual creation error-prone and time-consuming
+- **Response**: Use bash loop with heredoc and variable substitution to generate consistent files efficiently
+- **Source**: DRY principle; pragmatic automation
+
+## Pattern: HYBRID Ripple Activation (Manual → Automated)
+- **Observed**: 2026-02-13 (Session 005)
+- **Context**: When automated ripple infrastructure (ripple-listener workflow) doesn't exist yet
+- **Pattern**: Blocking governance upgrade on infrastructure creates delays
+- **Response**: HYBRID approach - manual ripple for this cycle, implement automated ripple for future governance changes
+- **Source**: CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md; pragmatic delivery vs long-term infrastructure
+
+## Pattern: Ripple Activation Plan Documents
+- **Observed**: 2026-02-13 (Session 005)
+- **Context**: When coordinating governance changes across multiple repositories
+- **Pattern**: Without comprehensive plan, ripple coordination is chaotic and error-prone
+- **Response**: Create detailed ripple plan document (e.g., RIPPLE_ACTIVATION_PLAN_TRS_UPGRADE.md) including: scope, impact, approaches, escalations, evidence
+- **Source**: GOVERNANCE_RIPPLE_MODEL.md, CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md
+
+## Pattern: BUILD_PROGRESS_TRACKER for Lifecycle Visibility
+- **Observed**: 2026-02-13 (Session 005)
+- **Context**: When modules progress through multi-stage lifecycle without visible status tracking
+- **Pattern**: Module status opaque without explicit tracker; agents and humans don't know what's done/pending
+- **Response**: Create BUILD_PROGRESS_TRACKER.md per module with stage status, artifacts checklist, completion dates, blockers
+- **Source**: MODULE_LIFECYCLE_AND_REPO_STRUCTURE_STRATEGY.md determinism principle
+
+## Pattern: Unicode Characters → Use sed Instead of edit
+- **Observed**: 2026-02-13 (Session 005)
+- **Context**: When updating text with special characters (arrows: →) in markdown files
+- **Pattern**: edit tool old_str matching fails with Unicode characters; sed handles them reliably
+- **Response**: For updates involving special characters, use sed with pattern substitution; verify with cat -A before editing
+- **Source**: Tool limitations discovered in practice
+
+## Pattern: Documentation-Only Governance Changes Have Ripple Impact
+- **Observed**: 2026-02-13 (Session 005)
+- **Context**: When updating strategy/policy files without code changes
+- **Pattern**: Governance updates affect multiple repos even without code (cross-repo alignment required)
+- **Response**: Treat documentation governance updates with same rigor as code (code review, ripple planning, evidence)
+- **Source**: GOVERNANCE_RIPPLE_MODEL.md - downward ripple requirement
+
+## Pattern: Code Review for Derivation Chain Clarity
+- **Observed**: 2026-02-13 (Session 005)
+- **Context**: When documenting multi-step derivation (App Description → FRS → TRS → Architecture)
+- **Pattern**: Slash notation (App Description/FRS) can imply "either/or" when intent is sequential
+- **Response**: Make derivation chain explicit and sequential; avoid ambiguous notation in governance docs
+- **Source**: Code review feedback; governance clarity principle
+
+---
+
+**Last Updated**: 2026-02-13  
+**Total Patterns**: 16  
+**Agent**: governance-liaison-isms

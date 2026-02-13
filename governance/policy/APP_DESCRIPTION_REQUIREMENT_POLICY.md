@@ -25,6 +25,8 @@ App Description (Authoritative)
     ↓
 Functional Requirement Specification (Derived)
     ↓
+Technical Requirements Specification (TRS)
+    ↓
 Architecture Compilation
     ↓
 Build Authorization
@@ -75,9 +77,10 @@ This policy derives authority from:
 
 **Ordering Rule**: App Description creation precedes:
 1. **Functional Requirement Specifications (FRS)**
-2. **Architecture Compilation**
-3. **Build Authorization**
-4. **Implementation**
+2. **Technical Requirements Specification (TRS)**
+3. **Architecture Compilation**
+4. **Build Authorization**
+5. **Implementation**
 
 **Blocking Rule**: No downstream artifact may be created without an approved, authoritative App Description.
 
