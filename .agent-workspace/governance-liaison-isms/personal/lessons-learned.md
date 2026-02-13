@@ -76,3 +76,15 @@
 **Version**: 1.0.0  
 **Last Updated**: 2026-02-12  
 **Authority**: LIVING_AGENT_SYSTEM.md v6.2.0
+
+## Session 20260213 - Canonical Module Standardization
+
+### Lesson: Use copy-first migration for governance artifacts
+- **Context**: Standardizing legacy module trees to canonical stage lifecycle folders
+- **Pattern**: Copying into canonical tree while retaining legacy source avoids destructive risk and preserves audit trail
+- **Action**: Keep legacy pointers + `90-legacy-assets` snapshots until owner review authorizes any cleanup
+
+### Lesson: Contract script dependencies must be repository-verified
+- **Context**: Wake-up/session-closure protocol references scripts under `.github/scripts/`
+- **Pattern**: Contract may require scripts that are absent in consumer repo
+- **Action**: Verify script existence at session start; escalate immediately if missing
