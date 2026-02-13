@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "echo 'Dev script to be configured'",
     "build": "echo 'Build script to be configured'",
-    "test": "echo 'Test script to be configured'"
+    "test": "vitest run",
+    "test:mat:red": "vitest run --config vitest.config.ts"
   },
   "keywords": [
     "monorepo",
@@ -19,5 +20,8 @@
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.1"
   }
 }

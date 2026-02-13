@@ -59,3 +59,26 @@
 - Context: Lessons from office-app (PRs #730, #737) apply to maturion-isms
 - Pattern: Session memory includes "Cross-Repo Learning Captured" section documenting what was adopted
 - Action: When implementing gold standards from other repositories, document provenance and adaptations
+
+## Session 20260213 (RED Suite Execution)
+
+### Lesson: QA-to-Red Requires Executable Artifacts, Not Just Planning Documents
+- Context: TEST_REGISTRY.json and strategy were merged without corresponding test code
+- Pattern: "Compiled" must mean "runnable test code exists" — not just "documented in JSON"
+- Action: Every test registry merge must include corresponding .test.ts files that run and fail RED
+- RCA: modules/mat/05-build-evidence/RCA_QA_PROCESS_LAPSE.md
+
+### Lesson: Registry + Test Code = Single Atomic Deliverable
+- Context: Splitting registry compilation and test scaffolding into separate PRs creates a process gap
+- Pattern: Two-phase QA delivery (plan + execute) should be one PR, not two
+- Action: Future QA-to-Red tasks must include both registry AND test code in the same deliverable
+
+### Lesson: Merge Gates Must Validate Executable Presence
+- Context: Registry PR merged without gate checking for test file existence
+- Pattern: Gate should verify: for every entry in TEST_REGISTRY.json, a .test.ts file exists with matching serial ID
+- Action: Enhance merge gate to check test code presence alongside registry metadata
+
+### Lesson: Programmatic Test Scaffolding from Registry Is Reliable
+- Context: 98 tests scaffolded from TEST_REGISTRY.json using Node.js generator script
+- Pattern: Registry JSON → parse → generate .test.ts files ensures 1:1 traceability
+- Action: Use registry-driven generation for future modules to prevent manual errors
