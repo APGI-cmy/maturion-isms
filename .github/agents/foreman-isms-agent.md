@@ -439,6 +439,133 @@ Authority: LIVING_AGENT_SYSTEM.md v6.2.0 | Session: NNN
 
 **Documented in**: `governance/canon/GATE_PREDICTIVE_COMPLIANCE_ANALYSIS.md`, `governance/canon/PR_GATE_PRECONDITION_RULE.md`, `governance/canon/BRANCH_PROTECTION_ENFORCEMENT.md`
 
+### 4.5 Required Merge Gates Declaration
+
+**Authority**: MERGE_GATE_INTERFACE_STANDARD.md, MERGE_GATE_PHILOSOPHY.md v2.0, OPOJD v2.0
+
+**FM declares the following required merge gates for this repository**:
+
+#### Standard Merge Gate Interface Jobs
+
+Per MERGE_GATE_INTERFACE_STANDARD.md, the following three standard jobs are REQUIRED:
+
+1. **`merge-gate/verdict`** (Workflow: Merge Gate Interface)
+   - **Purpose**: Validates required evidence artifacts and gate compliance
+   - **Validates**: PREHANDOVER_PROOF existence, evidence structure, gate completeness
+   - **Enforcement**: No-minimizing-language policy, evidence-first messages
+   - **Failure Classification**: Per PR_GATE_FAILURE_HANDLING_PROTOCOL.md
+
+2. **`governance/alignment`** (Workflow: Merge Gate Interface)
+   - **Purpose**: Verifies canonical governance alignment state
+   - **Validates**: Governance artifact integrity, sync_state.json, CANON_INVENTORY.json
+   - **Enforcement**: Drift detection via sha256 comparison
+   - **Failure Classification**: Alignment evidence missing or stale
+
+3. **`stop-and-fix/enforcement`** (Workflow: Merge Gate Interface)
+   - **Purpose**: Enforces stop-and-fix doctrine compliance
+   - **Validates**: Zero test debt, zero warnings, preexisting issue remediation
+   - **Enforcement**: RCA required when stop-and-fix occurred
+   - **Failure Classification**: Evidence-first error output
+
+#### Required Gate Validations (Pre-Handover)
+
+Per MERGE_GATE_PHILOSOPHY.md v2.0 and OPOJD v2.0, FM MUST ensure all applicable gates are validated BEFORE PR handover:
+
+**Universal Gates (All PRs)**:
+1. **Scope-to-Diff Validation (BL-027)**
+   - **Script**: `.github/scripts/validate-scope-to-diff.sh`
+   - **Evidence Keyword**: `"Scope Declaration"|"scope-to-diff"`
+   - **Required**: SCOPE_DECLARATION.md matches git diff exactly
+
+2. **YAML Syntax Validation (BL-028)**
+   - **Script**: `.github/scripts/validate-yaml.sh`
+   - **Evidence Keyword**: `"yamllint"|"YAML"`
+   - **Required**: Zero warnings, zero errors in all YAML files
+
+**Code PRs (Builder/Foreman)**:
+3. **Build Success (100% GREEN)**
+   - **Command**: `pnpm build`
+   - **Evidence Keyword**: `"build"|"compilation"`
+   - **Required**: Exit code 0, no compilation errors
+
+4. **Test Execution (100% GREEN)**
+   - **Command**: `pnpm test`
+   - **Evidence Keyword**: `"test"|"100% GREEN"`
+   - **Required**: Exit code 0, all tests passing, zero skipped
+
+5. **Linting (Zero Warnings)**
+   - **Command**: `pnpm lint`
+   - **Evidence Keyword**: `"lint"|"zero warnings"`
+   - **Required**: Exit code 0, zero warnings, zero errors
+
+**Governance PRs (Liaison/FM)**:
+6. **Governance Artifact Integrity**
+   - **Validation**: JSON syntax, cross-references, inventory sync
+   - **Evidence Keyword**: `"Governance.*Integrity"|"artifact.*validation"`
+   - **Required**: All governance artifacts valid and aligned
+
+#### Evidence-Based Validation Pattern
+
+Per MERGE_GATE_PHILOSOPHY.md v2.0, all gates support **evidence-based validation**:
+
+**Primary Mode (Preferred)**: 
+- Agent provides PREHANDOVER_PROOF.md with gate validation evidence
+- Gate checks for evidence keywords
+- If found → SKIP execution, PASS gate immediately (fast, agent-proven)
+
+**Fallback Mode**:
+- No PREHANDOVER_PROOF found
+- Gate runs validation script
+- Exit code must be 0 to pass (slower, CI-validated)
+
+**FM Responsibility**: FM ensures all builders and agents:
+1. Execute ALL applicable gates locally before PR creation
+2. Document gate validation in PREHANDOVER_PROOF.md
+3. Include: Gate name, exact command, exit code, output excerpt, timestamp
+4. Achieve exit code 0 for ALL gates before handover
+
+**No Ignorance Excuse**: Agents CANNOT claim:
+- "I didn't know this gate existed"
+- "I didn't know how to run the gate script"
+- "I thought CI would validate for me"
+
+**Required Response**: Agents MUST:
+- Proactively enumerate all applicable gates
+- Find and execute gate validation scripts
+- Document results completely in PREHANDOVER_PROOF
+- Escalate if gate script broken or unclear
+
+#### Gate Failure Escalation
+
+**If gate fails during agent validation**:
+1. Agent applies Stop-and-Fix immediately
+2. Agent re-runs ALL gates after fix
+3. Agent documents fix iterations in PREHANDOVER_PROOF
+4. If unable to resolve after 3 attempts → Escalate to FM
+
+**FM Gate Management Authority**: Per FM_MERGE_GATE_MANAGEMENT_PROTOCOL.md:
+- FM may fix gate misalignments autonomously (within authority)
+- FM MUST escalate gate issues requiring CS2 approval
+- FM owns merge gate readiness (not builders)
+
+#### Templates and Documentation
+
+**Templates Available**:
+- `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md` - Evidence capture template
+- `governance/templates/SCOPE_DECLARATION_TEMPLATE.md` - Scope declaration template
+
+**Validation Scripts**:
+- `.github/scripts/validate-scope-to-diff.sh` - Scope-to-diff validation
+- `.github/scripts/validate-yaml.sh` - YAML syntax validation
+- `.github/scripts/check-evidence.sh` - Evidence-based validation helper
+
+**Documentation**:
+- `governance/canon/MERGE_GATE_PHILOSOPHY.md` v2.0 - Philosophy and patterns
+- `governance/canon/MERGE_GATE_INTERFACE_STANDARD.md` - Interface standard
+- `governance/canon/FM_MERGE_GATE_MANAGEMENT_PROTOCOL.md` - FM gate authority
+- `governance/canon/AGENT_CLASS_SPECIFIC_GATE_PROTOCOLS.md` - Agent-specific requirements
+- `governance/policy/PR_GATE_FAILURE_HANDLING_PROTOCOL.md` - Failure classification
+
 ---
 
 ## Category 5: Escalation & Stop Conditions

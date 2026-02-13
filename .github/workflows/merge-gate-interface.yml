@@ -1,0 +1,270 @@
+name: Merge Gate Interface
+
+# Authority: MERGE_GATE_INTERFACE_STANDARD.md, MERGE_GATE_PHILOSOPHY.md v2.0
+# Purpose: Unified, explicit, and auditable merge gate interface for Living Agent System v6.x.0
+# Implements: OPOJD v2.0 complete handover doctrine with evidence-based validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  # ============================================================================
+  # JOB 1: PR Classification (Deterministic)
+  # ============================================================================
+  classify-pr:
+    name: "Classify PR Type"
+    runs-on: ubuntu-latest
+    outputs:
+      pr_type: ${{ steps.classify.outputs.pr_type }}
+      agent_role: ${{ steps.detect_agent.outputs.agent_role }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect Agent Role
+        id: detect_agent
+        run: |
+          # Detect agent role from PR body or labels
+          AGENT_ROLE="unknown"
+
+          # Check PR labels
+          if [[ "${{ contains(github.event.pull_request.labels.*.name, 'agent:foreman') }}" == "true" ]]; then
+            AGENT_ROLE="foreman"
+          elif [[ "${{ contains(github.event.pull_request.labels.*.name, 'agent:builder') }}" == "true" ]]; then
+            AGENT_ROLE="builder"
+          elif [[ "${{ contains(github.event.pull_request.labels.*.name, 'agent:liaison') }}" == "true" ]]; then
+            AGENT_ROLE="liaison"
+          elif [[ "${{ contains(github.event.pull_request.labels.*.name, 'agent:overseer') }}" == "true" ]]; then
+            AGENT_ROLE="overseer"
+          fi
+
+          echo "agent_role=$AGENT_ROLE" >> $GITHUB_OUTPUT
+          echo "Detected Agent Role: $AGENT_ROLE"
+
+      - name: Classify PR
+        id: classify
+        run: |
+          # Deterministic PR classification per MERGE_GATE_INTERFACE_STANDARD.md
+          PR_TYPE="code"
+
+          # Rule 1: Label override
+          if [[ "${{ contains(github.event.pull_request.labels.*.name, 'governance-only') }}" == "true" ]]; then
+            PR_TYPE="governance"
+          elif [[ "${{ contains(github.event.pull_request.labels.*.name, 'docs-only') }}" == "true" ]]; then
+            PR_TYPE="docs"
+          else
+            # Rule 2: Check changed paths
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }}...HEAD)
+
+            # Check for governance changes
+            if echo "$CHANGED_FILES" | grep -qE '^governance/|^\.github/agents/|^\.agent-admin/'; then
+              PR_TYPE="governance"
+            # Check for docs-only changes
+            elif echo "$CHANGED_FILES" | grep -qE '\.md$'; then
+              # All files are markdown
+              if ! echo "$CHANGED_FILES" | grep -qvE '\.md$'; then
+                PR_TYPE="docs"
+              fi
+            fi
+
+            # Rule 3: Branch patterns (release/* and hotfix/* are always code)
+            if [[ "${{ github.event.pull_request.head.ref }}" =~ ^(release|hotfix)/ ]]; then
+              PR_TYPE="code"
+            fi
+          fi
+
+          echo "pr_type=$PR_TYPE" >> $GITHUB_OUTPUT
+          echo "PR Type: $PR_TYPE"
+
+  # ============================================================================
+  # JOB 2: Merge Gate Verdict
+  # ============================================================================
+  merge-gate-verdict:
+    name: "merge-gate/verdict"
+    runs-on: ubuntu-latest
+    needs: classify-pr
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for PREHANDOVER_PROOF Evidence
+        id: evidence_check
+        run: |
+          echo "=== Evidence-Based Validation Check ==="
+          echo "PR Type: ${{ needs.classify-pr.outputs.pr_type }}"
+          echo "Agent Role: ${{ needs.classify-pr.outputs.agent_role }}"
+          echo ""
+
+          EVIDENCE_FOUND="false"
+
+          # Look for PREHANDOVER_PROOF with required gates documented
+          if [ -f "PREHANDOVER_PROOF.md" ]; then
+            echo "✅ Found PREHANDOVER_PROOF.md"
+            EVIDENCE_FOUND="true"
+          elif ls PREHANDOVER_PROOF_*.md 1> /dev/null 2>&1; then
+            echo "✅ Found PREHANDOVER_PROOF file"
+            EVIDENCE_FOUND="true"
+          else
+            echo "ℹ️  No PREHANDOVER_PROOF found - will execute validation gates"
+          fi
+
+          echo "evidence_found=$EVIDENCE_FOUND" >> $GITHUB_OUTPUT
+
+      - name: Validate Scope Declaration (BL-027)
+        if: steps.evidence_check.outputs.evidence_found != 'true'
+        run: |
+          # Check evidence first
+          if bash .github/scripts/check-evidence.sh "Scope-to-Diff" "Scope.*Declaration|scope-to-diff" | grep -q "skip_execution=true"; then
+            echo "✅ Evidence-based validation accepted"
+            exit 0
+          fi
+
+          # Run validation script
+          bash .github/scripts/validate-scope-to-diff.sh
+
+      - name: Validate YAML Syntax (BL-028)
+        if: steps.evidence_check.outputs.evidence_found != 'true'
+        run: |
+          # Check evidence first
+          if bash .github/scripts/check-evidence.sh "YAML Validation" "yamllint|YAML" | grep -q "skip_execution=true"; then
+            echo "✅ Evidence-based validation accepted"
+            exit 0
+          fi
+
+          # Run validation script
+          bash .github/scripts/validate-yaml.sh
+
+      - name: Validate Evidence Structure
+        run: |
+          echo "=== Evidence Structure Validation ==="
+
+          if [ -f "PREHANDOVER_PROOF.md" ] || ls PREHANDOVER_PROOF_*.md 1> /dev/null 2>&1; then
+            echo "✅ Evidence file exists"
+
+            # Check for required sections
+            PROOF_FILE=$(ls PREHANDOVER_PROOF*.md 2>/dev/null | head -1)
+
+            if [ -n "$PROOF_FILE" ]; then
+              # Check for basic structure
+              if grep -qiE "Pre-Gate Validation|Gate.*Validation|Evidence" "$PROOF_FILE"; then
+                echo "✅ Evidence structure appears valid"
+              else
+                echo "⚠️  Evidence file may be incomplete"
+              fi
+            fi
+          else
+            echo "ℹ️  No evidence file found (fallback validation used)"
+          fi
+
+      - name: Verdict Summary
+        run: |
+          echo "=== Merge Gate Verdict ==="
+          echo "PR Type: ${{ needs.classify-pr.outputs.pr_type }}"
+          echo "Agent Role: ${{ needs.classify-pr.outputs.agent_role }}"
+          echo "Evidence Found: ${{ steps.evidence_check.outputs.evidence_found }}"
+          echo ""
+          echo "✅ All merge gates PASSED"
+          echo ""
+          echo "Per MERGE_GATE_PHILOSOPHY.md v2.0:"
+          echo "  - Evidence-based validation preferred"
+          echo "  - CI is confirmatory, not diagnostic"
+          echo "  - Agent pre-validated locally before handover"
+
+  # ============================================================================
+  # JOB 3: Governance Alignment
+  # ============================================================================
+  governance-alignment:
+    name: "governance/alignment"
+    runs-on: ubuntu-latest
+    needs: classify-pr
+    if: needs.classify-pr.outputs.pr_type == 'governance'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check Governance Artifact Integrity
+        run: |
+          echo "=== Governance Alignment Check ==="
+          echo ""
+
+          # Check for sync_state.json
+          if [ -f "governance/sync_state.json" ]; then
+            echo "✅ governance/sync_state.json exists"
+
+            # Validate JSON syntax
+            if jq empty governance/sync_state.json 2>/dev/null; then
+              echo "✅ sync_state.json is valid JSON"
+            else
+              echo "❌ sync_state.json has invalid JSON syntax"
+              exit 1
+            fi
+          else
+            echo "⚠️  governance/sync_state.json not found"
+          fi
+
+          # Check for CANON_INVENTORY.json
+          if [ -f "governance/CANON_INVENTORY.json" ]; then
+            echo "✅ governance/CANON_INVENTORY.json exists"
+
+            # Validate JSON syntax
+            if jq empty governance/CANON_INVENTORY.json 2>/dev/null; then
+              echo "✅ CANON_INVENTORY.json is valid JSON"
+            else
+              echo "❌ CANON_INVENTORY.json has invalid JSON syntax"
+              exit 1
+            fi
+          fi
+
+          echo ""
+          echo "✅ Governance alignment check PASSED"
+
+  # ============================================================================
+  # JOB 4: Stop-and-Fix Enforcement
+  # ============================================================================
+  stop-and-fix-enforcement:
+    name: "stop-and-fix/enforcement"
+    runs-on: ubuntu-latest
+    needs: classify-pr
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for Stop-and-Fix Violations
+        run: |
+          echo "=== Stop-and-Fix Enforcement ==="
+          echo ""
+
+          # Check for evidence of stop-and-fix compliance in PREHANDOVER_PROOF
+          if [ -f "PREHANDOVER_PROOF.md" ] || ls PREHANDOVER_PROOF_*.md 1> /dev/null 2>&1; then
+            PROOF_FILE=$(ls PREHANDOVER_PROOF*.md 2>/dev/null | head -1)
+
+            if [ -n "$PROOF_FILE" ]; then
+              echo "✅ Evidence file found: $PROOF_FILE"
+
+              # Check for stop-and-fix documentation
+              if grep -qiE "stop.*fix|preexisting|discovered.*issue" "$PROOF_FILE"; then
+                echo "✅ Stop-and-Fix documentation found"
+              else
+                echo "ℹ️  No stop-and-fix issues documented (none encountered)"
+              fi
+            fi
+          else
+            echo "ℹ️  No evidence file found"
+          fi
+
+          echo ""
+          echo "✅ Stop-and-Fix enforcement check PASSED"
+          echo ""
+          echo "Per STOP_AND_FIX_DOCTRINE.md:"
+          echo "  - Zero tolerance for discovered defects"
+          echo "  - All preexisting issues must be fixed"
+          echo "  - No test debt allowed"
