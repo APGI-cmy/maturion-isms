@@ -60,10 +60,13 @@ Or simply: **None**
 
 This scope declaration MUST match `git diff --name-only origin/main...HEAD` exactly per BL-027.
 
+**Note**: The validation script uses origin/main if available, with automatic fallback to main if origin/main doesn't exist.
+
 **Validation Method**: Exact set comparison (no missing files, no extra files)
 
 **Step 1: Check Changed Files**
 ```bash
+# Uses origin/main if available, falls back to main
 git diff --name-only origin/main...HEAD | sort
 ```
 
@@ -91,6 +94,7 @@ git diff --name-only origin/main...HEAD | sort
 
 1. **Copy paths from git diff** to avoid typos:
    ```bash
+   # Uses origin/main if available, falls back to main
    git diff --name-only origin/main...HEAD
    ```
 

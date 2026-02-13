@@ -16,8 +16,8 @@
 #   # Check what files should be declared:
 #   git diff --name-only origin/main...HEAD | sort
 #
-#   # Extract what files are currently declared:
-#   grep -E '^\s*-\s+`[^`]+`' SCOPE_DECLARATION.md | sed 's/.*`\([^`]*\)`.*/\1/' | sort
+#   # Extract what files are currently declared (must match parser regex at line 69):
+#   grep -E '^\s*-\s+`[^`]+`\s+-\s+' SCOPE_DECLARATION.md | sed 's/.*`\([^`]*\)`.*/\1/' | sort
 #
 # Exit Codes:
 #   0 = Validation passed (exact match)
@@ -38,7 +38,7 @@ if [ ! -f "SCOPE_DECLARATION.md" ]; then
     echo ""
     echo "Remediation:"
     echo "  1. Create SCOPE_DECLARATION.md using governance/templates/SCOPE_DECLARATION_TEMPLATE.md"
-    echo "  2. List ALL changed files from: git diff --name-only origin/main...HEAD"
+    echo "  2. List ALL changed files from: git diff --name-only origin/main...HEAD (or main...HEAD if origin/main unavailable)"
     echo "  3. Run this script again to validate"
     echo ""
     exit 1
@@ -99,7 +99,7 @@ if [ "$CHANGED_COUNT" -gt 0 ] && [ "$SCOPE_COUNT" -eq 0 ]; then
     echo "Remediation:"
     echo "  1. Ensure SCOPE_DECLARATION.md contains file declarations in format:"
     echo "     - \`path/to/file.ext\` - Description"
-    echo "  2. List all files from: git diff --name-only origin/main...HEAD"
+    echo "  2. List all files from: git diff --name-only origin/main...HEAD (or main...HEAD if origin/main unavailable)"
     echo ""
     exit 1
 fi
@@ -113,7 +113,7 @@ if [ "$CHANGED_COUNT" -eq 0 ] && [ "$SCOPE_COUNT" -gt 0 ]; then
     echo ""
     echo "Remediation:"
     echo "  1. Verify you're on the correct branch"
-    echo "  2. Check git diff --name-only origin/main...HEAD output"
+    echo "  2. Check git diff --name-only origin/main...HEAD output (or main...HEAD if origin/main unavailable)"
     echo "  3. Update SCOPE_DECLARATION.md to match actual changes"
     echo ""
     exit 1

@@ -82,7 +82,7 @@ pnpm lint
 1. **`SCOPE_DECLARATION.md`** - Document all changed files
    - Use `governance/templates/SCOPE_DECLARATION_TEMPLATE.md` as template
    - List every file modified, added, or deleted
-   - Must match `git diff --name-only origin/main...HEAD` exactly
+   - Must match `git diff --name-only origin/main...HEAD` exactly (script uses origin/main with fallback to main)
 
 2. **`PREHANDOVER_PROOF.md`** - Document all gate validations
    - Use `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md` as template
@@ -142,12 +142,13 @@ The scope-to-diff validation script performs **exact set comparison** between fi
 
 **Step 1: Extract Changed Files**
 ```bash
+# Uses origin/main if available, falls back to main
 git diff --name-only origin/main...HEAD | sort
 ```
 
 **Step 2: Extract Declared Files**
 ```bash
-grep -E '^\s*-\s+`[^`]+`' SCOPE_DECLARATION.md | sed 's/.*`\([^`]*\)`.*/\1/' | sort
+grep -E '^\s*-\s+`[^`]+`\s+-\s+' SCOPE_DECLARATION.md | sed 's/.*`\([^`]*\)`.*/\1/' | sort
 ```
 
 **Step 3: Set Comparison**
@@ -216,7 +217,7 @@ Remediation:
 - Stale SCOPE_DECLARATION.md from previous changes
 
 **Solution:**
-1. Run `git diff --name-only origin/main...HEAD` to see actual changes
+1. Run `git diff --name-only origin/main...HEAD` to see actual changes (or `main...HEAD` if origin/main unavailable)
 2. Verify files are committed: `git log --oneline -5 --name-only`
 3. Update SCOPE_DECLARATION.md to match current branch state
 4. Re-run `.github/scripts/validate-scope-to-diff.sh`
@@ -229,7 +230,7 @@ Remediation:
 - Extra spaces or formatting issues
 
 **Solution:**
-1. Check exact file path: `git diff --name-only origin/main...HEAD | grep filename`
+1. Check exact file path: `git diff --name-only origin/main...HEAD | grep filename` (or `main...HEAD` if origin/main unavailable)
 2. Ensure canonical format: `` - `path/to/file.ext` - Description ``
 3. Verify no typos in path (case-sensitive)
 4. Copy-paste exact path from git diff output
@@ -243,7 +244,7 @@ Remediation:
 
 **Solution:**
 1. Stage and commit changes: `git add . && git commit -m "message"`
-2. Verify files committed: `git diff --name-only origin/main...HEAD`
+2. Verify files committed: `git diff --name-only origin/main...HEAD` (or `main...HEAD` if origin/main unavailable)
 3. Update SCOPE_DECLARATION.md to match committed files
 4. Re-run validation
 
@@ -259,6 +260,7 @@ Remediation:
 
 3. **Copy paths from git diff** to avoid typos:
    ```bash
+   # Uses origin/main if available, falls back to main
    git diff --name-only origin/main...HEAD | sort
    ```
 
