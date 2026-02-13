@@ -1,0 +1,12 @@
+{
+  "module_slug": "maturity-roadmap",
+  "module_name": "Maturity Roadmap",
+  "status": "migrated-structure",
+  "owners": [],
+  "canonical_root": "modules/maturity-roadmap",
+  "legacy_sources": ["Maturion/Maturity Roadmap"],
+  "artifact_lineage": "Legacy artifacts retained in 90-legacy-assets and source location.",
+  "migration_notes": "Canonical stage skeleton created; authoritative module lifecycle now starts under modules/maturity-roadmap.",
+  "legacy_pointer": "Maturion/Maturity Roadmap/CANONICAL_MODULE_POINTER.md",
+  "last_migrated_at": "2026-02-13"
+}

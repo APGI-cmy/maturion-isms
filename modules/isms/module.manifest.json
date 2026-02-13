@@ -1,0 +1,12 @@
+{
+  "module_slug": "isms",
+  "module_name": "ISMS",
+  "status": "migrated-structure",
+  "owners": [],
+  "canonical_root": "modules/isms",
+  "legacy_sources": ["Maturion/ISMS"],
+  "artifact_lineage": "Legacy artifacts retained in 90-legacy-assets and source location.",
+  "migration_notes": "Canonical stage skeleton created; authoritative module lifecycle now starts under modules/isms.",
+  "legacy_pointer": "Maturion/ISMS/CANONICAL_MODULE_POINTER.md",
+  "last_migrated_at": "2026-02-13"
+}

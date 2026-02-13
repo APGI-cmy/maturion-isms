@@ -1,0 +1,12 @@
+{
+  "module_slug": "xdetect",
+  "module_name": "XDETECT",
+  "status": "migrated-structure",
+  "owners": [],
+  "canonical_root": "modules/xdetect",
+  "legacy_sources": ["Maturion/XDETECT"],
+  "artifact_lineage": "Legacy artifacts retained in 90-legacy-assets and source location.",
+  "migration_notes": "Canonical stage skeleton created; authoritative module lifecycle now starts under modules/xdetect.",
+  "legacy_pointer": "Maturion/XDETECT_POINTER.md",
+  "last_migrated_at": "2026-02-13"
+}

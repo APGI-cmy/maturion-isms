@@ -1,0 +1,12 @@
+{
+  "module_slug": "mat",
+  "module_name": "MAT",
+  "status": "migrated-structure",
+  "owners": [],
+  "canonical_root": "modules/mat",
+  "legacy_sources": ["Maturion/MAT"],
+  "artifact_lineage": "Legacy artifacts retained in 90-legacy-assets and source location.",
+  "migration_notes": "Canonical stage skeleton created; authoritative module lifecycle now starts under modules/mat.",
+  "legacy_pointer": "Maturion/MAT/CANONICAL_MODULE_POINTER.md",
+  "last_migrated_at": "2026-02-13"
+}
