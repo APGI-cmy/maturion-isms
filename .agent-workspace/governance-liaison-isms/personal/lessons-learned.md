@@ -1,5 +1,37 @@
 # Lessons Learned - governance-liaison-isms
 
+## Session 20260213 - Documentation Consistency and Test Development
+
+### Lesson: Exit Code Capture with Local Variables
+- **Context**: When creating shell test scripts that validate exit codes
+- **Pattern**: `local var=$(cmd)` captures exit code of `local` builtin, not `cmd` - causes false test results
+- **Action**: Always separate declaration and assignment: `local var; var=$(cmd); exitcode=$?`
+- **Authority**: Standard bash behavior; discovered during test stub development
+
+### Lesson: Documentation Consistency Prevents Agent Confusion
+- **Context**: When documentation shows slightly different commands than actual script implementation
+- **Pattern**: Small inconsistencies (e.g., `main` vs `origin/main`, or incomplete regex patterns) cause agent errors
+- **Action**: Keep doc command snippets EXACTLY synchronized with script implementation; add explanatory notes
+- **Authority**: Learned from BL-027 follow-up cleanup task
+
+### Lesson: Test Stubs Catch Bugs Early
+- **Context**: When adding optional test coverage for validation scripts
+- **Pattern**: Creating minimal test stubs immediately revealed exit code capture bug that would have been hard to debug later
+- **Action**: Even for "optional" tasks, create test stubs early - they pay for themselves immediately
+- **Authority**: OPOJD v2.0 improvement suggestions; validated in practice
+
+### Lesson: Code Review Improves Clarity Even for Docs
+- **Context**: When completing documentation cleanup tasks
+- **Pattern**: Author understands what they wrote, but code review identifies ambiguities (e.g., "space-dash-space" vs "whitespace-dash-whitespace")
+- **Action**: Run code_review tool even for documentation-only PRs; address clarity feedback immediately
+- **Authority**: STOP_AND_FIX_DOCTRINE.md; validated in session 004
+
+### Lesson: mktemp Guarantees Uniqueness
+- **Context**: When creating temporary test directories in shell scripts
+- **Pattern**: `$$-$RANDOM` can theoretically collide; `mktemp` is guaranteed unique
+- **Action**: Always use `mktemp -d` for temporary directories instead of manual naming schemes
+- **Authority**: Code review feedback; standard shell best practice
+
 ## Session 20260212 - Initial Contract Drafting
 
 ### Lesson: Office-App Gold Standard as Template
