@@ -120,3 +120,59 @@
 - **Context**: Wake-up/session-closure protocol references scripts under `.github/scripts/`
 - **Pattern**: Contract may require scripts that are absent in consumer repo
 - **Action**: Verify script existence at session start; escalate immediately if missing
+
+## Session 20260213 - TRS Stage Governance Upgrade
+
+### Lesson: Governance Can Evolve Without Breaking Existing Work
+- **Context**: When inserting new mandatory stage (TRS) in existing module lifecycle
+- **Pattern**: Adding intermediate stage between existing stages (FRS → Architecture becomes FRS → TRS → Architecture)
+- **Action**: Classify as "moderate breaking change" but provide migration path (existing modules continue, add TRS before next Architecture update)
+- **Authority**: GOVERNANCE_RIPPLE_MODEL.md - Evolution without weakening principle
+
+### Lesson: Ripple-Listener Workflow Is Critical Infrastructure
+- **Context**: When discovering no automated ripple-listener workflow exists
+- **Pattern**: Manual ripple doesn't scale; automated ripple per CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md required
+- **Action**: Document gap explicitly, recommend HYBRID approach (manual this cycle, automated next sprint)
+- **Authority**: CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md mandatory requirements
+
+### Lesson: Bash Scripting for Repetitive Documentation Tasks
+- **Context**: When creating identical structure files across 8 modules
+- **Pattern**: Creating BUILD_PROGRESS_TRACKER.md manually would be error-prone and time-consuming
+- **Action**: Use bash heredoc with variable substitution in loop to create consistent files efficiently
+- **Authority**: DRY principle; pragmatic automation
+
+### Lesson: Code Review Catches Subtle Ambiguities
+- **Context**: When gap analysis section said "from App Description/FRS"
+- **Pattern**: Slash notation can imply "either/or" when intent is sequential derivation
+- **Action**: Clarify derivation chain explicitly: FRS → TRS → Architecture (not shortcuts)
+- **Authority**: Code review feedback; governance clarity principle
+
+### Lesson: Documentation-Only Changes Are Still Governance Changes
+- **Context**: When updating strategy and policy files without code changes
+- **Pattern**: Governance updates have cross-repo ripple impact even without code
+- **Action**: Treat documentation governance updates with same rigor as code (code review, ripple planning, evidence)
+- **Authority**: GOVERNANCE_RIPPLE_MODEL.md - downward ripple requirement
+
+### Lesson: Unicode Characters Require sed Instead of edit Tool
+- **Context**: When trying to update text with special arrows (→) in MODULE_LIFECYCLE_AND_REPO_STRUCTURE_STRATEGY.md
+- **Pattern**: Edit tool's old_str matching fails with Unicode; sed works reliably
+- **Action**: Use sed for updates involving special characters; verify with cat -A before editing
+- **Authority**: Tool limitations discovered in practice
+
+### Lesson: Ripple Activation Plans Provide Clear Path Forward
+- **Context**: When coordinating governance changes across multiple repositories
+- **Pattern**: Comprehensive plan document (RIPPLE_ACTIVATION_PLAN_TRS_UPGRADE.md) centralizes decisions and action items
+- **Action**: Create detailed ripple plan including: scope, impact, approaches (automated/manual), escalation path, evidence
+- **Authority**: CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md, GOVERNANCE_RIPPLE_MODEL.md
+
+### Lesson: Progress Trackers Enable Lifecycle Visibility
+- **Context**: When modules progress through multi-stage lifecycle
+- **Pattern**: Without explicit tracking, module status is opaque; BUILD_PROGRESS_TRACKER makes status visible
+- **Action**: Create progress tracker template; populate for existing modules; update as stages complete
+- **Authority**: MODULE_LIFECYCLE_AND_REPO_STRUCTURE_STRATEGY.md determinism principle
+
+---
+
+**Last Updated**: 2026-02-13  
+**Total Sessions**: 5  
+**Agent**: governance-liaison-isms
