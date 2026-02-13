@@ -1,0 +1,12 @@
+{
+  "module_slug": "incident-intelligence",
+  "module_name": "Incident Intelligence",
+  "status": "migrated-structure",
+  "owners": [],
+  "canonical_root": "modules/incident-intelligence",
+  "legacy_sources": ["Maturion/Incident Intellegence"],
+  "artifact_lineage": "Legacy artifacts retained in 90-legacy-assets and source location.",
+  "migration_notes": "Canonical stage skeleton created; authoritative module lifecycle now starts under modules/incident-intelligence.",
+  "legacy_pointer": "Maturion/Incident Intellegence/CANONICAL_MODULE_POINTER.md",
+  "last_migrated_at": "2026-02-13"
+}

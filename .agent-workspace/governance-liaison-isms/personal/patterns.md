@@ -89,3 +89,17 @@
 **Version**: 1.0.0  
 **Last Updated**: 2026-02-12  
 **Authority**: LIVING_AGENT_SYSTEM.md v6.2.0
+
+## Pattern: Canonical Module Skeleton Rollout
+- **Observed**: 2026-02-13 (Session 003)
+- **Context**: Multi-module governance/artifact normalization
+- **Pattern**: Deterministic slug mapping + fixed stage directories enables repeatable structure alignment across heterogeneous legacy modules
+- **Response**: Standardize on `modules/<slug>/{00..05}` + `module.manifest.json` + legacy pointers
+- **Source**: ISMS module canonicalization issue
+
+## Pattern: Missing Protocol Script Escalation
+- **Observed**: 2026-02-13 (Session 003)
+- **Context**: Mandatory execution hooks absent in repo
+- **Pattern**: Contract-required operational scripts can drift from consumer repository state
+- **Response**: Record blocker in escalation inbox and continue with manual evidence capture where possible
+- **Source**: governance-liaison-isms contract REQ-AS-005 / REQ-EO-005
