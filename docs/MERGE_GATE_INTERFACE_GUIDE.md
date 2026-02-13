@@ -132,6 +132,157 @@ Only after:
 
 ---
 
+## Scope-to-Diff Exact Set Comparison (BL-027)
+
+### Overview
+
+The scope-to-diff validation script performs **exact set comparison** between files changed in git diff and files declared in SCOPE_DECLARATION.md. The validation succeeds ONLY when both sets match exactly.
+
+### Validation Logic
+
+**Step 1: Extract Changed Files**
+```bash
+git diff --name-only origin/main...HEAD | sort
+```
+
+**Step 2: Extract Declared Files**
+```bash
+grep -E '^\s*-\s+`[^`]+`' SCOPE_DECLARATION.md | sed 's/.*`\([^`]*\)`.*/\1/' | sort
+```
+
+**Step 3: Set Comparison**
+- **Missing files**: Files in git diff but NOT in SCOPE_DECLARATION.md
+- **Extra files**: Files in SCOPE_DECLARATION.md but NOT in git diff
+- **Success**: Zero missing files AND zero extra files
+
+### Example: Successful Validation
+
+```
+=== Scope-to-Diff Validation (BL-027) ===
+Authority: MERGE_GATE_PHILOSOPHY.md, SCOPE_TO_DIFF_RULE.md
+Mode: Exact Set Comparison
+
+✓ SCOPE_DECLARATION.md exists
+✓ Found 3 changed files in git diff
+✓ Found 3 files declared in SCOPE_DECLARATION.md
+
+--- Performing Exact Set Comparison ---
+
+✅ Exact set comparison PASSED
+
+Summary:
+  Changed files (git diff):     3
+  Declared files (SCOPE_DECLARATION): 3
+  Missing files:                0
+  Extra files:                  0
+
+✅ All changed files are declared in SCOPE_DECLARATION.md
+✅ No extra files declared
+✅ Exact match confirmed
+```
+
+### Example: Failed Validation (Missing Files)
+
+```
+❌ MISSING FILES: 2 file(s) in git diff but NOT declared in SCOPE_DECLARATION.md
+
+The following files are changed in git but missing from SCOPE_DECLARATION.md:
+   - src/utils/helper.ts
+   - tests/helper.test.ts
+
+Remediation:
+  Add these files to SCOPE_DECLARATION.md in the appropriate section (Added/Modified/Deleted)
+```
+
+### Example: Failed Validation (Extra Files)
+
+```
+❌ EXTRA FILES: 1 file(s) declared in SCOPE_DECLARATION.md but NOT in git diff
+
+The following files are declared but not present in git diff:
+   - docs/old-guide.md
+
+Remediation:
+  Remove these files from SCOPE_DECLARATION.md or verify they are committed to the branch
+```
+
+### Troubleshooting
+
+**Issue**: "Git diff is empty but SCOPE_DECLARATION.md declares N files"
+
+**Possible causes:**
+- Files listed in SCOPE_DECLARATION.md are not committed to the branch
+- Wrong branch or git state
+- Stale SCOPE_DECLARATION.md from previous changes
+
+**Solution:**
+1. Run `git diff --name-only origin/main...HEAD` to see actual changes
+2. Verify files are committed: `git log --oneline -5 --name-only`
+3. Update SCOPE_DECLARATION.md to match current branch state
+4. Re-run `.github/scripts/validate-scope-to-diff.sh`
+
+**Issue**: "Missing files reported but I listed them in SCOPE_DECLARATION.md"
+
+**Possible causes:**
+- File path in SCOPE_DECLARATION.md doesn't match actual path (typo, wrong directory)
+- Missing backticks around file paths (canonical format requires backticks)
+- Extra spaces or formatting issues
+
+**Solution:**
+1. Check exact file path: `git diff --name-only origin/main...HEAD | grep filename`
+2. Ensure canonical format: `` - `path/to/file.ext` - Description ``
+3. Verify no typos in path (case-sensitive)
+4. Copy-paste exact path from git diff output
+
+**Issue**: "Extra files reported but they are changed"
+
+**Possible causes:**
+- Files not staged or committed yet
+- Files in .gitignore (won't appear in git diff)
+- Files only in working directory
+
+**Solution:**
+1. Stage and commit changes: `git add . && git commit -m "message"`
+2. Verify files committed: `git diff --name-only origin/main...HEAD`
+3. Update SCOPE_DECLARATION.md to match committed files
+4. Re-run validation
+
+### Best Practices
+
+1. **Create SCOPE_DECLARATION.md FIRST** before finalizing PR
+   - Use `governance/templates/SCOPE_DECLARATION_TEMPLATE.md` as template
+   
+2. **Use canonical format** for file declarations:
+   ```markdown
+   - `path/to/file.ext` - Brief description
+   ```
+
+3. **Copy paths from git diff** to avoid typos:
+   ```bash
+   git diff --name-only origin/main...HEAD | sort
+   ```
+
+4. **Validate immediately** after creating SCOPE_DECLARATION.md:
+   ```bash
+   .github/scripts/validate-scope-to-diff.sh
+   ```
+
+5. **Document in PREHANDOVER_PROOF** with exact command and output:
+   ```markdown
+   ### Gate 1: Scope-to-Diff Validation (BL-027)
+   
+   **Command Executed**:
+   ```bash
+   .github/scripts/validate-scope-to-diff.sh
+   ```
+   
+   **Exit Code**: 0
+   
+   **Summary**: Exact set comparison passed. All 3 changed files declared, no extra files.
+   ```
+
+---
+
 ## Gate Keywords
 
 For evidence-based validation, PREHANDOVER_PROOF must contain these keywords:
