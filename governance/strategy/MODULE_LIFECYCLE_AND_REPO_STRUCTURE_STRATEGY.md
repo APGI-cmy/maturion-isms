@@ -195,8 +195,8 @@ This prevents accidental lock-in to early experiments.
 
 This strategy is considered successful when:
 
-1. A new agent can locate any module’s App Description, FRS, and Architecture in under 60 seconds.
-2. Module lineage is explicit and reviewable: App Description → FRS → Architecture → Implementation Plan → Evidence.
+1. A new agent can locate any module’s App Description, FRS, TRS, and Architecture in under 60 seconds.
+2. Module lineage is explicit and reviewable: App Description → FRS → TRS → Architecture → Implementation Plan → Evidence.
 3. Legacy prototypes are preserved, discoverable, and referenced for gap analysis, without being authoritative by accident.
 
 ---
