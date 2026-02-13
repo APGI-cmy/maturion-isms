@@ -164,7 +164,7 @@ The TRS MUST include:
 
 Where legacy implementations exist:
 
-1. Produce TRS and Architecture from App Description/FRS (do not retrofit from legacy).
+1. Produce FRS from App Description, then TRS from FRS, then Architecture from TRS (do not retrofit from legacy).
 2. Create `modules/<module-slug>/02-architecture/gap-analysis-vs-legacy.md` containing:
    - Inventory of legacy assets (paths, brief description)
    - Mapping of legacy features to target architecture components
