@@ -14,6 +14,7 @@ The following files are modified, added, or deleted in this PR:
 ### Added Files
 
 - `.github/scripts/validate-scope-to-diff.test.sh` - Test stubs for scope-to-diff validation script
+- `PREHANDOVER_PROOF.md` - Evidence bundle for this PR
 
 ### Modified Files
 
