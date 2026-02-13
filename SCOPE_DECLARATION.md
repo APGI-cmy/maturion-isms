@@ -2,8 +2,8 @@
 
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)  
 **Purpose**: Declare all files changed in this PR for scope-to-diff validation  
-**PR**: Implement Unified Merge Gate Interface for LAS  
-**Date**: 2026-02-12
+**PR**: Enhance scope-to-diff validation with exact set comparison  
+**Date**: 2026-02-13
 
 ---
 
@@ -13,19 +13,14 @@ The following files are modified, added, or deleted in this PR:
 
 ### Added Files
 
-- `.github/scripts/validate-scope-to-diff.sh` - Scope-to-diff validation script
-- `.github/scripts/validate-yaml.sh` - YAML syntax validation script
-- `.github/scripts/check-evidence.sh` - Evidence-based validation helper
-- `.github/workflows/merge-gate-interface.yml` - Unified merge gate workflow implementing MERGE_GATE_INTERFACE_STANDARD.md
-- `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md` - Template for evidence capture per OPOJD v2.0
-- `governance/templates/SCOPE_DECLARATION_TEMPLATE.md` - Template for scope declaration per BL-027
-- `docs/MERGE_GATE_INTERFACE_GUIDE.md` - Implementation guide and troubleshooting
-- `SCOPE_DECLARATION.md` - This file
-- `PREHANDOVER_PROOF.md` - Evidence bundle for this PR
+None
 
 ### Modified Files
 
-- `.github/agents/foreman-isms-agent.md` - Added Category 4.5 declaring all required merge gates
+- `.github/scripts/validate-scope-to-diff.sh` - Enhanced with exact set comparison logic
+- `docs/MERGE_GATE_INTERFACE_GUIDE.md` - Added detailed section on scope-to-diff validation
+- `governance/templates/SCOPE_DECLARATION_TEMPLATE.md` - Enhanced with examples and guidance
+- `SCOPE_DECLARATION.md` - Updated for this PR
 
 ### Deleted Files
 
@@ -35,57 +30,58 @@ None
 
 ## Scope Rationale
 
-**Task**: Implement Unified Merge Gate Interface for Living Agent System (LAS): OPOJD & Evidence Compliance
+**Task**: Enhance the scope-to-diff validation script to perform exact set comparison as required by MERGE_GATE_PHILOSOPHY.md (BL-027).
 
 **Why these files**: 
-
-1. **`.github/scripts/*.sh`**: Reusable gate validation scripts that can be executed locally by agents and in CI, ensuring identical signals per MERGE_GATE_PHILOSOPHY.md v2.0
-
-2. **`.github/workflows/merge-gate-interface.yml`**: Unified workflow implementing the three standard jobs required by MERGE_GATE_INTERFACE_STANDARD.md:
-   - `merge-gate/verdict` - Evidence and gate compliance validation
-   - `governance/alignment` - Governance artifact integrity
-   - `stop-and-fix/enforcement` - Stop-and-fix doctrine enforcement
-
-3. **`governance/templates/*.md`**: Templates for agents to capture evidence (PREHANDOVER_PROOF) and declare scope (SCOPE_DECLARATION) per OPOJD v2.0 complete handover doctrine
-
-4. **`.github/agents/foreman-isms-agent.md`**: Updated to declare all required merge gates, validation procedures, evidence-based patterns, and FM responsibilities per FM_MERGE_GATE_MANAGEMENT_PROTOCOL.md
-
-5. **`SCOPE_DECLARATION.md`** and **`PREHANDOVER_PROOF.md`**: Evidence artifacts for this PR, demonstrating the system in action
+- `.github/scripts/validate-scope-to-diff.sh`: Core implementation of exact set comparison algorithm with detailed error reporting
+- `docs/MERGE_GATE_INTERFACE_GUIDE.md`: User-facing documentation with examples, troubleshooting, and best practices
+- `governance/templates/SCOPE_DECLARATION_TEMPLATE.md`: Template improvements to guide users in creating accurate scope declarations
+- `SCOPE_DECLARATION.md`: Required evidence artifact for this PR
 
 **Out of Scope**: 
-- No changes to application code (apps/, packages/)
-- No changes to infrastructure code
-- No changes to architecture documents
-- No changes to other agent contracts (only foreman updated)
+- No changes to workflow files (merge-gate-interface.yml already implements evidence-based validation pattern)
+- No changes to agent contract files (foreman-isms-agent.md already declares scope-to-diff gate in Category 4.5)
+- No changes to other validation scripts (yaml, evidence scripts work independently)
 
 ---
 
 ## Validation
 
-This scope declaration MUST match `git diff --name-only origin/main...HEAD` exactly.
+This scope declaration MUST match `git diff --name-only main...HEAD` exactly per BL-027.
 
-**Validation Command**:
+**Validation Method**: Exact set comparison (no missing files, no extra files)
+
+**Step 1: Check Changed Files**
 ```bash
-git diff --name-only origin/main...HEAD | sort
+git diff --name-only main...HEAD | sort
 ```
 
-**Expected Files**:
+**Output**:
 ```
-.github/agents/foreman-isms-agent.md
-.github/scripts/check-evidence.sh
 .github/scripts/validate-scope-to-diff.sh
-.github/scripts/validate-yaml.sh
-.github/workflows/merge-gate-interface.yml
-PREHANDOVER_PROOF.md
 SCOPE_DECLARATION.md
 docs/MERGE_GATE_INTERFACE_GUIDE.md
-governance/templates/PREHANDOVER_PROOF_TEMPLATE.md
 governance/templates/SCOPE_DECLARATION_TEMPLATE.md
 ```
 
-**Validation Status**: ✅ MATCHES
+**Step 2: Validate Exact Match**
+```bash
+.github/scripts/validate-scope-to-diff.sh
+```
+
+**Expected Result**: 
+```
+✅ Exact set comparison PASSED
+  Changed files (git diff):     4
+  Declared files (SCOPE_DECLARATION): 4
+  Missing files:                0
+  Extra files:                  0
+```
+
+**Validation Status**: ✅ PENDING (will validate after PREHANDOVER_PROOF.md creation)
 
 ---
 
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)  
-**Required by**: Merge Gate Interface (merge-gate/verdict job)
+**Required by**: Merge Gate Interface (merge-gate/verdict job)  
+**Validation**: Exact set comparison (`.github/scripts/validate-scope-to-diff.sh`)

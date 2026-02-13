@@ -47,7 +47,13 @@ fi
 echo "✓ SCOPE_DECLARATION.md exists"
 
 # Get list of changed files from git diff
-CHANGED_FILES=$(git diff --name-only origin/main...HEAD 2>/dev/null | sort)
+# Try origin/main first, fall back to main if origin/main doesn't exist
+if git rev-parse origin/main >/dev/null 2>&1; then
+    CHANGED_FILES=$(git diff --name-only origin/main...HEAD 2>/dev/null | sort)
+else
+    CHANGED_FILES=$(git diff --name-only main...HEAD 2>/dev/null | sort)
+fi
+
 if [ -z "$CHANGED_FILES" ]; then
     CHANGED_COUNT=0
 else
@@ -57,10 +63,10 @@ fi
 echo "✓ Found $CHANGED_COUNT changed files in git diff"
 
 # Extract files from SCOPE_DECLARATION.md
-# Improved parser: Looks for lines with backtick-wrapped paths (canonical format)
+# Improved parser: Looks for lines starting with "- `" at the beginning (bullet points only)
 # Format: - `path/to/file.ext` - Description
-# Also supports legacy format: - path/to/file.ext (without backticks)
-SCOPE_FILES=$(grep -E '^\s*-\s+`[^`]+`' SCOPE_DECLARATION.md 2>/dev/null | sed 's/.*`\([^`]*\)`.*/\1/' | sort || true)
+# This specifically targets file declarations in the Changed Files section
+SCOPE_FILES=$(grep -E '^\s*-\s+`[^`]+`\s+-\s+' SCOPE_DECLARATION.md 2>/dev/null | sed 's/.*`\([^`]*\)`.*/\1/' | sort || true)
 
 # Fallback: Try extracting files without backticks (legacy format)
 if [ -z "$SCOPE_FILES" ]; then
