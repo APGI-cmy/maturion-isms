@@ -33,9 +33,8 @@ run_test() {
     
     echo "Test: $test_name"
     
-    # Create test environment
-    local test_workspace="$TEST_DIR/test-$$-$RANDOM"
-    mkdir -p "$test_workspace"
+    # Create test environment using mktemp for guaranteed uniqueness
+    local test_workspace=$(mktemp -d -p "$TEST_DIR")
     cd "$test_workspace"
     
     # Initialize git repo
@@ -55,9 +54,10 @@ run_test() {
     # Run test-specific setup
     $setup_func
     
-    # Run validation script
+    # Run validation script and capture output
     set +e
-    bash "$VALIDATE_SCRIPT" > /dev/null 2>&1
+    local output
+    output=$(bash "$VALIDATE_SCRIPT" 2>&1)
     local actual_exit_code=$?
     set -e
     
@@ -67,6 +67,8 @@ run_test() {
         TEST_PASSED=$((TEST_PASSED + 1))
     else
         echo "  ❌ FAIL (expected: $expected_exit_code, got: $actual_exit_code)"
+        echo "  Output:"
+        echo "$output" | sed 's/^/    /'
         TEST_FAILED=$((TEST_FAILED + 1))
     fi
     

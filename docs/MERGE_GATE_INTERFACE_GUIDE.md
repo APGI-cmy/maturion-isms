@@ -155,7 +155,8 @@ grep -E '^\s*-\s+`[^`]+`\s+-\s+' SCOPE_DECLARATION.md | sed 's/.*`\([^`]*\)`.*/\
 **Note**: The regex `^\s*-\s+\`[^\`]+\`\s+-\s+` ensures the canonical format is used:
 - Line starts with optional whitespace and dash
 - File path enclosed in backticks
-- Followed by space, dash, space, and description
+- Followed by **whitespace-dash-whitespace** (enforces consistent spacing)
+- Then the description text
 
 **Step 3: Set Comparison**
 - **Missing files**: Files in git diff but NOT in SCOPE_DECLARATION.md
@@ -266,10 +267,10 @@ Remediation:
    
    **Important**: The validation script requires:
    - File path enclosed in backticks
-   - Space, dash, space after the closing backtick
+   - **Whitespace-dash-whitespace** after the closing backtick (enforces spacing)
    - Then the description
    
-   Format: `- \`path\` - Description` (the `\s+-\s+` pattern is enforced)
+   Format: `- \`path\` - Description` (the `\s+-\s+` pattern enforces spacing on both sides of the dash)
 
 3. **Copy paths from git diff** to avoid typos:
    ```bash
