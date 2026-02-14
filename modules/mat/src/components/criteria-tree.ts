@@ -184,7 +184,7 @@ export function getBreadcrumb(
       const segment: BreadcrumbSegment = {
         id: node.id,
         label: node.label,
-        type: node.type === 'criterion' ? 'criterion' : node.type === 'mps' ? 'mps' : 'domain'
+        type: node.type
       };
       const newPath = [...currentPath, segment];
 

@@ -319,7 +319,7 @@ export function createScoreConfirmation(
   timestamp: string;
 } {
   if (action === 'override' && !overrideReason) {
-    throw new Error('Override reason is required when overriding AI score');
+    throw new Error('Cannot override AI score without providing a reason. Please enter a justification for the override.');
   }
 
   return {

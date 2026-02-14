@@ -100,7 +100,7 @@ export function processApprovalAction(
   notes?: string
 ): ApprovalQueueState {
   if (state.currentIndex >= state.items.length) {
-    throw new Error('No more items to review');
+    throw new Error('Approval queue is empty. All items have been reviewed.');
   }
 
   const updatedItems = [...state.items];
