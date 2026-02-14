@@ -343,8 +343,8 @@ fi
 
 echo "  - Session outcome: ${OUTCOME}"
 
-# Update session file with preliminary outcome
-sed -i "s/\[✅ COMPLETE | ⚠️ PARTIAL | ❌ ESCALATED\]/${OUTCOME}/" "$SESSION_FILE"
+# Update session file with preliminary outcome (use | as delimiter to handle special characters)
+sed -i "s|\[✅ COMPLETE | ⚠️ PARTIAL | ❌ ESCALATED\]|${OUTCOME}|" "$SESSION_FILE"
 
 echo -e "${GREEN}✓ Step 7: COMPLETE${NC}"
 echo ""

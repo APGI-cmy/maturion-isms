@@ -74,7 +74,8 @@ check_yaml_frontmatter() {
         errors=$((errors + 1))
     fi
     
-    # Extract YAML front matter
+    # Extract YAML front matter (content between first and second '---' delimiters)
+    # awk logic: increment count on each '---', exit when count reaches 2, print lines when count==1
     local yaml_content
     yaml_content=$(awk '/^---$/{if(++count==2){exit}next}count==1' "$file")
     

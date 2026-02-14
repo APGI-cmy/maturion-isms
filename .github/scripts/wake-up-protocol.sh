@@ -94,8 +94,9 @@ fi
 echo -e "${GREEN}✓ Agent contract found: ${AGENT_CONTRACT_FILE}${NC}"
 
 # Extract agent class from contract (YAML front matter)
-AGENT_CLASS=$(grep -A 20 "^agent:" "$AGENT_CONTRACT_FILE" | grep "class:" | head -1 | awk '{print $2}' || echo "unknown")
-AGENT_VERSION=$(grep -A 20 "^agent:" "$AGENT_CONTRACT_FILE" | grep "version:" | head -1 | awk '{print $2}' || echo "unknown")
+# Use larger buffer to handle various YAML structures
+AGENT_CLASS=$(grep -A 50 "^agent:" "$AGENT_CONTRACT_FILE" | grep "class:" | head -1 | awk '{print $2}' || echo "unknown")
+AGENT_VERSION=$(grep -A 50 "^agent:" "$AGENT_CONTRACT_FILE" | grep "version:" | head -1 | awk '{print $2}' || echo "unknown")
 
 echo "  - Class: ${AGENT_CLASS}"
 echo "  - Version: ${AGENT_VERSION}"
