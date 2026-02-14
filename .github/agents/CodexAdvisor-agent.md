@@ -6,6 +6,7 @@ agent:
   id: CodexAdvisor-agent
   class: overseer
   version: 6.2.0
+  contract_version: 2.0.0
 
 governance:
   protocol: LIVING_AGENT_SYSTEM
@@ -27,6 +28,7 @@ merge_gate_interface:
     - "Merge Gate Interface / stop-and-fix/enforcement"
 
 scope:
+  repository: APGI-cmy/maturion-isms
   repositories:
     - APGI-cmy/maturion-isms
   agent_files_location: ".github/agents"

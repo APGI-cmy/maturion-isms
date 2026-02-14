@@ -40,3 +40,7 @@ pnpm-debug.log*
 
 # OS
 Thumbs.db
+
+# Agent workspace (session-specific, not persisted)
+.agent-workspace/*/working-contract.md
+.agent-workspace/*/environment-health.json

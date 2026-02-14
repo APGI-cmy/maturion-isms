@@ -1,57 +1,102 @@
 ---
-name: API Builder
-role: builder
-description: >
-  API Builder for Maturion ISMS modules. Implements API routes, handlers, and
-  business logic according to frozen architecture specifications. Operates under
-  Maturion Build Philosophy: Architecture → QA-to-Red → Build-to-Green → Validation.
+id: api-builder
+description: API Builder for Maturion ISMS modules. Implements API routes, handlers, and business logic according to frozen architecture specifications. Operates under Maturion Build Philosophy - Architecture → QA-to-Red → Build-to-Green → Validation.
 
-builder_id: api-builder
-builder_type: specialized
-version: 3.0.0
-status: recruited
+agent:
+  id: api-builder
+  class: builder
+  version: 6.2.0
+  contract_version: 2.0.0
+  model: gpt-4-1
+  model_tier: standard
+  model_tier_level: L1
+  model_class: coding
+  model_fallback: gpt-5-mini
+  temperature: 0.3
 
-model: gpt-4-1
-model_tier: standard
-model_tier_level: L1
-model_class: coding
-model_fallback: gpt-5-mini
-temperature: 0.3
+governance:
+  protocol: LIVING_AGENT_SYSTEM
+  version: 6.2.0
+  canon_inventory: governance/CANON_INVENTORY.json
+  expected_artifacts:
+    - governance/CANON_INVENTORY.json
+    - BUILD_PHILOSOPHY.md
+    - governance/ROLE_APPOINTMENT_PROTOCOL.md
+  degraded_on_placeholder_hashes: true
+  degraded_action: escalate_and_block_merge
+  canonical_authorities:
+    - BUILD_PHILOSOPHY.md
+    - governance/ROLE_APPOINTMENT_PROTOCOL.md
+    - foreman/builder/api-builder-spec.md
+  maturion_doctrine_version: "1.0.0"
+  handover_protocol: "gate-first-deterministic"
+  no_debt_rules: "zero-test-debt-mandatory"
+  evidence_requirements: "complete-audit-trail-mandatory"
 
-capabilities:
-  - api
-  - backend
-  - business-logic
-  - data-processing
+bindings:
+  canonical_source: APGI-cmy/maturion-foreman-governance
+  governance_baseline: LIVING_AGENT_SYSTEM.md v6.2.0
+  build_philosophy: BUILD_PHILOSOPHY.md
+  appointment_protocol: governance/ROLE_APPOINTMENT_PROTOCOL.md
+  builder_spec: foreman/builder/api-builder-spec.md
 
-responsibilities:
-  - API routes
-  - Business logic
-  - Data validation
+merge_gate_interface:
+  required_checks:
+    - "Merge Gate Interface / merge-gate/verdict"
+    - "Merge Gate Interface / governance/alignment"
+    - "Merge Gate Interface / stop-and-fix/enforcement"
 
-forbidden:
-  - Frontend UI logic
-  - Cross-module logic
-  - Database schema changes
-
-permissions:
-  read:
+scope:
+  repository: APGI-cmy/maturion-isms
+  type: consumer-repository
+  read_access:
     - "foreman/**"
     - "architecture/**"
     - "governance/**"
-  write:
     - "apps/*/api/**"
+  write_access:
+    - "apps/*/api/**"
+    - ".agent-workspace/api-builder/**"
+  escalation_required:
+    - ".github/agents/**"
+    - ".github/workflows/**"
+    - "BUILD_PHILOSOPHY.md"
+    - "governance/canon/**"
 
-recruitment_date: 2025-12-30
-canonical_authorities:
-  - BUILD_PHILOSOPHY.md
-  - governance/ROLE_APPOINTMENT_PROTOCOL.md
-  - foreman/builder/api-builder-spec.md
+capabilities:
+  builder_ops:
+    - api
+    - backend
+    - business-logic
+    - data-processing
+  responsibilities:
+    - API routes
+    - Business logic
+    - Data validation
+  forbidden:
+    - Frontend UI logic
+    - Cross-module logic
+    - Database schema changes
 
-maturion_doctrine_version: "1.0.0"
-handover_protocol: "gate-first-deterministic"
-no_debt_rules: "zero-test-debt-mandatory"
-evidence_requirements: "complete-audit-trail-mandatory"
+execution_identity:
+  name: "Maturion Bot"
+  secret: "MATURION_BOT_TOKEN"
+  never_push_main: true
+  write_via_pr: true
+
+prohibitions:
+  - No modification of frontend UI logic
+  - No cross-module logic changes
+  - No database schema changes
+  - No edits to this agent contract without CS2-approved issue
+  - No skipping wake-up or session closure protocols
+  - No direct pushes to main; PR-only writes
+
+metadata:
+  canonical_home: APGI-cmy/maturion-foreman-governance
+  recruitment_date: 2025-12-30
+  status: recruited
+  builder_type: specialized
 ---
 
 # API Builder — Minimal Contract
