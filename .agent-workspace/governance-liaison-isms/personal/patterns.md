@@ -160,8 +160,50 @@
 - **Response**: Make derivation chain explicit and sequential; avoid ambiguous notation in governance docs
 - **Source**: Code review feedback; governance clarity principle
 
+## Pattern: Authority Boundary Enforcement via Tool Restrictions
+- **Observed**: 2026-02-14 (Session 007, 008)
+- **Context**: When governance-liaison needs to fix agent contract schema errors
+- **Pattern**: Direct file editing violates authority boundaries; proper pattern is escalation to CodexAdvisor
+- **Response**: STOP before modifying protected files; invoke Codex via task tool; document escalation in evidence
+- **Source**: PR #116 violations → PR #118 compliance; AGENT_CONTRACT_PROTECTION_PROTOCOL.md
+
+## Pattern: Learning Loop Activation Through Transparent Failure Documentation
+- **Observed**: 2026-02-14 (Session 007, 008)
+- **Context**: When PR fails due to violations (PR #116 closed for authority violations and test dodging)
+- **Pattern**: Explicit documentation of failures and violations enables corrective learning loop
+- **Response**: Reference prior PR violations explicitly; document what was wrong, what was fixed, evidence of compliance
+- **Source**: Issue #115 (learning loop issue); PR #116 (violations) → PR #118 (compliant rerun)
+
+## Pattern: Embedded Authority Checklist Solves Bootstrap Paradox
+- **Observed**: 2026-02-14 (Session 007)
+- **Context**: How to comply with wake-up protocol when wake-up scripts don't exist yet?
+- **Pattern**: Bootstrap paradox - protocol requires scripts, but scripts are what you're installing
+- **Response**: Embed authority/wake-up checklist directly in issue description; enables compliance during installation
+- **Source**: Issue #115; Session 007 success after Session 001-006 struggled with missing scripts
+
+## Pattern: Before/After Transparent Error Counting
+- **Observed**: 2026-02-14 (Session 007, 008)
+- **Context**: When validation detects errors that need fixing
+- **Pattern**: Vague language ("some issues", "minor problems") violates transparency; exact counts required
+- **Response**: State exact error counts: "10 critical errors found" → "Codex fixed all 10" → "0 errors remaining"
+- **Source**: PR #116 closure reason ("test dodging language"); Session 007 transparent reporting success
+
+## Pattern: Evidence-First Execution for Protected Changes
+- **Observed**: 2026-02-14 (Session 007, 008)
+- **Context**: When making changes to protected files (agent contracts)
+- **Pattern**: Changes to protected files require evidence bundle with authority chain, checksums, validation results
+- **Response**: Create evidence report (e.g., AGENT_CONTRACT_YAML_FIXES_EVIDENCE.md) documenting who/what/why/authority
+- **Source**: EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md; Session 007 AGENT_CONTRACT_YAML_FIXES_EVIDENCE.md
+
+## Pattern: Automated Validation Enforces Governance Boundaries
+- **Observed**: 2026-02-14 (Session 007, 008)
+- **Context**: When agents might accidentally violate authority boundaries
+- **Pattern**: Manual governance enforcement doesn't scale; automated checks catch violations
+- **Response**: Create validators (agent-file-validator.sh, wake-up-protocol.sh, session-closure.sh) that enforce boundaries
+- **Source**: LIVING_AGENT_SYSTEM.md v6.2.0; Session 007 script creation
+
 ---
 
-**Last Updated**: 2026-02-13  
-**Total Patterns**: 16  
+**Last Updated**: 2026-02-14  
+**Total Patterns**: 22  
 **Agent**: governance-liaison-isms

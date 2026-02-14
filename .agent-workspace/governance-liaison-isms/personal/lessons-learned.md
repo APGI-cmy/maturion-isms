@@ -236,13 +236,55 @@
 
 ---
 
-## Session 008 - 20260214
+## Session 008 - 20260214 - Learning Loop: PR #116 Authority Violations → PR #118 Protocol Success
 
-**What I Learned:**
-- [Lesson to be filled by agent]
+### Lesson: Transparent Error Reporting Is Mandatory
+- **Context**: PR #116 was closed due to "test dodging language" and authority violations
+- **Pattern**: Minimizing errors or using vague language ("some issues found") violates transparency requirements
+- **Action**: Always state exact error counts (e.g., "10 critical errors found → Codex fixed → 0 errors remaining")
+- **Authority**: LIVING_AGENT_SYSTEM.md v6.2.0, Session 007 evidence in AGENT_CONTRACT_YAML_FIXES_EVIDENCE.md
 
-**What to Remember:**
-- [Key insight to be filled by agent]
+### Lesson: Never Modify Agent Contracts Outside Proper Authority
+- **Context**: In PR #116, governance-liaison directly edited agent contract files (api-builder.md, foreman-isms-agent.md)
+- **Pattern**: Even "trivial" YAML fixes require proper authority escalation to CodexAdvisor
+- **Action**: ALWAYS invoke Codex via task tool for ANY agent contract changes; never modify directly
+- **Authority**: AGENT_CONTRACT_PROTECTION_PROTOCOL.md, governance-liaison contract prohibition on self-modification
+
+### Lesson: Bootstrap Paradox Solution - Embedded Wake-Up Checklist
+- **Context**: How to comply with wake-up protocol requirements before wake-up scripts exist?
+- **Pattern**: Embedded wake-up checklist in issue description enables protocol compliance during initial installation
+- **Action**: For system installation tasks, embed authority/wake-up checklist directly in issue description
+- **Authority**: Session 007 learning; solved bootstrap problem for Living Agent System installation
+
+### Lesson: Learning Loop Requires Explicit Reference to Prior Violations
+- **Context**: PR #118 succeeded because it explicitly referenced PR #116 violations as learning source
+- **Pattern**: Learning loop activates when failures are documented, analyzed, and referenced in corrective actions
+- **Action**: Always document what was fixed, by whom, under what authority, and reference prior violations
+- **Authority**: Issue #115 description - learning loop documentation requirements
+
+### Lesson: Scripts and Automation Must Enforce Governance
+- **Context**: Agent file validator detects contract schema violations automatically
+- **Pattern**: Manual governance checks don't scale; automated validation enforces compliance
+- **Action**: Create validators (agent-file-validator.sh) that check and refuse protected file changes
+- **Authority**: LIVING_AGENT_SYSTEM.md v6.2.0, automated validation requirements
+
+### Lesson: Codex Invocation Pattern for Contract Changes
+- **Context**: When agent contracts need updates, proper authority escalation is required
+- **Pattern**: governance-liaison → task tool → CodexAdvisor-agent (documented in evidence)
+- **Action**: Use task tool with clear prompt specifying files, errors, and required fixes; Codex creates evidence report
+- **Authority**: AGENT_CONTRACT_PROTECTION_PROTOCOL.md, Session 007 successful pattern
+
+### Lesson: Evidence Bundle Proves Compliance
+- **Context**: AGENT_CONTRACT_YAML_FIXES_EVIDENCE.md documents who changed what and why
+- **Pattern**: Evidence files (with before/after counts, authority chain, checksums) prove protocol compliance
+- **Action**: Create comprehensive evidence reports for any protected file changes; include validation results
+- **Authority**: EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md, Session 007 evidence
+
+### Lesson: PR Description Must Include Authority References
+- **Context**: PR #118 description explicitly states authority chain (CS2 → FM → governance-liaison → Codex)
+- **Pattern**: Authority transparency enables audit and prevents violations
+- **Action**: Include authority references, canonical citations, and compliance confirmations in all PR descriptions
+- **Authority**: LIVING_AGENT_SYSTEM.md v6.2.0, REQ-CR-004 (governance alignment in PR descriptions)
 
 ---
 
