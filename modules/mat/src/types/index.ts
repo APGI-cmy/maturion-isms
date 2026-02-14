@@ -171,3 +171,69 @@ export type ApprovalAction =
   | 'approve_criteria' 
   | 'confirm_score' 
   | 'assign_auditor';
+
+// Criteria Management Types
+export type CriterionStatus = 
+  | 'not_started' 
+  | 'in_progress' 
+  | 'submitted' 
+  | 'ai_scored' 
+  | 'confirmed' 
+  | 'not_used';
+
+export interface Criterion {
+  id: string;
+  mps_id: string;
+  number: string;
+  title: string;
+  description: string;
+  status: CriterionStatus;
+  is_approved: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ParsedCriterion {
+  number: string;
+  title: string;
+  description: string;
+  source_text: string;
+}
+
+export interface UploadResult {
+  file_path: string;
+  sha256_hash: string;
+  file_size: number;
+}
+
+export interface ParseResult {
+  criteria: ParsedCriterion[];
+  coverage_ratio: number;
+  hallucination_flags: HallucinationFlag[];
+  is_valid: boolean;
+}
+
+export interface HallucinationFlag {
+  criterion_number: string;
+  issue: string;
+}
+
+export interface ValidationResult {
+  valid: boolean;
+  hallucinations: HallucinationFlag[];
+}
+
+export interface CoverageValidationResult {
+  coverage_ratio: number;
+  is_sufficient: boolean;
+}
+
+// Criterion Status Transitions Map
+export const CRITERION_STATUS_TRANSITIONS: Record<CriterionStatus, CriterionStatus[]> = {
+  not_started: ['in_progress', 'not_used'],
+  in_progress: ['submitted', 'not_used'],
+  submitted: ['ai_scored'],
+  ai_scored: ['confirmed'],
+  confirmed: [],
+  not_used: []
+};
