@@ -1,54 +1,85 @@
-# BUILDER AGENT FILE COMPLIANCE CHECKLIST
+# BUILDER AGENT FILE COMPLIANCE CHECKLIST (DRAFT PROPOSAL)
 
-**Status**: Canonical Governance Artifact  
-**Version**: 2.0.0  
-**Authority**: Maturion Engineering Leadership (Johan Ras)  
+⚠️ **DRAFT PROPOSAL - NOT YET CANONICAL GOVERNANCE** ⚠️
+
+**Status**: PROPOSAL - Pending CS2 Approval  
+**Version**: 2.0.0-DRAFT  
+**Authority**: Pending CS2 approval in maturion-foreman-governance  
+**Author**: Codex Agent (via Governance Liaison escalation)  
 **Created**: 2026-02-14  
 **Last Updated**: 2026-02-14  
-**Purpose**: Machine-checkable checklist for builder agent file creation and compliance validation  
-**Usage**: Foreman and builder recruitment validation
+**Purpose**: Proposed machine-checkable checklist for builder agent file creation and compliance validation  
+
+---
+
+## ⚠️ IMPORTANT: This Document is a PROPOSAL Only
+
+**This document is NOT governance until:**
+
+1. ✅ CS2 reviews and approves requirements in maturion-foreman-governance
+2. ✅ Canonical version published in maturion-foreman-governance repository
+3. ✅ Governance ripple triggered to consumer repositories
+4. ✅ Governance Liaison layers down approved canonical version
+
+**DO NOT USE THIS FOR ENFORCEMENT** until canonical version exists in maturion-foreman-governance.
+
+**Governance Authority Chain Correction**:
+- **Incorrect**: Governance Liaison → Codex Agent → Direct Creation in Consumer Repo
+- **Correct**: Governance Liaison → CS2 → Canonical Creation → Ripple to Consumers
+
+This draft was created by Codex Agent in Session 010 and should have been marked as PROPOSAL from the start. It is now correctly positioned as a draft for CS2 review, NOT as authoritative governance.
+
+**Related**:
+- Escalation: `.agent-workspace/governance-liaison-isms/escalation-inbox/` (pending creation)
+- Canonical Source: APGI-cmy/maturion-foreman-governance (awaiting CS2 action)
 
 ---
 
 ## Executive Summary
 
-This document provides a **comprehensive, machine-checkable compliance checklist** for builder agent file creation. It consolidates requirements from canonical governance, ensuring all builders are properly constituted, bound, and equipped for one-time build correctness.
+⚠️ **DRAFT PROPOSAL**: This document provides a **proposed, comprehensive, machine-checkable compliance checklist** for builder agent file creation. It consolidates requirements from canonical governance sources, ensuring all builders are properly constituted, bound, and equipped for one-time build correctness.
 
-**Critical Principle**: A builder agent file is INCOMPLETE and the agent is OUT OF GOVERNANCE if ANY required element is missing or non-compliant.
+**This is a draft proposal pending CS2 approval. It is NOT authoritative governance.**
 
-**Canonical References**:
+**Critical Principle** (if approved): A builder agent file is INCOMPLETE and the agent is OUT OF GOVERNANCE if ANY required element is missing or non-compliant.
+
+**Proposed Canonical References** (pending verification):
 - `governance/CANON_INVENTORY.json` - Canon alignment validation
 - `governance/canon/BUILDER_CONTRACT_BINDING_CHECKLIST.md` - Binding completeness
 - `governance/canon/FM_BUILDER_APPOINTMENT_PROTOCOL.md` - Appointment requirements
 - `governance/canon/BUILD_PHILOSOPHY.md` - One-Time Build Law, Zero Test Debt
 - `governance/canon/OPOJD_DOCTRINE.md` - Continuous execution mandate
 
+**Note**: All 81 canonical references in this document require verification by CS2 to ensure they exist and are correctly cited.
+
 ---
 
-## Usage Instructions
+## Usage Instructions (When Approved)
 
-### For Foreman (FM)
+⚠️ **DO NOT USE UNTIL CS2 APPROVES AND CANONICAL VERSION EXISTS**
 
-When creating builder agent files:
-1. Use this checklist as the canonical validation baseline
+### For Foreman (FM) - After CS2 Approval
+
+When creating builder agent files (after canonical version exists):
+1. Use the approved canonical checklist as validation baseline (not this draft)
 2. For each item, verify presence and compliance in the builder agent file
 3. Mark items as ✅ (present and compliant) or ❌ (missing or non-compliant)
 4. A builder agent file is VALID only if ALL required items are ✅
 5. Do NOT appoint builders until ALL ❌ items are resolved
 
-### For Validation Tooling
+### For Validation Tooling - After CS2 Approval
 
-Automated validators MUST:
+Automated validators MUST (after canonical version exists):
 1. Parse builder agent file (`.github/agents/*.md` format)
 2. For each checklist item, verify presence and correctness
 3. Generate validation report showing pass/fail for each item
 4. Return VALID only if all required items pass
 5. Block recruitment/execution if validation fails
 
-### For Governance Auditors
+### For Governance Auditors - After CS2 Approval
 
-When auditing builder compliance:
-1. Use this checklist as validation baseline
+When auditing builder compliance (after canonical version exists):
+1. Use the approved canonical checklist as validation baseline (not this draft)
 2. Verify builder agent files contain all required elements
 3. Verify elements are correctly specified (not placeholders)
 4. Document any gaps or non-compliance
@@ -58,18 +89,37 @@ When auditing builder compliance:
 
 ## Version History
 
-### Version 2.0.0 (2026-02-14)
+### Version 2.0.0-DRAFT (2026-02-14) - GOVERNANCE AUTHORITY CORRECTION
+
+⚠️ **DRAFT PROPOSAL STATUS**: This version converted to DRAFT proposal pending CS2 approval
+
+**Governance Authority Correction**:
+- **Issue Identified**: Session 010 created governance directly in consumer repo (governance/artifacts/)
+- **Authority Violation**: Bypassed canonical governance creation process
+- **Corrective Action**: File moved to docs/proposals/ and marked as DRAFT
+- **Correct Process**: CS2 must review, approve, and create canonical version in maturion-foreman-governance
+- **Authority Reference**: REQ-AS-002 (CS2 Escalation Required for New Governance)
+
+**Technical Content** (pending CS2 review):
 - **MAJOR ENHANCEMENT**: Added complete detailed validation sections
-- Expanded from stub (8 section titles) to full checklist (78 requirements)
+- Expanded from stub (8 section titles) to full checklist (77 requirements)
 - Added 8 comprehensive sections with machine-checkable validation criteria
 - Each requirement includes: ID, description, required field/path, validation rule, acceptance criteria, severity, canonical reference
-- Added 18 BLOCKER requirements (23%), 25 HIGH requirements (32%), 35 MEDIUM requirements (45%)
+- Added 25 BLOCKER requirements (32%), 30 HIGH requirements (39%), 21 MEDIUM requirements (27%)
 - Added Section 9: Validation Execution Workflow
 - Added Appendix A: Requirement Severity Definitions
 - Added Appendix B: Quick Validation Checklist (FM Use)
 - Added Appendix C: Validation Report Template
-- Added Appendix D: Canonical Reference Index (25+ canonical documents)
+- Added Appendix D: Canonical Reference Index (81 canonical references pending verification)
 - Rationale: Fulfill Foreman's need for machine-checkable validation criteria during builder recruitment
+
+**Next Steps**:
+1. CS2 reviews this draft proposal
+2. CS2 verifies all 81 canonical references exist
+3. CS2 creates canonical version in maturion-foreman-governance (may differ from this draft)
+4. Governance ripple triggered to consumer repos
+5. Governance Liaison layers down approved canonical version
+6. This draft replaced with canonical version
 
 ### Version 1.1.0 (2026-02-14)
 - **BREAKING CHANGE**: Removed all "Tier-0" terminology
@@ -1359,7 +1409,15 @@ Quick reference to canonical governance documents cited in this checklist:
 
 ---
 
-**Authority**: Maturion Engineering Leadership (Johan Ras)  
-**Version**: 2.0.0 (Detailed Sections)  
-**Effective Date**: 2026-02-14  
-**Canonical References**: All requirements trace to canonical governance documents listed above
+⚠️ **DRAFT PROPOSAL - NOT CANONICAL GOVERNANCE** ⚠️
+
+**Status**: DRAFT PROPOSAL - Pending CS2 Approval  
+**Version**: 2.0.0-DRAFT  
+**Authority**: Pending CS2 approval in APGI-cmy/maturion-foreman-governance  
+**Author**: Codex Agent (via Governance Liaison escalation)  
+**Effective Date**: Pending (after CS2 approval and canonical creation)  
+**Proposed Canonical References**: All 81 requirements trace to canonical governance documents listed above (pending CS2 verification)
+
+**Escalation Required**: This draft must be reviewed by CS2 and published as canonical governance in maturion-foreman-governance before use.
+
+**DO NOT USE FOR ENFORCEMENT** until canonical version exists.
