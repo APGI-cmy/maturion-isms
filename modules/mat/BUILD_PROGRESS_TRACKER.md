@@ -2,7 +2,7 @@
 
 **Module**: Mat  
 **Module Slug**: mat  
-**Last Updated**: 2026-02-13  
+**Last Updated**: 2026-02-14  
 **Updated By**: foreman-isms
 
 ---
@@ -178,9 +178,37 @@ Track the progression through the canonical module lifecycle stages.
 - [x] Responsibilities, constraints, and deliverables defined per builder
 - [x] Detailed handover instructions per builder with explicit requirements, standards, and acceptance criteria
 - [x] Builders appointed by FM
+- [x] Builder agent files created by Codex Advisor (`.github/agents/{schema,ui,integration,qa}-builder.md`)
+- [x] All 5 builder agent files present and compliant with BUILDER_CONTRACT_SCHEMA.md v2.0
 
-**Completion Date**: 2026-02-13  
-**Notes**: Builder contracts compiled per BUILDER_CONTRACT_SCHEMA.md v2.0. Each builder receives detailed scope, wave assignments, test coverage mapping, acceptance criteria, forbidden actions, and key architecture references. Maturion Doctrine compliance (One-Time Build Correctness, Zero Test Debt, Gate-First Handover) enforced for all builders.
+**Completion Date**: 2026-02-13 (contracts); 2026-02-14 (agent files)  
+**Notes**: Builder contracts compiled per BUILDER_CONTRACT_SCHEMA.md v2.0. Each builder receives detailed scope, wave assignments, test coverage mapping, acceptance criteria, forbidden actions, and key architecture references. Maturion Doctrine compliance (One-Time Build Correctness, Zero Test Debt, Gate-First Handover) enforced for all builders. Builder agent files created 2026-02-14 by Codex Advisor agent (the only agent authorized to create builder contracts/agent files).
+
+> **⚠️ PROCESS DEVIATION — POLC AUTHORITY BOUNDARY VIOLATION IN PR #128**
+>
+> **Deviation**: PR [APGI-cmy/maturion-isms#128](https://github.com/APGI-cmy/maturion-isms/pull/128) erroneously assigned governance authority to Foreman and had Foreman writing/modifying builder agent files (`.github/agents/api-builder.md`). This violated the constitutional authority chain: Foreman's role is SUPERVISORY ONLY (POLC: Plan, Organize, Lead, Control). Foreman reviews, aligns, and ensures readiness — it does NOT build, write, alter, or create agent files.
+>
+> **Root Cause**: The Foreman agent acted outside its constitutional authority boundary by directly modifying builder agent files. The correct agent chain was not enforced: only the Codex Advisor agent is authorized to create and modify builder contracts/agent files. The Foreman failed to delegate agent file creation to the Codex Advisor and instead performed the work itself.
+>
+> **Impact**: PR #128 was closed/rejected without merge. Builder agent file compliance was not properly validated through the correct agent chain (Codex Advisor creates → Foreman validates → CS2 approves).
+>
+> **Corrective Action**: Issue [#129](https://github.com/APGI-cmy/maturion-isms/issues/129) opened as supervisory task. All 4 missing builder agent files (schema-builder, ui-builder, integration-builder, qa-builder) created via Codex Advisor agent. Foreman role limited to supervision and validation only.
+>
+> **Preventive Action**: All future builder agent file creation/modification MUST follow the correct agent chain:
+>
+> ```
+> Codex Advisor (creates/modifies) → Foreman (supervises/validates) → CS2 (approves)
+> ```
+>
+> Foreman MUST NOT create, write, alter, or modify any agent files. This is a constitutional boundary, not a procedural guideline.
+>
+> **Lessons Learned**:
+> 1. POLC authority is supervisory — Foreman plans, organizes, leads, and controls but does NOT implement
+> 2. Agent file creation is exclusively Codex Advisor's responsibility
+> 3. Constitutional authority boundaries must be enforced before execution begins
+> 4. Previous PR failures must be recorded as deviation records to prevent recurrence
+>
+> **Reference**: PR [APGI-cmy/maturion-isms#128](https://github.com/APGI-cmy/maturion-isms/pull/128) (closed), Issue [#129](https://github.com/APGI-cmy/maturion-isms/issues/129)
 
 ---
 
@@ -201,9 +229,9 @@ Track the progression through the canonical module lifecycle stages.
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 4 (Builder Appointment COMPLETE)  
+**Current Stage**: Stage 4 (Builder Appointment COMPLETE — all agent files created)  
 **Overall Progress**: ~60% complete  
-**Blockers**: None — Implementation plan and builder appointments complete, ready for build execution  
+**Blockers**: None — Implementation plan, builder appointments, and agent files complete; ready for build execution  
 **Next Steps**: 
 1. ~~Create `01.5-trs/` folder in module structure~~
 2. ~~Develop TRS based on FRS requirements (FR-001 to FR-069)~~
@@ -212,7 +240,8 @@ Track the progression through the canonical module lifecycle stages.
 5. ~~Create Implementation Plan (6 build waves)~~
 6. ~~Create Builder Agent File Compliance Checklist (version 1.1.0)~~
 7. ~~Appoint builders (5 builder categories)~~
-8. Proceed to Stage 5: Build Execution (Wave 0 — Foundational Infrastructure)
+8. ~~Create builder agent files via Codex Advisor (schema, ui, integration, qa-builder)~~
+9. Proceed to Stage 5: Build Execution (Wave 0 — Foundational Infrastructure)
 
 ---
 
@@ -221,6 +250,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] All stages proceeding in order (TRS stage now required between FRS and Architecture)
 - [x] QA-to-Red stage now included as mandatory Stage 2.5 (previously omitted — see deviation record in Stage 2.5)
 - [x] CST/CWT integration testing requirements now included in Implementation Plan (previously omitted — see deviation record in Stage 3)
+- [x] POLC authority boundary enforced — builder agent files created by Codex Advisor only (see deviation record in Stage 4)
 - [x] Traceability maintained (App Description → FRS → TRS → Architecture → QA-to-Red → Implementation Plan → Builder Appointment)
 - [ ] All required approvals obtained
 - [ ] Evidence artifacts created for each stage
@@ -236,8 +266,10 @@ Track the progression through the canonical module lifecycle stages.
 
 **CST/CWT Omission Fix**: Implementation plan updated from v1.0.0 to v1.1.0 on 2026-02-14 to include CST/CWT integration testing requirements per `governance/canon/COMBINED_TESTING_PATTERN.md`. The omission was a governance failure — the derivation chain did not include the Combined Testing Pattern as a governance input. See Stage 3 deviation record for full RCA.
 
+**POLC Authority Boundary Correction (PR #128)**: PR [APGI-cmy/maturion-isms#128](https://github.com/APGI-cmy/maturion-isms/pull/128) was closed on 2026-02-14 after the Foreman agent erroneously wrote builder agent files directly, violating the constitutional authority chain. The correct agent chain is: Codex Advisor (creates/modifies) → Foreman (supervises/validates) → CS2 (approves). All 4 missing builder agent files (schema-builder, ui-builder, integration-builder, qa-builder) were subsequently created via the Codex Advisor agent under Foreman supervision, per Issue [#129](https://github.com/APGI-cmy/maturion-isms/issues/129). See Stage 4 deviation record for full details and lessons learned.
+
 ---
 
-**Template Version**: 1.2.0 (includes TRS stage, QA-to-Red stage, and Builder Checklist Creation stage)  
+**Template Version**: 1.3.0 (includes TRS stage, QA-to-Red stage, Builder Checklist Creation stage, and POLC authority deviation record)  
 **Template Authority**: MODULE_LIFECYCLE_AND_REPO_STRUCTURE_STRATEGY.md  
 **Last Template Update**: 2026-02-14
