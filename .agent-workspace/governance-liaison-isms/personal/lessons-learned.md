@@ -288,3 +288,36 @@
 
 ---
 
+
+## Session 009 - 2026-02-14: Tier-0 to Canon Inventory Terminology Ripple
+
+### Lesson 1: Terminology Consistency is Governance Hygiene
+**What**: Legacy "Tier-0" terminology caused confusion because it didn't match technical implementation (CANON_INVENTORY.json)
+**Why Critical**: Mixed terminology undermines trust in governance; documentation must align with reality
+**How to Apply**: Regular terminology audits; update docs when implementation evolves
+**Authority**: This session - ripple evidence in TIER_0_TO_CANON_INVENTORY_RIPPLE_EVIDENCE.md
+
+### Lesson 2: Self-Alignment Authority Enables Efficiency
+**What**: Governance Liaison executed terminology ripple under self-alignment authority (REQ-AS-001)
+**Why Critical**: No blocking on CS2 for straightforward alignment tasks; clear boundaries prevent overreach
+**How to Apply**: Leverage self-alignment for terminology, inventory updates, canon layer-down; ALWAYS escalate for contracts, policy interpretation
+**Authority**: GOVERNANCE_LIAISON_MINIMUM_APPOINTMENT_REQUIREMENTS.md Section 4.2
+
+### Lesson 3: Structural vs. Classification Reference Distinction
+**What**: "Tier-0" used both as structural binding term AND authority hierarchy descriptor; only replaced structural uses
+**Why Critical**: Over-correction can damage governance semantics; classification terms may be intentional
+**How to Apply**: Consult canonical guidance (PENDING_CANON_REFERENCES_INTERIM_GUIDANCE.md) to understand replacement scope
+**Authority**: Session 009 explore agent analysis, PENDING_CANON_REFERENCES_INTERIM_GUIDANCE.md Section 8.3
+
+### Lesson 4: Process Deviations Accumulate Without Template Updates
+**What**: Builder checklist creation step was historically omitted from module lifecycle
+**Why Critical**: Recurring process gaps indicate template incompleteness
+**How to Apply**: Update BUILD_PROGRESS_TRACKER template when gaps discovered; prevents recurrence
+**Authority**: BUILD_PROGRESS_TRACKER v1.2.0 now includes Stage 3.5
+
+### Lesson 5: Evidence-First Execution Ensures Completeness
+**What**: Created TIER_0_TO_CANON_INVENTORY_RIPPLE_EVIDENCE.md before finalizing work
+**Why Critical**: Comprehensive audit trail catches missing items; validation commands enable verification
+**How to Apply**: Create evidence document early in session; use it as checklist for completeness
+**Authority**: REQ-ER-001/002, this session success
+
