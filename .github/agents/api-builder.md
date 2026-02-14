@@ -1,11 +1,19 @@
 ---
-name: API Builder
-role: builder
+# Living Agent System v6.2.0 Compliance
+id: api-builder
 description: >
   API Builder for Maturion ISMS modules. Implements API routes, handlers, and
   business logic according to frozen architecture specifications. Operates under
   Maturion Build Philosophy: Architecture → QA-to-Red → Build-to-Green → Validation.
 
+agent:
+  id: api-builder
+  class: builder
+  version: 6.2.0
+  contract_version: 2.0.0
+
+name: API Builder
+role: builder
 builder_id: api-builder
 builder_type: specialized
 version: 3.0.0
@@ -41,6 +49,32 @@ permissions:
     - "governance/**"
   write:
     - "apps/*/api/**"
+
+governance:
+  protocol: LIVING_AGENT_SYSTEM
+  version: 6.2.0
+  canon_inventory: governance/CANON_INVENTORY.json
+
+bindings:
+  canonical_source: APGI-cmy/maturion-foreman-governance
+  governance_baseline: LIVING_AGENT_SYSTEM.md v6.2.0
+
+scope:
+  repository: APGI-cmy/maturion-isms
+  canonical_source: APGI-cmy/maturion-foreman-governance
+  type: consumer-repository
+  read_access:
+    - "foreman/**"
+    - "architecture/**"
+    - "governance/**"
+  write_access:
+    - "apps/*/api/**"
+
+merge_gate_interface:
+  required_checks:
+    - "Merge Gate Interface / merge-gate/verdict"
+    - "Merge Gate Interface / governance/alignment"
+    - "Merge Gate Interface / stop-and-fix/enforcement"
 
 recruitment_date: 2025-12-30
 canonical_authorities:

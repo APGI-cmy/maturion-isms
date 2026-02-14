@@ -189,7 +189,7 @@ validate_agent_file() {
     fi
     
     # Check for LOCKED sections (if this is an agent contract)
-    LOCKED_COUNT=$(grep -c "^<!-- LOCKED:" "$file" || echo "0")
+    LOCKED_COUNT=$(grep "^<!-- LOCKED:" "$file" | wc -l || echo "0")
     if [ "$LOCKED_COUNT" -gt 0 ]; then
         echo "  ✓ Contains $LOCKED_COUNT LOCKED section(s)"
     fi

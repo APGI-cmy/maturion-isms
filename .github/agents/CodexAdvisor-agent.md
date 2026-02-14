@@ -20,6 +20,10 @@ governance:
       never_push_main: true
       write_via_pr_by_default: true
 
+bindings:
+  canonical_source: APGI-cmy/maturion-foreman-governance
+  governance_baseline: LIVING_AGENT_SYSTEM.md v6.2.0
+
 merge_gate_interface:
   required_checks:
     - "Merge Gate Interface / merge-gate/verdict"
