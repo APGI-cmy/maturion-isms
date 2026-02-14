@@ -1,24 +1,30 @@
-name: Governance Ripple Sync
+name: Governance Alignment Schedule
 
 # Authority: CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md, LIVING_AGENT_SYSTEM.md v6.2.0
-# Purpose: Event-driven governance ripple receiver for cross-repo alignment
-# Complements governance-alignment-schedule.yml for scheduled fallback
+# Purpose: Scheduled fallback for governance alignment (hourly checks)
+# Complements event-driven governance-ripple-sync.yml
 
 on:
-  # Push-based listener (MANDATORY) - Primary trigger
-  repository_dispatch:
-    types: [governance_ripple]
+  # Scheduled fallback - runs every hour
+  schedule:
+    - cron: '0 * * * *'  # Every hour on the hour
   
-  # Manual trigger (for testing)
+  # Manual trigger for testing
   workflow_dispatch:
+    inputs:
+      force_pr:
+        description: 'Force PR creation even if no drift'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
-  sync-governance:
-    name: Governance Ripple Receiver
+  scheduled-alignment-check:
+    name: Scheduled Governance Alignment Check
     runs-on: ubuntu-latest
     
     steps:
@@ -33,24 +39,17 @@ jobs:
           git config --global user.name "Maturion Bot"
           git config --global user.email "bot@maturion.ai"
       
-      - name: Log Ripple Event
-        if: github.event_name == 'repository_dispatch'
-        run: |
-          echo "======================================"
-          echo "Governance Ripple Event Received"
-          echo "======================================"
-          echo "Dispatch ID: ${{ github.event.client_payload.dispatch_id }}"
-          echo "Canonical Commit: ${{ github.event.client_payload.canonical_commit }}"
-          echo "Changed Paths: ${{ github.event.client_payload.changed_paths }}"
-          echo "Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-          echo ""
-      
       - name: Run Governance Alignment
         id: align
         run: |
           set +e  # Don't exit on error
           
-          bash .github/scripts/align-governance.sh
+          FORCE_FLAG=""
+          if [ "${{ github.event.inputs.force_pr }}" = "true" ]; then
+            FORCE_FLAG="--force-pr"
+          fi
+          
+          bash .github/scripts/align-governance.sh $FORCE_FLAG
           EXIT_CODE=$?
           
           if [ $EXIT_CODE -eq 0 ]; then
@@ -91,33 +90,31 @@ jobs:
         with:
           token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
           commit-message: |
-            Governance alignment - ripple sync
+            Governance alignment - scheduled sync
             
             Canonical commit: ${{ steps.metadata.outputs.canonical_commit }}
             Files updated: ${{ steps.metadata.outputs.files_updated }}
-            Dispatch ID: ${{ github.event.client_payload.dispatch_id }}
-          branch: governance-ripple-sync-${{ github.run_id }}
+            Triggered: Scheduled fallback check
+          branch: governance-alignment-scheduled-${{ github.run_id }}
           delete-branch: true
-          title: '[Governance Ripple] Align with canonical governance'
+          title: '[Governance Alignment] Scheduled sync with canonical governance'
           body: |
-            ## Governance Ripple Sync
+            ## Governance Alignment - Scheduled Sync
             
-            This PR was automatically created in response to a governance ripple event from the canonical repository.
+            This PR was automatically created by the scheduled governance alignment workflow.
             
             ### Metadata
-            - **Trigger**: Repository dispatch (governance_ripple)
-            - **Dispatch ID**: `${{ github.event.client_payload.dispatch_id }}`
-            - **Canonical Commit**: `${{ steps.metadata.outputs.canonical_commit || github.event.client_payload.canonical_commit }}`
+            - **Trigger**: Scheduled fallback check (hourly)
+            - **Canonical Commit**: `${{ steps.metadata.outputs.canonical_commit }}`
             - **Canonical Version**: `${{ steps.metadata.outputs.canonical_version }}`
             - **Files Updated**: ${{ steps.metadata.outputs.files_updated }}
-            - **Changed Paths**: `${{ github.event.client_payload.changed_paths }}`
             - **Drift Report**: `${{ steps.metadata.outputs.drift_report }}`
             
             ### Governance Alignment Protocol
             
             Per **CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md**:
-            1. ✅ Ripple event received from canonical source
-            2. ✅ Drift detected via alignment script
+            1. ✅ Drift detected via scheduled check
+            2. ✅ Canonical governance fetched from `APGI-cmy/maturion-foreman-governance`
             3. ✅ Files layered down with SHA256 verification
             4. ✅ `sync_state.json` and `CANON_INVENTORY.json` updated
             5. ✅ Evidence artifacts created in `.agent-admin/governance/`
@@ -131,22 +128,21 @@ jobs:
             
             ---
             **Authority**: LIVING_AGENT_SYSTEM.md v6.2.0  
-            **Workflow**: `.github/workflows/governance-ripple-sync.yml`  
+            **Workflow**: `.github/workflows/governance-alignment-schedule.yml`  
             **Script**: `.github/scripts/align-governance.sh`
           labels: |
             governance
             automated
-            ripple-sync
             agent:liaison
           assignees: APGI-cmy
       
-      - name: Sync Summary
+      - name: Alignment Summary
         if: always()
         run: |
           echo "======================================"
-          echo "Governance Ripple Sync Summary"
+          echo "Governance Alignment Summary"
           echo "======================================"
-          echo "Trigger: ${{ github.event_name }}"
+          echo "Trigger: Scheduled fallback check"
           echo "Drift Detected: ${{ steps.align.outputs.drift_detected }}"
           
           if [ "${{ steps.align.outputs.drift_detected }}" = "true" ]; then

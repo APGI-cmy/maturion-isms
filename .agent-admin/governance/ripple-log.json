@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0",
+  "repository": "APGI-cmy/maturion-isms",
+  "canonical_source": "APGI-cmy/maturion-foreman-governance",
+  "description": "Log of governance ripple events and alignment activities",
+  "ripple_events": []
+}
