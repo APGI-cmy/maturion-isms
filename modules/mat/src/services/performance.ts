@@ -229,6 +229,11 @@ export function simulateAuditCompilation(criteriaCount: number): AuditCompilatio
   return measureAuditCompilation(criteriaCount, compilationTimeMs);
 }
 
+/** Simulated page load baseline time in ms */
+const BASE_PAGE_LOAD_MS = 400;
+/** Simulated page load variance range in ms */
+const LOAD_TIME_VARIANCE_MS = 600;
+
 /**
  * Simulates concurrent user page loads for performance testing
  */
@@ -237,10 +242,9 @@ export function simulateConcurrentUsers(userCount: number): ConcurrentUserResult
   // In production, this would be actual load testing results
   const pageLoadTimesMs: number[] = [];
   for (let i = 0; i < userCount; i++) {
-    // Simulate realistic page load times (200-1500ms with some variance)
-    const baseTime = 400;
-    const variance = Math.random() * 600;
-    pageLoadTimesMs.push(baseTime + variance);
+    // Simulate realistic page load times with some variance
+    const variance = Math.random() * LOAD_TIME_VARIANCE_MS;
+    pageLoadTimesMs.push(BASE_PAGE_LOAD_MS + variance);
   }
 
   return measureConcurrentUsers(userCount, pageLoadTimesMs);

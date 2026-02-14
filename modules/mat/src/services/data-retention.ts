@@ -63,7 +63,7 @@ export function createRetentionPolicy(params: {
   }
 
   if (params.retentionDays < 365) {
-    throw new Error('Minimum retention period is 365 days for compliance');
+    throw new Error('Minimum retention period is 365 days for GDPR/POPIA compliance');
   }
 
   return {

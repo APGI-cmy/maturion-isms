@@ -227,25 +227,25 @@ Track the progression through the canonical module lifecycle stages.
 ---
 
 ### Stage 5: Build Execution & Evidence
-**Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] COMPLETE  
+**Status**: [ ] NOT_STARTED | [x] IN_PROGRESS | [ ] COMPLETE  
 **Location**: `modules/mat/05-build-evidence/`  
 **Key Artifacts**:
-- [ ] Implementation code in `apps/` or `packages/`
-- [ ] Test evidence
-- [ ] QA validation results
-- [ ] Build completion evidence
-- [ ] Handover documentation
+- [x] Implementation code: Wave 1 Task 1.3 — Criteria Management UI components and services
+- [x] Test evidence: MAT-T-0069 through MAT-T-0073 GREEN (5 tests passing)
+- [ ] QA validation results (pending full wave completion)
+- [ ] Build completion evidence (pending full wave completion)
+- [ ] Handover documentation (pending full wave completion)
 
-**Completion Date**: N/A  
-**Notes**: Build evidence folder exists but likely not populated
+**Completion Date**: N/A (in progress)  
+**Notes**: Wave 1 Task 1.3 (Criteria Management UI) implemented 2026-02-14. Components: criteria-tree.ts, criteria-upload.ts, approval-workflow.ts. Services: data-retention.ts, regulatory-alignment.ts, performance.ts. Tests MAT-T-0069–0073 turned from RED to GREEN. Zero regressions (44 passing, 54 remaining red stubs from other waves).
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 4 (Builder Appointment COMPLETE — all agent files created)  
-**Overall Progress**: ~60% complete  
-**Blockers**: None — Implementation plan, builder appointments, and agent files complete; ready for build execution  
+**Current Stage**: Stage 5 (Build Execution — Wave 1 Task 1.3 Criteria Management UI COMPLETE)  
+**Overall Progress**: ~65% complete  
+**Blockers**: None — Wave 1 Task 1.3 complete; remaining tasks in-progress  
 **Next Steps**: 
 1. ~~Create `01.5-trs/` folder in module structure~~
 2. ~~Develop TRS based on FRS requirements (FR-001 to FR-069)~~
@@ -255,7 +255,8 @@ Track the progression through the canonical module lifecycle stages.
 6. ~~Create Builder Agent File Compliance Checklist (version 1.1.0)~~
 7. ~~Appoint builders (5 builder categories)~~
 8. ~~Create builder agent files via Codex Advisor (schema, ui, integration, qa-builder)~~
-9. Proceed to Stage 5: Build Execution (Wave 0 — Foundational Infrastructure)
+9. ~~Wave 1 Task 1.3: Criteria Management UI (criteria-tree, upload, approval workflow)~~
+10. Continue Wave 1 completion (Tasks 1.1, 1.2) and Wave 2 planning
 
 ---
 

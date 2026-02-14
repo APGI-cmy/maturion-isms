@@ -131,7 +131,11 @@ describe('CAT-08: performance', () => {
     expect(slowLcp.details.lcpPassed).toBe(false);
 
     // Test: Edge case — values at threshold boundary
-    const boundaryResult = measurePageLoad(2999, 499, 2499);
+    const boundaryResult = measurePageLoad(
+      PERFORMANCE_THRESHOLDS.page_load.maxValue - 1,
+      PERFORMANCE_THRESHOLDS.spa_navigation.maxValue - 1,
+      PERFORMANCE_THRESHOLDS.lcp.maxValue - 1
+    );
     expect(boundaryResult.allPassed).toBe(true);
 
     // Test: Performance measurement creation
