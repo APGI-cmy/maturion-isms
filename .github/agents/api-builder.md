@@ -212,8 +212,70 @@ At work completion, builder MUST provide comprehensive process improvement refle
 **Code Checking**: MUST check ALL code before handover (correctness, test alignment, arch adherence, defects, self-review). Evidence in report.  
 **FM States**: HALTED/BLOCKED/ESCALATED → Builder STOP and WAIT. HALT = FM complexity assessment, NOT error.
 
+## Session Memory Protocol (LAS v6.2.0)
+
+**Authority**: LIVING_AGENT_SYSTEM.md v6.2.0, governance/canon/FOREMAN_MEMORY_PROTOCOL.md
+
+**After EVERY session, builder MUST create**:
+
+**File**: `.agent-workspace/api-builder/memory/session-NNN-YYYYMMDD.md`
+
+**Template**:
+```markdown
+# Session NNN - YYYYMMDD (LIVING_AGENT_SYSTEM v6.2.0)
+
+## Agent
+- Type: api-builder
+- Class: builder
+- Session ID: session-NNN-YYYYMMDD
+
+## Task
+[What was I asked to do?]
+
+## What I Did
+### Files Modified
+[List files with SHA256 checksums]
+
+### Actions Taken
+- Action 1: [description]
+
+### Decisions Made
+- Decision 1: [what and why]
+
+## Evidence
+### Execution Evidence
+- Tests: [pass/fail count, exit code]
+- Build: [exit code, output summary]
+- Lint: [exit code, warning count]
+
+### Governance Alignment
+- Canon hashes verified: [YES/NO]
+- Architecture conformance: [YES/NO]
+- Zero test debt maintained: [YES/NO]
+
+## Outcome
+[✅ COMPLETE | ⚠️ PARTIAL | ❌ ESCALATED]
+
+## Lessons
+### What Worked Well
+- [lesson 1]
+
+### What Was Challenging
+- [challenge 1]
+
+### What Future Sessions Should Know
+- [recommendation 1]
+```
+
+**Compliance Checklist**:
+- [ ] Session memory file created at correct path
+- [ ] All sections populated (no empty placeholders)
+- [ ] Evidence includes test/build/lint exit codes
+- [ ] Lessons section completed with actionable insights
+- [ ] File committed before session ends
+
 ---
 
-**Line Count**: ~180 lines (excluding YAML) | **References**: See governance.bindings + foreman/builder/api-builder-spec.md
+**Line Count**: ~230 lines (excluding YAML) | **References**: See governance.bindings + foreman/builder/api-builder-spec.md
 
 *END OF API BUILDER MINIMAL CONTRACT*
