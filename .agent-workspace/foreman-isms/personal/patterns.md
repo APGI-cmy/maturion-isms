@@ -147,3 +147,15 @@
   - Status (mandatory/optional)
   - Example: 11 bindings from Tier-0 manifest to agent QA boundaries
   - Result: No ambiguity about which governance documents agent must load; prevents selective loading
+
+## Pattern: Cross-Agent Protocol Propagation Validation
+- Observed: 2026-02-14 (Session 003 — Session Memory Protocol Oversight)
+- Context: All 5 builder files created without Session Memory Protocol despite it being mandatory per LAS v6.2.0
+- Response: When creating or validating agent contracts for ANY agent class:
+  1. Enumerate all mandatory LAS v6.2.0 sections from Foreman contract (Categories 0-7)
+  2. For each mandatory section, determine applicability to target agent class
+  3. If applicable, verify presence in target agent contract (adapted for agent context)
+  4. If missing, add the section before contract is considered complete
+  5. Cross-check: builder compliance checklist must enumerate ALL mandatory governance sections
+  - Validation: Every mandatory Foreman Category → applicable to builder? → present in builder contract?
+  - Result: Prevents systematic omission of governance-required sections across agent classes
