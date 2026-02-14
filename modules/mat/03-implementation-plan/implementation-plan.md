@@ -1,11 +1,11 @@
 # MAT — Implementation Plan
 
 **Module**: MAT (Manual Audit Tool)  
-**Version**: v1.0.0  
+**Version**: v1.1.0  
 **Status**: APPROVED  
 **Owner**: Foreman (FM)  
 **Created**: 2026-02-13  
-**Last Updated**: 2026-02-13  
+**Last Updated**: 2026-02-14  
 **Authority**: Derived from Architecture (modules/mat/02-architecture/), FRS (modules/mat/01-frs/functional-requirements.md), TRS (modules/mat/01.5-trs/technical-requirements-specification.md), Test Registry (governance/TEST_REGISTRY.json)
 
 ---
@@ -497,7 +497,74 @@ These tasks run across all waves and are the responsibility of the qa-builder.
 
 ---
 
-## 4. Dependency Graph
+## 4. Combined Subwave Testing (CST) and Combined Wave Testing (CWT)
+
+**Authority**: `governance/canon/COMBINED_TESTING_PATTERN.md` v1.0.0
+
+CST and CWT are mandatory integration testing disciplines required by canonical governance. Their omission from v1.0.0 of this plan was a governance failure (see `modules/mat/BUILD_PROGRESS_TRACKER.md` Stage 3 deviation record).
+
+### 4.1 CST Checkpoints (Strategic, Per-Wave)
+
+CST is applied at convergence points where concurrent subwaves must integrate.
+
+| Wave | CST Checkpoint | Converging Tasks | Scope |
+|------|----------------|-----------------|-------|
+| 1 | After Tasks 1.1 + 1.3 complete | Upload API + Criteria UI | API contract integration: UI consumes upload/criteria endpoints |
+| 2 | After Tasks 2.1 + 2.3 complete | Evidence API + Evidence UI | API contract integration: UI consumes evidence endpoints, offline indicator |
+| 4 | After Tasks 4.1 + 4.2 complete | Dashboards + Reporting | Data consistency: dashboards and reports render from same data source |
+
+**CST is not required for Waves 0, 3, 5** — these waves are fully sequential with no concurrent subwave convergence points.
+
+**CST Evidence Requirements**:
+- Integration scenarios documented before convergence point
+- CST tests executed at convergence (cross-subwave API contract validation)
+- CST results recorded (PASS/FAIL with details)
+- Integration issues resolved before wave completion
+
+### 4.2 CWT Requirements (Mandatory, Pre-IBWR)
+
+CWT is mandatory before IBWR completion at every wave boundary. CWT cannot be skipped, deferred, or replaced.
+
+| Wave Gate | CWT Scope | Validation |
+|-----------|-----------|------------|
+| Wave 0 → 1 | Schema + Auth + Core API cross-layer integration | RLS enforced end-to-end, auth flows through API, health check returns status |
+| Wave 1 → 2 | Waves 0–1: Criteria upload → AI parsing → UI display | Full criteria lifecycle from upload through parsing to display |
+| Wave 2 → 3 | Waves 0–2: Evidence capture → storage → offline sync → UI display | Evidence lifecycle with offline/online transitions |
+| Wave 3 → 4 | Waves 0–3: Evidence → AI scoring → human confirmation → stored results | Scoring lifecycle from evidence through AI + human decision |
+| Wave 4 → 5 | Waves 0–4: All data flows rendered in dashboards + reports | Dashboard and report accuracy against stored audit data |
+| Wave 5 (Final) | Waves 0–5: Complete system integration | Full audit lifecycle, watchdog monitoring, integration exports |
+
+**CWT Evidence Requirements** (per `COMBINED_TESTING_PATTERN.md` §5.4):
+- CWT scope defined (waves covered, modules covered, scenarios covered)
+- CWT tests executed (cross-wave, cross-module, multi-scenario)
+- CWT results recorded (PASS/FAIL with detailed evidence)
+- CWT PASS verdict recorded in IBWR report
+- IBWR CANNOT complete without CWT PASS
+
+### 4.3 Updated Wave Gate Criteria
+
+Each wave gate now requires CST/CWT compliance in addition to existing criteria:
+
+1. All wave tests GREEN (zero failures, zero skipped, zero warnings)
+2. PREHANDOVER proof compiled
+3. **CST executed at convergence points (if applicable for wave)**
+4. **CWT executed and PASS before IBWR** (mandatory, non-negotiable)
+5. CWT evidence documented in wave reconciliation report
+
+### 4.4 CST/CWT Test Coverage
+
+CST/CWT integration tests supplement (not replace) existing test registry coverage:
+
+| Type | Scope | Responsibility |
+|------|-------|---------------|
+| CST tests | Cross-subwave API contract validation at convergence | Builders provide; FM validates |
+| CWT tests | Cross-wave end-to-end integration scenarios | Builders provide; FM executes/coordinates |
+
+**Health Check Integration**: The `GET /health` endpoint (Task 0.3) MUST include service dependency status to support CWT validation of cross-service integration health.
+
+---
+
+## 5. Dependency Graph
 
 ```
 Wave 0:  [0.1 Schema] ──→ [0.2 Auth] ──→ [0.3 Core API]
@@ -522,7 +589,7 @@ Wave 5:                        [5.1 Watchdog]  ──→ [5.2 Integration]
 
 ---
 
-## 5. Builder Assignment Summary
+## 6. Builder Assignment Summary
 
 | Builder | Waves | Primary Responsibility |
 |---------|-------|----------------------|
@@ -544,21 +611,21 @@ Wave 5:                        [5.1 Watchdog]  ──→ [5.2 Integration]
 
 ---
 
-## 6. Orchestration Protocol
+## 7. Orchestration Protocol
 
-### 6.1 Sequential Execution Rules
+### 7.1 Sequential Execution Rules
 
 - No wave starts until the prior wave gate is 100% GREEN
 - Within a wave, sequential tasks must complete before dependent tasks begin
 - Gate checks are performed by FM (not builders)
 
-### 6.2 Concurrent Execution Rules
+### 7.2 Concurrent Execution Rules
 
 - Concurrent tasks share a common API contract defined in architecture
 - Each concurrent task has independent test coverage
 - Both tasks must complete before any dependent task begins
 
-### 6.3 Builder Handover Protocol
+### 7.3 Builder Handover Protocol
 
 **Handover Points** (where builder assignment changes):
 
@@ -575,7 +642,7 @@ Wave 5:                        [5.1 Watchdog]  ──→ [5.2 Integration]
 4. Incoming builder briefed with scope, constraints, and acceptance criteria
 5. FM validates handover completeness
 
-### 6.4 Retry & Failure Protocol
+### 7.4 Retry & Failure Protocol
 
 - If a builder fails to achieve GREEN for their scope after 3 attempts → FM escalation
 - FM may reassign task to a different builder instance or split task further
@@ -584,7 +651,7 @@ Wave 5:                        [5.1 Watchdog]  ──→ [5.2 Integration]
 
 ---
 
-## 7. Risk Mitigation
+## 8. Risk Mitigation
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|------------|
@@ -598,7 +665,7 @@ Wave 5:                        [5.1 Watchdog]  ──→ [5.2 Integration]
 
 ---
 
-## 8. Evidence Requirements
+## 9. Evidence Requirements
 
 Each wave gate requires the following evidence:
 
@@ -611,7 +678,7 @@ Each wave gate requires the following evidence:
 
 ---
 
-## 9. Acceptance Criteria (Plan Level)
+## 10. Acceptance Criteria (Plan Level)
 
 This implementation plan is accepted when:
 
@@ -622,10 +689,11 @@ This implementation plan is accepted when:
 5. ✅ Multi-builder handover protocols documented
 6. ✅ All artifacts cross-linked to Architecture, FRS, TRS, and Test Registry
 7. ✅ Risk mitigation strategies defined for all identified risks
+8. ✅ CST/CWT integration testing requirements defined per `governance/canon/COMBINED_TESTING_PATTERN.md`
 
 ---
 
-## 10. Cross-References
+## 11. Cross-References
 
 | Artifact | Location |
 |----------|----------|
@@ -647,6 +715,7 @@ This implementation plan is accepted when:
 | Test Registry | `governance/TEST_REGISTRY.json` |
 | Builder Contracts | `modules/mat/04-builder-appointment/builder-contract.md` |
 | Build Progress Tracker | `modules/mat/BUILD_PROGRESS_TRACKER.md` |
+| CST/CWT Pattern | `governance/canon/COMBINED_TESTING_PATTERN.md` |
 | Builder Contract Schema | [BUILDER_CONTRACT_SCHEMA.md](https://github.com/APGI-cmy/maturion-foreman-office-app/blob/main/.github/agents/BUILDER_CONTRACT_SCHEMA.md) |
 | QA-to-Red RCA | `modules/mat/05-build-evidence/RCA_QA_PROCESS_LAPSE.md` |
 
