@@ -26,9 +26,11 @@ This document defines **which canonical governance documents** repository `.agen
 
 ---
 
-## 2. Tier-0 Mandatory Bindings (ALL Repositories)
+## 2. Universal Mandatory Bindings (ALL Repositories)
 
-These bindings MUST be present in ALL governed repositories, regardless of type, size, or agent roster.
+These bindings align with Canon Inventory and MUST be present in ALL governed repositories, regardless of type, size, or agent roster.
+
+**Canon Inventory Reference**: All bindings in this section are validated against `governance/CANON_INVENTORY.json` with SHA256 checksums.
 
 ### 2.1 GOVERNANCE_PURPOSE_AND_SCOPE.md
 
@@ -83,7 +85,7 @@ governance:
 
 ### 3.1 Application Repositories (with FM + Builders)
 
-In addition to Tier-0, application repositories MUST bind to:
+In addition to Universal Mandatory Bindings, application repositories MUST bind to:
 
 #### FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md
 
@@ -149,7 +151,7 @@ In addition to Tier-0, application repositories MUST bind to:
 
 ### 3.2 Governance Repositories
 
-In addition to Tier-0, governance repositories MUST bind to:
+In addition to Universal Mandatory Bindings, governance repositories MUST bind to:
 
 #### CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md
 
@@ -198,7 +200,7 @@ In addition to Tier-0, governance repositories MUST bind to:
 
 ### 3.3 Library/Utility Repositories
 
-Library repositories (no FM, no builders, passive artifacts) require only **Tier-0 bindings**.
+Library repositories (no FM, no builders, passive artifacts) require only **Universal Mandatory Bindings**.
 
 **Rationale**: Libraries don't execute builds or have autonomous agents. They follow conventional software practices with basic governance oversight.
 
@@ -385,7 +387,7 @@ Roles SHOULD use one of these patterns:
 ### 6.3 Binding Order
 
 Bindings SHOULD be ordered by:
-1. Authority and scope (Tier-0)
+1. Authority and scope (Universal Mandatory Bindings)
 2. Agent-specific requirements
 3. Execution and operational protocols
 4. Optional/contextual bindings
@@ -401,7 +403,7 @@ Use this decision tree to determine which bindings are mandatory:
 ```
 START
   |
-  +--> ALL REPOS: Tier-0 bindings (Section 2)
+  +--> ALL REPOS: Universal Mandatory Bindings (Section 2)
   |
   +--> Is this an application repo?
          YES --> Add Application bindings (Section 3.1)
@@ -409,7 +411,7 @@ START
   |
   +--> Is this a governance repo?
          YES --> Add Governance bindings (Section 3.2)
-         NO  --> Continue (Library repo, Tier-0 only)
+         NO  --> Continue (Library repo, Universal Mandatory Bindings only)
   |
   +--> Does repo have FM agent?
          YES --> Add FM bindings (Section 4.1)
@@ -497,7 +499,7 @@ When a canonical document is deprecated:
 ```yaml
 governance:
   bindings:
-    # Tier-0 (mandatory for ALL repos)
+    # Universal Mandatory Bindings (mandatory for ALL repos)
     - id: governance-purpose-scope
       path: governance/canon/GOVERNANCE_PURPOSE_AND_SCOPE.md
       role: supreme-authority-and-scope
@@ -529,7 +531,7 @@ governance:
 ```yaml
 governance:
   bindings:
-    # Tier-0 (mandatory for ALL repos)
+    # Universal Mandatory Bindings (mandatory for ALL repos)
     - id: governance-purpose-scope
       path: governance/canon/GOVERNANCE_PURPOSE_AND_SCOPE.md
       role: supreme-authority-and-scope
@@ -584,7 +586,7 @@ governance:
 ```yaml
 governance:
   bindings:
-    # Tier-0 only (mandatory for ALL repos)
+    # Universal Mandatory Bindings only (mandatory for ALL repos)
     - id: governance-purpose-scope
       path: governance/canon/GOVERNANCE_PURPOSE_AND_SCOPE.md
       role: supreme-authority-and-scope

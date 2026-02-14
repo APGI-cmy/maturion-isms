@@ -207,3 +207,57 @@
 **Last Updated**: 2026-02-14  
 **Total Patterns**: 22  
 **Agent**: governance-liaison-isms
+
+## Session 009 - 2026-02-14: Terminology Ripple and Builder Checklist Patterns
+
+### Pattern 1: Terminology Ripple Execution Pattern
+**Context**: Canonical governance updates terminology; consumer repositories must synchronize
+**Pattern**:
+1. Execute wake-up protocol
+2. Scan for all instances (grep -r with variations)
+3. Categorize references (structural vs. classification)
+4. Create replacement strategy (consult canonical guidance)
+5. Execute replacements (sed for batch, edit for specific)
+6. Verify completeness (grep again)
+7. Create ripple evidence document with validation commands
+8. Commit via report_progress
+**Authority**: Session 009 execution, REQ-RA-001/002/003
+
+### Pattern 2: Builder Checklist as Recruitment Gate
+**Context**: Foreman needs machine-checkable validation before appointing builders
+**Pattern**:
+- Checklist artifact created in `governance/artifacts/`
+- Version 1.1.0 removes all legacy terminology
+- 8 comprehensive sections (YAML frontmatter, canon alignment, build philosophy, evidence, gates, escalation, specialty)
+- Machine-checkable: can be automated with validator script
+- Foreman MUST verify checklist before builder appointment
+**Authority**: BUILDER_AGENT_FILE_COMPLIANCE_CHECKLIST.md v1.1.0, FM_BUILDER_APPOINTMENT_PROTOCOL.md
+
+### Pattern 3: Inserting Missing Lifecycle Stages
+**Context**: Historical process deviation discovered; lifecycle stage was omitted
+**Pattern**:
+- Insert as decimal stage number (e.g., Stage 3.5 between Stage 3 and Stage 4)
+- Maintains existing stage numbers, clearly shows insertion point
+- Add process upgrade note explaining rationale
+- Update template version number (BUILD_PROGRESS_TRACKER v1.1.0 → v1.2.0)
+- Document in session memory and lessons learned
+**Authority**: Session 009 BUILD_PROGRESS_TRACKER update, similar to Stage 2.5 (QA-to-Red) insertion
+
+### Pattern 4: Self-Alignment Authority Exercise
+**Context**: Governance Liaison has unique self-alignment authority for local governance
+**Pattern**:
+- ✅ CAN: Layer down canon, update inventories, sync with canonical source, verify and proceed
+- ❌ CANNOT: Modify own contract, interpret policy, cross repo boundaries to modify canonical source, make architecture/builder/enforcement decisions
+- Document self-alignment authority invocation in session memory
+- Create ripple evidence for transparency
+**Authority**: REQ-AS-001, GOVERNANCE_LIAISON_MINIMUM_APPOINTMENT_REQUIREMENTS.md Section 4.2
+
+### Pattern 5: Explore Agent for Pattern Analysis
+**Context**: Need to understand terminology usage patterns before making changes
+**Pattern**:
+- Use explore agent with specific prompt: "Search for X and provide contexts, patterns, suggested replacements"
+- Get comprehensive summary before making changes
+- Avoid manual file-by-file analysis
+- Use findings to inform replacement strategy
+**Authority**: Session 009 successful usage, explore agent efficiency
+
