@@ -115,7 +115,25 @@ Track the progression through the canonical module lifecycle stages.
 - [x] Risks and mitigation strategies documented (7 risks with mitigation)
 
 **Completion Date**: 2026-02-13  
-**Notes**: Implementation plan compiled with 6 build waves (Wave 0–5), builder assignments per task, concurrent/sequential execution logic, multi-builder handover protocols, risk mitigation, and full traceability to Architecture, FRS, TRS, and Test Registry. Cross-referenced with builder contracts.
+**Notes**: Implementation plan compiled with 6 build waves (Wave 0–5), builder assignments per task, concurrent/sequential execution logic, multi-builder handover protocols, risk mitigation, and full traceability to Architecture, FRS, TRS, and Test Registry. Cross-referenced with builder contracts. Updated to v1.1.0 (2026-02-14) to include CST/CWT integration testing requirements per `governance/canon/COMBINED_TESTING_PATTERN.md`.
+
+> **⚠️ PROCESS DEVIATION — CST/CWT INTEGRATION TESTING OMITTED FROM INITIAL PLAN**
+>
+> **Deviation**: The initial implementation plan (v1.0.0) omitted Combined Subwave Testing (CST) and Combined Wave Testing (CWT) requirements, which are mandatory per `governance/canon/COMBINED_TESTING_PATTERN.md` v1.0.0. CST checkpoints at convergence points and CWT validation before IBWR were not specified in wave gates, orchestration protocol, or evidence requirements.
+>
+> **Root Cause**: The implementation plan was compiled from Architecture, FRS, TRS, and Test Registry derivation chain but did not include `COMBINED_TESTING_PATTERN.md` as a governance input. The canonical testing hierarchy (Unit → Subwave QA → Wave QA → CST → CWT → E2E) was not referenced during plan compilation. This resulted in wave gates that validated individual test coverage but omitted cross-subwave and cross-wave integration testing requirements.
+>
+> **Impact**: Without CST/CWT requirements, builders would not know to provide integration tests at convergence points, FM would not enforce CWT before IBWR, and wave closure could proceed without cross-wave integration assurance — violating the constitutional mandate that IBWR cannot complete without CWT PASS.
+>
+> **Corrective Action**: Implementation plan updated to v1.1.0 with new Section 4 (CST/CWT requirements), including CST convergence checkpoints for Waves 1/2/4, mandatory CWT scope for all wave boundaries, updated wave gate criteria, and health check integration for CWT validation.
+>
+> **Preventive Action**: All future implementation plans MUST include `governance/canon/COMBINED_TESTING_PATTERN.md` in the derivation chain and explicitly define CST convergence checkpoints and CWT scope per wave. The canonical derivation chain is:
+>
+> ```
+> App Description → FRS → TRS → Architecture → QA-to-Red → COMBINED_TESTING_PATTERN → Implementation Plan
+> ```
+>
+> **Governance References**: `governance/canon/COMBINED_TESTING_PATTERN.md` v1.0.0, `governance/canon/IN_BETWEEN_WAVE_RECONCILIATION.md`, `governance/canon/BOOTSTRAP_EXECUTION_LEARNINGS.md` (BL-025)
 
 ---
 
@@ -202,6 +220,7 @@ Track the progression through the canonical module lifecycle stages.
 
 - [x] All stages proceeding in order (TRS stage now required between FRS and Architecture)
 - [x] QA-to-Red stage now included as mandatory Stage 2.5 (previously omitted — see deviation record in Stage 2.5)
+- [x] CST/CWT integration testing requirements now included in Implementation Plan (previously omitted — see deviation record in Stage 3)
 - [x] Traceability maintained (App Description → FRS → TRS → Architecture → QA-to-Red → Implementation Plan → Builder Appointment)
 - [ ] All required approvals obtained
 - [ ] Evidence artifacts created for each stage
@@ -214,6 +233,8 @@ Track the progression through the canonical module lifecycle stages.
 **Governance Upgrade**: TRS stage introduced 2026-02-13 per issue "Governance Upgrade: Insert Technical Requirements Specification (TRS) Step". This stage prevents downstream implementation failures by capturing technical constraints, performance requirements, and tool validation rules between FRS and Architecture.
 
 **QA-to-Red Stage Fix**: QA-to-Red stage (Stage 2.5) inserted into tracker 2026-02-13. The omission was identified and corrected via PR [APGI-cmy/maturion-isms#110](https://github.com/APGI-cmy/maturion-isms/pull/110). The canonical workflow now includes QA-to-Red as a mandatory, auditable stage between Architecture and Implementation Plan. See Stage 2.5 deviation record for full details.
+
+**CST/CWT Omission Fix**: Implementation plan updated from v1.0.0 to v1.1.0 on 2026-02-14 to include CST/CWT integration testing requirements per `governance/canon/COMBINED_TESTING_PATTERN.md`. The omission was a governance failure — the derivation chain did not include the Combined Testing Pattern as a governance input. See Stage 3 deviation record for full RCA.
 
 ---
 

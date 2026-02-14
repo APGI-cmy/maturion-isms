@@ -82,3 +82,15 @@
 - Context: 98 tests scaffolded from TEST_REGISTRY.json using Node.js generator script
 - Pattern: Registry JSON → parse → generate .test.ts files ensures 1:1 traceability
 - Action: Use registry-driven generation for future modules to prevent manual errors
+
+## Session 20260214 (CST/CWT Omission Correction)
+
+### Lesson: Implementation Plans Must Include Integration Testing Governance
+- Context: Implementation plan v1.0.0 omitted CST/CWT requirements from `governance/canon/COMBINED_TESTING_PATTERN.md`
+- Root Cause: Derivation chain (App Description → FRS → TRS → Architecture → QA-to-Red → Plan) did not include COMBINED_TESTING_PATTERN.md as a governance input. Wave gates only validated individual test coverage, not cross-subwave/cross-wave integration testing.
+- Impact: Without CST/CWT, builders would not provide integration tests at convergence points, FM would not enforce CWT before IBWR, and wave closure could proceed without cross-wave integration assurance.
+- Pattern: Every implementation plan derivation chain must explicitly include canonical testing patterns as inputs, not just functional/technical/architecture documents.
+- Action: Always include `governance/canon/COMBINED_TESTING_PATTERN.md` in derivation chain. Verify CST convergence checkpoints for concurrent tasks and CWT scope for every wave boundary.
+- RCA: The canonical testing hierarchy (Unit → Subwave QA → Wave QA → CST → CWT → E2E) was established in COMBINED_TESTING_PATTERN.md v1.0.0 but was not cross-referenced during plan compilation.
+- Preventive: Future implementation plans must checklist-verify: "Does this plan reference COMBINED_TESTING_PATTERN.md? Are CST checkpoints identified for concurrent subwaves? Is CWT scope defined per wave boundary?"
+- Governance Reference: `governance/canon/COMBINED_TESTING_PATTERN.md` v1.0.0, BL-025
