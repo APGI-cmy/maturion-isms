@@ -20,7 +20,11 @@ AGENT_ID="${1:-}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 WORKSPACE_DIR="${REPO_ROOT}/.agent-workspace/${AGENT_ID}"
-AGENT_CONTRACT_FILE="${REPO_ROOT}/.github/agents/${AGENT_ID}.md"
+# Try multiple naming conventions for agent contract files
+AGENT_CONTRACT_FILE="${REPO_ROOT}/.github/agents/${AGENT_ID}-agent.md"
+if [ ! -f "$AGENT_CONTRACT_FILE" ]; then
+    AGENT_CONTRACT_FILE="${REPO_ROOT}/.github/agents/${AGENT_ID}.md"
+fi
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 SESSION_DATE=$(date -u +"%Y%m%d")
 
