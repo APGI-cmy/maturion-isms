@@ -227,25 +227,36 @@ Track the progression through the canonical module lifecycle stages.
 ---
 
 ### Stage 5: Build Execution & Evidence
-**Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] COMPLETE  
+**Status**: [ ] NOT_STARTED | [x] IN_PROGRESS | [ ] COMPLETE  
 **Location**: `modules/mat/05-build-evidence/`  
 **Key Artifacts**:
-- [ ] Implementation code in `apps/` or `packages/`
-- [ ] Test evidence
-- [ ] QA validation results
-- [ ] Build completion evidence
-- [ ] Handover documentation
+- [x] Wave 0, Task 0.1: Database Schema, RLS, Migrations, Wiring Invariants — 25 tests GREEN (schema-builder)
+- [x] Wave 1, Task 1.3: Criteria Management UI — 2 tests GREEN: MAT-T-0010, MAT-T-0011 (ui-builder)
+- [ ] Wave 1, Task 1.1: Criteria Document Upload & Storage API
+- [ ] Wave 1, Task 1.2: AI Parsing Pipeline
+- [ ] Remaining wave tasks (Waves 2–5)
 
-**Completion Date**: N/A  
-**Notes**: Build evidence folder exists but likely not populated
+**Wave 1 Task 1.3 Evidence**:
+- [x] CST report: `.agent-workspace/ui-builder/evidence/wave-1-task-1.3-CST.md`
+- [x] CWT report: `.agent-workspace/ui-builder/evidence/wave-1-task-1.3-CWT.md`
+- [x] IBWR report: `.agent-workspace/ui-builder/evidence/wave-1-task-1.3-IBWR.md`
+
+**Wave 1 Task 1.3 Components Delivered**:
+- [x] `modules/mat/src/components/criteria-tree.ts` — Domain → MPS → Criteria hierarchy, keyboard nav, search/filter, responsive layout
+- [x] `modules/mat/src/components/criteria-modal.ts` — 5-tab modal with evidence sub-tabs, unsaved data protection, ARIA
+- [x] `modules/mat/src/components/criteria-upload.ts` — File validation, drag-and-drop, progress tracking
+- [x] `modules/mat/src/components/approval-workflow.ts` — Role-based approval queue with confirm/reject actions
+
+**Completion Date**: Wave 0 Task 0.1: 2026-02-14; Wave 1 Task 1.3: 2026-02-14  
+**Notes**: Wave 0 Task 0.1 turned 25 tests GREEN (wiring invariants + security/RLS). Wave 1 Task 1.3 turned 2 tests GREEN (MAT-T-0010 Hierarchical Navigation, MAT-T-0011 Criteria Modal). Total: 41 tests GREEN, 57 tests RED (expected). Note: Implementation plan references MAT-T-0069–0073 for Task 1.3, but per Test Registry consultation these IDs belong to CAT-08 (Performance) and CAT-12 (Data Privacy). The correct UI tests are MAT-T-0010 and MAT-T-0011 from CAT-10 (UI Accessibility), which map directly to FRS FR-010 and FR-011.
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 4 (Builder Appointment COMPLETE — all agent files created)  
-**Overall Progress**: ~60% complete  
-**Blockers**: None — Implementation plan, builder appointments, and agent files complete; ready for build execution  
+**Current Stage**: Stage 5 (Build Execution — IN PROGRESS)  
+**Overall Progress**: ~65% complete  
+**Blockers**: None — Wave 0 complete, Wave 1 Task 1.3 complete, remaining Wave 1 tasks pending  
 **Next Steps**: 
 1. ~~Create `01.5-trs/` folder in module structure~~
 2. ~~Develop TRS based on FRS requirements (FR-001 to FR-069)~~
@@ -255,7 +266,11 @@ Track the progression through the canonical module lifecycle stages.
 6. ~~Create Builder Agent File Compliance Checklist (version 1.1.0)~~
 7. ~~Appoint builders (5 builder categories)~~
 8. ~~Create builder agent files via Codex Advisor (schema, ui, integration, qa-builder)~~
-9. Proceed to Stage 5: Build Execution (Wave 0 — Foundational Infrastructure)
+9. ~~Complete Wave 0 Task 0.1: Foundational Infrastructure (25 tests GREEN)~~
+10. ~~Complete Wave 1 Task 1.3: Criteria Management UI (2 tests GREEN)~~
+11. Complete Wave 1 Task 1.1: Criteria Document Upload & Storage API
+12. Complete Wave 1 Task 1.2: AI Parsing Pipeline
+13. Proceed to Wave 2
 
 ---
 
