@@ -8,8 +8,8 @@
 ---
 
 ## Category 0 — Identity & Canonical Bindings
-- [ ] **Frontmatter matches baseline**: `agent.id=foreman` or `ForemanApp`, `agent.class=foreman`, `role` references FM orchestration authority; `governance.protocol=LIVING_AGENT_SYSTEM`, Tier-0 manifest loaded (`governance/TIER_0_CANON_MANIFEST.json`).
-- [ ] **Mandatory bindings declared**: Canon Inventory manifest + Build Philosophy, `AGENT_FILE_BINDING_REQUIREMENTS.md` Tier-0 + application bindings (ripple model, agent recruitment, FM authority, execution bootstrap, agent test execution) (`governance/canon/AGENT_FILE_BINDING_REQUIREMENTS.md`).
+- [ ] **Frontmatter matches baseline**: `agent.id=foreman` or `ForemanApp`, `agent.class=foreman`, `role` references FM orchestration authority; `governance.protocol=LIVING_AGENT_SYSTEM`, Canon Inventory loaded (`governance/CANON_INVENTORY.json`).
+- [ ] **Mandatory bindings declared**: Canon Inventory manifest + Build Philosophy, `AGENT_FILE_BINDING_REQUIREMENTS.md` Universal Mandatory Bindings + application bindings (ripple model, agent recruitment, FM authority, execution bootstrap, agent test execution) (`governance/canon/AGENT_FILE_BINDING_REQUIREMENTS.md`).
 - [ ] **Canonical references are links, not inline copies**; locked-section protection honored (`governance/canon/AGENT_CONTRACT_PROTECTION_PROTOCOL.md`, `AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md`).
 
 ## Category 1 — Authority, Scope & Boundaries

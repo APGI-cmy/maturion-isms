@@ -8,12 +8,12 @@
 ---
 
 ## Category 0 — Identity, Bindings & Scope
-- [ ] **Frontmatter**: `agent.id=governance-liaison`, `agent.class=liaison`; `governance.canon` points to `APGI-cmy/maturion-foreman-governance/governance/canon`; Tier-0 manifest loaded (`governance/TIER_0_CANON_MANIFEST.json`).
+- [ ] **Frontmatter**: `agent.id=governance-liaison`, `agent.class=liaison`; `governance.canon` points to `APGI-cmy/maturion-foreman-governance/governance/canon`; Canon Inventory loaded (`governance/CANON_INVENTORY.json`).
 - [ ] **Mandatory bindings present**: Governance purpose/scope, Build Philosophy, zero-test-debt, execution bootstrap, ripple model, contract protection, agent recruitment/authority, merge-gate philosophy, agent test execution, ripple checklist (`governance/canon/AGENT_FILE_BINDING_REQUIREMENTS.md`, `GOVERNANCE_LIAISON_MINIMUM_APPOINTMENT_REQUIREMENTS.md` Sections 2 & 5).
 - [ ] **Scope declaration**: Repo-scoped, write-access limits, restricted paths (.github/agents, Build Philosophy) captured.
 
 ## Category 1 — Appointment Preconditions & Authority Boundaries
-- [ ] **Structural appointment**: All five preconditions recorded (Tier-0 loaded, explicit scope, authorization trail, protocol reference, coupling rules active) (`governance/canon/GOVERNANCE_LIAISON_MINIMUM_APPOINTMENT_REQUIREMENTS.md` Section 5).
+- [ ] **Structural appointment**: All five preconditions recorded (Canon Inventory loaded, explicit scope, authorization trail, protocol reference, coupling rules active) (`governance/canon/GOVERNANCE_LIAISON_MINIMUM_APPOINTMENT_REQUIREMENTS.md` Section 5).
 - [ ] **Authority chain**: FM (recruiting authority) → Governance Liaison; human authorization required; appointment revocable (`governance/canon/GOVERNANCE_LIAISON_MINIMUM_APPOINTMENT_REQUIREMENTS.md` Sections 3.2, 6; `FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md`).
 - [ ] **Explicit negatives**: NOT builder, NOT FM, NOT governance administrator, NOT enforcement agent; cannot self-modify own contract (`governance/canon/GOVERNANCE_LIAISON_MINIMUM_APPOINTMENT_REQUIREMENTS.md` Section 3.3).
 - [ ] **Authority model compliance**: CS2 agent file authority + contract protection protocols referenced for any contract edits (`governance/canon/CS2_AGENT_FILE_AUTHORITY_MODEL.md`, `AGENT_CONTRACT_PROTECTION_PROTOCOL.md`).
@@ -39,7 +39,7 @@
 - [ ] **Authority boundaries**: Cannot approve merges; cannot bypass gates; must defer to FM/governance admin on constitutional changes (`governance/canon/MERGE_GATE_PHILOSOPHY.md`).
 
 ## Category 6 — Prohibitions & Guardrails
-- [ ] **No code-build tasks**: Prohibited from implementing code/tests/QA or orchestration; must not change Build Philosophy or Tier-0 artifacts (`governance/canon/GOVERNANCE_LIAISON_MINIMUM_APPOINTMENT_REQUIREMENTS.md` Sections 3.3.1–3.3.4).
+- [ ] **No code-build tasks**: Prohibited from implementing code/tests/QA or orchestration; must not change Build Philosophy or Canon Inventory artifacts (`governance/canon/GOVERNANCE_LIAISON_MINIMUM_APPOINTMENT_REQUIREMENTS.md` Sections 3.3.1–3.3.4).
 - [ ] **No self-contract edits** beyond formatting; changes require CS2/governance administrator.
 - [ ] **No cross-repo authority**: May not modify agent contracts or governance in other repos; repository seeding tasks only when authorized (`governance/canon/REPOSITORY_SEEDING_AND_ENFORCEMENT_ROLE_SEPARATION.md`, `AGENT_RECRUITMENT_AND_CONTRACT_AUTHORITY_MODEL.md`).
 
