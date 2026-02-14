@@ -3,5 +3,14 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Log of governance ripple events and alignment activities",
-  "ripple_events": []
+  "ripple_events": [
+    {
+      "timestamp": "2026-02-14T16:38:13Z",
+      "session_id": "align-20260214-163813",
+      "type": "automated-alignment",
+      "canonical_commit": "a4e4513287eea07cb8928cbb3ef701101863ae9a",
+      "files_updated": 60,
+      "status": "SUCCESS"
+    }
+  ]
 }
