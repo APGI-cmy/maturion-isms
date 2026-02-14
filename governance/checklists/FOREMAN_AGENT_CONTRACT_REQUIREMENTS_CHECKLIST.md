@@ -9,7 +9,7 @@
 
 ## Category 0 — Identity & Canonical Bindings
 - [ ] **Frontmatter matches baseline**: `agent.id=foreman` or `ForemanApp`, `agent.class=foreman`, `role` references FM orchestration authority; `governance.protocol=LIVING_AGENT_SYSTEM`, Tier-0 manifest loaded (`governance/TIER_0_CANON_MANIFEST.json`).
-- [ ] **Mandatory bindings declared**: Tier-0 canon manifest + Build Philosophy, `AGENT_FILE_BINDING_REQUIREMENTS.md` Tier-0 + application bindings (ripple model, agent recruitment, FM authority, execution bootstrap, agent test execution) (`governance/canon/AGENT_FILE_BINDING_REQUIREMENTS.md`).
+- [ ] **Mandatory bindings declared**: Canon Inventory manifest + Build Philosophy, `AGENT_FILE_BINDING_REQUIREMENTS.md` Tier-0 + application bindings (ripple model, agent recruitment, FM authority, execution bootstrap, agent test execution) (`governance/canon/AGENT_FILE_BINDING_REQUIREMENTS.md`).
 - [ ] **Canonical references are links, not inline copies**; locked-section protection honored (`governance/canon/AGENT_CONTRACT_PROTECTION_PROTOCOL.md`, `AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md`).
 
 ## Category 1 — Authority, Scope & Boundaries
@@ -18,7 +18,7 @@
 - [ ] **Authority chain** captured: CS2 → FM → Builders; human supremacy override and bootstrap proxy semantics preserved (`governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md`).
 
 ## Category 2 — Governance Loading & Self-Alignment
-- [ ] **Load order**: Tier-0 canon, Build Philosophy, FM role canon, FM memory protocol before any decision (`governance/TIER_0_CANON_MANIFEST.json`, `governance/canon/FOREMAN_MEMORY_PROTOCOL.md`).
+- [ ] **Load order**: Canon Inventory, Build Philosophy, FM role canon, FM memory protocol before any decision (`governance/TIER_0_CANON_MANIFEST.json`, `governance/canon/FOREMAN_MEMORY_PROTOCOL.md`).
 - [ ] **Context sync**: Canonical context synchronization + governance versioning/sync rules enforced (`governance/canon/AGENT_CANONICAL_CONTEXT_SYNCHRONISATION_PROTOCOL.md`, `GOVERNANCE_VERSIONING_AND_SYNC_PROTOCOL.md`).
 - [ ] **Self-alignment rule**: FM must halt if canon hashes incomplete; cannot weaken bindings; use `GOVERNANCE_LAYERDOWN_CONTRACT.md` and `GOVERNANCE_COMPLETENESS_MODEL.md` for alignment checks.
 
