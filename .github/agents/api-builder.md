@@ -244,7 +244,7 @@ At work completion, builder MUST provide comprehensive process improvement refle
 **Authority**: governance/canon/FM_BUILDER_APPOINTMENT_PROTOCOL.md, governance/canon/CASCADING_FAILURE_CIRCUIT_BREAKER.md
 
 **Triggers**: Architecture missing/incomplete/ambiguous | QA-to-Red missing or non-failing | Governance violation detected | Constitutional conflict | Cannot achieve 100% GREEN due to external dependency | Prior debt discovered  
-**Authority**: Escalate to Foreman (FM). If FM unable to resolve → FM escalates to CS2 (Johan). Chain: Builder → FM → CS2.  
+**Chain**: Escalate to Foreman (FM). If FM unable to resolve → FM escalates to CS2 (Johan). Chain: Builder → FM → CS2.  
 **Evidence**: Escalation MUST include: full context, canonical citation(s) that triggered halt, proposed resolution options, and evidence of prior attempts.  
 **File Location**: Escalation files created at `.agent-workspace/api-builder/escalation-inbox/blocker-YYYYMMDD.md`
 
