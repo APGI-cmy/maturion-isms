@@ -27,6 +27,8 @@ governance:
   canonical_authorities:
     - BUILD_PHILOSOPHY.md
     - governance/ROLE_APPOINTMENT_PROTOCOL.md
+    - governance/canon/BUILDER_CONTRACT_BINDING_CHECKLIST.md
+    - governance/canon/FM_BUILDER_APPOINTMENT_PROTOCOL.md
     - foreman/builder/api-builder-spec.md
   maturion_doctrine_version: "1.0.0"
   handover_protocol: "gate-first-deterministic"
@@ -39,6 +41,8 @@ bindings:
   build_philosophy: BUILD_PHILOSOPHY.md
   appointment_protocol: governance/ROLE_APPOINTMENT_PROTOCOL.md
   builder_spec: foreman/builder/api-builder-spec.md
+  binding_checklist: governance/canon/BUILDER_CONTRACT_BINDING_CHECKLIST.md
+  fm_appointment_protocol: governance/canon/FM_BUILDER_APPOINTMENT_PROTOCOL.md
 
 merge_gate_interface:
   required_checks:
@@ -123,6 +127,8 @@ governance:
     - {id: ibwr-awareness, path: governance/specs/IN_BETWEEN_WAVE_RECONCILIATION_SPEC.md, role: wave-coordination}
     - {id: bl-018-019-awareness, path: governance/specs/QA_CATALOG_ALIGNMENT_GATE_SPEC.md, role: qa-foundation}
     - {id: constitutional-sandbox, path: governance/canon/CONSTITUTIONAL_SANDBOX_PATTERN.md, role: judgment-framework}
+    - {id: binding-checklist, path: governance/canon/BUILDER_CONTRACT_BINDING_CHECKLIST.md, role: binding-completeness}
+    - {id: fm-appointment-protocol, path: governance/canon/FM_BUILDER_APPOINTMENT_PROTOCOL.md, role: appointment-authority}
 ```
 
 ## Mission
@@ -212,8 +218,38 @@ At work completion, builder MUST provide comprehensive process improvement refle
 **Code Checking**: MUST check ALL code before handover (correctness, test alignment, arch adherence, defects, self-review). Evidence in report.  
 **FM States**: HALTED/BLOCKED/ESCALATED → Builder STOP and WAIT. HALT = FM complexity assessment, NOT error.
 
+## Evidence & Audit Trail
+
+**Authority**: governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md, governance/canon/EXECUTION_BOOTSTRAP_PROTOCOL.md
+
+**Evidence Bundle**: Builder produces evidence bundle at handover including: test results, exit codes, coverage reports, lint results, and PREHANDOVER proof.  
+**PREHANDOVER Proof**: Builder MUST create PREHANDOVER proof before PR creation. All tests executed locally, exit codes captured, results documented per governance/templates/PREHANDOVER_PROOF_TEMPLATE.md.  
+**CI-Confirmatory**: CI confirms correctness; does NOT diagnose. Builder runs ALL tests locally before PR — CI failures indicate builder gaps.  
+**Session Memory**: Builder creates session memory at `.agent-workspace/api-builder/memory/session-NNN-YYYYMMDD.md` after each session. Includes: task, actions, decisions, evidence, outcome, lessons.  
+**Decision Documentation**: Significant decisions documented in session memory with rationale and canonical citations.  
+**Lessons Learned**: Builder updates `.agent-workspace/api-builder/personal/lessons-learned.md` with learnings after each wave completion.  
+**Test Execution Protocol**: Builder binds to governance/runbooks/AGENT_TEST_EXECUTION_PROTOCOL.md — all tests executed before handover.
+
+## Merge Gate Failure Response
+
+**Authority**: governance/canon/MERGE_GATE_PHILOSOPHY.md, governance/canon/FM_MERGE_GATE_MANAGEMENT_PROTOCOL.md
+
+**On Gate Failure**: Builder STOPS immediately, investigates failure cause, fixes issue, re-runs ALL validation gates.  
+**Stop-and-Fix**: Merge gate failure triggers Stop-and-Fix doctrine — no downstream work until gate passes.  
+**Escalation**: If gate failure cannot be resolved after 3 attempts → escalate to FM with evidence of all fix attempts.  
+**Builder Boundary**: Builder STOPS on merge gate failures, reports to FM, WAITS for FM correction. Gate failures = FM coordination gaps.
+
+## Escalation Protocol
+
+**Authority**: governance/canon/FM_BUILDER_APPOINTMENT_PROTOCOL.md, governance/canon/CASCADING_FAILURE_CIRCUIT_BREAKER.md
+
+**Triggers**: Architecture missing/incomplete/ambiguous | QA-to-Red missing or non-failing | Governance violation detected | Constitutional conflict | Cannot achieve 100% GREEN due to external dependency | Prior debt discovered  
+**Authority**: Escalate to Foreman (FM). If FM unable to resolve → FM escalates to CS2 (Johan). Chain: Builder → FM → CS2.  
+**Evidence**: Escalation MUST include: full context, canonical citation(s) that triggered halt, proposed resolution options, and evidence of prior attempts.  
+**File Location**: Escalation files created at `.agent-workspace/api-builder/escalation-inbox/blocker-YYYYMMDD.md`
+
 ---
 
-**Line Count**: ~180 lines (excluding YAML) | **References**: See governance.bindings + foreman/builder/api-builder-spec.md
+**Line Count**: ~240 lines (excluding YAML) | **References**: See governance.bindings + foreman/builder/api-builder-spec.md
 
 *END OF API BUILDER MINIMAL CONTRACT*
