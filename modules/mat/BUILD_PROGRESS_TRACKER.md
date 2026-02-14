@@ -119,6 +119,39 @@ Track the progression through the canonical module lifecycle stages.
 
 ---
 
+### Stage 3.5: Builder Agent File Checklist Creation/Update
+**Status**: [ ] NOT_STARTED | [ ] IN_PROGRESS | [x] COMPLETE  
+**Location**: `governance/artifacts/BUILDER_AGENT_FILE_COMPLIANCE_CHECKLIST.md`  
+**Key Artifacts**:
+- [x] `BUILDER_AGENT_FILE_COMPLIANCE_CHECKLIST.md` (version 1.1.0) - Machine-checkable builder agent file compliance checklist
+- [x] Canon Inventory alignment requirements (replaced legacy Tier-0 references)
+- [x] Build Philosophy binding requirements
+- [x] Evidence and artifact requirements
+- [x] Merge Gate compliance requirements
+- [x] Escalation protocol requirements
+- [x] Specialty requirements (UI, API, Schema, Integration, QA builders)
+
+**Completion Date**: 2026-02-14  
+**Notes**: Builder agent file compliance checklist created per governance directive. Version 1.1.0 removes all legacy "Tier-0" terminology, replacing with Canon Inventory alignment logic. Checklist provides comprehensive, machine-checkable validation criteria for Foreman to use during builder agent file creation and recruitment. Artifact filed canonically in `governance/artifacts/` directory. Rationale: Correct historical process deviation where builder checklist creation step was omitted between Implementation Plan and Builder Appointment stages.
+
+> **⚠️ PROCESS UPGRADE — BUILDER CHECKLIST CREATION STAGE ADDED**
+>
+> **Upgrade**: Builder Agent File Checklist Creation stage (Stage 3.5) added to tracker per governance directive. This stage was historically omitted, causing builder recruitment without formalized, machine-checkable compliance validation.
+>
+> **Root Cause**: Original BUILD_PROGRESS_TRACKER template did not include builder checklist creation/compilation as explicit stage between Implementation Plan and Builder Appointment, despite it being required for reliable builder constitution and governance binding.
+>
+> **Corrective Action**: Builder checklist artifact created and filed in `governance/artifacts/BUILDER_AGENT_FILE_COMPLIANCE_CHECKLIST.md` (version 1.1.0). Tracker now includes Stage 3.5 to record builder checklist creation/update step.
+>
+> **Preventive Action**: All future module BUILD_PROGRESS_TRACKER instances MUST include Builder Agent File Checklist Creation as mandatory, auditable stage (Stage 3.5) between Implementation Plan and Builder Appointment. The canonical workflow is:
+>
+> ```
+> App Description → FRS → TRS → Architecture → QA-to-Red → Implementation Plan → Builder Checklist → Builder Appointment → Build Execution
+> ```
+>
+> **Governance Reference**: Issue #[current issue number] - Builder agent file checklist artifact creation directive
+
+---
+
 ### Stage 4: Builder Appointment
 **Status**: [ ] NOT_STARTED | [ ] IN_PROGRESS | [x] COMPLETE  
 **Location**: `modules/mat/04-builder-appointment/`  
@@ -159,8 +192,9 @@ Track the progression through the canonical module lifecycle stages.
 3. ~~Complete Architecture with TRS constraints~~
 4. ~~Compile QA-to-Red test suite (98 tests, all RED)~~
 5. ~~Create Implementation Plan (6 build waves)~~
-6. ~~Appoint builders (5 builder categories)~~
-7. Proceed to Stage 5: Build Execution (Wave 0 — Foundational Infrastructure)
+6. ~~Create Builder Agent File Compliance Checklist (version 1.1.0)~~
+7. ~~Appoint builders (5 builder categories)~~
+8. Proceed to Stage 5: Build Execution (Wave 0 — Foundational Infrastructure)
 
 ---
 
@@ -183,6 +217,6 @@ Track the progression through the canonical module lifecycle stages.
 
 ---
 
-**Template Version**: 1.1.0 (includes TRS stage and QA-to-Red stage)  
+**Template Version**: 1.2.0 (includes TRS stage, QA-to-Red stage, and Builder Checklist Creation stage)  
 **Template Authority**: MODULE_LIFECYCLE_AND_REPO_STRUCTURE_STRATEGY.md  
-**Last Template Update**: 2026-02-13
+**Last Template Update**: 2026-02-14
