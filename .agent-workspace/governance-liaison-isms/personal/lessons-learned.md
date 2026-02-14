@@ -229,3 +229,6 @@
 
 ### Session 007 (20260214)
 - [Add lessons from this session]
+
+### Session 006 (20260214)
+- [Add lessons from this session]
