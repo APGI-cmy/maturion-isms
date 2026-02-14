@@ -94,3 +94,22 @@
 - RCA: The canonical testing hierarchy (Unit → Subwave QA → Wave QA → CST → CWT → E2E) was established in COMBINED_TESTING_PATTERN.md v1.0.0 but was not cross-referenced during plan compilation.
 - Preventive: Future implementation plans must checklist-verify: "Does this plan reference COMBINED_TESTING_PATTERN.md? Are CST checkpoints identified for concurrent subwaves? Is CWT scope defined per wave boundary?"
 - Governance Reference: `governance/canon/COMBINED_TESTING_PATTERN.md` v1.0.0, BL-025
+
+## Session 20260214 (Session Memory Protocol Oversight)
+
+### Lesson: Cross-Agent Protocol Propagation Must Be Verified
+- Context: All 5 builder agent files were created without Session Memory Protocol section, despite it being mandatory per LAS v6.2.0
+- Root Cause: Builder compliance checklist did not enumerate Session Memory Protocol as a required section. Foreman contract (Category 3.2) includes it, but the requirement was not propagated to builder validation criteria.
+- Pattern: When creating agent contracts for any agent class, EVERY mandatory LAS v6.2.0 section in the Foreman contract must be checked for applicability to the target agent class
+- Action: Always verify cross-agent protocol propagation — if Foreman requires session memory, builders require it too (adapted for builder context)
+- Preventive: Builder compliance checklists must be validated against Foreman contract Categories 0-7 to ensure no mandatory governance section is omitted
+
+### Lesson: "Minimal" Does Not Mean "Incomplete"
+- Context: Builder agent files were designed as "minimal contracts" but omitted a mandatory governance section
+- Pattern: Minimal contracts reduce procedural guidance but MUST retain all constitutional/governance-mandatory sections
+- Action: When reviewing builder contracts for minimality, verify: "Does this contract contain all LAS v6.2.0 mandatory sections?" Omitting mandatory sections is not minimization — it is non-compliance
+
+### Lesson: Checklist Completeness Is a Recursive Requirement
+- Context: The compliance checklist itself was incomplete (missing Session Memory Protocol), causing systematic omission across all 5 builder files
+- Pattern: Checklists must be validated against canonical source before use; a gap in the checklist propagates to all artifacts validated by it
+- Action: Before using any compliance checklist, verify it against the canonical LAS v6.2.0 requirements list. Checklist gaps are systemic — they affect ALL downstream artifacts

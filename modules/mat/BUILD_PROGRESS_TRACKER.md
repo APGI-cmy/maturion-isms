@@ -210,6 +210,20 @@ Track the progression through the canonical module lifecycle stages.
 >
 > **Reference**: PR [APGI-cmy/maturion-isms#128](https://github.com/APGI-cmy/maturion-isms/pull/128) (closed), Issue [#129](https://github.com/APGI-cmy/maturion-isms/issues/129)
 
+> **⚠️ PROCESS DEVIATION — SESSION MEMORY PROTOCOL OMITTED FROM BUILDER AGENT FILES**
+>
+> **Deviation**: All 5 builder agent files (api-builder, schema-builder, ui-builder, integration-builder, qa-builder) were created without the mandatory Session Memory Protocol section required by LIVING_AGENT_SYSTEM.md v6.2.0. The omission was identified during PR [APGI-cmy/maturion-isms#130](https://github.com/APGI-cmy/maturion-isms/pull/130) review.
+>
+> **Root Cause**: The Builder Agent File Compliance Checklist used during builder file creation did not include Session Memory Protocol as a mandatory section. The Foreman contract includes Session Memory Protocol (Category 3.2), but this requirement was not propagated to the builder checklist as a mandatory validation item. Contributing factors: (1) checklist gap — Session Memory Protocol not enumerated, (2) supervision gap — Foreman did not cross-check builder files against its own Category 3.2 requirement, (3) template gap — builder contract template did not include session memory as a standard section.
+>
+> **Impact**: Without Session Memory Protocol, builders cannot produce proper evidence trails, learning cannot propagate from builder sessions to institutional memory, and IBWR/wave closure lacks builder-side evidence.
+>
+> **Corrective Action**: Session Memory Protocol section added to all 5 builder agent files with LAS v6.2.0 compliant template, builder-specific workspace paths, and compliance checklist.
+>
+> **Preventive Action**: All future builder agent file creation/modification MUST validate that Session Memory Protocol is present. The builder compliance checklist MUST enumerate Session Memory Protocol as a mandatory section. Every mandatory LAS v6.2.0 section in the Foreman contract MUST be checked for applicability to builder contracts.
+>
+> **RCA Reference**: `.agent-workspace/foreman-isms/memory/session-003-20260214.md`
+
 ---
 
 ### Stage 5: Build Execution & Evidence
@@ -251,6 +265,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] QA-to-Red stage now included as mandatory Stage 2.5 (previously omitted — see deviation record in Stage 2.5)
 - [x] CST/CWT integration testing requirements now included in Implementation Plan (previously omitted — see deviation record in Stage 3)
 - [x] POLC authority boundary enforced — builder agent files created by Codex Advisor only (see deviation record in Stage 4)
+- [x] Session Memory Protocol compliance enforced — all builder files now include mandatory LAS v6.2.0 session memory section (see deviation record in Stage 4)
 - [x] Traceability maintained (App Description → FRS → TRS → Architecture → QA-to-Red → Implementation Plan → Builder Appointment)
 - [ ] All required approvals obtained
 - [ ] Evidence artifacts created for each stage
@@ -268,8 +283,10 @@ Track the progression through the canonical module lifecycle stages.
 
 **POLC Authority Boundary Correction (PR #128)**: PR [APGI-cmy/maturion-isms#128](https://github.com/APGI-cmy/maturion-isms/pull/128) was closed on 2026-02-14 after the Foreman agent erroneously wrote builder agent files directly, violating the constitutional authority chain. The correct agent chain is: Codex Advisor (creates/modifies) → Foreman (supervises/validates) → CS2 (approves). All 4 missing builder agent files (schema-builder, ui-builder, integration-builder, qa-builder) were subsequently created via the Codex Advisor agent under Foreman supervision, per Issue [#129](https://github.com/APGI-cmy/maturion-isms/issues/129). See Stage 4 deviation record for full details and lessons learned.
 
+**Session Memory Protocol Omission Fix**: All 5 builder agent files were updated on 2026-02-14 to include the mandatory Session Memory Protocol section required by LIVING_AGENT_SYSTEM.md v6.2.0. The omission was identified during PR [#130](https://github.com/APGI-cmy/maturion-isms/pull/130) review. Root cause: builder compliance checklist did not enumerate Session Memory Protocol as a required section. See Stage 4 Session Memory Protocol deviation record for full RCA.
+
 ---
 
-**Template Version**: 1.3.0 (includes TRS stage, QA-to-Red stage, Builder Checklist Creation stage, and POLC authority deviation record)  
+**Template Version**: 1.4.0 (includes TRS stage, QA-to-Red stage, Builder Checklist Creation stage, POLC authority deviation record, and Session Memory Protocol deviation record)  
 **Template Authority**: MODULE_LIFECYCLE_AND_REPO_STRUCTURE_STRATEGY.md  
 **Last Template Update**: 2026-02-14
