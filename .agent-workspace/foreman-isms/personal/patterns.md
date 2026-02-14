@@ -116,6 +116,26 @@
   - Organization-Specific: [list of adaptations]
   - Result: Clear provenance; future sessions understand derivation and continuous improvement lineage
 
+## Pattern: QA-to-Red Atomic Delivery (Registry + Test Code)
+- Observed: 2026-02-13 (RED Suite Execution)
+- Context: TEST_REGISTRY.json merged without executable tests; follow-up required to scaffold 98 tests
+- Response: QA-to-Red must always include:
+  1. Registry JSON with test metadata (serial, category, refs)
+  2. Executable test files (.test.ts) that run and fail RED
+  3. Evidence of RED execution (test run summary showing all N tests fail)
+  - These three artifacts form a single atomic deliverable
+  - Result: No gap between planning and execution; build-to-green can begin immediately
+
+## Pattern: Registry-Driven Test Generation
+- Observed: 2026-02-13 (RED Suite Execution)
+- Context: 98 tests needed scaffolding across 12 categories from TEST_REGISTRY.json
+- Response: Programmatic generation from registry ensures:
+  1. Parse TEST_REGISTRY.json for all components
+  2. Group by category, create directory per category
+  3. Generate .test.ts with serial ID, description, architecture/FRS/TRS refs
+  4. Each test throws NOT_IMPLEMENTED with serial ID
+  - Result: 1:1 traceability, zero manual errors, reproducible scaffolding
+
 ## Pattern: Governance Bindings Enumeration (Mandatory + Optional)
 - Observed: 2026-02-11 (Session 001)
 - Context: Agents must bind to canonical governance, but which documents?
