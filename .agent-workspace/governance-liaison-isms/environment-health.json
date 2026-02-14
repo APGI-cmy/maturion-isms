@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-02-14T08:11:59Z",
-  "session_id": "session-007-20260214",
+  "timestamp": "2026-02-14T08:15:41Z",
+  "session_id": "session-008-20260214",
   "agent_id": "governance-liaison-isms",
   "agent_class": "liaison",
   "agent_version": "6.2.0",
   "health_status": "WARNINGS",
   "checks": {
     "self_identification": { "status": "PASS" },
-    "memory_scan": { "status": "PASS", "sessions_found": 6, "escalations_pending": 2 },
+    "memory_scan": { "status": "PASS", "sessions_found": 7, "escalations_pending": 3 },
     "governance_discovery": { "status": "PASS", "governance_docs": 110, "canon_artifacts": 98 },
     "environment_health": { "status": "PASS" },
     "drift_detection": { 
