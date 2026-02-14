@@ -130,7 +130,7 @@ Track the progression through the canonical module lifecycle stages.
 > **Preventive Action**: All future implementation plans MUST include `governance/canon/COMBINED_TESTING_PATTERN.md` in the derivation chain and explicitly define CST convergence checkpoints and CWT scope per wave. The canonical derivation chain is:
 >
 > ```
-> App Description → FRS → TRS → Architecture → QA-to-Red → COMBINED_TESTING_PATTERN → Implementation Plan
+> App Description → FRS → TRS → Architecture → QA-to-Red → COMBINED_TESTING_PATTERN.md → Implementation Plan
 > ```
 >
 > **Governance References**: `governance/canon/COMBINED_TESTING_PATTERN.md` v1.0.0, `governance/canon/IN_BETWEEN_WAVE_RECONCILIATION.md`, `governance/canon/BOOTSTRAP_EXECUTION_LEARNINGS.md` (BL-025)

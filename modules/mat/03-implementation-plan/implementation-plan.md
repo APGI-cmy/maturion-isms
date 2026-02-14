@@ -689,7 +689,6 @@ This implementation plan is accepted when:
 5. ✅ Multi-builder handover protocols documented
 6. ✅ All artifacts cross-linked to Architecture, FRS, TRS, and Test Registry
 7. ✅ Risk mitigation strategies defined for all identified risks
-
 8. ✅ CST/CWT integration testing requirements defined per `governance/canon/COMBINED_TESTING_PATTERN.md`
 
 ---
