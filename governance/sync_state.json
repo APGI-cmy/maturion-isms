@@ -10,7 +10,8 @@
     "canonical_inventory_date": "2026-02-11",
     "total_canons_synced": 102,
     "sync_method": "layer-down",
-    "sync_status": "SUCCESS"
+    "sync_status": "SUCCESS",
+    "canonical_commit": "a4e4513287eea07cb8928cbb3ef701101863ae9a"
   },
   "alignment_status": {
     "overall": "ALIGNED",
@@ -21,7 +22,7 @@
       "missing": 0
     },
     "drift_detected": false,
-    "last_drift_check": "2026-02-11T12:53:13+00:00"
+    "last_drift_check": "2026-02-14T13:00:30Z"
   },
   "integrity": {
     "evidence_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_evidence.log",
@@ -41,7 +42,12 @@
     "model": "event-driven-plus-scheduled",
     "automatic_ripple": true,
     "scheduled_check_frequency": "quarterly",
-    "scheduled_check_months": [1, 4, 7, 10],
+    "scheduled_check_months": [
+      1,
+      4,
+      7,
+      10
+    ],
     "next_scheduled_check": "2026-04-01",
     "self_alignment_authorized": true
   },

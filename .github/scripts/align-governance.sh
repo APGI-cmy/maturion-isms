@@ -113,11 +113,23 @@ if ! jq empty "$CANONICAL_INVENTORY" 2>/dev/null; then
     exit 1
 fi
 
-CANONICAL_VERSION=$(jq -r '.version' "$CANONICAL_INVENTORY")
-TOTAL_ARTIFACTS=$(jq -r '.total_artifacts' "$CANONICAL_INVENTORY")
+CANONICAL_VERSION=$(jq -r '.version // "unknown"' "$CANONICAL_INVENTORY")
+TOTAL_ARTIFACTS=$(jq -r '(.total_artifacts // .total_canons) // 0' "$CANONICAL_INVENTORY")
+
+# Check if artifacts or canons key exists (support both formats)
+ARTIFACTS_KEY="artifacts"
+if ! jq -e '.artifacts' "$CANONICAL_INVENTORY" > /dev/null 2>&1; then
+    if jq -e '.canons' "$CANONICAL_INVENTORY" > /dev/null 2>&1; then
+        ARTIFACTS_KEY="canons"
+    else
+        echo -e "${RED}❌ CANON_INVENTORY.json missing 'artifacts' or 'canons' key${NC}"
+        exit 1
+    fi
+fi
 
 echo "Canonical inventory version: $CANONICAL_VERSION"
 echo "Total artifacts: $TOTAL_ARTIFACTS"
+echo "Using key: $ARTIFACTS_KEY"
 echo -e "${GREEN}✓ Canonical inventory loaded${NC}"
 echo ""
 
@@ -147,39 +159,87 @@ fi
 echo "Checking artifacts for drift..."
 ARTIFACT_COUNT=0
 
-while IFS= read -r artifact_path; do
-    ARTIFACT_COUNT=$((ARTIFACT_COUNT + 1))
+# Determine format and iterate
+if jq -e ".$ARTIFACTS_KEY | type == \"array\"" "$CANONICAL_INVENTORY" > /dev/null 2>&1; then
+    # Array format (canonical governance repo format)
+    ARTIFACT_COUNT=$(jq ".$ARTIFACTS_KEY | length" "$CANONICAL_INVENTORY")
     
-    # Get canonical SHA256
-    CANONICAL_SHA256=$(jq -r ".artifacts[\"$artifact_path\"].sha256" "$CANONICAL_INVENTORY")
+    for ((i=0; i<ARTIFACT_COUNT; i++)); do
+        # Get artifact details from array
+        artifact_path=$(jq -r ".$ARTIFACTS_KEY[$i].path" "$CANONICAL_INVENTORY")
+        CANONICAL_SHA256=$(jq -r ".$ARTIFACTS_KEY[$i].file_hash_sha256" "$CANONICAL_INVENTORY")
+        
+        # Skip if no path or hash
+        if [ "$artifact_path" = "null" ] || [ "$CANONICAL_SHA256" = "null" ]; then
+            continue
+        fi
+        
+        # Check if placeholder hash (all zeros or short hash)
+        if [[ "$CANONICAL_SHA256" =~ ^0+$ ]] || [ ${#CANONICAL_SHA256} -lt 64 ]; then
+            echo -e "${YELLOW}⚠️  Placeholder hash detected for: $artifact_path${NC}"
+            continue
+        fi
+        
+        # Construct local path
+        LOCAL_FILE="${REPO_ROOT}/${artifact_path}"
+        
+        # Check if file exists locally
+        if [ ! -f "$LOCAL_FILE" ]; then
+            echo "  Missing: $artifact_path"
+            MISSING_FILES+=("$artifact_path")
+            DRIFT_DETECTED=true
+            continue
+        fi
+        
+        # Calculate local SHA256
+        LOCAL_SHA256=$(sha256sum "$LOCAL_FILE" | awk '{print $1}')
+        
+        # Compare hashes
+        if [ "$LOCAL_SHA256" != "$CANONICAL_SHA256" ]; then
+            echo "  Hash mismatch: $artifact_path"
+            HASH_MISMATCHES+=("$artifact_path")
+            DRIFT_DETECTED=true
+        fi
+    done
     
-    # Check if placeholder hash (all zeros or short hash)
-    if [[ "$CANONICAL_SHA256" =~ ^0+$ ]] || [ ${#CANONICAL_SHA256} -lt 64 ]; then
-        echo -e "${YELLOW}⚠️  Placeholder hash detected for: $artifact_path${NC}"
-        continue
-    fi
-    
-    # Construct local path
-    LOCAL_FILE="${REPO_ROOT}/${artifact_path}"
-    
-    # Check if file exists locally
-    if [ ! -f "$LOCAL_FILE" ]; then
-        echo "  Missing: $artifact_path"
-        MISSING_FILES+=("$artifact_path")
-        DRIFT_DETECTED=true
-        continue
-    fi
-    
-    # Calculate local SHA256
-    LOCAL_SHA256=$(sha256sum "$LOCAL_FILE" | awk '{print $1}')
-    
-    # Compare hashes
-    if [ "$LOCAL_SHA256" != "$CANONICAL_SHA256" ]; then
-        echo "  Hash mismatch: $artifact_path"
-        HASH_MISMATCHES+=("$artifact_path")
-        DRIFT_DETECTED=true
-    fi
-done < <(jq -r '.artifacts | keys[]' "$CANONICAL_INVENTORY")
+elif jq -e ".$ARTIFACTS_KEY | type == \"object\"" "$CANONICAL_INVENTORY" > /dev/null 2>&1; then
+    # Object format (consumer repo format)
+    while IFS= read -r artifact_path; do
+        ARTIFACT_COUNT=$((ARTIFACT_COUNT + 1))
+        
+        # Get canonical SHA256
+        CANONICAL_SHA256=$(jq -r ".$ARTIFACTS_KEY[\"$artifact_path\"].sha256 // .$ARTIFACTS_KEY[\"$artifact_path\"]" "$CANONICAL_INVENTORY")
+        
+        # Check if placeholder hash (all zeros or short hash or null)
+        if [ "$CANONICAL_SHA256" = "null" ] || [[ "$CANONICAL_SHA256" =~ ^0+$ ]] || [ ${#CANONICAL_SHA256} -lt 64 ]; then
+            echo -e "${YELLOW}⚠️  Placeholder hash detected for: $artifact_path${NC}"
+            continue
+        fi
+        
+        # Construct local path
+        LOCAL_FILE="${REPO_ROOT}/${artifact_path}"
+        
+        # Check if file exists locally
+        if [ ! -f "$LOCAL_FILE" ]; then
+            echo "  Missing: $artifact_path"
+            MISSING_FILES+=("$artifact_path")
+            DRIFT_DETECTED=true
+            continue
+        fi
+        
+        # Calculate local SHA256
+        LOCAL_SHA256=$(sha256sum "$LOCAL_FILE" | awk '{print $1}')
+        
+        # Compare hashes
+        if [ "$LOCAL_SHA256" != "$CANONICAL_SHA256" ]; then
+            echo "  Hash mismatch: $artifact_path"
+            HASH_MISMATCHES+=("$artifact_path")
+            DRIFT_DETECTED=true
+        fi
+    done < <(jq -r ".$ARTIFACTS_KEY | keys[]" "$CANONICAL_INVENTORY" 2>/dev/null || echo "")
+else
+    echo -e "${YELLOW}⚠️  No artifacts found in canonical inventory${NC}"
+fi
 
 echo ""
 echo "Drift Analysis:"
@@ -240,7 +300,15 @@ for artifact_path in "${MISSING_FILES[@]}" "${HASH_MISMATCHES[@]}"; do
     
     # Verify SHA256
     LOCAL_SHA256=$(sha256sum "$LOCAL_FILE" | awk '{print $1}')
-    CANONICAL_SHA256=$(jq -r ".artifacts[\"$artifact_path\"].sha256" "$CANONICAL_INVENTORY")
+    
+    # Get canonical SHA256 (handle both formats)
+    if jq -e ".$ARTIFACTS_KEY | type == \"array\"" "$CANONICAL_INVENTORY" > /dev/null 2>&1; then
+        # Find artifact in array by path
+        CANONICAL_SHA256=$(jq -r ".$ARTIFACTS_KEY[] | select(.path == \"$artifact_path\") | .file_hash_sha256" "$CANONICAL_INVENTORY")
+    else
+        # Get from object
+        CANONICAL_SHA256=$(jq -r ".$ARTIFACTS_KEY[\"$artifact_path\"].sha256 // .$ARTIFACTS_KEY[\"$artifact_path\"]" "$CANONICAL_INVENTORY")
+    fi
     
     if [ "$LOCAL_SHA256" = "$CANONICAL_SHA256" ]; then
         echo -e "${GREEN}✓ Layered: $artifact_path${NC}"
