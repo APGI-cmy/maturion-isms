@@ -104,3 +104,70 @@ export interface CORSConfig {
   max_age: number;
   credentials: boolean;
 }
+
+// Audit Types
+export type AuditStatus = 
+  | 'not_started' 
+  | 'in_progress' 
+  | 'under_review' 
+  | 'completed' 
+  | 'archived';
+
+export interface Audit {
+  id: string;
+  title: string;
+  org_name: string;
+  org_id: string;
+  facility: string;
+  status: AuditStatus;
+  audit_period_start: string;
+  audit_period_end: string;
+  lead_auditor_id: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  is_archived: boolean;
+}
+
+// Audit Status Transitions Map
+export const AUDIT_STATUS_TRANSITIONS: Record<AuditStatus, AuditStatus[]> = {
+  not_started: ['in_progress'],
+  in_progress: ['under_review'],
+  under_review: ['completed', 'in_progress'],
+  completed: ['archived'],
+  archived: []
+};
+
+// Audit Trail Types
+export interface AuditTrailEntry {
+  id: string;
+  entity_type: string;
+  entity_id: string;
+  action: string;
+  actor_id: string;
+  changes: Record<string, unknown>;
+  timestamp: string;
+  is_immutable: boolean;
+}
+
+// Approval Types
+export interface ApprovalRecord {
+  approved: boolean;
+  approved_by: string;
+  approved_at: string;
+}
+
+// Auditor Assignment Types
+export interface AuditorAssignment {
+  auditor_id: string;
+  target_type: 'domain' | 'mps';
+  target_id: string;
+  assigned_at: string;
+}
+
+// Approval Actions
+export type ApprovalAction = 
+  | 'approve_report' 
+  | 'approve_criteria' 
+  | 'confirm_score' 
+  | 'assign_auditor';
