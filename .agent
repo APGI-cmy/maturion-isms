@@ -1,0 +1,73 @@
+# Repository Agent Configuration
+# Living Agent System v6.2.0
+
+repository:
+  name: maturion-isms
+  owner: APGI-cmy
+  type: consumer-repository
+  
+governance:
+  canonical_source: APGI-cmy/maturion-foreman-governance
+  canon_inventory: governance/CANON_INVENTORY.json
+  protocol_version: 6.2.0
+  
+  bindings:
+    - governance/canon/LIVING_AGENT_GOVERNANCE_HEALTH_CHECKS.md
+    - governance/canon/GOVERNANCE_LIAISON_MINIMUM_APPOINTMENT_REQUIREMENTS.md
+    - governance/canon/CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md
+    - governance/canon/CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md
+    - governance/canon/REPOSITORY_INITIALIZATION_AND_GOVERNANCE_SEEDING_PROTOCOL.md
+  
+  consumer_registry: governance/CONSUMER_REPO_REGISTRY.json
+  
+agents:
+  governance-liaison-isms:
+    file: .github/agents/governance-liaison-isms-agent.md
+    class: liaison
+    version: 6.2.0
+    contract_version: 2.0.0
+    workspace: .agent-workspace/governance-liaison-isms
+    
+  foreman-isms:
+    file: .github/agents/foreman-isms-agent.md
+    class: foreman
+    version: 6.2.0
+    workspace: .agent-workspace/foreman-isms
+    
+  CodexAdvisor-agent:
+    file: .github/agents/CodexAdvisor-agent.md
+    class: advisor
+    version: 6.2.0
+    workspace: .agent-workspace/CodexAdvisor-agent
+    
+  api-builder:
+    file: .github/agents/api-builder.md
+    class: builder
+    version: 6.2.0
+    workspace: .agent-workspace/api-builder
+
+scripts:
+  wake_up: .github/scripts/wake-up-protocol.sh
+  session_closure: .github/scripts/session-closure.sh
+  agent_validator: .github/scripts/agent-file-validator.sh
+
+merge_gate:
+  workflow: .github/workflows/merge-gate-interface.yml
+  required_checks:
+    - "Merge Gate Interface / merge-gate/verdict"
+    - "Merge Gate Interface / governance/alignment"
+    - "Merge Gate Interface / stop-and-fix/enforcement"
+
+escalation:
+  authority: CS2
+  contact: Johan Ras
+  protocol: governance/canon/GOVERNANCE_LIAISON_MINIMUM_APPOINTMENT_REQUIREMENTS.md
+
+# Authority Chain: CS2 → Foreman → Builders/Liaison
+# Revocability: CS2 may revoke agent authority at any time
+# Evidence: All agent sessions must maintain evidence trail
+
+---
+# Living Agent System v6.2.0
+# Authority: LIVING_AGENT_SYSTEM.md
+# Effective: 2026-02-14

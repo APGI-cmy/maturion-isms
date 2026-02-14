@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-02-14T08:11:59Z",
+  "session_id": "session-007-20260214",
+  "agent_id": "governance-liaison-isms",
+  "agent_class": "liaison",
+  "agent_version": "6.2.0",
+  "health_status": "WARNINGS",
+  "checks": {
+    "self_identification": { "status": "PASS" },
+    "memory_scan": { "status": "PASS", "sessions_found": 6, "escalations_pending": 2 },
+    "governance_discovery": { "status": "PASS", "governance_docs": 110, "canon_artifacts": 98 },
+    "environment_health": { "status": "PASS" },
+    "drift_detection": { 
+      "status": "PASS", 
+      "drifts_detected": 0
+    }
+  },
+  "warnings_count": 1,
+  "errors_count": 0,
+  "working_contract_path": "/home/runner/work/maturion-isms/maturion-isms/.agent-workspace/governance-liaison-isms/working-contract.md"
+}
