@@ -235,7 +235,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] Wave 2: Evidence Collection & Offline Sync — 20 tests GREEN (api-builder, integration-builder) — PR [#164](https://github.com/APGI-cmy/maturion-isms/pull/164)
 - [x] Wave 3: AI Scoring & Human Confirmation — 15 tests GREEN (api-builder, ui-builder) — PR [#168](https://github.com/APGI-cmy/maturion-isms/pull/168)
 - [x] Wave 4: Dashboards & Reporting — 9 tests GREEN (ui-builder, api-builder) — PR #178
-- [ ] Wave 5: Watchdog & Continuous Improvement
+- [x] Wave 5: Watchdog & Continuous Improvement — 13 tests GREEN (api-builder, integration-builder, qa-builder)
 - [ ] Wave 6: Deployment & Commissioning (Vercel provisioning, staging validation, production deployment, CWT on production, formal sign-over)
 
 **Wave 0 Test Coverage (31 tests GREEN)** — PRs #140, #142:
@@ -372,6 +372,37 @@ Track the progression through the canonical module lifecycle stages.
 
 **Completion Dates**: Wave 0: 2026-02-14; Wave 1: 2026-02-14; Wave 2: 2026-02-15 (PR #164 merged); Wave 3: 2026-02-15 (PR #168); Wave 4: 2026-02-15 (PR #178)  
 **Notes**: Test attribution follows PR delivery (which PR turned each test from RED to GREEN). Wave 0 Task 0.1 (schema-builder) turned 25 tests GREEN; Wave 0 Task 0.3 (api-builder) added 6 more. Wave 2 PR #164 explicitly documents 20 new tests (41→61 total). Wave 3 PR #168 added 15 new tests (61→76 total). Wave 4 PR #178 added 9 new tests (76→85 total). MAT-T-0038 (Report Approval) was turned GREEN in Wave 0 Task 0.3 despite being in Wave 3 scope (MAT-T-0026–0039), so it is not counted in Wave 3's 15.
+
+**Wave 5 Test Coverage (13 tests GREEN)**:
+- [x] MAT-T-0055: Extensibility and Plugin Architecture — GREEN
+- [x] MAT-T-0059: Watchdog Alert Thresholds — GREEN
+- [x] MAT-T-0060: Override Analysis and Feedback Loop — GREEN
+- [x] MAT-T-0067: GDPR Compliance — DSAR and Erasure — GREEN
+- [x] MAT-T-0068: POPIA Compliance — GREEN
+- [x] MAT-T-0069: Data Retention Policy Enforcement — GREEN
+- [x] MAT-T-0070: Regulatory Standard Alignment — GREEN
+- [x] MAT-T-0071: Large Audit Compilation — GREEN
+- [x] MAT-T-0072: Concurrent Auditor Support — GREEN
+- [x] MAT-T-0073: Page Load Performance (LCP < 2.5s) — GREEN
+- [x] MAT-T-0074: API Response Time (< 200ms p95 CRUD) — GREEN
+- [x] MAT-T-0075: AI Processing Performance — GREEN
+- [x] MAT-T-0097: Consent Management — GREEN
+
+**Wave 5 Components Delivered**:
+- [x] `modules/mat/src/services/watchdog.ts` — Extended with configurable org thresholds (createOrganisationThresholds), alert routing (getAlertRouting), health check endpoints (checkServiceHealth), override analysis (analyseOverrides)
+- [x] `modules/mat/src/services/integration.ts` — Extended with plugin registry (createPluginRegistry, registerPlugin, getPluginsByType), API contract validation (validatePITContract)
+- [x] `modules/mat/src/services/performance.ts` — Performance budget definitions and validation (getPerformanceBudgets, validateBudget, validateConcurrentCapacity, validateLargeAuditBudget, getAIPerformanceBudgets)
+- [x] `modules/mat/src/services/data-privacy.ts` — GDPR/POPIA compliance (generateDSARExport, performErasure), data retention (createRetentionPolicy, checkRetention), regulatory alignment (checkRegulatoryAlignment), consent management (recordConsent, withdrawConsent, hasActiveConsent)
+- [x] `modules/mat/src/types/index.ts` — Extended with types for alert routing, health checks, override analysis, performance budgets, data privacy, consent, regulatory alignment, and plugin architecture
+
+**Wave 5 Test Count Reconciliation**:
+- Wave 0: 31 tests GREEN
+- Wave 1: 10 tests GREEN
+- Wave 2: 20 tests GREEN
+- Wave 3: 15 tests GREEN
+- Wave 4: 9 tests GREEN
+- Wave 5: 13 tests GREEN (MAT-T-0055, 0059–0060, 0067–0075, 0097)
+- **Total: 31 + 10 + 20 + 15 + 9 + 13 = 98 unique GREEN tests** (verified via `npx vitest run`)
 
 > **⚠️ PROCESS DEVIATION — BUILD_PROGRESS_TRACKER NOT UPDATED DURING WAVE COMPLETION**
 >
@@ -606,8 +637,8 @@ Track the progression through the canonical module lifecycle stages.
 ## Current Stage Summary
 
 **Current Stage**: Stage 5 (Build Execution — IN PROGRESS)  
-**Overall Progress**: ~87% complete (85/98 tests GREEN)  
-**Blockers**: None — Waves 0–4 complete, remaining Wave 5–6 tasks pending  
+**Overall Progress**: ~100% build complete (98/98 tests GREEN)  
+**Blockers**: None — Waves 0–5 complete, remaining Wave 6 (deployment only)  
 **Next Steps**: 
 1. ~~Create `01.5-trs/` folder in module structure~~
 2. ~~Develop TRS based on FRS requirements (FR-001 to FR-069)~~
@@ -622,7 +653,7 @@ Track the progression through the canonical module lifecycle stages.
 11. ~~Complete Wave 2: Evidence Collection & Offline Sync (20 tests GREEN, PR #164)~~
 12. ~~Complete Wave 3: AI Scoring & Human Confirmation (15 tests GREEN, PR #168)~~
 13. ~~Complete Wave 4: Dashboards & Reporting (9 tests GREEN, PR #178)~~
-14. Proceed to Wave 5: Watchdog & Continuous Improvement
+14. ~~Complete Wave 5: Watchdog & Continuous Improvement (13 tests GREEN)~~
 15. Proceed to Wave 6: Deployment & Commissioning (Vercel deploy, staging validate, production deploy, CWT on production, formal sign-over)
 
 ---

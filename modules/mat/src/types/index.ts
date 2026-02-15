@@ -623,3 +623,112 @@ export interface WatchdogThreshold {
   critical_level: number;
   alert_enabled: boolean;
 }
+
+export interface WatchdogAlertRouting {
+  metric: string;
+  channels: Array<'email' | 'slack' | 'sms'>;
+  severity: 'warning' | 'critical';
+}
+
+export interface HealthCheckResult {
+  service: string;
+  status: 'healthy' | 'degraded' | 'unhealthy';
+  version: string;
+  uptime_seconds: number;
+  dependencies: Array<{ name: string; status: 'healthy' | 'degraded' | 'unhealthy' }>;
+  checked_at: string;
+}
+
+export interface OverrideAnalysisSummary {
+  total_overrides: number;
+  by_category: Record<OverrideReason, number>;
+  override_rate: number;
+  top_criteria: Array<{ criterion_id: string; count: number }>;
+  analysed_at: string;
+}
+
+// Performance Budget Types (FR-068, FR-069)
+export interface PerformanceBudget {
+  metric: string;
+  target: number;
+  unit: string;
+  threshold_warning: number;
+  threshold_critical: number;
+}
+
+export interface PerformanceBudgetResult {
+  metric: string;
+  target: number;
+  actual: number;
+  unit: string;
+  status: 'pass' | 'warning' | 'fail';
+}
+
+// Data Privacy Types (FR-066, FR-067)
+export interface DSARExport {
+  user_id: string;
+  organisation_id: string;
+  exported_at: string;
+  data_categories: string[];
+  records: Array<{ category: string; count: number }>;
+  format: 'json' | 'csv';
+}
+
+export interface ErasureResult {
+  user_id: string;
+  organisation_id: string;
+  anonymised_at: string;
+  fields_anonymised: string[];
+  audit_integrity_preserved: boolean;
+}
+
+export interface DataRetentionPolicy {
+  organisation_id: string;
+  retention_years: number;
+  minimum_years: number;
+  auto_archive: boolean;
+  policy_updated_at: string;
+}
+
+export interface RetentionCheckResult {
+  organisation_id: string;
+  records_checked: number;
+  records_expired: number;
+  records_archived: number;
+  checked_at: string;
+}
+
+export type RegulatoryStandard = 'iso27001' | 'iso19011' | 'gdpr' | 'popia';
+
+export interface RegulatoryAlignment {
+  standard: RegulatoryStandard;
+  aligned: boolean;
+  controls_mapped: number;
+  controls_total: number;
+  gaps: string[];
+}
+
+export interface ConsentRecord {
+  id: string;
+  user_id: string;
+  scope: string;
+  granted: boolean;
+  granted_at: string;
+  ip_address: string;
+  withdrawn_at: string | null;
+}
+
+// Plugin Architecture Types (FR-055)
+export interface PluginDescriptor {
+  id: string;
+  name: string;
+  type: 'evidence_type' | 'ai_capability' | 'parsing_rule' | 'maturity_model';
+  version: string;
+  enabled: boolean;
+  config: Record<string, unknown>;
+}
+
+export interface PluginRegistry {
+  plugins: PluginDescriptor[];
+  registered_at: string;
+}

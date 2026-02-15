@@ -8,11 +8,11 @@
  * Strategy: Maturion/strategy/MAT_RED_TEST_SUITE_STRATEGY.md
  */
 import { describe, it, expect } from 'vitest';
-import { exportForPIT, exportForMaturityRoadmap } from '../../src/services/integration.js';
+import { exportForPIT, exportForMaturityRoadmap, createPluginRegistry, registerPlugin, getPluginsByType, validatePITContract } from '../../src/services/integration.js';
 import { scoreMaturity, confirmScore } from '../../src/services/ai-scoring.js';
 import { collectTextEvidence } from '../../src/services/evidence-collection.js';
 import { generateExcelExport } from '../../src/services/reporting.js';
-import type { HumanScoreConfirmation } from '../../src/types/index.js';
+import type { HumanScoreConfirmation, PluginDescriptor } from '../../src/types/index.js';
 
 describe('CAT-09: integration', () => {
   it('MAT-T-0037: Excel Export', () => {
@@ -51,7 +51,66 @@ describe('CAT-09: integration', () => {
     // FRS: FR-055
     // TRS: TR-006
     // Type: unit | Priority: P1
-    throw new Error('NOT_IMPLEMENTED: MAT-T-0055 — Extensibility and Plugin Architecture');
+
+    // Create a plugin registry with initial plugins
+    const iotPlugin: PluginDescriptor = {
+      id: 'evidence-iot',
+      name: 'IoT Evidence Collector',
+      type: 'evidence_type',
+      version: '1.0.0',
+      enabled: true,
+      config: { protocol: 'mqtt', qos: 1 }
+    };
+
+    const customParsingPlugin: PluginDescriptor = {
+      id: 'parsing-healthcare',
+      name: 'Healthcare Criteria Parser',
+      type: 'parsing_rule',
+      version: '1.0.0',
+      enabled: true,
+      config: { standard: 'HIPAA' }
+    };
+
+    const registry = createPluginRegistry([iotPlugin]);
+    expect(registry.plugins).toHaveLength(1);
+    expect(registry.registered_at).toBeDefined();
+
+    // Register additional plugin
+    const updatedRegistry = registerPlugin(registry, customParsingPlugin);
+    expect(updatedRegistry.plugins).toHaveLength(2);
+
+    // Duplicate registration throws
+    expect(() => registerPlugin(updatedRegistry, iotPlugin)).toThrow("Plugin with ID 'evidence-iot' already registered");
+
+    // Filter by type
+    const evidencePlugins = getPluginsByType(updatedRegistry, 'evidence_type');
+    expect(evidencePlugins).toHaveLength(1);
+    expect(evidencePlugins[0].id).toBe('evidence-iot');
+
+    const parsingPlugins = getPluginsByType(updatedRegistry, 'parsing_rule');
+    expect(parsingPlugins).toHaveLength(1);
+    expect(parsingPlugins[0].id).toBe('parsing-healthcare');
+
+    // No results for unused type
+    const aiPlugins = getPluginsByType(updatedRegistry, 'ai_capability');
+    expect(aiPlugins).toHaveLength(0);
+
+    // API contract validation for PIT export
+    const evidence = collectTextEvidence({
+      criterion_id: 'crit-001',
+      audit_id: 'audit-001',
+      organisation_id: 'org-001',
+      evidence_type: 'text',
+      content_text: 'Evidence for contract validation',
+      uploaded_by: 'user-001'
+    });
+    const aiScore = scoreMaturity('crit-001', [evidence], 'gpt-4-turbo-2024');
+    const confirmation = confirmScore(aiScore, aiScore.maturity_level, 'user-002', 'lead_auditor');
+    const pitExport = exportForPIT('audit-001', 'org-001', [confirmation]);
+
+    const contractResult = validatePITContract(pitExport);
+    expect(contractResult.valid).toBe(true);
+    expect(contractResult.errors).toHaveLength(0);
   });
 
   it('MAT-T-0056: PIT Module Integration Export', () => {

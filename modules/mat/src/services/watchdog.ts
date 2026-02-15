@@ -6,7 +6,12 @@
 
 import type {
   WatchdogMetrics,
-  WatchdogThreshold
+  WatchdogThreshold,
+  WatchdogAlertRouting,
+  HealthCheckResult,
+  OverrideAnalysisSummary,
+  OverrideLogEntry,
+  OverrideReason
 } from '../types/index.js';
 
 /**
@@ -162,5 +167,135 @@ export function subscribeToDashboardUpdates(
       // In production, this would close the WebSocket channel
       isSubscribed = false;
     }
+  };
+}
+
+/**
+ * Creates configurable alert thresholds for an organisation
+ * Architecture: observability-architecture.md §4
+ * FRS: FR-060
+ * 
+ * Allows per-organisation threshold customisation with
+ * validation to prevent dangerous configurations.
+ * 
+ * @param organisationId - Organisation ID
+ * @param overrides - Partial threshold overrides
+ * @returns Array of merged threshold configurations
+ */
+export function createOrganisationThresholds(
+  organisationId: string,
+  overrides: Partial<Record<string, { warning_level?: number; critical_level?: number; alert_enabled?: boolean }>>
+): WatchdogThreshold[] {
+  const defaults = getDefaultThresholds();
+
+  return defaults.map(threshold => {
+    const override = overrides[threshold.metric];
+    if (!override) return threshold;
+
+    return {
+      ...threshold,
+      warning_level: override.warning_level ?? threshold.warning_level,
+      critical_level: override.critical_level ?? threshold.critical_level,
+      alert_enabled: override.alert_enabled ?? threshold.alert_enabled
+    };
+  });
+}
+
+/**
+ * Returns alert routing configuration per severity
+ * Architecture: observability-architecture.md §4
+ * FRS: FR-060
+ * 
+ * Maps alert thresholds to notification channels.
+ * Warning-level alerts route to email+slack.
+ * Critical-level alerts add SMS escalation.
+ * 
+ * @returns Array of alert routing rules
+ */
+export function getAlertRouting(): WatchdogAlertRouting[] {
+  return [
+    { metric: 'ai_refusal_rate', channels: ['email', 'slack'], severity: 'warning' },
+    { metric: 'ai_override_rate', channels: ['email', 'slack'], severity: 'warning' },
+    { metric: 'sync_failure_rate', channels: ['email', 'slack', 'sms'], severity: 'critical' },
+    { metric: 'error_rate', channels: ['email', 'slack', 'sms'], severity: 'critical' },
+    { metric: 'avg_response_time_ms', channels: ['email', 'slack'], severity: 'warning' }
+  ];
+}
+
+/**
+ * Performs a health check on a named service
+ * Architecture: observability-architecture.md §4
+ * FRS: FR-060
+ * 
+ * Returns health status including version, uptime, and dependency health.
+ * In production, this would probe actual service endpoints.
+ * 
+ * @param service - Service name to check
+ * @param deps - Dependency statuses
+ * @returns Health check result
+ */
+export function checkServiceHealth(
+  service: string,
+  deps: Array<{ name: string; healthy: boolean }>
+): HealthCheckResult {
+  const depResults = deps.map(d => ({
+    name: d.name,
+    status: d.healthy ? 'healthy' as const : 'unhealthy' as const
+  }));
+
+  const allHealthy = depResults.every(d => d.status === 'healthy');
+  const someHealthy = depResults.some(d => d.status === 'healthy');
+
+  return {
+    service,
+    status: allHealthy ? 'healthy' : someHealthy ? 'degraded' : 'unhealthy',
+    version: '1.0.0',
+    uptime_seconds: Math.floor(process.uptime()),
+    dependencies: depResults,
+    checked_at: new Date().toISOString()
+  };
+}
+
+/**
+ * Analyses override log entries and produces a summary
+ * Architecture: observability-architecture.md
+ * FRS: FR-061
+ * 
+ * Aggregates override entries by category, calculates override rate,
+ * and identifies top criteria receiving overrides.
+ * 
+ * @param overrides - Array of override log entries
+ * @param totalScored - Total number of scored criteria (for rate calculation)
+ * @returns Override analysis summary
+ */
+export function analyseOverrides(
+  overrides: OverrideLogEntry[],
+  totalScored: number
+): OverrideAnalysisSummary {
+  const byCategory: Record<OverrideReason, number> = {
+    evidence_quality: 0,
+    ai_misinterpretation: 0,
+    domain_specific_nuance: 0,
+    other: 0
+  };
+
+  const criterionCounts: Record<string, number> = {};
+
+  for (const entry of overrides) {
+    byCategory[entry.reason_category]++;
+    criterionCounts[entry.criterion_id] = (criterionCounts[entry.criterion_id] || 0) + 1;
+  }
+
+  const topCriteria = Object.entries(criterionCounts)
+    .map(([criterion_id, count]) => ({ criterion_id, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 10);
+
+  return {
+    total_overrides: overrides.length,
+    by_category: byCategory,
+    override_rate: totalScored > 0 ? overrides.length / totalScored : 0,
+    top_criteria: topCriteria,
+    analysed_at: new Date().toISOString()
   };
 }

@@ -8,7 +8,9 @@ import type {
   PITExportData,
   MaturityRoadmapExportData,
   MaturityLevel,
-  HumanScoreConfirmation
+  HumanScoreConfirmation,
+  PluginDescriptor,
+  PluginRegistry
 } from '../types/index.js';
 
 /**
@@ -144,4 +146,101 @@ function generateRecommendations(
   }
 
   return recommendations;
+}
+
+/**
+ * Creates a plugin registry for extensible evidence types and AI capabilities
+ * Architecture: §3.4, §3.10
+ * FRS: FR-055
+ * 
+ * Supports registration of new evidence types (e.g., IoT),
+ * AI capabilities, parsing rules, and maturity models
+ * via a plugin architecture with governance approval gates.
+ * 
+ * @param plugins - Array of plugin descriptors to register
+ * @returns Plugin registry with registration timestamp
+ */
+export function createPluginRegistry(plugins: PluginDescriptor[]): PluginRegistry {
+  return {
+    plugins: plugins.map(p => ({ ...p })),
+    registered_at: new Date().toISOString()
+  };
+}
+
+/**
+ * Registers a new plugin into an existing registry
+ * Architecture: §3.4, §3.10
+ * FRS: FR-055
+ * 
+ * @param registry - Existing plugin registry
+ * @param plugin - Plugin descriptor to add
+ * @returns Updated plugin registry
+ * @throws Error if plugin ID already exists
+ */
+export function registerPlugin(
+  registry: PluginRegistry,
+  plugin: PluginDescriptor
+): PluginRegistry {
+  if (registry.plugins.some(p => p.id === plugin.id)) {
+    throw new Error(`Plugin with ID '${plugin.id}' already registered`);
+  }
+
+  return {
+    plugins: [...registry.plugins, { ...plugin }],
+    registered_at: registry.registered_at
+  };
+}
+
+/**
+ * Lists plugins of a specific type from the registry
+ * Architecture: §3.4, §3.10
+ * FRS: FR-055
+ * 
+ * @param registry - Plugin registry to query
+ * @param type - Plugin type filter
+ * @returns Filtered array of plugin descriptors
+ */
+export function getPluginsByType(
+  registry: PluginRegistry,
+  type: PluginDescriptor['type']
+): PluginDescriptor[] {
+  return registry.plugins.filter(p => p.type === type);
+}
+
+/**
+ * Validates API contract for PIT export endpoint
+ * Architecture: integration-architecture.md
+ * FRS: FR-056
+ * 
+ * Validates that the export payload conforms to the PIT API contract:
+ * required fields, data types, and structural integrity.
+ * 
+ * @param data - PIT export data to validate
+ * @returns Validation result with any errors
+ */
+export function validatePITContract(
+  data: PITExportData
+): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+
+  if (!data.audit_id) errors.push('audit_id is required');
+  if (!data.organisation_id) errors.push('organisation_id is required');
+  if (!data.exported_at) errors.push('exported_at is required');
+  if (!Array.isArray(data.criteria_scores)) errors.push('criteria_scores must be an array');
+  if (!data.summary) errors.push('summary is required');
+
+  if (data.summary) {
+    if (typeof data.summary.total_criteria !== 'number') errors.push('summary.total_criteria must be a number');
+    if (typeof data.summary.scored_criteria !== 'number') errors.push('summary.scored_criteria must be a number');
+    if (typeof data.summary.average_maturity !== 'number') errors.push('summary.average_maturity must be a number');
+  }
+
+  for (const score of data.criteria_scores) {
+    if (!score.criterion_id) errors.push('criteria_scores[].criterion_id is required');
+    if (typeof score.maturity_level !== 'number' || score.maturity_level < 1 || score.maturity_level > 5) {
+      errors.push(`criteria_scores[].maturity_level must be 1-5, got ${score.maturity_level}`);
+    }
+  }
+
+  return { valid: errors.length === 0, errors };
 }
