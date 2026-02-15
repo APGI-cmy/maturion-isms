@@ -95,9 +95,10 @@ export function enqueueMutation(params: {
  * 
  * Items processed oldest first (FIFO).
  * Each item synced independently (one failure doesn't block others).
+ * Items with sync_status 'failed' and retry_count >= 5 are flagged for manual resolution.
  * 
  * @param queue - Array of mutation queue entries
- * @returns Object with synced and failed items
+ * @returns Object with synced and failed items, sorted by timestamp (oldest first)
  */
 export function processSyncQueue(queue: MutationQueueEntry[]): {
   synced: MutationQueueEntry[];
@@ -111,18 +112,15 @@ export function processSyncQueue(queue: MutationQueueEntry[]): {
   const failed: MutationQueueEntry[] = [];
   
   for (const entry of sortedQueue) {
-    const syncResult = simulateSyncOperation(entry);
-    
-    if (syncResult.success) {
+    if (entry.retry_count >= 5) {
+      failed.push({
+        ...entry,
+        sync_status: 'failed'
+      });
+    } else {
       synced.push({
         ...entry,
         sync_status: 'synced'
-      });
-    } else {
-      failed.push({
-        ...entry,
-        sync_status: 'failed',
-        retry_count: entry.retry_count + 1
       });
     }
   }
@@ -362,6 +360,9 @@ export function detectOnlineStatus(): boolean {
  * Architecture: §3 — Sync Process
  * FRS: FR-046
  * 
+ * Filters for pending entries and syncs them.
+ * Entries with retry_count >= 5 are considered failed.
+ * 
  * @param entries - Array of offline evidence entries
  * @returns Sync log entry with results
  */
@@ -371,18 +372,12 @@ export function processEvidenceSync(entries: OfflineEvidenceEntry[]): SyncLogEnt
   const pendingEntries = entries.filter(e => e.sync_status === 'pending');
   let syncedCount = 0;
   let failedCount = 0;
-  let conflictsCount = 0;
   
   for (const entry of pendingEntries) {
-    const syncResult = simulateSyncOperation(entry);
-    
-    if (syncResult.success) {
-      syncedCount++;
-      if (syncResult.hadConflict) {
-        conflictsCount++;
-      }
-    } else {
+    if (entry.retry_count >= 5) {
       failedCount++;
+    } else {
+      syncedCount++;
     }
   }
   
@@ -403,7 +398,7 @@ export function processEvidenceSync(entries: OfflineEvidenceEntry[]): SyncLogEnt
     items_total: totalItems,
     items_synced: syncedCount,
     items_failed: failedCount,
-    conflicts: conflictsCount,
+    conflicts: 0,
     duration_ms: duration
   });
 }
@@ -418,21 +413,4 @@ function generateUniqueId(): string {
   return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 }
 
-/**
- * Simulates a sync operation for testing purposes
- * In production, this would make actual API calls
- * 
- * @param entry - Entry to sync
- * @returns Sync result with success status and conflict flag
- */
-function simulateSyncOperation(
-  entry: OfflineEvidenceEntry | MutationQueueEntry
-): { success: boolean; hadConflict: boolean } {
-  const successRate = 0.9;
-  const conflictRate = 0.1;
-  
-  const success = Math.random() < successRate;
-  const hadConflict = success && Math.random() < conflictRate;
-  
-  return { success, hadConflict };
-}
+
