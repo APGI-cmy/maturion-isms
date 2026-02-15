@@ -1,8 +1,8 @@
 /**
  * MAT Red Test Suite — CAT-10: ui accessibility
  *
- * QA-to-Red: All tests MUST fail with NOT_IMPLEMENTED.
- * These tests define expected behavior before implementation exists.
+ * Build-to-Green for MAT-T-0010, MAT-T-0011, MAT-T-0033, MAT-T-0034, MAT-T-0039 (Wave 1+3 scope).
+ * Remaining tests stay QA-to-Red for future waves.
  *
  * Registry: governance/TEST_REGISTRY.json
  * Strategy: Maturion/strategy/MAT_RED_TEST_SUITE_STRATEGY.md
@@ -34,7 +34,21 @@ import {
   MODAL_TABS,
   EVIDENCE_SUBTABS
 } from '../../src/components/criteria-modal.js';
-import type { Criterion } from '../../src/types/index.js';
+import {
+  createReviewTableConfig,
+  createReviewTableRow,
+  sortReviewTable,
+  filterReviewTableByStatus,
+  editReviewTableRow,
+  validateReviewTableCompleteness
+} from '../../src/components/review-table.js';
+import {
+  generateDashboardMetrics,
+  validateDashboardMetrics
+} from '../../src/components/dashboard.js';
+import { scoreMaturity, confirmScore } from '../../src/services/ai-scoring.js';
+import { collectTextEvidence } from '../../src/services/evidence-collection.js';
+import type { Criterion, MaturityLevel } from '../../src/types/index.js';
 
 describe('CAT-10: ui accessibility', () => {
   it('MAT-T-0010: Hierarchical Navigation', () => {
@@ -248,7 +262,62 @@ describe('CAT-10: ui accessibility', () => {
     // FRS: FR-033
     // TRS: TR-044
     // Type: unit | Priority: P0
-    throw new Error('NOT_IMPLEMENTED: MAT-T-0033 — Review Table Component');
+    // Create review table config
+    const config = createReviewTableConfig();
+    expect(config.sortable).toBe(true);
+    expect(config.filterable).toBe(true);
+    expect(config.editable).toBe(true);
+    expect(config.columns.length).toBeGreaterThan(0);
+    expect(config.columns).toContain('criterion_number');
+    expect(config.columns).toContain('ai_maturity_level');
+    expect(config.columns).toContain('human_confirmed_level');
+
+    // Create review table rows
+    const row1 = createReviewTableRow({
+      criterion_id: 'crit-001',
+      criterion_number: '1.1.1',
+      criterion_title: 'Access Control Policy',
+      domain: 'Security',
+      mps: '1.1',
+      ai_maturity_level: 3,
+      ai_confidence: 0.85,
+      status: 'ai_scored',
+      evidence_count: 4
+    });
+
+    expect(row1.criterion_number).toBe('1.1.1');
+    expect(row1.ai_maturity_level).toBe(3);
+    expect(row1.human_confirmed_level).toBeNull();
+    expect(row1.status).toBe('ai_scored');
+
+    const row2 = createReviewTableRow({
+      criterion_id: 'crit-002',
+      criterion_number: '1.1.2',
+      criterion_title: 'Security Monitoring',
+      domain: 'Security',
+      mps: '1.1',
+      ai_maturity_level: 4,
+      ai_confidence: 0.92,
+      status: 'confirmed',
+      evidence_count: 6
+    });
+
+    // Sort by criterion_number
+    const sorted = sortReviewTable([row2, row1], 'criterion_number', true);
+    expect(sorted[0].criterion_number).toBe('1.1.1');
+    expect(sorted[1].criterion_number).toBe('1.1.2');
+
+    // Filter by status
+    const filtered = filterReviewTableByStatus([row1, row2], 'ai_scored');
+    expect(filtered).toHaveLength(1);
+    expect(filtered[0].criterion_id).toBe('crit-001');
+
+    // Validate completeness
+    const completeness = validateReviewTableCompleteness([row1, row2]);
+    expect(completeness.total).toBe(2);
+    expect(completeness.confirmed).toBe(1);
+    expect(completeness.pending).toBe(1);
+    expect(completeness.complete).toBe(false);
   });
 
   it('MAT-T-0034: Review Table Editing', () => {
@@ -256,7 +325,47 @@ describe('CAT-10: ui accessibility', () => {
     // FRS: FR-034
     // TRS: TR-044
     // Type: unit | Priority: P0
-    throw new Error('NOT_IMPLEMENTED: MAT-T-0034 — Review Table Editing');
+    // Create a row with AI score
+    const row = createReviewTableRow({
+      criterion_id: 'crit-001',
+      criterion_number: '1.1.1',
+      criterion_title: 'Access Control Policy',
+      domain: 'Security',
+      mps: '1.1',
+      ai_maturity_level: 3,
+      ai_confidence: 0.85,
+      status: 'ai_scored',
+      evidence_count: 4
+    });
+
+    // Edit to confirm at same level (no override)
+    const confirmedRow = editReviewTableRow(row, 3);
+    expect(confirmedRow.human_confirmed_level).toBe(3);
+    expect(confirmedRow.is_override).toBe(false);
+    expect(confirmedRow.status).toBe('confirmed');
+
+    // Edit to override (different level)
+    const overriddenRow = editReviewTableRow(row, 4);
+    expect(overriddenRow.human_confirmed_level).toBe(4);
+    expect(overriddenRow.is_override).toBe(true);
+    expect(overriddenRow.status).toBe('confirmed');
+
+    // Completeness after editing
+    const row2 = createReviewTableRow({
+      criterion_id: 'crit-002',
+      criterion_number: '1.1.2',
+      criterion_title: 'Monitoring',
+      domain: 'Security',
+      mps: '1.1',
+      status: 'ai_scored',
+      evidence_count: 3
+    });
+
+    const edited2 = editReviewTableRow(row2, 2);
+    const completeness = validateReviewTableCompleteness([confirmedRow, edited2]);
+    expect(completeness.complete).toBe(true);
+    expect(completeness.pending).toBe(0);
+    expect(completeness.confirmed).toBe(2);
   });
 
   it('MAT-T-0039: Global Dashboard', () => {
@@ -264,7 +373,39 @@ describe('CAT-10: ui accessibility', () => {
     // FRS: FR-039
     // TRS: TR-048
     // Type: e2e | Priority: P0
-    throw new Error('NOT_IMPLEMENTED: MAT-T-0039 — Global Dashboard');
+    const evidence = collectTextEvidence({
+      criterion_id: 'crit-001',
+      audit_id: 'audit-001',
+      organisation_id: 'org-001',
+      evidence_type: 'text',
+      content_text: 'Evidence for dashboard test',
+      uploaded_by: 'user-001'
+    });
+
+    const aiScore = scoreMaturity('crit-001', [evidence], 'gpt-4-turbo-2024');
+    const confirmation = confirmScore(aiScore, aiScore.maturity_level, 'user-002', 'lead_auditor');
+
+    const domainMapping = new Map<string, { domain_id: string; domain_name: string }>();
+    domainMapping.set('crit-001', { domain_id: 'dom-001', domain_name: 'Security' });
+    domainMapping.set('crit-002', { domain_id: 'dom-001', domain_name: 'Security' });
+
+    const metrics = generateDashboardMetrics('audit-001', [confirmation], 5, domainMapping);
+
+    expect(metrics.audit_id).toBe('audit-001');
+    expect(metrics.total_criteria).toBe(5);
+    expect(metrics.scored_criteria).toBe(1);
+    expect(metrics.confirmed_criteria).toBe(1);
+    expect(metrics.average_maturity).toBeGreaterThan(0);
+    expect(metrics.average_maturity).toBeLessThanOrEqual(5);
+    expect(metrics.completion_percentage).toBe(20); // 1/5 = 20%
+    expect(metrics.generated_at).toBeDefined();
+    expect(metrics.domains.length).toBeGreaterThan(0);
+    expect(metrics.domains[0].domain_name).toBe('Security');
+
+    // Validate metrics
+    const validation = validateDashboardMetrics(metrics);
+    expect(validation.valid).toBe(true);
+    expect(validation.errors).toHaveLength(0);
   });
 
   it('MAT-T-0040: Domain Dashboard', () => {
