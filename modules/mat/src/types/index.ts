@@ -237,3 +237,207 @@ export const CRITERION_STATUS_TRANSITIONS: Record<CriterionStatus, CriterionStat
   confirmed: [],
   not_used: []
 };
+
+// Evidence Types
+export type EvidenceType = 'text' | 'voice' | 'photo' | 'document' | 'video';
+
+export type SyncStatus = 'pending' | 'syncing' | 'synced' | 'failed';
+
+export type EvidenceStatus = 'pending_review' | 'accepted' | 'rejected';
+
+export interface Evidence {
+  id: string;
+  criterion_id: string;
+  audit_id: string;
+  organisation_id: string;
+  evidence_type: EvidenceType;
+  content_text: string | null;
+  file_path: string | null;
+  file_name: string | null;
+  file_size: number | null;
+  mime_type: string | null;
+  sha256_hash: string;
+  storage_url: string | null;
+  metadata: Record<string, unknown>;
+  is_offline_captured: boolean;
+  sync_status: SyncStatus;
+  uploaded_by: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  status: EvidenceStatus;
+}
+
+export interface EvidenceUploadParams {
+  criterion_id: string;
+  audit_id: string;
+  organisation_id: string;
+  evidence_type: EvidenceType;
+  content_text?: string;
+  file_name?: string;
+  file_size?: number;
+  mime_type?: string;
+  file_data?: string;
+  metadata?: Record<string, unknown>;
+  uploaded_by: string;
+  is_offline_captured?: boolean;
+}
+
+export interface InterviewRecording {
+  id: string;
+  evidence_id: string;
+  criterion_id: string | null;
+  audit_id: string;
+  recording_type: 'criterion' | 'audit';
+  transcription: string | null;
+  transcription_status: 'pending' | 'processing' | 'completed' | 'failed';
+  duration_seconds: number;
+  created_at: string;
+}
+
+export interface InterviewGovernance {
+  max_duration_seconds: number;
+  require_consent: boolean;
+  allowed_roles: UserRole[];
+  retention_days: number;
+}
+
+// Offline Sync Types
+export interface OfflineEvidenceEntry {
+  id: string;
+  criterion_id: string;
+  audit_id: string;
+  organisation_id: string;
+  evidence_type: EvidenceType;
+  content_text: string | null;
+  file_key: string | null;
+  file_name: string | null;
+  file_size: number | null;
+  mime_type: string | null;
+  sha256_hash: string;
+  metadata: Record<string, unknown>;
+  sync_status: SyncStatus;
+  retry_count: number;
+  created_at: string;
+  uploaded_by: string;
+}
+
+export interface MutationQueueEntry {
+  id: string;
+  timestamp: string;
+  entity_type: string;
+  entity_id: string;
+  action: string;
+  payload: Record<string, unknown>;
+  sync_status: SyncStatus;
+  retry_count: number;
+}
+
+export interface SyncLogEntry {
+  id: string;
+  timestamp: string;
+  status: 'started' | 'completed' | 'partial' | 'failed';
+  items_total: number;
+  items_synced: number;
+  items_failed: number;
+  conflicts: number;
+  duration_ms: number;
+}
+
+export interface SyncConflict {
+  entity_type: string;
+  entity_id: string;
+  client_version: Record<string, unknown>;
+  server_version: Record<string, unknown>;
+  resolution: 'client_wins' | 'server_wins';
+  resolved_at: string;
+}
+
+export interface PWAConfig {
+  name: string;
+  short_name: string;
+  description: string;
+  start_url: string;
+  display: string;
+  background_color: string;
+  theme_color: string;
+  icons: Array<{ src: string; sizes: string; type: string; purpose?: string }>;
+  service_worker_path: string;
+  offline_capable: boolean;
+}
+
+// AI Scoring Types
+export type MaturityLevel = 1 | 2 | 3 | 4 | 5;
+
+export interface AIScoreResult {
+  criterion_id: string;
+  maturity_level: MaturityLevel;
+  confidence: number;
+  rationale: string;
+  evidence_citations: string[];
+  model_version: string;
+  scored_at: string;
+}
+
+export interface HumanScoreConfirmation {
+  criterion_id: string;
+  ai_score: AIScoreResult;
+  confirmed_level: MaturityLevel;
+  is_override: boolean;
+  override_justification: string | null;
+  confirmed_by: string;
+  confirmed_at: string;
+}
+
+// Integration Types
+export interface PITExportData {
+  audit_id: string;
+  organisation_id: string;
+  exported_at: string;
+  criteria_scores: Array<{
+    criterion_id: string;
+    criterion_number: string;
+    maturity_level: MaturityLevel;
+    confidence: number;
+    evidence_count: number;
+  }>;
+  summary: {
+    total_criteria: number;
+    scored_criteria: number;
+    average_maturity: number;
+  };
+}
+
+export interface MaturityRoadmapExportData {
+  audit_id: string;
+  organisation_id: string;
+  exported_at: string;
+  gaps: Array<{
+    criterion_id: string;
+    criterion_number: string;
+    current_level: MaturityLevel;
+    target_level: MaturityLevel;
+    gap_description: string;
+    priority: 'immediate' | 'medium_term' | 'long_term';
+  }>;
+  recommendations: string[];
+}
+
+// Watchdog Types
+export interface WatchdogMetrics {
+  timestamp: string;
+  ai_refusal_rate: number;
+  ai_override_rate: number;
+  sync_failure_rate: number;
+  active_audits: number;
+  evidence_count: number;
+  avg_response_time_ms: number;
+  error_rate: number;
+}
+
+export interface WatchdogThreshold {
+  metric: keyof Omit<WatchdogMetrics, 'timestamp'>;
+  warning_level: number;
+  critical_level: number;
+  alert_enabled: boolean;
+}
