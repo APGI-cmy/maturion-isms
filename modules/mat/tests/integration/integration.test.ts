@@ -1,14 +1,20 @@
 /**
  * MAT Test Suite — CAT-09: integration
  *
- * Build-to-Green for MAT-T-0037, MAT-T-0056–0057 (Wave 2+3 scope).
- * Remaining tests stay QA-to-Red for future waves.
+ * Build-to-Green for MAT-T-0037, MAT-T-0055, MAT-T-0056–0057 (Wave 2+3+5 scope).
  *
  * Registry: governance/TEST_REGISTRY.json
  * Strategy: Maturion/strategy/MAT_RED_TEST_SUITE_STRATEGY.md
  */
 import { describe, it, expect } from 'vitest';
-import { exportForPIT, exportForMaturityRoadmap } from '../../src/services/integration.js';
+import {
+  exportForPIT,
+  exportForMaturityRoadmap,
+  registerPlugin,
+  listPlugins,
+  getSupportedPluginTypes,
+  clearPluginRegistry
+} from '../../src/services/integration.js';
 import { scoreMaturity, confirmScore } from '../../src/services/ai-scoring.js';
 import { collectTextEvidence } from '../../src/services/evidence-collection.js';
 import { generateExcelExport } from '../../src/services/reporting.js';
@@ -51,7 +57,63 @@ describe('CAT-09: integration', () => {
     // FRS: FR-055
     // TRS: TR-006
     // Type: unit | Priority: P1
-    throw new Error('NOT_IMPLEMENTED: MAT-T-0055 — Extensibility and Plugin Architecture');
+
+    // 1. Verify supported plugin types
+    const supportedTypes = getSupportedPluginTypes();
+    expect(supportedTypes).toContain('evidence_type');
+    expect(supportedTypes).toContain('maturity_model');
+    expect(supportedTypes).toContain('ai_capability');
+    expect(supportedTypes).toContain('criteria_parser');
+    expect(supportedTypes).toContain('report_format');
+
+    // 2. Register an evidence type plugin
+    clearPluginRegistry();
+    const evidencePlugin = registerPlugin(
+      'thermal-imaging',
+      'evidence_type',
+      '1.0.0',
+      { mime_types: ['image/tiff'], max_size_mb: 100 }
+    );
+    expect(evidencePlugin.id).toBeDefined();
+    expect(evidencePlugin.name).toBe('thermal-imaging');
+    expect(evidencePlugin.type).toBe('evidence_type');
+    expect(evidencePlugin.version).toBe('1.0.0');
+    expect(evidencePlugin.enabled).toBe(true);
+    expect(evidencePlugin.registered_at).toBeDefined();
+
+    // 3. Register an AI capability plugin
+    const aiPlugin = registerPlugin(
+      'custom-llm-scorer',
+      'ai_capability',
+      '2.0.0',
+      { model: 'custom-model', max_tokens: 4096 }
+    );
+    expect(aiPlugin.type).toBe('ai_capability');
+
+    // 4. Register a maturity model plugin
+    const maturityPlugin = registerPlugin(
+      'iso-27001-maturity-v2',
+      'maturity_model',
+      '1.0.0',
+      { levels: 6 }
+    );
+    expect(maturityPlugin.type).toBe('maturity_model');
+
+    // 5. List all plugins
+    const allPlugins = listPlugins();
+    expect(allPlugins).toHaveLength(3);
+
+    // 6. List plugins filtered by type
+    const evidencePlugins = listPlugins('evidence_type');
+    expect(evidencePlugins).toHaveLength(1);
+    expect(evidencePlugins[0].name).toBe('thermal-imaging');
+
+    const aiPlugins = listPlugins('ai_capability');
+    expect(aiPlugins).toHaveLength(1);
+    expect(aiPlugins[0].name).toBe('custom-llm-scorer');
+
+    // Cleanup
+    clearPluginRegistry();
   });
 
   it('MAT-T-0056: PIT Module Integration Export', () => {

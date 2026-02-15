@@ -1,14 +1,15 @@
 /**
  * Integration Service
  * Architecture: modules/mat/02-architecture/integration-architecture.md
- * Implements PIT module export and Maturity Roadmap export endpoints
+ * Implements PIT module export, Maturity Roadmap export, and plugin architecture
  */
 
 import type {
   PITExportData,
   MaturityRoadmapExportData,
   MaturityLevel,
-  HumanScoreConfirmation
+  HumanScoreConfirmation,
+  EvidenceType
 } from '../types/index.js';
 
 /**
@@ -144,4 +145,101 @@ function generateRecommendations(
   }
 
   return recommendations;
+}
+
+// ============================================================
+// Extensibility & Plugin Architecture (FR-055)
+// ============================================================
+
+/**
+ * Plugin types supported by the MAT extensibility framework
+ * Architecture: §3.4, §3.10
+ * FRS: FR-055
+ */
+export type PluginType =
+  | 'evidence_type'
+  | 'maturity_model'
+  | 'ai_capability'
+  | 'criteria_parser'
+  | 'report_format';
+
+/**
+ * Plugin registration record
+ */
+export interface PluginRegistration {
+  id: string;
+  name: string;
+  type: PluginType;
+  version: string;
+  enabled: boolean;
+  registered_at: string;
+  config: Record<string, unknown>;
+}
+
+/**
+ * Plugin registry (in-memory store)
+ */
+const pluginRegistry: PluginRegistration[] = [];
+
+/**
+ * Registers a plugin with the extensibility framework
+ * Architecture: §3.4, §3.10
+ * FRS: FR-055
+ *
+ * Allows registration of new evidence types, maturity models,
+ * AI capabilities, criteria parsers, and report formats.
+ *
+ * @param name - Plugin name
+ * @param type - Plugin type
+ * @param version - Plugin version
+ * @param config - Plugin configuration
+ * @returns Plugin registration record
+ */
+export function registerPlugin(
+  name: string,
+  type: PluginType,
+  version: string,
+  config: Record<string, unknown> = {}
+): PluginRegistration {
+  const plugin: PluginRegistration = {
+    id: `plugin-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+    name,
+    type,
+    version,
+    enabled: true,
+    registered_at: new Date().toISOString(),
+    config
+  };
+
+  pluginRegistry.push(plugin);
+  return plugin;
+}
+
+/**
+ * Lists registered plugins, optionally filtered by type
+ *
+ * @param type - Optional plugin type filter
+ * @returns Array of matching plugin registrations
+ */
+export function listPlugins(type?: PluginType): PluginRegistration[] {
+  if (type) {
+    return pluginRegistry.filter(p => p.type === type);
+  }
+  return [...pluginRegistry];
+}
+
+/**
+ * Returns supported plugin types
+ *
+ * @returns Array of supported plugin type names
+ */
+export function getSupportedPluginTypes(): PluginType[] {
+  return ['evidence_type', 'maturity_model', 'ai_capability', 'criteria_parser', 'report_format'];
+}
+
+/**
+ * Clears plugin registry (for testing only)
+ */
+export function clearPluginRegistry(): void {
+  pluginRegistry.length = 0;
 }
