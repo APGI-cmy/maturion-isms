@@ -199,6 +199,18 @@ jobs:
             echo "ℹ️  No evidence file found (fallback validation used)"
           fi
 
+      - name: Validate BUILD_PROGRESS_TRACKER Update (BL-029)
+        if: steps.check_governance.outputs.is_governance_auto != 'true'
+        run: |
+          # Check evidence first
+          if bash .github/scripts/check-evidence.sh "BUILD_PROGRESS_TRACKER Update" "BUILD_PROGRESS_TRACKER|BL-029|tracker.*update" | grep -q "skip_execution=true"; then
+            echo "✅ Evidence-based validation accepted"
+            exit 0
+          fi
+
+          # Run validation script
+          bash .github/scripts/validate-tracker-update.sh
+
       - name: Verdict Summary
         run: |
           echo "=== Merge Gate Verdict ==="

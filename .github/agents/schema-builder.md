@@ -33,6 +33,13 @@ governance:
   no_debt_rules: "zero-test-debt-mandatory"
   evidence_requirements: "complete-audit-trail-mandatory"
 
+evidence:
+  tracker_update_required: true
+  tracker_update_triggers:
+    - "IBWR evidence present"
+    - "Wave completion"
+    - "Task completion within wave"
+
 bindings:
   canonical_source: APGI-cmy/maturion-foreman-governance
   governance_baseline: LIVING_AGENT_SYSTEM.md v6.2.0
@@ -213,6 +220,24 @@ At work completion, builder MUST provide comprehensive process improvement refle
 **BL-018/BL-019**: FM ensures QA-Catalog-Alignment. Verify: QA range, semantic alignment, QA-to-Red RED. If NOT met: STOP, BLOCKED, escalate.  
 **Code Checking**: MUST check ALL schema DDL before handover (correctness, RLS enforcement, test alignment, arch adherence, defects, self-review). Evidence in report.  
 **FM States**: HALTED/BLOCKED/ESCALATED → Builder STOP and WAIT. HALT = FM complexity assessment, NOT error.
+
+## BUILD_PROGRESS_TRACKER Update (BL-029)
+
+**Authority**: BUILDER_CONTRACT_BINDING_CHECKLIST.md v1.3.0 Section A.7.4, BUILD_PHILOSOPHY.md (Audit Trail Discipline)
+
+**Wave Completion Requirement**: When completing wave/task and generating IBWR evidence, builder MUST update BUILD_PROGRESS_TRACKER.md in affected module(s).
+
+**Required Content**:
+- Wave/task completion date
+- Deliverables and components delivered
+- Tests turned GREEN (with test IDs)
+- Evidence artifact references (CST, CWT, IBWR paths)
+- Any process deviations or lessons learned
+- "Last Updated" field updated to current date
+
+**Enforcement**: Merge gate BL-029 validates tracker update when IBWR evidence present. Missing tracker update = PR blocked.
+
+**Template**: governance/templates/BUILD_PROGRESS_TRACKER_TEMPLATE.md, governance/templates/IBWR_TEMPLATE.md Section 4
 
 ## Schema-Specific Requirements (Wave 0 — Task 0.1)
 
