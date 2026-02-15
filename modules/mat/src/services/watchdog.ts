@@ -6,7 +6,9 @@
 
 import type {
   WatchdogMetrics,
-  WatchdogThreshold
+  WatchdogThreshold,
+  OverrideLogEntry,
+  OverrideReason
 } from '../types/index.js';
 
 /**
@@ -162,5 +164,141 @@ export function subscribeToDashboardUpdates(
       // In production, this would close the WebSocket channel
       isSubscribed = false;
     }
+  };
+}
+
+/**
+ * Routes an alert to the appropriate channels based on severity
+ * Architecture: observability-architecture.md §4
+ * FRS: FR-060
+ * 
+ * Determines routing channels using the alert threshold table:
+ * - warning: email + slack
+ * - critical: email + slack + sms
+ * 
+ * @param alert - Alert with metric, value, and severity
+ * @returns Routed alert with channels and timestamp
+ */
+export function routeAlert(alert: {
+  metric: string;
+  value: number;
+  severity: 'warning' | 'critical';
+}): {
+  metric: string;
+  value: number;
+  severity: 'warning' | 'critical';
+  channels: string[];
+  routed_at: string;
+} {
+  const channels = alert.severity === 'critical'
+    ? ['email', 'slack', 'sms']
+    : ['email', 'slack'];
+
+  return {
+    metric: alert.metric,
+    value: alert.value,
+    severity: alert.severity,
+    channels,
+    routed_at: new Date().toISOString()
+  };
+}
+
+/**
+ * Returns health status for a service
+ * Architecture: observability-architecture.md §3
+ * FRS: FR-062
+ * 
+ * Evaluates service health based on current metrics against thresholds.
+ * Returns 'healthy' if no alerts, 'degraded' if warnings only,
+ * 'unhealthy' if any critical alerts exist.
+ * 
+ * @param serviceName - Name of the service to check
+ * @param metrics - Current metrics snapshot
+ * @param thresholds - Threshold configurations
+ * @returns Health status object
+ */
+export function getHealthStatus(
+  serviceName: string,
+  metrics: WatchdogMetrics,
+  thresholds: WatchdogThreshold[]
+): {
+  service: string;
+  status: 'healthy' | 'degraded' | 'unhealthy';
+  checked_at: string;
+  alerts: Array<{ metric: string; value: number; severity: 'warning' | 'critical' }>;
+} {
+  const alerts = checkThresholds(metrics, thresholds);
+  const hasCritical = alerts.some(a => a.severity === 'critical');
+  const hasWarning = alerts.some(a => a.severity === 'warning');
+
+  let status: 'healthy' | 'degraded' | 'unhealthy';
+  if (hasCritical) {
+    status = 'unhealthy';
+  } else if (hasWarning) {
+    status = 'degraded';
+  } else {
+    status = 'healthy';
+  }
+
+  return {
+    service: serviceName,
+    status,
+    checked_at: new Date().toISOString(),
+    alerts
+  };
+}
+
+/**
+ * Analyzes override patterns for feedback loop
+ * Architecture: observability-architecture.md §4
+ * FRS: FR-061
+ * 
+ * Aggregates override log entries to identify patterns in human
+ * overrides of AI scores, enabling model improvement feedback.
+ * 
+ * @param overrides - Array of override log entries
+ * @returns Override pattern analysis with breakdown by reason and direction
+ */
+export function analyzeOverridePatterns(overrides: OverrideLogEntry[]): {
+  total_overrides: number;
+  by_reason: Record<OverrideReason, number>;
+  average_level_difference: number;
+  direction: { upward: number; downward: number };
+  most_common_reason: OverrideReason | null;
+} {
+  const byReason: Record<OverrideReason, number> = {
+    evidence_quality: 0,
+    ai_misinterpretation: 0,
+    domain_specific_nuance: 0,
+    other: 0
+  };
+
+  let totalDifference = 0;
+  let upward = 0;
+  let downward = 0;
+
+  for (const override of overrides) {
+    byReason[override.reason_category]++;
+    const diff = override.human_selected_level - override.original_ai_level;
+    totalDifference += Math.abs(diff);
+    if (diff > 0) upward++;
+    else if (diff < 0) downward++;
+  }
+
+  let mostCommonReason: OverrideReason | null = null;
+  let maxCount = 0;
+  for (const [reason, count] of Object.entries(byReason)) {
+    if (count > maxCount) {
+      maxCount = count;
+      mostCommonReason = reason as OverrideReason;
+    }
+  }
+
+  return {
+    total_overrides: overrides.length,
+    by_reason: byReason,
+    average_level_difference: overrides.length > 0 ? totalDifference / overrides.length : 0,
+    direction: { upward, downward },
+    most_common_reason: overrides.length > 0 ? mostCommonReason : null
   };
 }

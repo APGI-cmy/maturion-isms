@@ -1,7 +1,7 @@
 /**
  * MAT Test Suite — CAT-07: watchdog observability
  *
- * Build-to-Green for MAT-T-0058 (Wave 2 scope).
+ * Build-to-Green for MAT-T-0058, MAT-T-0059, MAT-T-0060 (Wave 2+5 scope).
  * Remaining tests stay QA-to-Red for future waves.
  *
  * Registry: governance/TEST_REGISTRY.json
@@ -12,8 +12,12 @@ import {
   collectMetrics,
   getDefaultThresholds,
   checkThresholds,
-  subscribeToDashboardUpdates
+  subscribeToDashboardUpdates,
+  routeAlert,
+  getHealthStatus,
+  analyzeOverridePatterns
 } from '../../src/services/watchdog.js';
+import type { OverrideLogEntry } from '../../src/types/index.js';
 
 describe('CAT-07: watchdog observability', () => {
   it('MAT-T-0058: Watchdog Monitoring Metrics', () => {
@@ -70,7 +74,83 @@ describe('CAT-07: watchdog observability', () => {
     // FRS: FR-060
     // TRS: TR-062
     // Type: integration | Priority: P1
-    throw new Error('NOT_IMPLEMENTED: MAT-T-0059 — Watchdog Alert Thresholds');
+
+    // 1. Verify alert thresholds are defined for all key metrics
+    const thresholds = getDefaultThresholds();
+    const metricNames = thresholds.map(t => t.metric);
+    expect(metricNames).toContain('ai_refusal_rate');
+    expect(metricNames).toContain('ai_override_rate');
+    expect(metricNames).toContain('sync_failure_rate');
+    expect(metricNames).toContain('error_rate');
+    expect(metricNames).toContain('avg_response_time_ms');
+
+    // 2. Verify each threshold has warning and critical levels
+    for (const threshold of thresholds) {
+      expect(threshold.warning_level).toBeDefined();
+      expect(threshold.critical_level).toBeDefined();
+      expect(threshold.critical_level).toBeGreaterThan(threshold.warning_level);
+      expect(threshold.alert_enabled).toBe(true);
+    }
+
+    // 3. Verify alert routing for warning severity
+    const warningAlert = { metric: 'ai_override_rate', value: 0.30, severity: 'warning' as const };
+    const routedWarning = routeAlert(warningAlert);
+    expect(routedWarning.channels).toContain('email');
+    expect(routedWarning.channels).toContain('slack');
+    expect(routedWarning.channels).not.toContain('sms');
+    expect(routedWarning.routed_at).toBeDefined();
+
+    // 4. Verify alert routing for critical severity
+    const criticalAlert = { metric: 'error_rate', value: 0.10, severity: 'critical' as const };
+    const routedCritical = routeAlert(criticalAlert);
+    expect(routedCritical.channels).toContain('email');
+    expect(routedCritical.channels).toContain('slack');
+    expect(routedCritical.channels).toContain('sms');
+
+    // 5. Verify health check endpoint returns correct status
+    const healthyMetrics = collectMetrics({
+      ai_refusal_rate: 0.01,
+      ai_override_rate: 0.05,
+      sync_failure_rate: 0.01,
+      active_audits: 5,
+      evidence_count: 100,
+      avg_response_time_ms: 200,
+      error_rate: 0.001
+    });
+    const healthyStatus = getHealthStatus('mat-api', healthyMetrics, thresholds);
+    expect(healthyStatus.service).toBe('mat-api');
+    expect(healthyStatus.status).toBe('healthy');
+    expect(healthyStatus.checked_at).toBeDefined();
+    expect(healthyStatus.alerts).toHaveLength(0);
+
+    // 6. Verify degraded status with warning-level metrics
+    const degradedMetrics = collectMetrics({
+      ai_refusal_rate: 0.15,
+      ai_override_rate: 0.25,
+      sync_failure_rate: 0.01,
+      active_audits: 5,
+      evidence_count: 100,
+      avg_response_time_ms: 200,
+      error_rate: 0.001
+    });
+    const degradedStatus = getHealthStatus('mat-api', degradedMetrics, thresholds);
+    expect(degradedStatus.status).toBe('degraded');
+    expect(degradedStatus.alerts.length).toBeGreaterThan(0);
+    expect(degradedStatus.alerts.every(a => a.severity === 'warning')).toBe(true);
+
+    // 7. Verify unhealthy status with critical-level metrics
+    const unhealthyMetrics = collectMetrics({
+      ai_refusal_rate: 0.35,
+      ai_override_rate: 0.55,
+      sync_failure_rate: 0.20,
+      active_audits: 5,
+      evidence_count: 100,
+      avg_response_time_ms: 6000,
+      error_rate: 0.10
+    });
+    const unhealthyStatus = getHealthStatus('mat-api', unhealthyMetrics, thresholds);
+    expect(unhealthyStatus.status).toBe('unhealthy');
+    expect(unhealthyStatus.alerts.some(a => a.severity === 'critical')).toBe(true);
   });
 
   it('MAT-T-0060: Override Analysis and Feedback Loop', () => {
@@ -78,7 +158,87 @@ describe('CAT-07: watchdog observability', () => {
     // FRS: FR-061
     // TRS: TR-062
     // Type: integration | Priority: P1
-    throw new Error('NOT_IMPLEMENTED: MAT-T-0060 — Override Analysis and Feedback Loop');
+
+    // 1. Analyze override patterns with multiple entries
+    const overrides: OverrideLogEntry[] = [
+      {
+        id: 'ovr-001',
+        criterion_id: 'crit-001',
+        audit_id: 'audit-001',
+        original_ai_level: 2,
+        human_selected_level: 3,
+        justification: 'AI underestimated maturity based on evidence',
+        reason_category: 'ai_misinterpretation',
+        evidence_ids: ['ev-001', 'ev-002'],
+        logged_by: 'user-001',
+        logged_at: '2026-02-10T10:00:00Z'
+      },
+      {
+        id: 'ovr-002',
+        criterion_id: 'crit-002',
+        audit_id: 'audit-001',
+        original_ai_level: 4,
+        human_selected_level: 3,
+        justification: 'Evidence quality insufficient for level 4',
+        reason_category: 'evidence_quality',
+        evidence_ids: ['ev-003'],
+        logged_by: 'user-001',
+        logged_at: '2026-02-10T11:00:00Z'
+      },
+      {
+        id: 'ovr-003',
+        criterion_id: 'crit-003',
+        audit_id: 'audit-001',
+        original_ai_level: 1,
+        human_selected_level: 3,
+        justification: 'Domain-specific context not captured by AI',
+        reason_category: 'domain_specific_nuance',
+        evidence_ids: ['ev-004', 'ev-005'],
+        logged_by: 'user-002',
+        logged_at: '2026-02-10T12:00:00Z'
+      },
+      {
+        id: 'ovr-004',
+        criterion_id: 'crit-004',
+        audit_id: 'audit-001',
+        original_ai_level: 3,
+        human_selected_level: 2,
+        justification: 'AI misread the compliance evidence',
+        reason_category: 'ai_misinterpretation',
+        evidence_ids: ['ev-006'],
+        logged_by: 'user-001',
+        logged_at: '2026-02-10T13:00:00Z'
+      }
+    ];
+
+    const analysis = analyzeOverridePatterns(overrides);
+
+    // 2. Verify total overrides count
+    expect(analysis.total_overrides).toBe(4);
+
+    // 3. Verify breakdown by reason category
+    expect(analysis.by_reason.ai_misinterpretation).toBe(2);
+    expect(analysis.by_reason.evidence_quality).toBe(1);
+    expect(analysis.by_reason.domain_specific_nuance).toBe(1);
+    expect(analysis.by_reason.other).toBe(0);
+
+    // 4. Verify average level difference (|1|+|1|+|2|+|1| = 5 / 4 = 1.25)
+    expect(analysis.average_level_difference).toBe(1.25);
+
+    // 5. Verify direction analysis (upward: 2, downward: 2)
+    expect(analysis.direction.upward).toBe(2);
+    expect(analysis.direction.downward).toBe(2);
+
+    // 6. Verify most common reason
+    expect(analysis.most_common_reason).toBe('ai_misinterpretation');
+
+    // 7. Verify empty override analysis
+    const emptyAnalysis = analyzeOverridePatterns([]);
+    expect(emptyAnalysis.total_overrides).toBe(0);
+    expect(emptyAnalysis.average_level_difference).toBe(0);
+    expect(emptyAnalysis.most_common_reason).toBeNull();
+    expect(emptyAnalysis.direction.upward).toBe(0);
+    expect(emptyAnalysis.direction.downward).toBe(0);
   });
 
   it('MAT-T-0098: Dashboard Realtime Update Wiring', () => {
