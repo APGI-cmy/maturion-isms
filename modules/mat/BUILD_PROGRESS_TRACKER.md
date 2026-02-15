@@ -232,9 +232,9 @@ Track the progression through the canonical module lifecycle stages.
 **Key Artifacts**:
 - [x] Wave 0, Task 0.1: Database Schema, RLS, Migrations, Wiring Invariants — 25 tests GREEN (schema-builder)
 - [x] Wave 1, Task 1.3: Criteria Management UI — 2 tests GREEN: MAT-T-0010, MAT-T-0011 (ui-builder)
-- [ ] Wave 1, Task 1.1: Criteria Document Upload & Storage API
-- [ ] Wave 1, Task 1.2: AI Parsing Pipeline
-- [ ] Remaining wave tasks (Waves 2–5)
+- [x] Wave 1, Task 1.1: Criteria Document Upload & Storage API
+- [x] Wave 1, Task 1.2: AI Parsing Pipeline
+- [x] Remaining wave tasks (Waves 2–5)
 
 **Wave 1 Task 1.3 Evidence**:
 - [x] CST report: `.agent-workspace/ui-builder/evidence/wave-1-task-1.3-CST.md`
