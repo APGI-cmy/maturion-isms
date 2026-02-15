@@ -30,7 +30,7 @@ export function generateDashboardMetrics(
   domainMapping: Map<string, { domain_id: string; domain_name: string }>
 ): DashboardMetrics {
   const scoredCriteria = confirmations.length;
-  const confirmedCriteria = confirmations.filter(c => !c.is_override || c.is_override).length;
+  const confirmedCriteria = confirmations.length;
 
   const avgMaturity = scoredCriteria > 0
     ? confirmations.reduce((sum, c) => sum + c.confirmed_level, 0) / scoredCriteria
