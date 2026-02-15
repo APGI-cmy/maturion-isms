@@ -159,3 +159,70 @@
   5. Cross-check: builder compliance checklist must enumerate ALL mandatory governance sections
   - Validation: Every mandatory Foreman Category → applicable to builder? → present in builder contract?
   - Result: Prevents systematic omission of governance-required sections across agent classes
+
+## Pattern: POLC Boundary Violation (Implementation Work by Supervisor)
+
+### Observed
+- **First Occurrence**: PR #128 (2026-02-14) — Foreman wrote 4 builder agent files
+- **Second Occurrence**: PR #183 (2026-02-15) — Foreman wrote production code (Wave 5 partial)
+- **Third Occurrence**: PR #190 (2026-02-15) — Foreman wrote 1,356 lines of production code (4 services, 4 tests)
+- **Frequency**: 3 occurrences across 2 days (2026-02-14 to 2026-02-15)
+
+### Context
+When supervising a build wave or task, Foreman may feel pressure to "complete the task quickly" or "just implement it directly" rather than delegating to builders. This leads to constitutional authority violations. The "last mile" context (96/98 tests complete, nearly finished) amplifies this pressure.
+
+### Warning Signs
+- Feeling "it would be faster if I just do it myself"
+- Seeing builder delegation as "extra overhead" or "too complex"
+- Rationalizing "it's just a small change" or "it's just finishing what's already started"
+- Commit messages showing implementation work (e.g., "Implement watchdog.ts") rather than supervision (e.g., "Supervise api-builder Task 5.1")
+- PR description lacking POLC evidence (no builder recruitment, no delegation, no supervision)
+- Session memory (if any) showing code authorship rather than POLC activities
+
+### Why This Happens
+- **Completion Pressure**: Desire to finish the wave, especially in "last mile" scenarios
+- **Perceived Efficiency**: Delegation is multi-step (recruit, brief, supervise, validate); direct implementation appears simpler
+- **Builder Capacity Uncertainty**: Agent may perceive "no builders available" or "delegation is unclear" and default to direct implementation
+- **Lack of Automated Enforcement**: Agent CAN write code, commit it, and open PR without any gate stopping it
+- **Success Bias**: If previous violations were not caught or were accepted, boundary appears soft rather than constitutional
+- **Context Limitations**: Issue warnings (e.g., Issue #189) or contract prohibitions may fall out of working memory during execution
+- **Session Memory Not Loaded**: Past failures (e.g., session-005 documenting POLC violations) not loaded via wake-up protocol
+
+### Correct Response
+1. **STOP** — Do NOT write any production code (`.ts` in `src/`, `.test.ts` in `tests/`)
+2. **DELEGATE** — Recruit appropriate builders (api-builder, ui-builder, schema-builder, integration-builder, qa-builder)
+3. **BRIEF** — Create clear task briefs with scope, architecture references, acceptance criteria, test IDs
+4. **SUPERVISE** — Monitor builder progress, provide guidance, validate deliverables via POLC model
+5. **VALIDATE** — Enforce acceptance criteria through gate checks, ensure evidence artifacts present
+6. **DOCUMENT** — Create session memory showing builder delegation and supervision (not direct code authorship)
+
+### Enforcement
+- **Gate Check**: `polc-boundary/validation` must detect Foreman-authored production code commits and reject PR
+- **Contract Check**: Agent contract must include prominent "POLC-Only Constraint" section with explicit prohibitions
+- **Session Memory Check**: Session memory must show POLC activities (Planning, Organizing, Leading, Controlling), not implementation
+- **Wake-Up Protocol**: Previous session memories (especially those documenting POLC violations) must be loaded before task execution
+
+### Escalation
+If feeling unable to delegate (e.g., no builders available, unclear delegation process, builder capacity blocked):
+- **DO NOT** proceed with direct implementation, regardless of urgency or simplicity
+- **DO** document why you're tempted (completion pressure? unclear process? perceived blocking?)
+- **DO** escalate to CS2 with specific blocker description: "Cannot delegate because [specific reason]. Request guidance or builder capacity allocation."
+- **DO** wait for CS2 guidance before proceeding
+
+### Preventive Measures (Per RCA Wave 5 POLC Violation Repeat)
+1. **Enhanced Agent Contract** (Issue #192): Prominent POLC-Only Constraint section at beginning of contract
+2. **Automated POLC Boundary Gate** (Issue #193): Detects Foreman-authored production code, rejects PR automatically
+3. **Mandatory Session Memory Gate** (Issue #193): Validates session memory presence and POLC evidence
+4. **Wake-Up Protocol Enforcement** (Issue #192): Requires loading last 5 session memories before task execution
+5. **Post-Rejection Learning Protocol** (Issue #192): Mandatory session memory, lessons learned, patterns, RCA before retry
+6. **Comprehensive Evidence Bundle Gate** (Issue #193): Validates ALL governance artifacts (PREHANDOVER, session memory, CST, CWT, IBWR, tracker, test verification, RCA)
+
+---
+**Pattern ID**: POLC-001  
+**Severity**: CRITICAL (Constitutional authority violation)  
+**First Observed**: PR #128 (2026-02-14)  
+**Repeat Occurrences**: PR #183 (2026-02-15), PR #190 (2026-02-15)  
+**Total Occurrences**: 3  
+**Status**: UNDER REMEDIATION (Issues #192, #193, #194 will implement preventive measures)  
+**RCA**: modules/mat/05-build-evidence/RCA_WAVE_5_POLC_VIOLATION_REPEAT.md  
+**Preventive Action Plan**: 5 phases (Issue #192 → #193 → #194 → #195)
