@@ -445,7 +445,7 @@ Track the progression through the canonical module lifecycle stages.
 **Recommendation**:
 - **Short-term (v1.x)**: Document the limitation; acceptable for development/testing
 - **Medium-term (v2.0)**: Refactor to use `ai_invocation_logs` table as designed in architecture
-- **Policy Decision**: Define log retention period (suggested: 13 months = 12 months + current month, aligning with monthly partitioning)
+- **Policy Decision**: Define log retention period (suggested: 13 complete calendar months, meaning 12 complete historical months plus the current partial month, aligning with monthly partitioning architecture)
 - **Archival Strategy**: After retention period, archive to cold storage (S3) or purge per data retention policy
 
 **Governance Alignment**: Aligns with `governance/canon/AUDIT_READINESS_MODEL.md` requirement for durable audit trails and TR-041 (AI Rate Limiting and Circuit Breaker) architecture requirement for metrics tracking.
