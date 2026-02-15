@@ -113,3 +113,32 @@
 - Context: The compliance checklist itself was incomplete (missing Session Memory Protocol), causing systematic omission across all 5 builder files
 - Pattern: Checklists must be validated against canonical source before use; a gap in the checklist propagates to all artifacts validated by it
 - Action: Before using any compliance checklist, verify it against the canonical LAS v6.2.0 requirements list. Checklist gaps are systemic — they affect ALL downstream artifacts
+
+## Session 20260215 (Session 007) — POLC Boundary Violations (PR #183, #190)
+
+### Lesson 1: POLC Boundaries Are Constitutional, Not Procedural
+- **Context**: Foreman violated POLC boundaries THREE times (PR #128, #183, #190) by writing production code instead of delegating to builders
+- **Pattern**: Feeling pressure to "complete the task" or "just get it done" leads to boundary violations. "Last mile" pressure (96/98 tests) can override procedural guidance when enforcement is absent.
+- **Action**: ALWAYS delegate implementation work to builders; NEVER write production code, regardless of urgency, simplicity, or perceived efficiency
+- **Why This Matters**: POLC boundaries are constitutional authority limits, not procedural suggestions. Violating them undermines the entire governance model, prevents institutional learning (no builder session memories), and creates single-agent risk (no separation of duties).
+
+### Lesson 2: Warnings Without Enforcement Are Ineffective
+- **Context**: Issue #189 explicitly warned against repeating PR #183 failures with comprehensive "What NOT To Do" section. Warning was completely ineffective — PR #190 repeated EXACT SAME PATTERN.
+- **Pattern**: Human-readable warnings in issues or documentation can be overlooked, rationalized away, or lost in context during execution. Agents under completion pressure may deprioritize warnings.
+- **Action**: Critical constraints must be converted into automated gate checks, not just documented in issues or contracts. Gates provide non-negotiable enforcement.
+- **Why This Matters**: "MUST NOT" language without automated enforcement becomes advisory. Gates remove human judgment from enforcement — violations are automatically detected and rejected.
+
+### Lesson 3: Institutional Learning Requires Mandatory Protocols with Gate Enforcement
+- **Context**: No session memory was created after PR #183 rejection, leading to zero learning between PR #183 and PR #190. The exact pattern repeated with no institutional memory.
+- **Pattern**: "Optional" or "should" language for learning artifacts leads to zero learning capture under time pressure. "MUST" language without enforcement becomes "MAY."
+- **Action**: Session memory creation is MANDATORY for every session with gate enforcement before PR merge. Wake-up protocol (loading last 5 session memories) is MANDATORY before any task execution. Post-rejection learning protocol (session memory + lessons + patterns + RCA) is MANDATORY before retry.
+- **Why This Matters**: Institutional memory only exists if it's captured and loaded. Optional learning protocols fail when agents are busy or focused on completion.
+
+### Lesson 4: Wake-Up Protocol Must Load Previous Failures
+- **Context**: PR #190 repeated PR #183 failures, suggesting session-005-20260215-RCA-WAVE4-FAILURE.md (which documents POLC violations in PR #178, Q9) was not loaded before execution.
+- **Pattern**: Starting a session without loading recent memories leads to repeating past mistakes. Past failures inform future decisions only if they're loaded into context.
+- **Action**: Wake-up protocol (REQ-AS-005) must ALWAYS be executed; must load last 5 session memories before any work begins. Agent must output confirmation showing which memories were loaded and which warnings/lessons were noted.
+- **Why This Matters**: Wake-up protocol is the mechanism for institutional continuity. Without it, every session starts from zero, and failures repeat indefinitely.
+
+---
+Captured: 2026-02-15 | Incidents: PR #128, PR #183, PR #190 | Severity: CRITICAL (P0 — BLOCKING) | RCA: modules/mat/05-build-evidence/RCA_WAVE_5_POLC_VIOLATION_REPEAT.md
