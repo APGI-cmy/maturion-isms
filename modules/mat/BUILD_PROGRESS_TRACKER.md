@@ -376,6 +376,20 @@ Track the progression through the canonical module lifecycle stages.
 >
 > **Governance References**: Issue [current], Implementation Plan Section 3 (Acceptance Criteria), LIVING_AGENT_SYSTEM.md v6.2.0 (Evidence Requirements), BUILD_PHILOSOPHY.md (Audit Trail Discipline), BL-029 (enforce tracker updates in wave completion PRs)
 
+> **⚠️ PROCESS DEVIATION — CST/CWT OMITTED FROM WAVES 2 AND 3**
+>
+> **Deviation**: Wave 2 (PR #164) and Wave 3 (PR #168) were completed without executing Combined Subwave Testing (CST) or Combined Wave Testing (CWT), despite Implementation Plan v1.1.0 Section 4 requirements.
+>
+> **Root Cause**: (1) Implementation Plan v1.0.0 initially omitted CST/CWT section (corrected 2026-02-14), (2) IBWR template did not enforce CST/CWT execution, (3) No merge gate automation for CST/CWT validation.
+>
+> **Impact**: Wave 2 convergence point (Tasks 2.1 + 2.3) lacked CST validation. Wave 2 → Wave 3 gate lacked CWT cross-wave integration validation. Test count reconciliation not performed during IBWR.
+>
+> **Corrective Action**: Retrospective CWT executed for Waves 0–3 (evidence: `.agent-workspace/foreman-isms/evidence/waves-0-3-retrospective-CWT.md`). All 5 cross-wave integration scenarios PASS. RCA filed in `modules/mat/05-build-evidence/RCA_CST_CWT_OMISSION_WAVES_2_3.md`.
+>
+> **Preventive Action**: IBWR template updated to require CST/CWT execution checklist items. Foreman contract updated to mandate CWT before IBWR completion. Merge gate automation enhancement proposed (BL-030).
+>
+> **Governance Reference**: `governance/canon/COMBINED_TESTING_PATTERN.md` v1.0.0, Implementation Plan v1.1.0 Section 4, RCA `RCA_CST_CWT_OMISSION_WAVES_2_3.md`
+
 ---
 
 ## Current Stage Summary
@@ -406,6 +420,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] All stages proceeding in order (TRS stage now required between FRS and Architecture)
 - [x] QA-to-Red stage now included as mandatory Stage 2.5 (previously omitted — see deviation record in Stage 2.5)
 - [x] CST/CWT integration testing requirements now included in Implementation Plan (previously omitted — see deviation record in Stage 3)
+- [x] Retrospective CWT executed for Waves 0–3 (see deviation record in Stage 5 and `.agent-workspace/foreman-isms/evidence/waves-0-3-retrospective-CWT.md`)
 - [x] POLC authority boundary enforced — builder agent files created by Codex Advisor only (see deviation record in Stage 4)
 - [x] Session Memory Protocol compliance enforced — all builder files now include mandatory LAS v6.2.0 session memory section (see deviation record in Stage 4)
 - [x] Traceability maintained (App Description → FRS → TRS → Architecture → QA-to-Red → Implementation Plan → Builder Appointment)
