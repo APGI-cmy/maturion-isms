@@ -392,6 +392,149 @@ Track the progression through the canonical module lifecycle stages.
 
 ---
 
+## Lessons Learned — Production Readiness Improvements
+
+**Context**: Following Wave 3 completion (PR #168), the circuit breaker and AI invocation logging implementations were reviewed for production readiness. While the in-memory implementations are acceptable for v1, several areas require enhancement for robust production operation, audit compliance, and system resilience.
+
+### Lesson 1: In-Memory State vs. Persistent State Trade-offs
+
+**Observation**: The circuit breaker service (`modules/mat/src/services/ai-scoring.ts`, lines 517-636) currently uses in-memory state management. This provides speed and simplicity during development but presents production risks:
+
+- **Risk**: Circuit breaker state lost on service restart/crash
+- **Risk**: No state reconciliation across multiple service instances
+- **Risk**: Audit trail gaps when state is not persisted
+- **Impact**: System may fail to maintain circuit breaker protection across restarts
+
+**Architecture Alignment**: The data architecture (`modules/mat/02-architecture/data-architecture.md`) already defines `ai_invocation_logs` table (Section 1.1.11) with monthly partitioning, but does NOT define a circuit breaker state table.
+
+**Technical Debt Identified**:
+1. Circuit breaker state should persist to database (requires new table: `ai_circuit_breaker_state`)
+2. State transitions should be auditable with timestamp and reason
+3. Recovery scenarios require state reconciliation logic
+4. Multi-instance deployments require distributed state management
+
+**Recommendation**: 
+- **Short-term (v1.x)**: Document the limitation; acceptable for single-instance deployment
+- **Medium-term (v2.0)**: Implement persistent circuit breaker state using PostgreSQL table
+- **Long-term (v3.0)**: Evaluate Redis or distributed cache for multi-region deployments
+
+**Governance Alignment**: Aligns with BUILD_PHILOSOPHY.md principle of "evidence-first, audit-first" and STOP_AND_FIX_DOCTRINE.md requirement to address technical debt immediately rather than parking it.
+
+### Lesson 2: Invocation Log Durability and Retention Policy
+
+**Observation**: AI invocation logs (`modules/mat/src/services/ai-scoring.ts`, lines 399-471) are currently maintained in an in-memory array. This presents several challenges:
+
+- **Risk**: Logs lost on service restart
+- **Risk**: Memory growth unbounded without retention policy
+- **Risk**: No queryable audit trail for post-incident analysis
+- **Risk**: Compliance gaps for cost tracking and model versioning audit
+
+**Architecture Alignment**: The `ai_invocation_logs` table IS defined in data architecture (Section 1.1.11) with proper schema:
+- Columns: `id`, `audit_id`, `criterion_id`, `organisation_id`, `task_type`, `model`, `model_version`, `prompt_tokens`, `completion_tokens`, `latency_ms`, `cost_estimate`, `status`, `error_message`, `created_at`
+- Partitioning: Range-partitioned by `created_at` (monthly)
+- Indexes: On `audit_id`, `organisation_id`, `task_type`, `created_at`
+
+**Gap**: Implementation uses in-memory storage; architecture defines database table. This is an **architecture-to-implementation gap**.
+
+**Technical Debt Identified**:
+1. `logAIInvocation()` function should INSERT into `ai_invocation_logs` table instead of pushing to array
+2. `queryInvocationLogs()` should query database instead of filtering array
+3. Retention policy needed (architecture suggests monthly partitioning but no retention duration)
+4. Log archival strategy needed for compliance and storage management
+
+**Recommendation**:
+- **Short-term (v1.x)**: Document the limitation; acceptable for development/testing
+- **Medium-term (v2.0)**: Refactor to use `ai_invocation_logs` table as designed in architecture
+- **Policy Decision**: Define log retention period (suggested: 13 complete calendar months, meaning 12 complete historical months plus the current partial month, aligning with monthly partitioning architecture)
+- **Archival Strategy**: After retention period, archive to cold storage (S3) or purge per data retention policy
+
+**Governance Alignment**: Aligns with `governance/canon/AUDIT_READINESS_MODEL.md` requirement for durable audit trails and TR-041 (AI Rate Limiting and Circuit Breaker) architecture requirement for metrics tracking.
+
+### Lesson 3: Test Verification and Zero Test Drift
+
+**Observation**: Wave 3 build included circuit breaker tests (MAT-T-0031: AI Rate Limiting, lines 376-410 in `ai-services.test.ts`). Test verification confirmed:
+
+- **Validation**: All circuit breaker tests remain GREEN ✅
+- **Coverage**: Tests verify CLOSED → OPEN → HALF_OPEN → CLOSED state transitions
+- **Genuine Tests**: No test drift detected; all tests verify actual functionality
+
+**Test IDs**:
+- MAT-T-0031: Circuit breaker state transitions (GREEN)
+- MAT-T-0029: AI invocation logging (GREEN)
+- MAT-T-0032: Model versioning with regression testing (GREEN)
+
+**Lesson**: Implementing persistence should NOT break existing tests. Refactoring to database persistence requires:
+1. Mock/stub database layer for unit tests
+2. Integration tests with test database
+3. Verify all 98 tests remain GREEN after persistence refactoring
+
+**Governance Alignment**: Aligns with BUILD_PHILOSOPHY.md "One-Time Build Correctness, Zero Regression" principle and `governance/policies/zero-test-debt-constitutional-rule.md`.
+
+### Lesson 4: Parking Technical Debt vs. Immediate Action
+
+**Observation**: This issue demonstrates the governance principle that **recording and acting on improvement areas immediately is preferred over "parking" technical debt**. Key insights:
+
+1. **Immediate Documentation**: Lessons learned recorded in tracker NOW (not deferred)
+2. **Decision Visibility**: If persistence cannot be implemented immediately, the decision to defer is EXPLICIT and DOCUMENTED
+3. **Audit Trail**: Future engineers inherit context via tracker, not tribal knowledge
+4. **Governance Enforcement**: Parking lot requires CS2 approval; immediate documentation requires FM action only
+
+**Action Taken**: This lessons learned section documents the gap, rationale, and roadmap. Implementation timeline determined by Wave 4-5 scope and resource availability.
+
+**Governance Alignment**: Aligns with `governance/canon/FOREMAN_WAVE_PLANNING_AND_ISSUE_ARTIFACT_GENERATION_PROTOCOL.md` and `governance/canon/IN_BETWEEN_WAVE_RECONCILIATION.md` requirements for lessons learned capture.
+
+### Lesson 5: Architecture-to-Implementation Gap Detection
+
+**Observation**: The gap between architecture (defines `ai_invocation_logs` table) and implementation (uses in-memory array) was not detected during Wave 3 build. This indicates a process improvement opportunity:
+
+**Recommendation**:
+1. **Pre-Wave Audit**: Before each wave, validate that implementation aligns with architecture
+2. **Builder Checklist**: Add item "Verify database schema exists for all persistent entities"
+3. **Merge Gate Enhancement**: Add automated check for architecture-to-implementation alignment
+
+**Governance Alignment**: Aligns with `governance/canon/MERGE_GATE_PHILOSOPHY.md` v2.0 and `governance/canon/ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md`.
+
+### Implementation Roadmap
+
+**Wave 3.5 (Current — Documentation Only)**:
+- [x] Document lessons learned in BUILD_PROGRESS_TRACKER.md
+- [x] Identify technical debt and architecture gaps
+- [x] Define retention policy and implementation approach
+
+**Wave 4 or Later (Implementation)**:
+- [ ] Create `ai_circuit_breaker_state` table in data architecture
+- [ ] Refactor `createCircuitBreaker()`, `recordCircuitBreakerError()`, `recordCircuitBreakerSuccess()` to use database
+- [ ] Refactor `logAIInvocation()`, `queryInvocationLogs()` to use `ai_invocation_logs` table
+- [ ] Implement log retention policy (13-month retention + archival strategy)
+- [ ] Add recovery/reconciliation logic for circuit breaker state
+- [ ] Update tests to mock database layer
+- [ ] Verify 100% GREEN tests after refactoring
+
+**Decision Authority**: 
+- FM has authority to proceed with persistence implementation in Wave 4-5
+- If resource constraints prevent implementation, FM must escalate to CS2 with explicit parking decision
+- No implementation required in Wave 3.5; documentation satisfies current issue requirements
+
+**Evidence References**:
+- Architecture: `modules/mat/02-architecture/ai-architecture.md` (Section 6: Circuit Breaker)
+- Architecture: `modules/mat/02-architecture/data-architecture.md` (Section 1.1.11: `ai_invocation_logs`)
+- Implementation: `modules/mat/src/services/ai-scoring.ts` (lines 399-636)
+- Tests: `modules/mat/tests/ai-services/ai-services.test.ts` (MAT-T-0029, MAT-T-0031, MAT-T-0032)
+- Issue: GitHub Issue "Improve Circuit Breaker Persistence and Logging for Production Readiness"
+
+**Governance References**: 
+- `BUILD_PHILOSOPHY.md` (One-Time Build Correctness, Audit Trail Discipline)
+- `governance/canon/STOP_AND_FIX_DOCTRINE.md` (Immediate technical debt remedy vs. parking)
+- `governance/canon/AUDIT_READINESS_MODEL.md` (Durable audit trail requirements)
+- `governance/canon/IN_BETWEEN_WAVE_RECONCILIATION.md` (Lessons learned capture)
+- `governance/canon/ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md` (Architecture-to-implementation alignment)
+
+**Recorded By**: foreman-isms  
+**Date**: 2026-02-15  
+**Session**: Issue "Improve Circuit Breaker Persistence and Logging for Production Readiness"
+
+---
+
 ## Current Stage Summary
 
 **Current Stage**: Stage 5 (Build Execution — IN PROGRESS)  
