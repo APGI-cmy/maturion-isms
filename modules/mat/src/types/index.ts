@@ -423,6 +423,188 @@ export interface MaturityRoadmapExportData {
   recommendations: string[];
 }
 
+// Override Logging Types (FR-026)
+export type OverrideReason =
+  | 'evidence_quality'
+  | 'ai_misinterpretation'
+  | 'domain_specific_nuance'
+  | 'other';
+
+export interface OverrideLogEntry {
+  id: string;
+  criterion_id: string;
+  audit_id: string;
+  original_ai_level: MaturityLevel;
+  human_selected_level: MaturityLevel;
+  justification: string;
+  reason_category: OverrideReason;
+  evidence_ids: string[];
+  logged_by: string;
+  logged_at: string;
+}
+
+// Maturity Model Types (FR-027)
+export type MaturityLevelName = 'Basic' | 'Reactive' | 'Compliant' | 'Proactive' | 'Resilient';
+
+export interface MaturityLevelDefinition {
+  level: MaturityLevel;
+  name: MaturityLevelName;
+  description: string;
+  indicators: string[];
+}
+
+// AI Task Routing Types (FR-028)
+export type AITaskType =
+  | 'document_parsing'
+  | 'transcription'
+  | 'scoring'
+  | 'image_analysis'
+  | 'report_generation'
+  | 'routine';
+
+export interface AIRoutingConfig {
+  task_type: AITaskType;
+  primary_model: string;
+  fallback_model: string | null;
+  max_tokens: number | null;
+  temperature: number | null;
+}
+
+// AI Invocation Logging Types (FR-029)
+export interface AIInvocationLog {
+  id: string;
+  model: string;
+  model_version: string;
+  prompt_tokens: number;
+  completion_tokens: number;
+  latency_ms: number;
+  cost_estimate: number;
+  timestamp: string;
+  task_type: AITaskType;
+  audit_id: string;
+  criterion_id: string | null;
+  status: 'success' | 'error' | 'timeout';
+  error_message: string | null;
+}
+
+// AI Confidence Flagging Types (FR-030)
+export interface ConfidenceFlagResult {
+  criterion_id: string;
+  confidence: number;
+  flagged: boolean;
+  flag_reason: string | null;
+  review_queue_priority: 'high' | 'medium' | 'low' | null;
+}
+
+// Circuit Breaker Types (FR-031)
+export type CircuitBreakerState = 'CLOSED' | 'OPEN' | 'HALF_OPEN';
+
+export interface CircuitBreaker {
+  state: CircuitBreakerState;
+  error_count: number;
+  success_count: number;
+  last_error_at: string | null;
+  last_state_change: string;
+  window_start: string;
+}
+
+// AI Model Versioning Types (FR-032)
+export interface AIModelVersion {
+  model_id: string;
+  version: string;
+  task_types: AITaskType[];
+  is_active: boolean;
+  deployed_at: string;
+  regression_tested: boolean;
+}
+
+// Review Table Types (FR-033, FR-034)
+export interface ReviewTableRow {
+  criterion_id: string;
+  criterion_number: string;
+  criterion_title: string;
+  domain: string;
+  mps: string;
+  ai_maturity_level: MaturityLevel | null;
+  ai_confidence: number | null;
+  human_confirmed_level: MaturityLevel | null;
+  is_override: boolean;
+  status: CriterionStatus;
+  evidence_count: number;
+}
+
+export interface ReviewTableConfig {
+  sortable: boolean;
+  filterable: boolean;
+  editable: boolean;
+  columns: string[];
+}
+
+// Report Generation Types (FR-035, FR-036)
+export type ReportFormat = 'docx' | 'pdf' | 'json';
+
+export interface ReportData {
+  id: string;
+  audit_id: string;
+  organisation_id: string;
+  format: ReportFormat;
+  title: string;
+  generated_at: string;
+  generated_by: string;
+  sections: ReportSection[];
+  summary: string;
+}
+
+export interface ReportSection {
+  title: string;
+  content: string;
+  order: number;
+}
+
+// Excel Export Types (FR-037)
+export interface ExcelExportData {
+  audit_id: string;
+  exported_at: string;
+  sheets: ExcelSheet[];
+}
+
+export interface ExcelSheet {
+  name: string;
+  headers: string[];
+  rows: Array<Record<string, string | number | boolean | null>>;
+}
+
+// Dashboard Types (FR-039)
+export interface DashboardMetrics {
+  audit_id: string;
+  total_criteria: number;
+  scored_criteria: number;
+  confirmed_criteria: number;
+  average_maturity: number;
+  completion_percentage: number;
+  domains: DashboardDomainMetric[];
+  generated_at: string;
+}
+
+export interface DashboardDomainMetric {
+  domain_id: string;
+  domain_name: string;
+  criteria_count: number;
+  scored_count: number;
+  average_maturity: number;
+}
+
+// Manual Scoring Types (FR-031 fallback)
+export interface ManualScoreEntry {
+  criterion_id: string;
+  maturity_level: MaturityLevel;
+  rationale: string;
+  scored_by: string;
+  scored_at: string;
+  is_manual: true;
+  manual_reason: 'ai_unavailable' | 'circuit_breaker_active' | 'fallback_failed';
+}
+
 // Watchdog Types
 export interface WatchdogMetrics {
   timestamp: string;

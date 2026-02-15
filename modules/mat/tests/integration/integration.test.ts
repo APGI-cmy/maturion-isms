@@ -1,7 +1,7 @@
 /**
  * MAT Test Suite — CAT-09: integration
  *
- * Build-to-Green for MAT-T-0056–0057 (Wave 2 scope).
+ * Build-to-Green for MAT-T-0037, MAT-T-0056–0057 (Wave 2+3 scope).
  * Remaining tests stay QA-to-Red for future waves.
  *
  * Registry: governance/TEST_REGISTRY.json
@@ -11,6 +11,7 @@ import { describe, it, expect } from 'vitest';
 import { exportForPIT, exportForMaturityRoadmap } from '../../src/services/integration.js';
 import { scoreMaturity, confirmScore } from '../../src/services/ai-scoring.js';
 import { collectTextEvidence } from '../../src/services/evidence-collection.js';
+import { generateExcelExport } from '../../src/services/reporting.js';
 import type { HumanScoreConfirmation } from '../../src/types/index.js';
 
 describe('CAT-09: integration', () => {
@@ -19,7 +20,30 @@ describe('CAT-09: integration', () => {
     // FRS: FR-037
     // TRS: TR-043
     // Type: integration | Priority: P0
-    throw new Error('NOT_IMPLEMENTED: MAT-T-0037 — Excel Export');
+    const evidence = collectTextEvidence({
+      criterion_id: 'crit-001',
+      audit_id: 'audit-001',
+      organisation_id: 'org-001',
+      evidence_type: 'text',
+      content_text: 'Evidence for Excel export test',
+      uploaded_by: 'user-001'
+    });
+
+    const aiScore = scoreMaturity('crit-001', [evidence], 'gpt-4-turbo-2024');
+    const confirmation = confirmScore(aiScore, aiScore.maturity_level, 'user-002', 'lead_auditor');
+
+    const excelExport = generateExcelExport('audit-001', [confirmation]);
+
+    expect(excelExport.audit_id).toBe('audit-001');
+    expect(excelExport.exported_at).toBeDefined();
+    expect(excelExport.sheets).toHaveLength(1);
+    expect(excelExport.sheets[0].name).toBe('Scores');
+    expect(excelExport.sheets[0].headers.length).toBeGreaterThan(0);
+    expect(excelExport.sheets[0].headers).toContain('Criterion ID');
+    expect(excelExport.sheets[0].headers).toContain('AI Maturity Level');
+    expect(excelExport.sheets[0].headers).toContain('Human Confirmed Level');
+    expect(excelExport.sheets[0].rows).toHaveLength(1);
+    expect(excelExport.sheets[0].rows[0]['Criterion ID']).toBe('crit-001');
   });
 
   it('MAT-T-0055: Extensibility and Plugin Architecture', () => {

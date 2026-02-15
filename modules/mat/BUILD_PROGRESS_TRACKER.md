@@ -230,35 +230,131 @@ Track the progression through the canonical module lifecycle stages.
 **Status**: [ ] NOT_STARTED | [x] IN_PROGRESS | [ ] COMPLETE  
 **Location**: `modules/mat/05-build-evidence/`  
 **Key Artifacts**:
-- [x] Wave 0, Task 0.1: Database Schema, RLS, Migrations, Wiring Invariants — 25 tests GREEN (schema-builder)
-- [x] Wave 1, Task 1.3: Criteria Management UI — 2 tests GREEN: MAT-T-0010, MAT-T-0011 (ui-builder)
-- [x] Wave 1, Task 1.1: Criteria Document Upload & Storage API
-- [x] Wave 1, Task 1.2: AI Parsing Pipeline
-- [x] Remaining wave tasks (Waves 2–5)
+- [x] Wave 0: Foundational Infrastructure — 31 tests GREEN (schema-builder, api-builder)
+- [x] Wave 1: Criteria Management — 10 tests GREEN (api-builder, ui-builder)
+- [x] Wave 2: Evidence Collection & Offline Sync — 20 tests GREEN (api-builder, integration-builder) — PR [#164](https://github.com/APGI-cmy/maturion-isms/pull/164)
+- [x] Wave 3: AI Scoring & Human Confirmation — 15 tests GREEN (api-builder, ui-builder) — PR [#168](https://github.com/APGI-cmy/maturion-isms/pull/168)
+- [ ] Wave 4: Dashboards & Reporting
+- [ ] Wave 5: Watchdog & Continuous Improvement
 
-**Wave 1 Task 1.3 Evidence**:
+**Wave 0 Test Coverage (31 tests GREEN)** — PRs #140, #142:
+- [x] Task 0.1 (schema-builder, 25 tests): MAT-T-0043, MAT-T-0044, MAT-T-0049–0053, MAT-T-0079–0094, MAT-T-0095, MAT-T-0096
+- [x] Task 0.3 (api-builder, 6 tests): MAT-T-0001–0003, MAT-T-0038, MAT-T-0045, MAT-T-0046
+
+**Wave 0 Evidence**:
+- [x] Build evidence: `modules/mat/05-build-evidence/wave-0-task-0.1-build-evidence.md`
+
+**Wave 0 Components Delivered**:
+- [x] `modules/mat/src/services/audit-lifecycle.ts` — Audit creation, status transitions, soft deletion, archival, approvals
+- [x] `modules/mat/src/services/security-rls.ts` — RBAC, RLS policies, session management, MFA
+- [x] `modules/mat/src/services/wiring-invariants.ts` — Wiring invariant validations
+- [x] `modules/mat/src/types/index.ts` — Core types for audit, evidence, criteria, security
+- [x] `modules/mat/src/utils/crypto.ts` — SHA-256 hashing utility
+
+**Wave 1 Test Coverage (10 tests GREEN)** — PRs #142, #143:
+- [x] MAT-T-0004: PDF/DOCX Upload — GREEN
+- [x] MAT-T-0005: SHA-256 Hash Computation — GREEN
+- [x] MAT-T-0006: Signed URL Retrieval — GREEN
+- [x] MAT-T-0007: AI Criteria Parsing — GREEN
+- [x] MAT-T-0008: Domain → MPS → Criteria Hierarchy — GREEN
+- [x] MAT-T-0009: Schema Validation — GREEN
+- [x] MAT-T-0010: Hierarchical Navigation — GREEN
+- [x] MAT-T-0011: Criteria Modal — GREEN
+- [x] MAT-T-0012: Human Review Interface — GREEN
+- [x] MAT-T-0054: Criterion Status Tracking — GREEN
+
+**Wave 1 Evidence**:
 - [x] CST report: `.agent-workspace/ui-builder/evidence/wave-1-task-1.3-CST.md`
 - [x] CWT report: `.agent-workspace/ui-builder/evidence/wave-1-task-1.3-CWT.md`
 - [x] IBWR report: `.agent-workspace/ui-builder/evidence/wave-1-task-1.3-IBWR.md`
+- [x] Task 1.1/1.2 completion: `.agent-workspace/api-builder/WAVE1_TASKS_1.1_1.2_COMPLETION_REPORT.md`
 
-**Wave 1 Task 1.3 Components Delivered**:
+**Wave 1 Components Delivered**:
+- [x] `modules/mat/src/services/criteria-management.ts` — Criteria CRUD, document upload, AI parsing pipeline
 - [x] `modules/mat/src/components/criteria-tree.ts` — Domain → MPS → Criteria hierarchy, keyboard nav, search/filter, responsive layout
 - [x] `modules/mat/src/components/criteria-modal.ts` — 5-tab modal with evidence sub-tabs, unsaved data protection, ARIA
 - [x] `modules/mat/src/components/criteria-upload.ts` — File validation, drag-and-drop, progress tracking
 - [x] `modules/mat/src/components/approval-workflow.ts` — Role-based approval queue with confirm/reject actions
 
-**Completion Date**: Wave 0 Task 0.1: 2026-02-14; Wave 1 Task 1.3: 2026-02-14  
-**Notes**: Wave 0 Task 0.1 turned 25 tests GREEN (wiring invariants + security/RLS). Wave 1 Task 1.3 turned 2 tests GREEN (MAT-T-0010 Hierarchical Navigation, MAT-T-0011 Criteria Modal). Total: 41 tests GREEN, 57 tests RED (expected). Note: Implementation plan references MAT-T-0069–0073 for Task 1.3, but per Test Registry consultation these IDs belong to CAT-08 (Performance) and CAT-12 (Data Privacy). The correct UI tests are MAT-T-0010 and MAT-T-0011 from CAT-10 (UI Accessibility), which map directly to FRS FR-010 and FR-011.
+**Wave 2 Test Coverage (20 tests GREEN)** — PR [#164](https://github.com/APGI-cmy/maturion-isms/pull/164):
+- [x] MAT-T-0013: Evidence Linking — GREEN
+- [x] MAT-T-0014: Criteria CRUD Operations — GREEN
+- [x] MAT-T-0015: Photo Upload with Metadata — GREEN
+- [x] MAT-T-0016: Audio Upload and Transcription — GREEN
+- [x] MAT-T-0017: File Upload SHA-256 Hash — GREEN
+- [x] MAT-T-0018: Evidence Hash Integrity Verification — GREEN
+- [x] MAT-T-0019: Delete Rejection on Committed Evidence — GREEN
+- [x] MAT-T-0020: Evidence Delete Governance — GREEN
+- [x] MAT-T-0021: Evidence Criterion Linking — GREEN
+- [x] MAT-T-0022: Evidence Multi-Type Support — GREEN
+- [x] MAT-T-0023: AI Scoring Pipeline — GREEN
+- [x] MAT-T-0024: Human Score Confirmation — GREEN
+- [x] MAT-T-0025: Override with Justification — GREEN
+- [x] MAT-T-0047: Token Refresh and Session Management — GREEN
+- [x] MAT-T-0048: Role Hierarchy Enforcement — GREEN
+- [x] MAT-T-0056: PIT Module Integration Export — GREEN
+- [x] MAT-T-0057: Maturity Roadmap Integration Export — GREEN
+- [x] MAT-T-0058: Watchdog Monitoring Metrics — GREEN
+- [x] MAT-T-0064: PWA Support — GREEN
+- [x] MAT-T-0078: Upload Failure and Retry — GREEN
+
+**Wave 2 Evidence**:
+- [x] Evidence collection: `.agent-workspace/api-builder/memory/session-001-20260108.md`
+- [x] Completion reports in `.agent-workspace/api-builder/`
+
+**Wave 2 Components Delivered**:
+- [x] `modules/mat/src/services/evidence-collection.ts` — Evidence upload with SHA-256 integrity hashing, multi-type support (text, voice, photo, video), interview recording, review workflow, retry logic (max 5 attempts)
+- [x] `modules/mat/src/services/offline-sync.ts` — IndexedDB config, mutation queue with FIFO processing, server-wins conflict resolution, exponential backoff, PWA manifest, evidence sync orchestration
+- [x] `modules/mat/src/services/ai-scoring.ts` — Maturity scoring (levels 1–5) with evidence-first gate, human confirmation workflow
+- [x] `modules/mat/src/services/integration.ts` — PIT module export and Maturity Roadmap export with gap analysis
+- [x] `modules/mat/src/services/watchdog.ts` — Metrics collection, configurable thresholds, alert severity checking
+- [x] `modules/mat/public/manifest.json` — PWA manifest
+- [x] `modules/mat/public/sw.js` — Service Worker implementation
+
+**Wave 3 Test Coverage (15 tests GREEN)** — PR [#168](https://github.com/APGI-cmy/maturion-isms/pull/168):
+- [x] MAT-T-0026: Override Logging — GREEN
+- [x] MAT-T-0027: Maturity Model (5-Level) — GREEN
+- [x] MAT-T-0028: AI Task Routing — GREEN
+- [x] MAT-T-0029: AI Invocation Logging — GREEN
+- [x] MAT-T-0030: AI Confidence Flagging — GREEN
+- [x] MAT-T-0031: AI Rate Limiting — GREEN
+- [x] MAT-T-0032: AI Model Versioning — GREEN
+- [x] MAT-T-0033: Review Table Component — GREEN
+- [x] MAT-T-0034: Review Table Editing — GREEN
+- [x] MAT-T-0035: Report Generation — GREEN
+- [x] MAT-T-0036: Report Formats (DOCX/PDF/JSON) — GREEN
+- [x] MAT-T-0037: Excel Export — GREEN
+- [x] MAT-T-0039: Global Dashboard — GREEN
+- [x] MAT-T-0076: Offline Indicator — GREEN
+- [x] MAT-T-0077: AI Degraded Mode — Manual Scoring — GREEN
+
+**Wave 3 Components Delivered**:
+- [x] `modules/mat/src/services/ai-scoring.ts` — Override logging, maturity model (5-level), AI task routing, invocation logging, confidence flagging, circuit breaker, model versioning, manual scoring fallback
+- [x] `modules/mat/src/services/reporting.ts` — Report generation, multi-format export (DOCX/PDF/JSON), Excel export
+- [x] `modules/mat/src/components/review-table.ts` — Review table component with sort, filter, edit, completeness validation
+- [x] `modules/mat/src/components/dashboard.ts` — Global dashboard with domain-level metrics
+- [x] `modules/mat/src/types/index.ts` — Types for override logging, maturity model, AI routing, invocation logging, confidence flagging, circuit breaker, model versioning, review table, reporting, dashboard
+
+**Test Count Reconciliation**:
+- Wave 0: 31 tests GREEN (Task 0.1: MAT-T-0043–0044, 0049–0053, 0079–0096; Task 0.3: MAT-T-0001–0003, 0038, 0045–0046)
+- Wave 1: 10 tests GREEN (MAT-T-0004–0012, 0054)
+- Wave 2: 20 tests GREEN (MAT-T-0013–0025, 0047–0048, 0056–0058, 0064, 0078) — per PR #164
+- Wave 3: 15 tests GREEN (MAT-T-0026–0037, 0039, 0076–0077) — per PR #168
+- **Total: 31 + 10 + 20 + 15 = 76 unique GREEN tests** (verified via `npx vitest run`)
+- **RED tests: 22** (expected — Waves 4–5 scope)
+
+**Completion Dates**: Wave 0: 2026-02-14; Wave 1: 2026-02-14; Wave 2: 2026-02-15 (PR #164 merged); Wave 3: 2026-02-15 (PR #168)  
+**Notes**: Test attribution follows PR delivery (which PR turned each test from RED to GREEN). Wave 0 Task 0.1 (schema-builder) turned 25 tests GREEN; Wave 0 Task 0.3 (api-builder) added 6 more. Wave 2 PR #164 explicitly documents 20 new tests (41→61 total). Wave 3 PR #168 added 15 new tests (61→76 total). MAT-T-0038 (Report Approval) was turned GREEN in Wave 0 Task 0.3 despite being in Wave 3 scope (MAT-T-0026–0039), so it is not counted in Wave 3's 15.
 
 > **⚠️ PROCESS DEVIATION — BUILD_PROGRESS_TRACKER NOT UPDATED DURING WAVE COMPLETION**
 >
-> **Deviation**: Wave completion PRs [#140](https://github.com/APGI-cmy/maturion-isms/pull/140), [#142](https://github.com/APGI-cmy/maturion-isms/pull/142), and [#143](https://github.com/APGI-cmy/maturion-isms/pull/143) were merged without updating BUILD_PROGRESS_TRACKER.md as required by governance policy. The Implementation Plan and wave acceptance criteria specify tracker update as mandatory, but this requirement was not enforced during IBWR (In-Between Wave Reconciliation).
+> **Deviation**: Wave completion PRs [#140](https://github.com/APGI-cmy/maturion-isms/pull/140), [#142](https://github.com/APGI-cmy/maturion-isms/pull/142), [#143](https://github.com/APGI-cmy/maturion-isms/pull/143), [#164](https://github.com/APGI-cmy/maturion-isms/pull/164), and [#168](https://github.com/APGI-cmy/maturion-isms/pull/168) were merged without updating BUILD_PROGRESS_TRACKER.md as required by governance policy. The Implementation Plan and wave acceptance criteria specify tracker update as mandatory, but this requirement was not enforced during IBWR (In-Between Wave Reconciliation).
 >
 > **Root Cause**: (1) Tracker update requirement documented in Implementation Plan but not enforced by builder checklists or merge gate validation, (2) IBWR evidence files did not include tracker update as mandatory step, (3) No automated validation script to detect tracker modification requirement in wave completion PRs.
 >
-> **Impact**: Tracker became stale after Wave 0 (PR #140) and Wave 1 Task 1.3 (PR #143) completion, reducing audit trail quality and governance compliance visibility. Historical wave completion evidence is recorded in IBWR files but not reflected in canonical BUILD_PROGRESS_TRACKER.
+> **Impact**: Tracker became stale after Wave 0 (PR #140), Wave 1 Task 1.3 (PR #143), and Wave 2 (PR #164) completion, reducing audit trail quality and governance compliance visibility. Wave 3 (PR #168) also omitted Wave 2 documentation entirely.
 >
-> **Corrective Action**: (1) This deviation record retroactively documents Wave 0 and Wave 1 Task 1.3 completion per PRs #140, #142, #143, (2) IBWR template updated to require tracker update evidence, (3) Merge gate validation script added to check tracker modification in wave completion PRs, (4) Builder agent file compliance checklist updated (via Codex Advisor) to include tracker update as mandatory wave completion deliverable.
+> **Corrective Action**: (1) This deviation record retroactively documents all wave completion per PRs #140, #142, #143, #164, #168, (2) IBWR template updated to require tracker update evidence, (3) Merge gate validation script added to check tracker modification in wave completion PRs, (4) Builder agent file compliance checklist updated (via Codex Advisor) to include tracker update as mandatory wave completion deliverable.
 >
 > **Preventive Action**: All future wave completion PRs MUST include BUILD_PROGRESS_TRACKER.md modification with: (a) Wave/task completion dates, (b) Deliverables and tests turned GREEN, (c) Evidence artifact references, (d) Any process deviations or lessons learned. The IBWR process now includes tracker update validation as mandatory gate before PR handover.
 >
@@ -267,21 +363,40 @@ Track the progression through the canonical module lifecycle stages.
 > 2. IBWR process must explicitly require tracker update with evidence capture
 > 3. Governance policy compliance requires both human awareness and automated validation
 > 4. Builder checklists are enforcement point — requirements in Implementation Plan alone are insufficient
+> 5. Test count math must be verified: sum of wave tests must equal total GREEN count
 >
 > **Retroactive Wave Documentation**:
-> - **Wave 0 (PR #140)**: Database schema, RLS policies, migrations, wiring invariants — 25 tests GREEN (MAT-T-0001 to MAT-T-0025)
-> - **Wave 1 Task 1.3 (PR #143)**: Criteria Management UI components — 2 tests GREEN (MAT-T-0010, MAT-T-0011)
-> - **Evidence**: IBWR reports filed in `.agent-workspace/ui-builder/evidence/` and `.agent-workspace/schema-builder/evidence/`
+> - **Wave 0 (PRs #140, #142)**: Task 0.1 (schema-builder): 25 tests GREEN; Task 0.3 (api-builder): 6 tests GREEN — Total 31 tests GREEN
+> - **Wave 1 (PRs #142, #143)**: Criteria Management — 10 tests GREEN (MAT-T-0004–0012, 0054)
+> - **Wave 2 (PR #164)**: Evidence Collection, Offline Sync, AI Scoring — 20 tests GREEN
+> - **Wave 3 (PR #168)**: AI Scoring Engine, Human Confirmation — 15 tests GREEN
+> - **Evidence**: IBWR reports filed in `.agent-workspace/` builder directories
 >
-> **Governance References**: Issue [current], Implementation Plan Section 3 (Acceptance Criteria), LIVING_AGENT_SYSTEM.md v6.2.0 (Evidence Requirements), BUILD_PHILOSOPHY.md (Audit Trail Discipline)
+> **RCA Reference**: `modules/mat/05-build-evidence/RCA_WAVE_3_TRACKER_UPDATE_FAILURE.md`
+>
+> **Governance References**: Issue [current], Implementation Plan Section 3 (Acceptance Criteria), LIVING_AGENT_SYSTEM.md v6.2.0 (Evidence Requirements), BUILD_PHILOSOPHY.md (Audit Trail Discipline), BL-029 (enforce tracker updates in wave completion PRs)
+
+> **⚠️ PROCESS DEVIATION — CST/CWT OMITTED FROM WAVES 2 AND 3**
+>
+> **Deviation**: Wave 2 (PR #164) and Wave 3 (PR #168) were completed without executing Combined Subwave Testing (CST) or Combined Wave Testing (CWT), despite Implementation Plan v1.1.0 Section 4 requirements.
+>
+> **Root Cause**: (1) Implementation Plan v1.0.0 initially omitted CST/CWT section (corrected 2026-02-14), (2) IBWR template did not enforce CST/CWT execution, (3) No merge gate automation for CST/CWT validation.
+>
+> **Impact**: Wave 2 convergence point (Tasks 2.1 + 2.3) lacked CST validation. Wave 2 → Wave 3 gate lacked CWT cross-wave integration validation. Test count reconciliation not performed during IBWR.
+>
+> **Corrective Action**: Retrospective CWT executed for Waves 0–3 (evidence: `.agent-workspace/foreman-isms/evidence/waves-0-3-retrospective-CWT.md`). All 5 cross-wave integration scenarios PASS. RCA filed in `modules/mat/05-build-evidence/RCA_CST_CWT_OMISSION_WAVES_2_3.md`.
+>
+> **Preventive Action**: IBWR template updated to require CST/CWT execution checklist items. Foreman contract updated to mandate CWT before IBWR completion. Merge gate automation enhancement proposed (BL-030).
+>
+> **Governance Reference**: `governance/canon/COMBINED_TESTING_PATTERN.md` v1.0.0, Implementation Plan v1.1.0 Section 4, RCA `RCA_CST_CWT_OMISSION_WAVES_2_3.md`
 
 ---
 
 ## Current Stage Summary
 
 **Current Stage**: Stage 5 (Build Execution — IN PROGRESS)  
-**Overall Progress**: ~65% complete  
-**Blockers**: None — Wave 0 complete, Wave 1 Task 1.3 complete, remaining Wave 1 tasks pending  
+**Overall Progress**: ~78% complete (76/98 tests GREEN)  
+**Blockers**: None — Waves 0–3 complete, remaining Wave 4–5 tasks pending  
 **Next Steps**: 
 1. ~~Create `01.5-trs/` folder in module structure~~
 2. ~~Develop TRS based on FRS requirements (FR-001 to FR-069)~~
@@ -291,11 +406,12 @@ Track the progression through the canonical module lifecycle stages.
 6. ~~Create Builder Agent File Compliance Checklist (version 1.1.0)~~
 7. ~~Appoint builders (5 builder categories)~~
 8. ~~Create builder agent files via Codex Advisor (schema, ui, integration, qa-builder)~~
-9. ~~Complete Wave 0 Task 0.1: Foundational Infrastructure (25 tests GREEN)~~
-10. ~~Complete Wave 1 Task 1.3: Criteria Management UI (2 tests GREEN)~~
-11. Complete Wave 1 Task 1.1: Criteria Document Upload & Storage API
-12. Complete Wave 1 Task 1.2: AI Parsing Pipeline
-13. Proceed to Wave 2
+9. ~~Complete Wave 0: Foundational Infrastructure (31 tests GREEN)~~
+10. ~~Complete Wave 1: Criteria Management (10 tests GREEN)~~
+11. ~~Complete Wave 2: Evidence Collection & Offline Sync (20 tests GREEN, PR #164)~~
+12. ~~Complete Wave 3: AI Scoring & Human Confirmation (15 tests GREEN, PR #168)~~
+13. Proceed to Wave 4: Dashboards & Reporting
+14. Proceed to Wave 5: Watchdog & Continuous Improvement
 
 ---
 
@@ -304,6 +420,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] All stages proceeding in order (TRS stage now required between FRS and Architecture)
 - [x] QA-to-Red stage now included as mandatory Stage 2.5 (previously omitted — see deviation record in Stage 2.5)
 - [x] CST/CWT integration testing requirements now included in Implementation Plan (previously omitted — see deviation record in Stage 3)
+- [x] Retrospective CWT executed for Waves 0–3 (see deviation record in Stage 5 and `.agent-workspace/foreman-isms/evidence/waves-0-3-retrospective-CWT.md`)
 - [x] POLC authority boundary enforced — builder agent files created by Codex Advisor only (see deviation record in Stage 4)
 - [x] Session Memory Protocol compliance enforced — all builder files now include mandatory LAS v6.2.0 session memory section (see deviation record in Stage 4)
 - [x] Traceability maintained (App Description → FRS → TRS → Architecture → QA-to-Red → Implementation Plan → Builder Appointment)
@@ -327,6 +444,6 @@ Track the progression through the canonical module lifecycle stages.
 
 ---
 
-**Template Version**: 1.4.0 (includes TRS stage, QA-to-Red stage, Builder Checklist Creation stage, POLC authority deviation record, and Session Memory Protocol deviation record)  
+**Template Version**: 1.5.0 (includes TRS stage, QA-to-Red stage, Builder Checklist Creation stage, POLC authority deviation record, Session Memory Protocol deviation record, Wave 2 retroactive documentation, Wave 3 tracker update failure RCA)  
 **Template Authority**: MODULE_LIFECYCLE_AND_REPO_STRUCTURE_STRATEGY.md  
-**Last Template Update**: 2026-02-14
+**Last Template Update**: 2026-02-15
