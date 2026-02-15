@@ -120,3 +120,47 @@ export function checkThresholds(
 
   return alerts;
 }
+
+/**
+ * Subscribes to real-time dashboard updates for an audit
+ * Architecture: system-architecture.md §3.2, §3.12 Path 8
+ * FRS: FR-039
+ * 
+ * Simulates Supabase Realtime subscription for dashboard updates.
+ * In production, this would establish a WebSocket connection to
+ * Supabase Realtime and subscribe to audit data changes.
+ * 
+ * @param audit_id - Audit ID to subscribe to
+ * @param callback - Callback function to invoke when audit data changes
+ * @returns Subscription object with unsubscribe function
+ */
+export function subscribeToDashboardUpdates(
+  audit_id: string,
+  callback: (data: { audit_id: string; updated_at: string }) => void
+): {
+  channel: string;
+  status: 'subscribed';
+  unsubscribe: () => void;
+} {
+  // In production, this would:
+  // 1. Create Supabase Realtime channel: `audit:${audit_id}`
+  // 2. Subscribe to changes on audits, criteria, evidence tables
+  // 3. Filter by audit_id using RLS and channel parameters
+  // 4. Invoke callback when INSERT/UPDATE/DELETE events occur
+  // 5. Return unsubscribe function that closes the WebSocket channel
+  
+  const channel = `audit:${audit_id}`;
+  let isSubscribed = true;
+
+  // Simulate subscription setup
+  // In production, this would be: supabase.channel(channel).on('postgres_changes', ...)
+  
+  return {
+    channel,
+    status: 'subscribed',
+    unsubscribe: () => {
+      // In production, this would close the WebSocket channel
+      isSubscribed = false;
+    }
+  };
+}
