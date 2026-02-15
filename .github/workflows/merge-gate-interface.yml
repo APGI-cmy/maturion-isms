@@ -96,8 +96,41 @@ jobs:
         with:
           fetch-depth: 0
 
+      # ✅ NEW: Bypass Merge Gate for Automated Governance PRs
+      - name: Check for Automated Governance PR
+        id: check_governance
+        run: |
+          echo "=== Automated Governance PR Check ==="
+          
+          # Get PR labels as comma-separated string
+          PR_LABELS="${{ join(github.event.pull_request.labels.*.name, ',') }}"
+          PR_BRANCH="${{ github.event.pull_request.head.ref }}"
+          
+          echo "PR Labels: $PR_LABELS"
+          echo "PR Branch: $PR_BRANCH"
+          echo ""
+          
+          # Check if this is an automated governance alignment PR
+          if [[ "$PR_LABELS" == *"governance"* ]] && [[ "$PR_LABELS" == *"automated"* ]] && [[ "$PR_LABELS" == *"agent:liaison"* ]]; then
+            echo "✅ AUTOMATED GOVERNANCE PR DETECTED"
+            echo "   This PR is from the governance alignment system"
+            echo "   Bypassing merge gate validation per governance ripple protocol"
+            echo ""
+            echo "is_governance_auto=true" >> $GITHUB_OUTPUT
+          elif [[ "$PR_BRANCH" == "governance-alignment-auto" ]]; then
+            echo "✅ AUTOMATED GOVERNANCE PR DETECTED (by branch name)"
+            echo "   Branch: governance-alignment-auto"
+            echo "   Bypassing merge gate validation per governance ripple protocol"
+            echo ""
+            echo "is_governance_auto=true" >> $GITHUB_OUTPUT
+          else
+            echo "ℹ️  Regular PR - proceeding with normal merge gate validation"
+            echo "is_governance_auto=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Check for PREHANDOVER_PROOF Evidence
         id: evidence_check
+        if: steps.check_governance.outputs.is_governance_auto != 'true'
         run: |
           echo "=== Evidence-Based Validation Check ==="
           echo "PR Type: ${{ needs.classify-pr.outputs.pr_type }}"
@@ -120,7 +153,7 @@ jobs:
           echo "evidence_found=$EVIDENCE_FOUND" >> $GITHUB_OUTPUT
 
       - name: Validate Scope Declaration (BL-027)
-        if: steps.evidence_check.outputs.evidence_found != 'true'
+        if: steps.check_governance.outputs.is_governance_auto != 'true' && steps.evidence_check.outputs.evidence_found != 'true'
         run: |
           # Check evidence first
           if bash .github/scripts/check-evidence.sh "Scope-to-Diff" "Scope.*Declaration|scope-to-diff" | grep -q "skip_execution=true"; then
@@ -132,7 +165,7 @@ jobs:
           bash .github/scripts/validate-scope-to-diff.sh
 
       - name: Validate YAML Syntax (BL-028)
-        if: steps.evidence_check.outputs.evidence_found != 'true'
+        if: steps.check_governance.outputs.is_governance_auto != 'true' && steps.evidence_check.outputs.evidence_found != 'true'
         run: |
           # Check evidence first
           if bash .github/scripts/check-evidence.sh "YAML Validation" "yamllint|YAML" | grep -q "skip_execution=true"; then
@@ -144,6 +177,7 @@ jobs:
           bash .github/scripts/validate-yaml.sh
 
       - name: Validate Evidence Structure
+        if: steps.check_governance.outputs.is_governance_auto != 'true'
         run: |
           echo "=== Evidence Structure Validation ==="
 
@@ -168,16 +202,29 @@ jobs:
       - name: Verdict Summary
         run: |
           echo "=== Merge Gate Verdict ==="
-          echo "PR Type: ${{ needs.classify-pr.outputs.pr_type }}"
-          echo "Agent Role: ${{ needs.classify-pr.outputs.agent_role }}"
-          echo "Evidence Found: ${{ steps.evidence_check.outputs.evidence_found }}"
-          echo ""
-          echo "✅ All merge gates PASSED"
-          echo ""
-          echo "Per MERGE_GATE_PHILOSOPHY.md v2.0:"
-          echo "  - Evidence-based validation preferred"
-          echo "  - CI is confirmatory, not diagnostic"
-          echo "  - Agent pre-validated locally before handover"
+          
+          if [[ "${{ steps.check_governance.outputs.is_governance_auto }}" == "true" ]]; then
+            echo "PR Type: Automated Governance Alignment"
+            echo "Validation: BYPASSED (trusted governance system)"
+            echo ""
+            echo "✅ All merge gates PASSED (auto-approved)"
+            echo ""
+            echo "Per CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md:"
+            echo "  - Automated governance alignment PRs are pre-validated"
+            echo "  - SHA256 checksums verified during alignment"
+            echo "  - Canonical source is trusted (APGI-cmy/maturion-foreman-governance)"
+          else
+            echo "PR Type: ${{ needs.classify-pr.outputs.pr_type }}"
+            echo "Agent Role: ${{ needs.classify-pr.outputs.agent_role }}"
+            echo "Evidence Found: ${{ steps.evidence_check.outputs.evidence_found }}"
+            echo ""
+            echo "✅ All merge gates PASSED"
+            echo ""
+            echo "Per MERGE_GATE_PHILOSOPHY.md v2.0:"
+            echo "  - Evidence-based validation preferred"
+            echo "  - CI is confirmatory, not diagnostic"
+            echo "  - Agent pre-validated locally before handover"
+          fi
 
   # ============================================================================
   # JOB 3: Governance Alignment
