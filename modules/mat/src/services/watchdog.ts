@@ -227,8 +227,9 @@ export function getAlertRouting(): WatchdogAlertRouting[] {
  * Architecture: observability-architecture.md §4
  * FRS: FR-060
  * 
- * Returns health status including version, uptime, and dependency health.
- * In production, this would probe actual service endpoints.
+ * Accepts pre-checked dependency statuses and computes overall
+ * service health. In production, this would probe actual service
+ * endpoints; here it uses provided dependency health states.
  * 
  * @param service - Service name to check
  * @param deps - Dependency statuses

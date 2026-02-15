@@ -235,10 +235,11 @@ export function validatePITContract(
     if (typeof data.summary.average_maturity !== 'number') errors.push('summary.average_maturity must be a number');
   }
 
-  for (const score of data.criteria_scores) {
-    if (!score.criterion_id) errors.push('criteria_scores[].criterion_id is required');
+  for (let i = 0; i < data.criteria_scores.length; i++) {
+    const score = data.criteria_scores[i];
+    if (!score.criterion_id) errors.push(`criteria_scores[${i}].criterion_id is required`);
     if (typeof score.maturity_level !== 'number' || score.maturity_level < 1 || score.maturity_level > 5) {
-      errors.push(`criteria_scores[].maturity_level must be 1-5, got ${score.maturity_level}`);
+      errors.push(`criteria_scores[${i}].maturity_level must be 1-5, got ${score.maturity_level}`);
     }
   }
 
