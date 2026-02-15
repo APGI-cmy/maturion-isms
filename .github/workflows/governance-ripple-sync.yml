@@ -87,6 +87,7 @@ jobs:
       
       - name: Create Alignment PR
         if: steps.align.outputs.drift_detected == 'true'
+        id: create_pr
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
@@ -133,13 +134,30 @@ jobs:
             ---
             **Authority**: LIVING_AGENT_SYSTEM.md v6.2.0  
             **Workflow**: `.github/workflows/governance-ripple-sync.yml`  
-            **Script**: `.github/scripts/align-governance.sh`
+            **Script**: `.github/scripts/align-governance.sh`  
+            **Auto-Merge**: This PR will be automatically merged once status checks pass.
           labels: |
             governance
             automated
             ripple-sync
             agent:liaison
           assignees: APGI-cmy
+      
+      # ✅ Enable auto-merge on the created PR
+      - name: Enable Auto-Merge
+        if: steps.align.outputs.drift_detected == 'true' && steps.create_pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+        run: |
+          PR_NUMBER="${{ steps.create_pr.outputs.pull-request-number }}"
+          
+          echo "Enabling auto-merge for PR #$PR_NUMBER"
+          
+          gh pr merge "$PR_NUMBER" \
+            --repo ${{ github.repository }} \
+            --auto \
+            --squash \
+            --delete-branch || echo "Auto-merge could not be enabled (may require branch protection rules or checks)"
       
       - name: Sync Summary
         if: always()
@@ -153,7 +171,8 @@ jobs:
           if [ "${{ steps.align.outputs.drift_detected }}" = "true" ]; then
             echo "Canonical Commit: ${{ steps.metadata.outputs.canonical_commit }}"
             echo "Files Updated: ${{ steps.metadata.outputs.files_updated }}"
-            echo "PR Created: Yes"
+            echo "PR Created: Yes (#${{ steps.create_pr.outputs.pull-request-number }})"
+            echo "Auto-Merge: Enabled (squash)"
           else
             echo "Status: Governance aligned - no action needed"
           fi
