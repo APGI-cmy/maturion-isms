@@ -409,6 +409,16 @@ export function translate(key: string, locale: SupportedLocale): string {
 }
 
 /**
+ * Maps a supported locale to its Intl locale string
+ *
+ * @param locale - Supported locale
+ * @returns Intl locale string
+ */
+function toIntlLocale(locale: SupportedLocale): string {
+  return locale === 'af' ? 'af-ZA' : 'en-ZA';
+}
+
+/**
  * Formats a number according to locale conventions
  *
  * @param value - Number to format
@@ -421,8 +431,7 @@ export function formatNumber(
   locale: SupportedLocale,
   options?: { decimals?: number; style?: 'decimal' | 'percent' }
 ): string {
-  const intlLocale = locale === 'af' ? 'af-ZA' : 'en-ZA';
-  const formatter = new Intl.NumberFormat(intlLocale, {
+  const formatter = new Intl.NumberFormat(toIntlLocale(locale), {
     minimumFractionDigits: options?.decimals ?? 0,
     maximumFractionDigits: options?.decimals ?? 2,
     style: options?.style === 'percent' ? 'percent' : 'decimal'
@@ -438,9 +447,8 @@ export function formatNumber(
  * @returns Formatted date string
  */
 export function formatDate(date: Date | string, locale: SupportedLocale): string {
-  const intlLocale = locale === 'af' ? 'af-ZA' : 'en-ZA';
   const dateObj = typeof date === 'string' ? new Date(date) : date;
-  return new Intl.DateTimeFormat(intlLocale, {
+  return new Intl.DateTimeFormat(toIntlLocale(locale), {
     year: 'numeric',
     month: 'long',
     day: 'numeric'

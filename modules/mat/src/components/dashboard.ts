@@ -86,6 +86,16 @@ export interface MPSMappingEntry {
 }
 
 /**
+ * Rounds a number to two decimal places
+ *
+ * @param value - Number to round
+ * @returns Number rounded to 2 decimal places
+ */
+function roundToTwoDecimals(value: number): number {
+  return Math.round(value * 100) / 100;
+}
+
+/**
  * Generates global dashboard metrics from confirmation data
  * Architecture: UI Component Architecture — Dashboards
  * FRS: FR-039
@@ -161,7 +171,7 @@ export function generateDashboardMetrics(
       domain_name: data.domain_name,
       criteria_count: data.total,
       scored_count: data.scores.length,
-      average_maturity: Math.round(domainAvg * 100) / 100
+      average_maturity: roundToTwoDecimals(domainAvg)
     });
   }
 
@@ -170,7 +180,7 @@ export function generateDashboardMetrics(
     total_criteria: totalCriteria,
     scored_criteria: scoredCriteria,
     confirmed_criteria: confirmedCriteria,
-    average_maturity: Math.round(avgMaturity * 100) / 100,
+    average_maturity: roundToTwoDecimals(avgMaturity),
     completion_percentage: completionPct,
     domains,
     generated_at: new Date().toISOString()
@@ -281,7 +291,7 @@ export function generateDomainDrilldown(
       mps_title: data.mps_title,
       criteria_count: data.total,
       scored_count: data.scores.length,
-      average_maturity: Math.round(mpsAvg * 100) / 100,
+      average_maturity: roundToTwoDecimals(mpsAvg),
       criteria
     });
 
@@ -307,7 +317,7 @@ export function generateDomainDrilldown(
     domain_name: domainName,
     criteria_count: totalCriteria,
     scored_count: totalScored,
-    average_maturity: Math.round(domainAvg * 100) / 100,
+    average_maturity: roundToTwoDecimals(domainAvg),
     completion_percentage: completionPct,
     mps_breakdown,
     generated_at: new Date().toISOString()
