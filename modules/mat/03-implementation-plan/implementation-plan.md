@@ -24,7 +24,7 @@ This document defines the complete, phased implementation plan for the MAT modul
 ### Derivation Chain
 
 ```
-App Description → FRS (FR-001–FR-069) → TRS (TR-001–TR-070) → Architecture (13 documents) → Test Registry (MAT-T-0001–MAT-T-0098) → This Plan (incl. Wave 6 Deployment & Commissioning)
+App Description → FRS (FR-001–FR-069) → TRS (TR-001–TR-070) → Architecture (13 documents) → Test Registry (MAT-T-0001–MAT-T-0098) → This Plan
 ```
 
 ---
@@ -497,13 +497,13 @@ MAT is built in **seven waves** (Wave 0–Wave 6). Each wave has a gate that mus
 - Provision Vercel project for MAT frontend
 - Configure `vercel.json` (rewrites, headers, environment variables)
 - Configure `.vercelignore` to exclude non-deployment files
-- Set all environment variables on Vercel using `.env.example` as source-of-truth (46 variables)
+- Set all environment variables on Vercel using `.env.example` as source-of-truth
 - Verify CI/CD pipeline integration (GitHub Actions → Vercel)
 
 **Acceptance Criteria**:
 1. Vercel project created and linked to repository
 2. `vercel.json` configuration matches `deployment-architecture.md` §3.1
-3. All 46 environment variables from `.env.example` provisioned on Vercel
+3. All environment variables from `.env.example` provisioned on Vercel
 4. CI/CD pipeline triggers Vercel deployment on merge to main
 
 #### Task 6.2: Staging Deployment & Health Validation
@@ -710,10 +710,10 @@ Wave 6:  [6.1 Vercel Provision] ──→ [6.2 Staging Validate] ──→ [6.3 
 | Builder | Waves | Primary Responsibility |
 |---------|-------|----------------------|
 | **schema-builder** | 0 | Database schema, migrations, RLS policies, seed data |
-| **api-builder** | 0, 1, 2, 3, 4, 5, 6 | Edge Functions, AI Gateway, business logic, offline sync engine, deployment provisioning |
+| **api-builder** | 0, 1, 2, 3, 4, 5, 6 (Tasks 6.1–6.3) | Edge Functions, AI Gateway, business logic, offline sync engine, deployment provisioning |
 | **ui-builder** | 1, 2, 3, 4 | React components, responsive design, accessibility, PWA shell |
 | **integration-builder** | 5 | PIT/Maturity Roadmap exports, API contract validation |
-| **qa-builder** | All, 6 | Performance testing, security scanning, compliance validation, regression, production CWT |
+| **qa-builder** | All, 6 (Task 6.4) | Performance testing, security scanning, compliance validation, regression, production CWT + sign-over |
 
 ### Multi-Builder Coordination Points
 
