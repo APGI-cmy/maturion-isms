@@ -11,7 +11,8 @@ import { describe, it, expect } from 'vitest';
 import {
   collectMetrics,
   getDefaultThresholds,
-  checkThresholds
+  checkThresholds,
+  subscribeToDashboardUpdates
 } from '../../src/services/watchdog.js';
 
 describe('CAT-07: watchdog observability', () => {
@@ -85,6 +86,23 @@ describe('CAT-07: watchdog observability', () => {
     // FRS: FR-039
     // TRS: TR-016
     // Type: integration | Priority: P0
-    throw new Error('NOT_IMPLEMENTED: MAT-T-0098 — Dashboard Realtime Update Wiring');
+    
+    const audit_id = 'test-audit-123';
+    const updates: Array<{ audit_id: string; updated_at: string }> = [];
+    
+    // Subscribe to dashboard updates
+    const subscription = subscribeToDashboardUpdates(audit_id, (data) => {
+      updates.push(data);
+    });
+
+    // Verify subscription structure
+    expect(subscription).toBeDefined();
+    expect(subscription.channel).toBe(`audit:${audit_id}`);
+    expect(subscription.status).toBe('subscribed');
+    expect(subscription.unsubscribe).toBeDefined();
+    expect(typeof subscription.unsubscribe).toBe('function');
+
+    // Verify unsubscribe works
+    expect(() => subscription.unsubscribe()).not.toThrow();
   });
 });

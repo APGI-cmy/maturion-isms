@@ -2,6 +2,7 @@
  * MAT Red Test Suite — CAT-10: ui accessibility
  *
  * Build-to-Green for MAT-T-0010, MAT-T-0011, MAT-T-0033, MAT-T-0034, MAT-T-0039 (Wave 1+3 scope).
+ * Build-to-Green for MAT-T-0040, MAT-T-0041, MAT-T-0042, MAT-T-0061, MAT-T-0062, MAT-T-0063, MAT-T-0065, MAT-T-0066 (Wave 4 scope).
  * Remaining tests stay QA-to-Red for future waves.
  *
  * Registry: governance/TEST_REGISTRY.json
@@ -44,8 +45,24 @@ import {
 } from '../../src/components/review-table.js';
 import {
   generateDashboardMetrics,
-  validateDashboardMetrics
+  validateDashboardMetrics,
+  generateDomainDrilldown,
+  generateMaturityDistribution
 } from '../../src/components/dashboard.js';
+import type { MPSMappingEntry } from '../../src/components/dashboard.js';
+import {
+  getResponsiveLayout,
+  getDeviceType,
+  validateTouchTargets,
+  validateAccessibility,
+  getDashboardAriaConfig,
+  getTranslations,
+  translate,
+  formatNumber,
+  formatDate,
+  getI18nConfig,
+  validateLocaleCompleteness
+} from '../../src/components/ui-support.js';
 import { scoreMaturity, confirmScore } from '../../src/services/ai-scoring.js';
 import { collectTextEvidence } from '../../src/services/evidence-collection.js';
 import type { Criterion, MaturityLevel } from '../../src/types/index.js';
@@ -413,7 +430,94 @@ describe('CAT-10: ui accessibility', () => {
     // FRS: FR-040
     // TRS: TR-048
     // Type: e2e | Priority: P0
-    throw new Error('NOT_IMPLEMENTED: MAT-T-0040 — Domain Dashboard');
+
+    // Setup: Create evidence and scores for multiple criteria in a domain
+    const evidence1 = collectTextEvidence({
+      criterion_id: 'crit-001',
+      audit_id: 'audit-001',
+      organisation_id: 'org-001',
+      evidence_type: 'text',
+      content_text: 'Evidence for domain dashboard test criterion 1',
+      uploaded_by: 'user-001'
+    });
+
+    const evidence2 = collectTextEvidence({
+      criterion_id: 'crit-002',
+      audit_id: 'audit-001',
+      organisation_id: 'org-001',
+      evidence_type: 'text',
+      content_text: 'Evidence for domain dashboard test criterion 2',
+      uploaded_by: 'user-001'
+    });
+
+    const aiScore1 = scoreMaturity('crit-001', [evidence1], 'gpt-4-turbo-2024');
+    const confirmation1 = confirmScore(aiScore1, aiScore1.maturity_level, 'user-002', 'lead_auditor');
+
+    const aiScore2 = scoreMaturity('crit-002', [evidence2], 'gpt-4-turbo-2024');
+    const confirmation2 = confirmScore(aiScore2, aiScore2.maturity_level, 'user-002', 'lead_auditor');
+
+    // MPS mapping for domain drill-down
+    const mpsMapping = new Map<string, MPSMappingEntry>();
+    mpsMapping.set('crit-001', {
+      domain_id: 'dom-001',
+      domain_name: 'Information Security Policies',
+      mps_id: 'mps-001',
+      mps_number: 'A.5',
+      mps_title: 'Management Direction',
+      criterion_number: 'A.5.1'
+    });
+    mpsMapping.set('crit-002', {
+      domain_id: 'dom-001',
+      domain_name: 'Information Security Policies',
+      mps_id: 'mps-001',
+      mps_number: 'A.5',
+      mps_title: 'Management Direction',
+      criterion_number: 'A.5.2'
+    });
+    mpsMapping.set('crit-003', {
+      domain_id: 'dom-001',
+      domain_name: 'Information Security Policies',
+      mps_id: 'mps-002',
+      mps_number: 'A.6',
+      mps_title: 'Organization',
+      criterion_number: 'A.6.1'
+    });
+
+    // Generate domain drill-down
+    const drilldown = generateDomainDrilldown(
+      'dom-001',
+      'Information Security Policies',
+      [confirmation1, confirmation2],
+      mpsMapping
+    );
+
+    // Verify domain-level metrics
+    expect(drilldown.domain_id).toBe('dom-001');
+    expect(drilldown.domain_name).toBe('Information Security Policies');
+    expect(drilldown.criteria_count).toBe(3); // 3 criteria mapped to this domain
+    expect(drilldown.scored_count).toBe(2); // 2 confirmations
+    expect(drilldown.average_maturity).toBeGreaterThan(0);
+    expect(drilldown.average_maturity).toBeLessThanOrEqual(5);
+    expect(drilldown.completion_percentage).toBe(67); // 2/3 ≈ 67%
+    expect(drilldown.generated_at).toBeDefined();
+
+    // Verify MPS breakdown
+    expect(drilldown.mps_breakdown.length).toBe(2); // 2 MPS groups
+    const mpsA5 = drilldown.mps_breakdown.find(m => m.mps_number === 'A.5');
+    expect(mpsA5).toBeDefined();
+    expect(mpsA5!.criteria_count).toBe(2);
+    expect(mpsA5!.scored_count).toBe(2);
+    expect(mpsA5!.average_maturity).toBeGreaterThan(0);
+
+    const mpsA6 = drilldown.mps_breakdown.find(m => m.mps_number === 'A.6');
+    expect(mpsA6).toBeDefined();
+    expect(mpsA6!.criteria_count).toBe(1);
+    expect(mpsA6!.scored_count).toBe(0); // No confirmations for A.6
+
+    // Verify criterion-level detail in MPS breakdown
+    expect(mpsA5!.criteria.length).toBe(2);
+    expect(mpsA5!.criteria[0].criterion_number).toBe('A.5.1');
+    expect(mpsA5!.criteria[0].confirmed_level).toBeGreaterThan(0);
   });
 
   it('MAT-T-0041: MPS Dashboard', () => {
@@ -421,7 +525,89 @@ describe('CAT-10: ui accessibility', () => {
     // FRS: FR-041
     // TRS: TR-048
     // Type: e2e | Priority: P1
-    throw new Error('NOT_IMPLEMENTED: MAT-T-0041 — MPS Dashboard');
+
+    // Setup: Create evidence and scores for criteria within an MPS
+    const evidence1 = collectTextEvidence({
+      criterion_id: 'crit-001',
+      audit_id: 'audit-001',
+      organisation_id: 'org-001',
+      evidence_type: 'text',
+      content_text: 'Evidence for MPS dashboard test criterion 1',
+      uploaded_by: 'user-001'
+    });
+
+    const evidence2 = collectTextEvidence({
+      criterion_id: 'crit-002',
+      audit_id: 'audit-001',
+      organisation_id: 'org-001',
+      evidence_type: 'text',
+      content_text: 'Evidence for MPS dashboard test criterion 2',
+      uploaded_by: 'user-001'
+    });
+
+    const aiScore1 = scoreMaturity('crit-001', [evidence1], 'gpt-4-turbo-2024');
+    const confirmation1 = confirmScore(aiScore1, aiScore1.maturity_level, 'user-002', 'lead_auditor');
+
+    const aiScore2 = scoreMaturity('crit-002', [evidence2], 'gpt-4-turbo-2024');
+    // Override to a different level for crit-002
+    const overrideLevel = (aiScore2.maturity_level === 5 ? 4 : aiScore2.maturity_level + 1) as MaturityLevel;
+    const confirmation2 = confirmScore(aiScore2, overrideLevel, 'user-002', 'lead_auditor', 'Evidence quality warrants higher rating');
+
+    // MPS mapping for drill-down to criterion level
+    const mpsMapping = new Map<string, MPSMappingEntry>();
+    mpsMapping.set('crit-001', {
+      domain_id: 'dom-001',
+      domain_name: 'Information Security Policies',
+      mps_id: 'mps-001',
+      mps_number: 'A.5',
+      mps_title: 'Management Direction',
+      criterion_number: 'A.5.1'
+    });
+    mpsMapping.set('crit-002', {
+      domain_id: 'dom-001',
+      domain_name: 'Information Security Policies',
+      mps_id: 'mps-001',
+      mps_number: 'A.5',
+      mps_title: 'Management Direction',
+      criterion_number: 'A.5.2'
+    });
+
+    // Generate domain drill-down (which includes MPS breakdown with criteria)
+    const drilldown = generateDomainDrilldown(
+      'dom-001',
+      'Information Security Policies',
+      [confirmation1, confirmation2],
+      mpsMapping
+    );
+
+    // Get MPS-level drill-down
+    const mpsDetail = drilldown.mps_breakdown.find(m => m.mps_id === 'mps-001');
+    expect(mpsDetail).toBeDefined();
+    expect(mpsDetail!.mps_number).toBe('A.5');
+    expect(mpsDetail!.mps_title).toBe('Management Direction');
+    expect(mpsDetail!.criteria_count).toBe(2);
+    expect(mpsDetail!.scored_count).toBe(2);
+    expect(mpsDetail!.average_maturity).toBeGreaterThan(0);
+
+    // Verify criterion-level detail
+    const criteria = mpsDetail!.criteria;
+    expect(criteria.length).toBe(2);
+
+    // Check criterion 1 — confirmed at AI level (no override)
+    const crit1 = criteria.find(c => c.criterion_id === 'crit-001');
+    expect(crit1).toBeDefined();
+    expect(crit1!.criterion_number).toBe('A.5.1');
+    expect(crit1!.ai_maturity_level).toBe(aiScore1.maturity_level);
+    expect(crit1!.confirmed_level).toBe(aiScore1.maturity_level);
+    expect(crit1!.is_override).toBe(false);
+    expect(crit1!.confidence).toBeGreaterThan(0);
+
+    // Check criterion 2 — overridden
+    const crit2 = criteria.find(c => c.criterion_id === 'crit-002');
+    expect(crit2).toBeDefined();
+    expect(crit2!.criterion_number).toBe('A.5.2');
+    expect(crit2!.confirmed_level).toBe(overrideLevel);
+    expect(crit2!.is_override).toBe(true);
   });
 
   it('MAT-T-0042: Maturity Distribution Visualization', () => {
@@ -429,7 +615,68 @@ describe('CAT-10: ui accessibility', () => {
     // FRS: FR-042
     // TRS: TR-048
     // Type: unit | Priority: P0
-    throw new Error('NOT_IMPLEMENTED: MAT-T-0042 — Maturity Distribution Visualization');
+
+    // Setup: Create multiple confirmations at different maturity levels
+    const confirmations = [];
+    const criterionIds = ['crit-001', 'crit-002', 'crit-003', 'crit-004', 'crit-005'];
+    const targetLevels: MaturityLevel[] = [2, 3, 3, 4, 5];
+
+    for (let i = 0; i < criterionIds.length; i++) {
+      const evidence = collectTextEvidence({
+        criterion_id: criterionIds[i],
+        audit_id: 'audit-001',
+        organisation_id: 'org-001',
+        evidence_type: 'text',
+        content_text: `Evidence for distribution test ${i + 1}`,
+        uploaded_by: 'user-001'
+      });
+
+      const aiScore = scoreMaturity(criterionIds[i], [evidence], 'gpt-4-turbo-2024');
+      const isOverride = targetLevels[i] !== aiScore.maturity_level;
+      const justification = isOverride ? `Distribution test override for criterion ${i + 1}` : undefined;
+      const confirmation = confirmScore(aiScore, targetLevels[i], 'user-002', 'lead_auditor', justification);
+      confirmations.push(confirmation);
+    }
+
+    // Generate maturity distribution
+    const distribution = generateMaturityDistribution('audit-001', confirmations);
+
+    // Verify distribution structure
+    expect(distribution.audit_id).toBe('audit-001');
+    expect(distribution.total_scored).toBe(5);
+    expect(distribution.distribution.length).toBe(5); // levels 1-5
+    expect(distribution.generated_at).toBeDefined();
+
+    // Verify each level has count and percentage
+    for (const levelData of distribution.distribution) {
+      expect(levelData.level).toBeGreaterThanOrEqual(1);
+      expect(levelData.level).toBeLessThanOrEqual(5);
+      expect(levelData.count).toBeGreaterThanOrEqual(0);
+      expect(levelData.percentage).toBeGreaterThanOrEqual(0);
+      expect(levelData.percentage).toBeLessThanOrEqual(100);
+    }
+
+    // Verify specific counts: level 1=0, level 2=1, level 3=2, level 4=1, level 5=1
+    const level1 = distribution.distribution.find(d => d.level === 1);
+    expect(level1!.count).toBe(0);
+    const level2 = distribution.distribution.find(d => d.level === 2);
+    expect(level2!.count).toBe(1);
+    const level3 = distribution.distribution.find(d => d.level === 3);
+    expect(level3!.count).toBe(2);
+    const level4 = distribution.distribution.find(d => d.level === 4);
+    expect(level4!.count).toBe(1);
+    const level5 = distribution.distribution.find(d => d.level === 5);
+    expect(level5!.count).toBe(1);
+
+    // Verify percentages sum to 100%
+    const totalPercentage = distribution.distribution.reduce((sum, d) => sum + d.percentage, 0);
+    expect(totalPercentage).toBe(100);
+
+    // Verify median (sorted: 2,3,3,4,5 — median is 3)
+    expect(distribution.median_level).toBe(3);
+
+    // Verify mode (level 3 has highest count of 2)
+    expect(distribution.mode_level).toBe(3);
   });
 
   it('MAT-T-0061: Responsive Design — Desktop', () => {
@@ -437,7 +684,22 @@ describe('CAT-10: ui accessibility', () => {
     // FRS: FR-062
     // TRS: TR-034
     // Type: e2e | Priority: P0
-    throw new Error('NOT_IMPLEMENTED: MAT-T-0061 — Responsive Design — Desktop');
+
+    // Desktop viewport (≥1024px)
+    const layout = getResponsiveLayout(1280);
+
+    expect(layout.device).toBe('desktop');
+    expect(layout.columns).toBe(3); // Multi-column layout
+    expect(layout.navigationStyle).toBe('sidebar'); // Side navigation
+    expect(layout.chartLayout).toBe('grid'); // Grid chart arrangement
+    expect(layout.modalBehavior).toBe('dialog'); // Modal as dialog
+    expect(layout.fontSize.base).toBe(14);
+    expect(layout.fontSize.heading).toBe(28);
+
+    // Device type classification
+    expect(getDeviceType(1280)).toBe('desktop');
+    expect(getDeviceType(1920)).toBe('desktop');
+    expect(getDeviceType(1024)).toBe('desktop');
   });
 
   it('MAT-T-0062: Responsive Design — Tablet', () => {
@@ -445,7 +707,26 @@ describe('CAT-10: ui accessibility', () => {
     // FRS: FR-062
     // TRS: TR-034
     // Type: e2e | Priority: P0
-    throw new Error('NOT_IMPLEMENTED: MAT-T-0062 — Responsive Design — Tablet');
+
+    // Tablet viewport (768–1023px)
+    const layout = getResponsiveLayout(900);
+
+    expect(layout.device).toBe('tablet');
+    expect(layout.columns).toBe(2); // Two-column layout
+    expect(layout.navigationStyle).toBe('drawer'); // Collapsible drawer
+    expect(layout.chartLayout).toBe('stacked'); // Stacked charts
+    expect(layout.touchTargetSize).toBe(44); // Minimum 44px touch targets
+    expect(layout.modalBehavior).toBe('full-width'); // Full-width modal
+
+    // Touch target validation for tablet
+    const touchValidation = validateTouchTargets(layout);
+    expect(touchValidation.valid).toBe(true);
+    expect(touchValidation.errors).toHaveLength(0);
+
+    // Device type classification
+    expect(getDeviceType(768)).toBe('tablet');
+    expect(getDeviceType(900)).toBe('tablet');
+    expect(getDeviceType(1023)).toBe('tablet');
   });
 
   it('MAT-T-0063: Responsive Design — Mobile', () => {
@@ -453,7 +734,27 @@ describe('CAT-10: ui accessibility', () => {
     // FRS: FR-062
     // TRS: TR-034
     // Type: e2e | Priority: P0
-    throw new Error('NOT_IMPLEMENTED: MAT-T-0063 — Responsive Design — Mobile');
+
+    // Mobile viewport (<768px)
+    const layout = getResponsiveLayout(400);
+
+    expect(layout.device).toBe('mobile');
+    expect(layout.columns).toBe(1); // Single-column stacked layout
+    expect(layout.navigationStyle).toBe('bottom-tabs'); // Bottom tab navigation
+    expect(layout.chartLayout).toBe('stacked'); // Stacked charts
+    expect(layout.touchTargetSize).toBe(44); // 44x44px touch targets per WCAG
+    expect(layout.modalBehavior).toBe('full-screen'); // Full-screen modals
+    expect(layout.fontSize.base).toBe(16); // Larger base font for readability
+
+    // Touch target validation for mobile
+    const touchValidation = validateTouchTargets(layout);
+    expect(touchValidation.valid).toBe(true);
+    expect(touchValidation.errors).toHaveLength(0);
+
+    // Device type classification
+    expect(getDeviceType(320)).toBe('mobile');
+    expect(getDeviceType(400)).toBe('mobile');
+    expect(getDeviceType(767)).toBe('mobile');
   });
 
   it('MAT-T-0065: Accessibility (WCAG 2.1 AA)', () => {
@@ -461,7 +762,65 @@ describe('CAT-10: ui accessibility', () => {
     // FRS: FR-064
     // TRS: TR-033
     // Type: e2e | Priority: P1
-    throw new Error('NOT_IMPLEMENTED: MAT-T-0065 — Accessibility (WCAG 2.1 AA)');
+
+    // Validate WCAG 2.1 AA compliance for MAT application
+    const accessibilityResult = validateAccessibility({
+      hasAriaLabels: true,
+      hasKeyboardNav: true,
+      contrastRatio: 7.0, // AAA level contrast ratio
+      hasScreenReaderSupport: true,
+      hasFocusIndicators: true,
+      hasSkipLinks: true,
+      hasAltText: true
+    });
+
+    // Verify AA compliance
+    expect(accessibilityResult.wcag_level).toBe('AA');
+    expect(accessibilityResult.compliant).toBe(true);
+    expect(accessibilityResult.failed).toBe(0);
+    expect(accessibilityResult.passed).toBe(accessibilityResult.checks.length);
+
+    // Verify specific WCAG criteria are checked
+    const ruleIds = accessibilityResult.checks.map(c => c.rule);
+    expect(ruleIds).toContain('1.1.1'); // Non-text Content
+    expect(ruleIds).toContain('1.4.3'); // Contrast (Minimum)
+    expect(ruleIds).toContain('2.1.1'); // Keyboard
+    expect(ruleIds).toContain('2.4.1'); // Bypass Blocks
+    expect(ruleIds).toContain('2.4.7'); // Focus Visible
+    expect(ruleIds).toContain('4.1.2'); // Name, Role, Value
+    expect(ruleIds).toContain('1.3.1'); // Info and Relationships
+
+    // Verify dashboard ARIA configurations
+    const chartAria = getDashboardAriaConfig('chart', 'Maturity Distribution Chart');
+    expect(chartAria.role).toBe('img');
+    expect(chartAria['aria-label']).toBe('Maturity Distribution Chart');
+    expect(chartAria.tabindex).toBe('0');
+
+    const metricAria = getDashboardAriaConfig('metric-card', 'Average Maturity Level');
+    expect(metricAria.role).toBe('status');
+    expect(metricAria['aria-live']).toBe('polite');
+    expect(metricAria['aria-atomic']).toBe('true');
+
+    const tableAria = getDashboardAriaConfig('data-table', 'Criteria Review Table');
+    expect(tableAria.role).toBe('table');
+
+    const navAria = getDashboardAriaConfig('navigation', 'Dashboard Navigation');
+    expect(navAria.role).toBe('navigation');
+
+    // Verify failure case — insufficient contrast
+    const failResult = validateAccessibility({
+      hasAriaLabels: true,
+      hasKeyboardNav: true,
+      contrastRatio: 3.0, // Below AA minimum
+      hasScreenReaderSupport: true,
+      hasFocusIndicators: true,
+      hasSkipLinks: true,
+      hasAltText: true
+    });
+    expect(failResult.compliant).toBe(false);
+    expect(failResult.failed).toBe(1);
+    const failedCheck = failResult.checks.find(c => !c.passed);
+    expect(failedCheck!.rule).toBe('1.4.3');
   });
 
   it('MAT-T-0066: Internationalization (i18n)', () => {
@@ -469,6 +828,52 @@ describe('CAT-10: ui accessibility', () => {
     // FRS: FR-065
     // TRS: TR-035
     // Type: unit | Priority: P1
-    throw new Error('NOT_IMPLEMENTED: MAT-T-0066 — Internationalization (i18n)');
+
+    // Verify i18n configuration
+    const config = getI18nConfig();
+    expect(config.defaultLocale).toBe('en');
+    expect(config.supportedLocales).toContain('en');
+    expect(config.supportedLocales).toContain('af'); // Afrikaans
+    expect(config.fallbackLocale).toBe('en');
+
+    // Verify English translations
+    const enDict = getTranslations('en');
+    expect(enDict.locale).toBe('en');
+    expect(enDict.translations['dashboard.title']).toBe('Audit Dashboard');
+    expect(enDict.translations['report.title']).toBe('Audit Report');
+    expect(enDict.translations['common.save']).toBe('Save');
+    expect(enDict.translations['common.cancel']).toBe('Cancel');
+
+    // Verify Afrikaans translations
+    const afDict = getTranslations('af');
+    expect(afDict.locale).toBe('af');
+    expect(afDict.translations['dashboard.title']).toBe('Oudit Kontroleskerm');
+    expect(afDict.translations['report.title']).toBe('Ouditverslag');
+    expect(afDict.translations['common.save']).toBe('Stoor');
+    expect(afDict.translations['common.cancel']).toBe('Kanselleer');
+
+    // Verify translate function
+    expect(translate('dashboard.title', 'en')).toBe('Audit Dashboard');
+    expect(translate('dashboard.title', 'af')).toBe('Oudit Kontroleskerm');
+    expect(translate('nonexistent.key', 'en')).toBe('nonexistent.key'); // Fallback to key
+
+    // Verify locale formatting
+    const formattedNumber = formatNumber(1234.5, 'en', { decimals: 1 });
+    expect(formattedNumber).toBeDefined();
+    expect(typeof formattedNumber).toBe('string');
+
+    const formattedDate = formatDate('2024-06-15T10:30:00Z', 'en');
+    expect(formattedDate).toBeDefined();
+    expect(typeof formattedDate).toBe('string');
+
+    // Verify locale completeness
+    const enCompleteness = validateLocaleCompleteness('en');
+    expect(enCompleteness.valid).toBe(true);
+    expect(enCompleteness.missingKeys).toHaveLength(0);
+
+    const afCompleteness = validateLocaleCompleteness('af');
+    expect(afCompleteness.valid).toBe(true);
+    expect(afCompleteness.missingKeys).toHaveLength(0);
+    expect(afCompleteness.translatedKeys).toBe(afCompleteness.totalKeys);
   });
 });
