@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-02-14T11:26:34Z",
+  "last_updated": "2026-02-15T06:57:37Z",
   "total_canons": 156,
-  "generation_timestamp": "2026-02-14T11:26:34Z",
+  "generation_timestamp": "2026-02-15T06:57:37Z",
   "canons": [
     {
       "filename": ".agent.schema.md",
@@ -832,13 +832,13 @@
     {
       "filename": "FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
       "version": "1.0.0",
-      "file_hash": "dacc9285c58c",
+      "file_hash": "794010b4250c",
       "effective_date": "2025-12-24",
-      "description": "This document formally defines the **Foreman (FM)** as a **managerial authority** within the Maturion ecosystem, establishing its supervisory responsibilities over builders and the execution process.",
+      "description": "This document formally defines the **Foreman (FM)** as a **managerial authority** within the Maturion ecosystem, establishing its supervisory responsibilities over builders and the execution process. Updated 2026-02-15 with Section 5.5: Delegation Model and Agent Invocation Protocol.",
       "type": "canon",
       "path": "governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "dacc9285c58c3b467a39cba5e235c4211ace6868a695bdf9f62260eb8be0b754"
+      "file_hash_sha256": "794010b4250c247b2da68b3e6dcc35bb067c3e1f4b18069c26f95b2c0ec85684"
     },
     {
       "filename": "FOREMAN_MEMORY_PROTOCOL.md",
