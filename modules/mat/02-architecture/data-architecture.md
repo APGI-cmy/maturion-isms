@@ -238,6 +238,32 @@ Append-only immutable log. RLS permits INSERT only — no UPDATE or DELETE.
 
 **Partitioning**: Range-partitioned by `created_at` (monthly).
 
+#### 1.1.11.1 `ai_circuit_breaker_state`
+
+| Column              | Type              | Constraints                        |
+|---------------------|-------------------|------------------------------------|
+| id                  | UUID              | PRIMARY KEY, DEFAULT gen_random_uuid() |
+| organisation_id     | UUID              | NOT NULL, REFERENCES organisations(id) |
+| task_type           | VARCHAR(50)       | NOT NULL                           |
+| state               | VARCHAR(20)       | NOT NULL, CHECK (state IN ('CLOSED', 'OPEN', 'HALF_OPEN')) |
+| error_count         | INT               | NOT NULL, DEFAULT 0                |
+| success_count       | INT               | NOT NULL, DEFAULT 0                |
+| last_error_at       | TIMESTAMPTZ       | NULL                               |
+| last_state_change   | TIMESTAMPTZ       | NOT NULL                           |
+| window_start        | TIMESTAMPTZ       | NOT NULL                           |
+| created_at          | TIMESTAMPTZ       | NOT NULL, DEFAULT NOW()            |
+| updated_at          | TIMESTAMPTZ       | NOT NULL, DEFAULT NOW()            |
+
+**Unique Constraint**: `UNIQUE (organisation_id, task_type)` — One circuit breaker state per organisation per AI task type.
+
+**Purpose**: Persistent storage for AI circuit breaker state management. Replaces in-memory state tracking to enable:
+- State persistence across service restarts
+- Multi-instance deployment support
+- Audit trail of circuit breaker state transitions
+- Recovery and reconciliation scenarios
+
+**Retention**: No retention policy (current state table, not historical log)
+
 #### 1.1.12 `report_outputs`
 
 | Column          | Type              | Constraints                        |
@@ -354,6 +380,12 @@ CREATE INDEX idx_ai_invocation_audit_id ON ai_invocation_logs(audit_id);
 CREATE INDEX idx_ai_invocation_organisation_id ON ai_invocation_logs(organisation_id);
 CREATE INDEX idx_ai_invocation_task_type ON ai_invocation_logs(task_type);
 CREATE INDEX idx_ai_invocation_created_at ON ai_invocation_logs(created_at);
+
+-- ai_circuit_breaker_state
+CREATE INDEX idx_circuit_breaker_organisation_id ON ai_circuit_breaker_state(organisation_id);
+CREATE INDEX idx_circuit_breaker_task_type ON ai_circuit_breaker_state(task_type);
+CREATE INDEX idx_circuit_breaker_state ON ai_circuit_breaker_state(state);
+CREATE UNIQUE INDEX idx_circuit_breaker_org_task ON ai_circuit_breaker_state(organisation_id, task_type);
 
 -- report_outputs
 CREATE INDEX idx_report_outputs_audit_id ON report_outputs(audit_id);
@@ -713,6 +745,7 @@ supabase/migrations/
 ├── 20250101000008_create_transcripts.sql
 ├── 20250101000009_create_audit_trail.sql
 ├── 20250101000010_create_ai_invocation_logs.sql
+├── 202501010000101_create_ai_circuit_breaker_state.sql
 ├── 20250101000011_create_report_outputs.sql
 ├── 20250101000012_create_consent_records.sql
 ├── 20250101000013_create_watchdog_metrics.sql
