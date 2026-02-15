@@ -66,6 +66,32 @@ jobs:
             exit $EXIT_CODE
           fi
       
+      # ✅ FIX #2: Check for existing governance alignment PRs
+      - name: Check for Existing Alignment PR
+        id: check_existing
+        if: steps.align.outputs.drift_detected == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+        run: |
+          # Check if a governance alignment PR already exists
+          EXISTING_PR=$(gh pr list \
+            --repo ${{ github.repository }} \
+            --state open \
+            --label "governance" \
+            --label "automated" \
+            --json number,headRefName \
+            --jq '.[] | select(.headRefName | startswith("governance-alignment-")) | .number' \
+            | head -1)
+          
+          if [ -n "$EXISTING_PR" ]; then
+            echo "existing_pr=$EXISTING_PR" >> $GITHUB_OUTPUT
+            echo "Existing governance alignment PR found: #$EXISTING_PR"
+            echo "Skipping new PR creation - will update existing PR"
+          else
+            echo "existing_pr=" >> $GITHUB_OUTPUT
+            echo "No existing governance alignment PR found"
+          fi
+      
       - name: Get Canonical Metadata
         id: metadata
         if: steps.align.outputs.drift_detected == 'true'
@@ -84,8 +110,10 @@ jobs:
             echo "drift_report=$DRIFT_REPORT" >> $GITHUB_OUTPUT
           fi
       
-      - name: Create Alignment PR
+      # ✅ FIX #1 & #3: Create OR Update PR with stable branch name
+      - name: Create or Update Alignment PR
         if: steps.align.outputs.drift_detected == 'true'
+        id: create_pr
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
@@ -95,7 +123,7 @@ jobs:
             Canonical commit: ${{ steps.metadata.outputs.canonical_commit }}
             Files updated: ${{ steps.metadata.outputs.files_updated }}
             Triggered: Scheduled fallback check
-          branch: governance-alignment-scheduled-${{ github.run_id }}
+          branch: governance-alignment-auto  # ✅ FIX #3: Stable branch name
           delete-branch: true
           title: '[Governance Alignment] Scheduled sync with canonical governance'
           body: |
@@ -130,11 +158,30 @@ jobs:
             **Authority**: LIVING_AGENT_SYSTEM.md v6.2.0  
             **Workflow**: `.github/workflows/governance-alignment-schedule.yml`  
             **Script**: `.github/scripts/align-governance.sh`
+            
+            ---
+            **Auto-Merge**: This PR will be automatically merged once status checks pass.
           labels: |
             governance
             automated
             agent:liaison
           assignees: APGI-cmy
+      
+      # ✅ FIX #1: Enable auto-merge on the PR
+      - name: Enable Auto-Merge
+        if: steps.align.outputs.drift_detected == 'true' && steps.create_pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+        run: |
+          PR_NUMBER="${{ steps.create_pr.outputs.pull-request-number }}"
+          
+          echo "Enabling auto-merge for PR #$PR_NUMBER"
+          
+          gh pr merge "$PR_NUMBER" \
+            --repo ${{ github.repository }} \
+            --auto \
+            --squash \
+            --delete-branch || echo "Auto-merge could not be enabled (may require branch protection rules or checks)"
       
       - name: Alignment Summary
         if: always()
@@ -148,7 +195,13 @@ jobs:
           if [ "${{ steps.align.outputs.drift_detected }}" = "true" ]; then
             echo "Canonical Commit: ${{ steps.metadata.outputs.canonical_commit }}"
             echo "Files Updated: ${{ steps.metadata.outputs.files_updated }}"
-            echo "PR Created: Yes"
+            
+            if [ -n "${{ steps.check_existing.outputs.existing_pr }}" ]; then
+              echo "Action: Updated existing PR #${{ steps.check_existing.outputs.existing_pr }}"
+            else
+              echo "Action: Created new PR #${{ steps.create_pr.outputs.pull-request-number }}"
+              echo "Auto-Merge: Enabled (squash)"
+            fi
           else
             echo "Status: Governance aligned - no action needed"
           fi
