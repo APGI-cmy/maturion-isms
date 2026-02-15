@@ -391,6 +391,22 @@ Track the progression through the canonical module lifecycle stages.
 >
 > **Governance References**: `governance/canon/COMBINED_TESTING_PATTERN.md` v1.0.0, Implementation Plan v1.1.0 Section 4, RCA `RCA_CST_CWT_OMISSION_WAVES_2_3.md`
 
+> **⚠️ PROCESS DEVIATION — WAVE 4 INCOMPLETE DELIVERY (PR #178)**
+>
+> **Deviation**: PR #178 delivered only Task 4.1 (Dashboards) of Wave 4, omitting Task 4.2 (Report Generation) entirely. Wave delivered at 50% scope completion. Additionally, CST, CWT, IBWR, BUILD_PROGRESS_TRACKER update, and Foreman session memory were all omitted. The Foreman agent violated its constitutional boundary by writing application code and tests directly instead of delegating to builders (ui-builder, api-builder).
+>
+> **Root Cause**: (1) Foreman executed building work directly instead of POLC supervision — no builders recruited, no task briefs issued, no concurrent execution coordinated, (2) Implementation Plan § 2.5 was not loaded before execution — the concurrent Task 4.1∥4.2 requirement was missed, (3) Previous deviation records in BUILD_PROGRESS_TRACKER.md were not consulted — same CST/CWT omission and tracker update failures recurred from Waves 2-3, (4) Test ID mapping confusion — implementation plan assigns MAT-T-0063–0066 to report generation acceptance criteria, but Foreman implemented the TEST_REGISTRY definitions (Responsive Design, PWA, WCAG, i18n) instead.
+>
+> **Impact**: Wave 4 gate cannot close — 50% scope delivered is unacceptable per OPOJD (One Plan One Job Done) principle. Audit trail broken — tracker shows Wave 3 as current (76 tests GREEN) but PR claims 84 tests GREEN without tracker evidence. CST cannot validate data consistency between dashboards and reports because reports were never built. "We Only Fail Once" principle violated — CST/CWT omission and tracker update omission are repeat failures from Waves 2-3.
+>
+> **Corrective Action**: (1) RCA filed as session memory: `.agent-workspace/foreman-isms/memory/session-005-20260215-RCA-WAVE4-FAILURE.md`, (2) This deviation record documents the failure, (3) Retroactive IBWR for Wave 3 → Wave 4 filed: `.agent-workspace/foreman-isms/evidence/wave-3-IBWR-RETROACTIVE.md`, (4) PR #178 marked as incomplete delivery, (5) Wave 4 re-orchestrated with full scope using proper builder delegation (ui-builder for Task 4.1, api-builder for Task 4.2), (6) CST, CWT, session memory, and tracker update will be mandatory deliverables in re-orchestrated Wave 4.
+>
+> **Preventive Action**: (1) Before ANY wave execution, Foreman MUST load Implementation Plan section for target wave and verify all tasks/builders/test IDs, (2) Foreman MUST NOT write application code or tests — all building delegated to specialist builders, (3) Foreman MUST consult all existing deviation records before each wave, (4) Pre-merge checklist: all acceptance criteria checked, CST executed, CWT executed, tracker updated, session memory filed, (5) Constitutional boundary enforcement — any session where Foreman writes code is a governance violation.
+>
+> **RCA Reference**: `.agent-workspace/foreman-isms/memory/session-005-20260215-RCA-WAVE4-FAILURE.md`
+>
+> **Governance References**: Implementation Plan § 2.5, COMBINED_TESTING_PATTERN.md v1.0.0, IN_BETWEEN_WAVE_RECONCILIATION.md, BUILD_PHILOSOPHY.md (OPOJD, "We Only Fail Once"), FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md §§ 1.3, 7.2
+
 > **⚠️ CRITICAL GAP — DEPLOYMENT & COMMISSIONING WAVE OMITTED FROM INITIAL PLAN**
 >
 > **Gap**: The initial implementation plan (v1.0.0 and v1.1.0) covered Waves 0–5 (build waves) but omitted an explicit **Deployment & Commissioning Wave (Wave 6)**. Without this wave, there was:
