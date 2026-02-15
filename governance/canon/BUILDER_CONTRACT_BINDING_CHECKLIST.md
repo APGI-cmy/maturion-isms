@@ -1,10 +1,10 @@
 # BUILDER CONTRACT BINDING CHECKLIST
 
 **Status**: Canonical Governance Validation Checklist  
-**Version**: 1.3.0  
+**Version**: 1.2.0  
 **Authority**: Maturion Engineering Leadership (Johan Ras)  
 **Created**: 2026-01-01  
-**Last Updated**: 2026-02-15 (Added A.7.4 BUILD_PROGRESS_TRACKER Update Requirements)  
+**Last Updated**: 2026-01-11  
 **Purpose**: Machine-checkable checklist of what MUST appear in every builder contract to be considered constitutionally bound
 
 ---
@@ -454,32 +454,6 @@ Each item includes:
     accurate_reflection_required: true
     placeholders_prohibited: true
     immutable_after_handover: true
-  ```
-
-#### A.7.4 BUILD_PROGRESS_TRACKER Update for Wave Completion
-
-- **Element**: `evidence.tracker_update_required` or explicit clause
-- **Requirement**: MANDATORY for wave completion PRs
-- **Validation**: 
-  - When IBWR (In-Between Wave Reconciliation) evidence is present, BUILD_PROGRESS_TRACKER.md MUST be updated
-  - Tracker update MUST include:
-    - Wave/task completion date
-    - Deliverables and components delivered
-    - Tests turned GREEN (with test IDs)
-    - Evidence artifact references (CST, CWT, IBWR paths)
-    - Any process deviations or lessons learned
-  - "Last Updated" field MUST be current
-- **Canonical Reference**: `BUILD_PHILOSOPHY.md` (Audit Trail Discipline), `LIVING_AGENT_SYSTEM.md` v6.2.0 (Evidence Requirements), `governance/templates/IBWR_TEMPLATE.md` Section 4
-- **Severity if Missing**: HIGH - Audit trail incomplete, governance compliance tracking degraded
-- **Enforcement**: Merge gate BL-029 (`validate-tracker-update.sh`)
-- **Format**:
-  ```yaml
-  evidence:
-    tracker_update_required: true
-    tracker_update_triggers:
-      - "IBWR evidence present"
-      - "Wave completion"
-      - "Task completion within wave"
   ```
 
 ### A.8 Gate Compliance Requirements

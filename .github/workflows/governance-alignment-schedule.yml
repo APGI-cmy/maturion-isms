@@ -124,6 +124,7 @@ jobs:
             Files updated: ${{ steps.metadata.outputs.files_updated }}
             Triggered: Scheduled fallback check
           branch: governance-alignment-auto  # ✅ FIX #3: Stable branch name
+          force-push: true  # ✅ FIX #4: Prevent race conditions with concurrent events
           delete-branch: true
           title: '[Governance Alignment] Scheduled sync with canonical governance'
           body: |

@@ -97,6 +97,7 @@ jobs:
             Files updated: ${{ steps.metadata.outputs.files_updated }}
             Dispatch ID: ${{ github.event.client_payload.dispatch_id }}
           branch: governance-ripple-sync-${{ github.run_id }}
+          force-push: true  # ✅ Prevent race conditions with concurrent events
           delete-branch: true
           title: '[Governance Ripple] Align with canonical governance'
           body: |
