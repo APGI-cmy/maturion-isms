@@ -32,7 +32,7 @@ echo ""
 # Step 1: Detect if this is a wave completion PR (IBWR evidence present)
 echo "Step 1: Checking for IBWR evidence..."
 
-IBWR_FILES=$(git diff --name-only origin/main...HEAD | grep -E '\.agent-workspace/.*/evidence/.*IBWR\.md$' || true)
+IBWR_FILES=$(git diff --name-only main...HEAD 2>/dev/null | grep -E '\.agent-workspace/.*/evidence/.*IBWR\.md$' || true)
 
 if [ -z "$IBWR_FILES" ]; then
   echo -e "${GREEN}✓ No IBWR evidence detected${NC}"
@@ -53,7 +53,7 @@ echo ""
 # Step 2: Check if BUILD_PROGRESS_TRACKER.md was modified
 echo "Step 2: Checking for BUILD_PROGRESS_TRACKER.md modifications..."
 
-TRACKER_MODIFICATIONS=$(git diff --name-only origin/main...HEAD | grep -E 'BUILD_PROGRESS_TRACKER\.md$' || true)
+TRACKER_MODIFICATIONS=$(git diff --name-only main...HEAD 2>/dev/null | grep -E 'BUILD_PROGRESS_TRACKER\.md$' || true)
 
 if [ -z "$TRACKER_MODIFICATIONS" ]; then
   echo -e "${RED}✗ BUILD_PROGRESS_TRACKER.md NOT modified${NC}"
@@ -89,7 +89,7 @@ echo ""
 echo "Step 3: Validating tracker modifications are substantial..."
 
 for tracker in $TRACKER_MODIFICATIONS; do
-  DIFF_SIZE=$(git diff origin/main...HEAD -- "$tracker" | grep -E '^\+[^+]' | wc -l)
+  DIFF_SIZE=$(git diff main...HEAD -- "$tracker" 2>/dev/null | grep -E '^\+[^+]' | wc -l)
   
   if [ "$DIFF_SIZE" -lt 5 ]; then
     echo -e "${RED}✗ Insufficient changes in $tracker${NC}"
