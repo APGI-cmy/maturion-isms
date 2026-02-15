@@ -113,7 +113,7 @@ Requirements are documented in:
 
 **Immediate**:
 - [x] Add Wave 2 completion section to BUILD_PROGRESS_TRACKER.md with test IDs, deliverables, evidence references
-- [x] Reconcile test count (enumerate Wave 2 tests, verify 76 total = 25 W0 + 12 W1 + 20 W2 + 16 W3 + overlaps)
+- [x] Reconcile test count (enumerate Wave 2 tests, verify 76 total = 31 W0 + 10 W1 + 20 W2 + 15 W3)
 - [x] Verify no test debt (search for skips, TODOs, deferred tests, deprecated code — all clean)
 - [x] File this RCA in `modules/mat/05-build-evidence/RCA_WAVE_3_TRACKER_UPDATE_FAILURE.md`
 
@@ -160,7 +160,7 @@ Requirements are documented in:
 
 4. **Tracker Currency Critical for Audit Trail**: BUILD_PROGRESS_TRACKER is not optional documentation — it is the authoritative audit trail for module lifecycle progression. Its staleness breaks governance compliance and audit readiness.
 
-5. **Test Math Must Always Add Up**: If the tracker claims 76 tests GREEN but per-wave sums don't reconcile, either the tracker is wrong or wave documentation is incomplete. Both are governance failures. The corrected math: 25 (W0) + 12 (W1) + 20 (W2) + 16 (W3) = 73 unique scope tests + 3 overlapping tests from cross-wave deliveries = 76 unique GREEN tests.
+5. **Test Math Must Always Add Up**: If the tracker claims 76 tests GREEN but per-wave sums don't reconcile, either the tracker is wrong or wave documentation is incomplete. Both are governance failures. The corrected math: 31 (W0) + 10 (W1) + 20 (W2) + 15 (W3) = 76 unique GREEN tests, verified against `npx vitest run` output.
 
 6. **Branch-Based Context Loss**: When a builder works on a feature branch, they see only the branch state. If the tracker was not updated on main before the branch was created, the builder inherits the omission. This is a systemic risk requiring pre-branch validation.
 

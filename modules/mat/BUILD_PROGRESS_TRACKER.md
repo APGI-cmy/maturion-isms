@@ -230,33 +230,16 @@ Track the progression through the canonical module lifecycle stages.
 **Status**: [ ] NOT_STARTED | [x] IN_PROGRESS | [ ] COMPLETE  
 **Location**: `modules/mat/05-build-evidence/`  
 **Key Artifacts**:
-- [x] Wave 0: Foundational Infrastructure — 25 tests GREEN (schema-builder, api-builder)
-- [x] Wave 1: Criteria Management — 11 tests GREEN (api-builder, ui-builder)
+- [x] Wave 0: Foundational Infrastructure — 31 tests GREEN (schema-builder, api-builder)
+- [x] Wave 1: Criteria Management — 10 tests GREEN (api-builder, ui-builder)
 - [x] Wave 2: Evidence Collection & Offline Sync — 20 tests GREEN (api-builder, integration-builder) — PR [#164](https://github.com/APGI-cmy/maturion-isms/pull/164)
-- [x] Wave 3: AI Scoring & Human Confirmation — 16 tests GREEN (api-builder, ui-builder) — PR [#168](https://github.com/APGI-cmy/maturion-isms/pull/168)
+- [x] Wave 3: AI Scoring & Human Confirmation — 15 tests GREEN (api-builder, ui-builder) — PR [#168](https://github.com/APGI-cmy/maturion-isms/pull/168)
 - [ ] Wave 4: Dashboards & Reporting
 - [ ] Wave 5: Watchdog & Continuous Improvement
-- [x] 4 additional tests turned GREEN as bonus deliverables across waves (MAT-T-0054, MAT-T-0079–0082)
 
-**Wave 0 Test Coverage (25 tests GREEN)**:
-- [x] MAT-T-0001: Audit Creation — GREEN
-- [x] MAT-T-0002: Status Transitions — GREEN
-- [x] MAT-T-0003: Soft Deletion — GREEN
-- [x] MAT-T-0043: RBAC Enforcement — GREEN
-- [x] MAT-T-0044: Permission Inheritance — GREEN
-- [x] MAT-T-0045: Auditor Assignment Flow — GREEN
-- [x] MAT-T-0046: Cross-Organisation Isolation — GREEN
-- [x] MAT-T-0047: Token Refresh and Session Management — GREEN
-- [x] MAT-T-0048: Role Hierarchy Enforcement — GREEN
-- [x] MAT-T-0049: Authentication Flow — GREEN
-- [x] MAT-T-0050: MFA Enforcement — GREEN
-- [x] MAT-T-0051: Row-Level Security Policies — GREEN
-- [x] MAT-T-0052: Audit Trail Immutability — GREEN
-- [x] MAT-T-0053: Data Encryption (At Rest and In Transit) — GREEN
-- [x] MAT-T-0083–MAT-T-0096: Wiring Invariants (14 tests) — GREEN
-- [x] MAT-T-0079–MAT-T-0082: Additional Wiring Invariants (4 tests) — GREEN
-- [x] MAT-T-0095: Input Validation and Sanitization — GREEN
-- [x] MAT-T-0096: API Security Headers and CORS — GREEN
+**Wave 0 Test Coverage (31 tests GREEN)** — PRs #140, #142:
+- [x] Task 0.1 (schema-builder, 25 tests): MAT-T-0043, MAT-T-0044, MAT-T-0049–0053, MAT-T-0079–0094, MAT-T-0095, MAT-T-0096
+- [x] Task 0.3 (api-builder, 6 tests): MAT-T-0001–0003, MAT-T-0038, MAT-T-0045, MAT-T-0046
 
 **Wave 0 Evidence**:
 - [x] Build evidence: `modules/mat/05-build-evidence/wave-0-task-0.1-build-evidence.md`
@@ -268,7 +251,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] `modules/mat/src/types/index.ts` — Core types for audit, evidence, criteria, security
 - [x] `modules/mat/src/utils/crypto.ts` — SHA-256 hashing utility
 
-**Wave 1 Test Coverage (11 tests GREEN)**:
+**Wave 1 Test Coverage (10 tests GREEN)** — PRs #142, #143:
 - [x] MAT-T-0004: PDF/DOCX Upload — GREEN
 - [x] MAT-T-0005: SHA-256 Hash Computation — GREEN
 - [x] MAT-T-0006: Signed URL Retrieval — GREEN
@@ -278,9 +261,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] MAT-T-0010: Hierarchical Navigation — GREEN
 - [x] MAT-T-0011: Criteria Modal — GREEN
 - [x] MAT-T-0012: Human Review Interface — GREEN
-- [x] MAT-T-0013: Evidence Linking — GREEN
-- [x] MAT-T-0014: Criteria CRUD Operations — GREEN
-- [x] MAT-T-0054: Criterion Status Tracking — GREEN (bonus deliverable)
+- [x] MAT-T-0054: Criterion Status Tracking — GREEN
 
 **Wave 1 Evidence**:
 - [x] CST report: `.agent-workspace/ui-builder/evidence/wave-1-task-1.3-CST.md`
@@ -296,6 +277,8 @@ Track the progression through the canonical module lifecycle stages.
 - [x] `modules/mat/src/components/approval-workflow.ts` — Role-based approval queue with confirm/reject actions
 
 **Wave 2 Test Coverage (20 tests GREEN)** — PR [#164](https://github.com/APGI-cmy/maturion-isms/pull/164):
+- [x] MAT-T-0013: Evidence Linking — GREEN
+- [x] MAT-T-0014: Criteria CRUD Operations — GREEN
 - [x] MAT-T-0015: Photo Upload with Metadata — GREEN
 - [x] MAT-T-0016: Audio Upload and Transcription — GREEN
 - [x] MAT-T-0017: File Upload SHA-256 Hash — GREEN
@@ -307,13 +290,12 @@ Track the progression through the canonical module lifecycle stages.
 - [x] MAT-T-0023: AI Scoring Pipeline — GREEN
 - [x] MAT-T-0024: Human Score Confirmation — GREEN
 - [x] MAT-T-0025: Override with Justification — GREEN
-- [x] MAT-T-0047: Token Refresh and Session Management — GREEN (overlap with Wave 0)
-- [x] MAT-T-0048: Role Hierarchy Enforcement — GREEN (overlap with Wave 0)
+- [x] MAT-T-0047: Token Refresh and Session Management — GREEN
+- [x] MAT-T-0048: Role Hierarchy Enforcement — GREEN
 - [x] MAT-T-0056: PIT Module Integration Export — GREEN
 - [x] MAT-T-0057: Maturity Roadmap Integration Export — GREEN
 - [x] MAT-T-0058: Watchdog Monitoring Metrics — GREEN
 - [x] MAT-T-0064: PWA Support — GREEN
-- [x] MAT-T-0076: Offline Indicator — GREEN
 - [x] MAT-T-0078: Upload Failure and Retry — GREEN
 
 **Wave 2 Evidence**:
@@ -329,7 +311,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] `modules/mat/public/manifest.json` — PWA manifest
 - [x] `modules/mat/public/sw.js` — Service Worker implementation
 
-**Wave 3 Test Coverage (16 tests GREEN)** — PR [#168](https://github.com/APGI-cmy/maturion-isms/pull/168):
+**Wave 3 Test Coverage (15 tests GREEN)** — PR [#168](https://github.com/APGI-cmy/maturion-isms/pull/168):
 - [x] MAT-T-0026: Override Logging — GREEN
 - [x] MAT-T-0027: Maturity Model (5-Level) — GREEN
 - [x] MAT-T-0028: AI Task Routing — GREEN
@@ -342,10 +324,9 @@ Track the progression through the canonical module lifecycle stages.
 - [x] MAT-T-0035: Report Generation — GREEN
 - [x] MAT-T-0036: Report Formats (DOCX/PDF/JSON) — GREEN
 - [x] MAT-T-0037: Excel Export — GREEN
-- [x] MAT-T-0038: Report Approval — GREEN
 - [x] MAT-T-0039: Global Dashboard — GREEN
+- [x] MAT-T-0076: Offline Indicator — GREEN
 - [x] MAT-T-0077: AI Degraded Mode — Manual Scoring — GREEN
-- [x] MAT-T-0078: Upload Failure and Retry — GREEN (overlap with Wave 2)
 
 **Wave 3 Components Delivered**:
 - [x] `modules/mat/src/services/ai-scoring.ts` — Override logging, maturity model (5-level), AI task routing, invocation logging, confidence flagging, circuit breaker, model versioning, manual scoring fallback
@@ -355,16 +336,15 @@ Track the progression through the canonical module lifecycle stages.
 - [x] `modules/mat/src/types/index.ts` — Types for override logging, maturity model, AI routing, invocation logging, confidence flagging, circuit breaker, model versioning, review table, reporting, dashboard
 
 **Test Count Reconciliation**:
-- Wave 0: 25 tests GREEN (MAT-T-0001–0003, 0043–0053, 0079–0082, 0083–0096)
-- Wave 1: 12 tests GREEN (MAT-T-0004–0014, 0054)
-- Wave 2: 20 tests GREEN (MAT-T-0015–0025, 0047, 0048, 0056–0058, 0064, 0076, 0078) — per PR #164
-- Wave 3: 16 tests GREEN (MAT-T-0026–0039, 0077, 0078) — per PR #168
-- Overlap: MAT-T-0047, 0048 (Wave 0 scope, Wave 2 PR), MAT-T-0078 (Wave 2 PR, Wave 3 scope)
-- **Unique GREEN tests: 76** (verified via `npx vitest run`)
+- Wave 0: 31 tests GREEN (Task 0.1: MAT-T-0043–0044, 0049–0053, 0079–0096; Task 0.3: MAT-T-0001–0003, 0038, 0045–0046)
+- Wave 1: 10 tests GREEN (MAT-T-0004–0012, 0054)
+- Wave 2: 20 tests GREEN (MAT-T-0013–0025, 0047–0048, 0056–0058, 0064, 0078) — per PR #164
+- Wave 3: 15 tests GREEN (MAT-T-0026–0037, 0039, 0076–0077) — per PR #168
+- **Total: 31 + 10 + 20 + 15 = 76 unique GREEN tests** (verified via `npx vitest run`)
 - **RED tests: 22** (expected — Waves 4–5 scope)
 
 **Completion Dates**: Wave 0: 2026-02-14; Wave 1: 2026-02-14; Wave 2: 2026-02-15 (PR #164 merged); Wave 3: 2026-02-15 (PR #168)  
-**Notes**: Test allocation follows the Implementation Plan wave gate scope. Some tests appear in multiple wave deliveries due to cross-cutting concerns (e.g., security tests turned GREEN in Wave 0 but also validated in Wave 2). The 76 GREEN count is the unique set of passing tests as verified by vitest execution.
+**Notes**: Test attribution follows PR delivery (which PR turned each test from RED to GREEN). Wave 0 Task 0.1 (schema-builder) turned 25 tests GREEN; Wave 0 Task 0.3 (api-builder) added 6 more. Wave 2 PR #164 explicitly documents 20 new tests (41→61 total). Wave 3 PR #168 added 15 new tests (61→76 total). MAT-T-0038 (Report Approval) was turned GREEN in Wave 0 Task 0.3 despite being in Wave 3 scope (MAT-T-0026–0039), so it is not counted in Wave 3's 15.
 
 > **⚠️ PROCESS DEVIATION — BUILD_PROGRESS_TRACKER NOT UPDATED DURING WAVE COMPLETION**
 >
@@ -386,10 +366,10 @@ Track the progression through the canonical module lifecycle stages.
 > 5. Test count math must be verified: sum of wave tests must equal total GREEN count
 >
 > **Retroactive Wave Documentation**:
-> - **Wave 0 (PR #140)**: Database schema, RLS policies, migrations, wiring invariants — 25 tests GREEN
-> - **Wave 1 (PRs #142, #143)**: Criteria Management — 12 tests GREEN (MAT-T-0004–0014, 0054)
+> - **Wave 0 (PRs #140, #142)**: Task 0.1 (schema-builder): 25 tests GREEN; Task 0.3 (api-builder): 6 tests GREEN — Total 31 tests GREEN
+> - **Wave 1 (PRs #142, #143)**: Criteria Management — 10 tests GREEN (MAT-T-0004–0012, 0054)
 > - **Wave 2 (PR #164)**: Evidence Collection, Offline Sync, AI Scoring — 20 tests GREEN
-> - **Wave 3 (PR #168)**: AI Scoring Engine, Human Confirmation — 16 tests GREEN
+> - **Wave 3 (PR #168)**: AI Scoring Engine, Human Confirmation — 15 tests GREEN
 > - **Evidence**: IBWR reports filed in `.agent-workspace/` builder directories
 >
 > **RCA Reference**: `modules/mat/05-build-evidence/RCA_WAVE_3_TRACKER_UPDATE_FAILURE.md`
@@ -412,10 +392,10 @@ Track the progression through the canonical module lifecycle stages.
 6. ~~Create Builder Agent File Compliance Checklist (version 1.1.0)~~
 7. ~~Appoint builders (5 builder categories)~~
 8. ~~Create builder agent files via Codex Advisor (schema, ui, integration, qa-builder)~~
-9. ~~Complete Wave 0: Foundational Infrastructure (25 tests GREEN)~~
-10. ~~Complete Wave 1: Criteria Management (12 tests GREEN)~~
+9. ~~Complete Wave 0: Foundational Infrastructure (31 tests GREEN)~~
+10. ~~Complete Wave 1: Criteria Management (10 tests GREEN)~~
 11. ~~Complete Wave 2: Evidence Collection & Offline Sync (20 tests GREEN, PR #164)~~
-12. ~~Complete Wave 3: AI Scoring & Human Confirmation (16 tests GREEN, PR #168)~~
+12. ~~Complete Wave 3: AI Scoring & Human Confirmation (15 tests GREEN, PR #168)~~
 13. Proceed to Wave 4: Dashboards & Reporting
 14. Proceed to Wave 5: Watchdog & Continuous Improvement
 
