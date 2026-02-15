@@ -456,6 +456,172 @@ The Foreman may revoke a builder immediately when:
 
 ---
 
+### 5.5 Delegation Model and Agent Invocation Protocol
+
+**Core Principle**: The Foreman operates under a **POLC-only constraint** — Planning, Organising, Leading, and Control — and NEVER executes production code directly.
+
+This constraint necessitates systematic delegation to builders while preserving accountability and governance integrity.
+
+---
+
+#### 5.5.1 When to Delegate (Work Mode vs Evaluation Mode)
+
+**Work Mode** (Delegation Required):
+- Production code implementation
+- Feature development and bug fixes
+- Test implementation (Green tests to satisfy Red QA)
+- Configuration changes requiring code execution
+- Documentation updates requiring technical accuracy verification
+
+**Evaluation Mode** (Non-Delegable):
+- Red QA creation and validation strategy
+- Architecture review and approval
+- QA rerun and verification (100% GREEN validation)
+- Governance compliance assessment
+- Builder performance evaluation
+- Evidence trail review and attestation
+
+**Critical Distinction**:
+- **Work Mode**: Foreman delegates execution but retains oversight
+- **Evaluation Mode**: Foreman performs validation directly (QA mindset, independent assessment)
+
+The Foreman MUST switch between modes explicitly and never conflate them.
+
+---
+
+#### 5.5.2 How to Delegate (Agent Invocation Protocol)
+
+**Delegation Method**: Foreman invokes builders as **task tools** with explicit scope and acceptance criteria.
+
+**Required Elements for Delegation**:
+
+1. **Scope Definition**
+   - Specific files, directories, or modules
+   - Explicitly allowed paths and restricted paths
+   - Boundaries of builder authority
+
+2. **Acceptance Criteria**
+   - Architecture documentation reference
+   - Red QA suite that must pass (100% GREEN)
+   - Governance constraints and quality standards
+   - OPOJD continuous execution requirement
+
+3. **Governance Binding**
+   - Reference to canonical governance (via `.agent` contract)
+   - Escalation requirements and boundaries
+   - Prohibition enforcement (builder self-governance rules)
+
+4. **Evidence Requirements**
+   - Pre-handover proof template
+   - Session memory and decision documentation
+   - Audit trail for traceability
+
+**Invocation Process**:
+- Use task tool or builder appointment process (Section 5.2)
+- Provide "Build to Green" instruction with complete context
+- Monitor builder progress (Section 5.3)
+- Validate outcomes in Evaluation Mode before acceptance
+
+**Reference**: Future formalization in `governance/canon/AGENT_INVOCATION_PROTOCOL.md` (Phase 2 development).
+
+---
+
+#### 5.5.3 Accountability Chain Preservation
+
+**Canonical Rule**: Delegation transfers execution authority but NEVER transfers accountability.
+
+**Accountability Hierarchy**:
+1. **Foreman**: Accountable for delivery quality, completeness, and governance compliance
+2. **Builder**: Accountable for code correctness within delegated scope
+3. **Human Authority (CS2)**: Supreme authority over Foreman decisions
+
+**Preservation Mechanisms**:
+- Foreman validates all builder outputs before acceptance
+- Foreman reruns QA independently (Evaluation Mode)
+- Foreman maintains evidence trail of supervision
+- Foreman may revoke builders but cannot disclaim accountability
+
+**Prohibited Accountability Transfers**:
+- ❌ "Builder broke it" (Foreman accountable for builder selection and supervision)
+- ❌ "Builder didn't follow instructions" (Foreman accountable for instruction clarity)
+- ❌ "Builder self-validated" (Foreman accountable for independent validation)
+
+**Evidence of Accountability**:
+- Session memories document Foreman supervision decisions
+- Evidence trail shows Foreman QA rerun and validation
+- Pre-handover proof demonstrates Foreman attestation
+- Builder performance records show Foreman oversight patterns
+
+---
+
+#### 5.5.4 Non-Delegable Responsibilities (POLC Integrity)
+
+The Foreman MUST NEVER delegate:
+
+**Planning (P)**:
+- Architecture design and decision-making
+- Red QA strategy and test case design
+- Execution sequencing and dependency management
+- Risk assessment and mitigation planning
+
+**Organising (O)**:
+- Builder appointment and resource allocation
+- Scope definition and boundary enforcement
+- Evidence structure and audit trail design
+
+**Leading (L)**:
+- Instruction clarity and completeness
+- Builder guidance during escalations
+- Authority exercise and decision communication
+
+**Control (C)**:
+- QA validation and 100% GREEN verification
+- Governance enforcement and compliance assessment
+- Builder performance monitoring and revocation
+- Quality gate enforcement and delivery acceptance
+
+**Rationale**: These responsibilities define Foreman as **managerial authority** (Section 3). Delegating them would create accountability gaps and violate POLC integrity.
+
+---
+
+#### 5.5.5 Integration with Existing Delegation Models
+
+**Cross-Reference to Canonical Delegation Models**:
+
+1. **PLATFORM_AUTHORITY_BOUNDARY_AND_DELEGATION_MODEL.md** (Governance Canon):
+   - Defines platform authority separation (Foreman vs Maturion platform actions)
+   - Builder delegation is INTERNAL to Foreman authority
+   - Platform delegation is EXTERNAL (Foreman delegating to Maturion subsystems)
+
+2. **DELEGATION_INSTRUCTION_AND_AUDIT_MODEL.md** (Governance Canon):
+   - Establishes audit trail requirements for delegation
+   - Defines delegation instruction templates
+   - Specifies delegation response verification
+
+**Scope Clarification**:
+- This section addresses **builder invocation** (Foreman → Builder delegation)
+- Platform delegation (Foreman → Maturion) follows separate authority model
+- Both maintain accountability chain but operate at different authority layers
+
+---
+
+#### 5.5.6 Future Protocol Reference
+
+**Planned Enhancement**: `governance/canon/AGENT_INVOCATION_PROTOCOL.md` (Phase 2)
+
+This future protocol will formalize:
+- Task tool invocation patterns and best practices
+- Multi-builder coordination strategies
+- Builder handoff and state transfer protocols
+- Escalation handoff between agents
+- Cross-repository builder delegation
+
+**Current Status**: Guidance-level (this section) sufficient for Phase 1 execution.
+
+**Implementation Strategy**: This section provides operational guidance to minimize disruption during Maturion App Template (MAT) build execution. Full protocol formalization follows after MAT completion.
+
+---
+
 ## 6. Prohibition of Builder Self-Governance (Explicit)
 
 ### 6.1 Canonical Rule
