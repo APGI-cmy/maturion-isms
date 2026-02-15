@@ -1,11 +1,11 @@
 # MAT — Implementation Plan
 
 **Module**: MAT (Manual Audit Tool)  
-**Version**: v1.1.0  
+**Version**: v1.2.0  
 **Status**: APPROVED  
 **Owner**: Foreman (FM)  
 **Created**: 2026-02-13  
-**Last Updated**: 2026-02-14  
+**Last Updated**: 2026-02-15  
 **Authority**: Derived from Architecture (modules/mat/02-architecture/), FRS (modules/mat/01-frs/functional-requirements.md), TRS (modules/mat/01.5-trs/technical-requirements-specification.md), Test Registry (governance/TEST_REGISTRY.json)
 
 ---
@@ -31,7 +31,7 @@ App Description → FRS (FR-001–FR-069) → TRS (TR-001–TR-070) → Architec
 
 ## 1. Build Wave Overview
 
-MAT is built in **six waves** (Wave 0–Wave 5). Each wave has a gate that must achieve 100% GREEN before the next wave begins.
+MAT is built in **seven waves** (Wave 0–Wave 6). Each wave has a gate that must achieve 100% GREEN before the next wave begins.
 
 | Wave | Name | Builder(s) | Execution | Tests | Est. Duration |
 |------|------|-----------|-----------|-------|---------------|
@@ -41,8 +41,9 @@ MAT is built in **six waves** (Wave 0–Wave 5). Each wave has a gate that must 
 | 3 | AI Scoring & Human Confirmation | api-builder, ui-builder | Sequential (3.1→3.2) | MAT-T-0026–0039 | 5 days |
 | 4 | Dashboards & Reporting | ui-builder, api-builder | Concurrent (4.1∥4.2) | MAT-T-0069–0081 | 5 days |
 | 5 | Watchdog & Continuous Improvement | api-builder, integration-builder | Sequential (5.1→5.2) | MAT-T-0059–0062, MAT-T-0063–0066 | 4 days |
+| 6 | Deployment & Commissioning | api-builder, qa-builder | Sequential (6.1→6.2→6.3→6.4) | CWT (all 98 tests on production) | 3 days |
 
-**Total Estimated Duration**: ~30 working days (6 weeks)
+**Total Estimated Duration**: ~33 working days (7 weeks)
 
 ---
 
@@ -475,6 +476,118 @@ MAT is built in **six waves** (Wave 0–Wave 5). Each wave has a gate that must 
 
 ---
 
+### 2.7 Wave 6 — Deployment & Commissioning
+
+**Objective**: Deploy MAT to production (Vercel), provision all environment variables, validate deployment health, execute Combined Wave Test (CWT) on the production build, and perform formal closure with governance sign-off.
+
+**Execution**: Sequential — each sub-task depends on the prior.
+
+**Rationale**: Governance requires an explicit deployment and commissioning wave. No build is closed or signable without evidence of full deployment, 100% test pass, and certified sign-over. This wave reflects PartPulse propagation learnings and ensures a documented, repeatable deployment process.
+
+#### Task 6.1: Vercel Project Provisioning & Configuration
+
+| Field | Value |
+|-------|-------|
+| **Builder** | api-builder |
+| **Execution** | Sequential (must complete before 6.2) |
+| **Dependencies** | Wave 5 complete (all 98 tests GREEN locally) |
+| **Architecture Refs** | `deployment-architecture.md` §3.1, §3.4 |
+
+**Scope**:
+- Provision Vercel project for MAT frontend
+- Configure `vercel.json` (rewrites, headers, environment variables)
+- Configure `.vercelignore` to exclude non-deployment files
+- Set all environment variables on Vercel using `.env.example` as source-of-truth
+- Verify CI/CD pipeline integration (GitHub Actions → Vercel)
+
+**Acceptance Criteria**:
+1. Vercel project created and linked to repository
+2. `vercel.json` configuration matches `deployment-architecture.md` §3.1
+3. All environment variables from `.env.example` provisioned on Vercel
+4. CI/CD pipeline triggers Vercel deployment on merge to main
+
+#### Task 6.2: Staging Deployment & Health Validation
+
+| Field | Value |
+|-------|-------|
+| **Builder** | api-builder |
+| **Execution** | Sequential (depends on 6.1, must complete before 6.3) |
+| **Dependencies** | Task 6.1 complete (Vercel provisioned) |
+| **Architecture Refs** | `deployment-architecture.md` §3.1–§3.5, `system-architecture.md` §3.2 |
+
+**Scope**:
+- Deploy to Vercel staging/preview environment
+- Validate application startup and health (`GET /health` returns 200)
+- Verify all environment variables accessible at runtime
+- Verify database migrations applied and data flows functional
+- Verify Supabase connection (Auth, Storage, Realtime, Edge Functions)
+- Verify AI Gateway connectivity and circuit breaker status
+- Smoke test critical user flows (audit creation, criteria upload, evidence capture)
+
+**Acceptance Criteria**:
+1. Staging deployment accessible at preview URL
+2. Health check endpoint returns 200 with all service dependencies healthy
+3. All environment variables present and correctly configured
+4. Database migrations verified (schema matches `data-architecture.md`)
+5. Critical user flows pass smoke testing on staging
+
+#### Task 6.3: Production Deployment
+
+| Field | Value |
+|-------|-------|
+| **Builder** | api-builder |
+| **Execution** | Sequential (depends on 6.2, must complete before 6.4) |
+| **Dependencies** | Task 6.2 complete (staging validated) |
+| **Architecture Refs** | `deployment-architecture.md` §3.1 |
+
+**Scope**:
+- Formal production deployment to Vercel production environment
+- Verify production URL is accessible and fully functional
+- Verify all environment variables present in production
+- Verify database migrations and data flows in production
+- Confirm no test-only artifacts or seed data present in production
+- Archive CI/CD configuration and governance artifacts
+
+**Acceptance Criteria**:
+1. Application running at production Vercel URL and fully functional
+2. All environment variables present and accessible in production
+3. Database migrations verified and all data flows validated in production
+4. No test-only artifacts or seed data present in production
+5. CI/CD configuration and governance artifacts archived
+
+#### Task 6.4: CWT on Production & Formal Sign-Over
+
+| Field | Value |
+|-------|-------|
+| **Builder** | qa-builder |
+| **Execution** | Sequential (depends on 6.3) |
+| **Dependencies** | Task 6.3 complete (production deployment) |
+| **Architecture Refs** | `test-strategy.md`, `governance/canon/COMBINED_TESTING_PATTERN.md` |
+| **Test Registry** | CWT: All MAT-T-0001–MAT-T-0098 on production |
+
+**Scope**:
+- Execute Combined Wave Test (CWT) on the deployed production build
+- Validate all 98 tests GREEN against production environment
+- End-to-end use case validation with real data (no test-only artifacts)
+- Security validation on production (RLS, auth, MFA, CORS)
+- Performance validation on production (response times, load handling)
+- Formal sign-over: governance agent or product owner verifies all acceptance criteria
+- Document closure evidence and certification statement
+
+**Acceptance Criteria**:
+1. CWT executed on production — all 98 tests GREEN (zero failures, zero skipped)
+2. End-to-end use case validated with real data on production
+3. Security validated on production (RLS cross-org isolation, auth flows, MFA)
+4. Performance validated on production (meets targets per `performance-architecture.md`)
+5. Formal sign-over completed by governance agent or product owner
+6. Closure evidence and certification statement documented in tracker
+
+**Escalation Rule**: If deployment or CWT in production discovers any failure, escalate per governance policies. Wave 6 closure is blocked until all failures are resolved and CWT re-executed to 100% GREEN.
+
+**Wave 6 Gate**: CWT 100% GREEN on production (all 98 tests). Formal sign-over completed. Closure evidence documented. PREHANDOVER proof compiled.
+
+---
+
 ## 3. Cross-Wave Tasks (Continuous)
 
 These tasks run across all waves and are the responsibility of the qa-builder.
@@ -532,7 +645,8 @@ CWT is mandatory before IBWR completion at every wave boundary. CWT cannot be sk
 | Wave 2 → 3 | Waves 0–2: Evidence capture → storage → offline sync → UI display | Evidence lifecycle with offline/online transitions |
 | Wave 3 → 4 | Waves 0–3: Evidence → AI scoring → human confirmation → stored results | Scoring lifecycle from evidence through AI + human decision |
 | Wave 4 → 5 | Waves 0–4: All data flows rendered in dashboards + reports | Dashboard and report accuracy against stored audit data |
-| Wave 5 (Final) | Waves 0–5: Complete system integration | Full audit lifecycle, watchdog monitoring, integration exports |
+| Wave 5 → 6 | Waves 0–5: Complete system integration (pre-deployment) | Full audit lifecycle, watchdog monitoring, integration exports |
+| Wave 6 (Final) | Waves 0–6: CWT on production build | All 98 tests GREEN on production, E2E with real data, security + performance validated, formal sign-over |
 
 **CWT Evidence Requirements** (per `COMBINED_TESTING_PATTERN.md` §5.4):
 - CWT scope defined (waves covered, modules covered, scenarios covered)
@@ -581,6 +695,8 @@ Wave 4:                        [4.1 Dashboards] ┐
                                [4.2 Reporting]  ┘
                                                 │
 Wave 5:                        [5.1 Watchdog]  ──→ [5.2 Integration]
+                                                │
+Wave 6:  [6.1 Vercel Provision] ──→ [6.2 Staging Validate] ──→ [6.3 Prod Deploy] ──→ [6.4 CWT + Sign-Over]
 ```
 
 **Legend**:
@@ -594,10 +710,10 @@ Wave 5:                        [5.1 Watchdog]  ──→ [5.2 Integration]
 | Builder | Waves | Primary Responsibility |
 |---------|-------|----------------------|
 | **schema-builder** | 0 | Database schema, migrations, RLS policies, seed data |
-| **api-builder** | 0, 1, 2, 3, 4, 5 | Edge Functions, AI Gateway, business logic, offline sync engine |
+| **api-builder** | 0, 1, 2, 3, 4, 5, 6 (Tasks 6.1–6.3) | Edge Functions, AI Gateway, business logic, offline sync engine, deployment provisioning |
 | **ui-builder** | 1, 2, 3, 4 | React components, responsive design, accessibility, PWA shell |
 | **integration-builder** | 5 | PIT/Maturity Roadmap exports, API contract validation |
-| **qa-builder** | All | Performance testing, security scanning, compliance validation, regression |
+| **qa-builder** | All, 6 (Task 6.4) | Performance testing, security scanning, compliance validation, regression, production CWT + sign-over |
 
 ### Multi-Builder Coordination Points
 
@@ -608,6 +724,8 @@ Wave 5:                        [5.1 Watchdog]  ──→ [5.2 Integration]
 3. **Wave 4 (Tasks 4.1 + 4.2)**: ui-builder (dashboards) and api-builder (reporting) work fully concurrently with no shared dependency.
 
 4. **Wave 5 (Task 5.2)**: integration-builder takes over from api-builder. Handover includes API documentation, test fixtures, and deployment configuration.
+
+5. **Wave 6 (Tasks 6.1–6.3 + 6.4)**: api-builder handles deployment provisioning and production deployment (Tasks 6.1–6.3). qa-builder executes CWT on production and facilitates formal sign-over (Task 6.4). Handover from api-builder to qa-builder occurs after production deployment is confirmed healthy.
 
 ---
 
@@ -634,6 +752,7 @@ Wave 5:                        [5.1 Watchdog]  ──→ [5.2 Integration]
 | schema-builder | api-builder | After Task 0.1 | Schema DDL, RLS policies, seed data, migration scripts |
 | api-builder + ui-builder | api-builder | After Tasks 1.1+1.3 | API contract, UI component list, shared test fixtures |
 | api-builder | integration-builder | After Task 5.1 | API documentation, health check endpoints, deployment config |
+| api-builder | qa-builder | After Task 6.3 | Production URL, deployment evidence, environment configuration |
 
 **Handover Checklist** (for each handover):
 1. All tests GREEN for outgoing builder's scope
@@ -662,6 +781,7 @@ Wave 5:                        [5.1 Watchdog]  ──→ [5.2 Integration]
 | Schema migration failures | Low | High | Idempotent migrations; up+down scripts tested in CI |
 | Builder unavailability | Low | Medium | Builder contracts define replacement protocol; FM can reassign |
 | Scope creep | Medium | High | Architecture is frozen; any change requires FM + CS2 approval |
+| Deployment failure | Low | Critical | Staging validation before production; rollback via Vercel instant rollback; `.env.example` as env var source-of-truth |
 
 ---
 
@@ -690,6 +810,7 @@ This implementation plan is accepted when:
 6. ✅ All artifacts cross-linked to Architecture, FRS, TRS, and Test Registry
 7. ✅ Risk mitigation strategies defined for all identified risks
 8. ✅ CST/CWT integration testing requirements defined per `governance/canon/COMBINED_TESTING_PATTERN.md`
+9. ✅ Deployment & Commissioning wave (Wave 6) defined with production CWT, formal sign-over, and closure certification
 
 ---
 
@@ -715,6 +836,7 @@ This implementation plan is accepted when:
 | Test Registry | `governance/TEST_REGISTRY.json` |
 | Builder Contracts | `modules/mat/04-builder-appointment/builder-contract.md` |
 | Build Progress Tracker | `modules/mat/BUILD_PROGRESS_TRACKER.md` |
+| Deployment Architecture | `modules/mat/02-architecture/deployment-architecture.md` |
 | CST/CWT Pattern | `governance/canon/COMBINED_TESTING_PATTERN.md` |
 | Builder Contract Schema | [BUILDER_CONTRACT_SCHEMA.md](https://github.com/APGI-cmy/maturion-foreman-office-app/blob/main/.github/agents/BUILDER_CONTRACT_SCHEMA.md) |
 | QA-to-Red RCA | `modules/mat/05-build-evidence/RCA_QA_PROCESS_LAPSE.md` |

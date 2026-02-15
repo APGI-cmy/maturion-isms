@@ -110,12 +110,12 @@ Track the progression through the canonical module lifecycle stages.
 **Status**: [ ] NOT_STARTED | [ ] IN_PROGRESS | [x] COMPLETE  
 **Location**: `modules/mat/03-implementation-plan/`  
 **Key Artifacts**:
-- [x] `implementation-plan.md` - Phased plan with 6 waves, acceptance criteria, evidence plan, concurrent/sequential logic
+- [x] `implementation-plan.md` - Phased plan with 7 waves, acceptance criteria, evidence plan, concurrent/sequential logic
 - [x] Dependencies identified and documented (dependency graph with sequential and parallel paths)
-- [x] Risks and mitigation strategies documented (7 risks with mitigation)
+- [x] Risks and mitigation strategies documented (8 risks with mitigation)
 
 **Completion Date**: 2026-02-13  
-**Notes**: Implementation plan compiled with 6 build waves (Wave 0–5), builder assignments per task, concurrent/sequential execution logic, multi-builder handover protocols, risk mitigation, and full traceability to Architecture, FRS, TRS, and Test Registry. Cross-referenced with builder contracts. Updated to v1.1.0 (2026-02-14) to include CST/CWT integration testing requirements per `governance/canon/COMBINED_TESTING_PATTERN.md`.
+**Notes**: Implementation plan compiled with 7 build waves (Wave 0–6), builder assignments per task, concurrent/sequential execution logic, multi-builder handover protocols, risk mitigation, and full traceability to Architecture, FRS, TRS, and Test Registry. Cross-referenced with builder contracts. Updated to v1.1.0 (2026-02-14) to include CST/CWT integration testing requirements per `governance/canon/COMBINED_TESTING_PATTERN.md`. Updated to v1.2.0 (2026-02-15) to include Wave 6: Deployment & Commissioning with production CWT, formal sign-over, and closure certification.
 
 > **⚠️ PROCESS DEVIATION — CST/CWT INTEGRATION TESTING OMITTED FROM INITIAL PLAN**
 >
@@ -236,6 +236,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] Wave 3: AI Scoring & Human Confirmation — 15 tests GREEN (api-builder, ui-builder) — PR [#168](https://github.com/APGI-cmy/maturion-isms/pull/168)
 - [ ] Wave 4: Dashboards & Reporting
 - [ ] Wave 5: Watchdog & Continuous Improvement
+- [ ] Wave 6: Deployment & Commissioning (Vercel provisioning, staging validation, production deployment, CWT on production, formal sign-over)
 
 **Wave 0 Test Coverage (31 tests GREEN)** — PRs #140, #142:
 - [x] Task 0.1 (schema-builder, 25 tests): MAT-T-0043, MAT-T-0044, MAT-T-0049–0053, MAT-T-0079–0094, MAT-T-0095, MAT-T-0096
@@ -388,7 +389,32 @@ Track the progression through the canonical module lifecycle stages.
 >
 > **Preventive Action**: IBWR template updated to require CST/CWT execution checklist items. Foreman contract updated to mandate CWT before IBWR completion. Merge gate automation enhancement proposed (BL-030).
 >
-> **Governance Reference**: `governance/canon/COMBINED_TESTING_PATTERN.md` v1.0.0, Implementation Plan v1.1.0 Section 4, RCA `RCA_CST_CWT_OMISSION_WAVES_2_3.md`
+> **Governance References**: `governance/canon/COMBINED_TESTING_PATTERN.md` v1.0.0, Implementation Plan v1.1.0 Section 4, RCA `RCA_CST_CWT_OMISSION_WAVES_2_3.md`
+
+> **⚠️ CRITICAL GAP — DEPLOYMENT & COMMISSIONING WAVE OMITTED FROM INITIAL PLAN**
+>
+> **Gap**: The initial implementation plan (v1.0.0 and v1.1.0) covered Waves 0–5 (build waves) but omitted an explicit **Deployment & Commissioning Wave (Wave 6)**. Without this wave, there was:
+> - No documented, repeatable Vercel deployment wave
+> - No formal `.env` provisioning to the platform
+> - No production deployment checklist
+> - No formal closure with end-to-end (CWT) validation in production
+> - No governance sign-over with 100% test pass confirmation
+>
+> **Root Cause**: The implementation plan derivation chain focused exclusively on build-time artifacts (Architecture → QA-to-Red → Build-to-Green) without extending to deployment-time validation and formal commissioning. The deployment architecture document (`modules/mat/02-architecture/deployment-architecture.md`) defined the deployment targets and configuration but was not translated into an actionable implementation wave. Additionally, the PartPulse propagation learnings regarding deployment wave necessity were not incorporated into the MAT plan.
+>
+> **Impact**: Without Wave 6, the build could complete all tests GREEN locally but never validate against the actual production environment. Production-specific failures (environment variables, deployment configuration, database migrations, cross-service connectivity) would go undetected until post-handover. Formal closure and governance sign-over lacked a defined process, creating governance compliance gaps.
+>
+> **Corrective Action**: Implementation plan updated to v1.2.0 with Wave 6: Deployment & Commissioning. Wave 6 includes four sequential tasks: (1) Vercel project provisioning and configuration, (2) staging deployment and health validation, (3) formal production deployment, (4) CWT on production and formal sign-over. The CWT requirements table now includes Wave 6 final CWT on production. Builder assignments, dependency graph, handover protocol, and risk mitigation updated to include Wave 6.
+>
+> **Preventive Action**: All future implementation plans MUST include a Deployment & Commissioning wave as the final wave. The canonical workflow is:
+>
+> ```
+> App Description → FRS → TRS → Architecture → QA-to-Red → Implementation Plan (incl. Deployment Wave) → Builder Appointment → Build Execution → Deployment & Commissioning → Closure
+> ```
+>
+> No build is closed or signable without evidence of full deployment, 100% test pass on production, and certified sign-over.
+>
+> **Governance References**: Issue "Add Wave 6: Deployment & Closure, CWT on Prod, and 100% Test Sign-Off", `modules/mat/02-architecture/deployment-architecture.md`, Implementation Plan v1.2.0 Section 2.7
 
 ---
 
@@ -539,13 +565,13 @@ Track the progression through the canonical module lifecycle stages.
 
 **Current Stage**: Stage 5 (Build Execution — IN PROGRESS)  
 **Overall Progress**: ~78% complete (76/98 tests GREEN)  
-**Blockers**: None — Waves 0–3 complete, remaining Wave 4–5 tasks pending  
+**Blockers**: None — Waves 0–3 complete, remaining Wave 4–6 tasks pending  
 **Next Steps**: 
 1. ~~Create `01.5-trs/` folder in module structure~~
 2. ~~Develop TRS based on FRS requirements (FR-001 to FR-069)~~
 3. ~~Complete Architecture with TRS constraints~~
 4. ~~Compile QA-to-Red test suite (98 tests, all RED)~~
-5. ~~Create Implementation Plan (6 build waves)~~
+5. ~~Create Implementation Plan (7 build waves, Waves 0–6)~~
 6. ~~Create Builder Agent File Compliance Checklist (version 1.1.0)~~
 7. ~~Appoint builders (5 builder categories)~~
 8. ~~Create builder agent files via Codex Advisor (schema, ui, integration, qa-builder)~~
@@ -555,6 +581,7 @@ Track the progression through the canonical module lifecycle stages.
 12. ~~Complete Wave 3: AI Scoring & Human Confirmation (15 tests GREEN, PR #168)~~
 13. Proceed to Wave 4: Dashboards & Reporting
 14. Proceed to Wave 5: Watchdog & Continuous Improvement
+15. Proceed to Wave 6: Deployment & Commissioning (Vercel deploy, staging validate, production deploy, CWT on production, formal sign-over)
 
 ---
 
@@ -567,6 +594,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] POLC authority boundary enforced — builder agent files created by Codex Advisor only (see deviation record in Stage 4)
 - [x] Session Memory Protocol compliance enforced — all builder files now include mandatory LAS v6.2.0 session memory section (see deviation record in Stage 4)
 - [x] Traceability maintained (App Description → FRS → TRS → Architecture → QA-to-Red → Implementation Plan → Builder Appointment)
+- [x] Deployment & Commissioning wave (Wave 6) included in Implementation Plan with production CWT, formal sign-over, and closure certification (previously omitted — see critical gap record in Stage 3)
 - [ ] All required approvals obtained
 - [ ] Evidence artifacts created for each stage
 - [ ] Module manifest up to date
@@ -585,8 +613,10 @@ Track the progression through the canonical module lifecycle stages.
 
 **Session Memory Protocol Omission Fix**: All 5 builder agent files were updated on 2026-02-14 to include the mandatory Session Memory Protocol section required by LIVING_AGENT_SYSTEM.md v6.2.0. The omission was identified during PR [#130](https://github.com/APGI-cmy/maturion-isms/pull/130) review. Root cause: builder compliance checklist did not enumerate Session Memory Protocol as a required section. See Stage 4 Session Memory Protocol deviation record for full RCA.
 
+**Deployment & Commissioning Wave Addition**: Wave 6 (Deployment & Commissioning) added to Implementation Plan on 2026-02-15 (v1.2.0). The initial plan (Waves 0–5) omitted an explicit deployment wave, creating a governance gap: no documented deployment pipeline, no production CWT, and no formal closure/sign-over process. This reflects PartPulse propagation learnings — no build is closed or signable without evidence of full deployment, 100% test pass on production, and certified sign-over. See Stage 3 critical gap record for full details.
+
 ---
 
-**Template Version**: 1.5.0 (includes TRS stage, QA-to-Red stage, Builder Checklist Creation stage, POLC authority deviation record, Session Memory Protocol deviation record, Wave 2 retroactive documentation, Wave 3 tracker update failure RCA)  
+**Template Version**: 1.6.0 (includes TRS stage, QA-to-Red stage, Builder Checklist Creation stage, POLC authority deviation record, Session Memory Protocol deviation record, Wave 2 retroactive documentation, Wave 3 tracker update failure RCA, Wave 6 Deployment & Commissioning addition)  
 **Template Authority**: MODULE_LIFECYCLE_AND_REPO_STRUCTURE_STRATEGY.md  
 **Last Template Update**: 2026-02-15
