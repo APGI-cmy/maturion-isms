@@ -200,7 +200,14 @@ export function getBreadcrumb(
     return null;
   }
 
+  // Breadcrumb generation with defensive fallback
+  // Returns root-only path if node not found in tree (e.g., stale ID from browser cache)
+  // This prevents UI crash but should log a warning in production
   const found = findPath(tree, nodeId, path);
+  if (!found) {
+    const safeNodeId = String(nodeId).slice(0, 100);
+    console.warn(`[Criteria Tree] Node ${safeNodeId} not found in tree. Displaying fallback breadcrumb.`);
+  }
   return found || path;
 }
 
