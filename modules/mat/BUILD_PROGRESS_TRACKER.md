@@ -2,7 +2,7 @@
 
 **Module**: Mat  
 **Module Slug**: mat  
-**Last Updated**: 2026-02-14  
+**Last Updated**: 2026-02-15  
 **Updated By**: foreman-isms
 
 ---
@@ -249,6 +249,31 @@ Track the progression through the canonical module lifecycle stages.
 
 **Completion Date**: Wave 0 Task 0.1: 2026-02-14; Wave 1 Task 1.3: 2026-02-14  
 **Notes**: Wave 0 Task 0.1 turned 25 tests GREEN (wiring invariants + security/RLS). Wave 1 Task 1.3 turned 2 tests GREEN (MAT-T-0010 Hierarchical Navigation, MAT-T-0011 Criteria Modal). Total: 41 tests GREEN, 57 tests RED (expected). Note: Implementation plan references MAT-T-0069–0073 for Task 1.3, but per Test Registry consultation these IDs belong to CAT-08 (Performance) and CAT-12 (Data Privacy). The correct UI tests are MAT-T-0010 and MAT-T-0011 from CAT-10 (UI Accessibility), which map directly to FRS FR-010 and FR-011.
+
+> **⚠️ PROCESS DEVIATION — BUILD_PROGRESS_TRACKER NOT UPDATED DURING WAVE COMPLETION**
+>
+> **Deviation**: Wave completion PRs [#140](https://github.com/APGI-cmy/maturion-isms/pull/140), [#142](https://github.com/APGI-cmy/maturion-isms/pull/142), and [#143](https://github.com/APGI-cmy/maturion-isms/pull/143) were merged without updating BUILD_PROGRESS_TRACKER.md as required by governance policy. The Implementation Plan and wave acceptance criteria specify tracker update as mandatory, but this requirement was not enforced during IBWR (In-Between Wave Reconciliation).
+>
+> **Root Cause**: (1) Tracker update requirement documented in Implementation Plan but not enforced by builder checklists or merge gate validation, (2) IBWR evidence files did not include tracker update as mandatory step, (3) No automated validation script to detect tracker modification requirement in wave completion PRs.
+>
+> **Impact**: Tracker became stale after Wave 0 (PR #140) and Wave 1 Task 1.3 (PR #143) completion, reducing audit trail quality and governance compliance visibility. Historical wave completion evidence is recorded in IBWR files but not reflected in canonical BUILD_PROGRESS_TRACKER.
+>
+> **Corrective Action**: (1) This deviation record retroactively documents Wave 0 and Wave 1 Task 1.3 completion per PRs #140, #142, #143, (2) IBWR template updated to require tracker update evidence, (3) Merge gate validation script added to check tracker modification in wave completion PRs, (4) Builder agent file compliance checklist updated (via Codex Advisor) to include tracker update as mandatory wave completion deliverable.
+>
+> **Preventive Action**: All future wave completion PRs MUST include BUILD_PROGRESS_TRACKER.md modification with: (a) Wave/task completion dates, (b) Deliverables and tests turned GREEN, (c) Evidence artifact references, (d) Any process deviations or lessons learned. The IBWR process now includes tracker update validation as mandatory gate before PR handover.
+>
+> **Lessons Learned**:
+> 1. Documentation of requirements insufficient without enforcement mechanism (builder checklist + merge gate)
+> 2. IBWR process must explicitly require tracker update with evidence capture
+> 3. Governance policy compliance requires both human awareness and automated validation
+> 4. Builder checklists are enforcement point — requirements in Implementation Plan alone are insufficient
+>
+> **Retroactive Wave Documentation**:
+> - **Wave 0 (PR #140)**: Database schema, RLS policies, migrations, wiring invariants — 25 tests GREEN (MAT-T-0001 to MAT-T-0025)
+> - **Wave 1 Task 1.3 (PR #143)**: Criteria Management UI components — 2 tests GREEN (MAT-T-0010, MAT-T-0011)
+> - **Evidence**: IBWR reports filed in `.agent-workspace/ui-builder/evidence/` and `.agent-workspace/schema-builder/evidence/`
+>
+> **Governance References**: Issue [current], Implementation Plan Section 3 (Acceptance Criteria), LIVING_AGENT_SYSTEM.md v6.2.0 (Evidence Requirements), BUILD_PHILOSOPHY.md (Audit Trail Discipline)
 
 ---
 
