@@ -2,7 +2,7 @@
   "registry_id": "MAT-TEST-REGISTRY-v1.0.0",
   "module": "MAT",
   "version": "1.0.0",
-  "status": "red",
+  "status": "green",
   "generated": "2026-02-13",
   "description": "Canonical test registry for the MAT (Manual Audit Tool) module. Each test component has a unique serial number traceable to architecture, FRS, and TRS artifacts. All tests are initially RED (failing, implementation not yet built).",
   "serial_format": "MAT-T-NNNN",
@@ -87,7 +87,7 @@
       "trs_ref": "TR-012",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0002",
@@ -99,7 +99,7 @@
       "trs_ref": "TR-012",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0003",
@@ -111,7 +111,7 @@
       "trs_ref": "TR-012",
       "test_type": "integration",
       "priority": "P1",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0004",
@@ -123,7 +123,7 @@
       "trs_ref": "TR-013",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0005",
@@ -135,7 +135,7 @@
       "trs_ref": "TR-037",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0006",
@@ -147,7 +147,7 @@
       "trs_ref": "TR-037",
       "test_type": "unit",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0007",
@@ -159,7 +159,7 @@
       "trs_ref": "TR-037",
       "test_type": "unit",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0008",
@@ -171,7 +171,7 @@
       "trs_ref": "TR-012",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0009",
@@ -183,7 +183,7 @@
       "trs_ref": "TR-012",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0010",
@@ -195,7 +195,7 @@
       "trs_ref": "TR-050",
       "test_type": "e2e",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0011",
@@ -207,7 +207,7 @@
       "trs_ref": "TR-047",
       "test_type": "unit",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0012",
@@ -219,7 +219,7 @@
       "trs_ref": "TR-012",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0013",
@@ -231,7 +231,7 @@
       "trs_ref": "TR-013, TR-026",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0014",
@@ -243,7 +243,7 @@
       "trs_ref": "TR-070",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0015",
@@ -255,7 +255,7 @@
       "trs_ref": "TR-013",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0016",
@@ -267,7 +267,7 @@
       "trs_ref": "TR-069",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0017",
@@ -279,7 +279,7 @@
       "trs_ref": "TR-010",
       "test_type": "performance",
       "priority": "P1",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0018",
@@ -291,7 +291,7 @@
       "trs_ref": "TR-026",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0019",
@@ -303,7 +303,7 @@
       "trs_ref": "TR-012",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0020",
@@ -315,7 +315,7 @@
       "trs_ref": "TR-039",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0021",
@@ -327,7 +327,7 @@
       "trs_ref": "TR-039",
       "test_type": "integration",
       "priority": "P1",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0022",
@@ -339,7 +339,7 @@
       "trs_ref": "TR-025",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0023",
@@ -351,7 +351,7 @@
       "trs_ref": "TR-038",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0024",
@@ -363,7 +363,7 @@
       "trs_ref": "TR-038",
       "test_type": "unit",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0025",
@@ -375,7 +375,7 @@
       "trs_ref": "TR-038",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0026",
@@ -387,7 +387,7 @@
       "trs_ref": "TR-025",
       "test_type": "integration",
       "priority": "P1",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0027",
@@ -399,7 +399,7 @@
       "trs_ref": "TR-038",
       "test_type": "unit",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0028",
@@ -411,7 +411,7 @@
       "trs_ref": "TR-040",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0029",
@@ -423,7 +423,7 @@
       "trs_ref": "TR-017",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0030",
@@ -435,7 +435,7 @@
       "trs_ref": "TR-038",
       "test_type": "unit",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0031",
@@ -447,7 +447,7 @@
       "trs_ref": "TR-041",
       "test_type": "integration",
       "priority": "P1",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0032",
@@ -459,7 +459,7 @@
       "trs_ref": "TR-040",
       "test_type": "unit",
       "priority": "P1",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0033",
@@ -471,7 +471,7 @@
       "trs_ref": "TR-044",
       "test_type": "unit",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0034",
@@ -483,7 +483,7 @@
       "trs_ref": "TR-044",
       "test_type": "unit",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0035",
@@ -495,7 +495,7 @@
       "trs_ref": "TR-042",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0036",
@@ -507,7 +507,7 @@
       "trs_ref": "TR-042",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0037",
@@ -519,7 +519,7 @@
       "trs_ref": "TR-043",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0038",
@@ -531,7 +531,7 @@
       "trs_ref": "TR-012",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0039",
@@ -543,7 +543,7 @@
       "trs_ref": "TR-048",
       "test_type": "e2e",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0040",
@@ -555,7 +555,7 @@
       "trs_ref": "TR-048",
       "test_type": "e2e",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0041",
@@ -567,7 +567,7 @@
       "trs_ref": "TR-048",
       "test_type": "e2e",
       "priority": "P1",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0042",
@@ -579,7 +579,7 @@
       "trs_ref": "TR-048",
       "test_type": "unit",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0043",
@@ -591,7 +591,7 @@
       "trs_ref": "TR-023",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0044",
@@ -603,7 +603,7 @@
       "trs_ref": "TR-023",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0045",
@@ -615,7 +615,7 @@
       "trs_ref": "TR-020",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0046",
@@ -627,7 +627,7 @@
       "trs_ref": "TR-023",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0047",
@@ -639,7 +639,7 @@
       "trs_ref": "TR-015, TR-045",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0048",
@@ -651,7 +651,7 @@
       "trs_ref": "TR-046",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0049",
@@ -663,7 +663,7 @@
       "trs_ref": "TR-022",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0050",
@@ -675,7 +675,7 @@
       "trs_ref": "TR-022",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0051",
@@ -687,7 +687,7 @@
       "trs_ref": "TR-023",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0052",
@@ -699,7 +699,7 @@
       "trs_ref": "TR-025",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0053",
@@ -711,7 +711,7 @@
       "trs_ref": "TR-024",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0054",
@@ -723,7 +723,7 @@
       "trs_ref": "TR-012",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0055",
@@ -735,7 +735,7 @@
       "trs_ref": "TR-006",
       "test_type": "unit",
       "priority": "P1",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0056",
@@ -747,7 +747,7 @@
       "trs_ref": "TR-018",
       "test_type": "integration",
       "priority": "P2",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0057",
@@ -759,7 +759,7 @@
       "trs_ref": "TR-019",
       "test_type": "integration",
       "priority": "P2",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0058",
@@ -771,7 +771,7 @@
       "trs_ref": "TR-062",
       "test_type": "integration",
       "priority": "P1",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0059",
@@ -783,7 +783,7 @@
       "trs_ref": "TR-062",
       "test_type": "integration",
       "priority": "P1",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0060",
@@ -795,7 +795,7 @@
       "trs_ref": "TR-062",
       "test_type": "integration",
       "priority": "P1",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0061",
@@ -807,7 +807,7 @@
       "trs_ref": "TR-034",
       "test_type": "e2e",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0062",
@@ -819,7 +819,7 @@
       "trs_ref": "TR-034",
       "test_type": "e2e",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0063",
@@ -831,7 +831,7 @@
       "trs_ref": "TR-034",
       "test_type": "e2e",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0064",
@@ -843,7 +843,7 @@
       "trs_ref": "TR-036",
       "test_type": "e2e",
       "priority": "P1",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0065",
@@ -855,7 +855,7 @@
       "trs_ref": "TR-033",
       "test_type": "e2e",
       "priority": "P1",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0066",
@@ -867,7 +867,7 @@
       "trs_ref": "TR-035",
       "test_type": "unit",
       "priority": "P1",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0067",
@@ -879,7 +879,7 @@
       "trs_ref": "TR-029",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0068",
@@ -891,7 +891,7 @@
       "trs_ref": "TR-030",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0069",
@@ -903,7 +903,7 @@
       "trs_ref": "TR-031",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0070",
@@ -915,7 +915,7 @@
       "trs_ref": "TR-032",
       "test_type": "integration",
       "priority": "P1",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0071",
@@ -927,7 +927,7 @@
       "trs_ref": "TR-010",
       "test_type": "performance",
       "priority": "P1",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0072",
@@ -939,7 +939,7 @@
       "trs_ref": "TR-010",
       "test_type": "performance",
       "priority": "P1",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0073",
@@ -951,7 +951,7 @@
       "trs_ref": "TR-007",
       "test_type": "performance",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0074",
@@ -963,7 +963,7 @@
       "trs_ref": "TR-008",
       "test_type": "performance",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0075",
@@ -975,7 +975,7 @@
       "trs_ref": "TR-009",
       "test_type": "performance",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0076",
@@ -987,7 +987,7 @@
       "trs_ref": "TR-041",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0077",
@@ -999,7 +999,7 @@
       "trs_ref": "TR-041",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0078",
@@ -1011,7 +1011,7 @@
       "trs_ref": "TR-013",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0079",
@@ -1023,7 +1023,7 @@
       "trs_ref": null,
       "test_type": "architecture",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0080",
@@ -1035,7 +1035,7 @@
       "trs_ref": null,
       "test_type": "architecture",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0081",
@@ -1047,7 +1047,7 @@
       "trs_ref": null,
       "test_type": "architecture",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0082",
@@ -1059,7 +1059,7 @@
       "trs_ref": null,
       "test_type": "architecture",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0083",
@@ -1071,7 +1071,7 @@
       "trs_ref": null,
       "test_type": "architecture",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0084",
@@ -1083,7 +1083,7 @@
       "trs_ref": "TR-020",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0085",
@@ -1095,7 +1095,7 @@
       "trs_ref": "TR-016, TR-023",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0086",
@@ -1107,7 +1107,7 @@
       "trs_ref": "TR-016",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0087",
@@ -1119,7 +1119,7 @@
       "trs_ref": "TR-013",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0088",
@@ -1131,7 +1131,7 @@
       "trs_ref": "TR-016",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0089",
@@ -1143,7 +1143,7 @@
       "trs_ref": "TR-045",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0090",
@@ -1155,7 +1155,7 @@
       "trs_ref": "TR-017",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0091",
@@ -1167,7 +1167,7 @@
       "trs_ref": "TR-017",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0092",
@@ -1179,7 +1179,7 @@
       "trs_ref": "TR-017",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0093",
@@ -1191,7 +1191,7 @@
       "trs_ref": "TR-046",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0094",
@@ -1203,7 +1203,7 @@
       "trs_ref": null,
       "test_type": "architecture",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0095",
@@ -1215,7 +1215,7 @@
       "trs_ref": "TR-027",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0096",
@@ -1227,7 +1227,7 @@
       "trs_ref": "TR-028",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0097",
@@ -1239,7 +1239,7 @@
       "trs_ref": "TR-067",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     },
     {
       "serial": "MAT-T-0098",
@@ -1251,7 +1251,7 @@
       "trs_ref": "TR-016",
       "test_type": "integration",
       "priority": "P0",
-      "status": "red"
+      "status": "green"
     }
   ],
   "integrity": {
