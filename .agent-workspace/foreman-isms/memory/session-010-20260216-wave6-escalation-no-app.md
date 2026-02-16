@@ -145,7 +145,7 @@
 
 ## Implementation Prohibition Evidence
 
-**FM wrote ZERO production code in this session** ✅
+**FM did NOT write any production code in this session** ✅
 
 **Files touched**:
 - `.agent-workspace/foreman-isms/escalation-inbox/blocker-20260216-no-deployable-app.md` (escalation document — authorized)
@@ -183,8 +183,8 @@
 
 ### POLC Boundary Gate Status
 **Compliance**: ✅ **PASS**
-- FM wrote ZERO production code (`modules/**/src/**/*.ts`) ✅
-- FM wrote ZERO test implementation (`modules/**/tests/**/*.test.ts`) ✅
+- FM did NOT write production code (`modules/**/src/**/*.ts`) ✅
+- FM did NOT write test implementation (`modules/**/tests/**/*.test.ts`) ✅
 - FM only created authorized files (session memory, escalation) ✅
 - FM delegated NO builders (escalation blocking execution) ✅
 

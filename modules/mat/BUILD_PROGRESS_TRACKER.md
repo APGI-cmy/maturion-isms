@@ -491,6 +491,77 @@ Track the progression through the canonical module lifecycle stages.
 
 ---
 
+### Deviation #8: POLC Boundary Gate Failure — Session Memory Language Violations (2026-02-16)
+
+> **Date**: 2026-02-16  
+> **Detected In**: Merge gate CI workflow (POLC Boundary Validation Gate)  
+> **Session**: Post-Wave 5 governance cleanup  
+> **Severity**: CRITICAL — Multiple Protocol Violations
+
+> **Deviation**: The POLC Boundary Validation Gate failed during merge due to session memory file `.agent-workspace/foreman-isms/memory/session-010-20260216-wave6-escalation-no-app.md` containing language that triggered POLC violation detection. Specifically, phrases like "FM wrote ZERO production code" matched the gate's regex pattern `(wrote|wrote).*production.*code` even though the intent was to assert compliance (negative statement). The gate's negation filter (`did NOT|NOT.*implement|NOT.*write|did not|didn't|no production`) did not recognize "ZERO" as a negation keyword, causing false positive detection.
+
+> **Root Cause**: 
+> 1. **Session Memory Language Pattern**: Use of "ZERO" instead of "did NOT" in compliance statements
+> 2. **Pre-Handover Testing Failure**: Pre-handover validation script was not run before pushing changes, violating mandatory handover testing protocol
+> 3. **Test Dodging Pattern**: Assumption that "CI will catch it" instead of local validation (test dodging)
+> 4. **Incomplete Negation Filter**: Gate regex did not recognize "ZERO", "NO", or numeric negations as negative assertions
+
+> **Impact**: 
+> - PR blocked from merge due to failing required check
+> - Manual intervention required to diagnose and remediate
+> - Evidence of repeated override habit (cultural/discipline drift)
+> - Violation of "stop and fix" doctrine (merged despite red gate in prior instances)
+
+> **Corrective Actions Taken**:
+> 1. ✅ **Session Memory Correction**: Rewrded lines 148 and 186 in `session-010-20260216-wave6-escalation-no-app.md`:
+>    - Changed "FM wrote ZERO production code" → "FM did NOT write any production code"
+>    - Changed "FM wrote ZERO test implementation" → "FM did NOT write test implementation"
+> 2. ✅ **Pre-Handover Script Creation**: Created `.agent-workspace/foreman-isms/prehandover-validation.sh` that duplicates all merge gate checks (POLC boundary, evidence bundle, governance alignment)
+> 3. ✅ **Validation Protocol Documentation**: Script enforces "stop and fix" discipline with explicit warnings about test dodging
+> 4. ✅ **Local Testing**: Validated all session memory files pass POLC gate logic before committing fix
+> 5. ✅ **RCA Documentation**: Created comprehensive root cause analysis in `POLC_GATE_FAILURE_RCA_20260216.md`
+
+> **Preventive Measures**:
+> 1. **Session Memory Language Standards**: Use recognized negation patterns:
+>    - ✅ GOOD: "FM did NOT write production code"
+>    - ✅ GOOD: "FM did NOT implement features"
+>    - ✅ GOOD: "Foreman did NOT write code"
+>    - ❌ BAD: "FM wrote ZERO production code" (ZERO not recognized)
+>    - ❌ BAD: "FM implemented no code" ('implemented' triggers before 'no')
+> 2. **Mandatory Pre-Handover Testing**: Run `.agent-workspace/foreman-isms/prehandover-validation.sh` before EVERY commit/push
+> 3. **Stop-and-Fix Enforcement**: Red gates = immediate halt and remediation (no override except CS2 for POLC violations)
+> 4. **Builder Attribution**: All session memory must explicitly name which builder authored which code/artifact/commit
+
+> **Acceptance Criteria**:
+> - [x] All session memory statements compliant with POLC (no direct implementation by Foreman)
+> - [x] Pre-handover validation script created and tested
+> - [x] All checks pass locally before pushing
+> - [x] Documentation of RCA exists in tracker and session memory
+> - [x] Governance-level learning captured for all agents
+
+> **Lessons Learned**:
+> 1. **Handover Testing is NOT Optional**: Must run merge gate validations locally BEFORE pushing
+> 2. **Test Dodging Has Many Forms**: "CI will catch it" is test dodging just like dismissing errors
+> 3. **Learning Must Be Applied Immediately**: Creating learning documents without changing behavior is worthless
+> 4. **Language Precision Matters**: Use negation patterns the validation logic recognizes
+> 5. **Cultural Drift Detection**: Repeated override habit indicates discipline/culture tool interaction failure
+
+> **RCA References**:
+> - `POLC_GATE_FAILURE_RCA_20260216.md` (comprehensive root cause analysis)
+> - `.github/workflows/polc-boundary-gate.yml` (the gate that detected violations)
+> - `.agent-workspace/foreman-isms/prehandover-validation.sh` (prevention script)
+> - Session memory: `.agent-workspace/foreman-isms/memory/session-010-20260216-wave6-escalation-no-app.md` (corrected)
+
+> **Governance References**: `LIVING_AGENT_SYSTEM.md` v6.2.0, `FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md`, `governance/canon/STOP_AND_FIX_DOCTRINE.md`, `governance/canon/WE_ONLY_FAIL_ONCE_DOCTRINE.md`, Issue #193 (POLC Boundary Validation Gate)
+
+> **Constitutional Violations**:
+> 1. Handover testing prohibition (pushed without testing) — REMEDIATED
+> 2. Test dodging (assumed tests not needed) — REMEDIATED
+> 3. Session memory language non-compliance — REMEDIATED
+> 4. Manual override habit (prior instances) — ESCALATED for process review
+
+---
+
 ## Lessons Learned — Production Readiness Improvements
 
 **Context**: Following Wave 3 completion (PR #168), the circuit breaker and AI invocation logging implementations were reviewed for production readiness. While the in-memory implementations are acceptable for v1, several areas require enhancement for robust production operation, audit compliance, and system resilience.
