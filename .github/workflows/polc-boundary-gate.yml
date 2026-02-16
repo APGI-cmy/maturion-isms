@@ -1,0 +1,360 @@
+name: POLC Boundary Validation Gate
+
+# Authority: FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md, LIVING_AGENT_SYSTEM.md v6.2.0
+# Purpose: Detect and prevent Foreman from writing production code; ensure builder delegation model
+# Issue: #193 - Implement POLC Boundary Validation Gate
+# Contract: Foreman-ISMS Agent Contract v2.1.0, Section 3.6 (Merge Gate Enforcement Specification)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  polc-boundary-validation:
+    name: "Merge Gate Interface / polc-boundary/validation"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check 1 - Detect Foreman Implementation Commits
+        id: check1
+        run: |
+          echo "=== Check 1: Detect Foreman-Authored Implementation Commits ==="
+          echo ""
+
+          # Get base branch
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+          echo "Base branch: $BASE_BRANCH"
+
+          # Get all commits in this PR
+          COMMITS=$(git log origin/$BASE_BRANCH..HEAD --pretty=format:"%H|%an|%ae")
+
+          # Foreman identity patterns
+          FOREMAN_PATTERNS=(
+            "copilot-swe-agent\[bot\]"
+            "Copilot"
+            "198982749+Copilot@users.noreply.github.com"
+          )
+
+          VIOLATION_FOUND=false
+          VIOLATION_FILES=""
+          VIOLATION_COMMITS=""
+
+          echo "Checking commits for Foreman authorship..."
+          echo ""
+
+          while IFS='|' read -r commit_sha commit_author commit_email; do
+            IS_FOREMAN=false
+
+            # Check if commit is by Foreman
+            for pattern in "${FOREMAN_PATTERNS[@]}"; do
+              if [[ "$commit_author" =~ $pattern ]] || [[ "$commit_email" =~ $pattern ]]; then
+                IS_FOREMAN=true
+                break
+              fi
+            done
+
+            if [ "$IS_FOREMAN" = true ]; then
+              echo "Foreman commit detected: $commit_sha ($commit_author)"
+
+              # Get files changed in this commit
+              FILES=$(git diff-tree --no-commit-id --name-only -r $commit_sha)
+
+              # Check for production/test code modifications
+              while IFS= read -r file; do
+                # Production code patterns (PROHIBITED)
+                if [[ "$file" =~ ^modules/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
+                   [[ "$file" =~ ^modules/.*/tests/.*\.test\.(ts|tsx|js|jsx)$ ]] || \
+                   [[ "$file" =~ ^apps/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
+                   [[ "$file" =~ ^packages/.*/src/.*\.(ts|tsx|js|jsx)$ ]]; then
+
+                  # Skip allowed files
+                  if [[ "$file" =~ ^modules/.*/02-architecture/ ]] || \
+                     [[ "$file" =~ ^\.agent-workspace/ ]] || \
+                     [[ "$file" =~ ^\.agent-admin/ ]] || \
+                     [[ "$file" =~ ^governance/ ]] || \
+                     [[ "$file" =~ BUILD_PROGRESS_TRACKER\.md$ ]]; then
+                    continue
+                  fi
+
+                  VIOLATION_FOUND=true
+                  VIOLATION_FILES="${VIOLATION_FILES}\n  - ${file}"
+                  VIOLATION_COMMITS="${VIOLATION_COMMITS}\n  - ${commit_sha} (${commit_author})"
+
+                  echo "  ❌ VIOLATION: Foreman modified production code: $file"
+                fi
+              done <<< "$FILES"
+            fi
+          done <<< "$COMMITS"
+
+          echo ""
+
+          if [ "$VIOLATION_FOUND" = true ]; then
+            echo "❌ POLC BOUNDARY VIOLATION DETECTED"
+            echo ""
+            echo "Foreman authored commits modifying production code."
+            echo ""
+            echo "Files:${VIOLATION_FILES}"
+            echo ""
+            echo "Commits:${VIOLATION_COMMITS}"
+            echo ""
+            echo "Foreman MUST NOT write production code. Builders implement; Foreman supervises."
+            echo ""
+            echo "Action Required:"
+            echo "  1. Close this PR"
+            echo "  2. Create builder delegation issues"
+            echo "  3. Assign builders to implement"
+            echo "  4. Foreman supervises (does not implement)"
+            echo ""
+            echo "Override: CS2 only"
+            echo ""
+            exit 1
+          else
+            echo "✅ Check 1 PASSED - No Foreman implementation commits detected"
+            echo "check1_status=passed" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check 2 - Validate Builder Involvement
+        id: check2
+        if: always()
+        run: |
+          echo "=== Check 2: Validate Builder Involvement ==="
+          echo ""
+
+          # Get base branch
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+
+          # Check if production code was changed
+          CHANGED_FILES=$(git diff --name-only origin/$BASE_BRANCH...HEAD)
+
+          PROD_CODE_CHANGED=false
+          while IFS= read -r file; do
+            if [[ "$file" =~ ^modules/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
+               [[ "$file" =~ ^modules/.*/tests/.*\.test\.(ts|tsx|js|jsx)$ ]] || \
+               [[ "$file" =~ ^apps/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
+               [[ "$file" =~ ^packages/.*/src/.*\.(ts|tsx|js|jsx)$ ]]; then
+              PROD_CODE_CHANGED=true
+              break
+            fi
+          done <<< "$CHANGED_FILES"
+
+          if [ "$PROD_CODE_CHANGED" = false ]; then
+            echo "ℹ️  No production code changes detected - skipping builder involvement check"
+            echo "check2_status=skipped" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "Production code changes detected. Checking for builder involvement..."
+          echo ""
+
+          # Check for builder commits
+          COMMITS=$(git log origin/$BASE_BRANCH..HEAD --pretty=format:"%H|%an|%ae")
+
+          BUILDER_PATTERNS=(
+            "ui-builder"
+            "api-builder"
+            "schema-builder"
+            "integration-builder"
+            "qa-builder"
+          )
+
+          BUILDER_FOUND=false
+
+          while IFS='|' read -r commit_sha commit_author commit_email; do
+            for pattern in "${BUILDER_PATTERNS[@]}"; do
+              if [[ "$commit_author" =~ $pattern ]] || [[ "$commit_email" =~ $pattern ]]; then
+                BUILDER_FOUND=true
+                echo "✅ Builder commit found: $commit_sha ($commit_author)"
+                break 2
+              fi
+            done
+          done <<< "$COMMITS"
+
+          # Check for builder completion reports
+          if [ "$BUILDER_FOUND" = false ]; then
+            if ls .agent-workspace/*/memory/*COMPLETION* 1> /dev/null 2>&1 || \
+               ls .agent-workspace/*/COMPLETION* 1> /dev/null 2>&1; then
+              BUILDER_FOUND=true
+              echo "✅ Builder completion reports found in .agent-workspace/"
+            fi
+          fi
+
+          echo ""
+
+          if [ "$BUILDER_FOUND" = false ]; then
+            echo "⚠️  WARNING: NO BUILDER INVOLVEMENT DETECTED"
+            echo ""
+            echo "Production code changed but no builder artifacts found."
+            echo ""
+            echo "Expected: Builder commits OR completion reports in .agent-workspace/"
+            echo ""
+            echo "If Foreman supervised builders, where are the builder artifacts?"
+            echo "If Foreman wrote code directly, this is a POLC violation."
+            echo ""
+            echo "This is a WARNING. Manual review required."
+            echo ""
+            # Set to passed but log warning
+            echo "check2_status=warning" >> $GITHUB_OUTPUT
+          else
+            echo "✅ Check 2 PASSED - Builder involvement confirmed"
+            echo "check2_status=passed" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check 3 - Validate Session Memory Presence
+        id: check3
+        if: always()
+        run: |
+          echo "=== Check 3: Validate Session Memory Presence ==="
+          echo ""
+
+          # Check for Foreman session memory
+          SESSION_MEMORY_FOUND=false
+
+          if ls .agent-workspace/foreman*/memory/session-*.md 1> /dev/null 2>&1; then
+            SESSION_MEMORY_FOUND=true
+            SESSION_FILES=$(ls .agent-workspace/foreman*/memory/session-*.md 2>/dev/null)
+            echo "✅ Session memory files found:"
+            echo "$SESSION_FILES" | while read -r file; do
+              echo "  - $file"
+            done
+          fi
+
+          echo ""
+
+          if [ "$SESSION_MEMORY_FOUND" = false ]; then
+            echo "❌ SESSION MEMORY REQUIRED"
+            echo ""
+            echo "Every Foreman session MUST create session memory."
+            echo ""
+            echo "Expected: .agent-workspace/foreman*/memory/session-NNN-YYYYMMDD.md"
+            echo ""
+            echo "Session memory must document:"
+            echo "  - Builder delegation (if implementation work occurred)"
+            echo "  - POLC supervision evidence"
+            echo "  - Decisions and lessons learned"
+            echo ""
+            echo "Per Living Agent System v6.2.0."
+            echo ""
+            exit 1
+          else
+            echo "✅ Check 3 PASSED - Session memory present"
+
+            # Validate session memory doesn't show FM writing code
+            echo ""
+            echo "Checking session memory for POLC violations..."
+
+            POLC_VIOLATION_IN_MEMORY=false
+            for session_file in .agent-workspace/foreman*/memory/session-*.md; do
+              if [ -f "$session_file" ]; then
+                # Check for indicators that FM wrote code (positive assertions only)
+                # Skip lines with negations (NOT, did not, didn't, no)
+                if grep -iE "(implemented|wrote|created|modified).*production.*code|FM.*implemented|Foreman.*wrote.*code" "$session_file" | \
+                   grep -qviE "did NOT|NOT.*implement|NOT.*write|did not|didn't|no production"; then
+                  echo "⚠️  WARNING: Session memory may indicate FM wrote code: $session_file"
+                  POLC_VIOLATION_IN_MEMORY=true
+                fi
+              fi
+            done
+
+            if [ "$POLC_VIOLATION_IN_MEMORY" = true ]; then
+              echo ""
+              echo "❌ SESSION MEMORY INDICATES POLC VIOLATION"
+              echo ""
+              echo "Session memory contains evidence that Foreman wrote production code."
+              echo "This violates the POLC-Only Constraint."
+              echo ""
+              exit 1
+            fi
+
+            echo "✅ Session memory validates POLC compliance"
+            echo "check3_status=passed" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check 4 - Validate Evidence Artifact Bundle
+        id: check4
+        if: always()
+        run: |
+          echo "=== Check 4: Validate Evidence Artifact Bundle ==="
+          echo ""
+
+          VALIDATION_FAILED=false
+
+          # Check for .agent-admin/ directory
+          if [ ! -d ".agent-admin" ]; then
+            echo "❌ .agent-admin/ directory missing"
+            VALIDATION_FAILED=true
+          else
+            echo "✅ .agent-admin/ directory exists"
+          fi
+
+          # Check required subdirectories
+          REQUIRED_DIRS=(
+            ".agent-admin/prehandover"
+            ".agent-admin/gates"
+            ".agent-admin/improvements"
+          )
+
+          for dir in "${REQUIRED_DIRS[@]}"; do
+            if [ ! -d "$dir" ]; then
+              echo "⚠️  $dir missing (may be created during build)"
+            else
+              echo "✅ $dir exists"
+            fi
+          done
+
+          echo ""
+
+          if [ "$VALIDATION_FAILED" = true ]; then
+            echo "❌ EVIDENCE ARTIFACT BUNDLE REQUIRED"
+            echo ""
+            echo "Expected structure:"
+            echo "  .agent-admin/prehandover/"
+            echo "  .agent-admin/gates/"
+            echo "  .agent-admin/improvements/"
+            echo ""
+            echo "Per EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md"
+            echo ""
+            exit 1
+          else
+            echo "✅ Check 4 PASSED - Evidence artifact bundle validated"
+            echo "check4_status=passed" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Report Final Verdict
+        if: always()
+        run: |
+          echo "=== POLC Boundary Validation - Final Verdict ==="
+          echo ""
+          echo "Check 1 (Foreman Commits):    ${{ steps.check1.outputs.check1_status || 'failed' }}"
+          echo "Check 2 (Builder Involvement): ${{ steps.check2.outputs.check2_status || 'failed' }}"
+          echo "Check 3 (Session Memory):      ${{ steps.check3.outputs.check3_status || 'failed' }}"
+          echo "Check 4 (Evidence Bundle):     ${{ steps.check4.outputs.check4_status || 'failed' }}"
+          echo ""
+
+          if [[ "${{ steps.check1.outputs.check1_status }}" != "passed" ]] || \
+             [[ "${{ steps.check3.outputs.check3_status }}" != "passed" ]] || \
+             [[ "${{ steps.check4.outputs.check4_status }}" != "passed" ]]; then
+            echo "❌ POLC BOUNDARY VALIDATION FAILED"
+            echo ""
+            echo "One or more required checks failed. Review the logs above."
+            echo ""
+            exit 1
+          elif [[ "${{ steps.check2.outputs.check2_status }}" == "warning" ]]; then
+            echo "⚠️  POLC BOUNDARY VALIDATION PASSED WITH WARNINGS"
+            echo ""
+            echo "Manual review recommended for builder involvement."
+            echo ""
+          else
+            echo "✅ POLC BOUNDARY VALIDATION PASSED"
+            echo ""
+            echo "All checks passed successfully."
+            echo "Foreman delegation model verified."
+            echo ""
+          fi
