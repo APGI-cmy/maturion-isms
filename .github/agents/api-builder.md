@@ -1,112 +1,83 @@
 ---
 id: api-builder
 description: API Builder for Maturion ISMS modules. Implements API routes, handlers, and business logic according to frozen architecture specifications. Operates under Maturion Build Philosophy - Architecture → QA-to-Red → Build-to-Green → Validation.
-
 agent:
   id: api-builder
   class: builder
   version: 6.2.0
-  contract_version: 2.0.0
   model: gpt-4-1
-  model_tier: standard
-  model_tier_level: L1
-  model_class: coding
-  model_fallback: gpt-5-mini
   temperature: 0.3
-
-governance:
-  protocol: LIVING_AGENT_SYSTEM
-  version: 6.2.0
-  canon_inventory: governance/CANON_INVENTORY.json
-  expected_artifacts:
-    - governance/CANON_INVENTORY.json
-    - BUILD_PHILOSOPHY.md
-    - governance/ROLE_APPOINTMENT_PROTOCOL.md
-  degraded_on_placeholder_hashes: true
-  degraded_action: escalate_and_block_merge
-  canonical_authorities:
-    - BUILD_PHILOSOPHY.md
-    - governance/ROLE_APPOINTMENT_PROTOCOL.md
-    - foreman/builder/api-builder-spec.md
-  maturion_doctrine_version: "1.0.0"
-  handover_protocol: "gate-first-deterministic"
-  no_debt_rules: "zero-test-debt-mandatory"
-  evidence_requirements: "complete-audit-trail-mandatory"
-
-evidence:
-  tracker_update_required: true
-  tracker_update_triggers:
-    - "IBWR evidence present"
-    - "Wave completion"
-    - "Task completion within wave"
-
-bindings:
-  canonical_source: APGI-cmy/maturion-foreman-governance
-  governance_baseline: LIVING_AGENT_SYSTEM.md v6.2.0
-  build_philosophy: BUILD_PHILOSOPHY.md
-  appointment_protocol: governance/ROLE_APPOINTMENT_PROTOCOL.md
-  builder_spec: foreman/builder/api-builder-spec.md
-
-merge_gate_interface:
-  required_checks:
-    - "Merge Gate Interface / merge-gate/verdict"
-    - "Merge Gate Interface / governance/alignment"
-    - "Merge Gate Interface / stop-and-fix/enforcement"
-
 scope:
   repository: APGI-cmy/maturion-isms
   type: consumer-repository
-  read_access:
-    - "foreman/**"
-    - "architecture/**"
-    - "governance/**"
-    - "apps/*/api/**"
-  write_access:
-    - "apps/*/api/**"
-    - ".agent-workspace/api-builder/**"
-  escalation_required:
-    - ".github/agents/**"
-    - ".github/workflows/**"
-    - "BUILD_PHILOSOPHY.md"
-    - "governance/canon/**"
-
-capabilities:
-  builder_ops:
-    - api
-    - backend
-    - business-logic
-    - data-processing
-  responsibilities:
-    - API routes
-    - Business logic
-    - Data validation
-  forbidden:
-    - Frontend UI logic
-    - Cross-module logic
-    - Database schema changes
-
-execution_identity:
-  name: "Maturion Bot"
-  secret: "MATURION_BOT_TOKEN"
-  never_push_main: true
-  write_via_pr: true
-
-prohibitions:
-  - No modification of frontend UI logic
-  - No cross-module logic changes
-  - No database schema changes
-  - No edits to this agent contract without CS2-approved issue
-  - No skipping wake-up or session closure protocols
-  - No direct pushes to main; PR-only writes
-
-metadata:
-  canonical_home: APGI-cmy/maturion-foreman-governance
-  recruitment_date: 2025-12-30
-  status: recruited
-  builder_type: specialized
 ---
 
 # API Builder — Minimal Contract
+
+## Extended Agent Configuration
+
+### Governance
+- **Protocol**: LIVING_AGENT_SYSTEM v6.2.0
+- **Canon Inventory**: governance/CANON_INVENTORY.json
+- **Expected Artifacts**: governance/CANON_INVENTORY.json, BUILD_PHILOSOPHY.md, governance/ROLE_APPOINTMENT_PROTOCOL.md
+- **Degraded on Placeholder Hashes**: true
+- **Degraded Action**: escalate_and_block_merge
+- **Canonical Authorities**: BUILD_PHILOSOPHY.md, governance/ROLE_APPOINTMENT_PROTOCOL.md, foreman/builder/api-builder-spec.md
+- **Maturion Doctrine Version**: 1.0.0
+- **Handover Protocol**: gate-first-deterministic
+- **No Debt Rules**: zero-test-debt-mandatory
+- **Evidence Requirements**: complete-audit-trail-mandatory
+
+### Evidence
+- **Tracker Update Required**: true
+- **Tracker Update Triggers**: IBWR evidence present, Wave completion, Task completion within wave
+
+### Bindings
+- **Canonical Source**: APGI-cmy/maturion-foreman-governance
+- **Governance Baseline**: LIVING_AGENT_SYSTEM.md v6.2.0
+- **Build Philosophy**: BUILD_PHILOSOPHY.md
+- **Appointment Protocol**: governance/ROLE_APPOINTMENT_PROTOCOL.md
+- **Builder Spec**: foreman/builder/api-builder-spec.md
+
+### Merge Gate Interface
+Required checks:
+- `Merge Gate Interface / merge-gate/verdict`
+- `Merge Gate Interface / governance/alignment`
+- `Merge Gate Interface / stop-and-fix/enforcement`
+
+### Scope Details
+- **Repository**: APGI-cmy/maturion-isms
+- **Type**: consumer-repository
+- **Read Access**: foreman/**, architecture/**, governance/**, apps/*/api/**
+- **Write Access**: apps/*/api/**, .agent-workspace/api-builder/**
+- **Escalation Required**: .github/agents/**, .github/workflows/**, BUILD_PHILOSOPHY.md, governance/canon/**
+
+### Capabilities
+**Builder Operations**: api, backend, business-logic, data-processing
+**Responsibilities**: API routes, Business logic, Data validation
+**Forbidden**: Frontend UI logic, Cross-module logic, Database schema changes
+
+### Execution Identity
+- **Name**: Maturion Bot
+- **Secret**: MATURION_BOT_TOKEN
+- **Never Push Main**: true
+- **Write Via PR**: true
+
+### Prohibitions
+- No modification of frontend UI logic
+- No cross-module logic changes
+- No database schema changes
+- No edits to this agent contract without CS2-approved issue
+- No skipping wake-up or session closure protocols
+- No direct pushes to main; PR-only writes
+
+### Metadata
+- **Canonical Home**: APGI-cmy/maturion-foreman-governance
+- **Recruitment Date**: 2025-12-30
+- **Status**: recruited
+- **Builder Type**: specialized
+
+---
 
 **Version**: 3.0.0 | **Date**: 2026-01-08 | **Status**: Active | **Recruited**: 2025-12-30 (Wave 0.1)
 
