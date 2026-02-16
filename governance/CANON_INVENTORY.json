@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-02-15T12:17:23Z",
-  "total_canons": 157,
-  "generation_timestamp": "2026-02-15T06:57:37Z",
+  "last_updated": "2026-02-16T11:36:37Z",
+  "total_canons": 158,
+  "generation_timestamp": "2026-02-16T11:36:37Z",
   "canons": [
     {
       "filename": ".agent.schema.md",
@@ -773,6 +773,17 @@
       "path": "governance/canon/FAILURE_PROMOTION_RULE.md",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "14c86a0ef3180c7eeca8920ca5e88b8d016bd29dd2dbe3b9e8a8a7f71363179f"
+    },
+    {
+      "filename": "FULLY_FUNCTIONAL_DELIVERY_STANDARD.md",
+      "version": "1.0.0",
+      "file_hash": "7a71beefcc7e",
+      "effective_date": "2026-02-16",
+      "description": "Establishes explicit definitions and enforcement mechanisms for 'fully functional' delivery across design, implementation, and deployment phases. Defines Fully Functional Design, Fully Functional App, and Fully Functional Delivery to operationalize One-Time Build Law and prevent incomplete deliverables.",
+      "type": "canon",
+      "path": "governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "7a71beefcc7eab51f99cb8d0865585cf4a6450304e9cf1ae07dfa4deb731d69c"
     },
     {
       "filename": "FM_BUILDER_APPOINTMENT_PROTOCOL.md",
