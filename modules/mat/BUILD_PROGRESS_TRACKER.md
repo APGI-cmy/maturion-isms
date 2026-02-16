@@ -620,6 +620,73 @@ Track the progression through the canonical module lifecycle stages.
 
 ---
 
+### Deviation #10: QA-to-Red Omission for Wave 5.5 Frontend — Code-First Violation (2026-02-16)
+
+> **Date**: 2026-02-16  
+> **Detected In**: PR [APGI-cmy/maturion-isms#239](https://github.com/APGI-cmy/maturion-isms/pull/239)  
+> **Session**: Wave 5.5 Frontend Application Assembly orchestration  
+> **Severity**: CRITICAL — BUILD_PHILOSOPHY.md Violation (Code-First ≠ Test-First)
+
+> **Deviation**: PR [APGI-cmy/maturion-isms#239](https://github.com/APGI-cmy/maturion-isms/pull/239) attempted to begin frontend implementation for Wave 5.5 (Frontend Application Assembly) WITHOUT first generating and committing a QA-to-Red functional test suite for MAT frontend features. This violates the canonical build workflow: **Architecture → QA-to-Red → Build-to-Green → Validation** (per BUILD_PHILOSOPHY.md).
+>
+> **What Happened**: 
+> - Wave 5.5 was added to Implementation Plan v1.3.0 (Issue #234, addressing Deviation #9: "Tested ≠ Delivered")
+> - ui-builder was recruited to scaffold `apps/mat-frontend/` and wire frontend components (Issue #237)
+> - PR #239 was submitted with frontend code changes
+> - **CRITICAL GAP**: No QA-to-Red test suite for Wave 5.5 frontend functionality was generated or committed before implementation began
+> - The 98 existing tests (MAT-T-0001 to MAT-T-0098) cover backend services and component logic, but NOT the frontend application assembly, routing, page layouts, or user-facing integration
+
+> **Root Cause** (5-Why Analysis):
+> 1. **Why no QA-to-Red suite for Wave 5.5?** Because Wave 5.5 was added to the Implementation Plan (v1.3.0) without updating the Test Registry with frontend-specific tests.
+> 2. **Why was Test Registry not updated?** Because Deviation #9 focused on adding Wave 5.5 to the Implementation Plan and updating FRS/TRS/App Description, but did not include a test suite generation step for the new wave.
+> 3. **Why wasn't test suite generation triggered?** Because the governance remediation for Deviation #9 focused on architecture and planning artifacts, not on QA-to-Red suite completeness for the new scope.
+> 4. **Why didn't the Foreman enforce QA-to-Red before build?** Because the Implementation Plan v1.3.0 Wave 5.5 section lacked explicit PRE-BUILD GATE language requiring QA-to-Red suite presence before implementation begins.
+> 5. **Why is this a governance failure?** Because the canonical workflow (Architecture → QA-to-Red → Build-to-Green) is ALWAYS mandatory, but Wave 5.5 was treated as an exception due to its remediation origin. **This is the "code-first" anti-pattern that BUILD_PHILOSOPHY.md explicitly prohibits.**
+
+> **Impact**:
+> - Code-first approach risks untested implementation, breaking the "test-first guarantee enables non-destructive build" principle
+> - Violates the canonical build workflow (Architecture → QA-to-Red → Build-to-Green → Validation)
+> - Creates risk of regression against the 98 existing GREEN tests
+> - Undermines the QA-to-Red discipline that defines mature vs. "normal coder" delivery
+
+> **Corrective Actions**:
+> 1. ✅ **PR #239 STOPPED** — Closed without merge. Code-first implementation halted immediately upon detection.
+> 2. ✅ **Issue #240 created** — "Wave 5.5 QA-to-Red Functional Test Suite" specifying frontend test requirements (application scaffolding verification, routing validation, component wiring verification, responsive layout validation, PWA manifest/service worker registration, build/deployment validation).
+> 3. ✅ **PR #241 delivered** — QA-to-Red functional test suite for Wave 5.5 frontend committed. Suite includes 6 test components covering all Wave 5.5 acceptance criteria (FR-070, FR-071). All new tests start RED. Existing 98 tests remain GREEN (non-destructive guarantee).
+> 4. ✅ **BUILD_PROGRESS_TRACKER.md updated** — This deviation record (Deviation #10).
+> 5. ✅ **Implementation Plan updated** — Wave 5.5 section enhanced with MANDATORY PRE-BUILD GATE language requiring QA-to-Red suite presence before any implementation begins (see v1.4.0).
+> 6. ⏳ **Governance learning recorded** — CodexAdvisor session memory entry: "CODE-FIRST VIOLATION STOPS WORK — TEST-FIRST GUARANTEE ENABLES NON-DESTRUCTIVE BUILD."
+
+> **Status**: REMEDIATED (2026-02-16)
+> - PR #239: Stopped and closed without merge
+> - Issue #240: QA-to-Red suite requirement defined
+> - PR #241: QA-to-Red suite delivered and committed (6 new tests RED, 98 existing tests GREEN preserved)
+> - Implementation Plan v1.4.0: MANDATORY PRE-BUILD GATE language added to Wave 5.5
+> - BUILD_PROGRESS_TRACKER.md: Deviation #10 recorded
+
+> **Preventive Actions**:
+> 1. All future waves MUST validate QA-to-Red suite presence before Build-to-Green phase begins (MANDATORY PRE-BUILD GATE)
+> 2. When new waves are added to Implementation Plan (e.g., remediation waves like 5.5), Test Registry MUST be updated BEFORE builder recruitment
+> 3. Foreman orchestration MUST enforce: "No QA-to-Red suite = No build authorization"
+> 4. Wave gates MUST include explicit QA-to-Red verification step in acceptance criteria
+> 5. Implementation Plan template MUST include MANDATORY PRE-BUILD GATE language in all wave definitions
+
+> **Lessons Learned**:
+> - **Code-first is NEVER permitted** — Even for remediation waves added post-architecture
+> - **QA-to-Red is non-negotiable** — Test suite MUST precede implementation (Architecture → QA-to-Red → Build-to-Green)
+> - **Test-first discipline = Non-destructive build guarantee** — This is the defining difference between mature governance and "normal coder" delivery
+> - **Governance doesn't pause for remediation** — New waves follow the same canonical workflow as original waves
+
+> **Governance References**: 
+> - `BUILD_PHILOSOPHY.md` (Architecture → QA-to-Red → Build-to-Green → Validation)
+> - `governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md` §3.1, §5.1
+> - Issue [#240](https://github.com/APGI-cmy/maturion-isms/issues/240) (Wave 5.5 QA-to-Red Functional Test Suite)
+> - PR [#239](https://github.com/APGI-cmy/maturion-isms/pull/239) (Stopped — Code-first violation)
+> - PR [#241](https://github.com/APGI-cmy/maturion-isms/pull/241) (QA-to-Red suite delivered)
+> - CS2 governance ruling 2026-02-16
+
+---
+
 ## Lessons Learned — Production Readiness Improvements
 
 **Context**: Following Wave 3 completion (PR #168), the circuit breaker and AI invocation logging implementations were reviewed for production readiness. While the in-memory implementations are acceptable for v1, several areas require enhancement for robust production operation, audit compliance, and system resilience.

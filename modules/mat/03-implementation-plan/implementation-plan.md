@@ -1,7 +1,7 @@
 # MAT — Implementation Plan
 
 **Module**: MAT (Manual Audit Tool)  
-**Version**: v1.3.0  
+**Version**: v1.4.0  
 **Status**: APPROVED  
 **Owner**: Foreman (FM)  
 **Created**: 2026-02-13  
@@ -47,6 +47,8 @@ MAT is built in **eight waves** (Wave 0–Wave 7). Each wave has a gate that mus
 **Total Estimated Duration**: ~36 working days (8 weeks)
 
 > **Change Note (v1.3.0, 2026-02-16)**: Wave 5.5 (Frontend Application Assembly) added to address governance gap where all component-level tests passed but no deployable React application was built. Wave 5.5 sits between Waves 5 and 6 because it requires all component implementations (Waves 0–5) to be complete before assembly, and must complete before deployment (Wave 6). See BUILD_PROGRESS_TRACKER.md Deviation #9.
+
+> **Change Note (v1.4.0, 2026-02-16)**: MANDATORY PRE-BUILD GATE language added to Wave 5.5 section (§2.6.5) requiring QA-to-Red functional test suite presence BEFORE any implementation begins. This enforces the canonical workflow (Architecture → QA-to-Red → Build-to-Green → Validation) and prevents code-first violations. Added after Deviation #10 (PR #239 attempted code-first implementation without QA-to-Red suite). See BUILD_PROGRESS_TRACKER.md Deviation #10.
 
 ---
 
@@ -490,6 +492,27 @@ MAT is built in **eight waves** (Wave 0–Wave 7). Each wave has a gate that mus
 **FRS References**: FR-070 (Frontend Application Scaffolding), FR-071 (Frontend Application Wiring)
 **TRS References**: TR-001 (React 18+ with Vite 5+), TR-006 (Monorepo Workspace), TR-071 (Frontend Application as Deployable Artifact)
 
+---
+
+#### ⚠️ MANDATORY PRE-BUILD GATE — QA-to-Red Suite Required
+
+**BEFORE ANY IMPLEMENTATION** in Wave 5.5 begins, the following MUST be satisfied:
+
+1. **QA-to-Red Functional Test Suite MUST exist** — A test suite covering all Wave 5.5 features and requirements (FR-070, FR-071) MUST be generated, committed, and approved.
+2. **Test suite MUST be runnable** — All new tests MUST start at RED status (expected failures) and be executable via the project test runner.
+3. **Non-destructive guarantee MUST be validated** — All existing tests (MAT-T-0001 to MAT-T-0098) MUST remain GREEN when the new test suite is added.
+4. **Evidence MUST be documented** — PREHANDOVER proof showing: (a) new test suite committed, (b) new tests RED, (c) existing tests GREEN.
+
+**Authority**: BUILD_PHILOSOPHY.md (Architecture → QA-to-Red → Build-to-Green → Validation), `governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md` §5.1
+
+**Enforcement**: Foreman MUST NOT authorize builder recruitment or issue creation for Wave 5.5 implementation until QA-to-Red suite is complete and committed.
+
+**Remediation Reference**: This gate was added after Deviation #10 (PR [APGI-cmy/maturion-isms#239](https://github.com/APGI-cmy/maturion-isms/pull/239) attempted code-first implementation without QA-to-Red suite, violating BUILD_PHILOSOPHY.md). PR #239 was stopped, Issue #240 created QA-to-Red requirement, PR #241 delivered suite. See BUILD_PROGRESS_TRACKER.md Deviation #10.
+
+**Critical Principle**: **CODE-FIRST IS NEVER PERMITTED. TEST-FIRST GUARANTEE ENABLES NON-DESTRUCTIVE BUILD.**
+
+---
+
 #### Task 5.5.1: React Application Scaffolding
 
 | Field | Value |
@@ -909,6 +932,7 @@ This implementation plan is accepted when:
 10. ✅ Frontend Application Assembly wave (Wave 5.5) defined with scaffolding, wiring, and build verification per FR-070, FR-071, TR-071
 
 **Change Log**:
+- v1.4.0 (2026-02-16): Added MANDATORY PRE-BUILD GATE to Wave 5.5 requiring QA-to-Red suite before implementation. Enforces canonical workflow (Architecture → QA-to-Red → Build-to-Green). See BUILD_PROGRESS_TRACKER.md Deviation #10.
 - v1.3.0 (2026-02-16): Added Wave 5.5 (Frontend Application Assembly) per governance remediation. Updated derivation chain to FR-001–FR-071 and TR-001–TR-071. See BUILD_PROGRESS_TRACKER.md Deviation #9.
 - v1.2.0 (2026-02-15): Added Wave 6 (Deployment & Commissioning).
 - v1.1.0 (2026-02-14): Added CST/CWT integration testing requirements.
