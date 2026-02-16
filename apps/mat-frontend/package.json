@@ -1,0 +1,17 @@
+{
+  "name": "mat-frontend",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "description": "MAT (Manual Audit Tool) Frontend Application — React 18+ / Vite 5+ / TypeScript",
+  "scripts": {
+    "dev": "echo 'Frontend dev server to be implemented'",
+    "build": "echo 'Frontend build to be implemented'",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "echo 'Linting to be configured'"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.1"
+  }
+}
