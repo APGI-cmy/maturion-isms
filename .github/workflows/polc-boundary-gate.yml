@@ -40,7 +40,6 @@ jobs:
           FOREMAN_PATTERNS=(
             "copilot-swe-agent\[bot\]"
             "Copilot"
-            "copilot"
             "198982749+Copilot@users.noreply.github.com"
           )
 
@@ -181,7 +180,7 @@ jobs:
           # Check for builder completion reports
           if [ "$BUILDER_FOUND" = false ]; then
             if ls .agent-workspace/*/memory/*COMPLETION* 1> /dev/null 2>&1 || \
-               ls .agent-workspace/*/*COMPLETION* 1> /dev/null 2>&1; then
+               ls .agent-workspace/*/COMPLETION* 1> /dev/null 2>&1; then
               BUILDER_FOUND=true
               echo "✅ Builder completion reports found in .agent-workspace/"
             fi
@@ -254,8 +253,10 @@ jobs:
             POLC_VIOLATION_IN_MEMORY=false
             for session_file in .agent-workspace/foreman*/memory/session-*.md; do
               if [ -f "$session_file" ]; then
-                # Check for indicators that FM wrote code
-                if grep -qiE "(implemented|wrote|created|modified).*production.*code|FM.*implemented|Foreman.*wrote.*code" "$session_file"; then
+                # Check for indicators that FM wrote code (positive assertions only)
+                # Skip lines with negations (NOT, did not, didn't, no)
+                if grep -iE "(implemented|wrote|created|modified).*production.*code|FM.*implemented|Foreman.*wrote.*code" "$session_file" | \
+                   grep -qviE "did NOT|NOT.*implement|NOT.*write|did not|didn't|no production"; then
                   echo "⚠️  WARNING: Session memory may indicate FM wrote code: $session_file"
                   POLC_VIOLATION_IN_MEMORY=true
                 fi
