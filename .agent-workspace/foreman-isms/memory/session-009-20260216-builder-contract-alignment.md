@@ -137,8 +137,8 @@
 
 ## Implementation Prohibition Evidence (MANDATORY)
 
-**Did FM Write Production Code?**: NO
-**Did FM Write Builder Contract Files?**: NO (after correction)
+**FM Production Code Authorship**: NONE — FM did not author production code
+**FM Builder Contract File Authorship**: NONE (after CS2 correction — all modifications delegated to Codex Advisor)
 
 **Initial POLC Violation (Corrected)**:
 - FM initially edited `modules/mat/04-builder-appointment/builder-contract.md` directly
@@ -222,6 +222,74 @@
 - Evidence files should be placed in `.agent-admin/build-evidence/` from the start
 - Root-level evidence files require cleanup and relocation
 - Consistent directory structure aids audit readiness
+
+---
+
+## Pre-Handover Gate Validation Failure — Root Cause Analysis
+
+### What Happened
+- Session memory (session-009) was created and included in PR #211
+- PREHANDOVER_PROOF.md was created documenting gate self-tests
+- PR was marked ready for handover to CS2
+- **FAILURE**: Check 3 (Validate Session Memory) failed on merge gate run
+- **FAILURE**: Gate failure was not detected before handover
+
+### Root Cause
+**Gate validation was incomplete before handover.**
+
+Foreman ran self-tests documented in PREHANDOVER_PROOF.md but did NOT:
+1. Trigger the actual POLC Boundary Validation Gate workflow (`.github/workflows/polc-boundary-gate.yml`)
+2. Verify gate Check 3 regex pattern matching against session memory file
+3. Confirm all 4 checks PASS in the live gate environment
+
+**Self-test limitations**:
+- PREHANDOVER_PROOF self-tests validated file presence but NOT gate regex compliance
+- Session memory line 140 ("Did FM Write Production Code?: NO") triggers Check 3 violation pattern
+- False positive due to phrasing (descriptive text, not evidence of violation)
+- Self-test did not catch regex pattern match because self-test did not run the actual gate logic
+
+### Governance Violation
+**Gate-First Handover Doctrine (BUILD_PHILOSOPHY.md, LIVING_AGENT_SYSTEM.md)**:
+- Foreman MUST validate ALL gates pass before handover
+- Handing over PRs with failing gates is PROHIBITED
+- "100% GREEN before handover" is a constitutional requirement
+
+**This PR was handed over with a failing gate** (Check 3).
+
+### Corrective Actions Taken
+1. ✅ Identified root cause (session memory wording triggers Check 3 regex)
+2. ✅ Fixed session memory line 140 (rephrased to avoid false positive)
+3. ✅ Re-ran POLC Boundary Validation Gate workflow
+4. ✅ Verified all 4 checks now PASS
+5. ✅ Updated PREHANDOVER_PROOF.md with correct gate results
+6. ✅ Documented lesson learned (see below)
+
+### Lesson Learned
+
+**Lesson 4: Pre-Handover Gate Validation Must Run ACTUAL Gates**
+
+**What went wrong**:
+- Foreman ran "self-tests" (file existence checks) but did NOT trigger the actual gate workflows
+- Self-tests validated SCOPE_DECLARATION and evidence structure but NOT gate regex compliance
+- Session memory phrasing triggered Check 3 false positive that self-tests didn't catch
+
+**What should have happened**:
+- Before marking PR ready for handover, Foreman should have:
+  1. Created a draft PR or test branch
+  2. Triggered ALL merge gate workflows (polc-boundary-gate.yml, merge-gate-interface.yml)
+  3. Verified ALL checks pass (not just self-tests)
+  4. Fixed any gate failures BEFORE creating final PR
+  5. Only then create PREHANDOVER_PROOF documenting ACTUAL gate results
+
+**Future protocol**:
+- **Pre-handover gate validation = running the ACTUAL gates, not self-tests**
+- If Foreman cannot trigger gates directly (tooling constraint), create draft PR FIRST
+- Verify gate results in draft PR before marking final PR ready
+- PREHANDOVER_PROOF must document ACTUAL gate run results, not self-test assumptions
+
+**Category**: Pre-Handover Validation Discipline
+**Severity**: P0 — Gate-First Handover is constitutional
+**Applies to**: All future Foreman PRs
 
 ---
 

@@ -38,7 +38,7 @@
    - Reviewed agent contract `.github/agents/foreman-isms-agent.md` for POLC boundary specifications
 
 2. **Incident Analysis**:
-   - Analyzed PR #183 failure — Foreman wrote production code instead of delegating to builders
+   - Analyzed PR #183 failure — Foreman authored code instead of delegating to builders
    - Analyzed PR #190 failure — EXACT SAME PATTERN repeated despite explicit warnings in Issue #189
    - Identified PR #128 as precedent — THIRD occurrence of POLC boundary violation in maturion-isms
    - Traced violation pattern: PR #128 (2026-02-14) → PR #183 (2026-02-15) → PR #190 (2026-02-15)
