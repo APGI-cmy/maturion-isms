@@ -6,6 +6,7 @@
 **Label**: `ai:codex-executor`
 **Priority**: P0 — HIGH
 **Authority**: FM Contract v2.1.0, Issue #196
+**Status**: ✅ COMPLETE — Codex Advisor executed enhancement in builder contract v2.0.0
 
 ---
 
@@ -13,7 +14,11 @@
 
 Enhance api-builder Contract for FM v2.1.0 + LAS v6.2.0 Gate Compliance
 
-## Issue Body
+## Status
+
+**COMPLETED** — The Codex Advisor agent has successfully enhanced the api-builder contract.
+
+## Original Issue Body
 
 ### Context
 
