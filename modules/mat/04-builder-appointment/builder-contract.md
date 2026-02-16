@@ -1,7 +1,7 @@
 # MAT — Builder Appointment & Contracts
 
 **Module**: MAT (Manual Audit Tool)  
-**Version**: v2.0.0  
+**Version**: v3.0.0  
 **Status**: APPROVED  
 **Owner**: Foreman (FM)  
 **Created**: 2026-02-13  
@@ -10,6 +10,7 @@
 **Authority**: Derived from Implementation Plan (`modules/mat/03-implementation-plan/implementation-plan.md`), Architecture (`modules/mat/02-architecture/`), [BUILDER_CONTRACT_SCHEMA.md](https://github.com/APGI-cmy/maturion-foreman-office-app/blob/main/.github/agents/BUILDER_CONTRACT_SCHEMA.md)
 
 **Change History**:
+- v3.0.0 (2026-02-16) — Added Wave 5.5 (Frontend Application Assembly) to ui-builder scope, added `apps/mat-frontend/**` to authorized paths, added FR-070/FR-071 acceptance criteria. See BUILD_PROGRESS_TRACKER.md Deviation #9.
 - v2.0.0 (2026-02-16) — Aligned with FM v2.1.0 for gate compliance (Issue #196)
 - v1.0.0 (2026-02-13) — Initial builder appointment and contracts
 
@@ -311,10 +312,10 @@ Per-wave acceptance criteria are defined in `modules/mat/03-implementation-plan/
 |-------|-------|
 | **Builder ID** | ui-builder |
 | **Builder Type** | specialized |
-| **Assigned Waves** | Wave 1 (Task 1.3), Wave 2 (Task 2.3), Wave 3 (Task 3.2), Wave 4 (Task 4.1) |
+| **Assigned Waves** | Wave 1 (Task 1.3), Wave 2 (Task 2.3), Wave 3 (Task 3.2), Wave 4 (Task 4.1), Wave 5.5 (Tasks 5.5.1–5.5.3) |
 | **Recruited By** | Foreman (FM) |
 | **Handover Protocol** | gate-first-deterministic |
-| **Contract Version** | 2.0.0 |
+| **Contract Version** | 3.0.0 |
 | **LAS Version** | 6.2.0 |
 
 ### Builder-Only Constraint (Mirrors FM §1.2)
@@ -323,6 +324,7 @@ Per-wave acceptance criteria are defined in `modules/mat/03-implementation-plan/
 - ✅ `modules/mat/src/ui/**`, `modules/mat/src/components/**`, `modules/mat/src/hooks/**`
 - ✅ `modules/mat/src/stores/**`, `modules/mat/src/styles/**`
 - ✅ `modules/mat/tests/ui/**`, `modules/mat/tests/components/**`
+- ✅ `apps/mat-frontend/**` (NEW — frontend application package)
 - ✅ `.agent-workspace/ui-builder/**`
 
 **Prohibited File Paths**:
@@ -333,7 +335,7 @@ Per-wave acceptance criteria are defined in `modules/mat/03-implementation-plan/
 
 ### Scope
 
-The ui-builder is responsible for all frontend React components, layouts, responsive design, accessibility, and PWA shell.
+The ui-builder is responsible for all frontend React components, layouts, responsive design, accessibility, PWA shell, **and the scaffolding and assembly of the `apps/mat-frontend/` React application**.
 
 ### Detailed Instructions
 
@@ -393,6 +395,31 @@ To complete this build you must do:
    - Real-time update indicators
    - Responsive charts (Recharts or similar)
 
+**Wave 5.5 — Frontend Application Assembly (Tasks 5.5.1–5.5.3)**:
+
+> **Governance Note**: This wave was added per governance remediation (BUILD_PROGRESS_TRACKER.md Deviation #9). All component logic built in Waves 1–4 must be assembled into a deployable React application.
+
+9. **Scaffold React application** (Task 5.5.1, FR-070, TR-071):
+   - Create `apps/mat-frontend/` with React 18+ and Vite 5+ (per TRS TR-001 — NOT Next.js from App Description §16.3)
+   - Configure `package.json`, TypeScript strict mode, Tailwind CSS, Shadcn/UI
+   - Configure Zustand + TanStack Query + Supabase client
+   - Create `src/main.tsx` entry point with providers
+   - Register in `pnpm-workspace.yaml`
+   - Verify `pnpm build` and `pnpm dev` work
+
+10. **Wire pages, routing, and components** (Task 5.5.2, FR-071):
+    - Create page layouts for all sections (Audits, Criteria, Evidence, Scoring, Dashboards, Reports)
+    - Configure client-side routing
+    - Import and render all components from `modules/mat/src/components/`
+    - Implement responsive navigation per FR-062
+    - Register PWA manifest and service worker per FR-063
+
+11. **Verify integration and build** (Task 5.5.3):
+    - Verify all 98 existing tests remain GREEN
+    - Verify frontend builds without errors
+    - Smoke test critical user flows in browser
+    - Document application structure
+
 ### Test Coverage
 
 | Test Registry IDs | Category | Count |
@@ -400,6 +427,8 @@ To complete this build you must do:
 | MAT-T-0069–MAT-T-0081 | CAT-10: UI and Accessibility | 13 |
 
 All 13 tests must be GREEN before each wave gate.
+
+**Wave 5.5 Acceptance**: FR-070 and FR-071 acceptance criteria met (see Implementation Plan §2.6.5).
 
 ### Acceptance Criteria
 
@@ -410,6 +439,8 @@ All 13 tests must be GREEN before each wave gate.
 5. All components have unit tests via Vitest + React Testing Library
 6. Zero lint warnings (`eslint` with React/hooks plugins)
 7. No class components — functional components only
+8. `apps/mat-frontend/` exists as a buildable, deployable workspace package (FR-070)
+9. All components wired into the frontend application with routing (FR-071)
 
 ### Forbidden Actions
 

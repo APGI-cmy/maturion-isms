@@ -1,11 +1,11 @@
 # MAT — Implementation Plan
 
 **Module**: MAT (Manual Audit Tool)  
-**Version**: v1.2.0  
+**Version**: v1.3.0  
 **Status**: APPROVED  
 **Owner**: Foreman (FM)  
 **Created**: 2026-02-13  
-**Last Updated**: 2026-02-15  
+**Last Updated**: 2026-02-16  
 **Authority**: Derived from Architecture (modules/mat/02-architecture/), FRS (modules/mat/01-frs/functional-requirements.md), TRS (modules/mat/01.5-trs/technical-requirements-specification.md), Test Registry (governance/TEST_REGISTRY.json)
 
 ---
@@ -24,14 +24,14 @@ This document defines the complete, phased implementation plan for the MAT modul
 ### Derivation Chain
 
 ```
-App Description → FRS (FR-001–FR-069) → TRS (TR-001–TR-070) → Architecture (13 documents) → Test Registry (MAT-T-0001–MAT-T-0098) → This Plan
+App Description → FRS (FR-001–FR-071) → TRS (TR-001–TR-071) → Architecture (13 documents) → Test Registry (MAT-T-0001–MAT-T-0098) → This Plan
 ```
 
 ---
 
 ## 1. Build Wave Overview
 
-MAT is built in **seven waves** (Wave 0–Wave 6). Each wave has a gate that must achieve 100% GREEN before the next wave begins.
+MAT is built in **eight waves** (Wave 0–Wave 7). Each wave has a gate that must achieve 100% GREEN before the next wave begins.
 
 | Wave | Name | Builder(s) | Execution | Tests | Est. Duration |
 |------|------|-----------|-----------|-------|---------------|
@@ -41,9 +41,12 @@ MAT is built in **seven waves** (Wave 0–Wave 6). Each wave has a gate that mus
 | 3 | AI Scoring & Human Confirmation | api-builder, ui-builder | Sequential (3.1→3.2) | MAT-T-0026–0039 | 5 days |
 | 4 | Dashboards & Reporting | ui-builder, api-builder | Concurrent (4.1∥4.2) | MAT-T-0069–0081 | 5 days |
 | 5 | Watchdog & Continuous Improvement | api-builder, integration-builder | Sequential (5.1→5.2) | MAT-T-0059–0062, MAT-T-0063–0066 | 4 days |
-| 6 | Deployment & Commissioning | api-builder, qa-builder | Sequential (6.1→6.2→6.3→6.4) | CWT (all 98 tests on production) | 3 days |
+| 5.5 | Frontend Application Assembly | ui-builder | Sequential (5.5.1→5.5.2→5.5.3) | FR-070, FR-071 acceptance criteria | 3 days |
+| 6 | Deployment & Commissioning | api-builder, qa-builder | Sequential (6.1→6.2→6.3→6.4) | CWT (all tests on production) | 3 days |
 
-**Total Estimated Duration**: ~33 working days (7 weeks)
+**Total Estimated Duration**: ~36 working days (8 weeks)
+
+> **Change Note (v1.3.0, 2026-02-16)**: Wave 5.5 (Frontend Application Assembly) added to address governance gap where all component-level tests passed but no deployable React application was built. Wave 5.5 sits between Waves 5 and 6 because it requires all component implementations (Waves 0–5) to be complete before assembly, and must complete before deployment (Wave 6). See BUILD_PROGRESS_TRACKER.md Deviation #9.
 
 ---
 
@@ -476,6 +479,98 @@ MAT is built in **seven waves** (Wave 0–Wave 6). Each wave has a gate that mus
 
 ---
 
+### 2.6.5 Wave 5.5 — Frontend Application Assembly
+
+**Objective**: Scaffold the MAT React frontend application at `apps/mat-frontend/`, wire all implemented components (Waves 1–5) into page layouts with routing, and produce a buildable, deployable application artifact.
+
+**Execution**: Sequential — each sub-task depends on the prior.
+
+**Rationale**: Waves 0–5 delivered all backend services and UI component logic, but NO deployable React application was ever scaffolded. The components exist in `modules/mat/src/components/` as TypeScript service/logic modules, not as rendered React components in a running SPA. This wave bridges the gap between tested components and a working application. See BUILD_PROGRESS_TRACKER.md Deviation #9.
+
+**FRS References**: FR-070 (Frontend Application Scaffolding), FR-071 (Frontend Application Wiring)
+**TRS References**: TR-001 (React 18+ with Vite 5+), TR-006 (Monorepo Workspace), TR-071 (Frontend Application as Deployable Artifact)
+
+#### Task 5.5.1: React Application Scaffolding
+
+| Field | Value |
+|-------|-------|
+| **Builder** | ui-builder |
+| **Execution** | Sequential (must complete before 5.5.2) |
+| **Dependencies** | Wave 5 complete |
+| **FRS Refs** | FR-070 |
+| **TRS Refs** | TR-001, TR-006, TR-071 |
+
+**Scope**:
+- Scaffold React 18+ application with Vite 5+ at `apps/mat-frontend/` (per TRS TR-001, NOT App Description §16.3 which specifies Next.js — TRS is authoritative)
+- Configure `package.json` with workspace dependencies
+- Configure TypeScript with `strict: true`
+- Configure Tailwind CSS 3+ and Shadcn/UI
+- Configure Zustand for client state, TanStack Query for server state
+- Configure Supabase client SDK
+- Create `src/main.tsx` entry point with providers (Auth, QueryClient, Store)
+- Register in `pnpm-workspace.yaml`
+- Verify `pnpm build` produces static assets
+- Verify `pnpm dev` starts development server
+
+**Acceptance Criteria** (FR-070):
+1. `apps/mat-frontend/` exists as a buildable workspace package
+2. `pnpm build` succeeds with zero warnings
+3. `pnpm dev` starts a development server
+4. TypeScript strict mode enabled
+5. Shadcn/UI + Tailwind CSS configured
+6. Supabase client SDK configured
+
+#### Task 5.5.2: Page Layouts, Routing, and Component Wiring
+
+| Field | Value |
+|-------|-------|
+| **Builder** | ui-builder |
+| **Execution** | Sequential (depends on 5.5.1, must complete before 5.5.3) |
+| **Dependencies** | Task 5.5.1 complete |
+| **FRS Refs** | FR-071 |
+| **TRS Refs** | TR-071, TR-001 |
+
+**Scope**:
+- Create page layouts for all major sections: Audit Management, Criteria Management, Evidence Collection, AI Scoring Review, Dashboards, Report Generation
+- Configure client-side routing (React Router or equivalent)
+- Import and render all components from `modules/mat/src/components/`
+- Implement responsive navigation (sidebar on desktop, drawer on mobile) per FR-062
+- Wire PWA manifest and service worker registration per FR-063
+
+**Acceptance Criteria** (FR-071):
+1. All major sections accessible via navigation
+2. Components render in their respective pages
+3. Responsive layout at desktop (≥1024px), tablet (768–1023px), mobile (<768px)
+4. PWA manifest registered
+5. Client-side routing functional
+
+#### Task 5.5.3: Integration Verification and Build Validation
+
+| Field | Value |
+|-------|-------|
+| **Builder** | ui-builder |
+| **Execution** | Sequential (depends on 5.5.2) |
+| **Dependencies** | Task 5.5.2 complete |
+| **FRS Refs** | FR-070, FR-071 |
+| **TRS Refs** | TR-071, TR-001, TR-007 |
+
+**Scope**:
+- Verify all existing tests (MAT-T-0001–MAT-T-0098) still pass
+- Verify frontend builds (`pnpm build`) without errors or warnings
+- Verify frontend starts and renders in browser
+- Smoke test critical user flows in the running application
+- Document application structure in build evidence
+
+**Acceptance Criteria**:
+1. All 98 existing tests remain GREEN
+2. Frontend build succeeds with zero warnings
+3. Application renders in browser and all pages are navigable
+4. Critical user flows (audit creation, criteria upload, evidence capture, dashboard view) are functional or show appropriate placeholder states
+
+**Wave 5.5 Gate**: FR-070 and FR-071 acceptance criteria met. All 98 existing tests remain GREEN. Frontend builds and renders. PREHANDOVER proof compiled.
+
+---
+
 ### 2.7 Wave 6 — Deployment & Commissioning
 
 **Objective**: Deploy MAT to production (Vercel), provision all environment variables, validate deployment health, execute Combined Wave Test (CWT) on the production build, and perform formal closure with governance sign-off.
@@ -490,7 +585,7 @@ MAT is built in **seven waves** (Wave 0–Wave 6). Each wave has a gate that mus
 |-------|-------|
 | **Builder** | api-builder |
 | **Execution** | Sequential (must complete before 6.2) |
-| **Dependencies** | Wave 5 complete (all 98 tests GREEN locally) |
+| **Dependencies** | Wave 5.5 complete (frontend application assembled and verified) |
 | **Architecture Refs** | `deployment-architecture.md` §3.1, §3.4 |
 
 **Scope**:
@@ -811,6 +906,13 @@ This implementation plan is accepted when:
 7. ✅ Risk mitigation strategies defined for all identified risks
 8. ✅ CST/CWT integration testing requirements defined per `governance/canon/COMBINED_TESTING_PATTERN.md`
 9. ✅ Deployment & Commissioning wave (Wave 6) defined with production CWT, formal sign-over, and closure certification
+10. ✅ Frontend Application Assembly wave (Wave 5.5) defined with scaffolding, wiring, and build verification per FR-070, FR-071, TR-071
+
+**Change Log**:
+- v1.3.0 (2026-02-16): Added Wave 5.5 (Frontend Application Assembly) per governance remediation. Updated derivation chain to FR-001–FR-071 and TR-001–TR-071. See BUILD_PROGRESS_TRACKER.md Deviation #9.
+- v1.2.0 (2026-02-15): Added Wave 6 (Deployment & Commissioning).
+- v1.1.0 (2026-02-14): Added CST/CWT integration testing requirements.
+- v1.0.0 (2026-02-13): Initial implementation plan with Waves 0–5.
 
 ---
 

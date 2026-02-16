@@ -3,12 +3,12 @@
 **Module**: MAT (Manual Audit Tool)
 **Artifact Type**: Technical Requirements Specification
 **Status**: COMPLETE
-**Version**: v1.0.0
+**Version**: v1.1.0
 **Owner**: Foreman (FM)
-**Authority**: Derived from FRS v1.0.0 (`modules/mat/01-frs/functional-requirements.md`)
+**Authority**: Derived from FRS v1.1.0 (`modules/mat/01-frs/functional-requirements.md`)
 **Applies To**: MAT module within maturion-isms repository
 **Created**: 2026-02-13
-**Last Updated**: 2026-02-13
+**Last Updated**: 2026-02-16
 
 ---
 
@@ -1302,11 +1302,32 @@ Audio recording and processing MUST be implemented in the browser and backend.
 
 ---
 
+### TR-071: Frontend Application as Deployable Artifact
+
+**Derives From**: FR-070, FR-071, TR-001, TR-006
+**Priority**: P0
+
+The MAT frontend MUST be delivered as a complete, deployable React 18+ application within the monorepo workspace.
+
+**Constraints**:
+1. Application location: `apps/mat-frontend/` within the pnpm workspace (per TR-006).
+2. Framework: React 18+ with Vite 5+ (per TR-001). This is the authoritative specification; App Description §16.3 (Next.js) is superseded.
+3. Build output: `pnpm build` produces optimized static assets deployable to Vercel (per TR-005).
+4. Development: `pnpm dev` starts a local development server with hot module replacement.
+5. Package manifest: `package.json` with correct workspace dependencies and scripts.
+6. All UI components specified in the UI Component Architecture (`ui-component-architecture.md`) are imported and rendered in the application.
+7. Routing: Client-side routing for all major sections (audits, criteria, evidence, scoring, dashboards, reports).
+8. Entry point: `src/main.tsx` bootstraps the React application with providers (auth, query client, store).
+
+> **Governance Note (2026-02-16)**: This TR was added because the existing TRs (TR-001 through TR-070) define the technical constraints for individual components but do NOT require their assembly into a deployable application. Without this TR, all component-level tests could pass while no working application exists. See BUILD_PROGRESS_TRACKER.md Deviation #9.
+
+---
+
 ## Priority Summary
 
 | Priority | TR Count | Description |
 |----------|----------|-------------|
-| P0       | 56       | Must Have — Core technical constraints for MVP |
+| P0       | 57       | Must Have — Core technical constraints for MVP |
 | P1       | 11       | Should Have — Important for production readiness |
 | P2       | 3        | Nice to Have — Future integration requirements |
 
@@ -1333,7 +1354,7 @@ Audio recording and processing MUST be implemented in the browser and backend.
 
 ## Document Authority
 
-This TRS is derived from the MAT FRS v1.0.0 (`modules/mat/01-frs/functional-requirements.md`, 69 requirements: FR-001 to FR-069).
+This TRS is derived from the MAT FRS v1.1.0 (`modules/mat/01-frs/functional-requirements.md`, 71 requirements: FR-001 to FR-071).
 
 **Governance Reference**: `governance/strategy/MODULE_LIFECYCLE_AND_REPO_STRUCTURE_STRATEGY.md` §4.1
 
@@ -1341,6 +1362,10 @@ This TRS is derived from the MAT FRS v1.0.0 (`modules/mat/01-frs/functional-requ
 **Downstream**: TRS → Architecture (`modules/mat/02-architecture/`)
 
 **Traceability**: Complete FRS-to-TRS mapping available in `frs-to-trs-traceability.md`.
+
+**Change Log**:
+- v1.1.0 (2026-02-16): Added TR-071 (Frontend Application as Deployable Artifact) per governance remediation. See BUILD_PROGRESS_TRACKER.md Deviation #9.
+- v1.0.0 (2026-02-13): Initial TRS with 70 requirements (TR-001–TR-070).
 
 ---
 

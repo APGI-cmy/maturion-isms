@@ -562,6 +562,64 @@ Track the progression through the canonical module lifecycle stages.
 
 ---
 
+### Deviation #9: Frontend Application Not Delivered — Tested ≠ Delivered (2026-02-16)
+
+> **Date**: 2026-02-16  
+> **Detected In**: Governance review (Issue #234)  
+> **Session**: Post-Wave 5 governance remediation  
+> **Severity**: CRITICAL — Fully Functional Delivery Standard Violation
+
+> **Deviation**: All 98 QA-to-Red tests reached GREEN status (Waves 0–5 complete), all architecture documents specify a React frontend (ui-component-architecture.md, deployment-architecture.md, system-architecture.md), and the FRS/TRS specify frontend requirements (TR-001: React 18+ with Vite 5+, TR-006: monorepo workspace at `apps/`). However, **NO deployable React frontend application was ever scaffolded or built**. The directory `apps/mat-frontend/` does not exist. The components in `modules/mat/src/components/` are TypeScript service/logic modules — NOT rendered React JSX components in a running SPA.
+>
+> **What Was Delivered**: 7 TypeScript logic/type files in `modules/mat/src/components/` (criteria-tree.ts, criteria-modal.ts, criteria-upload.ts, approval-workflow.ts, dashboard.ts, review-table.ts, ui-support.ts). These implement component logic and type definitions but are NOT React components with JSX rendering. 11 backend services in `modules/mat/src/services/`. 12 test suites with 98 tests GREEN.
+>
+> **What Was NOT Delivered**: A scaffolded React 18+ application at `apps/mat-frontend/` with: `package.json`, `src/main.tsx` entry point, page layouts, routing, Vite configuration, Tailwind CSS/Shadcn/UI setup, PWA manifest, service worker registration, or any rendered UI.
+
+> **Root Cause** (5-Why Analysis):
+> 1. **Why no frontend app?** Because no implementation wave explicitly required scaffolding a React application — waves built individual components and services.
+> 2. **Why was no wave explicit about the app?** Because the Implementation Plan (v1.2.0) derived tasks from the Architecture and Test Registry, which specified component behavior — not application assembly.
+> 3. **Why didn't the FRS catch this?** Because the FRS (v1.0.0) defined 69 system requirements (what the system must do) but had no requirement for the frontend application itself as a deliverable artifact.
+> 4. **Why didn't the App Description catch this?** Because the App Description §19 (Foreman Deliverable Expectation) listed FRS, Architecture, Database Schema, AI Specs, QA Plans, and Watchdog — but NOT a frontend application as a named deliverable.
+> 5. **Why didn't tests catch this?** Because the test suite validates service logic and component behavior at the unit/integration level — tests pass when the logic is correct, regardless of whether a deployable application exists. **This is the "Tested ≠ Delivered" anti-pattern documented in FULLY_FUNCTIONAL_DELIVERY_STANDARD.md.**
+>
+> **Additional Contributing Factor — Tech Stack Discrepancy**: App Description §16.3 specifies Next.js 14+ and explicitly prohibits "Vite + React SPA". However, TRS TR-001 specifies React 18+ with Vite 5+. Per governance hierarchy and CS2 authority clarification (2026-02-16), TRS is the authoritative technical specification and supersedes App Description on technical decisions. App Description §16.3 requires correction in a future update.
+
+> **Impact**:
+> - The "Tested ≠ Delivered" anti-pattern was realized: 100% test pass rate with 0% frontend application delivery.
+> - Wave 6 (Deployment & Commissioning) cannot proceed without a deployable application to deploy.
+> - The FULLY_FUNCTIONAL_DELIVERY_STANDARD.md Section 3.3 was violated: "Tested" was treated as "Delivered".
+> - The one-time build principle was broken: components exist but must now be assembled in a remediation wave.
+
+> **Corrective Actions**:
+> 1. ✅ **App Description updated** (v1.1 → v1.2): Added §19.7 "Frontend Application (React 18+ SPA with Vite)" as explicit Foreman deliverable. Documented tech stack discrepancy with TRS.
+> 2. ✅ **FRS updated** (v1.0.0 → v1.1.0): Added FR-070 (Frontend Application Scaffolding and Packaging) and FR-071 (Frontend Application Wiring and Completeness).
+> 3. ✅ **TRS updated** (v1.0.0 → v1.1.0): Added TR-071 (Frontend Application as Deployable Artifact). Reaffirmed TRS TR-001 (React 18+ with Vite 5+) as authoritative over App Description §16.3 (Next.js).
+> 4. ✅ **Implementation Plan updated** (v1.2.0 → v1.3.0): Added Wave 5.5 (Frontend Application Assembly) with 3 sequential tasks: scaffolding (5.5.1), page wiring (5.5.2), integration verification (5.5.3). Wave sits between Waves 5 and 6.
+> 5. ✅ **Builder Contract updated** (v2.0.0 → v3.0.0): Added Wave 5.5 to ui-builder scope. Added `apps/mat-frontend/**` to authorized paths. Added FR-070/FR-071 acceptance criteria.
+> 6. ✅ **BUILD_PROGRESS_TRACKER updated**: This deviation record.
+
+> **Before/After Reconciliation**:
+>
+> | Artifact | Before (Gap) | After (Remediated) |
+> |----------|-------------|-------------------|
+> | App Description §19 | 6 deliverables (no frontend app) | 7 deliverables (frontend app added, TRS authority noted) |
+> | FRS | 69 requirements (FR-001–FR-069) | 71 requirements (FR-070, FR-071 added) |
+> | TRS | 70 requirements (TR-001–TR-070) | 71 requirements (TR-071 added) |
+> | Implementation Plan | 7 waves (Wave 0–6) | 8 waves (Wave 5.5 added) |
+> | Builder Contract (ui-builder) | 4 waves (1, 2, 3, 4) | 5 waves (1, 2, 3, 4, 5.5) |
+> | `apps/mat-frontend/` | ❌ Does not exist | 📋 Defined in Wave 5.5 (awaiting builder execution) |
+
+> **Preventive Actions**:
+> 1. All future module specifications MUST include the deployable application as a named deliverable in the App Description and FRS.
+> 2. The FULLY_FUNCTIONAL_DELIVERY_STANDARD.md "Does the app WORK?" question MUST be applied at every wave closure — not just final deployment.
+> 3. Implementation plans MUST include an explicit "Application Assembly" wave or task that verifies all components are wired into a running, deployable application.
+> 4. Wave gates MUST validate that deliverables are not just tested but physically exist as deployable artifacts.
+> 5. Tech stack decisions in the TRS MUST be validated against the App Description, and any discrepancies documented and resolved before builder execution.
+
+> **Governance References**: `governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md` §3.3, §4.2, §8.2; `BUILD_PHILOSOPHY.md` (One-Time Build, Zero Regression); Issue #234; TRS TR-001 (React 18+ with Vite 5+ — authoritative); App Description §16.3 (Next.js — superseded by TRS per CS2 authority clarification)
+
+---
+
 ## Lessons Learned — Production Readiness Improvements
 
 **Context**: Following Wave 3 completion (PR #168), the circuit breaker and AI invocation logging implementations were reviewed for production readiness. While the in-memory implementations are acceptable for v1, several areas require enhancement for robust production operation, audit compliance, and system resilience.
@@ -708,8 +766,8 @@ Track the progression through the canonical module lifecycle stages.
 ## Current Stage Summary
 
 **Current Stage**: Stage 5 (Build Execution — IN PROGRESS)  
-**Overall Progress**: ~100% build complete (98/98 tests GREEN)  
-**Blockers**: None — Waves 0–5 complete, remaining Wave 6 (deployment only)  
+**Overall Progress**: ~95% build complete (98/98 tests GREEN, frontend application assembly pending)  
+**Blockers**: Wave 5.5 (Frontend Application Assembly) must complete before Wave 6 (Deployment)  
 **Next Steps**: 
 1. ~~Create `01.5-trs/` folder in module structure~~
 2. ~~Develop TRS based on FRS requirements (FR-001 to FR-069)~~
@@ -725,7 +783,8 @@ Track the progression through the canonical module lifecycle stages.
 12. ~~Complete Wave 3: AI Scoring & Human Confirmation (15 tests GREEN, PR #168)~~
 13. ~~Complete Wave 4: Dashboards & Reporting (9 tests GREEN, PR #178)~~
 14. ~~Complete Wave 5: Watchdog & Continuous Improvement (13 tests GREEN)~~
-15. Proceed to Wave 6: Deployment & Commissioning (Vercel deploy, staging validate, production deploy, CWT on production, formal sign-over)
+15. Complete Wave 5.5: Frontend Application Assembly (scaffold `apps/mat-frontend/` with React 18+ and Vite 5+ per TRS TR-001, wire components, verify build)
+16. Proceed to Wave 6: Deployment & Commissioning (Vercel deploy, staging validate, production deploy, CWT on production, formal sign-over)
 
 ---
 
@@ -739,6 +798,8 @@ Track the progression through the canonical module lifecycle stages.
 - [x] Session Memory Protocol compliance enforced — all builder files now include mandatory LAS v6.2.0 session memory section (see deviation record in Stage 4)
 - [x] Traceability maintained (App Description → FRS → TRS → Architecture → QA-to-Red → Implementation Plan → Builder Appointment)
 - [x] Deployment & Commissioning wave (Wave 6) included in Implementation Plan with production CWT, formal sign-over, and closure certification (previously omitted — see critical gap record in Stage 3)
+- [x] Frontend Application Assembly wave (Wave 5.5) added to Implementation Plan (previously omitted — see Deviation #9). All governing artifacts updated: App Description v1.2, FRS v1.1.0 (FR-070, FR-071), TRS v1.1.0 (TR-071), Implementation Plan v1.3.0, Builder Contract v3.0.0.
+- [x] Tech stack discrepancy documented: App Description §16.3 (Next.js) superseded by TRS TR-001 (React 18+ with Vite 5+) per CS2 authority clarification (2026-02-16). App Description correction deferred (non-blocking).
 - [ ] All required approvals obtained
 - [ ] Evidence artifacts created for each stage
 - [ ] Module manifest up to date
@@ -759,8 +820,10 @@ Track the progression through the canonical module lifecycle stages.
 
 **Deployment & Commissioning Wave Addition**: Wave 6 (Deployment & Commissioning) added to Implementation Plan on 2026-02-15 (v1.2.0). The initial plan (Waves 0–5) omitted an explicit deployment wave, creating a governance gap: no documented deployment pipeline, no production CWT, and no formal closure/sign-over process. This reflects PartPulse propagation learnings — no build is closed or signable without evidence of full deployment, 100% test pass on production, and certified sign-over. See Stage 3 critical gap record for full details.
 
+**Frontend Application Assembly Wave Addition (Deviation #9)**: Wave 5.5 (Frontend Application Assembly) added to Implementation Plan on 2026-02-16 (v1.3.0). All component-level tests passed (98/98 GREEN) but NO deployable React frontend application existed. This is the "Tested ≠ Delivered" anti-pattern per FULLY_FUNCTIONAL_DELIVERY_STANDARD.md. Root cause: the frontend application was never listed as an explicit deliverable in the App Description, FRS, or Implementation Plan — only individual component behaviors were specified and tested. Corrective action: updated all governing artifacts (App Description v1.2, FRS v1.1.0 with FR-070/FR-071, TRS v1.1.0 with TR-071, Implementation Plan v1.3.0 with Wave 5.5, Builder Contract v3.0.0). Tech stack discrepancy documented: TRS TR-001 (React 18+ with Vite 5+) is authoritative per CS2 clarification; App Description §16.3 (Next.js) is superseded and deferred for correction. See Deviation #9 for full RCA.
+
 ---
 
-**Template Version**: 1.6.0 (includes TRS stage, QA-to-Red stage, Builder Checklist Creation stage, POLC authority deviation record, Session Memory Protocol deviation record, Wave 2 retroactive documentation, Wave 3 tracker update failure RCA, Wave 6 Deployment & Commissioning addition)  
+**Template Version**: 1.7.0 (includes TRS stage, QA-to-Red stage, Builder Checklist Creation stage, POLC authority deviation record, Session Memory Protocol deviation record, Wave 2 retroactive documentation, Wave 3 tracker update failure RCA, Wave 6 Deployment & Commissioning addition, Wave 5.5 Frontend Application Assembly addition, Tech stack discrepancy documentation)  
 **Template Authority**: MODULE_LIFECYCLE_AND_REPO_STRUCTURE_STRATEGY.md  
-**Last Template Update**: 2026-02-15
+**Last Template Update**: 2026-02-16

@@ -3,9 +3,9 @@
 **Module**: MAT (Manual Audit Tool)
 **Artifact Type**: Functional Requirements Specification
 **Status**: COMPLETE
-**Version**: v1.0.0
+**Version**: v1.1.0
 **Owner**: Foreman (FM)
-**Authority**: Derived from App Description v1.1 (modules/mat/00-app-description/app-description.md)
+**Authority**: Derived from App Description v1.2 (modules/mat/00-app-description/app-description.md)
 **Applies To**: MAT module within maturion-isms repository
 **Created**: 2026-02-13
 **Last Updated**: 2026-02-13
@@ -1291,6 +1291,52 @@ The system MUST support 100+ concurrent auditors per deployment.
 
 ---
 
+## 22. Frontend Application Delivery
+
+> **Governance Note (2026-02-16)**: This section was added to address a governance gap where all frontend functionality was specified as system requirements (FR-001–FR-069) but no requirement explicitly mandated the delivery of a packaged, deployable frontend application. This allowed all tests to pass at the service/logic level without a working React application ever being built. See BUILD_PROGRESS_TRACKER.md Deviation #9 for full RCA.
+
+### FR-070: Frontend Application Scaffolding and Packaging
+
+**Priority**: P0
+**Source**: App Description §16.3 (Frontend Stack), §19.7 (Frontend Application Deliverable), TRS TR-001 (authoritative), TR-006
+
+The system MUST include a scaffolded, buildable React 18+ frontend application located at `apps/mat-frontend/` within the monorepo workspace.
+
+**Acceptance Criteria**:
+1. A React 18+ application exists at `apps/mat-frontend/` using Vite 5+ per TRS TR-001.
+2. The application is registered in `pnpm-workspace.yaml` as a workspace package.
+3. `pnpm build` from the application root produces deployable static assets.
+4. `pnpm dev` launches a local development server.
+5. The application uses TypeScript 5.0+ with `strict: true` per TRS TR-001.
+6. Shadcn/UI + Tailwind CSS 3+ used for all UI components per TRS TR-001.
+7. Zustand for client state and TanStack Query for server state per TRS TR-001.
+8. All functional components only — no class components per TRS TR-001.
+
+**Edge Cases**:
+- Build must succeed with zero warnings.
+- Application must not depend on backend services to start (graceful degradation).
+
+### FR-071: Frontend Application Wiring and Completeness
+
+**Priority**: P0
+**Source**: App Description §2–§12 (all user workflows), §16.2 (Responsive Design), §19.7 (Frontend Application Deliverable)
+
+All UI components, pages, and user workflows specified in FR-001 through FR-069 that involve user interaction MUST be wired into the frontend application with functional routing and navigation.
+
+**Acceptance Criteria**:
+1. The frontend application contains routes/pages for: audit management, criteria management, evidence collection, AI scoring review, dashboards, and report generation.
+2. All UI components from `modules/mat/src/components/` are imported and rendered in the application.
+3. Navigation between all major sections is functional (sidebar or top navigation).
+4. Responsive layout renders correctly at desktop (≥1024px), tablet (768–1023px), and mobile (<768px) per FR-062.
+5. PWA manifest and service worker are registered per FR-063.
+6. The application is deployable to Vercel and accessible at a production URL.
+
+**Edge Cases**:
+- Pages for features not yet connected to backend must render with appropriate placeholder states.
+- Offline mode must show an offline indicator per FR-047.
+
+---
+
 ## Traceability Matrix
 
 The following matrix links each FRS requirement to the source section(s) in the App Description.
@@ -1366,6 +1412,8 @@ The following matrix links each FRS requirement to the source section(s) in the 
 | FR-067 | §3.3.3 | Regulatory Compliance |
 | FR-068 | §3.3.1 | Large Audits |
 | FR-069 | §3.3.1 | Concurrent Users |
+| FR-070 | §16.3, §19.7, TRS TR-001, TR-006 | Frontend Application Scaffolding |
+| FR-071 | §2–§12, §16.2, §19.7 | Frontend Application Wiring |
 
 ---
 
@@ -1373,12 +1421,12 @@ The following matrix links each FRS requirement to the source section(s) in the 
 
 | Priority | Count | Description |
 |----------|-------|-------------|
-| P0 | 44 | Must Have — Core MVP functionality |
+| P0 | 46 | Must Have — Core MVP functionality |
 | P1 | 18 | Should Have — Important for launch |
 | P2 | 7 | Nice to Have — Future extensions |
 
 ### P0 Requirements (Must Have)
-FR-001 through FR-017, FR-019, FR-020, FR-022 through FR-025, FR-027, FR-028 through FR-030, FR-033 through FR-040, FR-042 through FR-054, FR-062, FR-066
+FR-001 through FR-017, FR-019, FR-020, FR-022 through FR-025, FR-027, FR-028 through FR-030, FR-033 through FR-040, FR-042 through FR-054, FR-062, FR-066, FR-070, FR-071
 
 ### P1 Requirements (Should Have)
 FR-003, FR-018, FR-021, FR-026, FR-031, FR-032, FR-041, FR-055, FR-059 through FR-061, FR-063 through FR-065, FR-067 through FR-069
@@ -1408,11 +1456,15 @@ FR-056, FR-057, FR-058
 
 ## Document Authority
 
-This FRS is derived from the MAT App Description v1.1 (`modules/mat/00-app-description/app-description.md`) and the MAT Manual Audit Tool Updated specification (`modules/mat/00-app-description/MAT_Manual_Audit_Tool_Updated.md`).
+This FRS is derived from the MAT App Description v1.2 (`modules/mat/00-app-description/app-description.md`) and the MAT Manual Audit Tool Updated specification (`modules/mat/00-app-description/MAT_Manual_Audit_Tool_Updated.md`).
 
 **Governance Reference**: `governance/strategy/MODULE_LIFECYCLE_AND_REPO_STRUCTURE_STRATEGY.md`
 
 **Next Stage**: This FRS feeds into the TRS (Technical Requirements Specification) at `modules/mat/01.5-trs/`.
+
+**Change Log**:
+- v1.1.0 (2026-02-16): Added FR-070, FR-071 (Frontend Application Delivery) per governance remediation. See BUILD_PROGRESS_TRACKER.md Deviation #9.
+- v1.0.0 (2026-02-13): Initial FRS with 69 requirements (FR-001–FR-069).
 
 ---
 

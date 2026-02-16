@@ -1095,11 +1095,24 @@ Based on this App Description, Foreman must generate:
    - Response playbooks
    - SLA requirements
 
+7. **Frontend Application (React 18+ SPA with Vite)**
+   - Scaffolded React 18+ application at `apps/mat-frontend/` using Vite 5+ per TRS TR-001 (authoritative technical specification)
+   - All UI components specified in §2–§12 wired into page layouts and routes
+   - Responsive design per §16.2 (desktop ≥1024px, tablet 768px, mobile <768px)
+   - PWA shell with offline support per §8
+   - Integration with backend API and Supabase per §16.4
+   - Deployable build artifact via `pnpm build` per §16.1 (Vercel)
+   - All acceptance criteria from §17 (functional, non-functional, AI governance) verifiable in the running application
+
+> **Governance Note (2026-02-16)**: This deliverable was added to address a governance gap where the frontend application was architecturally specified but NOT listed as an explicit Foreman deliverable. Without this entry, the frontend could be documented, designed, and tested at the service/logic level without ever being built as a deployable React application. See BUILD_PROGRESS_TRACKER.md Deviation #9 for full RCA.
+>
+> **Tech Stack Discrepancy (2026-02-16)**: App Description §16.3 specifies Next.js 14+ and prohibits Vite + React SPA. However, TRS TR-001 (the authoritative downstream technical specification) specifies React 18+ with Vite 5+. Per governance hierarchy (App Description → FRS → TRS), TRS supersedes App Description on technical decisions made during TRS compilation. Builders MUST use React 18+ with Vite 5+ per TRS TR-001. App Description §16.3 requires correction in a future update to align with TRS.
+
 ---
 
 ## End of Document
 
-**Document Version**: v1.1  
-**Last Updated**: 2026-02-13  
+**Document Version**: v1.2  
+**Last Updated**: 2026-02-16  
 **Status**: Draft (awaiting approval)  
 **Next Review**: After FRS generation and validation
