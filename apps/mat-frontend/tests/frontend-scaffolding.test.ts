@@ -73,8 +73,10 @@ describe('CAT-FE-01: frontend application scaffolding (FR-070)', () => {
 
     const pkg = JSON.parse(readFileSync(resolve(APP_ROOT, 'package.json'), 'utf-8'));
     const reactVersion = pkg.dependencies?.react || '';
-    // React 18 or higher
-    expect(reactVersion).toMatch(/\^?1[89]\./);
+    // React 18 or higher — extract major version number
+    const majorMatch = reactVersion.match(/(\d+)\./);
+    expect(majorMatch).not.toBeNull();
+    expect(Number(majorMatch![1])).toBeGreaterThanOrEqual(18);
   });
 
   it('MAT-FE-T-006: Application entry point exists (index.html + main.tsx)', () => {
