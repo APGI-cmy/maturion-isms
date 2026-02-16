@@ -341,3 +341,13 @@
 
 ---
 
+## Session 012 - 20260216
+
+**What I Learned:**
+- [Lesson to be filled by agent]
+
+**What to Remember:**
+- [Key insight to be filled by agent]
+
+---
+
