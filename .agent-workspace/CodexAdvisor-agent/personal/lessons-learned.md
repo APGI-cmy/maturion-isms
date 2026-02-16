@@ -133,6 +133,25 @@
 
 ---
 
+## Session 20260216 (Session 012 - Agent File Modification Authority)
+
+### Lesson: Agent File Modification Authority is Exclusive to CodexAdvisor
+- Context: Agent contracts (`.github/agents/**`) are constitutional governance artifacts requiring agent-factory oversight
+- Pattern: Only CodexAdvisor-agent (via agent-factory protocol) may create or modify agent contract files
+- Action: Before any `.github/agents/**` modification, confirm CodexAdvisor-agent authority OR explicit CS2/CS1-approved issue authorization
+- Evidence: CS2 Governance Ruling (2026-02-16), LIVING_AGENT_SYSTEM.md v6.2.0, AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md
+- Exception: CS2/CS1-approved issues may explicitly grant temporary authority to other agents for specific modifications
+- Violation Prevention: All future agent file changes must reference this lesson and confirm authority boundary compliance
+
+### Lesson: Proactive Governance Learning Prevents Violations
+- Context: Recording governance clarifications before violations occur establishes clear boundaries
+- Pattern: When governance ruling is issued (even if no violation occurred), immediately document in session memory and personal learning
+- Action: Create session memory + update lessons-learned.md + update patterns.md for comprehensive coverage
+- Evidence: Session 012 documents PR #233 governance clarification proactively (not reactively to violation)
+- Benefit: Future sessions have explicit authority boundary reference, preventing constitutional violations
+
+---
+
 ## Session 20260216 (Session 010)
 
 ### Lesson: Agent ID Consistency is Critical for GitHub Copilot Registration
