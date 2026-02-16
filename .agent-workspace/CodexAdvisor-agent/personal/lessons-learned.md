@@ -130,3 +130,35 @@
 - Action: Self-review sessions MUST catch incomplete work before merge; use explicit completion checklists to prevent propagation
 - Evidence: This corrective action prevented 66% incomplete validation from becoming canonical baseline
 
+
+---
+
+## Session 20260216 (Session 010)
+
+### Lesson: Agent ID Consistency is Critical for GitHub Copilot Registration
+- Context: Foreman agent disappeared from Copilot agent list after PR #222
+- Pattern: Agent file had frontmatter `id: foreman-isms-agent` but agent section `id: foreman-isms` (mismatch)
+- Action: GitHub Copilot requires exact match between frontmatter.id, agent.id, and filename for agent discovery
+- Prevention: Validate ID consistency before any agent file creation/modification
+- Tool: Compare `grep "^id:" file` with `grep "^  id:" file` output for all agent files
+
+### Lesson: Constitutional Authority Correction via Minimal Change
+- Context: governance-liaison-isms agent violated authority boundaries by creating foreman file
+- Pattern: When wrong agent creates file but content is valid, CodexAdvisor takes ownership via commit, not recreation
+- Action: Minimal surgical change (1 line) + proper commit authorship establishes CodexAdvisor ownership
+- Rationale: Preserves valid work while correcting constitutional violation; avoids unnecessary disruption
+- Authority: CodexAdvisor-agent is agent-factory; ownership shown through git history
+
+### Lesson: Agent File Authority Model Enforcement is Manual
+- Context: No automated gate prevented governance-liaison from creating foreman file
+- Pattern: Agent boundary violations are not currently caught by pre-commit hooks or merge gates
+- Action: Recommend pre-commit hook validating agent file modifications by correct agent
+- Enhancement: Add merge gate checking `.github/agents/*.md` changes against AGENT_RECRUITMENT_AND_CONTRACT_AUTHORITY_MODEL.md
+- Current state: Authority enforcement relies on manual review and post-facto correction
+
+### Lesson: PR #222 Gold Standard for Foreman Contract
+- Context: Foreman contract v2.2.0 includes FULLY_FUNCTIONAL_DELIVERY_STANDARD.md wave gates
+- Pattern: Contract structure now includes Pre-Wave Authorization Gate, Wave Completion Gate, Wave Closure Certification
+- Action: All future foreman updates must preserve these v2.2.0 enhancements
+- Reference: Sections 6.3-6.5 and 7.4 are critical additions from PR #222
+- Quality bar: "Tested" ≠ "Delivered" — physical verification required before wave closure
