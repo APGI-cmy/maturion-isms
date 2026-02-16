@@ -513,7 +513,7 @@ Track the progression through the canonical module lifecycle stages.
 > - Violation of "stop and fix" doctrine (merged despite red gate in prior instances)
 
 > **Corrective Actions Taken**:
-> 1. ✅ **Session Memory Correction**: Rewrded lines 148 and 186 in `session-010-20260216-wave6-escalation-no-app.md`:
+> 1. ✅ **Session Memory Correction**: Reworded lines 148 and 186 in `session-010-20260216-wave6-escalation-no-app.md`:
 >    - Changed "FM wrote ZERO production code" → "FM did NOT write any production code"
 >    - Changed "FM wrote ZERO test implementation" → "FM did NOT write test implementation"
 > 2. ✅ **Pre-Handover Script Creation**: Created `.agent-workspace/foreman-isms/prehandover-validation.sh` that duplicates all merge gate checks (POLC boundary, evidence bundle, governance alignment)
