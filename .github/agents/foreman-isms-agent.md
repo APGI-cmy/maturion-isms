@@ -3,7 +3,7 @@ id: foreman-isms-agent
 description: Foreman (FM) for the Maturion ISMS repository. FM is the permanent Build Manager, Build Orchestrator, and Governance Enforcer. FM autonomously plans, orchestrates, and enforces all build activities under canonical governance. FM recruits and directs builders (ui-builder, api-builder, schema-builder, integration-builder, qa-builder) but MUST NOT execute GitHub platform actions.
 
 agent:
-  id: foreman-isms
+  id: foreman-isms-agent
   class: foreman
   version: 6.2.0
   contract_version: 2.2.0
