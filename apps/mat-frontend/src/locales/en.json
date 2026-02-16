@@ -1,0 +1,28 @@
+{
+  "app": {
+    "title": "MAT - Manual Audit Tool",
+    "description": "Manual Audit Tool for ISMS maturity assessments"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "audits": "Audits",
+    "criteria": "Criteria",
+    "evidence": "Evidence",
+    "scoring": "Scoring",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "offline": "You are offline"
+  }
+}
