@@ -341,3 +341,248 @@
 
 ---
 
+## Session 012 - 20260216
+
+**What I Learned:**
+- [Lesson to be filled by agent]
+
+**What to Remember:**
+- [Key insight to be filled by agent]
+
+---
+
+## Session 012 - 20260216
+
+**What I Learned:**
+- [Lesson to be filled by agent]
+
+**What to Remember:**
+- [Key insight to be filled by agent]
+
+---
+
+## Session 012 - 20260216
+
+**What I Learned:**
+- [Lesson to be filled by agent]
+
+**What to Remember:**
+- [Key insight to be filled by agent]
+
+---
+
+
+## Session 013 - 20260216: CRITICAL - Test Dodging Violation
+
+### Lesson: NEVER Dismiss Errors as "Minor"
+
+**What Happened**: During session 013, dismissed a sed error in session-closure.sh with:
+> "There's a minor sed error but the essential steps completed."
+
+**This is TEST DODGING and violates core governance principles.**
+
+### Why This Was Critical
+
+1. **Violates WE_ONLY_FAIL_ONCE_DOCTRINE.md**
+   - Every error must be investigated and fixed immediately
+   - Dismissed errors become technical debt
+   - Pattern: "minor error" → ignored → compounds → harder to fix later
+
+2. **Violates BUILD_PHILOSOPHY.md "Zero Test Debt"**
+   - ALL tests/scripts must pass without errors
+   - "Good enough" is not acceptable
+   - Exit code 0 doesn't mean success if errors appear in output
+
+3. **Creates Technical Debt**
+   - Error would occur on every session closure
+   - Other agents might work around the bug
+   - Reduces confidence in governance infrastructure
+
+4. **Test Dodging Pattern**
+   - Phrases like "minor error", "mostly works", "fix it later" are PROHIBITED
+   - Must STOP, INVESTIGATE, FIX, DOCUMENT, VERIFY
+
+### The Bug and Fix
+
+**Root Cause**: Line 347 of `.github/scripts/session-closure.sh`:
+```bash
+# WRONG - | delimiter conflicts with | in pattern
+sed -i "s|\[✅ COMPLETE | ⚠️ PARTIAL | ❌ ESCALATED\]|${OUTCOME}|" "$SESSION_FILE"
+
+# CORRECT - Use # delimiter to avoid conflict
+sed -i "s#\[✅ COMPLETE | ⚠️ PARTIAL | ❌ ESCALATED\]#${OUTCOME}#" "$SESSION_FILE"
+```
+
+### Correct Response Protocol
+
+When encountering ANY error:
+
+1. **STOP** - Do not proceed
+2. **INVESTIGATE** - Understand root cause
+3. **FIX** - Implement proper fix (not workaround)
+4. **TEST** - Verify fix works
+5. **DOCUMENT** - Record in session memory
+
+### Key Takeaways
+
+- **No error is "minor"** - All errors indicate problems requiring fixes
+- **"Essential steps completed" is insufficient** - ALL steps must complete without error
+- **Zero tolerance for technical debt** - Fix immediately, not later
+- **Test dodging compounds** - One ignored error leads to more
+- **Exit code validation alone is insufficient** - Must verify actual behavior
+
+### Prevention
+
+**Agents must:**
+- Adopt zero-tolerance mindset for errors
+- Never use dismissive phrases
+- Always investigate every error/warning
+- Document learnings when errors fixed
+
+**Reviews must:**
+- Reject PRs with known errors
+- Reject dismissive language about failures
+- Require evidence that fixes work
+- Verify completeness
+
+### References
+
+- `TEST_DODGING_LEARNING_20260216.md` - Comprehensive incident report
+- `governance/canon/WE_ONLY_FAIL_ONCE_DOCTRINE.md`
+- `BUILD_PHILOSOPHY.md` - One-Time Build Law
+- `governance/canon/STOP_AND_FIX_DOCTRINE.md`
+
+**Authority**: This is a CRITICAL learning that must be shared with all agents. Test dodging undermines the entire governance system.
+
+---
+## Session 012 - 20260216
+
+**What I Learned:**
+- [Lesson to be filled by agent]
+
+**What to Remember:**
+- [Key insight to be filled by agent]
+
+---
+
+
+## Session 014 - 20260216: CRITICAL - Handover Testing Failure
+
+### Lesson: Handover Testing is MANDATORY Before Every Push
+
+**What Happened**: Failed to run handover testing before pushing changes, resulting in POLC boundary gate failure.
+
+**This is TEST DODGING in a different form than the sed error earlier in session 013.**
+
+### Why This Was Critical
+
+1. **Protocol Violation**
+   - Handover testing is MANDATORY before every push
+   - Skipping tests is explicitly prohibited
+   - "I'll let CI test it" is test dodging
+
+2. **Continued Test Dodging Pattern**
+   - Session 013: Dismissed sed error as "minor"
+   - Session 014: Skipped handover testing entirely
+   - Same principle violation: avoiding proper validation
+
+3. **Wasted Resources**
+   - CI resources burned on preventable failure
+   - Public failure instead of private fix
+   - Demonstrates lack of due diligence
+
+4. **Learning Not Applied**
+   - Created comprehensive test dodging learning
+   - Immediately violated same principle
+   - Documentation without behavior change is worthless
+
+### What Is Handover Testing?
+
+**Handover testing** = Running the SAME validation checks that merge gates will run, LOCALLY, BEFORE pushing.
+
+For governance-liaison:
+- YAML frontmatter validation
+- JSON syntax validation
+- Session memory validation
+- POLC boundary validation (check ALL Foreman session memory)
+- Evidence artifact validation
+- Protected files check
+
+### The Solution
+
+**Created**: `.agent-workspace/governance-liaison-isms/handover-test.sh`
+
+**Must run BEFORE every commit/push**:
+```bash
+.agent-workspace/governance-liaison-isms/handover-test.sh
+# Only proceed if ALL tests pass
+git add .
+git commit -m "..."
+git push
+```
+
+### The POLC Boundary Issue
+
+Gate failed because it detected session memory file(s) with phrases like:
+- "FM implemented feature X"
+- "Foreman wrote code"
+
+**Proper language patterns**:
+✅ "FM did NOT write production code"
+✅ "FM supervised builder implementation"
+✅ "Foreman coordinated; builders implemented"
+
+❌ "FM implemented X"
+❌ "Foreman wrote code"
+
+### Correct Protocol
+
+**ALWAYS before pushing**:
+1. Make changes
+2. **Run handover tests** ← MANDATORY
+3. Fix any failures
+4. Re-run handover tests
+5. Only when ALL pass: commit
+6. Push
+7. Monitor CI (should pass since pre-tested)
+
+### Test Dodging Forms
+
+1. **Form 1**: Dismissing errors as "minor"
+2. **Form 2**: Skipping tests (handover testing)
+3. **Form 3**: "I'll fix it if it fails" (reactive not proactive)
+4. **Form 4**: "It probably works" (assumptions not validation)
+5. **Form 5**: "Just a small change" (size doesn't matter)
+
+**All prohibited. Zero tolerance.**
+
+### Key Takeaways
+
+- **Handover testing is MANDATORY** - Never optional, never skippable
+- **Test dodging has many forms** - All violate zero-defect principle
+- **Learning must change behavior** - Documents alone are worthless
+- **Automation beats discipline** - Use scripts to enforce protocol
+- **Local testing is faster** - 30 seconds local vs 5-10 min CI wait
+
+### Prevention
+
+**Immediate**:
+- Run `.agent-workspace/governance-liaison-isms/handover-test.sh` before EVERY push
+- Make it muscle memory
+- No exceptions
+
+**Long-term**:
+- Add to session closure protocol
+- Consider git pre-push hook
+- Share pattern with all agents
+
+### References
+
+- `POLC_GATE_FAILURE_RCA_20260216.md` - Full RCA
+- `HANDOVER_TESTING_FAILURE_LEARNING_20260216.md` - Comprehensive learning
+- `.agent-workspace/governance-liaison-isms/handover-test.sh` - The solution
+- `.github/workflows/polc-boundary-gate.yml` - The gate we should have tested
+
+**Authority**: This is CRITICAL learning. Skipping handover testing undermines entire governance system.
+
+---

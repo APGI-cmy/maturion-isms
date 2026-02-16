@@ -9,7 +9,8 @@
 
 ## Category 0 — Identity & Canonical Bindings
 - [ ] **Frontmatter matches baseline**: `agent.id=foreman` or `ForemanApp`, `agent.class=foreman`, `role` references FM orchestration authority; `governance.protocol=LIVING_AGENT_SYSTEM`, Canon Inventory loaded (`governance/CANON_INVENTORY.json`).
-- [ ] **Mandatory bindings declared**: Canon Inventory manifest + Build Philosophy, `AGENT_FILE_BINDING_REQUIREMENTS.md` Universal Mandatory Bindings + application bindings (ripple model, agent recruitment, FM authority, execution bootstrap, agent test execution) (`governance/canon/AGENT_FILE_BINDING_REQUIREMENTS.md`).
+- [ ] **Core mandatory bindings**: Canon Inventory manifest (`governance/CANON_INVENTORY.json`) + Build Philosophy (`BUILD_PHILOSOPHY.md`) + FULLY_FUNCTIONAL_DELIVERY_STANDARD.md (wave gates).
+- [ ] **Application bindings declared**: `AGENT_FILE_BINDING_REQUIREMENTS.md` Universal Mandatory Bindings + application bindings (ripple model, agent recruitment, FM authority, execution bootstrap, agent test execution) (`governance/canon/AGENT_FILE_BINDING_REQUIREMENTS.md`, `governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md`).
 - [ ] **Canonical references are links, not inline copies**; locked-section protection honored (`governance/canon/AGENT_CONTRACT_PROTECTION_PROTOCOL.md`, `AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md`).
 
 ## Category 1 — Authority, Scope & Boundaries
@@ -39,6 +40,9 @@
 
 ## Category 6 — Role-Specific Deliverables & Outputs
 - [ ] **Outputs enumerated**: Requirement specs, architecture compilation, QA gate definitions, wave/issue artifacts, governance evidence bundle; aligns with FM POLC model (`governance/canon/FOREMAN_WAVE_PLANNING_AND_ISSUE_ARTIFACT_GENERATION_PROTOCOL.md`, `BUILD_EFFECTIVENESS_STANDARD.md`).
+- [ ] **Pre-Wave Authorization Gate**: Validates fully functional design before wave start; verifies architecture completeness, implementation plan, QA derivability; blocks wave if design incomplete (`governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md` Section 5.1).
+- [ ] **Wave Completion Gate**: Verifies physical deliverables exist and work before closure; validates functional completeness, quality standards, evidence bundle; non-delegable FM authority (`governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md` Section 5.2).
+- [ ] **Wave Closure Certification**: Issues formal certification with 5 mandatory criteria (deliverable completeness, functional completeness, quality completeness, fully functional delivery, zero major rework) with evidence (`governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md` Section 4.3).
 - [ ] **Wave closure**: IBWR + wave closure certification bindings referenced (`governance/canon/IN_BETWEEN_WAVE_RECONCILIATION.md`, `MANDATORY_CANONICAL_PROGRESS_RECORDING_AND_WAVE_CLOSURE_CERTIFICATION.md`).
 - [ ] **Traceability**: Scope-to-diff and scope declaration schema applied; decisions/audit trail kept (`governance/canon/SCOPE_TO_DIFF_RULE.md`, `SCOPE_DECLARATION_SCHEMA.md`, `COMMISSIONING_EVIDENCE_MODEL.md`).
 
@@ -46,6 +50,7 @@
 - [ ] **No contract self-modification outside protocol**; changes require CS2/governance approval (`governance/canon/AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md`, `CS2_AGENT_FILE_AUTHORITY_MODEL.md`).
 - [ ] **No boundary violations**: FM must not perform builder tasks or governance-liaison duties; respects agent QA boundaries (`governance/canon/AGENT_SCOPED_QA_BOUNDARIES.md`).
 - [ ] **No scope drift**: Follow domain ownership/accountability and platform boundary rules (`governance/canon/DOMAIN_OWNERSHIP_ACCOUNTABILITY.md`, `PLATFORM_AUTHORITY_BOUNDARY_AND_DELEGATION_MODEL.md`).
+- [ ] **Fully Functional Delivery Prohibitions**: FM must not approve partial delivery, defer critical features, or certify without physical verification; "Tested" ≠ "Delivered" rule enforced (`governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md` Section 4.2, Section 7.4 in contract).
 
 ---
 
@@ -59,7 +64,8 @@
 - Maintains comprehensive category-based organization (Categories 0-7)
 - Every checklist item includes explicit canonical source citations
 - Consumer repository context: Governance canon flows from APGI-cmy/maturion-foreman-governance
+- **v1.1.0 Update**: Added FULLY_FUNCTIONAL_DELIVERY_STANDARD.md requirements (Pre-Wave Authorization Gate, Wave Completion Gate, Wave Closure Certification, Fully Functional Delivery Prohibitions)
 
-**Version**: 1.0.0  
-**Date**: 2026-02-11  
-**Authority**: office-app PR #730, LIVING_AGENT_SYSTEM.md v6.2.0
+**Version**: 1.1.0  
+**Date**: 2026-02-16  
+**Authority**: office-app PR #730, LIVING_AGENT_SYSTEM.md v6.2.0, FULLY_FUNCTIONAL_DELIVERY_STANDARD.md v1.0.0
