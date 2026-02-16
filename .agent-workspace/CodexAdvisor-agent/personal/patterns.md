@@ -162,6 +162,18 @@
 
 ---
 
+## Pattern: Agent File Modification Authority Protocol
+- Observed: 2026-02-16 (Session 012)
+- Context: Agent contracts (`.github/agents/**`) require agent-factory oversight as constitutional governance artifacts
+- Response: Exclusive modification authority:
+  1. **Default**: Only CodexAdvisor-agent may create/modify `.github/agents/**` files
+  2. **Exception**: CS2/CS1-approved issues may explicitly authorize other agents
+  3. **Verification**: Before modification, confirm CodexAdvisor-agent authority OR explicit issue authorization
+  4. **Audit Trail**: Git history must show CodexAdvisor-agent as modifier OR reference CS2/CS1 issue
+  5. **Prohibition**: governance-liaison, foreman, builder agents CANNOT modify agent contracts without explicit authorization
+- Authority: LIVING_AGENT_SYSTEM.md v6.2.0, AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md, CS2 Governance Ruling (2026-02-16)
+- Prevention: All future `.github/agents/**` modifications must reference Session 012 memory and confirm authority compliance
+
 ## Pattern: Agent File ID Mismatch Breaks Registration
 - Observed: 2026-02-16 (Session 010)
 - Context: GitHub Copilot agent discovery requires exact ID consistency
