@@ -159,3 +159,29 @@
 - Root Cause: Agents created at different times with different assumptions
 - Response: Check 3+ agents to determine actual vs aspirational structure
 - Prevention: Standardize paths in agent factory protocol, validate against actual structure
+
+---
+
+## Pattern: Agent File ID Mismatch Breaks Registration
+- Observed: 2026-02-16 (Session 010)
+- Context: GitHub Copilot agent discovery requires exact ID consistency
+- Symptom: Agent exists in `.github/agents/*.md` but doesn't appear in Copilot agent list
+- Diagnosis: Check if frontmatter `id:` matches agent section `id:` matches filename (minus .md)
+- Fix: Align all three ID references to be identical
+- Prevention: Validate ID consistency in agent file creation/modification workflow
+
+## Pattern: Constitutional Ownership via Git History
+- Observed: 2026-02-16 (Session 010)
+- Context: When wrong agent creates valid file, establish correct ownership
+- Response: CodexAdvisor makes minimal surgical change with proper commit authorship
+- Rationale: Git history shows CodexAdvisor as last modifier, establishing authority
+- Trade-off: Preserves valid content while correcting constitutional violation
+- Authority: Agent-factory ownership demonstrated through commit lineage, not file recreation
+
+## Pattern: Agent Boundary Violation Detection Gap
+- Observed: 2026-02-16 (Session 010)
+- Context: governance-liaison-isms created foreman file despite authority restriction
+- Gap: No pre-commit hook or merge gate enforces AGENT_RECRUITMENT_AND_CONTRACT_AUTHORITY_MODEL.md
+- Current state: Manual detection and post-facto correction only
+- Recommendation: Implement automated enforcement (pre-commit hook + merge gate)
+- Urgency: Medium (violations are rare but constitutionally critical when they occur)
