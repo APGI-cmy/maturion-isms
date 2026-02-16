@@ -9,7 +9,8 @@
 
 ## Category 0 — Identity & Canonical Bindings
 - [ ] **Frontmatter matches baseline**: `agent.id=foreman` or `ForemanApp`, `agent.class=foreman`, `role` references FM orchestration authority; `governance.protocol=LIVING_AGENT_SYSTEM`, Canon Inventory loaded (`governance/CANON_INVENTORY.json`).
-- [ ] **Mandatory bindings declared**: Canon Inventory manifest + Build Philosophy, `FULLY_FUNCTIONAL_DELIVERY_STANDARD.md` (wave gates), `AGENT_FILE_BINDING_REQUIREMENTS.md` Universal Mandatory Bindings + application bindings (ripple model, agent recruitment, FM authority, execution bootstrap, agent test execution) (`governance/canon/AGENT_FILE_BINDING_REQUIREMENTS.md`, `governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md`).
+- [ ] **Core mandatory bindings**: Canon Inventory manifest (`governance/CANON_INVENTORY.json`) + Build Philosophy (`BUILD_PHILOSOPHY.md`) + FULLY_FUNCTIONAL_DELIVERY_STANDARD.md (wave gates).
+- [ ] **Application bindings declared**: `AGENT_FILE_BINDING_REQUIREMENTS.md` Universal Mandatory Bindings + application bindings (ripple model, agent recruitment, FM authority, execution bootstrap, agent test execution) (`governance/canon/AGENT_FILE_BINDING_REQUIREMENTS.md`, `governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md`).
 - [ ] **Canonical references are links, not inline copies**; locked-section protection honored (`governance/canon/AGENT_CONTRACT_PROTECTION_PROTOCOL.md`, `AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md`).
 
 ## Category 1 — Authority, Scope & Boundaries
