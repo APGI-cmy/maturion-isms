@@ -490,6 +490,41 @@ MAT is built in **eight waves** (Wave 0–Wave 7). Each wave has a gate that mus
 **FRS References**: FR-070 (Frontend Application Scaffolding), FR-071 (Frontend Application Wiring)
 **TRS References**: TR-001 (React 18+ with Vite 5+), TR-006 (Monorepo Workspace), TR-071 (Frontend Application as Deployable Artifact)
 
+---
+
+#### ⚠️ MANDATORY PRE-BUILD GATE: QA-to-Red Test Suite Required
+
+**Authority**: BUILD_PHILOSOPHY.md (test-first sequence), Issue [APGI-cmy/maturion-isms#240](https://github.com/APGI-cmy/maturion-isms/issues/240), PR [APGI-cmy/maturion-isms#241](https://github.com/APGI-cmy/maturion-isms/pull/241), CS2 governance ruling 2026-02-16
+
+**Gate Requirement**: Before ANY implementation work begins on Wave 5.5 tasks (5.5.1, 5.5.2, 5.5.3), Foreman MUST generate and merge a complete QA-to-Red test suite covering all Wave 5.5 frontend requirements (FR-070, FR-071, TR-001, TR-006, TR-071).
+
+**Mandatory Conditions**:
+1. **Test-First Sequence**: QA-to-Red tests MUST exist and be committed BEFORE any builder receives implementation assignment
+2. **Requirements Mapping**: All tests MUST be explicitly mapped to FRS/TRS requirements (FR-070, FR-071)
+3. **Non-Destructive**: New tests MUST preserve all 98 existing GREEN tests from Waves 0–5 (zero test regressions allowed)
+4. **Runnable RED State**: Tests MUST be executable and initially fail (RED status) before implementation begins
+5. **Complete Coverage**: Tests MUST cover:
+   - React application scaffolding verification (FR-070)
+   - Component wiring and routing validation (FR-071)
+   - Build and deployment artifact verification (TR-071)
+   - Responsive layout requirements (FR-062)
+   - PWA manifest and service worker registration (FR-063)
+
+**Stop-and-Fix Enforcement**: If this gate is violated (code-first approach attempted), Foreman MUST:
+- STOP all Wave 5.5 implementation work immediately
+- Document deviation in BUILD_PROGRESS_TRACKER.md
+- Generate QA-to-Red test suite before resuming
+- Conduct root cause analysis of gate violation
+
+**Traceability**:
+- **Governance Deviation Record**: See BUILD_PROGRESS_TRACKER.md Stage 2.5 (QA-to-Red Previously Omitted)
+- **QA-to-Red Issue**: [APGI-cmy/maturion-isms#240](https://github.com/APGI-cmy/maturion-isms/issues/240)
+- **QA-to-Red Implementation**: [APGI-cmy/maturion-isms#241](https://github.com/APGI-cmy/maturion-isms/pull/241)
+
+**Gate Validation**: Wave 5.5 cannot proceed to Task 5.5.1 until QA-to-Red test suite is merged and verified.
+
+---
+
 #### Task 5.5.1: React Application Scaffolding
 
 | Field | Value |
