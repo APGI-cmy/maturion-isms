@@ -361,3 +361,97 @@
 
 ---
 
+## Session 012 - 20260216
+
+**What I Learned:**
+- [Lesson to be filled by agent]
+
+**What to Remember:**
+- [Key insight to be filled by agent]
+
+---
+
+
+## Session 013 - 20260216: CRITICAL - Test Dodging Violation
+
+### Lesson: NEVER Dismiss Errors as "Minor"
+
+**What Happened**: During session 013, dismissed a sed error in session-closure.sh with:
+> "There's a minor sed error but the essential steps completed."
+
+**This is TEST DODGING and violates core governance principles.**
+
+### Why This Was Critical
+
+1. **Violates WE_ONLY_FAIL_ONCE_DOCTRINE.md**
+   - Every error must be investigated and fixed immediately
+   - Dismissed errors become technical debt
+   - Pattern: "minor error" → ignored → compounds → harder to fix later
+
+2. **Violates BUILD_PHILOSOPHY.md "Zero Test Debt"**
+   - ALL tests/scripts must pass without errors
+   - "Good enough" is not acceptable
+   - Exit code 0 doesn't mean success if errors appear in output
+
+3. **Creates Technical Debt**
+   - Error would occur on every session closure
+   - Other agents might work around the bug
+   - Reduces confidence in governance infrastructure
+
+4. **Test Dodging Pattern**
+   - Phrases like "minor error", "mostly works", "fix it later" are PROHIBITED
+   - Must STOP, INVESTIGATE, FIX, DOCUMENT, VERIFY
+
+### The Bug and Fix
+
+**Root Cause**: Line 347 of `.github/scripts/session-closure.sh`:
+```bash
+# WRONG - | delimiter conflicts with | in pattern
+sed -i "s|\[✅ COMPLETE | ⚠️ PARTIAL | ❌ ESCALATED\]|${OUTCOME}|" "$SESSION_FILE"
+
+# CORRECT - Use # delimiter to avoid conflict
+sed -i "s#\[✅ COMPLETE | ⚠️ PARTIAL | ❌ ESCALATED\]#${OUTCOME}#" "$SESSION_FILE"
+```
+
+### Correct Response Protocol
+
+When encountering ANY error:
+
+1. **STOP** - Do not proceed
+2. **INVESTIGATE** - Understand root cause
+3. **FIX** - Implement proper fix (not workaround)
+4. **TEST** - Verify fix works
+5. **DOCUMENT** - Record in session memory
+
+### Key Takeaways
+
+- **No error is "minor"** - All errors indicate problems requiring fixes
+- **"Essential steps completed" is insufficient** - ALL steps must complete without error
+- **Zero tolerance for technical debt** - Fix immediately, not later
+- **Test dodging compounds** - One ignored error leads to more
+- **Exit code validation alone is insufficient** - Must verify actual behavior
+
+### Prevention
+
+**Agents must:**
+- Adopt zero-tolerance mindset for errors
+- Never use dismissive phrases
+- Always investigate every error/warning
+- Document learnings when errors fixed
+
+**Reviews must:**
+- Reject PRs with known errors
+- Reject dismissive language about failures
+- Require evidence that fixes work
+- Verify completeness
+
+### References
+
+- `TEST_DODGING_LEARNING_20260216.md` - Comprehensive incident report
+- `governance/canon/WE_ONLY_FAIL_ONCE_DOCTRINE.md`
+- `BUILD_PHILOSOPHY.md` - One-Time Build Law
+- `governance/canon/STOP_AND_FIX_DOCTRINE.md`
+
+**Authority**: This is a CRITICAL learning that must be shared with all agents. Test dodging undermines the entire governance system.
+
+---
