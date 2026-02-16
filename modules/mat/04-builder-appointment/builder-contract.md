@@ -1,12 +1,17 @@
 # MAT — Builder Appointment & Contracts
 
 **Module**: MAT (Manual Audit Tool)  
-**Version**: v1.0.0  
+**Version**: v2.0.0  
 **Status**: APPROVED  
 **Owner**: Foreman (FM)  
 **Created**: 2026-02-13  
-**Last Updated**: 2026-02-13  
+**Last Updated**: 2026-02-16  
+**Governance Alignment**: FM Contract v2.1.0, LIVING_AGENT_SYSTEM.md v6.2.0  
 **Authority**: Derived from Implementation Plan (`modules/mat/03-implementation-plan/implementation-plan.md`), Architecture (`modules/mat/02-architecture/`), [BUILDER_CONTRACT_SCHEMA.md](https://github.com/APGI-cmy/maturion-foreman-office-app/blob/main/.github/agents/BUILDER_CONTRACT_SCHEMA.md)
+
+**Change History**:
+- v2.0.0 (2026-02-16) — Aligned with FM v2.1.0 for gate compliance (Issue #196)
+- v1.0.0 (2026-02-13) — Initial builder appointment and contracts
 
 ---
 
@@ -16,10 +21,25 @@ This document defines builder assignments, responsibilities, constraints, and ha
 
 ### Governance Binding
 
-All builder contracts in this document comply with:
-- **BUILDER_CONTRACT_SCHEMA.md** v2.0 (Maturion Doctrine Enforced)
-- **BUILD_PHILOSOPHY.md** — One-Time Build Correctness, Zero Regression, Build-to-Green
-- **FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md** — FM as managerial authority
+All builders comply with:
+- BUILDER_CONTRACT_SCHEMA.md v2.0, BUILD_PHILOSOPHY.md, FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md
+- LIVING_AGENT_SYSTEM.md v6.2.0, FM Contract v2.1.0
+- MERGE_GATE_INTERFACE_STANDARD.md, EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md
+
+### LAS v6.2.0 Compliance (All Builders)
+
+All builders comply with LAS v6.2.0 categories (see `governance/canon/LIVING_AGENT_SYSTEM.md` for full specification):
+
+| Category | Reference |
+|----------|-----------|
+| 0: Identity & Bindings | `AGENT_RECRUITMENT.md`, `CANON_INVENTORY.json` |
+| 1: Authority & Boundaries | §1–§5 Builder-Only Constraint, §6 Doctrine |
+| 2: Governance Loading | §6 Governance Loading, `BUILD_PHILOSOPHY.md` |
+| 3: Memory & Evidence | §8 Session Memory Protocol |
+| 4: Ripple & Gates | §6 Ripple Boundary, Merge Gate Awareness |
+| 5: Escalation & Stop | §6 Escalation & Stop Conditions |
+| 6: Deliverables & Outputs | §1–§5 Scope and acceptance criteria |
+| 7: Prohibitions & Guardrails | §1–§5 Forbidden Actions + Builder-Only Constraint |
 
 ---
 
@@ -34,6 +54,21 @@ All builder contracts in this document comply with:
 | **Assigned Waves** | Wave 0 (Task 0.1) |
 | **Recruited By** | Foreman (FM) |
 | **Handover Protocol** | gate-first-deterministic |
+| **Contract Version** | 2.0.0 |
+| **LAS Version** | 6.2.0 |
+
+### Builder-Only Constraint (Mirrors FM §1.2)
+
+**Authorized File Paths**:
+- ✅ `modules/mat/src/schema/**`, `modules/mat/src/migrations/**`, `modules/mat/src/seeds/**`
+- ✅ `modules/mat/tests/schema/**`, `modules/mat/tests/wiring/**`
+- ✅ `.agent-workspace/schema-builder/**`
+
+**Prohibited File Paths**:
+- ❌ API/Edge Functions, UI components, AI services, integrations (other builder scopes)
+- ❌ `governance/**`, `modules/mat/02-architecture/**` (read-only)
+
+**Violation Response**: POLC boundary gate Check 2 failure.
 
 ### Scope
 
@@ -124,6 +159,22 @@ Upon completion, schema-builder must provide:
 | **Assigned Waves** | Wave 0 (Tasks 0.2, 0.3), Wave 1 (Tasks 1.1, 1.2), Wave 2 (Tasks 2.1, 2.2), Wave 3 (Task 3.1), Wave 4 (Task 4.2), Wave 5 (Task 5.1) |
 | **Recruited By** | Foreman (FM) |
 | **Handover Protocol** | gate-first-deterministic |
+| **Contract Version** | 2.0.0 |
+| **LAS Version** | 6.2.0 |
+
+### Builder-Only Constraint (Mirrors FM §1.2)
+
+**Authorized File Paths**:
+- ✅ `modules/mat/src/api/**`, `modules/mat/src/edge-functions/**`, `modules/mat/src/ai-gateway/**`
+- ✅ `modules/mat/src/offline-sync/**`, `modules/mat/src/reports/**`, `modules/mat/src/watchdog/**`
+- ✅ `modules/mat/tests/api/**`, `modules/mat/tests/edge-functions/**`, `modules/mat/tests/ai-gateway/**`
+- ✅ `.agent-workspace/api-builder/**`
+
+**Prohibited File Paths**:
+- ❌ Database schema/migrations (schema-builder scope), UI components (ui-builder scope), integrations (integration-builder scope)
+- ❌ `governance/**`, `modules/mat/02-architecture/**` (read-only)
+
+**Violation Response**: POLC boundary gate Check 2 failure.
 
 ### Scope
 
@@ -263,6 +314,22 @@ Per-wave acceptance criteria are defined in `modules/mat/03-implementation-plan/
 | **Assigned Waves** | Wave 1 (Task 1.3), Wave 2 (Task 2.3), Wave 3 (Task 3.2), Wave 4 (Task 4.1) |
 | **Recruited By** | Foreman (FM) |
 | **Handover Protocol** | gate-first-deterministic |
+| **Contract Version** | 2.0.0 |
+| **LAS Version** | 6.2.0 |
+
+### Builder-Only Constraint (Mirrors FM §1.2)
+
+**Authorized File Paths**:
+- ✅ `modules/mat/src/ui/**`, `modules/mat/src/components/**`, `modules/mat/src/hooks/**`
+- ✅ `modules/mat/src/stores/**`, `modules/mat/src/styles/**`
+- ✅ `modules/mat/tests/ui/**`, `modules/mat/tests/components/**`
+- ✅ `.agent-workspace/ui-builder/**`
+
+**Prohibited File Paths**:
+- ❌ API/Edge Functions, database schema, AI services, integrations (other builder scopes)
+- ❌ `governance/**`, `modules/mat/02-architecture/**` (read-only)
+
+**Violation Response**: POLC boundary gate Check 2 failure.
 
 ### Scope
 
@@ -374,6 +441,20 @@ All 13 tests must be GREEN before each wave gate.
 | **Assigned Waves** | Wave 5 (Task 5.2) |
 | **Recruited By** | Foreman (FM) |
 | **Handover Protocol** | gate-first-deterministic |
+| **Contract Version** | 2.0.0 |
+| **LAS Version** | 6.2.0 |
+
+### Builder-Only Constraint (Mirrors FM §1.2)
+
+**Authorized File Paths**:
+- ✅ `modules/mat/src/integrations/**`, `modules/mat/tests/integrations/**`
+- ✅ `.agent-workspace/integration-builder/**`
+
+**Prohibited File Paths**:
+- ❌ Core API, UI, database schema (other builder scopes)
+- ❌ `governance/**`, `modules/mat/02-architecture/**` (read-only)
+
+**Violation Response**: POLC boundary gate Check 2 failure.
 
 ### Scope
 
@@ -450,6 +531,19 @@ All 4 tests must be GREEN before wave gate.
 | **Assigned Waves** | All waves (continuous) |
 | **Recruited By** | Foreman (FM) |
 | **Handover Protocol** | gate-first-deterministic |
+| **Contract Version** | 2.0.0 |
+| **LAS Version** | 6.2.0 |
+
+### Builder-Only Constraint (Mirrors FM §1.2)
+
+**Authorized File Paths**:
+- ✅ `modules/mat/tests/**` (all test categories), `modules/mat/src/test-fixtures/**`, `modules/mat/src/test-utils/**`
+- ✅ `.agent-workspace/qa-builder/**`
+
+**Prohibited File Paths**:
+- ❌ Production feature code (all builder scopes), `governance/**`, `modules/mat/02-architecture/**` (read-only)
+
+**Violation Response**: POLC boundary gate Check 2 failure.
 
 ### Scope
 
@@ -571,6 +665,32 @@ Submit enhancement proposal or explicit "No enhancements identified" statement.
 - Builders receive ripple context from FM but do not initiate or propagate ripple signals
 - Cross-module or cross-repo concerns → escalate to FM
 
+### Governance Loading (LAS Category 2)
+
+Before build: Load BUILD_PHILOSOPHY.md, architecture docs (verify frozen), TEST_REGISTRY.json, EXECUTION_BOOTSTRAP_PROTOCOL.md. Stop if architecture ambiguous.
+
+### Escalation & Stop (LAS Category 5)
+
+**Stop & Escalate**: Test debt, architecture ambiguity, missing prerequisites, warnings, cross-builder conflicts.
+
+**Hard Stops**: Architecture not frozen, QA-to-Red missing, governance ambiguity.
+
+**Path**: Builder → FM → CS2
+
+### Merge Gate Awareness (LAS Category 4)
+
+Builder evidence for gate checks:
+
+| Check | Evidence |
+|-------|----------|
+| merge-gate/verdict | PREHANDOVER proof, 100% GREEN, zero warnings |
+| governance/alignment | Session memory with compliance attestation |
+| stop-and-fix/enforcement | Test output, 100% pass, zero warnings |
+| polc-boundary/validation | File changes in authorized paths only |
+| session-memory/validation | Session memory per §8 |
+
+Gate failure = PR blocked.
+
 ---
 
 ## 7. Cross-References
@@ -587,6 +707,56 @@ Submit enhancement proposal or explicit "No enhancements identified" statement.
 | Builder Contract Schema | [BUILDER_CONTRACT_SCHEMA.md](https://github.com/APGI-cmy/maturion-foreman-office-app/blob/main/.github/agents/BUILDER_CONTRACT_SCHEMA.md) |
 | QA-to-Red RCA | `modules/mat/05-build-evidence/RCA_QA_PROCESS_LAPSE.md` |
 | PREHANDOVER Proof Template | `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md` |
+| MERGE_GATE_INTERFACE_STANDARD | `governance/canon/MERGE_GATE_INTERFACE_STANDARD.md` |
+| EVIDENCE_ARTIFACT_BUNDLE_STANDARD | `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md` |
+| FM Contract v2.1.0 | `.github/agents/foreman-isms-agent.md` |
+| LIVING_AGENT_SYSTEM v6.2.0 | `governance/canon/LIVING_AGENT_SYSTEM.md` |
+
+---
+
+## 8. Builder Session Memory & Completion Report Protocol
+
+All builders MUST follow session memory and completion report protocols per LAS v6.2.0 Category 3 (Memory & Evidence).
+
+### 8.1 Session Memory (MANDATORY)
+
+**Path**: `.agent-workspace/<builder-id>/memory/session-NNN-YYYYMMDD.md`
+
+**Required** (see template in `governance/templates/SESSION_MEMORY_TEMPLATE.md`): Builder ID/version, task, files modified (SHA256), actions, decisions, Builder-Only Constraint compliance, test results (100% GREEN), governance compliance, enhancement proposals, attestation.
+
+**Enforcement**: `session-memory/validation` gate check.
+
+---
+
+### 8.2 Completion Report (MANDATORY per Task/Wave)
+
+**Path**: `.agent-workspace/<builder-id>/TASK_<id>_COMPLETION_REPORT.md`
+
+**Required** (see template in `governance/templates/COMPLETION_REPORT_TEMPLATE.md`): Task reference, deliverables, tests implemented (Test Registry IDs, 100% GREEN), test results, PREHANDOVER proof reference, builder attestation, enhancement proposals.
+
+**Purpose**: Supports gate Check 2 (Validate Builder Involvement).
+
+---
+
+### 8.3 Delegation Acceptance Protocol
+
+When FM delegates: (1) Acknowledge, (2) Verify prerequisites, (3) Load governance per §6, (4) Confirm scope within authorized paths, (5) Begin build, (6) Report per §8.1–§8.2.
+
+**Rejection**: Prerequisites missing or task outside scope → escalate to FM.
+
+---
+
+### 8.4 Memory Rotation
+
+When >5 session files exist, archive oldest to `.agent-workspace/<builder-id>/memory/.archive/`.
+
+---
+
+### 8.5 Evidence Bundle Requirements
+
+Each builder PR MUST include under `.agent-admin/`: (1) PREHANDOVER Proof, (2) Gate Results Summary, (3) Test Output Logs (100% GREEN), (4) Coverage Reports, (5) Session Memory copy, (6) Completion Report copy.
+
+**Enforcement**: Gate Check 2 (Validate Builder Involvement).
 
 ---
 
@@ -594,5 +764,10 @@ Submit enhancement proposal or explicit "No enhancements identified" statement.
 
 **Contract Status**: ✅ ACTIVE  
 **Appointed By**: Foreman (FM)  
-**Date**: 2026-02-13  
-**Doctrine Version**: 1.0.0
+**Date**: 2026-02-16  
+**Doctrine Version**: 2.0.0  
+**LAS Version**: 6.2.0
+
+**Change Log**:
+- **v2.0.0** (2026-02-16) — FM v2.1.0 alignment (Issue #196): LAS v6.2.0 compliance, Builder-Only Constraints, Governance Loading, Escalation/Stop, Merge Gate Awareness, Session Memory (§8)
+- **v1.0.0** (2026-02-13) — Initial contract

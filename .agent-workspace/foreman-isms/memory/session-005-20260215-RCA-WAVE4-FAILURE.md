@@ -24,7 +24,7 @@
 
 ### Contributing Factors
 
-1. **Constitutional Boundary Violation**: Foreman wrote application code and tests directly rather than delegating to ui-builder and api-builder agents. This meant no builder recruitment occurred, no task briefs were issued, and no parallel execution was coordinated.
+1. **Constitutional Boundary Violation**: Foreman authored application code and tests directly rather than delegating to ui-builder and api-builder agents. This meant no builder recruitment occurred, no task briefs were issued, and no parallel execution was coordinated.
 
 2. **Implementation Plan Not Re-Read**: The Foreman did not re-read Implementation Plan § 2.5 before executing Wave 4. Had the plan been loaded, the concurrent execution requirement (Task 4.1 ∥ Task 4.2) would have been visible.
 

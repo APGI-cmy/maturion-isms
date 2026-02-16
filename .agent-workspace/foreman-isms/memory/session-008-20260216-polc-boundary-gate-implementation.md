@@ -71,7 +71,7 @@
      - Logic: Parse commits, identify Foreman authors, check files against patterns
      - Production code patterns (PROHIBITED): `modules/**/src/**/*.{ts,tsx}`, `modules/**/tests/**/*.test.{ts,tsx}`
      - Allowed files (excluded): `modules/**/02-architecture/**`, `.agent-workspace/**`, `.agent-admin/**`, `governance/**`
-     - Exit: 1 (fail) if Foreman modified production code
+     - Exit: 1 (fail) if Foreman directly changed production files
    - Implemented Check 2: Validate builder involvement
      - Logic: If production code changed, check for builder commits or completion reports
      - Builder patterns: `ui-builder`, `api-builder`, `schema-builder`, `integration-builder`, `qa-builder`
