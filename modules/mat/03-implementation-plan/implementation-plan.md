@@ -494,22 +494,36 @@ MAT is built in **eight waves** (Wave 0–Wave 7). Each wave has a gate that mus
 
 ---
 
-#### ⚠️ MANDATORY PRE-BUILD GATE — QA-to-Red Suite Required
+#### ⚠️ MANDATORY PRE-BUILD GATE: QA-to-Red Test Suite Required
 
-**BEFORE ANY IMPLEMENTATION** in Wave 5.5 begins, the following MUST be satisfied:
+**Authority**: BUILD_PHILOSOPHY.md (test-first sequence), Issue [APGI-cmy/maturion-isms#240](https://github.com/APGI-cmy/maturion-isms/issues/240), PR [APGI-cmy/maturion-isms#241](https://github.com/APGI-cmy/maturion-isms/pull/241), CS2 governance ruling 2026-02-16
 
-1. **QA-to-Red Functional Test Suite MUST exist** — A test suite covering all Wave 5.5 features and requirements (FR-070, FR-071) MUST be generated, committed, and approved.
-2. **Test suite MUST be runnable** — All new tests MUST start at RED status (expected failures) and be executable via the project test runner.
-3. **Non-destructive guarantee MUST be validated** — All existing tests (MAT-T-0001 to MAT-T-0098) MUST remain GREEN when the new test suite is added.
-4. **Evidence MUST be documented** — PREHANDOVER proof showing: (a) new test suite committed, (b) new tests RED, (c) existing tests GREEN.
+**Gate Requirement**: Before ANY implementation work begins on Wave 5.5 tasks (5.5.1, 5.5.2, 5.5.3), Foreman MUST generate and merge a complete QA-to-Red test suite covering all Wave 5.5 frontend requirements (FR-070, FR-071, TR-001, TR-006, TR-071).
 
-**Authority**: BUILD_PHILOSOPHY.md (Architecture → QA-to-Red → Build-to-Green → Validation), `governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md` §5.1
+**Mandatory Conditions**:
+1. **Test-First Sequence**: QA-to-Red tests MUST exist and be committed BEFORE any builder receives implementation assignment
+2. **Requirements Mapping**: All tests MUST be explicitly mapped to FRS/TRS requirements (FR-070, FR-071)
+3. **Non-Destructive**: New tests MUST preserve all 98 existing GREEN tests from Waves 0–5 (zero test regressions allowed)
+4. **Runnable RED State**: Tests MUST be executable and initially fail (RED status) before implementation begins
+5. **Complete Coverage**: Tests MUST cover:
+   - React application scaffolding verification (FR-070)
+   - Component wiring and routing validation (FR-071)
+   - Build and deployment artifact verification (TR-071)
+   - Responsive layout requirements (FR-062)
+   - PWA manifest and service worker registration (FR-063)
 
-**Enforcement**: Foreman MUST NOT authorize builder recruitment or issue creation for Wave 5.5 implementation until QA-to-Red suite is complete and committed.
+**Stop-and-Fix Enforcement**: If this gate is violated (code-first approach attempted), Foreman MUST:
+- STOP all Wave 5.5 implementation work immediately
+- Document deviation in BUILD_PROGRESS_TRACKER.md
+- Generate QA-to-Red test suite before resuming
+- Conduct root cause analysis of gate violation
 
-**Remediation Reference**: This gate was added after Deviation #10 (PR [APGI-cmy/maturion-isms#239](https://github.com/APGI-cmy/maturion-isms/pull/239) attempted code-first implementation without QA-to-Red suite, violating BUILD_PHILOSOPHY.md). PR #239 was stopped, Issue #240 created QA-to-Red requirement, PR #241 delivered suite. See BUILD_PROGRESS_TRACKER.md Deviation #10.
+**Traceability**:
+- **Governance Deviation Record**: See BUILD_PROGRESS_TRACKER.md Stage 2.5 (QA-to-Red Previously Omitted)
+- **QA-to-Red Issue**: [APGI-cmy/maturion-isms#240](https://github.com/APGI-cmy/maturion-isms/issues/240)
+- **QA-to-Red Implementation**: [APGI-cmy/maturion-isms#241](https://github.com/APGI-cmy/maturion-isms/pull/241)
 
-**Critical Principle**: **CODE-FIRST IS NEVER PERMITTED. TEST-FIRST GUARANTEE ENABLES NON-DESTRUCTIVE BUILD.**
+**Gate Validation**: Wave 5.5 cannot proceed to Task 5.5.1 until QA-to-Red test suite is merged and verified.
 
 ---
 
