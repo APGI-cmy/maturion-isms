@@ -1101,6 +1101,132 @@ Track the progression through the canonical module lifecycle stages.
 
 ---
 
+### Deviation #12: Agent Authority Boundary Violation — Foreman Bypassed Codex Advisor for ui-builder Contract Update (PR #303)
+
+> **Date**: 2026-02-17  
+> **Detected In**: Issue #302 governance review  
+> **Session**: Wave 5.6 preparation and recovery from Deviation #11  
+> **Severity**: HIGH — POLC Authority Boundary Violation, Agent Chain Bypass
+
+> **Deviation**: In PR [APGI-cmy/maturion-isms#303](https://github.com/APGI-cmy/maturion-isms/pull/303) ("Add QA-to-Red UI behavior tests and explicit wiring requirements for Wave 5.6 recovery"), the Foreman agent directly updated the ui-builder contract (`.github/agents/ui-builder.md`) to include explicit wiring/data flow implementation requirements. This violated the constitutional agent authority chain:
+> - **Correct Protocol**: Codex Advisor (creates/modifies) → Foreman (supervises/validates) → CS2 (approves)
+> - **Actual Execution**: Foreman directly authored contract changes (bypassing Codex Advisor)
+
+> **Root Cause** (5-Why Analysis):
+> 1. **Why did Foreman directly update ui-builder contract?** Because Foreman was responding to urgency of Deviation #11 remediation (Wave 5.6 blocking Wave 6).
+> 2. **Why wasn't Codex Advisor invoked for contract update?** Because Foreman acted under time pressure to unblock Wave 5.6 and bypassed the constitutional agent chain.
+> 3. **Why did Foreman not recognize the authority boundary?** Because the same violation occurred previously (PR #128, Deviation #0) and while documented, the preventive action did not sufficiently embed the "invoke Codex Advisor first" protocol into Foreman's execution pattern.
+> 4. **Why wasn't "invoke Codex Advisor" protocol embedded?** Because Deviation #0 preventive action documented the rule but did not create an operational checklist or gate to enforce it.
+> 5. **Why no operational gate for contract modifications?** Because the POLC boundary validation focuses on production code implementation (Foreman must not code), but does not explicitly validate "contract/agent file modifications must go via Codex Advisor."
+
+> **Pattern Analysis — Repeat of PR #128 Violation**:
+>
+> This is the **SECOND occurrence** of the "Foreman bypasses Codex Advisor for agent file modifications" pattern:
+> 1. **Deviation #0 (PR #128, 2026-02-14)**: Foreman directly wrote builder agent files → Remediated by routing all 4 builder files through Codex Advisor
+> 2. **Deviation #12 (PR #303, 2026-02-17)**: Foreman directly updated ui-builder contract → **CURRENT VIOLATION**
+>
+> **Root Pattern**: Foreman treats agent file/contract updates as "configuration changes" within supervisory authority, rather than recognizing them as "agent artifacts requiring Codex Advisor authorship."
+>
+> **Violation of "We Only Fail Once"**: Deviation #0 identified the authority boundary violation and documented the correct agent chain, but **did not implement operational gates or checklists** to prevent recurrence.
+
+> **Impact Assessment**:
+>
+> **Governance Impact**:
+> - ❌ **HIGH**: POLC authority boundary violated — Foreman acted outside supervisory role
+> - ❌ **HIGH**: Constitutional agent chain bypassed — Codex Advisor not invoked for agent file modification
+> - ❌ **MEDIUM**: "We Only Fail Once" doctrine violated — same root cause (authority boundary confusion) caused PR #128 and PR #303 violations
+>
+> **Delivery Impact**:
+> - ⚠️ **LOW**: Contract update content likely correct (addresses Deviation #11 remediation)
+> - ⚠️ **LOW**: No functional delivery impact (contract not yet executed by ui-builder)
+>
+> **Process Debt Impact**:
+> - ❌ **HIGH**: Authority boundary protocol not operationally enforced
+> - ❌ **MEDIUM**: Risk of future recurrence without operational gates
+
+> **Corrective Actions**:
+> 1. ✅ **Governance Learning Recorded** — This deviation record (Deviation #12) in BUILD_PROGRESS_TRACKER.md
+> 2. ✅ **Issue Created** — Issue [#302](https://github.com/APGI-cmy/maturion-isms/issues/302) documents violation and establishes corrective protocol
+> 3. ⏳ **PR #303 Review Required** — CS2 to review ui-builder contract update content (likely correct but procedurally incorrect)
+> 4. ⏳ **Future Contract Updates via Codex Advisor** — ALL agent file/contract modifications MUST be authored by Codex Advisor
+> 5. ⏳ **Operational Gate Addition** — Add "Agent File Modification Gate" to Foreman session checklist:
+>    - Before ANY modification to `.github/agents/*.md` → HALT and invoke Codex Advisor
+>    - Foreman role: Create issue for Codex Advisor, supervise execution, validate output
+>    - Codex Advisor role: Author contract changes, submit PR, document rationale
+>    - CS2 role: Final approval and merge authorization
+
+> **Preventive Actions (Addressing "We Only Fail Once" Violation)**:
+>
+> **Process Improvements**:
+> 1. **Foreman Session Checklist Enhancement** — Add mandatory pre-execution check:
+>    - "Am I modifying any `.github/agents/*.md` files?"
+>    - "If YES → HALT, create issue for Codex Advisor, delegate authorship"
+>    - "If NO → Proceed with supervisory work"
+> 2. **POLC Boundary Gate Enhancement** — Expand POLC validation to include:
+>    - Production code implementation (existing check)
+>    - Agent file/contract modifications (NEW check)
+>    - Governance artifact authorship (NEW check)
+> 3. **Codex Advisor Delegation Protocol** — Formalize process:
+>    - Foreman identifies need for contract/agent file update
+>    - Foreman creates GitHub issue describing required changes
+>    - Foreman assigns issue to Codex Advisor agent
+>    - Codex Advisor authors changes and submits PR
+>    - Foreman reviews PR for completeness and governance alignment
+>    - CS2 approves and merges PR
+> 4. **Merge Gate Automation Enhancement** — Add PR validation:
+>    - If PR modifies `.github/agents/*.md` AND author is NOT Codex Advisor → FAIL gate
+>    - Require manual CS2 override for exceptions
+>
+> **Governance Learning**:
+> 5. **Update FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md** — Add:
+>    - "Agent File Modification Prohibition" section
+>    - "Codex Advisor Delegation Protocol" section
+>    - Document Deviation #12 as example of authority boundary bypass
+> 6. **Update POLC Boundary Validation Workflow** — Add:
+>    - Agent file modification check as mandatory gate
+>    - "Invoke Codex Advisor First" operational checklist
+> 7. **Add to Foreman Personal Learning** — Record:
+>    - "Agent files are NOT configuration — they are canonical artifacts requiring Codex Advisor authorship"
+>    - "Urgency does NOT override constitutional authority boundaries"
+>    - "Deviation #0 and #12 prove operational gates needed, documentation alone insufficient"
+
+> **Lessons Learned**:
+> 1. **Agent Files are Canonical Artifacts** — `.github/agents/*.md` files are NOT configuration or supervisory artifacts. They are canonical agent contracts requiring Codex Advisor authorship.
+> 2. **Urgency ≠ Authority Override** — Time pressure to unblock Wave 5.6 does NOT grant Foreman authority to bypass constitutional agent chain.
+> 3. **Documentation ≠ Enforcement** — Deviation #0 documented the rule ("Codex Advisor creates/modifies agent files") but did not enforce it operationally. Checklists and gates are required.
+> 4. **"We Only Fail Once" Requires Operational Gates** — Preventive action must include operational enforcement mechanisms (checklists, gates, automation), not just documentation.
+> 5. **Authority Boundaries Apply Universally** — POLC boundary prohibits Foreman from implementing production code AND from authoring agent contracts. Both are implementation activities outside supervisory scope.
+
+> **Status**: ACTIVE LEARNING (2026-02-17)
+> - PR #303: Submitted (awaiting CS2 review and procedural correction)
+> - Governance Learning: RECORDED (this deviation record)
+> - Preventive Actions: PENDING (operational gates and checklist updates)
+> - Wave 5.6: READY TO PROCEED (via correct protocol: Codex Advisor authors → Foreman supervises → CS2 approves)
+
+> **Evidence Artifacts**:
+> - ✅ PR #303 submission and comments — See GitHub PR discussion
+> - ✅ Issue #302 governance alert — See GitHub issue
+> - ✅ Deviation #0 (PR #128) cross-reference — See Stage 4 deviation record
+> - ✅ BUILD_PROGRESS_TRACKER.md update — This deviation record
+> - ⏳ Foreman session checklist update — PENDING
+> - ⏳ POLC boundary gate enhancement — PENDING
+> - ⏳ Codex Advisor delegation protocol documentation — PENDING
+
+> **Governance References**:
+> - `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` (POLC authority, supervisory role definition)
+> - `governance/canon/POLC_BOUNDARY_VALIDATION.md` (Authority boundary enforcement)
+> - `governance/canon/WE_ONLY_FAIL_ONCE_DOCTRINE.md` (Preventive action must address root cause)
+> - `BUILD_PHILOSOPHY.md` (Constitutional authority boundaries)
+> - PR [APGI-cmy/maturion-isms#128](https://github.com/APGI-cmy/maturion-isms/pull/128) (Deviation #0 — first occurrence)
+> - PR [APGI-cmy/maturion-isms#303](https://github.com/APGI-cmy/maturion-isms/pull/303) (Current violation)
+> - Issue [APGI-cmy/maturion-isms#302](https://github.com/APGI-cmy/maturion-isms/issues/302) (Governance alert and corrective protocol)
+
+> **Recorded By**: foreman-agent  
+> **Date**: 2026-02-17  
+> **Session**: Governance Protocol Correction — Agent Authority Boundary Enforcement
+
+---
+
 ## Current Stage Summary
 
 **Current Stage**: Stage 5 (Build Execution — BLOCKED)  
@@ -1148,6 +1274,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] Retrospective CWT executed for Waves 0–3 (see deviation record in Stage 5 and `.agent-workspace/foreman-isms/evidence/waves-0-3-retrospective-CWT.md`)
 - [x] POLC authority boundary enforced — builder agent files created by Codex Advisor only (see deviation record in Stage 4)
 - [x] Session Memory Protocol compliance enforced — all builder files now include mandatory LAS v6.2.0 session memory section (see deviation record in Stage 4)
+- [x] Agent authority boundary violation recorded — Deviation #12 documents PR #303 violation (Foreman bypassed Codex Advisor for ui-builder contract update). Corrective protocol established: ALL future agent file modifications MUST be authored by Codex Advisor (see Deviation #12)
 - [x] Traceability maintained (App Description → FRS → TRS → Architecture → QA-to-Red → Implementation Plan → Builder Appointment)
 - [x] Deployment & Commissioning wave (Wave 6) included in Implementation Plan with production CWT, formal sign-over, and closure certification (previously omitted — see critical gap record in Stage 3)
 - [x] Frontend Application Assembly wave (Wave 5.5) added to Implementation Plan (previously omitted — see Deviation #9). All governing artifacts updated: App Description v1.2, FRS v1.1.0 (FR-070, FR-071), TRS v1.1.0 (TR-071), Implementation Plan v1.3.0, Builder Contract v3.0.0.
@@ -1174,8 +1301,10 @@ Track the progression through the canonical module lifecycle stages.
 
 **Frontend Application Assembly Wave Addition (Deviation #9)**: Wave 5.5 (Frontend Application Assembly) added to Implementation Plan on 2026-02-16 (v1.3.0). All component-level tests passed (98/98 GREEN) but NO deployable React frontend application existed. This is the "Tested ≠ Delivered" anti-pattern per FULLY_FUNCTIONAL_DELIVERY_STANDARD.md. Root cause: the frontend application was never listed as an explicit deliverable in the App Description, FRS, or Implementation Plan — only individual component behaviors were specified and tested. Corrective action: updated all governing artifacts (App Description v1.2, FRS v1.1.0 with FR-070/FR-071, TRS v1.1.0 with TR-071, Implementation Plan v1.3.0 with Wave 5.5, Builder Contract v3.0.0). Tech stack discrepancy documented: TRS TR-001 (React 18+ with Vite 5+) is authoritative per CS2 clarification; App Description §16.3 (Next.js) is superseded and deferred for correction. See Deviation #9 for full RCA.
 
+**Agent Authority Boundary Violation Recurrence (Deviation #12, PR #303)**: On 2026-02-17, Foreman directly updated the ui-builder contract in PR [APGI-cmy/maturion-isms#303](https://github.com/APGI-cmy/maturion-isms/pull/303) to add Wave 5.6 wiring requirements, bypassing the Codex Advisor agent. This is the second occurrence of the same violation pattern (first was PR #128, Deviation #0). The constitutional agent chain is: Codex Advisor (creates/modifies) → Foreman (supervises/validates) → CS2 (approves). Root cause: preventive action from Deviation #0 documented the rule but did not implement operational gates (checklists, POLC boundary validation enhancement). Corrective action: Deviation #12 recorded, Issue [#302](https://github.com/APGI-cmy/maturion-isms/issues/302) created, operational gates and Foreman session checklist enhancement planned. **All future agent file/contract modifications MUST be authored by Codex Advisor.** See Deviation #12 for full RCA and preventive actions.
+
 ---
 
-**Template Version**: 1.7.0 (includes TRS stage, QA-to-Red stage, Builder Checklist Creation stage, POLC authority deviation record, Session Memory Protocol deviation record, Wave 2 retroactive documentation, Wave 3 tracker update failure RCA, Wave 6 Deployment & Commissioning addition, Wave 5.5 Frontend Application Assembly addition, Tech stack discrepancy documentation)  
+**Template Version**: 1.8.0 (includes TRS stage, QA-to-Red stage, Builder Checklist Creation stage, POLC authority deviation record, Session Memory Protocol deviation record, Wave 2 retroactive documentation, Wave 3 tracker update failure RCA, Wave 6 Deployment & Commissioning addition, Wave 5.5 Frontend Application Assembly addition, Tech stack discrepancy documentation, Deviation #12 agent authority boundary violation recurrence)  
 **Template Authority**: MODULE_LIFECYCLE_AND_REPO_STRUCTURE_STRATEGY.md  
-**Last Template Update**: 2026-02-16
+**Last Template Update**: 2026-02-17
