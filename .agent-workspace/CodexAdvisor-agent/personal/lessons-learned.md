@@ -227,3 +227,33 @@
 - Evidence: Added agent-contract-protection gate to prevent future agent self-modification
 - Principle: Defense in depth - remediation + prevention
 
+
+## Session 20260217 (Session 014)
+
+### Lesson: Agent Contract Creation with 4-Phase Architecture
+- Context: Creating foreman agent contract following Living Agent System v6.2.0
+- Pattern: Use 4-phase canonical architecture (Preflight-Induction-Build-Handover)
+- Action: Structure all new agent contracts with clear phase boundaries, LOCKED self-modification prohibition, behavioral examples (❌ WRONG vs ✅ CORRECT)
+
+### Lesson: Character Count Management for Agent Contracts
+- Context: GitHub UI selectability breaks above 30K characters
+- Pattern: Target <25K characters (20% buffer) by using canonical references instead of duplication
+- Action: Link to canonical documents, scripts, and templates instead of embedding full content
+
+### Lesson: POLC Behavioral Examples Prevent Violations
+- Context: Foreman agents historically violated POLC boundaries by implementing code
+- Pattern: Include concrete ❌ WRONG vs ✅ CORRECT examples in Preflight phase
+- Action: For supervisor agents, show traditional coding agent behavior vs. POLC supervision model
+
+### Lesson: Checklist-First Contract Creation
+- Context: Living Agent System v6.2.0 requires 100% checklist compliance
+- Pattern: Load checklist before contract creation, map all items to contract sections
+- Action: Create compliance report with line number mappings for audit trail
+
+### Lesson: Consumer Repository Mode Requirements
+- Context: Consumer repositories receive governance via layer-down, cannot dispatch ripple
+- Pattern: Document governance sync protocol, drift detection, escalation to canonical source
+- Action: Include consumer mode section with ripple handling and alignment procedures
+
+---
+Created: Session 014 | Date: 2026-02-17 | Agent: CodexAdvisor-agent

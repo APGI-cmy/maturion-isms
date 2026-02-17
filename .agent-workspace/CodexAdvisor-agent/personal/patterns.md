@@ -257,3 +257,16 @@
 - Evidence: Issue #271 - both reverted foreman contract AND added agent-contract-protection gate
 - Principle: Every violation is opportunity to strengthen governance infrastructure
 
+
+## Pattern: 4-Phase Canonical Agent Contract Architecture
+- Observed: 2026-02-17 (Session 014)
+- Context: Creating foreman agent contract with Living Agent System v6.2.0
+- Response: Follow canonical 4-phase structure (Preflight-Induction-Build-Handover), include LOCKED self-modification prohibition, use behavioral examples (❌ vs ✅) to block default agent behaviors
+
+## Pattern: Character Count Management with References
+- Observed: 2026-02-17 (Session 014)
+- Context: GitHub UI selectability breaks above 30K characters
+- Response: Target <25K characters with 20% buffer, use canonical references instead of duplication, link to scripts/workflows/templates instead of embedding
+
+---
+Updated: Session 014 | Date: 2026-02-17 | Agent: CodexAdvisor-agent
