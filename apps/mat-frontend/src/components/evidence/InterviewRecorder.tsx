@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 interface InterviewRecordingProps {
   criterionId?: string;
+  // auditId and onSave are interface placeholders for future implementation
   auditId?: string;
   onSave?: (recording: File, metadata: InterviewMetadata) => void;
 }
@@ -13,7 +14,7 @@ interface InterviewMetadata {
   notes?: string;
 }
 
-const InterviewRecording = ({ criterionId, auditId, onSave }: InterviewRecordingProps) => {
+const InterviewRecording = ({ criterionId }: InterviewRecordingProps) => {
   const [isRecording, setIsRecording] = useState(false);
   const [duration, setDuration] = useState(0);
   const [metadata, setMetadata] = useState<Partial<InterviewMetadata>>({});

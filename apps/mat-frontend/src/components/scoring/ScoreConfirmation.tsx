@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 interface ScoreConfirmationProps {
-  criterionId: string;
+  criterionId: string; // For future use in API calls
   criterionNumber: string;
   aiScore: number;
   aiRationale: string;
@@ -10,7 +10,6 @@ interface ScoreConfirmationProps {
 }
 
 const ScoreConfirmation = ({
-  criterionId,
   criterionNumber,
   aiScore,
   aiRationale,

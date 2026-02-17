@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 interface CriterionReview {
   id: string;
   number: string;
@@ -12,26 +10,9 @@ interface CriterionReview {
 
 interface ReviewTableProps {
   criteria?: CriterionReview[];
-  onUpdate?: (criterionId: string, field: string, value: string | number) => void;
 }
 
-const ReviewTable = ({ criteria = [], onUpdate }: ReviewTableProps) => {
-  const [editingCell, setEditingCell] = useState<{ id: string; field: string } | null>(null);
-  const [editValue, setEditValue] = useState('');
-
-  const startEditing = (criterion: CriterionReview, field: string, currentValue: string) => {
-    if (!criterion.editable) return;
-    setEditingCell({ id: criterion.id, field });
-    setEditValue(currentValue);
-  };
-
-  const finishEditing = () => {
-    if (editingCell && onUpdate) {
-      onUpdate(editingCell.id, editingCell.field, editValue);
-    }
-    setEditingCell(null);
-    setEditValue('');
-  };
+const ReviewTable = ({ criteria = [] }: ReviewTableProps) => {
 
   const getMaturityLabel = (score: number): string => {
     const labels = ['L0', 'L1', 'L2', 'L3', 'L4', 'L5'];

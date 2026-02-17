@@ -39,7 +39,7 @@ const ParsingProgress = ({ status, progress = 0, message }: ParsingProgressProps
         <h3 className={`text-lg font-semibold ${config.color}`}>{config.label}</h3>
       </div>
 
-      {status !== 'idle' && status !== 'complete' && status !== 'error' && (
+      {(status === 'uploading' || status === 'parsing' || status === 'validating') && (
         <div className="w-full bg-gray-200 rounded-full h-2.5">
           <div
             className="bg-primary-600 h-2.5 rounded-full transition-all duration-300"
