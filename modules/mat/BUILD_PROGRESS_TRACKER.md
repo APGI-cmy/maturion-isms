@@ -915,11 +915,208 @@ Track the progression through the canonical module lifecycle stages.
 
 ---
 
+### Deviation #11: Wave 6 Production Test Failure — MAT Frontend Non-Functional (2026-02-17)
+
+> **Date**: 2026-02-17  
+> **Detected In**: Production deployment testing (Wave 6 commissioning)  
+> **Session**: Wave 6 Deployment & Commissioning  
+> **Severity**: CRITICAL — FULLY_FUNCTIONAL_DELIVERY_STANDARD.md Violation, "Tested ≠ Delivered" Pattern Recurrence
+
+> **Deviation**: Production testing of the deployed MAT frontend application on 2026-02-17 revealed **complete non-functionality**:
+> - **Dashboard**: Renders UI but displays hardcoded zeros (no Supabase data wiring)
+> - **Audits Page**: Blank section with no CRUD functionality
+> - **All Other Pages** (Criteria, Evidence, Scoring, Reports, Settings): Empty placeholders only
+> - **No Interactive Functionality**: Application deployed but completely unusable
+>
+> This occurred despite:
+> - ✅ 98/98 tests GREEN (Waves 0-5 complete)
+> - ✅ `apps/mat-frontend/` application scaffolded (Wave 5.5 complete)
+> - ✅ 40+ component files present in `/src/components/`
+> - ✅ Supabase client properly configured
+> - ✅ All backend services implemented and tested
+
+> **What Was Delivered**:
+> - React application scaffolding with routing, pages, and layout
+> - Component FILES with proper structure and FRS/TRS comments
+> - Backend service logic (audit-lifecycle, criteria-management, evidence-collection, etc.)
+> - 98 tests covering service logic and component structure
+
+> **What Was NOT Delivered**:
+> - **Component Logic**: All components are empty placeholders with no business logic
+> - **Data Fetching**: No Supabase queries, no useState/useEffect hooks, no TanStack Query
+> - **CRUD Operations**: No create/edit/delete handlers, no form submission logic
+> - **Component-to-Page Wiring**: Pages exist but don't import or use functional components
+> - **State Management**: No data binding, no loading states, no error handling
+> - **User Workflows**: No ability to create audits, upload criteria, collect evidence, etc.
+
+> **Root Cause** (5-Why Analysis):
+> 1. **Why is the frontend non-functional?** Because pages are not wired to components and contain no data fetching or CRUD logic.
+> 2. **Why are pages not wired to components?** Because ui-builder implemented component STRUCTURE/SKELETON but not component LOGIC or page wiring.
+> 3. **Why didn't ui-builder implement logic?** Because implementation plan and builder contract specified "implement components" but did not explicitly require "Supabase data fetching", "CRUD handlers", or "component-to-page wiring" as separate acceptance criteria.
+> 4. **Why did implementation plan assume implicit functionality?** Because QA-to-Red tests validated component STRUCTURE ("AuditList component exists") but NOT component BEHAVIOR ("AuditList fetches audits from Supabase").
+> 5. **Why didn't QA-to-Red tests validate behavior?** Because test registry focused on unit/integration-level logic tests (service layer) rather than end-to-end UI wiring tests. **Physical verification ("Does the app WORK?") was not enforced as mandatory gate before Wave 6.**
+
+> **Pattern Analysis — "Tested ≠ Delivered" Recurrence**:
+>
+> This is the **THIRD occurrence** of the "Tested ≠ Delivered" anti-pattern:
+> 1. **Deviation #9 (2026-02-16)**: Tests GREEN but no frontend application scaffolded → Remediated with Wave 5.5
+> 2. **Deviation #10 (2026-02-16)**: Wave 5.5 attempted code-first without QA-to-Red → Remediated with test-first enforcement
+> 3. **Deviation #11 (2026-02-17)**: Tests GREEN but frontend completely non-functional → **CURRENT FAILURE**
+>
+> **Root Pattern**: Test suite validates EXISTENCE and STRUCTURE, not BEHAVIOR and USER EXPERIENCE.
+>
+> **Violation of "We Only Fail Once"**: Deviations #9 and #10 identified the "Tested ≠ Delivered" pattern and implemented preventive measures, but **did not address the underlying root cause** — lack of end-to-end UI behavior tests and physical verification gates.
+
+> **Impact Assessment**:
+>
+> **Governance Impact**:
+> - ❌ **CRITICAL**: FULLY_FUNCTIONAL_DELIVERY_STANDARD.md §4.2 violated — application deployed but non-functional
+> - ❌ **CRITICAL**: "Tested ≠ Delivered" anti-pattern recurred despite prior remediation (Deviation #9)
+> - ❌ **CRITICAL**: Physical verification ("Does the app WORK?") not enforced as Wave 1-5 gate requirement
+> - ❌ **HIGH**: Wave 6 (Deployment & Commissioning) cannot complete — no functional app to commission
+> - ❌ **HIGH**: "We Only Fail Once" doctrine violated — same root cause (incomplete functional implementation) caused Deviations #9, #10, and #11
+>
+> **User Impact**:
+> - ❌ **CRITICAL**: Application completely unusable in production (0% functionality)
+> - ❌ **HIGH**: No audit creation, management, criteria upload, evidence collection, or reporting capability
+> - ❌ **HIGH**: Deployed application provides ZERO user value
+>
+> **Technical Debt Impact**:
+> - ❌ **HIGH**: Must retrofit all component logic, data fetching, CRUD handlers, and page wiring
+> - ❌ **MEDIUM**: Scope ambiguity — unclear boundary between "delivered" vs "requires implementation"
+
+> **Corrective Actions**:
+> 1. ✅ **HALT Wave 6** — Cannot commission a non-functional application
+> 2. ✅ **RCA Created** — Comprehensive root cause analysis filed: `modules/mat/05-build-evidence/RCA_WAVE6_FRONTEND_NON_FUNCTIONAL_20260217.md`
+> 3. ✅ **BUILD_PROGRESS_TRACKER updated** — This deviation record (Deviation #11)
+> 4. ⏳ **Wave 6 BLOCKED** — Marked as blocked until Wave 5.6 remediation complete
+> 5. ⏳ **Test Registry Update** — Add E2E UI behavior tests (user workflows, data fetching validation, CRUD operation verification)
+> 6. ⏳ **Implementation Plan Update** — Add Wave 5.6 (UI Component Wiring & Data Integration) with explicit tasks:
+>    - Task 5.6.1: Dashboard data fetching and metrics display
+>    - Task 5.6.2: Audit management CRUD implementation
+>    - Task 5.6.3: Criteria management CRUD implementation
+>    - Task 5.6.4: Evidence collection implementation
+>    - Task 5.6.5: Scoring and reports implementation
+>    - Task 5.6.6: Settings implementation
+> 7. ⏳ **ui-builder Contract Update** — Add explicit wiring requirements:
+>    - "Implement full Supabase data fetching with loading/error states"
+>    - "Wire components to pages with complete user workflows"
+>    - "Implement all CRUD form handlers and validation"
+>    - "Provide physical verification evidence (screenshots, video walkthrough)"
+> 8. ⏳ **Physical Verification Enforcement** — Mandatory "Does the app WORK?" checklist before ANY wave closure:
+>    - Video walkthrough of all features
+>    - Screenshot evidence of all pages functioning
+>    - Manual test checklist completed by Foreman
+>    - User workflow validation (can user create audit, upload criteria, collect evidence, etc.)
+> 9. ⏳ **Builder Recruitment** — Recruit ui-builder for Wave 5.6 execution with updated contract
+> 10. ⏳ **Governance Artifact Updates** — Update FULLY_FUNCTIONAL_DELIVERY_STANDARD.md and BUILD_PHILOSOPHY.md with UI behavior testing requirements
+
+> **Preventive Actions (Addressing "We Only Fail Once" Violation)**:
+>
+> **Process Improvements**:
+> 1. **Mandatory Physical Verification Gate** — ALL UI-related waves MUST include physical verification as acceptance criteria:
+>    - "Does the app WORK?" checklist MANDATORY before wave closure
+>    - Video/screenshot evidence REQUIRED in wave completion
+>    - Foreman MUST personally test UI in running browser
+> 2. **E2E UI Test Requirements** — Test Registry MUST include E2E UI behavior tests for ALL user-facing features:
+>    - Test strategy MUST validate "user can perform action" not just "component exists"
+>    - E2E tests validate full flow: user interaction → UI → service layer → database → UI update
+> 3. **Builder Contract Clarity** — "Implement component" MUST explicitly mean:
+>    - Fully functional with data fetching, state management, error handling
+>    - Wired to pages with complete user workflows
+>    - Loading states, error states, and success states implemented
+>    - CRUD handlers with form validation
+>    - Placeholder components NOT acceptable unless explicitly marked as such
+> 4. **Wave Gate Enhancement** — Wave gates MUST validate "functional completeness" not just "test GREEN count":
+>    - Foreman MUST run application and verify user workflows before wave closure
+>    - "Can user perform core actions?" MANDATORY validation
+> 5. **Implementation Plan Specification** — ALL frontend waves MUST explicitly list:
+>    - Data fetching requirements (which Supabase tables, what queries)
+>    - State management requirements (useState, useEffect, TanStack Query)
+>    - CRUD handler requirements (create, read, update, delete operations)
+>    - Loading/error state requirements
+>    - Component-to-page wiring as separate acceptance criterion
+>
+> **Governance Learning**:
+> 6. **Update FULLY_FUNCTIONAL_DELIVERY_STANDARD.md** — Add:
+>    - "UI Component Physical Verification" section
+>    - "E2E UI Test Requirement" section
+>    - Document Deviation #11 as example of "Tested ≠ Delivered" at UI layer
+> 7. **Update BUILD_PHILOSOPHY.md** — Add:
+>    - "Component Exists ≠ Component Works" principle
+>    - Requirement for E2E UI tests in QA-to-Red
+>    - "Physical verification is non-negotiable for UI" principle
+> 8. **Add to Foreman Session Checklist**:
+>    - "Have I personally tested the UI in a running browser?"
+>    - "Can a user complete core workflows without code changes?"
+>    - "Does the app provide USER VALUE, not just pass tests?"
+
+> **Wave 5.6 Acceptance Criteria (Functional Completeness)**:
+> - [ ] Dashboard displays real-time audit metrics from Supabase (total audits, completion rate, maturity)
+> - [ ] User can create new audit via form with validation (title, organization, dates)
+> - [ ] User can edit/delete audits from audit list
+> - [ ] User can upload criteria documents (PDF, DOCX) with drag-and-drop
+> - [ ] User can collect evidence (text notes, photos, audio, video)
+> - [ ] User can view scoring and generate reports (DOCX, PDF, Excel)
+> - [ ] User can manage settings (profile, organization, preferences)
+> - [ ] ALL features physically verified in running application (video walkthrough + screenshots)
+> - [ ] E2E tests GREEN for all user workflows (create audit → upload criteria → collect evidence → generate report)
+> - [ ] Loading states, error states, and empty states implemented for all data fetching
+> - [ ] Form validation with user-friendly error messages
+> - [ ] No console errors, no runtime errors, no broken UI states
+
+> **Status**: ACTIVE BLOCKER (2026-02-17)
+> - Wave 6: BLOCKED (cannot commission non-functional app)
+> - Wave 5.6: PENDING (awaiting builder recruitment and execution)
+> - RCA: COMPLETE (filed in `RCA_WAVE6_FRONTEND_NON_FUNCTIONAL_20260217.md`)
+> - Corrective Actions: IN PROGRESS
+
+> **Evidence Artifacts**:
+> - ✅ Production test screenshots (Dashboard, Audits page) — See issue attachments
+> - ✅ Component structure analysis — See RCA document
+> - ✅ Codebase investigation findings — See RCA document
+> - ⏳ Updated Implementation Plan (Wave 5.6 addition) — PENDING
+> - ⏳ Updated ui-builder contract (wiring requirements) — PENDING
+> - ⏳ Updated Test Registry (E2E UI tests) — PENDING
+> - ⏳ Wave 5.6 execution and completion evidence — PENDING
+
+> **Lessons Learned**:
+> 1. **"Tested ≠ Delivered" Applies at ALL Layers** — Service logic tested ✅ but UI not connected; Components exist ✅ but are empty placeholders; Pages exist ✅ but don't use components; Application deployed ✅ but completely non-functional.
+> 2. **Physical Verification is NON-NEGOTIABLE** — Tests validate logic; only physical verification validates USER EXPERIENCE. The question "Can a user create an audit in the running app?" was never asked during Waves 1-5.
+> 3. **E2E Tests are NOT Optional for UI** — Unit tests validated service logic, integration tests validated service-to-database, but NOTHING validated user-to-UI-to-service-to-database end-to-end flow.
+> 4. **Builder Contracts Must Specify "Fully Wired and Functional"** — "Implement components" interpreted as "create component files" (technically correct, functionally useless). Contracts must specify BEHAVIOR, not just STRUCTURE.
+> 5. **"We Only Fail Once" Violated AGAIN** — Deviation #9 (Frontend Not Delivered) → Remediated with Wave 5.5 (Application Assembly) → But same root cause (incomplete functional implementation) recurred as Deviation #11. **Preventive action from Deviation #9 addressed SYMPTOM (no app) but not CAUSE (incomplete implementation).**
+
+> **Governance References**:
+> - `governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md` §3.3, §4.2, §8.2 ("Tested ≠ Delivered", Physical Verification, "We Only Fail Once")
+> - `BUILD_PHILOSOPHY.md` (One-Time Build Correctness, Architecture → QA-to-Red → Build-to-Green → Validation)
+> - `governance/canon/WE_ONLY_FAIL_ONCE_DOCTRINE.md` (Preventive action must address root cause, not symptom)
+> - `RCA_WAVE6_FRONTEND_NON_FUNCTIONAL_20260217.md` (Full 5-why analysis, impact assessment, corrective actions)
+> - Issue #[Current] (Wave 6 Production Test Failure)
+> - Production Test Evidence: Dashboard screenshot, Audits page screenshot
+
+> **Recorded By**: foreman-isms  
+> **Date**: 2026-02-17  
+> **Session**: Wave 6 Production Testing — CRITICAL FAILURE
+
+---
+
 ## Current Stage Summary
 
-**Current Stage**: Stage 5 (Build Execution — IN PROGRESS)  
-**Overall Progress**: ~95% build complete (98/98 tests GREEN, frontend application assembly pending)  
-**Blockers**: Wave 5.5 (Frontend Application Assembly) must complete before Wave 6 (Deployment)  
+**Current Stage**: Stage 5 (Build Execution — BLOCKED)  
+**Overall Progress**: ~50% functional delivery (98/98 tests GREEN, frontend UI scaffolded, **CRITICAL: frontend logic NOT implemented**)  
+**Blockers**: 
+- ❌ **CRITICAL BLOCKER**: Wave 6 production test FAILED — frontend completely non-functional (Deviation #11)
+- ❌ **Wave 6 BLOCKED**: Cannot commission non-functional application
+- ⏳ **Wave 5.6 REQUIRED**: UI Component Wiring & Data Integration (not yet defined or planned)
+
+**Status Summary**:
+- ✅ Backend service layer: 100% implemented and tested (modules/mat/src/services/)
+- ✅ Frontend structure: Scaffolded (apps/mat-frontend/)
+- ❌ Frontend logic: 0% implemented (all components are empty placeholders)
+- ❌ Data wiring: NOT implemented (no Supabase queries, no CRUD handlers)
+- ❌ User value: 0% (application deployed but completely unusable)
+
 **Next Steps**: 
 1. ~~Create `01.5-trs/` folder in module structure~~
 2. ~~Develop TRS based on FRS requirements (FR-001 to FR-069)~~
@@ -935,8 +1132,11 @@ Track the progression through the canonical module lifecycle stages.
 12. ~~Complete Wave 3: AI Scoring & Human Confirmation (15 tests GREEN, PR #168)~~
 13. ~~Complete Wave 4: Dashboards & Reporting (9 tests GREEN, PR #178)~~
 14. ~~Complete Wave 5: Watchdog & Continuous Improvement (13 tests GREEN)~~
-15. Complete Wave 5.5: Frontend Application Assembly (scaffold `apps/mat-frontend/` with React 18+ and Vite 5+ per TRS TR-001, wire components, verify build)
-16. Proceed to Wave 6: Deployment & Commissioning (Vercel deploy, staging validate, production deploy, CWT on production, formal sign-over)
+15. ~~Complete Wave 5.5: Frontend Application Assembly (scaffold `apps/mat-frontend/` with React 18+ and Vite 5+ per TRS TR-001)~~
+16. **DEFINE Wave 5.6: UI Component Wiring & Data Integration** (PENDING — see Deviation #11 corrective actions)
+17. **EXECUTE Wave 5.6**: Implement full frontend functionality (data fetching, CRUD handlers, component-to-page wiring, loading/error states)
+18. **PHYSICAL VERIFICATION**: Manual testing of all user workflows in running application (video walkthrough + screenshots)
+19. Proceed to Wave 6: Deployment & Commissioning (CURRENTLY BLOCKED until Wave 5.6 complete)
 
 ---
 
