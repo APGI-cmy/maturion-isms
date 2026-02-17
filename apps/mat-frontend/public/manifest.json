@@ -1,0 +1,10 @@
+{
+  "name": "MAT - Manual Audit Tool",
+  "short_name": "MAT",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1e40af",
+  "description": "Manual Audit Tool for maturity assessments",
+  "icons": []
+}
