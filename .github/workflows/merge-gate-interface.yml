@@ -287,7 +287,132 @@ jobs:
           echo "✅ Governance alignment check PASSED"
 
   # ============================================================================
-  # JOB 4: Stop-and-Fix Enforcement
+  # JOB 4: Agent Contract Self-Modification Prevention
+  # ============================================================================
+  agent-contract-protection:
+    name: "agent-contract/self-modification-prevention"
+    runs-on: ubuntu-latest
+    needs: classify-pr
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for Agent Self-Modification
+        run: |
+          echo "=== Agent Contract Self-Modification Check ==="
+          echo ""
+          echo "Authority: LIVING_AGENT_SYSTEM.md v6.2.0"
+          echo "Issue: #271 - Governance Violation Prevention"
+          echo ""
+
+          # Get base branch
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+          echo "Base branch: $BASE_BRANCH"
+          echo ""
+
+          # Get all commits in this PR
+          COMMITS=$(git log origin/$BASE_BRANCH..HEAD --pretty=format:"%H|%an|%ae")
+
+          VIOLATION_FOUND=false
+          VIOLATION_FILES=""
+
+          echo "Checking commits for agent self-modification..."
+          echo ""
+
+          while IFS='|' read -r commit_sha commit_author commit_email; do
+            # Get files changed in this commit
+            FILES=$(git diff-tree --no-commit-id --name-only -r $commit_sha)
+
+            # Check for .github/agents/ modifications
+            while IFS= read -r file; do
+              if [[ "$file" =~ ^\.github/agents/.*-agent\.md$ ]]; then
+                # Extract agent name from file path
+                AGENT_FILE=$(basename "$file" .md)
+                
+                echo "🔍 Checking: $file (commit: ${commit_sha:0:7})"
+                echo "   Author: $commit_author <$commit_email>"
+                echo ""
+
+                # Check if the author matches the agent name
+                # Pattern matching for various agent identity formats
+                if [[ "$commit_author" =~ $AGENT_FILE ]] || \
+                   [[ "$commit_email" =~ $AGENT_FILE ]] || \
+                   [[ "$AGENT_FILE" =~ "foreman" && ("$commit_author" =~ "copilot-swe-agent" || "$commit_author" =~ "Copilot") ]] || \
+                   [[ "$AGENT_FILE" =~ "api-builder" && "$commit_author" =~ "api-builder" ]] || \
+                   [[ "$AGENT_FILE" =~ "ui-builder" && "$commit_author" =~ "ui-builder" ]] || \
+                   [[ "$AGENT_FILE" =~ "schema-builder" && "$commit_author" =~ "schema-builder" ]] || \
+                   [[ "$AGENT_FILE" =~ "integration-builder" && "$commit_author" =~ "integration-builder" ]] || \
+                   [[ "$AGENT_FILE" =~ "qa-builder" && "$commit_author" =~ "qa-builder" ]] || \
+                   [[ "$AGENT_FILE" =~ "governance-liaison" && "$commit_author" =~ "governance-liaison" ]]; then
+                  
+                  VIOLATION_FOUND=true
+                  echo "   ❌ VIOLATION: Agent attempted to modify own contract!"
+                  VIOLATION_FILES="${VIOLATION_FILES}\n     File - $file\n     Commit - $commit_sha\n     Author - $commit_author <$commit_email>\n"
+                else
+                  echo "   ✅ OK: Author is not the agent itself"
+                fi
+                echo ""
+              fi
+            done <<< "$FILES"
+          done <<< "$COMMITS"
+
+          echo ""
+          echo "=== VALIDATION RESULT ==="
+          echo ""
+
+          if [ "$VIOLATION_FOUND" = true ]; then
+            echo "❌ MERGE BLOCKED: Agents may not author or modify their own contracts."
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "Violations found:"
+            echo -e "$VIOLATION_FILES"
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "🚨 CONSTITUTIONAL VIOLATION"
+            echo ""
+            echo "Agents may NEVER directly change or write to their own contract."
+            echo "This right is reserved ONLY for:"
+            echo "  • CS2 (Johan Ras)"
+            echo "  • Approved governance agent via governance process"
+            echo ""
+            echo "If an agent wishes to propose contract updates, it must:"
+            echo "  1. Open a formal proposal issue for review by CS2"
+            echo "  2. Wait for CS2 approval"
+            echo "  3. Allow CS2 or governance agent to commit the changes"
+            echo ""
+            echo "The agent may NEVER commit these changes directly."
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "Action Required:"
+            echo "  1. Close this PR"
+            echo "  2. Revert the unauthorized changes"
+            echo "  3. If changes are needed, create a proposal issue for CS2 review"
+            echo ""
+            echo "Reference:"
+            echo "  - Issue #271: Governance Violation Prevention"
+            echo "  - LIVING_AGENT_SYSTEM.md v6.2.0"
+            echo "  - Authority: CS2 only for agent contract modifications"
+            echo ""
+            exit 1
+          else
+            echo "✅ Agent Contract Self-Modification Check PASSED"
+            echo ""
+            echo "No agent attempted to modify its own contract file."
+            echo ""
+            echo "Per LIVING_AGENT_SYSTEM.md v6.2.0:"
+            echo "  - Only CS2 or governance agents may modify agent contracts"
+            echo "  - Agents may propose changes via formal issues"
+            echo "  - Contract modifications require CS2 approval"
+            echo ""
+          fi
+
+  # ============================================================================
+  # JOB 5: Stop-and-Fix Enforcement
   # ============================================================================
   stop-and-fix-enforcement:
     name: "stop-and-fix/enforcement"

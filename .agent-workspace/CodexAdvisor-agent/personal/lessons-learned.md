@@ -181,3 +181,49 @@
 - Action: All future foreman updates must preserve these v2.2.0 enhancements
 - Reference: Sections 6.3-6.5 and 7.4 are critical additions from PR #222
 - Quality bar: "Tested" ≠ "Delivered" — physical verification required before wave closure
+
+---
+
+## Session 20260217 (Session 013 - Governance Violation Remediation)
+
+### Lesson: YAML Multi-line Strings with Colons Break GitHub Actions
+- Context: When adding bash scripts to GitHub Actions workflow files
+- Pattern: Multi-line string literals containing colons (e.g., "File: $file") confuse YAML parser
+- Action: Use single-line string concatenation with \n escape sequences instead of multi-line heredoc
+- Evidence: Initial approach caused YAML parser error; changed to `VIOLATION_FILES="${VIOLATION_FILES}\n     File - $file\n"` format
+- Prevention: Avoid `:` in variable assignments within GitHub Actions `run:` blocks; use `-` or `=` as separators
+
+### Lesson: Agent Identity Pattern Matching Must Be Comprehensive
+- Context: Detecting agent self-modification requires matching various commit author formats
+- Pattern: Same agent may appear as "foreman-isms-agent" (file), "Copilot" (author), or "copilot-swe-agent" (author)
+- Action: Create exhaustive pattern list covering all known agent identity formats
+- Evidence: Foreman special case required explicit "Copilot" and "copilot-swe-agent" patterns
+- Maintenance: Update pattern list when new agents added or identity formats change
+
+### Lesson: Constitutional Violations Require Hard Fail Enforcement
+- Context: Merge gate for agent self-modification prevention
+- Pattern: Governance violations at constitutional level require strict enforcement without warnings or overrides
+- Action: Use `exit 1` immediately upon detection; no graduated responses
+- Exception: Only CS2 override permitted (via direct commit, not agent)
+- Rationale: Establishes clear authority boundary that cannot be weakened by convenience arguments
+
+### Lesson: Surgical Deletion Preserves Valid Work
+- Context: PR #270 contained governance violation (agent contract) AND valid work (evidence, session memory)
+- Pattern: When violation is localized to specific files, delete those files rather than reverting entire commit
+- Action: Use `git rm` for targeted file removal; preserve rest of commit
+- Evidence: Deleted foreman-isms-agent.md (violation) but kept session memory, evidence docs (valid)
+- Benefit: Maintains audit trail and valuable artifacts while removing violation
+
+### Lesson: Merge Gate Job Positioning Affects Execution Order
+- Context: New agent-contract-protection job needs to run before code changes evaluated
+- Pattern: Job dependency via `needs:` controls execution order; position in file is cosmetic
+- Action: Place agent contract checks early (Job 4), before stop-and-fix enforcement (Job 5)
+- Rationale: Constitutional checks should gate before functional checks; hierarchy of concerns
+
+### Lesson: Prevention Gates vs. Remediation Work
+- Context: This session addressed BOTH remediation (revert) AND prevention (merge gate)
+- Pattern: Governance violations reveal missing preventive controls; fix requires both actions
+- Action: When remediating violation, always ask "What gate would have prevented this?"
+- Evidence: Added agent-contract-protection gate to prevent future agent self-modification
+- Principle: Defense in depth - remediation + prevention
+
