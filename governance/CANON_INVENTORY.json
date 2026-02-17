@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-02-17T07:01:14Z",
+  "last_updated": "2026-02-17T07:14:24Z",
   "total_canons": 163,
-  "generation_timestamp": "2026-02-17T07:01:14Z",
+  "generation_timestamp": "2026-02-17T07:14:24Z",
   "canons": [
     {
       "filename": ".agent.schema.md",
@@ -185,7 +185,7 @@
       "version": "1",
       "file_hash": "963eed45e027",
       "effective_date": "unknown",
-      "description": "This document defines the only legitimate process by which software agents may be introduced (\u201crecruited\u201d) into the governance system administered by the Foreman.",
+      "description": "This document defines the only legitimate process by which software agents may be introduced (“recruited”) into the governance system administered by the Foreman.",
       "type": "canon",
       "path": "governance/canon/AGENT_RECRUITMENT.md",
       "layer_down_status": "PUBLIC_API",
@@ -479,7 +479,7 @@
     },
     {
       "filename": "COGNITIVE_CAPABILITY_ORCHESTRATION_MODEL.md",
-      "version": "1.1.0 \u2014 ACTIVE OPERATIONAL GOVERNANCE",
+      "version": "1.1.0 — ACTIVE OPERATIONAL GOVERNANCE",
       "file_hash": "d9d45cb972b7",
       "effective_date": "2026-01-03 (Activation), 2025-12-24 (Original)",
       "description": "This document formally defines the **Cognitive Capability Orchestration Model** for the Maturion ecosystem.",
@@ -1120,7 +1120,7 @@
       "version": "1.0",
       "file_hash": "23d86014f109",
       "effective_date": "unknown",
-      "description": "This document defines the **Initialization Completeness Gate** \u2014 a mandatory governance gate that verifies repository initialization completeness before architecture, build, or execution activities...",
+      "description": "This document defines the **Initialization Completeness Gate** — a mandatory governance gate that verifies repository initialization completeness before architecture, build, or execution activities...",
       "type": "canon",
       "path": "governance/canon/INITIALIZATION_COMPLETENESS_GATE.md",
       "layer_down_status": "PUBLIC_API",
@@ -1362,7 +1362,7 @@
       "version": "1.0.0",
       "file_hash": "1faef6d0741c",
       "effective_date": "2025-12-25",
-      "description": "This document formally defines the **authority boundary** between:\n- **Foreman (FM)** \u2014 execution authority within repositories\n- **Maturion** \u2014 control-plane authority for platform actions (GitHub)",
+      "description": "This document formally defines the **authority boundary** between:\n- **Foreman (FM)** — execution authority within repositories\n- **Maturion** — control-plane authority for platform actions (GitHub)",
       "type": "canon",
       "path": "governance/canon/PLATFORM_AUTHORITY_BOUNDARY_AND_DELEGATION_MODEL.md",
       "layer_down_status": "PUBLIC_API",
@@ -1593,7 +1593,7 @@
       "version": "1",
       "file_hash": "d2c96ce6d14c",
       "effective_date": "unknown",
-      "description": "This rule enforces alignment between a PR\u2019s declared scope\nand the files actually modified in the PR.",
+      "description": "This rule enforces alignment between a PR’s declared scope\nand the files actually modified in the PR.",
       "type": "canon",
       "path": "governance/canon/SCOPE_TO_DIFF_RULE.md",
       "layer_down_status": "PUBLIC_API",
@@ -1745,57 +1745,57 @@
     {
       "filename": "AGENT_CONTRACT_ARCHITECTURE.md",
       "version": "1.0.0",
-      "file_hash": "2995be7406a5",
+      "file_hash": "6077885d5910",
       "effective_date": "2026-02-17",
-      "description": "Canonical 4-phase agent contract architecture (Preflight, Induction, Build, Handover) replacing flat documentation with executable structure",
+      "description": "Canonical four-phase agent contract architecture (Preflight-Induction-Build-Handover) for all Living Agent System v6.2.0 agents. Defines structure, benefits, and migration path.",
       "type": "canon",
       "path": "governance/canon/AGENT_CONTRACT_ARCHITECTURE.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "2995be7406a5f7371ce7b80b8df21f7dcbcac7bcdd368d8aa0d70acef0030207"
+      "file_hash_sha256": "6077885d591083280a2fdcfb5a12b39af9148ecae2f9520130cc2b2391aaf558"
     },
     {
       "filename": "AGENT_PREFLIGHT_PATTERN.md",
       "version": "1.0.0",
-      "file_hash": "d63311176deb",
+      "file_hash": "611ddfd8c3f0",
       "effective_date": "2026-02-17",
-      "description": "Canonical preflight check pattern blocking default behaviors and establishing constitutional boundaries before work begins",
+      "description": "Canonical Preflight phase (Phase 1) template defining identity, authority, sandbox constraints, and governance bindings. Blocks default coding behaviors with concrete examples.",
       "type": "canon",
       "path": "governance/canon/AGENT_PREFLIGHT_PATTERN.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "d63311176debec92f162e0f74c5800b1384f937e9196c0f639123dff129bacce"
+      "file_hash_sha256": "611ddfd8c3f068320668656987948d7f687979fda63c9fa6e8bf6ffe60dc36b6"
     },
     {
       "filename": "AGENT_PRIORITY_SYSTEM.md",
       "version": "1.0.0",
-      "file_hash": "c194400d5343",
+      "file_hash": "d6251a956f01",
       "effective_date": "2026-02-17",
-      "description": "Canonical priority-based context loading system enabling dynamic, role-specific context without contract modification",
+      "description": "Canonical priority coding system (H/M/L) for all agents. Defines priority levels, decision tree, escalation rules, and usage patterns across agent classes.",
       "type": "canon",
       "path": "governance/canon/AGENT_PRIORITY_SYSTEM.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "c194400d534327f78b6c671feb58af493f00153cc9eca801ca2f4688cb4aab2d"
+      "file_hash_sha256": "d6251a956f013278d094d44be4ad0aef1817d9a7623bf409c13c14d3e160e0d6"
     },
     {
       "filename": "AGENT_INDUCTION_PROTOCOL.md",
       "version": "1.0.0",
-      "file_hash": "6e10f4affe5d",
+      "file_hash": "756f6c643d06",
       "effective_date": "2026-02-17",
-      "description": "Canonical induction protocol transforming cold-start agents into fully-contextualized, governance-aligned executors",
+      "description": "Canonical Induction phase (Phase 2) template defining session wake-up protocol with dynamic governance loading, memory scan, degraded-mode detection, and working contract generation.",
       "type": "canon",
       "path": "governance/canon/AGENT_INDUCTION_PROTOCOL.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "6e10f4affe5d4f989b733e2398b7077904cdac26c41d2672b9cbd539ebb49863"
+      "file_hash_sha256": "756f6c643d064c4702ea9ebe8ea6af90fbda97b295eef60b9515fb93c231fa7a"
     },
     {
       "filename": "AGENT_HANDOVER_AUTOMATION.md",
       "version": "1.0.0",
-      "file_hash": "bc761ef20aa4",
+      "file_hash": "d5fcd80e8fcb",
       "effective_date": "2026-02-17",
-      "description": "Canonical handover automation protocol ensuring safe, compliant, auditable environment state with complete evidence",
+      "description": "Canonical Handover phase (Phase 4) template defining automated evidence generation, session memory creation/rotation, compliance checking, and escalation protocols.",
       "type": "canon",
       "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "bc761ef20aa43dd29d97a1267c0ed561aec1670575a2a407c475756e49ba0f5f"
+      "file_hash_sha256": "d5fcd80e8fcbde88b8b91974d8c4e3a48d852e47c7dd9c6796ec92f3b4275f1e"
     }
   ]
 }
