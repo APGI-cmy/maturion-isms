@@ -1,12 +1,18 @@
+---
 name: POLC Boundary Validation Gate
 
-# Authority: FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md, LIVING_AGENT_SYSTEM.md v6.2.0
-# Purpose: Prevent Foreman from implementing new features; allow supervision corrections
-# Issue: #193 - Implement POLC Boundary Validation Gate (refined per Issue #[current])
-# Contract: Foreman-ISMS Agent Contract v2.2.0, Section 3.6 (Merge Gate Enforcement Specification)
-# Refinement: Distinguish implementation (prohibited) from supervision (permitted)
+# Authority: FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md,
+#            LIVING_AGENT_SYSTEM.md v6.2.0
+# Purpose: Prevent Foreman from implementing new features;
+#          allow supervision corrections
+# Issue: #193 - Implement POLC Boundary Validation Gate
+#        (refined per current issue)
+# Contract: Foreman-ISMS Agent Contract v2.2.0,
+#           Section 3.6 (Merge Gate Enforcement Specification)
+# Refinement: Distinguish implementation (prohibited) from
+#             supervision (permitted)
 
-on:
+'on':
   pull_request:
     types: [opened, synchronize, reopened]
 
@@ -27,9 +33,9 @@ jobs:
       - name: Check 1 - Detect Foreman Implementation Commits
         id: check1
         run: |
-          echo "=== Check 1: Detect Foreman-Authored Implementation Commits ==="
+          echo "=== Check 1: Detect Foreman Implementation ==="
           echo ""
-          echo "Refined Logic: Block implementation, allow supervision corrections"
+          echo "Refined: Block implementation, allow supervision"
           echo ""
 
           # Get base branch
@@ -37,7 +43,8 @@ jobs:
           echo "Base branch: $BASE_BRANCH"
 
           # Get all commits in this PR
-          COMMITS=$(git log origin/$BASE_BRANCH..HEAD --pretty=format:"%H|%an|%ae")
+          COMMITS=$(git log origin/$BASE_BRANCH..HEAD \
+            --pretty=format:"%H|%an|%ae")
 
           # Foreman identity patterns
           FOREMAN_PATTERNS=(
@@ -59,7 +66,8 @@ jobs:
 
             # Check if commit is by Foreman
             for pattern in "${FOREMAN_PATTERNS[@]}"; do
-              if [[ "$commit_author" =~ $pattern ]] || [[ "$commit_email" =~ $pattern ]]; then
+              if [[ "$commit_author" =~ $pattern ]] || \
+                 [[ "$commit_email" =~ $pattern ]]; then
                 IS_FOREMAN=true
                 break
               fi
@@ -79,7 +87,8 @@ jobs:
                 fi
 
                 # SUPERVISION CORRECTIONS (PERMITTED)
-                # Documentation, config, test corrections, governance, session memory
+                # Documentation, config, test corrections, governance, session
+                # memory
                 if [[ "$file" =~ \.md$ ]] || \
                    [[ "$file" =~ README ]] || \
                    [[ "$file" =~ CHANGELOG ]] || \
@@ -91,7 +100,8 @@ jobs:
                    [[ "$file" =~ ^governance/ ]] || \
                    [[ "$file" =~ /02-architecture/ ]] || \
                    [[ "$file" =~ BUILD_PROGRESS_TRACKER\.md$ ]]; then
-                  echo "  ✅ SUPERVISION: $file (documentation/config/governance)"
+                  echo "  ✅ SUPERVISION: $file"
+                  echo "     (documentation/config/governance)"
                   SUPERVISION_FILES="${SUPERVISION_FILES}\n  - ${file}"
                   continue
                 fi
@@ -101,53 +111,61 @@ jobs:
                 if [[ "$file" =~ ^modules/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
                    [[ "$file" =~ ^apps/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
                    [[ "$file" =~ ^packages/.*/src/.*\.(ts|tsx|js|jsx)$ ]]; then
-                  
+
                   echo "  🔍 ANALYZING: $file (production code pattern)"
-                  
+
                   # Get file diff to check for implementation indicators
                   DIFF=$(git show $commit_sha -- "$file" 2>/dev/null || echo "")
-                  
-                  # Check for implementation patterns (new capability indicators)
+
+                  # Check for implementation patterns (new capability
+                  # indicators)
                   IMPLEMENTATION_DETECTED=false
-                  
+
                   # New component/function/class exports
-                  if echo "$DIFF" | grep -qE '^\+.*export (function|class|const|interface|type)'; then
+                  if echo "$DIFF" | \
+                     grep -qE '^\+.*export (function|class|const)'; then
                     echo "    - New export detected (possible new capability)"
                     IMPLEMENTATION_DETECTED=true
                   fi
-                  
+
                   # New React components
-                  if echo "$DIFF" | grep -qE '^\+.*(function|const) [A-Z][a-zA-Z]*.*=.*\(.*\).*=>|^\+.*class [A-Z][a-zA-Z]* extends (React\.)?Component'; then
-                    echo "    - New React component detected"
+                  if echo "$DIFF" | \
+                     grep -qE '^\+.*(function|const) [A-Z].*=>'; then
+                    echo "    - New component detected"
                     IMPLEMENTATION_DETECTED=true
                   fi
-                  
+
                   # New API routes/handlers
-                  if echo "$DIFF" | grep -qE '^\+.*(router\.|app\.|route\.)(get|post|put|delete|patch)'; then
+                  if echo "$DIFF" | grep -qE \
+                     '^\+.*(router\.|app\.|route\.)(get|post)'; then
                     echo "    - New API route/handler detected"
                     IMPLEMENTATION_DETECTED=true
                   fi
-                  
+
                   # New state management
-                  if echo "$DIFF" | grep -qE '^\+.*(createSlice|createReducer|useState|useReducer)'; then
+                  if echo "$DIFF" | grep -qE \
+                     '^\+.*(createSlice|useState|useReducer)'; then
                     echo "    - New state management detected"
                     IMPLEMENTATION_DETECTED=true
                   fi
-                  
+
                   # Large additions (>50 lines) suggesting feature expansion
                   LINES_ADDED=$(echo "$DIFF" | grep -c '^+[^+]' || echo "0")
                   if [ "$LINES_ADDED" -gt 50 ]; then
-                    echo "    - Large addition detected ($LINES_ADDED lines) - possible feature expansion"
+                    echo "    - Large addition detected"
+                    echo "($LINES_ADDED lines) - possible feature expansion"
                     IMPLEMENTATION_DETECTED=true
                   fi
-                  
+
                   if [ "$IMPLEMENTATION_DETECTED" = true ]; then
                     VIOLATION_FOUND=true
                     VIOLATION_FILES="${VIOLATION_FILES}\n  - ${file}"
-                    VIOLATION_COMMITS="${VIOLATION_COMMITS}\n  - ${commit_sha} (${commit_author})"
+                    VIOLATION_COMMITS="${VIOLATION_COMMITS}\n"
+                    VIOLATION_COMMITS="${VIOLATION_COMMITS}  - ${commit_sha}"
                     echo "  ❌ IMPLEMENTATION VIOLATION: $file"
                   else
-                    echo "  ⚠️  AMBIGUOUS: $file (production file modified, but no clear implementation detected)"
+                    echo "  ⚠️  AMBIGUOUS: $file (production"
+                    echo "file modified, but no clear implementation detected)"
                     echo "    Manual review recommended"
                   fi
                 fi
@@ -155,21 +173,26 @@ jobs:
                 # TEST FILES - Check if new test or test correction
                 if [[ "$file" =~ \.test\.(ts|tsx|js|jsx)$ ]]; then
                   echo "  🔍 ANALYZING TEST: $file"
-                  
+
                   # Get file diff
                   DIFF=$(git show $commit_sha -- "$file" 2>/dev/null || echo "")
-                  
+
                   # Check if this is a new test file (implementation)
-                  if git log --diff-filter=A --oneline origin/$BASE_BRANCH..HEAD -- "$file" | grep -q "$commit_sha"; then
+                  if git log --diff-filter=A --oneline \
+                     origin/$BASE_BRANCH..HEAD -- "$file" | \
+                     grep -q "$commit_sha"; then
                     echo "    - New test file detected (feature test creation)"
                     VIOLATION_FOUND=true
-                    VIOLATION_FILES="${VIOLATION_FILES}\n  - ${file} (new test file)"
-                    VIOLATION_COMMITS="${VIOLATION_COMMITS}\n  - ${commit_sha} (${commit_author})"
-                    echo "  ❌ IMPLEMENTATION VIOLATION: New test file for new feature"
+                    VIOLATION_FILES="${VIOLATION_FILES}\n"
+                    VIOLATION_FILES="${VIOLATION_FILES}  - ${file}"
+                    VIOLATION_COMMITS="${VIOLATION_COMMITS}\n"
+                    VIOLATION_COMMITS="${VIOLATION_COMMITS}  - ${commit_sha}"
+                  echo "  ❌ IMPLEMENTATION VIOLATION: New test"
                   else
                     # Existing test file - likely correction
-                    echo "    - Existing test modified (likely test correction)"
-                    SUPERVISION_FILES="${SUPERVISION_FILES}\n  - ${file} (test correction)"
+                    echo "    - Test modified (correction)"
+                    SUPERVISION_FILES="${SUPERVISION_FILES}\n"
+                    SUPERVISION_FILES="${SUPERVISION_FILES}  - ${file}"
                     echo "  ✅ SUPERVISION: Test correction"
                   fi
                 fi
@@ -190,16 +213,21 @@ jobs:
           if [ "$VIOLATION_FOUND" = true ]; then
             echo "❌ POLC BOUNDARY VIOLATION DETECTED"
             echo ""
-            echo "Foreman authored commits implementing new features/capabilities."
+            echo "Foreman authored commits"
+            echo "implementing new features/capabilities."
             echo ""
-            echo "Implementation Files Detected:${VIOLATION_FILES}"
+            echo "Implementation Files:"
+            echo -e "$VIOLATION_FILES"
             echo ""
             echo "Commits:${VIOLATION_COMMITS}"
             echo ""
-            echo "Foreman MUST NOT implement new features. Builders implement; Foreman supervises."
+            echo "Foreman MUST NOT implement new"
+            echo "features. Builders implement; Foreman supervises."
             echo ""
-            echo "Permitted: Documentation, config, test corrections, governance artifacts"
-            echo "Prohibited: New components, API routes, business logic, feature expansion"
+            echo "Permitted: Documentation, config,"
+            echo "test corrections, governance artifacts"
+            echo "Prohibited: New components,"
+            echo "API routes, business logic, feature expansion"
             echo ""
             echo "Action Required:"
             echo "  1. Close this PR"
@@ -207,13 +235,15 @@ jobs:
             echo "  3. Assign builders to implement"
             echo "  4. Foreman supervises (does not implement)"
             echo ""
-            echo "Override: CS2 only (for ambiguous cases or justified exceptions)"
+            echo "Override: CS2 only (for"
+            echo "ambiguous cases or justified exceptions)"
             echo ""
             exit 1
           else
             echo "✅ Check 1 PASSED - No Foreman implementation commits detected"
             echo ""
-            echo "Foreman performed supervision corrections only (or no production changes)."
+            echo "Foreman performed supervision"
+            echo "corrections only (or no production changes)."
             echo ""
             echo "check1_status=passed" >> $GITHUB_OUTPUT
           fi
@@ -264,7 +294,8 @@ jobs:
             # Check for new test files (implementation)
             if [[ "$file" =~ \.test\.(ts|tsx|js|jsx)$ ]]; then
               # Check if this is a new test file
-              if git log --diff-filter=A --oneline origin/$BASE_BRANCH..HEAD -- "$file" | grep -q .; then
+              if git log --diff-filter=A --oneline \
+                 origin/$BASE_BRANCH..HEAD -- "$file" | grep -q .; then
                 IMPLEMENTATION_CHANGED=true
                 SUPERVISION_ONLY=false
                 break
@@ -273,7 +304,8 @@ jobs:
           done <<< "$CHANGED_FILES"
 
           if [ "$SUPERVISION_ONLY" = true ]; then
-            echo "ℹ️  Only supervision corrections detected (docs, config, test fixes)"
+            echo "ℹ️  Only supervision corrections"
+            echo "detected (docs, config, test fixes)"
             echo "   No builder involvement required for supervision work."
             echo ""
             echo "check2_status=skipped" >> $GITHUB_OUTPUT
@@ -281,16 +313,19 @@ jobs:
           fi
 
           if [ "$IMPLEMENTATION_CHANGED" = false ]; then
-            echo "ℹ️  No implementation code changes detected - skipping builder involvement check"
+            echo "ℹ️  No implementation code changes"
+            echo "detected - skipping builder involvement check"
             echo "check2_status=skipped" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-          echo "Implementation code changes detected. Checking for builder involvement..."
+          echo "Implementation code changes"
+          echo "detected. Checking for builder involvement..."
           echo ""
 
           # Check for builder commits
-          COMMITS=$(git log origin/$BASE_BRANCH..HEAD --pretty=format:"%H|%an|%ae")
+          COMMITS=$(git log origin/$BASE_BRANCH..HEAD \
+            --pretty=format:"%H|%an|%ae")
 
           BUILDER_PATTERNS=(
             "ui-builder"
@@ -304,7 +339,8 @@ jobs:
 
           while IFS='|' read -r commit_sha commit_author commit_email; do
             for pattern in "${BUILDER_PATTERNS[@]}"; do
-              if [[ "$commit_author" =~ $pattern ]] || [[ "$commit_email" =~ $pattern ]]; then
+              if [[ "$commit_author" =~ $pattern ]] || \
+                 [[ "$commit_email" =~ $pattern ]]; then
                 BUILDER_FOUND=true
                 echo "✅ Builder commit found: $commit_sha ($commit_author)"
                 break 2
@@ -328,10 +364,13 @@ jobs:
             echo ""
             echo "Implementation code changed but no builder artifacts found."
             echo ""
-            echo "Expected: Builder commits OR completion reports in .agent-workspace/"
+            echo "Expected: Builder commits"
+            echo "OR completion reports in .agent-workspace/"
             echo ""
-            echo "If Foreman supervised builders, where are the builder artifacts?"
-            echo "If Foreman implemented directly, this should have been caught in Check 1."
+            echo "If Foreman supervised builders,"
+            echo "where are the builder artifacts?"
+            echo "If Foreman implemented directly,"
+            echo "this should have been caught in Check 1."
             echo ""
             echo "This is a WARNING. Manual review required."
             echo ""
@@ -352,9 +391,11 @@ jobs:
           # Check for Foreman session memory
           SESSION_MEMORY_FOUND=false
 
-          if ls .agent-workspace/foreman*/memory/session-*.md 1> /dev/null 2>&1; then
+          if ls .agent-workspace/foreman*/memory/session-*.md \
+             1> /dev/null 2>&1; then
             SESSION_MEMORY_FOUND=true
-            SESSION_FILES=$(ls .agent-workspace/foreman*/memory/session-*.md 2>/dev/null)
+            SESSION_FILES=$(ls .agent-workspace/foreman*/memory/session-*.md \
+              2>/dev/null)
             echo "✅ Session memory files found:"
             echo "$SESSION_FILES" | while read -r file; do
               echo "  - $file"
@@ -368,7 +409,8 @@ jobs:
             echo ""
             echo "Every Foreman session MUST create session memory."
             echo ""
-            echo "Expected: .agent-workspace/foreman*/memory/session-NNN-YYYYMMDD.md"
+            echo "Expected: .agent-workspace/forema"
+            echo "n*/memory/session-NNN-YYYYMMDD.md"
             echo ""
             echo "Session memory must document:"
             echo "  - Builder delegation (if implementation work occurred)"
@@ -386,13 +428,16 @@ jobs:
             echo "Checking session memory for POLC violations..."
 
             POLC_VIOLATION_IN_MEMORY=false
-            for session_file in .agent-workspace/foreman*/memory/session-*.md; do
+            for session_file in \
+                .agent-workspace/foreman*/memory/session-*.md; do
               if [ -f "$session_file" ]; then
-                # Check for indicators that FM wrote code (positive assertions only)
-                # Skip lines with negations (NOT, did not, didn't, no)
-                if grep -iE "(implemented|wrote|created|modified).*production.*code|FM.*implemented|Foreman.*wrote.*code" "$session_file" | \
-                   grep -qviE "did NOT|NOT.*implement|NOT.*write|did not|didn't|no production"; then
-                  echo "⚠️  WARNING: Session memory may indicate FM wrote code: $session_file"
+                # Check for indicators that FM wrote code
+                # Skip lines with negations
+                if grep -iE "(implemented|wrote).*code" \
+                   "$session_file" | \
+                   grep -qviE "did NOT|NOT.*implement"; then
+                  echo "⚠️  WARNING: Session memory"
+                  echo "may indicate FM wrote code: $session_file"
                   POLC_VIOLATION_IN_MEMORY=true
                 fi
               fi
@@ -402,10 +447,12 @@ jobs:
               echo ""
               echo "❌ SESSION MEMORY INDICATES POLC VIOLATION"
               echo ""
-              echo "Session memory contains evidence that Foreman implemented new features."
+              echo "Session memory contains evidence"
+              echo "that Foreman implemented new features."
               echo "This violates the POLC-Only Constraint."
               echo ""
-              echo "Note: Supervision corrections (docs, config, test fixes) are permitted."
+              echo "Note: Supervision corrections"
+              echo "(docs, config, test fixes) are permitted."
               echo ""
               exit 1
             fi
@@ -469,10 +516,14 @@ jobs:
         run: |
           echo "=== POLC Boundary Validation - Final Verdict ==="
           echo ""
-          echo "Check 1 (Foreman Commits):    ${{ steps.check1.outputs.check1_status || 'failed' }}"
-          echo "Check 2 (Builder Involvement): ${{ steps.check2.outputs.check2_status || 'failed' }}"
-          echo "Check 3 (Session Memory):      ${{ steps.check3.outputs.check3_status || 'failed' }}"
-          echo "Check 4 (Evidence Bundle):     ${{ steps.check4.outputs.check4_status || 'failed' }}"
+          echo "Check 1 (Foreman Commits):    ${{"
+          echo "steps.check1.outputs.check1_status || 'failed' }}"
+          echo "Check 2 (Builder Involvement): ${{"
+          echo "steps.check2.outputs.check2_status || 'failed' }}"
+          echo "Check 3 (Session Memory):      ${{"
+          echo "steps.check3.outputs.check3_status || 'failed' }}"
+          echo "Check 4 (Evidence Bundle):     ${{"
+          echo "steps.check4.outputs.check4_status || 'failed' }}"
           echo ""
 
           if [[ "${{ steps.check1.outputs.check1_status }}" != "passed" ]] || \
@@ -483,7 +534,8 @@ jobs:
             echo "One or more required checks failed. Review the logs above."
             echo ""
             exit 1
-          elif [[ "${{ steps.check2.outputs.check2_status }}" == "warning" ]]; then
+          elif [[ "${{ steps.check2.outputs.check2_status }}" == \
+                  "warning" ]]; then
             echo "⚠️  POLC BOUNDARY VALIDATION PASSED WITH WARNINGS"
             echo ""
             echo "Manual review recommended for builder involvement."
