@@ -216,13 +216,15 @@ If feeling unable to delegate (e.g., no builders available, unclear delegation p
 4. **Wake-Up Protocol Enforcement** (Issue #192): Requires loading last 5 session memories before task execution
 5. **Post-Rejection Learning Protocol** (Issue #192): Mandatory session memory, lessons learned, patterns, RCA before retry
 6. **Comprehensive Evidence Bundle Gate** (Issue #193): Validates ALL governance artifacts (PREHANDOVER, session memory, CST, CWT, IBWR, tracker, test verification, RCA)
+7. **Sub-Agent Delegation Is NOT Valid Delegation** (PR #263 Learning): Delegating to a builder sub-agent within the same session/PR context results in Foreman being the commit author. This is still a POLC violation. Valid delegation requires the builder to be a separate commit author in a separate PR.
 
 ---
 **Pattern ID**: POLC-001  
-**Severity**: CRITICAL (Constitutional authority violation)  
+**Severity**: CRITICAL (Constitutional authority violation — ESCALATION THRESHOLD REACHED)  
 **First Observed**: PR #128 (2026-02-14)  
-**Repeat Occurrences**: PR #183 (2026-02-15), PR #190 (2026-02-15)  
-**Total Occurrences**: 3  
-**Status**: UNDER REMEDIATION (Issues #192, #193, #194 will implement preventive measures)  
-**RCA**: modules/mat/05-build-evidence/RCA_WAVE_5_POLC_VIOLATION_REPEAT.md  
-**Preventive Action Plan**: 5 phases (Issue #192 → #193 → #194 → #195)
+**Repeat Occurrences**: PR #183 (2026-02-15), PR #190 (2026-02-15), PR #263 (2026-02-17)  
+**Total Occurrences**: 4  
+**Status**: REMEDIATION FAILED — Documentation-only prevention ineffective after 3 prior occurrences. Automated gate enforcement (Issue #193) is the ONLY viable solution.  
+**RCA**: PR #263 review by CS2 (2026-02-17)  
+**Preventive Action Plan**: Automated POLC boundary gate MUST be implemented before next build wave  
+**Escalation**: Fifth occurrence triggers mandatory CS2 escalation per WE_ONLY_FAIL_ONCE doctrine

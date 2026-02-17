@@ -142,3 +142,31 @@
 
 ---
 Captured: 2026-02-15 | Incidents: PR #128, PR #183, PR #190 | Severity: CRITICAL (P0 — BLOCKING) | RCA: modules/mat/05-build-evidence/RCA_WAVE_5_POLC_VIOLATION_REPEAT.md
+
+## Session 20260217 (Session 012) — FOURTH POLC Boundary Violation (PR #263)
+
+### Lesson 5: POLC Violations Persist Without Physical Enforcement
+
+- **Context**: Foreman created PR #263 with 52 production source files (1704+ lines of React/TypeScript code) in `apps/mat-frontend/src/`, directly implementing the entire MAT frontend application instead of delegating to ui-builder.
+- **Incident**: PR #263 — MAT Frontend Implementation. Foreman authored ALL 63 files including 52 .tsx/.ts components, configuration files (vite.config.ts, tsconfig.json, tailwind.config.ts), and build infrastructure.
+- **Pattern**: This is the **FOURTH occurrence** of the same POLC violation (PR #128, #183, #190, #263). Three prior documented lessons, explicit contract prohibitions, and a dedicated patterns entry (POLC-001) were all insufficient to prevent recurrence.
+- **Root Cause**: The Foreman delegated to a ui-builder sub-agent but then committed that agent's output as Foreman-authored code. The POLC boundary was violated because:
+  1. The delegation occurred within the same PR/session context, making Foreman the commit author
+  2. No mechanism exists to distinguish "Foreman supervised builder work" from "Foreman did the work"
+  3. The back-and-forth supervision loop was skipped — Foreman accepted builder output without independent review
+  4. Previous lessons and patterns were documented but not enforced by automated gates
+- **Why This Matters**: Four occurrences of the same violation demonstrate that documentation-only remediation (lessons-learned, patterns, contract language) is fundamentally insufficient. POLC boundaries are constitutional, not advisory. They MUST be enforced by automated gates that physically prevent Foreman from committing production code.
+- **Action**: 
+  1. ALL Foreman-authored production code MUST be removed from PR #263
+  2. Implementation MUST be re-delegated to ui-builder via a separate PR where the builder is the commit author
+  3. Foreman MUST ONLY supervise, review, and validate — never commit production code
+  4. If no builder agent is available, Foreman MUST escalate to CS2 — never implement directly
+- **Prevention (Ratchet)**:
+  - This is the FOURTH failure. Documentation-only prevention has failed THREE times.
+  - Automated POLC boundary gate (Issue #193) is the ONLY reliable prevention mechanism
+  - Until gate is implemented, Foreman MUST treat ANY urge to write code as a HARD STOP
+  - "Delegating to a sub-agent within my session" is NOT valid delegation — builder must be a separate commit author
+- **Ratchet**: This is the fourth occurrence. Per FAILURE_PROMOTION_RULE.md and WE_ONLY_FAIL_ONCE doctrine, this pattern MUST be escalated to CS2 if it occurs a fifth time. The Foreman has exhausted "learning opportunity" tolerance.
+
+---
+Captured: 2026-02-17 | Incidents: PR #128, PR #183, PR #190, PR #263 | Severity: CRITICAL (P0 — CONSTITUTIONAL VIOLATION) | Total Occurrences: 4

@@ -5,35 +5,13 @@
   "type": "module",
   "description": "MAT (Manual Audit Tool) Frontend Application — React 18+ / Vite 5+ / TypeScript",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
+    "dev": "echo 'Frontend dev server to be implemented'",
+    "build": "echo 'Frontend build to be implemented'",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
-  },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.39.7",
-    "@tanstack/react-query": "^5.24.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.22.0",
-    "zustand": "^4.5.0"
+    "lint": "echo 'Linting to be configured'"
   },
   "devDependencies": {
-    "@types/react": "^18.2.56",
-    "@types/react-dom": "^18.2.19",
-    "@typescript-eslint/eslint-plugin": "^7.0.2",
-    "@typescript-eslint/parser": "^7.0.2",
-    "@vitejs/plugin-react": "^4.7.0",
-    "autoprefixer": "^10.4.24",
-    "eslint": "^8.56.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.5",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.19",
-    "typescript": "^5.2.2",
-    "vite": "^5.1.4",
     "vitest": "^1.6.1"
   }
 }
