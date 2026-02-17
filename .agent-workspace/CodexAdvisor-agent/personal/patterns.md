@@ -197,3 +197,63 @@
 - Current state: Manual detection and post-facto correction only
 - Recommendation: Implement automated enforcement (pre-commit hook + merge gate)
 - Urgency: Medium (violations are rare but constitutionally critical when they occur)
+
+## Pattern: Agent Self-Modification Detection in Merge Gates
+- Observed: 2026-02-17 (Session 013)
+- Context: Constitutional governance requires preventing agents from modifying their own contracts
+- Response: Comprehensive detection strategy:
+  1. Iterate through all commits in PR
+  2. For each commit, extract author name and email
+  3. For each file changed, check if it matches `.github/agents/*-agent.md` pattern
+  4. Extract agent name from file path (e.g., "foreman-isms-agent" from "foreman-isms-agent.md")
+  5. Pattern match author against agent name (including identity aliases)
+  6. Hard fail (exit 1) if match detected
+  7. Provide clear constitutional violation message with remediation steps
+- Implementation: GitHub Actions workflow job with bash pattern matching
+- Edge cases handled: Different author formats (Copilot, copilot-swe-agent for foreman)
+
+## Pattern: YAML-Safe String Handling in GitHub Actions
+- Observed: 2026-02-17 (Session 013)
+- Context: Bash scripts in GitHub Actions `run:` blocks must avoid YAML parser conflicts
+- Response: Single-line string concatenation pattern:
+  - Avoid: Multi-line heredoc with colons (e.g., `DETAIL="File: $file\nCommit: $sha"`)
+  - Use: Single-line with escape sequences (e.g., `DETAIL="${DETAIL}\n     File - $file\n     Commit - $sha\n"`)
+  - Replace colons with hyphens in labels ("File -" instead of "File:")
+  - Use `echo -e "$DETAIL"` to interpret escape sequences at output time
+- Validation: Test with `python3 -c "import yaml; yaml.safe_load(open('file.yml'))"` before commit
+
+## Pattern: Surgical Violation Remediation
+- Observed: 2026-02-17 (Session 013)
+- Context: When commit contains BOTH governance violation AND valid work
+- Response: Targeted file deletion strategy:
+  1. Identify specific files that constitute violation
+  2. Use `git rm` to remove only violating files
+  3. Preserve valid artifacts (session memory, evidence, documentation)
+  4. Maintain git history for audit trail
+  5. Document what was removed and why in commit message
+- Benefit: Avoids collateral damage to valid work while enforcing governance
+- Alternative avoided: Reverting entire commit (destroys valid artifacts)
+
+## Pattern: Constitutional Violation Hard Fail Protocol
+- Observed: 2026-02-17 (Session 013)
+- Context: Merge gate response to constitutional governance violations
+- Response: Zero-tolerance enforcement:
+  - Immediate hard fail (exit 1) without warnings or graduated response
+  - Clear error message explaining constitutional nature of violation
+  - Explicit remediation steps (close PR, revert, create proposal)
+  - Reference to authority (Issue #, LIVING_AGENT_SYSTEM.md, CS2)
+  - No override mechanism except CS2 direct commit
+- Rationale: Constitutional boundaries must be unambiguous and strict
+- Examples: Agent self-modification, unauthorized governance changes
+
+## Pattern: Preventive Gate Addition After Violation Discovery
+- Observed: 2026-02-17 (Session 013)
+- Context: When governance violation reveals missing preventive control
+- Response: Dual remediation approach:
+  1. Remediation: Revert/fix the violation (immediate correction)
+  2. Prevention: Add merge gate check to prevent recurrence (systemic improvement)
+  3. Document both actions in same PR
+  4. Test gate would have caught original violation
+- Evidence: Issue #271 - both reverted foreman contract AND added agent-contract-protection gate
+- Principle: Every violation is opportunity to strengthen governance infrastructure
+
