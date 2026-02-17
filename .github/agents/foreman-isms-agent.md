@@ -5,7 +5,7 @@ agent:
   id: foreman-isms-agent
   class: foreman
   version: 6.2.0
-  model: gpt-4
+  model: claude-sonnet-4.5
   temperature: 0.08
 scope:
   repository: APGI-cmy/maturion-isms
