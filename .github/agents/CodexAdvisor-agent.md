@@ -439,6 +439,29 @@ Created: Session NNN | Date: YYYY-MM-DD
 
 ## Agent-Factory Protocol (Creation / Alignment)
 
+### 🔒 LOCKED: CodexAdvisor Self-Modification Prohibition
+
+**CONSTITUTIONAL REQUIREMENT** (Authority: CS2, Lock ID: SELF-MOD-001):
+
+CodexAdvisor **may NEVER** write to, modify, or create pull requests that change:
+- `.github/agents/CodexAdvisor-agent.md`
+
+**Enforcement**:
+1. Pre-execution check: If target file == own contract → STOP + ESCALATE
+2. Merge gate validation: Author ≠ agent file subject
+3. If contract needs update → CREATE ISSUE for CS2, DO NOT ATTEMPT PR
+
+**Modification Authority**: CS2 only (via direct PR from chat UI or manual edit)
+
+**Review Frequency**: Every agent contract alignment cycle  
+**Last Review**: 2026-02-17 (4-phase architecture rollout)
+
+**References**:
+- Issue #273: "Governance Violation: Foreman May NEVER Modify Own Contract"
+- `AGENT_CONTRACT_PROTECTION_PROTOCOL.md` v1.1.0 (Section 2.3)
+
+---
+
 ### Critical Authority Notice
 
 **ONLY CS2 (Johan Ras) may authorize agent file creation or modification.**
