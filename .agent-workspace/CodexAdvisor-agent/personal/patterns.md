@@ -269,4 +269,50 @@
 - Response: Target <25K characters with 20% buffer, use canonical references instead of duplication, link to scripts/workflows/templates instead of embedding
 
 ---
-Updated: Session 014 | Date: 2026-02-17 | Agent: CodexAdvisor-agent
+
+## Pattern: GitHub Copilot Agent Discovery Schema Validation
+- Observed: 2026-02-17 (Session 016)
+- Context: ui-builder.md was LAS v6.2.0 compliant but invisible in Copilot agent list
+- Diagnosis: Agent contract contained non-standard `assigned_waves` field in YAML frontmatter metadata
+- Root Cause: GitHub Copilot agent parser strictly validates YAML schema; non-standard fields cause rejection
+- Response: Systematic comparison workflow:
+  1. Compare YAML frontmatter of invisible agent with all visible agents
+  2. Use `grep -n "field_name" .github/agents/*.md` to identify unique fields
+  3. Remove non-standard fields that don't appear in visible agents
+  4. Validate YAML parsing still works after removal
+  5. Commit minimal change (1 line removed)
+- Prevention: Only include documented YAML fields in agent contracts; compare against working agents before committing
+
+## Pattern: YAML Syntax Valid ≠ Platform Schema Valid
+- Observed: 2026-02-17 (Session 016)
+- Context: ui-builder YAML frontmatter parsed successfully with Python yaml.safe_load() but failed GitHub Copilot discovery
+- Recognition: Agent contracts must satisfy TWO validation layers:
+  1. YAML parser (syntax correctness)
+  2. GitHub Copilot agent parser (schema correctness)
+- Response: Validate both layers before committing agent files
+- Testing limitation: No local testing capability for Copilot agent discovery; requires merge to main + cache refresh
+
+## Pattern: Agent Contract Metadata vs Task Management Separation
+- Observed: 2026-02-17 (Session 016)
+- Context: ui-builder attempted to track wave assignments in agent contract metadata (`assigned_waves` field)
+- Problem: Task assignments are ephemeral (change per project); agent contracts are persistent (define capabilities)
+- Response: Track wave assignments in foreman task management artifacts, NOT in agent contract metadata
+- Separation of concerns:
+  - Agent contract: "What capabilities/authority does this agent have?"
+  - Foreman task management: "What specific tasks is this agent assigned to?"
+- Result: Agent contracts remain stable across projects while task assignments vary
+
+## Pattern: Systematic Agent Comparison for Unique Difference Identification
+- Observed: 2026-02-17 (Session 016)
+- Context: Seven builder agents, six visible in Copilot, one invisible; needed to find unique characteristic
+- Response: Systematic comparison workflow:
+  1. List all agents (visible and invisible)
+  2. For each YAML field, check which agents have it: `grep -n "field:" .github/agents/*.md`
+  3. Identify fields unique to invisible agent
+  4. Remove unique non-standard field
+- Tools: grep for field-level comparison, diff for structural comparison
+- Evidence: `grep -n "assigned_waves"` returned only `ui-builder.md:68`
+- Result: Identified root cause in <10 minutes via systematic comparison
+
+---
+Updated: Session 016 | Date: 2026-02-17 | Agent: CodexAdvisor-agent
