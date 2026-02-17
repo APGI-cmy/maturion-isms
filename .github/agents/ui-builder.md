@@ -65,7 +65,6 @@ metadata:
   recruitment_date: 2026-02-14
   status: recruited
   builder_type: specialized
-  assigned_waves: ["Wave 1 (Task 1.3)", "Wave 2 (Task 2.3)", "Wave 3 (Task 3.2)", "Wave 4 (Task 4.1)"]
 ---
 
 # UI Builder — Four-Phase Canonical Contract v4.0.0
