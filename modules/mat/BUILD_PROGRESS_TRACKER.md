@@ -404,6 +404,91 @@ Track the progression through the canonical module lifecycle stages.
 - Wave 5: 13 tests GREEN (MAT-T-0055, 0059–0060, 0067–0075, 0097)
 - **Total: 31 + 10 + 20 + 15 + 9 + 13 = 98 unique GREEN tests** (verified via `npx vitest run`)
 
+## Wave 5.5 — Frontend Application Assembly
+
+**Status**: IN PROGRESS  
+**Started**: 2026-02-17  
+**Builder**: ui-builder (supervised by Foreman)  
+**Completion**: TBD
+
+### Tasks
+
+#### 5.5.1: React Application Scaffolding
+- **Status**: PENDING
+- **Builder**: ui-builder
+- **Tests**: FR-070 acceptance criteria
+
+#### 5.5.2: Page Layouts, Routing, Component Wiring
+- **Status**: PENDING
+- **Builder**: ui-builder
+- **Tests**: FR-071 acceptance criteria
+
+#### 5.5.3: Integration Verification and Build Validation
+- **Status**: PENDING
+- **Builder**: ui-builder
+- **Tests**: All 98 existing + new QA-to-Red tests
+
+---
+
+### ⚠️ CRITICAL DEVIATION: Agent Contract Failure (2026-02-17)
+
+**Deviation ID**: DEV-MAT-5.5-001  
+**Severity**: HIGH (governance violation, build delay)  
+**Date**: 2026-02-17  
+**Status**: RESOLVED
+
+#### What Went Wrong
+- **First Attempt (PR #288)**: Wrong agent used (generic coding agent instead of ui-builder via Foreman supervision)
+- **Root Cause**: ui-builder agent file had non-standard YAML frontmatter field (`assigned_waves`), preventing GitHub agent discovery
+- **Governance Violation**: Foreman supervision bypassed, generic coding agent wrote production code directly
+- **Impact**: 1 PR closed, 3 issues created, ~2 hours wasted, governance transgression
+
+#### How It Was Fixed
+1. Issue #290 created (agent discovery bug identified)
+2. PR #291 created (ui-builder YAML frontmatter fixed)
+3. Issue #292 created (Wave 5.5 resubmission)
+4. PR #293 created (correct approach: Foreman supervises ui-builder)
+
+#### Prevention Measures for Next Build
+1. ✅ **Pre-Flight Agent Availability Check** (LOCKED in Foreman contract)
+   - Before starting any wave, verify all assigned builders appear in GitHub agent list
+   - If any builder unavailable: HALT, investigate, fix, verify, then resume
+2. ✅ **Builder Agent YAML Frontmatter Compliance Spec** (governance canon)
+   - All builder contracts use only documented, GitHub-compatible YAML fields
+   - Prohibited: `assigned_waves`, custom metadata in YAML (use body text instead)
+3. ✅ **Post-Recruitment Verification** (Foreman POLC protocol)
+   - After recruiting builder, verify agent recognized in active session
+   - If not recognized: HALT, escalate to CS2, do NOT substitute
+4. ✅ **Learning Loop Entry** (BL-030)
+   - Canonical governance learning: Pre-Flight Builder Agent Availability Check
+   - Must ripple to all consumer repos
+
+#### Evidence
+- **RCA**: `modules/mat/05-build-evidence/RCA_WAVE_5.5_AGENT_CONTRACT_DEVIATION.md`
+- **Issues**: #287, #290, #292
+- **PRs**: #288 (closed), #291 (ui-builder fix), #293 (correct approach)
+- **Governance Learning**: BL-030 (BOOTSTRAP_EXECUTION_LEARNINGS.md)
+- **Prevention Protocols**:
+  - `governance/canon/FOREMAN_PRE_WAVE_AGENT_AVAILABILITY_CHECK.md` (to be created)
+  - `governance/specs/BUILDER_AGENT_YAML_FRONTMATTER_COMPLIANCE_SPEC.md` (to be created)
+
+#### Post-Mortem Checklist for Next Build
+
+**BEFORE starting ANY wave, Foreman MUST**:
+- [ ] Read this deviation log (DEV-MAT-5.5-001)
+- [ ] Run pre-flight agent availability check (verify all builders in agent list)
+- [ ] Validate builder agent YAML frontmatter compliance
+- [ ] Verify builder recognition after recruitment
+- [ ] Halt and escalate if ANY builder unavailable (no substitutions allowed)
+
+**If this pattern repeats in next build** → **CATASTROPHIC FAILURE** (same root cause, "We Only Fail Once" violation)
+
+---
+
+**Lesson**: Agent contracts are constitutional infrastructure. Builder unavailability = build blocker. Pre-flight checks are non-negotiable.
+
+---
+
 > **⚠️ PROCESS DEVIATION — BUILD_PROGRESS_TRACKER NOT UPDATED DURING WAVE COMPLETION**
 >
 > **Deviation**: Wave completion PRs [#140](https://github.com/APGI-cmy/maturion-isms/pull/140), [#142](https://github.com/APGI-cmy/maturion-isms/pull/142), [#143](https://github.com/APGI-cmy/maturion-isms/pull/143), [#164](https://github.com/APGI-cmy/maturion-isms/pull/164), and [#168](https://github.com/APGI-cmy/maturion-isms/pull/168) were merged without updating BUILD_PROGRESS_TRACKER.md as required by governance policy. The Implementation Plan and wave acceptance criteria specify tracker update as mandatory, but this requirement was not enforced during IBWR (In-Between Wave Reconciliation).
