@@ -1,10 +1,16 @@
 // Service Worker stub
 self.addEventListener('install', (event) => {
-  console.log('Service Worker installing.');
+  // Service Worker installing
+  if (import.meta.env.DEV) {
+    console.log('Service Worker installing.');
+  }
 });
 
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker activating.');
+  // Service Worker activating
+  if (import.meta.env.DEV) {
+    console.log('Service Worker activating.');
+  }
 });
 
 self.addEventListener('fetch', (event) => {

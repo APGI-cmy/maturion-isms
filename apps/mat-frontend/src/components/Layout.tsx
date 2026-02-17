@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 
 interface LayoutProps {
   children: ReactNode;
@@ -12,12 +13,12 @@ export default function Layout({ children }: LayoutProps) {
       </header>
       <nav role="navigation" className="bg-gray-100 p-4">
         <ul className="flex gap-4">
-          <li><a href="/audits">Audits</a></li>
-          <li><a href="/criteria">Criteria</a></li>
-          <li><a href="/evidence">Evidence</a></li>
-          <li><a href="/scoring">Scoring</a></li>
-          <li><a href="/dashboard">Dashboard</a></li>
-          <li><a href="/reports">Reports</a></li>
+          <li><Link to="/audits">Audits</Link></li>
+          <li><Link to="/criteria">Criteria</Link></li>
+          <li><Link to="/evidence">Evidence</Link></li>
+          <li><Link to="/scoring">Scoring</Link></li>
+          <li><Link to="/dashboard">Dashboard</Link></li>
+          <li><Link to="/reports">Reports</Link></li>
         </ul>
       </nav>
       <main role="main" className="flex-1 p-4">

@@ -216,7 +216,7 @@ If feeling unable to delegate (e.g., no builders available, unclear delegation p
 4. **Wake-Up Protocol Enforcement** (Issue #192): Requires loading last 5 session memories before task execution
 5. **Post-Rejection Learning Protocol** (Issue #192): Mandatory session memory, lessons learned, patterns, RCA before retry
 6. **Comprehensive Evidence Bundle Gate** (Issue #193): Validates ALL governance artifacts (PREHANDOVER, session memory, CST, CWT, IBWR, tracker, test verification, RCA)
-7. **Sub-Agent Delegation Is NOT Valid Delegation** (PR #263 Learning): Delegating to a builder sub-agent within the same session/PR context results in Foreman being the commit author. This is still a POLC violation. Valid delegation requires the builder to be a separate commit author in a separate PR.
+7. **Sub-agent Delegation Is NOT Valid Delegation** (PR #263 Learning): Delegating to a builder sub-agent within the same session/PR context results in Foreman being the commit author. This is still a POLC violation. Valid delegation requires the builder to be a separate commit author in a separate PR.
 
 ---
 **Pattern ID**: POLC-001  
