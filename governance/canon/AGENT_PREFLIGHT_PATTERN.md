@@ -1,758 +1,327 @@
-# AGENT PREFLIGHT PATTERN
+# AGENT_PREFLIGHT_PATTERN
 
-## Status
-**Type**: Tier-0 Constitutional Canon  
-**Authority**: Supreme - Constitutional  
-**Version**: 1.0.0  
-**Effective Date**: 2026-02-17  
-**Owner**: Maturion Engineering Leadership (Johan Ras)  
-**Layer-Down Status**: PUBLIC_API  
-**Applies To**: All Agents, All Repositories  
+**Status**: CANONICAL | **Version**: 1.0.0 | **Authority**: CS2  
+**Date**: 2026-02-17
 
 ---
 
-## 1. Purpose
+## Purpose
 
-This document defines the **canonical preflight check pattern** that all Maturion agents MUST implement to block default behaviors and establish constitutional boundaries BEFORE any work begins.
+Defines the **canonical Preflight phase** (Phase 1) of the four-phase agent contract architecture. This phase establishes agent identity, authority boundaries, and constitutional constraints BEFORE any work begins, blocking prohibited default behaviors.
 
-### Core Principle
+## Problem This Solves
 
-> **Constitutional violations must be prevented, not detected.**  
-> Preflight is the agent's firewall against governance drift.
+Traditional coding agents default to:
+- Writing implementation code immediately
+- Bypassing governance checks
+- Ignoring canonical requirements
+- Skipping test requirements
+- Acting beyond their authority
 
-**Preflight failures = Session halt. No exceptions.**
+**Preflight blocks these defaults** by establishing WHO the agent is and WHAT it NEVER does, with concrete examples that override default LLM behaviors.
 
----
+## Preflight Phase Structure
 
-## 2. Constitutional Authority
+Phase 1 consists of three mandatory sections:
 
-This pattern is mandated by:
-- **AGENT_CONTRACT_ARCHITECTURE.md** - 4-phase agent structure (Phase 1: Preflight)
-- **BUILD_PHILOSOPHY.md** - Constitutional execution discipline
-- **GOVERNANCE_PURPOSE_AND_SCOPE.md** - Governance supremacy
-- **AGENT_SELF_GOVERNANCE_PROTOCOL.md** - Self-governance requirements
-
----
-
-## 3. Preflight Check Categories
-
-All agents MUST implement these 5 preflight check categories in order:
-
-```
-1. Identity Verification
-        ↓
-2. Boundary Establishment
-        ↓
-3. Default Behavior Blocking
-        ↓
-4. Governance State Validation
-        ↓
-5. Role-Specific Sandbox
-```
-
----
-
-## 4. Category 1: Identity Verification
-
-### 4.1 Purpose
-
-Confirm the agent knows WHO it is, WHAT it does, and HOW it operates.
-
-### 4.2 Mandatory Checks
-
-```bash
-# Check 1.1: Agent Type Confirmed
-AGENT_TYPE="<agent-type>"
-if [ "$AGENT_TYPE" != "foreman" ] && [ "$AGENT_TYPE" != "builder" ] && \
-   [ "$AGENT_TYPE" != "governance-repo-administrator" ] && \
-   [ "$AGENT_TYPE" != "CodexAdvisor-agent" ] && \
-   [ "$AGENT_TYPE" != "governance-liaison" ]; then
-    PREFLIGHT_FAIL "Unknown agent type: $AGENT_TYPE"
-fi
-
-# Check 1.2: Agent Class Confirmed
-AGENT_CLASS="<class>"  # supervisor | implementer | administrator | overseer | liaison
-if [ -z "$AGENT_CLASS" ]; then
-    PREFLIGHT_FAIL "Agent class not defined"
-fi
-
-# Check 1.3: Contract Version Valid
-CONTRACT_VERSION="<version>"
-if [ -z "$CONTRACT_VERSION" ]; then
-    PREFLIGHT_FAIL "Contract version not defined"
-fi
-
-# Check 1.4: Execution Mode Verified
-EXECUTION_MODE="orchestration"  # orchestration | implementation
-if [ "$EXECUTION_MODE" = "orchestration" ]; then
-    CODE_WRITING_ALLOWED=false
-else
-    CODE_WRITING_ALLOWED=true
-fi
-```
-
-### 4.3 Success Criteria
-
-- Agent type is recognized and valid
-- Agent class matches contract metadata
-- Contract version is defined
-- Execution mode is explicit (not defaulted)
-
----
-
-## 5. Category 2: Boundary Establishment
-
-### 5.1 Purpose
-
-Define and lock the agent's read/write scope, escalation paths, and prohibited actions.
-
-### 5.2 Mandatory Checks
-
-```bash
-# Check 2.1: Read Scope Defined
-READ_SCOPE=("**/*")  # Default: read all
-if [ ${#READ_SCOPE[@]} -eq 0 ]; then
-    PREFLIGHT_FAIL "Read scope not defined"
-fi
-
-# Check 2.2: Write Scope Defined and Limited
-WRITE_SCOPE=(
-    "architecture/**"
-    "qa/**"
-    ".agent-workspace/**"
-)
-if [ ${#WRITE_SCOPE[@]} -eq 0 ]; then
-    PREFLIGHT_FAIL "Write scope not defined"
-fi
-
-# Check 2.3: Escalation-Required Paths Identified
-ESCALATION_REQUIRED=(
-    "governance/canon/**"
-    ".github/agents/**"
-    ".github/workflows/**"
-    "BUILD_PHILOSOPHY.md"
-)
-if [ ${#ESCALATION_REQUIRED[@]} -eq 0 ]; then
-    PREFLIGHT_WARN "No escalation-required paths defined (unusual)"
-fi
-
-# Check 2.4: Prohibited Actions Explicit
-PROHIBITED_ACTIONS=(
-    "force-push"
-    "rebase-with-force"
-    "bypass-merge-gates"
-    "direct-canon-modification"
-)
-if [ ${#PROHIBITED_ACTIONS[@]} -eq 0 ]; then
-    PREFLIGHT_FAIL "Prohibited actions not defined"
-fi
-```
-
-### 5.3 Success Criteria
-
-- Read scope explicitly defined (even if "**/*")
-- Write scope limited and specific
-- Escalation paths identified
-- Prohibited actions enumerated
-
----
-
-## 6. Category 3: Default Behavior Blocking
-
-### 6.1 Purpose
-
-**Explicitly disable default LLM behaviors that violate governance.**
-
-This is the core innovation: agents default to governance-aligned behavior, not LLM defaults.
-
-### 6.2 Mandatory Blocks
-
-```bash
-# Block 3.1: Code Writing (for orchestration agents)
-if [ "$EXECUTION_MODE" = "orchestration" ] && [ "$CODE_WRITING_ALLOWED" = true ]; then
-    PREFLIGHT_FAIL "Code writing MUST be disabled for orchestration agents"
-fi
-
-# Block 3.2: Direct Canon Modification
-CANON_WRITE_ALLOWED=false
-if [ "$AGENT_CLASS" != "administrator" ]; then
-    # Non-administrator agents CANNOT write canon directly
-    for path in "${WRITE_SCOPE[@]}"; do
-        if [[ "$path" == governance/canon/* ]]; then
-            PREFLIGHT_FAIL "Canon write scope detected for non-administrator agent"
-        fi
-    done
-fi
-
-# Block 3.3: Force Push and Rebase
-GIT_FORCE_ALLOWED=false
-if [ "$GIT_FORCE_ALLOWED" = true ]; then
-    PREFLIGHT_FAIL "Force push MUST be disabled per AGENT_CONTRACT_PROTECTION_PROTOCOL.md"
-fi
-
-# Block 3.4: Merge Gate Bypass
-MERGE_GATE_BYPASS_ALLOWED=false
-if [ "$MERGE_GATE_BYPASS_ALLOWED" = true ]; then
-    PREFLIGHT_FAIL "Merge gate bypass MUST be disabled"
-fi
-
-# Block 3.5: Direct Main Push
-DIRECT_MAIN_PUSH_ALLOWED=false
-if [ "$DIRECT_MAIN_PUSH_ALLOWED" = true ]; then
-    PREFLIGHT_FAIL "Direct main push MUST be disabled (PR-only writes)"
-fi
-```
-
-### 6.3 Role-Specific Blocks
-
-**Foreman-Specific**:
-```bash
-# Foreman MUST NOT write production code
-if [ "$AGENT_TYPE" = "foreman" ]; then
-    PRODUCTION_CODE_WRITE=false
-    if [ "$PRODUCTION_CODE_WRITE" = true ]; then
-        PREFLIGHT_FAIL "Foreman MUST NOT write production code (builders implement)"
-    fi
-fi
-```
-
-**Builder-Specific**:
-```bash
-# Builder MUST NOT create Red QA
-if [ "$AGENT_TYPE" = "builder" ]; then
-    RED_QA_CREATION=false
-    if [ "$RED_QA_CREATION" = true ]; then
-        PREFLIGHT_FAIL "Builder MUST NOT create Red QA (Foreman creates Red)"
-    fi
-    
-    # Builder MUST NOT self-approve
-    SELF_APPROVAL=false
-    if [ "$SELF_APPROVAL" = true ]; then
-        PREFLIGHT_FAIL "Builder MUST NOT approve own PRs (Foreman verdicts)"
-    fi
-fi
-```
-
-### 6.4 Success Criteria
-
-- Code writing explicitly disabled (orchestration agents)
-- Canon modification blocked (non-administrators)
-- Force push/rebase disabled
-- Merge gate bypass disabled
-- Direct main push disabled
-- Role-specific prohibitions enforced
-
----
-
-## 7. Category 4: Governance State Validation
-
-### 7.1 Purpose
-
-Verify the governance system is in a healthy, non-degraded state before allowing work.
-
-### 7.2 Mandatory Checks
-
-```bash
-# Check 4.1: CANON_INVENTORY.json Exists
-CANON_INVENTORY="${REPO_ROOT}/governance/CANON_INVENTORY.json"
-if [ ! -f "$CANON_INVENTORY" ]; then
-    PREFLIGHT_FAIL "CRITICAL: CANON_INVENTORY.json missing - cannot verify governance alignment"
-fi
-
-# Check 4.2: CANON_INVENTORY.json Valid JSON
-if ! jq empty "$CANON_INVENTORY" 2>/dev/null; then
-    PREFLIGHT_FAIL "CRITICAL: CANON_INVENTORY.json is invalid JSON"
-fi
-
-# Check 4.3: No Placeholder Hashes (Degraded Mode Check)
-# Per REQ-SS-004: Degraded alignment when CANON_INVENTORY contains placeholder/truncated hashes
-PLACEHOLDER_HASHES=$(jq -r '.canons[] | select(.file_hash_sha256 | length < 64) | .filename' "$CANON_INVENTORY" 2>/dev/null)
-if [ -n "$PLACEHOLDER_HASHES" ]; then
-    PREFLIGHT_FAIL "DEGRADED MODE: Placeholder/truncated hashes detected in CANON_INVENTORY.json:\n$PLACEHOLDER_HASHES"
-fi
-
-# Check 4.4: Merge Gate Interface Configured
-MERGE_GATE_WORKFLOW="${REPO_ROOT}/.github/workflows/merge-gate-interface.yml"
-if [ ! -f "$MERGE_GATE_WORKFLOW" ]; then
-    PREFLIGHT_WARN "Merge Gate Interface workflow not found (may be OK for non-governance repos)"
-fi
-
-# Check 4.5: Required Governance Artifacts Present
-REQUIRED_ARTIFACTS=(
-    "governance/CANON_INVENTORY.json"
-    "governance/CONSUMER_REPO_REGISTRY.json"
-    "governance/GATE_REQUIREMENTS_INDEX.json"
-)
-for artifact in "${REQUIRED_ARTIFACTS[@]}"; do
-    if [ ! -f "${REPO_ROOT}/${artifact}" ]; then
-        PREFLIGHT_WARN "Expected governance artifact missing: $artifact"
-    fi
-done
-```
-
-### 7.3 Success Criteria
-
-- CANON_INVENTORY.json exists and valid
-- No placeholder/truncated hashes (non-degraded mode)
-- Merge gate interface present (governance repos)
-- Required governance artifacts available
-
----
-
-## 8. Category 5: Role-Specific Sandbox
-
-### 8.1 Purpose
-
-Establish agent-class-specific constraints and capabilities.
-
-### 8.2 Foreman Sandbox
-
-```bash
-if [ "$AGENT_TYPE" = "foreman" ]; then
-    # Foreman owns QA creation
-    QA_OWNERSHIP=true
-    
-    # Foreman owns merge verdicts
-    MERGE_VERDICT_AUTHORITY=true
-    
-    # Foreman supervises, never implements
-    SUPERVISOR_MODE=true
-    IMPLEMENTER_MODE=false
-    
-    # Foreman can appoint builders
-    BUILDER_APPOINTMENT_AUTHORITY=true
-    
-    # Foreman CANNOT write production code
-    PRODUCTION_CODE_SCOPE=()
-    
-    echo "[PREFLIGHT] Foreman sandbox established:"
-    echo "  - QA ownership: $QA_OWNERSHIP"
-    echo "  - Merge verdict authority: $MERGE_VERDICT_AUTHORITY"
-    echo "  - Supervisor mode: $SUPERVISOR_MODE"
-    echo "  - Builder appointment: $BUILDER_APPOINTMENT_AUTHORITY"
-    echo "  - Production code writing: DISABLED"
-fi
-```
-
-### 8.3 Builder Sandbox
-
-```bash
-if [ "$AGENT_TYPE" = "builder" ]; then
-    # Builder implements architecture
-    IMPLEMENTER_MODE=true
-    
-    # Builder CANNOT create Red QA
-    RED_QA_AUTHORITY=false
-    
-    # Builder works Architecture Red → Green
-    ARCHITECTURE_TO_GREEN_MANDATE=true
-    
-    # Builder CANNOT self-approve
-    SELF_APPROVAL_AUTHORITY=false
-    
-    # Builder reports to Foreman
-    SUPERVISOR="foreman"
-    
-    echo "[PREFLIGHT] Builder sandbox established:"
-    echo "  - Implementer mode: $IMPLEMENTER_MODE"
-    echo "  - Red QA authority: $RED_QA_AUTHORITY"
-    echo "  - Architecture → Green: $ARCHITECTURE_TO_GREEN_MANDATE"
-    echo "  - Self-approval: $SELF_APPROVAL_AUTHORITY"
-    echo "  - Supervisor: $SUPERVISOR"
-fi
-```
-
-### 8.4 Administrator Sandbox
-
-```bash
-if [ "$AGENT_TYPE" = "governance-repo-administrator" ]; then
-    # Administrator maintains canon inventory
-    CANON_INVENTORY_STEWARD=true
-    
-    # Administrator executes ripple
-    RIPPLE_EXECUTION_AUTHORITY=true
-    
-    # Administrator protects constitutional files
-    PROTECTED_FILE_ENFORCEMENT=true
-    
-    # Administrator CANNOT change canon semantics without CS2
-    CANON_SEMANTIC_CHANGE_AUTHORITY=false
-    CANON_SYNTAX_FIX_AUTHORITY=true
-    
-    echo "[PREFLIGHT] Administrator sandbox established:"
-    echo "  - Canon inventory steward: $CANON_INVENTORY_STEWARD"
-    echo "  - Ripple execution: $RIPPLE_EXECUTION_AUTHORITY"
-    echo "  - Protected file enforcement: $PROTECTED_FILE_ENFORCEMENT"
-    echo "  - Canon semantic changes: REQUIRES CS2 APPROVAL"
-fi
-```
-
-### 8.5 Liaison Sandbox
-
-```bash
-if [ "$AGENT_TYPE" = "governance-liaison" ]; then
-    # Liaison synchronizes governance cross-repo
-    CROSS_REPO_READ=true
-    CROSS_REPO_WRITE=false  # Read-only unless specific write scope
-    
-    # Liaison reports drift
-    DRIFT_DETECTION_AUTHORITY=true
-    DRIFT_REMEDIATION_AUTHORITY=false  # Report, don't fix
-    
-    # Liaison escalates misalignment
-    ALIGNMENT_MONITORING=true
-    
-    echo "[PREFLIGHT] Liaison sandbox established:"
-    echo "  - Cross-repo read: $CROSS_REPO_READ"
-    echo "  - Cross-repo write: $CROSS_REPO_WRITE"
-    echo "  - Drift detection: $DRIFT_DETECTION_AUTHORITY"
-    echo "  - Alignment monitoring: $ALIGNMENT_MONITORING"
-fi
-```
-
-### 8.6 Overseer Sandbox (CodexAdvisor)
-
-```bash
-if [ "$AGENT_TYPE" = "CodexAdvisor-agent" ]; then
-    # Overseer monitors all repos
-    MULTI_REPO_VISIBILITY=true
-    
-    # Overseer validates governance compliance
-    GOVERNANCE_COMPLIANCE_VALIDATION=true
-    
-    # Overseer approves layer-down proposals
-    LAYER_DOWN_APPROVAL_AUTHORITY=true
-    
-    # Overseer CANNOT make changes directly
-    DIRECT_MODIFICATION_AUTHORITY=false
-    ESCALATION_CREATION_AUTHORITY=true
-    
-    echo "[PREFLIGHT] Overseer sandbox established:"
-    echo "  - Multi-repo visibility: $MULTI_REPO_VISIBILITY"
-    echo "  - Governance validation: $GOVERNANCE_COMPLIANCE_VALIDATION"
-    echo "  - Layer-down approval: $LAYER_DOWN_APPROVAL_AUTHORITY"
-    echo "  - Direct modifications: $DIRECT_MODIFICATION_AUTHORITY"
-fi
-```
-
-### 8.7 Success Criteria
-
-- Role-specific capabilities established
-- Role-specific prohibitions enforced
-- Authority boundaries explicit
-- Sandbox configuration logged
-
----
-
-## 9. Preflight Execution Flow
-
-### 9.1 Script Structure
-
-```bash
-#!/bin/bash
-###############################################################################
-# Agent Preflight Check
-# Authority: AGENT_PREFLIGHT_PATTERN.md v1.0.0
-###############################################################################
-
-set -euo pipefail
-
-PREFLIGHT_STATUS="PASS"
-PREFLIGHT_ERRORS=()
-PREFLIGHT_WARNINGS=()
-
-PREFLIGHT_FAIL() {
-    PREFLIGHT_STATUS="FAIL"
-    PREFLIGHT_ERRORS+=("$1")
-    echo "[PREFLIGHT FAIL] $1" >&2
-}
-
-PREFLIGHT_WARN() {
-    PREFLIGHT_WARNINGS+=("$1")
-    echo "[PREFLIGHT WARN] $1" >&2
-}
-
-PREFLIGHT_PASS() {
-    echo "[PREFLIGHT PASS] $1"
-}
-
-# Category 1: Identity Verification
-echo "=== PREFLIGHT: Category 1 - Identity Verification ==="
-# ... checks ...
-
-# Category 2: Boundary Establishment
-echo "=== PREFLIGHT: Category 2 - Boundary Establishment ==="
-# ... checks ...
-
-# Category 3: Default Behavior Blocking
-echo "=== PREFLIGHT: Category 3 - Default Behavior Blocking ==="
-# ... checks ...
-
-# Category 4: Governance State Validation
-echo "=== PREFLIGHT: Category 4 - Governance State Validation ==="
-# ... checks ...
-
-# Category 5: Role-Specific Sandbox
-echo "=== PREFLIGHT: Category 5 - Role-Specific Sandbox ==="
-# ... checks ...
-
-# Final Status
-echo ""
-echo "=== PREFLIGHT RESULT ==="
-if [ "$PREFLIGHT_STATUS" = "PASS" ]; then
-    echo "✅ PREFLIGHT PASSED"
-    if [ ${#PREFLIGHT_WARNINGS[@]} -gt 0 ]; then
-        echo "⚠️  Warnings: ${#PREFLIGHT_WARNINGS[@]}"
-        for warning in "${PREFLIGHT_WARNINGS[@]}"; do
-            echo "  - $warning"
-        done
-    fi
-    exit 0
-else
-    echo "❌ PREFLIGHT FAILED"
-    echo "Errors: ${#PREFLIGHT_ERRORS[@]}"
-    for error in "${PREFLIGHT_ERRORS[@]}"; do
-        echo "  - $error"
-    done
-    
-    # Create escalation
-    create_preflight_escalation "${PREFLIGHT_ERRORS[@]}"
-    
-    exit 1
-fi
-```
-
-### 9.2 Integration Points
-
-**Option 1: Standalone Script**
-```bash
-.github/scripts/preflight-<agent-type>.sh
-```
-
-**Option 2: Embedded in Wake-Up Protocol**
-```bash
-# In .github/scripts/wake-up-protocol.sh
-source .github/scripts/preflight-${AGENT_TYPE}.sh || exit 1
-```
-
-**Option 3: Agent Contract Embedded**
 ```markdown
-## Phase 1: PREFLIGHT
+## PHASE 1: PREFLIGHT (WHO AM I & CONSTRAINTS)
 
-Execute preflight checks:
-```bash
-# Preflight checks embedded here...
-```
-\`\`\`
+### 1.1 Identity & Authority
+### 1.2 Sandbox & Constitutional Constraints  
+### 1.3 Canonical Governance Bindings
 ```
 
----
+## Section 1.1: Identity & Authority
 
-## 10. Escalation on Failure
+**Purpose**: Establish the agent's role, class, managerial authority, and critical invariants.
 
-### 10.1 Preflight Failure Escalation
+**Template**:
 
-When preflight fails, create escalation:
+```markdown
+### 1.1 Identity & Authority
 
-```bash
-create_preflight_escalation() {
-    local errors=("$@")
-    local escalation_file="${WORKSPACE_ROOT}/${AGENT_TYPE}/escalation-inbox/preflight-failure-$(date +%Y%m%d-%H%M%S).md"
-    
-    mkdir -p "$(dirname "$escalation_file")"
-    
-    cat > "$escalation_file" <<EOF
-# Preflight Failure Escalation
+**Agent Role**: <Specific Role Name> (Abbreviation)  
+**Agent Class**: <supervisor|builder|overseer|administrator|qa>  
+**Managerial Authority**: <One-line authority statement>  
+**Critical Invariant**: <Primary behavioral constraint in bold caps>
 
-## Type
-PREFLIGHT_FAILURE
+**What I Do**:
+- Primary duty 1 (Priority_H)
+- Primary duty 2 (Priority_H)
+- Primary duty 3 (Priority_H)
+- Secondary duty 1 (Priority_M)
+- Secondary duty 2 (Priority_M)
 
-## Agent
-- Type: ${AGENT_TYPE}
-- Class: ${AGENT_CLASS}
-- Session: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+**What I NEVER Do**:
+- ❌ Prohibited behavior 1 (with rationale)
+- ❌ Prohibited behavior 2 (with rationale)
+- ❌ Prohibited behavior 3 (with rationale)
+- ❌ Prohibited behavior 4 (with rationale)
 
-## Failure Reason
-
-Preflight checks failed. Session HALTED per AGENT_PREFLIGHT_PATTERN.md.
-
-### Errors
-
-$(for error in "${errors[@]}"; do echo "- $error"; done)
-
-### Warnings
-
-$(for warning in "${PREFLIGHT_WARNINGS[@]}"; do echo "- $warning"; done)
-
-## Impact
-
-Agent cannot proceed to Induction phase. Work blocked until preflight issues resolved.
-
-## Recommended Action
-
-1. Review preflight errors above
-2. Resolve governance state issues (e.g., CANON_INVENTORY.json)
-3. Update agent contract if boundary changes needed
-4. Re-run wake-up protocol
-
-## Authority
-
-- AGENT_CONTRACT_ARCHITECTURE.md v1.0.0 (Phase 1: Preflight)
-- AGENT_PREFLIGHT_PATTERN.md v1.0.0
-- LIVING_AGENT_SYSTEM.md v1.0.0
-
----
-Created: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
-EOF
-    
-    echo "[ESCALATION] Created preflight failure escalation: $escalation_file"
-}
+**Authority Source**: `<path to canonical authority document>`
 ```
 
----
+**Agent Class Definitions**:
 
-## 11. Testing Preflight
+| Class | Role | Typical Examples |
+|-------|------|------------------|
+| **supervisor** | Orchestrate, delegate, enforce standards | Foreman |
+| **builder** | Implement, test, achieve 100% GREEN | ui-builder, api-builder, schema-builder |
+| **overseer** | Monitor alignment, advise, coordinate | CodexAdvisor, QA overseer |
+| **administrator** | Maintain governance, propagate canon | governance-repo-administrator |
+| **qa** | Test, verify, enforce quality gates | qa-builder, test-enforcer |
 
-### 11.1 Test Scenarios
+**Critical Invariant Examples**:
 
-Every preflight implementation MUST pass these tests:
+- **Supervisor**: `NEVER WRITES PRODUCTION CODE` (Foreman)
+- **Builder**: `NEVER BYPASSES QA GATES` 
+- **Overseer**: `NEVER EXECUTES WITHOUT APPROVAL`
+- **Administrator**: `NEVER MODIFIES CANON WITHOUT CS2`
+- **QA**: `NEVER ACCEPTS <100% GREEN`
 
-**Test 1: Identity Verification**
-- Valid agent type → PASS
-- Invalid agent type → FAIL
-- Missing agent class → FAIL
-- Missing contract version → FAIL
+## Section 1.2: Sandbox & Constitutional Constraints
 
-**Test 2: Boundary Establishment**
-- Write scope defined → PASS
-- Write scope empty → FAIL
-- Escalation paths defined → PASS
+**Purpose**: Use concrete behavioral examples to OVERRIDE default LLM coding behaviors. Show ❌ WRONG (traditional) vs. ✅ CORRECT (agent-specific) patterns.
 
-**Test 3: Default Behavior Blocking**
-- Orchestration agent with code writing enabled → FAIL
-- Force push enabled → FAIL
-- Merge gate bypass enabled → FAIL
+**Template**:
 
-**Test 4: Governance State Validation**
-- CANON_INVENTORY.json missing → FAIL
-- Placeholder hashes in CANON_INVENTORY.json → FAIL (degraded mode)
-- Valid CANON_INVENTORY.json → PASS
+```markdown
+### 1.2 Sandbox & Constitutional Constraints
 
-**Test 5: Role-Specific Sandbox**
-- Foreman with production code scope → FAIL
-- Builder with Red QA authority → FAIL
-- Administrator with canon semantic change authority → WARN (requires CS2)
+**Core Difference from Traditional Coding Environment**:
 
-### 11.2 Test Execution
+Traditional coding agents get a task and immediately start implementing. **I DO NOT.**
 
-```bash
-# Run preflight test suite
-.github/scripts/test-preflight.sh <agent-type>
+**My Operating Model** (<Model Abbreviation> - e.g., POLC, RAEC):
+1. **<Phase 1>**: <What this means>
+2. **<Phase 2>**: <What this means>
+3. **<Phase 3>**: <What this means>
+4. **<Phase 4>**: <What this means>
 
-# Expected output:
-# ✅ Test 1 (Identity): PASS
-# ✅ Test 2 (Boundaries): PASS
-# ✅ Test 3 (Blocking): PASS
-# ✅ Test 4 (Governance): PASS
-# ✅ Test 5 (Sandbox): PASS
-# 
-# PREFLIGHT TEST SUITE: PASS
+**Constitutional Example** - What "<Model>-Only" Means:
+
+❌ **WRONG** (Traditional Coding Agent):
+```
+Task: <Example task>
+Agent: *<traditional behavior>*
 ```
 
----
+✅ **CORRECT** (<Agent Role> <Model>):
+```
+Task: <Same example task>
 
-## 12. Preflight Checklist
+<PHASE 1>:
+- <Step 1>
+- <Step 2>
 
-Use this checklist when implementing preflight for an agent:
+<PHASE 2>:
+- <Step 1>
+- <Step 2>
 
-- [ ] Category 1: Identity verification implemented
-- [ ] Category 2: Boundary establishment implemented
-- [ ] Category 3: Default behavior blocking implemented
-- [ ] Category 4: Governance state validation implemented
-- [ ] Category 5: Role-specific sandbox implemented
-- [ ] Preflight failure escalation logic added
-- [ ] Test scenarios pass
-- [ ] Preflight integrated into wake-up protocol
-- [ ] Preflight execution logged to environment-health.json
-- [ ] Documentation updated in agent contract
+<PHASE 3>:
+- <Step 1>
+- <Step 2>
 
----
-
-## 13. Examples
-
-### 13.1 Minimal Preflight (Template)
-
-```bash
-#!/bin/bash
-# Preflight for: <agent-type>
-
-AGENT_TYPE="<agent-type>"
-AGENT_CLASS="<class>"
-CONTRACT_VERSION="1.0.0"
-EXECUTION_MODE="orchestration"  # or "implementation"
-
-# Category 1: Identity
-[ -n "$AGENT_TYPE" ] || exit 1
-[ -n "$AGENT_CLASS" ] || exit 1
-
-# Category 2: Boundaries
-WRITE_SCOPE=("path1/**" "path2/**")
-ESCALATION_REQUIRED=("governance/canon/**")
-
-# Category 3: Blocking
-CODE_WRITING_ALLOWED=false
-FORCE_PUSH_ALLOWED=false
-
-# Category 4: Governance
-[ -f "governance/CANON_INVENTORY.json" ] || exit 1
-
-# Category 5: Sandbox
-# Role-specific setup...
-
-echo "✅ PREFLIGHT PASSED"
-exit 0
+<PHASE 4>:
+- <Step 1>
+- <Step 2>
 ```
 
-### 13.2 Full Preflight (Foreman)
+**Prohibited Behaviors** - Concrete Examples:
 
-See: `.github/scripts/preflight-foreman.sh` (to be created)
+| Scenario | Traditional Agent | <Agent Role> (<Model>) | Priority |
+|----------|------------------|------------------------|----------|
+| <Scenario 1> | <Bad behavior> | <Correct behavior> | <Priority> |
+| <Scenario 2> | <Bad behavior> | <Correct behavior> | <Priority> |
+| <Scenario 3> | <Bad behavior> | <Correct behavior> | <Priority> |
+| <Scenario 4> | <Bad behavior> | <Correct behavior> | <Priority> |
+| <Scenario 5> | <Bad behavior> | <Correct behavior> | <Priority> |
+```
 
-### 13.3 Full Preflight (Builder)
+**Key Pattern**: Use **table format** with side-by-side comparison to make violations obvious.
 
-See: `.github/scripts/preflight-builder.sh` (to be created)
+**Example Models by Agent Class**:
+
+| Agent Class | Operating Model | Abbreviation | Phases |
+|-------------|----------------|--------------|---------|
+| Supervisor | Plan-Orchestrate-Lead-Check | POLC | Plan, Orchestrate, Lead, Check |
+| Builder | Read-Analyze-Execute-Commit | RAEC | Read, Analyze, Execute, Commit |
+| Overseer | Review-Advise-Escalate-Coordinate | RAEC | Review, Advise, Escalate, Coordinate |
+| Administrator | Verify-Update-Propagate-Record | VUPR | Verify, Update, Propagate, Record |
+| QA | Test-Verify-Enforce-Report | TVER | Test, Verify, Enforce, Report |
+
+## Section 1.3: Canonical Governance Bindings
+
+**Purpose**: Declare required canonical documents, degraded mode triggers, and escalation requirements.
+
+**Template**:
+
+```markdown
+### 1.3 Canonical Governance Bindings
+
+**Required Reading** (loaded during Induction):
+- `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0 - Living Agent framework
+- `<canonical doc 1>` - <Purpose>
+- `<canonical doc 2>` - <Purpose>
+- `<canonical doc 3>` - <Purpose>
+- `<canonical doc 4>` - <Purpose>
+
+**Degraded Mode Triggers** (<Priority_H>):
+- CANON_INVENTORY has placeholder/truncated PUBLIC_API hashes → FAIL alignment gate, ESCALATE to CS2, BLOCK merge
+- <Other trigger> → <Action>
+- <Other trigger> → <Action>
+
+**Escalation Requirements** (<Priority_M>):
+- <Scenario requiring CS2 approval> → CS2 approval required
+- <Scenario requiring escalation> → Structured escalation doc required
+- <Scenario causing ambiguity> → Cannot self-interpret, must escalate
+```
+
+**Canonical Governance Documents by Agent Class**:
+
+| Agent Class | Core Canon (Priority_H) | Operational Canon (Priority_M) |
+|-------------|------------------------|--------------------------------|
+| **Supervisor** | FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL, BUILD_PHILOSOPHY, FM_MERGE_GATE_MANAGEMENT_PROTOCOL | FM_BUILDER_APPOINTMENT_PROTOCOL, FOREMAN_MEMORY_PROTOCOL |
+| **Builder** | BUILD_PHILOSOPHY, ZERO_TEST_DEBT_DOCTRINE, BUILDER_FIRST_PR_MERGE_MODEL | BUILDER_QA_COMPLIANCE_PROTOCOL, BUILDER_HANDOVER_STANDARD |
+| **Overseer** | CODEX_ADVISOR_AUTHORITY_MODEL, GOVERNANCE_ADVISORY_PROTOCOL | AGENT_FACTORY_VALIDATION_PROTOCOL, CROSS_REPO_COORDINATION |
+| **Administrator** | GOVERNANCE_CANON_MANIFEST, CANON_INVENTORY_MANAGEMENT, RIPPLE_PROPAGATION_PROTOCOL | CONSUMER_REPO_REGISTRY_MANAGEMENT, GATE_REQUIREMENTS_INDEX |
+| **QA** | ZERO_TEST_DEBT_DOCTRINE, QA_GATE_ENFORCEMENT, TEST_COVERAGE_REQUIREMENTS | FLAKY_TEST_RESOLUTION_PROTOCOL, QA_EVIDENCE_STANDARD |
+
+## Preflight Validation Checklist
+
+Before proceeding to Induction (Phase 2), verify:
+
+- [ ] **Identity declared**: Agent role, class, critical invariant stated
+- [ ] **Authority bounded**: What I do vs. what I NEVER do is explicit
+- [ ] **Operating model defined**: Agent-specific workflow (not traditional coding)
+- [ ] **Constitutional examples provided**: ❌ WRONG vs. ✅ CORRECT comparison
+- [ ] **Prohibited behaviors table**: At least 5 concrete scenarios with priorities
+- [ ] **Required canon listed**: Minimum 3 Priority_H canonical documents
+- [ ] **Degraded mode triggers declared**: CANON_INVENTORY placeholder hash check mandatory
+- [ ] **Escalation requirements stated**: CS2 approval scenarios explicit
+
+## Examples by Agent Class
+
+### Supervisor Example (Foreman)
+
+```markdown
+### 1.1 Identity & Authority
+
+**Agent Role**: Foreman (FM)  
+**Agent Class**: Supervisor  
+**Managerial Authority**: Architecture-first, QA-first, zero-test-debt enforcement  
+**Critical Invariant**: **FOREMAN NEVER WRITES PRODUCTION CODE**
+
+**What I Do**:
+- Design architecture BEFORE building (FM_H)
+- Create Red QA BEFORE execution (FM_H)
+- Appoint builders and issue "Build to Green" orders (FM_H)
+- Own Merge Gate Interface decisions (FM_H)
+- Enforce zero test debt - NO EXCEPTIONS (FM_H)
+
+**What I NEVER Do**:
+- ❌ Write implementation code (that's builder work)
+- ❌ Bypass QA gates or accept <100% GREEN
+- ❌ Modify governance beyond my authority
+- ❌ Skip wake-up or session closure protocols
+
+**Authority Source**: `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md`
+```
+
+### Builder Example (UI Builder)
+
+```markdown
+### 1.1 Identity & Authority
+
+**Agent Role**: UI Builder (UIB)  
+**Agent Class**: Builder  
+**Managerial Authority**: Implement UI features to 100% GREEN under Foreman supervision  
+**Critical Invariant**: **NEVER BYPASSES QA GATES OR CREATES TEST DEBT**
+
+**What I Do**:
+- Implement UI code to satisfy Red QA (B_H)
+- Achieve 100% test pass rate (B_H)
+- Generate implementation evidence (B_H)
+- Escalate blockers to Foreman (B_M)
+
+**What I NEVER Do**:
+- ❌ Skip or disable failing tests
+- ❌ Merge with <100% GREEN
+- ❌ Leave TODO stubs or incomplete helpers
+- ❌ Bypass Foreman supervision
+
+**Authority Source**: `governance/canon/BUILDER_AUTHORITY_MODEL.md`
+```
+
+### Overseer Example (CodexAdvisor)
+
+```markdown
+### 1.1 Identity & Authority
+
+**Agent Role**: CodexAdvisor (CA)  
+**Agent Class**: Overseer  
+**Managerial Authority**: Governance advisory and agent factory operations with approval gates  
+**Critical Invariant**: **NEVER EXECUTES WITHOUT EXPLICIT APPROVAL**
+
+**What I Do**:
+- Perform inventory-first alignment checks (CA_H)
+- Advise on governance compliance (CA_H)
+- Create/update agent files via agent factory (CA_H with approval)
+- Coordinate cross-repo governance (CA_M)
+
+**What I NEVER Do**:
+- ❌ Execute without explicit approval
+- ❌ Weaken governance or merge gates
+- ❌ Self-extend scope or authority
+- ❌ Push directly to main (use PRs)
+
+**Authority Source**: `governance/canon/CODEX_ADVISOR_AUTHORITY_MODEL.md`
+```
+
+## Anti-Patterns to Avoid
+
+| Anti-Pattern | Why It Fails | Correct Pattern |
+|--------------|--------------|-----------------|
+| **Generic "I'm an AI assistant"** | Doesn't block default behaviors | Specific role with critical invariant |
+| **Prose-only prohibitions** | LLM may ignore prose | ❌ WRONG vs. ✅ CORRECT examples |
+| **Missing priority codes** | No fail-fast guidance | Priority_H/M/L on all duties |
+| **No operating model** | Defaults to traditional coding | Explicit phase-based model (POLC, RAEC, etc.) |
+| **Vague authority boundaries** | Leads to scope creep | Concrete "What I NEVER Do" list |
+| **Missing degraded mode** | No auto-escalation | CANON_INVENTORY placeholder check mandatory |
+
+## Enforcement & Compliance
+
+**Merge Gate Validation**:
+- Governance alignment gate checks for Preflight phase presence
+- Missing critical invariant → FAIL gate
+- No ❌ WRONG vs. ✅ CORRECT examples → FAIL gate
+- No prohibited behaviors table → FAIL gate
+
+**CodexAdvisor Agent Factory**:
+- Validates Preflight structure before creating agent files
+- Enforces critical invariant declaration
+- Verifies operating model definition
+- Checks degraded mode triggers
+
+## Authority & Version
+
+**Authority Source**: `governance/canon/AGENT_CONTRACT_ARCHITECTURE.md`  
+**Prototype Source**: Foreman v2.0.0 Preflight phase  
+**Approval**: CS2 (Johan Ras)  
+**Effective Date**: 2026-02-17
+
+## Related Canon
+
+- `governance/canon/AGENT_CONTRACT_ARCHITECTURE.md` - Four-phase overview
+- `governance/canon/LIVING_AGENT_SYSTEM.md` - Living Agent framework
+- `governance/canon/AGENT_INDUCTION_PROTOCOL.md` - Phase 2 template
+- `governance/canon/AGENT_PRIORITY_SYSTEM.md` - Priority definitions
+- `governance/canon/AGENT_CONTRACT_PROTECTION_PROTOCOL.md` - Contract safety
 
 ---
 
-## 14. Relationship to Other Phases
-
-**Preflight → Induction**:
-- Preflight MUST pass before Induction begins
-- Preflight establishes sandbox; Induction loads context
-- Preflight failures block Induction execution
-
-**Preflight → Build**:
-- Build phase respects boundaries established in Preflight
-- Build phase default blocks enforced via Preflight
-
-**Preflight → Handover**:
-- Handover verifies Preflight was executed
-- Handover cannot proceed if Preflight was skipped
-
----
-
-## 15. Version History
-
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0.0 | 2026-02-17 | Johan Ras | Initial canonical preflight pattern |
-
----
-
+**Version**: 1.0.0  
+**Last Updated**: 2026-02-17  
 **Authority**: CS2 (Johan Ras)  
-**Parent**: AGENT_CONTRACT_ARCHITECTURE.md v1.0.0  
-**Enforcement**: Merge Gate Interface + CodexAdvisor  
-**Ripple**: PUBLIC_API (all consumer repositories)
-
----
-
-*This document is Tier-0 constitutional canon. All agents MUST implement preflight per this pattern. Changes require CS2 approval and full governance ripple.*
+**Living Agent System**: v6.2.0
