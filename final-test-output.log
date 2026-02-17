@@ -1,0 +1,375 @@
+
+> maturion-isms@1.0.0 test
+> vitest run
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90m/home/runner/work/maturion-isms/maturion-isms[39m
+
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mDashboard Data Fetching[2m > [22mMAT-T-0099: Dashboard fetches and displays real Supabase data
+[31m   → NOT_IMPLEMENTED: Dashboard data fetching not yet implemented. Expected: Component uses TanStack Query useQuery to fetch from audits table, displays metrics (Total Domains, Total MPS, Total Criteria), shows loading skeleton while fetching, handles error states with toast notification.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mDashboard Data Fetching[2m > [22mMAT-T-0100: Dashboard implements Realtime subscriptions for live updates
+[31m   → NOT_IMPLEMENTED: Dashboard Realtime subscriptions not yet implemented. Expected: Component subscribes to Supabase Realtime channel on mount, listens for INSERT/UPDATE/DELETE events on audits table, updates displayed metrics when changes occur, unsubscribes on unmount.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0101: Create Audit button displays form with validation
+[31m   → NOT_IMPLEMENTED: Create Audit form not yet implemented. Expected: Button triggers modal with AuditCreateForm, form has controlled inputs for all mandatory fields, Zod schema validation displays field-level errors, form disabled state while submitting.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0102: Create Audit form submits and saves to Supabase
+[31m   → NOT_IMPLEMENTED: Create Audit mutation not yet implemented. Expected: Form uses TanStack Query useMutation hook, onSubmit handler calls mutate() with form data, successful creation shows toast notification, optimistic UI update adds audit to list, error state displays error message.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0103: Audit list fetches and displays audits from Supabase
+[31m   → NOT_IMPLEMENTED: Audit list data fetching not yet implemented. Expected: Component uses TanStack Query useQuery to fetch from audits table with RLS filter (current user's org), displays list of audits with status badges, shows skeleton loader while fetching, displays "No audits yet" empty state when data is empty array.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0104: Edit Audit functionality updates audit in Supabase
+[31m   → NOT_IMPLEMENTED: Edit Audit functionality not yet implemented. Expected: Edit button triggers modal with form pre-filled from selected audit, useMutation hook for PATCH request, optimistic UI update, success/error toast notifications.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0105: Delete Audit (soft delete) functionality updates Supabase
+[31m   → NOT_IMPLEMENTED: Delete Audit functionality not yet implemented. Expected: Delete button triggers confirmation dialog, useMutation hook for soft delete (PATCH with deleted_at), optimistic UI removal from list, undo option in toast notification.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0106: Audit status transition UI updates status in Supabase
+[31m   → NOT_IMPLEMENTED: Audit status transition UI not yet implemented. Expected: Status dropdown component wired to useMutation hook, validates allowed transitions, updates status in Supabase, displays status with color-coded badges (not_started: gray, in_progress: blue, completed: green), shows error toast for invalid transitions.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0107: Audit search and filter functionality filters client-side or server-side
+[31m   → NOT_IMPLEMENTED: Audit search and filter not yet implemented. Expected: Search input with debounced onChange handler, filter dropdowns for status/date range, useQuery hook with query params for server-side filtering OR client-side filtering with useMemo, "No results" empty state when filtered list is empty.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0108: Criteria document upload UI accepts PDF/DOCX and uploads to Supabase Storage
+[31m   → NOT_IMPLEMENTED: Criteria document upload not yet implemented. Expected: Drag-and-drop file input (react-dropzone), file type validation (PDF/DOCX only), file size limit check (10MB), Supabase Storage upload with signed URL, upload progress indicator, useMutation hook to save file URL to criteria_documents table.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0109: Criteria tree displays hierarchical data from Supabase
+[31m   → NOT_IMPLEMENTED: Criteria tree data fetching not yet implemented. Expected: useQuery hook fetches from criteria table with parent_id relationships, recursive tree rendering component, expand/collapse state management with useState, displays criteria numbering and text, loading skeleton for tree structure.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0110: Criteria modal displays criterion details and linked evidence
+[31m   → NOT_IMPLEMENTED: Criteria modal not yet implemented. Expected: Modal component triggered by criterion click, useQuery hook fetches criterion with related evidence and scores, displays criterion full text and metadata, shows list of linked evidence items, displays scoring status (not_scored/scored/confirmed).[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0111: AI parsing trigger button invokes edge function and updates Supabase
+[31m   → NOT_IMPLEMENTED: AI parsing trigger not yet implemented. Expected: Button triggers useMutation to invoke Supabase Edge Function (parse-criteria-document), edge function returns job_id, polling mechanism (useQuery with refetchInterval) checks job status, success state populates criteria tree, error state displays parsing errors, progress indicator during parsing.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0112: Criteria search and filter functionality filters tree
+[31m   → NOT_IMPLEMENTED: Criteria search not yet implemented. Expected: Search input filters criteria tree client-side (useMemo), highlights matching text, auto-expands tree to show matches, "No matches" message when filtered results empty.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0113: Criteria keyboard navigation (arrow keys) works in tree
+[31m   → NOT_IMPLEMENTED: Criteria keyboard navigation not yet implemented. Expected: Tree component supports arrow key navigation, up/down moves focus between items, right/left expands/collapses nodes, Enter selects/opens criterion, focus indicators visible for accessibility.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0114: Text note capture saves to Supabase
+[31m   → NOT_IMPLEMENTED: Text note capture not yet implemented. Expected: Textarea with controlled input, useMutation hook to save to evidence table with type: "text", linked to current criterion, autosave functionality (debounced), success toast notification.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0115: Photo capture uploads to Supabase Storage
+[31m   → NOT_IMPLEMENTED: Photo capture not yet implemented. Expected: Camera button triggers MediaDevices API (navigator.mediaDevices.getUserMedia), displays camera preview, capture button saves image, uploads to Supabase Storage, creates evidence record with file URL, displays thumbnail in evidence list.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0116: Audio recording uploads to Supabase Storage
+[31m   → NOT_IMPLEMENTED: Audio recording not yet implemented. Expected: Record button uses MediaRecorder API, displays recording timer, stop button saves audio blob, uploads to Supabase Storage, creates evidence record, displays audio player in evidence list.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0117: Video recording uploads to Supabase Storage
+[31m   → NOT_IMPLEMENTED: Video recording not yet implemented. Expected: Video button uses MediaDevices API with video constraints, displays video preview, recording with MediaRecorder, stop button saves video blob, uploads to Supabase Storage, creates evidence record, displays video player in evidence list.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0118: Interview recording (structured audio with transcription) saves to Supabase
+[31m   → NOT_IMPLEMENTED: Interview recording not yet implemented. Expected: Interview form with interviewee metadata fields, audio recording with MediaRecorder, uploads audio to Storage, creates evidence record with type: "interview", triggers AI transcription edge function, displays transcription when complete.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mScoring & Reports[2m > [22mMAT-T-0119: AI scoring trigger button invokes edge function
+[31m   → NOT_IMPLEMENTED: AI scoring trigger not yet implemented. Expected: Button triggers useMutation to invoke score-criterion edge function, polling mechanism for batch job status, displays scoring progress, updates criterion scores in UI when complete, error handling for AI failures.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mScoring & Reports[2m > [22mMAT-T-0120: Human confirmation workflow (approve/reject AI scores) updates Supabase
+[31m   → NOT_IMPLEMENTED: Human confirmation workflow not yet implemented. Expected: Review table displays criteria with AI scores, approve button updates score status to "confirmed", edit button opens modal for manual score adjustment, useMutation hook updates scores table, displays confirmation badges in UI.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mScoring & Reports[2m > [22mMAT-T-0121: Review table fetches and displays scoring data from Supabase
+[31m   → NOT_IMPLEMENTED: Review table data fetching not yet implemented. Expected: useQuery hook fetches from scores table with joins to criteria and evidence, displays table with columns: criterion, AI score, evidence count, confirmation status, sort and filter functionality, loading skeleton for table rows.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mScoring & Reports[2m > [22mMAT-T-0122: Report generation button downloads PDF report
+[31m   → NOT_IMPLEMENTED: Report generation not yet implemented. Expected: Button triggers useMutation to invoke generate-report edge function, edge function returns PDF blob or signed URL, downloads PDF to user device, displays generation progress, handles errors (missing data, generation failures).[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mSettings[2m > [22mMAT-T-0123: User profile management UI updates user_preferences table
+[31m   → NOT_IMPLEMENTED: User profile management not yet implemented. Expected: Settings form with controlled inputs for user profile fields, useQuery fetches current user data, useMutation updates user_profiles table, success toast on save, form validation with Zod schema.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mSettings[2m > [22mMAT-T-0124: Organization settings UI updates organization_settings table
+[31m   → NOT_IMPLEMENTED: Organization settings not yet implemented. Expected: Settings form for organization preferences, useQuery fetches org settings, useMutation updates organization_settings table, logo upload to Supabase Storage, RLS policies ensure only org admins can update, success/error notifications.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mComponent Wiring and State Management[2m > [22mMAT-T-0125: All page components import and render child components with data props
+[31m   → NOT_IMPLEMENTED: Component wiring not yet complete. Expected: DashboardPage imports and renders <GlobalDashboard>, <AuditList>, <CreateAuditButton> components, passes data from useQuery hooks as props, manages shared state with Zustand if needed, implements error boundaries for child components.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mComponent Wiring and State Management[2m > [22mMAT-T-0126: TanStack Query configured with Supabase client and proper cache settings
+[31m   → NOT_IMPLEMENTED: TanStack Query configuration not yet complete. Expected: QueryClientProvider wraps app root, QueryClient configured with staleTime/cacheTime settings, Supabase client query functions (getAudits, getCriteria, etc.) created, cache invalidation on mutations, Realtime integration invalidates queries on data changes.[39m
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mComponent Wiring and State Management[2m > [22mMAT-T-0127: Loading states (skeleton loaders) and error states (toast notifications) implemented for all data-fetching components
+[31m   → NOT_IMPLEMENTED: Loading and error states not yet complete. Expected: All data-fetching components (Dashboard, AuditList, CriteriaTree, etc.) render skeleton loaders while isLoading true, display toast error notifications when isError true, show empty state messages when data is empty array, consistent loading/error UX across all pages.[39m
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0023: AI Maturity Scoring
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0024: Evidence-First Scoring Rule
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0025: Human Score Confirmation
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0026: Override Logging
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0027: Maturity Model (5-Level)
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0028: AI Task Routing
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0029: AI Invocation Logging
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0030: AI Confidence Flagging
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0031: AI Rate Limiting
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0032: AI Model Versioning
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0035: Report Generation
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0036: Report Formats (DOCX/PDF/JSON)
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0076: AI Service Failure — Circuit Breaker
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0077: AI Degraded Mode — Manual Scoring
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0010: Hierarchical Navigation
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0011: Criteria Modal Component
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0033: Review Table Component
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0034: Review Table Editing
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0039: Global Dashboard
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0040: Domain Dashboard
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0041: MPS Dashboard
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0042: Maturity Distribution Visualization
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0061: Responsive Design — Desktop
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0062: Responsive Design — Tablet
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0063: Responsive Design — Mobile
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0065: Accessibility (WCAG 2.1 AA)
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0066: Internationalization (i18n)
+ [32m✓[39m modules/mat/tests/criteria-management/criteria-management.test.ts[2m > [22mCAT-02: criteria management[2m > [22mMAT-T-0004: Criteria Document Upload
+ [32m✓[39m modules/mat/tests/criteria-management/criteria-management.test.ts[2m > [22mCAT-02: criteria management[2m > [22mMAT-T-0005: AI Criteria Parsing
+ [32m✓[39m modules/mat/tests/criteria-management/criteria-management.test.ts[2m > [22mCAT-02: criteria management[2m > [22mMAT-T-0006: No-Hallucination Rule
+ [32m✓[39m modules/mat/tests/criteria-management/criteria-management.test.ts[2m > [22mCAT-02: criteria management[2m > [22mMAT-T-0007: Coverage Rule
+ [32m✓[39m modules/mat/tests/criteria-management/criteria-management.test.ts[2m > [22mCAT-02: criteria management[2m > [22mMAT-T-0008: Human Approval of Parsed Criteria
+ [32m✓[39m modules/mat/tests/criteria-management/criteria-management.test.ts[2m > [22mCAT-02: criteria management[2m > [22mMAT-T-0009: Criteria Numbering Immutability
+ [32m✓[39m modules/mat/tests/criteria-management/criteria-management.test.ts[2m > [22mCAT-02: criteria management[2m > [22mMAT-T-0012: Not Used Exclusion
+ [32m✓[39m modules/mat/tests/criteria-management/criteria-management.test.ts[2m > [22mCAT-02: criteria management[2m > [22mMAT-T-0054: Criterion Status Tracking
+ [32m✓[39m modules/mat/tests/audit-lifecycle/audit-lifecycle.test.ts[2m > [22mCAT-01: audit lifecycle[2m > [22mMAT-T-0001: Audit Creation
+ [32m✓[39m modules/mat/tests/audit-lifecycle/audit-lifecycle.test.ts[2m > [22mCAT-01: audit lifecycle[2m > [22mMAT-T-0002: Audit Status Lifecycle
+ [32m✓[39m modules/mat/tests/audit-lifecycle/audit-lifecycle.test.ts[2m > [22mCAT-01: audit lifecycle[2m > [22mMAT-T-0003: Audit Soft Deletion and Archival
+ [32m✓[39m modules/mat/tests/audit-lifecycle/audit-lifecycle.test.ts[2m > [22mCAT-01: audit lifecycle[2m > [22mMAT-T-0038: Report Approval
+ [32m✓[39m modules/mat/tests/audit-lifecycle/audit-lifecycle.test.ts[2m > [22mCAT-01: audit lifecycle[2m > [22mMAT-T-0045: Auditor Assignment Flow
+ [32m✓[39m modules/mat/tests/audit-lifecycle/audit-lifecycle.test.ts[2m > [22mCAT-01: audit lifecycle[2m > [22mMAT-T-0046: Approval Authority
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0013: Evidence Collection — Text and Document
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0014: Evidence Collection — Voice Recording
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0015: Evidence Collection — Photo Capture
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0016: Evidence Collection — Video
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0017: Concurrent File Uploads
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0018: Evidence Integrity Verification
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0019: Evidence Review and Status
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0020: Criterion Interview Recording
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0021: Audit-Level Interview
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0022: Interview Governance
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0078: Upload Failure and Retry
+ [32m✓[39m modules/mat/tests/watchdog-observability/watchdog-observability.test.ts[2m > [22mCAT-07: watchdog observability[2m > [22mMAT-T-0058: Watchdog Monitoring Metrics
+ [32m✓[39m modules/mat/tests/watchdog-observability/watchdog-observability.test.ts[2m > [22mCAT-07: watchdog observability[2m > [22mMAT-T-0059: Watchdog Alert Thresholds
+ [32m✓[39m modules/mat/tests/watchdog-observability/watchdog-observability.test.ts[2m > [22mCAT-07: watchdog observability[2m > [22mMAT-T-0060: Override Analysis and Feedback Loop
+ [32m✓[39m modules/mat/tests/watchdog-observability/watchdog-observability.test.ts[2m > [22mCAT-07: watchdog observability[2m > [22mMAT-T-0098: Dashboard Realtime Update Wiring
+ [32m✓[39m modules/mat/tests/data-privacy-compliance/data-privacy-compliance.test.ts[2m > [22mCAT-12: data privacy compliance[2m > [22mMAT-T-0067: GDPR Compliance — DSAR and Erasure
+ [32m✓[39m modules/mat/tests/data-privacy-compliance/data-privacy-compliance.test.ts[2m > [22mCAT-12: data privacy compliance[2m > [22mMAT-T-0068: POPIA Compliance
+ [32m✓[39m modules/mat/tests/data-privacy-compliance/data-privacy-compliance.test.ts[2m > [22mCAT-12: data privacy compliance[2m > [22mMAT-T-0069: Data Retention Policy Enforcement
+ [32m✓[39m modules/mat/tests/data-privacy-compliance/data-privacy-compliance.test.ts[2m > [22mCAT-12: data privacy compliance[2m > [22mMAT-T-0070: Regulatory Standard Alignment
+ [32m✓[39m modules/mat/tests/data-privacy-compliance/data-privacy-compliance.test.ts[2m > [22mCAT-12: data privacy compliance[2m > [22mMAT-T-0097: Consent Management
+ [32m✓[39m modules/mat/tests/integration/integration.test.ts[2m > [22mCAT-09: integration[2m > [22mMAT-T-0037: Excel Export
+ [32m✓[39m modules/mat/tests/integration/integration.test.ts[2m > [22mCAT-09: integration[2m > [22mMAT-T-0055: Extensibility and Plugin Architecture
+ [32m✓[39m modules/mat/tests/integration/integration.test.ts[2m > [22mCAT-09: integration[2m > [22mMAT-T-0056: PIT Module Integration Export
+ [32m✓[39m modules/mat/tests/integration/integration.test.ts[2m > [22mCAT-09: integration[2m > [22mMAT-T-0057: Maturity Roadmap Integration Export
+ [32m✓[39m modules/mat/tests/performance/performance.test.ts[2m > [22mCAT-08: performance[2m > [22mMAT-T-0071: Large Audit Compilation
+ [32m✓[39m modules/mat/tests/performance/performance.test.ts[2m > [22mCAT-08: performance[2m > [22mMAT-T-0072: Concurrent Auditor Support
+ [32m✓[39m modules/mat/tests/performance/performance.test.ts[2m > [22mCAT-08: performance[2m > [22mMAT-T-0073: Page Load Performance (LCP < 2.5s)
+ [32m✓[39m modules/mat/tests/performance/performance.test.ts[2m > [22mCAT-08: performance[2m > [22mMAT-T-0074: API Response Time (< 200ms p95 CRUD)
+ [32m✓[39m modules/mat/tests/performance/performance.test.ts[2m > [22mCAT-08: performance[2m > [22mMAT-T-0075: AI Processing Performance
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0079: Wiring Invariant — No Orphan Components
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0080: Wiring Invariant — No Phantom Interfaces
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0081: Wiring Invariant — No Implicit Connections
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0082: Wiring Invariant — Directional Clarity
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0083: Wiring Invariant — Failure Isolation
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0084: Connection [A] — Frontend to Supabase Auth
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0085: Connection [B] — Frontend to PostgREST + RLS
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0086: Connection [C] — Realtime WebSocket Subscriptions
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0087: Connection [D] — Frontend to Supabase Storage
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0088: Connection [E] — Frontend to Edge Functions
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0089: Connection [F] — Frontend to Service Worker
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0090: Connection [G] — Edge Functions to AI Gateway
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0091: Connection [H] — AI Gateway to PostgREST
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0092: Connection [K] — AI Services to OpenAI API
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0093: Connection [L] — Service Worker Sync to Supabase
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0094: Startup Order Compliance
+ [32m✓[39m modules/mat/tests/offline-sync/offline-sync.test.ts[2m > [22mCAT-06: offline sync[2m > [22mMAT-T-0047: Offline Evidence Capture
+ [32m✓[39m modules/mat/tests/offline-sync/offline-sync.test.ts[2m > [22mCAT-06: offline sync[2m > [22mMAT-T-0048: Auto Sync on Reconnect
+ [32m✓[39m modules/mat/tests/offline-sync/offline-sync.test.ts[2m > [22mCAT-06: offline sync[2m > [22mMAT-T-0064: PWA Support
+ [32m✓[39m modules/mat/tests/security-rls/security-rls.test.ts[2m > [22mCAT-05: security rls[2m > [22mMAT-T-0043: RBAC Enforcement
+ [32m✓[39m modules/mat/tests/security-rls/security-rls.test.ts[2m > [22mCAT-05: security rls[2m > [22mMAT-T-0044: Permission Inheritance
+ [32m✓[39m modules/mat/tests/security-rls/security-rls.test.ts[2m > [22mCAT-05: security rls[2m > [22mMAT-T-0049: Authentication Flow
+ [32m✓[39m modules/mat/tests/security-rls/security-rls.test.ts[2m > [22mCAT-05: security rls[2m > [22mMAT-T-0050: MFA Enforcement
+ [32m✓[39m modules/mat/tests/security-rls/security-rls.test.ts[2m > [22mCAT-05: security rls[2m > [22mMAT-T-0051: Row-Level Security Policies
+ [32m✓[39m modules/mat/tests/security-rls/security-rls.test.ts[2m > [22mCAT-05: security rls[2m > [22mMAT-T-0052: Audit Trail Immutability
+ [32m✓[39m modules/mat/tests/security-rls/security-rls.test.ts[2m > [22mCAT-05: security rls[2m > [22mMAT-T-0053: Data Encryption (At Rest and In Transit)
+ [32m✓[39m modules/mat/tests/security-rls/security-rls.test.ts[2m > [22mCAT-05: security rls[2m > [22mMAT-T-0095: Input Validation and Sanitization
+ [32m✓[39m modules/mat/tests/security-rls/security-rls.test.ts[2m > [22mCAT-05: security rls[2m > [22mMAT-T-0096: API Security Headers and CORS
+
+[31m⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 29 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mDashboard Data Fetching[2m > [22mMAT-T-0099: Dashboard fetches and displays real Supabase data
+[31m[1mError[22m: NOT_IMPLEMENTED: Dashboard data fetching not yet implemented. Expected: Component uses TanStack Query useQuery to fetch from audits table, displays metrics (Total Domains, Total MPS, Total Criteria), shows loading skeleton while fetching, handles error states with toast notification.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m30:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mDashboard Data Fetching[2m > [22mMAT-T-0100: Dashboard implements Realtime subscriptions for live updates
+[31m[1mError[22m: NOT_IMPLEMENTED: Dashboard Realtime subscriptions not yet implemented. Expected: Component subscribes to Supabase Realtime channel on mount, listens for INSERT/UPDATE/DELETE events on audits table, updates displayed metrics when changes occur, unsubscribes on unmount.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m41:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0101: Create Audit button displays form with validation
+[31m[1mError[22m: NOT_IMPLEMENTED: Create Audit form not yet implemented. Expected: Button triggers modal with AuditCreateForm, form has controlled inputs for all mandatory fields, Zod schema validation displays field-level errors, form disabled state while submitting.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m57:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0102: Create Audit form submits and saves to Supabase
+[31m[1mError[22m: NOT_IMPLEMENTED: Create Audit mutation not yet implemented. Expected: Form uses TanStack Query useMutation hook, onSubmit handler calls mutate() with form data, successful creation shows toast notification, optimistic UI update adds audit to list, error state displays error message.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m68:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0103: Audit list fetches and displays audits from Supabase
+[31m[1mError[22m: NOT_IMPLEMENTED: Audit list data fetching not yet implemented. Expected: Component uses TanStack Query useQuery to fetch from audits table with RLS filter (current user's org), displays list of audits with status badges, shows skeleton loader while fetching, displays "No audits yet" empty state when data is empty array.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m79:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0104: Edit Audit functionality updates audit in Supabase
+[31m[1mError[22m: NOT_IMPLEMENTED: Edit Audit functionality not yet implemented. Expected: Edit button triggers modal with form pre-filled from selected audit, useMutation hook for PATCH request, optimistic UI update, success/error toast notifications.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m90:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0105: Delete Audit (soft delete) functionality updates Supabase
+[31m[1mError[22m: NOT_IMPLEMENTED: Delete Audit functionality not yet implemented. Expected: Delete button triggers confirmation dialog, useMutation hook for soft delete (PATCH with deleted_at), optimistic UI removal from list, undo option in toast notification.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m101:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0106: Audit status transition UI updates status in Supabase
+[31m[1mError[22m: NOT_IMPLEMENTED: Audit status transition UI not yet implemented. Expected: Status dropdown component wired to useMutation hook, validates allowed transitions, updates status in Supabase, displays status with color-coded badges (not_started: gray, in_progress: blue, completed: green), shows error toast for invalid transitions.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m112:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0107: Audit search and filter functionality filters client-side or server-side
+[31m[1mError[22m: NOT_IMPLEMENTED: Audit search and filter not yet implemented. Expected: Search input with debounced onChange handler, filter dropdowns for status/date range, useQuery hook with query params for server-side filtering OR client-side filtering with useMemo, "No results" empty state when filtered list is empty.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m123:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0108: Criteria document upload UI accepts PDF/DOCX and uploads to Supabase Storage
+[31m[1mError[22m: NOT_IMPLEMENTED: Criteria document upload not yet implemented. Expected: Drag-and-drop file input (react-dropzone), file type validation (PDF/DOCX only), file size limit check (10MB), Supabase Storage upload with signed URL, upload progress indicator, useMutation hook to save file URL to criteria_documents table.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m138:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0109: Criteria tree displays hierarchical data from Supabase
+[31m[1mError[22m: NOT_IMPLEMENTED: Criteria tree data fetching not yet implemented. Expected: useQuery hook fetches from criteria table with parent_id relationships, recursive tree rendering component, expand/collapse state management with useState, displays criteria numbering and text, loading skeleton for tree structure.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m149:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0110: Criteria modal displays criterion details and linked evidence
+[31m[1mError[22m: NOT_IMPLEMENTED: Criteria modal not yet implemented. Expected: Modal component triggered by criterion click, useQuery hook fetches criterion with related evidence and scores, displays criterion full text and metadata, shows list of linked evidence items, displays scoring status (not_scored/scored/confirmed).[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m160:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0111: AI parsing trigger button invokes edge function and updates Supabase
+[31m[1mError[22m: NOT_IMPLEMENTED: AI parsing trigger not yet implemented. Expected: Button triggers useMutation to invoke Supabase Edge Function (parse-criteria-document), edge function returns job_id, polling mechanism (useQuery with refetchInterval) checks job status, success state populates criteria tree, error state displays parsing errors, progress indicator during parsing.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m171:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0112: Criteria search and filter functionality filters tree
+[31m[1mError[22m: NOT_IMPLEMENTED: Criteria search not yet implemented. Expected: Search input filters criteria tree client-side (useMemo), highlights matching text, auto-expands tree to show matches, "No matches" message when filtered results empty.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m182:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0113: Criteria keyboard navigation (arrow keys) works in tree
+[31m[1mError[22m: NOT_IMPLEMENTED: Criteria keyboard navigation not yet implemented. Expected: Tree component supports arrow key navigation, up/down moves focus between items, right/left expands/collapses nodes, Enter selects/opens criterion, focus indicators visible for accessibility.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m193:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0114: Text note capture saves to Supabase
+[31m[1mError[22m: NOT_IMPLEMENTED: Text note capture not yet implemented. Expected: Textarea with controlled input, useMutation hook to save to evidence table with type: "text", linked to current criterion, autosave functionality (debounced), success toast notification.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m208:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0115: Photo capture uploads to Supabase Storage
+[31m[1mError[22m: NOT_IMPLEMENTED: Photo capture not yet implemented. Expected: Camera button triggers MediaDevices API (navigator.mediaDevices.getUserMedia), displays camera preview, capture button saves image, uploads to Supabase Storage, creates evidence record with file URL, displays thumbnail in evidence list.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m219:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0116: Audio recording uploads to Supabase Storage
+[31m[1mError[22m: NOT_IMPLEMENTED: Audio recording not yet implemented. Expected: Record button uses MediaRecorder API, displays recording timer, stop button saves audio blob, uploads to Supabase Storage, creates evidence record, displays audio player in evidence list.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m230:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0117: Video recording uploads to Supabase Storage
+[31m[1mError[22m: NOT_IMPLEMENTED: Video recording not yet implemented. Expected: Video button uses MediaDevices API with video constraints, displays video preview, recording with MediaRecorder, stop button saves video blob, uploads to Supabase Storage, creates evidence record, displays video player in evidence list.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m241:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0118: Interview recording (structured audio with transcription) saves to Supabase
+[31m[1mError[22m: NOT_IMPLEMENTED: Interview recording not yet implemented. Expected: Interview form with interviewee metadata fields, audio recording with MediaRecorder, uploads audio to Storage, creates evidence record with type: "interview", triggers AI transcription edge function, displays transcription when complete.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m252:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mScoring & Reports[2m > [22mMAT-T-0119: AI scoring trigger button invokes edge function
+[31m[1mError[22m: NOT_IMPLEMENTED: AI scoring trigger not yet implemented. Expected: Button triggers useMutation to invoke score-criterion edge function, polling mechanism for batch job status, displays scoring progress, updates criterion scores in UI when complete, error handling for AI failures.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m267:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mScoring & Reports[2m > [22mMAT-T-0120: Human confirmation workflow (approve/reject AI scores) updates Supabase
+[31m[1mError[22m: NOT_IMPLEMENTED: Human confirmation workflow not yet implemented. Expected: Review table displays criteria with AI scores, approve button updates score status to "confirmed", edit button opens modal for manual score adjustment, useMutation hook updates scores table, displays confirmation badges in UI.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m278:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mScoring & Reports[2m > [22mMAT-T-0121: Review table fetches and displays scoring data from Supabase
+[31m[1mError[22m: NOT_IMPLEMENTED: Review table data fetching not yet implemented. Expected: useQuery hook fetches from scores table with joins to criteria and evidence, displays table with columns: criterion, AI score, evidence count, confirmation status, sort and filter functionality, loading skeleton for table rows.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m289:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mScoring & Reports[2m > [22mMAT-T-0122: Report generation button downloads PDF report
+[31m[1mError[22m: NOT_IMPLEMENTED: Report generation not yet implemented. Expected: Button triggers useMutation to invoke generate-report edge function, edge function returns PDF blob or signed URL, downloads PDF to user device, displays generation progress, handles errors (missing data, generation failures).[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m300:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mSettings[2m > [22mMAT-T-0123: User profile management UI updates user_preferences table
+[31m[1mError[22m: NOT_IMPLEMENTED: User profile management not yet implemented. Expected: Settings form with controlled inputs for user profile fields, useQuery fetches current user data, useMutation updates user_profiles table, success toast on save, form validation with Zod schema.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m315:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mSettings[2m > [22mMAT-T-0124: Organization settings UI updates organization_settings table
+[31m[1mError[22m: NOT_IMPLEMENTED: Organization settings not yet implemented. Expected: Settings form for organization preferences, useQuery fetches org settings, useMutation updates organization_settings table, logo upload to Supabase Storage, RLS policies ensure only org admins can update, success/error notifications.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m326:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mComponent Wiring and State Management[2m > [22mMAT-T-0125: All page components import and render child components with data props
+[31m[1mError[22m: NOT_IMPLEMENTED: Component wiring not yet complete. Expected: DashboardPage imports and renders <GlobalDashboard>, <AuditList>, <CreateAuditButton> components, passes data from useQuery hooks as props, manages shared state with Zustand if needed, implements error boundaries for child components.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m341:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mComponent Wiring and State Management[2m > [22mMAT-T-0126: TanStack Query configured with Supabase client and proper cache settings
+[31m[1mError[22m: NOT_IMPLEMENTED: TanStack Query configuration not yet complete. Expected: QueryClientProvider wraps app root, QueryClient configured with staleTime/cacheTime settings, Supabase client query functions (getAudits, getCriteria, etc.) created, cache invalidation on mutations, Realtime integration invalidates queries on data changes.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m351:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/29]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mComponent Wiring and State Management[2m > [22mMAT-T-0127: Loading states (skeleton loaders) and error states (toast notifications) implemented for all data-fetching components
+[31m[1mError[22m: NOT_IMPLEMENTED: Loading and error states not yet complete. Expected: All data-fetching components (Dashboard, AuditList, CriteriaTree, etc.) render skeleton loaders while isLoading true, display toast error notifications when isError true, show empty state messages when data is empty array, consistent loading/error UX across all pages.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m361:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/29]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m12 passed[39m[22m[90m (13)[39m
+[2m      Tests [22m [1m[31m29 failed[39m[22m[2m | [22m[1m[32m98 passed[39m[22m[90m (127)[39m
+[2m   Start at [22m 16:55:34
+[2m   Duration [22m 1.77s[2m (transform 542ms, setup 2ms, collect 830ms, tests 194ms, environment 3ms, prepare 1.42s)[22m
+
