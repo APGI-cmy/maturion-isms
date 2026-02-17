@@ -1,9 +1,10 @@
 name: POLC Boundary Validation Gate
 
 # Authority: FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md, LIVING_AGENT_SYSTEM.md v6.2.0
-# Purpose: Detect and prevent Foreman from writing production code; ensure builder delegation model
-# Issue: #193 - Implement POLC Boundary Validation Gate
-# Contract: Foreman-ISMS Agent Contract v2.1.0, Section 3.6 (Merge Gate Enforcement Specification)
+# Purpose: Prevent Foreman from implementing new features; allow supervision corrections
+# Issue: #193 - Implement POLC Boundary Validation Gate (refined per Issue #[current])
+# Contract: Foreman-ISMS Agent Contract v2.2.0, Section 3.6 (Merge Gate Enforcement Specification)
+# Refinement: Distinguish implementation (prohibited) from supervision (permitted)
 
 on:
   pull_request:
@@ -28,6 +29,8 @@ jobs:
         run: |
           echo "=== Check 1: Detect Foreman-Authored Implementation Commits ==="
           echo ""
+          echo "Refined Logic: Block implementation, allow supervision corrections"
+          echo ""
 
           # Get base branch
           BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
@@ -46,6 +49,7 @@ jobs:
           VIOLATION_FOUND=false
           VIOLATION_FILES=""
           VIOLATION_COMMITS=""
+          SUPERVISION_FILES=""
 
           echo "Checking commits for Foreman authorship..."
           echo ""
@@ -67,45 +71,135 @@ jobs:
               # Get files changed in this commit
               FILES=$(git diff-tree --no-commit-id --name-only -r $commit_sha)
 
-              # Check for production/test code modifications
+              # Check each file
               while IFS= read -r file; do
-                # Production code patterns (PROHIBITED)
+                # Skip if file doesn't exist (deleted files)
+                if [ ! -f "$file" ]; then
+                  continue
+                fi
+
+                # SUPERVISION CORRECTIONS (PERMITTED)
+                # Documentation, config, test corrections, governance, session memory
+                if [[ "$file" =~ \.md$ ]] || \
+                   [[ "$file" =~ README ]] || \
+                   [[ "$file" =~ CHANGELOG ]] || \
+                   [[ "$file" =~ \.config\.(ts|js|json)$ ]] || \
+                   [[ "$file" =~ package\.json$ ]] || \
+                   [[ "$file" =~ tsconfig\.json$ ]] || \
+                   [[ "$file" =~ ^\.agent-workspace/foreman ]] || \
+                   [[ "$file" =~ ^\.agent-admin/ ]] || \
+                   [[ "$file" =~ ^governance/ ]] || \
+                   [[ "$file" =~ /02-architecture/ ]] || \
+                   [[ "$file" =~ BUILD_PROGRESS_TRACKER\.md$ ]]; then
+                  echo "  ✅ SUPERVISION: $file (documentation/config/governance)"
+                  SUPERVISION_FILES="${SUPERVISION_FILES}\n  - ${file}"
+                  continue
+                fi
+
+                # IMPLEMENTATION DETECTION (PROHIBITED)
+                # Check for production code patterns
                 if [[ "$file" =~ ^modules/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
-                   [[ "$file" =~ ^modules/.*/tests/.*\.test\.(ts|tsx|js|jsx)$ ]] || \
                    [[ "$file" =~ ^apps/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
                    [[ "$file" =~ ^packages/.*/src/.*\.(ts|tsx|js|jsx)$ ]]; then
-
-                  # Skip allowed files
-                  if [[ "$file" =~ ^modules/.*/02-architecture/ ]] || \
-                     [[ "$file" =~ ^\.agent-workspace/ ]] || \
-                     [[ "$file" =~ ^\.agent-admin/ ]] || \
-                     [[ "$file" =~ ^governance/ ]] || \
-                     [[ "$file" =~ BUILD_PROGRESS_TRACKER\.md$ ]]; then
-                    continue
+                  
+                  echo "  🔍 ANALYZING: $file (production code pattern)"
+                  
+                  # Get file diff to check for implementation indicators
+                  DIFF=$(git show $commit_sha -- "$file" 2>/dev/null || echo "")
+                  
+                  # Check for implementation patterns (new capability indicators)
+                  IMPLEMENTATION_DETECTED=false
+                  
+                  # New component/function/class exports
+                  if echo "$DIFF" | grep -qE '^\+.*export (function|class|const|interface|type)'; then
+                    echo "    - New export detected (possible new capability)"
+                    IMPLEMENTATION_DETECTED=true
                   fi
+                  
+                  # New React components
+                  if echo "$DIFF" | grep -qE '^\+.*(function|const) [A-Z][a-zA-Z]*.*=.*\(.*\).*=>|^\+.*class [A-Z][a-zA-Z]* extends (React\.)?Component'; then
+                    echo "    - New React component detected"
+                    IMPLEMENTATION_DETECTED=true
+                  fi
+                  
+                  # New API routes/handlers
+                  if echo "$DIFF" | grep -qE '^\+.*(router\.|app\.|route\.)(get|post|put|delete|patch)'; then
+                    echo "    - New API route/handler detected"
+                    IMPLEMENTATION_DETECTED=true
+                  fi
+                  
+                  # New state management
+                  if echo "$DIFF" | grep -qE '^\+.*(createSlice|createReducer|useState|useReducer)'; then
+                    echo "    - New state management detected"
+                    IMPLEMENTATION_DETECTED=true
+                  fi
+                  
+                  # Large additions (>50 lines) suggesting feature expansion
+                  LINES_ADDED=$(echo "$DIFF" | grep -c '^+[^+]' || echo "0")
+                  if [ "$LINES_ADDED" -gt 50 ]; then
+                    echo "    - Large addition detected ($LINES_ADDED lines) - possible feature expansion"
+                    IMPLEMENTATION_DETECTED=true
+                  fi
+                  
+                  if [ "$IMPLEMENTATION_DETECTED" = true ]; then
+                    VIOLATION_FOUND=true
+                    VIOLATION_FILES="${VIOLATION_FILES}\n  - ${file}"
+                    VIOLATION_COMMITS="${VIOLATION_COMMITS}\n  - ${commit_sha} (${commit_author})"
+                    echo "  ❌ IMPLEMENTATION VIOLATION: $file"
+                  else
+                    echo "  ⚠️  AMBIGUOUS: $file (production file modified, but no clear implementation detected)"
+                    echo "    Manual review recommended"
+                  fi
+                fi
 
-                  VIOLATION_FOUND=true
-                  VIOLATION_FILES="${VIOLATION_FILES}\n  - ${file}"
-                  VIOLATION_COMMITS="${VIOLATION_COMMITS}\n  - ${commit_sha} (${commit_author})"
-
-                  echo "  ❌ VIOLATION: Foreman modified production code: $file"
+                # TEST FILES - Check if new test or test correction
+                if [[ "$file" =~ \.test\.(ts|tsx|js|jsx)$ ]]; then
+                  echo "  🔍 ANALYZING TEST: $file"
+                  
+                  # Get file diff
+                  DIFF=$(git show $commit_sha -- "$file" 2>/dev/null || echo "")
+                  
+                  # Check if this is a new test file (implementation)
+                  if git log --diff-filter=A --oneline origin/$BASE_BRANCH..HEAD -- "$file" | grep -q "$commit_sha"; then
+                    echo "    - New test file detected (feature test creation)"
+                    VIOLATION_FOUND=true
+                    VIOLATION_FILES="${VIOLATION_FILES}\n  - ${file} (new test file)"
+                    VIOLATION_COMMITS="${VIOLATION_COMMITS}\n  - ${commit_sha} (${commit_author})"
+                    echo "  ❌ IMPLEMENTATION VIOLATION: New test file for new feature"
+                  else
+                    # Existing test file - likely correction
+                    echo "    - Existing test modified (likely test correction)"
+                    SUPERVISION_FILES="${SUPERVISION_FILES}\n  - ${file} (test correction)"
+                    echo "  ✅ SUPERVISION: Test correction"
+                  fi
                 fi
               done <<< "$FILES"
             fi
           done <<< "$COMMITS"
 
           echo ""
+          echo "=== ANALYSIS SUMMARY ==="
+          echo ""
+
+          if [ -n "$SUPERVISION_FILES" ]; then
+            echo "✅ Supervision Corrections Detected (Permitted):"
+            echo -e "$SUPERVISION_FILES"
+            echo ""
+          fi
 
           if [ "$VIOLATION_FOUND" = true ]; then
             echo "❌ POLC BOUNDARY VIOLATION DETECTED"
             echo ""
-            echo "Foreman authored commits modifying production code."
+            echo "Foreman authored commits implementing new features/capabilities."
             echo ""
-            echo "Files:${VIOLATION_FILES}"
+            echo "Implementation Files Detected:${VIOLATION_FILES}"
             echo ""
             echo "Commits:${VIOLATION_COMMITS}"
             echo ""
-            echo "Foreman MUST NOT write production code. Builders implement; Foreman supervises."
+            echo "Foreman MUST NOT implement new features. Builders implement; Foreman supervises."
+            echo ""
+            echo "Permitted: Documentation, config, test corrections, governance artifacts"
+            echo "Prohibited: New components, API routes, business logic, feature expansion"
             echo ""
             echo "Action Required:"
             echo "  1. Close this PR"
@@ -113,11 +207,14 @@ jobs:
             echo "  3. Assign builders to implement"
             echo "  4. Foreman supervises (does not implement)"
             echo ""
-            echo "Override: CS2 only"
+            echo "Override: CS2 only (for ambiguous cases or justified exceptions)"
             echo ""
             exit 1
           else
             echo "✅ Check 1 PASSED - No Foreman implementation commits detected"
+            echo ""
+            echo "Foreman performed supervision corrections only (or no production changes)."
+            echo ""
             echo "check1_status=passed" >> $GITHUB_OUTPUT
           fi
 
@@ -127,31 +224,69 @@ jobs:
         run: |
           echo "=== Check 2: Validate Builder Involvement ==="
           echo ""
+          echo "Refined Logic: Skip if only supervision corrections detected"
+          echo ""
 
           # Get base branch
           BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
 
-          # Check if production code was changed
+          # Check if production/implementation code was changed
           CHANGED_FILES=$(git diff --name-only origin/$BASE_BRANCH...HEAD)
 
-          PROD_CODE_CHANGED=false
+          IMPLEMENTATION_CHANGED=false
+          SUPERVISION_ONLY=true
+
           while IFS= read -r file; do
+            # Skip supervision files
+            if [[ "$file" =~ \.md$ ]] || \
+               [[ "$file" =~ README ]] || \
+               [[ "$file" =~ CHANGELOG ]] || \
+               [[ "$file" =~ \.config\.(ts|js|json)$ ]] || \
+               [[ "$file" =~ package\.json$ ]] || \
+               [[ "$file" =~ tsconfig\.json$ ]] || \
+               [[ "$file" =~ ^\.agent-workspace/ ]] || \
+               [[ "$file" =~ ^\.agent-admin/ ]] || \
+               [[ "$file" =~ ^governance/ ]] || \
+               [[ "$file" =~ /02-architecture/ ]] || \
+               [[ "$file" =~ BUILD_PROGRESS_TRACKER\.md$ ]]; then
+              continue
+            fi
+
+            # Check for implementation files
             if [[ "$file" =~ ^modules/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
-               [[ "$file" =~ ^modules/.*/tests/.*\.test\.(ts|tsx|js|jsx)$ ]] || \
                [[ "$file" =~ ^apps/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
                [[ "$file" =~ ^packages/.*/src/.*\.(ts|tsx|js|jsx)$ ]]; then
-              PROD_CODE_CHANGED=true
+              IMPLEMENTATION_CHANGED=true
+              SUPERVISION_ONLY=false
               break
+            fi
+
+            # Check for new test files (implementation)
+            if [[ "$file" =~ \.test\.(ts|tsx|js|jsx)$ ]]; then
+              # Check if this is a new test file
+              if git log --diff-filter=A --oneline origin/$BASE_BRANCH..HEAD -- "$file" | grep -q .; then
+                IMPLEMENTATION_CHANGED=true
+                SUPERVISION_ONLY=false
+                break
+              fi
             fi
           done <<< "$CHANGED_FILES"
 
-          if [ "$PROD_CODE_CHANGED" = false ]; then
-            echo "ℹ️  No production code changes detected - skipping builder involvement check"
+          if [ "$SUPERVISION_ONLY" = true ]; then
+            echo "ℹ️  Only supervision corrections detected (docs, config, test fixes)"
+            echo "   No builder involvement required for supervision work."
+            echo ""
             echo "check2_status=skipped" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-          echo "Production code changes detected. Checking for builder involvement..."
+          if [ "$IMPLEMENTATION_CHANGED" = false ]; then
+            echo "ℹ️  No implementation code changes detected - skipping builder involvement check"
+            echo "check2_status=skipped" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "Implementation code changes detected. Checking for builder involvement..."
           echo ""
 
           # Check for builder commits
@@ -191,12 +326,12 @@ jobs:
           if [ "$BUILDER_FOUND" = false ]; then
             echo "⚠️  WARNING: NO BUILDER INVOLVEMENT DETECTED"
             echo ""
-            echo "Production code changed but no builder artifacts found."
+            echo "Implementation code changed but no builder artifacts found."
             echo ""
             echo "Expected: Builder commits OR completion reports in .agent-workspace/"
             echo ""
             echo "If Foreman supervised builders, where are the builder artifacts?"
-            echo "If Foreman wrote code directly, this is a POLC violation."
+            echo "If Foreman implemented directly, this should have been caught in Check 1."
             echo ""
             echo "This is a WARNING. Manual review required."
             echo ""
@@ -267,8 +402,10 @@ jobs:
               echo ""
               echo "❌ SESSION MEMORY INDICATES POLC VIOLATION"
               echo ""
-              echo "Session memory contains evidence that Foreman wrote production code."
+              echo "Session memory contains evidence that Foreman implemented new features."
               echo "This violates the POLC-Only Constraint."
+              echo ""
+              echo "Note: Supervision corrections (docs, config, test fixes) are permitted."
               echo ""
               exit 1
             fi
