@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-02-16T11:36:37Z",
-  "total_canons": 158,
-  "generation_timestamp": "2026-02-16T11:36:37Z",
+  "last_updated": "2026-02-17T07:01:14Z",
+  "total_canons": 163,
+  "generation_timestamp": "2026-02-17T07:01:14Z",
   "canons": [
     {
       "filename": ".agent.schema.md",
@@ -1741,6 +1741,61 @@
       "path": "governance/canon/WE_ONLY_FAIL_ONCE_DOCTRINE.md",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "fe01cf1078ec905fafbc235eddec117325e9491e5575b5d0233b8216e13a7574"
+    },
+    {
+      "filename": "AGENT_CONTRACT_ARCHITECTURE.md",
+      "version": "1.0.0",
+      "file_hash": "2995be7406a5",
+      "effective_date": "2026-02-17",
+      "description": "Canonical 4-phase agent contract architecture (Preflight, Induction, Build, Handover) replacing flat documentation with executable structure",
+      "type": "canon",
+      "path": "governance/canon/AGENT_CONTRACT_ARCHITECTURE.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "2995be7406a5f7371ce7b80b8df21f7dcbcac7bcdd368d8aa0d70acef0030207"
+    },
+    {
+      "filename": "AGENT_PREFLIGHT_PATTERN.md",
+      "version": "1.0.0",
+      "file_hash": "d63311176deb",
+      "effective_date": "2026-02-17",
+      "description": "Canonical preflight check pattern blocking default behaviors and establishing constitutional boundaries before work begins",
+      "type": "canon",
+      "path": "governance/canon/AGENT_PREFLIGHT_PATTERN.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "d63311176debec92f162e0f74c5800b1384f937e9196c0f639123dff129bacce"
+    },
+    {
+      "filename": "AGENT_PRIORITY_SYSTEM.md",
+      "version": "1.0.0",
+      "file_hash": "c194400d5343",
+      "effective_date": "2026-02-17",
+      "description": "Canonical priority-based context loading system enabling dynamic, role-specific context without contract modification",
+      "type": "canon",
+      "path": "governance/canon/AGENT_PRIORITY_SYSTEM.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "c194400d534327f78b6c671feb58af493f00153cc9eca801ca2f4688cb4aab2d"
+    },
+    {
+      "filename": "AGENT_INDUCTION_PROTOCOL.md",
+      "version": "1.0.0",
+      "file_hash": "6e10f4affe5d",
+      "effective_date": "2026-02-17",
+      "description": "Canonical induction protocol transforming cold-start agents into fully-contextualized, governance-aligned executors",
+      "type": "canon",
+      "path": "governance/canon/AGENT_INDUCTION_PROTOCOL.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "6e10f4affe5d4f989b733e2398b7077904cdac26c41d2672b9cbd539ebb49863"
+    },
+    {
+      "filename": "AGENT_HANDOVER_AUTOMATION.md",
+      "version": "1.0.0",
+      "file_hash": "bc761ef20aa4",
+      "effective_date": "2026-02-17",
+      "description": "Canonical handover automation protocol ensuring safe, compliant, auditable environment state with complete evidence",
+      "type": "canon",
+      "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "bc761ef20aa43dd29d97a1267c0ed561aec1670575a2a407c475756e49ba0f5f"
     }
   ]
 }
