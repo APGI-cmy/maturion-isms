@@ -1,7 +1,7 @@
 # MAT — Builder Appointment & Contracts
 
 **Module**: MAT (Manual Audit Tool)  
-**Version**: v3.0.0  
+**Version**: v3.1.0  
 **Status**: APPROVED  
 **Owner**: Foreman (FM)  
 **Created**: 2026-02-13  
@@ -10,6 +10,7 @@
 **Authority**: Derived from Implementation Plan (`modules/mat/03-implementation-plan/implementation-plan.md`), Architecture (`modules/mat/02-architecture/`), [BUILDER_CONTRACT_SCHEMA.md](https://github.com/APGI-cmy/maturion-foreman-office-app/blob/main/.github/agents/BUILDER_CONTRACT_SCHEMA.md)
 
 **Change History**:
+- v3.1.0 (2026-02-17) — Added "Component Implementation Requirements (EXPLICIT)" section to ui-builder scope with 12 mandatory sub-deliverables, physical verification checklist, and Deviation #11 learning integration. Updated acceptance criteria and forbidden actions to prevent placeholder components. Authority: GOVERNANCE_CHAIN_TRACEABILITY_ANALYSIS_20260217.md, FULLY_FUNCTIONAL_DELIVERY_STANDARD.md §3.2. See Issue #303 (Wave 5.6 Recovery Plan).
 - v3.0.0 (2026-02-16) — Added Wave 5.5 (Frontend Application Assembly) to ui-builder scope, added `apps/mat-frontend/**` to authorized paths, added FR-070/FR-071 acceptance criteria. See BUILD_PROGRESS_TRACKER.md Deviation #9.
 - v2.0.0 (2026-02-16) — Aligned with FM v2.1.0 for gate compliance (Issue #196)
 - v1.0.0 (2026-02-13) — Initial builder appointment and contracts
@@ -315,7 +316,7 @@ Per-wave acceptance criteria are defined in `modules/mat/03-implementation-plan/
 | **Assigned Waves** | Wave 1 (Task 1.3), Wave 2 (Task 2.3), Wave 3 (Task 3.2), Wave 4 (Task 4.1), Wave 5.5 (Tasks 5.5.1–5.5.3) |
 | **Recruited By** | Foreman (FM) |
 | **Handover Protocol** | gate-first-deterministic |
-| **Contract Version** | 3.0.0 |
+| **Contract Version** | 3.1.0 |
 | **LAS Version** | 6.2.0 |
 
 ### Builder-Only Constraint (Mirrors FM §1.2)
@@ -336,6 +337,216 @@ Per-wave acceptance criteria are defined in `modules/mat/03-implementation-plan/
 ### Scope
 
 The ui-builder is responsible for all frontend React components, layouts, responsive design, accessibility, PWA shell, **and the scaffolding and assembly of the `apps/mat-frontend/` React application**.
+
+---
+
+### Component Implementation Requirements (EXPLICIT)
+
+**Authority**: FULLY_FUNCTIONAL_DELIVERY_STANDARD.md §3.2, GOVERNANCE_CHAIN_TRACEABILITY_ANALYSIS_20260217.md (Deviation #11 Root Cause)
+
+**Constitutional Principle**: "Component Exists ≠ Component Works" — Delivering component STRUCTURE without component BEHAVIOR violates the Fully Functional Delivery Standard.
+
+#### What "Implement Component" ALWAYS Means
+
+When assigned to "implement" or "build" a component, you MUST deliver ALL of the following (not just JSX structure):
+
+1. **Component Structure** (JSX/TSX file):
+   - Component file at correct path per architecture
+   - Props interface with TypeScript strict typing
+   - Proper component hierarchy and composition
+
+2. **Data Fetching** (if component displays data):
+   - ✅ **TanStack Query `useQuery` hook** fetching from correct Supabase table
+   - ✅ Query key following project conventions (e.g., `['audits', orgId]`)
+   - ✅ Supabase client integration via `src/lib/supabase.ts`
+   - ❌ NO hardcoded placeholder data
+   - ❌ NO "TODO: fetch data" comments
+
+3. **State Management** (if component has interactive state):
+   - ✅ **TanStack Query mutations** for all CRUD operations
+   - ✅ **Zustand stores** for client-side state (if required per architecture)
+   - ✅ Optimistic updates where specified
+   - ✅ Cache invalidation after mutations
+
+4. **Loading States**:
+   - ✅ Loading skeleton or spinner during data fetch (`isLoading` state)
+   - ✅ Accessibility: `aria-busy="true"` during loading
+   - ❌ NO blank screens while loading
+
+5. **Error States**:
+   - ✅ Error boundary or error UI for query failures (`isError` state)
+   - ✅ User-friendly error messages (not raw error objects)
+   - ✅ Retry mechanism where appropriate
+   - ❌ NO silent failures or console-only errors
+
+6. **Empty States**:
+   - ✅ Friendly empty state UI when no data exists (`data.length === 0`)
+   - ✅ Call-to-action (e.g., "Create your first audit")
+   - ❌ NO "undefined" or blank screens for empty data
+
+7. **CRUD Handlers** (if component performs actions):
+   - ✅ **TanStack Query `useMutation` hooks** for create/update/delete
+   - ✅ Form submit handlers wired to mutations
+   - ✅ Success/error toast notifications
+   - ✅ Navigation after successful mutations (if required)
+   - ❌ NO placeholder button handlers with `console.log` only
+
+8. **Form Validation** (if component has forms):
+   - ✅ **Zod schema** matching backend validation rules
+   - ✅ React Hook Form integration with Zod resolver
+   - ✅ Field-level error display
+   - ✅ Disabled submit button during validation or submission
+   - ❌ NO unvalidated form submissions
+
+9. **Component-to-Page Wiring**:
+   - ✅ Component imported and rendered in correct page file (`apps/mat-frontend/src/pages/`)
+   - ✅ Routing configured (if new page)
+   - ✅ Navigation links updated (if new route)
+   - ❌ NO orphaned components that exist but are never rendered
+
+10. **Responsive Design**:
+    - ✅ Mobile (375px), tablet (768px), desktop (1024px) layouts
+    - ✅ Touch-optimized interactions for mobile
+    - ✅ Tailwind CSS responsive utilities
+
+11. **Accessibility**:
+    - ✅ Semantic HTML elements (`<button>`, `<nav>`, etc.)
+    - ✅ ARIA labels where needed
+    - ✅ Keyboard navigation support
+    - ✅ Focus management (modals, dialogs)
+
+12. **Unit Tests**:
+    - ✅ Vitest + React Testing Library tests
+    - ✅ Test rendering, user interactions, loading/error/empty states
+    - ✅ 100% GREEN before gate submission
+
+---
+
+#### Examples: Good vs. Vague Instructions
+
+| ❌ VAGUE (Causes Deviation #11) | ✅ EXPLICIT (Prevents Deviation #11) |
+|----------------------------------|---------------------------------------|
+| "Implement dashboard component" | "Implement `<GlobalDashboard>` component with: (1) TanStack Query `useQuery` hook fetching aggregated metrics from `audits`, `criteria`, and `audits_criteria` tables using `countAudits()`, `countCriteria()` SQL functions; (2) Loading skeleton during fetch; (3) Error toast on failure; (4) Real-time updates via Supabase Realtime channel subscription; (5) Responsive grid layout (1 column mobile, 2 columns tablet, 4 columns desktop); (6) Unit test validating data fetch and display" |
+| "Build audit creation form" | "Implement `<AuditCreationForm>` with: (1) Zod schema matching `audits` table constraints (`name` required, `organisation_id` FK, `status` enum); (2) React Hook Form with Zod resolver; (3) TanStack Query `useMutation` calling `POST /rest/v1/audits` via Supabase client; (4) Success toast + navigation to `/audits/{id}` on creation; (5) Field-level error display; (6) Disabled submit during submission; (7) Form wired into `<CreateAuditButton>` modal in `DashboardPage`" |
+| "Create criteria tree component" | "Implement `<CriteriaTree>` with: (1) TanStack Query `useQuery` fetching hierarchical criteria from `criteria` table with `domain_id`, `mps_id`, `parent_id` joins; (2) Recursive tree rendering with expand/collapse state (Zustand store for open nodes); (3) Status badge per criterion (color-coded); (4) Keyboard navigation (arrow keys, Enter to expand); (5) Search filter input (debounced, filters tree client-side); (6) Loading skeleton; (7) Empty state 'No criteria uploaded yet'; (8) Rendered in `CriteriaPage`" |
+| "Implement evidence gallery" | "Implement `<EvidenceGallery>` with: (1) TanStack Query `useQuery` fetching from `evidence` table filtered by `criterion_id`; (2) Grid layout (1 col mobile, 2 col tablet, 3 col desktop); (3) Thumbnail component per evidence type (photo preview, audio player, PDF icon); (4) Click opens `<EvidenceModal>` with full view; (5) Delete button per item (TanStack Query `useMutation` calling `DELETE /rest/v1/evidence/{id}`, optimistic update removes from grid); (6) Loading spinner; (7) Empty state 'No evidence collected'; (8) Rendered in `CriterionDetailPage`" |
+
+---
+
+#### Acceptance Criteria (EXPLICIT)
+
+**BLOCKING criteria — ALL must be met before gate submission:**
+
+1. ✅ **All components fetch/mutate data using TanStack Query**:
+   - Zero hardcoded placeholder data in production code
+   - All data-fetching components use `useQuery` with correct Supabase table/query
+   - All CRUD components use `useMutation` with correct Supabase endpoint
+
+2. ✅ **All forms have Zod validation wired**:
+   - Zod schema exists matching backend validation rules
+   - React Hook Form integrated with `zodResolver`
+   - Field-level errors display to user
+   - Submit button disabled during validation/submission
+
+3. ✅ **All data-fetching components render loading/error/empty states**:
+   - Loading skeleton or spinner visible during fetch
+   - Error boundary or error UI catches and displays failures
+   - Empty state UI with call-to-action when `data.length === 0`
+
+4. ✅ **All components imported and rendered in page files**:
+   - Zero orphaned components (components that exist but are never imported)
+   - All pages render components per architecture specification
+   - Navigation/routing configured for all user-facing pages
+
+5. ✅ **All TanStack Query mutations invalidate caches**:
+   - After create/update/delete mutation succeeds, query cache invalidated
+   - UI automatically refetches and updates (no manual page refresh required)
+
+6. ✅ **All interactive components have success/error feedback**:
+   - Toast notifications for mutation success/failure
+   - Loading indicators during async operations
+   - Optimistic updates where specified in architecture
+
+7. ✅ **All tests validate BEHAVIOR, not just structure**:
+   - Unit tests verify data fetching (mock Supabase responses)
+   - Unit tests verify mutation handling (mock mutation success/failure)
+   - Unit tests verify loading/error/empty state rendering
+   - ❌ NO tests that only check "component renders without crashing"
+
+8. ✅ **All components meet WCAG 2.1 AA accessibility**:
+   - Semantic HTML, ARIA labels, keyboard navigation
+   - Color contrast ratios meet standards
+   - Focus management for modals/dialogs
+
+9. ✅ **All components responsive at 375px/768px/1024px**:
+   - Mobile-first design with touch-optimized interactions
+   - Tailwind responsive utilities (`sm:`, `md:`, `lg:`)
+   - No horizontal scroll or layout breaks at any breakpoint
+
+10. ✅ **Zero console warnings or errors in development mode**:
+    - No React key warnings
+    - No unused variables/imports
+    - No ESLint errors
+
+---
+
+#### Physical Verification Checklist (Before Gate Submission)
+
+**Authority**: FULLY_FUNCTIONAL_DELIVERY_STANDARD.md §3.2 "Physical Existence" and "Functional Completeness"
+
+Before submitting to gate, verify EACH component meets ALL criteria:
+
+**For data-display components** (dashboard, list, gallery):
+- [ ] Component file exists at correct path
+- [ ] TanStack Query `useQuery` hook present
+- [ ] Query fetches from correct Supabase table
+- [ ] Loading skeleton renders during fetch (`isLoading === true`)
+- [ ] Error UI renders on failure (`isError === true`)
+- [ ] Empty state UI renders when `data.length === 0`
+- [ ] Component imported and rendered in page file
+- [ ] Unit test validates data fetch behavior
+
+**For form components** (create, edit):
+- [ ] Component file exists at correct path
+- [ ] Zod schema defined matching backend constraints
+- [ ] React Hook Form integrated with `zodResolver`
+- [ ] TanStack Query `useMutation` hook present
+- [ ] Mutation calls correct Supabase endpoint
+- [ ] Field-level errors display to user
+- [ ] Submit button disabled during submission
+- [ ] Success toast + navigation on success
+- [ ] Error toast on failure
+- [ ] Component imported and rendered in page file (modal or route)
+- [ ] Unit test validates form submission behavior
+
+**For interactive components** (buttons, modals, dialogs):
+- [ ] Component file exists at correct path
+- [ ] Event handlers wired to TanStack Query mutations (if CRUD)
+- [ ] Loading state during async operations
+- [ ] Success/error feedback to user
+- [ ] Keyboard navigation support
+- [ ] ARIA labels and roles
+- [ ] Component imported and rendered in page file
+- [ ] Unit test validates interaction behavior
+
+---
+
+#### Deviation #11 Learning Integration
+
+**Historical Context**: In Wave 5, ui-builder was assigned to "implement dashboard component" with vague acceptance criteria. Builder delivered component STRUCTURE (JSX files, component hierarchy) but NOT component BEHAVIOR (TanStack Query data fetching, loading/error/empty states, CRUD handlers). Result: Frontend appeared complete but was entirely non-functional with hardcoded placeholder data.
+
+**Root Cause**: Implementation plan acceptance criteria was vague: "Dashboard components render with data visualizations" did not explicitly require "Fetch data from Supabase using TanStack Query hooks."
+
+**Prevention Mechanism**: This "Component Implementation Requirements" section makes EXPLICIT what "implement component" means, with 12 mandatory sub-deliverables and physical verification checklist. No ambiguity remains.
+
+**Testing Strategy**: 29 new QA-to-Red tests (MAT-T-0099 to MAT-T-0127) now validate UI BEHAVIOR (data fetching, CRUD operations, state management), not just structure.
+
+**Authority**: 
+- GOVERNANCE_CHAIN_TRACEABILITY_ANALYSIS_20260217.md (Root Cause Analysis)
+- FULLY_FUNCTIONAL_DELIVERY_STANDARD.md §3.2 (Physical Verification)
+- BUILD_PROGRESS_TRACKER.md Deviation #11 (Historical Learning)
+
+---
 
 ### Detailed Instructions
 
@@ -432,18 +643,40 @@ All 13 tests must be GREEN before each wave gate.
 
 ### Acceptance Criteria
 
-1. All components render correctly at desktop (1024px), tablet (768px), mobile (375px)
-2. WCAG 2.1 AA compliance for all pages (keyboard navigation, screen reader, color contrast)
-3. All components use Shadcn/UI + Tailwind CSS (no external UI libraries)
-4. All state management via Zustand (client) and TanStack Query (server)
-5. All components have unit tests via Vitest + React Testing Library
-6. Zero lint warnings (`eslint` with React/hooks plugins)
-7. No class components — functional components only
-8. `apps/mat-frontend/` exists as a buildable, deployable workspace package (FR-070)
-9. All components wired into the frontend application with routing (FR-071)
+**See "Component Implementation Requirements (EXPLICIT)" section above for complete blocking criteria.**
+
+**Summary** (all must be met):
+
+1. All components fetch/mutate data using TanStack Query (no hardcoded data)
+2. All forms have Zod validation wired with field-level errors
+3. All data-fetching components render loading/error/empty states
+4. All components imported and rendered in page files (no orphaned components)
+5. All TanStack Query mutations invalidate caches (UI auto-updates)
+6. All interactive components have success/error feedback (toasts, loading indicators)
+7. All tests validate BEHAVIOR, not just structure
+8. All components meet WCAG 2.1 AA accessibility
+9. All components responsive at 375px/768px/1024px
+10. Zero console warnings or errors in development mode
+11. All components render correctly at desktop (1024px), tablet (768px), mobile (375px)
+12. All state management via Zustand (client) and TanStack Query (server)
+13. All components use Shadcn/UI + Tailwind CSS (no external UI libraries)
+14. No class components — functional components only
+15. `apps/mat-frontend/` exists as a buildable, deployable workspace package (FR-070)
+16. All components wired into the frontend application with routing (FR-071)
+17. Zero lint warnings (`eslint` with React/hooks plugins)
 
 ### Forbidden Actions
 
+- ❌ Delivering placeholder components without data fetching logic
+- ❌ Delivering components without TanStack Query hooks when data is required
+- ❌ Hardcoding data instead of fetching from Supabase
+- ❌ Implementing forms without Zod validation
+- ❌ Implementing CRUD actions without TanStack Query mutations
+- ❌ Creating components that are never imported/rendered in pages
+- ❌ Submitting components without loading/error/empty states
+- ❌ Writing tests that only validate "component renders" without testing behavior
+- ❌ Using `console.log` as placeholder for actual event handlers
+- ❌ Leaving "TODO: implement data fetching" comments in production code
 - ❌ Implementing backend logic or Edge Functions
 - ❌ Modifying database schema or migrations
 - ❌ Direct API calls bypassing TanStack Query
