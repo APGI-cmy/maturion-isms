@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-02-17T07:14:24Z",
+  "last_updated": "2026-02-17T10:58:00Z",
   "total_canons": 163,
   "generation_timestamp": "2026-02-17T07:14:24Z",
   "canons": [
@@ -680,7 +680,7 @@
       "version": "3.0.0",
       "file_hash": "27cb87ee3a04",
       "effective_date": "2026-02-17",
-      "description": "This policy establishes the canonical escalation hierarchy, triggers, procedures, and authority chain for the Maturion ecosystem, including model-specific cognitive escalation (Sonnet\u2192Opus/o1).",
+      "description": "This policy establishes the canonical escalation hierarchy, triggers, procedures, and authority chain for the Maturion ecosystem, including model-specific cognitive escalation (Sonnet→Opus/o1).",
       "type": "canon",
       "path": "governance/canon/ESCALATION_POLICY.md",
       "layer_down_status": "PUBLIC_API",
@@ -1807,6 +1807,18 @@
       "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "d5fcd80e8fcbde88b8b91974d8c4e3a48d852e47c7dd9c6796ec92f3b4275f1e"
+    },
+    {
+      "filename": "governance-liaison-isms-agent.md",
+      "version": "3.0.0",
+      "file_hash": "c4a9bac6bf4a",
+      "effective_date": "2026-02-17",
+      "description": "Governance Liaison agent contract for maturion-isms repository - Four-Phase Canonical architecture (Preflight-Induction-Build-Handover), RAEC model, cross-repo layer-down, governance ripple processing",
+      "type": "agent_contract",
+      "path": ".github/agents/governance-liaison-isms-agent.md",
+      "layer_down_status": "CONSUMER_SPECIFIC",
+      "file_hash_sha256": "c4a9bac6bf4a193b9730d863c0511afed9fc28ef33dd6a2ccca8e1a8aa6426a3",
+      "contract_pattern": "four_phase_canonical"
     }
   ]
 }
