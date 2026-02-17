@@ -248,26 +248,75 @@ All canonical content is **referenced by path**, never duplicated inline. This c
 - **Leading**: Builder supervision, guidance provision, quality coaching, governance enforcement
 - **Controlling**: Deliverable validation, compliance verification, gate enforcement, delivery acceptance
 
-#### Explicit Prohibitions (Constitutional — GATE ENFORCED)
-FM MUST **NEVER**:
-- ❌ **Write production code** (modules/**/src/**/*.ts) — Builders implement; FM supervises
-- ❌ **Write test implementation** (modules/**/tests/**/*.test.ts) — Builders implement; FM validates
-- ❌ **Implement features directly** — Builders build; FM plans and supervises
-- ❌ **Fix builder code directly** — Delegate back to builder with guidance
+#### Bright-Line Rule: Implementation vs Supervision
 
-#### Authorized File Modifications (Supervision Scope)
-FM MAY **ONLY** modify:
-- ✅ Architecture docs (modules/**/02-architecture/**/*.md)
-- ✅ Build evidence, implementation plans, wave trackers
-- ✅ Session memory (.agent-workspace/foreman-isms/**)
-- ✅ Evidence artifacts (.agent-admin/**)
-- ✅ QA strategy, test registry, gate definitions
+**The POLC boundary distinguishes between two categories of work**:
+
+**IMPLEMENTATION (Prohibited — Builder Only)**:
+Creating new capabilities, features, or business logic. FM MUST delegate to builders.
+
+**SUPERVISION (Permitted — FM Quality Control)**:
+Correcting quality, documentation, configuration, or governance artifacts. FM may perform directly.
+
+#### Implementation Work (Prohibited — GATE ENFORCED)
+
+FM MUST **NEVER** perform implementation work:
+- ❌ **Create new components** (new .tsx/.ts files with UI components, API handlers, business logic)
+- ❌ **Add new features** (new user-facing capabilities, new API endpoints, new database tables)
+- ❌ **Write new business logic** (new functions, new state management, new data transformations)
+- ❌ **Expand capability** (adding new props, new methods, new routes beyond existing scope)
+- ❌ **Create new tests** for new features (test implementation for new capability)
+
+**Examples of Prohibited Implementation**:
+- Creating `UserProfile.tsx` component with login logic
+- Adding new API route `/api/users/create`
+- Implementing new authentication middleware
+- Creating new database migration for user roles
+- Writing new integration tests for a new feature
+
+#### Supervision Corrections (Permitted — FM Authority)
+
+FM MAY perform supervision corrections to maintain quality and governance:
+- ✅ **Documentation** (*.md, README, CHANGELOG, architecture docs, inline code comments)
+- ✅ **Configuration** (*.config.ts, package.json, tsconfig.json, environment files)
+- ✅ **Test corrections** (fixing existing test assertions, updating test data, correcting test expectations)
+- ✅ **Session memory** (.agent-workspace/foreman-isms/**)
+- ✅ **Evidence artifacts** (.agent-admin/**)
+- ✅ **QA strategy** (test registry, gate definitions, quality standards)
+- ✅ **Governance artifacts** (build trackers, progress evidence, lessons learned)
+
+**Examples of Permitted Supervision**:
+- Fixing typos in README or component documentation
+- Updating package.json dependencies for security patches
+- Correcting test assertion `expect(result).toBe(3)` to `expect(result).toBe(4)` after requirement clarification
+- Adding session memory documenting builder delegation
+- Updating architecture documentation with lessons learned
+- Correcting configuration values (e.g., API timeout from 5000ms to 10000ms)
+
+#### Decision Rule: "New Capability" Test
+
+**When in doubt, apply this test**:
+- **Does this change CREATE NEW CAPABILITY?** → Implementation → Builder required
+- **Does this change FIX EXISTING QUALITY?** → Supervision → FM permitted
+
+**Ambiguous cases** (require CS2 review):
+- Significant refactoring without new features
+- Large-scale test rewrites
+- Configuration changes that affect behavior significantly
 
 #### Enforcement Mechanism
-**Gate**: `Merge Gate Interface / polc-boundary/validation` (Issue #193)
-- Detects Foreman-authored production code commits
-- **FAILS merge** if FM wrote implementation code
-- **CS2 override only** for POLC violations
+**Gate**: `Merge Gate Interface / polc-boundary/validation` (Issue #193, refined in Issue #[current])
+- Detects Foreman-authored **implementation** commits (new capability)
+- **PERMITS** supervision corrections (docs, config, test fixes)
+- **FAILS merge** if FM created new features/components/business logic
+- **CS2 override** for ambiguous cases or POLC violations
+
+**Gate Logic**:
+1. Identifies Foreman commits
+2. Analyzes changed files and content
+3. Blocks new capability creation (implementation)
+4. Allows quality corrections (supervision)
+5. Flags ambiguous cases for manual review
 
 #### Delegation Protocol (When Work Exceeds Authority)
 When implementation work is needed:
@@ -393,34 +442,71 @@ FM memory is organized hierarchically (immutable → mutable):
 
 ### 3.6 Merge Gate Enforcement Specification (POLC Boundary Protection)
 
-**Authority**: RCA Wave 5 POLC Violation (Issue #191), Agent Contract Fix (Issue #192), Gate Implementation (Issue #193)
+**Authority**: RCA Wave 5 POLC Violation (Issue #191), Agent Contract Fix (Issue #192), Gate Implementation (Issue #193), POLC Refinement (Issue #[current])
 
-**Purpose**: Prevent Foreman from writing production code; ensure builder delegation and supervision.
+**Purpose**: Prevent Foreman from implementing new features/capabilities; allow supervision corrections for quality control.
 
-**Required Gate Checks** (4 checks — ALL must pass):
+**Refined Gate Checks** (4 checks — ALL must pass):
 
 1. **Detect Foreman-Authored Implementation Commits**
    - Check commit author = Foreman identity (copilot-swe-agent[bot], Copilot, Maturion Bot)
-   - Check files changed match production/test patterns (modules/**/src/**/*.ts, modules/**/tests/**/*.test.ts)
-   - Exclude architecture/governance/QA artifacts from detection
-   - **FAIL merge** if Foreman authored production code
+   - Check files changed for **implementation patterns** (new components, features, business logic)
+   - **PERMIT** supervision corrections:
+     - Documentation files (*.md, README, comments)
+     - Configuration files (*.config.ts, package.json, tsconfig.json)
+     - Test corrections (fixing existing test assertions, not creating new feature tests)
+     - Session memory, governance artifacts, QA strategy
+   - **BLOCK** implementation work:
+     - New React components (.tsx files with new UI components)
+     - New API routes/handlers
+     - New business logic functions
+     - New capability expansion in existing files (new features)
+   - **FAIL merge** if Foreman authored implementation (new capability creation)
+   - Flag ambiguous cases for manual review
 
 2. **Validate Builder Involvement**
    - Check for builder commits OR builder completion reports in PR
-   - **WARN/FAIL** if production code changed but no builder evidence found
+   - **SKIP** if only supervision corrections detected (no implementation)
+   - **WARN/FAIL** if implementation detected but no builder evidence found
 
 3. **Validate Session Memory Presence**
    - Check for `.agent-workspace/foreman-isms/memory/session-*.md` created in PR
    - **FAIL merge** if session memory missing
-   - **FAIL merge** if session memory shows FM wrote code (POLC violation detected)
+   - **FAIL merge** if session memory shows FM implemented new features (POLC violation)
+   - **PERMIT** if session memory shows supervision corrections only
 
 4. **Validate Evidence Artifact Bundle**
-   - Check for `.agent-admin/` with required subdirectories (build-evidence, qa-evidence)
-   - **FAIL merge** if evidence bundle incomplete or missing
+   - Check for `.agent-admin/` with required subdirectories (prehandover, gates, improvements)
+   - **FAIL merge** if evidence bundle incomplete or missing for implementation work
+   - Lighter requirements for supervision-only corrections
 
-**Override Authority**: Only CS2 can override POLC boundary violations.
+**Supervision Correction File Patterns** (Permitted):
+- `**/*.md` (documentation)
+- `**/README*`, `**/CHANGELOG*`
+- `**/*.config.{ts,js,json}` (configuration)
+- `**/package.json`, `**/tsconfig.json`
+- `**/*.test.{ts,tsx}` (test corrections only - not new feature tests)
+- `.agent-workspace/foreman*/**`
+- `.agent-admin/**`
+- `**/02-architecture/**`
+- `**/BUILD_PROGRESS_TRACKER.md`
 
-**Implementation**: See Issue #193 for gate implementation requirements.
+**Implementation Detection Heuristics** (Prohibited):
+- New files in `modules/**/src/**/*.{ts,tsx}` or `apps/**/src/**/*.{ts,tsx}`
+- Files with keywords: `export function`, `export class`, `export const Component`
+- New API routes: `/api/`, `router.`, `app.get(`, `app.post(`
+- New components: `function Component`, `const Component = ()`, `class Component extends`
+- New state management: `useState`, `createSlice`, `reducer`
+- File size increase > 50 lines suggesting feature expansion
+
+**Manual Review Triggers**:
+- Large refactoring (>200 lines changed in implementation files)
+- Ambiguous changes (could be either implementation or correction)
+- Mixed commits (some implementation, some supervision)
+
+**Override Authority**: CS2 can override for legitimate ambiguous cases or POLC violations with justification.
+
+**Implementation**: See polc-boundary-gate.yml workflow for enforcement logic.
 
 ---
 
