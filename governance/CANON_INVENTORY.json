@@ -676,6 +676,17 @@
       "file_hash_sha256": "99ac8dcabc3780e28914c3ca25a4629f20b3ff331983307b333635a5aa3f7913"
     },
     {
+      "filename": "ESCALATION_POLICY.md",
+      "version": "3.0.0",
+      "file_hash": "27cb87ee3a04",
+      "effective_date": "2026-02-17",
+      "description": "This policy establishes the canonical escalation hierarchy, triggers, procedures, and authority chain for the Maturion ecosystem, including model-specific cognitive escalation (Sonnet\u2192Opus/o1).",
+      "type": "canon",
+      "path": "governance/canon/ESCALATION_POLICY.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "27cb87ee3a0466086ee1459698fbf7daa3cd2ac6ba46e5039af92630c52be7ec"
+    },
+    {
       "filename": "POST_MORTEM_PROTOCOL.md",
       "version": "1.0.0",
       "file_hash": "dd847a354b39",
