@@ -1,11 +1,11 @@
 # MAT — Implementation Plan
 
 **Module**: MAT (Manual Audit Tool)  
-**Version**: v1.4.0  
+**Version**: v1.5.0  
 **Status**: APPROVED  
 **Owner**: Foreman (FM)  
 **Created**: 2026-02-13  
-**Last Updated**: 2026-02-16  
+**Last Updated**: 2026-02-17  
 **Authority**: Derived from Architecture (modules/mat/02-architecture/), FRS (modules/mat/01-frs/functional-requirements.md), TRS (modules/mat/01.5-trs/technical-requirements-specification.md), Test Registry (governance/TEST_REGISTRY.json)
 
 ---
@@ -42,11 +42,14 @@ MAT is built in **eight waves** (Wave 0–Wave 7). Each wave has a gate that mus
 | 4 | Dashboards & Reporting | ui-builder, api-builder | Concurrent (4.1∥4.2) | MAT-T-0069–0081 | 5 days |
 | 5 | Watchdog & Continuous Improvement | api-builder, integration-builder | Sequential (5.1→5.2) | MAT-T-0059–0062, MAT-T-0063–0066 | 4 days |
 | 5.5 | Frontend Application Assembly | ui-builder | Sequential (5.5.1→5.5.2→5.5.3) | FR-070, FR-071 acceptance criteria | 3 days |
+| 5.6 | UI Component Wiring & Data Integration | ui-builder | Sequential (5.6.1→5.6.2→5.6.3→5.6.4→5.6.5→5.6.6) | MAT-T-0001–0042 (functional frontend tests) | 5 days |
 | 6 | Deployment & Commissioning | api-builder, qa-builder | Sequential (6.1→6.2→6.3→6.4) | CWT (all tests on production) | 3 days |
 
-**Total Estimated Duration**: ~36 working days (8 weeks)
+**Total Estimated Duration**: ~41 working days (8.5 weeks)
 
 > **Change Note (v1.3.0, 2026-02-16)**: Wave 5.5 (Frontend Application Assembly) added to address governance gap where all component-level tests passed but no deployable React application was built. Wave 5.5 sits between Waves 5 and 6 because it requires all component implementations (Waves 0–5) to be complete before assembly, and must complete before deployment (Wave 6). See BUILD_PROGRESS_TRACKER.md Deviation #9.
+
+> **Change Note (v1.5.0, 2026-02-17)**: Wave 5.6 (UI Component Wiring & Data Integration) added to address critical gap discovered during Wave 6 production testing. Wave 5.5 delivered application STRUCTURE (scaffolding, routing, layouts), but all components remained empty placeholders with NO data fetching, NO CRUD handlers, and NO component-to-page wiring. Wave 5.6 implements full frontend functionality by wiring components to Supabase, implementing CRUD operations, state management, and ensuring complete user workflows are functional. See RCA_WAVE6_FRONTEND_NON_FUNCTIONAL_20260217.md and BUILD_PROGRESS_TRACKER.md Deviation #11.
 
 > **Change Note (v1.4.0, 2026-02-16)**: MANDATORY PRE-BUILD GATE language added to Wave 5.5 section (§2.6.5) requiring QA-to-Red functional test suite presence BEFORE any implementation begins. This enforces the canonical workflow (Architecture → QA-to-Red → Build-to-Green → Validation) and prevents code-first violations. Added after Deviation #10 (PR #239 attempted code-first implementation without QA-to-Red suite). See BUILD_PROGRESS_TRACKER.md Deviation #10.
 
@@ -605,6 +608,357 @@ MAT is built in **eight waves** (Wave 0–Wave 7). Each wave has a gate that mus
 4. Critical user flows (audit creation, criteria upload, evidence capture, dashboard view) are functional or show appropriate placeholder states
 
 **Wave 5.5 Gate**: FR-070 and FR-071 acceptance criteria met. All 98 existing tests remain GREEN. Frontend builds and renders. PREHANDOVER proof compiled.
+
+---
+
+### 2.6.6 Wave 5.6 — UI Component Wiring & Data Integration
+
+**Objective**: Implement full frontend functionality by wiring all components to Supabase, implementing CRUD operations, data fetching, state management, loading/error states, and ensuring complete user workflows are functional.
+
+**Execution**: Sequential — each sub-task builds on the prior.
+
+**Rationale**: Wave 5.5 delivered the React application STRUCTURE (scaffolding, routing, page layouts), but all components remain empty placeholders with NO business logic. Wave 6 production testing (2026-02-17) revealed the application is completely non-functional: dashboard shows hardcoded zeros, audits page is blank, no CRUD operations exist, no Supabase data fetching implemented. This wave bridges the gap between application structure and functional user experience. See BUILD_PROGRESS_TRACKER.md Deviation #11.
+
+**FRS References**: FR-001 to FR-069 (All functional requirements requiring frontend implementation)
+**TRS References**: TR-001 (React 18+), TR-016 (Supabase Integration), TR-033 (UI Components), TR-047 (Responsive Design)
+
+**Root Cause Addressed**: "Tested ≠ Delivered" pattern at UI layer. Tests validated component structure ("component exists") but NOT component behavior ("component fetches data from Supabase"). Physical verification ("Does the app WORK?") was not enforced during Waves 1-5.
+
+---
+
+#### Task 5.6.1: Dashboard Data Fetching & Metrics Display
+
+| Field | Value |
+|-------|-------|
+| **Builder** | ui-builder |
+| **Execution** | Sequential (must complete before 5.6.2) |
+| **Dependencies** | Wave 5.5 complete (app scaffolded) |
+| **FRS Refs** | FR-039 to FR-042 (Global Dashboard, Domain Dashboard, MPS Dashboard, Criteria Dashboard) |
+| **TRS Refs** | TR-033 (Dashboard Components), TR-016 (Supabase Integration) |
+| **Test Registry** | MAT-T-0039 (Global Dashboard Test) |
+
+**Scope**:
+- Implement `<GlobalDashboard>` component with real-time Supabase data fetching:
+  - Total audits count (query `audits` table)
+  - Completion rate calculation (query `audits` with `status = 'completed'`)
+  - Average maturity score (query `audit_scores` table with aggregation)
+- Implement TanStack Query hooks for data fetching with automatic caching
+- Implement Supabase Realtime subscriptions for live updates (max 5-second lag per TR-033)
+- Implement loading states (skeleton loaders during data fetch)
+- Implement error states (toast notifications on fetch failure)
+- Implement empty states (when no audits exist)
+- Wire `<GlobalDashboard>` to `DashboardPage.tsx`
+
+**Acceptance Criteria**:
+1. Dashboard displays real audit metrics from Supabase (not hardcoded zeros)
+2. Metrics update in real-time when audits change (Realtime subscription functional)
+3. Loading skeleton displays during initial data fetch
+4. Error toast appears if Supabase query fails
+5. Empty state message displays when no audits exist
+6. MAT-T-0039 test GREEN
+7. Physical verification: Dashboard shows live data when running `pnpm dev`
+
+---
+
+#### Task 5.6.2: Audit Management CRUD Implementation
+
+| Field | Value |
+|-------|-------|
+| **Builder** | ui-builder |
+| **Execution** | Sequential (depends on 5.6.1, must complete before 5.6.3) |
+| **Dependencies** | Task 5.6.1 complete |
+| **FRS Refs** | FR-001 (Create Audit), FR-002 (Audit Listing), FR-003 (Audit Deletion/Archival) |
+| **TRS Refs** | TR-047 (Audit Management UI), TR-016 (Supabase Integration) |
+| **Test Registry** | MAT-T-0001, MAT-T-0002, MAT-T-0003 (Audit Lifecycle Tests) |
+
+**Scope**:
+- Implement `<AuditList>` component with Supabase data fetching:
+  - Query `audits` table with RLS (organization isolation)
+  - Display audit list with title, status, created date
+  - Implement search and filter functionality
+- Implement `<AuditCreationForm>` component with full CRUD logic:
+  - Form fields: title, organization, facility, audit lead, dates
+  - Form validation (Zod schema per TRS TR-047)
+  - Submit handler: `INSERT INTO audits` via Supabase
+  - Success/error handling with toast notifications
+- Implement audit edit functionality:
+  - Edit form pre-populated with existing audit data
+  - Update handler: `UPDATE audits` via Supabase
+- Implement audit deletion:
+  - Soft delete: `UPDATE audits SET deleted_at = NOW()`
+  - Confirmation dialog before deletion
+- Wire all components to `AuditManagementPage.tsx`
+
+**Acceptance Criteria**:
+1. User can create new audit via form (audit saved to Supabase)
+2. Audit list displays audits from Supabase (not "No audits yet" placeholder)
+3. User can edit existing audit (changes saved to Supabase)
+4. User can delete audit (soft delete in Supabase)
+5. Form validation prevents invalid submissions
+6. Loading states during CRUD operations
+7. Success/error toast notifications
+8. MAT-T-0001, MAT-T-0002, MAT-T-0003 tests GREEN
+9. Physical verification: Can create, edit, delete audit in running app
+
+---
+
+#### Task 5.6.3: Criteria Management CRUD Implementation
+
+| Field | Value |
+|-------|-------|
+| **Builder** | ui-builder |
+| **Execution** | Sequential (depends on 5.6.2, must complete before 5.6.4) |
+| **Dependencies** | Task 5.6.2 complete |
+| **FRS Refs** | FR-004 to FR-009 (Criteria Upload, AI Parsing, Hierarchy Display, Modal Interaction) |
+| **TRS Refs** | TR-047 (Criteria Management UI), TR-016 (Supabase Integration), TR-028 (AI Parsing) |
+| **Test Registry** | MAT-T-0004 to MAT-T-0012 (Criteria Management Tests) |
+
+**Scope**:
+- Implement `<CriteriaUpload>` component with file upload logic:
+  - File validation (PDF, DOCX, max 10MB)
+  - Drag-and-drop support
+  - Upload to Supabase Storage with signed URL
+  - SHA-256 hash computation
+  - Progress bar during upload
+- Implement AI parsing trigger:
+  - Call `invoke-ai-parse-criteria` edge function
+  - Display parsing progress
+  - Handle parsing success/failure
+- Implement `<CriteriaTree>` component with Supabase data fetching:
+  - Query `criteria` table with hierarchical structure
+  - Display Domain → MPS → Criteria hierarchy
+  - Keyboard navigation (arrow keys, Tab)
+  - Search and filter
+- Implement `<CriteriaModal>` component with full functionality:
+  - Fetch criterion details from Supabase
+  - Display all 5 tabs (Details, Evidence, Scoring, Compliance, History)
+  - Evidence sub-tabs (Text, Photo, Audio, Video)
+  - Unsaved data protection
+- Wire all components to `CriteriaManagementPage.tsx`
+
+**Acceptance Criteria**:
+1. User can upload criteria document (PDF/DOCX) to Supabase Storage
+2. AI parsing triggers and displays progress
+3. Criteria tree displays parsed hierarchy from Supabase
+4. User can navigate criteria tree with keyboard
+5. Criteria modal displays criterion details from Supabase
+6. All 5 modal tabs functional
+7. File upload progress bar displays
+8. SHA-256 hash computed and stored
+9. MAT-T-0004 to MAT-T-0012 tests GREEN
+10. Physical verification: Can upload criteria, view hierarchy, open modal
+
+---
+
+#### Task 5.6.4: Evidence Collection Implementation
+
+| Field | Value |
+|-------|-------|
+| **Builder** | ui-builder |
+| **Execution** | Sequential (depends on 5.6.3, must complete before 5.6.5) |
+| **Dependencies** | Task 5.6.3 complete |
+| **FRS Refs** | FR-010 to FR-015 (Evidence Collection: text, photo, audio, video, interview) |
+| **TRS Refs** | TR-047 (Evidence Collection UI), TR-016 (Supabase Integration) |
+| **Test Registry** | MAT-T-0013 to MAT-T-0022 (Evidence Collection Tests) |
+
+**Scope**:
+- Implement `<EvidenceCapture>` component with multi-type support:
+  - Text notes (rich text editor with Markdown support)
+  - Photo capture (camera access via MediaDevices API)
+  - Audio recording (microphone access, WAV/MP3 format)
+  - Video recording (camera + microphone, MP4 format)
+  - Interview recording mode (structured Q&A with timestamps)
+- Implement evidence upload to Supabase Storage:
+  - File upload with progress tracking
+  - SHA-256 hash computation for integrity
+  - Metadata storage (timestamps, geolocation if enabled)
+- Implement evidence linking to criteria:
+  - Link evidence to specific criterion
+  - Display evidence count per criterion
+- Implement evidence review workflow:
+  - View all evidence for a criterion
+  - Approve/reject evidence
+  - Add reviewer notes
+- Wire all components to `EvidenceCollectionPage.tsx`
+
+**Acceptance Criteria**:
+1. User can capture text notes and save to Supabase
+2. User can capture photo via camera and upload to Supabase Storage
+3. User can record audio and upload to Supabase Storage
+4. User can record video and upload to Supabase Storage
+5. User can conduct interview with structured Q&A
+6. Evidence linked to specific criteria in database
+7. Evidence count displays on criteria tree
+8. Review workflow functional (approve/reject)
+9. SHA-256 hash computed for all file uploads
+10. MAT-T-0013 to MAT-T-0022 tests GREEN
+11. Physical verification: Can collect all evidence types in running app
+
+---
+
+#### Task 5.6.5: Scoring & Reports Implementation
+
+| Field | Value |
+|-------|-------|
+| **Builder** | ui-builder |
+| **Execution** | Sequential (depends on 5.6.4, must complete before 5.6.6) |
+| **Dependencies** | Task 5.6.4 complete |
+| **FRS Refs** | FR-023 to FR-029 (AI Scoring, Human Confirmation, Override), FR-044 to FR-047 (Report Generation, Review Table) |
+| **TRS Refs** | TR-047 (Scoring/Reports UI), TR-028 (AI Integration) |
+| **Test Registry** | MAT-T-0023 to MAT-T-0037 (Scoring and Reports Tests) |
+
+**Scope**:
+- Implement AI scoring trigger:
+  - Call `invoke-ai-score-criterion` edge function
+  - Display AI confidence score (1-5 maturity levels)
+  - Display AI reasoning/explanation
+- Implement human confirmation workflow:
+  - Approve AI score (confirm button)
+  - Override AI score (justification required)
+  - Reject AI score (request re-scoring)
+- Implement `<ReviewTable>` component:
+  - Query all criteria with scores from Supabase
+  - Display status, evidence count, score, reviewer
+  - Inline editing of scores and notes
+  - Excel export functionality (XLSX format)
+- Implement `<ReportGenerator>` component:
+  - Select report template (Executive, Detailed, Gap Analysis)
+  - Generate report (DOCX/PDF/JSON formats)
+  - Download or email report
+- Wire all components to `ScoringPage.tsx` and `ReportsPage.tsx`
+
+**Acceptance Criteria**:
+1. User can trigger AI scoring for a criterion
+2. AI score displays with confidence level and reasoning
+3. User can approve AI score (saves to Supabase)
+4. User can override AI score with justification
+5. Review table displays all criteria with scores from Supabase
+6. User can edit scores inline in review table
+7. User can export review table to Excel (XLSX)
+8. User can generate reports in multiple formats (DOCX, PDF, JSON)
+9. Reports populate with real audit data from Supabase
+10. MAT-T-0023 to MAT-T-0037 tests GREEN
+11. Physical verification: Can score criteria, generate reports in running app
+
+---
+
+#### Task 5.6.6: Settings & Final Integration
+
+| Field | Value |
+|-------|-------|
+| **Builder** | ui-builder |
+| **Execution** | Sequential (depends on 5.6.5) |
+| **Dependencies** | Task 5.6.5 complete |
+| **FRS Refs** | FR-066 to FR-069 (Settings, Preferences, Organization Management) |
+| **TRS Refs** | TR-047 (Settings UI), TR-016 (Supabase Integration) |
+
+**Scope**:
+- Implement `<SettingsPage>` component:
+  - User profile management (name, email, avatar)
+  - Organization settings (name, logo, contact info)
+  - Preferences (language, theme, notifications)
+  - Data export/import functionality
+- Implement state persistence:
+  - Save settings to Supabase `user_preferences` table
+  - Load settings on app startup
+  - Apply theme and language preferences globally
+- Final integration verification:
+  - All components wired to pages
+  - All Supabase queries functional
+  - All CRUD operations tested
+  - All loading/error/empty states implemented
+  - No console errors or warnings
+  - No broken UI states
+
+**Acceptance Criteria**:
+1. User can update profile (name, email, avatar)
+2. User can update organization settings
+3. User can change preferences (language, theme)
+4. Settings persist in Supabase and reload on next session
+5. Theme applies globally (light/dark mode)
+6. Data export downloads all audit data (JSON format)
+7. All pages functional and wired to components
+8. Zero console errors or warnings
+9. Zero broken UI states
+10. Physical verification: All settings functional in running app
+
+---
+
+#### ⚠️ MANDATORY PHYSICAL VERIFICATION GATE
+
+**Authority**: FULLY_FUNCTIONAL_DELIVERY_STANDARD.md §4.2, BUILD_PHILOSOPHY.md, BUILD_PROGRESS_TRACKER.md Deviation #11
+
+**Gate Requirement**: Before Wave 5.6 can close, Foreman MUST perform comprehensive physical verification of the running application. "Does the app WORK?" is non-negotiable.
+
+**Mandatory Physical Verification Checklist**:
+
+1. **Video Walkthrough** (5-10 minutes):
+   - Record video demonstrating ALL core user workflows:
+     - Create new audit
+     - Upload criteria document
+     - Navigate criteria tree
+     - Collect evidence (text, photo, audio, video)
+     - Trigger AI scoring
+     - Approve/override AI score
+     - Generate report (DOCX, PDF, Excel)
+     - Update settings
+   - Video MUST be committed to evidence bundle
+
+2. **Screenshot Evidence** (all pages):
+   - Dashboard showing real data (not hardcoded zeros)
+   - Audits page with audit list and create form
+   - Criteria page with hierarchy tree and modal
+   - Evidence page with all capture modes
+   - Scoring page with AI scores and review table
+   - Reports page with generated reports
+   - Settings page with profile/org settings
+   - Screenshots MUST be committed to evidence bundle
+
+3. **Manual Test Checklist** (Foreman MUST personally execute):
+   - [ ] Dashboard displays real-time audit metrics from Supabase
+   - [ ] Can create new audit via form (audit saved to database)
+   - [ ] Can edit audit (changes saved to database)
+   - [ ] Can delete audit (soft delete in database)
+   - [ ] Can upload criteria document (file saved to Supabase Storage)
+   - [ ] AI parsing triggers and displays progress
+   - [ ] Criteria tree displays parsed hierarchy
+   - [ ] Can navigate criteria tree with keyboard
+   - [ ] Criteria modal opens and displays all tabs
+   - [ ] Can capture text evidence (saved to database)
+   - [ ] Can capture photo evidence (saved to Storage + database)
+   - [ ] Can record audio evidence (saved to Storage + database)
+   - [ ] Can record video evidence (saved to Storage + database)
+   - [ ] Can trigger AI scoring for criterion
+   - [ ] AI score displays with confidence and reasoning
+   - [ ] Can approve AI score (saved to database)
+   - [ ] Can override AI score with justification
+   - [ ] Review table displays all criteria with scores
+   - [ ] Can edit scores inline in review table
+   - [ ] Can export review table to Excel
+   - [ ] Can generate report (DOCX, PDF, JSON)
+   - [ ] Can update user profile (saved to database)
+   - [ ] Can update organization settings (saved to database)
+   - [ ] Can change theme (persists across sessions)
+   - [ ] Zero console errors or warnings
+   - [ ] Zero broken UI states
+   - [ ] All loading states display correctly
+   - [ ] All error states handle failures gracefully
+
+4. **User Workflow Validation**:
+   - Foreman MUST personally complete END-TO-END user workflows:
+     - Workflow 1: Create audit → Upload criteria → Collect evidence → Score criteria → Generate report
+     - Workflow 2: View dashboard → Navigate to audit → Update scores → Export review table
+     - Workflow 3: Manage settings → Change theme → Update profile → Verify persistence
+   - Each workflow MUST complete without errors or manual intervention
+
+**Stop-and-Fix Enforcement**: If ANY item in the physical verification checklist FAILS, Foreman MUST:
+- STOP Wave 5.6 closure immediately
+- Document failure in session memory
+- Assign ui-builder to fix identified issues
+- Re-run physical verification after fixes
+- Repeat until 100% checklist pass
+
+**Wave 5.6 Gate**: ALL Wave 5.6 acceptance criteria met. ALL physical verification checklist items PASS. Video walkthrough + screenshots committed to evidence bundle. E2E tests GREEN (if implemented). Application fully functional and provides USER VALUE.
 
 ---
 
