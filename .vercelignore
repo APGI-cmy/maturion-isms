@@ -1,0 +1,92 @@
+# Vercel Deployment Ignore File
+# Excludes non-deployment files from Vercel build environment
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Governance and documentation (not needed for deployment)
+governance/
+architecture/
+docs/
+modules/*/01-business-requirements/
+modules/*/02-architecture/
+modules/*/03-implementation-plan/
+modules/*/04-qa-evidence/
+modules/*/05-integration-evidence/
+modules/*/99-handover-closure/
+*.md
+!README.md
+!apps/mat-frontend/README.md
+
+# Test files (not needed for deployment)
+**/__tests__/
+**/tests/
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+test-output.log
+coverage/
+.nyc_output/
+
+# Agent workspace
+.agent-workspace/
+.agent-admin/
+
+# GitHub workflows and actions
+.github/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files (use Vercel environment variables instead)
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# Dependencies (Vercel installs these)
+node_modules/
+
+# Build artifacts from other apps (only mat-frontend is deployed)
+apps/*/dist/
+!apps/mat-frontend/
+apps/mat-ai-gateway/
+apps/*/build/
+apps/*/.next/
+apps/*/.turbo/
+
+# Supabase (backend, not deployed with frontend)
+supabase/
+
+# Infrastructure as code (not needed for deployment)
+infrastructure/
+Maturion/
+
+# Package manager files (Vercel handles installation)
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Misc
+.cache/
+.temp/
+tmp/

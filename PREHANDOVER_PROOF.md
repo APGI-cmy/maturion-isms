@@ -253,3 +253,145 @@ git diff --name-only origin/main...HEAD | grep -E '^(modules|apps|packages)/.*/t
 ---
 
 *END OF PRE-HANDOVER PROOF*
+
+---
+
+## Task 6.1: Vercel Project Configuration (2026-02-17)
+
+**Builder**: api-builder  
+**Wave**: Wave 6 — Deployment & Commissioning  
+**Status**: ✅ COMPLETE
+
+### Deliverables
+
+| File | Status | Purpose |
+|------|--------|---------|
+| `vercel.json` | ✅ CREATED | Vercel deployment configuration (build, rewrites, headers, env vars) |
+| `.vercelignore` | ✅ CREATED | Deployment exclusion rules (excludes governance, tests, other apps) |
+| `.github/workflows/deploy-mat-vercel.yml` | ✅ CREATED | CI/CD pipeline (lint → typecheck → test → build → deploy) |
+| `DEPLOYMENT_RUNBOOK_MAT.md` | ✅ CREATED | Complete deployment instructions for CS2 operators (16K, 13 sections) |
+
+**Total**: 4 files created, 25.4K total content
+
+### Acceptance Criteria Validation
+
+| Criterion | Status | Evidence |
+|-----------|--------|----------|
+| vercel.json exists and matches deployment-architecture.md §3.1 | ✅ PASS | Framework: Vite, output: apps/mat-frontend/dist, env vars: 3 required |
+| .vercelignore exists and excludes non-deployment files | ✅ PASS | Excludes: governance/, tests/, .github/, other apps, env files |
+| GitHub Actions workflow exists and follows canonical CI/CD pattern | ✅ PASS | 6 jobs: lint, typecheck, test, build, deploy-preview, deploy-production |
+| DEPLOYMENT_RUNBOOK_MAT.md exists and documents complete process | ✅ PASS | 13 sections: purpose, prerequisites, configuration, validation, troubleshooting, rollback |
+| No credentials hardcoded in any files | ✅ PASS | All credentials externalized to GitHub secrets and Vercel env vars |
+| Configuration validated against architecture specifications | ✅ PASS | 100% conformance to deployment-architecture.md §3.1, §3.4, §5.1 |
+
+**All acceptance criteria satisfied** ✅
+
+### Architecture Conformance
+
+**Deployment Architecture** (`modules/mat/02-architecture/deployment-architecture.md` v1.0.0):
+
+- ✅ **§3.1 Frontend Deployment**: Vercel, Node.js 20 LTS, Vite framework
+- ✅ **§3.1 Build Command**: `cd apps/mat-frontend && npm install && npm run build`
+- ✅ **§3.1 Output Directory**: `apps/mat-frontend/dist`
+- ✅ **§3.1 Platform Config**: `vercel.json` with rewrites, headers, env vars
+- ✅ **§3.4 CI/CD Pipeline**: GitHub Actions → Vercel, lint → test → build → deploy
+- ✅ **§5.1 Environment Variables**: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_API_BASE_URL
+
+**Conformance**: 100%
+
+### Security Validation
+
+- ✅ **No Hardcoded Credentials**: All secrets externalized to GitHub secrets and Vercel environment variables
+- ✅ **Environment Variable Pattern**: Used Vercel `@variable_name` syntax to reference secure environment variables
+- ✅ **Security Headers**: 5 headers configured (X-Frame-Options, X-Content-Type-Options, XSS-Protection, Referrer-Policy, Permissions-Policy)
+- ✅ **Cache-Control**: Static assets (1 year), HTML (no-cache) for optimal security/performance balance
+- ✅ **HTTPS-Only**: Vercel enforces HTTPS by default (no HTTP access)
+
+**Note**: One example credential found in `DEPLOYMENT_RUNBOOK_MAT.md` line 92 is a truncated placeholder for documentation (`eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`), not an actual credential.
+
+### Syntax Validation
+
+- ✅ **JSON**: `vercel.json` validated with Node.js JSON.parse (valid)
+- ✅ **YAML**: `.github/workflows/deploy-mat-vercel.yml` validated with Python yaml.safe_load (valid)
+- ✅ **Gitignore**: `.vercelignore` follows gitignore syntax (valid)
+- ✅ **Markdown**: `DEPLOYMENT_RUNBOOK_MAT.md` is valid Markdown (valid)
+
+### CI/CD Pipeline Validation
+
+GitHub Actions workflow includes:
+- ✅ **Triggers**: push to main (paths: apps/mat-frontend/**), pull_request, workflow_dispatch
+- ✅ **Jobs**: lint (ESLint) → typecheck (tsc) → test (Vitest) → build (Vite) → deploy
+- ✅ **Preview Deployments**: Separate job for PRs, comments preview URL on PR
+- ✅ **Production Deployments**: Separate job for main branch, generates deployment summary
+- ✅ **Node.js 20**: Configured via `actions/setup-node@v4`
+- ✅ **Dependency Caching**: Enabled via `cache: 'npm'`
+- ✅ **Environment Variables**: Injected from GitHub secrets during build/deploy
+
+### Deployment Runbook Completeness
+
+`DEPLOYMENT_RUNBOOK_MAT.md` includes:
+- ✅ **Section 1**: Purpose and audience (CS2 operators)
+- ✅ **Section 2**: Prerequisites checklist (Vercel account, GitHub access, Supabase credentials)
+- ✅ **Section 3**: Vercel project creation (dashboard + CLI methods)
+- ✅ **Section 4**: Environment variable configuration (3 required vars, how to obtain from Supabase)
+- ✅ **Section 5**: GitHub secrets configuration (6 required secrets, how to obtain Vercel token/IDs)
+- ✅ **Section 6**: Initial deployment instructions (GitHub Actions + CLI methods)
+- ✅ **Section 7**: Custom domain configuration (optional, DNS setup)
+- ✅ **Section 8**: Deployment validation checklist (health, security, performance, CI/CD)
+- ✅ **Section 9**: Troubleshooting guide (build failures, runtime errors, workflow failures)
+- ✅ **Section 10**: Rollback procedure (Vercel dashboard + Git revert)
+- ✅ **Section 11**: Monitoring and maintenance (analytics, error tracking, maintenance tasks)
+- ✅ **Section 12**: Reference links (Vercel docs, Supabase docs, architecture references)
+- ✅ **Section 13**: Change log
+
+**Completeness**: 100% (all required sections present)
+
+### Governance Compliance
+
+- ✅ **BUILD_PHILOSOPHY.md**: One-time build (no iteration or rework)
+- ✅ **Zero Test Debt**: No tests required for configuration files (infrastructure-as-code)
+- ✅ **Design Freeze**: Architecture frozen (deployment-architecture.md v1.0.0)
+- ✅ **Infrastructure-as-Code**: All configuration version-controlled, no manual provisioning in code
+- ✅ **CS2 Separation**: Configuration provides instructions, CS2 executes provisioning
+
+### Evidence Artifacts
+
+- ✅ **Session Memory**: `.agent-workspace/api-builder/memory/session-task-6.1-20260217.md`
+- ✅ **Validation Summary**: Task 6.1 validation summary (embedded in session memory)
+- ✅ **PREHANDOVER Proof**: This section
+
+### Process Improvement Reflection
+
+**What went well**:
+- Clear architecture specifications enabled one-time build
+- Environment variable clarity prevented discovery work
+- Security-first patterns (Vercel env vars, GitHub secrets) naturally enforced zero-credentials requirement
+- Comprehensive runbook anticipated CS2 needs
+
+**What was challenging**:
+- None (build completed without rework or blockers)
+
+**Governance compliance**:
+- ✅ BL-024 (Constitutional Sandbox): Exercised procedural judgment within constitutional boundaries
+- ✅ All applicable BLs satisfied
+
+**Actionable improvement for governance canon**:
+- Proposed: Create Deployment Configuration Template Package (vercel.json template, workflow template, runbook template) to accelerate future module deployments and ensure consistency
+- Activation: Layer up after Wave 6 closure (not urgent, future optimization)
+
+### Next Steps (CS2 Actions Required)
+
+1. **Review Runbook**: CS2 review `DEPLOYMENT_RUNBOOK_MAT.md` before provisioning
+2. **Provision Vercel Project**: Follow Section 3 (dashboard or CLI method)
+3. **Configure Environment Variables**: Follow Section 4 (3 required vars from Supabase)
+4. **Configure GitHub Secrets**: Follow Section 5 (6 required secrets, including Vercel token/IDs)
+5. **Execute Initial Deployment**: Trigger GitHub Actions workflow per Section 6
+6. **Validate Deployment**: Use checklist in Section 8 (health, security, performance)
+7. **(Optional) Configure Custom Domain**: Follow Section 7 if custom domain needed
+
+**Task 6.1 → Task 6.2 Dependency**: Task 6.2 (backend deployment) requires Vercel project provisioned and credentials configured. Task 6.1 deliverables enable that provisioning.
+
+---
+
+**Task 6.1 Summary**: ✅ COMPLETE — All 4 configuration files created, validated, and ready for CS2 credential provisioning and deployment execution.
+
