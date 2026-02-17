@@ -1,0 +1,7 @@
+{
+  "locale": "en",
+  "messages": {
+    "app.title": "MAT — Manual Audit Tool",
+    "app.welcome": "Welcome to the Manual Audit Tool"
+  }
+}

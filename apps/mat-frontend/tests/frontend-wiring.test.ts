@@ -9,7 +9,7 @@
  * Registry: governance/TEST_REGISTRY.json
  */
 import { describe, it, expect } from 'vitest';
-import { existsSync, readFileSync, readdirSync } from 'fs';
+import { existsSync } from 'fs';
 import { resolve } from 'path';
 
 const APP_ROOT = resolve(__dirname, '..');
