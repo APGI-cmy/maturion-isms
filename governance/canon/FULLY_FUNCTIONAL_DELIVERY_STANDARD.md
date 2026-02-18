@@ -253,6 +253,9 @@ This standard derives authority from and integrates with:
 
 3. **Quality Verification**
    - [ ] 100% GREEN tests (zero test debt)
+   - [ ] Lint validation: `yarn lint` or `pnpm lint` → 0 errors/warnings
+   - [ ] Type-check validation: `yarn type-check` or `pnpm type-check` (if applicable) → 0 errors
+   - [ ] Build validation: `yarn build` or `pnpm build` → Success (0 errors)
    - [ ] All TRS quality standards met
    - [ ] Performance requirements met
    - [ ] Security requirements met
@@ -272,6 +275,10 @@ This standard derives authority from and integrates with:
 **Validation Evidence Required**:
 - 📋 Deliverable inventory with file paths
 - 📋 Launch/deployment verification logs
+- 📋 Test results (100% GREEN, zero failures)
+- 📋 Lint validation output (0 errors/warnings)
+- 📋 Type-check validation output (0 errors)
+- 📋 Build validation output (success with 0 errors)
 - 📋 Functional test results covering all workflows
 - 📋 Performance test results
 - 📋 Screenshots/video of working application
@@ -312,8 +319,8 @@ This standard derives authority from and integrates with:
    - Evidence: Functional test results, deployment verification
 
 3. **Quality Completeness**
-   - Statement: "All quality standards met, 100% GREEN, zero test debt"
-   - Evidence: Test results, quality metrics
+   - Statement: "All quality standards met, 100% GREEN tests, 0 lint errors/warnings, 0 type errors, successful build, zero test debt"
+   - Evidence: Test results, lint output, type-check output, build output, quality metrics
 
 4. **Fully Functional Delivery**
    - Statement: "Wave delivery is fully functional per Section 3.3 criteria"
@@ -709,7 +716,15 @@ The following patterns are **STRICTLY PROHIBITED**:
 - ❌ Accepting mocks/stubs as implementation
 - ❌ Closure based on code coverage, not functional completeness
 
-### 11.4 Documentation-Only Proof
+### 11.4 Code Quality Gate Bypass
+- ❌ "Tests pass" without running lint validation
+- ❌ Merging code with lint errors or warnings
+- ❌ "Will fix lint issues later" after wave closure
+- ❌ Skipping type-check or static analysis gates
+- ❌ Accepting build warnings as acceptable
+- ❌ Deploying without validating all quality gates (tests + lint + type-check + build)
+
+### 11.5 Documentation-Only Proof
 - ❌ "Architecture says we have UI" without actual UI
 - ❌ "Requirements say we have frontend" without frontend code
 - ❌ Design documents without corresponding implementation

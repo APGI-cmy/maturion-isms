@@ -54,7 +54,7 @@
 - [ ] **Implementation boundaries**: Implement code within builder-specific scope (UI → components/pages/styles, API → api/**, Schema → database/migrations, QA → tests/**, Integration → integration endpoints).
 - [ ] **Forbidden actions**: No backend logic in UI builder, no frontend logic in API builder, no cross-module logic, no database schema in non-schema builders, no bypassing TanStack Query in UI builder.
 - [ ] **Wave compliance**: Comply with wave start/close merge gates; derive requirements from Foreman wave planning; bounded scope per wave (`governance/canon/FOREMAN_WAVE_PLANNING_AND_ISSUE_ARTIFACT_GENERATION_PROTOCOL.md`).
-- [ ] **PREHANDOVER evidence**: Issue PREHANDOVER_PROOF before wave completion; include implementation evidence, test results, coverage data, checklist compliance.
+- [ ] **PREHANDOVER evidence**: Issue PREHANDOVER_PROOF before wave completion; include implementation evidence, test results (100% GREEN), lint validation (0 errors/warnings), type-check validation (0 errors if applicable), build validation (success), coverage data, checklist compliance (`governance/templates/PREHANDOVER_PROOF_TEMPLATE.md`, `governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md`).
 
 ## Category 7 — Prohibitions & Guardrails (Four-Phase: Preflight)
 - [ ] **LOCKED: Self-modification prohibition**: Builder may NEVER modify own contract file; include LOCKED section with Lock ID, Authority (CS2), Review frequency, Modification Authority (CS2 only), References (`governance/canon/AGENT_CONTRACT_PROTECTION_PROTOCOL.md` v1.1.0).
