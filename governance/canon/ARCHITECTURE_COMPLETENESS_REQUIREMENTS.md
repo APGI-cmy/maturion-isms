@@ -2,7 +2,7 @@
 
 ## Status
 Canonical Governance Standard  
-Version: v1.3  
+Version: v1.4  
 Authority: Johan Ras  
 Applies To: All Applications, All Builds, Foreman, Builders, Governance Administrator
 
@@ -562,9 +562,11 @@ If same architectural gap occurs in multiple projects:
 
 ---
 
-## 8. PartPulse Learning Integration
+## 8. Learning Integration
 
-This document formalizes **validated learning from PartPulse failures**:
+This document formalizes **validated learning from production failures**:
+
+### 8.1 PartPulse Learning (v1.0)
 
 | Failure Class | Promoted Requirement | Section |
 |--------------|---------------------|---------|
@@ -574,11 +576,303 @@ This document formalizes **validated learning from PartPulse failures**:
 | Database migration ambiguity | Database and Migration Strategy | 3.4 |
 | Non-testable config failures | Non-Testable Configuration Boundaries | 3.5 |
 
+### 8.2 MAT Learning (v1.4 - Waves 5-7)
+
+**Authority**: `governance/canon/WAVES_5_TO_7_INFRA_FE_WIRING_LESSONS.md`
+
+| Failure Class | Promoted Requirement | Section |
+|--------------|---------------------|---------|
+| Frontend not scaffolded despite architecture | Frontend Application Scaffolding and UI Wiring | 3.14 |
+| UI-to-backend wiring missing | Frontend Application Scaffolding and UI Wiring | 3.14 |
+| Backend not deployed despite code complete | Infrastructure Deployment and Provisioning | 3.15 |
+| Database not provisioned despite wave closure | Infrastructure Deployment and Provisioning | 3.15 |
+| E2E tests missing for integrated systems | End-to-End Integration and Deployment Evidence | 3.16 |
+| Deployment evidence not collected | End-to-End Integration and Deployment Evidence | 3.16 |
+
+**MAT Pattern**: "Tested" ≠ "Deployed" ≠ "Working"
+- MAT Wave 5.5: 100% test GREEN, 0% frontend application existence
+- MAT Wave 5.6: Components isolated, 0% integration wiring
+- MAT Wave 5.7: Code complete, 0% infrastructure deployment
+
 **Future learning**: As new failure classes are discovered, this document MUST be updated to include new completeness requirements.
 
 ---
 
-### 3.14 QA Catalog Alignment and Validation (BL-018/BL-019-Derived) (MANDATORY)
+### 3.14 Frontend Application Scaffolding and UI Wiring (MAT Wave 5.5/5.6-Derived) (MANDATORY)
+
+**Requirement**: When architecture specifies a user-facing application (web, mobile, desktop), the architecture MUST explicitly define application scaffolding, UI component structure, and UI-to-backend wiring.
+
+**Context**: MAT Waves 5.5 and 5.6 revealed critical gaps where architecture specified frontend requirements but implementation plans did not enforce:
+- React application scaffolding
+- UI component library integration
+- API client configuration
+- UI-to-backend wiring and integration tests
+
+This resulted in "tests passing" without a deployable frontend application existing.
+
+**Evidence of Learning**: MAT Deviation #9 (Wave 5.5 — Missing React App Scaffolding), MAT Deviation #10 (Wave 5.6 — Missing UI Wiring & Integration Tests). See `governance/canon/WAVES_5_TO_7_INFRA_FE_WIRING_LESSONS.md`.
+
+**Required Elements**:
+
+#### 3.14.1 Application Scaffolding Specification
+- **Framework and Version**: Exact framework (React, Vue, Angular, Next.js, etc.) and version constraints
+- **Build Tool**: Vite, Webpack, esbuild, or equivalent
+- **Application Entry Point**: Main application file (e.g., `src/main.tsx`, `pages/_app.tsx`)
+- **Routing Strategy**: React Router, Next.js routing, file-based, or equivalent
+- **Application Structure**: Directory structure and module organization
+- **State Management**: Context, Redux, Zustand, or equivalent (if required)
+- **PWA Configuration**: Service worker, manifest, caching strategy (if required)
+
+#### 3.14.2 UI Component Library and Styling
+- **Component Library**: Tailwind CSS, Material-UI, Shadcn/UI, or custom
+- **Design System**: Color palette, typography, spacing system
+- **Responsive Design Strategy**: Breakpoints, mobile-first approach
+- **Theme Configuration**: Light/dark mode, customization approach
+- **Icon Library**: Lucide, FontAwesome, or equivalent
+
+#### 3.14.3 UI-to-Backend Wiring Architecture
+- **API Client Library**: Axios, fetch, TanStack Query, or equivalent
+- **Base URL Configuration**: Environment variable for API endpoint
+- **Authentication Integration**: Token storage, refresh logic, auth headers
+- **Error Handling**: API error display strategy in UI
+- **Loading States**: Loading indicators, skeleton screens
+- **CORS Configuration**: Required headers, allowed origins
+- **Request/Response Interceptors**: Logging, transformation, error handling
+
+#### 3.14.4 Data Flow and State Synchronization
+- **UI → API → Database Flow**: Complete data flow diagram
+- **Optimistic Updates**: Strategy for immediate UI feedback
+- **Cache Invalidation**: Strategy for keeping UI in sync with backend
+- **Offline Support**: Service worker sync, local storage strategy (if required)
+- **Real-time Updates**: WebSocket, SSE, polling strategy (if required)
+
+**Completeness Test**:
+- [ ] Is the exact frontend framework and version specified?
+- [ ] Is the application entry point and structure documented?
+- [ ] Is the UI component library and styling approach defined?
+- [ ] Is the API client configuration and wiring documented?
+- [ ] Is CORS configuration specified?
+- [ ] Is the complete UI → API → Database data flow traceable?
+- [ ] Are loading and error states defined?
+- [ ] Is authentication flow integrated in UI?
+
+**Mandatory Evidence for Wave Closure**:
+- [ ] Frontend application scaffolded and buildable
+- [ ] UI component library integrated
+- [ ] API client configured with correct base URL
+- [ ] At least ONE E2E workflow demonstrated (UI → API → Database → UI)
+- [ ] CORS configured and tested
+- [ ] Error handling implemented in UI
+
+**Violation**: If architecture specifies a user-facing application but does not define scaffolding, wiring, and integration architecture, it is **incomplete**.
+
+**Prohibited Patterns**:
+- ❌ "UI components will be built during implementation"
+- ❌ "API integration details to be determined"
+- ❌ "CORS configuration is a deployment concern"
+- ❌ Architecture defines backend API but no UI wiring specification
+
+---
+
+### 3.15 Infrastructure Deployment and Provisioning (MAT Wave 5.7-Derived) (MANDATORY)
+
+**Requirement**: Architecture MUST explicitly define infrastructure deployment targets, provisioning steps, and deployment validation for ALL components (frontend, backend, database, storage, services).
+
+**Context**: MAT Wave 5.7 (Issue #13) revealed critical gap where architecture specified backend deployment but wave closed without:
+- Supabase project provisioned
+- Database schema deployed
+- Production API accessible
+- Infrastructure deployment evidence
+
+This resulted in "wave complete" without production infrastructure existing.
+
+**Evidence of Learning**: MAT Deviation #13 (Wave 5.7 — Missing Backend Deployment). See `governance/canon/WAVES_5_TO_7_INFRA_FE_WIRING_LESSONS.md` Section 2.3.
+
+**Required Elements**:
+
+#### 3.15.1 Frontend Infrastructure
+- **Hosting Platform**: Vercel, Netlify, AWS Amplify, CloudFlare Pages, or equivalent
+- **Build Configuration**: Build command, output directory, environment variables
+- **Deployment Triggers**: Git branch, manual, or CI/CD pipeline
+- **Domain Configuration**: Primary domain, subdomains, SSL/TLS certificates
+- **CDN Configuration**: Caching strategy, edge functions (if applicable)
+- **Environment-Specific Deployments**: Production, staging, preview environments
+
+#### 3.15.2 Backend Infrastructure
+- **Hosting Platform**: Vercel Serverless, AWS Lambda, Google Cloud Run, dedicated server, or equivalent
+- **Runtime Environment**: Node.js version, Python version, or equivalent
+- **API Deployment Configuration**: Routes, endpoints, environment variables
+- **Scaling Configuration**: Auto-scaling rules, resource limits
+- **Health Check Endpoints**: Readiness, liveness probes
+- **Logging and Monitoring**: Log aggregation, error tracking, APM
+
+#### 3.15.3 Database Infrastructure
+- **Database Platform**: Supabase, AWS RDS, Google Cloud SQL, MongoDB Atlas, or equivalent
+- **Database Type and Version**: PostgreSQL 15, MongoDB 6, or equivalent
+- **Schema Deployment Strategy**: Migration tool, version control approach
+- **Seed Data Strategy**: Initial data, test data, reference data
+- **Backup Configuration**: Automated backups, retention policy, restore procedures
+- **Connection Configuration**: Connection pooling, SSL requirements, IAM authentication
+- **RLS Policies**: Row-level security configuration (if applicable)
+
+#### 3.15.4 Storage Infrastructure (if applicable)
+- **Storage Service**: AWS S3, Google Cloud Storage, Supabase Storage, or equivalent
+- **Bucket Configuration**: Public/private buckets, CORS configuration
+- **Access Control**: IAM policies, signed URLs, public access rules
+- **CDN Integration**: CloudFront, Cloud CDN, or equivalent
+
+#### 3.15.5 Additional Services
+- **Authentication Provider**: Supabase Auth, Auth0, Firebase Auth, or custom
+- **Email Service**: SendGrid, AWS SES, Postmark, or equivalent
+- **Job Queue/Background Workers**: BullMQ, AWS SQS, Google Cloud Tasks, or equivalent
+- **Caching Layer**: Redis, Memcached, or equivalent (if required)
+- **Search Service**: Algolia, Elasticsearch, Meilisearch, or equivalent (if required)
+
+**Deployment Validation Requirements**:
+
+For EACH infrastructure component, architecture MUST specify:
+- **Provisioning Steps**: Account setup, project creation, resource allocation
+- **Configuration Files**: Location and content of deployment configuration (e.g., `vercel.json`, `Dockerfile`, `infra/terraform/*.tf`)
+- **Environment Variables**: Complete `.env.example` with deployment-specific variables
+- **Deployment Verification**: How to verify component is deployed and accessible
+- **Rollback Procedure**: How to revert to previous version if deployment fails
+
+**Pre-Wave Infrastructure Readiness Checklist**:
+- [ ] Deployment platform accounts created
+- [ ] Database instances provisioned
+- [ ] Storage buckets/services configured
+- [ ] Environment variables documented and set
+- [ ] Configuration files committed to repository
+- [ ] Access credentials secured (not in repository)
+- [ ] Deployment tested in non-production environment
+
+**Wave Closure Infrastructure Evidence Requirements**:
+- [ ] Frontend deployed to staging/production (if applicable)
+- [ ] Backend deployed to staging/production (if applicable)
+- [ ] Database schema deployed and accessible
+- [ ] Deployment URLs documented
+- [ ] Health check endpoints returning 200 OK
+- [ ] Environment variables verified in deployment platform
+- [ ] No deployment errors in platform logs
+- [ ] At least ONE complete workflow demonstrated using deployed infrastructure
+
+**Completeness Test**:
+- [ ] Is the hosting platform for each component explicitly specified?
+- [ ] Are provisioning steps documented?
+- [ ] Are deployment configuration files specified?
+- [ ] Are environment variables documented in `.env.example`?
+- [ ] Are deployment verification steps defined?
+- [ ] Is rollback procedure documented?
+- [ ] Are all third-party service integrations specified (auth, email, storage, etc.)?
+
+**Violation**: If architecture specifies components (frontend, backend, database) but does not define deployment infrastructure and provisioning, it is **incomplete**.
+
+**Prohibited Patterns**:
+- ❌ "Deploy to cloud" without specifying platform and configuration
+- ❌ "Deployment is a DevOps concern, not architecture"
+- ❌ "Infrastructure will be set up during implementation"
+- ❌ Wave closure without infrastructure deployment evidence
+- ❌ "Code exists and tests pass" without verifying deployment
+
+---
+
+### 3.16 End-to-End Integration and Deployment Evidence (MAT Waves 5-7-Derived) (MANDATORY)
+
+**Requirement**: Architecture MUST define end-to-end integration testing strategy and specify evidence requirements for demonstrating complete, working, deployed systems.
+
+**Context**: MAT Waves 5-7 revealed pattern where:
+- Components existed in isolation (frontend, backend, database)
+- Unit tests passed (100% GREEN)
+- Integration was assumed but never verified
+- Deployment was deferred to "later"
+- Wave closed without working system demonstration
+
+**Evidence of Learning**: MAT Deviations #9, #10, #11 (Waves 5.5-5.7). See `governance/canon/WAVES_5_TO_7_INFRA_FE_WIRING_LESSONS.md` Sections 2.1-2.3.
+
+**Required Elements**:
+
+#### 3.16.1 E2E Test Strategy
+- **Test Scope**: Which user workflows require E2E tests
+- **Test Environment**: Deployed staging/production, not just localhost
+- **Test Framework**: Playwright, Cypress, Selenium, or equivalent
+- **Test Data Strategy**: Test accounts, seed data, cleanup procedures
+- **Assertion Strategy**: What constitutes a passing E2E test
+- **Test Execution Frequency**: Pre-deployment, post-deployment, scheduled
+
+#### 3.16.2 Integration Test Coverage
+- **UI-to-API Tests**: Frontend can call backend endpoints
+- **API-to-Database Tests**: Backend can read/write database
+- **Authentication Flow Tests**: Login, logout, token refresh
+- **Data Persistence Tests**: Data saved in DB is retrievable
+- **Error Scenario Tests**: API errors are handled gracefully
+- **CORS Tests**: Cross-origin requests work as expected
+
+#### 3.16.3 Deployment Evidence Requirements
+- **Frontend Evidence**:
+  - Deployment URL accessible
+  - Screenshots of key pages/workflows
+  - Performance metrics (page load time, bundle size)
+  - Responsive design verification (mobile, tablet, desktop)
+  
+- **Backend Evidence**:
+  - API deployment URL accessible
+  - Health check endpoint returns 200 OK
+  - API documentation accessible (if applicable)
+  - Response time metrics
+  
+- **Database Evidence**:
+  - Schema deployed (migration logs)
+  - Seed data loaded
+  - Connection verified from backend
+  - Sample queries executed successfully
+  
+- **Integration Evidence**:
+  - E2E test execution logs (against deployed environment)
+  - Video/screenshots of complete workflow (UI → API → DB → UI)
+  - API request/response logs
+  - Database transaction logs showing data persistence
+
+**Wave Closure Evidence Bundle Requirements**:
+
+For wave closure, the following evidence MUST be collected and attached:
+- [ ] Deployment URLs (frontend, backend, database connection string)
+- [ ] Health check responses (HTTP 200 OK logs)
+- [ ] E2E test execution results (100% GREEN against deployed environment)
+- [ ] Screenshots/video of working workflows
+- [ ] Performance metrics (load times, response times)
+- [ ] Database verification (schema deployed, data persisted)
+- [ ] Error-free production logs (no critical errors)
+- [ ] CORS verification (cross-origin requests successful)
+
+**Mandatory Demonstration**:
+
+Before wave closure, Foreman MUST:
+- [ ] Access deployed frontend URL and verify it loads
+- [ ] Execute at least ONE complete user workflow using deployed systems
+- [ ] Verify data persists to database and is retrievable
+- [ ] Verify E2E tests pass against deployed environment
+- [ ] Collect and attach evidence bundle to wave closure artifact
+
+**Completeness Test**:
+- [ ] Is E2E test strategy documented?
+- [ ] Are integration test requirements specified?
+- [ ] Are deployment evidence requirements clear?
+- [ ] Is evidence bundle structure defined?
+- [ ] Are mandatory demonstration steps documented?
+
+**Violation**: If architecture does not specify E2E testing strategy and deployment evidence requirements, it is **incomplete**.
+
+**Prohibited Patterns**:
+- ❌ "E2E tests will be added later"
+- ❌ "Integration testing is optional"
+- ❌ "Unit tests are sufficient"
+- ❌ Wave closure without E2E test execution
+- ❌ Wave closure without deployment evidence
+- ❌ "Tests passed on localhost" without deployed verification
+
+---
+
+### 3.17 QA Catalog Alignment and Validation (BL-018/BL-019-Derived) (MANDATORY)
 
 **Requirement**: Architecture MUST be aligned with a validated QA Catalog before wave planning, subwave assignment, or builder appointment.
 
@@ -706,6 +1000,55 @@ If any architecture artifact, builder behavior, or Foreman process conflicts wit
 
 ---
 
+### Version 1.4 (2026-02-18)
+
+**Status**: MAT Waves 5-7 Infrastructure and UI Wiring Learning Integration  
+**Authority**: Johan Ras (CS2)  
+**Trigger**: Issue APGI-cmy/maturion-isms#[number] - Add Architecture & Build Process Checklist Items for Infra, UI Wiring, and Full Delivery (Wave 5-7 Lessons Learned)
+
+**Summary**: Extended architecture completeness requirements to prevent recurring failures where systems are "tested" but not "deployed", "coded" but not "wired", and "complete" but not "working".
+
+**Key Requirements Added**:
+- Frontend Application Scaffolding and UI Wiring (3.14) — UI framework, routing, component library, API client configuration, CORS, data flow
+- Infrastructure Deployment and Provisioning (3.15) — Hosting platforms, database provisioning, storage services, deployment configuration, health checks
+- End-to-End Integration and Deployment Evidence (3.16) — E2E test strategy, integration coverage, deployment evidence bundle, mandatory demonstration
+
+**MAT Learning Sources**:
+- **MAT Deviation #9** (Wave 5.5): Frontend application not scaffolded despite architecture specifying React frontend
+- **MAT Deviation #10** (Wave 5.6): UI wiring and integration tests missing despite both frontend and backend existing
+- **MAT Deviation #13** (Wave 5.7): Backend (Supabase) deployment not provisioned despite "complete" wave status
+
+**Failure Mode Addressed**: Waves closed with high test pass rates but missing:
+- Deployable frontend applications
+- UI-to-backend wiring and integration
+- Production infrastructure provisioning
+- E2E tests against deployed environments
+- Working system demonstrations
+
+**Key Invariants Added**:
+- No wave closure without frontend deployment (if UI specified)
+- No wave closure without backend deployment (if API specified)
+- No wave closure without database deployment (if data persistence required)
+- No wave closure without E2E tests against deployed environment
+- No wave closure without deployment evidence bundle
+- "Tested" ≠ "Deployed" ≠ "Working" — all three must be verified
+
+**Key Prohibitions Added**:
+- ❌ "UI components will be built during implementation" — must be specified in architecture
+- ❌ "Deployment is a DevOps concern" — deployment is architectural concern
+- ❌ "Code exists and tests pass" without verifying deployment
+- ❌ Wave closure without infrastructure deployment evidence
+- ❌ "We'll deploy it later" — deployment is part of wave scope
+
+**Cross-References**:
+- `governance/canon/WAVES_5_TO_7_INFRA_FE_WIRING_LESSONS.md` (v1.0.0)
+- `governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md` (v1.0.0)
+- `governance/templates/BUILD_PROGRESS_TRACKER_TEMPLATE.md` (v2.0.0)
+
+**Effect**: Architecture without UI scaffolding, deployment infrastructure, and E2E integration specifications is now **constitutionally incomplete** and blocks wave authorization.
+
+---
+
 ### Version 1.2 (2025-12-22)
 
 **Status**: Environment Provisioning Process Integration  
@@ -786,8 +1129,8 @@ If any architecture artifact, builder behavior, or Foreman process conflicts wit
 ---
 
 **Document Metadata**:
-- Document ID: ARCHITECTURE_COMPLETENESS_REQUIREMENTS_V1.2
+- Document ID: ARCHITECTURE_COMPLETENESS_REQUIREMENTS_V1.4
 - Authority: Canonical Governance Standard
 - Required By: GOVERNANCE_PURPOSE_AND_SCOPE.md Section 5.2 (Architecture Compilation)
 - Enforcement: Governance Gate + Foreman + Governance Administrator
-- Integration: QA_POLICY_MASTER.md, LEARNING_INTAKE_AND_PROMOTION_MODEL.md, ENVIRONMENT_PROVISIONING_PROCESS.md
+- Integration: QA_POLICY_MASTER.md, LEARNING_INTAKE_AND_PROMOTION_MODEL.md, ENVIRONMENT_PROVISIONING_PROCESS.md, WAVES_5_TO_7_INFRA_FE_WIRING_LESSONS.md, FULLY_FUNCTIONAL_DELIVERY_STANDARD.md

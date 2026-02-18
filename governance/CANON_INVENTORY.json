@@ -1,9 +1,20 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-02-18T05:43:00Z",
-  "total_canons": 168,
+  "last_updated": "2026-02-18T14:30:00Z",
+  "total_canons": 169,
   "generation_timestamp": "2026-02-18T05:43:00Z",
   "canons": [
+    {
+      "filename": "AVOIDED_DEVIATION_PREVENTIVE_MEASURES.md",
+      "version": "1.0.0",
+      "file_hash": "b08025a49b92",
+      "effective_date": "2026-02-18",
+      "description": "Documents preventive measures institutionalized to avoid future deviations based on MAT Waves 5-7 lessons. Includes avoided deviation summaries for missing frontend, UI wiring, and infrastructure deployment.",
+      "type": "canon",
+      "path": "governance/canon/AVOIDED_DEVIATION_PREVENTIVE_MEASURES.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "b08025a49b92ab8273a06d10e52489adbdbe45027748cd9e8368e555f03cd3b2"
+    },
     {
       "filename": ".agent.schema.md",
       "version": "unknown",
@@ -185,7 +196,7 @@
       "version": "1",
       "file_hash": "963eed45e027",
       "effective_date": "unknown",
-      "description": "This document defines the only legitimate process by which software agents may be introduced (“recruited”) into the governance system administered by the Foreman.",
+      "description": "This document defines the only legitimate process by which software agents may be introduced (\u201crecruited\u201d) into the governance system administered by the Foreman.",
       "type": "canon",
       "path": "governance/canon/AGENT_RECRUITMENT.md",
       "layer_down_status": "PUBLIC_API",
@@ -259,14 +270,14 @@
     },
     {
       "filename": "ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md",
-      "version": "1.3",
-      "file_hash": "1db9160d2ee2",
-      "effective_date": "unknown",
+      "version": "1.4",
+      "file_hash": "b59842e6f5c6",
+      "effective_date": "2026-02-18",
       "description": "This document defines the **mandatory completeness requirements** for all architecture artifacts in the Maturion ecosystem.",
       "type": "canon",
       "path": "governance/canon/ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "1db9160d2ee2a2abc321b0e9c7b98311e5012b268e6e974fc76c8a758e26d51d"
+      "file_hash_sha256": "b59842e6f5c6918ae6c04eb1ead91eea57aae2feaac592884214e4c53edc3f07"
     },
     {
       "filename": "ARCHITECTURE_TEST_TRACEABILITY_METHODOLOGY.md",
@@ -380,14 +391,14 @@
     },
     {
       "filename": "BUILD_PROGRESS_TRACKER_TEMPLATE.md",
-      "version": "1.0.0",
-      "file_hash": "070d3345e0b3",
-      "effective_date": "2026-02-13",
+      "version": "2.0.0",
+      "file_hash": "b6ccbe813597",
+      "effective_date": "2026-02-18",
       "description": "Template for tracking module lifecycle progress through all 7 stages including TRS",
       "type": "template",
       "path": "governance/templates/BUILD_PROGRESS_TRACKER_TEMPLATE.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "070d3345e0b3904e8b14fcb8a3dde745cd2dca5787c3e275c9355283e2c8e1f4"
+      "file_hash_sha256": "b6ccbe81359799f2d4ea3d3f342ada1f929445fc75fb69998b0e32145e0714f5"
     },
     {
       "filename": "BUILD_TREE_EXECUTION_MODEL.md",
@@ -479,7 +490,7 @@
     },
     {
       "filename": "COGNITIVE_CAPABILITY_ORCHESTRATION_MODEL.md",
-      "version": "1.1.0 — ACTIVE OPERATIONAL GOVERNANCE",
+      "version": "1.1.0 \u2014 ACTIVE OPERATIONAL GOVERNANCE",
       "file_hash": "d9d45cb972b7",
       "effective_date": "2026-01-03 (Activation), 2025-12-24 (Original)",
       "description": "This document formally defines the **Cognitive Capability Orchestration Model** for the Maturion ecosystem.",
@@ -680,7 +691,7 @@
       "version": "3.0.0",
       "file_hash": "27cb87ee3a04",
       "effective_date": "2026-02-17",
-      "description": "This policy establishes the canonical escalation hierarchy, triggers, procedures, and authority chain for the Maturion ecosystem, including model-specific cognitive escalation (Sonnet→Opus/o1).",
+      "description": "This policy establishes the canonical escalation hierarchy, triggers, procedures, and authority chain for the Maturion ecosystem, including model-specific cognitive escalation (Sonnet\u2192Opus/o1).",
       "type": "canon",
       "path": "governance/canon/ESCALATION_POLICY.md",
       "layer_down_status": "PUBLIC_API",
@@ -1142,7 +1153,7 @@
       "version": "1.0",
       "file_hash": "23d86014f109",
       "effective_date": "unknown",
-      "description": "This document defines the **Initialization Completeness Gate** — a mandatory governance gate that verifies repository initialization completeness before architecture, build, or execution activities...",
+      "description": "This document defines the **Initialization Completeness Gate** \u2014 a mandatory governance gate that verifies repository initialization completeness before architecture, build, or execution activities...",
       "type": "canon",
       "path": "governance/canon/INITIALIZATION_COMPLETENESS_GATE.md",
       "layer_down_status": "PUBLIC_API",
@@ -1384,7 +1395,7 @@
       "version": "1.0.0",
       "file_hash": "1faef6d0741c",
       "effective_date": "2025-12-25",
-      "description": "This document formally defines the **authority boundary** between:\n- **Foreman (FM)** — execution authority within repositories\n- **Maturion** — control-plane authority for platform actions (GitHub)",
+      "description": "This document formally defines the **authority boundary** between:\n- **Foreman (FM)** \u2014 execution authority within repositories\n- **Maturion** \u2014 control-plane authority for platform actions (GitHub)",
       "type": "canon",
       "path": "governance/canon/PLATFORM_AUTHORITY_BOUNDARY_AND_DELEGATION_MODEL.md",
       "layer_down_status": "PUBLIC_API",
@@ -1615,7 +1626,7 @@
       "version": "1",
       "file_hash": "d2c96ce6d14c",
       "effective_date": "unknown",
-      "description": "This rule enforces alignment between a PR’s declared scope\nand the files actually modified in the PR.",
+      "description": "This rule enforces alignment between a PR\u2019s declared scope\nand the files actually modified in the PR.",
       "type": "canon",
       "path": "governance/canon/SCOPE_TO_DIFF_RULE.md",
       "layer_down_status": "PUBLIC_API",
