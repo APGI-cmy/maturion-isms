@@ -96,7 +96,7 @@ export function CriteriaTree({ auditId, onCriterionSelect }: CriteriaTreeProps) 
   return (
     <div className="criteria-tree" role="tree" aria-label="Criteria hierarchy">
       <div className="space-y-1">
-        {domains.map((domain: any) => {
+        {domains.map((domain) => {
           const isDomainExpanded = expandedDomains.has(domain.id);
 
           return (
@@ -124,7 +124,7 @@ export function CriteriaTree({ auditId, onCriterionSelect }: CriteriaTreeProps) 
               {/* MPS List (Nested) */}
               {isDomainExpanded && domain.mini_performance_standards && (
                 <div className="ml-4 mt-1 space-y-1" role="group">
-                  {domain.mini_performance_standards.map((mps: any) => {
+                  {domain.mini_performance_standards.map((mps) => {
                     const isMPSExpanded = expandedMPS.has(mps.id);
 
                     return (
@@ -152,7 +152,7 @@ export function CriteriaTree({ auditId, onCriterionSelect }: CriteriaTreeProps) 
                         {/* Criteria List (Nested) */}
                         {isMPSExpanded && mps.criteria && (
                           <div className="ml-4 mt-1 space-y-1" role="group">
-                            {mps.criteria.map((criterion: any) => (
+                            {mps.criteria.map((criterion) => (
                               <button
                                 key={criterion.id}
                                 onClick={() => onCriterionSelect?.(criterion.id)}

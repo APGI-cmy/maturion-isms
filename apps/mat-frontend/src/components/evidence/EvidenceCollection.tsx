@@ -30,7 +30,7 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
   const recordedChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const tabs: { id: EvidenceType; label: string; icon: any }[] = [
+  const tabs: { id: EvidenceType; label: string; icon: React.ElementType }[] = [
     { id: 'text', label: 'Text', icon: FileText },
     { id: 'photo', label: 'Photo', icon: Image },
     { id: 'audio', label: 'Audio', icon: Mic },

@@ -328,7 +328,7 @@ export function SettingsPage() {
                 <select
                   id="report-template"
                   value={reportTemplate}
-                  onChange={(e) => setReportTemplate(e.target.value as any)}
+                  onChange={(e) => setReportTemplate(e.target.value as 'standard' | 'detailed' | 'executive')}
                   className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="standard">Standard (Balanced detail)</option>

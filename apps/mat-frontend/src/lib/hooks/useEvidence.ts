@@ -16,7 +16,7 @@ export interface Evidence {
   file_name?: string;
   file_size?: number;
   mime_type?: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
   created_at: string;
   created_by: string;
 }
@@ -26,7 +26,7 @@ export interface EvidenceUploadInput {
   type: Evidence['type'];
   file?: File;
   content?: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }
 
 /**

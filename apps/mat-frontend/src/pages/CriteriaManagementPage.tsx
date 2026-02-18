@@ -9,11 +9,12 @@ import { CriteriaUpload } from '../components/criteria/CriteriaUpload';
 import { CriteriaTree } from '../components/criteria/CriteriaTree';
 import { CriteriaModal } from '../components/criteria/CriteriaModal';
 import { useAudits } from '../lib/hooks/useAudits';
+import type { Criterion } from '../lib/hooks/useCriteria';
 
 export function CriteriaManagementPage() {
   const { data: audits } = useAudits();
   const [selectedAuditId, setSelectedAuditId] = useState<string>('');
-  const [selectedCriterion, setSelectedCriterion] = useState<any>(null);
+  const [selectedCriterion, setSelectedCriterion] = useState<Criterion | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Get the first audit if none selected
@@ -24,10 +25,15 @@ export function CriteriaManagementPage() {
     // For now, we'll use mock data
     setSelectedCriterion({
       id: criterionId,
+      audit_id: auditId,
+      mps_id: 'mock-mps-id',
       number: '1.1.1',
       title: 'Sample Criterion',
       description: 'This is a sample criterion description that would be loaded from the database.',
-      status: 'in_progress'
+      status: 'in_progress',
+      sort_order: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     });
     setIsModalOpen(true);
   };

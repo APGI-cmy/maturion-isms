@@ -13,6 +13,7 @@ export interface Criterion {
   mps_id: string;
   number: string;
   title: string;
+  name?: string;
   description?: string;
   status: string;
   sort_order: number;
@@ -25,11 +26,30 @@ export interface CriteriaUploadInput {
   file: File;
 }
 
+export interface MiniPerformanceStandard {
+  id: string;
+  domain_id: string;
+  number: string;
+  name: string;
+  title?: string;
+  sort_order: number;
+  criteria?: Criterion[];
+}
+
+export interface Domain {
+  id: string;
+  audit_id: string;
+  name: string;
+  title?: string;
+  sort_order: number;
+  mini_performance_standards?: MiniPerformanceStandard[];
+}
+
 /**
  * Fetch criteria tree for an audit (hierarchical: Domain → MPS → Criteria)
  */
 export function useCriteriaTree(auditId: string) {
-  return useQuery<any[], Error>({
+  return useQuery<Domain[], Error>({
     queryKey: ['criteria-tree', auditId],
     queryFn: async () => {
       // Fetch domains with nested MPS and criteria

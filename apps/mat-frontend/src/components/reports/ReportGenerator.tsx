@@ -50,7 +50,7 @@ export function ReportGenerator({ auditId, auditTitle }: ReportGeneratorProps) {
           <select
             id="report-format"
             value={selectedFormat}
-            onChange={(e) => setSelectedFormat(e.target.value as any)}
+            onChange={(e) => setSelectedFormat(e.target.value as 'pdf' | 'docx' | 'xlsx')}
             className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           >
             <option value="pdf">PDF (Portable Document Format)</option>
