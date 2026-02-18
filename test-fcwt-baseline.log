@@ -1,0 +1,137 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90m/home/runner/work/maturion-isms/maturion-isms[39m
+
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mDashboard Data Fetching[2m > [22mMAT-T-0099: Dashboard fetches and displays real Supabase data
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mDashboard Data Fetching[2m > [22mMAT-T-0100: Dashboard implements Realtime subscriptions for live updates
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0101: Create Audit button displays form with validation
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0102: Create Audit form submits and saves to Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0103: Audit list fetches and displays audits from Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0104: Edit Audit functionality updates audit in Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0105: Delete Audit (soft delete) functionality updates Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0106: Audit status transition UI updates status in Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0107: Audit search and filter functionality filters client-side or server-side
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0108: Criteria document upload UI accepts PDF/DOCX and uploads to Supabase Storage
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0109: Criteria tree displays hierarchical data from Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0110: Criteria modal displays criterion details and linked evidence
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0111: AI parsing trigger button invokes edge function and updates Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0112: Criteria search and filter functionality filters tree
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0113: Criteria keyboard navigation (arrow keys) works in tree
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0114: Text note capture saves to Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0115: Photo capture uploads to Supabase Storage
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0116: Audio recording uploads to Supabase Storage
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0117: Video recording uploads to Supabase Storage
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0118: Interview recording (structured audio with transcription) saves to Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mScoring & Reports[2m > [22mMAT-T-0119: AI scoring trigger button invokes edge function
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mScoring & Reports[2m > [22mMAT-T-0120: Human confirmation workflow (approve/reject AI scores) updates Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mScoring & Reports[2m > [22mMAT-T-0121: Review table fetches and displays scoring data from Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mScoring & Reports[2m > [22mMAT-T-0122: Report generation button downloads PDF report
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mSettings[2m > [22mMAT-T-0123: User profile management UI updates user_preferences table
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mSettings[2m > [22mMAT-T-0124: Organization settings UI updates organization_settings table
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mComponent Wiring and State Management[2m > [22mMAT-T-0125: All page components import and render child components with data props
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mComponent Wiring and State Management[2m > [22mMAT-T-0126: TanStack Query configured with Supabase client and proper cache settings
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mComponent Wiring and State Management[2m > [22mMAT-T-0127: Loading states (skeleton loaders) and error states (toast notifications) implemented for all data-fetching components
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0023: AI Maturity Scoring
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0024: Evidence-First Scoring Rule
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0025: Human Score Confirmation
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0026: Override Logging
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0027: Maturity Model (5-Level)
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0028: AI Task Routing
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0029: AI Invocation Logging
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0030: AI Confidence Flagging
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0031: AI Rate Limiting
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0032: AI Model Versioning
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0035: Report Generation
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0036: Report Formats (DOCX/PDF/JSON)
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0076: AI Service Failure — Circuit Breaker
+ [32m✓[39m modules/mat/tests/ai-services/ai-services.test.ts[2m > [22mCAT-04: ai services[2m > [22mMAT-T-0077: AI Degraded Mode — Manual Scoring
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0010: Hierarchical Navigation
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0011: Criteria Modal Component
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0033: Review Table Component
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0034: Review Table Editing
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0039: Global Dashboard
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0040: Domain Dashboard
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0041: MPS Dashboard
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0042: Maturity Distribution Visualization
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0061: Responsive Design — Desktop
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0062: Responsive Design — Tablet
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0063: Responsive Design — Mobile
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0065: Accessibility (WCAG 2.1 AA)
+ [32m✓[39m modules/mat/tests/ui-accessibility/ui-accessibility.test.ts[2m > [22mCAT-10: ui accessibility[2m > [22mMAT-T-0066: Internationalization (i18n)
+ [32m✓[39m modules/mat/tests/criteria-management/criteria-management.test.ts[2m > [22mCAT-02: criteria management[2m > [22mMAT-T-0004: Criteria Document Upload
+ [32m✓[39m modules/mat/tests/criteria-management/criteria-management.test.ts[2m > [22mCAT-02: criteria management[2m > [22mMAT-T-0005: AI Criteria Parsing
+ [32m✓[39m modules/mat/tests/criteria-management/criteria-management.test.ts[2m > [22mCAT-02: criteria management[2m > [22mMAT-T-0006: No-Hallucination Rule
+ [32m✓[39m modules/mat/tests/criteria-management/criteria-management.test.ts[2m > [22mCAT-02: criteria management[2m > [22mMAT-T-0007: Coverage Rule
+ [32m✓[39m modules/mat/tests/criteria-management/criteria-management.test.ts[2m > [22mCAT-02: criteria management[2m > [22mMAT-T-0008: Human Approval of Parsed Criteria
+ [32m✓[39m modules/mat/tests/criteria-management/criteria-management.test.ts[2m > [22mCAT-02: criteria management[2m > [22mMAT-T-0009: Criteria Numbering Immutability
+ [32m✓[39m modules/mat/tests/criteria-management/criteria-management.test.ts[2m > [22mCAT-02: criteria management[2m > [22mMAT-T-0012: Not Used Exclusion
+ [32m✓[39m modules/mat/tests/criteria-management/criteria-management.test.ts[2m > [22mCAT-02: criteria management[2m > [22mMAT-T-0054: Criterion Status Tracking
+ [32m✓[39m modules/mat/tests/audit-lifecycle/audit-lifecycle.test.ts[2m > [22mCAT-01: audit lifecycle[2m > [22mMAT-T-0001: Audit Creation
+ [32m✓[39m modules/mat/tests/audit-lifecycle/audit-lifecycle.test.ts[2m > [22mCAT-01: audit lifecycle[2m > [22mMAT-T-0002: Audit Status Lifecycle
+ [32m✓[39m modules/mat/tests/audit-lifecycle/audit-lifecycle.test.ts[2m > [22mCAT-01: audit lifecycle[2m > [22mMAT-T-0003: Audit Soft Deletion and Archival
+ [32m✓[39m modules/mat/tests/audit-lifecycle/audit-lifecycle.test.ts[2m > [22mCAT-01: audit lifecycle[2m > [22mMAT-T-0038: Report Approval
+ [32m✓[39m modules/mat/tests/audit-lifecycle/audit-lifecycle.test.ts[2m > [22mCAT-01: audit lifecycle[2m > [22mMAT-T-0045: Auditor Assignment Flow
+ [32m✓[39m modules/mat/tests/audit-lifecycle/audit-lifecycle.test.ts[2m > [22mCAT-01: audit lifecycle[2m > [22mMAT-T-0046: Approval Authority
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0013: Evidence Collection — Text and Document
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0014: Evidence Collection — Voice Recording
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0015: Evidence Collection — Photo Capture
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0016: Evidence Collection — Video
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0017: Concurrent File Uploads
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0018: Evidence Integrity Verification
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0019: Evidence Review and Status
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0020: Criterion Interview Recording
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0021: Audit-Level Interview
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0022: Interview Governance
+ [32m✓[39m modules/mat/tests/evidence-collection/evidence-collection.test.ts[2m > [22mCAT-03: evidence collection[2m > [22mMAT-T-0078: Upload Failure and Retry
+ [32m✓[39m modules/mat/tests/watchdog-observability/watchdog-observability.test.ts[2m > [22mCAT-07: watchdog observability[2m > [22mMAT-T-0058: Watchdog Monitoring Metrics
+ [32m✓[39m modules/mat/tests/watchdog-observability/watchdog-observability.test.ts[2m > [22mCAT-07: watchdog observability[2m > [22mMAT-T-0059: Watchdog Alert Thresholds
+ [32m✓[39m modules/mat/tests/watchdog-observability/watchdog-observability.test.ts[2m > [22mCAT-07: watchdog observability[2m > [22mMAT-T-0060: Override Analysis and Feedback Loop
+ [32m✓[39m modules/mat/tests/watchdog-observability/watchdog-observability.test.ts[2m > [22mCAT-07: watchdog observability[2m > [22mMAT-T-0098: Dashboard Realtime Update Wiring
+ [32m✓[39m modules/mat/tests/data-privacy-compliance/data-privacy-compliance.test.ts[2m > [22mCAT-12: data privacy compliance[2m > [22mMAT-T-0067: GDPR Compliance — DSAR and Erasure
+ [32m✓[39m modules/mat/tests/data-privacy-compliance/data-privacy-compliance.test.ts[2m > [22mCAT-12: data privacy compliance[2m > [22mMAT-T-0068: POPIA Compliance
+ [32m✓[39m modules/mat/tests/data-privacy-compliance/data-privacy-compliance.test.ts[2m > [22mCAT-12: data privacy compliance[2m > [22mMAT-T-0069: Data Retention Policy Enforcement
+ [32m✓[39m modules/mat/tests/data-privacy-compliance/data-privacy-compliance.test.ts[2m > [22mCAT-12: data privacy compliance[2m > [22mMAT-T-0070: Regulatory Standard Alignment
+ [32m✓[39m modules/mat/tests/data-privacy-compliance/data-privacy-compliance.test.ts[2m > [22mCAT-12: data privacy compliance[2m > [22mMAT-T-0097: Consent Management
+ [32m✓[39m modules/mat/tests/integration/integration.test.ts[2m > [22mCAT-09: integration[2m > [22mMAT-T-0037: Excel Export
+ [32m✓[39m modules/mat/tests/integration/integration.test.ts[2m > [22mCAT-09: integration[2m > [22mMAT-T-0055: Extensibility and Plugin Architecture
+ [32m✓[39m modules/mat/tests/integration/integration.test.ts[2m > [22mCAT-09: integration[2m > [22mMAT-T-0056: PIT Module Integration Export
+ [32m✓[39m modules/mat/tests/integration/integration.test.ts[2m > [22mCAT-09: integration[2m > [22mMAT-T-0057: Maturity Roadmap Integration Export
+ [32m✓[39m modules/mat/tests/performance/performance.test.ts[2m > [22mCAT-08: performance[2m > [22mMAT-T-0071: Large Audit Compilation
+ [32m✓[39m modules/mat/tests/performance/performance.test.ts[2m > [22mCAT-08: performance[2m > [22mMAT-T-0072: Concurrent Auditor Support
+ [32m✓[39m modules/mat/tests/performance/performance.test.ts[2m > [22mCAT-08: performance[2m > [22mMAT-T-0073: Page Load Performance (LCP < 2.5s)
+ [32m✓[39m modules/mat/tests/performance/performance.test.ts[2m > [22mCAT-08: performance[2m > [22mMAT-T-0074: API Response Time (< 200ms p95 CRUD)
+ [32m✓[39m modules/mat/tests/performance/performance.test.ts[2m > [22mCAT-08: performance[2m > [22mMAT-T-0075: AI Processing Performance
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0079: Wiring Invariant — No Orphan Components
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0080: Wiring Invariant — No Phantom Interfaces
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0081: Wiring Invariant — No Implicit Connections
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0082: Wiring Invariant — Directional Clarity
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0083: Wiring Invariant — Failure Isolation
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0084: Connection [A] — Frontend to Supabase Auth
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0085: Connection [B] — Frontend to PostgREST + RLS
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0086: Connection [C] — Realtime WebSocket Subscriptions
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0087: Connection [D] — Frontend to Supabase Storage
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0088: Connection [E] — Frontend to Edge Functions
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0089: Connection [F] — Frontend to Service Worker
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0090: Connection [G] — Edge Functions to AI Gateway
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0091: Connection [H] — AI Gateway to PostgREST
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0092: Connection [K] — AI Services to OpenAI API
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0093: Connection [L] — Service Worker Sync to Supabase
+ [32m✓[39m modules/mat/tests/wiring-invariants/wiring-invariants.test.ts[2m > [22mCAT-11: wiring invariants[2m > [22mMAT-T-0094: Startup Order Compliance
+ [32m✓[39m modules/mat/tests/offline-sync/offline-sync.test.ts[2m > [22mCAT-06: offline sync[2m > [22mMAT-T-0047: Offline Evidence Capture
+ [32m✓[39m modules/mat/tests/offline-sync/offline-sync.test.ts[2m > [22mCAT-06: offline sync[2m > [22mMAT-T-0048: Auto Sync on Reconnect
+ [32m✓[39m modules/mat/tests/offline-sync/offline-sync.test.ts[2m > [22mCAT-06: offline sync[2m > [22mMAT-T-0064: PWA Support
+ [32m✓[39m modules/mat/tests/security-rls/security-rls.test.ts[2m > [22mCAT-05: security rls[2m > [22mMAT-T-0043: RBAC Enforcement
+ [32m✓[39m modules/mat/tests/security-rls/security-rls.test.ts[2m > [22mCAT-05: security rls[2m > [22mMAT-T-0044: Permission Inheritance
+ [32m✓[39m modules/mat/tests/security-rls/security-rls.test.ts[2m > [22mCAT-05: security rls[2m > [22mMAT-T-0049: Authentication Flow
+ [32m✓[39m modules/mat/tests/security-rls/security-rls.test.ts[2m > [22mCAT-05: security rls[2m > [22mMAT-T-0050: MFA Enforcement
+ [32m✓[39m modules/mat/tests/security-rls/security-rls.test.ts[2m > [22mCAT-05: security rls[2m > [22mMAT-T-0051: Row-Level Security Policies
+ [32m✓[39m modules/mat/tests/security-rls/security-rls.test.ts[2m > [22mCAT-05: security rls[2m > [22mMAT-T-0052: Audit Trail Immutability
+ [32m✓[39m modules/mat/tests/security-rls/security-rls.test.ts[2m > [22mCAT-05: security rls[2m > [22mMAT-T-0053: Data Encryption (At Rest and In Transit)
+ [32m✓[39m modules/mat/tests/security-rls/security-rls.test.ts[2m > [22mCAT-05: security rls[2m > [22mMAT-T-0095: Input Validation and Sanitization
+ [32m✓[39m modules/mat/tests/security-rls/security-rls.test.ts[2m > [22mCAT-05: security rls[2m > [22mMAT-T-0096: API Security Headers and CORS
+
+[2m Test Files [22m [1m[32m13 passed[39m[22m[90m (13)[39m
+[2m      Tests [22m [1m[32m127 passed[39m[22m[90m (127)[39m
+[2m   Start at [22m 15:39:44
+[2m   Duration [22m 1.79s[2m (transform 519ms, setup 1ms, collect 810ms, tests 202ms, environment 3ms, prepare 1.56s)[22m
+
