@@ -1,9 +1,20 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-02-18T05:43:00Z",
-  "total_canons": 168,
+  "last_updated": "2026-02-18T14:30:00Z",
+  "total_canons": 169,
   "generation_timestamp": "2026-02-18T05:43:00Z",
   "canons": [
+    {
+      "filename": "AVOIDED_DEVIATION_PREVENTIVE_MEASURES.md",
+      "version": "1.0.0",
+      "file_hash": "b08025a49b92",
+      "effective_date": "2026-02-18",
+      "description": "Documents preventive measures institutionalized to avoid future deviations based on MAT Waves 5-7 lessons. Includes avoided deviation summaries for missing frontend, UI wiring, and infrastructure deployment.",
+      "type": "canon",
+      "path": "governance/canon/AVOIDED_DEVIATION_PREVENTIVE_MEASURES.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "b08025a49b92ab8273a06d10e52489adbdbe45027748cd9e8368e555f03cd3b2"
+    },
     {
       "filename": ".agent.schema.md",
       "version": "unknown",
