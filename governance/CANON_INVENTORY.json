@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-02-17T16:50:03Z",
-  "total_canons": 167,
-  "generation_timestamp": "2026-02-17T16:50:03Z",
+  "last_updated": "2026-02-18T05:43:00Z",
+  "total_canons": 168,
+  "generation_timestamp": "2026-02-18T05:43:00Z",
   "canons": [
     {
       "filename": ".agent.schema.md",
@@ -185,7 +185,7 @@
       "version": "1",
       "file_hash": "963eed45e027",
       "effective_date": "unknown",
-      "description": "This document defines the only legitimate process by which software agents may be introduced (\u201crecruited\u201d) into the governance system administered by the Foreman.",
+      "description": "This document defines the only legitimate process by which software agents may be introduced (“recruited”) into the governance system administered by the Foreman.",
       "type": "canon",
       "path": "governance/canon/AGENT_RECRUITMENT.md",
       "layer_down_status": "PUBLIC_API",
@@ -479,7 +479,7 @@
     },
     {
       "filename": "COGNITIVE_CAPABILITY_ORCHESTRATION_MODEL.md",
-      "version": "1.1.0 \u2014 ACTIVE OPERATIONAL GOVERNANCE",
+      "version": "1.1.0 — ACTIVE OPERATIONAL GOVERNANCE",
       "file_hash": "d9d45cb972b7",
       "effective_date": "2026-01-03 (Activation), 2025-12-24 (Original)",
       "description": "This document formally defines the **Cognitive Capability Orchestration Model** for the Maturion ecosystem.",
@@ -680,7 +680,7 @@
       "version": "3.0.0",
       "file_hash": "27cb87ee3a04",
       "effective_date": "2026-02-17",
-      "description": "This policy establishes the canonical escalation hierarchy, triggers, procedures, and authority chain for the Maturion ecosystem, including model-specific cognitive escalation (Sonnet\u2192Opus/o1).",
+      "description": "This policy establishes the canonical escalation hierarchy, triggers, procedures, and authority chain for the Maturion ecosystem, including model-specific cognitive escalation (Sonnet→Opus/o1).",
       "type": "canon",
       "path": "governance/canon/ESCALATION_POLICY.md",
       "layer_down_status": "PUBLIC_API",
@@ -1142,7 +1142,7 @@
       "version": "1.0",
       "file_hash": "23d86014f109",
       "effective_date": "unknown",
-      "description": "This document defines the **Initialization Completeness Gate** \u2014 a mandatory governance gate that verifies repository initialization completeness before architecture, build, or execution activities...",
+      "description": "This document defines the **Initialization Completeness Gate** — a mandatory governance gate that verifies repository initialization completeness before architecture, build, or execution activities...",
       "type": "canon",
       "path": "governance/canon/INITIALIZATION_COMPLETENESS_GATE.md",
       "layer_down_status": "PUBLIC_API",
@@ -1384,7 +1384,7 @@
       "version": "1.0.0",
       "file_hash": "1faef6d0741c",
       "effective_date": "2025-12-25",
-      "description": "This document formally defines the **authority boundary** between:\n- **Foreman (FM)** \u2014 execution authority within repositories\n- **Maturion** \u2014 control-plane authority for platform actions (GitHub)",
+      "description": "This document formally defines the **authority boundary** between:\n- **Foreman (FM)** — execution authority within repositories\n- **Maturion** — control-plane authority for platform actions (GitHub)",
       "type": "canon",
       "path": "governance/canon/PLATFORM_AUTHORITY_BOUNDARY_AND_DELEGATION_MODEL.md",
       "layer_down_status": "PUBLIC_API",
@@ -1615,7 +1615,7 @@
       "version": "1",
       "file_hash": "d2c96ce6d14c",
       "effective_date": "unknown",
-      "description": "This rule enforces alignment between a PR\u2019s declared scope\nand the files actually modified in the PR.",
+      "description": "This rule enforces alignment between a PR’s declared scope\nand the files actually modified in the PR.",
       "type": "canon",
       "path": "governance/canon/SCOPE_TO_DIFF_RULE.md",
       "layer_down_status": "PUBLIC_API",
@@ -1840,6 +1840,17 @@
       "path": "governance/canon/FOREMAN_PRE_WAVE_AGENT_AVAILABILITY_CHECK.md",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "13b3633cd90e520c9121315aee33f2ef4cf34bceddd308dc5d2716963436855f"
+    },
+    {
+      "filename": "WAVES_5_TO_7_INFRA_FE_WIRING_LESSONS.md",
+      "version": "1.0.0",
+      "file_hash": "503d2a4d8d0e",
+      "effective_date": "2026-02-18",
+      "description": "Canonical lessons learned from MAT Waves 5-7 regarding infrastructure deployment, frontend scaffolding, backend deployment, and UI wiring validation failures. Institutionalizes prevention measures across architecture templates, build process canon, and wave closure gates.",
+      "type": "canon",
+      "path": "governance/canon/WAVES_5_TO_7_INFRA_FE_WIRING_LESSONS.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "503d2a4d8d0ebdc8f44e4d1efa7dea82bce7229a2c5680a018bb7242b61025ff"
     }
   ]
 }
