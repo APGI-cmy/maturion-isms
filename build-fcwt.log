@@ -1,0 +1,16 @@
+
+> mat-frontend@0.0.1 build
+> tsc && vite build
+
+[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+[32m✓[39m 1836 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mindex.html                          [39m[1m[2m  0.92 kB[22m[1m[22m[2m │ gzip:  0.45 kB[22m
+[2mdist/[22m[2massets/[22m[35mindex-sDgyZcoK.css           [39m[1m[2m 20.35 kB[22m[1m[22m[2m │ gzip:  4.42 kB[22m
+[2mdist/[22m[2massets/[22m[36mquery-vendor-Bg4Dp7M9.js     [39m[1m[2m 49.05 kB[22m[1m[22m[2m │ gzip: 15.00 kB[22m[2m │ map: 172.10 kB[22m
+[2mdist/[22m[2massets/[22m[36mindex-DpV56zo0.js            [39m[1m[2m 81.67 kB[22m[1m[22m[2m │ gzip: 18.39 kB[22m[2m │ map: 224.23 kB[22m
+[2mdist/[22m[2massets/[22m[36mreact-vendor-WnkdiLCq.js     [39m[1m[2m154.83 kB[22m[1m[22m[2m │ gzip: 50.74 kB[22m[2m │ map: 688.11 kB[22m
+[2mdist/[22m[2massets/[22m[36msupabase-vendor-CQnWzhEg.js  [39m[1m[2m173.07 kB[22m[1m[22m[2m │ gzip: 45.66 kB[22m[2m │ map: 773.69 kB[22m
+[32m✓ built in 3.13s[39m
