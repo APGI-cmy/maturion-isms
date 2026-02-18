@@ -1,12 +1,27 @@
+/**
+ * Audit Management Page
+ * FRS: FR-001 (Create Audit), FR-002 (Audit Listing), FR-003 (Audit Deletion)
+ * TRS: TR-047
+ * Task: 5.6.2 (Audit Management CRUD)
+ */
+import { AuditCreationForm } from '../components/audits/AuditCreationForm';
+import { AuditList } from '../components/audits/AuditList';
+
 export function AuditManagementPage() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Audit Management</h1>
-      <div className="bg-white rounded-lg shadow p-6">
-        <p className="text-gray-600">
-          Manage audits, create new audits, and track audit progress.
-        </p>
-        {/* FR-001, FR-002, FR-003 - Audit management functionality will be integrated here */}
+    <div className="audit-management-page p-6 max-w-7xl mx-auto">
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">Audit Management</h1>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Creation Form - 1/3 width on large screens */}
+        <div className="lg:col-span-1">
+          <AuditCreationForm />
+        </div>
+        
+        {/* Audit List - 2/3 width on large screens */}
+        <div className="lg:col-span-2">
+          <AuditList />
+        </div>
       </div>
     </div>
   );
