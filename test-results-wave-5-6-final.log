@@ -1,0 +1,49 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90m/home/runner/work/maturion-isms/maturion-isms[39m
+
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mDashboard Data Fetching[2m > [22mMAT-T-0099: Dashboard fetches and displays real Supabase data
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mDashboard Data Fetching[2m > [22mMAT-T-0100: Dashboard implements Realtime subscriptions for live updates
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0101: Create Audit button displays form with validation
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0102: Create Audit form submits and saves to Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0103: Audit list fetches and displays audits from Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0104: Edit Audit functionality updates audit in Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0105: Delete Audit (soft delete) functionality updates Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0106: Audit status transition UI updates status in Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mAudit Management CRUD[2m > [22mMAT-T-0107: Audit search and filter functionality filters client-side or server-side
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0108: Criteria document upload UI accepts PDF/DOCX and uploads to Supabase Storage
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0109: Criteria tree displays hierarchical data from Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0110: Criteria modal displays criterion details and linked evidence
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0111: AI parsing trigger button invokes edge function and updates Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0112: Criteria search and filter functionality filters tree
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mCriteria Management CRUD[2m > [22mMAT-T-0113: Criteria keyboard navigation (arrow keys) works in tree
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0114: Text note capture saves to Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0115: Photo capture uploads to Supabase Storage
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0116: Audio recording uploads to Supabase Storage
+ [31m×[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0117: Video recording uploads to Supabase Storage
+[31m   → NOT_IMPLEMENTED: Video recording not yet implemented. Expected: Video button uses MediaDevices API with video constraints, displays video preview, recording with MediaRecorder, stop button saves video blob, uploads to Supabase Storage, creates evidence record, displays video player in evidence list.[39m
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0118: Interview recording (structured audio with transcription) saves to Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mScoring & Reports[2m > [22mMAT-T-0119: AI scoring trigger button invokes edge function
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mScoring & Reports[2m > [22mMAT-T-0120: Human confirmation workflow (approve/reject AI scores) updates Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mScoring & Reports[2m > [22mMAT-T-0121: Review table fetches and displays scoring data from Supabase
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mScoring & Reports[2m > [22mMAT-T-0122: Report generation button downloads PDF report
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mSettings[2m > [22mMAT-T-0123: User profile management UI updates user_preferences table
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mSettings[2m > [22mMAT-T-0124: Organization settings UI updates organization_settings table
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mComponent Wiring and State Management[2m > [22mMAT-T-0125: All page components import and render child components with data props
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mComponent Wiring and State Management[2m > [22mMAT-T-0126: TanStack Query configured with Supabase client and proper cache settings
+ [32m✓[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mComponent Wiring and State Management[2m > [22mMAT-T-0127: Loading states (skeleton loaders) and error states (toast notifications) implemented for all data-fetching components
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts[2m > [22mCAT-13: UI Wiring and Data Fetching Behavior[2m > [22mEvidence Collection[2m > [22mMAT-T-0117: Video recording uploads to Supabase Storage
+[31m[1mError[22m: NOT_IMPLEMENTED: Video recording not yet implemented. Expected: Video button uses MediaDevices API with video constraints, displays video preview, recording with MediaRecorder, stop button saves video blob, uploads to Supabase Storage, creates evidence record, displays video player in evidence list.[39m
+[36m [2m❯[22m modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts:[2m326:13[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m28 passed[39m[22m[90m (29)[39m
+[2m   Start at [22m 05:38:27
+[2m   Duration [22m 317ms[2m (transform 37ms, setup 0ms, collect 28ms, tests 10ms, environment 0ms, prepare 80ms)[22m
+
