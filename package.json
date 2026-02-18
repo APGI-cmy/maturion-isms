@@ -7,7 +7,9 @@
     "dev": "echo 'Dev script to be configured'",
     "build": "echo 'Build script to be configured'",
     "test": "vitest run",
-    "test:mat:red": "vitest run --config vitest.config.ts"
+    "test:mat:red": "vitest run --config vitest.config.ts",
+    "lint": "echo 'Linting placeholder - to be configured with eslint/biome'",
+    "type-check": "echo 'Type checking placeholder - to be configured with tsc'"
   },
   "keywords": [
     "monorepo",
