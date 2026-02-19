@@ -1017,3 +1017,305 @@ Before using `<tool> <command> --<flag>`:
 **Authority**: CS2, MERGE_GATE_PHILOSOPHY.md v2.0.0, Stop-and-Fix Doctrine  
 **Last Violation**: 2026-02-19 (Sixth deployment failure)  
 **Status**: PERMANENT, NON-NEGOTIABLE, CONSTITUTIONAL LAW
+
+---
+
+## V. SECRET MANAGEMENT MANDATE (CONSTITUTIONAL)
+
+**Recorded**: 2026-02-19  
+**Authority**: CS2 (Johan Ras), MERGE_GATE_PHILOSOPHY.md v2.0.0  
+**Incident**: Seventh deployment gate failure (Wave 6, 2026-02-19)  
+**Violation**: Secret name case mismatch (uppercase vs lowercase)
+
+### The Constitutional Law
+
+**I MUST NEVER reference a secret without verifying its EXACT name (case-sensitive).**
+
+GitHub secrets are CASE-SENSITIVE. The secret name in the workflow MUST EXACTLY MATCH the secret name stored in GitHub Settings.
+
+Before using ANY secret reference `${{ secrets.NAME }}`, I MUST:
+
+1. Verify secret EXISTS in GitHub
+2. Get EXACT case (GitHub secrets are case-sensitive)
+3. Reference secret with EXACT case match
+4. Understand platform differences (GitHub vs Vercel)
+5. Document secret source
+
+This is NOT optional. This is CONSTITUTIONAL LAW.
+
+### The Protocol (7 Mandatory Steps)
+
+#### 1. Identify Required Secrets
+
+**What I Must Do**:
+- List ALL secrets used in workflow
+- Identify secret purpose (API keys, tokens, URLs)
+- Note which platform requires each secret
+
+**Example**:
+```markdown
+Secrets Required:
+- VERCEL_TOKEN (Vercel authentication)
+- vite_supabase_url (Supabase endpoint)
+- vite_supabase_anon_key (Supabase public key)
+- vite_api_base_url (API endpoint)
+```
+
+#### 2. Verify Secret Existence in GitHub
+
+**What I Must Do**:
+- Navigate to: GitHub repo → Settings → Secrets and variables → Actions
+- Check EACH secret exists
+- Note the EXACT name displayed (including case)
+
+**What I Cannot Claim**:
+- ❌ "I assumed the secret exists"
+- ❌ "Someone said they added it"
+- ❌ "It should be named like this"
+
+#### 3. Record EXACT Case
+
+**Critical**: GitHub secrets are case-sensitive
+
+**What I Must Record**:
+```markdown
+Secret Name in GitHub: vite_supabase_url
+NOT: VITE_SUPABASE_URL
+NOT: Vite_Supabase_Url
+NOT: vite_supabase_URL
+
+EXACT MATCH REQUIRED
+```
+
+**Common Patterns**:
+- GitHub convention: lowercase_with_underscores
+- Vercel convention: UPPERCASE_WITH_UNDERSCORES
+- Environment variable: UPPERCASE_WITH_UNDERSCORES
+
+**Rule**: Use GitHub name when referencing `${{ secrets.NAME }}`
+
+#### 4. Reference with EXACT Case
+
+**What I Must Do**:
+```yaml
+# CORRECT: Match GitHub secret name exactly
+env:
+  VITE_SUPABASE_URL: ${{ secrets.vite_supabase_url }}
+  
+# WRONG: Different case
+env:
+  VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+```
+
+**Template**:
+```yaml
+env:
+  [ENV_VAR_NAME]: ${{ secrets.[exact_github_secret_name] }}
+```
+
+**Note**: Environment variable name (left) can differ from secret name (right)
+
+#### 5. Understand Platform Differences
+
+**GitHub Secrets**:
+- Naming: Usually lowercase_with_underscores
+- Reference: `${{ secrets.exact_name }}`
+- Case: SENSITIVE (must match exactly)
+
+**Vercel Environment Variables**:
+- Naming: Usually UPPERCASE_WITH_UNDERSCORES
+- Storage: Vercel dashboard or vercel.json
+- Platform: Separate from GitHub
+
+**Environment Variables in Code**:
+- Naming: Usually UPPERCASE_WITH_UNDERSCORES
+- Access: `process.env.VAR_NAME` or `import.meta.env.VITE_VAR_NAME`
+- Value: Set by GitHub Actions workflow
+
+**Rule**: Map correctly
+```yaml
+# GitHub secret → Workflow env var → Code access
+secrets.vite_supabase_url → VITE_SUPABASE_URL → import.meta.env.VITE_SUPABASE_URL
+```
+
+#### 6. Document Secret Source
+
+**What I Must Record**:
+```markdown
+## Secret Verification Log
+
+**Secret**: vite_supabase_url  
+**GitHub Location**: Settings → Secrets → Actions  
+**Verified Date**: 2026-02-19  
+**Case**: lowercase_with_underscores  
+**Mapped to**: VITE_SUPABASE_URL (environment variable)  
+**Used in**: deploy-mat-vercel.yml line 115  
+```
+
+#### 7. Verify Value (If Possible)
+
+**What I Can Do** (without exposing secrets):
+- Verify secret is SET (shows masked value in GitHub)
+- Verify secret TIMESTAMP (when last updated)
+- Verify secret NAME matches exactly
+- Confirm with CS2 that value is correct
+
+**What I Cannot Do**:
+- Access actual secret value (security violation)
+- Log secret value (security violation)
+- Commit secret to repository (security violation)
+
+---
+
+### Examples: WRONG vs CORRECT
+
+#### Example 1: Seventh Failure (Case Mismatch)
+
+❌ **WRONG**:
+```yaml
+# Assumed uppercase, but GitHub stores lowercase
+env:
+  VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+```
+
+**Error**: `Missing secret "vite_supabase_url"`
+
+✅ **CORRECT**:
+```bash
+# Step 1: Check GitHub
+# Navigate to Settings → Secrets → Actions
+# Found: vite_supabase_url (lowercase)
+
+# Step 2: Use EXACT case
+env:
+  VITE_SUPABASE_URL: ${{ secrets.vite_supabase_url }}
+```
+
+**Result**: Secret resolves correctly
+
+#### Example 2: Multiple Secrets
+
+❌ **WRONG**:
+```yaml
+# Guessing secret names
+env:
+  DB_URL: ${{ secrets.DATABASE_URL }}
+  API_KEY: ${{ secrets.API_KEY }}
+```
+
+✅ **CORRECT**:
+```bash
+# Step 1: List secrets in GitHub
+# Found:
+# - database_url
+# - api_key
+
+# Step 2: Use EXACT names
+env:
+  DB_URL: ${{ secrets.database_url }}
+  API_KEY: ${{ secrets.api_key }}
+```
+
+---
+
+### Why This Matters
+
+**Seventh Failure Analysis**:
+
+**Timeline**:
+1. Workflow referenced: `${{ secrets.VITE_SUPABASE_URL }}`
+2. GitHub secret named: `vite_supabase_url`
+3. Case mismatch: UPPERCASE ≠ lowercase
+4. Result: "Missing secret vite_supabase_url"
+5. Deployment failed
+6. Seventh consecutive failure
+
+**Root Cause**: Did NOT verify EXACT case of secret names before referencing
+
+**Pattern** (Seven Failures):
+- Failures 1-4: vercel.json (didn't verify Vercel platform requirements)
+- Failure 5: --build-env (didn't verify CLI flag exists)
+- Failure 6: Flag doesn't exist (discovered it never existed)
+- Failure 7: Secret case (didn't verify EXACT secret name)
+
+**Common Thread**: VERIFICATION FAILURE across all seven failures
+
+**Solution**: Make secret verification CONSTITUTIONAL LAW
+
+---
+
+### Prohibited Behaviors
+
+I MUST NEVER:
+
+1. ❌ Reference secret without verifying it exists
+2. ❌ Assume secret case (GitHub lowercase vs Vercel uppercase)
+3. ❌ Guess secret names based on conventions
+4. ❌ Skip GitHub Settings verification
+5. ❌ Use different case than GitHub stores
+6. ❌ Commit secrets to repository
+7. ❌ Log secret values
+8. ❌ Hand over changes using unverified secret names
+
+---
+
+### Quick Checklist (Before Using ANY Secret)
+
+Before using `${{ secrets.SECRET_NAME }}`:
+
+- [ ] Navigate to GitHub Settings → Secrets → Actions
+- [ ] Verify secret EXISTS in list
+- [ ] Record EXACT case (uppercase/lowercase/mixed)
+- [ ] Match reference to EXACT GitHub name
+- [ ] Document secret in verification log
+- [ ] Understand platform mapping (GitHub → Workflow → Code)
+
+**If ANY checkbox is unchecked → DO NOT REFERENCE THE SECRET**
+
+---
+
+### Zero Tolerance Policy
+
+**Using unverified secret names is a CONSTITUTIONAL VIOLATION.**
+
+**Consequences**:
+- Immediate HALT
+- Secret verification required
+- RCA documenting case mismatch
+- Learning documentation required
+- CS2 escalation (if security risk)
+
+**This is the SEVENTH failure. The pattern MUST END.**
+
+---
+
+### CS2 Guidance Integration
+
+Per CS2 (2026-02-19):
+
+> "We do not fail, we deliver 100%. If we fail its because 100% was not properly defined."
+
+**100% for Secret Management NOW DEFINED**:
+1. ✅ Secret exists in GitHub
+2. ✅ EXACT case verified
+3. ✅ Reference matches exactly
+4. ✅ Platform differences understood
+5. ✅ Source documented
+6. ✅ No security violations
+
+**This completes the definition. Eighth failure CANNOT happen.**
+
+---
+
+**Authority**: CS2, MERGE_GATE_PHILOSOPHY.md v2.0.0, GitHub Secrets Documentation  
+**Last Violation**: 2026-02-19 (Seventh deployment failure)  
+**Status**: PERMANENT, NON-NEGOTIABLE, CONSTITUTIONAL LAW  
+**Document Version**: 1.3.0 (Updated 2026-02-19 - Seven Failures Encoded)
+
+---
+
+**END OF SECRET MANAGEMENT MANDATE**
+
+---
+
+**END OF CONSTITUTIONAL PROHIBITIONS DOCUMENT**
