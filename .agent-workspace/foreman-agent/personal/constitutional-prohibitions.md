@@ -538,3 +538,207 @@ TOTAL: 12 commands to validate
 ---
 
 **END OF COMMAND ENUMERATION REQUIREMENT**
+
+---
+
+## III. WORKFLOW FLAG VALIDATION REQUIREMENT (NEW - 2026-02-19)
+
+**Authority**: CS2 Guidance, MERGE_GATE_PHILOSOPHY.md v2.0.0  
+**Created**: 2026-02-19 (After Fifth Failure)  
+**Status**: CONSTITUTIONAL (MANDATORY)
+
+### The Prohibition
+
+**I, foreman-agent, am PROHIBITED from**:
+
+❌ Validating workflow commands WITHOUT validating command flags/arguments  
+❌ Assuming environment variables will "just work"  
+❌ Skipping CLI documentation for workflow tools  
+❌ Handing over changes that could fail due to incorrect flag usage
+
+### The Mandate
+
+**I, foreman-agent, MUST**:
+
+✅ For EVERY workflow command: Validate EVERY flag and argument  
+✅ For EVERY CLI tool: Read documentation for required flags  
+✅ For EVERY secret: Understand how it's passed (env vs flag)  
+✅ For EVERY validation: Execute with EXACT flags used in workflow
+
+### The Protocol (Workflow Flag Validation)
+
+**Step 1: Enumerate Commands** (from fourth failure lesson):
+```bash
+# Extract ALL run: statements from workflow YAML
+grep "run:" .github/workflows/deploy-mat-vercel.yml
+```
+
+**Step 2: Extract Flags** (NEW REQUIREMENT):
+```bash
+# For EACH command, extract ALL flags
+# Example command: vercel build --prod --token=$TOKEN
+#
+# Flags identified:
+# --prod (production mode)
+# --token (authentication)
+#
+# Environment variables in env: block:
+# VITE_SUPABASE_URL
+# VITE_SUPABASE_ANON_KEY
+# VITE_API_BASE_URL
+```
+
+**Step 3: Read CLI Documentation** (NEW REQUIREMENT):
+```bash
+# For EACH CLI tool, read official docs
+vercel build --help
+# or
+man vercel-build
+# or visit official documentation
+```
+
+**Step 4: Understand Secret Passing** (NEW REQUIREMENT):
+```markdown
+Question: How does Vercel receive VITE_* environment variables?
+
+Option A: From runner env: block
+Option B: From --build-env flags
+Option C: From .env file
+
+Research: Vercel CLI docs
+Finding: Requires --build-env flags for build-time variables
+Reason: Spawned processes don't inherit runner environment
+
+Conclusion: Must use --build-env flags
+```
+
+**Step 5: Execute with EXACT Flags**:
+```bash
+# Run command with EXACT flags from workflow
+vercel build --token=$TOKEN \
+  --build-env VITE_SUPABASE_URL="$VITE_SUPABASE_URL" \
+  --build-env VITE_SUPABASE_ANON_KEY="$VITE_SUPABASE_ANON_KEY" \
+  --build-env VITE_API_BASE_URL="$VITE_API_BASE_URL"
+
+echo "Exit code: $?"
+```
+
+**Step 6: Log Flag Validation**:
+```markdown
+## Command: vercel build
+Flags Validated:
+- --token: Authentication ✅
+- --build-env (x3): Environment variables ✅
+
+Environment Variables:
+- VITE_SUPABASE_URL: Passed via --build-env ✅
+- VITE_SUPABASE_ANON_KEY: Passed via --build-env ✅
+- VITE_API_BASE_URL: Passed via --build-env ✅
+
+Exit Code: 0 ✅
+```
+
+---
+
+### Why This Matters (Fifth Failure Analysis)
+
+The fifth consecutive deployment failure (2026-02-19) occurred because I didn't validate **command flags/arguments**.
+
+**The Mistake**:
+- Extracted command: `vercel build --token=$TOKEN` ✅
+- Saw environment variables in `env:` block
+- Assumed env vars would be passed to Vercel ❌
+- Didn't read Vercel CLI documentation ❌
+- Didn't understand `--build-env` flag requirement ❌
+
+**The Impact**:
+- VITE_* environment variables not passed to Vercel build
+- Vercel build failed with "Secret does not exist"
+- Deploy Preview gate failed
+- Production deployment blocked
+- Fifth consecutive deployment failure
+
+**The Learning**:
+Commands ≠ Complete validation. Must validate EVERY flag, read CLI docs, understand secret passing mechanisms.
+
+**Critical Understanding**: Spawned processes (like `vercel build`) do NOT inherit runner environment variables. Must use explicit flags like `--build-env`.
+
+---
+
+### Example: WRONG vs CORRECT
+
+❌ **WRONG**:
+```markdown
+Workflow command: vercel build --token=$TOKEN
+My validation: I'll run `vercel build` locally
+Result: Missing --build-env flags → deployment fails
+```
+
+✅ **CORRECT**:
+```markdown
+Workflow command: vercel build --token=$TOKEN
+Environment block: VITE_SUPABASE_URL, etc.
+
+Analysis:
+1. Command has 1 flag: --token ✅
+2. Environment has 3 vars: VITE_* 
+3. Question: How are VITE_* passed to Vercel?
+4. Research: Read Vercel CLI docs
+5. Finding: Need --build-env flags
+6. Validation: Run with --build-env flags
+7. Result: Deployment succeeds ✅
+```
+
+---
+
+### Mandatory Checklist (Updated)
+
+**Before EVERY handover**:
+
+1. ✅ Enumerate ALL commands from workflow YAML (fourth failure)
+2. ✅ **Extract ALL flags from EACH command** (NEW)
+3. ✅ **Read CLI docs for EACH tool** (NEW)
+4. ✅ **Understand secret passing for EACH tool** (NEW)
+5. ✅ Execute EXACT commands with EXACT flags
+6. ✅ Log flag validation results
+7. ✅ Maintain internal error log
+8. ✅ HALT if ANY command fails
+9. ✅ Document in PREHANDOVER_PROOF
+
+---
+
+### Zero Tolerance
+
+**Prohibited**:
+- ❌ Validating commands WITHOUT flag validation
+- ❌ Assuming environment variable behavior
+- ❌ Skipping CLI documentation
+- ❌ Using different flags than workflow
+
+**Required**:
+- ✅ Flag-by-flag validation
+- ✅ CLI documentation research
+- ✅ Secret passing mechanism understanding
+- ✅ EXACT flag replication
+
+---
+
+### Violation Record
+
+**Incident**: 2026-02-19 (Fifth Failure)  
+**Root Cause**: Workflow flag validation failure  
+**Pattern**: Same mistake, fifth consecutive violation  
+**Lesson**: Commands ≠ Complete. Must validate flags, read docs, understand secret passing.
+
+**Commitment**: I will VALIDATE EVERY FLAG for EVERY command in workflows. I will READ CLI DOCUMENTATION. I will UNDERSTAND secret passing mechanisms. This MUST NOT happen again.
+
+---
+
+**Authority**: CS2 Guidance, MERGE_GATE_PHILOSOPHY.md v2.0.0, Vercel CLI Documentation  
+**Document Version**: 1.2.0 (Updated 2026-02-19)  
+**Status**: PERMANENT (not rotated)  
+**Purpose**: Constitutional compliance, prevent sixth failure
+
+---
+
+**END OF WORKFLOW FLAG VALIDATION REQUIREMENT**
