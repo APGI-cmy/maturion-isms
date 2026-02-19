@@ -61,6 +61,7 @@ Each failure revealed a missing component of 100%:
 | 6: Flag doesn't exist | Documentation verification BEFORE use |
 | 7: Secret case (lowercase) | EXACT secret name verification |
 | 8: Secret case (reversal) | Source verification vs error interpretation |
+| **9: Cached config** | **Cache invalidation when upstream changes** |
 
 **Pattern**: Each failure ADDS to the definition of 100%
 
@@ -195,6 +196,35 @@ CORRECT: Check GitHub Settings → Discover secret IS "VITE_SUPABASE_URL"
 ```
 
 **Principle**: Error message ≠ Source truth. Always verify at source.
+
+---
+
+### 8. Cache Management and Invalidation (Failure 9 ✅)
+
+**Definition**:
+- Understand what gets cached (`.vercel/`, `node_modules/`, build outputs)
+- Detect when caches become stale (upstream config changes)
+- Know how to invalidate caches (`rm -rf`, `--no-cache`, force flags)
+- Verify fresh pull matches current upstream state
+
+**Verification**: Cache clearing before fresh pull
+
+**Status**: ✅ DEFINED (Constitutional Section VI: CACHE MANAGEMENT MANDATE) — **NEW (2026-02-19)**
+
+**Example**:
+```
+CS2 updates Vercel dashboard → Changes env vars from secrets to plain text
+WRONG: Run `vercel pull` with cached `.vercel/` (gets OLD config)
+CORRECT: Run `rm -rf .vercel` THEN `vercel pull` (gets FRESH config)
+```
+
+**Principle**: Caches assume stability. When upstream changes, cache becomes stale. Must invalidate to synchronize.
+
+**Why This Matters**:
+- Cached Vercel config had OLD setup (secret references)
+- CS2 updated Vercel dashboard to NEW setup (plain text values)
+- Workflow used cache → Got OLD config → Deployment failed
+- Fix: Clear cache → Pull fresh → Get NEW config → Deployment succeeds
 
 ---
 

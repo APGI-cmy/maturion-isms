@@ -1345,4 +1345,265 @@ Per CS2 (2026-02-19):
 
 ---
 
+## SECTION VI: CACHE MANAGEMENT MANDATE (CONSTITUTIONAL)
+
+**Recorded**: 2026-02-19  
+**Authority**: CS2 (Johan Ras), DEFINING_100_PERCENT.md Component 8  
+**Incident**: Ninth deployment gate failure (Wave 6, 2026-02-19)  
+**Violation**: Cache invalidation failure
+
+### The Constitutional Law
+
+**WHEN UPSTREAM CONFIGURATION CHANGES, DOWNSTREAM CACHES MUST BE INVALIDATED**
+
+This is NOT optional. This is NOT "best practice". This is CONSTITUTIONAL LAW.
+
+### The Cache Invalidation Protocol (5 Mandatory Steps)
+
+#### 1. Identify All Cached Artifacts
+
+**What I Must Know**:
+- `.vercel/` directory (Vercel configuration and environment)
+- `node_modules/` (npm dependencies)
+- `.next/` (Next.js build cache)
+- `dist/`, `build/` (build output)
+- GitHub Actions cache
+- Docker layer cache
+
+**What I Cannot Claim**:
+- ❌ "I didn't know this was cached"
+- ❌ "I thought it would auto-update"
+- ❌ "The cache should detect changes"
+
+---
+
+#### 2. Detect When Caches Become Stale
+
+**Upstream Changes That Require Cache Invalidation**:
+
+**Platform Configuration**:
+- Vercel dashboard settings changed → Clear `.vercel/`
+- Docker base image updated → Clear Docker cache
+- CI/CD environment variables changed → Clear workflow cache
+
+**Dependency Changes**:
+- `package.json` updated → Clear `node_modules/`, `package-lock.json`
+- `requirements.txt` updated → Clear Python venv
+- Base image tag changed → Clear container cache
+
+**Build Configuration**:
+- `tsconfig.json` changed → Clear `.tsbuildinfo`, build output
+- Webpack config changed → Clear `.webpack-cache`
+- Vite config changed → Clear `.vite` cache
+
+**Detection Method**:
+```bash
+# Check if upstream config changed
+git diff HEAD~1 vercel.json
+git diff HEAD~1 package.json
+
+# If changed, cache is stale
+```
+
+---
+
+#### 3. Know How to Invalidate Each Cache Type
+
+**Cache Clearing Commands**:
+
+```bash
+# Vercel configuration cache
+rm -rf .vercel
+
+# Node modules
+rm -rf node_modules package-lock.json
+npm ci --legacy-peer-deps
+
+# Build outputs
+rm -rf dist build .next out
+
+# TypeScript build info
+rm -rf .tsbuildinfo
+
+# GitHub Actions cache (workflow level)
+# Use cache key versioning or force clear action
+
+# Docker layer cache
+docker build --no-cache
+
+# Vite cache
+rm -rf node_modules/.vite
+```
+
+**In Workflows**:
+```yaml
+# Clear before pull/install
+- name: Clear Vercel Cache
+  run: rm -rf .vercel
+
+- name: Pull Vercel Environment Information
+  run: vercel pull ...
+```
+
+---
+
+#### 4. Force Fresh Pull/Install
+
+**After Clearing, MUST Pull Fresh**:
+
+```bash
+# After clearing Vercel cache
+vercel pull --yes --environment=preview --token=$TOKEN
+
+# After clearing npm cache
+npm ci --legacy-peer-deps
+
+# After clearing Docker cache
+docker pull <image>
+```
+
+**Verification**:
+```bash
+# Verify fresh artifacts
+ls -la .vercel/  # Should have fresh timestamp
+cat .vercel/project.json  # Should match Vercel dashboard
+```
+
+---
+
+#### 5. Verify Fresh Artifacts Match Upstream
+
+**Verification Steps**:
+
+1. **Compare timestamps**: Fresh artifacts should have current datetime
+2. **Compare content**: Fresh config should match upstream source
+3. **Test functionality**: Fresh artifacts should work with current config
+4. **Document verification**: Record in PREHANDOVER_PROOF
+
+**Example Verification**:
+```bash
+# Verify Vercel config is fresh
+cat .vercel/project.json | jq '.env.VITE_SUPABASE_URL'
+# Should show: {"type":"plain","value":"https://..."}
+# NOT: {"type":"secret","value":"@vite_supabase_url"}
+```
+
+---
+
+### The Ninth Failure (Learning)
+
+**What Happened**:
+1. CS2 updated Vercel dashboard from secret references to plain text values
+2. Workflow ran with cached `.vercel/project.json` (had OLD secret references)
+3. Vercel tried to resolve secrets that no longer exist
+4. Deployment failed: "Secret vite_supabase_url does not exist"
+5. **Root Cause**: Cache not invalidated when upstream config changed
+
+**What Should Have Happened**:
+1. CS2 updated Vercel dashboard
+2. Workflow clears `.vercel/` cache before pull
+3. `vercel pull` downloads FRESH config (plain text values)
+4. Deployment succeeds with current config
+
+**Fix Applied**:
+```yaml
+- name: Clear Vercel Cache
+  run: |
+    rm -rf .vercel
+    echo "Cleared cached Vercel configuration to force fresh pull"
+
+- name: Pull Vercel Environment Information
+  run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+```
+
+---
+
+### Quick Checklist (Before Using Cached Artifacts)
+
+- [ ] Has upstream configuration changed?
+- [ ] Is cached artifact still valid?
+- [ ] If stale, have I cleared the cache?
+- [ ] Have I forced fresh pull/install?
+- [ ] Have I verified fresh artifacts match upstream?
+- [ ] Have I documented cache invalidation?
+
+**If ANY checkbox is unchecked → HALT, clear cache, pull fresh**
+
+---
+
+### Principle
+
+**Caches Are Optimizations That Assume Stability**
+
+When upstream changes, stability assumption breaks. Cache becomes stale.
+
+**Cached State ≠ Current State**
+
+Must invalidate cache to synchronize with current upstream state.
+
+---
+
+### Examples
+
+#### ❌ WRONG (Ninth Failure)
+
+**Scenario**: CS2 updated Vercel dashboard configuration
+
+**My Action**:
+```yaml
+# No cache clearing
+- name: Pull Vercel Environment Information
+  run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+```
+
+**Result**: Used cached `.vercel/project.json` with OLD configuration  
+**Outcome**: ❌ Deployment failed (stale cache)
+
+---
+
+#### ✅ CORRECT (Fix Applied)
+
+**Scenario**: CS2 updated Vercel dashboard configuration
+
+**My Action**:
+```yaml
+# Clear cache FIRST
+- name: Clear Vercel Cache
+  run: rm -rf .vercel
+
+# THEN pull fresh
+- name: Pull Vercel Environment Information
+  run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+```
+
+**Result**: Downloaded FRESH configuration from Vercel dashboard  
+**Outcome**: ✅ Deployment succeeds (current config)
+
+---
+
+### Zero Tolerance Policy
+
+**Using stale caches when upstream has changed is a CONSTITUTIONAL VIOLATION**
+
+**Consequences**:
+- Deployment failures
+- Incorrect build artifacts
+- Security vulnerabilities (using old, unpatched dependencies)
+- Data inconsistencies
+
+**Prevention**: ALWAYS clear caches when upstream changes
+
+---
+
+**Authority**: CS2, DEFINING_100_PERCENT.md Component 8, RCA-NINTH-GATE-FAILURE-20260219.md  
+**Last Violation**: 2026-02-19 (Ninth deployment failure)  
+**Status**: PERMANENT, NON-NEGOTIABLE, CONSTITUTIONAL LAW  
+**Document Version**: 1.4.0 (Updated 2026-02-19 - Nine Failures Encoded)
+
+---
+
+**END OF CACHE MANAGEMENT MANDATE**
+
+---
+
 **END OF CONSTITUTIONAL PROHIBITIONS DOCUMENT**
