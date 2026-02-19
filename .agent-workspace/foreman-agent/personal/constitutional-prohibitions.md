@@ -742,3 +742,278 @@ Analysis:
 ---
 
 **END OF WORKFLOW FLAG VALIDATION REQUIREMENT**
+
+---
+
+## IV. CLI DOCUMENTATION VERIFICATION MANDATE (CONSTITUTIONAL)
+
+**Recorded**: 2026-02-19  
+**Authority**: CS2 (Johan Ras), MERGE_GATE_PHILOSOPHY.md v2.0.0  
+**Incident**: Sixth deployment gate failure (Wave 6, 2026-02-19)  
+**Violation**: Used non-existent `--build-env` flag without verification
+
+### The Constitutional Law
+
+**I MUST NEVER use a CLI flag without verifying it exists in documentation.**
+
+Before using ANY command-line flag with ANY tool (vercel, docker, kubectl, npm, etc.), I MUST:
+
+1. Verify the flag exists
+2. Understand its syntax
+3. Read its documentation
+4. Test it locally (if possible)
+
+This is NOT optional. This is NOT "nice to have". This is CONSTITUTIONAL LAW.
+
+### The Protocol (7 Mandatory Steps)
+
+#### 1. Identify CLI Tool
+
+**What I Must Do**:
+- Identify the tool name (e.g., `vercel`, `docker`, `kubectl`)
+- Verify tool version if relevant
+- Note tool installation source
+
+#### 2. Run Help Command
+
+**What I Must Do**:
+```bash
+# For top-level help
+<tool> --help
+
+# For command-specific help
+<tool> <command> --help
+
+# Example
+vercel --help
+vercel build --help
+```
+
+**What to Look For**:
+- List of available flags
+- Flag syntax
+- Flag descriptions
+- Examples
+
+#### 3. Search for Flag
+
+**What I Must Do**:
+```bash
+# Search help output for flag
+<tool> <command> --help | grep <flag-name>
+
+# Example
+vercel build --help | grep build-env
+# If NO output → Flag does NOT exist
+```
+
+**Red Flags**:
+- Flag not in help output → DON'T USE IT
+- Flag deprecated → DON'T USE IT
+- Flag experimental → VERIFY STABILITY
+
+#### 4. Read Official Documentation
+
+**What I Must Do**:
+- Find official docs (e.g., https://vercel.com/docs/cli)
+- Search for flag in docs
+- Read flag description thoroughly
+- Verify syntax and examples
+
+**What I Cannot Claim**:
+- ❌ "I assumed the flag exists"
+- ❌ "Similar tools have this flag"
+- ❌ "Someone told me to use this flag"
+- ❌ "The flag name makes sense"
+
+#### 5. Verify Flag Syntax
+
+**What I Must Check**:
+- Flag accepts arguments? (e.g., `--flag VALUE` vs `--flag`)
+- Arguments required or optional?
+- Argument format (string, number, boolean)?
+- Multiple uses allowed?
+
+**Example**:
+```bash
+# WRONG: Assume syntax
+vercel build --build-env FOO=bar
+
+# CORRECT: Verify first
+vercel build --help | grep build-env
+# NOT FOUND → Flag doesn't exist → Don't use it
+```
+
+#### 6. Test Flag Locally (If Possible)
+
+**What I Must Do** (when CLI available):
+- Install CLI tool locally
+- Run command with flag
+- Verify flag works as expected
+- Document test results
+
+**Example**:
+```bash
+# Install Vercel CLI
+npm install -g vercel
+
+# Test flag locally
+vercel build --build-env TEST=value
+# If error → Flag doesn't exist/wrong syntax
+# If success → Document and proceed
+```
+
+#### 7. Document Verification
+
+**What I Must Record**:
+- Tool name and version
+- Flag name and syntax
+- Docs URL
+- Verification date
+- Test results (if tested locally)
+
+**Example**:
+```markdown
+## Flag Verification Log
+
+**Flag**: `--build-env`  
+**Tool**: vercel build  
+**Docs**: https://vercel.com/docs/cli  
+**Date**: 2026-02-19  
+**Finding**: Flag does NOT exist in Vercel CLI  
+**Action**: Do NOT use this flag  
+```
+
+---
+
+### Examples: WRONG vs CORRECT
+
+#### Example 1: vercel --build-env
+
+❌ **WRONG**:
+```yaml
+# Assume --build-env exists
+run: |
+  vercel build --token=$TOKEN \
+    --build-env FOO=bar \
+    --build-env BAR=baz
+```
+
+✅ **CORRECT**:
+```bash
+# Step 1: Check help
+vercel build --help | grep build-env
+# Output: (nothing)
+
+# Step 2: Read docs
+# https://vercel.com/docs/cli
+
+# Step 3: Finding
+# Flag does NOT exist
+
+# Step 4: Use correct method
+# Environment variables via .env file or Vercel dashboard
+
+# Step 5: Update workflow
+run: vercel build --token=$TOKEN
+# (env vars configured in Vercel dashboard)
+```
+
+#### Example 2: docker --build-arg
+
+❌ **WRONG**:
+```bash
+# Assume --build-arg works
+docker build --build-arg FOO=bar .
+```
+
+✅ **CORRECT**:
+```bash
+# Step 1: Check help
+docker build --help | grep build-arg
+# Output: --build-arg list    Set build-time variables
+
+# Step 2: Read docs
+# https://docs.docker.com/engine/reference/commandline/build/
+
+# Step 3: Verify syntax
+# --build-arg <varname>=<value>
+
+# Step 4: Test locally
+docker build --build-arg FOO=bar .
+# Success!
+
+# Step 5: Document and use
+# Flag exists, syntax correct, tested successfully
+```
+
+---
+
+### Why This Matters
+
+**Sixth Failure Pattern**:
+1. Used `--build-env` flag
+2. Did NOT verify flag exists
+3. Flag doesn't exist in Vercel CLI
+4. Deployment failed
+5. Same verification failure pattern as previous 5 failures
+
+**Root Cause Thread** (All Six Failures):
+- Failure 1-4: vercel.json patterns (didn't read Vercel docs)
+- Failure 5: --build-env (added without verification)
+- Failure 6: --build-env doesn't exist (discovered it never existed)
+
+**Common Thread**: Did NOT read platform documentation before making changes
+
+**Solution**: Make documentation verification CONSTITUTIONAL LAW
+
+---
+
+### Prohibited Behaviors
+
+I MUST NEVER:
+
+1. ❌ Use a CLI flag without verifying it exists
+2. ❌ Assume flag syntax without reading docs
+3. ❌ Copy flags from "guidance" without verification
+4. ❌ Guess at flag behavior based on similar tools
+5. ❌ Skip documentation reading to "save time"
+6. ❌ Use deprecated or experimental flags without approval
+7. ❌ Apply "fixes" without understanding the tool
+8. ❌ Hand over changes using unverified flags
+
+---
+
+### Quick Checklist (Before Using ANY Flag)
+
+Before using `<tool> <command> --<flag>`:
+
+- [ ] Run: `<tool> <command> --help | grep <flag>`
+- [ ] Read: Official docs for `<flag>`
+- [ ] Verify: Flag syntax and arguments
+- [ ] Test: Flag locally (if possible)
+- [ ] Document: Verification results
+- [ ] Confirm: Flag exists and works as expected
+
+**If ANY checkbox is unchecked → DO NOT USE THE FLAG**
+
+---
+
+### Zero Tolerance Policy
+
+**Using unverified CLI flags is a CONSTITUTIONAL VIOLATION.**
+
+**Consequences**:
+- Immediate HALT
+- RCA required
+- Learning documentation required
+- Protocol update required
+- CS2 escalation (if repeated)
+
+**This has happened SIX TIMES. It MUST NOT happen again.**
+
+---
+
+**Authority**: CS2, MERGE_GATE_PHILOSOPHY.md v2.0.0, Stop-and-Fix Doctrine  
+**Last Violation**: 2026-02-19 (Sixth deployment failure)  
+**Status**: PERMANENT, NON-NEGOTIABLE, CONSTITUTIONAL LAW
