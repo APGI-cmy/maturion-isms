@@ -336,3 +336,205 @@ BEFORE I run report_progress:
 ---
 
 **END OF CONSTITUTIONAL PROHIBITION — This is permanent. This is non-negotiable.**
+
+---
+
+## COMMAND ENUMERATION REQUIREMENT (Added 2026-02-19 — Fourth Failure)
+
+**Authority**: CS2 Direct Order, Fourth Gate Failure RCA  
+**Incident**: Fourth deployment failure (vercel.json regex pattern)  
+**Root Cause**: Failed to enumerate EVERY command from workflow YAML
+
+### The Critical Mistake
+
+**What I Did Wrong**:
+- I identified workflow **job names** (lint, typecheck, test, build, deploy-preview)
+- I **assumed** job "build" = single `npm run build` command
+- I **didn't enumerate** line-by-line commands in each job
+- I **missed** `vercel build` command (line 150 in workflow)
+
+**Result**: Fourth consecutive gate failure
+
+---
+
+### The Constitutional Requirement
+
+**BEFORE EVERY HANDOVER**:
+
+I MUST enumerate EVERY command from workflow YAML files (line-by-line).
+
+**Process**:
+1. Open workflow YAML file
+2. Extract EVERY `run:` statement (line-by-line)
+3. Execute EXACT command locally (no substitutions, no assumptions)
+4. Log exit code for EACH command
+5. HALT if ANY command fails
+
+---
+
+### Example: WRONG vs CORRECT
+
+❌ **WRONG APPROACH** (Job Name Enumeration):
+```markdown
+Workflow: deploy-mat-vercel.yml
+Jobs identified:
+1. lint → I'll run `npm run lint` ✅
+2. typecheck → I'll run `npx tsc --noEmit` ✅
+3. test → I'll run `npm test` ✅
+4. build → I'll run `npm run build` ✅
+5. deploy-preview → I'll skip (needs tokens) ❌
+
+Result: 4 commands, but workflow actually has 12 commands
+Missing: vercel build, vercel pull, vercel deploy, etc.
+```
+
+✅ **CORRECT APPROACH** (Command-by-Command Enumeration):
+```markdown
+Workflow: deploy-mat-vercel.yml
+
+Job: lint (lines 26-46)
+- Command 1: cd apps/mat-frontend && npm ci
+- Command 2: cd apps/mat-frontend && npm run lint
+
+Job: typecheck (lines 48-68)
+- Command 3: cd apps/mat-frontend && npm ci
+- Command 4: cd apps/mat-frontend && npx tsc --noEmit
+
+Job: test (lines 70-90)
+- Command 5: cd apps/mat-frontend && npm ci
+- Command 6: cd apps/mat-frontend && npm run test
+
+Job: build (lines 92-124)
+- Command 7: cd apps/mat-frontend && npm ci
+- Command 8: cd apps/mat-frontend && npm run build
+
+Job: deploy-preview (lines 126-173)
+- Command 9: npm install --global vercel@latest
+- Command 10: vercel pull --yes --environment=preview --token=$TOKEN
+- Command 11: vercel build --token=$TOKEN
+- Command 12: vercel deploy --prebuilt --token=$TOKEN
+
+TOTAL: 12 commands to validate
+```
+
+**Key Difference**: 
+- Wrong approach: 4 commands (job names)
+- Correct approach: 12 commands (actual YAML lines)
+- **Missing 8 commands = 67% gate coverage gap**
+
+---
+
+### Why This Matters
+
+**Fourth Failure Analysis**:
+
+1. Workflow line 150: `vercel build --token=$TOKEN`
+2. This command validates vercel.json configuration
+3. I ran `npm run build` (different tool, different validation)
+4. I assumed `npm run build` would catch Vercel config issues (WRONG)
+5. `vercel build` would have caught regex capture group error
+6. I never ran `vercel build` locally
+7. Result: Fourth deployment failure
+
+**The Pattern**:
+- Job names ≠ Command list
+- Must extract line-by-line from YAML
+- Must execute EXACT commands
+- No assumptions about equivalence
+
+---
+
+### Mandatory Steps (Updated Protocol)
+
+**Before EVERY handover**:
+
+1. **Enumerate Commands** (NEW REQUIREMENT):
+   ```bash
+   # Open workflow YAML
+   cat .github/workflows/deploy-mat-vercel.yml
+   
+   # Extract EVERY run: statement
+   grep "run:" .github/workflows/deploy-mat-vercel.yml
+   
+   # Create numbered command list
+   # DO NOT group by job name
+   # DO enumerate line-by-line
+   ```
+
+2. **Install Required CLIs**:
+   ```bash
+   # Identify CLI tools needed
+   # Example: vercel, docker, kubectl, gh, etc.
+   
+   # Install missing tools
+   npm install --global vercel@latest
+   ```
+
+3. **Execute EXACT Commands**:
+   ```bash
+   # Run command 1
+   cd apps/mat-frontend && npm ci
+   echo "Exit code: $?"
+   
+   # Run command 2
+   cd apps/mat-frontend && npm run lint
+   echo "Exit code: $?"
+   
+   # ... continue for ALL commands ...
+   
+   # Run command 11 (the one I missed!)
+   vercel build --token=$TOKEN
+   echo "Exit code: $?"
+   ```
+
+4. **Log Every Command**:
+   ```markdown
+   ## Command 1: npm ci
+   Exit Code: 0 ✅
+   
+   ## Command 2: npm run lint
+   Exit Code: 0 ✅
+   
+   ## Command 11: vercel build
+   Exit Code: 0 ✅
+   
+   TOTAL: 12/12 PASS (100%)
+   ```
+
+---
+
+### Zero Tolerance
+
+**Prohibited**:
+- ❌ Enumerating job names instead of commands
+- ❌ Assuming command equivalence (npm build ≠ vercel build)
+- ❌ Skipping CLI tool installation
+- ❌ Running subset of commands
+
+**Required**:
+- ✅ Line-by-line command extraction from YAML
+- ✅ EXACT command execution (no substitutions)
+- ✅ CLI tool installation if needed
+- ✅ 100% command coverage (ALL commands validated)
+
+---
+
+### Violation Record
+
+**Incident**: 2026-02-19 (Fourth Failure)  
+**Root Cause**: Command enumeration failure  
+**Pattern**: Same mistake, fourth consecutive violation  
+**Lesson**: Job names ≠ Commands. Must enumerate line-by-line.
+
+**Commitment**: I will NEVER enumerate job names instead of commands again.
+
+---
+
+**Authority**: CS2 Direct Order (2026-02-19), MERGE_GATE_PHILOSOPHY.md v2.0.0  
+**Document Version**: 1.1.0 (Updated 2026-02-19)  
+**Status**: PERMANENT (not rotated)  
+**Purpose**: Constitutional compliance, prevent fifth failure
+
+---
+
+**END OF COMMAND ENUMERATION REQUIREMENT**
