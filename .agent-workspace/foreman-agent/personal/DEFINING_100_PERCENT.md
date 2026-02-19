@@ -59,7 +59,8 @@ Each failure revealed a missing component of 100%:
 | 1-4: vercel.json | Platform documentation reading |
 | 5: --build-env | CLI flag verification |
 | 6: Flag doesn't exist | Documentation verification BEFORE use |
-| 7: Secret case | EXACT secret name verification |
+| 7: Secret case (lowercase) | EXACT secret name verification |
+| 8: Secret case (reversal) | Source verification vs error interpretation |
 
 **Pattern**: Each failure ADDS to the definition of 100%
 
@@ -171,6 +172,29 @@ Learning = Closing the Gap
 **Verification**: Flag list + docs verification
 
 **Status**: ✅ DEFINED (Constitutional Section III)
+
+---
+
+### 7. Source Verification vs Error Interpretation (Failure 8 ✅)
+
+**Definition**:
+- Distinguish error message (REQUESTED) from source truth (ACTUAL)
+- Always verify ACTUAL values at SOURCE (GitHub UI, config files, docs)
+- Never assume from error messages alone
+- Ask CS2 or check source directly when in doubt
+
+**Verification**: GitHub Settings UI + CS2 confirmation
+
+**Status**: ✅ DEFINED (Constitutional Section V enhancement) — **NEW (2026-02-19)**
+
+**Example**:
+```
+Error: "Secret does not exist: vite_supabase_url"
+WRONG: Assume secret IS "vite_supabase_url"
+CORRECT: Check GitHub Settings → Discover secret IS "VITE_SUPABASE_URL"
+```
+
+**Principle**: Error message ≠ Source truth. Always verify at source.
 
 ---
 

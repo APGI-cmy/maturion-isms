@@ -1073,47 +1073,74 @@ Secrets Required:
 - ❌ "Someone said they added it"
 - ❌ "It should be named like this"
 
-#### 3. Record EXACT Case
+#### 3. Record EXACT Case FROM SOURCE (Not Error Message)
 
 **Critical**: GitHub secrets are case-sensitive
 
-**What I Must Record**:
-```markdown
-Secret Name in GitHub: vite_supabase_url
-NOT: VITE_SUPABASE_URL
-NOT: Vite_Supabase_Url
-NOT: vite_supabase_URL
+**EIGHTH FAILURE LEARNING** (2026-02-19):
 
-EXACT MATCH REQUIRED
+❌ **WRONG — Trust Error Message**:
+```markdown
+Error: "Secret does not exist: vite_supabase_url"
+Assumption: Secret IS named "vite_supabase_url" (lowercase)
+Action: Change workflow to use lowercase
+Result: FAILURE (made problem worse)
+```
+
+✅ **CORRECT — Verify SOURCE**:
+```markdown
+Error: "Secret does not exist: vite_supabase_url"
+Understanding: Workflow REQUESTED lowercase
+Verification: Check GitHub repo Settings → Secrets
+Discovery: Secret IS "VITE_SUPABASE_URL" (UPPERCASE)
+Action: Change workflow to use UPPERCASE
+Result: SUCCESS
+```
+
+**Critical Distinction**:
+- **Error Message**: Shows what was REQUESTED (workflow syntax)
+- **Actual Source**: Shows what EXISTS (GitHub UI, CS2 confirmation)
+- **Always Verify**: SOURCE (GitHub Settings), not error message
+
+**What I Must Record FROM SOURCE**:
+```markdown
+Secret Name in GitHub (from Settings UI): VITE_SUPABASE_URL
+NOT from error message: vite_supabase_url
+NOT from assumption: vite_api_base_url
+
+EXACT MATCH FROM SOURCE REQUIRED
 ```
 
 **Common Patterns**:
-- GitHub convention: lowercase_with_underscores
-- Vercel convention: UPPERCASE_WITH_UNDERSCORES
-- Environment variable: UPPERCASE_WITH_UNDERSCORES
+- GitHub convention: Can be any case (user-defined)
+- Vercel convention: Usually UPPERCASE_WITH_UNDERSCORES
+- Environment variable: Usually UPPERCASE_WITH_UNDERSCORES
 
-**Rule**: Use GitHub name when referencing `${{ secrets.NAME }}`
+**Rule**: Use EXACT name FROM GITHUB SETTINGS (not error message)
 
-#### 4. Reference with EXACT Case
+#### 4. Reference with EXACT Case FROM SOURCE
 
 **What I Must Do**:
 ```yaml
-# CORRECT: Match GitHub secret name exactly
+# CORRECT: Match GitHub secret name exactly FROM SOURCE
+env:
+  VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}  # Uppercase from GitHub
+  
+# WRONG: Different case (lowercase, but GitHub has uppercase)
 env:
   VITE_SUPABASE_URL: ${{ secrets.vite_supabase_url }}
-  
-# WRONG: Different case
-env:
-  VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
 ```
 
 **Template**:
 ```yaml
 env:
-  [ENV_VAR_NAME]: ${{ secrets.[exact_github_secret_name] }}
+  [ENV_VAR_NAME]: ${{ secrets.[EXACT_NAME_FROM_GITHUB_SETTINGS] }}
 ```
 
-**Note**: Environment variable name (left) can differ from secret name (right)
+**Note**: 
+- Environment variable name (left) is for application use
+- Secret reference (right) MUST match GitHub Settings EXACTLY
+- Case sensitivity applies to secret reference ONLY
 
 #### 5. Understand Platform Differences
 
