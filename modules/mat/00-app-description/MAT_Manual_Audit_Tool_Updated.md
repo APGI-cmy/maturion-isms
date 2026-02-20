@@ -303,7 +303,7 @@ model via the AI routing table (TR-040). The default agent is the General Assist
 (routine tasks, GPT-4o Mini). Specialised agents (scoring, document parsing, report
 generation) route to GPT-4 Turbo.
 
-**Reference**: FRS FR-072, TRS TR-071, MANDATORY_CROSS_APP_COMPONENTS.md §13
+**Reference**: FRS FR-072, TRS TR-072, MANDATORY_CROSS_APP_COMPONENTS.md §13
 
 ------------------------------------------------------------------------
 
