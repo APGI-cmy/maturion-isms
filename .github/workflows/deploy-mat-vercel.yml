@@ -143,13 +143,23 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Clear Vercel Cache
+      - name: Create Vercel project configuration
         run: |
-          rm -rf .vercel
-          echo "Cleared cached Vercel configuration to force fresh pull"
+          mkdir -p .vercel
+          jq -n \
+            --arg orgId "${{ env.VERCEL_ORG_ID }}" \
+            --arg projectId "${{ env.VERCEL_PROJECT_ID }}" \
+            '{"orgId": $orgId, "projectId": $projectId}' \
+            > .vercel/project.json
 
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Create environment file from GitHub Secrets
+        working-directory: apps/mat-frontend
+        run: |
+          cat > .env << EOF
+          VITE_SUPABASE_URL="${{ secrets.VITE_SUPABASE_URL }}"
+          VITE_SUPABASE_ANON_KEY="${{ secrets.VITE_SUPABASE_ANON_KEY }}"
+          VITE_API_BASE_URL="${{ secrets.VITE_API_BASE_URL }}"
+          EOF
 
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
@@ -193,13 +203,23 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Clear Vercel Cache
+      - name: Create Vercel project configuration
         run: |
-          rm -rf .vercel
-          echo "Cleared cached Vercel configuration to force fresh pull"
+          mkdir -p .vercel
+          jq -n \
+            --arg orgId "${{ env.VERCEL_ORG_ID }}" \
+            --arg projectId "${{ env.VERCEL_PROJECT_ID }}" \
+            '{"orgId": $orgId, "projectId": $projectId}' \
+            > .vercel/project.json
 
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Create environment file from GitHub Secrets
+        working-directory: apps/mat-frontend
+        run: |
+          cat > .env << EOF
+          VITE_SUPABASE_URL="${{ secrets.VITE_SUPABASE_URL }}"
+          VITE_SUPABASE_ANON_KEY="${{ secrets.VITE_SUPABASE_ANON_KEY }}"
+          VITE_API_BASE_URL="${{ secrets.VITE_API_BASE_URL }}"
+          EOF
 
       - name: Build Project Artifacts
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
