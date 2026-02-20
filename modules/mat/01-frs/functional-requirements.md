@@ -1347,13 +1347,13 @@ The system MUST provide an embedded AI assistant panel accessible from every MAT
 **Acceptance Criteria**:
 1. A collapsible AI assistant panel is rendered in the application layout and accessible from every page.
 2. The panel exposes agent/model selection: users can choose from at minimum: General Assistant (routine), Scoring Assistant (scoring), Document Parser (document_parsing), and Report Writer (report_generation).
-3. The selected agent/model routes through the AI Gateway per TR-040 (AI Model Routing Configuration).
-4. All AI invocations from the assistant are logged per FR-029 (AI Invocation Logging).
-5. The panel renders contextual placeholder state when the AI Gateway is unavailable (graceful degradation).
+3. The selected agent/model selection is captured and made available for routing through the AI Gateway per TR-040 (AI Model Routing Configuration) when gateway integration is wired in a future wave.
+4. The panel structure supports AI invocation logging per FR-029 when gateway integration is wired.
+5. The panel renders placeholder responses (UI scaffold) until AI Gateway integration is complete. Runtime gateway unavailability handling is deferred to a future wave.
 6. The assistant is keyboard-navigable and WCAG 2.1 AA compliant per FR-065.
 
 **Edge Cases**:
-- AI Gateway unavailable: panel shows degraded mode message, does not crash the application.
+- AI Gateway not yet integrated: panel renders placeholder responses, application does not crash.
 - No agent selected: defaults to General Assistant (routine task type).
 
 ---

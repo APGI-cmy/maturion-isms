@@ -1335,8 +1335,8 @@ The MAT frontend MUST include an embedded AI assistant React component accessibl
 2. Agent/model selection: The component MUST expose a selector for at least 4 pre-configured agents derived from the AI routing table (TR-040): General Assistant (routine), Scoring Assistant (scoring), Document Parser (document_parsing), Report Writer (report_generation).
 3. Chat UI: The component MUST provide a collapsible panel containing a message history log, text input, and send control.
 4. Layout wiring: The component MUST be rendered in the application Layout so it is present on every authenticated page.
-5. Routing: All assistant requests MUST specify the selected agent's `taskType` so the AI Gateway (TR-003) can route to the correct model per TR-040.
-6. Graceful degradation: When the AI Gateway is unavailable the panel MUST display a placeholder/degraded-mode message without crashing the application (TR-009).
+5. Routing: The component MUST capture the selected agent's `taskType` so it is available for AI Gateway routing (TR-003, TR-040) when gateway integration is wired in a future wave.
+6. UI scaffold: The current implementation renders placeholder responses. Runtime AI Gateway call, error handling, and gateway-unavailability UX are deferred to a future wave and MUST NOT be claimed as implemented until that wave is complete.
 7. Accessibility: The panel MUST include ARIA labels, `aria-expanded`, `role="dialog"`, `role="log"` per WCAG 2.1 AA (TR-035).
 8. No secrets exposed in frontend: API keys MUST NOT be included in the React bundle; all AI requests go through the server-side gateway.
 

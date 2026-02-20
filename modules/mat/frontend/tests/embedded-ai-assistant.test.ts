@@ -94,7 +94,7 @@ describe('CAT-FE-13: embedded AI assistant — LL-031 platform standard (FR-072)
 
     // Check types file
     const typesCandidates = [
-      resolve(APP_ROOT, '../../src/types/index.ts'),
+      resolve(APP_ROOT, '../src/types/index.ts'),
     ];
     const typesPath = typesCandidates.find((p) => existsSync(p));
     if (typesPath) {

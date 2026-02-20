@@ -2,10 +2,10 @@
  * Embedded AI Assistant Component
  * Platform Standard: LL-031 (Maturion/Platform/AI-Standard)
  * FRS: FR-072 (Embedded AI Assistant)
- * TRS: TR-071
+ * TRS: TR-072
  *
- * Provides a collapsible chat panel with agent/model selection, giving users
- * contextual AI assistance throughout the MAT workflow.
+ * UI scaffold: provides a collapsible chat panel with agent/model selection.
+ * Responses are placeholders until AI Gateway integration is wired (future wave).
  */
 import { useState, useRef, useEffect } from 'react';
 
@@ -164,7 +164,7 @@ export function EmbeddedAIAssistant({
           {/* Header with agent/model selector */}
           <div className="ai-assistant-header">
             <span className="ai-assistant-title">AI Assistant</span>
-            {/* Agent/model selection (FR-072 AC-2, TR-071 Constraint 2) */}
+            {/* Agent/model selection (FR-072 AC-2, TR-072 Constraint 2) */}
             <select
               className="ai-agent-selector"
               value={selectedAgentId}
