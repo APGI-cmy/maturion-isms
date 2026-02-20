@@ -25,6 +25,10 @@ pnpm-debug.log*
 .env
 .env*.local
 
+# MAT frontend env files (modules/mat/frontend)
+modules/mat/frontend/.env
+modules/mat/frontend/.env.local
+
 # Vercel
 .vercel
 
