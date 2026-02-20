@@ -102,10 +102,11 @@ describe('CAT-FE-13: embedded AI assistant — LL-031 platform standard (FR-072)
       expect(content).toMatch(/['"]assistant['"]/);
     }
 
-    // Check the component itself exports routing-aware agent options
-    const componentPath = resolve(SRC_DIR, 'components/common/EmbeddedAIAssistant.tsx');
-    expect(existsSync(componentPath)).toBe(true);
-    const content = readFileSync(componentPath, 'utf-8');
+    // Check the config file exports routing-aware agent options
+    // (constants live in aiAssistantConfig.ts; component re-exports them)
+    const configPath = resolve(SRC_DIR, 'components/common/aiAssistantConfig.ts');
+    expect(existsSync(configPath)).toBe(true);
+    const content = readFileSync(configPath, 'utf-8');
     // Must reference task types that correspond to AI_ROUTING_TABLE entries
     expect(content).toMatch(/taskType/);
     expect(content).toMatch(/primaryModel/);
