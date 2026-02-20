@@ -3,7 +3,7 @@
 **Module**: MAT (Manual Audit Tool)
 **Artifact Type**: Functional Requirements Specification
 **Status**: COMPLETE
-**Version**: v1.1.0
+**Version**: v1.2.0
 **Owner**: Foreman (FM)
 **Authority**: Derived from App Description v1.2 (modules/mat/00-app-description/app-description.md)
 **Applies To**: MAT module within maturion-isms repository
@@ -1337,7 +1337,28 @@ All UI components, pages, and user workflows specified in FR-001 through FR-069 
 
 ---
 
-## Traceability Matrix
+### FR-072: Embedded AI Assistant
+
+**Priority**: P0
+**Source**: App Description §13 (Embedded AI Assistant), Maturion Platform Standard LL-031, MANDATORY_CROSS_APP_COMPONENTS.md §13
+
+The system MUST provide an embedded AI assistant panel accessible from every MAT frontend page, with agent/model selection logic aligned to the platform AI routing standard.
+
+**Acceptance Criteria**:
+1. A collapsible AI assistant panel is rendered in the application layout and accessible from every page.
+2. The panel exposes agent/model selection: users can choose from at minimum: General Assistant (routine), Scoring Assistant (scoring), Document Parser (document_parsing), and Report Writer (report_generation).
+3. The selected agent/model routes through the AI Gateway per TR-040 (AI Model Routing Configuration).
+4. All AI invocations from the assistant are logged per FR-029 (AI Invocation Logging).
+5. The panel renders contextual placeholder state when the AI Gateway is unavailable (graceful degradation).
+6. The assistant is keyboard-navigable and WCAG 2.1 AA compliant per FR-065.
+
+**Edge Cases**:
+- AI Gateway unavailable: panel shows degraded mode message, does not crash the application.
+- No agent selected: defaults to General Assistant (routine task type).
+
+---
+
+
 
 The following matrix links each FRS requirement to the source section(s) in the App Description.
 
@@ -1414,6 +1435,7 @@ The following matrix links each FRS requirement to the source section(s) in the 
 | FR-069 | §3.3.1 | Concurrent Users |
 | FR-070 | §16.3, §19.7, TRS TR-001, TR-006 | Frontend Application Scaffolding |
 | FR-071 | §2–§12, §16.2, §19.7 | Frontend Application Wiring |
+| FR-072 | §13, LL-031, MANDATORY_CROSS_APP_COMPONENTS.md §13 | Embedded AI Assistant |
 
 ---
 
@@ -1426,7 +1448,7 @@ The following matrix links each FRS requirement to the source section(s) in the 
 | P2 | 7 | Nice to Have — Future extensions |
 
 ### P0 Requirements (Must Have)
-FR-001 through FR-017, FR-019, FR-020, FR-022 through FR-025, FR-027, FR-028 through FR-030, FR-033 through FR-040, FR-042 through FR-054, FR-062, FR-066, FR-070, FR-071
+FR-001 through FR-017, FR-019, FR-020, FR-022 through FR-025, FR-027, FR-028 through FR-030, FR-033 through FR-040, FR-042 through FR-054, FR-062, FR-066, FR-070, FR-071, FR-072
 
 ### P1 Requirements (Should Have)
 FR-003, FR-018, FR-021, FR-026, FR-031, FR-032, FR-041, FR-055, FR-059 through FR-061, FR-063 through FR-065, FR-067 through FR-069
@@ -1463,6 +1485,7 @@ This FRS is derived from the MAT App Description v1.2 (`modules/mat/00-app-descr
 **Next Stage**: This FRS feeds into the TRS (Technical Requirements Specification) at `modules/mat/01.5-trs/`.
 
 **Change Log**:
+- v1.2.0 (2026-02-20): Added FR-072 (Embedded AI Assistant) per platform governance blocker LL-031. See BUILD_PROGRESS_TRACKER.md INC-002.
 - v1.1.0 (2026-02-16): Added FR-070, FR-071 (Frontend Application Delivery) per governance remediation. See BUILD_PROGRESS_TRACKER.md Deviation #9.
 - v1.0.0 (2026-02-13): Initial FRS with 69 requirements (FR-001–FR-069).
 

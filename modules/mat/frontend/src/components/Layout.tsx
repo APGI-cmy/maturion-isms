@@ -1,5 +1,6 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
+import { EmbeddedAIAssistant } from './common/EmbeddedAIAssistant';
 
 export function Layout() {
   const location = useLocation();
@@ -95,6 +96,9 @@ export function Layout() {
           <Outlet />
         </main>
       </div>
+
+      {/* Embedded AI Assistant — Platform Standard LL-031 */}
+      <EmbeddedAIAssistant />
     </div>
   );
 }

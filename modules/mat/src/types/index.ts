@@ -460,7 +460,8 @@ export type AITaskType =
   | 'scoring'
   | 'image_analysis'
   | 'report_generation'
-  | 'routine';
+  | 'routine'
+  | 'assistant';
 
 export interface AIRoutingConfig {
   task_type: AITaskType;
