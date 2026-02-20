@@ -99,6 +99,29 @@
       "canonical_commit": "df7a0985cdcdcb498fca170eff997b0d7189acb1",
       "files_updated": 3,
       "status": "SUCCESS"
+    },
+    {
+      "timestamp": "2026-02-20T13:03:00Z",
+      "session_id": "align-20260220-130300",
+      "type": "layer-down",
+      "canonical_source": "APGI-cmy/maturion-foreman-governance",
+      "canonical_commit": "513ff44c47c3bb5d2bb52fe8077ff6d3aec298db",
+      "issue_ref": "APGI-cmy/maturion-isms#1169",
+      "files_updated": 8,
+      "files": [
+        "governance/canon/ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md",
+        "governance/canon/AGENT_DELEGATION_PROTOCOL.md",
+        "governance/canon/MULTI_EMBODIMENT_ORCHESTRATION_MODEL.md",
+        "governance/checklists/ORCHESTRATOR_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md",
+        "governance/checklists/SPECIALIST_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md",
+        "governance/templates/ORCHESTRATOR_AGENT_TEMPLATE.md",
+        "governance/templates/SPECIALIST_AGENT_TEMPLATE.md",
+        "governance/templates/DELEGATION_PROTOCOL_IMPLEMENTATION_GUIDE.md"
+      ],
+      "canon_inventory_updated": true,
+      "new_canon_inventory_version": "1.1.0",
+      "status": "SUCCESS",
+      "notes": "Phase 1.5 layer-down: orchestrator/specialist architecture governance artifacts synced from canonical source. Unblocks issue #353 and subsequent phases."
     }
   ]
 }
