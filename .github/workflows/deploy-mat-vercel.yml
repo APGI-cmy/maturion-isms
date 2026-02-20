@@ -5,14 +5,14 @@ on:
     branches:
       - main
     paths:
-      - 'apps/mat-frontend/**'
+      - 'modules/mat/frontend/**'
       - 'vercel.json'
       - '.github/workflows/deploy-mat-vercel.yml'
   pull_request:
     branches:
       - main
     paths:
-      - 'apps/mat-frontend/**'
+      - 'modules/mat/frontend/**'
       - 'vercel.json'
       - '.github/workflows/deploy-mat-vercel.yml'
   workflow_dispatch:
@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: apps/mat-frontend
+        working-directory: modules/mat/frontend
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: apps/mat-frontend
+        working-directory: modules/mat/frontend
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -72,7 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: apps/mat-frontend
+        working-directory: modules/mat/frontend
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -95,7 +95,7 @@ jobs:
     needs: [lint, typecheck, test]
     defaults:
       run:
-        working-directory: apps/mat-frontend
+        working-directory: modules/mat/frontend
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -120,7 +120,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mat-frontend-dist
-          path: apps/mat-frontend/dist/
+          path: modules/mat/frontend/dist/
           retention-days: 7
 
   deploy-preview:

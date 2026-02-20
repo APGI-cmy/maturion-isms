@@ -2,7 +2,7 @@
  * MAT Frontend QA-to-Red Test Suite — CAT-FE-01: Frontend Application Scaffolding
  *
  * QA-to-Red: Tests define expected behavior for FR-070 (Frontend Scaffolding).
- * Status at creation: RED — apps/mat-frontend/ application not yet scaffolded.
+ * Status at creation: RED — modules/mat/frontend/ application not yet scaffolded.
  *
  * FRS: FR-070 (Frontend Application Scaffolding and Packaging)
  * TRS: TR-001, TR-006
@@ -15,7 +15,7 @@ import { resolve } from 'path';
 const APP_ROOT = resolve(__dirname, '..');
 
 describe('CAT-FE-01: frontend application scaffolding (FR-070)', () => {
-  it('MAT-FE-T-001: React 18+ application exists at apps/mat-frontend/', () => {
+  it('MAT-FE-T-001: React 18+ application exists at modules/mat/frontend/', () => {
     // FRS: FR-070 AC-1
     // TRS: TR-001
     // Type: structural | Priority: P0
@@ -34,12 +34,12 @@ describe('CAT-FE-01: frontend application scaffolding (FR-070)', () => {
     // Type: structural | Priority: P0
     // Status: RED — not yet registered in workspace
 
-    const workspacePath = resolve(APP_ROOT, '../../pnpm-workspace.yaml');
+    const workspacePath = resolve(APP_ROOT, '../../../pnpm-workspace.yaml');
     expect(existsSync(workspacePath)).toBe(true);
 
     const content = readFileSync(workspacePath, 'utf-8');
-    // workspace should include apps/* which covers apps/mat-frontend
-    expect(content).toMatch(/apps\/\*/);
+    // workspace should include modules/mat/frontend
+    expect(content).toMatch(/modules\/mat\/frontend/);
   });
 
   it('MAT-FE-T-003: TypeScript strict mode enabled', () => {
