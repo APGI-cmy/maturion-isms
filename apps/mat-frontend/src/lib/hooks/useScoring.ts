@@ -37,6 +37,24 @@ export interface ReviewTableRow {
   confidence: number;
 }
 
+interface ScoreWithCriteria {
+  id: string;
+  maturity_level: number;
+  confidence: number;
+  confirmed: boolean;
+  override_score?: number;
+  criteria: {
+    id: string;
+    number: string;
+    title: string;
+    audit_id: string;
+  };
+}
+
+interface EvidenceCount {
+  criterion_id: string;
+}
+
 /**
  * Fetch scores for an audit (review table data)
  */
@@ -71,29 +89,32 @@ export function useAuditScores(auditId: string) {
       const { data: evidenceCounts, error: evidenceError } = await supabase
         .from('evidence')
         .select('criterion_id')
-        .in('criterion_id', (data || []).map((s: any) => s.criteria.id));
+        .in('criterion_id', (data || []).map((s) => (s as unknown as ScoreWithCriteria).criteria.id));
 
       if (evidenceError) {
         console.warn('Failed to fetch evidence counts:', evidenceError);
       }
 
       // Count evidence per criterion
-      const evidenceMap = (evidenceCounts || []).reduce((acc: any, item: any) => {
+      const evidenceMap = (evidenceCounts || []).reduce((acc: Record<string, number>, item: EvidenceCount) => {
         acc[item.criterion_id] = (acc[item.criterion_id] || 0) + 1;
         return acc;
       }, {});
 
       // Transform to review table format
-      return (data || []).map((score: any) => ({
-        id: score.id,
-        criterion_number: score.criteria.number,
-        criterion_title: score.criteria.title,
-        ai_score: score.maturity_level,
-        human_score: score.override_score,
-        evidence_count: evidenceMap[score.criteria.id] || 0,
-        status: score.override_score ? 'overridden' : score.confirmed ? 'confirmed' : 'pending',
-        confidence: score.confidence,
-      }));
+      return (data || []).map((score) => {
+        const typedScore = score as unknown as ScoreWithCriteria;
+        return {
+          id: typedScore.id,
+          criterion_number: typedScore.criteria.number,
+          criterion_title: typedScore.criteria.title,
+          ai_score: typedScore.maturity_level,
+          human_score: typedScore.override_score,
+          evidence_count: evidenceMap[typedScore.criteria.id] || 0,
+          status: typedScore.override_score ? 'overridden' as const : typedScore.confirmed ? 'confirmed' as const : 'pending' as const,
+          confidence: typedScore.confidence,
+        };
+      });
     },
     enabled: !!auditId,
   });
