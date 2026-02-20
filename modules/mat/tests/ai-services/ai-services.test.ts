@@ -259,7 +259,7 @@ describe('CAT-04: ai services', () => {
 
     // Full routing table
     const table = getRoutingTable();
-    expect(table.length).toBe(6);
+    expect(table.length).toBe(7);
   });
 
   it('MAT-T-0029: AI Invocation Logging', () => {

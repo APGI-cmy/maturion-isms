@@ -239,6 +239,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] Wave 5.5: Frontend Application Assembly — 29 tests GREEN (ui-builder)
 - [x] Wave 5.6: UI Component Wiring & Data Integration — 0 tests (wiring validation via browser testing)
 - [x] **FCWT: Final Complete Wave Test** — 127 tests GREEN, application fully functional (2026-02-18)
+- [x] **INC-002: LL-031 Platform Blocker — Embedded AI Assistant** — FR-072/TR-072 added, component implemented, 77 frontend tests GREEN (2026-02-20)
 - [ ] Wave 6: Deployment & Commissioning (Vercel provisioning, staging validation, production deployment, CWT on production, formal sign-over)
 
 **Wave 0 Test Coverage (31 tests GREEN)** — PRs #140, #142:

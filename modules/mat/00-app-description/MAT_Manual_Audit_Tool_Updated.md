@@ -283,4 +283,28 @@ Architecture must remain modular and extensible.
 
 ------------------------------------------------------------------------
 
+## 13. Embedded AI Assistant (Platform Standard LL-031)
+
+**Platform Requirement**: MANDATORY — Maturion/Platform/AI-Standard (LL-031)
+
+All MAT frontend application pages MUST include an embedded AI assistant panel that:
+
+-   Is accessible from every page via a persistent, collapsible UI panel
+-   Allows the user to select an AI agent/model optimised for their current task
+    (e.g. Scoring Assistant, Document Parser, Report Writer, General Assistant)
+-   Provides contextual AI guidance and Q&A within the audit workflow
+-   Routes all requests through the platform AI Gateway per TR-040 (AI Model Routing)
+-   Logs every invocation per FR-029 (AI Invocation Logging)
+-   Complies with WCAG 2.1 AA accessibility requirements (FR-065)
+
+**Agent/Model Selection**:  
+Users MUST be able to select from available AI agents, each mapped to an underlying
+model via the AI routing table (TR-040). The default agent is the General Assistant
+(routine tasks, GPT-4o Mini). Specialised agents (scoring, document parsing, report
+generation) route to GPT-4 Turbo.
+
+**Reference**: FRS FR-072, TRS TR-072, MANDATORY_CROSS_APP_COMPONENTS.md §13
+
+------------------------------------------------------------------------
+
 ## End of Document

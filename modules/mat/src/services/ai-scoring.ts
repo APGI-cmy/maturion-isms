@@ -351,7 +351,8 @@ const AI_ROUTING_TABLE: AIRoutingConfig[] = [
   { task_type: 'scoring', primary_model: 'gpt-4-turbo', fallback_model: 'gpt-4o-mini', max_tokens: 2048, temperature: 0.2 },
   { task_type: 'image_analysis', primary_model: 'gpt-4-vision-preview', fallback_model: 'gpt-4-turbo', max_tokens: 2048, temperature: 0.1 },
   { task_type: 'report_generation', primary_model: 'gpt-4-turbo', fallback_model: 'gpt-4o-mini', max_tokens: 8192, temperature: 0.3 },
-  { task_type: 'routine', primary_model: 'gpt-4o-mini', fallback_model: null, max_tokens: 1024, temperature: 0.1 }
+  { task_type: 'routine', primary_model: 'gpt-4o-mini', fallback_model: null, max_tokens: 1024, temperature: 0.1 },
+  { task_type: 'assistant', primary_model: 'gpt-4-turbo', fallback_model: 'gpt-4o-mini', max_tokens: 2048, temperature: 0.7 }
 ];
 
 /**
