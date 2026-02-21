@@ -1,1 +1,66 @@
+name: Model Scaling Check
 
+# Authority: CodexAdvisor-agent.md, LIVING_AGENT_SYSTEM.md v6.2.0
+# Purpose: Validate agent contract files do not exceed the 30,000 character
+#          limit (GitHub UI selectability requirement per CodexAdvisor-agent.md)
+# Ref: Phase 3.5 gate fix - model-scaling-check was previously empty
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  agent-file-size-check:
+    name: "model-scaling/agent-file-size"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check Agent File Sizes (30K limit)
+        run: |
+          echo "=== Model Scaling Check: Agent File Size Validation ==="
+          echo "Limit: 30,000 chars (GitHub UI selectability requirement)"
+          echo "Authority: CodexAdvisor-agent.md"
+          echo ""
+
+          VIOLATION_FOUND=false
+
+          for file in .github/agents/*.md; do
+            if [ ! -f "$file" ]; then
+              continue
+            fi
+            # Only check agent contract files (have YAML frontmatter)
+            if head -1 "$file" | grep -q "^---"; then
+              SIZE=$(wc -c < "$file")
+              if [ "$SIZE" -gt 30000 ]; then
+                echo "❌ OVER LIMIT: $file ($SIZE chars > 30,000)"
+                VIOLATION_FOUND=true
+              else
+                echo "✅ OK: $(basename $file) ($SIZE chars)"
+              fi
+            else
+              echo "ℹ️  SKIPPED: $(basename $file) (no YAML frontmatter)"
+            fi
+          done
+
+          echo ""
+
+          if [ "$VIOLATION_FOUND" = true ]; then
+            echo "❌ AGENT FILE SIZE VIOLATION"
+            echo ""
+            echo "Agent files must not exceed 30,000 characters."
+            echo "GitHub UI selectability breaks for files > 30K chars."
+            echo ""
+            echo "Remediation: use references instead of embedding full"
+            echo "content. See CodexAdvisor-agent.md size reduction strategies."
+            exit 1
+          else
+            echo "✅ PASSED: All agent contract files within 30,000 char limit"
+          fi
