@@ -145,11 +145,13 @@ metadata:
 
 1. Run final Quality Professor check: 100% GREEN, zero test debt, all evidence artifacts present
 2. Verdict PASS → generate evidence bundle per `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md`
-3. Create session memory: `.agent-workspace/foreman-v2/memory/session-NNN-YYYYMMDD.md`
+3. Create PREHANDOVER proof: `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-NNN-YYYYMMDD.md`
+   - Required fields: checklist compliance %, character count, bundle completeness, CANON_INVENTORY alignment
+4. Create session memory: `.agent-workspace/foreman-v2/memory/session-NNN-YYYYMMDD.md`
    - Template: `governance/canon/AGENT_HANDOVER_AUTOMATION.md`
    - Required fields: `roles_invoked`, `mode_transitions`, `escalations_triggered`, `separation_violations_detected`
-4. Release merge gate
-5. Verdict FAIL → remediation order → DO NOT release merge gate
+5. Release merge gate
+6. Verdict FAIL → remediation order → DO NOT release merge gate
 
 ---
 

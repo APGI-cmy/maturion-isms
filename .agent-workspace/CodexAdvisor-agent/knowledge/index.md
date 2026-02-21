@@ -41,6 +41,8 @@ CodexAdvisor operates in RAEC pattern:
 
 **After every agent file creation: mandatory QP self-evaluation before handover.**
 
+**Memory protocol enforcement**: Every agent PR MUST include session memory + PREHANDOVER proof (for contract/metadata changes). No PR is complete without these artifacts. See `governance/canon/AGENT_HANDOVER_AUTOMATION.md` and `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md`.
+
 ---
 
 ## Checklists Location

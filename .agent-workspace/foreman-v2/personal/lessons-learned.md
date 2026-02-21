@@ -28,3 +28,15 @@
 ---
 
 **Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
+
+## Session 2026-02-21 (Session 046 — retroactive lesson via session-020 CodexAdvisor)
+
+### Lesson: Contract Changes Require PREHANDOVER Proof — No Exceptions
+- **Context**: session-046 fixed the `model:` field placement in foreman-v2-agent.md (a contract change) but did not create a PREHANDOVER proof
+- **Pattern**: "Small" contract changes (single field move, minor metadata fix) still require PREHANDOVER proof because they modify the constitutional agent contract
+- **Action**: For every session that modifies `.github/agents/foreman-v2-agent.md`, generate: (1) session memory, (2) PREHANDOVER proof — before submitting the PR
+- **Evidence**: CS2 Issue "Fix and enforce agent memory protocol"; PREHANDOVER-session-046-20260221.md created retroactively by CodexAdvisor session-020
+- **Governance refs**: `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md`, Phase 4 of foreman-v2-agent.md contract
+
+---
+Updated: Session 046 (retroactive) | Date: 2026-02-21 | Agent: foreman-v2
