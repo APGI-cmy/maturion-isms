@@ -1,178 +1,252 @@
-# Orchestrator Agent Contract Requirements Checklist
+# ORCHESTRATOR AGENT CONTRACT REQUIREMENTS CHECKLIST
 
-**Status:** Reference checklist for orchestrator agent contract drafting  
-**Purpose:** One-stop "definition of done" for a compliant orchestrator agent contract  
-**Authority:** CS2 (Johan Ras)  
-**Derived From:** LIVING_AGENT_SYSTEM.md v6.2.0, ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md v1.0.0
-
----
-
-## Category 0 — Identity & Canonical Bindings (Component 1: Preflight)
-
-- [ ] **Frontmatter matches baseline**: `agent.id=<orchestrator-id>`, `agent.class=orchestrator`, `agent.version=6.2.0`, `governance.protocol=LIVING_AGENT_SYSTEM`
-- [ ] **Consumer mode YAML**: `scope.repositories=[APGI-cmy/maturion-isms]`, `metadata.canonical_home=APGI-cmy/maturion-foreman-governance`, `metadata.this_copy=consumer`
-- [ ] **Core mandatory bindings**: Canon Inventory (`governance/CANON_INVENTORY.json`), Orchestrator Architecture (`ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md`), Delegation Protocol (`AGENT_DELEGATION_PROTOCOL.md`), Multi-Embodiment Model (`MULTI_EMBODIMENT_ORCHESTRATION_MODEL.md`)
-- [ ] **Constitutional bindings declared**: All 13 Maturion constitutional docs referenced (`Maturion/maturion-identity.md`, `maturion-true-north.md`, `oversight-system.md`, `maturion-self-learning-governance.md`, `maturion-memory-architecture.md`, `guardrails-and-safety-charter.md`, etc.)
-- [ ] **Four-component contract pattern**: `metadata.contract_pattern=four_component_canonical` declared in frontmatter
-- [ ] **Degraded mode semantics**: `degraded_on_placeholder_hashes: true` in frontmatter
+**Status**: Canonical Governance Validation Checklist  
+**Version**: 1.0.0  
+**Authority**: CS2 (Johan Ras)  
+**Created**: 2026-02-20  
+**Last Updated**: 2026-02-20  
+**Purpose**: Machine-checkable checklist of MANDATORY elements for Orchestrator agent contract compliance with Living Agent System v6.2.0
 
 ---
 
-## Category 1 — Authority, Scope & Boundaries (Component 1: Preflight)
+## Executive Summary
 
-- [ ] **Orchestrator authority recorded**: Coordinate specialists, synthesize multi-specialist responses, maintain cross-app session continuity, enforce constitutional guardrails (`ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md` Section 2.1)
-- [ ] **Explicit prohibitions**: Orchestrator does NOT implement domain logic directly (delegates to specialists), bypass validation gates, modify own contract, approve PRs, modify governance/ directory
-- [ ] **Authority chain captured**: CS2 → Orchestrator → Specialists; orchestrator coordinates specialists, cannot bypass watchdogs
-- [ ] **Authority model**: RAEC (Review-Advise-Escalate-Coordinate)
-- [ ] **Scope boundaries**: Cross-app orchestration (MAT, PIT, XDETECT, Builder, Command), specialist coordination, constitutional alignment enforcement
+This document provides a **machine-checkable binding checklist** that defines the **MANDATORY elements** that MUST appear in any Orchestrator agent contract for the agent to be considered **fully compliant** with Living Agent System v6.2.0.
 
----
+**Critical Principle**: An Orchestrator contract is INCOMPLETE and the agent is OUT OF GOVERNANCE if ANY required element is missing or non-compliant.
 
-## Category 2 — Specialist Registry (Component 1: Preflight)
-
-- [ ] **Specialist registry defined**: Location `.agent-workspace/<orchestrator-id>/knowledge/specialist-registry.md`
-- [ ] **Registry format**: For each specialist: id, domain, expertise, apps, routing keywords, status, version, contract path
-- [ ] **Registry management protocol**: Add specialist, update specialist, decommission specialist, archive specialist
-- [ ] **Initial registry state**: Empty (ready for Phase 3 specialist registration) OR populated with Phase 3 MVP specialists (risk-platform-agent, mat-specialist, criteria-generator-agent)
+This checklist implements:
+- Living Agent System v6.2.0 (orchestrator-specific requirements)
+- Orchestrator/specialist architecture governance (ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md)
+- Delegation protocol compliance (AGENT_DELEGATION_PROTOCOL.md)
+- Multi-embodiment model compliance (MULTI_EMBODIMENT_ORCHESTRATION_MODEL.md)
+- 30,000 Character Limit Enforcement
 
 ---
 
-## Category 3 — Delegation Protocol (Component 3: During Process - Orchestration)
+## Usage Instructions
 
-- [ ] **Delegation request format implemented**: JSON schema (from, to, task, transparency, context, input, requirements) per `AGENT_DELEGATION_PROTOCOL.md` Section 2
-- [ ] **Delegation response format implemented**: JSON schema (status, output, metadata, validation) per `AGENT_DELEGATION_PROTOCOL.md` Section 3
-- [ ] **Transparency decision criteria defined**: Transparent vs. invisible delegation rules documented (`AGENT_DELEGATION_PROTOCOL.md` Section 4)
-- [ ] **Pre-delegation validation gates**: Guardian (policy/content), Arbiter (knowledge base integrity)
-- [ ] **Post-delegation validation gates**: Guardian (output scan), Sentinel (behavioral consistency), Arbiter (memory boundaries)
-- [ ] **Error handling protocol**: Specialist unavailable, out-of-scope, watchdog violation handling (`AGENT_DELEGATION_PROTOCOL.md` Section 7)
+### For Contract Authors
 
----
+When creating or updating an Orchestrator contract:
+1. Verify ALL checklist items are present and compliant
+2. Mark items as ✅ (present) or ❌ (missing)
+3. Contract is VALID only if ALL required items are ✅
+4. Character count MUST be < 30,000 (GitHub UI selectability)
 
-## Category 4 — Validation Gates (Component 3: During Process - Orchestration)
+### For Validation Tooling
 
-- [ ] **Guardian enforcement**: Cross-tenant leakage prevention, forbidden content blocking, policy compliance validation (`Maturion/oversight-system.md` Section 3)
-- [ ] **Sentinel enforcement**: Behavioral drift detection, anomaly monitoring, performance consistency (`Maturion/oversight-system.md` Section 4)
-- [ ] **Arbiter enforcement**: Memory boundary protection, knowledge contamination prevention, unauthorized learning blocking (`Maturion/oversight-system.md` Section 5)
-- [ ] **Watchdog violation handling**: Block output, log IWMS incident, escalate to CS2, return safe alternative response
-
----
-
-## Category 5 — Multi-Specialist Chaining (Component 3: During Process - Orchestration)
-
-- [ ] **Chain definition logic**: Complex task requiring multiple specialists in sequence
-- [ ] **Chain execution protocol**: Plan chain → Execute steps → Validate at each step → Synthesize final response (`AGENT_DELEGATION_PROTOCOL.md` Section 6.2)
-- [ ] **Chain failure handling**: Stop chain, capture partial results, return to user with context, offer retry
-- [ ] **Chain validation gates**: Pre-delegation and post-delegation validation at each step
-- [ ] **Chain logging**: Log complete chain in session memory (delegation sequence, timings, validations)
+Automated validators MUST:
+1. Parse agent contract file (.github/agents/[orchestrator-name].agent.md)
+2. Verify each checklist item
+3. Validate character count < 30,000
+4. Return VALID only if 100% compliance achieved
+5. Block recruitment if validation fails
 
 ---
 
-## Category 6 — Routing Intelligence (Component 3: During Process - Orchestration)
+## SECTION 1: MANDATORY COMPONENTS
 
-- [ ] **Query analysis**: Intent detection, domain classification, specialist selection
-- [ ] **Routing rules defined**: Location `.agent-workspace/<orchestrator-id>/knowledge/routing-rules.md`
-- [ ] **Routing logic documented**: Keyword matching, app context, user role, multi-specialist chaining triggers
-- [ ] **Fallback logic**: No specialist available → Direct response or escalate
-- [ ] **App-context routing**: App → specialist mapping (MAT → mat-specialist, PIT → risk-platform-agent, etc.) per `MULTI_EMBODIMENT_ORCHESTRATION_MODEL.md` Section 6
+### 1.1 YAML Frontmatter
+
+- **Requirement**: MANDATORY
+- **Validation**: Valid YAML with ALL required fields
+- **Required Fields**:
+  - `id: [orchestrator-id]`
+  - `description: [mission statement]`
+  - `agent.id: [orchestrator-id]`
+  - `agent.class: orchestrator`
+  - `agent.version: 6.2.0`
+  - `governance.protocol: LIVING_AGENT_SYSTEM`
+  - `governance.canon_inventory: governance/CANON_INVENTORY.json`
+  - `governance.expected_artifacts: [list]`
+  - `governance.degraded_on_placeholder_hashes: true`
+  - `execution_identity.name: "Maturion Bot"`
+  - `execution_identity.secret: "[secret-name]"`
+  - `execution_identity.never_push_main: true`
+  - `execution_identity.write_via_pr: true`
+  - `orchestrator.principal: [CS2|foreman-id]`
+  - `orchestrator.specialist_registry: governance/AGENT_REGISTRY.json`
+  - `orchestrator.max_concurrent_specialists: [N]`
+  - `orchestrator.delegation_log_path: .agent-admin/delegations/`
+  - `prohibitions: [list]`
+  - `metadata.canonical_home: [repo]`
+  - `metadata.this_copy: canonical`
+  - `metadata.authority: CS2`
+  - `metadata.last_updated: YYYY-MM-DD`
+- **Severity if Missing**: BLOCKER - Cannot parse agent configuration
+
+### 1.2 Mission Statement
+
+- **Requirement**: MANDATORY
+- **Validation**: Clear mission aligned to orchestrator role
+- **Required Elements**:
+  - Scope of coordination (which domains/specialists)
+  - Principal authority source (CS2 or specific Foreman)
+  - Critical invariant: "ORCHESTRATOR NEVER EXECUTES SPECIALIST-DOMAIN WORK DIRECTLY"
+- **Severity if Missing**: HIGH - Agent purpose unclear
+
+### 1.3 Phase 1: Preflight (Identity & Constraints)
+
+- **Requirement**: MANDATORY
+- **Validation**: Contains complete preflight section
+- **Required Elements**:
+  - Identity & Authority: orchestrator role, delegated-from principal
+  - Critical Invariants (negative examples with ❌/✅):
+    - ❌ WRONG: Orchestrator performs specialist domain work
+    - ✅ CORRECT: Orchestrator delegates and integrates
+  - Canonical Governance Bindings: references to ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md
+  - Degraded mode triggers: missing specialist, degraded CANON_INVENTORY
+- **Severity if Missing**: BLOCKER - Agent behavioral constraints not established
+
+### 1.4 Phase 2: Induction (Dynamic Context Loading)
+
+- **Requirement**: MANDATORY
+- **Validation**: Contains executable induction script
+- **Required Elements**:
+  - Wake-up protocol reference: `.github/scripts/wake-up-protocol.sh [orchestrator-id]`
+  - Specialist registry load: verify all registered specialists exist in `AGENT_REGISTRY.json`
+  - CANON_INVENTORY integrity check: no placeholder PUBLIC_API hashes
+  - Authority grant verification: confirm principal authorization exists
+  - Working contract generation
+- **Severity if Missing**: BLOCKER - Agent cannot initialize with correct specialist context
+
+### 1.5 Phase 3: Build (Orchestration Execution)
+
+- **Requirement**: MANDATORY
+- **Validation**: Contains priority-coded orchestration scripts
+- **Required Sections**:
+  - ORC_H (High): Task decomposition → specialist delegation → failure handling
+  - ORC_M (Medium): Monitoring, result integration, delegation log
+  - ORC_L (Low): Optimization, reporting, lessons capture
+- **Required Patterns**:
+  - Pre-delegation validation protocol (per AGENT_DELEGATION_PROTOCOL.md)
+  - Delegation package construction
+  - Parallel vs sequential execution decision logic
+  - Stop-and-fix trigger (≥2 specialist failures)
+  - Result integration gate
+- **Severity if Missing**: BLOCKER - Agent cannot perform orchestration work
+
+### 1.6 Phase 4: Handover (Evidence & Closure)
+
+- **Requirement**: MANDATORY
+- **Validation**: Contains automated handover script
+- **Required Evidence Artifacts**:
+  - Delegation log: `.agent-admin/delegations/log-<timestamp>.json`
+  - Consolidated result package: `.agent-admin/prehandover/proof-<timestamp>.md`
+  - Session memory: `.agent-workspace/[orchestrator-id]/memory/session-NNN-YYYYMMDD.md`
+  - Specialist evidence references (all embodiments)
+- **Severity if Missing**: HIGH - Cannot demonstrate governance compliance
+
+### 1.7 Delegation Protocol Compliance
+
+- **Requirement**: MANDATORY
+- **Validation**: Contract references and implements AGENT_DELEGATION_PROTOCOL.md
+- **Required Elements**:
+  - Pre-delegation validation script
+  - Delegation package JSON structure
+  - Specialist result acceptance criteria
+  - Audit trail commitment (.agent-admin/delegations/)
+- **Severity if Missing**: BLOCKER - Delegation not governed
+
+### 1.8 Specialist Registry Declaration
+
+- **Requirement**: MANDATORY
+- **Validation**: Orchestrator declares which specialists it coordinates
+- **Required Declaration**:
+  - Each specialist's agent-id
+  - Each specialist's primary domain
+  - Each specialist's `AGENT_REGISTRY.json` entry reference
+  - max_concurrent_specialists declared
+- **Severity if Missing**: HIGH - Specialist scope undefined
+
+### 1.9 Prohibited Behaviors
+
+- **Requirement**: MANDATORY
+- **Validation**: All core prohibitions listed
+- **Required Prohibitions**:
+  - No execution of specialist-domain work directly
+  - No delegation to unregistered specialists
+  - No scope expansion after delegation issued
+  - No authority grants exceeding principal authorization
+  - No silent failures (all failures logged and escalated)
+  - No pushing to main (use PRs)
+  - No self-extension of scope/authority
+- **Severity if Missing**: BLOCKER - Agent may violate governance
 
 ---
 
-## Category 7 — Session Memory (Component 4: Closure - Quality Assurance)
+## SECTION 2: ORCHESTRATOR-SPECIFIC REQUIREMENTS
 
-- [ ] **Session memory protocol**: Template reference for creating session memory files in `.agent-workspace/<orchestrator-id>/memory/session-NNN-YYYYMMDD.md`
-- [ ] **Memory rotation**: When >5 sessions exist, move oldest to `.archive/` subdirectory
-- [ ] **Delegation log included**: Timestamp, specialist, task, transparency mode, status, execution time, validation results (`AGENT_DELEGATION_PROTOCOL.md` Section 8.1)
-- [ ] **Cross-app insights captured**: Learnings from one app applied to another app context
-- [ ] **Unified session across apps**: Session ID persists across app switches (MAT → PIT → XDETECT)
+### 2.1 Multi-Embodiment Compliance
 
----
+- **Requirement**: MANDATORY when `max_concurrent_specialists > 1`
+- **Validation**: Contract references MULTI_EMBODIMENT_ORCHESTRATION_MODEL.md
+- **Required Elements**:
+  - Embodiment identity model (embodiment_id generation)
+  - Parallel execution conditions
+  - State isolation protocol
+  - Conflict detection and escalation
+- **Severity if Missing**: HIGH - Multi-embodiment not governed
 
-## Category 8 — Cross-App Context Awareness (Component 2: Induction - Session Initialization)
+### 2.2 Stop-and-Fix Integration
 
-- [ ] **App context model defined**: Supported apps (MAT, PIT, XDETECT, Maturity Roadmap, Builder, Command) per `MULTI_EMBODIMENT_ORCHESTRATION_MODEL.md` Section 2
-- [ ] **App context detection**: Explicit parameter, route-based, session history, default fallback
-- [ ] **Embodiment switching**: Risk-Maturion, Builder-Maturion, Command-Maturion based on app context (`MULTI_EMBODIMENT_ORCHESTRATION_MODEL.md` Section 3)
-- [ ] **App-specific knowledge loading**: Dynamic loading based on app context (e.g., MAT → mat-workflows.md)
-- [ ] **Cross-app session continuity**: Unified session memory, cross-app learning, context awareness across apps
+- **Requirement**: MANDATORY
+- **Validation**: Contract references STOP_AND_FIX_DOCTRINE.md
+- **Trigger Condition**: ≥2 specialist FAILED/ESCALATED in same session
+- **Required Action**: Halt all delegation, invoke stop-and-fix, escalate to principal
+- **Severity if Missing**: HIGH - Failure cascade not prevented
 
----
+### 2.3 Authority Chain Documentation
 
-## Category 9 — Constitutional Alignment (Component 1: Preflight)
-
-- [ ] **Identity consistency verification**: ONE identity across all apps (no separate mat-maturion, pit-maturion) per `Maturion/maturion-identity.md` Section 3
-- [ ] **Unified memory framework**: ONE memory framework across all apps per `Maturion/maturion-identity.md` Section 5
-- [ ] **Ethical framework enforcement**: ONE ethical framework (same guardrails in all apps) per `Maturion/maturion-identity.md` Section 6
-- [ ] **Risk-oriented worldview**: ISMS ontology (threats, vulnerabilities, controls) per `Maturion/maturion-true-north.md` Section 3.5
-- [ ] **Situational awareness check**: App, user, module, operational state known per `Maturion/maturion-true-north.md` Section 3.4
-- [ ] **Constitutional bindings documented**: Location `.agent-workspace/<orchestrator-id>/knowledge/constitutional-bindings.md` with all 13 Maturion docs and their behavioral constraints
-
----
-
-## Category 10 — File Size & Format Compliance
-
-- [ ] **Character limit**: Contract file <30,000 characters (GitHub UI selectability requirement)
-- [ ] **Compact formatting**: Use references to canonical documentation instead of duplication
-- [ ] **4 mandatory components**: Component 1 (Preflight & Governance Alignment), Component 2 (Induction - Session Initialization), Component 3 (During Process - Orchestration), Component 4 (Closure - Quality Assurance)
-- [ ] **Canonical references**: Enumerated list of all canonical governance files, not full descriptions
+- **Requirement**: MANDATORY
+- **Validation**: Authority chain documented in preflight
+- **Required**: CS2 approval reference, Foreman authorization (if applicable), specialist registry source
+- **Severity if Missing**: BLOCKER - Authority unclear
 
 ---
 
-## Category 11 — Governance Sync & Merge Gates (Component 1: Preflight)
+## SECTION 3: VALIDATION REQUIREMENTS
 
-- [ ] **Ripple mindset**: Assume non-local impact, surface ripples explicitly
-- [ ] **Consumer-mode ripple**: Receive-only ripple events from canonical source
-- [ ] **Merge Gate Interface**: Required checks listed: `Merge Gate Interface / merge-gate/verdict`, `Merge Gate Interface / governance/alignment`, `Merge Gate Interface / stop-and-fix/enforcement`
-- [ ] **Stop-and-Fix enforcement**: Constitutional violations → halt and escalate
+### 3.1 File Size Validation
 
----
+- **Requirement**: MANDATORY (BLOCKING)
+- **Validation**: Character count MUST be < 30,000
+- **Enforcement**: Pre-PR creation validation
+- **Test Command**: `wc -m < .github/agents/[orchestrator-name].agent.md`
+- **Severity if Exceeded**: BLOCKER
 
-## Category 12 — Escalation & Prohibitions (Component 1: Preflight)
+### 3.2 Version Consistency
 
-- [ ] **Escalation authority**: CS2 (Johan Ras)
-- [ ] **Escalation rules**: Constitutional violation → halt_and_escalate, Specialist unavailable → document_and_escalate, Watchdog violation → halt_and_escalate
-- [ ] **LOCKED: Self-modification prohibition**: Orchestrator may NEVER modify own contract file; include LOCKED section with Lock ID, Authority (CS2), Review frequency
-- [ ] **Consumer-specific prohibitions**: No modification of `governance/` directory (receive-only), no bypassing governance alignment gate, no creating governance canon, no dispatching ripple events
+- **Requirement**: MANDATORY
+- **Validation**: All version references MUST be v6.2.0
+- **Check Locations**: YAML frontmatter, session memory template, authority footer
+- **Severity if Inconsistent**: HIGH
 
----
+### 3.3 Agent Registry Reference
 
-## Category 13 — Wake-Up & Knowledge Base (Component 2: Induction)
-
-- [ ] **Wake-up protocol**: Reference to `.github/scripts/wake-up-protocol.sh <orchestrator-id>`
-- [ ] **Load order**: Canon Inventory, Orchestrator Architecture, Delegation Protocol, Multi-Embodiment Model, Constitutional Bindings, Specialist Registry, Routing Rules
-- [ ] **Knowledge base location**: `.agent-workspace/<orchestrator-id>/knowledge/`
-- [ ] **Knowledge base files**: `specialist-registry.md`, `routing-rules.md`, `constitutional-bindings.md`, app-specific knowledge (e.g., `mat-workflows.md`)
-
----
-
-## Category 14 — Evidence & Quality Metrics (Component 4: Closure)
-
-- [ ] **PREHANDOVER evidence**: Issue PREHANDOVER_PROOF before task completion
-- [ ] **Quality metrics logged**: Routing accuracy (>90%), Validation pass rate (>98%), Multi-specialist chain success rate (>85%) per `ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md` Section 12
-- [ ] **Session memory capture**: Modified files list, actions taken, decisions made, delegation log, cross-app insights
-- [ ] **Outcome status**: COMPLETE / PARTIAL / ESCALATED
+- **Requirement**: MANDATORY
+- **Validation**: Specialist registry references `AGENT_REGISTRY.json` (not CANON_INVENTORY)
+- **Rationale**: CANON_INVENTORY is an artifact inventory; AGENT_REGISTRY.json is the agent operational registry. See `governance/canon/AGENT_REGISTRY_ARCHITECTURE.md`.
+- **Severity if Missing**: HIGH
 
 ---
 
-## Usage
+## VALIDATION SUMMARY
 
-**Treat every unchecked item as a blocker for orchestrator contract readiness.**
-
-**Cite the listed source in the contract section that satisfies the item.**
-
-**If a required source is unavailable or hash-mismatched, halt and escalate per Category 12.**
+**Total Required Sections**: 9 mandatory components + 3 orchestrator-specific + 3 validation  
+**Compliance Threshold**: 100% (ALL items MUST be ✅)  
+**Character Limit**: < 30,000 characters (BLOCKING)  
+**Version Requirement**: Living Agent System v6.2.0  
+**CS2 Authorization**: REQUIRED for all orchestrator contract creation/modification
 
 ---
 
-**Alignment Notes:**
-- Derived from LIVING_AGENT_SYSTEM.md v6.2.0
-- Adapted for Orchestrator agent class (cross-app coordination, specialist management)
-- All canonical references updated to match maturion-isms governance structure
-- Maintains comprehensive category-based organization (Categories 0-14)
-- Every checklist item includes explicit canonical source citations
-- Consumer repository context: Governance canon flows from APGI-cmy/maturion-foreman-governance
-- Four-Component architecture integration (Preflight → Induction → During Process → Closure)
-- Enforces Orchestrator-specific constraints (specialist coordination, constitutional alignment, cross-app continuity)
+## Authority
 
-**Version:** 1.0.0  
-**Date:** 2026-02-20  
-**Authority:** LIVING_AGENT_SYSTEM.md v6.2.0, ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md v1.0.0
+**Living Agent System**: v6.2.0  
+**Checklist Version**: 1.0.0  
+**Authority**: CS2 (Johan Ras)  
+**Canonical Home**: APGI-cmy/maturion-foreman-governance  
+**Last Updated**: 2026-02-20  
+**Review Frequency**: Quarterly
