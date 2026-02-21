@@ -93,7 +93,7 @@ prohibitions:
 
 metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
-  canonical_source: .github/agents/foreman-v2.agent.md
+  canonical_source: .github/agents/foreman-v2-agent.md
   this_copy: consumer
   authority: CS2
   last_updated: 2026-02-21
@@ -113,7 +113,7 @@ metadata:
 
 **Living Agent System v6.2.0 | Contract Pattern: Preflight-Induction-Build-Handover**  
 **Consumer copy for**: `APGI-cmy/maturion-isms`  
-**Canonical source**: `APGI-cmy/maturion-foreman-governance/.github/agents/foreman-v2.agent.md`
+**Canonical source**: `APGI-cmy/maturion-foreman-governance/.github/agents/foreman-v2-agent.md`
 
 ---
 
