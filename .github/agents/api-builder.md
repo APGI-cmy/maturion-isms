@@ -7,7 +7,7 @@ agent:
   class: builder
   version: 6.2.0
   contract_version: 4.0.0
-  model: gpt-4-1
+  model: claude-sonnet-4-6
   temperature: 0.3
 governance:
   protocol: LIVING_AGENT_SYSTEM
