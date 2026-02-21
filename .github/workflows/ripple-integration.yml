@@ -1,0 +1,378 @@
+name: Ripple Integration
+
+# TERMINOLOGY (per ECOSYSTEM_VOCABULARY.md v1.1.0 and LAYERING_AND_RIPPLING_AUTOMATION_STRATEGY.md v1.0.0):
+# - LAYERING DOWN : Cross-repo distribution of governance artefacts (upstream — foreman-governance repo).
+# - RIPPLING      : Within-repo integration/synchronisation — this workflow.
+#
+# This workflow is the consumer-side listener.  It is triggered by the GitHub issues
+# that the upstream `governance-layer-down-dispatch.yml` workflow creates in this repo
+# (labels: governance + layer-down).  It then:
+#   1. Runs the existing align-governance.sh script to pull canonical changes.
+#   2. Detects whether any .github/agents/*.md files are in the diff.
+#   3. If agent files changed  → creates a DRAFT ripple PR + escalation doc (CS2 gate).
+#   4. If no agent files       → creates a normal ripple PR and enables auto-merge.
+#   5. Comments on the issue with the outcome.
+#
+# Authority: LAYERING_AND_RIPPLING_AUTOMATION_STRATEGY.md v1.0.0
+#            CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md
+#            CS2_AGENT_FILE_AUTHORITY_MODEL.md
+
+on:
+  issues:
+    types: [opened, edited, labeled]
+
+  # Manual trigger (testing / re-runs)
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Layer-down issue number to process'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  # ──────────────────────────────────────────────────────────────
+  # GATE: only process issues that carry both governance labels
+  # ──────────────────────────────────────────────────────────────
+  check-labels:
+    name: Check Issue Labels
+    runs-on: ubuntu-latest
+    outputs:
+      should_process: ${{ steps.check.outputs.should_process }}
+    steps:
+      - name: Evaluate labels
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_process=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          HAS_GOVERNANCE="${{ contains(github.event.issue.labels.*.name, 'governance') }}"
+          HAS_LAYERDOWN="${{ contains(github.event.issue.labels.*.name, 'layer-down') }}"
+
+          if [ "$HAS_GOVERNANCE" = "true" ] && [ "$HAS_LAYERDOWN" = "true" ]; then
+            echo "should_process=true" >> $GITHUB_OUTPUT
+            echo "Issue carries governance + layer-down labels — proceeding"
+          else
+            echo "should_process=false" >> $GITHUB_OUTPUT
+            echo "Issue does not carry both required labels — skipping"
+          fi
+
+  # ──────────────────────────────────────────────────────────────
+  # MAIN: ripple integration
+  # ──────────────────────────────────────────────────────────────
+  ripple-integration:
+    name: Ripple Integration
+    runs-on: ubuntu-latest
+    needs: check-labels
+    if: needs.check-labels.outputs.should_process == 'true'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "Maturion Bot"
+          git config --global user.email "bot@maturion.ai"
+
+      # ── Resolve the issue number regardless of trigger type ──
+      - name: Resolve issue number
+        id: issue
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "number=${{ github.event.inputs.issue_number }}" >> $GITHUB_OUTPUT
+          else
+            echo "number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+          fi
+
+      # ── Detect agent-file gate from issue body ──
+      - name: Detect agent file gate
+        id: agent_gate
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+        run: |
+          ISSUE_BODY=$(gh issue view "${{ steps.issue.outputs.number }}" \
+            --repo ${{ github.repository }} \
+            --json body --jq '.body' 2>/dev/null || echo "")
+
+          if echo "$ISSUE_BODY" | grep -q "Agent File Detection Gate"; then
+            echo "agent_files_changed=true" >> $GITHUB_OUTPUT
+            echo "Agent File Detection Gate found in issue — CS2 escalation required"
+          else
+            echo "agent_files_changed=false" >> $GITHUB_OUTPUT
+            echo "No Agent File Detection Gate in issue — standard ripple path"
+          fi
+
+      # ── Run canonical alignment script ──
+      - name: Run governance alignment
+        id: align
+        run: |
+          set +e
+          bash .github/scripts/align-governance.sh
+          EXIT_CODE=$?
+
+          if [ $EXIT_CODE -eq 0 ]; then
+            if git status --porcelain | grep -q '^'; then
+              echo "drift_detected=true" >> $GITHUB_OUTPUT
+            else
+              echo "drift_detected=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "alignment script exited with code $EXIT_CODE"
+            exit $EXIT_CODE
+          fi
+
+      # ── Verify changed files for agent contracts (git diff check) ──
+      - name: Check diff for agent contracts
+        id: diff_check
+        if: steps.align.outputs.drift_detected == 'true'
+        run: |
+          AGENT_DIFF=$(git diff --name-only HEAD | grep -E '^\.github/agents/.*\.md$' || true)
+          if [ -n "$AGENT_DIFF" ]; then
+            echo "has_agent_files=true" >> $GITHUB_OUTPUT
+            echo "Agent contract files in diff: $AGENT_DIFF"
+          else
+            echo "has_agent_files=false" >> $GITHUB_OUTPUT
+          fi
+
+      # ── Determine final escalation decision ──
+      - name: Determine escalation
+        id: escalation
+        run: |
+          GATE="${{ steps.agent_gate.outputs.agent_files_changed }}"
+          DIFF="${{ steps.diff_check.outputs.has_agent_files }}"
+          if [ "$GATE" = "true" ] || [ "$DIFF" = "true" ]; then
+            echo "require_cs2=true" >> $GITHUB_OUTPUT
+          else
+            echo "require_cs2=false" >> $GITHUB_OUTPUT
+          fi
+
+      # ── Collect alignment metadata ──
+      - name: Collect alignment metadata
+        id: metadata
+        if: steps.align.outputs.drift_detected == 'true'
+        run: |
+          DRIFT_REPORT=$(ls -t .agent-admin/governance/drift-report-*.md 2>/dev/null | head -1)
+          if [ -n "$DRIFT_REPORT" ]; then
+            CANONICAL_COMMIT=$(grep "Canonical Commit" "$DRIFT_REPORT" | sed 's/.*: //')
+            CANONICAL_VERSION=$(grep "Canonical Version" "$DRIFT_REPORT" | sed 's/.*: //')
+            FILES_UPDATED=$(grep "Files Layered Down" "$DRIFT_REPORT" | sed 's/.*: //')
+            echo "canonical_commit=$CANONICAL_COMMIT" >> $GITHUB_OUTPUT
+            echo "canonical_version=$CANONICAL_VERSION" >> $GITHUB_OUTPUT
+            echo "files_updated=$FILES_UPDATED" >> $GITHUB_OUTPUT
+            echo "drift_report=$DRIFT_REPORT" >> $GITHUB_OUTPUT
+          fi
+
+      # ── Create escalation document when agent files touched ──
+      - name: Create escalation document
+        if: >
+          steps.align.outputs.drift_detected == 'true' &&
+          steps.escalation.outputs.require_cs2 == 'true'
+        run: |
+          DATESTAMP=$(date -u +"%Y-%m-%d")
+          INBOX=".agent-workspace/governance-liaison/escalation-inbox"
+          mkdir -p "$INBOX"
+          ESCALATION_FILE="${INBOX}/agent-contract-ripple-escalation-${DATESTAMP}.md"
+
+          cat > "$ESCALATION_FILE" <<EOF
+          # Escalation: Agent Contract Ripple — CS2 Approval Required
+
+          ## Type
+          BLOCKER
+
+          ## Description
+          A governance layer-down triggered a ripple that includes changes to
+          agent contract files (`.github/agents/*.md`).
+
+          Per **CS2_AGENT_FILE_AUTHORITY_MODEL.md** and
+          **AGENT_CONTRACT_PROTECTION_PROTOCOL.md**, only CS2 (Johan Ras) may
+          approve and merge changes to agent contracts.
+
+          **The ripple PR has been created as DRAFT and must not be merged until
+          CS2 explicitly approves it.**
+
+          ## Context
+          - Session: ripple-integration-${{ github.run_id }}
+          - Triggered by: Issue #${{ steps.issue.outputs.number }}
+          - Canonical commit: ${{ steps.metadata.outputs.canonical_commit }}
+          - Canonical version: ${{ steps.metadata.outputs.canonical_version }}
+          - Files updated: ${{ steps.metadata.outputs.files_updated }}
+          - Drift report: ${{ steps.metadata.outputs.drift_report }}
+
+          ## Recommendation
+          1. CS2 reviews the DRAFT ripple PR
+          2. CS2 approves and merges after review
+          3. Move this file to \`escalation-archive/\` after resolution
+
+          ## Evidence
+          - Drift report: \`${{ steps.metadata.outputs.drift_report }}\`
+          - Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          ---
+          Created: $DATESTAMP | Authority: CS2 | Session: ${{ github.run_id }}
+          EOF
+
+          echo "Escalation document created: $ESCALATION_FILE"
+
+      # ── Create PR (DRAFT if CS2 required, normal otherwise) ──
+      - name: Create ripple PR
+        if: steps.align.outputs.drift_detected == 'true'
+        id: create_pr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          commit-message: |
+            Ripple: propagate governance layer-down (issue #${{ steps.issue.outputs.number }})
+
+            Canonical commit: ${{ steps.metadata.outputs.canonical_commit }}
+            Files updated: ${{ steps.metadata.outputs.files_updated }}
+            Agent files changed: ${{ steps.escalation.outputs.require_cs2 }}
+          branch: ripple/layer-down-${{ github.run_id }}
+          force-push: true
+          delete-branch: true
+          draft: ${{ steps.escalation.outputs.require_cs2 == 'true' }}
+          title: >-
+            ${{ steps.escalation.outputs.require_cs2 == 'true' &&
+              '[Ripple][DRAFT — CS2 Required] Propagate governance layer-down' ||
+              '[Ripple] Propagate governance layer-down' }}
+          body: |
+            ## Ripple Integration
+
+            This PR propagates governance artefacts from the upstream layer-down.
+
+            ### Source
+            - **Layer-down issue**: #${{ steps.issue.outputs.number }}
+            - **Canonical commit**: `${{ steps.metadata.outputs.canonical_commit }}`
+            - **Canonical version**: `${{ steps.metadata.outputs.canonical_version }}`
+            - **Files updated**: ${{ steps.metadata.outputs.files_updated }}
+            - **Drift report**: `${{ steps.metadata.outputs.drift_report }}`
+
+            ### Agent File Gate
+            ${{ steps.escalation.outputs.require_cs2 == 'true' &&
+              '⛔ **Agent contract files changed — CS2 approval required.**  Auto-merge is DISABLED.  See `.agent-workspace/governance-liaison/escalation-inbox/` for escalation document.' ||
+              '✅ No agent contract files changed — standard auto-merge path.' }}
+
+            ### Governance Alignment Protocol
+
+            Per **CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md**:
+            1. ✅ Layer-down issue received
+            2. ✅ Drift detected via align-governance.sh
+            3. ✅ Files layered down with SHA256 verification
+            4. ✅ sync_state.json and CANON_INVENTORY.json updated
+            5. ✅ Evidence artefacts in `.agent-admin/governance/`
+
+            ---
+            **Authority**: LAYERING_AND_RIPPLING_AUTOMATION_STRATEGY.md v1.0.0  
+            **Workflow**: `.github/workflows/ripple-integration.yml`  
+            **Closes**: #${{ steps.issue.outputs.number }}
+          labels: |
+            governance
+            ripple
+            automated
+            agent:liaison
+          assignees: APGI-cmy
+
+      # ── Record layer-down receipt ──
+      - name: Record layer-down receipt
+        if: steps.align.outputs.drift_detected == 'true'
+        run: |
+          mkdir -p .agent-admin/ripple
+          DATESTAMP=$(date -u +%Y%m%dT%H%M%SZ)
+          RECORD=".agent-admin/ripple/layer-down-received-${DATESTAMP}.json"
+          cat > "$RECORD" <<EOF
+          {
+            "schema_version": "1.0.0",
+            "type": "layer_down_received",
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "source_issue": "${{ steps.issue.outputs.number }}",
+            "canonical_commit": "${{ steps.metadata.outputs.canonical_commit }}",
+            "requires_cs2_approval": ${{ steps.escalation.outputs.require_cs2 }},
+            "ripple_pr": "${{ steps.create_pr.outputs.pull-request-number }}",
+            "escalated": ${{ steps.escalation.outputs.require_cs2 }}
+          }
+          EOF
+          echo "Receipt recorded: $RECORD"
+
+      # ── Enable auto-merge only when no CS2 gate required ──
+      - name: Enable auto-merge
+        if: >
+          steps.align.outputs.drift_detected == 'true' &&
+          steps.escalation.outputs.require_cs2 == 'false' &&
+          steps.create_pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+        run: |
+          PR_NUMBER="${{ steps.create_pr.outputs.pull-request-number }}"
+          echo "Enabling auto-merge for ripple PR #$PR_NUMBER"
+          gh pr merge "$PR_NUMBER" \
+            --repo ${{ github.repository }} \
+            --auto \
+            --squash \
+            --delete-branch || echo "Auto-merge could not be enabled — branch protection may require checks to pass first"
+
+      # ── Comment on the issue ──
+      - name: Comment on issue
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+        run: |
+          DRIFT="${{ steps.align.outputs.drift_detected }}"
+          REQUIRE_CS2="${{ steps.escalation.outputs.require_cs2 }}"
+          PR_NUMBER="${{ steps.create_pr.outputs.pull-request-number }}"
+
+          if [ "$DRIFT" = "true" ] && [ -n "$PR_NUMBER" ]; then
+            if [ "$REQUIRE_CS2" = "true" ]; then
+              COMMENT="## 🔒 Ripple Integration — CS2 Escalation Required
+
+          Governance drift was detected and a **DRAFT** ripple PR has been created.
+
+          **Agent contract files are in the changeset. Only CS2 (Johan Ras) may approve and merge.**
+
+          - Ripple PR: #${PR_NUMBER} (DRAFT — awaiting CS2 approval)
+          - Escalation doc: \`.agent-workspace/governance-liaison/escalation-inbox/\`
+          - Canonical commit: \`${{ steps.metadata.outputs.canonical_commit }}\`
+
+          ---
+          *Governance Liaison — ripple-integration.yml*"
+            else
+              COMMENT="## ✅ Ripple Integration — Auto-Merge Enabled
+
+          Governance drift was detected and a ripple PR has been created.
+
+          - Ripple PR: #${PR_NUMBER}
+          - Canonical commit: \`${{ steps.metadata.outputs.canonical_commit }}\`
+          - Files updated: ${{ steps.metadata.outputs.files_updated }}
+          - Auto-merge: **enabled** (no agent contract files changed)
+
+          ---
+          *Governance Liaison — ripple-integration.yml*"
+            fi
+          elif [ "$DRIFT" = "false" ]; then
+            COMMENT="## ✅ Ripple Integration — No Drift Detected
+
+          Governance is already aligned with canonical source. No PR required.
+
+          ---
+          *Governance Liaison — ripple-integration.yml*"
+          else
+            COMMENT="## ⚠️ Ripple Integration — Alignment Script Error
+
+          The alignment script encountered an error. Check the workflow run for details:
+          ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          ---
+          *Governance Liaison — ripple-integration.yml*"
+          fi
+
+          gh issue comment "${{ steps.issue.outputs.number }}" \
+            --repo ${{ github.repository }} \
+            --body "$COMMENT" || echo "Could not comment on issue"
