@@ -3,24 +3,23 @@
 **Purpose:** Active specialists available to Maturion orchestrator  
 **Location:** `.agent-workspace/maturion-agent/knowledge/specialist-registry.md`  
 **Authority:** CS2 (Johan Ras)  
-**Status:** Phase 2 (Empty - ready for Phase 3 specialist registration)
+**Status:** Phase 3.5 (6 MAT specialist stubs registered)
 
 ---
 
 ## Active Specialists
 
-**Current Status:** No specialists registered yet (Phase 3 pending)
-
-**Phase 3 MVP Specialists (To Be Registered):**
+**Current Status:** 6 MAT specialist stubs registered (Phase 3.5). Full activation Phase 3 MVP.
 
 ### 1. risk-platform-agent
 - **Domain:** Risk management, threat analysis, vulnerability assessment, control frameworks
 - **Expertise:** Threat taxonomies (insider, external, cyber, physical), control effectiveness, risk scoring, incident classification
-- **Apps:** ALL (MAT, PIT, XDETECT, Maturity Roadmap, Builder, Command)
+- **Apps:** MAT, PIT, XDETECT, Maturity Roadmap
 - **Routing Keywords:** threat, vulnerability, risk, control, incident, mitigation, attack, exploit, breach, exposure
-- **Status:** PENDING (Phase 3)
-- **Version:** TBD
-- **Contract:** `.github/agents/risk-platform-agent.md` (to be created)
+- **Status:** STUB (Phase 3.5 — full activation Phase 3 MVP)
+- **Version:** 1.0.0
+- **Contract:** `.github/agents/risk-platform-agent.md`
+- **Domain Flag Index:** `.agent-workspace/maturion-agent/knowledge/domain-flag-index.md` → "Risk & Threat Analysis"
 
 ---
 
@@ -29,42 +28,78 @@
 - **Expertise:** Domain → MPS → Criteria structure, maturity scoring, evidence collection, audit planning, compliance mapping
 - **Apps:** MAT
 - **Routing Keywords:** MAT, LDCS, audit, criteria, MPS, domain, maturity, assessment, evidence, compliance, ISO, NIST
-- **Status:** PENDING (Phase 3)
-- **Version:** TBD
-- **Contract:** `.github/agents/mat-specialist.md` (to be created)
+- **Status:** STUB (Phase 3.5 — full activation Phase 3 MVP)
+- **Version:** 1.0.0
+- **Contract:** `.github/agents/mat-specialist.md`
+- **Domain Flag Index:** `.agent-workspace/maturion-agent/knowledge/domain-flag-index.md` → "MAT Audit Lifecycle", "MAT Criteria & MPS Structure"
 
 ---
 
 ### 3. criteria-generator-agent
-- **Domain:** Document parsing, criteria extraction, framework mapping
-- **Expertise:** LDCS/ISO/NIST document parsing, Domain→MPS→Criteria mapping, markdown structure analysis, automated criteria generation
+- **Domain:** Criteria extraction, document parsing, framework mapping, Supabase embedding write
+- **Expertise:** LDCS/ISO/NIST document parsing, Domain→MPS→Criteria mapping, text chunking, embedding generation
 - **Apps:** MAT
-- **Routing Keywords:** import, parse, extract, criteria, document, upload, LDCS, ISO, NIST, framework, generate
-- **Status:** PENDING (Phase 3)
-- **Version:** TBD
-- **Contract:** `.github/agents/criteria-generator-agent.md` (to be created)
+- **Routing Keywords:** generate criteria, extract criteria, criteria generation, framework mapping, ISO mapping, NIST mapping, auto-generate, chunk document, embed criteria
+- **Status:** STUB (Phase 3.5 — full activation Phase 3 MVP)
+- **Version:** 1.0.0
+- **Contract:** `.github/agents/criteria-generator-agent.md`
+- **Pipeline Role:** LDCS→Supabase Step 3 (chunk + embed + write)
+- **Domain Flag Index:** `.agent-workspace/maturion-agent/knowledge/domain-flag-index.md` → "Criteria Generation & Extraction"
+
+---
+
+### 4. maturity-scoring-agent
+- **Domain:** Maturity score computation, gap analysis, improvement roadmaps
+- **Expertise:** Domain maturity scoring (Levels 1–5), MPS coverage analysis, heat map generation, benchmarking
+- **Apps:** MAT, Maturity Roadmap
+- **Routing Keywords:** maturity, maturity score, maturity level, maturity assessment, score domain, compute maturity, maturity heat map, maturity gap, gap analysis
+- **Status:** STUB (Phase 3.5 — full activation Phase 3 MVP)
+- **Version:** 1.0.0
+- **Contract:** `.github/agents/maturity-scoring-agent.md`
+- **Domain Flag Index:** `.agent-workspace/maturion-agent/knowledge/domain-flag-index.md` → "MAT Maturity Assessment"
+
+---
+
+### 5. report-writer-agent
+- **Domain:** Report generation (audit, maturity, executive, compliance)
+- **Expertise:** Structured report composition, multi-format output (markdown, PDF stub), template management
+- **Apps:** MAT
+- **Routing Keywords:** report, generate report, audit report, maturity report, executive summary, compliance report, export report, write report
+- **Status:** STUB (Phase 3.5 — full activation Phase 3 MVP)
+- **Version:** 1.0.0
+- **Contract:** `.github/agents/report-writer-agent.md`
+- **Domain Flag Index:** `.agent-workspace/maturion-agent/knowledge/domain-flag-index.md` → "MAT Report Generation"
+
+---
+
+### 6. document-parser-agent
+- **Domain:** Document ingestion and structural parsing
+- **Expertise:** PDF/DOCX/markdown extraction, Domain→MPS→Criteria structure detection, LDCS format recognition
+- **Apps:** MAT
+- **Routing Keywords:** LDCS, import document, upload document, parse document, ingest document, import LDCS, parse LDCS, document ingestion
+- **Status:** STUB (Phase 3.5 — full activation Phase 3 MVP)
+- **Version:** 1.0.0
+- **Contract:** `.github/agents/document-parser-agent.md`
+- **Pipeline Role:** LDCS→Supabase Step 2 (parse raw document)
+- **Domain Flag Index:** `.agent-workspace/maturion-agent/knowledge/domain-flag-index.md` → "LDCS Document Import"
 
 ---
 
 ## Future Specialists (Phase 4+)
 
-### 4. pit-specialist
+### 7. pit-specialist
 - **Domain:** PIT app workflows, threat intelligence feeds, vulnerability tracking
 - **Status:** PLANNED (Phase 4)
 
-### 5. xdetect-specialist
+### 8. xdetect-specialist
 - **Domain:** XDETECT workflows, contraband detection protocols, privacy compliance
 - **Status:** PLANNED (Phase 4)
 
-### 6. maturity-roadmap-specialist
+### 9. maturity-roadmap-specialist
 - **Domain:** Gap analysis, improvement planning, maturity progression roadmaps
 - **Status:** PLANNED (Phase 4)
 
-### 7. report-writer-agent
-- **Domain:** DOCX/PDF/Excel generation, report formatting, template management
-- **Status:** PLANNED (Phase 5)
-
-### 8. security-controls-agent
+### 10. security-controls-agent
 - **Domain:** ISO 27001, NIST CSF, CIS Controls definitions and mappings
 - **Status:** PLANNED (Phase 5)
 
@@ -165,7 +200,7 @@ for (const specialist of specialistRegistry) {
 ---
 
 **Authority:** CS2 (Johan Ras)  
-**Status:** Phase 2 (Empty - ready for Phase 3)  
-**Version:** 1.0.0  
-**Date:** 2026-02-20  
+**Status:** Phase 3.5 (6 MAT specialist stubs registered)  
+**Version:** 2.0.0  
+**Date:** 2026-02-21  
 **Canonical Reference:** `governance/canon/ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md` Section 10 (Specialist Lifecycle)
