@@ -11,7 +11,7 @@
     "total_canons_synced": 33,
     "sync_method": "layer-down-automated",
     "sync_status": "SUCCESS",
-    "canonical_commit": "aa831e6492bf37620e161cae4e06a8c2c7f9f1c5"
+    "canonical_commit": "076c0943db9d896619989e6d4c1a369658ba6265"
   },
   "alignment_status": {
     "overall": "ALIGNED",
@@ -22,7 +22,7 @@
       "missing": 0
     },
     "drift_detected": false,
-    "last_drift_check": "2026-02-21T11:28:29Z"
+    "last_drift_check": "2026-02-21T13:01:42Z"
   },
   "integrity": {
     "evidence_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_evidence.log",
