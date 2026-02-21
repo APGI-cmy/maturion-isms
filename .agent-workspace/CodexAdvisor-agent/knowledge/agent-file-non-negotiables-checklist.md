@@ -1,7 +1,7 @@
 # CodexAdvisor — Agent File Non-Negotiables Checklist (Tier 2 Operational Knowledge)
 
 **Agent**: CodexAdvisor-agent
-**Knowledge Version**: 1.0.0
+**Knowledge Version**: 1.1.0
 **Last Updated**: 2026-02-21
 **Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
 
@@ -130,6 +130,7 @@ Every agent file MUST contain all four phases as named, numbered sections. Each 
 - [ ] **S6-03** Session memory contains `## Suggestions for Improvement (MANDATORY — non-blank)` — blank = incomplete session
 - [ ] **S6-04** Session memory contains `prior_sessions_reviewed` and `unresolved_items_from_prior_sessions` fields
 - [ ] **S6-05** Memory rotation: keep last 5 in `memory/`, archive older to `memory/.archive/`
+- [ ] **S6-06** Append improvement suggestion summary to `.agent-workspace/parking-station/suggestions-log.md` at handover — one line per suggestion (columns: Date, Agent, Session, Summary, Detail/session-memory-filename). Create the file if it does not exist.
 
 ---
 
