@@ -1,20 +1,9 @@
 {
     "version": "1.1.0",
-    "last_updated": "2026-02-21T10:21:58Z",
-    "total_canons": 180,
+    "last_updated": "2026-02-21T11:06:34Z",
+    "total_canons": 182,
     "generation_timestamp": "2026-02-18T05:43:00Z",
     "canons": [
-        {
-            "filename": "AVOIDED_DEVIATION_PREVENTIVE_MEASURES.md",
-            "version": "1.0.0",
-            "file_hash": "b08025a49b92",
-            "effective_date": "2026-02-18",
-            "description": "Documents preventive measures institutionalized to avoid future deviations based on MAT Waves 5-7 lessons. Includes avoided deviation summaries for missing frontend, UI wiring, and infrastructure deployment.",
-            "type": "canon",
-            "path": "governance/canon/AVOIDED_DEVIATION_PREVENTIVE_MEASURES.md",
-            "layer_down_status": "PUBLIC_API",
-            "file_hash_sha256": "b08025a49b92ab8273a06d10e52489adbdbe45027748cd9e8368e555f03cd3b2"
-        },
         {
             "filename": ".agent.schema.md",
             "version": "unknown",
@@ -1897,61 +1886,6 @@
             "file_hash_sha256": "1ad56794e3f284b04f29dda876e683344d0719a1edb44a1fc646a1f3769f41e3"
         },
         {
-            "filename": "ORCHESTRATOR_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md",
-            "version": "1.0.0",
-            "file_hash": "2770d4c40a65",
-            "effective_date": "2026-02-20",
-            "description": "Machine-checkable binding checklist of mandatory elements for Orchestrator agent contract compliance with Living Agent System v6.2.0. Defines required YAML frontmatter, phase content, delegation protocol compliance, and validation requirements.",
-            "type": "checklist",
-            "path": "governance/checklists/ORCHESTRATOR_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md",
-            "layer_down_status": "PUBLIC_API",
-            "file_hash_sha256": "2770d4c40a657682b547c72e93f423115ed06f553b64add48135fc252bf53002"
-        },
-        {
-            "filename": "SPECIALIST_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md",
-            "version": "1.0.0",
-            "file_hash": "bdac159dd1ee",
-            "effective_date": "2026-02-20",
-            "description": "Machine-checkable binding checklist of mandatory elements for Specialist agent contract compliance with Living Agent System v6.2.0. Defines required YAML frontmatter, domain boundaries, knowledge management, and delegation validation requirements.",
-            "type": "checklist",
-            "path": "governance/checklists/SPECIALIST_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md",
-            "layer_down_status": "PUBLIC_API",
-            "file_hash_sha256": "bdac159dd1eec098fc9ff2e5f84c64356238652cff21dd5671e66129a4b6f561"
-        },
-        {
-            "filename": "ORCHESTRATOR_AGENT_TEMPLATE.md",
-            "version": "1.0.0",
-            "file_hash": "e457260f150c",
-            "effective_date": "2026-02-20",
-            "description": "Canonical template for creating Orchestrator agent contracts. Includes YAML frontmatter, four-phase contract structure (Preflight, Induction, Build, Handover), delegation patterns, and compliance checks.",
-            "type": "template",
-            "path": "governance/templates/ORCHESTRATOR_AGENT_TEMPLATE.md",
-            "layer_down_status": "PUBLIC_API",
-            "file_hash_sha256": "e457260f150ce0d5f065b07765284aaf76a373f19c32fe2d8204da76089bb2b3"
-        },
-        {
-            "filename": "SPECIALIST_AGENT_TEMPLATE.md",
-            "version": "1.0.0",
-            "file_hash": "884cf8f8c71c",
-            "effective_date": "2026-02-20",
-            "description": "Canonical template for creating Specialist agent contracts. Includes YAML frontmatter, four-phase contract structure, domain boundary declarations, Tier 1/Tier 2 knowledge management, and delegation validation patterns.",
-            "type": "template",
-            "path": "governance/templates/SPECIALIST_AGENT_TEMPLATE.md",
-            "layer_down_status": "PUBLIC_API",
-            "file_hash_sha256": "884cf8f8c71c3732a5c176d72bca68f9010af4e95c3b5b9d1d3c6aee656d33d7"
-        },
-        {
-            "filename": "DELEGATION_PROTOCOL_IMPLEMENTATION_GUIDE.md",
-            "version": "1.0.0",
-            "file_hash": "c46b3e692187",
-            "effective_date": "2026-02-20",
-            "description": "Step-by-step implementation guide for AGENT_DELEGATION_PROTOCOL.md in orchestrator and specialist agents. Covers planning, contract creation, delegation package construction, integration gate, testing, and AGENT_REGISTRY registration.",
-            "type": "template",
-            "path": "governance/templates/DELEGATION_PROTOCOL_IMPLEMENTATION_GUIDE.md",
-            "layer_down_status": "PUBLIC_API",
-            "file_hash_sha256": "c46b3e692187b17cc7cac75145d9e3d0eeea827160b68da3a208760cacd97bc5"
-        },
-        {
             "filename": "ECOSYSTEM_VOCABULARY.md",
             "version": "1.0.0",
             "file_hash": "fd2f98bc638e",
@@ -1983,6 +1917,94 @@
             "path": "governance/canon/AGENT_TIER_ARCHITECTURE.md",
             "layer_down_status": "PUBLIC_API",
             "file_hash_sha256": "facdee9e0ac11ced482c0a985c8064f5d30cee20616edc61e6e236dc545e389f"
+        },
+        {
+            "filename": "PLATFORM_AI_REQUIREMENTS.md",
+            "version": "1.0.0",
+            "file_hash": "1e99a0fe28dc",
+            "effective_date": "2026-02-19",
+            "description": "Canonical specification for mandatory platform-wide AI features including embedded AI assistant, context-aware AI in application UI, agent file AI capabilities, and AI task routing. Derived from LL-031 Platform AI Requirements Omission lesson.",
+            "type": "canon",
+            "path": "governance/canon/PLATFORM_AI_REQUIREMENTS.md",
+            "layer_down_status": "PUBLIC_API",
+            "file_hash_sha256": "1e99a0fe28dc9556d37227109dcbe0d2a21678f858e5710aacb0366085dc20be"
+        },
+        {
+            "filename": "PLATFORM_AI_REQUIREMENTS_CHECKLIST.md",
+            "version": "1.0.0",
+            "file_hash": "54043b8a8eb0",
+            "effective_date": "2026-02-19",
+            "description": "Builder validation checklist for platform-wide AI requirements. Validates AI assistant, context-aware AI, agent file AI capabilities, AI task routing, red tests, and compliance documentation before handover.",
+            "type": "checklist",
+            "path": "governance/checklists/PLATFORM_AI_REQUIREMENTS_CHECKLIST.md",
+            "layer_down_status": "PUBLIC_API",
+            "file_hash_sha256": "54043b8a8eb00715a07bf97f3e68d675019aa3750d1af49a2b8cf0f1452ad37f"
+        },
+        {
+            "filename": "SPECIALIST_KNOWLEDGE_MANAGEMENT.md",
+            "version": "1.0.0",
+            "file_hash": "dc27a4588542",
+            "effective_date": "2026-02-20",
+            "description": "Defines how specialist agents acquire, maintain, validate, and retire domain knowledge. Establishes three-tier knowledge model (constitutional, operational, session) with staleness detection and retirement protocols.",
+            "type": "canon",
+            "path": "governance/canon/SPECIALIST_KNOWLEDGE_MANAGEMENT.md",
+            "layer_down_status": "PUBLIC_API",
+            "file_hash_sha256": "dc27a45885426d0b67306ff3ee432d6de0b5814e63b0154492572cd45399d10c"
+        },
+        {
+            "filename": "AGENT_REGISTRY_ARCHITECTURE.md",
+            "version": "1.0.0",
+            "file_hash": "4bc5862119a8",
+            "effective_date": "2026-02-20",
+            "description": "Defines the dedicated agent registry architecture. AGENT_REGISTRY.json tracks deployed orchestrators and specialists (class, domain, status, owner); CANON_INVENTORY.json tracks governance artifacts. Defines schema, validation requirements, and lifecycle operations.",
+            "type": "canon",
+            "path": "governance/canon/AGENT_REGISTRY_ARCHITECTURE.md",
+            "layer_down_status": "PUBLIC_API",
+            "file_hash_sha256": "4bc5862119a83aca540e56aa64b76a40e652afc962fe637a2308bd63714b0beb"
+        },
+        {
+            "filename": "AGENT_REGISTRY.json",
+            "version": "1.0.0",
+            "file_hash": "bea6e92602c4",
+            "effective_date": "2026-02-20",
+            "description": "Active registry of deployed orchestrator and specialist agents. Initially empty; populated when Phase 2 (Maturion orchestrator) and Phase 3 (MVP specialists) are deployed.",
+            "type": "registry",
+            "path": "governance/AGENT_REGISTRY.json",
+            "layer_down_status": "PUBLIC_API",
+            "file_hash_sha256": "bea6e92602c407730d0f6539538f4ffad1eff9bb092d569c449ce975fdd30b98"
+        },
+        {
+            "filename": "AGENT_CREATION_BUNDLE_REQUIREMENTS.md",
+            "version": "1.0.0",
+            "file_hash": "47fa11a5447d",
+            "effective_date": "2026-02-21",
+            "description": "Defines the minimum required outputs for every new agent creation: contract file, Tier 2 knowledge stubs, AGENT_REGISTRY.json entry, routing update, and pre-handover commissioning proof. No agent is active until all five components are present and verified.",
+            "type": "canon",
+            "path": "governance/canon/AGENT_CREATION_BUNDLE_REQUIREMENTS.md",
+            "layer_down_status": "PUBLIC_API",
+            "file_hash_sha256": "47fa11a5447d30cf2deb7a4be82800c0db6f2ea04770390a98160b009d0df17d"
+        },
+        {
+            "filename": "PROXY_AUTHORITY_MODEL.md",
+            "version": "1.0.0",
+            "file_hash": "4f95fb1aaada",
+            "effective_date": "2026-02-21",
+            "description": "Canonical model for CS2-to-Foreman proxy authority delegation. Defines required language pattern, scope constraints, verification protocol, and lifecycle for proxy grants. Extends CS2_AGENT_FILE_AUTHORITY_MODEL.md Level 3. All agents must verify explicit proxy authority before accepting Foreman-created agent files.",
+            "type": "canon",
+            "path": "governance/canon/PROXY_AUTHORITY_MODEL.md",
+            "layer_down_status": "PUBLIC_API",
+            "file_hash_sha256": "4f95fb1aaadaa99adb1503782024c55def41e176326011d385f685a8a476049c"
+        },
+        {
+            "filename": "LL-031_platform_ai_requirements_omission.md",
+            "version": "1.0.0",
+            "file_hash": "5f9a1ebe5229",
+            "effective_date": "2026-02-19",
+            "description": "Canonical lesson LL-031: Platform-wide AI requirements omission during MAT frontend deployment. Documents catastrophic governance gap, root causes, structural changes required, and validation questions per LEARNING_INTAKE_AND_PROMOTION_MODEL.md.",
+            "type": "lesson",
+            "path": "governance/memory/canonical-lessons/LL-031_platform_ai_requirements_omission.md",
+            "layer_down_status": "INTERNAL",
+            "file_hash_sha256": "5f9a1ebe5229f18ebd5a217d8fd7961beca7892d192b3078d56e75e080e6171a"
         }
     ]
 }
