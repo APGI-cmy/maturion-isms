@@ -29,6 +29,7 @@ This registry lists all agents Foreman v2 may delegate to, their capabilities, a
 
 | Agent ID | Capabilities | Delegation Trigger | Authority Doc |
 |----------|--------------|--------------------|--------------|
+| `pit-specialist` | PIT threat intelligence, IOC management, TTP correlation, threat hunting | PIT-specific tasks | SPECIALIST_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md |
 | `mat-specialist` | MAT workflows, LDCS, audit lifecycle | Domain-specific MAT tasks | SPECIALIST_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md |
 | `risk-platform-agent` | Threat analysis, vulnerability assessment, risk scoring | Risk-specific tasks | SPECIALIST_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md |
 | `criteria-generator-agent` | Criteria extraction, chunking, embedding | Criteria/standards tasks | SPECIALIST_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md |
@@ -56,5 +57,4 @@ Foreman MUST NOT perform any activity listed under an agent's "Capabilities" col
 
 ---
 
-**Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0  
-**Referenced By**: `foreman-v2.agent.md` Section 1.6
+**Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0 | **Version**: 1.1.0 | **Date**: 2026-02-21
