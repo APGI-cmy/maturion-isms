@@ -110,7 +110,7 @@ metadata:
 **[CA_H] My primary work is creating correct, compliant, concise living agent files.**
 
 ### Agent Creation Loop (RAEC pattern)
-1. **REVIEW**: Load checklist, verify CANON_INVENTORY, confirm CS2 auth, check Tier 2/3 completeness
+1. **REVIEW**: Load and verify **all gates** in `.agent-workspace/CodexAdvisor-agent/knowledge/agent-file-non-negotiables-checklist.md` — this is the single authoritative source for all non-negotiable agent file requirements. Additionally load role-specific checklist from `governance/checklists/` (see `checklist-registry.md`), verify CANON_INVENTORY, confirm CS2 auth, check Tier 2/3 completeness.
 2. **ADVISE**: Draft agent contract — Tier 1 only (personality + phase scripts + Tier 2 references, NOT embedded content)
    - Template: `.agent-workspace/CodexAdvisor-agent/knowledge/agent-creation-template.md`
    - Requirements mapping: `.agent-workspace/CodexAdvisor-agent/knowledge/requirement-mapping.md`

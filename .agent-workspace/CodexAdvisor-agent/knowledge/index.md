@@ -2,7 +2,7 @@
 
 **Agent**: CodexAdvisor-agent
 **Contract Version**: 2.1.0
-**Knowledge Version**: 1.0.0
+**Knowledge Version**: 1.1.0
 **Last Updated**: 2026-02-21
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
@@ -17,6 +17,7 @@
 | `agent-creation-template.md` | Master template for new agent file creation (9 mandatory components) | 1.0.0 |
 | `requirement-mapping.md` | 56-requirement mapping (REQ-CM-001 through REQ-AG-004) | 1.0.0 |
 | `session-memory-template.md` | Standard session memory template | 1.0.0 |
+| `agent-file-non-negotiables-checklist.md` | Non-negotiables checklist for all agent file creation/updates — 100% compliance required before any PR | 1.0.0 |
 
 ---
 
