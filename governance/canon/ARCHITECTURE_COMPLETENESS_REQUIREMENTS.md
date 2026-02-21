@@ -2,7 +2,7 @@
 
 ## Status
 Canonical Governance Standard  
-Version: v1.3  
+Version: v1.5  
 Authority: Johan Ras  
 Applies To: All Applications, All Builds, Foreman, Builders, Governance Administrator
 
@@ -461,7 +461,7 @@ Before implementation begins, architecture MUST pass completeness validation:
 
 ### 4.1 Completeness Checklist
 
-All items in Section 3 (3.1 through 3.13) MUST be explicitly addressed.
+All items in Section 3 (3.1 through 3.17) MUST be explicitly addressed.
 
 **Validation Method**: 
 - Governance Administrator or Foreman performs completeness scan
@@ -560,9 +560,10 @@ If same architectural gap occurs in multiple projects:
 2. Governance Administrator MUST update this document
 3. Foreman MUST propagate update to all active projects
 
----
 
-## 8. PartPulse Learning Integration
+## 8. Learning Integration
+
+### 8.1 PartPulse Learning Integration
 
 This document formalizes **validated learning from PartPulse failures**:
 
@@ -574,7 +575,24 @@ This document formalizes **validated learning from PartPulse failures**:
 | Database migration ambiguity | Database and Migration Strategy | 3.4 |
 | Non-testable config failures | Non-Testable Configuration Boundaries | 3.5 |
 
+### 8.2 MAT Waves 5-7 Learning Integration
+
+This document formalizes **validated learning from MAT Waves 5-7 failures**:
+
+| Failure Class | Promoted Requirement | Section |
+|--------------|---------------------|---------|
+| Frontend not scaffolded despite specification | Frontend Application Scaffolding and UI Wiring | 3.15 |
+| UI-to-API wiring absent despite both components existing | Frontend Application Scaffolding and UI Wiring | 3.15 |
+| Backend infrastructure never deployed | Infrastructure Deployment and Provisioning | 3.16 |
+| Wave closed on test pass rate without deployment verification | Infrastructure Deployment and Provisioning | 3.16 |
+| No E2E integration tested against deployed environment | End-to-End Integration and Deployment Evidence | 3.17 |
+| Evidence bundle absent at wave closure | End-to-End Integration and Deployment Evidence | 3.17 |
+
+**Core Lesson**: "Tested" ≠ "Deployed" ≠ "Working". All three MUST be verified before wave closure.
+
 **Future learning**: As new failure classes are discovered, this document MUST be updated to include new completeness requirements.
+
+**Learning Retention Doctrine** (formally defined in Section 10 Changelog — v1.5): Learnings, once recorded in a canonical governance document, are **locked-in** and MUST NOT be removed except by an explicit superseding learning of greater authority. Silent removal of recorded learnings — whether by automated sync, manual edit, or governance downgrade — is a **governance violation** requiring immediate detection, escalation, and remediation.
 
 ---
 
@@ -666,6 +684,159 @@ Application repositories implementing wave-based delivery SHOULD provide:
 
 ---
 
+### 3.15 Frontend Application Scaffolding and UI Wiring (MAT-Derived) (MANDATORY)
+
+**Requirement**: Architecture MUST explicitly specify the frontend application framework, scaffolding approach, UI wiring to the backend, and mandatory evidence for wave closure.
+
+**Learning Source**: MAT Waves 5.5 and 5.6 — wave closures declared "complete" based on backend test pass rates while no frontend application existed or was wired.
+
+**Required Elements**:
+- **Framework and Version**: Exact framework and version (e.g., "React 18.2 with Vite 5.0", "Next.js 14", "Vue 3.4")
+- **Build Tool Specification**: Build tool and configuration (e.g., "Vite with vite.config.ts", "Webpack 5", "Turbopack")
+- **Application Entry Point and Structure**: Primary entry file and directory layout
+- **UI Component Library and Styling**: Component library (e.g., "shadcn/ui", "Material UI") and styling approach
+- **API Client Configuration and Wiring**: How the frontend calls the backend API (e.g., "Axios client at `src/lib/api.ts`", "tRPC hooks")
+- **CORS Configuration**: Explicit CORS settings required for frontend-backend communication
+- **Complete UI → API → Database Data Flow**: End-to-end path for each user workflow
+- **Loading and Error State Definitions**: How loading states and errors are handled in UI
+- **Authentication Flow Integration**: How auth tokens/sessions are managed in the frontend
+
+**Completeness Test**:
+- [ ] Is the frontend framework and version explicitly declared?
+- [ ] Is the build tool and configuration specified?
+- [ ] Is the API client wiring documented with file paths?
+- [ ] Are CORS settings specified (origins, methods, headers)?
+- [ ] Is the complete UI → API → Database data flow traced for each workflow?
+- [ ] Are loading and error states defined in the architecture?
+- [ ] Is authentication integration specified?
+- [ ] Can a builder scaffold the frontend without external research?
+
+**Mandatory Evidence for Wave Closure**:
+- Frontend application scaffolded and buildable (`npm run build` exits 0)
+- UI component library installed and integrated
+- API client configured and pointing at correct backend endpoint
+- At least ONE complete E2E workflow demonstrated (user action → API call → data persisted)
+- CORS configured and verified (browser dev tools show no CORS errors)
+- Error handling implemented (network failure, validation error, auth error)
+
+**Prohibited Patterns**:
+- ❌ "UI components will be built during implementation" (must be specified in architecture)
+- ❌ "API integration details to be determined" (wiring must be defined before build starts)
+- ❌ "CORS configuration is a deployment concern" (CORS is a cross-cutting architecture concern)
+- ❌ Wave closure without frontend scaffolding and build verification
+
+**Violation**: If architecture specifies a frontend application but does not define framework, wiring, and closure evidence requirements, it is **constitutionally incomplete**.
+
+**Evidence of Learning**: MAT Wave 5.5 wave closure was accepted with backend tests GREEN but zero frontend code existing. MAT Wave 5.6 closed with isolated unit tests but no UI-to-API wiring. Both violations required post-closure rework, breaking the One-Time Build Law.
+
+---
+
+### 3.16 Infrastructure Deployment and Provisioning (MAT-Derived) (MANDATORY)
+
+**Requirement**: Architecture MUST explicitly declare all infrastructure components, hosting platforms, provisioning steps, and deployment verification procedures. Wave closure MUST NOT occur without infrastructure deployment evidence.
+
+**Learning Source**: MAT Wave 5.7 — wave declared complete with tests passing while backend infrastructure (Supabase) was never provisioned or deployed.
+
+**Required Elements**:
+- **Frontend Hosting Platform**: Platform and configuration (e.g., "Vercel with `vercel.json`", "Netlify with `netlify.toml`")
+- **Backend Hosting Platform**: Serverless, container, or VM platform and entry point
+- **Database Platform**: Database service, schema location, and migration mechanism
+- **Storage Infrastructure**: Object storage platform and bucket configuration (if applicable)
+- **Additional Services**: Auth, email, job queue, caching, search — specify provider and integration
+- **Provisioning Steps**: Step-by-step provisioning procedure for each component
+- **Configuration Files**: All configuration files (e.g., `vercel.json`, `Dockerfile`, `supabase/config.toml`)
+- **Environment Variables Documentation**: Complete `.env.example` with all variables required per Section 3.3
+- **Deployment Verification Procedures**: How to verify each component is deployed and healthy
+- **Rollback Procedures**: How to roll back each component if deployment fails
+
+**Pre-Wave Infrastructure Readiness Checklist** (required before wave authorization):
+- [ ] Frontend hosting platform account/project created and accessible
+- [ ] Backend hosting platform account/project created and accessible
+- [ ] Database platform provisioned (instance running, schema applied)
+- [ ] Environment variables set in all deployment environments
+- [ ] Configuration files committed to repository
+- [ ] Deployment pipeline configured and verified
+- [ ] Rollback procedure documented and tested
+
+**Wave Closure Infrastructure Evidence Requirements**:
+- [ ] Frontend deployed to target platform — URL accessible from public internet
+- [ ] Backend deployed to target platform — health check endpoint returns 200 OK
+- [ ] Database provisioned with schema applied — connection verified from deployed backend
+- [ ] All cloud resources documented (URLs, resource IDs, region)
+- [ ] Configuration files committed to repository at correct locations
+- [ ] Environment variables set and verified in deployed environment
+- [ ] Deployment logs captured (no critical errors)
+- [ ] Domain/DNS configured (if applicable)
+- [ ] SSL/TLS certificates active (if applicable)
+
+**Completeness Test**:
+- [ ] Is every infrastructure component named with its specific platform?
+- [ ] Are provisioning steps documented for each component?
+- [ ] Are all required configuration files listed with their paths?
+- [ ] Is the `.env.example` file referenced or included?
+- [ ] Are deployment verification procedures specified?
+- [ ] Is rollback documented?
+- [ ] Can a builder provision and deploy without external research?
+
+**Prohibited Patterns**:
+- ❌ "Deploy to cloud" without specifying platform, region, and configuration
+- ❌ "Deployment is a DevOps concern, not architecture"
+- ❌ "Infrastructure will be set up during implementation"
+- ❌ Wave closure without infrastructure deployment evidence (deployed URLs, health check results)
+
+**Violation**: If architecture does not specify infrastructure platforms, provisioning steps, and closure evidence requirements, it is **constitutionally incomplete**.
+
+**Evidence of Learning**: MAT Wave 5.7 declared "complete" with backend tests GREEN while Supabase was never provisioned. Production deployment was impossible. Complete infrastructure setup was required post-closure, violating the One-Time Build Law.
+
+---
+
+### 3.17 End-to-End Integration and Deployment Evidence (MAT-Derived) (MANDATORY)
+
+**Requirement**: Architecture MUST define an E2E test strategy, integration test coverage requirements, and a mandatory wave closure evidence bundle demonstrating that the system works as an integrated, deployed whole.
+
+**Learning Source**: MAT Waves 5-7 — "tests pass" was equated with "system works", masking that frontend, backend, and database were never integrated or deployed together.
+
+**Required Elements**:
+- **E2E Test Strategy**: Scope (user workflows covered), environment (deployed, not localhost), framework (Playwright, Cypress, etc.), test data strategy, assertion depth
+- **Integration Test Coverage**: Must cover UI-API, API-Database, Authentication, Data Persistence, Error Handling, CORS
+- **Deployment Evidence Requirements**: For each tier (Frontend, Backend, Database, Integration) — accessible URL, health check result, screenshot
+- **Wave Closure Evidence Bundle**: URLs, health check logs, E2E test results (GREEN, run against deployed environment), screenshots/video, performance metrics, error log excerpts
+- **Mandatory Demonstration Checklist**: Minimum 5 workflows demonstrated end-to-end against deployed system
+
+**Completeness Test**:
+- [ ] Is an E2E test framework specified?
+- [ ] Is E2E testing scoped to deployed environment (NOT localhost only)?
+- [ ] Are all integration boundaries identified (UI↔API, API↔DB, auth, CORS)?
+- [ ] Is the wave closure evidence bundle structure defined?
+- [ ] Are mandatory demonstration workflows listed?
+
+**Wave Closure Evidence Bundle** (all required before closure):
+- [ ] Frontend URL — publicly accessible, loads application
+- [ ] Backend URL — health check endpoint returns 200 OK
+- [ ] Database connection — verified from deployed backend (not local migration)
+- [ ] E2E test results — GREEN, executed against deployed environment
+- [ ] Screenshots or video — showing at least 1 complete user workflow end-to-end
+- [ ] Performance metrics — page load time, API response time
+- [ ] Error logs — no critical errors from deployed environment
+- [ ] Integration verification — UI successfully calls backend, data persisted to database
+
+**Prohibited Patterns**:
+- ❌ "E2E tests will be added later"
+- ❌ "Integration testing is optional"
+- ❌ "Unit tests are sufficient for wave closure"
+- ❌ Wave closure without E2E test execution against deployed environment
+- ❌ "Tests passed on localhost" without deployed environment verification
+- ❌ Declaring wave complete without the evidence bundle
+
+**Violation**: If architecture does not define E2E test strategy, integration coverage, and closure evidence requirements, or if wave closure occurs without the evidence bundle, it is a **critical governance violation**.
+
+**Evidence of Learning**: Across MAT Waves 5-7, test pass rates (unit/component) were 100% GREEN but the system was never integrated or deployed. "Tested" ≠ "Deployed" ≠ "Working" — all three MUST be verified before wave closure.
+
+---
+
+
+---
+
 ## 9. Precedence
 
 This document has **canonical authority** for architecture completeness.
@@ -675,6 +846,60 @@ If any architecture artifact, builder behavior, or Foreman process conflicts wit
 ---
 
 ## 10. Changelog
+
+### Version 1.5 (2026-02-21)
+
+**Status**: MAT Waves 5-7 Learning Reinstatement  
+**Authority**: Johan Ras  
+**Trigger**: Issue #1177 — Governance sync (PR #370) silently removed MAT Waves 5-7 learnings (v1.4 content) by layering down canonical v1.3
+
+**Summary**: Reinstated three mandatory sections recording MAT Waves 5-7 failures (Frontend scaffolding missing, Infrastructure never deployed, E2E integration never verified). Renamed Section 8 to "Learning Integration" and added Section 8.2 for MAT learnings. Asserted the Learning Retention Doctrine.
+
+**Root Cause of Loss**: The governance alignment workflow (PR #370) automatically replaced the local v1.4 (which had the MAT learnings) with the canonical v1.3, which did not yet include those sections. This is a governance process violation: recorded learnings were silently discarded.
+
+**Learning Retention Doctrine** (asserted as permanent governance rule):
+> Learnings, once recorded in a canonical governance document, are locked-in and MUST NOT be removed except by an explicit superseding learning of greater authority. Silent removal by automated sync is a governance violation requiring immediate remediation.
+
+**Key Requirements Reinstated**:
+- Frontend Application Scaffolding and UI Wiring (3.15) — Architecture must specify framework, wiring, and wave closure evidence
+- Infrastructure Deployment and Provisioning (3.16) — Architecture must specify platforms, provisioning steps, and deployment evidence
+- End-to-End Integration and Deployment Evidence (3.17) — Architecture must define E2E strategy and mandatory evidence bundle
+
+**MAT Failure Chain Addressed**:
+- Wave 5.5: Frontend never scaffolded → covered by 3.15
+- Wave 5.6: UI-to-API wiring absent → covered by 3.15
+- Wave 5.7: Backend never deployed → covered by 3.16
+- All waves: No E2E integration tested → covered by 3.17
+
+**Section 8 Updates**:
+- Renamed Section 8 to "Learning Integration" with subsections 8.1 (PartPulse) and 8.2 (MAT)
+- MAT failure pattern table (6 failure classes → 3 sections)
+- Learning Retention Doctrine added to Section 8.2
+
+**Effect**: Architecture missing frontend scaffolding spec, infrastructure deployment spec, or E2E evidence requirements is now **constitutionally incomplete** and blocks implementation. Wave closure without deployment evidence and E2E results is a governance violation.
+
+**Note on Numbering**: Sections 3.15, 3.16, 3.17 in this version correspond to sections 3.14, 3.15, 3.16 in the original v1.4 (which was written before QA Catalog Alignment was added as 3.14 in the canonical v1.3). The content and intent are identical; only the section numbers differ due to QA Catalog Alignment (3.14) occupying what was previously an unused number.
+
+---
+
+### Version 1.4 (2026-02-18) [LOCAL — NOT CANONICALIZED]
+
+**Status**: MAT Waves 5-7 Learning Promotion (local maturion-isms extension)  
+**Authority**: Johan Ras  
+**Trigger**: MAT Waves 5.5, 5.6, 5.7 repeated delivery failures (Frontend not scaffolded, UI not wired, Backend not deployed)
+
+**Summary**: Extended ARCHITECTURE_COMPLETENESS_REQUIREMENTS with three new mandatory sections derived from MAT production failures. This version was created locally in the `maturion-isms` repository and was never upstreamed to the canonical governance repository (`maturion-foreman-governance`).
+
+**Sections Added** (numbered from 3.1-3.13 base, before QA Catalog Alignment was canonicalized):
+- 3.14 (v1.4) — Frontend Application Scaffolding and UI Wiring
+- 3.15 (v1.4) — Infrastructure Deployment and Provisioning
+- 3.16 (v1.4) — End-to-End Integration and Deployment Evidence
+
+**Loss Event**: Governance alignment sync PR #370 (2026-02-21) replaced this local v1.4 with canonical v1.3, silently removing these sections. This is a governance violation (see v1.5 and Learning Retention Doctrine).
+
+**Note**: Sections from this version are reinstated in v1.5 as 3.15, 3.16, 3.17 (renumbered to avoid collision with canonical 3.14 — QA Catalog Alignment).
+
+---
 
 ### Version 1.3 (2026-01-05)
 
@@ -786,8 +1011,8 @@ If any architecture artifact, builder behavior, or Foreman process conflicts wit
 ---
 
 **Document Metadata**:
-- Document ID: ARCHITECTURE_COMPLETENESS_REQUIREMENTS_V1.2
+- Document ID: ARCHITECTURE_COMPLETENESS_REQUIREMENTS_V1.5
 - Authority: Canonical Governance Standard
 - Required By: GOVERNANCE_PURPOSE_AND_SCOPE.md Section 5.2 (Architecture Compilation)
 - Enforcement: Governance Gate + Foreman + Governance Administrator
-- Integration: QA_POLICY_MASTER.md, LEARNING_INTAKE_AND_PROMOTION_MODEL.md, ENVIRONMENT_PROVISIONING_PROCESS.md
+- Integration: QA_POLICY_MASTER.md, LEARNING_INTAKE_AND_PROMOTION_MODEL.md, ENVIRONMENT_PROVISIONING_PROCESS.md, WAVES_5_TO_7_INFRA_FE_WIRING_LESSONS.md, FULLY_FUNCTIONAL_DELIVERY_STANDARD.md
