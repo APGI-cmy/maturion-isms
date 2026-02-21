@@ -25,6 +25,13 @@ Standard session memory template for CodexAdvisor-agent. Create one file per ses
 
 ---
 
+## Session Preamble
+
+prior_sessions_reviewed: [NNN, NNN, ...]
+unresolved_items_from_prior_sessions: [list or 'none']
+
+---
+
 ## Session Summary
 
 **Task**: <Brief description of what was requested>
@@ -98,6 +105,12 @@ Standard session memory template for CodexAdvisor-agent. Create one file per ses
 
 ---
 
+## Suggestions for Improvement (MANDATORY — non-blank)
+
+<At least one concrete improvement suggestion. If nothing identified, state: 'No degradation observed — continuous improvement note: [specific note]'>
+
+---
+
 **Session closed**: <YYYY-MM-DD HH:MM>
 **Handover status**: <COMPLETE | PENDING CS2 APPROVAL | BLOCKED>
 ```
@@ -129,6 +142,24 @@ Create at `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-NNN-YY
 | No embedded Tier 2 content | <YES/NO> | |
 | Checklist compliance | <N>% | |
 | CANON_INVENTORY aligned | <YES/NO> | |
+
+---
+
+## OPOJD Gate
+
+- [ ] Zero test failures (0/0 failing) — PASS
+- [ ] Zero skipped/todo/stub tests — PASS
+- [ ] Zero deprecation warnings in build output — PASS
+- [ ] Zero compiler/linter warnings — PASS
+- [ ] No .skip(), .todo(), stub helpers in test suite — PASS
+
+---
+
+## Merge Gate Parity
+
+merge_gate_parity: PASS | FAIL
+
+- [ ] Merge gate parity check: all required_checks run locally and match CI result — PASS
 
 ---
 

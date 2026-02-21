@@ -91,7 +91,9 @@ metadata:
 3. Verify `governance/canon/ECOSYSTEM_VOCABULARY.md` is present → if absent: HALT (cannot run Verb Classification Gate)
 4. Load Tier 2 knowledge index: `.agent-workspace/foreman-v2/knowledge/index.md`
 5. Load last 5 session memories from `.agent-workspace/foreman-v2/memory/`
-6. Status: STANDBY → awaiting task
+6. **Memory Catch-Up Confirmation**: Scan loaded memories for unresolved escalations, open blockers, and outstanding improvement suggestions. Record `prior_sessions_reviewed: [NNN, ...]` and `unresolved_items_from_prior_sessions: [list or 'none']` in session memory preamble. If unresolved items exist → address before starting new work.
+7. Load `merge_gate_interface.required_checks` from this contract's YAML — this is the authoritative local test checklist; local results must match CI results for every listed check.
+8. Status: STANDBY → awaiting task
 
 ---
 
@@ -134,6 +136,13 @@ metadata:
 - Verdict: **FAIL** → issue remediation order to builder → DO NOT proceed → re-evaluate on next handover
 - Record verdict + mode transition in session memory
 
+### Merge Gate Parity Check (mandatory before Phase 4)
+**[FM_H] Run after QP PASS — before releasing to handover.**
+- Enumerate all checks listed in `merge_gate_interface.required_checks` (loaded in Phase 1)
+- Run each check locally using the same script/ruleset as the CI merge gate
+- Compare: if ANY check fails or produces a different result than the CI merge gate → **STOP and FIX immediately** (do not open PR)
+- Document parity result in PREHANDOVER proof: `merge_gate_parity: PASS | FAIL`
+
 **Delegation registry**: `.agent-workspace/foreman-v2/knowledge/specialist-registry.md`
 **Pattern guide** (parallel / sequential / chained): `.agent-workspace/foreman-v2/knowledge/domain-flag-index.md`
 
@@ -144,14 +153,18 @@ metadata:
 **[FM_H] Quality Professor Final Verdict — mandatory before any merge gate release.**
 
 1. Run final Quality Professor check: 100% GREEN, zero test debt, all evidence artifacts present
-2. Verdict PASS → generate evidence bundle per `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md`
-3. Create PREHANDOVER proof: `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-NNN-YYYYMMDD.md`
-   - Required fields: checklist compliance %, character count, bundle completeness, CANON_INVENTORY alignment
-4. Create session memory: `.agent-workspace/foreman-v2/memory/session-NNN-YYYYMMDD.md`
+2. **OPOJD Gate**: Verify 0 test failures, 0 skipped/todo/stub tests, 0 deprecation warnings, 0 compiler/linter warnings. Any non-zero result is a handover BLOCKER — fix before proceeding.
+3. **Merge Gate Parity**: Confirm merge gate parity check result = PASS (from Phase 3). Document `merge_gate_parity: PASS` in PREHANDOVER proof. If FAIL → stop, do not open PR.
+4. Verdict PASS → generate evidence bundle per `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md`
+5. Create PREHANDOVER proof: `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-NNN-YYYYMMDD.md`
+   - Required fields: checklist compliance %, character count, bundle completeness, CANON_INVENTORY alignment, `merge_gate_parity: PASS`
+   - Required checklist lines: `[ ] Zero test failures`, `[ ] Zero skipped/todo/stub tests`, `[ ] Zero deprecation warnings`, `[ ] Zero compiler/linter warnings`, `[ ] Merge gate parity check: all required_checks match CI — PASS`
+6. Create session memory: `.agent-workspace/foreman-v2/memory/session-NNN-YYYYMMDD.md`
    - Template: `governance/canon/AGENT_HANDOVER_AUTOMATION.md`
-   - Required fields: `roles_invoked`, `mode_transitions`, `escalations_triggered`, `separation_violations_detected`
-5. Release merge gate
-6. Verdict FAIL → remediation order → DO NOT release merge gate
+   - Required fields: `roles_invoked`, `mode_transitions`, `escalations_triggered`, `separation_violations_detected`, `prior_sessions_reviewed`, `unresolved_items_from_prior_sessions`
+   - **Suggestions for Improvement** (MANDATORY — non-blank): record at least one concrete improvement suggestion. If nothing identified, state: 'No degradation observed — continuous improvement note: [specific note]'. A blank section is a handover BLOCKER.
+7. Release merge gate
+8. Verdict FAIL → remediation order → DO NOT release merge gate
 
 ---
 

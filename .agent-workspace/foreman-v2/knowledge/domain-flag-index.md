@@ -43,6 +43,7 @@ This index maps capability flags and activation states for Foreman v2 orchestrat
 | `FM_DEGRADED_NO_CANON_INVENTORY` | `governance/CANON_INVENTORY.json` missing or invalid | HALT, escalate to CS2 |
 | `FM_DEGRADED_NO_ECOSYSTEM_VOCABULARY` | `governance/canon/ECOSYSTEM_VOCABULARY.md` absent | HALT, cannot execute Verb Classification Gate |
 | `FM_DEGRADED_NO_TIER2_KNOWLEDGE` | This knowledge directory is missing required files | Log warning, proceed with base contract only |
+| `FM_OPOJD_GATE_BLOCKED` | Non-zero test failures, skips, warnings, or deprecations detected at handover | STOP — fix all OPOJD violations before proceeding to Phase 4 |
 
 ---
 
