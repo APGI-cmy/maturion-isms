@@ -711,19 +711,58 @@ INSTALLED → VALIDATED → COMMISSIONED → ACTIVATED
 
 ---
 
-## 13. AI Chat Interface Dual Pattern
+## 13. Platform-Wide AI Features (MANDATORY - All Applications)
 
-### 13.1 Pattern Overview
+### 13.1 Requirement Overview
 
-**Requirement**: MANDATORY (for apps with AI chat interfaces)  
-**Specification**: Application-specific, follows governance patterns  
-**Evidence**: `evidence-new/wave-execution/WAVE_5.1_SUMMARY.md` (Foreman Office example)
+**Requirement**: MANDATORY (all applications)  
+**Exclusions**: Only with CS2 written approval and documented justification  
+**Specification**: `governance/canon/PLATFORM_AI_REQUIREMENTS.md`  
+**Authority**: LL-031 Platform AI Requirements Omission canonical lesson  
+**Effective Date**: 2026-02-19
 
-**Dual Pattern Definition**:
-- **Front Office**: User-facing chat interface for end-user interactions
-- **Back Office**: Admin/operator chat interface for system control and monitoring
+**Foundational Principle**: The Maturion platform is AI-native. All applications MUST provide embedded AI capabilities for user assistance, context-aware decision support, and intelligent automation.
 
-### 13.2 Back Office Requirements
+---
+
+### 13.2 Mandatory AI Feature Categories
+
+All Maturion applications MUST implement the following four AI feature categories:
+
+1. **AI Assistant (Embedded Chat Interface)**
+   - User-facing chat UI for assistance and guidance
+   - Context-aware responses based on application state
+   - User authentication and audit logging
+   - Mobile-responsive design
+
+2. **Context-Aware AI in Application UI**
+   - AI explanations for scoring/calculations
+   - AI-generated rationale for recommendations
+   - Human override with AI context preservation
+   - Audit trail of AI vs. human decisions
+
+3. **Agent File with AI Capabilities**
+   - Model selection for different task types
+   - Task-to-model routing configuration
+   - Token limits and cost optimization
+   - Fallback models for degraded states
+
+4. **AI Task Routing**
+   - Deterministic model selection per task type
+   - Cost-optimized routing
+   - Performance monitoring per model
+   - Graceful degradation on model failures
+
+**Full Specification**: See `governance/canon/PLATFORM_AI_REQUIREMENTS.md` for detailed requirements, validation criteria, and implementation guidance.
+
+---
+
+### 13.3 AI Chat Interface Dual Pattern
+
+**Requirement**: MANDATORY (for apps with distinct admin/user roles)  
+**Pattern**: Separate back office (admin) from front office (end-user) AI interfaces
+
+#### 13.3.1 Back Office (Admin/Operator Interface)
 
 **Purpose**: Admin console for system operators and CS2
 
@@ -741,7 +780,9 @@ INSTALLED → VALIDATED → COMMISSIONED → ACTIVATED
 - Governance evidence display
 - Build/wave status tracking
 
-### 13.3 Front Office Requirements
+**Evidence**: `evidence-new/wave-execution/WAVE_5.1_SUMMARY.md` (Foreman Office example)
+
+#### 13.3.2 Front Office (End-User Interface)
 
 **Purpose**: End-user interface for application functionality
 
@@ -756,6 +797,36 @@ INSTALLED → VALIDATED → COMMISSIONED → ACTIVATED
 - Clear separation from back office (different routes/permissions)
 - No admin capabilities exposed to end users
 - No governance operations accessible
+
+---
+
+### 13.4 Validation and Evidence Requirements
+
+**Validation Script**: `.github/scripts/validate-platform-ai-features.sh`  
+**Merge Gate**: `platform-ai-features` (BLOCKING)
+
+**Required Evidence**:
+1. AI assistant UI screenshot
+2. Agent file with `ai_capabilities` section validated
+3. Red tests for AI features passing
+4. `APP_STARTUP_REQUIREMENTS.md` AI compliance section complete
+5. CS2 exemption (if applicable)
+
+**Failure Response**: PR blocked, builder notified with clear remediation steps
+
+---
+
+### 13.5 Exemption Process
+
+**CS2 Approval Required**: Applications may request exemption only with:
+- Documented justification (security, compliance, legacy integration)
+- Risk assessment
+- Alternative compliance approach (if applicable)
+- CS2 written approval recorded in `APP_STARTUP_REQUIREMENTS.md`
+
+**Exemption Tracking**: Recorded in `governance/CONSUMER_REPO_REGISTRY.json` with periodic review
+
+**Related Standards**: See `governance/canon/PLATFORM_AI_REQUIREMENTS.md` Section 7
 
 ---
 

@@ -356,7 +356,7 @@ THEN agent_contracts_bound = TRUE
    - Count STOP conditions: minimum 3 required (e.g., governance violation, cascading failure, human order)
 
 2. **Escalation Path Validation**:
-   - Verify `governance/escalation/ESCALATION_POLICY.md` exists
+   - Verify `governance/canon/ESCALATION_POLICY.md` exists
    - Verify 4 escalation levels defined (L1 Builder → L2 FM → L3 Governance/Codex → L4 Human+HighestModel)
    - Verify each level includes trigger criteria and response procedures
 
@@ -406,7 +406,7 @@ THEN stop_mechanics_enforceable = TRUE
 ```
 
 **Validation Sources**:
-- `governance/escalation/ESCALATION_POLICY.md`
+- `governance/canon/ESCALATION_POLICY.md`
 - `governance/canon/CASCADING_FAILURE_CIRCUIT_BREAKER.md`
 - `governance/philosophy/GOVERNANCE_INCIDENT_RESPONSE_DOCTRINE.md`
 - `governance/CONSTITUTION.md`

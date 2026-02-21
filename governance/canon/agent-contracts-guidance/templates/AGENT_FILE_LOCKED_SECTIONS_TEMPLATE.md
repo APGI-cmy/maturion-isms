@@ -272,7 +272,7 @@ This prohibition applies to ALL authority levels (except CS2). Self-modification
 
 **Authority**:
 - `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md`
-- `governance/escalation/ESCALATION_POLICY.md`
+- `governance/canon/ESCALATION_POLICY.md`
 
 <!-- LOCKED SECTION END -->
 ```

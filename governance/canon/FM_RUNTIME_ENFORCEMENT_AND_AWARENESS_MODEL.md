@@ -815,7 +815,7 @@ The following conditions MUST trigger automatic escalation:
 
 ### 8.2 Escalation Paths (Canonical)
 
-Per ESCALATION_POLICY.md:
+Per `governance/canon/ESCALATION_POLICY.md`:
 
 **L1: Builder Agent** → Executes within scope, escalates to Foreman when blocked
 

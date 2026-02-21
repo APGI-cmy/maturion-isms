@@ -107,6 +107,111 @@ Startup requirement declarations follow application lifecycle:
 
 ---
 
+### 4.4 Platform Requirements Inheritance (MANDATORY)
+
+**Requirement**: All application startup requirement declarations MUST inherit and validate platform-wide mandatory requirements.
+
+**Authority**: `governance/canon/PLATFORM_AI_REQUIREMENTS.md`, `governance/canon/MANDATORY_CROSS_APP_COMPONENTS.md`  
+**Source**: LL-031 Platform AI Requirements Omission canonical lesson
+
+**Foundational Principle**: Applications do not exist in isolation. All Maturion applications MUST comply with platform-wide standards in addition to application-specific requirements.
+
+#### 4.4.1 Required Platform Inheritance Section
+
+Every `APP_STARTUP_REQUIREMENTS.md` MUST include a Platform Requirements Compliance section:
+
+```markdown
+## Platform Requirements Compliance
+
+### Platform-Wide Mandatory Requirements
+
+This application inherits and complies with all platform-wide mandatory requirements from:
+- `governance/canon/MANDATORY_CROSS_APP_COMPONENTS.md`
+- `governance/canon/PLATFORM_AI_REQUIREMENTS.md`
+
+### Platform AI Features Compliance
+
+#### AI Assistant (Embedded Chat Interface)
+- [x] Embedded chat UI implemented
+- [x] Context-aware assistance enabled
+- [x] User authentication enforced
+- [x] Audit logging configured
+- **Evidence**: [Screenshot link], [Code reference], [Test coverage link]
+
+#### Context-Aware AI in Application UI
+- [x] AI explanations implemented (scoring, reports, etc.)
+- [x] Human override with AI context preservation
+- [x] Transparency labels on AI-generated content
+- [x] Audit trail for AI vs. human decisions
+- **Evidence**: [Screenshot link], [Code reference], [Audit log sample]
+
+#### Agent File with AI Capabilities
+- [x] Agent file exists and validated: `.agent`
+- [x] `ai_capabilities` section complete
+- [x] Task routing configured
+- [x] Cost optimization enabled
+- **Evidence**: [Agent file validation output]
+
+#### AI Task Routing
+- [x] Task classification implemented
+- [x] Model selection logic functional
+- [x] Performance monitoring enabled
+- [x] Error handling and fallbacks configured
+- **Evidence**: [Code reference], [Performance metrics]
+
+### Platform Requirements Exemption (If Applicable)
+
+**Exemption Status**: [NONE | GRANTED]  
+**Exemption For**: [Which platform requirements exempted]  
+**Approved By**: CS2 (Johan Ras)  
+**Approval Date**: [YYYY-MM-DD]  
+**Justification**: [Documented reason for exemption]  
+**Review Date**: [When to re-evaluate exemption]
+```
+
+#### 4.4.2 Validation Requirements
+
+**FM app MUST**:
+1. Verify Platform Requirements Compliance section exists
+2. Verify all platform AI features checklist items completed OR CS2 exemption documented
+3. Verify evidence links provided for each platform requirement
+4. Fail commissioning if platform requirements not met
+
+**Builder MUST**:
+1. Include Platform Requirements Compliance section in all `APP_STARTUP_REQUIREMENTS.md`
+2. Complete platform AI requirements checklist (see `governance/checklists/PLATFORM_AI_REQUIREMENTS_CHECKLIST.md`)
+3. Collect evidence for all platform requirements
+4. Obtain CS2 exemption if platform requirements cannot be met
+
+**Foreman MUST**:
+1. Verify platform requirements included in FRS/TRS before approval
+2. Hand off platform AI requirements checklist to builder during alignment
+3. Validate platform requirements compliance before wave closure
+4. Escalate to CS2 if platform requirements omitted without exemption
+
+#### 4.4.3 Exemption Process
+
+**When Exemption May Be Requested**:
+- Security constraints prohibit AI usage
+- Regulatory compliance prevents AI features
+- Legacy system integration with no UI extensibility
+- Specialized use case (no human user, infrastructure-only, etc.)
+
+**Exemption Request Process**:
+1. Builder documents justification in Platform Requirements Exemption section
+2. Risk assessment provided
+3. Alternative compliance approach documented (if applicable)
+4. Request submitted to CS2 for review
+5. CS2 approves/denies with written justification
+6. Approval recorded in `APP_STARTUP_REQUIREMENTS.md`
+7. Exemption tracked in `governance/CONSUMER_REPO_REGISTRY.json`
+
+**Denial Response**:
+- If CS2 denies exemption, application MUST implement platform requirements
+- No alternative path; platform requirements are mandatory
+
+---
+
 ## 5. Required Declaration Schema
 
 All startup requirement declarations MUST conform to this schema:

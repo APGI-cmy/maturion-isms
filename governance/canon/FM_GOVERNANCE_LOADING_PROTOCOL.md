@@ -93,7 +93,7 @@ Per `GOVERNANCE_COMPLETENESS_MODEL.md`, governance consists of:
 - `governance/CONSTITUTION.md`
 - `governance/philosophy/BYG_DOCTRINE.md`
 - `governance/philosophy/GOVERNANCE_INCIDENT_RESPONSE_DOCTRINE.md`
-- `governance/escalation/ESCALATION_POLICY.md`
+- `governance/canon/ESCALATION_POLICY.md`
 
 **Tier 2**: Canonical Governance Models
 - `governance/canon/**` (31+ canonical documents)
@@ -180,7 +180,7 @@ When loading governance, execution systems MUST follow this sequence:
 1. Load `CONSTITUTION.md`
 2. Load `governance/philosophy/BYG_DOCTRINE.md`
 3. Load `governance/philosophy/GOVERNANCE_INCIDENT_RESPONSE_DOCTRINE.md`
-4. Load `governance/escalation/ESCALATION_POLICY.md`
+4. Load `governance/canon/ESCALATION_POLICY.md`
 
 **Phase 2: Governance Canon**
 5. Load `governance/canon/GOVERNANCE_PURPOSE_AND_SCOPE.md`

@@ -156,12 +156,17 @@ echo "✅ [<Agent>_H] Evidence artifacts generated"
 **Builder**:
 ```markdown
 ## Evidence
-✅ All Red QA tests GREEN
+✅ All Red QA tests GREEN (100%, zero failures)
+✅ Lint validation PASS (0 errors, 0 warnings)
+✅ Type-check validation PASS (0 errors)
+✅ Build validation PASS (successful build)
 ✅ Test coverage: <N>%
 ✅ Zero skipped/disabled tests
 ✅ Zero test debt (no stubs/TODOs)
 ✅ Code quality checks PASS
+✅ Static analysis gates PASS (lint/type/build)
 ✅ Handover documentation complete
+✅ CLI/CI evidence attached for all gates
 ```
 
 **Overseer (CodexAdvisor)**:
@@ -473,13 +478,36 @@ DEBT_COUNT=$(grep -rE '\\.skip\\(|\\.todo\\(|// TODO' tests/ 2>/dev/null | wc -l
 # Check 2: No skipped tests
 [ "${SKIPPED_TESTS}" -gt 0 ] && COMPLIANCE_ISSUES+=("Skipped tests: ${SKIPPED_TESTS}")
 
-# Check 3: Code coverage meets requirement
+# Check 3: Lint validation PASS (0 errors, 0 warnings)
+# Note: Customize command for your repository (yarn/npm/pnpm lint, eslint, pylint, etc.)
+LINT_EXIT_CODE=$(yarn lint > /dev/null 2>&1; echo $?)
+[ "${LINT_EXIT_CODE}" -ne 0 ] && COMPLIANCE_ISSUES+=("Lint failed: exit code ${LINT_EXIT_CODE}")
+
+# Check 4: Type-check validation PASS (0 errors)
+# Note: Adapt command and condition for your repository's type system
+if command -v tsc &> /dev/null || [ -f "package.json" ]; then
+  TYPECHECK_EXIT_CODE=$(yarn type-check > /dev/null 2>&1; echo $?)
+  [ "${TYPECHECK_EXIT_CODE}" -ne 0 ] && COMPLIANCE_ISSUES+=("Type-check failed: exit code ${TYPECHECK_EXIT_CODE}")
+fi
+
+# Check 5: Build validation PASS
+# Note: Customize command for your repository (yarn/npm build, make, cargo build, etc.)
+BUILD_EXIT_CODE=$(yarn build > /dev/null 2>&1; echo $?)
+[ "${BUILD_EXIT_CODE}" -ne 0 ] && COMPLIANCE_ISSUES+=("Build failed: exit code ${BUILD_EXIT_CODE}")
+
+# Check 6: Code coverage meets requirement
 [ "${COVERAGE_PCT}" -lt "${REQUIRED_COVERAGE}" ] && \
   COMPLIANCE_ISSUES+=("Coverage ${COVERAGE_PCT}% < required ${REQUIRED_COVERAGE}%")
 
-# Check 4: Handover documentation
+# Check 7: Handover documentation with static gate evidence
 [ ! -f .agent-admin/prehandover/proof-*.md ] && \
   COMPLIANCE_ISSUES+=("Missing handover proof")
+
+# Check 8: Static gate evidence in prehandover proof
+if [ -f .agent-admin/prehandover/proof-*.md ]; then
+  grep -q "Static Analysis & Build Gates" .agent-admin/prehandover/proof-*.md || \
+    COMPLIANCE_ISSUES+=("Missing static analysis gates section in handover proof")
+fi
 ```
 
 **Overseer (CodexAdvisor)**:

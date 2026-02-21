@@ -370,8 +370,10 @@ This ensures continuous governance improvement and prevents accumulation of tech
 ### 9.3 Wave Closure
 - FM MUST certify wave completion based on evidence
 - FM MUST NOT certify without 100% QA GREEN, zero test debt
+- **FM MUST verify ALL deliverables exist and work** per FULLY_FUNCTIONAL_DELIVERY_STANDARD.md Section 5.2
+- **FM MUST validate Fully Functional Delivery criteria** per FULLY_FUNCTIONAL_DELIVERY_STANDARD.md Section 3.3
 - FM MUST block merge if certification cannot be issued
-- FM MUST generate wave closure certification artifact
+- FM MUST generate wave closure certification artifact per FULLY_FUNCTIONAL_DELIVERY_STANDARD.md Section 4.3
 
 ### 9.4 IBWR Execution
 - FM MUST initiate IBWR immediately after wave PR merge
@@ -390,6 +392,8 @@ FM and Builders MUST NEVER:
 - ❌ Skip wave planning phase ("just start building")
 - ❌ Create issues on-the-fly during execution
 - ❌ Certify wave closure without evidence review
+- **❌ Certify wave closure without verifying ALL deliverables exist and work** (FULLY_FUNCTIONAL_DELIVERY_STANDARD.md)
+- **❌ Accept "tests pass" as sufficient for closure without physical working deliverables** (FULLY_FUNCTIONAL_DELIVERY_STANDARD.md)
 - ❌ Proceed to next wave without IBWR completion
 - ❌ Skip CWT to accelerate wave closure
 - ❌ Accept partial wave completion (all-or-nothing)
@@ -426,6 +430,7 @@ This Wave Model integrates with:
 | **QA_CATALOG_ALIGNMENT_GATE_CANON.md** | QA Catalog alignment before wave execution |
 | **FM_PREAUTH_CHECKLIST_CANON.md** | Pre-authorization validation checklist |
 | **FOREMAN_WAVE_PLANNING_AND_ISSUE_ARTIFACT_GENERATION_PROTOCOL.md** | Issue creation protocol details |
+| **FULLY_FUNCTIONAL_DELIVERY_STANDARD.md** | Wave authorization and closure deliverable verification requirements |
 
 ---
 

@@ -92,7 +92,6 @@ As agents grow in specialisation and the platform scales across multiple reposit
 
 ```
 .agent-workspace/<agent>/knowledge/
-├── index.md                    # Knowledge index (entry point)
 ├── domain-flag-index.md        # Domain capability flags and activation states
 ├── specialist-registry.md      # Known specialists and orchestrators for this domain
 └── [domain-specific stubs]     # Domain-specific operational knowledge stubs
@@ -112,6 +111,29 @@ As agents grow in specialisation and the platform scales across multiple reposit
 ---
 
 ## Knowledge Acquisition Protocol
+
+### At Contract Creation (Bootstrapping)
+
+When a new agent contract is created, the **Agent Creation Bundle** (see `AGENT_CREATION_BUNDLE_REQUIREMENTS.md`) MUST include:
+
+1. **Tier 1 Binding**: Contract MUST reference all constitutional domain documents in `governance/canon/`
+2. **Tier 2 Initialisation**: Contract MUST reference Tier 2 knowledge stubs created in `.agent-workspace/<agent>/knowledge/`
+3. **YAML Frontmatter**: Specialist contracts MUST include `specialist.tier1_knowledge` and `specialist.tier2_knowledge` fields
+4. **Validation**: CodexAdvisor verifies domain references exist in `CANON_INVENTORY.json`
+
+```yaml
+# Required in specialist YAML frontmatter
+specialist:
+  domain: "<primary-domain>"
+  tier1_knowledge:
+    - path: "governance/canon/<DOMAIN_CONSTITUTIONAL_CANON.md>"
+      hash: "<sha256>"
+  tier2_knowledge:
+    - path: ".agent-workspace/<agent>/knowledge/domain-flag-index.md"
+      version: "<version>"
+    - path: ".agent-workspace/<agent>/knowledge/specialist-registry.md"
+      version: "<version>"
+```
 
 ### At Session Start (Induction — Phase 2)
 
@@ -133,6 +155,15 @@ echo "[TIER3] Loading session memory..."
 # Apply lessons and patterns to session context
 ```
 
+### During Execution (Tier 3 Accumulation)
+
+The agent accumulates Tier 3 knowledge during execution:
+- Task inputs from delegation package
+- Repository state observed during domain work
+- Test outputs, error messages, analysis results
+
+**Tier 3 NEVER overrides Tier 1.** If a task input contradicts Tier 1 knowledge, the agent MUST escalate.
+
 ---
 
 ## Knowledge Staleness Detection
@@ -142,6 +173,26 @@ echo "[TIER3] Loading session memory..."
 | Tier 1 hash mismatch | CANON_INVENTORY comparison | DEGRADED MODE → HALT, escalate |
 | Tier 2 version mismatch | Version field comparison | Warning → continue → flag for update |
 | Tier 3 conflict with Tier 1 | Runtime contradiction check | ESCALATED → return conflict detail |
+| Memory reference points to archived canon | Memory scan at session start | Update reference in next session |
+
+---
+
+## Knowledge Storage Structure
+
+```
+.agent-workspace/<agent>/
+├── knowledge/                           # Tier 2: Operational domain knowledge
+│   ├── domain-flag-index.md            # Domain capability flags
+│   ├── specialist-registry.md          # Known agents in domain
+│   └── [additional-stubs].md           # Domain-specific operational knowledge
+├── memory/                              # Session closure records (historical; Tier 3 is ephemeral)
+│   ├── session-NNN-YYYYMMDD.md         # Per-session memory
+│   └── .archive/                       # Archived sessions (>5 rotated here)
+└── personal/
+    ├── lessons-learned.md               # Cumulative domain lessons
+    ├── patterns.md                      # Observed domain patterns
+    └── knowledge-delta.md              # Tier 2 changes discovered this session
+```
 
 ---
 
@@ -149,9 +200,20 @@ echo "[TIER3] Loading session memory..."
 
 1. **Tier 1 is authoritative**: Constitutional rules cannot be overridden by any session input
 2. **Tier 2 is operational context**: Guides execution; updatable via governed process
-3. **Tier 3 is ephemeral**: Never promoted directly to Tier 1 without CS2 approval
+3. **Tier 3 is ephemeral**: Never promoted directly to Tier 1 without CS2 approval via `LAYER_UP_PROTOCOL.md`
 4. **Tier 2 promotion path**: Tier 3 lessons → `knowledge-delta.md` → layer-up review → CS2 approval → Tier 2 update
 5. **No lateral sharing**: Specialists do not share Tier 2 knowledge directly; all sharing via orchestrator or canon promotion
+
+---
+
+## Agent Class Applications
+
+| Agent Class | Tier 1 Load | Tier 2 Load | Tier 3 Scope |
+|-------------|-------------|-------------|--------------|
+| **specialist** | Constitutional domain docs (SHA256 verified) | `.agent-workspace/<specialist>/knowledge/` stubs | Single-domain task context |
+| **orchestrator** | Coordination canon (SHA256 verified) | Specialist registry from `AGENT_REGISTRY.json` | Multi-domain coordination context |
+| **foreman** | FM governance canon (SHA256 verified) | Wave state, builder registry, pre-auth checklist | Wave/subwave context |
+| **governance-admin** | `CANON_INVENTORY.json` + constitutional canon | Ripple state, consumer registry | Session-specific governance context |
 
 ---
 
@@ -160,14 +222,32 @@ echo "[TIER3] Loading session memory..."
 - ❌ Agent NEVER treats Tier 3 inputs as Tier 1 facts
 - ❌ Agent NEVER expands domain scope based on task inputs (Tier 3)
 - ❌ Agent NEVER continues execution with stale Tier 1 knowledge (DEGRADED MODE required)
+- ❌ Specialist NEVER shares Tier 2 knowledge laterally to other specialists
 - ❌ Agent NEVER self-promotes Tier 3 knowledge to Tier 1 without CS2 approval
 - ❌ Contract creation without Tier 2 stubs in `.agent-workspace/<agent>/knowledge/` is INCOMPLETE
 
 ---
 
+## Consumer Implementation References
+
+This architecture was introduced and first implemented in:
+
+- **APGI-cmy/maturion-isms#360** — Initial 3-tier knowledge architecture pattern (consumer implementation)
+- **APGI-cmy/maturion-isms#362** — Specialist registry and domain flag index implementation
+- **APGI-cmy/maturion-foreman-governance#361** — Governance canon alignment (this issue's PR)
+
+These issues serve as the canonical reference for how consumer repositories implement this architecture in practice. New consumer implementations MUST follow the patterns established there.
+
+---
+
 ## Related Canon
 
-- `governance/canon/AGENT_TIER_ARCHITECTURE.md` — Alias/forward reference to this document
+- `governance/canon/SPECIALIST_KNOWLEDGE_MANAGEMENT.md` — Specialist-specific knowledge lifecycle (extends this canon)
+- `governance/canon/AGENT_CREATION_BUNDLE_REQUIREMENTS.md` — Required bundle for all new agents
+- `governance/canon/PROXY_AUTHORITY_MODEL.md` — Authority delegation for agent creation
+- `governance/canon/ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md` — Role definitions and class model
+- `governance/canon/AGENT_DELEGATION_PROTOCOL.md` — Delegation mechanics
+- `governance/canon/LAYER_UP_PROTOCOL.md` — Tier 2/3 knowledge promotion path
 - `governance/canon/LIVING_AGENT_SYSTEM.md` — Governance framework v6.2.0
 - `governance/CANON_INVENTORY.json` — Canonical governance inventory (Tier 1 validation source)
 

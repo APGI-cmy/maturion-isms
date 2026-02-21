@@ -572,7 +572,7 @@ Governance Liaison MUST immediately STOP execution when ANY of the following occ
 - **Level 2:** Governance Liaison → Governance Administrator (for governance ambiguity)
 - **Level 3:** Governance Liaison → Human Authority (for governance conflicts or strategic decisions)
 
-**Canonical Reference:** `governance/escalation/ESCALATION_POLICY.md`
+**Canonical Reference:** `governance/canon/ESCALATION_POLICY.md`
 
 ### 7.4 Prehandover Verification Discipline (Mandatory)
 

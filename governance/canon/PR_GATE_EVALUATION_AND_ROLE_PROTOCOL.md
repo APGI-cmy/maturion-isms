@@ -696,7 +696,7 @@ Escalation is required when:
 
 ### 10.2 Escalation Levels
 
-Per `governance/escalation/ESCALATION_POLICY.md`:
+Per `governance/canon/ESCALATION_POLICY.md`:
 
 | Level | Authority | Escalation Trigger |
 |-------|-----------|-------------------|

@@ -48,11 +48,9 @@ Payload (JSON) MUST include:
 ```
 {
   "event_type": "governance_ripple",
-  "canonical_commit": "<sha>",
-  "inventory_version": "<version>",
-  "changed_paths": ["..."],
-  "sender": "APGI-cmy/maturion-foreman-governance",
-  "dispatch_id": "<uuid>",
+  "source_repo": "APGI-cmy/maturion-foreman-governance",
+  "commit_sha": "<sha>",
+  "commit_message": "<message>",
   "timestamp": "<iso-8601>"
 }
 ```

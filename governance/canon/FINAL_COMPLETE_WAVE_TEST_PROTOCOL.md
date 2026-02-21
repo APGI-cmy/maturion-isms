@@ -106,7 +106,7 @@ This protocol derives authority from and integrates with:
 
 ### Step 2: QA-to-Red Suite Compilation and Execution
 
-**Purpose**: Establish baseline that all automated tests pass before manual/creative testing.
+**Purpose**: Establish baseline that all automated tests AND static analysis gates pass before manual/creative testing.
 
 **Required Actions:**
 1. **Compile full test suite**
@@ -124,13 +124,44 @@ This protocol derives authority from and integrates with:
    - Zero failures, zero warnings, zero skipped tests
    - If any test fails, STOP FCWT and remediate
 
+4. **Execute lint validation (MANDATORY)**
+   - Run linter (e.g., yarn lint, npm run lint, eslint)
+   - Validate ZERO errors
+   - Validate ZERO warnings
+   - Capture lint output
+   - If ANY lint issue found, STOP FCWT and remediate
+
+5. **Execute type-check validation (if applicable)**
+   - Run type-checker (e.g., yarn type-check, tsc --noEmit, mypy)
+   - Validate ZERO type errors
+   - Capture type-check output
+   - If ANY type error found, STOP FCWT and remediate
+
+6. **Execute build validation (MANDATORY)**
+   - Run build command (e.g., yarn build, npm run build)
+   - Validate build succeeds (exit code 0)
+   - Verify build artifacts generated
+   - Capture build output
+   - If build fails, STOP FCWT and remediate
+
 **Evidence Required:**
 - 📋 Complete test execution log
 - 📋 Test results summary (pass/fail counts, coverage)
 - 📋 Screenshot of GREEN test dashboard
 - 📋 Test execution timestamp and environment details
+- 📋 **Lint execution output (0 errors, 0 warnings)**
+- 📋 **Type-check execution output (0 errors, if applicable)**
+- 📋 **Build execution output (successful build)**
+- 📋 **CLI evidence for ALL static analysis gates (lint/type/build)**
 
-**Blocking**: **Any test failure BLOCKS FCWT progression**. Return to development, fix issue, re-run QA-to-Red suite until 100% GREEN.
+**Blocking**: **Any test failure OR any lint/type/build failure BLOCKS FCWT progression**. Return to development, fix issue, re-run ALL gates (tests + lint + type + build) until 100% GREEN.
+
+**Wave 5.6 Learning**: "QA-to-Red test results alone are NOT sufficient. All lint/static/code quality gates must be zero-defect before any work is handed over. This enforces code and deployment integrity and prevents silent failures."
+
+**Authority**: 
+- Issue: "Governance Policy Update: Mandatory Lint/Static Analysis Gates Before Handover"
+- `BUILD_PHILOSOPHY.md` — One-Time Build Law: delivered means 100% working
+- `WE_ONLY_FAIL_ONCE_DOCTRINE.md` — Structural governance prevents repeat failures
 
 ---
 

@@ -281,8 +281,21 @@ IBWR is **NOT COMPLETE** until:
 - [ ] CWT PASS verdict recorded in Wave Reconciliation Report
 - [ ] CWT evidence documented and auditable
 
+**Test Count Reconciliation (MANDATORY):**
+**Authority**: COMBINED_TESTING_PATTERN.md § 8.4
+
+- [ ] Cumulative test tally documented across all waves
+- [ ] Per-wave test breakdown provided (GREEN/RED counts)
+- [ ] Tests turned RED→GREEN tracked and documented
+- [ ] Test count reconciliation verified (RECONCILED status)
+- [ ] All test count mismatches resolved and documented
+- [ ] Audit trail links provided for all test counts
+- [ ] Test debt documented (if any RED tests remain)
+- [ ] CS2 approval obtained for any test debt carryover
+- [ ] Zero-test-debt policy satisfied (or exemption documented)
+
 **Blocking Rule (Reinforced):**
-> **IBWR CANNOT complete without CWT PASS. Failure to execute CWT SHALL block next-wave authorization.**
+> **IBWR CANNOT complete without CWT PASS and explicit test count reconciliation. Failure to execute CWT or reconcile test counts SHALL block next-wave authorization.**
 
 ### 6.3 Governance Changes Implemented
 - [ ] Governance canon updated (if Tier-0 changes)
