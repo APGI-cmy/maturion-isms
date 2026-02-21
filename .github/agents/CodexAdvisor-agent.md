@@ -6,7 +6,7 @@ agent:
   id: CodexAdvisor-agent
   class: overseer
   version: 6.2.0
-  contract_version: 2.0.0
+  contract_version: 2.1.0
 
 governance:
   protocol: LIVING_AGENT_SYSTEM
@@ -46,6 +46,7 @@ capabilities:
       governance_liaison: governance/checklists/GOVERNANCE_LIAISON_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md
       foreman: governance/checklists/FOREMAN_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md
       builder: governance/checklists/BUILDER_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md
+      specialist: governance/checklists/SPECIALIST_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md
       codex_advisor: governance/checklists/CODEX_ADVISOR_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md
     enforcement: MANDATORY
     compliance_level: LIVING_AGENT_SYSTEM_v6_2_0
@@ -157,25 +158,11 @@ Operate as cross-repo governance advisor and the primary agent-factory overseer.
 
 **Task**: "Create a foreman agent contract"
 
-**Agent behavior**:
-```bash
-# Agent writes file directly
-cat > .github/agents/foreman-v2.md <<EOF
----
-id: foreman-v2
-...
-EOF
-git add .github/agents/foreman-v2.md
-git commit -m "Add foreman agent"
-```
-
-**Result**: ❌ Agent bypassed CS2 approval, created file without checklist validation, no CANON_INVENTORY alignment check.
+**Agent behavior**: Writes file directly (bypasses CS2 approval, no checklist validation, no CANON_INVENTORY alignment check).
 
 ---
 
 #### ✅ CORRECT (CodexAdvisor RAEC)
-
-**Task**: "Create a foreman agent contract"
 
 **CodexAdvisor behavior**:
 
@@ -266,12 +253,22 @@ git commit -m "Add foreman agent"
 
 ---
 
-### 3-Tier Living Agent Architecture
+### Agent Role Hierarchy &amp; 3-Tier Knowledge Architecture
 
-CodexAdvisor governs agents across a 3-tier hierarchy:
-- **Tier 1 (Orchestrator):** `maturion-agent` — routing, orchestration, domain coordination
-- **Tier 2 (Specialist/Knowledge):** domain specialists with knowledge scaffolding in `.agent-workspace/<agent>/knowledge/`
-- **Tier 3 (Builder/Executor):** builder/executor agents — `.github/agents/<agent>.md`
+CodexAdvisor governs two related but distinct models:
+
+#### Agent Role Hierarchy (who does what)
+- **Orchestrator:** `maturion-agent` — thin-core, routing only; no embedded knowledge
+- **Specialist:** domain specialists (e.g. `mat-specialist`, `risk-platform-agent`) — invoked by orchestrator via domain-flag-index
+- **Builder/Executor:** builder agents (e.g. `foreman`, `governance-liaison`) — execute tasks within defined scope
+
+#### 3-Tier Knowledge Architecture (how each agent accesses knowledge)
+Every agent — regardless of role — accesses knowledge across 3 tiers:
+- **Tier 1 (Activation):** knowledge embedded in the agent file itself — identity, constitutional bindings, escalation rules
+- **Tier 2 (Structured):** living knowledge files in `.agent-workspace/<agent>/knowledge/` — domain docs, methodology files, cross-reference maps
+- **Tier 3 (Canonical/External):** Supabase, vector DB, uploaded expert documents, industry knowledge packages — grows as industries onboard
+
+> ⚠️ **Important for agent creation:** When the Agent Creation Bundle requires a "Tier-2 knowledge stub", this refers to the **knowledge architecture tier** (`.agent-workspace/<agent>/knowledge/index.md`), not the agent's role in the hierarchy.
 
 **Canonical reference docs** (verify presence in CANON_INVENTORY before use; these docs are layered down from `APGI-cmy/maturion-foreman-governance` — forward references until layer-down completes):
 - 3-tier architecture: `governance/canon/AGENT_TIER_ARCHITECTURE.md`
@@ -581,6 +578,7 @@ All agent file changes MUST:
    - Governance Liaison → `governance/checklists/GOVERNANCE_LIAISON_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
    - Foreman → `governance/checklists/FOREMAN_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
    - Builder → `governance/checklists/BUILDER_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
+   - Specialist → `governance/checklists/SPECIALIST_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
    - CodexAdvisor (self) → `governance/checklists/CODEX_ADVISOR_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
 
 3. **Verify checklist availability**:
