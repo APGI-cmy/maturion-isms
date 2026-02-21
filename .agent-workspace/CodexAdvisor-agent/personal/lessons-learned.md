@@ -330,3 +330,21 @@ Created: Session 016 | Date: 2026-02-17 | Agent: CodexAdvisor-agent
 
 ---
 Updated: Session 019 | Date: 2026-02-21 | Agent: CodexAdvisor-agent
+
+## Session 20260221 (Session 020)
+
+### Lesson: Session Memory and PREHANDOVER Are Mandatory for Every Agent PR
+- Context: PR #385 was opened to add `contract_pattern: four_phase_canonical` to CodexAdvisor-agent.md but had no file changes and no session memory — violating the memory protocol
+- Pattern: It is insufficient to open a PR; the PR must include: (1) the actual file change, (2) session memory, (3) PREHANDOVER proof (for contract/metadata changes)
+- Action: Before calling `report_progress` on ANY agent contract change, verify all three bundle components exist and are committed
+- Evidence: CS2 Issue "Fix and enforce agent memory protocol"; session-020-20260221.md; PREHANDOVER-session-020-20260221.md
+- Governance refs: `governance/canon/AGENT_HANDOVER_AUTOMATION.md`, `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md`
+
+### Lesson: Retroactive PREHANDOVER Proofs Must Be Created When Missing
+- Context: foreman session-046 performed a contract change but did not create a PREHANDOVER proof
+- Pattern: Any session that modifies a `.github/agents/*.md` file must create a PREHANDOVER proof, even if it feels like a "small" change
+- Action: When a prior session is found to be missing its PREHANDOVER proof, create it retroactively with a clear "Retroactive" note explaining the gap
+- Evidence: PREHANDOVER-session-046-20260221.md created in session-020
+
+---
+Updated: Session 020 | Date: 2026-02-21 | Agent: CodexAdvisor-agent

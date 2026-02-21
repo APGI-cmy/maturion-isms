@@ -8,6 +8,7 @@ agent:
   class: overseer
   version: 6.2.0
   contract_version: 2.1.0
+  contract_pattern: four_phase_canonical
   model: claude-sonnet-4-6
 
 governance:
