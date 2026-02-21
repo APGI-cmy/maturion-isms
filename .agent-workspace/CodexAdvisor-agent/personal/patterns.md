@@ -316,3 +316,28 @@
 
 ---
 Updated: Session 016 | Date: 2026-02-17 | Agent: CodexAdvisor-agent
+
+## Pattern: Agent Contract Change Requires CodexAdvisor Gate
+- Observed: 2026-02-21 (Session 019)
+- Context: Any task that requires changes to `.github/agents/*.md` files
+- Response: 
+  1. Detect that the task involves agent contract files
+  2. STOP direct modification
+  3. Invoke `CodexAdvisor-agent` via `task` tool
+  4. CodexAdvisor verifies authority, checklist, CANON_INVENTORY before proceeding
+  5. Only then make changes (still via report_progress as Copilot SWE)
+- Evidence: Direct modification triggered governance violation (Issue #271), CI failure
+- Key insight: Even if the CHANGES are correct, the PROCESS must go through CodexAdvisor
+
+## Pattern: Pre-Submit Governance Check Simulation
+- Observed: 2026-02-21 (Session 019)
+- Context: Before calling `report_progress` on any PR with governance-sensitive files
+- Response: Mentally simulate what merge-gate checks will do:
+  1. `agent-contract/self-modification-prevention`: Will any `-agent.md` file be in my diff AND my commit_author match the agent name?
+  2. `governance/alignment`: Are CANON_INVENTORY.json and sync_state.json valid?
+  3. `merge-gate/verdict`: Does the PR have proper evidence/prehandover proof?
+- Tools: `git diff --name-only HEAD` → cross-check against workflow logic
+- Prevents: Submitting PRs that immediately fail CI
+
+---
+Updated: Session 019 | Date: 2026-02-21 | Agent: CodexAdvisor-agent
