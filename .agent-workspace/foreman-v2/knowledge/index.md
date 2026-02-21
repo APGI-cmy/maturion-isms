@@ -1,0 +1,59 @@
+# Foreman v2 — Tier 2 Knowledge Index
+
+**Agent**: foreman-v2  
+**Contract Version**: 2.1.0  
+**Knowledge Version**: 1.0.0  
+**Last Updated**: 2026-02-21  
+**Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
+
+---
+
+## Tier 2 Knowledge Contents
+
+This directory contains operational domain knowledge (Tier 2) for the Foreman v2 agent.
+See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full tier architecture specification.
+
+### Files
+
+| File | Purpose | Version |
+|------|---------|---------|
+| `index.md` (this file) | Knowledge entry point and version reference | 1.0.0 |
+
+---
+
+## Constitutional Canon References (Tier 1)
+
+The following Tier 1 documents govern this agent's constitutional behavior (SHA256 verified at session start via `governance/CANON_INVENTORY.json`):
+
+- `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0
+- `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md`
+- `governance/canon/ECOSYSTEM_VOCABULARY.md` v1.0.0 — **Canonical verb/mode definitions**
+- `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` v1.0.0
+- `governance/canon/FM_MERGE_GATE_MANAGEMENT_PROTOCOL.md`
+- `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md`
+
+---
+
+## Operating Mode Summary
+
+Per `governance/canon/ECOSYSTEM_VOCABULARY.md` Mode Reference Table:
+
+| Mode | Trigger Verbs | Authority |
+|------|--------------|-----------|
+| POLC-Orchestration | orchestrate, plan, organize, lead, coordinate, delegate | FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md |
+| Implementation Guard | implement, build, code, write, fix (directed at FM) | FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md |
+| Quality Professor | review, evaluate, QA, assess, validate, audit | EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md |
+
+---
+
+## Vocabulary Reference
+
+**Canonical source**: `governance/canon/ECOSYSTEM_VOCABULARY.md`  
+**Alias**: `governance/canon/AGENT_TIER_ARCHITECTURE.md` → `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
+
+All verb classification and mode-switching decisions MUST reference `ECOSYSTEM_VOCABULARY.md`.
+
+---
+
+**Authority**: CS2 (Johan Ras)  
+**Living Agent System**: v6.2.0
