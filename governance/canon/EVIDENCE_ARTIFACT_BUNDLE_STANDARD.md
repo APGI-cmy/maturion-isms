@@ -44,7 +44,6 @@ Minimum required subpaths:
 2. **Gate Results Summary** (machine-readable JSON)
 3. **Continuous Improvement Capture** (mandatory; may be "PARKED")
 4. **RCA** (required when stop-and-fix occurred OR when any gate failed and was repaired)
-5. **Merge Gate Parity Result** (mandatory): confirm all `merge_gate_interface.required_checks` were run locally and matched CI — field: `merge_gate_parity: PASS | FAIL`
 
 ---
 

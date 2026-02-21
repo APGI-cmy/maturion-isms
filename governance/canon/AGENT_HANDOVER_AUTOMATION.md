@@ -235,10 +235,6 @@ cat > "${SESSION_FILE}" <<EOF
 - Class: <class>
 - Session ID: ${SESSION_ID}
 
-## Session Preamble
-prior_sessions_reviewed: []
-unresolved_items_from_prior_sessions: []
-
 ## Task
 <What was I asked to do?>
 
@@ -289,9 +285,6 @@ unresolved_items_from_prior_sessions: []
 - <insight 1>
 - <insight 2>
 
-## Suggestions for Improvement (MANDATORY — non-blank)
-<At least one concrete improvement suggestion. If nothing identified, state: 'No degradation observed — continuous improvement note: [specific note]'>
-
 ---
 Authority: LIVING_AGENT_SYSTEM.md v6.2.0 | Session: $(printf "%03d" ${SESSION_NUMBER})
 EOF
@@ -330,13 +323,11 @@ echo "🔍 Environment: SAFE_FOR_HANDOVER"
 
 **Required Sections**:
 1. **Agent**: Type, class, session ID
-2. **Session Preamble**: `prior_sessions_reviewed`, `unresolved_items_from_prior_sessions`
-3. **Task**: What was requested
-4. **What I Did**: Files modified, actions taken, decisions made
-5. **Living Agent System Evidence**: Evidence collection, ripple status, governance gaps, hygiene
-6. **Outcome**: Complete/Partial/Escalated
-7. **Lessons**: What worked, what was challenging, recommendations, agent-specific insights
-8. **Suggestions for Improvement** (MANDATORY — non-blank): At least one concrete improvement suggestion per session
+2. **Task**: What was requested
+3. **What I Did**: Files modified, actions taken, decisions made
+4. **Living Agent System Evidence**: Evidence collection, ripple status, governance gaps, hygiene
+5. **Outcome**: Complete/Partial/Escalated
+6. **Lessons**: What worked, what was challenging, recommendations, agent-specific insights
 
 ### Memory Rotation Protocol
 
@@ -614,11 +605,7 @@ Created: <timestamp> | Session: <NNN>
 Before session ends, verify:
 
 - [ ] **Evidence artifacts generated**: Gate results (JSON) and prehandover proof (MD)
-- [ ] **OPOJD gate**: Zero failures, zero skips, zero warnings, zero deprecations — PASS
-- [ ] **Merge gate parity**: All `required_checks` run locally and match CI result — `merge_gate_parity: PASS`
 - [ ] **Session memory created**: Structured file in `memory/`
-- [ ] **Session memory preamble**: `prior_sessions_reviewed` and `unresolved_items_from_prior_sessions` fields populated
-- [ ] **Suggestions for Improvement**: Non-blank section in session memory — at least one item
 - [ ] **Memory rotated**: Last 5 kept, older archived
 - [ ] **Personal learnings updated**: Lessons and patterns files updated
 - [ ] **Environment health set**: Status = `SAFE_FOR_HANDOVER`
