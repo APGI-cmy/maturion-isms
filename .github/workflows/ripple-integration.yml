@@ -173,6 +173,8 @@ jobs:
           fi
 
       # ── Create escalation document when agent files touched ──
+      # Defect 3 fix: write each line via echo so headings appear at column 0
+      # in the committed file without breaking the YAML block scalar.
       - name: Create escalation document
         if: >
           steps.align.outputs.drift_detected == 'true' &&
@@ -182,97 +184,93 @@ jobs:
           INBOX=".agent-workspace/governance-liaison/escalation-inbox"
           mkdir -p "$INBOX"
           ESCALATION_FILE="${INBOX}/agent-contract-ripple-escalation-${DATESTAMP}.md"
-
-          cat > "$ESCALATION_FILE" <<EOF
-          # Escalation: Agent Contract Ripple — CS2 Approval Required
-
-          ## Type
-          BLOCKER
-
-          ## Description
-          A governance layer-down triggered a ripple that includes changes to
-          agent contract files (`.github/agents/*.md`).
-
-          Per **CS2_AGENT_FILE_AUTHORITY_MODEL.md** and
-          **AGENT_CONTRACT_PROTECTION_PROTOCOL.md**, only CS2 (Johan Ras) may
-          approve and merge changes to agent contracts.
-
-          **The ripple PR has been created as DRAFT and must not be merged until
-          CS2 explicitly approves it.**
-
-          ## Context
-          - Session: ripple-integration-${{ github.run_id }}
-          - Triggered by: Issue #${{ steps.issue.outputs.number }}
-          - Canonical commit: ${{ steps.metadata.outputs.canonical_commit }}
-          - Canonical version: ${{ steps.metadata.outputs.canonical_version }}
-          - Files updated: ${{ steps.metadata.outputs.files_updated }}
-          - Drift report: ${{ steps.metadata.outputs.drift_report }}
-
-          ## Recommendation
-          1. CS2 reviews the DRAFT ripple PR
-          2. CS2 approves and merges after review
-          3. Move this file to \`escalation-archive/\` after resolution
-
-          ## Evidence
-          - Drift report: \`${{ steps.metadata.outputs.drift_report }}\`
-          - Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-          ---
-          Created: $DATESTAMP | Authority: CS2 | Session: ${{ github.run_id }}
-          EOF
-
+          {
+            echo '# Escalation: Agent Contract Ripple — CS2 Approval Required'
+            echo ''
+            echo '## Type'
+            echo 'BLOCKER'
+            echo ''
+            echo '## Description'
+            echo 'A governance layer-down triggered a ripple that includes changes to'
+            echo 'agent contract files (`.github/agents/*.md`).'
+            echo ''
+            echo 'Per **CS2_AGENT_FILE_AUTHORITY_MODEL.md** and'
+            echo '**AGENT_CONTRACT_PROTECTION_PROTOCOL.md**, only CS2 (Johan Ras) may'
+            echo 'approve and merge changes to agent contracts.'
+            echo ''
+            echo '**The ripple PR has been created as DRAFT and must not be merged until'
+            echo 'CS2 explicitly approves it.**'
+            echo ''
+            echo '## Context'
+            echo "- Session: ripple-integration-${{ github.run_id }}"
+            echo "- Triggered by: Issue #${{ steps.issue.outputs.number }}"
+            echo "- Canonical commit: ${{ steps.metadata.outputs.canonical_commit }}"
+            echo "- Canonical version: ${{ steps.metadata.outputs.canonical_version }}"
+            echo "- Files updated: ${{ steps.metadata.outputs.files_updated }}"
+            echo "- Drift report: ${{ steps.metadata.outputs.drift_report }}"
+            echo ''
+            echo '## Recommendation'
+            echo '1. CS2 reviews the DRAFT ripple PR'
+            echo '2. CS2 approves and merges after review'
+            echo '3. Move this file to `escalation-archive/` after resolution'
+            echo ''
+            echo '## Evidence'
+            echo "- Drift report: \`${{ steps.metadata.outputs.drift_report }}\`"
+            echo "- Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo ''
+            echo '---'
+            echo "Created: ${DATESTAMP} | Authority: CS2 | Session: ${{ github.run_id }}"
+          } > "$ESCALATION_FILE"
           echo "Escalation document created: $ESCALATION_FILE"
 
-      # ── Create PR (DRAFT if CS2 required, normal otherwise) ──
-      - name: Create ripple PR
+      # ── Record layer-down receipt ──
+      # Defect 1 fix: this step runs BEFORE the PR creation steps so the JSON
+      # file is staged and included in the ripple PR commit.
+      - name: Record layer-down receipt
         if: steps.align.outputs.drift_detected == 'true'
-        id: create_pr
+        run: |
+          mkdir -p .agent-admin/ripple
+          DATESTAMP=$(date -u +%Y%m%dT%H%M%SZ)
+          RECORD=".agent-admin/ripple/layer-down-received-${DATESTAMP}.json"
+          jq -n \
+            --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg issue "${{ steps.issue.outputs.number }}" \
+            --arg commit "${{ steps.metadata.outputs.canonical_commit }}" \
+            --arg cs2 "${{ steps.escalation.outputs.require_cs2 }}" \
+            '{schema_version:"1.0.0",type:"layer_down_received",timestamp:$ts,source_issue:$issue,canonical_commit:$commit,requires_cs2_approval:($cs2=="true"),escalated:($cs2=="true")}' \
+            > "$RECORD"
+          echo "Receipt recorded: $RECORD"
+
+      # ── Create PR — standard path (no agent files changed) ──
+      # Defect 2 fix: separate steps with literal draft: false / draft: true
+      - name: Create ripple PR (standard — no agent files)
+        if: steps.align.outputs.drift_detected == 'true' && steps.escalation.outputs.require_cs2 == 'false'
+        id: create_pr_standard
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
           commit-message: |
             Ripple: propagate governance layer-down (issue #${{ steps.issue.outputs.number }})
-
             Canonical commit: ${{ steps.metadata.outputs.canonical_commit }}
             Files updated: ${{ steps.metadata.outputs.files_updated }}
-            Agent files changed: ${{ steps.escalation.outputs.require_cs2 }}
+            Agent files changed: false
           branch: ripple/layer-down-${{ github.run_id }}
           force-push: true
           delete-branch: true
-          draft: ${{ steps.escalation.outputs.require_cs2 == 'true' }}
-          title: >-
-            ${{ steps.escalation.outputs.require_cs2 == 'true' &&
-              '[Ripple][DRAFT — CS2 Required] Propagate governance layer-down' ||
-              '[Ripple] Propagate governance layer-down' }}
+          draft: false
+          title: '[Ripple] Propagate governance layer-down'
           body: |
             ## Ripple Integration
-
             This PR propagates governance artefacts from the upstream layer-down.
-
             ### Source
             - **Layer-down issue**: #${{ steps.issue.outputs.number }}
             - **Canonical commit**: `${{ steps.metadata.outputs.canonical_commit }}`
             - **Canonical version**: `${{ steps.metadata.outputs.canonical_version }}`
             - **Files updated**: ${{ steps.metadata.outputs.files_updated }}
-            - **Drift report**: `${{ steps.metadata.outputs.drift_report }}`
-
             ### Agent File Gate
-            ${{ steps.escalation.outputs.require_cs2 == 'true' &&
-              '⛔ **Agent contract files changed — CS2 approval required.**  Auto-merge is DISABLED.  See `.agent-workspace/governance-liaison/escalation-inbox/` for escalation document.' ||
-              '✅ No agent contract files changed — standard auto-merge path.' }}
-
-            ### Governance Alignment Protocol
-
-            Per **CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md**:
-            1. ✅ Layer-down issue received
-            2. ✅ Drift detected via align-governance.sh
-            3. ✅ Files layered down with SHA256 verification
-            4. ✅ sync_state.json and CANON_INVENTORY.json updated
-            5. ✅ Evidence artefacts in `.agent-admin/governance/`
-
+            ✅ No agent contract files changed — standard auto-merge path.
             ---
-            **Authority**: LAYERING_AND_RIPPLING_AUTOMATION_STRATEGY.md v1.0.0  
-            **Workflow**: `.github/workflows/ripple-integration.yml`  
+            **Authority**: LAYERING_AND_RIPPLING_AUTOMATION_STRATEGY.md v1.0.0
             **Closes**: #${{ steps.issue.outputs.number }}
           labels: |
             governance
@@ -281,37 +279,63 @@ jobs:
             agent:liaison
           assignees: APGI-cmy
 
-      # ── Record layer-down receipt ──
-      - name: Record layer-down receipt
-        if: steps.align.outputs.drift_detected == 'true'
+      # ── Create PR — CS2 DRAFT path (agent files changed) ──
+      - name: Create ripple PR (DRAFT — CS2 required)
+        if: steps.align.outputs.drift_detected == 'true' && steps.escalation.outputs.require_cs2 == 'true'
+        id: create_pr_draft
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          commit-message: |
+            Ripple: propagate governance layer-down (issue #${{ steps.issue.outputs.number }})
+            Canonical commit: ${{ steps.metadata.outputs.canonical_commit }}
+            Files updated: ${{ steps.metadata.outputs.files_updated }}
+            Agent files changed: true
+          branch: ripple/layer-down-${{ github.run_id }}
+          force-push: true
+          delete-branch: true
+          draft: true
+          title: '[Ripple][DRAFT — CS2 Required] Propagate governance layer-down'
+          body: |
+            ## Ripple Integration
+            This PR propagates governance artefacts from the upstream layer-down.
+            ### Source
+            - **Layer-down issue**: #${{ steps.issue.outputs.number }}
+            - **Canonical commit**: `${{ steps.metadata.outputs.canonical_commit }}`
+            - **Canonical version**: `${{ steps.metadata.outputs.canonical_version }}`
+            - **Files updated**: ${{ steps.metadata.outputs.files_updated }}
+            ### Agent File Gate
+            ⛔ **Agent contract files changed — CS2 approval required.** Auto-merge is DISABLED. See `.agent-workspace/governance-liaison/escalation-inbox/` for escalation document.
+            ---
+            **Authority**: LAYERING_AND_RIPPLING_AUTOMATION_STRATEGY.md v1.0.0
+            **Closes**: #${{ steps.issue.outputs.number }}
+          labels: |
+            governance
+            ripple
+            automated
+            agent:liaison
+          assignees: APGI-cmy
+
+      # ── Resolve PR number from whichever step ran ──
+      - name: Resolve PR number
+        id: pr_number
         run: |
-          mkdir -p .agent-admin/ripple
-          DATESTAMP=$(date -u +%Y%m%dT%H%M%SZ)
-          RECORD=".agent-admin/ripple/layer-down-received-${DATESTAMP}.json"
-          cat > "$RECORD" <<EOF
-          {
-            "schema_version": "1.0.0",
-            "type": "layer_down_received",
-            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-            "source_issue": "${{ steps.issue.outputs.number }}",
-            "canonical_commit": "${{ steps.metadata.outputs.canonical_commit }}",
-            "requires_cs2_approval": ${{ steps.escalation.outputs.require_cs2 }},
-            "ripple_pr": "${{ steps.create_pr.outputs.pull-request-number }}",
-            "escalated": ${{ steps.escalation.outputs.require_cs2 }}
-          }
-          EOF
-          echo "Receipt recorded: $RECORD"
+          NUMBER="${{ steps.create_pr_standard.outputs.pull-request-number }}"
+          if [ -z "$NUMBER" ]; then
+            NUMBER="${{ steps.create_pr_draft.outputs.pull-request-number }}"
+          fi
+          echo "number=$NUMBER" >> $GITHUB_OUTPUT
 
       # ── Enable auto-merge only when no CS2 gate required ──
       - name: Enable auto-merge
         if: >
           steps.align.outputs.drift_detected == 'true' &&
           steps.escalation.outputs.require_cs2 == 'false' &&
-          steps.create_pr.outputs.pull-request-number != ''
+          steps.pr_number.outputs.number != ''
         env:
           GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
         run: |
-          PR_NUMBER="${{ steps.create_pr.outputs.pull-request-number }}"
+          PR_NUMBER="${{ steps.pr_number.outputs.number }}"
           echo "Enabling auto-merge for ripple PR #$PR_NUMBER"
           gh pr merge "$PR_NUMBER" \
             --repo ${{ github.repository }} \
@@ -327,50 +351,46 @@ jobs:
         run: |
           DRIFT="${{ steps.align.outputs.drift_detected }}"
           REQUIRE_CS2="${{ steps.escalation.outputs.require_cs2 }}"
-          PR_NUMBER="${{ steps.create_pr.outputs.pull-request-number }}"
+          PR_NUMBER="${{ steps.pr_number.outputs.number }}"
+          COMMIT="${{ steps.metadata.outputs.canonical_commit }}"
+          FILES="${{ steps.metadata.outputs.files_updated }}"
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
           if [ "$DRIFT" = "true" ] && [ -n "$PR_NUMBER" ]; then
             if [ "$REQUIRE_CS2" = "true" ]; then
-              COMMENT="## 🔒 Ripple Integration — CS2 Escalation Required
-
-          Governance drift was detected and a **DRAFT** ripple PR has been created.
-
-          **Agent contract files are in the changeset. Only CS2 (Johan Ras) may approve and merge.**
-
-          - Ripple PR: #${PR_NUMBER} (DRAFT — awaiting CS2 approval)
-          - Escalation doc: \`.agent-workspace/governance-liaison/escalation-inbox/\`
-          - Canonical commit: \`${{ steps.metadata.outputs.canonical_commit }}\`
-
-          ---
-          *Governance Liaison — ripple-integration.yml*"
+              COMMENT=$(printf '%s\n\n%s\n\n%s\n\n%s\n%s\n%s\n\n%s\n%s' \
+                '## 🔒 Ripple Integration — CS2 Escalation Required' \
+                'Governance drift was detected and a **DRAFT** ripple PR has been created.' \
+                '**Agent contract files are in the changeset. Only CS2 (Johan Ras) may approve and merge.**' \
+                "- Ripple PR: #${PR_NUMBER} (DRAFT — awaiting CS2 approval)" \
+                '- Escalation doc: `.agent-workspace/governance-liaison/escalation-inbox/`' \
+                "- Canonical commit: \`${COMMIT}\`" \
+                '---' \
+                '*Governance Liaison — ripple-integration.yml*')
             else
-              COMMENT="## ✅ Ripple Integration — Auto-Merge Enabled
-
-          Governance drift was detected and a ripple PR has been created.
-
-          - Ripple PR: #${PR_NUMBER}
-          - Canonical commit: \`${{ steps.metadata.outputs.canonical_commit }}\`
-          - Files updated: ${{ steps.metadata.outputs.files_updated }}
-          - Auto-merge: **enabled** (no agent contract files changed)
-
-          ---
-          *Governance Liaison — ripple-integration.yml*"
+              COMMENT=$(printf '%s\n\n%s\n\n%s\n%s\n%s\n%s\n\n%s\n%s' \
+                '## ✅ Ripple Integration — Auto-Merge Enabled' \
+                'Governance drift was detected and a ripple PR has been created.' \
+                "- Ripple PR: #${PR_NUMBER}" \
+                "- Canonical commit: \`${COMMIT}\`" \
+                "- Files updated: ${FILES}" \
+                '- Auto-merge: **enabled** (no agent contract files changed)' \
+                '---' \
+                '*Governance Liaison — ripple-integration.yml*')
             fi
           elif [ "$DRIFT" = "false" ]; then
-            COMMENT="## ✅ Ripple Integration — No Drift Detected
-
-          Governance is already aligned with canonical source. No PR required.
-
-          ---
-          *Governance Liaison — ripple-integration.yml*"
+            COMMENT=$(printf '%s\n\n%s\n\n%s\n%s' \
+              '## ✅ Ripple Integration — No Drift Detected' \
+              'Governance is already aligned with canonical source. No PR required.' \
+              '---' \
+              '*Governance Liaison — ripple-integration.yml*')
           else
-            COMMENT="## ⚠️ Ripple Integration — Alignment Script Error
-
-          The alignment script encountered an error. Check the workflow run for details:
-          ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-          ---
-          *Governance Liaison — ripple-integration.yml*"
+            COMMENT=$(printf '%s\n\n%s\n%s\n\n%s\n%s' \
+              '## ⚠️ Ripple Integration — Alignment Script Error' \
+              'The alignment script encountered an error. Check the workflow run for details:' \
+              "${RUN_URL}" \
+              '---' \
+              '*Governance Liaison — ripple-integration.yml*')
           fi
 
           gh issue comment "${{ steps.issue.outputs.number }}" \
