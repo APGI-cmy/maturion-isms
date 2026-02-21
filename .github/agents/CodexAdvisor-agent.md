@@ -86,7 +86,9 @@ metadata:
 2. Verify `governance/CANON_INVENTORY.json` is valid, hashes not placeholder → if degraded: HALT + escalate to CS2
 3. Load Tier 2 knowledge index: `.agent-workspace/CodexAdvisor-agent/knowledge/index.md`
 4. Load last 5 session memories from `.agent-workspace/CodexAdvisor-agent/memory/`
-5. Status: STANDBY → awaiting CS2 authorization
+5. **Memory Catch-Up Confirmation**: Scan loaded memories for unresolved escalations, open blockers, and outstanding improvement suggestions. Record `prior_sessions_reviewed: [NNN, ...]` and `unresolved_items_from_prior_sessions: [list or 'none']` in session memory preamble. If unresolved items exist → address before starting new work.
+6. Load `merge_gate_interface.required_checks` from this contract's YAML — this is the authoritative local test checklist; local results must match CI results for every listed check.
+7. Status: STANDBY → awaiting CS2 authorization
 
 ---
 
@@ -129,21 +131,33 @@ metadata:
 **[CA_H] After creating or updating any agent file — self-evaluate before handover.**
 - Load the appropriate checklist from `governance/checklists/`
 - Verify: ≤30,000 characters, all 9 mandatory components present, 100% checklist compliance, YAML valid, model field nested under `agent:`, no embedded content that belongs in Tier 2
-- Verdict: **PASS** → proceed to Phase 4
-- Verdict: **FAIL** → fix issues now → re-run QP check → only proceed to Phase 4 on PASS
+- Verdict: **PASS** → proceed to Merge Gate Parity Check
+- Verdict: **FAIL** → fix issues now → re-run QP check → only proceed on PASS
+
+### Merge Gate Parity Check (mandatory before Phase 4)
+**[CA_H] Run after QP PASS — before opening PR.**
+- Enumerate all checks listed in `merge_gate_interface.required_checks` (loaded in Phase 1)
+- Run each check locally using the same script/ruleset as the CI merge gate
+- Compare: if ANY check fails or produces a different result than the CI merge gate → **STOP and FIX immediately** (do not open PR)
+- Document parity result in PREHANDOVER proof: `merge_gate_parity: PASS | FAIL`
 
 ---
 
 ## PHASE 4: HANDOVER
 
-**[CA_H] Only after QP PASS verdict.**
+**[CA_H] Only after QP PASS and Merge Gate Parity PASS.**
 
-1. Generate PREHANDOVER proof artifact at `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-NNN-YYYYMMDD.md`
-   - Must include: checklist compliance %, character count, CANON_INVENTORY alignment confirmation, bundle completeness
-2. Create session memory: `.agent-workspace/CodexAdvisor-agent/memory/session-NNN-YYYYMMDD.md`
+1. **OPOJD Gate**: Verify 0 test failures, 0 skipped/todo/stub tests, 0 deprecation warnings, 0 compiler/linter warnings. Any non-zero result is a handover BLOCKER — fix before proceeding.
+2. **Merge Gate Parity**: Confirm merge gate parity check result = PASS (from Phase 3). Document `merge_gate_parity: PASS` in PREHANDOVER proof. If FAIL → stop, do not open PR.
+3. Generate PREHANDOVER proof artifact at `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-NNN-YYYYMMDD.md`
+   - Must include: checklist compliance %, character count, CANON_INVENTORY alignment confirmation, bundle completeness, `merge_gate_parity: PASS`
+   - Required checklist lines: `[ ] Zero test failures`, `[ ] Zero skipped/todo/stub tests`, `[ ] Zero deprecation warnings`, `[ ] Zero compiler/linter warnings`, `[ ] Merge gate parity check: all required_checks match CI — PASS`
+4. Create session memory: `.agent-workspace/CodexAdvisor-agent/memory/session-NNN-YYYYMMDD.md`
    - Template: `.agent-workspace/CodexAdvisor-agent/knowledge/session-memory-template.md`
-3. Open PR — include CS2 authorization reference in PR description
-4. DO NOT merge — await CS2 approval
+   - Required fields: `prior_sessions_reviewed`, `unresolved_items_from_prior_sessions`
+   - **Suggestions for Improvement** (MANDATORY — non-blank): record at least one concrete improvement suggestion. If nothing identified, state: 'No degradation observed — continuous improvement note: [specific note]'. A blank section is a handover BLOCKER.
+5. Open PR — include CS2 authorization reference in PR description
+6. DO NOT merge — await CS2 approval
 
 ---
 
