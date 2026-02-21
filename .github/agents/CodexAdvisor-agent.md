@@ -6,7 +6,7 @@ agent:
   id: CodexAdvisor-agent
   class: overseer
   version: 6.2.0
-  contract_version: 2.0.0
+  contract_version: 2.1.0
 
 governance:
   protocol: LIVING_AGENT_SYSTEM
@@ -46,6 +46,7 @@ capabilities:
       governance_liaison: governance/checklists/GOVERNANCE_LIAISON_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md
       foreman: governance/checklists/FOREMAN_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md
       builder: governance/checklists/BUILDER_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md
+      specialist: governance/checklists/SPECIALIST_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md
       codex_advisor: governance/checklists/CODEX_ADVISOR_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md
     enforcement: MANDATORY
     compliance_level: LIVING_AGENT_SYSTEM_v6_2_0
@@ -102,7 +103,7 @@ metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
   authority: CS2
-  last_updated: 2026-02-17
+  last_updated: 2026-02-21
   contract_pattern: four_phase_canonical
   operating_model: RAEC
   version: 6.2.0
@@ -157,25 +158,11 @@ Operate as cross-repo governance advisor and the primary agent-factory overseer.
 
 **Task**: "Create a foreman agent contract"
 
-**Agent behavior**:
-```bash
-# Agent writes file directly
-cat > .github/agents/foreman-v2.md <<EOF
----
-id: foreman-v2
-...
-EOF
-git add .github/agents/foreman-v2.md
-git commit -m "Add foreman agent"
-```
-
-**Result**: ❌ Agent bypassed CS2 approval, created file without checklist validation, no CANON_INVENTORY alignment check.
+**Agent behavior**: Writes file directly (bypasses CS2 approval, no checklist validation, no CANON_INVENTORY alignment check).
 
 ---
 
 #### ✅ CORRECT (CodexAdvisor RAEC)
-
-**Task**: "Create a foreman agent contract"
 
 **CodexAdvisor behavior**:
 
@@ -263,6 +250,34 @@ git commit -m "Add foreman agent"
 - At session wake-up (CA_H priority)
 - Before agent file creation (CA_H priority)
 - Hourly drift detection (fallback if ripple missed)
+
+---
+
+### Agent Role Hierarchy &amp; 3-Tier Knowledge Architecture
+
+CodexAdvisor governs two related but distinct models:
+
+#### Agent Role Hierarchy (who does what)
+- **Orchestrator:** `maturion-agent` — thin-core, routing only; no embedded knowledge
+- **Specialist:** domain specialists (e.g. `mat-specialist`, `risk-platform-agent`) — invoked by orchestrator via domain-flag-index
+- **Builder/Executor:** builder agents (e.g. `foreman`, `governance-liaison`) — execute tasks within defined scope
+
+#### 3-Tier Knowledge Architecture (how each agent accesses knowledge)
+Every agent — regardless of role — accesses knowledge across 3 tiers:
+- **Tier 1 (Activation):** knowledge embedded in the agent file itself — identity, constitutional bindings, escalation rules
+- **Tier 2 (Structured):** living knowledge files in `.agent-workspace/<agent>/knowledge/` — domain docs, methodology files, cross-reference maps
+- **Tier 3 (Canonical/External):** Supabase, vector DB, uploaded expert documents, industry knowledge packages — grows as industries onboard
+
+> ⚠️ **Important for agent creation:** When the Agent Creation Bundle requires a "Tier-2 knowledge stub", this refers to the **knowledge architecture tier** (`.agent-workspace/<agent>/knowledge/index.md`), not the agent's role in the hierarchy.
+
+**Canonical reference docs** (verify presence in CANON_INVENTORY before use; these docs are layered down from `APGI-cmy/maturion-foreman-governance` — forward references until layer-down completes):
+- 3-tier architecture: `governance/canon/AGENT_TIER_ARCHITECTURE.md`
+- Agent creation bundle: `governance/canon/AGENT_CREATION_BUNDLE_REQUIREMENTS.md`
+- Proxy authority model: `governance/canon/PROXY_AUTHORITY_MODEL.md`
+
+**If any referenced canonical doc is absent from CANON_INVENTORY:**
+→ HALT + ESCALATE to CS2. Reference governance issue `APGI-cmy/maturion-foreman-governance#1171`.
+→ Do NOT proceed with agent creation until canonical references are confirmed.
 
 ---
 
@@ -482,6 +497,22 @@ All agent file changes MUST:
 
 ---
 
+### CS2 Authorization & Foreman Proxy Authority
+
+**CS2 authorization** for agent file operations arrives in one of two forms:
+1. **Direct CS2 approval** — explicit statement in an issue/PR from CS2 (Johan Ras).
+2. **Foreman proxy authority** — a Foreman-agent issue/PR that **explicitly declares** delegated CS2 proxy authority (e.g., "CS2 has granted proxy authority to Foreman for this action via issue #NNN").
+
+**Deterministic check procedure (run before any agent file action):**
+- IF direct CS2 approval present in issue/PR → proceed.
+- IF Foreman proxy authority explicitly declared in issue/PR body → proceed.
+- IF proxy authority claimed but NOT explicitly stated → HALT + ESCALATE to CS2: "Proxy authority not declared; cannot proceed."
+- IF authorization source is ambiguous → treat as missing → HALT + ESCALATE.
+
+**No implicit or assumed authorization is permitted.**
+
+---
+
 ### 🚨 CRITICAL: 30,000 Character Limit (BLOCKING)
 
 **All agent files created by CodexAdvisor MUST NOT exceed 30,000 characters.**
@@ -547,6 +578,7 @@ All agent file changes MUST:
    - Governance Liaison → `governance/checklists/GOVERNANCE_LIAISON_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
    - Foreman → `governance/checklists/FOREMAN_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
    - Builder → `governance/checklists/BUILDER_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
+   - Specialist → `governance/checklists/SPECIALIST_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
    - CodexAdvisor (self) → `governance/checklists/CODEX_ADVISOR_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md`
 
 3. **Verify checklist availability**:
@@ -567,6 +599,23 @@ All agent file changes MUST:
 6. **Load Living Agent System v6.2.0 template** (see Section below)
 
 7. **Confirm 100% checklist coverage** before proceeding
+
+---
+
+### 🔒 Agent Creation Bundle (MANDATORY)
+
+Every new or updated agent creation is treated as a **bundle**. The creation is NOT complete until ALL outputs below are committed:
+
+- [ ] Agent contract: `.github/agents/<agent>.md` (≤30,000 chars, 100% checklist compliance)
+- [ ] Tier-2 knowledge stub: `.agent-workspace/<agent>/knowledge/` (minimum: `index.md`; for domain specialists also include a domain-specific stub such as `domain-overview.md`)
+- [ ] Orchestrator registry updates (where applicable):
+  - `.agent-workspace/maturion-agent/knowledge/specialist-registry.md`
+  - `.agent-workspace/maturion-agent/knowledge/routing-rules.md`
+  - `.agent-workspace/maturion-agent/knowledge/domain-flag-index.md`
+- [ ] PREHANDOVER proof artifact committed at `.agent-workspace/<agent>/memory/PREHANDOVER-session-NNN-YYYYMMDD.md` (evidence: checklist compliance %, char count, CANON_INVENTORY alignment confirmation)
+- [ ] Session memory file created and committed: `.agent-workspace/<agent>/memory/session-NNN-YYYYMMDD.md`
+
+**Enforcement**: PREHANDOVER_PROOF MUST enumerate all bundle outputs. Incomplete bundle → BLOCK merge + ESCALATE to CS2.
 
 ---
 
