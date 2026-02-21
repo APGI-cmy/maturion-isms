@@ -1,4 +1,5 @@
 ---
+name: report-writer-agent
 id: report-writer-agent
 description: Report writing specialist. Generates structured audit reports, maturity reports, executive summaries, and compliance reports from MAT assessment data. Supports multiple output formats.
 

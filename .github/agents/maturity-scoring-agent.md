@@ -1,4 +1,5 @@
 ---
+name: maturity-scoring-agent
 id: maturity-scoring-agent
 description: Maturity scoring specialist. Computes domain maturity scores, gap analysis, and improvement roadmaps based on audit evidence and criteria coverage. Reads from Supabase criteria embeddings at runtime.
 

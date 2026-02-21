@@ -1,4 +1,5 @@
 ---
+name: governance-liaison-isms-agent
 id: governance-liaison-isms
 description: Governance liaison for maturion-isms repository - receives governance ripple and maintains local alignment
 

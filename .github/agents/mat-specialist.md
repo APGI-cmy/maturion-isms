@@ -1,4 +1,5 @@
 ---
+name: mat-specialist
 id: mat-specialist
 description: MAT domain specialist. Handles MAT app workflows, LDCS expertise, audit lifecycle, maturity domain structure, and compliance mapping. Operates under Maturion Build Philosophy.
 

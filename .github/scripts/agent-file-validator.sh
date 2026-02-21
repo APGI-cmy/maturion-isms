@@ -86,7 +86,7 @@ check_yaml_frontmatter() {
     fi
     
     # Check required fields
-    local required_fields=("id" "agent" "governance" "scope")
+    local required_fields=("name" "id" "agent" "governance" "scope")
     
     for field in "${required_fields[@]}"; do
         if ! echo "$yaml_content" | grep -q "^${field}:"; then
@@ -217,6 +217,15 @@ check_file_structure() {
     if ! grep -q "^#" "$file"; then
         echo -e "${YELLOW}  ⚠️  No markdown headers found${NC}"
         WARNINGS=$((WARNINGS + 1))
+    fi
+    
+    # Check for dual-dot filename (e.g. foreman-v2.agent.md) which breaks Copilot agent registration
+    local basename
+    basename=$(basename "$file")
+    local stem="${basename%.md}"
+    if [[ "$stem" == *.* ]]; then
+        echo -e "${RED}  ❌ Dual-dot filename detected: '${basename}'. Copilot loader expects '<agent-id>.md' (single dot). Rename to remove extra dot (e.g. foreman-v2-agent.md)${NC}"
+        errors=$((errors + 1))
     fi
     
     return $errors

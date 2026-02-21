@@ -1,4 +1,5 @@
 ---
+name: risk-platform-agent
 id: risk-platform-agent
 description: Risk platform specialist. Handles threat analysis, vulnerability assessment, risk scoring, control effectiveness evaluation, and risk register management across MAT, PIT, XDETECT, and Maturity Roadmap apps.
 
