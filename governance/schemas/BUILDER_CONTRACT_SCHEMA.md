@@ -4,7 +4,7 @@
 **Version**: 2.0  
 **Status**: CANONICAL SCHEMA (MATURION DOCTRINE ENFORCED)  
 **Authority**: Builder Recruitment Automation Corrective Design + BL-016 Constitutional Alignment  
-**Location**: `.github/agents/BUILDER_CONTRACT_SCHEMA.md`  
+**Location**: `governance/schemas/BUILDER_CONTRACT_SCHEMA.md`  
 **Upgrade Date**: 2026-01-01
 
 ---
