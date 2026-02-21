@@ -508,12 +508,12 @@ Each item includes:
   - Field exists OR explicit section in contract text
   - Specifies required escalation fields (Category, Severity, Trigger, Canonical References, Context, etc.)
   - References escalation policy
-- **Canonical Reference**: `governance/escalation/ESCALATION_POLICY.md`, `GOVERNANCE_BUILDER_SUBMISSION_SURVEY.md` section 11.1
+- **Canonical Reference**: `governance/canon/ESCALATION_POLICY.md`, `GOVERNANCE_BUILDER_SUBMISSION_SURVEY.md` section 11.1
 - **Severity if Missing**: MEDIUM - Escalation format inconsistent
 - **Format**:
   ```yaml
   escalation:
-    format: "governance/escalation/ESCALATION_POLICY.md"
+    format: "governance/canon/ESCALATION_POLICY.md"
     required_fields:
       - "category"
       - "severity"

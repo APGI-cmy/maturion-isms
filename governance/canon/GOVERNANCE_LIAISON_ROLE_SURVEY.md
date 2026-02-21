@@ -35,7 +35,7 @@ This survey forms the basis for defining **minimum appointment requirements** fo
 **PR Gate and Escalation Doctrine:**
 - `governance/policy/PR_GATE_FAILURE_HANDLING_PROTOCOL.md` — Gate failure classification and remediation
 - `governance/canon/PR_GATE_EVALUATION_AND_ROLE_PROTOCOL.md` — Gate evaluation by agent role
-- `governance/escalation/ESCALATION_POLICY.md` — Escalation levels and authorities
+- `governance/canon/ESCALATION_POLICY.md` — Escalation levels and authorities
 
 **Repository Seeding and Role Separation:**
 - `governance/canon/REPOSITORY_INITIALIZATION_AND_GOVERNANCE_SEEDING_PROTOCOL.md` — Repository initialization process

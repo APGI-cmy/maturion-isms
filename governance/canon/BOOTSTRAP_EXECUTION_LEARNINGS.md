@@ -1077,7 +1077,7 @@ This condition is now permanently elevated.
 - Issue: 🔴 ACTIVATE AI Escalation & Capability-Aware Scaling (Governance Activation)
 - Survey: AI_ESCALATION_CAPABILITY_SCALING_SURVEY_AND_RCA.md
 - Amended Artifacts:
-  - governance/escalation/ESCALATION_POLICY.md (v2.0 — ACTIVE)
+  - governance/canon/ESCALATION_POLICY.md (v2.0 — ACTIVE)
   - governance/canon/COGNITIVE_CAPABILITY_ORCHESTRATION_MODEL.md (v1.1.0 — ACTIVE)
   - governance/maturion/FM_ROLE_CANON.md (updated 2026-01-03)
 
@@ -3721,6 +3721,155 @@ Assess Impact: Critical / High / Medium / Low
 **Owner**: Governance-Repo-Administrator  
 **Authority**: CS2 (Johan Ras)  
 **Integration**: LEARNING_LOOP_CATEGORIES_AND_LIFECYCLE.md, LEARNING_PROMOTION_RULE.md
+
+---
+
+## BL-031: Pre-Flight Builder Agent Availability Check (2026-02-17)
+
+**Category**: Build Execution Learning  
+**Severity**: HIGH  
+**Status**: CANONICAL (protocols created and enforced)
+
+### Context
+Wave 5.5 (MAT Frontend Assembly) attempted execution with ui-builder agent that was present in repository but NOT available in GitHub agent selection list due to YAML frontmatter non-standard field (`assigned_waves`).
+
+### What Happened
+1. Implementation plan assigned ui-builder to Wave 5.5
+2. ui-builder agent file existed (`.github/agents/ui-builder.md`)
+3. ui-builder NOT visible in GitHub agent list (YAML issue)
+4. PR #288 created using generic coding agent (WRONG)
+5. Governance violation: Foreman supervision bypassed
+6. PR #288 closed, 2 hours wasted, rework required
+
+### Failure Pattern
+**Missing Pre-Flight Check**: Foreman started wave execution without verifying assigned builders were available in agent list.
+
+**Consequence**: When builder unavailable, system degraded to generic coding agent (governance violation).
+
+### Learning
+**Foreman MUST verify all assigned builder agents are available in GitHub agent selection list BEFORE starting wave execution.**
+
+**If ANY builder unavailable**:
+- HALT wave execution immediately
+- Create issue: Agent discovery failure
+- Investigate root cause (YAML frontmatter, file location, permissions)
+- Fix agent contract
+- Re-verify agent availability
+- Resume wave ONLY after all builders available
+- NEVER substitute with generic coding agent or other builders
+
+### Prevention Measures
+
+#### 1. Foreman Agent Contract Update (LOCKED Section)
+**File**: `.github/agents/foreman-agent.md`
+
+**New LOCKED Section**: Pre-Wave Authorization Gate — Agent Availability Check
+
+```markdown
+## 🔒 Pre-Wave Authorization Gate — Agent Availability Check (LOCKED)
+
+**MANDATORY BEFORE WAVE EXECUTION**:
+
+Before starting ANY wave, Foreman MUST verify all assigned builder agents are available:
+
+1. [ ] Review wave task assignments from implementation plan
+2. [ ] Identify all builder agents required (api-builder, ui-builder, qa-builder, schema-builder, integration-builder)
+3. [ ] Verify EACH builder appears in GitHub agent selection list
+4. [ ] If ANY builder unavailable:
+   - [ ] HALT wave execution (do NOT proceed)
+   - [ ] Create issue: "[BUG][LIVING AGENT] [builder-name] agent file present but missing from agent list"
+   - [ ] Investigate: YAML frontmatter compliance, file location, GitHub recognition
+   - [ ] Assign to CS2 for agent contract fix
+   - [ ] Wait for fix PR to merge
+   - [ ] Re-verify agent availability
+   - [ ] Resume wave ONLY after all builders available
+5. [ ] Document agent availability verification in wave planning evidence
+
+**PROHIBITED**:
+- ❌ Starting wave with unavailable builders
+- ❌ Substituting generic coding agent for missing builder
+- ❌ Substituting other builder types (e.g., api-builder for ui-builder)
+- ❌ Proceeding with "workaround" agents
+
+**Authority**: BL-030, RCA_WAVE_5.5_AGENT_CONTRACT_DEVIATION.md
+```
+
+#### 2. Governance Canon Protocol (CREATED)
+**File**: `governance/canon/FOREMAN_PRE_WAVE_AGENT_AVAILABILITY_CHECK.md`
+
+**Type**: PUBLIC_API TIER-0  
+**Version**: v1.0.0  
+**Status**: ✅ CREATED (2026-02-17)
+
+**Purpose**: Define mandatory pre-flight agent availability check protocol for all wave executions.
+
+**Content**:
+- Agent availability verification requirements
+- GitHub agent list validation procedure
+- YAML frontmatter compliance requirements
+- Escalation protocol when builders unavailable
+- Evidence documentation requirements
+- Integration with Foreman LOCKED sections
+
+#### 3. Builder Agent YAML Compliance Spec (CREATED)
+**File**: `governance/canon/BUILDER_AGENT_YAML_FRONTMATTER_COMPLIANCE_SPEC.md`
+
+**Type**: PUBLIC_API TIER-0  
+**Version**: v1.0.0  
+**Status**: ✅ CREATED (2026-02-17)
+
+**Purpose**: Define permitted and prohibited YAML frontmatter fields for builder agent contracts to ensure GitHub Copilot recognition.
+
+**Content**:
+- Permitted YAML fields (documented, GitHub-compatible)
+- Prohibited YAML fields (breaks parser: `assigned_waves`, custom metadata)
+- YAML structure validation
+- Merge gate enforcement
+- Cross-repository compliance audit procedures
+- Migration guide for existing contracts
+
+#### 4. Merge Gate Validation
+**Gate**: Builder Agent Contract Compliance
+
+**Validation**: Any PR modifying `.github/agents/*-builder.md` files MUST:
+- Validate YAML frontmatter against compliance spec
+- Prohibit non-standard fields
+- Verify GitHub Copilot parser compatibility
+- Test agent recognition in GitHub agent list (manual verification)
+
+### Verification
+**Next Build**: Before starting Wave 1, Foreman MUST:
+1. Read this learning (BL-030)
+2. Read RCA_WAVE_5.5_AGENT_CONTRACT_DEVIATION.md
+3. Run pre-flight agent availability check
+4. Verify all builders available
+5. Document verification in wave planning evidence
+
+**If this pattern repeats** → **CATASTROPHIC FAILURE** (same root cause twice)
+
+### Authority
+- RCA: `modules/mat/05-build-evidence/RCA_WAVE_5.5_AGENT_CONTRACT_DEVIATION.md`
+- Issues: #290 (agent discovery), #292 (resubmission)
+- PRs: #288 (wrong agent), #291 (ui-builder fix), #293 (correct approach)
+
+### Impact
+- **Time Lost**: ~2 hours
+- **Governance Violations**: 3 (wrong agent, Foreman bypass, architecture violation)
+- **Rework Required**: 1 PR closed, 3 issues created, 1 agent fix PR, 1 wave resubmission PR
+
+### Status
+- [x] RCA complete
+- [x] Learning documented (BL-030)
+- [ ] Foreman agent contract update (LOCKED section) — **REQUIRES CS2 ACTION**
+- [ ] Governance canon protocol creation — **REQUIRES GOVERNANCE-REPO-ADMINISTRATOR**
+- [ ] YAML compliance spec creation — **REQUIRES GOVERNANCE-REPO-ADMINISTRATOR**
+- [ ] Merge gate validation implementation — **REQUIRES CS2 ACTION**
+- [ ] Layer-down to consumer repos — **AFTER CANONICAL UPDATES**
+
+**Date**: 2026-02-17  
+**Author**: CS2 (CodexAdvisor)  
+**Severity**: HIGH  
+**Recurrence Risk**: MEDIUM (without prevention), LOW (with prevention)
 
 ---
 

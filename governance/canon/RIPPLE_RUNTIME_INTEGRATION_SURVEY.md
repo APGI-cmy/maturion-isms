@@ -216,7 +216,7 @@ This survey is **observation and mapping only**.
 - Incident created (CRITICAL severity)
 - Human governance authority notified
 
-**Canonical Reference**: `governance/escalation/ESCALATION_POLICY.md`
+**Canonical Reference**: `governance/canon/ESCALATION_POLICY.md`
 
 ---
 

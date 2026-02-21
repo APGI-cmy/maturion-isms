@@ -33,7 +33,7 @@ This doctrine derives supreme authority from and integrates with:
 - **BUILD_PHILOSOPHY.md** - 100% GREEN philosophy, Zero Test Debt constitutional requirement
 - **BYG_DOCTRINE.md** - One-Time Build Law, compulsory learning, failure semantics
 - **DEFECT_RESOLUTION_MAINTENANCE_CANON.md** - Defect resolution standards, maintenance governance
-- **ESCALATION_POLICY.md** - Escalation triggers and paths for unresolvable issues
+- **governance/canon/ESCALATION_POLICY.md** - Escalation triggers and paths for unresolvable issues
 - **FAILURE_PROMOTION_RULE.md** - Learning from failures, prevention of recurrence
 - **FM_ROLE_CANON.md** - FM authority to halt execution on quality violations
 - **QA_POLICY_MASTER.md** - QA validation requirements, test failure handling

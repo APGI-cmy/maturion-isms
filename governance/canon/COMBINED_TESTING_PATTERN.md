@@ -463,6 +463,90 @@ CWT validates integration completeness, not exhaustive production scenarios. Ful
 
 ---
 
+### 8.4 Test Count Reconciliation Requirements (MANDATORY)
+
+**Authority**: This subsection establishes mandatory test count reconciliation at CST, CWT, and IBWR checkpoints to ensure integration state integrity and detect test debt.
+
+#### 8.4.1 Test Reconciliation Mandate
+
+**At Each Integration Checkpoint (CST, CWT, IBWR):**
+- **MUST** record explicit sum of GREEN/total test counts
+- **MUST** track tests turned RED to GREEN since last checkpoint
+- **MUST** reconcile cumulative test tally across all integrated waves and subwaves
+- **MUST** document any mismatches with audit trail links to evidence
+
+**Purpose:**
+- Detect untracked test debt accumulation
+- Ensure integration state integrity
+- Validate canonical handover completeness
+- Enable auditable test progression tracking
+
+#### 8.4.2 CST Test Reconciliation
+
+**At Each CST Checkpoint, Document:**
+- Tests executed at this checkpoint: [N total tests, N passed, N failed]
+- Tests turned RED→GREEN since last checkpoint: [N tests fixed]
+- Cumulative subwave test tally: [Sum of all subwave tests integrated at this point]
+- Test count reconciliation status: [RECONCILED / MISMATCH DETECTED]
+- Audit trail: [Links to test execution logs, subwave QA evidence]
+
+**Mismatch Response:**
+- If test counts do not reconcile, MUST investigate and document discrepancy
+- CST checkpoint CANNOT pass with unresolved test count mismatches
+- Document reason for mismatch (missing tests, miscounted, etc.)
+
+#### 8.4.3 CWT Test Reconciliation (MANDATORY)
+
+**CWT MUST Include Explicit Test Reconciliation Section:**
+- Total tests executed across all waves: [N tests]
+- Tests passed (GREEN): [N tests] (Must be 100% for CWT PASS)
+- Tests turned RED→GREEN during Wave [N]: [N tests fixed]
+- Cumulative wave test tally: [Sum across Wave 1...Wave N]
+- Per-wave test breakdown:
+  - Wave 1: [N tests total, N GREEN]
+  - Wave 2: [N tests total, N GREEN]
+  - ...
+  - Wave N: [N tests total, N GREEN]
+- Test count reconciliation verification: [RECONCILED / MISMATCH]
+- Audit trail: [Links to wave QA results, test execution logs]
+
+**Blocking Rule:**
+> **CWT CANNOT pass without explicit test count reconciliation. Test count mismatches MUST be resolved before IBWR completion.**
+
+#### 8.4.4 IBWR Test Reconciliation Validation
+
+**IBWR Completion Checklist MUST Include:**
+- [ ] CST test reconciliation completed (if CST checkpoints exist)
+- [ ] CWT test reconciliation completed and verified
+- [ ] Cumulative test tally documented and reconciled
+- [ ] All test count mismatches resolved and documented
+- [ ] Audit trail links provided for all test counts
+- [ ] Test debt identified and tracked (if any tests remain RED)
+
+**Test Debt Documentation:**
+- If any tests remain RED (failing) at IBWR, MUST document:
+  - Number of RED tests: [N tests]
+  - Test debt justification: [Why deferred, when will be resolved]
+  - Exemption authority: [CS2 approval required for test debt carryover]
+  - Impact assessment: [Risk of proceeding with RED tests]
+
+**Default Rule:**
+> **Zero-test-debt policy: All tests MUST be GREEN before IBWR completion unless CS2 explicitly approves test debt carryover.**
+
+#### 8.4.5 Test Reconciliation Template Requirements
+
+**Templates MUST Include:**
+- CST checkpoint template: Test reconciliation checklist
+- CWT validation template: Comprehensive test reconciliation section
+- IBWR template: Test reconciliation validation checklist
+
+**Enforcement:**
+- Templates updated in governance/templates/
+- FM MUST use updated templates for all future waves
+- Test reconciliation becomes auditable, mandatory gate
+
+---
+
 ## 9. Testing Hierarchy
 
 **Maturion Testing Model (Updated):**

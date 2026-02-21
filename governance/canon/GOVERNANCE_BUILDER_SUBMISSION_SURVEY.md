@@ -816,7 +816,7 @@ Builder agents MUST satisfy ALL of the following gates:
 
 ### 11.1 Escalation Format
 
-**Canonical Reference**: `governance/escalation/ESCALATION_POLICY.md`
+**Canonical Reference**: `governance/canon/ESCALATION_POLICY.md`
 
 **All escalations MUST include:**
 

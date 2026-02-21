@@ -122,17 +122,33 @@ mkdir -p governance/evidence/initialization
 
 **For Application Repositories with Tests**:
 
-In addition to standard execution verification, **test execution is mandatory** per `AGENT_TEST_EXECUTION_PROTOCOL.md`:
+In addition to standard execution verification, **test execution AND static analysis validation are mandatory**:
 
 1. ✅ Run test suite in agent environment
 2. ✅ Achieve GREEN test state (exit code 0, all tests passed)
-3. ✅ Capture test execution output
-4. ✅ Include test evidence in PREHANDOVER_PROOF
-5. ✅ Do NOT create PR until tests GREEN locally
+3. ✅ **Run lint validation (0 errors, 0 warnings)**
+4. ✅ **Run type-check validation (0 errors, if applicable)**
+5. ✅ **Run build validation (successful build, exit code 0)**
+6. ✅ Capture execution output for ALL gates
+7. ✅ Include evidence for ALL gates in PREHANDOVER_PROOF
+8. ✅ Do NOT create PR until ALL gates GREEN locally
 
-**Reference**: `governance/runbooks/AGENT_TEST_EXECUTION_PROTOCOL.md`
+**Static Analysis Gates (MANDATORY for Application Repos)**:
 
-**Prohibition**: Do NOT skip this step and rely on CI to discover failures.
+Per Wave 5.6 post-mortem learning: "QA-to-Red test results alone are NOT sufficient. All lint/static/code quality gates must be zero-defect before any work is handed over."
+
+**Required Static Gates:**
+- **Lint**: yarn lint, npm run lint, eslint, pylint, cargo clippy, etc. (0 errors, 0 warnings)
+- **Type-check**: yarn type-check, tsc --noEmit, mypy, etc. (0 errors)
+- **Build**: yarn build, npm run build, cargo build, etc. (successful, exit code 0)
+- **Tests**: 100% GREEN (0 failures, 0 skipped)
+
+**Prohibition**: Do NOT skip static analysis validation and rely on CI to discover lint/type/build failures. Handover is **strictly prohibited** if ANY static gate fails.
+
+**Reference**: 
+- `governance/runbooks/AGENT_TEST_EXECUTION_PROTOCOL.md`
+- `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md` v4.0.0
+- Issue: "Governance Policy Update: Mandatory Lint/Static Analysis Gates Before Handover"
 
 **Example**:
 ```bash
@@ -146,10 +162,24 @@ yq eval '.on.pull_request.paths' .github/workflows/governance-gate.yml
 ls -la governance/alignment
 ls -la governance/evidence/initialization
 
-# For application repos: Run tests
+# For application repos: Run ALL gates
 npm test  # or pytest, cargo test, etc.
 # Exit code: 0 (all tests passed)
+
+npm run lint  # or yarn lint, eslint ., pylint src/
+# Exit code: 0 (0 errors, 0 warnings)
+
+npm run type-check  # or tsc --noEmit, mypy .
+# Exit code: 0 (0 type errors)
+
+npm run build  # or yarn build, cargo build
+# Exit code: 0 (build succeeded)
 ```
+
+**Authority**: 
+- `BUILD_PHILOSOPHY.md` — One-Time Build Law: delivered means 100% working
+- `WE_ONLY_FAIL_ONCE_DOCTRINE.md` — Structural governance prevents repeat failures
+- Wave 5.6 Post-Mortem
 
 ---
 

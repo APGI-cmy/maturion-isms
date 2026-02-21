@@ -1,7 +1,7 @@
 # AGENT_CONTRACT_ARCHITECTURE
 
-**Status**: CANONICAL | **Version**: 1.0.0 | **Authority**: CS2  
-**Date**: 2026-02-17
+**Status**: CANONICAL | **Version**: 1.1.0 | **Authority**: CS2  
+**Date**: 2026-02-20
 
 ---
 
@@ -9,7 +9,7 @@
 
 Establishes the **canonical four-phase agent contract architecture** that transforms agent contracts from static, prose-based documents into dynamic, executable, testable agent behavior systems.
 
-This architecture applies to **all agent classes**: supervisor, builder, overseer, administrator, QA, and specialized agents.
+This architecture applies to **all agent classes**: supervisor, builder, overseer, administrator, QA, orchestrator, specialist, and other specialized agents.
 
 ## Problem Statement
 
@@ -125,6 +125,8 @@ FOREMAN NEVER WRITES PRODUCTION CODE
 | **Overseer** (CodexAdvisor) | Review-Advise-Escalate | Alignment checks, advisory guidance, agent factory operations |
 | **Administrator** (Governance) | Verify-Update-Propagate | Canon updates, ripple execution, inventory management |
 | **QA** | Test-Verify-Enforce | Test execution, coverage verification, debt detection |
+| **Orchestrator** | Decompose-Delegate-Monitor-Integrate | Task decomposition, specialist delegation, result integration |
+| **Specialist** | Validate-Execute-Evidence-Report | Domain-scoped execution, evidence generation, result reporting |
 
 **Key Pattern**: Scripts use **priority codes** (FM_H/M/L for supervisor, B_H/M/L for builders, etc.) to sequence critical vs. optional work.
 
@@ -175,7 +177,7 @@ All agent contracts MUST follow this structure:
 # YAML frontmatter with agent metadata
 id: <agent-id>
 agent:
-  class: <supervisor|builder|overseer|administrator|qa>
+  class: <supervisor|builder|overseer|administrator|qa|orchestrator|specialist>
   version: 6.2.0
 governance:
   protocol: LIVING_AGENT_SYSTEM
@@ -262,10 +264,14 @@ All agent contracts MUST declare `contract_pattern: four_phase_canonical` in met
 - `governance/canon/AGENT_PRIORITY_SYSTEM.md` - Priority codes
 - `governance/canon/AGENT_HANDOVER_AUTOMATION.md` - Phase 4 template
 - `governance/canon/AGENT_CONTRACT_PROTECTION_PROTOCOL.md` - Contract modification
+- `governance/canon/ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md` - Orchestrator/specialist roles
+- `governance/canon/AGENT_DELEGATION_PROTOCOL.md` - Delegation mechanics
+- `governance/canon/SPECIALIST_KNOWLEDGE_MANAGEMENT.md` - Specialist knowledge management
+- `governance/canon/MULTI_EMBODIMENT_ORCHESTRATION_MODEL.md` - Multi-embodiment patterns
 
 ---
 
-**Version**: 1.0.0  
-**Last Updated**: 2026-02-17  
+**Version**: 1.1.0  
+**Last Updated**: 2026-02-20  
 **Authority**: CS2 (Johan Ras)  
 **Living Agent System**: v6.2.0
