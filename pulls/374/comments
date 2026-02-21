@@ -1,0 +1,161 @@
+## 🔴 STOP-AND-FIX — Three Defects Must Be Resolved Before Merge
+
+Per `BUILD_PHILOSOPHY.md` and the Zero Test Debt / Fully Functional Delivery Standard, **this PR is not yet at 100% delivery**. The three 🟡 medium issues identified during review are not "non-blocking" — they are defects that must be corrected before merge. There is no such thing as a tolerated gap in this system.
+
+---
+
+### Defect 1 — Receipt JSON Is Written But Not Committed
+
+**File**: `.github/workflows/ripple-integration.yml`
+
+**Problem**: The "Record layer-down receipt" step writes `.agent-admin/ripple/layer-down-received-<timestamp>.json` **after** `peter-evans/create-pull-request@v6` has already committed and pushed. The receipt file will never appear in the ripple PR and will be silently lost on the next run.
+
+**Required Fix**: Move the "Record layer-down receipt" step to **before** the "Create ripple PR" step so the file is included in the `create-pull-request` commit. The corrected step order must be:
+
+```
+1. Checkout
+2. Configure Git
+3. Resolve issue number
+4. Detect agent file gate
+5. Run governance alignment
+6. Check diff for agent contracts
+7. Determine escalation
+8. Collect alignment metadata
+9. Create escalation document (if CS2 required)
+10. *** Record layer-down receipt *** ← MOVE HERE (before create PR)
+11. Create ripple PR
+12. Enable auto-merge (if eligible)
+13. Comment on issue
+```
+
+**Acceptance Criterion**: The `layer-down-received-<timestamp>.json` file must appear in the files changed of every ripple PR created by this workflow.
+
+---
+
+### Defect 2 — `draft:` Boolean Expression May Not Evaluate in `peter-evans/create-pull-request@v6`
+
+**File**: `.github/workflows/ripple-integration.yml`, "Create ripple PR" step
+
+**Problem**: The `draft:` input is set to:
+```yaml
+draft: ${{ steps.escalation.outputs.require_cs2 == 'true' }}
+```
+This is an expression that evaluates to the **string** "true" or "false" inside a YAML value. `peter-evans/create-pull-request@v6` may not coerce this string to a boolean correctly, causing the CS2 escalation path to silently create a **normal (non-draft) PR** instead of a DRAFT PR — a critical governance gate failure.
+
+**Required Fix**: Use explicit conditional steps instead of a boolean expression on `draft:`. Split into two separate "Create ripple PR" steps — one for the CS2 path (draft: true) and one for the standard path (draft: false), gated by `if:` conditions:
+
+```yaml
+      - name: Create ripple PR (standard — no agent files)
+        if: steps.align.outputs.drift_detected == 'true' && steps.escalation.outputs.require_cs2 == 'false'
+        id: create_pr_standard
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          draft: false
+          title: '[Ripple] Propagate governance layer-down'
+          # ... (remaining fields identical)
+
+      - name: Create ripple PR (DRAFT — CS2 required)
+        if: steps.align.outputs.drift_detected == 'true' && steps.escalation.outputs.require_cs2 == 'true'
+        id: create_pr_draft
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          draft: true
+          title: '[Ripple][DRAFT — CS2 Required] Propagate governance layer-down'
+          # ... (remaining fields identical)
+```
+
+Then consolidate the PR number for downstream steps:
+```yaml
+      - name: Resolve PR number
+        id: pr_number
+        run: |
+          NUMBER="${{ steps.create_pr_standard.outputs.pull-request-number }}"
+          if [ -z "$NUMBER" ]; then
+            NUMBER="${{ steps.create_pr_draft.outputs.pull-request-number }}"
+          fi
+          echo "number=$NUMBER" >> $GITHUB_OUTPUT
+```
+
+Replace all subsequent references to `steps.create_pr.outputs.pull-request-number` with `steps.pr_number.outputs.number`.
+
+**Acceptance Criterion**: When a layer-down issue is processed that includes agent file changes, the created PR must be in DRAFT state. Verify by manual `workflow_dispatch` with a test issue that contains the string "Agent File Detection Gate" in its body.
+
+---
+
+### Defect 3 — Escalation Document Heredoc Has Leading Whitespace Indentation
+
+**File**: `.github/workflows/ripple-integration.yml`, "Create escalation document" step
+
+**Problem**: The `cat > $ESCALATION_FILE <<EOF` heredoc block is indented with spaces inside the `run:` block. This means every line of the escalation document will be prefixed with leading spaces in the committed file, producing a malformed Markdown document in `.agent-workspace/governance-liaison/escalation-inbox/`.
+
+**Required Fix**: Either (a) remove the indentation from all heredoc lines, or (b) use `<<-EOF` (dash variant) which strips leading **tab** characters (requires converting indentation to tabs). Option (a) is simpler and preferred:
+
+```yaml
+      - name: Create escalation document
+        if: >
+          steps.align.outputs.drift_detected == 'true' &&
+          steps.escalation.outputs.require_cs2 == 'true'
+        run: |
+          DATESTAMP=$(date -u +"%Y-%m-%d")
+          INBOX=".agent-workspace/governance-liaison/escalation-inbox"
+          mkdir -p "$INBOX"
+          ESCALATION_FILE="${INBOX}/agent-contract-ripple-escalation-${DATESTAMP}.md"
+          cat > "$ESCALATION_FILE" <<EOF
+# Escalation: Agent Contract Ripple — CS2 Approval Required
+
+## Type
+BLOCKER
+
+## Description
+A governance layer-down triggered a ripple that includes changes to
+agent contract files (`.github/agents/*.md`).
+
+Per **CS2_AGENT_FILE_AUTHORITY_MODEL.md** and
+**AGENT_CONTRACT_PROTECTION_PROTOCOL.md**, only CS2 (Johan Ras) may
+approve and merge changes to agent contracts.
+
+**The ripple PR has been created as DRAFT and must not be merged until
+CS2 explicitly approves it.**
+
+## Context
+- Session: ripple-integration-${{ github.run_id }}
+- Triggered by: Issue #${{ steps.issue.outputs.number }}
+- Canonical commit: ${{ steps.metadata.outputs.canonical_commit }}
+- Canonical version: ${{ steps.metadata.outputs.canonical_version }}
+- Files updated: ${{ steps.metadata.outputs.files_updated }}
+- Drift report: ${{ steps.metadata.outputs.drift_report }}
+
+## Recommendation
+1. CS2 reviews the DRAFT ripple PR
+2. CS2 approves and merges after review
+3. Move this file to `escalation-archive/` after resolution
+
+## Evidence
+- Drift report: `${{ steps.metadata.outputs.drift_report }}`
+- Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+---
+Created: ${DATESTAMP} | Authority: CS2 | Session: ${{ github.run_id }}
+EOF
+          echo "Escalation document created: $ESCALATION_FILE"
+```
+
+**Acceptance Criterion**: The committed escalation document must be valid Markdown with no leading whitespace on any line. The `#` heading must appear at column 0.
+
+---
+
+## Merge Gate
+
+**This PR MUST NOT be merged until all three defects above are resolved and verified.** Per `FULLY_FUNCTIONAL_DELIVERY_STANDARD.md`:
+
+- Defect 1 corrected (receipt JSON in ripple PR commit) ✅ / ❌
+- Defect 2 corrected (draft PR Boolean — split steps) ✅ / ❌
+- Defect 3 corrected (heredoc indentation removed) ✅ / ❌
+
+All three must show ✅ before the Wave Completion Gate is released.
+---
+**Authority**: `BUILD_PHILOSOPHY.md` | `FULLY_FUNCTIONAL_DELIVERY_STANDARD.md` | Zero Test Debt Rule  
+**Reviewer**: Copilot (acting as Foreman Quality Professor gate)  
+**PR**: APGI-cmy/maturion-isms#374
