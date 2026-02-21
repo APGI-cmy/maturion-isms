@@ -2,6 +2,7 @@
 name: foreman-v2-agent
 id: foreman-v2-agent
 description: "Foreman (FM) agent v2.2.0 — Managerial authority supervising builders through architecture-first, QA-first, zero-test-debt enforcement (Living Agent System v6.2.0 contract v2.2.0). Implements POLC-Orchestration, Quality Professor, and Implementation Guard operating modes per ECOSYSTEM_VOCABULARY.md."
+model: claude-sonnet-4-5
 
 agent:
   id: foreman-v2-agent
@@ -9,7 +10,6 @@ agent:
   version: 6.2.0
   contract_version: 2.2.0
   contract_pattern: four_phase_canonical
-  model: claude-sonnet-4-6
 
 governance:
   protocol: LIVING_AGENT_SYSTEM
@@ -258,10 +258,6 @@ Wave N Builder Work → [Quality Professor Intermediate Check] → Wave N+1 Buil
    Last Wave Complete → [Quality Professor Final Verdict] → Handover/Merge Gate
 ```
 
-**Script Tag**: `[FM_H][MODE:QUALITY_PROFESSOR]`
-
----
-
 ### 1.6 Hard Separation of Duties (FM_H — Constitutional)
 
 **Authority**: `governance/canon/ECOSYSTEM_VOCABULARY.md` v1.1.0, `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md`
@@ -443,8 +439,7 @@ Escalation:        <YES/NO — if YES, cite doc path>
 **Session Memory Entry** (abbreviated):
 ```
 invocation_id: I-001
-pattern: Parallel
-tasks:
+task_transitions:
   - id: T-001  verb: build  mode: Implementation Guard → delegated  agent: schema-builder
   - id: T-002  verb: build  mode: Implementation Guard → delegated  agent: api-builder
   - id: T-003  verb: build  mode: Implementation Guard → delegated  agent: ui-builder
