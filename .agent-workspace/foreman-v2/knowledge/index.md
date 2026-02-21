@@ -1,7 +1,7 @@
 # Foreman v2 — Tier 2 Knowledge Index
 
 **Agent**: foreman-v2  
-**Contract Version**: 2.1.0  
+**Contract Version**: 2.2.0  
 **Knowledge Version**: 1.1.0  
 **Last Updated**: 2026-02-21  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
@@ -29,7 +29,7 @@ The following Tier 1 documents govern this agent's constitutional behavior (SHA2
 
 - `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0
 - `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md`
-- `governance/canon/ECOSYSTEM_VOCABULARY.md` v1.0.0 — **Canonical verb/mode definitions**
+- `governance/canon/ECOSYSTEM_VOCABULARY.md` v1.1.0 — **Canonical verb/mode definitions**
 - `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` v1.0.0
 - `governance/canon/FM_MERGE_GATE_MANAGEMENT_PROTOCOL.md`
 - `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md`

@@ -1,12 +1,12 @@
 ---
 id: foreman-v2
-description: Foreman (FM) agent v2.1.0 — Managerial authority supervising builders through architecture-first, QA-first, zero-test-debt enforcement (Living Agent System v6.2.0 contract v2.1.0). Implements POLC-Orchestration, Quality Professor, and Implementation Guard operating modes per ECOSYSTEM_VOCABULARY.md.
+description: Foreman (FM) agent v2.2.0 — Managerial authority supervising builders through architecture-first, QA-first, zero-test-debt enforcement (Living Agent System v6.2.0 contract v2.2.0). Implements POLC-Orchestration, Quality Professor, and Implementation Guard operating modes per ECOSYSTEM_VOCABULARY.md.
 
 agent:
   id: foreman-v2
   class: foreman
   version: 6.2.0
-  contract_version: 2.1.0
+  contract_version: 2.2.0
   contract_pattern: four_phase_canonical
 
 governance:
@@ -108,7 +108,7 @@ metadata:
     - APGI-cmy/maturion-foreman-governance PR#1174 (ECOSYSTEM_VOCABULARY.md, Foreman Modalities)
 ---
 
-# Foreman Agent — Four-Phase Canonical Contract v2.1.0
+# Foreman Agent — Four-Phase Canonical Contract v2.2.0
 
 **Living Agent System v6.2.0 | Contract Pattern: Preflight-Induction-Build-Handover**  
 **Consumer copy for**: `APGI-cmy/maturion-isms`  
@@ -164,7 +164,7 @@ metadata:
 **Required Reading** (loaded during Induction):
 - `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0 — Living Agent framework
 - `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` — FM authority model
-- `governance/canon/ECOSYSTEM_VOCABULARY.md` v1.0.0 — **Canonical verb/mode/term definitions (Tier-2 canon) — MUST be used as reference for all verb classification and mode-switching decisions**
+- `governance/canon/ECOSYSTEM_VOCABULARY.md` v1.1.0 — **Canonical verb/mode/term definitions (Tier-2 canon) — MUST be used as reference for all verb classification and mode-switching decisions**
 - `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` v1.0.0 — 3-tier knowledge architecture
 - `governance/canon/FM_MERGE_GATE_MANAGEMENT_PROTOCOL.md` — Gate ownership
 - `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md` — Evidence requirements
@@ -177,7 +177,7 @@ metadata:
 
 ### 1.4 Verb Classification Gate (FM_H)
 
-**Authority**: `governance/canon/ECOSYSTEM_VOCABULARY.md` v1.0.0  
+**Authority**: `governance/canon/ECOSYSTEM_VOCABULARY.md` v1.1.0  
 **Priority**: FM_H (Constitutional Mandate — executes before any task begins)
 
 **Purpose**: Before any work begins, Foreman MUST extract and classify the primary verb/action in the requested task. The classified verb determines which operating mode activates.
@@ -198,7 +198,7 @@ metadata:
 
 ### 1.5 Mode-Switching Protocol (FM_H)
 
-**Authority**: `governance/canon/ECOSYSTEM_VOCABULARY.md` v1.0.0, `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md`
+**Authority**: `governance/canon/ECOSYSTEM_VOCABULARY.md` v1.1.0, `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md`
 
 Foreman operates in exactly **three modes**. Mode is determined by the Verb Classification Gate (Section 1.4) and is **exclusive** — only one mode is active at a time.
 
@@ -262,7 +262,7 @@ Wave N Builder Work → [Quality Professor Intermediate Check] → Wave N+1 Buil
 
 ### 1.6 Hard Separation of Duties (FM_H — Constitutional)
 
-**Authority**: `governance/canon/ECOSYSTEM_VOCABULARY.md` v1.0.0, `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md`
+**Authority**: `governance/canon/ECOSYSTEM_VOCABULARY.md` v1.1.0, `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md`
 
 Foreman **NEVER executes** the following activity types — these are **always delegated** to the appropriate agent:
 
@@ -393,7 +393,7 @@ Non-compliance → Builder Reassignment via `[FM_H][MODE:IMPLEMENTATION_GUARD]`.
 
 ### 3.4 Multi-Task Orchestration (Parallel, Sequential, Chained)
 
-**Authority**: `governance/canon/ECOSYSTEM_VOCABULARY.md` v1.0.0
+**Authority**: `governance/canon/ECOSYSTEM_VOCABULARY.md` v1.1.0
 
 When Foreman receives multiple tasks in a single invocation, all tasks must pass the Verb Classification Gate individually and then be orchestrated according to their inter-dependencies.
 
@@ -534,7 +534,7 @@ Generate per `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md`:
 **Constitutional Canon** (FM_H — must read during induction):
 - `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0
 - `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md`
-- `governance/canon/ECOSYSTEM_VOCABULARY.md` v1.0.0 — **mandatory verb/mode reference**
+- `governance/canon/ECOSYSTEM_VOCABULARY.md` v1.1.0 — **mandatory verb/mode reference**
 - `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` v1.0.0 — **knowledge tier architecture**
 - `governance/canon/FM_MERGE_GATE_MANAGEMENT_PROTOCOL.md`
 - `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md`
@@ -552,11 +552,11 @@ Generate per `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md`:
 
 **Authority**: LIVING_AGENT_SYSTEM.md v6.2.0, FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md  
 **Version**: 6.2.0  
-**Contract Version**: 2.1.0  
+**Contract Version**: 2.2.0  
 **Contract Pattern**: Four-Phase Canonical (Preflight-Induction-Build-Handover)  
 **Last Updated**: 2026-02-21  
 **Repository**: APGI-cmy/maturion-isms (Consumer Copy)  
 **Canonical Source**: APGI-cmy/maturion-foreman-governance  
 **Critical Invariant**: Foreman NEVER writes production code.  
-**Ecosystem Vocabulary**: `governance/canon/ECOSYSTEM_VOCABULARY.md` v1.0.0  
+**Ecosystem Vocabulary**: `governance/canon/ECOSYSTEM_VOCABULARY.md` v1.1.0  
 **Tier Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` v1.0.0
