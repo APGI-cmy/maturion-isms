@@ -3,7 +3,7 @@
 **Purpose:** Machine-readable mapping of trigger words/phrases → specialist agent → knowledge base location  
 **Managed by:** Maturion Orchestrator (read-only at runtime; updated via CS2-approved PR)  
 **Authority:** CS2 (Johan Ras)  
-**Version:** 1.0.0 (Phase 3.5 — MAT domain initial population)  
+**Version:** 1.1.0 (Phase 4-5 — PIT domain entries added)  
 **Date:** 2026-02-21
 
 > **Protocol:** At query time, the orchestrator tokenises the user's input, matches against `trigger_phrases`, and routes to the mapped `specialist`. If `knowledge_status` is `STUB`, the graceful degradation protocol applies (see `maturion-agent.md` Phase 3).
@@ -228,13 +228,51 @@ apps: [MAT, PIT, XDETECT, Maturity Roadmap]
 
 ---
 
-## Future Domain Entries (Phase 4+)
+## PIT Domain Entries
+
+### 8. PIT Threat Intelligence
+
+```yaml
+domain: PIT Threat Intelligence
+specialist: pit-specialist
+trigger_phrases:
+  - threat intelligence
+  - threat feed
+  - IOC
+  - indicator of compromise
+  - TTP
+  - tactics techniques procedures
+  - MITRE ATT&CK
+  - ATT&CK matrix
+  - threat hunting
+  - kill chain
+  - STIX
+  - TAXII
+  - feed configuration
+  - intelligence feed
+  - APT
+  - adversary profile
+  - threat actor
+  - threat campaign
+  - IOC ingestion
+  - threat correlation
+knowledge_base:
+  tier1_live: apps/pit/api/**
+  tier2_cached: .agent-workspace/pit-specialist/knowledge/threat-intelligence-model.md
+  tier3_external: supabase:table=threat_intelligence_feeds (stub)
+knowledge_status: ACTIVE
+apps: [PIT]
+notes: "PIT-specific threat intelligence specialist. Cross-app risk scoring uses risk-platform-agent."
+```
+
+---
+
+## Future Domain Entries (Phase 5+)
 
 | Domain | Specialist | Status | Apps |
 |--------|-----------|--------|------|
-| PIT Threat Intelligence | pit-specialist | PENDING Phase 4 | PIT |
-| XDETECT Contraband Detection | xdetect-specialist | PENDING Phase 4 | XDETECT |
-| Maturity Roadmap Planning | maturity-roadmap-specialist | PENDING Phase 4 | Maturity Roadmap |
+| XDETECT Contraband Detection | xdetect-specialist | PENDING Phase 5 | XDETECT |
+| Maturity Roadmap Planning | maturity-roadmap-specialist | PENDING Phase 5 | Maturity Roadmap |
 | Builder Code Review | (existing builders) | ACTIVE | Builder |
 | Command Voice/Text | (orchestrator direct) | ACTIVE | Command |
 

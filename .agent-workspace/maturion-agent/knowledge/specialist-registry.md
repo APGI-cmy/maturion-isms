@@ -85,29 +85,38 @@
 
 ---
 
-## Future Specialists (Phase 4+)
-
 ### 7. pit-specialist
-- **Domain:** PIT app workflows, threat intelligence feeds, vulnerability tracking
-- **Status:** PLANNED (Phase 4)
+- **Domain:** PIT app workflows, threat intelligence feeds, IOC management, TTP correlation, vulnerability tracking
+- **Expertise:** STIX/TAXII feed ingestion, MITRE ATT&CK TTP mapping, IOC lifecycle management, vulnerability prioritisation (CVSS), threat hunting workflows
+- **Apps:** PIT
+- **Routing Keywords:** threat intelligence, threat feed, IOC, indicator of compromise, TTP, MITRE, ATT&CK, threat hunting, feed configuration, vulnerability tracking, CVE, STIX, TAXII, kill chain
+- **Status:** ACTIVE
+- **Version:** 1.0.0
+- **Contract:** `.github/agents/pit-specialist.md`
+- **Domain Flag Index:** `.agent-workspace/maturion-agent/knowledge/domain-flag-index.md` → "PIT Threat Intelligence"
+
+---
+
+## Future Specialists (Phase 5+)
+
 
 ### 8. xdetect-specialist
 - **Domain:** XDETECT workflows, contraband detection protocols, privacy compliance
-- **Status:** PLANNED (Phase 4)
+- **Status:** PLANNED (Phase 5)
 
 ### 9. maturity-roadmap-specialist
 - **Domain:** Gap analysis, improvement planning, maturity progression roadmaps
-- **Status:** PLANNED (Phase 4)
+- **Status:** PLANNED (Phase 5)
 
 ### 10. security-controls-agent
 - **Domain:** ISO 27001, NIST CSF, CIS Controls definitions and mappings
 - **Status:** PLANNED (Phase 5)
 
-### 9. image-generation-agent
+### 11. image-generation-agent
 - **Domain:** Diagrams, infographics, architecture visualizations
 - **Status:** PLANNED (Phase 5)
 
-### 10. code-interpreter-agent
+### 12. code-interpreter-agent
 - **Domain:** Statistical analysis, data visualization, computational tasks
 - **Status:** PLANNED (Phase 5)
 
@@ -200,7 +209,7 @@ for (const specialist of specialistRegistry) {
 ---
 
 **Authority:** CS2 (Johan Ras)  
-**Status:** Phase 3.5 (6 MAT specialist stubs registered)  
-**Version:** 2.0.0  
+**Status:** Phase 4-5 (7 specialists: 6 MAT stubs + 1 PIT active)  
+**Version:** 2.1.0  
 **Date:** 2026-02-21  
 **Canonical Reference:** `governance/canon/ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md` Section 10 (Specialist Lifecycle)

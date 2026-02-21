@@ -58,15 +58,17 @@ START: Maturion receives user query
 
 ### PIT App
 
-**Default Specialist:** risk-platform-agent
+**Default Specialist:** pit-specialist
 
 **Routing Keywords → Specialist:**
-- `threat | vulnerability | incident | attack | exploit | breach | exposure | TTP | IOC` → **risk-platform-agent**
-- `feed | intelligence | correlation | hunting` → **pit-specialist** (Phase 2)
+- `threat intelligence | threat feed | IOC | indicator of compromise | TTP | MITRE | ATT&CK | threat hunting | kill chain | STIX | TAXII | feed configuration` → **pit-specialist**
+- `risk | threat | vulnerability | incident | attack | exploit | breach | exposure | CVE | CVSS` → **pit-specialist** (PIT context) OR **risk-platform-agent** (cross-app)
 
 **Examples:**
-- "Analyze recent ransomware campaigns targeting healthcare" → **risk-platform-agent**
-- "Show threat intelligence feed for APT groups" → **pit-specialist** (Phase 2)
+- "Configure STIX/TAXII threat intelligence feed for PIT" → **pit-specialist**
+- "Show IOCs for recent ransomware campaign" → **pit-specialist**
+- "Analyse ransomware TTPs using MITRE ATT&CK" → **pit-specialist**
+- "What are the top insider threats for financial services?" → **risk-platform-agent**
 
 ---
 
@@ -129,7 +131,7 @@ START: Maturion receives user query
 **App-Specific Specialists:**
 - **mat-specialist** → MAT only
 - **criteria-generator-agent** → MAT only
-- **pit-specialist** → PIT only (Phase 2)
+- **pit-specialist** → PIT only (ACTIVE — Phase 4-5)
 - **xdetect-specialist** → XDETECT only (Phase 2)
 - **maturity-roadmap-specialist** → Maturity Roadmap only (Phase 2)
 - **ui-builder, api-builder, schema-builder, qa-builder, integration-builder** → Builder only
