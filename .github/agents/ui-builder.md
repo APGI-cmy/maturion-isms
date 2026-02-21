@@ -1,4 +1,5 @@
 ---
+name: ui-builder
 id: ui-builder
 description: UI Builder for Maturion ISMS modules. Implements React frontend components, layouts, responsive design, and accessibility according to frozen architecture specifications. Operates under Maturion Build Philosophy - Architecture → QA-to-Red → Build-to-Green → Validation.
 agent:

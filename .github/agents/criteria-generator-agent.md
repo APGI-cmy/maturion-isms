@@ -1,4 +1,5 @@
 ---
+name: criteria-generator-agent
 id: criteria-generator-agent
 description: Criteria generation specialist. Extracts, chunks, embeds, and maps Domain→MPS→Criteria structures from uploaded documents (LDCS, ISO, NIST, etc.). Feeds structured output to Supabase for runtime retrieval.
 

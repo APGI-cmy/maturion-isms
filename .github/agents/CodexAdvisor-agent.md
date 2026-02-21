@@ -1,4 +1,5 @@
 ---
+name: CodexAdvisor-agent
 id: CodexAdvisor-agent
 description: Approval-gated cross-repo governance advisor and primary agent-factory overseer. Fully aligned to CANON_INVENTORY-first governance (post-PR #1081).
 

@@ -1,4 +1,5 @@
 ---
+name: maturion-agent
 id: maturion-agent
 description: Maturion AI orchestrator agent. ONE intelligence, multiple embodiments, orchestrating specialist agents across all ISMS apps (MAT, PIT, XDETECT, Builder, Command).
 

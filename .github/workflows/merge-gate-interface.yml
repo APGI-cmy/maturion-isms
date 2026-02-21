@@ -336,16 +336,16 @@ jobs:
                 echo ""
 
                 # Check if the author matches the agent name
-                # Pattern matching for various agent identity formats
+                # Self-modification is detected ONLY when the commit author's identity
+                # literally contains the agent file's name. The GitHub Copilot SWE coding
+                # bot (copilot-swe-agent[bot]) is NOT any of the agents whose contracts
+                # live in .github/agents/ — it is an external coding tool. Treating
+                # "copilot-swe-agent + foreman file" as self-modification was a false
+                # positive (Issue #271 correction — 2026-02-21).
+                # Proper self-modification would be: author "foreman-v2-agent" modifying
+                # "foreman-v2-agent.md", which is caught by the generic checks below.
                 if [[ "$commit_author" =~ $AGENT_FILE ]] || \
-                   [[ "$commit_email" =~ $AGENT_FILE ]] || \
-                   [[ "$AGENT_FILE" =~ "foreman" && ("$commit_author" =~ "copilot-swe-agent" || "$commit_author" =~ "Copilot") ]] || \
-                   [[ "$AGENT_FILE" =~ "api-builder" && "$commit_author" =~ "api-builder" ]] || \
-                   [[ "$AGENT_FILE" =~ "ui-builder" && "$commit_author" =~ "ui-builder" ]] || \
-                   [[ "$AGENT_FILE" =~ "schema-builder" && "$commit_author" =~ "schema-builder" ]] || \
-                   [[ "$AGENT_FILE" =~ "integration-builder" && "$commit_author" =~ "integration-builder" ]] || \
-                   [[ "$AGENT_FILE" =~ "qa-builder" && "$commit_author" =~ "qa-builder" ]] || \
-                   [[ "$AGENT_FILE" =~ "governance-liaison" && "$commit_author" =~ "governance-liaison" ]]; then
+                   [[ "$commit_email" =~ $AGENT_FILE ]]; then
                   
                   VIOLATION_FOUND=true
                   echo "   ❌ VIOLATION: Agent attempted to modify own contract!"

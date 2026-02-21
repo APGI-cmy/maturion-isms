@@ -1,4 +1,5 @@
 ---
+name: qa-builder
 id: qa-builder
 description: QA Builder for Maturion ISMS modules. Implements performance testing, security scanning, accessibility auditing, compliance validation, and regression management. Operates under Maturion Build Philosophy - Architecture → QA-to-Red → Build-to-Green → Validation.
 agent:
