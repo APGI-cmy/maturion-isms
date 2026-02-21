@@ -2,7 +2,7 @@
 
 **Agent**: foreman-v2  
 **Contract Version**: 2.1.0  
-**Knowledge Version**: 1.0.0  
+**Knowledge Version**: 1.1.0  
 **Last Updated**: 2026-02-21  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
@@ -17,7 +17,9 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 
 | File | Purpose | Version |
 |------|---------|---------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.0.0 |
+| `index.md` (this file) | Knowledge entry point and version reference | 1.1.0 |
+| `specialist-registry.md` | Registry of all delegable agents with capabilities and separation-of-duties boundary | 1.0.0 |
+| `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 |
 
 ---
 
@@ -44,6 +46,18 @@ Per `governance/canon/ECOSYSTEM_VOCABULARY.md` Mode Reference Table:
 | Implementation Guard | implement, build, code, write, fix (directed at FM) | FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md |
 | Quality Professor | review, evaluate, QA, assess, validate, audit | EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md |
 
+Mode flags and activation states: see `domain-flag-index.md`
+
+---
+
+## Separation of Duties Quick Reference
+
+Foreman NEVER executes directly. All operations delegated per `specialist-registry.md`:
+- Implementation → builder agents
+- Governance alignment → `governance-liaison-isms-agent`
+- Agent file ops → `CodexAdvisor-agent` (CS2-gated)
+- QA execution → `qa-builder`
+
 ---
 
 ## Vocabulary Reference
@@ -57,3 +71,4 @@ All verb classification and mode-switching decisions MUST reference `ECOSYSTEM_V
 
 **Authority**: CS2 (Johan Ras)  
 **Living Agent System**: v6.2.0
+
