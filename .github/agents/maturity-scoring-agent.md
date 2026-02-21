@@ -10,6 +10,7 @@ agent:
   contract_version: 1.0.0
   contract_pattern: specialist_stub
   status: STUB
+  model: claude-sonnet-4-6
 
 governance:
   protocol: LIVING_AGENT_SYSTEM

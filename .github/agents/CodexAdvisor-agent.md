@@ -8,6 +8,7 @@ agent:
   class: overseer
   version: 6.2.0
   contract_version: 2.1.0
+  model: claude-sonnet-4-6
 
 governance:
   protocol: LIVING_AGENT_SYSTEM

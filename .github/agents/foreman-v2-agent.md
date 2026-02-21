@@ -1,7 +1,7 @@
 ---
 name: foreman-v2-agent
 id: foreman-v2-agent
-description: Foreman (FM) agent v2.2.0 — Managerial authority supervising builders through architecture-first, QA-first, zero-test-debt enforcement (Living Agent System v6.2.0 contract v2.2.0). Implements POLC-Orchestration, Quality Professor, and Implementation Guard operating modes per ECOSYSTEM_VOCABULARY.md.
+description: "Foreman (FM) agent v2.2.0 — Managerial authority supervising builders through architecture-first, QA-first, zero-test-debt enforcement (Living Agent System v6.2.0 contract v2.2.0). Implements POLC-Orchestration, Quality Professor, and Implementation Guard operating modes per ECOSYSTEM_VOCABULARY.md."
 
 agent:
   id: foreman-v2-agent
@@ -9,6 +9,7 @@ agent:
   version: 6.2.0
   contract_version: 2.2.0
   contract_pattern: four_phase_canonical
+  model: claude-sonnet-4-6
 
 governance:
   protocol: LIVING_AGENT_SYSTEM
