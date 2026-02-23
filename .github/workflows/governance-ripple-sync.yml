@@ -164,7 +164,7 @@ jobs:
       # ── Detect agent-contract changes in diff ──
       - name: Check diff for agent contracts
         id: diff_check
-        if: steps.align.outputs.drift_detected == 'true'
+        if: steps.check_existing.outputs.skip != 'true' && steps.align.outputs.drift_detected == 'true'
         run: |
           AGENT_DIFF=$(git diff --name-only HEAD | grep -E '^\.github/agents/.*\.md$' || true)
           if [ -n "$AGENT_DIFF" ]; then
@@ -177,7 +177,7 @@ jobs:
       # ── Collect drift-report metadata ──
       - name: Collect alignment metadata
         id: metadata
-        if: steps.align.outputs.drift_detected == 'true'
+        if: steps.check_existing.outputs.skip != 'true' && steps.align.outputs.drift_detected == 'true'
         run: |
           DRIFT_REPORT=$(ls -t .agent-admin/governance/drift-report-*.md 2>/dev/null | head -1)
           if [ -n "$DRIFT_REPORT" ]; then
@@ -198,6 +198,7 @@ jobs:
       # ── Create escalation document when agent files are touched ──
       - name: Create escalation document
         if: >
+          steps.check_existing.outputs.skip != 'true' &&
           steps.align.outputs.drift_detected == 'true' &&
           steps.diff_check.outputs.has_agent_files == 'true'
         run: |
@@ -245,7 +246,7 @@ jobs:
 
       # ── Record layer-down receipt ──
       - name: Record layer-down receipt
-        if: steps.align.outputs.drift_detected == 'true'
+        if: steps.check_existing.outputs.skip != 'true' && steps.align.outputs.drift_detected == 'true'
         run: |
           mkdir -p .agent-admin/ripple
           DATESTAMP=$(date -u +%Y%m%dT%H%M%SZ)
@@ -266,7 +267,7 @@ jobs:
       # Formally notifies the governance liaison agent of a layer-down event.
       - name: Create governance liaison issue
         id: liaison_issue
-        if: steps.align.outputs.drift_detected == 'true'
+        if: steps.check_existing.outputs.skip != 'true' && steps.align.outputs.drift_detected == 'true'
         env:
           GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
         run: |
@@ -337,7 +338,7 @@ jobs:
 
       # ── Create PR — standard path (no agent files changed) ──
       - name: Create ripple PR (standard — no agent files)
-        if: steps.align.outputs.drift_detected == 'true' && steps.diff_check.outputs.has_agent_files != 'true'
+        if: steps.check_existing.outputs.skip != 'true' && steps.align.outputs.drift_detected == 'true' && steps.diff_check.outputs.has_agent_files != 'true'
         id: create_pr_standard
         uses: peter-evans/create-pull-request@v6
         with:
@@ -374,7 +375,7 @@ jobs:
 
       # ── Create PR — CS2 DRAFT path (agent files changed) ──
       - name: Create ripple PR (DRAFT — CS2 required)
-        if: steps.align.outputs.drift_detected == 'true' && steps.diff_check.outputs.has_agent_files == 'true'
+        if: steps.check_existing.outputs.skip != 'true' && steps.align.outputs.drift_detected == 'true' && steps.diff_check.outputs.has_agent_files == 'true'
         id: create_pr_draft
         uses: peter-evans/create-pull-request@v6
         with:
@@ -413,6 +414,7 @@ jobs:
       # ── Resolve PR number ──
       - name: Resolve PR number
         id: pr_number
+        if: steps.check_existing.outputs.skip != 'true'
         run: |
           NUMBER="${{ steps.create_pr_standard.outputs.pull-request-number }}"
           if [ -z "$NUMBER" ]; then
@@ -423,6 +425,7 @@ jobs:
       # ── Enable auto-merge (standard path only) ──
       - name: Enable auto-merge
         if: >
+          steps.check_existing.outputs.skip != 'true' &&
           steps.align.outputs.drift_detected == 'true' &&
           steps.diff_check.outputs.has_agent_files != 'true' &&
           steps.pr_number.outputs.number != ''
