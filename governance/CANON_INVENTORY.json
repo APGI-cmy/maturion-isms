@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "last_updated": "2026-02-23",
-  "total_canons": 178,
+  "total_canons": 179,
   "generation_timestamp": "2026-02-21T16:30:00Z",
   "canon_entry_schema": {
     "description": "Schema for canon entries in CANON_INVENTORY.json",
@@ -1426,6 +1426,21 @@
       "path": "governance/canon/POST_MORTEM_PROTOCOL.md",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "dd847a354b3914da98cd70851ae32b9d2dc5d51e0233253ded2437a2ea2c9b3d"
+    },
+    {
+      "filename": "PRE_BUILD_REALITY_CHECK_CANON.md",
+      "version": "1.0.0",
+      "file_hash": "0e3296398d33d95ea56ee944b4ade17c60bd93dd2e0885f32f5d15e725ee49cd",
+      "effective_date": "2026-02-23",
+      "description": "Mandatory Pre-Build Reality Check gate. Requires structured cross-artifact review against user intent before any implementation begins. Covers requirements completeness, functional coverage, architecture alignment, Red QA coverage, and statutory compliance.",
+      "type": "canon",
+      "path": "governance/canon/PRE_BUILD_REALITY_CHECK_CANON.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "0e3296398d33d95ea56ee944b4ade17c60bd93dd2e0885f32f5d15e725ee49cd",
+      "canonical_version": "1.0.0",
+      "local_version": null,
+      "local_extension": false,
+      "layer_up_status": "NONE"
     },
     {
       "filename": "PRE_IMPLEMENTATION_BEHAVIOR_REVIEW_PROTOCOL.md",
