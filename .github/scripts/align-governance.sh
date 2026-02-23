@@ -256,15 +256,23 @@ if [ "$DRIFT_DETECTED" = true ] || [ "$FORCE_PR" = true ]; then
 else
     echo -e "${GREEN}✓ No drift detected - governance aligned${NC}"
     
-    # Update sync state
+    # Update sync state — guard against write churn from concurrent workflows
+    # Note: stat -c %Y is GNU coreutils (Linux/Ubuntu); this script runs on GitHub Actions (ubuntu-latest).
     if [ -f "$LOCAL_SYNC_STATE" ]; then
-        jq --arg timestamp "$TIMESTAMP" \
-           --arg commit "$CANONICAL_COMMIT" \
-           '.alignment_status.last_drift_check = $timestamp | 
-            .alignment_status.drift_detected = false |
-            .last_sync.canonical_commit = $commit' \
-           "$LOCAL_SYNC_STATE" > "${LOCAL_SYNC_STATE}.tmp"
-        mv "${LOCAL_SYNC_STATE}.tmp" "$LOCAL_SYNC_STATE"
+        LAST_MODIFIED=$(stat -c %Y "$LOCAL_SYNC_STATE" 2>/dev/null || echo 0)
+        NOW=$(date +%s)
+        ELAPSED=$(( NOW - LAST_MODIFIED ))
+        if [ "$ELAPSED" -lt 300 ]; then
+            echo "sync_state.json modified ${ELAPSED}s ago — skipping last_drift_check update (5-minute write guard)"
+        else
+            jq --arg timestamp "$TIMESTAMP" \
+               --arg commit "$CANONICAL_COMMIT" \
+               '.alignment_status.last_drift_check = $timestamp | 
+                .alignment_status.drift_detected = false |
+                .last_sync.canonical_commit = $commit' \
+               "$LOCAL_SYNC_STATE" > "${LOCAL_SYNC_STATE}.tmp"
+            mv "${LOCAL_SYNC_STATE}.tmp" "$LOCAL_SYNC_STATE"
+        fi
     fi
     
     exit 0
