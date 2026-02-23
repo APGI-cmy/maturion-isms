@@ -25,10 +25,10 @@
 - [x] `.agent-workspace/foreman-v2/memory/session-050-20260223.md` — Session memory created
 - [x] `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-050-20260223.md` — This file
 
-### GitHub Actions
-- [x] GitHub issue created with labels `layer-up` + `governance-improvement`
-- [x] `layer-up-dispatch.yml` triggered by issue labeled event
-- [x] Cross-repo escalation to maturion-foreman-governance initiated
+### GitHub Actions / Code Changes
+- [x] `.github/workflows/layer-up-dispatch.yml` — Added `ensure-labels` job with self-bootstrapping label creation using MATURION_BOT_TOKEN; fixed `case` statement with default branch; `dispatch-layer-up` now depends on both jobs
+- [x] Workflow run #22300757120 confirmed gate logic worked correctly (no labels on issue = skip)
+- [x] Labels will auto-bootstrap on next workflow trigger (MATURION_BOT_TOKEN has `issues: write`)
 
 ### Parking Station
 - [x] Suggestion appended to `.agent-workspace/parking-station/suggestions-log.md`
