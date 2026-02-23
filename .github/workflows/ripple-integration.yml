@@ -131,6 +131,38 @@ jobs:
             exit $EXIT_CODE
           fi
 
+      # ── Check for existing alignment PR to avoid duplicates ──
+      # When triggered by an issue created by the scheduled alignment workflow,
+      # the scheduled workflow may have already created a PR.  If so, skip PR
+      # creation and just comment on the issue with the existing PR reference.
+      # Note: checks only the stable 'governance-alignment-auto' branch used by
+      # governance-alignment-schedule.yml.  PRs from governance-ripple-sync.yml
+      # use 'ripple/governance-sync-{run_id}' and are excluded intentionally —
+      # that path creates its own issue and PR atomically.
+      - name: Check for existing alignment PR
+        id: existing_pr
+        if: steps.align.outputs.drift_detected == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+        run: |
+          EXISTING=$(gh pr list \
+            --repo ${{ github.repository }} \
+            --state open \
+            --label "governance" \
+            --label "automated" \
+            --json number,headRefName,title \
+            --jq '.[] | select(.headRefName == "governance-alignment-auto") | .number' \
+            2>/dev/null | head -1 || echo "")
+          if [ -n "$EXISTING" ]; then
+            echo "pr_number=${EXISTING}" >> $GITHUB_OUTPUT
+            echo "skip_pr_creation=true" >> $GITHUB_OUTPUT
+            echo "Existing governance alignment PR #${EXISTING} found — skipping duplicate PR creation"
+          else
+            echo "pr_number=" >> $GITHUB_OUTPUT
+            echo "skip_pr_creation=false" >> $GITHUB_OUTPUT
+            echo "No existing alignment PR — proceeding with ripple PR creation"
+          fi
+
       # ── Verify changed files for agent contracts (git diff check) ──
       - name: Check diff for agent contracts
         id: diff_check
@@ -244,7 +276,10 @@ jobs:
       # ── Create PR — standard path (no agent files changed) ──
       # Defect 2 fix: separate steps with literal draft: false / draft: true
       - name: Create ripple PR (standard — no agent files)
-        if: steps.align.outputs.drift_detected == 'true' && steps.escalation.outputs.require_cs2 == 'false'
+        if: >
+          steps.align.outputs.drift_detected == 'true' &&
+          steps.escalation.outputs.require_cs2 == 'false' &&
+          steps.existing_pr.outputs.skip_pr_creation != 'true'
         id: create_pr_standard
         uses: peter-evans/create-pull-request@v6
         with:
@@ -281,7 +316,10 @@ jobs:
 
       # ── Create PR — CS2 DRAFT path (agent files changed) ──
       - name: Create ripple PR (DRAFT — CS2 required)
-        if: steps.align.outputs.drift_detected == 'true' && steps.escalation.outputs.require_cs2 == 'true'
+        if: >
+          steps.align.outputs.drift_detected == 'true' &&
+          steps.escalation.outputs.require_cs2 == 'true' &&
+          steps.existing_pr.outputs.skip_pr_creation != 'true'
         id: create_pr_draft
         uses: peter-evans/create-pull-request@v6
         with:
@@ -324,6 +362,10 @@ jobs:
           if [ -z "$NUMBER" ]; then
             NUMBER="${{ steps.create_pr_draft.outputs.pull-request-number }}"
           fi
+          # Fall back to the existing PR found by the duplicate-check step
+          if [ -z "$NUMBER" ]; then
+            NUMBER="${{ steps.existing_pr.outputs.pr_number }}"
+          fi
           echo "number=$NUMBER" >> $GITHUB_OUTPUT
 
       # ── Enable auto-merge only when no CS2 gate required ──
@@ -355,9 +397,19 @@ jobs:
           COMMIT="${{ steps.metadata.outputs.canonical_commit }}"
           FILES="${{ steps.metadata.outputs.files_updated }}"
           RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          SKIP_PR="${{ steps.existing_pr.outputs.skip_pr_creation }}"
 
           if [ "$DRIFT" = "true" ] && [ -n "$PR_NUMBER" ]; then
-            if [ "$REQUIRE_CS2" = "true" ]; then
+            if [ "$SKIP_PR" = "true" ]; then
+              COMMENT=$(printf '%s\n\n%s\n\n%s\n%s\n%s\n\n%s\n%s' \
+                '## ✅ Ripple Integration — Existing Alignment PR Referenced' \
+                'Governance drift was detected. A governance alignment PR already exists (created by the scheduled alignment workflow). No duplicate PR was created.' \
+                "- Existing PR: #${PR_NUMBER}" \
+                "- Canonical commit: \`${COMMIT}\`" \
+                "- Files updated: ${FILES}" \
+                '---' \
+                '*Governance Liaison — ripple-integration.yml*')
+            elif [ "$REQUIRE_CS2" = "true" ]; then
               COMMENT=$(printf '%s\n\n%s\n\n%s\n\n%s\n%s\n%s\n\n%s\n%s' \
                 '## 🔒 Ripple Integration — CS2 Escalation Required' \
                 'Governance drift was detected and a **DRAFT** ripple PR has been created.' \
