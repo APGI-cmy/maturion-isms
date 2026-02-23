@@ -8,7 +8,13 @@
   "serial_format": "MAT-T-NNNN",
   "serial_range": {
     "start": "MAT-T-0001",
-    "end": "MAT-T-AIMC-030"
+    "end": "MAT-T-AIMC-030",
+    "aimc_range": {
+      "wave_7": "MAT-T-AIMC-001 to MAT-T-AIMC-010 (blocks of 10 reserved per wave)",
+      "wave_8": "MAT-T-AIMC-011 to MAT-T-AIMC-020",
+      "wave_9": "MAT-T-AIMC-021 to MAT-T-AIMC-030",
+      "note": "Gaps within each block are intentionally reserved for future tests per wave delivery"
+    }
   },
   "architecture_ref": "modules/mat/02-architecture/system-architecture.md",
   "frs_ref": "modules/mat/01-frs/functional-requirements.md",
@@ -1757,5 +1763,5 @@
     "deterministic": true,
     "non_duplicative": true
   },
-  "aimc_governance_note": "AIMC_STRATEGY.md v1.0.0 is constitutional authority for all AI integration. Tests MAT-T-AIMC-* are RED until @maturion/ai-centre exposes the required Gateway capabilities. Tests MAT-T-0028, MAT-T-0031, MAT-T-0032, MAT-T-0076 validate legacy direct-provider patterns (now superseded) \u2014 see governance_note on each component. Issue #377 is superseded. See ai-architecture.md v2.0.0 for the AIMC Gateway pattern."
+  "aimc_governance_note": "AIMC_STRATEGY.md v1.0.0 is constitutional authority for all AI integration. Tests MAT-T-AIMC-* are RED until @maturion/ai-centre exposes the required Gateway capabilities. Serial number blocks are intentionally reserved per AIMC wave: Wave 7 (Advisory) = MAT-T-AIMC-001\u2013010 (5 tests defined, 5 reserved); Wave 8 (Analysis) = MAT-T-AIMC-011\u2013020 (3 tests defined, 7 reserved); Wave 9 (Embeddings/RAG) = MAT-T-AIMC-021\u2013030 (1 test defined, 9 reserved). Gaps within each block are intentionally reserved for additional tests added when AIMC waves deliver. Tests MAT-T-0028, MAT-T-0031, MAT-T-0032, MAT-T-0076 validate legacy direct-provider patterns (now superseded) \u2014 see governance_note on each component. Issue #377 is superseded. See ai-architecture.md v2.0.0 for the AIMC Gateway pattern."
 }
