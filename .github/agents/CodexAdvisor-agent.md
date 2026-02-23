@@ -156,6 +156,7 @@ metadata:
    - Template: `.agent-workspace/CodexAdvisor-agent/knowledge/session-memory-template.md`
    - Required fields: `prior_sessions_reviewed`, `unresolved_items_from_prior_sessions`
    - **Suggestions for Improvement** (MANDATORY — non-blank): record at least one concrete improvement suggestion. If nothing identified, state: 'No degradation observed — continuous improvement note: [specific note]'. A blank section is a handover BLOCKER.
+   - **Parking Station**: Append one-line summary per suggestion to `.agent-workspace/parking-station/suggestions-log.md` (create if absent). Format: `| YYYY-MM-DD | <agent> | <session-NNN> | <one-sentence summary> | <session-memory-filename> |`
 5. Open PR — include CS2 authorization reference in PR description
 6. DO NOT merge — await CS2 approval
 
