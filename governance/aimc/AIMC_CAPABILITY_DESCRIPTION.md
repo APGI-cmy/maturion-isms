@@ -92,6 +92,8 @@ The AIMC is instantiated through eight sequential waves. Each wave builds on the
 
 > **Wave 1 is the current wave.** This ACD is its first deliverable.
 
+> **Wave 8 extension note**: The Governance Certification gate added to Wave 8 extends Canon §8 Phase 6 (which covers `video-generation` + `algorithm-execution` only). This extension is a Wave 1 governance decision and does not constitute a modification to the canonical capability taxonomy, provider strategy, or governance principles. No CS2 canon amendment is required.
+
 ---
 
 ## 6. Relationship to the ISMS Agent System and Canon Files
@@ -144,6 +146,15 @@ The APS will define the concrete TypeScript interfaces, request/response schemas
 | `THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` | `governance/canon/` | Knowledge management principles implemented by AIMC `embeddings` + RAG pipeline |
 | `WAVE_MODEL.md` | `governance/canon/` | Wave model governing the 8-wave implementation sequence |
 
+**Operational Canon**:
+
+| Document | Location | Role |
+|---|---|---|
+| `GOVERNANCE_PURPOSE_AND_SCOPE.md` | `governance/canon/` | Governance as canonical memory and control system; constitutional basis cited in `AIMC_STRATEGY.md` §2 |
+| `CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md` | `governance/canon/` | Ripple protocol — changes to AIMC canon trigger layer-down to `maturion-isms`; referenced in `AIMC_STRATEGY.md` §11.3 |
+| `AGENT_CONTRACT_PROTECTION_PROTOCOL.md` | `governance/canon/` | CS2 approval gate for modifications to capability taxonomy, provider strategy, or governance principles; referenced in `AIMC_STRATEGY.md` §11.4 |
+| `GOVERNANCE_RIPPLE_MODEL.md` | `governance/canon/` | Ripple detection and execution model governing how AIMC canon changes propagate to consumer repos |
+
 ---
 
 ## 9. Acceptance Criteria
@@ -158,6 +169,8 @@ This ACD is complete and ready for CS2 sign-off when all of the following are sa
 - [x] Section 6 explains the AIMC's relationship to the ISMS agent system and canon files
 - [x] Section 7 seeds context for the GRS and APS
 - [x] Section 8 cites `AIMC_STRATEGY.md` and `LIVING_AGENT_SYSTEM.md` v6.2.0 as direct authorities
+- [x] Section 8 includes all Supporting Canon and Operational Canon references aligned to `AIMC_STRATEGY.md` §12
+- [x] Wave 8 Governance Certification extension is explicitly footnoted as a Wave 1 governance decision
 - [ ] CS2 review and sign-off received
 
 ---
