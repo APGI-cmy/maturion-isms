@@ -1,28 +1,33 @@
 /**
- * CapabilityRouter — STUB (Wave 2 implementation pending)
+ * CapabilityRouter — Wave 2 implementation
  *
- * All methods throw NOT_IMPLEMENTED until Wave 2 implementation is complete.
- * Tests against this stub will FAIL (RED) as required by AAD §9 / Step 6.
+ * Resolves providers for a capability, filtered by health registry.
  *
  * References: GRS-003, GRS-004 | APS §5.1 | AAD §5.2
  */
-import type {
-  CapabilityRouter as ICapabilityRouter,
-  Capability,
-  ProviderHealthRegistry,
-  ProviderName,
-  RoutingConfiguration,
+import {
+  ProviderHealthStatus,
+  type CapabilityRouter as ICapabilityRouter,
+  type Capability,
+  type ProviderHealthRegistry,
+  type ProviderName,
+  type RoutingConfiguration,
 } from '../types/index.js';
 
 export class CapabilityRouter implements ICapabilityRouter {
-  constructor(_config: RoutingConfiguration) {
-    // Wave 2 implementation pending
+  private readonly config: RoutingConfiguration;
+
+  constructor(config: RoutingConfiguration) {
+    this.config = config;
   }
 
   resolveProviders(
-    _capability: Capability,
-    _healthRegistry: ProviderHealthRegistry,
+    capability: Capability,
+    healthRegistry: ProviderHealthRegistry,
   ): ProviderName[] {
-    throw new Error('NOT_IMPLEMENTED: CapabilityRouter.resolveProviders()');
+    const configured = this.config.routes[capability] ?? [];
+    return configured.filter(
+      (p) => healthRegistry.getHealth(p) !== ProviderHealthStatus.UNAVAILABLE,
+    );
   }
 }
