@@ -1,0 +1,351 @@
+name: Governance Ripple Sync
+
+# Authority: CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md, LIVING_AGENT_SYSTEM.md v6.2.0
+# Purpose: Consumer-side listener for repository_dispatch ripple events from the canonical
+#          governance repo (APGI-cmy/maturion-foreman-governance).
+#
+# TERMINOLOGY (per ECOSYSTEM_VOCABULARY.md v1.1.0):
+# - LAYERING DOWN : Cross-repo distribution of governance artefacts (upstream → this repo).
+# - RIPPLING      : Within-repo integration/synchronisation.
+#
+# Trigger: governance-ripple-dispatch.yml in maturion-foreman-governance dispatches a
+#          repository_dispatch event of type "governance_ripple" to each consumer repo.
+#          This workflow catches that event, runs the alignment script, and creates a PR.
+#
+# Root-cause note (Issue #N, 2026-02-23):
+#   ripple-integration.yml only responds to *issues* with governance+layer-down labels.
+#   The canonical dispatch sends repository_dispatch events — which were silently ignored
+#   because no handler existed.  This workflow closes that gap.
+
+on:
+  repository_dispatch:
+    types: [governance_ripple]
+
+  # Manual re-trigger for testing and recovery
+  workflow_dispatch:
+    inputs:
+      canonical_commit:
+        description: 'Canonical commit SHA to align to (optional, for logging)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  ripple-sync:
+    name: Governance Ripple Sync
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "Maturion Bot"
+          git config --global user.email "bot@maturion.ai"
+
+      # ── Extract ripple payload ──
+      - name: Extract ripple payload
+        id: payload
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            SOURCE_REPO="${{ github.event.client_payload.source_repo }}"
+            COMMIT_SHA="${{ github.event.client_payload.commit_sha }}"
+            COMMIT_MSG="${{ github.event.client_payload.commit_message }}"
+            RIPPLE_TS="${{ github.event.client_payload.timestamp }}"
+          else
+            SOURCE_REPO="APGI-cmy/maturion-foreman-governance"
+            COMMIT_SHA="${{ github.event.inputs.canonical_commit }}"
+            COMMIT_MSG="manual trigger"
+            RIPPLE_TS="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          fi
+
+          echo "source_repo=${SOURCE_REPO:-APGI-cmy/maturion-foreman-governance}" >> $GITHUB_OUTPUT
+          echo "canonical_commit=${COMMIT_SHA:-unknown}" >> $GITHUB_OUTPUT
+          echo "commit_message=${COMMIT_MSG:-unknown}" >> $GITHUB_OUTPUT
+          echo "ripple_timestamp=${RIPPLE_TS:-$(date -u +%Y-%m-%dT%H:%M:%SZ)}" >> $GITHUB_OUTPUT
+
+          echo "Ripple payload:"
+          echo "  Source repo : ${SOURCE_REPO:-APGI-cmy/maturion-foreman-governance}"
+          echo "  Commit SHA  : ${COMMIT_SHA:-unknown}"
+          echo "  Commit msg  : ${COMMIT_MSG:-unknown}"
+          echo "  Timestamp   : ${RIPPLE_TS:-$(date -u +%Y-%m-%dT%H:%M:%SZ)}"
+
+      # ── Record ripple event receipt ──
+      - name: Record ripple event receipt
+        run: |
+          mkdir -p .agent-admin/ripple
+          DATESTAMP=$(date -u +%Y%m%dT%H%M%SZ)
+          RECORD=".agent-admin/ripple/ripple-received-${DATESTAMP}.json"
+          jq -n \
+            --arg ts   "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg src  "${{ steps.payload.outputs.source_repo }}" \
+            --arg sha  "${{ steps.payload.outputs.canonical_commit }}" \
+            --arg msg  "${{ steps.payload.outputs.commit_message }}" \
+            --arg run  "${{ github.run_id }}" \
+            '{schema_version:"1.0.0",type:"governance_ripple_received",timestamp:$ts,
+              source_repo:$src,canonical_commit:$sha,commit_message:$msg,
+              workflow_run:$run}' \
+            > "$RECORD"
+          echo "Receipt recorded: $RECORD"
+
+      # ── Run canonical alignment script ──
+      - name: Run governance alignment
+        id: align
+        run: |
+          set +e
+          bash .github/scripts/align-governance.sh
+          EXIT_CODE=$?
+
+          if [ $EXIT_CODE -eq 0 ]; then
+            if git status --porcelain | grep -q '^'; then
+              echo "drift_detected=true" >> $GITHUB_OUTPUT
+              echo "Drift detected — changes will be PRed"
+            else
+              echo "drift_detected=false" >> $GITHUB_OUTPUT
+              echo "No drift — already aligned"
+            fi
+          else
+            echo "drift_detected=false" >> $GITHUB_OUTPUT
+            echo "Alignment script exited with code $EXIT_CODE"
+            exit $EXIT_CODE
+          fi
+
+      # ── Detect agent-contract changes in diff ──
+      - name: Check diff for agent contracts
+        id: diff_check
+        if: steps.align.outputs.drift_detected == 'true'
+        run: |
+          AGENT_DIFF=$(git diff --name-only HEAD | grep -E '^\.github/agents/.*\.md$' || true)
+          if [ -n "$AGENT_DIFF" ]; then
+            echo "has_agent_files=true" >> $GITHUB_OUTPUT
+            echo "Agent contract files in diff: $AGENT_DIFF"
+          else
+            echo "has_agent_files=false" >> $GITHUB_OUTPUT
+          fi
+
+      # ── Collect drift-report metadata ──
+      - name: Collect alignment metadata
+        id: metadata
+        if: steps.align.outputs.drift_detected == 'true'
+        run: |
+          DRIFT_REPORT=$(ls -t .agent-admin/governance/drift-report-*.md 2>/dev/null | head -1)
+          if [ -n "$DRIFT_REPORT" ]; then
+            CANONICAL_COMMIT=$(grep "Canonical Commit" "$DRIFT_REPORT" | sed 's/.*: //')
+            CANONICAL_VERSION=$(grep "Canonical Version" "$DRIFT_REPORT" | sed 's/.*: //')
+            FILES_UPDATED=$(grep "Files Layered Down" "$DRIFT_REPORT" | sed 's/.*: //')
+            echo "canonical_commit=${CANONICAL_COMMIT:-${{ steps.payload.outputs.canonical_commit }}}" >> $GITHUB_OUTPUT
+            echo "canonical_version=${CANONICAL_VERSION:-unknown}" >> $GITHUB_OUTPUT
+            echo "files_updated=${FILES_UPDATED:-unknown}" >> $GITHUB_OUTPUT
+            echo "drift_report=$DRIFT_REPORT" >> $GITHUB_OUTPUT
+          else
+            echo "canonical_commit=${{ steps.payload.outputs.canonical_commit }}" >> $GITHUB_OUTPUT
+            echo "canonical_version=unknown" >> $GITHUB_OUTPUT
+            echo "files_updated=unknown" >> $GITHUB_OUTPUT
+            echo "drift_report=" >> $GITHUB_OUTPUT
+          fi
+
+      # ── Create escalation document when agent files are touched ──
+      - name: Create escalation document
+        if: >
+          steps.align.outputs.drift_detected == 'true' &&
+          steps.diff_check.outputs.has_agent_files == 'true'
+        run: |
+          DATESTAMP=$(date -u +"%Y-%m-%d")
+          INBOX=".agent-workspace/governance-liaison/escalation-inbox"
+          mkdir -p "$INBOX"
+          ESCALATION_FILE="${INBOX}/agent-contract-ripple-escalation-${DATESTAMP}.md"
+          {
+            echo '# Escalation: Agent Contract Ripple — CS2 Approval Required'
+            echo ''
+            echo '## Type'
+            echo 'BLOCKER'
+            echo ''
+            echo '## Description'
+            echo 'A governance layer-down triggered a ripple that includes changes to'
+            echo 'agent contract files (`.github/agents/*.md`).'
+            echo ''
+            echo 'Per **CS2_AGENT_FILE_AUTHORITY_MODEL.md** and'
+            echo '**AGENT_CONTRACT_PROTECTION_PROTOCOL.md**, only CS2 (Johan Ras) may'
+            echo 'approve and merge changes to agent contracts.'
+            echo ''
+            echo '**The ripple PR has been created as DRAFT and must not be merged until'
+            echo 'CS2 explicitly approves it.**'
+            echo ''
+            echo '## Context'
+            echo "- Session: governance-ripple-sync-${{ github.run_id }}"
+            echo "- Triggered by: repository_dispatch from ${{ steps.payload.outputs.source_repo }}"
+            echo "- Canonical commit: ${{ steps.metadata.outputs.canonical_commit }}"
+            echo "- Canonical version: ${{ steps.metadata.outputs.canonical_version }}"
+            echo "- Files updated: ${{ steps.metadata.outputs.files_updated }}"
+            echo ''
+            echo '## Recommendation'
+            echo '1. CS2 reviews the DRAFT ripple PR'
+            echo '2. CS2 approves and merges after review'
+            echo '3. Move this file to `escalation-archive/` after resolution'
+            echo ''
+            echo '## Evidence'
+            echo "- Drift report: \`${{ steps.metadata.outputs.drift_report }}\`"
+            echo "- Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo ''
+            echo '---'
+            echo "Created: ${DATESTAMP} | Authority: CS2 | Session: ${{ github.run_id }}"
+          } > "$ESCALATION_FILE"
+          echo "Escalation document created: $ESCALATION_FILE"
+
+      # ── Record layer-down receipt ──
+      - name: Record layer-down receipt
+        if: steps.align.outputs.drift_detected == 'true'
+        run: |
+          mkdir -p .agent-admin/ripple
+          DATESTAMP=$(date -u +%Y%m%dT%H%M%SZ)
+          RECORD=".agent-admin/ripple/layer-down-received-${DATESTAMP}.json"
+          jq -n \
+            --arg ts     "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg src    "${{ steps.payload.outputs.source_repo }}" \
+            --arg commit "${{ steps.metadata.outputs.canonical_commit }}" \
+            --arg cs2    "${{ steps.diff_check.outputs.has_agent_files }}" \
+            '{schema_version:"1.0.0",type:"layer_down_received",timestamp:$ts,
+              source_repo:$src,canonical_commit:$commit,
+              requires_cs2_approval:($cs2=="true"),escalated:($cs2=="true"),
+              trigger:"repository_dispatch"}' \
+            > "$RECORD"
+          echo "Receipt recorded: $RECORD"
+
+      # ── Create PR — standard path (no agent files changed) ──
+      - name: Create ripple PR (standard — no agent files)
+        if: steps.align.outputs.drift_detected == 'true' && steps.diff_check.outputs.has_agent_files != 'true'
+        id: create_pr_standard
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          commit-message: |
+            Ripple: propagate governance layer-down (run ${{ github.run_id }})
+            Canonical commit: ${{ steps.metadata.outputs.canonical_commit }}
+            Files updated: ${{ steps.metadata.outputs.files_updated }}
+            Agent files changed: false
+          branch: ripple/governance-sync-${{ github.run_id }}
+          force-push: true
+          delete-branch: true
+          draft: false
+          title: '[Ripple] Propagate governance layer-down (repository_dispatch)'
+          body: |
+            ## Ripple Integration
+            This PR propagates governance artefacts from the upstream layer-down.
+            ### Source
+            - **Trigger**: `repository_dispatch` from `${{ steps.payload.outputs.source_repo }}`
+            - **Canonical commit**: `${{ steps.metadata.outputs.canonical_commit }}`
+            - **Canonical version**: `${{ steps.metadata.outputs.canonical_version }}`
+            - **Files updated**: ${{ steps.metadata.outputs.files_updated }}
+            - **Ripple timestamp**: ${{ steps.payload.outputs.ripple_timestamp }}
+            ### Agent File Gate
+            ✅ No agent contract files changed — standard auto-merge path.
+            ---
+            **Authority**: CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md, LAYERING_AND_RIPPLING_AUTOMATION_STRATEGY.md v1.0.0
+          labels: |
+            governance
+            ripple
+            automated
+            agent:liaison
+          assignees: APGI-cmy
+
+      # ── Create PR — CS2 DRAFT path (agent files changed) ──
+      - name: Create ripple PR (DRAFT — CS2 required)
+        if: steps.align.outputs.drift_detected == 'true' && steps.diff_check.outputs.has_agent_files == 'true'
+        id: create_pr_draft
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          commit-message: |
+            Ripple: propagate governance layer-down (run ${{ github.run_id }})
+            Canonical commit: ${{ steps.metadata.outputs.canonical_commit }}
+            Files updated: ${{ steps.metadata.outputs.files_updated }}
+            Agent files changed: true
+          branch: ripple/governance-sync-${{ github.run_id }}
+          force-push: true
+          delete-branch: true
+          draft: true
+          title: '[Ripple][DRAFT — CS2 Required] Propagate governance layer-down (repository_dispatch)'
+          body: |
+            ## Ripple Integration
+            This PR propagates governance artefacts from the upstream layer-down.
+            ### Source
+            - **Trigger**: `repository_dispatch` from `${{ steps.payload.outputs.source_repo }}`
+            - **Canonical commit**: `${{ steps.metadata.outputs.canonical_commit }}`
+            - **Canonical version**: `${{ steps.metadata.outputs.canonical_version }}`
+            - **Files updated**: ${{ steps.metadata.outputs.files_updated }}
+            - **Ripple timestamp**: ${{ steps.payload.outputs.ripple_timestamp }}
+            ### Agent File Gate
+            ⛔ **Agent contract files changed — CS2 approval required.** Auto-merge is DISABLED.
+            See `.agent-workspace/governance-liaison/escalation-inbox/` for escalation document.
+            ---
+            **Authority**: CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md, LAYERING_AND_RIPPLING_AUTOMATION_STRATEGY.md v1.0.0
+          labels: |
+            governance
+            ripple
+            automated
+            agent:liaison
+          assignees: APGI-cmy
+
+      # ── Resolve PR number ──
+      - name: Resolve PR number
+        id: pr_number
+        run: |
+          NUMBER="${{ steps.create_pr_standard.outputs.pull-request-number }}"
+          if [ -z "$NUMBER" ]; then
+            NUMBER="${{ steps.create_pr_draft.outputs.pull-request-number }}"
+          fi
+          echo "number=$NUMBER" >> $GITHUB_OUTPUT
+
+      # ── Enable auto-merge (standard path only) ──
+      - name: Enable auto-merge
+        if: >
+          steps.align.outputs.drift_detected == 'true' &&
+          steps.diff_check.outputs.has_agent_files != 'true' &&
+          steps.pr_number.outputs.number != ''
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+        run: |
+          PR_NUMBER="${{ steps.pr_number.outputs.number }}"
+          echo "Enabling auto-merge for ripple PR #${PR_NUMBER}"
+          gh pr merge "${PR_NUMBER}" \
+            --repo ${{ github.repository }} \
+            --auto \
+            --squash \
+            --delete-branch || echo "Auto-merge could not be enabled — branch protection may require checks to pass first"
+
+      # ── Summary ──
+      - name: Summary
+        if: always()
+        run: |
+          DRIFT="${{ steps.align.outputs.drift_detected }}"
+          AGENT="${{ steps.diff_check.outputs.has_agent_files }}"
+          PR="${{ steps.pr_number.outputs.number }}"
+
+          echo "======================================"
+          echo "GOVERNANCE RIPPLE SYNC — SUMMARY"
+          echo "======================================"
+          echo "Trigger       : ${{ github.event_name }}"
+          echo "Source repo   : ${{ steps.payload.outputs.source_repo }}"
+          echo "Canonical SHA : ${{ steps.payload.outputs.canonical_commit }}"
+          echo "Drift detected: ${DRIFT}"
+
+          if [ "$DRIFT" = "true" ]; then
+            echo "Agent files   : ${AGENT}"
+            echo "PR created    : #${PR}"
+            if [ "$AGENT" = "true" ]; then
+              echo "Status        : DRAFT PR — CS2 approval required"
+            else
+              echo "Status        : PR created — auto-merge enabled"
+            fi
+          else
+            echo "Status        : Already aligned — no PR needed"
+          fi
+          echo "======================================"
