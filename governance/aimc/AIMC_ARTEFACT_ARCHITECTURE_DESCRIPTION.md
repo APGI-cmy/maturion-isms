@@ -90,7 +90,7 @@ graph TD
         TW["TelemetryWriter<br/>telemetry/TelemetryWriter.ts"]
 
         subgraph Agents_Dir["agents/ (Markdown only)"]
-            PA["mat-advisor.md<br/>course-crafter-advisor.md<br/>xdetect-advisor.md<br/>risk-advisor.md"]
+            PA["mat-advisor.md<br/>isms-navigator.md<br/>course-crafter-advisor.md<br/>xdetect-advisor.md<br/>risk-advisor.md"]
         end
     end
 
@@ -207,6 +207,7 @@ packages/ai-centre/
 │       └── index.ts                      # [TYPES] All interface/enum/type definitions from APS §4–§9
 ├── agents/                               # [PERSONAS] Plain Markdown persona files (no code)
 │   ├── mat-advisor.md                    # Wave 3
+│   ├── isms-navigator.md                 # Wave 4 (TBD-CS2)
 │   ├── course-crafter-advisor.md         # Wave 6
 │   ├── xdetect-advisor.md                # Wave 7
 │   └── risk-advisor.md                   # Wave 7
@@ -483,11 +484,11 @@ The following table maps each wave's deliverables to specific files in `packages
 |---|---|---|---|
 | **2** (Scaffold) | `src/index.ts`, `src/types/index.ts`, `src/gateway/AICentre.ts` (interface only), `supabase/migrations/001_ai_memory.sql`, `supabase/migrations/002_ai_telemetry.sql`, `package.json`, `tsconfig.json` | All adapter files, `memory/PersistentMemoryAdapter.ts`, `telemetry/TelemetryWriter.ts` | Full TypeScript interfaces; no live provider calls. All stubs must satisfy interface. |
 | **3** (Gateway + Advisory) | `gateway/AICentre.ts` (full), `routing/CapabilityRouter.ts`, `routing/ProviderHealthRegistry.ts`, `memory/SessionMemoryStore.ts`, `memory/MemoryLifecycle.ts` (partial — session only), `personas/PersonaLoader.ts`, `adapters/GitHubModelsAdapter.ts`, `keys/ProviderKeyStore.ts`, `telemetry/TelemetryWriter.ts`, `agents/mat-advisor.md` | `adapters/OpenAIAdapter.ts`, `adapters/AnthropicAdapter.ts`, `adapters/PerplexityAdapter.ts`, `adapters/RunwayAdapter.ts`, `memory/PersistentMemoryAdapter.ts` | First live capability. MAT advisory end-to-end. |
-| **4** (Analysis + Persistent Memory) | `adapters/OpenAIAdapter.ts` (analysis + embeddings), `memory/PersistentMemoryAdapter.ts`, `memory/MemoryLifecycle.ts` (full) | `adapters/AnthropicAdapter.ts`, `adapters/PerplexityAdapter.ts`, `adapters/RunwayAdapter.ts` | Tenant-isolated persistent memory active. |
+| **4** (Analysis + Persistent Memory) | `adapters/OpenAIAdapter.ts` (analysis + embeddings), `memory/PersistentMemoryAdapter.ts`, `memory/MemoryLifecycle.ts` (full), `agents/isms-navigator.md` (TBD-CS2 — confirm wave with CS2 before implementation) | `adapters/AnthropicAdapter.ts`, `adapters/PerplexityAdapter.ts`, `adapters/RunwayAdapter.ts` | Tenant-isolated persistent memory active. ISMS Navigator persona scheduled here pending CS2 wave confirmation. |
 | **5** (Knowledge + Embeddings + RAG) | `adapters/OpenAIAdapter.ts` (embeddings extension), RAG pipeline integration in `memory/MemoryLifecycle.ts` | `adapters/AnthropicAdapter.ts`, `adapters/PerplexityAdapter.ts`, `adapters/RunwayAdapter.ts` | Domain knowledge segment added to context assembly. |
 | **6** (Document + Image Generation) | `adapters/AnthropicAdapter.ts`, `adapters/OpenAIAdapter.ts` (image-generation extension), `agents/course-crafter-advisor.md` | `adapters/PerplexityAdapter.ts`, `adapters/RunwayAdapter.ts` | Course Crafter persona active. |
 | **7** (Deep Search + XDetect + Risk) | `adapters/PerplexityAdapter.ts`, `agents/xdetect-advisor.md`, `agents/risk-advisor.md` | `adapters/RunwayAdapter.ts` | XDetect and Risk advisor personas active. |
-| **8** (Video + Algorithm + Certification) | `adapters/RunwayAdapter.ts`, `algorithm-execution` internal handler | None | All stubs replaced. Governance certification deliverable. |
+| **8** (Video + Algorithm + Certification) | `adapters/RunwayAdapter.ts`, `adapters/OpenAIAdapter.ts` (algorithm-execution extension via o3 model) | None | All stubs replaced. Governance certification deliverable. `algorithm-execution` routes through `OpenAIAdapter` using the OpenAI o3 model — no separate adapter file is required; handled via capability routing configuration (see AIMC_STRATEGY.md §4, provider: OpenAI o3). |
 
 ---
 
@@ -730,13 +731,13 @@ const aiCentre = new AICentre({
 
 All provider API keys are read from process environment variables by `ProviderKeyStore`. The canonical environment variable names are:
 
-| Provider | Environment Variable |
-|---|---|
-| GitHub Models | `GITHUB_MODELS_API_KEY` |
-| OpenAI | `OPENAI_API_KEY` |
-| Anthropic | `ANTHROPIC_API_KEY` |
-| Perplexity | `PERPLEXITY_API_KEY` |
-| Runway | `RUNWAY_API_KEY` |
+| Provider | Environment Variable | Notes |
+|---|---|---|
+| GitHub Models | `GITHUB_TOKEN` | Standard GitHub Actions PAT / fine-grained token used to authenticate with `models.github.ai`. CS2 provisions this as a repository secret; no separate API key is issued for GitHub Models. |
+| OpenAI | `OPENAI_API_KEY` | |
+| Anthropic | `ANTHROPIC_API_KEY` | |
+| Perplexity | `PERPLEXITY_API_KEY` | |
+| Runway | `RUNWAY_API_KEY` | |
 
 These names are defined here as the canonical set. No other naming convention may be used. CS2 manages the values in the Vercel / CI secret stores.
 
