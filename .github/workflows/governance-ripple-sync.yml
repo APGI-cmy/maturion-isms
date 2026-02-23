@@ -79,8 +79,49 @@ jobs:
           echo "  Commit msg  : ${COMMIT_MSG:-unknown}"
           echo "  Timestamp   : ${RIPPLE_TS:-$(date -u +%Y-%m-%dT%H:%M:%SZ)}"
 
+      # ── Idempotency: check for existing ripple PR ──
+      - name: Check for existing ripple PR
+        id: check_existing
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+        run: |
+          RIPPLE_JQ='.[] | select(.headRefName | startswith("ripple/")) | .number'
+
+          # Check for any open PR with governance+ripple labels on a ripple/ branch
+          EXISTING_PR=$(gh pr list \
+            --repo ${{ github.repository }} \
+            --state open \
+            --label "governance" \
+            --label "ripple" \
+            --json number,headRefName \
+            --jq "$RIPPLE_JQ" \
+            2>/dev/null | head -1 || echo "")
+
+          # Also check for governance+automated labels on a ripple/ branch (catches all variants)
+          if [ -z "$EXISTING_PR" ]; then
+            EXISTING_PR=$(gh pr list \
+              --repo ${{ github.repository }} \
+              --state open \
+              --label "governance" \
+              --label "automated" \
+              --json number,headRefName \
+              --jq "$RIPPLE_JQ" \
+              2>/dev/null | head -1 || echo "")
+          fi
+
+          if [ -n "$EXISTING_PR" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "existing_pr=${EXISTING_PR}" >> $GITHUB_OUTPUT
+            echo "Idempotency triggered: open ripple PR #${EXISTING_PR} already exists — standing down"
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "existing_pr=" >> $GITHUB_OUTPUT
+            echo "No existing ripple PR found — proceeding"
+          fi
+
       # ── Record ripple event receipt ──
       - name: Record ripple event receipt
+        if: steps.check_existing.outputs.skip != 'true'
         run: |
           mkdir -p .agent-admin/ripple
           DATESTAMP=$(date -u +%Y%m%dT%H%M%SZ)
@@ -100,6 +141,7 @@ jobs:
       # ── Run canonical alignment script ──
       - name: Run governance alignment
         id: align
+        if: steps.check_existing.outputs.skip != 'true'
         run: |
           set +e
           bash .github/scripts/align-governance.sh
@@ -402,6 +444,8 @@ jobs:
           DRIFT="${{ steps.align.outputs.drift_detected }}"
           AGENT="${{ steps.diff_check.outputs.has_agent_files }}"
           PR="${{ steps.pr_number.outputs.number }}"
+          SKIP="${{ steps.check_existing.outputs.skip }}"
+          EXISTING="${{ steps.check_existing.outputs.existing_pr }}"
 
           echo "======================================"
           echo "GOVERNANCE RIPPLE SYNC — SUMMARY"
@@ -409,17 +453,21 @@ jobs:
           echo "Trigger       : ${{ github.event_name }}"
           echo "Source repo   : ${{ steps.payload.outputs.source_repo }}"
           echo "Canonical SHA : ${{ steps.payload.outputs.canonical_commit }}"
-          echo "Drift detected: ${DRIFT}"
 
-          if [ "$DRIFT" = "true" ]; then
-            echo "Agent files   : ${AGENT}"
-            echo "PR created    : #${PR}"
-            if [ "$AGENT" = "true" ]; then
-              echo "Status        : DRAFT PR — CS2 approval required"
-            else
-              echo "Status        : PR created — auto-merge enabled"
-            fi
+          if [ "$SKIP" = "true" ]; then
+            echo "Status        : IDEMPOTENCY — open ripple PR #${EXISTING} already exists — stood down"
           else
-            echo "Status        : Already aligned — no PR needed"
+            echo "Drift detected: ${DRIFT}"
+            if [ "$DRIFT" = "true" ]; then
+              echo "Agent files   : ${AGENT}"
+              echo "PR created    : #${PR}"
+              if [ "$AGENT" = "true" ]; then
+                echo "Status        : DRAFT PR — CS2 approval required"
+              else
+                echo "Status        : PR created — auto-merge enabled"
+              fi
+            else
+              echo "Status        : Already aligned — no PR needed"
+            fi
           fi
           echo "======================================"
