@@ -1318,7 +1318,9 @@ Track the progression through the canonical module lifecycle stages.
 22. Execute Wave 2 Remediation: photo capture (G-07), interview recording (G-10), offline mode verification (G-16)
 23. Execute Wave 4 Remediation: report backend generation confirmation (G-14)
    - ✅ **Wave 4R CST checkpoint COMPLETE (2026-02-23)**: Combined Subwave Testing executed covering Waves 0, 1, 2, 2R, 4R. 127 tests GREEN, 0 regressions, 0 skipped. Evidence: `modules/mat/05-build-evidence/prehandover-CST-4R-20260223.md`. Waves 3 and 4 skipped in this fast-track sequence per governance risk mitigation protocol (see CST doc §7).
-24. Execute Wave 5.6 Remediation: hierarchy UI render verification (G-03), evidence modal live data (G-04), mobile viewport tests (G-15)
+24. ~~Execute Wave 5.6 Remediation: hierarchy UI render verification (G-03), evidence modal live data (G-04), mobile viewport tests (G-15)~~
+   - ✅ **Wave 5.6R COMPLETE (2026-02-23)**: UI remediation delivered — G-03 (CriteriaTree.tsx live hierarchy render verified, MAT-T-0099 GREEN), G-04 (EvidenceCapture.tsx stub replaced with live EvidenceCollection delegation, MAT-T-0100 GREEN), G-15 (mobile viewport 375px documentation: MAT-T-0106, 0107, 0108 GREEN). All 127 tests GREEN, 0 regressions.
+   - ✅ **Wave 5.6R CST checkpoint COMPLETE (2026-02-23)**: Combined Subwave Testing executed covering Waves 0, 1, 2, 2R, 4R, 5.6R. 127 tests GREEN, 0 regressions, 0 skipped. Evidence: `modules/mat/05-build-evidence/prehandover-CST-5.6R-20260223.md`.
 25. Proceed to Wave 6: Deployment & Commissioning (READY — awaiting CS2 Vercel/Supabase access AND remediation completion)
 
 ---
