@@ -1,8 +1,7 @@
 /**
- * ProviderHealthRegistry — STUB (Wave 2 implementation pending)
+ * ProviderHealthRegistry — Wave 2 implementation
  *
- * All methods throw NOT_IMPLEMENTED until Wave 2 implementation is complete.
- * Tests against this stub will FAIL (RED) as required by AAD §9 / Step 6.
+ * Tracks provider health state with thresholds for DEGRADED and UNAVAILABLE.
  *
  * References: GRS-014 | APS §5.3 | AAD §5.3
  */
@@ -14,16 +13,37 @@ import {
 
 export { ProviderHealthStatus };
 
+const DEGRADED_THRESHOLD = 3;
+const UNAVAILABLE_THRESHOLD = 10;
+
+interface ProviderState {
+  failures: number;
+}
+
 export class ProviderHealthRegistry implements IProviderHealthRegistry {
-  getHealth(_provider: ProviderName): ProviderHealthStatus {
-    throw new Error('NOT_IMPLEMENTED: ProviderHealthRegistry.getHealth()');
+  private readonly state = new Map<ProviderName, ProviderState>();
+
+  private getState(provider: ProviderName): ProviderState {
+    if (!this.state.has(provider)) {
+      this.state.set(provider, { failures: 0 });
+    }
+    return this.state.get(provider)!;
   }
 
-  recordSuccess(_provider: ProviderName): void {
-    throw new Error('NOT_IMPLEMENTED: ProviderHealthRegistry.recordSuccess()');
+  getHealth(provider: ProviderName): ProviderHealthStatus {
+    const { failures } = this.getState(provider);
+    if (failures >= UNAVAILABLE_THRESHOLD) return ProviderHealthStatus.UNAVAILABLE;
+    if (failures >= DEGRADED_THRESHOLD) return ProviderHealthStatus.DEGRADED;
+    return ProviderHealthStatus.HEALTHY;
   }
 
-  recordFailure(_provider: ProviderName): void {
-    throw new Error('NOT_IMPLEMENTED: ProviderHealthRegistry.recordFailure()');
+  recordSuccess(provider: ProviderName): void {
+    const s = this.getState(provider);
+    s.failures = Math.max(0, s.failures - 3);
+  }
+
+  recordFailure(provider: ProviderName): void {
+    const s = this.getState(provider);
+    s.failures += 1;
   }
 }
