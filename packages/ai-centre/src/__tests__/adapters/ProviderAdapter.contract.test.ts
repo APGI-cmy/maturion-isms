@@ -25,15 +25,36 @@ import {
 // Registry of adapters under test (add each adapter as it is implemented)
 // ---------------------------------------------------------------------------
 
-// NOTE: Adapter implementations do not exist yet (Wave 3+).
-// This array will be populated when Wave 3 implementation begins.
-// All contract tests below will be exercised against every registered adapter.
+/**
+ * ⚠️  WAVE 3+ BUILDER MANDATORY ACTION:
+ *
+ * When you deliver a new ProviderAdapter implementation, you MUST register it
+ * here. Failing to do so means the contract tests below will NOT run against
+ * your adapter, and the CI merge gate will NOT catch contract regressions.
+ *
+ * HOW TO REGISTER:
+ *   1. Import your adapter at the top of this file:
+ *        import { GitHubModelsAdapter } from '../../adapters/GitHubModelsAdapter.js';
+ *   2. Add an instance to the array:
+ *        new GitHubModelsAdapter()
+ *   3. The parameterised contract tests below will automatically run against it.
+ *
+ * WAVE DELIVERY SCHEDULE (AAD §6.2 / APS §6.2):
+ *   Wave 3  → GitHubModelsAdapter  (advisory capability)
+ *   Wave 4  → OpenAIAdapter        (analysis, embeddings)
+ *   Wave 6  → AnthropicAdapter     (document-generation)
+ *   Wave 7  → PerplexityAdapter    (deep-search)
+ *   Wave 8  → RunwayAdapter        (video-generation)
+ *
+ * The sentinel test below fails RED until at least one adapter is registered.
+ * It will automatically stop failing once you add your adapter to this array.
+ */
 const ADAPTERS_UNDER_TEST: ProviderAdapter[] = [
-  // Wave 3: new GitHubModelsAdapter() — uncomment when implemented
-  // Wave 4: new OpenAIAdapter()       — uncomment when implemented
-  // Wave 6: new AnthropicAdapter()    — uncomment when implemented
-  // Wave 7: new PerplexityAdapter()   — uncomment when implemented
-  // Wave 8: new RunwayAdapter()       — uncomment when implemented
+  // Wave 3: new GitHubModelsAdapter() — import and uncomment when implemented
+  // Wave 4: new OpenAIAdapter()       — import and uncomment when implemented
+  // Wave 6: new AnthropicAdapter()    — import and uncomment when implemented
+  // Wave 7: new PerplexityAdapter()   — import and uncomment when implemented
+  // Wave 8: new RunwayAdapter()       — import and uncomment when implemented
 ];
 
 // ---------------------------------------------------------------------------

@@ -8,6 +8,23 @@
  *
  * Mapped requirements:
  *   GRS-008  Supabase persistent memory with organisation-level tenant isolation
+ *
+ * ⚠️  WAVE 4 BUILDER MANDATORY REQUIREMENTS:
+ *
+ * 1. SUPABASE BACKEND REQUIRED — GRS-008 mandates Supabase-backed storage with
+ *    organisation-level RLS. An in-memory implementation silently violates tenant
+ *    isolation and WILL NOT satisfy GRS-008. The constructor MUST accept a
+ *    SupabaseClient parameter and MUST throw if none is supplied.
+ *
+ * 2. CONSTRUCTOR SIGNATURE — update the stub constructor signature to:
+ *      constructor(supabaseClient: SupabaseClient)
+ *    and throw `new Error('SupabaseClient is required for PersistentMemoryAdapter')`
+ *    if the client is undefined/null.
+ *
+ * 3. RLS ENFORCEMENT — all queries MUST include `organisation_id` scoping that
+ *    aligns with the `ai_memory` table RLS policy in AAD §7.4 / APS §7.4.
+ *
+ * 4. DO NOT satisfy these tests by using in-memory maps or arrays.
  */
 import { describe, it, expect } from 'vitest';
 import { PersistentMemoryAdapter } from '../../memory/PersistentMemoryAdapter.js';
@@ -94,6 +111,26 @@ describe('PersistentMemoryAdapter', () => {
       expect(deletedCount).toBeGreaterThan(0);
       const remaining = await adapter.retrieve({ organisationId: 'org-prune' });
       expect(remaining.length).toBe(0);
+    },
+  );
+
+  it(
+    // GRS-008 | AAD §9.2 — Supabase enforcement (see file header for Wave 4 requirements)
+    "is backed by Supabase — constructor accepts a Supabase client (not in-memory)",
+    () => {
+      // PersistentMemoryAdapter MUST require a SupabaseClient to enforce org-level
+      // tenant isolation (GRS-008 / APS §7.4 RLS policy). Constructing without a
+      // client is invalid — an in-memory fallback silently violates GRS-008.
+      //
+      // Wave 4 builder: update the constructor to accept SupabaseClient and throw
+      // 'SupabaseClient is required for PersistentMemoryAdapter' when absent.
+      // Cast to a permissive constructor type so we can test the runtime guard
+      // with an explicit undefined argument, without TypeScript rejecting the call
+      // at compile time (the real constructor signature is updated in Wave 4).
+      type PermissiveConstructor = new (client?: unknown) => unknown;
+      expect(
+        () => new (PersistentMemoryAdapter as unknown as PermissiveConstructor)(undefined),
+      ).toThrow('SupabaseClient is required for PersistentMemoryAdapter');
     },
   );
 });

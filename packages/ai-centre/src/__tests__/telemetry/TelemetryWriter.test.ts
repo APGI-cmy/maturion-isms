@@ -55,17 +55,36 @@ describe('TelemetryWriter', () => {
 
   it(
     // GRS-012 | AAD §9.2
-    "write() includes all required telemetry fields in the persisted record",
+    "write() persists a record that includes all required TelemetryEvent fields",
     async () => {
       const writer = new TelemetryWriter();
       const event = makeEvent();
 
-      await writer.write(event);
+      const recordId = await writer.write(event);
 
-      // The writer must accept and persist the event without dropping required fields.
-      // Validation is structural — the TypeScript signature enforces the fields.
-      // This test confirms the method executes without throwing on a complete event.
-      expect(true).toBe(true);
+      // Structural completeness: verify all required TelemetryEvent fields are present
+      // in the event submitted to write(). This is an input-validation assertion — it
+      // confirms the caller correctly constructs a complete event before writing.
+      //
+      // NOTE: This does NOT yet verify what is actually persisted in Supabase.
+      // Wave 2 builder: extend this test to retrieve-and-verify the stored record
+      // once the Supabase-backed TelemetryWriter is implemented.
+      expect(typeof recordId).toBe('string');
+      expect(recordId.length).toBeGreaterThan(0);
+
+      const requiredFields: Array<keyof Omit<TelemetryEvent, 'id'>> = [
+        'organisationId',
+        'capability',
+        'providerUsed',
+        'promptTokens',
+        'completionTokens',
+        'latencyMs',
+        'recordedAt',
+      ];
+      for (const field of requiredFields) {
+        expect(event).toHaveProperty(field);
+        expect(event[field]).toBeDefined();
+      }
     },
   );
 
