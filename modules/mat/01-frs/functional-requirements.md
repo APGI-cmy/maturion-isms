@@ -3,7 +3,7 @@
 **Module**: MAT (Manual Audit Tool)
 **Artifact Type**: Functional Requirements Specification
 **Status**: COMPLETE
-**Version**: v1.2.0
+**Version**: v1.3.0
 **Owner**: Foreman (FM)
 **Authority**: Derived from App Description v1.2 (modules/mat/00-app-description/app-description.md)
 **Applies To**: MAT module within maturion-isms repository
@@ -1337,24 +1337,38 @@ All UI components, pages, and user workflows specified in FR-001 through FR-069 
 
 ---
 
-### FR-072: Embedded AI Assistant
+### FR-072: Embedded AI Assistant (AIMC Advisory Integration)
 
 **Priority**: P0
 **Source**: App Description §13 (Embedded AI Assistant), Maturion Platform Standard LL-031, MANDATORY_CROSS_APP_COMPONENTS.md §13
+**Constitutional Authority**: `AIMC_STRATEGY.md` v1.0.0
+**AIMC Prerequisite**: **BLOCKED — Cannot be executed before AIMC Wave 3 (Advisory Gateway) is complete**
 
-The system MUST provide an embedded AI assistant panel accessible from every MAT frontend page, with agent/model selection logic aligned to the platform AI routing standard.
+> **⚠️ AIMC BLOCKER**: This requirement CANNOT be implemented until the `@maturion/ai-centre` package
+> exposes the Advisory Gateway (AIMC Wave 3). Any prior scaffold implementation that uses direct
+> provider calls or placeholder wiring NOT connected to the AIMC Gateway is constitutionally
+> non-compliant and must be refactored when AIMC Wave 3 delivers.
+> Builders MUST NOT proceed with this requirement until POLC/CS2 confirms AIMC Wave 3 is complete.
+
+The system MUST provide an embedded AI assistant panel accessible from every MAT frontend page,
+consuming the AI advisory capability exclusively via the `@maturion/ai-centre` Gateway.
 
 **Acceptance Criteria**:
 1. A collapsible AI assistant panel is rendered in the application layout and accessible from every page.
-2. The panel exposes agent/model selection: users can choose from at minimum: General Assistant (routine), Scoring Assistant (scoring), Document Parser (document_parsing), and Report Writer (report_generation).
-3. The selected agent/model selection is captured and made available for routing through the AI Gateway per TR-040 (AI Model Routing Configuration) when gateway integration is wired in a future wave.
-4. The panel structure supports AI invocation logging per FR-029 when gateway integration is wired.
-5. The panel renders placeholder responses (UI scaffold) until AI Gateway integration is complete. Runtime gateway unavailability handling is deferred to a future wave.
-6. The assistant is keyboard-navigable and WCAG 2.1 AA compliant per FR-065.
+2. The panel exposes persona selection sourced from the AIMC canonical agent directory: at minimum
+   Maturity Advisor, Scoring Assistant, Document Parser, and Report Writer.
+3. All AI invocations route through `@maturion/ai-centre` Gateway — no direct provider calls.
+4. The panel captures the AIMC invocation reference ID returned by the Gateway for audit-domain logging per FR-029.
+5. The panel is keyboard-navigable and WCAG 2.1 AA compliant per FR-065.
+6. No AI provider API keys are present in the MAT frontend bundle or MAT backend configuration.
 
 **Edge Cases**:
-- AI Gateway not yet integrated: panel renders placeholder responses, application does not crash.
-- No agent selected: defaults to General Assistant (routine task type).
+- AIMC Wave 3 not yet complete: panel renders a locked/disabled state with messaging that AI advisory
+  capability is not yet available. Application MUST NOT crash.
+- No persona selected: defaults to Maturity Advisor persona.
+
+**Prerequisite Gate**: This requirement is gated on AIMC Wave 3 delivery. FR-072 acceptance criteria
+cannot be signed off until AIMC Wave 3 is confirmed GREEN by POLC.
 
 ---
 
@@ -1435,7 +1449,7 @@ The following matrix links each FRS requirement to the source section(s) in the 
 | FR-069 | §3.3.1 | Concurrent Users |
 | FR-070 | §16.3, §19.7, TRS TR-001, TR-006 | Frontend Application Scaffolding |
 | FR-071 | §2–§12, §16.2, §19.7 | Frontend Application Wiring |
-| FR-072 | §13, LL-031, MANDATORY_CROSS_APP_COMPONENTS.md §13 | Embedded AI Assistant |
+| FR-072 | §13, LL-031, MANDATORY_CROSS_APP_COMPONENTS.md §13, AIMC_STRATEGY.md v1.0.0 | Embedded AI Assistant (AIMC Advisory Integration — BLOCKED on AIMC Wave 3) |
 
 ---
 
@@ -1485,6 +1499,8 @@ This FRS is derived from the MAT App Description v1.2 (`modules/mat/00-app-descr
 **Next Stage**: This FRS feeds into the TRS (Technical Requirements Specification) at `modules/mat/01.5-trs/`.
 
 **Change Log**:
+- v1.3.0 (2026-02-23): Realigned FR-072 to AIMC Gateway pattern per `AIMC_STRATEGY.md` v1.0.0.
+  FR-072 now blocked on AIMC Wave 3. Direct provider references removed. Issue #377 superseded.
 - v1.2.0 (2026-02-20): Added FR-072 (Embedded AI Assistant) per platform governance blocker LL-031. See BUILD_PROGRESS_TRACKER.md INC-002.
 - v1.1.0 (2026-02-16): Added FR-070, FR-071 (Frontend Application Delivery) per governance remediation. See BUILD_PROGRESS_TRACKER.md Deviation #9.
 - v1.0.0 (2026-02-13): Initial FRS with 69 requirements (FR-001–FR-069).
