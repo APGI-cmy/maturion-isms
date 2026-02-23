@@ -1,18 +1,20 @@
 /**
  * Evidence Collection Component
- * FRS: FR-013 to FR-020 (Evidence Collection)
+ * FRS: FR-013 to FR-020, FR-027, FR-028 (Evidence Collection + Wave 2R G-07, G-10)
  * TRS: TR-049, TR-051, TR-052
  * Task: 5.6.4
  */
 import { useState, useRef } from 'react';
 import { useCriterionEvidence, useUploadEvidence, useDeleteEvidence } from '../../lib/hooks/useEvidence';
-import { FileText, Image, Mic, Video, Upload, Trash2, Check } from 'lucide-react';
+import { FileText, Image, Mic, Video, Upload, Trash2, Check, BookOpen } from 'lucide-react';
+import { InterviewRecorder } from './InterviewRecorder';
+import type { InterviewMetadata } from './InterviewRecorder';
 
 interface EvidenceCollectionProps {
   criterionId: string;
 }
 
-type EvidenceType = 'text' | 'photo' | 'audio' | 'video' | 'document';
+type EvidenceType = 'text' | 'photo' | 'audio' | 'video' | 'document' | 'interview';
 
 export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
   const { data: evidence, isLoading, isError, error } = useCriterionEvidence(criterionId);
@@ -36,6 +38,7 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
     { id: 'audio', label: 'Audio', icon: Mic },
     { id: 'video', label: 'Video', icon: Video },
     { id: 'document', label: 'Document', icon: Upload },
+    { id: 'interview', label: 'Interview', icon: BookOpen },
   ];
 
   const handleTextSubmit = async () => {
@@ -239,7 +242,7 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
         </div>
       )}
 
-      {/* Photo Evidence Tab */}
+      {/* Photo Evidence Tab — G-07 Wave 2R: capture="environment" for mobile native camera */}
       {activeTab === 'photo' && (
         <div className="space-y-4">
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
@@ -247,6 +250,7 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
               ref={fileInputRef}
               type="file"
               accept="image/*"
+              capture="environment"
               onChange={handleFileSelect}
               className="hidden"
               aria-label="Upload photo"
@@ -419,6 +423,30 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
             </button>
           )}
         </div>
+      )}
+
+      {/* Interview Recording Tab — G-10 Wave 2R: consent fields + MediaRecorder */}
+      {activeTab === 'interview' && (
+        <InterviewRecorder
+          onRecordingComplete={async (file: File, metadata: InterviewMetadata) => {
+            try {
+              await uploadEvidence.mutateAsync({
+                criterionId,
+                type: 'interview',
+                file,
+                metadata: {
+                  interviewee_name: metadata.interviewee_name,
+                  interviewee_role: metadata.interviewee_role,
+                  consent_given: metadata.consent_given,
+                },
+              });
+            } catch (err) {
+              alert(
+                `Failed to save interview recording: ${err instanceof Error ? err.message : 'Unknown error'}`
+              );
+            }
+          }}
+        />
       )}
 
       {/* Evidence List */}
