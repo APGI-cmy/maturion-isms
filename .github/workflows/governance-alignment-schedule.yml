@@ -21,6 +21,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
 jobs:
   scheduled-alignment-check:
@@ -110,7 +111,79 @@ jobs:
             echo "drift_report=$DRIFT_REPORT" >> $GITHUB_OUTPUT
           fi
       
+      # ── Create governance liaison issue (per CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md) ──
+      # Formally notifies the governance liaison agent of a layer-down event.
+      # This issues the layer-down signal that triggers ripple-integration.yml.
+      - name: Create governance liaison issue
+        id: liaison_issue
+        if: steps.align.outputs.drift_detected == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+        run: |
+          DATESTAMP=$(date -u +"%Y-%m-%d")
+          COMMIT="${{ steps.metadata.outputs.canonical_commit }}"
+          FILES="${{ steps.metadata.outputs.files_updated }}"
+          VERSION="${{ steps.metadata.outputs.canonical_version }}"
+          DRIFT_REPORT="${{ steps.metadata.outputs.drift_report }}"
+
+          ISSUE_BODY=$(printf '%s\n\n%s\n\n%s\n%s\n%s\n%s\n%s\n\n%s\n\n%s\n%s' \
+            '## Governance Layer-Down — Liaison Action Required' \
+            'The scheduled governance alignment workflow detected drift from the canonical source and has applied the layer-down changes. Per **CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md**, the governance liaison agent must verify, ripple, and confirm integration.' \
+            "- **Trigger**: Scheduled alignment fallback (hourly)" \
+            "- **Canonical commit**: \`${COMMIT}\`" \
+            "- **Canonical version**: \`${VERSION}\`" \
+            "- **Files layered down**: ${FILES}" \
+            "- **Drift report**: \`${DRIFT_REPORT}\`" \
+            '### Liaison Checklist' \
+            '- [ ] Verify files layered down match canonical inventory' \
+            '- [ ] Confirm AIMC canon is integrated and referenced where relevant' \
+            '- [ ] Trigger internal ripple: update cross-references and linked artefacts' \
+            '- [ ] Document completion in session memory and evidence artefacts' \
+            '- [ ] Close this issue after ripple is confirmed complete')
+
+          # Bootstrap required labels if missing
+          gh label create "layer-down" --color "0075ca" --description "Governance layer-down event from canonical source" --repo "${{ github.repository }}" 2>/dev/null || true
+          gh label create "governance" --color "e4e669" --description "Governance-related change" --repo "${{ github.repository }}" 2>/dev/null || true
+
+          # Idempotency: skip if an open layer-down liaison issue already exists for this canonical commit
+          SHORT_COMMIT="${COMMIT:0:12}"
+          EXISTING_ISSUE=$(gh issue list \
+            --repo "${{ github.repository }}" \
+            --state open \
+            --label "governance" \
+            --label "layer-down" \
+            --json number,title \
+            --jq ".[] | select(.title | contains(\"${SHORT_COMMIT}\")) | .number" \
+            2>/dev/null | head -1 || echo "")
+
+          if [ -n "$EXISTING_ISSUE" ]; then
+            echo "issue_number=${EXISTING_ISSUE}" >> $GITHUB_OUTPUT
+            echo "Existing liaison issue for commit ${SHORT_COMMIT} found: #${EXISTING_ISSUE} — skipping duplicate creation"
+            exit 0
+          fi
+
+          ISSUE_NUMBER=$(gh issue create \
+            --repo "${{ github.repository }}" \
+            --title "[Layer-Down] Governance alignment required — ${SHORT_COMMIT}" \
+            --body "$ISSUE_BODY" \
+            --label "governance" \
+            --label "layer-down" \
+            --assignee "APGI-cmy" \
+            2>/dev/null | grep -o '[0-9]*$' || echo "")
+
+          if [ -n "$ISSUE_NUMBER" ]; then
+            echo "issue_number=${ISSUE_NUMBER}" >> $GITHUB_OUTPUT
+            echo "Governance liaison issue created: #${ISSUE_NUMBER}"
+          else
+            echo "issue_number=" >> $GITHUB_OUTPUT
+            echo "Could not create liaison issue (labels may not exist yet — ripple-integration.yml will handle via repository_dispatch path)"
+          fi
+
       # ✅ FIX #1 & #3: Create OR Update PR with stable branch name
+      # Note: PR creation intentionally runs regardless of whether the liaison issue
+      # was created or skipped — the PR carries the actual code changes, the issue
+      # is the formal notification.  The `create-pull-request` action is idempotent
+      # (force-push on the stable branch updates the existing PR if one already exists).
       - name: Create or Update Alignment PR
         if: steps.align.outputs.drift_detected == 'true'
         id: create_pr
