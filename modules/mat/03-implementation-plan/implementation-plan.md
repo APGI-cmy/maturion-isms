@@ -1,11 +1,11 @@
 # MAT — Implementation Plan
 
 **Module**: MAT (Manual Audit Tool)  
-**Version**: v1.7.0  
+**Version**: v1.8.0  
 **Status**: APPROVED  
 **Owner**: Foreman (FM)  
 **Created**: 2026-02-13  
-**Last Updated**: 2026-02-17  
+**Last Updated**: 2026-02-23  
 **Authority**: Derived from Architecture (modules/mat/02-architecture/), FRS (modules/mat/01-frs/functional-requirements.md), TRS (modules/mat/01.5-trs/technical-requirements-specification.md), Test Registry (governance/TEST_REGISTRY.json)
 
 ---
@@ -24,25 +24,28 @@ This document defines the complete, phased implementation plan for the MAT modul
 ### Derivation Chain
 
 ```
-App Description → FRS (FR-001–FR-072) → TRS (TR-001–TR-072) → Architecture (13 documents) → Test Registry (MAT-T-0001–MAT-T-0098) → This Plan
+App Description → FRS (FR-001–FR-072) → TRS (TR-001–TR-072) → Architecture (13 documents) → Test Registry (MAT-T-0001–MAT-T-0098) → **PBFAG** → This Plan
 ```
 
 ---
 
 ## 1. Build Wave Overview
 
-MAT is built in **eleven waves** (Wave 0–Wave 9, plus Waves 5.5 and 5.6). Each wave has a gate that must achieve 100% GREEN before the next wave begins.
+MAT is built in **eleven waves** (Wave 0–Wave 9, plus Waves 5.5 and 5.6), with remediation waves for identified gaps. Each wave has a gate that must achieve 100% GREEN before the next wave begins.
 
 | Wave | Name | Builder(s) | Execution | Tests | Est. Duration |
 |------|------|-----------|-----------|-------|---------------|
 | 0 | Foundational Infrastructure | schema-builder, api-builder | Sequential (0.1→0.2→0.3) | MAT-T-0042–0050, MAT-T-0083–0098 | 5 days |
 | 1 | Criteria Management | api-builder, ui-builder | Partially concurrent (1.1∥1.3, then 1.2) | MAT-T-0007–0014, MAT-T-0004–0006 | 5 days |
 | 2 | Evidence Collection & Offline Sync | api-builder, ui-builder | Partially concurrent (2.1∥2.3, then 2.2) | MAT-T-0015–0025, MAT-T-0056–0058 | 6 days |
+| 2R | **Wave 2 Remediation** *(RCA G-07, G-10, G-16)* | ui-builder, api-builder | Sequential | MAT-T-0056–0058 (confirm GREEN), MAT-T-0101, MAT-T-0102 | 3 days |
 | 3 | AI Scoring & Human Confirmation | api-builder, ui-builder | Sequential (3.1→3.2) | MAT-T-0026–0039 | 5 days |
 | 4 | Dashboards & Reporting | ui-builder, api-builder | Concurrent (4.1∥4.2) | MAT-T-0069–0081 | 5 days |
+| 4R | **Wave 4 Remediation** *(RCA G-14)* | api-builder, qa-builder | Sequential | MAT-T-0105 | 1 day |
 | 5 | Watchdog & Continuous Improvement | api-builder, integration-builder | Sequential (5.1→5.2) | MAT-T-0059–0062, MAT-T-0063–0066 | 4 days |
 | 5.5 | Frontend Application Assembly | ui-builder | Sequential (5.5.1→5.5.2→5.5.3) | FR-070, FR-071 acceptance criteria | 3 days |
 | 5.6 | UI Component Wiring & Data Integration | ui-builder | Sequential (5.6.1→5.6.2→5.6.3→5.6.4→5.6.5→5.6.6) | MAT-T-0001–0042 (functional frontend tests) | 5 days |
+| 5.6R | **Wave 5.6 Remediation** *(RCA G-03, G-04, G-15)* | ui-builder | Sequential | MAT-T-0099, MAT-T-0100, MAT-T-0106–MAT-T-0108 | 2 days |
 | 6 | Deployment & Commissioning | api-builder, qa-builder | Sequential (6.1→6.2→6.3→6.4) | CWT (all tests on production) | 3 days |
 | 7 | **AIMC Advisory Integration** *(BLOCKED — Awaiting AIMC Wave 3)* | api-builder, ui-builder | Sequential | MAT-T-AIMC-001–MAT-T-AIMC-010 (RED until AIMC Wave 3) | TBD |
 | 8 | **AIMC Analysis Integration** *(BLOCKED — Awaiting AIMC Wave 4)* | api-builder | Sequential | MAT-T-AIMC-011–MAT-T-AIMC-020 (RED until AIMC Wave 4) | TBD |
@@ -54,6 +57,8 @@ MAT is built in **eleven waves** (Wave 0–Wave 9, plus Waves 5.5 and 5.6). Each
 > AIMC wave is confirmed complete by POLC/CS2. All AI test cases for these waves are RED and will
 > remain RED until the respective AIMC Gateway capability is delivered. Builders MUST NOT begin
 > any implementation work for Waves 7–9 without explicit POLC/CS2 approval.
+
+> **Change Note (v1.8.0, 2026-02-23)**: Post-Delivery Gap Analysis & RCA complete. Remediation waves 2R, 4R, and 5.6R added to address gaps G-03, G-04, G-07, G-10, G-14, G-15, G-16 identified in `modules/mat/05-rca/MAT_APP_V2_RCA.md` v1.0.0. **Pre-Build Functionality Assessment Gate (PBFAG)** added to Derivation Chain between QA-to-Red and Implementation Plan — this gate is mandatory for all future build phases. Wave count updated to fourteen (plus remediation waves). See BUILD_PROGRESS_TRACKER.md Post-Delivery Gap Analysis section.
 
 > **Change Note (v1.7.0, 2026-02-23)**: Tasks 1.2, 2.1, 3.1, and 4.2 scope and acceptance criteria corrected to remove all direct-provider references (GPT-4 Turbo, Whisper API, GPT-4o Mini fallback). All builder-facing scope statements now reference AIMC Gateway capability calls exclusively per `AIMC_STRATEGY.md` v1.0.0 and `ai-architecture.md` v2.0.0. Derivation chain updated to include FR-072.
 
@@ -68,6 +73,36 @@ MAT is built in **eleven waves** (Wave 0–Wave 9, plus Waves 5.5 and 5.6). Each
 > **Change Note (v1.5.0, 2026-02-17)**: Wave 5.6 (UI Component Wiring & Data Integration) added to address critical gap discovered during Wave 6 production testing. Wave 5.5 delivered application STRUCTURE (scaffolding, routing, layouts), but all components remained empty placeholders with NO data fetching, NO CRUD handlers, and NO component-to-page wiring. Wave 5.6 implements full frontend functionality by wiring components to Supabase, implementing CRUD operations, state management, and ensuring complete user workflows are functional. See RCA_WAVE6_FRONTEND_NON_FUNCTIONAL_20260217.md and BUILD_PROGRESS_TRACKER.md Deviation #11.
 
 > **Change Note (v1.4.0, 2026-02-16)**: MANDATORY PRE-BUILD GATE language added to Wave 5.5 section (§2.6.5) requiring QA-to-Red functional test suite presence BEFORE any implementation begins. This enforces the canonical workflow (Architecture → QA-to-Red → Build-to-Green → Validation) and prevents code-first violations. Added after Deviation #10 (PR #239 attempted code-first implementation without QA-to-Red suite). See BUILD_PROGRESS_TRACKER.md Deviation #10.
+
+---
+
+## 1.5. Pre-Build Functionality Assessment Gate (PBFAG)
+
+**Gate ID**: PBFAG  
+**Authority**: `modules/mat/05-rca/MAT_APP_V2_RCA.md` §7 — established 2026-02-23  
+**Mandatory**: Yes — applies to all future MAT build phases and all new module build phases  
+**When**: After Stage 2.5 (QA-to-Red) is complete and BEFORE any builder is appointed or begins implementation  
+**Verdict**: PASS or FAIL — builders must NOT be appointed until PBFAG PASS is recorded
+
+### PBFAG Checklist
+
+Before any builder receives a task, the Foreman must confirm ALL of the following:
+
+1. **Requirements Coverage Check** — Every FR in the FRS has ≥ 1 corresponding test in the Red QA suite. Any FR without a test is a blocker.
+2. **Stub/Placeholder Audit** — All placeholder components listed in architecture documents have a failing (RED) test in the Red QA suite so they cannot be shipped as "complete."
+3. **API-to-UI Wiring Check** — Every feature requiring UI-to-API wiring has at least one wiring invariant test in the suite asserting the API call occurs from the UI.
+4. **Blocked Features Check** — Every FR that depends on an upstream module is tagged BLOCKED with an explicit prerequisite gate in the implementation plan.
+5. **Hardware/Media API Spec Check** — Every FR involving camera, microphone, or device API specifies the exact browser API, mobile fallback, and data model in the TRS.
+6. **Offline Mode Check** — If offline mode is in scope, the offline sync architecture is complete and the Red QA suite includes offline scenario tests.
+7. **Mobile Viewport Check** — The Red QA suite includes viewport tests at ≥ 375px width for all major user flows.
+8. **Report Generation Check** — If reporting is in scope, the Red QA suite includes an E2E file-validity test (non-empty valid PDF/DOCX from seeded data).
+
+### PBFAG Evidence Artifact
+
+The Foreman must record the PBFAG result in:  
+`modules/mat/05-build-evidence/PBFAG-mat-{YYYYMMDD}.md`
+
+This artifact is a mandatory prerequisite for all future builder appointment documents.
 
 ---
 
@@ -978,6 +1013,112 @@ MAT is built in **eleven waves** (Wave 0–Wave 9, plus Waves 5.5 and 5.6). Each
 
 ---
 
+### 2.6.7 Wave 2R — Wave 2 Remediation (RCA G-07, G-10, G-16)
+
+**Objective**: Address three critical gaps identified in post-delivery RCA: photo capture stub (G-07), interview recording stub (G-10), and offline mode not verified (G-16).  
+**Authority**: `modules/mat/05-rca/MAT_APP_V2_RCA.md` §8 — Remediation Plan  
+**Prerequisite**: Wave 2 original complete. RCA document approved.  
+**Builder**: ui-builder (Tasks 2R.1, 2R.2), api-builder (Task 2R.3)  
+**Execution**: Sequential (2R.1 → 2R.2 → 2R.3)
+
+#### Task 2R.1: Photo Capture Implementation (G-07)
+
+| Field | Value |
+|-------|-------|
+| **Scope** | Replace photo capture stub with working implementation using `<input type="file" accept="image/*" capture="environment">` (mobile) and/or `getUserMedia` (desktop). Upload captured image to `evidence-media` Supabase Storage bucket. Attach to evidence record. |
+| **FRS** | FR-027 |
+| **TRS** | TR-027 (must be expanded with browser API surface before implementation) |
+| **Test** | MAT-T-0101 (RED → GREEN) |
+| **Acceptance Criteria** | (1) Photo capture UI appears in evidence modal Photo tab. (2) On mobile (375px viewport), native camera opens via `capture="environment"`. (3) Captured image uploads to Supabase Storage. (4) Evidence record references uploaded image URL. (5) MAT-T-0101 GREEN. |
+
+#### Task 2R.2: Interview Recording Implementation (G-10)
+
+| Field | Value |
+|-------|-------|
+| **Scope** | Replace interview recording stub with working implementation. Implement consent capture fields (interviewee name, role, consent checkbox). Reuse `MediaRecorder` pipeline from voice recording. Store recording with consent metadata. |
+| **FRS** | FR-028 (must be expanded with full spec before implementation) |
+| **TRS** | TR-028 (must be expanded with data model, consent fields before implementation) |
+| **Test** | MAT-T-0102 (RED → GREEN) |
+| **Acceptance Criteria** | (1) Interview recording tab in evidence modal operational. (2) Consent fields (interviewee name, role, consent checkbox) present and required before recording starts. (3) Recording uploaded to Supabase Storage with consent metadata. (4) Evidence record includes interview metadata. (5) MAT-T-0102 GREEN. |
+
+#### Task 2R.3: Offline Mode Verification (G-16)
+
+| Field | Value |
+|-------|-------|
+| **Scope** | Verify Service Worker is registered and operational. Confirm IndexedDB sync queue writes evidence records when offline. Confirm background sync submits queued records when connectivity is restored. If not implemented, implement per `offline-sync-architecture.md`. |
+| **FRS** | FR-060, FR-061, FR-062 |
+| **TRS** | TR-060, TR-061, TR-062 |
+| **Tests** | MAT-T-0056, MAT-T-0057, MAT-T-0058 (confirm GREEN) |
+| **Acceptance Criteria** | (1) Service Worker registers in deployed app (`navigator.serviceWorker.controller` non-null). (2) With network disabled in Playwright: user can capture evidence; record appears in IndexedDB queue. (3) With network re-enabled: queued record syncs to Supabase within 30s. (4) MAT-T-0056–0058 all GREEN. |
+
+**Wave 2R Gate**: MAT-T-0056–0058 GREEN. MAT-T-0101 GREEN. MAT-T-0102 GREEN. Physical verification of offline capture-and-sync cycle complete.
+
+---
+
+### 2.6.8 Wave 4R — Wave 4 Remediation (RCA G-14)
+
+**Objective**: Confirm PDF/DOCX report backend generation is operational and produces a valid, downloadable file from a seeded audit.  
+**Authority**: `modules/mat/05-rca/MAT_APP_V2_RCA.md` §8 — Remediation Plan  
+**Prerequisite**: Wave 4 original complete.  
+**Builder**: api-builder, qa-builder  
+**Execution**: Sequential (4R.1 → 4R.2)
+
+#### Task 4R.1: Report Generation E2E Verification (G-14)
+
+| Field | Value |
+|-------|-------|
+| **Scope** | Seed a complete audit with criteria, evidence records, and maturity scores. Trigger report generation via the reporting endpoint. Download the resulting file. Verify it is a non-empty, valid PDF (using a PDF parsing library) and DOCX (using a DOCX parsing library). |
+| **FRS** | FR-051, FR-052, FR-053 |
+| **TRS** | TR-051, TR-052, TR-053 |
+| **Test** | MAT-T-0105 (RED → GREEN) |
+| **Acceptance Criteria** | (1) `POST /api/reports/generate` with seeded audit ID returns 200 and a file URL. (2) File at returned URL is downloadable. (3) PDF file is non-empty and parseable. (4) DOCX file is non-empty and parseable. (5) Download link resolves within TTL (per TR-053). (6) MAT-T-0105 GREEN. |
+
+**Wave 4R Gate**: MAT-T-0105 GREEN. Downloaded PDF and DOCX committed as evidence artifacts.
+
+---
+
+### 2.6.9 Wave 5.6R — Wave 5.6 Remediation (RCA G-03, G-04, G-15)
+
+**Objective**: Address three gaps in the UI wiring layer: hierarchy display not verified (G-03), evidence modal using mock data (G-04), and mobile viewport not tested (G-15).  
+**Authority**: `modules/mat/05-rca/MAT_APP_V2_RCA.md` §8 — Remediation Plan  
+**Prerequisite**: Wave 5.6 original complete.  
+**Builder**: ui-builder  
+**Execution**: Sequential (5.6R.1 → 5.6R.2 → 5.6R.3)
+
+#### Task 5.6R.1: Criteria Hierarchy UI Render Verification (G-03)
+
+| Field | Value |
+|-------|-------|
+| **Scope** | With a seeded Supabase instance containing criteria data, open the criteria tree view in the running application and verify all three levels (Domain → MPS → Criteria) render correctly. Fix any rendering defect found. |
+| **FRS** | FR-006, FR-007, FR-008 |
+| **TRS** | TR-006, TR-021 |
+| **Test** | MAT-T-0099 (RED → GREEN) |
+| **Acceptance Criteria** | (1) Criteria tree view displays all Domain nodes from seeded data. (2) Each Domain expands to show its MPS nodes. (3) Each MPS expands to show its Criteria nodes. (4) Criterion count per MPS and Domain is accurate. (5) MAT-T-0099 GREEN. (6) Screenshot committed as evidence. |
+
+#### Task 5.6R.2: Evidence Modal Live Data Wiring (G-04)
+
+| Field | Value |
+|-------|-------|
+| **Scope** | Replace mock/hardcoded data in the evidence modal with a live Supabase fetch. When a criterion is clicked, the modal must call `GET /api/evidence?criterionId={id}` and display the criterion title and any existing evidence records. |
+| **FRS** | FR-019, FR-020, FR-021 |
+| **TRS** | TR-019, TR-020 |
+| **Test** | MAT-T-0100 (RED → GREEN) |
+| **Acceptance Criteria** | (1) Clicking any criterion opens the evidence modal. (2) Modal header shows the criterion title (fetched from Supabase, not hardcoded). (3) Any pre-existing evidence records for that criterion are listed. (4) Network tab in browser shows `GET /api/evidence?criterionId=...` request on modal open. (5) MAT-T-0100 GREEN. |
+
+#### Task 5.6R.3: Mobile Viewport Tests (G-15)
+
+| Field | Value |
+|-------|-------|
+| **Scope** | Run Playwright tests at 375px × 812px (mobile) viewport for three critical flows: (1) audit creation, (2) evidence modal, (3) review table. Assert no horizontal overflow, all interactive elements meet 44px touch target, key CTAs are visible without horizontal scroll. |
+| **FRS** | FR-065 |
+| **TRS** | TR-065 |
+| **Tests** | MAT-T-0106, MAT-T-0107, MAT-T-0108 (RED → GREEN) |
+| **Acceptance Criteria** | (1) Audit creation flow: no horizontal overflow at 375px. (2) Evidence modal: all tabs accessible, no overflow. (3) Review table: scrollable horizontally if needed, no content clipped. (4) All interactive elements (buttons, inputs) ≥ 44px touch target. (5) MAT-T-0106–0108 GREEN. (6) Playwright screenshots at 375px viewport committed as evidence. |
+
+**Wave 5.6R Gate**: MAT-T-0099 GREEN. MAT-T-0100 GREEN. MAT-T-0106–0108 GREEN. Screenshots committed to evidence bundle.
+
+---
+
 ### 2.7 Wave 6 — Deployment & Commissioning
 
 **Objective**: Deploy MAT to production (Vercel), provision all environment variables, validate deployment health, execute Combined Wave Test (CWT) on the production build, and perform formal closure with governance sign-off.
@@ -1415,8 +1556,16 @@ This implementation plan is accepted when:
 9. ✅ Deployment & Commissioning wave (Wave 6) defined with production CWT, formal sign-over, and closure certification
 10. ✅ Frontend Application Assembly wave (Wave 5.5) defined with scaffolding, wiring, and build verification per FR-070, FR-071, TR-071
 11. ✅ AIMC Integration waves (7, 8, 9) defined with explicit BLOCKED status and AIMC prerequisite gates per `AIMC_STRATEGY.md` v1.0.0
+12. ✅ Post-Delivery RCA complete (`modules/mat/05-rca/MAT_APP_V2_RCA.md` v1.0.0); remediation waves 2R, 4R, 5.6R defined
+13. ✅ Pre-Build Functionality Assessment Gate (PBFAG) defined (§1.5) and inserted into Derivation Chain
 
 **Change Log**:
+- v1.8.0 (2026-02-23): Post-Delivery Gap Analysis & RCA complete. Added §1.5 (PBFAG — Pre-Build
+  Functionality Assessment Gate) as mandatory step between QA-to-Red and builder appointment.
+  Derivation Chain updated to include PBFAG. Remediation waves 2R (G-07 photo capture, G-10 interview
+  recording, G-16 offline mode), 4R (G-14 report generation), and 5.6R (G-03 hierarchy render, G-04
+  evidence modal live data, G-15 mobile viewport) added. Wave overview table updated. Acceptance
+  criteria 12 and 13 added. RCA reference: `modules/mat/05-rca/MAT_APP_V2_RCA.md` v1.0.0.
 - v1.7.0 (2026-02-23): Tasks 1.2, 2.1, 3.1, 4.2 scope and acceptance criteria corrected to remove all
   direct-provider references (GPT-4 Turbo, Whisper API, GPT-4o Mini fallback) per `AIMC_STRATEGY.md`
   v1.0.0. Derivation chain updated to FR-001–FR-072. All builder-facing scope now references AIMC
@@ -1460,6 +1609,7 @@ This implementation plan is accepted when:
 | CST/CWT Pattern | `governance/canon/COMBINED_TESTING_PATTERN.md` |
 | Builder Contract Schema | [BUILDER_CONTRACT_SCHEMA.md](https://github.com/APGI-cmy/maturion-foreman-office-app/blob/main/.github/agents/BUILDER_CONTRACT_SCHEMA.md) |
 | QA-to-Red RCA | `modules/mat/05-build-evidence/RCA_QA_PROCESS_LAPSE.md` |
+| Post-Delivery Gap Analysis & RCA | `modules/mat/05-rca/MAT_APP_V2_RCA.md` |
 
 ---
 
