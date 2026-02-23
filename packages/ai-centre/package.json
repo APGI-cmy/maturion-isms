@@ -1,0 +1,14 @@
+{
+  "name": "@maturion/ai-centre",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Maturion AI Management Centre — single-gateway AI capability package",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "test:red": "vitest run --reporter=verbose"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.1"
+  }
+}
