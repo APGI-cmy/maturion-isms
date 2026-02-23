@@ -34,6 +34,7 @@ permissions:
   pull-requests: write
   issues: write
 
+
 jobs:
   ripple-sync:
     name: Governance Ripple Sync

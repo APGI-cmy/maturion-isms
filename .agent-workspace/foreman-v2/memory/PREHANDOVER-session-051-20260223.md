@@ -47,7 +47,7 @@ PREHANDOVER (this file): ~1,100 characters
 
 - [x] Session memory: `.agent-workspace/foreman-v2/memory/session-051-20260223.md`
 - [x] PREHANDOVER proof: `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-051-20260223.md`
-- [x] Governance liaison session memory: `.agent-workspace/governance-liaison/memory/session-liaison-007-20260223.md`
+- [x] Governance liaison session memory: `.agent-workspace/governance-liaison-isms/memory/session-015-20260223.md`
 - [x] Workflow fix — schedule: `.github/workflows/governance-alignment-schedule.yml`
 - [x] Workflow fix — ripple-sync: `.github/workflows/governance-ripple-sync.yml`
 - [x] Workflow fix — ripple-integration: `.github/workflows/ripple-integration.yml`
