@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0.0",
+  "type": "layer_down_received",
+  "timestamp": "2026-02-23T11:43:51Z",
+  "source_issue": "439",
+  "canonical_commit": "cd90d8ad776d737092a9d340892b8c082b90b69d  ",
+  "requires_cs2_approval": false,
+  "escalated": false
+}
