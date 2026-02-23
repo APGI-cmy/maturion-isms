@@ -2,7 +2,7 @@
 
 **Module**: Mat  
 **Module Slug**: mat  
-**Last Updated**: 2026-02-15  
+**Last Updated**: 2026-02-23  
 **Updated By**: foreman-isms
 
 ---
@@ -31,8 +31,8 @@ Track the progression through the canonical module lifecycle stages.
 - [x] Derivation statement from App Description included
 - [x] FRS approved by designated authority
 
-**Completion Date**: 2026-02-13  
-**Notes**: FRS compiled with 69 requirements (FR-001 to FR-069), traceability matrix, priority classification (P0/P1/P2), acceptance criteria, and edge cases. Derived from App Description v1.1.
+**Completion Date**: 2026-02-13 (v1.0.0); updated 2026-02-16 (v1.1.0 — FR-070, FR-071 added); updated 2026-02-20 (v1.2.0 — FR-072 added via INC-002)  
+**Notes**: FRS compiled with 69 requirements (FR-001 to FR-069), traceability matrix, priority classification (P0/P1/P2), acceptance criteria, and edge cases. Derived from App Description v1.1. Updated to v1.1.0 (2026-02-16) to add FR-070 (Frontend Application Scaffolding) and FR-071 (Frontend Application Wiring) per Deviation #9. Updated to v1.2.0 (2026-02-20) to add FR-072 (Embedded AI Assistant — AIMC Advisory Gateway) per INC-002/LL-031. Current FRS: 72 requirements (FR-001 to FR-072).
 
 ---
 
@@ -45,8 +45,8 @@ Track the progression through the canonical module lifecycle stages.
 - [x] Tool validation and quality gate definitions (TR-051 to TR-060)
 - [x] TRS approved by designated authority
 
-**Completion Date**: 2026-02-13  
-**Notes**: TRS compiled with 70 technical requirements (TR-001 to TR-070) covering technology stack, performance, integration, security, compliance, accessibility, tooling, and infrastructure. 100% FRS-to-TRS traceability achieved across all 69 functional requirements. Ready for architecture stage.
+**Completion Date**: 2026-02-13 (v1.0.0); updated 2026-02-16 (v1.1.0 — TR-071 added); updated 2026-02-20 (v1.2.0 — TR-072 added via INC-002)  
+**Notes**: TRS compiled with 70 technical requirements (TR-001 to TR-070) covering technology stack, performance, integration, security, compliance, accessibility, tooling, and infrastructure. 100% FRS-to-TRS traceability achieved across all 69 functional requirements. Updated to v1.1.0 (2026-02-16) to add TR-071 (Frontend Application as Deployable Artifact) per Deviation #9. Updated to v1.2.0 (2026-02-20) to add TR-072 (Embedded AI Assistant — AIMC Advisory Gateway integration) per INC-002/LL-031. Current TRS: 72 technical requirements (TR-001 to TR-072). Ready for architecture stage.
 
 ---
 
@@ -62,17 +62,17 @@ Track the progression through the canonical module lifecycle stages.
 - [x] `performance-architecture.md` - Performance targets, scalability, resource limits
 - [x] `observability-architecture.md` - Error handling, monitoring, watchdog, logging
 - [x] `test-strategy.md` - QA domains, testing levels, CI/CD, non-testable boundaries
-- [x] `ai-architecture.md` - Parsing, scoring, transcription, routing, circuit breaker
+- [x] `ai-architecture.md` v2.0.0 - AIMC Gateway pattern; parsing, scoring, transcription via `@maturion/ai-centre` Gateway (direct-provider content moved to §7 superseded record)
 - [x] `offline-sync-architecture.md` - Service Worker, sync protocol, PWA
 - [x] `ui-component-architecture.md` - Components, responsive design, accessibility, i18n
 - [x] `reporting-architecture.md` - Report engine, Excel export, review table
-- [x] `trs-to-architecture-traceability.md` - 100% TRS coverage (70/70 requirements mapped)
+- [x] `trs-to-architecture-traceability.md` - 100% TRS coverage (72/72 requirements mapped, including TR-071 and TR-072 added post-initial architecture)
 - [x] `.env.example` - All environment variables documented (46 variables)
 - [x] All 14 governance completeness domains addressed (3.1–3.14)
 - [x] Architecture approved by designated authority
 
-**Completion Date**: 2026-02-13  
-**Notes**: Architecture compiled with full compliance to ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md v1.3. All 14 mandatory completeness domains (3.1–3.14) explicitly addressed across 13 architecture documents. 100% TRS traceability achieved (70/70). Pending formal approval by designated authority.
+**Completion Date**: 2026-02-13 (v1.0.0); updated 2026-02-23 (`ai-architecture.md` rewritten to v2.0.0 — AIMC Gateway pattern)  
+**Notes**: Architecture compiled with full compliance to ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md v1.3. All 14 mandatory completeness domains (3.1–3.14) explicitly addressed across 13 architecture documents. 100% TRS traceability achieved (70/70 at initial; extended to 72/72 with TR-071 and TR-072 additions). `ai-architecture.md` updated to v2.0.0 on 2026-02-23 to reflect AIMC Gateway pattern; all direct-provider references moved to §7 (superseded record). Pending formal approval by designated authority.
 
 ---
 
@@ -110,12 +110,12 @@ Track the progression through the canonical module lifecycle stages.
 **Status**: [ ] NOT_STARTED | [ ] IN_PROGRESS | [x] COMPLETE  
 **Location**: `modules/mat/03-implementation-plan/`  
 **Key Artifacts**:
-- [x] `implementation-plan.md` - Phased plan with 7 waves, acceptance criteria, evidence plan, concurrent/sequential logic
+- [x] `implementation-plan.md` - Phased plan with 11 waves (Waves 0–9, plus Waves 5.5 and 5.6), acceptance criteria, evidence plan, concurrent/sequential logic
 - [x] Dependencies identified and documented (dependency graph with sequential and parallel paths)
 - [x] Risks and mitigation strategies documented (8 risks with mitigation)
 
-**Completion Date**: 2026-02-13  
-**Notes**: Implementation plan compiled with 7 build waves (Wave 0–6), builder assignments per task, concurrent/sequential execution logic, multi-builder handover protocols, risk mitigation, and full traceability to Architecture, FRS, TRS, and Test Registry. Cross-referenced with builder contracts. Updated to v1.1.0 (2026-02-14) to include CST/CWT integration testing requirements per `governance/canon/COMBINED_TESTING_PATTERN.md`. Updated to v1.2.0 (2026-02-15) to include Wave 6: Deployment & Commissioning with production CWT, formal sign-over, and closure certification.
+**Completion Date**: 2026-02-13 (v1.0.0)  
+**Notes**: Implementation plan compiled with 11 build waves (Waves 0–9, plus Waves 5.5 and 5.6), builder assignments per task, concurrent/sequential execution logic, multi-builder handover protocols, risk mitigation, and full traceability to Architecture, FRS, TRS, and Test Registry. Cross-referenced with builder contracts. Updated to v1.1.0 (2026-02-14) to include CST/CWT integration testing requirements per `governance/canon/COMBINED_TESTING_PATTERN.md`. Updated to v1.2.0 (2026-02-15) to include Wave 6: Deployment & Commissioning with production CWT, formal sign-over, and closure certification. Updated to v1.3.0 (2026-02-16) to add Wave 5.5 (Frontend Application Assembly) per Deviation #9; derivation chain updated to FR-001–FR-071, TR-001–TR-071. Updated to v1.4.0 (2026-02-16) to add MANDATORY PRE-BUILD GATE language to Wave 5.5. Updated to v1.5.0 (2026-02-17) to add Wave 5.6 (UI Component Wiring & Data Integration) per Deviation #11. Updated to v1.6.0 (2026-02-23) to add Waves 7, 8, 9 (AIMC Advisory, Analysis, Embeddings/RAG Integration — all BLOCKED pending upstream AIMC waves) per `AIMC_STRATEGY.md` v1.0.0; Issue #377 superseded. Updated to v1.7.0 (2026-02-23) to correct Tasks 1.2, 2.1, 3.1, and 4.2 scope — all direct-provider references (GPT-4 Turbo, Whisper API, GPT-4o Mini fallback) removed; all AI calls now reference AIMC Gateway capability calls exclusively per `AIMC_STRATEGY.md` v1.0.0 and `ai-architecture.md` v2.0.0; derivation chain updated to FR-001–FR-072, TR-001–TR-072.
 
 > **⚠️ PROCESS DEVIATION — CST/CWT INTEGRATION TESTING OMITTED FROM INITIAL PLAN**
 >
@@ -130,7 +130,7 @@ Track the progression through the canonical module lifecycle stages.
 > **Preventive Action**: All future implementation plans MUST include `governance/canon/COMBINED_TESTING_PATTERN.md` in the derivation chain and explicitly define CST convergence checkpoints and CWT scope per wave. The canonical derivation chain is:
 >
 > ```
-> App Description → FRS → TRS → Architecture → QA-to-Red → COMBINED_TESTING_PATTERN.md → Implementation Plan
+> App Description → FRS → TRS → Architecture → QA-to-Red → COMBINED_TESTING_PATTERN.md → AIMC_STRATEGY.md → Implementation Plan
 > ```
 >
 > **Governance References**: `governance/canon/COMBINED_TESTING_PATTERN.md` v1.0.0, `governance/canon/IN_BETWEEN_WAVE_RECONCILIATION.md`, `governance/canon/BOOTSTRAP_EXECUTION_LEARNINGS.md` (BL-025)
@@ -413,27 +413,27 @@ Track the progression through the canonical module lifecycle stages.
 
 ## Wave 5.5 — Frontend Application Assembly
 
-**Status**: IN PROGRESS  
+**Status**: ✅ COMPLETE  
 **Started**: 2026-02-17  
+**Completed**: 2026-02-18 (FCWT PASS — 127 tests GREEN)  
 **Builder**: ui-builder (supervised by Foreman)  
-**Completion**: TBD
 
 ### Tasks
 
 #### 5.5.1: React Application Scaffolding
-- **Status**: PENDING
+- **Status**: ✅ COMPLETE
 - **Builder**: ui-builder
 - **Tests**: FR-070 acceptance criteria
 
 #### 5.5.2: Page Layouts, Routing, Component Wiring
-- **Status**: PENDING
+- **Status**: ✅ COMPLETE
 - **Builder**: ui-builder
 - **Tests**: FR-071 acceptance criteria
 
 #### 5.5.3: Integration Verification and Build Validation
-- **Status**: PENDING
+- **Status**: ✅ COMPLETE
 - **Builder**: ui-builder
-- **Tests**: All 98 existing + new QA-to-Red tests
+- **Tests**: All 98 existing + new QA-to-Red tests (29 new tests GREEN — 127 total)
 
 ---
 
@@ -1234,28 +1234,64 @@ Track the progression through the canonical module lifecycle stages.
 
 ---
 
+### Deviation #13: Direct AI Provider References in Task Scope — AIMC Strategy Non-Compliance (2026-02-23)
+
+> **Date**: 2026-02-23  
+> **Detected In**: Implementation Plan v1.6.0 post-audit during AIMC canonisation  
+> **Session**: AIMC Strategy realignment and Implementation Plan v1.7.0 update  
+> **Severity**: CRITICAL — Constitutional governance violation; direct-provider references in builder-facing scope
+
+> **Deviation**: Following canonisation of `AIMC_STRATEGY.md` v1.0.0, a review of the Implementation Plan revealed that Tasks 1.2 (AI Parsing Pipeline), 2.1 (Evidence Capture API), 3.1 (AI Scoring Engine), and 4.2 (Report Generation) contained direct AI provider references in their scope and acceptance criteria — specifically: GPT-4 Turbo, Whisper API, and GPT-4o Mini fallback. These direct-provider references are constitutionally prohibited by `AIMC_STRATEGY.md` v1.0.0. Builders following the pre-v1.7.0 plan would have been instructed to implement direct provider calls, violating the AIMC-only enforcement mandate.
+
+> **Root Cause**: Implementation Plan v1.0.0 was authored before `AIMC_STRATEGY.md` was canonised. The derivation chain for v1.0.0–v1.6.0 did not include `AIMC_STRATEGY.md` or `ai-architecture.md` v2.0.0 as governance inputs. When Waves 7/8/9 were added in v1.6.0, the AIMC prerequisite was added to those new waves but existing task scopes (Waves 1–4) were not retrospectively reviewed for provider reference compliance.
+
+> **Impact**: Any builder executing Tasks 1.2, 2.1, 3.1, or 4.2 from the v1.6.0 plan would have received instructions to call OpenAI directly — a constitutional violation. Implementation Plan v1.7.0 corrects all four tasks to reference AIMC Gateway capability calls exclusively.
+
+> **Corrective Actions**:
+> 1. ✅ Implementation Plan updated to v1.7.0 (2026-02-23): All direct-provider references removed from Tasks 1.2, 2.1, 3.1, 4.2. Scope now specifies AIMC Gateway capability calls exclusively.
+> 2. ✅ Derivation chain updated to include `AIMC_STRATEGY.md` v1.0.0 and `ai-architecture.md` v2.0.0 as governance inputs.
+> 3. ✅ Derivation chain updated to FR-001–FR-072, TR-001–TR-072 (reflecting INC-002 additions).
+> 4. ✅ This deviation record added to tracker.
+
+> **Preventive Actions**:
+> 1. All future Implementation Plan updates that affect AI-related tasks MUST include `AIMC_STRATEGY.md` review as a mandatory gate before merging.
+> 2. Builder contracts for API-related waves MUST be reviewed against `AIMC_STRATEGY.md` whenever the plan changes.
+> 3. No builder may accept a task spec that references direct AI provider calls; builders MUST escalate to FM if they receive such instructions.
+
+> **Governance References**: `AIMC_STRATEGY.md` v1.0.0, `ai-architecture.md` v2.0.0, Implementation Plan v1.7.0 Change Log, DEV-MAT-AIMC-001
+
+> **Recorded By**: foreman-agent  
+> **Date**: 2026-02-23  
+> **Session**: AIMC Strategy Realignment — Implementation Plan v1.7.0
+
+---
+
 ## Current Stage Summary
 
-**Current Stage**: Stage 5 (Build Execution — BLOCKED)  
-**Overall Progress**: ~50% functional delivery (98/98 tests GREEN, frontend UI scaffolded, **CRITICAL: frontend logic NOT implemented**)  
+**Current Stage**: Stage 5 (Build Execution — Wave 6 IN PROGRESS, pending CS2 Vercel/Supabase access)  
+**Overall Progress**: Application fully functional and deployment-ready (127 tests GREEN, FCWT PASS, Wave 5.6 complete, INC-002 complete)  
 **Blockers**: 
-- ❌ **CRITICAL BLOCKER**: Wave 6 production test FAILED — frontend completely non-functional (Deviation #11)
-- ❌ **Wave 6 BLOCKED**: Cannot commission non-functional application
-- ⏳ **Wave 5.6 REQUIRED**: UI Component Wiring & Data Integration (not yet defined or planned)
+- ⏳ **Wave 6 PENDING CS2 ACCESS**: Vercel and Supabase production environment access required (not a technical blocker — deployment runbook complete)
+- ❌ **Wave 7 BLOCKED**: Awaiting AIMC Wave 3 (Advisory Gateway)
+- ❌ **Wave 8 BLOCKED**: Awaiting AIMC Wave 4 (Analysis Gateway)
+- ❌ **Wave 9 BLOCKED**: Awaiting AIMC Wave 5 (Embeddings/RAG Gateway)
 
 **Status Summary**:
 - ✅ Backend service layer: 100% implemented and tested (modules/mat/src/services/)
-- ✅ Frontend structure: Scaffolded (apps/mat-frontend/)
-- ❌ Frontend logic: 0% implemented (all components are empty placeholders)
-- ❌ Data wiring: NOT implemented (no Supabase queries, no CRUD handlers)
-- ❌ User value: 0% (application deployed but completely unusable)
+- ✅ Frontend structure: Scaffolded and fully functional (modules/mat/frontend/)
+- ✅ Frontend logic: Implemented — all CRUD handlers, data fetching, Supabase wiring complete (Wave 5.6)
+- ✅ Data wiring: Complete — Supabase queries, real-time subscriptions, state management functional
+- ✅ User value: VERIFIED — Full audit lifecycle, criteria management, evidence collection, AI scoring, reporting all functional (FCWT 2026-02-18)
+- ✅ INC-002: FR-072/TR-072 (Embedded AI Assistant — AIMC Advisory Gateway) implemented 2026-02-20; 77 frontend tests GREEN
+- ✅ AI integration: All direct-provider references removed; AIMC Gateway pattern enforced per v1.7.0 (ai-architecture.md v2.0.0, AIMC_STRATEGY.md v1.0.0)
+- ⏳ Wave 6: Deployment & Commissioning — awaiting CS2 Vercel/Supabase operator access
 
 **Next Steps**: 
 1. ~~Create `01.5-trs/` folder in module structure~~
 2. ~~Develop TRS based on FRS requirements (FR-001 to FR-069)~~
 3. ~~Complete Architecture with TRS constraints~~
 4. ~~Compile QA-to-Red test suite (98 tests, all RED)~~
-5. ~~Create Implementation Plan (7 build waves, Waves 0–6)~~
+5. ~~Create Implementation Plan (11 build waves, Waves 0–9 plus 5.5 and 5.6)~~
 6. ~~Create Builder Agent File Compliance Checklist (version 1.1.0)~~
 7. ~~Appoint builders (5 builder categories)~~
 8. ~~Create builder agent files via Codex Advisor (schema, ui, integration, qa-builder)~~
@@ -1265,12 +1301,13 @@ Track the progression through the canonical module lifecycle stages.
 12. ~~Complete Wave 3: AI Scoring & Human Confirmation (15 tests GREEN, PR #168)~~
 13. ~~Complete Wave 4: Dashboards & Reporting (9 tests GREEN, PR #178)~~
 14. ~~Complete Wave 5: Watchdog & Continuous Improvement (13 tests GREEN)~~
-15. ~~Complete Wave 5.5: Frontend Application Assembly (scaffold `apps/mat-frontend/` with React 18+ and Vite 5+ per TRS TR-001)~~
+15. ~~Complete Wave 5.5: Frontend Application Assembly (scaffold `modules/mat/frontend/` with React 18+ and Vite 5+ per TRS TR-001)~~
 16. ~~DEFINE Wave 5.6: UI Component Wiring & Data Integration~~
 17. ~~EXECUTE Wave 5.6: Implement full frontend functionality (data fetching, CRUD handlers, component-to-page wiring, loading/error states)~~
 18. ~~PHYSICAL VERIFICATION: Manual testing of all user workflows in running application (video walkthrough + screenshots)~~
 19. ~~Execute Final Complete Wave Test (FCWT) — 127 tests GREEN, application fully functional (2026-02-18)~~
-20. Proceed to Wave 6: Deployment & Commissioning (READY — FCWT PASS, deployment runbook complete)
+20. ~~INC-002: FR-072/TR-072 (Embedded AI Assistant) implemented; 77 frontend tests GREEN (2026-02-20)~~
+21. Proceed to Wave 6: Deployment & Commissioning (READY — FCWT PASS, INC-002 complete, deployment runbook complete — awaiting CS2 Vercel/Supabase access)
 
 ---
 
@@ -1308,10 +1345,10 @@ Track the progression through the canonical module lifecycle stages.
 
 Per FULLY_FUNCTIONAL_DELIVERY_STANDARD.md Section 3.2:
 
-1. **Exists physically**: ✅ VERIFIED — Application code at `apps/mat-frontend/`
+1. **Exists physically**: ✅ VERIFIED — Application code at `modules/mat/frontend/` (restructured from `apps/mat-frontend/` on 2026-02-20)
 2. **Launches and operates**: ✅ VERIFIED — Preview server runs at http://localhost:3000
-3. **Implements 100% of requirements**: ✅ VERIFIED — 69/69 FRS, 70/70 TRS
-4. **Fulfills user workflows**: ✅ VERIFIED — Dashboard, Audits, Criteria, Evidence, Scoring, Reports, Settings
+3. **Implements 100% of requirements**: ✅ VERIFIED — 69/69 FRS (FR-001–FR-069), 70/70 TRS at FCWT time; subsequently expanded to 72/72 FRS (FR-072 via INC-002), 72/72 TRS (TR-072 via INC-002) on 2026-02-20
+4. **Fulfills user workflows**: ✅ VERIFIED — Dashboard, Audits, Criteria, Evidence, Scoring, Reports, Settings; Embedded AI Assistant (FR-072) added post-FCWT via INC-002
 5. **Meets quality standards**: ✅ VERIFIED — Performance, UX, accessibility per TRS
 6. **Is deployment-ready**: ✅ VERIFIED — Vercel config, env vars, runbook complete
 
@@ -1355,10 +1392,15 @@ Total test suite: 127 tests (100% GREEN)
 - [x] POLC authority boundary enforced — builder agent files created by Codex Advisor only (see deviation record in Stage 4)
 - [x] Session Memory Protocol compliance enforced — all builder files now include mandatory LAS v6.2.0 session memory section (see deviation record in Stage 4)
 - [x] Agent authority boundary violation recorded — Deviation #12 documents PR #303 violation (Foreman bypassed Codex Advisor for ui-builder contract update). Corrective protocol established: ALL future agent file modifications MUST be authored by Codex Advisor (see Deviation #12)
-- [x] Traceability maintained (App Description → FRS → TRS → Architecture → QA-to-Red → Implementation Plan → Builder Appointment)
+- [x] Traceability maintained (App Description → FRS → TRS → Architecture → QA-to-Red → AIMC_STRATEGY.md → Implementation Plan → Builder Appointment)
 - [x] Deployment & Commissioning wave (Wave 6) included in Implementation Plan with production CWT, formal sign-over, and closure certification (previously omitted — see critical gap record in Stage 3)
 - [x] Frontend Application Assembly wave (Wave 5.5) added to Implementation Plan (previously omitted — see Deviation #9). All governing artifacts updated: App Description v1.2, FRS v1.1.0 (FR-070, FR-071), TRS v1.1.0 (TR-071), Implementation Plan v1.3.0, Builder Contract v3.0.0.
 - [x] Tech stack discrepancy documented: App Description §16.3 (Next.js) superseded by TRS TR-001 (React 18+ with Vite 5+) per CS2 authority clarification (2026-02-16). App Description correction deferred (non-blocking).
+- [x] AIMC Strategy canonised (2026-02-23): `AIMC_STRATEGY.md` v1.0.0 declared constitutional authority. Direct AI provider calls (GPT-4 Turbo, Whisper API, GPT-4o Mini) constitutionally prohibited in all MAT source files. All AI capabilities MUST route through `@maturion/ai-centre` Gateway. Deviation DEV-MAT-AIMC-001 recorded. `ai-architecture.md` updated to v2.0.0.
+- [x] Waves 7, 8, 9 defined as BLOCKED (AIMC Advisory, Analysis, Embeddings/RAG) per Implementation Plan v1.6.0; explicit prerequisite gates and POLC/CS2 approval requirement enforced. Tests MAT-T-AIMC-001–MAT-T-AIMC-030 remain RED until respective AIMC waves delivered.
+- [x] Implementation Plan v1.7.0 (2026-02-23): Tasks 1.2, 2.1, 3.1, and 4.2 scope corrected — all direct-provider references removed; all AI calls now reference AIMC Gateway exclusively. Derivation chain updated to FR-001–FR-072, TR-001–TR-072.
+- [x] FR-072 / TR-072 added (INC-002/LL-031, 2026-02-20): Embedded AI Assistant component implemented; routes to AIMC Advisory Gateway (BLOCKED on AIMC Wave 3). 77 frontend tests GREEN.
+- [x] Frontend Directory Restructure (2026-02-20): `apps/mat-frontend/` moved to `modules/mat/frontend/`. Canonical module build structure enforced.
 - [ ] All required approvals obtained
 - [ ] Evidence artifacts created for each stage
 - [ ] Module manifest up to date
@@ -1451,9 +1493,11 @@ Any deviation from this order is a constitutional governance violation.
 
 **Frontend Directory Restructure (2026-02-20)**: Issue [#](https://github.com/APGI-cmy/maturion-isms/issues/) identified a structural flaw: MAT frontend code lived at `apps/mat-frontend/` while all specs, architecture, and docs were at `modules/mat/`. This split created two sources of truth, CI/CD confusion, and ambiguous builder instructions. **Fix**: All contents of `apps/mat-frontend/` moved to `modules/mat/frontend/` as the canonical module build structure. Updated: `vercel.json` (build/output/dev paths), `.github/workflows/deploy-mat-vercel.yml` (path triggers and all working directories), `pnpm-workspace.yaml` (added `modules/mat/frontend` entry), root `.gitignore` (explicit env file exclusions for new path), and test workspace path reference. **Builder Instruction Protocol**: All future builders working on MAT frontend MUST use `modules/mat/frontend/` as the build root. Build artifacts are at `modules/mat/frontend/dist/`. No frontend code belongs in `apps/`. The canonical module structure is: `modules/<module>/frontend/` for frontend, `modules/<module>/` for specs and docs.
 
---- (includes TRS stage, QA-to-Red stage, Builder Checklist Creation stage, POLC authority deviation record, Session Memory Protocol deviation record, Wave 2 retroactive documentation, Wave 3 tracker update failure RCA, Wave 6 Deployment & Commissioning addition, Wave 5.5 Frontend Application Assembly addition, Tech stack discrepancy documentation, Deviation #12 agent authority boundary violation recurrence)  
+--- (includes TRS stage, QA-to-Red stage, Builder Checklist Creation stage, POLC authority deviation record, Session Memory Protocol deviation record, Wave 2 retroactive documentation, Wave 3 tracker update failure RCA, Wave 6 Deployment & Commissioning addition, Wave 5.5 Frontend Application Assembly addition, Tech stack discrepancy documentation, Deviation #12 agent authority boundary violation recurrence, Deviation #13 AIMC scope correction v1.7.0)  
 **Template Authority**: MODULE_LIFECYCLE_AND_REPO_STRUCTURE_STRATEGY.md  
-**Last Template Update**: 2026-02-17
+**Last Template Update**: 2026-02-23
+
+**AIMC Canonisation and Implementation Plan v1.7.0 (2026-02-23)**: `AIMC_STRATEGY.md` v1.0.0 was canonised as constitutional authority for all AI capabilities across Maturion modules. All direct AI provider calls (GPT-4 Turbo, Whisper API, GPT-4o Mini fallback) are constitutionally prohibited. All AI capabilities must be consumed via `@maturion/ai-centre` Gateway. Corrective actions: (1) `ai-architecture.md` rewritten to v2.0.0 (AIMC Gateway pattern), (2) FR-072/TR-072 realigned to AIMC Advisory Gateway pattern with AIMC Wave 3 prerequisite gate, (3) Implementation Plan updated to v1.6.0 (Waves 7, 8, 9 added as BLOCKED), (4) Implementation Plan updated to v1.7.0 (Tasks 1.2, 2.1, 3.1, 4.2 direct-provider references removed; all AI scope now references AIMC Gateway capability calls), (5) Derivation chain updated to include AIMC_STRATEGY.md v1.0.0 and ai-architecture.md v2.0.0. Issue #377 superseded. See DEV-MAT-AIMC-001 and Deviation #13 for full records.
 
 **Secret Key Naming Convention (Wave 6 Learning, 2026-02-19)**: Eight consecutive deployment failures (failures 1-8) occurred during Wave 6 deployment due to inconsistent secret name verification. Critical learning: **ALWAYS use UPPERCASE for GitHub repository secret names** (e.g., `VITE_SUPABASE_URL`, `VITE_API_BASE_URL`, `VERCEL_TOKEN`). GitHub secrets are case-sensitive and must be referenced EXACTLY as configured in GitHub Settings → Secrets and variables → Actions. Error messages show what was REQUESTED (workflow syntax), not what EXISTS (actual secret name in GitHub). **Naming Convention Rule**: Both CS2 and agents must use UPPERCASE when creating/referencing GitHub secrets to ensure consistency and prevent case mismatch errors. Always verify secret names FROM SOURCE (GitHub Settings UI) before referencing in workflows, never assume from error messages. See RCA-SEVENTH-GATE-FAILURE-20260219.md and RCA-EIGHTH-GATE-FAILURE-20260219.md for full analysis. This learning is now permanent in Constitutional Section V (SECRET MANAGEMENT MANDATE) and DEFINING_100_PERCENT.md (Component 7: Source Verification).
 
