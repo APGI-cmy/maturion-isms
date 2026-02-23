@@ -241,6 +241,9 @@ Track the progression through the canonical module lifecycle stages.
 - [x] **FCWT: Final Complete Wave Test** — 127 tests GREEN, application fully functional (2026-02-18)
 - [x] **INC-002: LL-031 Platform Blocker — Embedded AI Assistant** — FR-072/TR-072 added, component implemented, 77 frontend tests GREEN (2026-02-20)
 - [ ] Wave 6: Deployment & Commissioning (Vercel provisioning, staging validation, production deployment, CWT on production, formal sign-over)
+- [ ] **Wave 7: AIMC Advisory Integration** — **BLOCKED — Awaiting AIMC Wave 3** (Advisory Gateway)
+- [ ] **Wave 8: AIMC Analysis Integration** — **BLOCKED — Awaiting AIMC Wave 4** (Analysis Gateway)
+- [ ] **Wave 9: AIMC Embeddings/RAG Integration** — **BLOCKED — Awaiting AIMC Wave 5** (Embeddings/RAG Gateway)
 
 **Wave 0 Test Coverage (31 tests GREEN)** — PRs #140, #142:
 - [x] Task 0.1 (schema-builder, 25 tests): MAT-T-0043, MAT-T-0044, MAT-T-0049–0053, MAT-T-0079–0094, MAT-T-0095, MAT-T-0096
@@ -1359,6 +1362,72 @@ Total test suite: 127 tests (100% GREEN)
 - [ ] All required approvals obtained
 - [ ] Evidence artifacts created for each stage
 - [ ] Module manifest up to date
+
+---
+
+### ⚠️ GOVERNANCE DEVIATION — AIMC Strategy Canonisation Invalidates All Direct AI Integrations (2026-02-23)
+
+**Deviation ID**: DEV-MAT-AIMC-001  
+**Severity**: CRITICAL (constitutional governance violation — all direct AI integrations now prohibited)  
+**Date**: 2026-02-23  
+**Status**: REALIGNMENT IN PROGRESS — Governance artifacts updated; implementation blockers set
+
+#### What Happened
+
+`AIMC_STRATEGY.md` v1.0.0 (AI Management Centre Strategy) has been canonised as constitutional
+authority for all Maturion modules. This strategy mandates that:
+
+- All AI capabilities MUST be consumed via the `@maturion/ai-centre` shared package and its Gateway.
+- No module may hold AI provider API keys, import provider SDKs, or implement its own AI routing.
+- Issue APGI-cmy/maturion-isms#377 (direct OpenAI integration in MAT) is superseded and constitutionally
+  non-compliant.
+
+The prior MAT AI architecture (v1.0.0) described a standalone Central AI Gateway owned by MAT with
+direct OpenAI API calls (GPT-4 Turbo, Whisper, GPT-4 Vision). This is now a governance violation.
+
+The prior FR-072 and TR-072 described an Embedded AI Assistant scaffold that routed to a MAT-owned
+AI Gateway (TR-040 routing table). This is also non-compliant — all AI routing is an AIMC
+responsibility.
+
+#### Impact
+
+| Stage | Prior State | New State |
+|-------|------------|-----------|
+| AI Architecture | Direct provider calls (v1.0.0) | AIMC Gateway pattern (v2.0.0) — REALIGNED |
+| FR-072 | AI scaffold → MAT-owned gateway | AI panel → AIMC Advisory Gateway — REALIGNED; BLOCKED on AIMC Wave 3 |
+| TR-072 | Scaffold + routing table (TR-040) | AIMC Gateway method calls — REALIGNED; BLOCKED on AIMC Wave 3 |
+| Wave 5.7 (prior) | N/A — was never a formal wave | Superseded by Waves 7, 8, 9 |
+| Wave 7 | Not defined | AIMC Advisory Integration — DEFINED; BLOCKED on AIMC Wave 3 |
+| Wave 8 | Not defined | AIMC Analysis Integration — DEFINED; BLOCKED on AIMC Wave 4 |
+| Wave 9 | Not defined | AIMC Embeddings/RAG Integration — DEFINED; BLOCKED on AIMC Wave 5 |
+| All AI milestone tests | Direct provider assertions | RED — pending AIMC package delivery |
+
+#### Corrective Actions Taken
+
+1. ✅ `ai-architecture.md` rewritten to v2.0.0 — AIMC Gateway pattern; direct provider content moved to §7 (superseded record)
+2. ✅ FR-072 realigned — AIMC Advisory Gateway pattern; AIMC Wave 3 prerequisite gate added
+3. ✅ TR-072 realigned — AIMC Gateway method calls; direct provider constraints removed
+4. ✅ Implementation Plan updated to v1.6.0 — Waves 7, 8, 9 defined as BLOCKED
+5. ✅ BUILD_PROGRESS_TRACKER updated — Waves 7, 8, 9 added with BLOCKED status
+6. ✅ TEST_REGISTRY.json updated — AIMC gateway tests added (RED); direct-provider tests marked superseded
+7. ✅ Issue #377 status: superseded by AIMC_STRATEGY.md v1.0.0
+
+#### Preventive Measures
+
+- All future AI-related FRS/TRS/architecture documents MUST cite `AIMC_STRATEGY.md` as constitutional authority
+- No AI provider SDK may be imported by any MAT source file — enforcement via linting and code review
+- Wave gates for Waves 7, 8, 9 include explicit AIMC prerequisite check as hard gate condition
+- POLC/CS2 must validate all plans before any builder begins an AI wave
+
+#### Builder Instruction
+
+**BUILDERS MUST NOT implement any AI wave (7, 8, or 9) until:**
+1. The corresponding upstream AIMC wave is confirmed complete
+2. `@maturion/ai-centre` exposes the required Gateway methods
+3. POLC/CS2 provides written approval to proceed
+4. The relevant MAT test cases have been reviewed and confirmed RED (awaiting implementation)
+
+Any deviation from this order is a constitutional governance violation.
 
 ---
 

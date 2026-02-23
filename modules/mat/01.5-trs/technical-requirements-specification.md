@@ -3,12 +3,12 @@
 **Module**: MAT (Manual Audit Tool)
 **Artifact Type**: Technical Requirements Specification
 **Status**: COMPLETE
-**Version**: v1.1.0
+**Version**: v1.3.0
 **Owner**: Foreman (FM)
-**Authority**: Derived from FRS v1.1.0 (`modules/mat/01-frs/functional-requirements.md`)
+**Authority**: Derived from FRS v1.3.0 (`modules/mat/01-frs/functional-requirements.md`)
 **Applies To**: MAT module within maturion-isms repository
 **Created**: 2026-02-13
-**Last Updated**: 2026-02-16
+**Last Updated**: 2026-02-23
 
 ---
 
@@ -1323,24 +1323,44 @@ The MAT frontend MUST be delivered as a complete, deployable React 18+ applicati
 
 ---
 
-### TR-072: Embedded AI Assistant Component
+### TR-072: Embedded AI Assistant Component (AIMC Advisory Integration)
 
 **Derives From**: FR-072, FR-028, FR-029, FR-065
 **Priority**: P0
+**Constitutional Authority**: `AIMC_STRATEGY.md` v1.0.0
+**AIMC Prerequisite**: **BLOCKED — Cannot be executed before AIMC Wave 3 (Advisory Gateway) is complete**
 
-The MAT frontend MUST include an embedded AI assistant React component accessible from every application page, implementing the Maturion Platform AI Standard (LL-031).
+> **⚠️ AIMC BLOCKER**: This TR MUST NOT be implemented until `@maturion/ai-centre` exposes the
+> Advisory Gateway (AIMC Wave 3). Direct provider SDK imports, API keys, or model strings in MAT
+> are constitutionally prohibited. Builders MUST NOT proceed until POLC/CS2 confirms AIMC Wave 3
+> is complete.
+
+The MAT frontend MUST include an embedded AI assistant React component accessible from every
+application page, consuming AI advisory capability exclusively via the `@maturion/ai-centre` Gateway.
 
 **Constraints**:
 1. Component location: `src/components/common/EmbeddedAIAssistant.tsx` within the MAT frontend application.
-2. Agent/model selection: The component MUST expose a selector for at least 4 pre-configured agents derived from the AI routing table (TR-040): General Assistant (routine), Scoring Assistant (scoring), Document Parser (document_parsing), Report Writer (report_generation).
-3. Chat UI: The component MUST provide a collapsible panel containing a message history log, text input, and send control.
-4. Layout wiring: The component MUST be rendered in the application Layout so it is present on every authenticated page.
-5. Routing: The component MUST capture the selected agent's `taskType` so it is available for AI Gateway routing (TR-003, TR-040) when gateway integration is wired in a future wave.
-6. UI scaffold: The current implementation renders placeholder responses. Runtime AI Gateway call, error handling, and gateway-unavailability UX are deferred to a future wave and MUST NOT be claimed as implemented until that wave is complete.
-7. Accessibility: The panel MUST include ARIA labels, `aria-expanded`, `role="dialog"`, `role="log"` per WCAG 2.1 AA (TR-035).
-8. No secrets exposed in frontend: API keys MUST NOT be included in the React bundle; all AI requests go through the server-side gateway.
+2. Persona selection: The component MUST expose a selector for personas sourced from the AIMC
+   canonical agent directory — at minimum: Maturity Advisor, Scoring Assistant, Document Parser,
+   Report Writer. Persona identifiers are defined by the AIMC package, not by MAT.
+3. Chat UI: The component MUST provide a collapsible panel containing a message history log, text
+   input, and send control.
+4. Layout wiring: The component MUST be rendered in the application Layout so it is present on every
+   authenticated page.
+5. Gateway routing: All AI invocations MUST call `@maturion/ai-centre` Gateway methods. No direct
+   provider calls are permitted. No provider API keys in the React bundle.
+6. AIMC reference ID: The component MUST capture the AIMC invocation reference ID from Gateway
+   responses for audit-domain logging per TR-017.
+7. Accessibility: The panel MUST include ARIA labels, `aria-expanded`, `role="dialog"`, `role="log"`
+   per WCAG 2.1 AA (TR-035).
+8. Pre-AIMC-Wave-3 state: Until AIMC Wave 3 is delivered, the component renders a disabled/locked
+   state with appropriate user messaging. The application MUST NOT crash.
+9. No secrets in frontend: No AI provider API keys or model configuration in the React bundle.
 
-> **Governance Note (2026-02-20)**: TR-072 added to address platform governance blocker LL-031 (Maturion/Platform/AI-Standard). Embedded AI assistant UI and agent/model selection were identified as absent from the MAT frontend in issue resolution. See BUILD_PROGRESS_TRACKER.md INC-002.
+> **Governance Note (2026-02-23)**: TR-072 realigned to AIMC Gateway pattern per `AIMC_STRATEGY.md`
+> v1.0.0. Prior constraint describing placeholder responses wired to AI Gateway routing table
+> (TR-040) is superseded — all AI routing is now an AIMC responsibility. Direct provider references
+> removed. See BUILD_PROGRESS_TRACKER.md AIMC deviation entry and Issue #377 (superseded).
 
 ---
 
@@ -1375,7 +1395,7 @@ The MAT frontend MUST include an embedded AI assistant React component accessibl
 
 ## Document Authority
 
-This TRS is derived from the MAT FRS v1.2.0 (`modules/mat/01-frs/functional-requirements.md`, 72 requirements: FR-001 to FR-072).
+This TRS is derived from the MAT FRS v1.3.0 (`modules/mat/01-frs/functional-requirements.md`, 72 requirements: FR-001 to FR-072).
 
 **Governance Reference**: `governance/strategy/MODULE_LIFECYCLE_AND_REPO_STRUCTURE_STRATEGY.md` §4.1
 
@@ -1385,6 +1405,9 @@ This TRS is derived from the MAT FRS v1.2.0 (`modules/mat/01-frs/functional-requ
 **Traceability**: Complete FRS-to-TRS mapping available in `frs-to-trs-traceability.md`.
 
 **Change Log**:
+- v1.3.0 (2026-02-23): Realigned TR-072 to AIMC Gateway pattern per `AIMC_STRATEGY.md` v1.0.0.
+  TR-072 now blocked on AIMC Wave 3. Direct provider references, TR-040 routing table dependency,
+  and placeholder scaffold language removed. Issue #377 superseded.
 - v1.2.0 (2026-02-20): Added TR-072 (Embedded AI Assistant Component) per platform governance blocker LL-031. See BUILD_PROGRESS_TRACKER.md INC-002.
 - v1.1.0 (2026-02-16): Added TR-071 (Frontend Application as Deployable Artifact) per governance remediation. See BUILD_PROGRESS_TRACKER.md Deviation #9.
 - v1.0.0 (2026-02-13): Initial TRS with 70 requirements (TR-001–TR-070).
