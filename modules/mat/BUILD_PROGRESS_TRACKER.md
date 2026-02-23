@@ -1268,23 +1268,30 @@ Track the progression through the canonical module lifecycle stages.
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 5 (Build Execution — Wave 6 IN PROGRESS, pending CS2 Vercel/Supabase access)  
-**Overall Progress**: Application fully functional and deployment-ready (127 tests GREEN, FCWT PASS, Wave 5.6 complete, INC-002 complete)  
+**Current Stage**: Stage 5 (Build Execution — Wave 6 IN PROGRESS, pending CS2 Vercel/Supabase access) | Post-Delivery RCA COMPLETE  
+**Overall Progress**: Application functional with known gaps (127 tests GREEN, FCWT PASS, Wave 5.6 complete, INC-002 complete) — RCA identifies 6 remediation blockers and 2 AIMC-blocked items  
 **Blockers**: 
 - ⏳ **Wave 6 PENDING CS2 ACCESS**: Vercel and Supabase production environment access required (not a technical blocker — deployment runbook complete)
 - ❌ **Wave 7 BLOCKED**: Awaiting AIMC Wave 3 (Advisory Gateway)
 - ❌ **Wave 8 BLOCKED**: Awaiting AIMC Wave 4 (Analysis Gateway)
 - ❌ **Wave 9 BLOCKED**: Awaiting AIMC Wave 5 (Embeddings/RAG Gateway)
+- ⚠️ **RCA G-03 BLOCKER**: Domain → MPS → Criteria hierarchy UI render not verified (Wave 5.6 Remediation required)
+- ⚠️ **RCA G-04 BLOCKER**: Evidence modal uses mock data, not live DB fetch (Wave 5.6 Remediation required)
+- ❌ **RCA G-07 BLOCKER**: Photo capture is a stub — camera API not implemented (Wave 2 Remediation required)
+- ❌ **RCA G-10 BLOCKER**: Interview recording is a stub — no implementation (Wave 2 Remediation required)
+- ⚠️ **RCA G-14 BLOCKER**: Report PDF/DOCX backend generation not confirmed (Wave 4 Remediation required)
+- ❌ **RCA G-16 BLOCKER**: Offline mode not verified as implemented (Wave 2 Remediation required)
 
 **Status Summary**:
 - ✅ Backend service layer: 100% implemented and tested (modules/mat/src/services/)
 - ✅ Frontend structure: Scaffolded and fully functional (modules/mat/frontend/)
 - ✅ Frontend logic: Implemented — all CRUD handlers, data fetching, Supabase wiring complete (Wave 5.6)
 - ✅ Data wiring: Complete — Supabase queries, real-time subscriptions, state management functional
-- ✅ User value: VERIFIED — Full audit lifecycle, criteria management, evidence collection, AI scoring, reporting all functional (FCWT 2026-02-18)
 - ✅ INC-002: FR-072/TR-072 (Embedded AI Assistant — AIMC Advisory Gateway) implemented 2026-02-20; 77 frontend tests GREEN
 - ✅ AI integration: All direct-provider references removed; AIMC Gateway pattern enforced per v1.7.0 (ai-architecture.md v2.0.0, AIMC_STRATEGY.md v1.0.0)
+- ✅ Post-Delivery RCA: Complete — `modules/mat/05-rca/MAT_APP_V2_RCA.md` v1.0.0; PBFAG governance gate established
 - ⏳ Wave 6: Deployment & Commissioning — awaiting CS2 Vercel/Supabase operator access
+- ⚠️ Feature-complete status: PENDING — 6 RCA remediation blockers must be resolved before MAT App V2 is declared feature-complete
 
 **Next Steps**: 
 1. ~~Create `01.5-trs/` folder in module structure~~
@@ -1307,7 +1314,11 @@ Track the progression through the canonical module lifecycle stages.
 18. ~~PHYSICAL VERIFICATION: Manual testing of all user workflows in running application (video walkthrough + screenshots)~~
 19. ~~Execute Final Complete Wave Test (FCWT) — 127 tests GREEN, application fully functional (2026-02-18)~~
 20. ~~INC-002: FR-072/TR-072 (Embedded AI Assistant) implemented; 77 frontend tests GREEN (2026-02-20)~~
-21. Proceed to Wave 6: Deployment & Commissioning (READY — FCWT PASS, INC-002 complete, deployment runbook complete — awaiting CS2 Vercel/Supabase access)
+21. ~~Post-Delivery Gap Analysis & RCA — complete (`modules/mat/05-rca/MAT_APP_V2_RCA.md` v1.0.0; PBFAG gate established; Implementation Plan v1.8.0)~~
+22. Execute Wave 2 Remediation: photo capture (G-07), interview recording (G-10), offline mode verification (G-16)
+23. Execute Wave 4 Remediation: report backend generation confirmation (G-14)
+24. Execute Wave 5.6 Remediation: hierarchy UI render verification (G-03), evidence modal live data (G-04), mobile viewport tests (G-15)
+25. Proceed to Wave 6: Deployment & Commissioning (READY — awaiting CS2 Vercel/Supabase access AND remediation completion)
 
 ---
 
@@ -1401,6 +1412,7 @@ Total test suite: 127 tests (100% GREEN)
 - [x] Implementation Plan v1.7.0 (2026-02-23): Tasks 1.2, 2.1, 3.1, and 4.2 scope corrected — all direct-provider references removed; all AI calls now reference AIMC Gateway exclusively. Derivation chain updated to FR-001–FR-072, TR-001–TR-072.
 - [x] FR-072 / TR-072 added (INC-002/LL-031, 2026-02-20): Embedded AI Assistant component implemented; routes to AIMC Advisory Gateway (BLOCKED on AIMC Wave 3). 77 frontend tests GREEN.
 - [x] Frontend Directory Restructure (2026-02-20): `apps/mat-frontend/` moved to `modules/mat/frontend/`. Canonical module build structure enforced.
+- [x] Post-Delivery Gap Analysis & RCA (2026-02-23): Full RCA completed for all 16 gap items. `modules/mat/05-rca/MAT_APP_V2_RCA.md` v1.0.0 created. 8 learning-loop items recorded (LL-RCA-001–LL-RCA-008). Pre-Build Functionality Assessment Gate (PBFAG) established as mandatory governance gate. Implementation Plan updated to v1.8.0 with PBFAG and remediation wave tasks.
 - [ ] All required approvals obtained
 - [ ] Evidence artifacts created for each stage
 - [ ] Module manifest up to date
@@ -1473,6 +1485,83 @@ Any deviation from this order is a constitutional governance violation.
 
 ---
 
+## Post-Delivery Gap Analysis & RCA — 2026-02-23
+
+**RCA Document**: `modules/mat/05-rca/MAT_APP_V2_RCA.md` v1.0.0  
+**Trigger**: Post-delivery QA review identified feature and implementation gaps across 16 requirement areas.  
+**Foreman Verdict**: RCA COMPLETE — all gaps documented, root causes identified, preventive actions and remediation plan recorded.
+
+### Gap Summary
+
+| # | Requirement | Status | Blocker? |
+|---|---|---|---|
+| G-01 | Create new audit | ✅ COMPLETE | No |
+| G-02 | Upload criteria document | ✅ COMPLETE | No |
+| G-03 | Domain → MPS → Criteria hierarchy UI render | ⚠️ UNVERIFIED | Yes |
+| G-04 | Evidence modal fetches real data | ⚠️ STUB DATA | Yes |
+| G-05 | Evidence modal: text/findings | ✅ COMPLETE | No |
+| G-06 | Evidence modal: voice recording | ✅ COMPLETE | No |
+| G-07 | Evidence modal: photo capture | ❌ STUB | Yes |
+| G-08 | Evidence modal: video capture | ✅ COMPLETE | No |
+| G-09 | Evidence modal: file upload | ✅ COMPLETE | No |
+| G-10 | Evidence modal: interview recording | ❌ STUB | Yes |
+| G-11 | AI evaluates evidence → creates finding | ❌ NOT WIRED | BLOCKED (AIMC Wave 3) |
+| G-12 | AI maturity rating (1–5) trigger | ⚠️ DISPLAY ONLY | BLOCKED (AIMC Wave 3) |
+| G-13 | Human review table — confirm/override | ✅ COMPLETE | No |
+| G-14 | Submit → generate PDF/DOCX report (backend) | ⚠️ UNVERIFIED | Yes |
+| G-15 | Mobile-first / responsive (viewport verified) | ⚠️ UNVERIFIED | No |
+| G-16 | Offline mode | ❌ UNVERIFIED | Yes |
+
+### Learning Loop — "We Only Fail Once"
+
+| Learning ID | Learning | Governance Change |
+|---|---|---|
+| LL-RCA-001 | Stub components must have failing RED tests | Red QA suite spec: all stubs require a corresponding failing test |
+| LL-RCA-002 | Wave gate closure requires E2E verification, not just API 200 | Wave gate checklist: E2E test mandatory in addition to unit/integration |
+| LL-RCA-003 | Hardware/media FRS must specify browser API surface | FRS/TRS template: media features require API surface, fallback, data model |
+| LL-RCA-004 | AIMC-blocked features must be explicitly tagged BLOCKED | Delivery status taxonomy: BLOCKED (upstream dependency) is a distinct status |
+| LL-RCA-005 | Offline mode requires its own wave gate verification step | Wave 2 gate and Wave 6 commissioning checklist updated |
+| LL-RCA-006 | Mobile viewport must be tested explicitly, not assumed from Tailwind | Red QA suite: mobile viewport tests mandatory for all major flows |
+| LL-RCA-007 | Report generation requires E2E file validity test, not just 200 status | Wave 4 acceptance criteria updated |
+| LL-RCA-008 | Pre-Build Functionality Assessment Gate (PBFAG) is mandatory | New governance gate established — see below |
+
+### Governance Change: Pre-Build Functionality Assessment Gate (PBFAG)
+
+**Gate ID**: PBFAG  
+**Inserted Between**: Stage 2.5 (QA-to-Red) and Stage 3 (Implementation Plan)  
+**Authority**: `modules/mat/05-rca/MAT_APP_V2_RCA.md` §7  
+**Status**: ESTABLISHED — applies to all future MAT build phases and all new module build phases
+
+**Gate Checklist (all 8 must PASS before any builder is appointed)**:
+- [ ] Requirements Coverage Check: every FR has ≥ 1 corresponding test in the Red QA suite
+- [ ] Stub/Placeholder Audit: all placeholder components have a failing (RED) test in the suite
+- [ ] API-to-UI Wiring Check: every UI-to-API feature has a wiring invariant test in the suite
+- [ ] Blocked Features Check: all upstream-dependent FRs are tagged BLOCKED with prerequisite gates in the implementation plan
+- [ ] Hardware/Media API Spec Check: all camera/microphone/device-API FRs have TRS-level API surface, fallback, and data model specs
+- [ ] Offline Mode Check: if offline is in scope, offline architecture and offline scenario tests are complete
+- [ ] Mobile Viewport Check: Red QA suite includes viewport tests at ≥ 375px for all major user flows
+- [ ] Report Generation Check: if reporting is in scope, E2E file-validity test (non-empty valid PDF/DOCX) is in the suite
+
+**PBFAG Evidence Artifact Location**: `modules/mat/05-build-evidence/PBFAG-{module}-{date}.md`
+
+### Remediation Plan
+
+The following remediation waves are required before MAT App V2 can be declared feature-complete:
+
+| Priority | Gap | Remediation Wave | New Test | Implementation Plan Task |
+|---|---|---|---|---|
+| P0 | G-04 (evidence modal mock data) | Wave 5.6 Remediation | MAT-T-0100 | Task 5.6.3 AC update |
+| P0 | G-16 (offline mode not verified) | Wave 2 Remediation | MAT-T-0056–0058 confirm GREEN | Wave 2 offline verification step |
+| P1 | G-03 (hierarchy UI not verified) | Wave 5.6 Remediation | MAT-T-0099 | Task 5.6.1 AC update |
+| P1 | G-07 (photo capture stub) | Wave 2 Remediation | MAT-T-0101 | Task 2.3 photo capture sub-task |
+| P1 | G-10 (interview recording stub) | Wave 2 Remediation | MAT-T-0102 | Task 2.3 interview recording sub-task |
+| P1 | G-14 (report backend not confirmed) | Wave 4 Remediation | MAT-T-0105 | Task 4.2 AC update |
+| P2 | G-15 (mobile viewport not tested) | Wave 5.6 Remediation | MAT-T-0106–0108 | Wave 5.6 viewport test requirement |
+| BLOCKED | G-11 (AI scoring not wired) | Wave 7 (AIMC Wave 3 prerequisite) | MAT-T-AIMC-001 | Wave 7 as planned |
+| BLOCKED | G-12 (AI rating trigger not wired) | Wave 7 (AIMC Wave 3 prerequisite) | MAT-T-0104 | Wave 7 as planned |
+
+---
+
 ## Notes and Observations
 
 **Governance Upgrade**: TRS stage introduced 2026-02-13 per issue "Governance Upgrade: Insert Technical Requirements Specification (TRS) Step". This stage prevents downstream implementation failures by capturing technical constraints, performance requirements, and tool validation rules between FRS and Architecture.
@@ -1502,3 +1591,5 @@ Any deviation from this order is a constitutional governance violation.
 **Secret Key Naming Convention (Wave 6 Learning, 2026-02-19)**: Eight consecutive deployment failures (failures 1-8) occurred during Wave 6 deployment due to inconsistent secret name verification. Critical learning: **ALWAYS use UPPERCASE for GitHub repository secret names** (e.g., `VITE_SUPABASE_URL`, `VITE_API_BASE_URL`, `VERCEL_TOKEN`). GitHub secrets are case-sensitive and must be referenced EXACTLY as configured in GitHub Settings → Secrets and variables → Actions. Error messages show what was REQUESTED (workflow syntax), not what EXISTS (actual secret name in GitHub). **Naming Convention Rule**: Both CS2 and agents must use UPPERCASE when creating/referencing GitHub secrets to ensure consistency and prevent case mismatch errors. Always verify secret names FROM SOURCE (GitHub Settings UI) before referencing in workflows, never assume from error messages. See RCA-SEVENTH-GATE-FAILURE-20260219.md and RCA-EIGHTH-GATE-FAILURE-20260219.md for full analysis. This learning is now permanent in Constitutional Section V (SECRET MANAGEMENT MANDATE) and DEFINING_100_PERCENT.md (Component 7: Source Verification).
 
 **Cache Invalidation Requirement (Wave 6 Learning, 2026-02-19)**: Ninth deployment failure occurred due to cached Vercel configuration (`.vercel/project.json`) containing outdated setup. When platform configuration changes (e.g., Vercel dashboard updated from secret references to plain text values), cached artifacts must be invalidated BEFORE pulling fresh configuration. **Solution**: Added `rm -rf .vercel` step before `vercel pull` in deploy workflow (both preview and production jobs). **Principle**: Caches assume stability. When upstream changes, downstream caches become stale and must be cleared. **Cached State ≠ Current State**. Always clear caches when platform configuration changes to force fresh synchronization with upstream source. **Application**: Vercel dashboard changes → Clear `.vercel/` cache → Pull fresh config → Deploy with current setup. This pattern applies to ALL caches: `node_modules/` (when package.json changes), build outputs (when config changes), Docker layers (when base image changes), etc. See RCA-NINTH-GATE-FAILURE-20260219.md and Constitutional Section VI (CACHE MANAGEMENT MANDATE) for complete protocol. This learning is now permanent in DEFINING_100_PERCENT.md (Component 8: Cache Management).
+
+**Post-Delivery Gap Analysis & RCA (2026-02-23)**: Following handover and QA review, a comprehensive gap analysis identified 16 requirements from the original scope. 7 gaps were confirmed incomplete or unverified (G-03, G-04, G-07, G-10, G-11, G-14, G-16) and 2 are BLOCKED on upstream AIMC delivery (G-11, G-12). Full RCA completed per document `modules/mat/05-rca/MAT_APP_V2_RCA.md` (v1.0.0). Key systemic root causes: (1) stub components shipped without failing tests, (2) "API available" treated as "feature complete," (3) insufficient FRS/TRS specification depth for hardware-API features, (4) no pre-build functionality assessment gate existed. Eight learning-loop items recorded (LL-RCA-001 through LL-RCA-008). **Pre-Build Functionality Assessment Gate (PBFAG)** established as a mandatory governance gate between Stage 2.5 (QA-to-Red) and Stage 3 (Implementation Plan) for all future build phases. Implementation Plan updated to v1.8.0 to include PBFAG. Remediation waves required for G-03, G-04, G-07, G-10, G-14, G-16 before MAT App V2 can be declared feature-complete. See `modules/mat/05-rca/MAT_APP_V2_RCA.md` for full analysis, preventive actions, and remediation plan.
