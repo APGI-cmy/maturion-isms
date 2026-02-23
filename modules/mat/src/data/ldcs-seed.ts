@@ -457,7 +457,7 @@ export const LDCS_SEED: LdcsDomain[] = [
         number: 'MPS 7',
         name: 'Process Control',
         intent:
-          'To ensure that the processing and recovery of diamonds is conducted in a controlled and auditable manner that reduces the opportunity for theft.',
+          'To ensure that operational failures are minimised and the process of mining, liberating, washing, recovering, sorting and selling diamond is clearly understood, in control, measured and reconciled throughout.',
         criteria: [
           {
             number: '7.2',

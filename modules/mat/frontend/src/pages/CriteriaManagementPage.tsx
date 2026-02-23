@@ -4,44 +4,38 @@
  * TRS: TR-047, TR-016, TR-033
  * Task: 5.6.3
  */
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { CriteriaUpload } from '../components/criteria/CriteriaUpload';
 import { CriteriaTree } from '../components/criteria/CriteriaTree';
 import { CriteriaModal } from '../components/criteria/CriteriaModal';
 import { useAudits } from '../lib/hooks/useAudits';
+import { useCriterion } from '../lib/hooks/useCriteria';
 import type { Criterion } from '../lib/hooks/useCriteria';
 
 export function CriteriaManagementPage() {
   const { data: audits } = useAudits();
   const [selectedAuditId, setSelectedAuditId] = useState<string>('');
-  const [selectedCriterion, setSelectedCriterion] = useState<Criterion | null>(null);
+  const [selectedCriterionId, setSelectedCriterionId] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Get the first audit if none selected
   const auditId = selectedAuditId || audits?.[0]?.id || '';
 
-  const handleCriterionSelect = (criterionId: string) => {
-    // In a real implementation, this would fetch the full criterion data
-    // For now, we'll use mock data
-    setSelectedCriterion({
-      id: criterionId,
-      audit_id: auditId,
-      mps_id: 'mock-mps-id',
-      number: '1.1.1',
-      title: 'Sample Criterion',
-      description: 'This is a sample criterion description that would be loaded from the database.',
-      status: 'in_progress',
-      sort_order: 0,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    });
-    setIsModalOpen(true);
-  };
+  // Fetch the real criterion from Supabase when one is selected
+  const { data: fetchedCriterion } = useCriterion(selectedCriterionId);
 
-  const handleModalClose = () => {
+  // Derive the modal criterion: use fetched data, fall back to a minimal shape
+  const selectedCriterion: Criterion | null = fetchedCriterion ?? null;
+
+  const handleCriterionSelect = useCallback((criterionId: string) => {
+    setSelectedCriterionId(criterionId);
+    setIsModalOpen(true);
+  }, []);
+
+  const handleModalClose = useCallback(() => {
     setIsModalOpen(false);
-    setSelectedCriterion(null);
-  };
+    setSelectedCriterionId('');
+  }, []);
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -102,7 +96,7 @@ export function CriteriaManagementPage() {
         </div>
       </div>
 
-      {/* Criteria Detail Modal */}
+      {/* Criteria Detail Modal — populated with real Supabase data */}
       <CriteriaModal
         criterion={selectedCriterion}
         isOpen={isModalOpen}

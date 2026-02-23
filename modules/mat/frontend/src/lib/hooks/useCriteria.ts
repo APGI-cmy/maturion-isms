@@ -128,6 +128,62 @@ export function useUploadCriteria() {
 }
 
 /**
+ * Fetch a single criterion by ID from Supabase
+ * FRS: FR-011 (Criteria Modal — real data)
+ * TRS: TR-047
+ */
+export function useCriterion(criterionId: string) {
+  return useQuery<Criterion, Error>({
+    queryKey: ['criterion', criterionId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('criteria')
+        .select('*')
+        .eq('id', criterionId)
+        .single();
+
+      if (error) {
+        throw new Error(`Failed to fetch criterion: ${error.message}`);
+      }
+
+      return data as Criterion;
+    },
+    enabled: !!criterionId,
+  });
+}
+
+/**
+ * Approve or reject a criterion (updates status in Supabase)
+ * FRS: FR-008 (Human Approval)
+ * TRS: TR-012, TR-047
+ */
+export function useApproveCriterion() {
+  const queryClient = useQueryClient();
+
+  return useMutation<Criterion, Error, { criterionId: string; approved: boolean }>({
+    mutationFn: async ({ criterionId, approved }) => {
+      const newStatus = approved ? 'approved' : 'rejected';
+      const { data, error } = await supabase
+        .from('criteria')
+        .update({ status: newStatus, updated_at: new Date().toISOString() })
+        .eq('id', criterionId)
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(`Failed to ${newStatus} criterion: ${error.message}`);
+      }
+
+      return data as Criterion;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['criterion', data.id] });
+      queryClient.invalidateQueries({ queryKey: ['criteria-tree', data.audit_id] });
+    },
+  });
+}
+
+/**
  * Trigger AI parsing for uploaded criteria document
  */
 export function useTriggerAIParsing() {

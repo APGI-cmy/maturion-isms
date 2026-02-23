@@ -15,3 +15,6 @@
 | 2026-02-23 | foreman-v2 | session-050 | Add scheduled governance scan (quarterly) to auto-detect new layer-up candidates by comparing local governance/policy/, governance/agent/, governance/coordination/ files against CANON_INVENTORY.json | `session-050-20260223.md` |
 | 2026-02-23 | foreman-v2 | session-051 | Add integration test validating governance-alignment-schedule.yml creates a liaison issue on drift detection to prevent future automation gap regressions | `session-051-20260223.md` |
 | 2026-02-23 | foreman-v2 | session-051 | Add idempotency guard to governance-ripple-sync.yml issue creation: check for existing open layer-down issues by canonical commit before creating new one | `session-051-20260223.md` |
+| 2026-02-23 | copilot | session-052 | Add Node/ts-node seed runner script (run-ldcs-seed.ts) to execute canonical LDCS seed against live Supabase instance | `session-052-20260223.md` |
+| 2026-02-23 | copilot | session-052 | Add CriteriaModal loading skeleton while useCriterion is fetching (selectedCriterionId set but data not yet arrived) | `session-052-20260223.md` |
+| 2026-02-23 | copilot | session-052 | Add component-level render test for CriteriaApproval two-click confirmation flow using vitest + jsdom | `session-052-20260223.md` |

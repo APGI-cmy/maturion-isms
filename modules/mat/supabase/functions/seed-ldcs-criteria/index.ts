@@ -61,7 +61,7 @@ const LDCS_MPS: Record<string, { number: string; name: string; intent: string }[
   ],
   'Process Integrity': [
     { number: 'MPS 6', name: 'Diamond Value Management', intent: 'To ensure that the maximum value is recovered from the ore body and that losses are minimised throughout the process.' },
-    { number: 'MPS 7', name: 'Process Control', intent: 'To ensure that the processing and recovery of diamonds is conducted in a controlled and auditable manner.' },
+    { number: 'MPS 7', name: 'Process Control', intent: 'To ensure that operational failures are minimised and the process of mining, liberating, washing, recovering, sorting and selling diamond is clearly understood, in control, measured and reconciled throughout.' },
     { number: 'MPS 8', name: 'Maintenance and Housekeeping', intent: 'To ensure that maintenance and housekeeping activities in diamond areas are conducted in a manner that minimises loss.' },
     { number: 'MPS 9', name: 'Management of Change', intent: 'To ensure that changes to processes, procedures and equipment in diamond areas are managed in a controlled manner.' },
     { number: 'MPS 10', name: 'Sales and Auction Process', intent: 'To ensure that the sale and auction of diamonds is conducted in a secure, controlled and auditable manner.' },
