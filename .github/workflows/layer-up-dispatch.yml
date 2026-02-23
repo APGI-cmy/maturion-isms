@@ -69,12 +69,47 @@ jobs:
           fi
 
   # ──────────────────────────────────────────────────────────────
+  # BOOTSTRAP: ensure layer-up labels exist in this repo
+  # Runs on every dispatch-eligible trigger (harmless if labels already exist)
+  # ──────────────────────────────────────────────────────────────
+  ensure-labels:
+    name: Ensure Layer-Up Labels Exist
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create labels if missing
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+        run: |
+          for LABEL_NAME in "layer-up" "governance-improvement"; do
+            case "$LABEL_NAME" in
+              "layer-up")
+                COLOR="0075ca"
+                DESCRIPTION="Governance layer-up: escalate to canonical governance repo"
+                ;;
+              "governance-improvement")
+                COLOR="e4e669"
+                DESCRIPTION="Governance improvement proposal for canonical governance"
+                ;;
+              *)
+                echo "ERROR: unknown label name '$LABEL_NAME' — skipping"
+                continue
+                ;;
+            esac
+            gh label create "$LABEL_NAME" \
+              --repo ${{ github.repository }} \
+              --color "$COLOR" \
+              --description "$DESCRIPTION" 2>/dev/null \
+              && echo "Created label: $LABEL_NAME" \
+              || echo "Label already exists (or creation skipped): $LABEL_NAME"
+          done
+
+  # ──────────────────────────────────────────────────────────────
   # MAIN: create issue in governance repo
   # ──────────────────────────────────────────────────────────────
   dispatch-layer-up:
     name: Dispatch Layer-Up to Governance Repo
     runs-on: ubuntu-latest
-    needs: check-labels
+    needs: [check-labels, ensure-labels]
     if: needs.check-labels.outputs.should_dispatch == 'true'
 
     steps:
