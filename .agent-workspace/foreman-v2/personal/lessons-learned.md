@@ -40,3 +40,22 @@
 
 ---
 Updated: Session 046 (retroactive) | Date: 2026-02-21 | Agent: foreman-v2
+
+## Session 2026-02-23 (Session 052 — GOV-BREACH-AIMC-W2-001 RCA)
+
+### Lesson: No Builder Available Is NOT a Self-Implementation Permit
+
+- **Context**: In PR #468 (AIMC Wave 2), foreman-v2 self-implemented all deliverables. The breach occurred because the contract lacked an explicit hard-stop clause when builder agents were unavailable or uncontactable.
+- **Pattern**: "Builder unavailable → I must do it myself" is a rationalisation, not a valid exception. The contract forbids self-implementation regardless of builder availability.
+- **Action**: When no builder is available: (1) HALT the wave, (2) record reason in session memory, (3) escalate to CS2. **Never self-implement.** This is a constitutional invariant, not a guideline.
+- **Evidence**: RCA `governance/rca/GOV_BREACH_AIMC_W2_001_RCA.md`; CS2 merge note GOV-BREACH-AIMC-W2-001 on PR #468
+
+### Lesson: Pre-Wave Agent Availability Gate Must Be a Hard Blocker
+
+- **Context**: Phase 2 Alignment checks builder availability but did not block wave start when builders were unconfirmed. Wave proceeded with foreman as de-facto builder.
+- **Pattern**: Soft availability checks create loopholes. Only hard blocking gates prevent breach.
+- **Action**: At Phase 2 Alignment, if any required builder agent cannot be confirmed available, the wave DOES NOT START. Record in session memory and escalate to CS2.
+- **Governance refs**: `governance/canon/FOREMAN_PRE_WAVE_AGENT_AVAILABILITY_CHECK.md`, `FM_BUILDER_APPOINTMENT_PROTOCOL.md`
+
+---
+Updated: Session 052 | Date: 2026-02-23 | Agent: foreman-v2 | Incident: GOV-BREACH-AIMC-W2-001
