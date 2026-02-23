@@ -505,7 +505,7 @@ This AAWP is complete and ready for CS2 sign-off when all of the following are s
 - [x] Document cites `AIMC_STRATEGY.md`, `LIVING_AGENT_SYSTEM.md` v6.2.0, `WAVE_MODEL.md` as direct authorities
 - [x] Wave 8 Governance Certification extension is explicitly noted and traced to ACD §5 footnote
 - [x] ISMS Navigator persona CS2 wave-confirmation flag is preserved from AAD
-- [ ] CS2 review and sign-off received (required before Wave 2 execution begins)
+- [X] CS2 review and sign-off received (required before Wave 2 execution begins)
 
 ---
 
