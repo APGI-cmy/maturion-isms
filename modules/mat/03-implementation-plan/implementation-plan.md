@@ -1,7 +1,7 @@
 # MAT — Implementation Plan
 
 **Module**: MAT (Manual Audit Tool)  
-**Version**: v1.6.0  
+**Version**: v1.7.0  
 **Status**: APPROVED  
 **Owner**: Foreman (FM)  
 **Created**: 2026-02-13  
@@ -24,7 +24,7 @@ This document defines the complete, phased implementation plan for the MAT modul
 ### Derivation Chain
 
 ```
-App Description → FRS (FR-001–FR-071) → TRS (TR-001–TR-071) → Architecture (13 documents) → Test Registry (MAT-T-0001–MAT-T-0098) → This Plan
+App Description → FRS (FR-001–FR-072) → TRS (TR-001–TR-072) → Architecture (13 documents) → Test Registry (MAT-T-0001–MAT-T-0098) → This Plan
 ```
 
 ---
@@ -54,6 +54,8 @@ MAT is built in **eleven waves** (Wave 0–Wave 9, plus Waves 5.5 and 5.6). Each
 > AIMC wave is confirmed complete by POLC/CS2. All AI test cases for these waves are RED and will
 > remain RED until the respective AIMC Gateway capability is delivered. Builders MUST NOT begin
 > any implementation work for Waves 7–9 without explicit POLC/CS2 approval.
+
+> **Change Note (v1.7.0, 2026-02-23)**: Tasks 1.2, 2.1, 3.1, and 4.2 scope and acceptance criteria corrected to remove all direct-provider references (GPT-4 Turbo, Whisper API, GPT-4o Mini fallback). All builder-facing scope statements now reference AIMC Gateway capability calls exclusively per `AIMC_STRATEGY.md` v1.0.0 and `ai-architecture.md` v2.0.0. Derivation chain updated to include FR-072.
 
 > **Change Note (v1.6.0, 2026-02-23)**: Waves 7 (AIMC Advisory Integration), 8 (AIMC Analysis
 > Integration), and 9 (AIMC Embeddings/RAG Integration) added per AIMC Strategy v1.0.0 realignment.
@@ -196,18 +198,18 @@ MAT is built in **eleven waves** (Wave 0–Wave 9, plus Waves 5.5 and 5.6). Each
 | **Test Registry** | MAT-T-0007–MAT-T-0014 |
 
 **Scope**:
-- Implement AI Gateway service for document parsing per `ai-architecture.md`
-- Wire GPT-4 Turbo for criteria extraction (Domain → MPS → Criteria)
-- Implement deterministic validation (schema, coverage, numbering)
-- Implement circuit breaker and rate limiting per `system-architecture.md` §3.3
+- Invoke `@maturion/ai-centre` Gateway capability `analysis` for criteria document parsing per `ai-architecture.md` v2.0.0
+- Pass document content as structured input to `aimc.analysis.parseCriteriaDocument(input)`
+- Implement deterministic validation of AIMC Gateway response (schema, coverage, numbering)
 - Create human review queue for parsed results
+- All routing, model selection, circuit breaking, and rate limiting are managed by the AIMC Gateway — do NOT implement these in MAT
 
 **Acceptance Criteria**:
-1. AI parses PDF into structured criteria JSON (MAT-T-0007)
+1. AI parses PDF into structured criteria JSON via AIMC Gateway (MAT-T-0007)
 2. Parsed criteria follow Domain → MPS → Criteria hierarchy (MAT-T-0008)
-3. Invalid AI output rejected by schema validation (MAT-T-0009)
-4. Circuit breaker activates on repeated failures (MAT-T-0010)
-5. Fallback to GPT-4o Mini when primary unavailable (MAT-T-0011)
+3. Invalid AIMC Gateway response rejected by MAT schema validation (MAT-T-0009)
+4. AIMC Gateway unavailability surfaces a structured error to MAT; MAT offers manual review mode (MAT-T-0010)
+5. No direct provider fallback logic exists in MAT; AIMC Gateway manages all fallback internally (verified by MAT-T-0011)
 6. Human review interface shows parsed results for approval (MAT-T-0012–0014)
 
 #### Task 1.3: Criteria Management UI
@@ -259,7 +261,7 @@ MAT is built in **eleven waves** (Wave 0–Wave 9, plus Waves 5.5 and 5.6). Each
 - SHA-256 hashing at upload for immutability
 - Evidence metadata capture (timestamp, GPS, criterion link)
 - Append-only storage (no update/delete through API)
-- Audio transcription via Whisper API per `ai-architecture.md`
+- Audio transcription via AIMC Gateway capability `analysis` (`aimc.analysis.transcribe(input)`) per `ai-architecture.md` v2.0.0 — no direct Whisper API call
 
 **Acceptance Criteria**:
 1. Photo upload with metadata succeeds (MAT-T-0015)
@@ -338,20 +340,20 @@ MAT is built in **eleven waves** (Wave 0–Wave 9, plus Waves 5.5 and 5.6). Each
 | **Test Registry** | MAT-T-0026–MAT-T-0033 |
 
 **Scope**:
-- Maturity level prediction service (GPT-4 Turbo) per `ai-architecture.md`
-- Confidence scoring with rationale and evidence citations
-- Gap analysis (immediate, medium-term, long-term)
-- Refuse-to-score logic (insufficient evidence threshold)
-- Fallback scoring (GPT-4o Mini) on primary failure
-- AI response validation via Pydantic schemas
+- Invoke AIMC Gateway capability `analysis` for maturity level prediction (`aimc.analysis.scoreMaturity(input)`) per `ai-architecture.md` v2.0.0
+- Receive and surface confidence score, rationale, and evidence citations from AIMC Gateway response
+- Implement gap analysis rendering (immediate, medium-term, long-term) from structured AIMC response
+- Enforce refuse-to-score logic at MAT layer (insufficient evidence threshold — block Gateway call if < 2 evidence items)
+- AIMC Gateway manages fallback provider selection internally — do NOT implement direct fallback in MAT
+- Validate AIMC Gateway response against MAT AI scoring schema before storage
 
 **Acceptance Criteria**:
-1. AI produces maturity score with confidence level (MAT-T-0026)
-2. Rationale includes evidence citations (MAT-T-0027)
-3. Gap analysis categorizes findings correctly (MAT-T-0028)
-4. Refuse-to-score triggers below evidence threshold (MAT-T-0029)
-5. Fallback scoring activates on primary failure (MAT-T-0030)
-6. Invalid AI responses rejected by schema validation (MAT-T-0031–0033)
+1. AIMC Gateway returns maturity score with confidence level; MAT stores and surfaces result (MAT-T-0026)
+2. Rationale includes evidence citations as returned by AIMC Gateway (MAT-T-0027)
+3. Gap analysis renders correctly from structured AIMC Gateway response (MAT-T-0028)
+4. MAT blocks Gateway call and flags criterion as "AI Blocked" below evidence threshold (MAT-T-0029)
+5. AIMC Gateway unavailability returns structured error; MAT surfaces "AI temporarily unavailable" state with no direct fallback logic (verified by MAT-T-0030)
+6. Invalid AIMC Gateway responses rejected by MAT schema validation (MAT-T-0031–0033)
 
 #### Task 3.2: Human Confirmation UI & Workflow
 
@@ -429,7 +431,7 @@ MAT is built in **eleven waves** (Wave 0–Wave 9, plus Waves 5.5 and 5.6). Each
 - DOCX export with standard template
 - PDF export with styling
 - JSON export for API consumers
-- AI-assisted executive summary generation (GPT-4 Turbo)
+- AI-assisted executive summary generation via AIMC Gateway capability `document-generation` per `ai-architecture.md` v2.0.0 — no direct GPT-4 Turbo call
 - Review table with Excel export
 
 **Acceptance Criteria**:
@@ -1374,7 +1376,7 @@ Wave 9:  [BLOCKED: Awaiting AIMC Wave 5] ──→ [9.1 AIMC Embeddings/RAG Inte
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|------------|
-| AI API availability (OpenAI) | Medium | High | Circuit breaker + fallback model (GPT-4o Mini) per `ai-architecture.md` |
+| AI API availability (AIMC Gateway) | Medium | High | AIMC Gateway manages circuit breaking and fallback internally per `AIMC_STRATEGY.md` v1.0.0; MAT surfaces AIMC error response to user |
 | Offline sync conflicts | Medium | Medium | Server-wins strategy with merge for non-conflicting fields per `offline-sync-architecture.md` |
 | RLS policy gaps | Low | Critical | Automated RLS tests per wave; dedicated test fixtures per organisation |
 | Performance regression | Medium | Medium | Performance budgets in CI; k6 tests at each wave gate |
@@ -1415,6 +1417,10 @@ This implementation plan is accepted when:
 11. ✅ AIMC Integration waves (7, 8, 9) defined with explicit BLOCKED status and AIMC prerequisite gates per `AIMC_STRATEGY.md` v1.0.0
 
 **Change Log**:
+- v1.7.0 (2026-02-23): Tasks 1.2, 2.1, 3.1, 4.2 scope and acceptance criteria corrected to remove all
+  direct-provider references (GPT-4 Turbo, Whisper API, GPT-4o Mini fallback) per `AIMC_STRATEGY.md`
+  v1.0.0. Derivation chain updated to FR-001–FR-072. All builder-facing scope now references AIMC
+  Gateway capability calls exclusively.
 - v1.6.0 (2026-02-23): Added Waves 7, 8, 9 (AIMC Advisory, Analysis, Embeddings/RAG Integration).
   All three waves BLOCKED pending upstream AIMC waves per `AIMC_STRATEGY.md` v1.0.0. Updated
   derivation chain to include AIMC_STRATEGY.md and ai-architecture.md v2.0.0. Issue #377 superseded.
