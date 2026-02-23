@@ -248,14 +248,14 @@
     },
     {
       "filename": "ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md",
-      "version": "1.5",
-      "file_hash": "5808c9accecde3b0",
-      "effective_date": "2026-02-21",
+      "version": "1.3",
+      "file_hash": "1db9160d2ee2",
+      "effective_date": "unknown",
       "description": "This document defines the **mandatory completeness requirements** for all architecture artifacts in the Maturion ecosystem.",
       "type": "canon",
       "path": "governance/canon/ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "5808c9accecde3b0a1bb28365e22c870c261d4853754e079d0679328ef901c7e"
+      "file_hash_sha256": "1db9160d2ee2a2abc321b0e9c7b98311e5012b268e6e974fc76c8a758e26d51d"
     },
     {
       "filename": "ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
