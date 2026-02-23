@@ -727,6 +727,7 @@ fi
    - Always verify sender in registry before processing ripple
    - Constitutional changes require CS2 escalation
    ```
+   - **Parking Station**: Append one-line summary per suggestion to `.agent-workspace/parking-station/suggestions-log.md` (create if absent). Format: `| YYYY-MM-DD | <agent> | <session-NNN> | <one-sentence summary> | <session-memory-filename> |`
 
 3. **Memory Rotation**:
    - If >5 sessions exist, move oldest to `memory/.archive/`

@@ -533,6 +533,8 @@ When completing wave/task and generating IBWR evidence, builder MUST update BUIL
 - `.agent-workspace/ui-builder/personal/lessons-learned.md`
 - `.agent-workspace/ui-builder/personal/patterns.md`
 
+- **Parking Station**: Append one-line summary per suggestion to `.agent-workspace/parking-station/suggestions-log.md` (create if absent). Format: `| YYYY-MM-DD | <agent> | <session-NNN> | <one-sentence summary> | <session-memory-filename> |`
+
 **Authority**: LIVING_AGENT_SYSTEM.md v6.2.0, governance/canon/AGENT_HANDOVER_AUTOMATION.md
 
 ### 4.3 Mandatory Process Improvement Reflection (Priority B_M)
