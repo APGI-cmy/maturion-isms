@@ -1,8 +1,56 @@
 {
   "version": "1.0.0",
   "last_updated": "2026-02-21",
-  "total_canons": 176,
-  "generation_timestamp": "2026-02-21T10:47:46Z",
+  "total_canons": 177,
+  "generation_timestamp": "2026-02-21T16:30:00Z",
+  "canon_entry_schema": {
+    "description": "Schema for canon entries in CANON_INVENTORY.json",
+    "required_fields": [
+      "filename",
+      "version",
+      "file_hash",
+      "effective_date",
+      "description",
+      "type",
+      "path",
+      "layer_down_status",
+      "file_hash_sha256"
+    ],
+    "optional_fields": {
+      "canonical_version": {
+        "type": "string",
+        "description": "Canonical version (same as version field); intentionally redundant with 'version' to support version-guard tooling in consumer repos that needs an explicit canonical baseline field",
+        "example": "1.2.0"
+      },
+      "local_version": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Highest known consumer repo version if a local extension exists; null when no extension is present",
+        "example": "1.3.0",
+        "nullable": true
+      },
+      "local_extension": {
+        "type": "boolean",
+        "description": "Whether any consumer repo has a local extension (local_version > canonical_version)",
+        "default": false
+      },
+      "layer_up_status": {
+        "type": "string",
+        "description": "Current status of layer-up processing for this file",
+        "enum": [
+          "NONE",
+          "PENDING",
+          "PROPOSED",
+          "APPROVED",
+          "INTEGRATED",
+          "REJECTED"
+        ],
+        "default": "NONE"
+      }
+    }
+  },
   "canons": [
     {
       "filename": "ACTIVATION_STATE_MODEL.md",
@@ -163,7 +211,7 @@
       "version": "1",
       "file_hash": "963eed45e027",
       "effective_date": "unknown",
-      "description": "This document defines the only legitimate process by which software agents may be introduced (“recruited”) into the governance system administered by the Foreman.",
+      "description": "This document defines the only legitimate process by which software agents may be introduced (\u201crecruited\u201d) into the governance system administered by the Foreman.",
       "type": "canon",
       "path": "governance/canon/AGENT_RECRUITMENT.md",
       "layer_down_status": "PUBLIC_API",
@@ -435,7 +483,7 @@
     },
     {
       "filename": "COGNITIVE_CAPABILITY_ORCHESTRATION_MODEL.md",
-      "version": "1.1.0 — ACTIVE OPERATIONAL GOVERNANCE",
+      "version": "1.1.0 \u2014 ACTIVE OPERATIONAL GOVERNANCE",
       "file_hash": "722e42c369f9",
       "effective_date": "2026-01-03 (Activation), 2025-12-24 (Original)",
       "description": "This document formally defines the **Cognitive Capability Orchestration Model** for the Maturion ecosystem.",
@@ -1065,7 +1113,7 @@
       "version": "1.0",
       "file_hash": "23d86014f109",
       "effective_date": "unknown",
-      "description": "This document defines the **Initialization Completeness Gate** — a mandatory governance gate that verifies repository initialization completeness before architecture, build, or execution activities...",
+      "description": "This document defines the **Initialization Completeness Gate** \u2014 a mandatory governance gate that verifies repository initialization completeness before architecture, build, or execution activities...",
       "type": "canon",
       "path": "governance/canon/INITIALIZATION_COMPLETENESS_GATE.md",
       "layer_down_status": "PUBLIC_API",
@@ -1092,6 +1140,17 @@
       "path": "governance/canon/LAYER_UP_PROTOCOL.md",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "0f5b2d9c14640e156300a72370841d38dcc52da2c519c8c181683f33694f39c3"
+    },
+    {
+      "filename": "GOVERNANCE_LAYER_UP_PROTOCOL.md",
+      "version": "1.0.0",
+      "file_hash": "5f00356e78a1",
+      "effective_date": "2026-02-21",
+      "description": "This protocol defines the **automated mechanism** for detecting and proposing canonization of local governance extensions in consumer repositories when a consumer repo's governance file version exceeds the canonical repository's version.",
+      "type": "canon",
+      "path": "governance/canon/GOVERNANCE_LAYER_UP_PROTOCOL.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "5f00356e78a11466290758c6f9363cb646546295e01597b0a1e0969629b11bd7"
     },
     {
       "filename": "LEARNING_INTAKE_AND_PROMOTION_MODEL.md",
@@ -1340,7 +1399,7 @@
       "version": "1.0.0",
       "file_hash": "1faef6d0741c",
       "effective_date": "2025-12-25",
-      "description": "This document formally defines the **authority boundary** between:\n- **Foreman (FM)** — execution authority within repositories\n- **Maturion** — control-plane authority for platform actions (GitHub)",
+      "description": "This document formally defines the **authority boundary** between:\n- **Foreman (FM)** \u2014 execution authority within repositories\n- **Maturion** \u2014 control-plane authority for platform actions (GitHub)",
       "type": "canon",
       "path": "governance/canon/PLATFORM_AUTHORITY_BOUNDARY_AND_DELEGATION_MODEL.md",
       "layer_down_status": "PUBLIC_API",
@@ -1538,7 +1597,7 @@
       "version": "1",
       "file_hash": "d2c96ce6d14c",
       "effective_date": "unknown",
-      "description": "This rule enforces alignment between a PR’s declared scope\nand the files actually modified in the PR.",
+      "description": "This rule enforces alignment between a PR\u2019s declared scope\nand the files actually modified in the PR.",
       "type": "canon",
       "path": "governance/canon/SCOPE_TO_DIFF_RULE.md",
       "layer_down_status": "PUBLIC_API",
