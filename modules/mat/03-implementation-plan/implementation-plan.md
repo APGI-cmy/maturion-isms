@@ -1,7 +1,7 @@
 # MAT — Implementation Plan
 
 **Module**: MAT (Manual Audit Tool)  
-**Version**: v1.5.0  
+**Version**: v1.7.0  
 **Status**: APPROVED  
 **Owner**: Foreman (FM)  
 **Created**: 2026-02-13  
@@ -24,14 +24,14 @@ This document defines the complete, phased implementation plan for the MAT modul
 ### Derivation Chain
 
 ```
-App Description → FRS (FR-001–FR-071) → TRS (TR-001–TR-071) → Architecture (13 documents) → Test Registry (MAT-T-0001–MAT-T-0098) → This Plan
+App Description → FRS (FR-001–FR-072) → TRS (TR-001–TR-072) → Architecture (13 documents) → Test Registry (MAT-T-0001–MAT-T-0098) → This Plan
 ```
 
 ---
 
 ## 1. Build Wave Overview
 
-MAT is built in **eight waves** (Wave 0–Wave 7). Each wave has a gate that must achieve 100% GREEN before the next wave begins.
+MAT is built in **eleven waves** (Wave 0–Wave 9, plus Waves 5.5 and 5.6). Each wave has a gate that must achieve 100% GREEN before the next wave begins.
 
 | Wave | Name | Builder(s) | Execution | Tests | Est. Duration |
 |------|------|-----------|-----------|-------|---------------|
@@ -44,8 +44,24 @@ MAT is built in **eight waves** (Wave 0–Wave 7). Each wave has a gate that mus
 | 5.5 | Frontend Application Assembly | ui-builder | Sequential (5.5.1→5.5.2→5.5.3) | FR-070, FR-071 acceptance criteria | 3 days |
 | 5.6 | UI Component Wiring & Data Integration | ui-builder | Sequential (5.6.1→5.6.2→5.6.3→5.6.4→5.6.5→5.6.6) | MAT-T-0001–0042 (functional frontend tests) | 5 days |
 | 6 | Deployment & Commissioning | api-builder, qa-builder | Sequential (6.1→6.2→6.3→6.4) | CWT (all tests on production) | 3 days |
+| 7 | **AIMC Advisory Integration** *(BLOCKED — Awaiting AIMC Wave 3)* | api-builder, ui-builder | Sequential | MAT-T-AIMC-001–MAT-T-AIMC-010 (RED until AIMC Wave 3) | TBD |
+| 8 | **AIMC Analysis Integration** *(BLOCKED — Awaiting AIMC Wave 4)* | api-builder | Sequential | MAT-T-AIMC-011–MAT-T-AIMC-020 (RED until AIMC Wave 4) | TBD |
+| 9 | **AIMC Embeddings/RAG Integration** *(BLOCKED — Awaiting AIMC Wave 5)* | api-builder | Sequential | MAT-T-AIMC-021–MAT-T-AIMC-030 (RED until AIMC Wave 5) | TBD |
 
-**Total Estimated Duration**: ~41 working days (8.5 weeks)
+**Total Estimated Duration**: ~41 working days (8.5 weeks) for Waves 0–6. Waves 7–9 duration TBD — blocked on AIMC delivery.
+
+> **⚠️ AIMC BLOCKER — Waves 7, 8, 9**: These waves CANNOT start or pass their gate until the upstream
+> AIMC wave is confirmed complete by POLC/CS2. All AI test cases for these waves are RED and will
+> remain RED until the respective AIMC Gateway capability is delivered. Builders MUST NOT begin
+> any implementation work for Waves 7–9 without explicit POLC/CS2 approval.
+
+> **Change Note (v1.7.0, 2026-02-23)**: Tasks 1.2, 2.1, 3.1, and 4.2 scope and acceptance criteria corrected to remove all direct-provider references (GPT-4 Turbo, Whisper API, GPT-4o Mini fallback). All builder-facing scope statements now reference AIMC Gateway capability calls exclusively per `AIMC_STRATEGY.md` v1.0.0 and `ai-architecture.md` v2.0.0. Derivation chain updated to include FR-072.
+
+> **Change Note (v1.6.0, 2026-02-23)**: Waves 7 (AIMC Advisory Integration), 8 (AIMC Analysis
+> Integration), and 9 (AIMC Embeddings/RAG Integration) added per AIMC Strategy v1.0.0 realignment.
+> All three waves are BLOCKED pending their upstream AIMC wave. Wave count updated to 11. Prior AI
+> integration approach (direct provider calls) is constitutionally prohibited. Issue #377 superseded.
+> See `ai-architecture.md` v2.0.0 and BUILD_PROGRESS_TRACKER.md AIMC deviation entry.
 
 > **Change Note (v1.3.0, 2026-02-16)**: Wave 5.5 (Frontend Application Assembly) added to address governance gap where all component-level tests passed but no deployable React application was built. Wave 5.5 sits between Waves 5 and 6 because it requires all component implementations (Waves 0–5) to be complete before assembly, and must complete before deployment (Wave 6). See BUILD_PROGRESS_TRACKER.md Deviation #9.
 
@@ -182,18 +198,18 @@ MAT is built in **eight waves** (Wave 0–Wave 7). Each wave has a gate that mus
 | **Test Registry** | MAT-T-0007–MAT-T-0014 |
 
 **Scope**:
-- Implement AI Gateway service for document parsing per `ai-architecture.md`
-- Wire GPT-4 Turbo for criteria extraction (Domain → MPS → Criteria)
-- Implement deterministic validation (schema, coverage, numbering)
-- Implement circuit breaker and rate limiting per `system-architecture.md` §3.3
+- Invoke `@maturion/ai-centre` Gateway capability `analysis` for criteria document parsing per `ai-architecture.md` v2.0.0
+- Pass document content as structured input to `aimc.analysis.parseCriteriaDocument(input)`
+- Implement deterministic validation of AIMC Gateway response (schema, coverage, numbering)
 - Create human review queue for parsed results
+- All routing, model selection, circuit breaking, and rate limiting are managed by the AIMC Gateway — do NOT implement these in MAT
 
 **Acceptance Criteria**:
-1. AI parses PDF into structured criteria JSON (MAT-T-0007)
+1. AI parses PDF into structured criteria JSON via AIMC Gateway (MAT-T-0007)
 2. Parsed criteria follow Domain → MPS → Criteria hierarchy (MAT-T-0008)
-3. Invalid AI output rejected by schema validation (MAT-T-0009)
-4. Circuit breaker activates on repeated failures (MAT-T-0010)
-5. Fallback to GPT-4o Mini when primary unavailable (MAT-T-0011)
+3. Invalid AIMC Gateway response rejected by MAT schema validation (MAT-T-0009)
+4. AIMC Gateway unavailability surfaces a structured error to MAT; MAT offers manual review mode (MAT-T-0010)
+5. No direct provider fallback logic exists in MAT; AIMC Gateway manages all fallback internally (verified by MAT-T-0011)
 6. Human review interface shows parsed results for approval (MAT-T-0012–0014)
 
 #### Task 1.3: Criteria Management UI
@@ -245,7 +261,7 @@ MAT is built in **eight waves** (Wave 0–Wave 7). Each wave has a gate that mus
 - SHA-256 hashing at upload for immutability
 - Evidence metadata capture (timestamp, GPS, criterion link)
 - Append-only storage (no update/delete through API)
-- Audio transcription via Whisper API per `ai-architecture.md`
+- Audio transcription via AIMC Gateway capability `analysis` (`aimc.analysis.transcribe(input)`) per `ai-architecture.md` v2.0.0 — no direct Whisper API call
 
 **Acceptance Criteria**:
 1. Photo upload with metadata succeeds (MAT-T-0015)
@@ -324,20 +340,20 @@ MAT is built in **eight waves** (Wave 0–Wave 7). Each wave has a gate that mus
 | **Test Registry** | MAT-T-0026–MAT-T-0033 |
 
 **Scope**:
-- Maturity level prediction service (GPT-4 Turbo) per `ai-architecture.md`
-- Confidence scoring with rationale and evidence citations
-- Gap analysis (immediate, medium-term, long-term)
-- Refuse-to-score logic (insufficient evidence threshold)
-- Fallback scoring (GPT-4o Mini) on primary failure
-- AI response validation via Pydantic schemas
+- Invoke AIMC Gateway capability `analysis` for maturity level prediction (`aimc.analysis.scoreMaturity(input)`) per `ai-architecture.md` v2.0.0
+- Receive and surface confidence score, rationale, and evidence citations from AIMC Gateway response
+- Implement gap analysis rendering (immediate, medium-term, long-term) from structured AIMC response
+- Enforce refuse-to-score logic at MAT layer (insufficient evidence threshold — block Gateway call if < 2 evidence items)
+- AIMC Gateway manages fallback provider selection internally — do NOT implement direct fallback in MAT
+- Validate AIMC Gateway response against MAT AI scoring schema before storage
 
 **Acceptance Criteria**:
-1. AI produces maturity score with confidence level (MAT-T-0026)
-2. Rationale includes evidence citations (MAT-T-0027)
-3. Gap analysis categorizes findings correctly (MAT-T-0028)
-4. Refuse-to-score triggers below evidence threshold (MAT-T-0029)
-5. Fallback scoring activates on primary failure (MAT-T-0030)
-6. Invalid AI responses rejected by schema validation (MAT-T-0031–0033)
+1. AIMC Gateway returns maturity score with confidence level; MAT stores and surfaces result (MAT-T-0026)
+2. Rationale includes evidence citations as returned by AIMC Gateway (MAT-T-0027)
+3. Gap analysis renders correctly from structured AIMC Gateway response (MAT-T-0028)
+4. MAT blocks Gateway call and flags criterion as "AI Blocked" below evidence threshold (MAT-T-0029)
+5. AIMC Gateway unavailability returns structured error; MAT surfaces "AI temporarily unavailable" state with no direct fallback logic (verified by MAT-T-0030)
+6. Invalid AIMC Gateway responses rejected by MAT schema validation (MAT-T-0031–0033)
 
 #### Task 3.2: Human Confirmation UI & Workflow
 
@@ -415,7 +431,7 @@ MAT is built in **eight waves** (Wave 0–Wave 7). Each wave has a gate that mus
 - DOCX export with standard template
 - PDF export with styling
 - JSON export for API consumers
-- AI-assisted executive summary generation (GPT-4 Turbo)
+- AI-assisted executive summary generation via AIMC Gateway capability `document-generation` per `ai-architecture.md` v2.0.0 — no direct GPT-4 Turbo call
 - Review table with Excel export
 
 **Acceptance Criteria**:
@@ -1074,7 +1090,103 @@ MAT is built in **eight waves** (Wave 0–Wave 7). Each wave has a gate that mus
 
 ---
 
-## 3. Cross-Wave Tasks (Continuous)
+### 2.8 Wave 7 — AIMC Advisory Integration
+
+> **🚫 STATUS: BLOCKED — Cannot start until AIMC Wave 3 (Advisory Gateway) is confirmed complete by POLC/CS2.**
+> Builders MUST NOT begin any implementation work for this wave without explicit POLC/CS2 approval.
+> All test cases for this wave are RED and will remain RED until the AIMC Wave 3 prerequisite is met.
+
+**Objective**: Integrate the MAT embedded AI assistant panel with the `@maturion/ai-centre` Advisory
+Gateway, consuming the Maturity Advisor and related personas per FR-072 and TR-072.
+
+**AIMC Prerequisite**: AIMC Wave 3 — Advisory Gateway delivered in `@maturion/ai-centre` package.
+
+**Architecture Reference**: `modules/mat/02-architecture/ai-architecture.md` v2.0.0 §§2–4
+
+| Field | Value |
+|-------|-------|
+| **Status** | BLOCKED — Awaiting AIMC Wave 3 |
+| **Builder** | api-builder, ui-builder (after POLC/CS2 approval) |
+| **Dependencies** | Wave 6 complete; AIMC Wave 3 complete |
+| **FRS Refs** | FR-072, FR-028, FR-029 |
+| **TRS Refs** | TR-072, TR-017 |
+| **Tests** | MAT-T-AIMC-001–MAT-T-AIMC-010 (RED — pending AIMC Wave 3) |
+
+**Acceptance Criteria** (cannot be signed off before AIMC Wave 3):
+1. `EmbeddedAIAssistant` component calls `@maturion/ai-centre` Gateway — no direct provider calls.
+2. Persona list sourced from AIMC canonical agent directory.
+3. AIMC invocation reference ID captured and stored per FR-029.
+4. No AI provider API keys in MAT bundle or MAT backend config.
+5. Panel handles AIMC unavailability gracefully (disabled state, no crash).
+
+**Wave 7 Gate**: All MAT-T-AIMC-001–MAT-T-AIMC-010 tests GREEN. AIMC Wave 3 confirmed complete.
+POLC/CS2 approval on record. PREHANDOVER proof compiled. Zero direct provider references in code.
+
+---
+
+### 2.9 Wave 8 — AIMC Analysis Integration
+
+> **🚫 STATUS: BLOCKED — Cannot start until AIMC Wave 4 (Analysis Gateway) is confirmed complete by POLC/CS2.**
+> Builders MUST NOT begin any implementation work for this wave without explicit POLC/CS2 approval.
+> All test cases for this wave are RED and will remain RED until the AIMC Wave 4 prerequisite is met.
+
+**Objective**: Refactor MAT criteria parsing (FR-005, TR-037) and maturity scoring (FR-023, TR-038)
+pipelines to call `@maturion/ai-centre` Analysis Gateway instead of any direct provider.
+
+**AIMC Prerequisite**: AIMC Wave 4 — Analysis Gateway delivered in `@maturion/ai-centre` package.
+
+**Architecture Reference**: `modules/mat/02-architecture/ai-architecture.md` v2.0.0 §3
+
+| Field | Value |
+|-------|-------|
+| **Status** | BLOCKED — Awaiting AIMC Wave 4 |
+| **Builder** | api-builder (after POLC/CS2 approval) |
+| **Dependencies** | Wave 7 complete; AIMC Wave 4 complete |
+| **FRS Refs** | FR-005, FR-023, FR-024, FR-028, FR-029, FR-030 |
+| **TRS Refs** | TR-037, TR-038, TR-040, TR-017 |
+| **Tests** | MAT-T-AIMC-011–MAT-T-AIMC-020 (RED — pending AIMC Wave 4) |
+
+**Acceptance Criteria** (cannot be signed off before AIMC Wave 4):
+1. Criteria parsing calls `aimc.analysis.parseCriteriaDocument()` — no direct provider calls.
+2. Maturity scoring calls `aimc.analysis.scoreMaturity()` — no direct provider calls.
+3. All existing Wave 1/3 test cases remain GREEN with AIMC-backed implementation.
+4. No provider SDK imports or API keys in MAT codebase.
+
+**Wave 8 Gate**: All MAT-T-AIMC-011–MAT-T-AIMC-020 tests GREEN. AIMC Wave 4 confirmed complete.
+POLC/CS2 approval on record. PREHANDOVER proof compiled. Zero direct provider references in code.
+
+---
+
+### 2.10 Wave 9 — AIMC Embeddings/RAG Integration
+
+> **🚫 STATUS: BLOCKED — Cannot start until AIMC Wave 5 (Embeddings/RAG Gateway) is confirmed complete by POLC/CS2.**
+> Builders MUST NOT begin any implementation work for this wave without explicit POLC/CS2 approval.
+> All test cases for this wave are RED and will remain RED until the AIMC Wave 5 prerequisite is met.
+
+**Objective**: Integrate MAT with `@maturion/ai-centre` Embeddings/RAG Gateway for criteria
+similarity search and evidence-to-criterion matching.
+
+**AIMC Prerequisite**: AIMC Wave 5 — Embeddings/RAG Gateway delivered in `@maturion/ai-centre` package.
+
+**Architecture Reference**: `modules/mat/02-architecture/ai-architecture.md` v2.0.0 §3
+
+| Field | Value |
+|-------|-------|
+| **Status** | BLOCKED — Awaiting AIMC Wave 5 |
+| **Builder** | api-builder (after POLC/CS2 approval) |
+| **Dependencies** | Wave 8 complete; AIMC Wave 5 complete |
+| **FRS Refs** | FR-055 (Extensibility), FR-056 (PIT Integration) |
+| **TRS Refs** | TR-017 (AI Invocation Logging) |
+| **Tests** | MAT-T-AIMC-021–MAT-T-AIMC-030 (RED — pending AIMC Wave 5) |
+
+**Acceptance Criteria** (cannot be signed off before AIMC Wave 5):
+1. Embeddings/RAG calls route through `@maturion/ai-centre` Gateway — no direct provider calls.
+2. No vector database credentials or embedding model config in MAT configuration.
+
+**Wave 9 Gate**: All MAT-T-AIMC-021–MAT-T-AIMC-030 tests GREEN. AIMC Wave 5 confirmed complete.
+POLC/CS2 approval on record. PREHANDOVER proof compiled. Zero direct provider references in code.
+
+---
 
 These tasks run across all waves and are the responsibility of the qa-builder.
 
@@ -1183,6 +1295,10 @@ Wave 4:                        [4.1 Dashboards] ┐
 Wave 5:                        [5.1 Watchdog]  ──→ [5.2 Integration]
                                                 │
 Wave 6:  [6.1 Vercel Provision] ──→ [6.2 Staging Validate] ──→ [6.3 Prod Deploy] ──→ [6.4 CWT + Sign-Over]
+
+Wave 7:  [BLOCKED: Awaiting AIMC Wave 3] ──→ [7.1 AIMC Advisory Integration (FR-072, TR-072)]
+Wave 8:  [BLOCKED: Awaiting AIMC Wave 4] ──→ [8.1 AIMC Analysis Integration (TR-037, TR-038)]
+Wave 9:  [BLOCKED: Awaiting AIMC Wave 5] ──→ [9.1 AIMC Embeddings/RAG Integration]
 ```
 
 **Legend**:
@@ -1260,7 +1376,7 @@ Wave 6:  [6.1 Vercel Provision] ──→ [6.2 Staging Validate] ──→ [6.3 
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|------------|
-| AI API availability (OpenAI) | Medium | High | Circuit breaker + fallback model (GPT-4o Mini) per `ai-architecture.md` |
+| AI API availability (AIMC Gateway) | Medium | High | AIMC Gateway manages circuit breaking and fallback internally per `AIMC_STRATEGY.md` v1.0.0; MAT surfaces AIMC error response to user |
 | Offline sync conflicts | Medium | Medium | Server-wins strategy with merge for non-conflicting fields per `offline-sync-architecture.md` |
 | RLS policy gaps | Low | Critical | Automated RLS tests per wave; dedicated test fixtures per organisation |
 | Performance regression | Medium | Medium | Performance budgets in CI; k6 tests at each wave gate |
@@ -1298,8 +1414,18 @@ This implementation plan is accepted when:
 8. ✅ CST/CWT integration testing requirements defined per `governance/canon/COMBINED_TESTING_PATTERN.md`
 9. ✅ Deployment & Commissioning wave (Wave 6) defined with production CWT, formal sign-over, and closure certification
 10. ✅ Frontend Application Assembly wave (Wave 5.5) defined with scaffolding, wiring, and build verification per FR-070, FR-071, TR-071
+11. ✅ AIMC Integration waves (7, 8, 9) defined with explicit BLOCKED status and AIMC prerequisite gates per `AIMC_STRATEGY.md` v1.0.0
 
 **Change Log**:
+- v1.7.0 (2026-02-23): Tasks 1.2, 2.1, 3.1, 4.2 scope and acceptance criteria corrected to remove all
+  direct-provider references (GPT-4 Turbo, Whisper API, GPT-4o Mini fallback) per `AIMC_STRATEGY.md`
+  v1.0.0. Derivation chain updated to FR-001–FR-072. All builder-facing scope now references AIMC
+  Gateway capability calls exclusively.
+- v1.6.0 (2026-02-23): Added Waves 7, 8, 9 (AIMC Advisory, Analysis, Embeddings/RAG Integration).
+  All three waves BLOCKED pending upstream AIMC waves per `AIMC_STRATEGY.md` v1.0.0. Updated
+  derivation chain to include AIMC_STRATEGY.md and ai-architecture.md v2.0.0. Issue #377 superseded.
+  See BUILD_PROGRESS_TRACKER.md AIMC deviation entry.
+- v1.5.0 (2026-02-17): Added Wave 5.6 (UI Component Wiring & Data Integration) per governance remediation. See BUILD_PROGRESS_TRACKER.md Deviation #11.
 - v1.4.0 (2026-02-16): Added MANDATORY PRE-BUILD GATE to Wave 5.5 requiring QA-to-Red suite before implementation. Enforces canonical workflow (Architecture → QA-to-Red → Build-to-Green). See BUILD_PROGRESS_TRACKER.md Deviation #10.
 - v1.3.0 (2026-02-16): Added Wave 5.5 (Frontend Application Assembly) per governance remediation. Updated derivation chain to FR-001–FR-071 and TR-001–TR-071. See BUILD_PROGRESS_TRACKER.md Deviation #9.
 - v1.2.0 (2026-02-15): Added Wave 6 (Deployment & Commissioning).
@@ -1318,7 +1444,7 @@ This implementation plan is accepted when:
 | System Architecture | `modules/mat/02-architecture/system-architecture.md` |
 | Data Architecture | `modules/mat/02-architecture/data-architecture.md` |
 | Security Architecture | `modules/mat/02-architecture/security-architecture.md` |
-| AI Architecture | `modules/mat/02-architecture/ai-architecture.md` |
+| AI Architecture | `modules/mat/02-architecture/ai-architecture.md` (v2.0.0 — AIMC Gateway pattern) |
 | Offline/Sync Architecture | `modules/mat/02-architecture/offline-sync-architecture.md` |
 | UI Component Architecture | `modules/mat/02-architecture/ui-component-architecture.md` |
 | Performance Architecture | `modules/mat/02-architecture/performance-architecture.md` |

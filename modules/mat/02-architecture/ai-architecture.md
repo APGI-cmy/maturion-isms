@@ -1,292 +1,179 @@
-# MANUAL AUDIT TOOL (MAT) – AI ARCHITECTURE v1.0.0
+# MANUAL AUDIT TOOL (MAT) – AI ARCHITECTURE v2.0.0
 
-| Field            | Value                                      |
-|------------------|--------------------------------------------|
-| Module           | MAT – Manual Audit Tool                    |
-| Version          | v1.0.0                                     |
-| Status           | Approved                                   |
-| Classification   | Internal – Architecture                    |
-| Owner            | Maturion Platform Team                     |
-| Last Updated     | 2025-01-01                                 |
-| TRS Requirements | TR-037, TR-038, TR-039, TR-040, TR-041     |
+| Field            | Value                                                                  |
+|------------------|------------------------------------------------------------------------|
+| Module           | MAT – Manual Audit Tool                                                |
+| Version          | v2.0.0                                                                 |
+| Status           | REALIGNED — Supersedes v1.0.0                                          |
+| Classification   | Internal – Architecture                                                |
+| Owner            | Maturion Platform Team                                                 |
+| Last Updated     | 2026-02-23                                                             |
+| Constitutional Authority | `AIMC_STRATEGY.md` v1.0.0 (AI Management Centre Strategy)     |
+| TRS Requirements | TR-037, TR-038, TR-039, TR-040, TR-041, TR-072 (see AIMC blocker note) |
 
----
-
-## 1. AI Architecture Overview
-
-- **Central AI Gateway (FastAPI)** mediates all AI operations
-- **Stateless microservice design**; all state in Supabase
-- Each AI capability is a separate module within the gateway
-- All operations are asynchronous with progress tracking
-
----
-
-## 2. AI Document Parsing Pipeline (TR-037)
-
-### Pipeline Steps
-
-1. **Document Ingestion**: Apache Tika extracts text from uploaded document (.doc, .docx, .pdf, .xls, .xlsx, .ppt, .pptx)
-2. **Text Chunking**: Split extracted text into chunks (max 8K tokens per chunk)
-3. **AI Parsing**: Send chunks to GPT-4 Turbo with structured parsing prompt
-   - Prompt includes: criteria structure schema, no-hallucination rules, coverage requirements
-   - System prompt defines Domain → MPS → Criteria hierarchy
-4. **Output Validation**: Pydantic model validates AI output against CriteriaStructureSchema
-5. **Confidence Check**: Items with confidence < 0.85 flagged as `needs_human_review`
-6. **Source Anchors**: Every extracted criterion links to source document location (page, paragraph)
-7. **Coverage Report**: All source blocks mapped or explicitly marked as non-criteria context
-8. **Hallucination Check**: Every criterion must have a `source_anchor`; missing = flagged
-
-### Parsing Output Schema
-
-```python
-class Criterion(BaseModel):
-    number: str  # e.g., "1.1.1"
-    title: str
-    description: str
-    source_anchor: str  # page/paragraph reference
-    confidence: float  # 0.0–1.0
-
-class MiniPerformanceStandard(BaseModel):
-    number: str  # e.g., "1.1"
-    title: str
-    criteria: list[Criterion]
-
-class Domain(BaseModel):
-    number: int
-    title: str
-    mini_performance_standards: list[MiniPerformanceStandard]
-
-class ParsedStructure(BaseModel):
-    domains: list[Domain]
-    coverage_report: CoverageReport
-    unmapped_content: list[str]
-```
-
-### Error Handling
-
-- **Document too large (>50 pages)**: Split into batches, process sequentially, merge results
-- **Unsupported format**: Return error with supported format list
-- **AI parsing failure**: Retry with different chunking strategy; if 3 failures → escalate to user
+> **⚠️ GOVERNANCE REALIGNMENT NOTICE — v2.0.0**
+>
+> This document supersedes `ai-architecture.md` v1.0.0. All prior content describing direct AI provider calls
+> (OpenAI API keys, GPT-4 Turbo model strings, Whisper API, circuit breaker implementation, etc.) from within
+> MAT is **constitutionally prohibited** per `AIMC_STRATEGY.md` v1.0.0.
+>
+> **AIMC Strategy is canonical authority.** MAT MUST NOT implement or call any AI provider directly.
+> All AI capabilities MUST be consumed exclusively via the `@maturion/ai-centre` package and its Gateway.
+>
+> **MAT AI integration is BLOCKED until the corresponding AIMC waves are complete.**
+> Builders MUST NOT proceed with any AI implementation wave until POLC/CS2 approves the realigned plans
+> and the upstream AIMC wave is confirmed delivered.
 
 ---
 
-## 3. AI Maturity Scoring Pipeline (TR-038)
+## 1. AI Architecture Overview — AIMC Gateway Pattern
 
-### Pipeline Steps
-
-1. **Evidence Aggregation**: Collect all evidence items for the criterion
-2. **Evidence-First Check**: If < 2 evidence items → refuse to score, return `refuse_to_score: true` with `missing_evidence_needed` list
-3. **Evidence Preparation**: Compile evidence (text, transcripts, image descriptions) into scoring context
-4. **Scoring Request**: Send to GPT-4 Turbo with maturity model definitions and scoring rubric
-   - Include: criterion description, all evidence, maturity level definitions (Basic through Resilient), evidence weighting rules
-5. **Output Validation**: Pydantic model validates against ScoringResultSchema
-6. **Confidence Check**: Confidence < 0.70 → flag for human review
-7. **Evidence Weighting**: Documentary evidence weighted higher than testimonial per FR-022
-8. **Gap Analysis**: AI identifies immediate, medium-term, and long-term improvement actions
-
-### Scoring Output Schema
-
-```python
-class GapAnalysis(BaseModel):
-    immediate: str  # Next maturity level actions
-    medium_term: str  # +2 level actions
-    long_term: str  # Resilient level actions
-
-class ScoringResult(BaseModel):
-    maturity_level: Literal["basic", "reactive", "compliant", "proactive", "resilient"]
-    confidence: float  # 0.0–1.0
-    rationale: str  # Evidence-citing rationale
-    gap_analysis: GapAnalysis
-    evidence_ids_used: list[str]
-    refuse_to_score: bool = False
-    missing_evidence_needed: list[str] | None = None
-
-class MaturityLevel(BaseModel):
-    level: int  # 1–5
-    name: str
-    description: str
-    indicators: list[str]
-```
-
-### Performance
-
-- < 30 seconds per criterion
-
----
-
-## 4. AI Transcription Pipeline (TR-039)
-
-### Pipeline Steps
-
-1. **Audio Input**: Accept .mp3, .wav, .m4a files
-2. **Video Input**: Accept .mp4, .mov, .avi → extract audio via FFmpeg
-3. **Transcription**: OpenAI Whisper API
-   - Timestamped segments with speaker identification
-   - Auto language detection with manual override option
-4. **Video Snapshot Extraction**: FFmpeg extracts keyframes at 10-second intervals + scene detection
-   - Thumbnails: 320×240px
-   - Metadata: duration, resolution, codec, frame rate
-5. **Output**: Timestamped transcript segments + snapshot images
-
-### Transcription Output Schema
-
-```python
-class TranscriptSegment(BaseModel):
-    start_time: float  # seconds
-    end_time: float  # seconds
-    speaker: str | None
-    text: str
-    confidence: float
-
-class TranscriptionResult(BaseModel):
-    segments: list[TranscriptSegment]
-    full_text: str
-    language_detected: str
-    duration_seconds: float
-
-class VideoProcessingResult(BaseModel):
-    transcription: TranscriptionResult
-    snapshots: list[SnapshotInfo]
-    metadata: VideoMetadata
-```
-
-### Processing Limits
-
-- Audio: < 2× real-time duration
-- Video: < 3× video duration
-- Max 2 concurrent video processing jobs per container instance
-- Job queue via Celery (Python) for background processing
-- Progress tracked via WebSocket or polling
-
----
-
-## 5. AI Model Routing Configuration (TR-040)
-
-### Routing Table
-
-Stored in database or config file, **NOT hardcoded**:
-
-```json
-[
-  {
-    "task_type": "document_parsing",
-    "primary_model": "gpt-4-turbo",
-    "fallback_model": "gpt-4o-mini",
-    "max_tokens": 4096,
-    "temperature": 0.1
-  },
-  {
-    "task_type": "transcription",
-    "primary_model": "whisper-1",
-    "fallback_model": null,
-    "max_tokens": null,
-    "temperature": null
-  },
-  {
-    "task_type": "scoring",
-    "primary_model": "gpt-4-turbo",
-    "fallback_model": "gpt-4o-mini",
-    "max_tokens": 2048,
-    "temperature": 0.2
-  },
-  {
-    "task_type": "image_analysis",
-    "primary_model": "gpt-4-vision-preview",
-    "fallback_model": "gpt-4-turbo",
-    "max_tokens": 2048,
-    "temperature": 0.1
-  },
-  {
-    "task_type": "report_generation",
-    "primary_model": "gpt-4-turbo",
-    "fallback_model": "gpt-4o-mini",
-    "max_tokens": 8192,
-    "temperature": 0.3
-  },
-  {
-    "task_type": "routine",
-    "primary_model": "gpt-4o-mini",
-    "fallback_model": null,
-    "max_tokens": 1024,
-    "temperature": 0.1
-  }
-]
-```
-
-### Invocation Logging (per FR-029)
-
-Every AI invocation logged with:
-
-- `model`, `model_version`, `prompt_tokens`, `completion_tokens`, `latency_ms`, `cost_estimate`, `timestamp`, `task_type`, `audit_id`, `criterion_id`, `status`, `error_message`
-
-### Model Versioning (per FR-032)
-
-- Model version recorded per invocation
-- Model upgrades require regression testing
-- Fine-tuning only with governance approval + audit trail
-
----
-
-## 6. AI Rate Limiting and Circuit Breaker (TR-041)
-
-### Rate Limiting
-
-- Configurable per model and task type
-- Default: follow OpenAI API rate limits
-
-### Retry Strategy
-
-- Exponential backoff with jitter
-- Base: 1 second, max: 60 seconds, max retries: 5
-- Jitter: ±2 seconds
-
-### Circuit Breaker
+MAT consumes AI capabilities exclusively through the `@maturion/ai-centre` Gateway. This is a hard
+architectural constraint imposed by `AIMC_STRATEGY.md` v1.0.0 and enforced at every wave gate.
 
 ```
-States: CLOSED → OPEN → HALF_OPEN → CLOSED
-
-CLOSED (normal operation):
-  - All requests pass through
-  - Track error rate in sliding 5-minute window
-
-CLOSED → OPEN:
-  - Trigger: Error rate > 10% over 5-minute window
-  - Action: Switch to fallback model immediately
-
-OPEN (fallback mode):
-  - Primary model requests blocked
-  - All requests routed to fallback model
-  - Duration: 30 seconds
-
-OPEN → HALF_OPEN:
-  - After 30 seconds, allow 1 test request to primary model
-
-HALF_OPEN → CLOSED:
-  - 3 consecutive successes → reset to CLOSED
-
-HALF_OPEN → OPEN:
-  - Any failure → back to OPEN for another 30 seconds
-
-FALLBACK FAILURE:
-  - If fallback model also fails → offer manual mode to user
-  - User can assign maturity level manually without AI
-  - Manual mode logged in audit trail
+┌─────────────────────────────────────────────────────────┐
+│                   MAT Module                            │
+│                                                         │
+│  ┌──────────────┐    ┌──────────────────────────────┐   │
+│  │  MAT Service │───▶│  @maturion/ai-centre Gateway │   │
+│  │  (any wave)  │    │  (AIMC shared package)       │   │
+│  └──────────────┘    └──────────────┬───────────────┘   │
+│                                     │ AIMC internal      │
+└─────────────────────────────────────│───────────────────┘
+                                      ▼
+                          ┌───────────────────────┐
+                          │  AI Providers         │
+                          │  (managed by AIMC)    │
+                          └───────────────────────┘
 ```
 
-### Metrics Tracked
+**Constitutional constraints** (non-negotiable):
 
-- Error rate per model
-- Circuit breaker state transitions
-- Fallback usage count
-- Manual mode usage count
-- All logged to `watchdog_metrics` table
+1. MAT MUST NOT hold any AI provider API keys — keys are owned and managed by AIMC.
+2. MAT MUST NOT import or depend on any AI provider SDK (OpenAI, Anthropic, etc.).
+3. All AI task invocations go through `@maturion/ai-centre` Gateway method calls.
+4. Model selection, routing, fallback, circuit breaking, and rate limiting are all AIMC responsibilities.
+5. App-facing AI personas (e.g., Maturity Advisor) MUST be sourced from the AIMC canonical agent
+   directory — MAT does not define its own personas.
 
 ---
 
-## 7. AI Security Considerations
+## 2. AIMC Integration Barrier
 
-- API keys stored in environment variables only (never in code or client)
-- All AI requests go through AI Gateway (no direct client-to-OpenAI calls)
-- Request/response content never logged (only metadata for privacy)
-- PII masking in prompts where applicable
-- AI output validated before storage (prevent injection via AI responses)
+MAT cannot implement or use any AI feature until the corresponding AIMC wave is completed and the
+`@maturion/ai-centre` package exposes the required Gateway capability.
+
+| MAT AI Wave       | AIMC Prerequisite Wave | Status                            |
+|-------------------|------------------------|-----------------------------------|
+| Wave 7 – Advisory Integration (FR-072, TR-072) | AIMC Wave 3 – Advisory Gateway | **BLOCKED — Awaiting AIMC Wave 3** |
+| Wave 8 – Analysis Integration (scoring, parsing) | AIMC Wave 4 – Analysis Gateway | **BLOCKED — Awaiting AIMC Wave 4** |
+| Wave 9 – Embeddings/RAG Integration | AIMC Wave 5 – Embeddings/RAG Gateway | **BLOCKED — Awaiting AIMC Wave 5** |
+
+**No MAT AI wave may begin or pass its gate before its upstream AIMC wave is confirmed complete.**
+
+---
+
+## 3. AI Capability Mapping — AIMC Gateway Methods
+
+The following table describes how each MAT AI capability maps to the AIMC Gateway. These method
+signatures are indicative; the authoritative contract is published by the AIMC package.
+
+| MAT Capability              | FRS Ref  | TRS Ref  | AIMC Gateway Method (indicative)              |
+|-----------------------------|----------|----------|-----------------------------------------------|
+| Criteria document parsing   | FR-005   | TR-037   | `aimc.analysis.parseCriteriaDocument(input)`  |
+| Maturity scoring per criterion | FR-023 | TR-038   | `aimc.analysis.scoreMaturity(input)`          |
+| Audio/video transcription   | FR-014, FR-017 | TR-039 | `aimc.analysis.transcribe(input)`           |
+| AI task routing (all tasks) | FR-028   | TR-040   | Managed internally by AIMC Gateway            |
+| AI invocation logging       | FR-029   | TR-017   | Managed internally by AIMC Gateway            |
+| Confidence flagging         | FR-030   | TR-038   | Returned in Gateway response payload          |
+| Rate limiting & circuit breaker | FR-031 | TR-041  | Managed internally by AIMC Gateway            |
+| Embedded AI assistant panel | FR-072   | TR-072   | `aimc.advisory.chat(persona, message)`        |
+
+**Key principle**: MAT supplies context and receives structured results. MAT does NOT configure models,
+manage retries, or hold any provider credentials.
+
+---
+
+## 4. App-Facing Personas
+
+AI personas (e.g., "Maturity Advisor", "Document Parser", "Scoring Assistant") MUST be sourced
+from the AIMC canonical agent directory. MAT MUST NOT define, version, or host its own persona
+configuration files.
+
+MAT declares which persona it wants to use by passing a persona identifier to the Gateway:
+
+```typescript
+// Example — indicative only; authoritative contract defined by AIMC package
+import { AIMCGateway } from '@maturion/ai-centre';
+
+const response = await AIMCGateway.advisory.chat({
+  persona: 'maturity-advisor',   // sourced from AIMC agent directory
+  message: userMessage,
+  context: { auditId, criterionId }
+});
+```
+
+Persona identifiers and their capabilities are published by the AIMC package. MAT must not hardcode
+model names, temperature values, or token limits.
+
+---
+
+## 5. AI Invocation Logging (MAT Responsibility)
+
+Although AIMC manages provider-level logging, MAT retains responsibility for audit-domain logging:
+
+- Record that an AI capability was invoked for a given `audit_id` and `criterion_id`.
+- Record the AIMC invocation reference ID returned by the Gateway (for cross-system traceability).
+- Record human confirmation / override decisions per FR-025 and FR-026.
+- Log all of the above to the MAT `ai_invocation_log` table (schema defined in `data-architecture.md`).
+
+MAT MUST NOT log raw AI prompts or responses (privacy constraint per FR-066). Only metadata and
+AIMC-issued reference IDs are stored.
+
+---
+
+## 6. Security Constraints
+
+- No AI provider API keys in any MAT configuration, environment file, or frontend bundle.
+- No direct provider SDK imports in MAT source code.
+- All AI traffic routes through the AIMC Gateway (server-side only; no client-to-AIMC direct calls
+  from the React frontend — all AI calls are proxied through MAT backend Edge Functions).
+- AI output validated by MAT against expected schemas before storage (prevents injection attacks
+  via malformed Gateway responses).
+
+---
+
+## 7. Prior Architecture (v1.0.0) — Superseded
+
+The prior `ai-architecture.md` v1.0.0 described:
+
+- A standalone Central AI Gateway (FastAPI) owned and operated by MAT.
+- Direct OpenAI API integration (GPT-4 Turbo, Whisper, GPT-4 Vision) with API keys in MAT config.
+- MAT-owned circuit breaker, retry logic, model routing table, and rate limiter.
+- MAT-defined model routing configuration.
+
+**All of the above is constitutionally prohibited under `AIMC_STRATEGY.md` v1.0.0.**
+
+This prior design is retained here as an information record only. It MUST NOT be used as a build
+reference. Any builder encountering legacy code or configuration that implements this pattern MUST
+flag it as a governance violation and halt.
+
+---
+
+## 8. Cross-References
+
+| Artifact                        | Location                                                          |
+|---------------------------------|-------------------------------------------------------------------|
+| Constitutional Authority        | `AIMC_STRATEGY.md` v1.0.0                                        |
+| FRS (AI requirements)           | `modules/mat/01-frs/functional-requirements.md` FR-005, FR-023–FR-032, FR-072 |
+| TRS (AI requirements)           | `modules/mat/01.5-trs/technical-requirements-specification.md` TR-037–TR-041, TR-072 |
+| Implementation Plan             | `modules/mat/03-implementation-plan/implementation-plan.md` Waves 7–9 |
+| Build Progress Tracker          | `modules/mat/BUILD_PROGRESS_TRACKER.md` (AIMC deviation entry)   |
+| AIMC Package                    | `@maturion/ai-centre` (shared package — external to MAT)         |
+
+**Change Log**:
+- v2.0.0 (2026-02-23): Full realignment to AIMC Gateway pattern per `AIMC_STRATEGY.md` v1.0.0.
+  Supersedes v1.0.0. All direct provider references removed. AIMC integration barrier documented.
+  Waves 7–9 defined as BLOCKED until upstream AIMC waves complete. Issue #377 superseded.
+- v1.0.0 (2025-01-01): Initial AI architecture (now superseded — constitutionally prohibited pattern).

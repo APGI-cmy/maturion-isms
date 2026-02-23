@@ -3,7 +3,7 @@
 **Module**: MAT (Manual Audit Tool)
 **Artifact Type**: Functional Requirements Specification
 **Status**: COMPLETE
-**Version**: v1.2.0
+**Version**: v1.4.0
 **Owner**: Foreman (FM)
 **Authority**: Derived from App Description v1.2 (modules/mat/00-app-description/app-description.md)
 **Applies To**: MAT module within maturion-isms repository
@@ -573,24 +573,24 @@ The system MUST enforce the 5-level maturity model and support both global and c
 
 ---
 
-## 8. AI Model Routing and Governance
+## 8. AI Gateway Integration Governance (AIMC-Delegated)
 
-### FR-028: Dynamic AI Task Routing
+### FR-028: AI Gateway Integration (AIMC-Delegated)
 
 **Priority**: P0
 **Source**: App Description §8, §15.4, §16.6
+**Constitutional Authority**: `AIMC_STRATEGY.md` v1.0.0
 
-The system MUST automatically route AI tasks to the correct model/capability.
+MAT MUST invoke all AI capabilities exclusively via the `@maturion/ai-centre` Gateway. MAT MUST NOT reference, configure, or route to any AI provider, model, or API endpoint directly.
 
 **Acceptance Criteria**:
-1. Document parsing → structured reasoning model (GPT-4 Turbo or equivalent).
-2. Audio transcription → speech-to-text model (Whisper or equivalent).
-3. Image interpretation → vision model (GPT-4 Vision or equivalent).
-4. Maturity evaluation → reasoning model (GPT-4 Turbo or equivalent).
-5. Report generation → specialist report-writing model.
-6. Routine tasks (<1K tokens) → cost-optimized model (GPT-4o Mini or equivalent).
-7. Routing is dynamic and does not require hardcoded model assignments.
-8. Fallback models are configured per task type (App Description §16.6).
+1. Document parsing invoked via AIMC capability: `analysis` (`aimc.analysis.parseCriteriaDocument(input)`).
+2. Audio/video transcription invoked via AIMC capability: `analysis` (`aimc.analysis.transcribe(input)`).
+3. Image interpretation invoked via AIMC capability: `analysis` — passed as input context to the Gateway.
+4. Maturity evaluation invoked via AIMC capability: `analysis` (`aimc.analysis.scoreMaturity(input)`).
+5. Report/document generation invoked via AIMC capability: `document-generation`.
+6. All AI task routing, model selection, cost-tier assignment, and fallback logic are managed internally by the AIMC Gateway — MAT does not configure or observe these.
+7. No model names, provider names, or API endpoints appear in MAT source code, configuration, or environment files.
 
 ---
 
@@ -622,32 +622,34 @@ AI outputs with confidence below 70% MUST be flagged for human review.
 
 ---
 
-### FR-031: AI Rate Limiting and Circuit Breaker
+### FR-031: AI Resilience (AIMC-Managed)
 
 **Priority**: P1
 **Source**: App Description §16.6
+**Constitutional Authority**: `AIMC_STRATEGY.md` v1.0.0
 
-The system MUST implement rate limiting and circuit breaker patterns for AI API calls.
+Rate limiting, exponential backoff, circuit breaking, and fallback provider selection for all AI calls are managed exclusively by the AIMC Gateway. MAT MUST NOT implement any of these patterns independently.
 
 **Acceptance Criteria**:
-1. Exponential backoff is applied for AI API failures.
-2. Circuit breaker activates if error rate exceeds 10% over a 5-minute window.
-3. When circuit breaker is active, fallback model is used.
-4. If fallback also fails, manual mode is offered to the user.
+1. MAT does not implement retry, backoff, circuit breaker, or fallback logic for AI calls.
+2. If the AIMC Gateway returns a structured error response (all providers unavailable), MAT surfaces a user-facing message indicating AI features are temporarily unavailable.
+3. Manual mode (non-AI workflow path) is offered to the user if the AIMC Gateway returns a capability-unavailable error.
 
 ---
 
-### FR-032: AI Model Versioning
+### FR-032: AI Invocation Traceability (AIMC Reference IDs)
 
 **Priority**: P1
 **Source**: App Description §15.4
+**Constitutional Authority**: `AIMC_STRATEGY.md` v1.0.0
 
-All AI models used in an audit MUST be versioned and logged.
+MAT records AIMC-issued invocation reference IDs for audit-domain traceability. MAT MUST NOT log, record, or expose AI model names or provider versions — these are AIMC-internal concerns invisible to MAT.
 
 **Acceptance Criteria**:
-1. Each audit records which AI model versions were used.
-2. Model changes require regression testing against historical audits.
-3. Fine-tuning is only permitted with governance approval and audit trail.
+1. Each AI invocation log entry in MAT records the AIMC invocation reference ID returned by the Gateway (not a model name or version string).
+2. MAT audit records reference AIMC invocation IDs to enable cross-system traceability.
+3. Model version changes managed by AIMC are transparent to MAT — no MAT regression testing is triggered by AIMC model changes.
+4. Fine-tuning governance is an AIMC concern. MAT has no role in model training or versioning decisions.
 
 ---
 
@@ -1337,24 +1339,38 @@ All UI components, pages, and user workflows specified in FR-001 through FR-069 
 
 ---
 
-### FR-072: Embedded AI Assistant
+### FR-072: Embedded AI Assistant (AIMC Advisory Integration)
 
 **Priority**: P0
 **Source**: App Description §13 (Embedded AI Assistant), Maturion Platform Standard LL-031, MANDATORY_CROSS_APP_COMPONENTS.md §13
+**Constitutional Authority**: `AIMC_STRATEGY.md` v1.0.0
+**AIMC Prerequisite**: **BLOCKED — Cannot be executed before AIMC Wave 3 (Advisory Gateway) is complete**
 
-The system MUST provide an embedded AI assistant panel accessible from every MAT frontend page, with agent/model selection logic aligned to the platform AI routing standard.
+> **⚠️ AIMC BLOCKER**: This requirement CANNOT be implemented until the `@maturion/ai-centre` package
+> exposes the Advisory Gateway (AIMC Wave 3). Any prior scaffold implementation that uses direct
+> provider calls or placeholder wiring NOT connected to the AIMC Gateway is constitutionally
+> non-compliant and must be refactored when AIMC Wave 3 delivers.
+> Builders MUST NOT proceed with this requirement until POLC/CS2 confirms AIMC Wave 3 is complete.
+
+The system MUST provide an embedded AI assistant panel accessible from every MAT frontend page,
+consuming the AI advisory capability exclusively via the `@maturion/ai-centre` Gateway.
 
 **Acceptance Criteria**:
 1. A collapsible AI assistant panel is rendered in the application layout and accessible from every page.
-2. The panel exposes agent/model selection: users can choose from at minimum: General Assistant (routine), Scoring Assistant (scoring), Document Parser (document_parsing), and Report Writer (report_generation).
-3. The selected agent/model selection is captured and made available for routing through the AI Gateway per TR-040 (AI Model Routing Configuration) when gateway integration is wired in a future wave.
-4. The panel structure supports AI invocation logging per FR-029 when gateway integration is wired.
-5. The panel renders placeholder responses (UI scaffold) until AI Gateway integration is complete. Runtime gateway unavailability handling is deferred to a future wave.
-6. The assistant is keyboard-navigable and WCAG 2.1 AA compliant per FR-065.
+2. The panel exposes persona selection sourced from the AIMC canonical agent directory: at minimum
+   Maturity Advisor, Scoring Assistant, Document Parser, and Report Writer.
+3. All AI invocations route through `@maturion/ai-centre` Gateway — no direct provider calls.
+4. The panel captures the AIMC invocation reference ID returned by the Gateway for audit-domain logging per FR-029.
+5. The panel is keyboard-navigable and WCAG 2.1 AA compliant per FR-065.
+6. No AI provider API keys are present in the MAT frontend bundle or MAT backend configuration.
 
 **Edge Cases**:
-- AI Gateway not yet integrated: panel renders placeholder responses, application does not crash.
-- No agent selected: defaults to General Assistant (routine task type).
+- AIMC Wave 3 not yet complete: panel renders a locked/disabled state with messaging that AI advisory
+  capability is not yet available. Application MUST NOT crash.
+- No persona selected: defaults to Maturity Advisor persona.
+
+**Prerequisite Gate**: This requirement is gated on AIMC Wave 3 delivery. FR-072 acceptance criteria
+cannot be signed off until AIMC Wave 3 is confirmed GREEN by POLC.
 
 ---
 
@@ -1391,11 +1407,11 @@ The following matrix links each FRS requirement to the source section(s) in the 
 | FR-025 | §10.2, AC-F04 | Human Confirmation |
 | FR-026 | §7, §18.2 | Override Logging |
 | FR-027 | §3, §3.1 | Maturity Model |
-| FR-028 | §8, §15.4, §16.6 | AI Task Routing |
+| FR-028 | §8, §15.4, §16.6, AIMC_STRATEGY.md v1.0.0 | AI Gateway Integration (AIMC-Delegated) |
 | FR-029 | §16.6 | AI Invocation Logging |
 | FR-030 | §16.6 | AI Confidence Flagging |
-| FR-031 | §16.6 | AI Rate Limiting |
-| FR-032 | §15.4 | AI Model Versioning |
+| FR-031 | §16.6, AIMC_STRATEGY.md v1.0.0 | AI Resilience (AIMC-Managed) |
+| FR-032 | §15.4, AIMC_STRATEGY.md v1.0.0 | AI Invocation Traceability (AIMC Reference IDs) |
 | FR-033 | §9 | Review Table |
 | FR-034 | §9 | Review Table Editing |
 | FR-035 | §10, §13.1 | Report Generation |
@@ -1435,7 +1451,7 @@ The following matrix links each FRS requirement to the source section(s) in the 
 | FR-069 | §3.3.1 | Concurrent Users |
 | FR-070 | §16.3, §19.7, TRS TR-001, TR-006 | Frontend Application Scaffolding |
 | FR-071 | §2–§12, §16.2, §19.7 | Frontend Application Wiring |
-| FR-072 | §13, LL-031, MANDATORY_CROSS_APP_COMPONENTS.md §13 | Embedded AI Assistant |
+| FR-072 | §13, LL-031, MANDATORY_CROSS_APP_COMPONENTS.md §13, AIMC_STRATEGY.md v1.0.0 | Embedded AI Assistant (AIMC Advisory Integration — BLOCKED on AIMC Wave 3) |
 
 ---
 
@@ -1485,6 +1501,9 @@ This FRS is derived from the MAT App Description v1.2 (`modules/mat/00-app-descr
 **Next Stage**: This FRS feeds into the TRS (Technical Requirements Specification) at `modules/mat/01.5-trs/`.
 
 **Change Log**:
+- v1.4.0 (2026-02-23): Section 8 rewritten to AIMC-compliant capability-based language per `AIMC_STRATEGY.md` v1.0.0. FR-028 (AI Gateway Integration), FR-031 (AI Resilience), FR-032 (AI Invocation Traceability) corrected to remove direct-provider references. Section heading updated to reflect AIMC-delegated governance.
+- v1.3.0 (2026-02-23): Realigned FR-072 to AIMC Gateway pattern per `AIMC_STRATEGY.md` v1.0.0.
+  FR-072 now blocked on AIMC Wave 3. Direct provider references removed. Issue #377 superseded.
 - v1.2.0 (2026-02-20): Added FR-072 (Embedded AI Assistant) per platform governance blocker LL-031. See BUILD_PROGRESS_TRACKER.md INC-002.
 - v1.1.0 (2026-02-16): Added FR-070, FR-071 (Frontend Application Delivery) per governance remediation. See BUILD_PROGRESS_TRACKER.md Deviation #9.
 - v1.0.0 (2026-02-13): Initial FRS with 69 requirements (FR-001–FR-069).
