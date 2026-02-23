@@ -12,3 +12,4 @@
 | 2026-02-21 | CodexAdvisor-agent | session-023 | Add S6-06 parking station append step to session-memory-template.md so all future agents inherit the suggestions-log append behaviour by default | `session-023-20260221.md` |
 | 2026-02-23 | CodexAdvisor-agent | session-024 | Add Parking Station section to session-memory-template.md so agents using the template automatically produce the correct suggestions-log.md append line | `session-024-20260223.md` |
 | 2026-02-23 | CodexAdvisor-agent | session-025 | Standardise builder Phase 4 session memory with explicit Suggestions for Improvement mandate in §4.2 to match foreman-v2 and CodexAdvisor pattern | `session-025-20260223.md` |
+| 2026-02-23 | foreman-v2 | session-050 | Add scheduled governance scan (quarterly) to auto-detect new layer-up candidates by comparing local governance/policy/, governance/agent/, governance/coordination/ files against CANON_INVENTORY.json | `session-050-20260223.md` |
