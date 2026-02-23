@@ -21,7 +21,7 @@
 ## Evidence Summary
 
 ### Root Cause Documented
-- **File**: `LAYER_UP_PROTOCOL_RCA_AND_IMPLEMENTATION.md`
+- **File**: `governance/rca/LAYER_UP_PROTOCOL_RCA_AND_IMPLEMENTATION.md`
 - **Finding**: No `repository_dispatch` listener existed; ripple-integration.yml only handles issue-based triggers; governance repo dispatches repository_dispatch events → silently dropped
 
 ### Infrastructure Created
@@ -29,7 +29,7 @@
 |---|---|---|
 | `.github/workflows/governance-ripple-sync.yml` | NEW | Handles `repository_dispatch: governance_ripple` from canonical governance repo |
 | `.github/workflows/layer-up-dispatch.yml` | NEW | Automates layer-up escalation from isms issues to governance repo |
-| `LAYER_UP_PROTOCOL_RCA_AND_IMPLEMENTATION.md` | NEW | RCA and implementation documentation |
+| `governance/rca/LAYER_UP_PROTOCOL_RCA_AND_IMPLEMENTATION.md` | NEW | RCA and implementation documentation |
 | `.agent-workspace/foreman-v2/memory/session-049-20260223.md` | NEW | Session memory |
 
 ---
