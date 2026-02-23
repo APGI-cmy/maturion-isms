@@ -1,18 +1,31 @@
 /**
- * ProviderKeyStore — STUB (Wave 2 implementation pending)
+ * ProviderKeyStore — Wave 2 implementation
  *
- * All methods throw NOT_IMPLEMENTED until Wave 2 implementation is complete.
- * Tests against this stub will FAIL (RED) as required by AAD §9 / Step 6.
+ * Reads provider API keys from environment variables.
  *
  * References: GRS-015 | APS §6.3 | AAD §5.9
  */
-import type {
-  ProviderKeyStore as IProviderKeyStore,
-  ProviderName,
+import {
+  ProviderKeyNotFoundError,
+  type ProviderKeyStore as IProviderKeyStore,
+  type ProviderName,
 } from '../types/index.js';
 
+const ENV_VAR_MAP: Record<ProviderName, string> = {
+  'github-models': 'GITHUB_TOKEN',
+  openai: 'OPENAI_API_KEY',
+  anthropic: 'ANTHROPIC_API_KEY',
+  perplexity: 'PERPLEXITY_API_KEY',
+  runway: 'RUNWAY_API_KEY',
+};
+
 export class ProviderKeyStore implements IProviderKeyStore {
-  getKey(_provider: ProviderName): string {
-    throw new Error('NOT_IMPLEMENTED: ProviderKeyStore.getKey()');
+  getKey(provider: ProviderName): string {
+    const envVar = ENV_VAR_MAP[provider];
+    const value = process.env[envVar];
+    if (!value) {
+      throw new ProviderKeyNotFoundError(provider);
+    }
+    return value;
   }
 }

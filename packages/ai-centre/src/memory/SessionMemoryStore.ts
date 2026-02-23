@@ -1,8 +1,7 @@
 /**
- * SessionMemoryStore — STUB (Wave 2 implementation pending)
+ * SessionMemoryStore — Wave 2 implementation
  *
- * All methods throw NOT_IMPLEMENTED until Wave 2 implementation is complete.
- * Tests against this stub will FAIL (RED) as required by AAD §9 / Step 6.
+ * In-process in-memory session turn storage.
  *
  * References: GRS-007, GRS-031 | APS §7.1 | AAD §5.5
  */
@@ -12,19 +11,31 @@ import type {
 } from '../types/index.js';
 
 export class SessionMemoryStore implements ISessionMemoryStore {
-  append(_sessionId: string, _turn: MemoryTurn): void {
-    throw new Error('NOT_IMPLEMENTED: SessionMemoryStore.append()');
+  private readonly sessions = new Map<string, MemoryTurn[]>();
+
+  append(sessionId: string, turn: MemoryTurn): void {
+    const turns = this.sessions.get(sessionId) ?? [];
+    turns.push(turn);
+    this.sessions.set(sessionId, turns);
   }
 
-  getHistory(_sessionId: string): MemoryTurn[] {
-    throw new Error('NOT_IMPLEMENTED: SessionMemoryStore.getHistory()');
+  getHistory(sessionId: string): MemoryTurn[] {
+    return this.sessions.get(sessionId) ?? [];
   }
 
-  prune(_sessionId: string, _maxTokenBudget: number): void {
-    throw new Error('NOT_IMPLEMENTED: SessionMemoryStore.prune()');
+  prune(sessionId: string, maxTokenBudget: number): void {
+    const turns = this.sessions.get(sessionId);
+    if (!turns) return;
+
+    let total = turns.reduce((sum, t) => sum + t.estimatedTokens, 0);
+    while (total > maxTokenBudget && turns.length > 0) {
+      const removed = turns.shift()!;
+      total -= removed.estimatedTokens;
+    }
+    this.sessions.set(sessionId, turns);
   }
 
-  clearSession(_sessionId: string): void {
-    throw new Error('NOT_IMPLEMENTED: SessionMemoryStore.clearSession()');
+  clearSession(sessionId: string): void {
+    this.sessions.delete(sessionId);
   }
 }
