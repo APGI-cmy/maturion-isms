@@ -1,0 +1,283 @@
+name: Layer-Up Dispatch
+
+# Authority: LAYER_UP_PROTOCOL.md v1.0.0, GOVERNANCE_RIPPLE_MODEL.md Section 3.1
+# Purpose: Automate Phase 3 of LAYER_UP_PROTOCOL — escalate validated layer-up issues
+#          from this application repo (maturion-isms) to the canonical governance repo
+#          (APGI-cmy/maturion-foreman-governance) for intake by governance-repo-administrator.
+#
+# Trigger: Issues labeled with BOTH "layer-up" AND "governance-improvement" in this repo.
+#
+# Flow:
+#   Application issue created (by agent/human, labeled layer-up + governance-improvement)
+#     → This workflow fires
+#     → Creates a corresponding issue in maturion-foreman-governance
+#     → Comments on originating issue with cross-reference
+#
+# Authority boundary: This workflow ONLY creates issues in the governance repo.
+# It does NOT modify canonical governance files — that is governance-repo-administrator's role.
+
+on:
+  issues:
+    types: [opened, labeled]
+
+  # Manual trigger for testing or re-escalation
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number in THIS repo to escalate to governance'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  # ──────────────────────────────────────────────────────────────
+  # GATE: only process issues that carry BOTH layer-up labels
+  # ──────────────────────────────────────────────────────────────
+  check-labels:
+    name: Check Layer-Up Labels
+    runs-on: ubuntu-latest
+    outputs:
+      should_dispatch: ${{ steps.check.outputs.should_dispatch }}
+      issue_number: ${{ steps.check.outputs.issue_number }}
+    steps:
+      - name: Evaluate labels
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_dispatch=true" >> $GITHUB_OUTPUT
+            echo "issue_number=${{ github.event.inputs.issue_number }}" >> $GITHUB_OUTPUT
+            echo "Manual trigger — will dispatch issue ${{ github.event.inputs.issue_number }}"
+            exit 0
+          fi
+
+          HAS_LAYER_UP="${{ contains(github.event.issue.labels.*.name, 'layer-up') }}"
+          HAS_GOV_IMPROVEMENT="${{ contains(github.event.issue.labels.*.name, 'governance-improvement') }}"
+
+          echo "issue_number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+
+          if [ "$HAS_LAYER_UP" = "true" ] && [ "$HAS_GOV_IMPROVEMENT" = "true" ]; then
+            echo "should_dispatch=true" >> $GITHUB_OUTPUT
+            echo "Issue carries layer-up + governance-improvement labels — dispatching"
+          else
+            echo "should_dispatch=false" >> $GITHUB_OUTPUT
+            echo "Issue does not carry both required labels (layer-up + governance-improvement) — skipping"
+            echo "  has layer-up: $HAS_LAYER_UP"
+            echo "  has governance-improvement: $HAS_GOV_IMPROVEMENT"
+          fi
+
+  # ──────────────────────────────────────────────────────────────
+  # MAIN: create issue in governance repo
+  # ──────────────────────────────────────────────────────────────
+  dispatch-layer-up:
+    name: Dispatch Layer-Up to Governance Repo
+    runs-on: ubuntu-latest
+    needs: check-labels
+    if: needs.check-labels.outputs.should_dispatch == 'true'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Read source issue details ──
+      - name: Read source issue
+        id: source_issue
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+        run: |
+          ISSUE_NUMBER="${{ needs.check-labels.outputs.issue_number }}"
+
+          ISSUE_JSON=$(gh issue view "$ISSUE_NUMBER" \
+            --repo ${{ github.repository }} \
+            --json title,body,url,author 2>/dev/null || echo '{"title":"unknown","body":"","url":"","author":{"login":"unknown"}}')
+
+          ISSUE_TITLE=$(echo "$ISSUE_JSON" | jq -r '.title')
+          ISSUE_URL=$(echo "$ISSUE_JSON" | jq -r '.url')
+          ISSUE_AUTHOR=$(echo "$ISSUE_JSON" | jq -r '.author.login')
+
+          echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+          echo "issue_title=$ISSUE_TITLE" >> $GITHUB_OUTPUT
+          echo "issue_url=$ISSUE_URL" >> $GITHUB_OUTPUT
+          echo "issue_author=$ISSUE_AUTHOR" >> $GITHUB_OUTPUT
+
+          echo "Source issue: #$ISSUE_NUMBER — $ISSUE_TITLE"
+          echo "URL: $ISSUE_URL"
+
+      # ── Check for already-dispatched to prevent duplicates ──
+      - name: Check for existing dispatch
+        id: dup_check
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+        run: |
+          ISSUE_NUMBER="${{ needs.check-labels.outputs.issue_number }}"
+          GOVERNANCE_REPO="APGI-cmy/maturion-foreman-governance"
+
+          # Check if the token has access to the governance repo
+          if ! gh repo view "$GOVERNANCE_REPO" --json name &>/dev/null; then
+            echo "already_dispatched=false" >> $GITHUB_OUTPUT
+            echo "Note: Cannot access governance repo to check for duplicates — proceeding"
+            exit 0
+          fi
+
+          # Search for existing layer-up issue referencing this source issue
+          SEARCH_RESULT=$(gh issue list \
+            --repo "$GOVERNANCE_REPO" \
+            --label "layer-up" \
+            --state open \
+            --json title,body 2>/dev/null | \
+            jq --arg ref "maturion-isms#${ISSUE_NUMBER}" \
+              '[.[] | select(.title | contains($ref)) | select(.body | contains($ref))] | length' || echo "0")
+
+          if [ "${SEARCH_RESULT:-0}" -gt "0" ]; then
+            echo "already_dispatched=true" >> $GITHUB_OUTPUT
+            echo "Duplicate detected — layer-up issue already exists in governance repo for #$ISSUE_NUMBER"
+          else
+            echo "already_dispatched=false" >> $GITHUB_OUTPUT
+            echo "No duplicate found — proceeding with dispatch"
+          fi
+
+      # ── Create issue in governance repo ──
+      - name: Create layer-up issue in governance repo
+        id: create_governance_issue
+        if: steps.dup_check.outputs.already_dispatched != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+        run: |
+          GOVERNANCE_REPO="APGI-cmy/maturion-foreman-governance"
+          ISSUE_NUMBER="${{ steps.source_issue.outputs.issue_number }}"
+          ISSUE_TITLE="${{ steps.source_issue.outputs.issue_title }}"
+          ISSUE_URL="${{ steps.source_issue.outputs.issue_url }}"
+          ISSUE_AUTHOR="${{ steps.source_issue.outputs.issue_author }}"
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          # Read body of source issue (truncated to avoid GH limits)
+          SOURCE_BODY=$(gh issue view "$ISSUE_NUMBER" \
+            --repo ${{ github.repository }} \
+            --json body --jq '.body' 2>/dev/null | head -c 4000 || echo "")
+
+          GOV_ISSUE_TITLE="[Layer-Up] ${ISSUE_TITLE} (from maturion-isms #${ISSUE_NUMBER})"
+
+          GOV_ISSUE_BODY=$(printf '%s\n\n%s\n%s\n%s\n%s\n%s\n\n%s\n\n%s\n\n%s\n%s\n%s\n%s\n%s\n\n%s\n%s\n\n%s\n\n%s\n\n%s\n\n%s\n%s\n%s\n%s' \
+            '## Layer-Up Dispatch — Automated Intake' \
+            "Origin Repository: APGI-cmy/maturion-isms" \
+            "Origin Issue: #${ISSUE_NUMBER} — ${ISSUE_URL}" \
+            "Origin Author: @${ISSUE_AUTHOR}" \
+            "Dispatched At: ${TIMESTAMP}" \
+            "Dispatched By: Automated workflow (layer-up-dispatch.yml)" \
+            '---' \
+            '## Action Required: governance-repo-administrator' \
+            'Per LAYER_UP_PROTOCOL.md Section 6, Phase 2 (Intake and Validation):' \
+            '1. Validate evidence package in originating issue' \
+            '2. Classify priority (CRITICAL / HIGH / MEDIUM / LOW)' \
+            '3. Log layer-up in evidence log' \
+            '4. Acknowledge within 24 hours' \
+            'If CRITICAL: Escalate to CS2 immediately.' \
+            'If HIGH/MEDIUM: Plan for next governance cycle.' \
+            '---' \
+            '## Source Issue Content' \
+            "${SOURCE_BODY}" \
+            '---' \
+            "Protocol: LAYER_UP_PROTOCOL.md v1.0.0, Section 6 (Phase 1 to Phase 2 handoff)" \
+            "Authority: GOVERNANCE_RIPPLE_MODEL.md Section 3.1 (Bidirectional Evolution — Upward)" \
+            "Reference: APGI-cmy/maturion-isms#${ISSUE_NUMBER}"
+          )
+
+          # Check if governance repo is accessible before trying to create issue
+          if ! gh repo view "$GOVERNANCE_REPO" --json name &>/dev/null; then
+            echo "Warning: Cannot access $GOVERNANCE_REPO — token may not have cross-repo permissions"
+            echo "governance_issue_created=false" >> $GITHUB_OUTPUT
+            echo "governance_issue_number=" >> $GITHUB_OUTPUT
+            echo "The layer-up evidence is in maturion-isms#${ISSUE_NUMBER} and can be manually escalated"
+            exit 0
+          fi
+
+          # Create the issue in governance repo
+          CREATED_ISSUE=$(gh issue create \
+            --repo "$GOVERNANCE_REPO" \
+            --title "$GOV_ISSUE_TITLE" \
+            --body "$GOV_ISSUE_BODY" \
+            --label "layer-up,governance-improvement" 2>/dev/null || echo "")
+
+          if [ -n "$CREATED_ISSUE" ]; then
+            GOV_ISSUE_NUMBER=$(echo "$CREATED_ISSUE" | grep -oE '[0-9]+$' || echo "")
+            echo "governance_issue_created=true" >> $GITHUB_OUTPUT
+            echo "governance_issue_number=${GOV_ISSUE_NUMBER}" >> $GITHUB_OUTPUT
+            echo "governance_issue_url=${CREATED_ISSUE}" >> $GITHUB_OUTPUT
+            echo "Created governance issue: $CREATED_ISSUE"
+          else
+            echo "governance_issue_created=false" >> $GITHUB_OUTPUT
+            echo "governance_issue_number=" >> $GITHUB_OUTPUT
+            echo "governance_issue_url=" >> $GITHUB_OUTPUT
+            echo "Could not create governance issue — see workflow logs"
+          fi
+
+      # ── Comment on originating issue ──
+      - name: Comment on source issue
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+        run: |
+          ISSUE_NUMBER="${{ needs.check-labels.outputs.issue_number }}"
+          ALREADY_DISPATCHED="${{ steps.dup_check.outputs.already_dispatched }}"
+          GOV_CREATED="${{ steps.create_governance_issue.outputs.governance_issue_created }}"
+          GOV_URL="${{ steps.create_governance_issue.outputs.governance_issue_url }}"
+          GOV_NUMBER="${{ steps.create_governance_issue.outputs.governance_issue_number }}"
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          if [ "$ALREADY_DISPATCHED" = "true" ]; then
+            COMMENT=$(printf '%s\n\n%s\n\n%s\n%s' \
+              '## ℹ️ Layer-Up Dispatch — Already Dispatched' \
+              'A layer-up issue for this request already exists in the governance repository.' \
+              'No duplicate was created.' \
+              '---' \
+              '*Layer-Up Dispatch — layer-up-dispatch.yml*')
+
+          elif [ "$GOV_CREATED" = "true" ]; then
+            COMMENT=$(printf '%s\n\n%s\n\n%s\n%s\n%s\n\n%s\n\n%s\n%s' \
+              '## ✅ Layer-Up Dispatched to Governance Repository' \
+              'This layer-up request has been escalated to the canonical governance repository.' \
+              "- **Governance issue**: ${GOV_URL}" \
+              "- **Workflow run**: ${RUN_URL}" \
+              '- **Status**: Awaiting intake by governance-repo-administrator' \
+              'Per **LAYER_UP_PROTOCOL.md Section 6, Phase 2**, the governance-repo-administrator will validate, classify, and acknowledge within 24 hours.' \
+              '---' \
+              '*Layer-Up Dispatch — layer-up-dispatch.yml*')
+          else
+            COMMENT=$(printf '%s\n\n%s\n\n%s\n%s\n\n%s\n\n%s\n%s' \
+              '## ⚠️ Layer-Up Dispatch — Manual Escalation Required' \
+              'The automated dispatch could not create an issue in the governance repository.' \
+              'This may be due to missing cross-repository token permissions.' \
+              "- **Workflow run**: ${RUN_URL}" \
+              'Please manually create an issue in **APGI-cmy/maturion-foreman-governance** with labels `layer-up` and `governance-improvement`, referencing this issue.' \
+              '---' \
+              '*Layer-Up Dispatch — layer-up-dispatch.yml*')
+          fi
+
+          gh issue comment "$ISSUE_NUMBER" \
+            --repo ${{ github.repository }} \
+            --body "$COMMENT" || echo "Could not post comment on issue"
+
+      # ── Record dispatch evidence ──
+      - name: Record dispatch evidence
+        if: always()
+        run: |
+          mkdir -p .agent-admin/layer-up
+          DATESTAMP=$(date -u +%Y%m%dT%H%M%SZ)
+          RECORD=".agent-admin/layer-up/dispatch-${DATESTAMP}.json"
+          jq -n \
+            --arg ts       "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg src_num  "${{ needs.check-labels.outputs.issue_number }}" \
+            --arg src_url  "${{ steps.source_issue.outputs.issue_url }}" \
+            --arg gov_num  "${{ steps.create_governance_issue.outputs.governance_issue_number }}" \
+            --arg gov_url  "${{ steps.create_governance_issue.outputs.governance_issue_url }}" \
+            --arg created  "${{ steps.create_governance_issue.outputs.governance_issue_created }}" \
+            --arg dup      "${{ steps.dup_check.outputs.already_dispatched }}" \
+            '{schema_version:"1.0.0",type:"layer_up_dispatch",timestamp:$ts,
+              source:{repo:"APGI-cmy/maturion-isms",issue_number:$src_num,url:$src_url},
+              governance:{repo:"APGI-cmy/maturion-foreman-governance",issue_number:$gov_num,url:$gov_url},
+              dispatch_result:{created:($created=="true"),duplicate:($dup=="true")}}' \
+            > "$RECORD"
+          echo "Dispatch evidence recorded: $RECORD"
+          # Note: evidence file created in workflow run; not committed to avoid PR noise
