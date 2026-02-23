@@ -17,7 +17,7 @@
 | `agent-creation-template.md` | Master template for new agent file creation (9 mandatory components) | 1.0.0 |
 | `requirement-mapping.md` | 56-requirement mapping (REQ-CM-001 through REQ-AG-004) | 1.0.0 |
 | `session-memory-template.md` | Standard session memory template | 1.0.0 |
-| `agent-file-non-negotiables-checklist.md` | Non-negotiables checklist for all agent file creation/updates — 100% compliance required before any PR | 1.0.0 |
+| `agent-file-non-negotiables-checklist.md` | Non-negotiables checklist for all agent file creation/updates — 100% compliance required before any PR | 1.1.0 |
 
 ---
 
