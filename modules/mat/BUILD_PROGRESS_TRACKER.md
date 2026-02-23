@@ -1317,6 +1317,7 @@ Track the progression through the canonical module lifecycle stages.
 21. ~~Post-Delivery Gap Analysis & RCA — complete (`modules/mat/05-rca/MAT_APP_V2_RCA.md` v1.0.0; PBFAG gate established; Implementation Plan v1.8.0)~~
 22. Execute Wave 2 Remediation: photo capture (G-07), interview recording (G-10), offline mode verification (G-16)
 23. Execute Wave 4 Remediation: report backend generation confirmation (G-14)
+   - ✅ **Wave 4R CST checkpoint COMPLETE (2026-02-23)**: Combined Subwave Testing executed covering Waves 0, 1, 2, 2R, 4R. 127 tests GREEN, 0 regressions, 0 skipped. Evidence: `modules/mat/05-build-evidence/prehandover-CST-4R-20260223.md`. Waves 3 and 4 skipped in this fast-track sequence per governance risk mitigation protocol (see CST doc §7).
 24. Execute Wave 5.6 Remediation: hierarchy UI render verification (G-03), evidence modal live data (G-04), mobile viewport tests (G-15)
 25. Proceed to Wave 6: Deployment & Commissioning (READY — awaiting CS2 Vercel/Supabase access AND remediation completion)
 
