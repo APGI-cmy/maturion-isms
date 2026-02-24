@@ -278,6 +278,146 @@ The `maturion-isms` repository is **substantially compliant** with all mandatory
 
 ---
 
-*Report prepared by Governance Liaison (governance-liaison-isms) | Session 019 | 2026-02-24*  
-*Authority: GOVERNANCE_LIAISON_MINIMUM_APPOINTMENT_REQUIREMENTS.md*  
-*Evidence: .agent-admin/build-evidence/PLATFORM_STANDARDS_LAYER_DOWN_STATUS_REPORT.md*
+## Appendix B: Implementation Plan Gap Analysis
+
+**Reference**: `modules/mat/03-implementation-plan/implementation-plan.md` v1.8.0  
+**Question**: Which of the governance standard requirements from this report are accommodated in the MAT build as per the implementation plan?
+
+### B.1 Summary Table
+
+| Governance Requirement | Implementation Plan Coverage | Wave(s) | Build Status |
+|---|---|---|---|
+| **Tenant Isolation / RLS** | ✅ FULLY COVERED | Wave 0 (Task 0.1) | ✅ GREEN — 172/172 tests pass |
+| **Watchdog Service** | ✅ FULLY COVERED | Wave 5 (Task 5.1) | ✅ GREEN — MAT-T-0059–0062 pass |
+| **AI Integration (FR-072, PLATFORM_AI_REQUIREMENTS)** | ✅ PLANNED, BLOCKED | Waves 7, 8, 9 | ⛔ BLOCKED — Awaiting AIMC Waves 3, 4, 5 |
+| **Evidence Bundle (EVIDENCE_ARTIFACT_BUNDLE_STANDARD)** | ✅ ENFORCED AT EVERY GATE | All waves | ✅ PREHANDOVER proof mandated per wave gate |
+| **Deployment & Commissioning (Wave 6 = startup/activation)** | ✅ COVERED | Wave 6 | ⚠️ PARTIAL — QA gate PASS; production pending CS2 access |
+| **APP_STARTUP_REQUIREMENTS** | ❌ NOT IN PLAN (pre-existing gap) | Not assigned | ❌ MISSING from implementation plan scope |
+| **Tenant Isolation Citation in Architecture Docs** | ❌ NOT IN PLAN | Not assigned | Documentation gap (now fixed in this PR) |
+| **Cross-App Commissioning Checks** | ✅ PARTIALLY COVERED | Wave 6 (Task 6.4) | ✅ Security validation + CWT included |
+
+---
+
+### B.2 Detailed Findings
+
+#### B.2.1 Tenant Isolation / RLS — ✅ Fully Accommodated
+
+The implementation plan explicitly covers tenant isolation in **Wave 0, Task 0.1**:
+
+> *"Create RLS policies per `security-architecture.md`"*  
+> *"All RLS policies enforce organisation isolation (MAT-T-0042–0050)"*
+
+- **Test coverage**: MAT-T-0042–0050 (9 tests covering RLS policies)
+- **Wave 0 status**: ✅ GREEN (31 tests GREEN including all RLS tests)
+- **Production validation**: Wave 6 Task 6.4 includes *"Security validation on production (RLS, auth, MFA, CORS)"*
+
+**Gap vs. report**: The implementation plan covers the *implementation* of tenant isolation (RLS + `organisation_id`). It does not explicitly cite `maturion-tenant-isolation-standard.md` by name — which is the documentation gap CG-003, now remediated.
+
+---
+
+#### B.2.2 Watchdog Service — ✅ Fully Accommodated
+
+The implementation plan covers watchdog in **Wave 5, Task 5.1: Watchdog Monitoring**:
+
+> *"Alert threshold definitions (error rates, latency, AI costs)"*  
+> *"Watchdog metrics captured for all services (MAT-T-0059)"*  
+> *"Alerts trigger at defined thresholds (MAT-T-0060)"*  
+> *"Alert routing delivers to correct channels (MAT-T-0061)"*  
+> *"Health check endpoints return correct status (MAT-T-0062)"*
+
+- **Test coverage**: MAT-T-0059–0062 (4 tests)
+- **Wave 5 status**: ✅ GREEN (13 tests GREEN including MAT-T-0059–0060)
+- **Runtime artefact**: `modules/mat/src/services/watchdog.ts` ✅
+
+`WATCHDOG_AUTHORITY_AND_SCOPE.md` and `WATCHDOG_QUALITY_INTEGRITY_CHANNEL.md` are respected: the implementation plan specifies that MAT exposes watchdog metrics (read-only observation) and does not implement a full autonomous oversight system (which is a platform-level concern).
+
+---
+
+#### B.2.3 AI Features (PLATFORM_AI_REQUIREMENTS) — ✅ Planned, ⛔ Blocked
+
+The implementation plan covers AI features in three dedicated waves:
+
+| Wave | Scope | AIMC Prerequisite | Build Status |
+|---|---|---|---|
+| Wave 7 — AIMC Advisory Integration | FR-072: Embedded AI assistant, Maturity Advisor persona | AIMC Wave 3 (Advisory Gateway) | ⛔ BLOCKED |
+| Wave 8 — AIMC Analysis Integration | TR-037–038: AI scoring + parsing via AIMC | AIMC Wave 4 (Analysis Gateway) | ⛔ BLOCKED |
+| Wave 9 — AIMC Embeddings/RAG | RAG-based criteria search | AIMC Wave 5 (Embeddings/RAG) | ⛔ BLOCKED |
+
+**Key implementation plan language** (v1.7.0 correction):
+> *"All builder-facing scope statements now reference AIMC Gateway capability calls exclusively per `AIMC_STRATEGY.md` v1.0.0 and `ai-architecture.md` v2.0.0."*
+
+The AIMC blocking is **intentional and constitutional** — not a compliance gap. The plan correctly prevents premature AI implementation before the platform-level AIMC gateway exists.
+
+**Plan gap**: Neither Wave 7/8/9 nor Wave 6 reference `APP_STARTUP_REQUIREMENTS.md` as a commissioning gate that must be checked before activation — this is the CG-001 gap now remediated.
+
+---
+
+#### B.2.4 Evidence Bundle (EVIDENCE_ARTIFACT_BUNDLE_STANDARD) — ✅ Fully Accommodated
+
+The implementation plan enforces the evidence bundle standard at **every wave gate**:
+
+> *"PREHANDOVER proof compiled"* — required at the close of every wave (Waves 0–6 gate criteria)
+
+Wave-by-wave coverage:
+- Each wave gate requires: *"Zero warnings. PREHANDOVER proof compiled."*
+- Wave 5.6 gate adds: *"Video walkthrough + screenshots committed to evidence bundle"*
+- Wave 6 gate adds: *"Closure evidence documented"*
+
+The `.agent-admin/` structure (`prehandover/`, `gates/`, `governance/`) is established and used.
+
+**Partial gap (CG-004)**: RCA files are stored in `modules/mat/05-rca/` rather than `.agent-admin/rca/`. The implementation plan does not specify the `.agent-admin/rca/` path. A pointer README has been added (this PR) to bridge the gap without moving existing evidence.
+
+---
+
+#### B.2.5 APP_STARTUP_REQUIREMENTS — ❌ Not in Implementation Plan
+
+The implementation plan does **not** include creation of `APP_STARTUP_REQUIREMENTS.md` as a deliverable in any wave.
+
+- **Wave 6** covers deployment and commissioning, including production security validation and CWT — but it does not reference `APP_STARTUP_REQUIREMENTS_DECLARATION.md` or require creation of the startup declaration file.
+- The `APP_STARTUP_REQUIREMENTS_DECLARATION.md` canon (v1.0) requires every application to have this file, but it was never added to the MAT build plan.
+
+**Remediation (this PR)**: `modules/mat/APP_STARTUP_REQUIREMENTS.md` created as a standalone governance document. Because it is a governance declaration (not a runtime artefact), it does not require a new implementation wave — it is complete as-is and should be reviewed during Wave 6 commissioning sign-off.
+
+**Recommendation**: The implementation plan should be updated in a future revision to explicitly reference `APP_STARTUP_REQUIREMENTS.md` as a Wave 6 commissioning prerequisite check.
+
+---
+
+#### B.2.6 Deployment & Commissioning (Wave 6) vs. APP_STARTUP_REQUIREMENTS Checks
+
+Wave 6 of the implementation plan covers many of the same checks defined in `APP_STARTUP_REQUIREMENTS.md`, but does so without explicitly referencing it:
+
+| `APP_STARTUP_REQUIREMENTS.md` Check | Implementation Plan Coverage |
+|---|---|
+| Application builds successfully | Wave 6 Task 6.1 — Vercel provisioning + build verification |
+| Test suite passes | Wave 6 Task 6.4 — CWT 100% GREEN on production (all 98 tests) |
+| Schema migration applied | Wave 6 Task 6.2 — Staging environment validation |
+| Environment variables configured | Wave 6 Task 6.1 — *"Provision all required environment variables"* |
+| RLS policies verified | Wave 6 Task 6.4 — *"Security validated on production (RLS cross-org isolation, auth flows, MFA)"* |
+| Authentication configuration | Wave 6 Task 6.4 — *"auth flows, MFA"* |
+| Watchdog operational | Wave 6 Task 6.4 — *"full audit lifecycle, watchdog monitoring"* |
+| AI blocking acknowledged | Wave 7/8/9 — Explicit BLOCKED status with AIMC prerequisite |
+| CS2 activation approval | Wave 6 Task 6.4 — *"Formal sign-over completed by governance agent or product owner"* |
+
+**Conclusion**: Wave 6 covers substantially all of the commissioning checks in `APP_STARTUP_REQUIREMENTS.md`. The gap is that these checks were not formally linked to the startup declaration standard, making the process implicit rather than explicit.
+
+---
+
+### B.3 Gap Summary (Implementation Plan vs. Report)
+
+| # | Requirement | In Implementation Plan? | Plan Wave | Remediation |
+|---|---|---|---|---|
+| RLS / Tenant Isolation | ✅ YES | Wave 0 (Task 0.1) | ✅ COMPLETE |
+| Watchdog Service | ✅ YES | Wave 5 (Task 5.1) | ✅ COMPLETE |
+| AI Features (PLATFORM_AI_REQUIREMENTS) | ✅ YES (Waves 7–9, BLOCKED) | Waves 7, 8, 9 | ⛔ BLOCKED (by design) |
+| Evidence Bundle per Wave | ✅ YES (every gate) | All waves | ✅ COMPLETE |
+| Deployment & Security Commissioning | ✅ YES | Wave 6 | ⚠️ QA gate PASS; prod pending CS2 |
+| APP_STARTUP_REQUIREMENTS.md creation | ❌ NO | Not assigned | ✅ Created in this PR (governance doc) |
+| Tenant isolation citation in arch docs | ❌ NO | Not assigned | ✅ Fixed in this PR (1-line doc change) |
+| `.agent-admin/rca/` path alignment | ❌ NO | Not assigned | ✅ Fixed in this PR (pointer README) |
+
+**Overall**: The implementation plan accommodates all *runtime* governance requirements (RLS, watchdog, AI gateway pattern, evidence). The three items not in the plan are documentation/declaration gaps — all resolved in this PR without requiring new implementation waves.
+
+---
+
+*Appendix B added: 2026-02-24 | In response to PR comment requesting implementation plan gap analysis*  
+*Reference document: `modules/mat/03-implementation-plan/implementation-plan.md` v1.8.0*

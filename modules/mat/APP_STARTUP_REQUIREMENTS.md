@@ -245,6 +245,7 @@ MAT's AI feature implementation is **constitutionally BLOCKED** pending upstream
 | EVIDENCE_ARTIFACT_BUNDLE_STANDARD | `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md` |
 | MANDATORY_CROSS_APP_COMPONENTS | `governance/canon/MANDATORY_CROSS_APP_COMPONENTS.md` |
 | APP_STARTUP_REQUIREMENTS_DECLARATION | `governance/canon/APP_STARTUP_REQUIREMENTS_DECLARATION.md` |
+| Implementation Plan (Wave 6 commissioning) | `modules/mat/03-implementation-plan/implementation-plan.md` §2.7 |
 
 ---
 
