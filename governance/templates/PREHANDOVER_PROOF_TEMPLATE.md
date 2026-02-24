@@ -168,6 +168,18 @@ cat governance/CANON_INVENTORY.json
 
 ---
 
+## Wave Completeness Gate (MANDATORY — added per Wave 3 incomplete delivery incident 2026-02-24)
+
+> **Authority**: AAWP v0.1.0, Wave 3 incomplete delivery RCA 2026-02-24.
+> This gate is non-negotiable. A blank or unchecked row is a handover BLOCKER.
+
+- [ ] AAWP deliverable table for this wave reviewed line-by-line
+- [ ] Every deliverable file confirmed PRESENT in the PR diff
+- [ ] Any absent file is explicitly accounted for (future wave, confirmed stub, or CS2 waiver)
+- [ ] QA-to-Red confirmation recorded as PR comment BEFORE implementation began
+
+---
+
 ## Implementation Completeness
 
 **Original Requirements**: [List requirements from issue/task]

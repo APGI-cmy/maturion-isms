@@ -4,7 +4,7 @@
  * Wraps the GitHub Models REST API into the ProviderAdapter interface.
  * Supports the `advisory` capability only (Wave 3 scope).
  *
- * References: GRS-005, GRS-006, GRS-015 | APS §6.1, §6.2 | AAD §5.5
+ * References: GRS-005, GRS-006, GRS-015 | APS §6.1, §6.2 | AAD §5.5, §8.2
  */
 import {
   Capability,
@@ -21,14 +21,25 @@ const GITHUB_MODELS_ENDPOINT =
   'https://models.github.ai/inference/chat/completions';
 const DEFAULT_MODEL = 'openai/gpt-4o-mini';
 
+/** Minimal subset of the Fetch API used by this adapter (enables test injection). */
+export type FetchFn = (url: string, init: RequestInit) => Promise<Response>;
+
 export class GitHubModelsAdapter implements ProviderAdapter {
   readonly providerName = 'github-models' as const;
   readonly supportedCapabilities = new Set([Capability.ADVISORY]);
 
   private readonly keyStore: ProviderKeyStore;
+  private readonly fetchFn: FetchFn;
 
-  constructor(keyStore?: ProviderKeyStore) {
+  /**
+   * @param keyStore  - Injectable key store (defaults to env-backed ProviderKeyStore).
+   * @param fetchFn   - Injectable fetch function (defaults to global fetch).
+   *                    Injecting a mock here enables unit testing without live API calls
+   *                    per AAD §8.2 Testability via Dependency Injection.
+   */
+  constructor(keyStore?: ProviderKeyStore, fetchFn?: FetchFn) {
     this.keyStore = keyStore ?? new ProviderKeyStore();
+    this.fetchFn = fetchFn ?? ((url, init) => fetch(url, init));
   }
 
   async execute(request: NormalisedProviderRequest): Promise<CapabilityResult> {
@@ -64,7 +75,7 @@ export class GitHubModelsAdapter implements ProviderAdapter {
 
     let response: Response;
     try {
-      response = await fetch(GITHUB_MODELS_ENDPOINT, {
+      response = await this.fetchFn(GITHUB_MODELS_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
