@@ -3,15 +3,15 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "last_sync": {
-    "timestamp": "2026-02-23T14:55:08Z",
-    "session_id": "align-20260223-145508",
+    "timestamp": "2026-02-24T11:44:35Z",
+    "session_id": "align-20260224-114435",
     "executed_by": "governance-liaison",
     "canonical_inventory_version": "1.0.0",
     "canonical_inventory_date": "2026-02-11",
     "total_canons_synced": 2,
     "sync_method": "layer-down-automated",
     "sync_status": "SUCCESS",
-    "canonical_commit": "87119743814a626cc3eef325eae54445c1a18ffb"
+    "canonical_commit": "4978b0080e6c4b36d748753e2e2e62c45a8a6bc0"
   },
   "alignment_status": {
     "overall": "ALIGNED",
@@ -22,7 +22,7 @@
       "missing": 0
     },
     "drift_detected": false,
-    "last_drift_check": "2026-02-23T14:55:08Z"
+    "last_drift_check": "2026-02-24T11:44:35Z"
   },
   "integrity": {
     "evidence_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_evidence.log",

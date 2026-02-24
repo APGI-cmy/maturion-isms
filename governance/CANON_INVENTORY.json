@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-02-23",
-  "total_canons": 179,
+  "last_updated": "2026-02-24",
+  "total_canons": 180,
   "generation_timestamp": "2026-02-21T16:30:00Z",
   "canon_entry_schema": {
     "description": "Schema for canon entries in CANON_INVENTORY.json",
@@ -2024,6 +2024,21 @@
       "path": "governance/canon/AIMC_STRATEGY.md",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "dfe539fe290148e6e7c9112fa269b5cd0124c456954de1d75c9a7870cd79b2dc",
+      "canonical_version": "1.0.0",
+      "local_version": null,
+      "local_extension": false,
+      "layer_up_status": "NONE"
+    },
+    {
+      "filename": "UNIVERSAL_FAIL_ONLY_ONCE_POLICY.md",
+      "version": "1.0.0",
+      "file_hash": "9ae5d4f0638dc3c2424982b9947e307d404034c99c6a32b6f151399084e9ef1c",
+      "effective_date": "2026-02-24",
+      "description": "Universal policy expanding the 'We Only Fail Once' breach registry and mandatory preflight attestation to ALL agent classes. Every agent must maintain a per-agent Tier 2 FAIL-ONLY-ONCE registry and self-attest at every session start.",
+      "type": "policy",
+      "path": "governance/canon/UNIVERSAL_FAIL_ONLY_ONCE_POLICY.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "9ae5d4f0638dc3c2424982b9947e307d404034c99c6a32b6f151399084e9ef1c",
       "canonical_version": "1.0.0",
       "local_version": null,
       "local_extension": false,
