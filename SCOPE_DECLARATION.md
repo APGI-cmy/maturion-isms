@@ -1,38 +1,44 @@
 # Scope Declaration
 
-**Issue**: #193 - Implement POLC Boundary Validation Gate  
-**Date**: 2026-02-16  
-**Agent**: Foreman (foreman-isms)  
+**Issue**: Wave 6 QA Gate Remediation — Full Test Execution & Deployment Gate Pass
+**Date**: 2026-02-24
+**Agent**: copilot (GitHub Copilot Coding Agent)
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ---
 
 ## Purpose
 
-This PR implements a new merge gate to detect and prevent Foreman from writing production code, ensuring the POLC boundary (Planning, Organizing, Leading, Controlling) is enforced at merge time.
+This PR delivers the Wave 6 QA gate remediation for the MAT module:
+- Full test execution evidence (172/172 GREEN)
+- PREHANDOVER_PROOF documenting CWT results and deployment gate status
+- BUILD_PROGRESS_TRACKER update reflecting Wave 6 QA gate pass
+- Session closure evidence
 
 ---
 
 ## Files Changed
 
-**Total Files**: 3
+**Total Files**: 5
 
 All files in this PR are explicitly listed below (required by BL-027):
 
-- `.agent-admin/governance/MERGE_GATE_SPECIFICATION.md`
-- `.agent-workspace/foreman-isms/memory/session-008-20260216-polc-boundary-gate-implementation.md`
-- `.github/workflows/polc-boundary-gate.yml`
+- `PREHANDOVER_PROOF_WAVE_6_QA.md`
+- `SCOPE_DECLARATION.md`
+- `modules/mat/BUILD_PROGRESS_TRACKER.md`
+- `modules/mat/05-build-evidence/prehandover-CWT-wave6-20260224.md`
+- `.agent-admin/prehandover/proof-wave6-qa-20260224.md`
 
 ---
 
-## POLC Boundary Attestation
+## POLC Attestation
 
-**Critical**: This scope declaration attests that Foreman did NOT write production code.
-
-**Files Modified by FM**:
-- `.github/workflows/polc-boundary-gate.yml` — Infrastructure (GitHub Actions workflow, NOT production code)
-- `.agent-admin/governance/MERGE_GATE_SPECIFICATION.md` — Governance documentation (NOT production code)
-- `.agent-workspace/foreman-isms/memory/session-008-20260216-polc-boundary-gate-implementation.md` — Session memory (authorized FM file)
+**Files Modified**:
+- `PREHANDOVER_PROOF_WAVE_6_QA.md` — Governance evidence (not production code)
+- `SCOPE_DECLARATION.md` — Governance documentation (not production code)
+- `modules/mat/BUILD_PROGRESS_TRACKER.md` — Governance documentation (not production code)
+- `modules/mat/05-build-evidence/prehandover-CWT-wave6-20260224.md` — Build evidence (not production code)
+- `.agent-admin/prehandover/proof-wave6-qa-20260224.md` — Session proof (not production code)
 
 **Production Code Patterns (NONE MODIFIED)**:
 - `modules/**/src/**/*.ts` — ✅ NONE (0 files)
@@ -42,9 +48,9 @@ All files in this PR are explicitly listed below (required by BL-027):
 
 ## Signature
 
-**Scope Declared By**: Foreman (foreman-isms)  
-**Date**: 2026-02-16  
-**Issue**: #193
+**Scope Declared By**: copilot (GitHub Copilot Coding Agent)
+**Date**: 2026-02-24
+**Issue**: Wave 6 QA Gate Remediation
 
 ---
 
