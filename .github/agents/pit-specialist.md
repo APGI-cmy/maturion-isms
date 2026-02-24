@@ -244,6 +244,19 @@ All delegation results must follow this structure:
 **Location:** `.agent-admin/specialist-results/<delegation-id>.json`  
 **Required Content:** delegation-id, status, domain output, escalations, timestamp
 
+### 4.3 Pre-Handover Merge Gate Parity Check (Priority S_H — BLOCKING)
+
+**[S_H] Run before opening any PR or returning results to the delegating agent.**
+
+- Enumerate all checks listed in `merge_gate_interface.required_checks` (from agent contract YAML)
+- Run each check locally using the same script/ruleset as the CI merge gate
+- If ANY check fails locally → **STOP and FIX immediately** — do not open PR
+- Document result in evidence artifact: `merge_gate_parity: PASS | FAIL`
+
+> Opening a PR with a failing local gate is **prohibited** — it is the same class of violation as pushing directly to main.
+
+**Authority**: `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.1.0 Section 4.3
+
 ---
 
 **Authority:** CS2 (Johan Ras) | **Status:** ACTIVE | **Phase:** 4-5 | **Date:** 2026-02-21  

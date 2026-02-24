@@ -1,7 +1,7 @@
 # AGENT_HANDOVER_AUTOMATION
 
-**Status**: CANONICAL | **Version**: 1.0.0 | **Authority**: CS2  
-**Date**: 2026-02-17
+**Status**: CANONICAL | **Version**: 1.1.0 | **Authority**: CS2  
+**Date**: 2026-02-24
 
 ---
 
@@ -29,7 +29,8 @@ Phase 4 consists of three mandatory sections:
 
 ### 4.1 Evidence Artifact Generation
 ### 4.2 Session Memory & Closure
-### 4.3 Compliance Check & Escalation (if needed)
+### 4.3 Pre-Handover Merge Gate Parity Check (BLOCKING)
+### 4.4 Compliance Check & Escalation (if needed)
 ```
 
 ## Section 4.1: Evidence Artifact Generation
@@ -373,7 +374,98 @@ echo "🔍 Environment: SAFE_FOR_HANDOVER"
 ...
 ```
 
-## Section 4.3: Compliance Check & Escalation
+## Section 4.3: Pre-Handover Merge Gate Parity Check (mandatory, BLOCKING)
+
+**Purpose**: Guarantee that every merge gate check passes locally before the PR is opened. Opening a PR with a failing gate is **prohibited** — it is the same class of violation as pushing directly to main.
+
+**Template**:
+
+```markdown
+### 4.3 Pre-Handover Merge Gate Parity Check (Priority_H — BLOCKING)
+
+**Script**: Run all merge gate checks locally before opening the PR
+
+**Parity Check Protocol**:
+
+> **Consumer note**: The closing fence of the bash block below uses escaped backticks (`` \`\`\` ``) to prevent Markdown fence collision inside this outer code block. When copying this template into an agent contract or script, replace every `` \`\`\` `` (backslash + three backticks) with ` ``` ` (three plain backticks).
+
+```bash
+#!/bin/bash
+# <Agent> Handover - Pre-Handover Merge Gate Parity Check
+# Priority: <Agent>_H  — BLOCKING: do NOT open PR until all checks PASS
+
+echo "🔍 PRE-HANDOVER MERGE GATE PARITY CHECK (BLOCKING)"
+
+GATE_FAILURES=()
+
+# Step 1: Read required checks from agent contract YAML
+# MERGE_GATE_CHECKS is the list from merge_gate_interface.required_checks
+# e.g. MERGE_GATE_CHECKS=("merge-gate/verdict" "governance/alignment" "stop-and-fix/enforcement")
+
+# Step 2: Run each check locally using the same script/ruleset CI will use
+# and record a declared PASS or FAIL result
+
+# merge-gate/verdict — run the same commands the CI verdict job runs
+echo "  Running: merge-gate/verdict"
+<verdict check commands>
+VERDICT_RESULT=$?
+if [ "${VERDICT_RESULT}" -ne 0 ]; then
+  GATE_FAILURES+=("merge-gate/verdict: FAIL (exit code ${VERDICT_RESULT})")
+fi
+
+# governance/alignment — run the alignment check
+echo "  Running: governance/alignment"
+<alignment check commands>
+ALIGNMENT_RESULT=$?
+if [ "${ALIGNMENT_RESULT}" -ne 0 ]; then
+  GATE_FAILURES+=("governance/alignment: FAIL (exit code ${ALIGNMENT_RESULT})")
+fi
+
+# stop-and-fix/enforcement — run the stop-and-fix check
+echo "  Running: stop-and-fix/enforcement"
+<stop-and-fix check commands>
+STOPFIX_RESULT=$?
+if [ "${STOPFIX_RESULT}" -ne 0 ]; then
+  GATE_FAILURES+=("stop-and-fix/enforcement: FAIL (exit code ${STOPFIX_RESULT})")
+fi
+
+# Step 3: Evaluate results
+if [ ${#GATE_FAILURES[@]} -gt 0 ]; then
+  echo ""
+  echo "❌ [<Agent>_H] MERGE GATE PARITY FAILURES DETECTED"
+  for failure in "${GATE_FAILURES[@]}"; do
+    echo "  - ${failure}"
+  done
+  echo ""
+  echo "🛑 [<Agent>_H] HANDOVER BLOCKED — Fix failures and re-run from step 1"
+  echo "   Opening a PR with failing gates is PROHIBITED."
+  echo "   This is the same class of violation as pushing directly to main."
+  exit 1
+fi
+
+# Step 4: Document PASS in PREHANDOVER proof
+echo "merge_gate_parity: PASS" >> .agent-admin/prehandover/proof-$(date +%Y%m%d%H%M%S).md
+
+# Step 5: All checks PASS — agent may proceed to open the PR
+echo ""
+echo "✅ [<Agent>_H] ALL MERGE GATE PARITY CHECKS PASSED"
+echo "✅ [<Agent>_H] Agent is cleared to open the PR"
+\`\`\`
+
+**Commentary**: This check is **BLOCKING**. If any gate fails the agent **stops, fixes the issue, and re-runs from step 1**. Escalation is reserved for ambiguous blockers only — failing merge gates must be fixed before the PR is opened.
+
+### Merge Gate Parity Rules
+
+| Rule | Detail |
+|------|--------|
+| **BLOCKING** | Gate failures halt handover; the PR must not be opened |
+| **Fix-first** | Agent fixes the root cause and re-runs all checks from step 1 |
+| **No partial bypass** | Every required check must produce a declared PASS result |
+| **Escalation scope** | Only for genuinely ambiguous blockers — not for known gate failures |
+| **Prohibition parity** | Opening a PR on a local gate failure = pushing to main (both prohibited) |
+```
+
+## Section 4.4: Compliance Check & Escalation
 
 **Purpose**: Verify agent-class-specific compliance requirements and create escalations if needed.
 
@@ -609,6 +701,7 @@ Before session ends, verify:
 - [ ] **Memory rotated**: Last 5 kept, older archived
 - [ ] **Personal learnings updated**: Lessons and patterns files updated
 - [ ] **Environment health set**: Status = `SAFE_FOR_HANDOVER`
+- [ ] **Merge gate parity check**: All required checks pass locally — `merge_gate_parity: PASS` documented in PREHANDOVER proof (BLOCKING — do not open PR until PASS)
 - [ ] **Compliance checked**: Agent-specific requirements verified
 - [ ] **Escalations created**: If compliance failed or blockers found
 - [ ] **Working contract archived**: Ephemeral file can be deleted
@@ -620,6 +713,7 @@ Before session ends, verify:
 | **Manual evidence creation** | Inconsistent, forgotten | Automated script generates all evidence |
 | **No memory rotation** | Memory directory grows unbounded | Always rotate, keep last 5 |
 | **Skipping compliance checks** | Violations discovered at merge time | Always verify compliance before handover |
+| **Opening PR before parity check** | Failing gates blocked at CI — same as pushing to main | Run merge gate parity check locally; only open PR on PASS |
 | **No escalation creation** | Blockers undocumented | Auto-generate escalation documents |
 | **Vague session memory** | No actionable context for next session | Use structured template |
 | **No environment health** | Unknown state at handover | Always record health status |
@@ -659,7 +753,7 @@ Before session ends, verify:
 
 ---
 
-**Version**: 1.0.0  
-**Last Updated**: 2026-02-17  
+**Version**: 1.1.0  
+**Last Updated**: 2026-02-24  
 **Authority**: CS2 (Johan Ras)  
 **Living Agent System**: v6.2.0
