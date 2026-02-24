@@ -5,9 +5,11 @@
  * These tests verify end-to-end behaviour across MemoryLifecycle,
  * PersistentMemoryAdapter, and the AICentre gateway.
  *
- * CS2 ISMS Navigator Wave-Confirmation: CS2 confirmed via PR #487 comment
- * (2026-02-24) that the ISMS Navigator persona is authorised for Wave 4.
- * Implementation proceeded under this authorisation.
+ * CS2 ISMS Navigator Wave-Confirmation: CS2 authorisation for the ISMS Navigator
+ * persona was conveyed in a chat session on 2026-02-24 (prior to this PR).
+ * Formal on-record authorisation comment on this PR is PENDING — to be added by
+ * CS2. This header will be updated to reference the PR comment once it exists.
+ * Implementation proceeded under the chat-session authorisation.
  *
  * References: GRS-008, GRS-030 | APS §7.2, §7.3, §7.5 | AAD §5.7, §5.8
  *

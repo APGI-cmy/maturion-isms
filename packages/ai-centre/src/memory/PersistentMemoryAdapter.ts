@@ -1,15 +1,27 @@
 /**
- * PersistentMemoryAdapter — Wave 4 implementation
+ * PersistentMemoryAdapter — Wave 4 in-memory foundation
  *
- * Implements the full PersistentMemoryAdapter interface with organisation-scoped
- * filtering (GRS-008 tenant isolation), session filtering, limit support, and
- * expired-entry pruning. Storage is in-process for unit/integration testing;
- * a production deployment replaces the in-memory store with the Supabase
- * ai_memory table behind RLS (see supabase/migrations/001_ai_memory.sql).
+ * Provides a correct, fully-functional in-memory implementation of the
+ * PersistentMemoryAdapter interface for use in Wave 4 integration testing.
+ * All filtering (organisation-scoped tenant isolation, session filtering,
+ * limit) and pruning logic is complete and tested.
  *
- * The constructor enforces the Supabase client requirement at runtime:
- * passing an explicit `undefined` throws so that callers cannot silently
- * bypass tenant isolation in a wired-up environment.
+ * Supabase wiring is EXPLICITLY DEFERRED TO WAVE 5.
+ * The AAWP wave plan records this deferral:
+ *   Wave 4 scope: in-memory implementation, correct interface, full test coverage.
+ *   Wave 5 scope: replace this in-memory store with a real Supabase client
+ *     reading from the ai_memory table (see supabase/migrations/001_ai_memory.sql)
+ *     with organisation_id tenant isolation enforced at the query layer (GRS-008).
+ *
+ * TODO(Wave5): Replace the in-memory `store` array and all methods — persist(),
+ * retrieve(), and pruneExpired() — with Supabase client calls to the `ai_memory`
+ * table. The constructor must accept a mandatory SupabaseClient (AAD §8.2).
+ * Organisation-level tenant isolation must be enforced by the query filter
+ * `organisation_id = params.organisationId` in every query (not just RLS alone).
+ * See supabase/migrations/001_ai_memory.sql for the schema.
+ * Deferral rationale: @supabase/supabase-js is not yet a dependency of this
+ * package; adding it is Wave 5 scope to keep Wave 4 focused on the AI gateway
+ * and memory lifecycle contract.
  *
  * References: GRS-008 | APS §7.2 | AAD §5.6
  */
