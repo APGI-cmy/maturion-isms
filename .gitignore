@@ -48,3 +48,4 @@ Thumbs.db
 # Agent workspace (session-specific, not persisted)
 .agent-workspace/*/working-contract.md
 .agent-workspace/*/environment-health.json
+packages/ai-centre/package-lock.json

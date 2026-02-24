@@ -20,6 +20,7 @@ import {
   type ProviderAdapter,
   type NormalisedProviderRequest,
 } from '../../types/index.js';
+import { GitHubModelsAdapter } from '../../adapters/GitHubModelsAdapter.js';
 
 // ---------------------------------------------------------------------------
 // Registry of adapters under test (add each adapter as it is implemented)
@@ -50,7 +51,7 @@ import {
  * It will automatically stop failing once you add your adapter to this array.
  */
 const ADAPTERS_UNDER_TEST: ProviderAdapter[] = [
-  // Wave 3: new GitHubModelsAdapter() — import and uncomment when implemented
+  new GitHubModelsAdapter(), // Wave 3
   // Wave 4: new OpenAIAdapter()       — import and uncomment when implemented
   // Wave 6: new AnthropicAdapter()    — import and uncomment when implemented
   // Wave 7: new PerplexityAdapter()   — import and uncomment when implemented
