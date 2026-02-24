@@ -6,10 +6,8 @@
  * PersistentMemoryAdapter, and the AICentre gateway.
  *
  * CS2 ISMS Navigator Wave-Confirmation: CS2 authorisation for the ISMS Navigator
- * persona was conveyed in a chat session on 2026-02-24 (prior to this PR).
- * Formal on-record authorisation comment on this PR is PENDING — to be added by
- * CS2. This header will be updated to reference the PR comment once it exists.
- * Implementation proceeded under the chat-session authorisation.
+ * persona (isms-navigator.md) confirmed on-record via PR #487 comment
+ * (issuecomment-3950176995, @APGI-cmy, 2026-02-24T09:01:21Z). CONFIRMED.
  *
  * References: GRS-008, GRS-030 | APS §7.2, §7.3, §7.5 | AAD §5.7, §5.8
  *
