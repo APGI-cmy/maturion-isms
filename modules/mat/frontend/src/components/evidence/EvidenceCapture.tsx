@@ -2,12 +2,15 @@
  * Evidence Capture Component
  * FRS: FR-013 (Multi-Format Evidence)
  * TRS: TR-047
+ * 
+ * Wave 5.6R Gap G-04: Delegates to EvidenceCollection for live Supabase data wiring
  */
-export function EvidenceCapture() {
-  return (
-    <div className="evidence-capture">
-      <h3>Evidence Capture</h3>
-      <p>Multi-format evidence capture UI</p>
-    </div>
-  );
+import { EvidenceCollection } from './EvidenceCollection';
+
+interface EvidenceCaptureProps {
+  criterionId: string;
+}
+
+export function EvidenceCapture({ criterionId }: EvidenceCaptureProps) {
+  return <EvidenceCollection criterionId={criterionId} />;
 }

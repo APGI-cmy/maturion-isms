@@ -18,3 +18,5 @@
 | 2026-02-23 | foreman-v2 | session-052 | TD: TelemetryWriter process-wide counter must be replaced with persistent/UUID-based ID generation in Wave 4 (packages/ai-centre/src/telemetry/TelemetryWriter.ts) | `session-052-20260223.md` |
 | 2026-02-23 | foreman-v2 | session-052 | TD: AICentre provider loop contains a redundant UNAVAILABLE guard (line 70) — already filtered by router at line 55; mark for clean-up in Wave 3 or 4 (packages/ai-centre/src/gateway/AICentre.ts) | `session-052-20260223.md` |
 | 2026-02-24 | foreman-v2 | session-wave4-RCA | Add AAWP deliverable table line-by-line tick-off as a mandatory PREHANDOVER gate step — never raise a wave PR without it | `session-wave4-RCA-20260224.md` |
+| 2026-02-24 | foreman-v2 | session-053 | Add CI check that fails the PR when .agent-admin/prehandover/proof-*.md is absent to enforce PREHANDOVER completion as a hard gate (prevents Phase 4 omission repeat) | `session-053-20260224.md` |
+| 2026-02-24 | foreman-v2 | session-053 | Carry-forward: add integration test for governance-alignment-schedule.yml liaison issue creation on drift detection (originally session-051 — still unresolved) | `session-053-20260224.md` |
