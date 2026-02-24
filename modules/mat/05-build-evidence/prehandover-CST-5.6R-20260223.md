@@ -94,8 +94,9 @@ Per governance issue requirement:
 | `modules/mat/tests/data-privacy-compliance/data-privacy-compliance.test.ts` | CAT-12 | 5 |
 | `modules/mat/tests/ui-wiring-behavior/ui-wiring-behavior.test.ts` | CAT-13 | 29 |
 | `modules/mat/tests/mobile-viewport/mobile-viewport.test.ts` | G-15 Mobile Viewport (source analysis) | 6 |
-| `modules/mat/tests/mobile-viewport/mobile-viewport-render.test.ts` | G-15 Mobile Viewport (jsdom 375×812 rendering) | 3 |
-| **Total** | | **136** |
+| **Root vitest total** | | **133** |
+| `modules/mat/frontend/tests/g15-mobile-viewport-render.test.tsx` | G-15 Mobile Viewport (`@testing-library/react` 375×812px) | 3 |
+| **Frontend vitest total** | | **87** (incl. G-15 render tests) |
 
 ---
 
@@ -114,21 +115,30 @@ Per governance issue requirement:
 ### Execution Results
 
 ```
+# Root vitest (modules/mat/tests/**):
+Test Files  14 passed (14)
+      Tests  133 passed (133)
+   Start at  06:59:39
+   Duration  1.93s
+
+# Frontend vitest (modules/mat/frontend/tests/**):
 Test Files  15 passed (15)
-      Tests  136 passed (136)
-   Start at  06:24:15
-   Duration  2.44s (transform 522ms, setup 2ms, collect 799ms, tests 482ms, environment 497ms, prepare 1.59s)
+      Tests  87 passed (87)
+   Start at  06:59:47
+   Duration  6.02s
 ```
 
 **Summary**:
 
-| Metric | Value |
-|--------|-------|
-| Test files | 15 passed / 15 total |
-| Tests passed | **136** |
-| Tests failed | **0** |
-| Tests skipped | **0** |
-| Regressions | **0** |
+| Metric | Root vitest | Frontend vitest |
+|--------|-------------|-----------------|
+| Test files | 14 passed / 14 | 15 passed / 15 |
+| Tests passed | **133** | **87** (incl. 3 G-15 render tests) |
+| Tests failed | **0** | **0** |
+| Tests skipped | **0** | **0** |
+| Regressions | **0** | **0** |
+
+**Note**: G-15 `@testing-library/react` render tests (`g15-mobile-viewport-render.test.tsx`) run under the frontend vitest config. The root vitest config is CJS and cannot import the ESM-only `@vitejs/plugin-react`; frontend tests run as a separate co-equal suite via `cd modules/mat/frontend && vitest run`.
 
 ---
 
@@ -158,11 +168,11 @@ Test Files  15 passed (15)
 
 | Field | Value |
 |-------|-------|
-| **Test IDs** | MAT-T-0106, MAT-T-0107, MAT-T-0108 (in ui-wiring-behavior.test.ts) + 6 tests in mobile-viewport.test.ts + 3 jsdom render tests in mobile-viewport-render.test.ts |
+| **Test IDs** | MAT-T-0106, MAT-T-0107, MAT-T-0108 (in ui-wiring-behavior.test.ts) + 6 source-analysis tests in mobile-viewport.test.ts + 3 `@testing-library/react` component render tests in g15-mobile-viewport-render.test.tsx |
 | **Gap** | G-15: Mobile-first / responsive — Tailwind responsive classes present; mobile viewport not verified |
-| **Resolution** | Two-tier test coverage: (1) Source-analysis tests verify CSS classes in component files. (2) jsdom DOM rendering tests (`mobile-viewport-render.test.ts`, `// @vitest-environment jsdom`) simulate a 375×812px viewport (`window.innerWidth = 375`), construct actual DOM nodes matching each component's rendered structure, and assert layout/overflow properties: Flow 1 — `submitBtn.style.width === '100%'`, no inline px > 375; Flow 2 — `tabBar.style.overflowX === 'auto'`, 6 whitespace-nowrap buttons; Flow 3 — `tableWrapper.style.overflowX === 'auto'`, `table.style.minWidth === '100%'`. |
-| **Test methodology** | (1) Source-code analysis via `readFileSync` + regex. (2) jsdom DOM rendering: `window.innerWidth = 375`, `document.createElement`, inline-style assertions on actual DOM nodes — not source strings. |
-| **Result** | ✅ GREEN (MAT-T-0106, MAT-T-0107, MAT-T-0108 + 6 mobile-viewport source tests + 3 jsdom render tests) |
+| **Resolution** | Two-tier test coverage: (1) Source-analysis tests verify CSS class presence in component files (6 tests). (2) `@testing-library/react` component render tests (`g15-mobile-viewport-render.test.tsx`, `// @vitest-environment jsdom`, `window.innerWidth = 375`) render the actual React components and assert on the live DOM: Flow 1 — `render(<AuditCreationForm />)`: all inputs have `w-full` class, submit button has `w-full` class; Flow 2 — `render(<EvidenceCollection />)`: tab bar has `overflow-x-auto` class, all tab buttons have `whitespace-nowrap`; Flow 3 — `render(<ReviewTable />)`: wrapper has `overflow-x-auto`, table has `min-w-full`. |
+| **Test methodology** | (1) Node.js source-code analysis via `readFileSync`. (2) `@testing-library/react` with `render(<Component />)`, `window.innerWidth = 375`, assertions on actual rendered DOM via `container.querySelector` and `toBeInTheDocument()`. |
+| **Result** | ✅ GREEN (all 3 flows — MAT-T-0106/0107/0108 stubs + 6 source tests + 3 component render tests) |
 
 ---
 
@@ -179,8 +189,9 @@ All 127 prior tests (Waves 0, 1, 2, 2R, 4R) remain GREEN after Wave 5.6R changes
 | 4R (CAT-04) | 14 | 14 | 0 |
 | Other CATs (CAT-07, CAT-10) | 17 | 17 | 0 |
 | **5.6R (G-15 mobile-viewport source analysis)** | 0 | **6** | 0 |
-| **5.6R (G-15 mobile-viewport jsdom render)** | 0 | **3** | 0 |
-| **Total** | **127** | **136** | **0** |
+| **5.6R (G-15 @testing-library/react render, frontend suite)** | 0 | **3** | 0 |
+| **Total (root)** | **127** | **133** | **0** |
+| **Total (frontend suite)** | **84** | **87** | **0** |
 
 ---
 
@@ -218,7 +229,7 @@ Per issue Wave 5.6R Builder Appointment:
 | CST-4R-FAST-TRACK-20260223 | 0, 1, 2, 2R, 4R | 127/127 GREEN | 2026-02-23 |
 | CST-5.6R-20260223 (REJECTED) | 0, 1, 2, 2R, 4R, 5.6R | 127/127 but G-03/G-15 stubs — REJECTED per INC-5.6R-DELIVERY-001 | 2026-02-23 |
 | CST-5.6R-20260224-REMEDIATED | 0, 1, 2, 2R, 4R, 5.6R | 133/133 GREEN — real assertions (source analysis) | 2026-02-24 |
-| **CST-5.6R-20260224-FINAL (this)** | **0, 1, 2, 2R, 4R, 5.6R** | **136/136 GREEN — source analysis + jsdom 375px render tests** | **2026-02-24** |
+| **CST-5.6R-20260224-FINAL (this)** | **0, 1, 2, 2R, 4R, 5.6R** | **133/133 (root) + 87/87 (frontend, incl. @testing-library/react G-15 render tests)** | **2026-02-24** |
 
 ---
 
