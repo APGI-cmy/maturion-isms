@@ -21,6 +21,7 @@ import {
   type NormalisedProviderRequest,
 } from '../../types/index.js';
 import { GitHubModelsAdapter } from '../../adapters/GitHubModelsAdapter.js';
+import { OpenAIAdapter } from '../../adapters/OpenAIAdapter.js';
 import { ProviderKeyStore } from '../../keys/ProviderKeyStore.js';
 
 // ---------------------------------------------------------------------------
@@ -28,8 +29,8 @@ import { ProviderKeyStore } from '../../keys/ProviderKeyStore.js';
 // ---------------------------------------------------------------------------
 
 /**
- * Mock fetch that returns a well-formed GitHub Models chat-completion response.
- * Injected via the GitHubModelsAdapter constructor so no live API calls are made.
+ * Mock fetch that returns a well-formed chat-completion response.
+ * Injected via adapter constructors so no live API calls are made.
  */
 function makeMockFetch(text: string = 'Advisory response text.') {
   return vi.fn().mockResolvedValue({
@@ -39,6 +40,16 @@ function makeMockFetch(text: string = 'Advisory response text.') {
       choices: [{ message: { content: text } }],
     }),
   } as unknown as Response);
+}
+
+/**
+ * Mock fetch that returns a JSON-encoded analysis response.
+ * Used for adapters that support the `analysis` capability (Wave 4+).
+ */
+function makeMockAnalysisFetch(
+  data: Record<string, unknown> = { summary: 'Analysis complete.' },
+) {
+  return makeMockFetch(JSON.stringify(data));
 }
 
 /** Mock key store that returns a fake token without reading env vars. */
@@ -76,7 +87,7 @@ function makeMockKeyStore(): ProviderKeyStore {
  */
 const ADAPTERS_UNDER_TEST: ProviderAdapter[] = [
   new GitHubModelsAdapter(makeMockKeyStore(), makeMockFetch()), // Wave 3
-  // Wave 4: new OpenAIAdapter()       — import and uncomment when implemented
+  new OpenAIAdapter(makeMockKeyStore(), makeMockAnalysisFetch()), // Wave 4
   // Wave 6: new AnthropicAdapter()    — import and uncomment when implemented
   // Wave 7: new PerplexityAdapter()   — import and uncomment when implemented
   // Wave 8: new RunwayAdapter()       — import and uncomment when implemented

@@ -1,9 +1,10 @@
 /**
- * MemoryLifecycle — Wave 2 implementation
+ * MemoryLifecycle — Wave 4 full implementation
  *
  * Assembles context window in canonical order and manages turn recording.
+ * recordTurn() now persists turns to both session and persistent memory (AAD §5.8).
  *
- * References: GRS-030 | APS §7.3, §7.5 | AAD §5.7
+ * References: GRS-030 | APS §7.3, §7.5 | AAD §5.7, §5.8
  */
 import type {
   MemoryLifecycle as IMemoryLifecycle,
@@ -13,6 +14,7 @@ import type {
   AICentreResponse,
   SessionMemoryStore,
   PersistentMemoryAdapter,
+  PersistedMemoryEntry,
 } from '../types/index.js';
 
 export interface MemoryLifecycleDeps {
@@ -89,6 +91,29 @@ export class MemoryLifecycle implements IMemoryLifecycle {
       timestamp: now + 1,
       estimatedTokens: Math.ceil(resultText.length / 4),
     });
+
+    // Persist both turns to cross-session memory (AAD §5.8)
+    const baseEntry: Omit<PersistedMemoryEntry, 'role' | 'content' | 'timestamp'> = {
+      organisationId: params.request.context.organisationId,
+      sessionId,
+      userId: params.request.context.userId,
+      capability: params.request.capability,
+    };
+
+    await Promise.all([
+      this.persistentAdapter.persist({
+        ...baseEntry,
+        role: 'user',
+        content: inputText,
+        timestamp: now,
+      }),
+      this.persistentAdapter.persist({
+        ...baseEntry,
+        role: 'assistant',
+        content: resultText,
+        timestamp: now + 1,
+      }),
+    ]);
   }
 
   pruneSession(sessionId: string): void {
