@@ -3,27 +3,38 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 1.0.0  
+**Version**: 1.1.0  
 **Created**: 2026-02-24  
+**Updated**: 2026-02-24  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
+
+---
+
+## Tier and Canon Derivation
+
+This file is the **Tier 2 operational registry copy** for `foreman-v2` in `APGI-cmy/maturion-isms`.  
+It derives from and extends the canonical FAIL-ONLY-ONCE registry maintained in `APGI-cmy/maturion-foreman-governance`.  
+The canonical registry is the authoritative upstream source; this file records ISMS-local incidents and rules that have not yet been upstreamed, or that are specific to the ISMS deployment context.
 
 ---
 
 ## Purpose
 
-This file is the **single authoritative source** for all institutional learning, breach memorialisation, and Universal A-rules for the Foreman v2 agent.
+This file is the **Tier 2 operational registry** for all ISMS-local institutional learning, breach memorialisation, and Universal A-rules for the Foreman v2 agent. For the upstream canonical registry see `APGI-cmy/maturion-foreman-governance`.
 
 **Every session MUST open with a FAIL-ONLY-ONCE self-test (PREFLIGHT §1.3):**
 1. Read this entire file.
 2. Self-attest that every A-rule is understood and will be observed.
-3. Check the incident log for any open/unresolved breach — if found: **STOP-AND-FIX immediately** (session cannot proceed).
-4. Record attestation in session memory preamble: `fail_only_once_attested: true | unresolved_breaches: [list or 'none']`.
+3. Check the incident log — for every incident, note its status. If any incident has status `OPEN` or `IN_PROGRESS` → **STOP-AND-FIX immediately** (session cannot proceed until resolved). Sessions MAY proceed when all incidents are `REMEDIATED` or `ACCEPTED_RISK (CS2)`.
+4. Record attestation in session memory preamble: `fail_only_once_attested: true | unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']`.
 
 ---
 
 ## Section 1: Universal A-Rules (Permanent Invariants)
 
 These rules are **absolute** and may never be overridden, relaxed, or waived without explicit CS2 written authorisation.
+
+> **ID Namespace Note**: IDs in this file (A-001–A-008) are local to this Tier 2 ISMS operational registry. The canonical FAIL-ONLY-ONCE registry in `APGI-cmy/maturion-foreman-governance` uses a separate series (A-01, A-18, A-19, A-20, A-21, …). Rules from both registries are binding on the Foreman. IDs from the canonical registry must not be renumbered when referenced in this file — cite them as-is (e.g. "see canonical A-18").
 
 | ID | Rule | Source |
 |----|------|--------|
@@ -39,6 +50,15 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 ---
 
 ## Section 2: Incident Log
+
+**Allowed incident statuses**: `OPEN` | `IN_PROGRESS` | `REMEDIATED` | `ACCEPTED_RISK (CS2)`
+
+- **OPEN**: Breach identified; corrective action not yet started.
+- **IN_PROGRESS**: Corrective action underway but not confirmed complete.
+- **REMEDIATED**: Corrective action confirmed complete; breach closed.
+- **ACCEPTED_RISK (CS2)**: CS2 has explicitly accepted the residual risk in writing; session may proceed with acknowledgement.
+
+> **STOP-AND-FIX rule**: Foreman MUST halt and fix before proceeding if ANY incident in this log has status `OPEN` or `IN_PROGRESS`. Sessions MAY proceed when all incidents are `REMEDIATED` or `ACCEPTED_RISK (CS2)`.
 
 ### GV-001-20260221 — Silent Removal of Recorded Learnings
 **Date**: 2026-02-21  
@@ -124,12 +144,14 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 1.0.0
-unresolved_breaches: [list incident IDs with open status, or 'none']
+fail_only_once_version: 1.1.0
+unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
 open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005]
 ```
 
-If `unresolved_breaches` is not `'none'` → **STOP-AND-FIX immediately**. Do not proceed with any wave work until all listed breaches are resolved and attested as closed.
+**STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
+
+**Proceed condition**: All incidents are `REMEDIATED` or `ACCEPTED_RISK (CS2)` → attestation complete, session may proceed.
 
 ---
 
