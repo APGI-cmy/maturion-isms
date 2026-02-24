@@ -1,12 +1,13 @@
 # Governance Artifact Inventory
 
 **Repository**: APGI-cmy/maturion-isms  
-**Last Updated**: 2026-02-14T13:00:00+00:00  
+**Last Updated**: 2026-02-24T08:18:45Z  
 **Governance Source**: APGI-cmy/maturion-foreman-governance  
 **Canonical Version**: 1.0.0 (CANON_INVENTORY.json)  
-**Layer-Down Session**: align-20260214-130000  
+**Layer-Down Session**: align-20260223-114346  
 **Baseline PR**: #1083 (merged 2026-02-11T11:18:26Z)  
-**Infrastructure Update**: Governance Ripple System v1.0.0 implemented
+**Infrastructure Update**: Governance Ripple System v1.0.0 implemented  
+**Latest Ripple PR**: #441 (merged 2026-02-23T11:58:58Z) — AIMC_STRATEGY.md added
 
 ---
 
@@ -14,13 +15,13 @@
 
 This inventory tracks all governance artifacts layered down from the canonical governance repository to this consumer repository.
 
-- **Total PUBLIC_API Canons Layered**: 102 ✅
+- **Total PUBLIC_API Canons Layered**: 103 ✅ (102 baseline + AIMC_STRATEGY.md via PR #441)
 - **Total Governance Infrastructure**: 7 components complete
-- **Last Sync**: 2026-02-14T13:00:00+00:00
+- **Last Sync**: 2026-02-23T11:58:58Z (PR #441 — AIMC_STRATEGY.md)
 - **Alignment Status**: FULLY COMPLIANT (All 7 ripple components implemented)
 - **Evidence Log**: `.agent-admin/governance/ripple-log.json`
 - **Drift Detection**: Automated (hourly schedule + event-driven)
-- **Note**: Complete governance ripple infrastructure implemented
+- **Note**: Complete governance ripple infrastructure implemented. AIMC_STRATEGY.md layered down 2026-02-23.
 
 ---
 
@@ -89,16 +90,20 @@ This maturion-isms implementation serves as the **gold standard** for governance
 - 📦 **PUBLIC_API**: Canonical governance for consumer repositories
 - 🔒 **INTERNAL**: Internal to canonical governance repository only
 
-### Canon Files (102 total)
+### Canon Files (103 total)
 
-All 102 PUBLIC_API canon files have been successfully layered down to their respective paths:
+All PUBLIC_API canon files have been successfully layered down to their respective paths:
 
-- `governance/canon/` - Core canonical governance documents (97 files)
+- `governance/canon/` - Core canonical governance documents (98 files, including AIMC_STRATEGY.md added PR #441)
 - `governance/policy/` - Policy governance documents (9 files)
 - `governance/coordination/` - Cross-agent coordination protocols (1 file)
 - `governance/opojd/` - One Piece of Job Done doctrine (1 file)
 - `governance/agent/` - Agent-specific doctrines (1 file)
 - `governance/contracts/` - **NEW** Agent requirement contracts (2 files from PR #1083)
+
+**AIMC Integration** (added 2026-02-23 via canonical commit `cd90d8ad776d`, PR #441):
+- `governance/canon/AIMC_STRATEGY.md` v1.0.0 — SHA256: `dfe539fe290148e6e7c9112fa269b5cd0124c456954de1d75c9a7870cd79b2dc`
+- Referenced by: `governance/aimc/AIMC_GOVERNANCE_REQUIREMENTS_SPECIFICATION.md`, `governance/aimc/AIMC_ARTEFACT_ARCHITECTURE_DESCRIPTION.md`, `governance/aimc/AIMC_AGENT_PROTOCOL_SPECIFICATION.md`
 
 For detailed file list with checksums, see: `.agent-admin/sessions/governance-liaison/liaison-20260211-131419_alignment.log`
 
@@ -113,6 +118,7 @@ governance/
 │   │   ├── AGENT_CONTRACT_MIGRATION_GUIDE.md
 │   │   ├── AGENT_FILE_BINDING_REQUIREMENTS.md
 │   │   └── AGENT_ONBOARDING_QUICKSTART.md
+│   ├── AIMC_STRATEGY.md          ← NEW (PR #441, 2026-02-23)
 │   └── [97 other canon files]
 ├── policy/
 │   └── [9 policy files]

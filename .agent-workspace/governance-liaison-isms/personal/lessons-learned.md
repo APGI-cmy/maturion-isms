@@ -586,3 +586,14 @@ Gate failed because it detected session memory file(s) with phrases like:
 **Authority**: This is CRITICAL learning. Skipping handover testing undermines entire governance system.
 
 ---
+
+## Session 016 — 2026-02-24
+
+### AIMC Layer-Down Pattern
+When a new strategic canon (like AIMC_STRATEGY.md) is layered down:
+1. Verify SHA256 against CANON_INVENTORY.json entry before concluding verification
+2. Check governance/aimc/ or equivalent consumer-side directories for pre-existing cross-references
+3. Update GOVERNANCE_ARTIFACT_INVENTORY.md total count and add AIMC integration record
+4. Consumer artefacts (governance/aimc/*.md) may already have cross-references in place — confirm before adding redundant references
+
+**Authority**: Session 016 AIMC_STRATEGY.md layer-down verification
