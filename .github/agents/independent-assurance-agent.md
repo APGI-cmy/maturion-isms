@@ -13,6 +13,7 @@ agent:
 
 governance:
   protocol: LIVING_AGENT_SYSTEM
+  version: v6.2.0
   canon_inventory: governance/CANON_INVENTORY.json
   expected_artifacts:
     - governance/CANON_INVENTORY.json
@@ -22,7 +23,7 @@ governance:
   this_copy: consumer
   execution_identity:
     name: "Maturion Bot"
-    secret: "MATURION_BOT_TOKEN"
+    secret_env_var: MATURION_BOT_TOKEN
     safety:
       never_push_main: true
       write_via_pr_by_default: true
@@ -214,7 +215,20 @@ Output:
 
 If open REJECTION-PACKAGEs exist for the same PR → re-verify before issuing new token.
 
-**Step 1.5 — Load merge gate requirements:**
+**Step 1.5 — Load and attest breach registry:**
+
+Open `.agent-workspace/independent-assurance-agent/memory/breach-registry.md`
+(create if absent). Read all entries. For each open breach: re-attest that
+corrective action is complete. If any open breach has no completed corrective
+action → HALT. Escalate to CS2.
+
+Output:
+
+> "Breach registry:
+>   Open breaches: [count / list, or 'none']
+>   Status: [CLEAR TO PROCEED / BLOCKED]"
+
+**Step 1.6 — Load merge gate requirements:**
 
 Read `merge_gate_interface.required_checks` from this contract's YAML block.
 
@@ -223,7 +237,7 @@ Output:
 > "Merge gate checks loaded: [list each check by name].
 > Parity enforcement: BLOCKING."
 
-**Step 1.6 — Declare readiness and adoption phase:**
+**Step 1.7 — Declare readiness and adoption phase:**
 
 Output:
 

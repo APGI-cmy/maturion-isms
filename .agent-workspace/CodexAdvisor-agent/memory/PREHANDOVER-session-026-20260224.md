@@ -17,7 +17,7 @@ as required by Issue #1201 and the IAA governance canon.
 
 | File | Action | Character Count |
 |------|--------|-----------------|
-| `.github/agents/independent-assurance-agent.md` | CREATED — IAA Tier 1 contract | 16,213 |
+| `.github/agents/independent-assurance-agent.md` | CREATED — IAA Tier 1 contract; UPDATED v2 — 3 REJECTION-PACKAGE findings resolved | 16,667 |
 | `.agent-workspace/independent-assurance-agent/knowledge/index.md` | CREATED — Tier 2 knowledge stub | 3,350 |
 | `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-026-20260224.md` | CREATED (this file) | — |
 | `.agent-workspace/CodexAdvisor-agent/memory/session-026-20260224.md` | CREATED — session memory | — |
@@ -29,7 +29,7 @@ All created files are well under 30,000 characters.
 ## Target Agent: independent-assurance-agent
 
 - **File path**: `.github/agents/independent-assurance-agent.md`
-- **Character count**: 16,213 (target <25,000 / hard limit 30,000)
+- **Character count**: 16,667 (target <25,000 / hard limit 30,000)
 - **Agent class**: `assurance`
 - **Contract version**: 1.0.0
 
@@ -37,10 +37,10 @@ All created files are well under 30,000 characters.
 
 ## QP Scorecard Summary
 
-> QP EVALUATION — independent-assurance-agent.md:
+> QP EVALUATION — independent-assurance-agent.md (v2 — post REJECTION-PACKAGE fixes):
 >
 > FILE STRUCTURE (S1):
->   S1-01 Character count: 16,213 / 30,000 ✅
+>   S1-01 Character count: 16,667 / 30,000 ✅
 >   S1-02 YAML valid and delimited: ✅
 >   S1-03 name field present: ✅
 >   S1-04 id matches name: ✅
@@ -53,16 +53,18 @@ All created files are well under 30,000 characters.
 >
 > GOVERNANCE (S2):
 >   S2-01 governance.protocol is LIVING_AGENT_SYSTEM: ✅
+>   S2-01b governance.version is v6.2.0: ✅ (FINDING 3 resolved)
 >   S2-02 governance.canon_inventory points to governance/CANON_INVENTORY.json: ✅
 >   S2-03 governance.degraded_on_placeholder_hashes is true: ✅
 >   S2-04 governance.execution_identity.name is "Maturion Bot": ✅
+>   S2-04b governance.execution_identity uses secret_env_var (not secret): ✅ (FINDING 1 resolved)
 >   S2-05 governance.execution_identity.safety.never_push_main is true: ✅
 >   S2-06 governance.execution_identity.safety.write_via_pr_by_default is true: ✅
 >   S2-07 merge_gate_interface.required_checks lists all 3 standard checks: ✅
 >   S2-08 prohibitions includes: no self-modification, no push to main, no secrets, no governance weakening: ✅
 >
 > FOUR-PHASE STRUCTURE (S3):
->   S3-01 Phase 1 present and complete (wake-up, CANON_INVENTORY check, Tier 2 load, session memory): ✅
+>   S3-01 Phase 1 present and complete (wake-up, CANON_INVENTORY check, Tier 2 load, session memory, breach registry): ✅ (FINDING 2 resolved — Step 1.5 breach registry added, steps renumbered 1.5→1.6, 1.6→1.7)
 >   S3-02 Phase 2 present and complete (independence check, category classification, checklist load): ✅
 >   S3-03 Phase 3 present with per-check evidence mandate: ✅
 >   S3-04 Phase 4 present with binary verdict, session memory, parking station, handover: ✅
