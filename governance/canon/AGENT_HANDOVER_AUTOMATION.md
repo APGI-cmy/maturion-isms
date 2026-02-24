@@ -1,7 +1,7 @@
 # AGENT_HANDOVER_AUTOMATION
 
-**Status**: CANONICAL | **Version**: 1.0.0 | **Authority**: CS2  
-**Date**: 2026-02-17
+**Status**: CANONICAL | **Version**: 1.1.1 | **Authority**: CS2  
+**Date**: 2026-02-24
 
 ---
 
@@ -22,14 +22,15 @@ Traditional agent workflows:
 
 ## Handover Phase Structure
 
-Phase 4 consists of three mandatory sections:
+Phase 4 consists of four mandatory sections:
 
 ```markdown
 ## PHASE 4: HANDOVER SCRIPT (AUTOMATED EVIDENCE/COMPLIANCE/CLOSURE)
 
 ### 4.1 Evidence Artifact Generation
 ### 4.2 Session Memory & Closure
-### 4.3 Compliance Check & Escalation (if needed)
+### 4.3 Pre-Handover Merge Gate Parity Check (mandatory, BLOCKING)
+### 4.4 Compliance Check & Escalation (if needed)
 ```
 
 ## Section 4.1: Evidence Artifact Generation
@@ -373,16 +374,117 @@ echo "🔍 Environment: SAFE_FOR_HANDOVER"
 ...
 ```
 
-## Section 4.3: Compliance Check & Escalation
+## Section 4.3: Pre-Handover Merge Gate Parity Check (mandatory, BLOCKING)
+
+**Purpose**: Guarantee that every merge gate check passes locally before the PR is opened. Opening a PR with a failing gate is **prohibited** — it is the same class of violation as pushing directly to main.
+
+**Template**:
+
+```markdown
+### 4.3 Pre-Handover Merge Gate Parity Check (Priority_H — BLOCKING)
+
+**Script**: Run all merge gate checks locally before opening the PR
+
+**Parity Check Protocol**:
+
+> **Consumer note**: The closing fence of the bash block below uses escaped backticks (`` \`\`\` ``) to prevent Markdown fence collision inside this outer code block. When copying this template into an agent contract or script, replace every `` \`\`\` `` (backslash + three backticks) with ` ``` ` (three plain backticks).
+
+```bash
+#!/bin/bash
+# <Agent> Handover - Pre-Handover Merge Gate Parity Check
+# Priority: <Agent>_H  — BLOCKING: do NOT open PR until all checks PASS
+
+echo "🔍 PRE-HANDOVER MERGE GATE PARITY CHECK (BLOCKING)"
+
+GATE_FAILURES=()
+
+# Step 1: Read required checks from agent contract YAML
+# MERGE_GATE_CHECKS is the list from merge_gate_interface.required_checks
+# e.g. MERGE_GATE_CHECKS=("merge-gate/verdict" "governance/alignment" "stop-and-fix/enforcement")
+
+# Step 2: Run each check locally using the same script/ruleset CI will use
+# and record a declared PASS or FAIL result
+
+# merge-gate/verdict — run the same commands the CI verdict job runs
+echo "  Running: merge-gate/verdict"
+<verdict check commands>
+VERDICT_RESULT=$?
+if [ "${VERDICT_RESULT}" -ne 0 ]; then
+  GATE_FAILURES+=("merge-gate/verdict: FAIL")
+  echo "  ❌ merge-gate/verdict: FAIL"
+else
+  echo "  ✅ merge-gate/verdict: PASS"
+fi
+
+# governance/alignment — validate canon hashes locally
+echo "  Running: governance/alignment"
+if [ -f ".github/scripts/validate-canon-hashes.sh" ]; then
+  bash .github/scripts/validate-canon-hashes.sh > /dev/null 2>&1
+  ALIGNMENT_RESULT=$?
+  if [ "${ALIGNMENT_RESULT}" -ne 0 ]; then
+    GATE_FAILURES+=("governance/alignment: FAIL")
+    echo "  ❌ governance/alignment: FAIL"
+  else
+    echo "  ✅ governance/alignment: PASS"
+  fi
+else
+  echo "  ⚠️  governance/alignment: SKIPPED — .github/scripts/validate-canon-hashes.sh not found"
+  echo "     Confirm whether absence of this script is expected before opening the PR."
+fi
+
+# stop-and-fix/enforcement — verify no open RCA blockers
+echo "  Running: stop-and-fix/enforcement"
+OPEN_BLOCKERS=$(find .agent-workspace -name "blocker-*.md" 2>/dev/null | wc -l)
+if [ "${OPEN_BLOCKERS}" -gt 0 ]; then
+  GATE_FAILURES+=("stop-and-fix/enforcement: FAIL (${OPEN_BLOCKERS} open blocker(s))")
+  echo "  ❌ stop-and-fix/enforcement: FAIL (${OPEN_BLOCKERS} open blocker(s))"
+else
+  echo "  ✅ stop-and-fix/enforcement: PASS"
+fi
+
+# Step 3: Evaluate — if ANY check FAILED, STOP immediately
+# Step 4: STOP — do NOT open the PR; fix and re-run from step 1
+if [ ${#GATE_FAILURES[@]} -gt 0 ]; then
+  echo ""
+  echo "❌ [<Agent>_H] PRE-HANDOVER GATE PARITY FAILED — PR MUST NOT BE OPENED"
+  echo "Failing gates:"
+  for f in "${GATE_FAILURES[@]}"; do echo "  - ${f}"; done
+  echo ""
+  echo "ACTION REQUIRED: Fix all failing gates above, then re-run this check from step 1."
+  echo "Escalation is only appropriate for ambiguous blockers, NOT for gate failures."
+  echo "Opening a PR on a local gate failure is PROHIBITED (same class as pushing to main)."
+  exit 1
+fi
+
+# Step 5: All checks PASS — agent may proceed to open the PR
+echo ""
+echo "✅ [<Agent>_H] ALL MERGE GATE PARITY CHECKS PASSED"
+echo "✅ [<Agent>_H] Agent is cleared to open the PR"
+\`\`\`
+
+**Commentary**: This check is **BLOCKING**. If any gate fails the agent **stops, fixes the issue, and re-runs from step 1**. Escalation is reserved for ambiguous blockers only — failing merge gates must be fixed before the PR is opened.
+```
+
+### Merge Gate Parity Rules
+
+| Rule | Detail |
+|------|--------|
+| **BLOCKING** | Gate failures halt handover; the PR must not be opened |
+| **Fix-first** | Agent fixes the root cause and re-runs all checks from step 1 |
+| **No partial bypass** | Every required check must produce a declared PASS result |
+| **Escalation scope** | Only for genuinely ambiguous blockers — not for known gate failures |
+| **Prohibition parity** | Opening a PR on a local gate failure = pushing to main (both prohibited) |
+
+## Section 4.4: Compliance Check & Escalation
 
 **Purpose**: Verify agent-class-specific compliance requirements and create escalations if needed.
 
 **Template**:
 
 ```markdown
-### 4.3 <Agent-Specific> Compliance Check (Priority_H)
+### 4.4 <Agent-Specific> Compliance Check (Priority_H)
 
-**Script**: Verify compliance, create escalations for failures
+**Script**: Verify compliance; fix ALL issues before proceeding — escalation only for ambiguous blockers
 
 **Compliance Verification**:
 ```bash
@@ -411,10 +513,19 @@ if [ ${#COMPLIANCE_ISSUES[@]} -gt 0 ]; then
   echo "❌ [<Agent>_H] COMPLIANCE FAILED"
   echo "Issues: ${COMPLIANCE_ISSUES[@]}"
   
-  # Create escalation for compliance failure
+  # ALL compliance issues MUST be fixed before proceeding.
+  # Escalation documents are only created for genuinely ambiguous blockers —
+  # routine compliance failures (failing tests, missing artifacts, etc.) must be
+  # resolved by the agent before the PR is opened, not handed off to CI or CS2.
+  echo ""
+  echo "ACTION REQUIRED: Fix ALL issues listed above and re-run compliance check."
+  echo "Do NOT open the PR until every compliance check passes."
+  echo ""
+  echo "If (and only if) a blocker is genuinely ambiguous and cannot be resolved"
+  echo "within authority, create a structured escalation document and halt:"
   mkdir -p .agent-workspace/<agent>/escalation-inbox
   cat > .agent-workspace/<agent>/escalation-inbox/compliance-failure-$(date +%Y%m%d).md <<EOF
-# Escalation: Compliance Failure
+# Escalation: Compliance Failure (Ambiguous Blocker)
 
 ## Type
 BLOCKER
@@ -423,7 +534,8 @@ BLOCKER
 <Agent>_H
 
 ## Description
-<Agent-specific> compliance check failed.
+<Agent-specific> compliance check failed with an ambiguous blocker that cannot
+be resolved within agent authority.
 
 ## Issues
 $(for issue in "${COMPLIANCE_ISSUES[@]}"; do echo "- ${issue}"; done)
@@ -436,6 +548,11 @@ Phase: Handover
 ## Recommendation
 <Agent-specific remediation>
 
+## Note
+Escalation is only appropriate for ambiguous blockers. Routine failures
+(test failures, missing artifacts, gate failures) MUST be fixed by the
+agent — do not escalate resolvable issues.
+
 ---
 Created: $(date -u +%Y-%m-%dT%H:%M:%SZ)
 EOF
@@ -447,7 +564,7 @@ else
 fi
 \`\`\`
 
-**Commentary**: Automated compliance checking with escalation protocol.
+**Commentary**: Automated compliance checking. ALL issues must be fixed before the PR is opened. Escalation documents are reserved for genuinely ambiguous blockers that cannot be resolved within agent authority.
 ```
 
 ### Compliance Checks by Agent Class
@@ -609,8 +726,9 @@ Before session ends, verify:
 - [ ] **Memory rotated**: Last 5 kept, older archived
 - [ ] **Personal learnings updated**: Lessons and patterns files updated
 - [ ] **Environment health set**: Status = `SAFE_FOR_HANDOVER`
-- [ ] **Compliance checked**: Agent-specific requirements verified
-- [ ] **Escalations created**: If compliance failed or blockers found
+- [ ] **Pre-handover merge gate parity check PASSED**: All merge gate checks pass locally (BLOCKING — PR must not be opened until this is ✅)
+- [ ] **Compliance checked**: Agent-specific requirements verified; ALL issues fixed before proceeding
+- [ ] **Escalations created**: Only if genuinely ambiguous blockers remain that cannot be resolved within authority
 - [ ] **Working contract archived**: Ephemeral file can be deleted
 
 ## Anti-Patterns to Avoid
@@ -620,7 +738,9 @@ Before session ends, verify:
 | **Manual evidence creation** | Inconsistent, forgotten | Automated script generates all evidence |
 | **No memory rotation** | Memory directory grows unbounded | Always rotate, keep last 5 |
 | **Skipping compliance checks** | Violations discovered at merge time | Always verify compliance before handover |
-| **No escalation creation** | Blockers undocumented | Auto-generate escalation documents |
+| **Opening PR with failing gates** | Gate failure is CI's problem, not agent's | Run merge gate parity check locally; fix ALL failures before opening PR |
+| **Escalating resolvable failures** | Ambiguous — hides fixable issues | Escalation only for genuinely ambiguous blockers; fix routine failures directly |
+| **No escalation creation** | Ambiguous blockers undocumented | Auto-generate escalation document when a blocker truly cannot be resolved within authority |
 | **Vague session memory** | No actionable context for next session | Use structured template |
 | **No environment health** | Unknown state at handover | Always record health status |
 
@@ -659,7 +779,7 @@ Before session ends, verify:
 
 ---
 
-**Version**: 1.0.0  
-**Last Updated**: 2026-02-17  
+**Version**: 1.1.1  
+**Last Updated**: 2026-02-24  
 **Authority**: CS2 (Johan Ras)  
 **Living Agent System**: v6.2.0
