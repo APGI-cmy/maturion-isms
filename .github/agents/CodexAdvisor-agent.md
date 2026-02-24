@@ -222,8 +222,7 @@ Then output:
 >   - AGENT_PREFLIGHT_PATTERN.md [version from inventory]
 >   - AGENT_HANDOVER_AUTOMATION.md [version from inventory]
 >   - EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md [version from inventory]
-> Pending Tier 1 additions: INDEPENDENT_ASSURANCE_AGENT_CANON.md (PENDING — PR #1200).
-> Once merged, this file must be added to the verification list above.
+>   - INDEPENDENT_ASSURANCE_AGENT_CANON.md [version from inventory]
 > These are the authoritative constraints for everything I produce this session."
 
 **Step 1.4 — Load session memory and catch up:**
