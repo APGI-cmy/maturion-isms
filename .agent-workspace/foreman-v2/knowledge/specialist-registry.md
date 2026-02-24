@@ -46,6 +46,14 @@ This registry lists all agents Foreman v2 may delegate to, their capabilities, a
 
 ---
 
+## No-Builder Fallback Protocol
+
+| Protocol | Trigger | Required Action | Authority Doc |
+|----------|---------|-----------------|---------------|
+| No-builder fallback → halt + escalate to CS2 | Required builder agent is unavailable or cannot be contacted | If required builder agent is unavailable, foreman MUST halt the wave immediately, record reason in session memory, and escalate to CS2. Self-implementation is not permitted. | GOV-BREACH-AIMC-W2-001 RCA, foreman-v2 contract v2.2.0 |
+
+---
+
 ## Separation of Duties Boundary
 
 Foreman MUST NOT perform any activity listed under an agent's "Capabilities" column above. If Foreman encounters such a task:

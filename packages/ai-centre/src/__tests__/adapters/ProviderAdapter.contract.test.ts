@@ -13,13 +13,38 @@
  *   GRS-005  Provider adapter interface — all providers implement the same contract
  *   GRS-006  Progressive provider delivery (Wave 3–Wave 8)
  */
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   Capability,
   ProviderHealthStatus,
   type ProviderAdapter,
   type NormalisedProviderRequest,
 } from '../../types/index.js';
+import { GitHubModelsAdapter } from '../../adapters/GitHubModelsAdapter.js';
+import { ProviderKeyStore } from '../../keys/ProviderKeyStore.js';
+
+// ---------------------------------------------------------------------------
+// Test doubles for dependency injection (AAD §8.2)
+// ---------------------------------------------------------------------------
+
+/**
+ * Mock fetch that returns a well-formed GitHub Models chat-completion response.
+ * Injected via the GitHubModelsAdapter constructor so no live API calls are made.
+ */
+function makeMockFetch(text: string = 'Advisory response text.') {
+  return vi.fn().mockResolvedValue({
+    ok: true,
+    status: 200,
+    json: async () => ({
+      choices: [{ message: { content: text } }],
+    }),
+  } as unknown as Response);
+}
+
+/** Mock key store that returns a fake token without reading env vars. */
+function makeMockKeyStore(): ProviderKeyStore {
+  return { getKey: vi.fn().mockReturnValue('test-token') } as unknown as ProviderKeyStore;
+}
 
 // ---------------------------------------------------------------------------
 // Registry of adapters under test (add each adapter as it is implemented)
@@ -35,8 +60,8 @@ import {
  * HOW TO REGISTER:
  *   1. Import your adapter at the top of this file:
  *        import { GitHubModelsAdapter } from '../../adapters/GitHubModelsAdapter.js';
- *   2. Add an instance to the array:
- *        new GitHubModelsAdapter()
+ *   2. Add an instance to the array (with injected test doubles per AAD §8.2):
+ *        new GitHubModelsAdapter(makeMockKeyStore(), makeMockFetch())
  *   3. The parameterised contract tests below will automatically run against it.
  *
  * WAVE DELIVERY SCHEDULE (AAD §6.2 / APS §6.2):
@@ -50,7 +75,7 @@ import {
  * It will automatically stop failing once you add your adapter to this array.
  */
 const ADAPTERS_UNDER_TEST: ProviderAdapter[] = [
-  // Wave 3: new GitHubModelsAdapter() — import and uncomment when implemented
+  new GitHubModelsAdapter(makeMockKeyStore(), makeMockFetch()), // Wave 3
   // Wave 4: new OpenAIAdapter()       — import and uncomment when implemented
   // Wave 6: new AnthropicAdapter()    — import and uncomment when implemented
   // Wave 7: new PerplexityAdapter()   — import and uncomment when implemented
