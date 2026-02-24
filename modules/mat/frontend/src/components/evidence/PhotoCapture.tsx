@@ -122,7 +122,6 @@ export function PhotoCapture({ onCapture }: PhotoCaptureProps = {}) {
         </div>
       ) : (
         <div className="space-y-4">
-          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
           <video ref={videoRef} autoPlay playsInline className="w-full rounded-lg" aria-label="Camera preview" />
           <div className="flex gap-2">
             <button
