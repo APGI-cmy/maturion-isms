@@ -3,7 +3,7 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 1.1.0  
+**Version**: 1.2.0  
 **Created**: 2026-02-24  
 **Updated**: 2026-02-24  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
@@ -59,6 +59,8 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 - **ACCEPTED_RISK (CS2)**: CS2 has explicitly accepted the residual risk in writing; session may proceed with acknowledgement.
 
 > **STOP-AND-FIX rule**: Foreman MUST halt and fix before proceeding if ANY incident in this log has status `OPEN` or `IN_PROGRESS`. Sessions MAY proceed when all incidents are `REMEDIATED` or `ACCEPTED_RISK (CS2)`.
+
+> **Invalid status rule (HARD STOP)**: If ANY incident status is not one of the allowed statuses above, treat the registry as corrupted: **HALT immediately, record the incident ID and invalid status in session memory, and escalate to CS2**. Do not proceed with any work until corrected.
 
 ### GV-001-20260221 — Silent Removal of Recorded Learnings
 **Date**: 2026-02-21  
@@ -135,6 +137,7 @@ These items are tracked and must be reviewed each session. If assigned to the cu
 | S-003 | Add AAWP deliverable table line-by-line verification as a mandatory numbered step in every pre-handover checklist (not just the template) | INC-WAVE3-20260224 | OPEN |
 | S-004 | Add CI check that fails PR when `.agent-admin/prehandover/proof-*.md` is absent — converts PREHANDOVER requirement from soft governance obligation to hard machine-enforced gate | INC-PREHANDOVER-OMISSION-20260224 | OPEN |
 | S-005 | Add integration test validating `governance-alignment-schedule.yml` creates a liaison issue on drift detection (carry-forward from session-051) | session-051 | OPEN |
+| S-006 | Add CI lint/check: validate that every incident status in FAIL-ONLY-ONCE.md is in the allowed status set — automates the invalid-status HARD STOP rule currently enforced manually at preflight | maturion-isms#498 | OPEN |
 
 ---
 
@@ -144,9 +147,9 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 1.1.0
+fail_only_once_version: 1.2.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
