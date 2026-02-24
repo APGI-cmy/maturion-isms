@@ -10,6 +10,8 @@
 | Last Updated     | 2025-01-01                                 |
 | Governance       | Domain 3.7                                 |
 | TRS Requirements | TR-020 through TR-031                      |
+| Tenant Isolation | `Maturion/maturion-tenant-isolation-standard.md` — all tenant-scoped tables enforce `organisation_id` RLS |
+| Cross-Tenant AI  | `Maturion/cross-tenant-intelligence-safety-layer-spec.md` — MAT uses AIMC Gateway (no direct AI provider access) |
 
 ---
 
