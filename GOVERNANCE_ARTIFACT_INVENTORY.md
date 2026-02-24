@@ -7,7 +7,7 @@
 **Layer-Down Session**: align-20260223-145508  
 **Baseline PR**: #1083 (merged 2026-02-11T11:18:26Z)  
 **Infrastructure Update**: Governance Ripple System v1.0.0 implemented  
-**Latest Ripple PR**: #458 (auto-merged 2026-02-21) — 4 files (canonical commit `930a5d0ef893e7edba49b3db92747b699fb1a90b`)
+**Latest Ripple PR**: #475 (auto-merged 2026-02-23) — 3 files (canonical commit `87119743814a626cc3eef325eae54445c1a18ffb`)
 
 ---
 
@@ -15,9 +15,9 @@
 
 This inventory tracks all governance artifacts layered down from the canonical governance repository to this consumer repository.
 
-- **Total PUBLIC_API Canons Layered**: 106 ✅ (102 baseline + FINAL_COMPLETE_WAVE_TEST_PROTOCOL.md via PR #456 + AIMC_STRATEGY.md via PR #441 + PRE_BUILD_REALITY_CHECK_CANON.md via PR #458)
+- **Total PUBLIC_API Canons Layered**: 106 ✅ (102 baseline + FINAL_COMPLETE_WAVE_TEST_PROTOCOL.md via PR #456 + AIMC_STRATEGY.md via PR #441 + PRE_BUILD_REALITY_CHECK_CANON.md via PRs #473-475)
 - **Total Governance Infrastructure**: 7 components complete
-- **Last Sync**: 2026-02-24T08:26:39Z (issue `18e3f1422216` — ripple PRs #456/#457 `aa831e6492bf` 34 files, #458 `930a5d0ef893` 4 files — all confirmed)
+- **Last Sync**: 2026-02-24T08:42:25Z (issue `87119743814a` — ripple PRs #473/#474/#475 `87119743814a` 3 files — all confirmed)
 - **Alignment Status**: FULLY COMPLIANT (All 7 ripple components implemented)
 - **Evidence Log**: `.agent-admin/governance/ripple-log.json`
 - **Drift Detection**: Automated (hourly schedule + event-driven)
@@ -109,9 +109,10 @@ All PUBLIC_API canon files have been successfully layered down to their respecti
 - `governance/canon/AIMC_STRATEGY.md` v1.0.0 — SHA256: `dfe539fe290148e6e7c9112fa269b5cd0124c456954de1d75c9a7870cd79b2dc`
 - Referenced by: `governance/aimc/AIMC_GOVERNANCE_REQUIREMENTS_SPECIFICATION.md`, `governance/aimc/AIMC_ARTEFACT_ARCHITECTURE_DESCRIPTION.md`, `governance/aimc/AIMC_AGENT_PROTOCOL_SPECIFICATION.md`
 
-**PRE_BUILD_REALITY_CHECK_CANON Integration** (added 2026-02-23 via canonical commit `87119743814a`, ripple PR #458):
+**PRE_BUILD_REALITY_CHECK_CANON Integration** (added 2026-02-23 via canonical commit `87119743814a626cc3eef325eae54445c1a18ffb`, ripple PRs #473/#474/#475):
 - `governance/canon/PRE_BUILD_REALITY_CHECK_CANON.md` v1.0.0 — SHA256: `0e3296398d33d95ea56ee944b4ade17c60bd93dd2e0885f32f5d15e725ee49cd`
 - Drift report: `.agent-admin/governance/drift-report-align-20260223-145443.md`
+- Referenced by: `governance/canon/PRE_BUILD_REALITY_CHECK_CANON.md` — applies to all modules (MAT, ROADMAP, PIT, AIMC, RADAM)
 
 For detailed file list with checksums, see: `.agent-admin/sessions/governance-liaison/liaison-20260211-131419_alignment.log`
 
@@ -128,7 +129,7 @@ governance/
 │   │   └── AGENT_ONBOARDING_QUICKSTART.md
 │   ├── AIMC_STRATEGY.md          ← NEW (PR #441, 2026-02-23)
 │   ├── FINAL_COMPLETE_WAVE_TEST_PROTOCOL.md  ← NEW (PR #456, 2026-02-18)
-│   ├── PRE_BUILD_REALITY_CHECK_CANON.md      ← NEW (PR #458, 2026-02-23)
+│   ├── PRE_BUILD_REALITY_CHECK_CANON.md      ← NEW (ripple PRs #473-475, 2026-02-23)
 │   └── [98 other canon files]
 ├── policy/
 │   └── [9 policy files]
