@@ -35,6 +35,7 @@ import {
   type AICentreResponse,
   type AnalysisResult,
 } from '../../types/index.js';
+import { createMockSupabaseClient } from '../helpers/mockSupabaseClient.js';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -132,7 +133,7 @@ describe('Wave 4 CST — Cross-session persistent memory (GRS-008, GRS-030)', ()
     // GRS-008 | GRS-030 | AAD §5.8
     "recordTurn() persists both turns to persistent memory, then assembleContextWindow() returns them in a new session",
     async () => {
-      const persistentAdapter = new PersistentMemoryAdapter();
+      const persistentAdapter = new PersistentMemoryAdapter(createMockSupabaseClient());
       const sessionStore = new SessionMemoryStore();
 
       const lifecycle = new MemoryLifecycle({ sessionStore, persistentAdapter });
@@ -174,7 +175,7 @@ describe('Wave 4 CST — Cross-session persistent memory (GRS-008, GRS-030)', ()
     // GRS-008 | AAD §5.8
     "recordTurn() persists only to the correct organisationId — cross-tenant retrieval returns no records",
     async () => {
-      const persistentAdapter = new PersistentMemoryAdapter();
+      const persistentAdapter = new PersistentMemoryAdapter(createMockSupabaseClient());
       const sessionStore = new SessionMemoryStore();
       const lifecycle = new MemoryLifecycle({ sessionStore, persistentAdapter });
 

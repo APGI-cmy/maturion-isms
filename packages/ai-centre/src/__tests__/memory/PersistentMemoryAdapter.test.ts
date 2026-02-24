@@ -29,6 +29,7 @@
 import { describe, it, expect } from 'vitest';
 import { PersistentMemoryAdapter } from '../../memory/PersistentMemoryAdapter.js';
 import { Capability, type PersistedMemoryEntry } from '../../types/index.js';
+import { createMockSupabaseClient } from '../helpers/mockSupabaseClient.js';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -54,7 +55,7 @@ describe('PersistentMemoryAdapter', () => {
     // GRS-008 | AAD §9.2
     "retrieve() returns only entries belonging to the specified organisationId",
     async () => {
-      const adapter = new PersistentMemoryAdapter();
+      const adapter = new PersistentMemoryAdapter(createMockSupabaseClient());
 
       await adapter.persist(makeEntry({ organisationId: 'org-001' }));
       await adapter.persist(makeEntry({ organisationId: 'org-002' }));
@@ -69,7 +70,7 @@ describe('PersistentMemoryAdapter', () => {
     // GRS-008 | AAD §9.2
     "retrieve() returns empty array for an organisation with no persisted memory",
     async () => {
-      const adapter = new PersistentMemoryAdapter();
+      const adapter = new PersistentMemoryAdapter(createMockSupabaseClient());
 
       const results = await adapter.retrieve({ organisationId: 'org-999' });
 
@@ -81,7 +82,7 @@ describe('PersistentMemoryAdapter', () => {
     // GRS-008 | AAD §9.2
     "persist() stores the entry tagged with the correct organisationId",
     async () => {
-      const adapter = new PersistentMemoryAdapter();
+      const adapter = new PersistentMemoryAdapter(createMockSupabaseClient());
       const entry = makeEntry({ organisationId: 'org-abc' });
 
       await adapter.persist(entry);
@@ -97,7 +98,7 @@ describe('PersistentMemoryAdapter', () => {
     // GRS-008 | AAD §9.2
     "pruneExpired() deletes entries past their expiresAt timestamp",
     async () => {
-      const adapter = new PersistentMemoryAdapter();
+      const adapter = new PersistentMemoryAdapter(createMockSupabaseClient());
 
       const expiredEntry = makeEntry({
         organisationId: 'org-prune',

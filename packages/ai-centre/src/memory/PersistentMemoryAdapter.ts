@@ -1,43 +1,46 @@
 /**
- * PersistentMemoryAdapter — Wave 4 in-memory foundation
+ * PersistentMemoryAdapter — Wave 5 Supabase-backed implementation
  *
- * Provides a correct, fully-functional in-memory implementation of the
- * PersistentMemoryAdapter interface for use in Wave 4 integration testing.
- * All filtering (organisation-scoped tenant isolation, session filtering,
- * limit) and pruning logic is complete and tested.
+ * Implements persistent memory storage via Supabase client against the
+ * `ai_memory` table (see supabase/migrations/001_ai_memory.sql).
  *
- * Supabase wiring is EXPLICITLY DEFERRED TO WAVE 5.
- * The AAWP wave plan records this deferral:
- *   Wave 4 scope: in-memory implementation, correct interface, full test coverage.
- *   Wave 5 scope: replace this in-memory store with a real Supabase client
- *     reading from the ai_memory table (see supabase/migrations/001_ai_memory.sql)
- *     with organisation_id tenant isolation enforced at the query layer (GRS-008).
+ * Organisation-level tenant isolation is enforced at the query layer via the
+ * explicit SQL filter `organisation_id = params.organisationId` in every query,
+ * in addition to the RLS policy defined in the migration (GRS-008).
  *
- * TODO(Wave5): Replace the in-memory `store` array and all methods — persist(),
- * retrieve(), and pruneExpired() — with Supabase client calls to the `ai_memory`
- * table. The constructor must accept a mandatory SupabaseClient (AAD §8.2).
- * Organisation-level tenant isolation must be enforced by the query filter
- * `organisation_id = params.organisationId` in every query (not just RLS alone).
- * See supabase/migrations/001_ai_memory.sql for the schema.
- * Deferral rationale: @supabase/supabase-js is not yet a dependency of this
- * package; adding it is Wave 5 scope to keep Wave 4 focused on the AI gateway
- * and memory lifecycle contract.
+ * Constructor requires a SupabaseClient (AAD §8.2). Passing undefined throws.
  *
- * References: GRS-008 | APS §7.2 | AAD §5.6
+ * References: GRS-008 | APS §7.2 | AAD §5.6, §8.2
  */
+import type { SupabaseClient } from '@supabase/supabase-js';
 import type {
   PersistentMemoryAdapter as IPersistentMemoryAdapter,
   PersistedMemoryEntry,
 } from '../types/index.js';
 
+/** Row shape as stored in the ai_memory table. */
+interface AiMemoryRow {
+  id: string;
+  organisation_id: string;
+  session_id: string | null;
+  user_id: string | null;
+  role: 'user' | 'assistant';
+  content: string;
+  capability: string;
+  timestamp: number;
+  expires_at: string | null;
+}
+
 export class PersistentMemoryAdapter implements IPersistentMemoryAdapter {
-  private readonly store: PersistedMemoryEntry[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private readonly client: SupabaseClient<any, any, any>;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(supabaseClient?: any) {
-    if (arguments.length > 0 && supabaseClient === undefined) {
+  constructor(supabaseClient?: SupabaseClient<any, any, any>) {
+    if (supabaseClient === undefined || supabaseClient === null) {
       throw new Error('SupabaseClient is required for PersistentMemoryAdapter');
     }
+    this.client = supabaseClient;
   }
 
   async retrieve(params: {
@@ -45,36 +48,72 @@ export class PersistentMemoryAdapter implements IPersistentMemoryAdapter {
     sessionId?: string;
     limit?: number;
   }): Promise<PersistedMemoryEntry[]> {
-    let results = this.store.filter(
-      (e) => e.organisationId === params.organisationId,
-    );
+    let query = this.client
+      .from('ai_memory')
+      .select('*')
+      .eq('organisation_id', params.organisationId);
+
     if (params.sessionId !== undefined) {
-      results = results.filter((e) => e.sessionId === params.sessionId);
+      query = query.eq('session_id', params.sessionId);
     }
+
     if (params.limit !== undefined) {
-      results = results.slice(0, params.limit);
+      query = query.limit(params.limit);
     }
-    return results;
+
+    const { data, error } = await query;
+
+    if (error) {
+      throw new Error(`PersistentMemoryAdapter.retrieve failed: ${error.message}`);
+    }
+
+    return ((data as AiMemoryRow[]) ?? []).map((row) => ({
+      id: row.id,
+      organisationId: row.organisation_id,
+      sessionId: row.session_id ?? undefined,
+      userId: row.user_id ?? undefined,
+      role: row.role,
+      content: row.content,
+      capability: row.capability as PersistedMemoryEntry['capability'],
+      timestamp: row.timestamp,
+      expiresAt: row.expires_at ?? undefined,
+    }));
   }
 
   async persist(entry: PersistedMemoryEntry): Promise<void> {
-    this.store.push({ ...entry });
+    const row: Record<string, unknown> = {
+      organisation_id: entry.organisationId,
+      session_id: entry.sessionId ?? null,
+      user_id: entry.userId ?? null,
+      role: entry.role,
+      content: entry.content,
+      capability: entry.capability,
+      timestamp: entry.timestamp,
+      expires_at: entry.expiresAt ?? null,
+    };
+    if (entry.id !== undefined) {
+      row['id'] = entry.id;
+    }
+    const { error } = await this.client.from('ai_memory').insert(row);
+
+    if (error) {
+      throw new Error(`PersistentMemoryAdapter.persist failed: ${error.message}`);
+    }
   }
 
   async pruneExpired(organisationId: string): Promise<number> {
-    const now = new Date();
-    let count = 0;
-    for (let i = this.store.length - 1; i >= 0; i--) {
-      const entry = this.store[i]!;
-      if (
-        entry.organisationId === organisationId &&
-        entry.expiresAt !== undefined &&
-        new Date(entry.expiresAt) < now
-      ) {
-        this.store.splice(i, 1);
-        count++;
-      }
+    const { data, error } = await this.client
+      .from('ai_memory')
+      .delete()
+      .eq('organisation_id', organisationId)
+      .lt('expires_at', new Date().toISOString())
+      .not('expires_at', 'is', null)
+      .select('id');
+
+    if (error) {
+      throw new Error(`PersistentMemoryAdapter.pruneExpired failed: ${error.message}`);
     }
-    return count;
+
+    return (data as { id: string }[] | null)?.length ?? 0;
   }
 }
