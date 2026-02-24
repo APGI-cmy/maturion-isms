@@ -5,9 +5,14 @@
   "framework": "vite",
   "installCommand": "npm install",
   "devCommand": "cd modules/mat/frontend && npm run dev",
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "@vercel/node@3"
+    }
+  },
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
   ],

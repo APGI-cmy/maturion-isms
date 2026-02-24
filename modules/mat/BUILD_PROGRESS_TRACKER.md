@@ -241,6 +241,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] **FCWT: Final Complete Wave Test** — 127 tests GREEN, application fully functional (2026-02-18)
 - [x] **INC-002: LL-031 Platform Blocker — Embedded AI Assistant** — FR-072/TR-072 added, component implemented, 77 frontend tests GREEN (2026-02-20)
 - [x] Wave 6: Deployment & Commissioning (QA gate PASS — 172/172 tests GREEN, vercel.json valid, deployment config complete; production deployment pending CS2 Vercel/Supabase access)
+- [x] **Wave 6 Gap Remediation — Vercel Serverless API Gateway** — `POST /api/ai/request` serverless function delivered; 17 tests GREEN; vercel.json updated (2026-02-24)
 - [ ] **Wave 7: AIMC Advisory Integration** — **BLOCKED — Awaiting AIMC Wave 3** (Advisory Gateway)
 - [ ] **Wave 8: AIMC Analysis Integration** — **BLOCKED — Awaiting AIMC Wave 4** (Analysis Gateway)
 - [ ] **Wave 9: AIMC Embeddings/RAG Integration** — **BLOCKED — Awaiting AIMC Wave 5** (Embeddings/RAG Gateway)
@@ -1596,3 +1597,69 @@ The following remediation waves are required before MAT App V2 can be declared f
 
 
 **AIMC Wave 3 Incomplete Delivery Incident + Corrective Action (2026-02-24)**: PR [APGI-cmy/maturion-isms#483](https://github.com/APGI-cmy/maturion-isms/pull/483) was raised with only 2 of 10 AAWP Wave 3 deliverable rows present in the diff. **Root cause**: AAWP deliverable table not verified line-by-line before PR; 8 pre-existing Wave 2 scaffold files were assumed Wave-3-complete without explicit accounting. **Corrective action**: (1) `GitHubModelsAdapter.ts` delivered as the true new Wave 3 deliverable; (2) injectable fetch added to adapter for testability per AAD §8.2 DI principle; (3) contract test updated to inject mock fetch — all 39 tests GREEN; (4) Wave Completeness Gate checklist added to `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md` as a permanent guard; (5) RCA committed to `.agent-workspace/foreman-v2/memory/session-wave3-incomplete-delivery-RCA-20260224.md`. **Learning**: QA-to-Red and deliverable-completeness checks are non-negotiable pre-PR gates. Any PR that covers a Wave must include an explicit accounting of every row in the AAWP deliverable table (present, pre-existing, future wave, or CS2 waiver). **Guard installed**: Wave Completeness Gate in PREHANDOVER_PROOF_TEMPLATE.md is now a handover BLOCKER for all future wave PRs.
+
+---
+
+## RCA — Vercel Serverless API Gateway Omitted from Wave 6 (2026-02-24)
+
+**RCA ID**: RCA-MAT-API-GATEWAY-001
+**Date**: 2026-02-24
+**Severity**: HIGH — Security Risk (provider keys would otherwise be exposed to the browser)
+**Issue Reference**: "Implement Vercel Serverless API Gateway for AIMC Provider Calls"
+**Status**: REMEDIATED
+
+### What Was Missing
+
+The MAT frontend is a Vite SPA deployed via Vercel. Provider API keys (`GITHUB_TOKEN`, `OPENAI_API_KEY`) are stored as Vercel environment variables and must remain server-side. There was **no Vercel serverless function** to proxy AI requests from the frontend to the AIMC gateway — any direct use of these keys from browser code would have exposed them to users.
+
+The missing component:
+- **`POST /api/ai/request`** — Vercel Node.js serverless function at `api/ai/request.ts`
+- Reads `GITHUB_TOKEN` and `OPENAI_API_KEY` from `process.env` (server-side only)
+- Wraps and invokes `AICentre.request()` with the validated payload
+- Returns a structured result to the frontend; errors are sanitised before returning
+- Logs minimal telemetry to the server console (provider, capability, latency, orgId)
+
+### Root Cause (5-Why Analysis)
+
+1. **Why were keys exposed?** Because there was no server-side proxy endpoint; the frontend had no safe path to call AI providers.
+2. **Why was no proxy endpoint created?** Because Wave 6 (Deployment & Commissioning) focused on deployment configuration (`vercel.json`, environment variable provisioning) but did not include a **serverless API routes task** as a discrete wave task.
+3. **Why was the task omitted from Wave 6?** Because Wave 6 was added retroactively (Deviation — see Critical Gap above), and its derivation chain was drawn from the Deployment Architecture document. The deployment architecture defined static hosting and environment variables but did not explicitly call out serverless API functions as a Wave 6 deliverable.
+4. **Why didn't the Deployment Architecture document include API functions?** Because `ai-architecture.md` v1.0.0 (the prior version) assumed direct provider calls from the backend service layer, not a separate serverless gateway. When `ai-architecture.md` was rewritten to v2.0.0 on 2026-02-23 (AIMC Gateway pattern), the serverless proxy requirement became implicit but was not back-propagated as a Wave 6 gap.
+5. **Why wasn't the gap caught before production?** Because the Wave 6 QA gate validated deployment configuration artefacts (`vercel.json` format, env var presence) but did **not** include a checklist item: *"Is there a server-side proxy for all AI provider calls that require keys?"*
+
+### Impact
+
+- Without this gateway, any Wave 7/8/9 AIMC integration attempt from the frontend would require either (a) exposing provider keys in the browser bundle (CRITICAL security risk), or (b) blocking AIMC integration entirely.
+- The frontend AI features (criteria modal AI parsing, chat assistant, scoring) could not safely call provider APIs.
+
+### Corrective Actions
+
+1. ✅ **Serverless function delivered**: `api/ai/request.ts` — `POST /api/ai/request`
+   - Reads keys server-side via `ProviderKeyStore` (env vars)
+   - Constructs `AICentre` with `GitHubModelsAdapter` and `OpenAIAdapter`
+   - Validates and sanitises all input; never forwards raw provider errors to client
+   - Logs minimal telemetry (capability, provider, latency, orgId) to console
+2. ✅ **`vercel.json` updated**: `functions` key added for `api/**/*.ts`; SPA rewrite updated to negative-lookahead `/((?!api/).*) → /index.html` so API routes are not intercepted
+3. ✅ **17 unit tests delivered** (`api/ai/request.test.ts`): `parseBody`, `validateRequest`, `buildAICentre`, and the HTTP handler (405, 204, 400, 200, 502, 500, CORS headers)
+4. ✅ **`vitest.config.ts` updated**: `api/**/*.test.ts` added to the `include` list
+5. ✅ **This RCA recorded** in `BUILD_PROGRESS_TRACKER.md`
+
+### Preventive Actions
+
+1. **Deployment wave gate checklist MUST include**: *"If the module consumes provider keys for any feature, verify that a server-side proxy endpoint exists before Wave 6 closure."*
+2. **`ai-architecture.md` updates MUST trigger a Wave 6 task review**: When AI architecture is revised, the deployment wave must be re-reviewed for new infrastructure requirements (API routes, edge functions, etc.).
+3. **Serverless API gateway is part of commissioning, not a separate wave**: Future deployments with AI features MUST provision the API gateway as part of Wave 6 (Deployment & Commissioning), not as a post-facto gap.
+4. **Key-exposure security check**: Merge gate or Wave 6 acceptance criteria MUST assert that no provider key is readable from a browser context.
+
+### Lesson Learned (LL-MAT-API-001)
+
+> **Serverless API proxy is a mandatory Wave 6 deliverable whenever provider keys are required.**
+> An AI architecture change (e.g., adopting the AIMC Gateway pattern) must trigger a back-propagation check to the deployment wave: *"Does the new architecture require a server-side route that was not previously planned?"*
+> Architecture changes are not complete until their deployment implications are explicitly reflected in the implementation plan.
+
+**Evidence**:
+- New file: `api/ai/request.ts`
+- New test file: `api/ai/request.test.ts` (17 tests GREEN)
+- Updated: `vercel.json` (functions config + rewrite fix)
+- Updated: `vitest.config.ts` (api test include)
+- All 198 tests GREEN (181 pre-existing + 17 new)

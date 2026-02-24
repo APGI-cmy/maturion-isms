@@ -5,6 +5,7 @@ export default defineConfig({
     include: [
       'modules/mat/tests/**/*.test.ts',
       'packages/ai-centre/src/__tests__/**/*.test.ts',
+      'api/**/*.test.ts',
     ],
     globals: true,
     reporters: ['verbose'],
