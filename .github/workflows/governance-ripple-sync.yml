@@ -79,40 +79,28 @@ jobs:
           echo "  Commit msg  : ${COMMIT_MSG:-unknown}"
           echo "  Timestamp   : ${RIPPLE_TS:-$(date -u +%Y-%m-%dT%H:%M:%SZ)}"
 
-      # ── Idempotency: check for existing ripple PR ──
+      # ── Idempotency: check for existing ripple PR created by this workflow ──
       - name: Check for existing ripple PR
         id: check_existing
         env:
           GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
         run: |
-          RIPPLE_JQ='.[] | select(.headRefName | startswith("ripple/")) | .number'
-
-          # Check for any open PR with governance+ripple labels on a ripple/ branch
+          # Only match PRs on branches created by this workflow (ripple/governance-sync-*).
+          # Do NOT match all ripple/ branches — that catches unrelated PRs (e.g. feature PRs
+          # with governance labels) and causes the entire workflow to be silently skipped.
           EXISTING_PR=$(gh pr list \
             --repo ${{ github.repository }} \
             --state open \
             --label "governance" \
             --label "ripple" \
             --json number,headRefName \
-            --jq "$RIPPLE_JQ" \
+            --jq '.[] | select(.headRefName | startswith("ripple/governance-sync-")) | .number' \
             2>/dev/null | head -1 || echo "")
-
-          # Also check for governance+automated labels on a ripple/ branch (catches all variants)
-          if [ -z "$EXISTING_PR" ]; then
-            EXISTING_PR=$(gh pr list \
-              --repo ${{ github.repository }} \
-              --state open \
-              --label "governance" \
-              --label "automated" \
-              --json number,headRefName \
-              --jq "$RIPPLE_JQ" \
-              2>/dev/null | head -1 || echo "")
-          fi
 
           if [ -n "$EXISTING_PR" ]; then
             echo "skip=true" >> $GITHUB_OUTPUT
             echo "existing_pr=${EXISTING_PR}" >> $GITHUB_OUTPUT
-            echo "Idempotency triggered: open ripple PR #${EXISTING_PR} already exists — standing down"
+            echo "Idempotency triggered: open ripple PR #${EXISTING_PR} already exists — will skip PR creation only"
           else
             echo "skip=false" >> $GITHUB_OUTPUT
             echo "existing_pr=" >> $GITHUB_OUTPUT
@@ -121,7 +109,6 @@ jobs:
 
       # ── Record ripple event receipt ──
       - name: Record ripple event receipt
-        if: steps.check_existing.outputs.skip != 'true'
         run: |
           mkdir -p .agent-admin/ripple
           DATESTAMP=$(date -u +%Y%m%dT%H%M%SZ)
@@ -141,7 +128,6 @@ jobs:
       # ── Run canonical alignment script ──
       - name: Run governance alignment
         id: align
-        if: steps.check_existing.outputs.skip != 'true'
         run: |
           set +e
           bash .github/scripts/align-governance.sh
@@ -164,7 +150,7 @@ jobs:
       # ── Detect agent-contract changes in diff ──
       - name: Check diff for agent contracts
         id: diff_check
-        if: steps.check_existing.outputs.skip != 'true' && steps.align.outputs.drift_detected == 'true'
+        if: steps.align.outputs.drift_detected == 'true'
         run: |
           AGENT_DIFF=$(git diff --name-only HEAD | grep -E '^\.github/agents/.*\.md$' || true)
           if [ -n "$AGENT_DIFF" ]; then
@@ -177,7 +163,7 @@ jobs:
       # ── Collect drift-report metadata ──
       - name: Collect alignment metadata
         id: metadata
-        if: steps.check_existing.outputs.skip != 'true' && steps.align.outputs.drift_detected == 'true'
+        if: steps.align.outputs.drift_detected == 'true'
         run: |
           DRIFT_REPORT=$(ls -t .agent-admin/governance/drift-report-*.md 2>/dev/null | head -1)
           if [ -n "$DRIFT_REPORT" ]; then
@@ -198,7 +184,6 @@ jobs:
       # ── Create escalation document when agent files are touched ──
       - name: Create escalation document
         if: >
-          steps.check_existing.outputs.skip != 'true' &&
           steps.align.outputs.drift_detected == 'true' &&
           steps.diff_check.outputs.has_agent_files == 'true'
         run: |
@@ -246,7 +231,7 @@ jobs:
 
       # ── Record layer-down receipt ──
       - name: Record layer-down receipt
-        if: steps.check_existing.outputs.skip != 'true' && steps.align.outputs.drift_detected == 'true'
+        if: steps.align.outputs.drift_detected == 'true'
         run: |
           mkdir -p .agent-admin/ripple
           DATESTAMP=$(date -u +%Y%m%dT%H%M%SZ)
@@ -267,7 +252,7 @@ jobs:
       # Formally notifies the governance liaison agent of a layer-down event.
       - name: Create governance liaison issue
         id: liaison_issue
-        if: steps.check_existing.outputs.skip != 'true' && steps.align.outputs.drift_detected == 'true'
+        if: steps.align.outputs.drift_detected == 'true'
         env:
           GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
         run: |
@@ -458,7 +443,8 @@ jobs:
           echo "Canonical SHA : ${{ steps.payload.outputs.canonical_commit }}"
 
           if [ "$SKIP" = "true" ]; then
-            echo "Status        : IDEMPOTENCY — open ripple PR #${EXISTING} already exists — stood down"
+            echo "Drift detected: ${DRIFT}"
+            echo "Status        : IDEMPOTENCY — open ripple PR #${EXISTING} already exists — PR creation skipped (receipts and alignment ran)"
           else
             echo "Drift detected: ${DRIFT}"
             if [ "$DRIFT" = "true" ]; then

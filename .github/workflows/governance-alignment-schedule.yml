@@ -67,16 +67,16 @@ jobs:
             exit $EXIT_CODE
           fi
       
-      # ✅ FIX #2: Check for existing governance alignment PRs
+      # Check for existing governance alignment PRs created by this workflow only
       - name: Check for Existing Alignment PR
         id: check_existing
         if: steps.align.outputs.drift_detected == 'true'
         env:
           GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
         run: |
-          RIPPLE_JQ='.[] | select(.headRefName | startswith("ripple/")) | .number'
-
-          # Check for an existing governance alignment PR on the stable branch
+          # Only check for PRs on the stable branch used by this workflow.
+          # Do NOT check ripple/ branches — those belong to governance-ripple-sync.yml
+          # and are unrelated; blocking on them caused scheduled runs to be silently skipped.
           EXISTING_PR=$(gh pr list \
             --repo ${{ github.repository }} \
             --state open \
@@ -86,35 +86,12 @@ jobs:
             --jq '.[] | select(.headRefName | startswith("governance-alignment-")) | .number' \
             | head -1)
 
-          # Also check for any open ripple PR from governance-ripple-sync.yml or ripple-integration.yml
-          if [ -z "$EXISTING_PR" ]; then
-            EXISTING_PR=$(gh pr list \
-              --repo ${{ github.repository }} \
-              --state open \
-              --label "governance" \
-              --label "ripple" \
-              --json number,headRefName \
-              --jq "$RIPPLE_JQ" \
-              2>/dev/null | head -1 || echo "")
-          fi
-
-          if [ -z "$EXISTING_PR" ]; then
-            EXISTING_PR=$(gh pr list \
-              --repo ${{ github.repository }} \
-              --state open \
-              --label "governance" \
-              --label "automated" \
-              --json number,headRefName \
-              --jq "$RIPPLE_JQ" \
-              2>/dev/null | head -1 || echo "")
-          fi
-
           if [ -n "$EXISTING_PR" ]; then
             echo "existing_pr=$EXISTING_PR" >> $GITHUB_OUTPUT
-            echo "Existing governance/ripple PR found: #$EXISTING_PR — skipping new PR creation"
+            echo "Existing governance alignment PR found: #$EXISTING_PR — skipping new PR creation"
           else
             echo "existing_pr=" >> $GITHUB_OUTPUT
-            echo "No existing governance alignment or ripple PR found"
+            echo "No existing governance alignment PR found"
           fi
       
       - name: Get Canonical Metadata
@@ -203,11 +180,9 @@ jobs:
             echo "Could not create liaison issue (labels may not exist yet — ripple-integration.yml will handle via repository_dispatch path)"
           fi
 
-      # ✅ FIX #1 & #3: Create OR Update PR with stable branch name
-      # Note: PR creation is skipped when check_existing found an open ripple PR —
-      # deduplication across all governance ripple workflows.
-      # The `create-pull-request` action is idempotent on the stable branch when no
-      # existing PR blocks creation.
+      # Create OR Update PR with stable branch name.
+      # PR creation is skipped when check_existing found an open alignment PR on the same
+      # stable branch (governance-alignment-auto). All other workflow steps run regardless.
       - name: Create or Update Alignment PR
         if: steps.align.outputs.drift_detected == 'true' && steps.check_existing.outputs.existing_pr == ''
         id: create_pr
@@ -295,7 +270,7 @@ jobs:
             echo "Files Updated: ${{ steps.metadata.outputs.files_updated }}"
             
             if [ -n "${{ steps.check_existing.outputs.existing_pr }}" ]; then
-              echo "Action: IDEMPOTENCY — open ripple PR #${{ steps.check_existing.outputs.existing_pr }} already exists — stood down (no new PR created)"
+              echo "Action: IDEMPOTENCY — existing alignment PR #${{ steps.check_existing.outputs.existing_pr }} already open — no new PR created"
             elif [ -n "${{ steps.create_pr.outputs.pull-request-number }}" ]; then
               echo "Action: Created new PR #${{ steps.create_pr.outputs.pull-request-number }}"
               echo "Auto-Merge: Enabled (squash)"
