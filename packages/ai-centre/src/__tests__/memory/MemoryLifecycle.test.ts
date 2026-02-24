@@ -164,6 +164,28 @@ describe('MemoryLifecycle', () => {
   );
 
   it(
+    // GRS-008 | AAD §5.8 — sessionId guard prevents orphaned persistent records
+    "recordTurn() does NOT call persist() when sessionId is absent",
+    async () => {
+      const sessionStore = makeSessionStore();
+      const persistentAdapter = makePersistentAdapter();
+      const lifecycle = new MemoryLifecycle({ sessionStore, persistentAdapter });
+
+      const requestWithoutSession: AICentreRequest = {
+        ...makeRequest(),
+        context: { organisationId: 'org-001', userId: 'user-001' },
+      };
+
+      await lifecycle.recordTurn({ request: requestWithoutSession, response: makeResponse() });
+
+      // persist() must never be called — no sessionId means no persistent record
+      expect(persistentAdapter.persist).not.toHaveBeenCalled();
+      // session store must also be untouched
+      expect(sessionStore.append).not.toHaveBeenCalled();
+    },
+  );
+
+  it(
     // GRS-031 | AAD §9.2
     "pruneSession() trims session memory before context assembly",
     () => {

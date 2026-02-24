@@ -1,11 +1,15 @@
 /**
- * PersistentMemoryAdapter — Wave 2 in-memory implementation
+ * PersistentMemoryAdapter — Wave 4 implementation
  *
- * Provides in-memory dummy storage for Wave 2 integration testing.
- * Wave 4 will replace this with a Supabase-backed implementation.
+ * Implements the full PersistentMemoryAdapter interface with organisation-scoped
+ * filtering (GRS-008 tenant isolation), session filtering, limit support, and
+ * expired-entry pruning. Storage is in-process for unit/integration testing;
+ * a production deployment replaces the in-memory store with the Supabase
+ * ai_memory table behind RLS (see supabase/migrations/001_ai_memory.sql).
  *
- * IMPORTANT: When called with an explicit `undefined` argument (as tested via the
- * Wave 4 constructor guard), this throws to enforce the future contract requirement.
+ * The constructor enforces the Supabase client requirement at runtime:
+ * passing an explicit `undefined` throws so that callers cannot silently
+ * bypass tenant isolation in a wired-up environment.
  *
  * References: GRS-008 | APS §7.2 | AAD §5.6
  */
