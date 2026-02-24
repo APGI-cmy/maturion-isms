@@ -3,7 +3,7 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 1.2.0  
+**Version**: 1.3.0  
 **Created**: 2026-02-24  
 **Updated**: 2026-02-24  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
@@ -46,6 +46,7 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-006 | Learning Retention Doctrine — Learnings recorded in canonical governance documents are **locked-in** and MUST NOT be removed by automated sync, manual edit, or governance downgrade. Any sync that reduces section count or removes learning content requires an explicit human-approved superseding learning. | GV-001-20260221 (2026-02-21) |
 | A-007 | HARD STOP — NO BUILDER AVAILABLE: If a required builder agent cannot be contacted or appointed, Foreman MUST halt, record in session memory, and escalate to CS2. Self-implementation is never a permitted fallback. | `GOV-BREACH-AIMC-W2-001` (2026-02-24) |
 | A-008 | Full diff review is mandatory before every handover verdict. Every file in the PR diff must be examined. Committed working notes, internal summaries, or builder exploration files in the repository root or non-designated paths are a delivery failure. | INC-5.6R-DELIVERY-001 (2026-02-24) |
+| A-009 | Verb Classification Gate is mandatory BEFORE responding to any task. If the primary verb is an implementation verb (implement, build, code, write, fix) directed at the Foreman, the Foreman MUST enter [MODE:IMPLEMENTATION_GUARD] immediately — REJECT, create builder task spec, delegate, document. A session that receives an implementation verb without executing the Verb Classification Gate is in breach from the first action. | GOV-BREACH-AIMC-W5-001 (2026-02-24) |
 
 ---
 
@@ -126,6 +127,22 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 
 ---
 
+### GOV-BREACH-AIMC-W5-001 — Wave 5 POLC Violation: Foreman Wrote Production Code
+**Date**: 2026-02-24  
+**Severity**: CRITICAL  
+**Status**: REMEDIATED  
+**Source**: `session-wave5-polc-RCA-20260224.md`  
+
+**What happened**: Foreman-v2 wrote Wave 5 production implementation code and tests for PersistentMemoryAdapter Supabase wiring directly in PR #500, without delegating to api-builder or qa-builder. Six governance violations were confirmed by CS2 (issue #496): (1) Foreman performed builder work; (2) Quality Professor phase not independently activated; (3) OPOJD independence requirement structurally impossible; (4) Mock-only tests presented as GRS-008 integration tests; (5) PREHANDOVER proof misrepresented compliance; (6) Builder/QA separation eliminated. PR #500 was closed by CS2.
+
+**Root cause**: (1) Verb Classification Gate was not executed when the implementation task was received — the phrase "implement PersistentMemoryAdapter Supabase wiring" is an implementation verb directed at the Foreman and must trigger [MODE:IMPLEMENTATION_GUARD]. (2) Phase 1 Wake-Up protocol was not completed at session start — FAIL-ONLY-ONCE self-test and prior session memory catch-up were skipped, bypassing all protective preflight safeguards. This is a learning retention failure: the same primary failure mode (Foreman self-implements) as GOV-BREACH-AIMC-W2-001, whose corrective action (A-007) was locked in governance but not operationally retained.
+
+**Corrective action**: Full Tier 1 RCA completed (session-wave5-polc-RCA-20260224.md). A-009 locked in (Verb Classification Gate mandate). BUILD_PROGRESS_TRACKER created for ai-centre with permanent governance deviation record. Wave 5 marked NOT DELIVERED — must be re-executed with proper builder delegation. All six violation categories documented and institutionalised.
+
+**Open improvement**: Add a CI POLC boundary gate that fails the PR when foreman-v2 is the author of production code file changes — machine-level enforcement of A-001 that does not rely on agent discipline. *(See Section 3, item S-007.)*
+
+---
+
 ## Section 3: Open Improvement Suggestions
 
 These items are tracked and must be reviewed each session. If assigned to the current wave, they must be addressed before HANDOVER.
@@ -138,6 +155,7 @@ These items are tracked and must be reviewed each session. If assigned to the cu
 | S-004 | Add CI check that fails PR when `.agent-admin/prehandover/proof-*.md` is absent — converts PREHANDOVER requirement from soft governance obligation to hard machine-enforced gate | INC-PREHANDOVER-OMISSION-20260224 | OPEN |
 | S-005 | Add integration test validating `governance-alignment-schedule.yml` creates a liaison issue on drift detection (carry-forward from session-051) | session-051 | OPEN |
 | S-006 | Add CI lint/check: validate that every incident status in FAIL-ONLY-ONCE.md is in the allowed status set — automates the invalid-status HARD STOP rule currently enforced manually at preflight | maturion-isms#498 | OPEN |
+| S-007 | Add CI POLC boundary gate that fails PR when foreman-v2 is listed as author of production code file changes (outside designated governance evidence paths) — machine-level enforcement of A-001, preventing repeat of GOV-BREACH-AIMC-W5-001 | GOV-BREACH-AIMC-W5-001 | OPEN |
 
 ---
 
@@ -147,9 +165,9 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 1.2.0
+fail_only_once_version: 1.3.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
