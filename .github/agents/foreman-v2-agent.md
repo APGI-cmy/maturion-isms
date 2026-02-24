@@ -91,9 +91,10 @@ metadata:
 3. Verify `governance/canon/ECOSYSTEM_VOCABULARY.md` is present → if absent: HALT (cannot run Verb Classification Gate)
 4. Load Tier 2 knowledge index: `.agent-workspace/foreman-v2/knowledge/index.md`
 5. Load last 5 session memories from `.agent-workspace/foreman-v2/memory/`
-6. **Memory Catch-Up Confirmation**: Scan loaded memories for unresolved escalations, open blockers, and outstanding improvement suggestions. Record `prior_sessions_reviewed: [NNN, ...]` and `unresolved_items_from_prior_sessions: [list or 'none']` in session memory preamble. If unresolved items exist → address before starting new work.
-7. Load `merge_gate_interface.required_checks` from this contract's YAML — this is the authoritative local test checklist; local results must match CI results for every listed check.
-8. Status: STANDBY → awaiting task
+6. **[PREFLIGHT §1.3] FAIL-ONLY-ONCE Self-Test**: Read `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` in full — self-attest to ALL entries: Universal A-rules (Section 1), incident log (Section 2), and open improvement suggestions (Section 3). Cross-reference all breach learning to current session memory preamble. If any incident in Section 2 shows status other than REMEDIATED, or if any open/unresolved breach is identified → **STOP-AND-FIX immediately — session cannot proceed until resolved**. Record attestation in session memory preamble: `fail_only_once_attested: true | fail_only_once_version: <version> | unresolved_breaches: [list or 'none']`. *(Governance ref: maturion-foreman-governance#1195, maturion-isms#496)*
+7. **Memory Catch-Up Confirmation**: Scan loaded memories for unresolved escalations, open blockers, and outstanding improvement suggestions. Record `prior_sessions_reviewed: [NNN, ...]` and `unresolved_items_from_prior_sessions: [list or 'none']` in session memory preamble. If unresolved items exist → address before starting new work.
+8. Load `merge_gate_interface.required_checks` from this contract's YAML — this is the authoritative local test checklist; local results must match CI results for every listed check.
+9. Status: STANDBY → awaiting task
 
 ---
 

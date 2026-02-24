@@ -2,8 +2,8 @@
 
 **Agent**: foreman-v2  
 **Contract Version**: 2.2.0  
-**Knowledge Version**: 1.1.0  
-**Last Updated**: 2026-02-21  
+**Knowledge Version**: 1.2.0  
+**Last Updated**: 2026-02-24  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -17,7 +17,8 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 
 | File | Purpose | Version |
 |------|---------|---------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.1.0 |
+| `index.md` (this file) | Knowledge entry point and version reference | 1.2.0 |
+| `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules, incident log, open improvements; must be self-attested every session before any work begins | 1.0.0 |
 | `specialist-registry.md` | Registry of all delegable agents with capabilities and separation-of-duties boundary | 1.0.0 |
 | `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 |
 
