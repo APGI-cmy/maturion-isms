@@ -512,6 +512,7 @@ Must contain all of the following — no omissions:
 - CANON_INVENTORY alignment: CONFIRMED (hash check passed)
 - Bundle completeness: all required artifacts present (list each)
 - `merge_gate_parity: PASS` (§4.3 compliance confirmed)
+- `iaa_audit_token: PENDING` (to be updated after Step 4.3a)
 - CS2 authorization evidence: [source — comment link or issue reference]
 - Required checklist lines:
   - `[x] Zero test failures`
@@ -519,6 +520,7 @@ Must contain all of the following — no omissions:
   - `[x] Zero deprecation warnings`
   - `[x] Zero compiler/linter warnings`
   - `[x] §4.3 Merge gate parity check: all required_checks match CI — PASS`
+  - `[ ] IAA audit token recorded` ← updated to `[x]` after Step 4.3a
 
 **Step 4.3 — Generate session memory:**
 
@@ -547,9 +549,44 @@ A blank Suggestions field is a **HANDOVER BLOCKER**. The merge gate will not be 
 Append one-line summary per in-session suggestion to `.agent-workspace/parking-station/suggestions-log.md` (create if absent).
 Format: `| YYYY-MM-DD | foreman-v2-agent | session-NNN | [ORCHESTRATION/SESSION-END] | <one-sentence summary> | <session-memory-filename> |`
 
+**Step 4.3a — IAA Independent Audit (MANDATORY — BLOCKING):**
+
+**[FM_H] EXECUTE AFTER PREHANDOVER PROOF AND SESSION MEMORY — BEFORE MERGE GATE RELEASE.**
+
+**Rationale**: Foreman QAs builders. IAA QAs Foreman. Double-layer QA is intentional and required.
+The Foreman's role as a QA agent does not exempt it from independent audit. The IAA exists
+precisely to provide an independent check on the Foreman — the agent that controls the merge gate.
+Exempting the Foreman from IAA oversight creates a single point of failure at the most critical
+governance layer.
+
+Invoke the Independent Assurance Agent. Provide:
+- PREHANDOVER proof: `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-NNN-YYYYMMDD.md`
+- Session memory: `.agent-workspace/foreman-v2/memory/session-NNN-YYYYMMDD.md`
+- Wave evidence bundle (all artifacts listed in the PREHANDOVER proof)
+
+Output:
+
+> "Invoking IAA for independent audit of wave [N] deliverable.
+> Artifacts provided: [list PREHANDOVER proof + session memory + evidence bundle]
+> Awaiting: IAA verdict."
+
+IAA verdict handling:
+- **IAA PASS** → Record the IAA audit token in the PREHANDOVER proof (`iaa_audit_token: [token]`). Proceed to Step 4.4.
+- **IAA STOP-AND-FIX** → Halt handover immediately. Address every cited finding. Re-run QP (Phase 3 Step 3.5). Re-generate PREHANDOVER proof. Re-invoke IAA. Do NOT release merge gate until IAA PASS is received.
+- **IAA ESCALATE** → Do not release merge gate. Route to CS2 for resolution before any merge.
+
+If IAA is not yet deployed (Phase A advisory mode):
+
+> "IAA not yet deployed (Phase A). Logging invocation attempt. Proceeding under advisory mode.
+> IAA phase status: PHASE_A_ADVISORY. This wave is flagged for IAA review once Phase B activates.
+> IAA audit token: PHASE_A_ADVISORY — [date]"
+
+Record the audit token (or advisory status) in the PREHANDOVER proof under `iaa_audit_token`.
+Update the `[ ] IAA audit token recorded` checklist line in the PREHANDOVER proof to `[x]`.
+
 **Step 4.4 — Release merge gate:**
 
-If OPOJD: PASS and §4.3 merge gate parity: PASS:
+If OPOJD: PASS and §4.3 merge gate parity: PASS and IAA audit token recorded:
 
 > "Merge gate released. Wave [N] complete.
 > PREHANDOVER proof: [path]
@@ -557,7 +594,7 @@ If OPOJD: PASS and §4.3 merge gate parity: PASS:
 > Awaiting CS2 (Johan Ras / @APGI-cmy) review and approval.
 > Merge authority: CS2 ONLY."
 
-If OPOJD: FAIL or §4.3 merge gate parity: FAIL:
+If OPOJD: FAIL or §4.3 merge gate parity: FAIL or IAA STOP-AND-FIX:
 → Issue remediation order to builder.
 → DO NOT release merge gate.
 → Record failure reason in session memory.
@@ -584,5 +621,5 @@ If OPOJD: FAIL or §4.3 merge gate parity: FAIL:
 | OPOJD Gate checks | YAML validation, char count, checklist compliance | Test failures, warnings, evidence artifacts |
 | Phase 4 output | Opens PR | Releases merge gate |
 | Self-modification lock | SELF-MOD-001 (CodexAdvisor-agent.md) | SELF-MOD-FM-001 (foreman-v2-agent.md) |
-| IAA invocation | Required for agent contract changes | Not applicable (builder-output scope) |
+| IAA oversight | Required for agent contract changes | IAA audits Foreman output independently. Foreman QAs builders; IAA QAs Foreman. Double-layer QA is intentional and required. |
 | Phase 2 alignment | Per agent file job | Per wave start |
