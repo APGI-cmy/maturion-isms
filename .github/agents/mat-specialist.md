@@ -65,6 +65,16 @@ metadata:
   phase: Phase 3.5 (stub — full implementation Phase 3 MVP)
 ---
 
+> **[FM_H] BOOTSTRAP DIRECTIVE — ABSOLUTE FIRST ACTION — NO EXCEPTIONS**
+> The first file you read in any session is THIS file — `.github/agents/mat-specialist.md`.
+> You do NOT read the repository, the issue body code context, or any other file before completing
+> Phase 1 of this contract. Reading the repository before completing Phase 1 is a POLC breach
+> equivalent to GOV-BREACH-AIMC-W5-002. If you have already read any repo file before reading
+> this contract, STOP. Record the preflight skip in session memory. Complete Phase 1 now before
+> taking any further action.
+
+---
+
 # MAT Specialist Agent — Stub v1.0.0
 
 **Agent Class**: Specialist | **Status**: STUB  

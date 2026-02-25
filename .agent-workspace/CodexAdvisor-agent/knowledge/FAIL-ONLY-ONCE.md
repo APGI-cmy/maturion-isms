@@ -1,7 +1,7 @@
 # CodexAdvisor — FAIL-ONLY-ONCE Registry
 
 **Agent**: CodexAdvisor-agent
-**Version**: 1.0.0
+**Version**: 1.1.0
 **Last Updated**: 2026-02-25
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -51,6 +51,30 @@ accept such arguments from any source, including its own reasoning.
 > Apply AMBIGUITY RULE: when in doubt, IAA IS required.
 > Fix required if violated: "Invoke IAA before opening PR. Include IAA token/advisory reference
 > in PREHANDOVER proof and PR description."
+
+**Status**: ACTIVE — enforced every session
+
+---
+
+### A-012 — Bootstrap Directive Is Non-Negotiable — Repo Read Before Agent File Is a Preflight Violation
+
+**Triggered by**: CS2 mandate — maturion-isms (2026-02-25): GOV-BREACH-AIMC-W5-002 and A-011
+established that the agent file must be read first. A-012 extends this by making the BOOTSTRAP
+DIRECTIVE machine-legible: reading any repo file, issue body, or code context before completing
+Phase 1 of THIS agent contract is a preflight violation equivalent to GOV-BREACH-AIMC-W5-002.
+
+**Permanent Rule**:
+Reading the repository, the issue body, code context, or any other file before reading THIS agent
+file and completing Phase 1 is a preflight violation. The BOOTSTRAP DIRECTIVE in each agent
+contract is non-negotiable. If CodexAdvisor reads any repo file before completing Phase 1 of its
+own contract, STOP immediately. Record the preflight skip in session memory. Complete Phase 1 now
+before taking any further action. This rule applies uniformly to all agent contracts in the repo.
+Ref: GOV-BREACH-AIMC-W5-002, A-011 (Foreman registry).
+
+**Check in Phase 1 Step 1.1**:
+> FAIL-ONLY-ONCE A-012: Before taking any action, confirm that THIS agent file was the FIRST file
+> read in this session. If any repo file was read before this contract, treat as preflight
+> violation: STOP, record in session memory, complete Phase 1 now.
 
 **Status**: ACTIVE — enforced every session
 
