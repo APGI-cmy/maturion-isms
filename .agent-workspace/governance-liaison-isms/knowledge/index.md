@@ -1,9 +1,9 @@
 # governance-liaison-isms — Tier 2 Knowledge Index
 
 **Agent**: governance-liaison-isms  
-**Contract Version**: 3.0.0  
-**Knowledge Version**: 1.0.0  
-**Last Updated**: 2026-02-24  
+**Contract Version**: 3.1.0  
+**Knowledge Version**: 1.1.0  
+**Last Updated**: 2026-02-25  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -17,8 +17,10 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 
 | File | Purpose | Version |
 |------|---------|---------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.0.0 |
+| `index.md` (this file) | Knowledge entry point and version reference | 1.1.0 |
 | `FAIL-ONLY-ONCE.md` | **PREFLIGHT Attestation** — Breach registry, Universal A-rules, Conditional B-rules, incident log; must be self-attested every session before any work begins | 1.0.0 |
+| `scripts.md` | Operational bash scripts extracted from Phase 3 (SHA256 Validation, Sync State Update, Ripple Inbox, Ripple Archive, Drift Detection) | 1.0.0 |
+| `session-memory-template.md` | Standard session memory and PREHANDOVER proof templates for governance-liaison-isms sessions | 1.0.0 |
 
 ---
 
