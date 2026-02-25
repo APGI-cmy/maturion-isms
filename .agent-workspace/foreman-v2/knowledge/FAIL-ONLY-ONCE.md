@@ -3,9 +3,9 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 1.3.0  
+**Version**: 1.4.0  
 **Created**: 2026-02-24  
-**Updated**: 2026-02-24  
+**Updated**: 2026-02-25  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -47,6 +47,7 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-007 | HARD STOP — NO BUILDER AVAILABLE: If a required builder agent cannot be contacted or appointed, Foreman MUST halt, record in session memory, and escalate to CS2. Self-implementation is never a permitted fallback. | `GOV-BREACH-AIMC-W2-001` (2026-02-24) |
 | A-008 | Full diff review is mandatory before every handover verdict. Every file in the PR diff must be examined. Committed working notes, internal summaries, or builder exploration files in the repository root or non-designated paths are a delivery failure. | INC-5.6R-DELIVERY-001 (2026-02-24) |
 | A-009 | Verb Classification Gate is mandatory BEFORE responding to any task. If the primary verb is an implementation verb (implement, build, code, write, fix) directed at the Foreman, the Foreman MUST enter [MODE:IMPLEMENTATION_GUARD] immediately — REJECT, create builder task spec, delegate, document. A session that receives an implementation verb without executing the Verb Classification Gate is in breach from the first action. | GOV-BREACH-AIMC-W5-001 (2026-02-24) |
+| A-010 | IAA-INVOKE-001 (CS2 — 2026-02-25): All Foreman wave handovers MUST include an IAA independent audit (Step 4.3a) before merge gate release. IAA audit token MUST be recorded in the PREHANDOVER proof. IAA STOP-AND-FIX halts handover. IAA ESCALATE routes to CS2. Foreman's role as QA agent does NOT exempt it from IAA oversight — IAA QAs the Foreman, as the Foreman QAs builders. Exception: IAA does not audit itself. Applies to all waves producing or modifying repo content. | CS2 — maturion-isms#523 (2026-02-25) |
 
 ---
 
@@ -165,7 +166,7 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 1.3.0
+fail_only_once_version: 1.4.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
 open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007]
 ```
@@ -176,5 +177,5 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007]
 
 ---
 
-*Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-02-24 | Status: ACTIVE*
+*Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523 | LIVING_AGENT_SYSTEM.md v6.2.0*  
+*Last Updated: 2026-02-25 | Status: ACTIVE*
