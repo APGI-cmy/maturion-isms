@@ -1,10 +1,14 @@
 /**
- * OpenAIAdapter — Wave 5 implementation
+ * OpenAIAdapter — Wave 5 + Wave 8 implementation
  *
- * Wraps the OpenAI Chat Completions and Embeddings APIs into the ProviderAdapter interface.
- * Supports the `analysis`, `advisory`, and `embeddings` capabilities (Wave 5 scope).
+ * Wraps the OpenAI Chat Completions, Embeddings, Images, and Responses APIs into the
+ * ProviderAdapter interface. Supports the `analysis`, `advisory`, `embeddings`,
+ * `image-generation` (Wave 5/6 scope), and `algorithm-execution` (Wave 8 scope)
+ * capabilities.
  *
- * References: GRS-005, GRS-006 | APS §6.1, §6.2 | AAD §5.5, §8.2
+ * Algorithm execution routes to the o3 model via the Responses API (AAD §7, AAWP Wave 8).
+ *
+ * References: GRS-005, GRS-006 | APS §6.1, §6.2 | AAD §5.5, §7, §8.2
  */
 import {
   Capability,
@@ -17,14 +21,17 @@ import {
   type AdvisoryResult,
   type EmbeddingsResult,
   type ImageGenerationResult,
+  type AlgorithmExecutionResult,
 } from '../types/index.js';
 import { ProviderKeyStore } from '../keys/ProviderKeyStore.js';
 
 const OPENAI_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
 const OPENAI_EMBEDDINGS_ENDPOINT = 'https://api.openai.com/v1/embeddings';
 const OPENAI_IMAGES_ENDPOINT = 'https://api.openai.com/v1/images/generations';
+const OPENAI_RESPONSES_ENDPOINT = 'https://api.openai.com/v1/responses';
 const DEFAULT_MODEL = 'gpt-4o';
 const EMBEDDINGS_MODEL = 'text-embedding-3-small';
+const ALGORITHM_EXECUTION_MODEL = 'o3';
 
 /** Minimal subset of the Fetch API used by this adapter (enables test injection). */
 export type FetchFn = (url: string, init: RequestInit) => Promise<Response>;
@@ -36,6 +43,7 @@ export class OpenAIAdapter implements ProviderAdapter {
     Capability.ADVISORY,
     Capability.EMBEDDINGS,
     Capability.IMAGE_GENERATION,
+    Capability.ALGORITHM_EXECUTION,
   ]);
 
   private readonly keyStore: ProviderKeyStore;
@@ -166,6 +174,63 @@ export class OpenAIAdapter implements ProviderAdapter {
         providerUsed: this.providerName,
       };
       return imgResult;
+    }
+
+    // Algorithm execution capability — routes to o3 model via /v1/responses (Wave 8, AAD §7)
+    if (request.capability === Capability.ALGORITHM_EXECUTION) {
+      const algoMessages: Array<{ role: string; content: string }> = [
+        {
+          role: 'system',
+          content: request.systemPrompt || 'You are an expert algorithm execution engine.',
+        },
+        ...request.contextMessages.map((m) => ({
+          role: m.role,
+          content: m.content,
+        })),
+        { role: 'user', content: request.userInput },
+      ];
+
+      let algoResponse: Response;
+      try {
+        algoResponse = await this.fetchFn(OPENAI_RESPONSES_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            model: ALGORITHM_EXECUTION_MODEL,
+            input: algoMessages,
+          }),
+        });
+      } catch (err) {
+        throw new ProviderError(this.providerName, 'OpenAI API request failed.', err);
+      }
+
+      if (!algoResponse.ok) {
+        throw new ProviderError(
+          this.providerName,
+          `OpenAI API returned HTTP ${algoResponse.status}.`,
+        );
+      }
+
+      let algoData: unknown;
+      try {
+        algoData = await algoResponse.json();
+      } catch (err) {
+        throw new ProviderError(
+          this.providerName,
+          'Failed to parse OpenAI API response.',
+          err,
+        );
+      }
+
+      const algoResult: AlgorithmExecutionResult = {
+        capability: Capability.ALGORITHM_EXECUTION,
+        output: algoData,
+        providerUsed: this.providerName,
+      };
+      return algoResult;
     }
 
     const messages: Array<{ role: string; content: string }> = [

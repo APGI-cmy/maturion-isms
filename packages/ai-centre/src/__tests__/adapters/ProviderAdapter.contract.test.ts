@@ -25,6 +25,7 @@ import { OpenAIAdapter } from '../../adapters/OpenAIAdapter.js';
 import { ProviderKeyStore } from '../../keys/ProviderKeyStore.js';
 import { AnthropicAdapter } from '../../adapters/AnthropicAdapter.js';
 import { PerplexityAdapter } from '../../adapters/PerplexityAdapter.js';
+import { RunwayAdapter } from '../../adapters/RunwayAdapter.js';
 
 // ---------------------------------------------------------------------------
 // Test doubles for dependency injection (AAD §8.2)
@@ -78,6 +79,24 @@ function makeMockDocumentFetch() {
       stop_reason: 'end_turn',
       stop_sequence: null,
       usage: { input_tokens: 25, output_tokens: 80 },
+    }),
+  } as unknown as Response);
+}
+
+/**
+ * Mock fetch that returns a well-formed Runway API video-generation response.
+ * Mirrors the Runway Gen-2 /v1/image_to_video JSON shape for RunwayAdapter (Wave 8).
+ * Injected via RunwayAdapter constructor so no live API calls are made.
+ *
+ * Reference: https://docs.runwayml.com/
+ */
+function makeMockVideoFetch() {
+  return vi.fn().mockResolvedValue({
+    ok: true,
+    status: 200,
+    json: async () => ({
+      id: 'task_contract_001',
+      output: ['https://cdn.runwayml.com/generated/contract-test.mp4'],
     }),
   } as unknown as Response);
 }
@@ -138,7 +157,7 @@ const ADAPTERS_UNDER_TEST: ProviderAdapter[] = [
   new OpenAIAdapter(makeMockKeyStore(), makeMockAnalysisFetch()), // Wave 4
   new AnthropicAdapter(makeMockKeyStore(), makeMockDocumentFetch()), // Wave 6
   new PerplexityAdapter(makeMockKeyStore(), makeMockDeepSearchFetch()), // Wave 7
-  // Wave 8: new RunwayAdapter()       — import and uncomment when implemented
+  new RunwayAdapter(makeMockKeyStore(), makeMockVideoFetch()), // Wave 8
 ];
 
 // ---------------------------------------------------------------------------
