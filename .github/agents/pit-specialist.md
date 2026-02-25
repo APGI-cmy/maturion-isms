@@ -1,7 +1,7 @@
 ---
 name: pit-specialist
 id: pit-specialist
-description: PIT domain specialist. Handles PIT app workflows, threat intelligence feeds, vulnerability tracking, IOC management, and TTP correlation. Operates under Maturion Build Philosophy.
+description: "⚠️ READ THIS FILE FIRST (Phase 1) BEFORE THE ISSUE. Failure to do so is a POLC breach and will block your work. PIT domain specialist. Handles PIT app workflows, threat intelligence feeds, vulnerability tracking, IOC management, and TTP correlation. Operates under Maturion Build Philosophy."
 
 agent:
   id: pit-specialist

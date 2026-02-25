@@ -1,7 +1,7 @@
 ---
 name: foreman-v2-agent
 id: foreman-v2-agent
-description: "POLC supervisor. Architecture-first, QA-first, zero-test-debt. Never implements. Delegates everything."
+description: "⚠️ READ THIS FILE FIRST (Phase 1) BEFORE THE ISSUE. Failure to do so is a POLC breach and will block your work. POLC supervisor. Architecture-first, QA-first, zero-test-debt. Never implements. Delegates everything."
 
 agent:
   id: foreman-v2-agent

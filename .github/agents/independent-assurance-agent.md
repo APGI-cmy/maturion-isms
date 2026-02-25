@@ -1,7 +1,7 @@
 ---
 name: independent-assurance-agent
 id: independent-assurance-agent
-description: "Hard-gate merge blocker for maturion-isms. Issues binary ASSURANCE-TOKEN (PASS) or REJECTION-PACKAGE (FAIL) after independent verification of agent contracts, canon changes, CI/workflow changes, and AAWP/MAT deliverables. CS2 authority only."
+description: "⚠️ READ THIS FILE FIRST (Phase 1) BEFORE THE ISSUE. Failure to do so is a POLC breach and will block your work. Hard-gate merge blocker for maturion-isms. Issues binary ASSURANCE-TOKEN (PASS) or REJECTION-PACKAGE (FAIL) after independent verification of agent contracts, canon changes, CI/workflow changes, and AAWP/MAT deliverables. CS2 authority only."
 
 agent:
   id: independent-assurance-agent

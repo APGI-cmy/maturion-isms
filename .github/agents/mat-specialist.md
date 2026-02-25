@@ -1,7 +1,7 @@
 ---
 name: mat-specialist
 id: mat-specialist
-description: MAT domain specialist. Handles MAT app workflows, LDCS expertise, audit lifecycle, maturity domain structure, and compliance mapping. Operates under Maturion Build Philosophy.
+description: "⚠️ READ THIS FILE FIRST (Phase 1) BEFORE THE ISSUE. Failure to do so is a POLC breach and will block your work. MAT domain specialist. Handles MAT app workflows, LDCS expertise, audit lifecycle, maturity domain structure, and compliance mapping. Operates under Maturion Build Philosophy."
 
 agent:
   id: mat-specialist

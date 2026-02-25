@@ -1,7 +1,7 @@
 ---
 name: governance-liaison-isms-agent
 id: governance-liaison-isms
-description: Governance liaison for maturion-isms repository - receives governance ripple and maintains local alignment
+description: "⚠️ READ THIS FILE FIRST (Phase 1) BEFORE THE ISSUE. Failure to do so is a POLC breach and will block your work. Governance liaison for maturion-isms repository - receives governance ripple and maintains local alignment"
 
 agent:
   id: governance-liaison-isms
