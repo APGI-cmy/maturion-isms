@@ -314,10 +314,60 @@ sha256sum .github/agents/<specialist-id>.agent.md
 
 ---
 
+## Non-Negotiable Requirements for Agent Contract and Wave Delivery PRs
+
+The following requirements are enforced by CI and are **blocking**. A PR missing any of
+these will not be merged regardless of other approvals.
+
+### 1. PREHANDOVER Proof Artifact (CI-enforced, blocking)
+
+Every PR that modifies `.github/agents/*.md` or
+`governance/aimc/AIMC_AGENT_ASSIGNMENT_WAVE_PLAN.md` MUST include a PREHANDOVER proof
+file at `.agent-admin/prehandover/proof-<session-or-date>.md`.
+
+The proof file confirms that the agent's Phase 4 PREHANDOVER ceremony was completed
+before the PR was opened. Use `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md` as
+the base.
+
+CI gate: `governance/prehandover-proof-presence` (workflow: `governance-hardening.yml`)
+
+### 2. ui-builder.md Character Count (CI-enforced, blocking)
+
+The file `.github/agents/ui-builder.md` MUST remain below 30,000 characters. Any PR
+that pushes this file to or above 30,000 characters will be blocked.
+
+Move excess content to `.agent-workspace/ui-builder/knowledge/` per the
+THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md standard.
+
+Verify locally before pushing: `wc -c .github/agents/ui-builder.md`
+
+CI gate: `governance/ui-builder-character-count` (workflow: `governance-hardening.yml`)
+
+### 3. Builder Preflight Attestation Format (YAML, mandatory)
+
+Every builder-class agent session memory file MUST record Phase 1 preflight attestation
+as a structured YAML block, not as prose narrative. The canonical format is defined in:
+
+`governance/templates/BUILDER_PREFLIGHT_YAML_STANDARD.md`
+
+IAA will flag non-YAML attestations as `ATTESTATION-FORMAT-FAIL` during assurance
+verification.
+
+### 4. FetchFn Export Pattern (mandatory for all provider adapters)
+
+Every provider adapter in `packages/ai-centre/src/adapters/` MUST:
+- Export `FetchFn` at the top of the file (before the class declaration)
+- Accept `fetchFn?: FetchFn` as an optional constructor parameter
+- Use `this.fetchFn` for all HTTP calls (not the global `fetch` directly)
+
+Full specification: `packages/ai-centre/ADAPTER_ARCHITECTURE.md`
+
+---
+
 ## Authority
 
-**Implementation Guide Version**: 1.0.0  
+**Implementation Guide Version**: 1.1.0  
 **Based On**: `governance/canon/AGENT_DELEGATION_PROTOCOL.md` v1.0.0  
 **Authority**: CS2 (Johan Ras)  
-**Last Updated**: 2026-02-20  
+**Last Updated**: 2026-02-25  
 **Living Agent System**: v6.2.0
