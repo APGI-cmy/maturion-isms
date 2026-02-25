@@ -1,12 +1,8 @@
 # AGENT CONTRACT FILE PROTECTION POLICY
 
-**Policy ID**: AGCFPP-001  
-**Canonical Name**: Agent Contract File Protection Policy  
-**Canonical Path**: `governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md`  
 **Status**: CANONICAL | **Version**: 1.0.0 | **Authority**: CS2  
 **Effective Date**: 2026-02-24  
-**Supersedes**: Partial provisions in AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md §4 re: .github/agents/ write authority  
-**Cross-reference**: Builder contract pattern — see `governance/canon/agent-contracts-guidance/.agent.schema.md`
+**Supersedes**: Partial provisions in AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md §4 re: .github/agents/ write authority
 
 > **Amendment Authority**: Only CS2 (Johan Ras / repo owner) may amend this policy. Any PR modifying this file without CS2 sign-off is auto-FAIL at the merge gate.
 
