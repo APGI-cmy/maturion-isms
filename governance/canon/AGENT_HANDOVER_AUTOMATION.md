@@ -1,6 +1,6 @@
 # AGENT_HANDOVER_AUTOMATION
 
-**Status**: CANONICAL | **Version**: 1.1.1 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.1.2 | **Authority**: CS2  
 **Date**: 2026-02-24
 
 ---
@@ -475,7 +475,48 @@ echo "✅ [<Agent>_H] Agent is cleared to open the PR"
 | **Escalation scope** | Only for genuinely ambiguous blockers — not for known gate failures |
 | **Prohibition parity** | Opening a PR on a local gate failure = pushing to main (both prohibited) |
 
-## Section 4.4: Compliance Check & Escalation
+### Agent Contract File Modification Prohibition (CONSTITUTIONAL — added v1.1.2)
+
+> **ABSOLUTE RULE**: During pre-handover and all other phases, NO agent (other than CodexAdvisor with explicit CS2 permission) may modify `.github/agents/` contract files.
+
+If a handover or ripple operation requires changes to `.github/agents/` files, the agent **MUST**:
+
+1. **STOP** — do NOT make any write to `.github/agents/`
+2. **Create a structured escalation** documenting the required changes
+3. **CS2 reviews and authorizes** via a layer-down issue to CodexAdvisor
+4. **CodexAdvisor executes** the approved changes; IAA audits before merge
+
+**Handoff escalation template** (create at `.agent-workspace/<agent>/escalation-inbox/agent-contract-modification-YYYYMMDD.md`):
+
+```markdown
+# Escalation: Agent Contract Modification Required
+
+## Type
+AGENT_CONTRACT_MODIFICATION_REQUEST
+
+## Files Requiring Modification
+- `.github/agents/<file>`: <what change and why>
+
+## Originating Ripple / Issue
+<Reference to the triggering canon change or issue>
+
+## Proposed Diff Specification
+<Exact proposed changes — CS2 reviews and approves before CodexAdvisor executes>
+
+## Authority
+Per AGENT_CONTRACT_FILE_PROTECTION_POLICY.md §1:
+Only CodexAdvisor with CS2 permission may modify .github/agents/ files.
+This escalation requests CS2 review and CodexAdvisor invocation.
+
+---
+Created: <timestamp>
+Agent: <agent-type>
+```
+
+**Full policy**: `governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md`  
+**Incident reference**: `governance/incidents/INCIDENT-2026-02-24-PR517-AGENT-CONTRACT-BREACH.md`
+
+
 
 **Purpose**: Verify agent-class-specific compliance requirements and create escalations if needed.
 
@@ -779,7 +820,7 @@ Before session ends, verify:
 
 ---
 
-**Version**: 1.1.1  
+**Version**: 1.1.2  
 **Last Updated**: 2026-02-24  
 **Authority**: CS2 (Johan Ras)  
 **Living Agent System**: v6.2.0

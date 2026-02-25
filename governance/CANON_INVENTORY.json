@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "last_updated": "2026-02-24",
-    "total_canons": 181,
+    "total_canons": 182,
     "generation_timestamp": "2026-02-21T16:30:00Z",
     "canon_entry_schema": {
         "description": "Schema for canon entries in CANON_INVENTORY.json",
@@ -164,18 +164,20 @@
         },
         {
             "filename": "AGENT_HANDOVER_AUTOMATION.md",
-            "version": "1.1.1",
-            "file_hash": "6f106031e2d17098aa33f76725959a3d80f98bbe31e9437a684b41537eabeea3",
+            "version": "1.1.2",
+            "file_hash": "280efc805b140ccbab71a96b2d10896b5094d2a5f55775a4e17fe17944fdd6b8",
             "effective_date": "2026-02-24",
             "description": "Canonical governance document: AGENT_HANDOVER_AUTOMATION",
             "type": "canon",
             "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
             "layer_down_status": "PUBLIC_API",
-            "file_hash_sha256": "6f106031e2d17098aa33f76725959a3d80f98bbe31e9437a684b41537eabeea3",
+            "file_hash_sha256": "280efc805b140ccbab71a96b2d10896b5094d2a5f55775a4e17fe17944fdd6b8",
             "ripple_dispatched": "2026-02-24",
             "ripple_log": ".agent-admin/governance/ripple-logs/ripple-agent-handover-parity-20260224.md",
             "ripple_in_repo_status": "COMPLETE",
-            "ripple_consumer_status": "PENDING \u2014 layer-down issues to be created in consumer repos"
+            "ripple_consumer_status": "PENDING \u2014 layer-down issues to be created in consumer repos",
+            "last_updated": "2026-02-24",
+            "change_note": "v1.1.2: Added Agent Contract File Modification Prohibition subsection in \u00a74.3 with CodexAdvisor handoff pathway."
         },
         {
             "filename": "AGENT_INDUCTION_PROTOCOL.md",
@@ -1202,14 +1204,16 @@
         },
         {
             "filename": "LIVING_AGENT_SYSTEM.md",
-            "version": "1.0.0 | **Authority**: CS2",
-            "file_hash": "ce26928e149252e0afdc1b3f1edc7cda3e5c18b6908a78024ab99fe9af9ef4cd",
+            "version": "1.1.0",
+            "file_hash": "eb0933820bbc2b9a7600672309ea7bc36d4a49885eccd5c37fa4467894f09e9e",
             "effective_date": "unknown",
             "description": "Canonical governance document: LIVING_AGENT_SYSTEM",
             "type": "canon",
             "path": "governance/canon/LIVING_AGENT_SYSTEM.md",
             "layer_down_status": "INTERNAL",
-            "file_hash_sha256": "ce26928e149252e0afdc1b3f1edc7cda3e5c18b6908a78024ab99fe9af9ef4cd"
+            "file_hash_sha256": "eb0933820bbc2b9a7600672309ea7bc36d4a49885eccd5c37fa4467894f09e9e",
+            "last_updated": "2026-02-24",
+            "change_note": "v1.1.0: Added Agent Contract File Protection section (constitutional prohibition on agents modifying .github/agents/ files). Updated Prohibition #1."
         },
         {
             "filename": "MANDATORY_CANONICAL_PROGRESS_RECORDING_AND_WAVE_CLOSURE_CERTIFICATION.md",
@@ -2059,6 +2063,21 @@
             "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
             "layer_down_status": "INTERNAL",
             "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA)"
+        },
+        {
+            "filename": "AGENT_CONTRACT_FILE_PROTECTION_POLICY.md",
+            "version": "1.0.0",
+            "file_hash": "77f14bc5cb1e4440735a2822fab91ee0723f7743ca6efc393f5cab22848a6b2a",
+            "effective_date": "2026-02-24",
+            "description": "Constitutional policy: strict prohibition against agents (other than CodexAdvisor with explicit CS2 permission) modifying .github/agents/ contract files. Defines mandatory CodexAdvisor handoff pathway, IAA audit requirements, CI/CD enforcement, and breach protocol.",
+            "type": "canon",
+            "path": "governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md",
+            "layer_down_status": "LAYER_DOWN",
+            "ripple_required": true,
+            "ripple_notice": "governance/layer-down/AGENT_CONTRACT_FILE_PROTECTION_RIPPLE_NOTICE.md",
+            "amendment_authority": "CS2-only",
+            "last_updated": "2026-02-24",
+            "file_hash_sha256": "77f14bc5cb1e4440735a2822fab91ee0723f7743ca6efc393f5cab22848a6b2a"
         }
     ]
 }
