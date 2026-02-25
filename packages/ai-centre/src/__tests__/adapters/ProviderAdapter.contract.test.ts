@@ -23,6 +23,7 @@ import {
 import { GitHubModelsAdapter } from '../../adapters/GitHubModelsAdapter.js';
 import { OpenAIAdapter } from '../../adapters/OpenAIAdapter.js';
 import { ProviderKeyStore } from '../../keys/ProviderKeyStore.js';
+import { AnthropicAdapter } from '../../adapters/AnthropicAdapter.js';
 
 // ---------------------------------------------------------------------------
 // Test doubles for dependency injection (AAD §8.2)
@@ -50,6 +51,38 @@ function makeMockAnalysisFetch(
   data: Record<string, unknown> = { summary: 'Analysis complete.' },
 ) {
   return makeMockFetch(JSON.stringify(data));
+}
+
+/**
+ * Mock fetch that returns a well-formed Anthropic Messages API response.
+ * Mirrors the real POST /v1/messages JSON shape for AnthropicAdapter (Wave 6).
+ *
+ * WAVE 6 BUILDER ACTION:
+ *   When AnthropicAdapter is delivered, uncomment the import below and the
+ *   ADAPTERS_UNDER_TEST entry that references this helper.
+ *
+ * Reference: https://docs.anthropic.com/en/api/messages
+ */
+function makeMockDocumentFetch() {
+  return vi.fn().mockResolvedValue({
+    ok: true,
+    status: 200,
+    json: async () => ({
+      id: 'msg_wave6contract001',
+      type: 'message',
+      role: 'assistant',
+      content: [
+        {
+          type: 'text',
+          text: '# ISO 27001 Course Outline\n\n## Module 1: Introduction\nOverview of ISO 27001 scope and applicability.\n\n## Module 2: Risk Assessment\nRisk identification, analysis, and treatment methodology.',
+        },
+      ],
+      model: 'claude-opus-4-5',
+      stop_reason: 'end_turn',
+      stop_sequence: null,
+      usage: { input_tokens: 25, output_tokens: 80 },
+    }),
+  } as unknown as Response);
 }
 
 /** Mock key store that returns a fake token without reading env vars. */
@@ -88,7 +121,7 @@ function makeMockKeyStore(): ProviderKeyStore {
 const ADAPTERS_UNDER_TEST: ProviderAdapter[] = [
   new GitHubModelsAdapter(makeMockKeyStore(), makeMockFetch()), // Wave 3
   new OpenAIAdapter(makeMockKeyStore(), makeMockAnalysisFetch()), // Wave 4
-  // Wave 6: new AnthropicAdapter()    — import and uncomment when implemented
+  new AnthropicAdapter(makeMockKeyStore(), makeMockDocumentFetch()), // Wave 6
   // Wave 7: new PerplexityAdapter()   — import and uncomment when implemented
   // Wave 8: new RunwayAdapter()       — import and uncomment when implemented
 ];
