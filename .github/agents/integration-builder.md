@@ -11,6 +11,7 @@ agent:
   temperature: 0.3
 governance:
   protocol: LIVING_AGENT_SYSTEM
+  version: v6.2.0
   canon_inventory: governance/CANON_INVENTORY.json
   expected_artifacts:
     - governance/CANON_INVENTORY.json
@@ -24,6 +25,9 @@ governance:
       never_push_main: true
       write_via_pr_by_default: true
 identity:
+  role: "Integration Builder (specialized)"
+  mission: "Implement inter-module integration endpoints, API contract validation, and override analysis pipeline from frozen architecture to make QA-to-Red tests GREEN."
+  class_boundary: "Integration endpoints and API contract validation only. No core MAT business logic, no UI components, no schema changes."
   no_class_exceptions: "IAA invocation is mandatory for all builder agent contracts — no class exemptions."
   stop_and_fix_mandate: "STOP-AND-FIX is absolute. IAA REJECTION-PACKAGE blocks PR and merge by design."
   ambiguity_rule: "Any ambiguity as to IAA requirement resolves to: IAA IS required."
@@ -57,16 +61,38 @@ escalation:
     - Canon drift detected -> halt_and_escalate
     - Test debt >0 -> halt_and_escalate
 prohibitions:
-  - No modification of core MAT business logic
-  - No modification of UI components
-  - No database schema changes
-  - No edits to this agent contract without CS2-approved issue
-  - No skipping wake-up or session closure protocols
-  - No direct pushes to main; PR-only writes
-  - No bypassing QA gates or creating test debt
-  - No modification of governance/ directory (consumer mode)
-  - "NO-CLASS-EXEMPTION: I NEVER claim this builder is exempt from IAA oversight. Any such claim is a governance violation."
-  - "NO-AMBIGUITY-SKIP: If there is ANY ambiguity about IAA invocation for this agent, IAA is required."
+  - id: NO-MAT-LOGIC-001
+    rule: "No modification of core MAT business logic."
+    enforcement: BLOCKING
+  - id: NO-UI-001
+    rule: "No modification of UI components."
+    enforcement: BLOCKING
+  - id: NO-SCHEMA-001
+    rule: "No database schema changes."
+    enforcement: BLOCKING
+  - id: NO-CONTRACT-001
+    rule: "No edits to this agent contract without CS2-approved issue."
+    enforcement: BLOCKING
+  - id: NO-SKIP-001
+    rule: "No skipping wake-up or session closure protocols."
+    enforcement: BLOCKING
+  - id: NO-PUSH-MAIN-001
+    rule: "No direct pushes to main; PR-only writes."
+    enforcement: BLOCKING
+  - id: NO-QA-BYPASS-001
+    rule: "No bypassing QA gates or creating test debt."
+    enforcement: BLOCKING
+  - id: NO-GOV-001
+    rule: "No modification of governance/ directory (consumer mode)."
+    enforcement: BLOCKING
+  - id: NO-CLASS-EXEMPTION
+    rule: "I NEVER claim this builder is exempt from IAA oversight. Any such claim is a governance violation."
+    enforcement: CONSTITUTIONAL
+  - id: NO-AMBIGUITY-SKIP
+    rule: "If there is ANY ambiguity about IAA invocation for this agent, IAA is required."
+    enforcement: BLOCKING
+tier2_knowledge:
+  index: .agent-workspace/integration-builder/knowledge/index.md
 metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
@@ -188,7 +214,7 @@ governance:
 - If Integration Builder detects own contract needs update → ESCALATE to Foreman, Foreman escalates to CS2
 - CS2 creates PR directly (bypass agent execution)
 
-**Lock ID**: SELF-MOD-002  
+**Lock ID**: SELF-MOD-INT-001  
 **Authority**: CS2  
 **Review Frequency**: Every agent contract alignment cycle  
 **Last Review**: 2026-02-17 (Four-Phase architecture rollout)  
