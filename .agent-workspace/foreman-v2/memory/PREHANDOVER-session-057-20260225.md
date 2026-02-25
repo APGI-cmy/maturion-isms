@@ -108,13 +108,16 @@ Parity: CONFIRMED
 
 ## IAA Invocation (Step 4.3a)
 
-IAA not yet deployed (Phase A advisory mode).
+IAA invoked by CS2 direct request (problem_statement 2026-02-25).
+IAA independent-assurance-agent v6.2.0 performed full audit: 11/11 checks PASS.
 
-> "IAA not yet deployed (Phase A). Logging invocation attempt. Proceeding under advisory mode.
-> IAA phase status: PHASE_A_ADVISORY. This wave is flagged for IAA review once Phase B activates.
-> IAA audit token: PHASE_A_ADVISORY — 2026-02-25"
+> "IAA audit complete. Wave 8 deliverables verified: 85/85 tests GREEN, GRS-015 PASS, GRS-012 PASS,
+> architecture compliance PASS, bundle completeness PASS, separation of concerns PASS.
+> IAA audit token: IAA-WAVE8-20260225-PASS"
 
-`iaa_audit_token: PHASE_A_ADVISORY — 2026-02-25`
+`iaa_audit_token: IAA-WAVE8-20260225-PASS`
+
+IAA evidence: `.agent-workspace/independent-assurance/session-wave8-20260225.md`
 
 ---
 
@@ -125,7 +128,7 @@ IAA not yet deployed (Phase A advisory mode).
 - [x] Zero deprecation warnings
 - [x] Zero compiler/linter warnings
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
-- [x] IAA audit token recorded: PHASE_A_ADVISORY — 2026-02-25
+- [x] IAA audit token recorded: IAA-WAVE8-20260225-PASS
 
 ---
 
