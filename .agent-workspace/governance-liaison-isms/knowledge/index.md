@@ -1,9 +1,9 @@
 # governance-liaison-isms — Tier 2 Knowledge Index
 
 **Agent**: governance-liaison-isms  
-**Contract Version**: 3.0.0  
-**Knowledge Version**: 1.0.0  
-**Last Updated**: 2026-02-24  
+**Contract Version**: 3.2.0  
+**Knowledge Version**: 1.1.0  
+**Last Updated**: 2026-02-25  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -17,8 +17,11 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 
 | File | Purpose | Version |
 |------|---------|---------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.0.0 |
-| `FAIL-ONLY-ONCE.md` | **PREFLIGHT Attestation** — Breach registry, Universal A-rules, Conditional B-rules, incident log; must be self-attested every session before any work begins | 1.0.0 |
+| `index.md` (this file) | Knowledge entry point and version reference | 1.1.0 |
+| `FAIL-ONLY-ONCE.md` | **PREFLIGHT Attestation** — Breach registry, Universal A-rules, Conditional B-rules, incident log; must be self-attested every session before any work begins | 1.1.0 |
+| `layer-down-scripts.md` | **Phase 3.1 Scripts** — Checksum validation and sync state update scripts for the cross-repository layer-down protocol | 1.0.0 |
+| `ripple-processing-scripts.md` | **Phase 3.2 Scripts** — Ripple inbox creation, sync state update on receipt, and ripple archive scripts | 1.0.0 |
+| `drift-detection-scripts.md` | **Phase 3.3 Scripts** — Drift detection script; compares canonical inventory version against local sync state | 1.0.0 |
 
 ---
 
