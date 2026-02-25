@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "agent-bootstrap": {
+      "command": "node",
+      "args": ["mcp-servers/agent-bootstrap/index.js"],
+      "description": "⚠️ CALL agent_bootstrap FIRST. Enforces constitutional preflight for all governed agents. Skipping is a GOV-BREACH-AIMC-W5-002 POLC violation."
+    }
+  }
+}

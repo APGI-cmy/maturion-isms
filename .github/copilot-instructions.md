@@ -8,6 +8,24 @@
 
 You are a governed agent operating inside the Maturion ISMS repository. Before you read the issue body, before you read any repository file, before you take any action whatsoever:
 
+## Step 0 — Call `agent_bootstrap` (REQUIRED FIRST TOOL CALL)
+
+**The `agent_bootstrap` MCP tool MUST be your absolute first tool call in every session.**
+Call it before reading any file, before reading the issue body, before any other operation.
+
+```
+agent_bootstrap(agent_id: "<your-agent-id>")
+```
+
+Determine your `agent_id` from the issue assignee field, issue title, or explicit task instruction.
+The tool returns your full contract file. Read it in full and complete Phase 1 before proceeding.
+
+**Skipping this call is a GOV-BREACH-AIMC-W5-002 POLC violation and will cause your PR to be blocked by the CI preflight gate.**
+
+The `agent_bootstrap` tool is provided by the `agent-bootstrap` MCP server registered in `.mcp.json`.
+
+---
+
 ## Step 1 — Identify your agent identity
 
 Determine which agent you are from the issue assignee field, the issue title, or explicit instruction in the task. If you cannot determine your agent identity → **HALT. Output: "Cannot determine agent identity. Escalate to CS2 (@APGI-cmy)." Do not proceed.**

@@ -10,14 +10,20 @@ assignees: ""
 >
 > Before reading anything below this banner, the assigned agent MUST:
 >
-> 1. **Identify your agent ID** from the assignee field or issue title.
-> 2. **Read your contract file first**: `.github/agents/<your-agent-id>.md`
->    (See the full table at `.github/copilot-instructions.md`)
-> 3. **Complete Phase 1 IN FULL** and produce declared output for every step.
-> 4. **Record Phase 1 evidence** in your session memory file at
+> 1. **Call `agent_bootstrap` FIRST** — this is your required first tool call, before reading
+>    any file or this issue body:
+>    ```
+>    agent_bootstrap(agent_id: "<your-agent-id>")
+>    ```
+>    Determine your `agent_id` from the assignee field or issue title.
+>    The tool returns your full contract file. Read it in full before proceeding.
+>
+> 2. **Complete Phase 1 IN FULL** and produce declared output for every step.
+>
+> 3. **Record Phase 1 evidence** in your session memory file at
 >    `.agent-workspace/<agent-id>/memory/session-NNN-YYYYMMDD.md`
 >
-> **Failure to complete Phase 1 before reading this issue body is a POLC breach —
+> **Failure to call `agent_bootstrap` first is a POLC breach —
 > GOV-BREACH-AIMC-W5-002 — and will cause your PR to be blocked by the CI preflight gate.**
 >
 > **Authority**: CS2 (Johan Ras / @APGI-cmy)
