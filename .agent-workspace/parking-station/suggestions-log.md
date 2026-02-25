@@ -40,3 +40,5 @@
 
 | 2026-02-25 | independent-assurance-agent | session-001 | Phase 3 | Add IAA check to verify string constants in PREHANDOVER proofs match actual implementation (not just SHA) | session-001-20260225.md |
 | 2026-02-25 | independent-assurance-agent | session-001 | Phase 4 | Require agent footprint markers in commit messages ([agent-id]) to enable POLC audit via git log in single-bot environments | session-001-20260225.md |
+| 2026-02-25 | independent-assurance-agent | session-001 | Phase 4 verdict | Add CI YAML consistency check verifying identity.lock_id (YAML) matches **Lock ID** reference in LOCKED body section — would auto-catch Lock ID mismatch found in all five builder contracts without manual audit | `session-001-20260225.md` |
+| 2026-02-25 | independent-assurance-agent | session-001 | Phase 4 verdict | Four-phase contract upgrade process should include post-upgrade diff against CodexAdvisor-agent.md YAML structure to catch missing governance fields (governance.version, identity.role/mission/class_boundary) before merging | `session-001-20260225.md` |

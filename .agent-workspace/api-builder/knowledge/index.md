@@ -1,0 +1,38 @@
+# API Builder — Tier 2 Knowledge Index
+
+**Agent**: api-builder
+**Contract Version**: 4.0.0
+**Knowledge Version**: 1.0.0
+**Last Updated**: 2026-02-25
+**Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
+
+---
+
+## Tier 2 Knowledge Contents
+
+| File | Purpose | Version | Status |
+|------|---------|---------|--------|
+| `index.md` (this file) | Knowledge entry point and version reference | 1.0.0 | PRESENT |
+
+---
+
+## Constitutional Canon References (Tier 1 — verified via CANON_INVENTORY)
+
+- `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0
+- `governance/canon/AGENT_CONTRACT_ARCHITECTURE.md` v1.0.0
+- `governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md` (AGCFPP-001)
+- `BUILD_PHILOSOPHY.md`
+- `governance/ROLE_APPOINTMENT_PROTOCOL.md`
+
+---
+
+## Operating Model Summary
+
+API Builder implements Next.js API routes, backend business logic, and data processing
+from frozen architecture specifications. Operates under Foreman supervision.
+Build Philosophy: Architecture → QA-to-Red → Build-to-Green → Validation.
+
+---
+
+**Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
+**Canonical Source**: `APGI-cmy/maturion-foreman-governance`
