@@ -727,4 +727,4 @@ A PR description missing any of these fields is a non-compliant handover.
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Version**: 6.2.0 | **Contract**: 3.2.0 | **Last Updated**: 2026-02-25
-  **Self-Modification Lock**: SELF-MOD-001 — ACTIVE — CS2-GATED
+**Self-Modification Lock**: SELF-MOD-001 — ACTIVE — CS2-GATED
