@@ -96,6 +96,42 @@ CodexAdvisor did not read its own contract before starting work. This is the roo
 
 ---
 
+### BREACH-003 — PR #557: Contract Not Read Before Starting; IAA Not Invoked; No Evidence Bundle; Character Count Exceeded
+
+**Breach ID**: BREACH-003
+**Policy Violated**: AGCFPP-001, CodexAdvisor contract BOOTSTRAP DIRECTIVE, Phase 4 §4.2 (PREHANDOVER), Phase 4 §4.3 (session memory), Phase 4 §4.4 (IAA invocation), FAIL-ONLY-ONCE A-001, A-002, A-012, A-013
+**Date**: 2026-02-25
+**PR Reference**: maturion-isms PR #557 — "foreman-v2: codify PREHANDOVER token update ceremony as mandatory Step 4.3b (contract v2.5.0)"
+**Triggering Issue**: CS2 comment on PR #557: "Another violation. This is a multiple occasion violation. You did not read your agent file before you started, neither did you invoke IAA agent to get a release token. Do this before I can merge."
+**IAA Audit**: session-003-20260225.md — PHASE_A_ADVISORY (IAA-PR557-20260225-PHASE_A_ADVISORY); content PASS; process VIOLATION RECORDED
+
+**Description**:
+CodexAdvisor submitted PR #557 modifying `foreman-v2-agent.md` (an AGENT_CONTRACT class file) without:
+1. Reading its own contract before starting (BOOTSTRAP DIRECTIVE violated)
+2. Invoking IAA before the PR was opened
+3. Including a PREHANDOVER proof in the PR bundle
+4. Including session memory in the PR bundle
+5. Character count check: foreman-v2-agent.md was 30,285 chars at PR open (30,000 hard limit exceeded — FAIL-ONLY-ONCE A-013)
+
+This is the THIRD consecutive instance of the same root cause pattern (BREACH-001/PR#546, BREACH-002/PR#553, BREACH-003/PR#557). CS2 identified this explicitly as a "multiple occasion violation."
+
+**Root Cause**:
+Identical to BREACH-002: work began with repository exploration instead of reading `.github/agents/CodexAdvisor-agent.md` first. Phase 1 preflight was not executed. This caused Phase 4 Steps 4.2, 4.3, and 4.4 (PREHANDOVER, session memory, IAA invocation) to be skipped. The character count violation (30,285 chars) resulted from the Step 4.3b addition without running FAIL-ONLY-ONCE A-013 char count check.
+
+**Corrective Actions**:
+- [x] foreman-v2-agent.md character count remediated: 30,285 → 29,345 chars (commit `aab702c`) — 2026-02-25
+- [x] IAA retroactively invoked — session-003-20260225.md created; token IAA-PR557-20260225-PHASE_A_ADVISORY issued — 2026-02-25
+- [x] PREHANDOVER proof created — PREHANDOVER-session-032-20260225.md — 2026-02-25
+- [x] Session memory created — session-032-20260225.md — 2026-02-25
+- [x] Breach registry updated — BREACH-003 opened and closed this session — 2026-02-25
+- [x] Parking station updated — session-032 entries added — 2026-02-25
+
+**Status**: CLOSED — All corrective actions completed 2026-02-25
+**Closed By**: CodexAdvisor session-032 (retroactive remediation per CS2 directive)
+**CS2 Acknowledgment**: Required — CS2 identified violation on PR #557; CS2 merge authority holds
+
+---
+
 ## Adding New Breach Entries
 
 When a new governance process violation is confirmed (by IAA REJECTION-PACKAGE or CS2 stop-and-fix),
