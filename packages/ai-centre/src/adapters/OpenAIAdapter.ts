@@ -1,8 +1,8 @@
 /**
- * OpenAIAdapter — Wave 4 implementation
+ * OpenAIAdapter — Wave 5 implementation
  *
- * Wraps the OpenAI Chat Completions API into the ProviderAdapter interface.
- * Supports the `analysis` and `advisory` capabilities (Wave 4 scope).
+ * Wraps the OpenAI Chat Completions and Embeddings APIs into the ProviderAdapter interface.
+ * Supports the `analysis`, `advisory`, and `embeddings` capabilities (Wave 5 scope).
  *
  * References: GRS-005, GRS-006 | APS §6.1, §6.2 | AAD §5.5, §8.2
  */
@@ -15,11 +15,14 @@ import {
   type CapabilityResult,
   type AnalysisResult,
   type AdvisoryResult,
+  type EmbeddingsResult,
 } from '../types/index.js';
 import { ProviderKeyStore } from '../keys/ProviderKeyStore.js';
 
 const OPENAI_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
+const OPENAI_EMBEDDINGS_ENDPOINT = 'https://api.openai.com/v1/embeddings';
 const DEFAULT_MODEL = 'gpt-4o';
+const EMBEDDINGS_MODEL = 'text-embedding-3-small';
 
 /** Minimal subset of the Fetch API used by this adapter (enables test injection). */
 export type FetchFn = (url: string, init: RequestInit) => Promise<Response>;
@@ -29,6 +32,7 @@ export class OpenAIAdapter implements ProviderAdapter {
   readonly supportedCapabilities = new Set([
     Capability.ANALYSIS,
     Capability.ADVISORY,
+    Capability.EMBEDDINGS,
   ]);
 
   private readonly keyStore: ProviderKeyStore;
@@ -62,6 +66,52 @@ export class OpenAIAdapter implements ProviderAdapter {
         'OpenAI API key is not configured.',
         err,
       );
+    }
+
+    // Embeddings capability — routes to /v1/embeddings (GRS-006)
+    if (request.capability === Capability.EMBEDDINGS) {
+      let embResponse: Response;
+      try {
+        embResponse = await this.fetchFn(OPENAI_EMBEDDINGS_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ model: EMBEDDINGS_MODEL, input: request.userInput }),
+        });
+      } catch (err) {
+        throw new ProviderError(this.providerName, 'OpenAI API request failed.', err);
+      }
+
+      if (!embResponse.ok) {
+        throw new ProviderError(
+          this.providerName,
+          `OpenAI API returned HTTP ${embResponse.status}.`,
+        );
+      }
+
+      let embData: unknown;
+      try {
+        embData = await embResponse.json();
+      } catch (err) {
+        throw new ProviderError(
+          this.providerName,
+          'Failed to parse OpenAI API response.',
+          err,
+        );
+      }
+
+      const vectors = (
+        embData as { data: Array<{ embedding: number[] }> }
+      ).data.map((item) => item.embedding);
+
+      const embResult: EmbeddingsResult = {
+        capability: Capability.EMBEDDINGS,
+        vectors,
+        providerUsed: this.providerName,
+      };
+      return embResult;
     }
 
     const messages: Array<{ role: string; content: string }> = [

@@ -21,7 +21,7 @@ The `packages/ai-centre` package implements the AIMC (AI Memory Centre) gateway,
 | Wave 2 | AICentre gateway, OpenAI/GitHubModels adapters, ProviderAdapter contract | ✅ COMPLETE | All GREEN | Full gateway implementation |
 | Wave 3 | Persona, key rotation, telemetry, routing | ✅ COMPLETE | All GREEN | See `build-evidence/wave-3-close-20260224.md` |
 | Wave 4 | MemoryLifecycle, SessionMemoryStore, PersistentMemoryAdapter (in-memory foundation), wave4-cst integration tests | ✅ COMPLETE | 48 tests GREEN | Supabase wiring explicitly deferred to Wave 5 (see `PersistentMemoryAdapter.ts` TODO(Wave5)) |
-| **Wave 5** | PersistentMemoryAdapter Supabase wiring — replace in-memory store with Supabase client, ai_memory table, organisation_id tenant isolation per GRS-008 | 🔴 **NOT DELIVERED** | — | **PR #500 CLOSED — governance breach (see GOV-BREACH-AIMC-W5-001 below). Must be re-executed with proper builder delegation.** |
+| **Wave 5** | Knowledge Centre + Embeddings + RAG — `OpenAIAdapter` embeddings extension (`Capability.EMBEDDINGS`, `/v1/embeddings` API), `MemoryLifecycle` RAG step 4 (`KnowledgeRetriever` DI, GRS-030 context order), pgvector migration (`003_ai_knowledge.sql`) | ✅ **COMPLETE** | 61 tests GREEN (Waves 2–5 full regression suite) | Re-executed per POLC chain (GOV-BREACH-AIMC-W5-001 remediation). qa-builder → schema-builder → api-builder. QP PASS 2026-02-25. |
 
 ---
 
@@ -75,7 +75,7 @@ The Foreman agent (foreman-v2) violated the POLC boundary by writing Wave 5 prod
 |------|-----------|------------|--------|
 | Wave 3 | `src/__tests__/personas/`, `src/__tests__/routing/`, `src/__tests__/keys/`, `src/__tests__/telemetry/` | ~32 | ✅ GREEN |
 | Wave 4 | `src/__tests__/memory/`, `src/__tests__/integration/wave4-cst.test.ts` | 48 | ✅ GREEN |
-| Wave 5 | `src/__tests__/memory/PersistentMemoryAdapter.test.ts` (Red gate only — Supabase assertions absent) | 5 (4 pass in-memory, 1 constructor guard) | 🔴 NOT MET — in-memory tests do not satisfy GRS-008 |
+| Wave 5 | `src/__tests__/adapters/OpenAIAdapter.embeddings.test.ts`, `src/__tests__/memory/MemoryLifecycle.rag.test.ts`, `src/__tests__/integration/wave5-cst.test.ts` | 12 (+ 49 regression) = 61 total | ✅ GREEN |
 
 ---
 
@@ -89,5 +89,5 @@ The Foreman agent (foreman-v2) violated the POLC boundary by writing Wave 5 prod
 
 ---
 
-*Authority: foreman-v2 v2.2.0 | Governance Ref: maturion-isms#496 | GOV-BREACH-AIMC-W5-001*  
-*Last Updated: 2026-02-24*
+*Authority: foreman-v2 v6.2.0 | Governance Ref: maturion-isms#496 | GOV-BREACH-AIMC-W5-001 (REMEDIATED) | GOV-BREACH-AIMC-W5-002 (REMEDIATED)*  
+*Last Updated: 2026-02-25*

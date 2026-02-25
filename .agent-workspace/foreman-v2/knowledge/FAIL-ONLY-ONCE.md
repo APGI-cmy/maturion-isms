@@ -3,7 +3,7 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 1.4.0  
+**Version**: 1.5.0  
 **Created**: 2026-02-24  
 **Updated**: 2026-02-25  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
@@ -48,6 +48,7 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-008 | Full diff review is mandatory before every handover verdict. Every file in the PR diff must be examined. Committed working notes, internal summaries, or builder exploration files in the repository root or non-designated paths are a delivery failure. | INC-5.6R-DELIVERY-001 (2026-02-24) |
 | A-009 | Verb Classification Gate is mandatory BEFORE responding to any task. If the primary verb is an implementation verb (implement, build, code, write, fix) directed at the Foreman, the Foreman MUST enter [MODE:IMPLEMENTATION_GUARD] immediately — REJECT, create builder task spec, delegate, document. A session that receives an implementation verb without executing the Verb Classification Gate is in breach from the first action. | GOV-BREACH-AIMC-W5-001 (2026-02-24) |
 | A-010 | IAA-INVOKE-001 (CS2 — 2026-02-25): All Foreman wave handovers MUST include an IAA independent audit (Step 4.3a) before merge gate release. IAA audit token MUST be recorded in the PREHANDOVER proof. IAA STOP-AND-FIX halts handover. IAA ESCALATE routes to CS2. Foreman's role as QA agent does NOT exempt it from IAA oversight — IAA QAs the Foreman, as the Foreman QAs builders. Exception: IAA does not audit itself. Applies to all waves producing or modifying repo content. | CS2 — maturion-isms#523 (2026-02-25) |
+| A-011 | AGENT-FILE-FIRST (CS2 — 2026-02-25): The Foreman agent file (`.github/agents/foreman-v2-agent.md`) MUST be read and the full Phase 1 PREFLIGHT must be completed — with all 7 steps executed and evidence produced — before ANY other action in ANY session. A session that begins implementing, delegating, committing, or producing any output before completing Phase 1 is in breach from its first action. Foreman orchestrates; Foreman does not build. These two constraints — preflight-first and orchestration-only — are inseparable and equally non-negotiable. | CS2 — this session (2026-02-25) |
 
 ---
 
@@ -144,6 +145,22 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 
 ---
 
+### GOV-BREACH-AIMC-W5-002 — Preflight Skipped: Foreman Began Implementation Before Reading Agent File
+**Date**: 2026-02-25  
+**Severity**: CRITICAL  
+**Status**: REMEDIATED  
+**Source**: this session (Wave 5 re-execution issue, 2026-02-25)
+
+**What happened**: Foreman began writing production implementation code (type definitions, test files, and implementation logic directly in the repository) as the very first action of the session, without reading the agent file, without executing Phase 1 PREFLIGHT, and without running the Verb Classification Gate. The violation was caught and corrected mid-session by CS2 (@APGI-cmy) via an explicit new_requirement reminder. This is a repeat of the root cause pattern from GOV-BREACH-AIMC-W5-001: the protective preflight safeguards (agent file read → identity declaration → FAIL-ONLY-ONCE self-test → session memory catch-up) were bypassed entirely.
+
+**Root cause**: The triggering task message contained implementation-scope content (code files, wave deliverables). Without reading the agent file first, the Foreman's identity, class boundary, and A-rules were never loaded — leaving no active constraint against self-implementation. The preflight is not optional scaffolding; it is the mechanism that activates all other safeguards.
+
+**Corrective action**: Session halted mid-stream. Agent file read, full Phase 1 PREFLIGHT executed. Verb Classification Gate run. Implementation Guard activated for all prior self-implemented work. Delegation to qa-builder and api-builder issued. A-011 locked in: agent file MUST be read first, before any other action, in every session. This incident recorded.
+
+**Open improvement**: Add a CI check that fails the PR when there is no `.agent-workspace/foreman-v2/memory/session-*.md` file whose timestamp matches the PR creation date — machine-level enforcement that Phase 1 session memory was written, which requires Phase 1 to have been executed. *(See Section 3, item S-008.)*
+
+---
+
 ## Section 3: Open Improvement Suggestions
 
 These items are tracked and must be reviewed each session. If assigned to the current wave, they must be addressed before HANDOVER.
@@ -157,6 +174,7 @@ These items are tracked and must be reviewed each session. If assigned to the cu
 | S-005 | Add integration test validating `governance-alignment-schedule.yml` creates a liaison issue on drift detection (carry-forward from session-051) | session-051 | OPEN |
 | S-006 | Add CI lint/check: validate that every incident status in FAIL-ONLY-ONCE.md is in the allowed status set — automates the invalid-status HARD STOP rule currently enforced manually at preflight | maturion-isms#498 | OPEN |
 | S-007 | Add CI POLC boundary gate that fails PR when foreman-v2 is listed as author of production code file changes (outside designated governance evidence paths) — machine-level enforcement of A-001, preventing repeat of GOV-BREACH-AIMC-W5-001 | GOV-BREACH-AIMC-W5-001 | OPEN |
+| S-008 | Add CI check that fails PR when no `.agent-workspace/foreman-v2/memory/session-*.md` file exists with a timestamp matching the PR creation date — machine-level enforcement that Phase 1 PREFLIGHT was executed (session memory is only written in Phase 4, which requires Phase 1 completion), preventing repeat of GOV-BREACH-AIMC-W5-002 | GOV-BREACH-AIMC-W5-002 | OPEN |
 
 ---
 
@@ -166,9 +184,9 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 1.4.0
+fail_only_once_version: 1.5.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
@@ -178,4 +196,4 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007]
 ---
 
 *Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-02-25 | Status: ACTIVE*
+*Last Updated: 2026-02-25 | Version: 1.5.0 | Status: ACTIVE*
