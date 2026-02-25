@@ -79,6 +79,8 @@ IAA trigger classification: Agent contract update → IAA_REQUIRED: YES
 
 - [x] IAA audit token recorded: PHASE_A_ADVISORY — 2026-02-25
 
+> **Scope clarification**: IAA Phase B will independently re-audit this contract upon activation. This PR is flagged for Phase B review. The PHASE_A_ADVISORY token does not waive Phase B IAA audit.
+
 ---
 
 ## CS2 Authorization
