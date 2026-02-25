@@ -1,0 +1,4 @@
+# Allow node_modules for this MCP server — required for coding agent sandbox
+# The coding agent clones the repo fresh and does not run npm install automatically.
+# node_modules must be committed so the server can start without any pre-install step.
+!node_modules/
