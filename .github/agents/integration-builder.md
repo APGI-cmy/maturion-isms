@@ -425,7 +425,20 @@ When completing wave/task and generating IBWR evidence, builder MUST update BUIL
 
 **Authority**: LIVING_AGENT_SYSTEM.md v6.2.0, governance/canon/AGENT_HANDOVER_AUTOMATION.md
 
-### 4.3 Mandatory Process Improvement Reflection (Priority B_M)
+### 4.3 Pre-Handover Merge Gate Parity Check (Priority B_H — BLOCKING)
+
+**[B_H] Run before opening any PR. Do NOT open a PR until all checks PASS locally.**
+
+- Enumerate all checks listed in `merge_gate_interface.required_checks` (from agent contract YAML)
+- Run each check locally using the same script/ruleset as the CI merge gate
+- If ANY check fails locally → **STOP and FIX immediately** — do not open PR
+- Document result in PREHANDOVER proof: `merge_gate_parity: PASS | FAIL`
+
+> Opening a PR with a failing local gate is **prohibited** — it is the same class of violation as pushing directly to main.
+
+**Authority**: `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.1.0 Section 4.3
+
+### 4.4 Mandatory Process Improvement Reflection (Priority B_M)
 
 **Status**: MANDATORY at work completion
 
@@ -457,7 +470,7 @@ When completing wave/task and generating IBWR evidence, builder MUST update BUIL
 
 **Authority**: Up-rippled from governance canon (maturion-foreman-governance)
 
-### 4.4 Compliance Check & Escalation (Priority B_H)
+### 4.5 Compliance Check & Escalation (Priority B_H)
 
 **Escalation Inbox**:
 If blockers or governance gaps found, create escalation file:

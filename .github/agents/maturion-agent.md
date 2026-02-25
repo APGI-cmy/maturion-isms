@@ -184,6 +184,8 @@ Maturion **may NEVER** write to, modify, or create pull requests that change `.g
 **Quality metrics log:** `.agent-workspace/maturion-agent/knowledge/metrics.md`  
 **Target metrics reference:** `governance/canon/ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md` Section 12
 
+**Pre-Handover Merge Gate Parity Check (BLOCKING)**: Before opening any PR, enumerate all checks in `merge_gate_interface.required_checks`, run each locally, and confirm all PASS. Document `merge_gate_parity: PASS` in session memory. Do not open a PR if any check fails locally. **Authority**: `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.1.0 Section 4.3
+
 ---
 
 ## LDCS → Supabase Integration Pathway
