@@ -1,8 +1,8 @@
 # CodexAdvisor — Agent File Non-Negotiables Checklist (Tier 2 Operational Knowledge)
 
 **Agent**: CodexAdvisor-agent
-**Knowledge Version**: 1.1.0
-**Last Updated**: 2026-02-21
+**Knowledge Version**: 1.2.0
+**Last Updated**: 2026-02-25
 **Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
 
 ---
@@ -43,6 +43,7 @@ This is the Tier 2 single source of truth for agent file compliance. It supersed
   - `"Merge Gate Interface / governance/alignment"`
   - `"Merge Gate Interface / stop-and-fix/enforcement"`
 - [ ] **S2-08** `prohibitions` includes: no self-modification, no pushing to main, no secrets in commits/issues/PRs, no weakening of governance
+- [ ] **S2-09** IAA invocation evidence is present for this PR — IAA audit token or advisory note is recorded in the PREHANDOVER proof. No agent class is exempt from this requirement. See `FAIL-ONLY-ONCE.md` A-001 and IAA FAIL-ONLY-ONCE A-002. **BLOCKING — no class exceptions.**
 
 ---
 
@@ -141,7 +142,7 @@ Before opening any PR for an agent file:
 | Gate | Requirement | Blocking? |
 |------|-------------|-----------|
 | All S1 checks | File structure valid | YES |
-| All S2 checks | Governance fields complete | YES |
+| All S2 checks | Governance fields complete (incl. S2-09 IAA evidence) | YES |
 | All S3 checks | Four-phase structure present | YES |
 | All S4 checks | Living agent architecture correct | YES |
 | All S5 checks | Delegation boundaries stated | YES |
@@ -149,6 +150,7 @@ Before opening any PR for an agent file:
 | Character count | ≤ 30,000 characters | YES — hard block |
 | CANON_INVENTORY | Present, not degraded | YES |
 | CS2 authorization | Explicit, in issue/PR | YES |
+| IAA evidence | IAA audit token or advisory note in PREHANDOVER proof — NO CLASS EXCEPTIONS | YES |
 
 **If any gate is FAIL → DO NOT open PR → fix and re-verify → only proceed on 100% PASS**
 
