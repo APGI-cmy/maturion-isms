@@ -69,7 +69,10 @@ If CodexAdvisor or Foreman claims exemption → issue REJECTION-PACKAGE citing t
 
 ### A-003 — Ambiguity Resolves to Mandatory Invocation
 
-**Triggered by**: maturion-isms#529 — ambiguity in trigger table classification led to IAA skip
+**Derived from**: maturion-isms#528 and the general IAA canon principle — no specific incident number.
+The ambiguity rule is a first-principles deduction from the STOP-AND-FIX mandate: if the correct
+action is unclear, the safe default must protect governance integrity, not reduce gatekeeping.
+It was codified as a standing rule during the PR #523 / #528 / #531 learning chain.
 
 **Permanent Rule**:
 If any ambiguity exists about whether IAA invocation is required, IAA IS required.
