@@ -208,6 +208,40 @@ skipped. This is the fifth consecutive occurrence of the same root cause pattern
 
 ---
 
+### BREACH-006 — Issue #577 PR: Contract Not Read Before Starting; IAA Not Invoked; No Evidence Bundle; Character Count Exceeded
+
+**Breach ID**: BREACH-006
+**Policy Violated**: AGCFPP-001, CodexAdvisor contract BOOTSTRAP DIRECTIVE, Phase 4 §4.2 (PREHANDOVER), Phase 4 §4.3 (session memory), Phase 4 §4.4 (IAA invocation), FAIL-ONLY-ONCE A-001, A-002, A-013
+**Date**: 2026-02-25
+**PR Reference**: Branch `copilot/update-governance-liaison-structure` — "Governance Liaison Agent Contract: Phase 1 Structure, Tier 2 Refactor, and Full Compliance Update" (Issue #577)
+**Triggering Issue**: CS2 follow-up: "Did you provide an IAA assurance token as per your contract requirements"
+**IAA Audit**: session-006-20260225.md — PHASE_A_ADVISORY (IAA-ISSUE577-20260225-PHASE_A_ADVISORY); content PASS; process VIOLATION RECORDED
+
+**Description**:
+CodexAdvisor submitted the Issue #577 governance-liaison contract update PR without:
+1. Reading its own contract before starting (BOOTSTRAP DIRECTIVE violated — sixth consecutive occurrence)
+2. Invoking IAA before the PR was opened
+3. Including a PREHANDOVER proof in the PR bundle
+4. Including session memory in the PR bundle
+5. Character count check: `governance-liaison-isms-agent.md` was at 32,538 chars at PR open (30,000 hard limit exceeded — FAIL-ONLY-ONCE A-013)
+
+**Root Cause**:
+Identical to BREACH-002 through BREACH-005: work began with repository exploration instead of reading `.github/agents/CodexAdvisor-agent.md` first. Phase 1 preflight was not executed. This caused Phase 4 Steps 4.2, 4.3, and 4.4 to be skipped and the character count violation to go undetected.
+
+**Corrective Actions**:
+- [x] `governance-liaison-isms-agent.md` character count remediated: 32,538 → 29,686 chars (inline session memory template + escalation template moved to new `session-memory-template.md` Tier 2 file; execution checklist removed) — 2026-02-25
+- [x] `session-memory-template.md` created in Tier 2 knowledge — 2026-02-25
+- [x] IAA retroactively invoked — session-006-20260225.md; token IAA-ISSUE577-20260225-PHASE_A_ADVISORY — 2026-02-25
+- [x] PREHANDOVER proof created — PREHANDOVER-session-036-20260225.md — 2026-02-25
+- [x] Session memory created — session-036-20260225.md — 2026-02-25
+- [x] Breach registry updated — BREACH-006 opened and closed this session — 2026-02-25
+
+**Status**: CLOSED — All corrective actions completed 2026-02-25
+**Closed By**: CodexAdvisor session-036 (retroactive remediation per CS2 directive)
+**CS2 Acknowledgment**: Required — CS2 identified violation via "Did you provide an IAA assurance token" feedback
+
+---
+
 ## Adding New Breach Entries
 
 When a new governance process violation is confirmed (by IAA REJECTION-PACKAGE or CS2 stop-and-fix),

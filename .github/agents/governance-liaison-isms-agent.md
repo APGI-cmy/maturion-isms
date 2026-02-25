@@ -172,6 +172,7 @@ tier2_knowledge:
     - layer-down-scripts.md
     - ripple-processing-scripts.md
     - drift-detection-scripts.md
+    - session-memory-template.md
 
 metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
@@ -705,74 +706,13 @@ Output:
    - Record ripple status and alignment state
 
 2. **Create Session Memory**:
-   ```bash
-   # File: .agent-workspace/governance-liaison-isms/memory/session-NNN-YYYYMMDD.md
-   ```
-
-   **Template**:
-   ```markdown
-   # Session NNN - YYYYMMDD (LIVING_AGENT_SYSTEM v6.2.0)
-   
-   ## Agent
-   - Type: governance-liaison-isms
-   - Class: liaison
-   - Session ID: session-NNN-YYYYMMDD
-   - Contract Version: 3.2.0
-   
-   ## Task
-   [What was I asked to do?]
-   
-   ## What I Did
-   ### Files Modified
-   - governance/canon/FILE1.md (SHA256: abc123...)
-   - .agent-admin/governance/sync_state.json (SHA256: def456...)
-   
-   ### Actions Taken
-   - Received governance ripple event (ID: uuid-123)
-   - Executed layer-down for 3 canon files
-   - Created alignment PR #NNN
-   - Updated sync_state.json
-   
-   ### Decisions Made
-   - Self-aligned governance artifacts (no constitutional changes)
-   - Did not escalate (routine alignment)
-   
-   ## Living Agent System v6.2.0 Evidence
-   
-   ### Ripple Status
-   - Ripple received: YES (uuid-123)
-   - Ripple processed: COMPLETE
-   - Files updated: 3 canon files
-   
-   ### Governance Alignment
-   - Drift detected: YES
-   - Self-alignment executed: YES
-   - Alignment gate: PASSED
-   
-   ## Outcome
-   ✅ COMPLETE
-   
-   ## Lessons
-   ### What Worked Well
-   - Drift detection triggered correctly
-   - SHA256 validation prevented misaligned files
-   
-   ### What Future Sessions Should Know
-   - Always verify sender in registry before processing ripple
-   - Constitutional changes require CS2 escalation
-   
-   ## Required Fields (must all be populated — none may be blank or 'N/A')
-   - prior_sessions_reviewed: [list session IDs reviewed in Phase 1 Step 1.4]
-   - unresolved_items_from_prior_sessions: [list, or 'none']
-   - roles_invoked: [list all roles or agents invoked this session]
-   - governance_artifacts_aligned: [list files aligned, or 'none']
-   - escalations_triggered: [list by HALT/ESC id, or 'none']
-   - iaa_invocation_result: [ASSURANCE-TOKEN / REJECTION-PACKAGE / NOT_REQUIRED / PENDING]
-   
-   ## Suggestions for Improvement (MANDATORY — this field may NEVER be blank)
-   [At least one concrete improvement suggestion. If no degradation observed:
-   "No degradation observed. Continuous improvement note: [specific, actionable observation]."]
-   ```
+   - File: `.agent-workspace/governance-liaison-isms/memory/session-NNN-YYYYMMDD.md`
+   - Use the session memory template from `.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md`
+   - Required fields (must all be populated — none may be blank or 'N/A'):
+     - `prior_sessions_reviewed`, `unresolved_items_from_prior_sessions`
+     - `roles_invoked`, `governance_artifacts_aligned`, `escalations_triggered`
+     - `iaa_invocation_result: [ASSURANCE-TOKEN / REJECTION-PACKAGE / NOT_REQUIRED / PENDING]`
+   - **Suggestions for Improvement (MANDATORY — this field may NEVER be blank)**
    - **Parking Station**: Append one-line summary per suggestion to `.agent-workspace/parking-station/suggestions-log.md` (create if absent). Format: `| YYYY-MM-DD | governance-liaison-isms | session-NNN | [ALIGNMENT/SESSION-END] | <one-sentence summary> | <session-memory-filename> |`
 
 3. **Memory Rotation**:
@@ -861,72 +801,11 @@ Do not open PR until ASSURANCE-TOKEN is received.
 
 ### 4.5 Escalation Documentation
 
-**Escalation Types**:
-1. **BLOCKER**: Cannot proceed without CS2 resolution
-2. **GOVERNANCE_GAP**: Missing or unclear governance guidance
-3. **AUTHORITY_BOUNDARY**: Request beyond liaison authority
+Escalation types: **BLOCKER** (cannot proceed without CS2 resolution) | **GOVERNANCE_GAP** (missing/unclear guidance) | **AUTHORITY_BOUNDARY** (request beyond liaison scope).
 
-**Escalation Template**:
-```markdown
-# Escalation: [Title]
+Use the escalation template from `.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md`.
 
-## Type
-BLOCKER | GOVERNANCE_GAP | AUTHORITY_BOUNDARY
-
-## Description
-[What requires CS2 attention]
-
-## Context
-- Session: session-NNN-YYYYMMDD
-- Task: [original task]
-- Blocked at: [specific step]
-
-## Recommendation
-[Proposed solution or next steps]
-
-## Evidence
-- Related files: [file paths]
-- Canonical references: [governance docs]
-- Error logs: [if applicable]
-
----
-Created: Session NNN | Date: YYYY-MM-DD
-Authority: CS2
-```
-
-**Escalation File Location**:
-```
-.agent-workspace/governance-liaison-isms/escalation-inbox/blocker-YYYYMMDD.md
-```
-
----
-
-## Execution Checklist
-
-**Before Starting Work**:
-- [ ] Run wake-up protocol
-- [ ] Load last 5 session memories
-- [ ] Verify CANON_INVENTORY.json accessible
-- [ ] Check for governance drift
-- [ ] Review escalation-inbox for unresolved items
-- [ ] Generate working contract
-
-**During Work**:
-- [ ] Follow RAEC model (Review-Advise-Escalate-Coordinate)
-- [ ] Validate ripple events against registry
-- [ ] Execute layer-down with SHA256 validation
-- [ ] Document all alignment actions
-- [ ] Escalate authority boundary violations
-
-**Before Completing Session**:
-- [ ] Run session closure protocol
-- [ ] Create session memory file
-- [ ] Rotate memory if >5 sessions
-- [ ] Generate evidence artifact bundle
-- [ ] Update personal learning files
-- [ ] Document any escalations created
-- [ ] Verify sync_state.json updated
-- [ ] Archive processed ripple events
+**Escalation File Location**: `.agent-workspace/governance-liaison-isms/escalation-inbox/blocker-YYYYMMDD.md`
 
 ---
 

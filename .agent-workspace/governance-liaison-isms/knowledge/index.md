@@ -22,6 +22,7 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 | `layer-down-scripts.md` | **Phase 3.1 Scripts** — Checksum validation and sync state update scripts for the cross-repository layer-down protocol | 1.0.0 |
 | `ripple-processing-scripts.md` | **Phase 3.2 Scripts** — Ripple inbox creation, sync state update on receipt, and ripple archive scripts | 1.0.0 |
 | `drift-detection-scripts.md` | **Phase 3.3 Scripts** — Drift detection script; compares canonical inventory version against local sync state | 1.0.0 |
+| `session-memory-template.md` | **Phase 4.2 Template** — Session memory and escalation templates for use in Phase 4 session closure | 1.0.0 |
 
 ---
 
