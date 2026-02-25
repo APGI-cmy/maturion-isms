@@ -2,8 +2,8 @@
 
 **Agent**: CodexAdvisor-agent
 **Contract Version**: 2.1.0
-**Knowledge Version**: 1.1.0
-**Last Updated**: 2026-02-21
+**Knowledge Version**: 1.2.0
+**Last Updated**: 2026-02-25
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -13,11 +13,12 @@
 | File | Purpose | Version |
 |------|---------|---------|
 | `index.md` (this file) | Knowledge entry point and version reference | 1.0.0 |
+| `FAIL-ONLY-ONCE.md` | Permanent governance failure registry — rules CodexAdvisor must never violate again | 1.0.0 |
 | `checklist-registry.md` | Maps agent roles to their required creation checklists | 1.0.0 |
 | `agent-creation-template.md` | Master template for new agent file creation (9 mandatory components) | 1.0.0 |
 | `requirement-mapping.md` | 56-requirement mapping (REQ-CM-001 through REQ-AG-004) | 1.0.0 |
 | `session-memory-template.md` | Standard session memory template | 1.0.0 |
-| `agent-file-non-negotiables-checklist.md` | Non-negotiables checklist for all agent file creation/updates — 100% compliance required before any PR | 1.1.0 |
+| `agent-file-non-negotiables-checklist.md` | Non-negotiables checklist for all agent file creation/updates — 100% compliance required before any PR | 1.2.0 |
 
 ---
 
