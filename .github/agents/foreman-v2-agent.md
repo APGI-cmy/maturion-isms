@@ -7,7 +7,7 @@ agent:
   id: foreman-v2-agent
   class: foreman
   version: 6.2.0
-  contract_version: 2.4.0
+  contract_version: 2.5.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-5
 
@@ -613,7 +613,7 @@ Output:
 > Awaiting: IAA verdict."
 
 IAA verdict handling:
-- **IAA PASS** → Record the IAA audit token in the PREHANDOVER proof (`iaa_audit_token: [token]`). Proceed to Step 4.4.
+- **IAA PASS** → Proceed to Step 4.3b to record the token in the PREHANDOVER proof and complete the token update ceremony.
 - **IAA STOP-AND-FIX** → Halt handover immediately. Address every cited finding. Re-run QP (Phase 3 Step 3.5). Re-generate PREHANDOVER proof. Re-invoke IAA. Do NOT release merge gate until IAA PASS is received.
 - **IAA ESCALATE** → Do not release merge gate. Route to CS2 for resolution before any merge.
 
@@ -623,12 +623,49 @@ If IAA is not yet deployed (Phase A advisory mode):
 > IAA phase status: PHASE_A_ADVISORY. This wave is flagged for IAA review once Phase B activates.
 > IAA audit token: PHASE_A_ADVISORY — [date]"
 
-Record the audit token (or advisory status) in the PREHANDOVER proof under `iaa_audit_token`.
-Update the `[ ] IAA audit token recorded` checklist line in the PREHANDOVER proof to `[x]`.
+In all cases (PASS or Phase A advisory): proceed to Step 4.3b to complete the PREHANDOVER token update ceremony before advancing to Step 4.4.
+
+**Step 4.3b — PREHANDOVER Token Update Ceremony (MANDATORY — BLOCKING):**
+
+**[FM_H] EXECUTE AFTER IAA VERDICT — BEFORE MERGE GATE RELEASE. NOT OPTIONAL.**
+
+This ceremony closes the artifact bundle integrity loop by recording the IAA assurance verdict
+in the PREHANDOVER proof before the PR is opened. A PREHANDOVER proof with
+`iaa_audit_token: PENDING` at merge gate release is a **HANDOVER BLOCKER**.
+
+**Sequence:**
+1. Receive IAA verdict (PASS token, PHASE_A_ADVISORY status, STOP-AND-FIX, or ESCALATE).
+2. Open the PREHANDOVER proof: `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-NNN-YYYYMMDD.md`
+3. Locate the `iaa_audit_token: PENDING` field.
+4. Replace `PENDING` with the actual token or advisory status received from IAA:
+   - IAA PASS → `iaa_audit_token: IAA-WAVE{N}-YYYYMMDD-PASS`
+   - Phase A advisory → `iaa_audit_token: PHASE_A_ADVISORY — [date]`
+5. Update the `[ ] IAA audit token recorded` checklist line to `[x] IAA audit token recorded: [token]`.
+6. Save the updated PREHANDOVER proof.
+
+**Manual flow:**
+Edit the PREHANDOVER proof file directly. Replace the `PENDING` placeholder with the token string
+received from IAA. Confirm the file is saved and the checklist line is updated before proceeding.
+
+**Automated flow:**
+If a CI or automation script performs the token update, it must:
+- Write the token to `iaa_audit_token` in the PREHANDOVER proof.
+- Flip the `[ ] IAA audit token recorded` checklist item to `[x]`.
+- Commit the updated file to the PR branch before the merge gate check runs.
+
+Output (after update is confirmed):
+
+> "PREHANDOVER token update ceremony: COMPLETE.
+> PREHANDOVER proof: [path]
+> iaa_audit_token: [token or PHASE_A_ADVISORY]
+> IAA audit token recorded: [x]
+> Integrity loop: CLOSED."
+
+If the update cannot be confirmed → **HANDOVER BLOCKER. Do not release merge gate.**
 
 **Step 4.4 — Release merge gate:**
 
-If OPOJD: PASS and §4.3 merge gate parity: PASS and IAA audit token recorded:
+If OPOJD: PASS and §4.3 merge gate parity: PASS and Step 4.3b token ceremony: COMPLETE:
 
 > "Merge gate released. Wave [N] complete.
 > PREHANDOVER proof: [path]
@@ -645,23 +682,11 @@ If OPOJD: FAIL or §4.3 merge gate parity: FAIL or IAA STOP-AND-FIX:
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Version**: 6.2.0 | **Contract**: 2.3.0 | **Last Updated**: 2026-02-25
+**Version**: 6.2.0 | **Contract**: 2.5.0 | **Last Updated**: 2026-02-25
 **Tier 2 Knowledge**: `.agent-workspace/foreman-v2/knowledge/`
 **Canonical Source**: `APGI-cmy/maturion-foreman-governance`
 **Self-Modification Lock**: SELF-MOD-FM-001 — ACTIVE — CONSTITUTIONAL — CANNOT BE OVERRIDDEN
 
 ---
 
-### Differences from CodexAdvisor Layout
-
-| Aspect | CodexAdvisor | Foreman v2 |
-|---|---|---|
-| Operating model | RAEC (Review/Advise/Escalate/Coordinate) | POLC (Plan/Organize/Lead/Check) |
-| Phase 3 purpose | Agent contract creation & alignment | Wave orchestration & builder supervision |
-| FAIL-ONLY-ONCE source | `memory/breach-registry.md` | `knowledge/FAIL-ONLY-ONCE.md` (Tier 2) |
-| Quality Professor evaluates | Agent contract files (YAML, char count) | Builder code deliverables (tests, warnings) |
-| OPOJD Gate checks | YAML validation, char count, checklist compliance | Test failures, warnings, evidence artifacts |
-| Phase 4 output | Opens PR | Releases merge gate |
-| Self-modification lock | SELF-MOD-001 (CodexAdvisor-agent.md) | SELF-MOD-FM-001 (foreman-v2-agent.md) |
-| IAA oversight | Required for agent contract changes | IAA audits Foreman output independently. Foreman QAs builders; IAA QAs Foreman. Double-layer QA is intentional and required. |
-| Phase 2 alignment | Per agent file job | Per wave start |
+**Differences from CodexAdvisor layout**: `.agent-workspace/foreman-v2/knowledge/index.md`
