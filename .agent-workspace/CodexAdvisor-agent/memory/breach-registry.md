@@ -168,6 +168,46 @@ Identical to BREACH-002 and BREACH-003: work began with repository exploration i
 
 ---
 
+### BREACH-005 — Governance Hardening PR: Contract Not Read Before Starting; IAA Not Invoked; No Evidence Bundle
+
+**Breach ID**: BREACH-005
+**Policy Violated**: AGCFPP-001, CodexAdvisor contract BOOTSTRAP DIRECTIVE, Phase 4 §4.2 (PREHANDOVER), Phase 4 §4.3 (session memory), Phase 4 §4.4 (IAA invocation), FAIL-ONLY-ONCE A-001, A-002
+**Date**: 2026-02-25
+**PR Reference**: PR #565 — "Governance hardening: CI enforcement for PREHANDOVER proof, ui-builder char limit, builder YAML attestation standard, and FetchFn adapter pattern"
+**Triggering Issue**: CS2 feedback: "You did not read your own agent file, again. Therefore the merge gate will fail. Read your own agent file first, then before handover invoke the IAA agent as per your agent file. If you dont do this, you will fail each and every time. This learning has been recorded several times already."
+**IAA Audit**: session-005-20260225.md — PHASE_A_ADVISORY (IAA-PR565-20260225-PHASE_A_ADVISORY); content PASS; process VIOLATION RECORDED
+
+**Description**:
+CodexAdvisor submitted PR #565 implementing governance hardening (CI workflow, YAML standard, adapter docs,
+policy updates) without:
+1. Reading its own contract before starting (BOOTSTRAP DIRECTIVE violated — fifth consecutive occurrence)
+2. Invoking IAA before the PR was opened
+3. Including a PREHANDOVER proof in the PR bundle
+4. Including session memory in the PR bundle
+
+No agent contract files (`.github/agents/*.md`) were modified in this PR. However, the BOOTSTRAP
+DIRECTIVE applies to every session regardless of whether agent contracts are the target — the agent
+must read its own contract FIRST, ALWAYS, before any work begins.
+
+**Root Cause**:
+Identical to BREACH-002, BREACH-003, and BREACH-004: work began with search/exploration instead
+of reading `.github/agents/CodexAdvisor-agent.md` first. Phase 1 preflight was not executed.
+This caused Phase 4 Steps 4.2, 4.3, and 4.4 (PREHANDOVER, session memory, IAA invocation) to be
+skipped. This is the fifth consecutive occurrence of the same root cause pattern.
+
+**Corrective Actions**:
+- [x] IAA retroactively invoked — session-005-20260225.md created; token IAA-PR565-20260225-PHASE_A_ADVISORY issued — 2026-02-25
+- [x] PREHANDOVER proof created — `.agent-admin/prehandover/proof-governance-hardening-20260225.md` — 2026-02-25
+- [x] Session memory created — session-035-20260225.md — 2026-02-25
+- [x] Breach registry updated — BREACH-005 opened and closed this session — 2026-02-25
+- [x] Parking station updated — 2026-02-25
+
+**Status**: CLOSED — All corrective actions completed 2026-02-25
+**Closed By**: CodexAdvisor session-035 (retroactive remediation per CS2 directive)
+**CS2 Acknowledgment**: Required — CS2 identified violation; CS2 merge authority holds
+
+---
+
 ## Adding New Breach Entries
 
 When a new governance process violation is confirmed (by IAA REJECTION-PACKAGE or CS2 stop-and-fix),
