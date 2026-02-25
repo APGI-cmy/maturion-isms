@@ -30,8 +30,8 @@ identity:
   lock_id: SELF-MOD-API-001
 policy_refs:
   - id: AGCFPP-001
-    name: Agent Governance Compliance and Foreman Process Policy
-    path: governance/policies/AGCFPP-001.md
+    name: Agent Contract File Protection Policy
+    path: governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md
     role: iaa-invocation-mandate
 merge_gate_interface:
   required_checks:
@@ -538,7 +538,7 @@ This builder's handover is subject to double-QA:
 - GOVERNANCE_VERSIONING_AND_SYNC_PROTOCOL.md — Version management
 
 **IAA & Double-QA Canon**:
-- AGCFPP-001 — Agent Governance Compliance and Foreman Process Policy (IAA invocation mandate)
+- AGCFPP-001 — Agent Contract File Protection Policy (IAA invocation mandate)
 - INDEPENDENT_ASSURANCE_AGENT_CANON.md — IAA authority and procedures
 
 ---
