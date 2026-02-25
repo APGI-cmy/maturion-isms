@@ -294,6 +294,23 @@ export interface PersistentMemoryAdapter {
   pruneExpired(organisationId: string): Promise<number>;
 }
 
+// ---------------------------------------------------------------------------
+// Knowledge retrieval (APS §7.4 / Wave 5 RAG pipeline)
+// ---------------------------------------------------------------------------
+
+export interface KnowledgeEntry {
+  content: string;
+  source?: string;
+}
+
+export interface KnowledgeRetriever {
+  retrieve(
+    query: string,
+    organisationId: string,
+    limit?: number,
+  ): Promise<KnowledgeEntry[]>;
+}
+
 export interface AssembledContextSegment {
   role: 'system' | 'user' | 'assistant';
   content: string;
