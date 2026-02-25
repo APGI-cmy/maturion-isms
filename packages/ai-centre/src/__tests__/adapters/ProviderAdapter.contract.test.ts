@@ -25,6 +25,7 @@ import { OpenAIAdapter } from '../../adapters/OpenAIAdapter.js';
 import { ProviderKeyStore } from '../../keys/ProviderKeyStore.js';
 import { AnthropicAdapter } from '../../adapters/AnthropicAdapter.js';
 import { PerplexityAdapter } from '../../adapters/PerplexityAdapter.js';
+import { RunwayAdapter } from '../../adapters/RunwayAdapter.js';
 
 // ---------------------------------------------------------------------------
 // Test doubles for dependency injection (AAD §8.2)
@@ -105,6 +106,16 @@ function makeMockDeepSearchFetch() {
   } as unknown as Response);
 }
 
+function makeMockVideoFetch() {
+  return vi.fn().mockResolvedValue({
+    ok: true, status: 200,
+    json: async () => ({
+      id: 'task_contract_001',
+      output: ['https://cdn.runwayml.com/generated/contract-test.mp4'],
+    }),
+  } as unknown as Response);
+}
+
 // ---------------------------------------------------------------------------
 // Registry of adapters under test (add each adapter as it is implemented)
 // ---------------------------------------------------------------------------
@@ -128,7 +139,7 @@ function makeMockDeepSearchFetch() {
  *   Wave 4  → OpenAIAdapter        (analysis, embeddings)
  *   Wave 6  → AnthropicAdapter     (document-generation)
  *   Wave 7  → PerplexityAdapter    (deep-search)         ← RED gate activated
- *   Wave 8  → RunwayAdapter        (video-generation)
+ *   Wave 8  → RunwayAdapter        (video-generation)    ← added
  *
  * The sentinel test below fails RED until at least one adapter is registered.
  * It will automatically stop failing once you add your adapter to this array.
@@ -138,7 +149,7 @@ const ADAPTERS_UNDER_TEST: ProviderAdapter[] = [
   new OpenAIAdapter(makeMockKeyStore(), makeMockAnalysisFetch()), // Wave 4
   new AnthropicAdapter(makeMockKeyStore(), makeMockDocumentFetch()), // Wave 6
   new PerplexityAdapter(makeMockKeyStore(), makeMockDeepSearchFetch()), // Wave 7
-  // Wave 8: new RunwayAdapter()       — import and uncomment when implemented
+  new RunwayAdapter(makeMockKeyStore(), makeMockVideoFetch()), // Wave 8
 ];
 
 // ---------------------------------------------------------------------------
