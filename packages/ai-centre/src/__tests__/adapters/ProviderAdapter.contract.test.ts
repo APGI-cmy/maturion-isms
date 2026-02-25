@@ -24,6 +24,7 @@ import { GitHubModelsAdapter } from '../../adapters/GitHubModelsAdapter.js';
 import { OpenAIAdapter } from '../../adapters/OpenAIAdapter.js';
 import { ProviderKeyStore } from '../../keys/ProviderKeyStore.js';
 import { AnthropicAdapter } from '../../adapters/AnthropicAdapter.js';
+import { PerplexityAdapter } from '../../adapters/PerplexityAdapter.js';
 
 // ---------------------------------------------------------------------------
 // Test doubles for dependency injection (AAD §8.2)
@@ -57,10 +58,6 @@ function makeMockAnalysisFetch(
  * Mock fetch that returns a well-formed Anthropic Messages API response.
  * Mirrors the real POST /v1/messages JSON shape for AnthropicAdapter (Wave 6).
  *
- * WAVE 6 BUILDER ACTION:
- *   When AnthropicAdapter is delivered, uncomment the import below and the
- *   ADAPTERS_UNDER_TEST entry that references this helper.
- *
  * Reference: https://docs.anthropic.com/en/api/messages
  */
 function makeMockDocumentFetch() {
@@ -90,6 +87,24 @@ function makeMockKeyStore(): ProviderKeyStore {
   return { getKey: vi.fn().mockReturnValue('test-token') } as unknown as ProviderKeyStore;
 }
 
+/**
+ * Mock fetch that returns a well-formed Perplexity API deep-search response.
+ * Mirrors the real POST /chat/completions JSON shape for PerplexityAdapter (Wave 7).
+ * Injected via PerplexityAdapter constructor so no live API calls are made.
+ *
+ * Reference: https://docs.perplexity.ai/api-reference/chat-completions
+ */
+function makeMockDeepSearchFetch() {
+  return vi.fn().mockResolvedValue({
+    ok: true,
+    status: 200,
+    json: async () => ({
+      choices: [{ message: { content: 'Deep search result: threat intelligence summary.' } }],
+      citations: ['https://example.com/threat-source-1', 'https://nvd.nist.gov/vuln/detail/CVE-2024-0001'],
+    }),
+  } as unknown as Response);
+}
+
 // ---------------------------------------------------------------------------
 // Registry of adapters under test (add each adapter as it is implemented)
 // ---------------------------------------------------------------------------
@@ -112,7 +127,7 @@ function makeMockKeyStore(): ProviderKeyStore {
  *   Wave 3  → GitHubModelsAdapter  (advisory capability)
  *   Wave 4  → OpenAIAdapter        (analysis, embeddings)
  *   Wave 6  → AnthropicAdapter     (document-generation)
- *   Wave 7  → PerplexityAdapter    (deep-search)
+ *   Wave 7  → PerplexityAdapter    (deep-search)         ← RED gate activated
  *   Wave 8  → RunwayAdapter        (video-generation)
  *
  * The sentinel test below fails RED until at least one adapter is registered.
@@ -122,7 +137,7 @@ const ADAPTERS_UNDER_TEST: ProviderAdapter[] = [
   new GitHubModelsAdapter(makeMockKeyStore(), makeMockFetch()), // Wave 3
   new OpenAIAdapter(makeMockKeyStore(), makeMockAnalysisFetch()), // Wave 4
   new AnthropicAdapter(makeMockKeyStore(), makeMockDocumentFetch()), // Wave 6
-  // Wave 7: new PerplexityAdapter()   — import and uncomment when implemented
+  new PerplexityAdapter(makeMockKeyStore(), makeMockDeepSearchFetch()), // Wave 7
   // Wave 8: new RunwayAdapter()       — import and uncomment when implemented
 ];
 

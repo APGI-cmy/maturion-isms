@@ -91,3 +91,41 @@ The Foreman agent (foreman-v2) violated the POLC boundary by writing Wave 5 prod
 
 *Authority: foreman-v2 v6.2.0 | Governance Ref: maturion-isms#496 | GOV-BREACH-AIMC-W5-001 (REMEDIATED) | GOV-BREACH-AIMC-W5-002 (REMEDIATED)*  
 *Last Updated: 2026-02-25*
+
+---
+
+## Wave 7 — PerplexityAdapter + Persona Files
+
+**Completion Date**: 2026-02-25  
+**Last Updated**: 2026-02-25
+
+### Deliverables
+
+| Component | Path | Status |
+|-----------|------|--------|
+| PerplexityAdapter | `src/adapters/PerplexityAdapter.ts` | ✅ DELIVERED |
+| XDetect Advisor persona | `src/agents/xdetect-advisor.md` | ✅ DELIVERED |
+| Risk Advisor persona | `src/agents/risk-advisor.md` | ✅ DELIVERED |
+
+### Tests Turned GREEN
+
+| Test | ID | Result |
+|------|----|--------|
+| ai.request deep-search routes to PerplexityAdapter | wave7-cst test 1 | ✅ GREEN |
+| PersonaLoader.load('xdetect-advisor') | wave7-cst test 2 | ✅ GREEN |
+| PersonaLoader.load('risk-advisor') | wave7-cst test 3 | ✅ GREEN |
+| risk-advisor + telemetry integration | wave7-cst test 4 | ✅ GREEN |
+| perplexity adapter execute() contract | contract test | ✅ GREEN |
+| perplexity adapter error wrapping | contract test | ✅ GREEN |
+| perplexity adapter healthCheck() timing | contract test | ✅ GREEN |
+| perplexity adapter healthCheck() status | contract test | ✅ GREEN |
+
+**Total tests GREEN this wave**: 8 new (77 total, 0 failures)
+
+### Evidence Artifacts
+- Session memory: `.agent-workspace/api-builder/memory/session-wave7-20260225.md`
+
+### Process Deviations / Lessons Learned
+- FetchFn type must be exported from adapter — test imports it directly
+- Empty systemPrompt guard needed in messages construction
+- One-time build discipline achieved: 100% GREEN on first run
