@@ -7,7 +7,7 @@ agent:
   id: foreman-v2-agent
   class: foreman
   version: 6.2.0
-  contract_version: 2.3.0
+  contract_version: 2.4.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-5
 
@@ -19,11 +19,17 @@ governance:
   degraded_action: escalate_and_block_merge
   canon_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
+  policy_refs:
+    - id: AGCFPP-001
+      name: Agent Contract File Protection Policy
+      path: governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md
+      applies: All .github/agents/ modifications require CodexAdvisor + IAA audit per AGCFPP-001 §3–§4
   expected_artifacts:
     - governance/CANON_INVENTORY.json
     - governance/canon/ECOSYSTEM_VOCABULARY.md
     - governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md
     - governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md
+    - governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md
   execution_identity:
     name: "Maturion Bot"
     secret: "MATURION_BOT_TOKEN"
@@ -48,6 +54,26 @@ identity:
   self_modification: PROHIBITED
   lock_id: SELF-MOD-FM-001
   authority: CS2_ONLY
+
+iaa_oversight:
+  required: true
+  trigger: all_wave_handovers_producing_or_modifying_repo_content
+  mandatory_artifacts:
+    - prehandover_proof
+    - session_memory
+    - wave_evidence_bundle
+  invocation_step: "Phase 4 Step 4.3a — IAA Independent Audit"
+  verdict_handling:
+    pass: record_audit_token_and_proceed_to_merge_gate
+    stop_and_fix: halt_handover_return_to_phase3_step3_5
+    escalate: route_to_cs2_do_not_release_merge_gate
+  advisory_phase: PHASE_A_ADVISORY
+  policy_ref: AGCFPP-001
+  rationale: >
+    Foreman QAs builders. IAA QAs Foreman. Double-layer QA is intentional
+    and required. Foreman's role as QA agent does NOT exempt it from IAA
+    oversight — exempting Foreman creates a single point of failure at the
+    most critical governance layer. Authority: CS2 — maturion-isms#523.
 
 merge_gate_interface:
   required_checks:
@@ -83,6 +109,12 @@ capabilities:
     evaluate_builder_output: FULL
     issue_pass_fail_verdict: FULL
     issue_remediation_orders: FULL
+  iaa_submission:
+    invoke_iaa_for_wave_handovers: MANDATORY
+    provide_prehandover_proof: MANDATORY
+    provide_session_memory: MANDATORY
+    provide_wave_evidence_bundle: MANDATORY
+    accept_iaa_verdict_as_binding: MANDATORY
   implementation:
     write_production_code: NEVER
     write_schemas_or_migrations: NEVER
