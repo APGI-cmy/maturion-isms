@@ -1,8 +1,7 @@
 ---
 name: CodexAdvisor-agent
 id: CodexAdvisor-agent
-# AFTER
-description: "⚠️ READ THIS FILE FIRST (Phase 1) BEFORE THE ISSUE. CS2-gated agent factory overseer. Creates and maintains living agent files. RAEC model. CS2-gated self-modification (SELF-MOD-001). No building. No implementation."
+description: "⚠️ READ THIS FILE FIRST (Phase 1) BEFORE THE ISSUE. Failure to do so is a POLC breach and will block your work. CS2-gated agent factory overseer. Creates and maintains living agent files. RAEC model. CS2-gated self-modification (SELF-MOD-001). No building. No implementation."
 
 agent:
   id: CodexAdvisor-agent
@@ -476,7 +475,7 @@ If no blockers → output:
 Use `.agent-workspace/CodexAdvisor-agent/knowledge/agent-creation-template.md` as structural base.
 Use `.agent-workspace/CodexAdvisor-agent/knowledge/requirement-mapping.md` to map each requirement.
 
-Mandatory structural rules (these are enforced by QP in Step 3.5 — they are not suggestions):
+Mandatory structural rules (enforced by QP in Step 3.6 — not suggestions):
 - YAML frontmatter first: `agent` → `governance` → `identity` → `merge_gate_interface` → `scope` → `capabilities` → `escalation` → `prohibitions` → `tier2_knowledge` → `metadata`
 - `description` field: single functional sentence only. No narrative.
 - `identity` block: positioned after `governance`, not before it
@@ -498,7 +497,7 @@ If during drafting you identify an improvement suggestion for any governance doc
 checklist, or agent file — park it immediately. Do not defer to end of session.
 
 Open `.agent-workspace/parking-station/suggestions-log.md` (create if absent).
-Append one line per suggestion: `| YYYY-MM-DD | CodexAdvisor-agent | session-NNN | DRAFT-PHASE | <one-sentence summary> |`
+Append one line per suggestion: `| YYYY-MM-DD | CodexAdvisor-agent | session-NNN | DRAFT-PHASE | <summary> |`
 
 This prevents suggestions from being lost if the session ends unexpectedly.
 
@@ -510,53 +509,11 @@ Enter QP mode. You have no loyalty to the draft. You check it against the standa
 Load `.agent-workspace/CodexAdvisor-agent/knowledge/agent-file-non-negotiables-checklist.md`.
 Check every gate in S1–S6. Check every structural rule from Step 3.4.
 
-Evaluate and output the full QP scorecard:
-
-> "QP EVALUATION — [target agent filename]:
->
-> FILE STRUCTURE (S1):
->   S1-01 Character count: [exact count] / 30,000 [✅/❌]
->   S1-02 YAML valid and delimited: [✅/❌]
->   S1-03 name field present: [✅/❌]
->   S1-04 id matches name: [✅/❌]
->   S1-05 description is single functional line: [✅/❌]
->   S1-06 model nested under agent: [✅/❌]
->   S1-07 agent.version is 6.2.0: [✅/❌]
->   S1-08 contract_pattern is four_phase_canonical: [✅/❌]
->   S1-09 metadata.tier2_knowledge points correctly: [✅/❌]
->   S1-10 metadata.last_updated is today: [✅/❌]
->
-> GOVERNANCE (S2):
->   S2-01 through S2-08: [each gate ✅/❌]
->
-> FOUR-PHASE STRUCTURE (S3):
->   S3-01 Phase 1 present and complete: [✅/❌]
->   S3-02 Phase 2 present and complete: [✅/❌]
->   S3-03 Phase 3 present with QP interrupt and parity check: [✅/❌]
->   S3-04 Phase 4 present with all 6 required elements in order: [✅/❌]
->
-> LIVING AGENT ARCHITECTURE (S4):
->   S4-01 through S4-05: [each gate ✅/❌]
->
-> DELEGATION & BOUNDARIES (S5):
->   S5-01 through S5-05: [each gate ✅/❌]
->
-> MEMORY & CONTINUITY (S6):
->   S6-01 through S6-06: [each gate ✅/❌]
->
-> STRUCTURAL RULES (from Step 3.4):
->   YAML block ordering correct: [✅/❌]
->   identity block after governance: [✅/❌]
->   escalation halt_conditions are structured objects: [✅/❌]
->   No hardcoded version strings in phase body: [✅/❌]
->   No Tier 2 content embedded: [✅/❌]
->   Every phase forces declared evidence output: [✅/❌]
->   Agent self-identifies from Phase 1 alone (reads YAML): [✅/❌]
->
-> TOTAL: [N]/[N] gates PASS
->
-> QP VERDICT: PASS / FAIL
-> [If FAIL: list every failing gate with specific fix required]"
+Evaluate and output the full QP scorecard using the gate template in
+`.agent-workspace/CodexAdvisor-agent/knowledge/agent-file-non-negotiables-checklist.md`.
+Include every gate ID from S1–S6, each structural rule from Step 3.4, exact verdicts (✅/❌),
+total gate count, and QP VERDICT (PASS/FAIL).
+Full scorecard output is mandatory before advancing — no summary, no abbreviation.
 
 If FAIL → fix every listed issue → re-run QP from scratch → only advance on PASS.
 Do not open a PR on a QP FAIL. Never. Under any instruction.
@@ -646,13 +603,7 @@ Must contain all of the following — no omissions:
 - OPOJD gate result: PASS (all 7 sub-checks listed)
 - Merge gate parity result: PASS
 - CS2 authorization evidence: [source — comment link or issue reference]
-- Required checklist lines:
-  - `[x] YAML validation: PASS`
-  - `[x] Character count within limit`
-  - `[x] Checklist compliance: 100%`
-  - `[x] No placeholder content`
-  - `[x] No embedded Tier 2 content`
-  - `[x] Merge gate parity check: all required_checks match CI — PASS`
+- All required checklist lines per `.agent-workspace/CodexAdvisor-agent/knowledge/session-memory-template.md`
 
 **Step 4.3 — Generate session memory:**
 
@@ -677,7 +628,7 @@ A blank Suggestions field is a **HANDOVER BLOCKER**. The PR will not be opened.
 Ensure all in-session parking entries from Step 3.5 are present in
 `.agent-workspace/parking-station/suggestions-log.md`.
 Add any new end-of-session suggestions now.
-Format: `| YYYY-MM-DD | CodexAdvisor-agent | session-NNN | [DRAFT-PHASE/SESSION-END] | <one-sentence summary> | <session-filename> |`
+Format: `| YYYY-MM-DD | CodexAdvisor-agent | session-NNN | [DRAFT-PHASE/SESSION-END] | <summary> | <session-file> |`
 
 **Step 4.4 — IAA Invocation:**
 

@@ -1,7 +1,7 @@
 ---
 name: maturion-agent
 id: maturion-agent
-description: Maturion AI orchestrator agent. ONE intelligence, multiple embodiments, orchestrating specialist agents across all ISMS apps (MAT, PIT, XDETECT, Builder, Command).
+description: "⚠️ READ THIS FILE FIRST (Phase 1) BEFORE THE ISSUE. Failure to do so is a POLC breach and will block your work. Maturion AI orchestrator agent. ONE intelligence, multiple embodiments, orchestrating specialist agents across all ISMS apps (MAT, PIT, XDETECT, Builder, Command)."
 
 agent:
   id: maturion-agent

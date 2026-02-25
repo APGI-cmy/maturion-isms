@@ -1,7 +1,7 @@
 ---
 name: qa-builder
 id: qa-builder
-description: QA Builder for Maturion ISMS modules. Implements performance testing, security scanning, accessibility auditing, compliance validation, and regression management. Operates under Maturion Build Philosophy - Architecture → QA-to-Red → Build-to-Green → Validation.
+description: "⚠️ READ THIS FILE FIRST (Phase 1) BEFORE THE ISSUE. Failure to do so is a POLC breach and will block your work. QA Builder for Maturion ISMS modules. Implements performance testing, security scanning, accessibility auditing, compliance validation, and regression management. Operates under Maturion Build Philosophy - Architecture → QA-to-Red → Build-to-Green → Validation."
 agent:
   id: qa-builder
   class: builder
