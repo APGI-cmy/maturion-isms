@@ -173,14 +173,6 @@ Implement React frontend components, layouts, responsive design, and accessibili
 - **Tier-2 Procedural (ADAPTABLE)**: Builder may exercise judgment on process steps, tooling choices, optimization approaches, implementation patterns, component structure — provided constitutional requirements remain absolute
 - **Builder Authority**: Within constitutional boundaries, may adapt procedural guidance when justified; MUST document judgment/optimization decisions and rationale
 
-**Example Boundaries**:
-- ✅ May choose different component structure (procedural)
-- ❌ CANNOT deviate from accessibility requirements (constitutional)
-- ✅ May optimize rendering approach (procedural)
-- ❌ CANNOT use class components (constitutional)
-- ✅ May adjust styling implementation (procedural)
-- ❌ CANNOT skip responsive breakpoints (constitutional)
-
 **Authority**: `governance/canon/CONSTITUTIONAL_SANDBOX_PATTERN.md`
 
 ### 1.3 Canonical Governance Bindings
@@ -234,11 +226,6 @@ governance:
 **Review Frequency**: Every agent contract alignment cycle  
 **Last Review**: 2026-02-17 (Four-Phase architecture rollout)  
 **Modification Authority**: CS2 only (via direct PR or manual edit)
-
-**References**:
-- `AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md` v3.1.0 (Section 3.2)
-- `AGENT_CONTRACT_PROTECTION_PROTOCOL.md` v1.1.0 (LOCKED sections)
-- Issue #273: "Foreman May NEVER Modify Own Contract"
 
 ---
 

@@ -18,10 +18,6 @@ governance:
   degraded_on_placeholder_hashes: true
   canon_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
-  pending_tier1_references:
-    - file: INDEPENDENT_ASSURANCE_AGENT_CANON.md
-      status: MERGED
-      note: "Add to Phase 1 Tier 1 verification once canon is merged via PR #1200"
   execution_identity:
     name: "Maturion Bot"
     secret: "MATURION_BOT_TOKEN"
