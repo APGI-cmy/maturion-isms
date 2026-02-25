@@ -108,6 +108,32 @@ Ref: GOV-BREACH-AIMC-W5-002, Foreman A-012.
 > violation: STOP, record in session memory, complete Phase 1 now.
 
 **Status**: ACTIVE — enforced every invocation
+### A-004 — Post-Merge Retrospective Audit Findings Must Be Formally Recorded — No Informal Notes
+
+**Triggered by**: maturion-isms governance breach issue (PR #546 process violation) — session-002.
+An agent contract PR was merged without IAA invocation (AGCFPP-001 breach). The post-merge
+audit finding must produce a binding governance record, not just a learning note.
+
+**Incident**: PR #546 (remediation of session-001 findings) was submitted and merged by CS2
+without IAA invocation or evidence bundle. Session-002 conducted the retroactive audit and issued
+a REJECTION-PACKAGE for process violations. The content of PR #546 was accepted as correct.
+The process violation must be formally recorded in CodexAdvisor's breach-registry.md and
+FAIL-ONLY-ONCE.md, not left as an informal observation in IAA session memory alone.
+
+**Permanent Rule**:
+When IAA issues a post-merge retrospective REJECTION-PACKAGE, the following must occur in the
+SAME session as the audit:
+1. CodexAdvisor must create a breach-registry.md entry for the violation.
+2. CodexAdvisor must add a FAIL-ONLY-ONCE rule addressing the root cause.
+3. IAA must flag the unresolved items in its session memory as requiring CodexAdvisor action.
+4. The breach is only marked CLOSED when CodexAdvisor's corrective artifacts are committed.
+
+**Check in Phase 4 (after verdict)**:
+> FAIL-ONLY-ONCE A-004: After issuing a post-merge REJECTION-PACKAGE, verify that
+> unresolved_items_carried_forward lists each corrective action required of CodexAdvisor.
+> Do not mark session complete until corrective artifact requirements are documented.
+
+**Status**: ACTIVE — enforced every post-merge retrospective audit
 
 ---
 
