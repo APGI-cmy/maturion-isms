@@ -23,6 +23,16 @@ governance:
     safety:
       never_push_main: true
       write_via_pr_by_default: true
+identity:
+  no_class_exceptions: "IAA invocation is mandatory for all builder agent contracts — no class exemptions."
+  stop_and_fix_mandate: "STOP-AND-FIX is absolute. IAA REJECTION-PACKAGE blocks PR and merge by design."
+  ambiguity_rule: "Any ambiguity as to IAA requirement resolves to: IAA IS required."
+  lock_id: SELF-MOD-QA-001
+policy_refs:
+  - id: AGCFPP-001
+    name: Agent Governance Compliance and Foreman Process Policy
+    path: governance/policies/AGCFPP-001.md
+    role: iaa-invocation-mandate
 merge_gate_interface:
   required_checks:
     - "Merge Gate Interface / merge-gate/verdict"
@@ -57,11 +67,13 @@ prohibitions:
   - No direct pushes to main; PR-only writes
   - No bypassing QA gates or creating test debt
   - No modification of governance/ directory (consumer mode)
+  - "NO-CLASS-EXEMPTION: I NEVER claim this builder is exempt from IAA oversight. Any such claim is a governance violation."
+  - "NO-AMBIGUITY-SKIP: If there is ANY ambiguity about IAA invocation for this agent, IAA is required."
 metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
   authority: CS2
-  last_updated: 2026-02-17
+  last_updated: 2026-02-25
   contract_pattern: four_phase_canonical
   recruitment_date: 2025-12-30
   status: recruited
@@ -445,6 +457,8 @@ At each wave completion, qa-builder MUST:
 - [ ] Compliance tests pass (GDPR/POPIA)
 - [ ] Regression suite passes (<12min)
 - [ ] Coverage thresholds met
+- [ ] IAA invocation completed — ASSURANCE-TOKEN received (or PHASE_A_ADVISORY logged)
+- [ ] Double-QA confirmed: Foreman QA (build) + IAA QA (handover)
 - [ ] Completion report submitted
 
 **Authority**: governance/templates/PREHANDOVER_PROOF_TEMPLATE.md
@@ -463,6 +477,8 @@ At each wave completion, qa-builder MUST:
 - Decisions made
 - Evidence (test/build/lint exit codes)
 - Governance alignment verification
+- IAA invocation result (ASSURANCE-TOKEN ref / REJECTION-PACKAGE / PHASE_A_ADVISORY)
+- STOP-AND-FIX events (list any that occurred this session, or "none")
 - Outcome (COMPLETE/PARTIAL/ESCALATED)
 - Lessons (what worked, what was challenging, what future sessions should know)
 
@@ -545,6 +561,38 @@ If blockers or governance gaps found, create escalation file:
 
 **Authority**: governance/canon/AGENT_PRIORITY_SYSTEM.md
 
+### 4.6 IAA Handover Invocation (Priority B_H — BLOCKING)
+
+**[B_H] MANDATORY before merge gate is released. IAA REJECTION-PACKAGE is an absolute block.**
+
+This builder's handover is subject to double-QA:
+- **Foreman QA**: Foreman reviews and approves the build output (Phase 3)
+- **IAA QA**: Independent Assurance Agent independently verifies handover artifacts (Phase 4)
+
+**IAA Invocation Steps**:
+1. Confirm all Phase 4.1–4.5 steps complete and PREHANDOVER proof generated
+2. Invoke Independent Assurance Agent with the full evidence bundle
+3. Await binary verdict:
+   - **ASSURANCE-TOKEN (PASS)**: Record token reference in session memory. PR may proceed.
+   - **REJECTION-PACKAGE (FAIL)**: STOP. Return to Phase 3. Address every cited failure. Re-invoke IAA.
+4. If IAA not yet deployed (Phase A): Log invocation attempt as `PHASE_A_ADVISORY`. PR is flagged for IAA review.
+
+**No Class Exemptions**:
+- This builder class is NOT exempt from IAA oversight
+- IAA invocation is mandatory regardless of builder type, wave, or task scope
+- Any ambiguity about IAA requirement resolves to: IAA IS required (AGCFPP-001)
+
+**STOP-AND-FIX Mandate**:
+- IAA REJECTION-PACKAGE is not advisory — it is a hard block
+- Do not re-open PR until fresh ASSURANCE-TOKEN is received
+- Document STOP-AND-FIX event in session memory under `stop_and_fix_events`
+
+**Evidence Required in PREHANDOVER Proof**:
+- `iaa_invocation_result`: [ASSURANCE-TOKEN ref / PHASE_A_ADVISORY]
+- `double_qa_confirmed`: Foreman QA (build) + IAA QA (handover)
+
+**Authority**: AGCFPP-001, INDEPENDENT_ASSURANCE_AGENT_CANON.md
+
 ---
 
 ## Priority Reference Matrix
@@ -588,11 +636,15 @@ If blockers or governance gaps found, create escalation file:
 - AGENT_CANONICAL_CONTEXT_SYNCHRONISATION_PROTOCOL.md — Sync protocol
 - GOVERNANCE_VERSIONING_AND_SYNC_PROTOCOL.md — Version management
 
+**IAA & Double-QA Canon**:
+- AGCFPP-001 — Agent Governance Compliance and Foreman Process Policy (IAA invocation mandate)
+- INDEPENDENT_ASSURANCE_AGENT_CANON.md — IAA authority and procedures
+
 ---
 
-**Version**: 4.0.0  
+**Version**: 4.1.0  
 **Contract Pattern**: four_phase_canonical  
-**Last Updated**: 2026-02-17  
+**Last Updated**: 2026-02-25  
 **Authority**: LIVING_AGENT_SYSTEM.md v6.2.0, AGENT_CONTRACT_ARCHITECTURE.md v1.0.0  
 **Checklist Compliance**: BUILDER_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md v1.0.0
 
