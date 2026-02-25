@@ -16,11 +16,13 @@ import {
   type AnalysisResult,
   type AdvisoryResult,
   type EmbeddingsResult,
+  type ImageGenerationResult,
 } from '../types/index.js';
 import { ProviderKeyStore } from '../keys/ProviderKeyStore.js';
 
 const OPENAI_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
 const OPENAI_EMBEDDINGS_ENDPOINT = 'https://api.openai.com/v1/embeddings';
+const OPENAI_IMAGES_ENDPOINT = 'https://api.openai.com/v1/images/generations';
 const DEFAULT_MODEL = 'gpt-4o';
 const EMBEDDINGS_MODEL = 'text-embedding-3-small';
 
@@ -33,6 +35,7 @@ export class OpenAIAdapter implements ProviderAdapter {
     Capability.ANALYSIS,
     Capability.ADVISORY,
     Capability.EMBEDDINGS,
+    Capability.IMAGE_GENERATION,
   ]);
 
   private readonly keyStore: ProviderKeyStore;
@@ -112,6 +115,57 @@ export class OpenAIAdapter implements ProviderAdapter {
         providerUsed: this.providerName,
       };
       return embResult;
+    }
+
+    // Image generation capability — routes to /v1/images/generations (DALL-E 3) (GRS-006)
+    if (request.capability === Capability.IMAGE_GENERATION) {
+      let imgResponse: Response;
+      try {
+        imgResponse = await this.fetchFn(OPENAI_IMAGES_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            model: 'dall-e-3',
+            prompt: request.userInput,
+            n: 1,
+            size: '1024x1024',
+          }),
+        });
+      } catch (err) {
+        throw new ProviderError(this.providerName, 'OpenAI API request failed.', err);
+      }
+
+      if (!imgResponse.ok) {
+        throw new ProviderError(
+          this.providerName,
+          `OpenAI API returned HTTP ${imgResponse.status}.`,
+        );
+      }
+
+      let imgData: unknown;
+      try {
+        imgData = await imgResponse.json();
+      } catch (err) {
+        throw new ProviderError(
+          this.providerName,
+          'Failed to parse OpenAI API response.',
+          err,
+        );
+      }
+
+      const imageUrls = (
+        imgData as { data: Array<{ url: string }> }
+      ).data.map((item) => item.url);
+
+      const imgResult: ImageGenerationResult = {
+        capability: Capability.IMAGE_GENERATION,
+        imageUrls,
+        providerUsed: this.providerName,
+      };
+      return imgResult;
     }
 
     const messages: Array<{ role: string; content: string }> = [
