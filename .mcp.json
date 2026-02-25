@@ -2,8 +2,8 @@
   "mcpServers": {
     "agent-bootstrap": {
       "type": "stdio",
-      "command": "node",
-      "args": ["mcp-servers/agent-bootstrap/index.js"]
+      "command": "sh",
+      "args": ["-c", "cd mcp-servers/agent-bootstrap && npm install --silent && node index.js"]
     }
   }
 }
