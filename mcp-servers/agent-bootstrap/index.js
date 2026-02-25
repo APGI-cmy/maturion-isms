@@ -24,14 +24,22 @@ const REPO_ROOT = path.resolve(__dirname, "..", "..");
 const AGENTS_DIR = path.join(REPO_ROOT, ".github", "agents");
 
 // Dynamically discover all agent contracts at startup — no manual update needed when agents are added
-const AGENT_CONTRACT_PATHS = fs
-  .readdirSync(AGENTS_DIR)
-  .filter((f) => f.endsWith(".md") && !f.startsWith("_"))
-  .reduce((map, filename) => {
-    const agentId = filename.replace(/\.md$/, "");
-    map[agentId] = `.github/agents/${filename}`;
-    return map;
-  }, {});
+// Safe fallback: if the directory is unreadable, server still starts (tool returns empty valid IDs list)
+let AGENT_CONTRACT_PATHS = {};
+try {
+  AGENT_CONTRACT_PATHS = fs
+    .readdirSync(AGENTS_DIR)
+    .filter((f) => f.endsWith(".md") && !f.startsWith("_"))
+    .reduce((map, filename) => {
+      const agentId = filename.replace(/\.md$/, "");
+      map[agentId] = `.github/agents/${filename}`;
+      return map;
+    }, {});
+} catch (err) {
+  process.stderr.write(
+    `agent-bootstrap: WARNING — could not scan ${AGENTS_DIR}: ${err.message}\n`
+  );
+}
 
 const VALID_AGENT_IDS = Object.keys(AGENT_CONTRACT_PATHS).join(", ");
 
