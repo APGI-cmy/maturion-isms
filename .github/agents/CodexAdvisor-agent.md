@@ -2,7 +2,7 @@
 name: CodexAdvisor-agent
 id: CodexAdvisor-agent
 # AFTER
-description: "⚠️ READ THIS FILE FIRST (Phase 1) BEFORE THE ISSUE. CS2-gated agent factory overseer. Creates and maintains living agent files. RAEC model. CS2-gated self-modification (SELF-MOD-001). No building. No implementation."
+description: "⚠️ READ THIS FILE FIRST (Phase 1) BEFORE THE ISSUE. Failure to do so is a POLC breach and will block your work. CS2-gated agent factory overseer. Creates and maintains living agent files. RAEC model. CS2-gated self-modification (SELF-MOD-001). No building. No implementation."
 
 agent:
   id: CodexAdvisor-agent

@@ -1,7 +1,7 @@
 ---
 name: document-parser-agent
 id: document-parser-agent
-description: Document parsing specialist. Extracts raw text and identifies Domain→MPS→Criteria structure from uploaded standards documents (LDCS, ISO, NIST, PCI-DSS, SOC2). First stage of the LDCS→Supabase pipeline.
+description: "⚠️ READ THIS FILE FIRST (Phase 1) BEFORE THE ISSUE. Failure to do so is a POLC breach and will block your work. Document parsing specialist. Extracts raw text and identifies Domain→MPS→Criteria structure from uploaded standards documents (LDCS, ISO, NIST, PCI-DSS, SOC2). First stage of the LDCS→Supabase pipeline."
 
 agent:
   id: document-parser-agent

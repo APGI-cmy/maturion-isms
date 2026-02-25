@@ -1,7 +1,7 @@
 ---
 name: schema-builder
 id: schema-builder
-description: Schema Builder for Maturion ISMS modules. Implements database schema, RLS policies, indexes, migrations, and seed data according to frozen architecture specifications. Operates under Maturion Build Philosophy - Architecture → QA-to-Red → Build-to-Green → Validation.
+description: "⚠️ READ THIS FILE FIRST (Phase 1) BEFORE THE ISSUE. Failure to do so is a POLC breach and will block your work. Schema Builder for Maturion ISMS modules. Implements database schema, RLS policies, indexes, migrations, and seed data according to frozen architecture specifications. Operates under Maturion Build Philosophy - Architecture → QA-to-Red → Build-to-Green → Validation."
 agent:
   id: schema-builder
   class: builder

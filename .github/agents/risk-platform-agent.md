@@ -1,7 +1,7 @@
 ---
 name: risk-platform-agent
 id: risk-platform-agent
-description: Risk platform specialist. Handles threat analysis, vulnerability assessment, risk scoring, control effectiveness evaluation, and risk register management across MAT, PIT, XDETECT, and Maturity Roadmap apps.
+description: "⚠️ READ THIS FILE FIRST (Phase 1) BEFORE THE ISSUE. Failure to do so is a POLC breach and will block your work. Risk platform specialist. Handles threat analysis, vulnerability assessment, risk scoring, control effectiveness evaluation, and risk register management across MAT, PIT, XDETECT, and Maturity Roadmap apps."
 
 agent:
   id: risk-platform-agent

@@ -1,7 +1,7 @@
 ---
 name: criteria-generator-agent
 id: criteria-generator-agent
-description: Criteria generation specialist. Extracts, chunks, embeds, and maps Domain→MPS→Criteria structures from uploaded documents (LDCS, ISO, NIST, etc.). Feeds structured output to Supabase for runtime retrieval.
+description: "⚠️ READ THIS FILE FIRST (Phase 1) BEFORE THE ISSUE. Failure to do so is a POLC breach and will block your work. Criteria generation specialist. Extracts, chunks, embeds, and maps Domain→MPS→Criteria structures from uploaded documents (LDCS, ISO, NIST, etc.). Feeds structured output to Supabase for runtime retrieval."
 
 agent:
   id: criteria-generator-agent
