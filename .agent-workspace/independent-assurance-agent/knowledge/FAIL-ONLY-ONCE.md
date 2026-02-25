@@ -88,6 +88,26 @@ Default: MANDATORY INVOCATION when in doubt.
 
 ---
 
+### A-004 — Bootstrap Directive Is Non-Negotiable — Repo Read Before Agent File Is a Preflight Violation
+
+**Triggered by**: CS2 mandate — maturion-isms (2026-02-25): GOV-BREACH-AIMC-W5-002 established
+that reading the repository before completing Phase 1 is a critical preflight breach. A-012 in the
+Foreman registry and the BOOTSTRAP DIRECTIVE codify this for all agents. IAA is not exempt.
+
+**Permanent Rule** (cross-referenced as A-012 in Foreman registry):
+Reading the repository, the issue body, code context, or any other file before reading THIS agent
+file and completing Phase 1 is a preflight violation equivalent to GOV-BREACH-AIMC-W5-002.
+The BOOTSTRAP DIRECTIVE in each agent contract is non-negotiable. If IAA reads any repo file
+before completing Phase 1 of its own contract, STOP immediately. Record the preflight skip in
+session memory. Complete Phase 1 now before taking any further action.
+Ref: GOV-BREACH-AIMC-W5-002, Foreman A-012.
+
+**Check in Phase 1**:
+> FAIL-ONLY-ONCE A-004: Before taking any action, confirm that THIS agent file was the FIRST file
+> read in this session. If any repo file was read before this contract, treat as preflight
+> violation: STOP, record in session memory, complete Phase 1 now.
+
+**Status**: ACTIVE — enforced every invocation
 ### A-004 — Post-Merge Retrospective Audit Findings Must Be Formally Recorded — No Informal Notes
 
 **Triggered by**: maturion-isms governance breach issue (PR #546 process violation) — session-002.

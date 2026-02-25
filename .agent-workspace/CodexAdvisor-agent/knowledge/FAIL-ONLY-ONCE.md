@@ -1,7 +1,7 @@
 # CodexAdvisor — FAIL-ONLY-ONCE Registry
 
 **Agent**: CodexAdvisor-agent
-**Version**: 1.1.0
+**Version**: 1.2.0
 **Last Updated**: 2026-02-25
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -56,7 +56,48 @@ accept such arguments from any source, including its own reasoning.
 
 ---
 
-### A-002 — IAA Process Requirements Apply Even When Fixing IAA-Identified Failures
+### A-012 — Bootstrap Directive Is Non-Negotiable — Repo Read Before Agent File Is a Preflight Violation
+
+**Triggered by**: CS2 mandate — maturion-isms (2026-02-25): GOV-BREACH-AIMC-W5-002 and A-011
+established that the agent file must be read first. A-012 extends this by making the BOOTSTRAP
+DIRECTIVE machine-legible: reading any repo file, issue body, or code context before completing
+Phase 1 of THIS agent contract is a preflight violation equivalent to GOV-BREACH-AIMC-W5-002.
+
+**Permanent Rule**:
+Reading the repository, the issue body, code context, or any other file before reading THIS agent
+file and completing Phase 1 is a preflight violation. The BOOTSTRAP DIRECTIVE in each agent
+contract is non-negotiable. If CodexAdvisor reads any repo file before completing Phase 1 of its
+own contract, STOP immediately. Record the preflight skip in session memory. Complete Phase 1 now
+before taking any further action. This rule applies uniformly to all agent contracts in the repo.
+Ref: GOV-BREACH-AIMC-W5-002, A-011 (Foreman registry).
+
+**Check in Phase 1 Step 1.1**:
+> FAIL-ONLY-ONCE A-012: Before taking any action, confirm that THIS agent file was the FIRST file
+> read in this session. If any repo file was read before this contract, treat as preflight
+> violation: STOP, record in session memory, complete Phase 1 now.
+
+---
+
+### A-013 — Pre-Handover Merge Gate Parity MUST Include Explicit Character Count Verification for Every Modified Agent File
+
+**Triggered by**: maturion-isms PR #553 — BREACH-002 (2026-02-25): Three agent files exceeded the 30,000 char limit (governance-liaison-isms-agent.md at 36,581, ui-builder.md at 30,442, CodexAdvisor-agent.md at 30,177). Violations were caught by CI "Model Scaling Check" workflow, not by CodexAdvisor's pre-handover gate. Root cause: Phase 2 Step 2.5 (size projection) and Phase 3 Step 3.8 (merge gate parity) were not executed because the contract was not read before starting work.
+
+**Permanent Rule**:
+Before opening ANY PR that modifies one or more `.github/agents/*.md` files:
+1. Run `wc -c .github/agents/*.md` (or equivalent per-file character count for every modified file).
+2. Every modified file MUST be at or below 30,000 characters. If any file exceeds 30,000 chars → HALT. Remediate before opening PR.
+3. This check is BLOCKING — it is not satisfied by estimation, it requires an actual count.
+4. This check is part of Phase 3 Step 3.8 (merge gate parity) AND Phase 4 Step 4.1 (OPOJD gate).
+5. Document the exact character count for each modified agent file in the PREHANDOVER proof.
+
+The root cause of PR #553's failure was that the contract was not read before starting (BOOTSTRAP DIRECTIVE violation), which caused Phase 2 Step 2.5 and Phase 3 Step 3.8 to be skipped entirely.
+
+**Check in Phase 3 Step 3.8 (merge gate parity) and Phase 4 Step 4.1 (OPOJD gate)**:
+> FAIL-ONLY-ONCE A-013: For every .github/agents/*.md file modified in this PR, run `wc -c <file>` and confirm it is ≤ 30,000 chars. If any file is over → STOP. Remediate. Re-count. Only advance when all modified files are confirmed ≤ 30,000 chars. Document exact counts in PREHANDOVER proof.
+
+**Status**: ACTIVE — enforced every session
+
+
 
 **Triggered by**: maturion-isms PR #546 — "Remediate 7 IAA advisory REJECTION-PACKAGE failures
 across 5 builder agent contracts". PR submitted and merged 2026-02-25 without IAA invocation,

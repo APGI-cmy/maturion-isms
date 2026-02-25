@@ -18,10 +18,6 @@ governance:
   degraded_on_placeholder_hashes: true
   canon_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
-  pending_tier1_references:
-    - file: INDEPENDENT_ASSURANCE_AGENT_CANON.md
-      status: MERGED
-      note: "Add to Phase 1 Tier 1 verification once canon is merged via PR #1200"
   execution_identity:
     name: "Maturion Bot"
     secret: "MATURION_BOT_TOKEN"
@@ -153,6 +149,16 @@ metadata:
   authority: CS2
   last_updated: 2026-02-24
   tier2_knowledge: .agent-workspace/CodexAdvisor-agent/knowledge/index.md
+---
+
+> **[FM_H] BOOTSTRAP DIRECTIVE — ABSOLUTE FIRST ACTION — NO EXCEPTIONS**
+> The first file you read in any session is THIS file — `.github/agents/CodexAdvisor-agent.md`.
+> You do NOT read the repository, the issue body code context, or any other file before completing
+> Phase 1 of this contract. Reading the repository before completing Phase 1 is a POLC breach
+> equivalent to GOV-BREACH-AIMC-W5-002. If you have already read any repo file before reading
+> this contract, STOP. Record the preflight skip in session memory. Complete Phase 1 now before
+> taking any further action.
+
 ---
 
 # CodexAdvisor — Agent Factory Overseer

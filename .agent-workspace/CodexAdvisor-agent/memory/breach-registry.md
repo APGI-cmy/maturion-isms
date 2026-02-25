@@ -61,6 +61,41 @@ the rule to future PRs without checking it against the current PR being opened.
 
 ---
 
+### BREACH-002 — PR #553: Contract Not Read Before Starting; Model Scaling Check Failure; No IAA Token
+
+**Breach ID**: BREACH-002
+**Policy Violated**: AGCFPP-001, CodexAdvisor contract BOOTSTRAP DIRECTIVE, Phase 2 §2.5 (size projection), Phase 3 §3.8 (merge gate parity), Phase 4 §4.1 (OPOJD gate), Phase 4 §4.4 (IAA invocation)
+**Date**: 2026-02-25
+**PR Reference**: maturion-isms PR #553 — "Surgical: Insert [FM_H] BOOTSTRAP DIRECTIVE into all agent contracts + align governance-liaison-isms-agent to canonical structure"
+**Triggering Issue**: CS2 comment on PR #553 — merge gate failing; RCA points to contract not read before starting
+**IAA Audit**: Pending (Phase A advisory)
+
+**Description**:
+CodexAdvisor executed PR #553 work without first reading its own contract. This caused three cascading failures:
+1. **BOOTSTRAP DIRECTIVE violated**: The first action was repo/context exploration, not reading `.github/agents/CodexAdvisor-agent.md`. The BOOTSTRAP DIRECTIVE (which was being inserted into all agents as the primary task) was not applied to CodexAdvisor's own session.
+2. **Phase 2 Step 2.5 not executed**: Size projection was not run for any `.github/agents/*.md` file modified in the wave. Three files (`governance-liaison-isms-agent.md` at 36,581 chars, `ui-builder.md` at 30,442 chars, `CodexAdvisor-agent.md` at 30,177 chars) exceeded the 30,000 char limit and were caught by the CI "Model Scaling Check" workflow (job 64808711454), not by CodexAdvisor's own pre-handover gate.
+3. **Phase 4 IAA invocation not completed**: No ASSURANCE-TOKEN or formal advisory acknowledgment was obtained before opening the PR. The IAA step was acknowledged as PHASE_A_ADVISORY in the PR comment but IAA was not formally invoked per Phase 4 Step 4.4.
+
+**Root Cause** (CS2 identified):
+CodexAdvisor did not read its own contract before starting work. This is the root cause of all three failures:
+- Had Phase 1 been executed (BOOTSTRAP DIRECTIVE followed), Phase 2 Step 2.5 would have required a size projection for every target file.
+- Had Phase 3 Step 3.8 been executed, the merge gate parity check would have caught the 30,000 char violations before the PR was opened.
+- Had Phase 4 Step 4.4 been executed, IAA would have been formally invoked before opening the PR.
+
+**Corrective Actions**:
+- [x] Three oversized files remediated: `governance-liaison-isms-agent.md` (36,581 → 28,999), `ui-builder.md` (30,442 → 29,873), `CodexAdvisor-agent.md` (30,177 → 29,996) — commit `9386e78` — 2026-02-25
+- [x] FAIL-ONLY-ONCE A-013 added: pre-handover merge gate parity MUST include character count check for every `.github/agents/*.md` modified — 2026-02-25
+- [x] Session memory session-031 created documenting RCA and learning loop — 2026-02-25
+- [x] PREHANDOVER-session-031 proof created — 2026-02-25
+- [x] lessons-learned.md updated with contract-not-read-first pattern — 2026-02-25
+- [x] Parking station updated — 2026-02-25
+
+**Status**: CLOSED — All corrective actions completed 2026-02-25
+**Closed By**: CodexAdvisor session-031
+**CS2 Acknowledgment**: Required — CS2 identified root cause on PR #553
+
+---
+
 ## Adding New Breach Entries
 
 When a new governance process violation is confirmed (by IAA REJECTION-PACKAGE or CS2 stop-and-fix),

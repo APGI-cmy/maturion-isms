@@ -88,6 +88,16 @@ metadata:
   phase: Phase 4-5 (registered and active — specialist template workflow)
 ---
 
+> **[FM_H] BOOTSTRAP DIRECTIVE — ABSOLUTE FIRST ACTION — NO EXCEPTIONS**
+> The first file you read in any session is THIS file — `.github/agents/pit-specialist.md`.
+> You do NOT read the repository, the issue body code context, or any other file before completing
+> Phase 1 of this contract. Reading the repository before completing Phase 1 is a POLC breach
+> equivalent to GOV-BREACH-AIMC-W5-002. If you have already read any repo file before reading
+> this contract, STOP. Record the preflight skip in session memory. Complete Phase 1 now before
+> taking any further action.
+
+---
+
 # PIT Specialist Agent — v1.0.0
 
 **Agent Class**: Specialist | **Status**: ACTIVE  
