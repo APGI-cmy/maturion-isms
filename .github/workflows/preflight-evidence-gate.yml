@@ -38,8 +38,8 @@ jobs:
           PR_LABELS="${{ join(github.event.pull_request.labels.*.name, ',') }}"
           PR_BRANCH="${{ github.event.pull_request.head.ref }}"
 
-          if [[ "$PR_LABELS" == *"governance"* && "$PR_LABELS" == *"automated"* && "$PR_LABELS" == *"agent:liaison"* ]] || \
-             [[ "$PR_BRANCH" == "governance-alignment-auto" ]]; then
+          if [[ ( "$PR_LABELS" == *"governance"* && "$PR_LABELS" == *"automated"* && "$PR_LABELS" == *"agent:liaison"* ) || \
+               "$PR_BRANCH" == "governance-alignment-auto" ]]; then
             echo "✅ Automated governance alignment PR detected — bypassing preflight gate."
             exit 0
           fi
