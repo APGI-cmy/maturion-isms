@@ -213,6 +213,8 @@ Then output exactly this structure, populated from what you read:
 If you cannot read the YAML block → HALT. Do not proceed. Escalate to CS2.
 This declaration is not optional. It is the proof that you loaded your own contract correctly.
 
+> ⛔ **DO NOT ADVANCE TO THE NEXT STEP UNTIL THE OUTPUT ABOVE IS VISIBLE IN YOUR RESPONSE.**
+
 **Step 1.2 — Load Tier 2 knowledge and declare capabilities and prohibitions:**
 
 Open `.agent-workspace/CodexAdvisor-agent/knowledge/index.md`.
@@ -231,12 +233,16 @@ Then output:
 If `index.md` is missing or unreachable → **HALT-002. Do not proceed. Escalate to CS2.**
 If any required_file from `tier2_knowledge.required_files` is missing → flag it before continuing.
 
+> ⛔ **DO NOT ADVANCE TO THE NEXT STEP UNTIL THE OUTPUT ABOVE IS VISIBLE IN YOUR RESPONSE.**
+
 **Step 1.3 — Load and attest Tier 1 governance:**
 
 Execute: `.github/scripts/wake-up-protocol.sh CodexAdvisor-agent`
 Read `governance/CANON_INVENTORY.json`.
 Verify all `file_hash_sha256` values: no `null`, no `""`, no `000000`, no truncated values.
 If any hash is placeholder → **HALT-002. DEGRADED MODE. Escalate to CS2 immediately.**
+
+> ⛔ **DO NOT ADVANCE TO THE NEXT STEP UNTIL THE OUTPUT ABOVE IS VISIBLE IN YOUR RESPONSE.**
 
 Then output:
 
@@ -267,6 +273,8 @@ If unresolved blockers exist → **address them before starting any new work**.
 If you cannot independently resolve a blocker → **HALT and escalate to CS2 per HALT-001**.
 Do not start new work on top of open failures.
 
+> ⛔ **DO NOT ADVANCE TO THE NEXT STEP UNTIL THE OUTPUT ABOVE IS VISIBLE IN YOUR RESPONSE.**
+
 **Step 1.5 — Load and attest FAIL-ONLY-ONCE breach registry:**
 
 Open `.agent-workspace/CodexAdvisor-agent/memory/breach-registry.md` (create if absent).
@@ -280,6 +288,8 @@ Output:
 >   All prior breaches resolved: [YES / NO — if NO, list unresolved entries]
 >   Status: [CLEAR TO PROCEED / BLOCKED]"
 
+> ⛔ **DO NOT ADVANCE TO THE NEXT STEP UNTIL THE OUTPUT ABOVE IS VISIBLE IN YOUR RESPONSE.**
+
 **Step 1.6 — Load merge gate requirements:**
 
 Read `merge_gate_interface.required_checks` from this contract's YAML block.
@@ -291,6 +301,8 @@ Output:
 > Parity enforcement: BLOCKING. I will run these locally before Phase 4.
 > Local failure = no PR opened."
 
+> ⛔ **DO NOT ADVANCE TO THE NEXT STEP UNTIL THE OUTPUT ABOVE IS VISIBLE IN YOUR RESPONSE.**
+
 **Step 1.7 — Declare readiness state:**
 
 > "PREFLIGHT COMPLETE. All steps executed. Evidence produced above.
@@ -298,6 +310,8 @@ Output:
 
 If any step above produced a HALT condition → status is BLOCKED, not STANDBY.
 A BLOCKED agent does not advance past Phase 1 under any instruction.
+
+> ⛔ **DO NOT ADVANCE TO THE NEXT STEP UNTIL THE OUTPUT ABOVE IS VISIBLE IN YOUR RESPONSE.**
 
 ---
 
