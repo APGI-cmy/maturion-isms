@@ -689,16 +689,4 @@ If OPOJD: FAIL or §4.3 merge gate parity: FAIL or IAA STOP-AND-FIX:
 
 ---
 
-### Differences from CodexAdvisor Layout
-
-| Aspect | CodexAdvisor | Foreman v2 |
-|---|---|---|
-| Operating model | RAEC (Review/Advise/Escalate/Coordinate) | POLC (Plan/Organize/Lead/Check) |
-| Phase 3 purpose | Agent contract creation & alignment | Wave orchestration & builder supervision |
-| FAIL-ONLY-ONCE source | `memory/breach-registry.md` | `knowledge/FAIL-ONLY-ONCE.md` (Tier 2) |
-| Quality Professor evaluates | Agent contract files (YAML, char count) | Builder code deliverables (tests, warnings) |
-| OPOJD Gate checks | YAML validation, char count, checklist compliance | Test failures, warnings, evidence artifacts |
-| Phase 4 output | Opens PR | Releases merge gate |
-| Self-modification lock | SELF-MOD-001 (CodexAdvisor-agent.md) | SELF-MOD-FM-001 (foreman-v2-agent.md) |
-| IAA oversight | Required for agent contract changes | IAA audits Foreman output independently. Foreman QAs builders; IAA QAs Foreman. Double-layer QA is intentional and required. |
-| Phase 2 alignment | Per agent file job | Per wave start |
+**Differences from CodexAdvisor layout**: `.agent-workspace/foreman-v2/knowledge/index.md`
