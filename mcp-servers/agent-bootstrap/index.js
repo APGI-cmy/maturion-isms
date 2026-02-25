@@ -18,31 +18,22 @@ const { z } = require("zod");
 const { McpServer } = require("@modelcontextprotocol/sdk/server/mcp.js");
 const { StdioServerTransport } = require("@modelcontextprotocol/sdk/server/stdio.js");
 
-// Hardcoded map of valid agent IDs to their contract file paths (relative to repo root)
-const AGENT_CONTRACT_PATHS = {
-  "foreman-v2-agent":              ".github/agents/foreman-v2-agent.md",
-  "CodexAdvisor-agent":            ".github/agents/CodexAdvisor-agent.md",
-  "api-builder":                   ".github/agents/api-builder.md",
-  "qa-builder":                    ".github/agents/qa-builder.md",
-  "schema-builder":                ".github/agents/schema-builder.md",
-  "ui-builder":                    ".github/agents/ui-builder.md",
-  "integration-builder":           ".github/agents/integration-builder.md",
-  "maturion-agent":                ".github/agents/maturion-agent.md",
-  "mat-specialist":                ".github/agents/mat-specialist.md",
-  "pit-specialist":                ".github/agents/pit-specialist.md",
-  "governance-liaison-isms-agent": ".github/agents/governance-liaison-isms-agent.md",
-  "independent-assurance-agent":   ".github/agents/independent-assurance-agent.md",
-  "report-writer-agent":           ".github/agents/report-writer-agent.md",
-  "risk-platform-agent":           ".github/agents/risk-platform-agent.md",
-  "maturity-scoring-agent":        ".github/agents/maturity-scoring-agent.md",
-  "criteria-generator-agent":      ".github/agents/criteria-generator-agent.md",
-  "document-parser-agent":         ".github/agents/document-parser-agent.md",
-};
-
-const VALID_AGENT_IDS = Object.keys(AGENT_CONTRACT_PATHS).join(", ");
-
 // Resolve repo root: two levels up from mcp-servers/agent-bootstrap/
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
+
+const AGENTS_DIR = path.join(REPO_ROOT, ".github", "agents");
+
+// Dynamically discover all agent contracts at startup — no manual update needed when agents are added
+const AGENT_CONTRACT_PATHS = fs
+  .readdirSync(AGENTS_DIR)
+  .filter((f) => f.endsWith(".md") && !f.startsWith("_"))
+  .reduce((map, filename) => {
+    const agentId = filename.replace(/\.md$/, "");
+    map[agentId] = `.github/agents/${filename}`;
+    return map;
+  }, {});
+
+const VALID_AGENT_IDS = Object.keys(AGENT_CONTRACT_PATHS).join(", ");
 
 const server = new McpServer({
   name: "agent-bootstrap",
@@ -62,7 +53,7 @@ server.tool(
     agent_id: z
       .string()
       .describe(
-        "Your agent identity. Must be one of the 17 governed agent IDs listed in " +
+        `Your agent identity. Must be one of the ${Object.keys(AGENT_CONTRACT_PATHS).length} governed agent IDs listed in ` +
         ".github/copilot-instructions.md. Determine this from the issue assignee, " +
         "issue title, or explicit instruction before calling this tool."
       ),
