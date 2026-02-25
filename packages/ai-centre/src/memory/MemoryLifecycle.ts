@@ -15,11 +15,13 @@ import type {
   SessionMemoryStore,
   PersistentMemoryAdapter,
   PersistedMemoryEntry,
+  KnowledgeRetriever,
 } from '../types/index.js';
 
 export interface MemoryLifecycleDeps {
   sessionStore: SessionMemoryStore;
   persistentAdapter: PersistentMemoryAdapter;
+  knowledgeRetriever?: KnowledgeRetriever;
 }
 
 const DEFAULT_PRUNE_TOKEN_BUDGET = 2000;
@@ -27,10 +29,12 @@ const DEFAULT_PRUNE_TOKEN_BUDGET = 2000;
 export class MemoryLifecycle implements IMemoryLifecycle {
   private readonly sessionStore: SessionMemoryStore;
   private readonly persistentAdapter: PersistentMemoryAdapter;
+  private readonly knowledgeRetriever?: KnowledgeRetriever;
 
   constructor(deps: MemoryLifecycleDeps) {
     this.sessionStore = deps.sessionStore;
     this.persistentAdapter = deps.persistentAdapter;
+    this.knowledgeRetriever = deps.knowledgeRetriever;
   }
 
   async assembleContextWindow(
@@ -57,7 +61,17 @@ export class MemoryLifecycle implements IMemoryLifecycle {
       }
     }
 
-    // 4. (Wave 5+) Domain knowledge via RAG — not yet implemented
+    // 4. Domain knowledge via RAG (Wave 5 / GRS-030)
+    if (this.knowledgeRetriever) {
+      const knowledge = await this.knowledgeRetriever.retrieve(
+        params.userInput,
+        params.organisationId,
+        5,
+      );
+      for (const entry of knowledge) {
+        segments.push({ role: 'system', content: entry.content });
+      }
+    }
 
     // 5. Current user input
     segments.push({ role: 'user', content: params.userInput });
