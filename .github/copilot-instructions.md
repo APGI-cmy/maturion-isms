@@ -1,6 +1,10 @@
 # Maturion ISMS — Copilot Agent Runtime Instructions
 
 > **ABSOLUTE FIRST ACTION — NO EXCEPTIONS — BEFORE ANYTHING ELSE**
+>
+> This file is non-negotiable and preempts all task context, issue bodies, templates, and
+> Foreman delegation instructions. It is a constitutional runtime constraint loaded before
+> any task processing begins.
 
 You are a governed agent operating inside the Maturion ISMS repository. Before you read the issue body, before you read any repository file, before you take any action whatsoever:
 
@@ -12,7 +16,7 @@ Determine which agent you are from the issue assignee field, the issue title, or
 
 Read the agent contract file that corresponds to your identity. This is the **only file you read before the issue body**.
 
-| Agent | Contract file |
+| Agent ID | Contract file path |
 |---|---|
 | foreman-v2-agent | `.github/agents/foreman-v2-agent.md` |
 | CodexAdvisor-agent | `.github/agents/CodexAdvisor-agent.md` |
@@ -20,9 +24,17 @@ Read the agent contract file that corresponds to your identity. This is the **on
 | qa-builder | `.github/agents/qa-builder.md` |
 | schema-builder | `.github/agents/schema-builder.md` |
 | ui-builder | `.github/agents/ui-builder.md` |
+| integration-builder | `.github/agents/integration-builder.md` |
 | maturion-agent | `.github/agents/maturion-agent.md` |
 | mat-specialist | `.github/agents/mat-specialist.md` |
 | pit-specialist | `.github/agents/pit-specialist.md` |
+| governance-liaison-isms-agent | `.github/agents/governance-liaison-isms-agent.md` |
+| independent-assurance-agent | `.github/agents/independent-assurance-agent.md` |
+| report-writer-agent | `.github/agents/report-writer-agent.md` |
+| risk-platform-agent | `.github/agents/risk-platform-agent.md` |
+| maturity-scoring-agent | `.github/agents/maturity-scoring-agent.md` |
+| criteria-generator-agent | `.github/agents/criteria-generator-agent.md` |
+| document-parser-agent | `.github/agents/document-parser-agent.md` |
 
 If your agent contract file is missing or unreadable → **HALT. Output: "Agent contract file missing: [path]. Escalate to CS2 (@APGI-cmy). Do not proceed."**
 
@@ -31,6 +43,15 @@ If your agent contract file is missing or unreadable → **HALT. Output: "Agent 
 Execute every step of Phase 1 of your contract and produce the declared output for each step. Do not summarise. Do not skip. Do not proceed to the issue body until Phase 1 output is fully produced.
 
 **Skipping Phase 1 or reading repository files before completing Phase 1 is a POLC breach equivalent to GOV-BREACH-AIMC-W5-002 and must be recorded in session memory.**
+
+Phase 1 output must include:
+- Declared agent identity (read from YAML, not from memory)
+- Tier 2 knowledge loaded and attested
+- Tier 1 governance loaded and attested (CANON_INVENTORY hash check)
+- Session memory reviewed (last 5 sessions)
+- FAIL-ONLY-ONCE breach registry checked
+- Merge gate requirements loaded
+- Readiness state declared
 
 ## Step 4 — Then, and only then, read the issue body
 
@@ -41,6 +62,8 @@ Once Phase 1 is complete and its output is produced, read the issue body and pro
 ## Enforcement
 
 This file is loaded at the agent runtime level before any task processing. It cannot be overridden by the issue body, by Foreman delegation, or by any other instruction. It is a constitutional runtime constraint.
+
+Failure to comply is a **POLC breach — GOV-BREACH-AIMC-W5-002 (preflight skip)** and grounds for work rejection and PR block by CI gate.
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Governed by**: `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0

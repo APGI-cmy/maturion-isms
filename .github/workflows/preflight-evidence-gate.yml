@@ -1,0 +1,185 @@
+name: Preflight Evidence Gate
+
+# Authority: LIVING_AGENT_SYSTEM.md v6.2.0, AGENT_PREFLIGHT_PATTERN.md v1.0.0
+# Purpose: Block PRs from agent-driven work unless the active agent's session memory
+#          contains a non-empty phase_1_preflight evidence block.
+# Violation class: GOV-BREACH-AIMC-W5-002 (preflight skip)
+# Assignee: Copilot (automation script / CI infra update)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  preflight-evidence-check:
+    name: "preflight/phase-1-evidence"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for Phase 1 Preflight Evidence
+        id: preflight_check
+        env:
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          echo "=== Phase 1 Preflight Evidence Gate ==="
+          echo "Authority: LIVING_AGENT_SYSTEM.md v6.2.0"
+          echo "Violation class: GOV-BREACH-AIMC-W5-002 (preflight skip)"
+          echo ""
+
+          # ----------------------------------------------------------------
+          # Automated governance alignment PRs are pre-validated — bypass
+          # ----------------------------------------------------------------
+
+          if [[ ( "$PR_LABELS" == *"governance"* && "$PR_LABELS" == *"automated"* && "$PR_LABELS" == *"agent:liaison"* ) || \
+               "$PR_BRANCH" == "governance-alignment-auto" ]]; then
+            echo "✅ Automated governance alignment PR detected — bypassing preflight gate."
+            exit 0
+          fi
+
+          # ----------------------------------------------------------------
+          # Detect which agent submitted this PR (from labels or PR body)
+          # ----------------------------------------------------------------
+          AGENT_ID="unknown"
+          KNOWN_AGENTS=(
+            "foreman-v2-agent"
+            "CodexAdvisor-agent"
+            "api-builder"
+            "qa-builder"
+            "schema-builder"
+            "ui-builder"
+            "integration-builder"
+            "maturion-agent"
+            "mat-specialist"
+            "pit-specialist"
+            "governance-liaison-isms-agent"
+            "independent-assurance-agent"
+            "report-writer-agent"
+            "risk-platform-agent"
+            "maturity-scoring-agent"
+            "criteria-generator-agent"
+            "document-parser-agent"
+          )
+
+          # Check labels first
+          for agent in "${KNOWN_AGENTS[@]}"; do
+            if [[ "$PR_LABELS" == *"agent:${agent}"* ]] || [[ "$PR_LABELS" == *"${agent}"* ]]; then
+              AGENT_ID="$agent"
+              break
+            fi
+          done
+
+          # If not found via labels, check PR body for agent signature
+          if [[ "$AGENT_ID" == "unknown" ]]; then
+            for agent in "${KNOWN_AGENTS[@]}"; do
+              if echo "$PR_BODY" | grep -qi "$agent"; then
+                AGENT_ID="$agent"
+                break
+              fi
+            done
+          fi
+
+          echo "Detected agent: $AGENT_ID"
+          echo ""
+
+          # ----------------------------------------------------------------
+          # If no agent detected, check whether ANY session memory file
+          # exists with phase_1_preflight evidence (covers unlabelled PRs)
+          # ----------------------------------------------------------------
+          EVIDENCE_FOUND=false
+
+          if [[ "$AGENT_ID" == "unknown" ]]; then
+            echo "ℹ️  Agent identity not detected from PR labels or body."
+            echo "    Searching all session memory files for phase_1_preflight evidence..."
+            echo ""
+
+            if find .agent-workspace -name "session-*.md" 2>/dev/null | xargs grep -qliE "phase_1_preflight|Phase 1.*[Cc]omplete|PREFLIGHT COMPLETE|PREFLIGHT.*PASS|preflight.*evidence|Phase 1 output" 2>/dev/null; then
+              EVIDENCE_FOUND=true
+              echo "✅ Phase 1 preflight evidence found in at least one session memory file."
+            else
+              echo "ℹ️  No session memory files found with phase_1_preflight evidence."
+              echo "    This PR does not appear to be an agent-driven work PR."
+              echo "    Skipping preflight gate (non-agent PR)."
+              exit 0
+            fi
+          else
+            # ----------------------------------------------------------------
+            # Agent identified — look in its session memory directory
+            # ----------------------------------------------------------------
+            MEMORY_DIR=".agent-workspace/${AGENT_ID}/memory"
+            echo "Session memory directory: $MEMORY_DIR"
+            echo ""
+
+            if [ ! -d "$MEMORY_DIR" ]; then
+              echo "⚠️  Session memory directory not found: $MEMORY_DIR"
+              echo "    This may be a new agent or the session memory was not committed."
+              echo "ℹ️  Falling back to broad search across all session memory files..."
+              echo ""
+            fi
+
+            # Search in agent-specific directory first, then fall back to broader search
+            SEARCH_PATHS="$MEMORY_DIR"
+            if [ ! -d "$MEMORY_DIR" ]; then
+              SEARCH_PATHS=".agent-workspace"
+            fi
+
+            if find "$SEARCH_PATHS" -name "session-*.md" 2>/dev/null | \
+               xargs grep -qliE "phase_1_preflight|Phase 1.*[Cc]omplete|PREFLIGHT COMPLETE|PREFLIGHT.*PASS|preflight.*evidence|Phase 1 output" 2>/dev/null; then
+              EVIDENCE_FOUND=true
+            fi
+          fi
+
+          # ----------------------------------------------------------------
+          # Evaluate result
+          # ----------------------------------------------------------------
+          echo "=== Phase 1 Preflight Evidence Check Result ==="
+          echo ""
+
+          if [ "$EVIDENCE_FOUND" = true ]; then
+            echo "✅ PASS — Phase 1 preflight evidence found in session memory."
+            echo ""
+            echo "Per AGENT_PREFLIGHT_PATTERN.md v1.0.0:"
+            echo "  - Agent completed Phase 1 before submitting this PR."
+            echo "  - Preflight compliance confirmed."
+          else
+            echo "❌ FAIL — No Phase 1 preflight evidence found in session memory."
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "🚨 GOV-BREACH-AIMC-W5-002 — PREFLIGHT SKIP DETECTED"
+            echo ""
+            echo "Every agent-driven PR must include a session memory file at:"
+            echo "  .agent-workspace/<agent-id>/memory/session-NNN-YYYYMMDD.md"
+            echo ""
+            echo "The session memory must contain a non-empty phase_1_preflight"
+            echo "evidence block proving Phase 1 was executed before any work began."
+            echo ""
+            echo "Required evidence in session memory (any of):"
+            echo "  - 'phase_1_preflight: ...' field with non-empty value"
+            echo "  - 'PREFLIGHT COMPLETE' declaration"
+            echo "  - 'Phase 1 output:' section with declared evidence"
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "Action Required:"
+            echo "  1. Complete Phase 1 of your agent contract IN FULL."
+            echo "  2. Record Phase 1 evidence output in your session memory file."
+            echo "  3. Commit the updated session memory file to this PR."
+            echo "  4. Push to re-trigger CI validation."
+            echo ""
+            echo "Reference:"
+            echo "  - LIVING_AGENT_SYSTEM.md v6.2.0"
+            echo "  - AGENT_PREFLIGHT_PATTERN.md v1.0.0"
+            echo "  - copilot-instructions.md (repo-root enforcement)"
+            echo ""
+            exit 1
+          fi
