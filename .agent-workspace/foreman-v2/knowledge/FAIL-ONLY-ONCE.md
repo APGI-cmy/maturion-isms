@@ -3,7 +3,7 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 1.5.0  
+**Version**: 1.7.0  
 **Created**: 2026-02-24  
 **Updated**: 2026-02-25  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
@@ -158,7 +158,28 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 
 **Corrective action**: Session halted mid-stream. Agent file read, full Phase 1 PREFLIGHT executed. Verb Classification Gate run. Implementation Guard activated for all prior self-implemented work. Delegation to qa-builder and api-builder issued. A-011 locked in: agent file MUST be read first, before any other action, in every session. This incident recorded.
 
-**Open improvement**: Add a CI check that fails the PR when there is no `.agent-workspace/foreman-v2/memory/session-*.md` file whose timestamp matches the PR creation date — machine-level enforcement that Phase 1 session memory was written, which requires Phase 1 to have been executed. *(See Section 3, item S-008.)*
+**Open improvement**: Add a CI check that fails the PR when there is no `.agent-workspace/foreman-v2/memory/session-*.md` file whose timestamp matches the PR creation date — machine-level enforcement that Phase 1 PREFLIGHT was executed (session memory is only written in Phase 4, which requires Phase 1 completion), preventing repeat of GOV-BREACH-AIMC-W5-002. *(See Section 3, item S-008.)*
+
+---
+
+### GOV-BREACH-AIMC-W8-001 — Wave 8 POLC Violation: Foreman Self-Implemented Without Preflight or Delegation
+**Date**: 2026-02-25
+**Severity**: CRITICAL
+**Status**: REMEDIATED
+**Source**: `session-056-20260225-POLC-BREACH.md` | PR: copilot/implement-wave-8-video-gen
+
+**What happened**: Copilot (acting as foreman-v2-agent) received a Wave 8 implementation task and self-implemented the complete Wave 8 deliverables — `RunwayAdapter.ts`, `OpenAIAdapter.ts` Wave 8 extension (ALGORITHM_EXECUTION via o3), `wave8-cst.test.ts`, contract test Wave 8 registration, and `AIMC_GOVERNANCE_CERTIFICATION.md` — directly, without executing Phase 1 PREFLIGHT, without running the Verb Classification Gate, and without delegating to `qa-builder` or `api-builder`. The session even explicitly stated: "I'm Copilot — the implementation agent for this task — and I'll proceed to implement Wave 8" — demonstrating the agent had adopted the wrong identity entirely. CS2 (@APGI-cmy) caught the violation and issued a correction directive.
+
+**Root cause**: Same root-cause pattern as GOV-BREACH-AIMC-W5-001 and GOV-BREACH-AIMC-W5-002. The BOOTSTRAP DIRECTIVE, Phase 1 PREFLIGHT, and the Verb Classification Gate were all skipped. Without executing Phase 1, the agent's identity, class boundary, and A-rules were never loaded. The agent operated as a general-purpose code implementer (wrong identity class) rather than as the POLC-Orchestration foreman (correct identity class). This is the third occurrence of the same root-cause pattern. The corrective actions from prior incidents (A-009, A-011, A-012) were not retained.
+
+**Corrective action**:
+1. All unauthorized implementation files reverted: `RunwayAdapter.ts` deleted, `OpenAIAdapter.ts` Wave 8 changes reverted, `wave8-cst.test.ts` deleted, `ProviderAdapter.contract.test.ts` Wave 8 registration reverted, `AIMC_GOVERNANCE_CERTIFICATION.md` deleted.
+2. Repository restored to Wave 7 complete state (16 test files, 77 tests, all GREEN — verified).
+3. This breach record created. Session memory (`session-056-20260225-POLC-BREACH.md`) created.
+4. Delegation specifications created for `qa-builder` (Wave 8 RED gate tests) and `api-builder` (Wave 8 implementation).
+5. Wave 8 marked NOT DELIVERED — must be re-executed with proper builder delegation from CS2-authorized wave start.
+
+**Open improvement**: S-007 (CI POLC boundary gate) would have caught this: a CI check that fails the PR when foreman-v2 is listed as author of production code file changes is the machine-level enforcement needed to make A-001 structurally impossible to violate. *(See Section 3, item S-007.)*
 
 ---
 
@@ -185,7 +206,7 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 1.6.0
+fail_only_once_version: 1.7.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
 open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008]
 ```
@@ -197,4 +218,4 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 ---
 
 *Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-02-25 | Version: 1.6.0 | Status: ACTIVE*
+*Last Updated: 2026-02-25 | Version: 1.7.0 | Status: ACTIVE*
