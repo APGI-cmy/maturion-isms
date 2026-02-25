@@ -110,6 +110,16 @@ metadata:
   builder_type: specialized
 ---
 
+> **[FM_H] BOOTSTRAP DIRECTIVE — ABSOLUTE FIRST ACTION — NO EXCEPTIONS**
+> The first file you read in any session is THIS file — `.github/agents/ui-builder.md`.
+> You do NOT read the repository, the issue body code context, or any other file before completing
+> Phase 1 of this contract. Reading the repository before completing Phase 1 is a POLC breach
+> equivalent to GOV-BREACH-AIMC-W5-002. If you have already read any repo file before reading
+> this contract, STOP. Record the preflight skip in session memory. Complete Phase 1 now before
+> taking any further action.
+
+---
+
 # UI Builder — Four-Phase Canonical Contract v4.0.0
 
 ## Mission
@@ -162,14 +172,6 @@ Implement React frontend components, layouts, responsive design, and accessibili
 - **Tier-1 Constitutional (IMMUTABLE)**: Zero Test Debt, 100% GREEN, One-Time Build, BUILD_PHILOSOPHY, Design Freeze, Architecture Conformance, WCAG 2.1 AA Compliance — NEVER negotiable
 - **Tier-2 Procedural (ADAPTABLE)**: Builder may exercise judgment on process steps, tooling choices, optimization approaches, implementation patterns, component structure — provided constitutional requirements remain absolute
 - **Builder Authority**: Within constitutional boundaries, may adapt procedural guidance when justified; MUST document judgment/optimization decisions and rationale
-
-**Example Boundaries**:
-- ✅ May choose different component structure (procedural)
-- ❌ CANNOT deviate from accessibility requirements (constitutional)
-- ✅ May optimize rendering approach (procedural)
-- ❌ CANNOT use class components (constitutional)
-- ✅ May adjust styling implementation (procedural)
-- ❌ CANNOT skip responsive breakpoints (constitutional)
 
 **Authority**: `governance/canon/CONSTITUTIONAL_SANDBOX_PATTERN.md`
 
@@ -224,11 +226,6 @@ governance:
 **Review Frequency**: Every agent contract alignment cycle  
 **Last Review**: 2026-02-17 (Four-Phase architecture rollout)  
 **Modification Authority**: CS2 only (via direct PR or manual edit)
-
-**References**:
-- `AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md` v3.1.0 (Section 3.2)
-- `AGENT_CONTRACT_PROTECTION_PROTOCOL.md` v1.1.0 (LOCKED sections)
-- Issue #273: "Foreman May NEVER Modify Own Contract"
 
 ---
 

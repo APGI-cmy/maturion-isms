@@ -348,3 +348,30 @@ Updated: Session 019 | Date: 2026-02-21 | Agent: CodexAdvisor-agent
 
 ---
 Updated: Session 020 | Date: 2026-02-21 | Agent: CodexAdvisor-agent
+
+## Session 20260225 (Session 031 — BREACH-002 Learning Loop)
+
+### Lesson: Contract-Not-Read-First Is a First-Order Failure That Disables All Downstream Gates
+- Context: PR #553 (Bootstrap Directive wave) was executed without first reading CodexAdvisor's own contract
+- Pattern: Skipping the BOOTSTRAP DIRECTIVE disables Phase 1→2→3→4 execution, causing all pre-handover checks to be skipped
+- Root Cause: Work began with repository/context exploration instead of reading `.github/agents/CodexAdvisor-agent.md` first
+- Cascading failures: Phase 2.5 (size projection) skipped → three files exceeded 30,000 chars; Phase 3.8 (merge gate parity) skipped → violations not caught pre-PR; Phase 4.4 (IAA invocation) skipped → no ASSURANCE-TOKEN before PR opened
+- Action: The BOOTSTRAP DIRECTIVE is the first action — no exceptions, no shortcuts. Even when the task IS inserting the BOOTSTRAP DIRECTIVE into other agents, it applies to CodexAdvisor's own session first
+- Evidence: BREACH-002; CI Model Scaling Check failure (job 64808711454); CS2 RCA comment on PR #553
+
+### Lesson: Character Count Verification Is Part of Merge Gate Parity — Not Optional
+- Context: Three agent files exceeded 30,000 chars in PR #553 and were caught by CI, not by CodexAdvisor's pre-handover gate
+- Pattern: Phase 3 Step 3.8 (merge gate parity) must include `wc -c` on every `.github/agents/*.md` modified; hard limit is 30,000 chars
+- Action: Run character count verification before opening any PR that modifies agent contract files. Document exact counts in PREHANDOVER proof. Any file over 30,000 chars → HALT, remediate, re-count
+- Authority: FAIL-ONLY-ONCE A-013 (v1.2.0); CodexAdvisor contract Phase 3 §3.8, Phase 4 §4.1
+- Prevention: This check would have caught the PR #553 violations before the PR was opened
+
+### Lesson: IAA Invocation Must Be Formally Executed — Advisory Acknowledgment Is Not Sufficient
+- Context: PR #553 acknowledged IAA was in PHASE_A_ADVISORY mode but did not formally execute Phase 4 Step 4.4 (invoke IAA)
+- Pattern: Even when IAA is in advisory mode, the Step 4.4 invocation must be formally executed and documented in the PREHANDOVER proof
+- Action: Before opening any agent contract PR, confirm IAA has been formally invoked (Step 4.4). Record result (ASSURANCE-TOKEN / PHASE_A_ADVISORY / REJECTION-PACKAGE) in PREHANDOVER proof and PR description
+- Authority: FAIL-ONLY-ONCE A-001, A-002, A-013; AGCFPP-001
+- Evidence: BREACH-002; A-001 and A-002 both violated in PR #553
+
+---
+Updated: Session 031 | Date: 2026-02-25 | Agent: CodexAdvisor-agent

@@ -49,6 +49,7 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-009 | Verb Classification Gate is mandatory BEFORE responding to any task. If the primary verb is an implementation verb (implement, build, code, write, fix) directed at the Foreman, the Foreman MUST enter [MODE:IMPLEMENTATION_GUARD] immediately — REJECT, create builder task spec, delegate, document. A session that receives an implementation verb without executing the Verb Classification Gate is in breach from the first action. | GOV-BREACH-AIMC-W5-001 (2026-02-24) |
 | A-010 | IAA-INVOKE-001 (CS2 — 2026-02-25): All Foreman wave handovers MUST include an IAA independent audit (Step 4.3a) before merge gate release. IAA audit token MUST be recorded in the PREHANDOVER proof. IAA STOP-AND-FIX halts handover. IAA ESCALATE routes to CS2. Foreman's role as QA agent does NOT exempt it from IAA oversight — IAA QAs the Foreman, as the Foreman QAs builders. Exception: IAA does not audit itself. Applies to all waves producing or modifying repo content. | CS2 — maturion-isms#523 (2026-02-25) |
 | A-011 | AGENT-FILE-FIRST (CS2 — 2026-02-25): The Foreman agent file (`.github/agents/foreman-v2-agent.md`) MUST be read and the full Phase 1 PREFLIGHT must be completed — with all 7 steps executed and evidence produced — before ANY other action in ANY session. A session that begins implementing, delegating, committing, or producing any output before completing Phase 1 is in breach from its first action. Foreman orchestrates; Foreman does not build. These two constraints — preflight-first and orchestration-only — are inseparable and equally non-negotiable. | CS2 — this session (2026-02-25) |
+| A-012 | BOOTSTRAP-DIRECTIVE-FIRST (CS2 — 2026-02-25): Reading the repository, the issue body, code context, or any other file before reading THIS agent file and completing Phase 1 is a preflight violation equivalent to GOV-BREACH-AIMC-W5-002. The BOOTSTRAP DIRECTIVE is non-negotiable and applies to every agent contract in the repo. If any repo file was read before reading the Foreman agent contract, STOP immediately. Record the preflight skip in session memory. Complete Phase 1 now before taking any further action. Ref: GOV-BREACH-AIMC-W5-002, A-011. | CS2 — maturion-isms (2026-02-25) |
 
 ---
 
@@ -184,7 +185,7 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 1.5.0
+fail_only_once_version: 1.6.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
 open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008]
 ```
@@ -196,4 +197,4 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 ---
 
 *Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-02-25 | Version: 1.5.0 | Status: ACTIVE*
+*Last Updated: 2026-02-25 | Version: 1.6.0 | Status: ACTIVE*

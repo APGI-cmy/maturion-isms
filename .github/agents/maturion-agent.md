@@ -88,6 +88,16 @@ metadata:
   multi_embodiment_model: governance/canon/MULTI_EMBODIMENT_ORCHESTRATION_MODEL.md
 ---
 
+> **[FM_H] BOOTSTRAP DIRECTIVE — ABSOLUTE FIRST ACTION — NO EXCEPTIONS**
+> The first file you read in any session is THIS file — `.github/agents/maturion-agent.md`.
+> You do NOT read the repository, the issue body code context, or any other file before completing
+> Phase 1 of this contract. Reading the repository before completing Phase 1 is a POLC breach
+> equivalent to GOV-BREACH-AIMC-W5-002. If you have already read any repo file before reading
+> this contract, STOP. Record the preflight skip in session memory. Complete Phase 1 now before
+> taking any further action.
+
+---
+
 # Maturion Orchestrator Agent — Thin-Core Living Contract v2.0.0
 
 **Agent Class**: Orchestrator | **Pattern**: Thin-Core Living  
