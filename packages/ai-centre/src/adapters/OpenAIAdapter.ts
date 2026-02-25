@@ -17,12 +17,14 @@ import {
   type AdvisoryResult,
   type EmbeddingsResult,
   type ImageGenerationResult,
+  type AlgorithmExecutionResult,
 } from '../types/index.js';
 import { ProviderKeyStore } from '../keys/ProviderKeyStore.js';
 
 const OPENAI_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
 const OPENAI_EMBEDDINGS_ENDPOINT = 'https://api.openai.com/v1/embeddings';
 const OPENAI_IMAGES_ENDPOINT = 'https://api.openai.com/v1/images/generations';
+const OPENAI_RESPONSES_ENDPOINT = 'https://api.openai.com/v1/responses';
 const DEFAULT_MODEL = 'gpt-4o';
 const EMBEDDINGS_MODEL = 'text-embedding-3-small';
 
@@ -36,6 +38,7 @@ export class OpenAIAdapter implements ProviderAdapter {
     Capability.ADVISORY,
     Capability.EMBEDDINGS,
     Capability.IMAGE_GENERATION,
+    Capability.ALGORITHM_EXECUTION,
   ]);
 
   private readonly keyStore: ProviderKeyStore;
@@ -166,6 +169,51 @@ export class OpenAIAdapter implements ProviderAdapter {
         providerUsed: this.providerName,
       };
       return imgResult;
+    }
+
+    // Algorithm execution capability — routes to /v1/responses (o3 model) (GRS-006, Wave 8)
+    if (request.capability === Capability.ALGORITHM_EXECUTION) {
+      let algoResponse: Response;
+      try {
+        algoResponse = await this.fetchFn(OPENAI_RESPONSES_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            model: 'o3',
+            input: request.userInput,
+          }),
+        });
+      } catch (err) {
+        throw new ProviderError(this.providerName, 'OpenAI API request failed.', err);
+      }
+
+      if (!algoResponse.ok) {
+        throw new ProviderError(
+          this.providerName,
+          `OpenAI API returned HTTP ${algoResponse.status}.`,
+        );
+      }
+
+      let algoData: unknown;
+      try {
+        algoData = await algoResponse.json();
+      } catch (err) {
+        throw new ProviderError(
+          this.providerName,
+          'Failed to parse OpenAI API response.',
+          err,
+        );
+      }
+
+      const algoResult: AlgorithmExecutionResult = {
+        capability: Capability.ALGORITHM_EXECUTION,
+        output: algoData,
+        providerUsed: this.providerName,
+      };
+      return algoResult;
     }
 
     const messages: Array<{ role: string; content: string }> = [
