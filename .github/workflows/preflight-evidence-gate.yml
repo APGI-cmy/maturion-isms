@@ -26,6 +26,10 @@ jobs:
 
       - name: Check for Phase 1 Preflight Evidence
         id: preflight_check
+        env:
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_BODY: ${{ github.event.pull_request.body }}
         run: |
           echo "=== Phase 1 Preflight Evidence Gate ==="
           echo "Authority: LIVING_AGENT_SYSTEM.md v6.2.0"
@@ -35,8 +39,6 @@ jobs:
           # ----------------------------------------------------------------
           # Automated governance alignment PRs are pre-validated — bypass
           # ----------------------------------------------------------------
-          PR_LABELS="${{ join(github.event.pull_request.labels.*.name, ',') }}"
-          PR_BRANCH="${{ github.event.pull_request.head.ref }}"
 
           if [[ ( "$PR_LABELS" == *"governance"* && "$PR_LABELS" == *"automated"* && "$PR_LABELS" == *"agent:liaison"* ) || \
                "$PR_BRANCH" == "governance-alignment-auto" ]]; then
@@ -78,7 +80,6 @@ jobs:
 
           # If not found via labels, check PR body for agent signature
           if [[ "$AGENT_ID" == "unknown" ]]; then
-            PR_BODY='${{ github.event.pull_request.body }}'
             for agent in "${KNOWN_AGENTS[@]}"; do
               if echo "$PR_BODY" | grep -qi "$agent"; then
                 AGENT_ID="$agent"
