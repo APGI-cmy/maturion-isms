@@ -20,7 +20,7 @@ Applied when PR category is `AGENT_CONTRACT`.
 
 | Check ID | Check Name | Description |
 |----------|-----------|-------------|
-| OVL-AC-001 | AGCFPP-001 policy reference | governance.policy_refs includes AGCFPP-001 with correct path |
+| OVL-AC-001 | AGCFPP-001 policy reference | governance.policy_refs includes AGCFPP-001 with canonical path `governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md` and name `Agent Contract File Protection Policy` |
 | OVL-AC-002 | IAA oversight block | iaa_oversight block present (for foreman/builder class agents) OR policy_refs confirms IAA authority |
 | OVL-AC-003 | Four-phase canonical structure | All four phases complete with mandatory evidence output declarations |
 | OVL-AC-004 | Self-modification prohibition | CONSTITUTIONAL enforcement on SELF-MOD prohibition |
