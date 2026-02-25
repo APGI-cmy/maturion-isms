@@ -16,6 +16,15 @@
 
 ---
 
+## Preflight Attestation Standard
+
+Phase 1 preflight attestation MUST be recorded as structured YAML in session memory.
+Canonical format: `governance/templates/BUILDER_PREFLIGHT_YAML_STANDARD.md`
+
+A prose narrative attestation is non-compliant from 2026-02-25 forward.
+
+---
+
 ## Constitutional Canon References (Tier 1 — verified via CANON_INVENTORY)
 
 - `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0

@@ -16,22 +16,12 @@
 
 ---
 
-## Constitutional Canon References (Tier 1 — verified via CANON_INVENTORY)
+## Preflight Attestation Standard
 
-- `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0
-- `governance/canon/AGENT_CONTRACT_ARCHITECTURE.md` v1.0.0
-- `governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md` (AGCFPP-001)
-- `BUILD_PHILOSOPHY.md`
-- `governance/ROLE_APPOINTMENT_PROTOCOL.md`
+Phase 1 preflight attestation MUST be recorded as structured YAML in session memory.
+Canonical format: `governance/templates/BUILDER_PREFLIGHT_YAML_STANDARD.md`
 
----
-
-## Operating Model Summary
-
-Integration Builder implements inter-module integration endpoints (PIT, Maturity Roadmap),
-API contract validation, and override analysis pipeline from frozen architecture specifications.
-Operates under Foreman supervision.
-Build Philosophy: Architecture → QA-to-Red → Build-to-Green → Validation.
+A prose narrative attestation is non-compliant from 2026-02-25 forward.
 
 ---
 

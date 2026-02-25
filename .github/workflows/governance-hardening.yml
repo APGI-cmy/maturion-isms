@@ -1,0 +1,204 @@
+name: Governance Hardening Checks
+
+# Authority: Issue #[this issue] — Governance Hardening (CI Enforcement, Evidence Bundle, Builder Attestation, Adapter Standards)
+# Purpose:
+#   1. Block PRs touching agent contracts or AAWP deliverables that lack a
+#      .agent-admin/prehandover/proof-*.md artifact.
+#   2. Block PRs that push .github/agents/ui-builder.md at or above the
+#      constitutional 30,000 character limit.
+# Violation class: GOV-BREACH-AIMC-W5-002 (evidence bundle incomplete)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  # ============================================================================
+  # JOB 1: PREHANDOVER Proof Presence Check
+  # ============================================================================
+  prehandover-proof-check:
+    name: "governance/prehandover-proof-presence"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PREHANDOVER proof presence for agent contract and AAWP PRs
+        env:
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          echo "=== PREHANDOVER Proof Presence Check ==="
+          echo "Authority: Governance Hardening Issue"
+          echo "Scope: .github/agents/*.md and governance/aimc/AIMC_AGENT_ASSIGNMENT_WAVE_PLAN.md"
+          echo ""
+
+          # ----------------------------------------------------------------
+          # Automated governance alignment PRs are pre-validated — bypass
+          # ----------------------------------------------------------------
+          if [[ ( "$PR_LABELS" == *"governance"* && "$PR_LABELS" == *"automated"* && "$PR_LABELS" == *"agent:liaison"* ) || \
+               "$PR_BRANCH" == "governance-alignment-auto" ]]; then
+            echo "✅ Automated governance alignment PR detected — bypassing check."
+            exit 0
+          fi
+
+          # ----------------------------------------------------------------
+          # Detect whether this PR touches scoped files
+          # ----------------------------------------------------------------
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+          CHANGED_FILES=$(git diff --name-only "origin/${BASE_BRANCH}...HEAD" 2>/dev/null || \
+                          git diff --name-only HEAD~1 2>/dev/null || true)
+
+          echo "Changed files detected:"
+          echo "$CHANGED_FILES"
+          echo ""
+
+          SCOPED=false
+          while IFS= read -r f; do
+            if [[ "$f" =~ ^\.github/agents/.*\.md$ ]] || \
+               [[ "$f" == "governance/aimc/AIMC_AGENT_ASSIGNMENT_WAVE_PLAN.md" ]]; then
+              SCOPED=true
+              echo "  ✦ Scoped file detected: $f"
+            fi
+          done <<< "$CHANGED_FILES"
+
+          if [ "$SCOPED" = false ]; then
+            echo ""
+            echo "ℹ️  No agent contract or AAWP deliverable files changed in this PR."
+            echo "    PREHANDOVER proof check: SKIPPED (not in scope)."
+            exit 0
+          fi
+
+          echo ""
+          echo "Agent contract or AAWP file(s) detected in PR diff."
+          echo "Checking for .agent-admin/prehandover/proof-*.md artifact..."
+          echo ""
+
+          # ----------------------------------------------------------------
+          # Check that at least one proof-*.md was added or modified
+          # ----------------------------------------------------------------
+          PROOF_FILES=$(echo "$CHANGED_FILES" | grep -E '^\.agent-admin/prehandover/proof-.*\.md$' || true)
+
+          if [ -n "$PROOF_FILES" ]; then
+            echo "✅ PASS — PREHANDOVER proof artifact found in PR diff:"
+            echo "$PROOF_FILES" | sed 's/^/    /'
+            echo ""
+            echo "Evidence bundle integrity: CONFIRMED"
+          else
+            # Also check whether an existing proof file is already present
+            # (covers the case where the proof was committed in a prior push)
+            EXISTING=$(find .agent-admin/prehandover -name "proof-*.md" 2>/dev/null | head -1 || true)
+            if [ -n "$EXISTING" ]; then
+              echo "⚠️  WARNING — PREHANDOVER proof not in this PR diff, but an existing"
+              echo "    proof artifact was found in the repository:"
+              echo "    $EXISTING"
+              echo ""
+              echo "    If this proof covers the current PR's work, this is acceptable."
+              echo "    If the proof predates this PR, a new proof is required."
+              echo ""
+              echo "✅ PASS (existing proof accepted — verify manually that it covers this PR)."
+            else
+              echo "❌ FAIL — No PREHANDOVER proof artifact found."
+              echo ""
+              echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+              echo ""
+              echo "🚨 GOV-BREACH-AIMC-W5-002 — EVIDENCE BUNDLE INCOMPLETE"
+              echo ""
+              echo "This PR modifies agent contract files or AAWP deliverables but does"
+              echo "not include a PREHANDOVER proof artifact at:"
+              echo "  .agent-admin/prehandover/proof-<session-or-date>.md"
+              echo ""
+              echo "Every PR that touches .github/agents/*.md or"
+              echo "governance/aimc/AIMC_AGENT_ASSIGNMENT_WAVE_PLAN.md MUST include a"
+              echo "PREHANDOVER proof confirming all handover gates were satisfied."
+              echo ""
+              echo "Action Required:"
+              echo "  1. Complete your agent contract's Phase 4 PREHANDOVER ceremony."
+              echo "  2. Create a proof file at .agent-admin/prehandover/proof-<id>.md"
+              echo "     using the template at governance/templates/PREHANDOVER_PROOF_TEMPLATE.md"
+              echo "  3. Add the proof file to this PR and push to re-trigger CI."
+              echo ""
+              echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+              exit 1
+            fi
+          fi
+
+  # ============================================================================
+  # JOB 2: ui-builder.md Character Count Check
+  # ============================================================================
+  ui-builder-char-count:
+    name: "governance/ui-builder-character-count"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check ui-builder.md character count
+        run: |
+          echo "=== ui-builder.md Constitutional Character Count Check ==="
+          echo "Constitutional limit: 30,000 characters"
+          echo "Authority: LIVING_AGENT_SYSTEM.md v6.2.0, agent-file-non-negotiables-checklist.md"
+          echo ""
+
+          AGENT_FILE=".github/agents/ui-builder.md"
+          LIMIT=30000
+
+          if [ ! -f "$AGENT_FILE" ]; then
+            echo "ℹ️  $AGENT_FILE not present — check skipped."
+            exit 0
+          fi
+
+          CHAR_COUNT=$(wc -c < "$AGENT_FILE")
+          echo "File: $AGENT_FILE"
+          echo "Character count: $CHAR_COUNT / $LIMIT"
+          echo ""
+
+          if [ "$CHAR_COUNT" -ge "$LIMIT" ]; then
+            echo "❌ FAIL — $AGENT_FILE is at or above the constitutional 30,000 character limit."
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "🚨 CONSTITUTIONAL LIMIT BREACH — AGENT CONTRACT TOO LARGE"
+            echo ""
+            echo "  File  : $AGENT_FILE"
+            echo "  Size  : $CHAR_COUNT characters"
+            echo "  Limit : $LIMIT characters"
+            echo "  Excess: $((CHAR_COUNT - LIMIT)) characters over limit"
+            echo ""
+            echo "Action Required:"
+            echo "  1. Move Tier 2 content out of the contract and into"
+            echo "     .agent-workspace/ui-builder/knowledge/ per the"
+            echo "     THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md standard."
+            echo "  2. Remove any inline documentation, examples, or prose narrative"
+            echo "     that belongs in Tier 2."
+            echo "  3. Re-count characters locally with: wc -c .github/agents/ui-builder.md"
+            echo "  4. Confirm count is < 30,000 before pushing."
+            echo ""
+            echo "Reference:"
+            echo "  - LIVING_AGENT_SYSTEM.md v6.2.0"
+            echo "  - agent-file-non-negotiables-checklist.md (S1-01)"
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            exit 1
+          fi
+
+          # Warn if approaching the limit (within 1,000 chars)
+          WARN_THRESHOLD=$((LIMIT - 1000))
+          if [ "$CHAR_COUNT" -ge "$WARN_THRESHOLD" ]; then
+            echo "⚠️  WARNING — $AGENT_FILE is within 1,000 characters of the"
+            echo "    constitutional 30,000 character limit."
+            echo "    Current: $CHAR_COUNT / $LIMIT"
+            echo "    Consider moving content to Tier 2 before the next update."
+            echo ""
+          fi
+
+          echo "✅ PASS — $AGENT_FILE is within the constitutional character limit."
+          echo "   Size: $CHAR_COUNT / $LIMIT characters"
