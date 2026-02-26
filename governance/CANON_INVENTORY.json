@@ -878,14 +878,14 @@
         },
         {
             "filename": "FOREMAN_WAVE_PLANNING_AND_ISSUE_ARTIFACT_GENERATION_PROTOCOL.md",
-            "version": "1.0.0",
-            "file_hash": "b543d97f397601fe90a3ece4d42a3e0d34148dc2ae356af97a1800b4e47aac79",
-            "effective_date": "2026-02-08",
+            "version": "1.1.0",
+            "file_hash": "2d4603796bce3a18209ce09d6bc7a2907f5fbb6accd5b7f71cc88c545eca0cf8",
+            "effective_date": "2026-02-26",
             "description": "This protocol establishes the **canonical workflow for FM wave planning and issue artifact generation**, defining:\n- Wave planning methodology and decomposition strategy\n- Subwave identification an...",
             "type": "canon",
             "path": "governance/canon/FOREMAN_WAVE_PLANNING_AND_ISSUE_ARTIFACT_GENERATION_PROTOCOL.md",
             "layer_down_status": "PUBLIC_API",
-            "file_hash_sha256": "b543d97f397601fe90a3ece4d42a3e0d34148dc2ae356af97a1800b4e47aac79"
+            "file_hash_sha256": "2d4603796bce3a18209ce09d6bc7a2907f5fbb6accd5b7f71cc88c545eca0cf8"
         },
         {
             "filename": "FPC_REPOSITORY_LAYERDOWN_GUIDE.md",

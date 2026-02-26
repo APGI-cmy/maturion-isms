@@ -242,7 +242,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] **INC-002: LL-031 Platform Blocker — Embedded AI Assistant** — FR-072/TR-072 added, component implemented, 77 frontend tests GREEN (2026-02-20)
 - [x] Wave 6: Deployment & Commissioning (QA gate PASS — 172/172 tests GREEN, vercel.json valid, deployment config complete; production deployment pending CS2 Vercel/Supabase access)
 - [x] **Wave 6 Gap Remediation — Vercel Serverless API Gateway** — `POST /api/ai/request` serverless function delivered; 17 tests GREEN; vercel.json updated (2026-02-24)
-- [ ] **Wave 7: AIMC Advisory Integration** — **BLOCKED — Awaiting AIMC Wave 3** (Advisory Gateway)
+- [x] **Wave 7: AIMC Advisory Integration** — **COMPLETE** (AIMC Wave 3 confirmed; advisory-service.ts, EmbeddedAIAssistant AIMC wiring, env cleanup delivered)
 - [ ] **Wave 8: AIMC Analysis Integration** — **BLOCKED — Awaiting AIMC Wave 4** (Analysis Gateway)
 - [ ] **Wave 9: AIMC Embeddings/RAG Integration** — **BLOCKED — Awaiting AIMC Wave 5** (Embeddings/RAG Gateway)
 
@@ -1273,7 +1273,7 @@ Track the progression through the canonical module lifecycle stages.
 **Overall Progress**: All 172 tests GREEN (24 test files), vercel.json valid, deployment config complete — Wave 6 QA gate passed 2026-02-24. Production deployment pending CS2 operator access.
 **Blockers**:
 - ⏳ **Wave 6 PRODUCTION DEPLOYMENT PENDING CS2 ACCESS**: Vercel and Supabase production environment access required (QA gate PASS — not a technical blocker)
-- ❌ **Wave 7 BLOCKED**: Awaiting AIMC Wave 3 (Advisory Gateway)
+- ✅ **Wave 7 COMPLETE**: AIMC Advisory Integration delivered (advisory-service.ts, EmbeddedAIAssistant AIMC wiring, env cleanup)
 - ❌ **Wave 8 BLOCKED**: Awaiting AIMC Wave 4 (Analysis Gateway)
 - ❌ **Wave 9 BLOCKED**: Awaiting AIMC Wave 5 (Embeddings/RAG Gateway)
 
