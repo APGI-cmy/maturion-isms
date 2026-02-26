@@ -27,4 +27,12 @@ describe('Wave 9.11-FU — Supabase Client Wiring', () => {
   it('W9.11-FU-T-004: approve.ts references SUPABASE_SERVICE_ROLE_KEY', () => {
     expect(approveSource).toContain('SUPABASE_SERVICE_ROLE_KEY');
   });
+  it('W9.11-FU-T-005: pending.ts does NOT use SUPABASE_SERVICE_ROLE_KEY', () => {
+    const pendingSource = readFileSync(resolve(__dirname, 'feedback', 'pending.ts'), 'utf-8');
+    expect(pendingSource).not.toContain('SUPABASE_SERVICE_ROLE_KEY');
+  });
+  it('W9.11-FU-T-006: pending.ts references SUPABASE_ANON_KEY', () => {
+    const pendingSource = readFileSync(resolve(__dirname, 'feedback', 'pending.ts'), 'utf-8');
+    expect(pendingSource).toContain('SUPABASE_ANON_KEY');
+  });
 });

@@ -22,10 +22,17 @@ import type { FeedbackPipelineInterface } from '../../../packages/ai-centre/src/
 
 export type FeedbackPipelineFactory = () => FeedbackPipelineInterface;
 
+/**
+ * Build a FeedbackPipeline instance for list (read-only) operations.
+ * Uses anon key — listPending() is scoped by organisationId and Supabase
+ * RLS enforces org isolation at the data layer. service_role is NOT needed
+ * here (that is reserved for approve/reject in feedback/approve.ts).
+ * In tests, inject via createHandler(mockFactory).
+ */
 export function buildFeedbackPipeline(): FeedbackPipelineInterface {
   const supabaseUrl = process.env['SUPABASE_URL'] ?? '';
-  const serviceRoleKey = process.env['SUPABASE_SERVICE_ROLE_KEY'] ?? '';
-  const supabaseClient = createClient(supabaseUrl, serviceRoleKey);
+  const supabaseAnonKey = process.env['SUPABASE_ANON_KEY'] ?? '';
+  const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
   return new FeedbackPipeline(supabaseClient);
 }
 
