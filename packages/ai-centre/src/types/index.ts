@@ -38,6 +38,7 @@ export enum Capability {
   ADVISORY = 'advisory',
   ANALYSIS = 'analysis',
   EMBEDDINGS = 'embeddings',
+  RAG = 'rag',
   DOCUMENT_GENERATION = 'document-generation',
   IMAGE_GENERATION = 'image-generation',
   DEEP_SEARCH = 'deep-search',
@@ -204,7 +205,7 @@ export interface ProviderHealthRegistry {
 // ---------------------------------------------------------------------------
 
 export interface RoutingConfiguration {
-  routes: Record<Capability, ProviderName[]>;
+  routes: Partial<Record<Capability, ProviderName[]>>;
 }
 
 export interface CapabilityRouter {
