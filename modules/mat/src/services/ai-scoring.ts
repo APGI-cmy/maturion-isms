@@ -23,6 +23,7 @@ import type {
   AIModelVersion,
   ManualScoreEntry
 } from '../types/index.js';
+import { AI_ROUTING_TABLE } from './ai-routing-table.js';
 
 /**
  * Minimum evidence count required before AI scoring is permitted
@@ -340,20 +341,8 @@ export function getMaturityLevelName(level: MaturityLevel): MaturityLevelName {
 // AI Task Routing (FR-028)
 // ============================================================
 
-/**
- * Default AI routing configuration table
- * Architecture: §5 — AI Model Routing Configuration (TR-040)
- * FRS: FR-028
- */
-const AI_ROUTING_TABLE: AIRoutingConfig[] = [
-  { task_type: 'document_parsing', primary_model: 'gpt-4-turbo', fallback_model: 'gpt-4o-mini', max_tokens: 4096, temperature: 0.1 },
-  { task_type: 'transcription', primary_model: 'whisper-1', fallback_model: null, max_tokens: null, temperature: null },
-  { task_type: 'scoring', primary_model: 'gpt-4-turbo', fallback_model: 'gpt-4o-mini', max_tokens: 2048, temperature: 0.2 },
-  { task_type: 'image_analysis', primary_model: 'gpt-4-vision-preview', fallback_model: 'gpt-4-turbo', max_tokens: 2048, temperature: 0.1 },
-  { task_type: 'report_generation', primary_model: 'gpt-4-turbo', fallback_model: 'gpt-4o-mini', max_tokens: 8192, temperature: 0.3 },
-  { task_type: 'routine', primary_model: 'gpt-4o-mini', fallback_model: null, max_tokens: 1024, temperature: 0.1 },
-  { task_type: 'assistant', primary_model: 'gpt-4-turbo', fallback_model: 'gpt-4o-mini', max_tokens: 2048, temperature: 0.7 }
-];
+// AI_ROUTING_TABLE is imported from ./ai-routing-table.js
+// (Extracted during Wave 8 AIMC realignment — ai-architecture.md v2.0.0)
 
 /**
  * Routes an AI task to the correct model based on task type
