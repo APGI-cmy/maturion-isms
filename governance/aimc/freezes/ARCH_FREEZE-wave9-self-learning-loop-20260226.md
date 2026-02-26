@@ -295,7 +295,8 @@ Any amendment to this freeze document requires:
 
 | Date | Amendment | Approved By |
 |---|---|---|
-| *(none)* | — | — |
+| 2026-02-26 | Wave 9.11 dependency waiver: Wave 9.11 executed without Wave 9.3 (Episodic Memory Adapter) complete. Wave 9.3 dependency WAIVED for Wave 9.11 functional deliverables (deprecation markers + regression tests) which have no technical dependency on Wave 9.3. Wave 9.3 remains outstanding. Issue #628 — Authority: CS2 (@APGI-cmy) | CS2 (@APGI-cmy) |
+| 2026-02-26 | Wave 9.11-FU-2: Items 1–5 from PR #614 unimplemented checklist implemented via Issue #628. (1) Real Supabase clients wired. (2) GET /api/ai/feedback/pending added. (3) userId overridden from JWT. (4) @deprecated on all 6 remaining legacy hooks. (5) This amendment. Authority: CS2 (@APGI-cmy) | CS2 (@APGI-cmy) |
 
 ---
 

@@ -1,4 +1,9 @@
-
+/**
+ * @deprecated This hook accesses legacy AI learning tables directly, bypassing
+ * the AIMC governance gateway. Use the AIMC FeedbackPipeline API instead.
+ * This hook will be removed in Wave 9.11 (full legacy escape remediation).
+ * References: ARCH_FREEZE-wave9-self-learning-loop-20260226.md, Issue #628
+ */
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useOrganization } from '@/hooks/useOrganization';

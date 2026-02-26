@@ -126,4 +126,66 @@ describe('Wave 9.4 — POST /api/ai/feedback', () => {
     expect(body).toHaveProperty('id', 'evt-uuid-001');
     expect(body).toHaveProperty('arcStatus', 'pending');
   });
+
+  it('W9.4-FU-T-005: submit() is NOT called with body userId (JWT sub claim takes precedence)', async () => {
+    let capturedPayload: unknown;
+    const mockPipeline: FeedbackPipelineInterface = {
+      submit: vi.fn().mockImplementation((payload: unknown) => {
+        capturedPayload = payload;
+        return Promise.resolve(persistedEvent);
+      }),
+      listPending: vi.fn().mockResolvedValue([]),
+      approve: vi.fn().mockResolvedValue(persistedEvent),
+      reject: vi.fn().mockResolvedValue(persistedEvent),
+    };
+    const handler = createHandler(() => mockPipeline);
+
+    // Body includes userId: 'body-user' — this MUST be ignored
+    const bodyWithUserId = { ...validFeedbackBody, userId: 'body-user' };
+    // JWT with a different sub claim
+    const jwtHeader = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
+    const jwtPayload = Buffer.from(JSON.stringify({ sub: 'jwt-user-001' })).toString('base64url');
+    const fakeJwt = `${jwtHeader}.${jwtPayload}.fakesig`;
+
+    const req = mockRequest('POST', bodyWithUserId, {
+      authorization: `Bearer ${fakeJwt}`,
+    });
+    const res = mockResponse();
+
+    await handler(req, res as unknown as ServerResponse);
+
+    expect(res.statusCode).toBe(200);
+    expect((capturedPayload as Record<string, unknown>)['userId']).not.toBe('body-user');
+    // Also assert the JWT sub claim was used instead
+    expect((capturedPayload as Record<string, unknown>)['userId']).toBe('jwt-user-001');
+  });
+
+  it('W9.4-FU-T-006: submit() is called with JWT sub claim as userId', async () => {
+    let capturedPayload: unknown;
+    const mockPipeline: FeedbackPipelineInterface = {
+      submit: vi.fn().mockImplementation((payload: unknown) => {
+        capturedPayload = payload;
+        return Promise.resolve(persistedEvent);
+      }),
+      listPending: vi.fn().mockResolvedValue([]),
+      approve: vi.fn().mockResolvedValue(persistedEvent),
+      reject: vi.fn().mockResolvedValue(persistedEvent),
+    };
+    const handler = createHandler(() => mockPipeline);
+
+    // Construct a fake JWT with sub: 'jwt-user-001'
+    const jwtHeader = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
+    const jwtPayload = Buffer.from(JSON.stringify({ sub: 'jwt-user-001' })).toString('base64url');
+    const fakeJwt = `${jwtHeader}.${jwtPayload}.fakesig`;
+
+    const req = mockRequest('POST', validFeedbackBody, {
+      authorization: `Bearer ${fakeJwt}`,
+    });
+    const res = mockResponse();
+
+    await handler(req, res as unknown as ServerResponse);
+
+    expect(res.statusCode).toBe(200);
+    expect((capturedPayload as Record<string, unknown>)['userId']).toBe('jwt-user-001');
+  });
 });
