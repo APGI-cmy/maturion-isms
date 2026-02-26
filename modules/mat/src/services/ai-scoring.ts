@@ -23,6 +23,9 @@ import type {
   AIModelVersion,
   ManualScoreEntry
 } from '../types/index.js';
+import { Capability } from '../../../../packages/ai-centre/src/types/index.js';
+
+export { Capability };
 
 /**
  * Minimum evidence count required before AI scoring is permitted
@@ -341,18 +344,22 @@ export function getMaturityLevelName(level: MaturityLevel): MaturityLevelName {
 // ============================================================
 
 /**
- * Default AI routing configuration table
+ * Capability-based AI task routing table.
+ * Architecture mandate (ai-architecture.md v2.0.0): model selection is AIMC's
+ * responsibility. MAT routes by capability key only — no provider model names.
+ * All AI calls are delegated to the AIMC Analysis Gateway via analysis-service.ts.
+ *
  * Architecture: §5 — AI Model Routing Configuration (TR-040)
  * FRS: FR-028
  */
 const AI_ROUTING_TABLE: AIRoutingConfig[] = [
-  { task_type: 'document_parsing', primary_model: 'gpt-4-turbo', fallback_model: 'gpt-4o-mini', max_tokens: 4096, temperature: 0.1 },
-  { task_type: 'transcription', primary_model: 'whisper-1', fallback_model: null, max_tokens: null, temperature: null },
-  { task_type: 'scoring', primary_model: 'gpt-4-turbo', fallback_model: 'gpt-4o-mini', max_tokens: 2048, temperature: 0.2 },
-  { task_type: 'image_analysis', primary_model: 'gpt-4-vision-preview', fallback_model: 'gpt-4-turbo', max_tokens: 2048, temperature: 0.1 },
-  { task_type: 'report_generation', primary_model: 'gpt-4-turbo', fallback_model: 'gpt-4o-mini', max_tokens: 8192, temperature: 0.3 },
-  { task_type: 'routine', primary_model: 'gpt-4o-mini', fallback_model: null, max_tokens: 1024, temperature: 0.1 },
-  { task_type: 'assistant', primary_model: 'gpt-4-turbo', fallback_model: 'gpt-4o-mini', max_tokens: 2048, temperature: 0.7 }
+  { task_type: 'document_parsing', capability: Capability.ANALYSIS, max_tokens: 4096, temperature: 0.1 },
+  { task_type: 'transcription', capability: Capability.ANALYSIS, max_tokens: null, temperature: null },
+  { task_type: 'scoring', capability: Capability.ANALYSIS, max_tokens: 2048, temperature: 0.2 },
+  { task_type: 'image_analysis', capability: Capability.ANALYSIS, max_tokens: 2048, temperature: 0.1 },
+  { task_type: 'report_generation', capability: Capability.DOCUMENT_GENERATION, max_tokens: 8192, temperature: 0.3 },
+  { task_type: 'routine', capability: Capability.ADVISORY, max_tokens: 1024, temperature: 0.1 },
+  { task_type: 'assistant', capability: Capability.ADVISORY, max_tokens: 2048, temperature: 0.7 },
 ];
 
 /**
@@ -373,15 +380,15 @@ export function routeAITask(taskType: AITaskType): AIRoutingConfig {
 }
 
 /**
- * Returns the fallback model for a given task type
+ * Returns the fallback model for a given task type.
+ * Model-level fallback is AIMC's responsibility — MAT routing is capability-based only.
  * FRS: FR-028 (AC8)
- * 
- * @param taskType - Type of AI task
- * @returns Fallback model name or null if none configured
+ *
+ * @param _taskType - Type of AI task (unused; fallback is AIMC-managed)
+ * @returns null — fallback routing is delegated to AIMC
  */
-export function getFallbackModel(taskType: AITaskType): string | null {
-  const config = routeAITask(taskType);
-  return config.fallback_model;
+export function getFallbackModel(_taskType: AITaskType): string | null {
+  return null;
 }
 
 /**
@@ -637,35 +644,35 @@ export function transitionToHalfOpen(breaker: CircuitBreaker): CircuitBreaker {
 }
 
 /**
- * Scores maturity with fallback model support
+ * Scores maturity with circuit-breaker awareness.
+ * Routes through the configured capability in all states.
+ * `degraded_mode: true` signals the circuit breaker is OPEN — callers should apply
+ * manual-scoring fallback logic. It does NOT mean a different provider model was
+ * selected; model-level fallback is AIMC's internal responsibility.
  * Architecture: §6 — Fallback Mode
  * FRS: FR-031 (AC3, AC4)
- * 
+ *
  * @param criterionId - Criterion ID
  * @param evidence - Evidence array
  * @param breaker - Circuit breaker state
- * @returns Score result with model info, or null if both primary and fallback fail
+ * @returns Score result with capability and degraded-mode indicator
  */
 export function scoreWithFallback(
   criterionId: string,
   evidence: Evidence[],
   breaker: CircuitBreaker
-): { score: AIScoreResult | null; model_used: string; fallback_used: boolean } {
+): { score: AIScoreResult | null; capability_used: string; degraded_mode: boolean } {
   const routing = routeAITask('scoring');
 
   if (breaker.state === 'CLOSED' || breaker.state === 'HALF_OPEN') {
-    const score = scoreMaturity(criterionId, evidence, routing.primary_model);
-    return { score, model_used: routing.primary_model, fallback_used: false };
+    const score = scoreMaturity(criterionId, evidence, routing.capability);
+    return { score, capability_used: routing.capability, degraded_mode: false };
   }
 
-  // OPEN state — use fallback
-  if (routing.fallback_model) {
-    const score = scoreMaturity(criterionId, evidence, routing.fallback_model);
-    return { score, model_used: routing.fallback_model, fallback_used: true };
-  }
-
-  // No fallback available
-  return { score: null, model_used: 'none', fallback_used: false };
+  // OPEN state — route through same capability (AIMC handles provider fallback internally)
+  // degraded_mode signals callers that the circuit is open and manual scoring may be needed
+  const score = scoreMaturity(criterionId, evidence, routing.capability);
+  return { score, capability_used: routing.capability, degraded_mode: true };
 }
 
 /**

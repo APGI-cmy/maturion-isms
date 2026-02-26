@@ -465,8 +465,7 @@ export type AITaskType =
 
 export interface AIRoutingConfig {
   task_type: AITaskType;
-  primary_model: string;
-  fallback_model: string | null;
+  capability: string;
   max_tokens: number | null;
   temperature: number | null;
 }

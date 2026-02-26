@@ -33,7 +33,8 @@ import {
   registerModelVersion,
   getActiveModelVersion,
   isRegressionTested,
-  clearModelVersionRegistry
+  clearModelVersionRegistry,
+  Capability
 } from '../../src/services/ai-scoring.js';
 import { generateReport, generateAllFormats, validateReport } from '../../src/services/reporting.js';
 import { collectTextEvidence, reviewEvidence } from '../../src/services/evidence-collection.js';
@@ -227,34 +228,32 @@ describe('CAT-04: ai services', () => {
     // FRS: FR-028
     // TRS: TR-040
     // Type: integration | Priority: P0
-    // Document parsing → GPT-4 Turbo
+    // Document parsing → ANALYSIS capability
     const docConfig = routeAITask('document_parsing');
-    expect(docConfig.primary_model).toBe('gpt-4-turbo');
-    expect(docConfig.fallback_model).toBe('gpt-4o-mini');
+    expect(docConfig.capability).toBe(Capability.ANALYSIS);
 
-    // Transcription → Whisper
+    // Transcription → ANALYSIS capability
     const transConfig = routeAITask('transcription');
-    expect(transConfig.primary_model).toBe('whisper-1');
+    expect(transConfig.capability).toBe(Capability.ANALYSIS);
 
-    // Scoring → GPT-4 Turbo
+    // Scoring → ANALYSIS capability
     const scoreConfig = routeAITask('scoring');
-    expect(scoreConfig.primary_model).toBe('gpt-4-turbo');
-    expect(scoreConfig.fallback_model).toBe('gpt-4o-mini');
+    expect(scoreConfig.capability).toBe(Capability.ANALYSIS);
 
-    // Image analysis → GPT-4 Vision
+    // Image analysis → ANALYSIS capability
     const imgConfig = routeAITask('image_analysis');
-    expect(imgConfig.primary_model).toBe('gpt-4-vision-preview');
+    expect(imgConfig.capability).toBe(Capability.ANALYSIS);
 
-    // Report generation → GPT-4 Turbo
+    // Report generation → DOCUMENT_GENERATION capability
     const reportConfig = routeAITask('report_generation');
-    expect(reportConfig.primary_model).toBe('gpt-4-turbo');
+    expect(reportConfig.capability).toBe(Capability.DOCUMENT_GENERATION);
 
-    // Routine → GPT-4o Mini
+    // Routine → ADVISORY capability
     const routineConfig = routeAITask('routine');
-    expect(routineConfig.primary_model).toBe('gpt-4o-mini');
+    expect(routineConfig.capability).toBe(Capability.ADVISORY);
 
-    // Fallback model test
-    expect(getFallbackModel('scoring')).toBe('gpt-4o-mini');
+    // Fallback model is AIMC's responsibility — no model-level fallback configured
+    expect(getFallbackModel('scoring')).toBeNull();
     expect(getFallbackModel('transcription')).toBeNull();
 
     // Full routing table
@@ -555,14 +554,14 @@ describe('CAT-04: ai services', () => {
       uploaded_by: 'user-001'
     });
 
-    // CLOSED state — use primary model
+    // CLOSED state — route through scoring capability
     const closedBreaker = createCircuitBreaker();
     const result1 = scoreWithFallback('crit-001', [evidence], closedBreaker);
     expect(result1.score).not.toBeNull();
-    expect(result1.model_used).toBe('gpt-4-turbo');
-    expect(result1.fallback_used).toBe(false);
+    expect(result1.capability_used).toBe(Capability.ANALYSIS);
+    expect(result1.degraded_mode).toBe(false);
 
-    // OPEN state — use fallback model
+    // OPEN state — route through same capability, flagged as degraded mode (circuit open)
     let openBreaker = createCircuitBreaker();
     for (let i = 0; i < 4; i++) {
       openBreaker = recordCircuitBreakerSuccess(openBreaker);
@@ -572,15 +571,15 @@ describe('CAT-04: ai services', () => {
 
     const result2 = scoreWithFallback('crit-001', [evidence], openBreaker);
     expect(result2.score).not.toBeNull();
-    expect(result2.model_used).toBe('gpt-4o-mini');
-    expect(result2.fallback_used).toBe(true);
+    expect(result2.capability_used).toBe(Capability.ANALYSIS);
+    expect(result2.degraded_mode).toBe(true);
 
-    // HALF_OPEN state — use primary model (test request)
+    // HALF_OPEN state — route through scoring capability (test request)
     const halfOpenBreaker = transitionToHalfOpen(openBreaker);
     const result3 = scoreWithFallback('crit-001', [evidence], halfOpenBreaker);
     expect(result3.score).not.toBeNull();
-    expect(result3.model_used).toBe('gpt-4-turbo');
-    expect(result3.fallback_used).toBe(false);
+    expect(result3.capability_used).toBe(Capability.ANALYSIS);
+    expect(result3.degraded_mode).toBe(false);
   });
 
   it('MAT-T-0077: AI Degraded Mode — Manual Scoring', () => {
