@@ -2,8 +2,8 @@
 
 **Module**: Mat  
 **Module Slug**: mat  
-**Last Updated**: 2026-02-24  
-**Updated By**: foreman-isms
+**Last Updated**: 2026-02-26  
+**Updated By**: foreman-v2-agent (session-063)
 
 ---
 
@@ -244,7 +244,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] **Wave 6 Gap Remediation — Vercel Serverless API Gateway** — `POST /api/ai/request` serverless function delivered; 17 tests GREEN; vercel.json updated (2026-02-24)
 - [x] **Wave 7: AIMC Advisory Integration** — **COMPLETE** (AIMC Wave 3 confirmed; advisory-service.ts, EmbeddedAIAssistant AIMC wiring, env cleanup delivered)
 - [x] **Wave 8: AIMC Analysis Integration** — **COMPLETE** (AIMC Wave 4 confirmed; analysis-service.ts delivered, AI_ROUTING_TABLE removed from ai-scoring.ts)
-- [ ] **Wave 9: AIMC Embeddings/RAG Integration** — **BLOCKED — Awaiting AIMC Wave 5** (Embeddings/RAG Gateway)
+- [~] **Wave 9: AIMC Embeddings/RAG Integration** — **IN_PROGRESS** (AIMC Wave 5 confirmed; CS2 authorized via issue #632; QA-to-Red gate in progress — 2026-02-26)
 
 **Wave 0 Test Coverage (31 tests GREEN)** — PRs #140, #142:
 - [x] Task 0.1 (schema-builder, 25 tests): MAT-T-0043, MAT-T-0044, MAT-T-0049–0053, MAT-T-0079–0094, MAT-T-0095, MAT-T-0096
@@ -1275,7 +1275,7 @@ Track the progression through the canonical module lifecycle stages.
 - ⏳ **Wave 6 PRODUCTION DEPLOYMENT PENDING CS2 ACCESS**: Vercel and Supabase production environment access required (QA gate PASS — not a technical blocker)
 - ✅ **Wave 7 COMPLETE**: AIMC Advisory Integration delivered (advisory-service.ts, EmbeddedAIAssistant AIMC wiring, env cleanup)
 - ✅ **Wave 8 COMPLETE**: AIMC Wave 4 confirmed; analysis-service.ts delivered, AI_ROUTING_TABLE removed from ai-scoring.ts (2026-02-26)
-- ❌ **Wave 9 BLOCKED**: Awaiting AIMC Wave 5 (Embeddings/RAG Gateway)
+- 🔄 **Wave 9 IN_PROGRESS**: AIMC Wave 5 confirmed; CS2 authorized via issue #632; QA-to-Red gate in progress (2026-02-26)
 
 **Status Summary**:
 - ✅ Backend service layer: 100% implemented and tested (modules/mat/src/services/)
@@ -1320,6 +1320,9 @@ Track the progression through the canonical module lifecycle stages.
 25. ~~Proceed to Wave 6: Deployment & Commissioning (READY — awaiting CS2 Vercel/Supabase access AND remediation completion)~~
    - ✅ **Wave 6 QA Gate PASS (2026-02-24)**: CWT executed — 172/172 tests GREEN. vercel.json validated. Deployment configuration complete. Evidence: `modules/mat/05-build-evidence/prehandover-CWT-wave6-20260224.md`. PREHANDOVER proof: `PREHANDOVER_PROOF_WAVE_6_QA.md`.
 26. Execute Wave 6 production deployment (pending CS2 Vercel/Supabase access): run deploy workflow, confirm health check 200, execute production CWT, formal sign-over
+27. ~~Execute Wave 7: AIMC Advisory Integration (AIMC Wave 3 confirmed; advisory-service.ts, EmbeddedAIAssistant AIMC wiring delivered)~~
+28. ~~Execute Wave 8: AIMC Analysis Integration (AIMC Wave 4 confirmed; analysis-service.ts delivered, AI_ROUTING_TABLE capability-aligned)~~
+29. **[IN_PROGRESS] Execute Wave 9: AIMC Embeddings/RAG Integration** — CS2 authorized via issue #632 (2026-02-26); AIMC Wave 5 confirmed complete; QA-to-Red gate in progress (qa-builder appointed)
 
 ---
 
@@ -1454,7 +1457,7 @@ responsibility.
 | Wave 5.7 (prior) | N/A — was never a formal wave | Superseded by Waves 7, 8, 9 |
 | Wave 7 | Not defined | AIMC Advisory Integration — DEFINED; BLOCKED on AIMC Wave 3 |
 | Wave 8 | Not defined | AIMC Analysis Integration — DEFINED; BLOCKED on AIMC Wave 4 |
-| Wave 9 | Not defined | AIMC Embeddings/RAG Integration — DEFINED; BLOCKED on AIMC Wave 5 |
+| Wave 9 | Not defined | AIMC Embeddings/RAG Integration — DEFINED; IN_PROGRESS — CS2 authorized issue #632 (2026-02-26) |
 | All AI milestone tests | Direct provider assertions | RED — pending AIMC package delivery |
 
 #### Corrective Actions Taken
