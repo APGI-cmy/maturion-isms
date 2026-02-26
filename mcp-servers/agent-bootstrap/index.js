@@ -83,9 +83,11 @@ server.tool(
             text:
               "HALT: 'agent_id' is required but was empty.\n\n" +
               "Determine your agent identity from the issue assignee field, issue title, or " +
-              "explicit task instruction, then call agent_bootstrap again with a valid agent_id.\n\n" +
-              "If you cannot determine your identity, call agent_bootstrap(agent_id: \"list\") " +
-              "or use the agent_bootstrap_list_agents tool.\n\n" +
+              "explicit task instruction, then call agent_bootstrap again with your agent_id.\n\n" +
+              "If you cannot determine your identity, use discovery mode: " +
+              "call agent_bootstrap(agent_id: \"list\") or agent_bootstrap_list_agents — " +
+              "these return all valid IDs so you can identify yourself. " +
+              "NOTE: \"list\" is a discovery mode, not a valid agent_id.\n\n" +
               "Valid agent IDs: " + VALID_AGENT_IDS,
           },
         ],
@@ -93,15 +95,18 @@ server.tool(
       };
     }
 
-    // Special mode: return the list of valid agent IDs without loading a contract.
+    // Special discovery mode: return the list of valid agent IDs without loading a contract.
     if (agentId === "list") {
       return {
         content: [
           {
             type: "text",
             text:
-              "# Valid governed agent IDs\n\n" +
-              "Pass one of these as agent_id to load your contract:\n\n" +
+              "NOTE: \"list\" is a special discovery mode, not an agent_id. " +
+              "Do NOT use \"list\" as your identity.\n\n" +
+              "# Governed agent IDs\n\n" +
+              "Identify which of these you are, then call " +
+              "agent_bootstrap(agent_id: \"<your-id>\") immediately:\n\n" +
               Object.keys(AGENT_CONTRACT_PATHS)
                 .sort()
                 .map((id) => `- ${id}`)
@@ -120,7 +125,9 @@ server.tool(
             text:
               `HALT: Unrecognized agent_id '${agentId}'.\n\n` +
               "Cannot determine contract file. Escalate to CS2 (@APGI-cmy). Do not proceed.\n\n" +
-              "Call agent_bootstrap(agent_id: \"list\") or agent_bootstrap_list_agents to see valid IDs.\n\n" +
+              "Use discovery mode to see valid IDs: call agent_bootstrap(agent_id: \"list\") " +
+              "or agent_bootstrap_list_agents. " +
+              "NOTE: \"list\" is a discovery mode, not a valid agent_id.\n\n" +
               "Valid agent IDs: " + VALID_AGENT_IDS,
           },
         ],
@@ -170,7 +177,8 @@ server.tool(
   "agent_bootstrap_list_agents",
   "Returns the list of all valid governed agent IDs registered in this repository. " +
   "Call this tool if you cannot determine your agent_id before calling agent_bootstrap. " +
-  "Once you know your agent_id, call agent_bootstrap(agent_id: \"<id>\") immediately.",
+  "NOTE: this is a discovery tool only — do NOT use a returned ID as \"list\"; " +
+  "once you identify yourself, call agent_bootstrap(agent_id: \"<your-id>\") immediately.",
   {},
   async () => {
     return {
@@ -178,8 +186,11 @@ server.tool(
         {
           type: "text",
           text:
-            "# Valid governed agent IDs\n\n" +
-            "Pass one of these as agent_id to agent_bootstrap:\n\n" +
+            "NOTE: \"list\" is a special discovery mode, not an agent_id. " +
+            "Do NOT use \"list\" as your identity.\n\n" +
+            "# Governed agent IDs\n\n" +
+            "Identify which of these you are, then call " +
+            "agent_bootstrap(agent_id: \"<your-id>\") immediately:\n\n" +
             Object.keys(AGENT_CONTRACT_PATHS)
               .sort()
               .map((id) => `- ${id}`)
