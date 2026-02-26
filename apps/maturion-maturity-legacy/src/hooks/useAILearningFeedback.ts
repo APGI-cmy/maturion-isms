@@ -1,3 +1,10 @@
+/**
+ * @deprecated This hook is deprecated as of Wave 9.2/9.4 (2026-02-26).
+ *
+ * Use `FeedbackPipeline.submit()` from `@maturion/ai-centre` instead.
+ * AIMC reference: ARCH_FREEZE-wave9-self-learning-loop-20260226.md
+ */
+
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
