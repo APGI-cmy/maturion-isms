@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
-    "last_updated": "2026-02-24",
-    "total_canons": 182,
+    "last_updated": "2026-02-25",
+    "total_canons": 183,
     "generation_timestamp": "2026-02-21T16:30:00Z",
     "canon_entry_schema": {
         "description": "Schema for canon entries in CANON_INVENTORY.json",
@@ -133,12 +133,14 @@
             "filename": "AGENT_CREATION_BUNDLE_REQUIREMENTS.md",
             "version": "1.0.0 | **Authority**: CS2",
             "file_hash": "47fa11a5447d30cf2deb7a4be82800c0db6f2ea04770390a98160b009d0df17d",
-            "effective_date": "YYYY-MM-DD",
+            "effective_date": "2026-02-21",
             "description": "Canonical governance document: AGENT_CREATION_BUNDLE_REQUIREMENTS",
             "type": "canon",
             "path": "governance/canon/AGENT_CREATION_BUNDLE_REQUIREMENTS.md",
             "layer_down_status": "PUBLIC_API",
-            "file_hash_sha256": "47fa11a5447d30cf2deb7a4be82800c0db6f2ea04770390a98160b009d0df17d"
+            "file_hash_sha256": "47fa11a5447d30cf2deb7a4be82800c0db6f2ea04770390a98160b009d0df17d",
+            "layer_up_status": "INTEGRATED",
+            "layer_up_provenance": "First draft layered up from maturion-isms PR APGI-cmy/maturion-foreman-governance#366 (2026-02-21)"
         },
         {
             "filename": "AGENT_DELEGATION_PROTOCOL.md",
@@ -238,12 +240,14 @@
             "filename": "AGENT_REGISTRY_ARCHITECTURE.md",
             "version": "1.0.0 | **Authority**: CS2",
             "file_hash": "4bc5862119a83aca540e56aa64b76a40e652afc962fe637a2308bd63714b0beb",
-            "effective_date": "unknown",
+            "effective_date": "2026-02-21",
             "description": "Canonical governance document: AGENT_REGISTRY_ARCHITECTURE",
             "type": "canon",
             "path": "governance/canon/AGENT_REGISTRY_ARCHITECTURE.md",
             "layer_down_status": "PUBLIC_API",
-            "file_hash_sha256": "4bc5862119a83aca540e56aa64b76a40e652afc962fe637a2308bd63714b0beb"
+            "file_hash_sha256": "4bc5862119a83aca540e56aa64b76a40e652afc962fe637a2308bd63714b0beb",
+            "layer_up_status": "INTEGRATED",
+            "layer_up_provenance": "First draft layered up from maturion-isms PR APGI-cmy/maturion-foreman-governance#366 (2026-02-21)"
         },
         {
             "filename": "AGENT_RIPPLE_AWARENESS_OBLIGATION.md",
@@ -1400,7 +1404,9 @@
             "type": "canon",
             "path": "governance/canon/PLATFORM_AI_REQUIREMENTS.md",
             "layer_down_status": "PUBLIC_API",
-            "file_hash_sha256": "1e99a0fe28dc9556d37227109dcbe0d2a21678f858e5710aacb0366085dc20be"
+            "file_hash_sha256": "1e99a0fe28dc9556d37227109dcbe0d2a21678f858e5710aacb0366085dc20be",
+            "layer_up_status": "INTEGRATED",
+            "layer_up_provenance": "First draft layered up from maturion-isms PR APGI-cmy/maturion-foreman-governance#366 (2026-02-21)"
         },
         {
             "filename": "PLATFORM_AUTHORITY_BOUNDARY_AND_DELEGATION_MODEL.md",
@@ -1476,12 +1482,14 @@
             "filename": "PROXY_AUTHORITY_MODEL.md",
             "version": "1.0.0 | **Authority**: CS2",
             "file_hash": "4f95fb1aaadaa99adb1503782024c55def41e176326011d385f685a8a476049c",
-            "effective_date": "unknown",
+            "effective_date": "2026-02-21",
             "description": "Canonical governance document: PROXY_AUTHORITY_MODEL",
             "type": "canon",
             "path": "governance/canon/PROXY_AUTHORITY_MODEL.md",
             "layer_down_status": "PUBLIC_API",
-            "file_hash_sha256": "4f95fb1aaadaa99adb1503782024c55def41e176326011d385f685a8a476049c"
+            "file_hash_sha256": "4f95fb1aaadaa99adb1503782024c55def41e176326011d385f685a8a476049c",
+            "layer_up_status": "INTEGRATED",
+            "layer_up_provenance": "First draft layered up from maturion-isms PR APGI-cmy/maturion-foreman-governance#366 (2026-02-21)"
         },
         {
             "filename": "PR_GATE_EVALUATION_AND_ROLE_PROTOCOL.md",
@@ -1641,12 +1649,14 @@
             "filename": "SPECIALIST_KNOWLEDGE_MANAGEMENT.md",
             "version": "1.0.0 | **Authority**: CS2",
             "file_hash": "dc27a45885426d0b67306ff3ee432d6de0b5814e63b0154492572cd45399d10c",
-            "effective_date": "unknown",
+            "effective_date": "2026-02-21",
             "description": "Canonical governance document: SPECIALIST_KNOWLEDGE_MANAGEMENT",
             "type": "canon",
             "path": "governance/canon/SPECIALIST_KNOWLEDGE_MANAGEMENT.md",
             "layer_down_status": "PUBLIC_API",
-            "file_hash_sha256": "dc27a45885426d0b67306ff3ee432d6de0b5814e63b0154492572cd45399d10c"
+            "file_hash_sha256": "dc27a45885426d0b67306ff3ee432d6de0b5814e63b0154492572cd45399d10c",
+            "layer_up_status": "INTEGRATED",
+            "layer_up_provenance": "First draft layered up from maturion-isms PR APGI-cmy/maturion-foreman-governance#366 (2026-02-21)"
         },
         {
             "filename": "STOP_AND_FIX_DOCTRINE.md",
@@ -2078,6 +2088,19 @@
             "amendment_authority": "CS2-only",
             "last_updated": "2026-02-24",
             "file_hash_sha256": "77f14bc5cb1e4440735a2822fab91ee0723f7743ca6efc393f5cab22848a6b2a"
+        },
+        {
+            "filename": "PLATFORM_AI_REQUIREMENTS_CHECKLIST.md",
+            "version": "1.0.0",
+            "file_hash_sha256": "54043b8a8eb00715a07bf97f3e68d675019aa3750d1af49a2b8cf0f1452ad37f",
+            "file_hash": "54043b8a8eb00715a07bf97f3e68d675019aa3750d1af49a2b8cf0f1452ad37f",
+            "effective_date": "2026-02-21",
+            "description": "Platform AI requirements builder checklist \u2014 governance coverage for LL-031-compliant AI features in all Maturion applications",
+            "type": "checklist",
+            "path": "governance/checklists/PLATFORM_AI_REQUIREMENTS_CHECKLIST.md",
+            "layer_down_status": "PUBLIC_API",
+            "layer_up_status": "INTEGRATED",
+            "layer_up_provenance": "First draft layered up from maturion-isms PR APGI-cmy/maturion-foreman-governance#366 (2026-02-21)"
         }
     ]
 }
