@@ -1,1 +1,3 @@
-node_modules/
+# node_modules are committed for MCP server reliability in agent sandboxes
+# (npm install is unreliable in Copilot agent environments)
+# Do NOT add node_modules/ back to this ignore file.
