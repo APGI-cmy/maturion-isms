@@ -3,8 +3,8 @@
 ## Status
 **Type**: Canonical Governance Protocol  
 **Authority**: Supreme - Canonical  
-**Version**: 1.0.0  
-**Effective Date**: 2026-02-08  
+**Version**: 1.1.0  
+**Effective Date**: 2026-02-26  
 **Owner**: Maturion Engineering Leadership (Johan Ras)  
 **Precedence**: Subordinate to GOVERNANCE_PURPOSE_AND_SCOPE.md  
 **Layer-Down Status**: PUBLIC_API  
@@ -554,6 +554,53 @@ Per FM_ROLE_CANON.md §6.1.1, FM MUST update wave progress artifact:
 - **Within 4 hours** of issue creation/closure
 - **Within 4 hours** of correction/RCA event
 
+### 5.3 Session Record Artifact Naming Convention
+
+**Problem**: When multiple waves or subwaves execute within a single foreman session/date, artifacts named only by session ID (e.g., `PREHANDOVER-session-058-20260226.md`) collide, causing merge conflicts and audit-trail loss.
+
+**Mandatory Rule**: All per-wave or per-subwave session record artifacts (PREHANDOVER proofs, session memory files, gate result files, and any evidence artifact created inside a foreman wave execution) **MUST** include both the session ID and the wave/subwave identifier in the filename.
+
+#### Required Filename Pattern
+
+```
+<ARTIFACT_TYPE>-session-<NNN>-wave<W[.S]>-<YYYYMMDD>.<ext>
+```
+
+Where:
+- `<ARTIFACT_TYPE>` is the artifact class (e.g., `PREHANDOVER`, `session`, `gate-results`, `rca`)
+- `<NNN>` is the zero-padded foreman session number (e.g., `058`)
+- `<W[.S]>` is the wave number, optionally including subwave (e.g., `7`, `9.1`, `12.3`)
+- `<YYYYMMDD>` is the ISO date of the session
+- `<ext>` is the file extension (e.g., `md`, `json`)
+
+#### Canonical Examples
+
+| Scenario | Filename |
+|----------|----------|
+| PREHANDOVER proof — Session 058, Wave 7 | `PREHANDOVER-session-058-wave7-20260226.md` |
+| PREHANDOVER proof — Session 058, Wave 9.1 | `PREHANDOVER-session-058-wave9.1-20260226.md` |
+| Session memory — Session 058, Wave 12 | `session-058-wave12-20260226.md` |
+| Gate results — Session 058, Wave 3.2 | `gate-results-session-058-wave3.2-20260226.json` |
+| RCA — Session 058, Wave 5 | `rca-session-058-wave5-20260226.md` |
+
+#### Applies To
+
+This naming convention applies to **all agents** that create workspace governance proofs or session records during foreman wave execution, including but not limited to:
+- Foreman (FM)
+- QA Agent
+- Independent Assurance Agent (IAA)
+- Builder agents
+- Governance Repository Administrator
+
+#### Backward Compatibility
+
+Artifacts created before v1.1.0 of this protocol that use the legacy `session-NNN-YYYYMMDD` pattern are valid for sessions where only a single wave executed. New artifacts MUST follow the v1.1.0 pattern. Existing artifacts MUST NOT be renamed retroactively.
+
+**Cross-References**:
+- `AGENT_HANDOVER_AUTOMATION.md` — prehandover proof generation (update `proof-${TIMESTAMP}.md` to include wave ID when inside a wave execution)
+- `FOREMAN_MEMORY_PROTOCOL.md` — session memory naming
+- `AGENT_CONTRACT_ARCHITECTURE.md` — evidence chain-of-custody requirements
+
 ---
 
 ## 6. Artifact Quality Standards
@@ -629,6 +676,7 @@ Per FM_ROLE_CANON.md §6.1.1, FM MUST update wave progress artifact:
 - ✅ Update wave progress artifact within 4 hours of events
 - ✅ Use standardized issue templates
 - ✅ Validate issue quality before creation
+- ✅ Use per-wave artifact naming convention (§5.3) for all session records created during wave execution
 
 **FM MUST NOT**:
 - ❌ Create issues without governance authority
@@ -641,9 +689,10 @@ Per FM_ROLE_CANON.md §6.1.1, FM MUST update wave progress artifact:
 
 ## 9. Versioning and Evolution
 
-**Current Version**: 1.0.0 (2026-02-08)
+**Current Version**: 1.1.0 (2026-02-26)
 
 **Version History**:
+- **v1.1.0** (2026-02-26) — Added §5.3 mandatory per-wave artifact naming convention to prevent session ID collisions when multiple waves execute in a single foreman session. Updated §8.1 compliance checklist. References added to AGENT_HANDOVER_AUTOMATION.md and FOREMAN_MEMORY_PROTOCOL.md.
 - **v1.0.0** (2026-02-08) — Initial canonical protocol establishing wave planning methodology, issue artifact generation workflow, and progress tracking requirements
 
 ---
@@ -662,12 +711,15 @@ Wave initialization, builder task, correction/RCA, governance gap, subwave scope
 **Wave progress artifact?**  
 Canonical progress tracking document (execution-progress/WAVE_N_IMPLEMENTATION_PROGRESS.md) updated within 4 hours of events.
 
+**Session record artifact naming?**  
+All per-wave session records MUST use `<TYPE>-session-<NNN>-wave<W[.S]>-<YYYYMMDD>.<ext>` (e.g., `PREHANDOVER-session-058-wave9.1-20260226.md`). See §5.3.
+
 **Artifact quality standards?**  
 Clear, complete, governance-aligned, audit-ready. No vague criteria, governance violations, or missing timestamps.
 
 ---
 
 **Authority**: GOVERNANCE_PURPOSE_AND_SCOPE.md  
-**Version**: 1.0.0  
-**Effective**: 2026-02-08  
+**Version**: 1.1.0  
+**Effective**: 2026-02-26  
 **Owner**: CS2 (Johan Ras)
