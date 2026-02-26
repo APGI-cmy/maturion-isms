@@ -14,6 +14,7 @@
  */
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
+import { createClient } from '@supabase/supabase-js';
 import { FeedbackPipeline } from '../../../packages/ai-centre/src/feedback/FeedbackPipeline.js';
 import type { FeedbackPipelineInterface } from '../../../packages/ai-centre/src/types/feedback.js';
 
@@ -24,8 +25,9 @@ import type { FeedbackPipelineInterface } from '../../../packages/ai-centre/src/
 export type FeedbackPipelineFactory = () => FeedbackPipelineInterface;
 
 export function buildFeedbackPipeline(): FeedbackPipelineInterface {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const supabaseClient: any = null; // Replaced by real service_role client in production
+  const supabaseUrl = process.env['SUPABASE_URL'] ?? '';
+  const serviceRoleKey = process.env['SUPABASE_SERVICE_ROLE_KEY'] ?? '';
+  const supabaseClient = createClient(supabaseUrl, serviceRoleKey);
   return new FeedbackPipeline(supabaseClient);
 }
 

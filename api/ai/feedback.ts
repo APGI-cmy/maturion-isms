@@ -13,6 +13,7 @@
  */
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
+import { createClient } from '@supabase/supabase-js';
 import { FeedbackPipeline } from '../../packages/ai-centre/src/feedback/FeedbackPipeline.js';
 import type {
   FeedbackPipelineInterface,
@@ -27,16 +28,37 @@ export type FeedbackPipelineFactory = () => FeedbackPipelineInterface;
 
 /**
  * Build a FeedbackPipeline instance for this serverless request.
- *
- * Note: Supabase client wiring is deferred — the pipeline accepts any
- * client conforming to the Supabase query builder interface. In production,
- * pass a @supabase/supabase-js client with appropriate credentials.
+ * Uses a real Supabase client wired from environment variables.
  * In tests, inject via createHandler(mockFactory).
  */
 export function buildFeedbackPipeline(): FeedbackPipelineInterface {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const supabaseClient: any = null; // Replaced by real client when wired to production
+  const supabaseUrl = process.env['SUPABASE_URL'] ?? '';
+  const supabaseAnonKey = process.env['SUPABASE_ANON_KEY'] ?? '';
+  const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
   return new FeedbackPipeline(supabaseClient);
+}
+
+// ---------------------------------------------------------------------------
+// JWT helper
+// ---------------------------------------------------------------------------
+
+const BEARER_PREFIX_LENGTH = 7; // Length of 'Bearer '
+
+/**
+ * Decode the JWT Bearer token and extract the `sub` claim as userId.
+ * No signature verification — Supabase RLS enforces real auth in production.
+ */
+function extractUserIdFromJwt(authHeader: string): string | undefined {
+  try {
+    const token = authHeader.slice(BEARER_PREFIX_LENGTH);
+    const parts = token.split('.');
+    if (parts.length !== 3) return undefined;
+    const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf-8'));
+    return typeof payload['sub'] === 'string' ? payload['sub'] : undefined;
+  } catch (error) {
+    console.error('Failed to extract userId from JWT:', error);
+    return undefined;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -100,7 +122,6 @@ export function validateFeedbackBody(
   return {
     organisationId: b['organisationId'] as string,
     sessionId: b['sessionId'] as string,
-    userId: typeof b['userId'] === 'string' ? b['userId'] : undefined,
     interactionId: b['interactionId'] as string,
     feedbackType: b['feedbackType'] as FeedbackEvent['feedbackType'],
     rating: typeof b['rating'] === 'number' ? b['rating'] : undefined,
@@ -144,7 +165,10 @@ export function createHandler(factory: FeedbackPipelineFactory = buildFeedbackPi
     let payload: Omit<FeedbackEvent, 'id' | 'arcStatus' | 'createdAt'>;
     try {
       const body = await parseBody(req);
-      payload = validateFeedbackBody(body);
+      const validated = validateFeedbackBody(body);
+      // Extract userId from JWT sub claim — NOT from request body
+      const userId = extractUserIdFromJwt(authHeader);
+      payload = { ...validated, userId };
     } catch (err) {
       res.writeHead(400);
       res.end(

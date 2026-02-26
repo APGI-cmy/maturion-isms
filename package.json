@@ -23,6 +23,9 @@
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
   },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.98.0"
+  },
   "devDependencies": {
     "vitest": "^1.6.1"
   }
