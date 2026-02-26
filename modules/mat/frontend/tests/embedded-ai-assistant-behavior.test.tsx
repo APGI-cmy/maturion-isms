@@ -8,7 +8,7 @@
  * FRS: FR-072 (Embedded AI Assistant)
  * TRS: TR-072
  */
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import {
@@ -19,6 +19,11 @@ import {
 // jsdom does not implement scrollIntoView; mock it globally
 beforeAll(() => {
   window.HTMLElement.prototype.scrollIntoView = () => {};
+});
+
+// Restore all global stubs after each test to avoid cross-test contamination
+afterEach(() => {
+  vi.unstubAllGlobals();
 });
 
 describe('CAT-FE-13b: embedded AI assistant behavior (FR-072)', () => {
@@ -51,6 +56,35 @@ describe('CAT-FE-13b: embedded AI assistant behavior (FR-072)', () => {
     // TRS: TR-072 Constraint 3
     // Type: behavior | Priority: P0
 
+    // Mock fetch to return a successful AIMC advisory response so the assistant
+    // message appears after handleSend() resolves (Wave 7 AIMC wiring requires fetch).
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            capability: 'advisory',
+            result: {
+              capability: 'advisory',
+              text: 'Test advisory response from AIMC.',
+              providerUsed: 'github-models',
+            },
+            telemetry: {
+              id: 'test-tel-001',
+              organisationId: 'org-001',
+              userId: undefined,
+              capability: 'advisory',
+              providerUsed: 'github-models',
+              promptTokens: 0,
+              completionTokens: 0,
+              latencyMs: 50,
+              recordedAt: Date.now(),
+            },
+          }),
+      }),
+    );
+
     render(<EmbeddedAIAssistant initiallyOpen={true} />);
 
     const input = screen.getByTestId('ai-assistant-input');
@@ -69,7 +103,7 @@ describe('CAT-FE-13b: embedded AI assistant behavior (FR-072)', () => {
     expect(userMessages.length).toBeGreaterThanOrEqual(1);
     expect(userMessages[0]).toHaveTextContent('What is maturity level 3?');
 
-    // Placeholder assistant response appears
+    // Assistant response from AIMC advisory appears
     const assistantMessages = await screen.findAllByTestId('ai-message-assistant');
     expect(assistantMessages.length).toBeGreaterThanOrEqual(1);
   });
