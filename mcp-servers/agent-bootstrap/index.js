@@ -20,6 +20,7 @@ const path = require("path");
 const { z } = require("zod");
 const { McpServer } = require("@modelcontextprotocol/sdk/server/mcp.js");
 const { StdioServerTransport } = require("@modelcontextprotocol/sdk/server/stdio.js");
+const { REQUIRED_AGENT_IDS } = require("./agent-ids.js");
 
 // Resolve repo root: two levels up from mcp-servers/agent-bootstrap/
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
@@ -45,6 +46,14 @@ try {
 }
 
 const VALID_AGENT_IDS = Object.keys(AGENT_CONTRACT_PATHS).join(", ");
+
+// Warn at startup if any required agent contracts are missing from the discovered set.
+const missingRequired = REQUIRED_AGENT_IDS.filter((id) => !AGENT_CONTRACT_PATHS[id]);
+if (missingRequired.length > 0) {
+  process.stderr.write(
+    `agent-bootstrap: WARNING — required agent contract(s) not found: ${missingRequired.join(", ")}\n`
+  );
+}
 
 const server = new McpServer({
   name: "agent-bootstrap",

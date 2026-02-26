@@ -15,6 +15,7 @@
 const fs   = require("fs");
 const path = require("path");
 const { execSync, spawn } = require("child_process");
+const { REQUIRED_AGENT_IDS } = require("./agent-ids.js");
 
 let failures = 0;
 
@@ -107,8 +108,7 @@ async function main() {
 
   // 4d. Required governed agent IDs present — fail if ANY are missing
   try {
-    const expected = ["api-builder", "foreman-v2-agent", "qa-builder", "schema-builder", "ui-builder"];
-    const missing  = expected.filter((id) => !agentIds.includes(id));
+    const missing  = REQUIRED_AGENT_IDS.filter((id) => !agentIds.includes(id));
     if (missing.length > 0) {
       throw new Error(`required agent contract(s) missing: ${missing.join(", ")}`);
     }
@@ -119,10 +119,12 @@ async function main() {
 
   // ── 5. MCP server boot check ───────────────────────────────────────────────
   // Spawn the server as a child process and confirm it does not crash within
-  // BOOT_WAIT_MS. Then terminate it cleanly.
+  // BOOT_WAIT_MS.  Then send SIGTERM and verify the process exits cleanly
+  // within TERM_WAIT_MS to prevent CI hangs.
   console.log("\n5. Server boot check");
   await new Promise((resolve) => {
     const BOOT_WAIT_MS = 1000;
+    const TERM_WAIT_MS = 3000;
     const child = spawn(process.execPath, ["index.js"], {
       cwd:   __dirname,
       stdio: ["pipe", "pipe", "pipe"],
@@ -131,19 +133,25 @@ async function main() {
     let stdout = "";
     let stderr = "";
     let exited = false;
+    let exitCode = null;
+    let exitSignal = null;
 
     child.stdout.on("data", (d) => { stdout += d.toString(); });
     child.stderr.on("data", (d) => { stderr += d.toString(); });
-    child.on("exit", () => { exited = true; });
+    child.on("exit", (code, signal) => {
+      exited    = true;
+      exitCode  = code;
+      exitSignal = signal;
+    });
 
     // Register error handler before starting the timer to avoid missed errors.
     child.on("error", (err) => {
-      clearTimeout(timer);
+      clearTimeout(bootTimer);
       fail("server boot check FAIL (spawn error)", err);
       resolve();
     });
 
-    const timer = setTimeout(() => {
+    const bootTimer = setTimeout(() => {
       if (exited) {
         fail(
           "server boot check FAIL (server must survive 1 s without crashing)",
@@ -152,14 +160,52 @@ async function main() {
           )
         );
         resolve();
-      } else {
-        // Still running after BOOT_WAIT_MS — boot successful, kill cleanly.
-        // Guard against the unlikely case the process exits between the check above
-        // and the kill call; ignore ESRCH (no such process) errors.
-        try { child.kill("SIGTERM"); } catch (_) { /* already gone — fine */ }
-        ok(`server boot check PASS (survived ${BOOT_WAIT_MS} ms without crashing)`);
-        resolve();
+        return;
       }
+
+      // Still running after BOOT_WAIT_MS — boot successful, now terminate.
+      console.log(`  server PID: ${child.pid}`);
+      ok(`server boot check PASS (survived ${BOOT_WAIT_MS} ms without crashing)`);
+
+      try { child.kill("SIGTERM"); } catch (_) { /* already gone — fine */ }
+
+      // Verify the process exits cleanly within TERM_WAIT_MS.
+      const termTimer = setTimeout(() => {
+        fail(
+          "server SIGTERM check FAIL (process did not terminate within timeout)",
+          new Error(`PID ${child.pid} still alive after ${TERM_WAIT_MS} ms`)
+        );
+        try { child.kill("SIGKILL"); } catch (_) {}
+        resolve();
+      }, TERM_WAIT_MS);
+
+      // If already exited by the time we reach here, fire immediately.
+      if (exited) {
+        clearTimeout(termTimer);
+        if (exitSignal === "SIGTERM" || exitCode === 0) {
+          ok(`server SIGTERM check PASS (code=${exitCode} signal=${exitSignal})`);
+        } else {
+          fail(
+            "server SIGTERM check FAIL (non-clean exit)",
+            new Error(`exit code=${exitCode} signal=${exitSignal}`)
+          );
+        }
+        resolve();
+        return;
+      }
+
+      child.once("exit", (code, signal) => {
+        clearTimeout(termTimer);
+        if (signal === "SIGTERM" || code === 0) {
+          ok(`server SIGTERM check PASS (code=${code} signal=${signal})`);
+        } else {
+          fail(
+            "server SIGTERM check FAIL (non-clean exit)",
+            new Error(`exit code=${code} signal=${signal}`)
+          );
+        }
+        resolve();
+      });
     }, BOOT_WAIT_MS);
   });
 
