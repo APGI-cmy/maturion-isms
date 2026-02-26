@@ -156,6 +156,8 @@ describe('Wave 9.4 — POST /api/ai/feedback', () => {
 
     expect(res.statusCode).toBe(200);
     expect((capturedPayload as Record<string, unknown>)['userId']).not.toBe('body-user');
+    // Also assert the JWT sub claim was used instead
+    expect((capturedPayload as Record<string, unknown>)['userId']).toBe('jwt-user-001');
   });
 
   it('W9.4-FU-T-006: submit() is called with JWT sub claim as userId', async () => {
