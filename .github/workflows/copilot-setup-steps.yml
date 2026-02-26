@@ -22,15 +22,5 @@ jobs:
           echo "Node: $(node --version)"
           echo "PWD: $(pwd)"
           cd mcp-servers/agent-bootstrap
-          echo "Checking MCP SDK dist entrypoint exists..."
-          node -e "require('@modelcontextprotocol/sdk/server/mcp.js'); console.log('OK: MCP SDK dist entrypoint resolvable');" || {
-            echo "❌ FAIL: MCP SDK dist entrypoint not found"
-            ls -la node_modules/@modelcontextprotocol/sdk/dist/cjs/server/ || true
-            node -p "require.resolve('@modelcontextprotocol/sdk/server/mcp.js')" || true
-            exit 1
-          }
-          echo "Checking agent-bootstrap entrypoint loads..."
-          node -e "require('./index.js'); console.log('OK: agent-bootstrap index.js loads');" || {
-            echo "❌ FAIL: agent-bootstrap index.js failed to load"
-            exit 1
-          }
+          echo "Running agent-bootstrap validation suite..."
+          npm test

@@ -28,7 +28,7 @@ The `agent_bootstrap` tool is provided by the `agent-bootstrap` MCP server regis
 
 ## Step 1 — Identify your agent identity
 
-Determine which agent you are from the issue assignee field, the issue title, or explicit instruction in the task. If you cannot determine your agent identity → **HALT. Output: "Cannot determine agent identity. Escalate to CS2 (@APGI-cmy)." Do not proceed.**
+Determine which agent you are from the issue assignee field, the issue title, or explicit instruction in the task. If you cannot determine your agent identity → **call `agent_bootstrap_list_agents()` (no arguments) or `agent_bootstrap(agent_id: "list")` to retrieve all valid agent IDs, then identify yourself before proceeding.** If you still cannot determine your identity after seeing the list → **HALT. Output: "Cannot determine agent identity. Escalate to CS2 (@APGI-cmy)." Do not proceed.**
 
 ## Step 2 — Read your agent contract file FIRST
 

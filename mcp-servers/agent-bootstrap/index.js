@@ -2,12 +2,15 @@
 /**
  * agent-bootstrap MCP Server
  *
- * Provides a single tool: `agent_bootstrap`
+ * Provides two tools:
+ *   - `agent_bootstrap`            — load an agent contract (REQUIRED FIRST CALL)
+ *   - `agent_bootstrap_list_agents` — list all valid governed agent IDs
  *
- * ⚠️ CALL THIS FIRST. Skipping is a GOV-BREACH-AIMC-W5-002 POLC violation.
+ * ⚠️ CALL `agent_bootstrap` FIRST. Skipping is a GOV-BREACH-AIMC-W5-002 POLC violation.
  *
- * Every governed agent MUST call this tool as their absolute first action in
+ * Every governed agent MUST call `agent_bootstrap` as their absolute first action in
  * every session, before any repo file read, issue body read, or other operation.
+ * If you cannot determine your agent_id, call `agent_bootstrap_list_agents` first.
  */
 
 "use strict";
@@ -56,6 +59,8 @@ server.tool(
   "operation. Provide your agent_id (from the issue assignee field, issue title, or " +
   "explicit task instruction). The tool returns your full contract file contents, which " +
   "you must read and execute Phase 1 of before proceeding.\n\n" +
+  "Pass agent_id=\"list\" to return all valid agent IDs without loading a contract " +
+  "(use this when you cannot determine your identity).\n\n" +
   "Valid agent IDs: " + VALID_AGENT_IDS,
   {
     agent_id: z
@@ -63,7 +68,8 @@ server.tool(
       .describe(
         `Your agent identity. Must be one of the ${Object.keys(AGENT_CONTRACT_PATHS).length} governed agent IDs listed in ` +
         ".github/copilot-instructions.md. Determine this from the issue assignee, " +
-        "issue title, or explicit instruction before calling this tool."
+        "issue title, or explicit instruction before calling this tool. " +
+        "Pass agent_id=\"list\" to retrieve all valid agent IDs if you cannot determine your identity."
       ),
   },
   async ({ agent_id }) => {
@@ -78,10 +84,30 @@ server.tool(
               "HALT: 'agent_id' is required but was empty.\n\n" +
               "Determine your agent identity from the issue assignee field, issue title, or " +
               "explicit task instruction, then call agent_bootstrap again with a valid agent_id.\n\n" +
+              "If you cannot determine your identity, call agent_bootstrap(agent_id: \"list\") " +
+              "or use the agent_bootstrap_list_agents tool.\n\n" +
               "Valid agent IDs: " + VALID_AGENT_IDS,
           },
         ],
         isError: true,
+      };
+    }
+
+    // Special mode: return the list of valid agent IDs without loading a contract.
+    if (agentId === "list") {
+      return {
+        content: [
+          {
+            type: "text",
+            text:
+              "# Valid governed agent IDs\n\n" +
+              "Pass one of these as agent_id to load your contract:\n\n" +
+              Object.keys(AGENT_CONTRACT_PATHS)
+                .sort()
+                .map((id) => `- ${id}`)
+                .join("\n"),
+          },
+        ],
       };
     }
 
@@ -94,6 +120,7 @@ server.tool(
             text:
               `HALT: Unrecognized agent_id '${agentId}'.\n\n` +
               "Cannot determine contract file. Escalate to CS2 (@APGI-cmy). Do not proceed.\n\n" +
+              "Call agent_bootstrap(agent_id: \"list\") or agent_bootstrap_list_agents to see valid IDs.\n\n" +
               "Valid agent IDs: " + VALID_AGENT_IDS,
           },
         ],
@@ -131,6 +158,32 @@ server.tool(
             `⚠️ You MUST read this contract in full and complete Phase 1 before any other action.\n\n` +
             `---\n\n` +
             contractContents,
+        },
+      ],
+    };
+  }
+);
+
+// Second tool: convenience listing of all valid governed agent IDs.
+// Useful when agent identity cannot be determined before the first tool call.
+server.tool(
+  "agent_bootstrap_list_agents",
+  "Returns the list of all valid governed agent IDs registered in this repository. " +
+  "Call this tool if you cannot determine your agent_id before calling agent_bootstrap. " +
+  "Once you know your agent_id, call agent_bootstrap(agent_id: \"<id>\") immediately.",
+  {},
+  async () => {
+    return {
+      content: [
+        {
+          type: "text",
+          text:
+            "# Valid governed agent IDs\n\n" +
+            "Pass one of these as agent_id to agent_bootstrap:\n\n" +
+            Object.keys(AGENT_CONTRACT_PATHS)
+              .sort()
+              .map((id) => `- ${id}`)
+              .join("\n"),
         },
       ],
     };
