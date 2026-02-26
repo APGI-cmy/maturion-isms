@@ -103,6 +103,19 @@ const approveHandlerSource = readFileSync(
   'utf-8',
 );
 
+const useAILearningPatternsSource = readFileSync(
+  repoFile('apps', 'maturion-maturity-legacy', 'src', 'hooks', 'useAILearningPatterns.ts'), 'utf-8');
+const useFeedbackRetrainingWeightsSource = readFileSync(
+  repoFile('apps', 'maturion-maturity-legacy', 'src', 'hooks', 'useFeedbackRetrainingWeights.ts'), 'utf-8');
+const useSmartFeedbackLoopSource = readFileSync(
+  repoFile('apps', 'maturion-maturity-legacy', 'src', 'hooks', 'useSmartFeedbackLoop.ts'), 'utf-8');
+const useLearningModelSnapshotsSource = readFileSync(
+  repoFile('apps', 'maturion-maturity-legacy', 'src', 'hooks', 'useLearningModelSnapshots.ts'), 'utf-8');
+const useLearningRuleConfigurationsSource = readFileSync(
+  repoFile('apps', 'maturion-maturity-legacy', 'src', 'hooks', 'useLearningRuleConfigurations.ts'), 'utf-8');
+const useAIMPSGenerationSource = readFileSync(
+  repoFile('apps', 'maturion-maturity-legacy', 'src', 'hooks', 'useAIMPSGeneration.ts'), 'utf-8');
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -186,5 +199,24 @@ describe('Wave 9.11 — Legacy Escape Remediation', () => {
     expect(err.name).toBe('AIMCBypassError');
     expect(err).toBeInstanceOf(Error);
     expect(err).toBeInstanceOf(AIMCBypassError);
+  });
+
+  it('W9.11-T-008: useAILearningPatterns.ts contains @deprecated JSDoc marker', () => {
+    expect(useAILearningPatternsSource).toContain('@deprecated');
+  });
+  it('W9.11-T-009: useFeedbackRetrainingWeights.ts contains @deprecated JSDoc marker', () => {
+    expect(useFeedbackRetrainingWeightsSource).toContain('@deprecated');
+  });
+  it('W9.11-T-010: useSmartFeedbackLoop.ts contains @deprecated JSDoc marker', () => {
+    expect(useSmartFeedbackLoopSource).toContain('@deprecated');
+  });
+  it('W9.11-T-011: useLearningModelSnapshots.ts contains @deprecated JSDoc marker', () => {
+    expect(useLearningModelSnapshotsSource).toContain('@deprecated');
+  });
+  it('W9.11-T-012: useLearningRuleConfigurations.ts contains @deprecated JSDoc marker', () => {
+    expect(useLearningRuleConfigurationsSource).toContain('@deprecated');
+  });
+  it('W9.11-T-013: useAIMPSGeneration.ts contains @deprecated JSDoc marker', () => {
+    expect(useAIMPSGenerationSource).toContain('@deprecated');
   });
 });
