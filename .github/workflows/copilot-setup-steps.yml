@@ -1,0 +1,36 @@
+name: Copilot Setup Steps
+
+# Runs during the "Prepare Copilot" phase — BEFORE "Start MCP Servers".
+# Adds a preflight self-test for the agent-bootstrap MCP server so that
+# missing dist/ files (MODULE_NOT_FOUND) surface as a clear Node stack trace
+# rather than the generic "MCP error -32000: Connection closed".
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Agent-bootstrap MCP preflight self-test (Linux)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Node: $(node --version)"
+          echo "PWD: $(pwd)"
+          cd mcp-servers/agent-bootstrap
+          echo "Checking MCP SDK dist entrypoint exists..."
+          node -e "require('@modelcontextprotocol/sdk/server/mcp.js'); console.log('OK: MCP SDK dist entrypoint resolvable');" || {
+            echo "❌ FAIL: MCP SDK dist entrypoint not found"
+            ls -la node_modules/@modelcontextprotocol/sdk/dist/cjs/server/ || true
+            node -p "require.resolve('@modelcontextprotocol/sdk/server/mcp.js')" || true
+            exit 1
+          }
+          echo "Checking agent-bootstrap entrypoint loads..."
+          node -e "require('./index.js'); console.log('OK: agent-bootstrap index.js loads');" || {
+            echo "❌ FAIL: agent-bootstrap index.js failed to load"
+            exit 1
+          }
