@@ -230,3 +230,168 @@ describe('EpisodicMemorySchema — 004_ai_episodic_memory.sql', () => {
     },
   );
 });
+
+// =============================================================================
+// Wave 9.1-FU — Gap 1: GDPR/POPIA Soft-Redaction Columns
+// =============================================================================
+//
+// Agent Assignment:    schema-builder (Wave 9.1-FU)
+// Issue Reference:     Wave 9.1-FU (Compliance & Data Integrity Gaps)
+// Contract Phase:      QA-to-Red (Phase 3 — Build Script)
+//
+// These tests MUST FAIL (RED) until Wave 9.1-FU schema-builder adds the
+// soft-redaction columns and partial index to 004_ai_episodic_memory.sql.
+//
+// Requirements:
+//   - redacted_at   TIMESTAMPTZ  nullable  — timestamp of ARC soft-redaction
+//   - redacted_by   TEXT         nullable  — actor (user/agent) performing redaction
+//   - redaction_reason TEXT      nullable  — GDPR/POPIA right-to-erasure rationale
+//   - idx_ai_episodic_events_redacted_at  partial index (WHERE redacted_at IS NOT NULL)
+//
+// Regulatory references: GDPR Art. 17 (right to erasure), POPIA §24 (data subject rights)
+// =============================================================================
+
+describe('EpisodicMemorySchema — Gap 1: GDPR/POPIA Soft-Redaction Columns (Wave 9.1-FU)', () => {
+  // ⚠️  RED GATE — migration must add redacted_at, redacted_by, redaction_reason columns
+
+  it(
+    // GDPR Art. 17 — redacted_at records the moment of ARC soft-redaction
+    'migration contains redacted_at column (TIMESTAMPTZ, nullable)',
+    () => {
+      const sql = readMigrationSQL();
+      expect(
+        sql,
+        'Migration must declare a nullable TIMESTAMPTZ column named redacted_at.\n' +
+          'Wave 9.1-FU schema-builder must add: redacted_at TIMESTAMPTZ',
+      ).toMatch(/\bredacted_at\b\s+TIMESTAMPTZ/i);
+    },
+  );
+
+  it(
+    // GDPR Art. 17 — redacted_by records which actor (user/agent) performed redaction
+    'migration contains redacted_by column (TEXT, nullable)',
+    () => {
+      const sql = readMigrationSQL();
+      expect(
+        sql,
+        'Migration must declare a nullable TEXT column named redacted_by.\n' +
+          'Wave 9.1-FU schema-builder must add: redacted_by TEXT',
+      ).toMatch(/\bredacted_by\b\s+TEXT/i);
+    },
+  );
+
+  it(
+    // POPIA §24 — redaction_reason captures the statutory justification
+    'migration contains redaction_reason column (TEXT, nullable)',
+    () => {
+      const sql = readMigrationSQL();
+      expect(
+        sql,
+        'Migration must declare a nullable TEXT column named redaction_reason.\n' +
+          'Wave 9.1-FU schema-builder must add: redaction_reason TEXT',
+      ).toMatch(/\bredaction_reason\b\s+TEXT/i);
+    },
+  );
+
+  it(
+    // Performance — partial index on redacted_at for efficient ARC redaction queries
+    'migration contains partial index idx_ai_episodic_events_redacted_at (WHERE redacted_at IS NOT NULL)',
+    () => {
+      const sql = readMigrationSQL();
+
+      // Index must exist
+      expect(
+        sql,
+        'Migration must contain: CREATE INDEX IF NOT EXISTS idx_ai_episodic_events_redacted_at\n' +
+          'Wave 9.1-FU schema-builder must add this partial index.',
+      ).toMatch(/CREATE\s+INDEX\s+IF\s+NOT\s+EXISTS\s+idx_ai_episodic_events_redacted_at/i);
+
+      // Must be a partial index (only non-null redacted rows — efficient ARC queries)
+      expect(
+        sql,
+        'idx_ai_episodic_events_redacted_at must be a partial index: WHERE redacted_at IS NOT NULL\n' +
+          'Partial indexes improve performance — only ~1% of rows will have redacted_at set.',
+      ).toMatch(/WHERE\s+redacted_at\s+IS\s+NOT\s+NULL/i);
+    },
+  );
+});
+
+// =============================================================================
+// Wave 9.1-FU — Gap 2: Capability Enum CHECK Constraint
+// =============================================================================
+//
+// Agent Assignment:    schema-builder (Wave 9.1-FU)
+// Issue Reference:     Wave 9.1-FU (Compliance & Data Integrity Gaps)
+// Contract Phase:      QA-to-Red (Phase 3 — Build Script)
+//
+// These tests MUST FAIL (RED) until Wave 9.1-FU schema-builder adds the
+// CHECK constraint on the capability column in 004_ai_episodic_memory.sql.
+//
+// The constraint must enumerate ALL 8 values from the canonical Capability
+// enum in packages/ai-centre/src/types/index.ts:
+//   advisory, analysis, embeddings, document-generation, image-generation,
+//   deep-search, video-generation, algorithm-execution
+//
+// References: APS §4.4 (Capability enum), GRS-003 (capability constraint)
+// =============================================================================
+
+describe('EpisodicMemorySchema — Gap 2: Capability Enum CHECK Constraint (Wave 9.1-FU)', () => {
+  // ⚠️  RED GATE — migration must add CHECK constraint on capability column
+
+  it(
+    // APS §4.4 — capability column must be constrained to valid enum values
+    'migration contains a CHECK constraint on the capability column',
+    () => {
+      const sql = readMigrationSQL();
+
+      // A CHECK constraint must reference the capability column.
+      // Accepted patterns:
+      //   Inline:       capability TEXT NOT NULL CHECK (capability IN (...))
+      //   Table-level:  CONSTRAINT capability_check CHECK (capability IN (...))
+      //   ALTER TABLE:  ALTER TABLE ... ADD CONSTRAINT ... CHECK (capability IN (...))
+      const hasInlineCheck = /\bcapability\b[^,)]*CHECK\s*\(/is.test(sql);
+      const hasTableLevelCheck =
+        /CONSTRAINT\s+\w+\s+CHECK\s*\([^)]*\bcapability\b/is.test(sql);
+      const hasAlterTableCheck =
+        /ALTER\s+TABLE[^;]*ADD\s+CONSTRAINT[^;]*CHECK\s*\([^)]*\bcapability\b/is.test(sql);
+
+      expect(
+        hasInlineCheck || hasTableLevelCheck || hasAlterTableCheck,
+        'Migration must contain a CHECK constraint on the capability column.\n' +
+          'Wave 9.1-FU schema-builder must add one of:\n' +
+          "  • Inline:       capability TEXT NOT NULL CHECK (capability IN ('advisory', ...))\n" +
+          "  • Table-level:  CONSTRAINT capability_check CHECK (capability IN ('advisory', ...))\n" +
+          "  • ALTER TABLE:  ALTER TABLE ai_episodic_events ADD CONSTRAINT ...",
+      ).toBe(true);
+    },
+  );
+
+  it(
+    // APS §4.4 | GRS-003 — all 8 Capability enum values must be in the CHECK constraint
+    'capability CHECK constraint enumerates all 8 valid values from the Capability enum',
+    () => {
+      const sql = readMigrationSQL();
+
+      // All 8 values from Capability enum (packages/ai-centre/src/types/index.ts)
+      const CAPABILITY_VALUES = [
+        'advisory',
+        'analysis',
+        'embeddings',
+        'document-generation',
+        'image-generation',
+        'deep-search',
+        'video-generation',
+        'algorithm-execution',
+      ] as const;
+
+      for (const value of CAPABILITY_VALUES) {
+        expect(
+          sql,
+          `CHECK constraint must include capability value: '${value}'\n` +
+            `Source: Capability enum in packages/ai-centre/src/types/index.ts\n` +
+            `Expected pattern: '${value}' inside a CHECK (capability IN (...)) constraint`,
+        ).toContain(`'${value}'`);
+      }
+    },
+  );
+});
