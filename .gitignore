@@ -11,6 +11,9 @@ coverage/
 dist/
 build/
 out/
+# Un-ignore dist/ inside agent-bootstrap node_modules (needed for @modelcontextprotocol/sdk CJS build)
+!mcp-servers/agent-bootstrap/node_modules/**/dist/
+!mcp-servers/agent-bootstrap/node_modules/**/dist/**
 
 # Misc
 .DS_Store
