@@ -15,7 +15,6 @@
 
 // Primary gateway import — AICentre from the @maturion/ai-centre package barrel.
 // Uses the canonical relative path to the ai-centre package (AIMC gateway pattern).
-// eslint-disable-next-line import/no-internal-modules
 import { AICentre } from '../../../../packages/ai-centre';
 import {
   Capability,
