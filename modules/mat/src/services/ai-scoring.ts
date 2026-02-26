@@ -645,31 +645,34 @@ export function transitionToHalfOpen(breaker: CircuitBreaker): CircuitBreaker {
 
 /**
  * Scores maturity with circuit-breaker awareness.
- * In CLOSED/HALF_OPEN state routes through the configured capability.
- * In OPEN state flags fallback_used so callers can apply manual-scoring logic.
+ * Routes through the configured capability in all states.
+ * `degraded_mode: true` signals the circuit breaker is OPEN — callers should apply
+ * manual-scoring fallback logic. It does NOT mean a different provider model was
+ * selected; model-level fallback is AIMC's internal responsibility.
  * Architecture: §6 — Fallback Mode
  * FRS: FR-031 (AC3, AC4)
  *
  * @param criterionId - Criterion ID
  * @param evidence - Evidence array
  * @param breaker - Circuit breaker state
- * @returns Score result with capability info, or null if circuit is open without fallback
+ * @returns Score result with capability and degraded-mode indicator
  */
 export function scoreWithFallback(
   criterionId: string,
   evidence: Evidence[],
   breaker: CircuitBreaker
-): { score: AIScoreResult | null; capability_used: string; fallback_used: boolean } {
+): { score: AIScoreResult | null; capability_used: string; degraded_mode: boolean } {
   const routing = routeAITask('scoring');
 
   if (breaker.state === 'CLOSED' || breaker.state === 'HALF_OPEN') {
     const score = scoreMaturity(criterionId, evidence, routing.capability);
-    return { score, capability_used: routing.capability, fallback_used: false };
+    return { score, capability_used: routing.capability, degraded_mode: false };
   }
 
   // OPEN state — route through same capability (AIMC handles provider fallback internally)
+  // degraded_mode signals callers that the circuit is open and manual scoring may be needed
   const score = scoreMaturity(criterionId, evidence, routing.capability);
-  return { score, capability_used: routing.capability, fallback_used: true };
+  return { score, capability_used: routing.capability, degraded_mode: true };
 }
 
 /**

@@ -559,9 +559,9 @@ describe('CAT-04: ai services', () => {
     const result1 = scoreWithFallback('crit-001', [evidence], closedBreaker);
     expect(result1.score).not.toBeNull();
     expect(result1.capability_used).toBe(Capability.ANALYSIS);
-    expect(result1.fallback_used).toBe(false);
+    expect(result1.degraded_mode).toBe(false);
 
-    // OPEN state — route through same capability, flagged as fallback mode
+    // OPEN state — route through same capability, flagged as degraded mode (circuit open)
     let openBreaker = createCircuitBreaker();
     for (let i = 0; i < 4; i++) {
       openBreaker = recordCircuitBreakerSuccess(openBreaker);
@@ -572,14 +572,14 @@ describe('CAT-04: ai services', () => {
     const result2 = scoreWithFallback('crit-001', [evidence], openBreaker);
     expect(result2.score).not.toBeNull();
     expect(result2.capability_used).toBe(Capability.ANALYSIS);
-    expect(result2.fallback_used).toBe(true);
+    expect(result2.degraded_mode).toBe(true);
 
     // HALF_OPEN state — route through scoring capability (test request)
     const halfOpenBreaker = transitionToHalfOpen(openBreaker);
     const result3 = scoreWithFallback('crit-001', [evidence], halfOpenBreaker);
     expect(result3.score).not.toBeNull();
     expect(result3.capability_used).toBe(Capability.ANALYSIS);
-    expect(result3.fallback_used).toBe(false);
+    expect(result3.degraded_mode).toBe(false);
   });
 
   it('MAT-T-0077: AI Degraded Mode — Manual Scoring', () => {
