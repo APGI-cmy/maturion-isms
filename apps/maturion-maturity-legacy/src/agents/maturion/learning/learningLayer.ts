@@ -1,4 +1,21 @@
 /**
+ * @deprecated This module is deprecated as of Wave 9.2/9.4 (2026-02-26).
+ *
+ * The self-learning loop has been migrated to AIMC. Use the AIMC-governed
+ * FeedbackPipeline instead:
+ *   `packages/ai-centre/src/feedback/FeedbackPipeline.ts`
+ *
+ * Migration path:
+ *   - Replace `recordLearningPattern()` calls with `FeedbackPipeline.submit()`
+ *   - Replace `submitFeedback()` calls with `FeedbackPipeline.submit()`
+ *   - The new pipeline writes to `ai_feedback_events` (not legacy tables)
+ *   - ARC approval required before knowledge promotion
+ *
+ * AIMC governance reference: ARCH_FREEZE-wave9-self-learning-loop-20260226.md
+ * Authority: CS2 (@APGI-cmy) — Issue #613
+ */
+
+/**
  * Maturion Self-Learning Layer (Human-in-the-Loop)
  * NOT autonomous self-training
  * Stores anonymized interaction patterns and suggests improvements for developer approval
