@@ -546,6 +546,11 @@ Output:
 
 Write `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-NNN-YYYYMMDD.md`
 
+**Artifact Naming Protocol (mandatory):**
+All evidence artifacts must use filenames including both session and wave/subwave IDs, e.g.:
+- `PREHANDOVER-session-058-wave9.1-20260226.md`
+- `PREHANDOVER-session-058-wave7-20260226.md`
+
 Must contain all of the following — no omissions:
 - Session ID, date (YYYY-MM-DD), agent version, triggering issue/PR reference
 - Wave description and builder(s) involved
