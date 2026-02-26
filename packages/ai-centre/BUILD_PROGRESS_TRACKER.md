@@ -2,8 +2,8 @@
 
 **Package**: `packages/ai-centre`  
 **Package Slug**: ai-centre  
-**Last Updated**: 2026-02-24  
-**Updated By**: foreman-v2 (session-wave5-polc-RCA-20260224)
+**Last Updated**: 2026-02-26  
+**Updated By**: foreman-v2 (session-063-wave9.6-9.9-20260226)
 
 ---
 
@@ -129,3 +129,67 @@ The Foreman agent (foreman-v2) violated the POLC boundary by writing Wave 5 prod
 - FetchFn type must be exported from adapter — test imports it directly
 - Empty systemPrompt guard needed in messages construction
 - One-time build discipline achieved: 100% GREEN on first run
+
+---
+
+## Wave 9.6 — Module Integration: xDetect + Risk Management
+
+**Completion Date**: 2026-02-26
+**Session**: session-063-wave9.6-9.9-20260226
+**QP Verdict**: PASS
+**Issue**: maturion-isms#634
+**Architecture Freeze**: `governance/aimc/freezes/ARCH_FREEZE-wave9-track-c-module-integration-20260226.md`
+
+### Deliverables
+
+| Component | Path | Status |
+|-----------|------|--------|
+| xDetect AIMC wiring service | `modules/xdetect/src/services/aimc-wiring.ts` | ✅ DELIVERED |
+| Risk Management AIMC wiring service | `modules/risk-management/src/services/aimc-wiring.ts` | ✅ DELIVERED |
+| xDetect wiring invariant tests (6 tests) | `modules/xdetect/tests/wiring-invariants/wiring-invariants.test.ts` | ✅ GREEN |
+| xDetect AI gateway smoke tests (2 tests) | `modules/xdetect/tests/ai-gateway-smoke/ai-gateway-smoke.test.ts` | ✅ GREEN |
+| Risk Management wiring invariant tests (6 tests) | `modules/risk-management/tests/wiring-invariants/wiring-invariants.test.ts` | ✅ GREEN |
+| Risk Management AI gateway smoke tests (2 tests) | `modules/risk-management/tests/ai-gateway-smoke/ai-gateway-smoke.test.ts` | ✅ GREEN |
+| Wave 9.6 vitest config | `vitest.wave9.6.config.ts` | ✅ DELIVERED |
+
+### Tests Turned GREEN
+
+| Test | Module | Capability | Agent | Result |
+|------|--------|-----------|-------|--------|
+| XDETECT-AIMC-T-001: PersonaLoader regression guard | xDetect | advisory | xdetect-advisor | ✅ GREEN |
+| XDETECT-AIMC-T-002: Wiring service exists | xDetect | advisory | xdetect-advisor | ✅ GREEN |
+| XDETECT-AIMC-T-003: Calls POST /api/ai/request | xDetect | advisory | xdetect-advisor | ✅ GREEN |
+| XDETECT-AIMC-T-004: capability: 'advisory' | xDetect | advisory | xdetect-advisor | ✅ GREEN |
+| XDETECT-AIMC-T-005: agent: 'xdetect-advisor' | xDetect | advisory | xdetect-advisor | ✅ GREEN |
+| XDETECT-AIMC-T-006: No forbidden provider imports | xDetect | advisory | xdetect-advisor | ✅ GREEN |
+| XDETECT-AIMC-T-007: Service is instantiable | xDetect | advisory | xdetect-advisor | ✅ GREEN |
+| XDETECT-AIMC-T-008: Returns AIMC response | xDetect | advisory | xdetect-advisor | ✅ GREEN |
+| RISK-AIMC-T-001: PersonaLoader regression guard | Risk Mgmt | advisory | risk-advisor | ✅ GREEN |
+| RISK-AIMC-T-002: Wiring service exists | Risk Mgmt | advisory | risk-advisor | ✅ GREEN |
+| RISK-AIMC-T-003: Calls POST /api/ai/request | Risk Mgmt | advisory | risk-advisor | ✅ GREEN |
+| RISK-AIMC-T-004: capability: 'advisory' | Risk Mgmt | advisory | risk-advisor | ✅ GREEN |
+| RISK-AIMC-T-005: agent: 'risk-advisor' | Risk Mgmt | advisory | risk-advisor | ✅ GREEN |
+| RISK-AIMC-T-006: No forbidden provider imports | Risk Mgmt | advisory | risk-advisor | ✅ GREEN |
+| RISK-AIMC-T-007: Service is instantiable | Risk Mgmt | advisory | risk-advisor | ✅ GREEN |
+| RISK-AIMC-T-008: Returns AIMC response | Risk Mgmt | advisory | risk-advisor | ✅ GREEN |
+
+**Total Wave 9.6 tests**: 16/16 GREEN
+**Regression (ai-centre)**: 154/154 GREEN (1 pre-existing EpisodicMemoryAdapter — Wave 9.3 RED gate, waived)
+
+### Specialist Advisory Review
+
+**risk-platform-agent** reviewed Risk Management wiring:
+- `capability: 'advisory'` CONFIRMED for Wave 9.6
+- Context fields recommended: `tenant_id` (mandatory), `risk_domain` (routing)
+- Legacy escape risks noted: THREAT_MODEL_ROUTING_SPEC superseded by AIMC; no live code to gate
+- Persona adequacy: ADEQUATE for wiring layer; future enrichment recommended
+
+### AIMC Wiring Pattern Established
+
+```
+capability: 'advisory' | agent: 'xdetect-advisor' → POST /api/ai/request
+capability: 'advisory' | agent: 'risk-advisor'    → POST /api/ai/request
+```
+
+No provider SDK imports in either module. All AI routing through AIMC gateway.
+
