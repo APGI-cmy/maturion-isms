@@ -142,6 +142,38 @@ cat governance/CANON_INVENTORY.json
 
 ---
 
+### Gate 6: Deployment Gate Confirmation (MANDATORY — Issue #622)
+
+**Status**: ✅ PASS | ❌ FAIL | N/A (no deployment-triggering changes)
+**Applicability**: All PRs that modify `modules/mat/frontend/**`, `vercel.json`, or `.github/workflows/deploy-mat-vercel.yml`. Required for any wave whose PR triggers the `deploy-mat-vercel.yml` workflow.
+**Authority**: Issue #622 — CS2 (@APGI-cmy), 2026-02-26
+
+> **BLOCKING RULE (Issue #622)**: A wave is NOT ready for production merge if the deployment
+> gate has not passed or has not been explicitly confirmed N/A with documented justification.
+> Force-merging without a confirmed deployment gate is a governance violation.
+
+**CI Workflow**: `.github/workflows/deploy-mat-vercel.yml`
+
+**Deployment Gate Status**:
+- [ ] Deployment gate: NOT TRIGGERED (governance/docs-only PR — no `modules/mat/frontend/**`, `vercel.json`, or `.github/workflows/deploy-mat-vercel.yml` changes)
+- [ ] Deployment gate: TRIGGERED AND PASSED (confirm CI run link below)
+- [ ] Deployment gate: TRIGGERED AND FAILED — **DO NOT MERGE** — return to builder for fix
+
+**CI Run Reference**: [Link to GitHub Actions run or "N/A — gate not triggered"]
+
+**Exit Code / Status**: [0 = PASS | non-zero = FAIL | N/A]
+
+**Timestamp**: [YYYY-MM-DD HH:MM:SS UTC]
+
+**Justification (if N/A)**:
+```
+[If N/A — state explicitly why deployment gate was not triggered, e.g.:
+"This PR modifies only governance/templates/ and .agent-workspace/ paths.
+No deployment-triggering files changed. Deployment gate: NOT TRIGGERED — N/A."]
+```
+
+---
+
 ## Stop-and-Fix Compliance
 
 **Preexisting Issues Encountered**: [YES | NO]
@@ -270,6 +302,7 @@ Per OPOJD v2.0, all jobs MUST generate improvement suggestions.
 9. ✅ All improvements captured
 10. ✅ Work is production-ready and merge-ready
 11. ✅ No ignorance excuses - all requirements understood and satisfied
+12. ✅ Deployment gate confirmed (PASS or N/A with documented justification) — Issue #622 mandatory check
 
 **Handover Status**: ✅ COMPLETE - Ready for merge
 
