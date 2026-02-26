@@ -1,1 +1,2 @@
 | 2026-02-26 | integration-builder | session-001 | Wave 9.6 source-check pattern should be documented in arch freeze as standard acceptance test template | session-001-20260226.md |
+| 2026-02-26 | qa-builder | session-005-20260226 | Add 'wave_pattern_reference' field to architecture freeze docs pointing to prior wave test pattern files for faster qa-builder orientation. | session-005-20260226.md |
