@@ -4,12 +4,14 @@
  * FRS: FR-072 (Embedded AI Assistant)
  * TRS: TR-072
  *
- * UI scaffold: provides a collapsible chat panel with agent/model selection.
- * Responses are placeholders until AI Gateway integration is wired (future wave).
+ * Wave 7 (AIMC Advisory Integration): handleSend now calls the server-side
+ * AIMC proxy at AI_GATEWAY_URL (/api/ai/request). On AIMC unavailability the
+ * panel shows a graceful error notice (data-testid="ai-assistant-unavailable")
+ * instead of crashing. No provider SDK imports — all AI traffic is server-side.
  */
 import { useState, useRef, useEffect } from 'react';
 import type { AIAgentOption, AIAssistantMessage } from './aiAssistantConfig';
-import { AI_AGENT_OPTIONS } from './aiAssistantConfig';
+import { AI_AGENT_OPTIONS, AI_GATEWAY_URL } from './aiAssistantConfig';
 
 export type { AIAgentOption, AIAssistantMessage };
 export { AI_AGENT_OPTIONS };
@@ -30,6 +32,7 @@ export function EmbeddedAIAssistant({
   const [messages, setMessages] = useState<AIAssistantMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isAiUnavailable, setIsAiUnavailable] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const selectedAgent =
@@ -65,15 +68,48 @@ export function EmbeddedAIAssistant({
     setIsLoading(true);
 
     try {
-      // Placeholder: real implementation will call the AI Gateway (TR-003, TR-040)
+      const response = await fetch(AI_GATEWAY_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          capability: 'advisory',
+          agent: selectedAgent.agentId,
+          input: { text },
+          context: {
+            organisationId: 'default', // TODO: wire real org context
+            sessionId: `session-${Date.now()}`,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        setIsAiUnavailable(true);
+        return;
+      }
+
+      const data = (await response.json()) as Record<string, unknown>;
+
+      // Check for AIMC error response (has errorCode field)
+      if ('errorCode' in data) {
+        setIsAiUnavailable(true);
+        return;
+      }
+
+      // Success — extract advisory text from result
+      const result = data.result as Record<string, unknown> | undefined;
+      const advisoryText =
+        typeof result?.text === 'string' ? result.text : 'Advisory response received.';
+
       const assistantMessage: AIAssistantMessage = {
         id: `msg-${Date.now()}-assistant`,
         role: 'assistant',
-        content: `[${selectedAgent.label}] AI assistance is being configured. The ${selectedAgent.primaryModel} model will process your request: "${text}"`,
+        content: advisoryText,
         timestamp: new Date(),
-        model: selectedAgent.primaryModel,
       };
       setMessages((prev) => [...prev, assistantMessage]);
+      setIsAiUnavailable(false);
+    } catch {
+      setIsAiUnavailable(true);
     } finally {
       setIsLoading(false);
     }
@@ -129,7 +165,7 @@ export function EmbeddedAIAssistant({
             >
               {AI_AGENT_OPTIONS.map((agent) => (
                 <option key={agent.id} value={agent.id}>
-                  {agent.label} ({agent.primaryModel})
+                  {agent.label}
                 </option>
               ))}
             </select>
@@ -157,7 +193,7 @@ export function EmbeddedAIAssistant({
             aria-live="polite"
             data-testid="ai-assistant-messages"
           >
-            {messages.length === 0 && (
+            {messages.length === 0 && !isAiUnavailable && (
               <p className="ai-assistant-empty">
                 Ask the {selectedAgent.label} anything about your audit…
               </p>
@@ -172,13 +208,17 @@ export function EmbeddedAIAssistant({
                   {msg.role === 'user' ? 'You' : selectedAgent.label}
                 </span>
                 <span className="ai-message-content">{msg.content}</span>
-                {msg.model && (
-                  <span className="ai-message-model" aria-label={`Model: ${msg.model}`}>
-                    {msg.model}
-                  </span>
-                )}
               </div>
             ))}
+            {isAiUnavailable && (
+              <div
+                data-testid="ai-assistant-unavailable"
+                className="ai-assistant-unavailable"
+                role="alert"
+              >
+                AI assistant is temporarily unavailable. Please try again later.
+              </div>
+            )}
             {isLoading && (
               <div className="ai-message ai-message--loading" aria-label="AI is thinking">
                 <span className="ai-message-role">{selectedAgent.label}</span>
