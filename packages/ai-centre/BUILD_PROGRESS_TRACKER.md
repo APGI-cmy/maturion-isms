@@ -22,10 +22,40 @@ The `packages/ai-centre` package implements the AIMC (AI Memory Centre) gateway,
 | Wave 3 | Persona, key rotation, telemetry, routing | ✅ COMPLETE | All GREEN | See `build-evidence/wave-3-close-20260224.md` |
 | Wave 4 | MemoryLifecycle, SessionMemoryStore, PersistentMemoryAdapter (in-memory foundation), wave4-cst integration tests | ✅ COMPLETE | 48 tests GREEN | Supabase wiring explicitly deferred to Wave 5 (see `PersistentMemoryAdapter.ts` TODO(Wave5)) |
 | **Wave 5** | Knowledge Centre + Embeddings + RAG — `OpenAIAdapter` embeddings extension (`Capability.EMBEDDINGS`, `/v1/embeddings` API), `MemoryLifecycle` RAG step 4 (`KnowledgeRetriever` DI, GRS-030 context order), pgvector migration (`003_ai_knowledge.sql`) | ✅ **COMPLETE** | 61 tests GREEN (Waves 2–5 full regression suite) | Re-executed per POLC chain (GOV-BREACH-AIMC-W5-001 remediation). qa-builder → schema-builder → api-builder. QP PASS 2026-02-25. |
+| **Wave 9.6** | Module Integration: xDetect + Risk Management — AIMC wiring services, wiring invariant tests, AI gateway smoke tests for both modules | ✅ **COMPLETE** | 16/16 GREEN (+ 154 regression) | QP PASS 2026-02-26. risk-platform-agent advisory. capability: 'advisory'. ARCH-FREEZE-WAVE9-TRACK-C-20260226. |
+| **Wave 9.7** | Module Integration: PIT — `pit-advisor.md` persona + AIMC wiring service, wiring invariant tests, AI gateway smoke tests | ✅ **COMPLETE** | 8/8 GREEN (+ 154 regression) | QP PASS 2026-02-26. pit-specialist advisory. capability: 'analysis'. pit-advisor.md created inline (Wave 9.10 dependency met for PIT). |
+| **Wave 9.8** | Module Integration: Course Crafter + ISMS Navigator — AIMC wiring services, wiring invariant + smoke tests | ⏸ PENDING | — | Awaiting CS2 wave-start. Personas exist (`course-crafter-advisor.md`, `isms-navigator.md`). No Wave 9.10 dependency for 9.8. |
+| **Wave 9.9** | Module Integration: Incident Intelligence + Maturity Roadmap — new personas + AIMC wiring services, tests | ⏸ PENDING | — | **Blocked on Wave 9.10** (personas `incident-intelligence-advisor.md`, `maturity-roadmap-advisor.md` required before wave-start). See Wave 9.10 dependency gate below. |
+| **Wave 9.10** | Persona Lifecycle: 3 missing personas + YAML front-matter on all existing + `AIMC_PERSONA_LIFECYCLE.md` | ⏸ PENDING | — | Partially satisfied: `pit-advisor.md` delivered in Wave 9.7. Remaining: `incident-intelligence-advisor.md`, `maturity-roadmap-advisor.md`. Must complete before Wave 9.9 starts. |
 
 ---
 
-## Governance Deviations
+## Wave 9.10 Dependency Gate
+
+> **⚠️ HARD GATE — Wave 9.9 MUST NOT START until this gate is cleared.**
+
+Wave 9.9 (Incident Intelligence + Maturity Roadmap) depends on Wave 9.10 delivering two new persona files:
+
+| Persona | Path | Required By | Status |
+|---|---|---|---|
+| `incident-intelligence-advisor.md` | `packages/ai-centre/src/agents/incident-intelligence-advisor.md` | Wave 9.9 start | ❌ NOT YET CREATED |
+| `maturity-roadmap-advisor.md` | `packages/ai-centre/src/agents/maturity-roadmap-advisor.md` | Wave 9.9 start | ❌ NOT YET CREATED |
+
+**Wave 9.7 handled PIT persona inline** (per pit-specialist advisory, `pit-advisor.md` was created directly in Wave 9.7 rather than blocking on Wave 9.10). This is acceptable because Wave 9.7 and Wave 9.10 both assign `api-builder` for persona creation and the pit-specialist review was completed within Wave 9.7.
+
+**Wave 9.8 has NO Wave 9.10 dependency** — `course-crafter-advisor.md` and `isms-navigator.md` already exist and are loadable via PersonaLoader. Wave 9.8 can start immediately after Wave 9.7 is CS2-certified complete.
+
+**Execution order**:
+```
+Wave 9.7 ✅ COMPLETE → Wave 9.8 (no 9.10 dependency) → Wave 9.10 remaining personas → Wave 9.9
+                                                          ↓
+                                          incident-intelligence-advisor.md ✅
+                                          maturity-roadmap-advisor.md ✅
+                                                          ↓
+                                                    Wave 9.9 start
+```
+
+*Governance reference: AAWP v0.2.0 §4, Wave 9.9: "Wave 9.10 must have delivered `incident-intelligence-advisor.md` and `maturity-roadmap-advisor.md` before this wave starts."*
 
 ### GOV-BREACH-AIMC-W5-001 — Wave 5 POLC Violation: Foreman Wrote Production Code
 **Date**: 2026-02-24  
