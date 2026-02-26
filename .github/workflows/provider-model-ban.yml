@@ -1,0 +1,39 @@
+---
+name: Ban Direct Provider Model Strings
+
+# Authority: ai-architecture.md v2.0.0, AIMC_STRATEGY.md v1.0.0
+# Purpose: Prevent provider model name strings from appearing in modules/mat/src/
+#          All AI model selection must be handled by the AIMC Gateway exclusively.
+# Parking station: S-009 (session-062-mat-t0028-coupling-cleanup-20260226.md)
+# Implemented: 2026-02-26 (foreman-v2-agent session-063 follow-up)
+
+on:
+  pull_request:
+    paths:
+      - 'modules/mat/src/**'
+
+jobs:
+  provider-model-ban:
+    name: "AIMC Compliance / provider-model-ban"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for banned provider model strings
+        run: |
+          echo "Checking for banned provider model name strings in modules/mat/src/..."
+          echo "Authority: ai-architecture.md v2.0.0, AIMC_STRATEGY.md v1.0.0"
+          echo ""
+          if grep -rn --include="*.ts" --include="*.tsx" \
+            -E '(gpt-[0-9]|whisper-[0-9a-z]|claude-[0-9a-z]|dall-e|o3-mini|o1-mini|o1-preview|text-embedding-)' \
+            modules/mat/src/; then
+            echo ""
+            echo "❌ BANNED: Direct provider model name strings found in modules/mat/src/"
+            echo "All AI model selection must be handled by the AIMC Gateway."
+            echo "MAT must not reference specific provider model names."
+            echo "See: ai-architecture.md v2.0.0 and AIMC_STRATEGY.md v1.0.0"
+            exit 1
+          else
+            echo "✅ No banned provider model strings found."
+          fi

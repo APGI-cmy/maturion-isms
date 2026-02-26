@@ -1666,3 +1666,38 @@ The missing component:
 - Updated: `vercel.json` (functions config + rewrite fix)
 - Updated: `vitest.config.ts` (api test include)
 - All 198 tests GREEN (181 pre-existing + 17 new)
+
+---
+
+## Known Dependency Gap: EpisodicMemoryAdapter Test Failure (Waves 7–9)
+
+**First observed**: Wave 7
+**Confirmed by IAA**: Session-011, 2026-02-26
+**Nature**: Pre-existing failure in `EpisodicMemoryAdapter` test suite. Root cause is an
+incomplete upstream AIMC implementation — the adapter and its tests were scaffolded in
+the AIMC package but the full `ai_episodic_events` schema (Wave 9.1) and
+`EpisodicMemoryAdapter` implementation (Wave 9.3) have not yet been delivered by the
+AIMC build track.
+
+**Impact on MAT**: Zero — MAT does not consume `EpisodicMemoryAdapter` directly.
+Failure is inherited in the combined test run and is NOT introduced by any MAT wave.
+
+**Resolution path**: This gap closes automatically when AIMC Wave 9.1 and Wave 9.3
+are Foreman-certified complete. Foreman MUST verify at that point that this failure
+clears from the regression suite.
+
+**Audit instruction**: Per-wave IAA checks should flag this entry as "known tracked gap"
+and exclude it from per-wave regression penalty until upstream closure is confirmed.
+
+---
+
+## CI Tooling Exception: CodeQL Timeout — Wave 9 (2026-02-26)
+
+**PR**: #633 — MAT Wave 9: AIMC Embeddings/RAG Integration
+**Status**: CodeQL scan timed out (GitHub Actions resource/time limit reached).
+**Resolution**: IAA session-011 completed manual security review. All changed files
+confirmed clean — no new vulnerabilities, no new provider key references, no new
+direct AI provider imports. IAA token: `IAA-WAVE9-20260226-PASS` covers this.
+
+**Follow-up**: Raise a CI configuration task to increase CodeQL timeout budget or
+split the scan job for large TypeScript monorepos. See parking station S-010.
