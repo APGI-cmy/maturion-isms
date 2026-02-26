@@ -1,13 +1,13 @@
 # Governance Artifact Inventory
 
 **Repository**: APGI-cmy/maturion-isms  
-**Last Updated**: 2026-02-24T08:26:39Z  
+**Last Updated**: 2026-02-26T09:00:55Z  
 **Governance Source**: APGI-cmy/maturion-foreman-governance  
 **Canonical Version**: 1.0.0 (CANON_INVENTORY.json)  
-**Layer-Down Session**: align-20260223-145508  
+**Layer-Down Session**: align-20260226-085653  
 **Baseline PR**: #1083 (merged 2026-02-11T11:18:26Z)  
 **Infrastructure Update**: Governance Ripple System v1.0.0 implemented  
-**Latest Ripple PR**: #505 (auto-merged 2026-02-24) — 3 files (canonical commit `4978b0080e6c4b36d748753e2e2e62c45a8a6bc0`)
+**Latest Ripple PR**: #606 (auto-merged 2026-02-26) — 3 files (canonical commit `d9e6c9afb89d2252d51831871badcbebeaeccaa3`)
 
 ---
 
@@ -17,7 +17,7 @@ This inventory tracks all governance artifacts layered down from the canonical g
 
 - **Total PUBLIC_API Canons Layered**: 107 ✅ (102 baseline + FINAL_COMPLETE_WAVE_TEST_PROTOCOL.md via PR #456 + AIMC_STRATEGY.md via PR #441 + PRE_BUILD_REALITY_CHECK_CANON.md via PRs #473-475 + UNIVERSAL_FAIL_ONLY_ONCE_POLICY.md via PRs #503-505)
 - **Total Governance Infrastructure**: 7 components complete
-- **Last Sync**: 2026-02-24T16:15:28Z (issue `4978b0080e6c` — ripple PRs #503/#504/#505 `4978b0080e6c` 3 files — all confirmed)
+- **Last Sync**: 2026-02-26T09:00:55Z (issue `d9e6c9afb89d` — ripple PRs #604/#605/#606 `d9e6c9afb89d` 3 files — all confirmed)
 - **Alignment Status**: FULLY COMPLIANT (All 7 ripple components implemented)
 - **Evidence Log**: `.agent-admin/governance/ripple-log.json`
 - **Drift Detection**: Automated (hourly schedule + event-driven)
@@ -113,6 +113,11 @@ All PUBLIC_API canon files have been successfully layered down to their respecti
 - `governance/canon/PRE_BUILD_REALITY_CHECK_CANON.md` v1.0.0 — SHA256: `0e3296398d33d95ea56ee944b4ade17c60bd93dd2e0885f32f5d15e725ee49cd`
 - Drift report: `.agent-admin/governance/drift-report-align-20260223-145443.md`
 - Referenced by: `governance/canon/PRE_BUILD_REALITY_CHECK_CANON.md` — applies to all modules (MAT, ROADMAP, PIT, AIMC, RADAM)
+
+**PLATFORM_AI_REQUIREMENTS_CHECKLIST Update** (updated 2026-02-26 via canonical commit `d9e6c9afb89d2252d51831871badcbebeaeccaa3`, ripple PRs #604/#605/#606):
+- `governance/checklists/PLATFORM_AI_REQUIREMENTS_CHECKLIST.md` v1.0.0 — SHA256: `54043b8a8eb00715a07bf97f3e68d675019aa3750d1af49a2b8cf0f1452ad37f`
+- Drift report: `.agent-admin/governance/drift-report-align-20260226-085653.md`
+- Referenced by: `governance/canon/APP_STARTUP_REQUIREMENTS_DECLARATION.md`, `governance/memory/canonical-lessons/LL-031_platform_ai_requirements_omission.md`
 
 For detailed file list with checksums, see: `.agent-admin/sessions/governance-liaison/liaison-20260211-131419_alignment.log`
 
