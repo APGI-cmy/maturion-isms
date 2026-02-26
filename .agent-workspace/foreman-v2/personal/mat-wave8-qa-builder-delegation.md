@@ -56,7 +56,7 @@ same file-existence checks, same import checks.
 | MAT-T-AIMC-012 | `analysis-service.ts` exports `parseCriteriaDocument` function | RED — file does not exist yet |
 | MAT-T-AIMC-013 | `analysis-service.ts` exports `scoreMaturity` function | RED — file does not exist yet |
 | MAT-T-AIMC-014 | `analysis-service.ts` imports from `@maturion/ai-centre` or relative ai-centre path (AICentre gateway) — no direct OpenAI/GPT imports | RED — file does not exist yet |
-| MAT-T-AIMC-015 | `criteria-management.ts` does NOT contain hardcoded model names (`gpt-4-turbo`, `gpt-4o-mini`, `whisper-1`) | RED — model names present in routing table at lines ~349–355 |
+| MAT-T-AIMC-015 | `criteria-management.ts` does NOT contain hardcoded model names (`gpt-4-turbo`, `gpt-4o-mini`, `whisper-1`) | GREEN — regression guard (criteria-management.ts is already clean; model names reside in ai-scoring.ts, not here) |
 | MAT-T-AIMC-016 | `ai-scoring.ts` does NOT contain hardcoded model names (`gpt-4-turbo`, `gpt-4o-mini`) | RED — model names present in ai-scoring.ts |
 | MAT-T-AIMC-017 | No direct provider SDK imports (`openai`, `@anthropic-ai/*`, `@mistralai/*`) in MAT src files | GREEN — regression guard (currently passes) |
 | MAT-T-AIMC-018 | `modules/mat/.env.example` does NOT contain `OPENAI_API_KEY` or raw model key variables | GREEN — regression guard (Wave 7 already cleaned this) |
@@ -83,14 +83,14 @@ FAIL  modules/mat/tests/aimc-analysis/aimc-analysis.test.ts
   MAT-T-AIMC-012 ❌ FAIL — analysis-service.ts does not exist
   MAT-T-AIMC-013 ❌ FAIL — analysis-service.ts does not exist
   MAT-T-AIMC-014 ❌ FAIL — analysis-service.ts does not exist
-  MAT-T-AIMC-015 ❌ FAIL — gpt-4-turbo found in criteria-management.ts
+  MAT-T-AIMC-015 ✅ PASS — regression guard (criteria-management.ts already clean)
   MAT-T-AIMC-016 ❌ FAIL — gpt-4-turbo found in ai-scoring.ts
   MAT-T-AIMC-017 ✅ PASS — regression guard (no direct SDK imports)
   MAT-T-AIMC-018 ✅ PASS — regression guard (.env.example clean)
   MAT-T-AIMC-019 ❌ FAIL — Wave 8 entry says BLOCKED (RED — expected pre-implementation)
   MAT-T-AIMC-020 ❌ FAIL — analysis-service.ts does not exist
 
-8 failing, 2 passing — RED gate confirmed
+7 failing, 3 passing — RED gate confirmed
 ```
 
 All prior Wave 1–7 tests (modules/mat/tests/) MUST remain GREEN (no regressions).
