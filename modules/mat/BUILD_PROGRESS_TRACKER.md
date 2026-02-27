@@ -1701,3 +1701,240 @@ direct AI provider imports. IAA token: `IAA-WAVE9-20260226-PASS` covers this.
 
 **Follow-up**: Raise a CI configuration task to increase CodeQL timeout budget or
 split the scan job for large TypeScript monorepos. See parking station S-010.
+
+---
+
+## Wave 6 Final — Post-AIMC FCWT, LDCS Canonical Seed, Production Deployment, QAP Evaluation and RCA Addendum
+
+**Date**: 2026-02-27
+**Foreman Session**: session-064-20260227
+**Triggering Issue**: APGI-cmy/maturion-isms#653 (supersedes #452)
+**Gap Remediation Track**: APGI-cmy/maturion-isms#651
+**Authority**: CS2 (Johan Ras / @APGI-cmy)
+
+---
+
+### Phase 1: Final Complete Wave Test (FCWT)
+
+**FCWT Result**: PASS (with 1 known dependency gap — see below)
+
+| Metric | Value |
+|---|---|
+| Total tests GREEN | 332 |
+| Total tests FAILING | 0 (MAT-owned) |
+| Known dependency gap failures | EpisodicMemoryAdapter (upstream AIMC — pre-existing, zero MAT impact) |
+| New regressions introduced | 0 |
+| Waves covered | 0, 1, 2, 3, 4, 5, 5.5, 5.6, 6, 7, 8, 9 |
+| Test evidence source | session-063-mat-wave9-20260226 (api-builder delivery, QP PASS) |
+
+**Coverage summary**:
+- Wave 0–4: Core schema, data layer, offline sync, reporting — all GREEN
+- Wave 5/5.5/5.6: Frontend assembly, wiring, gap remediation — all GREEN
+- Wave 6: Deployment & Commissioning (incl. `api/ai/request.ts` gateway) — all GREEN
+- Wave 7: AIMC Gateway Integration — all GREEN (MAT-T-AIMC-001–010)
+- Wave 8: AIMC Multi-Provider — all GREEN (MAT-T-AIMC-011–020)
+- Wave 9: AIMC Embeddings/RAG Integration — all GREEN (MAT-T-AIMC-021–030)
+
+**Known Dependency Gap (confirmed pre-existing)**:
+`EpisodicMemoryAdapter` test suite failures — upstream AIMC gap, not introduced by MAT.
+First observed Wave 7. Confirmed by IAA session-011. Resolution path: AIMC Waves 9.1 + 9.3
+completion. Tracked in BUILD_PROGRESS_TRACKER "Known Dependency Gap" section above.
+
+---
+
+### Phase 2: LDCS Canonical Seeding
+
+**Standard**: Lucara Diamond Control Standard (LDCS) 2021-11-16
+**Source**: `modules/mat/Lucara_Diamond_Control_Standard_seed_info.md`
+**Status**: DOMAIN INVENTORY COMPLETE — WORKFLOW-LEVEL SEEDING PENDING
+
+The LDCS defines 25 Minimum Performance Standards (MPS) across 5 governance domains:
+
+| Domain | MPS Range | Standards |
+|---|---|---|
+| Leadership & Governance | MPS 1–5 | Leadership, Chain of Custody, Separation of Duties, Risk Management, Legal & Regulatory |
+| Process Integrity | MPS 6–11 | Diamond Value Management, Process Control, Maintenance, Management of Change, Sales & Auction, Trading Operations |
+| People & Culture | MPS 12–15 | Human Rights & Community, Reliable People, Engagement & Communication, Continuous Improvement |
+| Protection | MPS 16–21 | Physical Security, Technical Systems, Security Operations, Product Shipment, Surveillance & Analysis, Resilience & Recovery |
+| Proof | MPS 22–25 | Documentation & Metrics, Investigations, Audits & Review, Intelligence |
+
+**Seeding workflow**: LDCS MPS hierarchy and criteria structures must be seeded into the
+Supabase `domains`, `mps`, and `criteria` tables via the mat-specialist / criteria-generator-agent
+workflow. This requires live Supabase access and is a mat-specialist function.
+
+**Seeding status**: The LDCS domain structure is fully documented. Actual database seeding
+(INSERT operations via Supabase client) is flagged for mat-specialist execution post
+production deployment verification. Partial seeding evidence (if any) from prior sessions
+is recorded in the criteria-generator-agent workspace.
+
+**Gap**: No evidence of complete LDCS seed execution in the Supabase production instance
+as of 2026-02-27. This is a P2 gap to be addressed by mat-specialist in issue #651.
+
+---
+
+### Phase 3: Production Deployment Status
+
+**Platform**: Vercel (SPA + serverless functions) + Supabase (database + auth + storage)
+**Deployment workflow**: `.github/workflows/deploy-mat-vercel.yml`
+**Serverless API gateway**: `api/ai/request.ts` — `POST /api/ai/request` (delivered Wave 6 RCA)
+
+**Infrastructure checklist**:
+
+| Component | Status |
+|---|---|
+| Vercel SPA deployment | ✅ Workflow configured (deploy-mat-vercel.yml) |
+| Vercel environment variables | ✅ Provisioned (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_API_BASE_URL, OPENAI_API_KEY, GITHUB_TOKEN) |
+| Supabase project | ✅ Provisioned (URL + anon key in Vercel env) |
+| Serverless API gateway | ✅ `api/ai/request.ts` delivered and tested (17 tests GREEN) |
+| `vercel.json` configuration | ✅ Functions config + SPA rewrite (negative-lookahead for `/api/`) |
+| `vitest.config.ts` api include | ✅ `api/**/*.test.ts` added |
+| Repository secrets | ✅ MATURION_BOT_TOKEN, OPENAI_API_KEY, VERCEL_ORG_ID, VERCEL_PROJECT_ID, VERCEL_TOKEN, VITE_API_BASE_URL, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY configured |
+| Live health verification | ⚠️ PENDING — requires post-merge CI/CD run and HTTP health check |
+
+**Deployment note**: The deployment CI/CD workflow triggers on merge to `main`. Live health
+verification (HTTP 200 from production URL, Supabase connectivity check) requires the PR
+to be merged and the workflow to complete. CS2 must verify live instance after merge.
+
+**Secret naming**: All secrets use UPPERCASE convention per Wave 6 learning (LL-SECRET-001).
+See "Secret Key Naming Convention" in Notes and Observations above.
+
+---
+
+### Phase 4: QA Professor (QAP) Evaluation
+
+**QAP Verdict**: CONDITIONAL PASS
+**Condition**: 5 post-AIMC gaps identified from audit. All are forward-looking AIMC Wave 9
+subwave gaps — none constitute regressions from the Wave 6 baseline.
+
+**QAP findings** (from post-AIMC audit, issue #653 attachment):
+
+| Priority | Audit Gap | Targeted Waves | Remediation Issue |
+|---|---|---|---|
+| P1 | Self-Learning Loop — legacy implementation not migrated to AIMC | 9.2, 9.4, 9.11 | #651 |
+| P1 | Module Integration Layer — 7 of 8 modules not wired to AIMC gateway | 9.6, 9.7, 9.8, 9.9 | #651 |
+| P2 | Episodic Memory (Tier 3) — not implemented | 9.1, 9.3 | #651 |
+| P2 | Knowledge Base Inventory and ARC Approval Protocol — not documented | 9.2, 9.5 | #651 |
+| P3 | Persona Lifecycle — missing personas, no versioning protocol | 9.10 | #651 |
+
+**Assessment**:
+- All P1/P2/P3 gaps are AIMC Wave 9 subwave scope — they were identified as Wave 9 requirements
+  and are tracked in the gap remediation issue #651.
+- Wave 9 (session-063) delivered: `embedding-service.ts`, `Capability.RAG` — these are the
+  Wave 9 RAG/Embeddings foundation. The remaining 9.x subwaves are planned in #651.
+- The existing 332-test GREEN suite confirms all delivered functionality is stable.
+- QAP CONDITIONAL PASS: Core MAT functionality is delivered and tested. AIMC Wave 9.x
+  subwaves are a known forward-looking gap, not a regression. Remediation tracked in #651.
+
+---
+
+### Phase 5: RCA Addendum — Post-AIMC Gap Analysis
+
+#### RCA-001: Self-Learning Loop — Legacy Not Migrated to AIMC
+
+**Gap**: The legacy self-learning loop implementation in the MAT module was not migrated
+to use the AIMC Gateway pattern. References to direct provider implementations persist.
+
+**Root Cause**: Wave 9 scope was defined to deliver foundational AIMC integrations
+(Embeddings/RAG, gateway wiring, multi-provider). The self-learning loop migration
+(Waves 9.2, 9.4, 9.11) was planned but not yet executed.
+
+**Corrective Action**: Addressed in issue #651. mat-specialist to deliver Waves 9.2, 9.4,
+9.11 with full AIMC migration of self-learning loop components.
+
+**Lesson Learned (LL-MAT-SL-001)**: When a new architectural pattern (AIMC Gateway) is
+adopted, all legacy implementations must be explicitly enumerated and assigned to a migration
+wave. A "legacy migration inventory" step should be added to the Wave 9 planning gate.
+
+---
+
+#### RCA-002: Module Integration Layer — 7/8 Modules Not Wired to AIMC Gateway
+
+**Gap**: Of 8 MAT modules requiring AIMC gateway integration, only 1 (embedding service,
+Wave 9 RAG) is wired. The remaining 7 modules (criteria assessment, scoring, reporting,
+transcription, chat assistant, audit evidence, recommendation engine) are unwired.
+
+**Root Cause**: Wave 9 scope prioritised the AIMC foundation layer (types, adapters,
+embedding service). Module-by-module wiring (Waves 9.6–9.9) was planned for subsequent
+sessions but not delivered before this FCWT.
+
+**Corrective Action**: Addressed in issue #651. api-builder and integration-builder to
+deliver Waves 9.6, 9.7, 9.8, 9.9 in sequence, each wiring 1–2 modules to the AIMC gateway.
+
+**Lesson Learned (LL-MAT-MI-001)**: A Module Integration Layer completion gate should be
+added to the Wave 9 PREHANDOVER proof: "Wired modules: N/8 — COMPLETE when N=8." This
+prevents wave closure without full integration coverage.
+
+---
+
+#### RCA-003: Episodic Memory (Tier 3) — Not Implemented
+
+**Gap**: The AIMC Episodic Memory (Tier 3) adapter and schema (`ai_episodic_events` table)
+have not been delivered. This is the pre-existing `EpisodicMemoryAdapter` dependency gap
+tracked in the Known Dependency Gap section above.
+
+**Root Cause**: Waves 9.1 (schema) and 9.3 (adapter implementation) are part of the AIMC
+build track. The AIMC build track and MAT build track have an explicit dependency —
+MAT cannot deliver Episodic Memory until the AIMC schema and adapter are ready.
+
+**Corrective Action**: Addressed in issue #651. AIMC build track must deliver Waves 9.1 + 9.3
+before MAT can wire Episodic Memory. Foreman to gate MAT Wave 9.3 wiring on AIMC delivery.
+
+**Lesson Learned (LL-MAT-EM-001)**: Cross-track dependencies must be explicitly tracked in
+the BUILD_PROGRESS_TRACKER with a "BLOCKED ON: [upstream track + wave]" status line.
+
+---
+
+#### RCA-004: Knowledge Base Inventory and ARC Approval Protocol — Not Documented
+
+**Gap**: The AIMC Knowledge Base inventory (list of all knowledge sources, their provenance,
+approval status, and refresh protocol) and the ARC (Approval, Review, Currency) protocol
+for knowledge base updates are not documented.
+
+**Root Cause**: Waves 9.2 and 9.5 address Knowledge Base structure and ARC protocol. These
+were identified in the AIMC architecture but documentation deliverables were not included
+in the Wave 9 scope delivered in session-063.
+
+**Corrective Action**: Addressed in issue #651. mat-specialist to produce the Knowledge Base
+inventory document and ARC Approval Protocol as part of Waves 9.2/9.5 remediation.
+
+**Lesson Learned (LL-MAT-KB-001)**: Governance documentation (inventories, approval protocols)
+must be explicitly listed as AAWP deliverables — not implied by architectural references.
+"Architecture references X" ≠ "Documentation of X exists."
+
+---
+
+#### RCA-005: Persona Lifecycle — Missing Personas, No Versioning Protocol
+
+**Gap**: Wave 9.10 (Persona Lifecycle) is incomplete. The `incident-intelligence` and
+`maturity-roadmap` personas are missing. No persona versioning protocol exists.
+
+**Root Cause**: Wave 9.10 was not delivered in session-063. The session-063 parking station
+note flagged: "Wave 9.10 remaining personas (incident-intelligence, maturity-roadmap) block
+Wave 9.9 — issue dedicated task immediately after Wave 9.8 closes." The dedicated issue was
+not created before this FCWT session.
+
+**Corrective Action**: Addressed in issue #651. ui-builder to deliver missing personas
+(incident-intelligence, maturity-roadmap) and a formal persona versioning protocol document
+as part of Wave 9.10 remediation.
+
+**Lesson Learned (LL-MAT-PL-001)**: When a parking station note flags "issue dedicated task
+immediately," Foreman MUST create that issue before closing the wave session. Deferred task
+creation leads to gap accumulation. Implement: parking station entries tagged `[IMMEDIATE]`
+must be resolved within the same session.
+
+---
+
+### Continuous Improvement — Self-Learning Feedback
+
+The following items are registered for agent self-learning and future wave planning:
+
+| ID | Learning | Target Agent |
+|---|---|---|
+| LL-MAT-SL-001 | Legacy migration inventory required when adopting new arch pattern | foreman-v2, mat-specialist |
+| LL-MAT-MI-001 | Module Integration Layer completion gate in PREHANDOVER proof | foreman-v2, api-builder |
+| LL-MAT-EM-001 | Cross-track dependency tracking with BLOCKED-ON status in tracker | foreman-v2 |
+| LL-MAT-KB-001 | Governance docs must be explicit AAWP deliverables — not implied | foreman-v2, mat-specialist |
+| LL-MAT-PL-001 | Parking station [IMMEDIATE] items must be resolved in-session | foreman-v2 |
+
+**Session reference**: session-064-mat-wave6-final-20260227.md
+**Updated by**: foreman-v2-agent (session-064-20260227)
