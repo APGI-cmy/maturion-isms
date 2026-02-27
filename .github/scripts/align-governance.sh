@@ -110,6 +110,9 @@ if ! git clone "https://github.com/${CANONICAL_REPO}.git" "$CANONICAL_DIR" --qui
 fi
 echo -e "${GREEN}✓ Canonical governance fetched${NC}"
 
+# Unset URL rewrite to prevent token propagation beyond the clone
+git config --global --unset "url.https://x-access-token:${MATURION_BOT_TOKEN}@github.com/.insteadOf" || true
+
 # Get canonical commit hash
 CANONICAL_COMMIT=$(cd "$CANONICAL_DIR" && git rev-parse HEAD)
 echo "Canonical commit: $CANONICAL_COMMIT"
