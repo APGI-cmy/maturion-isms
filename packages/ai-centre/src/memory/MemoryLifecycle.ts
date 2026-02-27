@@ -16,25 +16,33 @@ import type {
   PersistentMemoryAdapter,
   PersistedMemoryEntry,
   KnowledgeRetriever,
+  EpisodicMemoryAdapter,
 } from '../types/index.js';
 
 export interface MemoryLifecycleDeps {
   sessionStore: SessionMemoryStore;
   persistentAdapter: PersistentMemoryAdapter;
   knowledgeRetriever?: KnowledgeRetriever;
+  episodicAdapter?: EpisodicMemoryAdapter;
 }
 
 const DEFAULT_PRUNE_TOKEN_BUDGET = 2000;
+/** Maximum character length for episodic summary snippets (APS §7.6 / Wave 9.3). */
+const MAX_EPISODIC_SUMMARY_LENGTH = 200;
+/** Canonical agent ID for AIMC-originated episodic events (APS §7.6 / Wave 9.3). */
+const AIMC_AGENT_ID = 'aimc';
 
 export class MemoryLifecycle implements IMemoryLifecycle {
   private readonly sessionStore: SessionMemoryStore;
   private readonly persistentAdapter: PersistentMemoryAdapter;
   private readonly knowledgeRetriever?: KnowledgeRetriever;
+  private readonly episodicAdapter?: EpisodicMemoryAdapter;
 
   constructor(deps: MemoryLifecycleDeps) {
     this.sessionStore = deps.sessionStore;
     this.persistentAdapter = deps.persistentAdapter;
     this.knowledgeRetriever = deps.knowledgeRetriever;
+    this.episodicAdapter = deps.episodicAdapter;
   }
 
   async assembleContextWindow(
@@ -128,6 +136,22 @@ export class MemoryLifecycle implements IMemoryLifecycle {
         timestamp: now + 1,
       }),
     ]);
+
+    // Fire-and-forget episodic event recording (Wave 9.3 / GRS-009)
+    if (this.episodicAdapter) {
+      this.episodicAdapter
+        .record({
+          organisationId: params.request.context.organisationId,
+          sessionId: sessionId,
+          agentId: AIMC_AGENT_ID,
+          eventType: 'capability_invocation',
+          capability: params.request.capability,
+          summary: inputText.slice(0, MAX_EPISODIC_SUMMARY_LENGTH),
+        })
+        .catch(() => {
+          // Non-blocking: episodic recording failure must not break recordTurn()
+        });
+    }
   }
 
   pruneSession(sessionId: string): void {
