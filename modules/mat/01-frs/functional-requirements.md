@@ -1374,7 +1374,106 @@ cannot be signed off until AIMC Wave 3 is confirmed GREEN by POLC.
 
 ---
 
+### FR-073: AI Gateway Persona Loading
 
+**Priority**: P0
+**Source**: Issue: [Critical Gap] Complete persistent memory, session, persona, and context handling in AI gateway; AIMC_STRATEGY.md v1.0.0; ai-architecture.md v2.0.0
+**Constitutional Authority**: `AIMC_STRATEGY.md` v1.0.0
+**AIMC Prerequisite**: AIMC Wave 3 (Advisory Gateway) — **COMPLETE**
+
+The AI gateway (`api/ai/request.ts`) MUST load agent personas from the AIMC canonical agent directory when processing requests that include an `agent` field. The null/stub PersonaLoader MUST be replaced with the real `PersonaLoader` implementation from `@maturion/ai-centre`.
+
+**Acceptance Criteria**:
+1. The gateway uses `PersonaLoader` from `@maturion/ai-centre` — no null stub.
+2. When a request includes a valid `agent` field, the corresponding persona Markdown file is loaded and used as the system prompt.
+3. When the persona file does not exist, the gateway returns an appropriate AIMC error response (UNKNOWN_AGENT) — not a 500.
+4. `PersonaLoader.listAvailable()` returns the real set of available personas from the AIMC agent directory.
+5. No direct file-system access in the gateway other than via `PersonaLoader`.
+
+**Edge Cases**:
+- Invalid agent ID (path traversal attempt): `PersonaLoader` rejects with `PersonaNotFoundError`; gateway returns 502 UNKNOWN_AGENT, not 500.
+- Empty agent field: defaults to no system prompt (persona-less request).
+
+---
+
+### FR-074: AI Gateway Session Memory
+
+**Priority**: P1
+**Source**: Issue: [Critical Gap] Complete persistent memory, session, persona, and context handling in AI gateway
+**Constitutional Authority**: `AIMC_STRATEGY.md` v1.0.0
+
+The AI gateway MUST use a real `SessionMemoryStore` implementation (not a null stub) so that memory turns accumulated within a session's request lifecycle are accessible for context retrieval.
+
+**Acceptance Criteria**:
+1. The gateway instantiates `SessionMemoryStore` from `@maturion/ai-centre` — no null stub.
+2. Session memory accumulated via `append()` is retrievable via `getHistory()` within the same request context.
+3. Session memory is scoped per `sessionId` — different sessions do not share history.
+4. Memory is cleared via `clearSession()` when a session ends.
+
+**Edge Cases**:
+- Serverless cold start: each function invocation creates a new `SessionMemoryStore` instance; cross-invocation session persistence is the responsibility of the caller (via `sessionId` and persistent memory).
+- Missing `sessionId` in request context: session memory operates without session scoping (all turns accumulate in the default session).
+
+**Note**: For true cross-invocation session persistence, a Supabase-backed adapter is required (Wave 11 scope). The Wave 10 baseline uses the in-memory `SessionMemoryStore` with documented deferral.
+
+---
+
+### FR-075: AI Gateway Persistent Memory (Wave 10 Baseline)
+
+**Priority**: P1
+**Source**: Issue: [Critical Gap] Complete persistent memory, session, persona, and context handling in AI gateway; Wave 4 Supabase deferral plan
+**Constitutional Authority**: `AIMC_STRATEGY.md` v1.0.0
+
+The AI gateway MUST use a real `PersistentMemoryAdapter` implementation (not a null stub). The Wave 10 baseline uses the in-memory adapter from `@maturion/ai-centre`; Supabase wiring is deferred to Wave 11 per the existing architectural plan.
+
+**Acceptance Criteria**:
+1. The gateway instantiates `PersistentMemoryAdapter` from `@maturion/ai-centre` — no null stub.
+2. `persist()` stores entries in the adapter's backing store.
+3. `retrieve()` returns stored entries filtered by `organisationId` (and optionally `sessionId`).
+4. `pruneExpired()` removes entries past their `expiresAt` timestamp.
+5. The Supabase deferral is documented in the `AI_GATEWAY_MEMORY_RUNBOOK.md` with migration path references.
+
+**Supabase Deferral Notice**: The production-grade Supabase-backed `PersistentMemoryAdapter` (reading from `ai_memory` table per `supabase/migrations/001_ai_memory.sql`) is Wave 11 scope. The Wave 10 in-memory implementation provides correct interface semantics and full test coverage.
+
+---
+
+### FR-076: AI Gateway Health Check Endpoint
+
+**Priority**: P1
+**Source**: Issue: [Critical Gap] Complete persistent memory, session, persona, and context handling in AI gateway
+
+The system MUST expose a health check endpoint at `GET /api/ai/health` that reports the operational status of the AI gateway and its configured adapter integrations.
+
+**Acceptance Criteria**:
+1. `GET /api/ai/health` returns HTTP 200 when the gateway is operational.
+2. Response body is a JSON object with at minimum: `{ "status": "ok", "personaLoader": "...", "sessionMemory": "...", "persistentMemory": "...", "supabaseWiring": "..." }`.
+3. The response indicates the implementation type for each adapter (e.g., `"real"`, `"in_memory"`, `"pending_wave11"`).
+4. Endpoint is accessible without authentication (health checks must not require auth tokens).
+5. Endpoint returns HTTP 503 if any critical dependency is unavailable.
+
+**Edge Cases**:
+- PersonaLoader filesystem unavailable: response includes `"personaLoader": "degraded"` and status `"degraded"`.
+- Non-GET methods: return 405 Method Not Allowed.
+
+---
+
+### FR-077: AI Gateway Memory Architecture Runbook
+
+**Priority**: P2
+**Source**: Issue: [Critical Gap] Complete persistent memory, session, persona, and context handling in AI gateway
+
+Architecture documentation for the AI gateway memory, session, and persona flows MUST be created and maintained as `api/ai/AI_GATEWAY_MEMORY_RUNBOOK.md`.
+
+**Acceptance Criteria**:
+1. Document exists at `api/ai/AI_GATEWAY_MEMORY_RUNBOOK.md`.
+2. Documents the persona loading flow: request → agent field → PersonaLoader → system prompt.
+3. Documents the session memory flow: request → SessionMemoryStore → context → response.
+4. Documents the persistent memory hierarchy: in-memory (Wave 10) → Supabase (Wave 11).
+5. Documents the health check endpoint response schema.
+6. Documents the Supabase deferral with references to `supabase/migrations/001_ai_memory.sql` and the Wave 11 migration path.
+7. Documents edge cases: multi-user concurrency, concurrent persona requests, cold-start session amnesia.
+
+---
 
 The following matrix links each FRS requirement to the source section(s) in the App Description.
 
@@ -1452,6 +1551,11 @@ The following matrix links each FRS requirement to the source section(s) in the 
 | FR-070 | §16.3, §19.7, TRS TR-001, TR-006 | Frontend Application Scaffolding |
 | FR-071 | §2–§12, §16.2, §19.7 | Frontend Application Wiring |
 | FR-072 | §13, LL-031, MANDATORY_CROSS_APP_COMPONENTS.md §13, AIMC_STRATEGY.md v1.0.0 | Embedded AI Assistant (AIMC Advisory Integration — BLOCKED on AIMC Wave 3) |
+| FR-073 | AIMC_STRATEGY.md v1.0.0, ai-architecture.md v2.0.0, Issue: Critical Gap — AI Gateway | AI Gateway Persona Loading |
+| FR-074 | AIMC_STRATEGY.md v1.0.0, Issue: Critical Gap — AI Gateway | AI Gateway Session Memory |
+| FR-075 | AIMC_STRATEGY.md v1.0.0, Wave 4 Supabase deferral, Issue: Critical Gap — AI Gateway | AI Gateway Persistent Memory (Wave 10 Baseline) |
+| FR-076 | Issue: Critical Gap — AI Gateway | AI Gateway Health Check Endpoint |
+| FR-077 | Issue: Critical Gap — AI Gateway | AI Gateway Memory Architecture Runbook |
 
 ---
 
@@ -1459,18 +1563,18 @@ The following matrix links each FRS requirement to the source section(s) in the 
 
 | Priority | Count | Description |
 |----------|-------|-------------|
-| P0 | 46 | Must Have — Core MVP functionality |
-| P1 | 18 | Should Have — Important for launch |
-| P2 | 7 | Nice to Have — Future extensions |
+| P0 | 47 | Must Have — Core MVP functionality |
+| P1 | 21 | Should Have — Important for launch |
+| P2 | 8 | Nice to Have — Future extensions |
 
 ### P0 Requirements (Must Have)
-FR-001 through FR-017, FR-019, FR-020, FR-022 through FR-025, FR-027, FR-028 through FR-030, FR-033 through FR-040, FR-042 through FR-054, FR-062, FR-066, FR-070, FR-071, FR-072
+FR-001 through FR-017, FR-019, FR-020, FR-022 through FR-025, FR-027, FR-028 through FR-030, FR-033 through FR-040, FR-042 through FR-054, FR-062, FR-066, FR-070, FR-071, FR-072, FR-073
 
 ### P1 Requirements (Should Have)
-FR-003, FR-018, FR-021, FR-026, FR-031, FR-032, FR-041, FR-055, FR-059 through FR-061, FR-063 through FR-065, FR-067 through FR-069
+FR-003, FR-018, FR-021, FR-026, FR-031, FR-032, FR-041, FR-055, FR-059 through FR-061, FR-063 through FR-065, FR-067 through FR-069, FR-074, FR-075, FR-076
 
 ### P2 Requirements (Nice to Have)
-FR-056, FR-057, FR-058
+FR-056, FR-057, FR-058, FR-077
 
 ---
 
@@ -1501,6 +1605,7 @@ This FRS is derived from the MAT App Description v1.2 (`modules/mat/00-app-descr
 **Next Stage**: This FRS feeds into the TRS (Technical Requirements Specification) at `modules/mat/01.5-trs/`.
 
 **Change Log**:
+- v1.5.0 (2026-02-27): Added FR-073 through FR-077 (AI Gateway Memory, Persona, Session, Health Check, Runbook) per Issue: [Critical Gap] Complete persistent memory and context handling in AI gateway. FRS extended to 77 requirements. Architecture freeze effective on merge of implementing PR per CS2 directive.
 - v1.4.0 (2026-02-23): Section 8 rewritten to AIMC-compliant capability-based language per `AIMC_STRATEGY.md` v1.0.0. FR-028 (AI Gateway Integration), FR-031 (AI Resilience), FR-032 (AI Invocation Traceability) corrected to remove direct-provider references. Section heading updated to reflect AIMC-delegated governance.
 - v1.3.0 (2026-02-23): Realigned FR-072 to AIMC Gateway pattern per `AIMC_STRATEGY.md` v1.0.0.
   FR-072 now blocked on AIMC Wave 3. Direct provider references removed. Issue #377 superseded.

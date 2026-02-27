@@ -1329,6 +1329,84 @@ POLC/CS2 approval on record. PREHANDOVER proof compiled. Zero direct provider re
 
 ---
 
+### 2.11 Wave 10 — AI Gateway Memory Wiring and Health Check (Gap Remediation)
+
+> **✅ STATUS: AUTHORIZED — CS2 wave-start authorization via Issue: [Critical Gap] Complete persistent
+> memory, session, persona, and context handling in AI gateway. Architecture freeze effective on merge
+> of implementing PR per CS2 directive 2026-02-27.**
+
+**Objective**: Replace all null/stub collaborators in `api/ai/request.ts` with real implementations
+from `@maturion/ai-centre`. Add a health check endpoint at `GET /api/ai/health`. Document the
+memory architecture in `api/ai/AI_GATEWAY_MEMORY_RUNBOOK.md`.
+
+**Architecture Reference**: `modules/mat/02-architecture/ai-architecture.md` v3.0.0 §9–§11
+
+**AIMC Prerequisites**:
+- AIMC Wave 2 (PersonaLoader, SessionMemoryStore): ✅ COMPLETE
+- AIMC Wave 4 (PersistentMemoryAdapter in-memory baseline): ✅ COMPLETE
+- AIMC Wave 5 (Supabase wiring — `ai_memory` table): ✅ MIGRATION EXISTS; adapter wiring deferred to Wave 11
+
+| Field | Value |
+|-------|-------|
+| **Status** | AUTHORIZED — Wave 10 |
+| **Builder** | qa-builder (RED gate tests) → api-builder (implementation) |
+| **Dependencies** | AIMC Waves 2, 4 complete; `api/ai/request.ts` baseline (Wave 6) exists |
+| **FRS Refs** | FR-073, FR-074, FR-075, FR-076, FR-077 |
+| **TRS Refs** | TR-073, TR-074, TR-075, TR-076, TR-077 |
+| **Tests** | T-073-1, T-073-2, T-074-1, T-074-2, T-075-1, T-075-2, T-076-1–T-076-4 (RED before impl, GREEN after) |
+
+#### Task 10.1: RED Gate Tests (qa-builder)
+
+**Builder**: qa-builder
+**Deliverables**:
+1. Additional tests in `api/ai/request.test.ts` → `describe('buildAICentre adapters')` block:
+   - T-073-1: `buildPersonaLoader()` returns real `PersonaLoader` instance (not null stub — verify constructor name)
+   - T-073-2: `buildPersonaLoader().listAvailable()` resolves to an array (real directory listing attempt)
+   - T-074-1: `buildSessionMemory()` accumulates turns — `append()` then `getHistory()` returns non-empty
+   - T-074-2: Session memory is not always `[]` after append (null stub behaviour eliminated)
+   - T-075-1: `buildPersistentMemory().persist()` then `retrieve()` returns the stored entry
+   - T-075-2: Persistent memory is not always `[]` after persist (null stub behaviour eliminated)
+2. New test file `api/ai/health.test.ts`:
+   - T-076-1: `GET /api/ai/health` returns HTTP 200
+   - T-076-2: Response body contains `status: 'ok'`
+   - T-076-3: Response body contains `personaLoader` field
+   - T-076-4: Non-GET methods return 405
+
+**Gate**: ALL tests above must be RED (failing) before Task 10.2 begins.
+
+#### Task 10.2: Implementation (api-builder)
+
+**Builder**: api-builder
+**Deliverables**:
+1. `api/ai/request.ts` modifications:
+   - Export `buildPersonaLoader()`, `buildSessionMemory()`, `buildPersistentMemory()` factory functions
+   - Replace `nullPersonaLoader` with `new PersonaLoader()` in `buildAICentre()`
+   - Replace `nullSessionMemory` with `new SessionMemoryStore()` in `buildAICentre()`
+   - Replace `nullPersistentMemory` with `new PersistentMemoryAdapter()` in `buildAICentre()`
+   - Remove all three null stub constant definitions
+2. `api/ai/health.ts` (new file):
+   - `GET /api/ai/health` → 200 + JSON status body (per TR-076 schema)
+   - 405 for non-GET methods
+   - Exported as `createHealthHandler` + default export
+3. `api/ai/AI_GATEWAY_MEMORY_RUNBOOK.md` (new file):
+   - Covers all items per TR-077 constraints
+
+**Gate**: ALL RED gate tests (Task 10.1) turn GREEN. Zero existing tests broken. Zero TypeScript errors.
+
+**Wave 10 Gate**: All T-073 through T-076 tests GREEN. PREHANDOVER proof compiled.
+Zero null stubs in `api/ai/request.ts`. Health check endpoint returns 200. Runbook exists.
+
+#### Wave 11 Dependency Gate
+
+Wave 11 (Supabase Persistent Memory Wiring) MUST NOT start until:
+- Wave 10 is CS2-certified complete
+- Supabase connection string and service role key are provisioned as environment variables
+- `SupabasePersistentMemoryAdapter` is delivered by `schema-builder` + `api-builder`
+
+Wave 11 migration reference: `packages/ai-centre/supabase/migrations/001_ai_memory.sql`
+
+---
+
 These tasks run across all waves and are the responsibility of the qa-builder.
 
 ### QA Validation (All Waves)
