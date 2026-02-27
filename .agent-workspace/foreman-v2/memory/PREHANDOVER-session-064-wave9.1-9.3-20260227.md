@@ -99,9 +99,14 @@ CANON_INVENTORY verified: all 187 entries, no placeholder hashes — CONFIRMED.
 
 ## IAA Audit Token
 
-`iaa_audit_token: PHASE_A_ADVISORY — 2026-02-27`
+`iaa_audit_token: IAA-WAVE9.3-20260227-PASS`
 
-- [x] IAA audit token recorded: PHASE_A_ADVISORY — 2026-02-27
+- [x] IAA audit token recorded: IAA-WAVE9.3-20260227-PASS
+- IAA phase: PHASE_B_BLOCKING (upgraded per CS2, commit c68f7e28)
+- IAA session: session-012-20260227
+- Assurance artifact: `.agent-admin/assurance/assurance-token-652.md`
+- 18/18 checks PASS. 161/161 tests GREEN (independently verified by IAA).
+- 3 advisory findings (non-blocking) — see assurance artifact for detail.
 
 ---
 
