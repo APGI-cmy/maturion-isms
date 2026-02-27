@@ -582,6 +582,26 @@ This tracker aligns with:
 
 ---
 
+## Oversight Records
+
+This section tracks major process oversights identified during the build that have been remediated. Each entry is permanent and must never be removed.
+
+### OVERSIGHT-CI-001 — Automatic Supabase Migrations Missing from CI/CD
+
+| Field | Value |
+|-------|-------|
+| **ID** | OVERSIGHT-CI-001 |
+| **Date Identified** | 2026-02-27 |
+| **Severity** | CRITICAL |
+| **Issue Reference** | maturion-isms#[this issue] |
+| **Root Cause** | Supabase migrations were not applied automatically as part of the deployment workflow. `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_DB_URL`, and Supabase CLI invocation were absent from the original architecture and CI/CD implementation plan. |
+| **Impact** | Live deployments had null or incomplete database schemas. Backend/frontend code relying on DB schema (e.g. `public.audits`) failed. No auditable tracking of schema changes in CI. |
+| **Remediation** | Added `supabase-migrate` job to `.github/workflows/deploy-mat-vercel.yml` (Wave CI-001, 2026-02-27). Both `deploy-preview` and `deploy-production` now depend on `supabase-migrate`. |
+| **Status** | REMEDIATED |
+| **Pillar Mandate** | Automatic migrations MUST be part of every future implementation plan. CI/CD MUST block deploys if DB is not in expected state. Include as Phase 1 preflight/pillar item in all future app/infra build waves. |
+
+---
+
 ## Improvement Points & Deferrals
 
 This section tracks features, improvements, or optimizations identified during the build that are **deferred** to post-v1 or future versions, along with rationale.
@@ -621,6 +641,7 @@ This tracker feeds into the governance learning loop as follows:
 |----------|-------------|-------------|------------|
 | 2026-02-13 | 1.0 | Initial creation with all 8 phases outlined | Foreman Agent |
 | 2026-02-16 | 1.1 | Wave 5 completed: Watchdog & Feedback — 98/98 tests GREEN, registry updated | Foreman Agent |
+| 2026-02-27 | 1.2 | Wave CI-001: Added Supabase migration step to CI/CD (OVERSIGHT-CI-001 remediated). `supabase-migrate` job added to deploy-mat-vercel.yml; deploy jobs now depend on migration success. | foreman-v2-agent |
 
 ---
 
