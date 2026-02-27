@@ -123,3 +123,4 @@
 | 2026-02-27 | foreman-v2-agent | session-066 | [SESSION-END] | FAIL-ONLY-ONCE A-005 update: add IAA false attestation trigger list as incident candidates from IAA session-012 findings | session-066-20260227.md |
 | 2026-02-27 | foreman-v2-agent | session-066 | [SESSION-END] | Zero-tolerance policy active: advisory/non-blocking classifications ABOLISHED. All findings are STOP-AND-FIX. Embed in canon via CodexAdvisor issue (separate task). | session-066-20260227.md |
 | 2026-02-27 | independent-assurance-agent | session-013 | [Phase 3/CI_WORKFLOW] | CI_WORKFLOW overlay lacks deployment-security sub-checklist: add branch-guard, boundary, and secrets checks for deployment job modifications | session-013-20260227.md |
+| 2026-02-27 | foreman-v2-agent | session-068 | [SESSION-END] | Explicitly specify artifact paths in builder delegation specs to prevent prehandover artifacts at repo root (A-008 risk) | session-068-hotfix-20260227.md |

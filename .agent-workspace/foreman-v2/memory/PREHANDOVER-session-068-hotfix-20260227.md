@@ -86,7 +86,7 @@ CONFIRMED — 187 canons, all `file_hash_sha256` values verified non-null at Pha
 
 ## IAA Audit Token
 
-`iaa_audit_token: PENDING`
+`iaa_audit_token: IAA-013-20260227-PASS`
 
 ---
 
@@ -103,7 +103,7 @@ Issue opened by CS2 (@APGI-cmy) directly, assigned to foreman-v2-agent. Valid pe
 - [x] Zero deprecation warnings
 - [x] Zero compiler/linter warnings
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
-- [ ] IAA audit token recorded
+- [x] IAA audit token recorded: IAA-013-20260227-PASS
 
 ---
 
