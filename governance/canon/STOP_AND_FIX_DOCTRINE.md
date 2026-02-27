@@ -3,8 +3,8 @@
 ## Status
 **Type**: Tier-0 Constitutional Canon
 **Authority**: Supreme - Constitutional
-**Version**: 2.0.0
-**Effective Date**: 2026-01-27
+**Version**: 2.1.0
+**Effective Date**: 2026-02-27
 **Owner**: Maturion Engineering Leadership (Johan Ras)
 **Layer-Down Status**: PUBLIC_API
 **Applies To**: All Agents, All Builders, All Foreman Instances, All Work, All Repositories
@@ -98,14 +98,14 @@ immediate action.
 - ❌ "Current tests are sufficient" (if tests are failing, they're insufficient)
 - ❌ "Can't reproduce" or "Flaky" (investigate until reproducible)
 - ❌ "Blocked by dependencies" (escalate the blocker, don't ignore)
-- ❌ "Reviewer said don't bother" (unless explicitly granted exception, see Section 3.5)
+- ❌ "Reviewer said don't bother" (only CS2 may grant a written exception — see Section 3.5)
 - ❌ "Ignore unrelated bugs or broken tests; it is not your responsibility to fix them"
   (you ARE responsible—fix or escalate)
 
 **Limited Exception**: If fixing requires domain expertise you lack OR would require
 changing code/architecture outside your authority, you may escalate to CS2 (see Section 5).
-If reviewer explicitly grants "non-blocking (optional)" with clear justification, document
-in PREHANDOVER_PROOF (see Section 3.5).
+Only CS2 may grant a written exception; no reviewer, Foreman, or agent may classify any finding
+as "non-blocking (optional)". See `ZERO_TOLERANCE_FINDING_PROTOCOL.md`.
 
 ### 3.3 Immediate Remediation
 
@@ -250,13 +250,12 @@ or documentation is itself a governance violation subject to escalation and enfo
 **Correct Response to Discovered Issues**:
 - ✅ FIX the issue immediately (default action)
 - ✅ ESCALATE to CS2 if genuinely outside your capability/authority (with full context)
-- ✅ DOCUMENT exception only when reviewer explicitly grants "non-blocking (optional)" with clear justification in PREHANDOVER_PROOF
+- ✅ DOCUMENT exception only when CS2 explicitly grants written approval to waive or defer a finding in PREHANDOVER_PROOF (see `ZERO_TOLERANCE_FINDING_PROTOCOL.md`)
 
 **Reviewer Feedback Handling**:
-- ALL reviewer feedback is in-scope for fix unless reviewer EXPLICITLY grants exception
-- Exception format: "Non-blocking (optional): [clear reason why optional]"
-- Exception MUST be documented in PREHANDOVER_PROOF with reviewer name and justification
-- No exception grant = mandatory fix before merge
+- ALL reviewer feedback is in-scope for fix — no reviewer, Foreman, or agent may grant a "non-blocking" exception
+- Only CS2 may grant a written exception; exception reference MUST appear in PREHANDOVER_PROOF
+- No CS2 exception on file = mandatory fix before merge
 
 **Enforcement**:
 - Use of excuse language → Flag as governance violation
@@ -1011,6 +1010,11 @@ Quality is everyone's responsibility. "If you see it, you own it." No "not my jo
 
 ## Version History
 
+**v2.1.0** (2026-02-27): Removed "reviewer explicitly grants non-blocking (optional)" exception
+pathway — aligned to `ZERO_TOLERANCE_FINDING_PROTOCOL.md`. Only CS2 may now grant a written
+exception for any finding; no reviewer, Foreman, or agent may classify any finding as
+non-blocking or advisory. Updated Sections 3.2 and 3.5 accordingly.
+
 **v2.0.0** (2026-01-27): Major enhancement banning excuse-based test dodging. Added
 Section 3.5 "Ban on Excuse-Based Test Dodging" enumerating 9 categories of prohibited
 excuse patterns (minimization, scope deflection, responsibility discharge, deferral,
@@ -1040,6 +1044,7 @@ ESCALATION_POLICY.md. Applies to all agents, all builders, all work, all reposit
 - **FM_ROLE_CANON.md** - FM authority to halt execution
 - **QA_POLICY_MASTER.md** - QA validation requirements
 - **POLICY-NO-ONLY-LANGUAGE.md** - Minimizing language prohibition
+- **ZERO_TOLERANCE_FINDING_PROTOCOL.md** - Zero-tolerance principle for all AI/agent findings
 
 ---
 
