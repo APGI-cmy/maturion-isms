@@ -106,10 +106,12 @@ All 7 required CI checks expected to pass:
 
 ## IAA Audit
 
-iaa_audit_token: PENDING — awaiting IAA Phase B audit
+iaa_audit_token: IAA-session-016-20260227-PASS
 iaa_phase: PHASE_B_BLOCKING
 
-- [ ] IAA audit token recorded: PENDING (unchecked — will be updated after IAA PASS)
+- [x] IAA audit token recorded: IAA-session-016-20260227-PASS
+
+**Post-IAA fix applied**: Removed unused `SUPABASE_SERVICE_ROLE_KEY` from job-level env (IAA MEDIUM advisory — zero-tolerance policy per CS2 session-066). CodeQL re-run: 0 alerts.
 
 ---
 

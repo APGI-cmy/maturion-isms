@@ -132,8 +132,6 @@ jobs:
     needs: [build]
     permissions:
       contents: read
-    env:
-      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
