@@ -41,11 +41,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # ── Token guard — must be first. No write step may proceed without MATURION_BOT_TOKEN. ──
+      - name: Validate MATURION_BOT_TOKEN
+        env:
+          TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::error::MATURION_BOT_TOKEN is not set or is empty. All write/mutate actions in this workflow require MATURION_BOT_TOKEN. Fallback to the default GITHUB_TOKEN is prohibited by Maturion governance policy (Gap 5)."
+            exit 1
+          fi
+          echo "MATURION_BOT_TOKEN is present — token validation passed."
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          token: ${{ secrets.MATURION_BOT_TOKEN }}
 
       - name: Configure Git
         run: |
@@ -83,7 +94,7 @@ jobs:
       - name: Check for existing ripple PR
         id: check_existing
         env:
-          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
         run: |
           # Only match PRs on branches created by this workflow (ripple/governance-sync-*).
           # Do NOT match all ripple/ branches — that catches unrelated PRs (e.g. feature PRs
@@ -256,7 +267,7 @@ jobs:
         id: liaison_issue
         if: steps.align.outputs.drift_detected == 'true'
         env:
-          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
         run: |
           DATESTAMP=$(date -u +"%Y-%m-%d")
           COMMIT="${{ steps.metadata.outputs.canonical_commit }}"
@@ -329,7 +340,7 @@ jobs:
         id: create_pr_standard
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          token: ${{ secrets.MATURION_BOT_TOKEN }}
           commit-message: |
             Ripple: propagate governance layer-down (run ${{ github.run_id }})
             Canonical commit: ${{ steps.metadata.outputs.canonical_commit }}
@@ -366,7 +377,7 @@ jobs:
         id: create_pr_draft
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          token: ${{ secrets.MATURION_BOT_TOKEN }}
           commit-message: |
             Ripple: propagate governance layer-down (run ${{ github.run_id }})
             Canonical commit: ${{ steps.metadata.outputs.canonical_commit }}
@@ -417,7 +428,7 @@ jobs:
           steps.diff_check.outputs.has_agent_files != 'true' &&
           steps.pr_number.outputs.number != ''
         env:
-          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
         run: |
           PR_NUMBER="${{ steps.pr_number.outputs.number }}"
           echo "Enabling auto-merge for ripple PR #${PR_NUMBER}"
