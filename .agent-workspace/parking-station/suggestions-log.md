@@ -104,3 +104,4 @@
 | 2026-02-26 | foreman-v2-agent | session-063-20260226 | [SESSION-END] | Wave 9.10 remaining personas (incident-intelligence, maturity-roadmap) block Wave 9.9 — issue dedicated task immediately after Wave 9.8 closes | session-063-20260226.md |
 | 2026-02-26 | foreman-v2-agent | session-063-20260226 | [SESSION-END] | Governance canon gap #1218 — qa-builder wave 9.8/9.9 tests may need enhancement when contract testing canon ratified | session-063-20260226.md |
 | 2026-02-26 | foreman-v2-agent | session-063-20260226 | [SESSION-END] | qa-builder PersonaLoader path (plural 'personas') — add to delegation spec template to prevent T-001 path error recurrence | session-063-20260226.md |
+| 2026-02-27 | governance-liaison-isms | session-022 | [SESSION-END] | Automated ripple workflow should detect concurrent alignment jobs for same canonical commit and suppress duplicate PR to avoid merge conflicts in sync_state.json and ripple-log.json | session-022-20260227.md |

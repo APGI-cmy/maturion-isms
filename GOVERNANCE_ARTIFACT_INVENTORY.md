@@ -1,13 +1,13 @@
 # Governance Artifact Inventory
 
 **Repository**: APGI-cmy/maturion-isms  
-**Last Updated**: 2026-02-26T11:12:31Z  
+**Last Updated**: 2026-02-27T12:14:02Z  
 **Governance Source**: APGI-cmy/maturion-foreman-governance  
 **Canonical Version**: 1.0.0 (CANON_INVENTORY.json)  
-**Layer-Down Session**: align-20260226-110012  
+**Layer-Down Session**: align-20260227-104644  
 **Baseline PR**: #1083 (merged 2026-02-11T11:18:26Z)  
 **Infrastructure Update**: Governance Ripple System v1.0.0 implemented  
-**Latest Ripple PR**: #617 (auto-merged 2026-02-26) — 3 files (canonical commit `4504eb35de7420558826dcc25dd64d71425966ab`)
+**Latest Ripple PR**: #641 (auto-merged 2026-02-27) — 6 files (canonical commit `a925dd789b25f27f804b35df9019494371449aae`)
 
 ---
 
@@ -15,13 +15,13 @@
 
 This inventory tracks all governance artifacts layered down from the canonical governance repository to this consumer repository.
 
-- **Total PUBLIC_API Canons Layered**: 107 ✅ (102 baseline + FINAL_COMPLETE_WAVE_TEST_PROTOCOL.md via PR #456 + AIMC_STRATEGY.md via PR #441 + PRE_BUILD_REALITY_CHECK_CANON.md via PRs #473-475 + UNIVERSAL_FAIL_ONLY_ONCE_POLICY.md via PRs #503-505)
+- **Total PUBLIC_API Canons Layered**: 111 ✅ (102 baseline + FINAL_COMPLETE_WAVE_TEST_PROTOCOL.md via PR #456 + AIMC_STRATEGY.md via PR #441 + PRE_BUILD_REALITY_CHECK_CANON.md via PRs #473-475 + UNIVERSAL_FAIL_ONLY_ONCE_POLICY.md via PRs #503-505 + AUTOMATED_QUALITY_TOOLING_CANON.md + CODE_COVERAGE_THRESHOLD_CANON.md + CONTRACT_TESTING_CANON.md + POST_PRODUCTION_TELEMETRY_CANON.md via PRs #639-641)
 - **Total Governance Infrastructure**: 7 components complete
-- **Last Sync**: 2026-02-26T11:12:31Z (issue `4504eb35de74` — ripple PRs #617/#618 `4504eb35de7420558826dcc25dd64d71425966ab` 3 files — all confirmed)
+- **Last Sync**: 2026-02-27T12:14:02Z (issue `a925dd789b25` — ripple PRs #639/#640/#641 `a925dd789b25f27f804b35df9019494371449aae` 6 files — all confirmed)
 - **Alignment Status**: FULLY COMPLIANT (All 7 ripple components implemented)
 - **Evidence Log**: `.agent-admin/governance/ripple-log.json`
 - **Drift Detection**: Automated (hourly schedule + event-driven)
-- **Note**: Complete governance ripple infrastructure implemented. FINAL_COMPLETE_WAVE_TEST_PROTOCOL.md layered down 2026-02-18, AIMC_STRATEGY.md layered down 2026-02-23, PRE_BUILD_REALITY_CHECK_CANON.md layered down 2026-02-23.
+- **Note**: Complete governance ripple infrastructure implemented. FINAL_COMPLETE_WAVE_TEST_PROTOCOL.md layered down 2026-02-18, AIMC_STRATEGY.md layered down 2026-02-23, PRE_BUILD_REALITY_CHECK_CANON.md layered down 2026-02-23. AUTOMATED_QUALITY_TOOLING_CANON.md, CODE_COVERAGE_THRESHOLD_CANON.md, CONTRACT_TESTING_CANON.md, POST_PRODUCTION_TELEMETRY_CANON.md layered down 2026-02-27.
 
 ---
 
@@ -123,6 +123,14 @@ All PUBLIC_API canon files have been successfully layered down to their respecti
 - `governance/canon/FOREMAN_WAVE_PLANNING_AND_ISSUE_ARTIFACT_GENERATION_PROTOCOL.md` v1.1.0 — SHA256: `2d4603796bce3a18209ce09d6bc7a2907f5fbb6accd5b7f71cc88c545eca0cf8`
 - Drift report: `.agent-admin/governance/drift-report-align-20260226-110012.md`
 - Referenced by: `governance/canon/PENDING_CANON_REFERENCES_INTERIM_GUIDANCE.md`
+
+**Quality and Telemetry Canons Layer-Down** (updated 2026-02-27 via canonical commit `a925dd789b25f27f804b35df9019494371449aae`, ripple PRs #639/#640/#641):
+- `governance/canon/AUTOMATED_QUALITY_TOOLING_CANON.md` v1.0.0 — SHA256: `c1f052a7dffaf1cf182c9d4aa6cc434ebd5e7a2a7cd1aa243fb6ed132f5fe9a5`
+- `governance/canon/CODE_COVERAGE_THRESHOLD_CANON.md` v1.0.0 — SHA256: `f969f80a18f3b8b628012232f40571639d7f8493fbedcdc68e003361a7dbed42`
+- `governance/canon/CONTRACT_TESTING_CANON.md` v1.0.0 — SHA256: `7452ab65959cfefde73065fe24eaa45111d7c515757e191ab498b0f1653a8ed0`
+- `governance/canon/POST_PRODUCTION_TELEMETRY_CANON.md` v1.0.0 — SHA256: `f1c6b2c1df5620d7657b7a625434c7309c3ae0760c99f7f5e7f7671d4b23b85d`
+- Drift report: `.agent-admin/governance/drift-report-align-20260227-104644.md`
+- AIMC integration: CODE_COVERAGE_THRESHOLD_CANON.md (REQ-CCT-003 AIMC Module thresholds), CONTRACT_TESTING_CANON.md (REQ-CT-002 AIMC Provider Contract Tests — mandatory contract tests for all AIMC integration points)
 
 For detailed file list with checksums, see: `.agent-admin/sessions/governance-liaison/liaison-20260211-131419_alignment.log`
 
