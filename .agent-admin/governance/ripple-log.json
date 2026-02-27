@@ -351,6 +351,20 @@
       "cross_references_updated": true,
       "status": "SUCCESS",
       "notes": "Liaison checklist complete for canonical commit a925dd789b25. All 4 new canon files SHA256-verified: AUTOMATED_QUALITY_TOOLING_CANON.md (c1f052a7), CODE_COVERAGE_THRESHOLD_CANON.md (f969f80a), CONTRACT_TESTING_CANON.md (7452ab65), POST_PRODUCTION_TELEMETRY_CANON.md (f1c6b2c1). AIMC integration confirmed: CODE_COVERAGE_THRESHOLD_CANON.md and CONTRACT_TESTING_CANON.md include AIMC-specific requirements. Merge conflicts in sync_state.json and ripple-log.json resolved (ripple branch timestamp 10:46:44Z used as authoritative). GOVERNANCE_ARTIFACT_INVENTORY.md updated. Session-022 memory created."
+    },
+    {
+      "timestamp": "2026-02-27T12:43:27Z",
+      "session_id": "session-023-20260227",
+      "type": "liaison-duplicate-note",
+      "canonical_commit": "a925dd789b25f27f804b35df9019494371449aae",
+      "canonical_version": "1.0.0",
+      "issue_ref": "APGI-cmy/maturion-isms#648",
+      "b04_rule_applied": true,
+      "prior_confirmation_session": "session-022-20260227",
+      "prior_issue_ref": "APGI-cmy/maturion-isms#637",
+      "layer_down_skipped": true,
+      "status": "B04_DUPLICATE_LOGGED",
+      "notes": "B-04 applied: canonical commit a925dd789b25 was already fully processed in session-022 (issue #637, liaison-confirmation SUCCESS, ripple PRs #639/#640/#641). No re-execution of layer-down. Alignment already confirmed: 4 new canon files SHA256-verified, AIMC integration confirmed, cross-references updated, GOVERNANCE_ARTIFACT_INVENTORY.md updated. This entry documents the duplicate dispatch detection per B-04 protocol. Session-023 memory created."
     }
   ]
 }
