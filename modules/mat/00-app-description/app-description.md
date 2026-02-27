@@ -7,13 +7,13 @@
 - **Module**: MAT (Manual Audit Tool)
 - **Artifact Type**: App Description (Upstream Authority)
 - **Status**: Draft (to be marked **Authoritative** only after approval)
-- **Version**: v1.1
+- **Version**: v1.3
 - **Owner**: Johan Ras (Product Owner / Human Authority)
 - **Authority**: Johan Ras
 - **Applies To**: MAT module within maturion-isms repository (and any downstream FRS/Architecture artifacts)
 - **Approval Date**: N/A (Draft)
-- **Last Updated**: 2026-02-13
-- **Supersedes / Superseded By**: v0.2 (governance enhancements) → v1.1 (added Section 16: Technical Stack & Deployment Specifications)
+- **Last Updated**: 2026-02-27
+- **Supersedes / Superseded By**: v1.2 → v1.3 (Wave 10 AI gateway memory wiring gap added)
 
 > **Governance note**: Per **APP_DESCRIPTION_REQUIREMENT_POLICY.md**, no FRS/Architecture may be treated as authoritative without an authoritative App Description, and downstream artifacts must explicitly derive from this document.
 
@@ -1110,9 +1110,67 @@ Based on this App Description, Foreman must generate:
 
 ---
 
+## 20. Identified Gaps and Gap Resolutions
+
+This section records gaps identified during the build process per the Process Governance Gap Resolution Protocol (CS2 authority). Each gap undergoes the full treatment: App Description update → FRS → TRS → Implementation Plan → Red Test Suite → Builder allocation → Progress Tracker update.
+
+---
+
+### Gap GR-001: AI Gateway Memory, Persona, and Session Stubs (Wave 10)
+
+**Identified**: 2026-02-27
+**Authority**: CS2 (@APGI-cmy) — Issue: [Critical Gap] Complete persistent memory, session, persona, and context handling in AI gateway
+**Status**: RESOLVED (Wave 10 — PR merging)
+
+#### Gap Description
+
+The AI gateway serverless handler (`api/ai/request.ts`), delivered in Wave 6 Gap Remediation, wired no-op null stub objects for all three critical AI collaborators:
+
+- **PersonaLoader** — always returned empty string; no persona file was ever loaded
+- **SessionMemoryStore** — always returned empty array; no session turns were accumulated
+- **PersistentMemoryAdapter** — always returned empty array; no memory was ever stored or retrieved
+
+This meant every AI request was handled statelessly with no persona identity, no session context, and no memory persistence. Real implementations for all three collaborators existed in `@maturion/ai-centre` (delivered in AIMC Waves 2 and 4) but were never wired into the gateway.
+
+#### User Impact
+
+- AI assistants could not remember user preferences, prior session turns, or history
+- No persona context was loaded — the AI assistant had no "identity" for any request
+- All personalization features (Maturity Advisor, Scoring Assistant, Document Parser) were effectively disabled
+- Users experienced "amnesia" on every interaction
+
+#### Resolution (Wave 10)
+
+The following were delivered per the full Process Governance Gap Resolution Protocol:
+
+1. **App Description** (this document) — §20 added, v1.3
+2. **FRS v1.5.0** — FR-073 (Persona Loading), FR-074 (Session Memory), FR-075 (Persistent Memory Baseline), FR-076 (Health Check), FR-077 (Runbook)
+3. **TRS v1.4.0** — TR-073–TR-077 with acceptance criteria and RED gate test IDs
+4. **Implementation Plan v1.8.0** — Wave 10 added with task breakdown (Task 10.1: RED gate tests, Task 10.2: implementation) and Wave 11 Supabase gate
+5. **RED Test Suite** — 8 RED gate tests (T-073-1, T-073-2, T-074-1, T-075-1, T-076-1–T-076-4) created before implementation; all 8 turned GREEN after
+6. **Builder allocation** — qa-builder (RED gate tests) → api-builder (implementation)
+7. **Progress Tracker** — `BUILD_PROGRESS_TRACKER.md` updated with Wave 10 entry
+
+#### What Was Delivered
+
+- `api/ai/request.ts` — Null stubs removed; `buildPersonaLoader()`, `buildSessionMemory()`, `buildPersistentMemory()` factory functions added; real adapters wired into `buildAICentre()`
+- `api/ai/health.ts` — New `GET /api/ai/health` endpoint
+- `api/ai/AI_GATEWAY_MEMORY_RUNBOOK.md` — Operational runbook
+- `ai-architecture.md` v3.0.0 — §9 (Memory/Persona Architecture), §10 (Health Check), §11 (Runbook Reference); architecture FROZEN on merge per CS2 directive
+
+#### Scope Boundary
+
+Full cross-invocation Supabase persistence (reading/writing to `ai_memory` table) is **Wave 11** scope. The Wave 10 `PersistentMemoryAdapter` is the in-memory baseline with correct interface semantics and full test coverage. Migration path is documented in `ai-architecture.md` v3.0.0 §9.5 and `AI_GATEWAY_MEMORY_RUNBOOK.md` §4.
+
+#### Fail-Only-Once Rule
+
+Per the issue notes: **"Never open a deployment/CI/CD issue for a service or path until it exists in the repository."** This rule applies to all apps in the ISMS suite.
+
+---
+
 ## End of Document
 
-**Document Version**: v1.2  
-**Last Updated**: 2026-02-16  
-**Status**: Draft (awaiting approval)  
-**Next Review**: After FRS generation and validation
+**Document Version**: v1.3
+**Last Updated**: 2026-02-27
+**Status**: Draft (awaiting approval)
+**Next Review**: After Wave 10 merge and Wave 11 planning

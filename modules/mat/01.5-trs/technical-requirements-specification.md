@@ -3,12 +3,12 @@
 **Module**: MAT (Manual Audit Tool)
 **Artifact Type**: Technical Requirements Specification
 **Status**: COMPLETE
-**Version**: v1.3.0
+**Version**: v1.4.0
 **Owner**: Foreman (FM)
-**Authority**: Derived from FRS v1.3.0 (`modules/mat/01-frs/functional-requirements.md`)
+**Authority**: Derived from FRS v1.5.0 (`modules/mat/01-frs/functional-requirements.md`)
 **Applies To**: MAT module within maturion-isms repository
 **Created**: 2026-02-13
-**Last Updated**: 2026-02-23
+**Last Updated**: 2026-02-27
 
 ---
 
@@ -1364,13 +1364,129 @@ application page, consuming AI advisory capability exclusively via the `@maturio
 
 ---
 
+### TR-073: AI Gateway Persona Loading Implementation
+
+**Derives From**: FR-073
+**Priority**: P0
+**Constitutional Authority**: `AIMC_STRATEGY.md` v1.0.0; `ai-architecture.md` v2.0.0
+**AIMC Prerequisite**: AIMC Wave 2 (PersonaLoader) — **COMPLETE**
+
+The `buildAICentre()` factory in `api/ai/request.ts` MUST wire the `PersonaLoader` class from `@maturion/ai-centre` as the `personaLoader` collaborator. The `nullPersonaLoader` stub MUST be removed.
+
+**Constraints**:
+1. Import: `import { PersonaLoader } from '../../packages/ai-centre/src/personas/PersonaLoader.js'`
+2. Factory: `buildAICentre()` passes `new PersonaLoader()` as `personaLoader` in the `AICentreConfig`.
+3. The null stub (`nullPersonaLoader`) MUST be removed entirely from the module.
+4. Path traversal protection is provided by `PersonaLoader.validateAgentId()` — no additional sanitisation in the gateway.
+5. `PersonaLoader.listAvailable()` MUST return the real directory listing from `packages/ai-centre/src/agents/`.
+
+**Test Requirements** (must be RED before implementation, GREEN after):
+- T-073-1: `buildAICentre()` uses a real `PersonaLoader` instance (not null stub) — verify via constructor name or behavioural test.
+- T-073-2: Persona loading returns non-empty content for a known valid agent ID.
+
+---
+
+### TR-074: AI Gateway Session Memory Implementation
+
+**Derives From**: FR-074
+**Priority**: P1
+**Constitutional Authority**: `AIMC_STRATEGY.md` v1.0.0
+
+The `buildAICentre()` factory in `api/ai/request.ts` MUST wire the `SessionMemoryStore` class from `@maturion/ai-centre` as the `sessionMemory` collaborator. The `nullSessionMemory` stub MUST be removed.
+
+**Constraints**:
+1. Import: `import { SessionMemoryStore } from '../../packages/ai-centre/src/memory/SessionMemoryStore.js'`
+2. Factory: `buildAICentre()` passes `new SessionMemoryStore()` as `sessionMemory`.
+3. The null stub (`nullSessionMemory`) MUST be removed entirely from the module.
+4. `getHistory(sessionId)` MUST return accumulated turns (not always empty `[]`).
+5. Cross-invocation persistence: NOT required at Wave 10 (each serverless invocation creates a fresh instance; see Wave 11 Supabase scope).
+
+**Test Requirements** (must be RED before implementation, GREEN after):
+- T-074-1: `SessionMemoryStore` accumulates turns — `append()` followed by `getHistory()` returns non-empty array.
+- T-074-2: Null stub behaviour no longer present — history is not always `[]` after append.
+
+---
+
+### TR-075: AI Gateway Persistent Memory Baseline
+
+**Derives From**: FR-075
+**Priority**: P1
+**Constitutional Authority**: `AIMC_STRATEGY.md` v1.0.0; Wave 4 Supabase deferral plan
+
+The `buildAICentre()` factory in `api/ai/request.ts` MUST wire the `PersistentMemoryAdapter` class from `@maturion/ai-centre` as the `persistentMemory` collaborator. The `nullPersistentMemory` stub MUST be removed.
+
+**Constraints**:
+1. Import: `import { PersistentMemoryAdapter } from '../../packages/ai-centre/src/memory/PersistentMemoryAdapter.js'`
+2. Factory: `buildAICentre()` passes `new PersistentMemoryAdapter()` as `persistentMemory`.
+3. The null stub (`nullPersistentMemory`) MUST be removed entirely from the module.
+4. `retrieve()` MUST return stored entries (not always empty `[]`).
+5. `persist()` MUST store entries in the backing store.
+6. The Supabase-backed adapter (reading from `ai_memory` table — see `supabase/migrations/001_ai_memory.sql`) is Wave 11 scope; the in-memory baseline is Wave 10 scope.
+7. The Supabase deferral MUST be documented in `AI_GATEWAY_MEMORY_RUNBOOK.md` with migration path.
+
+**Test Requirements** (must be RED before implementation, GREEN after):
+- T-075-1: `PersistentMemoryAdapter.persist()` then `retrieve()` returns stored entry (not always `[]`).
+- T-075-2: Null stub behaviour no longer present — retrieve is not always `[]` after persist.
+
+---
+
+### TR-076: AI Gateway Health Check Endpoint
+
+**Derives From**: FR-076
+**Priority**: P1
+
+The API MUST expose a serverless handler at `api/ai/health.ts` implementing the `GET /api/ai/health` endpoint.
+
+**Constraints**:
+1. File location: `api/ai/health.ts`.
+2. Handler signature: `(req: IncomingMessage, res: ServerResponse) => Promise<void>` (mirrors `api/ai/request.ts` pattern).
+3. `GET /api/ai/health` returns HTTP 200 with JSON body:
+   ```json
+   {
+     "status": "ok",
+     "personaLoader": "real",
+     "sessionMemory": "in_memory",
+     "persistentMemory": "in_memory",
+     "supabaseWiring": "pending_wave11"
+   }
+   ```
+4. Non-GET methods return HTTP 405 Method Not Allowed.
+5. No authentication required on this endpoint.
+6. Handler MUST be exported as both named `createHealthHandler` and default export.
+7. Response `Content-Type: application/json` header MUST be set.
+
+**Test Requirements** (must be RED before implementation — file doesn't exist — GREEN after):
+- T-076-1: `GET /api/ai/health` returns HTTP 200.
+- T-076-2: Response body contains `status: 'ok'`.
+- T-076-3: Response body contains `personaLoader` field.
+- T-076-4: Non-GET methods return 405.
+
+---
+
+### TR-077: AI Gateway Memory Architecture Runbook
+
+**Derives From**: FR-077
+**Priority**: P2
+
+A Markdown runbook documenting the AI gateway memory, session, and persona architecture MUST exist at `api/ai/AI_GATEWAY_MEMORY_RUNBOOK.md`.
+
+**Constraints**:
+1. File location: `api/ai/AI_GATEWAY_MEMORY_RUNBOOK.md`.
+2. MUST document: persona loading flow, session memory flow, persistent memory hierarchy, health check schema.
+3. MUST document the Supabase deferral with references to `supabase/migrations/001_ai_memory.sql`.
+4. MUST document Wave 10 (in-memory baseline) vs Wave 11 (Supabase wiring) scope boundary.
+5. MUST document edge cases: cold-start session amnesia, multi-user concurrency, concurrent persona requests.
+6. No version-controlled code in the runbook — architecture diagrams in ASCII or Mermaid.
+
+---
+
 ## Priority Summary
 
 | Priority | TR Count | Description |
 |----------|----------|-------------|
-| P0       | 57       | Must Have — Core technical constraints for MVP |
-| P1       | 11       | Should Have — Important for production readiness |
-| P2       | 3        | Nice to Have — Future integration requirements |
+| P0       | 58       | Must Have — Core technical constraints for MVP |
+| P1       | 14       | Should Have — Important for production readiness |
+| P2       | 4        | Nice to Have — Future integration requirements |
 
 ---
 
@@ -1395,7 +1511,7 @@ application page, consuming AI advisory capability exclusively via the `@maturio
 
 ## Document Authority
 
-This TRS is derived from the MAT FRS v1.3.0 (`modules/mat/01-frs/functional-requirements.md`, 72 requirements: FR-001 to FR-072).
+This TRS is derived from the MAT FRS v1.5.0 (`modules/mat/01-frs/functional-requirements.md`, 77 requirements: FR-001 to FR-077).
 
 **Governance Reference**: `governance/strategy/MODULE_LIFECYCLE_AND_REPO_STRUCTURE_STRATEGY.md` §4.1
 
@@ -1405,6 +1521,7 @@ This TRS is derived from the MAT FRS v1.3.0 (`modules/mat/01-frs/functional-requ
 **Traceability**: Complete FRS-to-TRS mapping available in `frs-to-trs-traceability.md`.
 
 **Change Log**:
+- v1.4.0 (2026-02-27): Added TR-073 through TR-077 (AI Gateway Persona Loading, Session Memory, Persistent Memory Baseline, Health Check, Memory Runbook) per FRS v1.5.0 additions FR-073–FR-077. TRS extended to 77 requirements. Architecture freeze effective on merge per CS2 directive.
 - v1.3.0 (2026-02-23): Realigned TR-072 to AIMC Gateway pattern per `AIMC_STRATEGY.md` v1.0.0.
   TR-072 now blocked on AIMC Wave 3. Direct provider references, TR-040 routing table dependency,
   and placeholder scaffold language removed. Issue #377 superseded.
