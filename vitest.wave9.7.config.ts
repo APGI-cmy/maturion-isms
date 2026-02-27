@@ -3,7 +3,7 @@
  * PIT AIMC wiring invariants and smoke tests.
  *
  * Architecture Freeze: ARCH-FREEZE-WAVE9-TRACK-C-20260226
- * Wave: 9.7 — Module Integration: PIT (Penetration Intelligence Tool)
+ * Wave: 9.7 — Module Integration: PIT (Project Implementation Tracker)
  * Foreman Session: session-063-20260226
  *
  * Usage:
