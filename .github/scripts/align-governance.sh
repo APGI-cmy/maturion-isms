@@ -80,14 +80,32 @@ fi
 echo "Phase 1: Fetch Canonical Governance"
 echo "--------------------------------------"
 
-# Clone canonical governance repository
+# Authentication check — all CI clone/fetch operations MUST use MATURION_BOT_TOKEN.
+# Unauthenticated access is prohibited because:
+#   1. This repo may become private in the future.
+#   2. GitHub API rate limits apply to unauthenticated requests (60/hr vs 5000/hr).
+#   3. Governance enforcement requires auditable, identity-bound access.
+#   4. Token revocation must immediately block unauthorized access.
+if [ -z "${MATURION_BOT_TOKEN:-}" ]; then
+    echo -e "${RED}❌ MATURION_BOT_TOKEN is not set or empty.${NC}"
+    echo -e "${RED}   Unauthenticated git clone is prohibited by Gap 3 policy.${NC}"
+    echo -e "${RED}   Ensure MATURION_BOT_TOKEN is available as an environment variable.${NC}"
+    exit 1
+fi
+
+# Configure URL rewriting so the token is injected by git internally rather than
+# appearing in the clone URL (prevents token exposure in process listings/error messages).
+git config --global url."https://x-access-token:${MATURION_BOT_TOKEN}@github.com/".insteadOf "https://github.com/"
+
+# Clone canonical governance repository using the plain public URL.
+# Git rewrites it to the authenticated form via the config above.
 if [ -d "$CANONICAL_DIR" ]; then
     rm -rf "$CANONICAL_DIR"
 fi
 
-echo "Cloning $CANONICAL_REPO..."
+echo "Cloning $CANONICAL_REPO (authenticated)..."
 if ! git clone "https://github.com/${CANONICAL_REPO}.git" "$CANONICAL_DIR" --quiet; then
-    echo -e "${RED}❌ Failed to clone canonical governance repository${NC}"
+    echo -e "${RED}❌ Failed to clone canonical governance repository (authenticated)${NC}"
     exit 1
 fi
 echo -e "${GREEN}✓ Canonical governance fetched${NC}"
