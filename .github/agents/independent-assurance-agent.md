@@ -99,8 +99,7 @@ capabilities:
     ambiguity_resolution: MANDATORY_INVOCATION
   adoption_phase:
     current: PHASE_B_BLOCKING
-    description: "IAA invoked but verdicts are advisory. Phase B activates mandatory blocking once IAA is fully deployed."
-    phase_b_activation_condition: "CS2-authorized PR updates this field to PHASE_B_BLOCKING. Requires full population of Tier 2 stub files (iaa-core-invariants-checklist.md, iaa-trigger-table.md, iaa-category-overlays.md) from INDEPENDENT_ASSURANCE_AGENT_CANON.md. Activation decision is CS2_ONLY."
+    description: "IAA verdicts are hard-blocking. REJECTION-PACKAGE prevents PR from being merged. Phase B is now active."
 
 escalation:
   authority: CS2
@@ -564,6 +563,6 @@ Output:
 **Version**: 6.2.0 | **Contract**: 2.0.0 | **Last Updated**: 2026-02-25
 **Tier 2 Knowledge**: `.agent-workspace/independent-assurance-agent/knowledge/`
 **Canonical Source**: `APGI-cmy/maturion-foreman-governance`
-**IAA Adoption Phase**: PHASE_A_ADVISORY (Phase B activates once fully deployed)
+**IAA Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
 **Self-Modification Lock**: SELF-MOD-IAA-001 — ACTIVE — CONSTITUTIONAL — CANNOT BE OVERRIDDEN
 **STOP-AND-FIX Mandate**: ACTIVE — No class exceptions — Ambiguity resolves to mandatory invocation
