@@ -93,10 +93,12 @@ Local parity assessment:
 
 ## IAA Audit Token
 
-`iaa_audit_token: PHASE_A_ADVISORY — 2026-02-27`
+`iaa_audit_token: IAA-012-20260227-PASS`
 
-IAA is in Phase A (advisory mode). This wave is flagged for IAA review once Phase B activates.
-No IAA STOP-AND-FIX or ESCALATE received.
+IAA adoption phase: PHASE_B_BLOCKING (hard gate ACTIVE).
+IAA session: session-012-20260227 (independent-assurance-agent).
+Verdict: ASSURANCE-TOKEN — 16/16 checks PASS.
+Merge permitted subject to CS2 approval (@APGI-cmy).
 
 ---
 
@@ -107,7 +109,7 @@ No IAA STOP-AND-FIX or ESCALATE received.
 - [x] Zero deprecation warnings
 - [x] Zero compiler/linter warnings
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
-- [x] IAA audit token recorded: PHASE_A_ADVISORY — 2026-02-27
+- [x] IAA audit token recorded: IAA-012-20260227-PASS
 
 ---
 
