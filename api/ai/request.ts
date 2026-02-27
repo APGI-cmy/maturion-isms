@@ -5,8 +5,9 @@
  * the AICentre gateway server-side, keeping GITHUB_TOKEN and OPENAI_API_KEY
  * out of the browser entirely.
  *
- * References: FR-072, TR-072 | ai-architecture.md v2.0.0
+ * References: FR-072–FR-077, TR-072–TR-077 | ai-architecture.md v3.0.0 §9–§11
  * Wave 6 gap remediation — Issue: Implement Vercel Serverless API Gateway for AIMC Provider Calls
+ * Wave 10 — AI Gateway Memory Wiring (null stubs replaced with real collaborators)
  */
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
@@ -16,51 +17,40 @@ import { OpenAIAdapter } from '../../packages/ai-centre/src/adapters/OpenAIAdapt
 import { ProviderHealthRegistry } from '../../packages/ai-centre/src/routing/ProviderHealthRegistry.js';
 import { ProviderKeyStore } from '../../packages/ai-centre/src/keys/ProviderKeyStore.js';
 import { TelemetryWriter } from '../../packages/ai-centre/src/telemetry/TelemetryWriter.js';
+import { PersonaLoader } from '../../packages/ai-centre/src/personas/PersonaLoader.js';
+import { SessionMemoryStore } from '../../packages/ai-centre/src/memory/SessionMemoryStore.js';
+import { PersistentMemoryAdapter } from '../../packages/ai-centre/src/memory/PersistentMemoryAdapter.js';
 import {
   Capability,
   AICentreErrorCode,
   type AICentreRequest,
   type AICentreResponse,
   type AICentreErrorResponse,
-  type PersonaLoader,
-  type SessionMemoryStore,
-  type PersistentMemoryAdapter,
 } from '../../packages/ai-centre/src/types/index.js';
 
 // ---------------------------------------------------------------------------
-// Null collaborators — stateless serverless context requires no-op impls
+// Real collaborator factories — Wave 10: null stubs replaced
 // ---------------------------------------------------------------------------
 
-/** No-op PersonaLoader — avoids file-system access in serverless context. */
-const nullPersonaLoader: PersonaLoader = {
-  async load(_agentId: string): Promise<string> {
-    return '';
-  },
-  async listAvailable(): Promise<string[]> {
-    return [];
-  },
-};
+/** Returns a real PersonaLoader instance for use in this serverless handler. */
+export function buildPersonaLoader(): PersonaLoader {
+  return new PersonaLoader();
+}
 
-/** No-op SessionMemoryStore — serverless functions are stateless. */
-const nullSessionMemory: SessionMemoryStore = {
-  append(): void {},
-  getHistory(): [] {
-    return [];
-  },
-  prune(): void {},
-  clearSession(): void {},
-};
+/** Returns a real SessionMemoryStore instance for use in this serverless handler. */
+export function buildSessionMemory(): SessionMemoryStore {
+  return new SessionMemoryStore();
+}
 
-/** No-op PersistentMemoryAdapter — memory managed by upstream caller. */
-const nullPersistentMemory: PersistentMemoryAdapter = {
-  async retrieve(): Promise<[]> {
-    return [];
-  },
-  async persist(): Promise<void> {},
-  async pruneExpired(): Promise<number> {
-    return 0;
-  },
-};
+/**
+ * Returns a real PersistentMemoryAdapter instance.
+ * Wave 10 baseline: in-memory implementation (Supabase wiring deferred to Wave 11).
+ * Wave 11 TODO: Replace with SupabasePersistentMemoryAdapter(supabaseClient).
+ * See: packages/ai-centre/supabase/migrations/001_ai_memory.sql
+ */
+export function buildPersistentMemory(): PersistentMemoryAdapter {
+  return new PersistentMemoryAdapter();
+}
 
 // ---------------------------------------------------------------------------
 // AICentre factory
@@ -87,9 +77,9 @@ export function buildAICentre(): AICentre {
     },
     keyStore,
     telemetryWriter,
-    persistentMemory: nullPersistentMemory,
-    sessionMemory: nullSessionMemory,
-    personaLoader: nullPersonaLoader,
+    persistentMemory: buildPersistentMemory(),
+    sessionMemory: buildSessionMemory(),
+    personaLoader: buildPersonaLoader(),
     healthRegistry,
     adapters: [
       new GitHubModelsAdapter(keyStore),
