@@ -98,7 +98,7 @@ capabilities:
     foreman_builder_invocation: MANDATORY_NO_EXCEPTIONS
     ambiguity_resolution: MANDATORY_INVOCATION
   adoption_phase:
-    current: PHASE_A_ADVISORY
+    current: PHASE_B_BLOCKING
     description: "IAA invoked but verdicts are advisory. Phase B activates mandatory blocking once IAA is fully deployed."
     phase_b_activation_condition: "CS2-authorized PR updates this field to PHASE_B_BLOCKING. Requires full population of Tier 2 stub files (iaa-core-invariants-checklist.md, iaa-trigger-table.md, iaa-category-overlays.md) from INDEPENDENT_ASSURANCE_AGENT_CANON.md. Activation decision is CS2_ONLY."
 
