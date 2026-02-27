@@ -3,12 +3,12 @@
 **Module**: MAT (Manual Audit Tool)
 **Artifact Type**: Technical Requirements Specification
 **Status**: COMPLETE
-**Version**: v1.3.0
+**Version**: v1.4.0
 **Owner**: Foreman (FM)
-**Authority**: Derived from FRS v1.3.0 (`modules/mat/01-frs/functional-requirements.md`)
+**Authority**: Derived from FRS v1.5.0 (`modules/mat/01-frs/functional-requirements.md`)
 **Applies To**: MAT module within maturion-isms repository
 **Created**: 2026-02-13
-**Last Updated**: 2026-02-23
+**Last Updated**: 2026-02-27
 
 ---
 

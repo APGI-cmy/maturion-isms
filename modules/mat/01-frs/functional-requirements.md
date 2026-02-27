@@ -3,12 +3,12 @@
 **Module**: MAT (Manual Audit Tool)
 **Artifact Type**: Functional Requirements Specification
 **Status**: COMPLETE
-**Version**: v1.4.0
+**Version**: v1.5.0
 **Owner**: Foreman (FM)
-**Authority**: Derived from App Description v1.2 (modules/mat/00-app-description/app-description.md)
+**Authority**: Derived from App Description v1.3 (modules/mat/00-app-description/app-description.md)
 **Applies To**: MAT module within maturion-isms repository
 **Created**: 2026-02-13
-**Last Updated**: 2026-02-13
+**Last Updated**: 2026-02-27
 
 ---
 
