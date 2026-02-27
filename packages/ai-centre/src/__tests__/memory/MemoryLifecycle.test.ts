@@ -24,6 +24,8 @@ import {
   type PersistentMemoryAdapter,
   type PersistedMemoryEntry,
   type MemoryTurn,
+  type EpisodicMemoryAdapter,
+  type EpisodicEventEntry,
 } from '../../types/index.js';
 
 // ---------------------------------------------------------------------------
@@ -210,6 +212,82 @@ describe('MemoryLifecycle', () => {
 
       // After pruning, the session store's prune method should have been called
       expect(sessionStore.prune).toHaveBeenCalledWith('sess-001', expect.any(Number));
+    },
+  );
+
+  // ---------------------------------------------------------------------------
+  // Wave 9.3 | GRS-009 — Episodic memory adapter integration
+  // ---------------------------------------------------------------------------
+
+  it(
+    // GRS-009 | APS §7.6 — episodic record() receives correct event fields
+    "Wave 9.3 | GRS-009 — episodic adapter record() is called with correct fields when adapter is injected",
+    async () => {
+      const episodicAdapter: EpisodicMemoryAdapter = {
+        record: vi.fn().mockResolvedValue(undefined),
+        retrieve: vi.fn(),
+      };
+
+      const lifecycle = new MemoryLifecycle({
+        sessionStore: makeSessionStore(),
+        persistentAdapter: makePersistentAdapter(),
+        episodicAdapter,
+      });
+
+      await lifecycle.recordTurn({ request: makeRequest(), response: makeResponse() });
+
+      expect(episodicAdapter.record).toHaveBeenCalledTimes(1);
+      expect(episodicAdapter.record).toHaveBeenCalledWith(
+        expect.objectContaining<Partial<EpisodicEventEntry>>({
+          organisationId: 'org-001',
+          sessionId: 'sess-001',
+          agentId: 'aimc',
+          eventType: 'capability_invocation',
+          capability: Capability.ADVISORY,
+          summary: 'How do I improve my maturity score?',
+        }),
+      );
+    },
+  );
+
+  it(
+    // GRS-009 | APS §7.6 — fire-and-forget: .catch() swallows adapter failure
+    "Wave 9.3 | GRS-009 — fire-and-forget: episodic record() rejection does NOT propagate from recordTurn()",
+    async () => {
+      const episodicAdapter: EpisodicMemoryAdapter = {
+        record: vi.fn().mockRejectedValue(new Error('episodic storage unavailable')),
+        retrieve: vi.fn(),
+      };
+
+      const lifecycle = new MemoryLifecycle({
+        sessionStore: makeSessionStore(),
+        persistentAdapter: makePersistentAdapter(),
+        episodicAdapter,
+      });
+
+      // recordTurn() must resolve without throwing even though record() rejects
+      await expect(
+        lifecycle.recordTurn({ request: makeRequest(), response: makeResponse() }),
+      ).resolves.toBeUndefined();
+
+      // Flush microtasks so the .catch() swallow handler runs before test ends
+      await Promise.resolve();
+    },
+  );
+
+  it(
+    // GRS-009 | APS §7.6 — no adapter injected: episodic branch is skipped
+    "Wave 9.3 | GRS-009 — recordTurn() completes without error when no episodic adapter is injected",
+    async () => {
+      const lifecycle = new MemoryLifecycle({
+        sessionStore: makeSessionStore(),
+        persistentAdapter: makePersistentAdapter(),
+        // episodicAdapter intentionally omitted
+      });
+
+      await expect(
+        lifecycle.recordTurn({ request: makeRequest(), response: makeResponse() }),
+      ).resolves.toBeUndefined();
     },
   );
 });
