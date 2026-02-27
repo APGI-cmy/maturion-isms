@@ -1,0 +1,27 @@
+{
+  "session": "session-001-20260226",
+  "agent": "integration-builder",
+  "wave": "9.6",
+  "timestamp": "2026-02-26T15:26:00Z",
+  "architecture_freeze": "ARCH-FREEZE-WAVE9-TRACK-C-20260226",
+  "verdict": "PASS",
+  "checks": {
+    "tests_total": 16,
+    "tests_passed": 16,
+    "tests_failed": 0,
+    "wave9_6_green": true,
+    "regression_suite_passed": 154,
+    "regression_suite_pre_existing_failures": 1,
+    "regression_suite_new_failures": 0,
+    "forbidden_imports": false,
+    "test_debt": false,
+    "architecture_conformance": true,
+    "merge_gate_parity": "PASS",
+    "iaa_invocation": "PHASE_A_ADVISORY"
+  },
+  "files_delivered": [
+    "modules/xdetect/src/services/aimc-wiring.ts",
+    "modules/risk-management/src/services/aimc-wiring.ts"
+  ],
+  "commit": "37aeedc"
+}
