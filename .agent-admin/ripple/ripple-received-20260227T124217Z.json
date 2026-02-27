@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0.0",
+  "type": "governance_ripple_received",
+  "timestamp": "2026-02-27T12:42:17Z",
+  "source_repo": "APGI-cmy/maturion-foreman-governance",
+  "canonical_commit": "fad4bc8786eb99ed75354aed50c0a50cdd8d055a",
+  "commit_message": "Merge pull request #1232 from APGI-cmy/copilot/trigger-governance-pipeline-test",
+  "workflow_run": "22486651880"
+}
