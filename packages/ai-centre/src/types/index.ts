@@ -384,6 +384,26 @@ export interface TelemetryWriter {
 }
 
 // ---------------------------------------------------------------------------
+// Episodic Memory (APS §7.6, GRS-009, AAD §9.4) — Wave 9.3
+// ---------------------------------------------------------------------------
+
+export interface EpisodicEventEntry {
+  organisationId: string;
+  sessionId: string;
+  agentId: string;
+  eventType: string;
+  capability: Capability;
+  summary: string;
+  fullContext?: string;
+  createdAt?: number;
+}
+
+export interface EpisodicMemoryAdapter {
+  record(entry: EpisodicEventEntry): Promise<void>;
+  retrieve(params: { organisationId: string; sessionId?: string; limit?: number }): Promise<EpisodicEventEntry[]>;
+}
+
+// ---------------------------------------------------------------------------
 // AICentre gateway config (APS §12, AAD §12.1)
 // ---------------------------------------------------------------------------
 
@@ -398,4 +418,6 @@ export interface AICentreConfig {
   adapters: ProviderAdapter[];
   /** Optional MemoryLifecycle collaborator injected for testability (AAD §12.1). */
   memoryLifecycle?: MemoryLifecycle;
+  /** Optional episodic memory adapter injection point (APS §7.6, Wave 9.3). */
+  episodicMemory?: EpisodicMemoryAdapter;
 }
