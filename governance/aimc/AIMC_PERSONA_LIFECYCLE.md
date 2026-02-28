@@ -2,7 +2,7 @@
 
 **Document Type**: Governance Artefact — Wave 9.10 Deliverable
 **Status**: ACTIVE
-**Version**: 1.0.0
+**Version**: 1.0.1
 **Effective Date**: 2026-02-28
 **Owner**: CS2 — Johan Ras (@APGI-cmy)
 **Location**: `governance/aimc/AIMC_PERSONA_LIFECYCLE.md`
@@ -29,7 +29,7 @@ This document exists to:
 - Provide a compliance reference for the persona governance requirements of `APS §5` and `AIMC_STRATEGY.md §7`
 - Serve as the audit trail anchor for all future persona lifecycle events
 
-**Critical Invariant**: No persona file may be loaded into a live AI interaction unless it carries valid YAML front-matter conforming to the schema in §5 of this document. The `PersonaLoader` is responsible for enforcing this gate.
+**Critical Policy Requirement**: All persona files MUST include valid YAML front-matter conforming to the schema in §5 of this document before they may be used in any live AI interaction. Compliance with this requirement is enforced via automated tests/CI and persona governance processes, and runtime components such as the `PersonaLoader` MUST NOT be modified in ways that weaken these checks without corresponding governance updates.
 
 ---
 
@@ -232,9 +232,13 @@ All personas begin at version `1.0.0` on first deployment. Version `0.x.y` is no
 
 ### 5.4 Validation Enforcement
 
-The `PersonaLoader` component (`packages/ai-centre/src/personas/PersonaLoader.ts`) must validate YAML front-matter at load time. Any persona file missing required front-matter fields must cause `PersonaLoader.load()` to throw a `PersonaValidationError` rather than silently loading a malformed persona.
+**Target behaviour (governance requirement)**  
+The `PersonaLoader` component (`packages/ai-centre/src/personas/PersonaLoader.ts`) **must** validate persona YAML front-matter at load time. Once implemented, any persona file missing required front-matter fields (including version metadata) **must** cause `PersonaLoader.load()` to throw a `PersonaValidationError` rather than silently loading a malformed persona.
 
-This is a **hard gate**: a persona without valid versioned front-matter must not be injected into an AI interaction.
+This will be a **hard gate**: after validation is implemented, a persona without valid versioned front-matter must not be injected into an AI interaction.
+
+**Current implementation state (Wave 9.10)**  
+As of this document version, `PersonaLoader.load()` does **not yet** perform structured validation of persona YAML front-matter and does **not** throw `PersonaValidationError`. Introduction of the `PersonaValidationError` type and corresponding validation logic is tracked as future work and is required to bring the implementation in line with this governance requirement.
 
 ---
 
@@ -299,7 +303,7 @@ Retired persona files are **never deleted**. They are moved to the `retired/` su
 
 | Gate | Enforcement Point | Enforced By |
 |---|---|---|
-| YAML front-matter schema | `PersonaLoader.load()` at runtime | `api-builder` authors validation; `qa-builder` RED gate tests verify |
+| YAML front-matter schema | Automated tests/CI (RED gate); runtime validation is future work (tracked) | `qa-builder` RED gate tests verify; `PersonaLoader` runtime enforcement pending |
 | Persona Registry currency | Governance Liaison review at each wave handover | `governance-liaison-isms-agent` |
 | APS §5 alignment | Governance Liaison review before PR merge | `governance-liaison-isms-agent` |
 | Version increment on every change | PR review diff check | Foreman wave certification |
@@ -312,7 +316,7 @@ The following test files enforce persona lifecycle compliance:
 
 | Test File | What It Enforces |
 |---|---|
-| `packages/ai-centre/src/__tests__/personas/PersonaLoader.test.ts` | PersonaLoader loads all registered personas; path traversal guard; YAML metadata validation |
+| `packages/ai-centre/src/__tests__/personas/PersonaLoader.test.ts` | PersonaLoader loads all registered personas; path traversal guard; unknown agent error handling; `listAvailable()` behavior |
 | `packages/ai-centre/src/__tests__/personas/wave9.10-persona-lifecycle.test.ts` | Lifecycle governance document existence (`T-041`); all 8 personas loadable; YAML front-matter fields present for all personas |
 
 Tests must remain **100% GREEN, zero skipped** at all times. Any persona change that causes a test regression is a **MERGE BLOCKER** until resolved.
@@ -393,6 +397,7 @@ The following items are **not** remediated by Wave 9.10 but are tracked for subs
 
 | Version | Date | Author | Wave | Change Summary |
 |---|---|---|---|---|
+| 1.0.1 | 2026-02-28 | `governance-liaison-isms-agent` | Wave 9.10 follow-up | Corrected §1 Critical Invariant, §5.4 Validation Enforcement, §7.1 compliance table, and §7.2 test table to reflect that PersonaLoader does not yet perform runtime YAML validation; documented target state as future requirement. PR reviewer comments r2867457935, r2867457937, r2867457942, r2867457944. |
 | 1.0.0 | 2026-02-28 | `governance-liaison-isms-agent` | Wave 9.10 | Initial creation. Establishes persona lifecycle governance protocol. Persona Registry populated with all 8 current personas. Gap analysis (Wave 9.10, Gap 5) documented. Remediation of G5-1 through G5-5 recorded. |
 
 ---
