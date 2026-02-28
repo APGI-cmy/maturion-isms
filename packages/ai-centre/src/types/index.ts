@@ -313,6 +313,8 @@ export interface PersistentMemoryAdapter {
 export interface KnowledgeEntry {
   content: string;
   source?: string;
+  /** ARC approval status. Entries without this field are treated as 'pending'. Wave 9.5. */
+  approvalStatus?: 'pending' | 'approved' | 'retired';
 }
 
 export interface KnowledgeRetriever {
