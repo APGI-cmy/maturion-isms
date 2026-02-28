@@ -10,12 +10,20 @@ name: Governance Ripple Sync
 #
 # Trigger: governance-ripple-dispatch.yml in maturion-foreman-governance dispatches a
 #          repository_dispatch event of type "governance_ripple" to each consumer repo.
-#          This workflow catches that event, runs the alignment script, and creates a PR.
+#          This workflow catches that event, runs the alignment script, and creates a
+#          governance liaison ISSUE (governance + layer-down labels).
+#          ripple-integration.yml then processes that issue and creates the PR.
+#          (New protocol: dispatch → governance issue → PR via ripple-integration.yml)
 #
 # Root-cause note (Issue #N, 2026-02-23):
 #   ripple-integration.yml only responds to *issues* with governance+layer-down labels.
 #   The canonical dispatch sends repository_dispatch events — which were silently ignored
 #   because no handler existed.  This workflow closes that gap.
+#
+# Governance note: Direct PR creation was removed per governance issue
+#   [Governance] Remove legacy ripple layer-down automation (direct layer-down PR creation).
+#   This workflow now only creates governance liaison issues; PRs are created by
+#   ripple-integration.yml in response to those issues (new protocol: issue → review → PR).
 
 on:
   repository_dispatch:
@@ -31,7 +39,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
   issues: write
 
 
@@ -89,34 +96,6 @@ jobs:
           echo "  Commit SHA  : ${COMMIT_SHA:-unknown}"
           echo "  Commit msg  : ${COMMIT_MSG:-unknown}"
           echo "  Timestamp   : ${RIPPLE_TS:-$(date -u +%Y-%m-%dT%H:%M:%SZ)}"
-
-      # ── Idempotency: check for existing ripple PR created by this workflow ──
-      - name: Check for existing ripple PR
-        id: check_existing
-        env:
-          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
-        run: |
-          # Only match PRs on branches created by this workflow (ripple/governance-sync-*).
-          # Do NOT match all ripple/ branches — that catches unrelated PRs (e.g. feature PRs
-          # with governance labels) and causes the entire workflow to be silently skipped.
-          EXISTING_PR=$(gh pr list \
-            --repo ${{ github.repository }} \
-            --state open \
-            --label "governance" \
-            --label "ripple" \
-            --json number,headRefName \
-            --jq '.[] | select(.headRefName | startswith("ripple/governance-sync-")) | .number' \
-            2>/dev/null | head -1 || echo "")
-
-          if [ -n "$EXISTING_PR" ]; then
-            echo "skip=true" >> $GITHUB_OUTPUT
-            echo "existing_pr=${EXISTING_PR}" >> $GITHUB_OUTPUT
-            echo "Idempotency triggered: open ripple PR #${EXISTING_PR} already exists — will skip PR creation only"
-          else
-            echo "skip=false" >> $GITHUB_OUTPUT
-            echo "existing_pr=" >> $GITHUB_OUTPUT
-            echo "No existing ripple PR found — proceeding"
-          fi
 
       # ── Record ripple event receipt ──
       - name: Record ripple event receipt
@@ -218,7 +197,8 @@ jobs:
             echo '**AGENT_CONTRACT_PROTECTION_PROTOCOL.md**, only CS2 (Johan Ras) may'
             echo 'approve and merge changes to agent contracts.'
             echo ''
-            echo '**The ripple PR has been created as DRAFT and must not be merged until'
+            echo '**The governance liaison issue has been created. The resulting ripple PR'
+            echo '(created by ripple-integration.yml) must not be merged until'
             echo 'CS2 explicitly approves it.**'
             echo ''
             echo '## Context'
@@ -229,7 +209,7 @@ jobs:
             echo "- Files updated: ${{ steps.metadata.outputs.files_updated }}"
             echo ''
             echo '## Recommendation'
-            echo '1. CS2 reviews the DRAFT ripple PR'
+            echo '1. CS2 reviews the ripple PR created by ripple-integration.yml'
             echo '2. CS2 approves and merges after review'
             echo '3. Move this file to `escalation-archive/` after resolution'
             echo ''
@@ -334,119 +314,17 @@ jobs:
             echo "Could not create liaison issue (labels may not exist yet)"
           fi
 
-      # ── Create PR — standard path (no agent files changed) ──
-      - name: Create ripple PR (standard — no agent files)
-        if: steps.check_existing.outputs.skip != 'true' && steps.align.outputs.drift_detected == 'true' && steps.diff_check.outputs.has_agent_files != 'true'
-        id: create_pr_standard
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.MATURION_BOT_TOKEN }}
-          commit-message: |
-            Ripple: propagate governance layer-down (run ${{ github.run_id }})
-            Canonical commit: ${{ steps.metadata.outputs.canonical_commit }}
-            Files updated: ${{ steps.metadata.outputs.files_updated }}
-            Agent files changed: false
-          branch: ripple/governance-sync-${{ github.run_id }}
-          force-push: true
-          delete-branch: true
-          draft: false
-          title: '[Ripple] Propagate governance layer-down (repository_dispatch)'
-          body: |
-            ## Ripple Integration
-            This PR propagates governance artefacts from the upstream layer-down.
-            ### Source
-            - **Trigger**: `repository_dispatch` from `${{ steps.payload.outputs.source_repo }}`
-            - **Canonical commit**: `${{ steps.metadata.outputs.canonical_commit }}`
-            - **Canonical version**: `${{ steps.metadata.outputs.canonical_version }}`
-            - **Files updated**: ${{ steps.metadata.outputs.files_updated }}
-            - **Ripple timestamp**: ${{ steps.payload.outputs.ripple_timestamp }}
-            ### Agent File Gate
-            ✅ No agent contract files changed — standard auto-merge path.
-            ---
-            **Authority**: CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md, LAYERING_AND_RIPPLING_AUTOMATION_STRATEGY.md v1.0.0
-          labels: |
-            governance
-            ripple
-            automated
-            agent:liaison
-          assignees: APGI-cmy
-
-      # ── Create PR — CS2 DRAFT path (agent files changed) ──
-      - name: Create ripple PR (DRAFT — CS2 required)
-        if: steps.check_existing.outputs.skip != 'true' && steps.align.outputs.drift_detected == 'true' && steps.diff_check.outputs.has_agent_files == 'true'
-        id: create_pr_draft
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.MATURION_BOT_TOKEN }}
-          commit-message: |
-            Ripple: propagate governance layer-down (run ${{ github.run_id }})
-            Canonical commit: ${{ steps.metadata.outputs.canonical_commit }}
-            Files updated: ${{ steps.metadata.outputs.files_updated }}
-            Agent files changed: true
-          branch: ripple/governance-sync-${{ github.run_id }}
-          force-push: true
-          delete-branch: true
-          draft: true
-          title: '[Ripple][DRAFT — CS2 Required] Propagate governance layer-down (repository_dispatch)'
-          body: |
-            ## Ripple Integration
-            This PR propagates governance artefacts from the upstream layer-down.
-            ### Source
-            - **Trigger**: `repository_dispatch` from `${{ steps.payload.outputs.source_repo }}`
-            - **Canonical commit**: `${{ steps.metadata.outputs.canonical_commit }}`
-            - **Canonical version**: `${{ steps.metadata.outputs.canonical_version }}`
-            - **Files updated**: ${{ steps.metadata.outputs.files_updated }}
-            - **Ripple timestamp**: ${{ steps.payload.outputs.ripple_timestamp }}
-            ### Agent File Gate
-            ⛔ **Agent contract files changed — CS2 approval required.** Auto-merge is DISABLED.
-            See `.agent-workspace/governance-liaison/escalation-inbox/` for escalation document.
-            ---
-            **Authority**: CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md, LAYERING_AND_RIPPLING_AUTOMATION_STRATEGY.md v1.0.0
-          labels: |
-            governance
-            ripple
-            automated
-            agent:liaison
-          assignees: APGI-cmy
-
-      # ── Resolve PR number ──
-      - name: Resolve PR number
-        id: pr_number
-        if: steps.check_existing.outputs.skip != 'true'
-        run: |
-          NUMBER="${{ steps.create_pr_standard.outputs.pull-request-number }}"
-          if [ -z "$NUMBER" ]; then
-            NUMBER="${{ steps.create_pr_draft.outputs.pull-request-number }}"
-          fi
-          echo "number=$NUMBER" >> $GITHUB_OUTPUT
-
-      # ── Enable auto-merge (standard path only) ──
-      - name: Enable auto-merge
-        if: >
-          steps.check_existing.outputs.skip != 'true' &&
-          steps.align.outputs.drift_detected == 'true' &&
-          steps.diff_check.outputs.has_agent_files != 'true' &&
-          steps.pr_number.outputs.number != ''
-        env:
-          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
-        run: |
-          PR_NUMBER="${{ steps.pr_number.outputs.number }}"
-          echo "Enabling auto-merge for ripple PR #${PR_NUMBER}"
-          gh pr merge "${PR_NUMBER}" \
-            --repo ${{ github.repository }} \
-            --auto \
-            --squash \
-            --delete-branch || echo "Auto-merge could not be enabled — branch protection may require checks to pass first"
-
       # ── Summary ──
+      # NOTE: Direct PR creation has been removed per governance issue
+      # (remove legacy ripple layer-down automation). PRs are now created
+      # exclusively by ripple-integration.yml in response to the governance
+      # liaison issue created above (new protocol: dispatch → issue → PR).
       - name: Summary
         if: always()
         run: |
           DRIFT="${{ steps.align.outputs.drift_detected }}"
           AGENT="${{ steps.diff_check.outputs.has_agent_files }}"
-          PR="${{ steps.pr_number.outputs.number }}"
-          SKIP="${{ steps.check_existing.outputs.skip }}"
-          EXISTING="${{ steps.check_existing.outputs.existing_pr }}"
+          ISSUE="${{ steps.liaison_issue.outputs.issue_number }}"
 
           echo "======================================"
           echo "GOVERNANCE RIPPLE SYNC — SUMMARY"
@@ -454,22 +332,12 @@ jobs:
           echo "Trigger       : ${{ github.event_name }}"
           echo "Source repo   : ${{ steps.payload.outputs.source_repo }}"
           echo "Canonical SHA : ${{ steps.payload.outputs.canonical_commit }}"
-
-          if [ "$SKIP" = "true" ]; then
-            echo "Drift detected: ${DRIFT}"
-            echo "Status        : IDEMPOTENCY — open ripple PR #${EXISTING} already exists — PR creation skipped (receipts and alignment ran)"
+          echo "Drift detected: ${DRIFT}"
+          if [ "$DRIFT" = "true" ]; then
+            echo "Agent files   : ${AGENT}"
+            echo "Liaison issue : #${ISSUE}"
+            echo "Status        : Governance liaison issue created — ripple-integration.yml will create PR from issue"
           else
-            echo "Drift detected: ${DRIFT}"
-            if [ "$DRIFT" = "true" ]; then
-              echo "Agent files   : ${AGENT}"
-              echo "PR created    : #${PR}"
-              if [ "$AGENT" = "true" ]; then
-                echo "Status        : DRAFT PR — CS2 approval required"
-              else
-                echo "Status        : PR created — auto-merge enabled"
-              fi
-            else
-              echo "Status        : Already aligned — no PR needed"
-            fi
+            echo "Status        : Already aligned — no action needed"
           fi
           echo "======================================"

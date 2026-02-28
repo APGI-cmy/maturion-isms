@@ -133,12 +133,12 @@ jobs:
             exit $EXIT_CODE
           fi
 
-      # ── Check for existing alignment PR to avoid duplicates ──
-      # Checks for:
-      #   1. The stable 'governance-alignment-auto' branch used by governance-alignment-schedule.yml
-      #   2. Any open PR with a 'ripple/' branch prefix from governance-ripple-sync.yml
+      # ── Check for existing ripple PR to avoid duplicates ──
+      # Checks for any open PR with a 'ripple/' branch prefix from ripple-integration.yml.
       # If any such PR is found, skip creation and reference it in the issue comment.
-      - name: Check for existing alignment PR
+      # NOTE: The governance-alignment-auto branch check was removed as
+      # governance-alignment-schedule.yml has been deleted (legacy direct-PR automation).
+      - name: Check for existing ripple PR
         id: existing_pr
         if: steps.align.outputs.drift_detected == 'true'
         env:
@@ -146,27 +146,15 @@ jobs:
         run: |
           RIPPLE_JQ='.[] | select(.headRefName | startswith("ripple/")) | .number'
 
-          # Check for stable alignment-auto branch PR
+          # Check for any open ripple/ prefix branch PR from this workflow
           EXISTING=$(gh pr list \
             --repo ${{ github.repository }} \
             --state open \
             --label "governance" \
-            --label "automated" \
-            --json number,headRefName,title \
-            --jq '.[] | select(.headRefName == "governance-alignment-auto") | .number' \
+            --label "ripple" \
+            --json number,headRefName \
+            --jq "$RIPPLE_JQ" \
             2>/dev/null | head -1 || echo "")
-
-          # Also check for any open ripple/ prefix branch PR
-          if [ -z "$EXISTING" ]; then
-            EXISTING=$(gh pr list \
-              --repo ${{ github.repository }} \
-              --state open \
-              --label "governance" \
-              --label "ripple" \
-              --json number,headRefName \
-              --jq "$RIPPLE_JQ" \
-              2>/dev/null | head -1 || echo "")
-          fi
 
           if [ -z "$EXISTING" ]; then
             EXISTING=$(gh pr list \
