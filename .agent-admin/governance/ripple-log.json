@@ -389,6 +389,21 @@
       "canonical_commit": "810218ff7439daaa882b41b732d14f7803781e83",
       "files_updated": 5,
       "status": "SUCCESS"
+    },
+    {
+      "timestamp": "2026-02-28T14:14:40Z",
+      "session_id": "session-025-20260228",
+      "type": "liaison-confirmation",
+      "canonical_commit": "6644ee51ce714d3a9331b28b74b3e05f1b7ee880",
+      "issue_ref": "APGI-cmy/maturion-isms (layer-down issue 6644ee51 — 2026-02-28)",
+      "ripple_prs": [],
+      "files_verified": [],
+      "files_changed": 0,
+      "no_change_ripple": true,
+      "drift_detected": false,
+      "sha256_verified": true,
+      "status": "SUCCESS",
+      "notes": "No PUBLIC_API governance files changed in canonical commit 6644ee51ce714d3a9331b28b74b3e05f1b7ee880. Trigger: Merge pull request -1244 from APGI-cmy-copilot-investigate-layer-down-workflow. Automated CI (ripple-integration.yml) created draft PRs #683-686 citing agent contract drift — those are CS2-gated per AGCFPP-001. Liaison confirms: governance is aligned with canonical source. sync_state.json updated to record new canonical commit. No layer-down required. Session-025 memory created."
     }
   ]
 }
