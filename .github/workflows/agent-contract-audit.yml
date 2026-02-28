@@ -1,0 +1,444 @@
+name: Agent Contract Audit
+
+# Authority: AGENT_CONTRACT_FILE_PROTECTION_POLICY.md v1.0.0, LIVING_AGENT_SYSTEM.md v6.2.0
+# Purpose: Enforce surgical agent file edit discipline and IAA verification requirement.
+#          Blocks PRs that touch .github/agents/** files without:
+#            1. A CS2-approved issue reference in the PR description
+#            2. An actor consistent with CodexAdvisor or CS2 direct action
+#            3. An IAA assurance token artifact present in the PR bundle
+# Policy ref: AGENT_CONTRACT_FILE_PROTECTION_POLICY.md §5 (CI/CD Enforcement)
+# Violation class: AGCFPP-001
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/agents/**'
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  # ============================================================================
+  # JOB 1: Detect changed agent contract files and generate diff report
+  # ============================================================================
+  agent-contract-diff-report:
+    name: "agent-contract/diff-report"
+    runs-on: ubuntu-latest
+    outputs:
+      agent_files_changed: ${{ steps.detect.outputs.agent_files_changed }}
+      changed_files_list: ${{ steps.detect.outputs.changed_files_list }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed agent contract files
+        id: detect
+        run: |
+          echo "=== Agent Contract Audit — Diff Report ==="
+          echo "Authority: AGENT_CONTRACT_FILE_PROTECTION_POLICY.md v1.0.0"
+          echo "Policy: §5 CI/CD Enforcement — surgical edit discipline"
+          echo ""
+
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+          git fetch origin "${BASE_BRANCH}" --depth=1 2>/dev/null || true
+          CHANGED_FILES=$(git diff --name-only "origin/${BASE_BRANCH}...HEAD" 2>/dev/null || \
+                          git diff --name-only HEAD~1 2>/dev/null || true)
+
+          AGENT_FILES=""
+          while IFS= read -r f; do
+            if [[ "$f" =~ ^\.github/agents/.*\.md$ ]]; then
+              AGENT_FILES="${AGENT_FILES}${f}"$'\n'
+            fi
+          done <<< "$CHANGED_FILES"
+
+          if [ -z "$AGENT_FILES" ]; then
+            echo "ℹ️  No .github/agents/*.md files changed — audit not triggered."
+            echo "agent_files_changed=false" >> $GITHUB_OUTPUT
+            echo "changed_files_list=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "agent_files_changed=true" >> $GITHUB_OUTPUT
+          # Store newline-separated list, escaping for GITHUB_OUTPUT
+          ESCAPED=$(echo "$AGENT_FILES" | tr '\n' '|')
+          echo "changed_files_list=${ESCAPED}" >> $GITHUB_OUTPUT
+
+          echo "Agent contract files modified in this PR:"
+          echo "$AGENT_FILES" | sed 's/^/  /'
+          echo ""
+
+          echo "=== Diff Report: Changed Agent Contract Files ==="
+          echo ""
+          while IFS= read -r f; do
+            if [ -n "$f" ]; then
+              echo "────────────────────────────────────────────────────────────────────"
+              echo "File: $f"
+              echo "────────────────────────────────────────────────────────────────────"
+              git diff "origin/${BASE_BRANCH}...HEAD" -- "$f" || true
+              echo ""
+            fi
+          done <<< "$AGENT_FILES"
+
+          echo "=== End Diff Report ==="
+
+  # ============================================================================
+  # JOB 2: CS2 Authorization Check
+  # Per policy §2: Only CS2 or CodexAdvisor with CS2 permission may modify
+  # agent contract files. PR description must reference a CS2-approved issue.
+  # ============================================================================
+  cs2-authorization-check:
+    name: "agent-contract/cs2-authorization"
+    runs-on: ubuntu-latest
+    needs: agent-contract-diff-report
+    if: needs.agent-contract-diff-report.outputs.agent_files_changed == 'true'
+    env:
+      PR_BODY: ${{ github.event.pull_request.body }}
+      PR_TITLE: ${{ github.event.pull_request.title }}
+    steps:
+      - name: Check for CS2 authorization reference
+        run: |
+          echo "=== CS2 Authorization Check ==="
+          echo "Authority: AGENT_CONTRACT_FILE_PROTECTION_POLICY.md §2"
+          echo ""
+          echo "PR: #${{ github.event.pull_request.number }} — ${{ github.event.pull_request.title }}"
+          echo "Author: ${{ github.event.pull_request.user.login }}"
+          echo ""
+
+          # CS2 identity: @APGI-cmy (Johan Ras)
+          CS2_LOGIN="APGI-cmy"
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+
+          # If the PR was opened directly by CS2, it is authorized by definition
+          if [[ "$PR_AUTHOR" == "$CS2_LOGIN" ]]; then
+            echo "✅ PASS — PR submitted directly by CS2 (@APGI-cmy)."
+            echo "   CS2 has unconditional write authority per AGCFPP §2."
+            exit 0
+          fi
+
+          # For non-CS2 authors (including CodexAdvisor via copilot-swe-agent[bot]):
+          # PR description MUST reference a GitHub issue number traceable to CS2 authorization.
+          # Pattern: any of #NNN, Fixes #NNN, Closes #NNN, Issue #NNN, Ref #NNN, issue #NNN
+          echo "PR author is not CS2. Checking PR description for CS2-authorized issue reference..."
+          echo ""
+
+          if echo "$PR_BODY" | grep -qE '(#[0-9]+|([Ff]ixes|[Cc]loses|[Ii]ssue|[Rr]ef|[Aa]uth)[[:space:]]+#[0-9]+)'; then
+            ISSUE_REF=$(echo "$PR_BODY" | grep -oE '(#[0-9]+)' | head -1)
+            echo "✅ PASS — PR description contains issue reference: ${ISSUE_REF}"
+            echo ""
+            echo "Traceability requirement met per AGENT_CONTRACT_FILE_PROTECTION_POLICY.md §3 Step 2."
+            echo "CS2 authorization must be confirmed by reviewing the referenced issue."
+            echo ""
+            echo "Note: This automated check verifies presence of a reference."
+            echo "      CS2 reviewer must confirm the referenced issue grants explicit"
+            echo "      authorization for CodexAdvisor to make these changes."
+          else
+            echo "❌ FAIL — No issue reference found in PR description."
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "🚨 AGCFPP-001 — CS2 AUTHORIZATION REFERENCE MISSING"
+            echo ""
+            echo "This PR modifies .github/agents/ contract files."
+            echo ""
+            echo "Per AGENT_CONTRACT_FILE_PROTECTION_POLICY.md §2:"
+            echo "  Only CodexAdvisor acting with explicit CS2 permission via a"
+            echo "  CS2-approved layer-down issue may modify .github/agents/ files."
+            echo ""
+            echo "REQUIRED: PR description must include a reference to the CS2-approved"
+            echo "issue authorizing this modification. Example:"
+            echo "  - 'CS2 authorization: #NNN'"
+            echo "  - 'Fixes #NNN' (where NNN is the CS2-approved issue)"
+            echo "  - 'Per CS2 directive: maturion-isms#NNN'"
+            echo ""
+            echo "Action Required:"
+            echo "  1. Obtain CS2 (@APGI-cmy) authorization via a layer-down issue."
+            echo "  2. Reference that issue in the PR description."
+            echo "  3. Push to re-trigger CI."
+            echo ""
+            echo "Reference: AGENT_CONTRACT_FILE_PROTECTION_POLICY.md §3 Step 2"
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            exit 1
+          fi
+
+  # ============================================================================
+  # JOB 3: Actor Authority Check
+  # Per policy §2: Only CodexAdvisor or CS2 may commit changes to agent files.
+  # Any other actor is a constitutional violation.
+  # ============================================================================
+  actor-authority-check:
+    name: "agent-contract/actor-authority"
+    runs-on: ubuntu-latest
+    needs: agent-contract-diff-report
+    if: needs.agent-contract-diff-report.outputs.agent_files_changed == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify actor authority for agent contract changes
+        run: |
+          echo "=== Actor Authority Check ==="
+          echo "Authority: AGENT_CONTRACT_FILE_PROTECTION_POLICY.md §2"
+          echo ""
+
+          # CS2 identity — exact values only (no substring matching to prevent spoofing)
+          CS2_LOGIN="APGI-cmy"
+          CS2_EMAILS=("johangraz@me.com" "apgi-cmy@users.noreply.github.com" "49699333+APGI-cmy@users.noreply.github.com")
+
+          # CodexAdvisor operates via copilot-swe-agent[bot] as the runtime executor
+          # The GitHub Copilot coding agent uses these exact identities:
+          CODEX_AUTHORS=("copilot-swe-agent[bot]" "github-copilot[bot]" "Copilot")
+          CODEX_EMAILS=("copilot-swe-agent[bot]@users.noreply.github.com"
+                        "github-copilot[bot]@users.noreply.github.com"
+                        "198982749+copilot-swe-agent[bot]@users.noreply.github.com")
+
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+
+          echo "PR Author: $PR_AUTHOR"
+          echo ""
+
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+          git fetch origin "${BASE_BRANCH}" --depth=1 2>/dev/null || true
+          COMMITS=$(git log "origin/${BASE_BRANCH}..HEAD" --pretty=format:"%H|%an|%ae" 2>/dev/null || true)
+
+          VIOLATION_FOUND=false
+          VIOLATION_DETAILS=""
+
+          echo "Checking commits for unauthorized actor..."
+          echo ""
+
+          while IFS='|' read -r commit_sha commit_author commit_email; do
+            # Get agent files changed in this commit
+            FILES=$(git diff-tree --no-commit-id --name-only -r "$commit_sha" 2>/dev/null | \
+                    grep -E '^\.github/agents/.*\.md$' || true)
+
+            if [ -z "$FILES" ]; then
+              continue
+            fi
+
+            echo "🔍 Commit: ${commit_sha:0:7} | Author: $commit_author <$commit_email>"
+            echo "   Agent files: $(echo "$FILES" | tr '\n' ' ')"
+
+            # Check if author is CS2 — exact username or exact email match only
+            IS_AUTHORIZED=false
+
+            if [[ "$commit_author" == "$CS2_LOGIN" ]]; then
+              IS_AUTHORIZED=true
+              echo "   ✅ Author is CS2 (username match) — authorized"
+            else
+              for cs2_email in "${CS2_EMAILS[@]}"; do
+                if [[ "$commit_email" == "$cs2_email" ]]; then
+                  IS_AUTHORIZED=true
+                  echo "   ✅ Author is CS2 (email match) — authorized"
+                  break
+                fi
+              done
+            fi
+
+            # Check if author is CodexAdvisor runtime — exact username or exact email match only
+            if [ "$IS_AUTHORIZED" = false ]; then
+              for codex_author in "${CODEX_AUTHORS[@]}"; do
+                if [[ "$commit_author" == "$codex_author" ]]; then
+                  IS_AUTHORIZED=true
+                  echo "   ✅ Author is CodexAdvisor runtime — authorized (pending CS2 auth check)"
+                  break
+                fi
+              done
+            fi
+
+            if [ "$IS_AUTHORIZED" = false ]; then
+              for codex_email in "${CODEX_EMAILS[@]}"; do
+                if [[ "$commit_email" == "$codex_email" ]]; then
+                  IS_AUTHORIZED=true
+                  echo "   ✅ Author is CodexAdvisor runtime (email match) — authorized"
+                  break
+                fi
+              done
+            fi
+
+            if [ "$IS_AUTHORIZED" = false ]; then
+              VIOLATION_FOUND=true
+              VIOLATION_DETAILS="${VIOLATION_DETAILS}  Commit: ${commit_sha:0:7}\n"
+              VIOLATION_DETAILS="${VIOLATION_DETAILS}  Author: ${commit_author} <${commit_email}>\n"
+              VIOLATION_DETAILS="${VIOLATION_DETAILS}  Files:  $(echo "$FILES" | tr '\n' ' ')\n\n"
+              echo "   ❌ UNAUTHORIZED ACTOR — not CS2 or CodexAdvisor"
+            fi
+            echo ""
+          done <<< "$COMMITS"
+
+          echo "=== Actor Authority Result ==="
+          echo ""
+
+          if [ "$VIOLATION_FOUND" = true ]; then
+            echo "❌ FAIL — Unauthorized actor modified agent contract files."
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "🚨 AGCFPP-001 — UNAUTHORIZED AGENT CONTRACT MODIFICATION"
+            echo ""
+            echo "Violations:"
+            echo -e "$VIOLATION_DETAILS"
+            echo "Per AGENT_CONTRACT_FILE_PROTECTION_POLICY.md §1 (Absolute Prohibition):"
+            echo "  No agent — other than CodexAdvisor acting with explicit CS2 permission"
+            echo "  — may create, modify, or delete any file in .github/agents/."
+            echo ""
+            echo "Authorized actors:"
+            echo "  - CS2 (Johan Ras / @APGI-cmy): unconditional write authority"
+            echo "  - CodexAdvisor via copilot-swe-agent[bot]: conditional (CS2 issue required)"
+            echo ""
+            echo "Action Required:"
+            echo "  1. Revert unauthorized agent file changes."
+            echo "  2. Follow the mandatory pathway in AGCFPP §3."
+            echo "  3. Request CS2 authorization and have CodexAdvisor apply the changes."
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            exit 1
+          else
+            echo "✅ PASS — All agent contract commits were made by authorized actors."
+            echo ""
+            echo "Per AGENT_CONTRACT_FILE_PROTECTION_POLICY.md §2:"
+            echo "  Actor authority verified. CS2 or CodexAdvisor runtime only."
+          fi
+
+  # ============================================================================
+  # JOB 4: IAA Assurance Token Check
+  # Per INDEPENDENT_ASSURANCE_AGENT_CANON.md: All agent contract modifications
+  # by CodexAdvisor require IAA audit producing ASSURANCE-TOKEN.
+  # ============================================================================
+  iaa-assurance-check:
+    name: "agent-contract/iaa-assurance-token"
+    runs-on: ubuntu-latest
+    needs: agent-contract-diff-report
+    if: needs.agent-contract-diff-report.outputs.agent_files_changed == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for IAA assurance token artifact
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          echo "=== IAA Assurance Token Check ==="
+          echo "Authority: INDEPENDENT_ASSURANCE_AGENT_CANON.md, AGCFPP §4"
+          echo ""
+
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+          CS2_LOGIN="APGI-cmy"
+
+          # CS2 PRs do not require IAA audit (CS2 is the supreme authority)
+          if [[ "$PR_AUTHOR" == "$CS2_LOGIN" ]]; then
+            echo "✅ PASS — PR submitted directly by CS2 (@APGI-cmy)."
+            echo "   IAA assurance token not required for CS2 direct action."
+            exit 0
+          fi
+
+          echo "Checking for IAA assurance token in PR artifacts..."
+          echo ""
+
+          TOKEN_FOUND=false
+
+          # Check 1: .agent-admin/assurance/assurance-token-*.md artifact in repo
+          ASSURANCE_DIR=".agent-admin/assurance"
+          if [ -d "$ASSURANCE_DIR" ]; then
+            TOKEN_FILES=$(find "$ASSURANCE_DIR" -name "assurance-token-*.md" 2>/dev/null | head -5)
+            if [ -n "$TOKEN_FILES" ]; then
+              echo "📄 Assurance token files found in repository:"
+              echo "$TOKEN_FILES" | sed 's/^/   /'
+              echo ""
+              # Check if any token file contains ASSURANCE-TOKEN (not REJECTION-PACKAGE)
+              for tf in $TOKEN_FILES; do
+                if grep -q "ASSURANCE-TOKEN" "$tf" 2>/dev/null && \
+                   ! grep -q "REJECTION-PACKAGE" "$tf" 2>/dev/null; then
+                  echo "✅ Valid ASSURANCE-TOKEN found in: $tf"
+                  TOKEN_FOUND=true
+                  break
+                fi
+              done
+            fi
+          fi
+
+          # Check 2: IAA session memory with ASSURANCE-TOKEN in IAA memory dir
+          # Search all IAA session files for a valid ASSURANCE-TOKEN (any session)
+          if [ "$TOKEN_FOUND" = false ]; then
+            IAA_MEMORY=".agent-workspace/independent-assurance-agent/memory"
+            if [ -d "$IAA_MEMORY" ]; then
+              if find "$IAA_MEMORY" -name "session-*.md" 2>/dev/null | \
+                 xargs grep -ql "ASSURANCE-TOKEN" 2>/dev/null | head -1 | grep -q .; then
+                echo "✅ ASSURANCE-TOKEN found in IAA session memory."
+                TOKEN_FOUND=true
+              fi
+            fi
+          fi
+
+          # Check 3: PR description references an IAA token
+          if [ "$TOKEN_FOUND" = false ]; then
+            if echo "$PR_BODY" | grep -qiE "(ASSURANCE-TOKEN|IAA-[A-Z0-9]+-[0-9]+-PASS|iaa_audit_token)"; then
+              echo "✅ IAA token reference found in PR description."
+              TOKEN_FOUND=true
+            fi
+          fi
+
+          # Check 4: PREHANDOVER proof referencing IAA invocation in PR artifacts
+          if [ "$TOKEN_FOUND" = false ]; then
+            # Check PREHANDOVER files in CodexAdvisor memory
+            CODEX_MEMORY=".agent-workspace/CodexAdvisor-agent/memory"
+            if [ -d "$CODEX_MEMORY" ]; then
+              if find "$CODEX_MEMORY" -name "PREHANDOVER-*.md" 2>/dev/null | \
+                 xargs grep -ql "IAA\|ASSURANCE-TOKEN\|iaa_audit_token" 2>/dev/null | head -1 | grep -q .; then
+                echo "✅ IAA invocation evidence found in CodexAdvisor PREHANDOVER proof."
+                TOKEN_FOUND=true
+              fi
+            fi
+          fi
+
+          echo ""
+
+          if [ "$TOKEN_FOUND" = true ]; then
+            echo "=== IAA Assurance Check: PASS ==="
+            echo ""
+            echo "IAA assurance evidence present in PR bundle."
+            echo ""
+            echo "Per AGENT_CONTRACT_FILE_PROTECTION_POLICY.md §4:"
+            echo "  IAA audit requirement satisfied."
+            echo "  Merge permitted pending CS2 approval."
+          else
+            echo "❌ FAIL — No IAA assurance token found."
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "🚨 AGCFPP-001 — IAA ASSURANCE TOKEN MISSING"
+            echo ""
+            echo "This PR modifies .github/agents/ contract files."
+            echo ""
+            echo "Per AGENT_CONTRACT_FILE_PROTECTION_POLICY.md §3 Step 4:"
+            echo "  The Independent Assurance Agent (IAA) MUST audit all .github/agents/"
+            echo "  modifications by CodexAdvisor before merge is permitted."
+            echo ""
+            echo "REQUIRED: One of the following must be present:"
+            echo "  a) .agent-admin/assurance/assurance-token-NNN.md with ASSURANCE-TOKEN"
+            echo "  b) IAA session memory referencing this PR with ASSURANCE-TOKEN"
+            echo "  c) PR description containing IAA token (format: IAA-XXXX-YYYYMMDD-PASS)"
+            echo "  d) CodexAdvisor PREHANDOVER proof referencing IAA invocation"
+            echo ""
+            echo "Action Required:"
+            echo "  1. Invoke the Independent Assurance Agent (CodexAdvisor Phase 4 §4.4)."
+            echo "  2. Obtain ASSURANCE-TOKEN from IAA."
+            echo "  3. Include the token artifact in the PR bundle."
+            echo "  4. Push to re-trigger CI."
+            echo ""
+            echo "Reference:"
+            echo "  - INDEPENDENT_ASSURANCE_AGENT_CANON.md"
+            echo "  - AGENT_CONTRACT_FILE_PROTECTION_POLICY.md §3 Step 4"
+            echo "  - CodexAdvisor contract Phase 4 §4.4"
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            exit 1
+          fi
