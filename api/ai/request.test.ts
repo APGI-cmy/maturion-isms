@@ -15,6 +15,9 @@ import {
   validateRequest,
   buildAICentre,
   createHandler,
+  buildPersonaLoader,   // RED: not exported yet — Wave 10 gate
+  buildSessionMemory,   // RED: not exported yet — Wave 10 gate
+  buildPersistentMemory, // RED: not exported yet — Wave 10 gate
 } from './request.js';
 import {
   Capability,
@@ -301,5 +304,100 @@ describe('handler', () => {
 
     expect(res.headers['Content-Type']).toBe('application/json');
     expect(res.headers['Access-Control-Allow-Methods']).toContain('POST');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Wave 10 RED gate — buildAICentre adapters non-null requirement (T-073–T-075)
+//
+// These tests FAIL with the current null-stub collaborators in request.ts
+// because buildPersonaLoader / buildSessionMemory / buildPersistentMemory are
+// not yet exported.  They turn GREEN once api-builder wires the real
+// @maturion/ai-centre implementations and exports the factory functions.
+//
+// References: FR-073, FR-074, FR-075, TR-073, TR-074, TR-075 | Wave 10
+// ---------------------------------------------------------------------------
+
+describe('buildAICentre adapters — non-null requirement (T-073 through T-075)', () => {
+  // ---------------------------------------------------------------------------
+  // Type-assertion pattern note:
+  //   `buildPersonaLoader / buildSessionMemory / buildPersistentMemory` are
+  //   imported as named exports but are NOT yet exported from request.ts.
+  //   Vite/vitest resolves missing named exports to `undefined` at runtime
+  //   (rather than throwing at parse time), so existing tests stay GREEN.
+  //   The `as unknown as () => unknown` double-cast is intentional: it lets
+  //   TypeScript compile the test file, while the actual call at runtime throws
+  //   `TypeError: <name> is not a function` — the correct RED failure mode.
+  //   Once api-builder exports the factories, the casts become safely callable
+  //   and the downstream assertions drive the test to GREEN.
+  // ---------------------------------------------------------------------------
+
+  // T-073-1 ----------------------------------------------------------------
+  it('buildPersonaLoader() is exported and returns a real PersonaLoader instance', () => {
+    // RED: buildPersonaLoader is undefined (not exported) — throws at call site
+    const loader = (buildPersonaLoader as unknown as () => unknown)();
+    expect(loader).toBeDefined();
+    // Real PersonaLoader class name is 'PersonaLoader'; the null stub is a plain
+    // object literal whose constructor.name is 'Object'.
+    expect(
+      (loader as { constructor: { name: string } }).constructor.name,
+    ).toBe('PersonaLoader');
+  });
+
+  // T-073-2 ----------------------------------------------------------------
+  it('buildPersonaLoader().listAvailable() resolves to an array (real fs attempt)', async () => {
+    // RED: buildPersonaLoader is undefined (not exported) — throws at call site
+    const loader = (buildPersonaLoader as unknown as () => unknown)() as {
+      listAvailable(): Promise<string[]>;
+    };
+    const result = await loader.listAvailable();
+    // Null stub always returns [] with no fs access.
+    // Real PersonaLoader calls readdir — even an empty agents/ dir returns [].
+    // The gate is that the factory EXISTS and returns a genuine class instance.
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  // T-074-1 ----------------------------------------------------------------
+  it('buildSessionMemory() accumulates turns (non-null behaviour)', () => {
+    // RED: buildSessionMemory is undefined (not exported) — throws at call site
+    const store = (buildSessionMemory as unknown as () => unknown)() as {
+      append(sessionId: string, turn: Record<string, unknown>): void;
+      getHistory(sessionId: string): Array<{ content: string }>;
+    };
+
+    store.append('sess-red-001', {
+      role: 'user',
+      content: 'hello',
+      timestamp: Date.now(),
+      estimatedTokens: 5,
+    });
+
+    const history = store.getHistory('sess-red-001');
+    // Null stub always returns [] — real SessionMemoryStore persists turns.
+    expect(history).toHaveLength(1);
+    expect(history[0]!.content).toBe('hello');
+  });
+
+  // T-075-1 ----------------------------------------------------------------
+  it('buildPersistentMemory() stores and retrieves entries (non-null behaviour)', async () => {
+    // RED: buildPersistentMemory is undefined (not exported) — throws at call site
+    const adapter = (buildPersistentMemory as unknown as () => unknown)() as {
+      persist(entry: Record<string, unknown>): Promise<void>;
+      retrieve(params: { organisationId: string }): Promise<Array<{ content: string }>>;
+    };
+
+    await adapter.persist({
+      organisationId: 'org-red-001',
+      sessionId: 'sess-red-001',
+      role: 'user',
+      content: 'test memory entry',
+      capability: Capability.ADVISORY,
+      timestamp: Date.now(),
+    });
+
+    const results = await adapter.retrieve({ organisationId: 'org-red-001' });
+    // Null stub always returns [] — real PersistentMemoryAdapter retains entries.
+    expect(results).toHaveLength(1);
+    expect(results[0]!.content).toBe('test memory entry');
   });
 });

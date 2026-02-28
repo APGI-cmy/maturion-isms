@@ -365,6 +365,30 @@
       "layer_down_skipped": true,
       "status": "B04_DUPLICATE_LOGGED",
       "notes": "B-04 applied: canonical commit a925dd789b25 was already fully processed in session-022 (issue #637, liaison-confirmation SUCCESS, ripple PRs #639/#640/#641). No re-execution of layer-down. Alignment already confirmed: 4 new canon files SHA256-verified, AIMC integration confirmed, cross-references updated, GOVERNANCE_ARTIFACT_INVENTORY.md updated. This entry documents the duplicate dispatch detection per B-04 protocol. Session-023 memory created."
+    },
+    {
+      "timestamp": "2026-02-27T16:28:34Z",
+      "session_id": "session-024-20260227",
+      "type": "liaison-confirmation",
+      "canonical_commit": "fad4bc8786eb99ed75354aed50c0a50cdd8d055a",
+      "canonical_version": "1.0.0",
+      "issue_ref": "APGI-cmy/maturion-isms (current layer-down issue fad4bc87)",
+      "ripple_prs": [],
+      "files_verified": [],
+      "files_changed": 0,
+      "no_change_ripple": true,
+      "drift_detected": false,
+      "sha256_verified": true,
+      "status": "SUCCESS",
+      "notes": "No PUBLIC_API governance files changed in canonical commit fad4bc8786eb99ed75354aed50c0a50cdd8d055a. Automated CI confirmed no drift (ripple-integration.yml). Liaison confirms: governance is aligned with canonical source. sync_state.json updated to record new canonical commit. No layer-down required. Session-024 memory created."
+    },
+    {
+      "timestamp": "2026-02-27T16:49:18Z",
+      "session_id": "align-20260227-164918",
+      "type": "automated-alignment",
+      "canonical_commit": "810218ff7439daaa882b41b732d14f7803781e83",
+      "files_updated": 5,
+      "status": "SUCCESS"
     }
   ]
 }

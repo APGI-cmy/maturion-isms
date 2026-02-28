@@ -137,6 +137,24 @@ SAME session as the audit:
 
 ---
 
+### A-005 — Agent Contract File Immutability — No Agent May Touch `.github/agents/` Files
+
+**Rule** (CS2 directive — 2026-02-27):
+No agent (builder, Foreman, IAA, specialist, or any other) may create, read for modification, edit, delete, or include in a PR diff any file under `.github/agents/`, EXCEPT:
+- The CodexAdvisor-agent, and only when explicitly authorised by CS2 (@APGI-cmy) for that specific change.
+
+Any PR diff that includes modifications to `.github/agents/` files authored by any agent other than CodexAdvisor-agent is a violation of class GOV-BREACH-CONTRACT-001.
+
+**Check in IAA QP phase (CORE-007 / OVL-*):**
+> FAIL-ONLY-ONCE A-005: Inspect the PR diff for any file path matching `.github/agents/**`.
+> If any such file is modified, added, or deleted: verify the producing agent is CodexAdvisor-agent
+> AND CS2 authorisation is explicitly documented in the PREHANDOVER proof.
+> If either condition fails → REJECTION-PACKAGE citing A-005 (GOV-BREACH-CONTRACT-001).
+
+**Status**: ACTIVE — enforced on every audit
+
+---
+
 ## Adding New Rules
 
 When a new governance failure pattern is identified during a session (learning_notes in session

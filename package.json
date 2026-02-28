@@ -27,6 +27,15 @@
     "@supabase/supabase-js": "^2.98.0"
   },
   "devDependencies": {
-    "vitest": "^1.6.1"
+    "vitest": "^3.0.0"
+  },
+  "overrides": {
+    "rollup": ">=4.59.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "rollup": ">=4.59.0",
+      "esbuild": ">=0.25.0"
+    }
   }
 }

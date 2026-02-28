@@ -152,6 +152,7 @@ Agents created without the required knowledge artifact structure are **INCOMPLET
 - `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` — Tier 2 knowledge structure
 - `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0 — Living Agent framework
 - `governance/canon/agent-contracts-guidance/AGENT_CONTRACT.template.md` — Agent contract template
+- `governance/canon/ZERO_TOLERANCE_FINDING_PROTOCOL.md` — Zero-tolerance principle for all AI/agent findings (every finding is blocking unless CS2 exempts it)
 
 ---
 

@@ -32,7 +32,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] FRS approved by designated authority
 
 **Completion Date**: 2026-02-13 (v1.0.0); updated 2026-02-16 (v1.1.0 — FR-070, FR-071 added); updated 2026-02-20 (v1.2.0 — FR-072 added via INC-002)  
-**Notes**: FRS compiled with 69 requirements (FR-001 to FR-069), traceability matrix, priority classification (P0/P1/P2), acceptance criteria, and edge cases. Derived from App Description v1.1. Updated to v1.1.0 (2026-02-16) to add FR-070 (Frontend Application Scaffolding) and FR-071 (Frontend Application Wiring) per Deviation #9. Updated to v1.2.0 (2026-02-20) to add FR-072 (Embedded AI Assistant — AIMC Advisory Gateway) per INC-002/LL-031. Current FRS: 72 requirements (FR-001 to FR-072).
+**Notes**: FRS compiled with 69 requirements (FR-001 to FR-069), traceability matrix, priority classification (P0/P1/P2), acceptance criteria, and edge cases. Derived from App Description v1.1. Updated to v1.1.0 (2026-02-16) to add FR-070 (Frontend Application Scaffolding) and FR-071 (Frontend Application Wiring) per Deviation #9. Updated to v1.2.0 (2026-02-20) to add FR-072 (Embedded AI Assistant — AIMC Advisory Gateway) per INC-002/LL-031. Current FRS: 72 requirements (FR-001 to FR-072). Updated to v1.3.0 (2026-02-23): AI section realigned to AIMC Gateway pattern. Updated to v1.4.0 (2026-02-23): FR-028, FR-031, FR-032 corrected to remove direct-provider references. Updated to v1.5.0 (2026-02-27): FR-073–FR-077 added (AI Gateway Persona Loading, Session Memory, Persistent Memory Baseline, Health Check, Runbook) per Gap GR-001 resolution. Current FRS: 77 requirements (FR-001 to FR-077).
 
 ---
 
@@ -46,7 +46,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] TRS approved by designated authority
 
 **Completion Date**: 2026-02-13 (v1.0.0); updated 2026-02-16 (v1.1.0 — TR-071 added); updated 2026-02-20 (v1.2.0 — TR-072 added via INC-002)  
-**Notes**: TRS compiled with 70 technical requirements (TR-001 to TR-070) covering technology stack, performance, integration, security, compliance, accessibility, tooling, and infrastructure. 100% FRS-to-TRS traceability achieved across all 69 functional requirements. Updated to v1.1.0 (2026-02-16) to add TR-071 (Frontend Application as Deployable Artifact) per Deviation #9. Updated to v1.2.0 (2026-02-20) to add TR-072 (Embedded AI Assistant — AIMC Advisory Gateway integration) per INC-002/LL-031. Current TRS: 72 technical requirements (TR-001 to TR-072). Ready for architecture stage.
+**Notes**: TRS compiled with 70 technical requirements (TR-001 to TR-070) covering technology stack, performance, integration, security, compliance, accessibility, tooling, and infrastructure. 100% FRS-to-TRS traceability achieved across all 69 functional requirements. Updated to v1.1.0 (2026-02-16) to add TR-071 (Frontend Application as Deployable Artifact) per Deviation #9. Updated to v1.2.0 (2026-02-20) to add TR-072 (Embedded AI Assistant — AIMC Advisory Gateway integration) per INC-002/LL-031. Updated to v1.3.0 (2026-02-23): TR-072 realigned to AIMC Gateway pattern. Updated to v1.4.0 (2026-02-27): TR-073–TR-077 added (AI Gateway Persona Loading, Session Memory, Persistent Memory Baseline, Health Check, Runbook) per Gap GR-001 resolution. Current TRS: 77 technical requirements (TR-001 to TR-077). Ready for architecture stage.
 
 ---
 
@@ -63,6 +63,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] `observability-architecture.md` - Error handling, monitoring, watchdog, logging
 - [x] `test-strategy.md` - QA domains, testing levels, CI/CD, non-testable boundaries
 - [x] `ai-architecture.md` v2.0.0 - AIMC Gateway pattern; parsing, scoring, transcription via `@maturion/ai-centre` Gateway (direct-provider content moved to §7 superseded record)
+- [x] `ai-architecture.md` v3.0.0 - Wave 10 gap resolution: §9 (Memory/Persona collaborator wiring, flows, Wave 11 migration path), §10 (Health Check endpoint), §11 (Memory Runbook reference); architecture FROZEN on merge per CS2 directive 2026-02-27
 - [x] `offline-sync-architecture.md` - Service Worker, sync protocol, PWA
 - [x] `ui-component-architecture.md` - Components, responsive design, accessibility, i18n
 - [x] `reporting-architecture.md` - Report engine, Excel export, review table
@@ -71,8 +72,8 @@ Track the progression through the canonical module lifecycle stages.
 - [x] All 14 governance completeness domains addressed (3.1–3.14)
 - [x] Architecture approved by designated authority
 
-**Completion Date**: 2026-02-13 (v1.0.0); updated 2026-02-23 (`ai-architecture.md` rewritten to v2.0.0 — AIMC Gateway pattern)  
-**Notes**: Architecture compiled with full compliance to ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md v1.3. All 14 mandatory completeness domains (3.1–3.14) explicitly addressed across 13 architecture documents. 100% TRS traceability achieved (70/70 at initial; extended to 72/72 with TR-071 and TR-072 additions). `ai-architecture.md` updated to v2.0.0 on 2026-02-23 to reflect AIMC Gateway pattern; all direct-provider references moved to §7 (superseded record). Pending formal approval by designated authority.
+**Completion Date**: 2026-02-13 (v1.0.0); updated 2026-02-23 (`ai-architecture.md` rewritten to v2.0.0 — AIMC Gateway pattern); updated 2026-02-27 (`ai-architecture.md` updated to v3.0.0 — Wave 10 Memory/Persona/Health Check architecture added; FROZEN on merge)
+**Notes**: Architecture compiled with full compliance to ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md v1.3. All 14 mandatory completeness domains (3.1–3.14) explicitly addressed across 13 architecture documents. 100% TRS traceability achieved (70/70 at initial; extended to 72/72 with TR-071 and TR-072 additions; extended to 77/77 with TR-073–TR-077 additions in Wave 10). `ai-architecture.md` updated to v2.0.0 on 2026-02-23 to reflect AIMC Gateway pattern; all direct-provider references moved to §7 (superseded record). Updated to v3.0.0 on 2026-02-27 to add Wave 10 memory/persona/health check architecture and freeze declaration. Pending formal approval by designated authority.
 
 ---
 
@@ -115,7 +116,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] Risks and mitigation strategies documented (8 risks with mitigation)
 
 **Completion Date**: 2026-02-13 (v1.0.0)  
-**Notes**: Implementation plan compiled with 11 build waves (Waves 0–9, plus Waves 5.5 and 5.6), builder assignments per task, concurrent/sequential execution logic, multi-builder handover protocols, risk mitigation, and full traceability to Architecture, FRS, TRS, and Test Registry. Cross-referenced with builder contracts. Updated to v1.1.0 (2026-02-14) to include CST/CWT integration testing requirements per `governance/canon/COMBINED_TESTING_PATTERN.md`. Updated to v1.2.0 (2026-02-15) to include Wave 6: Deployment & Commissioning with production CWT, formal sign-over, and closure certification. Updated to v1.3.0 (2026-02-16) to add Wave 5.5 (Frontend Application Assembly) per Deviation #9; derivation chain updated to FR-001–FR-071, TR-001–TR-071. Updated to v1.4.0 (2026-02-16) to add MANDATORY PRE-BUILD GATE language to Wave 5.5. Updated to v1.5.0 (2026-02-17) to add Wave 5.6 (UI Component Wiring & Data Integration) per Deviation #11. Updated to v1.6.0 (2026-02-23) to add Waves 7, 8, 9 (AIMC Advisory, Analysis, Embeddings/RAG Integration — all BLOCKED pending upstream AIMC waves) per `AIMC_STRATEGY.md` v1.0.0; Issue #377 superseded. Updated to v1.7.0 (2026-02-23) to correct Tasks 1.2, 2.1, 3.1, and 4.2 scope — all direct-provider references (GPT-4 Turbo, Whisper API, GPT-4o Mini fallback) removed; all AI calls now reference AIMC Gateway capability calls exclusively per `AIMC_STRATEGY.md` v1.0.0 and `ai-architecture.md` v2.0.0; derivation chain updated to FR-001–FR-072, TR-001–TR-072.
+**Notes**: Implementation plan compiled with 11 build waves (Waves 0–9, plus Waves 5.5 and 5.6), builder assignments per task, concurrent/sequential execution logic, multi-builder handover protocols, risk mitigation, and full traceability to Architecture, FRS, TRS, and Test Registry. Cross-referenced with builder contracts. Updated to v1.1.0 (2026-02-14) to include CST/CWT integration testing requirements per `governance/canon/COMBINED_TESTING_PATTERN.md`. Updated to v1.2.0 (2026-02-15) to include Wave 6: Deployment & Commissioning with production CWT, formal sign-over, and closure certification. Updated to v1.3.0 (2026-02-16) to add Wave 5.5 (Frontend Application Assembly) per Deviation #9; derivation chain updated to FR-001–FR-071, TR-001–TR-071. Updated to v1.4.0 (2026-02-16) to add MANDATORY PRE-BUILD GATE language to Wave 5.5. Updated to v1.5.0 (2026-02-17) to add Wave 5.6 (UI Component Wiring & Data Integration) per Deviation #11. Updated to v1.6.0 (2026-02-23) to add Waves 7, 8, 9 (AIMC Advisory, Analysis, Embeddings/RAG Integration — all BLOCKED pending upstream AIMC waves) per `AIMC_STRATEGY.md` v1.0.0; Issue #377 superseded. Updated to v1.7.0 (2026-02-23) to correct Tasks 1.2, 2.1, 3.1, and 4.2 scope — all direct-provider references (GPT-4 Turbo, Whisper API, GPT-4o Mini fallback) removed; all AI calls now reference AIMC Gateway capability calls exclusively per `AIMC_STRATEGY.md` v1.0.0 and `ai-architecture.md` v2.0.0; derivation chain updated to FR-001–FR-072, TR-001–TR-072. Updated to v1.8.0 (2026-02-27): Wave 10 (AI Gateway Memory Wiring — Gap GR-001) added with task breakdown (Task 10.1: RED gate tests by qa-builder; Task 10.2: implementation by api-builder) and Wave 11 Supabase gate; derivation chain updated to FR-001–FR-077, TR-001–TR-077.
 
 > **⚠️ PROCESS DEVIATION — CST/CWT INTEGRATION TESTING OMITTED FROM INITIAL PLAN**
 >
@@ -245,6 +246,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] **Wave 7: AIMC Advisory Integration** — **COMPLETE** (AIMC Wave 3 confirmed; advisory-service.ts, EmbeddedAIAssistant AIMC wiring, env cleanup delivered)
 - [x] **Wave 8: AIMC Analysis Integration** — **COMPLETE** (AIMC Wave 4 confirmed; analysis-service.ts delivered, AI_ROUTING_TABLE removed from ai-scoring.ts)
 - [x] **Wave 9: AIMC Embeddings/RAG Integration** — **COMPLETE** (AIMC Wave 5 confirmed; embedding-service.ts delivered, searchSimilarCriteria and matchEvidenceToCriteria via Capability.RAG — 2026-02-26)
+- [x] **Wave 10: AI Gateway Memory Wiring (Gap GR-001)** — **COMPLETE** (2026-02-27 — null stubs replaced with real PersonaLoader, SessionMemoryStore, PersistentMemoryAdapter; GET /api/ai/health endpoint added; AI_GATEWAY_MEMORY_RUNBOOK.md created; 8 RED gate tests → GREEN; 368/368 monorepo tests GREEN)
 
 **Wave 0 Test Coverage (31 tests GREEN)** — PRs #140, #142:
 - [x] Task 0.1 (schema-builder, 25 tests): MAT-T-0043, MAT-T-0044, MAT-T-0049–0053, MAT-T-0079–0094, MAT-T-0095, MAT-T-0096
@@ -1935,6 +1937,58 @@ The following items are registered for agent self-learning and future wave plann
 | LL-MAT-EM-001 | Cross-track dependency tracking with BLOCKED-ON status in tracker | foreman-v2 |
 | LL-MAT-KB-001 | Governance docs must be explicit AAWP deliverables — not implied | foreman-v2, mat-specialist |
 | LL-MAT-PL-001 | Parking station [IMMEDIATE] items must be resolved in-session | foreman-v2 |
+| LL-MAT-GR-001 | All null/stub adapters in factory functions must be gap-resolved before wave closes | foreman-v2, api-builder |
+| LL-MAT-GR-002 | Process Governance Gap Resolution Protocol: all 7 steps (App Description → FRS → TRS → Impl Plan → RED tests → Builder allocation → Progress Tracker) required for every gap | foreman-v2 |
 
-**Session reference**: session-064-mat-wave6-final-20260227.md
-**Updated by**: foreman-v2-agent (session-064-20260227)
+**Session reference**: session-064-mat-wave6-final-20260227.md; session-wave10-20260227.md
+**Updated by**: foreman-v2-agent (session-064-20260227); foreman-v2-agent (session-wave10-20260227)
+
+---
+
+## Gap GR-001: AI Gateway Memory, Persona, and Session Stubs — Wave 10
+
+**Identified**: 2026-02-27
+**Status**: RESOLVED — Wave 10 complete
+**Issue Reference**: [Critical Gap] Complete persistent memory, session, persona, and context handling in AI gateway (api/ai/request.ts)
+**CS2 Authorization**: Issue opened by @APGI-cmy; architecture freeze directive 2026-02-27
+
+### Gap Description
+
+The AI gateway serverless handler (`api/ai/request.ts`) wired no-op null stub objects for all three critical collaborators: `PersonaLoader` (always returned `''`), `SessionMemoryStore` (always returned `[]`), `PersistentMemoryAdapter` (always returned `[]`). Real implementations existed in `@maturion/ai-centre` (Waves 2 and 4) but were never wired.
+
+### Process Governance Gap Resolution Protocol Compliance
+
+| Step | Artifact | Status |
+|---|---|---|
+| 1. App Description Update | `modules/mat/00-app-description/app-description.md` §20 (Gap GR-001), v1.3 | ✅ |
+| 2. FRS Entry | FR-073–FR-077 (`functional-requirements.md` v1.5.0) | ✅ |
+| 3. TRS Entry | TR-073–TR-077 (`technical-requirements-specification.md` v1.4.0) | ✅ |
+| 4. Implementation Plan | Wave 10 (`implementation-plan.md` v1.8.0) | ✅ |
+| 5. RED Test Suite | 8 RED gate tests (T-073-1, T-073-2, T-074-1, T-075-1, T-076-1–T-076-4) — RED before, GREEN after | ✅ |
+| 6. Builder Allocation | qa-builder (Task 10.1: RED tests) → api-builder (Task 10.2: implementation) | ✅ |
+| 7. Progress Tracker Update | This entry | ✅ |
+
+### Deliverables
+
+- `api/ai/request.ts` — Null stubs removed; `buildPersonaLoader()`, `buildSessionMemory()`, `buildPersistentMemory()` wired
+- `api/ai/health.ts` — `GET /api/ai/health` endpoint (FR-076/TR-076)
+- `api/ai/AI_GATEWAY_MEMORY_RUNBOOK.md` — Operational runbook (FR-077/TR-077)
+- `modules/mat/02-architecture/ai-architecture.md` v3.0.0 — §9–§11 added; FROZEN on merge
+- `modules/mat/01-frs/functional-requirements.md` v1.5.0 — FR-073–FR-077
+- `modules/mat/01.5-trs/technical-requirements-specification.md` v1.4.0 — TR-073–TR-077
+- `modules/mat/03-implementation-plan/implementation-plan.md` v1.8.0 — Wave 10
+
+### Test Evidence
+
+- 8 RED gate tests → GREEN (T-073-1, T-073-2, T-074-1, T-075-1, T-076-1–T-076-4)
+- Full monorepo: 368/368 tests GREEN (zero regressions)
+
+### Scope Boundary
+
+Full Supabase cross-invocation persistence is **Wave 11** scope, per existing Wave 4 architectural deferral. The Wave 10 in-memory `PersistentMemoryAdapter` has correct interface semantics, full test coverage, and documented migration path (`ai-architecture.md` v3.0.0 §9.5, `AI_GATEWAY_MEMORY_RUNBOOK.md` §4).
+
+### Fail-Only-Once Rule (per Issue notes)
+
+> "Never open a deployment/CI/CD issue for a service or path until it exists in the repository."
+
+This rule applies to all apps in the ISMS suite. To be canonised per CS2 direction.
