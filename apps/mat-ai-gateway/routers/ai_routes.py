@@ -7,7 +7,7 @@ Architecture reference: modules/mat/02-architecture/system-architecture.md §3.3
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Union
 
 from fastapi import APIRouter
 from pydantic import BaseModel
@@ -41,7 +41,7 @@ class ParseRequest(BaseModel):
 
 class ScoreRequest(BaseModel):
     tenant_id: str
-    evidence: Any = None
+    evidence: list[Union[str, dict]] | None = None
     criteria_id: str | None = None
     criteria: list | None = None
 
@@ -121,7 +121,7 @@ def generate_report(request: ReportRequest) -> dict:
     audit_data = request.audit_data or {"audit_id": request.audit_id}
     return _generator.generate(
         audit_data=audit_data,
-        format=request.format,
+        report_format=request.format,
         tenant_id=request.tenant_id,
     )
 

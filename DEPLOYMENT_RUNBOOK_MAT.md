@@ -452,3 +452,157 @@ If deployment introduces critical issues, follow this rollback procedure:
 ---
 
 **END OF DEPLOYMENT RUNBOOK**
+
+---
+
+# MAT AI GATEWAY DEPLOYMENT RUNBOOK
+
+| Field           | Value                                   |
+|-----------------|-----------------------------------------|
+| Module          | MAT – Manual Audit Tool                 |
+| Component       | AI Gateway (Python FastAPI)             |
+| Version         | v1.0.0                                  |
+| Last Updated    | 2026-02-28                              |
+| Owner           | CS2 (Infrastructure/DevOps)             |
+| Classification  | Internal – Operations                   |
+
+---
+
+## AG.1 Purpose
+
+This section covers deployment of the **MAT AI Gateway** — a Python FastAPI microservice providing
+AI-powered compliance operations (document parsing, maturity scoring, transcription, report generation,
+image analysis). It complements the frontend runbook above.
+
+**Architecture Reference**: `modules/mat/02-architecture/deployment-architecture.md` §3.3  
+**System Reference**: `modules/mat/02-architecture/system-architecture.md` §3.3–3.4  
+**Application Root**: `apps/mat-ai-gateway/`  
+**CI/CD Workflow**: `.github/workflows/deploy-mat-ai-gateway.yml`
+
+---
+
+## AG.2 Prerequisites Checklist
+
+- [ ] **Docker** 24+ installed on the deployment host
+- [ ] **Python 3.11+** (for local development only)
+- [ ] **Supabase Project** provisioned (database schema deployed)
+- [ ] **OpenAI API Key** with GPT-4 and Whisper access
+- [ ] **Deployment Platform** account (AWS ECS / GCP Cloud Run / Railway / Render)
+
+---
+
+## AG.3 Required Environment Variables
+
+| Variable | Description | Required |
+|---|---|---|
+| `OPENAI_API_KEY` | OpenAI API key (GPT-4 Turbo, Whisper) | Yes |
+| `SUPABASE_URL` | Supabase project URL | Yes |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (server-side operations) | Yes |
+| `CORS_ORIGINS` | Comma-separated allowed origins (default: `*`) | No |
+
+**Important**: The gateway validates all required variables at startup. Missing variables raise `RuntimeError` immediately, preventing silent misconfiguration.
+
+---
+
+## AG.4 Local Development
+
+```bash
+# 1. Create environment file
+cd apps/mat-ai-gateway
+cp .env.example .env  # or create manually with required vars
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Start gateway (hot reload)
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+# 4. Verify health check
+curl http://localhost:8000/health
+# Expected: {"status": "ok"}
+```
+
+---
+
+## AG.5 Docker Deployment
+
+```bash
+# Build image
+docker build -t mat-ai-gateway:latest apps/mat-ai-gateway/
+
+# Run container
+docker run -d \
+  --name mat-ai-gateway \
+  -p 8000:8000 \
+  -e OPENAI_API_KEY=sk-... \
+  -e SUPABASE_URL=https://<project>.supabase.co \
+  -e SUPABASE_SERVICE_ROLE_KEY=<key> \
+  mat-ai-gateway:latest
+
+# Verify health
+curl http://localhost:8000/health
+# Expected: {"status": "ok"}
+```
+
+---
+
+## AG.6 CI/CD Pipeline
+
+The pipeline runs automatically on push/PR to files under `apps/mat-ai-gateway/**`:
+
+| Stage | Description | Required |
+|---|---|---|
+| `lint` | flake8 code style check | Yes |
+| `test` | 45 pytest tests (health, routes, services, env) | Yes |
+| `build` | Docker image build | Yes |
+| `deploy-preview` | Preview deploy (PR only — configure `DEPLOY_TARGET` secret) | Optional |
+| `deploy-production` | Production deploy (main branch — configure `DEPLOY_TARGET` secret) | Optional |
+
+**To enable automated deployment**: Configure the `DEPLOY_TARGET`, `RAILWAY_TOKEN`, `RENDER_API_KEY`,
+or equivalent deployment secret in GitHub repository settings. The deploy jobs contain placeholder
+steps that echo instructions; replace them with your platform-specific deployment commands.
+
+---
+
+## AG.7 API Routes
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/health` | Liveness probe — no auth required |
+| `POST` | `/api/v1/parse` | Document parsing (PDF/DOCX → structured criteria JSON) |
+| `POST` | `/api/v1/score` | Maturity scoring (evidence + criteria → maturity level) |
+| `POST` | `/api/v1/transcribe` | Audio transcription (audio URL → timestamped transcript) |
+| `POST` | `/api/v1/report` | Report generation (audit data → DOCX/PDF/JSON) |
+| `POST` | `/api/v1/analyse-image` | Image analysis (photo evidence → compliance description) |
+
+---
+
+## AG.8 Health Check and Monitoring
+
+The container exposes a health check endpoint used by container orchestrators (ECS, Cloud Run):
+
+```bash
+GET /health
+# Response: {"status": "ok"}  HTTP 200
+```
+
+The Dockerfile configures a Python-based health probe (no curl dependency):
+- Interval: 30 seconds
+- Timeout: 5 seconds
+- Action on failure: container marked unhealthy, orchestrator restarts
+
+---
+
+## AG.9 Scaling Strategy
+
+Per `deployment-architecture.md` §3.3:
+
+| Concern | Recommended Value |
+|---|---|
+| CPU | 0.5–4 vCPU per container |
+| Memory | 1–8 GB per container |
+| Min replicas | 1 (dev/staging), 2 (production) |
+| Max replicas | 10 (auto-scaling) |
+| Request timeout | 300 seconds (AI processing) |
+
+Configure horizontal scaling in your container platform (ECS service auto-scaling, Cloud Run max-instances, Railway replicas).

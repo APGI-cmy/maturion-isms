@@ -17,15 +17,15 @@ class ReportGenerator:
     is wired in a later wave; this stub satisfies the architectural interface.
     """
 
-    def generate(self, audit_data: dict, format: str, tenant_id: str) -> dict:
+    def generate(self, audit_data: dict, report_format: str, tenant_id: str) -> dict:
         """
-        Generate an audit report from *audit_data* in the requested *format*.
+        Generate an audit report from *audit_data* in the requested *report_format*.
 
         Parameters
         ----------
         audit_data:
             Dictionary containing audit findings, evidence, and maturity scores.
-        format:
+        report_format:
             Output format: ``"json"``, ``"docx"``, or ``"pdf"``.
         tenant_id:
             Tenant scoping key for multi-tenancy isolation and audit trail.
@@ -38,6 +38,6 @@ class ReportGenerator:
         return {
             "status": "queued",
             "task_id": "stub",
-            "format": format,
+            "format": report_format,
             "tenant_id": tenant_id,
         }
