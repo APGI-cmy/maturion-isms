@@ -597,3 +597,11 @@ When a new strategic canon (like AIMC_STRATEGY.md) is layered down:
 4. Consumer artefacts (governance/aimc/*.md) may already have cross-references in place — confirm before adding redundant references
 
 **Authority**: Session 016 AIMC_STRATEGY.md layer-down verification
+
+## Session 025 — 2026-02-28 (no-change ripple for 6644ee51)
+
+1. No-change ripples (no PUBLIC_API files changed) follow the same processing pattern: update sync_state.json, add ripple-log entry, update GOVERNANCE_ARTIFACT_INVENTORY.md — even when no files are layered down.
+2. Automated CI (ripple-integration.yml) may create CS2-gated DRAFT PRs for agent contract drift independent of the ripple's specific changes. These are separate work items, not liaison actions.
+3. B-04 check is critical: always verify canonical commit not already in ripple-log before processing.
+
+**Authority**: Session 025 no-change ripple 6644ee51 processing
