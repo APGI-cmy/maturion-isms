@@ -3,6 +3,8 @@ agentId: isms-navigator
 description: ISMS Navigator — cross-module AI advisor for the Maturion Information Security Management System
 module: isms
 version: 1.0.0
+last_reviewed: 2026-02-28
+owner: CS2
 ---
 
 # ISMS Navigator

@@ -10,6 +10,13 @@
     "canonical_inventory_date": "2026-02-26",
     "total_canons_synced": 0,
     "sync_method": "no-change-ripple",
+    "timestamp": "2026-02-28T14:13:28Z",
+    "session_id": "align-20260228-141328",
+    "executed_by": "governance-liaison",
+    "canonical_inventory_version": "1.0.0",
+    "canonical_inventory_date": "2026-02-26",
+    "total_canons_synced": 3,
+    "sync_method": "layer-down-automated",
     "sync_status": "SUCCESS",
     "canonical_commit": "6644ee51ce714d3a9331b28b74b3e05f1b7ee880"
   },
@@ -23,6 +30,7 @@
     },
     "drift_detected": false,
     "last_drift_check": "2026-02-28T14:14:40Z"
+    "last_drift_check": "2026-02-28T14:13:28Z"
   },
   "integrity": {
     "evidence_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_evidence.log",

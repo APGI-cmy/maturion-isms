@@ -25,11 +25,14 @@ This governance implements the **Requirements-First** principle from BUILD_PHILO
 
 ## 2. Constitutional Authority
 
-This governance derives authority from:
-- **BUILD_PHILOSOPHY.md** - Requirements-First principle, One-Time Build Law
-- **GOVERNANCE_PURPOSE_AND_SCOPE.md** - Requirements as canonical memory
-- **QA_POLICY_MASTER.md** - Requirements define what must be tested
-- **COMPLIANCE_AND_STANDARDS_GOVERNANCE.md** - Requirement traceability for compliance
+This governance derives authority from the following canonical clauses:
+
+- **GOVERNANCE_PURPOSE_AND_SCOPE.md § 5.1** ("Requirement Specification (Pre-Architecture)") — mandates that every build or upgrade begins with a Requirement Specification covering functional requirements, integration requirements, hosting and deployment considerations, environment and scalability analysis, and future extensibility; no architecture may begin without this step. This clause is the direct constitutional origin of this document.
+- **GOVERNANCE_PURPOSE_AND_SCOPE.md § 2** ("Governance as Canonical Memory") — all durable knowledge must be written to canonical, versioned governance artifacts; requirements are canonical memory, not ephemeral instructions; verbal agreements, issue comments, and chat context are not valid requirement records.
+- **BUILD_PHILOSOPHY.md** — Requirements-First principle, One-Time Build Law.
+- **COMPLIANCE_AND_STANDARDS_GOVERNANCE.md § 5** ("Control Traceability Rule") — mandates traceability from requirement → control → evidence; no compliance control is valid unless it can be traced back to a requirement that specifies what must be controlled; a requirement specification is therefore a prerequisite for any compliant build.
+- **COMPLIANCE_AND_STANDARDS_GOVERNANCE.md § 9** ("Audit Outputs") — requires audit reports reproducible from governance artifacts including requirement traceability chains; without versioned, approved requirement specifications, audit outputs cannot be reproduced.
+- **QA_POLICY_MASTER.md** — Requirements define what must be tested.
 
 ---
 
@@ -52,6 +55,9 @@ Requirements are NOT:
 - ❌ Issue descriptions only
 - ❌ Verbal agreements only
 - ❌ Ephemeral documentation
+- ❌ App descriptions (high-level product summaries that describe purpose and capabilities but do not define testable acceptance criteria)
+- ❌ Feature ideas or user story outlines (informal descriptions of desired behavior without approval, versioning, or traceability)
+- ❌ Implementation details (prescriptions of *how* to build; requirements define *what* must be achieved)
 
 Requirements ARE:
 - ✅ Versioned artifacts in version control
