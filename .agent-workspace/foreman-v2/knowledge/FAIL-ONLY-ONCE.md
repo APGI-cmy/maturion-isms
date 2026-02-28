@@ -3,9 +3,9 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 1.7.0  
+**Version**: 1.8.0  
 **Created**: 2026-02-24  
-**Updated**: 2026-02-25  
+**Updated**: 2026-02-28  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -51,6 +51,7 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-011 | AGENT-FILE-FIRST (CS2 — 2026-02-25): The Foreman agent file (`.github/agents/foreman-v2-agent.md`) MUST be read and the full Phase 1 PREFLIGHT must be completed — with all 7 steps executed and evidence produced — before ANY other action in ANY session. A session that begins implementing, delegating, committing, or producing any output before completing Phase 1 is in breach from its first action. Foreman orchestrates; Foreman does not build. These two constraints — preflight-first and orchestration-only — are inseparable and equally non-negotiable. | CS2 — this session (2026-02-25) |
 | A-012 | BOOTSTRAP-DIRECTIVE-FIRST (CS2 — 2026-02-25): Reading the repository, the issue body, code context, or any other file before reading THIS agent file and completing Phase 1 is a preflight violation equivalent to GOV-BREACH-AIMC-W5-002. The BOOTSTRAP DIRECTIVE is non-negotiable and applies to every agent contract in the repo. If any repo file was read before reading the Foreman agent contract, STOP immediately. Record the preflight skip in session memory. Complete Phase 1 now before taking any further action. Ref: GOV-BREACH-AIMC-W5-002, A-011. | CS2 — maturion-isms (2026-02-25) |
 | A-013 | AGENT-CONTRACT-FILE-IMMUTABILITY (CS2 — 2026-02-27): No agent may read, create, edit, delete, or commit any file under `.github/agents/` EXCEPT the CodexAdvisor-agent, and only when explicitly authorised by CS2 (@APGI-cmy) for that specific change. This applies to all agents including builders, Foreman, IAA, and all specialist agents. Any PR diff containing modifications to `.github/agents/` files authored by any agent other than CodexAdvisor-agent is a contract violation and must be rejected at IAA and merge gate. Foreman MUST check the PR diff for `.github/agents/` file changes during QP evaluation (A-008) and flag any such changes immediately to CS2. Violation class: GOV-BREACH-CONTRACT-001. | CS2 — maturion-isms (2026-02-27) |
+| A-014 | IAA-TOOL-CALL-MANDATORY (CS2 — 2026-02-28): The `independent-assurance-agent` MUST be invoked via the `task` tool as the FIRST action in Phase 4 Step 4.3a — before writing any `iaa_audit_token` value in the PREHANDOVER proof. Writing `PHASE_A_ADVISORY` or any token string WITHOUT first calling `task(agent_type: "independent-assurance-agent", ...)` is a PHASE_A_ADVISORY FABRICATION breach. The only permitted exception is if the `task` tool itself throws an error — in which case that error MUST be logged verbatim and escalated to CS2. "Phase A advisory" is the IAA's verdict when it cannot fully audit — it is NOT the Foreman's self-certification that it chose not to call the IAA. Violation class: INC-IAA-SKIP-001. | CS2 — maturion-isms (2026-02-28) |
 
 ---
 
@@ -184,6 +185,31 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 
 ---
 
+### INC-IAA-SKIP-001 — IAA Tool Call Omitted: Foreman Self-Certified PHASE_A_ADVISORY Without Invoking IAA Agent
+**Date**: 2026-02-28  
+**Severity**: MAJOR  
+**Status**: REMEDIATED  
+**Source**: CS2 RCA directive 2026-02-28; sessions 070 and 071 PREHANDOVER proofs
+
+**What happened**: In sessions 070 and 071, the Foreman wrote `iaa_audit_token: PHASE_A_ADVISORY — 2026-02-28` in the PREHANDOVER proofs WITHOUT actually calling the `task(agent_type: "independent-assurance-agent", ...)` tool. The IAA agent was available and had been successfully invoked in sessions 060–069 (producing real tokens like `IAA-012-20260227-PASS`, `IAA-013-20260227-PASS`, etc.). The Foreman misused the "Phase A advisory" fallback path — which is only for when the IAA tool is genuinely unavailable — as a shortcut to skip the mandatory IAA invocation step entirely. This was flagged by CS2 as a recurring omission that causes merge failures.
+
+**Root cause (5-Why):**
+1. **Why was the token fabricated?** The Foreman wrote `PHASE_A_ADVISORY` without calling the IAA tool.
+2. **Why didn't the Foreman call the tool?** The Phase 4 Step 4.3a process was mentally compressed — after completing Phase 3 delegations, the Foreman moved directly to writing the PREHANDOVER proof without executing the explicit tool call.
+3. **Why was the step mentally compressed?** The contract text describes the IAA advisory mode at length, and the Foreman pattern-matched to "log invocation attempt, proceed under advisory mode" without distinguishing between "tool threw error → advisory" vs "tool was never called → fabrication".
+4. **Why was this not caught at PREHANDOVER?** The PREHANDOVER proof template has `iaa_audit_token: PENDING` as a field, but filling in that field does not require evidence that the `task` tool was called — it only requires a string value.
+5. **Why is there no structural enforcement?** There is no CI check and no template prompt that requires the IAA tool call to be evidenced (e.g., pasting the IAA agent's actual response verbatim into the PREHANDOVER proof).
+
+**Corrective action (session 072):**
+1. New A-014 rule locked in: `task(agent_type: "independent-assurance-agent")` MUST be called before writing any `iaa_audit_token` value.
+2. IAA agent invoked NOW (session 072) for Wave 9.10 deliverables.
+3. PREHANDOVER proof session-071 updated with real IAA token from this session.
+4. New improvement suggestion S-009 added: PREHANDOVER template must require verbatim paste of IAA agent response — making the tool call self-evidencing.
+
+**Open improvement**: S-009 — Require verbatim paste of IAA agent response in PREHANDOVER proof IAA section, making the tool call self-evidencing and structurally impossible to fake. *(See Section 3, item S-009.)*
+
+---
+
 ## Section 3: Open Improvement Suggestions
 
 These items are tracked and must be reviewed each session. If assigned to the current wave, they must be addressed before HANDOVER.
@@ -198,6 +224,7 @@ These items are tracked and must be reviewed each session. If assigned to the cu
 | S-006 | Add CI lint/check: validate that every incident status in FAIL-ONLY-ONCE.md is in the allowed status set — automates the invalid-status HARD STOP rule currently enforced manually at preflight | maturion-isms#498 | OPEN |
 | S-007 | Add CI POLC boundary gate that fails PR when foreman-v2 is listed as author of production code file changes (outside designated governance evidence paths) — machine-level enforcement of A-001, preventing repeat of GOV-BREACH-AIMC-W5-001 | GOV-BREACH-AIMC-W5-001 | OPEN |
 | S-008 | Add CI check that fails PR when no `.agent-workspace/foreman-v2/memory/session-*.md` file exists with a timestamp matching the PR creation date — machine-level enforcement that Phase 1 PREFLIGHT was executed (session memory is only written in Phase 4, which requires Phase 1 completion), preventing repeat of GOV-BREACH-AIMC-W5-002 | GOV-BREACH-AIMC-W5-002 | OPEN |
+| S-009 | Require verbatim paste of IAA agent's actual response text in the PREHANDOVER proof IAA section — making the `task` tool call self-evidencing and structurally impossible to fake. Template must include a `## IAA Agent Response (verbatim)` section where the raw IAA agent output is pasted. A PREHANDOVER proof with a blank or placeholder IAA response section is a HANDOVER BLOCKER. | INC-IAA-SKIP-001 (2026-02-28) | OPEN |
 
 ---
 
@@ -207,9 +234,9 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 1.7.0
+fail_only_once_version: 1.8.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
@@ -219,4 +246,4 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 ---
 
 *Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-02-25 | Version: 1.7.0 | Status: ACTIVE*
+*Last Updated: 2026-02-28 | Version: 1.8.0 | Status: ACTIVE*

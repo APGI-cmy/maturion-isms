@@ -3,6 +3,8 @@ agentId: xdetect-advisor
 description: XDetect Module AI Advisor — supports anomaly detection and incident response conversations
 module: xdetect
 version: 1.0.0
+last_reviewed: 2026-02-28
+owner: CS2
 ---
 
 # XDetect Advisor

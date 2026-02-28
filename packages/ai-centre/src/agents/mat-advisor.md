@@ -3,6 +3,8 @@ agentId: mat-advisor
 description: MAT Module AI Advisor — supports governance and maturity assessment conversations
 module: mat
 version: 1.0.0
+last_reviewed: 2026-02-28
+owner: CS2
 ---
 
 # MAT Advisor

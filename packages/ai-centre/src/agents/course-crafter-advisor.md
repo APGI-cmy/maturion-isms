@@ -1,3 +1,13 @@
+---
+agentId: course-crafter-advisor
+description: Course Crafter Advisor — AI-powered instructional design specialist for ISMS learning content creation
+module: course-crafter
+version: 1.0.0
+last_reviewed: 2026-02-28
+owner: CS2
+capability: document-generation
+---
+
 # Course Crafter Advisor
 
 ## Agent Identity
