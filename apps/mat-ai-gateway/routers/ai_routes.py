@@ -12,7 +12,22 @@ from typing import Any
 from fastapi import APIRouter
 from pydantic import BaseModel
 
+from services.image_analysis import ImageAnalyser
+from services.parsing import DocumentParser
+from services.reporting import ReportGenerator
+from services.scoring import MaturityScorer
+from services.transcription import AudioTranscriber
+
 router = APIRouter(prefix="/api/v1", tags=["AI Services"])
+
+# ---------------------------------------------------------------------------
+# Module-level service singletons — instantiated once, shared across requests
+# ---------------------------------------------------------------------------
+_parser = DocumentParser()
+_scorer = MaturityScorer()
+_transcriber = AudioTranscriber()
+_generator = ReportGenerator()
+_analyser = ImageAnalyser()
 
 
 # ---------------------------------------------------------------------------
@@ -59,9 +74,7 @@ def parse_document(request: ParseRequest) -> dict:
 
     Architecture: system-architecture.md §3.4
     """
-    from services.parsing import DocumentParser
-    parser = DocumentParser()
-    return parser.parse(
+    return _parser.parse(
         document_url=request.document_url,
         tenant_id=request.tenant_id,
     )
@@ -74,13 +87,11 @@ def score_maturity(request: ScoreRequest) -> dict:
 
     Architecture: system-architecture.md §3.4
     """
-    from services.scoring import MaturityScorer
-    scorer = MaturityScorer()
     evidence = request.evidence if isinstance(request.evidence, list) else [request.evidence]
     criteria = request.criteria or (
         [request.criteria_id] if request.criteria_id else []
     )
-    return scorer.score(
+    return _scorer.score(
         evidence=evidence,
         criteria=criteria,
         tenant_id=request.tenant_id,
@@ -94,9 +105,7 @@ def transcribe_audio(request: TranscribeRequest) -> dict:
 
     Architecture: system-architecture.md §3.4
     """
-    from services.transcription import AudioTranscriber
-    transcriber = AudioTranscriber()
-    return transcriber.transcribe(
+    return _transcriber.transcribe(
         audio_url=request.audio_url,
         tenant_id=request.tenant_id,
     )
@@ -109,10 +118,8 @@ def generate_report(request: ReportRequest) -> dict:
 
     Architecture: system-architecture.md §3.4
     """
-    from services.reporting import ReportGenerator
-    generator = ReportGenerator()
     audit_data = request.audit_data or {"audit_id": request.audit_id}
-    return generator.generate(
+    return _generator.generate(
         audit_data=audit_data,
         format=request.format,
         tenant_id=request.tenant_id,
@@ -126,9 +133,7 @@ def analyse_image(request: AnalyseImageRequest) -> dict:
 
     Architecture: system-architecture.md §3.4
     """
-    from services.image_analysis import ImageAnalyser
-    analyser = ImageAnalyser()
-    return analyser.analyse(
+    return _analyser.analyse(
         image_url=request.image_url,
         tenant_id=request.tenant_id,
     )
