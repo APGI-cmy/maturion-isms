@@ -98,7 +98,7 @@ All required artifacts present:
 
 - **IAA required**: REVIEW (governance CI, not AGENT_CONTRACT)
 - **IAA invocation**: Invoked via independent-assurance-agent task tool
-- **iaa_audit_token**: PENDING — awaiting IAA verdict
+- **iaa_audit_token**: IAA-017-20260228-PASS (PHASE_B_BLOCKING)
 
 ---
 
