@@ -2,8 +2,8 @@
 
 **Package**: `packages/ai-centre`  
 **Package Slug**: ai-centre  
-**Last Updated**: 2026-02-26  
-**Updated By**: foreman-v2 (session-063-wave9.6-9.9-20260226)
+**Last Updated**: 2026-02-28  
+**Updated By**: schema-builder (wave9.2 PR — copilot/design-feedback-pipeline-schema)
 
 ---
 
@@ -23,7 +23,11 @@ The `packages/ai-centre` package implements the AIMC (AI Memory Centre) gateway,
 | Wave 4 | MemoryLifecycle, SessionMemoryStore, PersistentMemoryAdapter (in-memory foundation), wave4-cst integration tests | ✅ COMPLETE | 48 tests GREEN | Supabase wiring explicitly deferred to Wave 5 (see `PersistentMemoryAdapter.ts` TODO(Wave5)) |
 | **Wave 5** | Knowledge Centre + Embeddings + RAG — `OpenAIAdapter` embeddings extension (`Capability.EMBEDDINGS`, `/v1/embeddings` API), `MemoryLifecycle` RAG step 4 (`KnowledgeRetriever` DI, GRS-030 context order), pgvector migration (`003_ai_knowledge.sql`) | ✅ **COMPLETE** | 61 tests GREEN (Waves 2–5 full regression suite) | Re-executed per POLC chain (GOV-BREACH-AIMC-W5-001 remediation). qa-builder → schema-builder → api-builder. QP PASS 2026-02-25. |
 | **Wave 9.1** | Schema: Episodic Memory Table — `ai_episodic_events` DDL, RLS, immutability rules, indexes | ✅ **COMPLETE** | All schema tests GREEN | Pre-existing at session-064 start. Delivered prior to PR #652. |
+| **Wave 9.2** | Schema: Feedback Pipeline Table + `ai_knowledge` Amendment — `005_ai_feedback_pipeline.sql` (`ai_feedback_events` table, ARC status constraint, RLS), `006_ai_knowledge_metadata.sql` (`domain`, `module`, `standard_ref`, `freshness_date`, `approval_status` columns), `src/types/feedback.ts` (FeedbackEvent, ARCReviewStatus, FeedbackPipelineInterface) | ✅ **COMPLETE** | 18/18 schema GREEN (W9.2-T-001 to W9.2-T-018, + regression = 179 total) | QP PASS 2026-02-27. schema-builder. IAA-WAVE9.2+9.5-20260227-PASS. PREHANDOVER session-060-wave9.2-9.4-9.11, session-069-wave9.2-9.5. |
 | **Wave 9.3** | API: Episodic Memory Adapter + MemoryLifecycle Integration — `EpisodicMemoryAdapter.ts`, type extensions (`EpisodicEventEntry`, `EpisodicMemoryAdapter` interface, `AICentreConfig.episodicMemory`), `MemoryLifecycle.ts` episodic fire-and-forget integration | ✅ **COMPLETE** | 7/7 GREEN (+ 154 regression = 161 total) | QP PASS 2026-02-27. api-builder. IAA-WAVE9.3-20260227-PASS. PR #652. |
+| **Wave 9.4** | API: FeedbackPipeline class — `src/feedback/FeedbackPipeline.ts` (submit, listPending, approve, reject via `ai_feedback_events`), `AIMCBypassError` guard on missing organisationId | ✅ **COMPLETE** | 8/8 GREEN (W9.4-T-001 to W9.4-T-006, T-011 + regression = 179 total) | QP PASS 2026-02-26. api-builder. IAA-WAVE9.2+9.4-20260226-PASS. PREHANDOVER session-060-wave9.2-9.4-9.11. |
+| **Wave 9.5** | API: KnowledgeRetrieverImpl approval filter — `src/memory/KnowledgeRetrieverImpl.ts` (filters by `approvalStatus === 'approved'`), `KnowledgeEntry.approvalStatus` type extension | ✅ **COMPLETE** | 7/7 GREEN (W9.5-T-001 to W9.5-T-007 + regression = 179 total) | QP PASS 2026-02-27. api-builder. IAA-WAVE9.2+9.5-20260227-PASS. PREHANDOVER session-069-wave9.2-9.5. |
+| **Wave 9.11** | Legacy Escape Remediation — `@deprecated` JSDoc markers on legacy learning hook files; AIMCBypassError exported from `errors/index.ts` | ✅ **COMPLETE** | All W9.11-T-* tests GREEN | QP PASS 2026-02-26. PREHANDOVER session-060-wave9.2-9.4-9.11. |
 | **Wave 9.6** | Module Integration: xDetect + Risk Management — AIMC wiring services, wiring invariant tests, AI gateway smoke tests for both modules | ✅ **COMPLETE** | 16/16 GREEN (+ 154 regression) | QP PASS 2026-02-26. risk-platform-agent advisory. capability: 'advisory'. ARCH-FREEZE-WAVE9-TRACK-C-20260226. |
 | **Wave 9.7** | Module Integration: PIT — `pit-advisor.md` persona + AIMC wiring service, wiring invariant tests, AI gateway smoke tests | ✅ **COMPLETE** | 8/8 GREEN (+ 154 regression) | QP PASS 2026-02-26. pit-specialist advisory. capability: 'analysis'. pit-advisor.md created inline (Wave 9.10 dependency met for PIT). |
 | **Wave 9.8** | Module Integration: Course Crafter + ISMS Navigator — AIMC wiring services, wiring invariant + smoke tests | ⏸ PENDING | — | Awaiting CS2 wave-start. Personas exist (`course-crafter-advisor.md`, `isms-navigator.md`). No Wave 9.10 dependency for 9.8. |
