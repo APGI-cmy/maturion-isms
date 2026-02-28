@@ -3,6 +3,8 @@ agentId: risk-advisor
 description: Risk Advisor — cross-module risk assessment, threat analysis, and control effectiveness advisor
 module: risk
 version: 1.0.0
+last_reviewed: 2026-02-28
+owner: CS2
 ---
 
 # Risk Advisor

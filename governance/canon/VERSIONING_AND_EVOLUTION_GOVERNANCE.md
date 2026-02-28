@@ -30,11 +30,14 @@ This policy applies to:
 
 ## 2. Constitutional Authority
 
-This governance derives authority from:
-- **GOVERNANCE_PURPOSE_AND_SCOPE.md** - Governance as canonical memory
-- **BUILD_PHILOSOPHY.md** - One-Time Build Law requires version stability
-- **COMPLIANCE_AND_STANDARDS_GOVERNANCE.md** - Audit trail and traceability requirements
-- **QA_POLICY_MASTER.md** - QA repeatability requires version control
+This governance derives authority from the following canonical clauses:
+
+- **GOVERNANCE_PURPOSE_AND_SCOPE.md § 10** ("Versioning and Evolution") — mandates that all builds and upgrades are independently versioned; each version must have its own QA evidence and effectiveness score and must not contaminate previous versions; evolution must be intentional and auditable. This clause is the direct constitutional origin of this document.
+- **GOVERNANCE_PURPOSE_AND_SCOPE.md § 2** ("Governance as Canonical Memory") — requires all durable knowledge to be written to canonical, versioned governance artifacts; no agent may rely on ephemeral memory; learning that is not versioned is not preserved.
+- **BUILD_PHILOSOPHY.md** — One-Time Build Law requires version stability and reproducibility.
+- **COMPLIANCE_AND_STANDARDS_GOVERNANCE.md § 6** ("Evidence Requirements") — mandates evidence that is timestamped, attributable, and reproducible; version isolation is the mechanism that makes evidence reproducible and attributable per build, satisfying ISO 27001 and ISO 31000 audit requirements.
+- **COMPLIANCE_AND_STANDARDS_GOVERNANCE.md § 9** ("Audit Outputs") — requires audit reports reproducible from governance artifacts, build artifacts, and evidence catalog sources; version isolation per build is a prerequisite for reproducible audit outputs.
+- **QA_POLICY_MASTER.md** — QA repeatability requires version control.
 
 ---
 

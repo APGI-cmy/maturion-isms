@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-02-27",
+  "last_updated": "2026-02-28",
   "total_canons": 188,
   "generation_timestamp": "2026-02-21T16:30:00Z",
   "canon_entry_schema": {
@@ -1862,13 +1862,13 @@
     {
       "filename": "REQUIREMENT_SPECIFICATION_GOVERNANCE.md",
       "version": "1.0",
-      "file_hash": "d5db263e4f4e190c094ef0cbbce58c17cc80c958a2eaaf77118537c3bdd0c667",
+      "file_hash": "645cf74498ff42d8aebdd7eeb7c2d60ccf23ef099c8dd8877ff202a930a98063",
       "effective_date": "unknown",
       "description": "This document defines governance rules for **requirement specifications** across all repositories requiring structured requirements management.",
       "type": "canon",
       "path": "governance/canon/REQUIREMENT_SPECIFICATION_GOVERNANCE.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "d5db263e4f4e190c094ef0cbbce58c17cc80c958a2eaaf77118537c3bdd0c667"
+      "file_hash_sha256": "645cf74498ff42d8aebdd7eeb7c2d60ccf23ef099c8dd8877ff202a930a98063"
     },
     {
       "filename": "RESPONSIBILITY_DOMAIN_ENTRY.template.md",
@@ -2033,13 +2033,13 @@
     {
       "filename": "VERSIONING_AND_EVOLUTION_GOVERNANCE.md",
       "version": "1.0",
-      "file_hash": "0c6e460555625327aef110fb3be84800b1984024b0daeab8179db80afcb03b92",
+      "file_hash": "590509c92e0a945dee8dafa6fb6614f4300bc08c9f38a84ce1df5bcf4d8bcf32",
       "effective_date": "unknown",
       "description": "This document defines governance rules for **versioning and evolution** of all governance artifacts, application code, and system components.",
       "type": "canon",
       "path": "governance/canon/VERSIONING_AND_EVOLUTION_GOVERNANCE.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "0c6e460555625327aef110fb3be84800b1984024b0daeab8179db80afcb03b92"
+      "file_hash_sha256": "590509c92e0a945dee8dafa6fb6614f4300bc08c9f38a84ce1df5bcf4d8bcf32"
     },
     {
       "filename": "VISION_ALIGNMENT_AND_DRIFT_MODEL.md",
