@@ -95,15 +95,30 @@ Issue `[Wave 9.10] AIMC – Persona Lifecycle: Missing Personas, Versioning, Gov
 - [x] Zero deprecation warnings
 - [x] Zero compiler/linter warnings
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
-- [x] IAA audit token recorded: PHASE_A_ADVISORY — 2026-02-28
+- [x] IAA audit token recorded: IAA-session-017-20260228-PASS (PHASE_B_BLOCKING, session-017-20260228, 16/16 checks PASS)
 
 ---
 
 ## IAA Audit
 
-`iaa_audit_token: PHASE_A_ADVISORY — 2026-02-28`
+`iaa_audit_token: IAA-session-017-20260228-PASS`
 
-IAA not yet deployed (Phase A). Invocation logged. This wave is flagged for IAA review once Phase B activates. Proceeding under advisory mode.
+IAA session: session-017-20260228 (independent-assurance-agent). Phase B BLOCKING. All 16 checks PASS. Merge gate parity: PASS.
+
+> **IAA Agent Response (verbatim — ASSURANCE-TOKEN):**
+> ```
+> ASSURANCE-TOKEN
+> PR: copilot/define-persona-lifecycle-governance
+>     Wave 9.10 — AIMC Persona Lifecycle (Track D)
+> 
+> All 16 checks PASS. Merge gate parity: PASS.
+> Merge permitted (subject to CS2 approval).
+> 
+> Token reference: IAA-session-017-20260228-PASS
+> Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+> ```
+
+**NOTE — INC-IAA-SKIP-001 Remediation**: The original session 071 PREHANDOVER proof incorrectly recorded `PHASE_A_ADVISORY` without calling the IAA `task` tool. This has been remediated in session 072 per CS2 RCA directive 2026-02-28. The IAA agent was properly invoked via `task(agent_type: "independent-assurance-agent")` in session 072 and issued the above ASSURANCE-TOKEN. The PREHANDOVER proof has been updated accordingly.
 
 ---
 
