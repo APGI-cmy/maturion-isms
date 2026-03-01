@@ -1,11 +1,11 @@
 # MAT — Implementation Plan
 
 **Module**: MAT (Manual Audit Tool)  
-**Version**: v1.8.0  
+**Version**: v1.9.0  
 **Status**: APPROVED  
 **Owner**: Foreman (FM)  
 **Created**: 2026-02-13  
-**Last Updated**: 2026-02-27  
+**Last Updated**: 2026-03-01  
 **Authority**: Derived from Architecture (modules/mat/02-architecture/), FRS (modules/mat/01-frs/functional-requirements.md), TRS (modules/mat/01.5-trs/technical-requirements-specification.md), Test Registry (governance/TEST_REGISTRY.json)
 
 ---
@@ -31,7 +31,7 @@ App Description → FRS (FR-001–FR-072) → TRS (TR-001–TR-072) → Architec
 
 ## 1. Build Wave Overview
 
-MAT is built in **eleven waves** (Wave 0–Wave 9, plus Waves 5.5 and 5.6), with remediation waves for identified gaps. Each wave has a gate that must achieve 100% GREEN before the next wave begins.
+MAT is built in **twelve waves** (Wave 0–Wave 11, plus Waves 5.5 and 5.6), with remediation waves for identified gaps. Each wave has a gate that must achieve 100% GREEN before the next wave begins.
 
 | Wave | Name | Builder(s) | Execution | Tests | Est. Duration |
 |------|------|-----------|-----------|-------|---------------|
@@ -50,13 +50,17 @@ MAT is built in **eleven waves** (Wave 0–Wave 9, plus Waves 5.5 and 5.6), with
 | 7 | **AIMC Advisory Integration** *(BLOCKED — Awaiting AIMC Wave 3)* | api-builder, ui-builder | Sequential | MAT-T-AIMC-001–MAT-T-AIMC-010 (RED until AIMC Wave 3) | TBD |
 | 8 | **AIMC Analysis Integration** *(BLOCKED — Awaiting AIMC Wave 4)* | api-builder | Sequential | MAT-T-AIMC-011–MAT-T-AIMC-020 (RED until AIMC Wave 4) | TBD |
 | 9 | **AIMC Embeddings/RAG Integration** *(BLOCKED — Awaiting AIMC Wave 5)* | api-builder | Sequential | MAT-T-AIMC-021–MAT-T-AIMC-030 (RED until AIMC Wave 5) | TBD |
+| 10 | **AI Gateway Memory Wiring (Gap GR-001)** | qa-builder, api-builder | Sequential (10.1→10.2) | T-073-1, T-073-2, T-074-1, T-074-2, T-075-1, T-075-2, T-076-1–T-076-4 | 2 days |
+| 11 | **Supabase Persistent Memory Wiring** *(PENDING — Awaiting Wave 10 CS2 cert + Supabase env)* | qa-builder, schema-builder, api-builder | Sequential (11.1→11.2→11.3) | T-075-SUP-1–T-075-SUP-4, T-076-SUP-1 | 2 days |
 
-**Total Estimated Duration**: ~41 working days (8.5 weeks) for Waves 0–6. Waves 7–9 duration TBD — blocked on AIMC delivery.
+**Total Estimated Duration**: ~41 working days (8.5 weeks) for Waves 0–6. Waves 7–9 duration TBD — blocked on AIMC delivery. Wave 10 COMPLETE (2 days). Wave 11 estimated 2 days — pending Wave 10 CS2 certification and Supabase env provisioning.
 
 > **⚠️ AIMC BLOCKER — Waves 7, 8, 9**: These waves CANNOT start or pass their gate until the upstream
 > AIMC wave is confirmed complete by POLC/CS2. All AI test cases for these waves are RED and will
 > remain RED until the respective AIMC Gateway capability is delivered. Builders MUST NOT begin
 > any implementation work for Waves 7–9 without explicit POLC/CS2 approval.
+
+> **Change Note (v1.9.0, 2026-03-01)**: Wave 11 (Supabase Persistent Memory Wiring) added to implementation plan per governance documentation task. Wave 11 implements the migration path defined in `ai-architecture.md` v3.0.0 §9.5 — replacing the in-memory `PersistentMemoryAdapter` with `SupabasePersistentMemoryAdapter` for cross-invocation persistence. Wave count updated to twelve. Cross-wave learning outcomes from Wave 10 (merge gate IAA token incident INC-IAA-SKIP-001 remediated, session-072 RCA) and Wave 9.10 (persona lifecycle complete, 425 tests GREEN) recorded. Architecture remains FROZEN per CS2 directive 2026-02-27. Acceptance criterion 14 added.
 
 > **Change Note (v1.8.0, 2026-02-23)**: Post-Delivery Gap Analysis & RCA complete. Remediation waves 2R, 4R, and 5.6R added to address gaps G-03, G-04, G-07, G-10, G-14, G-15, G-16 identified in `modules/mat/05-rca/MAT_APP_V2_RCA.md` v1.0.0. **Pre-Build Functionality Assessment Gate (PBFAG)** added to Derivation Chain between QA-to-Red and Implementation Plan — this gate is mandatory for all future build phases. Wave count updated to fourteen (plus remediation waves). See BUILD_PROGRESS_TRACKER.md Post-Delivery Gap Analysis section.
 
@@ -1407,6 +1411,117 @@ Wave 11 migration reference: `packages/ai-centre/supabase/migrations/001_ai_memo
 
 ---
 
+### 2.12 Wave 11 — Supabase Persistent Memory Wiring
+
+> **⚠️ STATUS: PENDING — Wave 10 must be CS2-certified complete AND Supabase environment variables
+> provisioned before Wave 11 may begin. No builder may be appointed or begin implementation work
+> until explicit POLC/CS2 written authorization is received.**
+
+**Objective**: Replace the in-memory `PersistentMemoryAdapter` in `api/ai/request.ts` with a
+`SupabasePersistentMemoryAdapter` backed by the `ai_memory` Supabase table. This delivers
+cross-invocation persistent AI memory — the final step of the Wave 4 architectural deferral
+recorded in the `TODO(Wave5)` comment in `PersistentMemoryAdapter.ts`.
+
+**Architecture Reference**: `modules/mat/02-architecture/ai-architecture.md` v3.0.0 §9.4–§9.5
+
+**Cross-Wave Learning (from Wave 10 — INC-IAA-SKIP-001)**:
+The Wave 10 delivery exposed a governance process gap (INC-IAA-SKIP-001 — IAA tool call omitted,
+PHASE_A_ADVISORY self-certified without invoking IAA agent). This has been remediated (A-014
+locked in: FAIL-ONLY-ONCE v1.8.0). Wave 11 PREHANDOVER proof MUST include verbatim IAA agent
+response per S-009 improvement — the `task(agent_type: "independent-assurance-agent")` call
+is MANDATORY before any `iaa_audit_token` is written.
+
+**Cross-Wave Learning (from Wave 9.10 — session-071)**:
+Wave 9.10 (Persona Lifecycle) delivered 42 tests GREEN (425 total monorepo tests). The
+three-builder delegation pattern (qa-builder RED → api-builder content → governance-liaison
+governance doc) proved effective for lifecycle/governance track waves.
+
+**Prerequisites**:
+- AIMC Wave 5 (Supabase migration `001_ai_memory.sql`): ✅ MIGRATION EXISTS
+- Wave 10 (in-memory `PersistentMemoryAdapter` wired): ✅ COMPLETE (2026-02-27)
+- `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` provisioned as Vercel environment variables: ⏳ PENDING CS2
+
+| Field | Value |
+|-------|-------|
+| **Status** | PENDING — CS2 wave-start authorization required |
+| **Builder** | qa-builder (Task 11.1: RED gate tests) → schema-builder (Task 11.2: migration validation) → api-builder (Task 11.3: Supabase adapter wiring) |
+| **Dependencies** | Wave 10 CS2-certified complete; `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` provisioned |
+| **FRS Refs** | FR-075 (Persistent Memory Baseline — Supabase extension) |
+| **TRS Refs** | TR-075 (Persistent Memory — Supabase backing store) |
+| **Architecture Ref** | `ai-architecture.md` v3.0.0 §9.4–§9.5 (FROZEN) |
+| **Migration Ref** | `packages/ai-centre/supabase/migrations/001_ai_memory.sql` |
+| **Tests** | T-075-SUP-1 through T-075-SUP-4 (cross-invocation persist/retrieve), T-076-SUP-1 (health check `supabaseWiring: "active"`) |
+
+#### Task 11.1: RED Gate Tests (qa-builder)
+
+**Builder**: qa-builder  
+**Prerequisite**: Wave 10 CS2-certified complete; Supabase env vars provisioned  
+**Deliverables**:
+1. New describe block in `api/ai/request.test.ts` → `describe('Wave 11 — Supabase persistence')`:
+   - T-075-SUP-1: `buildPersistentMemory()` returns `SupabasePersistentMemoryAdapter` (not in-memory — verify constructor name)
+   - T-075-SUP-2: `persist()` followed by `retrieve()` returns the persisted entry across a simulated cold start (mock Supabase client used in tests)
+   - T-075-SUP-3: `retrieve()` filters by `organisation_id` — entries from org A are not visible to org B
+   - T-075-SUP-4: `pruneExpired()` deletes entries with `expires_at < NOW()` (mock Supabase client)
+2. Update `api/ai/health.test.ts`:
+   - T-076-SUP-1: Health endpoint returns `supabaseWiring: "active"` and `persistentMemory: "supabase"` when Supabase adapter is wired
+
+**Gate**: ALL T-075-SUP and T-076-SUP tests must be RED (failing) before Task 11.2 begins.
+
+#### Task 11.2: Migration Validation (schema-builder)
+
+**Builder**: schema-builder  
+**Prerequisite**: Task 11.1 RED gate complete  
+**Deliverables**:
+1. Validate `packages/ai-centre/supabase/migrations/001_ai_memory.sql` is complete and idempotent:
+   - `ai_memory` table exists with columns: `id`, `organisation_id`, `session_id`, `key`, `value`, `expires_at`, `created_at`
+   - RLS policy enforces `organisation_id = auth.jwt()->>'organisation_id'`
+   - Index on `organisation_id` for query performance
+   - Migration is idempotent (safe to re-apply)
+2. If migration is incomplete, deliver the complete migration SQL as `packages/ai-centre/supabase/migrations/001_ai_memory_wave11.sql`
+3. Confirm `SUPABASE_DB_URL` can apply the migration in CI (no new secrets required beyond what Wave 10 provisioned)
+
+**Gate**: Migration passes `supabase db push --dry-run` in CI.
+
+#### Task 11.3: Supabase Adapter Wiring (api-builder)
+
+**Builder**: api-builder  
+**Prerequisite**: Tasks 11.1 (RED gate) and 11.2 (migration validated) complete  
+**Deliverables**:
+1. `packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.ts` (new file):
+   - Implements `IPersistentMemory` interface from `@maturion/ai-centre`
+   - Constructor: `new SupabasePersistentMemoryAdapter(supabaseClient, organisationId)`
+   - `persist(key, value, ttlSeconds?)`: writes to `ai_memory` table with RLS tenant isolation
+   - `retrieve(key)`: queries `ai_memory WHERE organisation_id = $1 AND key = $2`
+   - `pruneExpired()`: deletes `WHERE expires_at < NOW()`
+   - `organisationId` filter applied on all queries (GRS-008 compliance)
+2. `api/ai/request.ts` modifications:
+   - Update `buildPersistentMemory()` to instantiate `SupabasePersistentMemoryAdapter`
+   - Construct Supabase client from `process.env.SUPABASE_URL` + `process.env.SUPABASE_SERVICE_ROLE_KEY`
+   - Pass `organisationId` from request context to adapter
+   - Remove `TODO(Wave5)` comment (fulfilled)
+3. `api/ai/health.ts` update:
+   - Report `supabaseWiring: "active"` and `persistentMemory: "supabase"` when Supabase adapter is in use
+   - Report `supabaseWiring: "degraded"` if Supabase client cannot connect (failsafe — do not throw)
+4. `api/ai/AI_GATEWAY_MEMORY_RUNBOOK.md` update:
+   - §4 (Wave 11 migration steps) updated to reflect completion
+   - Add §5: Supabase production operations (connection pool, cold-start behaviour, RLS test)
+
+**Gate**: ALL T-075-SUP and T-076-SUP tests GREEN. Zero existing tests broken (425 baseline). Zero TypeScript errors. `supabaseWiring: "active"` in health response.
+
+#### Wave 11 Gate
+
+All of the following must be confirmed before Wave 11 closes:
+- All T-075-SUP-1 through T-075-SUP-4 and T-076-SUP-1 GREEN
+- Zero regressions (425 baseline tests GREEN)
+- `SupabasePersistentMemoryAdapter` implements `IPersistentMemory` with `organisation_id` tenant isolation
+- `buildPersistentMemory()` in `api/ai/request.ts` returns `SupabasePersistentMemoryAdapter`
+- `GET /api/ai/health` returns `supabaseWiring: "active"` and `persistentMemory: "supabase"`
+- `AI_GATEWAY_MEMORY_RUNBOOK.md` §4 updated to reflect Wave 11 completion
+- `TODO(Wave5)` comment in `PersistentMemoryAdapter.ts` resolved
+- PREHANDOVER proof compiled with IAA token from `task(agent_type: "independent-assurance-agent")` (A-014 compliance)
+
+---
+
 These tasks run across all waves and are the responsibility of the qa-builder.
 
 ### QA Validation (All Waves)
@@ -1636,8 +1751,17 @@ This implementation plan is accepted when:
 11. ✅ AIMC Integration waves (7, 8, 9) defined with explicit BLOCKED status and AIMC prerequisite gates per `AIMC_STRATEGY.md` v1.0.0
 12. ✅ Post-Delivery RCA complete (`modules/mat/05-rca/MAT_APP_V2_RCA.md` v1.0.0); remediation waves 2R, 4R, 5.6R defined
 13. ✅ Pre-Build Functionality Assessment Gate (PBFAG) defined (§1.5) and inserted into Derivation Chain
+14. ✅ Wave 11 (Supabase Persistent Memory Wiring) defined (§2.12) with full task breakdown, builder assignments, dependency gates, and cross-wave learning outcomes from Waves 9.10 and 10
 
 **Change Log**:
+- v1.9.0 (2026-03-01): Wave 11 (Supabase Persistent Memory Wiring) added per governance documentation
+  task (issue: [Governance Task] Wave 11 Module Lifecycle Documentation). Full Wave 11 section (§2.12)
+  added with three-task breakdown (11.1: RED gate tests by qa-builder; 11.2: migration validation by
+  schema-builder; 11.3: Supabase adapter wiring by api-builder). Wave count updated to twelve. Cross-wave
+  learning outcomes from Wave 10 (INC-IAA-SKIP-001, A-014 IAA-TOOL-CALL-MANDATORY) and Wave 9.10
+  (persona lifecycle, 425 tests GREEN, three-builder delegation pattern) recorded. Architecture remains
+  FROZEN per CS2 directive 2026-02-27. Acceptance criterion 14 added. Wave 11 Dependency Gate updated to
+  full section §2.12 with dependency prerequisites, test IDs, and wave gate criteria.
 - v1.8.0 (2026-02-23): Post-Delivery Gap Analysis & RCA complete. Added §1.5 (PBFAG — Pre-Build
   Functionality Assessment Gate) as mandatory step between QA-to-Red and builder appointment.
   Derivation Chain updated to include PBFAG. Remediation waves 2R (G-07 photo capture, G-10 interview
@@ -1671,7 +1795,7 @@ This implementation plan is accepted when:
 | System Architecture | `modules/mat/02-architecture/system-architecture.md` |
 | Data Architecture | `modules/mat/02-architecture/data-architecture.md` |
 | Security Architecture | `modules/mat/02-architecture/security-architecture.md` |
-| AI Architecture | `modules/mat/02-architecture/ai-architecture.md` (v2.0.0 — AIMC Gateway pattern) |
+| AI Architecture | `modules/mat/02-architecture/ai-architecture.md` (v3.0.0 — AIMC Gateway + Memory/Persona/Health Check architecture; FROZEN per CS2 directive 2026-02-27) |
 | Offline/Sync Architecture | `modules/mat/02-architecture/offline-sync-architecture.md` |
 | UI Component Architecture | `modules/mat/02-architecture/ui-component-architecture.md` |
 | Performance Architecture | `modules/mat/02-architecture/performance-architecture.md` |
