@@ -7,7 +7,7 @@
  * References: GRS-010, GRS-028, GRS-029 | APS §8.1 | AAD §9.2
  *
  * Mapped requirements:
- *   GRS-010  Persona files stored in packages/ai-centre/agents/
+ *   GRS-010  Persona files stored in packages/ai-centre/src/agents/
  *   GRS-028  Persona loading by agentId
  *   GRS-029  Persona files as plain Markdown only
  */
@@ -27,7 +27,7 @@ describe('PersonaLoader', () => {
     async () => {
       const loader = new PersonaLoader();
 
-      // 'mat-advisor' persona file should exist at packages/ai-centre/agents/mat-advisor.md
+      // 'mat-advisor' persona file should exist at packages/ai-centre/src/agents/mat-advisor.md
       const content = await loader.load('mat-advisor');
 
       expect(typeof content).toBe('string');
