@@ -74,7 +74,7 @@ This contract is a **synthesis document** that extracts layer-down requirements 
 - Gap identification for existing repositories
 
 ✅ **Application-specific mappings**:
-- FM app (maturion-foreman-app) requirements
+- AMC app (maturion-amc / App Management Centre) requirements
 - SlotMaster requirements
 - Generic application repository template
 
@@ -940,13 +940,13 @@ If audit reveals gaps, use this checklist to remediate:
 
 ---
 
-## 8. FM + SlotMaster Mapping
+## 8. AMC + SlotMaster Mapping
 
-### 8.1 FM App (maturion-foreman-app)
+### 8.1 AMC App (maturion-amc — App Management Centre)
 
-**Repository**: `maturion-foreman-app`
+**Repository**: `maturion-amc`
 
-**Purpose**: Foreman orchestration application for managing builds, workflows, and governance enforcement
+**Purpose**: App Management Centre — central governance and operational oversight platform for managing builds, workflows, governance enforcement, ARC trigger review, quota management, and audit trail
 
 **Status**: To be assessed against this contract
 

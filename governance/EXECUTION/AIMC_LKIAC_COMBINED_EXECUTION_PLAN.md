@@ -37,7 +37,7 @@ This document is the **authoritative combined execution roadmap** for all remain
 The centralised AI capability platform for the Maturion ISMS ecosystem. Waves 1–11 delivered the core platform. Remaining work covers: foundation audit, 7 unwired modules, knowledge upload centre, persona improvements, governance certification, and effectiveness metrics.
 
 **LKIAC (Legacy Knowledge Integration and Architecture Consolidation)** — LKIAC-001 v1.0.0  
-The strategy for migrating valuable legacy assets from `apps/maturion-maturity-legacy/` into the governed AIMC architecture, and for establishing the correct architectural boundary between the Foreman Office App and the ISMS monorepo. Covers:
+The strategy for migrating valuable legacy assets from `apps/maturion-maturity-legacy/` into the governed AIMC architecture, and for establishing the correct architectural boundary between the App Management Centre (AMC) and the ISMS monorepo. Covers:
 
 | LKIAC Wave | Title | Priority |
 |---|---|---|
@@ -46,7 +46,7 @@ The strategy for migrating valuable legacy assets from `apps/maturion-maturity-l
 | Wave 3 | Knowledge re-ingestion into AIMC `ai_knowledge` table | HIGH |
 | Wave 4 | Domain specialist knowledge routing (source-filtered queries) | MEDIUM |
 | Wave 5 | Deprecation register activation + legacy component audit | MEDIUM |
-| Wave 6 | Foreman Office App API contract definition | MEDIUM |
+| Wave 6 | App Management Centre (AMC) API contract definition | MEDIUM |
 | Wave 7 | Legacy component decommission | LOW |
 
 ### 1.2 Why Combined Sequencing
@@ -80,7 +80,7 @@ All waves supervised by `foreman-v2-agent`. No wave may begin without CS2 wave-s
 | `api-builder` | Persona migration, PersonaLoader improvements, knowledge upload endpoint, migration script |
 | `schema-builder` | Schema RLS audit, migration rollback assessment, knowledge schema review |
 | `integration-builder` | CI checks (routing governance, persona registry sync), module wiring, domain routing tests |
-| `governance-liaison-isms-agent` | Governance documents, knowledge inventory, ARC protocol, deprecation register, AAWP amendments, Foreman App contract |
+| `governance-liaison-isms-agent` | Governance documents, knowledge inventory, ARC protocol, deprecation register, AAWP amendments, AMC (App Management Centre) contract |
 | `mat-specialist` | Knowledge inventory audit, domain tagging validation, T-E-001/T-E-006/T-E-007 persona reviews |
 | `pit-specialist` | T-E-002/T-E-005 persona reviews |
 | `risk-platform-agent` | T-E-003/T-E-004 persona reviews |
@@ -223,7 +223,7 @@ The following 16 waves (CL-0 through CL-15) constitute the full combined AIMC + 
 **Priority**: MEDIUM  
 **Parallel With**: CL-1, CL-2 (no interdependencies)
 
-**Objective**: Formally complete the Deprecation Register for all `maturion-maturity-legacy` components. Map each to its Foreman Office App or AIMC equivalent. Identify gaps (components with no current equivalent) and create tracking issues.
+**Objective**: Formally complete the Deprecation Register for all `maturion-maturity-legacy` components. Map each to its App Management Centre (AMC) or AIMC equivalent. Identify gaps (components with no current equivalent) and create tracking issues.
 
 **Entry Criteria**: CL-0 closed.
 
@@ -231,8 +231,8 @@ The following 16 waves (CL-0 through CL-15) constitute the full combined AIMC + 
 
 | ID | Deliverable | Assigned To | Location |
 |---|---|---|---|
-| CL-3-D1 | Completed Deprecation Register: all components in LKIAC-001 §6 assessed with current status (`ACTIVE` / `PARALLEL-RUN` / `SUPERSEDED` / `DECOMMISSIONED`), Foreman App equivalent confirmed or gap flagged | `governance-liaison-isms-agent` | `governance/aimc/LKIAC_DEPRECATION_REGISTER.md` |
-| CL-3-D2 | Gap issues: GitHub issues in `maturion-isms` for any legacy component with no current Foreman App equivalent | `governance-liaison-isms-agent` | maturion-isms issues tracker |
+| CL-3-D1 | Completed Deprecation Register: all components in LKIAC-001 §6 assessed with current status (`ACTIVE` / `PARALLEL-RUN` / `SUPERSEDED` / `DECOMMISSIONED`), AMC equivalent confirmed or gap flagged | `governance-liaison-isms-agent` | `governance/aimc/LKIAC_DEPRECATION_REGISTER.md` |
+| CL-3-D2 | Gap issues: GitHub issues in `maturion-isms` for any legacy component with no current AMC equivalent | `governance-liaison-isms-agent` | maturion-isms issues tracker |
 
 **Exit Criteria**:
 - All 12 components in LKIAC-001 §6 have a recorded status and gate condition
@@ -674,14 +674,14 @@ any migration is applied.
 
 ---
 
-### Wave CL-13: LKIAC Wave 6 — Foreman Office App API Contract Definition
+### Wave CL-13: LKIAC Wave 6 — App Management Centre (AMC) API Contract Definition
 
 **Programme**: LKIAC  
 **Source**: LKIAC-001 §5 Wave 6; §3.5; §4  
 **Type**: Governance document — produces canonical contract  
 **Priority**: MEDIUM (LKIAC-001 §5 Wave 6)
 
-**Objective**: Define the formal API and governance event contract between the Foreman Office App and the AIMC. Create `governance/canon/FOREMAN_ISMS_INTEGRATION_CONTRACT.md` and canonise it. This establishes the architectural boundary described in LKIAC-001 §4.
+**Objective**: Define the formal API and governance event contract between the App Management Centre (AMC) and the AIMC. Create `governance/canon/FOREMAN_ISMS_INTEGRATION_CONTRACT.md` and canonise it. This establishes the architectural boundary described in LKIAC-001 §4.
 
 > **CL-13 Extended Scope (CL-3-D2, 2026-03-01)**: CL-13 scope is extended to include delivery of
 > three QA-facing modules in the Foreman Office App, resolving DEP-005, DEP-006, and DEP-007 gap
@@ -693,15 +693,15 @@ any migration is applied.
 > See `governance/aimc/LKIAC_CL3_D2_GAP_RESOLUTION.md` for rationale and acceptance criteria.
 
 **Entry Criteria**:
-- CL-8 closed (AIMC domain specialist routing live — the API surface Foreman App will consume is stable)
+- CL-8 closed (AIMC domain specialist routing live — the API surface AMC will consume is stable)
 
 **Deliverables**:
 
 | ID | Deliverable | Assigned To | Location |
 |---|---|---|---|
-| CL-13-D1 | AIMC API surface definition for Foreman App — which AIMC endpoints Foreman App may call, with schemas | `governance-liaison-isms-agent` | `governance/canon/FOREMAN_ISMS_INTEGRATION_CONTRACT.md` §2 |
-| CL-13-D2 | Governance event schema — layer-down/layer-up event format for Foreman App ↔ ISMS communication | `governance-liaison-isms-agent` | `governance/canon/FOREMAN_ISMS_INTEGRATION_CONTRACT.md` §3 |
-| CL-13-D3 | Supabase RLS rules governing Foreman App data access | `schema-builder` | `governance/canon/FOREMAN_ISMS_INTEGRATION_CONTRACT.md` §4 |
+| CL-13-D1 | AIMC API surface definition for AMC — which AIMC endpoints AMC may call, with schemas | `governance-liaison-isms-agent` | `governance/canon/FOREMAN_ISMS_INTEGRATION_CONTRACT.md` §2 |
+| CL-13-D2 | Governance event schema — layer-down/layer-up event format for AMC ↔ ISMS communication | `governance-liaison-isms-agent` | `governance/canon/FOREMAN_ISMS_INTEGRATION_CONTRACT.md` §3 |
+| CL-13-D3 | Supabase RLS rules governing AMC data access | `schema-builder` | `governance/canon/FOREMAN_ISMS_INTEGRATION_CONTRACT.md` §4 |
 | CL-13-D4 | `governance/canon/FOREMAN_ISMS_INTEGRATION_CONTRACT.md` — complete canonical document (per LKIAC-001 §9 success criterion) | `governance-liaison-isms-agent` | `governance/canon/FOREMAN_ISMS_INTEGRATION_CONTRACT.md` |
 
 **Exit Criteria**:
@@ -760,9 +760,9 @@ any migration is applied.
 
 **Entry Criteria**:
 - CL-3 closed (Deprecation Register: all components assessed)
-- CL-13 closed (Foreman App integration contract defined — equivalents confirmed)
+- CL-13 closed (AMC (App Management Centre) integration contract defined — equivalents confirmed)
 - CL-14 closed (Governance Certification updated)
-- Foreman App parity confirmed for all `SUPERSEDED` components (per LKIAC-001 §5 Wave 7 gate)
+- AMC parity confirmed for all `SUPERSEDED` components (per LKIAC-001 §5 Wave 7 gate)
 
 **Deliverables**:
 
@@ -774,7 +774,7 @@ any migration is applied.
 | CL-15-D4 | AIMC + LKIAC Effectiveness Report: synthesises all audit category results, LKIAC success criteria (LKIAC-001 §9), metrics, and outstanding items into a formal effectiveness assessment | `governance-liaison-isms-agent` | `governance/AUDIT/AIMC_LKIAC_P1_EFFECTIVENESS_REPORT_{date}.md` |
 
 **Exit Criteria**:
-- All `SUPERSEDED` components decommissioned (no active user-facing routes removed without verified Foreman App equivalent — LKIAC-001 §5 Wave 7 zero-tolerance check)
+- All `SUPERSEDED` components decommissioned (no active user-facing routes removed without verified AMC equivalent — LKIAC-001 §5 Wave 7 zero-tolerance check)
 - All Category G process tests completed and evidenced
 - All Category H metrics baselined with actual values
 - Effectiveness Report produced and CS2-approved
@@ -783,7 +783,7 @@ any migration is applied.
 
 **Dependencies**: CL-3 ✅, CL-13 ✅, CL-14 ✅ (Foreman parity confirmed)
 
-**RED Gate**: `qa-builder` must run a zero-tolerance pre-decommission check — no active routes removed without Foreman App equivalent confirmed.
+**RED Gate**: `qa-builder` must run a zero-tolerance pre-decommission check — no active routes removed without AMC equivalent confirmed.
 
 **CS2 Checkpoint (CP-15)**: CS2 authorises each individual decommission action (per LKIAC-001 §8 Principle 3). CS2 signs off Effectiveness Report — closes full AIMC + LKIAC programme.
 
@@ -827,7 +827,7 @@ CL-9 + CL-11 complete:
        └─ CL-12c (ISMS+Incidents+Roadmap)─┘
 
 CL-8 complete:
-  └──→ CL-13 (LKIAC W6: Foreman App Contract)       can run parallel with CL-9/CL-11
+  └──→ CL-13 (LKIAC W6: AMC Contract)       can run parallel with CL-9/CL-11
 
 CL-12 + CL-10 + CL-7 complete:
   └──→ CL-14 (Governance Certification + AAWP Update)
@@ -850,7 +850,7 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 | LKIAC Wave 3 — Knowledge Re-ingestion | CL-6 | One-time migration; ongoing uploads via CL-11 |
 | LKIAC Wave 4 — Domain Specialist Routing | CL-8 | Builds on CL-6 knowledge base |
 | LKIAC Wave 5 — Deprecation Register | CL-3 | Feeds CL-15 decommission |
-| LKIAC Wave 6 — Foreman App Contract | CL-13 | Requires CL-8 routing stable |
+| LKIAC Wave 6 — AMC Contract | CL-13 | Requires CL-8 routing stable |
 | LKIAC Wave 7 — Legacy Decommission | CL-15 (D1) | Combined with effectiveness report closure |
 
 ## 7. AIMC Audit Plan Phase Cross-Reference
@@ -893,6 +893,7 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 | LKIAC-SC-3 | Legacy Supabase not decommissioned | Decommission after validation | CL-6 (gate) |
 | LKIAC-SC-4 | Domain specialists not routing knowledge | Domain specialist routing | CL-8 |
 | LKIAC-SC-5 | Deprecation Register not formalised | Deprecation register activation | CL-3 |
+| LKIAC-SC-6 | AMC integration contract absent | Contract definition | CL-13 |
 | LKIAC-SC-6 | Foreman App integration contract absent | Contract definition | CL-13 |
 | DEP-GAP-001 | DEP-005 QA Dashboard — no target equivalent (resolved CL-3-D2) | Foreman Office App QA Overview panel | CL-13 (extended scope) |
 | DEP-GAP-002 | DEP-006 Unified QA Dashboard — no target equivalent (resolved CL-3-D2) | Foreman Office App Unified QA Signal Aggregation view | CL-13 (extended scope) |
@@ -938,7 +939,7 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 | CP-12a | Module wave-start: PIT + XDetect | Before CL-12a | CS2 authorises sub-wave |
 | CP-12b | Module wave-start: Risk + CourseCrafter | Before CL-12b | CS2 authorises sub-wave |
 | CP-12c | Module wave-start: ISMS + Incidents + Roadmap | Before CL-12c | CS2 authorises sub-wave |
-| CP-13 | Foreman App contract canonisation | CL-13 | CS2 canonises integration contract |
+| CP-13 | AMC (App Management Centre) contract canonisation | CL-13 | CS2 canonises integration contract |
 | CP-14 | Governance Certification + AAWP sign-off | CL-14 | CS2 signs updated certification |
 | CP-15 | Individual decommission authorisations + Effectiveness Report | CL-15 | CS2 authorises each decommission; signs off report |
 
