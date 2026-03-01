@@ -87,7 +87,12 @@ def score_maturity(request: ScoreRequest) -> dict:
 
     Architecture: system-architecture.md §3.4
     """
-    evidence = request.evidence if isinstance(request.evidence, list) else [request.evidence]
+    if request.evidence is None:
+        evidence: list[Union[str, dict]] = []
+    elif isinstance(request.evidence, list):
+        evidence = request.evidence
+    else:
+        evidence = [request.evidence]
     criteria = request.criteria or (
         [request.criteria_id] if request.criteria_id else []
     )

@@ -507,9 +507,13 @@ image analysis). It complements the frontend runbook above.
 ## AG.4 Local Development
 
 ```bash
-# 1. Create environment file
+# 1. Create environment file with the required variables (see AG.3)
 cd apps/mat-ai-gateway
-cp .env.example .env  # or create manually with required vars
+cat > .env << 'EOF'
+OPENAI_API_KEY=sk-your-key-here
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
+EOF
 
 # 2. Install dependencies
 pip install -r requirements.txt

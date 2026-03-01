@@ -39,13 +39,25 @@ app = FastAPI(
     description="MAT AI Gateway — Python FastAPI microservice for AI-powered compliance operations.",
 )
 
-# CORS — allow all origins in dev; configurable via CORS_ORIGINS env var in production
-_cors_origins: list[str] = os.environ.get("CORS_ORIGINS", "*").split(",")
+# CORS — allow all origins in dev; configurable via CORS_ORIGINS env var in production.
+# When CORS_ORIGINS is unset or "*", credentials are disabled (browser security requirement
+# for wildcard origins). When explicit origins are provided, credentials are allowed.
+_raw_cors_origins = os.environ.get("CORS_ORIGINS")
+if not _raw_cors_origins or _raw_cors_origins.strip() == "*":
+    _cors_origins: list[str] = ["*"]
+    _cors_allow_credentials = False
+else:
+    _cors_origins = [
+        origin.strip()
+        for origin in _raw_cors_origins.split(",")
+        if origin.strip()
+    ]
+    _cors_allow_credentials = True
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_cors_origins,
-    allow_credentials=True,
+    allow_credentials=_cors_allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )

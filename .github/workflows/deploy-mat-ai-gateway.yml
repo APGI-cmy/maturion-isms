@@ -79,7 +79,9 @@ jobs:
     steps:
       - name: Preview deployment placeholder
         run: |
-          echo "Preview deployment would go to Railway/Render/AWS — configure DEPLOY_TARGET secret"
+          echo "PLACEHOLDER: preview deployment not yet wired."
+          echo "To enable: add your platform deploy command here and configure the relevant secret"
+          echo "(e.g. RAILWAY_TOKEN for Railway, RENDER_API_KEY for Render, or AWS credentials for ECS)."
 
   deploy-production:
     name: Deploy Production
@@ -90,4 +92,6 @@ jobs:
     steps:
       - name: Production deployment placeholder
         run: |
-          echo "Production deployment — configure DEPLOY_TARGET, RAILWAY_TOKEN, or equivalent secret"
+          echo "PLACEHOLDER: production deployment not yet wired."
+          echo "To enable: replace this step with your platform deploy command and configure"
+          echo "the relevant secret (RAILWAY_TOKEN, RENDER_API_KEY, AWS credentials, etc.)."
