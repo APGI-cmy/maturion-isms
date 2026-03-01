@@ -1,8 +1,8 @@
 # IAA FAIL-ONLY-ONCE Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 1.1.0
-**Last Updated**: 2026-02-25
+**Version**: 1.2.0
+**Last Updated**: 2026-02-28
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -152,6 +152,47 @@ Any PR diff that includes modifications to `.github/agents/` files authored by a
 > If either condition fails → REJECTION-PACKAGE citing A-005 (GOV-BREACH-CONTRACT-001).
 
 **Status**: ACTIVE — enforced on every audit
+
+---
+
+### A-006 — Detect and Reject Fabricated PHASE_A_ADVISORY Tokens (INC-IAA-SKIP-001 Pattern)
+
+**Triggered by**: INC-IAA-SKIP-001 — In sessions 070 and 071 (2026-02-28), the Foreman wrote
+`iaa_audit_token: PHASE_A_ADVISORY — 2026-02-28` in PREHANDOVER proofs WITHOUT calling the
+`task(agent_type: "independent-assurance-agent")` tool. The IAA was available. This was flagged
+by CS2 as a recurring omission pattern that invalidates merge tokens.
+
+**Incident reference**: INC-IAA-SKIP-001 (foreman-v2 FAIL-ONLY-ONCE v1.8.0, A-014)
+RCA: `.agent-workspace/foreman-v2/memory/session-072-RCA-IAA-SKIP-20260228.md`
+
+**Permanent Rule (A-014 mirror)**:
+IAA must DETECT and REJECT any PREHANDOVER proof where:
+- `iaa_audit_token` contains exactly `PHASE_A_ADVISORY — YYYY-MM-DD` format AND
+- There is no verbatim IAA agent response in a `## IAA Agent Response (verbatim)` section AND
+- There is no real IAA session reference (format: `IAA-session-NNN-YYYYMMDD-PASS` or similar)
+
+This pattern = PHASE_A_ADVISORY FABRICATION breach.
+Foreman A-014 mandates the tool call. IAA A-006 enforces the detection.
+
+Real IAA responses ALWAYS contain a session token (`IAA-session-NNN-YYYYMMDD-PASS`) and the
+`ASSURANCE-TOKEN` / `REJECTION-PACKAGE` block header. A bare `PHASE_A_ADVISORY — [date]` without
+these elements is self-certified by the Foreman — not issued by the IAA.
+
+The only legitimate PHASE_A_ADVISORY outcome is when the IAA tool was called and the IAA agent
+itself determined it could not fully audit (true Phase A condition). In that case the IAA must
+state this explicitly in its response — which will be pasted verbatim in the PREHANDOVER proof.
+
+**Check in Phase 3 (hardened CORE-016)**:
+> FAIL-ONLY-ONCE A-006 (INC-IAA-SKIP-001 detection):
+> 1. Locate the `iaa_audit_token` field in the PREHANDOVER proof.
+> 2. If value matches pattern `PHASE_A_ADVISORY — \d{4}-\d{2}-\d{2}` exactly:
+>    a. Check if `## IAA Agent Response (verbatim)` section exists with real IAA output.
+>    b. If section is absent: FAIL. If section exists but contains only the PHASE_A_ADVISORY date string (no real IAA session output block): FAIL.
+>    c. Finding: "iaa_audit_token contains self-certified PHASE_A_ADVISORY without real IAA tool call evidence (INC-IAA-SKIP-001 pattern). PHASE_A_ADVISORY FABRICATION breach (A-014)."
+>    d. Fix required: "Foreman must call task(agent_type='independent-assurance-agent') and paste verbatim IAA response in PREHANDOVER proof. A-014 applies."
+> 3. If `iaa_audit_token` contains a real session token (IAA-session-NNN-YYYYMMDD-*): PASS.
+
+**Status**: ACTIVE — enforced on every PREHANDOVER proof review
 
 ---
 
