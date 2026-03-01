@@ -59,9 +59,9 @@ class TestHealthEndpoint:
         response = test_client.get("/health")
         assert response.status_code != 401, (
             "Health endpoint must not require authentication. "
-            f"Got HTTP 401 — remove auth dependency from /health."
+            "Got HTTP 401 — remove auth dependency from /health."
         )
         assert response.status_code != 403, (
             "Health endpoint must not require authorisation. "
-            f"Got HTTP 403 — remove auth/permission guard from /health."
+            "Got HTTP 403 — remove auth/permission guard from /health."
         )

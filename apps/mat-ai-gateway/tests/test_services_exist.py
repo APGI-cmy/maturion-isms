@@ -79,7 +79,7 @@ def test_service_module_is_importable(module_name: str, description: str):
     Failure here means the file is missing or contains a syntax/import error.
     """
     try:
-        mod = _load_service(module_name, _app_root())
+        _load_service(module_name, _app_root())
     except ModuleNotFoundError as exc:
         pytest.fail(
             f"Service module '{module_name}' ({description}) could not be imported.\n"

@@ -23,8 +23,6 @@ from __future__ import annotations
 import importlib
 import os
 import sys
-from typing import Iterator
-
 import pytest
 
 # ---------------------------------------------------------------------------
