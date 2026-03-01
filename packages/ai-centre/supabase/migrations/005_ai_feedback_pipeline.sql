@@ -9,7 +9,7 @@
 -- Wave 9.2 — Schema: AI Feedback Pipeline
 -- Authority: CS2 (@APGI-cmy) via foreman-v2-agent session-060-20260226
 
-CREATE TABLE ai_feedback_events (
+CREATE TABLE IF NOT EXISTS ai_feedback_events (
   id                UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   organisation_id   UUID        NOT NULL REFERENCES organisations(id) ON DELETE CASCADE,
   session_id        TEXT        NOT NULL,

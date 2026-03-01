@@ -169,12 +169,25 @@ jobs:
       # DEPENDENCY: AIMC migration 005_ai_feedback_pipeline.sql references the `organisations` table
       # defined in the legacy app migrations. This step MUST run AFTER "Apply pending migrations"
       # (apps/maturion-maturity-legacy) and MUST target the same $SUPABASE_DB_URL.
+      # NOTE: `supabase db push` requires <timestamp>_name.sql filenames; AIMC uses sequential
+      # names (001_ai_memory.sql). psql is used directly with an aimc_migrations tracking table
+      # to apply each file exactly once, matching Supabase's migration semantics.
       - name: Apply AIMC package migrations
-        working-directory: packages/ai-centre
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
-          supabase db push --db-url "$SUPABASE_DB_URL"
+          psql "$SUPABASE_DB_URL" -c "CREATE TABLE IF NOT EXISTS aimc_migrations (name TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now());"
+          for f in $(ls packages/ai-centre/supabase/migrations/*.sql | sort); do
+            name=$(basename "$f")
+            count=$(psql "$SUPABASE_DB_URL" -t -A -c "SELECT COUNT(*) FROM aimc_migrations WHERE name = '$name';")
+            if [ "$count" = "0" ]; then
+              echo "Applying $f..."
+              psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "$f"
+              psql "$SUPABASE_DB_URL" -c "INSERT INTO aimc_migrations (name) VALUES ('$name');"
+            else
+              echo "Skipping $f (already applied)"
+            fi
+          done
 
   deploy-preview:
     name: Deploy Preview
