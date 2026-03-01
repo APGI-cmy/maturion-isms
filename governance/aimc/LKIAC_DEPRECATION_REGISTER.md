@@ -16,7 +16,7 @@
 
 This register formally activates the LKIAC-001 §6 Deprecation Register for all components in
 `apps/maturion-maturity-legacy/`. It records the current status of each legacy component, maps
-each to its planned Foreman Office App or AIMC equivalent, and identifies gaps where no confirmed
+each to its planned AMC (App Management Centre) or AIMC equivalent, and identifies gaps where no confirmed
 equivalent exists yet.
 
 **Governing Principle** (LKIAC-001 §8 Principle 3):
@@ -46,10 +46,10 @@ component may proceed without a `SUPERSEDED` status in this register AND CS2 sig
 
 | ID | Component Name | Legacy Path | Status | Foreman/AIMC Equivalent | Planned Wave | Gate Condition | Notes |
 |----|---------------|-------------|--------|------------------------|--------------|----------------|-------|
-| DEP-001 | Watchdog Dashboard | `apps/maturion-maturity-legacy/src/pages/WatchdogDashboard.tsx` | `ACTIVE` | Foreman Office App — watchdog module | CL-13 | CS2 sign-off after CL-13 delivers verified watchdog module | File confirmed present. Foreman Office App does not exist yet. No equivalent live. AI confidence heatmap + watchdog control panel. |
-| DEP-002 | Admin Health Checker | `apps/maturion-maturity-legacy/src/pages/AdminHealthChecker.tsx` | `ACTIVE` | Foreman Office App — health module | CL-13 | CS2 sign-off after CL-13 delivers verified health module | File confirmed present. Provides QA health checks against ARCHITECTURE.md True North and `qa/requirements.json`. Foreman Office App not yet built. |
-| DEP-003 | Admin Workflow Dashboard | `apps/maturion-maturity-legacy/src/pages/AdminWorkflowDashboard.tsx` | `ACTIVE` | Foreman Office App — workflow module | CL-13 | CS2 sign-off after CL-13 delivers verified workflow module | File confirmed present. Foreman Office App not yet built. No equivalent live. |
-| DEP-004 | Admin Config | `apps/maturion-maturity-legacy/src/pages/AdminConfig.tsx` | `ACTIVE` | Foreman Office App — config module | CL-13 | CS2 sign-off after CL-13 delivers verified config module | File confirmed present. Foreman Office App not yet built. No equivalent live. |
+| DEP-001 | Watchdog Dashboard | `apps/maturion-maturity-legacy/src/pages/WatchdogDashboard.tsx` | `ACTIVE` | AMC (App Management Centre) — watchdog module | CL-13 | CS2 sign-off after CL-13 delivers verified watchdog module | File confirmed present. AMC (App Management Centre) does not exist yet. No equivalent live. AI confidence heatmap + watchdog control panel. |
+| DEP-002 | Admin Health Checker | `apps/maturion-maturity-legacy/src/pages/AdminHealthChecker.tsx` | `ACTIVE` | AMC (App Management Centre) — health module | CL-13 | CS2 sign-off after CL-13 delivers verified health module | File confirmed present. Provides QA health checks against ARCHITECTURE.md True North and `qa/requirements.json`. AMC (App Management Centre) not yet built. |
+| DEP-003 | Admin Workflow Dashboard | `apps/maturion-maturity-legacy/src/pages/AdminWorkflowDashboard.tsx` | `ACTIVE` | AMC (App Management Centre) — workflow module | CL-13 | CS2 sign-off after CL-13 delivers verified workflow module | File confirmed present. AMC (App Management Centre) not yet built. No equivalent live. |
+| DEP-004 | Admin Config | `apps/maturion-maturity-legacy/src/pages/AdminConfig.tsx` | `ACTIVE` | AMC (App Management Centre) — config module | CL-13 | CS2 sign-off after CL-13 delivers verified config module | File confirmed present. AMC (App Management Centre) not yet built. No equivalent live. |
 | DEP-005 | QA Dashboard (legacy) | `apps/maturion-maturity-legacy/src/pages/QADashboard.tsx` | `ACTIVE` | **TBD — no equivalent planned** | **UNPLANNED — GAP** | Blocked: target must be defined and wave assigned before gate applies | ⚠️ **GAP ITEM**. No AMC or AIMC equivalent defined. No execution plan wave covers this component. Requires GitHub issue (CL-3-D2). |
 | DEP-006 | Unified QA Dashboard | `apps/maturion-maturity-legacy/src/pages/UnifiedQADashboard.tsx` | `ACTIVE` | **TBD — no equivalent planned** | **UNPLANNED — GAP** | Blocked: target must be defined and wave assigned before gate applies | ⚠️ **GAP ITEM**. No AMC or AIMC equivalent defined. No execution plan wave covers this component. Requires GitHub issue (CL-3-D2). |
 | DEP-007 | QA Test Dashboard | `apps/maturion-maturity-legacy/src/pages/QATestDashboard.tsx` | `ACTIVE` | **TBD — no equivalent planned** | **UNPLANNED — GAP** | Blocked: target must be defined and wave assigned before gate applies | ⚠️ **GAP ITEM**. No AMC or AIMC equivalent defined. No execution plan wave covers this component. Requires GitHub issue (CL-3-D2). |
@@ -71,9 +71,9 @@ component may proceed without a `SUPERSEDED` status in this register AND CS2 sig
 
 | Gap ID | Component | DEP Ref | Gap Description | Recommended Next Action |
 |--------|-----------|---------|-----------------|------------------------|
-| GAP-001 | QA Dashboard (legacy) | DEP-005 | No target equivalent defined. No CL wave planned. The legacy QA dashboard functionality has no home in Foreman Office App or AIMC. | Create GitHub issue: define whether QA dashboard capabilities belong in Foreman Office App (new module) or AIMC admin panel. Assign to a CL wave. |
-| GAP-002 | Unified QA Dashboard | DEP-006 | No target equivalent defined. No CL wave planned. Unified view combines multiple QA signal sources — no architectural decision made on where this belongs in the new platform. | Create GitHub issue: define target architecture (Foreman Office App unified QA module vs. AIMC monitoring panel). Assign to a CL wave. |
-| GAP-003 | QA Test Dashboard | DEP-007 | No target equivalent defined. No CL wave planned. Test execution and results display — overlaps with Foreman Office App health module but no explicit mapping confirmed. | Create GitHub issue: clarify overlap with DEP-002 (Admin Health Checker → CL-13 health module). If covered by CL-13, update DEP-007 mapping. If separate, define new module and wave. |
+| GAP-001 | QA Dashboard (legacy) | DEP-005 | No target equivalent defined. No CL wave planned. The legacy QA dashboard functionality has no home in AMC (App Management Centre) or AIMC. | Create GitHub issue: define whether QA dashboard capabilities belong in AMC (new module) or AIMC admin panel. Assign to a CL wave. |
+| GAP-002 | Unified QA Dashboard | DEP-006 | No target equivalent defined. No CL wave planned. Unified view combines multiple QA signal sources — no architectural decision made on where this belongs in the new platform. | Create GitHub issue: define target architecture (AMC unified QA module vs. AIMC monitoring panel). Assign to a CL wave. |
+| GAP-003 | QA Test Dashboard | DEP-007 | No target equivalent defined. No CL wave planned. Test execution and results display — overlaps with AMC health module but no explicit mapping confirmed. | Create GitHub issue: clarify overlap with DEP-002 (Admin Health Checker → CL-13 health module). If covered by CL-13, update DEP-007 mapping. If separate, define new module and wave. |
 | GAP-004 | Data Sources Management | DEP-008 | AIMC data source registry named as target but no `data_sources` table exists in AIMC Supabase migrations. No specific CL wave covers this migration. 4 legacy Edge Functions active. | Create GitHub issue: design AIMC data source registry schema, plan Edge Function migration, assign to a CL wave before CL-15. |
 
 ### 4.1 Gap Summary
@@ -93,7 +93,7 @@ component may proceed without a `SUPERSEDED` status in this register AND CS2 sig
 No component may be moved from `ACTIVE` or `PARALLEL-RUN` to `SUPERSEDED` or `DECOMMISSIONED`
 without ALL of the following:
 
-1. **Equivalent live and validated**: The target Foreman Office App module or AIMC equivalent
+1. **Equivalent live and validated**: The target AMC (App Management Centre) module or AIMC equivalent
    must be deployed and passing its GREEN gate tests.
 2. **Data migration verified**: All data, configuration, and knowledge assets must be confirmed
    migrated (row count match or equivalent verification).

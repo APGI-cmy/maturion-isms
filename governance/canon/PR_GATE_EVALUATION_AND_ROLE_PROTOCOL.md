@@ -828,7 +828,7 @@ This protocol integrates with and clarifies:
 
 ---
 
-## 14. FM App Alignment Requirements
+## 14. AMC Alignment Requirements
 
 For AMC (`maturion-amc`) to fully implement this protocol:
 
