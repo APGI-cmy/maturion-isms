@@ -2,10 +2,11 @@
 
 **Document Type**: Foreman POLC Planning Output — Combined Execution Roadmap  
 **Status**: DRAFT — Awaiting CS2 Review and Wave-Start Authorisation  
-**Version**: 1.2.0  
+**Version**: 1.3.0  
 **Date**: 2026-03-01  
 **Produced By**: foreman-v2-agent v6.2.0 (session 075, Wave COMBINED-PLAN)  
 **Amendment v1.2.0**: v1.2.0 — 2026-03-01: CL-3-D2 gap resolution — added CL-3.5, extended CL-13 QA module scope (session-079).  
+**Amendment v1.3.0**: v1.3.0 — 2026-03-01: CL-13 scope extended per kick-off issue — D5/D6/D7 added for QA modules (GAP-001/002/003 resolution, session-080).  
 **Triggering Issue**: [maturion-isms#704](https://github.com/APGI-cmy/maturion-isms/issues/704)  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
 **Location**: `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md`
@@ -712,18 +713,24 @@ any migration is applied.
 | CL-13-D2 | Governance event schema — layer-down/layer-up event format for AMC ↔ ISMS communication | `governance-liaison-isms-agent` | `governance/canon/FOREMAN_ISMS_INTEGRATION_CONTRACT.md` §3 |
 | CL-13-D3 | Supabase RLS rules governing AMC data access | `schema-builder` | `governance/canon/FOREMAN_ISMS_INTEGRATION_CONTRACT.md` §4 |
 | CL-13-D4 | `governance/canon/FOREMAN_ISMS_INTEGRATION_CONTRACT.md` — complete canonical document (per LKIAC-001 §9 success criterion) | `governance-liaison-isms-agent` | `governance/canon/FOREMAN_ISMS_INTEGRATION_CONTRACT.md` |
+| CL-13-D5 | QA Overview Panel — Live QA signal status view in Foreman Office App; resolves DEP-005 (GAP-001) | `ui-builder` | Foreman Office App — QA Overview panel module |
+| CL-13-D6 | Unified QA Signal Aggregation View — Multi-source QA signal aggregation in Foreman Office App; resolves DEP-006 (GAP-002) | `api-builder` + `ui-builder` | Foreman Office App — Unified QA Signal Aggregation view |
+| CL-13-D7 | Health Module Test Results Sub-view — Test execution history and status display in health module; resolves DEP-007 (GAP-003) | `api-builder` + `ui-builder` | Foreman Office App — health module test results sub-view |
 
 **Exit Criteria**:
 - CL-13-D4 produced, QP-reviewed, and canonised
 - Contract covers: AIMC API surface, governance event schema, Supabase RLS rules, architectural boundary confirmation
+- CL-13-D5 accepted: Foreman Office App delivers QA Overview panel showing live QA signal status for all active modules, verified against QADashboard.tsx functionality checklist
+- CL-13-D6 accepted: Foreman Office App delivers unified QA aggregation view consuming QA signal data from ≥2 configured signal sources, verified against UnifiedQADashboard.tsx functional scope
+- CL-13-D7 accepted: Health module includes test results sub-view showing test execution history and current status, verified against QATestDashboard.tsx scope
 
 **Dependencies**: CL-8 ✅
 
-**RED Gate**: N/A.
+**RED Gate**: N/A (governance deliverables D1–D4); `qa-builder` must supply RED gate test suite for D5/D6/D7 QA module deliverables before `ui-builder` and `api-builder` begin implementation.
 
 **CS2 Checkpoint (CP-13)**: CS2 reviews and canonises `FOREMAN_ISMS_INTEGRATION_CONTRACT.md` (per LKIAC-001 §5 Wave 6 gate).
 
-**Responsible Agents**: `governance-liaison-isms-agent`, `schema-builder`
+**Responsible Agents**: `governance-liaison-isms-agent`, `schema-builder`, `api-builder`, `ui-builder`
 
 ---
 
@@ -965,7 +972,7 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 
 ## 12. Acceptance Criteria for This Plan
 
-- [x] All 16 waves (CL-0 through CL-15) defined with objective, entry/exit criteria, deliverables, dependencies, responsible agents — **v1.2.0: CL-3.5 added (17 waves total)**
+- [x] All 16 waves (CL-0 through CL-15) defined with objective, entry/exit criteria, deliverables, dependencies, responsible agents — **v1.2.0: CL-3.5 added (17 waves total); v1.3.0: CL-13 extended scope (D5/D6/D7 added)**
 - [x] LKIAC-001 strategy canonical reference confirmed: `LEGACY_KNOWLEDGE_INTEGRATION_AND_ARCHITECTURE_CONSOLIDATION_STRATEGY.md` v1.0.0
 - [x] All 7 LKIAC waves mapped to combined plan waves (§6)
 - [x] All AIMC audit phases A–E mapped to combined plan waves (§7)
