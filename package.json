@@ -24,6 +24,7 @@
     "pnpm": ">=8.15.7"
   },
   "dependencies": {
+    "@maturion/ai-centre": "workspace:*",
     "@supabase/supabase-js": "^2.98.0"
   },
   "devDependencies": {

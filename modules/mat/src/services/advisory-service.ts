@@ -11,21 +11,23 @@
  *
  * References: FR-072, TR-072 | ai-architecture.md v2.0.0
  */
-import { AICentre } from '../../../../packages/ai-centre/src/gateway/AICentre.js';
+// All imports from the @maturion/ai-centre package barrel (GRS-001 / CL-4 ARCH-001 fix).
+// No deep internal path imports — only the package root is used.
 import {
+  AICentre,
   Capability,
+  PersonaLoader,
+  GitHubModelsAdapter,
+  OpenAIAdapter,
+  ProviderHealthRegistry,
+  ProviderKeyStore,
+  TelemetryWriter,
   type AICentreResponse,
   type AICentreErrorResponse,
-  type SessionMemoryStore,
+  type ISessionMemoryStore as SessionMemoryStore,
+  type IPersonaLoader,
   type PersistentMemoryAdapter,
-  type PersonaLoader as IPersonaLoader,
-} from '../../../../packages/ai-centre/src/types/index.js';
-import { PersonaLoader } from '../../../../packages/ai-centre/src/personas/PersonaLoader.js';
-import { GitHubModelsAdapter } from '../../../../packages/ai-centre/src/adapters/GitHubModelsAdapter.js';
-import { OpenAIAdapter } from '../../../../packages/ai-centre/src/adapters/OpenAIAdapter.js';
-import { ProviderHealthRegistry } from '../../../../packages/ai-centre/src/routing/ProviderHealthRegistry.js';
-import { ProviderKeyStore } from '../../../../packages/ai-centre/src/keys/ProviderKeyStore.js';
-import { TelemetryWriter } from '../../../../packages/ai-centre/src/telemetry/TelemetryWriter.js';
+} from '../../../../packages/ai-centre';
 
 // ---------------------------------------------------------------------------
 // Null collaborators — no-op impls for stateless/service context

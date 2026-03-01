@@ -438,11 +438,16 @@ describe('T-W12-INT-4: Deployment artefact completeness', () => {
   it('T-W12-INT-4f: No broken imports in AI gateway (request.ts imports all required modules)', () => {
     const src = readFileSync(resolve(API_AI, 'request.ts'), 'utf-8');
 
-    // All key imports present
-    expect(src).toContain("from '../../packages/ai-centre/src/gateway/AICentre.js'");
-    expect(src).toContain("from '../../packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.js'");
-    expect(src).toContain("from '../../packages/ai-centre/src/memory/SessionMemoryStore.js'");
-    expect(src).toContain("from '../../packages/ai-centre/src/personas/PersonaLoader.js'");
+    // CL-4 ARCH-001 fix: all imports now route through the @maturion/ai-centre barrel.
+    // Deep internal path imports (src/gateway/AICentre.js, src/memory/..., etc.) have been
+    // replaced with barrel imports from '../../packages/ai-centre' (GRS-001 compliance).
+    expect(src).toContain("from '../../packages/ai-centre'");
+
+    // Key collaborators are still imported (via barrel rather than deep paths)
+    expect(src).toMatch(/\bAICentre\b/);
+    expect(src).toMatch(/\bSupabasePersistentMemoryAdapter\b/);
+    expect(src).toMatch(/\bSessionMemoryStore\b/);
+    expect(src).toMatch(/\bPersonaLoader\b/);
   });
 });
 

@@ -12,22 +12,24 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { createClient } from '@supabase/supabase-js';
 
-import { AICentre } from '../../packages/ai-centre/src/gateway/AICentre.js';
-import { GitHubModelsAdapter } from '../../packages/ai-centre/src/adapters/GitHubModelsAdapter.js';
-import { OpenAIAdapter } from '../../packages/ai-centre/src/adapters/OpenAIAdapter.js';
-import { ProviderHealthRegistry } from '../../packages/ai-centre/src/routing/ProviderHealthRegistry.js';
-import { ProviderKeyStore } from '../../packages/ai-centre/src/keys/ProviderKeyStore.js';
-import { TelemetryWriter } from '../../packages/ai-centre/src/telemetry/TelemetryWriter.js';
-import { PersonaLoader } from '../../packages/ai-centre/src/personas/PersonaLoader.js';
-import { SessionMemoryStore } from '../../packages/ai-centre/src/memory/SessionMemoryStore.js';
-import { SupabasePersistentMemoryAdapter } from '../../packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.js';
+// All imports from the @maturion/ai-centre package barrel (GRS-001 / CL-4 ARCH-001 fix).
+// No deep internal path imports — only the package root is used.
 import {
+  AICentre,
   Capability,
   AICentreErrorCode,
+  GitHubModelsAdapter,
+  OpenAIAdapter,
+  ProviderHealthRegistry,
+  ProviderKeyStore,
+  TelemetryWriter,
+  PersonaLoader,
+  SessionMemoryStore,
+  SupabasePersistentMemoryAdapter,
   type AICentreRequest,
   type AICentreResponse,
   type AICentreErrorResponse,
-} from '../../packages/ai-centre/src/types/index.js';
+} from '../../packages/ai-centre';
 
 // ---------------------------------------------------------------------------
 // Real collaborator factories — Wave 10: null stubs replaced
