@@ -1,0 +1,9 @@
+{
+  "name": "@maturion/mat",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@maturion/ai-centre": "workspace:*"
+  }
+}
