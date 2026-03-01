@@ -187,33 +187,26 @@ None of these files contain SQL DDL. No module or app defines a competing `ai_me
 
 ### T-A-012 — Supabase CI Migration Pipeline (AIMC Migrations in CD)
 
-**Status**: PARTIAL FAIL
+**Status**: ✅ PASS *(Remediated — Wave CL-4, T-A-012)*
 
-**Finding**: A `supabase-migrate` job exists in `deploy-mat-vercel.yml` with correct secret and ordering, but it does **not** apply the AIMC migrations from `packages/ai-centre/supabase/migrations/`.
+**Remediation Applied**: `packages/ai-centre/supabase/config.toml` created and step `Apply AIMC package migrations` added to the `supabase-migrate` job in `.github/workflows/deploy-mat-vercel.yml` (working-directory: `packages/ai-centre`). All 6 AIMC migrations (001–006) are now applied in CI before deployment.
 
 **Evidence**:
 
 | Check | Result | Detail |
 |-------|--------|--------|
-| `supabase-migrate` job exists | ✅ PASS | Job `supabase-migrate` in `.github/workflows/deploy-mat-vercel.yml` (line ~107) |
-| Applies AIMC migrations (001–006) | ❌ FAIL | `working-directory: apps/maturion-maturity-legacy` — points to legacy app, NOT `packages/ai-centre/supabase/migrations/` |
+| `supabase-migrate` job exists | ✅ PASS | Job `supabase-migrate` in `.github/workflows/deploy-mat-vercel.yml` |
+| Applies AIMC migrations (001–006) | ✅ PASS | Step `Apply AIMC package migrations` with `working-directory: packages/ai-centre` added |
 | Uses DB URL secret (not service role key) | ✅ PASS | `SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}` — correct secret type |
 | Migration step runs before deployment | ✅ PASS | Deploy jobs declare `needs: [build, supabase-migrate]`; migrate job declares `needs: [build]` |
 
-**AIMC Migrations present** (`packages/ai-centre/supabase/migrations/`):
+**AIMC Migrations now applied** (`packages/ai-centre/supabase/migrations/`):
 - `001_ai_memory.sql`
 - `002_ai_telemetry.sql`
 - `003_ai_knowledge.sql`
 - `004_ai_episodic_memory.sql`
 - `005_ai_feedback_pipeline.sql`
 - `006_ai_knowledge_metadata.sql`
-
-None of the above 6 migrations are applied by the current CI pipeline.
-
-**Root Cause**: The `supabase-migrate` job only runs `supabase db push` from `apps/maturion-maturity-legacy` working directory. The AIMC migrations in `packages/ai-centre/supabase/migrations/` have no CI pipeline step that applies them to any deployment target.
-
-**Gap Reference**: `deploy-mat-vercel.yml` job `supabase-migrate`, step `Apply pending migrations`.  
-**Recommendation**: Add a second `supabase db push` step (or separate job) targeting `packages/ai-centre` with the same `SUPABASE_DB_URL` secret. Alternatively, restructure to run migrations from the monorepo root with both paths included.
 
 ---
 
@@ -280,7 +273,7 @@ grep -rn --include="*.ts" --include="*.tsx" \
 
 | T-ID | GRS Ref | Description | Status |
 |------|---------|-------------|--------|
-| T-A-012 | GRS-CICD | Supabase CI migration pipeline applies AIMC migrations | **PARTIAL FAIL** — job exists, correct secret & ordering, but AIMC migrations not applied |
+| T-A-012 | GRS-CICD | Supabase CI migration pipeline applies AIMC migrations | **PASS** ✅ — step added targeting `packages/ai-centre`; all 6 AIMC migrations now applied |
 | T-C-001 | GRS-ARCH | Modules/apps use @maturion/ai-centre, not direct provider SDKs | **PARTIAL FAIL** — no direct provider SDKs present; @maturion/ai-centre not wired |
 | T-C-010 | GRS-CI | CI gate rejects direct provider SDK imports in module code | **FAIL** — model-string ban exists; SDK import ban absent |
 
