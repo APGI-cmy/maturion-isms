@@ -53,3 +53,123 @@ These import the AIMC adapter (not the `openai` npm package). The architecture m
 
 ### T-A-009 Health Endpoint Gap
 The test specification calls for a "health endpoint test". The implemented tests cover health tracking (ProviderHealthRegistry) and adapter healthCheck() methods. A dedicated HTTP /health route test (e.g., testing an Express/Next.js /api/health endpoint) does not exist in packages/ai-centre/__tests__. This may be an infrastructure/api concern vs. a package concern.
+
+---
+
+## Schema-Builder DB Audit — T-B-002, T-B-003, T-B-009, T-C-006
+
+**Agent**: schema-builder  
+**Session**: 078  
+**Wave**: CL-4  
+**Date**: 2026-03-01  
+**Scope**: `packages/ai-centre/supabase/migrations/` — RLS enforcement, module isolation, episodic schema, tenant isolation
+
+---
+
+### T-B-002 — RLS Enforcement (GRS-007)
+
+**Status**: PASS (with scope gap noted — see `ai_requests` below)
+
+**Evidence**:
+
+| Table | Migration File | `organisation_id` Column | RLS Enabled | Policy Name(s) | Verdict |
+|-------|---------------|--------------------------|-------------|----------------|---------|
+| `ai_memory` | `001_ai_memory.sql` | `organisation_id TEXT NOT NULL` | ✅ YES | `ai_memory_org_isolation` | **PASS** |
+| `ai_knowledge` | `003_ai_knowledge.sql` | `organisation_id TEXT NOT NULL` | ✅ YES | `ai_knowledge_org_isolation` | **PASS** |
+| `ai_episodic_events` (episodic_memory) | `004_ai_episodic_memory.sql` | `organisation_id TEXT NOT NULL` | ✅ YES | `ai_episodic_events_insert_org_scope`, `ai_episodic_events_select_org_scope` | **PASS** |
+| `ai_feedback_events` (feedback_*) | `005_ai_feedback_pipeline.sql` | `organisation_id UUID NOT NULL REFERENCES organisations(id)` | ✅ YES | `ai_feedback_events_insert`, `ai_feedback_events_org_select`, `ai_feedback_events_arc_update` | **PASS** |
+| `ai_requests` | **NOT FOUND** | — | — | — | **GAP** |
+
+**Policy SQL Detail**:
+
+- `ai_memory_org_isolation`: `USING (organisation_id = current_setting('app.current_organisation_id', true))`
+- `ai_knowledge_org_isolation`: `USING (organisation_id = current_setting('app.current_organisation_id', true))`
+- `ai_episodic_events_insert_org_scope`: `FOR INSERT WITH CHECK (organisation_id = current_setting('app.current_organisation_id', true))`
+- `ai_episodic_events_select_org_scope`: `FOR SELECT USING (organisation_id = current_setting('app.current_organisation_id', true))`
+- `ai_feedback_events_org_select`: `USING (organisation_id::text = current_setting('app.current_organisation_id', true))`
+
+**`ai_requests` Gap**: No migration file defines an `ai_requests` table. This table name appears in the audit checklist but has no corresponding migration in `packages/ai-centre/supabase/migrations/`. If GRS-007 requires an `ai_requests` table, a migration must be created. Escalated to Foreman for resolution.
+
+---
+
+### T-B-003 — No module defines its own ai_memory table (GRS-008)
+
+**Status**: PASS
+
+**Evidence**:
+
+Command run: `grep -rn "ai_memory\|CREATE TABLE.*memory\|ai_episodic\|ai_requests" modules/ apps/` (excluding `maturion-maturity-legacy`, `node_modules`)
+
+**Result**: Zero `CREATE TABLE` SQL definitions found in `modules/` or `apps/`. All matches returned are **documentation references only** (Markdown files, architecture docs, implementation plans, TRS, FRS, BUILD_PROGRESS_TRACKER.md):
+
+- `modules/mat/00-app-description/app-description.md` — documentation reference to AIMC migration
+- `modules/mat/03-implementation-plan/implementation-plan.md` — 9 documentation references
+- `modules/mat/02-architecture/ai-architecture.md` — 3 documentation references
+- `modules/mat/01.5-trs/technical-requirements-specification.md` — 2 documentation references
+- `modules/mat/01-frs/functional-requirements.md` — 2 documentation references
+- `modules/mat/BUILD_PROGRESS_TRACKER.md` — 4 tracker references
+
+None of these files contain SQL DDL. No module or app defines a competing `ai_memory`, `ai_episodic_memory`, or `ai_requests` table outside the AIMC package. GRS-008 is satisfied.
+
+---
+
+### T-B-009 — Episodic Memory Schema Present, Immutable, Org-Scoped (GRS-030/031)
+
+**Status**: PASS
+
+**Evidence**:
+
+1. **Migration file exists**: `packages/ai-centre/supabase/migrations/004_ai_episodic_memory.sql` ✅
+
+2. **EpisodicMemorySchema.test.ts exists**: `packages/ai-centre/src/__tests__/memory/EpisodicMemorySchema.test.ts` ✅  
+   Covers: file existence, all required columns, immutability rules, RLS policies, all 4 required indexes, GDPR soft-redaction columns (Gap 1: Wave 9.1-FU), Capability enum CHECK constraint (Gap 2: Wave 9.1-FU)
+
+3. **`organisation_id` present**: `organisation_id TEXT NOT NULL` — confirmed in migration DDL ✅
+
+4. **Immutability constraints**:
+   - `CREATE RULE ai_episodic_events_no_update AS ON UPDATE TO ai_episodic_events DO INSTEAD NOTHING` ✅
+   - `CREATE RULE ai_episodic_events_no_delete AS ON DELETE TO ai_episodic_events DO INSTEAD NOTHING` ✅
+   - No UPDATE or DELETE RLS policies (append-only enforced at rule layer) ✅
+
+5. **GDPR/POPIA soft-redaction columns** (Wave 9.1-FU):
+   - `redacted_at TIMESTAMPTZ` (nullable) ✅
+   - `redacted_by TEXT` (nullable) ✅
+   - `redaction_reason TEXT` (nullable) ✅
+   - Partial index `idx_ai_episodic_events_redacted_at WHERE redacted_at IS NOT NULL` ✅
+
+6. **Capability CHECK constraint** (Wave 9.1-FU): All 8 values enumerated — `advisory`, `analysis`, `embeddings`, `document-generation`, `image-generation`, `deep-search`, `video-generation`, `algorithm-execution` ✅
+
+---
+
+### T-C-006 — Tenant Isolation (Strategy §9 Principle 4)
+
+**Status**: PASS
+
+**Evidence** — All AIMC tables enforce `organisation_id` isolation via RLS:
+
+| Table | Migration | Policy Name | SQL Clause |
+|-------|-----------|-------------|------------|
+| `ai_memory` | `001_ai_memory.sql` | `ai_memory_org_isolation` | `USING (organisation_id = current_setting('app.current_organisation_id', true))` |
+| `ai_telemetry` | `002_ai_telemetry.sql` | `ai_telemetry_org_isolation` | `USING (organisation_id = current_setting('app.current_organisation_id', true))` |
+| `ai_knowledge` | `003_ai_knowledge.sql` | `ai_knowledge_org_isolation` | `USING (organisation_id = current_setting('app.current_organisation_id', true))` |
+| `ai_episodic_events` | `004_ai_episodic_memory.sql` | `ai_episodic_events_insert_org_scope` | `FOR INSERT WITH CHECK (organisation_id = current_setting('app.current_organisation_id', true))` |
+| `ai_episodic_events` | `004_ai_episodic_memory.sql` | `ai_episodic_events_select_org_scope` | `FOR SELECT USING (organisation_id = current_setting('app.current_organisation_id', true))` |
+| `ai_feedback_events` | `005_ai_feedback_pipeline.sql` | `ai_feedback_events_org_select` | `USING (organisation_id::text = current_setting('app.current_organisation_id', true))` |
+
+**Isolation mechanism**: All tables use the Supabase session variable `app.current_organisation_id` as the RLS predicate. This variable is set at the start of each authenticated session and ensures cross-org data leakage is blocked at the database layer.
+
+**Note**: `ai_feedback_events.organisation_id` is typed as `UUID` (references `organisations(id)`) while other tables use `TEXT`. The SELECT policy performs a cast (`organisation_id::text`) to match the session variable string. This is functionally correct but represents a minor type inconsistency across the schema.
+
+---
+
+### Summary Table — Schema-Builder DB Audit
+
+| T-ID | GRS Ref | Description | Status |
+|------|---------|-------------|--------|
+| T-B-002 | GRS-007 | RLS Enforcement — all AI tables | **PASS** (ai_requests gap noted) |
+| T-B-003 | GRS-008 | No module defines own ai_memory table | **PASS** |
+| T-B-009 | GRS-030/031 | Episodic memory schema: present, immutable, org-scoped | **PASS** |
+| T-C-006 | Strategy §9 P4 | Tenant isolation via organisation_id RLS | **PASS** |
+
+**Auditor**: schema-builder  
+**Audit completed**: 2026-03-01
