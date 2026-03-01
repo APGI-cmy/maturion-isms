@@ -2,8 +2,8 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 1.1.0
-**Last Updated**: 2026-02-25
+**Knowledge Version**: 1.2.0
+**Last Updated**: 2026-02-28
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -13,10 +13,10 @@
 | File | Purpose | Version | Status |
 |------|---------|---------|--------|
 | `index.md` (this file) | Knowledge entry point and version reference | 1.1.0 | PRESENT |
-| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.0.0 | PRESENT — Rules A-001, A-002, A-003 active |
-| `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 1.0.0 | STUB — must be fully populated from INDEPENDENT_ASSURANCE_AGENT_CANON.md before Phase B activation |
-| `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 1.0.0 | STUB — must be fully populated from INDEPENDENT_ASSURANCE_AGENT_CANON.md before Phase B activation |
-| `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT) | 1.0.0 | STUB — must be fully populated from INDEPENDENT_ASSURANCE_AGENT_CANON.md before Phase B activation |
+| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.2.0 | PRESENT — Rules A-001 through A-006 active; A-006 (INC-IAA-SKIP-001 detection) added |
+| `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.0.0 | ACTIVE — fully populated from canon v2.0.0 |
+| `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.0.0 | ACTIVE — fully populated from canon v2.0.0 |
+| `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT) | 2.0.0 | ACTIVE — fully populated from canon v2.0.0; OVL-CI-004 added |
 | `session-memory-template.md` | Standard session memory template for IAA invocations | 1.0.0 | PRESENT |
 
 ---
@@ -54,6 +54,7 @@
 | A-001 | IAA invocation evidence must be present in all agent contract PRs | ACTIVE |
 | A-002 | IAA is mandatory for ALL agent contract classes — no class exceptions | ACTIVE |
 | A-003 | Ambiguity resolves to mandatory invocation | ACTIVE |
+| A-006 | PHASE_A_ADVISORY FABRICATION breach detection (INC-IAA-SKIP-001 pattern) | ACTIVE |
 
 ---
 
@@ -62,19 +63,17 @@
 | Phase | Status | Behaviour |
 |-------|--------|-----------|
 | Phase A | **CURRENT** | Advisory mode — verdicts informational, not hard-blocking |
-| Phase B | PENDING | Mandatory blocking — REJECTION-PACKAGE prevents PR open |
+| Phase B | ACTIVE — PHASE_B_BLOCKING | Mandatory blocking — REJECTION-PACKAGE prevents PR open |
 
 ---
 
-## Stub Population Instructions
+## Stub Population Status
 
-The following files are stubs that **must be fully populated before Phase B activation**:
-Blocker: `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` must be fully specified.
-Timeline: CS2-authorized governance layer-down session after Phase B activation decision.
+All previously stub files have been fully populated (as of 2026-02-28):
 
-1. `iaa-core-invariants-checklist.md` — extract complete core check list from IAA canon
-2. `iaa-trigger-table.md` — extract complete trigger classification table from IAA canon
-3. `iaa-category-overlays.md` — extract complete per-category overlay checks from IAA canon
+1. `iaa-core-invariants-checklist.md` — fully populated from IAA canon v2.0.0 (CORE-001 to CORE-017)
+2. `iaa-trigger-table.md` — fully populated from IAA canon v2.0.0 (with AGENT_INTEGRITY category and classification decision flow)
+3. `iaa-category-overlays.md` — fully populated from IAA canon v2.0.0 (with OVL-CI-004 and AGENT_INTEGRITY overlay)
 
 ---
 
