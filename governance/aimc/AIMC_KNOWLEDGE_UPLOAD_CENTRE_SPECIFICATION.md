@@ -1,7 +1,7 @@
 # AIMC Knowledge Upload Centre — Governance Specification
 
 **Document Type**: Governance Artefact — CL-5 Deliverable  
-**Status**: DRAFT — Awaiting CS2 Review and Approval (CP-5)  
+**Status**: APPROVED — CP-5 SIGNED OFF by CS2 (Johan Ras / @APGI-cmy) on 2026-03-01  
 **Version**: 1.0.0  
 **Effective Date**: 2026-03-01  
 **Owner**: Maturion Engineering Leadership (Johan Ras, CS2)  
@@ -16,13 +16,15 @@
 **APS Reference**: `governance/aimc/AIMC_AGENT_PROTOCOL_SPECIFICATION.md`  
 **Schema Reference**: `packages/ai-centre/supabase/migrations/006_ai_knowledge_metadata.sql`  
 **Inventory Reference**: `governance/aimc/AIMC_KNOWLEDGE_BASE_INVENTORY.md`
+**Issue #733 Reference**: APGI-cmy/maturion-isms#733 — CP-5 Amendment: CS2 Decisions OQ-001–OQ-005
+**Issue #735 Reference**: APGI-cmy/maturion-isms#735 — AMC Rename and Scope Expansion
 
 > ⚠️ **IMPLEMENTATION GATE — HARD BLOCK**
 >
 > CL-10 (Upload Endpoint Implementation) and CL-11 (Module Integration with Knowledge Retrieval)
 > MUST NOT begin until this specification has received CS2 approval at Checkpoint CP-5.
-> No builder agent may implement the upload endpoint or any dependent feature without a
-> Foreman-issued wave-start authorisation citing this document's CS2-approved status.
+> No builder agent may implement the upload endpoint or any dependent feature without an
+> AMC (App Management Centre)-issued wave-start authorisation citing this document's CS2-approved status.
 > This is an absolute gate. Time pressure does not override it.
 
 ---
@@ -375,6 +377,25 @@ Every successfully inserted knowledge item (single or batch) MUST automatically 
 
 The ARC trigger protocol connects the upload API to the ARC Knowledge Promotion Protocol (`AIMC_ARC_KNOWLEDGE_PROMOTION_PROTOCOL.md` §4 Step 2).
 
+> ⚠️ **AMC GOVERNANCE — OPTION C (Human-in-the-Loop)**
+>
+> By CS2 decision at CP-5, ALL ARC triggers are routed through the **App Management Centre (AMC)**
+> before any GitHub issue is created. No ARC issue is ever auto-created without explicit YES/NO
+> approval from CS2 in AMC. This applies to all uploads — single and batch — from all organisations.
+>
+> **Flow**:
+> 1. Upload succeeds → database row inserted
+> 2. ARC trigger fires → alert sent to AMC Dashboard
+> 3. CS2 notified in AMC
+> 4. CS2 reviews (optionally discusses with Maturion in AMC Discussion UI)
+> 5. CS2 decides: **YES** → GitHub issue created | **NO** → dismissed with audit record
+> 6. CS2 notified of outcome
+> 7. Full audit trail stored regardless of decision
+>
+> This Option C policy is the default. CS2 may relax it to Option B (auto for low-risk) or
+> Option A (fully automatic) via AMC settings at any time. All automation level changes
+> require explicit CS2 instruction and are logged and reversible.
+
 ### 5.2 ARC GitHub Issue Creation
 
 Upon successful database insertion, the upload handler MUST create a GitHub issue in the `APGI-cmy/maturion-isms` repository with the following specification:
@@ -441,7 +462,7 @@ If the GitHub API call to create the issue fails after successful database inser
 | 2 | Include the `item_id` in the response body so the caller can track the item |
 | 3 | Log the failure with item_id, timestamp, and error detail to AIMC telemetry (`ai_telemetry` table) |
 | 4 | The item remains in `approval_status = 'pending'` (correctly) |
-| 5 | The ARC Chair (`@APGI-cmy`) is notified via the fallback channel (email/Slack per CS2 preference) |
+| 5 | The ARC trigger failure is escalated to the AMC Dashboard. CS2 is alerted in AMC regardless of whether the GitHub API call succeeded or failed. CS2 makes the explicit YES/NO decision in AMC as per Option C policy. |
 | 6 | The ARC Chair manually creates the review issue citing the `item_id` |
 
 ### 5.5 Review Queue Management
@@ -449,7 +470,7 @@ If the GitHub API call to create the issue fails after successful database inser
 ARC review issues are managed as a queue:
 - Issues are reviewed in order of creation (oldest first) unless CS2 sets a priority label
 - Bulk uploads from a single batch submission should reference the `batch_id` in each issue for traceability
-- Maximum queue depth: no hard limit; however CS2 may pause upload capability (via `AIMC_UPLOAD_PAUSED` environment flag in the endpoint handler) if the review queue exceeds 50 outstanding items
+- Maximum queue depth: no hard limit; however CS2 may pause upload capability (via `AIMC_UPLOAD_PAUSED` environment flag in the endpoint handler) if the review queue exceeds 50 outstanding items. AMC alerts CS2 when the pending decision queue in AMC exceeds 100 items globally across all organisations.
 
 ---
 
@@ -462,6 +483,27 @@ ARC review issues are managed as a queue:
 | Single uploads per org per day | **50 items** | Midnight UTC | API handler + `ai_telemetry` count query |
 | Batch uploads per org per day | **5 batches** | Midnight UTC | API handler + `ai_telemetry` count query |
 | Total items per org per day (single + batch combined) | **100 items** | Midnight UTC | Enforced at item insertion, not batch level |
+
+> **AMC Dynamic Quota Scaling** (CS2 Decision OQ-005):
+>
+> The above quotas are the default starting values. They are AMC-controlled parameters, not hardcoded values.
+>
+> | Alert Threshold | Trigger | CS2 Action |
+> |---|---|---|
+> | ⚠️ Approaching quota | Org hits 80% of daily limit | Informational alert in AMC |
+> | 🔴 Quota hit | Org hits 100% of daily limit | AMC decision required — scale or hold |
+> | 🚨 Global backlog | Total pending AMC decisions > 100 | Review queue management in AMC |
+>
+> CS2 may adjust per-org or global quotas in real time from AMC with no code change or redeployment required.
+> All quota changes are audited with timestamp and CS2 identity.
+>
+> **Scaling tiers (AMC-managed)**:
+> | Tier | Single/day | Batch/day | Trigger |
+> |---|---|---|---|
+> | Tier 1 (default) | 50 | 5 | — |
+> | Tier 2 | 200 | 20 | AMC backlog alert |
+> | Tier 3 | 500 | 50 | AMC backlog alert |
+> | Tier 4 (enterprise) | Unlimited | Unlimited | Explicit CS2 decision |
 
 ### 6.2 Content Size Limits
 
@@ -714,7 +756,7 @@ CL-11 MUST NOT begin until both CL-5 and CL-10 are closed. The `KnowledgeRetriev
 | Context assembly with domain knowledge | GRS | GRS-030 — domain knowledge as segment 4 of context window |
 | API architecture pattern | AAD | `governance/aimc/AIMC_ARTEFACT_ARCHITECTURE_DESCRIPTION.md` §5, §8 |
 | Authentication model | APS | `governance/aimc/AIMC_AGENT_PROTOCOL_SPECIFICATION.md` §7, §10 |
-| Wave gate model | APS | APS §10.1 — GRS-019, GRS-023: no implementation without Foreman wave-start citing CS2 approval |
+| Wave gate model | APS | APS §10.1 — GRS-019, GRS-023: no implementation without AMC (App Management Centre) wave-start citing CS2 approval |
 | Runtime knowledge gate | KnowledgeRetrieverImpl | `packages/ai-centre/src/memory/KnowledgeRetrieverImpl.ts` (approvalStatus filter) |
 | CL-10 dependency (endpoint build) | Combined Plan | CL-10 MUST NOT begin until CP-5 (this document) is approved |
 | CL-11 dependency (module integration) | Combined Plan | CL-11 MUST NOT begin until CL-10 is closed |
@@ -723,17 +765,19 @@ CL-11 MUST NOT begin until both CL-5 and CL-10 are closed. The `KnowledgeRetriev
 
 ---
 
-## 11. Open Questions and Decisions Pending CS2
+## 11. CS2 Decisions — CP-5 (2026-03-01)
 
-The following items require CS2 decision before or during CL-10 implementation:
+All five open questions have been resolved by CS2 at CP-5 on 2026-03-01. The following decisions supersede all defaults and are binding on CL-10 and CL-11 implementation.
 
-| ID | Question | Impact | Default (if CS2 does not respond) |
+| ID | Question | CS2 Decision | Effective |
 |---|---|---|---|
-| OQ-001 | Should the upload endpoint generate embeddings at upload time (synchronous) or defer to a background job? | Affects API response latency; synchronous embedding adds ~2–5s per item | Default: defer to background job; upload returns immediately |
-| OQ-002 | Should the `metadata` field accept nested objects or only flat key-value pairs? | Schema complexity | Default: flat key-value pairs only (nested objects rejected with `400 VALIDATION_ERROR`) |
-| OQ-003 | Should ARC issues for items in the same batch/domain/module be grouped into one issue or one issue per item? | ARC reviewer workload | Default: one issue per item for full traceability |
-| OQ-004 | Should the fallback channel for ARC trigger failures be email, Slack, or GitHub at-mention in a sentinel issue? | ARC trigger failure recovery | Default: GitHub at-mention in a designated sentinel issue `[ARC FALLBACK QUEUE]` |
-| OQ-005 | Is the 50-item/day per-org quota appropriate for the expected usage volume at launch? | Rate limiting calibration | Default: 50/day single + 5 batches/day; revisable post-launch via CS2 decision |
+| OQ-001 | Embedding timing | **Background job** — Upload returns immediately; embedding runs asynchronously. A status indicator is shown to the uploader until embedding is complete. Synchronous embedding is not permitted. | CP-5, 2026-03-01 |
+| OQ-002 | `metadata` structure | **Flat key-value only** — No nested objects permitted. Key naming convention: `{domain}_{field}` (e.g. `source_org`, `author_role`). Nested objects must be rejected with `400 VALIDATION_ERROR`. | CP-5, 2026-03-01 |
+| OQ-003 | Batch ARC issues | **Hybrid** — Batches of ≤5 documents: 1 individual ARC issue per document with problems. Batches of >5 documents: 1 grouped ARC issue with a checklist item per document. | CP-5, 2026-03-01 |
+| OQ-004 | ARC fallback / governance | **AMC-governed, Option C** — No ARC GitHub issue is ever created without explicit YES/NO approval from CS2 in the App Management Centre (AMC). All ARC triggers (not just failures) are routed to AMC first. Approvals and dismissals are fully audited. This default holds until CS2 explicitly changes it in AMC settings. | CP-5, 2026-03-01 |
+| OQ-005 | Upload quota | **Scalable, AMC-controlled** — Default: 50 single / 5 batch per org per day. AMC alerts CS2 at 80% threshold and on quota hit. CS2 can adjust per-org or global quotas in real time from AMC. All changes are audited. No code change or redeployment required to scale. See §6.1 scaling tiers. | CP-5, 2026-03-01 |
+
+> These decisions are formally recorded in APGI-cmy/maturion-isms#733 and APGI-cmy/maturion-isms#735.
 
 ---
 
@@ -752,31 +796,38 @@ The following criteria map directly to the CL-5 issue acceptance criteria and Co
 - [ ] **AC-9**: Traceability to ARC protocol, GRS requirements, GAP-007, and Combined Plan CL-5 is complete ✅ (§10)
 - [ ] **AC-10**: Architecture review section confirms CL-11 dependency on CL-10 and CL-10 dependency on this document's CS2 approval ✅ (§9.4)
 - [ ] **AC-11**: Document explicitly states that CL-10 and CL-11 MUST NOT begin until this specification is CS2-approved (CP-5) ✅ (header gate notice)
-- [ ] **AC-12**: Document is reviewed and approved by CS2 (CP-5) — **PENDING CS2 REVIEW**
+- [x] **AC-12**: Document is reviewed and approved by CS2 (CP-5) — ✅ **APPROVED 2026-03-01**
 
 ---
 
 ## 13. CS2 Approval Gate (CP-5)
 
-> **Status**: DRAFT — Awaiting CS2 Review
+> **Status**: ✅ APPROVED — CP-5 SIGNED OFF by CS2 (Johan Ras / @APGI-cmy) on 2026-03-01
 >
-> This document requires explicit approval by CS2 (Johan Ras / @APGI-cmy) before CL-10 implementation
-> may begin. Approval constitutes CS2's confirmation that:
+> CS2 has confirmed:
 >
-> 1. The API contract is complete and fit for implementation
-> 2. The ARC trigger protocol is correctly specified
-> 3. The auth model is aligned with existing AIMC security posture
-> 4. Rate limits and quotas are appropriate
-> 5. The implementation dependency chain (CL-5 → CL-10 → CL-11) is correctly declared
+> 1. ✅ The API contract is complete and fit for implementation
+> 2. ✅ The ARC trigger protocol is correctly specified — governed by AMC Option C (human-in-the-loop)
+> 3. ✅ The auth model is aligned with existing AIMC security posture
+> 4. ✅ Rate limits and quotas are appropriate — starting at 50/5/day with AMC-controlled dynamic scaling
+> 5. ✅ The implementation dependency chain (CL-5 → CL-10 → CL-11) is correctly declared
 >
-> **To approve**: CS2 MUST update the `Status` field in the document header from `DRAFT — Awaiting CS2 Review and Approval (CP-5)` to `APPROVED — CP-5 SIGNED OFF by CS2 (Johan Ras) on <date>` and merge the approval PR.
+> **All five open questions (OQ-001 through OQ-005) have been resolved. See §11.**
 >
-> **CS2 Veto**: If any section requires amendment before approval, CS2 issues a rejection with specific revision requirements. `governance-liaison-isms-agent` incorporates amendments and re-submits for CP-5.
+> **CL-10 and CL-11 are hereby UNBLOCKED** pending AMC wave-start authorisation from CS2.
+>
+> **AMC Rename**: The application formerly known as "Foreman App" is now officially the
+> **App Management Centre (AMC)**. All references in this document and all downstream
+> implementation documents must use "AMC" going forward.
+>
+> **Linked governance records**:
+> - APGI-cmy/maturion-isms#733 — CP-5 Amendment: CS2 Decisions OQ-001–OQ-005
+> - APGI-cmy/maturion-isms#735 — AMC Rename and Scope Expansion
 
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
 **Governed By**: AIMC Audit Plan §8; GAP-007; Combined Plan CL-5  
 **Process Owner**: Maturion Engineering Leadership  
-**Next Review**: On CS2 approval (CP-5), or when CL-10 architecture deviates from this spec  
-**Implementation Gate**: CL-10 and CL-11 MUST NOT commence until CP-5 is signed
+**Next Review**: On CL-10 architecture deviation from this spec, or on CS2 instruction  
+**Implementation Gate**: ✅ CP-5 SIGNED — CL-10 and CL-11 may commence upon AMC wave-start authorisation from CS2
