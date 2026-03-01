@@ -102,7 +102,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && secrets.AWS_REGION != ''
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
