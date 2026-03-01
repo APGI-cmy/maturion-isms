@@ -326,3 +326,41 @@ Specifically:
 > commit both to branch, re-invoke IAA, then follow Post-ASSURANCE-TOKEN Ceremony.
 
 **Status**: ACTIVE — enforced every invocation
+
+---
+
+### A-016 — Trigger Table Misapplication Is an IAA Bypass — ALL Triggering Categories Require IAA
+
+**Triggered by**: maturion-isms#711 — governance-liaison-isms session-027-20260301.
+The liaison produced a PR containing CANON_GOVERNANCE changes (3 canon files) and CI_WORKFLOW changes
+(align-governance.sh + ripple-integration.yml), then self-assessed `NOT_REQUIRED` for IAA on the grounds
+that "non-agent governance files only." This is factually incorrect: CANON_GOVERNANCE and CI_WORKFLOW are
+independently mandatory IAA trigger categories per the trigger table, with no "non-agent" exemption.
+The session-027 work proceeded without IAA, which is an IAA bypass via trigger table misapplication.
+
+**Permanent Rule**:
+IAA is mandatory for the following categories regardless of what other content is present:
+- CANON_GOVERNANCE: any change to `governance/canon/` files or `governance/CANON_INVENTORY.json`
+- CI_WORKFLOW: any change to `.github/workflows/` or `.github/scripts/` files
+- AGENT_CONTRACT: any change to `.github/agents/` files
+- AAWP_MAT: any AAWP or MAT deliverable
+
+The producing agent may NOT self-assess IAA as `NOT_REQUIRED` for any of these categories.
+Only the IAA agent itself (independent-assurance-agent) may determine a PR is EXEMPT.
+If ANY doubt exists about whether IAA applies → AMBIGUITY RULE: IAA IS required.
+
+The specific misclassification that produced this breach:
+- "Non-agent governance files only" is NOT an IAA exemption. Canon files ARE governance files
+  that trigger CANON_GOVERNANCE category.
+- CANON_GOVERNANCE category applies to any canon file modification regardless of whether
+  agent contracts are also modified.
+
+**Check in Phase 3**:
+> FAIL-ONLY-ONCE A-016: If PR contains any change to governance/canon/ OR .github/workflows/ OR
+> .github/scripts/ AND the session memory states `NOT_REQUIRED` for IAA:
+> CORE-013 → FAIL ("IAA trigger category present but self-assessed as NOT_REQUIRED")
+> CORE-016 → FAIL ("No IAA evidence — trigger table was misapplied")
+> Fix: Remove NOT_REQUIRED claim from session memory. Create PREHANDOVER proof.
+> Invoke IAA via the independent-assurance-agent tool. Include verbatim IAA output in proof.
+
+**Status**: ACTIVE — enforced every invocation
