@@ -128,16 +128,6 @@ jobs:
             else
               echo "drift_detected=false" >> $GITHUB_OUTPUT
             fi
-          elif [ $EXIT_CODE -eq 2 ]; then
-            # Partial success: some files were layered but some had hash verification failures
-            # (stale CANON_INVENTORY.json hash in canonical source — escalation required for those files)
-            echo "alignment script completed with hash verification failures for one or more files (exit code 2)"
-            echo "Files that passed verification have been layered. Checking for changes..."
-            if git status --porcelain | grep -q '^'; then
-              echo "drift_detected=true" >> $GITHUB_OUTPUT
-            else
-              echo "drift_detected=false" >> $GITHUB_OUTPUT
-            fi
           else
             echo "alignment script exited with code $EXIT_CODE"
             exit $EXIT_CODE

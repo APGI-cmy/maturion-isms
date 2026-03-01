@@ -1394,14 +1394,14 @@
     },
     {
       "filename": "LAYER_UP_PROTOCOL.md",
-      "version": "1.0.0",
-      "file_hash": "0f5b2d9c14640e156300a72370841d38dcc52da2c519c8c181683f33694f39c3",
+      "version": "1.1.0",
+      "file_hash": "ac23efd1b44ac26b620cf387fdba6b23031ac988a5b51fb304eb215ce7ffc58f",
       "effective_date": "2026-02-09",
       "description": "This protocol defines the **explicit, controlled mechanism** for propagating lessons learned, governance improvements, and alignment feedback from downstream application repositories back to the ca...",
       "type": "canon",
       "path": "governance/canon/LAYER_UP_PROTOCOL.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "0f5b2d9c14640e156300a72370841d38dcc52da2c519c8c181683f33694f39c3"
+      "file_hash_sha256": "ac23efd1b44ac26b620cf387fdba6b23031ac988a5b51fb304eb215ce7ffc58f"
     },
     {
       "filename": "LEARNING_INTAKE_AND_PROMOTION_MODEL.md",
