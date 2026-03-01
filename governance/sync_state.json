@@ -3,21 +3,19 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "last_sync": {
-    "timestamp": "2026-03-01T06:56:43Z",
-    "session_id": "session-026-20260301",
+    "timestamp": "2026-03-01T09:27:36Z",
+    "session_id": "session-027-20260301",
     "executed_by": "governance-liaison",
     "canonical_inventory_version": "1.0.0",
-    "canonical_inventory_date": "2026-02-28",
-    "total_canons_synced": 4,
+    "canonical_inventory_date": "2026-03-01",
+    "total_canons_synced": 2,
     "sync_method": "layer-down-manual-liaison",
     "sync_status": "SUCCESS",
-    "canonical_commit": "6644ee51ce714d3a9331b28b74b3e05f1b7ee880",
+    "canonical_commit": "1bce7a831467b784b261b207f969bc2ec35131ab",
     "ripple_pr": "#686",
     "files_layered_down": [
-      "governance/canon/REQUIREMENT_SPECIFICATION_GOVERNANCE.md",
-      "governance/canon/VERSIONING_AND_EVOLUTION_GOVERNANCE.md",
-      "governance/CANON_INVENTORY.json",
-      "governance/sync_state.json"
+      "governance/canon/LAYER_UP_PROTOCOL.md",
+      "governance/CANON_INVENTORY.json"
     ]
   },
   "alignment_status": {
@@ -29,7 +27,7 @@
       "missing": 0
     },
     "drift_detected": false,
-    "last_drift_check": "2026-03-01T06:56:43Z"
+    "last_drift_check": "2026-03-01T09:27:36Z"
   },
   "integrity": {
     "evidence_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_evidence.log",
