@@ -12,6 +12,9 @@ importers:
 
   .:
     dependencies:
+      '@maturion/ai-centre':
+        specifier: workspace:*
+        version: link:packages/ai-centre
       '@supabase/supabase-js':
         specifier: ^2.98.0
         version: 2.98.0
