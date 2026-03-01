@@ -228,3 +228,5 @@
 | 2026-03-01 | governance-liaison-isms | session-030 | SESSION-END | Align Effective Date terminology with Last Updated used by other governance docs | session-030-20260301.md |
 | 2026-03-01 | independent-assurance-agent | session-029 | Phase 4 | S-001: Foreman FAIL-ONLY-ONCE should require PREHANDOVER proof creation BEFORE IAA invocation — ordering constraint prevents ceremony-after-content errors | session-029-20260301.md |
 | 2026-03-01 | independent-assurance-agent | session-029 | Phase 4 | S-002: REJECTION-PACKAGE for ceremony-only failures should flag as "lightweight fix — PREHANDOVER creation only" to reduce remediation confusion | session-029-20260301.md |
+| 2026-03-01 | independent-assurance-agent | session-079 | Phase 4 | S-001: Formalise PENDING→verbatim paste→token update as named Post-IAA-Token Ceremony (PCN-001) in Foreman FAIL-ONLY-ONCE registry | session-079-20260301.md |
+| 2026-03-01 | independent-assurance-agent | session-079 | Phase 4 | S-002: Foreman should create session memory in Phase 3 OPOJD gate (before IAA invocation) so file is in bundle at audit time | session-079-20260301.md |
