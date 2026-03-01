@@ -1528,7 +1528,7 @@ All of the following must be confirmed before Wave 11 closes:
 ### 2.13 Wave 12 — Full Functionality & Build Wiring Verification
 
 > **Status**: DEFINED — 2026-03-01. Entry criteria: Wave 11 CS2-certified COMPLETE.  
-> **CS2 Authorization**: Issue #709 opened by @APGI-cmy assigning foreman-v2-agent.  
+> **CS2 Authorization**: Issue #709 opened by @APGI-cmy assigning foreman-v2-agent — 2026-03-01.  
 > **Architecture Authority**: Existing MAT architecture v3.0.0 (FROZEN — no new architecture required for QA verification wave).
 
 #### Wave 12 Description
