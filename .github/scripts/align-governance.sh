@@ -310,6 +310,7 @@ echo "Phase 4: Layer Down Canonical Governance"
 echo "--------------------------------------"
 
 LAYERED_FILES=()
+VERIFICATION_FAILURES=()
 
 # Layer down each drifted or missing file
 for artifact_path in "${MISSING_FILES[@]}" "${HASH_MISMATCHES[@]}"; do
@@ -344,7 +345,13 @@ for artifact_path in "${MISSING_FILES[@]}" "${HASH_MISMATCHES[@]}"; do
         LAYERED_FILES+=("$artifact_path")
     else
         echo -e "${RED}❌ Hash verification failed: $artifact_path${NC}"
-        exit 1
+        echo -e "${RED}   Actual canonical file hash: $LOCAL_SHA256${NC}"
+        echo -e "${RED}   CANON_INVENTORY.json expected: $CANONICAL_SHA256${NC}"
+        echo -e "${YELLOW}   ⚠️  ESCALATION REQUIRED: CANON_INVENTORY.json may have a stale hash for $artifact_path${NC}"
+        echo -e "${YELLOW}   Reverting file — canonical source must fix CANON_INVENTORY.json for this file.${NC}"
+        # Revert the problematic file to its previous state
+        git -C "$REPO_ROOT" checkout HEAD -- "$artifact_path" 2>/dev/null || rm -f "$LOCAL_FILE"
+        VERIFICATION_FAILURES+=("$artifact_path")
     fi
 done
 
@@ -397,6 +404,7 @@ cat > "$DRIFT_REPORT" <<EOF
 - **Missing Files**: ${#MISSING_FILES[@]}
 - **Hash Mismatches**: ${#HASH_MISMATCHES[@]}
 - **Files Layered Down**: ${#LAYERED_FILES[@]}
+- **Verification Failures (stale CANON_INVENTORY.json hash)**: ${#VERIFICATION_FAILURES[@]}
 
 ## Missing Files
 
@@ -436,9 +444,27 @@ done
 
 cat >> "$DRIFT_REPORT" <<EOF
 
+## Verification Failures (Escalation Required)
+
+These files were NOT layered down because the actual canonical file hash does not match
+the hash in CANON_INVENTORY.json. This indicates a stale/incorrect CANON_INVENTORY.json
+entry in the canonical source repository. CS2 must fix CANON_INVENTORY.json for each:
+
+EOF
+
+if [ ${#VERIFICATION_FAILURES[@]} -eq 0 ]; then
+    echo "None" >> "$DRIFT_REPORT"
+else
+    for file in "${VERIFICATION_FAILURES[@]}"; do
+        echo "- \`$file\` — ⚠️ ESCALATION REQUIRED: stale hash in canonical CANON_INVENTORY.json" >> "$DRIFT_REPORT"
+    done
+fi
+
+cat >> "$DRIFT_REPORT" <<EOF
+
 ## Verification
 
-All files verified with SHA256 checksums from canonical CANON_INVENTORY.json.
+Successfully layered files verified with SHA256 checksums from canonical CANON_INVENTORY.json.
 
 ---
 **Authority**: CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md  
@@ -452,17 +478,22 @@ echo "Phase 6: Update Ripple Log"
 echo "--------------------------------------"
 
 # Add ripple event to log
+RIPPLE_STATUS="SUCCESS"
+if [ ${#VERIFICATION_FAILURES[@]} -gt 0 ]; then
+    RIPPLE_STATUS="PARTIAL_SUCCESS"
+fi
 jq --arg timestamp "$TIMESTAMP" \
    --arg session "$SESSION_ID" \
    --arg commit "$CANONICAL_COMMIT" \
    --argjson count "${#LAYERED_FILES[@]}" \
+   --arg status "$RIPPLE_STATUS" \
    '.ripple_events += [{
      "timestamp": $timestamp,
      "session_id": $session,
      "type": "automated-alignment",
      "canonical_commit": $commit,
      "files_updated": $count,
-     "status": "SUCCESS"
+     "status": $status
    }]' \
    "$RIPPLE_LOG" > "${RIPPLE_LOG}.tmp"
 mv "${RIPPLE_LOG}.tmp" "$RIPPLE_LOG"
@@ -470,27 +501,59 @@ mv "${RIPPLE_LOG}.tmp" "$RIPPLE_LOG"
 echo -e "${GREEN}✓ Ripple log updated${NC}"
 echo ""
 
-echo "======================================"
-echo "✅ ALIGNMENT COMPLETE"
-echo "======================================"
-echo "Files updated: ${#LAYERED_FILES[@]}"
-echo "Drift report: $DRIFT_REPORT"
-echo ""
-echo "Next steps:"
-echo "  1. Review changes: git status"
-echo "  2. Commit changes: git add . && git commit -m 'Governance alignment'"
-echo "  3. Create PR for review"
-echo ""
+if [ ${#VERIFICATION_FAILURES[@]} -gt 0 ]; then
+    echo "======================================"
+    echo "⚠️  ALIGNMENT PARTIAL SUCCESS"
+    echo "======================================"
+    echo "Files updated: ${#LAYERED_FILES[@]}"
+    echo "Verification failures (NOT layered): ${#VERIFICATION_FAILURES[@]}"
+    for f in "${VERIFICATION_FAILURES[@]}"; do
+        echo "  ⚠️  $f — stale hash in canonical CANON_INVENTORY.json, escalation required"
+    done
+    echo "Drift report: $DRIFT_REPORT"
+    echo ""
+    echo "ACTION REQUIRED:"
+    echo "  The files listed above have mismatched hashes between the actual canonical file"
+    echo "  and CANON_INVENTORY.json. The canonical source repository must update"
+    echo "  CANON_INVENTORY.json to correct the hash for these files."
+    echo ""
 
-# Set output for GitHub Actions
-if [ -n "${GITHUB_OUTPUT:-}" ]; then
-    echo "drift_detected=true" >> "$GITHUB_OUTPUT"
-    echo "files_updated=${#LAYERED_FILES[@]}" >> "$GITHUB_OUTPUT"
-    echo "canonical_commit=$CANONICAL_COMMIT" >> "$GITHUB_OUTPUT"
-    echo "drift_report=$DRIFT_REPORT" >> "$GITHUB_OUTPUT"
+    # Set output for GitHub Actions
+    if [ -n "${GITHUB_OUTPUT:-}" ]; then
+        echo "drift_detected=true" >> "$GITHUB_OUTPUT"
+        echo "files_updated=${#LAYERED_FILES[@]}" >> "$GITHUB_OUTPUT"
+        echo "canonical_commit=$CANONICAL_COMMIT" >> "$GITHUB_OUTPUT"
+        echo "drift_report=$DRIFT_REPORT" >> "$GITHUB_OUTPUT"
+    fi
+
+    # Cleanup
+    rm -rf "$CANONICAL_DIR"
+
+    # Exit code 2 = partial success (some files layered, some had hash verification failures)
+    exit 2
+else
+    echo "======================================"
+    echo "✅ ALIGNMENT COMPLETE"
+    echo "======================================"
+    echo "Files updated: ${#LAYERED_FILES[@]}"
+    echo "Drift report: $DRIFT_REPORT"
+    echo ""
+    echo "Next steps:"
+    echo "  1. Review changes: git status"
+    echo "  2. Commit changes: git add . && git commit -m 'Governance alignment'"
+    echo "  3. Create PR for review"
+    echo ""
+
+    # Set output for GitHub Actions
+    if [ -n "${GITHUB_OUTPUT:-}" ]; then
+        echo "drift_detected=true" >> "$GITHUB_OUTPUT"
+        echo "files_updated=${#LAYERED_FILES[@]}" >> "$GITHUB_OUTPUT"
+        echo "canonical_commit=$CANONICAL_COMMIT" >> "$GITHUB_OUTPUT"
+        echo "drift_report=$DRIFT_REPORT" >> "$GITHUB_OUTPUT"
+    fi
+
+    # Cleanup
+    rm -rf "$CANONICAL_DIR"
+
+    exit 0
 fi
-
-# Cleanup
-rm -rf "$CANONICAL_DIR"
-
-exit 0

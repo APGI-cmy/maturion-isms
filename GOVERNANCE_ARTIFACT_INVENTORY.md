@@ -1,14 +1,14 @@
 # Governance Artifact Inventory
 
 **Repository**: APGI-cmy/maturion-isms  
-**Last Updated**: 2026-03-01T06:56:43Z  
+**Last Updated**: 2026-03-01T08:27:00Z  
 **Governance Source**: APGI-cmy/maturion-foreman-governance  
 **Canonical Version**: 1.0.0 (CANON_INVENTORY.json)  
-**Layer-Down Session**: session-026-20260301  
+**Layer-Down Session**: session-027-20260301  
 **Baseline PR**: #1083 (merged 2026-02-11T11:18:26Z)  
 **Infrastructure Update**: Governance Ripple System v1.0.0 implemented  
-**Latest Ripple PR**: #686 (merged 2026-02-28T14:18:09Z by CS2) — 4 files (canonical commit `6644ee51ce714d3a9331b28b74b3e05f1b7ee880`)  
-**Latest Canonical Commit**: `6644ee51ce714d3a9331b28b74b3e05f1b7ee880` (2026-02-28 — 2 canon files updated via PR #686)
+**Latest Ripple PR**: pending (session-027 — canonical commit `64ac0b7b80035dcbee2c5eb99f5c11d41d60f399`)  
+**Latest Canonical Commit**: `64ac0b7b80035dcbee2c5eb99f5c11d41d60f399` (2026-03-01 — 3 canon files layered, CI script fix applied)
 
 ---
 
@@ -16,14 +16,14 @@
 
 This inventory tracks all governance artifacts layered down from the canonical governance repository to this consumer repository.
 
-- **Total PUBLIC_API Canons Layered**: 113 ✅ (102 baseline + FINAL_COMPLETE_WAVE_TEST_PROTOCOL.md via PR #456 + AIMC_STRATEGY.md via PR #441 + PRE_BUILD_REALITY_CHECK_CANON.md via PRs #473-475 + UNIVERSAL_FAIL_ONLY_ONCE_POLICY.md via PRs #503-505 + AUTOMATED_QUALITY_TOOLING_CANON.md + CODE_COVERAGE_THRESHOLD_CANON.md + CONTRACT_TESTING_CANON.md + POST_PRODUCTION_TELEMETRY_CANON.md via PRs #639-641 + REQUIREMENT_SPECIFICATION_GOVERNANCE.md + VERSIONING_AND_EVOLUTION_GOVERNANCE.md via PR #686)
+- **Total PUBLIC_API Canons Layered**: 116 ✅ (113 previous + GOVERNANCE_TOKEN_USAGE_REQUIREMENTS.md + INDEPENDENT_ASSURANCE_AGENT_CANON.md updated + LAYER_UP_PROTOCOL.md updated to v1.1.0 via session-027)
 - **Total Governance Infrastructure**: 7 components complete
-- **Last Sync**: 2026-03-01T06:56:43Z (session-026 — canonical commit `6644ee51ce714d3a9331b28b74b3e05f1b7ee880` — 4 files layered down via PR #686 — REQUIREMENT_SPECIFICATION_GOVERNANCE.md + VERSIONING_AND_EVOLUTION_GOVERNANCE.md updated — governance aligned)
-- **Prior Sync**: 2026-02-28T14:14:40Z (session-025 — canonical commit `6644ee51ce714d3a9331b28b74b3e05f1b7ee880` — draft PRs created by automated CI — CS2 approval pending at time of session-025)
-- **Alignment Status**: FULLY COMPLIANT (All 7 ripple components implemented)
+- **Last Sync**: 2026-03-01T08:27:00Z (session-027 — canonical commit `64ac0b7b80035dcbee2c5eb99f5c11d41d60f399` — 3 canon files layered: GOVERNANCE_TOKEN_USAGE_REQUIREMENTS.md new, INDEPENDENT_ASSURANCE_AGENT_CANON.md updated, LAYER_UP_PROTOCOL.md v1.1.0; align-governance.sh CI bug fixed; escalation for stale CANON_INVENTORY.json hash)
+- **Prior Sync**: 2026-03-01T06:56:43Z (session-026 — canonical commit `6644ee51ce714d3a9331b28b74b3e05f1b7ee880` — 4 files layered down via PR #686 — REQUIREMENT_SPECIFICATION_GOVERNANCE.md + VERSIONING_AND_EVOLUTION_GOVERNANCE.md updated — governance aligned)
+- **Alignment Status**: PARTIAL (LAYER_UP_PROTOCOL.md layered but A-07 escalation open — canonical CANON_INVENTORY.json has stale hash for this file)
 - **Evidence Log**: `.agent-admin/governance/ripple-log.json`
 - **Drift Detection**: Automated (hourly schedule + event-driven)
-- **Note**: Complete governance ripple infrastructure implemented. FINAL_COMPLETE_WAVE_TEST_PROTOCOL.md layered down 2026-02-18, AIMC_STRATEGY.md layered down 2026-02-23, PRE_BUILD_REALITY_CHECK_CANON.md layered down 2026-02-23. AUTOMATED_QUALITY_TOOLING_CANON.md, CODE_COVERAGE_THRESHOLD_CANON.md, CONTRACT_TESTING_CANON.md, POST_PRODUCTION_TELEMETRY_CANON.md layered down 2026-02-27. REQUIREMENT_SPECIFICATION_GOVERNANCE.md, VERSIONING_AND_EVOLUTION_GOVERNANCE.md layered down 2026-02-28 (PR #686, CS2-approved).
+- **Note**: CI scripts fixed in this session: align-governance.sh now exits with code 2 (partial success) instead of code 1 (fatal error) when individual file hash verification fails. ripple-integration.yml handles exit code 2 gracefully. GOVERNANCE_TOKEN_USAGE_REQUIREMENTS.md added (new policy per PR #1249 in canonical repo). LAYER_UP_PROTOCOL.md updated to v1.1.0 (HITL close-loop automation additions).
 
 ---
 

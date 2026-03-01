@@ -3,25 +3,28 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "last_sync": {
-    "timestamp": "2026-03-01T06:56:43Z",
-    "session_id": "session-026-20260301",
-    "executed_by": "governance-liaison",
+    "timestamp": "2026-03-01T08:27:00Z",
+    "session_id": "session-027-20260301",
+    "executed_by": "governance-liaison-isms",
     "canonical_inventory_version": "1.0.0",
-    "canonical_inventory_date": "2026-02-28",
-    "total_canons_synced": 4,
+    "canonical_inventory_date": "2026-03-01",
+    "total_canons_synced": 3,
     "sync_method": "layer-down-manual-liaison",
-    "sync_status": "SUCCESS",
-    "canonical_commit": "6644ee51ce714d3a9331b28b74b3e05f1b7ee880",
-    "ripple_pr": "#686",
+    "sync_status": "PARTIAL_SUCCESS",
+    "canonical_commit": "64ac0b7b80035dcbee2c5eb99f5c11d41d60f399",
+    "ripple_pr": "pending",
     "files_layered_down": [
-      "governance/canon/REQUIREMENT_SPECIFICATION_GOVERNANCE.md",
-      "governance/canon/VERSIONING_AND_EVOLUTION_GOVERNANCE.md",
-      "governance/CANON_INVENTORY.json",
-      "governance/sync_state.json"
+      "governance/canon/GOVERNANCE_TOKEN_USAGE_REQUIREMENTS.md",
+      "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
+      "governance/canon/LAYER_UP_PROTOCOL.md",
+      "governance/CANON_INVENTORY.json"
+    ],
+    "verification_failures": [
+      "governance/canon/LAYER_UP_PROTOCOL.md (stale hash in canonical CANON_INVENTORY.json - A-07 escalation)"
     ]
   },
   "alignment_status": {
-    "overall": "ALIGNED",
+    "overall": "PARTIAL",
     "canon_files": {
       "total": 102,
       "aligned": 96,
@@ -29,7 +32,7 @@
       "missing": 0
     },
     "drift_detected": false,
-    "last_drift_check": "2026-03-01T06:56:43Z"
+    "last_drift_check": "2026-03-01T08:27:00Z"
   },
   "integrity": {
     "evidence_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_evidence.log",

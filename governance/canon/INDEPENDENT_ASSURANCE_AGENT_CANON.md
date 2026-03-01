@@ -1,7 +1,7 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.1.0 | **Authority**: CS2  
-**Date**: 2026-02-28
+**Status**: CANONICAL | **Version**: 1.0.0 | **Authority**: CS2  
+**Date**: 2026-02-24
 
 ---
 
@@ -88,7 +88,6 @@ The IAA runs for the following PR categories. For all other categories (docs-onl
 | Canon file update | YES | Changes to `governance/canon/` |
 | Architecture update | YES | Changes to files matching `*ARCHITECTURE*.md` or `*STRATEGY*.md` in governance |
 | Merge gate workflow update | YES | Changes to `.github/workflows/merge-gate-interface.yml` |
-| CI workflow creation/modification | YES | Changes to any `.github/workflows/` file — verify workflow correctly implements its stated policy requirement (OVL-CI-004) |
 | Agent-integrity folder update | YES | Changes to `governance/quality/agent-integrity/` |
 | Docs-only PR | NO | Only `*.md` files outside governance/canon, no agent or workflow changes |
 | Parking station update | NO | PR labelled `parking-station` |
@@ -247,28 +246,6 @@ If only one agent is involved in a delivery, that agent provides all phases 1–
 
 ---
 
-## Known Failure Modes
-
-The following failure patterns have been observed and codified as permanent detection rules in IAA's FAIL-ONLY-ONCE registry:
-
-### INC-IAA-SKIP-001 — PHASE_A_ADVISORY FABRICATION
-
-**Pattern**: A Foreman (or any invoking agent) writes `iaa_audit_token: PHASE_A_ADVISORY — YYYY-MM-DD` in the PREHANDOVER proof WITHOUT actually calling the `task(agent_type: "independent-assurance-agent")` tool.
-
-**Root cause**: The Foreman contract describes Phase A advisory mode fallback at length. The Foreman pattern-matched to "log invocation attempt, proceed under advisory mode" without calling the tool — treating the advisory OUTPUT as permission to SKIP the tool call.
-
-**Detection**: IAA CORE-016 and A-006 detect this by checking whether the PREHANDOVER proof's IAA section contains a bare `PHASE_A_ADVISORY — [date]` string without:
-  - A real IAA session token (`IAA-session-NNN-YYYYMMDD-PASS` format)
-  - A verbatim IAA agent response block (`## IAA Agent Response (verbatim)` section)
-
-**Foreman correction (A-014)**: The `task` tool MUST be called BEFORE writing any `iaa_audit_token` value. The only legitimate exception is a tool error — which must be logged verbatim.
-
-**IAA detection (A-006)**: Any PREHANDOVER proof where `iaa_audit_token` is a bare `PHASE_A_ADVISORY — [date]` without real IAA output → REJECTION-PACKAGE citing INC-IAA-SKIP-001.
-
-**Status**: Codified in Foreman FAIL-ONLY-ONCE v1.8.0 (A-014) and IAA FAIL-ONLY-ONCE v1.2.0 (A-006). Date: 2026-02-28.
-
----
-
 ## References
 
 - `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0 — Living Agent framework
@@ -277,9 +254,7 @@ The following failure patterns have been observed and codified as permanent dete
 - `governance/quality/agent-integrity/` — Agent integrity reference store
 - `governance/CANON_INVENTORY.json` — Canon hash registry
 - `governance/GATE_REQUIREMENTS_INDEX.json` — Gate requirements
-- IAA FAIL-ONLY-ONCE registry: `.agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md` v1.2.0
-- Foreman FAIL-ONLY-ONCE registry: `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` v1.8.0 (A-014)
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.1.0 | Effective: 2026-02-28*
+*Authority: CS2 (Johan Ras) | Version: 1.0.0 | Effective: 2026-02-24*
