@@ -7,7 +7,7 @@
   "devCommand": "cd modules/mat/frontend && npm run dev",
   "rewrites": [
     {
-      "source": "/((?!api/).*)",
+      "source": "/((?!api/|assets/).*)",
       "destination": "/index.html"
     }
   ],
