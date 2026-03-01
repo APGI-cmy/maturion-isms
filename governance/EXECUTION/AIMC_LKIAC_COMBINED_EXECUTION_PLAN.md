@@ -2,9 +2,10 @@
 
 **Document Type**: Foreman POLC Planning Output — Combined Execution Roadmap  
 **Status**: DRAFT — Awaiting CS2 Review and Wave-Start Authorisation  
-**Version**: 1.1.0  
+**Version**: 1.2.0  
 **Date**: 2026-03-01  
 **Produced By**: foreman-v2-agent v6.2.0 (session 075, Wave COMBINED-PLAN)  
+**Amendment v1.2.0**: v1.2.0 — 2026-03-01: CL-3-D2 gap resolution — added CL-3.5, extended CL-13 QA module scope (session-079).  
 **Triggering Issue**: [maturion-isms#704](https://github.com/APGI-cmy/maturion-isms/issues/704)  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
 **Location**: `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md`
@@ -244,6 +245,54 @@ The following 16 waves (CL-0 through CL-15) constitute the full combined AIMC + 
 **CS2 Checkpoint (CP-3)**: CS2 reviews and signs off the Deprecation Register (CL-3-D1) per LKIAC-001 §5 Wave 5 gate.
 
 **Responsible Agent**: `governance-liaison-isms-agent`
+
+---
+
+### Wave CL-3.5: AIMC Data Sources Registry — Schema, Edge Functions, Admin UI
+
+**Programme**: LKIAC (AIMC schema extension — GAP-004 resolution)  
+**Source**: LKIAC-001 §6 DEP-008; CL-3-D2 gap resolution; `governance/aimc/LKIAC_CL3_D2_GAP_RESOLUTION.md`  
+**Type**: Implementation — RED gate → schema-builder + api-builder + ui-builder → GREEN  
+**Priority**: MEDIUM (must complete before CL-8 domain routing wave)
+
+**Objective**: Deliver the AIMC data source registry that supersedes the legacy
+`DataSourcesManagement.tsx` component (DEP-008). Create a new `ai_data_sources` Supabase table
+with RLS, migrate all 4 legacy Edge Functions into the governed AIMC functions directory, and
+deliver an AIMC data source management UI or admin panel.
+
+**Entry Criteria**:
+- CL-3 closed (Deprecation Register complete; GAP-004 resolution recorded in CL-3-D2)
+- CP-3.5 issued: CS2 approves data sources schema specification before schema-builder builds
+
+**Deliverables**:
+
+| ID | Deliverable | Assigned To | Location |
+|---|---|---|---|
+| CL-3.5-D1 | RED gate test suite: tests for `ai_data_sources` schema (RLS, CRUD) and all 4 Edge Functions (connect, sync, query, test-api) | `qa-builder` | `packages/ai-centre/supabase/functions/` test files |
+| CL-3.5-D2 | Supabase migration `007_ai_data_sources.sql` (or next sequential number): `ai_data_sources` table schema with RLS policies | `schema-builder` | `packages/ai-centre/supabase/migrations/` |
+| CL-3.5-D3 | Edge Function migration ×4: `connect-data-source`, `sync-data-source`, `query-data-source`, `test-data-sources-api` migrated to `packages/ai-centre/supabase/functions/` | `api-builder` | `packages/ai-centre/supabase/functions/` |
+| CL-3.5-D4 | AIMC data source management UI or admin API panel wired to migrated Edge Functions | `ui-builder` | `packages/ai-centre/src/` or designated admin module |
+| CL-3.5-D5 | Deprecation Register updated: DEP-008 status → `PARALLEL-RUN`, Foreman/AIMC Equivalent confirmed | `governance-liaison-isms-agent` | `governance/aimc/LKIAC_DEPRECATION_REGISTER.md` |
+
+**Exit Criteria**:
+- CL-3.5-D2 migration applied: `ai_data_sources` table with RLS enabled
+- All 4 Edge Functions migrated (CL-3.5-D3)
+- Admin UI/panel built and wired (CL-3.5-D4)
+- 100% GREEN test gate: all tests passing, zero stubs, zero skipped
+- DEP-008 status updated to `PARALLEL-RUN`
+
+**Dependencies**: After CL-3 ✅; before CL-8 (domain routing wave)
+
+**RED Gate**: `qa-builder` produces CL-3.5-D1 (all tests failing RED) BEFORE `schema-builder`
+creates CL-3.5-D2 or `api-builder` begins Edge Function migration (CL-3.5-D3).
+
+**CS2 Checkpoint (CP-3.5)**: CS2 approves the `ai_data_sources` schema specification (CL-3.5-D2
+design) before schema-builder builds. Ensures architectural alignment with AIMC strategy before
+any migration is applied.
+
+**Responsible Agents**: `qa-builder` (RED gate + test suite), `schema-builder` (migration),
+`api-builder` (Edge Function migration), `ui-builder` (admin UI/panel),
+`governance-liaison-isms-agent` (register update CL-3.5-D5)
 
 ---
 
@@ -634,6 +683,15 @@ The following 16 waves (CL-0 through CL-15) constitute the full combined AIMC + 
 
 **Objective**: Define the formal API and governance event contract between the App Management Centre (AMC) and the AIMC. Create `governance/canon/FOREMAN_ISMS_INTEGRATION_CONTRACT.md` and canonise it. This establishes the architectural boundary described in LKIAC-001 §4.
 
+> **CL-13 Extended Scope (CL-3-D2, 2026-03-01)**: CL-13 scope is extended to include delivery of
+> three QA-facing modules in the Foreman Office App, resolving DEP-005, DEP-006, and DEP-007 gap
+> items. These are sub-modules of the CL-13 health/watchdog module delivery:
+> - **QA Overview panel** (DEP-005 / GAP-001): Shows live QA signal status for all active modules
+> - **Unified QA Signal Aggregation view** (DEP-006 / GAP-002): Aggregates QA signal data from ≥2 configured signal sources
+> - **Health module test results sub-view** (DEP-007 / GAP-003): Displays test execution history and status
+>
+> See `governance/aimc/LKIAC_CL3_D2_GAP_RESOLUTION.md` for rationale and acceptance criteria.
+
 **Entry Criteria**:
 - CL-8 closed (AIMC domain specialist routing live — the API surface AMC will consume is stable)
 
@@ -743,6 +801,9 @@ CL-0 (Governance Foundation)
   ├──→ CL-4  (AIMC Audit Phase A: Foundation)        │
   └──→ CL-5  (Knowledge Upload Centre Spec)          ─┘
 
+CL-3 complete:
+  └──→ CL-3.5 (AIMC Data Sources Registry)           sequential after CL-3; before CL-8
+
 CL-2 + CL-4 complete:
   └──→ CL-6  (LKIAC W3: Knowledge Re-ingestion)      ─┐ sequential after CL-2+CL-4
 
@@ -833,6 +894,11 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 | LKIAC-SC-4 | Domain specialists not routing knowledge | Domain specialist routing | CL-8 |
 | LKIAC-SC-5 | Deprecation Register not formalised | Deprecation register activation | CL-3 |
 | LKIAC-SC-6 | AMC integration contract absent | Contract definition | CL-13 |
+| LKIAC-SC-6 | Foreman App integration contract absent | Contract definition | CL-13 |
+| DEP-GAP-001 | DEP-005 QA Dashboard — no target equivalent (resolved CL-3-D2) | Foreman Office App QA Overview panel | CL-13 (extended scope) |
+| DEP-GAP-002 | DEP-006 Unified QA Dashboard — no target equivalent (resolved CL-3-D2) | Foreman Office App Unified QA Signal Aggregation view | CL-13 (extended scope) |
+| DEP-GAP-003 | DEP-007 QA Test Dashboard — no target equivalent (resolved CL-3-D2) | Foreman Office App health module test results sub-view | CL-13 (extended scope) |
+| DEP-GAP-004 | DEP-008 Data Sources Management — no AIMC schema or wave (resolved CL-3-D2) | AIMC data source registry (ai_data_sources table + 4 Edge Functions + admin UI) | CL-3.5 (new wave) |
 
 ---
 
@@ -861,6 +927,7 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 | CP-1 | Maturion persona content review | CL-1 | CS2 approves persona before activation |
 | CP-2 | Domain tagging mapping approval | CL-2 | CS2 approves legacy label → AIMC source map |
 | CP-3 | Deprecation Register sign-off | CL-3 | CS2 approves all component assessments |
+| CP-3.5 | AIMC Data Sources Registry spec approval | CL-3.5 | CS2 approves data sources schema spec before schema-builder builds |
 | CP-4 | Phase A foundation audit verdict | CL-4 | CS2 reviews QP verdict |
 | CP-5 | Knowledge Upload Centre spec approval | CL-5 | CS2 approves spec before endpoint build |
 | CP-6 | Knowledge migration report + decommission gate | CL-6 | CS2 authorises legacy Supabase decommission |
@@ -889,12 +956,12 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 
 ## 12. Acceptance Criteria for This Plan
 
-- [x] All 16 waves (CL-0 through CL-15) defined with objective, entry/exit criteria, deliverables, dependencies, responsible agents
+- [x] All 16 waves (CL-0 through CL-15) defined with objective, entry/exit criteria, deliverables, dependencies, responsible agents — **v1.2.0: CL-3.5 added (17 waves total)**
 - [x] LKIAC-001 strategy canonical reference confirmed: `LEGACY_KNOWLEDGE_INTEGRATION_AND_ARCHITECTURE_CONSOLIDATION_STRATEGY.md` v1.0.0
 - [x] All 7 LKIAC waves mapped to combined plan waves (§6)
 - [x] All AIMC audit phases A–E mapped to combined plan waves (§7)
 - [x] RED gate requirements specified for every implementation wave (§9)
-- [x] All CS2 approval checkpoints identified: 17 checkpoints (§10)
+- [x] All CS2 approval checkpoints identified: 17 checkpoints (§10) — **v1.2.0: CP-3.5 added (18 checkpoints total)**
 - [x] Master dependency graph and critical path documented (§5)
 - [x] All AIMC gaps (GAP-001 to GAP-010) mapped to resolving waves (§8)
 - [x] All governance gaps (GOV-001 to GOV-005) mapped to resolving waves (§8)
