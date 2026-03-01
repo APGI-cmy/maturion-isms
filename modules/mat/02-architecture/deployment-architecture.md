@@ -1,14 +1,18 @@
-# MANUAL AUDIT TOOL (MAT) – DEPLOYMENT ARCHITECTURE v1.0.0
+# MANUAL AUDIT TOOL (MAT) – DEPLOYMENT ARCHITECTURE v1.1.0
 
 | Field            | Value                                      |
 |------------------|--------------------------------------------|
 | Module           | MAT – Manual Audit Tool                    |
-| Version          | v1.0.0                                     |
+| Version          | v1.1.0                                     |
 | Status           | Approved                                   |
 | Classification   | Internal – Architecture                    |
 | Owner            | Maturion Platform Team                     |
-| Last Updated     | 2025-01-01                                 |
+| Last Updated     | 2026-03-01                                 |
 | Governance       | Domains 3.1, 3.2                           |
+
+---
+
+> **Amendment v1.1.0 — 2026-03-01**: §3.3 corrected — AI Gateway platform updated from AWS ECS to Render (actual production platform). §5.3 CI/CD Pipeline Secrets added. Correction raised by foreman-v2-agent session-081 and independent-assurance-agent session-030 parking station entries following Wave 12 deployment re-do.
 
 ---
 
@@ -69,7 +73,7 @@ This document defines the deployment architecture for the Manual Audit Tool (MAT
 
 | Concern            | Value                                                                 |
 |--------------------|-----------------------------------------------------------------------|
-| Target Platform    | AWS ECS (primary), GCP Cloud Run (alternative), Azure Container Apps (alternative) |
+| Target Platform    | Render (primary) — Web Service, Docker runtime |
 | Container Runtime  | Docker 24+                                                            |
 | Container Image    | `python:3.11-slim` base, multi-stage builds, < 500 MB image size     |
 | Entry Point        | `uvicorn main:app --host 0.0.0.0 --port 8000`                        |
@@ -279,8 +283,41 @@ maturion-isms/
 
 ---
 
+## 5.3 CI/CD Pipeline Secrets
+
+The following GitHub Actions secrets must be provisioned for the deployment pipeline to function. All secrets are stored in the repository's GitHub Actions secrets store (Settings → Secrets and variables → Actions).
+
+### Frontend (Vercel)
+
+| Secret | Purpose |
+|--------|---------|
+| `VERCEL_TOKEN` | Vercel API token for deployment |
+| `VERCEL_ORG_ID` | Vercel organisation identifier |
+| `VERCEL_PROJECT_ID` | Vercel project identifier |
+| `VITE_SUPABASE_URL` | Supabase project URL (build-time env) |
+| `VITE_SUPABASE_ANON_KEY` | Supabase anon key (build-time env) |
+| `VITE_API_BASE_URL` | AI Gateway base URL (build-time env) |
+
+### AI Gateway (Render)
+
+| Secret | Purpose |
+|--------|---------|
+| `RENDER_API_KEY` | Render API token for deployment trigger |
+| `RENDER_SERVICE_ID` | Render service identifier for `mat-ai-gateway` |
+| `RENDER_SERVICE_URL` | Production URL for post-deploy health check |
+
+### Backend (Supabase)
+
+| Secret | Purpose |
+|--------|---------|
+| `SUPABASE_DB_URL` | Supabase database URL (for migrations) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key |
+
+---
+
 ## 6. Revision History
 
 | Version | Date       | Author                 | Changes         |
 |---------|------------|------------------------|-----------------|
 | v1.0.0  | 2025-01-01 | Maturion Platform Team | Initial release |
+| v1.1.0  | 2026-03-01 | foreman-v2-agent / independent-assurance-agent | §3.3 corrected to Render; §5.3 CI/CD Pipeline Secrets added |
