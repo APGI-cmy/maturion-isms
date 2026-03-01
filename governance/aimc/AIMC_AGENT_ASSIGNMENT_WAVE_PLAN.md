@@ -2,7 +2,7 @@
 
 **Document Type**: Foundation Artefact — Wave 1 Deliverable (Step 7); amended post-Wave 8 audit
 **Status**: ACTIVE — Wave 9 CS2 sign-off recorded; Combined Execution Plan is authoritative
-**Version**: 0.3.0
+**Version**: 0.4.0
 **Effective Date**: 2026-03-01
 **Owner**: Maturion Engineering Leadership (Johan Ras, CS2)
 **Location**: `governance/aimc/AIMC_AGENT_ASSIGNMENT_WAVE_PLAN.md`
@@ -25,7 +25,7 @@
 - `governance/AUDIT/WAVE9_AIMC_FUNCTIONALITY_AUDIT.md` v1.0.0 (post-Wave 8 functionality audit)
 
 **Combined Execution Plan Reference** (v0.3.0 addition):
-- `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md` v1.1.0 — AIMC + LKIAC Combined Waved Execution Plan; authoritative execution sequence for all CL-* waves; supersedes AAWP standalone sequence for scheduling purposes
+- `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md` v1.4.0 — AIMC + LKIAC Combined Waved Execution Plan; authoritative execution sequence for all CL-* waves; supersedes AAWP standalone sequence for scheduling purposes
 
 **Step Gate**:
 > **IMPORTANT**: This AAWP is a Wave 1 planning deliverable. CS2 MUST review and sign off this document before Step 8 (Wave 2 execution) may commence. No build agent may begin Wave 2 work until CS2 approval is recorded in Section 10.
@@ -45,7 +45,7 @@ All subsequent waves must be executed in strict compliance with this plan. Any d
 
 **Wave 9 Amendment (v0.2.0 — 2026-02-26)**: Following the successful delivery of all 8 planned waves (235 tests GREEN, zero failures), a post-production architecture audit (`governance/AUDIT/WAVE9_AIMC_FUNCTIONALITY_AUDIT.md` v1.0.0) identified five gaps that must be addressed before AIMC is fully production-ready as the sole governed AI integration layer. This amendment adds Wave 9 (11 subwaves) to the plan, covering episodic memory, self-learning loop migration, knowledge base governance, module integration for the 7 unwired modules, persona lifecycle management, and legacy escape remediation.
 
-**Combined Execution Plan Amendment (v0.3.0 — 2026-03-01)**: The AIMC + LKIAC Combined Waved Execution Plan (`governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md` v1.1.0, produced by `foreman-v2-agent` session 075) is now the **authoritative combined execution roadmap** for all remaining AIMC and LKIAC work. That plan supersedes this AAWP's standalone execution sequence for all CL-* combined waves, governing combined ordering and inter-programme dependencies. This AAWP remains the authoritative source for wave-level scope definitions, agent assignments, deliverables, and handover requirements. CS2 Wave 9 sign-off is formally recorded in this v0.3.0 amendment, clearing all Wave 9 subwaves to proceed per the Combined Execution Plan. This amendment resolves governance gap **GOV-006**.
+**Combined Execution Plan Amendment (v0.3.0 — 2026-03-01)**: The AIMC + LKIAC Combined Waved Execution Plan (`governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md` v1.4.0 (latest, incorporating CL-3.5, CL-13 D5/D6/D7 scope extensions, and CL-0/CL-1 COMPLETE status), produced by `foreman-v2-agent` session 075, amended through session 082) is now the **authoritative combined execution roadmap** for all remaining AIMC and LKIAC work. That plan supersedes this AAWP's standalone execution sequence for all CL-* combined waves, governing combined ordering and inter-programme dependencies. This AAWP remains the authoritative source for wave-level scope definitions, agent assignments, deliverables, and handover requirements. CS2 Wave 9 sign-off is formally recorded in this v0.3.0 amendment, clearing all Wave 9 subwaves to proceed per the Combined Execution Plan. This amendment resolves governance gap **GOV-006**.
 
 ---
 
@@ -1038,7 +1038,7 @@ All AAWP wave plans are traceable to the prior Wave 1 artefacts as follows:
 
 | Document | Location | Version | Role |
 |---|---|---|---|
-| AIMC + LKIAC Combined Waved Execution Plan | `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md` | v1.1.0 | Supersedes AAWP standalone execution sequence for all CL-* waves; governs combined ordering, inter-programme dependencies, and CS2 checkpoints across AIMC and LKIAC programmes |
+| AIMC + LKIAC Combined Waved Execution Plan | `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md` | v1.4.0 | Supersedes AAWP standalone execution sequence for all CL-* waves; governs combined ordering, inter-programme dependencies, and CS2 checkpoints across AIMC and LKIAC programmes |
 
 **Input Artefacts (Steps 1–6)**:
 
@@ -1100,5 +1100,5 @@ This AAWP is complete and ready for CS2 sign-off when all of the following are s
 
 **Owner**: `governance-liaison-isms-agent`  
 **Authority**: `governance/canon/AIMC_STRATEGY.md` v1.0.0 | `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0  
-**Drafted**: 2026-02-23 | **Amended**: 2026-02-26 (v0.2.0 — Wave 9 scope added) | **Amended**: 2026-03-01 (v0.3.0 — Wave 9 CS2 sign-off recorded; Combined Execution Plan reference added; GOV-006 resolved)  
-**Next Action**: Wave 9 execution authorised — proceed per AIMC + LKIAC Combined Execution Plan (`governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md` v1.1.0)
+**Drafted**: 2026-02-23 | **Amended**: 2026-02-26 (v0.2.0 — Wave 9 scope added) | **Amended**: 2026-03-01 (v0.3.0 — Wave 9 CS2 sign-off recorded; Combined Execution Plan reference added; GOV-006 resolved) | **Amended**: 2026-03-01 (v0.4.0 — Combined Execution Plan reference updated to v1.4.0; CL-0/CL-1 COMPLETE noted)  
+**Next Action**: Wave 9 execution authorised and in progress — CL-0 COMPLETE, CL-1 COMPLETE, CL-2 through CL-15 per AIMC + LKIAC Combined Execution Plan (`governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md` v1.4.0)
