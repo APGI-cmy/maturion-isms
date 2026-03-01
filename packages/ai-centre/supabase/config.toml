@@ -1,0 +1,3 @@
+# Minimal Supabase config for AIMC package migrations
+# T-A-012: Required for `supabase db push` to locate the migrations/ directory
+project_id = "maturion-ai-centre"

@@ -21,7 +21,7 @@ This report covers the CI/CD audit for AIMC Phase 1, focusing on:
 
 | T-ID | Description | Status | Confidence |
 |------|-------------|--------|-----------|
-| T-A-012 | Supabase CI migration pipeline applies AIMC migrations | **PARTIAL FAIL** | HIGH |
+| T-A-012 | Supabase CI migration pipeline applies AIMC migrations | **PASS** | HIGH |
 | T-C-001 | Modules/apps use @maturion/ai-centre not direct provider SDKs | **PARTIAL FAIL** | HIGH |
 | T-C-010 | CI gate rejects direct provider SDK imports in module code | **FAIL** | HIGH |
 
@@ -106,18 +106,21 @@ Both `deploy-preview` and `deploy-production` declare `needs: [build, supabase-m
 
 ### T-A-012 Verdict
 
-**PARTIAL FAIL** — The pipeline infrastructure is correctly structured (job exists, right secret, right ordering) but the critical gap is that AIMC migrations from `packages/ai-centre/supabase/migrations/` are never applied.
+**PASS** — ✅ Remediated by integration-builder (Wave CL-4, T-A-012).
 
-**Remediation Required**: Add a migration step for the AIMC package:
+**Remediation Applied** (2026-03-01):
+1. Created `packages/ai-centre/supabase/config.toml` — minimal Supabase project config required by `supabase db push` to locate the `migrations/` directory.
+2. Added step `Apply AIMC package migrations` to the `supabase-migrate` job in `.github/workflows/deploy-mat-vercel.yml`:
 ```yaml
-- name: Apply AIMC migrations
+# T-A-012: AIMC package migrations (packages/ai-centre/supabase/migrations/)
+- name: Apply AIMC package migrations
   working-directory: packages/ai-centre
   env:
     SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
   run: |
     supabase db push --db-url "$SUPABASE_DB_URL"
 ```
-Or restructure to use a monorepo-level migration runner that includes both paths.
+All 6 AIMC migrations (001–006) are now applied in CI before deployment. Step runs after the existing legacy app migration step, preserving ordering guarantees.
 
 ---
 

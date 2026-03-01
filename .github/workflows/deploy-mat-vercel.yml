@@ -146,6 +146,14 @@ jobs:
         run: |
           supabase db push --db-url "$SUPABASE_DB_URL"
 
+      # T-A-012: AIMC package migrations (packages/ai-centre/supabase/migrations/)
+      - name: Apply AIMC package migrations
+        working-directory: packages/ai-centre
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          supabase db push --db-url "$SUPABASE_DB_URL"
+
   deploy-preview:
     name: Deploy Preview
     runs-on: ubuntu-latest
