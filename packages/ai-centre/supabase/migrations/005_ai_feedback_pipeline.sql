@@ -11,7 +11,9 @@
 
 CREATE TABLE IF NOT EXISTS ai_feedback_events (
   id                UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-  organisation_id   UUID        NOT NULL REFERENCES organisations(id) ON DELETE CASCADE,
+  organisation_id   UUID        NOT NULL,
+  -- Note: FK to organisations(id) intentionally omitted — enforced at application level
+  -- to avoid cross-schema dependency ordering issues in CI
   session_id        TEXT        NOT NULL,
   user_id           UUID        REFERENCES auth.users(id) ON DELETE SET NULL,
   interaction_id    TEXT        NOT NULL,
