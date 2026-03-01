@@ -159,11 +159,21 @@ jobs:
         uses: supabase/setup-cli@v1
 
       - name: Apply pending migrations
-        working-directory: apps/maturion-maturity-legacy
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
-          supabase db push --db-url "$SUPABASE_DB_URL"
+          psql "$SUPABASE_DB_URL" -c "CREATE TABLE IF NOT EXISTS legacy_migrations (name TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now());"
+          for f in $(ls apps/maturion-maturity-legacy/supabase/migrations/*.sql | sort); do
+            name=$(basename "$f")
+            count=$(psql "$SUPABASE_DB_URL" -t -A -c "SELECT COUNT(*) FROM legacy_migrations WHERE name = '$name';")
+            if [ "$count" = "0" ]; then
+              echo "Applying $f..."
+              psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "$f"
+              psql "$SUPABASE_DB_URL" -c "INSERT INTO legacy_migrations (name) VALUES ('$name');"
+            else
+              echo "Skipping $f (already applied)"
+            fi
+          done
 
       # T-A-012: AIMC package migrations (packages/ai-centre/supabase/migrations/)
       # DEPENDENCY: AIMC migration 005_ai_feedback_pipeline.sql references the `organisations` table
