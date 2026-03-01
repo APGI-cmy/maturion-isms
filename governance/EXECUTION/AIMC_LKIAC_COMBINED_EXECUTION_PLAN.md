@@ -2,11 +2,12 @@
 
 **Document Type**: Foreman POLC Planning Output — Combined Execution Roadmap  
 **Status**: DRAFT — Awaiting CS2 Review and Wave-Start Authorisation  
-**Version**: 1.3.0  
+**Version**: 1.4.0  
 **Date**: 2026-03-01  
 **Produced By**: foreman-v2-agent v6.2.0 (session 075, Wave COMBINED-PLAN)  
 **Amendment v1.2.0**: v1.2.0 — 2026-03-01: CL-3-D2 gap resolution — added CL-3.5, extended CL-13 QA module scope (session-079).  
 **Amendment v1.3.0**: v1.3.0 — 2026-03-01: CL-13 scope extended per kick-off issue — D5/D6/D7 added for QA modules (GAP-001/002/003 resolution, session-080).  
+**Amendment v1.4.0**: v1.4.0 — 2026-03-01: Wave CL-0 and CL-1 status updated to COMPLETE; FAIL-ONLY-ONCE registry version corrected to v1.9.0; next workstream steps documented (session-082, progress tracker reconciliation).  
 **Triggering Issue**: [maturion-isms#704](https://github.com/APGI-cmy/maturion-isms/issues/704)  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
 **Location**: `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md`
@@ -142,9 +143,7 @@ The following 16 waves (CL-0 through CL-15) constitute the full combined AIMC + 
 
 **Responsible Agent**: `governance-liaison-isms-agent`
 
----
-
-### Wave CL-1: LKIAC Wave 1 — Maturion Persona Migration
+**Status: COMPLETE — 2026-03-01** (CL-0-D1: GRS CS2 sign-off recorded; CL-0-D2: AAWP v0.3.0 merged with Wave 9 sign-off and Combined Plan reference — session-075, IAA-session-023-20260301-PASS)
 
 **Programme**: LKIAC  
 **Source**: LKIAC-001 §5 Wave 1; §2.1; §3.2  
@@ -179,9 +178,7 @@ The following 16 waves (CL-0 through CL-15) constitute the full combined AIMC + 
 
 **Responsible Agents**: `qa-builder` (RED gate), `api-builder` (persona file), `governance-liaison-isms-agent` (registry)
 
----
-
-### Wave CL-2: LKIAC Wave 2 — Legacy Knowledge Inventory and Domain Tagging Plan
+**Status: COMPLETE — 2026-03-01** (CL-1-D1: 5 RED gate tests → GREEN; CL-1-D2: maturion-advisor.md created at `packages/ai-centre/src/agents/`; CL-1-D3: AIMC_PERSONA_LIFECYCLE.md §2 registry updated to v1.1.0; 226/226 tests GREEN — session-078, IAA-session-027-20260301-PASS)
 
 **Programme**: LKIAC  
 **Source**: LKIAC-001 §5 Wave 2; §7  
@@ -983,7 +980,7 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 - [x] All governance gaps (GOV-001 to GOV-005) mapped to resolving waves (§8)
 - [x] All LKIAC success criteria (LKIAC-001 §9) mapped to resolving waves (§8 LKIAC-SC-* rows)
 - [x] Plan update protocol defined (§11)
-- [ ] CS2 review and wave-start authorisation for Wave CL-0
+- [x] CS2 review and wave-start authorisation for Wave CL-0 — COMPLETE (individual wave authorisations via CS2-issued issues; CL-0 formally closed 2026-03-01)
 
 ---
 
@@ -1001,10 +998,26 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 | AIMC Governance Certification | `governance/aimc/AIMC_GOVERNANCE_CERTIFICATION.md` | Wave 8 |
 | Wave 9 Functionality Audit | `governance/AUDIT/WAVE9_AIMC_FUNCTIONALITY_AUDIT.md` | 1.0.0 |
 | MATURION AIMC Strategy | `maturion/strategy/MATURION_AI_MANAGEMENT_CENTRE_STRATEGY.md` (governance repo) | 1.0.0 |
-| FAIL-ONLY-ONCE Registry | `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` | 1.8.0 |
+| FAIL-ONLY-ONCE Registry | `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` | 1.9.0 |
 | Triggering Issue | [maturion-isms#704](https://github.com/APGI-cmy/maturion-isms/issues/704) | — |
 | Foreman Session Memory (session 075) | `.agent-workspace/foreman-v2/memory/session-075-wave-combined-plan-20260301.md` | — |
 | PREHANDOVER Proof (session 075) | `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-075-wave-combined-plan-20260301.md` | — |
+
+---
+
+## 14. Current Workstream Status (as of 2026-03-01)
+
+| Artefact | Current State | Next Step(s) | Responsible Agent | Blockers |
+|---|---|---|---|---|
+| CL-0: Governance Foundation | ✅ COMPLETE (2026-03-01) | None — gate closed | governance-liaison-isms-agent | None |
+| CL-1: Maturion Persona Migration | ✅ COMPLETE (2026-03-01) | CP-1 CS2 review pending | qa-builder / api-builder / governance-liaison-isms-agent | Awaiting CP-1 CS2 sign-off |
+| CL-2: Legacy Knowledge Inventory | ⏳ PENDING | mat-specialist to execute legacy Supabase audit | mat-specialist | CL-0 cleared; awaiting wave-start issue from CS2 |
+| CL-3: Deprecation Register Activation | ⏳ PENDING | governance-liaison-isms-agent to produce LKIAC_DEPRECATION_REGISTER.md | governance-liaison-isms-agent | CL-0 cleared; awaiting wave-start issue from CS2 |
+| CL-3.5: AI Data Sources Registry | ⏳ PENDING (PROPOSED — CP-3.5 awaiting CS2 approval) | qa-builder RED gate → schema-builder migration → api-builder Edge Functions | qa-builder / schema-builder / api-builder / ui-builder | CP-3.5 CS2 schema approval required before build begins |
+| CL-4: AIMC Audit Phase A | ⏳ PENDING | qa-builder to execute T-A-001–T-C-010 audit suite | qa-builder / integration-builder / schema-builder | CL-0 cleared; awaiting wave-start issue from CS2 |
+| CL-5: Knowledge Upload Centre Spec | ⏳ IN PROGRESS — v1.1.0 CP-5 decisions incorporated | CP-5 COMPLETE; awaiting CL-5-D2 upload arch review | api-builder (CL-5-D2) | CL-5-D2 (upload arch review) still outstanding |
+| CL-6 through CL-15 | ⏳ PENDING | Per dependency chain §5 | Per §4 wave definitions | All blocked on CL-2–CL-5 completion |
+| MAT Module | ✅ COMPLETE — Wave 12 COMPLETE (554/554 GREEN) | Awaiting AIMC CL waves for Waves 7–9 integration | foreman-v2-agent (oversight) | MAT Waves 7–9 blocked on AIMC CL-12 |
 
 ---
 
