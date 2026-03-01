@@ -63,15 +63,29 @@ Issue #699 opened by CS2 (@APGI-cmy), assigned to Copilot. Title: "[Governance] 
 
 <!-- ANTI-MISUSE: Set iaa_audit_token to PENDING before invoking IAA. Never pre-fill "-PASS". -->
 <!-- After receiving ASSURANCE-TOKEN: follow the Post-ASSURANCE-TOKEN Ceremony. -->
-`iaa_audit_token: PENDING`
+`iaa_audit_token: IAA-session-022-20260301-PASS`
 
-First IAA invocation (session-021-20260301) returned REJECTION-PACKAGE — missing session memory and PREHANDOVER proof on branch. Those artifacts are now created. Re-invocation pending.
+IAA re-invocation (session-022-20260301) issued ASSURANCE-TOKEN after all process artifacts were committed to branch. 15 checks: 12 substantive PASS, 3 N/A. Merge gate parity: PASS.
 
 ## IAA Agent Response (verbatim)
 <!-- MANDATORY PER S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) -->
 <!-- Paste the COMPLETE raw output from task(agent_type: "independent-assurance-agent") here -->
 
-[To be completed after re-invocation ASSURANCE-TOKEN]
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/patch-proof-template-update
+Issue: maturion-isms#699 — [Governance] Patch PREHANDOVER Proof Template
+
+Re-invocation: REJECTION-PACKAGE IAA-021-20260301-REJECT → RESOLVED ✅
+
+All 12 substantive checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+
+Token reference: IAA-session-022-20260301-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+═══════════════════════════════════════
+```
 
 ---
 
