@@ -1,7 +1,7 @@
 # MAT — Builder Appointment & Contracts
 
 **Module**: MAT (Manual Audit Tool)  
-**Version**: v3.2.0  
+**Version**: v3.3.0  
 **Status**: APPROVED  
 **Owner**: Foreman (FM)  
 **Created**: 2026-02-13  
@@ -1044,7 +1044,7 @@ Wave 12 verifies 100% full functionality of the MAT module across all domains. I
 | **Builder** | qa-builder |
 | **Task ID** | 12.1 |
 | **Execution order** | FIRST — all other builders blocked until 12.1 is GREEN |
-| **Test IDs** | T-W12-QAV-1 through T-W12-QAV-5 |
+| **Test IDs** | T-W12-QAV-1 through T-W12-QAV-8 |
 | **Contract version** | 2.0.0 |
 | **LAS version** | 6.2.0 |
 
@@ -1064,10 +1064,13 @@ qa-builder MUST confirm all 5 tests RED (i.e., tests exist but fail) before begi
 | T-W12-QAV-3 | Org isolation at Supabase RLS level | Org A entries NOT returned when org B requests; real Supabase connection tested |
 | T-W12-QAV-4 | Degraded-mode fallback (missing env vars) | `buildPersistentMemory()` returns in-memory adapter when `VITE_SUPABASE_URL` absent; no throw |
 | T-W12-QAV-5 | Memory module line coverage ≥ 90% | `packages/ai-centre/src/memory/` line coverage report attached; no untested branches |
+| T-W12-QAV-6 | RLS cross-org isolation — MAT API level | Two org tokens call `GET /api/criteria`, `GET /api/evidence`, `GET /api/audits`; responses contain only calling org's data (real RLS, not mocked) — W12-GAP-001 |
+| T-W12-QAV-7 | MFA enforcement — Lead Auditor role | Attempt Lead Auditor–restricted endpoint without MFA token → 403; with valid MFA token → 200 (FR-031, MAT-T-0043) — W12-GAP-001 |
+| T-W12-QAV-8 | RCA remediation regression — original 98-test suite | All MAT-T-0001–MAT-T-0098 GREEN against current codebase (CWT-equivalent baseline re-assertion) — W12-GAP-005, W12-GAP-007 |
 
 **Acceptance Criteria**:
-- All 5 tests RED confirmed before start
-- All 5 tests GREEN on handover
+- All 8 tests RED confirmed before start
+- All 8 tests GREEN on handover
 - Zero regressions (430 baseline tests GREEN)
 - Coverage report evidence attached to handover bundle
 
@@ -1085,7 +1088,7 @@ qa-builder MUST confirm all 5 tests RED (i.e., tests exist but fail) before begi
 | **Builder** | api-builder |
 | **Task ID** | 12.2 |
 | **Execution order** | SECOND — begins only after Task 12.1 GREEN |
-| **Test IDs** | T-W12-API-1 through T-W12-API-5 |
+| **Test IDs** | T-W12-API-1 through T-W12-API-7 |
 | **Contract version** | 2.0.0 |
 | **LAS version** | 6.2.0 |
 
@@ -1102,11 +1105,13 @@ qa-builder MUST confirm all 5 tests RED (i.e., tests exist but fail) before begi
 | T-W12-API-3 | `GET /api/ai/health` Supabase wiring active | Returns HTTP 200 with `supabaseWiring: "active"`, `persistentMemory: "supabase"`, `status: "ok"` |
 | T-W12-API-4 | `POST /api/ai/request` Supabase timeout graceful degradation | No unhandled rejection; returns structured error; handler exits cleanly |
 | T-W12-API-5 | Vercel build artefact completeness | `vercel build` exits 0; `api/ai/request.ts` and `api/ai/health.ts` present in output |
+| T-W12-API-6 | AI scoring pipeline E2E | Seed audit with ≥ 2 evidence items; call `POST /api/scoring/score`; AIMC Gateway response received; score stored in `audit_scores`; response contains `maturityLevel`, `confidence`, `rationale` — W12-GAP-004 |
+| T-W12-API-7 | Report generation E2E | Seed complete audit; call `POST /api/reports/generate`; 200 with file URL; downloaded PDF non-empty valid; downloaded DOCX non-empty valid (MAT-T-0105 re-assertion, RCA G-14) — W12-GAP-003 |
 
 **Acceptance Criteria**:
-- All 5 tests RED confirmed before start
-- All 5 tests GREEN on handover
-- Zero regressions (430 + T-W12-QAV-1–5 baseline = 435 total)
+- All 7 tests RED confirmed before start
+- All 7 tests GREEN on handover
+- Zero regressions (430 + T-W12-QAV-1–8 baseline = 438 total)
 
 **Forbidden Actions**:
 - ❌ Returning hardcoded fixtures to pass tests
@@ -1122,7 +1127,7 @@ qa-builder MUST confirm all 5 tests RED (i.e., tests exist but fail) before begi
 | **Builder** | ui-builder |
 | **Task ID** | 12.3 |
 | **Execution order** | THIRD — begins only after Task 12.2 GREEN |
-| **Test IDs** | T-W12-UI-1 through T-W12-UI-5 |
+| **Test IDs** | T-W12-UI-1 through T-W12-UI-9 |
 | **Contract version** | 2.0.0 |
 | **LAS version** | 6.2.0 |
 
@@ -1139,11 +1144,15 @@ qa-builder MUST confirm all 5 tests RED (i.e., tests exist but fail) before begi
 | T-W12-UI-3 | Evidence upload flow completes | Upload modal opens → form submits → success state displayed; API response wired |
 | T-W12-UI-4 | Error state renders on API failure | When API returns 4xx/5xx, UI renders structured error message (not blank screen, not uncaught exception) |
 | T-W12-UI-5 | WCAG 2.1 AA — zero critical violations | Accessibility audit on main user journeys; zero critical violations reported |
+| T-W12-UI-6 | Offline capture → sync cycle | Network throttled to offline: user captures text evidence → appears in IndexedDB queue → on network restore, sync fires → evidence in Supabase (MAT-T-0056–0058, RCA G-16) — W12-GAP-002 |
+| T-W12-UI-7 | RCA G-03 — criteria hierarchy render | With seeded Supabase data: criteria tree renders all 3 levels (Domain → MPS → Criteria); each expandable; count matches seeded data (MAT-T-0099) — W12-GAP-005 |
+| T-W12-UI-8 | RCA G-04 — evidence modal live data | Click any criterion; modal header shows criterion title from Supabase (not hardcoded); pre-existing evidence displayed (MAT-T-0100) — W12-GAP-005 |
+| T-W12-UI-9 | RCA G-15 — mobile viewport regression | Playwright 375px × 812px: audit creation, evidence modal, review table — no horizontal overflow; all elements reachable; no content clipped (MAT-T-0106–0108) — W12-GAP-006 |
 
 **Acceptance Criteria**:
-- All 5 tests RED confirmed before start
-- All 5 tests GREEN on handover
-- Zero regressions (435 + T-W12-API-1–5 baseline = 440 total)
+- All 9 tests RED confirmed before start
+- All 9 tests GREEN on handover
+- Zero regressions (438 + T-W12-API-1–7 baseline = 445 total)
 - Accessibility audit report attached to handover bundle
 
 **Forbidden Actions**:
@@ -1160,7 +1169,7 @@ qa-builder MUST confirm all 5 tests RED (i.e., tests exist but fail) before begi
 | **Builder** | integration-builder |
 | **Task ID** | 12.4 |
 | **Execution order** | FOURTH (final) — begins only after Task 12.3 GREEN |
-| **Test IDs** | T-W12-INT-1 through T-W12-INT-5 |
+| **Test IDs** | T-W12-INT-1 through T-W12-INT-7 |
 | **Contract version** | 2.0.0 |
 | **LAS version** | 6.2.0 |
 
@@ -1176,12 +1185,14 @@ qa-builder MUST confirm all 5 tests RED (i.e., tests exist but fail) before begi
 | T-W12-INT-2 | Persistent memory cross-invocation (E2E) | Two sequential AI requests via API; second request response incorporates context from first |
 | T-W12-INT-3 | Cross-org data isolation (E2E) | Two organisations' API calls do not share data; verified at integration layer |
 | T-W12-INT-4 | Deployment artefact completeness | `pnpm build` exits 0; all required output files present; no missing imports or broken references |
-| T-W12-INT-5 | Full test suite GREEN in CI environment | 450/450 tests GREEN (430 baseline + 20 Wave 12 tests) in CI-equivalent environment |
+| T-W12-INT-5 | Full test suite GREEN in CI environment | 461/461 tests GREEN (430 baseline + 31 Wave 12 tests) in CI-equivalent environment |
+| T-W12-INT-6 | CWT — full 98-test suite on production build | Execute all MAT-T-0001–MAT-T-0098 against deployed production Vercel URL (not localhost); 98/98 GREEN; zero failures; zero skipped — formal CWT per §4.2 — W12-GAP-007 |
+| T-W12-INT-7 | Photo capture E2E — RCA G-07 regression | Mobile viewport 375px: photo capture UI present; `<input type="file" accept="image/*" capture="environment">` in DOM; captured image uploads to Supabase Storage; `evidence` record created (MAT-T-0101) — W12-GAP-005 |
 
 **Acceptance Criteria**:
-- All 5 tests RED confirmed before start
-- All 5 tests GREEN on handover
-- Final test count: **450/450 GREEN** (zero regressions, zero skipped, zero stubs)
+- All 7 tests RED confirmed before start
+- All 7 tests GREEN on handover
+- Final test count: **461/461 GREEN** (zero regressions, zero skipped, zero stubs)
 - `pnpm build` exit code 0 confirmed
 
 **Forbidden Actions**:
@@ -1195,13 +1206,15 @@ All of the following must be confirmed before Foreman accepts Wave 12 handover:
 
 | Check | Required |
 |---|---|
-| T-W12-QAV-1–5 GREEN | ✅ All 5 |
-| T-W12-API-1–5 GREEN | ✅ All 5 |
-| T-W12-UI-1–5 GREEN | ✅ All 5 |
-| T-W12-INT-1–5 GREEN | ✅ All 5 |
-| Total test count | 450/450 GREEN |
+| T-W12-QAV-1–8 GREEN | ✅ All 8 |
+| T-W12-API-1–7 GREEN | ✅ All 7 |
+| T-W12-UI-1–9 GREEN | ✅ All 9 |
+| T-W12-INT-1–7 GREEN | ✅ All 7 |
+| Total test count | **461/461 GREEN** |
 | Zero regressions against 430 baseline | ✅ Required |
 | `pnpm build` exit 0 | ✅ Required |
+| CWT complete — MAT-T-0001–MAT-T-0098 on production Vercel URL (T-W12-INT-6) | ✅ Required |
+| All 7 Gap Register gaps RESOLVED (W12-GAP-001–007) | ✅ Required |
 | Coverage report (Task 12.1) | ✅ Attached |
 | Accessibility audit report (Task 12.3) | ✅ Attached |
 | PREHANDOVER proof with verbatim IAA response | ✅ Required (A-014, S-009) |
@@ -1217,6 +1230,7 @@ All of the following must be confirmed before Foreman accepts Wave 12 handover:
 **LAS Version**: 6.2.0
 
 **Change Log**:
+- **v3.3.0** (2026-03-01) — Wave 12 plan augmented per CS2 instruction (PR #710, 2026-03-01). §9 extended: Task 12.1 +3 tests (T-W12-QAV-6–8: RLS/MFA/RCA regression); Task 12.2 +2 tests (T-W12-API-6–7: AI scoring E2E, report generation E2E); Task 12.3 +4 tests (T-W12-UI-6–9: offline sync, RCA G-03/G-04/G-15); Task 12.4 +2 tests (T-W12-INT-6–7: CWT production, photo capture RCA G-07). §9.5 handover gate updated to 31 tests, 461/461 total, CWT gate + Gap Register gate added. Authority: implementation-plan.md v2.1.0 §2.13, CS2 PR #710 comment.
 - **v3.2.0** (2026-03-01) — Wave 12 (Full Functionality & Build Wiring Verification) task specifications added (§9). Four builders delegated: qa-builder Task 12.1, api-builder Task 12.2, ui-builder Task 12.3, integration-builder Task 12.4. 20 RED gate tests defined. Sequential delegation pattern enforced. Authority: implementation-plan.md v2.0.0 §2.13, issue #709.
 - **v3.1.0** (2026-02-17) — Added "Component Implementation Requirements (EXPLICIT)" section to ui-builder scope with 12 mandatory sub-deliverables, physical verification checklist, and Deviation #11 learning integration. Updated acceptance criteria and forbidden actions to prevent placeholder components. Authority: GOVERNANCE_CHAIN_TRACEABILITY_ANALYSIS_20260217.md, FULLY_FUNCTIONAL_DELIVERY_STANDARD.md §3.2. See Issue #303 (Wave 5.6 Recovery Plan).
 - **v3.0.0** (2026-02-16) — Added Wave 5.5 (Frontend Application Assembly) to ui-builder scope, added `apps/mat-frontend/**` to authorized paths, added FR-070/FR-071 acceptance criteria. See BUILD_PROGRESS_TRACKER.md Deviation #9.

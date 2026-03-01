@@ -1,7 +1,7 @@
 # MAT — Implementation Plan
 
 **Module**: MAT (Manual Audit Tool)  
-**Version**: v2.0.0  
+**Version**: v2.1.0  
 **Status**: APPROVED  
 **Owner**: Foreman (FM)  
 **Created**: 2026-02-13  
@@ -52,7 +52,7 @@ MAT is built in **thirteen waves** (Wave 0–Wave 12, plus Waves 5.5 and 5.6), w
 | 9 | **AIMC Embeddings/RAG Integration** *(BLOCKED — Awaiting AIMC Wave 5)* | api-builder | Sequential | MAT-T-AIMC-021–MAT-T-AIMC-030 (RED until AIMC Wave 5) | TBD |
 | 10 | **AI Gateway Memory Wiring (Gap GR-001)** | qa-builder, api-builder | Sequential (10.1→10.2) | T-073-1, T-073-2, T-074-1, T-074-2, T-075-1, T-075-2, T-076-1–T-076-4 | 2 days |
 | 11 | **Supabase Persistent Memory Wiring** | qa-builder, schema-builder, api-builder | Sequential (11.1→11.2→11.3) | T-075-SUP-1–T-075-SUP-4, T-076-SUP-1 | 2 days |
-| 12 | **Full Functionality & Build Wiring Verification** | qa-builder, api-builder, ui-builder, integration-builder | Sequential (12.1→12.2→12.3→12.4) | T-W12-QAV-1–T-W12-QAV-5, T-W12-API-1–T-W12-API-5, T-W12-UI-1–T-W12-UI-5, T-W12-INT-1–T-W12-INT-5 | 3 days |
+| 12 | **Full Functionality & Build Wiring Verification** | qa-builder, api-builder, ui-builder, integration-builder | Sequential (12.1→12.2→12.3→12.4) | T-W12-QAV-1–8, T-W12-API-1–7, T-W12-UI-1–9, T-W12-INT-1–7 | 3 days |
 
 **Total Estimated Duration**: ~41 working days (8.5 weeks) for Waves 0–6. Waves 7–9 duration TBD — blocked on AIMC delivery. Wave 10 COMPLETE (2 days). Wave 11 COMPLETE (2 days). Wave 12 estimated 3 days — requires Wave 11 CS2 certification.
 
@@ -64,6 +64,8 @@ MAT is built in **thirteen waves** (Wave 0–Wave 12, plus Waves 5.5 and 5.6), w
 > **Change Note (v1.9.0, 2026-03-01)**: Wave 11 (Supabase Persistent Memory Wiring) added to implementation plan per governance documentation task. Wave 11 implements the migration path defined in `ai-architecture.md` v3.0.0 §9.5 — replacing the in-memory `PersistentMemoryAdapter` with `SupabasePersistentMemoryAdapter` for cross-invocation persistence. Wave count updated to twelve. Cross-wave learning outcomes from Wave 10 (merge gate IAA token incident INC-IAA-SKIP-001 remediated, session-072 RCA) and Wave 9.10 (persona lifecycle complete, 425 tests GREEN) recorded. Architecture remains FROZEN per CS2 directive 2026-02-27. Acceptance criterion 14 added.
 
 > **Change Note (v2.0.0, 2026-03-01)**: Wave 12 (Full Functionality & Build Wiring Verification) added. Wave count updated to thirteen. This wave orchestrates the comprehensive cross-domain QA sweep required after the Supabase Persistent Memory integration (Wave 11). Four builder domains: qa-builder (Task 12.1 — Supabase persistence E2E + coverage audit), api-builder (Task 12.2 — API contract verification), ui-builder (Task 12.3 — frontend flow verification), integration-builder (Task 12.4 — cross-component E2E). Acceptance criterion 15 added. CS2 authorization: issue #709 opened by @APGI-cmy.
+
+> **Change Note (v2.1.0, 2026-03-01)**: Wave 12 plan augmented per CS2 instruction (PR #710 review, 2026-03-01). 11 new test IDs added closing W12-GAP-001–007: T-W12-QAV-6 (RLS cross-org MAT API), T-W12-QAV-7 (MFA FR-031), T-W12-QAV-8 (RCA 98-test regression), T-W12-API-6 (AI scoring pipeline E2E), T-W12-API-7 (report generation E2E/RCA G-14), T-W12-UI-6 (offline sync/RCA G-16), T-W12-UI-7 (RCA G-03 criteria hierarchy), T-W12-UI-8 (RCA G-04 evidence modal), T-W12-UI-9 (mobile viewport/RCA G-15), T-W12-INT-6 (CWT production Vercel URL/§4.2), T-W12-INT-7 (photo capture/RCA G-07). Total Wave 12 tests: 31. Final test count target: 461 (430+31). Wave 12 Gap Register added to §2.13. CWT mandate per §4.2 satisfied by T-W12-INT-6. Acceptance criterion 15 updated.
 
 > **Change Note (v1.8.0, 2026-02-23)**: Post-Delivery Gap Analysis & RCA complete. Remediation waves 2R, 4R, and 5.6R added to address gaps G-03, G-04, G-07, G-10, G-14, G-15, G-16 identified in `modules/mat/05-rca/MAT_APP_V2_RCA.md` v1.0.0. **Pre-Build Functionality Assessment Gate (PBFAG)** added to Derivation Chain between QA-to-Red and Implementation Plan — this gate is mandatory for all future build phases. Wave count updated to fourteen (plus remediation waves). See BUILD_PROGRESS_TRACKER.md Post-Delivery Gap Analysis section.
 
@@ -1560,7 +1562,7 @@ Wave 12 MUST NOT start until:
 | **Builder** | qa-builder |
 | **Task ID** | 12.1 |
 | **Execution** | Sequential — first (RED gate before all other tasks) |
-| **Test IDs** | T-W12-QAV-1 through T-W12-QAV-5 |
+| **Test IDs** | T-W12-QAV-1 through T-W12-QAV-8 |
 
 **Scope**:
 - T-W12-QAV-1: `SupabasePersistentMemoryAdapter.persist()` stores and `retrieve()` fetches across two separate invocations (cross-invocation persistence, not just in-memory round-trip)
@@ -1568,10 +1570,13 @@ Wave 12 MUST NOT start until:
 - T-W12-QAV-3: Org isolation enforced — organisation A cannot read organisation B's memory rows (real Supabase RLS)
 - T-W12-QAV-4: Degraded mode — when `VITE_SUPABASE_URL` env var absent, `buildPersistentMemory()` returns in-memory fallback without throwing
 - T-W12-QAV-5: Coverage audit — `packages/ai-centre/src/memory/` has ≥ 90% line coverage; no untested branches in happy or error paths
+- T-W12-QAV-6: RLS cross-org isolation — MAT API level — two org tokens call `GET /api/criteria`, `GET /api/evidence`, `GET /api/audits` respectively; responses contain only the calling org's data (real RLS, not mocked) — closes W12-GAP-001
+- T-W12-QAV-7: MFA enforcement — Lead Auditor role — attempt to access Lead Auditor–restricted endpoint without MFA token returns 403; with valid MFA token returns 200 (FR-031, MAT-T-0043) — closes W12-GAP-001
+- T-W12-QAV-8: RCA remediation regression — all MAT-T-0001–MAT-T-0098 still GREEN against current codebase (CWT-equivalent baseline re-assertion) — closes W12-GAP-005, W12-GAP-007
 
 **Acceptance Criteria**:
-- All 5 tests RED before Task 12.1 begins (confirmed by qa-builder)
-- All 5 tests GREEN after Task 12.1 completes
+- All 8 tests RED before Task 12.1 begins (confirmed by qa-builder)
+- All 8 tests GREEN after Task 12.1 completes
 - Zero regressions against 430 baseline tests
 - Coverage report evidence attached to handover
 
@@ -1582,7 +1587,7 @@ Wave 12 MUST NOT start until:
 | **Builder** | api-builder |
 | **Task ID** | 12.2 |
 | **Execution** | Sequential — after Task 12.1 GREEN |
-| **Test IDs** | T-W12-API-1 through T-W12-API-5 |
+| **Test IDs** | T-W12-API-1 through T-W12-API-7 |
 
 **Scope**:
 - T-W12-API-1: `POST /api/ai/request` with valid body returns HTTP 200 with `message` field and session memory persisted
@@ -1590,11 +1595,13 @@ Wave 12 MUST NOT start until:
 - T-W12-API-3: `GET /api/ai/health` returns HTTP 200 with `supabaseWiring: "active"`, `persistentMemory: "supabase"`, and `status: "ok"`
 - T-W12-API-4: `POST /api/ai/request` with simulated Supabase timeout falls back gracefully (no unhandled rejection, returns structured error)
 - T-W12-API-5: All Vercel API routes present in deployment artefact (`api/ai/request.ts`, `api/ai/health.ts`) — `vercel build` exits 0
+- T-W12-API-6: AI scoring pipeline E2E — seed an audit with ≥ 2 evidence items; call `POST /api/scoring/score`; AIMC Gateway response received; score and rationale stored in `audit_scores`; response contains `maturityLevel`, `confidence`, `rationale` fields — closes W12-GAP-004
+- T-W12-API-7: Report generation E2E — seed complete audit (criteria + evidence + scores); call `POST /api/reports/generate`; response returns 200 with file URL; downloaded file is non-empty valid PDF; downloaded file is non-empty valid DOCX (MAT-T-0105 re-assertion, RCA G-14) — closes W12-GAP-003
 
 **Acceptance Criteria**:
-- All 5 tests RED before Task 12.2 begins
-- All 5 tests GREEN after Task 12.2 completes
-- Zero regressions against 430 + T-W12-QAV-1–5 baseline
+- All 7 tests RED before Task 12.2 begins
+- All 7 tests GREEN after Task 12.2 completes
+- Zero regressions against 430 + T-W12-QAV-1–8 baseline
 
 #### Task 12.3 — Frontend Flow Verification (ui-builder)
 
@@ -1603,7 +1610,7 @@ Wave 12 MUST NOT start until:
 | **Builder** | ui-builder |
 | **Task ID** | 12.3 |
 | **Execution** | Sequential — after Task 12.2 GREEN |
-| **Test IDs** | T-W12-UI-1 through T-W12-UI-5 |
+| **Test IDs** | T-W12-UI-1 through T-W12-UI-9 |
 
 **Scope**:
 - T-W12-UI-1: AI chat flow — user submits prompt → loading state shown → response rendered; no console errors
@@ -1611,11 +1618,16 @@ Wave 12 MUST NOT start until:
 - T-W12-UI-3: Evidence collection flow — upload modal opens, form submits, success state displayed; API response wired
 - T-W12-UI-4: Error state rendering — when API returns 4xx/5xx, UI shows structured error message (not blank screen)
 - T-W12-UI-5: Accessibility audit — WCAG 2.1 AA baseline; zero critical violations on main user journeys
+- T-W12-UI-6: Offline capture → sync cycle — with network throttled to offline in test browser: user captures text evidence; record appears in IndexedDB queue; on network restore, sync fires; evidence record appears in Supabase (MAT-T-0056–0058 re-assertion, RCA G-16) — closes W12-GAP-002
+- T-W12-UI-7: RCA G-03 regression — criteria hierarchy render — with seeded Supabase data: criteria tree renders all three levels (Domain → MPS → Criteria); each level is expandable; criterion count matches seeded data (MAT-T-0099 re-assertion) — closes W12-GAP-005
+- T-W12-UI-8: RCA G-04 regression — evidence modal live data — click any criterion; modal header shows criterion title from Supabase (not hardcoded); pre-existing evidence records displayed (MAT-T-0100 re-assertion) — closes W12-GAP-005
+- T-W12-UI-9: RCA G-15 regression — mobile viewport — Playwright at 375px × 812px: audit creation flow, evidence modal, review table — no horizontal overflow; all interactive elements reachable; no content clipped (MAT-T-0106–0108 re-assertion) — closes W12-GAP-006
 
 **Acceptance Criteria**:
-- All 5 tests RED before Task 12.3 begins
-- All 5 tests GREEN after Task 12.3 completes
+- All 9 tests RED before Task 12.3 begins
+- All 9 tests GREEN after Task 12.3 completes
 - Zero regressions against running baseline
+- Accessibility audit report attached to handover bundle
 
 #### Task 12.4 — Cross-Component Integration & Deployment Verification (integration-builder)
 
@@ -1624,19 +1636,21 @@ Wave 12 MUST NOT start until:
 | **Builder** | integration-builder |
 | **Task ID** | 12.4 |
 | **Execution** | Sequential — after Task 12.3 GREEN |
-| **Test IDs** | T-W12-INT-1 through T-W12-INT-5 |
+| **Test IDs** | T-W12-INT-1 through T-W12-INT-7 |
 
 **Scope**:
 - T-W12-INT-1: End-to-end user journey — submit audit criteria → score computed → result displayed in dashboard; verified against live API
 - T-W12-INT-2: Persistent memory cross-invocation — two sequential AI requests share session context (second request sees prior exchange)
 - T-W12-INT-3: Org boundary — two organisations' data do not leak across API calls (tested at integration layer, not just unit)
 - T-W12-INT-4: Deployment artefact completeness — `pnpm build` exits 0; all required output files present; no missing imports
-- T-W12-INT-5: Regression safety net — full test suite (all tests including T-W12-QAV-1–5, T-W12-API-1–5, T-W12-UI-1–5) runs GREEN in CI environment
+- T-W12-INT-5: Regression safety net — full test suite (all tests including T-W12-QAV-1–8, T-W12-API-1–7, T-W12-UI-1–9) runs GREEN in CI environment
+- T-W12-INT-6: CWT — full 98-test suite on production build — execute all MAT-T-0001–MAT-T-0098 against the deployed production Vercel URL (not localhost); 98/98 GREEN; zero failures; zero skipped — formal CWT required by implementation-plan.md §4.2 — closes W12-GAP-007
+- T-W12-INT-7: Photo capture E2E — RCA G-07 regression — on mobile viewport (375px): photo capture UI present; `<input type="file" accept="image/*" capture="environment">` present in DOM; captured image uploads to Supabase Storage and `evidence` record created (MAT-T-0101 re-assertion) — closes W12-GAP-005
 
 **Acceptance Criteria**:
-- All 5 tests RED before Task 12.4 begins
-- All 5 tests GREEN after Task 12.4 completes
-- Final test count: 450/450 GREEN (430 baseline + 20 new Wave 12 tests)
+- All 7 tests RED before Task 12.4 begins
+- All 7 tests GREEN after Task 12.4 completes
+- Final test count: **461/461 GREEN** (430 baseline + 31 new Wave 12 tests)
 
 #### Cross-Wave Learning Outcomes Applied
 
@@ -1647,16 +1661,32 @@ Wave 12 MUST NOT start until:
 | S-009 | Verbatim IAA response paste in PREHANDOVER proof | Wave 10 | Wave 12 PREHANDOVER template includes `## IAA Agent Response (verbatim)` section |
 | LL-W11-001 | Three-builder delegation (qa-builder RED → schema-builder migration → api-builder implementation) validated | Wave 11 (session-075) | Wave 12 uses four-builder sequential delegation with RED gate before each task |
 
+#### Wave 12 Gap Register
+
+The following gaps were identified by CS2 review (comment on PR #710, 2026-03-01) and resolved by new test IDs in this amendment:
+
+| Gap ID | Domain | Closing Test(s) | Status |
+|--------|--------|-----------------|--------|
+| W12-GAP-001 | Auth / RLS — MAT API level + MFA (FR-031) | T-W12-QAV-6, T-W12-QAV-7 | RESOLVED |
+| W12-GAP-002 | Offline mode / sync E2E (MAT-T-0056–0058) | T-W12-UI-6 | RESOLVED |
+| W12-GAP-003 | Report generation E2E — DOCX/PDF (RCA G-14) | T-W12-API-7 | RESOLVED |
+| W12-GAP-004 | AI scoring pipeline E2E | T-W12-API-6 | RESOLVED |
+| W12-GAP-005 | RCA remediation regression (G-07, G-10, G-03, G-04) | T-W12-QAV-8, T-W12-UI-7, T-W12-UI-8, T-W12-INT-7 | RESOLVED |
+| W12-GAP-006 | Mobile viewport regression (G-15, MAT-T-0106–0108) | T-W12-UI-9 | RESOLVED |
+| W12-GAP-007 | CWT mandate (implementation-plan.md §4.2) | T-W12-QAV-8, T-W12-INT-6 | RESOLVED |
+
 #### Wave 12 Gate
 
 All of the following must be confirmed before Wave 12 closes:
-- T-W12-QAV-1 through T-W12-QAV-5 GREEN (qa-builder)
-- T-W12-API-1 through T-W12-API-5 GREEN (api-builder)
-- T-W12-UI-1 through T-W12-UI-5 GREEN (ui-builder)
-- T-W12-INT-1 through T-W12-INT-5 GREEN (integration-builder)
-- Zero regressions — 430 baseline tests still GREEN; 450 total
+- T-W12-QAV-1 through T-W12-QAV-8 GREEN (qa-builder)
+- T-W12-API-1 through T-W12-API-7 GREEN (api-builder)
+- T-W12-UI-1 through T-W12-UI-9 GREEN (ui-builder)
+- T-W12-INT-1 through T-W12-INT-7 GREEN (integration-builder)
+- Zero regressions — 430 baseline tests still GREEN; **461 total**
 - Final `pnpm build` exits 0 with no warnings
 - Deployment artefact completeness confirmed (T-W12-INT-4)
+- CWT complete — all MAT-T-0001–MAT-T-0098 GREEN on production Vercel URL (T-W12-INT-6)
+- All 7 Gap Register gaps RESOLVED (W12-GAP-001 through W12-GAP-007)
 - PREHANDOVER proof compiled with verbatim IAA response and token (A-014, S-009 compliance)
 
 ---
@@ -1891,9 +1921,10 @@ This implementation plan is accepted when:
 12. ✅ Post-Delivery RCA complete (`modules/mat/05-rca/MAT_APP_V2_RCA.md` v1.0.0); remediation waves 2R, 4R, 5.6R defined
 13. ✅ Pre-Build Functionality Assessment Gate (PBFAG) defined (§1.5) and inserted into Derivation Chain
 14. ✅ Wave 11 (Supabase Persistent Memory Wiring) defined (§2.12) with full task breakdown, builder assignments, dependency gates, and cross-wave learning outcomes from Waves 9.10 and 10
-15. ✅ Wave 12 (Full Functionality & Build Wiring Verification) defined (§2.13) with four-domain task breakdown (qa-builder, api-builder, ui-builder, integration-builder), 20 RED gate tests (T-W12-QAV-1–5, T-W12-API-1–5, T-W12-UI-1–5, T-W12-INT-1–5), dependency gates, and cross-wave learning outcomes
+15. ✅ Wave 12 (Full Functionality & Build Wiring Verification) defined (§2.13) with four-domain task breakdown (qa-builder, api-builder, ui-builder, integration-builder), 31 RED gate tests (T-W12-QAV-1–8, T-W12-API-1–7, T-W12-UI-1–9, T-W12-INT-1–7), dependency gates, gap register (W12-GAP-001–007 all RESOLVED), CWT mandate satisfied (T-W12-INT-6), and cross-wave learning outcomes
 
 **Change Log**:
+- v2.1.0 (2026-03-01): Wave 12 plan augmented per CS2 instruction (PR #710, 2026-03-01). 11 new test IDs added: T-W12-QAV-6–8, T-W12-API-6–7, T-W12-UI-6–9, T-W12-INT-6–7. Wave 12 Gap Register (W12-GAP-001–007) added to §2.13 — all 7 gaps RESOLVED. Total Wave 12 tests: 31. Final test count target: 461. CWT mandate (§4.2) satisfied by T-W12-INT-6. Acceptance criterion 15 updated.
 - v2.0.0 (2026-03-01): Wave 12 (Full Functionality & Build Wiring Verification) added per Foreman QA Orchestration wave (issue #709). Full Wave 12 section (§2.13) added with four-task sequential breakdown (12.1: Supabase E2E + coverage audit by qa-builder; 12.2: API contract verification by api-builder; 12.3: frontend flow verification by ui-builder; 12.4: cross-component integration + deployment verification by integration-builder). 20 RED gate tests defined: T-W12-QAV-1–5, T-W12-API-1–5, T-W12-UI-1–5, T-W12-INT-1–5. Wave count updated to thirteen. Wave 11 overview table entry updated to remove PENDING note. Total duration line updated to reflect Wave 11 COMPLETE. Acceptance criterion 15 added.
 - v1.9.0 (2026-03-01): Wave 11 (Supabase Persistent Memory Wiring) added per governance documentation
   task (issue: [Governance Task] Wave 11 Module Lifecycle Documentation). Full Wave 11 section (§2.12)

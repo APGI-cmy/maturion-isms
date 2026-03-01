@@ -2097,25 +2097,38 @@ All of the following confirmed before Wave 12 begins:
 | Date | Status | Note |
 |------|--------|------|
 | 2026-03-01 | DEFINED | Wave 12 section added to implementation plan v2.0.0; governance docs created (session-076) |
+| 2026-03-01 | AMENDED | Wave 12 plan augmented per CS2 instruction (PR #710): 11 additional tests; gap register W12-GAP-001–007 added; 31 total tests; 461 final target (session-077) |
 
 ### Principal Artifacts
 
 | Artifact | Builder | Status |
 |---|---|---|
-| RED gate tests T-W12-QAV-1 through T-W12-QAV-5 (Supabase E2E + coverage audit) | qa-builder | ⏳ PENDING |
-| RED gate tests T-W12-API-1 through T-W12-API-5 (API contract verification) | api-builder | ⏳ PENDING |
-| RED gate tests T-W12-UI-1 through T-W12-UI-5 (frontend flow verification) | ui-builder | ⏳ PENDING |
-| RED gate tests T-W12-INT-1 through T-W12-INT-5 (cross-component E2E + deployment) | integration-builder | ⏳ PENDING |
+| RED gate tests T-W12-QAV-1–8 (Supabase E2E + coverage + RLS/MFA + RCA regression) | qa-builder | ⏳ PENDING |
+| RED gate tests T-W12-API-1–7 (API contract + AI scoring pipeline E2E + report generation E2E) | api-builder | ⏳ PENDING |
+| RED gate tests T-W12-UI-1–9 (frontend flows + offline sync + RCA G-03/G-04/G-15) | ui-builder | ⏳ PENDING |
+| RED gate tests T-W12-INT-1–7 (cross-component E2E + CWT production + photo capture RCA G-07) | integration-builder | ⏳ PENDING |
+
+### Gap Register
+
+| Gap ID | Domain | Closing Test(s) | Status |
+|--------|--------|-----------------|--------|
+| W12-GAP-001 | Auth / RLS — MAT API level + MFA (FR-031) | T-W12-QAV-6, T-W12-QAV-7 | RESOLVED (pending execution) |
+| W12-GAP-002 | Offline mode / sync E2E (MAT-T-0056–0058, RCA G-16) | T-W12-UI-6 | RESOLVED (pending execution) |
+| W12-GAP-003 | Report generation E2E — DOCX/PDF (RCA G-14) | T-W12-API-7 | RESOLVED (pending execution) |
+| W12-GAP-004 | AI scoring pipeline E2E | T-W12-API-6 | RESOLVED (pending execution) |
+| W12-GAP-005 | RCA remediation regression (G-07, G-10, G-03, G-04) | T-W12-QAV-8, T-W12-UI-7, T-W12-UI-8, T-W12-INT-7 | RESOLVED (pending execution) |
+| W12-GAP-006 | Mobile viewport regression (G-15, MAT-T-0106–0108) | T-W12-UI-9 | RESOLVED (pending execution) |
+| W12-GAP-007 | CWT mandate (implementation-plan.md §4.2) | T-W12-QAV-8, T-W12-INT-6 | RESOLVED (pending execution) |
 
 ### Delegation Sequence
 
 Wave 12 follows strict sequential delegation (each builder must deliver GREEN before next begins):
 
 ```
-Task 12.1: qa-builder    → T-W12-QAV-1–5 RED → GREEN
-Task 12.2: api-builder   → T-W12-API-1–5 RED → GREEN  (after 12.1 GREEN)
-Task 12.3: ui-builder    → T-W12-UI-1–5  RED → GREEN  (after 12.2 GREEN)
-Task 12.4: integration-builder → T-W12-INT-1–5 RED → GREEN  (after 12.3 GREEN)
+Task 12.1: qa-builder    → T-W12-QAV-1–8 RED → GREEN
+Task 12.2: api-builder   → T-W12-API-1–7 RED → GREEN  (after 12.1 GREEN)
+Task 12.3: ui-builder    → T-W12-UI-1–9  RED → GREEN  (after 12.2 GREEN)
+Task 12.4: integration-builder → T-W12-INT-1–7 RED → GREEN  (after 12.3 GREEN)
 ```
 
 ### Cross-Wave Learning Outcomes Applied
