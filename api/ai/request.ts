@@ -177,7 +177,20 @@ export async function parseBody(req: IncomingMessage): Promise<unknown> {
   });
 }
 
-const ALLOWED_CAPABILITIES = new Set<string>(Object.values(Capability));
+/**
+ * Extended capability identifiers handled at the gateway layer.
+ * These extend the AICentre Capability enum for domain-specific pipelines.
+ * W12-GAP-003: Report generation pipeline (capability: 'reporting')
+ * W12-GAP-004: Maturity scoring pipeline (capability: 'scoring')
+ */
+export const SCORING_CAPABILITY = 'scoring';
+export const REPORTING_CAPABILITY = 'reporting';
+
+const ALLOWED_CAPABILITIES = new Set<string>([
+  ...Object.values(Capability),
+  SCORING_CAPABILITY,   // W12-GAP-004: Maturity scoring pipeline — wiring in progress
+  REPORTING_CAPABILITY, // W12-GAP-003: Report generation pipeline — wiring in progress
+]);
 
 /** Validate the parsed body and return a typed AICentreRequest. */
 export function validateRequest(body: unknown): AICentreRequest {
