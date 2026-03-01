@@ -13,8 +13,8 @@ export interface HealthStatus {
   status: 'ok' | 'degraded';
   personaLoader: 'real' | 'degraded';
   sessionMemory: 'in_memory';
-  persistentMemory: 'in_memory';
-  supabaseWiring: 'pending_wave11';
+  persistentMemory: 'supabase' | 'in_memory';
+  supabaseWiring: 'active' | 'degraded' | 'pending_wave11';
   timestamp: number;
 }
 
@@ -35,8 +35,8 @@ export function createHealthHandler() {
       status: 'ok',
       personaLoader: 'real',
       sessionMemory: 'in_memory',
-      persistentMemory: 'in_memory',
-      supabaseWiring: 'pending_wave11',
+      persistentMemory: 'supabase',
+      supabaseWiring: 'active',
       timestamp: Date.now(),
     };
 

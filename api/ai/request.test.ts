@@ -23,6 +23,7 @@ import {
   Capability,
   AICentreErrorCode,
 } from '../../packages/ai-centre/src/types/index.js';
+import { makeTestSupabaseClient, type TestSupabaseClient } from './__test-utils__/makeTestSupabaseClient.js';
 
 // ---------------------------------------------------------------------------
 // Test doubles
@@ -304,6 +305,153 @@ describe('handler', () => {
 
     expect(res.headers['Content-Type']).toBe('application/json');
     expect(res.headers['Access-Control-Allow-Methods']).toContain('POST');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Wave 11 — Supabase persistence (T-075-SUP-1 through T-075-SUP-4)
+//
+// These tests validate SupabasePersistentMemoryAdapter functionality including
+// persistence, tenant isolation, and expiry pruning.
+// T-075-SUP-1 verifies buildPersistentMemory() returns SupabasePersistentMemoryAdapter.
+// T-075-SUP-2 through T-075-SUP-4 use a mock Supabase client to test adapter logic.
+//
+// References: FR-075-SUP, TR-075-SUP | Wave 11 (Supabase Persistent Memory Wiring)
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Mock Supabase client builder for persistent memory tests (Wave 11)
+// Imported from __test-utils__/makeTestSupabaseClient — one source of truth.
+// ---------------------------------------------------------------------------
+
+// Convenience type alias for the mock client shape used in T-075-SUP-2/3/4
+type MockSupabaseClient = TestSupabaseClient;
+
+describe('Wave 11 — Supabase persistence', () => {
+  // T-075-SUP-1 --------------------------------------------------------------
+  it('T-075-SUP-1: buildPersistentMemory() returns a SupabasePersistentMemoryAdapter instance', () => {
+    const adapter = (buildPersistentMemory as unknown as () => unknown)();
+    expect(adapter).toBeDefined();
+    expect(
+      (adapter as { constructor: { name: string } }).constructor.name,
+    ).toBe('SupabasePersistentMemoryAdapter');
+  });
+
+  // T-075-SUP-2 --------------------------------------------------------------
+  it('T-075-SUP-2: persist() followed by retrieve() returns the persisted entry (simulated cold start)', async () => {
+    // Dynamic import verifies module resolution and avoids vitest cache issues
+    const { SupabasePersistentMemoryAdapter } = await import(
+      '../../packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.js'
+    );
+
+    const mockClient = makeTestSupabaseClient();
+    const adapter = new SupabasePersistentMemoryAdapter(
+      mockClient as unknown as MockSupabaseClient,
+    );
+
+    const entry = {
+      organisationId: 'org-1',
+      sessionId: 'sess-1',
+      role: 'user' as const,
+      content: 'Supabase memory test entry',
+      capability: Capability.ADVISORY,
+      timestamp: Date.now(),
+    };
+
+    await adapter.persist(entry);
+    const results = await adapter.retrieve({ organisationId: 'org-1' });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]!.content).toBe('Supabase memory test entry');
+    expect(results[0]!.organisationId).toBe('org-1');
+  });
+
+  // T-075-SUP-3 --------------------------------------------------------------
+  it('T-075-SUP-3: retrieve() filters by organisation_id — org A entries are NOT visible to org B', async () => {
+    const { SupabasePersistentMemoryAdapter } = await import(
+      '../../packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.js'
+    );
+
+    const mockClient = makeTestSupabaseClient();
+    const adapterA = new SupabasePersistentMemoryAdapter(
+      mockClient as unknown as MockSupabaseClient,
+    );
+    const adapterB = new SupabasePersistentMemoryAdapter(
+      mockClient as unknown as MockSupabaseClient,
+    );
+
+    await adapterA.persist({
+      organisationId: 'org-A',
+      role: 'user' as const,
+      content: 'Entry for org A',
+      capability: Capability.ADVISORY,
+      timestamp: Date.now(),
+    });
+
+    await adapterB.persist({
+      organisationId: 'org-B',
+      role: 'assistant' as const,
+      content: 'Entry for org B',
+      capability: Capability.ADVISORY,
+      timestamp: Date.now(),
+    });
+
+    const resultsA = await adapterA.retrieve({ organisationId: 'org-A' });
+    const resultsB = await adapterB.retrieve({ organisationId: 'org-B' });
+
+    // Org A sees only its own entry
+    expect(resultsA).toHaveLength(1);
+    expect(resultsA[0]!.organisationId).toBe('org-A');
+    expect(resultsA.every((e: { organisationId: string }) => e.organisationId === 'org-A')).toBe(true);
+
+    // Org B sees only its own entry
+    expect(resultsB).toHaveLength(1);
+    expect(resultsB[0]!.organisationId).toBe('org-B');
+    expect(resultsB.every((e: { organisationId: string }) => e.organisationId === 'org-B')).toBe(true);
+  });
+
+  // T-075-SUP-4 --------------------------------------------------------------
+  it('T-075-SUP-4: pruneExpired() deletes entries with expires_at < NOW()', async () => {
+    const { SupabasePersistentMemoryAdapter } = await import(
+      '../../packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.js'
+    );
+
+    const mockClient = makeTestSupabaseClient();
+    const adapter = new SupabasePersistentMemoryAdapter(
+      mockClient as unknown as MockSupabaseClient,
+    );
+
+    const pastExpiry = new Date(Date.now() - 60_000).toISOString(); // 1 min ago
+    const futureExpiry = new Date(Date.now() + 60_000).toISOString(); // 1 min ahead
+
+    // Persist one expired and one active entry
+    await adapter.persist({
+      organisationId: 'org-prune',
+      role: 'user' as const,
+      content: 'Expired entry',
+      capability: Capability.ADVISORY,
+      timestamp: Date.now() - 120_000,
+      expiresAt: pastExpiry,
+    });
+
+    await adapter.persist({
+      organisationId: 'org-prune',
+      role: 'assistant' as const,
+      content: 'Active entry',
+      capability: Capability.ADVISORY,
+      timestamp: Date.now(),
+      expiresAt: futureExpiry,
+    });
+
+    const deletedCount = await adapter.pruneExpired('org-prune');
+
+    // One expired entry should have been pruned
+    expect(deletedCount).toBe(1);
+
+    // Active entry should still be retrievable
+    const remaining = await adapter.retrieve({ organisationId: 'org-prune' });
+    expect(remaining).toHaveLength(1);
+    expect(remaining[0]!.content).toBe('Active entry');
   });
 });
 

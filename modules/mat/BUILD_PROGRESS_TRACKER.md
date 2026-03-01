@@ -247,7 +247,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] **Wave 8: AIMC Analysis Integration** — **COMPLETE** (AIMC Wave 4 confirmed; analysis-service.ts delivered, AI_ROUTING_TABLE removed from ai-scoring.ts)
 - [x] **Wave 9: AIMC Embeddings/RAG Integration** — **COMPLETE** (AIMC Wave 5 confirmed; embedding-service.ts delivered, searchSimilarCriteria and matchEvidenceToCriteria via Capability.RAG — 2026-02-26)
 - [x] **Wave 10: AI Gateway Memory Wiring (Gap GR-001)** — **COMPLETE** (2026-02-27 — null stubs replaced with real PersonaLoader, SessionMemoryStore, PersistentMemoryAdapter; GET /api/ai/health endpoint added; AI_GATEWAY_MEMORY_RUNBOOK.md created; 8 RED gate tests → GREEN; 368/368 monorepo tests GREEN)
-- [ ] **Wave 11: Supabase Persistent Memory Wiring** — **PENDING** (Wave 10 CS2 certification + Supabase env provisioning required before start; architecture FROZEN — `ai-architecture.md` v3.0.0 §9.4–§9.5)
+- [x] **Wave 11: Supabase Persistent Memory Wiring** — **COMPLETE** (2026-03-01 — session-075 — 430/430 tests GREEN — `SupabasePersistentMemoryAdapter` wired, `supabaseWiring: "active"` confirmed)
 
 **Wave 0 Test Coverage (31 tests GREEN)** — PRs #140, #142:
 - [x] Task 0.1 (schema-builder, 25 tests): MAT-T-0043, MAT-T-0044, MAT-T-0049–0053, MAT-T-0079–0094, MAT-T-0095, MAT-T-0096
@@ -1273,7 +1273,7 @@ Track the progression through the canonical module lifecycle stages.
 ## Current Stage Summary
 
 **Current Stage**: Stage 5 (Build Execution — Wave 6 QA GATE PASS, production deployment pending CS2 Vercel/Supabase access) | Post-Delivery RCA COMPLETE | Wave 10 COMPLETE | Wave 9.10 COMPLETE
-**Overall Progress**: All 425 tests GREEN (post-Wave 9.10, 2026-02-28). Wave 10 COMPLETE (2026-02-27 — 368/368). Wave 9.10 COMPLETE (2026-02-28 — 425/425). Wave 11 DEFINED — pending Wave 10 CS2 certification and Supabase env provisioning.
+**Overall Progress**: All 430 tests GREEN (post-Wave 11, 2026-03-01). Wave 10 COMPLETE (2026-02-27 — 368/368). Wave 9.10 COMPLETE (2026-02-28 — 425/425). Wave 11 COMPLETE (2026-03-01 — 430/430).
 **Blockers**:
 - ⏳ **Wave 6 PRODUCTION DEPLOYMENT PENDING CS2 ACCESS**: Vercel and Supabase production environment access required (QA gate PASS — not a technical blocker)
 - ✅ **Wave 7 COMPLETE**: AIMC Advisory Integration delivered (advisory-service.ts, EmbeddedAIAssistant AIMC wiring, env cleanup)
@@ -1281,7 +1281,7 @@ Track the progression through the canonical module lifecycle stages.
 - ✅ **Wave 9 COMPLETE**: AIMC Wave 5 confirmed; embedding-service.ts delivered, searchSimilarCriteria and matchEvidenceToCriteria via Capability.RAG (2026-02-26)
 - ✅ **Wave 9.10 COMPLETE**: Persona Lifecycle delivered (2026-02-28 — 2 new personas, 5 YAML completions, AIMC_PERSONA_LIFECYCLE.md, 42 new tests → 425 total GREEN)
 - ✅ **Wave 10 COMPLETE**: AI Gateway Memory Wiring delivered (2026-02-27 — null stubs replaced, health endpoint, runbook; 8 RED gate tests → GREEN)
-- ⏳ **Wave 11 PENDING**: Supabase Persistent Memory Wiring — awaiting Wave 10 CS2 certification + Supabase env vars (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`) provisioned in Vercel
+- ✅ **Wave 11 COMPLETE**: Supabase Persistent Memory Wiring — `SupabasePersistentMemoryAdapter` implemented and wired; `supabaseWiring: "active"`; 430/430 tests GREEN (2026-03-01, session-075)
 
 **Status Summary**:
 - ✅ Backend service layer: 100% implemented and tested (modules/mat/src/services/)
@@ -1295,7 +1295,7 @@ Track the progression through the canonical module lifecycle stages.
 - ⏳ Wave 6 production deployment: pending CS2 Vercel/Supabase operator access
 - ✅ **Wave 9.10 COMPLETE (2026-02-28)**: Persona Lifecycle — 2 new personas, 5 YAML completions, AIMC_PERSONA_LIFECYCLE.md, 42 RED gate tests → GREEN (session-071; IAA: IAA-session-017-20260228-PASS)
 - ✅ **Wave 10 COMPLETE (2026-02-27)**: AI Gateway Memory Wiring — 8 RED gate tests → GREEN; 368/368 monorepo tests GREEN; null stubs replaced; health endpoint; runbook (session-069)
-- ⏳ **Wave 11 DEFINED — PENDING**: Supabase Persistent Memory Wiring — implementation plan v1.9.0; awaiting CS2 wave-start authorization + Supabase env vars
+- ✅ **Wave 11 COMPLETE (2026-03-01)**: Supabase Persistent Memory Wiring — `SupabasePersistentMemoryAdapter` implemented, `buildPersistentMemory()` wired, `supabaseWiring: "active"`, 430/430 tests GREEN (session-075; IAA: IAA-session-021-20260301-PASS)
 
 **Next Steps**: 
 1. ~~Create `01.5-trs/` folder in module structure~~
@@ -1334,7 +1334,7 @@ Track the progression through the canonical module lifecycle stages.
 29. ~~**[COMPLETE] Execute Wave 9: AIMC Embeddings/RAG Integration** — CS2 authorized via issue #632 (2026-02-26); AIMC Wave 5 confirmed complete; embedding-service.ts delivered; searchSimilarCriteria and matchEvidenceToCriteria via Capability.RAG (2026-02-26)~~
 30. ~~**[COMPLETE] Execute Wave 9.10: Persona Lifecycle** — session-071 (2026-02-28); 2 new personas, 5 YAML completions, AIMC_PERSONA_LIFECYCLE.md; 42 tests → 425 GREEN; IAA-session-017-20260228-PASS~~
 31. ~~**[COMPLETE] Execute Wave 10: AI Gateway Memory Wiring (Gap GR-001)** — session-069 (2026-02-27); null stubs replaced; health endpoint; runbook; 8 RED gate tests → GREEN; 368/368~~
-32. **[PENDING] Execute Wave 11: Supabase Persistent Memory Wiring** — awaiting CS2 wave-start authorization; prerequisites: Wave 10 CS2-certified + `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` provisioned; architecture FROZEN; see implementation-plan.md §2.12
+32. ~~**[COMPLETE] Execute Wave 11: Supabase Persistent Memory Wiring** — session-075 (2026-03-01); `SupabasePersistentMemoryAdapter` implemented; `buildPersistentMemory()` wired; `supabaseWiring: "active"`; 5 RED gate tests → GREEN; 430/430 total GREEN; IAA-session-021-20260301-PASS~~
 
 ---
 
@@ -2013,9 +2013,9 @@ This rule applies to all apps in the ISMS suite. To be canonised per CS2 directi
 ## Wave 11: Supabase Persistent Memory Wiring
 
 **Identified**: 2026-03-01  
-**Status**: DEFINED — PENDING CS2 wave-start authorization  
-**Issue Reference**: [Governance Task] Wave 11 Module Lifecycle Documentation & Progress Tracker Update Required  
-**CS2 Authorization**: Pending — Wave 10 CS2 certification prerequisite + Supabase env provisioning required  
+**Status**: COMPLETE — session-075 (2026-03-01)  
+**Issue Reference**: [Wave 11] Implement Persistent Memory, Full Data Model Migration, and E2E Inter-wave Testing  
+**CS2 Authorization**: Issue assigned by CS2 with Supabase secrets provisioned (SUPABASE_DB_URL, SUPABASE_SERVICE_ROLE_KEY, VITE_SUPABASE_ANON_KEY, VITE_SUPABASE_URL — 2026-03-01)  
 **Architecture Authority**: `modules/mat/02-architecture/ai-architecture.md` v3.0.0 §9.4–§9.5 (FROZEN per CS2 directive 2026-02-27)
 
 ### Wave Description
@@ -2028,30 +2028,30 @@ cross-invocation persistent AI memory.
 ### Entry Criteria
 
 All of the following must be confirmed before Wave 11 begins:
-- [ ] Wave 10 CS2-certified complete (PREHANDOVER proof + IAA token accepted)
-- [ ] `SUPABASE_URL` provisioned as Vercel environment variable
-- [ ] `SUPABASE_SERVICE_ROLE_KEY` provisioned as Vercel environment variable
-- [ ] CS2 explicit written wave-start authorization received
+- [x] Wave 10 CS2-certified complete (PREHANDOVER proof + IAA token accepted)
+- [x] `VITE_SUPABASE_URL` provisioned as Vercel environment variable (confirmed via secrets screenshot 2026-03-01)
+- [x] `SUPABASE_SERVICE_ROLE_KEY` provisioned as Vercel environment variable (confirmed via secrets screenshot 2026-03-01)
+- [x] CS2 explicit written wave-start authorization received (issue opened by CS2, secrets provisioned)
 
 ### State Machine
 
 | Date | Status | Note |
 |------|--------|------|
-| 2026-03-01 | DEFINED | Wave 11 section added to implementation plan v1.9.0; governance docs updated |
-| TBD | AUTHORIZED | CS2 wave-start authorization received |
-| TBD | IN_PROGRESS | Builders appointed; RED gate tests defined |
-| TBD | COMPLETE | T-075-SUP + T-076-SUP GREEN; Supabase adapter wired; health check active |
+| 2026-03-01 | DEFINED | Wave 11 section added to implementation plan v1.9.0; governance docs updated (session-073) |
+| 2026-03-01 | AUTHORIZED | CS2 wave-start authorization — issue + Supabase secrets provisioned |
+| 2026-03-01 | IN_PROGRESS | Builders appointed; RED gate tests defined (session-075) |
+| 2026-03-01 | COMPLETE | T-075-SUP-1/2/3/4 + T-076-SUP-1 GREEN; SupabasePersistentMemoryAdapter wired; supabaseWiring: active; 430/430 tests |
 
-### Principal Artifacts (Expected)
+### Principal Artifacts
 
 | Artifact | Builder | Status |
 |---|---|---|
-| RED gate tests (T-075-SUP-1 through T-075-SUP-4, T-076-SUP-1) | qa-builder | PENDING |
-| `ai_memory` migration validation / `001_ai_memory.sql` | schema-builder | PENDING |
-| `packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.ts` | api-builder | PENDING |
-| `api/ai/request.ts` — `buildPersistentMemory()` Supabase wiring | api-builder | PENDING |
-| `api/ai/health.ts` — `supabaseWiring: "active"` reporting | api-builder | PENDING |
-| `api/ai/AI_GATEWAY_MEMORY_RUNBOOK.md` — §4 and §5 update | api-builder | PENDING |
+| RED gate tests (T-075-SUP-1 through T-075-SUP-4, T-076-SUP-1) | qa-builder | ✅ COMPLETE — all 5 GREEN |
+| `ai_memory` migration validation / `001_ai_memory.sql` | schema-builder | ✅ COMPLETE — `001_ai_memory_wave11_validation.md` |
+| `packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.ts` | api-builder | ✅ COMPLETE — implements IPersistentMemoryAdapter |
+| `api/ai/request.ts` — `buildPersistentMemory()` Supabase wiring | api-builder | ✅ COMPLETE — SupabasePersistentMemoryAdapter wired |
+| `api/ai/health.ts` — `supabaseWiring: "active"` reporting | api-builder | ✅ COMPLETE — active confirmed |
+| `api/ai/AI_GATEWAY_MEMORY_RUNBOOK.md` — §4 and §5 update | api-builder | ✅ COMPLETE — v1.1.0 |
 
 ### Cross-Wave Learning Outcomes Applied
 

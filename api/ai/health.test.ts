@@ -117,4 +117,22 @@ describe('GET /api/ai/health — health check endpoint (T-076-1 through T-076-4)
       expect(res.headers['Content-Type']).toBe('application/json');
     }
   });
+
+  // T-076-SUP-1 -------------------------------------------------------------
+  // Wave 11 (Supabase Persistent Memory Wiring) — verifies health endpoint
+  // reports active Supabase wiring after SupabasePersistentMemoryAdapter is wired.
+  //
+  // References: FR-076-SUP, TR-076-SUP | Wave 11 (Supabase Persistent Memory Wiring)
+  it('T-076-SUP-1: health endpoint returns supabaseWiring: "active" and persistentMemory: "supabase"', async () => {
+    const handler = createHealthHandler();
+    const req = mockGetRequest('GET');
+    const res = mockResponse();
+
+    await handler(req, res as unknown as ServerResponse);
+
+    expect(res.statusCode).toBe(200);
+    const body = JSON.parse(res.body) as Record<string, unknown>;
+    expect(body['supabaseWiring']).toBe('active');
+    expect(body['persistentMemory']).toBe('supabase');
+  });
 });
