@@ -6,6 +6,7 @@
 **Status**: ACTIVE  
 **Authority**: LKIAC-001 §4, CL-3-D2  
 **Produced By**: foreman-v2-agent v6.2.0 (session-079) via governance-liaison-isms-agent  
+**Bootstrap**: Phase 1 contract load confirmed (governance-liaison-isms-agent contract v3.2.0 loaded via agent_bootstrap before any repository file access)  
 **Location**: `governance/aimc/LKIAC_CL3_D2_GAP_RESOLUTION.md`  
 **Feeds**: `governance/aimc/LKIAC_DEPRECATION_REGISTER.md`, `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md`
 
