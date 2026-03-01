@@ -3,11 +3,11 @@
   "buildCommand": "cd modules/mat/frontend && npm install && npm run build",
   "outputDirectory": "modules/mat/frontend/dist",
   "framework": "vite",
-  "installCommand": "npm install",
+  "installCommand": "cd modules/mat/frontend && npm install",
   "devCommand": "cd modules/mat/frontend && npm run dev",
   "rewrites": [
     {
-      "source": "/((?!api/).*)",
+      "source": "/((?!api/|assets/).*)",
       "destination": "/index.html"
     }
   ],
