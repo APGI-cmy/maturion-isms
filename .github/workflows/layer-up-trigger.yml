@@ -1,0 +1,320 @@
+name: Layer-Up Trigger
+
+# Authority: LAYER_UP_PROTOCOL.md v1.0.0 §5, GOVERNANCE_RIPPLE_MODEL.md §3.1
+# Purpose: Auto-create a layer-up issue (labeled layer-up + governance-improvement) when:
+#   1. A merged PR body contains an approval phrase ("Auto layer up approved" /
+#      "Layer up approved"), OR
+#   2. A comment containing the approval phrase is posted on any open or merged PR.
+#
+# The created issue is then automatically picked up by layer-up-dispatch.yml which
+# escalates it to the canonical governance repo (APGI-cmy/maturion-foreman-governance).
+#
+# Approval phrases (case-insensitive):
+#   - "Auto layer up approved"
+#   - "Layer up approved"
+#
+# Human fallback: manual issue creation with layer-up + governance-improvement labels
+# is always supported and continues to work unchanged.
+#
+# Security: all user-supplied content (PR body, comment body, titles) is passed
+# through env: blocks and referenced via shell variables — never inline in run
+# scripts — to prevent script injection (per Maturion CI security policy).
+
+on:
+  # Trigger 1: comment posted on a PR
+  issue_comment:
+    types: [created]
+
+  # Trigger 2: PR closed (merged)
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────
+  # GATE: determine whether this event should trigger a layer-up
+  # ─────────────────────────────────────────────────────────────────────────
+  check-trigger:
+    name: Evaluate Layer-Up Trigger
+    runs-on: ubuntu-latest
+    outputs:
+      should_trigger: ${{ steps.evaluate.outputs.should_trigger }}
+      pr_number:      ${{ steps.evaluate.outputs.pr_number }}
+      pr_title:       ${{ steps.evaluate.outputs.pr_title }}
+      pr_url:         ${{ steps.evaluate.outputs.pr_url }}
+      pr_author:      ${{ steps.evaluate.outputs.pr_author }}
+      trigger_type:   ${{ steps.evaluate.outputs.trigger_type }}
+      approver:       ${{ steps.evaluate.outputs.approver }}
+
+    steps:
+      - name: Evaluate trigger condition
+        id: evaluate
+        env:
+          EVENT_NAME:        ${{ github.event_name }}
+          # issue_comment fields
+          COMMENT_BODY:      ${{ github.event.comment.body }}
+          COMMENT_AUTHOR:    ${{ github.event.comment.user.login }}
+          ISSUE_IS_PR:       ${{ github.event.issue.pull_request != null }}
+          ISSUE_NUMBER:      ${{ github.event.issue.number }}
+          ISSUE_TITLE:       ${{ github.event.issue.title }}
+          # pull_request fields
+          PR_MERGED:         ${{ github.event.pull_request.merged }}
+          PR_NUMBER:         ${{ github.event.pull_request.number }}
+          PR_TITLE:          ${{ github.event.pull_request.title }}
+          PR_BODY:           ${{ github.event.pull_request.body }}
+          PR_URL:            ${{ github.event.pull_request.html_url }}
+          PR_AUTHOR:         ${{ github.event.pull_request.user.login }}
+        run: |
+          # Normalise approval phrase check (case-insensitive grep)
+          contains_approval() {
+            local TEXT="$1"
+            echo "$TEXT" | grep -qiE '(auto\s+layer[\s-]up\s+approved|layer[\s-]up\s+approved)'
+          }
+
+          SHOULD_TRIGGER=false
+          TRIGGER_TYPE=""
+          PR_NUM=""
+          OUT_PR_TITLE=""
+          OUT_PR_URL=""
+          PR_AUTHOR_VAL=""
+          APPROVER=""
+
+          if [ "$EVENT_NAME" = "issue_comment" ]; then
+            # Only proceed if the issue is actually a PR
+            if [ "$ISSUE_IS_PR" != "true" ]; then
+              echo "Comment is on an issue (not a PR) — skipping"
+              echo "should_trigger=false" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+
+            if contains_approval "$COMMENT_BODY"; then
+              SHOULD_TRIGGER=true
+              TRIGGER_TYPE="comment"
+              PR_NUM="$ISSUE_NUMBER"
+              OUT_PR_TITLE="$ISSUE_TITLE"
+              OUT_PR_URL="https://github.com/${{ github.repository }}/pull/${ISSUE_NUMBER}"
+              PR_AUTHOR_VAL="unknown"   # not available on issue_comment event
+              APPROVER="$COMMENT_AUTHOR"
+              echo "Approval comment detected on PR #${PR_NUM} by @${APPROVER}"
+            else
+              echo "Comment does not contain approval phrase — skipping"
+            fi
+
+          elif [ "$EVENT_NAME" = "pull_request" ]; then
+            if [ "$PR_MERGED" != "true" ]; then
+              echo "PR was closed without merging — skipping"
+              echo "should_trigger=false" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+
+            if contains_approval "$PR_BODY"; then
+              SHOULD_TRIGGER=true
+              TRIGGER_TYPE="pr_merge"
+              PR_NUM="$PR_NUMBER"
+              OUT_PR_TITLE="$PR_TITLE"
+              OUT_PR_URL="$PR_URL"
+              PR_AUTHOR_VAL="$PR_AUTHOR"
+              APPROVER="$PR_AUTHOR"
+              echo "Merged PR #${PR_NUM} body contains approval phrase — triggering"
+            else
+              echo "Merged PR body does not contain approval phrase — skipping"
+            fi
+          fi
+
+          echo "should_trigger=${SHOULD_TRIGGER}" >> $GITHUB_OUTPUT
+          echo "pr_number=${PR_NUM}"              >> $GITHUB_OUTPUT
+          echo "pr_title=${OUT_PR_TITLE}"         >> $GITHUB_OUTPUT
+          echo "pr_url=${OUT_PR_URL}"             >> $GITHUB_OUTPUT
+          echo "pr_author=${PR_AUTHOR_VAL}"       >> $GITHUB_OUTPUT
+          echo "trigger_type=${TRIGGER_TYPE}"     >> $GITHUB_OUTPUT
+          echo "approver=${APPROVER}"             >> $GITHUB_OUTPUT
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # MAIN: create the layer-up issue and label it
+  # ─────────────────────────────────────────────────────────────────────────
+  create-layer-up-issue:
+    name: Create Layer-Up Issue
+    runs-on: ubuntu-latest
+    needs: check-trigger
+    if: needs.check-trigger.outputs.should_trigger == 'true'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Ensure labels exist ──────────────────────────────────────────────
+      - name: Ensure layer-up labels exist
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+        run: |
+          for LABEL_NAME in "layer-up" "governance-improvement"; do
+            case "$LABEL_NAME" in
+              "layer-up")
+                COLOR="0075ca"
+                DESCRIPTION="Governance layer-up: escalate to canonical governance repo"
+                ;;
+              "governance-improvement")
+                COLOR="e4e669"
+                DESCRIPTION="Governance improvement proposal for canonical governance"
+                ;;
+            esac
+            gh label create "$LABEL_NAME" \
+              --repo "${{ github.repository }}" \
+              --color "$COLOR" \
+              --description "$DESCRIPTION" 2>/dev/null \
+              && echo "Created label: $LABEL_NAME" \
+              || echo "Label already exists: $LABEL_NAME"
+          done
+
+      # ── Idempotency: skip if a layer-up issue for this PR already exists ─
+      - name: Check for existing layer-up issue
+        id: dup_check
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          PR_NUMBER: ${{ needs.check-trigger.outputs.pr_number }}
+        run: |
+          EXISTING=$(gh issue list \
+            --repo "${{ github.repository }}" \
+            --label "layer-up" \
+            --state open \
+            --limit 100 \
+            --json number,title \
+            --jq ".[] | select(.title | test(\"PR #${PR_NUMBER}\"; \"i\")) | .number" \
+            2>/dev/null | head -1 || echo "")
+
+          if [ -n "$EXISTING" ]; then
+            echo "already_exists=true"  >> $GITHUB_OUTPUT
+            echo "existing_number=${EXISTING}" >> $GITHUB_OUTPUT
+            echo "Layer-up issue #${EXISTING} already exists for PR #${PR_NUMBER} — skipping creation"
+          else
+            echo "already_exists=false" >> $GITHUB_OUTPUT
+            echo "No existing layer-up issue for PR #${PR_NUMBER} — proceeding"
+          fi
+
+      # ── Fetch PR description for issue body ──────────────────────────────
+      - name: Fetch PR details
+        id: pr_details
+        if: steps.dup_check.outputs.already_exists != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          PR_NUMBER: ${{ needs.check-trigger.outputs.pr_number }}
+        run: |
+          PR_BODY_CONTENT=$(gh pr view "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --json body --jq '.body' 2>/dev/null | head -c 3000 || echo "")
+          # Export safely — newlines require special handling in GITHUB_OUTPUT
+          echo "pr_body_truncated<<EOF_PR_BODY" >> $GITHUB_OUTPUT
+          echo "$PR_BODY_CONTENT"               >> $GITHUB_OUTPUT
+          echo "EOF_PR_BODY"                    >> $GITHUB_OUTPUT
+
+      # ── Create the layer-up issue ────────────────────────────────────────
+      - name: Create layer-up issue
+        id: create_issue
+        if: steps.dup_check.outputs.already_exists != 'true'
+        env:
+          GH_TOKEN:    ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          PR_NUMBER:   ${{ needs.check-trigger.outputs.pr_number }}
+          PR_TITLE:    ${{ needs.check-trigger.outputs.pr_title }}
+          PR_URL:      ${{ needs.check-trigger.outputs.pr_url }}
+          PR_AUTHOR:   ${{ needs.check-trigger.outputs.pr_author }}
+          TRIGGER:     ${{ needs.check-trigger.outputs.trigger_type }}
+          APPROVER:    ${{ needs.check-trigger.outputs.approver }}
+          PR_BODY_CONTENT: ${{ steps.pr_details.outputs.pr_body_truncated }}
+        run: |
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          ISSUE_TITLE="[Layer-Up] Auto-triggered: ${PR_TITLE} (PR #${PR_NUMBER})"
+
+          ISSUE_BODY=$(printf '%s\n\n%s\n%s\n%s\n%s\n%s\n\n%s\n\n%s\n\n%s\n\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n\n%s\n\n%s\n\n%s\n%s\n%s\n%s\n%s\n\n%s\n\n%s\n\n%s\n\n%s\n%s\n%s\n%s\n\n%s\n%s' \
+            '## Layer-Up — Automated Trigger' \
+            "Origin PR: #${PR_NUMBER} — ${PR_URL} — ${PR_TITLE}" \
+            "PR Author: @${PR_AUTHOR}" \
+            "Triggered By: @${APPROVER} via ${TRIGGER}" \
+            "Triggered At: ${TIMESTAMP}" \
+            'Workflow: Automated — layer-up-trigger.yml' \
+            '---' \
+            '## Governance Improvement Summary' \
+            'This issue was automatically created because the originating PR contains an approved layer-up instruction. The content of this PR should be reviewed for canonizable governance improvements and escalated to `APGI-cmy/maturion-foreman-governance`.' \
+            '---' \
+            '## Conflict Detection — Reviewer Instructions' \
+            'Before escalating to canonical governance, reviewers (or the governance-liaison agent) MUST check for conflicts:' \
+            '1. Search existing canon — Does `governance/CANON_INVENTORY.json` already cover the governance change proposed in this PR?' \
+            '2. Check for open layer-up issues — Is an equivalent layer-up issue already open (in this repo or in `maturion-foreman-governance`)?' \
+            '3. If conflict found — Escalate to CS2 (@APGI-cmy) for reconciliation review BEFORE proceeding. Do NOT allow duplicate or conflicting canon entries.' \
+            '4. If additive (no conflict) — Apply `layer-up` + `governance-improvement` labels (already applied) to proceed with automated escalation to canonical.' \
+            '---' \
+            '## PR Description (Excerpt)' \
+            "${PR_BODY_CONTENT}" \
+            '---' \
+            '## Next Steps' \
+            '- [ ] Reviewer: verify no canon conflict (see Conflict Detection above)' \
+            '- [ ] If conflict: escalate to @APGI-cmy for reconciliation' \
+            '- [ ] If additive: labels are already applied — layer-up-dispatch.yml will escalate automatically' \
+            '- [ ] Human fallback: manual issue creation with `layer-up` + `governance-improvement` labels is always supported' \
+            '---' \
+            '*Automated layer-up trigger — layer-up-trigger.yml*' \
+            '*Protocol: LAYER_UP_PROTOCOL.md v1.1.0 §5, GOVERNANCE_RIPPLE_MODEL.md §3.1*' \
+            '*Authority: CS2 (Johan Ras / @APGI-cmy)*')
+
+          CREATED_ISSUE=$(gh issue create \
+            --repo "${{ github.repository }}" \
+            --title "$ISSUE_TITLE" \
+            --body "$ISSUE_BODY" \
+            --label "layer-up" \
+            --label "governance-improvement" \
+            2>/dev/null || echo "")
+
+          if [ -n "$CREATED_ISSUE" ]; then
+            ISSUE_NUM=$(echo "$CREATED_ISSUE" | grep -oE '[0-9]+$' || echo "")
+            echo "issue_created=true"            >> $GITHUB_OUTPUT
+            echo "issue_number=${ISSUE_NUM}"     >> $GITHUB_OUTPUT
+            echo "issue_url=${CREATED_ISSUE}"    >> $GITHUB_OUTPUT
+            echo "Layer-up issue created: ${CREATED_ISSUE}"
+          else
+            echo "issue_created=false"           >> $GITHUB_OUTPUT
+            echo "issue_number="                 >> $GITHUB_OUTPUT
+            echo "issue_url="                    >> $GITHUB_OUTPUT
+            echo "::warning::Could not create layer-up issue — see workflow logs. Manual creation required."
+          fi
+
+      # ── Comment on the originating PR ────────────────────────────────────
+      - name: Comment on originating PR
+        if: always() && needs.check-trigger.outputs.pr_number != ''
+        env:
+          GH_TOKEN:       ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          PR_NUMBER:      ${{ needs.check-trigger.outputs.pr_number }}
+          ALREADY_EXISTS: ${{ steps.dup_check.outputs.already_exists }}
+          ISSUE_CREATED:  ${{ steps.create_issue.outputs.issue_created }}
+          ISSUE_URL:      ${{ steps.create_issue.outputs.issue_url }}
+          ISSUE_NUM:      ${{ steps.create_issue.outputs.issue_number }}
+          EXISTING_NUM:   ${{ steps.dup_check.outputs.existing_number }}
+          RUN_URL:        ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ "$ALREADY_EXISTS" = "true" ]; then
+            COMMENT=$(printf '%s\n\n%s\n\n%s' \
+              '## ℹ️ Layer-Up Trigger — Already Exists' \
+              "A layer-up issue already exists for this PR: #${EXISTING_NUM}" \
+              '*No duplicate issue was created. — layer-up-trigger.yml*')
+
+          elif [ "$ISSUE_CREATED" = "true" ]; then
+            COMMENT=$(printf '%s\n\n%s\n\n%s\n%s\n\n%s\n\n%s' \
+              '## ✅ Layer-Up Issue Created Automatically' \
+              "Layer-up issue **#${ISSUE_NUM}** has been created and labeled \`layer-up\` + \`governance-improvement\`." \
+              "- **Layer-up issue**: ${ISSUE_URL}" \
+              "- **Workflow run**: ${RUN_URL}" \
+              "The issue will be automatically escalated to the canonical governance repository by **layer-up-dispatch.yml**." \
+              '*Automated layer-up trigger — layer-up-trigger.yml*')
+          else
+            COMMENT=$(printf '%s\n\n%s\n\n%s\n\n%s' \
+              '## ⚠️ Layer-Up Trigger — Manual Action Required' \
+              'The automated workflow could not create the layer-up issue.' \
+              "Please manually create an issue in this repository with labels \`layer-up\` and \`governance-improvement\`, referencing this PR." \
+              '*layer-up-trigger.yml*')
+          fi
+
+          gh pr comment "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --body "$COMMENT" || echo "Could not post comment on PR — continuing"

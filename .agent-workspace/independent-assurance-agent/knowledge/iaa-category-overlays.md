@@ -1,9 +1,10 @@
 # IAA Category Overlays
 
 **Agent**: independent-assurance-agent
-**Version**: 1.0.0 — STUB
-**Status**: STUB — must be populated from INDEPENDENT_ASSURANCE_AGENT_CANON.md before Phase B activation
-**Last Updated**: 2026-02-25
+**Version**: 2.0.0
+**Status**: ACTIVE
+**Last Updated**: 2026-02-28
+**Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
 
@@ -11,6 +12,9 @@
 
 This file defines per-category additional checks that supplement the core invariants checklist.
 IAA loads the overlay for the classified PR category in Phase 2 Step 2.4.
+
+Core invariants (CORE-001 to CORE-017) apply to ALL categories.
+Overlay checks are ADDITIONAL checks specific to each category.
 
 ---
 
@@ -55,6 +59,7 @@ Applied when PR category is `CI_WORKFLOW`.
 | OVL-CI-001 | Merge gate checks preserved | All required merge_gate_interface checks remain present |
 | OVL-CI-002 | No gate weakening | No check removed, softened, or made non-blocking |
 | OVL-CI-003 | Parity enforcement maintained | parity_required and parity_enforcement remain BLOCKING |
+| OVL-CI-004 | Workflow policy correctness | For any new workflow created or significantly modified: verify the workflow correctly implements its stated policy requirement — not just gate preservation. The workflow logic must match its declared intent (e.g., a "preflight gate" workflow must actually enforce preflight; a "ripple sync" workflow must actually sync ripples). A workflow that preserves the gate structure but inverts or misimplements its policy intent is a failure. |
 
 ---
 
@@ -70,12 +75,24 @@ Applied when PR category is `AAWP_MAT`.
 
 ---
 
-## Stub Population Instructions
+## AGENT_INTEGRITY Overlay
 
-Extract detailed overlay check specifications from:
-`governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md`
+Applied when PR category is `AGENT_INTEGRITY`.
 
-Timeline: Before Phase B activation. CS2 authorization required.
+| Check ID | Check Name | Description |
+|----------|-----------|-------------|
+| OVL-AI-001 | CS2-only modification | Only CS2 (Johan Ras / @APGI-cmy) may modify `governance/quality/agent-integrity/` files |
+| OVL-AI-002 | Hash update is complete | All updated agent contract hashes reflect the current file state |
+| OVL-AI-003 | No hash deletions | No previously present agent integrity entries deleted without CS2 sign-off |
+
+---
+
+## Version History
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.0.0 | 2026-02-25 | Initial STUB (placeholder from canon) |
+| 2.0.0 | 2026-02-28 | Fully populated from INDEPENDENT_ASSURANCE_AGENT_CANON.md; OVL-CI-004 added (workflow policy correctness check from IAA session-017 suggestion); AGENT_INTEGRITY overlay added; STUB status removed |
 
 ---
 

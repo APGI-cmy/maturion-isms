@@ -21,6 +21,7 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 | `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 1.3.0 |
 | `specialist-registry.md` | Registry of all delegable agents with capabilities and separation-of-duties boundary | 1.0.0 |
 | `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 |
+| `prehandover-template.md` | **PHASE 4 §S-009** — PREHANDOVER proof template with mandatory IAA Agent Response (verbatim) section per FAIL-ONLY-ONCE v1.8.0 S-009 | 1.0.0 |
 
 ---
 

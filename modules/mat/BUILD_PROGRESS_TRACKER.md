@@ -2,8 +2,8 @@
 
 **Module**: Mat  
 **Module Slug**: mat  
-**Last Updated**: 2026-02-26  
-**Updated By**: api-builder (session-wave9-implementation-20260226)
+**Last Updated**: 2026-03-01  
+**Updated By**: foreman-v2-agent (session-073-wave11-governance-20260301)
 
 ---
 
@@ -116,7 +116,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] Risks and mitigation strategies documented (8 risks with mitigation)
 
 **Completion Date**: 2026-02-13 (v1.0.0)  
-**Notes**: Implementation plan compiled with 11 build waves (Waves 0–9, plus Waves 5.5 and 5.6), builder assignments per task, concurrent/sequential execution logic, multi-builder handover protocols, risk mitigation, and full traceability to Architecture, FRS, TRS, and Test Registry. Cross-referenced with builder contracts. Updated to v1.1.0 (2026-02-14) to include CST/CWT integration testing requirements per `governance/canon/COMBINED_TESTING_PATTERN.md`. Updated to v1.2.0 (2026-02-15) to include Wave 6: Deployment & Commissioning with production CWT, formal sign-over, and closure certification. Updated to v1.3.0 (2026-02-16) to add Wave 5.5 (Frontend Application Assembly) per Deviation #9; derivation chain updated to FR-001–FR-071, TR-001–TR-071. Updated to v1.4.0 (2026-02-16) to add MANDATORY PRE-BUILD GATE language to Wave 5.5. Updated to v1.5.0 (2026-02-17) to add Wave 5.6 (UI Component Wiring & Data Integration) per Deviation #11. Updated to v1.6.0 (2026-02-23) to add Waves 7, 8, 9 (AIMC Advisory, Analysis, Embeddings/RAG Integration — all BLOCKED pending upstream AIMC waves) per `AIMC_STRATEGY.md` v1.0.0; Issue #377 superseded. Updated to v1.7.0 (2026-02-23) to correct Tasks 1.2, 2.1, 3.1, and 4.2 scope — all direct-provider references (GPT-4 Turbo, Whisper API, GPT-4o Mini fallback) removed; all AI calls now reference AIMC Gateway capability calls exclusively per `AIMC_STRATEGY.md` v1.0.0 and `ai-architecture.md` v2.0.0; derivation chain updated to FR-001–FR-072, TR-001–TR-072. Updated to v1.8.0 (2026-02-27): Wave 10 (AI Gateway Memory Wiring — Gap GR-001) added with task breakdown (Task 10.1: RED gate tests by qa-builder; Task 10.2: implementation by api-builder) and Wave 11 Supabase gate; derivation chain updated to FR-001–FR-077, TR-001–TR-077.
+**Notes**: Implementation plan compiled with 11 build waves (Waves 0–9, plus Waves 5.5 and 5.6), builder assignments per task, concurrent/sequential execution logic, multi-builder handover protocols, risk mitigation, and full traceability to Architecture, FRS, TRS, and Test Registry. Cross-referenced with builder contracts. Updated to v1.1.0 (2026-02-14) to include CST/CWT integration testing requirements per `governance/canon/COMBINED_TESTING_PATTERN.md`. Updated to v1.2.0 (2026-02-15) to include Wave 6: Deployment & Commissioning with production CWT, formal sign-over, and closure certification. Updated to v1.3.0 (2026-02-16) to add Wave 5.5 (Frontend Application Assembly) per Deviation #9; derivation chain updated to FR-001–FR-071, TR-001–TR-071. Updated to v1.4.0 (2026-02-16) to add MANDATORY PRE-BUILD GATE language to Wave 5.5. Updated to v1.5.0 (2026-02-17) to add Wave 5.6 (UI Component Wiring & Data Integration) per Deviation #11. Updated to v1.6.0 (2026-02-23) to add Waves 7, 8, 9 (AIMC Advisory, Analysis, Embeddings/RAG Integration — all BLOCKED pending upstream AIMC waves) per `AIMC_STRATEGY.md` v1.0.0; Issue #377 superseded. Updated to v1.7.0 (2026-02-23) to correct Tasks 1.2, 2.1, 3.1, and 4.2 scope — all direct-provider references (GPT-4 Turbo, Whisper API, GPT-4o Mini fallback) removed; all AI calls now reference AIMC Gateway capability calls exclusively per `AIMC_STRATEGY.md` v1.0.0 and `ai-architecture.md` v2.0.0; derivation chain updated to FR-001–FR-072, TR-001–TR-072. Updated to v1.8.0 (2026-02-27): Wave 10 (AI Gateway Memory Wiring — Gap GR-001) added with task breakdown (Task 10.1: RED gate tests by qa-builder; Task 10.2: implementation by api-builder) and Wave 11 Supabase gate; derivation chain updated to FR-001–FR-077, TR-001–TR-077. Updated to v1.9.0 (2026-03-01): Wave 11 (Supabase Persistent Memory Wiring) added as full §2.12 with three-task breakdown (11.1: RED gate tests by qa-builder; 11.2: migration validation by schema-builder; 11.3: Supabase adapter wiring by api-builder); wave count updated to twelve; cross-wave learning from Wave 10 (INC-IAA-SKIP-001 — A-014 locked) and Wave 9.10 (persona lifecycle, 425 tests) recorded.
 
 > **⚠️ PROCESS DEVIATION — CST/CWT INTEGRATION TESTING OMITTED FROM INITIAL PLAN**
 >
@@ -247,6 +247,7 @@ Track the progression through the canonical module lifecycle stages.
 - [x] **Wave 8: AIMC Analysis Integration** — **COMPLETE** (AIMC Wave 4 confirmed; analysis-service.ts delivered, AI_ROUTING_TABLE removed from ai-scoring.ts)
 - [x] **Wave 9: AIMC Embeddings/RAG Integration** — **COMPLETE** (AIMC Wave 5 confirmed; embedding-service.ts delivered, searchSimilarCriteria and matchEvidenceToCriteria via Capability.RAG — 2026-02-26)
 - [x] **Wave 10: AI Gateway Memory Wiring (Gap GR-001)** — **COMPLETE** (2026-02-27 — null stubs replaced with real PersonaLoader, SessionMemoryStore, PersistentMemoryAdapter; GET /api/ai/health endpoint added; AI_GATEWAY_MEMORY_RUNBOOK.md created; 8 RED gate tests → GREEN; 368/368 monorepo tests GREEN)
+- [ ] **Wave 11: Supabase Persistent Memory Wiring** — **PENDING** (Wave 10 CS2 certification + Supabase env provisioning required before start; architecture FROZEN — `ai-architecture.md` v3.0.0 §9.4–§9.5)
 
 **Wave 0 Test Coverage (31 tests GREEN)** — PRs #140, #142:
 - [x] Task 0.1 (schema-builder, 25 tests): MAT-T-0043, MAT-T-0044, MAT-T-0049–0053, MAT-T-0079–0094, MAT-T-0095, MAT-T-0096
@@ -1271,13 +1272,16 @@ Track the progression through the canonical module lifecycle stages.
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 5 (Build Execution — Wave 6 QA GATE PASS, production deployment pending CS2 Vercel/Supabase access) | Post-Delivery RCA COMPLETE
-**Overall Progress**: All 172 tests GREEN (24 test files), vercel.json valid, deployment config complete — Wave 6 QA gate passed 2026-02-24. Production deployment pending CS2 operator access.
+**Current Stage**: Stage 5 (Build Execution — Wave 6 QA GATE PASS, production deployment pending CS2 Vercel/Supabase access) | Post-Delivery RCA COMPLETE | Wave 10 COMPLETE | Wave 9.10 COMPLETE
+**Overall Progress**: All 425 tests GREEN (post-Wave 9.10, 2026-02-28). Wave 10 COMPLETE (2026-02-27 — 368/368). Wave 9.10 COMPLETE (2026-02-28 — 425/425). Wave 11 DEFINED — pending Wave 10 CS2 certification and Supabase env provisioning.
 **Blockers**:
 - ⏳ **Wave 6 PRODUCTION DEPLOYMENT PENDING CS2 ACCESS**: Vercel and Supabase production environment access required (QA gate PASS — not a technical blocker)
 - ✅ **Wave 7 COMPLETE**: AIMC Advisory Integration delivered (advisory-service.ts, EmbeddedAIAssistant AIMC wiring, env cleanup)
 - ✅ **Wave 8 COMPLETE**: AIMC Wave 4 confirmed; analysis-service.ts delivered, AI_ROUTING_TABLE removed from ai-scoring.ts (2026-02-26)
 - ✅ **Wave 9 COMPLETE**: AIMC Wave 5 confirmed; embedding-service.ts delivered, searchSimilarCriteria and matchEvidenceToCriteria via Capability.RAG (2026-02-26)
+- ✅ **Wave 9.10 COMPLETE**: Persona Lifecycle delivered (2026-02-28 — 2 new personas, 5 YAML completions, AIMC_PERSONA_LIFECYCLE.md, 42 new tests → 425 total GREEN)
+- ✅ **Wave 10 COMPLETE**: AI Gateway Memory Wiring delivered (2026-02-27 — null stubs replaced, health endpoint, runbook; 8 RED gate tests → GREEN)
+- ⏳ **Wave 11 PENDING**: Supabase Persistent Memory Wiring — awaiting Wave 10 CS2 certification + Supabase env vars (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`) provisioned in Vercel
 
 **Status Summary**:
 - ✅ Backend service layer: 100% implemented and tested (modules/mat/src/services/)
@@ -1289,6 +1293,9 @@ Track the progression through the canonical module lifecycle stages.
 - ✅ Post-Delivery RCA: Complete — `modules/mat/05-rca/MAT_APP_V2_RCA.md` v1.0.0; PBFAG governance gate established
 - ✅ **Wave 6 QA GATE PASS (2026-02-24)**: 172/172 tests GREEN across 24 test files. vercel.json valid. Deployment config complete. CWT evidence: `modules/mat/05-build-evidence/prehandover-CWT-wave6-20260224.md`. Formal PREHANDOVER proof: `PREHANDOVER_PROOF_WAVE_6_QA.md`.
 - ⏳ Wave 6 production deployment: pending CS2 Vercel/Supabase operator access
+- ✅ **Wave 9.10 COMPLETE (2026-02-28)**: Persona Lifecycle — 2 new personas, 5 YAML completions, AIMC_PERSONA_LIFECYCLE.md, 42 RED gate tests → GREEN (session-071; IAA: IAA-session-017-20260228-PASS)
+- ✅ **Wave 10 COMPLETE (2026-02-27)**: AI Gateway Memory Wiring — 8 RED gate tests → GREEN; 368/368 monorepo tests GREEN; null stubs replaced; health endpoint; runbook (session-069)
+- ⏳ **Wave 11 DEFINED — PENDING**: Supabase Persistent Memory Wiring — implementation plan v1.9.0; awaiting CS2 wave-start authorization + Supabase env vars
 
 **Next Steps**: 
 1. ~~Create `01.5-trs/` folder in module structure~~
@@ -1325,6 +1332,9 @@ Track the progression through the canonical module lifecycle stages.
 27. ~~Execute Wave 7: AIMC Advisory Integration (AIMC Wave 3 confirmed; advisory-service.ts, EmbeddedAIAssistant AIMC wiring delivered)~~
 28. ~~Execute Wave 8: AIMC Analysis Integration (AIMC Wave 4 confirmed; analysis-service.ts delivered, AI_ROUTING_TABLE capability-aligned)~~
 29. ~~**[COMPLETE] Execute Wave 9: AIMC Embeddings/RAG Integration** — CS2 authorized via issue #632 (2026-02-26); AIMC Wave 5 confirmed complete; embedding-service.ts delivered; searchSimilarCriteria and matchEvidenceToCriteria via Capability.RAG (2026-02-26)~~
+30. ~~**[COMPLETE] Execute Wave 9.10: Persona Lifecycle** — session-071 (2026-02-28); 2 new personas, 5 YAML completions, AIMC_PERSONA_LIFECYCLE.md; 42 tests → 425 GREEN; IAA-session-017-20260228-PASS~~
+31. ~~**[COMPLETE] Execute Wave 10: AI Gateway Memory Wiring (Gap GR-001)** — session-069 (2026-02-27); null stubs replaced; health endpoint; runbook; 8 RED gate tests → GREEN; 368/368~~
+32. **[PENDING] Execute Wave 11: Supabase Persistent Memory Wiring** — awaiting CS2 wave-start authorization; prerequisites: Wave 10 CS2-certified + `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` provisioned; architecture FROZEN; see implementation-plan.md §2.12
 
 ---
 
@@ -1915,9 +1925,12 @@ note flagged: "Wave 9.10 remaining personas (incident-intelligence, maturity-roa
 Wave 9.9 — issue dedicated task immediately after Wave 9.8 closes." The dedicated issue was
 not created before this FCWT session.
 
-**Corrective Action**: Addressed in issue #651. ui-builder to deliver missing personas
-(incident-intelligence, maturity-roadmap) and a formal persona versioning protocol document
-as part of Wave 9.10 remediation.
+**Corrective Action**: ✅ **RESOLVED (session-071, 2026-02-28)** — Wave 9.10 delivered by api-builder
+(2 new personas: `incident-intelligence-advisor.md`, `maturity-roadmap-advisor.md`) + YAML front-matter
+completed on 5 existing personas (`mat-advisor.md`, `isms-navigator.md`, `risk-advisor.md`,
+`xdetect-advisor.md`, `course-crafter-advisor.md`) + governance document `AIMC_PERSONA_LIFECYCLE.md`
+(governance-liaison-isms-agent) + 42 RED gate tests (qa-builder) → GREEN. Monorepo: 425/425 tests GREEN.
+IAA token: IAA-session-017-20260228-PASS (PHASE_B_BLOCKING, 16/16 checks).
 
 **Lesson Learned (LL-MAT-PL-001)**: When a parking station note flags "issue dedicated task
 immediately," Foreman MUST create that issue before closing the wave session. Deferred task
@@ -1939,9 +1952,11 @@ The following items are registered for agent self-learning and future wave plann
 | LL-MAT-PL-001 | Parking station [IMMEDIATE] items must be resolved in-session | foreman-v2 |
 | LL-MAT-GR-001 | All null/stub adapters in factory functions must be gap-resolved before wave closes | foreman-v2, api-builder |
 | LL-MAT-GR-002 | Process Governance Gap Resolution Protocol: all 7 steps (App Description → FRS → TRS → Impl Plan → RED tests → Builder allocation → Progress Tracker) required for every gap | foreman-v2 |
+| LL-MAT-W11-001 | Wave documentation gaps (no full impl plan section, no tracker entry) must be caught at wave-end, not deferred to next wave planning session | foreman-v2 |
+| LL-MAT-W11-002 | Cross-wave learning outcomes (INC-IAA-SKIP-001, A-014) must be explicitly referenced in successor wave plan sections to ensure institutional learning is applied | foreman-v2 |
 
-**Session reference**: session-064-mat-wave6-final-20260227.md; session-wave10-20260227.md
-**Updated by**: foreman-v2-agent (session-064-20260227); foreman-v2-agent (session-wave10-20260227)
+**Session reference**: session-064-mat-wave6-final-20260227.md; session-wave10-20260227.md; session-073-wave11-governance-20260301.md
+**Updated by**: foreman-v2-agent (session-064-20260227); foreman-v2-agent (session-wave10-20260227); foreman-v2-agent (session-073-20260301)
 
 ---
 
@@ -1992,3 +2007,63 @@ Full Supabase cross-invocation persistence is **Wave 11** scope, per existing Wa
 > "Never open a deployment/CI/CD issue for a service or path until it exists in the repository."
 
 This rule applies to all apps in the ISMS suite. To be canonised per CS2 direction.
+
+---
+
+## Wave 11: Supabase Persistent Memory Wiring
+
+**Identified**: 2026-03-01  
+**Status**: DEFINED — PENDING CS2 wave-start authorization  
+**Issue Reference**: [Governance Task] Wave 11 Module Lifecycle Documentation & Progress Tracker Update Required  
+**CS2 Authorization**: Pending — Wave 10 CS2 certification prerequisite + Supabase env provisioning required  
+**Architecture Authority**: `modules/mat/02-architecture/ai-architecture.md` v3.0.0 §9.4–§9.5 (FROZEN per CS2 directive 2026-02-27)
+
+### Wave Description
+
+Wave 11 completes the persistent memory migration path deferred from Wave 4. The Wave 10 delivery
+wired an in-memory `PersistentMemoryAdapter` with correct interface semantics. Wave 11 replaces
+this with a `SupabasePersistentMemoryAdapter` backed by the `ai_memory` Supabase table, providing
+cross-invocation persistent AI memory.
+
+### Entry Criteria
+
+All of the following must be confirmed before Wave 11 begins:
+- [ ] Wave 10 CS2-certified complete (PREHANDOVER proof + IAA token accepted)
+- [ ] `SUPABASE_URL` provisioned as Vercel environment variable
+- [ ] `SUPABASE_SERVICE_ROLE_KEY` provisioned as Vercel environment variable
+- [ ] CS2 explicit written wave-start authorization received
+
+### State Machine
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-01 | DEFINED | Wave 11 section added to implementation plan v1.9.0; governance docs updated |
+| TBD | AUTHORIZED | CS2 wave-start authorization received |
+| TBD | IN_PROGRESS | Builders appointed; RED gate tests defined |
+| TBD | COMPLETE | T-075-SUP + T-076-SUP GREEN; Supabase adapter wired; health check active |
+
+### Principal Artifacts (Expected)
+
+| Artifact | Builder | Status |
+|---|---|---|
+| RED gate tests (T-075-SUP-1 through T-075-SUP-4, T-076-SUP-1) | qa-builder | PENDING |
+| `ai_memory` migration validation / `001_ai_memory.sql` | schema-builder | PENDING |
+| `packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.ts` | api-builder | PENDING |
+| `api/ai/request.ts` — `buildPersistentMemory()` Supabase wiring | api-builder | PENDING |
+| `api/ai/health.ts` — `supabaseWiring: "active"` reporting | api-builder | PENDING |
+| `api/ai/AI_GATEWAY_MEMORY_RUNBOOK.md` — §4 and §5 update | api-builder | PENDING |
+
+### Cross-Wave Learning Outcomes Applied
+
+| ID | Learning | Source Wave | Applied to Wave 11 |
+|----|----------|-------------|-------------------|
+| LL-MAT-GR-001 | All null/stub adapters must be gap-resolved before wave closes | Wave 10 (GR-001) | Wave 11 GATE includes Supabase adapter verification as hard gate |
+| LL-MAT-GR-002 | Process Governance Gap Resolution Protocol: all 7 steps required | Wave 10 | Wave 11 follows all 7 steps in implementation plan §2.12 |
+| INC-IAA-SKIP-001 | IAA tool call mandatory before writing iaa_audit_token (A-014) | Wave 10 (session-072 RCA) | Wave 11 PREHANDOVER proof MUST include verbatim IAA response |
+| S-009 | Verbatim IAA response paste in PREHANDOVER proof | Wave 10 (INC-IAA-SKIP-001) | Wave 11 PREHANDOVER template to include `## IAA Agent Response (verbatim)` |
+
+### Oversight Records
+
+| ID | Date | Severity | Description | Status |
+|----|------|----------|-------------|--------|
+| OVR-W11-001 | 2026-03-01 | MINOR | Wave 11 documentation gap: Wave 11 was defined in Wave 10 dependency gate but had no full implementation plan section, no BUILD_PROGRESS_TRACKER entry, and no cross-wave learning outcomes recorded. Corrected in this session (foreman-v2-agent, session-073). | RESOLVED |
