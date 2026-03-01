@@ -1369,8 +1369,8 @@ integration-builder
 qa-builder
 Note: Builder embodiment is DISTINCT from orchestrator pattern (Foreman vs. Maturion)
 
-4.3 Command-Maturion (Foreman App)
-Activated when: app = foreman-app OR mobile interface
+4.3 Command-Maturion (App Management Centre - AMC)
+Activated when: app = maturion-amc OR mobile interface
 
 Behavior:
 
