@@ -2067,3 +2067,62 @@ All of the following must be confirmed before Wave 11 begins:
 | ID | Date | Severity | Description | Status |
 |----|------|----------|-------------|--------|
 | OVR-W11-001 | 2026-03-01 | MINOR | Wave 11 documentation gap: Wave 11 was defined in Wave 10 dependency gate but had no full implementation plan section, no BUILD_PROGRESS_TRACKER entry, and no cross-wave learning outcomes recorded. Corrected in this session (foreman-v2-agent, session-073). | RESOLVED |
+
+---
+
+## Wave 12: Full Functionality & Build Wiring Verification
+
+**Identified**: 2026-03-01  
+**Status**: DEFINED — session-076 (2026-03-01)  
+**Issue Reference**: [Foreman QA Orchestration] 100% Full Functionality & Build Wiring Verification Plan (Wave 11) — #709  
+**CS2 Authorization**: Issue #709 opened and assigned by CS2 (@APGI-cmy) — 2026-03-01  
+**Architecture Authority**: `modules/mat/02-architecture/ai-architecture.md` v3.0.0 (FROZEN — no new architecture required for QA verification wave)
+
+### Wave Description
+
+Wave 12 is the comprehensive cross-domain QA verification wave for the MAT module. It verifies 100% full functionality across all delivered waves, with special focus on Supabase Persistent Memory integration (Wave 11) and the complete backend-frontend wiring. This wave does NOT add new features. It verifies that every previously delivered capability works correctly end-to-end in the production deployment context: no regressions, no untested paths, no broken wiring.
+
+**Domains covered**: persistent memory (Supabase), API contract, frontend flows, cross-component integration, deployment artefacts.
+
+### Entry Criteria
+
+All of the following confirmed before Wave 12 begins:
+- [x] Wave 11 CS2-certified COMPLETE (IAA-session-021-20260301-PASS accepted)
+- [x] `supabaseWiring: "active"` confirmed in production health endpoint
+- [x] 430/430 baseline tests GREEN (zero regressions)
+- [x] Architecture v3.0.0 FROZEN
+
+### State Machine
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-01 | DEFINED | Wave 12 section added to implementation plan v2.0.0; governance docs created (session-076) |
+
+### Principal Artifacts
+
+| Artifact | Builder | Status |
+|---|---|---|
+| RED gate tests T-W12-QAV-1 through T-W12-QAV-5 (Supabase E2E + coverage audit) | qa-builder | ⏳ PENDING |
+| RED gate tests T-W12-API-1 through T-W12-API-5 (API contract verification) | api-builder | ⏳ PENDING |
+| RED gate tests T-W12-UI-1 through T-W12-UI-5 (frontend flow verification) | ui-builder | ⏳ PENDING |
+| RED gate tests T-W12-INT-1 through T-W12-INT-5 (cross-component E2E + deployment) | integration-builder | ⏳ PENDING |
+
+### Delegation Sequence
+
+Wave 12 follows strict sequential delegation (each builder must deliver GREEN before next begins):
+
+```
+Task 12.1: qa-builder    → T-W12-QAV-1–5 RED → GREEN
+Task 12.2: api-builder   → T-W12-API-1–5 RED → GREEN  (after 12.1 GREEN)
+Task 12.3: ui-builder    → T-W12-UI-1–5  RED → GREEN  (after 12.2 GREEN)
+Task 12.4: integration-builder → T-W12-INT-1–5 RED → GREEN  (after 12.3 GREEN)
+```
+
+### Cross-Wave Learning Outcomes Applied
+
+| ID | Learning | Source Wave | Applied to Wave 12 |
+|----|----------|-------------|-------------------|
+| LL-MAT-GR-001 | All null/stub adapters must be gap-resolved before wave closes | Wave 10 (GR-001) | Wave 12 GATE includes Supabase degraded-mode (no-env-var fallback) as hard gate T-W12-QAV-4 |
+| INC-IAA-SKIP-001 / A-014 | IAA tool call mandatory before writing iaa_audit_token | Wave 10 (session-072 RCA) | Wave 12 PREHANDOVER proof MUST include verbatim IAA response (S-009) |
+| LL-W11-001 | Three-builder delegation (qa-builder RED → schema-builder migration → api-builder implementation) validated | Wave 11 (session-075) | Wave 12 uses same pattern extended to four builders with RED gate before each task |
+
