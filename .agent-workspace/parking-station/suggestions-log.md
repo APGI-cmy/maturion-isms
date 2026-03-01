@@ -255,3 +255,7 @@
 | 2026-03-01 | governance-liaison-isms | session-031 | SESSION-END | CP-3.5 approval tracking: no formal mechanism exists for CS2 to record approval of data model spec beyond kick-off issue comment | session-031-20260301.md |
 | 2026-03-01 | governance-liaison-isms | session-031 | SESSION-END | CL-13 RED gate: D5/D6/D7 RED gate test scope is unspecified; follow-on governance deliverable needed for qa-builder | session-031-20260301.md |
 | 2026-03-01 | governance-liaison-isms | session-031 | SESSION-END | Session memory template missing separate session_number field; composite session_id makes auto-incrementing harder to track | session-031-20260301.md |
+| 2026-03-01 | independent-assurance-agent | session-030 | [Phase 4] | Remove iaa_invocation_result field from governance-liaison session memory template — builder should not self-assess IAA necessity | session-030-20260301.md |
+| 2026-03-01 | independent-assurance-agent | session-030 | [Phase 4] | Rename second A-016 in FAIL-ONLY-ONCE.md to A-018 to resolve duplicate rule ID conflict (persists sessions 027-030) | session-030-20260301.md |
+| 2026-03-01 | independent-assurance-agent | session-030 | [Phase 4] | Expand AAWP_MAT path patterns in trigger table to include governance/EXECUTION/ and governance/aimc/ paths | session-030-20260301.md |
+| 2026-03-01 | foreman-v2-agent | session-080 | [SESSION-END] | Create standard kick-off issue template with pre-populated Foreman deliverables checklist — reduces CS2 review burden at kick-off gate | session-080-waveCL3.5-CL13-kickoff-20260301.md |
