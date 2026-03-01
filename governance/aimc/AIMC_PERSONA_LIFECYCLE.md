@@ -2,8 +2,8 @@
 
 **Document Type**: Governance Artefact — Wave 9.10 Deliverable
 **Status**: ACTIVE
-**Version**: 1.0.1
-**Effective Date**: 2026-02-28
+**Version**: 1.1.0
+**Effective Date**: 2026-03-01
 **Owner**: CS2 — Johan Ras (@APGI-cmy)
 **Location**: `governance/aimc/AIMC_PERSONA_LIFECYCLE.md`
 
@@ -47,6 +47,7 @@ The following table is the **authoritative Persona Registry** for the Maturion A
 | `course-crafter-advisor` | Course Crafter | Course Crafter Advisor — AI-powered instructional design for ISMS learning content | 1.0.0 | ACTIVE | IDLE ⚠️ | 2026-02-28 | CS2 |
 | `incident-intelligence-advisor` | Incident Intelligence | Incident Intelligence Module AI Advisor — incident analysis, IOC enrichment, TTP correlation | 1.0.0 | ACTIVE | IDLE ⚠️ | 2026-02-28 | CS2 |
 | `maturity-roadmap-advisor` | Maturity Roadmap | Maturity Roadmap Module AI Advisor — roadmap generation, remediation planning, gap prioritisation | 1.0.0 | ACTIVE | IDLE ⚠️ | 2026-02-28 | CS2 |
+| `maturion-advisor` | Maturion (cross-module) | Maturion Enterprise AI Advisor — enterprise security, operational maturity, and ISMS governance across all six maturity domains | 1.0.0 | ACTIVE | IDLE ⚠️ | 2026-03-01 | CS2 |
 
 **Wiring State Legend**:
 - `WIRED ✅` — Module has active AIMC gateway integration and uses this persona in production
@@ -397,6 +398,7 @@ The following items are **not** remediated by Wave 9.10 but are tracked for subs
 
 | Version | Date | Author | Wave | Change Summary |
 |---|---|---|---|---|
+| 1.1.0 | 2026-03-01 | `foreman-v2-agent` session-078 | CL-1 (LKIAC Wave 1) | Added `maturion-advisor` to Persona Registry (§2). Migrated from legacy `apps/maturion-maturity-legacy/src/agents/maturion/prompts/system.md`. IDLE — wiring pending CP-1 CS2 sign-off. |
 | 1.0.1 | 2026-02-28 | `governance-liaison-isms-agent` | Wave 9.10 follow-up | Corrected §1 Critical Invariant, §5.4 Validation Enforcement, §7.1 compliance table, and §7.2 test table to reflect that PersonaLoader does not yet perform runtime YAML validation; documented target state as future requirement. PR reviewer comments r2867457935, r2867457937, r2867457942, r2867457944. |
 | 1.0.0 | 2026-02-28 | `governance-liaison-isms-agent` | Wave 9.10 | Initial creation. Establishes persona lifecycle governance protocol. Persona Registry populated with all 8 current personas. Gap analysis (Wave 9.10, Gap 5) documented. Remediation of G5-1 through G5-5 recorded. |
 

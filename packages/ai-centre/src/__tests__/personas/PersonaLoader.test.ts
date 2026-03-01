@@ -20,6 +20,7 @@ import { PersonaNotFoundError } from '../../types/index.js';
 // ---------------------------------------------------------------------------
 
 describe('PersonaLoader', () => {
+
   it(
     // GRS-028 | AAD §9.2
     "load() returns the full Markdown content of a known agentId",
@@ -84,6 +85,92 @@ describe('PersonaLoader', () => {
         expect(agentId.length).toBeGreaterThan(0);
         expect(agentId).not.toContain('.md');
       }
+    },
+  );
+});
+
+// ---------------------------------------------------------------------------
+// CL-1 — maturion-advisor persona (LKIAC Wave 1) — RED gate tests
+//
+// These tests MUST FAIL until Task CL-1.2 creates maturion-advisor.md.
+// They become GREEN after the persona file is created (Task CL-1.2).
+//
+// Authority: CS2 (@APGI-cmy) — Issue [CL-1]
+// Wave: CL-1 (LKIAC Wave 1 — Maturion Persona Migration)
+// ---------------------------------------------------------------------------
+
+describe('CL-1 — maturion-advisor persona (LKIAC Wave 1)', () => {
+  const loader = new PersonaLoader();
+
+  /**
+   * CL-1-T-001
+   * RED until maturion-advisor.md exists.
+   * load("maturion-advisor") must return non-empty Markdown content.
+   */
+  it(
+    'CL-1-T-001: load("maturion-advisor") returns non-empty markdown content',
+    async () => {
+      const content = await loader.load('maturion-advisor');
+
+      expect(typeof content).toBe('string');
+      expect(content.length).toBeGreaterThan(0);
+      // Persona files are Markdown — must contain at least one heading
+      expect(content).toContain('#');
+    },
+  );
+
+  /**
+   * CL-1-T-002
+   * RED until maturion-advisor.md exists with YAML front-matter.
+   * The persona file must contain a `---` YAML front-matter delimiter.
+   */
+  it(
+    'CL-1-T-002: maturion-advisor front-matter contains "---" YAML delimiter',
+    async () => {
+      const content = await loader.load('maturion-advisor');
+
+      // Front-matter must start at the beginning of the file with `---\n`
+      expect(content.startsWith('---')).toBe(true);
+    },
+  );
+
+  /**
+   * CL-1-T-003
+   * RED until maturion-advisor.md exists with `agentId:` in its front-matter.
+   */
+  it(
+    'CL-1-T-003: maturion-advisor front-matter contains "agentId:" field',
+    async () => {
+      const content = await loader.load('maturion-advisor');
+
+      expect(content).toContain('agentId:');
+    },
+  );
+
+  /**
+   * CL-1-T-004
+   * RED until maturion-advisor.md exists with `version:` in its front-matter.
+   */
+  it(
+    'CL-1-T-004: maturion-advisor front-matter contains "version:" field',
+    async () => {
+      const content = await loader.load('maturion-advisor');
+
+      expect(content).toContain('version:');
+    },
+  );
+
+  /**
+   * CL-1-T-005
+   * RED until maturion-advisor.md exists in the agents directory.
+   * listAvailable() must include "maturion-advisor".
+   */
+  it(
+    'CL-1-T-005: listAvailable() includes "maturion-advisor"',
+    async () => {
+      const available = await loader.listAvailable();
+
+      expect(available).toContain('maturion-advisor');
     },
   );
 });
