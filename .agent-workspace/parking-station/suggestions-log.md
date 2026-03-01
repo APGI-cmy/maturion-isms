@@ -224,3 +224,7 @@
 | 2026-03-01 | independent-assurance-agent | session-027 | Phase 3 | CORE-007 TBD prevention: foreman/builder agents should use 'PENDING — reason' instead of 'TBD' in table cells to prevent common CORE-007 failures on governance document waves | session-027-20260301.md |
 | 2026-03-01 | independent-assurance-agent | session-028 | Phase 4 | Re-invocation PASS: targeted TBD→PENDING fixes applied correctly; STOP-AND-FIX mechanism worked as designed | session-028-20260301.md |
 | 2026-03-01 | independent-assurance-agent | session-028 | Phase 4 | S-002: LKIAC waves without live DB access should pre-declare Advisory Items in PREHANDOVER proof to capture pending CS2 DB actions formally | session-028-20260301.md |
+| 2026-03-01 | governance-liaison-isms | session-030 | SESSION-END | Persona Registry auto-test should assert 9 personas when maturion-advisor is wired | session-030-20260301.md |
+| 2026-03-01 | governance-liaison-isms | session-030 | SESSION-END | Align Effective Date terminology with Last Updated used by other governance docs | session-030-20260301.md |
+| 2026-03-01 | independent-assurance-agent | session-029 | Phase 4 | S-001: Foreman FAIL-ONLY-ONCE should require PREHANDOVER proof creation BEFORE IAA invocation — ordering constraint prevents ceremony-after-content errors | session-029-20260301.md |
+| 2026-03-01 | independent-assurance-agent | session-029 | Phase 4 | S-002: REJECTION-PACKAGE for ceremony-only failures should flag as "lightweight fix — PREHANDOVER creation only" to reduce remediation confusion | session-029-20260301.md |
