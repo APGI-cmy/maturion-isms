@@ -310,12 +310,10 @@ describe('handler', () => {
 // ---------------------------------------------------------------------------
 // Wave 11 — Supabase persistence (T-075-SUP-1 through T-075-SUP-4)
 //
-// These tests are RED because SupabasePersistentMemoryAdapter does NOT yet exist.
-// T-075-SUP-1 fails because buildPersistentMemory() currently returns
-// PersistentMemoryAdapter (in-memory), not SupabasePersistentMemoryAdapter.
-// T-075-SUP-2 through T-075-SUP-4 use dynamic import() so that only those
-// individual tests fail with "Cannot find module" — existing GREEN tests are
-// NOT broken by a missing static import at file-collection time.
+// These tests validate SupabasePersistentMemoryAdapter functionality including
+// persistence, tenant isolation, and expiry pruning.
+// T-075-SUP-1 verifies buildPersistentMemory() returns SupabasePersistentMemoryAdapter.
+// T-075-SUP-2 through T-075-SUP-4 use a mock Supabase client to test adapter logic.
 //
 // References: FR-075-SUP, TR-075-SUP | Wave 11 (Supabase Persistent Memory Wiring)
 // ---------------------------------------------------------------------------
@@ -375,9 +373,6 @@ type MockSupabaseClient = ReturnType<typeof makeMockSupabaseClient>;
 
 describe('Wave 11 — Supabase persistence', () => {
   // T-075-SUP-1 --------------------------------------------------------------
-  // RED: buildPersistentMemory() currently returns PersistentMemoryAdapter
-  // (in-memory). This turns GREEN once api-builder wires
-  // SupabasePersistentMemoryAdapter into request.ts.
   it('T-075-SUP-1: buildPersistentMemory() returns a SupabasePersistentMemoryAdapter instance', () => {
     const adapter = (buildPersistentMemory as unknown as () => unknown)();
     expect(adapter).toBeDefined();
@@ -387,10 +382,8 @@ describe('Wave 11 — Supabase persistence', () => {
   });
 
   // T-075-SUP-2 --------------------------------------------------------------
-  // RED: dynamic import of SupabasePersistentMemoryAdapter fails with
-  // "Cannot find module" until api-builder creates the file.
   it('T-075-SUP-2: persist() followed by retrieve() returns the persisted entry (simulated cold start)', async () => {
-    // Dynamic import isolates the "Cannot find module" failure to this test only
+    // Dynamic import verifies module resolution and avoids vitest cache issues
     const { SupabasePersistentMemoryAdapter } = await import(
       '../../packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.js'
     );
@@ -418,10 +411,7 @@ describe('Wave 11 — Supabase persistence', () => {
   });
 
   // T-075-SUP-3 --------------------------------------------------------------
-  // RED: dynamic import of SupabasePersistentMemoryAdapter fails with
-  // "Cannot find module" until api-builder creates the file.
   it('T-075-SUP-3: retrieve() filters by organisation_id — org A entries are NOT visible to org B', async () => {
-    // Dynamic import isolates the "Cannot find module" failure to this test only
     const { SupabasePersistentMemoryAdapter } = await import(
       '../../packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.js'
     );
@@ -465,10 +455,7 @@ describe('Wave 11 — Supabase persistence', () => {
   });
 
   // T-075-SUP-4 --------------------------------------------------------------
-  // RED: dynamic import of SupabasePersistentMemoryAdapter fails with
-  // "Cannot find module" until api-builder creates the file.
   it('T-075-SUP-4: pruneExpired() deletes entries with expires_at < NOW()', async () => {
-    // Dynamic import isolates the "Cannot find module" failure to this test only
     const { SupabasePersistentMemoryAdapter } = await import(
       '../../packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.js'
     );

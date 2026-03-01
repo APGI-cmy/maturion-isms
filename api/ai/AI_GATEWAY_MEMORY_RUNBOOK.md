@@ -1,6 +1,6 @@
 # AI Gateway Memory Architecture Runbook
 
-**Version**: 1.0.0
+**Version**: 1.1.0
 **Wave**: Wave 10 — AI Gateway Memory Wiring (Gap Remediation)
 **Architecture Reference**: `modules/mat/02-architecture/ai-architecture.md` v3.0.0 §9–§11
 **FRS**: FR-073–FR-077 | **TRS**: TR-073–TR-077
@@ -16,7 +16,7 @@ requests through the `@maturion/ai-centre` AICentre Gateway. It wires three coll
 |---|---|---|
 | `personaLoader` | `PersonaLoader` (file-system) | No change planned |
 | `sessionMemory` | `SessionMemoryStore` (in-memory) | Supabase-backed (optional) |
-| `persistentMemory` | `PersistentMemoryAdapter` (in-memory) | `SupabasePersistentMemoryAdapter` |
+| `persistentMemory` | `PersistentMemoryAdapter` (in-memory) | COMPLETE (Wave 11) |
 
 ---
 
@@ -177,9 +177,59 @@ If a request specifies `agent: "unknown-persona"` and the file does not exist:
 | `GITHUB_TOKEN` | Yes | GitHub Models API key | Wave 6+ |
 | `OPENAI_API_KEY` | Yes | OpenAI API key | Wave 6+ |
 | `VITE_API_BASE_URL` | No | CORS origin for MAT frontend | Wave 6+ |
-| `SUPABASE_URL` | Wave 11 | Supabase project URL for persistent memory | Wave 11 |
+| `VITE_SUPABASE_URL` | Wave 11 | Supabase project URL for persistent memory (also used by frontend) | Wave 11 |
 | `SUPABASE_SERVICE_ROLE_KEY` | Wave 11 | Service role key for persistent memory | Wave 11 |
+| `SUPABASE_DB_URL` | Wave 11 | Full database URL — used by `supabase db push` for migrations | Wave 11 |
 
 ---
 
-*Runbook version 1.0.0 — Wave 10 baseline. Update on Wave 11 delivery.*
+## 4. Wave 11 Migration — Supabase Persistent Memory
+
+**Status**: COMPLETE (2026-03-01)
+**Migration**: `packages/ai-centre/supabase/migrations/001_ai_memory.sql`
+**Adapter**: `packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.ts`
+**Wired in**: `api/ai/request.ts` → `buildPersistentMemory()`
+
+### Environment Variables Required
+| Variable | Purpose |
+|---|---|
+| `VITE_SUPABASE_URL` | Supabase project URL (also used by frontend) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key — bypasses RLS for trusted server-side access |
+| `SUPABASE_DB_URL` | Full database URL — used by `supabase db push` for migrations |
+
+### CI Migration
+The migration is applied during CI via:
+```bash
+supabase db push --db-url "$SUPABASE_DB_URL"
+```
+
+### Tenant Isolation
+The `SupabasePersistentMemoryAdapter` uses the service role key which bypasses RLS.
+Tenant isolation is enforced at the application layer:
+- All `retrieve()` calls include `WHERE organisation_id = $organisationId`
+- All `pruneExpired()` calls include `WHERE organisation_id = $organisationId`
+- RLS policy in `001_ai_memory.sql` provides defence-in-depth for non-service-role access
+
+---
+
+## 5. Supabase Production Operations
+
+### Connection Behaviour
+The `SupabasePersistentMemoryAdapter` creates a Supabase client per serverless invocation using
+`createClient(VITE_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)`. Supabase's client handles connection
+pooling internally via PostgREST.
+
+### Cold Start Behaviour
+Each Vercel serverless function invocation creates a new Supabase client. This is acceptable
+because PostgREST handles connection pooling server-side. No warm connection state is assumed.
+
+### RLS Test
+To verify RLS is working for non-service-role access:
+```sql
+SET app.current_organisation_id = 'org-test';
+SELECT * FROM ai_memory;  -- Should only return rows for org-test
+```
+
+---
+
+*Runbook version 1.1.0 — Wave 11: Supabase Persistent Memory Wiring complete.*
