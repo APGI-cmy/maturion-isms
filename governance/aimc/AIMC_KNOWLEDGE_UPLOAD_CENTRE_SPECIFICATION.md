@@ -1,6 +1,9 @@
 # AIMC Knowledge Upload Centre — Governance Specification
 
 **Document Type**: Governance Artefact — CL-5 Deliverable  
+**Status**: APPROVED — CP-5 SIGNED OFF by CS2 (Johan Ras / @APGI-cmy) on 2026-03-01  
+**Version**: 1.0.0  
+**Effective Date**: 2026-03-01  
 **Status**: APPROVED — CP-5 Decisions Recorded — 2026-03-01  
 **Version**: 1.1.0  
 **Effective Date**: 2026-03-01  
@@ -17,11 +20,15 @@
 **APS Reference**: `governance/aimc/AIMC_AGENT_PROTOCOL_SPECIFICATION.md`  
 **Schema Reference**: `packages/ai-centre/supabase/migrations/006_ai_knowledge_metadata.sql`  
 **Inventory Reference**: `governance/aimc/AIMC_KNOWLEDGE_BASE_INVENTORY.md`
+**Issue #733 Reference**: APGI-cmy/maturion-isms#733 — CP-5 Amendment: CS2 Decisions OQ-001–OQ-005
+**Issue #735 Reference**: APGI-cmy/maturion-isms#735 — AMC Rename and Scope Expansion
 
 > ⚠️ **IMPLEMENTATION GATE — HARD BLOCK**
 >
 > CL-10 (Upload Endpoint Implementation) and CL-11 (Module Integration with Knowledge Retrieval)
 > MUST NOT begin until this specification has received CS2 approval at Checkpoint CP-5.
+> No builder agent may implement the upload endpoint or any dependent feature without an
+> AMC (App Management Centre)-issued wave-start authorisation citing this document's CS2-approved status.
 > No builder agent may implement the upload endpoint or any dependent feature without a
 > Foreman-issued wave-start authorisation citing this document's CS2-approved status.
 > This is an absolute gate. Time pressure does not override it.
