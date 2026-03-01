@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'modules/mat/frontend/**'
+      - 'modules/**'
       - 'vercel.json'
       - '.github/workflows/deploy-mat-vercel.yml'
       - 'apps/maturion-maturity-legacy/supabase/migrations/**'
@@ -13,7 +13,7 @@ on:
     branches:
       - main
     paths:
-      - 'modules/mat/frontend/**'
+      - 'modules/**'
       - 'vercel.json'
       - '.github/workflows/deploy-mat-vercel.yml'
       - 'apps/maturion-maturity-legacy/supabase/migrations/**'
@@ -44,6 +44,25 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Check for direct provider SDK imports (T-C-010 CI gate)
+        working-directory: .
+        run: |
+          echo "Scanning modules/ for direct provider SDK imports..."
+          # Fail if any non-test file in modules/ imports openai, @anthropic-ai, or similar SDKs directly
+          if grep -rn \
+            --include="*.ts" --include="*.tsx" --include="*.js" \
+            --exclude="*.test.ts" --exclude="*.test.tsx" --exclude="*.test.js" \
+            --exclude="*.spec.ts" --exclude="*.spec.tsx" \
+            -E "from ['\"]openai['\"]|from ['\"]@anthropic-ai|from ['\"]@google/generative-ai|require\(['\"]openai['\"]|require\(['\"]@anthropic-ai|require\(['\"]@google/generative-ai" \
+            modules/; then
+            echo ""
+            echo "❌ T-C-010 FAIL: Direct provider SDK import found in modules/."
+            echo "   All AI provider access MUST go through the @maturion/ai-centre gateway."
+            echo "   Replace the import above with the appropriate AICentre capability call."
+            exit 1
+          fi
+          echo "✅ T-C-010 PASS: No direct provider SDK imports found in modules/."
 
       - name: Run ESLint
         run: npm run lint
@@ -140,11 +159,45 @@ jobs:
         uses: supabase/setup-cli@v1
 
       - name: Apply pending migrations
-        working-directory: apps/maturion-maturity-legacy
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
-          supabase db push --db-url "$SUPABASE_DB_URL"
+          psql "$SUPABASE_DB_URL" -c "CREATE TABLE IF NOT EXISTS legacy_migrations (name TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now());"
+          for f in $(ls apps/maturion-maturity-legacy/supabase/migrations/*.sql | sort); do
+            name=$(basename "$f")
+            count=$(psql "$SUPABASE_DB_URL" -t -A -c "SELECT COUNT(*) FROM legacy_migrations WHERE name = '$name';")
+            if [ "$count" = "0" ]; then
+              echo "Applying $f..."
+              psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "$f"
+              psql "$SUPABASE_DB_URL" -c "INSERT INTO legacy_migrations (name) VALUES ('$name');"
+            else
+              echo "Skipping $f (already applied)"
+            fi
+          done
+
+      # T-A-012: AIMC package migrations (packages/ai-centre/supabase/migrations/)
+      # DEPENDENCY: AIMC migration 005_ai_feedback_pipeline.sql references the `organisations` table
+      # defined in the legacy app migrations. This step MUST run AFTER "Apply pending migrations"
+      # (apps/maturion-maturity-legacy) and MUST target the same $SUPABASE_DB_URL.
+      # NOTE: `supabase db push` requires <timestamp>_name.sql filenames; AIMC uses sequential
+      # names (001_ai_memory.sql). psql is used directly with an aimc_migrations tracking table
+      # to apply each file exactly once, matching Supabase's migration semantics.
+      - name: Apply AIMC package migrations
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          psql "$SUPABASE_DB_URL" -c "CREATE TABLE IF NOT EXISTS aimc_migrations (name TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now());"
+          for f in $(ls packages/ai-centre/supabase/migrations/*.sql | sort); do
+            name=$(basename "$f")
+            count=$(psql "$SUPABASE_DB_URL" -t -A -c "SELECT COUNT(*) FROM aimc_migrations WHERE name = '$name';")
+            if [ "$count" = "0" ]; then
+              echo "Applying $f..."
+              psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "$f"
+              psql "$SUPABASE_DB_URL" -c "INSERT INTO aimc_migrations (name) VALUES ('$name');"
+            else
+              echo "Skipping $f (already applied)"
+            fi
+          done
 
   deploy-preview:
     name: Deploy Preview

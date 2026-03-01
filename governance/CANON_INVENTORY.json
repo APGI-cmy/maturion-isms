@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "last_updated": "2026-03-01",
-  "total_canons": 189,
+  "total_canons": 190,
   "generation_timestamp": "2026-02-21T16:30:00Z",
   "canon_entry_schema": {
     "description": "Schema for canon entries in CANON_INVENTORY.json",
@@ -269,9 +269,9 @@
       "ripple_dispatched": "2026-02-24",
       "ripple_log": ".agent-admin/governance/ripple-logs/ripple-agent-handover-parity-20260224.md",
       "ripple_in_repo_status": "COMPLETE",
-      "ripple_consumer_status": "PENDING — layer-down issues to be created in consumer repos",
+      "ripple_consumer_status": "PENDING \u2014 layer-down issues to be created in consumer repos",
       "last_updated": "2026-02-24",
-      "change_note": "v1.1.2: Added Agent Contract File Modification Prohibition subsection in §4.3 with CodexAdvisor handoff pathway."
+      "change_note": "v1.1.2: Added Agent Contract File Modification Prohibition subsection in \u00a74.3 with CodexAdvisor handoff pathway."
     },
     {
       "filename": "AGENT_INDUCTION_PROTOCOL.md",
@@ -322,7 +322,7 @@
       "version": "1",
       "file_hash": "963eed45e027e02a3ae595d5043ec09b4e604203eec71f7de790bbd4d0675e18",
       "effective_date": "unknown",
-      "description": "This document defines the only legitimate process by which software agents may be introduced (“recruited”) into the governance system administered by the Foreman.",
+      "description": "This document defines the only legitimate process by which software agents may be introduced (\u201crecruited\u201d) into the governance system administered by the Foreman.",
       "type": "canon",
       "path": "governance/canon/AGENT_RECRUITMENT.md",
       "layer_down_status": "PUBLIC_API",
@@ -401,7 +401,7 @@
       "version": "1.0.0",
       "file_hash": "dfe539fe290148e6e7c9112fa269b5cd0124c456954de1d75c9a7870cd79b2dc",
       "effective_date": "2026-02-23",
-      "description": "This document defines the Maturion AI Management Centre (AIMC) — a centralised AI capability platform enabling all ISMS modules to access diverse AI capabilities via a single, governed, plug-and-play integration point",
+      "description": "This document defines the Maturion AI Management Centre (AIMC) \u2014 a centralised AI capability platform enabling all ISMS modules to access diverse AI capabilities via a single, governed, plug-and-play integration point",
       "type": "canon",
       "path": "governance/canon/AIMC_STRATEGY.md",
       "layer_down_status": "PUBLIC_API",
@@ -410,6 +410,17 @@
       "local_version": null,
       "local_extension": false,
       "layer_up_status": "NONE"
+    },
+    {
+      "filename": "AMC_SCOPE_DOCUMENT.md",
+      "version": "1.0.0",
+      "file_hash": "22baf37474388a272b54484404d34c93607f3a240b6b13b16d65f53b52c1658a",
+      "effective_date": "2026-03-01",
+      "description": "App Management Centre (AMC) scope document \u2014 defines expanded governance scope, responsibilities, and authority. Supersedes informal Foreman App governance definition.",
+      "type": "canon",
+      "path": "governance/canon/AMC_SCOPE_DOCUMENT.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "22baf37474388a272b54484404d34c93607f3a240b6b13b16d65f53b52c1658a"
     },
     {
       "filename": "APP_DESCRIPTION_REQUIREMENT_POLICY.md",
@@ -685,7 +696,7 @@
     },
     {
       "filename": "COGNITIVE_CAPABILITY_ORCHESTRATION_MODEL.md",
-      "version": "1.1.0 — ACTIVE OPERATIONAL GOVERNANCE",
+      "version": "1.1.0 \u2014 ACTIVE OPERATIONAL GOVERNANCE",
       "file_hash": "722e42c369f913d1beda9e0e5ed31b6881752e12ae91017491e7a72a53f8e0d2",
       "effective_date": "2026-01-03 (Activation), 2025-12-24 (Original)",
       "description": "This document formally defines the **Cognitive Capability Orchestration Model** for the Maturion ecosystem.",
@@ -1375,7 +1386,7 @@
       "version": "1.0",
       "file_hash": "23d86014f109ddcd13fb2ade8c3a911deb698d04e772563b570b12fa67b9320a",
       "effective_date": "unknown",
-      "description": "This document defines the **Initialization Completeness Gate** — a mandatory governance gate that verifies repository initialization completeness before architecture, build, or execution activities...",
+      "description": "This document defines the **Initialization Completeness Gate** \u2014 a mandatory governance gate that verifies repository initialization completeness before architecture, build, or execution activities...",
       "type": "canon",
       "path": "governance/canon/INITIALIZATION_COMPLETENESS_GATE.md",
       "layer_down_status": "PUBLIC_API",
@@ -1655,7 +1666,7 @@
       "file_hash_sha256": "54043b8a8eb00715a07bf97f3e68d675019aa3750d1af49a2b8cf0f1452ad37f",
       "file_hash": "54043b8a8eb00715a07bf97f3e68d675019aa3750d1af49a2b8cf0f1452ad37f",
       "effective_date": "2026-02-21",
-      "description": "Platform AI requirements builder checklist — governance coverage for LL-031-compliant AI features in all Maturion applications",
+      "description": "Platform AI requirements builder checklist \u2014 governance coverage for LL-031-compliant AI features in all Maturion applications",
       "type": "checklist",
       "path": "governance/checklists/PLATFORM_AI_REQUIREMENTS_CHECKLIST.md",
       "layer_down_status": "PUBLIC_API",
@@ -1667,7 +1678,7 @@
       "version": "1.0.0",
       "file_hash": "1faef6d0741cf3b67b98eb0b7419d4fe4f98eb73ee0a89e8786c39d6e06e576d",
       "effective_date": "2025-12-25",
-      "description": "This document formally defines the **authority boundary** between:\n- **Foreman (FM)** — execution authority within repositories\n- **Maturion** — control-plane authority for platform actions (GitHub)",
+      "description": "This document formally defines the **authority boundary** between:\n- **Foreman (FM)** \u2014 execution authority within repositories\n- **Maturion** \u2014 control-plane authority for platform actions (GitHub)",
       "type": "canon",
       "path": "governance/canon/PLATFORM_AUTHORITY_BOUNDARY_AND_DELEGATION_MODEL.md",
       "layer_down_status": "PUBLIC_API",
@@ -1941,7 +1952,7 @@
       "version": "1",
       "file_hash": "d2c96ce6d14c34e28ff79c39c7c97f69ffbf9a905fff32feaf8d310f3f5825ed",
       "effective_date": "unknown",
-      "description": "This rule enforces alignment between a PR’s declared scope\nand the files actually modified in the PR.",
+      "description": "This rule enforces alignment between a PR\u2019s declared scope\nand the files actually modified in the PR.",
       "type": "canon",
       "path": "governance/canon/SCOPE_TO_DIFF_RULE.md",
       "layer_down_status": "PUBLIC_API",

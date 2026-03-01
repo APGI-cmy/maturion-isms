@@ -621,7 +621,7 @@ At completion of ANY work unit, builder MUST evaluate:
 - Mark as: `PARKED — NOT AUTHORIZED FOR EXECUTION`
 - No prescriptive implementation detail
 - No urgency language
-- Route to Foreman App Parking Station
+- Route to AMC Parking Station
 
 **Prohibitions**:
 - ❌ Do NOT implement enhancements proactively
@@ -991,7 +991,7 @@ At completion of ANY work unit, builder MUST evaluate:
 - Mark as: `PARKED — NOT AUTHORIZED FOR EXECUTION`
 - No prescriptive implementation detail
 - No urgency language
-- Route to Foreman App Parking Station
+- Route to AMC Parking Station
 
 **Prohibitions**:
 - ❌ Do NOT implement enhancements proactively

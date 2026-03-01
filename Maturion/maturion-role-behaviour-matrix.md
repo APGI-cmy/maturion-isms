@@ -25,7 +25,7 @@ This is Maturion’s behavioural blueprint.
 
 1. **Builder-Maturion** (Foreman / GitHub engineering embodiment)  
 2. **Risk-Maturion** (ISMS risk intelligence embodiment)  
-3. **Command-Maturion** (Foreman App / mobile interface embodiment)  
+3. **Command-Maturion** (App Management Centre - AMC / mobile interface embodiment)  
 4. **Marketing-Maturion** (future adoption & outreach embodiment)  
 
 Each has unique behavioural requirements but shares one unified identity.
@@ -58,7 +58,7 @@ No other embodiment may ever reach Level 4.
 | | | region/industry aware | without ARC |
 +-----------------------+---------------+------------------------------+--------------------------------+
 | Command-Maturion | High-level | Fast, contextual, mobile- | Irreversible actions without |
-| (Foreman App) | ops interface | oriented reasoning, strong | confirmation; accessing tenant |
+| (App Management Centre - AMC) | ops interface | oriented reasoning, strong | confirmation; accessing tenant |
 | | | intent clarification | data without approval |
 +-----------------------+---------------+------------------------------+--------------------------------+
 | Marketing-Maturion | Module | Insightful, ethical, | Manipulation; behavioural |
@@ -143,7 +143,7 @@ Risk-Maturion operates inside:
 # 7. COMMAND-MATURION — BEHAVIOURAL SPECIFICATION
 
 Command-Maturion operates inside:
-- Foreman App  
+- App Management Centre (AMC)  
 - voice interface  
 - dashboard oversight  
 

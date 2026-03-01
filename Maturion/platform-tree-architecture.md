@@ -23,12 +23,12 @@ It ties together:
 - Governance / runtime systems  
 - Maturion diagnostic flows  
 
-This blueprint guides implementation in the `maturion-foreman-app` repo.
+This blueprint guides implementation in the `maturion-amc` repo.
 
 --------------------------------------------------------------------------------
 # 2. ARCHITECTURE OVERVIEW
 
-The Platform Tree is implemented as a **feature module** in the Foreman App:
+The Platform Tree is implemented as a **feature module** in the App Management Centre (AMC):
 
 - Frontend: React + TypeScript (assumed stack)
 - State management: local component state + query/cache layer (e.g. React Query or equivalent)
@@ -46,7 +46,7 @@ Key properties:
 --------------------------------------------------------------------------------
 # 3. MODULE LOCATION & FOLDER STRUCTURE
 
-Recommended folder structure inside `maturion-foreman-app`:
+Recommended folder structure inside `maturion-amc`:
 
 ```text
 /src
