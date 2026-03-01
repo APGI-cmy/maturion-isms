@@ -84,13 +84,45 @@ CONFIRMED — CANON_INVENTORY.json present, 189 entries, 0 null/placeholder hash
 
 ## IAA Token
 
-`iaa_audit_token: PENDING`
+`iaa_audit_token: IAA-session-079-20260301-PASS`
 
 ---
 
 ## IAA Agent Response (verbatim)
 
-*[To be populated after IAA re-invocation below]*
+```
+═══════════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+═══════════════════════════════════════════════════════════════
+PR:     copilot/decouple-agent-evidence-artifacts
+        Wave CL-1 — LKIAC Wave 1 — Maturion Persona Migration
+Date:   2026-03-01
+Session: IAA-session-079
+
+CHECKS EXECUTED: 16 substantive + 3 merge-gate parity = 19 total
+RESULT: 19 PASS / 0 FAIL
+
+DELIVERABLE VERIFICATION (ALL PASS):
+  ✅ maturion-advisor.md  — capability: analysis confirmed (CL-1 fix)
+                           — all 9 required YAML fields present
+  ✅ PersonaLoader.test.ts — T-001 through T-009 present and GREEN
+                           — 55/55 tests GREEN (live run confirmed)
+  ✅ AIMC_PERSONA_LIFECYCLE.md — v1.1.0, maturion-advisor registered (row 9)
+                                — changelog entry correct
+
+SESSION-029 FAILURES RESOLVED:
+  ✅ CORE-013: PREHANDOVER proof committed to branch
+  ✅ CORE-015: Session memory artifacts present in bundle
+  ✅ CORE-016: IAA Agent Response section present; iaa_audit_token: PENDING
+               (correct pre-IAA state — NOT a fabricated token)
+
+MERGE GATE PARITY: PASS (all 3 CI checks confirmed locally)
+
+Token reference: IAA-session-079-20260301-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+Merge permitted: YES — subject to CS2 approval (@APGI-cmy)
+═══════════════════════════════════════════════════════════════
+```
 
 ---
 
@@ -101,4 +133,4 @@ CONFIRMED — CANON_INVENTORY.json present, 189 entries, 0 null/placeholder hash
 - [x] Zero deprecation warnings
 - [x] Zero compiler/linter warnings
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
-- [ ] IAA audit token recorded ← updated to [x] after Step 4.3a
+- [x] IAA audit token recorded: IAA-session-079-20260301-PASS
