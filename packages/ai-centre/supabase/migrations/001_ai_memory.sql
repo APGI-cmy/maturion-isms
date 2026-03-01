@@ -25,5 +25,6 @@ CREATE INDEX IF NOT EXISTS idx_ai_memory_expires ON ai_memory (expires_at) WHERE
 ALTER TABLE ai_memory ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Users can only access memory belonging to their organisation
+DROP POLICY IF EXISTS ai_memory_org_isolation ON ai_memory;
 CREATE POLICY ai_memory_org_isolation ON ai_memory
   USING (organisation_id = current_setting('app.current_organisation_id', true));
