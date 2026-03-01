@@ -64,7 +64,10 @@ export function buildPersistentMemory(): SupabasePersistentMemoryAdapter {
   // Production mode: real Supabase service-role client.
   // The service role key bypasses RLS — application-layer organisation_id
   // filtering is the primary tenant isolation control (GRS-008).
-  const supabaseClient = createClient(supabaseUrl, serviceRoleKey);
+  // Cast via unknown to avoid TS2589: SupabaseClient has a deeply nested generic
+  // type that exceeds TypeScript's instantiation depth limit when checked against
+  // the SupabaseMinimalClient interface in SupabasePersistentMemoryAdapter.
+  const supabaseClient = createClient(supabaseUrl, serviceRoleKey) as unknown as ConstructorParameters<typeof SupabasePersistentMemoryAdapter>[0];
   return new SupabasePersistentMemoryAdapter(supabaseClient);
 }
 
