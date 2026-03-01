@@ -348,9 +348,7 @@ The `ai_knowledge` table RLS policy MUST include the following (addition to exis
 
 ```sql
 -- INSERT policy: only authenticated users may insert their own org's knowledge items
--- Note: auth.jwt()->>'organisation_id' returns TEXT; explicit cast to UUID required
--- because ai_knowledge.organisation_id is UUID type. The schema-builder implementing
--- this in CL-10 MUST use the cast form below to avoid implicit coercion ambiguity.
+-- Cast required: auth.jwt()->>'organisation_id' returns TEXT; ai_knowledge.organisation_id is UUID.
 CREATE POLICY "knowledge_upload_insert_own_org"
   ON ai_knowledge
   FOR INSERT
@@ -403,9 +401,9 @@ Upon successful database insertion, the upload handler MUST create a GitHub issu
 ## Content Preview
 
 ```
-{content_first_500_chars_word_boundary}...
-[Truncated at word boundary; full content stored in ai_knowledge row — query by item_id]
+{content_preview}...
 ```
+*(Truncated at word boundary, max 500 chars. Full content stored in ai_knowledge row — query by item_id.)*
 
 ---
 
