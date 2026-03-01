@@ -57,41 +57,124 @@ jobs:
         working-directory: apps/mat-ai-gateway
         run: python -m pytest tests/ -v
 
-  build:
-    name: Build Docker Image
-    runs-on: ubuntu-latest
-    needs: test
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Build Docker image
-        run: docker build -t mat-ai-gateway:${{ github.sha }} apps/mat-ai-gateway/
-
   deploy-preview:
     name: Deploy Preview
     runs-on: ubuntu-latest
-    needs: build
+    needs: test
     permissions: {}
     if: github.event_name == 'pull_request'
     steps:
-      - name: Preview deployment placeholder
+      - name: Deploy to Render staging (if configured)
+        env:
+          RENDER_SERVICE_ID_STAGING: ${{ secrets.RENDER_SERVICE_ID_STAGING }}
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          echo "PLACEHOLDER: preview deployment not yet wired."
-          echo "To enable: add your platform deploy command here and configure the relevant secret"
-          echo "(e.g. RAILWAY_TOKEN for Railway, RENDER_API_KEY for Render, or AWS credentials for ECS)."
+          if [ -z "$RENDER_SERVICE_ID_STAGING" ]; then
+            echo "Render staging deploy skipped -- configure RENDER_SERVICE_ID_STAGING to enable"
+            exit 0
+          fi
+          curl -f -X POST \
+            "https://api.render.com/v1/services/$RENDER_SERVICE_ID_STAGING/deploys" \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"clearCache": false}'
 
   deploy-production:
     name: Deploy Production
     runs-on: ubuntu-latest
-    needs: build
-    permissions: {}
+    needs: test
+    permissions:
+      contents: read
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - name: Production deployment placeholder
+      - name: Trigger Render deploy
+        id: trigger-deploy
+        env:
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          echo "PLACEHOLDER: production deployment not yet wired."
-          echo "To enable: replace this step with your platform deploy command and configure"
-          echo "the relevant secret (RAILWAY_TOKEN, RENDER_API_KEY, AWS credentials, etc.)."
+          RESPONSE=$(curl -f -s -X POST \
+            "https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys" \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"clearCache": false}')
+          echo "Deploy triggered: $RESPONSE"
+          DEPLOY_ID=$(echo "$RESPONSE" | jq -r '.id // empty')
+          if [ -z "$DEPLOY_ID" ]; then
+            echo "Failed to extract deploy ID from response: $RESPONSE"
+            exit 1
+          fi
+          echo "deploy_id=$DEPLOY_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for deployment to complete
+        env:
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          DEPLOY_ID: ${{ steps.trigger-deploy.outputs.deploy_id }}
+        run: |
+          echo "Polling for deployment $DEPLOY_ID to complete (max 10 minutes)..."
+          for i in $(seq 1 40); do
+            STATUS=$(curl -f -s \
+              "https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys/$DEPLOY_ID" \
+              -H "Authorization: Bearer $RENDER_API_KEY" | \
+              jq -r '.status // empty')
+            echo "Attempt $i: status=$STATUS"
+            if [ "$STATUS" = "live" ]; then
+              echo "Deployment is live."
+              exit 0
+            fi
+            if [ "$STATUS" = "deactivated" ] || [ "$STATUS" = "canceled" ]; then
+              echo "Deployment ended with status: $STATUS"
+              exit 1
+            fi
+            sleep 15
+          done
+          echo "Deployment did not complete within 10 minutes."
+          exit 1
+
+      - name: Health check
+        env:
+          RENDER_SERVICE_URL: ${{ secrets.RENDER_SERVICE_URL }}
+        run: |
+          for i in {1..5}; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$RENDER_SERVICE_URL/health")
+            if [ "$STATUS" = "200" ]; then
+              echo "Health check passed"
+              exit 0
+            fi
+            echo "Attempt $i failed (status $STATUS), retrying in 10s..."
+            sleep 10
+          done
+          echo "Health check failed after 5 attempts"
+          exit 1
+
+  cwt:
+    name: Combined Wave Test (MAT-T-0001–0098)
+    runs-on: ubuntu-latest
+    needs: [deploy-production]
+    permissions:
+      contents: read
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Combined Wave Tests (MAT-T-0001–0098)
+        shell: bash
+        run: set -o pipefail && npm test | tee cwt-test-output.log
+
+      - name: Upload CWT test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cwt-test-results-${{ github.sha }}
+          path: cwt-test-output.log
+          if-no-files-found: ignore
