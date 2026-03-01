@@ -1,8 +1,8 @@
 # PREHANDOVER Proof Template — Foreman v2
 
 **Agent**: foreman-v2
-**Version**: 1.0.0
-**Last Updated**: 2026-02-28
+**Version**: 1.1.0
+**Last Updated**: 2026-03-01
 **Purpose**: Template for generating Phase 4 PREHANDOVER proof artifacts per S-009 (FAIL-ONLY-ONCE v1.8.0)
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -104,9 +104,11 @@ Local test run: [N] tests passed, [N] failed, [N] skipped — [N] test files.
 
 ## IAA Audit
 
-`iaa_audit_token: [token — format: IAA-session-NNN-YYYYMMDD-PASS]`
+<!-- ANTI-MISUSE: Set iaa_audit_token to PENDING before invoking IAA. Never pre-fill "-PASS". -->
+<!-- After receiving ASSURANCE-TOKEN: follow the Post-ASSURANCE-TOKEN Ceremony in Notes below. -->
+`iaa_audit_token: PENDING`
 
-[Brief summary of IAA verdict]
+[Brief summary of IAA verdict — complete after receiving ASSURANCE-TOKEN]
 
 ## IAA Agent Response (verbatim)
 <!-- MANDATORY PER S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) -->
@@ -142,6 +144,21 @@ The `## IAA Agent Response (verbatim)` section is **MANDATORY** per:
 Real IAA responses always include either:
 - `ASSURANCE-TOKEN` block with session reference (`IAA-session-NNN-YYYYMMDD-PASS`)
 - `REJECTION-PACKAGE` block with findings and remediation
+
+---
+
+## Post-ASSURANCE-TOKEN Ceremony
+
+After IAA issues ASSURANCE-TOKEN, complete these 3 steps **before opening the PR**:
+
+1. Update `iaa_audit_token` from `PENDING` to the issued token — exact format: `IAA-session-NNN-YYYYMMDD-PASS`
+2. Paste the verbatim ASSURANCE-TOKEN block into `## IAA Agent Response (verbatim)` — copy the complete raw block from the IAA tool output, character for character; never paraphrase or summarise
+3. Commit the updated PREHANDOVER proof file — then open the PR
+
+**Anti-misuse rules:**
+- Never pre-fill `iaa_audit_token` with a `-PASS` suffix before IAA has issued the token
+- Never claim PASS for a session that returned a REJECTION-PACKAGE
+- Never paraphrase or summarise the IAA response — verbatim paste only
 
 ---
 

@@ -1,9 +1,9 @@
 # IAA Core Invariants Checklist
 
 **Agent**: independent-assurance-agent
-**Version**: 2.0.0
+**Version**: 2.1.0
 **Status**: ACTIVE
-**Last Updated**: 2026-02-28
+**Last Updated**: 2026-03-01
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -64,6 +64,8 @@ PASS if:
 - `iaa_audit_token` contains a real IAA session token (`IAA-session-NNN-YYYYMMDD-PASS` format), AND
 - `## IAA Agent Response (verbatim)` section contains the verbatim IAA agent output block.
 
+**Copy-paste requirement**: The `## IAA Agent Response (verbatim)` section must contain the complete IAA output block copied character-for-character from the IAA tool output — from the opening `ASSURANCE-TOKEN` / `REJECTION-PACKAGE` header to the end of the block. Paraphrasing, summarising, or partial copying is not permitted. Any deviation from the exact IAA output constitutes an INC-IAA-SKIP-001 breach.
+
 **Note**: PHASE_A_ADVISORY is a legitimate outcome — but only when the IAA tool was actually called and the IAA agent itself issued the advisory. A bare date string without IAA session output is always a PHASE_A_ADVISORY FABRICATION breach (FAIL-ONLY-ONCE A-014 / INC-IAA-SKIP-001).
 
 ---
@@ -74,6 +76,7 @@ PASS if:
 |---------|------|--------|
 | 1.0.0 | 2026-02-25 | Initial STUB (placeholder from canon) |
 | 2.0.0 | 2026-02-28 | Fully populated from INDEPENDENT_ASSURANCE_AGENT_CANON.md; CORE-016 added (A-014 IAA tool call evidence); CORE-017 added (A-005/A-013 agent file immutability); STUB status removed |
+| 2.1.0 | 2026-03-01 | CORE-016: added explicit copy-paste-only requirement — verbatim full block, never paraphrase (maturion-isms#699) |
 
 ---
 
