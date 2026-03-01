@@ -118,6 +118,8 @@ The following 16 waves (CL-0 through CL-15) constitute the full combined AIMC + 
 
 ### Wave CL-0: Governance Foundation
 
+**Status: COMPLETE — 2026-03-01** (CL-0-D1: GRS CS2 sign-off recorded; CL-0-D2: AAWP v0.3.0 merged with Wave 9 sign-off and Combined Plan reference — session-075, IAA-session-023-20260301-PASS)
+
 **Programme**: Both  
 **Source**: AIMC Audit Plan §3.2 (GOV-005, GOV-006); LKIAC-001 §5  
 **Type**: Administrative governance — no code changes  
@@ -143,7 +145,11 @@ The following 16 waves (CL-0 through CL-15) constitute the full combined AIMC + 
 
 **Responsible Agent**: `governance-liaison-isms-agent`
 
-**Status: COMPLETE — 2026-03-01** (CL-0-D1: GRS CS2 sign-off recorded; CL-0-D2: AAWP v0.3.0 merged with Wave 9 sign-off and Combined Plan reference — session-075, IAA-session-023-20260301-PASS)
+---
+
+### Wave CL-1: LKIAC Wave 1 — Maturion Persona Migration
+
+**Status: COMPLETE — 2026-03-01** (CL-1-D1: 5 RED gate tests → GREEN; CL-1-D2: maturion-advisor.md created at `packages/ai-centre/src/agents/`; CL-1-D3: AIMC_PERSONA_LIFECYCLE.md §2 registry updated to v1.1.0; 226/226 tests GREEN — session-078, IAA-session-027-20260301-PASS)
 
 **Programme**: LKIAC  
 **Source**: LKIAC-001 §5 Wave 1; §2.1; §3.2  
@@ -178,7 +184,9 @@ The following 16 waves (CL-0 through CL-15) constitute the full combined AIMC + 
 
 **Responsible Agents**: `qa-builder` (RED gate), `api-builder` (persona file), `governance-liaison-isms-agent` (registry)
 
-**Status: COMPLETE — 2026-03-01** (CL-1-D1: 5 RED gate tests → GREEN; CL-1-D2: maturion-advisor.md created at `packages/ai-centre/src/agents/`; CL-1-D3: AIMC_PERSONA_LIFECYCLE.md §2 registry updated to v1.1.0; 226/226 tests GREEN — session-078, IAA-session-027-20260301-PASS)
+---
+
+### Wave CL-2: LKIAC Wave 2 — Legacy Knowledge Inventory and Domain Tagging Plan
 
 **Programme**: LKIAC  
 **Source**: LKIAC-001 §5 Wave 2; §7  
