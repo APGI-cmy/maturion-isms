@@ -53,15 +53,19 @@ CREATE INDEX IF NOT EXISTS idx_ai_episodic_events_redacted_at
 ALTER TABLE ai_episodic_events ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Allow inserts scoped to the current organisation
+DROP POLICY IF EXISTS ai_episodic_events_insert_org_scope ON ai_episodic_events;
 CREATE POLICY ai_episodic_events_insert_org_scope ON ai_episodic_events
   FOR INSERT
   WITH CHECK (organisation_id = current_setting('app.current_organisation_id', true));
 
 -- Policy: Users can only read events belonging to their organisation
+DROP POLICY IF EXISTS ai_episodic_events_select_org_scope ON ai_episodic_events;
 CREATE POLICY ai_episodic_events_select_org_scope ON ai_episodic_events
   FOR SELECT
   USING (organisation_id = current_setting('app.current_organisation_id', true));
 
 -- Enforce append-only: prevent UPDATE and DELETE operations on this table
+DROP RULE IF EXISTS ai_episodic_events_no_update ON ai_episodic_events;
 CREATE RULE ai_episodic_events_no_update AS ON UPDATE TO ai_episodic_events DO INSTEAD NOTHING;
+DROP RULE IF EXISTS ai_episodic_events_no_delete ON ai_episodic_events;
 CREATE RULE ai_episodic_events_no_delete AS ON DELETE TO ai_episodic_events DO INSTEAD NOTHING;

@@ -90,6 +90,30 @@ describe('PersonaLoader', () => {
 });
 
 // ---------------------------------------------------------------------------
+// YAML front-matter helper (used by CL-1 tests below)
+// Follows the same pattern as wave9.10-persona-lifecycle.test.ts.
+// ---------------------------------------------------------------------------
+
+/**
+ * Extract the raw YAML front-matter block from markdown content.
+ * Returns the text between the first pair of `---` delimiters, or an empty
+ * string if no valid front-matter block is present.
+ */
+function extractFrontMatter(content: string): string {
+  // Must start with `---` (anchored to string start, not line start)
+  const match = content.match(/^---\r?\n([\s\S]*?)\r?\n?---/);
+  return match ? match[1] : '';
+}
+
+// ---------------------------------------------------------------------------
+// CL-1 — maturion-advisor persona (LKIAC Wave 1)
+//
+// Required front-matter fields (governance/aimc/AIMC_PERSONA_LIFECYCLE.md §5.1):
+//   agentId, module, version, last_reviewed, owner, description
+//
+// Authority: CS2 (@APGI-cmy) — Issue [CL-1]
+// Wave: CL-1 (LKIAC Wave 1 — Maturion Persona Migration)
+// Governance Reference: LKIAC Wave 1 | APS §5 | AIMC_PERSONA_LIFECYCLE.md §5.1
 // CL-1 — maturion-advisor persona (LKIAC Wave 1) — RED gate tests
 //
 // These tests MUST FAIL until Task CL-1.2 creates maturion-advisor.md.
@@ -104,6 +128,28 @@ describe('CL-1 — maturion-advisor persona (LKIAC Wave 1)', () => {
 
   /**
    * CL-1-T-001
+   * load("maturion-advisor") must return non-empty Markdown content.
+   *
+   * Reference: LKIAC Wave 1 | AIMC_PERSONA_LIFECYCLE.md §5.1
+   */
+  it('CL-1-T-001: load("maturion-advisor") returns non-empty markdown content', async () => {
+    const content = await loader.load('maturion-advisor');
+    expect(typeof content).toBe('string');
+    expect(content.length).toBeGreaterThan(0);
+    // Persona files are Markdown — must contain at least one heading
+    expect(content).toContain('#');
+  });
+
+  /**
+   * CL-1-T-002
+   * The persona file must contain a `---` YAML front-matter delimiter.
+   *
+   * Reference: LKIAC Wave 1 | AIMC_PERSONA_LIFECYCLE.md §5.1
+   */
+  it(
+    'CL-1-T-002: maturion-advisor front-matter contains "---" YAML delimiter (file starts with ---)',
+    async () => {
+      const content = await loader.load('maturion-advisor');
    * RED until maturion-advisor.md exists.
    * load("maturion-advisor") must return non-empty Markdown content.
    */
@@ -136,6 +182,92 @@ describe('CL-1 — maturion-advisor persona (LKIAC Wave 1)', () => {
 
   /**
    * CL-1-T-003
+   * The persona file must contain `agentId:` in its front-matter
+   * (required field per AIMC_PERSONA_LIFECYCLE.md §5.1).
+   *
+   * Reference: LKIAC Wave 1 | AIMC_PERSONA_LIFECYCLE.md §5.1
+   */
+  it('CL-1-T-003: maturion-advisor front-matter contains "agentId:" field', async () => {
+    const content = await loader.load('maturion-advisor');
+    const fm = extractFrontMatter(content);
+    expect(fm).toContain('agentId:');
+  });
+
+  /**
+   * CL-1-T-004
+   * The persona file must contain `version:` in its front-matter
+   * (required field per AIMC_PERSONA_LIFECYCLE.md §5.1).
+   *
+   * Reference: LKIAC Wave 1 | AIMC_PERSONA_LIFECYCLE.md §5.1
+   */
+  it('CL-1-T-004: maturion-advisor front-matter contains "version:" field', async () => {
+    const content = await loader.load('maturion-advisor');
+    const fm = extractFrontMatter(content);
+    expect(fm).toContain('version:');
+  });
+
+  /**
+   * CL-1-T-005
+   * listAvailable() must include "maturion-advisor".
+   *
+   * Reference: LKIAC Wave 1 | GRS-010 | APS §5
+   */
+  it('CL-1-T-005: listAvailable() includes "maturion-advisor"', async () => {
+    const available = await loader.listAvailable();
+    expect(available).toContain('maturion-advisor');
+  });
+
+  /**
+   * CL-1-T-006
+   * The persona file must contain `module:` in its front-matter
+   * (required field per AIMC_PERSONA_LIFECYCLE.md §5.1).
+   *
+   * Reference: LKIAC Wave 1 | AIMC_PERSONA_LIFECYCLE.md §5.1
+   */
+  it('CL-1-T-006: maturion-advisor front-matter contains "module:" field', async () => {
+    const content = await loader.load('maturion-advisor');
+    const fm = extractFrontMatter(content);
+    expect(fm).toContain('module:');
+  });
+
+  /**
+   * CL-1-T-007
+   * The persona file must contain `last_reviewed:` in its front-matter
+   * (required field per AIMC_PERSONA_LIFECYCLE.md §5.1).
+   *
+   * Reference: LKIAC Wave 1 | AIMC_PERSONA_LIFECYCLE.md §5.1
+   */
+  it('CL-1-T-007: maturion-advisor front-matter contains "last_reviewed:" field', async () => {
+    const content = await loader.load('maturion-advisor');
+    const fm = extractFrontMatter(content);
+    expect(fm).toContain('last_reviewed:');
+  });
+
+  /**
+   * CL-1-T-008
+   * The persona file must contain `owner:` in its front-matter
+   * (required field per AIMC_PERSONA_LIFECYCLE.md §5.1).
+   *
+   * Reference: LKIAC Wave 1 | AIMC_PERSONA_LIFECYCLE.md §5.1
+   */
+  it('CL-1-T-008: maturion-advisor front-matter contains "owner:" field', async () => {
+    const content = await loader.load('maturion-advisor');
+    const fm = extractFrontMatter(content);
+    expect(fm).toContain('owner:');
+  });
+
+  /**
+   * CL-1-T-009
+   * The persona file must contain `description:` in its front-matter
+   * (required field per AIMC_PERSONA_LIFECYCLE.md §5.1).
+   *
+   * Reference: LKIAC Wave 1 | AIMC_PERSONA_LIFECYCLE.md §5.1
+   */
+  it('CL-1-T-009: maturion-advisor front-matter contains "description:" field', async () => {
+    const content = await loader.load('maturion-advisor');
+    const fm = extractFrontMatter(content);
+    expect(fm).toContain('description:');
+  });
    * RED until maturion-advisor.md exists with `agentId:` in its front-matter.
    */
   it(

@@ -27,7 +27,7 @@ to operate safely and ethically in the context of marketing and user engagement.
 
 Marketing-Maturion is responsible for:
 
-- Observing user behaviour inside the ISMS and Foreman App  
+- Observing user behaviour inside the ISMS and App Management Centre (AMC)  
 - Identifying missing modules or underutilised capabilities  
 - Suggesting relevant product modules based on risk profile, industry, and region  
 - Producing high-quality marketing content templates  
