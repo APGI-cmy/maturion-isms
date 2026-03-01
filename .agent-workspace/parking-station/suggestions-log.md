@@ -216,3 +216,7 @@
 | 2026-03-01 | independent-assurance-agent | session-025 | [Phase 4] | Amendment session pattern mature: first clean single-pass amendment audit; pre-invocation PENDING ceremony executed correctly; governance system reaching operational maturity | session-025-20260301.md |
 | 2026-03-01 | independent-assurance-agent | session-078 | [Phase 3] | Compound IAA sessions should issue per-PR sub-tokens (IAA-session-NNNa/b-PASS) to close A-016 grey areas and ensure token-to-PR traceability | session-078-20260301.md |
 | 2026-03-01 | independent-assurance-agent | session-078 | [Phase 4] | IAA session memory template should include an audit-task variant that does not presuppose a PR merge gate invocation | session-078-20260301.md |
+| 2026-03-01 | foreman-v2-agent | session-078 | [ORCHESTRATION] | Compound IAA sessions should use sub-identified tokens per PR for traceability clarity | session-078-waveCL4-20260301.md |
+| 2026-03-01 | foreman-v2-agent | session-078 | [SESSION-END] | Add GRS-001 spirit check: audit that AI calls in module services use AICentre gateway, not just adapter classes | session-078-waveCL4-20260301.md |
+| 2026-03-01 | independent-assurance-agent | session-079 | Phase 1 | IAA session ID pre-allocation for multi-invocation waves should be formalized in foreman PREHANDOVER proof | session-079-20260301.md |
+| 2026-03-01 | independent-assurance-agent | session-079 | Phase 3 | Dual AAWP_MAT+CI_WORKFLOW overlay should have a combined checklist template to reduce auditor cognitive load | session-079-20260301.md |
