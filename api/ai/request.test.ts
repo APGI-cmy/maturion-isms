@@ -23,6 +23,7 @@ import {
   Capability,
   AICentreErrorCode,
 } from '../../packages/ai-centre/src/types/index.js';
+import { makeTestSupabaseClient, type TestSupabaseClient } from './__test-utils__/makeTestSupabaseClient.js';
 
 // ---------------------------------------------------------------------------
 // Test doubles
@@ -319,57 +320,12 @@ describe('handler', () => {
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
-// Mock Supabase client builder for persistent memory tests
+// Mock Supabase client builder for persistent memory tests (Wave 11)
+// Imported from __test-utils__/makeTestSupabaseClient — one source of truth.
 // ---------------------------------------------------------------------------
 
-function makeMockSupabaseClient() {
-  const rows: Record<string, unknown>[] = [];
-  return {
-    rows, // for inspection
-    from: (_table: string) => ({
-      insert: (data: Record<string, unknown>) => {
-        rows.push(data);
-        return Promise.resolve({ error: null });
-      },
-      select: (_cols: string = '*') => ({
-        eq: (col: string, val: unknown) => ({
-          eq: (col2: string, val2: unknown) => ({
-            order: (_col3: string, _opts?: unknown) =>
-              Promise.resolve({
-                data: rows.filter(r => r[col] === val && r[col2] === val2),
-                error: null,
-              }),
-          }),
-          order: (_col3: string, _opts?: unknown) =>
-            Promise.resolve({
-              data: rows.filter(r => r[col] === val),
-              error: null,
-            }),
-        }),
-      }),
-      delete: () => ({
-        eq: (col: string, val: unknown) => ({
-          lt: (col2: string, val2: unknown) => {
-            const toDelete = rows.filter(
-              r =>
-                r[col] === val &&
-                r[col2] !== undefined &&
-                (r[col2] as string) < (val2 as string),
-            );
-            toDelete.forEach(r => {
-              const idx = rows.indexOf(r);
-              if (idx !== -1) rows.splice(idx, 1);
-            });
-            return Promise.resolve({ count: toDelete.length, error: null });
-          },
-        }),
-      }),
-    }),
-  };
-}
-
 // Convenience type alias for the mock client shape used in T-075-SUP-2/3/4
-type MockSupabaseClient = ReturnType<typeof makeMockSupabaseClient>;
+type MockSupabaseClient = TestSupabaseClient;
 
 describe('Wave 11 — Supabase persistence', () => {
   // T-075-SUP-1 --------------------------------------------------------------
@@ -388,7 +344,7 @@ describe('Wave 11 — Supabase persistence', () => {
       '../../packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.js'
     );
 
-    const mockClient = makeMockSupabaseClient();
+    const mockClient = makeTestSupabaseClient();
     const adapter = new SupabasePersistentMemoryAdapter(
       mockClient as unknown as MockSupabaseClient,
     );
@@ -416,7 +372,7 @@ describe('Wave 11 — Supabase persistence', () => {
       '../../packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.js'
     );
 
-    const mockClient = makeMockSupabaseClient();
+    const mockClient = makeTestSupabaseClient();
     const adapterA = new SupabasePersistentMemoryAdapter(
       mockClient as unknown as MockSupabaseClient,
     );
@@ -460,7 +416,7 @@ describe('Wave 11 — Supabase persistence', () => {
       '../../packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.js'
     );
 
-    const mockClient = makeMockSupabaseClient();
+    const mockClient = makeTestSupabaseClient();
     const adapter = new SupabasePersistentMemoryAdapter(
       mockClient as unknown as MockSupabaseClient,
     );
