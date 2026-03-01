@@ -16,19 +16,19 @@
  * AIMC Wave: 5 (RAG pipeline)
  */
 
-// Primary gateway import — AICentre from the @maturion/ai-centre package barrel.
-// Uses the canonical relative path to the ai-centre package (AIMC gateway pattern).
+// All imports from the @maturion/ai-centre package barrel (GRS-001 / CL-4 ARCH-001 fix).
+// AICentre is imported on a single line to satisfy static-analysis gateway checks.
 import { AICentre } from '../../../../packages/ai-centre';
 import {
   Capability,
+  OpenAIAdapter,
+  ProviderHealthRegistry,
+  ProviderKeyStore,
+  TelemetryWriter,
   type AICentreResponse,
-  type SessionMemoryStore,
+  type ISessionMemoryStore as SessionMemoryStore,
   type PersistentMemoryAdapter,
-} from '../../../../packages/ai-centre/src/types/index.js';
-import { OpenAIAdapter } from '../../../../packages/ai-centre/src/adapters/OpenAIAdapter.js';
-import { ProviderHealthRegistry } from '../../../../packages/ai-centre/src/routing/ProviderHealthRegistry.js';
-import { ProviderKeyStore } from '../../../../packages/ai-centre/src/keys/ProviderKeyStore.js';
-import { TelemetryWriter } from '../../../../packages/ai-centre/src/telemetry/TelemetryWriter.js';
+} from '../../../../packages/ai-centre';
 // Re-export gate: all imports above originate from the @maturion/ai-centre package
 // (packages/ai-centre). No direct provider SDK (openai, @anthropic-ai) imported.
 // No vector DB packages (@pinecone-database/pinecone, weaviate-ts-client, @qdrant/js-client-rest) imported.

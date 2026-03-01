@@ -605,3 +605,11 @@ When a new strategic canon (like AIMC_STRATEGY.md) is layered down:
 3. B-04 check is critical: always verify canonical commit not already in ripple-log before processing.
 
 **Authority**: Session 025 no-change ripple 6644ee51 processing
+
+---
+
+### Session-031 (2026-03-01) — CL-3.5/CL-13 Kick-Off
+
+- **Spec-document discipline**: When producing data model specs, remove all actual SQL DDL from code blocks and replace with descriptive language. The spec is for CS2 approval, not for schema-builder execution. SQL belongs in the migration file only.
+- **RLS pattern matching**: Always read the existing AIMC migration files (especially `003_ai_knowledge.sql`) before writing RLS design in a new spec. The `current_setting('app.current_organisation_id', true)` pattern with `true` for error-suppression is a critical detail.
+- **Deliverable completeness for exit criteria**: When adding new deliverables (D5/D6/D7) to an existing wave, always add corresponding acceptance criteria to the Exit Criteria section AND update the Responsible Agents field.

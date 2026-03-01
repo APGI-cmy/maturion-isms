@@ -26,5 +26,6 @@ CREATE INDEX IF NOT EXISTS idx_ai_knowledge_embedding ON ai_knowledge
 ALTER TABLE ai_knowledge ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Users can only access knowledge belonging to their organisation
+DROP POLICY IF EXISTS ai_knowledge_org_isolation ON ai_knowledge;
 CREATE POLICY ai_knowledge_org_isolation ON ai_knowledge
   USING (organisation_id = current_setting('app.current_organisation_id', true));
