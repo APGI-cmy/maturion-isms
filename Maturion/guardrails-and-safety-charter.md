@@ -97,7 +97,7 @@ Allowed:
 - Maturity modelling  
 
 --------------------------------------------------------------------------------
-## 3.3 Command-Maturion (Foreman App)
+## 3.3 Command-Maturion (App Management Centre - AMC)
 - MUST NOT execute irreversible actions without explicit confirmation  
 - MUST NOT access tenant-specific data unless authorised  
 - MUST NOT bypass watchdog warnings  

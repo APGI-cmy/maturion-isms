@@ -272,7 +272,7 @@ All startup requirement declarations MUST conform to this schema:
 
 **Required Fields**:
 
-- **Application Name**: Human-readable name (e.g., "Foreman App", "PartPulse Production", "Builder Service")
+- **Application Name**: Human-readable name (e.g., "App Management Centre (AMC)", "PartPulse Production", "Builder Service")
 - **Application ID**: Unique identifier (e.g., `fm-app-v1`, `partpulse-prod`, `builder-svc`)
 - **Application Type**: Classification determining commissioning approach
   - `web-app`: Browser-accessed web application

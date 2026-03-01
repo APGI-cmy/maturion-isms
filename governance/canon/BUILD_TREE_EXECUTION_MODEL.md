@@ -101,7 +101,7 @@ Application (Root)
 - Reports overall application build status to human authority
 
 **Examples**: 
-- Foreman App (complete application)
+- App Management Centre - AMC (complete application)
 - Builder Service (complete application)
 - Memory Fabric (complete subsystem)
 

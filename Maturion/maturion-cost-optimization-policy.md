@@ -242,7 +242,7 @@ Every repo must have:
 - workflow enforcement preventing bypass  
 
 Repos include:
-- maturion-foreman-app  
+- maturion-amc  
 - maturion-ai-foreman  
 - maturion-copilot-builders  
 - maturion-local-builder  

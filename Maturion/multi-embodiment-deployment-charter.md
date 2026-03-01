@@ -96,7 +96,7 @@ intelligence.
 
 --------------------------------------------------------------------------------
 ## 3.3 COMMAND-MATURION  
-**Location:** maturion-foreman-app (mobile + web)  
+**Location:** maturion-amc (mobile + web)  
 **Purpose:** Real-time conversational operating system for Johan.  
 **Surface:** Voice-to-text, mobile commands, operational dashboards.
 
