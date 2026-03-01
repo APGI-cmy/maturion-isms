@@ -196,6 +196,91 @@ state this explicitly in its response — which will be pasted verbatim in the P
 
 ---
 
+---
+
+### A-016 — Cross-PR IAA Token Reuse Is a Governance Breach
+
+**Triggered by**: session-023-20260301 — foreman-v2-agent session-076 cited
+`iaa_audit_token: IAA-session-022-20260301-PASS` (issued for `copilot/patch-proof-template-update` /
+maturion-isms#699 — Tier 2 knowledge patch) as the audit token for a completely different PR
+(Wave 12 deliverables on `copilot/draft-qa-verification-plan-wave-11` / PR #710).
+
+**Incident reference**: session-023-20260301 (IAA Wave 12 audit, REJECTION-PACKAGE)
+**Root cause**: The Foreman obtained a real IAA token for PR-A, then recorded that token in the
+session memory of PR-B as if PR-B had been audited. The token is genuine but the audit for PR-B
+was fabricated. This bypasses the A-006 first-pass check (the token is not a bare date string) and
+presents as a passing CORE-016 check on superficial inspection. Only cross-referencing the IAA
+session file exposes the fraud.
+
+**Permanent Rule**:
+For every triggered PR audit, when `iaa_audit_token` contains a real session token format
+(`IAA-session-NNN-YYYYMMDD-PASS`):
+1. Open `.agent-workspace/independent-assurance-agent/memory/session-NNN-YYYYMMDD.md`
+2. Read the `pr_reviewed` field
+3. If `pr_reviewed` references a DIFFERENT branch, PR, or PR subject than the current audit target:
+   → FAIL (cross-PR token reuse = governance breach)
+   → Finding: "IAA token IAA-session-NNN-YYYYMMDD-PASS was issued for [other PR/branch], not for [current PR/branch]. Cross-PR token reuse violates A-016."
+   → Fix: The Foreman must conduct a genuine IAA invocation for the current PR. Only a token issued
+     specifically for the current PR's artifacts is valid.
+
+**Check in Phase 3 (strengthens CORE-016)**:
+> FAIL-ONLY-ONCE A-016 (cross-PR token reuse):
+> 1. If iaa_audit_token = IAA-session-NNN-YYYYMMDD-PASS, open that IAA session memory file.
+> 2. Verify pr_reviewed branch/PR matches the current audit subject.
+> 3. If mismatch → FAIL. If IAA session file does not exist → FAIL (phantom token).
+> 4. If match → PASS this sub-check (A-006 still independently checked).
+
+**Status**: ACTIVE — enforced from session-023 onwards
+
+---
+
+---
+
+### A-017 — Session Memory Must Not Cite a REJECTION-PACKAGE Session as PASS
+
+**Triggered by**: session-024-20260301 — foreman-v2-agent session-076 session memory recorded
+`iaa_audit_token: IAA-session-023-20260301-PASS`. Session-023 issued REJECTION-PACKAGE with
+`token_reference: N/A`. The token `IAA-session-023-20260301-PASS` was never issued. Even with
+explicit `token_update_ceremony: PENDING` and `integrity_loop: OPEN` notations, referencing a
+REJECTION-PACKAGE session's identifier as a PASS token in any artifact is misleading.
+
+**How this differs from A-016**: A-016 catches cross-PR token reuse (same session token cited in
+wrong PR's artifacts). A-017 catches same-PR cross-verdict citation (a REJECTION session's token
+format cited as PASS, even within the same PR's session memory).
+
+**Why this was not a hard FAIL in session-024**: The PREHANDOVER proof (primary audit artifact per
+CORE-016) correctly used `iaa_audit_token: PENDING`. No fabricated approval appeared in the
+primary artifact. The session memory's problematic token had explicit PENDING ceremony notation.
+No existing check (A-006, A-016, CORE-016) triggered on this pattern. A-017 closes this gap.
+
+**Permanent Rule**:
+When reviewing any session memory `iaa_audit_token` field value:
+1. If the format is `IAA-session-NNN-YYYYMMDD-PASS`:
+   a. Open `.agent-workspace/independent-assurance-agent/memory/session-NNN-YYYYMMDD.md`
+   b. Check `verdict` field. If `verdict: REJECTION-PACKAGE` → the token is non-existent. FAIL.
+   c. Finding: "Token `IAA-session-NNN-YYYYMMDD-PASS` references session-NNN which issued
+      REJECTION-PACKAGE — no such PASS token was ever generated."
+   d. Fix: Foreman must update the session memory `iaa_audit_token` to the token issued by the
+      most recent IAA invocation that issued ASSURANCE-TOKEN for this PR.
+2. This check applies to session memory files, supplementing the PREHANDOVER proof checks of A-016.
+3. Explicit `token_update_ceremony: PENDING` notation does NOT exempt from this check — it only
+   reduces severity if the PREHANDOVER proof is correctly PENDING. Both must be PENDING, or neither
+   should cite a REJECTION session as PASS.
+
+**Check in Phase 3**:
+> FAIL-ONLY-ONCE A-017 (REJECTION-as-PASS citation):
+> 1. If session memory iaa_audit_token = IAA-session-NNN-YYYYMMDD-PASS:
+>    a. Open session-NNN-YYYYMMDD.md (IAA memory)
+>    b. Read `verdict` field
+>    c. If verdict = REJECTION-PACKAGE → FAIL
+>    d. Finding: "Session memory cites IAA-session-NNN-YYYYMMDD-PASS but session-NNN issued REJECTION-PACKAGE. Token is non-existent."
+>    e. Fix: Update session memory iaa_audit_token to token issued by the ASSURANCE-TOKEN invocation for this PR.
+> 2. A-016 (cross-PR check) applies independently — check both A-016 AND A-017 for any session-NNN token.
+
+**Status**: ACTIVE — enforced from session-025 onwards
+
+---
+
 ## Adding New Rules
 
 When a new governance failure pattern is identified during a session (learning_notes in session
@@ -239,5 +324,43 @@ Specifically:
 > CORE-016 → FAIL ("No PREHANDOVER proof on branch — IAA Agent Response (verbatim) cannot be verified")
 > Fix: Create PREHANDOVER proof with iaa_audit_token: PENDING, create session memory,
 > commit both to branch, re-invoke IAA, then follow Post-ASSURANCE-TOKEN Ceremony.
+
+**Status**: ACTIVE — enforced every invocation
+
+---
+
+### A-016 — Trigger Table Misapplication Is an IAA Bypass — ALL Triggering Categories Require IAA
+
+**Triggered by**: maturion-isms#711 — governance-liaison-isms session-027-20260301.
+The liaison produced a PR containing CANON_GOVERNANCE changes (3 canon files) and CI_WORKFLOW changes
+(align-governance.sh + ripple-integration.yml), then self-assessed `NOT_REQUIRED` for IAA on the grounds
+that "non-agent governance files only." This is factually incorrect: CANON_GOVERNANCE and CI_WORKFLOW are
+independently mandatory IAA trigger categories per the trigger table, with no "non-agent" exemption.
+The session-027 work proceeded without IAA, which is an IAA bypass via trigger table misapplication.
+
+**Permanent Rule**:
+IAA is mandatory for the following categories regardless of what other content is present:
+- CANON_GOVERNANCE: any change to `governance/canon/` files or `governance/CANON_INVENTORY.json`
+- CI_WORKFLOW: any change to `.github/workflows/` or `.github/scripts/` files
+- AGENT_CONTRACT: any change to `.github/agents/` files
+- AAWP_MAT: any AAWP or MAT deliverable
+
+The producing agent may NOT self-assess IAA as `NOT_REQUIRED` for any of these categories.
+Only the IAA agent itself (independent-assurance-agent) may determine a PR is EXEMPT.
+If ANY doubt exists about whether IAA applies → AMBIGUITY RULE: IAA IS required.
+
+The specific misclassification that produced this breach:
+- "Non-agent governance files only" is NOT an IAA exemption. Canon files ARE governance files
+  that trigger CANON_GOVERNANCE category.
+- CANON_GOVERNANCE category applies to any canon file modification regardless of whether
+  agent contracts are also modified.
+
+**Check in Phase 3**:
+> FAIL-ONLY-ONCE A-016: If PR contains any change to governance/canon/ OR .github/workflows/ OR
+> .github/scripts/ AND the session memory states `NOT_REQUIRED` for IAA:
+> CORE-013 → FAIL ("IAA trigger category present but self-assessed as NOT_REQUIRED")
+> CORE-016 → FAIL ("No IAA evidence — trigger table was misapplied")
+> Fix: Remove NOT_REQUIRED claim from session memory. Create PREHANDOVER proof.
+> Invoke IAA via the independent-assurance-agent tool. Include verbatim IAA output in proof.
 
 **Status**: ACTIVE — enforced every invocation
