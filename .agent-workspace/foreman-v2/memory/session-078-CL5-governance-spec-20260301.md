@@ -92,10 +92,11 @@ Corrective action taken: PREHANDOVER proof created with `iaa_audit_token: PENDIN
 
 ```yaml
 iaa_invoked: true
-iaa_tool_called: task(agent_type: "independent-assurance-agent") (twice — first: REJECT; second: PENDING)
+iaa_tool_called: task(agent_type: "independent-assurance-agent") (twice — first: REJECT IAA-session-027-20260301-REJECT; second: PASS IAA-session-028-20260301-PASS)
 iaa_phase: PHASE_B_BLOCKING
-iaa_audit_token: PENDING → updated to real token after second invocation
-token_update_ceremony: IN_PROGRESS
+iaa_audit_token: IAA-session-028-20260301-PASS
+token_update_ceremony: COMPLETE
+integrity_loop: CLOSED
 ```
 
 Note: governance-liaison-isms-agent session-029 incorrectly stated "PHASE_A_ADVISORY — IAA not yet deployed (Phase A)". IAA is PHASE_B_BLOCKING. The Foreman's invocations correctly override this incorrect advisory.

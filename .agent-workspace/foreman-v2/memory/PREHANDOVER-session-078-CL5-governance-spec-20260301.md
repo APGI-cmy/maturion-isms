@@ -120,21 +120,47 @@ CS2 authorization: VALID.
 - [x] Zero deprecation warnings
 - [x] Zero compiler/linter warnings
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
-- [ ] IAA audit token recorded ← updated to `[x]` after Step 4.3b token update ceremony
+- [x] IAA audit token recorded: IAA-session-028-20260301-PASS
 
 ---
 
 ## IAA Audit
 
-<!-- ANTI-MISUSE: Set iaa_audit_token to PENDING before invoking IAA. Never pre-fill "-PASS". -->
-`iaa_audit_token: PENDING`
+<!-- ANTI-MISUSE: Token updated from PENDING after receiving ASSURANCE-TOKEN from IAA session-028. -->
+`iaa_audit_token: IAA-session-028-20260301-PASS`
 
 IAA invoked via `task(agent_type: "independent-assurance-agent")` per A-014 (FAIL-ONLY-ONCE v1.8.0).
-This is IAA phase PHASE_B_BLOCKING — governance-liaison session-029 incorrectly cited PHASE_A_ADVISORY; the correct phase is PHASE_B_BLOCKING and this PREHANDOVER proof supersedes that incorrect advisory.
+First invocation returned REJECTION-PACKAGE (IAA-session-027-20260301-REJECT) — PREHANDOVER proof absent. Proof created and committed. Second invocation returned ASSURANCE-TOKEN below.
+IAA phase: PHASE_B_BLOCKING — governance-liaison session-029 incorrectly cited PHASE_A_ADVISORY; overridden by this proof.
 
 ## IAA Agent Response (verbatim)
 
-[IAA verbatim response to be pasted here after re-invocation following this proof being committed]
+```
+═══════════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/draft-governance-specification
+    CL-5 — AIMC Knowledge Upload Centre Governance Specification
+
+All 10 substantive checks PASS (10 N/A — AGENT_CONTRACT checks
+not applicable to AAWP_MAT category).
+Merge gate parity: PASS (all 3 CI checks confirmed locally).
+
+Prior REJECTION-PACKAGE IAA-session-027-20260301-REJECT: FULLY REMEDIATED.
+  → CORE-013 RESOLVED: PREHANDOVER proof present with iaa_audit_token: PENDING ✅
+  → CORE-016 RESOLVED: Live IAA invocation executed (this session) with PENDING token ✅
+  → OVL-AM-002 RESOLVED: Full evidence bundle present on branch ✅
+
+Code review: CLEAN (no review comments).
+Security (CodeQL): N/A — documentation-only wave.
+POLC boundary: CONFIRMED — zero production code in PR diff.
+
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-028-20260301-PASS
+Session memory: .agent-workspace/independent-assurance-agent/memory/session-028-20260301.md
+Adoption phase: PHASE_B_BLOCKING — hard gate
+Authority: CS2 ONLY (@APGI-cmy)
+═══════════════════════════════════════════════════════════════
+```
 
 ---
 
