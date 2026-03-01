@@ -3,8 +3,8 @@
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
   "executionRoleArn": "REPLACE_WITH_ECS_EXECUTION_ROLE_ARN",
-  "cpu": "256",
-  "memory": "512",
+  "cpu": "512",
+  "memory": "1024",
   "containerDefinitions": [
     {
       "name": "mat-ai-gateway",
@@ -44,7 +44,7 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "/ecs/mat-ai-gateway",
-          "awslogs-region": "us-east-1",
+          "awslogs-region": "REPLACE_WITH_REGION",
           "awslogs-stream-prefix": "ecs"
         }
       }
