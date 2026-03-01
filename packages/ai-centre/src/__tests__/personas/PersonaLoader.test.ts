@@ -7,7 +7,7 @@
  * References: GRS-010, GRS-028, GRS-029 | APS §8.1 | AAD §9.2
  *
  * Mapped requirements:
- *   GRS-010  Persona files stored in packages/ai-centre/agents/
+ *   GRS-010  Persona files stored in packages/ai-centre/src/agents/
  *   GRS-028  Persona loading by agentId
  *   GRS-029  Persona files as plain Markdown only
  */
@@ -20,13 +20,14 @@ import { PersonaNotFoundError } from '../../types/index.js';
 // ---------------------------------------------------------------------------
 
 describe('PersonaLoader', () => {
+
   it(
     // GRS-028 | AAD §9.2
     "load() returns the full Markdown content of a known agentId",
     async () => {
       const loader = new PersonaLoader();
 
-      // 'mat-advisor' persona file should exist at packages/ai-centre/agents/mat-advisor.md
+      // 'mat-advisor' persona file should exist at packages/ai-centre/src/agents/mat-advisor.md
       const content = await loader.load('mat-advisor');
 
       expect(typeof content).toBe('string');
@@ -107,12 +108,11 @@ function extractFrontMatter(content: string): string {
 // ---------------------------------------------------------------------------
 // CL-1 — maturion-advisor persona (LKIAC Wave 1)
 //
-// RED gate: all 9 tests will FAIL until maturion-advisor.md is created by
-// api-builder with the required YAML front-matter fields.
-//
 // Required front-matter fields (governance/aimc/AIMC_PERSONA_LIFECYCLE.md §5.1):
 //   agentId, module, version, last_reviewed, owner, description
 //
+// Authority: CS2 (@APGI-cmy) — Issue [CL-1]
+// Wave: CL-1 (LKIAC Wave 1 — Maturion Persona Migration)
 // Governance Reference: LKIAC Wave 1 | APS §5 | AIMC_PERSONA_LIFECYCLE.md §5.1
 // ---------------------------------------------------------------------------
 
@@ -121,8 +121,7 @@ describe('CL-1 — maturion-advisor persona (LKIAC Wave 1)', () => {
 
   /**
    * CL-1-T-001
-   * RED — maturion-advisor.md does not yet exist.
-   * Will turn GREEN when api-builder creates the persona file.
+   * load("maturion-advisor") must return non-empty Markdown content.
    *
    * Reference: LKIAC Wave 1 | AIMC_PERSONA_LIFECYCLE.md §5.1
    */
@@ -130,13 +129,13 @@ describe('CL-1 — maturion-advisor persona (LKIAC Wave 1)', () => {
     const content = await loader.load('maturion-advisor');
     expect(typeof content).toBe('string');
     expect(content.length).toBeGreaterThan(0);
+    // Persona files are Markdown — must contain at least one heading
+    expect(content).toContain('#');
   });
 
   /**
    * CL-1-T-002
-   * RED — maturion-advisor.md does not yet exist.
-   * Will turn GREEN when api-builder creates the persona file with a valid YAML
-   * front-matter block starting with `---`.
+   * The persona file must contain a `---` YAML front-matter delimiter.
    *
    * Reference: LKIAC Wave 1 | AIMC_PERSONA_LIFECYCLE.md §5.1
    */
@@ -144,15 +143,14 @@ describe('CL-1 — maturion-advisor persona (LKIAC Wave 1)', () => {
     'CL-1-T-002: maturion-advisor front-matter contains "---" YAML delimiter (file starts with ---)',
     async () => {
       const content = await loader.load('maturion-advisor');
-      expect(content).toMatch(/^---/);
+      expect(content.startsWith('---')).toBe(true);
     },
   );
 
   /**
    * CL-1-T-003
-   * RED — maturion-advisor.md does not yet exist.
-   * Will turn GREEN when api-builder creates the persona file with "agentId:" in
-   * the YAML front-matter (required field per AIMC_PERSONA_LIFECYCLE.md §5.1).
+   * The persona file must contain `agentId:` in its front-matter
+   * (required field per AIMC_PERSONA_LIFECYCLE.md §5.1).
    *
    * Reference: LKIAC Wave 1 | AIMC_PERSONA_LIFECYCLE.md §5.1
    */
@@ -164,9 +162,8 @@ describe('CL-1 — maturion-advisor persona (LKIAC Wave 1)', () => {
 
   /**
    * CL-1-T-004
-   * RED — maturion-advisor.md does not yet exist.
-   * Will turn GREEN when api-builder creates the persona file with "version:" in
-   * the YAML front-matter (required field per AIMC_PERSONA_LIFECYCLE.md §5.1).
+   * The persona file must contain `version:` in its front-matter
+   * (required field per AIMC_PERSONA_LIFECYCLE.md §5.1).
    *
    * Reference: LKIAC Wave 1 | AIMC_PERSONA_LIFECYCLE.md §5.1
    */
@@ -178,9 +175,7 @@ describe('CL-1 — maturion-advisor persona (LKIAC Wave 1)', () => {
 
   /**
    * CL-1-T-005
-   * RED — maturion-advisor.md does not yet exist; PersonaLoader.listAvailable()
-   * will not include it.
-   * Will turn GREEN when api-builder creates the persona file.
+   * listAvailable() must include "maturion-advisor".
    *
    * Reference: LKIAC Wave 1 | GRS-010 | APS §5
    */
@@ -191,9 +186,8 @@ describe('CL-1 — maturion-advisor persona (LKIAC Wave 1)', () => {
 
   /**
    * CL-1-T-006
-   * RED — maturion-advisor.md does not yet exist.
-   * Will turn GREEN when api-builder creates the persona file with "module:" in
-   * the YAML front-matter (required field per AIMC_PERSONA_LIFECYCLE.md §5.1).
+   * The persona file must contain `module:` in its front-matter
+   * (required field per AIMC_PERSONA_LIFECYCLE.md §5.1).
    *
    * Reference: LKIAC Wave 1 | AIMC_PERSONA_LIFECYCLE.md §5.1
    */
@@ -205,9 +199,8 @@ describe('CL-1 — maturion-advisor persona (LKIAC Wave 1)', () => {
 
   /**
    * CL-1-T-007
-   * RED — maturion-advisor.md does not yet exist.
-   * Will turn GREEN when api-builder creates the persona file with "last_reviewed:"
-   * in the YAML front-matter (required field per AIMC_PERSONA_LIFECYCLE.md §5.1).
+   * The persona file must contain `last_reviewed:` in its front-matter
+   * (required field per AIMC_PERSONA_LIFECYCLE.md §5.1).
    *
    * Reference: LKIAC Wave 1 | AIMC_PERSONA_LIFECYCLE.md §5.1
    */
@@ -219,9 +212,8 @@ describe('CL-1 — maturion-advisor persona (LKIAC Wave 1)', () => {
 
   /**
    * CL-1-T-008
-   * RED — maturion-advisor.md does not yet exist.
-   * Will turn GREEN when api-builder creates the persona file with "owner:" in
-   * the YAML front-matter (required field per AIMC_PERSONA_LIFECYCLE.md §5.1).
+   * The persona file must contain `owner:` in its front-matter
+   * (required field per AIMC_PERSONA_LIFECYCLE.md §5.1).
    *
    * Reference: LKIAC Wave 1 | AIMC_PERSONA_LIFECYCLE.md §5.1
    */
@@ -233,9 +225,8 @@ describe('CL-1 — maturion-advisor persona (LKIAC Wave 1)', () => {
 
   /**
    * CL-1-T-009
-   * RED — maturion-advisor.md does not yet exist.
-   * Will turn GREEN when api-builder creates the persona file with "description:"
-   * in the YAML front-matter (required field per AIMC_PERSONA_LIFECYCLE.md §5.1).
+   * The persona file must contain `description:` in its front-matter
+   * (required field per AIMC_PERSONA_LIFECYCLE.md §5.1).
    *
    * Reference: LKIAC Wave 1 | AIMC_PERSONA_LIFECYCLE.md §5.1
    */
