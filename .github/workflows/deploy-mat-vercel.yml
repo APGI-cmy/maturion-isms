@@ -166,6 +166,9 @@ jobs:
           supabase db push --db-url "$SUPABASE_DB_URL"
 
       # T-A-012: AIMC package migrations (packages/ai-centre/supabase/migrations/)
+      # DEPENDENCY: AIMC migration 005_ai_feedback_pipeline.sql references the `organisations` table
+      # defined in the legacy app migrations. This step MUST run AFTER "Apply pending migrations"
+      # (apps/maturion-maturity-legacy) and MUST target the same $SUPABASE_DB_URL.
       - name: Apply AIMC package migrations
         working-directory: packages/ai-centre
         env:
