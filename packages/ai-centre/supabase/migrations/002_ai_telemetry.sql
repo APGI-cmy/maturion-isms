@@ -31,5 +31,7 @@ CREATE POLICY ai_telemetry_org_isolation ON ai_telemetry
   USING (organisation_id = current_setting('app.current_organisation_id', true));
 
 -- Enforce append-only: prevent UPDATE and DELETE operations on this table
+DROP RULE IF EXISTS ai_telemetry_no_update ON ai_telemetry;
 CREATE RULE ai_telemetry_no_update AS ON UPDATE TO ai_telemetry DO INSTEAD NOTHING;
+DROP RULE IF EXISTS ai_telemetry_no_delete ON ai_telemetry;
 CREATE RULE ai_telemetry_no_delete AS ON DELETE TO ai_telemetry DO INSTEAD NOTHING;

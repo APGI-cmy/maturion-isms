@@ -65,5 +65,7 @@ CREATE POLICY ai_episodic_events_select_org_scope ON ai_episodic_events
   USING (organisation_id = current_setting('app.current_organisation_id', true));
 
 -- Enforce append-only: prevent UPDATE and DELETE operations on this table
+DROP RULE IF EXISTS ai_episodic_events_no_update ON ai_episodic_events;
 CREATE RULE ai_episodic_events_no_update AS ON UPDATE TO ai_episodic_events DO INSTEAD NOTHING;
+DROP RULE IF EXISTS ai_episodic_events_no_delete ON ai_episodic_events;
 CREATE RULE ai_episodic_events_no_delete AS ON DELETE TO ai_episodic_events DO INSTEAD NOTHING;
