@@ -1,0 +1,12 @@
+{
+  "module_slug": "amc",
+  "module_name": "App Management Centre (AMC)",
+  "status": "governance-defined",
+  "owners": ["CS2 (Johan Ras / @APGI-cmy)"],
+  "canonical_root": "modules/amc",
+  "legacy_sources": ["maturion-foreman-app"],
+  "artifact_lineage": "Renamed from Foreman App. AMC scope formally defined 2026-03-01 per issue #735. Build waves TBD.",
+  "migration_notes": "Foreman App renamed to App Management Centre (AMC) per CS2 authority 2026-03-01. Scope expanded to include ARC trigger governance, quota management, alert dashboard, audit trail, and progressive automation control.",
+  "legacy_pointer": "governance/canon/AMC_SCOPE_DOCUMENT.md",
+  "last_migrated_at": "2026-03-01"
+}

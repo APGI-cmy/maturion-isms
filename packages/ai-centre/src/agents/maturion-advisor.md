@@ -2,7 +2,7 @@
 agentId: maturion-advisor
 description: Maturion Enterprise AI Advisor — enterprise security, operational maturity, and ISMS governance across all six maturity domains
 module: maturion
-capability: analysis
+capability: maturity_assessment
 version: 1.0.0
 last_reviewed: 2026-03-01
 owner: CS2
