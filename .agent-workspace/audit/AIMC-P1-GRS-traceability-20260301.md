@@ -173,3 +173,117 @@ None of these files contain SQL DDL. No module or app defines a competing `ai_me
 
 **Auditor**: schema-builder  
 **Audit completed**: 2026-03-01
+
+---
+
+## Integration-Builder CI/CD Audit — T-A-012, T-C-001, T-C-010
+
+**Auditor**: integration-builder  
+**Session**: 078  
+**Date**: 2026-03-01  
+**Wave**: CL-4
+
+---
+
+### T-A-012 — Supabase CI Migration Pipeline (AIMC Migrations in CD)
+
+**Status**: PARTIAL FAIL
+
+**Finding**: A `supabase-migrate` job exists in `deploy-mat-vercel.yml` with correct secret and ordering, but it does **not** apply the AIMC migrations from `packages/ai-centre/supabase/migrations/`.
+
+**Evidence**:
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| `supabase-migrate` job exists | ✅ PASS | Job `supabase-migrate` in `.github/workflows/deploy-mat-vercel.yml` (line ~107) |
+| Applies AIMC migrations (001–006) | ❌ FAIL | `working-directory: apps/maturion-maturity-legacy` — points to legacy app, NOT `packages/ai-centre/supabase/migrations/` |
+| Uses DB URL secret (not service role key) | ✅ PASS | `SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}` — correct secret type |
+| Migration step runs before deployment | ✅ PASS | Deploy jobs declare `needs: [build, supabase-migrate]`; migrate job declares `needs: [build]` |
+
+**AIMC Migrations present** (`packages/ai-centre/supabase/migrations/`):
+- `001_ai_memory.sql`
+- `002_ai_telemetry.sql`
+- `003_ai_knowledge.sql`
+- `004_ai_episodic_memory.sql`
+- `005_ai_feedback_pipeline.sql`
+- `006_ai_knowledge_metadata.sql`
+
+None of the above 6 migrations are applied by the current CI pipeline.
+
+**Root Cause**: The `supabase-migrate` job only runs `supabase db push` from `apps/maturion-maturity-legacy` working directory. The AIMC migrations in `packages/ai-centre/supabase/migrations/` have no CI pipeline step that applies them to any deployment target.
+
+**Gap Reference**: `deploy-mat-vercel.yml` job `supabase-migrate`, step `Apply pending migrations`.  
+**Recommendation**: Add a second `supabase db push` step (or separate job) targeting `packages/ai-centre` with the same `SUPABASE_DB_URL` secret. Alternatively, restructure to run migrations from the monorepo root with both paths included.
+
+---
+
+### T-C-001 — Single Entry Point Verification (@maturion/ai-centre consumption)
+
+**Status**: PARTIAL FAIL
+
+**Finding**: No module or app `package.json` declares a dependency on `@maturion/ai-centre`. The package exists and exports a gateway interface, but it is not consumed by any downstream consumer in `modules/` or `apps/`.
+
+**Evidence**:
+
+| Location | `@maturion/ai-centre` dep | Direct provider SDK dep | Notes |
+|----------|--------------------------|------------------------|-------|
+| `modules/mat/frontend/package.json` | ❌ ABSENT | ❌ ABSENT | No AI deps at all in frontend |
+| `apps/maturion-maturity-legacy/package.json` | ❌ ABSENT | ❌ ABSENT | Uses Supabase, no AI SDK |
+| `apps/isms-portal/package.json` | ❌ ABSENT | ❌ ABSENT | Minimal React app, no AI deps |
+| `apps/mat-ai-gateway/` (Python) | N/A | Python SDK (separate ecosystem) | Gateway itself; exempt from JS import rule |
+
+**Positive signals** (partial compliance):
+- No `openai`, `@anthropic-ai/sdk`, or `@perplexity-ai/sdk` packages found in any `modules/` or `apps/` JS/TS `package.json`
+- Test file `modules/mat/tests/aimc-analysis/aimc-analysis.test.ts` (line 222–227) asserts `analysis-service.ts` must NOT import directly from `openai` or `@anthropic-ai` packages — static enforcement via test
+- `@maturion/ai-centre` package exists at `packages/ai-centre/` with correct name and entry point
+
+**Gap**: The single-entry-point pattern is architecturally defined but not structurally enforced via package dependency declarations. If `modules/mat` were to add AI capability, the gateway path is not pre-wired.
+
+---
+
+### T-C-010 — CI Gate for Direct Provider Imports
+
+**Status**: FAIL
+
+**Finding**: No workflow file contains a CI gate that rejects direct provider SDK **import statements** (e.g. `import ... from 'openai'`, `import ... from '@anthropic-ai/sdk'`). The `provider-model-ban.yml` workflow exists but bans **model name strings**, not SDK import declarations.
+
+**Evidence**:
+
+| Workflow | Gate Type | Scope | Covers Direct SDK Imports? |
+|----------|-----------|-------|---------------------------|
+| `.github/workflows/provider-model-ban.yml` | Bans model name strings (`gpt-4`, `claude-*`, `dall-e`, etc.) | `modules/mat/src/**` `*.ts`, `*.tsx` | ❌ No — checks string literals, not import paths |
+| All other workflows | No provider import check | — | ❌ No |
+
+**What provider-model-ban.yml does** (correct but incomplete):
+```yaml
+grep -rn --include="*.ts" --include="*.tsx" \
+  -E '(gpt-[0-9]|whisper-[0-9a-z]|claude-[0-9a-z]|dall-e|o3-mini|...)' \
+  modules/mat/src/
+```
+This catches hardcoded model strings but NOT:
+- `import OpenAI from 'openai'`
+- `import Anthropic from '@anthropic-ai/sdk'`
+- `import { PerplexityClient } from '@perplexity-ai/sdk'`
+
+**No workflow found** matching pattern: `grep.*import.*openai\|import.*anthropic\|import.*perplexity`
+
+**Recommendation**: Add a step to `provider-model-ban.yml` (or a new `provider-import-ban.yml` workflow) that greps for direct SDK import paths in `modules/` source:
+```bash
+grep -rn --include="*.ts" --include="*.tsx" \
+  -E "from ['\"]openai['\"]|from ['\"]@anthropic-ai|from ['\"]@perplexity" \
+  modules/
+```
+
+---
+
+### T-A-012 / T-C-001 / T-C-010 — Summary
+
+| T-ID | GRS Ref | Description | Status |
+|------|---------|-------------|--------|
+| T-A-012 | GRS-CICD | Supabase CI migration pipeline applies AIMC migrations | **PARTIAL FAIL** — job exists, correct secret & ordering, but AIMC migrations not applied |
+| T-C-001 | GRS-ARCH | Modules/apps use @maturion/ai-centre, not direct provider SDKs | **PARTIAL FAIL** — no direct provider SDKs present; @maturion/ai-centre not wired |
+| T-C-010 | GRS-CI | CI gate rejects direct provider SDK imports in module code | **FAIL** — model-string ban exists; SDK import ban absent |
+
+**Auditor**: integration-builder  
+**Session**: 078  
+**Audit completed**: 2026-03-01

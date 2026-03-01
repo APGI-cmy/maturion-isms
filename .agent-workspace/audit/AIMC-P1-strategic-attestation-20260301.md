@@ -68,3 +68,36 @@ I, qa-builder (Session 078), attest that:
 Date: 2026-03-01
 Wave: CL-4
 Session: 078
+
+---
+
+## T-C-001 — Single Entry Point (Integration-Builder)
+
+**Auditor**: integration-builder  
+**Session**: 078  
+**Date**: 2026-03-01
+
+**Status**: PARTIAL FAIL
+
+**Strategic Requirement**: All modules and apps that invoke AI capabilities must route exclusively through `@maturion/ai-centre`. No module or app may depend directly on `openai`, `@anthropic-ai/sdk`, `@perplexity-ai/sdk`, or any provider SDK.
+
+**Findings**:
+
+1. **No direct provider SDK dependencies found** in any `modules/` or `apps/` JS/TS `package.json` — this is the positive finding. No violation of the prohibition.
+
+2. **`@maturion/ai-centre` is not declared** as a dependency in any consuming module or app:
+   - `modules/mat/frontend/package.json` — absent
+   - `apps/maturion-maturity-legacy/package.json` — absent
+   - `apps/isms-portal/package.json` — absent
+
+3. **Package exists** at `packages/ai-centre/` with name `@maturion/ai-centre` (v0.0.1, status: private). The single-entry-point infrastructure is in place but not consumed.
+
+4. **AI Gateway is Python-based** (`apps/mat-ai-gateway/`). The JS/TS `@maturion/ai-centre` package is the Node.js gateway abstraction. Current architecture routes AI calls through the Python HTTP gateway, explaining the absence of `@maturion/ai-centre` in frontend package.json files — but no explicit dependency declaration confirms compliance with the single-entry-point rule.
+
+**Risk**: Without declared dependency + enforced import path, any developer could add a direct provider SDK to a module without triggering a dependency-level review. The T-C-010 CI gate gap (no import-path check) compounds this risk.
+
+**Recommendation**: Either:
+- (a) Wire `@maturion/ai-centre` as a workspace dependency in `modules/mat` package.json and enforce its use for any AI capability invocation, OR  
+- (b) Document the Python gateway as the official single entry point and enforce via T-C-010 import-ban CI gate
+
+**Attestation**: Evidence based on direct inspection of `package.json` files and source code. No AI provider SDK package declarations found. No `@maturion/ai-centre` declarations found.
