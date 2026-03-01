@@ -22,6 +22,9 @@ importers:
 
   apps/isms-portal:
     dependencies:
+      '@maturion/ai-centre':
+        specifier: workspace:*
+        version: link:../../packages/ai-centre
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -59,6 +62,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.9.0
         version: 3.10.0(react-hook-form@7.71.1)
+      '@maturion/ai-centre':
+        specifier: workspace:*
+        version: link:../../packages/ai-centre
       '@radix-ui/react-accordion':
         specifier: ^1.2.0
         version: 1.2.12(@types/react-dom@18.3.7)(@types/react@18.3.28)(react-dom@18.3.1)(react@18.3.1)
@@ -273,6 +279,12 @@ importers:
       vite:
         specifier: ^5.4.1
         version: 5.4.21(@types/node@22.19.11)
+
+  modules/mat:
+    dependencies:
+      '@maturion/ai-centre':
+        specifier: workspace:*
+        version: link:../../packages/ai-centre
 
   modules/mat/frontend:
     dependencies:
