@@ -63,35 +63,182 @@ jobs:
     needs: test
     permissions:
       contents: read
+      id-token: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Configure AWS credentials
+        if: github.event_name != 'pull_request'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        if: github.event_name != 'pull_request'
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
       - name: Build Docker image
         run: docker build -t mat-ai-gateway:${{ github.sha }} apps/mat-ai-gateway/
+
+      - name: Tag and push Docker image to ECR
+        if: github.event_name != 'pull_request'
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker tag mat-ai-gateway:$IMAGE_TAG $ECR_REGISTRY/mat-ai-gateway:$IMAGE_TAG
+          docker tag mat-ai-gateway:$IMAGE_TAG $ECR_REGISTRY/mat-ai-gateway:latest
+          docker push $ECR_REGISTRY/mat-ai-gateway:$IMAGE_TAG
+          docker push $ECR_REGISTRY/mat-ai-gateway:latest
 
   deploy-preview:
     name: Deploy Preview
     runs-on: ubuntu-latest
     needs: build
-    permissions: {}
+    permissions:
+      contents: read
+      id-token: write
     if: github.event_name == 'pull_request'
     steps:
-      - name: Preview deployment placeholder
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push preview image to ECR
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          PR_TAG: pr-${{ github.event.number }}
         run: |
-          echo "PLACEHOLDER: preview deployment not yet wired."
-          echo "To enable: add your platform deploy command here and configure the relevant secret"
-          echo "(e.g. RAILWAY_TOKEN for Railway, RENDER_API_KEY for Render, or AWS credentials for ECS)."
+          docker build -t mat-ai-gateway:$PR_TAG apps/mat-ai-gateway/
+          docker tag mat-ai-gateway:$PR_TAG $ECR_REGISTRY/mat-ai-gateway:$PR_TAG
+          docker push $ECR_REGISTRY/mat-ai-gateway:$PR_TAG
+
+      - name: Inject execution role ARN into task definition
+        env:
+          ECS_EXECUTION_ROLE_ARN: ${{ secrets.ECS_EXECUTION_ROLE_ARN }}
+        run: |
+          jq --arg arn "$ECS_EXECUTION_ROLE_ARN" \
+            '.executionRoleArn = $arn' \
+            apps/mat-ai-gateway/ecs-task-def.json > /tmp/ecs-task-def-resolved.json
+
+      - name: Render preview ECS task definition
+        id: render-task-def-preview
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: /tmp/ecs-task-def-resolved.json
+          container-name: mat-ai-gateway
+          image: ${{ secrets.ECR_REGISTRY }}/mat-ai-gateway:pr-${{ github.event.number }}
+
+      - name: Deploy to staging ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.render-task-def-preview.outputs.task-definition }}
+          service: ${{ secrets.ECS_SERVICE_STAGING }}
+          cluster: ${{ secrets.ECS_CLUSTER_STAGING }}
+          wait-for-service-stability: false
 
   deploy-production:
     name: Deploy Production
     runs-on: ubuntu-latest
     needs: build
-    permissions: {}
+    permissions:
+      contents: read
+      id-token: write
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - name: Production deployment placeholder
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Inject execution role ARN into task definition
+        env:
+          ECS_EXECUTION_ROLE_ARN: ${{ secrets.ECS_EXECUTION_ROLE_ARN }}
         run: |
-          echo "PLACEHOLDER: production deployment not yet wired."
-          echo "To enable: replace this step with your platform deploy command and configure"
-          echo "the relevant secret (RAILWAY_TOKEN, RENDER_API_KEY, AWS credentials, etc.)."
+          jq --arg arn "$ECS_EXECUTION_ROLE_ARN" \
+            '.executionRoleArn = $arn' \
+            apps/mat-ai-gateway/ecs-task-def.json > /tmp/ecs-task-def-resolved.json
+
+      - name: Render ECS task definition with new image
+        id: render-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: /tmp/ecs-task-def-resolved.json
+          container-name: mat-ai-gateway
+          image: ${{ secrets.ECR_REGISTRY }}/mat-ai-gateway:${{ github.sha }}
+
+      - name: Deploy to production ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.render-task-def.outputs.task-definition }}
+          service: ${{ secrets.ECS_SERVICE }}
+          cluster: ${{ secrets.ECS_CLUSTER }}
+          wait-for-service-stability: true
+
+      - name: Verify service health check
+        env:
+          SERVICE_URL: ${{ secrets.ECS_SERVICE_URL }}
+        run: |
+          echo "Verifying health check at $SERVICE_URL/health ..."
+          for i in $(seq 1 5); do
+            if curl -fsS --max-time 5 "$SERVICE_URL/health" > /dev/null; then
+              echo "Health check passed."
+              exit 0
+            fi
+            echo "Attempt $i failed. Retrying in 10 seconds..."
+            sleep 10
+          done
+          echo "Health check failed after 5 attempts."
+          exit 1
+
+  cwt:
+    name: Combined Wave Test (MAT-T-0001–0098)
+    runs-on: ubuntu-latest
+    needs: [deploy-production]
+    permissions:
+      contents: read
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Combined Wave Tests (MAT-T-0001–0098)
+        shell: bash
+        run: set -o pipefail && npm test | tee cwt-test-output.log
+
+      - name: Upload CWT test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cwt-test-results-${{ github.sha }}
+          path: cwt-test-output.log
+          if-no-files-found: ignore
