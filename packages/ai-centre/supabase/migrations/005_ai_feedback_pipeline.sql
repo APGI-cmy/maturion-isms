@@ -46,6 +46,7 @@ ALTER TABLE ai_feedback_events ENABLE ROW LEVEL SECURITY;
 
 -- Policy: ai_feedback_events_insert
 -- Authenticated users can INSERT feedback rows for their own user_id.
+DROP POLICY IF EXISTS ai_feedback_events_insert ON ai_feedback_events;
 CREATE POLICY ai_feedback_events_insert ON ai_feedback_events
   FOR INSERT
   TO authenticated
@@ -55,6 +56,7 @@ CREATE POLICY ai_feedback_events_insert ON ai_feedback_events
 -- Org members can SELECT feedback rows belonging to their organisation.
 -- Organisation membership is determined by the app.current_organisation_id
 -- session variable (consistent with all other AIMC table policies).
+DROP POLICY IF EXISTS ai_feedback_events_org_select ON ai_feedback_events;
 CREATE POLICY ai_feedback_events_org_select ON ai_feedback_events
   FOR SELECT
   USING (organisation_id::text = current_setting('app.current_organisation_id', true));
@@ -63,6 +65,7 @@ CREATE POLICY ai_feedback_events_org_select ON ai_feedback_events
 -- ARC approval fields (arc_status, arc_reviewed_by, arc_reviewed_at, arc_notes)
 -- may ONLY be updated by the service_role (CS2-gated ARC endpoint).
 -- No direct user-facing UPDATE is permitted.
+DROP POLICY IF EXISTS ai_feedback_events_arc_update ON ai_feedback_events;
 CREATE POLICY ai_feedback_events_arc_update ON ai_feedback_events
   FOR UPDATE
   TO service_role

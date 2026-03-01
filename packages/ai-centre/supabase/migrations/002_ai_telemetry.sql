@@ -26,6 +26,7 @@ CREATE INDEX IF NOT EXISTS idx_ai_telemetry_recorded_at ON ai_telemetry (recorde
 ALTER TABLE ai_telemetry ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Users can only read telemetry belonging to their organisation
+DROP POLICY IF EXISTS ai_telemetry_org_isolation ON ai_telemetry;
 CREATE POLICY ai_telemetry_org_isolation ON ai_telemetry
   USING (organisation_id = current_setting('app.current_organisation_id', true));
 
