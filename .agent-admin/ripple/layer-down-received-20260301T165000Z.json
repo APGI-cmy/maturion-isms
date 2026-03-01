@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "type": "layer_down_received",
+  "timestamp": "2026-03-01T16:50:00Z",
+  "source_issue": "765",
+  "canonical_commit": "79652ea59982559435b40519f47c3ab854da3d1a",
+  "requires_cs2_approval": false,
+  "escalated": false,
+  "agent_files_changed": false,
+  "files_updated": 7,
+  "drift_report": ".agent-admin/governance/drift-report-align-20260301-ripple-79652ea5.md",
+  "trigger": "manual recovery trigger",
+  "workflow_fix": "ripple-integration.yml updated to use github.token fallback"
+}

@@ -46,7 +46,7 @@ A **component** is any system, subsystem, capability, service, application, or f
 - Has governance-defined activation requirements
 
 Components include:
-- Complete applications (e.g., App Management Centre - AMC, Builder Service)
+- Complete applications (e.g., Foreman App, Builder Service)
 - Subsystems within applications (e.g., Authentication Module, Reporting Engine)
 - Capabilities or features (e.g., Auto-scaling, Autonomous Decision-Making)
 - Integration points (e.g., External API Connector)
@@ -630,7 +630,7 @@ Version rollback to previously commissioned version may allow faster re-activati
 
 ### 10.1 Application-Level Components
 
-**Examples**: Complete applications (App Management Centre - AMC, Builder Service)
+**Examples**: Complete applications (Foreman App, Builder Service)
 
 **State Applicability**: All states (DORMANT → VALIDATED → READ_ONLY → PROPOSAL_ONLY → ACTIVE)
 
