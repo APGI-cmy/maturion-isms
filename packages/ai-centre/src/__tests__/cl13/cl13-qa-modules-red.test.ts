@@ -156,10 +156,10 @@ describe('CL-13 D5 — QAOverviewPanel', () => {
   it('CL-13-D5-T-005: QAOverviewPanel source contains QA metrics display (rules, tests, compliance)', () => {
     // CL-13-D5-T-005: <source contains metrics terms>
     const source = readComponentSource('QAOverviewPanel');
-    // "Active QA Rules" / rules count
-    expect(source.toLowerCase()).toMatch(/active.*rules|rules.*count|active_rules/);
-    // Running / completed tests
-    expect(source.toLowerCase()).toMatch(/running.*test|completed.*test|active.*test/);
+    // "Active QA Rules" / rules count — tightened whitespace constraints
+    expect(source.toLowerCase()).toMatch(/active\s+rules|rules\s+count|active_rules/);
+    // Running / completed tests — whitespace-bounded
+    expect(source.toLowerCase()).toMatch(/running\s+test|completed\s+test|active\s+test/);
     // Compliance rate
     expect(source.toLowerCase()).toMatch(/compliance/);
   });
@@ -298,9 +298,9 @@ describe('CL-13 D7 — HealthTestResultsView', () => {
     // Category 1: Database & Schema
     expect(source).toContain('Database');
     expect(source.toLowerCase()).toMatch(/schema/);
-    // Category 2: API Functionality
+    // Category 2: API Functionality — reordered so specific pattern takes precedence
     expect(source).toContain('API');
-    expect(source.toLowerCase()).toMatch(/functionality|api\s+functionality/);
+    expect(source.toLowerCase()).toMatch(/api\s+functionality|functionality/);
     // Category 3: Security & Permissions
     expect(source.toLowerCase()).toMatch(/security/);
     expect(source.toLowerCase()).toMatch(/permissions/);
@@ -323,7 +323,7 @@ describe('CL-13 D7 — HealthTestResultsView', () => {
     expect(source.toLowerCase()).toMatch(/failed/);
     // Filter by 'warning' status
     expect(source.toLowerCase()).toMatch(/warning/);
-    // Must have some form of filter/select mechanism
-    expect(source.toLowerCase()).toMatch(/filter|select.*status|status.*filter/);
+    // Must have some form of filter/select mechanism — scoped to status-filter context
+    expect(source.toLowerCase()).toMatch(/status.*filter|filter.*status|filterby.*status|filter\w*status/);
   });
 });
