@@ -169,9 +169,11 @@ export async function fetchTestResults(
     // Records whose status is stored only in metric_data.status — rather than
     // in metric_type — will NOT be caught by this server-side filter.
     // Post-fetch client-side filtering for those records is intentionally
-    // omitted to avoid fetching unlimited rows; callers that require strict
-    // status accuracy should pass no filter and filter client-side on the
-    // returned QATestResult[].
+    // omitted to avoid fetching unlimited rows.
+    // Recommendation for strict status filtering: pass no filter parameter and
+    // apply client-side filtering using the returned QATestResult[].status field
+    // (e.g. results.filter(r => r.status === 'failed')) after calling this
+    // function without a filter argument.
     if (filter?.status) {
       query = query.eq('metric_type', `test_result_${filter.status}`);
     }
@@ -312,8 +314,10 @@ function _rowToTestResult(row: QAMetricRecord): QATestResult {
   // Derive status in priority order:
   //   1. Explicit metric_data.status (most specific)
   //   2. metric_type pattern "test_result_{status}"
-  //   3. 'warning' as a safe fallback — never silently promote unknown results
-  //      to 'passed', which could mask real failures.
+  //   3. 'warning' as a safe fallback — 'warning' is used rather than 'passed'
+  //      because it signals to callers that the status requires investigation,
+  //      avoiding the risk of incorrectly treating unknown statuses as 'passed'
+  //      which could mask real failures in downstream health checks or alerts.
   let status: QATestResult['status'] = 'warning'; // safe default
   if (typeof md['status'] === 'string') {
     const s = md['status'];
