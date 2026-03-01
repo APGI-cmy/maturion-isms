@@ -15,7 +15,7 @@ This system ensures that governance artifacts remain synchronized with the canon
 
 ## Architecture
 
-### 7 Core Components
+### 8 Core Components
 
 #### 1. Receiver Workflow ✅
 **File**: `.github/workflows/governance-ripple-sync.yml`
@@ -126,7 +126,29 @@ gh pr list --repo APGI-cmy/maturion-isms
 
 **Fallback**: Workflows use `secrets.MATURION_BOT_TOKEN || github.token` to gracefully degrade to default token if bot token unavailable.
 
-#### 7. Documentation ✅
+#### 7. Layer-Up Trigger Automation ✅
+**File**: `.github/workflows/layer-up-trigger.yml`
+
+Automated workflow that listens for PR merge or approval comment events and creates
+a layer-up issue with the required labels, eliminating manual issue creation for
+most governance improvement scenarios.
+
+**Triggers**:
+- PR comment containing `"Auto layer up approved"` or `"Layer up approved"` (case-insensitive)
+- PR closed as merged with approval phrase in the PR body
+
+**Actions**:
+1. Detects approval phrase in PR body or comment
+2. Checks for duplicate layer-up issues (idempotent)
+3. Creates layer-up issue with labels `layer-up` + `governance-improvement` and PR cross-link
+4. Includes conflict-detection instructions for reviewers
+5. Comments on the originating PR with the issue reference
+6. `layer-up-dispatch.yml` automatically picks up the labeled issue and escalates to the governance repo
+
+**Human fallback**: Manual issue creation with `layer-up` + `governance-improvement` labels
+is always supported and continues to work unchanged.
+
+#### 8. Documentation ✅
 **This file**: `docs/GOVERNANCE_RIPPLE_SYSTEM.md`
 
 Comprehensive maintainability guide covering:
@@ -162,7 +184,27 @@ Every hour, `governance-alignment-schedule.yml`:
 
 **Expected Latency**: Up to 1 hour
 
-### 3. Manual Trigger (Testing)
+### 3. Automated Layer-Up Trigger (Upward Direction)
+
+**PR Merge or Approval Comment → Layer-Up Issue Created Automatically**
+
+When a PR merges with an approval phrase in its body, or when a reviewer comments
+`"Auto layer up approved"` / `"Layer up approved"` on a PR:
+
+1. `layer-up-trigger.yml` detects the approval phrase
+2. Creates a layer-up issue with labels `layer-up` + `governance-improvement`
+3. Includes conflict-detection instructions and PR cross-link
+4. `layer-up-dispatch.yml` picks up the issue and escalates to the governance repo
+
+**Supported approval phrases** (case-insensitive):
+- `Auto layer up approved`
+- `Layer up approved`
+
+**Idempotency**: If a layer-up issue for the same PR already exists, no duplicate is created.
+
+**Human fallback**: Manual issue creation with the required labels continues to work.
+
+### 4. Manual Trigger (Testing)
 
 **Workflow Dispatch**
 
@@ -449,6 +491,11 @@ Key features:
 - Graceful degradation with fallback mechanisms
 
 ## Version History
+
+- **v1.1.0** (2026-03-01) - Layer-up trigger automation
+  - Added `layer-up-trigger.yml` (Component 7) for automated layer-up issue creation
+  - Documented Layer-Up Trigger in Trigger Mechanisms section
+  - Updated component count from 7 to 8
 
 - **v1.0.0** (2026-02-14) - Initial complete implementation
   - All 7 components implemented

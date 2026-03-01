@@ -202,9 +202,23 @@ Layer-up MUST be initiated when:
 
 ### Phase 1: Detection & Documentation (Application Repository)
 
-**Who**: governance-liaison, foreman, or builder in application repository  
-**When**: Upon trigger (see Section 5)  
+**Who**: governance-liaison, foreman, or builder in application repository (or automated workflow)
+**When**: Upon trigger (see Section 5)
 **Where**: Application repository
+
+**Automated Path (PR-based)**:
+
+When a PR is merged or reviewed with an explicit approval phrase, the layer-up issue is
+created automatically by `layer-up-trigger.yml`:
+
+1. A reviewer or author includes `"Auto layer up approved"` or `"Layer up approved"` in the
+   PR body (for merge trigger) or as a PR comment.
+2. `layer-up-trigger.yml` detects the phrase and auto-creates an issue with labels
+   `layer-up` + `governance-improvement` and a cross-link to the originating PR.
+3. Conflict-detection instructions are included in the auto-created issue.
+4. `layer-up-dispatch.yml` then escalates the issue to the governance repository automatically.
+
+**Manual Path (Human or Agent)**:
 
 **Steps**:
 1. **Capture Evidence**:
@@ -673,8 +687,9 @@ Title: [Layer-Up] <Brief Description>
 
 ---
 
-**Version**: 1.0.0  
+**Version**: 1.1.0  
 **Created**: 2026-02-09  
+**Updated**: 2026-03-01 — Automated layer-up trigger documented (layer-up-trigger.yml)  
 **Authority**: GOVERNANCE_RIPPLE_MODEL.md, Living Agent System v5.0.0, Issue #1047  
 **Owner**: governance-repo-administrator  
 **Purpose**: Enable bidirectional governance evolution through structured layer-up protocol

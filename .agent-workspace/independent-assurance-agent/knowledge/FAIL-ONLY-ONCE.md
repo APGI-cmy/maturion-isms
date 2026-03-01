@@ -210,3 +210,34 @@ All updates to this file must be committed as part of the session bundle for tha
 ---
 
 **Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
+
+---
+
+### A-015 — Tier 2 Knowledge Patches Require Full PREHANDOVER Ceremony — No Content-Type Exemption
+
+**Triggered by**: maturion-isms#699 — session-021-20260301 REJECTION-PACKAGE.
+CodexAdvisor invoked IAA for a Tier 2 knowledge patch (prehandover-template.md + iaa-core-invariants-checklist.md)
+without creating a PREHANDOVER proof or session memory. The patch's own subject matter was the PREHANDOVER
+ceremony, yet the ceremony was not followed. This is the third REJECTION-PACKAGE in sessions 018–021 involving
+CORE-013/015/016 process violations.
+
+**Permanent Rule**:
+CORE-013, CORE-015, and CORE-016 apply to ALL triggered PRs regardless of content type.
+A "Tier 2 knowledge patch" is NOT an implicit exemption from the PREHANDOVER process.
+Specifically:
+- Any PR that triggers IAA (governance knowledge update, CANON_GOVERNANCE, AGENT_CONTRACT, CI_WORKFLOW, AAWP_MAT)
+  requires a PREHANDOVER proof + session memory regardless of how "simple" the content change is.
+- A patch to the PREHANDOVER template itself must follow the PREHANDOVER ceremony it describes —
+  this is the canonical bootstrap case. The first use of the new ceremony must be the PR that introduces it.
+- No content-type-based exemption from CORE-013/015/016 exists. Only IAA-classified EXEMPT category
+  (unambiguously non-triggering) bypasses these checks.
+
+**Check in Phase 3**:
+> FAIL-ONLY-ONCE A-015: If PR is triggered (non-EXEMPT) and contains no PREHANDOVER proof:
+> CORE-013 → FAIL ("No PREHANDOVER proof or IAA token reference in PR artifacts")
+> CORE-015 → FAIL ("No session memory artifact in PR bundle")
+> CORE-016 → FAIL ("No PREHANDOVER proof on branch — IAA Agent Response (verbatim) cannot be verified")
+> Fix: Create PREHANDOVER proof with iaa_audit_token: PENDING, create session memory,
+> commit both to branch, re-invoke IAA, then follow Post-ASSURANCE-TOKEN Ceremony.
+
+**Status**: ACTIVE — enforced every invocation
