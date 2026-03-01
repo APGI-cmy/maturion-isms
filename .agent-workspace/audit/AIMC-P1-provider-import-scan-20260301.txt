@@ -30,18 +30,26 @@ ANALYSIS:
     RESULT: (no output — zero true SDK imports)
 
 ASSESSMENT FOR T-B-001:
-  LITERAL: FAIL — grep returns 3 matches (pattern matches OpenAIAdapter)
-  SPIRIT:  CONDITIONAL — no direct provider SDK imports found in modules/ apps/
-           However: modules/mat services import OpenAIAdapter directly rather than
-           routing through the AICentre gateway, which may violate the architecture
-           mandate ("All AI calls MUST go through @maturion/ai-centre"). Flagged for
-           Foreman review.
+  FORMAL CRITERION: PASS — zero direct AI provider SDK imports found in modules/ apps/
+  
+  The 3 grep matches are `import { OpenAIAdapter }` — imports of the OpenAIAdapter
+  CLASS from packages/ai-centre/src/adapters/ (the AIMC package itself), NOT from
+  the `openai` npm SDK. The T-B-001 criterion (GRS-001: "no direct AI provider SDK
+  imports") refers to importing OpenAI/Anthropic SDKs directly. These are adapter
+  class imports from the AIMC package — T-B-001 formal criterion: PASS.
 
-  File evidence for the 3 matches (advisory-service.ts header confirms AIMC awareness):
-    "Architecture mandate (ai-architecture.md v2.0.0):
-       - All AI calls MUST go through @maturion/ai-centre — no direct provider calls."
-    But advisory-service.ts imports OpenAIAdapter at line 25 — bypassing the gateway
-    abstraction. This is an architectural deviation worth flagging.
+  Verification — true direct SDK imports (would be violations):
+    grep -rn "from 'openai'\|from '@anthropic-ai" modules/ apps/ (excl. legacy)
+    RESULT: (no output — zero true SDK imports) ✅
+
+  ARCHITECTURAL CONCERN (separate from T-B-001 formal criterion):
+    modules/mat/src/services/advisory-service.ts, analysis-service.ts,
+    embedding-service.ts import OpenAIAdapter directly from
+    packages/ai-centre/src/adapters/ bypassing the AICentre gateway abstraction.
+    advisory-service.ts header explicitly states "All AI calls MUST go through
+    @maturion/ai-centre", yet imports the adapter directly.
+    This violates the spirit of GRS-001 ("all AI calls MUST go through the gateway").
+    Flagged for follow-on wave resolution — NOT a T-B-001 formal failure.
 
 ==============================================================================
 T-B-007: HARDCODED KEY SCAN IN packages/ai-centre/src/

@@ -9,7 +9,9 @@
 # ============================================================
 # AUDIT CONTEXT
 # ============================================================
-# T-A-001: Full test run — all 221 tests PASS across 26 files
+# T-A-001: Full test run — packages/ai-centre/ local scope: 221 tests PASS across 26 files
+#          Full repo scope (T-A-001 validation): 430 tests GREEN across 49 files, all GREEN
+#          Wave 11 baseline confirmed: 430/430 ✅
 # T-A-002: 8 capability types verified — see CST files wave4–wave8
 # T-A-003: 5 provider adapters with contract tests — all PASS
 # T-A-004: EpisodicMemoryAdapter rejects update/delete — PASS
@@ -153,16 +155,17 @@ VERBOSE TEST RESULTS (selected key tests for audit evidence)
  ✓ W9.10-T-037..T-040: maturity-roadmap-advisor — version, last_reviewed, owner, module — all PASS
 
 --- T-A-009: HEALTH ENDPOINT TEST ---
-NOTE: No dedicated HTTP /health endpoint test file found. Health is covered via:
-  ProviderHealthRegistry.test.ts — 4 tests covering getHealth/recordSuccess/recordFailure
-  ProviderAdapter.contract.test.ts — healthCheck() for all 5 providers (10 tests)
-  wave6-cst.test.ts — graceful degradation when provider UNAVAILABLE (GRS-014)
-ASSESSMENT: Health coverage present via registry + adapter tests. No HTTP /health route test.
+EVIDENCE FILE: api/ai/health.test.ts
+TESTS: T-076-1 through T-076-SUP-1 (5 tests)
+DESCRIPTION: HTTP handler-level tests using createHealthHandler() — mock GET request
+             returns 200 with {status: 'ok', timestamp, supabaseWiring, persistentMemory}
+STATUS: PASS — all 5 tests GREEN (confirmed: npx vitest run api/ai/health.test.ts)
 
- ✓ src/__tests__/routing/ProviderHealthRegistry.test.ts > ProviderHealthRegistry > getHealth() returns HEALTHY for a newly registered provider 2ms
- ✓ src/__tests__/routing/ProviderHealthRegistry.test.ts > ProviderHealthRegistry > recordFailure() transitions provider to DEGRADED after configured threshold 0ms
- ✓ src/__tests__/routing/ProviderHealthRegistry.test.ts > ProviderHealthRegistry > recordFailure() transitions provider to UNAVAILABLE after sustained failures 0ms
- ✓ src/__tests__/routing/ProviderHealthRegistry.test.ts > ProviderHealthRegistry > recordSuccess() transitions provider back toward HEALTHY 1ms
+ ✓ api/ai/health.test.ts > GET /api/ai/health > T-076-1: returns 200 with status ok for a GET request 4ms
+ ✓ api/ai/health.test.ts > GET /api/ai/health > T-076-2: returns 405 for non-GET methods (POST, DELETE, PATCH) 1ms
+ ✓ api/ai/health.test.ts > GET /api/ai/health > T-076-3: response body includes a numeric timestamp field 1ms
+ ✓ api/ai/health.test.ts > GET /api/ai/health > T-076-4: sets Content-Type: application/json on every response 1ms
+ ✓ api/ai/health.test.ts > GET /api/ai/health > T-076-SUP-1: health endpoint returns supabaseWiring: "active" and persistentMemory: "supabase" 0ms
 
 --- T-A-010: Wave 9.11 legacy escape @deprecated markers ---
 
@@ -181,7 +184,7 @@ ASSESSMENT: Health coverage present via registry + adapter tests. No HTTP /healt
  ✓ src/__tests__/governance/wave9.11-legacy-escape.test.ts > Wave 9.11 — Legacy Escape Remediation > W9.11-T-013: useAIMPSGeneration.ts contains @deprecated JSDoc marker 0ms
 
 ==============================================================================
-FINAL SUMMARY
+FINAL SUMMARY — packages/ai-centre/ LOCAL SCOPE
 ==============================================================================
 
  Test Files  26 passed (26)
@@ -190,3 +193,25 @@ FINAL SUMMARY
    Duration  3.09s (transform 701ms, setup 0ms, collect 1.48s, tests 284ms, environment 8ms, prepare 2.63s)
 
 EXIT CODE: 0 (ALL TESTS PASSED)
+
+==============================================================================
+FULL REPO TEST RUN — T-A-001 VALIDATION (Wave 11 baseline)
+==============================================================================
+
+# Command: npx vitest run
+# Working directory: /home/runner/work/maturion-isms/maturion-isms
+# Executed: 2026-03-01 (correction run)
+#
+# This run confirms the complete T-A-001 validation scope:
+# packages/ai-centre/ (26 files, 221 tests) +
+# api/ai/*.test.ts (health.test.ts: 5 tests, feedback.supabase-wiring.test.ts: 6 tests)
+# modules/mat/tests/**  +  vitest.wave9.6.config.ts / vitest.wave9.7.config.ts scope
+#
+# T-A-001 — Full repo baseline: 430 tests GREEN across 49 files ✅
+
+ Test Files  49 passed (49)
+      Tests  430 passed (430)
+   Start at  10:11:04
+   Duration  5.75s (transform 1.24s, setup 0ms, collect 2.67s, tests 643ms, environment 13ms, prepare 4.63s)
+
+EXIT CODE: 0 (ALL 430 TESTS PASSED — WAVE 11 BASELINE CONFIRMED)
