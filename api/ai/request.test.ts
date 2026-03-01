@@ -308,6 +308,211 @@ describe('handler', () => {
 });
 
 // ---------------------------------------------------------------------------
+// Wave 11 — Supabase persistence (T-075-SUP-1 through T-075-SUP-4)
+//
+// These tests are RED because SupabasePersistentMemoryAdapter does NOT yet exist.
+// T-075-SUP-1 fails because buildPersistentMemory() currently returns
+// PersistentMemoryAdapter (in-memory), not SupabasePersistentMemoryAdapter.
+// T-075-SUP-2 through T-075-SUP-4 use dynamic import() so that only those
+// individual tests fail with "Cannot find module" — existing GREEN tests are
+// NOT broken by a missing static import at file-collection time.
+//
+// References: FR-075-SUP, TR-075-SUP | Wave 11 (Supabase Persistent Memory Wiring)
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Mock Supabase client builder for persistent memory tests
+// ---------------------------------------------------------------------------
+
+function makeMockSupabaseClient() {
+  const rows: Record<string, unknown>[] = [];
+  return {
+    rows, // for inspection
+    from: (_table: string) => ({
+      insert: (data: Record<string, unknown>) => {
+        rows.push(data);
+        return Promise.resolve({ error: null });
+      },
+      select: (_cols: string = '*') => ({
+        eq: (col: string, val: unknown) => ({
+          eq: (col2: string, val2: unknown) => ({
+            order: (_col3: string, _opts?: unknown) =>
+              Promise.resolve({
+                data: rows.filter(r => r[col] === val && r[col2] === val2),
+                error: null,
+              }),
+          }),
+          order: (_col3: string, _opts?: unknown) =>
+            Promise.resolve({
+              data: rows.filter(r => r[col] === val),
+              error: null,
+            }),
+        }),
+      }),
+      delete: () => ({
+        eq: (col: string, val: unknown) => ({
+          lt: (col2: string, val2: unknown) => {
+            const toDelete = rows.filter(
+              r =>
+                r[col] === val &&
+                r[col2] !== undefined &&
+                (r[col2] as string) < (val2 as string),
+            );
+            toDelete.forEach(r => {
+              const idx = rows.indexOf(r);
+              if (idx !== -1) rows.splice(idx, 1);
+            });
+            return Promise.resolve({ count: toDelete.length, error: null });
+          },
+        }),
+      }),
+    }),
+  };
+}
+
+// Convenience type alias for the mock client shape used in T-075-SUP-2/3/4
+type MockSupabaseClient = ReturnType<typeof makeMockSupabaseClient>;
+
+describe('Wave 11 — Supabase persistence', () => {
+  // T-075-SUP-1 --------------------------------------------------------------
+  // RED: buildPersistentMemory() currently returns PersistentMemoryAdapter
+  // (in-memory). This turns GREEN once api-builder wires
+  // SupabasePersistentMemoryAdapter into request.ts.
+  it('T-075-SUP-1: buildPersistentMemory() returns a SupabasePersistentMemoryAdapter instance', () => {
+    const adapter = (buildPersistentMemory as unknown as () => unknown)();
+    expect(adapter).toBeDefined();
+    expect(
+      (adapter as { constructor: { name: string } }).constructor.name,
+    ).toBe('SupabasePersistentMemoryAdapter');
+  });
+
+  // T-075-SUP-2 --------------------------------------------------------------
+  // RED: dynamic import of SupabasePersistentMemoryAdapter fails with
+  // "Cannot find module" until api-builder creates the file.
+  it('T-075-SUP-2: persist() followed by retrieve() returns the persisted entry (simulated cold start)', async () => {
+    // Dynamic import isolates the "Cannot find module" failure to this test only
+    const { SupabasePersistentMemoryAdapter } = await import(
+      '../../packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.js'
+    );
+
+    const mockClient = makeMockSupabaseClient();
+    const adapter = new SupabasePersistentMemoryAdapter(
+      mockClient as unknown as MockSupabaseClient,
+    );
+
+    const entry = {
+      organisationId: 'org-1',
+      sessionId: 'sess-1',
+      role: 'user' as const,
+      content: 'Supabase memory test entry',
+      capability: Capability.ADVISORY,
+      timestamp: Date.now(),
+    };
+
+    await adapter.persist(entry);
+    const results = await adapter.retrieve({ organisationId: 'org-1' });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]!.content).toBe('Supabase memory test entry');
+    expect(results[0]!.organisationId).toBe('org-1');
+  });
+
+  // T-075-SUP-3 --------------------------------------------------------------
+  // RED: dynamic import of SupabasePersistentMemoryAdapter fails with
+  // "Cannot find module" until api-builder creates the file.
+  it('T-075-SUP-3: retrieve() filters by organisation_id — org A entries are NOT visible to org B', async () => {
+    // Dynamic import isolates the "Cannot find module" failure to this test only
+    const { SupabasePersistentMemoryAdapter } = await import(
+      '../../packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.js'
+    );
+
+    const mockClient = makeMockSupabaseClient();
+    const adapterA = new SupabasePersistentMemoryAdapter(
+      mockClient as unknown as MockSupabaseClient,
+    );
+    const adapterB = new SupabasePersistentMemoryAdapter(
+      mockClient as unknown as MockSupabaseClient,
+    );
+
+    await adapterA.persist({
+      organisationId: 'org-A',
+      role: 'user' as const,
+      content: 'Entry for org A',
+      capability: Capability.ADVISORY,
+      timestamp: Date.now(),
+    });
+
+    await adapterB.persist({
+      organisationId: 'org-B',
+      role: 'assistant' as const,
+      content: 'Entry for org B',
+      capability: Capability.ADVISORY,
+      timestamp: Date.now(),
+    });
+
+    const resultsA = await adapterA.retrieve({ organisationId: 'org-A' });
+    const resultsB = await adapterB.retrieve({ organisationId: 'org-B' });
+
+    // Org A sees only its own entry
+    expect(resultsA).toHaveLength(1);
+    expect(resultsA[0]!.organisationId).toBe('org-A');
+    expect(resultsA.every((e: { organisationId: string }) => e.organisationId === 'org-A')).toBe(true);
+
+    // Org B sees only its own entry
+    expect(resultsB).toHaveLength(1);
+    expect(resultsB[0]!.organisationId).toBe('org-B');
+    expect(resultsB.every((e: { organisationId: string }) => e.organisationId === 'org-B')).toBe(true);
+  });
+
+  // T-075-SUP-4 --------------------------------------------------------------
+  // RED: dynamic import of SupabasePersistentMemoryAdapter fails with
+  // "Cannot find module" until api-builder creates the file.
+  it('T-075-SUP-4: pruneExpired() deletes entries with expires_at < NOW()', async () => {
+    // Dynamic import isolates the "Cannot find module" failure to this test only
+    const { SupabasePersistentMemoryAdapter } = await import(
+      '../../packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.js'
+    );
+
+    const mockClient = makeMockSupabaseClient();
+    const adapter = new SupabasePersistentMemoryAdapter(
+      mockClient as unknown as MockSupabaseClient,
+    );
+
+    const pastExpiry = new Date(Date.now() - 60_000).toISOString(); // 1 min ago
+    const futureExpiry = new Date(Date.now() + 60_000).toISOString(); // 1 min ahead
+
+    // Persist one expired and one active entry
+    await adapter.persist({
+      organisationId: 'org-prune',
+      role: 'user' as const,
+      content: 'Expired entry',
+      capability: Capability.ADVISORY,
+      timestamp: Date.now() - 120_000,
+      expiresAt: pastExpiry,
+    });
+
+    await adapter.persist({
+      organisationId: 'org-prune',
+      role: 'assistant' as const,
+      content: 'Active entry',
+      capability: Capability.ADVISORY,
+      timestamp: Date.now(),
+      expiresAt: futureExpiry,
+    });
+
+    const deletedCount = await adapter.pruneExpired('org-prune');
+
+    // One expired entry should have been pruned
+    expect(deletedCount).toBe(1);
+
+    // Active entry should still be retrievable
+    const remaining = await adapter.retrieve({ organisationId: 'org-prune' });
+    expect(remaining).toHaveLength(1);
+    expect(remaining[0]!.content).toBe('Active entry');
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Wave 10 RED gate — buildAICentre adapters non-null requirement (T-073–T-075)
 //
 // These tests FAIL with the current null-stub collaborators in request.ts
