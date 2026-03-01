@@ -92,7 +92,6 @@ serve(async (req) => {
       organisation_id,
       status: 'inactive',
       is_active: false,
-      updated_at: new Date().toISOString(),
     };
 
     if (credentials) {
