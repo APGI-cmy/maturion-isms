@@ -3,9 +3,9 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 1.8.0  
+**Version**: 1.9.0  
 **Created**: 2026-02-24  
-**Updated**: 2026-02-28  
+**Updated**: 2026-03-01  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -225,6 +225,8 @@ These items are tracked and must be reviewed each session. If assigned to the cu
 | S-007 | Add CI POLC boundary gate that fails PR when foreman-v2 is listed as author of production code file changes (outside designated governance evidence paths) — machine-level enforcement of A-001, preventing repeat of GOV-BREACH-AIMC-W5-001 | GOV-BREACH-AIMC-W5-001 | OPEN |
 | S-008 | Add CI check that fails PR when no `.agent-workspace/foreman-v2/memory/session-*.md` file exists with a timestamp matching the PR creation date — machine-level enforcement that Phase 1 PREFLIGHT was executed (session memory is only written in Phase 4, which requires Phase 1 completion), preventing repeat of GOV-BREACH-AIMC-W5-002 | GOV-BREACH-AIMC-W5-002 | OPEN |
 | S-009 | Require verbatim paste of IAA agent's actual response text in the PREHANDOVER proof IAA section — making the `task` tool call self-evidencing and structurally impossible to fake. Template must include a `## IAA Agent Response (verbatim)` section where the raw IAA agent output is pasted. A PREHANDOVER proof with a blank or placeholder IAA response section is a HANDOVER BLOCKER. | INC-IAA-SKIP-001 (2026-02-28) | OPEN |
+| S-010 | Correct GRS-010 requirement text in PersonaLoader.test.ts header comment — line 10 references packages/ai-centre/agents/ but actual PersonaLoader path is packages/ai-centre/src/agents/. Also correct inline comment on line 30. Prevents path confusion in CL-2 through CL-4 persona migration issues. | session-078 / IAA-session-027-20260301 | REMEDIATED |
+| S-011 | Canonical FAIL-ONLY-ONCE registry in maturion-foreman-governance has duplicate rule IDs: A-004 appears twice (Bootstrap Directive rule + Post-Merge Retrospective rule) and A-016 appears twice (Trigger Table Misapplication + Cross-PR Token Reuse). Renumber later-added rules to sequential IDs (A-018, A-019, etc.) to prevent ambiguous rule citations in sessions. CodexAdvisor-agent to execute in a governance maintenance PR to maturion-foreman-governance. | IAA-session-027-20260301 | OPEN |
 
 ---
 
@@ -234,9 +236,9 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 1.8.0
+fail_only_once_version: 1.9.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
@@ -246,4 +248,4 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 ---
 
 *Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-02-28 | Version: 1.8.0 | Status: ACTIVE*
+*Last Updated: 2026-03-01 | Version: 1.9.0 | Status: ACTIVE*
