@@ -692,6 +692,15 @@ any migration is applied.
 >
 > See `governance/aimc/LKIAC_CL3_D2_GAP_RESOLUTION.md` for rationale and acceptance criteria.
 
+> **CL-13 Extended Scope (CL-3-D2, 2026-03-01)**: CL-13 scope is extended to include delivery of
+> three QA-facing modules in the Foreman Office App, resolving DEP-005, DEP-006, and DEP-007 gap
+> items. These are sub-modules of the CL-13 health/watchdog module delivery:
+> - **QA Overview panel** (DEP-005 / GAP-001): Shows live QA signal status for all active modules
+> - **Unified QA Signal Aggregation view** (DEP-006 / GAP-002): Aggregates QA signal data from ≥2 configured signal sources
+> - **Health module test results sub-view** (DEP-007 / GAP-003): Displays test execution history and status
+>
+> See `governance/aimc/LKIAC_CL3_D2_GAP_RESOLUTION.md` for rationale and acceptance criteria.
+
 **Entry Criteria**:
 - CL-8 closed (AIMC domain specialist routing live — the API surface AMC will consume is stable)
 
