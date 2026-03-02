@@ -1272,10 +1272,10 @@ Track the progression through the canonical module lifecycle stages.
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 5 (Build Execution — Wave 12 COMPLETE | Production deployment wired to Render platform) | Post-Delivery RCA COMPLETE | Wave 10 COMPLETE | Wave 9.10 COMPLETE | Wave 11 COMPLETE | Wave 12 COMPLETE
-**Overall Progress**: All 559 tests GREEN (post-Wave 12 CWT, 2026-03-01). Wave 10 COMPLETE (2026-02-27 — 368/368). Wave 9.10 COMPLETE (2026-02-28 — 425/425). Wave 11 COMPLETE (2026-03-01 — 430/430). Wave 12 COMPLETE (2026-03-01 — 554/554 local; 559/559 post-CWT in CI).
+**Current Stage**: Stage 5 (Build Execution — Wave 12 COMPLETE | Post-Wave 12 Live Deployment Failures Detected — Wave 13 OPEN) | Post-Delivery RCA COMPLETE | Wave 10 COMPLETE | Wave 9.10 COMPLETE | Wave 11 COMPLETE | Wave 12 COMPLETE | **⚠️ Wave 13 OPEN — awaiting CS2 wave-start**
+**Overall Progress**: 559 tests GREEN (post-Wave 12 CWT, 2026-03-01). ⚠️ Post-Wave 12 live deployment failures detected (2026-03-02): auth wiring broken, `public.audits` table missing in schema cache, major pages blank — see RCA MAT-RCA-002. Wave 13 defined and awaiting CS2 wave-start.
 **Blockers**:
-- ⏳ **Wave 6 PRODUCTION DEPLOYMENT PENDING CS2 ACCESS**: Vercel and Supabase production environment access required (QA gate PASS — not a technical blocker)
+- ⚠️ **LIVE DEPLOYMENT BLOCKED**: Post-Wave 12 functional testing revealed critical wiring failures — auth session not forwarded to API, `public.audits` table missing in production schema cache, major pages blank. RCA: `modules/mat/05-rca/RCA_WAVE12_POST_DEPLOYMENT_WIRING_FAILURES_20260302.md`. Fix plan: Wave 13 (awaiting CS2 authorisation).
 - ✅ **Wave 7 COMPLETE**: AIMC Advisory Integration delivered (advisory-service.ts, EmbeddedAIAssistant AIMC wiring, env cleanup)
 - ✅ **Wave 8 COMPLETE**: AIMC Wave 4 confirmed; analysis-service.ts delivered, AI_ROUTING_TABLE removed from ai-scoring.ts (2026-02-26)
 - ✅ **Wave 9 COMPLETE**: AIMC Wave 5 confirmed; embedding-service.ts delivered, searchSimilarCriteria and matchEvidenceToCriteria via Capability.RAG (2026-02-26)
@@ -1338,6 +1338,7 @@ Track the progression through the canonical module lifecycle stages.
 31. ~~**[COMPLETE] Execute Wave 10: AI Gateway Memory Wiring (Gap GR-001)** — session-069 (2026-02-27); null stubs replaced; health endpoint; runbook; 8 RED gate tests → GREEN; 368/368~~
 32. ~~**[COMPLETE] Execute Wave 11: Supabase Persistent Memory Wiring** — session-075 (2026-03-01); `SupabasePersistentMemoryAdapter` implemented; `buildPersistentMemory()` wired; `supabaseWiring: "active"`; 5 RED gate tests → GREEN; 430/430 total GREEN; IAA-session-021-20260301-PASS~~
 33. ~~**[COMPLETE] Execute Wave 12: Full Functionality & Build Wiring Verification** — session-078/080/081 (2026-03-01); 31 test IDs (554 sub-tests total) GREEN; all W12-GAP-001–007 resolved; deploy-mat-ai-gateway.yml wired for Render platform; ecs-task-def.json removed; IAA-session-026/029/030-20260301-PASS~~
+34. **[OPEN] Execute Wave 13: Live Deployment Wiring Regression Fix & Continuous Improvement** — awaiting CS2 wave-start authorisation; RCA MAT-RCA-002 filed (2026-03-02); PBFAG updated (checks 9–13); 24 RED gate test IDs defined (T-W13-SCH-1–4, T-W13-AUTH-1–4, T-W13-WIRE-1–8, T-W13-E2E-1–5, T-W13-CI-1–3); 5 builders (schema-builder, api-builder, ui-builder, integration-builder, qa-builder)
 
 ---
 
@@ -2145,3 +2146,80 @@ Task 12.4: integration-builder → T-W12-INT-1–7 RED → GREEN  (after 12.3 GR
 | INC-IAA-SKIP-001 / A-014 | IAA tool call mandatory before writing iaa_audit_token | Wave 10 (session-072 RCA) | Wave 12 PREHANDOVER proof MUST include verbatim IAA response (S-009) |
 | LL-W11-001 | Three-builder delegation (qa-builder RED → schema-builder migration → api-builder implementation) validated | Wave 11 (session-075) | Wave 12 uses same pattern extended to four builders with RED gate before each task |
 
+
+
+---
+
+## Wave 13: Live Deployment Wiring Regression Fix & Continuous Improvement
+
+**Identified**: 2026-03-02  
+**Status**: OPEN — awaiting CS2 wave-start authorisation  
+**RCA Reference**: `modules/mat/05-rca/RCA_WAVE12_POST_DEPLOYMENT_WIRING_FAILURES_20260302.md` (MAT-RCA-002)  
+**CS2 Authorization**: Required before any builder begins  
+**Session**: session-084 (foreman-v2-agent v6.2.0) — plan phase only  
+
+### Wave 13 Description
+
+Wave 13 is the live deployment wiring regression fix and continuous improvement wave for the MAT module. It was triggered by post-Wave 12 functional testing that revealed critical failures in the live Vercel deployment despite 559/559 tests passing in CI. The failures (auth not forwarded, schema missing, pages blank) trace back to insufficient E2E verification against the live deployment stack.
+
+This wave does NOT add new features. It fixes the wiring to make Wave 12 deliverables work correctly in production, and upgrades the CI/CD gate to prevent identical recurrence.
+
+**Domains covered**: schema migrations (production), auth session wiring, UI page wiring (all major pages), E2E CWT (live Vercel), CI pipeline gates.
+
+### Entry Criteria
+
+| # | Criterion | Status |
+|---|-----------|--------|
+| 1 | Wave 12 CS2-certified COMPLETE (IAA: IAA-session-026/029/030-20260301-PASS) | ✅ Confirmed |
+| 2 | RCA MAT-RCA-002 FINAL status | ✅ Confirmed (2026-03-02) |
+| 3 | CS2 wave-start authorization | ⏳ Pending |
+| 4 | 559/559 baseline tests GREEN | ✅ Confirmed |
+| 5 | Architecture FROZEN | ✅ Confirmed (v3.0.0, 2026-02-27) |
+
+### State Machine
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-02 | DEFINED | Wave 13 section added to implementation plan v2.3.0; RCA MAT-RCA-002 created; PBFAG updated with checks 9–13 (session-084) |
+
+### Principal Artifacts
+
+| Artifact | Builder | Status |
+|---|---|---|
+| RED gate tests T-W13-SCH-1–4 (schema existence + env var audit) | schema-builder + integration-builder | ⏳ PENDING CS2 AUTH |
+| RED gate tests T-W13-AUTH-1–4 (E2E auth session wiring) | api-builder | ⏳ PENDING CS2 AUTH |
+| RED gate tests T-W13-WIRE-1–8 (UI page wiring) | ui-builder | ⏳ PENDING CS2 AUTH |
+| RED gate tests T-W13-E2E-1–5 (full E2E CWT live Vercel) | integration-builder + qa-builder | ⏳ PENDING CS2 AUTH |
+| RED gate tests T-W13-CI-1–3 (CI pipeline gates) | integration-builder | ⏳ PENDING CS2 AUTH |
+
+### Gap Register
+
+| Gap ID | Domain | Root Cause | Closing Test(s) | Status |
+|--------|--------|-----------|-----------------|--------|
+| W13-GAP-001 | Schema — `audits` table missing in production | Migration not applied to production Supabase | T-W13-SCH-1 | ⏳ OPEN |
+| W13-GAP-002 | Auth — session not forwarded to API calls | Session initialisation broken in production | T-W13-AUTH-1–4 | ⏳ OPEN |
+| W13-GAP-003 | Criteria — blocked by cascade from GAP-001/002 | Dependency cascade | T-W13-AUTH-1, T-W13-WIRE-2–3 | ⏳ OPEN |
+| W13-GAP-004 | Evidence — placeholder only, not wired to live context | Component not wired to live audit/criteria | T-W13-WIRE-4–5 | ⏳ OPEN |
+| W13-GAP-005 | Dashboard/Scoring/Reports — blank pages | Auth cascade + missing data | T-W13-WIRE-6–8 | ⏳ OPEN |
+| W13-GAP-006 | Settings — dropdowns not persisting | Auth cascade | T-W13-E2E-2–3 | ⏳ OPEN |
+| W13-GAP-007 | AI chat — "no access" overlay | Auth cascade + env var check | T-W13-SCH-4, T-W13-E2E-4 | ⏳ OPEN |
+
+### Delegation Sequence
+
+Wave 13 follows strict sequential delegation (each builder must deliver GREEN before next begins):
+
+```
+Task 13.1: schema-builder + integration-builder → T-W13-SCH-1–4 + T-W13-CI-1–2 RED → GREEN
+Task 13.2: api-builder                          → T-W13-AUTH-1–4 RED → GREEN  (after 13.1 GREEN)
+Task 13.3: ui-builder                           → T-W13-WIRE-1–8 RED → GREEN  (after 13.2 GREEN)
+Task 13.4: integration-builder + qa-builder     → T-W13-E2E-1–5 RED → GREEN   (after 13.3 GREEN)
+Task 13.5: integration-builder                  → T-W13-CI-3 RED → GREEN      (after 13.4 GREEN)
+```
+
+### Cross-Wave Learning Outcomes Applied
+
+| ID | Learning | Source | Applied to Wave 13 |
+|----|----------|--------|--------------------|
+| RCA-MAT-002-F01 | Auth session must be forwarded end-to-end in production; mocked auth in tests is insufficient | RCA MAT-RCA-002 F-01/F-10 | T-W13-AUTH-1–4: real login E2E tests mandatory |
+| RCA-MAT-002-F02 | Schema migrations must be verified in production schema cache as part of CWT | RCA MAT-RCA-002 F-02 | T-W13-SCH-1–3: schema existence checks in CI |
+| RCA-MAT-002-WGI01 | PBFAG now requires E2E auth, schema existence, full-flow wiring, page content, and env var checks | RCA MAT-RCA-002 §6 WGI-01–04 | PBFAG checks 9–13 added to implementation plan §1.5 |
