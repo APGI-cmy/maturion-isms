@@ -63,8 +63,10 @@
 | A-016 | Cross-PR IAA token reuse is a governance breach | ACTIVE |
 | A-017 | Session memory must not cite a REJECTION-PACKAGE session as PASS | ACTIVE |
 | A-018 | Post-merge retrospective audit findings must be formally recorded — no informal notes | ACTIVE |
+| A-019 | Trigger table misapplication is an IAA bypass — all triggering categories require IAA | ACTIVE |
 | A-020 | PREHANDOVER template must be kept current with overlay requirements — stale template causes cascading REJECTION-PACKAGEs | ACTIVE |
 | A-021 | Commit and push BEFORE invoking IAA — working-tree-only fix is not a committed fix and will fail IAA audit | ACTIVE |
+| A-022 | Re-evaluate trigger categories on every IAA invocation — do not carry forward prior session classification | ACTIVE |
 | A-023 | Ceremony artifacts must use PENDING until Post-ASSURANCE-TOKEN ceremony — no pre-fill of anticipated -PASS tokens | ACTIVE |
 
 ---
