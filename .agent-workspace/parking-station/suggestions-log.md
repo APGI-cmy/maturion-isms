@@ -345,3 +345,5 @@
 | 2026-03-02 | independent-assurance-agent | session-094 | PHASE-3 | CANDIDATE A-023: Tier 2 knowledge file version header must match history entry — three-point pre-commit check recommended for Foreman template | session-094-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-095 | [PHASE-4] | Foreman prehandover-template.md must add CANON_INVENTORY hash update checklist item — prevents CORE-006/OVL-CG-001/005/006 failures as a group | session-095-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-095 | [PHASE-4] | Dual-PREHANDOVER PRs: IAA should verify each proof's scope aligns with actual PR diff — a proof for a wave not in the PR diff is a scope integrity failure | session-095-20260302.md |
+| 2026-03-02 | independent-assurance-agent | session-096 | Phase 4 | Foreman PREHANDOVER template: add Wave vs PR scope disambiguation sections to prevent scope over-representation | session-096-20260302.md |
+| 2026-03-02 | independent-assurance-agent | session-096 | Phase 4 | Foreman PREHANDOVER checklist: add sha256sum verification step for every modified canon file before IAA invocation | session-096-20260302.md |
