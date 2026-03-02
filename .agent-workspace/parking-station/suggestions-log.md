@@ -367,4 +367,12 @@
 =======
 | 2026-03-02 | independent-assurance-agent | session-097 | PHASE-3 | Add explicit PREHANDOVER creation instruction to liaison/specialist agent Phase 3 to prevent CORE-018 at first AAWP_MAT invocation | session-097-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-097 | PHASE-3 | Add TECHNICAL_FIX alias warning to trigger table — technical fixes to AAWP_MAT paths ARE triggering; TECHNICAL_FIX is not a recognised exempt category | session-097-20260302.md |
+<<<<<<< HEAD
 >>>>>>> 00777ab (chore(iaa): session-097 — REJECTION-PACKAGE for PR #805 (AAWP_MAT — missing PREHANDOVER proof))
+=======
+| 2026-03-02 | independent-assurance-agent | session-098 | PHASE-4 | Cross-check version numbers in PREHANDOVER narratives against actual package.json content — SHA256 correctness does not guarantee narrative accuracy | session-098-20260302.md |
+| 2026-03-02 | independent-assurance-agent | session-098 | PHASE-4 | Governance ceremony sessions should self-verify that all CREATED artifacts listed in HANDOVER_SUMMARY actually exist before sign-off | session-098-20260302.md |
+| 2026-03-02 | governance-liaison-isms | session-038 | SESSION-END | Add pre-IAA checklist to verify HANDOVER_SUMMARY file claims match actual files before invoking IAA | session-038-20260302.md |
+| 2026-03-02 | independent-assurance-agent | session-099 | PHASE-4 | Liaison agent needs mandatory pre-commit checklist: git status before IAA invocation — uncommitted governance artifacts = immediate A-021 failure | session-099-20260302.md |
+| 2026-03-02 | independent-assurance-agent | session-099 | PHASE-4 | When fixing a find-replace-style text error in governance artifacts, use grep -n to locate ALL instances before declaring fix complete | session-099-20260302.md |
+>>>>>>> 6fdcb29 (chore(iaa): session-099 — REJECTION-PACKAGE for PR #805 (CORE-021-F3: uncommitted artifacts; CORE-021-F4: residual ^20.0.0 line 257))
