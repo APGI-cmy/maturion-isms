@@ -26,6 +26,46 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 
 ---
 
+## Governance Ceremony Merge Gate
+
+**Workflow**: `.github/workflows/governance-ceremony-gate.yml`  
+**Authority**: FAIL-ONLY-ONCE v2.2.0 (A-010, A-014, A-015, A-016)  
+**Violation class**: GOV-BREACH-AIMC-W5-002  
+
+This gate blocks merging of any PR that touches governed paths unless the full governance ceremony is complete. It is **Foreman-owned** and runs on all pull requests.
+
+### Governed Paths (trigger scope)
+
+| Path Pattern | Description |
+|---|---|
+| `.github/workflows/**` | CI workflow additions or modifications |
+| `.github/agents/**` | Agent contract files |
+| `.agent-workspace/foreman-v2/knowledge/*.md` | Foreman Tier 2 knowledge files |
+
+### Gate Checks (all must pass)
+
+| Check | Job name | What it enforces |
+|---|---|---|
+| Draft PR check | `governance-ceremony/draft-check` | PR must not be in draft state |
+| PREHANDOVER proof + IAA token | `governance-ceremony/prehandover-and-iaa-token` | PREHANDOVER proof must exist; `iaa_audit_token` must be resolved (not PENDING, not PHASE_A_ADVISORY); `## IAA Agent Response (verbatim)` must be non-empty |
+| PR body governance block | `governance-ceremony/pr-body-governance-block` | PR body must contain `## Governance` block with `IAA Category`, `IAA Audit Token` (non-stale), and `PREHANDOVER Proof` path |
+| Final verdict | `governance-ceremony/verdict` | Aggregates all checks; fails if any check failed |
+
+### Required PR Body Format
+
+```markdown
+## Governance
+- IAA Category: <category of change>
+- IAA Audit Token: IAA-session-NNN-YYYYMMDD-PASS
+- PREHANDOVER Proof: .agent-workspace/foreman-v2/memory/PREHANDOVER-session-NNN-waveX-YYYYMMDD.md
+```
+
+### Bypass Condition
+
+Automated governance alignment PRs (labels: `governance` + `automated` + `agent:liaison`, or branch `governance-alignment-auto`) are pre-validated and bypass this gate, consistent with all other governance workflows.
+
+---
+
 ## Constitutional Canon References (Tier 1)
 
 The following Tier 1 documents govern this agent's constitutional behavior (SHA256 verified at session start via `governance/CANON_INVENTORY.json`):
