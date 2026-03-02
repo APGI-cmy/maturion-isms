@@ -12,7 +12,7 @@
     "sync_method": "layer-down-manual-liaison",
     "sync_status": "SUCCESS",
     "canonical_commit": "79652ea59982559435b40519f47c3ab854da3d1a",
-    "ripple_pr": "pending",
+    "ripple_pr": "767",
     "files_layered_down": [
       "governance/canon/ACTIVATION_STATE_MODEL.md",
       "governance/canon/AGENT_ROLE_GATE_APPLICABILITY.md",
