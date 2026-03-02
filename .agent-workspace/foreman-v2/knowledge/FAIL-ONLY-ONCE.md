@@ -3,7 +3,7 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 2.1.0  
+**Version**: 2.2.0  
 **Created**: 2026-02-24  
 **Updated**: 2026-03-02  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
@@ -54,6 +54,7 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-014 | IAA-TOOL-CALL-MANDATORY (CS2 — 2026-02-28): The `independent-assurance-agent` MUST be invoked via the `task` tool as the FIRST action in Phase 4 Step 4.3a — before writing any `iaa_audit_token` value in the PREHANDOVER proof. Writing `PHASE_A_ADVISORY` or any token string WITHOUT first calling `task(agent_type: "independent-assurance-agent", ...)` is a PHASE_A_ADVISORY FABRICATION breach. The only permitted exception is if the `task` tool itself throws an error — in which case that error MUST be logged verbatim and escalated to CS2. "Phase A advisory" is the IAA's verdict when it cannot fully audit — it is NOT the Foreman's self-certification that it chose not to call the IAA. Violation class: INC-IAA-SKIP-001. | CS2 — maturion-isms (2026-02-28) |
 | A-015 | IAA-TOKEN-FORMAT (CS2 — 2026-03-02): The IAA audit token MUST use the canonical format `IAA-session-NNN-YYYYMMDD-PASS` (session number, not wave name or description). Any token using `IAA-WAVE{N}-...`, `IAA-PLAN-...`, or any other non-canonical prefix is a format violation and MUST be corrected before the PREHANDOVER proof is committed. The canonical format is defined in the PREHANDOVER template Tier 2 knowledge. The foreman-v2-agent contract Step 4.3b `IAA-WAVE{N}-YYYYMMDD-PASS` placeholder is superseded by this rule — correct format is always `IAA-session-NNN-YYYYMMDD-PASS`. Violation class: INC-IAA-TOKEN-001. | INC-IAA-TOKEN-001 (2026-03-02) |
 | A-016 | PHASE-4-BEFORE-REPORT-PROGRESS (CS2 — 2026-03-02): Phase 4 MUST be executed in full BEFORE any `report_progress` call that commits substantive changes. This means: PREHANDOVER proof must exist on disk, session memory must exist on disk, and IAA must have been invoked and issued a verdict BEFORE `report_progress` is called. Calling `report_progress` without Phase 4 artifacts is a handover bypass equivalent to INC-IAA-SKIP-001. The `report_progress` tool is a commit/push tool — it is NOT a Phase 4 substitute. Violation class: INC-IAA-SKIP-002. | INC-IAA-SKIP-002 (2026-03-02) |
+| A-017 | ISMS-AGENTS-ONLY (CS2 — 2026-03-02): Foreman MUST ONLY delegate implementation tasks to inducted ISMS specialist agents (qa-builder, schema-builder, api-builder, ui-builder, integration-builder, mat-specialist, pit-specialist, etc.). The `general-purpose` agent type is NOT inducted in the ISMS ecosystem, does not carry ISMS governance constructs, and will deliver incomplete jobs that fail ISMS governance requirements. Using `general-purpose` as a substitute for an ISMS specialist agent — for ANY reason, including time pressure, timeout recovery, or task complexity — is a POLC delegation violation. If no inducted ISMS agent is available for a required task, Foreman MUST HALT (A-007) and escalate to CS2. The only exception: `general-purpose` may be used for pure research/exploration tasks that produce no committed repo artifacts. Violation class: INC-GENERAL-PURPOSE-001. | CS2 directive 2026-03-02 (maturion-isms Wave 13 session-089) |
 
 ---
 
@@ -268,6 +269,34 @@ CS2 (@APGI-cmy) flagged the omission immediately: "Are you really handing over a
 
 ---
 
+### INC-GENERAL-PURPOSE-001 — Non-ISMS Agent Used for Implementation Delegation
+**Date**: 2026-03-02  
+**Severity**: MAJOR  
+**Status**: REMEDIATED  
+**Source**: CS2 directive 2026-03-02; Wave 13 session-089 (maturion-isms#788)
+
+**What happened**: In session-089, Foreman delegated Wave 13 Tasks 13.1–13.5 (implementation of schema migration, auth wiring, frontend page components, and CI gates) to `general-purpose` agent instead of the appropriate inducted ISMS specialist agents (`schema-builder`, `api-builder`, `ui-builder`, `integration-builder`). The justification was time pressure and efficiency — the previous session (088) had timed out after running four sequential specialist agents, losing all local commits when the push failed with a 403 error. The `general-purpose` agent completed the implementation work successfully (15/15 tests GREEN), but CS2 flagged this as a governance violation: `general-purpose` is not inducted in the ISMS ecosystem, does not carry ISMS governance constructs, and will deliver incomplete jobs as per ISMS governance requirements.
+
+**Root cause (5-Why):**
+1. **Why was `general-purpose` used?** The Foreman prioritised task completion speed over correct agent selection, judging that running five specialist agents sequentially would again cause a timeout.
+2. **Why was speed prioritised over correct agent selection?** The Foreman lacked an explicit A-rule prohibiting `general-purpose` delegation for implementation tasks — the absence of a prohibition was treated as implicit permission.
+3. **Why was there no A-rule?** This breach pattern had not previously occurred — all prior violations involved Foreman self-implementing, not delegating to a non-ISMS agent.
+4. **Why wasn't the timeout risk managed differently?** No CS2 escalation was raised before the session — A-007 (HALT and escalate if no builder available) was not applied to the "risk of timeout" scenario.
+5. **Why is there no structural enforcement?** The `task` tool accepts `general-purpose` as a valid `agent_type` with no ISMS-membership check — there is no guard at the tooling level.
+
+**Corrective action (session-089 — same session):**
+1. CS2 directive received and recorded immediately.
+2. New A-017 rule locked in: ISMS-AGENTS-ONLY — Foreman MUST delegate ONLY to inducted ISMS specialist agents. `general-purpose` is prohibited for all committed-artifact implementation work.
+3. This incident recorded in FAIL-ONLY-ONCE v2.2.0.
+4. New improvement suggestion S-014 added (see below).
+5. Session-089 implementation work (15/15 tests GREEN, 558 baseline GREEN) accepted by CS2 as a one-time exception given correct implementation quality; no rollback required. This exception does not set a precedent.
+
+**Learning**: Timeout risk must be managed by using `report_progress` checkpoints after each specialist agent task (one push per task), not by consolidating all work into a single non-ISMS agent. The correct response to "five sequential agents may time out" is to complete them one at a time across sessions with "proceed" prompts from CS2 — NOT to bypass the specialist requirement.
+
+**Open improvement**: S-014 — Add explicit documentation in the specialist-registry and session-memory-template that `general-purpose` agent is not an ISMS agent and must never be used for committed-artifact work. Consider adding a Foreman self-check: before every `task()` call, verify `agent_type` is in the inducted ISMS agent list. *(See Section 3, item S-014.)*
+
+---
+
 These items are tracked and must be reviewed each session. If assigned to the current wave, they must be addressed before HANDOVER.
 
 | ID | Description | Origin | Status |
@@ -285,6 +314,7 @@ These items are tracked and must be reviewed each session. If assigned to the cu
 | S-011 | Canonical FAIL-ONLY-ONCE registry in maturion-foreman-governance has duplicate rule IDs: A-004 appears twice (Bootstrap Directive rule + Post-Merge Retrospective rule) and A-016 appears twice (Trigger Table Misapplication + Cross-PR Token Reuse). Renumber later-added rules to sequential IDs (A-018, A-019, etc.) to prevent ambiguous rule citations in sessions. CodexAdvisor-agent to execute in a governance maintenance PR to maturion-foreman-governance. | IAA-session-027-20260301 | REMEDIATED — maturion-isms#IAA-TIER2 (2026-03-02) |
 | S-012 | Update foreman-v2-agent contract Step 4.3b to replace `IAA-WAVE{N}-YYYYMMDD-PASS` with `IAA-session-NNN-YYYYMMDD-PASS` — aligning contract text with the canonical format defined in the Tier 2 PREHANDOVER template. Requires CodexAdvisor-agent + CS2 written authorisation per A-002/A-013. Until the contract is updated, A-015 is the authoritative rule (Tier 2 knowledge supersedes the contract placeholder). | INC-IAA-TOKEN-001 (2026-03-02) | OPEN |
 | S-013 | Add a pre-condition check before `report_progress` is called for substantive commits: verify that PREHANDOVER proof file exists on disk AND IAA has been invoked. Until mechanical enforcement exists, Foreman MUST verify PREHANDOVER proof presence on disk and IAA invocation result BEFORE calling `report_progress`. This rule is now codified as A-016. | INC-IAA-SKIP-002 (2026-03-02) | OPEN |
+| S-014 | Add explicit documentation in `specialist-registry.md` and `session-memory-template.md` that `general-purpose` agent is NOT an inducted ISMS agent and MUST NEVER be used for committed-artifact implementation work. Consider adding a Foreman self-check: before every `task()` call, verify `agent_type` is in the inducted ISMS agent list (qa-builder, schema-builder, api-builder, ui-builder, integration-builder, mat-specialist, pit-specialist, criteria-generator-agent, document-parser-agent, report-writer-agent, risk-platform-agent, maturity-scoring-agent). This rule is now codified as A-017. | INC-GENERAL-PURPOSE-001 (2026-03-02) | OPEN |
 
 ---
 
@@ -294,9 +324,9 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 2.0.0
+fail_only_once_version: 2.2.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
@@ -306,4 +336,4 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 ---
 
 *Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-03-02 | Version: 2.0.0 | Status: ACTIVE*
+*Last Updated: 2026-03-02 | Version: 2.2.0 | Status: ACTIVE*
