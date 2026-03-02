@@ -486,3 +486,36 @@ This rule is especially critical for PRs where remediation commits are added bet
 ---
 
 **Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
+
+---
+
+### A-023 — Cited CI Run Must Have Jobs Executed — action_required With 0 Jobs Is Not CI Evidence
+
+**Triggered by**: PR #806 sessions 095 and 096 (2026-03-02) — two consecutive OVL-CI-005 REJECTION-PACKAGEs.
+Session-095: no CI URL at all. Session-096: CI URL present but cited run (22585159313) had `action_required` conclusion with **0 jobs executed** — blocked by GitHub Actions environment protection before any workflow steps ran.
+
+**Incident**: The PREHANDOVER correctly added `## CI Check Run Evidence` (OVL-CI-005 requirement) and provided run 22585159313 with a status explanation ("the workflow ran to the point where the model scaling check requires CS2 environment approval"). However, GitHub API verification showed `jobs_count: 0` — no jobs ran. The explanation was inaccurate. A passing run (22584620674, Merge Gate Interface, SUCCESS, 5 jobs executed) existed at the same branch commit (057569d1) but was not cited.
+
+**Root cause**: Producing agents select CI run URLs based on what appears in the Actions run list without verifying that workflow jobs actually executed. GitHub Actions `action_required` with 0 jobs is a workflow-level environment protection gate — the workflow was blocked before any jobs ran. This is NOT evidence of successful CI execution, regardless of any accompanying explanation.
+
+**Permanent Rule**:
+When adding a CI run citation for OVL-CI-005, the producing agent MUST verify the cited run has both:
+1. Non-zero job count (`gh run view <run_id> --json jobs | jq '.jobs | length'` > 0)
+2. Conclusion of `success` (for positive evidence) OR `failure` with explicit post-execution failure explanation
+
+A run with `conclusion: action_required` and 0 jobs is NOT valid OVL-CI-005 evidence, regardless of any explanation provided.
+A run with `conclusion: success` and 0 jobs is also NOT valid evidence.
+IAA will verify `jobs_count > 0` via GitHub API on every OVL-CI-005 check.
+
+**Check in Phase 3 (OVL-CI-005 hardening)**:
+> FAIL-ONLY-ONCE A-023: When evaluating OVL-CI-005, open the cited CI run via GitHub API:
+> `gh run view <run_id> --json status,conclusion,jobs`
+> 1. If `jobs` array length = 0 → FAIL (no jobs executed — not valid CI evidence)
+> 2. If conclusion = `action_required` AND jobs > 0 → requires explicit justification showing jobs ran and what outcome was expected
+> 3. If conclusion = `success` AND jobs > 0 → PASS (standard case)
+> 4. If conclusion = `failure` AND jobs > 0 → requires explanation in PREHANDOVER
+> Verify the cited run covers the substantive code-change commits (not just ceremony commits).
+
+**Status**: ACTIVE — elevated from CANDIDATE this session (second occurrence of same pattern)
+
+
