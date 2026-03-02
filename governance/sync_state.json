@@ -11,7 +11,7 @@
     "total_canons_synced": 6,
     "sync_method": "layer-down-manual-liaison",
     "sync_status": "SUCCESS",
-    "canonical_commit": "79652ea59982559435b40519f47c3ab854da3d1a",
+    "canonical_commit": "e52ec033c5955cdbe833986e9da0a37927c5a1bc",
     "ripple_pr": "767",
     "files_layered_down": [
       "governance/canon/ACTIVATION_STATE_MODEL.md",
@@ -32,7 +32,7 @@
       "missing": 0
     },
     "drift_detected": false,
-    "last_drift_check": "2026-03-01T17:00:33Z"
+    "last_drift_check": "2026-03-02T11:23:28Z"
   },
   "integrity": {
     "evidence_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_evidence.log",
