@@ -2,7 +2,7 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 1.3.0
+**Knowledge Version**: 1.4.0
 **Last Updated**: 2026-03-02
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
@@ -12,11 +12,11 @@
 
 | File | Purpose | Version | Status |
 |------|---------|---------|--------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.3.0 | PRESENT |
-| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.2.0 | PRESENT — Rules A-001 through A-017 active |
-| `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.2.0 | ACTIVE — CORE-001 to CORE-020; CORE-018 (evidence sweep), CORE-019 (token cross-check), CORE-020 (zero partial pass) added |
-| `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.0.0 | ACTIVE — fully populated from canon v2.0.0 |
-| `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT) | 2.1.0 | ACTIVE — OVL-AC-011/012, OVL-CG-005/006, OVL-CI-005/006, OVL-AM-004–007 added |
+| `index.md` (this file) | Knowledge entry point and version reference | 1.4.0 | PRESENT |
+| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.3.0 | PRESENT — Rules A-001 through A-019 active (A-018 renumbered from dup A-004; A-019 renumbered from dup A-016) |
+| `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.3.0 | ACTIVE — CORE-001 to CORE-020; CORE-007 updated with PENDING carve-out note |
+| `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.1.0 | ACTIVE — KNOWLEDGE_GOVERNANCE trigger category added |
+| `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE) | 2.2.0 | ACTIVE — OVL-KG-001 through OVL-KG-005 added |
 | `session-memory-template.md` | Standard session memory template for IAA invocations | 1.0.0 | PRESENT |
 
 ---
@@ -41,6 +41,7 @@
 | Canon / governance document changes | YES | |
 | CI / workflow changes | YES | |
 | AAWP / MAT deliverables | YES | |
+| Tier 2 knowledge file changes | YES — MANDATORY | KNOWLEDGE_GOVERNANCE category. Evidence bundle + PREHANDOVER ceremony required (A-015). |
 | Doc-only or parking station updates | NO | Must be unambiguously doc-only |
 | Session memory files only | NO | |
 | Ambiguous / unclear category | YES — MANDATORY | FAIL-ONLY-ONCE A-003: ambiguity resolves to mandatory |
@@ -54,12 +55,14 @@
 | A-001 | IAA invocation evidence must be present in all agent contract PRs | ACTIVE |
 | A-002 | IAA is mandatory for ALL agent contract classes — no class exceptions | ACTIVE |
 | A-003 | Ambiguity resolves to mandatory invocation | ACTIVE |
-| A-004 | Bootstrap directive non-negotiable; post-merge retrospective audit findings must be formally recorded | ACTIVE |
+| A-004 | Bootstrap directive non-negotiable — repo read before agent file is a preflight violation | ACTIVE |
 | A-005 | Agent contract file immutability — no agent may modify .github/agents/ except CodexAdvisor+CS2 | ACTIVE |
 | A-006 | PHASE_A_ADVISORY FABRICATION breach detection (INC-IAA-SKIP-001 pattern) | ACTIVE |
 | A-015 | Tier 2 knowledge patches require full PREHANDOVER ceremony | ACTIVE |
 | A-016 | Cross-PR IAA token reuse is a governance breach | ACTIVE |
 | A-017 | Session memory must not cite a REJECTION-PACKAGE session as PASS | ACTIVE |
+| A-018 | Post-merge retrospective audit findings must be formally recorded — no informal notes | ACTIVE |
+| A-019 | Trigger table misapplication is an IAA bypass — ALL triggering categories require IAA | ACTIVE |
 
 ---
 

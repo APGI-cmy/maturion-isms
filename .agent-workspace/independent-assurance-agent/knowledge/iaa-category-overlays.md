@@ -1,7 +1,7 @@
 # IAA Category Overlays
 
 **Agent**: independent-assurance-agent
-**Version**: 2.1.0
+**Version**: 2.2.0
 **Status**: ACTIVE
 **Last Updated**: 2026-03-02
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
@@ -97,6 +97,20 @@ Applied when PR category is `AGENT_INTEGRITY`.
 
 ---
 
+## KNOWLEDGE_GOVERNANCE Overlay
+
+Applied when PR category is `KNOWLEDGE_GOVERNANCE`.
+
+| Check ID | Check Name | Description |
+|----------|-----------|-------------|
+| OVL-KG-001 | PREHANDOVER ceremony complete | PR includes PREHANDOVER proof and session memory; `iaa_audit_token` is non-empty and non-placeholder. Tier 2 knowledge patches are NOT exempt from the PREHANDOVER ceremony (FAIL-ONLY-ONCE A-015). |
+| OVL-KG-002 | Knowledge version bumped | Every modified Tier 2 knowledge file has its version number incremented (patch or minor). A version-unchanged modification = REJECTION-PACKAGE. |
+| OVL-KG-003 | Version history table updated | Every modified Tier 2 knowledge file's version history table includes an entry for the new version with date and change description. Missing or stale version history = REJECTION-PACKAGE. |
+| OVL-KG-004 | Index.md updated | The agent's `knowledge/index.md` reflects updated file versions and new rules or categories introduced. Stale index = REJECTION-PACKAGE. |
+| OVL-KG-005 | Cross-reference consistency | Any rule IDs, check IDs, or category names changed or added are updated consistently across all files that reference them (trigger table, overlays, checklist, index, learning notes). Any dangling or stale cross-reference = REJECTION-PACKAGE. |
+
+---
+
 ## Version History
 
 | Version | Date | Change |
@@ -104,6 +118,7 @@ Applied when PR category is `AGENT_INTEGRITY`.
 | 1.0.0 | 2026-02-25 | Initial STUB (placeholder from canon) |
 | 2.0.0 | 2026-02-28 | Fully populated from INDEPENDENT_ASSURANCE_AGENT_CANON.md; OVL-CI-004 added (workflow policy correctness check from IAA session-017 suggestion); AGENT_INTEGRITY overlay added; STUB status removed |
 | 2.1.0 | 2026-03-02 | AGENT_CONTRACT: OVL-AC-011 (drift check), OVL-AC-012 (ripple assessment) added; CANON_GOVERNANCE: OVL-CG-005 (drift/integrity hash), OVL-CG-006 (CANON_INVENTORY update confirmed) added; CI_WORKFLOW: OVL-CI-005 (CI check run result), OVL-CI-006 (environment parity) added; AAWP_MAT: OVL-AM-004 (architecture ripple/impact plan), OVL-AM-005 (wave gap trace), OVL-AM-006 (environment parity), OVL-AM-007 (session memory learning notes) added (maturion-isms#IAA-TIER2 Wave 13+) |
+| 2.2.0 | 2026-03-02 | KNOWLEDGE_GOVERNANCE overlay added (OVL-KG-001 through OVL-KG-005) — formalises Tier 2 knowledge patch audit requirements (maturion-isms#IAA-TIER2) |
 
 ---
 

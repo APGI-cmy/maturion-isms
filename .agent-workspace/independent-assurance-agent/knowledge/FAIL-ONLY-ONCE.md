@@ -1,8 +1,8 @@
 # IAA FAIL-ONLY-ONCE Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 1.2.0
-**Last Updated**: 2026-02-28
+**Version**: 1.3.0
+**Last Updated**: 2026-03-02
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -108,7 +108,10 @@ Ref: GOV-BREACH-AIMC-W5-002, Foreman A-012.
 > violation: STOP, record in session memory, complete Phase 1 now.
 
 **Status**: ACTIVE — enforced every invocation
-### A-004 — Post-Merge Retrospective Audit Findings Must Be Formally Recorded — No Informal Notes
+
+---
+
+### A-018 — Post-Merge Retrospective Audit Findings Must Be Formally Recorded — No Informal Notes
 
 **Triggered by**: maturion-isms governance breach issue (PR #546 process violation) — session-002.
 An agent contract PR was merged without IAA invocation (AGCFPP-001 breach). The post-merge
@@ -129,7 +132,7 @@ SAME session as the audit:
 4. The breach is only marked CLOSED when CodexAdvisor's corrective artifacts are committed.
 
 **Check in Phase 4 (after verdict)**:
-> FAIL-ONLY-ONCE A-004: After issuing a post-merge REJECTION-PACKAGE, verify that
+> FAIL-ONLY-ONCE A-018: After issuing a post-merge REJECTION-PACKAGE, verify that
 > unresolved_items_carried_forward lists each corrective action required of CodexAdvisor.
 > Do not mark session complete until corrective artifact requirements are documented.
 
@@ -285,16 +288,12 @@ When reviewing any session memory `iaa_audit_token` field value:
 
 When a new governance failure pattern is identified during a session (learning_notes in session
 memory), IAA adds a new entry to this file following the format above. Each new rule:
-- Gets the next sequential ID (A-004, A-005, etc.)
+- Gets the next sequential ID (A-020 is the next available ID)
 - References the incident that triggered it
 - States the permanent rule precisely
 - Defines how the rule is checked in the phase steps
 
 All updates to this file must be committed as part of the session bundle for that invocation.
-
----
-
-**Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
 
 ---
 
@@ -329,7 +328,7 @@ Specifically:
 
 ---
 
-### A-016 — Trigger Table Misapplication Is an IAA Bypass — ALL Triggering Categories Require IAA
+### A-019 — Trigger Table Misapplication Is an IAA Bypass — ALL Triggering Categories Require IAA
 
 **Triggered by**: maturion-isms#711 — governance-liaison-isms session-027-20260301.
 The liaison produced a PR containing CANON_GOVERNANCE changes (3 canon files) and CI_WORKFLOW changes
@@ -356,7 +355,7 @@ The specific misclassification that produced this breach:
   agent contracts are also modified.
 
 **Check in Phase 3**:
-> FAIL-ONLY-ONCE A-016: If PR contains any change to governance/canon/ OR .github/workflows/ OR
+> FAIL-ONLY-ONCE A-019: If PR contains any change to governance/canon/ OR .github/workflows/ OR
 > .github/scripts/ AND the session memory states `NOT_REQUIRED` for IAA:
 > CORE-013 → FAIL ("IAA trigger category present but self-assessed as NOT_REQUIRED")
 > CORE-016 → FAIL ("No IAA evidence — trigger table was misapplied")
@@ -364,3 +363,18 @@ The specific misclassification that produced this breach:
 > Invoke IAA via the independent-assurance-agent tool. Include verbatim IAA output in proof.
 
 **Status**: ACTIVE — enforced every invocation
+
+---
+
+## Version History
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.0.0 | 2026-02-25 | Initial registry with A-001, A-002, A-003 |
+| 1.1.0 | 2026-02-27 | A-004 (bootstrap directive), A-005 (agent contract immutability) added |
+| 1.2.0 | 2026-02-28 | A-006 (PHASE_A_ADVISORY fabrication), A-015 (Tier 2 patches require ceremony), A-016 (cross-PR token reuse), A-017 (REJECTION-as-PASS citation) added |
+| 1.3.0 | 2026-03-02 | A-018 renumbered from duplicate A-004 (post-merge retrospective); A-019 renumbered from duplicate A-016 (trigger table misapplication); duplicate rule ID deduplication patch (maturion-isms#IAA-TIER2) |
+
+---
+
+**Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
