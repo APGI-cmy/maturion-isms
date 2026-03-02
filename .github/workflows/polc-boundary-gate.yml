@@ -24,6 +24,7 @@ jobs:
   polc-boundary-validation:
     name: "Merge Gate Interface / polc-boundary/validation"
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
