@@ -66,7 +66,7 @@ All 4 artifacts present:
 
 ## IAA Audit Token
 
-`iaa_audit_token: PENDING`
+`iaa_audit_token: IAA-session-084-20260302-PASS`
 
 ---
 
@@ -90,7 +90,23 @@ Issue "[IAA-TIER2] Upgrade ISMS IAA QA Overlay — Comprehensive Evidence, Integ
 
 ## IAA Agent Response (verbatim)
 
-*(To be populated after IAA invocation per Post-ASSURANCE-TOKEN ceremony)*
+```
+═══════════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/upgrade-isms-iaa-qa-overlay
+Upgrade ISMS IAA QA Overlay — Comprehensive Evidence, Integrity,
+and Cross-Wave Review Requirements (Wave 13+)
+
+All 21 checks PASS. Merge gate parity: PASS.
+0 failures. 0 REJECTION conditions.
+
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-084-20260302-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate
+═══════════════════════════════════════════════════════════════
+```
+
+*IAA Session: session-084-20260302 | Token: IAA-session-084-20260302-PASS | Phase: PHASE_B_BLOCKING | Agent: independent-assurance-agent v6.2.0*
 
 ---
 
