@@ -3,7 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "seed:ldcs": "tsx scripts/seed-ldcs-canonical.ts",
+    "seed:ldcs:dry-run": "DRY_RUN=true tsx scripts/seed-ldcs-canonical.ts"
+  },
   "dependencies": {
-    "@maturion/ai-centre": "workspace:*"
+    "@maturion/ai-centre": "workspace:*",
+    "@supabase/supabase-js": "^2.38.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0"
   }
 }
