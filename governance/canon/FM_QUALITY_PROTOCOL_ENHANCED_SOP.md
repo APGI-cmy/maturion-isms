@@ -3,7 +3,7 @@
 ## Status
 **Type**: Tier-3 Governance SOP (Operational Protocol)
 **Authority**: Governance Administrator — authorized by CS2 governance issue
-**Version**: 1.0.0
+**Version**: 1.1.0
 **Effective Date**: 2026-03-02
 **Last Updated**: 2026-03-02
 **Owner**: Maturion Engineering Leadership (Johan Ras)
@@ -34,6 +34,7 @@ These enhancements close two gaps in the existing Quality Professor mode:
 This SOP derives authority from and implements:
 
 - **governance/canon/LIVING_AGENT_SYSTEM.md v1.1.0** — Supreme governance authority
+- **.github/agents/foreman-v2-agent.md v2.3.0** — Quality Professor mode (Mode 3), Section 1.7
 - **governance/quality/agent-integrity/foreman-v2.agent.md v2.3.0** — Quality Professor mode (Mode 3), Section 1.7
 - **governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md** — FM supervision authority over builders
 - **governance/canon/MANDATORY_CANONICAL_PROGRESS_RECORDING_AND_WAVE_CLOSURE_CERTIFICATION.md** — Progress recording canon
@@ -233,7 +234,7 @@ Every Quality Professor session that results in a PASS MUST produce:
 
 ## 7. Relationship to Existing Quality Professor Mode
 
-This SOP **supplements** the Quality Professor mode defined in `governance/quality/agent-integrity/foreman-v2.agent.md` Section 1.7. It does NOT modify the agent contract.
+This SOP **supplements** the Quality Professor mode defined in `.github/agents/foreman-v2-agent.md` Section 1.7. It does NOT modify the agent contract.
 
 The existing Quality Professor script already:
 - Issues remediation orders to builder on FAIL
@@ -312,3 +313,12 @@ Block merge gate
 
 **Authority**: governance/canon/LIVING_AGENT_SYSTEM.md v1.1.0 | FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md | MANDATORY_CANONICAL_PROGRESS_RECORDING_AND_WAVE_CLOSURE_CERTIFICATION.md
 **Governance Issue**: [Governance] Upgrade foreman quality protocol: builder referral & progress tracker enforcement
+
+---
+
+## Version History
+
+| Version | Date | Author | Change |
+|---------|------|--------|--------|
+| 1.1.0 | 2026-03-02 | Copilot (foreman-v2 agent, PR #808) | Corrected agent contract reference in Section 2 and Section 7 to canonical path `.github/agents/foreman-v2-agent.md`; retained dual-path reference per CS2 review directive |
+| 1.0.0 | 2026-03-02 | CS2 (Johan Ras) | Initial creation |
