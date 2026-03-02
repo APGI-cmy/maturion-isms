@@ -33,11 +33,30 @@
 
 ## IAA Invocation
 
-iaa_audit_token: PENDING
+iaa_audit_token: IAA-session-087-20260302-PASS
 
 ## IAA Agent Response (verbatim)
 
-*Awaiting IAA verdict — this section will be populated after IAA re-invocation.*
+```
+═══════════════════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR:     copilot/propagate-governance-changes-ccc21440-b826-40c3-a0da-77770d961ba3
+Issue:  #782 — [Layer-Down] Propagate Governance Changes (e52ec033)
+Agent:  governance-liaison-isms session-035
+
+All 29 checks PASS. Merge gate parity: PASS.
+Merge permitted — subject to CS2 approval (@APGI-cmy).
+
+Token reference: IAA-session-087-20260302-PASS
+
+RE-INVOCATION STOP-AND-FIX RESOLUTION CONFIRMED:
+  ✅ CORE-016: ## IAA Agent Response (verbatim) section — PRESENT
+  ✅ CORE-018: PREHANDOVER_PROOF.md complete with all 4 sub-conditions — PRESENT
+
+Adoption phase: PHASE_B_BLOCKING — hard gate
+Security: No CodeQL alerts (governance/markdown only — no analyzable code)
+═══════════════════════════════════════════════════════════════════════
+```
 
 ---
 
