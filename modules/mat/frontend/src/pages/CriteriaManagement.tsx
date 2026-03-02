@@ -1,5 +1,3 @@
-import React from 'react';
-
 export function CriteriaManagement() {
   return (
     <div data-testid="criteria-upload-pane">

@@ -1,5 +1,3 @@
-import React from 'react';
-
 export function Reports() {
   return (
     <div data-testid="reports-content">

@@ -1,6 +1,3 @@
-import React from 'react';
-import { supabase } from '../lib/supabase';
-
 export function AuditManagement() {
   return (
     <div data-testid="audit-list">

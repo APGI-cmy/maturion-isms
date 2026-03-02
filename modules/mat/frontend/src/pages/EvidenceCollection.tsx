@@ -1,5 +1,3 @@
-import React from 'react';
-
 export function EvidenceCollection() {
   return (
     <div data-testid="evidence-collection-form">

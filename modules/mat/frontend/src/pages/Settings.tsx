@@ -1,6 +1,3 @@
-import React from 'react';
-import { updateProfile } from '../lib/api/profile';
-
 export function Settings() {
   return (
     <div>
