@@ -349,30 +349,17 @@
 | 2026-03-02 | independent-assurance-agent | session-089 | [PHASE-4] | OVL-CG-005 update — add explicit before-hash verification command (`git show HEAD~1:<path> \| sha256sum`) to check description in iaa-category-overlays.md | session-089-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-094 | PHASE-4 | ASSURANCE-TOKEN issued for PR #789 Wave 13 — all prior failures resolved; 6-invocation PR complete | session-094-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-094 | PHASE-3 | CANDIDATE A-023: Tier 2 knowledge file version header must match history entry — three-point pre-commit check recommended for Foreman template | session-094-20260302.md |
-<<<<<<< HEAD
-| 2026-03-02 | foreman-v2-agent | session-091 | [SESSION-END] | CI workflow task sessions should trigger automatic ceremony reminder before report_progress to prevent skipped-ceremony PRs — add CI_WORKFLOW_CREATION domain flag to domain-flag-index.md | session-091-governance-ceremony-gate-20260302.md |
-| 2026-03-02 | independent-assurance-agent | session-095 | [PHASE-4] | OVL-CI-005 requires explicit guidance for new workflow additions where GitHub Actions action_required prevents pre-merge execution; PREHANDOVER template missing explicit Environment Parity section (OVL-CI-006 recurring miss — A-020 flag) | session-095-20260302.md |
-| 2026-03-02 | independent-assurance-agent | session-096 | [PHASE-4] | OVL-CI-005 needs explicit action_required pattern guidance to prevent future ambiguity on bot-authored PRs; A-020 PREHANDOVER template staleness now 7 sessions outstanding | session-096-20260302.md |
-| 2026-03-02 | governance-liaison-isms | session-037 | SESSION-END | Consider adding explicit push: branches-ignore trigger to polc-boundary-gate.yml to complement the if: guard and make the PR-only intent self-documenting | session-037-20260302.md |
-| 2026-03-02 | independent-assurance-agent | session-095 | PHASE-4 | governance-liaison PREHANDOVER template lacks OVL-CI-005 (CI Check Run Evidence) and OVL-CI-006 (Environment Parity) required sections — update template before next CI_WORKFLOW PR | session-095-20260302.md |
-| 2026-03-02 | independent-assurance-agent | session-095 | PHASE-3 | Post-O-fix hash cascade miss pattern: when a mid-session fix changes a file, ALL SHA256 references across ALL evidence artifacts must be updated atomically before commit — add to pre-commit hash consistency checklist | session-095-20260302.md |
-| 2026-03-02 | independent-assurance-agent | session-096 | Phase 4 | Add pre-commit hook to auto-verify SHA256 hash consistency between workflow files and evidence artifacts to prevent O-001-class hash cascade misses | session-096-20260302.md |
-| 2026-03-02 | governance-liaison-isms | session-036 | [SESSION-END] | Enhance align-governance.sh to emit richer ripple-log entries for automated-alignment events (trigger, changed_artifacts, issue_ref) to reduce post-hoc documentation gaps by liaison | session-036-20260302.md |
-| 2026-03-02 | independent-assurance-agent | session-095 | [PHASE-4] | Liaison/specialist PREHANDOVER templates should include pre-commit reminder to set iaa_invocation_result to PENDING (not NOT_REQUIRED) before committing session memory to branch, preventing CORE-013/A-019 failures | session-095-20260302.md |
-| 2026-03-02 | independent-assurance-agent | session-096 | [PHASE-4] | PREHANDOVER template should instruct agents to update SHA256 claims in Files Delivered table when a fix commit modifies a previously-delivered file, preventing stale hash claims on re-invocation | session-096-20260302.md |
-<<<<<<< HEAD
-=======
 | 2026-03-02 | governance-liaison-isms | session-036 | SESSION-END | Add dedicated CI gate for api/ and packages/ai-centre/ TypeScript type-checking separate from mat/frontend gate | session-036-20260302.md |
->>>>>>> fe646ff (fix(typescript): resolve TS type errors in ai/ai-centre — @types/node, TS1434, malformed test file)
 =======
 | 2026-03-02 | independent-assurance-agent | session-097 | PHASE-3 | Add explicit PREHANDOVER creation instruction to liaison/specialist agent Phase 3 to prevent CORE-018 at first AAWP_MAT invocation | session-097-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-097 | PHASE-3 | Add TECHNICAL_FIX alias warning to trigger table — technical fixes to AAWP_MAT paths ARE triggering; TECHNICAL_FIX is not a recognised exempt category | session-097-20260302.md |
-<<<<<<< HEAD
->>>>>>> 00777ab (chore(iaa): session-097 — REJECTION-PACKAGE for PR #805 (AAWP_MAT — missing PREHANDOVER proof))
-=======
 | 2026-03-02 | independent-assurance-agent | session-098 | PHASE-4 | Cross-check version numbers in PREHANDOVER narratives against actual package.json content — SHA256 correctness does not guarantee narrative accuracy | session-098-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-098 | PHASE-4 | Governance ceremony sessions should self-verify that all CREATED artifacts listed in HANDOVER_SUMMARY actually exist before sign-off | session-098-20260302.md |
 | 2026-03-02 | governance-liaison-isms | session-038 | SESSION-END | Add pre-IAA checklist to verify HANDOVER_SUMMARY file claims match actual files before invoking IAA | session-038-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-099 | PHASE-4 | Liaison agent needs mandatory pre-commit checklist: git status before IAA invocation — uncommitted governance artifacts = immediate A-021 failure | session-099-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-099 | PHASE-4 | When fixing a find-replace-style text error in governance artifacts, use grep -n to locate ALL instances before declaring fix complete | session-099-20260302.md |
->>>>>>> 6fdcb29 (chore(iaa): session-099 — REJECTION-PACKAGE for PR #805 (CORE-021-F3: uncommitted artifacts; CORE-021-F4: residual ^20.0.0 line 257))
+<<<<<<< HEAD
+=======
+| 2026-03-02 | independent-assurance-agent | session-100 | PHASE-4 | Post-ASSURANCE-TOKEN ceremony steps should be automated or checklisted to prevent manual omission after token issuance | session-100-20260302.md |
+| 2026-03-02 | independent-assurance-agent | session-100 | PHASE-4 | Multi-invocation PR governance squash policy — CS2 consideration for consolidating governance ceremony commits before merge | session-100-20260302.md |
+>>>>>>> c7a47a8 (chore(iaa): session-100 — ASSURANCE-TOKEN for PR #805 (all 19 checks PASS; session-099 F3+F4 resolved in 510e0ce))
