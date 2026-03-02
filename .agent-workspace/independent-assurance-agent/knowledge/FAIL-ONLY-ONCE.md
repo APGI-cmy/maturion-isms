@@ -1,7 +1,7 @@
 # IAA FAIL-ONLY-ONCE Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 1.5.0
+**Version**: 1.6.0
 **Last Updated**: 2026-03-02
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -482,6 +482,7 @@ This rule is especially critical for PRs where remediation commits are added bet
 | 1.3.0 | 2026-03-02 | A-018 renumbered from duplicate A-004 (post-merge retrospective); A-019 renumbered from duplicate A-016 (trigger table misapplication); duplicate rule ID deduplication patch (maturion-isms#IAA-TIER2) |
 | 1.4.0 | 2026-03-02 | A-020 (PREHANDOVER template staleness — template must be kept current with overlay requirements) added from session-088 Wave 13 REJECTION-PACKAGE learning |
 | 1.5.0 | 2026-03-02 | A-021 (commit and push before IAA invocation — working-tree fix is not a committed fix) codified from sessions 090/091 CANDIDATE; A-022 (re-evaluate trigger categories on every invocation — do not carry forward prior session classification) added from session-092 OVL-KG-004 finding |
+| 1.6.0 | 2026-03-02 | A-023 added (cited CI run must have jobs executed — action_required with 0 jobs is not CI evidence; elevated from CANDIDATE, PR #806 sessions 095/096) |
 
 ---
 
