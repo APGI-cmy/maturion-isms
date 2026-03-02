@@ -496,8 +496,6 @@
       "ci_result": "No Drift Detected — governance already aligned with canonical source"
     },
     {
-      "timestamp": "2026-03-02T13:42:21Z",
-      "session_id": "align-20260302-134221",
       "timestamp": "2026-03-02T13:42:25Z",
       "session_id": "align-20260302-134225",
       "type": "automated-alignment",
