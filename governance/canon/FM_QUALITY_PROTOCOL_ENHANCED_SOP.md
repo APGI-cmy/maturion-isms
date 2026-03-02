@@ -3,7 +3,7 @@
 ## Status
 **Type**: Tier-3 Governance SOP (Operational Protocol)
 **Authority**: Governance Administrator — authorized by CS2 governance issue
-**Version**: 1.0.0
+**Version**: 1.1.0
 **Effective Date**: 2026-03-02
 **Last Updated**: 2026-03-02
 **Owner**: Maturion Engineering Leadership (Johan Ras)
@@ -313,3 +313,12 @@ Block merge gate
 
 **Authority**: governance/canon/LIVING_AGENT_SYSTEM.md v1.1.0 | FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md | MANDATORY_CANONICAL_PROGRESS_RECORDING_AND_WAVE_CLOSURE_CERTIFICATION.md
 **Governance Issue**: [Governance] Upgrade foreman quality protocol: builder referral & progress tracker enforcement
+
+---
+
+## Version History
+
+| Version | Date | Author | Change |
+|---------|------|--------|--------|
+| 1.1.0 | 2026-03-02 | Copilot (foreman-v2 agent, PR #808) | Corrected agent contract reference in Section 2 and Section 7 to canonical path `.github/agents/foreman-v2-agent.md`; retained dual-path reference per CS2 review directive |
+| 1.0.0 | 2026-03-02 | CS2 (Johan Ras) | Initial creation |

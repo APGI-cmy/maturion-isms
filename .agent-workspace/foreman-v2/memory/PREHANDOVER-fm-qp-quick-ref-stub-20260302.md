@@ -47,6 +47,32 @@ Add the missing Tier 2 knowledge stub `FM_QP_ENHANCED_QUICK_REFERENCE.md` for th
 
 ---
 
+## Ripple Impact Assessment (OVL-CG-004)
+
+**Canon file modified**: `governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md`
+
+| Impact Dimension | Assessment |
+|---|---|
+| Downstream consumers | foreman-v2-agent (Tier 2 knowledge stub `FM_QP_ENHANCED_QUICK_REFERENCE.md`) |
+| Agent contract changes | None — SOP supplements agent contract, does not modify it |
+| Ripple trigger required | No — SOP path correction only; no structural protocol change |
+| CANON_INVENTORY update required | Yes — hash and version must reflect v1.1.0 |
+| Tier 2 knowledge update required | Yes — `FM_QP_ENHANCED_QUICK_REFERENCE.md` newly created this PR to reflect SOP |
+
+**Ripple verdict**: Self-contained. SOP path reference corrected to canonical `.github/agents/foreman-v2-agent.md`. No downstream ripple to other agent workspaces required.
+
+---
+
+## SHA256 Drift Evidence (OVL-CG-005)
+
+| File | Before (v1.0.0) | After (v1.1.0) |
+|---|---|---|
+| `governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` | `65ee6752ef458a2c043aa59d20d2b9c6c58830aef56ea5e429d3f1b4f25b900b` | `5f800b7bd630ade3ca8bbb586ce91afb32c85a1036366c7e7ce1d94ee7667af7` |
+
+CANON_INVENTORY.json updated: `FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` entry bumped to version `1.1.0` with new hash.
+
+---
+
 ## IAA Audit
 
 `iaa_audit_token: PENDING`
