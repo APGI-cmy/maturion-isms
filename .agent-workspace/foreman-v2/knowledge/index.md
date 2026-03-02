@@ -2,7 +2,7 @@
 
 **Agent**: foreman-v2  
 **Contract Version**: 2.5.0  
-**Knowledge Version**: 1.6.0  
+**Knowledge Version**: 1.6.1  
 **Last Updated**: 2026-03-02  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
@@ -17,7 +17,7 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 
 | File | Purpose | Version |
 |------|---------|---------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.2.0 |
+| `index.md` (this file) | Knowledge entry point and version reference | 1.6.1 |
 | `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 2.1.0 |
 | `specialist-registry.md` | Registry of all delegable agents with capabilities and separation-of-duties boundary | 1.0.0 |
 | `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 |
@@ -73,6 +73,15 @@ All verb classification and mode-switching decisions MUST reference `ECOSYSTEM_V
 
 **Authority**: CS2 (Johan Ras)  
 **Living Agent System**: v6.2.0
+
+---
+
+## Version History
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.6.1 | 2026-03-02 | Corrected version table row for `index.md` from `1.2.0` to `1.6.1` — cosmetic drift from PR #785 (v1.3.0→v1.6.0 progression did not update table cell); version bumped on edit per OVL-KG-002 |
+| 1.6.0 | 2026-03-02 | FAIL-ONLY-ONCE.md updated to v2.1.0 (INC-IAA-SKIP-002, A-016, S-013); prehandover-template.md added (PHASE 4 §S-009) |
 
 ---
 
