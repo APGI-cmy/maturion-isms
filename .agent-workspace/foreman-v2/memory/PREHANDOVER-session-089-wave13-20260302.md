@@ -158,15 +158,44 @@ HEAD commit: `dfdc6ba8c923a5d290bc2e7dfc330a884e172a08`
 
 ## IAA Audit
 
-`iaa_audit_token: PENDING`
+`iaa_audit_token: IAA-session-094-20260302-PASS`
 
-- [ ] IAA audit token recorded
+- [x] IAA audit token recorded: IAA-session-094-20260302-PASS
 
 ## IAA Agent Response (verbatim)
 
-*(Awaiting IAA re-invocation — artifacts committed and CI run confirmed)*
+```
+Token reference: IAA-session-094-20260302-PASS
 
-Previous IAA response (session-089 first invocation): REJECTION-PACKAGE — 8 governance format gaps in PREHANDOVER proof. All 8 gaps were governance process gaps only; implementation quality was confirmed excellent. Remediation applied in this updated PREHANDOVER proof version.
+Session: 094  |  Date: 2026-03-02  |  Agent: independent-assurance-agent v6.2.0
+HEAD commit verified: 73a8575712c3822c32e2975df58d574e48f7c3b3
+
+─────────────────────────────────────────────────────────────────
+CHECKS SUMMARY
+─────────────────────────────────────────────────────────────────
+FAIL-ONLY-ONCE learning checks:     5 PASS / 0 FAIL
+Core invariants (CORE-001–020):     9 PASS / 0 FAIL / 11 N/A (justified)
+CI_WORKFLOW overlay (OVL-CI):       6 PASS / 0 FAIL
+AAWP_MAT overlay (OVL-AM):         7 PASS / 0 FAIL
+KNOWLEDGE_GOVERNANCE overlay (OVL-KG): 5 PASS / 0 FAIL
+─────────────────────────────────────────────────────────────────
+TOTAL: 32 PASS / 0 FAIL
+
+ALL PRIOR REJECTION-PACKAGE FAILURES — RESOLVED
+session-088:  8 failures (governance format gaps)               → ALL FIXED ✅
+session-090:  1 failure  (OVL-CI-005 wrong run, not committed)  → FIXED at d27f876 ✅
+session-091:  1 failure  (OVL-CI-005 working tree only)         → FIXED ✅
+session-092:  1 failure  (OVL-KG-004 foreman-v2 index stale)    → FIXED at cae9a53 ✅
+session-093:  1 failure  (OVL-KG-002 FAIL-ONLY-ONCE.md header)  → FIXED at 73a8575 ✅
+
+MERGE GATE PARITY (§4.3): PASS
+  merge-gate/verdict:          PASS (32/32 checks PASS)
+  governance/alignment:        PASS (190 canons, 0 bad hashes)
+  stop-and-fix/enforcement:    PASS (all failures resolved)
+  CodeQL:                      0 alerts
+
+Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
+```
 
 ---
 
