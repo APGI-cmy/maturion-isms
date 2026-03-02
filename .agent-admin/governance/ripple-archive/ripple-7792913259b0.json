@@ -5,7 +5,7 @@
   "sender": "APGI-cmy/maturion-foreman-governance",
   "dispatch_id": "7792913259b0",
   "timestamp": "2026-03-02T13:42:01Z",
-  "trigger": "Merge pull request -1273 from APGI-cmy-copilot-upgrade-quality-protocol",
+  "trigger": "Merge pull request #1273 from APGI-cmy/copilot-upgrade-quality-protocol",
   "changed_artifacts": [
     "governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md"
   ],
