@@ -343,3 +343,4 @@
 | 2026-03-02 | independent-assurance-agent | session-089 | [PHASE-4] | OVL-CG-005 update — add explicit before-hash verification command (`git show HEAD~1:<path> \| sha256sum`) to check description in iaa-category-overlays.md | session-089-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-094 | PHASE-4 | ASSURANCE-TOKEN issued for PR #789 Wave 13 — all prior failures resolved; 6-invocation PR complete | session-094-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-094 | PHASE-3 | CANDIDATE A-023: Tier 2 knowledge file version header must match history entry — three-point pre-commit check recommended for Foreman template | session-094-20260302.md |
+| 2026-03-02 | governance-liaison-isms | session-036 | [SESSION-END] | Enhance align-governance.sh to emit richer ripple-log entries for automated-alignment events (trigger, changed_artifacts, issue_ref) to reduce post-hoc documentation gaps by liaison | session-036-20260302.md |
