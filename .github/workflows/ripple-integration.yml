@@ -8,7 +8,8 @@ name: Ripple Integration
 # that the upstream `governance-layer-down-dispatch.yml` workflow creates in this repo
 # (labels: governance + layer-down).  It then:
 #   1. Runs the existing align-governance.sh script to pull canonical changes.
-#   2. Detects whether any .github/agents/*.md files are in the diff.
+#   2. Parses upstream AGENT-FILE-MANIFEST from issue body (informational).
+#      Detects whether any .github/agents/*.md files are in the LOCAL diff (authoritative).
 #   3. If agent files changed  → creates a DRAFT ripple PR + escalation doc (CS2 gate).
 #   4. If no agent files       → creates a normal ripple PR and enables auto-merge.
 #   5. Comments on the issue with the outcome.
@@ -94,8 +95,22 @@ jobs:
             echo "number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
           fi
 
-      # ── Detect agent-file gate from issue body ──
-      - name: Detect agent file gate
+      # ── Parse upstream agent file manifest from issue body ──
+      # The upstream governance-layer-down-dispatch.yml embeds a structured
+      # <!-- AGENT-FILE-MANIFEST ... --> HTML comment in every layer-down issue body.
+      # Format when agent files are present:
+      #   <!-- AGENT-FILE-MANIFEST
+      #   agent_files_in_payload:
+      #     - .github/agents/some-agent.md
+      #   -->
+      # Format when no agent files:
+      #   <!-- AGENT-FILE-MANIFEST
+      #   agent_files_in_payload: []
+      #   -->
+      # We parse this block and set has_upstream_agent_files=true/false.
+      # NOTE: this is the UPSTREAM signal only. The authoritative gate for CS2
+      # escalation is diff_check (local git reality). See 'Determine escalation'.
+      - name: Parse upstream agent file manifest
         id: agent_gate
         env:
           GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
@@ -104,12 +119,21 @@ jobs:
             --repo ${{ github.repository }} \
             --json body --jq '.body' 2>/dev/null || echo "")
 
-          if echo "$ISSUE_BODY" | grep -q "Agent File Detection Gate"; then
+          # Extract the AGENT-FILE-MANIFEST block and check for non-empty payload
+          MANIFEST=$(echo "$ISSUE_BODY" | awk '/<!-- AGENT-FILE-MANIFEST/{found=1} found{print} /-->/{if(found)exit}')
+
+          if echo "$MANIFEST" | grep -qE 'agent_files_in_payload:\s*\[?\s*-'; then
             echo "agent_files_changed=true" >> $GITHUB_OUTPUT
-            echo "Agent File Detection Gate found in issue — CS2 escalation required"
+            echo "Upstream manifest contains agent files — upstream signal: CS2 escalation indicated"
+            echo "Manifest content:"
+            echo "$MANIFEST"
           else
             echo "agent_files_changed=false" >> $GITHUB_OUTPUT
-            echo "No Agent File Detection Gate in issue — standard ripple path"
+            if [ -z "$MANIFEST" ]; then
+              echo "No AGENT-FILE-MANIFEST block found in issue body — legacy dispatch or no agent files"
+            else
+              echo "AGENT-FILE-MANIFEST present but agent_files_in_payload is empty — no agent files upstream"
+            fi
           fi
 
       # ── Run canonical alignment script ──
@@ -204,10 +228,24 @@ jobs:
       - name: Determine escalation
         id: escalation
         run: |
+          # GATE = upstream signal (informational, from manifest in issue body)
+          # DIFF = local git diff reality (authoritative — agent files actually in this consumer's changeset)
+          #
+          # Security design: DIFF is the sole gate for CS2 escalation.
+          # GATE provides traceability but a false positive in the upstream signal must NOT
+          # block a pure governance layer-down that contains no agent files in the consumer diff.
+          # Authority: CS2_AGENT_FILE_AUTHORITY_MODEL.md
           GATE="${{ steps.agent_gate.outputs.agent_files_changed }}"
           DIFF="${{ steps.diff_check.outputs.has_agent_files }}"
-          if [ "$GATE" = "true" ] || [ "$DIFF" = "true" ]; then
+          if [ "$DIFF" = "true" ]; then
             echo "require_cs2=true" >> $GITHUB_OUTPUT
+            echo "CS2 escalation required: agent contract files present in local diff"
+          elif [ "$GATE" = "true" ]; then
+            # Upstream said agent files changed but local diff is clean.
+            # This can happen when the upstream commit touched agent files not applicable to this consumer.
+            # Log for audit trail but do NOT escalate to CS2.
+            echo "require_cs2=false" >> $GITHUB_OUTPUT
+            echo "::notice::Upstream manifest indicated agent files but local diff is clean — standard path (no false escalation)"
           else
             echo "require_cs2=false" >> $GITHUB_OUTPUT
           fi
