@@ -28,6 +28,8 @@
     "@supabase/supabase-js": "^2.98.0"
   },
   "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.3.3",
     "vitest": "^3.0.0"
   },
   "overrides": {

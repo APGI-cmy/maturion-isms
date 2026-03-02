@@ -1,35 +1,41 @@
-# FM Enhanced Quality Protocol — Quick Reference (Tier 2 Stub)
+# FM Enhanced Quality Protocol — Quick Reference
 
 **Agent**: foreman-v2  
-**Knowledge Version**: 1.0.0  
-**Last Updated**: 2026-03-02  
-**Tier**: 2 (Operational Knowledge)  
-**Canonical Authority (Tier 3)**: `governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md`  
-**Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
+**Tier**: 2 (Operational Knowledge — Quick Reference Stub)  
+**Version**: 1.0.0  
+**Authority**: CS2 (Johan Ras)  
+**Canonical SOP**: `governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` v1.0.0  
+**Layer-Down Source**: APGI-cmy/maturion-foreman-governance commit `7792913259b00fab77c2d1be966e923a463853db`  
+**Effective Date**: 2026-03-02
 
 ---
 
 ## Purpose
 
-This file is the **Tier 2 induction stub** for the FM Enhanced Quality Protocol. It provides a quick-reference summary of the two mandatory Quality Professor enhancements. For the full protocol, always refer to the Tier-3 canonical authority above.
+This Tier 2 stub provides Foreman v2 with a concise reference to the two mandatory enhancements
+defined in `FM_QUALITY_PROTOCOL_ENHANCED_SOP.md`. Load at induction alongside `FAIL-ONLY-ONCE.md`.
+
+**Full canonical authority**: `governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md`
 
 ---
 
-## QP Enhancement 1: Builder Referral Protocol
+## Enhancement 1 — Builder Referral Protocol
 
-When Quality Professor verdict is **FAIL**, FM MUST:
+**Trigger**: Any Quality Professor FAIL verdict.
 
-1. **Create** a Builder Referral Artifact at `.agent-admin/quality-professor/builder-referral-<YYYYMMDD>-<builder-id>-<issue-ref>.md`
-2. **Update** the Referral Index at `.agent-admin/quality-professor/REFERRAL_INDEX.md`
-3. **Notify** the builder with the referral path, failure conditions, and re-submission instructions
-4. **Block** the merge gate until the builder re-submission achieves a QP PASS
+**FM MUST**:
+1. Record `qp-verdict: FAIL` with all failure conditions
+2. Create a Builder Referral artifact: `.agent-admin/quality-professor/builder-referral-<date>-<builder>-<issue>.md`
+3. Update `REFERRAL_INDEX.md` in `.agent-admin/quality-professor/`
+4. Notify the responsible builder agent with referral path + remediation requirements
+5. On re-submission: re-invoke QP; if PASS → close referral; if FAIL → create new referral
 
-### Failure Condition Codes
+**Failure Codes that mandate a Referral**:
 
 | Code | Condition |
 |------|-----------|
 | QP-FAIL-001 | QA not 100% GREEN |
-| QP-FAIL-002 | Test debt detected |
+| QP-FAIL-002 | Test debt detected (.skip/.todo/stubs) |
 | QP-FAIL-003 | Evidence artifacts missing |
 | QP-FAIL-004 | Architecture alignment gap |
 | QP-FAIL-005 | Scope violation |
@@ -38,44 +44,43 @@ When Quality Professor verdict is **FAIL**, FM MUST:
 
 ---
 
-## QP Enhancement 2: Progress Tracker Enforcement
+## Enhancement 2 — Progress Tracker Enforcement
 
-When reviewing a build, FM MUST check the progress tracker **before** accepting the submission if:
-- The build corresponds to an open GitHub issue, AND
-- An implementation plan or progress tracker exists for that issue, AND
-- The issue is part of a multi-wave or multi-phase execution
+**Trigger**: Build delivered that corresponds to an existing implementation plan or progress tracker.
 
-If the tracker is out of sync → issue **QP-FAIL-007** and create a Builder Referral Artifact.
+**FM MUST**:
+1. Identify if the issue has an associated progress tracker or implementation plan
+2. Verify the tracker reflects the delivered build before accepting submission
+3. If tracker is out of sync → add QP-FAIL-007 to failure conditions, issue builder referral
 
----
-
-## Re-submission Protocol
-
-1. Builder addresses all remediation items
-2. Builder runs QA to 100% GREEN
-3. Builder updates progress tracker (if applicable)
-4. FM re-invokes Quality Professor (Mode 3)
-5. FM closes referral artifact and updates REFERRAL_INDEX.md on PASS
-
-Repeat referrals use suffixes: `-r2`, `-r3`, etc.
+**N/A case**: If no tracker exists for the issue → note "N/A — no tracker" in QP report and continue.
 
 ---
 
-## Key Paths
+## Required Infrastructure
 
-| Artifact | Path |
-|----------|------|
-| Builder Referral | `.agent-admin/quality-professor/builder-referral-<YYYYMMDD>-<builder-id>-<issue-ref>.md` |
-| Referral Index | `.agent-admin/quality-professor/REFERRAL_INDEX.md` |
-| QP Verdict Report | `.agent-admin/quality-professor/qp-verdict-<TIMESTAMP>.md` |
+Per SOP §8 (Layer-Down Propagation), this repository MUST maintain:
+- `.agent-admin/quality-professor/` — directory for referral artifacts and REFERRAL_INDEX.md
+- QA checklists must include Builder Referral and Tracker Enforcement requirements
+
+---
+
+## References
+
+- **Full SOP**: `governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` v1.0.0
+- **Authority**: `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md`
+- **Canonical Source**: APGI-cmy/maturion-foreman-governance
+- **LIVING_AGENT_SYSTEM**: v6.2.0
+
+---
 
 ## Version History
 
-| Version | Date | Author | Change |
-|---------|------|--------|--------|
-| 1.0.0 | 2026-03-02 | Copilot (foreman-v2 agent, session-036) | Initial creation — Tier 2 induction stub for FM Enhanced Quality Protocol (Builder Referral + Progress Tracker Enforcement) |
+| Version | Date | Change |
+|---------|------|--------|
+| 1.0.0 | 2026-03-02 | Initial creation — Layer-Down propagation of `FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` v1.0.0 (canonical commit 7792913259b0); Builder Referral Protocol (QP-FAIL-001–007) and Progress Tracker Enforcement Tier 2 stub |
 
 ---
 
-**Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0  
-**Full SOP**: `governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md`
+*Layer-Down by governance-liaison-isms-agent | Session 036 | 2026-03-02*  
+*Per CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md — canonical commit 7792913259b0*
