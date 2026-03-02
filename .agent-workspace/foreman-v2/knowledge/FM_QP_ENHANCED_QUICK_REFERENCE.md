@@ -69,6 +69,12 @@ Repeat referrals use suffixes: `-r2`, `-r3`, etc.
 | Referral Index | `.agent-admin/quality-professor/REFERRAL_INDEX.md` |
 | QP Verdict Report | `.agent-admin/quality-professor/qp-verdict-<TIMESTAMP>.md` |
 
+## Version History
+
+| Version | Date | Author | Change |
+|---------|------|--------|--------|
+| 1.0.0 | 2026-03-02 | Copilot (foreman-v2 agent, session-036) | Initial creation — Tier 2 induction stub for FM Enhanced Quality Protocol (Builder Referral + Progress Tracker Enforcement) |
+
 ---
 
 **Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0  
