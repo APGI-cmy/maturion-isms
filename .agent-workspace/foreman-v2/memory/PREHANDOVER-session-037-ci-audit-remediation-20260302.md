@@ -95,4 +95,4 @@ Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
 ---
 
 *Authority: CS2 (Johan Ras) | governance-liaison-isms-agent v6.2.0*  
-*Created: 2026-03-02 | Status: PENDING IAA*
+*Created: 2026-03-02 | Status: IAA ASSURANCE-TOKEN RECEIVED — IAA-session-096-20260302-PASS*
