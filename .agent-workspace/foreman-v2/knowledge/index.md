@@ -2,7 +2,7 @@
 
 **Agent**: foreman-v2  
 **Contract Version**: 2.5.0  
-**Knowledge Version**: 1.6.2  
+**Knowledge Version**: 1.7.0  
 **Last Updated**: 2026-03-02  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
@@ -17,11 +17,51 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 
 | File | Purpose | Version |
 |------|---------|---------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.6.2 |
+| `index.md` (this file) | Knowledge entry point and version reference | 1.7.0 |
 | `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 2.2.0 |
 | `specialist-registry.md` | Registry of all delegable agents with capabilities and separation-of-duties boundary | 1.0.0 |
 | `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 |
 | `prehandover-template.md` | **PHASE 4 §S-009** — PREHANDOVER proof template with mandatory IAA Agent Response (verbatim) section per FAIL-ONLY-ONCE v1.8.0 S-009 | 1.0.0 |
+
+---
+
+## Governance Ceremony Merge Gate
+
+**Workflow**: `.github/workflows/governance-ceremony-gate.yml`  
+**Authority**: FAIL-ONLY-ONCE v2.2.0 (A-010, A-014, A-015, A-016)  
+**Violation class**: GOV-BREACH-AIMC-W5-002  
+
+This gate blocks merging of any PR that touches governed paths unless the full governance ceremony is complete. It is **Foreman-owned** and runs on all pull requests.
+
+### Governed Paths (trigger scope)
+
+| Path Pattern | Description |
+|---|---|
+| `.github/workflows/**` | CI workflow additions or modifications |
+| `.github/agents/**` | Agent contract files |
+| `.agent-workspace/foreman-v2/knowledge/*.md` | Foreman Tier 2 knowledge files |
+
+### Gate Checks (all must pass)
+
+| Check | Job name | What it enforces |
+|---|---|---|
+| Draft PR check | `governance-ceremony/draft-check` | PR must not be in draft state |
+| PREHANDOVER proof + IAA token | `governance-ceremony/prehandover-and-iaa-token` | PREHANDOVER proof must exist; `iaa_audit_token` must be resolved (not PENDING, not PHASE_A_ADVISORY); `## IAA Agent Response (verbatim)` must be non-empty |
+| PR body governance block | `governance-ceremony/pr-body-governance-block` | PR body must contain `## Governance` block with `IAA Category`, `IAA Audit Token` (non-stale), and `PREHANDOVER Proof` path |
+| Final verdict | `governance-ceremony/verdict` | Aggregates all checks; fails if any check failed |
+
+### Required PR Body Format
+
+```markdown
+## Governance
+- IAA Category: <category of change>
+- IAA Audit Token: IAA-session-NNN-YYYYMMDD-PASS
+- PREHANDOVER Proof: .agent-workspace/foreman-v2/memory/PREHANDOVER-session-NNN-waveX-YYYYMMDD.md
+```
+
+### Bypass Condition
+
+Automated governance alignment PRs (labels: `governance` + `automated` + `agent:liaison`, or branch `governance-alignment-auto`) are pre-validated and bypass this gate, consistent with all other governance workflows.
 
 ---
 
@@ -80,6 +120,7 @@ All verb classification and mode-switching decisions MUST reference `ECOSYSTEM_V
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.7.0 | 2026-03-02 | Added governance-ceremony-gate.yml workflow (Issue #808); added Governance Ceremony Merge Gate section documenting governed paths, gate checks, and required PR body format |
 | 1.6.2 | 2026-03-02 | FAIL-ONLY-ONCE.md updated to v2.2.0 — A-017 ISMS-AGENTS-ONLY rule locked in, INC-GENERAL-PURPOSE-001 incident recorded, S-014 improvement suggestion added (CS2 directive 2026-03-02) |
 | 1.6.1 | 2026-03-02 | Corrected version table row for `index.md` from `1.2.0` to `1.6.1` — cosmetic drift from PR #785 (v1.3.0→v1.6.0 progression did not update table cell); version bumped on edit per OVL-KG-002 |
 | 1.6.0 | 2026-03-02 | FAIL-ONLY-ONCE.md updated to v2.1.0 (INC-IAA-SKIP-002, A-016, S-013); prehandover-template.md added (PHASE 4 §S-009) |
