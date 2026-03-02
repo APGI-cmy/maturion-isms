@@ -107,7 +107,7 @@ jobs:
       #   <!-- AGENT-FILE-MANIFEST
       #   agent_files_in_payload: []
       #   -->
-      # We parse this block and set has_upstream_agent_files=true/false.
+      # We parse this block and set agent_files_changed=true/false.
       # NOTE: this is the UPSTREAM signal only. The authoritative gate for CS2
       # escalation is diff_check (local git reality). See 'Determine escalation'.
       - name: Parse upstream agent file manifest
@@ -126,7 +126,7 @@ jobs:
             found && /-->/ { exit }
           ')
 
-          if echo "$MANIFEST" | grep -qE 'agent_files_in_payload:\s*\[?\s*-'; then
+          if echo "$MANIFEST" | grep -q 'agent_files_in_payload:' && echo "$MANIFEST" | grep -qE '^[[:space:]]+-[[:space:]]'; then
             echo "agent_files_changed=true" >> $GITHUB_OUTPUT
             echo "Upstream manifest contains agent files — upstream signal: CS2 escalation indicated"
             echo "Manifest content:"
