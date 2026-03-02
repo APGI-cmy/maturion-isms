@@ -10,6 +10,7 @@
 | wave_description | Fix dead AGENT-FILE-MANIFEST parser + make diff_check authoritative |
 | scope | .github/workflows/ripple-integration.yml |
 | iaa_audit_token | PENDING |
+| session_memory | `.agent-workspace/foreman-v2/memory/session-096-fix-ripple-agent-gate-20260302.md` |
 
 ---
 
@@ -71,6 +72,28 @@ This PR fixes two coupled defects in `.github/workflows/ripple-integration.yml`:
 - [x] §4.3 Merge gate parity check: workflow-only change
 
 **OPOJD: PASS**
+
+---
+
+## CI Check Run Evidence
+
+| Workflow | Run ID | URL | Branch | Status |
+|---|---|---|---|---|
+| Model Scaling Check | 22585159313 | https://github.com/APGI-cmy/maturion-isms/actions/runs/22585159313 | copilot/fix-agent-file-detection-gate | completed / action_required |
+
+**Status explanation**: `action_required` — the workflow ran to the point where the model scaling check requires CS2 environment approval. This is expected and by design for PR workflows in this repository.
+
+PR: https://github.com/APGI-cmy/maturion-isms/pull/806
+Branch: `copilot/fix-agent-file-detection-gate`
+HEAD commit at CI run trigger: `1565863b07510c114dcce9439b75fbbb3ab0f00a`
+
+---
+
+## Environment Parity
+
+This PR modifies only `.github/workflows/ripple-integration.yml`. This is a CI workflow file executed exclusively by GitHub Actions — it has no separate local, staging, or production deployment environments. The workflow logic executes identically across all trigger events (`workflow_dispatch`, `issues`). There are no environment-specific code paths or configuration values. Environment parity is structurally guaranteed: a single YAML file executed by a single CI runtime.
+
+`environment_parity: PASS — single execution environment (GitHub Actions), no environment differentiation applicable`
 
 ---
 
