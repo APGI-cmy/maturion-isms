@@ -349,6 +349,7 @@
 | 2026-03-02 | independent-assurance-agent | session-089 | [PHASE-4] | OVL-CG-005 update — add explicit before-hash verification command (`git show HEAD~1:<path> \| sha256sum`) to check description in iaa-category-overlays.md | session-089-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-094 | PHASE-4 | ASSURANCE-TOKEN issued for PR #789 Wave 13 — all prior failures resolved; 6-invocation PR complete | session-094-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-094 | PHASE-3 | CANDIDATE A-023: Tier 2 knowledge file version header must match history entry — three-point pre-commit check recommended for Foreman template | session-094-20260302.md |
+<<<<<<< HEAD
 | 2026-03-02 | foreman-v2-agent | session-091 | [SESSION-END] | CI workflow task sessions should trigger automatic ceremony reminder before report_progress to prevent skipped-ceremony PRs — add CI_WORKFLOW_CREATION domain flag to domain-flag-index.md | session-091-governance-ceremony-gate-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-095 | [PHASE-4] | OVL-CI-005 requires explicit guidance for new workflow additions where GitHub Actions action_required prevents pre-merge execution; PREHANDOVER template missing explicit Environment Parity section (OVL-CI-006 recurring miss — A-020 flag) | session-095-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-096 | [PHASE-4] | OVL-CI-005 needs explicit action_required pattern guidance to prevent future ambiguity on bot-authored PRs; A-020 PREHANDOVER template staleness now 7 sessions outstanding | session-096-20260302.md |
@@ -359,3 +360,6 @@
 | 2026-03-02 | governance-liaison-isms | session-036 | [SESSION-END] | Enhance align-governance.sh to emit richer ripple-log entries for automated-alignment events (trigger, changed_artifacts, issue_ref) to reduce post-hoc documentation gaps by liaison | session-036-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-095 | [PHASE-4] | Liaison/specialist PREHANDOVER templates should include pre-commit reminder to set iaa_invocation_result to PENDING (not NOT_REQUIRED) before committing session memory to branch, preventing CORE-013/A-019 failures | session-095-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-096 | [PHASE-4] | PREHANDOVER template should instruct agents to update SHA256 claims in Files Delivered table when a fix commit modifies a previously-delivered file, preventing stale hash claims on re-invocation | session-096-20260302.md |
+=======
+| 2026-03-02 | governance-liaison-isms | session-036 | SESSION-END | Add dedicated CI gate for api/ and packages/ai-centre/ TypeScript type-checking separate from mat/frontend gate | session-036-20260302.md |
+>>>>>>> fe646ff (fix(typescript): resolve TS type errors in ai/ai-centre — @types/node, TS1434, malformed test file)
