@@ -9,7 +9,7 @@
 | pr_category | CI_WORKFLOW |
 | wave_description | Fix dead AGENT-FILE-MANIFEST parser + make diff_check authoritative |
 | scope | .github/workflows/ripple-integration.yml |
-| iaa_audit_token | PENDING |
+| iaa_audit_token | IAA-session-098-20260302-PASS |
 | session_memory | `.agent-workspace/foreman-v2/memory/session-096-fix-ripple-agent-gate-20260302.md` |
 
 ---
@@ -102,7 +102,27 @@ This PR modifies only `.github/workflows/ripple-integration.yml`. This is a CI w
 
 ## IAA Agent Response (verbatim)
 
-*(To be filled after IAA invocation)*
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #806 — fix(ripple-integration): replace dead agent gate grep with AGENT-FILE-MANIFEST parser; make diff_check authoritative for CS2 escalation
+
+All 23 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+
+Token reference: IAA-session-098-20260302-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate
+
+Checks:
+  FAIL-ONLY-ONCE learning (A-001/002/015/021/022/023): 6 PASS / 0 FAIL
+  Core invariants (CORE-005/006/007/013–021):          12 PASS / 0 FAIL
+  CI_WORKFLOW overlay (OVL-CI-001–006):                 6 PASS / 0 FAIL
+  KNOWLEDGE_GOVERNANCE overlay (OVL-KG-001–005):        5 PASS / 0 FAIL
+  TOTAL: 23 PASS / 0 FAIL
+
+IAA Session: 098 | Date: 2026-03-02 | Agent: independent-assurance-agent v6.2.0
+═══════════════════════════════════════
+```
 
 ---
 
