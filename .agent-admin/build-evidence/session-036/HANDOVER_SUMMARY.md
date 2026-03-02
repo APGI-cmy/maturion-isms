@@ -62,8 +62,9 @@ Open from prior sessions:
 
 ## IAA Invocation
 
-IAA not yet deployed (Phase A). Logging invocation attempt. Proceeding under advisory mode.  
-IAA phase status: PHASE_A_ADVISORY. This PR is flagged for IAA review once Phase B activates.
+IAA invoked for `KNOWLEDGE_GOVERNANCE` category (new file under `.agent-workspace/foreman-v2/knowledge/` path — IAA Trigger Table v2.1.0, OVL-KG-* overlays).  
+IAA invocation result: PENDING — awaiting ASSURANCE-TOKEN.  
+PREHANDOVER proof: `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-036-liaison-ripple-7792913259b0.md`
 
 ---
 

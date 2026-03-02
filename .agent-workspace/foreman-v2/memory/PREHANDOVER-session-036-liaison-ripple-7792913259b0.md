@@ -5,7 +5,7 @@
 **Agent Version**: governance-liaison-isms-agent v6.2.0 (contract v3.2.0)  
 **Triggering Issue**: [Layer-Down] Governance ripple received — 7792913259b0  
 **Branch**: copilot/verify-governance-ripple-another-one  
-**PR Category**: `AGENT_KNOWLEDGE`  
+**PR Category**: `KNOWLEDGE_GOVERNANCE`  
 **Authority**: CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md | CS2_AGENT_FILE_AUTHORITY_MODEL.md
 
 ---
@@ -25,7 +25,7 @@ Automated CI (align-governance.sh) had already layered down the file via PR #797
 
 **Scope**: New file `.agent-workspace/foreman-v2/knowledge/FM_QP_ENHANCED_QUICK_REFERENCE.md` + `index.md` update (v1.6.2→v1.6.3)
 
-**IAA Trigger**: `AGENT_KNOWLEDGE` — new file under `.agent-workspace/foreman-v2/knowledge/` path (per IAA Trigger Table v2.1.0)
+**IAA Trigger**: `KNOWLEDGE_GOVERNANCE` — new file under `.agent-workspace/foreman-v2/knowledge/` path (per IAA Trigger Table v2.1.0, OVL-KG-* overlays)
 
 ---
 
@@ -33,7 +33,7 @@ Automated CI (align-governance.sh) had already layered down the file via PR #797
 
 | File | Action | SHA256 |
 |------|--------|--------|
-| `.agent-workspace/foreman-v2/knowledge/FM_QP_ENHANCED_QUICK_REFERENCE.md` | CREATED (v1.0.0) | `ffe7e6fe4c323ae39c9a51eeb6ad8709963cae5006224dc5f29ab6b09f1372b6` |
+| `.agent-workspace/foreman-v2/knowledge/FM_QP_ENHANCED_QUICK_REFERENCE.md` | CREATED (v1.0.0) | `1d4a35c37596508cae4ca379e56dfc21c89796c7fe29c068880a545988f05282` |
 | `.agent-workspace/foreman-v2/knowledge/index.md` | UPDATED (v1.6.2→v1.6.3) | `fac3d1bb48ca45e3dbfe31d5e3f51f1e21a1d9900ba7fda2028c3ba25e02d8d9` |
 | `.agent-admin/quality-professor/README.md` | CREATED | — |
 | `.agent-admin/governance/ripple-archive/ripple-7792913259b0.json` | CREATED | — |

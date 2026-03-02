@@ -74,5 +74,13 @@ Per SOP §8 (Layer-Down Propagation), this repository MUST maintain:
 
 ---
 
+## Version History
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.0.0 | 2026-03-02 | Initial creation — Layer-Down propagation of `FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` v1.0.0 (canonical commit 7792913259b0); Builder Referral Protocol (QP-FAIL-001–007) and Progress Tracker Enforcement Tier 2 stub |
+
+---
+
 *Layer-Down by governance-liaison-isms-agent | Session 036 | 2026-03-02*  
 *Per CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md — canonical commit 7792913259b0*
