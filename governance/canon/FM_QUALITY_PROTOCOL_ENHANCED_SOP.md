@@ -34,7 +34,7 @@ These enhancements close two gaps in the existing Quality Professor mode:
 This SOP derives authority from and implements:
 
 - **governance/canon/LIVING_AGENT_SYSTEM.md v1.1.0** — Supreme governance authority
-- **governance/quality/agent-integrity/foreman-v2.agent.md v2.3.0** — Quality Professor mode (Mode 3), Section 1.7
+- **.github/agents/foreman-v2-agent.md v2.3.0** — Quality Professor mode (Mode 3), Section 1.7
 - **governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md** — FM supervision authority over builders
 - **governance/canon/MANDATORY_CANONICAL_PROGRESS_RECORDING_AND_WAVE_CLOSURE_CERTIFICATION.md** — Progress recording canon
 - **governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md** — Evidence artifact requirements
