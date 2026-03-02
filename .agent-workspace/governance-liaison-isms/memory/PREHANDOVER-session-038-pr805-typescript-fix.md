@@ -280,25 +280,47 @@ cd modules/mat/frontend && node_modules/.bin/eslint . --ext ts,tsx --report-unus
 
 ## IAA Audit
 
-`iaa_audit_token: PENDING`
+`iaa_audit_token: IAA-session-100-20260302-PASS`
 
-First invocation (session-097) issued REJECTION-PACKAGE for 11 failures:
-- CORE-018: No PREHANDOVER proof
-- CORE-013/014/016/019/005: IAA invocation evidence gaps
+Prior REJECTION-PACKAGEs:
+- IAA-session-097-20260302: CLOSED (11 failures — PREHANDOVER ceremony now present)
+- IAA-session-098-20260302: CLOSED (CORE-021-F1 version text + CORE-021-F2 missing session-038 memory)
+- IAA-session-099-20260302: CLOSED (CORE-021-F3 uncommitted artifacts + CORE-021-F4 residual ^20.0.0)
 
-Second invocation (session-098) issued REJECTION-PACKAGE for 2 failures:
-- CORE-021-F1: PREHANDOVER narrative said `^20.0.0` but branch has `^22.0.0` / `^22.19.11`
-- CORE-021-F2: `session-038-20260302.md` listed as CREATED in HANDOVER_SUMMARY but didn't exist
-
-Both failures from session-098 are now resolved:
-- CORE-021-F1: PREHANDOVER narrative updated with correct versions throughout
-- CORE-021-F2: `session-038-20260302.md` created
-
-Re-invoking IAA as session-099. Note: IAA confirmed technical fix (commit `fe646ff`) is SOUND.
+All cited failures resolved. ASSURANCE-TOKEN issued after 24/24 checks PASS.
 
 ## IAA Agent Response (verbatim)
 
-*[To be populated after session-099 verdict]*
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #805 — copilot/fix-typescript-errors-ai-centre
+  fix(typescript): add @types/node, fix TS1434, repair PersonaLoader test
+
+All 24 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+
+Token reference: IAA-session-100-20260302-PASS
+
+Check summary:
+  FAIL-ONLY-ONCE learning (A-001, A-002, A-003, A-021, A-022): 5/5 PASS
+  CORE invariants (CORE-005,006,007,013–021): 12/12 PASS
+  AAWP_MAT overlay (OVL-AM-001–007): 7/7 PASS
+
+Prior REJECTION-PACKAGEs cleared:
+  session-097: CLEARED (11 failures — PREHANDOVER ceremony now present)
+  session-098: CLEARED (CORE-021-F1 version text + CORE-021-F2 missing session-038)
+  session-099: CLEARED (CORE-021-F3 uncommitted artifacts + CORE-021-F4 residual ^20.0.0)
+
+Branch HEAD verified: 510e0ce
+Commit: "chore(governance): session-038 PREHANDOVER proof + session
+  memory for PR #805 IAA ceremony"
+Producing agent: governance-liaison-isms
+Technical fix (fe646ff): CONFIRMED SOUND (4 consecutive audit confirmations)
+
+Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+═══════════════════════════════════════
+```
 
 ---
 
