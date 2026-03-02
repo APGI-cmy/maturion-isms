@@ -108,7 +108,7 @@ Issue #815 opened by CS2 (@APGI-cmy) and assigned to Copilot — constitutes wav
 - [x] Zero deprecation warnings
 - [x] Zero compiler/linter warnings
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
-- [x] IAA audit token recorded: IAA-session-097-20260302-PASS
+- [ ] IAA audit token recorded: [PENDING — awaiting IAA verdict]
 
 ---
 

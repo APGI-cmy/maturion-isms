@@ -67,7 +67,7 @@ mode_transitions:
 agents_delegated_to:
   - agent: independent-assurance-agent
     task: IAA audit of prehandover-template.md v1.2.0 and index.md v1.6.4 changes (KNOWLEDGE_GOVERNANCE category)
-    result: ASSURANCE-TOKEN IAA-session-097-20260302-PASS (after initial REJECTION-PACKAGE for missing ceremony artifacts — resolved by creating PREHANDOVER proof and session memory)
+    result: REJECTION-PACKAGE (session-097 and session-098); IAA re-invoked as session-099
 escalations_triggered: none
 separation_violations_detected: none
 ```
@@ -93,10 +93,10 @@ A_rules_active:
 ## IAA Audit
 
 ```yaml
-iaa_audit_token: IAA-session-097-20260302-PASS
+iaa_audit_token: PENDING
 ```
 
-IAA session-097 issued ASSURANCE-TOKEN after initial REJECTION-PACKAGE (session-097 first invocation) for missing ceremony artifacts. Content quality confirmed HIGH by IAA. All 5 OVL-KG and CORE checks PASS after ceremony artifacts committed.
+IAA session-097 and session-098 issued REJECTION-PACKAGEs (session-097: missing ceremony artifacts; session-098: pre-filled PASS token contradicting PENDING field). Session-099 ASSURANCE-TOKEN pending.
 
 ---
 
