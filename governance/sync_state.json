@@ -3,31 +3,36 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "last_sync": {
-    "timestamp": "2026-03-01T09:27:36Z",
-    "session_id": "session-027-20260301",
-    "executed_by": "governance-liaison",
+    "timestamp": "2026-03-01T17:00:33Z",
+    "session_id": "liaison-ripple-79652ea5",
+    "executed_by": "governance-liaison-isms-agent",
     "canonical_inventory_version": "1.0.0",
     "canonical_inventory_date": "2026-03-01",
-    "total_canons_synced": 2,
+    "total_canons_synced": 6,
     "sync_method": "layer-down-manual-liaison",
     "sync_status": "SUCCESS",
-    "canonical_commit": "1bce7a831467b784b261b207f969bc2ec35131ab",
+    "canonical_commit": "79652ea59982559435b40519f47c3ab854da3d1a",
     "ripple_pr": "pending",
     "files_layered_down": [
-      "governance/canon/LAYER_UP_PROTOCOL.md",
+      "governance/canon/ACTIVATION_STATE_MODEL.md",
+      "governance/canon/AGENT_ROLE_GATE_APPLICABILITY.md",
+      "governance/canon/APP_STARTUP_REQUIREMENTS_DECLARATION.md",
+      "governance/canon/BUILD_TREE_EXECUTION_MODEL.md",
+      "governance/canon/GOVERNANCE_LAYERDOWN_CONTRACT.md",
+      "governance/canon/PR_GATE_EVALUATION_AND_ROLE_PROTOCOL.md",
       "governance/CANON_INVENTORY.json"
     ]
   },
   "alignment_status": {
     "overall": "ALIGNED",
     "canon_files": {
-      "total": 102,
-      "aligned": 96,
-      "sha256_variance": 6,
+      "total": 190,
+      "aligned": 190,
+      "sha256_variance": 0,
       "missing": 0
     },
     "drift_detected": false,
-    "last_drift_check": "2026-03-01T09:27:36Z"
+    "last_drift_check": "2026-03-01T17:00:33Z"
   },
   "integrity": {
     "evidence_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_evidence.log",

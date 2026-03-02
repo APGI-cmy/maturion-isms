@@ -412,17 +412,6 @@
       "layer_up_status": "NONE"
     },
     {
-      "filename": "AMC_SCOPE_DOCUMENT.md",
-      "version": "1.0.0",
-      "file_hash": "22baf37474388a272b54484404d34c93607f3a240b6b13b16d65f53b52c1658a",
-      "effective_date": "2026-03-01",
-      "description": "App Management Centre (AMC) scope document \u2014 defines expanded governance scope, responsibilities, and authority. Supersedes informal Foreman App governance definition.",
-      "type": "canon",
-      "path": "governance/canon/AMC_SCOPE_DOCUMENT.md",
-      "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "22baf37474388a272b54484404d34c93607f3a240b6b13b16d65f53b52c1658a"
-    },
-    {
       "filename": "APP_DESCRIPTION_REQUIREMENT_POLICY.md",
       "version": "1.0",
       "file_hash": "3e14b061c313aab7b70197846b333f17b7de7db445b6feb9b9cf57afc88b422c",
@@ -1405,14 +1394,14 @@
     },
     {
       "filename": "LAYER_UP_PROTOCOL.md",
-      "version": "1.1.0",
-      "file_hash": "ac23efd1b44ac26b620cf387fdba6b23031ac988a5b51fb304eb215ce7ffc58f",
+      "version": "1.0.0",
+      "file_hash": "0f5b2d9c14640e156300a72370841d38dcc52da2c519c8c181683f33694f39c3",
       "effective_date": "2026-02-09",
       "description": "This protocol defines the **explicit, controlled mechanism** for propagating lessons learned, governance improvements, and alignment feedback from downstream application repositories back to the ca...",
       "type": "canon",
       "path": "governance/canon/LAYER_UP_PROTOCOL.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "ac23efd1b44ac26b620cf387fdba6b23031ac988a5b51fb304eb215ce7ffc58f"
+      "file_hash_sha256": "0f5b2d9c14640e156300a72370841d38dcc52da2c519c8c181683f33694f39c3"
     },
     {
       "filename": "LEARNING_INTAKE_AND_PROMOTION_MODEL.md",
@@ -2198,6 +2187,19 @@
       "path": "governance/canon/scope-declaration.template.md",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "06e4173ff8485b6a1af86a91d12484856c5c7f4d193f38ae88e79573e646c5ee"
+    },
+    {
+      "filename": "AMC_SCOPE_DOCUMENT.md",
+      "version": "1.0.0",
+      "file_hash": "22baf37474388a272b54484404d34c93607f3a240b6b13b16d65f53b52c1658a",
+      "effective_date": "2026-03-01",
+      "description": "App Management Centre (AMC) scope document \u2014 defines expanded governance scope, responsibilities, and authority. Supersedes informal Foreman App governance definition.",
+      "type": "canon",
+      "path": "governance/canon/AMC_SCOPE_DOCUMENT.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "22baf37474388a272b54484404d34c93607f3a240b6b13b16d65f53b52c1658a",
+      "local_extension": true,
+      "local_version": "1.0.0"
     }
   ]
 }

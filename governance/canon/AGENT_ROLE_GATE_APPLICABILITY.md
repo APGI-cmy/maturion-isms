@@ -98,7 +98,7 @@ Gate applicability **MUST NOT** be inferred from:
 **Identity**: Agents orchestrating builds, managing workflows, and enforcing governance
 
 **Examples**:
-- App Management Centre (AMC) agents
+- Foreman App agents
 - Foreman runtime orchestration
 - Workflow management agents
 

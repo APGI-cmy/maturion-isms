@@ -828,9 +828,9 @@ This protocol integrates with and clarifies:
 
 ---
 
-## 14. AMC Alignment Requirements
+## 14. FM App Alignment Requirements
 
-For AMC (`maturion-amc`) to fully implement this protocol:
+For FM Office App (`maturion-foreman-app`) to fully implement this protocol:
 
 ### 14.1 Required Capabilities
 

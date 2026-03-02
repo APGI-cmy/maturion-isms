@@ -116,7 +116,7 @@ jobs:
       - name: Run governance alignment
         id: align
         env:
-          MATURION_BOT_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
+          MATURION_BOT_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
         run: |
           set +e
           bash .github/scripts/align-governance.sh
