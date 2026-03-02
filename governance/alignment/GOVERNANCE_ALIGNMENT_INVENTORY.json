@@ -1,0 +1,90 @@
+{
+  "version": "1.0.0",
+  "repository": "APGI-cmy/maturion-isms",
+  "canonical_source": "APGI-cmy/maturion-foreman-governance",
+  "description": "Consumer-side governance alignment inventory — tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
+  "last_updated": "2026-03-02",
+  "last_ripple_commit": "e52ec033c5955cdbe833986e9da0a37927c5a1bc",
+  "last_ripple_timestamp": "2026-03-02T10:37:21Z",
+  "alignment_summary": {
+    "total_artifacts": 6,
+    "aligned": 6,
+    "drifted": 0,
+    "missing": 0,
+    "overall_status": "ALIGNED"
+  },
+  "artifacts": [
+    {
+      "filename": "ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
+      "path": "governance/canon/ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
+      "canonical_version": "1.0.0",
+      "local_version": "1.0.0",
+      "canonical_hash_sha256": "1c72a45294640ce51966be64fb2bcf37a47c1366a9488f53a0321ecccca3d9f7",
+      "local_hash_sha256": "1c72a45294640ce51966be64fb2bcf37a47c1366a9488f53a0321ecccca3d9f7",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "OPTIONAL",
+      "last_verified": "2026-03-02T11:23:28Z"
+    },
+    {
+      "filename": "AUTOMATED_QUALITY_TOOLING_CANON.md",
+      "path": "governance/canon/AUTOMATED_QUALITY_TOOLING_CANON.md",
+      "canonical_version": "1.0.0",
+      "local_version": "1.0.0",
+      "canonical_hash_sha256": "c1f052a7dffaf1cf182c9d4aa6cc434ebd5e7a2a7cd1aa243fb6ed132f5fe9a5",
+      "local_hash_sha256": "c1f052a7dffaf1cf182c9d4aa6cc434ebd5e7a2a7cd1aa243fb6ed132f5fe9a5",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-03-02T11:23:28Z"
+    },
+    {
+      "filename": "BUILD_INTERVENTION_AND_ALERT_MODEL.md",
+      "path": "governance/canon/BUILD_INTERVENTION_AND_ALERT_MODEL.md",
+      "canonical_version": "1.0",
+      "local_version": "1.0",
+      "canonical_hash_sha256": "b74ffd7421f314df6efb882c383b0a24de872eb8a005dd2596632471160491db",
+      "local_hash_sha256": "b74ffd7421f314df6efb882c383b0a24de872eb8a005dd2596632471160491db",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-03-02T11:23:28Z"
+    },
+    {
+      "filename": "GOVERNANCE_RIPPLE_MODEL.md",
+      "path": "governance/canon/GOVERNANCE_RIPPLE_MODEL.md",
+      "canonical_version": "1.1.0",
+      "local_version": "1.1.0",
+      "canonical_hash_sha256": "00cc56b025a30956d26420ba86328abb2ad2e6894399c7c661721e6c2e42f387",
+      "local_hash_sha256": "00cc56b025a30956d26420ba86328abb2ad2e6894399c7c661721e6c2e42f387",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-03-02T11:23:28Z"
+    },
+    {
+      "filename": "WATCHDOG_AUTHORITY_AND_SCOPE.md",
+      "path": "governance/canon/WATCHDOG_AUTHORITY_AND_SCOPE.md",
+      "canonical_version": "1.0.0",
+      "local_version": "1.0.0",
+      "canonical_hash_sha256": "36b66652da76236ab1bcc891cd32666ce95879f8bf224c64289d8732881d0063",
+      "local_hash_sha256": "36b66652da76236ab1bcc891cd32666ce95879f8bf224c64289d8732881d0063",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "OPTIONAL",
+      "last_verified": "2026-03-02T11:23:28Z"
+    },
+    {
+      "filename": "POLICY-NO-ONLY-LANGUAGE.md",
+      "path": "governance/policy/POLICY-NO-ONLY-LANGUAGE.md",
+      "canonical_version": "v1.0",
+      "local_version": "v1.0",
+      "canonical_hash_sha256": "88369fb8b764f063f5d67f0ae1c4caed5587b65412ca11ef083ad6b4ab31b253",
+      "local_hash_sha256": "88369fb8b764f063f5d67f0ae1c4caed5587b65412ca11ef083ad6b4ab31b253",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-03-02T11:23:28Z"
+    }
+  ],
+  "metadata": {
+    "living_agent_system_version": "6.2.0",
+    "governing_protocol": "GOVERNANCE_RIPPLE_MODEL.md v1.1.0",
+    "canonical_checklist": "GOVERNANCE_RIPPLE_CHECKLIST_PROTOCOL.md",
+    "created_by": "governance-liaison-isms session-035"
+  }
+}
