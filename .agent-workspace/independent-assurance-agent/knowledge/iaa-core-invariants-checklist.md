@@ -36,7 +36,7 @@ All checks below are applied on every qualifying PR invocation.
 | CORE-013 | IAA invocation evidence | PREHANDOVER proof or IAA token reference present in PR artifacts (FAIL-ONLY-ONCE A-001). For AGENT_CONTRACT PRs: explicit IAA audit token required, not just a reference | ALL | REJECTION-PACKAGE |
 | CORE-014 | No class exemption claim | Invoking agent has not claimed class exemption from IAA (FAIL-ONLY-ONCE A-002). Foreman, Builder, Overseer, Specialist — all subject to IAA | ALL | REJECTION-PACKAGE |
 | CORE-015 | Session memory present | Session memory artifact included in PR bundle (file path present in PREHANDOVER proof or PR artifact manifest) | ALL | REJECTION-PACKAGE |
-| CORE-016 | IAA tool call evidenced | PREHANDOVER proof must contain a `## IAA Agent Response (verbatim)` section with actual IAA agent output. See **CORE-016 Detail** below. `iaa_audit_token: PENDING` with section present is a valid mid-ceremony state (PASS conditional) — not a fabrication failure. | ALL | REJECTION-PACKAGE |
+| CORE-016 | IAA tool call evidenced | PREHANDOVER proof must contain a `## IAA Agent Response (verbatim)` section with actual IAA agent output. See **CORE-016 Detail** below. `iaa_audit_token: PENDING` with section present = PASS (ceremony in progress) — not a fabrication failure. | ALL | REJECTION-PACKAGE |
 | CORE-017 | No .github/agents/ modifications by unauthorized agent | PR diff must not contain modifications to `.github/agents/` files unless producing agent is CodexAdvisor-agent AND CS2 authorization is documented in PREHANDOVER proof (FAIL-ONLY-ONCE A-005 / A-013) | ALL | REJECTION-PACKAGE |
 | CORE-018 | Complete evidence artifact sweep | BEFORE applying any overlay: verify ALL of the following are present and non-empty: (a) PREHANDOVER proof file on branch, (b) session memory file on branch, (c) `iaa_audit_token` field non-empty and non-placeholder, (d) `## IAA Agent Response (verbatim)` section present in PREHANDOVER proof. Any absent/empty/placeholder item = immediate REJECTION-PACKAGE before overlay checks proceed. | ALL | REJECTION-PACKAGE |
 | CORE-019 | IAA token cross-verification | When `iaa_audit_token` is not PENDING: (a) verify token format matches `IAA-session-NNN-YYYYMMDD-PASS`, (b) open the referenced IAA session memory file, (c) verify `pr_reviewed` field matches the current PR branch/number being audited, (d) verify session file `verdict` = ASSURANCE-TOKEN. Any mismatch = REJECTION-PACKAGE (enforces A-016 cross-PR reuse and A-017 REJECTION-as-PASS at core level). | ALL | REJECTION-PACKAGE |
@@ -67,8 +67,8 @@ PASS if:
 - `iaa_audit_token` contains a real IAA session token (`IAA-session-NNN-YYYYMMDD-PASS` format), AND
 - `## IAA Agent Response (verbatim)` section contains the verbatim IAA agent output block.
 
-**PENDING is a valid mid-ceremony state (PASS conditional)**:
-- `iaa_audit_token: PENDING` with `## IAA Agent Response (verbatim)` section present (awaiting population) = PASS conditional on Post-ASSURANCE-TOKEN ceremony completion.
+**PENDING is a valid mid-ceremony state (PASS — ceremony in progress)**:
+- `iaa_audit_token: PENDING` with `## IAA Agent Response (verbatim)` section present (awaiting population) = PASS (ceremony in progress) — conditional on Post-ASSURANCE-TOKEN ceremony completion.
 - Do not fail a PREHANDOVER proof solely because `iaa_audit_token: PENDING` — this is the correct state at invocation time. Distinguish this clearly from PHASE_A_ADVISORY fabrication (see A-006).
 
 **Copy-paste requirement**: The `## IAA Agent Response (verbatim)` section must contain the complete IAA output block copied character-for-character from the IAA tool output — from the opening `ASSURANCE-TOKEN` / `REJECTION-PACKAGE` header to the end of the block. Paraphrasing, summarising, or partial copying is not permitted. Any deviation from the exact IAA output constitutes an INC-IAA-SKIP-001 breach.

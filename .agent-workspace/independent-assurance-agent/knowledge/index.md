@@ -47,13 +47,15 @@
 
 ---
 
-## FAIL-ONLY-ONCE Active Rules
+## FAIL-ONLY-ONCE Active Rules (Key Rules — full registry in `FAIL-ONLY-ONCE.md`)
 
 | Rule ID | Trigger | Status |
 |---------|---------|--------|
 | A-001 | IAA invocation evidence must be present in all agent contract PRs | ACTIVE |
 | A-002 | IAA is mandatory for ALL agent contract classes — no class exceptions | ACTIVE |
 | A-003 | Ambiguity resolves to mandatory invocation | ACTIVE |
+| A-004 | Bootstrap directive non-negotiable; post-merge retrospective audit findings must be formally recorded | ACTIVE |
+| A-005 | Agent contract file immutability — no agent may modify .github/agents/ except CodexAdvisor+CS2 | ACTIVE |
 | A-006 | PHASE_A_ADVISORY FABRICATION breach detection (INC-IAA-SKIP-001 pattern) | ACTIVE |
 | A-015 | Tier 2 knowledge patches require full PREHANDOVER ceremony | ACTIVE |
 | A-016 | Cross-PR IAA token reuse is a governance breach | ACTIVE |
