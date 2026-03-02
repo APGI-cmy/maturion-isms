@@ -55,7 +55,11 @@ jobs:
             echo "Reason: ${{ github.event.inputs.reason }}"
             echo ""
             echo "=== Agent Contract File Inventory ==="
-            find .github/agents -name '*.md' | sort | sed 's/^/  /'
+            if [ -d .github/agents ]; then
+              find .github/agents -name '*.md' | sort | sed 's/^/  /'
+            else
+              echo "  (no .github/agents/ directory found)"
+            fi
             echo ""
             echo "ℹ️  No PR diff available for workflow_dispatch — full audit checks skipped."
             echo "agent_files_changed=false" >> $GITHUB_OUTPUT

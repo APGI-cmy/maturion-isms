@@ -1,10 +1,12 @@
-# HANDOVER SUMMARY — Session 036
+# HANDOVER SUMMARY — Session 037
 ## governance-liaison-isms — CI Audit Remediation
 
 **Agent**: governance-liaison-isms  
-**Session**: 036  
+**Session**: 037  
 **Date**: 2026-03-02  
 **Issue**: [Foreman][CI Audit] Orchestrate resolution of findings from session-090 (PR #801)  
+**PR**: #812  
+**IAA Category**: CI_WORKFLOW  
 **Outcome**: ✅ COMPLETE
 
 ---
@@ -14,7 +16,7 @@
 Implemented CI/CD audit finding remediations for findings F-002 and S-001 from CI audit session-090 (PR #801):
 
 - **F-002** (BLOCKING): POLC Boundary Gate produces false positives on push events. Fixed by adding `if: github.event_name == 'pull_request'` guard to the `polc-boundary-validation` job.
-- **S-001** (SUGGESTION): `agent-contract-audit.yml` had zero runs since creation. Fixed by adding `workflow_dispatch` trigger with graceful handling.
+- **S-001** (SUGGESTION): `agent-contract-audit.yml` had zero runs since creation. Fixed by adding `workflow_dispatch` trigger with graceful handling. Also added `[ -d .github/agents ]` directory guard per CS2 O-001 observation.
 
 ---
 
@@ -23,7 +25,7 @@ Implemented CI/CD audit finding remediations for findings F-002 and S-001 from C
 | File | Change | SHA256 |
 |------|--------|--------|
 | `.github/workflows/polc-boundary-gate.yml` | Added `if: github.event_name == 'pull_request'` to job | `8b7d626442c79d25d9b1def0b0dde8ee768293042758807bb5c595d8c89a4bfe` |
-| `.github/workflows/agent-contract-audit.yml` | Added `workflow_dispatch` trigger + graceful detect step | `a6069c78c9b8046d39697da842b7dfb5e11d30d3f81c599be5be2530fcd2a6c7` |
+| `.github/workflows/agent-contract-audit.yml` | Added `workflow_dispatch` trigger + graceful detect step + directory guard | — (updated post O-001 fix) |
 
 ---
 
@@ -32,6 +34,12 @@ Implemented CI/CD audit finding remediations for findings F-002 and S-001 from C
 - Governance alignment gate: N/A (workflow tooling fix, not governance ripple)
 - Drift detected: NO
 - Escalations created: NONE
+
+---
+
+## CS2 Override
+
+POLC boundary breach acknowledged: CI workflow modification by governance-liaison-isms agent. CS2 override granted 2026-03-02 for PR #812 (changes surgical and verified correct). Post-merge incident `INC-POLC-BOUNDARY-LIAISON-001` required.
 
 ---
 
@@ -45,7 +53,7 @@ Implemented CI/CD audit finding remediations for findings F-002 and S-001 from C
 
 ## IAA Invocation
 
-IAA not yet deployed for this wave. Proceeding under Phase A advisory mode.  
-IAA phase status: PHASE_A_ADVISORY.
+- IAA category: CI_WORKFLOW
+- Status: PENDING (to be updated with IAA verdict)
 
 *Authority: CS2 (Johan Ras) | governance-liaison-isms-agent v6.2.0*
