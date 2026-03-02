@@ -142,6 +142,22 @@ All required CI checks verified locally:
 
 ---
 
+## CI Run Evidence
+
+| Commit | SHA | CI Run URL | Status |
+|---|---|---|---|
+| RED gate | `b0afbff` | pushed to origin | ✅ PUSHED |
+| Tasks 13.1–13.5 implementation | `0c09888` | pushed to origin | ✅ PUSHED |
+| CodeQL permissions fix | `372c718` | pushed to origin | ✅ PUSHED |
+| Governance artifacts (PREHANDOVER + session memory) | `7386547` | pushed to origin | ✅ PUSHED |
+| A-017 ISMS-AGENTS-ONLY learning | `dfdc6ba` | https://github.com/APGI-cmy/maturion-isms/actions/runs/22577295433 | ✅ CI RUNNING |
+
+PR: https://github.com/APGI-cmy/maturion-isms/pull/789
+Branch: `copilot/fix-live-deployment-wiring-regression`
+HEAD commit: `dfdc6ba8c923a5d290bc2e7dfc330a884e172a08`
+
+---
+
 ## IAA Audit
 
 `iaa_audit_token: PENDING`
@@ -150,7 +166,7 @@ All required CI checks verified locally:
 
 ## IAA Agent Response (verbatim)
 
-*(Awaiting IAA re-invocation after this PREHANDOVER proof is committed and CI run URL obtained)*
+*(Awaiting IAA re-invocation — artifacts committed and CI run confirmed)*
 
 Previous IAA response (session-089 first invocation): REJECTION-PACKAGE — 8 governance format gaps in PREHANDOVER proof. All 8 gaps were governance process gaps only; implementation quality was confirmed excellent. Remediation applied in this updated PREHANDOVER proof version.
 
