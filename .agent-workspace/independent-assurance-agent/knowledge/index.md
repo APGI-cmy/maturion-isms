@@ -2,8 +2,8 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 1.2.0
-**Last Updated**: 2026-02-28
+**Knowledge Version**: 1.3.0
+**Last Updated**: 2026-03-02
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -12,11 +12,11 @@
 
 | File | Purpose | Version | Status |
 |------|---------|---------|--------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.1.0 | PRESENT |
-| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.2.0 | PRESENT — Rules A-001 through A-006 active; A-006 (INC-IAA-SKIP-001 detection) added |
-| `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.0.0 | ACTIVE — fully populated from canon v2.0.0 |
+| `index.md` (this file) | Knowledge entry point and version reference | 1.3.0 | PRESENT |
+| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.2.0 | PRESENT — Rules A-001 through A-017 active |
+| `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.2.0 | ACTIVE — CORE-001 to CORE-020; CORE-018 (evidence sweep), CORE-019 (token cross-check), CORE-020 (zero partial pass) added |
 | `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.0.0 | ACTIVE — fully populated from canon v2.0.0 |
-| `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT) | 2.0.0 | ACTIVE — fully populated from canon v2.0.0; OVL-CI-004 added |
+| `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT) | 2.1.0 | ACTIVE — OVL-AC-011/012, OVL-CG-005/006, OVL-CI-005/006, OVL-AM-004–007 added |
 | `session-memory-template.md` | Standard session memory template for IAA invocations | 1.0.0 | PRESENT |
 
 ---
@@ -55,6 +55,9 @@
 | A-002 | IAA is mandatory for ALL agent contract classes — no class exceptions | ACTIVE |
 | A-003 | Ambiguity resolves to mandatory invocation | ACTIVE |
 | A-006 | PHASE_A_ADVISORY FABRICATION breach detection (INC-IAA-SKIP-001 pattern) | ACTIVE |
+| A-015 | Tier 2 knowledge patches require full PREHANDOVER ceremony | ACTIVE |
+| A-016 | Cross-PR IAA token reuse is a governance breach | ACTIVE |
+| A-017 | Session memory must not cite a REJECTION-PACKAGE session as PASS | ACTIVE |
 
 ---
 
@@ -62,8 +65,8 @@
 
 | Phase | Status | Behaviour |
 |-------|--------|-----------|
-| Phase A | **CURRENT** | Advisory mode — verdicts informational, not hard-blocking |
-| Phase B | ACTIVE — PHASE_B_BLOCKING | Mandatory blocking — REJECTION-PACKAGE prevents PR open |
+| Phase A | CLOSED | Advisory mode — verdicts informational, not hard-blocking |
+| Phase B | **CURRENT — PHASE_B_BLOCKING** | Mandatory blocking — REJECTION-PACKAGE prevents PR open |
 
 ---
 
