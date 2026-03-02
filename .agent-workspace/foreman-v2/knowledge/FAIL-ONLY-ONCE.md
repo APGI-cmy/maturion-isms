@@ -3,7 +3,7 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 2.0.0  
+**Version**: 2.1.0  
 **Created**: 2026-02-24  
 **Updated**: 2026-03-02  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
@@ -53,6 +53,7 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-013 | AGENT-CONTRACT-FILE-IMMUTABILITY (CS2 — 2026-02-27): No agent may read, create, edit, delete, or commit any file under `.github/agents/` EXCEPT the CodexAdvisor-agent, and only when explicitly authorised by CS2 (@APGI-cmy) for that specific change. This applies to all agents including builders, Foreman, IAA, and all specialist agents. Any PR diff containing modifications to `.github/agents/` files authored by any agent other than CodexAdvisor-agent is a contract violation and must be rejected at IAA and merge gate. Foreman MUST check the PR diff for `.github/agents/` file changes during QP evaluation (A-008) and flag any such changes immediately to CS2. Violation class: GOV-BREACH-CONTRACT-001. | CS2 — maturion-isms (2026-02-27) |
 | A-014 | IAA-TOOL-CALL-MANDATORY (CS2 — 2026-02-28): The `independent-assurance-agent` MUST be invoked via the `task` tool as the FIRST action in Phase 4 Step 4.3a — before writing any `iaa_audit_token` value in the PREHANDOVER proof. Writing `PHASE_A_ADVISORY` or any token string WITHOUT first calling `task(agent_type: "independent-assurance-agent", ...)` is a PHASE_A_ADVISORY FABRICATION breach. The only permitted exception is if the `task` tool itself throws an error — in which case that error MUST be logged verbatim and escalated to CS2. "Phase A advisory" is the IAA's verdict when it cannot fully audit — it is NOT the Foreman's self-certification that it chose not to call the IAA. Violation class: INC-IAA-SKIP-001. | CS2 — maturion-isms (2026-02-28) |
 | A-015 | IAA-TOKEN-FORMAT (CS2 — 2026-03-02): The IAA audit token MUST use the canonical format `IAA-session-NNN-YYYYMMDD-PASS` (session number, not wave name or description). Any token using `IAA-WAVE{N}-...`, `IAA-PLAN-...`, or any other non-canonical prefix is a format violation and MUST be corrected before the PREHANDOVER proof is committed. The canonical format is defined in the PREHANDOVER template Tier 2 knowledge. The foreman-v2-agent contract Step 4.3b `IAA-WAVE{N}-YYYYMMDD-PASS` placeholder is superseded by this rule — correct format is always `IAA-session-NNN-YYYYMMDD-PASS`. Violation class: INC-IAA-TOKEN-001. | INC-IAA-TOKEN-001 (2026-03-02) |
+| A-016 | PHASE-4-BEFORE-REPORT-PROGRESS (CS2 — 2026-03-02): Phase 4 MUST be executed in full BEFORE any `report_progress` call that commits substantive changes. This means: PREHANDOVER proof must exist on disk, session memory must exist on disk, and IAA must have been invoked and issued a verdict BEFORE `report_progress` is called. Calling `report_progress` without Phase 4 artifacts is a handover bypass equivalent to INC-IAA-SKIP-001. The `report_progress` tool is a commit/push tool — it is NOT a Phase 4 substitute. Violation class: INC-IAA-SKIP-002. | INC-IAA-SKIP-002 (2026-03-02) |
 
 ---
 
@@ -235,7 +236,37 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 
 ---
 
-## Section 3: Open Improvement Suggestions
+### INC-IAA-SKIP-002 — IAA Invocation Skipped: Work Committed Without PREHANDOVER Proof or IAA Audit
+**Date**: 2026-03-02  
+**Severity**: MAJOR  
+**Status**: REMEDIATED  
+**Source**: CS2 directive 2026-03-02; PR `copilot/add-knowledge-governance-trigger` (IAA-TIER2 knowledge cleanups)
+
+**What happened**: The foreman-v2-agent session handling the IAA-TIER2 knowledge governance cleanups (maturion-isms#IAA-TIER2) committed changes to 5 IAA knowledge files (`FAIL-ONLY-ONCE.md`, `iaa-core-invariants-checklist.md`, `iaa-trigger-table.md`, `iaa-category-overlays.md`, `index.md`) and pushed to the PR branch WITHOUT:
+1. Creating a PREHANDOVER proof
+2. Creating a session memory
+3. Invoking the IAA independent-assurance-agent
+4. Completing the token update ceremony
+
+CS2 (@APGI-cmy) flagged the omission immediately: "Are you really handing over a job without invoking IAA agent review. You should know the merge gate will fail if you dont."
+
+**Root cause (5-Why):**
+1. **Why was IAA not invoked?** The session produced governance artifact changes and moved directly to `report_progress` (commit + push) without executing Phase 4 Steps 4.2–4.3b.
+2. **Why were Phase 4 steps skipped?** The session treated `report_progress` as the final action after making changes, conflating "commit the changes" with "complete the handover ceremony".
+3. **Why was the Phase 4 ceremony not triggered?** The session did not have a prior PREHANDOVER proof or session memory scaffolded before making changes — Phase 4 must be executed in full, not as an afterthought.
+4. **Why was A-014 not enforced?** The agent's working pattern (explore → change → commit) bypassed the Phase 1→2→3→4 sequential structure required by the contract.
+5. **Why does this recur?** INC-IAA-SKIP-001 (session-070/071) was remediated for the PHASE_A_ADVISORY fabrication pattern, but a distinct variant — skipping all of Phase 4, not just fabricating the token — was not locked in as a separate A-rule.
+
+**Corrective action (session-086):**
+1. PREHANDOVER proof created for session-086 covering the IAA-TIER2 knowledge changes.
+2. Session memory created for session-086.
+3. IAA invoked NOW via `task(agent_type: "independent-assurance-agent")`.
+4. PREHANDOVER proof updated with real IAA token from session-086 IAA invocation.
+5. New A-016 rule locked in: Phase 4 MUST be executed in full before any `report_progress` that commits substantive changes.
+
+**Open improvement**: S-013 — Add a PREHANDOVER proof existence check as a pre-condition for `report_progress` tool use. Until this is mechanically enforced, the Foreman must verify that a PREHANDOVER proof file exists on disk before calling `report_progress` for any substantive change commit. *(See Section 3.)*
+
+---
 
 These items are tracked and must be reviewed each session. If assigned to the current wave, they must be addressed before HANDOVER.
 
@@ -251,8 +282,9 @@ These items are tracked and must be reviewed each session. If assigned to the cu
 | S-008 | Add CI check that fails PR when no `.agent-workspace/foreman-v2/memory/session-*.md` file exists with a timestamp matching the PR creation date — machine-level enforcement that Phase 1 PREFLIGHT was executed (session memory is only written in Phase 4, which requires Phase 1 completion), preventing repeat of GOV-BREACH-AIMC-W5-002 | GOV-BREACH-AIMC-W5-002 | OPEN |
 | S-009 | Require verbatim paste of IAA agent's actual response text in the PREHANDOVER proof IAA section — making the `task` tool call self-evidencing and structurally impossible to fake. Template must include a `## IAA Agent Response (verbatim)` section where the raw IAA agent output is pasted. A PREHANDOVER proof with a blank or placeholder IAA response section is a HANDOVER BLOCKER. | INC-IAA-SKIP-001 (2026-02-28) | OPEN |
 | S-010 | Correct GRS-010 requirement text in PersonaLoader.test.ts header comment — line 10 references packages/ai-centre/agents/ but actual PersonaLoader path is packages/ai-centre/src/agents/. Also correct inline comment on line 30. Prevents path confusion in CL-2 through CL-4 persona migration issues. | session-078 / IAA-session-027-20260301 | REMEDIATED |
-| S-011 | Canonical FAIL-ONLY-ONCE registry in maturion-foreman-governance has duplicate rule IDs: A-004 appears twice (Bootstrap Directive rule + Post-Merge Retrospective rule) and A-016 appears twice (Trigger Table Misapplication + Cross-PR Token Reuse). Renumber later-added rules to sequential IDs (A-018, A-019, etc.) to prevent ambiguous rule citations in sessions. CodexAdvisor-agent to execute in a governance maintenance PR to maturion-foreman-governance. | IAA-session-027-20260301 | OPEN |
+| S-011 | Canonical FAIL-ONLY-ONCE registry in maturion-foreman-governance has duplicate rule IDs: A-004 appears twice (Bootstrap Directive rule + Post-Merge Retrospective rule) and A-016 appears twice (Trigger Table Misapplication + Cross-PR Token Reuse). Renumber later-added rules to sequential IDs (A-018, A-019, etc.) to prevent ambiguous rule citations in sessions. CodexAdvisor-agent to execute in a governance maintenance PR to maturion-foreman-governance. | IAA-session-027-20260301 | REMEDIATED — maturion-isms#IAA-TIER2 (2026-03-02) |
 | S-012 | Update foreman-v2-agent contract Step 4.3b to replace `IAA-WAVE{N}-YYYYMMDD-PASS` with `IAA-session-NNN-YYYYMMDD-PASS` — aligning contract text with the canonical format defined in the Tier 2 PREHANDOVER template. Requires CodexAdvisor-agent + CS2 written authorisation per A-002/A-013. Until the contract is updated, A-015 is the authoritative rule (Tier 2 knowledge supersedes the contract placeholder). | INC-IAA-TOKEN-001 (2026-03-02) | OPEN |
+| S-013 | Add a pre-condition check before `report_progress` is called for substantive commits: verify that PREHANDOVER proof file exists on disk AND IAA has been invoked. Until mechanical enforcement exists, Foreman MUST verify PREHANDOVER proof presence on disk and IAA invocation result BEFORE calling `report_progress`. This rule is now codified as A-016. | INC-IAA-SKIP-002 (2026-03-02) | OPEN |
 
 ---
 
