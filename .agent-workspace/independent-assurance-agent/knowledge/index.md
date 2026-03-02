@@ -2,7 +2,7 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 1.4.0
+**Knowledge Version**: 1.5.0
 **Last Updated**: 2026-03-02
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
@@ -12,8 +12,8 @@
 
 | File | Purpose | Version | Status |
 |------|---------|---------|--------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.4.0 | PRESENT |
-| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.4.0 | PRESENT — Rules A-001 through A-020 active (A-018 renumbered from dup A-004; A-019 renumbered from dup A-016; A-020 added session-088 — PREHANDOVER template staleness) |
+| `index.md` (this file) | Knowledge entry point and version reference | 1.5.0 | PRESENT |
+| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.5.0 | PRESENT — Rules A-001 through A-022 active (A-021 codified from sessions 090/091 candidate; A-022 added session-092 — re-evaluate trigger categories on every invocation) |
 | `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.3.0 | ACTIVE — CORE-001 to CORE-020; CORE-007 updated with PENDING carve-out note |
 | `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.1.0 | ACTIVE — KNOWLEDGE_GOVERNANCE trigger category added |
 | `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE) | 2.2.0 | ACTIVE — OVL-KG-001 through OVL-KG-005 added |
@@ -63,6 +63,8 @@
 | A-017 | Session memory must not cite a REJECTION-PACKAGE session as PASS | ACTIVE |
 | A-018 | Post-merge retrospective audit findings must be formally recorded — no informal notes | ACTIVE |
 | A-020 | PREHANDOVER template must be kept current with overlay requirements — stale template causes cascading REJECTION-PACKAGEs | ACTIVE |
+| A-021 | Commit and push BEFORE invoking IAA — working-tree-only fix is not a committed fix and will fail IAA audit | ACTIVE |
+| A-022 | Re-evaluate ALL trigger categories on every IAA invocation — do not carry forward prior session's category classification; new commits can introduce new trigger categories | ACTIVE |
 
 ---
 
@@ -95,6 +97,15 @@ IAA operates with a single objective: binary verdict.
 IAA never produces partial verdicts, never reviews its own work, and is never the same agent
 that produced the work under review. Every invocation is logged in session memory and
 `learning_notes` are used to refine future decisions and grow the FAIL-ONLY-ONCE registry.
+
+---
+
+## Version History
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.4.0 | 2026-03-02 | A-020 added (PREHANDOVER template staleness); Stub Population Status section added; all stub files populated |
+| 1.5.0 | 2026-03-02 | A-021 codified (commit before IAA invocation — sessions 090/091 candidate elevated); A-022 added (re-evaluate trigger categories every invocation — session-092 OVL-KG-004 learning); index and FAIL-ONLY-ONCE versions updated to 1.5.0 |
 
 ---
 

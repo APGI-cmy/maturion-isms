@@ -410,6 +410,68 @@ for AAWP_MAT or CI_WORKFLOW category PRs):
 
 ---
 
+### A-021 — Commit and Push Before IAA Invocation (CI Run Evidence)
+
+**Triggered by**: maturion-isms PR #789 sessions 090 and 091 — two consecutive REJECTION-PACKAGEs
+for OVL-CI-005 where the fix existed in the local working tree but was NOT committed or pushed.
+
+**Incident**: In sessions 090 and 091, the Foreman prepared the correct CI Run Evidence section
+in the PREHANDOVER proof (with run 22574538846, deploy-mat-vercel.yml). Both times, the fix
+existed only in the working tree — it was never committed and pushed to the PR branch. IAA
+independently verifies the committed artifact (via GitHub API), not the local working tree.
+The CORRECT content in the working tree failed IAA both times because the PR branch didn't
+contain it. Fixed at d27f876 when the Foreman finally committed and pushed.
+
+**Permanent Rule**:
+After preparing ANY change to a PREHANDOVER proof or governance artifact that is required for
+an IAA check, the producing agent MUST execute `git commit && git push` BEFORE invoking IAA.
+A working-tree-only or staging-area-only fix is NOT a committed fix and WILL fail IAA audit.
+Pre-handover checklist MUST include: "Run `git status` — confirm no uncommitted changes to
+PREHANDOVER or governance artifacts. If any appear in 'Changes not staged for commit' or
+'Changes to be committed', STOP — commit and push before invoking IAA."
+
+**Check in Phase 1 (pre-invocation note for Foreman)**:
+> FAIL-ONLY-ONCE A-021: If the claiming agent says "fix has been applied," IAA must verify
+> the committed artifact — not the working tree. GitHub API `get_file_contents` on the PR branch
+> ref is the authoritative check. Do not accept claims about working-tree state.
+
+**Status**: ACTIVE — CANDIDATE from sessions 090/091, codified from session-092
+
+---
+
+### A-022 — Re-Evaluate Trigger Categories on Every IAA Invocation
+
+**Triggered by**: maturion-isms PR #789 sessions 090 and 091 — KNOWLEDGE_GOVERNANCE trigger
+missed despite `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` being modified in
+commit dfdc6ba (added between session-088 and sessions 090/091). Sessions 090 and 091 carried
+forward the session-088 classification (CI_WORKFLOW + AAWP_MAT) without re-reading the trigger
+table against the full commit history.
+
+**Incident**: dfdc6ba was committed to PR #789 AFTER session-088. When session-090 ran, dfdc6ba
+was in scope and modified `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` — a file
+matching the KNOWLEDGE_GOVERNANCE trigger pattern `.agent-workspace/*/knowledge/*`. Sessions 090
+and 091 classified the PR as MIXED (CI_WORKFLOW + AAWP_MAT) without applying the
+KNOWLEDGE_GOVERNANCE overlay. Session-092 correctly identified and applied the overlay,
+discovering OVL-KG-004 (stale index.md) as a new failure.
+
+**Permanent Rule**:
+On EVERY IAA invocation, IAA MUST re-evaluate the trigger table from Step 1 of the decision flow
+against ALL commits in the PR, not just the commits present in the prior invocation. A multi-
+invocation PR may accumulate new commits between invocations that introduce new trigger categories.
+Carrying forward a prior session's category classification without re-verification is a governance gap.
+This rule is especially critical for PRs where remediation commits are added between IAA invocations
+(e.g., the Foreman adds a governance learning commit between session-088 and session-090).
+
+**Check in Phase 2 (category classification)**:
+> FAIL-ONLY-ONCE A-022: Before classifying PR category, list all commits in the PR and check
+> each against the trigger table. Do not carry forward prior session's category classification.
+> Re-read the trigger table decision flow (steps 1-7) every invocation against the full commit
+> history. New commits = new trigger possibilities.
+
+**Status**: ACTIVE — CANDIDATE from session-092
+
+---
+
 ## Version History
 
 | Version | Date | Change |
@@ -419,6 +481,7 @@ for AAWP_MAT or CI_WORKFLOW category PRs):
 | 1.2.0 | 2026-02-28 | A-006 (PHASE_A_ADVISORY fabrication), A-015 (Tier 2 patches require ceremony), A-016 (cross-PR token reuse), A-017 (REJECTION-as-PASS citation) added |
 | 1.3.0 | 2026-03-02 | A-018 renumbered from duplicate A-004 (post-merge retrospective); A-019 renumbered from duplicate A-016 (trigger table misapplication); duplicate rule ID deduplication patch (maturion-isms#IAA-TIER2) |
 | 1.4.0 | 2026-03-02 | A-020 (PREHANDOVER template staleness — template must be kept current with overlay requirements) added from session-088 Wave 13 REJECTION-PACKAGE learning |
+| 1.5.0 | 2026-03-02 | A-021 (commit and push before IAA invocation — working-tree fix is not a committed fix) codified from sessions 090/091 CANDIDATE; A-022 (re-evaluate trigger categories on every invocation — do not carry forward prior session classification) added from session-092 OVL-KG-004 finding |
 
 ---
 
