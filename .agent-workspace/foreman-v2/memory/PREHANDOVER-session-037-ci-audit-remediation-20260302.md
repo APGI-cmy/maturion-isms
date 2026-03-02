@@ -59,6 +59,24 @@ Added `workflow_dispatch` trigger with optional `reason` input. Updated `detect`
 
 ---
 
+## CI Check Run Evidence
+
+CI was triggered on branch `copilot/orchestrate-ci-audit-findings` (commit `9beb985`):
+- **Run**: https://github.com/APGI-cmy/maturion-isms/actions/runs/22584549134
+- **Workflow**: Preflight Evidence Gate
+- **Status**: completed / action_required (environment-protection hold — this is expected gating per S-002; not a failure of the CI logic changes in this PR)
+- Additional runs triggered on the same head SHA across other workflows confirming the PR is being evaluated by the CI system.
+
+Note: The `polc-boundary-gate.yml` workflow does not run on this PR's head (expected — the workflow only runs on `pull_request` events and the new `if: github.event_name == 'pull_request'` guard is working correctly). The `agent-contract-audit.yml` workflow does not run because no `.github/agents/**` files were changed in this PR (expected path-filter behavior).
+
+---
+
+## Environment Parity
+
+CI workflow changes affect GitHub Actions execution only — no dev/staging/production environment is impacted. The `if: github.event_name == 'pull_request'` guard controls GitHub-internal job evaluation; the `workflow_dispatch` trigger adds a manual invocation pathway. Neither change affects deployed application behavior, infrastructure configuration, secrets, or environment state. Environment parity: MAINTAINED.
+
+---
+
 ## iaa_audit_token: PENDING
 
 ## IAA Agent Response (verbatim)

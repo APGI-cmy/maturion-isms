@@ -25,7 +25,7 @@ Implemented CI/CD audit finding remediations for findings F-002 and S-001 from C
 | File | Change | SHA256 |
 |------|--------|--------|
 | `.github/workflows/polc-boundary-gate.yml` | Added `if: github.event_name == 'pull_request'` to job | `8b7d626442c79d25d9b1def0b0dde8ee768293042758807bb5c595d8c89a4bfe` |
-| `.github/workflows/agent-contract-audit.yml` | Added `workflow_dispatch` trigger + graceful detect step + directory guard | — (updated post O-001 fix) |
+| `.github/workflows/agent-contract-audit.yml` | Added `workflow_dispatch` trigger + graceful detect step + directory guard | `9c327c96060ded2ca12443a840649a2fc8add8885ccd425d67db440045df9ad0` |
 
 ---
 
