@@ -233,7 +233,7 @@ Every Quality Professor session that results in a PASS MUST produce:
 
 ## 7. Relationship to Existing Quality Professor Mode
 
-This SOP **supplements** the Quality Professor mode defined in `governance/quality/agent-integrity/foreman-v2.agent.md` Section 1.7. It does NOT modify the agent contract.
+This SOP **supplements** the Quality Professor mode defined in `.github/agents/foreman-v2-agent.md` Section 1.7. It does NOT modify the agent contract.
 
 The existing Quality Professor script already:
 - Issues remediation orders to builder on FAIL
