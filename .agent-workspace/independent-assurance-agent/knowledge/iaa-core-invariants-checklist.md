@@ -1,7 +1,7 @@
 # IAA Core Invariants Checklist
 
 **Agent**: independent-assurance-agent
-**Version**: 2.3.0
+**Version**: 2.4.0
 **Status**: ACTIVE
 **Last Updated**: 2026-03-02
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
@@ -41,6 +41,7 @@ All checks below are applied on every qualifying PR invocation.
 | CORE-018 | Complete evidence artifact sweep | BEFORE applying any overlay: verify ALL of the following are present and non-empty: (a) PREHANDOVER proof file on branch, (b) session memory file on branch, (c) `iaa_audit_token` field non-empty and non-placeholder, (d) `## IAA Agent Response (verbatim)` section present in PREHANDOVER proof. Any absent/empty/placeholder item = immediate REJECTION-PACKAGE before overlay checks proceed. | ALL | REJECTION-PACKAGE |
 | CORE-019 | IAA token cross-verification | When `iaa_audit_token` is not PENDING: (a) verify token format matches `IAA-session-NNN-YYYYMMDD-PASS`, (b) open the referenced IAA session memory file, (c) verify `pr_reviewed` field matches the current PR branch/number being audited, (d) verify session file `verdict` = ASSURANCE-TOKEN. Any mismatch = REJECTION-PACKAGE (enforces A-016 cross-PR reuse and A-017 REJECTION-as-PASS at core level). | ALL | REJECTION-PACKAGE |
 | CORE-020 | Zero partial pass rule | Any core or overlay check that cannot be verified due to missing, blank, or unverifiable evidence = REJECTION-PACKAGE for that check. No assumed passes. Absence of evidence = failing check. A PR with partial evidence must not receive ASSURANCE-TOKEN under any category or class. | ALL | REJECTION-PACKAGE |
+| CORE-021 | Zero-severity-tolerance | Any finding identified during the assurance review — regardless of perceived severity, wording, or delivery size — MUST produce REJECTION-PACKAGE. Prohibited: using terms "minor", "trivial", "cosmetic", "small", "negligible", "low-impact", "soft-pass", or "acceptable" to characterise a finding as passable. The only valid exception is an explicit written CS2 waiver quoted verbatim in the output. See `IAA_ZERO_SEVERITY_TOLERANCE.md` for full operational guidance. | ALL | REJECTION-PACKAGE |
 
 ---
 
@@ -117,6 +118,7 @@ This check MUST be run for EVERY non-PENDING token. Cross-referencing the sessio
 | 2.1.0 | 2026-03-01 | CORE-016: added explicit copy-paste-only requirement — verbatim full block, never paraphrase (maturion-isms#699) |
 | 2.2.0 | 2026-03-02 | CORE-016: added PENDING mid-ceremony PASS state clarification (session-083 suggestion); CORE-018 added (complete evidence artifact sweep before overlay checks); CORE-019 added (IAA token cross-verification — A-016/A-017 enforcement at core level); CORE-020 added (zero partial pass rule — any unverifiable check = REJECTION-PACKAGE); CORE-018/019 detail sections added (maturion-isms#IAA-TIER2 Wave 13+) |
 | 2.3.0 | 2026-03-02 | CORE-007: added explicit PENDING carve-out note — do not flag `iaa_audit_token: PENDING` or `## IAA Agent Response (verbatim)` placeholder entries as placeholder violations (maturion-isms#IAA-TIER2) |
+| 2.4.0 | 2026-03-02 | CORE-021 added: Zero-Severity-Tolerance enforcement — any finding regardless of perceived severity triggers REJECTION-PACKAGE; prohibited language table enforced (maturion-isms IAA Policy issue) |
 
 ---
 

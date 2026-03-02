@@ -11,3 +11,19 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     detectSessionInUrl: true,
   },
 });
+
+/**
+ * Returns the Supabase client. Call this for authenticated API calls.
+ * The client manages the session automatically via persistSession: true.
+ */
+export async function getAuthenticatedClient() {
+  return supabase;
+}
+
+/**
+ * Returns the current session's access token, or null if not authenticated.
+ */
+export async function getSessionToken(): Promise<string | null> {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session?.access_token ?? null;
+}

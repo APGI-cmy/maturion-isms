@@ -35,6 +35,7 @@ This SOP derives authority from and implements:
 
 - **governance/canon/LIVING_AGENT_SYSTEM.md v1.1.0** — Supreme governance authority
 - **.github/agents/foreman-v2-agent.md v2.3.0** — Quality Professor mode (Mode 3), Section 1.7
+- **governance/quality/agent-integrity/foreman-v2.agent.md v2.3.0** — Quality Professor mode (Mode 3), Section 1.7
 - **governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md** — FM supervision authority over builders
 - **governance/canon/MANDATORY_CANONICAL_PROGRESS_RECORDING_AND_WAVE_CLOSURE_CERTIFICATION.md** — Progress recording canon
 - **governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md** — Evidence artifact requirements
@@ -234,6 +235,7 @@ Every Quality Professor session that results in a PASS MUST produce:
 ## 7. Relationship to Existing Quality Professor Mode
 
 This SOP **supplements** the Quality Professor mode defined in `.github/agents/foreman-v2-agent.md` Section 1.7. It does NOT modify the agent contract.
+This SOP **supplements** the Quality Professor mode defined in `governance/quality/agent-integrity/foreman-v2.agent.md` Section 1.7. It does NOT modify the agent contract.
 
 The existing Quality Professor script already:
 - Issues remediation orders to builder on FAIL
