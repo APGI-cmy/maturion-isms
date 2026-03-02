@@ -1,0 +1,21 @@
+{
+  "session": "session-035-20260302",
+  "agent": "governance-liaison-isms",
+  "ripple_events": [
+    {
+      "dispatch_id": "aa831e6492bf",
+      "canonical_commit": "aa831e6492bf37620e161cae4e06a8c2c7f9f1c5",
+      "sender": "APGI-cmy/maturion-foreman-governance",
+      "received_at": "2026-03-02T12:35:22Z",
+      "canonical_inventory_version": "1.0.0",
+      "files_in_ripple_payload": 34,
+      "processing_result": "NO_DRIFT",
+      "pr_created": false,
+      "pr_number": null,
+      "ci_confirmations": 3,
+      "ci_status": "No Drift Detected — Governance is already aligned with canonical source. No PR required.",
+      "archived_at": "2026-03-02T12:35:22Z",
+      "archive_path": ".agent-admin/governance/ripple-archive/ripple-aa831e6492bf.json"
+    }
+  ]
+}
