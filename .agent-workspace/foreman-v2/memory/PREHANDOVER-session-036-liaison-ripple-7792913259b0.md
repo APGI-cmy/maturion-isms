@@ -76,11 +76,37 @@ Automated CI (align-governance.sh) had already layered down the file via PR #797
 
 ## IAA Audit
 
-`iaa_audit_token: PENDING`
+`iaa_audit_token: IAA-session-096-20260302-PASS`
+
+Second invocation — REJECTION-PACKAGE IAA-session-095-20260302 CLOSED after all 3 failures fixed.
 
 ## IAA Agent Response (verbatim)
 
-[IAA agent output pasted verbatim here — the ASSURANCE-TOKEN or REJECTION-PACKAGE block]
+```
+═══════════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #810 — copilot/verify-governance-ripple-another-one
+Category: KNOWLEDGE_GOVERNANCE
+Producing agent: governance-liaison-isms-agent (session-036-20260302)
+Second invocation — REJECTION-PACKAGE IAA-session-095-20260302 CLOSED
+
+All 22 checks PASS. Merge gate parity: PASS (7/7 local checks).
+
+Resolved failures (from session-095):
+  ✅ CORE-013/A-019 — iaa_invocation_result corrected to PENDING in
+     session-036 memory and HANDOVER_SUMMARY (NOT_REQUIRED/PHASE_A_ADVISORY absent)
+  ✅ OVL-KG-003 — ## Version History table added to
+     FM_QP_ENHANCED_QUICK_REFERENCE.md v1.0.0 with proper entry;
+     SHA256 integrity verified (1d4a35c…)
+  ✅ CORE-021 (category label) — PR Category corrected to
+     KNOWLEDGE_GOVERNANCE across PREHANDOVER, session memory,
+     and HANDOVER_SUMMARY
+
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-096-20260302-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate
+═══════════════════════════════════════════════════════════════
+```
 
 ---
 

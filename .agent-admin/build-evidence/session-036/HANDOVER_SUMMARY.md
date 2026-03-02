@@ -63,7 +63,8 @@ Open from prior sessions:
 ## IAA Invocation
 
 IAA invoked for `KNOWLEDGE_GOVERNANCE` category (new file under `.agent-workspace/foreman-v2/knowledge/` path — IAA Trigger Table v2.1.0, OVL-KG-* overlays).  
-IAA invocation result: PENDING — awaiting ASSURANCE-TOKEN.  
+First invocation (session-095): REJECTION-PACKAGE (3 failures: CORE-013, OVL-KG-003, CORE-021) — all fixed.  
+Second invocation (session-096): **ASSURANCE-TOKEN issued: `IAA-session-096-20260302-PASS`**  
 PREHANDOVER proof: `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-036-liaison-ripple-7792913259b0.md`
 
 ---
