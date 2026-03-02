@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-03-01",
+  "last_updated": "2026-03-02",
   "total_canons": 190,
   "generation_timestamp": "2026-02-21T16:30:00Z",
   "canon_entry_schema": {
@@ -1049,6 +1049,19 @@
       "path": "governance/canon/FM_PREAUTH_CHECKLIST_CANON.md",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "6f48a49354822e12cfcfb3c2a9b2fc01db4984efb8a1f3bea6057bf49f5dec17"
+    },
+    {
+      "filename": "FM_QUALITY_PROTOCOL_ENHANCED_SOP.md",
+      "version": "1.0.0",
+      "file_hash": "65ee6752ef458a2c043aa59d20d2b9c6c58830aef56ea5e429d3f1b4f25b900b",
+      "effective_date": "2026-03-02",
+      "description": "Tier-3 governance SOP defining two mandatory enhancements to the Foreman Quality Protocol (QP): (1) formal Builder Referral with trackable artifacts and REFERRAL_INDEX for every QP FAIL verdict, and (2) Progress Tracker Enforcement (QP-FAIL-007) requiring tracker currency before merge gate release. Supplements foreman-v2 Quality Professor mode (Mode 3) without modifying agent contracts.",
+      "type": "canon",
+      "path": "governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "65ee6752ef458a2c043aa59d20d2b9c6c58830aef56ea5e429d3f1b4f25b900b",
+      "canonical_version": "1.0.0",
+      "layer_up_status": "NONE"
     },
     {
       "filename": "FM_RUNTIME_ENFORCEMENT_AND_AWARENESS_MODEL.md",
@@ -2187,19 +2200,6 @@
       "path": "governance/canon/scope-declaration.template.md",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "06e4173ff8485b6a1af86a91d12484856c5c7f4d193f38ae88e79573e646c5ee"
-    },
-    {
-      "filename": "AMC_SCOPE_DOCUMENT.md",
-      "version": "1.0.0",
-      "file_hash": "22baf37474388a272b54484404d34c93607f3a240b6b13b16d65f53b52c1658a",
-      "effective_date": "2026-03-01",
-      "description": "App Management Centre (AMC) scope document \u2014 defines expanded governance scope, responsibilities, and authority. Supersedes informal Foreman App governance definition.",
-      "type": "canon",
-      "path": "governance/canon/AMC_SCOPE_DOCUMENT.md",
-      "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "22baf37474388a272b54484404d34c93607f3a240b6b13b16d65f53b52c1658a",
-      "local_extension": true,
-      "local_version": "1.0.0"
     }
   ]
 }
