@@ -15,8 +15,6 @@
 | `index.md` (this file) | Knowledge entry point and version reference | 1.6.0 | PRESENT |
 | `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.6.0 | PRESENT — Rules A-001 through A-023 active (A-023 added session-098 — pre-filling anticipated -PASS tokens before ASSURANCE-TOKEN is a CORE-007/A-017 breach) |
 | `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.4.0 | ACTIVE — CORE-001 to CORE-021; CORE-021 enforces Zero-Severity-Tolerance Rule |
-| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.6.0 | PRESENT — Rules A-001 through A-023 active (A-023 added session-098 — pre-filling anticipated -PASS tokens before ASSURANCE-TOKEN is a CORE-007/A-017 breach) |
-| `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.3.0 | ACTIVE — CORE-001 to CORE-020; CORE-007 updated with PENDING carve-out note |
 | `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.1.0 | ACTIVE — KNOWLEDGE_GOVERNANCE trigger category added |
 | `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE) | 2.2.0 | ACTIVE — OVL-KG-001 through OVL-KG-005 added |
 | `session-memory-template.md` | Standard session memory template for IAA invocations | 1.0.0 | PRESENT |
