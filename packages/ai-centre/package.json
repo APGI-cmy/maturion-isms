@@ -9,6 +9,7 @@
     "test:red": "vitest run --reporter=verbose"
   },
   "devDependencies": {
+    "@types/node": "^22.19.11",
     "vitest": "^1.6.1"
   }
 }
