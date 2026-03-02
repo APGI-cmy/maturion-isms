@@ -92,5 +92,22 @@
     "files_layered_down": 0,
     "pr_required": false,
     "notes": "CI ripple-integration.yml confirmed: governance already aligned. No PR required."
+  },
+  "liaison_confirmation": {
+    "timestamp": "2026-03-02T15:45:04Z",
+    "session_id": "session-036-20260302",
+    "executed_by": "governance-liaison-isms-agent",
+    "canonical_commit": "7792913259b00fab77c2d1be966e923a463853db",
+    "canonical_inventory_version": "1.0.0",
+    "sha256_verified": true,
+    "files_confirmed": [
+      "governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md",
+      "governance/CANON_INVENTORY.json",
+      "governance/sync_state.json"
+    ],
+    "aimc_integration": "NOT_REQUIRED",
+    "cross_references_updated": true,
+    "internal_ripple_complete": true,
+    "status": "SUCCESS"
   }
 }
