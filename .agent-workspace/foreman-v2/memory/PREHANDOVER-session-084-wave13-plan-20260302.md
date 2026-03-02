@@ -106,7 +106,7 @@ This session produces governance artifacts only (no production code, no test cha
 - [x] Wave 13 §2.14 added to implementation plan with 24 RED gate test IDs and 5-task delegation sequence
 - [x] BUILD_PROGRESS_TRACKER updated with Wave 13 entry, gap register, and delegation sequence
 - [x] Session memory contains all mandatory fields and non-blank suggestions
-- [ ] IAA audit token recorded ← pending IAA re-invocation after PREHANDOVER proof commit
+- [x] IAA audit token recorded: IAA-WAVE13-PLAN-20260302-PASS
 
 ---
 
@@ -116,13 +116,29 @@ This session produces governance artifacts only (no production code, no test cha
 **Root cause of rejection**: PREHANDOVER proof was not created before IAA first invocation; artifacts were untracked.
 **Remediation**: PREHANDOVER proof created (this file); all artifacts committed via report_progress; IAA re-invoked.
 
-`iaa_audit_token: PENDING`
+`iaa_audit_token: IAA-WAVE13-PLAN-20260302-PASS`
 
 ---
 
 ## IAA Agent Response (verbatim)
 
-*[To be populated after IAA re-invocation below]*
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: Wave 13 Planning — Post-Wave 12 Live Deployment Wiring Regression Fix
+    (branch: copilot/fix-post-wave-audit-issues, commit: 2ecb4f6)
+
+Re-audit of foreman-v2-agent session-084 Wave 13 planning deliverables.
+All 4 session-082 REJECTION-PACKAGE failures confirmed remediated.
+All 14 applicable checks PASS. 0 FAIL. Merge gate parity: PASS.
+
+Merge permitted (subject to CS2 approval — @APGI-cmy).
+Token reference: IAA-WAVE13-PLAN-20260302-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate
+═══════════════════════════════════════
+```
+
+**IAA Session**: 083 | **Date**: 2026-03-02 | **Agent**: independent-assurance-agent v6.2.0
 
 ---
 
