@@ -120,7 +120,11 @@ jobs:
             --json body --jq '.body' 2>/dev/null || echo "")
 
           # Extract the AGENT-FILE-MANIFEST block and check for non-empty payload
-          MANIFEST=$(echo "$ISSUE_BODY" | awk '/<!-- AGENT-FILE-MANIFEST/{found=1} found{print} /-->/{if(found)exit}')
+          MANIFEST=$(echo "$ISSUE_BODY" | awk '
+            /<!-- AGENT-FILE-MANIFEST/ { found=1 }
+            found { print }
+            found && /-->/ { exit }
+          ')
 
           if echo "$MANIFEST" | grep -qE 'agent_files_in_payload:\s*\[?\s*-'; then
             echo "agent_files_changed=true" >> $GITHUB_OUTPUT
