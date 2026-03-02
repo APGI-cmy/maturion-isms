@@ -95,15 +95,38 @@ All required CI checks verified locally:
 
 ## CI Run Evidence
 
-| Workflow | Check | Status |
+| Workflow | Run ID | URL | SHA | Status |
+|---|---|---|---|---|
+| POLC Boundary Gate (push event — PD-001 known false positive) | 22585724029 | https://github.com/APGI-cmy/maturion-isms/actions/runs/22585724029 | 38fc689 | completed/failure (push-trigger false positive — known PD-001) |
+| Governance Ceremony Gate (pull_request) | 22585182268 | https://github.com/APGI-cmy/maturion-isms/actions/runs/22585182268 | e58a695 | action_required (pending CS2 bot-PR approval) |
+| Merge Gate Interface (pull_request) | 22585182281 | https://github.com/APGI-cmy/maturion-isms/actions/runs/22585182281 | e58a695 | action_required (pending CS2 bot-PR approval) |
+| Governance Hardening Checks (pull_request) | 22585182298 | https://github.com/APGI-cmy/maturion-isms/actions/runs/22585182298 | e58a695 | action_required (pending CS2 bot-PR approval) |
+| Preflight Evidence Gate (pull_request) | 22585182314 | https://github.com/APGI-cmy/maturion-isms/actions/runs/22585182314 | e58a695 | action_required (pending CS2 bot-PR approval) |
+
+**Note on action_required status**: GitHub organization settings require maintainer approval before GitHub Actions runs execute on bot-authored PRs. These runs ARE triggered and visible — they are awaiting CS2 (@APGI-cmy) approval to execute. Once approved, all governance ceremony gate workflows will run against the PR. The POLC Boundary Gate push-event failure (run 22585724029) is the known PD-001 false positive documented in session-090.
+
+`merge_gate_parity: PASS (local checks) — CI runs pending CS2 bot-PR approval`
+
+---
+
+## Environment Parity
+
+**No environment impact.** `governance-ceremony-gate.yml` is a GitHub Actions CI workflow that executes exclusively in GitHub's ephemeral CI runners. It does not deploy to, or affect the behavior of, dev, staging, or production application environments. No environment variables are consumed from deployment environments. No application code, database schema, or service configuration is modified.
+
+| Environment | Impact | Status |
 |---|---|---|
-| YAML validation | `python3 -c "import yaml; yaml.safe_load(open('...').read())"` | ✅ PASS |
-| CodeQL | Actions ecosystem | ✅ 0 alerts (verified prior session) |
-| code_review | Automated review | ✅ No review comments |
+| Dev | None | ✅ No change |
+| Staging | None | ✅ No change |
+| Production | None | ✅ No change |
+| GitHub Actions CI | New governance gate workflow added | ✅ By design |
+
+All application environments remain at full parity. The `index.md` Tier 2 knowledge update is an agent-internal documentation artifact and has no runtime environment impact.
+
+---
 
 PR: https://github.com/APGI-cmy/maturion-isms/pull/814  
 Branch: `copilot/add-governance-ceremony-merge-gate`  
-HEAD commit: `e58a6954574981596678005cb587e781575d0313`
+HEAD commit: `38fc689bf2e987c321402c9d3e59fdb0b7897ef1`
 
 ---
 

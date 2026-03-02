@@ -407,6 +407,7 @@ for AAWP_MAT or CI_WORKFLOW category PRs):
 > updated before next wave." Add to session memory learning_notes. Flag in parking station.
 
 **Status**: ACTIVE — enforced from session-088 onwards
+**Template gap confirmed**: As of session-095 (2026-03-02), `prehandover-template.md` STILL lacks `## Environment Parity` section — OVL-CI-006 continues to produce REJECTION-PACKAGEs on PRs that use the unupdated template (PR #789 sessions 088–093, PR #814 session-095). Foreman must update `prehandover-template.md` to add this section before next CI_WORKFLOW or AAWP_MAT wave. A-020 REMAINS OPEN until template is updated.
 
 ---
 
