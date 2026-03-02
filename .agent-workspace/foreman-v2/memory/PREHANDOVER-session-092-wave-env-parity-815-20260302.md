@@ -108,7 +108,7 @@ Issue #815 opened by CS2 (@APGI-cmy) and assigned to Copilot — constitutes wav
 - [x] Zero deprecation warnings
 - [x] Zero compiler/linter warnings
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
-- [ ] IAA audit token recorded: [PENDING — awaiting IAA verdict]
+- [x] IAA audit token recorded: IAA-session-099-20260302-PASS
 
 ---
 
@@ -116,9 +116,9 @@ Issue #815 opened by CS2 (@APGI-cmy) and assigned to Copilot — constitutes wav
 
 <!-- ANTI-MISUSE: Set iaa_audit_token to PENDING before invoking IAA. Never pre-fill "-PASS". -->
 <!-- After receiving ASSURANCE-TOKEN: follow the Post-ASSURANCE-TOKEN Ceremony in Notes below. -->
-`iaa_audit_token: PENDING`
+`iaa_audit_token: IAA-session-099-20260302-PASS`
 
-[Brief summary of IAA verdict — complete after receiving ASSURANCE-TOKEN]
+IAA session-099 issued ASSURANCE-TOKEN. Content quality HIGH. All 17 checks PASS. Prior REJECTION-PACKAGEs (session-097: missing ceremony artifacts; session-098: pre-filled PASS token) resolved and confirmed.
 
 ## IAA Agent Response (verbatim)
 <!-- MANDATORY PER S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) -->
@@ -126,7 +126,34 @@ Issue #815 opened by CS2 (@APGI-cmy) and assigned to Copilot — constitutes wav
 <!-- A PREHANDOVER proof with a blank or placeholder IAA response section is a HANDOVER BLOCKER -->
 <!-- IAA bare PHASE_A_ADVISORY without this section = INC-IAA-SKIP-001 breach -->
 
-[IAA agent output pasted verbatim here — the ASSURANCE-TOKEN or REJECTION-PACKAGE block]
+```
+═══════════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #816 — feat: add ## Environment Parity section to
+           prehandover-template.md v1.2.0 (issue #815)
+Branch: copilot/add-environment-parity-section (SHA: afe82d6+)
+
+All 17 checks PASS. Merge gate parity: PASS.
+
+Session-097 failures (5): ALL RESOLVED ✅
+Session-098 failures (2): ALL RESOLVED ✅
+  — CORE-007: Checklist item correctly `[ ] [PENDING]` ✅
+  — CORE-019/A-017: iaa_audit_token correctly `PENDING`;
+    delegation log accurately records REJECTION-PACKAGE
+    history and session-099 re-invocation ✅
+
+Additional IAA workspace housekeeping committed:
+  — Duplicate rows removed from IAA knowledge index ✅
+  — Missing A-019/A-022 rows added to key-rules table ✅
+
+Merge permitted (subject to CS2 approval and Post-
+ASSURANCE-TOKEN ceremony completion by foreman-v2-agent).
+
+Token reference: IAA-session-099-20260302-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate.
+Authority: CS2 ONLY (@APGI-cmy)
+═══════════════════════════════════════════════════════════════
+```
 
 ---
 
