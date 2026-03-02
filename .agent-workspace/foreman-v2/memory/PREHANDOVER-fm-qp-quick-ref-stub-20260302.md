@@ -75,11 +75,27 @@ CANON_INVENTORY.json updated: `FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` entry bumped
 
 ## IAA Audit
 
-`iaa_audit_token: PENDING`
+`iaa_audit_token: IAA-session-096-20260302-PASS`
 
 ## IAA Agent Response (verbatim)
 
-*(Awaiting IAA invocation under `AGENT_KNOWLEDGE` + `GOVERNANCE_CANON` overlay — to be completed before merge)*
+```
+═══════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #808 — "Fix CS2 review blockers: Version History, duplicate 
+            SOP line, PREHANDOVER proof, and ripple artefact integrity"
+Branch: copilot/sub-pr-796-again → main
+
+All 26 evaluated checks PASS. 0 FAIL. 
+Merge gate parity: PASS.
+
+All 7 session-095 REJECTION-PACKAGE failures independently verified resolved.
+
+Token reference: IAA-session-096-20260302-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate
+Authority: CS2 only (@APGI-cmy)
+═══════════════════════════════════════════════════════════
+```
 
 ---
 
