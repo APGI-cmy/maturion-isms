@@ -13,7 +13,7 @@
 | File | Purpose | Version | Status |
 |------|---------|---------|--------|
 | `index.md` (this file) | Knowledge entry point and version reference | 1.4.0 | PRESENT |
-| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.3.0 | PRESENT — Rules A-001 through A-019 active (A-018 renumbered from dup A-004; A-019 renumbered from dup A-016) |
+| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.4.0 | PRESENT — Rules A-001 through A-020 active (A-018 renumbered from dup A-004; A-019 renumbered from dup A-016; A-020 added session-088 — PREHANDOVER template staleness) |
 | `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.3.0 | ACTIVE — CORE-001 to CORE-020; CORE-007 updated with PENDING carve-out note |
 | `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.1.0 | ACTIVE — KNOWLEDGE_GOVERNANCE trigger category added |
 | `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE) | 2.2.0 | ACTIVE — OVL-KG-001 through OVL-KG-005 added |
@@ -62,7 +62,7 @@
 | A-016 | Cross-PR IAA token reuse is a governance breach | ACTIVE |
 | A-017 | Session memory must not cite a REJECTION-PACKAGE session as PASS | ACTIVE |
 | A-018 | Post-merge retrospective audit findings must be formally recorded — no informal notes | ACTIVE |
-| A-019 | Trigger table misapplication is an IAA bypass — ALL triggering categories require IAA | ACTIVE |
+| A-020 | PREHANDOVER template must be kept current with overlay requirements — stale template causes cascading REJECTION-PACKAGEs | ACTIVE |
 
 ---
 

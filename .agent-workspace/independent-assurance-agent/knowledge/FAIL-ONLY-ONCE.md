@@ -1,7 +1,7 @@
 # IAA FAIL-ONLY-ONCE Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 1.3.0
+**Version**: 1.4.0
 **Last Updated**: 2026-03-02
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -366,6 +366,50 @@ The specific misclassification that produced this breach:
 
 ---
 
+### A-020 — PREHANDOVER Template Must Be Kept Current With Overlay Requirements
+
+**Triggered by**: session-088-20260302 — foreman-v2-agent session-089 Wave 13 REJECTION-PACKAGE.
+The Foreman's PREHANDOVER template (v1.1.0, last updated 2026-03-01) was used to generate the
+session-089 PREHANDOVER proof. The overlay v2.1.0 (deployed 2026-03-02) added new required sections
+(OVL-AM-004/005/006, OVL-CI-005/006) and CORE-018 added the `## IAA Agent Response (verbatim)` section
+requirement. The template was not updated, so the generated PREHANDOVER proof was missing 6 required
+sections. This produced a REJECTION-PACKAGE despite excellent substantive implementation work.
+
+**Root cause**: The PREHANDOVER template is maintained by the Foreman and was last updated before
+the overlay v2.1.0 additions. There is no check that enforces template-overlay synchronization.
+Every AAWP_MAT or CI_WORKFLOW PR will continue to produce REJECTION-PACKAGEs until the template
+is updated to include the new required sections.
+
+**Permanent Rule**:
+When IAA identifies that a REJECTION-PACKAGE was produced because the PREHANDOVER proof is missing
+sections that are required by the CURRENT overlay version (not missing due to agent negligence, but
+due to template not being updated):
+
+1. Issue the REJECTION-PACKAGE normally — the content failures are real and must be fixed.
+2. In the session learning notes, EXPLICITLY flag: "Foreman PREHANDOVER template is stale — must
+   be updated to v1.2.0+ before next wave to include [list missing sections]."
+3. Flag in IAA session memory under `fail_only_once_updates` that A-020 was applied.
+4. The Foreman (or CodexAdvisor) must update the PREHANDOVER template as a standalone PR before
+   the next wave's PREHANDOVER is generated. This prevents cascading REJECTION-PACKAGEs.
+
+**Required template sections as of overlay v2.2.0** (must be present in any PREHANDOVER proof
+for AAWP_MAT or CI_WORKFLOW category PRs):
+- `## IAA Agent Response (verbatim)` — CORE-016/018
+- `## Architecture Ripple/Impact Assessment` — OVL-AM-004
+- `## Wave Gap Register` — OVL-AM-005
+- `## Environment Parity` — OVL-AM-006 and OVL-CI-006
+- `## CI Check Run Evidence` — OVL-CI-005 (only for CI_WORKFLOW PRs)
+
+**Check in Phase 4 learning notes (post-REJECTION-PACKAGE)**:
+> FAIL-ONLY-ONCE A-020: After issuing a REJECTION-PACKAGE for missing PREHANDOVER sections,
+> check if the failures are due to template staleness (generated from outdated template) rather
+> than agent negligence. If so, add explicit learning note: "Foreman template stale — must be
+> updated before next wave." Add to session memory learning_notes. Flag in parking station.
+
+**Status**: ACTIVE — enforced from session-088 onwards
+
+---
+
 ## Version History
 
 | Version | Date | Change |
@@ -374,6 +418,7 @@ The specific misclassification that produced this breach:
 | 1.1.0 | 2026-02-27 | A-004 (bootstrap directive), A-005 (agent contract immutability) added |
 | 1.2.0 | 2026-02-28 | A-006 (PHASE_A_ADVISORY fabrication), A-015 (Tier 2 patches require ceremony), A-016 (cross-PR token reuse), A-017 (REJECTION-as-PASS citation) added |
 | 1.3.0 | 2026-03-02 | A-018 renumbered from duplicate A-004 (post-merge retrospective); A-019 renumbered from duplicate A-016 (trigger table misapplication); duplicate rule ID deduplication patch (maturion-isms#IAA-TIER2) |
+| 1.4.0 | 2026-03-02 | A-020 (PREHANDOVER template staleness — template must be kept current with overlay requirements) added from session-088 Wave 13 REJECTION-PACKAGE learning |
 
 ---
 
