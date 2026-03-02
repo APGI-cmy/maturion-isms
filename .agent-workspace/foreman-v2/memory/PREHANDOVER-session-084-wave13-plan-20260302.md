@@ -106,7 +106,7 @@ This session produces governance artifacts only (no production code, no test cha
 - [x] Wave 13 §2.14 added to implementation plan with 24 RED gate test IDs and 5-task delegation sequence
 - [x] BUILD_PROGRESS_TRACKER updated with Wave 13 entry, gap register, and delegation sequence
 - [x] Session memory contains all mandatory fields and non-blank suggestions
-- [x] IAA audit token recorded: IAA-WAVE13-PLAN-20260302-PASS
+- [x] IAA audit token recorded: IAA-session-083-20260302-PASS
 
 ---
 
@@ -116,7 +116,7 @@ This session produces governance artifacts only (no production code, no test cha
 **Root cause of rejection**: PREHANDOVER proof was not created before IAA first invocation; artifacts were untracked.
 **Remediation**: PREHANDOVER proof created (this file); all artifacts committed via report_progress; IAA re-invoked.
 
-`iaa_audit_token: IAA-WAVE13-PLAN-20260302-PASS`
+`iaa_audit_token: IAA-session-083-20260302-PASS`
 
 ---
 
@@ -133,7 +133,7 @@ All 4 session-082 REJECTION-PACKAGE failures confirmed remediated.
 All 14 applicable checks PASS. 0 FAIL. Merge gate parity: PASS.
 
 Merge permitted (subject to CS2 approval — @APGI-cmy).
-Token reference: IAA-WAVE13-PLAN-20260302-PASS
+Token reference: IAA-session-083-20260302-PASS
 Adoption phase: PHASE_B_BLOCKING — hard gate
 ═══════════════════════════════════════
 ```

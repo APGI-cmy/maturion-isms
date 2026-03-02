@@ -3,9 +3,9 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 1.9.0  
+**Version**: 2.0.0  
 **Created**: 2026-02-24  
-**Updated**: 2026-03-01  
+**Updated**: 2026-03-02  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -52,6 +52,7 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-012 | BOOTSTRAP-DIRECTIVE-FIRST (CS2 — 2026-02-25): Reading the repository, the issue body, code context, or any other file before reading THIS agent file and completing Phase 1 is a preflight violation equivalent to GOV-BREACH-AIMC-W5-002. The BOOTSTRAP DIRECTIVE is non-negotiable and applies to every agent contract in the repo. If any repo file was read before reading the Foreman agent contract, STOP immediately. Record the preflight skip in session memory. Complete Phase 1 now before taking any further action. Ref: GOV-BREACH-AIMC-W5-002, A-011. | CS2 — maturion-isms (2026-02-25) |
 | A-013 | AGENT-CONTRACT-FILE-IMMUTABILITY (CS2 — 2026-02-27): No agent may read, create, edit, delete, or commit any file under `.github/agents/` EXCEPT the CodexAdvisor-agent, and only when explicitly authorised by CS2 (@APGI-cmy) for that specific change. This applies to all agents including builders, Foreman, IAA, and all specialist agents. Any PR diff containing modifications to `.github/agents/` files authored by any agent other than CodexAdvisor-agent is a contract violation and must be rejected at IAA and merge gate. Foreman MUST check the PR diff for `.github/agents/` file changes during QP evaluation (A-008) and flag any such changes immediately to CS2. Violation class: GOV-BREACH-CONTRACT-001. | CS2 — maturion-isms (2026-02-27) |
 | A-014 | IAA-TOOL-CALL-MANDATORY (CS2 — 2026-02-28): The `independent-assurance-agent` MUST be invoked via the `task` tool as the FIRST action in Phase 4 Step 4.3a — before writing any `iaa_audit_token` value in the PREHANDOVER proof. Writing `PHASE_A_ADVISORY` or any token string WITHOUT first calling `task(agent_type: "independent-assurance-agent", ...)` is a PHASE_A_ADVISORY FABRICATION breach. The only permitted exception is if the `task` tool itself throws an error — in which case that error MUST be logged verbatim and escalated to CS2. "Phase A advisory" is the IAA's verdict when it cannot fully audit — it is NOT the Foreman's self-certification that it chose not to call the IAA. Violation class: INC-IAA-SKIP-001. | CS2 — maturion-isms (2026-02-28) |
+| A-015 | IAA-TOKEN-FORMAT (CS2 — 2026-03-02): The IAA audit token MUST use the canonical format `IAA-session-NNN-YYYYMMDD-PASS` (session number, not wave name or description). Any token using `IAA-WAVE{N}-...`, `IAA-PLAN-...`, or any other non-canonical prefix is a format violation and MUST be corrected before the PREHANDOVER proof is committed. The canonical format is defined in the PREHANDOVER template Tier 2 knowledge. The foreman-v2-agent contract Step 4.3b `IAA-WAVE{N}-YYYYMMDD-PASS` placeholder is superseded by this rule — correct format is always `IAA-session-NNN-YYYYMMDD-PASS`. Violation class: INC-IAA-TOKEN-001. | INC-IAA-TOKEN-001 (2026-03-02) |
 
 ---
 
@@ -210,6 +211,30 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 
 ---
 
+### INC-IAA-TOKEN-001 — IAA Token Format Deviation: Wave Name Used Instead of Session Number
+**Date**: 2026-03-02  
+**Severity**: MINOR  
+**Status**: REMEDIATED  
+**Source**: maturion-isms follow-up issue from PR #776 (Wave 13 planning)  
+
+**What happened**: In session 083 (IAA) and session 084 (Foreman), the IAA audit token was recorded as `IAA-WAVE13-PLAN-20260302-PASS` instead of the canonical format `IAA-session-083-20260302-PASS`. The Foreman contract Step 4.3b contained the placeholder `IAA-WAVE{N}-YYYYMMDD-PASS`, which contradicts the Tier 2 PREHANDOVER template canonical format `IAA-session-NNN-YYYYMMDD-PASS`. Both the IAA session memory and the Foreman PREHANDOVER proof recorded the non-canonical token.
+
+**Root cause (5-Why):**
+1. **Why was the wrong format used?** The Foreman contract Step 4.3b specifies `IAA-WAVE{N}-YYYYMMDD-PASS` (wave-name format), not `IAA-session-NNN-YYYYMMDD-PASS` (session-number format).
+2. **Why does the contract have a different format from the template?** The PREHANDOVER template (Tier 2 knowledge) was updated to `IAA-session-NNN-YYYYMMDD-PASS` but the agent contract text was not kept in sync.
+3. **Why was the discrepancy not caught?** No FAIL-ONLY-ONCE rule existed requiring the canonical token format. The prehandover-template Post-ASSURANCE-TOKEN Ceremony states "exact format: `IAA-session-NNN-YYYYMMDD-PASS`" but this was not enforced by any A-rule.
+4. **Why wasn't the IAA's token reference flagged?** The IAA issued `IAA-WAVE13-PLAN-20260302-PASS` based on the wave context — there was no rule binding the IAA to the canonical `session-NNN` format.
+5. **Why is there no structural enforcement?** No CI check and no FAIL-ONLY-ONCE rule validated the IAA token format before commit.
+
+**Corrective action (maturion-isms follow-up issue 2026-03-02):**
+1. New A-015 rule locked in: IAA token MUST use canonical format `IAA-session-NNN-YYYYMMDD-PASS`.
+2. Historical artifacts corrected: `PREHANDOVER-session-084-wave13-plan-20260302.md` (3 occurrences) and IAA `session-083-20260302.md` (1 occurrence) updated to canonical token.
+3. New improvement suggestion S-012 added: Foreman contract Step 4.3b placeholder must be updated to canonical format via CodexAdvisor-agent CS2-gated change.
+
+**Open improvement**: S-012 — Foreman contract Step 4.3b must be updated to replace `IAA-WAVE{N}-YYYYMMDD-PASS` with `IAA-session-NNN-YYYYMMDD-PASS`. Requires CodexAdvisor-agent + CS2 authorisation per A-002/A-013. *(See Section 3, item S-012.)*
+
+---
+
 ## Section 3: Open Improvement Suggestions
 
 These items are tracked and must be reviewed each session. If assigned to the current wave, they must be addressed before HANDOVER.
@@ -227,6 +252,7 @@ These items are tracked and must be reviewed each session. If assigned to the cu
 | S-009 | Require verbatim paste of IAA agent's actual response text in the PREHANDOVER proof IAA section — making the `task` tool call self-evidencing and structurally impossible to fake. Template must include a `## IAA Agent Response (verbatim)` section where the raw IAA agent output is pasted. A PREHANDOVER proof with a blank or placeholder IAA response section is a HANDOVER BLOCKER. | INC-IAA-SKIP-001 (2026-02-28) | OPEN |
 | S-010 | Correct GRS-010 requirement text in PersonaLoader.test.ts header comment — line 10 references packages/ai-centre/agents/ but actual PersonaLoader path is packages/ai-centre/src/agents/. Also correct inline comment on line 30. Prevents path confusion in CL-2 through CL-4 persona migration issues. | session-078 / IAA-session-027-20260301 | REMEDIATED |
 | S-011 | Canonical FAIL-ONLY-ONCE registry in maturion-foreman-governance has duplicate rule IDs: A-004 appears twice (Bootstrap Directive rule + Post-Merge Retrospective rule) and A-016 appears twice (Trigger Table Misapplication + Cross-PR Token Reuse). Renumber later-added rules to sequential IDs (A-018, A-019, etc.) to prevent ambiguous rule citations in sessions. CodexAdvisor-agent to execute in a governance maintenance PR to maturion-foreman-governance. | IAA-session-027-20260301 | OPEN |
+| S-012 | Update foreman-v2-agent contract Step 4.3b to replace `IAA-WAVE{N}-YYYYMMDD-PASS` with `IAA-session-NNN-YYYYMMDD-PASS` — aligning contract text with the canonical format defined in the Tier 2 PREHANDOVER template. Requires CodexAdvisor-agent + CS2 written authorisation per A-002/A-013. Until the contract is updated, A-015 is the authoritative rule (Tier 2 knowledge supersedes the contract placeholder). | INC-IAA-TOKEN-001 (2026-03-02) | OPEN |
 
 ---
 
@@ -236,9 +262,9 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 1.9.0
+fail_only_once_version: 2.0.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
@@ -248,4 +274,4 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 ---
 
 *Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-03-01 | Version: 1.9.0 | Status: ACTIVE*
+*Last Updated: 2026-03-02 | Version: 2.0.0 | Status: ACTIVE*
