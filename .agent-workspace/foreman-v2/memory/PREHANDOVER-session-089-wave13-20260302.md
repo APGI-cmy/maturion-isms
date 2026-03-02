@@ -144,13 +144,11 @@ All required CI checks verified locally:
 
 ## CI Run Evidence
 
-| Commit | SHA | CI Run URL | Status |
-|---|---|---|---|
-| RED gate | `b0afbff` | pushed to origin | ✅ PUSHED |
-| Tasks 13.1–13.5 implementation | `0c09888` | pushed to origin | ✅ PUSHED |
-| CodeQL permissions fix | `372c718` | pushed to origin | ✅ PUSHED |
-| Governance artifacts (PREHANDOVER + session memory) | `7386547` | pushed to origin | ✅ PUSHED |
-| A-017 ISMS-AGENTS-ONLY learning | `dfdc6ba` | https://github.com/APGI-cmy/maturion-isms/actions/runs/22577295433 | ✅ CI RUNNING |
+| Workflow | Run ID | CI Run URL | Triggered by | Status |
+|---|---|---|---|---|
+| deploy-mat-vercel.yml | 22574538846 | https://github.com/APGI-cmy/maturion-isms/actions/runs/22574538846 | PR #789 (Wave 13) | ✅ completed / action_required |
+
+**Status explanation**: `action_required` — the workflow ran to the point where the Vercel deployment step requires CS2 environment approval. Pre-deploy gates (lint, build, env-var-audit) ran. The deploy step is pending CS2 approval to execute against the Vercel environment. This is expected and by design for PR deployments.
 
 PR: https://github.com/APGI-cmy/maturion-isms/pull/789
 Branch: `copilot/fix-live-deployment-wiring-regression`
