@@ -77,11 +77,20 @@ CI workflow changes affect GitHub Actions execution only — no dev/staging/prod
 
 ---
 
-## iaa_audit_token: PENDING
+## iaa_audit_token: IAA-session-096-20260302-PASS
 
 ## IAA Agent Response (verbatim)
 
-*Awaiting IAA invocation*
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #812 — copilot/orchestrate-ci-audit-findings
+All 34 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-096-20260302-PASS
+Re-invocation: resolves REJECTION-PACKAGE IAA-session-095-20260302 (4 failures: CORE-007, CORE-020, OVL-CI-005, OVL-CI-006)
+Head SHA verified: f29ea82
+Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+═══════════════════════════════════════
 
 ---
 
