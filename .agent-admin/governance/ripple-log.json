@@ -502,6 +502,32 @@
       "canonical_commit": "7792913259b00fab77c2d1be966e923a463853db",
       "files_updated": 3,
       "status": "SUCCESS"
+    },
+    {
+      "timestamp": "2026-03-02T15:45:04Z",
+      "session_id": "session-036-20260302",
+      "type": "liaison-confirmation",
+      "canonical_commit": "7792913259b00fab77c2d1be966e923a463853db",
+      "canonical_version": "1.0.0",
+      "issue_ref": "APGI-cmy/maturion-isms (layer-down issue 7792913259b0 — ripple issue current session)",
+      "ripple_prs": [
+        "#797"
+      ],
+      "files_verified": [
+        "governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md",
+        "governance/CANON_INVENTORY.json",
+        "governance/sync_state.json"
+      ],
+      "sha256_verified": true,
+      "aimc_integration_confirmed": "NOT_REQUIRED",
+      "cross_references_updated": true,
+      "internal_ripple_actions": [
+        ".agent-workspace/foreman-v2/knowledge/FM_QP_ENHANCED_QUICK_REFERENCE.md created",
+        ".agent-workspace/foreman-v2/knowledge/index.md updated (v1.6.2 -> v1.6.3)",
+        ".agent-admin/quality-professor/ directory created per SOP §8"
+      ],
+      "status": "SUCCESS",
+      "notes": "Liaison checklist complete for canonical commit 7792913259b0. FM_QUALITY_PROTOCOL_ENHANCED_SOP.md SHA256 verified (65ee6752... match). AIMC canon checked — no AIMC dependency; AIMC integration NOT REQUIRED for this SOP. Internal ripple executed: Tier 2 QR stub created for foreman-v2, knowledge index updated, quality-professor admin dir created. Session-036 memory created."
     }
   ]
 }
