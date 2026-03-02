@@ -22,6 +22,7 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 | `specialist-registry.md` | Registry of all delegable agents with capabilities and separation-of-duties boundary | 1.0.0 |
 | `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 |
 | `prehandover-template.md` | **PHASE 4 §S-009** — PREHANDOVER proof template with mandatory IAA Agent Response (verbatim) section per FAIL-ONLY-ONCE v1.8.0 S-009 | 1.0.0 |
+| `FM_QP_ENHANCED_QUICK_REFERENCE.md` | **QP MODE** — Tier 2 quick reference stub for Enhanced Quality Protocol: Builder Referral Protocol, Progress Tracker Enforcement, QP-FAIL codes; Tier-3 authority: `governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` | 1.0.0 |
 
 ---
 
