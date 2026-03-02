@@ -146,25 +146,6 @@ describe('CL-1 — maturion-advisor persona (LKIAC Wave 1)', () => {
    *
    * Reference: LKIAC Wave 1 | AIMC_PERSONA_LIFECYCLE.md §5.1
    */
-  it(
-    'CL-1-T-002: maturion-advisor front-matter contains "---" YAML delimiter (file starts with ---)',
-    async () => {
-      const content = await loader.load('maturion-advisor');
-   * RED until maturion-advisor.md exists.
-   * load("maturion-advisor") must return non-empty Markdown content.
-   */
-  it(
-    'CL-1-T-001: load("maturion-advisor") returns non-empty markdown content',
-    async () => {
-      const content = await loader.load('maturion-advisor');
-
-      expect(typeof content).toBe('string');
-      expect(content.length).toBeGreaterThan(0);
-      // Persona files are Markdown — must contain at least one heading
-      expect(content).toContain('#');
-    },
-  );
-
   /**
    * CL-1-T-002
    * RED until maturion-advisor.md exists with YAML front-matter.
@@ -268,41 +249,4 @@ describe('CL-1 — maturion-advisor persona (LKIAC Wave 1)', () => {
     const fm = extractFrontMatter(content);
     expect(fm).toContain('description:');
   });
-   * RED until maturion-advisor.md exists with `agentId:` in its front-matter.
-   */
-  it(
-    'CL-1-T-003: maturion-advisor front-matter contains "agentId:" field',
-    async () => {
-      const content = await loader.load('maturion-advisor');
-
-      expect(content).toContain('agentId:');
-    },
-  );
-
-  /**
-   * CL-1-T-004
-   * RED until maturion-advisor.md exists with `version:` in its front-matter.
-   */
-  it(
-    'CL-1-T-004: maturion-advisor front-matter contains "version:" field',
-    async () => {
-      const content = await loader.load('maturion-advisor');
-
-      expect(content).toContain('version:');
-    },
-  );
-
-  /**
-   * CL-1-T-005
-   * RED until maturion-advisor.md exists in the agents directory.
-   * listAvailable() must include "maturion-advisor".
-   */
-  it(
-    'CL-1-T-005: listAvailable() includes "maturion-advisor"',
-    async () => {
-      const available = await loader.listAvailable();
-
-      expect(available).toContain('maturion-advisor');
-    },
-  );
 });
