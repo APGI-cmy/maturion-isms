@@ -67,7 +67,7 @@ mode_transitions:
 agents_delegated_to:
   - agent: independent-assurance-agent
     task: IAA audit of governance-ceremony-gate.yml and index.md changes (CI_WORKFLOW category, OVL-CW-* overlays)
-    result: PENDING (invoked in Step 4.3a)
+    result: ASSURANCE-TOKEN IAA-session-096-20260302-PASS (after one REJECTION-PACKAGE session-095 — 2 failures fixed)
 escalations_triggered: none
 separation_violations_detected:
   - NOTE: Previous session (Issue #808 task run) created the workflow directly without delegating to a builder agent
@@ -98,10 +98,10 @@ A_rules_active:
 ## IAA Audit
 
 ```yaml
-iaa_audit_token: PENDING
+iaa_audit_token: IAA-session-096-20260302-PASS
 ```
 
-[To be updated after IAA invocation]
+IAA session-096 issued ASSURANCE-TOKEN on re-invocation. Prior REJECTION-PACKAGE session-095 cited OVL-CI-005 and OVL-CI-006; both fixed and confirmed resolved. 29/29 PASS.
 
 ---
 

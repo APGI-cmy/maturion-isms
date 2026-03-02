@@ -145,7 +145,7 @@ CS2 wave-start authorization:
 - [x] Zero deprecation warnings
 - [x] Zero compiler/linter warnings
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
-- [ ] IAA audit token recorded ← updated to [x] after Step 4.3a
+- [x] IAA audit token recorded: IAA-session-096-20260302-PASS
 
 ---
 
@@ -153,16 +153,50 @@ CS2 wave-start authorization:
 
 <!-- ANTI-MISUSE: iaa_audit_token set to PENDING before IAA invocation. Never pre-fill "-PASS". -->
 <!-- After receiving ASSURANCE-TOKEN: follow Post-ASSURANCE-TOKEN Ceremony in prehandover-template.md -->
-`iaa_audit_token: PENDING`
+`iaa_audit_token: IAA-session-096-20260302-PASS`
 
-[IAA verdict to be recorded after independent-assurance-agent invocation]
+IAA issued ASSURANCE-TOKEN on re-invocation (session-096, 2026-03-02). Two prior failures from REJECTION-PACKAGE session-095 (OVL-CI-005: no CI run URLs; OVL-CI-006: no environment parity statement) were fixed and confirmed resolved. 29/29 checks PASS.
 
 ## IAA Agent Response (verbatim)
 <!-- MANDATORY PER S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) -->
 <!-- Paste the COMPLETE raw output from task(agent_type: "independent-assurance-agent") here -->
-<!-- A PREHANDOVER proof with a blank or placeholder IAA response section is a HANDOVER BLOCKER -->
 
-[IAA agent output to be pasted verbatim here — the ASSURANCE-TOKEN or REJECTION-PACKAGE block]
+```
+Token reference: IAA-session-096-20260302-PASS
+
+PR: #814 / copilot/add-governance-ceremony-merge-gate
+Subject: Governance Ceremony Gate CI workflow addition — governance-ceremony-gate.yml + Foreman Tier 2 knowledge index.md v1.7.0
+
+All 29 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+
+Token reference: IAA-session-096-20260302-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate
+
+Verification Summary:
+  FAIL-ONLY-ONCE (A-001/A-002/A-006/A-021/A-022):   5/5 PASS
+  Core Invariants (CORE-005 through CORE-021):       13/13 PASS
+  CI_WORKFLOW overlay (OVL-CI-001 through OVL-CI-006): 6/6 PASS
+  KNOWLEDGE_GOVERNANCE overlay (OVL-KG-001–OVL-KG-005): 5/5 PASS
+  Merge Gate Parity (§4.3):                          PASS
+  Total:                                             29/29 PASS
+
+Session-095 Failure Remediation Confirmed:
+  OVL-CI-005 (No GitHub Actions run URL) → RESOLVED — PASS
+    Fix: CI Run Evidence section added at commit 38ca403; 5 run URLs cited
+  OVL-CI-006 (No environment parity statement) → RESOLVED — PASS
+    Fix: Environment Parity section added at commit 38ca403
+
+Post-ASSURANCE-TOKEN Ceremony Required:
+  1. Update PREHANDOVER iaa_audit_token: PENDING → IAA-session-096-20260302-PASS
+  2. Paste this block into ## IAA Agent Response (verbatim)
+  3. Update session memory iaa_audit_token
+  4. Add ## Governance block to PR body
+  5. Commit all ceremony updates before merge
+
+Authority: CS2 (Johan Ras / @APGI-cmy) | independent-assurance-agent v6.2.0
+Session: 096 | Date: 2026-03-02 | PR: #814 | Verdict: ASSURANCE-TOKEN
+```
 
 ---
 
