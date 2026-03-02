@@ -1,33 +1,34 @@
-# HANDOVER_SUMMARY — Session 035 — governance-liaison-isms
+# Handover Summary — governance-liaison-isms — Session 035
 
+**Agent**: governance-liaison-isms  
+**Session ID**: session-035  
 **Date**: 2026-03-02  
-**Session**: session-035-20260302  
-**Agent**: governance-liaison-isms v6.2.0  
-**Issue**: [Layer-Down] Governance ripple received — aa831e6492bf  
-**Outcome**: ✅ COMPLETE — No-Drift Ripple Processed
+**Issue**: #782 — [Layer-Down] Propagate Governance Changes - 2026-03-02 (e52ec033)  
+**Outcome**: ✅ COMPLETE
 
 ---
 
 ## Session Overview
 
-Ripple event received from canonical source (`APGI-cmy/maturion-foreman-governance`) for canonical commit `aa831e6492bf37620e161cae4e06a8c2c7f9f1c5`. CI workflow `ripple-integration.yml` ran 3 times and confirmed "No Drift Detected — Governance is already aligned with canonical source. No PR required."
+Governance ripple processing for canonical commit `e52ec033c5955cdbe833986e9da0a37927c5a1bc`.
+The automated `ripple-integration.yml` CI workflow ran 4 times and reported "No Drift Detected" on all runs.
+This session completes the required administrative records that are not created by the CI no-drift path.
 
 ## Files Modified
 
 | File | Change | SHA256 |
-|------|--------|--------|
-| `governance/sync_state.json` | Added `last_ripple_check` entry recording no-drift result | `db7101b6d29e0ed9fbbb89bff473c52f84e1d1559720d2d97b6d8804ecdbf621` |
-| `.agent-admin/governance/ripple-archive/ripple-aa831e6492bf.json` | Ripple event archived (no-drift, no PR) | `09d167032d149a3ece9dcb37871076160d7d6081f402daf9d7c7d2c4c950d866` |
-| `.agent-workspace/governance-liaison-isms/memory/session-035-20260302.md` | Session memory created | — |
-| `.agent-workspace/governance-liaison-isms/memory/.archive/session-030-20260301.md` | Rotated per S6-05 | — |
+|---|---|---|
+| `governance/sync_state.json` | Updated canonical_commit, last_drift_check | `a9aabc8248d5dfd34888d7870cde8b5cb71826f9b9eb9b901ed8581d89ae6235` |
+| `.agent-admin/governance/ripple-log.json` | Added ripple-no-drift entry | `3d5f0bdb78df6a02e45b02a0a653053b8febc0fc8e744a1594a2e0c40dfcf485` |
+| `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` | CREATED — new file | `7336efbe88da55cc56a039d51c054bdb787f40642b7e6244d4c8b75a7f3c1f30` |
+| `.agent-workspace/governance-liaison-isms/memory/session-035-20260302.md` | CREATED — session memory | — |
 
 ## Alignment Status
 
-- CANON_INVENTORY: v1.0.0, 190 canons, 0 placeholder hashes — PASS
-- PUBLIC_API canons (sample of 20): all aligned — PASS  
-- AIMC_STRATEGY.md: hash verified — PASS
-- Drift detected: NO
-- Layer-down required: NO
+- **Overall**: ALIGNED
+- **Drift detected**: false
+- **Canonical commit**: `e52ec033c5955cdbe833986e9da0a37927c5a1bc`
+- **6 artifacts verified**: all local hashes match CANON_INVENTORY.json entries
 
 ## Escalations Created
 
@@ -35,4 +36,5 @@ None.
 
 ---
 
-*Authority: CS2 (Johan Ras) | governance-liaison-isms v6.2.0*
+*Authority: CS2 (Johan Ras) | governance-liaison-isms-agent v6.2.0*  
+*Created: 2026-03-02*
