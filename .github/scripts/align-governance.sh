@@ -370,6 +370,7 @@ if [ -f "$LOCAL_SYNC_STATE" ]; then
         .last_sync.total_canons_synced = $count |
         .last_sync.sync_method = "layer-down-automated" |
         .last_sync.sync_status = "SUCCESS" |
+        .last_sync.ripple_pr = "pending" |
         .alignment_status.overall = "ALIGNED" |
         .alignment_status.drift_detected = false |
         .alignment_status.last_drift_check = $timestamp' \

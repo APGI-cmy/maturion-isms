@@ -116,11 +116,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ── Pre-flight: require MATURION_BOT_TOKEN ──
+      - name: Verify MATURION_BOT_TOKEN is set
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::MATURION_BOT_TOKEN is not set. Cross-repo dispatch requires a PAT with access to maturion-foreman-governance. Cannot proceed."
+            exit 1
+          fi
+
       # ── Read source issue details ──
       - name: Read source issue
         id: source_issue
         env:
-          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
         run: |
           ISSUE_NUMBER="${{ needs.check-labels.outputs.issue_number }}"
 
@@ -144,16 +154,15 @@ jobs:
       - name: Check for existing dispatch
         id: dup_check
         env:
-          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
         run: |
           ISSUE_NUMBER="${{ needs.check-labels.outputs.issue_number }}"
           GOVERNANCE_REPO="APGI-cmy/maturion-foreman-governance"
 
           # Check if the token has access to the governance repo
           if ! gh repo view "$GOVERNANCE_REPO" --json name &>/dev/null; then
-            echo "already_dispatched=false" >> $GITHUB_OUTPUT
-            echo "Note: Cannot access governance repo to check for duplicates — proceeding"
-            exit 0
+            echo "::error::Cannot access $GOVERNANCE_REPO — MATURION_BOT_TOKEN may be missing or invalid."
+            exit 1
           fi
 
           # Search for existing layer-up issue referencing this source issue
@@ -178,7 +187,7 @@ jobs:
         id: create_governance_issue
         if: steps.dup_check.outputs.already_dispatched != 'true'
         env:
-          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
         run: |
           GOVERNANCE_REPO="APGI-cmy/maturion-foreman-governance"
           ISSUE_NUMBER="${{ steps.source_issue.outputs.issue_number }}"
@@ -221,11 +230,10 @@ jobs:
 
           # Check if governance repo is accessible before trying to create issue
           if ! gh repo view "$GOVERNANCE_REPO" --json name &>/dev/null; then
-            echo "Warning: Cannot access $GOVERNANCE_REPO — token may not have cross-repo permissions"
+            echo "::error::Cannot access $GOVERNANCE_REPO — MATURION_BOT_TOKEN may be missing or invalid. Layer-up dispatch FAILED for issue #${ISSUE_NUMBER}. Manual escalation required."
             echo "governance_issue_created=false" >> $GITHUB_OUTPUT
             echo "governance_issue_number=" >> $GITHUB_OUTPUT
-            echo "The layer-up evidence is in maturion-isms#${ISSUE_NUMBER} and can be manually escalated"
-            exit 0
+            exit 1
           fi
 
           # Create the issue in governance repo
@@ -242,17 +250,18 @@ jobs:
             echo "governance_issue_url=${CREATED_ISSUE}" >> $GITHUB_OUTPUT
             echo "Created governance issue: $CREATED_ISSUE"
           else
+            echo "::error::layer-up-dispatch FAILED to create governance issue for maturion-isms#${ISSUE_NUMBER}. Manual escalation required to APGI-cmy/maturion-foreman-governance."
             echo "governance_issue_created=false" >> $GITHUB_OUTPUT
             echo "governance_issue_number=" >> $GITHUB_OUTPUT
             echo "governance_issue_url=" >> $GITHUB_OUTPUT
-            echo "Could not create governance issue — see workflow logs"
+            exit 1
           fi
 
       # ── Comment on originating issue ──
       - name: Comment on source issue
         if: always()
         env:
-          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
         run: |
           ISSUE_NUMBER="${{ needs.check-labels.outputs.issue_number }}"
           ALREADY_DISPATCHED="${{ steps.dup_check.outputs.already_dispatched }}"

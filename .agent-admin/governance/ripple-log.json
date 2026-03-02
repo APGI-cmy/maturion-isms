@@ -466,6 +466,15 @@
       "alignment_script_fix": "align-governance.sh updated to use exit code 2 for partial failures; ripple-integration.yml updated to handle exit code 2",
       "status": "PARTIAL_SUCCESS",
       "notes": "Layer-down for canonical commit 64ac0b7b. CI was failing with exit code 1 because align-governance.sh aborted on LAYER_UP_PROTOCOL.md hash verification failure (stale hash in canonical CANON_INVENTORY.json). Fixed script to use exit code 2 for partial failures. Layered: GOVERNANCE_TOKEN_USAGE_REQUIREMENTS.md (new, SHA256 verified), INDEPENDENT_ASSURANCE_AGENT_CANON.md (updated, SHA256 verified), LAYER_UP_PROTOCOL.md (v1.1.0 from canonical, A-07 escalation noted \u2014 stale CANON_INVENTORY.json hash). Escalation created: stale-hash-LAYER_UP_PROTOCOL-20260301.md. ripple-integration.yml updated to handle exit code 2 gracefully."
+    },
+    {
+      "timestamp": "2026-03-01T16:50:00Z",
+      "session_id": "align-20260301-ripple-79652ea5",
+      "type": "manual-alignment",
+      "canonical_commit": "79652ea59982559435b40519f47c3ab854da3d1a",
+      "files_updated": 7,
+      "status": "SUCCESS",
+      "trigger": "manual recovery trigger - issue #765"
     }
   ]
 }
