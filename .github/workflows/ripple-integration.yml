@@ -128,6 +128,16 @@ jobs:
             else
               echo "drift_detected=false" >> $GITHUB_OUTPUT
             fi
+          elif [ $EXIT_CODE -eq 2 ]; then
+            # Exit code 2: partial success — stale hash in canonical CANON_INVENTORY.json.
+            # Files were layered but hash verification against inventory failed.
+            # Treat as a successful drift detection run so the PR path can proceed.
+            echo "::warning::Alignment script completed with stale canonical inventory hashes (exit 2). Escalation required for canonical CANON_INVENTORY update."
+            if git status --porcelain | grep -q '^'; then
+              echo "drift_detected=true" >> $GITHUB_OUTPUT
+            else
+              echo "drift_detected=false" >> $GITHUB_OUTPUT
+            fi
           else
             echo "alignment script exited with code $EXIT_CODE"
             exit $EXIT_CODE

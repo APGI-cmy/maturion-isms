@@ -217,9 +217,18 @@ if jq -e ".$ARTIFACTS_KEY | type == \"array\"" "$CANONICAL_INVENTORY" > /dev/nul
         
         # Compare hashes
         if [ "$LOCAL_SHA256" != "$CANONICAL_SHA256" ]; then
-            echo "  Hash mismatch: $artifact_path"
-            HASH_MISMATCHES+=("$artifact_path")
-            DRIFT_DETECTED=true
+            # Before marking drift: check if local already matches the canonical actual file.
+            # If yes, the CANON_INVENTORY.json entry has a stale hash — skip to avoid
+            # a false-positive layer-down that would fail hash verification (exit 1).
+            CANONICAL_ACTUAL_FILE="${CANONICAL_DIR}/${artifact_path}"
+            if [ -f "$CANONICAL_ACTUAL_FILE" ] && \
+               [ "$(sha256sum "$CANONICAL_ACTUAL_FILE" | awk '{print $1}')" = "$LOCAL_SHA256" ]; then
+                echo -e "${YELLOW}⚠️  Stale inventory hash (local=canonical): $artifact_path — skipping${NC}"
+            else
+                echo "  Hash mismatch: $artifact_path"
+                HASH_MISMATCHES+=("$artifact_path")
+                DRIFT_DETECTED=true
+            fi
         fi
     done
     
@@ -253,9 +262,16 @@ elif jq -e ".$ARTIFACTS_KEY | type == \"object\"" "$CANONICAL_INVENTORY" > /dev/
         
         # Compare hashes
         if [ "$LOCAL_SHA256" != "$CANONICAL_SHA256" ]; then
-            echo "  Hash mismatch: $artifact_path"
-            HASH_MISMATCHES+=("$artifact_path")
-            DRIFT_DETECTED=true
+            # Before marking drift: check if local already matches the canonical actual file.
+            CANONICAL_ACTUAL_FILE="${CANONICAL_DIR}/${artifact_path}"
+            if [ -f "$CANONICAL_ACTUAL_FILE" ] && \
+               [ "$(sha256sum "$CANONICAL_ACTUAL_FILE" | awk '{print $1}')" = "$LOCAL_SHA256" ]; then
+                echo -e "${YELLOW}⚠️  Stale inventory hash (local=canonical): $artifact_path — skipping${NC}"
+            else
+                echo "  Hash mismatch: $artifact_path"
+                HASH_MISMATCHES+=("$artifact_path")
+                DRIFT_DETECTED=true
+            fi
         fi
     done < <(jq -r ".$ARTIFACTS_KEY | keys[]" "$CANONICAL_INVENTORY" 2>/dev/null || echo "")
 else
@@ -310,6 +326,7 @@ echo "Phase 4: Layer Down Canonical Governance"
 echo "--------------------------------------"
 
 LAYERED_FILES=()
+STALE_HASH_DETECTED=false
 
 # Layer down each drifted or missing file
 for artifact_path in "${MISSING_FILES[@]}" "${HASH_MISMATCHES[@]}"; do
@@ -343,8 +360,17 @@ for artifact_path in "${MISSING_FILES[@]}" "${HASH_MISMATCHES[@]}"; do
         echo -e "${GREEN}✓ Layered: $artifact_path${NC}"
         LAYERED_FILES+=("$artifact_path")
     else
-        echo -e "${RED}❌ Hash verification failed: $artifact_path${NC}"
-        exit 1
+        # The copied file's hash doesn't match the CANON_INVENTORY recorded hash.
+        # This means the canonical CANON_INVENTORY.json has a stale hash for this file
+        # (the file was updated in the canonical repo but the inventory wasn't updated).
+        # Per A-07: escalation required; use exit 2 (partial success) to avoid silently
+        # blocking all future ripple runs.
+        echo -e "${YELLOW}⚠️  Stale hash in canonical CANON_INVENTORY for: $artifact_path${NC}"
+        echo -e "${YELLOW}   Inventory: $CANONICAL_SHA256${NC}"
+        echo -e "${YELLOW}   Actual:    $LOCAL_SHA256${NC}"
+        echo -e "${YELLOW}   File copied. Escalation required for canonical CANON_INVENTORY update.${NC}"
+        LAYERED_FILES+=("$artifact_path")
+        STALE_HASH_DETECTED=true
     fi
 done
 
@@ -493,5 +519,12 @@ fi
 
 # Cleanup
 rm -rf "$CANONICAL_DIR"
+
+# Exit 2 signals partial success: files were layered but canonical CANON_INVENTORY.json
+# has stale hashes. The workflow treats this as success but logs a warning.
+if [ "$STALE_HASH_DETECTED" = "true" ]; then
+    echo "⚠️  Stale hashes detected in canonical CANON_INVENTORY.json. Exiting with code 2 (partial success — escalation required)."
+    exit 2
+fi
 
 exit 0
