@@ -367,3 +367,5 @@
 | 2026-03-02 | independent-assurance-agent | session-098 | [PHASE-4] | S-017: PREHANDOVER template checklist 'IAA audit token recorded' item should default to unchecked/PENDING to prevent Foreman pre-filling anticipated -PASS tokens before ASSURANCE-TOKEN is issued | session-098-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-098 | [PHASE-4] | S-018: Session memory template iaa_audit_token and delegation result fields need DO-NOT-POPULATE-UNTIL-POST-CEREMONY warning comment to prevent A-017 pre-fill violations | session-098-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-098 | [PHASE-3] | A-023 elevated: pre-filling ceremony artifact token fields with anticipated -PASS before ASSURANCE-TOKEN issued = CORE-007 + potential A-017 breach; Foreman must use PENDING in all fields until Post-ASSURANCE-TOKEN ceremony | session-098-20260302.md |
+
+| 2026-03-02 | independent-assurance-agent | session-099 | Phase 4 | A-023 should include a worked example distinguishing narrative-prose workflow descriptions (acceptable) from iaa_audit_token field pre-fills (breach) to prevent over/under-application | session-099-20260302.md |
