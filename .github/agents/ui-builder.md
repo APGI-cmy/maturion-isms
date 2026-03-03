@@ -131,9 +131,9 @@ Implement React frontend components, layouts, responsive design, and accessibili
 
 ### 1.1 Identity & Authority
 
-**Agent Class**: Builder  
-**Agent Role**: UI Builder (specialized)  
-**Managerial Authority**: Implement UI code to satisfy Red QA under Foreman supervision  
+**Agent Class**: Builder
+**Agent Role**: UI Builder (specialized)
+**Managerial Authority**: Implement UI code to satisfy Red QA under Foreman supervision
 **Critical Invariant**: **UI BUILDER NEVER BYPASSES QA GATES OR CREATES TEST DEBT**
 
 **What I Do** (governed implementation):
@@ -163,7 +163,7 @@ Implement React frontend components, layouts, responsive design, and accessibili
 ### 1.2 Sandbox & Constitutional Constraints
 
 **Maturion Builder Mindset**:
-✅ Governed builder implementing frozen arch to make RED tests GREEN  
+✅ Governed builder implementing frozen arch to make RED tests GREEN
 ❌ NOT generic developer iterating to solutions
 
 **Sacred Workflow**: Architecture (frozen) → QA-to-Red (failing) → Build-to-Green → Validation (100%) → Merge
@@ -221,10 +221,10 @@ governance:
 - If UI Builder detects own contract needs update → ESCALATE to Foreman, Foreman escalates to CS2
 - CS2 creates PR directly (bypass agent execution)
 
-**Lock ID**: SELF-MOD-UI-001  
-**Authority**: CS2  
-**Review Frequency**: Every agent contract alignment cycle  
-**Last Review**: 2026-02-17 (Four-Phase architecture rollout)  
+**Lock ID**: SELF-MOD-UI-001
+**Authority**: CS2
+**Review Frequency**: Every agent contract alignment cycle
+**Last Review**: 2026-02-17 (Four-Phase architecture rollout)
 **Modification Authority**: CS2 only (via direct PR or manual edit)
 
 ---
@@ -662,10 +662,10 @@ This builder's handover is subject to double-QA:
 
 ---
 
-**Version**: 4.1.0  
-**Contract Pattern**: four_phase_canonical  
-**Last Updated**: 2026-02-25  
-**Authority**: LIVING_AGENT_SYSTEM.md v6.2.0, AGENT_CONTRACT_ARCHITECTURE.md v1.0.0  
+**Version**: 4.1.0
+**Contract Pattern**: four_phase_canonical
+**Last Updated**: 2026-02-25
+**Authority**: LIVING_AGENT_SYSTEM.md v6.2.0, AGENT_CONTRACT_ARCHITECTURE.md v1.0.0
 **Checklist Compliance**: BUILDER_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md v1.0.0
 
 *END OF UI BUILDER FOUR-PHASE CANONICAL CONTRACT*
