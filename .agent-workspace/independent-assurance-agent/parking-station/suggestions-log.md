@@ -196,3 +196,4 @@
 | 2026-03-03 | independent-assurance-agent | session-112 | [PHASE-4] | Add pre-IAA commit check to CodexAdvisor closure template — `git status` gate prevents A-021 repeat | session-112-20260303.md |
 | 2026-03-03 | independent-assurance-agent | session-112 | [PHASE-4] | PREHANDOVER template missing `## IAA Agent Response (verbatim)` stub — causes CORE-016 section-absent failure | session-112-20260303.md |
 | 2026-03-03 | independent-assurance-agent | session-112 | [PHASE-4] | PREHANDOVER template missing `## Ripple Assessment` stub — causes OVL-AC-012/A-023 failure; A-020 and session-110 suggestion not yet applied | session-112-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-113 | Phase 3/OVL-AC-011 | PREHANDOVER template should have dual-column Chars Before/After; rewrite-regression risk identified — treat PREHANDOVER as additive not replacement | session-113-20260303.md |

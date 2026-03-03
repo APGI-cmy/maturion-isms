@@ -21,13 +21,13 @@
 
 ## Per-File Character Counts (counted, not estimated)
 
-| File | Chars After | Limit | Status |
-|------|-------------|-------|--------|
-| `.github/agents/api-builder.md` | 26,538 | 30,000 | ✅ WITHIN LIMIT |
-| `.github/agents/ui-builder.md` | 29,876 | 30,000 | ✅ WITHIN LIMIT |
-| `.github/agents/schema-builder.md` | 28,638 | 30,000 | ✅ WITHIN LIMIT |
-| `.github/agents/qa-builder.md` | 29,815 | 30,000 | ✅ WITHIN LIMIT |
-| `.github/agents/integration-builder.md` | 29,597 | 30,000 | ✅ WITHIN LIMIT |
+| File | Chars Before | Chars After | Limit | Status |
+|------|-------------|-------------|-------|--------|
+| `.github/agents/api-builder.md` | 26,041 | 26,550 | 30,000 | ✅ WITHIN LIMIT |
+| `.github/agents/ui-builder.md` | 29,797 | 29,942 | 30,000 | ✅ WITHIN LIMIT |
+| `.github/agents/schema-builder.md` | 28,141 | 28,708 | 30,000 | ✅ WITHIN LIMIT |
+| `.github/agents/qa-builder.md` | 29,736 | 29,826 | 30,000 | ✅ WITHIN LIMIT |
+| `.github/agents/integration-builder.md` | 29,100 | 29,672 | 30,000 | ✅ WITHIN LIMIT |
 
 ---
 
