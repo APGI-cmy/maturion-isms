@@ -788,6 +788,20 @@ for an IAA verdict.
 > HANDOVER_SUMMARY.md]
 > Awaiting: ASSURANCE-TOKEN (PASS) or REJECTION-PACKAGE (FAIL)"
 
+> ⛔ **DO NOT ADVANCE PAST THIS LINE. TOOL CALL REQUIRED.**
+>
+> You MUST now invoke the Independent Assurance Agent via a tool call:
+>
+> `task(agent_type: "independent-assurance-agent")`
+>
+> **Rules:**
+> - You MUST make the tool call **before** writing any `iaa_audit_token` value other than `PENDING`.
+> - Writing `PHASE_A_ADVISORY` (or any token) **without** attempting the tool call is a governance violation (INC-IAA-SKIP class).
+> - “Phase A advisory mode” is only permitted **if and only if** the tool call fails due to tool unavailability. In that case:
+>   1) paste the tool error verbatim into the PREHANDOVER proof,
+>   2) escalate to CS2,
+>   3) then proceed under advisory mode.
+
 **If IAA is not yet deployed** (Phase A advisory):
 > "IAA not yet deployed (Phase A). Logging invocation attempt. Proceeding under advisory mode.
 > IAA phase status: PHASE_A_ADVISORY. This PR is flagged for IAA review once Phase B activates."
