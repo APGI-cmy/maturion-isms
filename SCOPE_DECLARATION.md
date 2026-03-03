@@ -1,32 +1,41 @@
 # Scope Declaration
 
-**Issue**: Wave 13 Governance Failure: Post-deployment audit schema/cache miss + profile save broken (record, RCA, wire fix)
+**Issue**: Wave 13 Governance Failure + PR Review Findings (Addendum B+C + session-096 hardening)
 **Date**: 2026-03-03
-**Agent**: foreman-v2-agent (session-095, v6.2.0)
+**Agent**: foreman-v2-agent (session-095 + session-096, v6.2.0)
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ---
 
 ## Purpose
 
-This PR delivers Wave 13 Addendum B (two production-stopper fixes) + Addendum C (full Supabase table population pathway audit):
+This PR delivers:
 
+**Session-095 — Wave 13 Addendum B+C:**
 1. Audit schema cache miss: adds missing audit_period_start/audit_period_end columns to audits table (INC-W13-AUDIT-SCHEMA-001)
 2. Profile save broken: fixes useSettings.ts user_profiles -> profiles table name (INC-W13-PROFILE-TABLE-001)
 3. Table pathway audit: 4 additional migrations + 8 new drift-detection tests (T-W13-SCH-5 to T-W13-SCH-12)
+
+**Session-096 — Wave 13 PR Review Findings:**
+4. audit-documents RLS hardening with org-path isolation (INC-W13-BUCKET-RLS-001)
+5. audit_scores table migration (INC-W13-AUDIT-SCORES-001)
+6. SCOPE_DECLARATION.md duplicate section removed
+7. Column-level drift tests (T-W13-SCH-13 to T-W13-SCH-16) + T-W13-SCH-11 regex hardened
 
 ---
 
 ## Files Changed
 
-**Total Files**: 21
+**Total Files**: 22
 
 All files in this PR are explicitly listed below (required by BL-027):
 
-- `SCOPE_DECLARATION.md` - this file (updated for this PR; duplicate legacy section removed)
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-095-wave13-addendum-bc-20260303.md` - PREHANDOVER proof
-- `.agent-workspace/foreman-v2/memory/session-095-wave13-addendum-bc-20260303.md` - session memory
-- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - parking station append
+- `SCOPE_DECLARATION.md` - this file (updated for session-096)
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-095-wave13-addendum-bc-20260303.md` - session-095 PREHANDOVER proof (IAA token: IAA-session-117-20260303-PASS)
+- `.agent-workspace/foreman-v2/memory/session-095-wave13-addendum-bc-20260303.md` - session-095 memory
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-096-wave13-pr-review-findings-20260303.md` - session-096 PREHANDOVER proof
+- `.agent-workspace/foreman-v2/memory/session-096-wave13-pr-review-findings-20260303.md` - session-096 memory
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - parking station append (sessions 095 + 096)
 - `.agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md` - A-026 codified by IAA (session-116)
 - `.agent-workspace/independent-assurance-agent/knowledge/index.md` - version bump to 1.9.0 by IAA (session-116)
 - `.agent-workspace/independent-assurance-agent/memory/session-115-20260303.md` - IAA session-115 memory
@@ -56,9 +65,9 @@ All other files: governance documentation and schema DDL (additive only, no data
 
 ## Signature
 
-**Scope Declared By**: foreman-v2-agent (session-095, v6.2.0)
+**Scope Declared By**: foreman-v2-agent (session-095 + session-096, v6.2.0)
 **Date**: 2026-03-03
-**Issue**: Wave 13 Governance Failure: Post-deployment audit schema/cache miss + profile save broken
+**Issue**: Wave 13 Governance Failure + PR Review Findings
 
 ---
 
