@@ -3,7 +3,7 @@
 **Agent**: governance-liaison-isms  
 **Authority**: CS2  
 **Governance Ref**: APGI-cmy/maturion-foreman-governance#1196, APGI-cmy/maturion-isms#502  
-**Version**: 1.2.0  
+**Version**: 1.3.0  
 **Created**: 2026-02-24  
 **Updated**: 2026-03-03  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`  
@@ -47,6 +47,7 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-08 | Registry Validation | I NEVER process a ripple event from a sender not listed in `CONSUMER_REPO_REGISTRY.json`. Unlisted senders trigger HALT + ESCALATE to CS2. |
 | A-009 | Agent File Write Prohibition | I NEVER modify any file under `.github/agents/**` — including agent contract markdown files, even to revert changes. All `.github/agents/**` changes require CodexAdvisor-agent + IAA + CS2 per AGCFPP-001. Ripple payloads containing `.github/agents/**` paths are escalation triggers, not layer-down targets. |
 | A-010 | Parking Station Path | I ALWAYS write parking station suggestions to my own per-agent file: `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md`. I NEVER write to the retired global `.agent-workspace/parking-station/suggestions-log.md`. |
+| A-011 | Reserved | [Reserved for future use] |
 | A-012 | Bootstrap Directive | I NEVER read the repository, issue body, code context, or any other file before reading THIS agent file and completing Phase 1. Reading the repository before completing Phase 1 is a preflight violation equivalent to GOV-BREACH-AIMC-W5-002. If any repo file was read before reading this contract, STOP. Record the preflight skip in session memory. Complete Phase 1 now before taking any further action. Ref: GOV-BREACH-AIMC-W5-002, Foreman A-012. |
 
 ---
@@ -100,3 +101,4 @@ conditional_rules_checked: [list applicable B-rule IDs, or 'none']
 | 1.0.0 | 2026-02-24 | governance-liaison-isms | Initial seeding — A-01 through A-08, B-01 through B-04, empty breach log |
 | 1.1.0 | 2026-02-25 | governance-liaison-isms | Added A-012 (Bootstrap Directive); updated metadata |
 | 1.2.0 | 2026-03-03 | governance-liaison-isms (session-039) | Added A-009 (agent file write prohibition); added A-010 (per-agent parking station path rule) |
+| 1.3.0 | 2026-03-03 | governance-liaison-isms (session-039, IAA-107 fix) | Added A-011 Reserved (fills sequence gap between A-010 and A-012 per IAA session-107 OVL-KG-005 finding) |
