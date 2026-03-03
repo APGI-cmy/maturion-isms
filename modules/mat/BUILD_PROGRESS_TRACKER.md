@@ -2399,3 +2399,101 @@ Task 13.B.2: ui-builder     → fix useSettings.ts: user_profiles → profiles (
 | — | MIGRATION PENDING | schema-builder to create period columns migration |
 | — | HOOK FIX PENDING | ui-builder to rename `user_profiles` → `profiles` in `useSettings.ts` |
 | — | CI-CERTIFIED | All fixes GREEN in CI |
+
+---
+
+## Wave 13 Addendum C: Full Supabase Table Population Pathway Audit
+
+**Identified**: 2026-03-03 (new requirement — "We Only Fail Once" class-of-problem fix)  
+**Status**: 🚨 IN PROGRESS — Audit complete; delegation issued for missing migrations and tests  
+**Session**: session-095 (foreman-v2-agent v6.2.0)  
+**Mandate**: Every table referenced in the frontend codebase must be audited: migration exists, correct table name, column completeness, write+read test coverage. Any gap must be logged and remediated before the wave closes.
+
+### Full Table Pathway Audit
+
+Every `supabase.from('...')` call in `modules/mat/frontend/src/lib/` was enumerated and cross-checked against:
+1. Production migrations in `apps/maturion-maturity-legacy/supabase/migrations/`
+2. Data architecture in `modules/mat/02-architecture/data-architecture.md`
+3. Existing schema existence tests in `modules/mat/tests/wave13/schema-existence.test.ts`
+
+#### Audit Results — Database Tables
+
+| Table | Files | In Migration | In Architecture | Correct Name in Hooks | Column Coverage | Test | Gap ID | Status |
+|-------|-------|-------------|-----------------|----------------------|-----------------|------|--------|--------|
+| `audits` | useAudits.ts, api/audits.ts, useAuditMetrics.ts | ✅ `20260302000000_mat_core_tables.sql` | ✅ §1.1.3 | ✅ | ❌ `audit_period_start`, `audit_period_end` missing | T-W13-SCH-1 (table only) | INC-W13-AUDIT-SCHEMA-001 | ✅ FIXED: `20260303000000_audits_add_period_columns.sql` |
+| `profiles` | api/profile.ts, useSettings.ts | ✅ `20260302000000_mat_core_tables.sql` | ✅ §1.1.2 | ❌ was `user_profiles` | ✅ | None | INC-W13-PROFILE-TABLE-001 | ✅ FIXED: `useSettings.ts` corrected |
+| `domains` | useCriteria.ts | ✅ `20260302000000_mat_core_tables.sql` | ✅ §1.1.4 | ✅ | ⚠️ Not tested at column level | T-W13-SCH-3 (table only) | — | ⚠️ Column test gap |
+| `criteria` | (indirect — via joins) | ✅ `20260302000000_mat_core_tables.sql` | ✅ §1.1.6 | ✅ | ⚠️ Not tested at column level | T-W13-SCH-2 (table only) | — | ⚠️ Column test gap |
+| `evidence` | useEvidence.ts, useScoring.ts | ❌ NOT in MAT migration | ✅ §1.1.7 | ✅ | ❌ No migration | None | INC-W13-EVIDENCE-TABLE-001 | 🔴 MISSING MIGRATION |
+| `scores` | useScoring.ts | ❌ NOT in any migration | ❌ Architecture has `ai_scoring_results` | ❌ Drift: frontend uses `scores`, arch says `ai_scoring_results` | ❌ No migration | None | INC-W13-SCORES-TABLE-001 | 🔴 MISSING MIGRATION + TABLE NAME DRIFT |
+| `audit_scores` | useAuditMetrics.ts | ❌ NOT in any migration | ❌ Not defined | ⚠️ | ❌ No migration (guarded with try/catch in code) | None | INC-W13-AUDIT-SCORES-001 | 🟡 DEFERRED (guarded; low severity) |
+| `organisation_settings` | useSettings.ts | ❌ NOT in any migration | ❌ Not in data-architecture.md | ✅ | ❌ No migration | None | INC-W13-ORG-SETTINGS-001 | 🔴 MISSING MIGRATION + ARCHITECTURE GAP |
+
+#### Audit Results — Supabase Storage Buckets
+
+| Bucket | Files | In Migration | In Architecture | Status |
+|--------|-------|-------------|-----------------|--------|
+| `audit-documents` | useCriteria.ts, useEvidence.ts | ❌ Not in migration | ⚠️ Referenced as storage path convention (§2.1) | 🔴 BUCKET CREATION NOT IN MIGRATION |
+| `organisation-assets` | useSettings.ts | ❌ Not in migration | ❌ Not mentioned in data-architecture.md | 🔴 BUCKET CREATION NOT IN MIGRATION |
+
+#### Column-Level Completeness Check — `audits` Table
+
+| Column from data-architecture.md §1.1.3 | In `20260302000000_mat_core_tables.sql` | In `20260303000000_audits_add_period_columns.sql` | Status |
+|---|---|---|---|
+| id | ✅ | — | ✅ |
+| organisation_id | ✅ | — | ✅ |
+| title | ✅ | — | ✅ |
+| organisation_name | ❌ | — | 🟡 Arch specifies, migration omits (not yet used by frontend) |
+| facility_location | ❌ | — | 🟡 Arch specifies, migration omits (not yet used by frontend) |
+| audit_lead_id | ❌ | — | 🟡 Arch specifies, migration omits (not yet used by frontend) |
+| audit_period_start | ❌ | ✅ Added | ✅ FIXED |
+| audit_period_end | ❌ | ✅ Added | ✅ FIXED |
+| status | ✅ (simplified CHECK) | — | ✅ |
+| criteria_approved | ❌ | — | 🟡 Arch specifies, migration omits |
+| criteria_approved_at | ❌ | — | 🟡 Arch specifies, migration omits |
+| criteria_approved_by | ❌ | — | 🟡 Arch specifies, migration omits |
+| created_by | ✅ | — | ✅ |
+| created_at | ✅ | — | ✅ |
+| updated_at | ✅ | — | ✅ |
+| deleted_at | ✅ | — | ✅ |
+
+**Note**: Columns marked 🟡 are in the architecture but not yet used by the current frontend. They are deferred to a future migration wave. Only actively-used columns (`audit_period_start`, `audit_period_end`) are urgent.
+
+### Incident Registry (Addendum C)
+
+| Incident ID | Description | Severity | Migration Required | Status |
+|---|---|---|---|---|
+| INC-W13-AUDIT-SCHEMA-001 | `audit_period_start`/`audit_period_end` missing from `audits` table | CRITICAL | `20260303000000_audits_add_period_columns.sql` | ✅ FIXED |
+| INC-W13-PROFILE-TABLE-001 | `useSettings.ts` used `user_profiles` instead of `profiles` | CRITICAL | None (hook fix) | ✅ FIXED |
+| INC-W13-EVIDENCE-TABLE-001 | `evidence` table missing from production migration | CRITICAL | `20260303000001_evidence_table.sql` | 🔴 DELEGATED |
+| INC-W13-SCORES-TABLE-001 | `scores` table missing; arch/hook name drift (`ai_scoring_results` vs `scores`) | HIGH | `20260303000002_scores_table.sql` | 🔴 DELEGATED |
+| INC-W13-ORG-SETTINGS-001 | `organisation_settings` table missing from migration and architecture | HIGH | `20260303000003_organisation_settings_table.sql` | 🔴 DELEGATED |
+| INC-W13-AUDIT-SCORES-001 | `audit_scores` table missing; guarded by try/catch in code | LOW | Deferred | 🟡 DEFERRED |
+| INC-W13-BUCKET-001 | `audit-documents` + `organisation-assets` storage buckets not created in migration | MEDIUM | `20260303000004_storage_buckets.sql` | 🔴 DELEGATED |
+| INC-W13-COL-TEST-001 | Schema existence tests only assert table presence, not column presence | MEDIUM | New tests T-W13-SCH-5+ | 🔴 DELEGATED |
+
+### Delegation Sequence (Addendum C)
+
+```
+Task 13.C.1: schema-builder → Create missing table migrations (evidence, scores, organisation_settings, storage buckets)
+Task 13.C.2: qa-builder     → Add column-level and table-name-drift schema tests (T-W13-SCH-5 to T-W13-SCH-12)
+```
+
+### Structural Governance Improvement (WGI-07 — "We Only Fail Once")
+
+| # | Failure Pattern | Structural Improvement |
+|---|----------------|----------------------|
+| WGI-07 | Tables referenced in frontend hooks have no systematic cross-check against migrations or architecture | **Mandatory pre-wave-close table pathway audit**: enumerate every `.from('...')` in frontend, cross-check migration existence, column completeness, and correct name. Must produce an audit table logged in BUILD_PROGRESS_TRACKER.md before any wave is declared CI-CERTIFIED. |
+| WGI-08 | Schema existence tests only cover table presence — column presence silently unverified | Schema tests must assert column presence for every column actively used by the frontend. Column-level tests required alongside table-level tests. |
+| WGI-09 | Storage bucket creation not included in migration files | Supabase Storage bucket creation (via `supabase.storage.createBucket()` or SQL equivalent) must be in an idempotent migration, not only assumed from the Supabase dashboard. |
+
+### State Machine
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-03 | AUDIT COMPLETE | All 9 database table + 2 storage bucket references enumerated and classified |
+| 2026-03-03 | CRITICAL GAPS FIXED | INC-W13-AUDIT-SCHEMA-001 + INC-W13-PROFILE-TABLE-001 resolved |
+| 2026-03-03 | DELEGATION ISSUED | schema-builder (Task 13.C.1) + qa-builder (Task 13.C.2) delegated |
+| — | MIGRATION COMPLETE | evidence, scores, organisation_settings, storage bucket migrations merged |
+| — | TESTS GREEN | T-W13-SCH-5 to T-W13-SCH-12 all GREEN |
+| — | WAVE CLOSED | All audit gaps logged and remediated; "We Only Fail Once" — this class of gap is now impossible to ship undetected |
