@@ -450,7 +450,7 @@ Mandatory structural rules: load from the non-negotiables checklist (Step 3.1 â€
 If during drafting you identify an improvement suggestion for any governance document, canon,
 checklist, or agent file â€” park it immediately. Do not defer to end of session.
 
-Open `.agent-workspace/parking-station/suggestions-log.md` (create if absent).
+Open `.agent-workspace/CodexAdvisor-agent/parking-station/suggestions-log.md` (create if absent).
 Append one line per suggestion: `| YYYY-MM-DD | CodexAdvisor-agent | session-NNN | DRAFT-PHASE | <summary> |`
 
 This prevents suggestions from being lost if the session ends unexpectedly.
@@ -557,7 +557,7 @@ Use `.agent-workspace/CodexAdvisor-agent/knowledge/session-memory-template.md` a
 
 **Parking Station (mandatory):**
 Ensure all in-session parking entries from Step 3.5 are present in
-`.agent-workspace/parking-station/suggestions-log.md`.
+`.agent-workspace/CodexAdvisor-agent/parking-station/suggestions-log.md`.
 Add any new end-of-session suggestions now.
 Format: `| YYYY-MM-DD | CodexAdvisor-agent | session-NNN | [DRAFT-PHASE/SESSION-END] | <summary> | <session-file> |`
 

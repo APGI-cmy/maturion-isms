@@ -536,7 +536,7 @@ A blank Suggestions field is a session memory integrity failure and a **HANDOVER
 
 **Parking Station (mandatory):**
 Ensure all in-session improvement suggestions are appended to
-`.agent-workspace/parking-station/suggestions-log.md`.
+`.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md`.
 Format: `| YYYY-MM-DD | independent-assurance-agent | session-NNN | [phase] | <one-sentence summary> | <session-filename> |`
 
 **Learning integration (mandatory):**

@@ -598,7 +598,7 @@ If no degradation was observed, state a specific positive observation:
 A blank Suggestions field is a **HANDOVER BLOCKER**. The merge gate will not be released.
 
 **Parking Station (mandatory):**
-Append one-line summary per in-session suggestion to `.agent-workspace/parking-station/suggestions-log.md` (create if absent).
+Append one-line summary per in-session suggestion to `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` (create if absent).
 Format: `| YYYY-MM-DD | foreman-v2-agent | session-NNN | [ORCHESTRATION/SESSION-END] | <one-sentence summary> | <session-memory-filename> |`
 
 **Step 4.3a — IAA Independent Audit (MANDATORY — BLOCKING):**

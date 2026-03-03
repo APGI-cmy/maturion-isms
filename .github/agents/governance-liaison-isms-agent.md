@@ -715,7 +715,7 @@ Output:
      - `roles_invoked`, `governance_artifacts_aligned`, `escalations_triggered`
      - `iaa_invocation_result: [ASSURANCE-TOKEN / REJECTION-PACKAGE / NOT_REQUIRED / PENDING]`
    - **Suggestions for Improvement (MANDATORY — this field may NEVER be blank)**
-   - **Parking Station**: Append one-line summary per suggestion to `.agent-workspace/parking-station/suggestions-log.md` (create if absent). Format: `| YYYY-MM-DD | governance-liaison-isms | session-NNN | [ALIGNMENT/SESSION-END] | <one-sentence summary> | <session-memory-filename> |`
+   - **Parking Station**: Append one-line summary per suggestion to `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md` (create if absent). Format: `| YYYY-MM-DD | governance-liaison-isms | session-NNN | [ALIGNMENT/SESSION-END] | <one-sentence summary> | <session-memory-filename> |`
 
 3. **Memory Rotation**:
    - If >5 sessions exist, move oldest to `memory/.archive/`
