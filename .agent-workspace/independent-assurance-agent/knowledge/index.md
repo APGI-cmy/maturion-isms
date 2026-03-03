@@ -15,7 +15,7 @@
 | `index.md` (this file) | Knowledge entry point and version reference | 1.5.0 | PRESENT |
 | `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.3.0 | PRESENT — Rules A-001 through A-019 active (A-018 renumbered from dup A-004; A-019 renumbered from dup A-016) |
 | `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.4.0 | ACTIVE — CORE-001 to CORE-021; CORE-021 enforces Zero-Severity-Tolerance Rule |
-| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.5.0 | PRESENT — Rules A-001 through A-022 active (A-021 codified from sessions 090/091 candidate; A-022 added session-092 — re-evaluate trigger categories on every invocation) |
+| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.6.0 | PRESENT — Rules A-001 through A-023 active (A-023 added session-102 — PREHANDOVER SHA256 table must be computed as final pre-IAA step) |
 | `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.3.0 | ACTIVE — CORE-001 to CORE-020; CORE-007 updated with PENDING carve-out note |
 | `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.1.0 | ACTIVE — KNOWLEDGE_GOVERNANCE trigger category added |
 | `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE) | 2.2.0 | ACTIVE — OVL-KG-001 through OVL-KG-005 added |
@@ -115,6 +115,7 @@ that produced the work under review. Every invocation is logged in session memor
 | 1.5.0 | 2026-03-02 | Added IAA_ZERO_SEVERITY_TOLERANCE.md v1.0.0; iaa-core-invariants-checklist.md v2.4.0 (CORE-021 zero-severity-tolerance enforcement) |
 | 1.4.0 | 2026-03-02 | A-020 added (PREHANDOVER template staleness); Stub Population Status section added; all stub files populated |
 | 1.5.0 | 2026-03-02 | A-021 codified (commit before IAA invocation — sessions 090/091 candidate elevated); A-022 added (re-evaluate trigger categories every invocation — session-092 OVL-KG-004 learning); index and FAIL-ONLY-ONCE versions updated to 1.5.0 |
+| 1.6.0 | 2026-03-03 | A-023 added (PREHANDOVER SHA256 table must be computed as final pre-IAA step — stale hash = CORE-020 FAIL; second-occurrence pattern from sessions 097+102); FAIL-ONLY-ONCE.md updated to v1.6.0 |
 
 ---
 

@@ -473,6 +473,33 @@ This rule is especially critical for PRs where remediation commits are added bet
 
 ---
 
+### A-023 — PREHANDOVER SHA256 Table Must Be Computed As Final Pre-IAA Step
+
+**Triggered by**: sessions 097 and 102 — PREHANDOVER SHA256 table stale in both sessions.
+- Session-097 (PR #805): PREHANDOVER SHA256 table was computed before session memory was finalized, producing a stale hash.
+- Session-102 (session-040 round 2): PREHANDOVER-session-040-20260303.md SHA256 table claimed `f0f51433...` for session-040-20260303.md but actual committed hash was `3141a7ed...` — session memory was amended after the SHA256 table was written.
+
+**Incident**: In both cases, the producing agent wrote the PREHANDOVER SHA256 table as an intermediate step and then continued modifying artifacts (session memory, parking station entry, IAA invocation results), invalidating the table. The PREHANDOVER was committed with incorrect hashes, causing a CORE-020 evidence integrity failure.
+
+**Permanent Rule**:
+The PREHANDOVER SHA256 table (listing artifact hashes) MUST be computed as the **absolute last action** before invoking IAA. The sequence is mandatory:
+1. Finalize ALL artifacts (session memory, escalations, FAIL-ONLY-ONCE, all evidence files)
+2. Run `sha256sum` on each listed file
+3. Update SHA256 table in PREHANDOVER proof
+4. Commit (making SHA256 table the last committed content)
+5. THEN invoke IAA
+
+Any artifact modification after SHA256 computation invalidates the table and requires full recomputation before IAA invocation. A stale or incorrect SHA256 table in the PREHANDOVER proof = REJECTION-PACKAGE under CORE-020.
+
+**Check in Phase 3 (CORE-020)**:
+> FAIL-ONLY-ONCE A-023: Verify every SHA256 hash in the PREHANDOVER SHA256 table against the
+> actual committed file. Run `sha256sum <file>` for each entry. Any mismatch = CORE-020 FAIL.
+> Stale hash tables are a recurring pattern — do not accept hash claims at face value.
+
+**Status**: ACTIVE — formalized from sessions 097 + 102 second-occurrence pattern
+
+---
+
 ## Version History
 
 | Version | Date | Change |
@@ -483,6 +510,7 @@ This rule is especially critical for PRs where remediation commits are added bet
 | 1.3.0 | 2026-03-02 | A-018 renumbered from duplicate A-004 (post-merge retrospective); A-019 renumbered from duplicate A-016 (trigger table misapplication); duplicate rule ID deduplication patch (maturion-isms#IAA-TIER2) |
 | 1.4.0 | 2026-03-02 | A-020 (PREHANDOVER template staleness — template must be kept current with overlay requirements) added from session-088 Wave 13 REJECTION-PACKAGE learning |
 | 1.5.0 | 2026-03-02 | A-021 (commit and push before IAA invocation — working-tree fix is not a committed fix) codified from sessions 090/091 CANDIDATE; A-022 (re-evaluate trigger categories on every invocation — do not carry forward prior session classification) added from session-092 OVL-KG-004 finding |
+| 1.6.0 | 2026-03-03 | A-023 (PREHANDOVER SHA256 table must be computed as final pre-IAA step — stale hash = CORE-020 FAIL) formalized from sessions 097 + 102 second-occurrence pattern |
 
 ---
 
