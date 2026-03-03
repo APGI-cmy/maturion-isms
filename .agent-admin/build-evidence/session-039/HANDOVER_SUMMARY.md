@@ -30,8 +30,8 @@ update Tier 2 knowledge; escalate agent contract updates (outside scope).
 | `.agent-workspace/integration-builder/parking-station/suggestions-log.md` | CREATED — 1 migrated entry | (see git) |
 | `.agent-workspace/qa-builder/parking-station/suggestions-log.md` | CREATED — 5 migrated entries | (see git) |
 | `.agent-workspace/schema-builder/parking-station/suggestions-log.md` | CREATED — 1 migrated entry | (see git) |
-| `.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md` | MODIFIED — v1.1.0 — added Parking Station section with per-agent path | `a916a51a0cd5aff570eb18a60deea798f22850f0892b839230831bae262c4651` |
-| `.agent-workspace/governance-liaison-isms/knowledge/FAIL-ONLY-ONCE.md` | MODIFIED — v1.2.0 — added A-09 (agent file write prohibition) and A-010 (per-agent parking station) | `394bcd31fb4ca5ce08fb337c18a0d848b9ada113e73456cfea69a08bf38b8492` |
+| `.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md` | MODIFIED — v1.1.0 — added Parking Station section with per-agent path | `f063dbe5075e8963b44ab12efb5ca2432ede802664fe11298a1433c5ae9446b7` |
+| `.agent-workspace/governance-liaison-isms/knowledge/FAIL-ONLY-ONCE.md` | MODIFIED — v1.2.0 — added A-009 (agent file write prohibition) and A-010 (per-agent parking station) | `8dfb016580c5b1eb426e60a515753f07eac6fb700764df78aed1ba8b019df207` |
 | `.agent-workspace/governance-liaison-isms/knowledge/index.md` | MODIFIED — v1.2.0 — updated FAIL-ONLY-ONCE reference | (see git) |
 | `governance/PER_AGENT_PARKING_STATION_SPEC.md` | CREATED — v1.0.0 — governance spec for per-agent parking station pattern | `6fbf61ebb616456c95f62fe8096aaaf46b34909a610d00025bb87ac50754d908` |
 | `.agent-workspace/governance-liaison-isms/escalation-inbox/escalation-agent-contracts-parking-station-20260303.md` | CREATED — escalation for CodexAdvisor-agent | (see git) |

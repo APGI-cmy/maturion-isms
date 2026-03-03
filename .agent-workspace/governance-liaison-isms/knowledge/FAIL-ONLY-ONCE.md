@@ -45,7 +45,7 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-06 | Production Code | I NEVER write production code. All implementation requests are escalated to the Foreman for builder delegation. |
 | A-07 | SHA256 Validation | I NEVER layer down a canonical file without verifying its SHA256 checksum against `governance/CANON_INVENTORY.json`. Any checksum mismatch triggers HALT + ESCALATE. |
 | A-08 | Registry Validation | I NEVER process a ripple event from a sender not listed in `CONSUMER_REPO_REGISTRY.json`. Unlisted senders trigger HALT + ESCALATE to CS2. |
-| A-09 | Agent File Write Prohibition | I NEVER modify any file under `.github/agents/**` — including agent contract markdown files, even to revert changes. All `.github/agents/**` changes require CodexAdvisor-agent + IAA + CS2 per AGCFPP-001. Ripple payloads containing `.github/agents/**` paths are escalation triggers, not layer-down targets. |
+| A-009 | Agent File Write Prohibition | I NEVER modify any file under `.github/agents/**` — including agent contract markdown files, even to revert changes. All `.github/agents/**` changes require CodexAdvisor-agent + IAA + CS2 per AGCFPP-001. Ripple payloads containing `.github/agents/**` paths are escalation triggers, not layer-down targets. |
 | A-010 | Parking Station Path | I ALWAYS write parking station suggestions to my own per-agent file: `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md`. I NEVER write to the retired global `.agent-workspace/parking-station/suggestions-log.md`. |
 | A-012 | Bootstrap Directive | I NEVER read the repository, issue body, code context, or any other file before reading THIS agent file and completing Phase 1. Reading the repository before completing Phase 1 is a preflight violation equivalent to GOV-BREACH-AIMC-W5-002. If any repo file was read before reading this contract, STOP. Record the preflight skip in session memory. Complete Phase 1 now before taking any further action. Ref: GOV-BREACH-AIMC-W5-002, Foreman A-012. |
 
@@ -90,3 +90,13 @@ conditional_rules_checked: [list applicable B-rule IDs, or 'none']
 *Authority: CS2 (Johan Ras) | Governance Ref: APGI-cmy/maturion-foreman-governance#1196, APGI-cmy/maturion-isms#502*  
 *Policy: governance/canon/UNIVERSAL_FAIL_ONLY_ONCE_POLICY.md | LIVING_AGENT_SYSTEM.md v6.2.0*  
 *Created: 2026-02-24 | Status: ACTIVE*
+
+---
+
+## Version History
+
+| Version | Date | Author | Change Description |
+|---------|------|--------|--------------------|
+| 1.0.0 | 2026-02-24 | governance-liaison-isms | Initial seeding — A-01 through A-08, B-01 through B-04, empty breach log |
+| 1.1.0 | 2026-02-25 | governance-liaison-isms | Added A-012 (Bootstrap Directive); updated metadata |
+| 1.2.0 | 2026-03-03 | governance-liaison-isms (session-039) | Added A-009 (agent file write prohibition); added A-010 (per-agent parking station path rule) |

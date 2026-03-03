@@ -58,12 +58,12 @@ the agent contract YAML, or the directory already established under `.agent-work
 **Repository**: APGI-cmy/maturion-isms
 **Purpose**: Append-only index of improvement suggestions from agent session handovers.
 **Pattern**: Per-agent parking station.
-**Aggregation**: CI reports aggregate all `.agent-workspace/*/parking-station/suggestions-log.md` files.
+**Aggregation**: Planned CI/reporting aggregation will read all `.agent-workspace/*/parking-station/suggestions-log.md` files (see §7).
 
 ---
 
-| Date | Agent | Session | Summary | Detail |
-|------|-------|---------|---------|--------|
+| Date | Agent | Session | Trigger | Summary | Detail |
+|------|-------|---------|---------|---------|--------|
 | YYYY-MM-DD | <agent-id> | session-NNN | [TRIGGER] | One-sentence summary | session-NNN-YYYYMMDD.md |
 ```
 

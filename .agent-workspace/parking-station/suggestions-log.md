@@ -6,7 +6,7 @@
 > [Propagation][Parking Station] (CS2 authority: Johan Ras).
 >
 > **All agents now write exclusively to their own per-agent parking station file:**
-> `.agent-workspace/<agent-name>/parking-station/suggestions-log.md`
+> `.agent-workspace/<agent-workspace-name>/parking-station/suggestions-log.md` (where `<agent-workspace-name>` is the agent's workspace directory name, which may differ from the agent ID)
 >
 > **Historical entries have been migrated to per-agent files:**
 > - `.agent-workspace/CodexAdvisor-agent/parking-station/suggestions-log.md` (21 entries)
@@ -23,7 +23,7 @@
 >
 > **DO NOT APPEND TO THIS FILE.** New suggestions must be written to the agent-specific file.
 >
-> CI/reporting scripts aggregate from `.agent-workspace/*/parking-station/suggestions-log.md`.
+> Planned: future CI/reporting scripts will aggregate from `.agent-workspace/*/parking-station/suggestions-log.md`.
 
 **Repository**: APGI-cmy/maturion-isms
 **Status**: RETIRED — see migration notice above

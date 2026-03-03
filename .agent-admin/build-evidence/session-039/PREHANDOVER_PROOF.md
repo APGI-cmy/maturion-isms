@@ -6,6 +6,7 @@
 **Contract Version**: 3.2.0
 **Issue**: [Propagation][Parking Station] Update all agent contracts to use per-agent parking station file paths
 **Category**: KNOWLEDGE_GOVERNANCE + GOVERNANCE_ADMINISTRATION (parking station infrastructure)
+**iaa_audit_token**: PENDING (IAA session-106 invocation in progress)
 
 ---
 
@@ -48,9 +49,9 @@
 
 | File | Action | SHA256 |
 |------|--------|--------|
-| `.agent-workspace/governance-liaison-isms/knowledge/FAIL-ONLY-ONCE.md` | Added A-09 + A-010 rules; v1.1.0 → v1.2.0 | `394bcd31fb4ca5ce08fb337c18a0d848b9ada113e73456cfea69a08bf38b8492` |
-| `.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md` | Added Parking Station section; v1.0.0 → v1.1.0 | `a916a51a0cd5aff570eb18a60deea798f22850f0892b839230831bae262c4651` |
-| `.agent-workspace/governance-liaison-isms/knowledge/index.md` | Updated FAIL-ONLY-ONCE ref v1.1.0→v1.2.0; knowledge v1.1.0→v1.2.0 | `90cc10166466995d7c9ed1efbe6e7eacd220af1c06c657d8fc93ae04f5e46f47` |
+| `.agent-workspace/governance-liaison-isms/knowledge/FAIL-ONLY-ONCE.md` | Added A-009 + A-010 rules; v1.1.0 → v1.2.0 | `8dfb016580c5b1eb426e60a515753f07eac6fb700764df78aed1ba8b019df207` |
+| `.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md` | Added Parking Station section; v1.0.0 → v1.1.0 | `f063dbe5075e8963b44ab12efb5ca2432ede802664fe11298a1433c5ae9446b7` |
+| `.agent-workspace/governance-liaison-isms/knowledge/index.md` | Updated FAIL-ONLY-ONCE ref v1.1.0→v1.2.0; knowledge v1.1.0→v1.2.0 | `5ea37cfebdb36142ff2a3be7c27fe620f12b18c20ca29a5b00dd300ea9d051df` |
 
 ### Governance Spec (NEW)
 
@@ -105,3 +106,12 @@
 
 *Authority: CS2 (Johan Ras) | LIVING_AGENT_SYSTEM.md v6.2.0*
 *governance-liaison-isms v3.2.0 | 2026-03-03*
+
+---
+
+## IAA Agent Response (verbatim)
+
+> REJECTION-PACKAGE (IAA session-105-20260303) and REJECTION-PACKAGE (IAA session-106-20260303) — 7 failures cited. See full output in session memory.
+> Failures: CORE-016, CORE-018, CORE-019 (iaa_audit_token missing from PREHANDOVER), OVL-KG-001 (ceremony incomplete), OVL-KG-003 (version history tables absent), OVL-KG-004 (index.md stale), OVL-KG-005 (A-09 padding inconsistency not committed).
+> All 7 failures addressed: iaa_audit_token field added, version history tables added to 3 Tier 2 knowledge files, index.md updated, A-09 → A-009 renamed and cross-references updated.
+> Re-invocation pending (IAA session-106).
