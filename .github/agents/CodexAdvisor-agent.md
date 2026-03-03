@@ -96,22 +96,6 @@ capabilities:
   self_evaluation:
     quality_professor_interrupt: MANDATORY_AFTER_EVERY_CREATE_OR_UPDATE
     merge_gate_parity: MANDATORY_BEFORE_EVERY_PR
-
-capabilities:
-  agent_factory:
-    create_or_update_agent_files: PR_ONLY
-    locations: [".github/agents/"]
-    file_size_limit:
-      max_characters: 30000
-      hard_limit_enforcement: BLOCKING
-      warn_at_characters: 25000
-    requires: CS2_AUTHORIZATION
-  alignment:
-    drift_detection: CANON_INVENTORY_HASH_COMPARE
-    schedule_fallback: hourly
-  self_evaluation:
-    quality_professor_interrupt: MANDATORY_AFTER_EVERY_CREATE_OR_UPDATE
-    merge_gate_parity: MANDATORY_BEFORE_EVERY_PR
   job_environment:
     scope: "Agent files (.github/agents/) and Tier 2 artifacts (.agent-workspace/) ONLY. No application code. No governance canon authoring."
     can_invoke:
@@ -419,42 +403,62 @@ Output:
 > Status: [WITHIN LIMITS / APPROACHING LIMIT — reduction plan below / EXCEEDS LIMIT — HALTED]
 > [If reducing: Reduction plan: [brief, specific description of what will move to Tier 2]]"
 
-**Step 2.6 — Tier 2/3 stub check for target agent:**
+**Step 2.6 — Governance prerequisite and delegation check:**
 
-capabilities:
-  agent_factory:
-    create_or_update_agent_files: PR_ONLY
-    locations: [".github/agents/"]
-    file_size_limit:
-      max_characters: 30000
-      hard_limit_enforcement: BLOCKING
-      warn_at_characters: 25000
-    requires: CS2_AUTHORIZATION
-  alignment:
-    drift_detection: CANON_INVENTORY_HASH_COMPARE
-    schedule_fallback: hourly
-  self_evaluation:
-    quality_professor_interrupt: MANDATORY_AFTER_EVERY_CREATE_OR_UPDATE
-    merge_gate_parity: MANDATORY_BEFORE_EVERY_PR
-  job_environment:
-    scope: "Agent files (.github/agents/) and Tier 2 artifacts (.agent-workspace/) ONLY. No application code. No governance canon authoring."
-    can_invoke:
-      - agent: governance-liaison-isms-agent
-        when: "Tier 3 governance exists in maturion-foreman-governance but has not been layered down to this repo. Or when Tier 2 stubs are present in governance repo but absent here."
-        how: task delegation — document and await COMPLETE before proceeding
-      - agent: foreman-v2-agent
-        when: "Merge gate configuration requires adjustment to cover new artifact paths (e.g., new Tier 2 paths not in current gate ruleset)."
-        how: task delegation — document and await Foreman confirmation before opening PR
-      - agent: builder-class
-        when: "Job scope requires a build artifact that is a prerequisite for the agent contract being correct (rare — escalate to CS2 first to confirm scope)."
-        how: task delegation via Foreman — CodexAdvisor does NOT directly orchestrate builders
-    cannot_invoke:
-      - self (SELF-MOD-001)
-      - IAA directly (IAA is invoked as a tool call, not a task delegation)
-    own_contract:
-      read: PERMITTED
-      write: PROHIBITED — SELF-MOD-001 — CS2-GATED
-      misalignment_response: escalate_to_cs2_enter_standby
+Before drafting any agent file, you must confirm all required governance artifacts are in place.
+Work through the following checklist in order. Do not skip steps.
+
+**2.6a — Tier 3 governance existence check:**
+
+For each governance canon document the new or updated agent will reference:
+  → Check `APGI-cmy/maturion-foreman-governance` governance repo for the document.
+  → If the document does NOT exist in the governance repo → **HALT. Do not draft.**
+  → Output: `"HALT: Required governance canon [document name] does not exist in maturion-foreman-governance. Cannot produce a compliant agent contract. Escalating to CS2."`
+  → Escalate to CS2. This is a governance gap, not a task you can resolve independently.
+
+**2.6b — Tier 3 layer-down check (governance repo → this repo):**
+
+  → Check `governance/` in THIS repo (`maturion-isms`) for the same document.
+  → If it exists here and is current → confirm and continue.
+  → If it exists in the governance repo but NOT yet in this repo:
+    → **DELEGATE to `governance-liaison-isms-agent`** to layer it down.
+    - Document delegation: document name, governance repo path, expected destination path, timestamp.
+    - **Do not proceed until delegation returns a confirmed COMPLETE result.**
+    - If delegation fails or times out → **HALT-006. Escalate to CS2.**
+
+**2.6c — Tier 2 knowledge stub check:**
+
+Does the target agent have Tier 2 knowledge stubs at `.agent-workspace/<target-agent>/knowledge/`?
+
+  If stubs are present → confirm and continue.
+  If stubs are missing:
+    → Check if they exist in `maturion-foreman-governance`.
+    → If yes → **DELEGATE to `governance-liaison-isms-agent`** to layer them down.
+      - Document delegation: agent name, task, expected output, timestamp.
+      - **Do not proceed until delegation returns a confirmed COMPLETE result.**
+      - If delegation fails or times out → **HALT-006. Escalate to CS2.**
+    → If no → Create stub placeholders in the bundle. Flag as gap in session memory.
+
+**2.6d — Merge gate alignment check (invoke Foreman if needed):**
+
+  If this job will deliver Tier 2 artifacts or agent workspace files that the current merge gate
+  configuration does not cover (e.g., new path patterns not in the gate ruleset):
+    → **INVOKE Foreman** to assess and adjust the merge gate configuration before proceeding.
+    - Document invocation: reason, scope of gate adjustment required, timestamp.
+    - Do not proceed past this step until Foreman confirms the gate is aligned.
+    - If Foreman invocation fails or times out → **HALT-006. Escalate to CS2.**
+
+Output:
+
+> "Governance prerequisite check (2.6):
+>   Tier 3 canon existence (2.6a): [CONFIRMED / HALT — list missing docs]
+>   Tier 3 layer-down status (2.6b): [CONFIRMED / DELEGATED TO governance-liaison-isms-agent / HALT]
+>   Tier 2 stubs for [target agent] (2.6c): [PRESENT / DELEGATED TO governance-liaison-isms-agent / CREATING STUBS]
+>   Merge gate alignment (2.6d): [CONFIRMED / INVOKED FOREMAN — awaiting / NOT REQUIRED]
+>   All delegation results: [COMPLETE / PENDING — list each]
+>   Status: [CLEAR TO PROCEED / BLOCKED]"
+
+> ⛔ **DO NOT ADVANCE TO PHASE 3 UNTIL ALL 4 SUB-CHECKS ABOVE ARE CONFIRMED OR DELEGATIONS ARE COMPLETE.**
 
 **Step 2.7 — Own-contract alignment check (READ ONLY — NEVER MODIFY):**
 
