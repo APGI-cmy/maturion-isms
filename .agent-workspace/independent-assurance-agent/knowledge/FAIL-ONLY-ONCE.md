@@ -527,6 +527,41 @@ This rule is especially critical for PRs where remediation commits are added bet
 
 ---
 
+<<<<<<< copilot/add-environment-parity-section
+### A-023 — Ceremony Artifacts Must Use PENDING Until Post-ASSURANCE-TOKEN Ceremony — No Pre-Fill of Anticipated -PASS Tokens
+
+**Triggered by**: maturion-isms session-098 (2026-03-02) — PR #816 re-invocation after session-097 REJECTION-PACKAGE.
+During remediation, the Foreman's session-092 memory and the PREHANDOVER proof checklist were populated with
+`iaa_audit_token: IAA-session-097-20260302-PASS` and `result: ASSURANCE-TOKEN IAA-session-097-20260302-PASS`
+before session-097 had issued any ASSURANCE-TOKEN. Since session-097 actually issued a REJECTION-PACKAGE, this
+constituted an A-017 breach (citing REJECTION-PACKAGE as PASS) and a CORE-007 violation (incorrect/fabricated content).
+The PREHANDOVER template anti-misuse comment explicitly warned "Never pre-fill '-PASS'" but was not followed.
+
+**Incident**: Two PR artifacts (PREHANDOVER proof checklist line 111 and foreman session-092 memory) pre-filled
+anticipated ASSURANCE-TOKEN values that referenced a session whose actual verdict was REJECTION-PACKAGE.
+This caused a second REJECTION-PACKAGE (session-098) for a PR whose substantive content was correct.
+
+**Permanent Rule**:
+Ceremony artifacts (`PREHANDOVER-*.md` and `session-NNN-*.md`) must be committed with:
+- `iaa_audit_token: PENDING` in all relevant fields
+- Delegation log `result:` field: `[not yet issued — awaiting IAA session-NNN]` or `REJECTION-PACKAGE (session-NNN) — re-invoked`
+- PREHANDOVER checklist `IAA audit token recorded` item: `- [ ] IAA audit token recorded: [PENDING — awaiting IAA session-NNN verdict]` (UNCHECKED)
+
+Pre-filling any field with an anticipated `-PASS` token value before the ASSURANCE-TOKEN is actually received constitutes:
+1. CORE-007 violation if the field is incorrect (fabricated content)
+2. A-017 violation if the pre-filled token references a session that actually issued REJECTION-PACKAGE
+
+The Post-ASSURANCE-TOKEN ceremony (copying verbatim IAA output, updating token field, committing) is the ONLY
+authorised mechanism for populating ceremony artifact token fields with non-PENDING values.
+
+**Check in Phase 3 (CORE-007 and CORE-019)**:
+> FAIL-ONLY-ONCE A-023: For every `iaa_audit_token` field found in any PR artifact with a non-PENDING value,
+> run CORE-019 cross-verification. Also check PREHANDOVER checklist items — any checked `[x]` IAA token item
+> must reference an ASSURANCE-TOKEN session (not REJECTION-PACKAGE). If the iaa_audit_token field is PENDING
+> but any checklist item or prose in the same file pre-fills a -PASS token → CORE-007 FAIL.
+
+**Status**: ACTIVE — from session-098 (2026-03-02)
+=======
 ### A-023 — OVL-AC-012 Ripple Assessment Is a Standing PREHANDOVER Requirement
 
 **Triggered by**: Recurring pattern across sessions 084, 086, 088, 089, 097, 101 (2026-03-02–03) — OVL-AC-012 (ripple/cross-agent assessment absent) has failed in AGENT_CONTRACT and AAWP_MAT audits repeatedly.
@@ -541,6 +576,7 @@ For every AGENT_CONTRACT PR, the PREHANDOVER proof MUST contain an explicit `## 
 > If absent: FAIL immediately. Session memory is not a substitute.
 
 **Status**: ACTIVE
+>>>>>>> main
 
 ---
 
@@ -554,8 +590,15 @@ For every AGENT_CONTRACT PR, the PREHANDOVER proof MUST contain an explicit `## 
 | 1.3.0 | 2026-03-02 | A-018 renumbered from duplicate A-004 (post-merge retrospective); A-019 renumbered from duplicate A-016 (trigger table misapplication); duplicate rule ID deduplication patch (maturion-isms#IAA-TIER2) |
 | 1.4.0 | 2026-03-02 | A-020 (PREHANDOVER template staleness — template must be kept current with overlay requirements) added from session-088 Wave 13 REJECTION-PACKAGE learning |
 | 1.5.0 | 2026-03-02 | A-021 (commit and push before IAA invocation — working-tree fix is not a committed fix) codified from sessions 090/091 CANDIDATE; A-022 (re-evaluate trigger categories on every invocation — do not carry forward prior session classification) added from session-092 OVL-KG-004 finding |
+<<<<<<< copilot/add-environment-parity-section
+| 1.6.0 | 2026-03-02 | A-023 added: ceremony artifacts must use PENDING until Post-ASSURANCE-TOKEN ceremony — pre-filling anticipated -PASS tokens before ASSURANCE-TOKEN is received = CORE-007 + A-017 breach (session-098 PR #816 learning) |
+=======
 | 1.6.0 | 2026-03-03 | A-023 (OVL-AC-012 ripple assessment is a standing PREHANDOVER requirement for all AGENT_CONTRACT PRs) codified from recurring pattern sessions 084–101 |
+<<<<<<< HEAD
 | 1.7.0 | 2026-03-03 | A-024 (secret field naming — `secret:` prohibited in agent contracts; must use `secret_env_var:`) added from CI scanner failures (job 65529138120) |
+=======
+>>>>>>> main
+>>>>>>> origin/main
 
 ---
 
