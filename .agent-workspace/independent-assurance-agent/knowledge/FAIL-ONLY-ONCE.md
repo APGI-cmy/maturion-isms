@@ -580,6 +580,27 @@ authorised mechanism for populating ceremony artifact token fields with non-PEND
 
 ---
 
+### A-026 — SCOPE_DECLARATION.md Must Be Updated to Exactly Match PR Diff Before IAA Invocation
+
+**Trigger**: IAA session-116 (2026-03-03) — Wave 13 Addendum B+C re-invocation
+**Root Cause**: SCOPE_DECLARATION.md was not updated for the PR branch. It retained Wave 6 QA remediation content (5 old files declared). Actual PR diff contained 14 files. `validate-scope-to-diff.sh` (BL-027 exact set comparison) fails when SCOPE_DECLARATION.md is stale. The PREHANDOVER §4.3 self-report inaccurately stated PASS.
+
+**Rule**: SCOPE_DECLARATION.md must be updated and committed on every PR branch to exactly match the output of `git diff --name-only origin/main...HEAD` before IAA is invoked. A SCOPE_DECLARATION.md that retains content from a prior session, prior PR, or is otherwise not current with the active diff constitutes a `validate-scope-to-diff.sh` (BL-027) failure and is an automatic REJECTION-PACKAGE at merge gate parity.
+
+**IAA Enforcement**: During §4.3 Merge Gate Parity Check, run `validate-scope-to-diff.sh` and inspect exit code. Exit code 1 = REJECTION-PACKAGE citing merge gate parity failure. Do not accept the PREHANDOVER §4.3 self-report at face value — run the script.
+
+**Fix Procedure**:
+1. Run `git diff --name-only origin/main...HEAD | sort` to get the exact file list
+2. Update `SCOPE_DECLARATION.md` — replace the file list section with all files from step 1
+3. Commit and push the updated `SCOPE_DECLARATION.md`
+4. Re-invoke IAA
+
+**Applies To**: All PRs with SCOPE_DECLARATION.md present; all PRs where `validate-scope-to-diff.sh` is a CI gate check
+
+**Status**: ACTIVE — from session-116 (2026-03-03)
+
+---
+
 ## Version History
 
 | Version | Date | Change |
@@ -593,6 +614,7 @@ authorised mechanism for populating ceremony artifact token fields with non-PEND
 | 1.6.0 | 2026-03-03 | A-023 (OVL-AC-012 ripple assessment is a standing PREHANDOVER requirement for all AGENT_CONTRACT PRs) codified from recurring pattern sessions 084–101 |
 | 1.7.0 | 2026-03-03 | A-024 (secret field naming — `secret:` prohibited in agent contracts; must use `secret_env_var:`) added from CI scanner failures (job 65529138120) |
 | 1.8.0 | 2026-03-03 | Conflict resolution: A-023 collision fixed — PR #816 rule renumbered to A-025 (ceremony PENDING rule); A-023 now = OVL-AC-012 ripple assessment; A-024 = secret field naming; A-025 = ceremony PENDING pre-fill prohibition |
+| 1.9.0 | 2026-03-03 | A-026 (SCOPE_DECLARATION.md must match PR diff exactly before IAA invocation — stale declaration = BL-027 merge gate parity failure) added from session-116 (Wave 13 Addendum B+C re-invocation) |
 
 ---
 
