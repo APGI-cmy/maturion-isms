@@ -121,3 +121,4 @@
 | 2026-03-02 | foreman-v2-agent | session-090 | [SESSION-END] | Agent Contract Audit workflow (id 239866721) has 0 runs since 2026-02-28 creation — verify trigger and activation | session-090-cicd-audit-20260302.md |
 | 2026-03-02 | foreman-v2-agent | session-090 | [SESSION-END] | CS2 needs to establish POLC gate override protocol for INC-GENERAL-PURPOSE-001 case (PR #789 validated implementation) | session-090-cicd-audit-20260302.md |
 | 2026-03-03 | foreman-v2-agent | session-092 | [SESSION-END] | ripple-integration.yml check-labels job has unreachable issues-path code after retirement — future cleanup candidate (S-015) | session-092-ripple-cleanup-20260303.md |
+| 2026-03-03 | foreman-v2-agent | session-094 | [ORCHESTRATION] | Auth layer tests must verify full app-level wiring: AuthProvider, QueryClientProvider, ProtectedRoute, and real LoginPage auth calls — not only API helper functions (INC-AUTH-PROVIDER-001) | session-094-wave13addendum-20260303.md |
