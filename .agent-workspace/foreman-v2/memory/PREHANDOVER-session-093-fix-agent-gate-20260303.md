@@ -114,7 +114,7 @@ Issue #846 opened by @APGI-cmy (repository owner, CS2 authority) with instructio
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
 - [x] CI Run Evidence section populated (OVL-CI-005)
 - [x] Environment Parity section populated (OVL-CI-006)
-- [ ] IAA audit token recorded — updated after Step 4.3a
+- [x] IAA audit token recorded: IAA-session-107-20260303-PASS
 
 ---
 
@@ -122,15 +122,28 @@ Issue #846 opened by @APGI-cmy (repository owner, CS2 authority) with instructio
 
 <!-- ANTI-MISUSE: Set iaa_audit_token to PENDING before invoking IAA. Never pre-fill "-PASS". -->
 <!-- After receiving ASSURANCE-TOKEN: follow the Post-ASSURANCE-TOKEN Ceremony in Notes below. -->
-`iaa_audit_token: PENDING`
-
-[IAA verdict to be recorded after Step 4.3a invocation]
+`iaa_audit_token: IAA-session-107-20260303-PASS`
 
 ## IAA Agent Response (verbatim)
-<!-- MANDATORY PER S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) -->
-<!-- Paste the COMPLETE raw output from task(agent_type: "independent-assurance-agent") here -->
 
-[IAA agent output to be pasted verbatim here after invocation]
+```
+═══════════════════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #847 — branch copilot/replace-agent-file-detection-gate
+    foreman-v2-agent session-093
+    Fix Ripple Agent File Detection Gate (Issue #846)
+    Third and final invocation — following session-105 (7 failures)
+    and session-106 (1 failure: OVL-CI-005)
+
+All 29 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+
+Token reference: IAA-session-107-20260303-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate
+Code review: PASS (0 comments)
+CodeQL: PASS (0 alerts)
+═══════════════════════════════════════════════════════════════════════
+```
 
 ---
 
