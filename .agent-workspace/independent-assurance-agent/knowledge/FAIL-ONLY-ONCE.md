@@ -1,8 +1,8 @@
 # IAA FAIL-ONLY-ONCE Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 1.5.0
-**Last Updated**: 2026-03-02
+**Version**: 1.7.0
+**Last Updated**: 2026-03-03
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -511,7 +511,26 @@ Any artifact modification after SHA256 computation invalidates the table and req
 | 1.4.0 | 2026-03-02 | A-020 (PREHANDOVER template staleness — template must be kept current with overlay requirements) added from session-088 Wave 13 REJECTION-PACKAGE learning |
 | 1.5.0 | 2026-03-02 | A-021 (commit and push before IAA invocation — working-tree fix is not a committed fix) codified from sessions 090/091 CANDIDATE; A-022 (re-evaluate trigger categories on every invocation — do not carry forward prior session classification) added from session-092 OVL-KG-004 finding |
 | 1.6.0 | 2026-03-03 | A-023 (PREHANDOVER SHA256 table must be computed as final pre-IAA step — stale hash = CORE-020 FAIL) formalized from sessions 097 + 102 second-occurrence pattern |
+| 1.7.0 | 2026-03-03 | A-024 candidate added (IAA write_paths boundary check — HALT-001 prevention from session-103 first-occurrence pattern) |
 
 ---
 
 **Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
+
+---
+
+### A-024 — CANDIDATE: IAA Must Check Own Commits in PR Branch for Write_Paths Violations
+
+**Date identified**: 2026-03-03
+**Session**: session-103-20260303
+**Occurrence count**: 1 (first — CANDIDATE, not yet full rule)
+**Pattern**: IAA's git identity (`independent-assurance-agent <iaa@maturion-isms>`) was found as the author of commit 5b0a211 in a PR branch, modifying files outside IAA's authorized `write_paths` (`.agent-workspace/governance-liaison-isms/` instead of `.agent-workspace/independent-assurance-agent/`). When IAA then reviewed the PR in a subsequent session (session-103), HALT-001 was triggered at Phase 2 Step 2.2 because IAA cannot review work it authored.
+
+**Root cause**: Unknown — either (a) a prior IAA session intentionally committed outside its write_paths (class boundary violation), or (b) IAA's git identity was used by another agent in error.
+
+**Preventive check** (elevate to A-024 after second occurrence):
+Before Phase 2 Step 2.2, enumerate all commits in the PR branch authored by `independent-assurance-agent`. For each such commit, check whether any modified file is outside `.agent-workspace/independent-assurance-agent/`. If YES → flag as HALT-001 candidate and declare at Step 2.2.
+
+> FAIL-ONLY-ONCE A-024 (CANDIDATE): "Check all PR branch commits authored by IAA's git identity against IAA's write_paths. Any modification outside write_paths = HALT-001 detected at Phase 2 Step 2.2. Record in REJECTION-PACKAGE. Escalate to CS2."
+
+**Status**: CANDIDATE — second occurrence elevates to FULL RULE
