@@ -1272,7 +1272,7 @@ Track the progression through the canonical module lifecycle stages.
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 5 (Build Execution — Wave 12 COMPLETE | Wave 13 CST/CWT/FCWT CI-CERTIFIED COMPLETE ✅; Wave 13 Addendum A: First-User Signup & Auth Failure — 🚨 IN PROGRESS (Issue #855, 2026-03-03) | Wave 13 Addendum B: Audit Schema Cache Miss + Profile Save Broken — 🚨 IN PROGRESS (Issue #[this issue], 2026-03-03)) | Post-Delivery RCA COMPLETE | Wave 10 COMPLETE | Wave 9.10 COMPLETE | Wave 11 COMPLETE | Wave 12 COMPLETE
+**Current Stage**: Stage 5 (Build Execution — Wave 12 COMPLETE | Wave 13 CST/CWT/FCWT CI-CERTIFIED COMPLETE ✅; Wave 13 Addendum A: First-User Signup & Auth Failure — 🚨 IN PROGRESS (Issue #855, 2026-03-03) | Wave 13 Addendum B+C: Audit Schema Cache Miss + Profile Save Broken + Table Pathway Audit — ✅ COMPLETE (2026-03-03)) | Post-Delivery RCA COMPLETE | Wave 10 COMPLETE | Wave 9.10 COMPLETE | Wave 11 COMPLETE | Wave 12 COMPLETE
 **Overall Progress**: 620 tests GREEN (post-Wave 13 CST/CWT/FCWT, 2026-03-03). T-W13-AUTH-1–4 ✅ | T-W13-CI-1–3 ✅ | T-W13-WIRE-1–8 ✅ (all 8 GREEN) | T-W13-SCH-1–4 + T-W13-E2E-1–5 🔴 EXPECTED RED (production-only, by design). | T-W13-AUTH-APP-1–5 🔴 RED GATE (auth provider wiring — INC-AUTH-PROVIDER-001)
 **Blockers**:
 - 🚨 **AUDIT CREATION BLOCKED** (2026-03-03): Production surfaces `Could not find the 'audit_period_end' column of 'audits' in the schema cache` — migration `20260302000000_mat_core_tables.sql` omits `audit_period_start` and `audit_period_end` columns. New migration required. Fix delegated to schema-builder. RCA: F-02 addendum (INC-W13-AUDIT-SCHEMA-001).
@@ -2424,17 +2424,17 @@ Every `supabase.from('...')` call in `modules/mat/frontend/src/lib/` was enumera
 | `profiles` | api/profile.ts, useSettings.ts | ✅ `20260302000000_mat_core_tables.sql` | ✅ §1.1.2 | ❌ was `user_profiles` | ✅ | None | INC-W13-PROFILE-TABLE-001 | ✅ FIXED: `useSettings.ts` corrected |
 | `domains` | useCriteria.ts | ✅ `20260302000000_mat_core_tables.sql` | ✅ §1.1.4 | ✅ | ⚠️ Not tested at column level | T-W13-SCH-3 (table only) | — | ⚠️ Column test gap |
 | `criteria` | (indirect — via joins) | ✅ `20260302000000_mat_core_tables.sql` | ✅ §1.1.6 | ✅ | ⚠️ Not tested at column level | T-W13-SCH-2 (table only) | — | ⚠️ Column test gap |
-| `evidence` | useEvidence.ts, useScoring.ts | ❌ NOT in MAT migration | ✅ §1.1.7 | ✅ | ❌ No migration | None | INC-W13-EVIDENCE-TABLE-001 | 🔴 MISSING MIGRATION |
-| `scores` | useScoring.ts | ❌ NOT in any migration | ❌ Architecture has `ai_scoring_results` | ❌ Drift: frontend uses `scores`, arch says `ai_scoring_results` | ❌ No migration | None | INC-W13-SCORES-TABLE-001 | 🔴 MISSING MIGRATION + TABLE NAME DRIFT |
-| `audit_scores` | useAuditMetrics.ts | ❌ NOT in any migration | ❌ Not defined | ⚠️ | ❌ No migration (guarded with try/catch in code) | None | INC-W13-AUDIT-SCORES-001 | 🟡 DEFERRED (guarded; low severity) |
-| `organisation_settings` | useSettings.ts | ❌ NOT in any migration | ❌ Not in data-architecture.md | ✅ | ❌ No migration | None | INC-W13-ORG-SETTINGS-001 | 🔴 MISSING MIGRATION + ARCHITECTURE GAP |
+| `evidence` | useEvidence.ts, useScoring.ts | ✅ `20260303000001_evidence_table.sql` | ✅ §1.1.7 | ✅ | ✅ T-W13-SCH-7 | T-W13-SCH-7 | INC-W13-EVIDENCE-TABLE-001 | ✅ FIXED |
+| `scores` | useScoring.ts | ✅ `20260303000002_scores_table.sql` | ❌ Architecture has `ai_scoring_results` (drift documented) | ✅ | ✅ T-W13-SCH-8 | T-W13-SCH-8 | INC-W13-SCORES-TABLE-001 | ✅ FIXED (drift documented) |
+| `audit_scores` | useAuditMetrics.ts | ❌ NOT in any migration | ❌ Not defined | ⚠️ | ❌ Guarded by try/catch | None | INC-W13-AUDIT-SCORES-001 | 🟡 DEFERRED (guarded; low severity) |
+| `organisation_settings` | useSettings.ts | ✅ `20260303000003_organisation_settings_table.sql` | ❌ Not in data-architecture.md (gap documented) | ✅ | ✅ T-W13-SCH-9 | T-W13-SCH-9 | INC-W13-ORG-SETTINGS-001 | ✅ FIXED |
 
 #### Audit Results — Supabase Storage Buckets
 
 | Bucket | Files | In Migration | In Architecture | Status |
 |--------|-------|-------------|-----------------|--------|
-| `audit-documents` | useCriteria.ts, useEvidence.ts | ❌ Not in migration | ⚠️ Referenced as storage path convention (§2.1) | 🔴 BUCKET CREATION NOT IN MIGRATION |
-| `organisation-assets` | useSettings.ts | ❌ Not in migration | ❌ Not mentioned in data-architecture.md | 🔴 BUCKET CREATION NOT IN MIGRATION |
+| `audit-documents` | useCriteria.ts, useEvidence.ts | ✅ `20260303000004_storage_buckets.sql` | ⚠️ Referenced as storage path convention (§2.1) | ✅ FIXED (T-W13-SCH-10) |
+| `organisation-assets` | useSettings.ts | ✅ `20260303000004_storage_buckets.sql` | ❌ Not mentioned in data-architecture.md | ✅ FIXED (T-W13-SCH-10) |
 
 #### Column-Level Completeness Check — `audits` Table
 
@@ -2465,12 +2465,12 @@ Every `supabase.from('...')` call in `modules/mat/frontend/src/lib/` was enumera
 |---|---|---|---|---|
 | INC-W13-AUDIT-SCHEMA-001 | `audit_period_start`/`audit_period_end` missing from `audits` table | CRITICAL | `20260303000000_audits_add_period_columns.sql` | ✅ FIXED |
 | INC-W13-PROFILE-TABLE-001 | `useSettings.ts` used `user_profiles` instead of `profiles` | CRITICAL | None (hook fix) | ✅ FIXED |
-| INC-W13-EVIDENCE-TABLE-001 | `evidence` table missing from production migration | CRITICAL | `20260303000001_evidence_table.sql` | 🔴 DELEGATED |
-| INC-W13-SCORES-TABLE-001 | `scores` table missing; arch/hook name drift (`ai_scoring_results` vs `scores`) | HIGH | `20260303000002_scores_table.sql` | 🔴 DELEGATED |
-| INC-W13-ORG-SETTINGS-001 | `organisation_settings` table missing from migration and architecture | HIGH | `20260303000003_organisation_settings_table.sql` | 🔴 DELEGATED |
+| INC-W13-EVIDENCE-TABLE-001 | `evidence` table missing from production migration | CRITICAL | `20260303000001_evidence_table.sql` | ✅ FIXED |
+| INC-W13-SCORES-TABLE-001 | `scores` table missing; arch/hook name drift (`ai_scoring_results` vs `scores`) | HIGH | `20260303000002_scores_table.sql` | ✅ FIXED |
+| INC-W13-ORG-SETTINGS-001 | `organisation_settings` table missing from migration and architecture | HIGH | `20260303000003_organisation_settings_table.sql` | ✅ FIXED |
 | INC-W13-AUDIT-SCORES-001 | `audit_scores` table missing; guarded by try/catch in code | LOW | Deferred | 🟡 DEFERRED |
-| INC-W13-BUCKET-001 | `audit-documents` + `organisation-assets` storage buckets not created in migration | MEDIUM | `20260303000004_storage_buckets.sql` | 🔴 DELEGATED |
-| INC-W13-COL-TEST-001 | Schema existence tests only assert table presence, not column presence | MEDIUM | New tests T-W13-SCH-5+ | 🔴 DELEGATED |
+| INC-W13-BUCKET-001 | `audit-documents` + `organisation-assets` storage buckets not created in migration | MEDIUM | `20260303000004_storage_buckets.sql` | ✅ FIXED |
+| INC-W13-COL-TEST-001 | Schema existence tests only assert table presence, not column presence | MEDIUM | New tests T-W13-SCH-5+ | ✅ FIXED: T-W13-SCH-5–12 added and GREEN |
 
 ### Delegation Sequence (Addendum C)
 
@@ -2493,7 +2493,7 @@ Task 13.C.2: qa-builder     → Add column-level and table-name-drift schema tes
 |------|--------|------|
 | 2026-03-03 | AUDIT COMPLETE | All 9 database table + 2 storage bucket references enumerated and classified |
 | 2026-03-03 | CRITICAL GAPS FIXED | INC-W13-AUDIT-SCHEMA-001 + INC-W13-PROFILE-TABLE-001 resolved |
-| 2026-03-03 | DELEGATION ISSUED | schema-builder (Task 13.C.1) + qa-builder (Task 13.C.2) delegated |
-| — | MIGRATION COMPLETE | evidence, scores, organisation_settings, storage bucket migrations merged |
-| — | TESTS GREEN | T-W13-SCH-5 to T-W13-SCH-12 all GREEN |
-| — | WAVE CLOSED | All audit gaps logged and remediated; "We Only Fail Once" — this class of gap is now impossible to ship undetected |
+| 2026-03-03 | DELEGATION COMPLETE | schema-builder (Task 13.C.1) + qa-builder (Task 13.C.2) — all migrations created, all tests GREEN |
+| 2026-03-03 | ALL GAPS REMEDIATED | INC-W13-EVIDENCE-TABLE-001, INC-W13-SCORES-TABLE-001, INC-W13-ORG-SETTINGS-001, INC-W13-BUCKET-001, INC-W13-COL-TEST-001 — all FIXED |
+| 2026-03-03 | TESTS GREEN | T-W13-SCH-5 to T-W13-SCH-12: 8/8 GREEN (file-based, no env vars required) |
+| 2026-03-03 | WAVE CLOSED | All audit gaps logged and remediated; T-W13-SCH-11 drift guard prevents this class of gap from reaching production undetected |

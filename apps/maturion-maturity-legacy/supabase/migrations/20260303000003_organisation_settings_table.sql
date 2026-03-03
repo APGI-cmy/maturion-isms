@@ -1,5 +1,5 @@
 -- INC-W13-ORG-SETTINGS-001: organisation_settings table for org-level branding and
--- configuration; not in data-architecture.md v1.0.0 (gap WGI-09)
+-- configuration; not in data-architecture.md v1.0.0 (gap WGI-07)
 -- Source: modules/mat/frontend/src/lib/hooks/useSettings.ts uses .from('organisation_settings')
 -- Migration is idempotent (CREATE TABLE IF NOT EXISTS)
 

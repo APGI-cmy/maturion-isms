@@ -112,7 +112,7 @@ describe('T-W13-SCH: Schema Existence and Env Var Audit', () => {
     const SETTINGS_HOOK = path.resolve(process.cwd(), 'modules/mat/frontend/src/lib/hooks/useSettings.ts');
     expect(fs.existsSync(SETTINGS_HOOK), `useSettings.ts not found at ${SETTINGS_HOOK}`).toBe(true);
     const source = fs.readFileSync(SETTINGS_HOOK, 'utf-8');
-    expect(source, 'useSettings.ts must NOT reference user_profiles — use profiles (INC-W13-PROFILE-TABLE-001)').not.toMatch(/'user_profiles'/);
+    expect(source, 'useSettings.ts must NOT reference user_profiles — use profiles (INC-W13-PROFILE-TABLE-001)').not.toMatch(/user_profiles/);
     expect(source, 'useSettings.ts must reference profiles table').toMatch(/from\('profiles'\)/);
   });
 
@@ -207,6 +207,6 @@ describe('T-W13-SCH: Schema Existence and Env Var Audit', () => {
     expect(fs.existsSync(PROFILE_API), `profile.ts not found at ${PROFILE_API}`).toBe(true);
     const source = fs.readFileSync(PROFILE_API, 'utf-8');
     expect(source, 'profile.ts must reference profiles table').toMatch(/from\('profiles'\)/);
-    expect(source, 'profile.ts must NOT reference user_profiles').not.toMatch(/'user_profiles'/);
+    expect(source, 'profile.ts must NOT reference user_profiles').not.toMatch(/user_profiles/);
   });
 });
