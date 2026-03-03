@@ -1,7 +1,7 @@
 # IAA FAIL-ONLY-ONCE Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 1.7.0
+**Version**: 1.8.0
 **Last Updated**: 2026-03-03
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -342,7 +342,7 @@ execution_identity:
 
 When a new governance failure pattern is identified during a session (learning_notes in session
 memory), IAA adds a new entry to this file following the format above. Each new rule:
-- Gets the next sequential ID (A-025 is the next available ID)
+- Gets the next sequential ID (A-026 is the next available ID)
 - References the incident that triggered it
 - States the permanent rule precisely
 - Defines how the rule is checked in the phase steps
@@ -527,8 +527,24 @@ This rule is especially critical for PRs where remediation commits are added bet
 
 ---
 
-<<<<<<< copilot/add-environment-parity-section
-### A-023 — Ceremony Artifacts Must Use PENDING Until Post-ASSURANCE-TOKEN Ceremony — No Pre-Fill of Anticipated -PASS Tokens
+### A-023 — OVL-AC-012 Ripple Assessment Is a Standing PREHANDOVER Requirement
+
+**Triggered by**: Recurring pattern across sessions 084, 086, 088, 089, 097, 101 (2026-03-02–03) — OVL-AC-012 (ripple/cross-agent assessment absent) has failed in AGENT_CONTRACT and AAWP_MAT audits repeatedly.
+
+**Incident reference**: session-101-20260303 (learning integration trigger).
+
+**Permanent Rule**:
+For every AGENT_CONTRACT PR, the PREHANDOVER proof MUST contain an explicit `## Ripple/Cross-Agent Assessment` section with either (a) a list of all affected agents with ripple status, or (b) an explicit "No ripple required" statement with specific justification per agent class.
+
+**Check in Phase 3 (OVL-AC-012 enforcement)**:
+> FAIL-ONLY-ONCE A-023: Search PREHANDOVER proof for ripple/cross-agent assessment section.
+> If absent: FAIL immediately. Session memory is not a substitute.
+
+**Status**: ACTIVE
+
+---
+
+### A-025 — Ceremony Artifacts Must Use PENDING Until Post-ASSURANCE-TOKEN Ceremony — No Pre-Fill of Anticipated -PASS Tokens
 
 **Triggered by**: maturion-isms session-098 (2026-03-02) — PR #816 re-invocation after session-097 REJECTION-PACKAGE.
 During remediation, the Foreman's session-092 memory and the PREHANDOVER proof checklist were populated with
@@ -555,28 +571,12 @@ The Post-ASSURANCE-TOKEN ceremony (copying verbatim IAA output, updating token f
 authorised mechanism for populating ceremony artifact token fields with non-PENDING values.
 
 **Check in Phase 3 (CORE-007 and CORE-019)**:
-> FAIL-ONLY-ONCE A-023: For every `iaa_audit_token` field found in any PR artifact with a non-PENDING value,
+> FAIL-ONLY-ONCE A-025: For every `iaa_audit_token` field found in any PR artifact with a non-PENDING value,
 > run CORE-019 cross-verification. Also check PREHANDOVER checklist items — any checked `[x]` IAA token item
 > must reference an ASSURANCE-TOKEN session (not REJECTION-PACKAGE). If the iaa_audit_token field is PENDING
 > but any checklist item or prose in the same file pre-fills a -PASS token → CORE-007 FAIL.
 
-**Status**: ACTIVE — from session-098 (2026-03-02)
-=======
-### A-023 — OVL-AC-012 Ripple Assessment Is a Standing PREHANDOVER Requirement
-
-**Triggered by**: Recurring pattern across sessions 084, 086, 088, 089, 097, 101 (2026-03-02–03) — OVL-AC-012 (ripple/cross-agent assessment absent) has failed in AGENT_CONTRACT and AAWP_MAT audits repeatedly.
-
-**Incident reference**: session-101-20260303 (learning integration trigger).
-
-**Permanent Rule**:
-For every AGENT_CONTRACT PR, the PREHANDOVER proof MUST contain an explicit `## Ripple/Cross-Agent Assessment` section with either (a) a list of all affected agents with ripple status, or (b) an explicit "No ripple required" statement with specific justification per agent class.
-
-**Check in Phase 3 (OVL-AC-012 enforcement)**:
-> FAIL-ONLY-ONCE A-023: Search PREHANDOVER proof for ripple/cross-agent assessment section.
-> If absent: FAIL immediately. Session memory is not a substitute.
-
-**Status**: ACTIVE
->>>>>>> main
+**Status**: ACTIVE — from session-098 (2026-03-02); renumbered A-025 (conflict resolution 2026-03-03)
 
 ---
 
@@ -590,15 +590,9 @@ For every AGENT_CONTRACT PR, the PREHANDOVER proof MUST contain an explicit `## 
 | 1.3.0 | 2026-03-02 | A-018 renumbered from duplicate A-004 (post-merge retrospective); A-019 renumbered from duplicate A-016 (trigger table misapplication); duplicate rule ID deduplication patch (maturion-isms#IAA-TIER2) |
 | 1.4.0 | 2026-03-02 | A-020 (PREHANDOVER template staleness — template must be kept current with overlay requirements) added from session-088 Wave 13 REJECTION-PACKAGE learning |
 | 1.5.0 | 2026-03-02 | A-021 (commit and push before IAA invocation — working-tree fix is not a committed fix) codified from sessions 090/091 CANDIDATE; A-022 (re-evaluate trigger categories on every invocation — do not carry forward prior session classification) added from session-092 OVL-KG-004 finding |
-<<<<<<< copilot/add-environment-parity-section
-| 1.6.0 | 2026-03-02 | A-023 added: ceremony artifacts must use PENDING until Post-ASSURANCE-TOKEN ceremony — pre-filling anticipated -PASS tokens before ASSURANCE-TOKEN is received = CORE-007 + A-017 breach (session-098 PR #816 learning) |
-=======
 | 1.6.0 | 2026-03-03 | A-023 (OVL-AC-012 ripple assessment is a standing PREHANDOVER requirement for all AGENT_CONTRACT PRs) codified from recurring pattern sessions 084–101 |
-<<<<<<< HEAD
 | 1.7.0 | 2026-03-03 | A-024 (secret field naming — `secret:` prohibited in agent contracts; must use `secret_env_var:`) added from CI scanner failures (job 65529138120) |
-=======
->>>>>>> main
->>>>>>> origin/main
+| 1.8.0 | 2026-03-03 | Conflict resolution: A-023 collision fixed — PR #816 rule renumbered to A-025 (ceremony PENDING rule); A-023 now = OVL-AC-012 ripple assessment; A-024 = secret field naming; A-025 = ceremony PENDING pre-fill prohibition |
 
 ---
 
