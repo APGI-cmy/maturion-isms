@@ -363,3 +363,4 @@
 | 2026-03-02 | independent-assurance-agent | session-100 | PHASE-4 | Post-ASSURANCE-TOKEN ceremony steps should be automated or checklisted to prevent manual omission after token issuance | session-100-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-100 | PHASE-4 | Multi-invocation PR governance squash policy — CS2 consideration for consolidating governance ceremony commits before merge | session-100-20260302.md |
 >>>>>>> c7a47a8 (chore(iaa): session-100 — ASSURANCE-TOKEN for PR #805 (all 19 checks PASS; session-099 F3+F4 resolved in 510e0ce))
+| 2026-03-03 | governance-liaison-isms | session-039 | SESSION-END | Extend GOVERNANCE_ALIGNMENT_INVENTORY to include agent_contracts section for .github/agents/*.md files | session-039-20260303.md |

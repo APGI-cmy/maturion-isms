@@ -66,6 +66,8 @@ merge_gate_interface:
     - "Merge Gate Interface / merge-gate/verdict"
     - "Merge Gate Interface / governance/alignment"
     - "Merge Gate Interface / stop-and-fix/enforcement"
+    - "Governance Ceremony Gate / governance-ceremony/draft-check"
+    - "Governance Ceremony Gate / governance-ceremony/verdict"
   parity_required: true
   parity_enforcement: BLOCKING
 

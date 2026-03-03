@@ -1,0 +1,12 @@
+{
+  "event_type": "governance_ripple",
+  "canonical_commit": "954fe2fbd95477f1af9edbad0d496379e1d1fe0e",
+  "inventory_version": "1.0.0",
+  "changed_paths": [".github/agents/CodexAdvisor-agent.md"],
+  "sender": "APGI-cmy/maturion-foreman-governance",
+  "dispatch_id": "954fe2fb",
+  "timestamp": "2026-03-03T06:32:57Z",
+  "trigger": "Merge pull request #1283 from APGI-cmy/copilot/fix-merge-gate-issues",
+  "session_id": "session-039-20260303",
+  "status": "PROCESSING"
+}
