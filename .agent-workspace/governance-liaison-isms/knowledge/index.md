@@ -2,8 +2,8 @@
 
 **Agent**: governance-liaison-isms  
 **Contract Version**: 3.2.0  
-**Knowledge Version**: 1.1.0  
-**Last Updated**: 2026-02-25  
+**Knowledge Version**: 1.3.0  
+**Last Updated**: 2026-03-03  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -17,12 +17,12 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 
 | File | Purpose | Version |
 |------|---------|---------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.1.0 |
-| `FAIL-ONLY-ONCE.md` | **PREFLIGHT Attestation** — Breach registry, Universal A-rules, Conditional B-rules, incident log; must be self-attested every session before any work begins | 1.1.0 |
+| `index.md` (this file) | Knowledge entry point and version reference | 1.3.0 |
+| `FAIL-ONLY-ONCE.md` | **PREFLIGHT Attestation** — Breach registry, Universal A-rules, Conditional B-rules, incident log; must be self-attested every session before any work begins | 1.3.0 |
 | `layer-down-scripts.md` | **Phase 3.1 Scripts** — Checksum validation and sync state update scripts for the cross-repository layer-down protocol | 1.0.0 |
 | `ripple-processing-scripts.md` | **Phase 3.2 Scripts** — Ripple inbox creation, sync state update on receipt, and ripple archive scripts | 1.0.0 |
 | `drift-detection-scripts.md` | **Phase 3.3 Scripts** — Drift detection script; compares canonical inventory version against local sync state | 1.0.0 |
-| `session-memory-template.md` | **Phase 4.2 Template** — Session memory and escalation templates for use in Phase 4 session closure | 1.0.0 |
+| `session-memory-template.md` | **Phase 4.2 Template** — Session memory and escalation templates for use in Phase 4 session closure | 1.1.0 |
 
 ---
 
@@ -66,3 +66,14 @@ governance-liaison-isms NEVER executes directly for:
 **Authority**: CS2 (Johan Ras)  
 **Living Agent System**: v6.2.0  
 **Policy**: `governance/canon/UNIVERSAL_FAIL_ONLY_ONCE_POLICY.md`
+
+---
+
+## Version History
+
+| Version | Date | Author | Change Description |
+|---------|------|--------|--------------------|
+| 1.0.0 | 2026-02-25 | governance-liaison-isms | Initial knowledge index — 6 knowledge files listed |
+| 1.1.0 | 2026-02-25 | governance-liaison-isms | Updated FAIL-ONLY-ONCE.md version reference to 1.1.0 |
+| 1.2.0 | 2026-03-03 | governance-liaison-isms (session-039) | Updated FAIL-ONLY-ONCE.md to v1.2.0; updated session-memory-template.md to v1.1.0; updated index self-reference to v1.2.0 |
+| 1.3.0 | 2026-03-03 | governance-liaison-isms (session-039, IAA-107 fix) | Updated FAIL-ONLY-ONCE.md to v1.3.0 (A-011 added); updated index self-reference to v1.3.0 |
