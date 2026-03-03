@@ -22,21 +22,23 @@ Plus ceremony artifacts and IAA session memory.
 
 ## Files Changed
 
-**Total Files**: 11
+**Total Files**: 13
 
 All files in this PR are explicitly listed below (required by BL-027):
 
-- `SCOPE_DECLARATION.md` — this file (reset for re-anchor workflow PR)
-- `.github/workflows/foreman-reanchor.yml` — NEW Re-Anchor Pulse workflow
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks-template.md` — NEW wave task tracker template
-- `.agent-workspace/foreman-v2/knowledge/WAVE-CURRENT-TASKS-PROTOCOL.md` — NEW Tier 2 knowledge doc (v1.0.0)
-- `.agent-workspace/foreman-v2/knowledge/index.md` — UPDATED to v1.7.0 (adds WAVE-CURRENT-TASKS-PROTOCOL entry)
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-reanchor-workflow-20260303.md` — PREHANDOVER proof (iaa_audit_token: PENDING → session-121)
-- `.agent-workspace/foreman-v2/memory/session-reanchor-workflow-20260303.md` — session memory for this PR
-- `.agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md` — A-027 codified by IAA (session-120)
-- `.agent-workspace/independent-assurance-agent/knowledge/index.md` — version bump by IAA (session-120)
-- `.agent-workspace/independent-assurance-agent/memory/session-120-20260303.md` — IAA session-120 memory (REJECTION-PACKAGE)
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` — IAA parking station append (session-120)
+- `SCOPE_DECLARATION.md` - this file (reset for re-anchor workflow PR)
+- `.github/workflows/foreman-reanchor.yml` - NEW Re-Anchor Pulse workflow
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks-template.md` - NEW wave task tracker template
+- `.agent-workspace/foreman-v2/knowledge/WAVE-CURRENT-TASKS-PROTOCOL.md` - NEW Tier 2 knowledge doc (v1.0.0)
+- `.agent-workspace/foreman-v2/knowledge/index.md` - UPDATED to v1.7.0 (adds WAVE-CURRENT-TASKS-PROTOCOL entry)
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-reanchor-workflow-20260303.md` - PREHANDOVER proof (iaa_audit_token: PENDING)
+- `.agent-workspace/foreman-v2/memory/session-reanchor-workflow-20260303.md` - session memory for this PR
+- `.agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md` - A-027 and A-028 codified by IAA (sessions 120 and 122)
+- `.agent-workspace/independent-assurance-agent/knowledge/index.md` - version bumps by IAA (sessions 120 and 122)
+- `.agent-workspace/independent-assurance-agent/memory/session-120-20260303.md` - IAA session-120 memory (REJECTION-PACKAGE, 10 findings)
+- `.agent-workspace/independent-assurance-agent/memory/session-121-20260303.md` - IAA session-121 memory (REJECTION-PACKAGE, 2 findings)
+- `.agent-workspace/independent-assurance-agent/memory/session-122-20260303.md` - IAA session-122 memory (REJECTION-PACKAGE, 2 findings)
+- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station append (sessions 120, 121, 122)
 
 ---
 
