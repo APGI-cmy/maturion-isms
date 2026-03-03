@@ -368,3 +368,8 @@
 | 2026-03-03 | independent-assurance-agent | session-103 | Phase 4 | CodexAdvisor must add OVL-AC-011 pre-flight to PREHANDOVER checklist: after every fix commit, re-verify BOTH char counts AND git object hashes for all modified agent files — partial update (hashes only) caused this session's sole failure | session-103-20260303.md |
 
 | 2026-03-03 | independent-assurance-agent | session-104 | Phase 4 | Produce structured 'Post-ASSURANCE-TOKEN ceremony checklist' in ASSURANCE-TOKEN output so CodexAdvisor has explicit task list to complete PENDING → token update ceremony | session-104-20260303.md |
+| 2026-03-03 | foreman-v2-agent | session-092 | [SESSION-END] | ripple-integration.yml check-labels job has unreachable issues-path code after retirement — future cleanup candidate (S-015) | session-092-ripple-cleanup-20260303.md |
+
+| 2026-03-03 | independent-assurance-agent | session-101 | [PHASE-4] | Foreman wrote PHASE_A_ADVISORY in PREHANDOVER on 2026-03-03 despite IAA being PHASE_B_BLOCKING since 2026-03-02 — foreman should read IAA adoption phase from IAA knowledge index at Phase 1 (track as foreman S-016) | session-101-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-102 | [PHASE-4] | A-021 pattern persists as most common failure mode (3 consecutive PRs): producing agent must run git-show-HEAD verification on PREHANDOVER after every edit before invoking IAA (track as foreman S-017) | session-102-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-103 | [PHASE-4] | Three-invocation ASSURANCE-TOKEN finally achieved for PR #826 — recommend pre-IAA commit verification script (S-018) to eliminate A-021 pattern systemically rather than through repeated REJECTION-PACKAGEs | session-103-20260303.md |
