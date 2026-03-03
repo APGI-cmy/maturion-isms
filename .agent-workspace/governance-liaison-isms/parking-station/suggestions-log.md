@@ -60,3 +60,4 @@
 | 2026-03-02 | governance-liaison-isms | session-036 | SESSION-END | Add dedicated CI gate for api/ and packages/ai-centre/ TypeScript type-checking separate from mat/frontend gate | session-036-20260302.md |
 | 2026-03-02 | governance-liaison-isms | session-038 | SESSION-END | Add pre-IAA checklist to verify HANDOVER_SUMMARY file claims match actual files before invoking IAA | session-038-20260302.md |
 | 2026-03-03 | governance-liaison-isms | session-039 | SESSION-END | Add per-agent parking station validation script to catch agents still writing to retired global file after contract updates | session-039-20260303.md |
+| 2026-03-03 | governance-liaison-isms | session-040 | [SESSION-END] | ripple-integration.yml diff_check step should add agent_only_payload output to short-circuit to CS2-escalation path when ripple contains exclusively .github/agents/** changes — removes liaison layer-down work entirely for agent-only ripples | session-040-20260303.md |
