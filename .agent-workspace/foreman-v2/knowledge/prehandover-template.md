@@ -1,10 +1,20 @@
 # PREHANDOVER Proof Template — Foreman v2
 
 **Agent**: foreman-v2
-**Version**: 1.1.0
-**Last Updated**: 2026-03-01
+**Version**: 1.2.0
+**Last Updated**: 2026-03-02
 **Purpose**: Template for generating Phase 4 PREHANDOVER proof artifacts per S-009 (FAIL-ONLY-ONCE v1.8.0)
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
+
+---
+
+## Version History
+
+| Version | Date | Change |
+|---|---|---|
+| 1.2.0 | 2026-03-02 | Add `## Environment Parity` section (OVL-CI-006 / A-020 — 7-session recurring flag closed via issue #815) |
+| 1.1.0 | 2026-03-01 | Add `## IAA Agent Response (verbatim)` mandatory section per S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) |
+| 1.0.0 | 2026-02-25 | Initial template |
 
 ---
 
@@ -82,6 +92,23 @@ Replace all `[placeholder]` values — no field may be left blank.
 
 Local test run: [N] tests passed, [N] failed, [N] skipped — [N] test files.
 `merge_gate_parity: PASS`
+
+---
+
+## Environment Parity
+
+Confirms local execution environment matches CI merge gate configuration.
+
+| Check | Local | CI | Match? |
+|---|---|---|---|
+| Node version | [X.Y.Z] | [X.Y.Z from .nvmrc / CI config] | [✅/❌] |
+| Required env vars present | [list or 'all present'] | [required by CI] | [✅/❌] |
+| Schema/migration state | [migrated/current] | [expected by CI] | [✅/❌] |
+| Any environment-specific flags | [list or 'none'] | [CI flags] | [✅/❌] |
+
+**Environment Parity Verdict: [PASS / FAIL]**
+
+> If FAIL: describe discrepancy and resolution before proceeding to Phase 4.
 
 ---
 
