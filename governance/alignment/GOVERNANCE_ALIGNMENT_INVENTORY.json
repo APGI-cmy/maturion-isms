@@ -5,10 +5,10 @@
   "description": "Consumer-side governance alignment inventory \u2014 tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
   "last_updated": "2026-03-03",
   "last_ripple_commit": "954fe2fbd95477f1af9edbad0d496379e1d1fe0e",
-  "last_ripple_timestamp": "2026-03-03T06:32:57Z",
+  "last_ripple_timestamp": "2026-03-03T06:44:14Z",
   "alignment_summary": {
-    "total_artifacts": 7,
-    "aligned": 7,
+    "total_artifacts": 6,
+    "aligned": 6,
     "drifted": 0,
     "missing": 0,
     "overall_status": "ALIGNED"
@@ -79,20 +79,6 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
       "last_verified": "2026-03-02T11:23:28Z"
-    },
-    {
-      "filename": "CodexAdvisor-agent.md",
-      "path": ".github/agents/CodexAdvisor-agent.md",
-      "canonical_version": "6.2.0",
-      "local_version": "6.2.0",
-      "canonical_hash_sha256": "f1d81dc78152eded7e2bfc95415c76fee86bbe9bf9ffa15568c8857837488f0a",
-      "local_hash_sha256": "f1d81dc78152eded7e2bfc95415c76fee86bbe9bf9ffa15568c8857837488f0a",
-      "alignment_status": "ALIGNED",
-      "layer_down_status": "AGENT_CONTRACT",
-      "last_verified": "2026-03-03T06:34:29Z",
-      "cs2_approval_required": true,
-      "canonical_commit": "954fe2fbd95477f1af9edbad0d496379e1d1fe0e",
-      "ripple_dispatch_id": "954fe2fb"
     }
   ],
   "metadata": {

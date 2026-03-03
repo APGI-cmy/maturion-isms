@@ -8,6 +8,16 @@
 
 ---
 
+## ⚠️ BREACH RECORD (session-040 amendment)
+
+**Breach ID**: INC-AGCFPP-001-LIAISON-001  
+**Detection**: CS2 feedback 2026-03-03  
+**Nature**: `.github/agents/CodexAdvisor-agent.md` was modified in violation of AGCFPP-001  
+**Remediation**: session-040 reverted the CodexAdvisor-agent.md change; FAIL-ONLY-ONCE rule A-09 added; CS2 escalation created  
+**Status**: REMEDIATED
+
+---
+
 ## Session Overview
 
 Layer-down of governance ripple event from canonical source.

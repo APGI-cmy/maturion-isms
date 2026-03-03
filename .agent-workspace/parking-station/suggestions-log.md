@@ -364,3 +364,7 @@
 | 2026-03-02 | independent-assurance-agent | session-100 | PHASE-4 | Multi-invocation PR governance squash policy — CS2 consideration for consolidating governance ceremony commits before merge | session-100-20260302.md |
 >>>>>>> c7a47a8 (chore(iaa): session-100 — ASSURANCE-TOKEN for PR #805 (all 19 checks PASS; session-099 F3+F4 resolved in 510e0ce))
 | 2026-03-03 | governance-liaison-isms | session-039 | SESSION-END | Extend GOVERNANCE_ALIGNMENT_INVENTORY to include agent_contracts section for .github/agents/*.md files | session-039-20260303.md |
+| 2026-03-03 | governance-liaison-isms | session-040 | SESSION-END | Add pre-layer-down screening of ripple changed_paths against scope.escalation_required; escalate immediately if any match | session-040-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-101 | PHASE-4 | governance-liaison FAIL-ONLY-ONCE.md lacks A-021 equivalent — all artifacts must be committed before IAA invocation; gap caused REJECTION-PACKAGE for session-040 | session-101-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-101 | PHASE-4 | AGCFPP-001 should explicitly state that revert operations on .github/agents/ files are still modifications requiring CodexAdvisor-agent authorship — no revert exception | session-101-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-101 | PHASE-4 | Create breach-remediation PREHANDOVER template separating agent-file vs non-agent-file correction paths to prevent structural error in future breach remediations | session-101-20260303.md |
