@@ -1,7 +1,7 @@
 # IAA FAIL-ONLY-ONCE Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 1.7.0
+**Version**: 1.8.0
 **Last Updated**: 2026-03-03
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
