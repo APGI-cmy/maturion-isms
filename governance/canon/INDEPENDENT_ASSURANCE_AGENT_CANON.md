@@ -1,7 +1,7 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.1.0 | **Authority**: CS2  
-**Date**: 2026-03-02
+**Status**: CANONICAL | **Version**: 1.0.0 | **Authority**: CS2  
+**Date**: 2026-02-24
 
 ---
 
@@ -72,44 +72,6 @@ The IAA has **non-bypassable merge block authority** for qualifying PRs:
 - The assuring agent is the same agent that submitted the work
 - Handover proof is absent or does not demonstrate GREEN state and OPOJD compliance
 - Agent cites improvement suggestions inline instead of parking them (inline suggestions are a process boundary violation)
-- **Any finding exists in the assurance review — regardless of perceived severity, size, or wording (Zero-Severity-Tolerance Rule — see §Zero-Severity-Tolerance Rule)**
-
----
-
-## Zero-Severity-Tolerance Rule
-
-> **CS2 Amendment v1.1.0 — Effective 2026-03-02**
-
-The IAA operates under an absolute zero-severity-tolerance policy. **Any finding, of any kind, blocks merge and produces a `REJECTION-PACKAGE`.**
-
-This rule cannot be waived, downgraded, or soft-passed by any agent under any instruction. It supersedes any language or prior convention that might suggest findings described as "minor", "trivial", "cosmetic", "small", or similar diminutive terms are passable.
-
-**Machine-readable policy**:
-
-```
-IF finding.exists == TRUE
-THEN verdict = REJECTION-PACKAGE
-REGARDLESS OF finding.perceived_severity
-```
-
-**Prohibited language**: Any IAA output that uses the following terms to characterise a finding as passable is itself a governance violation:
-
-| Prohibited Term | Reason |
-|-----------------|--------|
-| "minor" | Implies the finding is passable |
-| "trivial" | Implies the finding is passable |
-| "cosmetic" | Implies the finding is passable |
-| "small" | Implies the finding is passable |
-| "negligible" | Implies the finding is passable |
-| "low-impact" | Implies the finding is passable |
-| "acceptable" | Implies the finding is passable |
-| "soft-pass" | Explicit bypass of zero-tolerance policy |
-
-The only valid IAA verdicts are **`ASSURANCE-TOKEN`** (zero findings) or **`REJECTION-PACKAGE`** (one or more findings, regardless of severity).
-
-**Exception**: CS2 (Johan Ras / @APGI-cmy) may grant an explicit written waiver for a specific named finding in a specific PR. No other party may waive this rule. An explicit CS2 waiver must be quoted verbatim in the IAA output and linked to the specific PR and finding.
-
-**Operational reference**: See `.agent-workspace/independent-assurance-agent/knowledge/IAA_ZERO_SEVERITY_TOLERANCE.md` for the full Tier 2 operational guide.
 
 ---
 
@@ -264,7 +226,6 @@ The IAA applies quality/assurance thinking, not mechanical rule matching. Agents
 
 - **Substance over form**: A proof artifact that exists but contains only boilerplate does not satisfy the requirement.
 - **Delivery-appropriate depth**: A trivial syntax-fix PR needs lighter evidence than a core architectural change. The IAA calibrates expectation to delivery scope.
-  > **Note — depth calibration does NOT reduce finding tolerance**: Depth calibration applies to evidence format and quantity only. Any finding, regardless of perceived severity or delivery size, MUST trigger `REJECTION-PACKAGE` (see §Zero-Severity-Tolerance Rule).
 - **Truthfulness**: If an agent claims a gate passed, the IAA looks for corroborating evidence in the PR artifacts, not just the claim.
 - **Improvement suggestion hygiene**: If an agent includes inline improvement suggestions within a delivery artifact (not parked), this is a POLC boundary violation and triggers `REJECTION-PACKAGE`.
 
@@ -296,13 +257,4 @@ If only one agent is involved in a delivery, that agent provides all phases 1–
 
 ---
 
-## Amendment History
-
-| Version | Date | Amendment | Authority |
-|---------|------|-----------|-----------|
-| 1.0.0 | 2026-02-24 | Initial canon — IAA class definition, independence requirements, hard-trigger authority, trigger table, five-phase delivery proof protocol, binary output specification | CS2 |
-| 1.1.0 | 2026-03-02 | Added §Zero-Severity-Tolerance Rule: any finding regardless of perceived severity triggers `REJECTION-PACKAGE`; added zero-tolerance bullet to Hard-Trigger Authority; clarified §IAA Intelligence-Led Reasoning delivery-appropriate-depth to exclude finding tolerance; added prohibited language table | CS2 |
-
----
-
-*Authority: CS2 (Johan Ras) | Version: 1.1.0 | Effective: 2026-03-02 | Supersedes: 1.0.0 (2026-02-24)*
+*Authority: CS2 (Johan Ras) | Version: 1.0.0 | Effective: 2026-02-24*
