@@ -96,11 +96,37 @@ no environment-specific deviation.
 
 IAA was invoked via `task(agent_type="independent-assurance-agent")` on 2026-03-03.
 
-`iaa_audit_token: PENDING`
+`iaa_audit_token: IAA-session-103-20260303-PASS`
 
 ## IAA Agent Response (verbatim)
 
-<!-- To be populated after IAA invocation post-commit -->
+```
+═══════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+
+PR: #826 — [WIP] Remove legacy ripple-integration listener and stale draft PRs
+Branch: copilot/remove-legacy-ripple-integration
+Head SHA audited: 1fd6697235e80b647c71e349e5aac21fa32ff299
+
+All 21 applicable checks PASS. Merge gate parity: PASS.
+
+| Category | Checks | Result |
+|----------|--------|--------|
+| FAIL-ONLY-ONCE (A-001, A-002, A-021, A-022) | 4 | 4 PASS / 0 FAIL |
+| Core invariants (CORE-005 to CORE-021, applicable) | 11 | 11 PASS / 0 FAIL |
+| CI_WORKFLOW overlay (OVL-CI-001 to OVL-CI-006) | 6 | 6 PASS / 0 FAIL |
+| TOTAL | 21 | 21 PASS / 0 FAIL |
+
+Merge gate parity (§4.3):
+- Merge Gate Interface / merge-gate/verdict — LOCAL: PASS ✅
+- Merge Gate Interface / governance/alignment — LOCAL: PASS ✅
+- Merge Gate Interface / stop-and-fix/enforcement — LOCAL: PASS ✅
+
+Token reference: IAA-session-103-20260303-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate
+Merge permitted (subject to CS2 approval and DRAFT → Ready conversion)
+═══════════════════════════════════════════════════════════
+```
 
 ---
 
@@ -111,7 +137,7 @@ IAA was invoked via `task(agent_type="independent-assurance-agent")` on 2026-03-
 - [x] Zero deprecation warnings
 - [x] Zero compiler/linter warnings
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
-- [ ] IAA audit token recorded ← to be updated after IAA PASS
+- [x] IAA audit token recorded: IAA-session-103-20260303-PASS
 
 ---
 

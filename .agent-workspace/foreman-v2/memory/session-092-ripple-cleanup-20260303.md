@@ -106,14 +106,14 @@ A_rules_active:
 ## IAA Audit
 
 ```yaml
-iaa_audit_token: PENDING
+iaa_audit_token: IAA-session-103-20260303-PASS
 iaa_phase_status: PHASE_B_BLOCKING
 ```
 
-IAA is in Phase B BLOCKING mode (confirmed session-100, 2026-03-02). Genuine invocation
-required post-commit. IAA session-101 issued REJECTION-PACKAGE (6 ceremony failures,
-all correctable). PREHANDOVER updated per IAA remediation instructions. Re-invocation
-pending after commit+push.
+IAA session-103 issued ASSURANCE-TOKEN: 21/21 PASS. Prior REJECTION-PACKAGEs:
+- session-101: 6 failures (F1 uncommitted artifacts, F2-F4 Phase_A fabrication/no token/no
+  verbatim section, F5 no CI URL, F6 no env parity) — all fixed
+- session-102: 1 failure (OVL-CI-005 CI URL section in working tree only, not committed) — fixed
 
 ---
 
