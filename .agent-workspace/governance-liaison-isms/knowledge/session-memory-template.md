@@ -2,8 +2,8 @@
 
 **Agent**: governance-liaison-isms  
 **Contract Version**: 3.2.0  
-**Template Version**: 1.0.0  
-**Last Updated**: 2026-02-25  
+**Template Version**: 1.1.0  
+**Last Updated**: 2026-03-03  
 **Authority**: CS2 (Johan Ras)
 
 ---
@@ -79,6 +79,16 @@ unresolved_breaches: [list, or 'none']
 
 [At least one concrete improvement suggestion. If no degradation observed:
 "No degradation observed. Continuous improvement note: [specific, actionable observation]."]
+
+## Parking Station (MANDATORY — append per suggestion to agent-specific file)
+
+**Target file**: `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md`
+**DO NOT** write to the retired global `.agent-workspace/parking-station/suggestions-log.md`.
+
+Format (one line per suggestion):
+```
+| YYYY-MM-DD | governance-liaison-isms | session-NNN | [ALIGNMENT/SESSION-END] | <one-sentence summary> | <session-memory-filename> |
+```
 ```
 
 ---
