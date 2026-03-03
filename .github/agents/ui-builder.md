@@ -521,18 +521,19 @@ GATE_FAILURES=()
 # Checks: merge-gate/verdict | governance/alignment | stop-and-fix/enforcement
 bash .github/scripts/merge-gate-verdict.sh >/dev/null 2>&1 \
   || GATE_FAILURES+=("merge-gate/verdict: FAIL")
-[ -f ".github/scripts/validate-canon-hashes.sh" ] \
-  && bash .github/scripts/validate-canon-hashes.sh >/dev/null 2>&1 \
-  || GATE_FAILURES+=("governance/alignment: FAIL")
+if [ -f ".github/scripts/validate-canon-hashes.sh" ]; then
+  bash .github/scripts/validate-canon-hashes.sh >/dev/null 2>&1 \
+    || GATE_FAILURES+=("governance/alignment: FAIL")
+fi
 [ "$(find .agent-workspace/ui-builder -name 'blocker-*.md' 2>/dev/null | wc -l)" -gt 0 ] \
   && GATE_FAILURES+=("stop-and-fix/enforcement: FAIL")
 if [ ${#GATE_FAILURES[@]} -gt 0 ]; then
-  echo "❌ [B_H] GATE PARITY FAILED — DO NOT OPEN PR"
+  echo "[FAIL] [B_H] GATE PARITY FAILED - DO NOT OPEN PR"
   printf '  - %s\n' "${GATE_FAILURES[@]}"
   echo "Fix all failing gates and re-run. Opening a PR on a local gate failure is PROHIBITED."
   exit 1
 fi
-echo "✅ [B_H] ALL GATE PARITY CHECKS PASSED — cleared to open PR"
+echo "[PASS] [B_H] ALL GATE PARITY CHECKS PASSED - cleared to open PR"
 ```
 
 Document in PREHANDOVER proof: `merge_gate_parity: PASS`
@@ -551,12 +552,8 @@ Document in PREHANDOVER proof: `merge_gate_parity: PASS`
 3. **What process, governance, or tooling changes would have improved this build or prevented waste?**
 
 4. **Did you comply with all governance learnings (BLs)?**
-   - Verify compliance with: BL-016 (ratchet conditions), BL-018 (QA range), BL-019 (semantic alignment), BL-022 (if activated), BL-024 (constitutional sandbox), BL-029 (tracker update)
-   - If non-compliance: STOP, document reason, escalate to Foreman
 
 5. **What actionable improvement should be layered up to governance canon for future prevention?**
-   - Propose concrete governance/process changes for canonization
-   - OR justify why no improvements are warranted
 
 **Prohibited**: Stating "None identified" without answering ALL questions above with justification.
 
