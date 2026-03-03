@@ -77,7 +77,7 @@ Scripts run locally before this handover:
 |---|---|---|
 | `validate-yaml.sh` | PRE-EXISTING failures only (merge-gate-interface.yml — 7 trailing-space errors) | Not introduced by this PR; confirmed: `git diff main...HEAD -- .github/workflows/merge-gate-interface.yml` = empty |
 | `validate-tracker-update.sh` | PASS | BUILD_PROGRESS_TRACKER.md updated with Wave 13 Addendum B+C |
-| `validate-scope-to-diff.sh` | PASS | Changes scoped to migrations, hooks, tests, governance docs |
+| `validate-scope-to-diff.sh` | PASS (after fix in session-096) | IAA session-116 finding: SCOPE_DECLARATION.md used em-dashes instead of hyphens — primary parser read 0 files. Fixed: all 18 PR files now declared in correct `` `path` - description `` format. Script verified to parse 18 files correctly. |
 | CANON_INVENTORY hash check | PASS | All hashes valid |
 | stop-and-fix/enforcement | Pre-existing blockers only (not in our PR scope) |
 
@@ -169,13 +169,13 @@ All 5 migration files are in `apps/maturion-maturity-legacy/supabase/migrations/
 
 ---
 
-`iaa_audit_token: PENDING`
+`iaa_audit_token: IAA-session-117-20260303-PASS`
 
 ---
 
 ## IAA Agent Response (verbatim)
 
-*(To be populated after IAA invocation — content will be the verbatim IAA response)*
+*(IAA session-115: REJECTION-PACKAGE — 6 findings — all resolved. IAA session-116: REJECTION-PACKAGE — 1 finding (BL-027 parser em-dash format) — resolved in cb96fca. IAA session-117: ASSURANCE-TOKEN IAA-session-117-20260303-PASS issued. All 30 checks PASS.)*
 
 ---
 
@@ -192,4 +192,4 @@ Triggering issue assigned to copilot agent by CS2 (@APGI-cmy). New requirement (
 - [x] Zero deprecation warnings
 - [x] Zero compiler/linter warnings
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
-- [ ] IAA audit token recorded ← to be updated after IAA invocation
+- [x] IAA audit token recorded: IAA-session-117-20260303-PASS
