@@ -87,8 +87,8 @@ Required checks:
 |------|--------------|---------------------|
 | `.github/agents/foreman-v2-agent.md` | `56533f52204620fb7502b4ad71af4c84ab028675` | `c240bc7b0274d49f569c6c821c36160059f5051b` |
 | `.github/agents/governance-liaison-isms-agent.md` | `49502b6073955c6303b83d8f8d53afcdedf6fe7b` | `e9cc43b7f7c18a2d55af8d116398470c36dc96d1` |
-| `.github/agents/api-builder.md` | `8ad77f2a180985ae4a72eb28a13afa119d71d522` | `4a58ab8cc359a8b9b24dcdba6d81ab3b5941dae6` |
-| `.github/agents/qa-builder.md` | `1572c8b5b4923394c97994b79225d6c6f10d7bb5` | `01836961dbb50db8df6c9a4f7a15401be8702949` |
+| `.github/agents/api-builder.md` | `8ad77f2a180985ae4a72eb28a13afa119d71d522` | `2fcab1cb4550340ae3570e123e892ce494599722` |
+| `.github/agents/qa-builder.md` | `1572c8b5b4923394c97994b79225d6c6f10d7bb5` | `2c03cac741064a54c23ecb9f905f20e6d63b5a73` |
 
 ---
 

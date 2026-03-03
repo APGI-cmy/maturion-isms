@@ -42,6 +42,8 @@ merge_gate_interface:
     - "Merge Gate Interface / merge-gate/verdict"
     - "Merge Gate Interface / governance/alignment"
     - "Merge Gate Interface / stop-and-fix/enforcement"
+  parity_required: true
+  parity_enforcement: BLOCKING
 scope:
   repository: APGI-cmy/maturion-isms
   type: consumer-repository
