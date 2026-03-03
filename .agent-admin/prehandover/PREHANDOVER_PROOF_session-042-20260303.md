@@ -26,10 +26,13 @@
 
 IAA invoked for independent assurance audit.
 
-**Phase A advisory mode**: IAA not yet deployed. Invocation attempt documented.  
-**IAA phase status**: PHASE_A_ADVISORY  
+**IAA phase status**: PHASE_B_BLOCKING (hard gate ACTIVE)  
 **Evidence artifacts provided**: PREHANDOVER_PROOF, session memory, gate results  
-**Awaiting**: ASSURANCE-TOKEN or REJECTION-PACKAGE (Phase B)
+**iaa_audit_token**: PENDING
+
+## IAA Agent Response (verbatim)
+
+*To be populated after ASSURANCE-TOKEN is issued by IAA re-invocation.*
 
 ---
 
