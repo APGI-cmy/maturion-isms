@@ -3,7 +3,7 @@
 **Agent**: governance-liaison-isms  
 **Authority**: CS2  
 **Governance Ref**: APGI-cmy/maturion-foreman-governance#1196, APGI-cmy/maturion-isms#502  
-**Version**: 1.1.0  
+**Version**: 1.2.0  
 **Created**: 2026-02-24  
 **Updated**: 2026-03-03  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`  
@@ -90,3 +90,13 @@ conditional_rules_checked: [list applicable B-rule IDs, or 'none']
 *Authority: CS2 (Johan Ras) | Governance Ref: APGI-cmy/maturion-foreman-governance#1196, APGI-cmy/maturion-isms#502*  
 *Policy: governance/canon/UNIVERSAL_FAIL_ONLY_ONCE_POLICY.md | LIVING_AGENT_SYSTEM.md v6.2.0*  
 *Created: 2026-02-24 | Status: ACTIVE*
+
+---
+
+## Version History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 1.0.0 | 2026-02-24 | Initial seeding — ISMS-local registry created, A-01 through A-08 universal rules, B-01 through B-04 conditional rules, empty breach log |
+| 1.1.0 | 2026-02-25 | Added A-012 (Bootstrap Directive — preflight sequence enforcement); updated schema for PREFLIGHT attestation block |
+| 1.2.0 | 2026-03-03 | Added A-09 (Agent Files — never modify .github/agents/**); recorded breach INC-AGCFPP-001-LIAISON-001 (session-039 unauthorized CodexAdvisor-agent.md modification) |

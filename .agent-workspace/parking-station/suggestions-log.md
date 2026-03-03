@@ -350,7 +350,6 @@
 | 2026-03-02 | independent-assurance-agent | session-094 | PHASE-4 | ASSURANCE-TOKEN issued for PR #789 Wave 13 — all prior failures resolved; 6-invocation PR complete | session-094-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-094 | PHASE-3 | CANDIDATE A-023: Tier 2 knowledge file version header must match history entry — three-point pre-commit check recommended for Foreman template | session-094-20260302.md |
 | 2026-03-02 | governance-liaison-isms | session-036 | SESSION-END | Add dedicated CI gate for api/ and packages/ai-centre/ TypeScript type-checking separate from mat/frontend gate | session-036-20260302.md |
-=======
 | 2026-03-02 | independent-assurance-agent | session-097 | PHASE-3 | Add explicit PREHANDOVER creation instruction to liaison/specialist agent Phase 3 to prevent CORE-018 at first AAWP_MAT invocation | session-097-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-097 | PHASE-3 | Add TECHNICAL_FIX alias warning to trigger table — technical fixes to AAWP_MAT paths ARE triggering; TECHNICAL_FIX is not a recognised exempt category | session-097-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-098 | PHASE-4 | Cross-check version numbers in PREHANDOVER narratives against actual package.json content — SHA256 correctness does not guarantee narrative accuracy | session-098-20260302.md |
@@ -358,13 +357,13 @@
 | 2026-03-02 | governance-liaison-isms | session-038 | SESSION-END | Add pre-IAA checklist to verify HANDOVER_SUMMARY file claims match actual files before invoking IAA | session-038-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-099 | PHASE-4 | Liaison agent needs mandatory pre-commit checklist: git status before IAA invocation — uncommitted governance artifacts = immediate A-021 failure | session-099-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-099 | PHASE-4 | When fixing a find-replace-style text error in governance artifacts, use grep -n to locate ALL instances before declaring fix complete | session-099-20260302.md |
-<<<<<<< HEAD
-=======
 | 2026-03-02 | independent-assurance-agent | session-100 | PHASE-4 | Post-ASSURANCE-TOKEN ceremony steps should be automated or checklisted to prevent manual omission after token issuance | session-100-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-100 | PHASE-4 | Multi-invocation PR governance squash policy — CS2 consideration for consolidating governance ceremony commits before merge | session-100-20260302.md |
->>>>>>> c7a47a8 (chore(iaa): session-100 — ASSURANCE-TOKEN for PR #805 (all 19 checks PASS; session-099 F3+F4 resolved in 510e0ce))
 | 2026-03-03 | governance-liaison-isms | session-039 | SESSION-END | Extend GOVERNANCE_ALIGNMENT_INVENTORY to include agent_contracts section for .github/agents/*.md files | session-039-20260303.md |
 | 2026-03-03 | governance-liaison-isms | session-040 | SESSION-END | Add pre-layer-down screening of ripple changed_paths against scope.escalation_required; escalate immediately if any match | session-040-20260303.md |
 | 2026-03-03 | independent-assurance-agent | session-101 | PHASE-4 | governance-liaison FAIL-ONLY-ONCE.md lacks A-021 equivalent — all artifacts must be committed before IAA invocation; gap caused REJECTION-PACKAGE for session-040 | session-101-20260303.md |
 | 2026-03-03 | independent-assurance-agent | session-101 | PHASE-4 | AGCFPP-001 should explicitly state that revert operations on .github/agents/ files are still modifications requiring CodexAdvisor-agent authorship — no revert exception | session-101-20260303.md |
 | 2026-03-03 | independent-assurance-agent | session-101 | PHASE-4 | Create breach-remediation PREHANDOVER template separating agent-file vs non-agent-file correction paths to prevent structural error in future breach remediations | session-101-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-102 | PHASE-4 | Formalize A-023: SHA256 table must be computed as final step before IAA invocation — second pattern occurrence; add to FAIL-ONLY-ONCE.md | session-102-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-102 | PHASE-4 | Add CORE-017 Branch Remediation Runbook to IAA knowledge — fix path for unauthorized agent file in branch diff is complex with grafted history | session-102-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-102 | PHASE-4 | Suggestions-log.md concurrent edit protocol — shared file conflict risk; consider append-only section headers per branch | session-102-20260303.md |

@@ -47,26 +47,28 @@
 
 | File | SHA256 |
 |------|--------|
-| `.agent-workspace/governance-liaison-isms/knowledge/FAIL-ONLY-ONCE.md` | `9333ed7b7fed2e3896f04398cda9a74b7819afc4ee619be7541ace9c36e72955` |
+| `.agent-workspace/governance-liaison-isms/knowledge/FAIL-ONLY-ONCE.md` | `0787be294332cde4b929f70e8cdefbfb83ccac6d5eaeb8b2f61685bc99bfbd67` |
 | `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` | `6639faf360e95f175f405210ccea0c861102e55369012ef90ad5c310d53cd219` |
 | `.agent-workspace/governance-liaison-isms/escalation-inbox/INC-AGCFPP-001-LIAISON-001-20260303.md` | `b2bdc592d1e8aa5cb72176e64b5c19c6c6881ca47aa644585a56b0a71b6e86dd` |
 | `.agent-workspace/governance-liaison-isms/memory/session-039-20260303.md` (amended) | `35c226453e6a9a3630185c2dc7b409cfb8470566c33098c18dc526c03515e952` |
-| `.agent-workspace/governance-liaison-isms/memory/session-040-20260303.md` | `f0f51433eb1064a13ce3a6f5774086e54cce753a6cd3058ccc39b16d4aaee60b` |
+| `.agent-workspace/governance-liaison-isms/memory/session-040-20260303.md` | `3141a7ed8358d33de6aeb782de67813b5caf58d32da17f97d59f3c90082ac29a` |
+| `.agent-workspace/parking-station/suggestions-log.md` (conflict markers removed) | `7bde11994cef446a6ea14b5fd18ac13f5080ace0633996a7e89e89c130f38b3b` |
 
 ---
 
-## CodexAdvisor-agent.md — Before/After (CORE-017 Compliance)
+## CodexAdvisor-agent.md — Before/After Drift Check (OVL-AC-011)
 
-**IAA CORE-017 finding**: Governance-liaison-isms CANNOT touch `.github/agents/CodexAdvisor-agent.md` even to revert it.
+**IAA CORE-017 compliance**: Governance-liaison-isms CANNOT touch `.github/agents/CodexAdvisor-agent.md` even to revert it.
 
-| State | Description | Required_checks count |
-|-------|-------------|----------------------|
-| Before session-039 | Original consumer copy (3 checks: Merge Gate Interface only) | 3 |
-| After session-039 (current HEAD) | Unauthorized change — added 2 Governance Ceremony Gate checks | 5 |
-| Session-040 this PR | NOT MODIFIED — governance-liaison excluded this file per IAA CORE-017 | 5 (unchanged in this PR) |
+| State | Description | Char Count | SHA256 |
+|-------|-------------|------------|--------|
+| Before session-039 (original) | Consumer copy — 3 checks (Merge Gate Interface only) | 29,702 | `fde74da846f85fc0845178bea4b2053a8d26e62ea117e38de3d69c58a3af72e3` |
+| After session-039 (current HEAD) | Unauthorized change — 5 checks (+2 Governance Ceremony Gate) | 29,832 | `f1d81dc78152eded7e2bfc95415c76fee86bbe9bf9ffa15568c8857837488f0a` |
+| After session-040 (this PR) | NOT MODIFIED — governance-liaison excluded this file per IAA CORE-017 | 29,832 (unchanged) | `f1d81dc78152eded7e2bfc95415c76fee86bbe9bf9ffa15568c8857837488f0a` (unchanged) |
 
-**Revert required by**: CodexAdvisor-agent or CS2 in a SEPARATE authorized PR  
-**Escalation**: INC-AGCFPP-001-LIAISON-001-20260303.md (filed this session)
+**Revert required by**: CodexAdvisor-agent or CS2 → separate authorized PR  
+**Target state after revert**: 29,702 chars, SHA256 `fde74da846f85fc0845178bea4b2053a8d26e62ea117e38de3d69c58a3af72e3`  
+**CS2 escalation**: INC-AGCFPP-001-LIAISON-001-20260303.md (filed this session)
 
 ---
 
@@ -124,7 +126,17 @@ REJECTION-PACKAGE — 10 failures including:
 - OVL-AC-012: No ripple/cross-agent assessment (fixed: section above)
 - PARITY-001: Merge gate parity (fixed: parity check above)
 
-### Round 2 (this invocation):
+### Round 2 (after PREHANDOVER proof committed, all round 1 failures addressed):
+
+REJECTION-PACKAGE — 6 failures:
+- **CORE-007** (Merge conflict markers in suggestions-log.md) → Fixed: conflict markers removed, all entries preserved
+- **CORE-017** (Session-039 agent file change still in PR diff) → IAA notes CS2 must rebase/amend OR issue written waiver; governance-liaison cannot restructure branch without touching agent file. CS2 escalation INC-AGCFPP-001-LIAISON-001 filed.
+- **CORE-020** (SHA256 mismatch in PREHANDOVER) → Fixed: hashes recomputed as final step per A-023
+- **OVL-AC-009** (CodexAdvisor-agent.md char count) → Current HEAD file is 29,832 chars (within 30,000 limit); auto-resolved when CORE-017 is addressed by CS2
+- **OVL-AC-011** (Missing char count + SHA256 in before/after table) → Fixed: full table with char counts and SHA256 hashes added
+- **OVL-KG-003** (No version history in FAIL-ONLY-ONCE.md) → Fixed: ## Version History section added with 1.0.0, 1.1.0, 1.2.0 entries
+
+### Round 3 (this invocation):
 PENDING
 
 ---
