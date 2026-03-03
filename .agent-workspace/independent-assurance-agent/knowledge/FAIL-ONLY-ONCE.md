@@ -1,7 +1,7 @@
 # IAA FAIL-ONLY-ONCE Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 2.0.0
+**Version**: 2.1.0
 **Last Updated**: 2026-03-03
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -620,6 +620,34 @@ Any PREHANDOVER proof that cannot produce these three evidence snippets is self-
 
 ---
 
+### A-028 — SCOPE_DECLARATION Format Compliance — List Format Required, Prior-Wave Entries Must Be Trimmed
+
+**Trigger**: IAA session-120 (2026-03-03) — Wave 14 Addendum A fourth invocation attempt
+**Root Cause**: SCOPE_DECLARATION.md Wave 14 section used table format (`| \`file\` | type | incident |`) instead of list format (`- \`file\` - description`). The BL-027 `validate-scope-to-diff.sh` script parses ONLY list-format declarations using regex `^\s*-\s+\`[^`]+\`\s+-\s+`. Table-format declarations are completely invisible to the script, yielding 0 declared files from the entire Wave 14 section. Additionally, prior-wave list-format entries (from previous PRs already merged to `origin/main`) remain in SCOPE_DECLARATION — they appear as "EXTRA" declarations in BL-027's set comparison since they are not in the current PR's diff.
+
+**Permanent Rule**:
+1. SCOPE_DECLARATION.md file declarations MUST use list format only: `- \`path/to/file\` - one-line description`. Never use table format for file declarations in SCOPE_DECLARATION.
+2. SCOPE_DECLARATION.md must be trimmed on each PR branch to contain ONLY the files changed in that PR's diff (`git diff --name-only origin/main...HEAD`). Prior-wave entries (already merged to origin/main) must be removed.
+3. ALL files in the PR diff must be declared — including IAA workspace files, parking-station files, and any agent session memory files committed as evidence artifacts.
+4. Reference format template: the Wave 13 Addendum B+C section (sessions 095/116) as the canonical format example — it previously passed BL-027.
+
+**Self-Check Before IAA Invocation**:
+```bash
+# Step 1: Get exact PR diff file count
+git diff --name-only origin/main...HEAD | wc -l
+
+# Step 2: Get list-format declaration count from SCOPE_DECLARATION  
+grep -E '^\s*-\s+`[^`]+`\s+-\s+' SCOPE_DECLARATION.md | wc -l
+
+# These counts MUST match. If they don't: fix SCOPE_DECLARATION before invoking IAA.
+```
+
+**IAA Enforcement**: During §4.3, manually simulate `validate-scope-to-diff.sh` by running both commands above and confirming equal counts. If the script is unavailable (shallow clone), the manual count comparison is the equivalent check.
+
+**Status**: ACTIVE — from session-120 (2026-03-03)
+
+---
+
 ## Version History
 
 | Version | Date | Change |
@@ -635,6 +663,7 @@ Any PREHANDOVER proof that cannot produce these three evidence snippets is self-
 | 1.8.0 | 2026-03-03 | Conflict resolution: A-023 collision fixed — PR #816 rule renumbered to A-025 (ceremony PENDING rule); A-023 now = OVL-AC-012 ripple assessment; A-024 = secret field naming; A-025 = ceremony PENDING pre-fill prohibition |
 | 1.9.0 | 2026-03-03 | A-026 (SCOPE_DECLARATION.md must match PR diff exactly before IAA invocation — stale declaration = BL-027 merge gate parity failure) added from session-116 (Wave 13 Addendum B+C re-invocation) |
 | 2.0.0 | 2026-03-03 | A-027 (third-consecutive A-021 failure = systemic workflow gap — Pre-IAA Commit Gate required) added from session-119 (Wave 14 Addendum A — third A-021 failure on same branch); header version corrected from 1.8.0 to 2.0.0 (header/index discrepancy resolved) |
+| 2.1.0 | 2026-03-03 | A-028 (SCOPE_DECLARATION format compliance — list format required, prior-wave entries must be trimmed) added from session-120 (Wave 14 Addendum A — fourth invocation; BL-027 fails due to table format and phantom prior-wave entries) |
 
 ---
 
