@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "repository": "APGI-cmy/maturion-isms",
+  "canonical_source": "APGI-cmy/maturion-foreman-governance",
+  "last_updated": "2026-03-03T14:28:26Z",
+  "canonical_commit": "1d27714f96a217e48e29e55524fe5d33459eb68b",
+  "canonical_inventory_version": "1.0.0",
+  "sync_pending": false,
+  "drift_detected": false,
+  "last_ripple_received": "2026-03-03T11:23:06Z",
+  "last_ripple_dispatch_id": "1d27714f",
+  "last_liaison_session": "session-043-20260303",
+  "notes": "Sync state initialised by session-043-20260303. Ripple 1d27714f processed: no PUBLIC_API files changed. Pre-existing escalation ESC-AGENTFILE-E77B00C7-20260303 remains open (agent contract files awaiting CS2/CodexAdvisor resolution)."
+}
