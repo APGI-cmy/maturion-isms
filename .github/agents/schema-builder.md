@@ -42,6 +42,8 @@ merge_gate_interface:
     - "Merge Gate Interface / merge-gate/verdict"
     - "Merge Gate Interface / governance/alignment"
     - "Merge Gate Interface / stop-and-fix/enforcement"
+  parity_required: true
+  parity_enforcement: BLOCKING
 scope:
   repository: APGI-cmy/maturion-isms
   type: consumer-repository
@@ -480,16 +482,31 @@ When completing wave/task and generating IBWR evidence, builder MUST update BUIL
 
 ### 4.3 Pre-Handover Merge Gate Parity Check (Priority B_H — BLOCKING)
 
-**[B_H] Run before opening any PR. Do NOT open a PR until all checks PASS locally.**
+**[B_H] CI is confirmatory — run all gate checks locally before opening any PR.**
 
-- Enumerate all checks listed in `merge_gate_interface.required_checks` (from agent contract YAML)
-- Run each check locally using the same script/ruleset as the CI merge gate
-- If ANY check fails locally → **STOP and FIX immediately** — do not open PR
-- Document result in PREHANDOVER proof: `merge_gate_parity: PASS | FAIL`
+```bash
+#!/bin/bash
+# B_H — BLOCKING: do NOT open PR until all checks PASS
+GATE_FAILURES=()
+# Checks: merge-gate/verdict | governance/alignment | stop-and-fix/enforcement
+bash .github/scripts/merge-gate-verdict.sh >/dev/null 2>&1 \
+  || GATE_FAILURES+=("merge-gate/verdict: FAIL")
+[ -f ".github/scripts/validate-canon-hashes.sh" ] \
+  && bash .github/scripts/validate-canon-hashes.sh >/dev/null 2>&1 \
+  || GATE_FAILURES+=("governance/alignment: FAIL")
+[ "$(find .agent-workspace/schema-builder -name 'blocker-*.md' 2>/dev/null | wc -l)" -gt 0 ] \
+  && GATE_FAILURES+=("stop-and-fix/enforcement: FAIL")
+if [ ${#GATE_FAILURES[@]} -gt 0 ]; then
+  echo "❌ [B_H] GATE PARITY FAILED — DO NOT OPEN PR"
+  printf '  - %s\n' "${GATE_FAILURES[@]}"
+  echo "Fix all failing gates and re-run. Opening a PR on a local gate failure is PROHIBITED."
+  exit 1
+fi
+echo "✅ [B_H] ALL GATE PARITY CHECKS PASSED — cleared to open PR"
+```
 
-> Opening a PR with a failing local gate is **prohibited** — it is the same class of violation as pushing directly to main.
-
-**Authority**: `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.1.0 Section 4.3
+Document in PREHANDOVER proof: `merge_gate_parity: PASS`
+**Authority**: `governance/canon/AGENT_HANDOVER_AUTOMATION.md` Section 4.3
 
 ### 4.4 Mandatory Process Improvement Reflection (Priority B_M)
 
