@@ -601,6 +601,68 @@ authorised mechanism for populating ceremony artifact token fields with non-PEND
 
 ---
 
+### A-027 — GitHub Actions Script Injection: `${{ }}` Inside `github-script` Template Literals Is Prohibited
+
+**Triggered by**: IAA session-120 (2026-03-03) — `copilot/add-re-anchor-workflow` OVL-CI-004 finding.
+The `foreman-reanchor.yml` workflow embedded `${{ steps.wave_tasks.outputs.tasks_snippet }}` directly
+inside a JavaScript template literal in an `actions/github-script` step. Although backticks were escaped
+via `sed`, the `${...}` template expression injection vector remained open. This is a well-known GitHub
+Actions security anti-pattern (GitHub Security Advisory GHSA-mfwh-5m23-j46w pattern; CWE-1336).
+
+**Incident**: Workflow `foreman-reanchor.yml` in PR `copilot/add-re-anchor-workflow` used:
+```javascript
+const tasksSnippet = `${{ steps.wave_tasks.outputs.tasks_snippet }}`;
+```
+This embeds file content (from `wave-current-tasks.md` on a PR branch) verbatim into JavaScript source
+code before execution. A malicious `wave-current-tasks.md` with `${require('fs').readFileSync(...)}` or
+`${process.env.GITHUB_TOKEN}` content could exfiltrate data or execute arbitrary code. The workflow
+holds `pull-requests: write` and `issues: write` permissions.
+
+**Permanent Rule**:
+In any `actions/github-script` (or equivalent JS runner) step, GitHub Actions expression `${{ }}` values
+that originate from untrusted or potentially attacker-influenced sources (step outputs, PR branch file
+content, issue body content, comment body content) MUST be passed via `env:` variables and accessed
+via `process.env.VARIABLE_NAME`, NOT embedded directly in template literals or string concatenation.
+
+The correct pattern is:
+```yaml
+- name: Post comment
+  uses: actions/github-script@v7
+  env:
+    USER_CONTENT: ${{ steps.read_file.outputs.content }}
+  with:
+    script: |
+      const userContent = process.env.USER_CONTENT || '';
+```
+
+**IAA Enforcement** (CI_WORKFLOW overlay OVL-CI-004):
+During OVL-CI-004 check, scan the workflow file for the regex pattern:
+`\$\{\{[^}]+\}\}` appearing inside a `script:` block of a `github-script` step (or any `run:` step
+that uses the value in a context that could lead to code execution). Any match where the expression
+output may contain user/file/attacker-influenced content = OVL-CI-004 FAIL.
+
+**Trusted expression exceptions** (PASS — these are safe):
+- `${{ github.event_name }}`, `${{ github.repository }}` — GitHub-controlled metadata
+- `${{ steps.X.outputs.tasks_found }}` where output is `'true'`/`'false'` only (boolean, controlled)
+- `${{ context.repo.owner }}` — repository metadata
+
+**Always flag as FAIL**:
+- `${{ steps.X.outputs.Y }}` where Y may contain file content, user input, issue body, comment body
+- `${{ github.event.comment.body }}`, `${{ github.event.issue.body }}`, `${{ github.event.pull_request.title }}`
+  (if used directly in code, not just for boolean `contains()` checks)
+
+**Fix Procedure**:
+1. Identify all `${{ }}` expressions inside `script:` blocks
+2. Move attacker-influenced values to `env:` block above the step
+3. Access via `process.env.VARIABLE_NAME` in the JavaScript code
+4. Re-test the workflow
+
+**Applies To**: All CI_WORKFLOW PRs containing `actions/github-script` steps or equivalent
+
+**Status**: ACTIVE — from session-120 (2026-03-03)
+
+---
+
 ## Version History
 
 | Version | Date | Change |
@@ -615,6 +677,7 @@ authorised mechanism for populating ceremony artifact token fields with non-PEND
 | 1.7.0 | 2026-03-03 | A-024 (secret field naming — `secret:` prohibited in agent contracts; must use `secret_env_var:`) added from CI scanner failures (job 65529138120) |
 | 1.8.0 | 2026-03-03 | Conflict resolution: A-023 collision fixed — PR #816 rule renumbered to A-025 (ceremony PENDING rule); A-023 now = OVL-AC-012 ripple assessment; A-024 = secret field naming; A-025 = ceremony PENDING pre-fill prohibition |
 | 1.9.0 | 2026-03-03 | A-026 (SCOPE_DECLARATION.md must match PR diff exactly before IAA invocation — stale declaration = BL-027 merge gate parity failure) added from session-116 (Wave 13 Addendum B+C re-invocation) |
+| 2.0.0 | 2026-03-03 | A-027 (GitHub Actions script injection — `${{ }}` inside github-script template literals prohibited; must use `env:` variable pattern) added from session-120 OVL-CI-004 finding (copilot/add-re-anchor-workflow) |
 
 ---
 
