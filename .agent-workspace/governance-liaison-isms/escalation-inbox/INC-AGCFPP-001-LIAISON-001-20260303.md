@@ -10,6 +10,32 @@
 
 ---
 
+## ⚠️ ADDITIONAL IAA FINDINGS — CS2 ACTION REQUIRED (rounds 2 and 3)
+
+### HALT-001 (IAA round 3 — Independence Violation)
+
+**Finding**: Commit `5b0a211` in this PR is attributed to `independent-assurance-agent <iaa@maturion-isms>` and modifies three files that IAA is reviewing:
+- `.agent-workspace/governance-liaison-isms/knowledge/FAIL-ONLY-ONCE.md`
+- `.agent-workspace/governance-liaison-isms/memory/PREHANDOVER-session-040-20260303.md`
+- `.agent-workspace/parking-station/suggestions-log.md`
+
+IAA cannot review artifacts it authored. This is a hard HALT-001 (independence violation).
+
+**CS2 action required (choose one)**:
+- **Option A**: CS2 amends commit `5b0a211` to re-attribute authorship to governance-liaison-isms-agent or CS2 directly, force-pushes branch
+- **Option B**: CS2 reverts `5b0a211`; governance-liaison re-applies the same three fixes under its own git identity
+
+### CORE-017 (Persistent across all 3 rounds)
+
+**Finding**: Commit `7071bd0` (session-039) modified `.github/agents/CodexAdvisor-agent.md` without CodexAdvisor + CS2 authorization. Remains in PR diff.
+
+**CS2 action required (choose one)**:
+- **Option A**: CS2 issues written waiver document (committing to PR as verifiable artifact)
+- **Option B**: CS2 directs rebase/squash to remove commit `7071bd0` from this branch (CodexAdvisor-agent.md change goes to separate PR)
+- **Option C**: CS2 directs CodexAdvisor-agent to add a revert commit restoring CodexAdvisor-agent.md to pre-session-039 state
+
+---
+
 ## IAA REJECTION-PACKAGE Finding — CORE-017 Update
 
 **IAA session-040 finding**: Governance-liaison-isms CANNOT revert `.github/agents/CodexAdvisor-agent.md` even to remediate session-039's breach. The revert itself would be another AGCFPP-001 violation. Per IAA CORE-017:
