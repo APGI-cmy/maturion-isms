@@ -120,3 +120,4 @@
 | 2026-03-03 | independent-assurance-agent | session-105 | Phase 3/OVL-AC-009 | Add boundary-risk pre-check to CodexAdvisor PREHANDOVER ceremony for bulk renames approaching 30,000-char limit | session-105-20260303.md |
 | 2026-03-03 | independent-assurance-agent | session-106 | Phase 3/CORE-021 | Add PREHANDOVER self-consistency sweep to CodexAdvisor remediation checklist: search all delta values across all sections after updating any data table | session-106-20260303.md |
 | 2026-03-03 | independent-assurance-agent | session-107 | Phase 4 | CodexAdvisor should add pre-invocation self-check script to verify PREHANDOVER per-file char table programmatically before invoking IAA | session-107-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-109 | [ASSURANCE] | Pre-invocation git-commit verification: CodexAdvisor should gate IAA invocation on confirmed committed state of all intended changes via git diff --stat | session-109-20260303.md |
