@@ -2,7 +2,7 @@
 
 **Agent**: foreman-v2  
 **Contract Version**: 2.5.0  
-**Knowledge Version**: 1.6.4  
+**Knowledge Version**: 1.6.5  
 **Last Updated**: 2026-03-02  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
@@ -17,7 +17,7 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 
 | File | Purpose | Version |
 |------|---------|---------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.6.4 |
+| `index.md` (this file) | Knowledge entry point and version reference | 1.6.5 |
 | `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 2.2.0 |
 | `specialist-registry.md` | Registry of all delegable agents with capabilities and separation-of-duties boundary | 1.0.0 |
 | `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 |
@@ -121,6 +121,7 @@ All verb classification and mode-switching decisions MUST reference `ECOSYSTEM_V
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.6.5 | 2026-03-03 | Re-trigger CI synchronize event — PR #806 governance-ceremony gate run 22588649095 showed action_required (bot approval pending); force fresh event to execute PR body governance block check against current body |
 | 1.6.4 | 2026-03-02 | PR #806 governance ceremony complete — `## Governance` block added to PR body with IAA Audit Token IAA-session-098-20260302-PASS; PR Body Governance Block gate now satisfied |
 | 1.6.3 | 2026-03-02 | FM_QP_ENHANCED_QUICK_REFERENCE.md added (v1.0.0) — Layer-Down propagation of FM_QUALITY_PROTOCOL_ENHANCED_SOP.md v1.0.0 (canonical commit 7792913259b0); Builder Referral Protocol and Progress Tracker Enforcement Tier 2 stub |
 | 1.6.2 | 2026-03-02 | FAIL-ONLY-ONCE.md updated to v2.2.0 — A-017 ISMS-AGENTS-ONLY rule locked in, INC-GENERAL-PURPOSE-001 incident recorded, S-014 improvement suggestion added (CS2 directive 2026-03-02) |
