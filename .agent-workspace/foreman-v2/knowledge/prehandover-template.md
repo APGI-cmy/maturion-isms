@@ -2,9 +2,19 @@
 
 **Agent**: foreman-v2
 **Version**: 1.2.0
-**Last Updated**: 2026-03-03
+**Last Updated**: 2026-03-02
 **Purpose**: Template for generating Phase 4 PREHANDOVER proof artifacts per S-009 (FAIL-ONLY-ONCE v1.8.0)
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
+
+---
+
+## Version History
+
+| Version | Date | Change |
+|---|---|---|
+| 1.2.0 | 2026-03-02 | Add `## Environment Parity` section (OVL-CI-006 / A-020 — 7-session recurring flag closed via issue #815) |
+| 1.1.0 | 2026-03-01 | Add `## IAA Agent Response (verbatim)` mandatory section per S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) |
+| 1.0.0 | 2026-02-25 | Initial template |
 
 ---
 
@@ -85,30 +95,20 @@ Local test run: [N] tests passed, [N] failed, [N] skipped — [N] test files.
 
 ---
 
-## CI Run Evidence
-
-<!-- MANDATORY: OVL-CI-005 compliance — IAA requires a CI run URL proving the workflow ran against this branch -->
-
-| Field | Value |
-|---|---|
-| CI Run URL | [GitHub Actions run URL — e.g. https://github.com/OWNER/REPO/actions/runs/RUNID] |
-| Run Status | [PASS / FAIL / N/A (pre-merge)] |
-| Triggered by | [workflow name and trigger event] |
-
----
-
 ## Environment Parity
 
-<!-- MANDATORY: OVL-CI-006 compliance — IAA requires confirmation that CI environment matches local validation -->
+Confirms local execution environment matches CI merge gate configuration.
 
-| Check | Local | CI | Parity |
+| Check | Local | CI | Match? |
 |---|---|---|---|
-| Node version | [version] | [version] | [✅/❌] |
-| OS | [local OS] | ubuntu-latest | [✅/❌] |
-| Dependencies installed | [yes/no] | [yes/no] | [✅/❌] |
-| Workflow YAML valid | [yes — yamllint / N/A] | [yes — CI] | [✅/❌] |
+| Node version | [X.Y.Z] | [X.Y.Z from .nvmrc / CI config] | [✅/❌] |
+| Required env vars present | [list or 'all present'] | [required by CI] | [✅/❌] |
+| Schema/migration state | [migrated/current] | [expected by CI] | [✅/❌] |
+| Any environment-specific flags | [list or 'none'] | [CI flags] | [✅/❌] |
 
-`environment_parity: [CONFIRMED / DEVIATION — describe any deviations]`
+**Environment Parity Verdict: [PASS / FAIL]**
+
+> If FAIL: describe discrepancy and resolution before proceeding to Phase 4.
 
 ---
 
@@ -125,8 +125,6 @@ Local test run: [N] tests passed, [N] failed, [N] skipped — [N] test files.
 - [x] Zero deprecation warnings
 - [x] Zero compiler/linter warnings
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
-- [x] CI Run Evidence section populated (OVL-CI-005)
-- [x] Environment Parity section populated (OVL-CI-006)
 - [x] IAA audit token recorded: [token]
 
 ---
@@ -192,13 +190,3 @@ After IAA issues ASSURANCE-TOKEN, complete these 3 steps **before opening the PR
 ---
 
 **Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
-
----
-
-## Version History
-
-| Version | Date | Change |
-|---------|------|--------|
-| 1.2.0 | 2026-03-03 | CI Run Evidence (OVL-CI-005) and Environment Parity (OVL-CI-006) sections added to template; checklist updated with OVL-CI-005/OVL-CI-006 items — addresses IAA REJECTION-PACKAGE findings from sessions 095–098 (Issue #846) |
-| 1.1.0 | 2026-03-01 | Initial template with IAA Agent Response (verbatim) section (S-009 compliance); ANTI-MISUSE annotations added |
-| 1.0.0 | 2026-03-01 | Initial template created for PHASE 4 §S-009 compliance |

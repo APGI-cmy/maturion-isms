@@ -3,7 +3,7 @@
 **Agent**: foreman-v2  
 **Contract Version**: 2.5.0  
 **Knowledge Version**: 1.6.4  
-**Last Updated**: 2026-03-03  
+**Last Updated**: 2026-03-02  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -21,7 +21,7 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 | `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 2.2.0 |
 | `specialist-registry.md` | Registry of all delegable agents with capabilities and separation-of-duties boundary | 1.0.0 |
 | `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 |
-| `prehandover-template.md` | **PHASE 4 §S-009** — PREHANDOVER proof template with mandatory IAA Agent Response (verbatim) section per FAIL-ONLY-ONCE v1.8.0 S-009; CI Run Evidence (OVL-CI-005) and Environment Parity (OVL-CI-006) sections added v1.2.0 | 1.2.0 |
+| `prehandover-template.md` | **PHASE 4 §S-009** — PREHANDOVER proof template with mandatory IAA Agent Response (verbatim) section per FAIL-ONLY-ONCE v1.8.0 S-009; `## Environment Parity` section per OVL-CI-006 | 1.2.0 |
 | `FM_QP_ENHANCED_QUICK_REFERENCE.md` | **Quality Professor Mode** — Quick reference for Builder Referral Protocol (QP-FAIL-001–007) and Progress Tracker Enforcement; Tier 3 canonical authority: `governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` v1.0.0 | 1.0.0 |
 
 ---
@@ -121,7 +121,7 @@ All verb classification and mode-switching decisions MUST reference `ECOSYSTEM_V
 
 | Version | Date | Change |
 |---------|------|--------|
-| 1.6.4 | 2026-03-03 | prehandover-template.md updated to v1.2.0 — CI Run Evidence (OVL-CI-005) and Environment Parity (OVL-CI-006) sections added to address IAA REJECTION-PACKAGE findings from sessions 095–098 |
+| 1.6.4 | 2026-03-02 | prehandover-template.md bumped to v1.2.0 — `## Environment Parity` section added (OVL-CI-006 / A-020 7-session recurring flag resolved, issue #815) |
 | 1.6.3 | 2026-03-02 | FM_QP_ENHANCED_QUICK_REFERENCE.md added (v1.0.0) — Layer-Down propagation of FM_QUALITY_PROTOCOL_ENHANCED_SOP.md v1.0.0 (canonical commit 7792913259b0); Builder Referral Protocol and Progress Tracker Enforcement Tier 2 stub |
 | 1.6.2 | 2026-03-02 | FAIL-ONLY-ONCE.md updated to v2.2.0 — A-017 ISMS-AGENTS-ONLY rule locked in, INC-GENERAL-PURPOSE-001 incident recorded, S-014 improvement suggestion added (CS2 directive 2026-03-02) |
 | 1.6.1 | 2026-03-02 | Corrected version table row for `index.md` from `1.2.0` to `1.6.1` — cosmetic drift from PR #785 (v1.3.0→v1.6.0 progression did not update table cell); version bumped on edit per OVL-KG-002 |
