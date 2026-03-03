@@ -202,3 +202,58 @@ Per `governance/canon/WE_ONLY_FAIL_ONCE_DOCTRINE.md`, every failure must result 
 ---
 
 *Authority: CS2 (Johan Ras) | Governance: `WE_ONLY_FAIL_ONCE_DOCTRINE.md` v1.0.0 | Version: v1.0.0 | 2026-03-02*
+
+---
+
+## 8. Addendum — Wave 13 Post-CI-Certification Production Failures (2026-03-03)
+
+**Addendum Version**: v1.1.0  
+**Date**: 2026-03-03  
+**Author**: foreman-v2-agent, session-095  
+**Trigger**: Post-deployment full workflow testing surfaced two additional production-stopper failures after Wave 13 CST/CWT/FCWT was declared CI-CERTIFIED COMPLETE.
+
+---
+
+### 8.1 F-02 Addendum: Audit Schema Cache Miss — `audit_period_end` Column Not in Migration
+
+**Gap Description (supplementary to §3 F-02)**:
+
+The root cause of the schema cache miss is more specific than the initial RCA recorded. The production migration `apps/maturion-maturity-legacy/supabase/migrations/20260302000000_mat_core_tables.sql` **was successfully applied** to production (visible in `aimc_migrations` screenshot: `20260302000000_mat_core_tables.sql` applied at `2026-03-02 14:40:36`), but the migration **omits `audit_period_start` and `audit_period_end` columns** from the `audits` table definition.
+
+The `data-architecture.md §1.1.3` specifies these columns as part of the `audits` schema (type `DATE`). The frontend files `AuditCreationForm.tsx` and `useAudits.ts` both reference these columns. When the frontend attempts to insert an audit record with `audit_period_end`, the Supabase schema cache correctly reports the column as absent — because the migration that created the table never included it.
+
+**Incident ID**: INC-W13-AUDIT-SCHEMA-001  
+**Corrective Action**: schema-builder to create a new idempotent migration:
+```sql
+ALTER TABLE public.audits ADD COLUMN IF NOT EXISTS audit_period_start DATE;
+ALTER TABLE public.audits ADD COLUMN IF NOT EXISTS audit_period_end DATE;
+```
+
+**Preventive Action**: All migration files must be cross-validated column-by-column against `data-architecture.md` before being signed off. A schema existence test must assert the presence of every column defined in the architecture, not only the table itself.
+
+---
+
+### 8.2 F-10 Addendum: Profile Save Broken — `user_profiles`/`profiles` Hook Drift
+
+**Gap Description (supplementary to §3 F-10)**:
+
+The initial RCA for F-10 attributed the profile save failure to auth session forwarding (cascade from F-01). This remains a contributing factor, but a second independent root cause was identified post-Wave 13 CI certification:
+
+`modules/mat/frontend/src/lib/hooks/useSettings.ts` calls `supabase.from('user_profiles')` in both `useUserProfile()` (read) and `useUpdateUserProfile()` (write/upsert). The correct table name, as defined in `data-architecture.md §1.1.2`, is `profiles`. The table `user_profiles` does not exist in the production schema.
+
+By contrast, `modules/mat/frontend/src/lib/api/profile.ts` (added in Wave 13 for auth wiring) correctly uses `.from('profiles')`. This divergence means that even after auth session forwarding was fixed (Wave 13 T-W13-AUTH-4), the `useSettings.ts` hook continues to fail because it targets a non-existent table.
+
+**Incident ID**: INC-W13-PROFILE-TABLE-001  
+**Affected File**: `modules/mat/frontend/src/lib/hooks/useSettings.ts` (lines 45 and 82)  
+**Corrective Action**: ui-builder to rename both `user_profiles` occurrences to `profiles` in `useSettings.ts`.
+
+**Preventive Action**: Frontend hook table references must be cross-checked against `data-architecture.md` on every schema refactor. Any change to table names must trigger a codebase-wide search for references to the old name. This check must be included in the architecture drift validation step of every wave gate.
+
+---
+
+### 8.3 Structural Governance Improvements (Addendum)
+
+| # | Failure Pattern | Structural Improvement |
+|---|----------------|----------------------|
+| WGI-05 | Migration applied but missing columns — not caught by column-level schema test | Schema existence tests must assert column presence, not only table presence |
+| WGI-06 | Hook table name differs from architecture and from peer API file — drift undetected | Architecture drift check must include cross-file table name consistency scan |
