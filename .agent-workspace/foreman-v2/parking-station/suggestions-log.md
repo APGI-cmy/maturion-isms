@@ -1,0 +1,1 @@
+| 2026-03-03 | foreman-v2-agent | session-093 | [ORCHESTRATION] | Pre-flight merge conflict scan: grep for `<<<<<<< HEAD` in all JSON and TS files before delegating test execution — prevents silent CI failures from unresolved conflicts in non-obvious files. | session-093-20260303.md |
