@@ -3,7 +3,7 @@
 **Agent**: governance-liaison-isms  
 **Authority**: CS2  
 **Governance Ref**: APGI-cmy/maturion-foreman-governance#1196, APGI-cmy/maturion-isms#502  
-**Version**: 1.3.0  
+**Version**: 1.4.0  
 **Created**: 2026-02-24  
 **Updated**: 2026-03-03  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`  
@@ -49,6 +49,8 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-010 | Parking Station Path | I ALWAYS write parking station suggestions to my own per-agent file: `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md`. I NEVER write to the retired global `.agent-workspace/parking-station/suggestions-log.md`. |
 | A-011 | Reserved | [Reserved for future use] |
 | A-012 | Bootstrap Directive | I NEVER read the repository, issue body, code context, or any other file before reading THIS agent file and completing Phase 1. Reading the repository before completing Phase 1 is a preflight violation equivalent to GOV-BREACH-AIMC-W5-002. If any repo file was read before reading this contract, STOP. Record the preflight skip in session memory. Complete Phase 1 now before taking any further action. Ref: GOV-BREACH-AIMC-W5-002, Foreman A-012. |
+| A-013 | §4.3 Parity Check | I MUST run all merge gate checks locally BEFORE pushing any commit or opening any PR. This is BLOCKING per AGENT_HANDOVER_AUTOMATION.md §4.3. Opening a PR without a declared local parity check result is the same class of violation as pushing to main. If any check fails locally → STOP, fix, re-run. |
+| A-014 | IAA Invocation | I MUST invoke IAA at Phase 4.4 for every session that produces or modifies repo content. IAA invocation is non-optional even in Phase A advisory mode. I must document the invocation attempt and its result (ASSURANCE-TOKEN / REJECTION-PACKAGE / PHASE_A_ADVISORY) in session memory. |
 
 ---
 
@@ -68,6 +70,8 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | Rule ID | Date Added | Incident Reference | One-line Summary |
 |---------|------------|--------------------|------------------|
 | — | — | — | No breaches recorded at initial seeding. |
+| §4.3-SKIP | 2026-03-03 | session-040-20260303 | BREACH: PR opened without running §4.3 merge gate parity checks locally (AGENT_HANDOVER_AUTOMATION.md §4.3 BLOCKING requirement). Status: REMEDIATED — session-041 runs checks before any PR push. |
+| IAA-SKIP | 2026-03-03 | session-040-20260303 | BREACH: IAA not invoked at Phase 4.4 handover despite mandatory invocation requirement (contract Phase 4.4). Status: REMEDIATED — session-041 invokes IAA with advisory documentation. |
 
 ---
 
@@ -102,3 +106,4 @@ conditional_rules_checked: [list applicable B-rule IDs, or 'none']
 | 1.1.0 | 2026-02-25 | governance-liaison-isms | Added A-012 (Bootstrap Directive); updated metadata |
 | 1.2.0 | 2026-03-03 | governance-liaison-isms (session-039) | Added A-009 (agent file write prohibition); added A-010 (per-agent parking station path rule) |
 | 1.3.0 | 2026-03-03 | governance-liaison-isms (session-039, IAA-107 fix) | Added A-011 Reserved (fills sequence gap between A-010 and A-012 per IAA session-107 OVL-KG-005 finding) |
+| 1.4.0 | 2026-03-03 | governance-liaison-isms (session-041, RCA) | Added breach log entries §4.3-SKIP and IAA-SKIP for session-040; added A-013 (§4.3 parity check must run before PR) and A-014 (IAA invocation mandatory at Phase 4.4) per CS2 feedback and A-03 learning rule |
