@@ -49,9 +49,9 @@ The Re-Anchor Pulse workflow (`.github/workflows/foreman-reanchor.yml`) reads th
 
 ## Absence Behaviour
 
-If `wave-current-tasks.md` does not exist when the Re-Anchor Pulse fires, the workflow posts a fallback message directing the Foreman to read the latest session memory file. This is acceptable but sub-optimal — the Foreman should always create `wave-current-tasks.md` at wave start.
+**Mid-wave (Phase 3 — Re-Anchor Pulse fires during active wave):** If `wave-current-tasks.md` does not exist, the workflow posts a fallback message directing the Foreman to read the latest session memory file. This is sub-optimal and the Foreman must create `wave-current-tasks.md` immediately — but wave execution may continue.
 
-A missing `wave-current-tasks.md` at handover (Phase 4) is a **HANDOVER BLOCKER** — it is a required wave evidence artifact from knowledge version 1.10.0 onward.
+**At handover (Phase 4):** A missing `wave-current-tasks.md` is a **HANDOVER BLOCKER** — it is a required wave evidence artifact from knowledge version 1.7.0 onward. Handover must not proceed until the file is produced and committed.
 
 ---
 
