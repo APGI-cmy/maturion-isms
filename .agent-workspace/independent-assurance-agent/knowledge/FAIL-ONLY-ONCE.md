@@ -487,3 +487,27 @@ This rule is especially critical for PRs where remediation commits are added bet
 ---
 
 **Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
+
+---
+
+### A-023 — OVL-AC-012 Ripple Assessment Is a Standing PREHANDOVER Requirement
+
+**Triggered by**: Recurring pattern across sessions 084, 086, 088, 089, 097, 101 (2026-03-02–03) — OVL-AC-012 (ripple/cross-agent assessment absent) has failed in AGENT_CONTRACT and AAWP_MAT audits repeatedly. The pattern is that CodexAdvisor completes the technical work correctly but omits the explicit ripple assessment section.
+
+**Incident reference**: session-101-20260303 (learning integration trigger), corroborated by sessions 084, 086, 088, 089, 097.
+
+**Permanent Rule**:
+For every AGENT_CONTRACT PR, the PREHANDOVER proof MUST contain an explicit `## Ripple/Cross-Agent Assessment` section with one of:
+a) A list of all agents affected by the change, with ripple initiation status for each, OR
+b) An explicit "No ripple required" statement with specific justification for each agent class NOT updated.
+
+A PREHANDOVER proof without any ripple assessment content = immediate REJECTION-PACKAGE citing OVL-AC-012 and A-023.
+The absence of a ripple assessment section (not just an incomplete one) is the most common failure pattern.
+
+**Check in Phase 3 (OVL-AC-012 enforcement)**:
+> FAIL-ONLY-ONCE A-023: Search PREHANDOVER proof and session memory for ripple/cross-agent assessment.
+> If no `## Ripple` section or equivalent exists in the PREHANDOVER proof: FAIL immediately.
+> Do not accept session memory as a substitute for PREHANDOVER proof ripple assessment.
+
+**Status**: ACTIVE — effective immediately
+
