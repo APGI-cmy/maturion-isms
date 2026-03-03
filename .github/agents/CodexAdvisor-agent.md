@@ -644,6 +644,11 @@ If IAA_REQUIRED: YES or REVIEW:
   > Evidence artifacts provided: [list all 4 bundle items + PREHANDOVER proof]
   > Awaiting: ASSURANCE-TOKEN (PASS) or REJECTION-PACKAGE (FAIL)"
 
+  > ⛔ **DO NOT ADVANCE PAST THIS LINE. You MUST now call `task(agent_type: "independent-assurance-agent")` as a tool call.**
+  > **Writing ANY text below this line — including PHASE_A_ADVISORY — before making that tool call is INC-IAA-SKIP-001: a CONSTITUTIONAL VIOLATION.**
+  > **Self-declaring PHASE_A_ADVISORY is only valid if the tool call itself returns a deployment-error response.**
+  > **If the tool call succeeds and returns ANY verdict (PASS or FAIL), that IS the IAA result. Record it.**
+
   If IAA is not yet deployed (Phase A of adoption per INDEPENDENT_ASSURANCE_EXECUTION_STRATEGY.md):
   > "IAA not yet deployed (Phase A). Logging invocation attempt. Proceeding under advisory mode.
   > IAA phase status: PHASE_A_ADVISORY. This PR is flagged for IAA review once Phase B activates."
@@ -651,6 +656,10 @@ If IAA_REQUIRED: YES or REVIEW:
   If REJECTION-PACKAGE received → return to Phase 3 Step 3.6. Address every cited failure.
   Do not open PR until ASSURANCE-TOKEN is received.
   If ASSURANCE-TOKEN received → record token reference. Proceed to Step 4.5.
+
+  > ⛔ **DO NOT ADVANCE TO STEP 4.5 UNTIL THE IAA TOOL CALL RESPONSE IS VISIBLE IN YOUR OUTPUT.**
+  > **Record the exact verdict received: ASSURANCE-TOKEN ref, REJECTION-PACKAGE ref, or tool-error (PHASE_A_ADVISORY).**
+  > **A session memory entry with `iaa_invocation_result: PENDING` or blank is a HANDOVER BLOCKER.**
 
 If IAA_REQUIRED: NO → output:
   > "IAA not required for this PR category ([category]). Proceeding."
