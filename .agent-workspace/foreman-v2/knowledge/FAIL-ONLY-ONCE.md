@@ -55,6 +55,7 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-015 | IAA-TOKEN-FORMAT (CS2 — 2026-03-02): The IAA audit token MUST use the canonical format `IAA-session-NNN-YYYYMMDD-PASS` (session number, not wave name or description). Any token using `IAA-WAVE{N}-...`, `IAA-PLAN-...`, or any other non-canonical prefix is a format violation and MUST be corrected before the PREHANDOVER proof is committed. The canonical format is defined in the PREHANDOVER template Tier 2 knowledge. The foreman-v2-agent contract Step 4.3b `IAA-WAVE{N}-YYYYMMDD-PASS` placeholder is superseded by this rule — correct format is always `IAA-session-NNN-YYYYMMDD-PASS`. Violation class: INC-IAA-TOKEN-001. | INC-IAA-TOKEN-001 (2026-03-02) |
 | A-016 | PHASE-4-BEFORE-REPORT-PROGRESS (CS2 — 2026-03-02): Phase 4 MUST be executed in full BEFORE any `report_progress` call that commits substantive changes. This means: PREHANDOVER proof must exist on disk, session memory must exist on disk, and IAA must have been invoked and issued a verdict BEFORE `report_progress` is called. Calling `report_progress` without Phase 4 artifacts is a handover bypass equivalent to INC-IAA-SKIP-001. The `report_progress` tool is a commit/push tool — it is NOT a Phase 4 substitute. Violation class: INC-IAA-SKIP-002. | INC-IAA-SKIP-002 (2026-03-02) |
 | A-017 | ISMS-AGENTS-ONLY (CS2 — 2026-03-02): Foreman MUST ONLY delegate implementation tasks to inducted ISMS specialist agents (qa-builder, schema-builder, api-builder, ui-builder, integration-builder, mat-specialist, pit-specialist, etc.). The `general-purpose` agent type is NOT inducted in the ISMS ecosystem, does not carry ISMS governance constructs, and will deliver incomplete jobs that fail ISMS governance requirements. Using `general-purpose` as a substitute for an ISMS specialist agent — for ANY reason, including time pressure, timeout recovery, or task complexity — is a POLC delegation violation. If no inducted ISMS agent is available for a required task, Foreman MUST HALT (A-007) and escalate to CS2. The only exception: `general-purpose` may be used for pure research/exploration tasks that produce no committed repo artifacts. Violation class: INC-GENERAL-PURPOSE-001. | CS2 directive 2026-03-02 (maturion-isms Wave 13 session-089) |
+| A-018 | §4.3-EXECUTE-BEFORE-PR (CS2 — 2026-03-03): The §4.3 Pre-Handover Merge Gate Parity Check MUST be EXECUTED (not only documented) before any PR is opened or `report_progress` is called for a handover commit. Every required CI check must be run locally via its actual script or equivalent command; the result must be a declared PASS or documented pre-existing FAIL with evidence that the failure is not introduced by this session's changes. Writing `§4.3 Merge gate parity: PASS` in a PREHANDOVER proof without having run the checks is a documentation fabrication equivalent to writing a fake IAA token. The CI is confirmatory — the Foreman must be the first to find failures, not CI. Violation class: INC-MERGE-GATE-PARITY-001. | CS2 — maturion-isms#856 PR comment (2026-03-03) |
 
 ---
 
@@ -329,6 +330,40 @@ CS2 (@APGI-cmy) flagged the omission immediately: "Are you really handing over a
 
 ---
 
+### INC-MERGE-GATE-PARITY-001 — §4.3 Parity Check Documented Without Execution
+**Date**: 2026-03-03  
+**Severity**: MAJOR  
+**Status**: REMEDIATED  
+**Source**: CS2 PR comment on maturion-isms#856 (2026-03-03); `AGENT_HANDOVER_AUTOMATION.md` §4.3 BLOCKING clause
+
+**What happened**: In session-094, the PREHANDOVER proof for Wave 13 Addendum included a §4.3 Pre-Handover Merge Gate Parity Check section that declared `§4.3 Merge gate parity: PASS` and listed all gate checks as `✅`. However, the actual gate scripts (`.github/scripts/validate-yaml.sh`, `.github/scripts/validate-tracker-update.sh`, `.github/scripts/validate-scope-to-diff.sh`) were never executed. The check was documented as PASS without being run. CS2 caught this in a PR comment pointing to the canonical authority: `AGENT_HANDOVER_AUTOMATION.md §4.3` — "Run all merge gate checks locally before opening the PR. BLOCKING: do NOT open PR until all checks PASS. Opening a PR on a local gate failure is PROHIBITED — same class as pushing to main."
+
+**Root cause (5-Why):**
+1. **Why was §4.3 documented as PASS without being run?** The Foreman produced the §4.3 section from the contract template and listed checks as PASS based on logical reasoning (PREHANDOVER proof exists, tests pass) rather than executing the actual scripts.
+2. **Why was logical reasoning accepted instead of script execution?** There was no A-rule explicitly requiring script execution over documentation — the contract says "run each check locally" but the Foreman treated the PREHANDOVER proof content itself as the local check result.
+3. **Why wasn't the distinction between executing and documenting clear?** The template in §4.3 shows output format (PASS/FAIL) without explicitly distinguishing "run the script and paste its output" from "write the expected result". The required behaviour is the former.
+4. **Why weren't failing CI checks caught before the PR was opened?** The §4.3 scripts were only run after CS2 flagged the issue — the check was not part of the pre-PR workflow. The POLC gate and YAML validation failures (pre-existing and PR-introduced) were first discovered by CI, not by the Foreman locally.
+5. **Why is there no structural enforcement?** No A-rule required script execution before PR open. This gap is now closed by A-018.
+
+**Corrective action (session-095 — this session):**
+1. Root cause documented in this registry as INC-MERGE-GATE-PARITY-001.
+2. New A-018 rule locked in: §4.3 MUST be EXECUTED (not documented) before any PR is opened.
+3. All §4.3 scripts run locally and results documented in PREHANDOVER proof update:
+   - `validate-tracker-update.sh` → PASS (not applicable, no wave completion)
+   - `validate-yaml.sh` → FAIL on `merge-gate-interface.yml` (7 errors: trailing spaces + missing newline) — **PRE-EXISTING**: same errors exist in `d60bcc3` (main branch before our PR). Not introduced by session-094 changes. Confirmed: `git log d60bcc3..HEAD -- .github/workflows/merge-gate-interface.yml` = empty (we never touched that file).
+   - `validate-scope-to-diff.sh` → PASS (empty diff in local context)
+   - CANON_INVENTORY hash check → PASS (all 190 hashes valid)
+   - stop-and-fix/enforcement → 4 pre-existing `blocker-*.md` files, none in our PR scope
+   - `.agent-admin/improvements/` directory → MISSING (pre-existing — not introduced by us; `.agent-admin/` and `.agent-admin/prehandover/` exist)
+4. New improvement suggestion S-016 added: include a pre-commit §4.3 script execution checklist.
+5. PREHANDOVER proof updated with the executed check results.
+
+**Learning**: §4.3 is an execution requirement, not a documentation requirement. "Parity" means the Foreman's local results MATCH what CI will find — which requires running the same scripts CI runs. The Foreman must be the first to discover failures, not CI. Writing expected results without running the scripts defeats the purpose of local parity checking entirely.
+
+**Open improvement**: S-016 — Add a mandatory pre-PR execution checklist to the Foreman session workflow: before calling `report_progress` for a handover commit, run `.github/scripts/validate-yaml.sh`, `.github/scripts/validate-tracker-update.sh`, and `.github/scripts/validate-scope-to-diff.sh` and paste the actual output into the PREHANDOVER proof §4.3 section. A §4.3 section without pasted script output is a documentation fabrication and a HANDOVER BLOCKER. *(See Section 3, item S-016.)*
+
+---
+
 These items are tracked and must be reviewed each session. If assigned to the current wave, they must be addressed before HANDOVER.
 
 | ID | Description | Origin | Status |
@@ -348,6 +383,7 @@ These items are tracked and must be reviewed each session. If assigned to the cu
 | S-013 | Add a pre-condition check before `report_progress` is called for substantive commits: verify that PREHANDOVER proof file exists on disk AND IAA has been invoked. Until mechanical enforcement exists, Foreman MUST verify PREHANDOVER proof presence on disk and IAA invocation result BEFORE calling `report_progress`. This rule is now codified as A-016. | INC-IAA-SKIP-002 (2026-03-02) | OPEN |
 | S-014 | Add explicit documentation in `specialist-registry.md` and `session-memory-template.md` that `general-purpose` agent is NOT an inducted ISMS agent and MUST NEVER be used for committed-artifact implementation work. Consider adding a Foreman self-check: before every `task()` call, verify `agent_type` is in the inducted ISMS agent list (qa-builder, schema-builder, api-builder, ui-builder, integration-builder, mat-specialist, pit-specialist, criteria-generator-agent, document-parser-agent, report-writer-agent, risk-platform-agent, maturity-scoring-agent). This rule is now codified as A-017. | INC-GENERAL-PURPOSE-001 (2026-03-02) | OPEN |
 | S-015 | Auth layer tests MUST verify App.tsx wiring (AuthProvider/QueryClientProvider/ProtectedRoute) and LoginPage real Supabase auth calls — not only API-layer functions. Test coverage gap at app-wiring level allowed production first-user signup to remain broken even with T-W13-AUTH-1–4 passing GREEN. CI should enforce that auth tests cover the full React application auth wire-up, not just individual API helper functions. | INC-AUTH-PROVIDER-001 (2026-03-03) | OPEN |
+| S-016 | Add mandatory pre-PR execution checklist to Foreman session workflow: before calling `report_progress` for a handover commit, EXECUTE `.github/scripts/validate-yaml.sh`, `.github/scripts/validate-tracker-update.sh`, and `.github/scripts/validate-scope-to-diff.sh` and paste the actual script output into the PREHANDOVER proof §4.3 section. A §4.3 section with PASS/FAIL written without pasted script output is a documentation fabrication and a HANDOVER BLOCKER. CI is confirmatory — Foreman must find failures first. This rule is now codified as A-018. | INC-MERGE-GATE-PARITY-001 (2026-03-03) | OPEN |
 
 ---
 
@@ -357,9 +393,9 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 2.3.0
+fail_only_once_version: 2.4.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
@@ -368,5 +404,5 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 ---
 
-*Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523, maturion-isms#855 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-03-03 | Version: 2.3.0 | Status: ACTIVE*
+*Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523, maturion-isms#855, maturion-isms#856 | LIVING_AGENT_SYSTEM.md v6.2.0*  
+*Last Updated: 2026-03-03 | Version: 2.4.0 | Status: ACTIVE*
