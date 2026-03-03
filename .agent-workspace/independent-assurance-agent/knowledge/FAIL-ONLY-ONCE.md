@@ -1,7 +1,7 @@
 # IAA FAIL-ONLY-ONCE Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 1.8.0
+**Version**: 2.0.0
 **Last Updated**: 2026-03-03
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -601,6 +601,25 @@ authorised mechanism for populating ceremony artifact token fields with non-PEND
 
 ---
 
+### A-027 — Third-Consecutive A-021 Failure = Systemic Workflow Gap — Pre-IAA Commit Gate Required
+
+**Trigger**: IAA session-119 (2026-03-03) — Wave 14 Addendum A third re-invocation attempt (sessions 118 and 119 both failed A-021 on same branch copilot/fix-schema-mapping-issues)
+**Root Cause**: When A-021 (commit before invoke) fires three or more times consecutively on the same PR/branch, the root cause is no longer individual oversight but a systemic gap in the producing agent's pre-IAA workflow. The PREHANDOVER proof is written to disk, the implementation commit is made, but the governance artifact commit (PREHANDOVER + session memory + governance fixes) is deferred until after IAA responds — which is the precise anti-pattern A-021 was designed to prevent.
+
+**Permanent Rule**:
+When A-021 fires on a PR for the third time, IAA must cite this rule in the REJECTION-PACKAGE and record the systemic gap in learning notes. The producing agent (foreman) must add a "Pre-IAA Commit Gate" section to the PREHANDOVER template requiring explicit evidence that:
+1. `git status --short | grep -E "^\?\?"` returns no untracked governance files before IAA invocation
+2. `git log --oneline -1` output is pasted (showing governance files are in the latest commit)
+3. SCOPE_DECLARATION matches the committed diff (A-026 self-check)
+
+Any PREHANDOVER proof that cannot produce these three evidence snippets is self-disqualifying before IAA is even invoked.
+
+**IAA Enforcement**: On every re-invocation, run `git status --short` and check for `??` on PREHANDOVER and session memory files. If `??` is found, cite A-021 and A-027 together.
+
+**Status**: ACTIVE — from session-119 (2026-03-03)
+
+---
+
 ## Version History
 
 | Version | Date | Change |
@@ -615,6 +634,7 @@ authorised mechanism for populating ceremony artifact token fields with non-PEND
 | 1.7.0 | 2026-03-03 | A-024 (secret field naming — `secret:` prohibited in agent contracts; must use `secret_env_var:`) added from CI scanner failures (job 65529138120) |
 | 1.8.0 | 2026-03-03 | Conflict resolution: A-023 collision fixed — PR #816 rule renumbered to A-025 (ceremony PENDING rule); A-023 now = OVL-AC-012 ripple assessment; A-024 = secret field naming; A-025 = ceremony PENDING pre-fill prohibition |
 | 1.9.0 | 2026-03-03 | A-026 (SCOPE_DECLARATION.md must match PR diff exactly before IAA invocation — stale declaration = BL-027 merge gate parity failure) added from session-116 (Wave 13 Addendum B+C re-invocation) |
+| 2.0.0 | 2026-03-03 | A-027 (third-consecutive A-021 failure = systemic workflow gap — Pre-IAA Commit Gate required) added from session-119 (Wave 14 Addendum A — third A-021 failure on same branch); header version corrected from 1.8.0 to 2.0.0 (header/index discrepancy resolved) |
 
 ---
 

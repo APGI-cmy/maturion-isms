@@ -3,9 +3,9 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 2.2.0  
+**Version**: 2.5.0  
 **Created**: 2026-02-24  
-**Updated**: 2026-03-02  
+**Updated**: 2026-03-03  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -394,7 +394,7 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 2.4.0
+fail_only_once_version: 2.5.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
 open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016]
 ```
@@ -407,3 +407,16 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 *Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523, maturion-isms#855, maturion-isms#856 | LIVING_AGENT_SYSTEM.md v6.2.0*  
 *Last Updated: 2026-03-03 | Version: 2.5.0 | Status: ACTIVE*
+
+---
+
+## Version History
+
+| Version | Date | Change |
+|---------|------|--------|
+| 2.5.0 | 2026-03-03 | A-027 added: column-level drift must be caught at QA-to-Red (INC-W14-COL-MAPPING-001); header version corrected from 2.2.0 to 2.5.0 (stale — footer was already at 2.5.0) |
+| 2.4.0 | 2026-03-03 | A-018 §4.3-EXECUTE-BEFORE-PR locked in (INC-MERGE-GATE-PARITY-001 / S-016); S-016 improvement suggestion added |
+| 2.3.0 | 2026-03-03 | A-015 IAA-TOKEN-FORMAT locked in (INC-IAA-TOKEN-001 / S-012); Section 4 attestation block updated |
+| 2.2.0 | 2026-03-02 | A-017 ISMS-AGENTS-ONLY locked in (INC-GENERAL-PURPOSE-001 / S-014) |
+| 2.1.0 | 2026-03-02 | A-016 PHASE-4-BEFORE-REPORT-PROGRESS locked in (INC-IAA-SKIP-002 / S-013) |
+| 2.0.0 | 2026-02-28 | A-014 IAA-TOOL-CALL-MANDATORY locked in (INC-IAA-SKIP-001 / S-009) |

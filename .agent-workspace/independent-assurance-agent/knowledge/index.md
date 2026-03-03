@@ -2,7 +2,7 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 1.9.0
+**Knowledge Version**: 2.0.0
 **Last Updated**: 2026-03-03
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
@@ -13,7 +13,7 @@
 | File | Purpose | Version | Status |
 |------|---------|---------|--------|
 | `index.md` (this file) | Knowledge entry point and version reference | 1.8.0 | PRESENT |
-| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.9.0 | PRESENT — Rules A-001 through A-026 active (A-026: SCOPE_DECLARATION.md must match PR diff exactly; A-025: ceremony artifacts must use PENDING until Post-ASSURANCE-TOKEN ceremony) |
+| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 2.0.0 | PRESENT — Rules A-001 through A-027 active (A-027: third-consecutive A-021 failure = systemic workflow gap; A-026: SCOPE_DECLARATION.md must match PR diff exactly; A-025: ceremony artifacts must use PENDING until Post-ASSURANCE-TOKEN ceremony) |
 | `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.5.0 | ACTIVE — CORE-001 to CORE-022; CORE-022 enforces secret field naming compliance |
 | `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.1.0 | ACTIVE — KNOWLEDGE_GOVERNANCE trigger category added |
 | `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE) | 2.2.0 | ACTIVE — OVL-KG-001 through OVL-KG-005 added |
@@ -71,6 +71,7 @@
 | A-024 | `secret:` field prohibited in agent contracts — must use `secret_env_var:` to prevent CI scanner false positives | ACTIVE |
 | A-025 | Ceremony artifacts must use PENDING until Post-ASSURANCE-TOKEN ceremony — no pre-fill of anticipated -PASS tokens | ACTIVE |
 | A-026 | `SCOPE_DECLARATION.md` must match `git diff --name-only origin/main...HEAD` exactly before IAA invocation — stale = BL-027 merge gate parity failure | ACTIVE |
+| A-027 | Third-consecutive A-021 failure on same PR/branch = systemic workflow gap — producing agent must add Pre-IAA Commit Gate to PREHANDOVER template with git status + git log evidence | ACTIVE |
 
 ---
 
@@ -120,6 +121,7 @@ that produced the work under review. Every invocation is logged in session memor
 | 1.7.0 | 2026-03-03 | FAIL-ONLY-ONCE.md v1.7.0 (A-024 secret field naming — `secret:` prohibited, must use `secret_env_var:`); iaa-core-invariants-checklist.md v2.5.0 (CORE-022); all 16 active agent contracts fixed; CI scanner failures resolved |
 | 1.8.0 | 2026-03-03 | Conflict resolution: A-023 collision fixed — PR #816 rule renumbered to A-025 (ceremony PENDING rule); A-023 now = OVL-AC-012 ripple assessment; A-024 = secret field naming; A-025 = ceremony PENDING pre-fill prohibition |
 | 1.9.0 | 2026-03-03 | FAIL-ONLY-ONCE.md v1.9.0 — A-026 (SCOPE_DECLARATION.md must match PR diff exactly before IAA invocation — stale = BL-027 merge gate parity failure) added from session-116 Wave 13 Addendum B+C re-invocation |
+| 2.0.0 | 2026-03-03 | FAIL-ONLY-ONCE.md v2.0.0 — A-027 (third-consecutive A-021 = systemic workflow gap) added from session-119 (Wave 14 Addendum A); FAIL-ONLY-ONCE.md header corrected from 1.8.0 to 2.0.0 (header/index version mismatch resolved) |
 
 ---
 
