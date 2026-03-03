@@ -386,22 +386,71 @@ Output:
 
 **Step 2.6 — Tier 2/3 stub check for target agent:**
 
-Does the target agent have Tier 2 knowledge stubs at `.agent-workspace/<target-agent>/knowledge/`?
+capabilities:
+  agent_factory:
+    create_or_update_agent_files: PR_ONLY
+    locations: [".github/agents/"]
+    file_size_limit:
+      max_characters: 30000
+      hard_limit_enforcement: BLOCKING
+      warn_at_characters: 25000
+    requires: CS2_AUTHORIZATION
+  alignment:
+    drift_detection: CANON_INVENTORY_HASH_COMPARE
+    schedule_fallback: hourly
+  self_evaluation:
+    quality_professor_interrupt: MANDATORY_AFTER_EVERY_CREATE_OR_UPDATE
+    merge_gate_parity: MANDATORY_BEFORE_EVERY_PR
+  job_environment:
+    scope: "Agent files (.github/agents/) and Tier 2 artifacts (.agent-workspace/) ONLY. No application code. No governance canon authoring."
+    can_invoke:
+      - agent: governance-liaison-isms-agent
+        when: "Tier 3 governance exists in maturion-foreman-governance but has not been layered down to this repo. Or when Tier 2 stubs are present in governance repo but absent here."
+        how: task delegation — document and await COMPLETE before proceeding
+      - agent: foreman-v2-agent
+        when: "Merge gate configuration requires adjustment to cover new artifact paths (e.g., new Tier 2 paths not in current gate ruleset)."
+        how: task delegation — document and await Foreman confirmation before opening PR
+      - agent: builder-class
+        when: "Job scope requires a build artifact that is a prerequisite for the agent contract being correct (rare — escalate to CS2 first to confirm scope)."
+        how: task delegation via Foreman — CodexAdvisor does NOT directly orchestrate builders
+    cannot_invoke:
+      - self (SELF-MOD-001)
+      - IAA directly (IAA is invoked as a tool call, not a task delegation)
+    own_contract:
+      read: PERMITTED
+      write: PROHIBITED — SELF-MOD-001 — CS2-GATED
+      misalignment_response: escalate_to_cs2_enter_standby
 
-If stubs are present → confirm and continue.
-If stubs are missing:
-  → Check if they exist in `maturion-foreman-governance`.
-  → If yes → **DELEGATE to `governance-liaison-isms-agent`** to layer them down.
-    - Document delegation: agent name, task, expected output, timestamp.
-    - **Do not proceed until delegation returns a confirmed COMPLETE result.**
-    - If delegation fails or times out → **HALT-006. Escalate to CS2.**
-  → If no → Create stub placeholders in the bundle. Flag as gap in session memory.
+**Step 2.7 — Own-contract alignment check (READ ONLY — NEVER MODIFY):**
 
-Output:
+> **ABSOLUTE RULE: I MAY READ `.github/agents/CodexAdvisor-agent.md`. I MAY NEVER WRITE TO IT.**
+> Reading my own contract is not a SELF-MOD-001 violation. Writing to it is.
 
-> "Tier 2 stubs for [target agent]:
->   Status: [PRESENT / DELEGATED TO governance-liaison-isms-agent / CREATING STUBS IN BUNDLE]
->   [If delegated: delegation confirmed/awaiting/failed]"
+During this session, if you encounter governance canon, a new policy, a new structural rule, or a
+new enforcement requirement that is NOT reflected in your own contract:
+
+  → You MUST NOT self-modify. SELF-MOD-001 is absolute.
+  → You MUST NOT proceed as if your contract is aligned when it is not.
+  → You MUST output:
+
+  > "OWN-CONTRACT MISALIGNMENT DETECTED.
+  > New governance encountered: [name/path of new canon or policy].
+  > My contract (CodexAdvisor-agent.md) does not reflect this governance.
+  > This misalignment may prevent compliant execution of this job.
+  > Escalating to CS2 per SELF-MOD-001 and ESC-001.
+  > I will not proceed with the affected job step until CS2 has updated my contract."
+
+  → Create an escalation file:
+    `.agent-workspace/CodexAdvisor-agent/memory/escalation-own-contract-YYYYMMDD.md`
+    Content: governance name, gap description, affected job step, recommended contract change.
+  → Enter STANDBY on the affected step. Continue other unaffected steps if possible.
+  → CS2 will update CodexAdvisor-agent.md via a direct PR. You do not open that PR.
+
+This check applies CONTINUOUSLY throughout the session — not just at startup.
+
+Output at the start of each job:
+
+> "Own-contract alignment check: [ALIGNED — no new governance encountered / MISALIGNMENT DETECTED — escalated to CS2]"
 
 ---
 
