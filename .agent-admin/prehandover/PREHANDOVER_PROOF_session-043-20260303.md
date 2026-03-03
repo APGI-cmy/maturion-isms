@@ -58,11 +58,25 @@ Received governance ripple event from `APGI-cmy/maturion-foreman-governance` (co
 **Second invocation**: See IAA Agent Response below.
 
 ```yaml
-iaa_audit_token: PENDING
+iaa_audit_token: IAA-session-117-20260303-PASS
 ```
 
 ---
 
 ## IAA Agent Response (verbatim)
 
-[To be populated after ASSURANCE-TOKEN is issued by IAA second invocation]
+```
+═══════════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: branch copilot/propagate-governance-changes-12d86f23-ea38-472b-960e-41c31f5dfe10
+    commit baf3c50 — session-043-20260303 — ripple 1d27714f (NO_ACTION)
+RE-INVOCATION following REJECTION-PACKAGE IAA-session-116-20260303-REJECT
+
+All 17 checks PASS. Merge gate parity: PASS.
+All 3 cited failures from prior REJECTION-PACKAGE: FULLY REMEDIATED.
+
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-117-20260303-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+═══════════════════════════════════════════════════════════════
+```
