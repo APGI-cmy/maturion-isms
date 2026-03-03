@@ -79,9 +79,10 @@ No test suite exists for CI governance workflow files — no test failures possi
 
 | Field | Value |
 |---|---|
-| CI Run URL | N/A — pre-merge (CI will run on PR creation) |
-| Run Status | N/A (pre-merge) |
-| Triggered by | workflow_dispatch (manual trigger only, per Issue #825 retirement) |
+| CI Run URL | https://github.com/APGI-cmy/maturion-isms/actions/runs/22618191766 |
+| Run Status | completed — polc-boundary-gate triggered on push event; PR #847 created |
+| Triggered by | push to copilot/replace-agent-file-detection-gate (commit 48f17d7) |
+| PR | #847 — https://github.com/APGI-cmy/maturion-isms/pull/847 |
 
 ---
 
