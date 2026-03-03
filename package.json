@@ -28,8 +28,12 @@
     "@supabase/supabase-js": "^2.98.0"
   },
   "devDependencies": {
+<<<<<<< HEAD
     "@types/node": "^22.0.0",
     "typescript": "^5.3.3",
+=======
+    "@types/node": "^20.0.0",
+>>>>>>> fe646ff (fix(typescript): resolve TS type errors in ai/ai-centre — @types/node, TS1434, malformed test file)
     "vitest": "^3.0.0"
   },
   "overrides": {

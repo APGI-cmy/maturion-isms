@@ -3,7 +3,7 @@
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
 **Knowledge Version**: 1.6.0
-**Last Updated**: 2026-03-02
+**Last Updated**: 2026-03-03
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -13,7 +13,7 @@
 | File | Purpose | Version | Status |
 |------|---------|---------|--------|
 | `index.md` (this file) | Knowledge entry point and version reference | 1.6.0 | PRESENT |
-| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.6.0 | PRESENT — Rules A-001 through A-023 active (A-023 added session-098 — pre-filling anticipated -PASS tokens before ASSURANCE-TOKEN is a CORE-007/A-017 breach) |
+| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.6.0 | PRESENT — Rules A-001 through A-023 active (A-023: OVL-AC-012 ripple assessment is a standing PREHANDOVER requirement) |
 | `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.4.0 | ACTIVE — CORE-001 to CORE-021; CORE-021 enforces Zero-Severity-Tolerance Rule |
 | `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.1.0 | ACTIVE — KNOWLEDGE_GOVERNANCE trigger category added |
 | `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE) | 2.2.0 | ACTIVE — OVL-KG-001 through OVL-KG-005 added |
@@ -111,11 +111,17 @@ that produced the work under review. Every invocation is logged in session memor
 | 1.1.0 | 2026-02-28 | Core knowledge files fully populated (iaa-core-invariants-checklist.md, iaa-trigger-table.md, iaa-category-overlays.md) |
 | 1.2.0 | 2026-03-01 | iaa-core-invariants-checklist.md v2.1.0 update (CORE-016 copy-paste requirement) |
 | 1.3.0 | 2026-03-02 | iaa-trigger-table.md v2.1.0 (KNOWLEDGE_GOVERNANCE category); iaa-category-overlays.md v2.2.0 (OVL-KG-001 through OVL-KG-005); FAIL-ONLY-ONCE.md v1.3.0 (A-018, A-019) |
+<<<<<<< copilot/add-environment-parity-section
 | 1.4.0 | 2026-03-02 | iaa-core-invariants-checklist.md v2.3.0 (CORE-018 to CORE-020; CORE-007 PENDING carve-out) |
 | 1.5.0 | 2026-03-02 | Added IAA_ZERO_SEVERITY_TOLERANCE.md v1.0.0; iaa-core-invariants-checklist.md v2.4.0 (CORE-021 zero-severity-tolerance enforcement) |
 | 1.4.0 | 2026-03-02 | A-020 added (PREHANDOVER template staleness); Stub Population Status section added; all stub files populated |
 | 1.5.0 | 2026-03-02 | A-021 codified (commit before IAA invocation — sessions 090/091 candidate elevated); A-022 added (re-evaluate trigger categories every invocation — session-092 OVL-KG-004 learning); index and FAIL-ONLY-ONCE versions updated to 1.5.0 |
 | 1.6.0 | 2026-03-02 | A-023 added: ceremony artifacts must use PENDING until Post-ASSURANCE-TOKEN ceremony — pre-filling anticipated -PASS tokens before ASSURANCE-TOKEN received = CORE-007/A-017 breach (session-098 PR #816 learning); FAIL-ONLY-ONCE.md updated to v1.6.0; index version bumped to 1.6.0 |
+=======
+| 1.4.0 | 2026-03-02 | iaa-core-invariants-checklist.md v2.3.0 (CORE-018 to CORE-020; CORE-007 PENDING carve-out); A-020 (PREHANDOVER template staleness); all stub files populated |
+| 1.5.0 | 2026-03-02 | IAA_ZERO_SEVERITY_TOLERANCE.md v1.0.0; iaa-core-invariants-checklist.md v2.4.0 (CORE-021); A-021 (commit before invocation); A-022 (re-evaluate trigger categories every invocation) |
+| 1.6.0 | 2026-03-03 | FAIL-ONLY-ONCE.md v1.6.0 (A-023 OVL-AC-012 ripple assessment standing requirement codified from sessions 084–101); index updated to 1.6.0 |
+>>>>>>> main
 
 ---
 

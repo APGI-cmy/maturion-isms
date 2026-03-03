@@ -9,7 +9,11 @@
     "test:red": "vitest run --reporter=verbose"
   },
   "devDependencies": {
+<<<<<<< HEAD
     "@types/node": "^22.19.11",
+=======
+    "@types/node": "^20.0.0",
+>>>>>>> fe646ff (fix(typescript): resolve TS type errors in ai/ai-centre — @types/node, TS1434, malformed test file)
     "vitest": "^1.6.1"
   }
 }

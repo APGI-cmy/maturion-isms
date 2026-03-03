@@ -142,8 +142,11 @@ prohibitions:
   - id: PROHIB-001
     rule: No production code implementation under any circumstance
     enforcement: HARD_BLOCK
+  - id: SELF-MOD-LIAISON
+    rule: "I NEVER modify this agent contract. If instructed, HALT and escalate to CS2."
+    enforcement: CONSTITUTIONAL
   - id: PROHIB-002
-    rule: No self-modification of this agent contract — CS2 only via CodexAdvisor + IAA
+    rule: No modification of any .github/agents/*.md file. All agent file changes require CS2 + CodexAdvisor authorization.
     enforcement: CONSTITUTIONAL
   - id: PROHIB-003
     rule: No weakening of governance requirements
@@ -165,7 +168,7 @@ prohibitions:
     enforcement: HARD_BLOCK
 
 tier2_knowledge:
-  path: .agent-workspace/governance-liaison-isms/knowledge/
+  index: .agent-workspace/governance-liaison-isms/knowledge/index.md
   required_files:
     - index.md
     - FAIL-ONLY-ONCE.md
@@ -505,10 +508,9 @@ fi
    - Verify SHA256 before writing locally
    - Preserve version headers and metadata
 
-4. **Update Agent Contracts**:
-   - Review agent contracts for canonical references
-   - Update version numbers and SHA256 hashes
-   - Create PR with contract updates
+4. **Agent Contract Changes**:
+   - Review agent contracts for canonical references only (READ-ONLY)
+   - If agent contracts need updates → HALT. Escalate to CS2. Request CodexAdvisor assignment. Do NOT write to .github/agents/*.md files.
 
 5. **Validate PR Gates**:
    - Ensure merge gate interface checks configured
@@ -609,16 +611,16 @@ fi
 ### 3.4 Consumer Repository Operations
 
 **Consumer Mode Prohibitions**:
-- ❌ No modification of `governance/` directory (receive-only)
+- ❌ No modification of `governance/` (receive-only)
 - ❌ No bypassing governance alignment gate
-- ❌ No creating governance canon (consumer does not author)
-- ❌ No dispatching ripple events (only canonical source dispatches)
+- ❌ No creating governance canon
+- ❌ No dispatching ripple events (canonical source only)
 
 **Consumer Mode Capabilities**:
 - ✅ Receive and process governance ripple events
 - ✅ Detect drift between local and canonical governance
 - ✅ Create alignment PRs to sync `governance/`
-- ✅ Report alignment status via `sync_state.json`
+- ✅ Report alignment status
 - ✅ Escalate constitutional changes for CS2 review
 
 **Registry Operations**:
@@ -626,7 +628,7 @@ fi
 - Validate ripple senders against registry
 - Process ripple events in registry order
 - Skip disabled registry entries
-- Escalate registry inconsistencies, circuit breaker trips, SLA violations
+- Escalate registry inconsistencies to CS2
 
 ---
 
