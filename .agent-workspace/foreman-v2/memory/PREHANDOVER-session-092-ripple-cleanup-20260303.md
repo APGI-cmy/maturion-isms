@@ -84,6 +84,12 @@ GitHub Actions CI environment (ubuntu-latest). Retirement of the `on: issues` tr
 and addition of the `concurrency` block apply uniformly to all workflow invocations with
 no environment-specific deviation.
 
+## CI Run
+
+- **CI run (pull_request)**: https://github.com/APGI-cmy/maturion-isms/actions/runs/22612005942
+- **CI run (push)**: https://github.com/APGI-cmy/maturion-isms/actions/runs/22612004604
+- **Commit SHA**: b5d40064e494456d9fe04c999bec142f294f7be8
+
 ---
 
 ## IAA Invocation
