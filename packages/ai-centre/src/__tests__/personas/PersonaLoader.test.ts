@@ -146,7 +146,6 @@ describe('CL-1 — maturion-advisor persona (LKIAC Wave 1)', () => {
    *
    * Reference: LKIAC Wave 1 | AIMC_PERSONA_LIFECYCLE.md §5.1
    */
-<<<<<<< HEAD
   /**
    * CL-1-T-002
    * RED until maturion-advisor.md exists with YAML front-matter.
@@ -154,10 +153,6 @@ describe('CL-1 — maturion-advisor persona (LKIAC Wave 1)', () => {
    */
   it(
     'CL-1-T-002: maturion-advisor front-matter contains "---" YAML delimiter',
-=======
-  it(
-    'CL-1-T-002: maturion-advisor front-matter contains "---" YAML delimiter (file starts with ---)',
->>>>>>> fe646ff (fix(typescript): resolve TS type errors in ai/ai-centre — @types/node, TS1434, malformed test file)
     async () => {
       const content = await loader.load('maturion-advisor');
 

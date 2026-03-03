@@ -120,3 +120,11 @@
 | 2026-03-03 | independent-assurance-agent | session-105 | Phase 3/OVL-AC-009 | Add boundary-risk pre-check to CodexAdvisor PREHANDOVER ceremony for bulk renames approaching 30,000-char limit | session-105-20260303.md |
 | 2026-03-03 | independent-assurance-agent | session-106 | Phase 3/CORE-021 | Add PREHANDOVER self-consistency sweep to CodexAdvisor remediation checklist: search all delta values across all sections after updating any data table | session-106-20260303.md |
 | 2026-03-03 | independent-assurance-agent | session-107 | Phase 4 | CodexAdvisor should add pre-invocation self-check script to verify PREHANDOVER per-file char table programmatically before invoking IAA | session-107-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-108 | Phase 4 | PREHANDOVER template missing `## IAA Agent Response (verbatim)` placeholder — recurring CORE-016 failure | session-108-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-108 | Phase 3 | OVL-AM-004/OVL-AM-006 pre-populated template fields needed — before/after diff and env parity are recurrent gaps | session-108-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-108 | Phase 3 | Builder IAA awareness — qa-builder included stale PHASE_A_ADVISORY claim in FCWT; builders should not declare IAA phase status | session-108-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-108 | Phase 2 | Pre-push git status check — A-021 recurrence; foreman should verify zero staged/untracked before IAA invocation | session-108-20260303.md |
+
+| 2026-03-03 | independent-assurance-agent | session-109 | Phase 4 | index.md merge conflict markers unresolved — require CodexAdvisor KNOWLEDGE_GOVERNANCE PR to fix | session-109-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-109 | Phase 4 | Post-ASSURANCE-TOKEN ceremony: foreman must update iaa_audit_token PENDING → IAA-session-109-20260303-PASS in PREHANDOVER and session memory | session-109-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-109 | Phase 4 | PREHANDOVER template should pre-populate IAA Agent Response, OVL-AM-004 diff, and OVL-AM-006 parity sections to prevent recurrent REJECTION-PACKAGEs | session-109-20260303.md |
