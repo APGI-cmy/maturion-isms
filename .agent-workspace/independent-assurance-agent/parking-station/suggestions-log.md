@@ -218,3 +218,5 @@
 
 | 2026-03-03 | independent-assurance-agent | session-119 | [Phase 4] | A-026 (4th occurrence): foreman pre-commit gate needed — git diff --cached --name-only must be verified against SCOPE_DECLARATION before every governance fix commit | session-119-20260303.md |
 | 2026-03-03 | independent-assurance-agent | session-120 | [Phase 3/4] | New FAIL-ONLY-ONCE candidate A-027: github-script script injection — ${{ }} inside template literals must use env: variable pattern; CS2-direct PRs require ceremony artifacts same as foreman-produced PRs | session-120-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-121 | [Phase 3] | Multi-commit SCOPE_DECLARATION audit: run git diff --name-only origin/main...HEAD after EVERY commit in a multi-commit fix sequence and update SCOPE_DECLARATION before IAA invocation | session-121-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-121 | [Phase 3] | OVL-CI-005: PREHANDOVER template should include explicit checkbox for CI run URL for any .github/workflows/ additions — prevents claim-without-URL pattern | session-121-20260303.md |

@@ -65,6 +65,9 @@ This is a governance/CI tooling PR with no production code, schema, or tests. Th
 - Markdown documentation files
 - SCOPE_DECLARATION.md update
 
+**CI Run Evidence**: GitHub Actions workflow run for commit `4f3ee83` (initial delivery):
+`https://github.com/APGI-cmy/maturion-isms/actions/runs/22634235967` — foreman-reanchor.yml syntax validation succeeded.
+
 `merge_gate_parity: N/A — governance/CI-only deliverables`
 
 ---
@@ -112,6 +115,74 @@ IAA session-120 issued REJECTION-PACKAGE (10 findings). All findings resolved pr
 
 ## IAA Agent Response (verbatim)
 <!-- MANDATORY PER S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) -->
+
+### Session-121 Response (2026-03-03 — Re-invocation after session-120)
+
+```
+═══════════════════════════════════════════════════════════════════
+REJECTION-PACKAGE
+PR: copilot/add-re-anchor-workflow
+    'feat: Foreman Re-Anchor Pulse — mid-wave context recovery workflow'
+    HEAD: ce0156194a0076b21db451fdff90aab57c62c478
+2 check(s) FAILED. Merge blocked. STOP-AND-FIX required.
+
+FAILURES:
+
+  OVL-CI-005 — CI check run result absent from PREHANDOVER
+    Finding: PREHANDOVER §4.3 states "YAML workflow file (syntax verified
+    via GitHub Actions)" — zero CI run URLs and zero log snippets provided.
+    OVL-CI-005 is explicit: "A claim that CI passed without any supporting
+    URL or log reference = REJECTION-PACKAGE." The foreman-reanchor.yml
+    workflow DID fire on this branch: Run ID 22634235967 (sha 4f3ee832)
+    shows Foreman Re-Anchor Pulse conclusion:success. That run URL must
+    be cited in the PREHANDOVER.
+    Fix required: Add the following line to the PREHANDOVER (under a new
+    "OVL-CI-005 Evidence" section or within §4.3 Merge Gate Parity):
+      CI run result: https://github.com/APGI-cmy/maturion-isms/actions/runs/22634235967
+      (sha 4f3ee832, Foreman Re-Anchor Pulse, conclusion: success)
+    Note: If the HEAD commit (ce01561) CI run for the merge gate completes
+    before re-invocation, include its URL instead/additionally.
+
+  PARITY-001 / A-026 — SCOPE_DECLARATION.md missing 2 files
+    Finding: Commit 1bb638a ("chore: plan IAA remediation — all 10 failures
+    from session-120") is part of this branch and modifies 4 files. Only 2
+    of those 4 files are listed in SCOPE_DECLARATION.md:
+      IN SCOPE_DECLARATION: .agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md ✅
+      IN SCOPE_DECLARATION: .agent-workspace/independent-assurance-agent/memory/session-120-20260303.md ✅
+      MISSING: .agent-workspace/independent-assurance-agent/knowledge/index.md ❌
+        (modified in 1bb638a: version bump 1.9.0 → 2.0.0)
+      MISSING: .agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md ❌
+        (modified in 1bb638a: session-120 entry appended)
+    SCOPE_DECLARATION declares 9 files; actual PR-modified file count: 11.
+    validate-scope-to-diff.sh (BL-027) will fail the merge-gate/verdict CI check.
+    Fix required: Add these 2 lines to SCOPE_DECLARATION.md under "Files Changed":
+      - `.agent-workspace/independent-assurance-agent/knowledge/index.md`
+        — UPDATED to v2.0.0 (A-027 codified by IAA session-120)
+      - `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md`
+        — session-120 parking station entry appended
+    Update "Total Files" count from 9 to 11. Commit to branch before re-invoking IAA.
+
+NOTE: All 10 session-120 failures are confirmed RESOLVED:
+  ✅ F-001/F-002/F-004/F-007/F-008/F-009 (CORE-018): PREHANDOVER proof created,
+     all 4 ceremony conditions met, IAA Agent Response verbatim present.
+  ✅ F-003 (CORE-015): Session memory created.
+  ✅ F-005 (CORE-019): iaa_audit_token: PENDING correctly set.
+  ✅ F-006 (OVL-CI-004/A-027): Script injection fixed — env: variable pattern
+     applied, zero ${{ }} inside github-script script: block. PASS.
+  ✅ F-008 (OVL-CI-006): Environment parity statement complete and explicit.
+  ✅ F-009 (OVL-KG-001): PREHANDOVER ceremony present for Tier 2 knowledge patches.
+  ✅ F-010 (A-026 partial): SCOPE_DECLARATION reset from Wave 13 content — correct.
+     HOWEVER: SCOPE_DECLARATION is still incomplete (2 files from 1bb638a absent).
+     This is a new A-026 finding, not a re-occurrence of F-010's original issue.
+
+The 2 remaining failures are straightforward fixes. Expected to PASS on session-122.
+Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE.
+Token reference: N/A — REJECTION-PACKAGE
+Session: IAA-session-121-20260303-REJECT
+═══════════════════════════════════════════════════════════════════
+```
+
+### Session-120 Response (2026-03-03 — First invocation)
 
 ```
 ═══════════════════════════════════════════════════════════════════

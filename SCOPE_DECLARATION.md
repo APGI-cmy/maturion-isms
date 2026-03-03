@@ -22,7 +22,7 @@ Plus ceremony artifacts and IAA session memory.
 
 ## Files Changed
 
-**Total Files**: 9
+**Total Files**: 11
 
 All files in this PR are explicitly listed below (required by BL-027):
 
@@ -33,8 +33,10 @@ All files in this PR are explicitly listed below (required by BL-027):
 - `.agent-workspace/foreman-v2/knowledge/index.md` — UPDATED to v1.7.0 (adds WAVE-CURRENT-TASKS-PROTOCOL entry)
 - `.agent-workspace/foreman-v2/memory/PREHANDOVER-reanchor-workflow-20260303.md` — PREHANDOVER proof (iaa_audit_token: PENDING → session-121)
 - `.agent-workspace/foreman-v2/memory/session-reanchor-workflow-20260303.md` — session memory for this PR
-- `.agent-workspace/independent-assurance-agent/memory/session-120-20260303.md` — IAA session-120 memory (REJECTION-PACKAGE)
 - `.agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md` — A-027 codified by IAA (session-120)
+- `.agent-workspace/independent-assurance-agent/knowledge/index.md` — version bump by IAA (session-120)
+- `.agent-workspace/independent-assurance-agent/memory/session-120-20260303.md` — IAA session-120 memory (REJECTION-PACKAGE)
+- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` — IAA parking station append (session-120)
 
 ---
 
