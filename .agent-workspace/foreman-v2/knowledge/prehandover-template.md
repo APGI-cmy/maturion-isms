@@ -1,8 +1,8 @@
 # PREHANDOVER Proof Template — Foreman v2
 
 **Agent**: foreman-v2
-**Version**: 1.2.0
-**Last Updated**: 2026-03-02
+**Version**: 1.3.0
+**Last Updated**: 2026-03-03
 **Purpose**: Template for generating Phase 4 PREHANDOVER proof artifacts per S-009 (FAIL-ONLY-ONCE v1.8.0)
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -13,6 +13,7 @@
 | Version | Date | Change |
 |---|---|---|
 | 1.2.0 | 2026-03-02 | Add `## Environment Parity` section (OVL-CI-006 / A-020 — 7-session recurring flag closed via issue #815) |
+| 1.3.0 | 2026-03-03 | Add `## End-to-End Wiring Trace (OVL-AM-008)` section — mandatory for PRs touching schema migrations, API endpoints, Supabase hooks, or frontend data hooks |
 | 1.1.0 | 2026-03-01 | Add `## IAA Agent Response (verbatim)` mandatory section per S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) |
 | 1.0.0 | 2026-02-25 | Initial template |
 
@@ -109,6 +110,28 @@ Confirms local execution environment matches CI merge gate configuration.
 **Environment Parity Verdict: [PASS / FAIL]**
 
 > If FAIL: describe discrepancy and resolution before proceeding to Phase 4.
+
+---
+
+## End-to-End Wiring Trace (OVL-AM-008)
+
+> Required for any PR touching schema migrations, API endpoints, Supabase hooks, or frontend data hooks.
+> State "Not applicable" with justification if this PR contains no such changes.
+
+### Writers
+<!-- Which runtime clients write to each new/modified table or endpoint? Specify Supabase key used (anon/service role). -->
+
+### Readers
+<!-- Which hooks or components read from this table/endpoint? What columns/fields do they query? -->
+
+### Shape Compatibility
+<!-- Confirm writer payload fields map correctly to table columns / API response fields consumed by readers. -->
+
+### Auth / RLS Model
+<!-- State which Supabase key each writer uses. Is the RLS policy consistent with this access pattern? -->
+
+### FK / Dependency Chain
+<!-- Confirm all foreign key references resolve correctly given current migration order and production data state. -->
 
 ---
 

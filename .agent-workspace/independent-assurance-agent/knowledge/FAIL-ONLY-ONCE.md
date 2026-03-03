@@ -1,7 +1,7 @@
 # IAA FAIL-ONLY-ONCE Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 1.8.0
+**Version**: 2.0.0
 **Last Updated**: 2026-03-03
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -601,6 +601,20 @@ authorised mechanism for populating ceremony artifact token fields with non-PEND
 
 ---
 
+### A-027 — End-to-End Wiring Trace Mandatory for Schema/API/Hook PRs — OVL-AM-008
+
+**Triggered by**: CS2 review of PRs #865 and #868 (Wave 13 schema migrations, 2026-03-03). The IAA correctly verified that `20260303000006_audit_scores_table.sql` was syntactically valid, but did not verify who writes to `audit_scores` at runtime, whether the AI Gateway's service role key bypasses the RLS policy, whether the `scored_by` FK constraint would be satisfiable when the AI Gateway is the writer, or whether the FK chain `audit_id → audits.id` resolves correctly.
+
+**Permanent Rule**:
+A PREHANDOVER proof that confirms migration SQL is syntactically correct but omits the wiring trace (Writers/Readers/Shape/Auth/FK) is an incomplete evidence bundle. Absence of wiring trace = REJECTION-PACKAGE under OVL-AM-008. Introduced 2026-03-03 from CS2 review of PRs #865 and #868.
+
+**Check in Phase 3 (OVL-AM-008 enforcement)**:
+> FAIL-ONLY-ONCE A-027: For any PR touching schema migrations, API endpoint definitions, Supabase hooks, or frontend data hooks, search PREHANDOVER proof for an **End-to-End Wiring Trace** section containing all five elements: Writers, Readers, Shape Compatibility, Auth/RLS Model, FK/Dependency Chain. If absent, blank, or boilerplate → FAIL immediately.
+
+**Status**: ACTIVE — introduced 2026-03-03 from CS2 review of PRs #865 and #868
+
+---
+
 ## Version History
 
 | Version | Date | Change |
@@ -615,6 +629,7 @@ authorised mechanism for populating ceremony artifact token fields with non-PEND
 | 1.7.0 | 2026-03-03 | A-024 (secret field naming — `secret:` prohibited in agent contracts; must use `secret_env_var:`) added from CI scanner failures (job 65529138120) |
 | 1.8.0 | 2026-03-03 | Conflict resolution: A-023 collision fixed — PR #816 rule renumbered to A-025 (ceremony PENDING rule); A-023 now = OVL-AC-012 ripple assessment; A-024 = secret field naming; A-025 = ceremony PENDING pre-fill prohibition |
 | 1.9.0 | 2026-03-03 | A-026 (SCOPE_DECLARATION.md must match PR diff exactly before IAA invocation — stale declaration = BL-027 merge gate parity failure) added from session-116 (Wave 13 Addendum B+C re-invocation) |
+| 2.0.0 | 2026-03-03 | A-027 added — end-to-end wiring trace mandatory for AAWP_MAT PRs touching schema/API/hooks; linked to OVL-AM-008 |
 
 ---
 
