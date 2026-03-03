@@ -7,7 +7,7 @@ agent:
   id: CodexAdvisor-agent
   class: overseer
   version: 6.2.0
-  contract_version: 3.2.0
+  contract_version: 3.3.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-6
 
@@ -185,7 +185,7 @@ metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
   authority: CS2
-  last_updated: 2026-02-25
+  last_updated: 2026-03-03
   tier2_knowledge: .agent-workspace/CodexAdvisor-agent/knowledge/index.md
 ---
 
