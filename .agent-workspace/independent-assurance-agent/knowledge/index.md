@@ -2,7 +2,7 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 1.6.0
+**Knowledge Version**: 1.7.0
 **Last Updated**: 2026-03-03
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
@@ -12,9 +12,9 @@
 
 | File | Purpose | Version | Status |
 |------|---------|---------|--------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.6.0 | PRESENT |
-| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.6.0 | PRESENT — Rules A-001 through A-023 active (A-023: OVL-AC-012 ripple assessment is a standing PREHANDOVER requirement) |
-| `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.4.0 | ACTIVE — CORE-001 to CORE-021; CORE-021 enforces Zero-Severity-Tolerance Rule |
+| `index.md` (this file) | Knowledge entry point and version reference | 1.7.0 | PRESENT |
+| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 1.7.0 | PRESENT — Rules A-001 through A-024 active (A-024: `secret:` prohibited in agent contracts — must use `secret_env_var:`) |
+| `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.5.0 | ACTIVE — CORE-001 to CORE-022; CORE-022 enforces secret field naming compliance |
 | `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.1.0 | ACTIVE — KNOWLEDGE_GOVERNANCE trigger category added |
 | `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE) | 2.2.0 | ACTIVE — OVL-KG-001 through OVL-KG-005 added |
 | `session-memory-template.md` | Standard session memory template for IAA invocations | 1.0.0 | PRESENT |
@@ -66,8 +66,14 @@
 | A-019 | Trigger table misapplication is an IAA bypass — all triggering categories require IAA | ACTIVE |
 | A-020 | PREHANDOVER template must be kept current with overlay requirements — stale template causes cascading REJECTION-PACKAGEs | ACTIVE |
 | A-021 | Commit and push BEFORE invoking IAA — working-tree-only fix is not a committed fix and will fail IAA audit | ACTIVE |
+<<<<<<< HEAD
+| A-022 | Re-evaluate ALL trigger categories on every IAA invocation — do not carry forward prior session's category classification; new commits can introduce new trigger categories | ACTIVE |
+| A-023 | OVL-AC-012 ripple assessment is a standing PREHANDOVER requirement for all AGENT_CONTRACT PRs | ACTIVE |
+| A-024 | `secret:` field prohibited in agent contracts — must use `secret_env_var:` to prevent CI scanner false positives | ACTIVE |
+=======
 | A-022 | Re-evaluate trigger categories on every IAA invocation — do not carry forward prior session classification | ACTIVE |
 | A-023 | Ceremony artifacts must use PENDING until Post-ASSURANCE-TOKEN ceremony — no pre-fill of anticipated -PASS tokens | ACTIVE |
+>>>>>>> origin/main
 
 ---
 
@@ -121,7 +127,11 @@ that produced the work under review. Every invocation is logged in session memor
 | 1.4.0 | 2026-03-02 | iaa-core-invariants-checklist.md v2.3.0 (CORE-018 to CORE-020; CORE-007 PENDING carve-out); A-020 (PREHANDOVER template staleness); all stub files populated |
 | 1.5.0 | 2026-03-02 | IAA_ZERO_SEVERITY_TOLERANCE.md v1.0.0; iaa-core-invariants-checklist.md v2.4.0 (CORE-021); A-021 (commit before invocation); A-022 (re-evaluate trigger categories every invocation) |
 | 1.6.0 | 2026-03-03 | FAIL-ONLY-ONCE.md v1.6.0 (A-023 OVL-AC-012 ripple assessment standing requirement codified from sessions 084–101); index updated to 1.6.0 |
+<<<<<<< HEAD
+| 1.7.0 | 2026-03-03 | FAIL-ONLY-ONCE.md v1.7.0 (A-024 secret field naming — `secret:` prohibited, must use `secret_env_var:`); iaa-core-invariants-checklist.md v2.5.0 (CORE-022); all 16 active agent contracts fixed; CI scanner failures resolved |
+=======
 >>>>>>> main
+>>>>>>> origin/main
 
 ---
 
