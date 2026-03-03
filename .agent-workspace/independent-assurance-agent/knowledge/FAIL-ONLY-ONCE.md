@@ -2,7 +2,7 @@
 
 **Agent**: independent-assurance-agent
 **Version**: 1.6.0
-**Last Updated**: 2026-03-02
+**Last Updated**: 2026-03-03
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -471,6 +471,23 @@ This rule is especially critical for PRs where remediation commits are added bet
 
 **Status**: ACTIVE — CANDIDATE from session-092
 
+
+---
+
+### A-024 — OVL-AC-012 Ripple Assessment Is a Standing PREHANDOVER Requirement
+
+**Triggered by**: Recurring pattern across sessions 084, 086, 088, 089, 097, 101 (2026-03-02–03) — OVL-AC-012 (ripple/cross-agent assessment absent) has failed in AGENT_CONTRACT and AAWP_MAT audits repeatedly.
+
+**Incident reference**: session-101-20260303 (learning integration trigger).
+
+**Permanent Rule**:
+For every AGENT_CONTRACT PR, the PREHANDOVER proof MUST contain an explicit ## Ripple/Cross-Agent Assessment section with either (a) a list of all affected agents with ripple status, or (b) an explicit "No ripple required" statement with specific justification per agent class.
+
+**Check in Phase 3 (OVL-AC-012 enforcement)**:
+> FAIL-ONLY-ONCE A-024: Search PREHANDOVER proof for ripple/cross-agent assessment section.
+> If absent: FAIL immediately. Session memory is not a substitute.
+
+**Status**: ACTIVE
 ---
 
 ## Version History

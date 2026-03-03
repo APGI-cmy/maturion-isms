@@ -2,8 +2,8 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 1.6.0
-**Last Updated**: 2026-03-02
+**Knowledge Version**: 1.7.0
+**Last Updated**: 2026-03-03
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -69,6 +69,7 @@
 | A-021 | Commit and push BEFORE invoking IAA — working-tree-only fix is not a committed fix and will fail IAA audit | ACTIVE |
 | A-022 | Re-evaluate ALL trigger categories on every IAA invocation — do not carry forward prior session's category classification; new commits can introduce new trigger categories | ACTIVE |
 | A-023 | Cited CI run must have jobs > 0 — action_required with 0 jobs is not CI evidence | ACTIVE |
+| A-024 | OVL-AC-012 ripple/cross-agent assessment must be present in PREHANDOVER proof for all AGENT_CONTRACT PRs | ACTIVE |
 
 ---
 
