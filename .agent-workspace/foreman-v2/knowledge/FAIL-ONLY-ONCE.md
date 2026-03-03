@@ -297,6 +297,38 @@ CS2 (@APGI-cmy) flagged the omission immediately: "Are you really handing over a
 
 ---
 
+### INC-AUTH-PROVIDER-001 — Auth Provider Omission: App-Level Auth Wiring Not Verified by Tests
+**Date**: 2026-03-03  
+**Severity**: MAJOR  
+**Status**: REMEDIATED  
+**Source**: Issue #855 (@APGI-cmy, 2026-03-03); Wave 13 post-CI-certification production failure
+
+**What happened**: Wave 13 T-W13-AUTH-1–4 tests passed GREEN and the wave was declared CI-CERTIFIED COMPLETE. However, the live production deployment continued to surface `"Failed to update profile: Not authenticated"` for all users. Root cause: T-W13-AUTH-1–4 verified auth session forwarding at the API layer (`lib/supabase.ts` exports, `lib/api/audits.ts`, `lib/api/profile.ts`) but did NOT verify that the React application itself has the auth wiring in place:
+- `App.tsx` has no `QueryClientProvider`, `AuthProvider`, or `ProtectedRoute` — all pages accessible without authentication
+- `LoginPage.tsx` is a stub form with no `supabase.auth.signUp()` or `signInWithPassword()` calls
+- `AuthContext.tsx` does not exist — no `AuthProvider` / `useAuth` hook
+
+**Root cause (5-Why):**
+1. **Why did production still fail after T-W13-AUTH-1–4 passed?** T-W13-AUTH-1–4 tested the existence of auth helper functions but not their integration into the React app entry point (App.tsx) or the login form (LoginPage.tsx).
+2. **Why didn't the tests cover App.tsx auth wiring?** The Red QA gate was scoped to the API layer (api-builder deliverables) and did not include tests for the React app wrapper (AuthProvider, QueryClientProvider, ProtectedRoute).
+3. **Why was the React app wrapper not tested?** The test strategy treated auth session forwarding as an API concern, not an application wiring concern — missing that the React app must also wrap routes with AuthProvider and that LoginPage must call real auth methods.
+4. **Why wasn't this caught in CWT?** CWT tests run against the CI environment with mock auth; they do not test that a real user can sign up/sign in end-to-end using the actual LoginPage form.
+5. **Why is there no structural check?** The PBFAG auth checks (9–13) focus on schema existence and env vars, not on React app auth wiring completeness.
+
+**Corrective action (session-094 — this session):**
+1. Root cause documented in BUILD_PROGRESS_TRACKER.md Wave 13 Addendum section.
+2. New incident INC-AUTH-PROVIDER-001 added to this registry.
+3. New improvement suggestion S-015 added: auth tests must cover App.tsx auth wiring.
+4. New Red QA gate T-W13-AUTH-APP-1–5 to be created by qa-builder (pending task 13.A.1).
+5. Implementation (AuthContext.tsx, LoginPage.tsx real auth, App.tsx wrappers) delegated to ui-builder (pending task 13.A.2).
+6. Session memory and PREHANDOVER proof to be produced before merge gate release.
+
+**Learning**: Auth test coverage must span the full application stack: API helpers, React context providers, route guards, AND the login form itself. Passing API-layer auth tests is necessary but not sufficient — the app-level wiring must also be tested.
+
+**Open improvement**: S-015 — Auth tests must cover App.tsx wiring (AuthProvider/QueryClientProvider/ProtectedRoute) and LoginPage real Supabase auth calls. *(See Section 3, item S-015.)*
+
+---
+
 These items are tracked and must be reviewed each session. If assigned to the current wave, they must be addressed before HANDOVER.
 
 | ID | Description | Origin | Status |
@@ -315,6 +347,7 @@ These items are tracked and must be reviewed each session. If assigned to the cu
 | S-012 | Update foreman-v2-agent contract Step 4.3b to replace `IAA-WAVE{N}-YYYYMMDD-PASS` with `IAA-session-NNN-YYYYMMDD-PASS` — aligning contract text with the canonical format defined in the Tier 2 PREHANDOVER template. Requires CodexAdvisor-agent + CS2 written authorisation per A-002/A-013. Until the contract is updated, A-015 is the authoritative rule (Tier 2 knowledge supersedes the contract placeholder). | INC-IAA-TOKEN-001 (2026-03-02) | OPEN |
 | S-013 | Add a pre-condition check before `report_progress` is called for substantive commits: verify that PREHANDOVER proof file exists on disk AND IAA has been invoked. Until mechanical enforcement exists, Foreman MUST verify PREHANDOVER proof presence on disk and IAA invocation result BEFORE calling `report_progress`. This rule is now codified as A-016. | INC-IAA-SKIP-002 (2026-03-02) | OPEN |
 | S-014 | Add explicit documentation in `specialist-registry.md` and `session-memory-template.md` that `general-purpose` agent is NOT an inducted ISMS agent and MUST NEVER be used for committed-artifact implementation work. Consider adding a Foreman self-check: before every `task()` call, verify `agent_type` is in the inducted ISMS agent list (qa-builder, schema-builder, api-builder, ui-builder, integration-builder, mat-specialist, pit-specialist, criteria-generator-agent, document-parser-agent, report-writer-agent, risk-platform-agent, maturity-scoring-agent). This rule is now codified as A-017. | INC-GENERAL-PURPOSE-001 (2026-03-02) | OPEN |
+| S-015 | Auth layer tests MUST verify App.tsx wiring (AuthProvider/QueryClientProvider/ProtectedRoute) and LoginPage real Supabase auth calls — not only API-layer functions. Test coverage gap at app-wiring level allowed production first-user signup to remain broken even with T-W13-AUTH-1–4 passing GREEN. CI should enforce that auth tests cover the full React application auth wire-up, not just individual API helper functions. | INC-AUTH-PROVIDER-001 (2026-03-03) | OPEN |
 
 ---
 
@@ -324,9 +357,9 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 2.2.0
+fail_only_once_version: 2.3.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
@@ -335,5 +368,5 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 ---
 
-*Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-03-02 | Version: 2.2.0 | Status: ACTIVE*
+*Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523, maturion-isms#855 | LIVING_AGENT_SYSTEM.md v6.2.0*  
+*Last Updated: 2026-03-03 | Version: 2.3.0 | Status: ACTIVE*

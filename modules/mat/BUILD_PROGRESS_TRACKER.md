@@ -1272,9 +1272,10 @@ Track the progression through the canonical module lifecycle stages.
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 5 (Build Execution — Wave 12 COMPLETE | Wave 13 CST/CWT/FCWT CI-CERTIFIED COMPLETE ✅ — T-W13-AUTH ✅ T-W13-CI ✅ T-W13-WIRE 8/8 ✅ (WIRE-7 fixed by ui-builder 2026-03-03); production E2E pending live deployment (controlled exception)) | Post-Delivery RCA COMPLETE | Wave 10 COMPLETE | Wave 9.10 COMPLETE | Wave 11 COMPLETE | Wave 12 COMPLETE | **Wave 13 CI-CERTIFIED COMPLETE — production E2E pending live deployment**
-**Overall Progress**: 620 tests GREEN (post-Wave 13 CST/CWT/FCWT, 2026-03-03). T-W13-AUTH-1–4 ✅ | T-W13-CI-1–3 ✅ | T-W13-WIRE-1–8 ✅ (all 8 GREEN) | T-W13-SCH-1–4 + T-W13-E2E-1–5 🔴 EXPECTED RED (production-only, by design).
+**Current Stage**: Stage 5 (Build Execution — Wave 12 COMPLETE | Wave 13 CST/CWT/FCWT CI-CERTIFIED COMPLETE ✅; Wave 13 Addendum: First-User Signup & Auth Failure — 🚨 IN PROGRESS (Issue #855, 2026-03-03)) | Post-Delivery RCA COMPLETE | Wave 10 COMPLETE | Wave 9.10 COMPLETE | Wave 11 COMPLETE | Wave 12 COMPLETE
+**Overall Progress**: 620 tests GREEN (post-Wave 13 CST/CWT/FCWT, 2026-03-03). T-W13-AUTH-1–4 ✅ | T-W13-CI-1–3 ✅ | T-W13-WIRE-1–8 ✅ (all 8 GREEN) | T-W13-SCH-1–4 + T-W13-E2E-1–5 🔴 EXPECTED RED (production-only, by design). | T-W13-AUTH-APP-1–5 🔴 RED GATE (auth provider wiring — INC-AUTH-PROVIDER-001)
 **Blockers**:
+- 🚨 **FIRST-USER SIGNUP BLOCKED** (Issue #855, 2026-03-03): Production MAT deployment surfaces "Failed to update profile: Not authenticated" — App.tsx missing QueryClientProvider/AuthProvider/ProtectedRoute; LoginPage.tsx is a stub; AuthContext.tsx does not exist. Fix delegated to ui-builder. Red QA: T-W13-AUTH-APP-1–5. RCA: INC-AUTH-PROVIDER-001.
 - ✅ **T-W13-WIRE-7 RESOLVED**: Settings.tsx persistence wiring completed by ui-builder (localStorage added, 2026-03-03, session-093) — T-W13-WIRE-7 now GREEN
 - ⚠️ **PRODUCTION E2E PENDING**: T-W13-SCH-1–4 and T-W13-E2E-1–5 require live Vercel deployment + Supabase secrets (controlled exception, expected RED in CI)
 - ✅ **Wave 7 COMPLETE**: AIMC Advisory Integration delivered (advisory-service.ts, EmbeddedAIAssistant AIMC wiring, env cleanup)
@@ -1339,7 +1340,8 @@ Track the progression through the canonical module lifecycle stages.
 31. ~~**[COMPLETE] Execute Wave 10: AI Gateway Memory Wiring (Gap GR-001)** — session-069 (2026-02-27); null stubs replaced; health endpoint; runbook; 8 RED gate tests → GREEN; 368/368~~
 32. ~~**[COMPLETE] Execute Wave 11: Supabase Persistent Memory Wiring** — session-075 (2026-03-01); `SupabasePersistentMemoryAdapter` implemented; `buildPersistentMemory()` wired; `supabaseWiring: "active"`; 5 RED gate tests → GREEN; 430/430 total GREEN; IAA-session-021-20260301-PASS~~
 33. ~~**[COMPLETE] Execute Wave 12: Full Functionality & Build Wiring Verification** — session-078/080/081 (2026-03-01); 31 test IDs (554 sub-tests total) GREEN; all W12-GAP-001–007 resolved; deploy-mat-ai-gateway.yml wired for Render platform; ecs-task-def.json removed; IAA-session-026/029/030-20260301-PASS~~
-34. **[CI-CERTIFIED COMPLETE] Execute Wave 13: Live Deployment Wiring Regression Fix & Continuous Improvement** — CS2 auth: Issue #849 (2026-03-03); CST/CWT/FCWT executed session-093 (2026-03-03); T-W13-AUTH-1–4 GREEN ✅; T-W13-CI-1–3 GREEN ✅; T-W13-WIRE-1–8 GREEN ✅ (WIRE-7 fixed by ui-builder 2026-03-03); T-W13-SCH-1–4 EXPECTED RED (production-only); T-W13-E2E-1–5 EXPECTED RED (production-only); 620 tests GREEN total; production E2E pending live deployment (controlled exception)
+34. **[CI-CERTIFIED COMPLETE — Addendum In Progress] Execute Wave 13: Live Deployment Wiring Regression Fix & Continuous Improvement** — CS2 auth: Issue #849 (2026-03-03); CST/CWT/FCWT executed session-093 (2026-03-03); T-W13-AUTH-1–4 GREEN ✅; T-W13-CI-1–3 GREEN ✅; T-W13-WIRE-1–8 GREEN ✅ (WIRE-7 fixed by ui-builder 2026-03-03); T-W13-SCH-1–4 EXPECTED RED (production-only); T-W13-E2E-1–5 EXPECTED RED (production-only); 620 tests GREEN total; production E2E pending live deployment (controlled exception)
+35. **[IN PROGRESS] Wave 13 Addendum: First-User Signup & Auth Provider Omission Failure** — CS2 auth: Issue #855 (2026-03-03); failure captured: App.tsx missing AuthProvider/QueryClientProvider/ProtectedRoute; LoginPage stub; AuthContext.tsx absent; Red QA T-W13-AUTH-APP-1–5 pending (qa-builder); implementation pending (ui-builder); INC-AUTH-PROVIDER-001 in FAIL-ONLY-ONCE registry
 
 ---
 
@@ -2231,3 +2233,81 @@ Task 13.5: integration-builder                  → T-W13-CI-3 RED → GREEN    
 | RCA-MAT-002-F01 | Auth session must be forwarded end-to-end in production; mocked auth in tests is insufficient | RCA MAT-RCA-002 F-01/F-10 | T-W13-AUTH-1–4: real login E2E tests mandatory |
 | RCA-MAT-002-F02 | Schema migrations must be verified in production schema cache as part of CWT | RCA MAT-RCA-002 F-02 | T-W13-SCH-1–3: schema existence checks in CI |
 | RCA-MAT-002-WGI01 | PBFAG now requires E2E auth, schema existence, full-flow wiring, page content, and env var checks | RCA MAT-RCA-002 §6 WGI-01–04 | PBFAG checks 9–13 added to implementation plan §1.5 |
+
+---
+
+## Wave 13 Addendum: First-User Signup & Auth Provider Omission Failure
+
+**Identified**: 2026-03-03  
+**Status**: 🚨 IN PROGRESS — Red QA gate defined; builder appointment pending  
+**CS2 Authorization**: Issue #855 (@APGI-cmy, 2026-03-03)  
+**Session**: session-094 (foreman-v2-agent v6.2.0) — failure capture, prebuild alignment, tracker update  
+**RCA Incident**: INC-AUTH-PROVIDER-001  
+**Priority**: Blocker — first-user onboarding fully blocked on production
+
+### Failure Description
+
+Despite Wave 13 T-W13-AUTH-1–4 passing GREEN in CI, the live Vercel deployment surfaces
+`"Failed to update profile: Not authenticated"` for all users. Root cause: the existing
+auth tests verified auth session forwarding at the API layer (`lib/api/audits.ts`,
+`lib/api/profile.ts`, `lib/supabase.ts`), but did NOT verify that the React application
+itself has the auth wiring in place (AuthProvider, QueryClientProvider, ProtectedRoute).
+
+### Root Cause Analysis
+
+| Root Cause | File | Status |
+|---|---|---|
+| `App.tsx` has no `QueryClientProvider`, `AuthProvider`, or `ProtectedRoute` — all pages accessible without authentication | `modules/mat/frontend/src/App.tsx` | 🔴 NOT FIXED |
+| `LoginPage.tsx` is a stub — no `supabase.auth.signUp()` or `signInWithPassword()` calls | `modules/mat/frontend/src/pages/LoginPage.tsx` | 🔴 NOT FIXED |
+| `AuthContext.tsx` does not exist — no `AuthProvider` / `useAuth` hook | `modules/mat/frontend/src/contexts/AuthContext.tsx` | 🔴 NOT FIXED |
+| `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` must be confirmed in Vercel env vars | Vercel project settings | ⚠️ VERIFY |
+
+### Prebuild Alignment Verification
+
+| # | Criterion | File | Status |
+|---|-----------|------|--------|
+| 1 | App Description — scope includes authenticated user flows | `modules/mat/00-app-description/app-description.md` | ✅ Scope covers §3.3.2 User Auth |
+| 2 | FRS — FR-049 (Authentication) covered | `modules/mat/01-frs/functional-requirements.md` | ✅ FR-049 exists |
+| 3 | TRS — TR-020 (Auth Integration), TR-022 (Auth Security) covered | `modules/mat/01.5-trs/technical-requirements-specification.md` | ✅ TR-020, TR-022 exist |
+| 4 | Red QA suite — T-W13-AUTH-APP-1–5 defined and RED | `modules/mat/tests/wave13/auth-app-wiring.test.tsx` | 🔴 PENDING (qa-builder task) |
+| 5 | Implementation Plan — Wave 13 addendum tasks 13.A.1–13.A.2 defined | `modules/mat/03-implementation-plan/implementation-plan.md` | ✅ This tracker update constitutes the plan |
+| 6 | CANON_INVENTORY.json hash check | `governance/CANON_INVENTORY.json` | ✅ PASS (Phase 1 preflight) |
+| 7 | PBFAG checks 9–13 (§1.5) | implementation plan §1.5 | ✅ Auth check coverage gap identified, now being closed |
+| 8 | INC-AUTH-PROVIDER-001 in FAIL-ONLY-ONCE registry | `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` | 🔴 PENDING (this session) |
+
+### New Red QA Gate Tests
+
+| Test ID | What It Tests | Status |
+|---------|---------------|--------|
+| T-W13-AUTH-APP-1 | `AuthContext.tsx` exists with `AuthProvider` export and `useAuth` hook | 🔴 RED (file missing) |
+| T-W13-AUTH-APP-2 | `App.tsx` imports and uses `AuthProvider` | 🔴 RED (not present) |
+| T-W13-AUTH-APP-3 | `App.tsx` imports and uses `QueryClientProvider` | 🔴 RED (not present) |
+| T-W13-AUTH-APP-4 | `App.tsx` has `ProtectedRoute` or equivalent auth guard for non-login routes | 🔴 RED (not present) |
+| T-W13-AUTH-APP-5 | `LoginPage.tsx` calls real Supabase auth methods (`signUp` or `signInWithPassword`) | 🔴 RED (stub only) |
+
+### Delegation Sequence
+
+Wave 13 Addendum follows sequential delegation:
+
+```
+Task 13.A.1: qa-builder    → T-W13-AUTH-APP-1–5 RED gate (define tests that fail until implementation exists)
+Task 13.A.2: ui-builder    → T-W13-AUTH-APP-1–5 RED → GREEN (implement AuthContext, LoginPage, App.tsx)
+```
+
+### Fail-Only-Once Learning
+
+| ID | Learning | Applied |
+|----|----------|---------|
+| LL-AUTH-001 | Auth layer tests MUST verify App.tsx wiring (AuthProvider/QueryClientProvider/ProtectedRoute), not only API-layer auth functions | T-W13-AUTH-APP-1–5 added to Red QA suite; INC-AUTH-PROVIDER-001 in FAIL-ONLY-ONCE registry |
+| LL-AUTH-002 | LoginPage MUST be verified to call real Supabase auth, not just render a form | T-W13-AUTH-APP-5 added |
+| LL-AUTH-003 | AuthContext.tsx MUST be verified to exist and export AuthProvider | T-W13-AUTH-APP-1 added |
+
+### State Machine
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-03 | FAILURE DETECTED | Production signup blocked; root cause identified (App.tsx missing AuthProvider/QueryClientProvider/ProtectedRoute; stub LoginPage) |
+| 2026-03-03 | FAILURE RECORDED | INC-AUTH-PROVIDER-001 added to FAIL-ONLY-ONCE registry; BUILD_PROGRESS_TRACKER updated; prebuild alignment verified |
+| 2026-03-03 | RED QA GATE PENDING | T-W13-AUTH-APP-1–5 to be created by qa-builder |
+| — | IMPLEMENTATION PENDING | ui-builder to implement AuthContext, LoginPage real auth, App.tsx wrappers |
+| — | CI-CERTIFIED | All T-W13-AUTH-APP-1–5 GREEN |
