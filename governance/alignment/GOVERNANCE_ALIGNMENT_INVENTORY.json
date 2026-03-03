@@ -3,15 +3,16 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory — tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
-  "last_updated": "2026-03-02",
-  "last_ripple_commit": "e52ec033c5955cdbe833986e9da0a37927c5a1bc",
-  "last_ripple_timestamp": "2026-03-02T10:37:21Z",
+  "last_updated": "2026-03-03",
+  "last_ripple_commit": "e77b00c71511ae353d903f89fa85680dcbfc7cd9",
+  "last_ripple_timestamp": "2026-03-03T09:17:26Z",
   "alignment_summary": {
-    "total_artifacts": 6,
+    "total_artifacts": 10,
     "aligned": 6,
     "drifted": 0,
     "missing": 0,
-    "overall_status": "ALIGNED"
+    "escalated": 4,
+    "overall_status": "PARTIAL — AGENT CONTRACT FILES ESCALATED TO CS2"
   },
   "artifacts": [
     {
@@ -79,12 +80,65 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
       "last_verified": "2026-03-02T11:23:28Z"
+    },
+    {
+      "filename": "CodexAdvisor-agent.md",
+      "path": ".github/agents/CodexAdvisor-agent.md",
+      "canonical_version": "3.2.0",
+      "local_version": "3.3.0",
+      "canonical_hash_sha256": "d8e07cde1c2907cf415c93626b288f0ef842fbaf",
+      "local_hash_sha256": "17de1f1f0f60fd92c8e12d130bbedaf02dcb05b6a84b772d50788fe47c98ee01",
+      "alignment_status": "ESCALATED_TO_CS2",
+      "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
+      "last_verified": "2026-03-03T13:03:45Z",
+      "escalation_ref": "ESC-AGENTFILE-E77B00C7-20260303",
+      "note": "Local v3.3.0 is NEWER than canonical v3.2.0 — this is a layer-up situation. The local contract was updated by CodexAdvisor-agent in a prior session beyond the canonical version. Resolution options: (a) submit a layer-up PR to canonical source to adopt local v3.3.0, or (b) if canonical v3.2.0 contains corrections not in local, merge those in. CS2 must determine which version is authoritative and whether a layer-up PR to maturion-foreman-governance is required."
+    },
+    {
+      "filename": "foreman-v2.agent.md",
+      "path": ".github/agents/foreman-v2.agent.md",
+      "canonical_version": "2.3.0",
+      "local_version": null,
+      "canonical_hash_sha256": "33ea404cec5231c03d9cc6c7367b56906bf365d9",
+      "local_hash_sha256": null,
+      "alignment_status": "ESCALATED_TO_CS2",
+      "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
+      "last_verified": "2026-03-03T13:03:45Z",
+      "escalation_ref": "ESC-AGENTFILE-E77B00C7-20260303",
+      "note": "Filename mismatch: local has foreman-v2-agent.md at v2.5.0; canonical has foreman-v2.agent.md at v2.3.0. CS2 review required to determine correct resolution."
+    },
+    {
+      "filename": "governance-repo-administrator-v2.agent.md",
+      "path": ".github/agents/governance-repo-administrator-v2.agent.md",
+      "canonical_version": "2.0.0",
+      "local_version": null,
+      "canonical_hash_sha256": "7e6e98c3f1356758167a5a2325c233f6d6838ec4",
+      "local_hash_sha256": null,
+      "alignment_status": "ESCALATED_TO_CS2",
+      "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
+      "last_verified": "2026-03-03T13:03:45Z",
+      "escalation_ref": "ESC-AGENTFILE-E77B00C7-20260303",
+      "note": "Not present locally. CS2 to decide whether this agent should be introduced to maturion-isms."
+    },
+    {
+      "filename": "independent-assurance-agent.md",
+      "path": ".github/agents/independent-assurance-agent.md",
+      "canonical_version": "2.0.0",
+      "local_version": "2.0.0",
+      "canonical_hash_sha256": "104af34806c18a06b5521bd03e75bdbdeeba262a",
+      "local_hash_sha256": "4bbf5f60d276d79c62428284fee9e5010a509799c53fdd6ab1a64583b98035e0",
+      "alignment_status": "ESCALATED_TO_CS2",
+      "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
+      "last_verified": "2026-03-03T13:03:45Z",
+      "escalation_ref": "ESC-AGENTFILE-E77B00C7-20260303",
+      "note": "Same contract version but content differs (description changed in canonical). CS2 review required."
     }
   ],
   "metadata": {
     "living_agent_system_version": "6.2.0",
     "governing_protocol": "GOVERNANCE_RIPPLE_MODEL.md v1.1.0",
     "canonical_checklist": "GOVERNANCE_RIPPLE_CHECKLIST_PROTOCOL.md",
-    "created_by": "governance-liaison-isms session-035"
+    "created_by": "governance-liaison-isms session-035",
+    "last_updated_by": "governance-liaison-isms session-040-20260303"
   }
 }

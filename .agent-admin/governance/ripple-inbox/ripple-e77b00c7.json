@@ -1,0 +1,30 @@
+{
+  "event_type": "governance_ripple",
+  "canonical_commit": "e77b00c71511ae353d903f89fa85680dcbfc7cd9",
+  "inventory_version": "1.0.0",
+  "sender": "APGI-cmy/maturion-foreman-governance",
+  "dispatch_id": "e77b00c7",
+  "timestamp": "2026-03-03T09:17:26Z",
+  "trigger": "Merge pull request #1289 from APGI-cmy/copilot/harmonize-agent-contract-files",
+  "changed_artifacts": [
+    ".github/agents/CodexAdvisor-agent.md",
+    ".github/agents/foreman-v2.agent.md",
+    ".github/agents/governance-repo-administrator-v2.agent.md",
+    ".github/agents/independent-assurance-agent.md"
+  ],
+  "agent_files_detected": true,
+  "processing": {
+    "received_at": "2026-03-03T13:03:45Z",
+    "processed_by": "governance-liaison-isms-agent",
+    "session_id": "session-040-20260303",
+    "result": "ESCALATED_TO_CS2",
+    "reason": "A-009: ripple payload contains .github/agents/** paths — these are escalation triggers, not layer-down targets. All .github/agents/** changes require CodexAdvisor-agent + IAA + CS2 per AGCFPP-001.",
+    "drift_detected": true,
+    "files_layered_down": 0,
+    "pr_required": true,
+    "pr_number": null,
+    "escalation_document": ".agent-workspace/governance-liaison-isms/escalation-inbox/escalation-agent-contracts-e77b00c7-20260303.md",
+    "archived_at": null,
+    "notes": "Agent contract file drift detected. Governance admin records updated. CS2 escalation created. Awaiting CodexAdvisor-agent assignment and CS2 authorization to complete layer-down of agent contract files."
+  }
+}

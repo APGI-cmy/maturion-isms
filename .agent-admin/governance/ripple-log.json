@@ -528,6 +528,26 @@
       ],
       "status": "SUCCESS",
       "notes": "Liaison checklist complete for canonical commit 7792913259b0. FM_QUALITY_PROTOCOL_ENHANCED_SOP.md SHA256 verified (65ee6752... match). AIMC canon checked — no AIMC dependency; AIMC integration NOT REQUIRED for this SOP. Internal ripple executed: Tier 2 QR stub created for foreman-v2, knowledge index updated, quality-professor admin dir created. Session-036 memory created."
+    },
+    {
+      "timestamp": "2026-03-03T13:03:45Z",
+      "session_id": "session-040-20260303",
+      "type": "liaison-escalation",
+      "canonical_commit": "e77b00c71511ae353d903f89fa85680dcbfc7cd9",
+      "canonical_version": "1.0.0",
+      "dispatch_id": "e77b00c7",
+      "trigger": "Merge pull request #1289 from APGI-cmy/copilot/harmonize-agent-contract-files",
+      "agent_files_detected": true,
+      "files_updated": 0,
+      "status": "ESCALATED_TO_CS2",
+      "escalation_ref": "ESC-AGENTFILE-E77B00C7-20260303",
+      "changed_artifacts": [
+        ".github/agents/CodexAdvisor-agent.md",
+        ".github/agents/foreman-v2.agent.md",
+        ".github/agents/governance-repo-administrator-v2.agent.md",
+        ".github/agents/independent-assurance-agent.md"
+      ],
+      "notes": "A-009: ripple payload contains .github/agents/** paths — escalation triggers, not layer-down targets. Governance admin records updated. CS2 escalation created. GOVERNANCE_ALIGNMENT_INVENTORY.json updated with 4 ESCALATED_TO_CS2 entries. Awaiting CodexAdvisor-agent + CS2 authorization."
     }
   ]
 }
