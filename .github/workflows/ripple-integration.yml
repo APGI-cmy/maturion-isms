@@ -4,24 +4,30 @@ name: Ripple Integration
 # - LAYERING DOWN : Cross-repo distribution of governance artefacts (upstream — foreman-governance repo).
 # - RIPPLING      : Within-repo integration/synchronisation — this workflow.
 #
-# This workflow is the consumer-side listener.  It is triggered by the GitHub issues
-# that the upstream `governance-layer-down-dispatch.yml` workflow creates in this repo
-# (labels: governance + layer-down).  It then:
+# This workflow is the consumer-side listener for [Layer-Down] issues.  It processes
+# a layer-down issue (labels: governance + layer-down) and creates a ripple PR.
+#
 #   1. Runs the existing align-governance.sh script to pull canonical changes.
 #   2. Detects whether any .github/agents/*.md files are in the diff.
 #   3. If agent files changed  → creates a DRAFT ripple PR + escalation doc (CS2 gate).
 #   4. If no agent files       → creates a normal ripple PR and enables auto-merge.
 #   5. Comments on the issue with the outcome.
 #
+# RETIREMENT NOTE (Issue #825, 2026-03-03):
+#   The automatic `on: issues` trigger has been retired.  Automatically reacting to
+#   every issue open/edit/label event was creating duplicate DRAFT ripple PRs that fail
+#   the governance-ceremony-gate (draft-check + verdict).  The correct protocol is:
+#     governance-ripple-sync.yml receives the repository_dispatch and creates ONE
+#     [Layer-Down] issue.  A human reviewer (governance-liaison-agent or CS2) then
+#     triggers this workflow manually via workflow_dispatch with the issue number.
+#   This decouples the ISMS from governance dispatch side-effects.
+#
 # Authority: LAYERING_AND_RIPPLING_AUTOMATION_STRATEGY.md v1.0.0
 #            CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md
 #            CS2_AGENT_FILE_AUTHORITY_MODEL.md
 
 on:
-  issues:
-    types: [opened, edited, labeled]
-
-  # Manual trigger (testing / re-runs)
+  # Manual trigger only — automatic issues-listener retired (Issue #825, 2026-03-03)
   workflow_dispatch:
     inputs:
       issue_number:
