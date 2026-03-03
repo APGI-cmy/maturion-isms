@@ -123,18 +123,30 @@ Merge gate parity: PASS
 ## IAA Agent Response (verbatim)
 
 ```
-First invocation: IAA-session-105-20260303-FAIL (REJECTION-PACKAGE)
-Failures (all resolved):
-1. OVL-AC-009: CodexAdvisor-agent.md was over 30,000 chars. RESOLVED: 28,590 chars.
-2. OVL-AC-009: governance-liaison-isms-agent.md — byte count 30,001 but chars=29,855. WITHIN LIMIT.
-3. PREHANDOVER aggregate table inaccurate. RESOLVED: per-file table with exact chars and SHA256.
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #845 — copilot/add-automated-secret-scan
+"[Feature] Add automated secret value name scan/check to IAA agent Tier 2 logic"
+Third invocation — all prior REJECTION-PACKAGE failures resolved.
 
-Second invocation: IAA-session-106-20260303-FAIL (REJECTION-PACKAGE)
-Failures (resolved):
-1. CORE-021: OPOJD gate Character count row still read "+7 chars" — should be "+8 chars". RESOLVED.
+All 39 checks PASS. Merge gate parity: PASS.
 
-Third invocation: PENDING
-iaa_audit_token: PENDING
+Check breakdown:
+  FAIL-ONLY-ONCE learning (8 rules applied): 8 PASS / 0 FAIL
+  Core invariants (CORE-001 to CORE-022):   22 PASS / 0 FAIL
+  AGENT_CONTRACT overlay (OVL-AC-001–012):  12 PASS / 0 FAIL
+  KNOWLEDGE_GOVERNANCE overlay (OVL-KG-001–005):  5 PASS / 0 FAIL
+
+Key resolutions verified this session:
+  ✅ Session-105 Failure 1 (OVL-AC-009 CodexAdvisor): 28,590 chars — within limit
+  ✅ Session-105 Failure 2 (OVL-AC-009 governance-liaison): 29,855 chars — within limit
+  ✅ Session-105 Failure 3 (OVL-AC-011 PREHANDOVER): per-file table, +8 deltas, SHA256 — accurate
+  ✅ Session-106 Failure 1 (CORE-021 OPOJD "+7"→"+8"): OPOJD gate verified clean
+
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-107-20260303-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate
+═══════════════════════════════════════
 ```
 
 ---
