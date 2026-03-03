@@ -110,7 +110,25 @@ Merge gate parity: PASS
 
 ## IAA Agent Response (verbatim)
 
-PENDING — to be completed in Phase 4 Step 4.4.
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: branch copilot/update-agent-contract-paths — HEAD commit 2ae06b6
+Artifacts assured: 9 agent contracts (parking station path migration) + PREHANDOVER-session-043-20260303.md + session memory + parking station files
+
+All 34 checks PASS. Merge gate parity: PASS.
+
+Session-110 REJECTION-PACKAGE failures — resolution confirmed:
+  ✅ CORE-016 (FAIL → PASS): ## IAA Agent Response (verbatim) heading confirmed
+  ✅ CORE-018 (FAIL → PASS): All 4 evidence artifact sweep conditions met
+  ✅ OVL-AC-012 (FAIL → PASS): ## Ripple Assessment section present with explicit NO DOWNSTREAM GOVERNANCE RIPPLE REQUIRED verdict
+
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-111-20260303-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate
+Authority: CS2 only (@APGI-cmy)
+═══════════════════════════════════════
+```
 
 ---
 
@@ -123,4 +141,4 @@ Justification: This change is a surgical parking station path correction in 9 id
 
 **PREHANDOVER proof generated**: 2026-03-03
 **Producing agent**: CodexAdvisor-agent v6.2.0
-**Handover status**: PENDING IAA INVOCATION
+**Handover status**: COMPLETE — IAA ASSURANCE-TOKEN issued (IAA-session-111-20260303-PASS); awaiting CS2 approval
