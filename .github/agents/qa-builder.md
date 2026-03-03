@@ -544,16 +544,32 @@ At each wave completion, qa-builder MUST:
 
 ### 4.3 Pre-Handover Merge Gate Parity Check (Priority B_H — BLOCKING)
 
-**[B_H] Run before opening any PR. Do NOT open a PR until all checks PASS locally.**
+**[B_H] CI is confirmatory — run all gate checks locally before opening any PR.**
 
-- Enumerate all checks listed in `merge_gate_interface.required_checks` (from agent contract YAML)
-- Run each check locally using the same script/ruleset as the CI merge gate
-- If ANY check fails locally → **STOP and FIX immediately** — do not open PR
-- Document result in PREHANDOVER proof: `merge_gate_parity: PASS | FAIL`
+```bash
+#!/bin/bash
+# B_H — BLOCKING: do NOT open PR until all checks PASS
+GATE_FAILURES=()
+# Checks: merge-gate/verdict | governance/alignment | stop-and-fix/enforcement
+bash .github/scripts/merge-gate-verdict.sh >/dev/null 2>&1 \
+  || GATE_FAILURES+=("merge-gate/verdict: FAIL")
+if [ -f ".github/scripts/validate-canon-hashes.sh" ]; then
+  bash .github/scripts/validate-canon-hashes.sh >/dev/null 2>&1 \
+    || GATE_FAILURES+=("governance/alignment: FAIL")
+fi
+[ "$(find .agent-workspace/qa-builder -name 'blocker-*.md' 2>/dev/null | wc -l)" -gt 0 ] \
+  && GATE_FAILURES+=("stop-and-fix/enforcement: FAIL")
+if [ ${#GATE_FAILURES[@]} -gt 0 ]; then
+  echo "[FAIL] [B_H] GATE PARITY FAILED - DO NOT OPEN PR"
+  printf '  - %s\n' "${GATE_FAILURES[@]}"
+  echo "Fix all failing gates and re-run. Opening a PR on a local gate failure is PROHIBITED."
+  exit 1
+fi
+echo "[PASS] [B_H] ALL GATE PARITY CHECKS PASSED - cleared to open PR"
+```
 
-> Opening a PR with a failing local gate is **prohibited** — it is the same class of violation as pushing directly to main.
-
-**Authority**: `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.1.0 Section 4.3
+Document in PREHANDOVER proof: `merge_gate_parity: PASS`
+**Authority**: `governance/canon/AGENT_HANDOVER_AUTOMATION.md` Section 4.3
 
 ### 4.4 Mandatory Process Improvement Reflection (Priority B_M)
 
@@ -562,24 +578,16 @@ At each wave completion, qa-builder MUST:
 **Required Analysis** (ALL questions must be answered):
 
 1. **What went well in this build?**
-   - Identify processes, tools, or governance elements that enabled success
-   - Highlight what should be preserved or amplified in future builds
 
 2. **What failed, was blocked, or required rework?**
-   - Document failures, blockers, rework cycles with root causes
-   - Include governance gaps, tooling limitations, or unclear specifications
 
 3. **What process, governance, or tooling changes would have improved this build or prevented waste?**
-   - Propose specific improvements to prevent recurrence
-   - Identify friction points in workflow, coordination, or verification
 
 4. **Did you comply with all governance learnings (BLs)?**
    - Verify compliance with: BL-016 (ratchet conditions), BL-018 (QA range), BL-019 (semantic alignment), BL-022 (if activated), BL-024 (constitutional sandbox), BL-029 (tracker update)
    - If non-compliance: STOP, document reason, escalate to Foreman
 
 5. **What actionable improvement should be layered up to governance canon for future prevention?**
-   - Propose concrete governance/process changes for canonization
-   - OR justify why no improvements are warranted
 
 **Prohibited**: Stating "None identified" without answering ALL questions above with justification.
 
