@@ -89,7 +89,7 @@ All 4 required artifacts present:
 | Gate | Status |
 |------|--------|
 | YAML validation | PASS ✅ — surgical rename only; YAML structure unchanged in all files |
-| Character count | PASS ✅ — max change: +7 chars per agent file; no file near 30,000 limit |
+| Character count | PASS ✅ — CodexAdvisor-agent.md: 28,590 chars (was 35,804 — reduced); all other files: +8 chars each from rename; all ≤29,855 chars, within 30,000 limit |
 | Checklist compliance | PASS ✅ — 6/6 applicable S1–S6 gates |
 | Canon hash verification | PASS ✅ — CANON_INVENTORY.json 0 placeholder hashes |
 | No placeholder/stub/TODO content | PASS ✅ |
@@ -124,12 +124,16 @@ Merge gate parity: PASS
 
 ```
 First invocation: IAA-session-105-20260303-FAIL (REJECTION-PACKAGE)
-Failures:
-1. OVL-AC-009: CodexAdvisor-agent.md was 36,184 bytes (35,804 chars) — pre-existing over-limit condition. RESOLVED: file reduced to 28,590 chars.
-2. OVL-AC-009: governance-liaison-isms-agent.md reported as 30,001 bytes — actual chars = 29,855. WITHIN LIMIT per max_characters: 30000 policy.
-3. PREHANDOVER char count table was aggregate/inaccurate. RESOLVED: replaced with per-file table with accurate chars, deltas, and SHA256 prefixes.
+Failures (all resolved):
+1. OVL-AC-009: CodexAdvisor-agent.md was over 30,000 chars. RESOLVED: 28,590 chars.
+2. OVL-AC-009: governance-liaison-isms-agent.md — byte count 30,001 but chars=29,855. WITHIN LIMIT.
+3. PREHANDOVER aggregate table inaccurate. RESOLVED: per-file table with exact chars and SHA256.
 
-Second invocation: PENDING — awaiting re-invocation after fixes committed.
+Second invocation: IAA-session-106-20260303-FAIL (REJECTION-PACKAGE)
+Failures (resolved):
+1. CORE-021: OPOJD gate Character count row still read "+7 chars" — should be "+8 chars". RESOLVED.
+
+Third invocation: PENDING
 iaa_audit_token: PENDING
 ```
 
