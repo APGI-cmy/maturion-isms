@@ -1,8 +1,8 @@
 # IAA FAIL-ONLY-ONCE Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 1.5.0
-**Last Updated**: 2026-03-02
+**Version**: 1.6.0
+**Last Updated**: 2026-03-03
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -473,6 +473,23 @@ This rule is especially critical for PRs where remediation commits are added bet
 
 ---
 
+### A-023 — OVL-AC-012 Ripple Assessment Is a Standing PREHANDOVER Requirement
+
+**Triggered by**: Recurring pattern across sessions 084, 086, 088, 089, 097, 101 (2026-03-02–03) — OVL-AC-012 (ripple/cross-agent assessment absent) has failed in AGENT_CONTRACT and AAWP_MAT audits repeatedly.
+
+**Incident reference**: session-101-20260303 (learning integration trigger).
+
+**Permanent Rule**:
+For every AGENT_CONTRACT PR, the PREHANDOVER proof MUST contain an explicit `## Ripple/Cross-Agent Assessment` section with either (a) a list of all affected agents with ripple status, or (b) an explicit "No ripple required" statement with specific justification per agent class.
+
+**Check in Phase 3 (OVL-AC-012 enforcement)**:
+> FAIL-ONLY-ONCE A-023: Search PREHANDOVER proof for ripple/cross-agent assessment section.
+> If absent: FAIL immediately. Session memory is not a substitute.
+
+**Status**: ACTIVE
+
+---
+
 ## Version History
 
 | Version | Date | Change |
@@ -483,7 +500,9 @@ This rule is especially critical for PRs where remediation commits are added bet
 | 1.3.0 | 2026-03-02 | A-018 renumbered from duplicate A-004 (post-merge retrospective); A-019 renumbered from duplicate A-016 (trigger table misapplication); duplicate rule ID deduplication patch (maturion-isms#IAA-TIER2) |
 | 1.4.0 | 2026-03-02 | A-020 (PREHANDOVER template staleness — template must be kept current with overlay requirements) added from session-088 Wave 13 REJECTION-PACKAGE learning |
 | 1.5.0 | 2026-03-02 | A-021 (commit and push before IAA invocation — working-tree fix is not a committed fix) codified from sessions 090/091 CANDIDATE; A-022 (re-evaluate trigger categories on every invocation — do not carry forward prior session classification) added from session-092 OVL-KG-004 finding |
+| 1.6.0 | 2026-03-03 | A-023 (OVL-AC-012 ripple assessment is a standing PREHANDOVER requirement for all AGENT_CONTRACT PRs) codified from recurring pattern sessions 084–101 |
 
 ---
 
 **Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
+

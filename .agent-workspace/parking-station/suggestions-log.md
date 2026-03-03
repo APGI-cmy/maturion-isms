@@ -350,7 +350,6 @@
 | 2026-03-02 | independent-assurance-agent | session-094 | PHASE-4 | ASSURANCE-TOKEN issued for PR #789 Wave 13 — all prior failures resolved; 6-invocation PR complete | session-094-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-094 | PHASE-3 | CANDIDATE A-023: Tier 2 knowledge file version header must match history entry — three-point pre-commit check recommended for Foreman template | session-094-20260302.md |
 | 2026-03-02 | governance-liaison-isms | session-036 | SESSION-END | Add dedicated CI gate for api/ and packages/ai-centre/ TypeScript type-checking separate from mat/frontend gate | session-036-20260302.md |
-=======
 | 2026-03-02 | independent-assurance-agent | session-097 | PHASE-3 | Add explicit PREHANDOVER creation instruction to liaison/specialist agent Phase 3 to prevent CORE-018 at first AAWP_MAT invocation | session-097-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-097 | PHASE-3 | Add TECHNICAL_FIX alias warning to trigger table — technical fixes to AAWP_MAT paths ARE triggering; TECHNICAL_FIX is not a recognised exempt category | session-097-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-098 | PHASE-4 | Cross-check version numbers in PREHANDOVER narratives against actual package.json content — SHA256 correctness does not guarantee narrative accuracy | session-098-20260302.md |
@@ -360,6 +359,15 @@
 | 2026-03-02 | independent-assurance-agent | session-099 | PHASE-4 | When fixing a find-replace-style text error in governance artifacts, use grep -n to locate ALL instances before declaring fix complete | session-099-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-100 | PHASE-4 | Post-ASSURANCE-TOKEN ceremony steps should be automated or checklisted to prevent manual omission after token issuance | session-100-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-100 | PHASE-4 | Multi-invocation PR governance squash policy — CS2 consideration for consolidating governance ceremony commits before merge | session-100-20260302.md |
+| 2026-03-03 | CodexAdvisor-agent | session-041 | DRAFT-PHASE | governance-liaison-isms Phase 3.1 Step 4 had erroneous agent-file-write permission — add cross-check to non-negotiables checklist verifying no agent contract phase body permits .github/agents writes unless agent is CodexAdvisor | session-041-20260303.md |
+
+| 2026-03-03 | independent-assurance-agent | session-101 | Phase 4 | PREHANDOVER template needs: IAA verbatim section heading, git object hashes in drift table, ripple assessment section — all missing in session-041; add commit-status checklist gate to prevent A-021 recurrence | session-101-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-101 | Phase 3 | Systematic CORE-012 fix pass needed: SELF-MOD-* id absent from prohibitions YAML array in api-builder, qa-builder, governance-liaison-isms-agent — recommend dedicated Issue #854 for all-agent sweep | session-101-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-102 | Phase 4 | PREHANDOVER template must cover ALL triggered categories (AGENT_CONTRACT + KNOWLEDGE_GOVERNANCE separately) — fix commit modifying FAIL-ONLY-ONCE.md triggered KG overlay checks that were not addressed | session-102-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-102 | Phase 3 | Add PREHANDOVER checklist item for CORE-009: all modified agent files must have parity_required: true and parity_enforcement: BLOCKING in merge_gate_interface — pre-existing builder gap missed in session-101 | session-102-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-103 | Phase 4 | CodexAdvisor must add OVL-AC-011 pre-flight to PREHANDOVER checklist: after every fix commit, re-verify BOTH char counts AND git object hashes for all modified agent files — partial update (hashes only) caused this session's sole failure | session-103-20260303.md |
+
+| 2026-03-03 | independent-assurance-agent | session-104 | Phase 4 | Produce structured 'Post-ASSURANCE-TOKEN ceremony checklist' in ASSURANCE-TOKEN output so CodexAdvisor has explicit task list to complete PENDING → token update ceremony | session-104-20260303.md |
 | 2026-03-03 | foreman-v2-agent | session-092 | [SESSION-END] | ripple-integration.yml check-labels job has unreachable issues-path code after retirement — future cleanup candidate (S-015) | session-092-ripple-cleanup-20260303.md |
 
 | 2026-03-03 | independent-assurance-agent | session-101 | [PHASE-4] | Foreman wrote PHASE_A_ADVISORY in PREHANDOVER on 2026-03-03 despite IAA being PHASE_B_BLOCKING since 2026-03-02 — foreman should read IAA adoption phase from IAA knowledge index at Phase 1 (track as foreman S-016) | session-101-20260303.md |
