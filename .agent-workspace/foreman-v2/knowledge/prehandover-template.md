@@ -1,8 +1,8 @@
 # PREHANDOVER Proof Template — Foreman v2
 
 **Agent**: foreman-v2
-**Version**: 1.1.0
-**Last Updated**: 2026-03-01
+**Version**: 1.2.0
+**Last Updated**: 2026-03-03
 **Purpose**: Template for generating Phase 4 PREHANDOVER proof artifacts per S-009 (FAIL-ONLY-ONCE v1.8.0)
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -85,6 +85,33 @@ Local test run: [N] tests passed, [N] failed, [N] skipped — [N] test files.
 
 ---
 
+## CI Run Evidence
+
+<!-- MANDATORY: OVL-CI-005 compliance — IAA requires a CI run URL proving the workflow ran against this branch -->
+
+| Field | Value |
+|---|---|
+| CI Run URL | [GitHub Actions run URL — e.g. https://github.com/OWNER/REPO/actions/runs/RUNID] |
+| Run Status | [PASS / FAIL / N/A (pre-merge)] |
+| Triggered by | [workflow name and trigger event] |
+
+---
+
+## Environment Parity
+
+<!-- MANDATORY: OVL-CI-006 compliance — IAA requires confirmation that CI environment matches local validation -->
+
+| Check | Local | CI | Parity |
+|---|---|---|---|
+| Node version | [version] | [version] | [✅/❌] |
+| OS | [local OS] | ubuntu-latest | [✅/❌] |
+| Dependencies installed | [yes/no] | [yes/no] | [✅/❌] |
+| Workflow YAML valid | [yes — yamllint / N/A] | [yes — CI] | [✅/❌] |
+
+`environment_parity: [CONFIRMED / DEVIATION — describe any deviations]`
+
+---
+
 ## CS2 Authorization Evidence
 
 [Issue reference that constitutes CS2 wave-start authorization]
@@ -98,6 +125,8 @@ Local test run: [N] tests passed, [N] failed, [N] skipped — [N] test files.
 - [x] Zero deprecation warnings
 - [x] Zero compiler/linter warnings
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
+- [x] CI Run Evidence section populated (OVL-CI-005)
+- [x] Environment Parity section populated (OVL-CI-006)
 - [x] IAA audit token recorded: [token]
 
 ---
@@ -163,3 +192,13 @@ After IAA issues ASSURANCE-TOKEN, complete these 3 steps **before opening the PR
 ---
 
 **Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
+
+---
+
+## Version History
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.2.0 | 2026-03-03 | CI Run Evidence (OVL-CI-005) and Environment Parity (OVL-CI-006) sections added to template; checklist updated with OVL-CI-005/OVL-CI-006 items — addresses IAA REJECTION-PACKAGE findings from sessions 095–098 (Issue #846) |
+| 1.1.0 | 2026-03-01 | Initial template with IAA Agent Response (verbatim) section (S-009 compliance); ANTI-MISUSE annotations added |
+| 1.0.0 | 2026-03-01 | Initial template created for PHASE 4 §S-009 compliance |
