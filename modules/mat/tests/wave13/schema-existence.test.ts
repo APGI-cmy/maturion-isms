@@ -1,5 +1,5 @@
 /**
- * Wave 13 — Schema Existence Tests (T-W13-SCH-1 to T-W13-SCH-12)
+ * Wave 13 — Schema Existence Tests (T-W13-SCH-1 to T-W13-SCH-16)
  *
  * Test IDs : T-W13-SCH-1 to T-W13-SCH-12
  * Task     : Wave 13 — Red QA Gate for the MAT module + Addendum C (Table Pathway Audit)
@@ -23,6 +23,8 @@
  *   INC-W13-SCORES-TABLE-001   — scores table absent from production migration
  *   INC-W13-ORG-SETTINGS-001   — organisation_settings table absent from production migration
  *   INC-W13-BUCKET-001         — storage buckets absent from production migration
+ *   INC-W13-BUCKET-RLS-001    — audit-documents bucket RLS lacked org-path isolation
+ *   INC-W13-AUDIT-SCORES-001  — audit_scores table absent from production migration
  *
  * POLC Note: T-W13-SCH-1–4 committed as FAILING (RED) per Wave 13 QA gate mandate.
  *            Do NOT modify those tests to pass — implement the fix instead.
@@ -172,8 +174,8 @@ describe('T-W13-SCH: Schema Existence and Env Var Audit', () => {
     const STORAGE_BUCKETS = new Set(['audit-documents', 'organisation-assets']);
 
     // Tables explicitly documented as optional / not-yet-migrated in hook source — exempt.
-    // audit_scores: useAuditMetrics.ts line ~67 — "Note: audit_scores table may not exist yet in schema"
-    const OPTIONAL_TABLES = new Set(['audit_scores']);
+    // audit_scores: migration 20260303000006_audit_scores_table.sql now covers this table.
+    const OPTIONAL_TABLES = new Set<string>();
 
     const hookFiles = fs.readdirSync(HOOKS_DIR).filter(f => f.endsWith('.ts') || f.endsWith('.tsx'));
     const allHookSource = hookFiles.map(f => fs.readFileSync(path.join(HOOKS_DIR, f), 'utf-8')).join('\n');
@@ -192,12 +194,13 @@ describe('T-W13-SCH: Schema Existence and Env Var Audit', () => {
     const migrationFiles = fs.readdirSync(MIGRATION_DIR).filter(f => f.endsWith('.sql'));
     const allMigrationSql = migrationFiles.map(f => fs.readFileSync(path.join(MIGRATION_DIR, f), 'utf-8')).join('\n');
 
-    // Every table referenced in hooks must appear in at least one migration
+    // Every table referenced in hooks must appear in at least one CREATE TABLE statement in migrations.
+    // Uses CREATE TABLE ... tableName pattern to avoid false positives from column names or comments.
     for (const tableName of tableRefs) {
       expect(
         allMigrationSql,
         `Table '${tableName}' referenced in frontend hooks has no migration — add a CREATE TABLE migration`
-      ).toMatch(new RegExp(tableName, 'i'));
+      ).toMatch(new RegExp(`CREATE\\s+TABLE[^;]*${tableName}`, 'i'));
     }
   });
 
@@ -208,5 +211,79 @@ describe('T-W13-SCH: Schema Existence and Env Var Audit', () => {
     const source = fs.readFileSync(PROFILE_API, 'utf-8');
     expect(source, 'profile.ts must reference profiles table').toMatch(/from\('profiles'\)/);
     expect(source, 'profile.ts must NOT reference user_profiles').not.toMatch(/user_profiles/);
+  });
+
+  it('T-W13-SCH-13: domains table migration includes required columns (WGI-08 column-level drift guard)', () => {
+    // WGI-08 column-level drift detection for the domains table.
+    // Validates that the migration for domains declares the columns relied upon by frontend hooks.
+    const MIGRATION_DIR = path.resolve(process.cwd(), 'apps/maturion-maturity-legacy/supabase/migrations');
+    const files = fs.readdirSync(MIGRATION_DIR).filter(f => f.endsWith('.sql'));
+    const allSql = files.map(f => fs.readFileSync(path.join(MIGRATION_DIR, f), 'utf-8')).join('\n');
+
+    // Confirm the domains CREATE TABLE block is present first
+    expect(allSql, 'No migration creates public.domains table').toMatch(
+      /CREATE\s+TABLE[^;]*domains/i
+    );
+
+    // Columns used by frontend hooks (useDomains.ts etc.) must be declared
+    const requiredColumns = ['audit_id', 'organisation_id', 'number', 'name'];
+    for (const col of requiredColumns) {
+      // The column must appear within the domains CREATE TABLE block
+      const domainBlock = allSql.match(/CREATE\s+TABLE\s+IF\s+NOT\s+EXISTS\s+public\.domains\s*\([\s\S]*?\);/i)?.[0] ?? '';
+      expect(
+        domainBlock,
+        `domains table migration is missing required column '${col}' (WGI-08 column-level drift guard)`
+      ).toMatch(new RegExp(`\\b${col}\\b`, 'i'));
+    }
+  });
+
+  it('T-W13-SCH-14: criteria table migration includes required columns (WGI-08 column-level drift guard)', () => {
+    // WGI-08 column-level drift detection for the criteria table.
+    // Validates that the migration for criteria declares the columns relied upon by frontend hooks.
+    const MIGRATION_DIR = path.resolve(process.cwd(), 'apps/maturion-maturity-legacy/supabase/migrations');
+    const files = fs.readdirSync(MIGRATION_DIR).filter(f => f.endsWith('.sql'));
+    const allSql = files.map(f => fs.readFileSync(path.join(MIGRATION_DIR, f), 'utf-8')).join('\n');
+
+    // Confirm the criteria CREATE TABLE block is present first
+    expect(allSql, 'No migration creates public.criteria table').toMatch(
+      /CREATE\s+TABLE[^;]*criteria/i
+    );
+
+    // Columns used by frontend hooks (useCriteria.ts etc.) must be declared
+    const requiredColumns = ['audit_id', 'organisation_id', 'number', 'description', 'mps_id'];
+    for (const col of requiredColumns) {
+      const criteriaBlock = allSql.match(/CREATE\s+TABLE\s+IF\s+NOT\s+EXISTS\s+public\.criteria\s*\([\s\S]*?\);/i)?.[0] ?? '';
+      expect(
+        criteriaBlock,
+        `criteria table migration is missing required column '${col}' (WGI-08 column-level drift guard)`
+      ).toMatch(new RegExp(`\\b${col}\\b`, 'i'));
+    }
+  });
+
+  it('T-W13-SCH-15: audit_scores table migration exists (INC-W13-AUDIT-SCORES-001)', () => {
+    // INC-W13-AUDIT-SCORES-001: audit_scores table referenced in useAuditMetrics.ts was not
+    // covered by any migration. This test ensures the remediation migration exists.
+    const MIGRATION_DIR = path.resolve(process.cwd(), 'apps/maturion-maturity-legacy/supabase/migrations');
+    const files = fs.readdirSync(MIGRATION_DIR).filter(f => f.endsWith('.sql'));
+    const allSql = files.map(f => fs.readFileSync(path.join(MIGRATION_DIR, f), 'utf-8')).join('\n');
+    expect(allSql, 'No migration creates public.audit_scores table').toMatch(
+      /CREATE\s+TABLE\s+IF\s+NOT\s+EXISTS\s+public\.audit_scores/i
+    );
+  });
+
+  it('T-W13-SCH-16: audit-documents bucket RLS migration enforces org-path isolation (INC-W13-BUCKET-RLS-001)', () => {
+    // INC-W13-BUCKET-RLS-001: the original audit-documents RLS only checked auth.role() = 'authenticated'.
+    // This test verifies a remediation migration exists that adds path-prefix org isolation.
+    const MIGRATION_DIR = path.resolve(process.cwd(), 'apps/maturion-maturity-legacy/supabase/migrations');
+    const files = fs.readdirSync(MIGRATION_DIR).filter(f => f.endsWith('.sql'));
+    const allSql = files.map(f => fs.readFileSync(path.join(MIGRATION_DIR, f), 'utf-8')).join('\n');
+    expect(
+      allSql,
+      'No migration adds org-path RLS for audit-documents bucket (INC-W13-BUCKET-RLS-001)'
+    ).toMatch(/audit_documents_org_read_v2/i);
+    expect(
+      allSql,
+      'audit-documents RLS hardening must use split_part path-prefix check'
+    ).toMatch(/split_part\s*\(\s*name\s*,\s*'\/'\s*,\s*1\s*\)/i);
   });
 });
