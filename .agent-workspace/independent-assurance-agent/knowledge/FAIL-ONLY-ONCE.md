@@ -663,6 +663,38 @@ output may contain user/file/attacker-influenced content = OVL-CI-004 FAIL.
 
 ---
 
+### A-028 — SCOPE_DECLARATION.md File Entries Must Use Hyphen Separator, Not Em Dash
+
+**Triggered by**: session-122 (2026-03-03) — PARITY-001/A-026 F-013 finding on `copilot/add-re-anchor-workflow`
+
+**Incident**: SCOPE_DECLARATION.md was updated 3 times on this PR (sessions 120, 121, 122) without detecting that all file entries used em dash (`—`) as the separator between backtick-quoted paths and descriptions (e.g., `` - `.github/workflows/foreman-reanchor.yml` — description ``). The `validate-scope-to-diff.sh` BL-027 script uses two grep patterns to extract declared files: (1) primary: `grep -E '^\s*-\s+`[^`]+`\s+-\s+'` (requires hyphen ` - `); (2) fallback: `grep -E '^\s*-\s+[^\s`].*\.(ext)'` (requires non-backtick line start). Em dash fails the primary pattern. Backtick-prefixed paths fail the fallback. Result: SCOPE_COUNT=0, CHANGED_COUNT>0 → CI exits "SCOPE_DECLARATION.md is empty or malformed" → BL-027 FAIL. The failure was silent to human review because em dash looks similar to hyphen.
+
+**Permanent Rule**:
+SCOPE_DECLARATION.md file list entries must use hyphen (` - `) as the separator between the backtick-quoted file path and the description. Em dash (` — `) is prohibited in file list entries.
+
+**Correct format** (from `governance/templates/SCOPE_DECLARATION_TEMPLATE.md`):
+```markdown
+- `path/to/file.ext` - Brief description
+```
+
+**Prohibited format**:
+```markdown
+- `path/to/file.ext` — Brief description  ← em dash — INVALID
+```
+
+**IAA verification step (mandatory before every §4.3 parity check)**:
+Run the following before assessing SCOPE_DECLARATION content:
+```bash
+grep -E '^\s*-\s+`[^`]+`\s+-\s+' SCOPE_DECLARATION.md | wc -l
+```
+Result must be > 0. If 0 → FORMAT FAILURE → REJECTION-PACKAGE before content comparison.
+
+**Applies To**: All PRs that contain or modify SCOPE_DECLARATION.md
+
+**Status**: ACTIVE — from session-122 (2026-03-03)
+
+---
+
 ## Version History
 
 | Version | Date | Change |
@@ -678,6 +710,7 @@ output may contain user/file/attacker-influenced content = OVL-CI-004 FAIL.
 | 1.8.0 | 2026-03-03 | Conflict resolution: A-023 collision fixed — PR #816 rule renumbered to A-025 (ceremony PENDING rule); A-023 now = OVL-AC-012 ripple assessment; A-024 = secret field naming; A-025 = ceremony PENDING pre-fill prohibition |
 | 1.9.0 | 2026-03-03 | A-026 (SCOPE_DECLARATION.md must match PR diff exactly before IAA invocation — stale declaration = BL-027 merge gate parity failure) added from session-116 (Wave 13 Addendum B+C re-invocation) |
 | 2.0.0 | 2026-03-03 | A-027 (GitHub Actions script injection — `${{ }}` inside github-script template literals prohibited; must use `env:` variable pattern) added from session-120 OVL-CI-004 finding (copilot/add-re-anchor-workflow) |
+| 2.1.0 | 2026-03-03 | A-028 (SCOPE_DECLARATION.md file entries must use hyphen separator ` - ` not em dash ` — `; em dash causes BL-027 to parse 0 files → "empty or malformed" on CI) added from session-122 PARITY-001 F-013 finding |
 
 ---
 
