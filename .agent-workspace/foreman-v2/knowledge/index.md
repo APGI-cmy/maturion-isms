@@ -2,8 +2,8 @@
 
 **Agent**: foreman-v2  
 **Contract Version**: 2.5.0  
-**Knowledge Version**: 1.6.4  
-**Last Updated**: 2026-03-02  
+**Knowledge Version**: 1.7.0  
+**Last Updated**: 2026-03-03  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -15,14 +15,15 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 
 ### Files
 
-| File | Purpose | Version |
-|------|---------|---------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.6.4 |
-| `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 2.4.0 |
-| `specialist-registry.md` | Registry of all delegable agents with capabilities and separation-of-duties boundary | 1.0.0 |
-| `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 |
-| `prehandover-template.md` | **PHASE 4 §S-009** — PREHANDOVER proof template with mandatory IAA Agent Response (verbatim) section per FAIL-ONLY-ONCE v1.8.0 S-009; `## Environment Parity` section per OVL-CI-006 | 1.2.0 |
-| `FM_QP_ENHANCED_QUICK_REFERENCE.md` | **Quality Professor Mode** — Quick reference for Builder Referral Protocol (QP-FAIL-001–007) and Progress Tracker Enforcement; Tier 3 canonical authority: `governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` v1.0.0 | 1.0.0 |
+| File | Purpose | Version | Notes |
+|------|---------|---------|-------|
+| `index.md` (this file) | Knowledge entry point and version reference | 1.7.0 | |
+| `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 2.4.0 | |
+| `specialist-registry.md` | Registry of all delegable agents with capabilities and separation-of-duties boundary | 1.0.0 | |
+| `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 | |
+| `prehandover-template.md` | **PHASE 4 §S-009** — PREHANDOVER proof template with mandatory IAA Agent Response (verbatim) section per FAIL-ONLY-ONCE v1.8.0 S-009; `## Environment Parity` section per OVL-CI-006 | 1.2.0 | |
+| `FM_QP_ENHANCED_QUICK_REFERENCE.md` | **Quality Professor Mode** — Quick reference for Builder Referral Protocol (QP-FAIL-001–007) and Progress Tracker Enforcement; Tier 3 canonical authority: `governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` v1.0.0 | 1.0.0 | |
+| `WAVE-CURRENT-TASKS-PROTOCOL.md` | Mandates creation and maintenance of `wave-current-tasks.md` at wave start; defines Re-Anchor Pulse data contract | 1.0.0 | ACTIVE — wave-current-tasks.md is a required wave evidence artifact from this version onward |
 
 ---
 
@@ -121,6 +122,7 @@ All verb classification and mode-switching decisions MUST reference `ECOSYSTEM_V
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.7.0 | 2026-03-03 | WAVE-CURRENT-TASKS-PROTOCOL.md v1.0.0 added — wave-current-tasks.md mandate and Re-Anchor Pulse data contract |
 | 1.6.4 | 2026-03-02 | prehandover-template.md bumped to v1.2.0 — `## Environment Parity` section added (OVL-CI-006 / A-020 7-session recurring flag resolved, issue #815) |
 | 1.6.3 | 2026-03-02 | FM_QP_ENHANCED_QUICK_REFERENCE.md added (v1.0.0) — Layer-Down propagation of FM_QUALITY_PROTOCOL_ENHANCED_SOP.md v1.0.0 (canonical commit 7792913259b0); Builder Referral Protocol and Progress Tracker Enforcement Tier 2 stub |
 | 1.6.2 | 2026-03-02 | FAIL-ONLY-ONCE.md updated to v2.2.0 — A-017 ISMS-AGENTS-ONLY rule locked in, INC-GENERAL-PURPOSE-001 incident recorded, S-014 improvement suggestion added (CS2 directive 2026-03-02) |
