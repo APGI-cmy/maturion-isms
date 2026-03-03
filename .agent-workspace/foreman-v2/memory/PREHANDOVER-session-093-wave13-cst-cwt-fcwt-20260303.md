@@ -128,13 +128,11 @@ CANON_INVENTORY.json hash check: PASS (190 canons, all non-null hashes, last_upd
 - [x] Zero deprecation warnings
 - [x] Zero compiler/linter warnings
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
-- [ ] IAA audit token recorded ← to be updated after Step 4.3a
+- [x] IAA audit token recorded: IAA-session-109-20260303-PASS
 
 ---
 
-## iaa_audit_token: PENDING
-
-*(To be updated after IAA re-invocation following STOP-AND-FIX resolution)*
+## iaa_audit_token: IAA-session-109-20260303-PASS
 
 ---
 
