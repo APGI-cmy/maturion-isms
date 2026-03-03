@@ -26,7 +26,7 @@ This PR delivers:
 
 ## Files Changed
 
-**Total Files**: 22
+**Total Files**: 24
 
 All files in this PR are explicitly listed below (required by BL-027):
 
@@ -40,6 +40,8 @@ All files in this PR are explicitly listed below (required by BL-027):
 - `.agent-workspace/independent-assurance-agent/knowledge/index.md` - version bump to 1.9.0 by IAA (session-116)
 - `.agent-workspace/independent-assurance-agent/memory/session-115-20260303.md` - IAA session-115 memory
 - `.agent-workspace/independent-assurance-agent/memory/session-116-20260303.md` - IAA session-116 memory
+- `.agent-workspace/independent-assurance-agent/memory/session-118-20260303.md` - IAA session-118 memory (REJECTION-PACKAGE for session-096 first invocation)
+- `.agent-workspace/independent-assurance-agent/memory/session-119-20260303.md` - IAA session-119 memory (REJECTION-PACKAGE for session-096 second invocation)
 - `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station append
 - `apps/maturion-maturity-legacy/supabase/migrations/20260303000000_audits_add_period_columns.sql` - adds audit_period_start and audit_period_end columns (INC-W13-AUDIT-SCHEMA-001)
 - `apps/maturion-maturity-legacy/supabase/migrations/20260303000001_evidence_table.sql` - creates evidence table (INC-W13-EVIDENCE-TABLE-001)

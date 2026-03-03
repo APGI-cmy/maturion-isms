@@ -215,3 +215,5 @@
 | 2026-03-03 | independent-assurance-agent | session-118 | Phase 3/4 | OVL-AM-005/006 missing from PREHANDOVER — foreman PREHANDOVER template stale (A-020); add OVL-AM-005/006 stub sections to template | session-118-20260303.md |
 | 2026-03-03 | independent-assurance-agent | session-118 | Phase 3 | Session memory must be created BEFORE writing PREHANDOVER Bundle Completeness table — create-then-attest workflow needed | session-118-20260303.md |
 | 2026-03-03 | independent-assurance-agent | session-118 | Phase 4 | Add pre-IAA invocation git-status gate to Foreman contract: `git status` must show PREHANDOVER committed before IAA tool call | session-118-20260303.md |
+
+| 2026-03-03 | independent-assurance-agent | session-119 | [Phase 4] | A-026 (4th occurrence): foreman pre-commit gate needed — git diff --cached --name-only must be verified against SCOPE_DECLARATION before every governance fix commit | session-119-20260303.md |
