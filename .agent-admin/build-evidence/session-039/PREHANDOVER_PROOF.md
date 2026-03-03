@@ -6,7 +6,7 @@
 **Contract Version**: 3.2.0
 **Issue**: [Propagation][Parking Station] Update all agent contracts to use per-agent parking station file paths
 **Category**: KNOWLEDGE_GOVERNANCE + GOVERNANCE_ADMINISTRATION (parking station infrastructure)
-**iaa_audit_token**: PENDING (IAA session-107 — fixes committed, session-108 re-invocation pending)
+**iaa_audit_token**: IAA-session-108-20260303-PASS
 
 ---
 
@@ -111,7 +111,19 @@
 
 ## IAA Agent Response (verbatim)
 
-> REJECTION-PACKAGE (IAA sessions 105, 106, 107) resolved. Session-108 re-invocation pending ASSURANCE-TOKEN.
+> REJECTION-PACKAGE (IAA sessions 105, 106, 107) resolved. ASSURANCE-TOKEN issued session-108.
+>
+> ```
+> ═══════════════════════════════════════
+> ASSURANCE-TOKEN
+> PR: #841 — branch copilot/update-agent-parking-station-paths
+> HEAD commit: 9cf14a4cf467748a3f03c2220e07d47fad7aec45
+> All 18 checks PASS. Merge gate parity: PASS.
+> Merge permitted (subject to CS2 approval).
+> Token reference: IAA-session-108-20260303-PASS
+> Adoption phase: PHASE_B_BLOCKING
+> ═══════════════════════════════════════
+> ```
 > Session-105 failures (7): CORE-016/018/019 (iaa_audit_token missing), OVL-KG-001/003/004/005 — all fixed.
 > Session-106 failures (A-021): fixes not committed before invoke — committed in 6f145a0.
 > Session-107 failures (2): PREHANDOVER SHA256 hashes stale (11 files), A-011 gap — both fixed in this commit.
