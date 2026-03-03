@@ -66,7 +66,8 @@ Required checks:
 
 - **IAA trigger classification**: AGENT_CONTRACT_CHANGE
 - **IAA required**: YES
-- **iaa_audit_token**: PENDING
+- **iaa_audit_token**: IAA-session-104-20260303-PASS
+- [x] IAA audit token recorded: IAA-session-104-20260303-PASS
 
 ---
 
@@ -120,10 +121,26 @@ Note: This issue specifically targets the 4 listed agents. Remaining agents shou
 
 ## IAA Agent Response (verbatim)
 
-*To be populated after IAA invocation.*
+```
+═══════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/harden-agent-boundaries — Issue #853
+    "[Governance Propagation] Harden agent boundaries,
+    invocation permissions, and escalation logic in all
+    agent contract files"
+    Commit: 3007bd1 (fourth invocation — session-104)
+
+All 46 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+
+Token reference: IAA-session-104-20260303-PASS
+
+Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+═══════════════════════════════════════════════════════════
+```
 
 ---
 
 **CS2 Authorization**: Issue #853 opened by @APGI-cmy, assigned to @copilot
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Handover status**: PENDING IAA + CS2 APPROVAL
+**Handover status**: ASSURANCE-TOKEN RECEIVED — IAA-session-104-20260303-PASS — AWAITING CS2 APPROVAL
