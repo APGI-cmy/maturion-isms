@@ -13,9 +13,9 @@
 | File | Operation | Char Count | Limit | Status |
 |------|-----------|-----------|-------|--------|
 | `.github/agents/foreman-v2-agent.md` | UPDATE | 29,987 | 30,000 | ✅ PASS |
-| `.github/agents/governance-liaison-isms-agent.md` | UPDATE | 29,963 | 30,000 | ✅ PASS |
-| `.github/agents/api-builder.md` | UPDATE | 25,988 | 30,000 | ✅ PASS |
-| `.github/agents/qa-builder.md` | UPDATE | 29,695 | 30,000 | ✅ PASS |
+| `.github/agents/governance-liaison-isms-agent.md` | UPDATE | 29,993 | 30,000 | ✅ PASS |
+| `.github/agents/api-builder.md` | UPDATE | 26,214 | 30,000 | ✅ PASS |
+| `.github/agents/qa-builder.md` | UPDATE | 29,920 | 30,000 | ✅ PASS |
 
 ---
 
