@@ -41,6 +41,13 @@ permissions:
   contents: write
   issues: write
 
+# Prevent race-condition duplicate issues: if two repository_dispatch events arrive
+# for the same commit SHA simultaneously, cancel the second run (the first will create
+# the issue; the idempotency guard in the liaison_issue step handles any edge cases).
+# workflow_dispatch runs are keyed by github.run_id so they never cancel each other.
+concurrency:
+  group: governance-ripple-sync-${{ github.event.client_payload.commit_sha || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   ripple-sync:

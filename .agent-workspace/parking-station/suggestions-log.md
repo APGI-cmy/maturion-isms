@@ -358,8 +358,8 @@
 | 2026-03-02 | governance-liaison-isms | session-038 | SESSION-END | Add pre-IAA checklist to verify HANDOVER_SUMMARY file claims match actual files before invoking IAA | session-038-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-099 | PHASE-4 | Liaison agent needs mandatory pre-commit checklist: git status before IAA invocation — uncommitted governance artifacts = immediate A-021 failure | session-099-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-099 | PHASE-4 | When fixing a find-replace-style text error in governance artifacts, use grep -n to locate ALL instances before declaring fix complete | session-099-20260302.md |
-<<<<<<< HEAD
-=======
 | 2026-03-02 | independent-assurance-agent | session-100 | PHASE-4 | Post-ASSURANCE-TOKEN ceremony steps should be automated or checklisted to prevent manual omission after token issuance | session-100-20260302.md |
 | 2026-03-02 | independent-assurance-agent | session-100 | PHASE-4 | Multi-invocation PR governance squash policy — CS2 consideration for consolidating governance ceremony commits before merge | session-100-20260302.md |
->>>>>>> c7a47a8 (chore(iaa): session-100 — ASSURANCE-TOKEN for PR #805 (all 19 checks PASS; session-099 F3+F4 resolved in 510e0ce))
+| 2026-03-03 | foreman-v2-agent | session-092 | [SESSION-END] | ripple-integration.yml check-labels job has unreachable issues-path code after retirement — future cleanup candidate (S-015) | session-092-ripple-cleanup-20260303.md |
+
+| 2026-03-03 | independent-assurance-agent | session-101 | [PHASE-4] | Foreman wrote PHASE_A_ADVISORY in PREHANDOVER on 2026-03-03 despite IAA being PHASE_B_BLOCKING since 2026-03-02 — foreman should read IAA adoption phase from IAA knowledge index at Phase 1 (track as foreman S-016) | session-101-20260303.md |
