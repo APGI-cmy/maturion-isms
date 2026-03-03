@@ -1521,6 +1521,7 @@ This TRS is derived from the MAT FRS v1.5.0 (`modules/mat/01-frs/functional-requ
 **Traceability**: Complete FRS-to-TRS mapping available in `frs-to-trs-traceability.md`.
 
 **Change Log**:
+- v1.5.0 (2026-03-03): Added TR-078 through TR-081 (Wave 14 Addendum A — Column Mapping Remediation INC-W14-COL-MAPPING-001). TRS extended to 81 requirements.
 - v1.4.0 (2026-02-27): Added TR-073 through TR-077 (AI Gateway Persona Loading, Session Memory, Persistent Memory Baseline, Health Check, Memory Runbook) per FRS v1.5.0 additions FR-073–FR-077. TRS extended to 77 requirements. Architecture freeze effective on merge per CS2 directive.
 - v1.3.0 (2026-02-23): Realigned TR-072 to AIMC Gateway pattern per `AIMC_STRATEGY.md` v1.0.0.
   TR-072 now blocked on AIMC Wave 3. Direct provider references, TR-040 routing table dependency,
@@ -1530,5 +1531,38 @@ This TRS is derived from the MAT FRS v1.5.0 (`modules/mat/01-frs/functional-requ
 - v1.0.0 (2026-02-13): Initial TRS with 70 requirements (TR-001–TR-070).
 
 ---
+
+---
+
+## Wave 14 Addendum A: Column Mapping Remediation Technical Requirements (INC-W14-COL-MAPPING-001)
+
+**Added**: v1.5.0 (2026-03-03) | **Authority**: CS2 (Johan Ras) | **Incident**: INC-W14-COL-MAPPING-001
+
+### TR-078: profiles table migration — extended columns
+
+Migration MUST use `ADD COLUMN IF NOT EXISTS` for idempotency.
+Columns: `full_name TEXT`, `preferences JSONB DEFAULT '{}'`.
+Migration file: `20260304000000_profiles_add_full_name_and_preferences.sql`
+Must be applied before any frontend Settings page smoke test.
+
+### TR-079: audits table migration — criteria_approved and missing columns
+
+Migration MUST use `ADD COLUMN IF NOT EXISTS` for idempotency.
+Columns: `criteria_approved BOOLEAN NOT NULL DEFAULT false`, `organisation_name TEXT`, `facility_location TEXT`, `audit_lead_id UUID`.
+Migration file: `20260304000001_audits_add_criteria_approved.sql`
+Must be applied before any Audit Management smoke test.
+
+### TR-080: Column-level drift test suite
+
+All column-level tests MUST be file-based (no live Supabase env required).
+All column-level tests MUST pass in CI without env vars.
+Test IDs: T-W14-COL-001 to T-W14-COL-006.
+
+### TR-081: audit_scores table migration
+
+Migration MUST create `public.audit_scores` with `maturity_level`, `audit_id`,
+`criterion_id`, `organisation_id`, RLS enabled, org-isolation policy.
+Migration file: `20260304000002_audit_scores_table.sql`
+Carry-forward from INC-W13-AUDIT-SCORES-001.
 
 *END OF TECHNICAL REQUIREMENTS SPECIFICATION*

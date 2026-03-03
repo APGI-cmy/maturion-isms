@@ -41,6 +41,8 @@ User profiles extending Supabase Auth (`auth.users`).
 | organisation_id | UUID              | NOT NULL, REFERENCES organisations(id) |
 | role            | TEXT              | NOT NULL, CHECK (role IN ('lead_auditor', 'domain_auditor', 'mps_auditor', 'evidence_contributor')) |
 | display_name    | VARCHAR(255)      | NOT NULL                           |
+| full_name       | TEXT              | NULL (extended — INC-W14-PROFILES-COL-001) |
+| preferences     | JSONB             | DEFAULT '{}'::jsonb (extended — INC-W14-PROFILES-COL-002) |
 | mfa_enabled     | BOOLEAN           | NOT NULL, DEFAULT false            |
 | created_at      | TIMESTAMPTZ       | NOT NULL, DEFAULT NOW()            |
 | updated_at      | TIMESTAMPTZ       | NOT NULL, DEFAULT NOW()            |

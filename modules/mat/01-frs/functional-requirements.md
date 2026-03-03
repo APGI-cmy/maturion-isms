@@ -1605,6 +1605,7 @@ This FRS is derived from the MAT App Description v1.2 (`modules/mat/00-app-descr
 **Next Stage**: This FRS feeds into the TRS (Technical Requirements Specification) at `modules/mat/01.5-trs/`.
 
 **Change Log**:
+- v1.6.0 (2026-03-03): Added FR-078 through FR-081 (Wave 14 Addendum A — Column Mapping Remediation INC-W14-COL-MAPPING-001). FRS extended to 81 requirements.
 - v1.5.0 (2026-02-27): Added FR-073 through FR-077 (AI Gateway Memory, Persona, Session, Health Check, Runbook) per Issue: [Critical Gap] Complete persistent memory and context handling in AI gateway. FRS extended to 77 requirements. Architecture freeze effective on merge of implementing PR per CS2 directive.
 - v1.4.0 (2026-02-23): Section 8 rewritten to AIMC-compliant capability-based language per `AIMC_STRATEGY.md` v1.0.0. FR-028 (AI Gateway Integration), FR-031 (AI Resilience), FR-032 (AI Invocation Traceability) corrected to remove direct-provider references. Section heading updated to reflect AIMC-delegated governance.
 - v1.3.0 (2026-02-23): Realigned FR-072 to AIMC Gateway pattern per `AIMC_STRATEGY.md` v1.0.0.
@@ -1614,5 +1615,37 @@ This FRS is derived from the MAT App Description v1.2 (`modules/mat/00-app-descr
 - v1.0.0 (2026-02-13): Initial FRS with 69 requirements (FR-001–FR-069).
 
 ---
+
+---
+
+## Wave 14 Addendum A: Column Mapping Remediation Requirements (INC-W14-COL-MAPPING-001)
+
+**Added**: v1.6.0 (2026-03-03) | **Authority**: CS2 (Johan Ras) | **Incident**: INC-W14-COL-MAPPING-001
+
+### FR-078: profiles.full_name persistence
+
+The system SHALL persist a user's full display name in the `profiles.full_name` column.
+The profiles table migration MUST include: `full_name TEXT`.
+**Acceptance**: Profile save succeeds without schema cache error.
+
+### FR-079: profiles.preferences persistence
+
+The system SHALL persist user UI preferences (language, theme, notification opt-in)
+in a `profiles.preferences JSONB` column.
+The profiles table migration MUST include: `preferences JSONB DEFAULT '{}'`.
+**Acceptance**: Profile preference save succeeds without schema cache error.
+
+### FR-080: audits.criteria_approved persistence
+
+The system SHALL track whether audit criteria have been approved via
+`audits.criteria_approved BOOLEAN NOT NULL DEFAULT false`.
+The audits table migration MUST include this column.
+**Acceptance**: Audit creation succeeds without schema cache error.
+
+### FR-081: Column-level alignment gate
+
+The QA suite SHALL include a column-level drift test for all P0 columns
+identified in INC-W14-COL-MAPPING-001.
+**Acceptance**: Tests T-W14-COL-001 to T-W14-COL-006 all GREEN in CI.
 
 *END OF FUNCTIONAL REQUIREMENTS SPECIFICATION*

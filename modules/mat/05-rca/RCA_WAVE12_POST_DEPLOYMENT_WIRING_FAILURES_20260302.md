@@ -257,3 +257,50 @@ By contrast, `modules/mat/frontend/src/lib/api/profile.ts` (added in Wave 13 for
 |---|----------------|----------------------|
 | WGI-05 | Migration applied but missing columns — not caught by column-level schema test | Schema existence tests must assert column presence, not only table presence |
 | WGI-06 | Hook table name differs from architecture and from peer API file — drift undetected | Architecture drift check must include cross-file table name consistency scan |
+
+---
+
+## 9. Wave 14 RCA: Column-Level Migration Drift (INC-W14-COL-MAPPING-001)
+
+**Date**: 2026-03-03  
+**Incident ID**: INC-W14-COL-MAPPING-001  
+**Severity**: P0 (two production blockers)  
+**Reported by**: Post-merge production testing
+
+### 9.1 Summary
+
+Post-Wave-13 production testing revealed two new schema-cache errors in the MAT frontend:
+
+1. `Failed to update profile: Could not find the 'full_name' column of 'profiles' in the schema cache`
+2. `Failed to create audit: Could not find the 'criteria_approved' column of 'audits' in the schema cache`
+
+These are column-level drift defects: the Wave 13 migrations added the correct tables but omitted required columns that the frontend hooks actively write.
+
+### 9.2 Root Cause
+
+The Wave 13 Addendum C table-pathway audit (T-W13-SCH-11) verified table-name alignment but did not assert column-level completeness for every column written by each hook. The `profiles` migration only included `display_name`, `email`, `language`, `theme`, `role` columns, while `useSettings.ts → useUpdateUserProfile()` writes `full_name` and `preferences`. The `audits` migration omitted `criteria_approved`, `organisation_name`, `facility_location`, and `audit_lead_id`, while `useAudits.ts → useCreateAudit()` writes all four.
+
+### 9.3 Impact
+
+- Save Profile flow broken in production (all users affected)
+- Create Audit flow broken in production (blocks primary MAT workflow)
+
+### 9.4 Corrective Actions
+
+| Migration | Columns Added | Status |
+|---|---|---|
+| `20260304000000_profiles_add_full_name_and_preferences.sql` | `full_name TEXT`, `preferences JSONB` | ✅ Created |
+| `20260304000001_audits_add_criteria_approved.sql` | `criteria_approved BOOLEAN`, `organisation_name TEXT`, `facility_location TEXT`, `audit_lead_id UUID` | ✅ Created |
+| `20260304000002_audit_scores_table.sql` | `audit_scores` table (carry-forward INC-W13-AUDIT-SCORES-001) | ✅ Created |
+
+### 9.5 Preventive Actions
+
+- FAIL-ONLY-ONCE rule A-027 codified: column-level alignment must be asserted in QA-to-Red suite for every frontend write path.
+- Tests T-W14-COL-001 to T-W14-COL-006 added to `modules/mat/tests/wave14/column-mapping.test.ts`.
+- `data-architecture.md §1.1.2` updated to include `full_name` and `preferences` extended columns.
+
+### 9.6 Structural Governance Improvement
+
+| # | Failure Pattern | Structural Improvement |
+|---|----------------|----------------------|
+| WGI-10 | Table-level migration audit did not extend to column-level completeness | FAIL-ONLY-ONCE A-027: every wave QA-to-Red suite MUST include column-level tests for every column actively written by the frontend |
