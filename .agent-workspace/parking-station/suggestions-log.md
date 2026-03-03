@@ -363,3 +363,4 @@
 | 2026-03-03 | foreman-v2-agent | session-092 | [SESSION-END] | ripple-integration.yml check-labels job has unreachable issues-path code after retirement — future cleanup candidate (S-015) | session-092-ripple-cleanup-20260303.md |
 
 | 2026-03-03 | independent-assurance-agent | session-101 | [PHASE-4] | Foreman wrote PHASE_A_ADVISORY in PREHANDOVER on 2026-03-03 despite IAA being PHASE_B_BLOCKING since 2026-03-02 — foreman should read IAA adoption phase from IAA knowledge index at Phase 1 (track as foreman S-016) | session-101-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-102 | [PHASE-4] | A-021 pattern persists as most common failure mode (3 consecutive PRs): producing agent must run git-show-HEAD verification on PREHANDOVER after every edit before invoking IAA (track as foreman S-017) | session-102-20260303.md |
