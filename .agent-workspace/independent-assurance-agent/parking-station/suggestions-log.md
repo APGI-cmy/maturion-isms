@@ -197,3 +197,6 @@
 | 2026-03-03 | independent-assurance-agent | session-112 | [PHASE-4] | PREHANDOVER template missing `## IAA Agent Response (verbatim)` stub — causes CORE-016 section-absent failure | session-112-20260303.md |
 | 2026-03-03 | independent-assurance-agent | session-112 | [PHASE-4] | PREHANDOVER template missing `## Ripple Assessment` stub — causes OVL-AC-012/A-023 failure; A-020 and session-110 suggestion not yet applied | session-112-20260303.md |
 | 2026-03-03 | independent-assurance-agent | session-113 | Phase 3/OVL-AC-011 | PREHANDOVER template should have dual-column Chars Before/After; rewrite-regression risk identified — treat PREHANDOVER as additive not replacement | session-113-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-114 | Phase 4 | Create merge-gate-verdict.sh and validate-canon-hashes.sh scripts to resolve INCONCLUSIVE parity check (pre-existing since session-112) | session-114-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-114 | Phase 3 | A-026 candidate: treat PREHANDOVER as additive on re-invocation — rewrite regression confirmed across 112→113→114 chain | session-114-20260303.md |
+| 2026-03-03 | independent-assurance-agent | session-114 | Phase 3 | Add pre-IAA PREHANDOVER self-check to CodexAdvisor: grep -c "Chars Before" to prevent OVL-AC-011 class failures | session-114-20260303.md |

@@ -92,7 +92,38 @@ IAA-session-112-20260303-REJECT received. All 5 cited failures addressed:
 - FAILURE-4 [CORE-009]: `parity_required: true` + `parity_enforcement: BLOCKING` added to ui-builder, schema-builder, integration-builder YAML blocks
 - FAILURE-5 [CORE-018]: bash template updated to scope blocker search to each agent's own workspace; PREHANDOVER corrected
 
-IAA re-invocation in progress.
+IAA-session-113-20260303-REJECT received. OVL-AC-011 fixed: Chars Before column added to table.
+
+ASSURANCE-TOKEN received:
+
+```
+═══════════════════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR Branch: copilot/update-builder-agent-contracts
+HEAD commit verified: eac1c79
+
+Invocation: THIRD (following IAA-session-112-20260303-REJECT, IAA-session-113-20260303-REJECT)
+
+Checks executed: 41 total
+  - FAIL-ONLY-ONCE learning: 7/7 PASS
+  - Core invariants (CORE-001→CORE-022): 22/22 PASS
+  - AGENT_CONTRACT overlay (OVL-AC-001→OVL-AC-012): 12/12 PASS
+
+Merge gate parity: PASS (all 3 checks)
+
+All 6 prior REJECTION-PACKAGE cited failures confirmed resolved:
+  ✅ A-021: Working tree clean — committed
+  ✅ CORE-016: IAA Agent Response section present
+  ✅ OVL-AC-012/A-023: Ripple Assessment with NO RIPPLE justification
+  ✅ CORE-009: parity_required + parity_enforcement: BLOCKING in all 5 YAML blocks
+  ✅ CORE-018: Per-agent bash template; open_blockers_in_scope=0 accurate
+  ✅ OVL-AC-011: Chars Before + Chars After columns present in PREHANDOVER drift table
+
+Token: IAA-session-114-20260303-PASS
+Adoption phase: PHASE_B_BLOCKING — binding verdict.
+Merge permitted — subject to CS2 approval (@APGI-cmy).
+═══════════════════════════════════════════════════════════════════════
+```
 
 ---
 
@@ -106,7 +137,8 @@ IAA re-invocation in progress.
 
 ## IAA Invocation Result
 
-**iaa_audit_token**: PENDING (second invocation in progress)
+**iaa_audit_token**: IAA-session-114-20260303-PASS
+**Previous rejections**: IAA-session-112-20260303-REJECT, IAA-session-113-20260303-REJECT
 
 ---
 
