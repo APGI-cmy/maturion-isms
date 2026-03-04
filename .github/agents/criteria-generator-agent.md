@@ -44,6 +44,13 @@ capabilities:
     - Supabase criteria_embeddings write
     - Framework-to-criteria auto-mapping
 
+can_invoke:
+  - none (specialist — delegates output upward to orchestrator only)
+
+cannot_invoke:
+  - self (see prohibitions — no self-modification)
+  - .github/agents/*.md writes (CodexAdvisor + CS2 only)
+
 escalation:
   authority: maturion-agent
   rules:

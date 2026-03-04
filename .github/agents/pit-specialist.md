@@ -62,6 +62,13 @@ capabilities:
     - Threat hunting workflows
     - Intelligence report generation
 
+can_invoke:
+  - none (specialist — delegates output upward to orchestrator only)
+
+cannot_invoke:
+  - self (see prohibitions — no self-modification)
+  - .github/agents/*.md writes (CodexAdvisor + CS2 only)
+
 escalation:
   authority: maturion-agent
   rules:

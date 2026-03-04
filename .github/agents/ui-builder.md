@@ -54,6 +54,12 @@ capabilities:
   builder_operations: ["ui", "frontend", "react-components", "responsive-design", "accessibility", "pwa-shell"]
   responsibilities: ["React components (functional only)", "Layouts and responsive design", "Client state (Zustand)", "Server state integration (TanStack Query)", "Accessibility (WCAG 2.1 AA)", "PWA capabilities"]
   forbidden: ["Backend logic or Edge Functions", "Database schema changes", "Direct API calls bypassing TanStack Query", "Class components", "Cross-module logic"]
+can_invoke:
+  - none
+
+cannot_invoke:
+  - self (see prohibitions)
+
 escalation:
   authority: Foreman
   rules:
@@ -609,6 +615,7 @@ This builder's handover is subject to double-QA:
 - Document STOP-AND-FIX event in session memory under `stop_and_fix_events`
 
 **Evidence Required in PREHANDOVER Proof**:
+- `iaa_audit_token`: IAA-session-NNN-waveY-YYYYMMDD-PASS (per §4.3b; PREHANDOVER proof read-only)
 - `iaa_invocation_result`: [ASSURANCE-TOKEN ref / PHASE_A_ADVISORY]
 - `double_qa_confirmed`: Foreman QA (build) + IAA QA (handover)
 

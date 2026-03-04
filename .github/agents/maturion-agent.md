@@ -52,6 +52,13 @@ capabilities:
     - Maintain cross-app session memory
     - Enforce constitutional guardrails on all specialist outputs
 
+can_invoke:
+  - none (specialist — delegates output upward to orchestrator only)
+
+cannot_invoke:
+  - self (see prohibitions — no self-modification)
+  - .github/agents/*.md writes (CodexAdvisor + CS2 only)
+
 escalation:
   authority: CS2
   rules:

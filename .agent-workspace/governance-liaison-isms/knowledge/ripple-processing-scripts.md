@@ -2,8 +2,8 @@
 
 **Agent**: governance-liaison-isms  
 **Contract Version**: 3.2.0  
-**Knowledge Version**: 1.0.0  
-**Last Updated**: 2026-02-25  
+**Knowledge Version**: 1.1.0  
+**Last Updated**: 2026-03-04  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`  
 **Canonical Reference**: `governance/canon/CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md`
 
@@ -108,3 +108,22 @@ echo "Ripple event archived: ${ARCHIVE_DIR}/ripple-${DISPATCH_ID}.json"
 *Authority: CS2 (Johan Ras) | LIVING_AGENT_SYSTEM.md v6.2.0*  
 *Policy: governance/canon/CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md*  
 *Created: 2026-02-25 | Status: ACTIVE*
+
+---
+
+## Full Ripple Processing Protocol (5 Steps) — migrated from contract §3.2
+
+1. **Validate Ripple Event**: Verify sender in CONSUMER_REPO_REGISTRY.json. Validate event structure and required fields. Check dispatch_id not already processed.
+2. **Create Ripple Inbox Entry**: Use Script 1 (above). Write event payload to `.agent-admin/governance/ripple-inbox/ripple-${DISPATCH_ID}.json`.
+3. **Update Sync State**: Use Script 2 (above). Record: last_ripple_received timestamp, canonical_commit. Set `sync_pending: true`.
+4. **Execute Layer-Down**: Follow §3.1 protocol (see `layer-down-scripts.md`). Create alignment PR. Include ripple event ID in PR description.
+5. **Archive Ripple Event**: Use Script 3 (above). Move `ripple-inbox/ripple-${DISPATCH_ID}.json` to `ripple-archive/` after PR is merged.
+
+---
+
+## Version History
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.0.0 | 2026-02-25 | Initial — ripple inbox, sync state, archive scripts |
+| 1.1.0 | 2026-03-04 | Full 5-step ripple processing protocol migrated from contract §3.2 |
