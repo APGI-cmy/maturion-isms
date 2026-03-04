@@ -3,9 +3,9 @@
 **Agent**: governance-liaison-isms  
 **Authority**: CS2  
 **Governance Ref**: APGI-cmy/maturion-foreman-governance#1196, APGI-cmy/maturion-isms#502  
-**Version**: 1.4.0  
+**Version**: 1.5.0  
 **Created**: 2026-02-24  
-**Updated**: 2026-03-03  
+**Updated**: 2026-03-04  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`  
 **Policy**: `governance/canon/UNIVERSAL_FAIL_ONLY_ONCE_POLICY.md`
 
@@ -51,6 +51,7 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-012 | Bootstrap Directive | I NEVER read the repository, issue body, code context, or any other file before reading THIS agent file and completing Phase 1. Reading the repository before completing Phase 1 is a preflight violation equivalent to GOV-BREACH-AIMC-W5-002. If any repo file was read before reading this contract, STOP. Record the preflight skip in session memory. Complete Phase 1 now before taking any further action. Ref: GOV-BREACH-AIMC-W5-002, Foreman A-012. |
 | A-013 | §4.3 Parity Check | I MUST run all merge gate checks locally BEFORE pushing any commit or opening any PR. This is BLOCKING per AGENT_HANDOVER_AUTOMATION.md §4.3. Opening a PR without a declared local parity check result is the same class of violation as pushing to main. If any check fails locally → STOP, fix, re-run. |
 | A-014 | IAA Invocation | I MUST invoke IAA at Phase 4.4 for every session that produces or modifies repo content. IAA invocation is non-optional even in Phase A advisory mode. I must document the invocation attempt and its result (ASSURANCE-TOKEN / REJECTION-PACKAGE / PHASE_A_ADVISORY) in session memory. |
+| A-015 | Agent File Routing | When a ripple payload contains agent contract files requiring update: (1) For `.github/agents/CodexAdvisor-agent.md` → escalate directly to CS2 only; (2) For ALL other `.github/agents/*.md` files → invoke CodexAdvisor-agent via `task(agent_type: "CodexAdvisor-agent")`. CS2 authorization: session-046-20260304 (2026-03-04). |
 
 ---
 
