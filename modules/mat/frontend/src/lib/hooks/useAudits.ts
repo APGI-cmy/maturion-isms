@@ -11,10 +11,10 @@ export interface Audit {
   id: string;
   organisation_id: string;
   title: string;
-  organisation_name: string;
-  facility_location?: string;
-  audit_period_start?: string;
-  audit_period_end?: string;
+  organisation_name: string | null;     // nullable TEXT — Supabase returns null for existing rows
+  facility_location: string | null;     // nullable TEXT — Supabase returns null for existing rows
+  audit_period_start: string | null;    // nullable DATE — Supabase returns ISO string or null
+  audit_period_end: string | null;      // nullable DATE — Supabase returns ISO string or null
   description?: string;
   framework?: string;
   target_date?: string;
