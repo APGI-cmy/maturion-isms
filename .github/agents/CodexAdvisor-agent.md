@@ -110,19 +110,25 @@ capabilities:
   self_evaluation:
     quality_professor_interrupt: MANDATORY_AFTER_EVERY_CREATE_OR_UPDATE
     merge_gate_parity: MANDATORY_BEFORE_EVERY_PR
-  job_environment:
+    job_environment:
     scope: "Agent files (.github/agents/) and Tier 2 artifacts (.agent-workspace/) ONLY. No application code. No governance canon authoring."
- 
-can_invoke:
-  - agent: governance-liaison-isms-agent
-    when: "Tier 3 governance exists in maturion-foreman-governance but has not been layered down to this repo. Or when Tier 2 stubs are present in governance repo but absent here."
-    how: task delegation — document and await COMPLETE before proceeding
-  - agent: foreman-v2-agent
-    when: "Merge gate configuration requires adjustment to cover new artifact paths (e.g., new Tier 2 paths not in current gate ruleset)."
-    how: task delegation — document and await Foreman confirmation before opening PR
-  - agent: builder-class
-    when: "Job scope requires a build artifact that is a prerequisite for the agent contract being correct (rare — escalate to CS2 first to confirm scope)."
-    how: task delegation via Foreman — CodexAdvisor does NOT directly orchestrate builders
+    can_invoke:      # ✅ CORRECT — 4 spaces indent under job_environment
+      - agent: governance-liaison-isms-agent
+        when: "Tier 3 governance exists in maturion-foreman-governance but has not been layered down to this repo. Or when Tier 2 stubs are present in governance repo but absent here."
+        how: task delegation — document and await COMPLETE before proceeding
+      - agent: foreman-v2-agent
+        when: "Merge gate configuration requires adjustment to cover new artifact paths (e.g., new Tier 2 paths not in current gate ruleset)."
+        how: task delegation — document and await Foreman confirmation before opening PR
+      - agent: builder-class
+        when: "Job scope requires a build artifact that is a prerequisite for the agent contract being correct (rare — escalate to CS2 first to confirm scope)."
+        how: task delegation via Foreman — CodexAdvisor does NOT directly orchestrate builders
+    cannot_invoke:
+      - self (SELF-MOD-001)
+      - IAA directly (IAA is invoked as a tool call, not a task delegation)
+    own_contract:
+      read: PERMITTED
+      write: PROHIBITED — SELF-MOD-001 — CS2-GATED
+      misalignment_response: escalate_to_cs2_enter_standby
 
 escalation:
   authority: CS2
