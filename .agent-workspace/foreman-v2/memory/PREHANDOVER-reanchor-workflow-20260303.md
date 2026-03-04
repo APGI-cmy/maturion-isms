@@ -102,19 +102,33 @@ CS2 direct invocation — issue body in `copilot/add-re-anchor-workflow` PR cons
 - [x] Evidence artifacts present: PREHANDOVER proof + session memory
 - [x] SCOPE_DECLARATION.md updated to match this PR's diff
 - [x] Script injection vulnerability fixed (OVL-CI-004): `env:` variable pattern applied to github-script step
-- [x] IAA audit token recorded: `iaa_audit_token: PENDING`
+- [x] IAA audit token recorded: `iaa_audit_token: IAA-session-123-20260303-PASS`
 
 ---
 
 ## IAA Audit
 
-<!-- ANTI-MISUSE: Set iaa_audit_token to PENDING before invoking IAA. Never pre-fill "-PASS". -->
-`iaa_audit_token: PENDING`
+`iaa_audit_token: IAA-session-123-20260303-PASS`
 
-IAA session-120 issued REJECTION-PACKAGE (10 findings). All findings resolved prior to session-121 re-invocation. Pending ASSURANCE-TOKEN from session-121.
+IAA sessions 120–122 issued REJECTION-PACKAGEs (10 + 2 + 2 findings). All 14 findings resolved. ASSURANCE-TOKEN issued by IAA session-123.
 
 ## IAA Agent Response (verbatim)
 <!-- MANDATORY PER S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) -->
+
+### Session-123 Response (2026-03-03 — Final invocation — ASSURANCE-TOKEN)
+
+```
+═══════════════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/add-re-anchor-workflow
+    'feat: Foreman Re-Anchor Pulse — mid-wave context recovery workflow'
+    HEAD at audit: 1850401
+All 29 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-123-20260303-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+═══════════════════════════════════════════════════════════════════
+```
 
 ### Session-121 Response (2026-03-03 — Re-invocation after session-120)
 
