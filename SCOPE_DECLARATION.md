@@ -1,54 +1,59 @@
-# Scope Declaration — CodexAdvisor-agent Session-045
+# Scope Declaration — foreman-v2-agent Session-097
 
-**PR**: `copilot/upgrade-agent-files-and-artifacts`
-**Session**: CodexAdvisor-agent session-045
+**PR**: `copilot/resolve-supabase-rls-failures`
+**Session**: foreman-v2-agent session-097
 **Date**: 2026-03-04
 **Authority**: BL-027 (MERGE_GATE_PHILOSOPHY.md), SCOPE_TO_DIFF_RULE.md
-**CS2 Authorization**: Issue assigned to CodexAdvisor-agent — "Upgrade All Agent Files and Tier 2 Artifacts"
+**CS2 Authorization**: Issue #891 — MAT App: Supabase RLS Failures — assigned to @Copilot by @APGI-cmy
 
 ---
 
 ## Files Declared
 
-- `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-045-20260304.md` - PREHANDOVER proof for this session
-- `.agent-workspace/CodexAdvisor-agent/memory/session-045-20260304.md` - Session memory for this session
-- `.agent-workspace/CodexAdvisor-agent/parking-station/suggestions-log.md` - 3 session-045 suggestions appended
-- `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` - A-028 added (PREHANDOVER immutability); version bumped to v2.6.0
-- `.agent-workspace/foreman-v2/knowledge/prehandover-template.md` - §4.3b token ceremony; PENDING replaced with expected reference format; temporal ordering fixed
-- `.agent-workspace/governance-liaison-isms/knowledge/index.md` - layer-down-scripts and ripple-processing-scripts bumped to v1.1.0
-- `.agent-workspace/governance-liaison-isms/knowledge/layer-down-scripts.md` - Full 7-step protocol migrated from contract §3.1; version bumped to v1.1.0
-- `.agent-workspace/governance-liaison-isms/knowledge/ripple-processing-scripts.md` - Full 5-step protocol migrated from contract §3.2; version bumped to v1.1.0
-- `.agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md` - A-029 added (artifact immutability §4.3b supersedes A-025); version bumped to v2.2.0
-- `.agent-workspace/independent-assurance-agent/knowledge/iaa-core-invariants-checklist.md` - CORE-016 PENDING carve-out updated per A-029; version bumped to v2.6.0
-- `.agent-workspace/independent-assurance-agent/knowledge/index.md` - FAIL-ONLY-ONCE and checklist versions updated to v2.2.0 and v2.6.0
-- `.agent-workspace/integration-builder/knowledge/canonical-governance-refs.md` - NEW: Tier 2 governance references migrated from integration-builder contract
-- `.agent-workspace/qa-builder/knowledge/canonical-governance-refs.md` - NEW: Tier 2 governance references migrated from qa-builder contract
-- `.github/agents/api-builder.md` - can_invoke/cannot_invoke YAML; §4.6 iaa_audit_token reference
-- `.github/agents/criteria-generator-agent.md` - can_invoke/cannot_invoke YAML
-- `.github/agents/document-parser-agent.md` - can_invoke/cannot_invoke YAML
-- `.github/agents/foreman-v2-agent.md` - §4.3b token ceremony; iaa_oversight artifact_immutability; can_invoke/cannot_invoke
-- `.github/agents/governance-liaison-isms-agent.md` - §3.1/§3.2 migrated to Tier 2; §4.4b token ceremony; iaa_oversight updated; can_invoke/cannot_invoke; reduced from 30722 to 29857 bytes
-- `.github/agents/independent-assurance-agent.md` - §4.2b token ceremony; artifact_immutability in capabilities; can_invoke/cannot_invoke
-- `.github/agents/integration-builder.md` - can_invoke/cannot_invoke YAML; Canonical Governance References migrated to Tier 2; reduced from 30065 to 28859 bytes
-- `.github/agents/mat-specialist.md` - can_invoke/cannot_invoke YAML
-- `.github/agents/maturion-agent.md` - can_invoke/cannot_invoke YAML
-- `.github/agents/maturity-scoring-agent.md` - can_invoke/cannot_invoke YAML
-- `.github/agents/pit-specialist.md` - can_invoke/cannot_invoke YAML
-- `.github/agents/qa-builder.md` - can_invoke/cannot_invoke YAML; Canonical Governance References migrated to Tier 2; reduced from 30095 to 28880 bytes
-- `.github/agents/report-writer-agent.md` - can_invoke/cannot_invoke YAML
-- `.github/agents/risk-platform-agent.md` - can_invoke/cannot_invoke YAML
-- `.github/agents/schema-builder.md` - can_invoke/cannot_invoke YAML; §4.6 iaa_audit_token reference
-- `.github/agents/ui-builder.md` - can_invoke/cannot_invoke YAML; §4.6 iaa_audit_token reference
-- `SCOPE_DECLARATION.md` - this file
+### Implementation Deliverables (schema-builder / qa-builder)
+- `.agent-admin/waves/wave-postbuild-fails-01-current-tasks.md` - Wave postbuild-fails-01 task checklist
+- `apps/maturion-maturity-legacy/supabase/migrations/20260304000003_fix_rls_policies_postbuild.sql` - RLS fix migration: handle_new_user() trigger + profiles/audits policies
+- `modules/mat/tests/security-rls/wave-postbuild-fails-01.test.ts` - T-PBF-001 to T-PBF-004 (file-based, all GREEN)
 
-### LEGACY_BOUNDARY Files (CS2 commit 70e73fe — 2026-03-04)
+### Governance Deliverables (Foreman)
+- `governance/TEST_REGISTRY.json` - Registered T-PBF-001 to T-PBF-004 (CAT-14, P0, v1.3.0)
+- `modules/mat/01-frs/functional-requirements.md` - Added FR-082 and FR-083 (v1.7.0)
+- `modules/mat/01.5-trs/technical-requirements-specification.md` - Added TR-082 and TR-083 (v1.6.0)
+- `modules/mat/03-implementation-plan/implementation-plan.md` - Added Wave postbuild-fails-01 section
+- `modules/mat/03-implementation-plan/supabase-sync-audit-20260304.md` - Full Supabase RLS gap audit (5 gaps identified and fixed)
+- `modules/mat/BUILD_PROGRESS_TRACKER.md` - Wave postbuild-fails-01 section added
 
-- `.agent-workspace/CodexAdvisor-agent/memory/LEGACY_BOUNDARY.md` - CS2 legacy boundary marker (session-045 = first compliant session)
-- `.agent-workspace/api-builder/memory/LEGACY_BOUNDARY.md` - CS2 legacy boundary marker
-- `.agent-workspace/foreman-v2/memory/LEGACY_BOUNDARY.md` - CS2 legacy boundary marker
-- `.agent-workspace/governance-liaison-isms/memory/LEGACY_BOUNDARY.md` - CS2 legacy boundary marker
-- `.agent-workspace/independent-assurance-agent/memory/LEGACY_BOUNDARY.md` - CS2 legacy boundary marker
-- `.agent-workspace/integration-builder/memory/LEGACY_BOUNDARY.md` - CS2 legacy boundary marker
-- `.agent-workspace/qa-builder/memory/LEGACY_BOUNDARY.md` - CS2 legacy boundary marker
-- `.agent-workspace/schema-builder/memory/LEGACY_BOUNDARY.md` - CS2 legacy boundary marker
-- `.agent-workspace/ui-builder/memory/LEGACY_BOUNDARY.md` - CS2 legacy boundary marker
+### Governance Ceremony Artifacts (Foreman Phase 4)
+- `SCOPE_DECLARATION.md` - This file (scope declaration for PR, replaces session-045 declaration)
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-097-wave-postbuild-fails-01-20260304.md` - Foreman PREHANDOVER proof for session-097
+- `.agent-workspace/foreman-v2/memory/session-097-20260304.md` - Foreman session memory for session-097
+
+### IAA Audit Artifacts (independent-assurance-agent)
+- `.agent-admin/assurance/iaa-rejection-session-097-wave-postbuild-fails-01-20260304.md` - IAA first invocation rejection package (governance ceremony absent)
+- `.agent-workspace/independent-assurance-agent/memory/session-097-20260304.md` - IAA session memory for first invocation
+- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station (updated by IAA during session)
+
+### IAA Session Archive (independent-assurance-agent housekeeping)
+- `.agent-workspace/independent-assurance-agent/memory/.archive/session-114-20260303.md` - Archived IAA session (preflight maintenance)
+- `.agent-workspace/independent-assurance-agent/memory/.archive/session-120-20260303.md` - Archived IAA session (preflight maintenance)
+- `.agent-workspace/independent-assurance-agent/memory/.archive/session-121-20260303.md` - Archived IAA session (preflight maintenance)
+- `.agent-workspace/independent-assurance-agent/memory/.archive/session-122-20260303.md` - Archived IAA session (preflight maintenance)
+- `.agent-workspace/independent-assurance-agent/memory/.archive/session-123-20260303.md` - Archived IAA session (preflight maintenance)
+
+---
+
+## Files Removed (IAA session archive rotation)
+
+The following files were deleted by the IAA agent's preflight session archive rotation (older sessions moved to `.archive/`):
+- `.agent-workspace/independent-assurance-agent/memory/session-114-20260303.md` - Moved to `.archive/`
+- `.agent-workspace/independent-assurance-agent/memory/session-120-20260303.md` - Moved to `.archive/`
+- `.agent-workspace/independent-assurance-agent/memory/session-121-20260303.md` - Moved to `.archive/`
+- `.agent-workspace/independent-assurance-agent/memory/session-122-20260303.md` - Moved to `.archive/`
+- `.agent-workspace/independent-assurance-agent/memory/session-123-20260303.md` - Moved to `.archive/`
+
+---
+
+## Out of Scope
+
+No `.github/agents/*.md` files were modified (CORE-017 compliant — no agent contract changes).
+No `.github/workflows/` files were modified.
