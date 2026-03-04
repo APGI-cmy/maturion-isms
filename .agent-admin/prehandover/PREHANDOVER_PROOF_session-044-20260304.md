@@ -62,7 +62,7 @@ IAA_PRE_BRIEF_PROTOCOL.md:
 | A-07 (SHA256 Validation) | ✅ COMPLIED — Both governance canon files validated against canonical CANON_INVENTORY before writing |
 | A-09 (Agent File Write Prohibition) | ✅ COMPLIED — foreman-v2.agent.md and independent-assurance-agent.md not modified; escalated to CS2 |
 | A-013 (§4.3 Parity Check) | ✅ COMPLIED — All 3 merge gate checks verified locally before any commit |
-| A-014 (IAA Invocation) | ✅ COMPLIED — IAA invoked at Phase 4.4; result: PHASE_A_ADVISORY |
+| A-014 (IAA Invocation) | ✅ COMPLIED — IAA invoked; first result: REJECTION-PACKAGE (8 failures; remediated — see Section 6) |
 
 ---
 
@@ -81,8 +81,8 @@ Per A-009 (FAIL-ONLY-ONCE.md), the following files were NOT modified and are esc
 
 ```yaml
 iaa_audit_token: PENDING
-iaa_session: IAA-session-124-20260304
-iaa_invocation_attempt: 1 (first — REJECTION-PACKAGE received)
+iaa_session: IAA-session-125-20260304
+iaa_invocation_attempt: 2 (second — REJECTION-PACKAGE received; third invocation pending)
 ```
 
 ### First IAA Invocation: IAA-session-124-20260304 — REJECTION-PACKAGE
@@ -127,16 +127,45 @@ Token reference: IAA-session-124-20260304-REJECTED
 ═══════════════════════════════════════════════════════════════
 ```
 
-### Second IAA Invocation (post-remediation)
+### Second IAA Invocation: IAA-session-125-20260304 — REJECTION-PACKAGE
 
-All 8 failures remediated:
-- SCOPE_DECLARATION.md updated to reflect governance ripple 6523fe8d files
-- All files committed and pushed (git log evidence: commits c60d5e1 and bd8bb43 + remediation commit)
-- PHASE_A_ADVISORY claims removed
-- iaa_audit_token: PENDING set
-- Verbatim IAA section added (this section)
+IAA issued REJECTION-PACKAGE (token: IAA-session-125-20260304-REJECTED). 2 failures cited. Substantive work again noted as sound.
 
-IAA re-invoked — result recorded in session memory after re-invocation.
+**Failures cited by IAA:**
+1. PARITY-002 / A-028 — SCOPE_DECLARATION.md em-dash separators (U+2014 `—`) detected; BL-027 regex detected 0 declared files (fixed: replaced all em-dashes with ` - ` per BL-027 format; verified `grep -cE '^\s*-\s+\`[^`]+\`\s+-\s+' SCOPE_DECLARATION.md` returns 15)
+2. CORE-021 — Section 4 row A-014 still said "result: PHASE_A_ADVISORY" (fixed: updated to "result: REJECTION-PACKAGE (8 failures; remediated — see Section 6)")
+
+**IAA verbatim output (second invocation):**
+
+```
+═══════════════════════════════════════════════════════════════════════
+REJECTION-PACKAGE
+PR: copilot/propagate-governance-changes-cc3ac819-9829-49d2-9eff-980eda1bd197
+    governance-liaison-isms session-044-20260304 — SECOND invocation
+
+2 check(s) FAILED. Merge blocked. STOP-AND-FIX required.
+
+FAILURES:
+  PARITY-002 / A-028 — SCOPE_DECLARATION Format Violation (em-dash separators)
+  CORE-021 — Residual Stale Text "result: PHASE_A_ADVISORY" in Section 4
+
+NOTE: The substantive governance work remains sound:
+  Both canon files SHA256-verified. CANON_INVENTORY valid (191 canons).
+  All 6 OVL-CG overlay checks PASS. A-009 escalation complied.
+  All 8 original session-124 failures substantively addressed.
+
+Token reference: IAA-session-125-20260304-REJECTED
+═══════════════════════════════════════════════════════════════════════
+```
+
+### Third IAA Invocation (post-remediation)
+
+Both failures remediated:
+- SCOPE_DECLARATION.md em-dashes replaced with ` - ` (BL-027 format); verified 15 matches
+- PREHANDOVER Section 4 row A-014 updated: stale PHASE_A_ADVISORY removed
+- All files committed and pushed
+
+IAA re-invoked (third invocation) - result recorded below.
 
 ---
 
