@@ -80,9 +80,9 @@ Per A-009 (FAIL-ONLY-ONCE.md), the following files were NOT modified and are esc
 ## 6. IAA Invocation (Phase 4.4 — A-014 Mandatory)
 
 ```yaml
-iaa_audit_token: PENDING
+iaa_audit_token: IAA-session-127-20260304-PASS
 iaa_session: IAA-session-126-20260304
-iaa_invocation_attempt: 4 (fourth — pending)
+iaa_invocation_attempt: 4 (fourth — ASSURANCE-TOKEN)
 ```
 
 ### First IAA Invocation: IAA-session-124-20260304 — REJECTION-PACKAGE
@@ -190,7 +190,7 @@ Single failure remediated:
 - SCOPE_DECLARATION.md updated: session-126 memory added; total updated 21→22; verified 22 declared = 22 in diff
 - Files committed and pushed
 
-IAA re-invoked (fourth invocation) - result recorded below.
+IAA ASSURANCE-TOKEN received: IAA-session-127-20260304-PASS. All 27 checks PASS. Merge permitted subject to CS2 approval.
 
 ---
 
