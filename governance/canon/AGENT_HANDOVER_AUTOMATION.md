@@ -1,7 +1,8 @@
 # AGENT_HANDOVER_AUTOMATION
 
-**Status**: CANONICAL | **Version**: 1.1.2 | **Authority**: CS2  
-**Date**: 2026-02-24
+**Status**: CANONICAL | **Version**: 1.1.3 | **Authority**: CS2  
+**Date**: 2026-02-24  
+**Amended**: 2026-03-04 — v1.1.3: Added §4.3b Token Update Ceremony (PREHANDOVER proof is read-only post-commit; IAA token written to dedicated file); added per-session append-only artifact requirement (CS2 auth: APGI-cmy/maturion-foreman-governance issue — Artifact Immutability & Append-Only Proof Protocols)
 
 ---
 
@@ -30,6 +31,7 @@ Phase 4 consists of four mandatory sections:
 ### 4.1 Evidence Artifact Generation
 ### 4.2 Session Memory & Closure
 ### 4.3 Pre-Handover Merge Gate Parity Check (mandatory, BLOCKING)
+### 4.3b Token Update Ceremony (IAA token — append-only, dedicated file)
 ### 4.4 Compliance Check & Escalation (if needed)
 ```
 
@@ -516,7 +518,90 @@ Agent: <agent-type>
 **Full policy**: `governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md`  
 **Incident reference**: `governance/incidents/INCIDENT-2026-02-24-PR517-AGENT-CONTRACT-BREACH.md`
 
+## Section 4.3b: Token Update Ceremony (IAA Token — Append-Only, Dedicated File)
 
+**Purpose**: Govern how the IAA writes its assurance verdict. The PREHANDOVER proof is
+**read-only** once committed. The IAA token is written to a new, dedicated artifact file —
+never as an edit to the PREHANDOVER proof.
+
+**Effective**: 2026-03-04 | **Authority**: CS2 | **Added**: v1.1.3
+
+### Rule
+
+> **ABSOLUTE RULE**: After initial commit of the PREHANDOVER proof, no agent (including the IAA)
+> may modify that file. The IAA MUST write its assurance verdict to a separate, dedicated token
+> file. The PREHANDOVER proof records only the token reference (ID), not the token text.
+
+### Template
+
+```markdown
+### 4.3b Token Update Ceremony (FM_H / GA_H — MANDATORY after IAA PASS)
+
+**Trigger**: IAA has issued a verdict for this PR.
+
+**Protocol**:
+
+1. **Do NOT edit the PREHANDOVER proof.** The PREHANDOVER proof is immutable once committed.
+2. The IAA writes its verdict to a dedicated token file:
+   `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`
+3. The PREHANDOVER proof `iaa_audit_token` field already recorded the token reference at
+   initial commit time (using the expected format `IAA-session-NNN-YYYYMMDD-PASS`).
+   No update to the PREHANDOVER proof is needed or permitted.
+4. The submitting agent (Foreman or GA) commits the token file as a **new file only** —
+   no amendments to any existing committed artifact.
+5. If the IAA issues a REJECTION-PACKAGE, it similarly writes a new rejection artifact;
+   the submitting agent opens a STOP-AND-FIX, fixes the gaps, and re-initiates handover
+   with a fresh PREHANDOVER proof in a new commit.
+
+\`\`\`bash
+#!/bin/bash
+# 4.3b Token Update Ceremony — append-only dedicated token file
+
+IAA_TOKEN_FILE=".agent-admin/assurance/iaa-token-session-${IAA_SESSION}-wave${WAVE}-${TIMESTAMP}.md"
+
+# IAA writes token to new file — NEVER edits prehandover proof
+cat > "${IAA_TOKEN_FILE}" <<EOF
+# IAA Token — session-${IAA_SESSION}-wave${WAVE}-${TIMESTAMP}
+
+IAA Session: ${IAA_SESSION}
+PR: #${PR_NUMBER}
+Wave: ${WAVE}
+Date: $(date +%Y-%m-%d)
+
+## Verdict
+
+${IAA_VERDICT}
+
+Phases Verified: 1-${PHASE1}, 2-${PHASE2}, 3-${PHASE3}, 4-${PHASE4}
+Agent Integrity: ${INTEGRITY_RESULT}
+Independence: CONFIRMED
+Verdict: ${MERGE_VERDICT}
+EOF
+
+echo "✅ IAA token written to: ${IAA_TOKEN_FILE}"
+echo "✅ PREHANDOVER proof unchanged (immutable post-commit)"
+\`\`\`
+```
+
+### Append-Only Session Artifact Rules
+
+All post-commit governance artifacts produced during Phase 4 MUST follow the append-only pattern.
+These rules apply to all agent classes:
+
+| Artifact Type | Rule |
+|---------------|------|
+| **PREHANDOVER proof** | Read-only after initial commit. Never edited post-commit by any agent. |
+| **IAA assurance token** | Dedicated new file per §Token Ceremony. Never written into PREHANDOVER proof. |
+| **Parking station suggestions** | Per-agent dedicated log file (never a shared cross-agent file on a wave branch). |
+| **Session memories** | New file per session. Rotate per LIVING_AGENT_SYSTEM.md §Rolling Memory. |
+| **FAIL-ONLY-ONCE entries** | Append new rule row only. Never delete or edit prior rows. |
+| **RCA breach log entries** | Append-only. Never overwrite a prior entry. |
+
+**Rationale**: In multi-agent, concurrent-wave execution, shared mutable files on a branch tip
+cause merge conflicts and artifact drift. Each agent writes its own new file; no agent edits
+another agent's committed artifact.
+
+**Full specification**: `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` §Artifact Immutability Rule
 
 **Purpose**: Verify agent-class-specific compliance requirements and create escalations if needed.
 
