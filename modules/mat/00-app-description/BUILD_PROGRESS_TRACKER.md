@@ -645,6 +645,64 @@ This tracker feeds into the governance learning loop as follows:
 
 ---
 
+## ⛔ FAILED TO ADDRESS UX WORKFLOW — GAP WAVE REMEDIATION REQUIRED
+
+**Governance Notice**: Issue #909 — Governance Remediation: FRS, TRS, and Red QA Suite for Unaddressed UX Workflow Gaps
+**Authority**: CS2 (Johan Ras / @APGI-cmy)
+**Date Identified**: 2026-03-04
+**Session**: session-099
+**Source authority**: `modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md` v1.0
+
+### Failure Description
+
+Post-delivery governance review of the MAT module identified **14 critical UX workflow and backend wiring gaps** that were not addressed in any of Waves 0–13 or the remediation waves. These gaps were catalogued in `MAT_UX_WORKFLOW_AND_WIRING.md` (v1.0, CS2 direct, 2026-03-04).
+
+The failure resulted from the original app description, FRS, TRS, and implementation plan not fully specifying the end-to-end UX workflows and their required backend tables, RLS policies, Edge Functions, and AI endpoint wiring.
+
+**All 14 gaps are RED (BLOCKING). No gap wave is complete. Builder delegation for each subwave requires:**
+1. Architecture document frozen for that subwave
+2. RED QA tests specified (complete — `tests/wave14/wave14-ux-gap-red-suite-spec.md`)
+3. RED QA tests implemented by qa-builder and failing
+4. CS2 wave-start authorisation for each builder delegation
+
+### Wave 14 Gap Register
+
+| Gap ID | Wave | Subwave | Gap Description | FRS Ref | TRS Ref | Test ID | Status | Remediation Action |
+|--------|------|---------|-----------------|---------|---------|---------|--------|-------------------|
+| GAP-W01 | 14 | 14.1 | Sign-up → onboarding → first-use flow with org creation; app is dead on first use without it | FR-089 | TR-089 | T-W14-UX-001 | 🔴 RED | Implement OnboardingGuard + 2-step wizard + organisations INSERT + profiles UPSERT |
+| GAP-W02 | 14 | 14.2 | Invite Auditor UX: per-domain and per-MPS invite modal, email flow, accept → signup → scoped access | FR-090 | TR-090 | T-W14-UX-002 | 🔴 RED | Create audit_invitations, domain_assignments, mps_assignments tables + send-invitation Edge Function + accept-invite route |
+| GAP-W03 | 14 | 14.3 | Toggle exclude behaviour: greying out a Domain/MPS/Criteria and cascade to scoring and report gating | FR-091 | TR-091 | T-W14-UX-003 | 🔴 RED | Add excluded columns + cascade trigger + gating query in dashboard |
+| GAP-W04 | 14 | 14.4 | Invite Evidence Submitter as a distinct lower-access role (criteria-scoped, not domain-scoped) | FR-092 | TR-092 | T-W14-UX-004 | 🔴 RED | Create criteria_assignments table + evidence_submitter role + criteria-scoped RLS on evidence |
+| GAP-W05 | 14 | 14.5 | Evidence card interaction model: click-and-hold for voice/video, multi-type uploader state machine, edit/remove/add after upload | FR-093 | TR-093 | T-W14-UX-005 | 🔴 RED | Implement MediaRecorder API integration + evidence tile component + auto-save debounce |
+| GAP-W06 | 14 | 14.6 | Submit button as the AI trigger: exactly what the AI does on submit, what inputs it consumes, what outputs it produces | FR-094 | TR-094 | T-W14-UX-006 | 🔴 RED | Create criteria_evaluations + evaluation_overrides tables + /ai/evaluate-criteria endpoint + criteria card update |
+| GAP-W07 | 14 | 14.7 | AI next-level explanation + taster: the visible feature showing rating, improvement path, and preview of level+2 | FR-095 | TR-095 | T-W14-UX-007 | 🔴 RED | Add next_level_guidance + next_plus_one_taster to criteria_evaluations; render on criteria card |
+| GAP-W08 | 14 | 14.8 | AI chat UI entry point from the criteria card for deeper level exploration | FR-096 | TR-096 | T-W14-UX-008 | 🔴 RED | Add contextPayload prop to AI chat panel; wire "Explore further levels" link on criteria card |
+| GAP-W09 | 14 | 14.9 | Audit results table: Domain / MPS / Criteria / Findings / Rating / Recommendations displayed post-submission | FR-097 | TR-097 | T-W14-UX-009 | 🔴 RED | Implement Results tab + table component with sortable columns + RLS-scoped query |
+| GAP-W10 | 14 | 14.10 | Dashboard outstanding work drill-down: "addressed" gating condition before "Create Report" becomes active | FR-098 | TR-098 | T-W14-UX-010 | 🔴 RED | Implement dashboard metrics query + drill-down navigation + Create Report gate query |
+| GAP-W11 | 14 | 14.11 | "Create Report" button as the final AI trigger: exact sequence, report content, export format and structure | FR-099 | TR-099 | T-W14-UX-011 | 🔴 RED | Implement /ai/generate-report endpoint + generate-pdf Edge Function + audit_reports table + reports bucket |
+| GAP-W12 | 14 | 14.12 | Level descriptor cards: Domain, MPS, and Criteria cards each show a level descriptor; Domain/MPS aggregate underlying achievements | FR-100 | TR-100 | T-W14-UX-012 | 🔴 RED | Create criteria_level_descriptors, mps_level_descriptors, domain_level_descriptors tables + AI parsing integration |
+| GAP-W13 | 14 | 14.13 | Scoring and rating method in DB: rating/scoring tables structure not wired to UI | FR-101 | TR-101 | T-W14-UX-013, T-W14-UX-016 | 🔴 RED | Create maturity_levels, scoring_rules, aggregate_scores tables + seed global default + compute-scores function |
+| GAP-W14 | 14 | 14.14 | Responsibility cascade rule wired: Lead Auditor retains responsibility when no auditor invited; enforced in DB and UI | FR-102 | TR-102 | T-W14-UX-014 | 🔴 RED | Implement responsibility cascade view/function + useResponsibleUser hook + card display |
+
+### Cross-Cutting Test
+
+| Test ID | Scope | Description | Status |
+|---------|-------|-------------|--------|
+| T-W14-UX-015 | All GAP-W01–W14 | All 14 new tables have org-isolation RLS (no cross-org data leakage) | 🔴 RED |
+
+### Remediation Progress
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| FRS addendum (FR-089–FR-102) | Functional requirements for all 14 gaps | ✅ COMPLETE |
+| TRS addendum (TR-089–TR-102) | Technical requirements for all 14 gaps | ✅ COMPLETE |
+| RED QA suite spec (16 tests) | Test specifications in `tests/wave14/wave14-ux-gap-red-suite-spec.md` | ✅ COMPLETE |
+| Implementation plan Wave 14 | Gap waves 14.1–14.14 in `03-implementation-plan/implementation-plan.md` | ✅ COMPLETE |
+| RED test file implementation | qa-builder to implement T-W14-UX-001 to T-W14-UX-016 | 🔴 PENDING |
+| Per-subwave builder delegation | Each subwave needs architecture freeze + builder appointment | 🔴 PENDING |
+
+---
+
 **End of BUILD_PROGRESS_TRACKER.md**
 
-**Next Update**: After App Description peer review (Phase 00.3)
+**Next Update**: After qa-builder delivers RED test file implementation (TASK-W14-006)

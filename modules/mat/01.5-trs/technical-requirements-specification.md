@@ -3,9 +3,9 @@
 **Module**: MAT (Manual Audit Tool)
 **Artifact Type**: Technical Requirements Specification
 **Status**: COMPLETE
-**Version**: v1.7.0  
+**Version**: v1.8.0  
 **Owner**: Foreman (FM)  
-**Authority**: Derived from FRS v1.8.0 (`modules/mat/01-frs/functional-requirements.md`)
+**Authority**: Derived from FRS v1.9.0 (`modules/mat/01-frs/functional-requirements.md`)
 **Applies To**: MAT module within maturion-isms repository
 **Created**: 2026-02-13
 **Last Updated**: 2026-03-04
@@ -1656,5 +1656,335 @@ All policies MUST use `IF NOT EXISTS` guards.
 **Status**: 🔴 RED — GAP-006 (organisations), GAP-007 (domains), GAP-008 (mini_performance_standards), GAP-009 (criteria) open
 **Tests**: T-PBF2-005 (criteria), T-PBF2-006 (domains), T-PBF2-007 (organisations), T-PBF2-008 (mini_performance_standards)
 **Migration file**: To be created in `apps/maturion-maturity-legacy/supabase/migrations/`
+
+---
+
+## 22. UX Workflow Gap Remediation — Technical Requirements (GAP-W01–GAP-W14)
+
+**Source authority**: `modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md` v1.0 (CS2 direct, 2026-03-04)
+**Derives from FRS**: FR-089 to FR-102
+**Added**: 2026-03-04
+**Governance**: Issue #909 — Governance Remediation: FRS, TRS, and Red QA Suite for Unaddressed UX Workflow Gaps
+**Status**: 🔴 RED SUITE — All 14 requirements below are UNIMPLEMENTED; new tables and endpoints not yet created
+
+### TR-089: Sign-Up, Onboarding, and First-Use — DB and Guard Wiring (GAP-W01)
+
+**Derives From**: FR-089
+**Priority**: P0
+
+The `OnboardingGuard` React component MUST be implemented in `App.tsx` routing to redirect all authenticated users without a non-null `profile.organisation_id` to `/onboarding`. The following wiring is mandatory:
+
+1. Supabase Auth `signUp()` integration with redirect to `/onboarding` on success.
+2. `public.organisations` RLS: INSERT policy for any authenticated user; SELECT scoped to `profiles.organisation_id = auth.uid()`-via-profiles join.
+3. `public.profiles` RLS: UPSERT (INSERT + UPDATE) policy allowing the user to write their own row (`id = auth.uid()`).
+4. React hook `useOnboarding()` in `useSettings.ts` wrapping the two-step INSERT flow.
+5. `OnboardingGuard` reads `profile.organisation_id` from Supabase Realtime or a fresh query and gates all app routes.
+
+**Constraints**:
+1. Guard must be applied before any authenticated route renders — not inside individual components.
+2. Organisation name must be `VARCHAR(255) NOT NULL` in `public.organisations`.
+3. Onboarding must handle network failures gracefully (retry or error state — not silent failure).
+4. All DB operations must execute within the authenticated user's RLS context — no service-role bypass.
+
+**Migration file**: New migration adding `public.organisations` INSERT/SELECT RLS + `public.profiles` UPSERT RLS if not already present.
+**Test**: T-W14-UX-001
+
+---
+
+### TR-090: Invite Auditor — Database Tables, Edge Function, and RLS (GAP-W02)
+
+**Derives From**: FR-090
+**Priority**: P0
+
+New tables and infrastructure required for auditor invitation:
+
+1. `public.audit_invitations` table: `id UUID PK DEFAULT gen_random_uuid()`, `audit_id UUID REFERENCES audits(id)`, `scope_type VARCHAR(20) CHECK ('domain','mps','criteria')`, `scope_id UUID NOT NULL`, `invitee_email TEXT NOT NULL`, `invitee_name TEXT NOT NULL`, `invitation_token UUID UNIQUE DEFAULT gen_random_uuid()`, `status VARCHAR(20) DEFAULT 'pending' CHECK ('pending','accepted','declined')`, `invited_by UUID REFERENCES profiles(id)`, `created_at TIMESTAMPTZ DEFAULT now()`, `accepted_at TIMESTAMPTZ`.
+2. `public.domain_assignments` table: `id UUID PK`, `domain_id UUID`, `audit_id UUID`, `user_id UUID REFERENCES profiles(id)`, `assigned_at TIMESTAMPTZ DEFAULT now()`.
+3. `public.mps_assignments` table: same structure scoped to `mps_id`.
+4. Supabase Edge Function `send-invitation`: receives `invitation_id`, queries `audit_invitations`, constructs and sends email via configured email service.
+5. React route `/accept-invite?token=...`: reads token, fetches invitation, creates or links account, creates assignment row, updates invitation status.
+6. RLS on `domain_assignments`/`mps_assignments`: SELECT for org members; INSERT for Lead Auditor only; no DELETE by application users.
+
+**Constraints**:
+1. `invitation_token` must be UUID; never reused after acceptance.
+2. Email sending must be async (Edge Function must not block the INSERT response).
+3. Onboarding flow MUST support `?invite_token=...` param to skip org creation and join inviting org.
+4. Scoped access enforcement: after acceptance, invitee's profile `role` and assignment row together gate their visible scope (RLS enforces at DB level).
+
+**Migration file**: New migration `20260304000010_invitation_system.sql` (or next available timestamp).
+**Test**: T-W14-UX-002
+
+---
+
+### TR-091: Toggle Exclude — DB Cascade, Trigger or Application Logic (GAP-W03)
+
+**Derives From**: FR-091
+**Priority**: P0
+
+Exclusion cascade MUST be implemented as either a PostgreSQL trigger or consistent application-level logic:
+
+1. `domains.excluded BOOLEAN NOT NULL DEFAULT false` column (already referenced; must be confirmed in schema).
+2. `mps.excluded BOOLEAN NOT NULL DEFAULT false` column — same.
+3. `criteria.excluded BOOLEAN NOT NULL DEFAULT false` column — same.
+4. Cascade: When `domains.excluded` is set to `true`, all `mps` rows with `mps.domain_id = domains.id` and all `criteria` rows with `criteria.domain_id = domains.id` MUST also be set to `excluded = true` — either via a `BEFORE UPDATE` trigger or a guaranteed application-level cascade call.
+5. Scoring queries MUST use `WHERE excluded = false` filter at each hierarchy level.
+6. "Create Report" gating SQL MUST count `criteria WHERE excluded = false AND criteria_evaluations.status NOT IN ('confirmed','overridden')` — result must be 0 for button to activate.
+
+**Constraints**:
+1. Trigger-based cascade preferred over application-level (avoids race conditions on concurrent updates).
+2. `excluded` reversal: un-toggling a parent domain must NOT automatically restore previously individually-excluded child items (restore only items that inherited from this toggle).
+3. Cascade logic must be covered by T-W14-UX-003 test.
+
+**Migration file**: New migration adding `excluded` columns and cascade trigger (or confirming existing columns + adding trigger).
+**Test**: T-W14-UX-003
+
+---
+
+### TR-092: Invite Evidence Submitter — Criteria-Level Scope Table and RLS (GAP-W04)
+
+**Derives From**: FR-092
+**Priority**: P1
+
+New table required for criteria-scoped access:
+
+1. `public.criteria_assignments` table: `id UUID PK DEFAULT gen_random_uuid()`, `criteria_id UUID REFERENCES criteria(id)`, `audit_id UUID REFERENCES audits(id)`, `user_id UUID REFERENCES profiles(id)`, `assigned_at TIMESTAMPTZ DEFAULT now()`.
+2. RLS on `criteria_assignments`: SELECT for org members; INSERT for Lead/Domain/MPS Auditor; no DELETE by application users.
+3. RLS on `evidence` table: Evidence Submitter may INSERT/UPDATE/DELETE `evidence` rows where `criteria_id IN (SELECT criteria_id FROM criteria_assignments WHERE user_id = auth.uid())`.
+4. React app route for `scope_type = 'criteria'` in the accept-invite flow must create a `criteria_assignments` row (not `domain_assignments` or `mps_assignments`).
+
+**Constraints**:
+1. Evidence Submitter role MUST have a `role = 'evidence_submitter'` value in `profiles.role` — add to CHECK constraint if not already present.
+2. The restricted view for Evidence Submitters must be enforced at RLS level, not only in the frontend routing.
+
+**Migration file**: New migration `20260304000011_criteria_assignments.sql` (or next available timestamp).
+**Test**: T-W14-UX-004
+
+---
+
+### TR-093: Evidence Card — MediaRecorder API, Storage, and State Machine (GAP-W05)
+
+**Derives From**: FR-093
+**Priority**: P0
+
+Frontend implementation requirements for the Evidence Upload Panel:
+
+1. `MediaRecorder` API integration for voice notes: `new MediaRecorder(stream)`, `start()` on `mousedown`/`touchstart`, `stop()` on `mouseup`/`touchend`, `onstop` handler staging the `Blob` for upload.
+2. Same pattern for video (`videoBitsPerSecond` constraint recommended at 1Mbps for mobile).
+3. Supabase Storage upload: `supabase.storage.from('evidence-files').upload(path, blob)` using path `{organisation_id}/{audit_id}/{criteria_id}/{uuid}.{ext}`.
+4. Evidence tile component: thumbnail/audio-player/video-player/file-icon based on `evidence.type`; Remove button calls soft-delete (`UPDATE evidence SET deleted = true`); Replace button re-triggers picker.
+5. Findings text auto-save: debounced (400ms) `UPDATE public.evidence SET findings_text = $1 WHERE id = $2`.
+6. `public.evidence` table: confirm all required columns exist (`id`, `criteria_id`, `audit_id`, `organisation_id`, `submitted_by`, `type` ENUM, `storage_path`, `findings_text`, `deleted` BOOLEAN, `submitted_at`, `updated_at`).
+
+**Constraints**:
+1. `MediaRecorder` must request `getUserMedia` permissions before first use — handle permission denied gracefully.
+2. Storage paths must be org-isolated (`{organisation_id}/...`); never accessible cross-org.
+3. `deleted = true` is a soft delete — no physical removal from storage until audit archival.
+
+**Migration file**: Confirm/add `evidence` table columns and `evidence-files` storage bucket policy.
+**Test**: T-W14-UX-005
+
+---
+
+### TR-094: AI Evaluation Endpoint — Pipeline, DB Writes, and Card Update (GAP-W06)
+
+**Derives From**: FR-094
+**Priority**: P0
+
+AI evaluation endpoint and DB table requirements:
+
+1. `POST /ai/evaluate-criteria` endpoint (Supabase Edge Function or Next.js API route): accepts `{ criteria_id, audit_id }`, fetches all non-deleted `evidence` rows, calls AI models per type (text → GPT-4 Turbo, audio → Whisper → GPT-4 Turbo, video → Whisper + GPT-4 Vision, image → GPT-4 Vision), produces structured response.
+2. `public.criteria_evaluations` table: `id`, `criteria_id`, `audit_id`, `organisation_id`, `proposed_level` (ENUM: Basic/Reactive/Compliant/Proactive/Resilient), `confirmed_level` (same ENUM, nullable), `confidence_score INTEGER`, `rationale TEXT`, `findings_summary TEXT`, `next_level_guidance TEXT`, `next_plus_one_taster TEXT`, `ai_model_used TEXT`, `status` (ENUM: pending_review/confirmed/overridden), `evaluated_at TIMESTAMPTZ`.
+3. `public.evaluation_overrides` table: `id`, `evaluation_id`, `original_level`, `overridden_level`, `justification TEXT NOT NULL`, `overridden_by UUID`, `overridden_at TIMESTAMPTZ`.
+4. React hook `useEvaluateCriteria(criteriaId)`: calls endpoint, inserts evaluation row, updates criteria card state in Supabase Realtime subscription.
+5. RLS on `criteria_evaluations`: SELECT for org members; INSERT for the evaluating user (or service role); UPDATE for Confirm/Override actions.
+
+**Constraints**:
+1. AI calls MUST route via the AI Gateway (TR-040) — no direct OpenAI calls from frontend or edge function.
+2. `evaluation_overrides.justification` is mandatory (application-level and DB-level CHECK if possible).
+3. Status transitions: `pending_review` → `confirmed` (Confirm button) or `pending_review` → `overridden` (Override submit). No direct `pending_review` → `overridden` without override form submission.
+
+**Migration file**: New migrations for `criteria_evaluations` and `evaluation_overrides` tables.
+**Test**: T-W14-UX-006
+
+---
+
+### TR-095: Next-Level Guidance Surface — Component and DB Source (GAP-W07)
+
+**Derives From**: FR-095
+**Priority**: P1
+
+Frontend component and DB wiring for next-level guidance display:
+
+1. Criteria card post-evaluation section: renders `criteria_evaluations.proposed_level` (or `confirmed_level` if confirmed) as a colour-coded badge; renders `next_level_guidance` as a "What to improve" section; renders `next_plus_one_taster` as a "Where you're heading" preview.
+2. All content MUST come from the `criteria_evaluations` DB row — no hardcoded guidance text.
+3. "Explore further levels" link/button: visible when `criteria_evaluations` row exists for the criteria; triggers opening the AI chat panel with context injection.
+4. Component must handle loading state (skeleton) while evaluation is in progress.
+
+**Constraints**:
+1. `next_level_guidance` and `next_plus_one_taster` are populated by the AI evaluation endpoint (TR-094) — never manually entered.
+2. If `proposed_level = 'Resilient'` (highest level), `next_level_guidance` and `next_plus_one_taster` must show "Maximum maturity level achieved" — no guidance needed.
+
+**Test**: T-W14-UX-007
+
+---
+
+### TR-096: AI Chat Panel Context Injection (GAP-W08)
+
+**Derives From**: FR-096
+**Priority**: P1
+
+Technical wiring for AI chat panel context injection from criteria card:
+
+1. Existing AI chat panel component (LL-031 / FR-072) MUST accept a `contextPayload` prop: `{ criteria_name: string, current_level: string, next_level_guidance: string, audit_context: string }`.
+2. When opened from criteria card, the panel initialises the chat session with a system prompt incorporating the `contextPayload` — injected BEFORE the user sends the first message.
+3. The context injection must be visible to the AI for all turns in the session.
+4. Chat panel opened without context (from the main navigation) must NOT include stale criteria context from a previous session.
+
+**Constraints**:
+1. Context must not exceed AI model token limits — truncate `next_level_guidance` at 500 tokens if necessary.
+2. Chat history is NOT persisted across page refreshes for session-mode (no DB write unless user clicks "Save Chat").
+
+**Test**: T-W14-UX-008
+
+---
+
+### TR-097: Audit Results Table — Query and RLS Scope (GAP-W09)
+
+**Derives From**: FR-097
+**Priority**: P0
+
+Backend query and RLS requirements for the Audit Results table:
+
+1. Results query: JOIN `audits → domains → mps → criteria → criteria_evaluations` on `audit_id`; include `excluded` flag on each level; include `confirmed_level` (or `proposed_level` if not confirmed) and `findings_summary`, `next_level_guidance` from `criteria_evaluations`.
+2. Query MUST use `LEFT JOIN` on `criteria_evaluations` to surface Pending criteria (no evaluation row yet).
+3. Sortable columns: Domain name/number, MPS name/number, Rating (`confirmed_level` enum order: Basic=1, Reactive=2, Compliant=3, Proactive=4, Resilient=5).
+4. RLS scoping: Lead Auditor sees all criteria; Domain Auditor sees only criteria under their `domain_assignments.domain_id`; MPS Auditor sees only criteria under their `mps_assignments.mps_id`; Evidence Submitter sees only their assigned `criteria_assignments.criteria_id`.
+5. React hook `useAuditResults(auditId)`: returns paginated results; updates via Supabase Realtime subscription on `criteria_evaluations`.
+
+**Constraints**:
+1. Results table MUST show excluded criteria greyed — not hidden — to preserve audit completeness awareness.
+2. "Pending" criteria (no evaluation row) must be clearly badged and sortable to the top of the table.
+
+**Test**: T-W14-UX-009
+
+---
+
+### TR-098: Dashboard Metrics Query and Create-Report Gate (GAP-W10)
+
+**Derives From**: FR-098
+**Priority**: P0
+
+Backend aggregation and gate query requirements:
+
+1. Dashboard metrics query: aggregate counts from `criteria` with LEFT JOIN on `criteria_evaluations` — compute Total Criteria, Submitted (has evaluation row), Outstanding (no evaluation row and `excluded = false`), Excluded.
+2. Overall Maturity Rating: computed from `aggregate_scores` table (see TR-101) using `scoring_rules.aggregation_method`.
+3. Maturity Distribution: COUNT of criteria grouped by `confirmed_level` — returned as array for chart rendering.
+4. "Create Report" gate query: `SELECT COUNT(*) FROM criteria WHERE audit_id = $1 AND excluded = false AND id NOT IN (SELECT criteria_id FROM criteria_evaluations WHERE status IN ('confirmed','overridden'))` — must return 0 to activate the button.
+5. React hook `useDashboardMetrics(auditId)`: provides all metrics; subscribes to Realtime for live updates.
+
+**Constraints**:
+1. Dashboard must use a single aggregate query (not N+1 queries per domain) for performance.
+2. Gate query result must be cached client-side but refreshed on `criteria_evaluations` update events.
+3. Drill-down navigation (click domain → MPS view) must be implemented as route-based navigation, not modal overlays.
+
+**Test**: T-W14-UX-010
+
+---
+
+### TR-099: Report Generation Endpoint, PDF Export, and audit_reports Table (GAP-W11)
+
+**Derives From**: FR-099
+**Priority**: P0
+
+Report generation technical requirements:
+
+1. `POST /ai/generate-report` endpoint: accepts `{ audit_id }`, fetches all non-excluded confirmed/overridden evaluations, constructs structured report JSON via AI model, returns report HTML.
+2. AI model: GPT-4 Turbo (report writer agent) via AI Gateway (TR-040).
+3. PDF generation: server-side Supabase Edge Function `generate-pdf` using Puppeteer or wkhtmltopdf (decision: server-side preferred to avoid large client-side bundles).
+4. `public.audit_reports` table: `id UUID PK`, `audit_id UUID REFERENCES audits(id)`, `organisation_id UUID`, `generated_at TIMESTAMPTZ DEFAULT now()`, `generated_by UUID REFERENCES profiles(id)`, `storage_path TEXT NOT NULL`, `status VARCHAR(20) DEFAULT 'final'`.
+5. Supabase Storage bucket `reports`: org-isolated path `{organisation_id}/{audit_id}/{uuid}.pdf`.
+6. RLS on `audit_reports`: SELECT for Lead Auditor of the audit; INSERT by the generating user (or service role); no UPDATE or DELETE by application users.
+
+**Constraints**:
+1. Report generation is a long-running operation (>5s) — must use async pattern with status polling or Supabase Realtime event on `audit_reports` insert.
+2. `scoring_rules` and `aggregate_scores` must be readable at report time (RLS must allow SELECT for Lead Auditor).
+3. PDF download link must be a signed URL (time-limited) from Supabase Storage — not a public URL.
+
+**Migration file**: New migration for `audit_reports` table + `reports` storage bucket policy.
+**Test**: T-W14-UX-011
+
+---
+
+### TR-100: Level Descriptor Tables and Aggregation Wiring (GAP-W12)
+
+**Derives From**: FR-100
+**Priority**: P1
+
+New descriptor tables required:
+
+1. `public.criteria_level_descriptors` table: `id UUID PK`, `criteria_id UUID REFERENCES criteria(id)`, `level` (ENUM: Basic/Reactive/Compliant/Proactive/Resilient), `descriptor_text TEXT NOT NULL`, UNIQUE constraint on `(criteria_id, level)`.
+2. `public.mps_level_descriptors` table: same structure with `mps_id UUID REFERENCES mps(id)`.
+3. `public.domain_level_descriptors` table: same structure with `domain_id UUID REFERENCES domains(id)`.
+4. Descriptor population: AI criteria parsing endpoint (TR-037) MUST generate and INSERT descriptors for all 5 levels for each criteria/MPS/domain at parse time.
+5. React hook `useLevelDescriptor(level, criteriaId|mpsId|domainId)`: queries the appropriate descriptor table and returns descriptor text for the current confirmed level.
+6. RLS: SELECT for org members (read-only for application users); INSERT by parsing service role only.
+
+**Constraints**:
+1. Descriptor tables are append-only after initial population — no UPDATE or DELETE by application users.
+2. MPS and Domain descriptors are derived by the AI from the aggregate level (not per-level pre-generation) — OR the AI can pre-generate all 5 levels; implementation decision for the architecture document.
+3. Descriptor text must be non-empty (NOT NULL + CHECK `length(descriptor_text) > 0`).
+
+**Migration file**: New migrations for all three descriptor tables.
+**Test**: T-W14-UX-012
+
+---
+
+### TR-101: Maturity Levels, Scoring Rules, and Aggregate Scores Tables (GAP-W13)
+
+**Derives From**: FR-101
+**Priority**: P0
+
+Scoring infrastructure tables:
+
+1. `public.maturity_levels` table: `id UUID PK`, `name VARCHAR(20) UNIQUE NOT NULL` (values: Basic, Reactive, Compliant, Proactive, Resilient), `numeric_value INTEGER UNIQUE NOT NULL CHECK (numeric_value BETWEEN 1 AND 5)`, `colour_hex CHAR(7)`. Seeded via migration with all 5 rows.
+2. `public.scoring_rules` table: `id UUID PK`, `organisation_id UUID REFERENCES organisations(id) NULL` (NULL = global default), `aggregation_method VARCHAR(20) NOT NULL CHECK ('weighted_average','minimum','majority')`, `weight_criteria NUMERIC(5,4) DEFAULT 1.0`, `weight_mps NUMERIC(5,4) DEFAULT 1.0`, `weight_domain NUMERIC(5,4) DEFAULT 1.0`. Seeded with one global default row (`organisation_id = NULL, aggregation_method = 'weighted_average'`).
+3. `public.aggregate_scores` table: `id UUID PK`, `audit_id UUID REFERENCES audits(id)`, `level_type VARCHAR(20) CHECK ('criteria','mps','domain','audit')`, `scope_id UUID NOT NULL`, `computed_level VARCHAR(20)`, `numeric_score NUMERIC(5,2)`, `computed_at TIMESTAMPTZ DEFAULT now()`, UNIQUE constraint on `(audit_id, level_type, scope_id)`.
+4. Score computation: a Supabase Edge Function or API endpoint `compute-scores(audit_id)` reads `scoring_rules` (org-specific first, falling back to global), applies the method over the hierarchy, and UPSERTS `aggregate_scores` rows.
+5. RLS: `maturity_levels` and `scoring_rules` — SELECT for all authenticated users; INSERT/UPDATE by service role only. `aggregate_scores` — SELECT for org members of the audit; INSERT/UPDATE by the compute function (service role).
+
+**Constraints**:
+1. `maturity_levels` seed data MUST be in migration SQL — not inserted by application code at runtime.
+2. `scoring_rules` global default MUST be present before any scoring call — enforced by the seed migration.
+3. Frontend must NOT hardcode `{ 'Basic': 1, 'Compliant': 3, ... }` — always read from `maturity_levels` table.
+
+**Migration file**: New migration for all three tables + seed data.
+**Test**: T-W14-UX-013
+
+---
+
+### TR-102: Responsibility Cascade — View/Hook and Assignment Tables (GAP-W14)
+
+**Derives From**: FR-102
+**Priority**: P0
+
+Technical implementation of the responsibility cascade:
+
+1. `public.domain_assignments` and `public.mps_assignments` and `public.criteria_assignments` tables (shared with TR-090/TR-092 — confirm existence before creating).
+2. PostgreSQL view or computed column `responsible_user_id` on each level:
+   - For domains: `COALESCE((SELECT user_id FROM domain_assignments WHERE domain_id = d.id LIMIT 1), (SELECT created_by FROM audits WHERE id = d.audit_id))`.
+   - For MPS: `COALESCE((SELECT user_id FROM mps_assignments WHERE mps_id = m.id LIMIT 1), domain_responsible_user_id)`.
+   - For criteria: `COALESCE((SELECT user_id FROM criteria_assignments WHERE criteria_id = c.id LIMIT 1), mps_responsible_user_id)`.
+3. React hook `useResponsibleUser(level: 'domain'|'mps'|'criteria', scopeId: string)`: calls the view/function and returns `{ userId, displayName, isCurrentUser }`.
+4. Each card renders "Responsible: You" if `isCurrentUser = true`, else the assignee's `profiles.display_name`.
+
+**Constraints**:
+1. Responsibility display MUST be available even before anyone is invited — defaults to Lead Auditor from the first card render.
+2. The cascade logic must not require a frontend loop — it must be resolvable in a single DB query per card.
+3. When a domain auditor is removed (future feature), the cascade must revert to Lead Auditor — implement as a view (not a denormalised column) to avoid stale data.
+
+**Migration file**: Cascade view/function added to migration file alongside assignment tables (see TR-090, TR-092).
+**Test**: T-W14-UX-014
+
+---
 
 *END OF TECHNICAL REQUIREMENTS SPECIFICATION*

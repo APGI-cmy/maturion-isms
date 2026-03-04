@@ -149,12 +149,26 @@ Tests must be RED before schema-builder migration lands, GREEN after:
 
 | PR # | Token | Date |
 |------|-------|------|
+| — | PENDING | — |
 | copilot/fix-organisation-name-type-mismatch | IAA-session-138-wave-bd022-bd017-20260304-PASS | 2026-03-04 |
 
 ---
 
 ## Wave Completion Gate
 
+- [ ] All tasks above show 🟢 DONE
+- [ ] All PRs have ASSURANCE-TOKEN
+- [ ] Session memory written
+- [ ] PREHANDOVER proof committed
+- [ ] CS2 notified for merge approval
+
+---
+
+<!-- original template content below -->
+# Wave Current Tasks — foreman-v2-agent (ORIGINAL TEMPLATE — DO NOT USE)
+
+**Wave**: Wave postbuild-fails-02 / MAT Supabase RLS Full Remediation
+**Session ID**: session-098
 - [x] All tasks above show 🟢 DONE
 - [x] IAA Pre-Brief exists at .agent-admin/assurance/iaa-prebrief-wave-bd022-bd017.md
 - [x] IAA assurance token received: IAA-session-138-wave-bd022-bd017-20260304-PASS

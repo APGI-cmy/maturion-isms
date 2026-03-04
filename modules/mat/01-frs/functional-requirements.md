@@ -3,9 +3,9 @@
 **Module**: MAT (Manual Audit Tool)
 **Artifact Type**: Functional Requirements Specification
 **Status**: COMPLETE
-**Version**: v1.8.0  
+**Version**: v1.9.0  
 **Owner**: Foreman (FM)  
-**Authority**: Derived from App Description v1.3 (modules/mat/00-app-description/app-description.md)
+**Authority**: Derived from App Description v1.3 (modules/mat/00-app-description/app-description.md); UX Workflow & Wiring Specification v1.0 (modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md)
 **Applies To**: MAT module within maturion-isms repository
 **Created**: 2026-02-13
 **Last Updated**: 2026-03-04
@@ -1724,5 +1724,378 @@ The following tables MUST have their RLS coverage verified and completed:
 **Status**: 🔴 RED — partial (SELECT-only) or missing policies on all four tables
 **Tests**: T-PBF2-005 (criteria), T-PBF2-006 (domains), T-PBF2-007 (organisations), T-PBF2-008 (mini_performance_standards)
 **Acceptance**: Organisation, domain, and criteria management operations succeed for authorised users; mini_performance_standards are read-only for all application-level users.
+
+---
+
+## 22. UX Workflow Gap Remediation (GAP-W01–GAP-W14)
+
+**Source authority**: `modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md` v1.0 (CS2 direct, 2026-03-04)
+**Added**: 2026-03-04
+**Governance**: Issue #909 — Governance Remediation: FRS, TRS, and Red QA Suite for Unaddressed UX Workflow Gaps
+**Status**: 🔴 RED SUITE — All 14 requirements below are UNIMPLEMENTED; new tables and endpoints not yet created
+
+### FR-089: Sign-Up, Onboarding, and First-Use Flow (GAP-W01)
+
+**Priority**: P0
+**Source**: MAT_UX_WORKFLOW_AND_WIRING.md §STEP 0 (GAP-W01)
+**Status**: 🔴 RED — onboarding wizard with org creation not implemented end-to-end
+
+The system MUST provide a complete sign-up and onboarding flow that takes a brand-new user from first registration through to a usable audit-ready workspace. The flow MUST include:
+
+1. Sign-up screen (email + password) posting to Supabase Auth.
+2. Onboarding wizard (2 steps): full name, then organisation creation.
+3. `INSERT INTO public.organisations` returning the new `id`.
+4. `UPSERT INTO public.profiles` with `organisation_id`, `full_name`, `display_name`, `email`, `role`.
+5. `OnboardingGuard` blocking all app routes until `profile.organisation_id` is non-null.
+
+**Acceptance Criteria**:
+1. A new user can sign up, complete onboarding, and land on the dashboard without a dead end.
+2. If `profile.organisation_id` is null, all app routes redirect to `/onboarding`.
+3. Organisation creation succeeds and is persisted in `public.organisations`.
+4. Profile is upserted with correct `organisation_id` after onboarding completion.
+5. Onboarding wizard is skipped when the user already has an `organisation_id`.
+
+**Test**: T-W14-UX-001
+**Gap ref**: GAP-W01
+
+---
+
+### FR-090: Invite Auditor UX (GAP-W02)
+
+**Priority**: P0
+**Source**: MAT_UX_WORKFLOW_AND_WIRING.md §STEP 4.1 (GAP-W02)
+**Status**: 🔴 RED — invite modal, email flow, acceptance → scoped access not implemented
+
+The system MUST support per-domain and per-MPS auditor invitation via a modal, including email delivery, invite token acceptance, and scoped access provisioning.
+
+1. "Invite Auditor" button on Domain and MPS cards opens an invite modal (name, email, scope shown).
+2. On submit: `INSERT INTO public.audit_invitations` with invitation token (UUID).
+3. Email dispatched via `send-invitation` Edge Function containing a `https://app.maturion.ai/accept-invite?token={token}` link.
+4. Invitee accepts → creates account (or logs in) → profile assigned `role = 'domain_auditor'` or `'mps_auditor'` under the inviting org.
+5. `domain_assignments` or `mps_assignments` row created; `audit_invitations.status` updated to `'accepted'`.
+6. Invitee sees only their assigned scope in the app.
+
+**Acceptance Criteria**:
+1. Invite modal submits correctly, creating an `audit_invitations` row with `status='pending'`.
+2. Email with invite token link is sent (edge function called).
+3. Accept-invite flow creates the user account scoped to the inviting org.
+4. Domain or MPS assignment row is created on acceptance.
+5. Invited auditor cannot see domains or MPS outside their assigned scope.
+
+**Test**: T-W14-UX-002
+**Gap ref**: GAP-W02
+
+---
+
+### FR-091: Toggle Exclude Behaviour with Cascade (GAP-W03)
+
+**Priority**: P0
+**Source**: MAT_UX_WORKFLOW_AND_WIRING.md §3.1, §5 (GAP-W03)
+**Status**: 🔴 RED — exclusion toggle, cascade propagation, and scoring exclusion not implemented
+
+The system MUST support toggling a Domain, MPS, or Criteria to excluded status, with automatic cascade propagation and exclusion from scoring and reporting.
+
+1. Toggle on Domain card sets `domains.excluded = true` AND all child MPS and Criteria inherit `excluded = true`.
+2. Toggle on MPS card sets `mps.excluded = true` AND all child Criteria inherit `excluded = true`.
+3. Toggle on Criteria card sets `criteria.excluded = true` only.
+4. Excluded items are visually greyed out in the UI.
+5. Excluded items are excluded from aggregate scoring and from the final report.
+6. "Create Report" gating condition (`§8`) ignores excluded criteria.
+7. Exclusion is reversible; un-toggling restores prior state.
+
+**Acceptance Criteria**:
+1. Toggling a Domain excluded sets all child MPS and Criteria to `excluded = true` in DB.
+2. Excluded items render with greyed visual treatment in the UI.
+3. Scoring queries exclude items where `excluded = true`.
+4. "Create Report" button gate evaluates only `excluded = false` criteria.
+5. Cascaded exclusion can be reversed individually or by un-toggling the parent.
+
+**Test**: T-W14-UX-003
+**Gap ref**: GAP-W03
+
+---
+
+### FR-092: Invite Evidence Submitter (Criteria-Level) (GAP-W04)
+
+**Priority**: P1
+**Source**: MAT_UX_WORKFLOW_AND_WIRING.md §STEP 4.2 (GAP-W04)
+**Status**: 🔴 RED — criteria-scoped invite role not implemented
+
+The system MUST support inviting an Evidence Submitter — a distinct lower-access role — scoped to a single Criteria item.
+
+1. "Invite Evidence Submitter" button on Criteria card opens invite modal.
+2. On accept: profile assigned `role = 'evidence_submitter'`; `criteria_assignments` row created.
+3. Evidence Submitter can see and interact with ONLY the specific criteria they were invited for.
+4. Evidence Submitter cannot see other criteria, MPS, domains, or audit settings.
+
+**Acceptance Criteria**:
+1. Invite modal creates `audit_invitations` row with `scope_type = 'criteria'`.
+2. Accepted invite creates `criteria_assignments` row linking invitee to the criteria.
+3. Evidence Submitter's authenticated view is restricted to their assigned criteria only.
+4. RLS on `criteria_evaluations` and `evidence` enforces criteria-scoped access.
+
+**Test**: T-W14-UX-004
+**Gap ref**: GAP-W04
+
+---
+
+### FR-093: Evidence Card Interaction Model (GAP-W05)
+
+**Priority**: P0
+**Source**: MAT_UX_WORKFLOW_AND_WIRING.md §STEP 5 (GAP-W05)
+**Status**: 🔴 RED — multi-type uploader state machine, click-and-hold voice/video, edit/remove after upload not implemented
+
+The system MUST provide a complete Evidence Upload Panel with the following capabilities:
+
+1. Six evidence type inputs: text findings, file upload, voice note (click-and-hold), photo, video (click-and-hold or toggle), interview transcript.
+2. Click-and-hold behaviour: `mousedown`/`touchstart` starts MediaRecorder; `mouseup`/`touchend` stops and stages the audio/video file.
+3. Each uploaded item appears as a tile with preview, Remove, and Replace buttons.
+4. "Add More" appends additional evidence items.
+5. Findings text area auto-saves (debounced update to `evidence.findings_text`).
+6. "Submit for Evaluation" button disabled until at least one evidence item is present OR `findings_text` is non-empty.
+
+**Acceptance Criteria**:
+1. All 6 evidence types can be captured and uploaded to `evidence-files` storage bucket.
+2. Click-and-hold voice recording produces a storable audio artifact.
+3. Uploaded evidence tiles show preview, Remove, and Replace controls.
+4. Auto-save triggers a debounced UPDATE to `evidence.findings_text`.
+5. Submit button is disabled when evidence panel has no content.
+
+**Test**: T-W14-UX-005
+**Gap ref**: GAP-W05
+
+---
+
+### FR-094: Submit Button as AI Evaluation Trigger (GAP-W06)
+
+**Priority**: P0
+**Source**: MAT_UX_WORKFLOW_AND_WIRING.md §STEP 6 (GAP-W06)
+**Status**: 🔴 RED — AI evaluation trigger, criteria card update, human confirmation flow not implemented
+
+The system MUST trigger the full AI evaluation pipeline when the user clicks "Submit for Evaluation" on a Criteria card.
+
+1. On confirm: `POST /ai/evaluate-criteria` called with `criteria_id` and `audit_id`.
+2. AI evaluates all non-deleted evidence for the criteria, producing: `proposed_level`, `confidence_score`, `rationale`, `findings_summary`, `next_level_guidance`, `next_plus_one_taster`.
+3. `INSERT INTO public.criteria_evaluations` with AI output and `status = 'pending_review'`.
+4. Criteria card updates to show the maturity level badge, findings summary, and improvement guidance.
+5. "Confirm Rating" button locks `confirmed_level`; "Override" opens override form logged to `evaluation_overrides`.
+
+**Acceptance Criteria**:
+1. Submit triggers AI evaluation endpoint call.
+2. `criteria_evaluations` row is created with all required AI output fields populated.
+3. Criteria card updates with maturity level badge, summary, and guidance after evaluation.
+4. "Confirm Rating" sets `criteria_evaluations.status = 'confirmed'` and `confirmed_level`.
+5. Override form creates `evaluation_overrides` row with justification.
+
+**Test**: T-W14-UX-006
+**Gap ref**: GAP-W06
+
+---
+
+### FR-095: AI Next-Level Explanation and Taster Surface (GAP-W07)
+
+**Priority**: P1
+**Source**: MAT_UX_WORKFLOW_AND_WIRING.md §STEP 6 (GAP-W07)
+**Status**: 🔴 RED — next-level guidance and level+2 taster UI surface not implemented on criteria card
+
+The system MUST display, on each criteria card post-evaluation:
+
+1. The current rating (level label + colour badge).
+2. "What is needed to reach the next level" — detailed, actionable guidance from `criteria_evaluations.next_level_guidance`.
+3. "A taster of what the level after next looks like" — brief preview from `criteria_evaluations.next_plus_one_taster`.
+4. An "Explore further levels" link that opens the AI Chat UI for the criteria (see FR-096).
+
+**Acceptance Criteria**:
+1. After AI evaluation, criteria card shows current rating, `next_level_guidance`, and `next_plus_one_taster`.
+2. "Explore further levels" link is visible and opens the AI chat panel.
+3. Content is sourced from `criteria_evaluations` DB row — not hardcoded.
+4. Display is absent (not rendered) before evaluation is completed.
+
+**Test**: T-W14-UX-007
+**Gap ref**: GAP-W07
+
+---
+
+### FR-096: AI Chat UI Entry Point from Criteria Card (GAP-W08)
+
+**Priority**: P1
+**Source**: MAT_UX_WORKFLOW_AND_WIRING.md §6.1 (GAP-W08)
+**Status**: 🔴 RED — AI chat panel not wired to criteria card; context injection not implemented
+
+The system MUST provide an "Explore further levels" link on each criteria card (post-evaluation) that opens the embedded AI assistant panel pre-loaded with the criteria context.
+
+1. Clicking "Explore further levels" opens the embedded AI chat panel (LL-031 / FR-072).
+2. The panel is pre-loaded with: `criteria_name`, `current_level`, `next_level_guidance`, `audit_context`.
+3. The user can ask questions about reaching higher maturity levels.
+4. Chat history is session-only (not persisted) unless explicitly saved.
+
+**Acceptance Criteria**:
+1. Clicking the link opens the AI chat panel.
+2. Chat panel receives and displays the injected criteria context.
+3. User can submit questions and receive AI responses within the panel.
+4. Closing the panel clears the session chat history.
+
+**Test**: T-W14-UX-008
+**Gap ref**: GAP-W08
+
+---
+
+### FR-097: Audit Results Table (GAP-W09)
+
+**Priority**: P0
+**Source**: MAT_UX_WORKFLOW_AND_WIRING.md §STEP 7 (GAP-W09)
+**Status**: 🔴 RED — post-submission results table not implemented
+
+The system MUST display an Audit Results table on the Audit Detail → Results tab (or automatically after all criteria are submitted) showing one row per criteria.
+
+Table columns: Domain | MPS | Criteria | Findings Summary | Rating | Recommendations.
+
+1. Table is sortable by Domain, MPS, and Rating.
+2. Expandable rows show full rationale, evidence links, improvement detail, and `next_plus_one_taster`.
+3. Excluded criteria are greyed and labelled "Excluded".
+4. Criteria not yet submitted show status badge "Pending".
+5. Access is scoped: Lead Auditor sees all rows; Domain/MPS Auditors see only their scope.
+
+**Acceptance Criteria**:
+1. Results tab shows a table with the specified columns populated from `criteria_evaluations`.
+2. Rows can be sorted by Domain, MPS, and Rating.
+3. Expanding a row reveals full rationale and evidence references.
+4. Excluded criteria render with grey treatment and "Excluded" label.
+5. RLS scoping is enforced: domain auditors see only their assigned domain rows.
+
+**Test**: T-W14-UX-009
+**Gap ref**: GAP-W09
+
+---
+
+### FR-098: Dashboard Outstanding Work Drill-Down and Report Gating (GAP-W10)
+
+**Priority**: P0
+**Source**: MAT_UX_WORKFLOW_AND_WIRING.md §STEP 8 (GAP-W10)
+**Status**: 🔴 RED — dashboard drill-down and "Create Report" gating condition not implemented
+
+The system MUST provide a Lead Auditor dashboard with metrics, drill-down navigation, and a conditional "Create Report" button.
+
+1. Dashboard metrics: Total Domains, Total MPS, Total Criteria, Criteria Submitted/Outstanding/Excluded counts, Overall Maturity Rating, Maturity Distribution chart.
+2. Click Domain → MPS-level breakdown; click MPS → Criteria-level breakdown; click outstanding Criteria → navigate to that criteria card.
+3. "Create Report" button is **disabled** until ALL non-excluded criteria have `criteria_evaluations.status IN ('confirmed', 'overridden')`.
+4. When the gating condition is met, "Create Report" becomes active and green.
+
+**Acceptance Criteria**:
+1. Dashboard displays all six metrics correctly computed from DB.
+2. Clicking a domain expands an MPS-level breakdown; clicking an MPS expands criteria-level.
+3. Clicking an outstanding criteria navigates to the criteria card.
+4. "Create Report" button is disabled when any non-excluded criteria lacks a confirmed/overridden evaluation.
+5. "Create Report" becomes active once gating condition is satisfied.
+
+**Test**: T-W14-UX-010
+**Gap ref**: GAP-W10
+
+---
+
+### FR-099: "Create Report" Button as Final AI Trigger (GAP-W11)
+
+**Priority**: P0
+**Source**: MAT_UX_WORKFLOW_AND_WIRING.md §STEP 10 (GAP-W11)
+**Status**: 🔴 RED — report generation trigger, PDF export, and audit_reports storage not implemented
+
+The system MUST generate a complete audit report when the Lead Auditor clicks the "Create Report" button (active only when dashboard gating condition is met per FR-098).
+
+1. On click: `POST /ai/generate-report` with `audit_id`; AI retrieves all confirmed/overridden evaluations.
+2. Report content: Executive Summary, per-Domain/MPS/Criteria sections with findings, ratings, descriptors, evidence references, recommendations.
+3. Report rendered in-app as an HTML preview.
+4. Export: "Download PDF" button (server-side or client-side PDF generation).
+5. `INSERT INTO public.audit_reports` with `storage_path` pointing to file in `reports` bucket.
+
+**Acceptance Criteria**:
+1. Clicking "Create Report" triggers the AI report generation endpoint.
+2. Generated report contains all non-excluded domains, MPS, criteria with correct data.
+3. In-app HTML preview renders correctly.
+4. "Download PDF" produces a downloadable PDF artifact.
+5. `audit_reports` row is created with correct `audit_id`, `generated_by`, and `storage_path`.
+
+**Test**: T-W14-UX-011
+**Gap ref**: GAP-W11
+
+---
+
+### FR-100: Level Descriptor Cards at Domain, MPS, and Criteria Level (GAP-W12)
+
+**Priority**: P1
+**Source**: MAT_UX_WORKFLOW_AND_WIRING.md §STEP 9 (GAP-W12)
+**Status**: 🔴 RED — level descriptor tables not created; card-level descriptor display not implemented
+
+The system MUST display a level descriptor on every Domain, MPS, and Criteria card, sourced from dedicated descriptor tables.
+
+1. Criteria cards show the descriptor for the current confirmed maturity level from `criteria_level_descriptors`.
+2. MPS cards show an aggregated descriptor from `mps_level_descriptors` (aggregated from underlying criteria).
+3. Domain cards show an aggregated descriptor from `domain_level_descriptors` (aggregated from underlying MPS).
+4. Descriptor tables are pre-populated by the AI during the criteria parsing step.
+5. Descriptors are absent (not rendered) until the criteria structure is approved.
+
+**Acceptance Criteria**:
+1. `criteria_level_descriptors`, `mps_level_descriptors`, and `domain_level_descriptors` tables exist with correct schema.
+2. Criteria card renders the descriptor text for the current confirmed level.
+3. MPS and Domain cards render aggregated descriptors at the correct aggregate level.
+4. Descriptors are populated during AI criteria parsing (Step 2) and are read-only thereafter.
+5. No descriptor is shown on cards before the criteria structure is approved.
+
+**Test**: T-W14-UX-012
+**Gap ref**: GAP-W12
+
+---
+
+### FR-101: Scoring and Rating Method Wired Through DB (GAP-W13)
+
+**Priority**: P0
+**Source**: MAT_UX_WORKFLOW_AND_WIRING.md §4 (GAP-W13)
+**Status**: 🔴 RED — scoring rules table, maturity_levels table, and aggregate_scores table not created; scoring is not wired to UI
+
+The system MUST store and compute all maturity scoring through database-defined rules, with no hardcoded scoring logic in the frontend.
+
+1. `public.maturity_levels` table: `id`, `name` (Basic/Reactive/Compliant/Proactive/Resilient), `numeric_value` (1–5), `colour_hex`.
+2. `public.scoring_rules` table: `id`, `organisation_id` (nullable = global), `aggregation_method` (enum: `weighted_average`/`minimum`/`majority`), `weight_criteria`, `weight_mps`, `weight_domain`.
+3. Default global rule: `weighted_average` with equal weights — seeded in migrations.
+4. `public.aggregate_scores` table stores computed ratings at all levels per `(audit_id, level_type, scope_id)`.
+5. MPS, Domain, and overall Audit scores are computed by applying `scoring_rules.aggregation_method` up the hierarchy.
+6. Computed scores are readable at report generation time.
+
+**Acceptance Criteria**:
+1. `maturity_levels`, `scoring_rules`, and `aggregate_scores` tables exist with correct schema.
+2. A default global `scoring_rules` row is seeded (aggregation_method = 'weighted_average').
+3. MPS score is computed from underlying criteria ratings using the DB-defined method.
+4. Domain score is computed from underlying MPS scores.
+5. Scores are readable from `aggregate_scores` at report generation without a frontend computation.
+
+**Test**: T-W14-UX-013
+**Gap ref**: GAP-W13
+
+---
+
+### FR-102: Responsibility Cascade Rule Wired in DB and UI (GAP-W14)
+
+**Priority**: P0
+**Source**: MAT_UX_WORKFLOW_AND_WIRING.md §3 (GAP-W14)
+**Status**: 🔴 RED — responsibility cascade logic not wired in DB or UI; assignment fallback to Lead Auditor not enforced
+
+The system MUST enforce the responsibility cascade rule at all hierarchy levels and display the responsible person name on each card.
+
+1. Domain responsibility: if `domain_assignments` has a row for the domain → that user; else → `audit.created_by` (Lead Auditor).
+2. MPS responsibility: if `mps_assignments` has a row → that user; else → domain responsible user.
+3. Criteria responsibility: if `criteria_assignments` has a row → that user; else → MPS responsible user.
+4. Each card MUST display the responsible person's name (e.g. "Responsible: You" or the assignee's display name).
+5. DB MUST support a computed or view-based `responsible_user_id` for each level, resolved by cascading the assignments tables.
+
+**Acceptance Criteria**:
+1. Domain card shows "Responsible: [Lead Auditor name]" when no domain auditor is assigned.
+2. Domain card shows assigned auditor name when `domain_assignments` row exists.
+3. MPS card cascades correctly: falls back to domain auditor then Lead Auditor.
+4. Criteria card cascades correctly: falls back through MPS → domain → Lead Auditor.
+5. A `useResponsibleUser(level, scope_id)` hook (or equivalent) resolves responsibility without hardcoded fallback in the component.
+
+**Test**: T-W14-UX-014
+**Gap ref**: GAP-W14
+
+---
 
 *END OF FUNCTIONAL REQUIREMENTS SPECIFICATION*
