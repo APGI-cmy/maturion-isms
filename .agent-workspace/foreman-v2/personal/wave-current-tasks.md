@@ -79,3 +79,25 @@ T-AFS-COL-001 to T-AFS-COL-005 satisfy this requirement.
       `audit_period_end: input.audit_period_end || null`
   (c) Update AuditList.tsx to display audit.organisation_name below audit.title
   All T-AFS-COL-001 to T-AFS-COL-005 must be GREEN after this fix.
+
+---
+
+## IAA Pre-Brief Finding — FOREMAN RESPONSE
+
+IAA Pre-Brief flagged `organisation_name` and `facility_location` as missing from migrations.
+
+**FOREMAN CORRECTION (verified 2026-03-04):**
+Both columns ARE present in migration `20260304000001_audits_add_criteria_approved.sql`:
+- `ALTER TABLE public.audits ADD COLUMN IF NOT EXISTS organisation_name TEXT;` — line 7
+- `ALTER TABLE public.audits ADD COLUMN IF NOT EXISTS facility_location TEXT;` — line 10
+
+IAA inspection missed this file (checked only `20260302000000` and `20260303000000`).
+
+**Impact on test strategy:**
+- T-AFS-COL-001 to T-AFS-COL-004: Will be GREEN (migrations exist) — these act as drift guards
+- T-AFS-COL-005: Will be RED (hook uses `description` workaround) — the primary QA-to-Red gate
+- TASK-AFS-002 (ui-builder): No migration needed — all 4 columns already exist in DB. Fix scope is hook + interface + AuditList only.
+
+The `allMigrationSql()` helper in column-mapping tests reads ALL .sql files — all T-AFS-COL tests will correctly scan all migration files.
+
+**No schema-builder task required for this wave.**
