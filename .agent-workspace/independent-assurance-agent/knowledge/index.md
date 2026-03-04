@@ -2,8 +2,8 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 2.2.0
-**Last Updated**: 2026-03-03
+**Knowledge Version**: 2.3.0
+**Last Updated**: 2026-03-04
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -13,7 +13,7 @@
 | File | Purpose | Version | Status |
 |------|---------|---------|--------|
 | `index.md` (this file) | Knowledge entry point and version reference | 2.2.0 | PRESENT |
-| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 2.2.0 | PRESENT — Rules A-001 through A-029 active (A-029: PREHANDOVER proof immutability §4.3b — supersedes A-025 PENDING requirement) |
+| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 2.3.0 | PRESENT — Rules A-001 through A-030 active (A-030: CORE-019 re-invocation carve-out — correction addendum is the resolution path when PREHANDOVER is A-029-immutable) |
 | `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.6.0 | ACTIVE — CORE-001 to CORE-022; CORE-016 PENDING carve-out updated per A-029 |
 | `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.1.0 | ACTIVE — KNOWLEDGE_GOVERNANCE trigger category added |
 | `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE) | 2.3.0 | ACTIVE — OVL-KG-001 through OVL-KG-005 added; OVL-AM-008 (end-to-end wiring verification) added |
@@ -72,6 +72,9 @@
 | A-025 | Ceremony artifacts must use PENDING until Post-ASSURANCE-TOKEN ceremony — no pre-fill of anticipated -PASS tokens | ACTIVE |
 | A-026 | `SCOPE_DECLARATION.md` must match `git diff --name-only origin/main...HEAD` exactly before IAA invocation — stale = BL-027 merge gate parity failure | ACTIVE |
 | A-027 | Third-consecutive A-021 failure on same PR/branch = systemic workflow gap — producing agent must add Pre-IAA Commit Gate to PREHANDOVER template with git status + git log evidence | ACTIVE |
+| A-028 | `SCOPE_DECLARATION.md` format compliance — list format required, prior-wave entries must be trimmed | ACTIVE |
+| A-029 | PREHANDOVER proof immutability §4.3b — pre-populate expected reference token at commit time; IAA writes dedicated token file post-verdict; PREHANDOVER is READ-ONLY post-commit | ACTIVE |
+| A-030 | CORE-019 re-invocation carve-out — correction addendum (committed) documents prior rejection verdict; satisfies CORE-019 for immutable-PREHANDOVER re-invocation scenarios | ACTIVE |
 
 ---
 
@@ -124,6 +127,7 @@ that produced the work under review. Every invocation is logged in session memor
 | 2.0.0 | 2026-03-03 | FAIL-ONLY-ONCE.md v2.0.0 — A-027 (third-consecutive A-021 = systemic workflow gap) added from session-119 (Wave 14 Addendum A); FAIL-ONLY-ONCE.md header corrected from 1.8.0 to 2.0.0 (header/index version mismatch resolved) |
 | 2.1.0 | 2026-03-03 | FAIL-ONLY-ONCE.md v2.1.0 — A-028 (SCOPE_DECLARATION format compliance — list format required, prior-wave entries must be trimmed) added from session-120 (Wave 14 Addendum A fourth invocation) |
 | 2.2.0 | 2026-03-04 | FAIL-ONLY-ONCE.md v2.2.0 (A-029 ARTIFACT-IMMUTABILITY §4.3b); iaa-core-invariants-checklist.md v2.6.0 (CORE-016 PENDING carve-out updated per A-029) |
+| 2.3.0 | 2026-03-04 | FAIL-ONLY-ONCE.md v2.3.0 (A-030 CORE-019 re-invocation carve-out — correction addendum path for immutable-PREHANDOVER re-invocation scenarios); index updated to 2.3.0 (session-098b) |
 
 ---
 

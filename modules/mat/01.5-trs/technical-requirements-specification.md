@@ -3,12 +3,12 @@
 **Module**: MAT (Manual Audit Tool)
 **Artifact Type**: Technical Requirements Specification
 **Status**: COMPLETE
-**Version**: v1.5.0
-**Owner**: Foreman (FM)
-**Authority**: Derived from FRS v1.6.0 (`modules/mat/01-frs/functional-requirements.md`)
+**Version**: v1.7.0  
+**Owner**: Foreman (FM)  
+**Authority**: Derived from FRS v1.8.0 (`modules/mat/01-frs/functional-requirements.md`)
 **Applies To**: MAT module within maturion-isms repository
 **Created**: 2026-02-13
-**Last Updated**: 2026-02-27
+**Last Updated**: 2026-03-04
 
 ---
 
@@ -1521,6 +1521,7 @@ This TRS is derived from the MAT FRS v1.5.0 (`modules/mat/01-frs/functional-requ
 **Traceability**: Complete FRS-to-TRS mapping available in `frs-to-trs-traceability.md`.
 
 **Change Log**:
+- v1.7.0 (2026-03-04): Added TR-084 through TR-088 (Wave postbuild-fails-02 — Full RLS Remediation, GAP-006–GAP-013). All 5 requirements marked 🔴 NEEDS REMEDIATION. TRS extended to 88 requirements.
 - v1.6.0 (2026-03-04): Added TR-082, TR-083 (Wave postbuild-fails-01 — RLS Fix). TRS extended to 83 requirements.
 - v1.5.0 (2026-03-03): Added TR-078 through TR-081 (Wave 14 Addendum A — Column Mapping Remediation INC-W14-COL-MAPPING-001). TRS extended to 81 requirements.
 - v1.4.0 (2026-02-27): Added TR-073 through TR-077 (AI Gateway Persona Loading, Session Memory, Persistent Memory Baseline, Health Check, Memory Runbook) per FRS v1.5.0 additions FR-073–FR-077. TRS extended to 77 requirements. Architecture freeze effective on merge per CS2 directive.
@@ -1588,5 +1589,72 @@ RLS policies MUST be added:
 - `audits_insert_authenticated`: `FOR INSERT WITH CHECK (auth.role() = 'authenticated' AND auth.uid() = created_by)`
 All policies MUST use `IF NOT EXISTS` guards for idempotency.
 Migration file: `apps/maturion-maturity-legacy/supabase/migrations/20260304000003_fix_rls_policies_postbuild.sql`
+
+---
+
+## Wave postbuild-fails-02: Full RLS Remediation Technical Requirements (GAP-006 to GAP-013) 🔴 NEEDS REMEDIATION
+
+**Added**: v1.7.0 (2026-03-04) | **Authority**: CS2 (Johan Ras) | **Issue**: #897
+**Reference**: `modules/mat/03-implementation-plan/supabase-sync-audit-20260304.md` GAP-006–GAP-013
+**Status**: 🔴 RED SUITE — All requirements below are UNVERIFIED pending schema-builder migration delivery
+
+### TR-084: evidence table RLS policies (INSERT + UPDATE + DELETE) 🔴 NEEDS REMEDIATION
+
+RLS policies MUST be added to the `evidence` table:
+- `evidence_insert_own`: `FOR INSERT WITH CHECK (auth.uid() IS NOT NULL)` (authenticated users may upload evidence)
+- `evidence_update_own`: `FOR UPDATE USING (auth.uid() = created_by OR auth.uid() = uploaded_by)` (owner may update)
+- `evidence_delete_own`: `FOR DELETE USING (auth.uid() = created_by OR auth.uid() = uploaded_by)` (owner may delete)
+
+All three policies are required. DELETE policy is not optional (see IAA Pre-Brief OVL-AM-008).
+All policies MUST use `IF NOT EXISTS` or `DROP IF EXISTS` guards for idempotency.
+**Status**: 🔴 RED — GAP-010 open
+**Test**: T-PBF2-001
+**Migration file**: To be created in `apps/maturion-maturity-legacy/supabase/migrations/`
+
+### TR-085: scores table RLS policies (INSERT + UPDATE) 🔴 NEEDS REMEDIATION
+
+RLS policies MUST be added to the `scores` table:
+- `scores_insert_authenticated`: `FOR INSERT WITH CHECK (auth.uid() IS NOT NULL AND auth.uid() = auditor_id)` (auditor submitting scores)
+- `scores_update_authenticated`: `FOR UPDATE USING (auth.uid() = auditor_id)` (auditor updating their scores)
+
+All policies MUST use `IF NOT EXISTS` guards.
+**Status**: 🔴 RED — GAP-011 open
+**Test**: T-PBF2-002
+**Migration file**: To be created in `apps/maturion-maturity-legacy/supabase/migrations/`
+
+### TR-086: audit_scores table RLS policies (INSERT + UPDATE) 🔴 NEEDS REMEDIATION
+
+RLS policies MUST be added to the `audit_scores` table:
+- `audit_scores_insert_authenticated`: `FOR INSERT WITH CHECK (auth.uid() IS NOT NULL)`
+- `audit_scores_update_authenticated`: `FOR UPDATE USING (auth.uid() IS NOT NULL)`
+
+All policies MUST use `IF NOT EXISTS` guards.
+**Status**: 🔴 RED — GAP-013 open
+**Test**: T-PBF2-003
+**Migration file**: To be created in `apps/maturion-maturity-legacy/supabase/migrations/`
+
+### TR-087: organisation_settings table RLS policies (INSERT + UPDATE) 🔴 NEEDS REMEDIATION
+
+RLS policies MUST be added to the `organisation_settings` table:
+- `org_settings_insert_admin`: `FOR INSERT WITH CHECK (auth.uid() IS NOT NULL)` (restrict to org admin in application logic; minimal DB-level INSERT guard)
+- `org_settings_update_admin`: `FOR UPDATE USING (auth.uid() IS NOT NULL)`
+
+All policies MUST use `IF NOT EXISTS` guards.
+**Status**: 🔴 RED — GAP-012 open
+**Test**: T-PBF2-004
+**Migration file**: To be created in `apps/maturion-maturity-legacy/supabase/migrations/`
+
+### TR-088: organisations, domains, criteria, mini_performance_standards RLS policy completeness 🔴 NEEDS REMEDIATION
+
+RLS policies MUST be added or verified for:
+- `organisations`: INSERT policy `organisations_insert_authenticated` + UPDATE policy `organisations_update_own` (scoped to org owner)
+- `domains`: INSERT policy `domains_insert_admin` + UPDATE policy `domains_update_admin` (admin-scoped domain management)
+- `criteria`: INSERT policy `criteria_insert_admin` + UPDATE policy `criteria_update_admin` (admin-scoped criteria management)
+- `mini_performance_standards`: MUST NOT have INSERT or UPDATE policies for application-level users — read-only guard: only service-role key may write (enforce via RLS denial + explicit documentation)
+
+All policies MUST use `IF NOT EXISTS` guards.
+**Status**: 🔴 RED — GAP-006 (organisations), GAP-007 (domains), GAP-008 (mini_performance_standards), GAP-009 (criteria) open
+**Tests**: T-PBF2-005 (criteria), T-PBF2-006 (domains), T-PBF2-007 (organisations), T-PBF2-008 (mini_performance_standards)
+**Migration file**: To be created in `apps/maturion-maturity-legacy/supabase/migrations/`
 
 *END OF TECHNICAL REQUIREMENTS SPECIFICATION*

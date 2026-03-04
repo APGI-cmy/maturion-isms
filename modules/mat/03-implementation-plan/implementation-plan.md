@@ -1,11 +1,11 @@
 # MAT — Implementation Plan
 
 **Module**: MAT (Manual Audit Tool)  
-**Version**: v2.3.0  
+**Version**: v2.4.0  
 **Status**: APPROVED  
 **Owner**: Foreman (FM)  
 **Created**: 2026-02-13  
-**Last Updated**: 2026-03-02  
+**Last Updated**: 2026-03-04  
 **Authority**: Derived from Architecture (modules/mat/02-architecture/), FRS (modules/mat/01-frs/functional-requirements.md), TRS (modules/mat/01.5-trs/technical-requirements-specification.md), Test Registry (governance/TEST_REGISTRY.json)
 
 ---
@@ -2074,8 +2074,11 @@ This implementation plan is accepted when:
 14. ✅ Wave 11 (Supabase Persistent Memory Wiring) defined (§2.12) with full task breakdown, builder assignments, dependency gates, and cross-wave learning outcomes from Waves 9.10 and 10
 15. ✅ Wave 12 (Full Functionality & Build Wiring Verification) COMPLETE (§2.13): 554/554 tests GREEN; four-domain sequential delivery (qa-builder+34, api-builder+10, ui-builder+42, integration-builder+38); all W12-GAP-001–007 resolved; deploy-mat-ai-gateway.yml wired for Render; IAA-session-026/029/030-20260301-PASS
 16. ✅ Post-Wave 12 Live Deployment RCA complete (`modules/mat/05-rca/RCA_WAVE12_POST_DEPLOYMENT_WIRING_FAILURES_20260302.md` v1.0.0); PBFAG updated with checks 9–13 (E2E auth, schema existence, full-flow wiring, major page content, env var audit); Wave 13 defined (§2.14) with 24 RED gate test IDs; wave count updated to fourteen
+17. ✅ Wave postbuild-fails-01 (RLS Fix) COMPLETE (PR #895): profiles SELECT/INSERT/UPDATE + audits INSERT + handle_new_user() trigger; T-PBF-001 to T-PBF-004 GREEN; IAA-session-097-20260304-PASS
+18. Wave postbuild-fails-02 (Full RLS Remediation) DEFINED (Issue #897): GAP-006 to GAP-013 recorded; 8 tables with unverified RLS coverage; T-PBF2-001 to T-PBF2-008 RED gate tests pending; schema-builder and qa-builder delegation pending
 
 **Change Log**:
+- v2.4.0 (2026-03-04): Wave postbuild-fails-02 (Full Supabase RLS Remediation) added. All 13 gaps from supabase-sync-audit-20260304.md recorded (GAP-001 to GAP-013). GAP-001–GAP-005 CLOSED (postbuild-fails-01). GAP-006–GAP-013 OPEN — 8 tables (organisations, domains, mini_performance_standards, criteria, evidence, scores, organisation_settings, audit_scores) require RLS policy verification and migration. 8 RED gate test IDs defined (T-PBF2-001 to T-PBF2-008). 5-task delegation plan: foreman (TASK-PBF2-001 to TASK-PBF2-003) + qa-builder (TASK-PBF2-004) + schema-builder (TASK-PBF2-005). Acceptance criteria 17 and 18 added. IAA Pre-Brief: iaa-prebrief-wave-postbuild-fails-02.md. (session-098)
 - v2.3.0 (2026-03-02): Post-Wave 12 live deployment failures analysed (RCA MAT-RCA-002). PBFAG checklist extended with checks 9–13 (E2E auth, schema existence, full-flow wiring, major page content, env var audit — all mandatory per WE_ONLY_FAIL_ONCE doctrine). Wave 13 (Live Deployment Wiring Regression Fix & Continuous Improvement) added (§2.14): 5-task sequential plan (schema-builder+integration-builder → api-builder → ui-builder → integration-builder+qa-builder → integration-builder); 24 RED gate test IDs (T-W13-SCH-1–4, T-W13-AUTH-1–4, T-W13-WIRE-1–8, T-W13-E2E-1–5, T-W13-CI-1–3); 7 gap register entries (W13-GAP-001–007). Wave count updated to fourteen. Acceptance criterion 16 added. (session-084)
 - v2.2.0 (2026-03-01): Wave 12 status updated to COMPLETE (session-078/080/081). 554/554 tests GREEN (430 baseline + 124 sub-tests from 31 test IDs). All W12-GAP-001–007 resolved and confirmed GREEN. deploy-mat-ai-gateway.yml wired for Render platform; ecs-task-def.json removed. Version updated: v2.1.0 → v2.2.0. Total duration note updated. IAA tokens: IAA-session-026/029/030-20260301-PASS. Progress tracker reconciliation per issue [Agent Task] Update all progress trackers for MAT module and Combined Execution Plan.
 - v2.1.0 (2026-03-01): Wave 12 plan augmented per CS2 instruction (PR #710, 2026-03-01). 11 new test IDs added: T-W12-QAV-6–8, T-W12-API-6–7, T-W12-UI-6–9, T-W12-INT-6–7. Wave 12 Gap Register (W12-GAP-001–007) added to §2.13 — all 7 gaps RESOLVED. Total Wave 12 tests: 31. Final test count target: 461. CWT mandate (§4.2) satisfied by T-W12-INT-6. Acceptance criterion 15 updated.
@@ -2165,6 +2168,85 @@ Root cause: missing `handle_new_user()` trigger and missing profiles/audits INSE
 | TASK-PBF-01-002 | RLS fix migration | `20260304000003_fix_rls_policies_postbuild.sql` |
 | TASK-PBF-01-003 | QA tests T-PBF-001 to T-PBF-004 | `wave-postbuild-fails-01.test.ts` |
 | TASK-PBF-01-004 | Governance updates | FRS, TRS, BUILD_PROGRESS_TRACKER, TEST_REGISTRY |
+
+---
+
+## Wave postbuild-fails-02 — Supabase RLS Full Remediation
+
+**Date**: 2026-03-04
+**Issue**: #897
+**Authority**: CS2 (Johan Ras / @APGI-cmy)
+**Session**: session-098
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave-postbuild-fails-02.md`
+**Reference Audit**: `modules/mat/03-implementation-plan/supabase-sync-audit-20260304.md`
+
+### Context
+
+Wave postbuild-fails-01 (PR #895) fixed the two P0 production blockers (GAP-001 to GAP-005):
+profiles RLS SELECT/INSERT/UPDATE + audits RLS INSERT + handle_new_user() trigger. T-PBF-001 to
+T-PBF-004 are all GREEN.
+
+The Supabase sync audit (`supabase-sync-audit-20260304.md`) identified **8 additional tables** with
+RLS enabled but no documented policies (GAP-006 to GAP-013). These represent unverified and
+potentially missing RLS coverage for the full multi-tenant isolation model.
+
+### Scope — All Failures from supabase-sync-audit-20260304.md
+
+| Gap ID | Table | Finding | Priority | Status |
+|--------|-------|---------|----------|--------|
+| GAP-001 | `profiles` | No INSERT policy | 🔴 P0 | ✅ FIXED (postbuild-fails-01) |
+| GAP-002 | `profiles` | No UPDATE policy | 🔴 P0 | ✅ FIXED (postbuild-fails-01) |
+| GAP-003 | `profiles` | No SELECT policy | 🔴 P0 | ✅ FIXED (postbuild-fails-01) |
+| GAP-004 | `audits` | No INSERT policy | 🔴 P0 | ✅ FIXED (postbuild-fails-01) |
+| GAP-005 | (trigger) | No handle_new_user() trigger | 🔴 P0 | ✅ FIXED (postbuild-fails-01) |
+| GAP-006 | `organisations` | No documented INSERT/UPDATE policies | 🟡 HIGH | 🔴 OPEN |
+| GAP-007 | `domains` | SELECT only — no INSERT/UPDATE policies | 🟡 HIGH | 🔴 OPEN |
+| GAP-008 | `mini_performance_standards` | No documented policies | 🟡 HIGH | 🔴 OPEN |
+| GAP-009 | `criteria` | SELECT only — no INSERT/UPDATE policies | 🟡 HIGH | 🔴 OPEN |
+| GAP-010 | `evidence` | No documented policies | 🔴 P0 | 🔴 OPEN |
+| GAP-011 | `scores` | No documented policies | 🔴 P0 | 🔴 OPEN |
+| GAP-012 | `organisation_settings` | No documented policies | 🟡 HIGH | 🔴 OPEN |
+| GAP-013 | `audit_scores` | No documented policies | 🟡 HIGH | 🔴 OPEN |
+
+### Untested Frontend Hook Paths
+
+| Hook | Table | Test ID | Status |
+|------|-------|---------|--------|
+| useUpdateUserProfile | profiles | T-PBF-002 | ✅ GREEN (postbuild-fails-01) |
+| useUserProfile | profiles | T-PBF-004 | ✅ GREEN (postbuild-fails-01) |
+| useCreateAudit | audits | T-PBF-003 | ✅ GREEN (postbuild-fails-01) |
+| useEvidence / useCreateEvidence | evidence | T-PBF2-001 | 🔴 RED — untested |
+| useScores / useSubmitScore | scores | T-PBF2-002 | 🔴 RED — untested |
+| useAuditScores | audit_scores | T-PBF2-003 | 🔴 RED — untested |
+| useOrganisationSettings | organisation_settings | T-PBF2-004 | 🔴 RED — untested |
+| useCriteria / useCreateCriteria | criteria | T-PBF2-005 | 🔴 RED — untested |
+| useDomains | domains | T-PBF2-006 | 🔴 RED — untested |
+| useOrganisations | organisations | T-PBF2-007 | 🔴 RED — untested |
+| useMiniPerformanceStandards | mini_performance_standards | T-PBF2-008 | 🔴 RED — untested |
+
+### Tasks
+
+| ID | Description | Builder | Status | Artifact |
+|----|-------------|---------|--------|----------|
+| TASK-PBF2-001 | Add Wave postbuild-fails-02 to implementation-plan.md | foreman | ✅ DONE | This section |
+| TASK-PBF2-002 | Record GAP-006–GAP-013 in BUILD_PROGRESS_TRACKER.md | foreman | 🔴 PENDING | `modules/mat/BUILD_PROGRESS_TRACKER.md` |
+| TASK-PBF2-003 | Update App Description, FRS (FR-084–FR-088), TRS (TR-084–TR-088) — mark RLS sections RED | foreman | 🔴 PENDING | `01-frs/functional-requirements.md`, `01.5-trs/technical-requirements-specification.md`, `00-app-description/app-description.md` |
+| TASK-PBF2-004 | RED gate QA tests T-PBF2-001 to T-PBF2-008 — assert RLS policies for all 8 remaining tables | qa-builder | ✅ DONE | `modules/mat/tests/security-rls/wave-postbuild-fails-02.test.ts` |
+| TASK-PBF2-005 | RLS policy migrations for organisations, domains, mini_performance_standards, criteria, evidence, scores, organisation_settings, audit_scores | schema-builder | ✅ DONE | `apps/maturion-maturity-legacy/supabase/migrations/20260304000004_fix_rls_remaining_tables.sql` (16 policies) |
+
+### Acceptance Criteria
+
+- [ ] All 13 GAPs (001–013) recorded in BUILD_PROGRESS_TRACKER.md
+- [ ] GAP-006 to GAP-013 all in OPEN/RED state until migrations land
+- [ ] T-PBF2-001 to T-PBF2-008 defined RED before migration delegation
+- [ ] T-PBF2-001 to T-PBF2-008 all GREEN after schema-builder delivers
+- [ ] FR-084 to FR-088 and TR-084 to TR-088 added to FRS/TRS
+- [ ] App Description updated to flag incomplete RLS coverage for 8 tables
+- [ ] evidence table: INSERT + UPDATE + DELETE policies (all three required)
+- [ ] mini_performance_standards: read-only guard (no anon INSERT/UPDATE permitted)
+- [ ] All prior wave policies (postbuild-fails-01) untouched — no regression
+- [ ] OVL-AM-008 end-to-end wiring trace completed by schema-builder
+- [ ] IAA post-handover ASSURANCE-TOKEN received
 
 **End of Implementation Plan**
 

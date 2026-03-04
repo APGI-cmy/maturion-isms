@@ -1272,8 +1272,8 @@ Track the progression through the canonical module lifecycle stages.
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 5 (Build Execution — Wave 12 COMPLETE | Wave 13 CST/CWT/FCWT CI-CERTIFIED COMPLETE ✅; Wave 13 Addendum A: First-User Signup & Auth Failure — 🚨 IN PROGRESS (Issue #855, 2026-03-03) | Wave 13 Addendum B+C: Audit Schema Cache Miss + Profile Save Broken + Table Pathway Audit — ✅ COMPLETE (2026-03-03)) | Post-Delivery RCA COMPLETE | Wave 10 COMPLETE | Wave 9.10 COMPLETE | Wave 11 COMPLETE | Wave 12 COMPLETE
-**Overall Progress**: 620 tests GREEN (post-Wave 13 CST/CWT/FCWT, 2026-03-03). T-W13-AUTH-1–4 ✅ | T-W13-CI-1–3 ✅ | T-W13-WIRE-1–8 ✅ (all 8 GREEN) | T-W13-SCH-1–4 + T-W13-E2E-1–5 🔴 EXPECTED RED (production-only, by design). | T-W13-AUTH-APP-1–5 🔴 RED GATE (auth provider wiring — INC-AUTH-PROVIDER-001)
+**Current Stage**: Stage 5 (Build Execution — Wave 12 COMPLETE | Wave 13 CST/CWT/FCWT CI-CERTIFIED COMPLETE ✅; Wave 13 Addendum A: First-User Signup & Auth Failure — 🚨 IN PROGRESS (Issue #855, 2026-03-03) | Wave 13 Addendum B+C: Audit Schema Cache Miss + Profile Save Broken + Table Pathway Audit — ✅ COMPLETE (2026-03-03)) | Post-Delivery RCA COMPLETE | Wave 10 COMPLETE | Wave 9.10 COMPLETE | Wave 11 COMPLETE | Wave 12 COMPLETE | Wave postbuild-fails-01 COMPLETE (2026-03-04) | Wave postbuild-fails-02 🔴 IN PROGRESS — GAP-006–GAP-013 OPEN (2026-03-04, Issue #897)
+**Overall Progress**: 624 tests GREEN (post-Wave postbuild-fails-01, 2026-03-04 — T-PBF-001 to T-PBF-004 GREEN). T-W13-AUTH-1–4 ✅ | T-W13-CI-1–3 ✅ | T-W13-WIRE-1–8 ✅ (all 8 GREEN) | T-W13-SCH-1–4 + T-W13-E2E-1–5 🔴 EXPECTED RED (production-only, by design). | T-W13-AUTH-APP-1–5 🔴 RED GATE (auth provider wiring — INC-AUTH-PROVIDER-001). T-PBF2-001 to T-PBF2-008 🔴 RED GATE (RLS remediation wave postbuild-fails-02)
 **Blockers**:
 - 🚨 **AUDIT CREATION BLOCKED** (2026-03-03): Production surfaces `Could not find the 'audit_period_end' column of 'audits' in the schema cache` — migration `20260302000000_mat_core_tables.sql` omits `audit_period_start` and `audit_period_end` columns. New migration required. Fix delegated to schema-builder. RCA: F-02 addendum (INC-W13-AUDIT-SCHEMA-001).
 - 🚨 **PROFILE SAVE BROKEN** (2026-03-03): `useSettings.ts` writes to `user_profiles` table which does not exist — correct table is `profiles`. Fix delegated to ui-builder. RCA: F-10 addendum (INC-W13-PROFILE-TABLE-001).
@@ -1345,6 +1345,8 @@ Track the progression through the canonical module lifecycle stages.
 34. **[CI-CERTIFIED COMPLETE — Addendum In Progress] Execute Wave 13: Live Deployment Wiring Regression Fix & Continuous Improvement** — CS2 auth: Issue #849 (2026-03-03); CST/CWT/FCWT executed session-093 (2026-03-03); T-W13-AUTH-1–4 GREEN ✅; T-W13-CI-1–3 GREEN ✅; T-W13-WIRE-1–8 GREEN ✅ (WIRE-7 fixed by ui-builder 2026-03-03); T-W13-SCH-1–4 EXPECTED RED (production-only); T-W13-E2E-1–5 EXPECTED RED (production-only); 620 tests GREEN total; production E2E pending live deployment (controlled exception)
 35. **[IN PROGRESS] Wave 13 Addendum A: First-User Signup & Auth Provider Omission Failure** — CS2 auth: Issue #855 (2026-03-03); failure captured: App.tsx missing AuthProvider/QueryClientProvider/ProtectedRoute; LoginPage stub; AuthContext.tsx absent; Red QA T-W13-AUTH-APP-1–5 pending (qa-builder); implementation pending (ui-builder); INC-AUTH-PROVIDER-001 in FAIL-ONLY-ONCE registry
 36. **[IN PROGRESS] Wave 13 Addendum B: Audit Schema Cache Miss + Profile Save Broken** — 2026-03-03; two production-stopper failures: (1) `audit_period_end` column missing from `audits` table (migration gap, INC-W13-AUDIT-SCHEMA-001); (2) `useSettings.ts` writes to `user_profiles` instead of `profiles` (hook drift, INC-W13-PROFILE-TABLE-001); schema-builder delegated for migration fix; ui-builder delegated for hook table name fix
+37. ~~**[COMPLETE] Wave postbuild-fails-01: Supabase RLS Fix** — CS2 auth: Issue #891 (2026-03-04); F-001 (profiles RLS INSERT+UPDATE) + F-002 (audits RLS INSERT) + missing handle_new_user() trigger remediated; migration 20260304000003_fix_rls_policies_postbuild.sql; T-PBF-001 to T-PBF-004 GREEN ✅; IAA-session-097-20260304-PASS~~
+38. **[IN PROGRESS — RED GATE] Wave postbuild-fails-02: Supabase RLS Full Remediation** — CS2 auth: Issue #897 (2026-03-04); 8 remaining tables with unverified/incomplete RLS coverage (GAP-006 to GAP-013: organisations, domains, mini_performance_standards, criteria, evidence, scores, organisation_settings, audit_scores); T-PBF2-001 to T-PBF2-008 defined RED; delegation to qa-builder (TASK-PBF2-004) + schema-builder (TASK-PBF2-005) pending; IAA Pre-Brief: iaa-prebrief-wave-postbuild-fails-02.md
 
 ---
 
@@ -2595,3 +2597,76 @@ The `profiles` table had RLS enabled with no policies defined (no SELECT, INSERT
 | 2026-03-04 | MIGRATION CREATED | 20260304000003_fix_rls_policies_postbuild.sql — all RLS gaps remediated |
 | 2026-03-04 | TESTS GREEN | T-PBF-001 to T-PBF-004 all GREEN |
 | 2026-03-04 | DOCUMENTATION UPDATED | FRS, TRS, BUILD_PROGRESS_TRACKER, TEST_REGISTRY, implementation-plan updated |
+
+---
+
+## Wave postbuild-fails-02 — Supabase RLS Full Remediation — 2026-03-04
+
+**Issue**: #897 — Wave Next: Foreman to orchestrate remediation for Supabase RLS failures and record all failed states
+**Authority**: CS2 (Johan Ras / @APGI-cmy)
+**Session**: session-098
+**Reference Audit**: `modules/mat/03-implementation-plan/supabase-sync-audit-20260304.md`
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave-postbuild-fails-02.md`
+
+Wave postbuild-fails-01 (PR #895) fixed P0 production blockers GAP-001 to GAP-005. This wave records
+all remaining failures from the full Supabase RLS audit (GAP-006 to GAP-013) and defines the
+remediation plan for the 8 tables still carrying unverified or incomplete RLS coverage.
+
+### All Failures Recorded — supabase-sync-audit-20260304.md (Complete Registry)
+
+| Gap ID | Table | Finding | Priority | Status |
+|--------|-------|---------|----------|--------|
+| GAP-001 | `profiles` | No INSERT policy — `useUpdateUserProfile` upsert violated RLS | 🔴 P0 | ✅ CLOSED (postbuild-fails-01: `profiles_insert_own` added) |
+| GAP-002 | `profiles` | No UPDATE policy — profile save failed with RLS violation | 🔴 P0 | ✅ CLOSED (postbuild-fails-01: `profiles_update_own` added) |
+| GAP-003 | `profiles` | No SELECT policy — `useUserProfile` reads may fail with RLS enabled | 🔴 P0 | ✅ CLOSED (postbuild-fails-01: `profiles_select_own` added) |
+| GAP-004 | `audits` | No INSERT policy — `useCreateAudit` INSERT violated `audits` RLS | 🔴 P0 | ✅ CLOSED (postbuild-fails-01: `audits_insert_authenticated` added) |
+| GAP-005 | (trigger) | No `handle_new_user()` trigger — new auth users had no `profiles` row | 🔴 P0 | ✅ CLOSED (postbuild-fails-01: trigger + function added) |
+| GAP-006 | `organisations` | No documented INSERT/UPDATE policies — org creation/update flows unguarded | 🟡 HIGH | 🔴 OPEN |
+| GAP-007 | `domains` | SELECT policy only — no INSERT/UPDATE policies for domain management | 🟡 HIGH | 🔴 OPEN |
+| GAP-008 | `mini_performance_standards` | No documented policies — read-only guard absent | 🟡 HIGH | 🔴 OPEN |
+| GAP-009 | `criteria` | SELECT policy only — no INSERT/UPDATE policies for criteria management | 🟡 HIGH | 🔴 OPEN |
+| GAP-010 | `evidence` | No documented policies — evidence INSERT/UPDATE/DELETE unguarded | 🔴 P0 | 🔴 OPEN |
+| GAP-011 | `scores` | No documented policies — scoring INSERT/UPDATE unguarded | 🔴 P0 | 🔴 OPEN |
+| GAP-012 | `organisation_settings` | No documented policies — settings INSERT/UPDATE unguarded | 🟡 HIGH | 🔴 OPEN |
+| GAP-013 | `audit_scores` | No documented policies — audit score INSERT/UPDATE unguarded | 🟡 HIGH | 🔴 OPEN |
+
+### Untested Frontend Hook Paths (RED Gate)
+
+| Hook | Table | Test ID | Status |
+|------|-------|---------|--------|
+| useEvidence / useCreateEvidence | `evidence` | T-PBF2-001 | 🔴 RED — untested |
+| useScores / useSubmitScore | `scores` | T-PBF2-002 | 🔴 RED — untested |
+| useAuditScores | `audit_scores` | T-PBF2-003 | 🔴 RED — untested |
+| useOrganisationSettings | `organisation_settings` | T-PBF2-004 | 🔴 RED — untested |
+| useCriteria / useCreateCriteria | `criteria` | T-PBF2-005 | 🔴 RED — untested |
+| useDomains | `domains` | T-PBF2-006 | 🔴 RED — untested |
+| useOrganisations | `organisations` | T-PBF2-007 | 🔴 RED — untested |
+| useMiniPerformanceStandards | `mini_performance_standards` | T-PBF2-008 | 🔴 RED — untested |
+
+### Delegation Plan
+
+| Task ID | Builder | Description | Status |
+|---------|---------|-------------|--------|
+| TASK-PBF2-001 | foreman | Add Wave postbuild-fails-02 to implementation-plan.md | ✅ DONE |
+| TASK-PBF2-002 | foreman | Record GAP-006–GAP-013 in BUILD_PROGRESS_TRACKER.md | ✅ DONE (this entry) |
+| TASK-PBF2-003 | foreman | Update App Description, FRS (FR-084–FR-088), TRS (TR-084–TR-088) | 🔴 PENDING |
+| TASK-PBF2-004 | qa-builder | RED gate tests T-PBF2-001 to T-PBF2-008 | 🔴 PENDING |
+| TASK-PBF2-005 | schema-builder | RLS policy migrations for 8 remaining tables | 🔴 PENDING |
+
+### Acceptance Criteria
+
+- [ ] All 13 GAPs (001–013) in this registry (GAP-001–GAP-005 CLOSED; GAP-006–GAP-013 OPEN → CLOSED after migrations)
+- [ ] T-PBF2-001 to T-PBF2-008 all GREEN after schema-builder delivers
+- [ ] FR-084 to FR-088 and TR-084 to TR-088 added to FRS/TRS
+- [ ] `evidence` table: INSERT + UPDATE + DELETE policies (all three)
+- [ ] `mini_performance_standards`: read-only guard (no anon INSERT/UPDATE)
+- [ ] Prior wave policies (postbuild-fails-01) untouched — no regression
+- [ ] OVL-AM-008 end-to-end wiring trace completed by schema-builder
+
+### State Machine
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-04 | GAPS IDENTIFIED | GAP-006 to GAP-013 identified from supabase-sync-audit-20260304.md (8 tables with unverified RLS) |
+| 2026-03-04 | PLANNING | Wave postbuild-fails-02 defined in implementation-plan.md v2.4.0; IAA Pre-Brief generated |
+| 2026-03-04 | 🔴 RED GATE | T-PBF2-001 to T-PBF2-008 defined RED — delegation to qa-builder and schema-builder pending |
