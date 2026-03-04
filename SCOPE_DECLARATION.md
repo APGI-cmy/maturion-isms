@@ -6,13 +6,15 @@
 **Authority**: BL-027 (MERGE_GATE_PHILOSOPHY.md)
 **Task**: Fix CI label validation error in ripple-integration.yml + governance artifacts for ripple 61ab7b83
 **Issue**: APGI-cmy/maturion-isms#876
+**IAA Token**: IAA-session-132-20260304-PASS (ASSURANCE-TOKEN)
 
 ---
 
 ## Files Declared
 
-- `.agent-admin/assurance/rejection-package-session-130-20260304.md` - IAA session-130 REJECTION-PACKAGE artifact
-- `.agent-admin/assurance/rejection-package-session-131-20260304.md` - IAA session-131 REJECTION-PACKAGE artifact
+- `.agent-admin/assurance/iaa-token-session-132-20260304.md` - IAA ASSURANCE-TOKEN artifact
+- `.agent-admin/assurance/rejection-package-session-130-20260304.md` - IAA session-130 REJECTION-PACKAGE
+- `.agent-admin/assurance/rejection-package-session-131-20260304.md` - IAA session-131 REJECTION-PACKAGE
 - `.agent-admin/governance/ripple-log.json` - Added liaison-escalated entry for ripple 61ab7b83 (48 events)
 - `.agent-admin/governance/sync_state.json` - Updated canonical_commit to 61ab7b83, last_ripple_dispatch_id, last_liaison_session
 - `.agent-workspace/governance-liaison-isms/escalation-inbox/escalation-agent-contracts-61ab7b83-20260304.md` - ESC-AGENTFILE-61AB7B83-20260304 for CodexAdvisor-agent.md
@@ -20,6 +22,7 @@
 - `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md` - 1 session-045 suggestion appended
 - `.agent-workspace/independent-assurance-agent/memory/session-130-20260304.md` - IAA session-130 memory
 - `.agent-workspace/independent-assurance-agent/memory/session-131-20260304.md` - IAA session-131 memory
+- `.agent-workspace/independent-assurance-agent/memory/session-132-20260304.md` - IAA session-132 memory
 - `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station updates
 - `.github/workflows/ripple-integration.yml` - Added continue-on-error to create_pr_standard and create_pr_draft steps
 - `PREHANDOVER_PROOF_SESSION_045_RIPPLE_61AB7B83.md` - PREHANDOVER proof for this session

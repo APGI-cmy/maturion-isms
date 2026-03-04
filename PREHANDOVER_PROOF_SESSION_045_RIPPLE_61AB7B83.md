@@ -187,8 +187,14 @@ OPOJD: ✅ PASS
 > 8 check(s) FAILED. Merge blocked. STOP-AND-FIX required.
 > Token reference: IAA-session-130-20260304-REJECTION
 
-**Second invocation**: Awaiting ASSURANCE-TOKEN. IAA will write token to
-`.agent-admin/assurance/iaa-token-session-045-ripple-61ab7b83-20260304.md` (new file only).
+**Second invocation (IAA session-132-20260304)**: ASSURANCE-TOKEN issued.
+
+> Token reference: IAA-session-132-20260304-PASS
+> All 35 checks PASS (22 substantive PASS + 13 N/A). Merge gate parity: PASS.
+> Merge permitted (subject to CS2 approval).
+> Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+
+IAA token written to: `.agent-admin/assurance/iaa-token-session-132-20260304.md` (new file only per §4.3b)
 
 ---
 
