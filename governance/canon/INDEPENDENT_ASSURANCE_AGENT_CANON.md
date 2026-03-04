@@ -1,11 +1,10 @@
-# INDEPENDENT_ASSURANCE_AGENT_CANON
-
-**Status**: CANONICAL | **Version**: 1.3.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.4.0 | **Authority**: CS2
 **Date**: 2026-03-03
 **Amended**: 2026-03-03 — v1.1.0: Added §Proactive Assurance — Pre-Brief Protocol
 **Amended**: 2026-03-04 — v1.2.1: Added §CS2 Direct Review Track
 **Amended**: 2026-03-04 — v1.3.0: Added §Risk-Tiered Ceremony Table + §Functional Fitness Assessment (FFA)
 **Amended**: 2026-03-04 — v1.3.0 layered down from maturion-foreman-governance (CS2 direct authority)
+**Amended**: 2026-03-04 — v1.4.0: Added FFA-02b (Schema-to-Hook Alignment), FFA-06 (Canonical Artifact Update Check), FFA-07 (QA-to-Red Sequencing Gate) — CS2 direct authority
 
 ---
 
@@ -93,7 +92,7 @@ highest-risk changed file. When files from multiple tiers are present, the highe
 | Tier | PR Type | Examples | Ceremony Required | IAA Required | FFA Required |
 |------|---------|----------|------------------|-------------|-------------|
 | **T1** | Tier 1 agent contract change (autonomous agent) | `.github/agents/*.md` changed by non-CS2 agent | Full Five-Phase + Agent Integrity check | **YES — mandatory** | FFA-01, FFA-03 |
-| **T2** | Build deliverable — schema, API, frontend hooks | Migrations, Supabase hooks, API endpoints, frontend components | Full Five-Phase + OVL-AM-008 wiring trace | **YES — mandatory** | **FFA-01 through FFA-05 (all)** |
+| **T2** | Build deliverable — schema, API, frontend hooks | Migrations, Supabase hooks, API endpoints, frontend components | Full Five-Phase + OVL-AM-008 wiring trace | **YES — mandatory** | **FFA-01 through FFA-07 (all)** |
 | **T3** | Governance canon change | `governance/canon/*.md` | CS2 Direct Review **OR** Three-Phase (1, 2, 4) | **NO** — CS2 review sufficient | FFA-01, FFA-03 |
 | **T4** | CI / workflow change | `.github/workflows/*.yml` | CS2 Direct Review **OR** Two-Phase (1, 4) | **NO** — CS2 review sufficient | FFA-02 (trigger wiring only) |
 | **T5** | Tier 2 knowledge patch | `.agent-workspace/*/knowledge/*.md` | Self-attestation + CS2 spot-check | **NO** | None |
@@ -272,6 +271,28 @@ For every API endpoint call from the frontend:
 
 **FAIL condition**: Any unconfirmed wire. Partial wiring is not acceptable.
 
+### FFA-02b — Schema-to-Hook Alignment
+
+**Applies to**: All Tier 2 PRs that include a schema migration (CREATE TABLE, ALTER TABLE, DROP COLUMN, or any structural change).
+
+This check extends FFA-02 beyond the PR diff to the **full codebase**. A schema migration that does not visibly break the *new* code may silently break *existing* code. FFA-02b closes this gap.
+
+For every table **altered or created** by a migration in this PR, the IAA MUST:
+
+1. Locate **all** hooks and form components in the codebase that write to that table (`.insert()`, `.upsert()`, `.update()`)
+2. For each column written in those hooks/components — verify it exists in the **post-migration** schema
+3. For each column that **existed in a prior migration** but is **absent or removed** by this PR's migration — verify that all existing callers have been updated in this same PR, or that a tracked follow-up issue with CS2 sign-off exists
+
+| Check | Required |
+|-------|---------|
+| All hook/form writes to the affected table use columns that exist post-migration | YES |
+| No existing caller writes a column that this migration removes or was never added | YES |
+| Any existing caller that would be broken is updated inline or covered by a tracked issue | YES |
+
+**FAIL condition**: Any column written by existing code (outside this PR's diff) that does not exist in the post-migration schema, with no tracked resolution. This includes phantom columns that were never in any migration but are written by existing frontend code.
+
+**Root cause this closes**: PR #897 introduced RLS migrations for the `audits` table without verifying that `AuditCreationForm` was writing `organisation_name` and `facility_location` — columns that existed in a prior wave's migration but whose absence from the RLS migration scope was never cross-checked against existing callers.
+
 ### FFA-03 — Cross-Delivery Integration
 
 For any PR that modifies, extends, or depends on a prior delivery:
@@ -317,6 +338,49 @@ with a confirmed remediation plan and the current PR does not make the broken st
 **CFM is not scope creep.** It is the IAA exercising its functional fitness gate authority.
 The IAA's mandate is a fully functional delivery — not a delivery that passes ceremony while
 leaving the app broken.
+
+### FFA-06 — Canonical Artifact Update Check
+
+**Applies to**: All Tier 2 (build) PRs that introduce, remove, or change any functional behaviour visible to the user or to other system components.
+
+Every build PR must leave the canonical tracking artifacts in a state that accurately reflects what has been delivered. Agents must not deliver features that are undocumented in the system's own specification artifacts.
+
+For every Tier 2 PR, the IAA MUST verify that the following artifacts were updated **if** this PR introduces, removes, or changes any functional behaviour:
+
+| Artifact | Location | Update Required When |
+|---|---|---|
+| App Description | `modules/mat/00-app-description/app-description.md` | Any user-visible functional change |
+| FRS | `modules/mat/01-frs/functional-requirements.md` | Any new or changed functional requirement |
+| TRS | `modules/mat/02-trs/technical-requirements.md` | Any new or changed technical approach |
+| QA-to-Red test suite | `modules/mat/tests/` | Every build wave — RED tests committed before implementation |
+| BUILD_PROGRESS_TRACKER.md | `modules/mat/BUILD_PROGRESS_TRACKER.md` | Wave closure or any schema/hook change |
+
+**FAIL condition**: Any of the above artifacts are absent or materially outdated relative to the functional change delivered in this PR, and no CS2-approved deferral with a tracked issue exists.
+
+**Exemption**: If the PR is a pure schema/RLS fix that does not change user-visible behaviour (e.g. adding an RLS policy to a table that already exists), FRS/TRS/App Description updates are not required — but BUILD_PROGRESS_TRACKER.md must still be updated.
+
+### FFA-07 — QA-to-Red Sequencing Gate
+
+**Applies to**: All Tier 2 (build) PRs.
+
+The MAT build process mandates test-first delivery: QA writes failing (RED) tests *before* the builder implements the feature. A builder who commits tests and implementation in the same commit, or who commits implementation before tests, cannot demonstrate test-first discipline and may have written tests to match their code rather than tests that verify requirements.
+
+For every Tier 2 build PR, the IAA MUST verify:
+
+1. A QA-to-Red test file covering **this wave's functional scope** was committed **before** the implementation code (verified via git commit order on the PR branch)
+2. The RED test commit is **separate** from the implementation commit — they must not be the same commit
+3. The builder's PREHANDOVER proof explicitly states the QA-to-Red commit SHA and the implementation commit SHA, confirming sequencing
+
+| Check | Required |
+|-------|---------|
+| QA-to-Red test file exists for this wave's scope | YES |
+| RED test commit timestamp/order precedes implementation commit | YES |
+| Tests were in a failing (RED) state when committed (not written after going GREEN) | YES — attested in PREHANDOVER proof |
+| PREHANDOVER proof cites both the QA commit SHA and the implementation commit SHA | YES |
+
+**FAIL condition**: Implementation code exists with no prior RED test commit on the branch, OR the QA-to-Red tests and implementation code share the same commit with no sequencing evidence, OR the PREHANDOVER proof does not cite both commit SHAs.
+
+**What this closes**: Builders who write tests after implementing (to make them pass) are not practising test-first delivery. This gate enforces the discipline at the IAA assurance layer, not just on trust.
 
 ---
 
@@ -367,9 +431,12 @@ Phases:
 FFA Assessment: [PASS|FAIL|NOT-REQUIRED]
   FFA-01 Delivery Completeness: [PASS|FAIL] — <finding>
   FFA-02 Wiring Verification: [PASS|FAIL] — <finding>
+  FFA-02b Schema-to-Hook Alignment: [PASS|FAIL] — <finding>
   FFA-03 Cross-Delivery Integration: [PASS|FAIL] — <finding>
   FFA-04 Supabase Alignment: [PASS|FAIL] — <finding>
   FFA-05 Carry-Forward Mandate: [NONE|ISSUED] — <finding>
+  FFA-06 Canonical Artifact Update: [PASS|FAIL|EXEMPT] — <finding>
+  FFA-07 QA-to-Red Sequencing: [PASS|FAIL] — <finding>
 Agent Integrity: [PASS|FAIL|NOT-REQUIRED] — <finding>
 Independence: [CONFIRMED|VIOLATION] — <finding>
 Verdict: MERGE BLOCKED
@@ -390,6 +457,7 @@ The IAA applies quality/assurance thinking, not mechanical rule matching. The IA
 - **Functional fitness over ceremony**: For T2 PRs, a ceremonially complete but functionally broken delivery is a FAIL. The IAA prioritises working software over paperwork.
 - **Improvement suggestion hygiene**: If an agent includes inline improvement suggestions within a delivery artifact (not parked), this is a POLC boundary violation and triggers `REJECTION-PACKAGE`.
 - **Carry-forward authority**: The IAA does not ignore prior broken wires because they are "out of scope." If this PR exposes or depends on a broken state, the IAA mandates resolution.
+- **System-wide scope for schema PRs**: For any PR that alters a database schema, the IAA checks the full codebase for existing callers — not only the code introduced by the PR. A schema change that silently breaks existing hooks is a FAIL regardless of whether the PR itself appears clean.
 
 ---
 
@@ -402,7 +470,7 @@ For each qualifying PR, the following agents must each provide their phase proof
 | **Builder** | Phases 1, 3, 4 | Phases 1, 3, 4 + FFA evidence in Phase 3 |
 | **QA/Validator** | Phases 1, 2, 4 | Phases 1, 2, 4 |
 | **Foreman** | Phases 1, 2, 4 | Phases 1, 2, 4 |
-| **IAA** | Phase 5 + Agent Integrity | Phase 5 + FFA-01 to FFA-05 |
+| **IAA** | Phase 5 + Agent Integrity | Phase 5 + FFA-01 to FFA-07 |
 
 For T3–T6 PRs: submitting agent provides applicable phases per tier; IAA is not required.
 
@@ -561,4 +629,4 @@ and the IAA independently review identical content under human oversight.
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.3.0 | Effective: 2026-02-24 | Amended: 2026-03-04*
+*Authority: CS2 (Johan Ras) | Version: 1.4.0 | Effective: 2026-02-24 | Amended: 2026-03-04*
