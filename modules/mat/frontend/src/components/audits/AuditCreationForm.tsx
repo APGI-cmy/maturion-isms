@@ -11,7 +11,10 @@ export function AuditCreationForm() {
   const createAudit = useCreateAudit();
   const [formData, setFormData] = useState({
     title: '',
-    description: '',
+    organisation_name: '',
+    facility_location: '',
+    audit_period_start: '',
+    audit_period_end: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -20,6 +23,10 @@ export function AuditCreationForm() {
     
     if (!formData.title.trim()) {
       newErrors.title = 'Audit title is required';
+    }
+
+    if (!formData.organisation_name.trim()) {
+      newErrors.organisation_name = 'Organisation name is required';
     }
 
     setErrors(newErrors);
@@ -38,7 +45,10 @@ export function AuditCreationForm() {
       // Reset form on success
       setFormData({
         title: '',
-        description: '',
+        organisation_name: '',
+        facility_location: '',
+        audit_period_start: '',
+        audit_period_end: '',
       });
       setErrors({});
       alert('Audit created successfully!');
@@ -83,17 +93,68 @@ export function AuditCreationForm() {
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-            Description
+          <label htmlFor="organisation_name" className="block text-sm font-medium text-gray-700 mb-1">
+            Organisation Name <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
-            id="description"
-            name="description"
-            value={formData.description}
+            id="organisation_name"
+            name="organisation_name"
+            value={formData.organisation_name}
             onChange={handleChange}
-            placeholder="Enter audit description"
-            aria-label="Audit description"
+            placeholder="Enter organisation name"
+            aria-label="Organisation name"
+            aria-required="true"
+            aria-invalid={!!errors.organisation_name}
+            className={`w-full px-3 py-2 border rounded ${errors.organisation_name ? 'border-red-500' : 'border-gray-300'}`}
+          />
+          {errors.organisation_name && (
+            <p className="text-red-500 text-sm mt-1" role="alert">{errors.organisation_name}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="facility_location" className="block text-sm font-medium text-gray-700 mb-1">
+            Facility Location
+          </label>
+          <input
+            type="text"
+            id="facility_location"
+            name="facility_location"
+            value={formData.facility_location}
+            onChange={handleChange}
+            placeholder="Enter facility location"
+            aria-label="Facility location"
+            className="w-full px-3 py-2 border border-gray-300 rounded"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="audit_period_start" className="block text-sm font-medium text-gray-700 mb-1">
+            Audit Period Start
+          </label>
+          <input
+            type="date"
+            id="audit_period_start"
+            name="audit_period_start"
+            value={formData.audit_period_start}
+            onChange={handleChange}
+            aria-label="Audit period start"
+            className="w-full px-3 py-2 border border-gray-300 rounded"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="audit_period_end" className="block text-sm font-medium text-gray-700 mb-1">
+            Audit Period End
+          </label>
+          <input
+            type="date"
+            id="audit_period_end"
+            name="audit_period_end"
+            value={formData.audit_period_end}
+            onChange={handleChange}
+            aria-label="Audit period end"
             className="w-full px-3 py-2 border border-gray-300 rounded"
           />
         </div>
