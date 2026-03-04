@@ -2,7 +2,7 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 2.0.0
+**Knowledge Version**: 2.1.0
 **Last Updated**: 2026-03-03
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 

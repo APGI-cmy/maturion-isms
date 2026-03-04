@@ -5,7 +5,7 @@
 **Agent**: foreman-v2-agent (session-096, v6.2.0)
 **Issue**: Wave 13 Governance Failure + PR Review Findings (Addendum B+C + session-096 hardening)
 **Date**: 2026-03-03
-**Agent**: foreman-v2-agent (session-095 + session-096, v6.2.0)
+**Agent**: copilot-swe-agent (CS2-direct, co-authored: @APGI-cmy)
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 **Incident**: INC-W14-COL-MAPPING-001
 
@@ -21,16 +21,12 @@ This PR delivers Wave 14 Addendum A — Column Mapping Remediation (INC-W14-COL-
 4. Governance: FAIL-ONLY-ONCE A-027, RCA §9, FRS v1.6.0, TRS v1.5.0, data-architecture.md update
 This PR delivers:
 
-**Session-095 — Wave 13 Addendum B+C:**
-1. Audit schema cache miss: adds missing audit_period_start/audit_period_end columns to audits table (INC-W13-AUDIT-SCHEMA-001)
-2. Profile save broken: fixes useSettings.ts user_profiles -> profiles table name (INC-W13-PROFILE-TABLE-001)
-3. Table pathway audit: 4 additional migrations + 8 new drift-detection tests (T-W13-SCH-5 to T-W13-SCH-12)
+1. New GitHub Actions workflow: `.github/workflows/foreman-reanchor.yml`
+2. New wave task tracker template: `.agent-workspace/foreman-v2/personal/wave-current-tasks-template.md`
+3. New Tier 2 knowledge document: `.agent-workspace/foreman-v2/knowledge/WAVE-CURRENT-TASKS-PROTOCOL.md`
+4. Updated knowledge index: `.agent-workspace/foreman-v2/knowledge/index.md` (v1.7.0)
 
-**Session-096 — Wave 13 PR Review Findings:**
-4. audit-documents RLS hardening with org-path isolation (INC-W13-BUCKET-RLS-001)
-5. audit_scores table migration (INC-W13-AUDIT-SCORES-001)
-6. SCOPE_DECLARATION.md duplicate section removed
-7. Column-level drift tests (T-W13-SCH-13 to T-W13-SCH-16) + T-W13-SCH-11 regex hardened
+Plus ceremony artifacts and IAA session memory.
 
 ---
 
@@ -66,30 +62,20 @@ All files in this PR are explicitly listed below (required by BL-027):
 
 All files in this PR are explicitly listed below (required by BL-027):
 
-- `SCOPE_DECLARATION.md` - this file (updated for session-096)
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-095-wave13-addendum-bc-20260303.md` - session-095 PREHANDOVER proof (IAA token: IAA-session-117-20260303-PASS)
-- `.agent-workspace/foreman-v2/memory/session-095-wave13-addendum-bc-20260303.md` - session-095 memory
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-096-wave13-pr-review-findings-20260303.md` - session-096 PREHANDOVER proof
-- `.agent-workspace/foreman-v2/memory/session-096-wave13-pr-review-findings-20260303.md` - session-096 memory
-- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - parking station append (sessions 095 + 096)
-- `.agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md` - A-026 codified by IAA (session-116)
-- `.agent-workspace/independent-assurance-agent/knowledge/index.md` - version bump to 1.9.0 by IAA (session-116)
-- `.agent-workspace/independent-assurance-agent/memory/session-115-20260303.md` - IAA session-115 memory
-- `.agent-workspace/independent-assurance-agent/memory/session-116-20260303.md` - IAA session-116 memory
-- `.agent-workspace/independent-assurance-agent/memory/session-118-20260303.md` - IAA session-118 memory (REJECTION-PACKAGE for session-096 first invocation)
-- `.agent-workspace/independent-assurance-agent/memory/session-119-20260303.md` - IAA session-119 memory (REJECTION-PACKAGE for session-096 second invocation)
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station append
-- `apps/maturion-maturity-legacy/supabase/migrations/20260303000000_audits_add_period_columns.sql` - adds audit_period_start and audit_period_end columns (INC-W13-AUDIT-SCHEMA-001)
-- `apps/maturion-maturity-legacy/supabase/migrations/20260303000001_evidence_table.sql` - creates evidence table (INC-W13-EVIDENCE-TABLE-001)
-- `apps/maturion-maturity-legacy/supabase/migrations/20260303000002_scores_table.sql` - creates scores table (INC-W13-SCORES-TABLE-001)
-- `apps/maturion-maturity-legacy/supabase/migrations/20260303000003_organisation_settings_table.sql` - creates organisation_settings table (INC-W13-ORG-SETTINGS-001)
-- `apps/maturion-maturity-legacy/supabase/migrations/20260303000004_storage_buckets.sql` - creates audit-documents and organisation-assets storage buckets (INC-W13-BUCKET-001)
-- `apps/maturion-maturity-legacy/supabase/migrations/20260303000005_audit_documents_rls_hardening.sql` - hardens audit-documents bucket RLS with org-path isolation (INC-W13-BUCKET-RLS-001)
-- `apps/maturion-maturity-legacy/supabase/migrations/20260303000006_audit_scores_table.sql` - creates audit_scores table (INC-W13-AUDIT-SCORES-001)
-- `modules/mat/05-rca/RCA_WAVE12_POST_DEPLOYMENT_WIRING_FAILURES_20260302.md` - section 8 addendum (F-02 column gap, F-10 table name drift)
-- `modules/mat/BUILD_PROGRESS_TRACKER.md` - Wave 13 Addendum B and C sections added
-- `modules/mat/frontend/src/lib/hooks/useSettings.ts` - renames user_profiles to profiles in 2 from() calls (INC-W13-PROFILE-TABLE-001)
-- `modules/mat/tests/wave13/schema-existence.test.ts` - adds T-W13-SCH-5 to T-W13-SCH-16 (12 new file-based tests, all GREEN; T-W13-SCH-11 regex hardened)
+- `SCOPE_DECLARATION.md` - this file (reset for re-anchor workflow PR)
+- `.github/workflows/foreman-reanchor.yml` - NEW Re-Anchor Pulse workflow
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks-template.md` - NEW wave task tracker template
+- `.agent-workspace/foreman-v2/knowledge/WAVE-CURRENT-TASKS-PROTOCOL.md` - NEW Tier 2 knowledge doc (v1.0.0)
+- `.agent-workspace/foreman-v2/knowledge/index.md` - UPDATED to v1.7.0 (adds WAVE-CURRENT-TASKS-PROTOCOL entry)
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-reanchor-workflow-20260303.md` - PREHANDOVER proof (iaa_audit_token: IAA-session-123-20260303-PASS)
+- `.agent-workspace/foreman-v2/memory/session-reanchor-workflow-20260303.md` - session memory for this PR
+- `.agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md` - A-027 and A-028 codified by IAA (sessions 120 and 122)
+- `.agent-workspace/independent-assurance-agent/knowledge/index.md` - version bumps by IAA (sessions 120 and 122)
+- `.agent-workspace/independent-assurance-agent/memory/session-120-20260303.md` - IAA session-120 memory (REJECTION-PACKAGE, 10 findings)
+- `.agent-workspace/independent-assurance-agent/memory/session-121-20260303.md` - IAA session-121 memory (REJECTION-PACKAGE, 2 findings)
+- `.agent-workspace/independent-assurance-agent/memory/session-122-20260303.md` - IAA session-122 memory (REJECTION-PACKAGE, 2 findings)
+- `.agent-workspace/independent-assurance-agent/memory/session-123-20260303.md` - IAA session-123 memory (ASSURANCE-TOKEN: IAA-session-123-20260303-PASS)
+- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station append (sessions 120, 121, 122, 123)
 
 ---
 
@@ -113,7 +99,7 @@ All other files: governance documentation and schema DDL (additive only, no data
 **Issue**: #869 — Schema mapping mismatch: frontend-to-Supabase table columns missing
 **Scope Declared By**: foreman-v2-agent (session-095 + session-096, v6.2.0)
 **Date**: 2026-03-03
-**Issue**: Wave 13 Governance Failure + PR Review Findings
+**Issue**: feat: Foreman Re-Anchor Pulse — mid-wave context recovery workflow
 
 ---
 
