@@ -33,6 +33,14 @@
 - `.agent-admin/prehandover/prehandover_proof-wave-postbuild-fails-02-task4.md` - qa-builder PREHANDOVER proof (session-098)
 - `.agent-workspace/qa-builder/memory/session-098-20260304.md` - qa-builder session memory for session-098
 
+### Implementation Deliverables (schema-builder — Wave postbuild-fails-02 Task 5)
+- `apps/maturion-maturity-legacy/supabase/migrations/20260304000004_fix_rls_remaining_tables.sql` - RLS policies for all 8 remaining tables (GAP-006 to GAP-013); 15 policies total
+
+### Governance Ceremony Artifacts (schema-builder Phase 4 — Wave postbuild-fails-02 Task 5)
+- `.agent-admin/prehandover/prehandover_proof-wave-postbuild-fails-02-task5.md` - schema-builder PREHANDOVER proof with full OVL-AM-008 wiring trace (session-098)
+- `.agent-workspace/schema-builder/memory/session-098-20260304.md` - schema-builder session memory for session-098
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - TASK-PBF2-005 updated to 🟢 DONE; GAP-006 to GAP-013 marked ✅
+
 ### IAA Audit Artifacts (independent-assurance-agent)
 - `.agent-admin/assurance/iaa-rejection-session-097-wave-postbuild-fails-01-20260304.md` - IAA first invocation rejection package (governance ceremony absent)
 - `.agent-workspace/independent-assurance-agent/memory/session-097-20260304.md` - IAA session memory for first invocation
