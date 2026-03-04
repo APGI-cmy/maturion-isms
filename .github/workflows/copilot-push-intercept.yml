@@ -22,7 +22,7 @@ jobs:
     if: >-
       contains(github.event.comment.body, '@copilot') &&
       (
-        contains(github.event.comment.body, '403') ||
+        (contains(github.event.comment.body, 'push') && contains(github.event.comment.body, '403')) ||
         contains(github.event.comment.body, 'push failed') ||
         contains(github.event.comment.body, 'push access') ||
         contains(github.event.comment.body, 'MATURION_BOT_TOKEN') ||
@@ -38,10 +38,13 @@ jobs:
         uses: actions/github-script@v7
         env:
           ISSUE_NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
-          COMMENT_ID: ${{ github.event.comment.id }}
         with:
           script: |
             const issueNumber = parseInt(process.env.ISSUE_NUMBER, 10);
+            if (isNaN(issueNumber)) {
+              core.warning('Could not resolve issue/PR number — skipping intercept.');
+              return;
+            }
 
             // Idempotency: don't post if we already replied to this session
             const { data: comments } = await github.rest.issues.listComments({
