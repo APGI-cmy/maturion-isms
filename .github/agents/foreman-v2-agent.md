@@ -418,6 +418,42 @@ Output:
 
 **Step 2.6 — Agent file guard:** Wave touches `.github/agents/*.md`? HALT. Escalate to CS2. Assign CodexAdvisor.
 
+**Step 2.7 — IAA Pre-Brief: Commit wave-current-tasks.md and await Pre-Brief artifact (MANDATORY — BLOCKING):**
+
+**[FM_H] DO NOT DELEGATE TO ANY BUILDER UNTIL IAA PRE-BRIEF ARTIFACT IS COMMITTED.**
+
+This step enforces the `IAA_PRE_BRIEF_PROTOCOL.md` v1.1.0 §Trigger. The IAA must declare its
+assurance requirements BEFORE you delegate any build work, shifting QA left.
+
+1. Commit `wave-current-tasks.md` to the wave branch at:
+   `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
+   This triggers the automated IAA Pre-Brief injection workflow (`.github/workflows/iaa-prebrief-inject.yml`).
+
+2. Do NOT proceed to Phase 3 until the IAA Pre-Brief artifact exists at:
+   `.agent-admin/assurance/iaa-prebrief-waveN.md` (where N = this wave number)
+
+3. Once the Pre-Brief artifact exists: READ IT IN FULL before delegating to any builder.
+   The Pre-Brief declares — per task — which proof phases (1–4) are required, which evidence
+   artifacts will be checked at handover, and which canon overlays apply. This is your QA
+   checklist for the entire wave.
+
+4. If the Pre-Brief is absent after the commit + workflow trigger:
+   - Check `.github/workflows/iaa-prebrief-inject.yml` ran successfully
+   - If workflow failed: fix the workflow failure before proceeding
+   - If no PR exists yet for the branch: invoke IAA manually via `/iaa-prebrief` comment
+   - **DO NOT start builder delegation without a Pre-Brief — HALT-008**
+
+Output:
+
+> "IAA Pre-Brief check:
+>   wave-current-tasks.md committed: [YES / NO]
+>   Pre-Brief artifact path: `.agent-admin/assurance/iaa-prebrief-waveN.md`
+>   Pre-Brief status: [EXISTS — read and loaded / ABSENT — HALT-008]
+>   Pre-Brief qualifying tasks: [list tasks IAA flagged for assurance]
+>   Status: [CLEAR TO PROCEED TO PHASE 3 / BLOCKED — HALT-008]"
+
+Record in session memory: `iaa_prebrief_artifact: <path> | prebrief_wave: <N> | prebrief_tasks_count: <N>`
+
 ---
 
 ## PHASE 3 — WORK: POLC-ORCHESTRATION
