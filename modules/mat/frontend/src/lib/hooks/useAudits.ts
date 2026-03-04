@@ -11,6 +11,10 @@ export interface Audit {
   id: string;
   organisation_id: string;
   title: string;
+  organisation_name: string;            // VARCHAR(255) NOT NULL — data-architecture.md §1.1.3
+  facility_location: string | null;     // VARCHAR(255) nullable — Supabase returns null when not set
+  audit_period_start: string | null;    // nullable DATE — Supabase returns ISO string or null
+  audit_period_end: string | null;      // nullable DATE — Supabase returns ISO string or null
   description?: string;
   framework?: string;
   target_date?: string;
@@ -83,6 +87,19 @@ export function useCreateAudit() {
 
   return useMutation<Audit, Error, CreateAuditInput>({
     mutationFn: async (input) => {
+      // Runtime validation — BD-017
+      const trimmedOrgName = input.organisation_name.trim();
+      if (!trimmedOrgName) {
+        throw new Error('Organisation name is required');
+      }
+      if (trimmedOrgName.length > 255) {
+        throw new Error('Organisation name must not exceed 255 characters');
+      }
+      const trimmedLocation = input.facility_location ? input.facility_location.trim() : undefined;
+      if (trimmedLocation && trimmedLocation.length > 255) {
+        throw new Error('Facility location must not exceed 255 characters');
+      }
+
       // Get current user
       const { data: { user }, error: authError } = await supabase.auth.getUser();
       if (authError || !user) {
@@ -106,8 +123,10 @@ export function useCreateAudit() {
         .from('audits')
         .insert({
           title: input.title,
-          // organisation_name maps to description column as closest available DB column
-          description: input.organisation_name,
+          organisation_name: trimmedOrgName,
+          facility_location: trimmedLocation || null,
+          audit_period_start: input.audit_period_start || null,
+          audit_period_end: input.audit_period_end || null,
           organisation_id: profile.organisation_id,
           created_by: user.id,
           status: 'draft',

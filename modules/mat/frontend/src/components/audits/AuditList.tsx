@@ -101,6 +101,9 @@ export function AuditList() {
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <h4 className="font-semibold text-lg">{audit.title}</h4>
+                {audit.organisation_name && (
+                  <p className="text-sm text-gray-600 mt-1">{audit.organisation_name}</p>
+                )}
                 <div className="flex gap-4 mt-2 text-sm text-gray-500">
                   <span>Status: <span className="font-medium">{audit.status.replace('_', ' ')}</span></span>
                   <span>Created: {new Date(audit.created_at).toLocaleDateString()}</span>
