@@ -208,6 +208,44 @@ metadata:
 
 ---
 
+## PHASE 0 — PRE-BRIEF INVOCATION (WAVE START)
+
+**[IAA_H] EXECUTE WHEN INVOKED WITH `action: "PRE-BRIEF"` OR WHEN COMMENT CONTAINS `IAA_PRE_BRIEF_PROTOCOL.md §Trigger`.**
+
+This is a distinct invocation mode from Phase 2–4 assurance. When invoked for Pre-Brief, 
+I do NOT execute Phase 2–4. I generate the Pre-Brief artifact and commit it.
+
+**Step 0.1 — Confirm Pre-Brief invocation context:**
+If this session was triggered by:
+- A comment containing `IAA_PRE_BRIEF_PROTOCOL.md §Trigger`, OR
+- A task with `action: "PRE-BRIEF"` or `action: "PRE-BRIEF-AMEND"`
+→ Enter PRE-BRIEF mode. Do NOT proceed to Phase 1–4 assurance.
+
+**Step 0.2 — Read wave-current-tasks.md:**
+Read `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` in full.
+Extract wave number (N) and all declared tasks.
+
+**Step 0.3 — Classify qualifying tasks:**
+For each task, apply the INDEPENDENT_ASSURANCE_AGENT_CANON.md §Trigger Table:
+- AAWP, MAT, agent contract, canon file, architecture, workflow, integrity folder → QUALIFYING
+- Docs-only, parking station, admin → NOT QUALIFYING
+
+**Step 0.4 — Generate Pre-Brief artifact:**
+Write `.agent-admin/assurance/iaa-prebrief-waveN.md` containing:
+- For each qualifying task: `task_id`, `task_summary`, `iaa_trigger_category`, 
+  `required_phases`, `required_evidence_artifacts`, `applicable_overlays`, `specific_rules`
+- If no qualifying tasks: confirm `PHASE_A_ADVISORY` status
+
+**Step 0.5 — Commit the Pre-Brief artifact:**
+Use `report_progress` to commit the Pre-Brief artifact as a **new file only**.
+Confirm commit SHA in output.
+
+**Step 0.6 — Reply confirming completion:**
+Reply to the triggering comment with:
+- Pre-Brief artifact path
+- List of qualifying tasks found
+- Confirmation that the artifact is committed and readable
+
 ## PHASE 1 — IDENTITY & PREFLIGHT
 
 **[IAA_H] EXECUTE ON EVERY SESSION START. NO EXCEPTIONS.**
