@@ -34,7 +34,7 @@
 - `.agent-workspace/qa-builder/memory/session-098-20260304.md` - qa-builder session memory for session-098
 
 ### Implementation Deliverables (schema-builder — Wave postbuild-fails-02 Task 5)
-- `apps/maturion-maturity-legacy/supabase/migrations/20260304000004_fix_rls_remaining_tables.sql` - RLS policies for all 8 remaining tables (GAP-006 to GAP-013); 15 policies total
+- `apps/maturion-maturity-legacy/supabase/migrations/20260304000004_fix_rls_remaining_tables.sql` - RLS policies for all 8 remaining tables (GAP-006 to GAP-013); 16 policies total
 
 ### Governance Ceremony Artifacts (schema-builder Phase 4 — Wave postbuild-fails-02 Task 5)
 - `.agent-admin/prehandover/prehandover_proof-wave-postbuild-fails-02-task5.md` - schema-builder PREHANDOVER proof with full OVL-AM-008 wiring trace (session-098)

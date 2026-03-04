@@ -2231,8 +2231,8 @@ potentially missing RLS coverage for the full multi-tenant isolation model.
 | TASK-PBF2-001 | Add Wave postbuild-fails-02 to implementation-plan.md | foreman | ✅ DONE | This section |
 | TASK-PBF2-002 | Record GAP-006–GAP-013 in BUILD_PROGRESS_TRACKER.md | foreman | 🔴 PENDING | `modules/mat/BUILD_PROGRESS_TRACKER.md` |
 | TASK-PBF2-003 | Update App Description, FRS (FR-084–FR-088), TRS (TR-084–TR-088) — mark RLS sections RED | foreman | 🔴 PENDING | `01-frs/functional-requirements.md`, `01.5-trs/technical-requirements-specification.md`, `00-app-description/app-description.md` |
-| TASK-PBF2-004 | RED gate QA tests T-PBF2-001 to T-PBF2-008 — assert RLS policies for all 8 remaining tables | qa-builder | 🔴 PENDING | `modules/mat/tests/wave-postbuild-fails-02/` |
-| TASK-PBF2-005 | RLS policy migrations for organisations, domains, mini_performance_standards, criteria, evidence, scores, organisation_settings, audit_scores | schema-builder | 🔴 PENDING | `apps/maturion-maturity-legacy/supabase/migrations/` |
+| TASK-PBF2-004 | RED gate QA tests T-PBF2-001 to T-PBF2-008 — assert RLS policies for all 8 remaining tables | qa-builder | ✅ DONE | `modules/mat/tests/security-rls/wave-postbuild-fails-02.test.ts` |
+| TASK-PBF2-005 | RLS policy migrations for organisations, domains, mini_performance_standards, criteria, evidence, scores, organisation_settings, audit_scores | schema-builder | ✅ DONE | `apps/maturion-maturity-legacy/supabase/migrations/20260304000004_fix_rls_remaining_tables.sql` (16 policies) |
 
 ### Acceptance Criteria
 
