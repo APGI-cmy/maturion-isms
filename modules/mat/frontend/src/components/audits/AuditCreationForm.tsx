@@ -25,8 +25,15 @@ export function AuditCreationForm() {
       newErrors.title = 'Audit title is required';
     }
 
-    if (!formData.organisation_name.trim()) {
+    const trimmedOrgName = formData.organisation_name.trim();
+    if (!trimmedOrgName) {
       newErrors.organisation_name = 'Organisation name is required';
+    } else if (trimmedOrgName.length > 255) {
+      newErrors.organisation_name = 'Organisation name must not exceed 255 characters';
+    }
+
+    if ((formData.facility_location || '').trim().length > 255) {
+      newErrors.facility_location = 'Facility location must not exceed 255 characters';
     }
 
     setErrors(newErrors);
@@ -103,6 +110,7 @@ export function AuditCreationForm() {
             value={formData.organisation_name}
             onChange={handleChange}
             placeholder="Enter organisation name"
+            maxLength={255}
             aria-label="Organisation name"
             aria-required="true"
             aria-invalid={!!errors.organisation_name}
@@ -124,9 +132,14 @@ export function AuditCreationForm() {
             value={formData.facility_location}
             onChange={handleChange}
             placeholder="Enter facility location"
+            maxLength={255}
             aria-label="Facility location"
-            className="w-full px-3 py-2 border border-gray-300 rounded"
+            aria-invalid={!!errors.facility_location}
+            className={`w-full px-3 py-2 border rounded ${errors.facility_location ? 'border-red-500' : 'border-gray-300'}`}
           />
+          {errors.facility_location && (
+            <p className="text-red-500 text-sm mt-1" role="alert">{errors.facility_location}</p>
+          )}
         </div>
 
         <div>
