@@ -14,6 +14,8 @@ type ActiveTab = 'overview' | 'results';
 
 export function AuditManagementPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('overview');
+  // selectedAuditId drives AuditResultsTable — criteria data wiring is a Batch C task
+  const [selectedAuditId, _setSelectedAuditId] = useState<string>('');
 
   return (
     <div className="audit-management-page p-6 max-w-7xl mx-auto">
@@ -91,7 +93,7 @@ export function AuditManagementPage() {
           </div>
           {/* AuditResultsTable renders criteria_evaluations data for the selected audit */}
           <AuditResultsTable
-            auditId=""
+            auditId={selectedAuditId}
             criteria={[]}
           />
         </div>

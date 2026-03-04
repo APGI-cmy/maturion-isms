@@ -18,6 +18,19 @@ export function DashboardPage() {
   const { data: metrics, isLoading, isError, error } = useAuditMetrics();
   const queryClient = useQueryClient();
 
+  // Create Report handler — wired to the gate button (FR-099, TR-099)
+  // TODO: wire to active audit selection + AI generation pipeline (Batch C)
+  // Pattern: supabase.from('audit_reports').insert({
+  //   audit_id: selectedAuditId,
+  //   organisation_id: orgId,
+  //   storage_path: 'pending',
+  //   status: 'generating',
+  //   triggered_by: userId,
+  // })
+  const handleCreateReport = () => {
+    /* TODO: wire to active audit + AI generation pipeline */
+  };
+
   // Realtime subscription for live updates (MAT-T-0100)
   useEffect(() => {
     const channel = supabase
@@ -175,6 +188,7 @@ export function DashboardPage() {
           }`}
           disabled={!displayMetrics.isCreateReportEnabled}
           aria-disabled={!displayMetrics.isCreateReportEnabled}
+          onClick={handleCreateReport}
           data-testid="create-report-button"
           title={
             displayMetrics.isCreateReportEnabled

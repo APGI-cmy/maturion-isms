@@ -11,7 +11,8 @@ import { useState } from 'react';
 
 export interface EvidenceItem {
   id: string;
-  type: 'document' | 'image' | 'link' | 'text' | 'video' | 'file' | 'voice';
+  /** DB CHECK constraint values: 'text','photo','audio','video','document','interview','file','voice' */
+  type: 'document' | 'photo' | 'audio' | 'text' | 'video' | 'interview' | 'file' | 'voice';
   name: string;
   storagePath: string;
   deleted: boolean;
@@ -30,9 +31,8 @@ const EVIDENCE_TYPES: {
   icon: string;
   accept?: string;
 }[] = [
-  { type: 'document', label: 'Document', icon: '📄', accept: '.pdf,.doc,.docx' },
-  { type: 'image', label: 'Image', icon: '🖼️', accept: 'image/*' },
-  { type: 'link', label: 'Link / URL', icon: '🔗' },
+  { type: 'document', label: 'Document / URL', icon: '📄', accept: '.pdf,.doc,.docx' },
+  { type: 'photo', label: 'Photo / Image', icon: '🖼️', accept: 'image/*' },
   { type: 'text', label: 'Text / Findings', icon: '📝' },
   { type: 'video', label: 'Video', icon: '🎥', accept: 'video/*' },
   { type: 'file', label: 'File (Spreadsheet)', icon: '📊', accept: '.xlsx,.xls,.csv' },
@@ -46,7 +46,6 @@ export function EvidenceUploadPanel({
   onEvidenceChange,
 }: EvidenceUploadPanelProps) {
   const [evidenceItems, setEvidenceItems] = useState<EvidenceItem[]>([]);
-  const [linkInput, setLinkInput] = useState('');
   const [textInput, setTextInput] = useState('');
 
   function buildStoragePath(type: EvidenceItem['type'], fileName: string): string {
@@ -68,20 +67,6 @@ export function EvidenceUploadPanel({
     onEvidenceChange?.(updated);
   }
 
-  function handleLinkAdd() {
-    if (!linkInput.trim()) return;
-    const newItem: EvidenceItem = {
-      id: `link-${Date.now()}`,
-      type: 'link',
-      name: linkInput.trim(),
-      storagePath: linkInput.trim(),
-      deleted: false,
-    };
-    const updated = [...evidenceItems, newItem];
-    setEvidenceItems(updated);
-    setLinkInput('');
-    onEvidenceChange?.(updated);
-  }
 
   function handleTextSave() {
     if (!textInput.trim()) return;
@@ -148,39 +133,6 @@ export function EvidenceUploadPanel({
         data-testid="evidence-type-tiles"
       >
         {EVIDENCE_TYPES.map(({ type, label, icon, accept }) => {
-          if (type === 'link') {
-            return (
-              <div
-                key={type}
-                className="evidence-tile flex flex-col items-center p-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary-500 cursor-pointer"
-                data-testid={`evidence-tile-${type}`}
-              >
-                <span className="text-2xl mb-1" aria-hidden="true">{icon}</span>
-                <span className="text-sm font-medium text-gray-700">{label}</span>
-                <div className="mt-2 flex gap-1 w-full">
-                  <input
-                    type="url"
-                    className="flex-1 text-xs border border-gray-300 rounded px-1 py-0.5"
-                    placeholder="https://"
-                    value={linkInput}
-                    onChange={(e) => setLinkInput(e.target.value)}
-                    aria-label="Enter link URL"
-                    data-testid="evidence-link-input"
-                  />
-                  <button
-                    type="button"
-                    className="text-xs bg-primary-600 text-white px-2 py-0.5 rounded"
-                    onClick={handleLinkAdd}
-                    aria-label="Add link evidence"
-                    data-testid="evidence-link-add"
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
-            );
-          }
-
           if (type === 'text') {
             return (
               <div
@@ -267,7 +219,7 @@ export function EvidenceUploadPanel({
                     data-testid={`evidence-replace-${item.id}`}
                   >
                     Replace
-                    {item.type !== 'link' && item.type !== 'text' && (
+                    {item.type !== 'text' && (
                       <input
                         type="file"
                         className="sr-only"
