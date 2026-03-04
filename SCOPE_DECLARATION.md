@@ -33,3 +33,6 @@
 - `modules/mat/frontend/src/pages/OnboardingPage.tsx` - GAP-W01/FR-089: data-testid="onboarding-step-1" and data-testid="onboarding-step-2" on wizard forms
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated with Wave 14 Batch A tasks + POLC violation record (SELF-BREACH-SESSION-140-001)
 - `SCOPE_DECLARATION.md` - This file — scope declaration for session-140 Wave 14 Batch A
+- `.agent-admin/assurance/iaa-token-session-140-wave14-batchA-20260304.md` - IAA audit token file for Wave 14 Batch A (initial: REJECTION-PACKAGE for stale SCOPE_DECLARATION; updated to ASSURANCE-TOKEN after fix)
+- `.agent-workspace/independent-assurance-agent/memory/session-140-20260304.md` - IAA session memory for session-140
+- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station log (session-140 entry appended)
