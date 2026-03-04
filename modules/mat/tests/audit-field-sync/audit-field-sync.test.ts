@@ -82,14 +82,15 @@ function computeAuditsNetSchema(): NetSchemaResult {
   const droppedBy = new Map<string, string>();
 
   for (const file of files) {
-    const sql = fs.readFileSync(path.join(MIGRATION_DIR, file), 'utf-8').toLowerCase();
+    // Preserve original SQL text (for debug diagnostics); use /i flag on regexes for case-insensitive matching
+    const sql = fs.readFileSync(path.join(MIGRATION_DIR, file), 'utf-8');
 
     // ADD COLUMN [IF NOT EXISTS] <col>  on  public.audits  (or unqualified audits)
     const addRe =
-      /alter\s+table\s+(?:public\.)?audits\s+add\s+column\s+(?:if\s+not\s+exists\s+)?(\w+)/g;
+      /alter\s+table\s+(?:public\.)?audits\s+add\s+column\s+(?:if\s+not\s+exists\s+)?(\w+)/gi;
     let m: RegExpExecArray | null;
     while ((m = addRe.exec(sql)) !== null) {
-      const col = m[1];
+      const col = m[1].toLowerCase(); // normalise to lowercase — PostgreSQL identifiers are case-insensitive
       columns.add(col);
       addedBy.set(col, file);
       droppedBy.delete(col);
@@ -97,9 +98,9 @@ function computeAuditsNetSchema(): NetSchemaResult {
 
     // DROP COLUMN [IF EXISTS] <col>  on  public.audits
     const dropRe =
-      /alter\s+table\s+(?:public\.)?audits\s+drop\s+column\s+(?:if\s+exists\s+)?(\w+)/g;
+      /alter\s+table\s+(?:public\.)?audits\s+drop\s+column\s+(?:if\s+exists\s+)?(\w+)/gi;
     while ((m = dropRe.exec(sql)) !== null) {
-      const col = m[1];
+      const col = m[1].toLowerCase();
       if (columns.has(col)) {
         columns.delete(col);
         droppedBy.set(col, file);
@@ -108,9 +109,10 @@ function computeAuditsNetSchema(): NetSchemaResult {
 
     // RENAME COLUMN <old> TO <new>  on  public.audits
     const renameRe =
-      /alter\s+table\s+(?:public\.)?audits\s+rename\s+column\s+(\w+)\s+to\s+(\w+)/g;
+      /alter\s+table\s+(?:public\.)?audits\s+rename\s+column\s+(\w+)\s+to\s+(\w+)/gi;
     while ((m = renameRe.exec(sql)) !== null) {
-      const [, oldCol, newCol] = m;
+      const oldCol = m[1].toLowerCase();
+      const newCol = m[2].toLowerCase();
       if (columns.has(oldCol)) {
         columns.delete(oldCol);
         droppedBy.set(oldCol, `${file} (renamed to ${newCol})`);
@@ -127,7 +129,15 @@ describe('Wave audit-field-sync — Column Drift Guard & Implementation Gate (TA
   let netSchema: NetSchemaResult;
 
   beforeAll(() => {
-    netSchema = computeAuditsNetSchema();
+    try {
+      netSchema = computeAuditsNetSchema();
+    } catch (err) {
+      throw new Error(
+        `computeAuditsNetSchema() failed — check that the migration directory exists and is readable.\n` +
+          `Expected path: ${MIGRATION_DIR}\n` +
+          `Original error: ${err instanceof Error ? err.message : String(err)}`
+      );
+    }
   });
 
   it('T-AFS-COL-001: organisation_name must be present in final net schema state of public.audits', () => {
