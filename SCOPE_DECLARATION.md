@@ -40,3 +40,15 @@
 - `.github/agents/schema-builder.md` - can_invoke/cannot_invoke YAML; §4.6 iaa_audit_token reference
 - `.github/agents/ui-builder.md` - can_invoke/cannot_invoke YAML; §4.6 iaa_audit_token reference
 - `SCOPE_DECLARATION.md` - this file
+
+### LEGACY_BOUNDARY Files (CS2 commit 70e73fe — 2026-03-04)
+
+- `.agent-workspace/CodexAdvisor-agent/memory/LEGACY_BOUNDARY.md` - CS2 legacy boundary marker (session-045 = first compliant session)
+- `.agent-workspace/api-builder/memory/LEGACY_BOUNDARY.md` - CS2 legacy boundary marker
+- `.agent-workspace/foreman-v2/memory/LEGACY_BOUNDARY.md` - CS2 legacy boundary marker
+- `.agent-workspace/governance-liaison-isms/memory/LEGACY_BOUNDARY.md` - CS2 legacy boundary marker
+- `.agent-workspace/independent-assurance-agent/memory/LEGACY_BOUNDARY.md` - CS2 legacy boundary marker
+- `.agent-workspace/integration-builder/memory/LEGACY_BOUNDARY.md` - CS2 legacy boundary marker
+- `.agent-workspace/qa-builder/memory/LEGACY_BOUNDARY.md` - CS2 legacy boundary marker
+- `.agent-workspace/schema-builder/memory/LEGACY_BOUNDARY.md` - CS2 legacy boundary marker
+- `.agent-workspace/ui-builder/memory/LEGACY_BOUNDARY.md` - CS2 legacy boundary marker

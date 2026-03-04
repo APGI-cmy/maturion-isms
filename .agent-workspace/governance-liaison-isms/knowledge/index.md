@@ -3,7 +3,7 @@
 **Agent**: governance-liaison-isms  
 **Contract Version**: 3.2.0  
 **Knowledge Version**: 1.5.0  
-**Last Updated**: 2026-03-03  
+**Last Updated**: 2026-03-04  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---

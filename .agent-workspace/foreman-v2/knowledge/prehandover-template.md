@@ -1,8 +1,8 @@
 # PREHANDOVER Proof Template — Foreman v2
 
 **Agent**: foreman-v2
-**Version**: 1.3.0
-**Last Updated**: 2026-03-03
+**Version**: 1.4.0
+**Last Updated**: 2026-03-04
 **Purpose**: Template for generating Phase 4 PREHANDOVER proof artifacts per S-009 (FAIL-ONLY-ONCE v1.8.0)
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -14,6 +14,7 @@
 |---|---|---|
 | 1.2.0 | 2026-03-02 | Add `## Environment Parity` section (OVL-CI-006 / A-020 — 7-session recurring flag closed via issue #815) |
 | 1.3.0 | 2026-03-03 | Add `## End-to-End Wiring Trace (OVL-AM-008)` section — mandatory for PRs touching schema migrations, API endpoints, Supabase hooks, or frontend data hooks |
+| 1.4.0 | 2026-03-04 | Post-ASSURANCE-TOKEN Ceremony rewritten with explicit temporal ordering per §4.3b (CR-2 fix); PENDING replaced with expected reference format per A-028/A-029 |
 | 1.1.0 | 2026-03-01 | Add `## IAA Agent Response (verbatim)` mandatory section per S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) |
 | 1.0.0 | 2026-02-25 | Initial template |
 
