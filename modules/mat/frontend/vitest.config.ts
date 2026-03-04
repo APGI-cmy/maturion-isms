@@ -10,9 +10,18 @@ export default defineConfig({
     },
   },
   test: {
-    include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
+    include: [
+      'tests/**/*.test.ts',
+      'tests/**/*.test.tsx',
+      '../tests/wave13/**/*.test.ts',
+    ],
     globals: true,
     reporters: ['verbose'],
     environment: 'jsdom',
+    env: {
+      VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL ?? '',
+      VITE_SUPABASE_ANON_KEY: process.env.VITE_SUPABASE_ANON_KEY ?? '',
+      VITE_API_BASE_URL: process.env.VITE_API_BASE_URL ?? '',
+    },
   },
 });
