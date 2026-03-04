@@ -104,12 +104,14 @@ capabilities:
       hard_limit_enforcement: BLOCKING
       warn_at_characters: 25000
     requires: CS2_AUTHORIZATION
-  alignment:
+   alignment:
     drift_detection: CANON_INVENTORY_HASH_COMPARE
     schedule_fallback: hourly
-    self_evaluation:
+  self_evaluation:            # ✅ 2-space indent, sibling under capabilities
     quality_professor_interrupt: MANDATORY_AFTER_EVERY_CREATE_OR_UPDATE
     merge_gate_parity: MANDATORY_BEFORE_EVERY_PR
+  job_environment:            # ✅ 2-space indent, sibling under capabilities
+    scope: "Agent files (.github/agents/) and Tier 2 artifacts (.agent-workspace/) ONLY. No application code. No governance canon authoring."
   job_environment:            # ✅ CORRECT — 2-space indent, sibling under capabilities
     scope: "Agent files (.github/agents/) and Tier 2 artifacts (.agent-workspace/) ONLY. No application code. No governance canon authoring."
     can_invoke:      # ✅ CORRECT — 4 spaces indent under job_environment
