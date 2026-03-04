@@ -692,5 +692,40 @@ grep -E '^\s*-\s+`[^`]+`\s+-\s+' SCOPE_DECLARATION.md | wc -l
 
 ---
 
+---
+
+### A-030 — CORE-019 Re-Invocation Carve-Out — Correction Addendum Is the Resolution Path
+
+**Triggered by**: maturion-isms session-098b-20260304 — re-invocation for Wave postbuild-fails-02.
+CORE-019 requires `iaa_audit_token` referenced session memory to show `verdict = ASSURANCE-TOKEN`.
+In re-invocation scenarios where A-029 makes the PREHANDOVER immutable, the pre-populated PASS token
+cannot be updated after a REJECTION-PACKAGE. The referenced session memory permanently shows
+`REJECTION-PACKAGE`, causing CORE-019 to fail in every subsequent re-invocation — impossible to fix
+by editing the PREHANDOVER.
+
+**Permanent Rule**:
+When `iaa_audit_token` is not PENDING and the referenced IAA session memory shows
+`verdict = REJECTION-PACKAGE` (not ASSURANCE-TOKEN), this is a re-invocation scenario.
+CORE-019 check PASSES in re-invocations if ALL of the following are present in a correction addendum
+committed on the branch:
+  (a) Prior rejection commit SHA cited explicitly
+  (b) Prior rejection token file path cited explicitly
+  (c) Statement that this is a re-invocation and the expected PASS token was not realized
+  (d) Statement that the addendum + dedicated IAA token files constitute the complete CORE-019 audit trail
+
+If ANY of (a)–(d) are absent from the correction addendum → CORE-019 FAILS.
+The correction addendum MUST be committed (not working-tree-only) before CORE-019 can pass.
+
+**Check in Phase 3 (CORE-019 extension)**:
+> A-030: When session memory shows REJECTION-PACKAGE for referenced iaa_audit_token:
+> - Locate correction addendum on branch (committed, not working-tree-only)
+> - Verify all four components (a)–(d) are present
+> - If present and committed: CORE-019 PASS (re-invocation scenario confirmed)
+> - If absent or uncommitted: CORE-019 FAIL
+
+**Status**: ACTIVE — from 2026-03-04 (session-098b)
+
+---
+
 **Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
 
