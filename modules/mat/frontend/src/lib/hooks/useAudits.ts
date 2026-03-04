@@ -23,9 +23,10 @@ export interface Audit {
 
 export interface CreateAuditInput {
   title: string;
-  description?: string;
-  framework?: string;
-  target_date?: string;
+  organisation_name: string;
+  facility_location?: string;
+  audit_period_start?: string;
+  audit_period_end?: string;
 }
 
 /**
@@ -105,9 +106,8 @@ export function useCreateAudit() {
         .from('audits')
         .insert({
           title: input.title,
-          description: input.description,
-          framework: input.framework,
-          target_date: input.target_date,
+          // organisation_name maps to description column as closest available DB column
+          description: input.organisation_name,
           organisation_id: profile.organisation_id,
           created_by: user.id,
           status: 'draft',
