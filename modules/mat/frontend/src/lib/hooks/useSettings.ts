@@ -151,6 +151,52 @@ export function useUpdateOrganisationSettings() {
   });
 }
 
+export interface CreateOrganisationInput {
+  name: string;
+  ownerFullName: string;
+}
+
+/**
+ * Create a new organisation and link it to the current user's profile
+ */
+export function useCreateOrganisation() {
+  const queryClient = useQueryClient();
+
+  return useMutation<{ organisationId: string }, Error, CreateOrganisationInput>({
+    mutationFn: async ({ name, ownerFullName }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      // 1. Create organisation
+      const { data: org, error: orgError } = await supabase
+        .from('organisations')
+        .insert({ name })
+        .select('id')
+        .single();
+      if (orgError) throw new Error(`Failed to create organisation: ${orgError.message}`);
+
+      // 2. Upsert profile with organisation_id and full_name
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          organisation_id: org.id,
+          full_name: ownerFullName,
+          display_name: ownerFullName,
+          email: user.email,
+          updated_at: new Date().toISOString(),
+        });
+      if (profileError) throw new Error(`Failed to update profile: ${profileError.message}`);
+
+      return { organisationId: org.id };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-profile'] });
+      queryClient.invalidateQueries({ queryKey: ['organisation-settings'] });
+    },
+  });
+}
+
 /**
  * Upload organisation logo
  */

@@ -19,6 +19,7 @@ export function LoginPage() {
       if (isSignUp) {
         const { error: signUpError } = await supabase.auth.signUp({ email, password });
         if (signUpError) throw signUpError;
+        navigate('/onboarding');
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
         if (signInError) throw signInError;

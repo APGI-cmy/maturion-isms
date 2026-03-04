@@ -10,8 +10,10 @@ import { DashboardPage } from './pages/DashboardPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { LoginPage } from './pages/LoginPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { OnboardingPage } from './pages/OnboardingPage';
 import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './contexts/AuthContext';
+import { useUserProfile } from './lib/hooks/useSettings';
 
 const queryClient = new QueryClient();
 
@@ -28,6 +30,19 @@ function ProtectedRoute() {
   return <Outlet />;
 }
 
+function OnboardingGuard() {
+  const { data: profile, isLoading } = useUserProfile();
+  if (isLoading) {
+    return (
+      <div role="status" aria-live="polite" className="min-h-screen flex items-center justify-center">
+        <span className="sr-only">Loading…</span>
+      </div>
+    );
+  }
+  if (!profile?.organisation_id) return <Navigate to="/onboarding" replace />;
+  return <Outlet />;
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -37,15 +52,18 @@ function App() {
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route element={<ProtectedRoute />}>
-                <Route path="/" element={<Layout />}>
-                  <Route index element={<DashboardPage />} />
-                  <Route path="audits" element={<AuditManagementPage />} />
-                  <Route path="criteria" element={<CriteriaManagementPage />} />
-                  <Route path="evidence" element={<EvidenceCollectionPage />} />
-                  <Route path="scoring" element={<ScoringPage />} />
-                  <Route path="dashboard" element={<DashboardPage />} />
-                  <Route path="reports" element={<ReportsPage />} />
-                  <Route path="settings" element={<SettingsPage />} />
+                <Route path="/onboarding" element={<OnboardingPage />} />
+                <Route element={<OnboardingGuard />}>
+                  <Route path="/" element={<Layout />}>
+                    <Route index element={<DashboardPage />} />
+                    <Route path="audits" element={<AuditManagementPage />} />
+                    <Route path="criteria" element={<CriteriaManagementPage />} />
+                    <Route path="evidence" element={<EvidenceCollectionPage />} />
+                    <Route path="scoring" element={<ScoringPage />} />
+                    <Route path="dashboard" element={<DashboardPage />} />
+                    <Route path="reports" element={<ReportsPage />} />
+                    <Route path="settings" element={<SettingsPage />} />
+                  </Route>
                 </Route>
               </Route>
             </Routes>
