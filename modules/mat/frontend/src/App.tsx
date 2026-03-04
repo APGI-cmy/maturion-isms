@@ -40,7 +40,12 @@ function OnboardingGuard() {
     );
   }
   if (!profile?.organisation_id) return <Navigate to="/onboarding" replace />;
-  return <Outlet />;
+  return (
+    <>
+      <span data-testid="onboarding-guard" style={{ display: 'none' }} aria-hidden="true" />
+      <Outlet />
+    </>
+  );
 }
 
 function App() {
