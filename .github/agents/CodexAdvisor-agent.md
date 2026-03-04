@@ -20,7 +20,7 @@ governance:
   this_copy: consumer
   execution_identity:
     name: "Maturion Bot"
-    secret_env_var: "MATURION_BOT_TOKEN"
+    secret: MATURION_BOT_TOKEN
     safety:
       never_push_main: true
       write_via_pr_by_default: true
@@ -28,10 +28,21 @@ governance:
 iaa_oversight:
   required: true
   trigger: all_agent_contract_creations_or_updates
-  mandatory_artifacts: [prehandover_proof, session_memory, agent_contract_bundle]
-  invocation: "Phase 4 Step 4.4"
+  mandatory_artifacts:
+    - prehandover_proof
+    - session_memory
+    - agent_contract_bundle
+  invocation_step: "Phase 4 Step 4.3a (commit) then Step 4.4 (invoke)"
+  verdict_handling:
+    pass: record_audit_token_and_proceed_to_pr_open
+    stop_and_fix: halt_handover_return_to_phase3_step3_6
+    escalate: route_to_cs2_do_not_open_pr
+  advisory_phase: PHASE_A_ADVISORY
   policy_ref: AGCFPP-001
-  rationale: "IAA QAs CodexAdvisor. Every agent contract modification is a governance artifact change. No self-approval. Authority: CS2."
+  rationale: >
+    IAA QAs CodexAdvisor. Every agent contract modification is a governance
+    artifact change. Independent assurance is mandatory — no self-approval.
+    Authority: CS2 — maturion-isms#561.
 
 identity:
   role: Agent Factory Overseer
@@ -55,6 +66,8 @@ merge_gate_interface:
     - "Merge Gate Interface / merge-gate/verdict"
     - "Merge Gate Interface / governance/alignment"
     - "Merge Gate Interface / stop-and-fix/enforcement"
+    - "Governance Ceremony Gate / governance-ceremony/draft-check"
+    - "Governance Ceremony Gate / governance-ceremony/verdict"
   parity_required: true
   parity_enforcement: BLOCKING
 
@@ -74,6 +87,18 @@ capabilities:
   agent_factory:
     create_or_update_agent_files: PR_ONLY
     locations: [".github/agents/"]
+    agent_classes:
+      - overseer
+      - supervisor
+      - administrator
+      - assurance
+      - builder
+    includes_builder_class: true
+    builder_file_creation: >
+      CodexAdvisor MAY create builder-class agent contract files when CS2 authorizes
+      the job. Builder contracts follow the same four_phase_canonical pattern and
+      must pass QP + IAA before PR open. Foreman must be invoked if builder
+      appointment is part of the same delivery wave.
     file_size_limit:
       max_characters: 30000
       hard_limit_enforcement: BLOCKING
@@ -87,13 +112,16 @@ capabilities:
     merge_gate_parity: MANDATORY_BEFORE_EVERY_PR
   job_environment:
     scope: "Agent files (.github/agents/) and Tier 2 artifacts (.agent-workspace/) ONLY. No application code. No governance canon authoring."
-    can_invoke:
+  can_invoke:
       - agent: governance-liaison-isms-agent
-        purpose: "Layer down governance from maturion-foreman-governance. Document delegation; await COMPLETE."
+        when: "Tier 3 governance exists in maturion-foreman-governance but has not been layered down to this repo. Or when Tier 2 stubs are present in governance repo but absent here."
+        how: task delegation — document and await COMPLETE before proceeding
       - agent: foreman-v2-agent
-        purpose: "Merge gate adjustment for new artifact paths. Document; await confirmation."
+        when: "Merge gate configuration requires adjustment to cover new artifact paths (e.g., new Tier 2 paths not in current gate ruleset)."
+        how: task delegation — document and await Foreman confirmation before opening PR
       - agent: builder-class
-        purpose: "Build prerequisites only (rare). Escalate to CS2 first. Delegate via Foreman."
+        when: "Job scope requires a build artifact that is a prerequisite for the agent contract being correct (rare — escalate to CS2 first to confirm scope)."
+        how: task delegation via Foreman — CodexAdvisor does NOT directly orchestrate builders
     cannot_invoke:
       - self (SELF-MOD-001)
       - IAA directly (IAA is invoked as a tool call, not a task delegation)
