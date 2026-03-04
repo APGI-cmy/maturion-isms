@@ -75,10 +75,11 @@ This wave required multiple IAA invocations. The complete audit trail for CORE-0
 |-----------|--------|-----------|---------|
 | 1st (post-handover) | 462e707 | `.agent-admin/assurance/iaa-token-session-098-wave-postbuild-fails-02-20260304.md` | REJECTION-PACKAGE (FINDING-A: policy count; FINDING-B: test path) |
 | 2nd (re-invocation) | 964565a | `.agent-admin/assurance/iaa-token-session-098-wave-postbuild-fails-02-20260304-v2.md` | REJECTION-PACKAGE (A-021: not committed; SCOPE_DECLARATION not fixed; addendum incomplete; CORE-019 context absent) |
-| 3rd (re-invocation) | (this commit) | `.agent-admin/assurance/iaa-token-session-098-wave-postbuild-fails-02-20260304-v3.md` | Pending |
+| 3rd (re-invocation) | cd44579 | `.agent-admin/assurance/iaa-token-session-098-wave-postbuild-fails-02-20260304-v3.md` | REJECTION-PACKAGE (CORE-021-F1: session memory 3× "15 policies"; CORE-021-F2: addendum missing Foreman PREHANDOVER rows 25+35) |
+| 4th (re-invocation) | 8de7b57 | `.agent-admin/assurance/iaa-token-session-098-wave-postbuild-fails-02-20260304-v4.md` | Pending |
 
 The PREHANDOVER proof field `iaa_audit_token: IAA-session-098-wave-postbuild-fails-02-20260304-PASS`
 records the expected token reference at initial commit time per A-029. The actual token is in the
-v3 token file once IAA issues ASSURANCE-TOKEN. This addendum + all three invocation token files
+v4 token file once IAA issues ASSURANCE-TOKEN. This addendum + all four invocation token files
 constitute the complete CORE-019 audit trail for this wave re-invocation scenario.
 
