@@ -4,8 +4,8 @@
     "canonical_source": "APGI-cmy/maturion-foreman-governance",
     "description": "Consumer-side governance alignment inventory \u2014 tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
     "last_updated": "2026-03-04",
-    "last_ripple_commit": "6523fe8d42e6fb1608a7744a64e910230f9cc881",
-    "last_ripple_timestamp": "2026-03-04T06:06:16Z",
+    "last_ripple_commit": "4e2e193c3cfedf04441e26076759d718b92db5a3",
+    "last_ripple_timestamp": "2026-03-04T08:28:24Z",
     "alignment_summary": {
         "total_artifacts": 12,
         "aligned": 8,
@@ -85,14 +85,19 @@
             "filename": "CodexAdvisor-agent.md",
             "path": ".github/agents/CodexAdvisor-agent.md",
             "canonical_version": "3.2.0",
-            "local_version": "3.3.0",
-            "canonical_hash_sha256": "d8e07cde1c2907cf415c93626b288f0ef842fbaf",
+            "local_version": "3.4.0",
+            "canonical_hash_sha256": "c4b1c8919ec1b9ca2e973713a625ccf6b1f187ae",
             "local_hash_sha256": "17de1f1f0f60fd92c8e12d130bbedaf02dcb05b6a84b772d50788fe47c98ee01",
             "alignment_status": "ESCALATED_TO_CS2",
             "layer_down_status": "AGENT_CONTRACT \u2014 requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
-            "last_verified": "2026-03-03T13:03:45Z",
-            "escalation_ref": "ESC-AGENTFILE-E77B00C7-20260303",
-            "note": "Local v3.3.0 is NEWER than canonical v3.2.0 \u2014 this is a layer-up situation. The local contract was updated by CodexAdvisor-agent in a prior session beyond the canonical version. Resolution options: (a) submit a layer-up PR to canonical source to adopt local v3.3.0, or (b) if canonical v3.2.0 contains corrections not in local, merge those in. CS2 must determine which version is authoritative and whether a layer-up PR to maturion-foreman-governance is required."
+            "last_verified": "2026-03-04T08:28:24Z",
+            "escalation_ref": "ESC-AGENTFILE-4E2E193C-20260304",
+            "prior_escalations": [
+                "ESC-AGENTFILE-E77B00C7-20260303",
+                "ESC-AGENTFILE-61AB7B83-20260304",
+                "ESC-AGENTFILE-4981C34F-20260304"
+            ],
+            "note": "Local v3.4.0 is NEWER than canonical v3.2.0 \u2014 layer-up situation. Canonical ripple 4e2e193c (trigger: Reinstate mandatory commit step for IAA invocation) changed this file. Per A-015: escalated directly to CS2. CS2 must determine authoritative version and whether layer-up PR to canonical source is required."
         },
         {
             "filename": "foreman-v2.agent.md",
@@ -161,6 +166,6 @@
         "governing_protocol": "GOVERNANCE_RIPPLE_MODEL.md v1.1.0",
         "canonical_checklist": "GOVERNANCE_RIPPLE_CHECKLIST_PROTOCOL.md",
         "created_by": "governance-liaison-isms session-035",
-        "last_updated_by": "governance-liaison-isms session-044-20260304"
+        "last_updated_by": "governance-liaison-isms session-047-20260304"
     }
 }

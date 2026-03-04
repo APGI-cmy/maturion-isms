@@ -82,18 +82,18 @@
     "governance_liaison_contract": ".github/agents/governance-liaison.md"
   },
   "last_ripple_check": {
-    "timestamp": "2026-03-03T13:03:45Z",
-    "session_id": "session-040-20260303",
+    "timestamp": "2026-03-04T08:28:24Z",
+    "session_id": "session-047-20260304",
     "executed_by": "governance-liaison-isms-agent",
-    "canonical_commit": "e77b00c71511ae353d903f89fa85680dcbfc7cd9",
+    "canonical_commit": "4e2e193c3cfedf04441e26076759d718b92db5a3",
     "canonical_inventory_version": "1.0.0",
     "result": "ESCALATED_TO_CS2",
-    "drift_detected": true,
+    "drift_detected": false,
     "agent_files_changed": true,
     "files_layered_down": 0,
-    "pr_required": true,
+    "pr_required": false,
     "sync_pending": true,
-    "notes": "Ripple e77b00c7 contains .github/agents/** changes — A-009 escalation trigger. Governance admin records updated. CS2 escalation created. Awaiting CodexAdvisor-agent + CS2 authorization for agent contract file changes."
+    "notes": "Ripple 4e2e193c contains .github/agents/CodexAdvisor-agent.md change — A-009/A-015 escalation trigger. No governance canon files changed. Per A-015: CodexAdvisor-agent.md escalated directly to CS2 (ESC-AGENTFILE-4E2E193C-20260304). Local v3.4.0 is newer than canonical v3.2.0. CS2 to determine authoritative version."
   },
   "liaison_confirmation": {
     "timestamp": "2026-03-02T15:45:04Z",
