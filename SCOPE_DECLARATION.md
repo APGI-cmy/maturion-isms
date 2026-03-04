@@ -1,105 +1,73 @@
 # Scope Declaration
 
-**Issue**: #869 — Schema mapping mismatch: frontend-to-Supabase table columns missing for profile and audit management
-**Date**: 2026-03-03
-**Agent**: foreman-v2-agent (session-096, v6.2.0)
-**Issue**: Wave 13 Governance Failure + PR Review Findings (Addendum B+C + session-096 hardening)
-**Date**: 2026-03-03
-**Agent**: copilot-swe-agent (CS2-direct, co-authored: @APGI-cmy)
+**Issue**: [Layer-Down] Propagate Governance Changes - 2026-03-04 (6523fe8d)
+**Date**: 2026-03-04
+**Agent**: governance-liaison-isms (session-044-20260304, v6.2.0)
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
-**Incident**: INC-W14-COL-MAPPING-001
+**Canonical Commit**: 6523fe8d42e6fb1608a7744a64e910230f9cc881
 
 ---
 
 ## Purpose
 
-This PR delivers Wave 14 Addendum A — Column Mapping Remediation (INC-W14-COL-MAPPING-001):
+This PR delivers governance layer-down for ripple event 6523fe8d from `APGI-cmy/maturion-foreman-governance`:
 
-1. Two P0 production blockers resolved: `profiles.full_name` missing (Save Profile broken) + `audits.criteria_approved` missing (Create Audit broken)
-2. `audit_scores` table carry-forward migration (INC-W13-AUDIT-SCORES-001)
-3. Column-level drift regression tests T-W14-COL-001 to T-W14-COL-006 (all GREEN, file-based)
-4. Governance: FAIL-ONLY-ONCE A-027, RCA §9, FRS v1.6.0, TRS v1.5.0, data-architecture.md update
-This PR delivers:
+1. `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` - NEW file (v1.1.0), SHA256-verified
+2. `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` - Updated (v1.1.0), SHA256-verified
+3. `governance/CANON_INVENTORY.json` - Updated (total_canons: 190→191, hash updated, new entry)
+4. Administrative records updated (ripple-log, sync_state, GOVERNANCE_ALIGNMENT_INVENTORY)
+5. Agent contract files escalated to CS2 per A-009 (NOT modified)
 
-1. New GitHub Actions workflow: `.github/workflows/foreman-reanchor.yml`
-2. New wave task tracker template: `.agent-workspace/foreman-v2/personal/wave-current-tasks-template.md`
-3. New Tier 2 knowledge document: `.agent-workspace/foreman-v2/knowledge/WAVE-CURRENT-TASKS-PROTOCOL.md`
-4. Updated knowledge index: `.agent-workspace/foreman-v2/knowledge/index.md` (v1.7.0)
-
-Plus ceremony artifacts and IAA session memory.
+**PR STATUS: DRAFT - CS2 approval required** (agent contract files in ripple payload)
 
 ---
 
 ## Files Changed
 
-**Total Files**: 22
+**Total Files**: 23
 
 All files in this PR are explicitly listed below (required by BL-027):
 
-- `SCOPE_DECLARATION.md` - this file (Wave 14 Addendum A scope)
-- `apps/maturion-maturity-legacy/supabase/migrations/20260304000000_profiles_add_full_name_and_preferences.sql` - adds full_name TEXT and preferences JSONB to profiles (INC-W14-PROFILES-COL-001, INC-W14-PROFILES-COL-002)
-- `apps/maturion-maturity-legacy/supabase/migrations/20260304000001_audits_add_criteria_approved.sql` - adds criteria_approved BOOLEAN + missing audit columns (INC-W14-AUDITS-COL-001)
-- `apps/maturion-maturity-legacy/supabase/migrations/20260304000002_audit_scores_table.sql` - creates audit_scores table with RLS (INC-W13-AUDIT-SCORES-001 carry-forward)
-- `modules/mat/tests/wave14/column-mapping.test.ts` - T-W14-COL-001 to T-W14-COL-006 column drift guard tests (all GREEN)
-- `modules/mat/02-architecture/data-architecture.md` - §1.1.2 updated: full_name and preferences columns added to profiles spec
-- `modules/mat/01-frs/functional-requirements.md` - FR-078 to FR-081 added (v1.5.0 → v1.6.0)
-- `modules/mat/01.5-trs/technical-requirements-specification.md` - TR-078 to TR-081 added, header v1.4.0 → v1.5.0 (v1.4.0 → v1.5.0)
-- `modules/mat/BUILD_PROGRESS_TRACKER.md` - Wave 14 Addendum A task list + incident registry added
-- `modules/mat/05-rca/RCA_WAVE12_POST_DEPLOYMENT_WIRING_FAILURES_20260302.md` - §9 RCA entry for INC-W14-COL-MAPPING-001
-- `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` - A-027 codified; header version 2.2.0 → 2.5.0; Version History section added; Section 4 attestation block updated
-- `.agent-workspace/foreman-v2/knowledge/index.md` - FAIL-ONLY-ONCE.md version updated 2.4.0 → 2.5.0
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-096-wave14-addendum-a-20260303.md` - Phase 4 PREHANDOVER proof
-- `.agent-workspace/foreman-v2/memory/session-096-20260303.md` - Phase 4 session memory
-- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - session-096 suggestions appended
-- `.agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md` - A-027 + A-028 codified by IAA (sessions 118–120)
-- `.agent-workspace/independent-assurance-agent/knowledge/index.md` - IAA knowledge index updated by IAA (sessions 118–120)
-- `.agent-workspace/independent-assurance-agent/memory/.archive/session-113-20260303.md` - IAA archived session (rotation)
-- `.agent-workspace/independent-assurance-agent/memory/session-118-20260303.md` - IAA session-118 memory (first REJECTION-PACKAGE)
-- `.agent-workspace/independent-assurance-agent/memory/session-119-20260303.md` - IAA session-119 memory (second REJECTION-PACKAGE)
-- `.agent-workspace/independent-assurance-agent/memory/session-120-20260303.md` - IAA session-120 memory (third REJECTION-PACKAGE — BL-027 format fix required)
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station appended (sessions 118–120)
-**Total Files**: 24
-
-All files in this PR are explicitly listed below (required by BL-027):
-
-- `SCOPE_DECLARATION.md` - this file (reset for re-anchor workflow PR)
-- `.github/workflows/foreman-reanchor.yml` - NEW Re-Anchor Pulse workflow
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks-template.md` - NEW wave task tracker template
-- `.agent-workspace/foreman-v2/knowledge/WAVE-CURRENT-TASKS-PROTOCOL.md` - NEW Tier 2 knowledge doc (v1.0.0)
-- `.agent-workspace/foreman-v2/knowledge/index.md` - UPDATED to v1.7.0 (adds WAVE-CURRENT-TASKS-PROTOCOL entry)
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-reanchor-workflow-20260303.md` - PREHANDOVER proof (iaa_audit_token: IAA-session-123-20260303-PASS)
-- `.agent-workspace/foreman-v2/memory/session-reanchor-workflow-20260303.md` - session memory for this PR
-- `.agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md` - A-027 and A-028 codified by IAA (sessions 120 and 122)
-- `.agent-workspace/independent-assurance-agent/knowledge/index.md` - version bumps by IAA (sessions 120 and 122)
-- `.agent-workspace/independent-assurance-agent/memory/session-120-20260303.md` - IAA session-120 memory (REJECTION-PACKAGE, 10 findings)
-- `.agent-workspace/independent-assurance-agent/memory/session-121-20260303.md` - IAA session-121 memory (REJECTION-PACKAGE, 2 findings)
-- `.agent-workspace/independent-assurance-agent/memory/session-122-20260303.md` - IAA session-122 memory (REJECTION-PACKAGE, 2 findings)
-- `.agent-workspace/independent-assurance-agent/memory/session-123-20260303.md` - IAA session-123 memory (ASSURANCE-TOKEN: IAA-session-123-20260303-PASS)
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station append (sessions 120, 121, 122, 123)
+- `SCOPE_DECLARATION.md` - this file (governance ripple 6523fe8d scope declaration)
+- `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` - NEW: IAA Pre-Brief Protocol v1.1.0 (layered down from canonical; sha256=c4f8d171ca9c9683025f6e7a14cf7c6908362a9c1e24f3c6ed0735453ef7238f)
+- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` - UPDATED: IAA Canon v1.1.0 with Pre-Brief Protocol integration (sha256=bc83390755ec9c06c726d380c472d8c9d6ec78b92e10940e3e6a612ee8b0db03)
+- `governance/CANON_INVENTORY.json` - UPDATED: hash updated for INDEPENDENT_ASSURANCE_AGENT_CANON.md; new entry for IAA_PRE_BRIEF_PROTOCOL.md; total_canons 190→191
+- `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` - UPDATED: new ALIGNED entries for both canon files; agent contract escalation refs updated to 6523fe8d
+- `.agent-admin/governance/ripple-inbox/ripple-6523fe8d.json` - NEW: ripple inbox entry for dispatch-id 6523fe8d
+- `.agent-admin/governance/ripple-log.json` - UPDATED: entry added (type: liaison-partial-escalated)
+- `.agent-admin/governance/sync_state.json` - UPDATED: canonical_commit=6523fe8d, sync_pending=true
+- `.agent-admin/prehandover/PREHANDOVER_PROOF_session-044-20260304.md` - NEW: PREHANDOVER proof artifact
+- `.agent-workspace/governance-liaison-isms/escalation-inbox/escalation-agent-contracts-6523fe8d-20260304.md` - NEW: ESC-AGENTFILE-6523FE8D-20260304 escalation
+- `.agent-workspace/governance-liaison-isms/memory/.archive/session-039-20260303.md` - ARCHIVED: session-039 rotated to archive (>5 governance liaison sessions)
+- `.agent-workspace/governance-liaison-isms/memory/session-044-20260304.md` - NEW: session memory
+- `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md` - UPDATED: session-044 suggestion appended
+- `.agent-workspace/independent-assurance-agent/memory/.archive/session-115-20260303.md` - ARCHIVED: IAA session-115 rotated to archive (>5 IAA sessions)
+- `.agent-workspace/independent-assurance-agent/memory/.archive/session-116-20260303.md` - ARCHIVED: IAA session-116 rotated to archive (>5 IAA sessions)
+- `.agent-workspace/independent-assurance-agent/memory/.archive/session-117-20260303.md` - ARCHIVED: IAA session-117 rotated to archive (>5 IAA sessions)
+- `.agent-workspace/independent-assurance-agent/memory/.archive/session-118-20260303.md` - ARCHIVED: IAA session-118 rotated to archive (>5 IAA sessions)
+- `.agent-workspace/independent-assurance-agent/memory/.archive/session-119-20260303.md` - ARCHIVED: IAA session-119 rotated to archive (>5 IAA sessions)
+- `.agent-workspace/independent-assurance-agent/memory/session-124-20260304.md` - NEW: IAA session-124 memory (REJECTION-PACKAGE - 8 procedural failures; substantive work sound)
+- `.agent-workspace/independent-assurance-agent/memory/session-125-20260304.md` - NEW: IAA session-125 memory (REJECTION-PACKAGE - em-dash format + stale text)
+- `.agent-workspace/independent-assurance-agent/memory/session-126-20260304.md` - NEW: IAA session-126 memory (REJECTION-PACKAGE - count mismatch 15 vs 21)
+- `.agent-workspace/independent-assurance-agent/memory/session-127-20260304.md` - NEW: IAA session-127 memory (ASSURANCE-TOKEN PASS - 27 checks pass)
+- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - UPDATED: IAA session-124 and session-125 suggestions appended
 
 ---
 
 ## POLC Attestation
 
-Production code modified: none (migrations only — no TypeScript/React changes)
-Schema DDL: 3 new idempotent migrations (ADD COLUMN IF NOT EXISTS, CREATE TABLE IF NOT EXISTS)
-Test code: 1 new test file — 6 file-based tests, all GREEN, no env vars required
-Governance files: FAIL-ONLY-ONCE v2.5.0, FRS v1.6.0, TRS v1.5.0, data-architecture.md, BUILD_PROGRESS_TRACKER, RCA §9
-No `.github/agents/*.md` files modified (AGCFPP-001 compliant)
-Production code modified: modules/mat/frontend/src/lib/hooks/useSettings.ts (2-line table name fix, no logic change)
-Test code modified: modules/mat/tests/wave13/schema-existence.test.ts (adds T-W13-SCH-13–T-W13-SCH-16, hardens T-W13-SCH-11 regex)
-All other files: governance documentation and schema DDL (additive only, no data loss)
+Production code modified: NONE
+Schema DDL: NONE
+Governance canon files: 2 files updated (SHA256-verified against canonical CANON_INVENTORY)
+Agent contracts: NONE (escalated per A-009 - no .github/agents/*.md files modified; AGCFPP-001 compliant)
 
 ---
 
 ## Signature
 
-**Scope Declared By**: foreman-v2-agent (session-096, v6.2.0)
-**Date**: 2026-03-03
-**Issue**: #869 — Schema mapping mismatch: frontend-to-Supabase table columns missing
-**Scope Declared By**: foreman-v2-agent (session-095 + session-096, v6.2.0)
-**Date**: 2026-03-03
-**Issue**: feat: Foreman Re-Anchor Pulse — mid-wave context recovery workflow
+**Scope Declared By**: governance-liaison-isms (session-044-20260304, v6.2.0)
+**Date**: 2026-03-04
+**Issue**: [Layer-Down] Propagate Governance Changes - 2026-03-04 (6523fe8d)
 
 ---
 
