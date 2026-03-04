@@ -31,8 +31,8 @@ function ProtectedRoute() {
 }
 
 function OnboardingGuard() {
-  const { data: profile, isLoading } = useUserProfile();
-  if (isLoading) {
+  const { data: profile, isLoading, isFetching } = useUserProfile();
+  if (isLoading || isFetching) {
     return (
       <div role="status" aria-live="polite" className="min-h-screen flex items-center justify-center">
         <span className="sr-only">Loading…</span>

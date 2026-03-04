@@ -167,12 +167,13 @@ export function useCreateOrganisation() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      // 1. Create organisation
-      const { data: org, error: orgError } = await supabase
+      // 1. Create organisation — generate ID client-side to avoid RLS SELECT
+      //    chicken-and-egg: the user has no profile link yet so a server-side
+      //    RETURNING/select would return 0 rows under current RLS policies.
+      const newOrgId = crypto.randomUUID();
+      const { error: orgError } = await supabase
         .from('organisations')
-        .insert({ name })
-        .select('id')
-        .single();
+        .insert({ id: newOrgId, name });
       if (orgError) throw new Error(`Failed to create organisation: ${orgError.message}`);
 
       // 2. Upsert profile with organisation_id and full_name
@@ -180,7 +181,7 @@ export function useCreateOrganisation() {
         .from('profiles')
         .upsert({
           id: user.id,
-          organisation_id: org.id,
+          organisation_id: newOrgId,
           full_name: ownerFullName,
           display_name: ownerFullName,
           email: user.email,
@@ -188,7 +189,7 @@ export function useCreateOrganisation() {
         });
       if (profileError) throw new Error(`Failed to update profile: ${profileError.message}`);
 
-      return { organisationId: org.id };
+      return { organisationId: newOrgId };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-profile'] });
