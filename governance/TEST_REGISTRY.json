@@ -1,7 +1,7 @@
 {
   "registry_id": "MAT-TEST-REGISTRY-v1.0.0",
   "module": "MAT",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "status": "red",
   "generated": "2026-02-23",
   "description": "Canonical test registry for the MAT (Manual Audit Tool) module. Each test component has a unique serial number traceable to architecture, FRS, and TRS artifacts. All tests are initially RED (failing, implementation not yet built).",
@@ -90,6 +90,11 @@
       "id": "CAT-13",
       "name": "AIMC Gateway Integration",
       "description": "Tests verifying MAT AI capabilities are consumed via @maturion/ai-centre Gateway \u2014 no direct provider calls (per AIMC_STRATEGY.md v1.0.0)"
+    },
+    {
+      "id": "CAT-14",
+      "name": "RLS Policy Fix \u2014 Wave postbuild-fails-01",
+      "description": "Tests verifying Supabase RLS policy completeness and handle_new_user() trigger existence (Issue #891)"
     }
   ],
   "components": [
@@ -1746,6 +1751,62 @@
       "status": "red",
       "blocked_reason": "BLOCKED \u2014 Awaiting AIMC Wave 5 (Embeddings/RAG Gateway)",
       "governance_note": "This test is RED until @maturion/ai-centre exposes the Embeddings/RAG Gateway. See AIMC_STRATEGY.md v1.0.0."
+    },
+    {
+      "serial": "T-PBF-001",
+      "category": "CAT-14",
+      "name": "handle_new_user() trigger migration exists",
+      "description": "Verify handle_new_user() function and on_auth_user_created trigger are defined in a migration (F-001 root cause fix)",
+      "architecture_ref": "modules/mat/02-architecture/security-architecture.md \u00a7RLS",
+      "frs_ref": "FR-082",
+      "trs_ref": "TR-082",
+      "type": "file-based",
+      "priority": "P0",
+      "status": "green",
+      "incident_ref": "F-001",
+      "wave": "postbuild-fails-01"
+    },
+    {
+      "serial": "T-PBF-002",
+      "category": "CAT-14",
+      "name": "profiles INSERT + UPDATE policies in migration",
+      "description": "Verify profiles_insert_own and profiles_update_own RLS policies are defined in a migration (F-001 fix)",
+      "architecture_ref": "modules/mat/02-architecture/security-architecture.md \u00a7RLS",
+      "frs_ref": "FR-083",
+      "trs_ref": "TR-083",
+      "type": "file-based",
+      "priority": "P0",
+      "status": "green",
+      "incident_ref": "F-001",
+      "wave": "postbuild-fails-01"
+    },
+    {
+      "serial": "T-PBF-003",
+      "category": "CAT-14",
+      "name": "audits INSERT policy in migration",
+      "description": "Verify audits_insert_authenticated RLS INSERT policy with WITH CHECK clause exists in a migration (F-002 fix)",
+      "architecture_ref": "modules/mat/02-architecture/security-architecture.md \u00a7RLS",
+      "frs_ref": "FR-083",
+      "trs_ref": "TR-083",
+      "type": "file-based",
+      "priority": "P0",
+      "status": "green",
+      "incident_ref": "F-002",
+      "wave": "postbuild-fails-01"
+    },
+    {
+      "serial": "T-PBF-004",
+      "category": "CAT-14",
+      "name": "RLS isolation \u2014 uid-scoped policies present",
+      "description": "Verify profiles_select_own and audits INSERT policy scope to auth.uid() for per-user isolation (F-001, F-002)",
+      "architecture_ref": "modules/mat/02-architecture/security-architecture.md \u00a7RLS",
+      "frs_ref": "FR-083",
+      "trs_ref": "TR-083",
+      "type": "file-based",
+      "priority": "P0",
+      "status": "green",
+      "incident_ref": "F-001, F-002",
+      "wave": "postbuild-fails-01"
     }
   ],
   "integrity": {

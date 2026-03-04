@@ -1521,6 +1521,7 @@ This TRS is derived from the MAT FRS v1.5.0 (`modules/mat/01-frs/functional-requ
 **Traceability**: Complete FRS-to-TRS mapping available in `frs-to-trs-traceability.md`.
 
 **Change Log**:
+- v1.6.0 (2026-03-04): Added TR-082, TR-083 (Wave postbuild-fails-01 — RLS Fix). TRS extended to 83 requirements.
 - v1.5.0 (2026-03-03): Added TR-078 through TR-081 (Wave 14 Addendum A — Column Mapping Remediation INC-W14-COL-MAPPING-001). TRS extended to 81 requirements.
 - v1.4.0 (2026-02-27): Added TR-073 through TR-077 (AI Gateway Persona Loading, Session Memory, Persistent Memory Baseline, Health Check, Memory Runbook) per FRS v1.5.0 additions FR-073–FR-077. TRS extended to 77 requirements. Architecture freeze effective on merge per CS2 directive.
 - v1.3.0 (2026-02-23): Realigned TR-072 to AIMC Gateway pattern per `AIMC_STRATEGY.md` v1.0.0.
@@ -1564,5 +1565,28 @@ Migration MUST create `public.audit_scores` with `maturity_level`, `audit_id`,
 `criterion_id`, `organisation_id`, RLS enabled, org-isolation policy.
 Migration file: `20260304000002_audit_scores_table.sql`
 Carry-forward from INC-W13-AUDIT-SCORES-001.
+
+---
+
+## Wave postbuild-fails-01: RLS Fix Technical Requirements (F-001, F-002)
+
+**Added**: v1.6.0 (2026-03-04) | **Authority**: CS2 (Johan Ras) | **Issue**: #891
+
+### TR-082: handle_new_user() trigger function and trigger
+
+A SECURITY DEFINER PL/pgSQL function `public.handle_new_user()` MUST be created.
+It MUST insert a row into `public.profiles` (`id`, `email`, `role = 'viewer'`) on new auth user creation, using `ON CONFLICT (id) DO NOTHING` for idempotency.
+The trigger `on_auth_user_created` MUST fire `AFTER INSERT ON auth.users FOR EACH ROW`.
+Migration file: `apps/maturion-maturity-legacy/supabase/migrations/20260304000003_fix_rls_policies_postbuild.sql`
+
+### TR-083: profiles and audits RLS policy completeness
+
+RLS policies MUST be added:
+- `profiles_select_own`: `FOR SELECT USING (auth.uid() = id)`
+- `profiles_insert_own`: `FOR INSERT WITH CHECK (auth.uid() = id)`
+- `profiles_update_own`: `FOR UPDATE USING (auth.uid() = id) WITH CHECK (auth.uid() = id)`
+- `audits_insert_authenticated`: `FOR INSERT WITH CHECK (auth.role() = 'authenticated' AND auth.uid() = created_by)`
+All policies MUST use `IF NOT EXISTS` guards for idempotency.
+Migration file: `apps/maturion-maturity-legacy/supabase/migrations/20260304000003_fix_rls_policies_postbuild.sql`
 
 *END OF TECHNICAL REQUIREMENTS SPECIFICATION*

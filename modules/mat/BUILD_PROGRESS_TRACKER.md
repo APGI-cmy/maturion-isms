@@ -2548,3 +2548,50 @@ Post-merge evaluation of Wave 13 (PR #865) revealed that PR #865 fixed table-lev
 | 2026-03-03 | P0 GAPS IDENTIFIED | INC-W14-PROFILES-COL-001, INC-W14-PROFILES-COL-002, INC-W14-AUDITS-COL-001 identified from production errors |
 | 2026-03-03 | MIGRATIONS CREATED | 3 migrations added; T-W14-COL-001 to T-W14-COL-006 all GREEN |
 | 2026-03-03 | DOCUMENTATION UPDATED | data-architecture.md, FRS, TRS, BUILD_PROGRESS_TRACKER, FAIL-ONLY-ONCE, RCA updated |
+
+
+---
+
+## Wave postbuild-fails-01 — RLS Policy Fix — 2026-03-04
+
+**Issue**: #891 — MAT App: Supabase RLS Failures
+**Authority**: CS2 (Johan Ras / @APGI-cmy)
+
+Two production-stopper failures were observed during post-deployment testing of the live MAT app after Wave 14, with Supabase RLS violations blocking core user flows.
+
+### Failures Recorded
+
+- **F-001**: User Profile → Save: `new row violates row-level security policy for table "profiles"` (RLS INSERT+UPDATE)
+- **F-002**: Audit Management → Create New Audit: `new row violates row-level security policy for table "audits"` (RLS INSERT)
+
+### Root Cause
+
+The `profiles` table had RLS enabled with no policies defined (no SELECT, INSERT, or UPDATE). The `audits` table had only an org-isolation `USING` policy (SELECT/UPDATE/DELETE) but no INSERT `WITH CHECK` policy. Additionally, no `handle_new_user()` trigger existed to auto-create a `profiles` row on new auth user creation, meaning all profile-dependent RLS checks failed for new users.
+
+### Fixes Applied
+
+- Created `handle_new_user()` SECURITY DEFINER trigger function + `on_auth_user_created` trigger on `auth.users`
+- Added `profiles_select_own`, `profiles_insert_own`, `profiles_update_own` RLS policies
+- Added `audits_insert_authenticated` RLS INSERT policy
+
+### Migration
+
+`apps/maturion-maturity-legacy/supabase/migrations/20260304000003_fix_rls_policies_postbuild.sql`
+
+### Test Coverage
+
+| Test ID | Description | Status |
+|---------|-------------|--------|
+| T-PBF-001 | handle_new_user() trigger migration exists | ✅ GREEN |
+| T-PBF-002 | profiles INSERT + UPDATE policies in migration | ✅ GREEN |
+| T-PBF-003 | audits INSERT policy in migration | ✅ GREEN |
+| T-PBF-004 | RLS isolation — uid-scoped policies present | ✅ GREEN |
+
+### State Machine
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-04 | P0 GAPS IDENTIFIED | F-001 and F-002 confirmed from production testing at matfrontend-9xhm4z30c-rassie-ras-projects.vercel.app |
+| 2026-03-04 | MIGRATION CREATED | 20260304000003_fix_rls_policies_postbuild.sql — all RLS gaps remediated |
+| 2026-03-04 | TESTS GREEN | T-PBF-001 to T-PBF-004 all GREEN |
+| 2026-03-04 | DOCUMENTATION UPDATED | FRS, TRS, BUILD_PROGRESS_TRACKER, TEST_REGISTRY, implementation-plan updated |

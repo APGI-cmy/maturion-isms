@@ -1605,6 +1605,7 @@ This FRS is derived from the MAT App Description v1.2 (`modules/mat/00-app-descr
 **Next Stage**: This FRS feeds into the TRS (Technical Requirements Specification) at `modules/mat/01.5-trs/`.
 
 **Change Log**:
+- v1.7.0 (2026-03-04): Added FR-082, FR-083 (Wave postbuild-fails-01 — RLS Fix, handle_new_user trigger). FRS extended to 83 requirements.
 - v1.6.0 (2026-03-03): Added FR-078 through FR-081 (Wave 14 Addendum A — Column Mapping Remediation INC-W14-COL-MAPPING-001). FRS extended to 81 requirements.
 - v1.5.0 (2026-02-27): Added FR-073 through FR-077 (AI Gateway Memory, Persona, Session, Health Check, Runbook) per Issue: [Critical Gap] Complete persistent memory and context handling in AI gateway. FRS extended to 77 requirements. Architecture freeze effective on merge of implementing PR per CS2 directive.
 - v1.4.0 (2026-02-23): Section 8 rewritten to AIMC-compliant capability-based language per `AIMC_STRATEGY.md` v1.0.0. FR-028 (AI Gateway Integration), FR-031 (AI Resilience), FR-032 (AI Invocation Traceability) corrected to remove direct-provider references. Section heading updated to reflect AIMC-delegated governance.
@@ -1647,5 +1648,25 @@ The audits table migration MUST include this column.
 The QA suite SHALL include a column-level drift test for all P0 columns
 identified in INC-W14-COL-MAPPING-001.
 **Acceptance**: Tests T-W14-COL-001 to T-W14-COL-006 all GREEN in CI.
+
+---
+
+## Wave postbuild-fails-01: RLS Fix Requirements (F-001, F-002)
+
+**Added**: v1.7.0 (2026-03-04) | **Authority**: CS2 (Johan Ras) | **Issue**: #891
+
+### FR-082: Auto-profile creation on signup (handle_new_user trigger)
+
+When a new user registers via Supabase Auth, the system SHALL automatically create a
+corresponding row in the `public.profiles` table with default `role = 'viewer'` and the user's
+email. This trigger MUST exist and be ENABLED in the production Supabase project.
+**Acceptance**: New auth user → `profiles` row created automatically; no RLS violation on first login.
+
+### FR-083: profiles and audits RLS INSERT+UPDATE coverage
+
+The `profiles` table MUST have explicit RLS policies for SELECT, INSERT, and UPDATE operations,
+scoped to `auth.uid() = id`. The `audits` table MUST have an INSERT policy that allows
+authenticated users to create audits they own (`auth.uid() = created_by`).
+**Acceptance**: Profile save and audit creation succeed for authenticated users without RLS violations.
 
 *END OF FUNCTIONAL REQUIREMENTS SPECIFICATION*
