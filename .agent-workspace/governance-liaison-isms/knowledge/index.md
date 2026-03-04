@@ -2,7 +2,7 @@
 
 **Agent**: governance-liaison-isms  
 **Contract Version**: 3.2.0  
-**Knowledge Version**: 1.5.0  
+**Knowledge Version**: 1.6.0  
 **Last Updated**: 2026-03-04  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
@@ -18,7 +18,7 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 | File | Purpose | Version |
 |------|---------|---------|
 | `index.md` (this file) | Knowledge entry point and version reference | 1.5.0 |
-| `FAIL-ONLY-ONCE.md` | **PREFLIGHT Attestation** — Breach registry, Universal A-rules, Conditional B-rules, incident log; must be self-attested every session before any work begins | 1.4.0 |
+| `FAIL-ONLY-ONCE.md` | **PREFLIGHT Attestation** — Breach registry, Universal A-rules, Conditional B-rules, incident log; must be self-attested every session before any work begins | 1.5.0 |
 | `layer-down-scripts.md` | **Phase 3.1 Scripts** — Checksum validation and sync state update scripts for the cross-repository layer-down protocol; full 7-step protocol | 1.1.0 |
 | `ripple-processing-scripts.md` | **Phase 3.2 Scripts** — Ripple inbox creation, sync state update on receipt, and ripple archive scripts; full 5-step protocol | 1.1.0 |
 | `drift-detection-scripts.md` | **Phase 3.3 Scripts** — Drift detection script; compares canonical inventory version against local sync state | 1.0.0 |
@@ -79,3 +79,4 @@ governance-liaison-isms NEVER executes directly for:
 | 1.3.0 | 2026-03-03 | governance-liaison-isms (session-039, IAA-107 fix) | Updated FAIL-ONLY-ONCE.md to v1.3.0 (A-011 added); updated index self-reference to v1.3.0 |
 | 1.4.0 | 2026-03-03 | governance-liaison-isms (session-041, RCA) | Updated FAIL-ONLY-ONCE.md to v1.4.0 (A-013, A-014 added; breach log entries §4.3-SKIP and IAA-SKIP recorded); updated index self-reference to v1.4.0 |
 | 1.5.0 | 2026-03-04 | CodexAdvisor-agent (session-045) | layer-down-scripts.md → v1.1.0 (7-step protocol migrated from contract §3.1); ripple-processing-scripts.md → v1.1.0 (5-step protocol migrated from §3.2) |
+| 1.6.0 | 2026-03-04 | governance-liaison-isms (session-046) | FAIL-ONLY-ONCE.md → v1.5.0 (A-015 added: CS2-authorized agent file routing — CodexAdvisor for non-CodexAdvisor files, CS2 directly for CodexAdvisor-agent.md); index self-reference updated to v1.6.0 |

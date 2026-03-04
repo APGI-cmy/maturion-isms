@@ -1,10 +1,46 @@
 # IAA Core Invariants Checklist
 
 **Agent**: independent-assurance-agent
-**Version**: 2.6.0
+**Version**: 2.8.0
 **Status**: ACTIVE
 **Last Updated**: 2026-03-04
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
+
+---
+
+## ⚠️ ARCHITECTURE ALIGNMENT NOTE (effective 2026-03-04)
+
+**A-029 (§4.3b Artifact Immutability) supersedes A-025 and changes the PREHANDOVER evidence model.**
+Under the new architecture:
+- The **PREHANDOVER proof** is committed before the IAA runs and is **read-only** thereafter.
+- The `iaa_audit_token` field in the PREHANDOVER proof is pre-populated with the **expected** token reference at commit time (e.g., `IAA-session-NNN-waveY-YYYYMMDD-PASS`).
+- The IAA writes its full verdict to a **separate dedicated token file**: `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`.
+- The `## IAA Agent Response (verbatim)` section lives in the **token file**, NOT in the PREHANDOVER proof.
+- CORE-016 and CORE-018 have been updated below to match this architecture. References to `## IAA Agent Response (verbatim)` in the PREHANDOVER proof are now obsolete.
+
+---
+
+## ⚠️ ORIENTATION MANDATE — READ BEFORE APPLYING THIS CHECKLIST (CS2 Directive — 2026-03-04)
+
+**These checks are the 10% ceremony admin layer.** They verify existence and format only.
+
+IAA's primary obligation (90%) is substance:
+- For BUILD PRs: does the delivered code actually work, is it safe, and will it produce a
+  functional result first time?
+- For GOVERNANCE PRs: does the change align with strategy, avoid contradictions, and close
+  gaps rather than create them?
+
+**Do NOT spend more than 10% of session effort on the checks in this file.**
+A session that produces 20 CORE check findings and zero substantive observations has
+inverted the mandate. This checklist exists to prevent ceremony bypass — not to replace
+the substantive review.
+
+The only hard-gate checks that justify extended time are:
+- CORE-018 (evidence sweep) — binary: present or absent
+- CORE-016 (token file) — binary: exists or does not
+- CORE-013 (IAA invocation evidence) — binary: present or absent
+
+All other checks: apply once, record PASS/FAIL, move to substance.
 
 ---
 
@@ -27,7 +63,7 @@ All checks below are applied on every qualifying PR invocation.
 | CORE-004 | Identity block complete | identity.role, identity.mission, identity.class_boundary all present and non-empty; class_boundary must be longer than 20 characters (not a stub) | AGENT_CONTRACT | REJECTION-PACKAGE |
 | CORE-005 | Governance block present | governance.protocol, governance.version, governance.canon_inventory all present; no placeholder values | ALL | REJECTION-PACKAGE |
 | CORE-006 | CANON_INVENTORY alignment | All governance artifacts listed in expected_artifacts exist in governance/CANON_INVENTORY.json with non-null, non-placeholder SHA256 hashes | ALL | REJECTION-PACKAGE |
-| CORE-007 | No placeholder content | No stub, TODO, FIXME, or placeholder values in any delivered artifact. Search for: "STUB", "TODO:", "FIXME:", "placeholder", "to be populated", "TBD". Do not flag placeholder/PENDING entries in the verbatim IAA response section (`## IAA Agent Response (verbatim)`) — `iaa_audit_token: PENDING` is a valid mid-ceremony state (see CORE-016 Detail). | ALL | REJECTION-PACKAGE |
+| CORE-007 | No placeholder content | No stub, TODO, FIXME, or placeholder values in any delivered artifact. Search for: "STUB", "TODO:", "FIXME:", "placeholder", "to be populated", "TBD". **Exempt**: the `iaa_audit_token` field in the PREHANDOVER proof when it contains the expected reference format `IAA-session-NNN-waveY-YYYYMMDD-PASS` (this is a valid pre-populated reference, not a placeholder). Do NOT flag this field unless the value is a bare date string or the word PENDING/TBD. | ALL | REJECTION-PACKAGE |
 | CORE-008 | Prohibitions block present | At least one prohibition entry present with id, rule, and enforcement fields; at least one prohibition has enforcement: CONSTITUTIONAL | AGENT_CONTRACT | REJECTION-PACKAGE |
 | CORE-009 | Merge gate interface present | merge_gate_interface.required_checks is a non-empty array; parity_required: true; parity_enforcement: BLOCKING | AGENT_CONTRACT | REJECTION-PACKAGE |
 | CORE-010 | Tier 2 knowledge indexed | tier2_knowledge.index path is correct; the referenced index.md exists at the stated path in the repository | AGENT_CONTRACT | REJECTION-PACKAGE |
@@ -36,10 +72,10 @@ All checks below are applied on every qualifying PR invocation.
 | CORE-013 | IAA invocation evidence | PREHANDOVER proof or IAA token reference present in PR artifacts (FAIL-ONLY-ONCE A-001). For AGENT_CONTRACT PRs: explicit IAA audit token required, not just a reference | ALL | REJECTION-PACKAGE |
 | CORE-014 | No class exemption claim | Invoking agent has not claimed class exemption from IAA (FAIL-ONLY-ONCE A-002). Foreman, Builder, Overseer, Specialist — all subject to IAA | ALL | REJECTION-PACKAGE |
 | CORE-015 | Session memory present | Session memory artifact included in PR bundle (file path present in PREHANDOVER proof or PR artifact manifest) | ALL | REJECTION-PACKAGE |
-| CORE-016 | IAA tool call evidenced | PREHANDOVER proof must contain a `## IAA Agent Response (verbatim)` section with actual IAA agent output. See **CORE-016 Detail** below. `iaa_audit_token: PENDING` with section present = PASS (ceremony in progress) — not a fabrication failure. | ALL | REJECTION-PACKAGE |
+| CORE-016 | IAA verdict evidenced (§4.3b architecture) | A dedicated IAA token file must exist on the branch at `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`. This file contains the verbatim IAA output. The PREHANDOVER proof is NOT required to contain a `## IAA Agent Response (verbatim)` section — that requirement is superseded by A-029. See **CORE-016 Detail** below. | ALL | REJECTION-PACKAGE |
 | CORE-017 | No .github/agents/ modifications by unauthorized agent | PR diff must not contain modifications to `.github/agents/` files unless producing agent is CodexAdvisor-agent AND CS2 authorization is documented in PREHANDOVER proof (FAIL-ONLY-ONCE A-005 / A-013) | ALL | REJECTION-PACKAGE |
-| CORE-018 | Complete evidence artifact sweep | BEFORE applying any overlay: verify ALL of the following are present and non-empty: (a) PREHANDOVER proof file on branch, (b) session memory file on branch, (c) `iaa_audit_token` field non-empty and non-placeholder, (d) `## IAA Agent Response (verbatim)` section present in PREHANDOVER proof. Any absent/empty/placeholder item = immediate REJECTION-PACKAGE before overlay checks proceed. | ALL | REJECTION-PACKAGE |
-| CORE-019 | IAA token cross-verification | When `iaa_audit_token` is not PENDING: (a) verify token format matches `IAA-session-NNN-YYYYMMDD-PASS`, (b) open the referenced IAA session memory file, (c) verify `pr_reviewed` field matches the current PR branch/number being audited, (d) verify session file `verdict` = ASSURANCE-TOKEN. Any mismatch = REJECTION-PACKAGE (enforces A-016 cross-PR reuse and A-017 REJECTION-as-PASS at core level). | ALL | REJECTION-PACKAGE |
+| CORE-018 | Complete evidence artifact sweep | BEFORE applying any overlay: verify ALL of the following are present and non-empty: (a) PREHANDOVER proof file on branch, (b) session memory file on branch, (c) `iaa_audit_token` field in PREHANDOVER proof is non-empty and not a bare placeholder (TBD/TODO/blank), (d) dedicated IAA token file exists at `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`. The PREHANDOVER proof is NOT required to contain `## IAA Agent Response (verbatim)` — that section has moved to the token file. Any absent/empty item = immediate REJECTION-PACKAGE before overlay checks proceed. | ALL | REJECTION-PACKAGE |
+| CORE-019 | IAA token cross-verification | When `iaa_audit_token` contains `IAA-session-NNN-waveY-YYYYMMDD-PASS` or similar: (a) verify token format is valid, (b) open the dedicated token file `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`, (c) verify it references the current PR branch/number, (d) verify token file verdict = ASSURANCE-TOKEN. **FIRST INVOCATION EXCEPTION**: If the token file does not yet exist AND this is clearly the first IAA invocation for this session number on this PR (no prior session memory exists for session-NNN on this PR), treat CORE-019 as PASS — the token file will be created during Step 4.3 of THIS invocation. Record "First invocation — token file will be created this session" in evidence output. If a session file exists and references a different PR → FAIL (A-016 cross-PR reuse). | ALL | REJECTION-PACKAGE |
 | CORE-020 | Zero partial pass rule | Any core or overlay check that cannot be verified due to missing, blank, or unverifiable evidence = REJECTION-PACKAGE for that check. No assumed passes. Absence of evidence = failing check. A PR with partial evidence must not receive ASSURANCE-TOKEN under any category or class. | ALL | REJECTION-PACKAGE |
 | CORE-021 | Zero-severity-tolerance | Any finding identified during the assurance review — regardless of perceived severity, wording, or delivery size — MUST produce REJECTION-PACKAGE. Prohibited: using terms "minor", "trivial", "cosmetic", "small", "negligible", "low-impact", "soft-pass", or "acceptable" to characterise a finding as passable. The only valid exception is an explicit written CS2 waiver quoted verbatim in the output. See `IAA_ZERO_SEVERITY_TOLERANCE.md` for full operational guidance. | ALL | REJECTION-PACKAGE |
 | CORE-022 | Secret field naming compliance | Agent contract files must use `secret_env_var:` — never `secret:` — in `governance.execution_identity` blocks and any YAML block. Scan the PR diff for the pattern `secret: "` in any `.github/agents/*.md` file (excluding `_archive/`). If found: FAIL. Enforces FAIL-ONLY-ONCE A-024. Prevents CI secret scanner false positives that block all gate checks. | AGENT_CONTRACT | REJECTION-PACKAGE |
@@ -58,58 +94,89 @@ For each check:
 
 ---
 
-## CORE-016 Detail — IAA Tool Call Evidence
+## CORE-016 Detail — IAA Verdict Evidence (§4.3b Architecture — Updated 2026-03-04)
 
-CORE-016 applies to every PR. FAIL if:
-- The `iaa_audit_token` field value matches the pattern `PHASE_A_ADVISORY — \d{4}-\d{2}-\d{2}` exactly (a self-certified advisory date string), AND
-- The `## IAA Agent Response (verbatim)` section is absent from the PREHANDOVER proof, OR
-- The `## IAA Agent Response (verbatim)` section exists but contains only the same bare date string and no real IAA output block (`ASSURANCE-TOKEN` / `REJECTION-PACKAGE` header).
+**This check has been updated to match the A-029 §4.3b architecture.** The previous requirement for a `## IAA Agent Response (verbatim)` section inside the PREHANDOVER proof is superseded.
 
-PASS if:
-- `iaa_audit_token` contains a real IAA session token (`IAA-session-NNN-YYYYMMDD-PASS` format), AND
-- `## IAA Agent Response (verbatim)` section contains the verbatim IAA agent output block.
+### Under the §4.3b Architecture:
 
-**PENDING is a valid mid-ceremony state for PREHANDOVER proofs committed before 2026-03-04 only (SUPERSEDED by A-029)**:
-- Per `AGENT_HANDOVER_AUTOMATION.md` v1.1.3 §4.3b and FAIL-ONLY-ONCE A-029 (effective 2026-03-04):
-  PREHANDOVER proofs committed on or after 2026-03-04 MUST have `iaa_audit_token` pre-populated with
-  the expected reference (`IAA-session-NNN-waveY-YYYYMMDD-PASS`) — NOT `PENDING`.
-- For pre-2026-03-04 proofs: `iaa_audit_token: PENDING` with `## IAA Agent Response (verbatim)` section present was valid. Do not retroactively fail prior sessions.
-- For post-2026-03-04 proofs: `iaa_audit_token: PENDING` is a protocol violation (A-029 / INC-PREHANDOVER-MUTATE-001). Fail.
+The PREHANDOVER proof is committed **before** IAA runs and is **read-only** thereafter. The IAA verdict lives in a separate dedicated file:
 
-**Copy-paste requirement**: The `## IAA Agent Response (verbatim)` section must contain the complete IAA output block copied character-for-character from the IAA tool output — from the opening `ASSURANCE-TOKEN` / `REJECTION-PACKAGE` header to the end of the block. Paraphrasing, summarising, or partial copying is not permitted. Any deviation from the exact IAA output constitutes an INC-IAA-SKIP-001 breach.
+**Token file path**: `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`
 
-**Note**: PHASE_A_ADVISORY is a legitimate outcome — but only when the IAA tool was actually called and the IAA agent itself issued the advisory. A bare date string without IAA session output is always a PHASE_A_ADVISORY FABRICATION breach (FAIL-ONLY-ONCE A-014 / INC-IAA-SKIP-001).
+CORE-016 PASS conditions (§4.3b — post 2026-03-04):
+1. `iaa_audit_token` field in PREHANDOVER proof contains a valid expected reference in format `IAA-session-NNN-waveY-YYYYMMDD-PASS` (or `IAA-session-NNN-YYYYMMDD-PASS`), AND
+2. Dedicated token file exists at `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`, AND
+3. Token file contains the verbatim IAA ASSURANCE-TOKEN output block.
+
+**FIRST INVOCATION EXCEPTION**: If this is the first time IAA is being invoked for session-NNN on this PR, the token file does not yet exist (it will be created during THIS invocation's Step 4.3). In this case:
+- Condition 1 must still hold (PREHANDOVER proof must have the expected reference)
+- Conditions 2 and 3 are waived for this invocation only — IAA creates the token file as its output
+- Record "First invocation — token file will be created this session" in CORE-016 evidence
+
+CORE-016 FAIL conditions:
+- `iaa_audit_token` is blank, "TBD", "TODO", or "placeholder" → FAIL
+- `iaa_audit_token` contains exactly `PHASE_A_ADVISORY — YYYY-MM-DD` with no real IAA tool call evidence → FAIL (INC-IAA-SKIP-001 / A-006)
+- Token file exists but contains no ASSURANCE-TOKEN or REJECTION-PACKAGE header → FAIL (invalid token file)
+- Token file exists but references a different PR → FAIL (A-016 cross-PR reuse)
+
+**For pre-2026-03-04 PREHANDOVER proofs** (legacy — PENDING architecture):
+PASS if: `iaa_audit_token: PENDING` AND `## IAA Agent Response (verbatim)` section is present with real IAA output. Do not retroactively fail prior sessions for using PENDING.
+
+**PHASE_A_ADVISORY detection (A-006)**:
+A bare `PHASE_A_ADVISORY — [date]` in `iaa_audit_token` without a real IAA session output is always a fabrication breach. PHASE_A_ADVISORY is only legitimate when the IAA tool was called and the IAA agent itself issued the advisory — evidenced by a token file or verbatim response section.
 
 ---
 
-## CORE-018 Detail — Complete Evidence Artifact Sweep
+## CORE-018 Detail — Complete Evidence Artifact Sweep (§4.3b Architecture — Updated 2026-03-04)
 
 CORE-018 is the first check applied on every triggered invocation. Before evaluating any core invariant or overlay:
 
 1. Confirm PREHANDOVER proof file exists on the PR branch
 2. Confirm session memory file exists on the PR branch
-3. Confirm `iaa_audit_token` field is present in the PREHANDOVER proof AND is non-empty AND is not a generic placeholder ("TODO", "TBD", "placeholder", etc.)
-4. Confirm `## IAA Agent Response (verbatim)` section is present in the PREHANDOVER proof (content may be empty ONLY if `iaa_audit_token: PENDING` AND proof committed before 2026-03-04; see A-029)
+3. Confirm `iaa_audit_token` field is present in the PREHANDOVER proof AND is non-empty AND is not a bare placeholder ("TODO", "TBD", "placeholder", blank)
+4. **§4.3b check**: Confirm dedicated IAA token file exists at `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md` OR this is the first invocation for session-NNN on this PR (see First Invocation Exception in CORE-019)
 
-If any of the four conditions fails → REJECTION-PACKAGE immediately. Do not continue to overlay checks.
+**What is NO LONGER required in CORE-018** (superseded by A-029):
+- The PREHANDOVER proof does NOT need to contain `## IAA Agent Response (verbatim)`. That section has moved to the dedicated token file.
+- Do NOT fail CORE-018 because the PREHANDOVER proof lacks a verbatim response section.
+
+If conditions 1–3 fail → REJECTION-PACKAGE immediately. Do not continue to overlay checks.
+If condition 4 fails and this is NOT the first invocation → REJECTION-PACKAGE.
+If condition 4 fails and this IS the first invocation → PASS condition 4 (First Invocation Exception).
 
 ---
 
-## CORE-019 Detail — IAA Token Cross-Verification
+## CORE-019 Detail — IAA Token Cross-Verification (Updated 2026-03-04)
 
-When `iaa_audit_token` is not PENDING and contains `IAA-session-NNN-YYYYMMDD-PASS`:
+### Standard path (token file exists):
+
+When `iaa_audit_token` contains `IAA-session-NNN-waveY-YYYYMMDD-PASS` or `IAA-session-NNN-YYYYMMDD-PASS`:
 
 1. Extract session-NNN and date YYYYMMDD from the token
-2. Open `.agent-workspace/independent-assurance-agent/memory/session-NNN-YYYYMMDD.md`
-3. If file does not exist → FAIL (phantom token)
-4. Read `pr_reviewed` field in that session file
-5. Compare `pr_reviewed` to the current PR branch/number being audited
+2. Open `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md` (or closest matching path)
+3. If file does not exist → apply First Invocation Exception (step 4 below) before failing
+4. Read PR reference field in that token file
+5. Compare PR reference to the current PR branch/number being audited
 6. If mismatch → FAIL (A-016: cross-PR token reuse)
-7. Read `verdict` field in that session file
-8. If `verdict = REJECTION-PACKAGE` → FAIL (A-017: REJECTION-as-PASS citation)
+7. Read verdict field in that token file
+8. If verdict = REJECTION-PACKAGE → FAIL (A-017: REJECTION-as-PASS citation)
 9. If all checks pass → PASS
 
-This check MUST be run for EVERY non-PENDING token. Cross-referencing the session file is mandatory — do not accept the token string at face value.
+### First Invocation Exception:
+
+If the token file does not exist AND both of the following are true:
+- No prior IAA session memory file exists for session-NNN on this PR (`session-NNN-*.md` not found in `.agent-workspace/independent-assurance-agent/memory/`)
+- The `iaa_audit_token` in the PREHANDOVER proof matches the session number currently being run
+
+Then: **PASS CORE-019 for this invocation**. Record in evidence: "Session-NNN token file does not yet exist — this is the creating invocation. Token file will be written at Step 4.3." The cross-verification will run on ALL subsequent invocations once the token file exists.
+
+### What this prevents:
+- Accepting tokens that were issued for a different PR (A-016)
+- Accepting tokens where the underlying session issued REJECTION-PACKAGE (A-017)
+- Accepting phantom tokens (no backing session file at all, on re-invocations)
+
+This check MUST be run on every NON-first-invocation. First invocations are exempt by the clause above.
 
 ---
 
@@ -125,6 +192,8 @@ This check MUST be run for EVERY non-PENDING token. Cross-referencing the sessio
 | 2.4.0 | 2026-03-02 | CORE-021 added: Zero-Severity-Tolerance enforcement — any finding regardless of perceived severity triggers REJECTION-PACKAGE; prohibited language table enforced (maturion-isms IAA Policy issue) |
 | 2.5.0 | 2026-03-03 | CORE-022 added: Secret field naming compliance — `secret:` prohibited in agent contracts; must use `secret_env_var:`; enforces FAIL-ONLY-ONCE A-024 (maturion-isms feature issue, CI scanner failures job 65529138120) |
 | 2.6.0 | 2026-03-04 | CORE-016 PENDING carve-out updated — post-2026-03-04 PREHANDOVER proofs must use expected reference format not PENDING (A-029 supersession per §4.3b); CORE-018 note updated accordingly |
+| 2.7.0 | 2026-03-04 | **BREAKING FIX**: CORE-016, CORE-018, CORE-019 fully rewritten to match §4.3b architecture (A-029). Verbatim response requirement moved from PREHANDOVER proof to dedicated token file. First Invocation Exception added to CORE-019 to break the circular dependency loop. Architecture Alignment Note added at top of file. CORE-007 carve-out updated for expected reference format. |
+| 2.8.0 | 2026-03-04 | Orientation Mandate section added — 90/10 rule codified in checklist; ceremony checks explicitly framed as 10% layer; substantive review as 90% primary obligation (CS2 directive) |
 
 ---
 

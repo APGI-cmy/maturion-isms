@@ -2,13 +2,13 @@
   "version": "1.0.0",
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
-  "last_updated": "2026-03-04T06:19:59Z",
-  "canonical_commit": "6523fe8d42e6fb1608a7744a64e910230f9cc881",
+  "last_updated": "2026-03-04T15:24:28Z",
+  "canonical_commit": "4981c34fb1fadf8d297723ab3660425f85f287a3",
   "canonical_inventory_version": "1.0.0",
   "sync_pending": true,
   "drift_detected": false,
-  "last_ripple_received": "2026-03-04T06:06:16Z",
-  "last_ripple_dispatch_id": "6523fe8d",
-  "last_liaison_session": "session-044-20260304",
-  "notes": "Ripple 6523fe8d processed by session-044-20260304. Governance canon files layered down: IAA_PRE_BRIEF_PROTOCOL.md (new), INDEPENDENT_ASSURANCE_AGENT_CANON.md (updated). Agent contracts escalated to CS2: ESC-AGENTFILE-6523FE8D-20260304. sync_pending=true until agent contract changes resolved by CS2/CodexAdvisor. Prior escalation ESC-AGENTFILE-E77B00C7-20260303 also still open."
+  "last_ripple_received": "2026-03-04T08:25:17Z",
+  "last_ripple_dispatch_id": "4981c34f",
+  "last_liaison_session": "session-046-20260304",
+  "notes": "Ripple 4981c34f processed by session-046-20260304. No governance canon files in payload. Only agent contract CodexAdvisor-agent.md changed — escalated to CS2 per A-015 (ESC-AGENTFILE-4981C34F-20260304). Non-CodexAdvisor agent files from prior escalations (e77b00c7, 6523fe8d) routed to CodexAdvisor-agent per A-015. sync_pending=true pending CS2 resolution of CodexAdvisor-agent.md."
 }
