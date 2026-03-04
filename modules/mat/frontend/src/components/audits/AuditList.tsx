@@ -52,7 +52,7 @@ export function AuditList() {
   // Filter audits
   const filteredAudits = audits.filter(audit => {
     const matchesSearch = audit.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         audit.organisation_name.toLowerCase().includes(searchTerm.toLowerCase());
+                         audit.organisation_id.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || audit.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -87,9 +87,8 @@ export function AuditList() {
             aria-label="Filter by status"
           >
             <option value="all">All Statuses</option>
-            <option value="not_started">Not Started</option>
-            <option value="in_progress">In Progress</option>
-            <option value="under_review">Under Review</option>
+            <option value="draft">Draft</option>
+            <option value="active">Active</option>
             <option value="completed">Completed</option>
             <option value="archived">Archived</option>
           </select>
@@ -101,9 +100,9 @@ export function AuditList() {
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <h4 className="font-semibold text-lg">{audit.title}</h4>
-                <p className="text-sm text-gray-600">{audit.organisation_name}</p>
-                {audit.facility_location && (
-                  <p className="text-sm text-gray-500">Location: {audit.facility_location}</p>
+                <p className="text-sm text-gray-600">{audit.organisation_id}</p>
+                {audit.description && (
+                  <p className="text-sm text-gray-500">{audit.description}</p>
                 )}
                 <div className="flex gap-4 mt-2 text-sm text-gray-500">
                   <span>Status: <span className="font-medium">{audit.status.replace('_', ' ')}</span></span>

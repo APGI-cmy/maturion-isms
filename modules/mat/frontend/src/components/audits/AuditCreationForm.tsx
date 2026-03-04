@@ -11,8 +11,7 @@ export function AuditCreationForm() {
   const createAudit = useCreateAudit();
   const [formData, setFormData] = useState({
     title: '',
-    organisation_name: '',
-    facility_location: '',
+    description: '',
     audit_period_start: '',
     audit_period_end: '',
   });
@@ -23,9 +22,6 @@ export function AuditCreationForm() {
     
     if (!formData.title.trim()) {
       newErrors.title = 'Audit title is required';
-    }
-    if (!formData.organisation_name.trim()) {
-      newErrors.organisation_name = 'Organisation name is required';
     }
     if (formData.audit_period_start && formData.audit_period_end) {
       if (new Date(formData.audit_period_start) > new Date(formData.audit_period_end)) {
@@ -49,8 +45,7 @@ export function AuditCreationForm() {
       // Reset form on success
       setFormData({
         title: '',
-        organisation_name: '',
-        facility_location: '',
+        description: '',
         audit_period_start: '',
         audit_period_end: '',
       });
@@ -97,38 +92,17 @@ export function AuditCreationForm() {
         </div>
 
         <div>
-          <label htmlFor="organisation_name" className="block text-sm font-medium text-gray-700 mb-1">
-            Organisation Name <span className="text-red-500">*</span>
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+            Description
           </label>
           <input
             type="text"
-            id="organisation_name"
-            name="organisation_name"
-            value={formData.organisation_name}
+            id="description"
+            name="description"
+            value={formData.description}
             onChange={handleChange}
-            placeholder="Enter organisation name"
-            aria-label="Organisation name"
-            aria-required="true"
-            aria-invalid={!!errors.organisation_name}
-            className={`w-full px-3 py-2 border rounded ${errors.organisation_name ? 'border-red-500' : 'border-gray-300'}`}
-          />
-          {errors.organisation_name && (
-            <p className="text-red-500 text-sm mt-1" role="alert">{errors.organisation_name}</p>
-          )}
-        </div>
-
-        <div>
-          <label htmlFor="facility_location" className="block text-sm font-medium text-gray-700 mb-1">
-            Facility Location
-          </label>
-          <input
-            type="text"
-            id="facility_location"
-            name="facility_location"
-            value={formData.facility_location}
-            onChange={handleChange}
-            placeholder="Enter facility location"
-            aria-label="Facility location"
+            placeholder="Enter audit description"
+            aria-label="Audit description"
             className="w-full px-3 py-2 border border-gray-300 rounded"
           />
         </div>
