@@ -32,12 +32,37 @@ DO $$ BEGIN
   END IF;
 END $$;
 
+-- INSERT policy: authenticated users may insert their own completion record
+-- (application code or accept-invite flow may insert directly in addition to the trigger)
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE tablename = 'onboarding_completions'
+      AND policyname = 'onboarding_completions_insert'
+  ) THEN
+    CREATE POLICY onboarding_completions_insert ON public.onboarding_completions
+      FOR INSERT
+      WITH CHECK (user_id = auth.uid());
+  END IF;
+END $$;
+
 -- Trigger function: after an organisation is created during onboarding, record completion
 CREATE OR REPLACE FUNCTION public.record_onboarding_complete()
 RETURNS TRIGGER AS $$
+DECLARE
+  v_user_id UUID;
 BEGIN
+  -- Resolve authenticated user ID from JWT session claims.
+  -- auth.uid() reads request.jwt.claims (session-level GUC set by PostgREST).
+  -- Guard: if called outside an authenticated request context (e.g. by service role
+  -- or direct psql), auth.uid() returns NULL — skip insertion gracefully.
+  v_user_id := auth.uid();
+  IF v_user_id IS NULL THEN
+    RETURN NEW;
+  END IF;
+
   INSERT INTO public.onboarding_completions (user_id, organisation_id)
-  VALUES (NEW.id, NEW.id)
+  VALUES (v_user_id, NEW.id)
   ON CONFLICT (user_id) DO NOTHING;
   RETURN NEW;
 END;

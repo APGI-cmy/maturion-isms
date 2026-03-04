@@ -94,6 +94,46 @@ DO $$ BEGIN
   END IF;
 END $$;
 
+-- audit_invitations: INSERT policy — org members may create invitations
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE tablename = 'audit_invitations'
+      AND policyname = 'audit_invitations_insert'
+  ) THEN
+    CREATE POLICY audit_invitations_insert ON public.audit_invitations
+      FOR INSERT
+      WITH CHECK (
+        organisation_id IN (
+          SELECT organisation_id FROM public.profiles WHERE profiles.id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
+
+-- audit_invitations: UPDATE policy — invitee may accept their own invitation
+-- (status: 'pending' → 'accepted'; accepted_at set by application code)
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE tablename = 'audit_invitations'
+      AND policyname = 'audit_invitations_update'
+  ) THEN
+    CREATE POLICY audit_invitations_update ON public.audit_invitations
+      FOR UPDATE
+      USING (
+        organisation_id IN (
+          SELECT organisation_id FROM public.profiles WHERE profiles.id = auth.uid()
+        )
+      )
+      WITH CHECK (
+        organisation_id IN (
+          SELECT organisation_id FROM public.profiles WHERE profiles.id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
+
 -- domain_assignments: org-isolation SELECT policy
 DO $$ BEGIN
   IF NOT EXISTS (
@@ -104,6 +144,23 @@ DO $$ BEGIN
     CREATE POLICY domain_assignments_select ON public.domain_assignments
       FOR SELECT
       USING (
+        organisation_id IN (
+          SELECT organisation_id FROM public.profiles WHERE profiles.id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
+
+-- domain_assignments: INSERT policy — org members may create domain assignments
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE tablename = 'domain_assignments'
+      AND policyname = 'domain_assignments_insert'
+  ) THEN
+    CREATE POLICY domain_assignments_insert ON public.domain_assignments
+      FOR INSERT
+      WITH CHECK (
         organisation_id IN (
           SELECT organisation_id FROM public.profiles WHERE profiles.id = auth.uid()
         )
@@ -128,6 +185,23 @@ DO $$ BEGIN
   END IF;
 END $$;
 
+-- mps_assignments: INSERT policy — org members may create MPS assignments
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE tablename = 'mps_assignments'
+      AND policyname = 'mps_assignments_insert'
+  ) THEN
+    CREATE POLICY mps_assignments_insert ON public.mps_assignments
+      FOR INSERT
+      WITH CHECK (
+        organisation_id IN (
+          SELECT organisation_id FROM public.profiles WHERE profiles.id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
+
 -- criteria_assignments: org-isolation SELECT policy (TR-092 — scoped access enforcement)
 DO $$ BEGIN
   IF NOT EXISTS (
@@ -138,6 +212,23 @@ DO $$ BEGIN
     CREATE POLICY criteria_assignments_select ON public.criteria_assignments
       FOR SELECT
       USING (
+        organisation_id IN (
+          SELECT organisation_id FROM public.profiles WHERE profiles.id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
+
+-- criteria_assignments: INSERT policy — org members may create criteria assignments
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE tablename = 'criteria_assignments'
+      AND policyname = 'criteria_assignments_insert'
+  ) THEN
+    CREATE POLICY criteria_assignments_insert ON public.criteria_assignments
+      FOR INSERT
+      WITH CHECK (
         organisation_id IN (
           SELECT organisation_id FROM public.profiles WHERE profiles.id = auth.uid()
         )
