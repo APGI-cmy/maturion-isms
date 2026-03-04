@@ -106,8 +106,25 @@ export function useUploadCriteria() {
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
+      // Fetch authenticated user and their organisation_id (required for RLS-compliant storage paths)
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Authentication required to import criteria');
+
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('organisation_id')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError) throw new Error(`Failed to fetch user profile: ${profileError.message}`);
+      if (!profile?.organisation_id) {
+        throw new Error('Your account is not linked to an organisation.');
+      }
+      const organisationId = profile.organisation_id;
+
       // Upload to Supabase Storage
-      const filePath = `criteria/${auditId}/${Date.now()}-${file.name}`;
+      // Path must start with organisationId to satisfy RLS: split_part(name, '/', 1) = organisation_id
+      const filePath = `${organisationId}/criteria/${auditId}/${Date.now()}-${file.name}`;
       const { data, error } = await supabase.storage
         .from('audit-documents')
         .upload(filePath, file, {
