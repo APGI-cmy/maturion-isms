@@ -3,12 +3,12 @@
 **Module**: MAT (Manual Audit Tool)
 **Artifact Type**: Functional Requirements Specification
 **Status**: COMPLETE
-**Version**: v1.5.0
-**Owner**: Foreman (FM)
+**Version**: v1.8.0  
+**Owner**: Foreman (FM)  
 **Authority**: Derived from App Description v1.3 (modules/mat/00-app-description/app-description.md)
 **Applies To**: MAT module within maturion-isms repository
 **Created**: 2026-02-13
-**Last Updated**: 2026-02-27
+**Last Updated**: 2026-03-04
 
 ---
 
@@ -1605,6 +1605,7 @@ This FRS is derived from the MAT App Description v1.2 (`modules/mat/00-app-descr
 **Next Stage**: This FRS feeds into the TRS (Technical Requirements Specification) at `modules/mat/01.5-trs/`.
 
 **Change Log**:
+- v1.8.0 (2026-03-04): Added FR-084 through FR-088 (Wave postbuild-fails-02 — Full RLS Remediation, GAP-006–GAP-013). All 5 requirements marked 🔴 NEEDS REMEDIATION pending schema-builder migration delivery. FRS extended to 88 requirements.
 - v1.7.0 (2026-03-04): Added FR-082, FR-083 (Wave postbuild-fails-01 — RLS Fix, handle_new_user trigger). FRS extended to 83 requirements.
 - v1.6.0 (2026-03-03): Added FR-078 through FR-081 (Wave 14 Addendum A — Column Mapping Remediation INC-W14-COL-MAPPING-001). FRS extended to 81 requirements.
 - v1.5.0 (2026-02-27): Added FR-073 through FR-077 (AI Gateway Memory, Persona, Session, Health Check, Runbook) per Issue: [Critical Gap] Complete persistent memory and context handling in AI gateway. FRS extended to 77 requirements. Architecture freeze effective on merge of implementing PR per CS2 directive.
@@ -1668,5 +1669,60 @@ The `profiles` table MUST have explicit RLS policies for SELECT, INSERT, and UPD
 scoped to `auth.uid() = id`. The `audits` table MUST have an INSERT policy that allows
 authenticated users to create audits they own (`auth.uid() = created_by`).
 **Acceptance**: Profile save and audit creation succeed for authenticated users without RLS violations.
+
+---
+
+## Wave postbuild-fails-02: Full RLS Remediation (GAP-006 to GAP-013) 🔴 NEEDS REMEDIATION
+
+**Added**: v1.8.0 (2026-03-04) | **Authority**: CS2 (Johan Ras) | **Issue**: #897
+**Reference**: `modules/mat/03-implementation-plan/supabase-sync-audit-20260304.md` GAP-006–GAP-013
+**Status**: 🔴 RED SUITE — All 5 requirements below are UNVERIFIED pending schema-builder migration delivery
+
+### FR-084: evidence table RLS policy completeness 🔴 NEEDS REMEDIATION
+
+The `evidence` table MUST have explicit RLS policies for INSERT, UPDATE, and DELETE operations
+(all three are required), scoped to the authenticated user's organisation (`auth.uid()` via
+the `audits` FK chain or directly). Evidence records must be writable by audit participants
+and deletable by the evidence owner or org admin only.
+**Status**: 🔴 RED — no documented INSERT/UPDATE/DELETE policies (GAP-010)
+**Test**: T-PBF2-001
+**Acceptance**: Evidence upload/update/delete succeed for authenticated audit participants without RLS violations.
+
+### FR-085: scores table RLS policy completeness 🔴 NEEDS REMEDIATION
+
+The `scores` table MUST have explicit RLS policies for INSERT and UPDATE operations,
+scoped to `auth.uid()` (authenticated auditor submitting scores for their audit).
+**Status**: 🔴 RED — no documented INSERT/UPDATE policies (GAP-011)
+**Test**: T-PBF2-002
+**Acceptance**: Score submission and update succeed for authenticated auditors without RLS violations.
+
+### FR-086: audit_scores table RLS policy completeness 🔴 NEEDS REMEDIATION
+
+The `audit_scores` table MUST have explicit RLS policies for INSERT and UPDATE operations,
+scoped to `auth.uid()` (authenticated auditor submitting/updating aggregate scores).
+**Status**: 🔴 RED — no documented INSERT/UPDATE policies (GAP-013)
+**Test**: T-PBF2-003
+**Acceptance**: Audit score insertion and update succeed for authenticated auditors without RLS violations.
+
+### FR-087: organisation_settings table RLS policy completeness 🔴 NEEDS REMEDIATION
+
+The `organisation_settings` table MUST have explicit RLS policies for INSERT and UPDATE
+operations, scoped to org admin role (`auth.uid()` and `auth.jwt()->>'role' = 'admin'` or
+equivalent). Settings must only be writeable by org administrators.
+**Status**: 🔴 RED — no documented INSERT/UPDATE policies (GAP-012)
+**Test**: T-PBF2-004
+**Acceptance**: Settings save succeeds for org admin; non-admin users cannot write settings.
+
+### FR-088: organisations, domains, criteria, mini_performance_standards RLS policy completeness 🔴 NEEDS REMEDIATION
+
+The following tables MUST have their RLS coverage verified and completed:
+- `organisations`: INSERT/UPDATE policies for org creation/update flows (GAP-006)
+- `domains`: INSERT/UPDATE policies for domain management (GAP-007; currently SELECT-only)
+- `criteria`: INSERT/UPDATE policies for criteria management (GAP-009; currently SELECT-only)
+- `mini_performance_standards`: read-only guard — no anon INSERT/UPDATE permitted (GAP-008)
+
+**Status**: 🔴 RED — partial (SELECT-only) or missing policies on all four tables
+**Tests**: T-PBF2-005 (criteria), T-PBF2-006 (domains), T-PBF2-007 (organisations), T-PBF2-008 (mini_performance_standards)
+**Acceptance**: Organisation, domain, and criteria management operations succeed for authorised users; mini_performance_standards are read-only for all application-level users.
 
 *END OF FUNCTIONAL REQUIREMENTS SPECIFICATION*

@@ -1168,9 +1168,47 @@ Per the issue notes: **"Never open a deployment/CI/CD issue for a service or pat
 
 ---
 
+## Section 21 — Supabase RLS Remediation Status (Wave postbuild-fails-02) 🔴 NEEDS REMEDIATION
+
+**Added**: v1.4 (2026-03-04) | **Authority**: CS2 (Johan Ras) | **Issue**: #897
+**Reference**: `modules/mat/03-implementation-plan/supabase-sync-audit-20260304.md`
+
+### RLS Coverage Gap — 8 Tables Affected
+
+Following the Supabase sync audit (2026-03-04), **8 tables** have RLS enabled but unverified or
+incomplete policy coverage. Wave postbuild-fails-01 (PR #895) fixed the two P0 production blockers.
+The following tables remain in 🔴 NEEDS REMEDIATION state:
+
+| Table | RLS Enabled | Current Gap | Priority |
+|-------|------------|-------------|----------|
+| `evidence` | ✅ | No INSERT/UPDATE/DELETE policies | 🔴 P0 |
+| `scores` | ✅ | No INSERT/UPDATE policies | 🔴 P0 |
+| `organisations` | ✅ | No INSERT/UPDATE policies | 🟡 HIGH |
+| `domains` | ✅ | SELECT-only — no INSERT/UPDATE | 🟡 HIGH |
+| `criteria` | ✅ | SELECT-only — no INSERT/UPDATE | 🟡 HIGH |
+| `audit_scores` | ✅ | No INSERT/UPDATE policies | 🟡 HIGH |
+| `organisation_settings` | ✅ | No INSERT/UPDATE policies | 🟡 HIGH |
+| `mini_performance_standards` | ✅ | No read-only guard documented | 🟡 HIGH |
+
+### Required Actions
+
+All actions are tracked in Wave postbuild-fails-02 (implementation-plan.md v2.4.0 §Wave postbuild-fails-02):
+1. **qa-builder**: Define RED gate tests T-PBF2-001 to T-PBF2-008 before migrations land
+2. **schema-builder**: Add RLS policy migrations for all 8 tables (OVL-AM-008 wiring trace required)
+3. **foreman**: Update all architecture artifacts to reflect GREEN state after migrations
+
+### Resolved Gaps
+
+The following gaps from the same audit are **RESOLVED** (Wave postbuild-fails-01, PR #895):
+- `profiles` SELECT/INSERT/UPDATE policies ✅ — `profiles_select_own`, `profiles_insert_own`, `profiles_update_own`
+- `audits` INSERT policy ✅ — `audits_insert_authenticated`
+- `handle_new_user()` trigger ✅ — SECURITY DEFINER function + trigger on `auth.users`
+
+---
+
 ## End of Document
 
-**Document Version**: v1.3
-**Last Updated**: 2026-02-27
-**Status**: Draft (awaiting approval)
-**Next Review**: After Wave 10 merge and Wave 11 planning
+**Document Version**: v1.4
+**Last Updated**: 2026-03-04
+**Status**: Draft (awaiting approval — Wave postbuild-fails-02 remediation in progress)
+**Next Review**: After Wave postbuild-fails-02 merge and schema-builder migration delivery
