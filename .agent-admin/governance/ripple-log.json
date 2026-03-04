@@ -395,7 +395,7 @@
       "session_id": "session-025-20260228",
       "type": "liaison-confirmation",
       "canonical_commit": "6644ee51ce714d3a9331b28b74b3e05f1b7ee880",
-      "issue_ref": "APGI-cmy/maturion-isms (layer-down issue 6644ee51 \u2014 2026-02-28)",
+      "issue_ref": "APGI-cmy/maturion-isms (layer-down issue 6644ee51 — 2026-02-28)",
       "ripple_prs": [],
       "files_verified": [],
       "files_changed": 0,
@@ -403,7 +403,7 @@
       "drift_detected": false,
       "sha256_verified": true,
       "status": "SUCCESS",
-      "notes": "No PUBLIC_API governance files changed in canonical commit 6644ee51ce714d3a9331b28b74b3e05f1b7ee880. Trigger: Merge pull request -1244 from APGI-cmy-copilot-investigate-layer-down-workflow. Automated CI (ripple-integration.yml) created draft PRs #683-686 citing agent contract drift \u2014 those are CS2-gated per AGCFPP-001. Liaison confirms: governance is aligned with canonical source. sync_state.json updated to record new canonical commit. No layer-down required. Session-025 memory created."
+      "notes": "No PUBLIC_API governance files changed in canonical commit 6644ee51ce714d3a9331b28b74b3e05f1b7ee880. Trigger: Merge pull request -1244 from APGI-cmy-copilot-investigate-layer-down-workflow. Automated CI (ripple-integration.yml) created draft PRs #683-686 citing agent contract drift — those are CS2-gated per AGCFPP-001. Liaison confirms: governance is aligned with canonical source. sync_state.json updated to record new canonical commit. No layer-down required. Session-025 memory created."
     },
     {
       "timestamp": "2026-02-28T14:13:28Z",
@@ -419,7 +419,7 @@
       "type": "liaison-confirmation",
       "canonical_commit": "6644ee51ce714d3a9331b28b74b3e05f1b7ee880",
       "canonical_version": "1.0.0",
-      "issue_ref": "APGI-cmy/maturion-isms (layer-down issue 6644ee51 \u2014 current session)",
+      "issue_ref": "APGI-cmy/maturion-isms (layer-down issue 6644ee51 — current session)",
       "ripple_prs": [
         "#686"
       ],
@@ -465,7 +465,7 @@
       "sha256_verified": true,
       "alignment_script_fix": "align-governance.sh updated to use exit code 2 for partial failures; ripple-integration.yml updated to handle exit code 2",
       "status": "PARTIAL_SUCCESS",
-      "notes": "Layer-down for canonical commit 64ac0b7b. CI was failing with exit code 1 because align-governance.sh aborted on LAYER_UP_PROTOCOL.md hash verification failure (stale hash in canonical CANON_INVENTORY.json). Fixed script to use exit code 2 for partial failures. Layered: GOVERNANCE_TOKEN_USAGE_REQUIREMENTS.md (new, SHA256 verified), INDEPENDENT_ASSURANCE_AGENT_CANON.md (updated, SHA256 verified), LAYER_UP_PROTOCOL.md (v1.1.0 from canonical, A-07 escalation noted \u2014 stale CANON_INVENTORY.json hash). Escalation created: stale-hash-LAYER_UP_PROTOCOL-20260301.md. ripple-integration.yml updated to handle exit code 2 gracefully."
+      "notes": "Layer-down for canonical commit 64ac0b7b. CI was failing with exit code 1 because align-governance.sh aborted on LAYER_UP_PROTOCOL.md hash verification failure (stale hash in canonical CANON_INVENTORY.json). Fixed script to use exit code 2 for partial failures. Layered: GOVERNANCE_TOKEN_USAGE_REQUIREMENTS.md (new, SHA256 verified), INDEPENDENT_ASSURANCE_AGENT_CANON.md (updated, SHA256 verified), LAYER_UP_PROTOCOL.md (v1.1.0 from canonical, A-07 escalation noted — stale CANON_INVENTORY.json hash). Escalation created: stale-hash-LAYER_UP_PROTOCOL-20260301.md. ripple-integration.yml updated to handle exit code 2 gracefully."
     },
     {
       "timestamp": "2026-03-01T16:50:00Z",
@@ -483,7 +483,7 @@
       "canonical_commit": "e52ec033c5955cdbe833986e9da0a37927c5a1bc",
       "files_updated": 0,
       "status": "NO_DRIFT",
-      "trigger": "layer-down-dispatch issue #782 \u2014 6 governance artifacts verified aligned, no changes required",
+      "trigger": "layer-down-dispatch issue #782 — 6 governance artifacts verified aligned, no changes required",
       "changed_artifacts_verified": [
         "governance/canon/ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
         "governance/canon/AUTOMATED_QUALITY_TOOLING_CANON.md",
@@ -493,7 +493,7 @@
         "governance/policy/POLICY-NO-ONLY-LANGUAGE.md"
       ],
       "ci_runs": 4,
-      "ci_result": "No Drift Detected \u2014 governance already aligned with canonical source"
+      "ci_result": "No Drift Detected — governance already aligned with canonical source"
     },
     {
       "timestamp": "2026-03-02T13:42:25Z",
@@ -509,7 +509,7 @@
       "type": "liaison-confirmation",
       "canonical_commit": "7792913259b00fab77c2d1be966e923a463853db",
       "canonical_version": "1.0.0",
-      "issue_ref": "APGI-cmy/maturion-isms (layer-down issue 7792913259b0 \u2014 ripple issue current session)",
+      "issue_ref": "APGI-cmy/maturion-isms (layer-down issue 7792913259b0 — ripple issue current session)",
       "ripple_prs": [
         "#797"
       ],
@@ -524,10 +524,10 @@
       "internal_ripple_actions": [
         ".agent-workspace/foreman-v2/knowledge/FM_QP_ENHANCED_QUICK_REFERENCE.md created",
         ".agent-workspace/foreman-v2/knowledge/index.md updated (v1.6.2 -> v1.6.3)",
-        ".agent-admin/quality-professor/ directory created per SOP \u00a78"
+        ".agent-admin/quality-professor/ directory created per SOP §8"
       ],
       "status": "SUCCESS",
-      "notes": "Liaison checklist complete for canonical commit 7792913259b0. FM_QUALITY_PROTOCOL_ENHANCED_SOP.md SHA256 verified (65ee6752... match). AIMC canon checked \u2014 no AIMC dependency; AIMC integration NOT REQUIRED for this SOP. Internal ripple executed: Tier 2 QR stub created for foreman-v2, knowledge index updated, quality-professor admin dir created. Session-036 memory created."
+      "notes": "Liaison checklist complete for canonical commit 7792913259b0. FM_QUALITY_PROTOCOL_ENHANCED_SOP.md SHA256 verified (65ee6752... match). AIMC canon checked — no AIMC dependency; AIMC integration NOT REQUIRED for this SOP. Internal ripple executed: Tier 2 QR stub created for foreman-v2, knowledge index updated, quality-professor admin dir created. Session-036 memory created."
     },
     {
       "timestamp": "2026-03-03T13:03:45Z",
@@ -547,7 +547,7 @@
         ".github/agents/governance-repo-administrator-v2.agent.md",
         ".github/agents/independent-assurance-agent.md"
       ],
-      "notes": "A-009: ripple payload contains .github/agents/** paths \u2014 escalation triggers, not layer-down targets. Governance admin records updated. CS2 escalation created. GOVERNANCE_ALIGNMENT_INVENTORY.json updated with 4 ESCALATED_TO_CS2 entries. Awaiting CodexAdvisor-agent + CS2 authorization."
+      "notes": "A-009: ripple payload contains .github/agents/** paths — escalation triggers, not layer-down targets. Governance admin records updated. CS2 escalation created. GOVERNANCE_ALIGNMENT_INVENTORY.json updated with 4 ESCALATED_TO_CS2 entries. Awaiting CodexAdvisor-agent + CS2 authorization."
     },
     {
       "timestamp": "2026-03-03T14:28:26Z",
@@ -584,6 +584,14 @@
       "escalation_ref": "ESC-AGENTFILE-6523FE8D-20260304",
       "session": "session-044-20260304",
       "type": "liaison-partial-escalated"
+    },
+    {
+      "timestamp": "2026-03-04T08:22:45Z",
+      "session_id": "align-20260304-082245",
+      "type": "automated-alignment",
+      "canonical_commit": "61ab7b83d2bae691f1a861581871bbb28c07d578",
+      "files_updated": 3,
+      "status": "SUCCESS"
     }
   ]
 }
