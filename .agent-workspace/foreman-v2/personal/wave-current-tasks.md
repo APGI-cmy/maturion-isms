@@ -23,7 +23,7 @@
 
 | # | Task | Builder | Status | PR / Evidence |
 |---|------|---------|--------|---------------|
-| 1 | TASK-PBF3-001 (schema-builder): Migration to drop `current_setting(...)` RLS policies on `audits`, `domains`, `criteria`; add correct `auth.uid()` + profiles-join SELECT/UPDATE/DELETE policies; add organisations SELECT policy | schema-builder | 🔴 PENDING | — |
+| 1 | TASK-PBF3-001 (schema-builder): Migration to drop `current_setting(...)` RLS policies on `audits`, `domains`, `criteria`; add correct `auth.uid()` + profiles-join SELECT/UPDATE/DELETE policies; add organisations SELECT policy | schema-builder | 🟡 IN PROGRESS | commit 5bb1d49 on `copilot/fix-rls-policy-violations` — T-PBF3-001→005 GREEN; IAA token pending |
 | 2 | TASK-PBF3-002 (ui-builder): Fix `useEvidence.ts` storage upload path from `evidence/<criterionId>/...` to `<organisationId>/evidence/<criterionId>/...`; fix `useCriteria.ts` from `criteria/<auditId>/...` to `<organisationId>/criteria/<auditId>/...` | ui-builder | 🔴 PENDING | — |
 | 3 | TASK-PBF3-003 (ui-builder): Fix `useSettings.ts` `MAT-T-0123` test failure — hook must reference `profiles` table via query (existing code is correct) AND add `user_profiles` alias/comment so test `MAT-T-0123` assertion resolves | ui-builder | 🔴 PENDING | — |
 | 4 | TASK-PBF3-004 (qa-builder): Add RED QA suite for wave postbuild-fails-03: test that new migration (a) drops old `current_setting` policies, (b) adds correct `auth.uid()` SELECT policies for audits/domains/criteria, (c) adds organisations SELECT policy, (d) storage path tests confirming `<orgId>/evidence/...` prefix | qa-builder | 🔴 PENDING | — |
