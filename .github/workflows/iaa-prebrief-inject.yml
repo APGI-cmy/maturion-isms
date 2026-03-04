@@ -38,50 +38,42 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Read wave-current-tasks.md if present
+      - name: Read wave-current-tasks.md and check for existing Pre-Brief
         id: wave_tasks
         run: |
           TASKS_FILE=".agent-workspace/foreman-v2/personal/wave-current-tasks.md"
           if [ -f "$TASKS_FILE" ]; then
-            # Extract first 1500 chars, escape backticks (prevents shell/JS injection)
             SNIPPET=$(head -c 1500 "$TASKS_FILE" | sed "s/\`/'/g")
-            # Extract wave number from header line e.g. "**Wave**: Wave 14"
-            WAVE_NUM=$(grep -m1 -oP '(?<=\*\*Wave\*\*:\s)(Wave\s+\S+|\S+)' "$TASKS_FILE" || echo "")
+            # Normalize wave number — strip "Wave " prefix, capture just the number/slug
+            WAVE_NUM=$(grep -m1 -oP '(?<=\*\*Wave\*\*:\s)(Wave\s+)?\K\S+' "$TASKS_FILE" || echo "unknown")
             echo "tasks_found=true" >> "$GITHUB_OUTPUT"
-            echo "wave_num<<EOF_WAVE" >> "$GITHUB_OUTPUT"
-            echo "$WAVE_NUM" >> "$GITHUB_OUTPUT"
-            echo "EOF_WAVE" >> "$GITHUB_OUTPUT"
+            echo "wave_num=$WAVE_NUM" >> "$GITHUB_OUTPUT"
             echo "tasks_snippet<<EOF_TASKS" >> "$GITHUB_OUTPUT"
             echo "$SNIPPET" >> "$GITHUB_OUTPUT"
             echo "EOF_TASKS" >> "$GITHUB_OUTPUT"
-          else
-            echo "tasks_found=false" >> "$GITHUB_OUTPUT"
-            echo "wave_num=" >> "$GITHUB_OUTPUT"
-          fi
 
-      - name: Check for existing Pre-Brief (idempotency guard)
-        id: prebrief_check
-        run: |
-          ASSURANCE_DIR=".agent-admin/assurance"
-          if [ -d "$ASSURANCE_DIR" ]; then
-            # Look for any iaa-prebrief-wave*.md that is NOT marked SUPERSEDED
-            EXISTING=$(find "$ASSURANCE_DIR" -maxdepth 1 -name "iaa-prebrief-wave*.md" | while read f; do
-              if ! grep -qi "SUPERSEDED" "$f" 2>/dev/null; then
-                echo "$f"
-              fi
-            done)
-            if [ -n "$EXISTING" ]; then
+            # Idempotency guard — scoped to THIS wave's pre-brief file
+            ASSURANCE_DIR=".agent-admin/assurance"
+            PREBRIEF_FILE="${ASSURANCE_DIR}/iaa-prebrief-wave${WAVE_NUM}.md"
+            if [ "$WAVE_NUM" != "unknown" ] && [ -f "$PREBRIEF_FILE" ] && ! grep -qi "SUPERSEDED" "$PREBRIEF_FILE" 2>/dev/null; then
               echo "prebrief_exists=true" >> "$GITHUB_OUTPUT"
             else
               echo "prebrief_exists=false" >> "$GITHUB_OUTPUT"
             fi
           else
+            echo "tasks_found=false" >> "$GITHUB_OUTPUT"
+            echo "wave_num=unknown" >> "$GITHUB_OUTPUT"
             echo "prebrief_exists=false" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Skip if Pre-Brief already exists for this wave
+        if: steps.wave_tasks.outputs.prebrief_exists == 'true'
+        run: |
+          echo "::notice::Pre-Brief already exists for wave ${{ steps.wave_tasks.outputs.wave_num }} — skipping auto-invocation. Use /iaa-prebrief-amend to request an amendment."
+
       - name: Find associated PR number (push event)
         id: find_pr
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && steps.wave_tasks.outputs.prebrief_exists != 'true'
         uses: actions/github-script@v7
         env:
           GH_REF: ${{ github.ref }}
@@ -104,7 +96,7 @@ jobs:
             }
 
       - name: Post IAA Pre-Brief invocation comment
-        if: steps.prebrief_check.outputs.prebrief_exists != 'true'
+        if: steps.wave_tasks.outputs.prebrief_exists != 'true'
         uses: actions/github-script@v7
         env:
           TASKS_FOUND: ${{ steps.wave_tasks.outputs.tasks_found }}
@@ -115,7 +107,7 @@ jobs:
           script: |
             const tasksFound = process.env.TASKS_FOUND === 'true';
             const tasksSnippet = process.env.TASKS_SNIPPET || '';
-            const waveNum = process.env.WAVE_NUM || '<N>';
+            const waveNum = (process.env.WAVE_NUM || 'unknown').trim();
             const prNumberEnv = process.env.PR_NUMBER || '';
 
             // Determine which issue/PR to comment on
@@ -164,8 +156,3 @@ jobs:
               issue_number: issueNumber,
               body,
             });
-
-      - name: Notice — Pre-Brief already exists (idempotency skip)
-        if: steps.prebrief_check.outputs.prebrief_exists == 'true'
-        run: |
-          echo "::notice::Pre-Brief already exists for this wave — skipping auto-invocation. Use /iaa-prebrief-amend to request an amendment."
