@@ -9,7 +9,10 @@ on:
     branches-ignore:
       - main
   pull_request:
-    types: [ready_for_review, synchronize]
+    # FIX-4: Added 'opened' so Gap 2 also fires when a PR is created directly as
+    # ready (not via DRAFT → ready_for_review transition), closing the blind spot
+    # where non-draft PRs never trigger a ready_for_review event.
+    types: [opened, ready_for_review, synchronize]
 
 permissions:
   pull-requests: write
@@ -36,12 +39,15 @@ jobs:
             const branch = process.env.PUSH_BRANCH;
             const sha = process.env.PUSH_SHA;
 
-            // Guard: exempt governance/liaison/ripple/dependabot branches
+            // Guard: exempt governance/liaison/ripple/dependabot/copilot branches
+            // FIX-3: Added 'copilot/' — Copilot coding agent branches (e.g. copilot/fix-xyz)
+            // are created atomically with a PR; false alerts on these branches are noise.
             const exemptPrefixes = [
               'governance/',
               'ripple-',
               'governance-alignment',
               'dependabot/',
+              'copilot/',
             ];
             for (const prefix of exemptPrefixes) {
               if (branch.startsWith(prefix)) {
@@ -128,7 +134,10 @@ jobs:
   gap2-ready-pr-missing-prebrief:
     name: "watchdog/gap2-ready-pr-missing-prebrief"
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.event.action == 'ready_for_review'
+    if: >-
+      github.event_name == 'pull_request' &&
+      (github.event.action == 'ready_for_review' ||
+       (github.event.action == 'opened' && !github.event.pull_request.draft))
     steps:
       - name: Check PR for ripple/liaison guard
         id: guard
