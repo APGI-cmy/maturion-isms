@@ -204,10 +204,10 @@ Real IAA responses always include either:
 Per `AGENT_HANDOVER_AUTOMATION.md` v1.1.3 §4.3b, the PREHANDOVER proof is immutable once committed.
 
 After IAA issues ASSURANCE-TOKEN:
-1. The `iaa_audit_token` field was already pre-populated at initial commit time — do NOT edit the PREHANDOVER proof.
-2. Paste the verbatim ASSURANCE-TOKEN block into `## IAA Agent Response (verbatim)` in the PREHANDOVER proof **before its initial commit** — copy the complete raw block character for character; never paraphrase.
-3. The IAA writes its token to a **new dedicated file**: `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`
-4. Commit the token file as a new file only — no amendments to the PREHANDOVER proof post-commit.
+1. **Before initial commit**: Write PREHANDOVER proof with `iaa_audit_token: IAA-session-NNN-waveY-YYYYMMDD-PASS` pre-populated. Do NOT commit yet.
+2. **Before initial commit**: Invoke IAA. Receive ASSURANCE-TOKEN. Paste the verbatim ASSURANCE-TOKEN block into `## IAA Agent Response (verbatim)` — copy character-for-character; never paraphrase.
+3. **Initial commit**: Commit the PREHANDOVER proof now. This is the read-only initial commit — henceforth immutable (§4.3b).
+4. **Post-commit (new file only)**: The IAA writes its dedicated token to `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`. No amendments to the committed PREHANDOVER proof.
 
 **Anti-misuse rules:**
 - Pre-populate `iaa_audit_token` with the expected reference format at commit time (not PENDING)

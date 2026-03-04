@@ -2,7 +2,7 @@
 
 **Agent**: governance-liaison-isms  
 **Contract Version**: 3.2.0  
-**Knowledge Version**: 1.4.0  
+**Knowledge Version**: 1.5.0  
 **Last Updated**: 2026-03-03  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
@@ -17,10 +17,10 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 
 | File | Purpose | Version |
 |------|---------|---------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.4.0 |
+| `index.md` (this file) | Knowledge entry point and version reference | 1.5.0 |
 | `FAIL-ONLY-ONCE.md` | **PREFLIGHT Attestation** — Breach registry, Universal A-rules, Conditional B-rules, incident log; must be self-attested every session before any work begins | 1.4.0 |
-| `layer-down-scripts.md` | **Phase 3.1 Scripts** — Checksum validation and sync state update scripts for the cross-repository layer-down protocol | 1.0.0 |
-| `ripple-processing-scripts.md` | **Phase 3.2 Scripts** — Ripple inbox creation, sync state update on receipt, and ripple archive scripts | 1.0.0 |
+| `layer-down-scripts.md` | **Phase 3.1 Scripts** — Checksum validation and sync state update scripts for the cross-repository layer-down protocol; full 7-step protocol | 1.1.0 |
+| `ripple-processing-scripts.md` | **Phase 3.2 Scripts** — Ripple inbox creation, sync state update on receipt, and ripple archive scripts; full 5-step protocol | 1.1.0 |
 | `drift-detection-scripts.md` | **Phase 3.3 Scripts** — Drift detection script; compares canonical inventory version against local sync state | 1.0.0 |
 | `session-memory-template.md` | **Phase 4.2 Template** — Session memory and escalation templates for use in Phase 4 session closure | 1.1.0 |
 
@@ -78,3 +78,4 @@ governance-liaison-isms NEVER executes directly for:
 | 1.2.0 | 2026-03-03 | governance-liaison-isms (session-039) | Updated FAIL-ONLY-ONCE.md to v1.2.0; updated session-memory-template.md to v1.1.0; updated index self-reference to v1.2.0 |
 | 1.3.0 | 2026-03-03 | governance-liaison-isms (session-039, IAA-107 fix) | Updated FAIL-ONLY-ONCE.md to v1.3.0 (A-011 added); updated index self-reference to v1.3.0 |
 | 1.4.0 | 2026-03-03 | governance-liaison-isms (session-041, RCA) | Updated FAIL-ONLY-ONCE.md to v1.4.0 (A-013, A-014 added; breach log entries §4.3-SKIP and IAA-SKIP recorded); updated index self-reference to v1.4.0 |
+| 1.5.0 | 2026-03-04 | CodexAdvisor-agent (session-045) | layer-down-scripts.md → v1.1.0 (7-step protocol migrated from contract §3.1); ripple-processing-scripts.md → v1.1.0 (5-step protocol migrated from §3.2) |

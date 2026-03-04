@@ -2,7 +2,7 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 2.1.0
+**Knowledge Version**: 2.2.0
 **Last Updated**: 2026-03-03
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
@@ -12,9 +12,9 @@
 
 | File | Purpose | Version | Status |
 |------|---------|---------|--------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.8.0 | PRESENT |
-| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 2.1.0 | PRESENT — Rules A-001 through A-028 active (A-028: SCOPE_DECLARATION list format required, prior-wave entries must be trimmed; A-027: third-consecutive A-021 failure = systemic workflow gap; A-026: SCOPE_DECLARATION.md must match PR diff exactly; A-025: ceremony artifacts must use PENDING until Post-ASSURANCE-TOKEN ceremony) |
-| `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.5.0 | ACTIVE — CORE-001 to CORE-022; CORE-022 enforces secret field naming compliance |
+| `index.md` (this file) | Knowledge entry point and version reference | 2.2.0 | PRESENT |
+| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 2.2.0 | PRESENT — Rules A-001 through A-029 active (A-029: PREHANDOVER proof immutability §4.3b — supersedes A-025 PENDING requirement) |
+| `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.6.0 | ACTIVE — CORE-001 to CORE-022; CORE-016 PENDING carve-out updated per A-029 |
 | `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.1.0 | ACTIVE — KNOWLEDGE_GOVERNANCE trigger category added |
 | `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE) | 2.3.0 | ACTIVE — OVL-KG-001 through OVL-KG-005 added; OVL-AM-008 (end-to-end wiring verification) added |
 | `session-memory-template.md` | Standard session memory template for IAA invocations | 1.0.0 | PRESENT |
@@ -123,6 +123,7 @@ that produced the work under review. Every invocation is logged in session memor
 | 1.9.0 | 2026-03-03 | FAIL-ONLY-ONCE.md v1.9.0 — A-026 (SCOPE_DECLARATION.md must match PR diff exactly before IAA invocation — stale = BL-027 merge gate parity failure) added from session-116 Wave 13 Addendum B+C re-invocation |
 | 2.0.0 | 2026-03-03 | FAIL-ONLY-ONCE.md v2.0.0 — A-027 (third-consecutive A-021 = systemic workflow gap) added from session-119 (Wave 14 Addendum A); FAIL-ONLY-ONCE.md header corrected from 1.8.0 to 2.0.0 (header/index version mismatch resolved) |
 | 2.1.0 | 2026-03-03 | FAIL-ONLY-ONCE.md v2.1.0 — A-028 (SCOPE_DECLARATION format compliance — list format required, prior-wave entries must be trimmed) added from session-120 (Wave 14 Addendum A fourth invocation) |
+| 2.2.0 | 2026-03-04 | FAIL-ONLY-ONCE.md v2.2.0 (A-029 ARTIFACT-IMMUTABILITY §4.3b); iaa-core-invariants-checklist.md v2.6.0 (CORE-016 PENDING carve-out updated per A-029) |
 
 ---
 

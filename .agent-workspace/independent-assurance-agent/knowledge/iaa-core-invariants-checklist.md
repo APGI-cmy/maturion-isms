@@ -1,9 +1,9 @@
 # IAA Core Invariants Checklist
 
 **Agent**: independent-assurance-agent
-**Version**: 2.5.0
+**Version**: 2.6.0
 **Status**: ACTIVE
-**Last Updated**: 2026-03-03
+**Last Updated**: 2026-03-04
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -124,6 +124,7 @@ This check MUST be run for EVERY non-PENDING token. Cross-referencing the sessio
 | 2.3.0 | 2026-03-02 | CORE-007: added explicit PENDING carve-out note — do not flag `iaa_audit_token: PENDING` or `## IAA Agent Response (verbatim)` placeholder entries as placeholder violations (maturion-isms#IAA-TIER2) |
 | 2.4.0 | 2026-03-02 | CORE-021 added: Zero-Severity-Tolerance enforcement — any finding regardless of perceived severity triggers REJECTION-PACKAGE; prohibited language table enforced (maturion-isms IAA Policy issue) |
 | 2.5.0 | 2026-03-03 | CORE-022 added: Secret field naming compliance — `secret:` prohibited in agent contracts; must use `secret_env_var:`; enforces FAIL-ONLY-ONCE A-024 (maturion-isms feature issue, CI scanner failures job 65529138120) |
+| 2.6.0 | 2026-03-04 | CORE-016 PENDING carve-out updated — post-2026-03-04 PREHANDOVER proofs must use expected reference format not PENDING (A-029 supersession per §4.3b); CORE-018 note updated accordingly |
 
 ---
 

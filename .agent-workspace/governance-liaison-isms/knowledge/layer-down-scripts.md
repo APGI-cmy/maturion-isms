@@ -2,8 +2,8 @@
 
 **Agent**: governance-liaison-isms  
 **Contract Version**: 3.2.0  
-**Knowledge Version**: 1.0.0  
-**Last Updated**: 2026-02-25  
+**Knowledge Version**: 1.1.0  
+**Last Updated**: 2026-03-04  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`  
 **Canonical Reference**: `governance/canon/CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md`
 
@@ -122,3 +122,12 @@ echo "Sync state updated: $TIMESTAMP | commit=$CANONICAL_COMMIT | version=$CANON
 5. **Validate PR Gates**: Ensure merge gate interface checks configured. Verify governance/alignment gate enabled. Test changes in isolated branch.
 6. **Execute Prehandover Verification**: Generate evidence artifact bundle. Include: file checksums, version alignment, test results. Attach MANDATORY PREHANDOVER_PROOF.
 7. **Update Sync State**: Use Script 2 (above). Record: timestamp, canonical_commit, canonical_inventory_version, files_updated. Set `sync_pending: false` and `drift_detected: false` on successful completion.
+
+---
+
+## Version History
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.0.0 | 2026-02-25 | Initial — checksum validation and sync state update scripts |
+| 1.1.0 | 2026-03-04 | Full 7-step layer-down protocol migrated from contract §3.1 |

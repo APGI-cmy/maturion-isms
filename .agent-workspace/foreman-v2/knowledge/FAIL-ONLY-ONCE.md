@@ -3,9 +3,9 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 2.5.0  
+**Version**: 2.6.0  
 **Created**: 2026-02-24  
-**Updated**: 2026-03-03  
+**Updated**: 2026-03-04  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---

@@ -1,74 +1,41 @@
-# Scope Declaration
+# Scope Declaration — CodexAdvisor-agent Session-045
 
-**Issue**: [Layer-Down] Propagate Governance Changes - 2026-03-04 (6523fe8d)
+**PR**: `copilot/upgrade-agent-files-and-artifacts`
+**Session**: CodexAdvisor-agent session-045
 **Date**: 2026-03-04
-**Agent**: governance-liaison-isms (session-044-20260304, v6.2.0)
-**Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
-**Canonical Commit**: 6523fe8d42e6fb1608a7744a64e910230f9cc881
+**Authority**: BL-027 (MERGE_GATE_PHILOSOPHY.md), SCOPE_TO_DIFF_RULE.md
+**CS2 Authorization**: Issue assigned to CodexAdvisor-agent — "Upgrade All Agent Files and Tier 2 Artifacts"
 
 ---
 
-## Purpose
+## Files Declared
 
-This PR delivers governance layer-down for ripple event 6523fe8d from `APGI-cmy/maturion-foreman-governance`:
-
-1. `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` - NEW file (v1.1.0), SHA256-verified
-2. `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` - Updated (v1.1.0), SHA256-verified
-3. `governance/CANON_INVENTORY.json` - Updated (total_canons: 190→191, hash updated, new entry)
-4. Administrative records updated (ripple-log, sync_state, GOVERNANCE_ALIGNMENT_INVENTORY)
-5. Agent contract files escalated to CS2 per A-009 (NOT modified)
-
-**PR STATUS: DRAFT - CS2 approval required** (agent contract files in ripple payload)
-
----
-
-## Files Changed
-
-**Total Files**: 23
-
-All files in this PR are explicitly listed below (required by BL-027):
-
-- `SCOPE_DECLARATION.md` - this file (governance ripple 6523fe8d scope declaration)
-- `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` - NEW: IAA Pre-Brief Protocol v1.1.0 (layered down from canonical; sha256=c4f8d171ca9c9683025f6e7a14cf7c6908362a9c1e24f3c6ed0735453ef7238f)
-- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` - UPDATED: IAA Canon v1.1.0 with Pre-Brief Protocol integration (sha256=bc83390755ec9c06c726d380c472d8c9d6ec78b92e10940e3e6a612ee8b0db03)
-- `governance/CANON_INVENTORY.json` - UPDATED: hash updated for INDEPENDENT_ASSURANCE_AGENT_CANON.md; new entry for IAA_PRE_BRIEF_PROTOCOL.md; total_canons 190→191
-- `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` - UPDATED: new ALIGNED entries for both canon files; agent contract escalation refs updated to 6523fe8d
-- `.agent-admin/governance/ripple-inbox/ripple-6523fe8d.json` - NEW: ripple inbox entry for dispatch-id 6523fe8d
-- `.agent-admin/governance/ripple-log.json` - UPDATED: entry added (type: liaison-partial-escalated)
-- `.agent-admin/governance/sync_state.json` - UPDATED: canonical_commit=6523fe8d, sync_pending=true
-- `.agent-admin/prehandover/PREHANDOVER_PROOF_session-044-20260304.md` - NEW: PREHANDOVER proof artifact
-- `.agent-workspace/governance-liaison-isms/escalation-inbox/escalation-agent-contracts-6523fe8d-20260304.md` - NEW: ESC-AGENTFILE-6523FE8D-20260304 escalation
-- `.agent-workspace/governance-liaison-isms/memory/.archive/session-039-20260303.md` - ARCHIVED: session-039 rotated to archive (>5 governance liaison sessions)
-- `.agent-workspace/governance-liaison-isms/memory/session-044-20260304.md` - NEW: session memory
-- `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md` - UPDATED: session-044 suggestion appended
-- `.agent-workspace/independent-assurance-agent/memory/.archive/session-115-20260303.md` - ARCHIVED: IAA session-115 rotated to archive (>5 IAA sessions)
-- `.agent-workspace/independent-assurance-agent/memory/.archive/session-116-20260303.md` - ARCHIVED: IAA session-116 rotated to archive (>5 IAA sessions)
-- `.agent-workspace/independent-assurance-agent/memory/.archive/session-117-20260303.md` - ARCHIVED: IAA session-117 rotated to archive (>5 IAA sessions)
-- `.agent-workspace/independent-assurance-agent/memory/.archive/session-118-20260303.md` - ARCHIVED: IAA session-118 rotated to archive (>5 IAA sessions)
-- `.agent-workspace/independent-assurance-agent/memory/.archive/session-119-20260303.md` - ARCHIVED: IAA session-119 rotated to archive (>5 IAA sessions)
-- `.agent-workspace/independent-assurance-agent/memory/session-124-20260304.md` - NEW: IAA session-124 memory (REJECTION-PACKAGE - 8 procedural failures; substantive work sound)
-- `.agent-workspace/independent-assurance-agent/memory/session-125-20260304.md` - NEW: IAA session-125 memory (REJECTION-PACKAGE - em-dash format + stale text)
-- `.agent-workspace/independent-assurance-agent/memory/session-126-20260304.md` - NEW: IAA session-126 memory (REJECTION-PACKAGE - count mismatch 15 vs 21)
-- `.agent-workspace/independent-assurance-agent/memory/session-127-20260304.md` - NEW: IAA session-127 memory (ASSURANCE-TOKEN PASS - 27 checks pass)
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - UPDATED: IAA session-124 and session-125 suggestions appended
-
----
-
-## POLC Attestation
-
-Production code modified: NONE
-Schema DDL: NONE
-Governance canon files: 2 files updated (SHA256-verified against canonical CANON_INVENTORY)
-Agent contracts: NONE (escalated per A-009 - no .github/agents/*.md files modified; AGCFPP-001 compliant)
-
----
-
-## Signature
-
-**Scope Declared By**: governance-liaison-isms (session-044-20260304, v6.2.0)
-**Date**: 2026-03-04
-**Issue**: [Layer-Down] Propagate Governance Changes - 2026-03-04 (6523fe8d)
-
----
-
-*END OF SCOPE DECLARATION*
+- `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-045-20260304.md` - PREHANDOVER proof for this session
+- `.agent-workspace/CodexAdvisor-agent/memory/session-045-20260304.md` - Session memory for this session
+- `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` - A-028 added (PREHANDOVER immutability); version bumped to v2.6.0
+- `.agent-workspace/foreman-v2/knowledge/prehandover-template.md` - §4.3b token ceremony; PENDING replaced with expected reference format; temporal ordering fixed
+- `.agent-workspace/governance-liaison-isms/knowledge/index.md` - layer-down-scripts and ripple-processing-scripts bumped to v1.1.0
+- `.agent-workspace/governance-liaison-isms/knowledge/layer-down-scripts.md` - Full 7-step protocol migrated from contract §3.1; version bumped to v1.1.0
+- `.agent-workspace/governance-liaison-isms/knowledge/ripple-processing-scripts.md` - Full 5-step protocol migrated from contract §3.2; version bumped to v1.1.0
+- `.agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md` - A-029 added (artifact immutability §4.3b supersedes A-025); version bumped to v2.2.0
+- `.agent-workspace/independent-assurance-agent/knowledge/iaa-core-invariants-checklist.md` - CORE-016 PENDING carve-out updated per A-029; version bumped to v2.6.0
+- `.agent-workspace/independent-assurance-agent/knowledge/index.md` - FAIL-ONLY-ONCE and checklist versions updated to v2.2.0 and v2.6.0
+- `.agent-workspace/integration-builder/knowledge/canonical-governance-refs.md` - NEW: Tier 2 governance references migrated from integration-builder contract
+- `.agent-workspace/qa-builder/knowledge/canonical-governance-refs.md` - NEW: Tier 2 governance references migrated from qa-builder contract
+- `.github/agents/api-builder.md` - can_invoke/cannot_invoke YAML; §4.6 iaa_audit_token reference
+- `.github/agents/criteria-generator-agent.md` - can_invoke/cannot_invoke YAML
+- `.github/agents/document-parser-agent.md` - can_invoke/cannot_invoke YAML
+- `.github/agents/foreman-v2-agent.md` - §4.3b token ceremony; iaa_oversight artifact_immutability; can_invoke/cannot_invoke
+- `.github/agents/governance-liaison-isms-agent.md` - §3.1/§3.2 migrated to Tier 2; §4.4b token ceremony; iaa_oversight updated; can_invoke/cannot_invoke; reduced from 30722 to 29857 bytes
+- `.github/agents/independent-assurance-agent.md` - §4.2b token ceremony; artifact_immutability in capabilities; can_invoke/cannot_invoke
+- `.github/agents/integration-builder.md` - can_invoke/cannot_invoke YAML; Canonical Governance References migrated to Tier 2; reduced from 30065 to 28859 bytes
+- `.github/agents/mat-specialist.md` - can_invoke/cannot_invoke YAML
+- `.github/agents/maturion-agent.md` - can_invoke/cannot_invoke YAML
+- `.github/agents/maturity-scoring-agent.md` - can_invoke/cannot_invoke YAML
+- `.github/agents/pit-specialist.md` - can_invoke/cannot_invoke YAML
+- `.github/agents/qa-builder.md` - can_invoke/cannot_invoke YAML; Canonical Governance References migrated to Tier 2; reduced from 30095 to 28880 bytes
+- `.github/agents/report-writer-agent.md` - can_invoke/cannot_invoke YAML
+- `.github/agents/risk-platform-agent.md` - can_invoke/cannot_invoke YAML
+- `.github/agents/schema-builder.md` - can_invoke/cannot_invoke YAML; §4.6 iaa_audit_token reference
+- `.github/agents/ui-builder.md` - can_invoke/cannot_invoke YAML; §4.6 iaa_audit_token reference
+- `SCOPE_DECLARATION.md` - this file
