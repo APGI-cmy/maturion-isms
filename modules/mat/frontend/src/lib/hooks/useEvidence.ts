@@ -67,7 +67,7 @@ export function useUploadEvidence() {
 
       // Fetch authenticated user and their organisation_id (required for RLS-compliant storage paths)
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
+      if (!user) throw new Error('Authentication required to upload evidence');
 
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
@@ -75,7 +75,7 @@ export function useUploadEvidence() {
         .eq('id', user.id)
         .single();
 
-      if (profileError) throw new Error('Failed to fetch user profile.');
+      if (profileError) throw new Error(`Failed to fetch user profile: ${profileError.message}`);
       if (!profile?.organisation_id) {
         throw new Error('Your account is not linked to an organisation.');
       }
