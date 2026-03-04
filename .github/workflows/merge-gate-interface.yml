@@ -101,15 +101,15 @@ jobs:
         id: check_governance
         run: |
           echo "=== Automated Governance PR Check ==="
-          
+
           # Get PR labels as comma-separated string
           PR_LABELS="${{ join(github.event.pull_request.labels.*.name, ',') }}"
           PR_BRANCH="${{ github.event.pull_request.head.ref }}"
-          
+
           echo "PR Labels: $PR_LABELS"
           echo "PR Branch: $PR_BRANCH"
           echo ""
-          
+
           # Check if this is an automated governance alignment PR
           if [[ "$PR_LABELS" == *"governance"* ]] && [[ "$PR_LABELS" == *"automated"* ]] && [[ "$PR_LABELS" == *"agent:liaison"* ]]; then
             echo "✅ AUTOMATED GOVERNANCE PR DETECTED"
@@ -214,7 +214,7 @@ jobs:
       - name: Verdict Summary
         run: |
           echo "=== Merge Gate Verdict ==="
-          
+
           if [[ "${{ steps.check_governance.outputs.is_governance_auto }}" == "true" ]]; then
             echo "PR Type: Automated Governance Alignment"
             echo "Validation: BYPASSED (trusted governance system)"
@@ -330,7 +330,7 @@ jobs:
               if [[ "$file" =~ ^\.github/agents/.*-agent\.md$ ]]; then
                 # Extract agent name from file path
                 AGENT_FILE=$(basename "$file" .md)
-                
+
                 echo "🔍 Checking: $file (commit: ${commit_sha:0:7})"
                 echo "   Author: $commit_author <$commit_email>"
                 echo ""
@@ -346,7 +346,7 @@ jobs:
                 # "foreman-v2-agent.md", which is caught by the generic checks below.
                 if [[ "$commit_author" =~ $AGENT_FILE ]] || \
                    [[ "$commit_email" =~ $AGENT_FILE ]]; then
-                  
+
                   VIOLATION_FOUND=true
                   echo "   ❌ VIOLATION: Agent attempted to modify own contract!"
                   VIOLATION_FILES="${VIOLATION_FILES}\n     File - $file\n     Commit - $commit_sha\n     Author - $commit_author <$commit_email>\n"
@@ -365,12 +365,12 @@ jobs:
           if [ "$VIOLATION_FOUND" = true ]; then
             echo "❌ MERGE BLOCKED: Agents may not author or modify their own contracts."
             echo ""
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "================================================================"
             echo ""
             echo "Violations found:"
             echo -e "$VIOLATION_FILES"
             echo ""
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "================================================================"
             echo ""
             echo "🚨 CONSTITUTIONAL VIOLATION"
             echo ""
@@ -386,7 +386,7 @@ jobs:
             echo ""
             echo "The agent may NEVER commit these changes directly."
             echo ""
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "================================================================"
             echo ""
             echo "Action Required:"
             echo "  1. Close this PR"
