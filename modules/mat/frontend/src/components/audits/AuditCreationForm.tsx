@@ -12,8 +12,6 @@ export function AuditCreationForm() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    audit_period_start: '',
-    audit_period_end: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -22,11 +20,6 @@ export function AuditCreationForm() {
     
     if (!formData.title.trim()) {
       newErrors.title = 'Audit title is required';
-    }
-    if (formData.audit_period_start && formData.audit_period_end) {
-      if (new Date(formData.audit_period_start) > new Date(formData.audit_period_end)) {
-        newErrors.audit_period_end = 'End date must be after start date';
-      }
     }
 
     setErrors(newErrors);
@@ -46,8 +39,6 @@ export function AuditCreationForm() {
       setFormData({
         title: '',
         description: '',
-        audit_period_start: '',
-        audit_period_end: '',
       });
       setErrors({});
       alert('Audit created successfully!');
@@ -105,42 +96,6 @@ export function AuditCreationForm() {
             aria-label="Audit description"
             className="w-full px-3 py-2 border border-gray-300 rounded"
           />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="audit_period_start" className="block text-sm font-medium text-gray-700 mb-1">
-              Audit Period Start
-            </label>
-            <input
-              type="date"
-              id="audit_period_start"
-              name="audit_period_start"
-              value={formData.audit_period_start}
-              onChange={handleChange}
-              aria-label="Audit period start date"
-              className="w-full px-3 py-2 border border-gray-300 rounded"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="audit_period_end" className="block text-sm font-medium text-gray-700 mb-1">
-              Audit Period End
-            </label>
-            <input
-              type="date"
-              id="audit_period_end"
-              name="audit_period_end"
-              value={formData.audit_period_end}
-              onChange={handleChange}
-              aria-label="Audit period end date"
-              aria-invalid={!!errors.audit_period_end}
-              className={`w-full px-3 py-2 border rounded ${errors.audit_period_end ? 'border-red-500' : 'border-gray-300'}`}
-            />
-            {errors.audit_period_end && (
-              <p className="text-red-500 text-sm mt-1" role="alert">{errors.audit_period_end}</p>
-            )}
-          </div>
         </div>
       </div>
 
