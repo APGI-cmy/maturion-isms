@@ -548,6 +548,7 @@ This builder's handover is subject to double-QA:
 - Document STOP-AND-FIX event in session memory under `stop_and_fix_events`
 
 **Evidence Required in PREHANDOVER Proof**:
+- `iaa_audit_token`: IAA-session-NNN-waveY-YYYYMMDD-PASS (per §4.3b; PREHANDOVER proof read-only)
 - `iaa_invocation_result`: [ASSURANCE-TOKEN ref / PHASE_A_ADVISORY]
 - `double_qa_confirmed`: Foreman QA (build) + IAA QA (handover)
 
