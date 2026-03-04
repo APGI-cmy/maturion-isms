@@ -196,8 +196,9 @@ jobs:
             let prebriefExists = false;
             try {
               if (fs.existsSync('.agent-admin/assurance')) {
+                // Use -print -quit instead of | head -1 to avoid SIGPIPE on some shells
                 const result = execSync(
-                  'find .agent-admin/assurance -name "iaa-prebrief-wave*.md" | head -1',
+                  'find .agent-admin/assurance -name "iaa-prebrief-wave*.md" -print -quit',
                   { encoding: 'utf8' }
                 ).trim();
                 prebriefExists = result.length > 0;
@@ -215,16 +216,16 @@ jobs:
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
 
             const body = [
-              '## ⚠️ GOVERNANCE WATCHDOG — Pre-Brief Missing at Ready Transition',
+              '## ⚠️ GOVERNANCE WATCHDOG — Pre-Brief Missing for Ready PR',
               '',
-              `@copilot You are the **Independent Assurance Agent (IAA)**. This PR has just been marked **ready for review** but **no IAA pre-brief artifact** was found on branch \`${branch}\`.`,
+              `@copilot You are the **Independent Assurance Agent (IAA)**. This PR is **open for review** (either newly opened as ready or marked ready from draft) but **no IAA pre-brief artifact** was found on branch \`${branch}\`.`,
               '',
               'Per Phase 0 of the foreman-v2-agent contract and IAA_PRE_BRIEF_PROTOCOL.md:',
               '- A pre-wave pre-brief is mandatory **before** wave work begins',
               '- The pre-brief must exist before this PR can proceed to the merge gate',
               '- Marking a PR ready without a pre-brief is a Phase 0 protocol violation',
               '',
-              `**Detected:** PR transitioned DRAFT → Ready, no \`.agent-admin/assurance/iaa-prebrief-wave*.md\` found on \`${branch}\``,
+              `**Detected:** PR is ready for review (opened as ready or transitioned from draft) with no \`.agent-admin/assurance/iaa-prebrief-wave*.md\` found on \`${branch}\``,
               '**Required:** IAA pre-brief artifact at `.agent-admin/assurance/iaa-prebrief-wave<N>.md`',
               '',
               '### Your obligations (from `IAA_PRE_BRIEF_PROTOCOL.md` v1.1.0):',
@@ -260,13 +261,25 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 2
+          # Use full history so we can diff between before/after SHAs for synchronize events
+          fetch-depth: 0
 
       - name: Detect PREHANDOVER changes and check for PENDING token
         id: detect
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.event.after }}
         run: |
-          # Get list of files changed in the latest commit (works for all commits)
-          CHANGED=$(git diff-tree --no-commit-id --name-only -r HEAD 2>/dev/null || echo "")
+          # Determine diff range for this PR synchronize update.
+          # github.event.before/after are available for synchronize events; validate they are
+          # 40-char hex SHAs before using them so we fall back gracefully if ever absent.
+          if [[ "$BEFORE_SHA" =~ ^[0-9a-f]{40}$ ]] && [[ "$AFTER_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "Using diff range $BEFORE_SHA...$AFTER_SHA from pull_request.synchronize event"
+            CHANGED=$(git diff --name-only "$BEFORE_SHA...$AFTER_SHA" 2>/dev/null || echo "")
+          else
+            echo "Event before/after SHAs not available or invalid; falling back to HEAD-only diff"
+            CHANGED=$(git diff-tree --no-commit-id --name-only -r HEAD 2>/dev/null || echo "")
+          fi
 
           PREHANDOVER_FILE=""
           for f in $CHANGED; do
@@ -305,6 +318,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_BODY: ${{ github.event.pull_request.body }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PREHANDOVER_FILE: ${{ steps.detect.outputs.prehandover_file }}
         with:
           script: |
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
@@ -324,7 +338,22 @@ jobs:
               core.warning(`Could not fetch commit message: ${e.message}`);
             }
 
-            const combined = prBody + ' ' + commitMsg;
+            // Also read the PREHANDOVER file content so the keyword scan covers
+            // handover language inside the proof itself, not only PR body / commit msg.
+            const fs = require('fs');
+            let prehandoverContent = '';
+            const prehandoverFile = process.env.PREHANDOVER_FILE || '';
+            try {
+              // Guard against path traversal: git diff output shouldn't produce '../' paths,
+              // but validate explicitly before passing to fs calls.
+              if (prehandoverFile && !prehandoverFile.includes('..') && fs.existsSync(prehandoverFile)) {
+                prehandoverContent = fs.readFileSync(prehandoverFile, 'utf8').toLowerCase();
+              }
+            } catch (e) {
+              core.warning(`Could not read PREHANDOVER file content: ${e.message}`);
+            }
+
+            const combined = prBody + ' ' + commitMsg + ' ' + prehandoverContent;
 
             // Check for handover/closure keywords
             const handoverKeywords = [
@@ -345,17 +374,18 @@ jobs:
               return;
             }
 
-            // Idempotency guard: check recent comments for existing alert
-            // listComments returns oldest-first; fetch up to 100 and check the last 10
+            // Idempotency guard: fetch newest 10 comments in descending order
+            // to avoid missing an existing alert when the PR has >100 comments.
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: prNumber,
-              per_page: 100,
+              per_page: 10,
+              sort: 'created',
+              direction: 'desc',
             });
 
-            const recentComments = comments.slice(-10);
-            const alreadyPosted = recentComments.some(c =>
+            const alreadyPosted = comments.some(c =>
               c.body && c.body.includes('GOVERNANCE WATCHDOG — IAA Token Missing')
             );
 
