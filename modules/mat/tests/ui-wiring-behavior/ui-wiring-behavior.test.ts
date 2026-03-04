@@ -672,8 +672,8 @@ describe('CAT-13: UI Wiring and Data Fetching Behavior', () => {
       // Assert: Write hook exported for saving profile updates
       expect(hookSrc).toContain('useUpdateUserProfile');
 
-      // Assert: Hook reads from the user_profiles table
-      expect(hookSrc).toContain('user_profiles');
+      // Assert: Hook reads from the profiles table (public.profiles — canonical table name per all migrations)
+      expect(hookSrc).toContain("from('profiles')");
     });
 
     it('MAT-T-0124: Organization settings UI updates organization_settings table', () => {
