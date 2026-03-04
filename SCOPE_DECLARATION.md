@@ -1,29 +1,36 @@
-# Scope Declaration — governance-liaison-isms Session-045
+# Scope Declaration — foreman-v2-agent Session-099 — Wave audit-field-sync
 
-**PR**: `copilot/propagate-governance-changes-e45c6ae2-8853-4ff3-bb03-1720769d28b6`
-**Session**: governance-liaison-isms session-045-20260304
+**PR**: `copilot/sync-frontend-backend-audit-fields`
+**Session**: session-099
+**Wave**: audit-field-sync
 **Date**: 2026-03-04
 **Authority**: BL-027 (MERGE_GATE_PHILOSOPHY.md)
-**Task**: Fix CI label validation error in ripple-integration.yml + governance artifacts for ripple 61ab7b83
-**Issue**: APGI-cmy/maturion-isms#876
-**IAA Token**: IAA-session-132-20260304-PASS (ASSURANCE-TOKEN)
+**Task**: Orchestrate full frontend/backend sync for Audit form fields after broken PR #897
+**Issue**: Orchestrate full frontend/backend sync for Audit form fields after broken PR #897
 
 ---
 
 ## Files Declared
 
-- `.agent-admin/assurance/iaa-token-session-132-20260304.md` - IAA ASSURANCE-TOKEN artifact
-- `.agent-admin/assurance/rejection-package-session-130-20260304.md` - IAA session-130 REJECTION-PACKAGE
-- `.agent-admin/assurance/rejection-package-session-131-20260304.md` - IAA session-131 REJECTION-PACKAGE
-- `.agent-admin/governance/ripple-log.json` - Added liaison-escalated entry for ripple 61ab7b83 (48 events)
-- `.agent-admin/governance/sync_state.json` - Updated canonical_commit to 61ab7b83, last_ripple_dispatch_id, last_liaison_session
-- `.agent-workspace/governance-liaison-isms/escalation-inbox/escalation-agent-contracts-61ab7b83-20260304.md` - ESC-AGENTFILE-61AB7B83-20260304 for CodexAdvisor-agent.md
-- `.agent-workspace/governance-liaison-isms/memory/session-045-20260304.md` - Session memory for session-045
-- `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md` - 1 session-045 suggestion appended
-- `.agent-workspace/independent-assurance-agent/memory/session-130-20260304.md` - IAA session-130 memory
-- `.agent-workspace/independent-assurance-agent/memory/session-131-20260304.md` - IAA session-131 memory
-- `.agent-workspace/independent-assurance-agent/memory/session-132-20260304.md` - IAA session-132 memory
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station updates
-- `.github/workflows/ripple-integration.yml` - Added continue-on-error to create_pr_standard and create_pr_draft steps
-- `PREHANDOVER_PROOF_SESSION_045_RIPPLE_61AB7B83.md` - PREHANDOVER proof for this session
-- `SCOPE_DECLARATION.md` - This file
+### Implementation (TASK-AFS-002 — ui-builder)
+- `modules/mat/frontend/src/lib/hooks/useAudits.ts` — Audit interface + useCreateAudit field mapping fix
+- `modules/mat/frontend/src/components/audits/AuditList.tsx` — organisation_name display added
+
+### Tests (TASK-AFS-001 — qa-builder)
+- `modules/mat/tests/audit-field-sync/audit-field-sync.test.ts` — Column drift guard + RED gate tests T-AFS-COL-001 to T-AFS-COL-005
+
+### Foreman Governance Artifacts
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — Wave task list updated for audit-field-sync
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-099-wave-audit-field-sync-20260304.md` — Foreman PREHANDOVER proof
+- `SCOPE_DECLARATION.md` — This file
+
+### IAA Artifacts
+- `.agent-admin/assurance/iaa-prebrief-wave-audit-field-sync.md` — IAA Pre-Brief (generated before delegation)
+- `.agent-admin/assurance/rejection-package-session-133-wave-audit-field-sync-20260304.md` — IAA REJECTION-PACKAGE (ceremony findings — remediated)
+- `.agent-admin/prehandover/PREHANDOVER_PROOF_TASK_AFS_001.md` — TASK-AFS-001 PREHANDOVER proof (corrected v2)
+- `.agent-admin/prehandover/PREHANDOVER_PROOF_TASK_AFS_002.md` — TASK-AFS-002 PREHANDOVER proof
+
+---
+
+## IAA Token
+IAA ASSURANCE-TOKEN: to be recorded in Foreman PREHANDOVER proof after re-invocation.
