@@ -2591,7 +2591,7 @@ The `profiles` table had RLS enabled with no policies defined (no SELECT, INSERT
 
 | Date | Status | Note |
 |------|--------|------|
-| 2026-03-04 | P0 GAPS IDENTIFIED | F-001 and F-002 confirmed from production testing at matfrontend-9xhm4z30c-rassie-ras-projects.vercel.app |
+| 2026-03-04 | P0 GAPS IDENTIFIED | F-001 and F-002 confirmed from production environment testing (MAT app live deployment) |
 | 2026-03-04 | MIGRATION CREATED | 20260304000003_fix_rls_policies_postbuild.sql — all RLS gaps remediated |
 | 2026-03-04 | TESTS GREEN | T-PBF-001 to T-PBF-004 all GREEN |
 | 2026-03-04 | DOCUMENTATION UPDATED | FRS, TRS, BUILD_PROGRESS_TRACKER, TEST_REGISTRY, implementation-plan updated |
