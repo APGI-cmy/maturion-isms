@@ -65,6 +65,21 @@ export function useUploadEvidence() {
       let fileSize: number | undefined;
       let mimeType: string | undefined;
 
+      // Fetch authenticated user and their organisation_id (required for RLS-compliant storage paths)
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('organisation_id')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError || !profile?.organisation_id) {
+        throw new Error('Your account is not linked to an organisation.');
+      }
+      const organisationId = profile.organisation_id;
+
       // Handle file upload if file provided
       if (file) {
         fileName = file.name;
@@ -72,13 +87,14 @@ export function useUploadEvidence() {
         mimeType = file.type;
 
         // Upload to Supabase Storage
+        // Path must start with organisationId to satisfy RLS: split_part(name, '/', 1) = organisation_id
         const storageFolder = type === 'photo' ? 'photos' :
                             type === 'audio' ? 'audio' :
                             type === 'video' ? 'videos' :
                             type === 'document' ? 'documents' :
                             'other';
 
-        const path = `evidence/${criterionId}/${storageFolder}/${Date.now()}-${file.name}`;
+        const path = `${organisationId}/evidence/${criterionId}/${storageFolder}/${Date.now()}-${file.name}`;
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('audit-documents')
           .upload(path, file, {
@@ -105,6 +121,8 @@ export function useUploadEvidence() {
           file_size: fileSize,
           mime_type: mimeType,
           metadata,
+          organisation_id: organisationId,
+          created_by: user.id,
         })
         .select()
         .single();
