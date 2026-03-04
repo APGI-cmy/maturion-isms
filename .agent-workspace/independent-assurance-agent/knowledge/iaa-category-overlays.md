@@ -1,20 +1,113 @@
 # IAA Category Overlays
 
 **Agent**: independent-assurance-agent
-**Version**: 2.3.0
+**Version**: 3.0.0
 **Status**: ACTIVE
-**Last Updated**: 2026-03-03
+**Last Updated**: 2026-03-04
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
 
-## Purpose
+## Orientation Mandate
 
-This file defines per-category additional checks that supplement the core invariants checklist.
-IAA loads the overlay for the classified PR category in Phase 2 Step 2.4.
+> **IAA is a quality engineer and senior reviewer — not a file auditor.**
+>  
+> For BUILD deliverables: 90% of IAA effort goes on whether the build works, is safe, is wired correctly, meets standards, and will deliver a fully functional app first time. 10% goes on ceremony admin (existence checks only — did the agent create the required files? Yes/No. Nothing more).
+>  
+> For GOVERNANCE changes: 90% of IAA effort goes on whether the governance change aligns with the strategy it serves, whether obvious gaps exist against the intended design, and whether it creates contradictions. 10% goes on ceremony admin (existence checks only).
+>  
+> **Session numbers, file sequence IDs, version bump history, cross-reference consistency** — these are agent self-maintenance responsibilities. IAA does NOT investigate these. If a version number was not bumped, note it once and move on. Do not spend time on it.
+>  
+> **The FAIL-ONLY-ONCE and session memory files** are agent learning artifacts. IAA checks only: were they created? Yes/No. That is the complete check. IAA does not audit their content, completeness of notes, prior session references, or sequential numbering. Agents are responsible for maintaining their own learning artifacts.
 
-Core invariants (CORE-001 to CORE-020) apply to ALL categories.
-Overlay checks are ADDITIONAL checks specific to each category.
+---
+
+## Universal Ceremony Gate (Applies to ALL Categories — Max 5 Minutes)
+
+Before any category-specific checks, run these existence checks only. Each is binary — exists or does not exist. If it does not exist, state "Create [file]" once and move on.
+
+| Check ID | Check Name | Pass Condition | On Fail |
+|----------|-----------|---------------|---------|
+| CERT-001 | PREHANDOVER proof exists | File present in PR bundle | State once: "PREHANDOVER proof not found — create it." |
+| CERT-002 | Session memory exists | File present in PR bundle | State once: "Session memory not found — create it." |
+| CERT-003 | FAIL-ONLY-ONCE attestation declared | Producing agent stated attestation in session memory preamble | State once: "Add fail_only_once_attested declaration to session memory." |
+| CERT-004 | IAA audit token field present | `iaa_audit_token` field exists in PREHANDOVER proof | State once: "Add iaa_audit_token field to PREHANDOVER proof." |
+
+**Critical rule**: CERT checks are existence checks only. IAA does NOT audit the content quality of session memories, the sequential correctness of session numbers, the completeness of learning notes, or the history of prior sessions referenced. If CERT-001 through CERT-004 all pass, the ceremony gate is PASSED. Proceed immediately to category-specific checks.
+
+---
+
+## BUILD_DELIVERABLE Overlay — PRIMARY FOCUS
+
+Applied when PR category is `AAWP_MAT`, `MAT_DELIVERABLE`, or any T2 PR delivering executable application behaviour (schema migrations, API endpoints, frontend components, hooks, Supabase operations, integrations, workflows, services).
+
+> **Mindset**: IAA acts as a senior engineer reviewing the delivery. The question is not "did the agent follow the ceremony?" The question is "will this build actually work, be safe, scale, and deliver the intended user outcome — the first time it is deployed?"
+
+### BD-TIER-1 — Delivery Completeness (Blocking)
+
+| Check ID | Check Name | What IAA Does |
+|----------|-----------|---------------|
+| BD-001 | Full scope delivered | Cross-reference the PR description / issue against the actual diff. Every promised deliverable must be present in the diff. Partial delivery = REJECTION-PACKAGE citing specific missing items. |
+| BD-002 | No stub/TODO in production paths | Inspect every new function, hook, endpoint, migration for TODO comments, stub returns, placeholder values, or unimplemented branches in production code paths. Any found = REJECTION-PACKAGE. |
+| BD-003 | One-time build compliance | Ask: "If this is merged and deployed today, will the feature work end-to-end without requiring another immediate fix?" If the answer is no due to missing wiring, unimplemented paths, or broken dependencies — REJECTION-PACKAGE. |
+| BD-004 | No leftover debt from previous jobs | If the PR touches files that contain known failing tests, known linter errors, or broken wiring from previous waves visible in the diff context — Stop-and-Fix applies. The agent must fix these before handover. REJECTION-PACKAGE if present and unfixed. |
+
+### BD-TIER-2 — Wiring & Integration Verification (Blocking)
+
+| Check ID | Check Name | What IAA Does |
+|----------|-----------|---------------|
+| BD-005 | End-to-end wiring verified | For every new schema table, API endpoint, hook, or service: trace the complete path from data source to API/hook to UI consumer (or service consumer). Verify all links in the chain exist in the PR diff or in existing code. A broken chain = REJECTION-PACKAGE. |
+| BD-006 | Writers and readers confirmed | Every table or data entity introduced must have: at minimum one confirmed writer (INSERT/mutation path) and one confirmed reader (SELECT/query path) wired and tested. Orphaned tables or unread data = REJECTION-PACKAGE. |
+| BD-007 | Auth guards applied end-to-end | Every protected route, endpoint, or data operation must have auth verification applied. Missing auth guard on any user-facing protected path = REJECTION-PACKAGE. |
+| BD-008 | FK and relational integrity | All FK relationships declared in migrations must have corresponding application-layer enforcement (cascade, restrict, or explicit handling). Dangling FKs with no application logic = REJECTION-PACKAGE. |
+| BD-009 | Cross-component integration fit | Does this build fit correctly into what has already been built? Check: does this PR's interfaces match what other components expect? Does it break any existing contracts (API shape, type definitions, event names)? If yes = REJECTION-PACKAGE with specific conflict identified. |
+| BD-010 | No orphaned deliverables | No new files, components, endpoints, or migrations that are not referenced or consumed by anything else in the system. Orphans indicate incomplete wiring. REJECTION-PACKAGE with list of orphans. |
+
+### BD-TIER-3 — Test Quality & Zero Debt (Blocking)
+
+| Check ID | Check Name | What IAA Does |
+|----------|-----------|---------------|
+| BD-011 | 100% test pass rate | All tests in the PR suite pass. Zero failures. A claim of "tests pass" without evidence = REJECTION-PACKAGE. |
+| BD-012 | Zero test debt | No `.skip()`, `.only()`, `test.todo()`, commented-out tests, or incomplete test stubs. Every new code path has test coverage. Any test debt = REJECTION-PACKAGE. |
+| BD-013 | No test dodging | Tests must assert on the actual intended behaviour. Tests that always pass regardless of implementation correctness (vacuous tests, tests that catch then re-throw, tests with no assertions) = REJECTION-PACKAGE. |
+| BD-014 | No deprecation accumulation | No new usage of deprecated APIs, deprecated package versions, or patterns explicitly marked for removal. IAA checks: are there `@deprecated` usages or deprecated packages introduced by this PR? If yes = REJECTION-PACKAGE with specific items listed. |
+
+### BD-TIER-4 — Security Review (Blocking)
+
+| Check ID | Check Name | What IAA Does |
+|----------|-----------|---------------|
+| BD-015 | RLS policies complete | For any Supabase table created or modified: verify SELECT, INSERT, UPDATE, DELETE policies exist for every relevant role. A table with RLS enabled but incomplete policies = REJECTION-PACKAGE with list of missing policies. |
+| BD-016 | No hardcoded secrets or credentials | Inspect diff for API keys, passwords, tokens, connection strings, or other secrets hardcoded in application code, config files, or test fixtures. Any found = immediate REJECTION-PACKAGE. |
+| BD-017 | Input validation present | Every user-controlled input entering the system must have validation/sanitisation applied before processing or persistence. Missing = REJECTION-PACKAGE. |
+| BD-018 | No obvious injection vectors | Inspect for SQL injection patterns (raw string interpolation into queries), XSS vectors (unescaped user content rendered as HTML), or command injection risks. Any found = REJECTION-PACKAGE. |
+| BD-019 | International standards compliance | For any healthcare, financial, or compliance-sensitive module: verify applicable standards are observed (HIPAA data handling, GDPR consent patterns, WCAG accessibility for UI, ISO 27001 for data classification). If standards apply and are not observed = REJECTION-PACKAGE with specific standard and gap identified. |
+
+### BD-TIER-5 — Code Quality & Architecture Fitness (IAA Uses Judgement)
+
+| Check ID | Check Name | What IAA Does |
+|----------|-----------|---------------|
+| BD-020 | Clean coding structure | Review for: God functions (>50 lines doing multiple things), magic numbers/strings without constants, deeply nested conditionals (>3 levels without extraction), naming that does not reflect intent. IAA flags each specific instance. If severe (multiple violations across the PR) = REJECTION-PACKAGE. If isolated = advisory with specific fix suggested. |
+| BD-021 | International coding best practice | Verify: TypeScript strictness (no `any`, no unsafe `as` casts masking type errors), SOLID principles observed, DRY (no copy-paste logic blocks), proper error handling (no silent swallows, no bare `catch (e) {}`). IAA flags violations with specific line references. |
+| BD-022 | Architecture alignment | Does the implementation match the architecture document for this wave/feature? If the code diverges from the architecture: (a) improvement = document and accept, (b) mistake = REJECTION-PACKAGE with correction, (c) architecture was wrong = flag for FM/CS2 architecture update. |
+| BD-023 | Technology currency | Are the packages, libraries, APIs, and patterns used current? If the PR introduces a package/API with a non-deprecated, actively maintained replacement — IAA flags with recommended replacement. If critical (security vulnerability) = REJECTION-PACKAGE. If advisory = suggestion with upgrade path. |
+| BD-024 | Could it be done better — right now | IAA applies engineering judgement: if a materially better approach exists that achieves the same result with less complexity, better performance, or greater maintainability — and the improvement is within scope of this PR — IAA either proposes the improvement for the agent to implement, or if trivially simple and clearly superior, implements it directly. This is IAA's senior-engineer prerogative. |
+
+### BD-TIER-6 — Functional Fitness Assessment (FFA) Summary
+
+After all tier checks, IAA produces a Functional Fitness Assessment statement:
+
+```
+FFA Result:
+  FFA-01 Delivery Completeness: [PASS|FAIL] — <one line>
+  FFA-02 Wiring Verification: [PASS|FAIL] — <one line>
+  FFA-03 Integration Fit: [PASS|FAIL] — <one line>
+  FFA-04 Security: [PASS|FAIL] — <one line>
+  FFA-05 Code Quality: [PASS|ADVISORY|FAIL] — <one line>
+  FFA-06 One-Time Build: [PASS|FAIL] — <one line>
+  FFA-CARRY-FORWARD: [NONE|ISSUED] — <list any carry-forward mandates>
+```
+
+**Carry-Forward Mandate**: If any pre-existing broken state visible in the codebase is outside this PR's scope, IAA issues a Carry-Forward Mandate. The FM must address it before the next wave. Carry-forward items do NOT block this PR but are mandatory for the next handover.
 
 ---
 
@@ -22,20 +115,28 @@ Overlay checks are ADDITIONAL checks specific to each category.
 
 Applied when PR category is `AGENT_CONTRACT`.
 
-| Check ID | Check Name | Description |
-|----------|-----------|-------------|
-| OVL-AC-001 | AGCFPP-001 policy reference | governance.policy_refs includes AGCFPP-001 with canonical path `governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md` and name `Agent Contract File Protection Policy` |
-| OVL-AC-002 | IAA oversight block | iaa_oversight block present (for foreman/builder class agents) OR policy_refs confirms IAA authority |
-| OVL-AC-003 | Four-phase canonical structure | All four phases complete with mandatory evidence output declarations |
-| OVL-AC-004 | Self-modification prohibition | CONSTITUTIONAL enforcement on SELF-MOD prohibition |
-| OVL-AC-005 | No Tier 2 content embedded | No Tier 2 content inlined in the contract body |
-| OVL-AC-006 | PREHANDOVER proof in bundle | PR bundle contains PREHANDOVER proof artifact |
-| OVL-AC-007 | Session memory in bundle | PR bundle contains session memory artifact |
-| OVL-AC-008 | Tier 2 stub present | `.agent-workspace/<agent>/knowledge/index.md` exists |
-| OVL-AC-009 | Character count within limit | Contract body is under 30,000 characters |
-| OVL-AC-010 | No hardcoded version strings | Phase body reads identity from YAML, not hardcoded strings |
-| OVL-AC-011 | Agent file drift check | PREHANDOVER must include before/after character count for every modified agent contract file. If SHA256 hash comparison is available (e.g., from git diff or CANON_INVENTORY), before/after hashes must also be stated. |
-| OVL-AC-012 | Ripple/cross-agent assessment | If the agent contract change triggers governance ripple requirements for other agents (e.g., shared Tier 2 references, cascading policy updates), PREHANDOVER proof must list all affected agents and whether ripple has been initiated or flagged. "No ripple required" is acceptable only when explicitly stated with justification. |
+> **Mindset**: IAA checks whether the agent contract correctly serves the governance strategy it is meant to implement. Does this contract enable the agent to do its job correctly and safely?
+
+### Substance Checks (Primary)
+
+| Check ID | Check Name | What IAA Does |
+|----------|-----------|---------------|
+| OVL-AC-001 | Strategy alignment | Does this agent contract correctly implement the governance intent as defined in LIVING_AGENT_SYSTEM.md and the relevant canon? Are there obvious gaps? Flag specific gaps with reference to the authorising canon. |
+| OVL-AC-002 | No contradictions | Does this contract contradict any existing canon, constitutional rule, or other agent contract it is meant to work alongside? Flag specific contradictions with canon reference. |
+| OVL-AC-003 | Authority boundaries correct | Are the agent's authority boundaries correctly and unambiguously defined? Ambiguous authority = REJECTION-PACKAGE. |
+| OVL-AC-004 | Delegation safety | If this agent delegates to others: are the delegation boundaries safe? Could a builder exploit ambiguity in this contract to exceed its authority? Flag specific exploit paths. |
+| OVL-AC-005 | Four-phase structure present | All four phases (Preflight, Induction, Build/Execute, Handover) are complete and substantively populated — not just section headings. Skeleton contract = REJECTION-PACKAGE. |
+| OVL-AC-006 | Self-modification prohibition present | Contract explicitly prohibits self-modification. Missing = REJECTION-PACKAGE. |
+| OVL-AC-007 | Ripple/cross-agent impact | Does this contract change require corresponding updates in other agent contracts or Tier 2 knowledge files? If yes: are those updates included or flagged? Missing ripple assessment = REJECTION-PACKAGE. |
+
+### Admin Checks (Secondary — Existence Only)
+
+| Check ID | Check Name | Pass Condition |
+|----------|-----------|----------------|
+| OVL-AC-ADM-001 | PREHANDOVER proof exists | Covered by CERT-001 |
+| OVL-AC-ADM-002 | Session memory exists | Covered by CERT-002 |
+| OVL-AC-ADM-003 | Tier 2 stub present | `.agent-workspace/<agent>/knowledge/index.md` exists |
+| OVL-AC-ADM-004 | Character count within limit | Contract body <= 30,000 characters |
 
 ---
 
@@ -43,14 +144,24 @@ Applied when PR category is `AGENT_CONTRACT`.
 
 Applied when PR category is `CANON_GOVERNANCE`.
 
-| Check ID | Check Name | Description |
-|----------|-----------|-------------|
-| OVL-CG-001 | CANON_INVENTORY updated | Changes reflected in CANON_INVENTORY.json with new hashes |
-| OVL-CG-002 | No placeholder hashes | No `null`, `""`, `000000`, or truncated hash values |
-| OVL-CG-003 | Version bump present | Updated document has bumped version number |
-| OVL-CG-004 | Ripple impact assessed | Any impacted agents are flagged for governance ripple update |
-| OVL-CG-005 | Drift/integrity hash check | PREHANDOVER must include for each modified canon file: either (a) SHA256 hash before and after the change, or (b) a git diff excerpt or summary confirming the exact scope of change. Missing or absent drift evidence = REJECTION-PACKAGE. |
-| OVL-CG-006 | CANON_INVENTORY hash update confirmed | Every canon file modified in this PR must have its `file_hash_sha256` field updated in `governance/CANON_INVENTORY.json` to reflect the new file state. Stale or unchanged hashes for modified files = REJECTION-PACKAGE. |
+> **Mindset**: IAA checks whether the governance change serves the strategic intent it is meant to implement. Is the canon correct, complete, and unambiguous relative to that strategy?
+
+### Substance Checks (Primary)
+
+| Check ID | Check Name | What IAA Does |
+|----------|-----------|---------------|
+| OVL-CG-001 | Strategy alignment | Does this canon change correctly implement or extend the strategy it serves? Is there an obvious gap between what the strategy requires and what the canon delivers? Flag specific gaps with strategy reference. |
+| OVL-CG-002 | No contradictions with existing canon | Does this change contradict any constitutional rule or existing canon? Identify specific contradictions. |
+| OVL-CG-003 | Enforcement gap | Is the new rule/policy actually enforceable as written? If the rule cannot be detected or enforced by an agent operating autonomously, flag it as an enforcement gap. |
+| OVL-CG-004 | Ripple impact assessed | Does this canon change require corresponding updates in any agent contract, agent knowledge file, or consumer repo? If yes: are those identified and flagged? Missing = REJECTION-PACKAGE. |
+| OVL-CG-005 | ISMS layer-down scope | If this is a governance change being applied to maturion-isms: were all ripple-affected agent contracts and knowledge files touched? A governance layer-down that skips any affected file = REJECTION-PACKAGE with list of missed files. |
+
+### Admin Checks (Secondary — Existence Only)
+
+| Check ID | Check Name | Pass Condition |
+|----------|-----------|----------------|
+| OVL-CG-ADM-001 | CANON_INVENTORY updated | `governance/CANON_INVENTORY.json` reflects the new file state |
+| OVL-CG-ADM-002 | Version bump present | Modified canon document has an incremented version number |
 
 ---
 
@@ -58,43 +169,17 @@ Applied when PR category is `CANON_GOVERNANCE`.
 
 Applied when PR category is `CI_WORKFLOW`.
 
-| Check ID | Check Name | Description |
-|----------|-----------|-------------|
-| OVL-CI-001 | Merge gate checks preserved | All required merge_gate_interface checks remain present |
-| OVL-CI-002 | No gate weakening | No check removed, softened, or made non-blocking |
-| OVL-CI-003 | Parity enforcement maintained | parity_required and parity_enforcement remain BLOCKING |
-| OVL-CI-004 | Workflow policy correctness | For any new workflow created or significantly modified: verify the workflow correctly implements its stated policy requirement — not just gate preservation. The workflow logic must match its declared intent (e.g., a "preflight gate" workflow must actually enforce preflight; a "ripple sync" workflow must actually sync ripples). A workflow that preserves the gate structure but inverts or misimplements its policy intent is a failure. |
-| OVL-CI-005 | CI check run result attached | When any `.github/workflows/` or `.github/scripts/` file is modified, PREHANDOVER must include the URL of the resulting CI check run result or a log snippet confirming the workflow executed successfully (no errors/failures). A claim that CI passed without any supporting URL or log reference = REJECTION-PACKAGE. |
-| OVL-CI-006 | Environment parity statement | PREHANDOVER must explicitly address whether the workflow/script change affects dev, staging, and production environments differently and how parity is maintained. An explicit "no environment impact" statement is acceptable when justified. Absent or blank environment parity statement = REJECTION-PACKAGE. |
+> **Mindset**: IAA checks whether the workflow actually implements its stated policy correctly and will work in practice.
 
----
+### Substance Checks (Primary)
 
-## AAWP_MAT Overlay
-
-Applied when PR category is `AAWP_MAT`.
-
-| Check ID | Check Name | Description |
-|----------|-----------|-------------|
-| OVL-AM-001 | Stub population complete | No stub/TODO content in AAWP/MAT deliverables |
-| OVL-AM-002 | Evidence artifacts present | Required evidence bundle artifacts present |
-| OVL-AM-003 | Governance alignment | Deliverables align with current canon version |
-| OVL-AM-004 | Architecture ripple/impact plan | If any schema, data model, AI model, migration, or critical infrastructure file changes: PREHANDOVER must include (a) a before/after diff summary of the change and (b) an explicit ripple/impact assessment listing downstream components that may be affected. "No downstream impact" is acceptable when explicitly stated with justification. Absent = REJECTION-PACKAGE. |
-| OVL-AM-005 | Wave gap register trace | PREHANDOVER proof or session memory must include a link to the gap register entry for this wave's work, or explicitly state "no gap register entry applicable" with a brief justification. A blank or absent gap register reference = REJECTION-PACKAGE. |
-| OVL-AM-006 | Environment parity validation | PREHANDOVER must explicitly state whether the change affects dev, staging, and production environments differently. Must identify any environment with different post-deployment behavior. An explicit "no environment impact" statement is acceptable when justified. Absent = REJECTION-PACKAGE. |
-| OVL-AM-007 | Session memory learning note coverage | Session memory must contain at least one concrete, non-blank learning note in the `learning_notes` or `suggestions` field. If a repeat failure pattern is identified (same failure as any prior session), the session memory must explicitly reference the prior session ID(s) and flag for root-cause analysis. A blank or placeholder learning note = REJECTION-PACKAGE. |
-| OVL-AM-008 | End-to-end wiring verification | For any PR touching schema migrations, API endpoint definitions, Supabase hooks, or frontend data hooks: the PREHANDOVER must include an **End-to-End Wiring Trace** section containing ALL of the following: (a) **Writers** — which runtime clients write to each new/modified table or endpoint (frontend anon key, AI Gateway service role, edge function, etc.); (b) **Readers** — which hooks or components read from it and what columns/fields they expect; (c) **Shape compatibility** — confirmation that writer payload fields map correctly to table columns or API response fields consumed by readers (field names, types, nullable constraints); (d) **Auth/RLS model** — explicit statement of which Supabase key each writer uses (anon key = subject to RLS, service role = bypasses RLS) and whether the RLS policy is consistent with that access pattern; (e) **FK/dependency chain** — confirmation that all foreign key references (e.g. `audit_id → audits.id`) will resolve correctly given the current migration order and production data state. An explicit "not applicable" is acceptable ONLY for PRs that contain no schema, API, or hook changes — and must be stated with justification. Absent, blank, or boilerplate wiring trace = REJECTION-PACKAGE. |
-
----
-
-## AGENT_INTEGRITY Overlay
-
-Applied when PR category is `AGENT_INTEGRITY`.
-
-| Check ID | Check Name | Description |
-|----------|-----------|-------------|
-| OVL-AI-001 | CS2-only modification | Only CS2 (Johan Ras / @APGI-cmy) may modify `governance/quality/agent-integrity/` files |
-| OVL-AI-002 | Hash update is complete | All updated agent contract hashes reflect the current file state |
-| OVL-AI-003 | No hash deletions | No previously present agent integrity entries deleted without CS2 sign-off |
+| Check ID | Check Name | What IAA Does |
+|----------|-----------|---------------|
+| OVL-CI-001 | Workflow policy correctness | Does the workflow actually implement what it claims to implement? Does the logic match the intent? A workflow that inverts, mismaps, or silently skips its stated policy = REJECTION-PACKAGE. |
+| OVL-CI-002 | Merge gate integrity | All required merge gate checks remain present and non-weakened. Any gate removed, softened, or made optional = REJECTION-PACKAGE. |
+| OVL-CI-003 | Silent failure risk | Are there code paths where a failure would be swallowed silently (e.g., unguarded `continue-on-error`, missing exit code checks)? Any silent failure path = REJECTION-PACKAGE with specific line. |
+| OVL-CI-004 | Environment parity | Does the workflow behave consistently across dev/staging/production? If environments produce different gate outcomes, this must be explicitly stated and justified. |
+| OVL-CI-005 | CI evidence present | When any workflow file is modified: PREHANDOVER must include a CI check run URL or log snippet confirming the workflow executed successfully post-change. Claim without evidence = REJECTION-PACKAGE.
 
 ---
 
@@ -102,26 +187,32 @@ Applied when PR category is `AGENT_INTEGRITY`.
 
 Applied when PR category is `KNOWLEDGE_GOVERNANCE`.
 
-| Check ID | Check Name | Description |
-|----------|-----------|-------------|
-| OVL-KG-001 | PREHANDOVER ceremony complete | PR includes PREHANDOVER proof and session memory; `iaa_audit_token` is non-empty and non-placeholder. Tier 2 knowledge patches are NOT exempt from the PREHANDOVER ceremony (FAIL-ONLY-ONCE A-015). |
-| OVL-KG-002 | Knowledge version bumped | Every modified Tier 2 knowledge file has its version number incremented (patch or minor). A version-unchanged modification = REJECTION-PACKAGE. |
-| OVL-KG-003 | Version history table updated | Every modified Tier 2 knowledge file's version history table includes an entry for the new version with date and change description. Missing or stale version history = REJECTION-PACKAGE. |
-| OVL-KG-004 | Index.md updated | The agent's `knowledge/index.md` reflects updated file versions and new rules or categories introduced. Stale index = REJECTION-PACKAGE. |
-| OVL-KG-005 | Cross-reference consistency | Any rule IDs, check IDs, or category names changed or added are updated consistently across all files that reference them (trigger table, overlays, checklist, index, learning notes). Any dangling or stale cross-reference = REJECTION-PACKAGE. |
+> **Mindset**: IAA checks whether the Tier 2 knowledge update correctly captures the intended learning or operational rule. Will the agent that reads this file understand what to do?
+
+### Substance Checks (Primary)
+
+| Check ID | Check Name | What IAA Does |
+|----------|-----------|---------------|
+| OVL-KG-001 | Rule clarity | Is the new rule/learning stated clearly enough that an agent can apply it without ambiguity? A vague rule is not a rule — flag for sharpening with specific suggestion. |
+| OVL-KG-002 | Triggered by real incident | Is the new FAIL-ONLY-ONCE rule or learning note traceable to a real incident or confirmed pattern? Rules without incident grounding belong in canon, not in the agent's operational learning registry. |
+| OVL-KG-003 | No duplication | Does the new rule duplicate an existing rule? If yes: flag the duplication and recommend consolidation. |
+| OVL-KG-004 | Cross-reference consistency | If the new rule references another rule ID, check ID, or file — does that reference actually exist? Dangling references = REJECTION-PACKAGE. |
+
+### Admin Checks (Secondary — Existence Only)
+
+| Check ID | Check Name | Pass Condition |
+|----------|-----------|----------------|
+| OVL-KG-ADM-001 | PREHANDOVER ceremony complete | Covered by CERT-001 through CERT-004 |
+| OVL-KG-ADM-002 | Knowledge version bumped | Modified Tier 2 file has incremented version |
+| OVL-KG-ADM-003 | Index.md updated | Agent knowledge index reflects updated file versions |
 
 ---
 
-## Version History
+## AGENT_INTEGRITY Overlay
 
-| Version | Date | Change |
-|---------|------|--------|
-| 1.0.0 | 2026-02-25 | Initial STUB (placeholder from canon) |
-| 2.0.0 | 2026-02-28 | Fully populated from INDEPENDENT_ASSURANCE_AGENT_CANON.md; OVL-CI-004 added (workflow policy correctness check from IAA session-017 suggestion); AGENT_INTEGRITY overlay added; STUB status removed |
-| 2.1.0 | 2026-03-02 | AGENT_CONTRACT: OVL-AC-011 (drift check), OVL-AC-012 (ripple assessment) added; CANON_GOVERNANCE: OVL-CG-005 (drift/integrity hash), OVL-CG-006 (CANON_INVENTORY update confirmed) added; CI_WORKFLOW: OVL-CI-005 (CI check run result), OVL-CI-006 (environment parity) added; AAWP_MAT: OVL-AM-004 (architecture ripple/impact plan), OVL-AM-005 (wave gap trace), OVL-AM-006 (environment parity), OVL-AM-007 (session memory learning notes) added (maturion-isms#IAA-TIER2 Wave 13+) |
-| 2.2.0 | 2026-03-02 | KNOWLEDGE_GOVERNANCE overlay added (OVL-KG-001 through OVL-KG-005) — formalises Tier 2 knowledge patch audit requirements (maturion-isms#IAA-TIER2) |
-| 2.3.0 | 2026-03-03 | AAWP_MAT: OVL-AM-008 (end-to-end wiring verification) added — requires Writers/Readers/Shape/Auth/FK trace in PREHANDOVER for any schema, API, or hook-touching PR. Addresses IAA substantive gap identified by CS2 on 2026-03-03 (PRs #865, #868). |
+Applied when PR category is `AGENT_INTEGRITY`.
 
----
-
-**Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
+| Check ID | Check Name | What IAA Does |
+|----------|-----------|---------------|
+| OVL-AI-001 | CS2 authorisation verified | Any change to `governance/quality/agent-integrity/` requires explicit CS2 (@APGI-cmy) written authorisation. Absent = immediate REJECTION-PACKAGE. |
+| OVL-AI-002 | Change intent matches governance strategy | Does the agent-integrity change serve the constitutional quality goals? Is it coherent with the existing integrity framework? Flag any divergence.
