@@ -56,8 +56,10 @@ These are documentation errors only; the migration implementation is correct (16
 
 | Line | Incorrect text | Correct value |
 |------|----------------|---------------|
-| 64 | "All 15 policies use `DO $$ BEGIN IF NOT EXISTS...`" | "All 16 policies use..." |
-| 102 | "### Policies Delivered (15 total)" | "### Policies Delivered (16 total)" |
+| 25 | "`apps/...20260304000004_fix_rls_remaining_tables.sql` (15 policies, 8 tables)" [Foreman PREHANDOVER line 25] | "(16 policies, 8 tables)" |
+| 35 | "PASS — 15 policies added, evidence DELETE present, MPS read-only, idempotent guards" [Foreman PREHANDOVER line 35] | "PASS — 16 policies added..." |
+| 64 | "All 15 policies use `DO $$ BEGIN IF NOT EXISTS...`" [schema-builder PREHANDOVER line 64] | "All 16 policies use..." |
+| 102 | "### Policies Delivered (15 total)" [schema-builder PREHANDOVER line 102] | "### Policies Delivered (16 total)" |
 
 These errors are recorded here for audit completeness. They do not affect the correctness of the
 migration or the test results. IAA independently verified the migration contains 16 CREATE POLICY
