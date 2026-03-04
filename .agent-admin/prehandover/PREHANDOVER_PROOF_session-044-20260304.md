@@ -82,7 +82,7 @@ Per A-009 (FAIL-ONLY-ONCE.md), the following files were NOT modified and are esc
 ```yaml
 iaa_audit_token: PENDING
 iaa_session: IAA-session-126-20260304
-iaa_invocation_attempt: 3 (third — REJECTION-PACKAGE received; fourth invocation pending)
+iaa_invocation_attempt: 4 (fourth — pending)
 ```
 
 ### First IAA Invocation: IAA-session-124-20260304 — REJECTION-PACKAGE
@@ -187,8 +187,7 @@ Token reference: IAA-session-126-20260304-REJECTED
 ### Fourth IAA Invocation (post-remediation)
 
 Single failure remediated:
-- SCOPE_DECLARATION.md updated: 6 missing IAA archive/session files added; total updated 15→21
-- Verified: `grep -cE '^\s*-\s+\`[^`]+\`\s+-\s+' SCOPE_DECLARATION.md` = 21; diff file count = 21
+- SCOPE_DECLARATION.md updated: session-126 memory added; total updated 21→22; verified 22 declared = 22 in diff
 - Files committed and pushed
 
 IAA re-invoked (fourth invocation) - result recorded below.

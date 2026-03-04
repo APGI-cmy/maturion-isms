@@ -24,7 +24,7 @@ This PR delivers governance layer-down for ripple event 6523fe8d from `APGI-cmy/
 
 ## Files Changed
 
-**Total Files**: 21
+**Total Files**: 22
 
 All files in this PR are explicitly listed below (required by BL-027):
 
@@ -48,6 +48,7 @@ All files in this PR are explicitly listed below (required by BL-027):
 - `.agent-workspace/independent-assurance-agent/memory/.archive/session-119-20260303.md` - ARCHIVED: IAA session-119 rotated to archive (>5 IAA sessions)
 - `.agent-workspace/independent-assurance-agent/memory/session-124-20260304.md` - NEW: IAA session-124 memory (REJECTION-PACKAGE - 8 procedural failures; substantive work sound)
 - `.agent-workspace/independent-assurance-agent/memory/session-125-20260304.md` - NEW: IAA session-125 memory (REJECTION-PACKAGE - em-dash format + stale text)
+- `.agent-workspace/independent-assurance-agent/memory/session-126-20260304.md` - NEW: IAA session-126 memory (REJECTION-PACKAGE - count mismatch 15 vs 21)
 - `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - UPDATED: IAA session-124 and session-125 suggestions appended
 
 ---
