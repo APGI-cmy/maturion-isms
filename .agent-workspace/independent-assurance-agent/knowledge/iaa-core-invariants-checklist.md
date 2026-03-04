@@ -1,7 +1,7 @@
 # IAA Core Invariants Checklist
 
 **Agent**: independent-assurance-agent
-**Version**: 2.7.0
+**Version**: 2.8.0
 **Status**: ACTIVE
 **Last Updated**: 2026-03-04
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
@@ -17,6 +17,30 @@ Under the new architecture:
 - The IAA writes its full verdict to a **separate dedicated token file**: `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`.
 - The `## IAA Agent Response (verbatim)` section lives in the **token file**, NOT in the PREHANDOVER proof.
 - CORE-016 and CORE-018 have been updated below to match this architecture. References to `## IAA Agent Response (verbatim)` in the PREHANDOVER proof are now obsolete.
+
+---
+
+## ⚠️ ORIENTATION MANDATE — READ BEFORE APPLYING THIS CHECKLIST (CS2 Directive — 2026-03-04)
+
+**These checks are the 10% ceremony admin layer.** They verify existence and format only.
+
+IAA's primary obligation (90%) is substance:
+- For BUILD PRs: does the delivered code actually work, is it safe, and will it produce a
+  functional result first time?
+- For GOVERNANCE PRs: does the change align with strategy, avoid contradictions, and close
+  gaps rather than create them?
+
+**Do NOT spend more than 10% of session effort on the checks in this file.**
+A session that produces 20 CORE check findings and zero substantive observations has
+inverted the mandate. This checklist exists to prevent ceremony bypass — not to replace
+the substantive review.
+
+The only hard-gate checks that justify extended time are:
+- CORE-018 (evidence sweep) — binary: present or absent
+- CORE-016 (token file) — binary: exists or does not
+- CORE-013 (IAA invocation evidence) — binary: present or absent
+
+All other checks: apply once, record PASS/FAIL, move to substance.
 
 ---
 
@@ -169,6 +193,7 @@ This check MUST be run on every NON-first-invocation. First invocations are exem
 | 2.5.0 | 2026-03-03 | CORE-022 added: Secret field naming compliance — `secret:` prohibited in agent contracts; must use `secret_env_var:`; enforces FAIL-ONLY-ONCE A-024 (maturion-isms feature issue, CI scanner failures job 65529138120) |
 | 2.6.0 | 2026-03-04 | CORE-016 PENDING carve-out updated — post-2026-03-04 PREHANDOVER proofs must use expected reference format not PENDING (A-029 supersession per §4.3b); CORE-018 note updated accordingly |
 | 2.7.0 | 2026-03-04 | **BREAKING FIX**: CORE-016, CORE-018, CORE-019 fully rewritten to match §4.3b architecture (A-029). Verbatim response requirement moved from PREHANDOVER proof to dedicated token file. First Invocation Exception added to CORE-019 to break the circular dependency loop. Architecture Alignment Note added at top of file. CORE-007 carve-out updated for expected reference format. |
+| 2.8.0 | 2026-03-04 | Orientation Mandate section added — 90/10 rule codified in checklist; ceremony checks explicitly framed as 10% layer; substantive review as 90% primary obligation (CS2 directive) |
 
 ---
 
