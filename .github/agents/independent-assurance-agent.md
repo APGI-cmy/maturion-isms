@@ -28,7 +28,7 @@ governance:
       applies: "All .github/agents/ modifications require CodexAdvisor + IAA audit per AGCFPP-001 §3–§4. IAA must be invoked for ALL agent contract PRs — no class exceptions."
   execution_identity:
     name: "Maturion Bot"
-    secret_env_var: MATURION_BOT_TOKEN
+    secret: MATURION_BOT_TOKEN
     safety:
       never_push_main: true
       write_via_pr_by_default: true
@@ -187,7 +187,7 @@ metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
   authority: CS2
-  last_updated: 2026-02-25
+  last_updated: 2026-03-04
   tier2_knowledge: .agent-workspace/independent-assurance-agent/knowledge/index.md
 ---
 
