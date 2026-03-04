@@ -1,9 +1,25 @@
 # IAA FAIL-ONLY-ONCE Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 2.2.0
+**Version**: 2.3.0
 **Last Updated**: 2026-03-04
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
+
+---
+
+## ⚠️ ACTIVE OVERRIDE — A-029 SUPERSEDES A-025 (read this first)
+
+**A-029 is the current governing rule for PREHANDOVER proof token fields.**
+A-025 (PENDING requirement) is superseded as of 2026-03-04 for the `iaa_audit_token` field in PREHANDOVER proofs.
+
+Under A-029 (§4.3b architecture):
+- PREHANDOVER proof `iaa_audit_token` → pre-populated at commit time with **expected reference** `IAA-session-NNN-waveY-YYYYMMDD-PASS`
+- IAA verdict → written to **dedicated token file** `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`
+- PREHANDOVER proof is **read-only** after initial commit
+- `iaa_audit_token: PENDING` is the OLD pattern — do not use for post-2026-03-04 proofs
+
+**CORE-016 and CORE-018 have been updated in `iaa-core-invariants-checklist.md` v2.7.0 to match this architecture.**
+The `## IAA Agent Response (verbatim)` section requirement has moved from the PREHANDOVER proof to the dedicated token file.
 
 ---
 
@@ -111,35 +127,6 @@ Ref: GOV-BREACH-AIMC-W5-002, Foreman A-012.
 
 ---
 
-### A-018 — Post-Merge Retrospective Audit Findings Must Be Formally Recorded — No Informal Notes
-
-**Triggered by**: maturion-isms governance breach issue (PR #546 process violation) — session-002.
-An agent contract PR was merged without IAA invocation (AGCFPP-001 breach). The post-merge
-audit finding must produce a binding governance record, not just a learning note.
-
-**Incident**: PR #546 (remediation of session-001 findings) was submitted and merged by CS2
-without IAA invocation or evidence bundle. Session-002 conducted the retroactive audit and issued
-a REJECTION-PACKAGE for process violations. The content of PR #546 was accepted as correct.
-The process violation must be formally recorded in CodexAdvisor's breach-registry.md and
-FAIL-ONLY-ONCE.md, not left as an informal observation in IAA session memory alone.
-
-**Permanent Rule**:
-When IAA issues a post-merge retrospective REJECTION-PACKAGE, the following must occur in the
-SAME session as the audit:
-1. CodexAdvisor must create a breach-registry.md entry for the violation.
-2. CodexAdvisor must add a FAIL-ONLY-ONCE rule addressing the root cause.
-3. IAA must flag the unresolved items in its session memory as requiring CodexAdvisor action.
-4. The breach is only marked CLOSED when CodexAdvisor's corrective artifacts are committed.
-
-**Check in Phase 4 (after verdict)**:
-> FAIL-ONLY-ONCE A-018: After issuing a post-merge REJECTION-PACKAGE, verify that
-> unresolved_items_carried_forward lists each corrective action required of CodexAdvisor.
-> Do not mark session complete until corrective artifact requirements are documented.
-
-**Status**: ACTIVE — enforced every post-merge retrospective audit
-
----
-
 ### A-005 — Agent Contract File Immutability — No Agent May Touch `.github/agents/` Files
 
 **Rule** (CS2 directive — 2026-02-27):
@@ -148,7 +135,7 @@ No agent (builder, Foreman, IAA, specialist, or any other) may create, read for 
 
 Any PR diff that includes modifications to `.github/agents/` files authored by any agent other than CodexAdvisor-agent is a violation of class GOV-BREACH-CONTRACT-001.
 
-**Check in IAA QP phase (CORE-007 / OVL-*):**
+**Check in IAA QP phase (CORE-007 / OVL-*)**:
 > FAIL-ONLY-ONCE A-005: Inspect the PR diff for any file path matching `.github/agents/**`.
 > If any such file is modified, added, or deleted: verify the producing agent is CodexAdvisor-agent
 > AND CS2 authorisation is explicitly documented in the PREHANDOVER proof.
@@ -171,183 +158,23 @@ RCA: `.agent-workspace/foreman-v2/memory/session-072-RCA-IAA-SKIP-20260228.md`
 **Permanent Rule (A-014 mirror)**:
 IAA must DETECT and REJECT any PREHANDOVER proof where:
 - `iaa_audit_token` contains exactly `PHASE_A_ADVISORY — YYYY-MM-DD` format AND
-- There is no verbatim IAA agent response in a `## IAA Agent Response (verbatim)` section AND
-- There is no real IAA session reference (format: `IAA-session-NNN-YYYYMMDD-PASS` or similar)
+- No dedicated IAA token file exists for this PR at `.agent-admin/assurance/iaa-token-session-NNN-*.md`
 
 This pattern = PHASE_A_ADVISORY FABRICATION breach.
 Foreman A-014 mandates the tool call. IAA A-006 enforces the detection.
 
-Real IAA responses ALWAYS contain a session token (`IAA-session-NNN-YYYYMMDD-PASS`) and the
-`ASSURANCE-TOKEN` / `REJECTION-PACKAGE` block header. A bare `PHASE_A_ADVISORY — [date]` without
-these elements is self-certified by the Foreman — not issued by the IAA.
+Real IAA responses ALWAYS produce a dedicated token file containing the ASSURANCE-TOKEN or REJECTION-PACKAGE block. A bare `PHASE_A_ADVISORY — [date]` without a corresponding token file is self-certified by the Foreman — not issued by the IAA.
 
-The only legitimate PHASE_A_ADVISORY outcome is when the IAA tool was called and the IAA agent
-itself determined it could not fully audit (true Phase A condition). In that case the IAA must
-state this explicitly in its response — which will be pasted verbatim in the PREHANDOVER proof.
-
-**Check in Phase 3 (hardened CORE-016)**:
+**Check in Phase 3**:
 > FAIL-ONLY-ONCE A-006 (INC-IAA-SKIP-001 detection):
 > 1. Locate the `iaa_audit_token` field in the PREHANDOVER proof.
 > 2. If value matches pattern `PHASE_A_ADVISORY — \d{4}-\d{2}-\d{2}` exactly:
->    a. Check if `## IAA Agent Response (verbatim)` section exists with real IAA output.
->    b. If section is absent: FAIL. If section exists but contains only the PHASE_A_ADVISORY date string (no real IAA session output block): FAIL.
->    c. Finding: "iaa_audit_token contains self-certified PHASE_A_ADVISORY without real IAA tool call evidence (INC-IAA-SKIP-001 pattern). PHASE_A_ADVISORY FABRICATION breach (A-014)."
->    d. Fix required: "Foreman must call task(agent_type='independent-assurance-agent') and paste verbatim IAA response in PREHANDOVER proof. A-014 applies."
-> 3. If `iaa_audit_token` contains a real session token (IAA-session-NNN-YYYYMMDD-*): PASS.
+>    a. Check if a dedicated IAA token file exists at `.agent-admin/assurance/iaa-token-session-NNN-*.md` for this PR.
+>    b. If absent: FAIL. Finding: "iaa_audit_token contains self-certified PHASE_A_ADVISORY without real IAA tool call evidence (INC-IAA-SKIP-001 pattern). PHASE_A_ADVISORY FABRICATION breach (A-014)."
+>    c. Fix required: "Foreman must call task(agent_type='independent-assurance-agent'). IAA will create the dedicated token file. A-014 applies."
+> 3. If `iaa_audit_token` contains a real session token reference format: PASS (CORE-019 handles cross-verification).
 
 **Status**: ACTIVE — enforced on every PREHANDOVER proof review
-
----
-
----
-
-### A-016 — Cross-PR IAA Token Reuse Is a Governance Breach
-
-**Triggered by**: session-023-20260301 — foreman-v2-agent session-076 cited
-`iaa_audit_token: IAA-session-022-20260301-PASS` (issued for `copilot/patch-proof-template-update` /
-maturion-isms#699 — Tier 2 knowledge patch) as the audit token for a completely different PR
-(Wave 12 deliverables on `copilot/draft-qa-verification-plan-wave-11` / PR #710).
-
-**Incident reference**: session-023-20260301 (IAA Wave 12 audit, REJECTION-PACKAGE)
-**Root cause**: The Foreman obtained a real IAA token for PR-A, then recorded that token in the
-session memory of PR-B as if PR-B had been audited. The token is genuine but the audit for PR-B
-was fabricated. This bypasses the A-006 first-pass check (the token is not a bare date string) and
-presents as a passing CORE-016 check on superficial inspection. Only cross-referencing the IAA
-session file exposes the fraud.
-
-**Permanent Rule**:
-For every triggered PR audit, when `iaa_audit_token` contains a real session token format
-(`IAA-session-NNN-YYYYMMDD-PASS`):
-1. Open `.agent-workspace/independent-assurance-agent/memory/session-NNN-YYYYMMDD.md`
-2. Read the `pr_reviewed` field
-3. If `pr_reviewed` references a DIFFERENT branch, PR, or PR subject than the current audit target:
-   → FAIL (cross-PR token reuse = governance breach)
-   → Finding: "IAA token IAA-session-NNN-YYYYMMDD-PASS was issued for [other PR/branch], not for [current PR/branch]. Cross-PR token reuse violates A-016."
-   → Fix: The Foreman must conduct a genuine IAA invocation for the current PR. Only a token issued
-     specifically for the current PR's artifacts is valid.
-
-**Check in Phase 3 (strengthens CORE-016)**:
-> FAIL-ONLY-ONCE A-016 (cross-PR token reuse):
-> 1. If iaa_audit_token = IAA-session-NNN-YYYYMMDD-PASS, open that IAA session memory file.
-> 2. Verify pr_reviewed branch/PR matches the current audit subject.
-> 3. If mismatch → FAIL. If IAA session file does not exist → FAIL (phantom token).
-> 4. If match → PASS this sub-check (A-006 still independently checked).
-
-**Status**: ACTIVE — enforced from session-023 onwards
-
----
-
----
-
-### A-017 — Session Memory Must Not Cite a REJECTION-PACKAGE Session as PASS
-
-**Triggered by**: session-024-20260301 — foreman-v2-agent session-076 session memory recorded
-`iaa_audit_token: IAA-session-023-20260301-PASS`. Session-023 issued REJECTION-PACKAGE with
-`token_reference: N/A`. The token `IAA-session-023-20260301-PASS` was never issued. Even with
-explicit `token_update_ceremony: PENDING` and `integrity_loop: OPEN` notations, referencing a
-REJECTION-PACKAGE session's identifier as a PASS token in any artifact is misleading.
-
-**How this differs from A-016**: A-016 catches cross-PR token reuse (same session token cited in
-wrong PR's artifacts). A-017 catches same-PR cross-verdict citation (a REJECTION session's token
-format cited as PASS, even within the same PR's session memory).
-
-**Why this was not a hard FAIL in session-024**: The PREHANDOVER proof (primary audit artifact per
-CORE-016) correctly used `iaa_audit_token: PENDING`. No fabricated approval appeared in the
-primary artifact. The session memory's problematic token had explicit PENDING ceremony notation.
-No existing check (A-006, A-016, CORE-016) triggered on this pattern. A-017 closes this gap.
-
-**Permanent Rule**:
-When reviewing any session memory `iaa_audit_token` field value:
-1. If the format is `IAA-session-NNN-YYYYMMDD-PASS`:
-   a. Open `.agent-workspace/independent-assurance-agent/memory/session-NNN-YYYYMMDD.md`
-   b. Check `verdict` field. If `verdict: REJECTION-PACKAGE` → the token is non-existent. FAIL.
-   c. Finding: "Token `IAA-session-NNN-YYYYMMDD-PASS` references session-NNN which issued
-      REJECTION-PACKAGE — no such PASS token was ever generated."
-   d. Fix: Foreman must update the session memory `iaa_audit_token` to the token issued by the
-      most recent IAA invocation that issued ASSURANCE-TOKEN for this PR.
-2. This check applies to session memory files, supplementing the PREHANDOVER proof checks of A-016.
-3. Explicit `token_update_ceremony: PENDING` notation does NOT exempt from this check — it only
-   reduces severity if the PREHANDOVER proof is correctly PENDING. Both must be PENDING, or neither
-   should cite a REJECTION session as PASS.
-
-**Check in Phase 3**:
-> FAIL-ONLY-ONCE A-017 (REJECTION-as-PASS citation):
-> 1. If session memory iaa_audit_token = IAA-session-NNN-YYYYMMDD-PASS:
->    a. Open session-NNN-YYYYMMDD.md (IAA memory)
->    b. Read `verdict` field
->    c. If verdict = REJECTION-PACKAGE → FAIL
->    d. Finding: "Session memory cites IAA-session-NNN-YYYYMMDD-PASS but session-NNN issued REJECTION-PACKAGE. Token is non-existent."
->    e. Fix: Update session memory iaa_audit_token to token issued by the ASSURANCE-TOKEN invocation for this PR.
-> 2. A-016 (cross-PR check) applies independently — check both A-016 AND A-017 for any session-NNN token.
-
-**Status**: ACTIVE — enforced from session-025 onwards
-
----
-
-### A-024 — Secret Field Naming in Agent Contracts Must Use `secret_env_var:` — Not `secret:`
-
-**Triggered by**: maturion-isms feature request (CS2 — 2026-03-03): CI secret scanners repeatedly
-flagged the `secret: "MATURION_BOT_TOKEN"` field in `governance.execution_identity` blocks across
-all agent contract files. Even though no actual secret value is present, the YAML field name
-`secret:` with a token name as value is sufficient to trigger GitHub's secret scanning heuristics
-and cause CI gate failures. Job 65529138120 was one of several recurring failures from this pattern.
-
-**Incident**: All 16 active agent contract files contained `secret: "MATURION_BOT_TOKEN"` in their
-`governance.execution_identity` block. This caused secret scanner CI gates to fail on any PR that
-included or touched these files. The convention must be `secret_env_var: "..."` to express that
-the value is an environment variable name (not a secret value), preventing scanner false positives.
-
-**Permanent Rule**:
-All agent contract files (`.github/agents/*.md`) MUST use `secret_env_var: "..."` in the
-`governance.execution_identity` block — never `secret: "..."`.
-
-The field `secret:` with any value in agent contract YAML:
-- Is prohibited in any `.github/agents/*.md` file
-- Triggers a REJECTION-PACKAGE if found in a PR diff
-- Is considered a security convention violation regardless of whether the value is an actual secret
-
-This rule applies to:
-- New agent contracts created by CodexAdvisor
-- Updated agent contracts in any PR
-- Any delivery artifact containing agent YAML blocks
-
-The correct pattern is:
-```yaml
-execution_identity:
-  name: "Maturion Bot"
-  secret_env_var: "MATURION_BOT_TOKEN"
-  safety:
-    never_push_main: true
-    write_via_pr_by_default: true
-```
-
-**Check in Phase 3 (QP and delivery artifact sweep)**:
-> FAIL-ONLY-ONCE A-024: For any PR touching `.github/agents/*.md` files:
-> Scan the diff for the pattern `secret: "` (YAML field named `secret` with a quoted value).
-> If found anywhere in an active agent contract file (not `_archive/`):
->   FAIL → Finding: "Agent contract contains prohibited `secret:` field — must use `secret_env_var:` instead."
->   Fix required: "Rename `secret:` to `secret_env_var:` in the affected agent contract file(s).
->   This prevents CI secret scanner false positives that block all PR gate checks."
-> If NOT found: PASS.
-
-**Check also applies to**:
-- PREHANDOVER proof YAML blocks (if they include agent contract excerpts)
-- Any governance artifact that embeds agent YAML
-
-**Status**: ACTIVE — enforced from session-042 (2026-03-03) onwards
-
----
-
-## Adding New Rules
-
-When a new governance failure pattern is identified during a session (learning_notes in session
-memory), IAA adds a new entry to this file following the format above. Each new rule:
-- Gets the next sequential ID (A-026 is the next available ID)
-- References the incident that triggered it
-- States the permanent rule precisely
-- Defines how the rule is checked in the phase steps
-
-All updates to this file must be committed as part of the session bundle for that invocation.
 
 ---
 
@@ -374,22 +201,88 @@ Specifically:
 > FAIL-ONLY-ONCE A-015: If PR is triggered (non-EXEMPT) and contains no PREHANDOVER proof:
 > CORE-013 → FAIL ("No PREHANDOVER proof or IAA token reference in PR artifacts")
 > CORE-015 → FAIL ("No session memory artifact in PR bundle")
-> CORE-016 → FAIL ("No PREHANDOVER proof on branch — IAA Agent Response (verbatim) cannot be verified")
-> Fix: Create PREHANDOVER proof with iaa_audit_token: PENDING, create session memory,
+> CORE-016 → FAIL ("No PREHANDOVER proof on branch — dedicated IAA token file cannot be verified")
+> Fix: Create PREHANDOVER proof with iaa_audit_token pre-populated to expected reference, create session memory,
 > commit both to branch, re-invoke IAA, then follow Post-ASSURANCE-TOKEN Ceremony.
 
 **Status**: ACTIVE — enforced every invocation
 
 ---
 
+### A-016 — Cross-PR IAA Token Reuse Is a Governance Breach
+
+**Triggered by**: session-023-20260301 — foreman-v2-agent session-076 cited
+`iaa_audit_token: IAA-session-022-20260301-PASS` (issued for `copilot/patch-proof-template-update` /
+pr #699 — Tier 2 knowledge patch) as the audit token for a completely different PR
+(Wave 12 deliverables on `copilot/draft-qa-verification-plan-wave-11` / PR #710).
+
+**Incident reference**: session-023-20260301 (IAA Wave 12 audit, REJECTION-PACKAGE)
+**Root cause**: The Foreman obtained a real IAA token for PR-A, then recorded that token in the
+session memory of PR-B as if PR-B had been audited. The token is genuine but the audit for PR-B
+was fabricated.
+
+**Permanent Rule**:
+For every triggered PR audit, when `iaa_audit_token` contains a real session token reference:
+1. Open the dedicated token file `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`
+2. Read the PR reference field
+3. If PR reference references a DIFFERENT branch, PR, or PR subject than the current audit target:
+   → FAIL (cross-PR token reuse = governance breach)
+4. Apply CORE-019 First Invocation Exception if token file does not yet exist.
+
+**Check in Phase 3 (strengthens CORE-016)**:
+> FAIL-ONLY-ONCE A-016 (cross-PR token reuse):
+> 1. If iaa_audit_token = IAA-session-NNN-YYYYMMDD-PASS, open that dedicated token file.
+> 2. Verify PR reference matches the current audit subject.
+> 3. If mismatch → FAIL. If token file does not exist AND this is NOT a first invocation → FAIL (phantom token).
+> 4. If match → PASS this sub-check.
+
+**Status**: ACTIVE — enforced from session-023 onwards
+
+---
+
+### A-017 — Session Memory Must Not Cite a REJECTION-PACKAGE Session as PASS
+
+**Triggered by**: session-024-20260301 — foreman-v2-agent session-076 session memory recorded
+`iaa_audit_token: IAA-session-023-20260301-PASS`. Session-023 issued REJECTION-PACKAGE with
+`token_reference: N/A`. The token `IAA-session-023-20260301-PASS` was never issued.
+
+**Permanent Rule**:
+When reviewing any session memory `iaa_audit_token` field value:
+1. If the format is `IAA-session-NNN-YYYYMMDD-PASS`:
+   a. Open the dedicated token file for session-NNN
+   b. Check verdict field. If verdict = REJECTION-PACKAGE → the token is non-existent. FAIL.
+   c. Finding: "Token references session-NNN which issued REJECTION-PACKAGE — no such PASS token was ever generated."
+   d. Fix: Foreman must update the session memory `iaa_audit_token` to the token issued by the most recent ASSURANCE-TOKEN invocation for this PR.
+
+**Check in Phase 3**:
+> FAIL-ONLY-ONCE A-017 (REJECTION-as-PASS citation):
+> 1. If session memory iaa_audit_token = IAA-session-NNN-YYYYMMDD-PASS, open dedicated token file for session-NNN.
+> 2. If verdict = REJECTION-PACKAGE → FAIL. Finding: "Session memory cites session-NNN which issued REJECTION-PACKAGE."
+> 3. A-016 (cross-PR check) applies independently.
+
+**Status**: ACTIVE — enforced from session-025 onwards
+
+---
+
+### A-018 — Post-Merge Retrospective Audit Findings Must Be Formally Recorded — No Informal Notes
+
+**Triggered by**: maturion-isms governance breach issue (PR #546 process violation) — session-002.
+
+**Permanent Rule**:
+When IAA issues a post-merge retrospective REJECTION-PACKAGE, the following must occur in the
+SAME session as the audit:
+1. CodexAdvisor must create a breach-registry.md entry for the violation.
+2. CodexAdvisor must add a FAIL-ONLY-ONCE rule addressing the root cause.
+3. IAA must flag the unresolved items in its session memory as requiring CodexAdvisor action.
+4. The breach is only marked CLOSED when CodexAdvisor's corrective artifacts are committed.
+
+**Status**: ACTIVE — enforced every post-merge retrospective audit
+
+---
+
 ### A-019 — Trigger Table Misapplication Is an IAA Bypass — ALL Triggering Categories Require IAA
 
 **Triggered by**: maturion-isms#711 — governance-liaison-isms session-027-20260301.
-The liaison produced a PR containing CANON_GOVERNANCE changes (3 canon files) and CI_WORKFLOW changes
-(align-governance.sh + ripple-integration.yml), then self-assessed `NOT_REQUIRED` for IAA on the grounds
-that "non-agent governance files only." This is factually incorrect: CANON_GOVERNANCE and CI_WORKFLOW are
-independently mandatory IAA trigger categories per the trigger table, with no "non-agent" exemption.
-The session-027 work proceeded without IAA, which is an IAA bypass via trigger table misapplication.
 
 **Permanent Rule**:
 IAA is mandatory for the following categories regardless of what other content is present:
@@ -399,22 +292,7 @@ IAA is mandatory for the following categories regardless of what other content i
 - AAWP_MAT: any AAWP or MAT deliverable
 
 The producing agent may NOT self-assess IAA as `NOT_REQUIRED` for any of these categories.
-Only the IAA agent itself (independent-assurance-agent) may determine a PR is EXEMPT.
-If ANY doubt exists about whether IAA applies → AMBIGUITY RULE: IAA IS required.
-
-The specific misclassification that produced this breach:
-- "Non-agent governance files only" is NOT an IAA exemption. Canon files ARE governance files
-  that trigger CANON_GOVERNANCE category.
-- CANON_GOVERNANCE category applies to any canon file modification regardless of whether
-  agent contracts are also modified.
-
-**Check in Phase 3**:
-> FAIL-ONLY-ONCE A-019: If PR contains any change to governance/canon/ OR .github/workflows/ OR
-> .github/scripts/ AND the session memory states `NOT_REQUIRED` for IAA:
-> CORE-013 → FAIL ("IAA trigger category present but self-assessed as NOT_REQUIRED")
-> CORE-016 → FAIL ("No IAA evidence — trigger table was misapplied")
-> Fix: Remove NOT_REQUIRED claim from session memory. Create PREHANDOVER proof.
-> Invoke IAA via the independent-assurance-agent tool. Include verbatim IAA output in proof.
+Only the IAA agent itself may determine a PR is EXEMPT.
 
 **Status**: ACTIVE — enforced every invocation
 
@@ -423,118 +301,61 @@ The specific misclassification that produced this breach:
 ### A-020 — PREHANDOVER Template Must Be Kept Current With Overlay Requirements
 
 **Triggered by**: session-088-20260302 — foreman-v2-agent session-089 Wave 13 REJECTION-PACKAGE.
-The Foreman's PREHANDOVER template (v1.1.0, last updated 2026-03-01) was used to generate the
-session-089 PREHANDOVER proof. The overlay v2.1.0 (deployed 2026-03-02) added new required sections
-(OVL-AM-004/005/006, OVL-CI-005/006) and CORE-018 added the `## IAA Agent Response (verbatim)` section
-requirement. The template was not updated, so the generated PREHANDOVER proof was missing 6 required
-sections. This produced a REJECTION-PACKAGE despite excellent substantive implementation work.
-
-**Root cause**: The PREHANDOVER template is maintained by the Foreman and was last updated before
-the overlay v2.1.0 additions. There is no check that enforces template-overlay synchronization.
-Every AAWP_MAT or CI_WORKFLOW PR will continue to produce REJECTION-PACKAGEs until the template
-is updated to include the new required sections.
 
 **Permanent Rule**:
 When IAA identifies that a REJECTION-PACKAGE was produced because the PREHANDOVER proof is missing
-sections that are required by the CURRENT overlay version (not missing due to agent negligence, but
-due to template not being updated):
+sections required by the CURRENT overlay version:
+1. Issue the REJECTION-PACKAGE normally.
+2. In session learning notes, flag: "Foreman PREHANDOVER template is stale — must be updated."
+3. The Foreman must update the template before the next wave's PREHANDOVER is generated.
 
-1. Issue the REJECTION-PACKAGE normally — the content failures are real and must be fixed.
-2. In the session learning notes, EXPLICITLY flag: "Foreman PREHANDOVER template is stale — must
-   be updated to v1.2.0+ before next wave to include [list missing sections]."
-3. Flag in IAA session memory under `fail_only_once_updates` that A-020 was applied.
-4. The Foreman (or CodexAdvisor) must update the PREHANDOVER template as a standalone PR before
-   the next wave's PREHANDOVER is generated. This prevents cascading REJECTION-PACKAGEs.
-
-**Required template sections as of overlay v2.2.0** (must be present in any PREHANDOVER proof
-for AAWP_MAT or CI_WORKFLOW category PRs):
-- `## IAA Agent Response (verbatim)` — CORE-016/018
+**Required template sections as of overlay v3.0.0** (must be present in any PREHANDOVER proof):
+- `iaa_audit_token` field pre-populated with expected reference (§4.3b architecture)
 - `## Architecture Ripple/Impact Assessment` — OVL-AM-004
 - `## Wave Gap Register` — OVL-AM-005
 - `## Environment Parity` — OVL-AM-006 and OVL-CI-006
 - `## CI Check Run Evidence` — OVL-CI-005 (only for CI_WORKFLOW PRs)
-
-**Check in Phase 4 learning notes (post-REJECTION-PACKAGE)**:
-> FAIL-ONLY-ONCE A-020: After issuing a REJECTION-PACKAGE for missing PREHANDOVER sections,
-> check if the failures are due to template staleness (generated from outdated template) rather
-> than agent negligence. If so, add explicit learning note: "Foreman template stale — must be
-> updated before next wave." Add to session memory learning_notes. Flag in parking station.
+- **Note**: `## IAA Agent Response (verbatim)` is NO LONGER a required PREHANDOVER section. It now lives in the dedicated token file.
 
 **Status**: ACTIVE — enforced from session-088 onwards
-**Template gap confirmed**: As of session-095 (2026-03-02), `prehandover-template.md` STILL lacks `## Environment Parity` section — OVL-CI-006 continues to produce REJECTION-PACKAGEs on PRs that use the unupdated template (PR #789 sessions 088–093, PR #814 session-095). Foreman must update `prehandover-template.md` to add this section before next CI_WORKFLOW or AAWP_MAT wave. A-020 REMAINS OPEN until template is updated.
 
 ---
 
 ### A-021 — Commit and Push Before IAA Invocation (CI Run Evidence)
 
-**Triggered by**: maturion-isms PR #789 sessions 090 and 091 — two consecutive REJECTION-PACKAGEs
-for OVL-CI-005 where the fix existed in the local working tree but was NOT committed or pushed.
-
-**Incident**: In sessions 090 and 091, the Foreman prepared the correct CI Run Evidence section
-in the PREHANDOVER proof (with run 22574538846, deploy-mat-vercel.yml). Both times, the fix
-existed only in the working tree — it was never committed and pushed to the PR branch. IAA
-independently verifies the committed artifact (via GitHub API), not the local working tree.
-The CORRECT content in the working tree failed IAA both times because the PR branch didn't
-contain it. Fixed at d27f876 when the Foreman finally committed and pushed.
+**Triggered by**: maturion-isms PR #789 sessions 090 and 091.
 
 **Permanent Rule**:
-After preparing ANY change to a PREHANDOVER proof or governance artifact that is required for
-an IAA check, the producing agent MUST execute `git commit && git push` BEFORE invoking IAA.
+After preparing ANY change to a PREHANDOVER proof or governance artifact required for an IAA check,
+the producing agent MUST execute `git commit && git push` BEFORE invoking IAA.
 A working-tree-only or staging-area-only fix is NOT a committed fix and WILL fail IAA audit.
-Pre-handover checklist MUST include: "Run `git status` — confirm no uncommitted changes to
-PREHANDOVER or governance artifacts. If any appear in 'Changes not staged for commit' or
-'Changes to be committed', STOP — commit and push before invoking IAA."
 
 **Check in Phase 1 (pre-invocation note for Foreman)**:
-> FAIL-ONLY-ONCE A-021: If the claiming agent says "fix has been applied," IAA must verify
-> the committed artifact — not the working tree. GitHub API `get_file_contents` on the PR branch
-> ref is the authoritative check. Do not accept claims about working-tree state.
+> FAIL-ONLY-ONCE A-021: IAA must verify the committed artifact — not the working tree.
+> GitHub API `get_file_contents` on the PR branch ref is the authoritative check.
 
-**Status**: ACTIVE — CANDIDATE from sessions 090/091, codified from session-092
+**Status**: ACTIVE — codified from session-092
 
 ---
 
 ### A-022 — Re-Evaluate Trigger Categories on Every IAA Invocation
 
-**Triggered by**: maturion-isms PR #789 sessions 090 and 091 — KNOWLEDGE_GOVERNANCE trigger
-missed despite `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` being modified in
-commit dfdc6ba (added between session-088 and sessions 090/091). Sessions 090 and 091 carried
-forward the session-088 classification (CI_WORKFLOW + AAWP_MAT) without re-reading the trigger
-table against the full commit history.
-
-**Incident**: dfdc6ba was committed to PR #789 AFTER session-088. When session-090 ran, dfdc6ba
-was in scope and modified `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` — a file
-matching the KNOWLEDGE_GOVERNANCE trigger pattern `.agent-workspace/*/knowledge/*`. Sessions 090
-and 091 classified the PR as MIXED (CI_WORKFLOW + AAWP_MAT) without applying the
-KNOWLEDGE_GOVERNANCE overlay. Session-092 correctly identified and applied the overlay,
-discovering OVL-KG-004 (stale index.md) as a new failure.
+**Triggered by**: maturion-isms PR #789 sessions 090 and 091.
 
 **Permanent Rule**:
-On EVERY IAA invocation, IAA MUST re-evaluate the trigger table from Step 1 of the decision flow
-against ALL commits in the PR, not just the commits present in the prior invocation. A multi-
-invocation PR may accumulate new commits between invocations that introduce new trigger categories.
-Carrying forward a prior session's category classification without re-verification is a governance gap.
-This rule is especially critical for PRs where remediation commits are added between IAA invocations
-(e.g., the Foreman adds a governance learning commit between session-088 and session-090).
+On EVERY IAA invocation, IAA MUST re-evaluate the trigger table against ALL commits in the PR,
+not just the commits present in the prior invocation.
 
-**Check in Phase 2 (category classification)**:
-> FAIL-ONLY-ONCE A-022: Before classifying PR category, list all commits in the PR and check
-> each against the trigger table. Do not carry forward prior session's category classification.
-> Re-read the trigger table decision flow (steps 1-7) every invocation against the full commit
-> history. New commits = new trigger possibilities.
-
-**Status**: ACTIVE — CANDIDATE from session-092
+**Status**: ACTIVE — from session-092
 
 ---
 
 ### A-023 — OVL-AC-012 Ripple Assessment Is a Standing PREHANDOVER Requirement
 
-**Triggered by**: Recurring pattern across sessions 084, 086, 088, 089, 097, 101 (2026-03-02–03) — OVL-AC-012 (ripple/cross-agent assessment absent) has failed in AGENT_CONTRACT and AAWP_MAT audits repeatedly.
-
-**Incident reference**: session-101-20260303 (learning integration trigger).
+**Triggered by**: Recurring pattern across sessions 084, 086, 088, 089, 097, 101.
 
 **Permanent Rule**:
-For every AGENT_CONTRACT PR, the PREHANDOVER proof MUST contain an explicit `## Ripple/Cross-Agent Assessment` section with either (a) a list of all affected agents with ripple status, or (b) an explicit "No ripple required" statement with specific justification per agent class.
+For every AGENT_CONTRACT PR, the PREHANDOVER proof MUST contain an explicit `## Ripple/Cross-Agent Assessment` section.
 
 **Check in Phase 3 (OVL-AC-012 enforcement)**:
 > FAIL-ONLY-ONCE A-023: Search PREHANDOVER proof for ripple/cross-agent assessment section.
@@ -544,58 +365,41 @@ For every AGENT_CONTRACT PR, the PREHANDOVER proof MUST contain an explicit `## 
 
 ---
 
-### A-025 — Ceremony Artifacts Must Use PENDING Until Post-ASSURANCE-TOKEN Ceremony — No Pre-Fill of Anticipated -PASS Tokens
+### A-024 — Secret Field Naming in Agent Contracts Must Use `secret_env_var:` — Not `secret:`
 
-**Triggered by**: maturion-isms session-098 (2026-03-02) — PR #816 re-invocation after session-097 REJECTION-PACKAGE.
-During remediation, the Foreman's session-092 memory and the PREHANDOVER proof checklist were populated with
-`iaa_audit_token: IAA-session-097-20260302-PASS` and `result: ASSURANCE-TOKEN IAA-session-097-20260302-PASS`
-before session-097 had issued any ASSURANCE-TOKEN. Since session-097 actually issued a REJECTION-PACKAGE, this
-constituted an A-017 breach (citing REJECTION-PACKAGE as PASS) and a CORE-007 violation (incorrect/fabricated content).
-The PREHANDOVER template anti-misuse comment explicitly warned "Never pre-fill '-PASS'" but was not followed.
-
-**Incident**: Two PR artifacts (PREHANDOVER proof checklist line 111 and foreman session-092 memory) pre-filled
-anticipated ASSURANCE-TOKEN values that referenced a session whose actual verdict was REJECTION-PACKAGE.
-This caused a second REJECTION-PACKAGE (session-098) for a PR whose substantive content was correct.
+**Triggered by**: maturion-isms feature request (CS2 — 2026-03-03).
 
 **Permanent Rule**:
-Ceremony artifacts (`PREHANDOVER-*.md` and `session-NNN-*.md`) must be committed with:
-- `iaa_audit_token: PENDING` in all relevant fields
-- Delegation log `result:` field: `[not yet issued — awaiting IAA session-NNN]` or `REJECTION-PACKAGE (session-NNN) — re-invoked`
-- PREHANDOVER checklist `IAA audit token recorded` item: `- [ ] IAA audit token recorded: [PENDING — awaiting IAA session-NNN verdict]` (UNCHECKED)
+All agent contract files MUST use `secret_env_var:` — never `secret:` — in `governance.execution_identity` blocks.
 
-Pre-filling any field with an anticipated `-PASS` token value before the ASSURANCE-TOKEN is actually received constitutes:
-1. CORE-007 violation if the field is incorrect (fabricated content)
-2. A-017 violation if the pre-filled token references a session that actually issued REJECTION-PACKAGE
+**Status**: ACTIVE — enforced from session-042 (2026-03-03) onwards
 
-The Post-ASSURANCE-TOKEN ceremony (copying verbatim IAA output, updating token field, committing) is the ONLY
-authorised mechanism for populating ceremony artifact token fields with non-PENDING values.
+---
 
-**Check in Phase 3 (CORE-007 and CORE-019)**:
-> FAIL-ONLY-ONCE A-025: For every `iaa_audit_token` field found in any PR artifact with a non-PENDING value,
-> run CORE-019 cross-verification. Also check PREHANDOVER checklist items — any checked `[x]` IAA token item
-> must reference an ASSURANCE-TOKEN session (not REJECTION-PACKAGE). If the iaa_audit_token field is PENDING
-> but any checklist item or prose in the same file pre-fills a -PASS token → CORE-007 FAIL.
+### A-025 — ~~Ceremony Artifacts Must Use PENDING~~ — SUPERSEDED BY A-029
 
-**Status**: ACTIVE — from session-098 (2026-03-02); renumbered A-025 (conflict resolution 2026-03-03)
+**Status**: ⚠️ SUPERSEDED by A-029 (effective 2026-03-04) for the `iaa_audit_token` field in PREHANDOVER proofs.
+
+**What A-025 said**: PREHANDOVER proof `iaa_audit_token` must be committed as `PENDING` and updated only after receiving ASSURANCE-TOKEN.
+
+**Why it is superseded**: A-029 (§4.3b architecture) makes the PREHANDOVER proof read-only post-commit. PENDING can no longer be the pre-commit value because the proof cannot be edited after commit. Instead, the expected reference format is pre-populated at commit time.
+
+**A-025 still applies to**:
+- Session memory `iaa_audit_token` fields (NOT governed by §4.3b immutability)
+- Delegation log `result:` fields
+- PREHANDOVER checklist items EXCEPT the `iaa_audit_token` field itself
+
+**For PREHANDOVER proof `iaa_audit_token` specifically**: Use A-029.
 
 ---
 
 ### A-026 — SCOPE_DECLARATION.md Must Be Updated to Exactly Match PR Diff Before IAA Invocation
 
-**Trigger**: IAA session-116 (2026-03-03) — Wave 13 Addendum B+C re-invocation
-**Root Cause**: SCOPE_DECLARATION.md was not updated for the PR branch. It retained Wave 6 QA remediation content (5 old files declared). Actual PR diff contained 14 files. `validate-scope-to-diff.sh` (BL-027 exact set comparison) fails when SCOPE_DECLARATION.md is stale. The PREHANDOVER §4.3 self-report inaccurately stated PASS.
+**Trigger**: IAA session-116 (2026-03-03)
 
-**Rule**: SCOPE_DECLARATION.md must be updated and committed on every PR branch to exactly match the output of `git diff --name-only origin/main...HEAD` before IAA is invoked. A SCOPE_DECLARATION.md that retains content from a prior session, prior PR, or is otherwise not current with the active diff constitutes a `validate-scope-to-diff.sh` (BL-027) failure and is an automatic REJECTION-PACKAGE at merge gate parity.
+**Rule**: SCOPE_DECLARATION.md must be updated and committed on every PR branch to exactly match `git diff --name-only origin/main...HEAD` before IAA is invoked.
 
-**IAA Enforcement**: During §4.3 Merge Gate Parity Check, run `validate-scope-to-diff.sh` and inspect exit code. Exit code 1 = REJECTION-PACKAGE citing merge gate parity failure. Do not accept the PREHANDOVER §4.3 self-report at face value — run the script.
-
-**Fix Procedure**:
-1. Run `git diff --name-only origin/main...HEAD | sort` to get the exact file list
-2. Update `SCOPE_DECLARATION.md` — replace the file list section with all files from step 1
-3. Commit and push the updated `SCOPE_DECLARATION.md`
-4. Re-invoke IAA
-
-**Applies To**: All PRs with SCOPE_DECLARATION.md present; all PRs where `validate-scope-to-diff.sh` is a CI gate check
+**IAA Enforcement**: During §4.3 Merge Gate Parity Check, run `validate-scope-to-diff.sh` and inspect exit code. Exit code 1 = REJECTION-PACKAGE.
 
 **Status**: ACTIVE — from session-116 (2026-03-03)
 
@@ -603,18 +407,14 @@ authorised mechanism for populating ceremony artifact token fields with non-PEND
 
 ### A-027 — Third-Consecutive A-021 Failure = Systemic Workflow Gap — Pre-IAA Commit Gate Required
 
-**Trigger**: IAA session-119 (2026-03-03) — Wave 14 Addendum A third re-invocation attempt (sessions 118 and 119 both failed A-021 on same branch copilot/fix-schema-mapping-issues)
-**Root Cause**: When A-021 (commit before invoke) fires three or more times consecutively on the same PR/branch, the root cause is no longer individual oversight but a systemic gap in the producing agent's pre-IAA workflow. The PREHANDOVER proof is written to disk, the implementation commit is made, but the governance artifact commit (PREHANDOVER + session memory + governance fixes) is deferred until after IAA responds — which is the precise anti-pattern A-021 was designed to prevent.
+**Trigger**: IAA session-119 (2026-03-03)
 
 **Permanent Rule**:
-When A-021 fires on a PR for the third time, IAA must cite this rule in the REJECTION-PACKAGE and record the systemic gap in learning notes. The producing agent (foreman) must add a "Pre-IAA Commit Gate" section to the PREHANDOVER template requiring explicit evidence that:
-1. `git status --short | grep -E "^\?\?"` returns no untracked governance files before IAA invocation
-2. `git log --oneline -1` output is pasted (showing governance files are in the latest commit)
-3. SCOPE_DECLARATION matches the committed diff (A-026 self-check)
-
-Any PREHANDOVER proof that cannot produce these three evidence snippets is self-disqualifying before IAA is even invoked.
-
-**IAA Enforcement**: On every re-invocation, run `git status --short` and check for `??` on PREHANDOVER and session memory files. If `??` is found, cite A-021 and A-027 together.
+When A-021 fires on a PR for the third time, IAA must cite this rule in the REJECTION-PACKAGE.
+The producing agent must add a "Pre-IAA Commit Gate" section requiring explicit evidence of:
+1. `git status --short` shows no untracked governance files
+2. `git log --oneline -1` shows governance files in latest commit
+3. SCOPE_DECLARATION matches committed diff
 
 **Status**: ACTIVE — from session-119 (2026-03-03)
 
@@ -622,29 +422,82 @@ Any PREHANDOVER proof that cannot produce these three evidence snippets is self-
 
 ### A-028 — SCOPE_DECLARATION Format Compliance — List Format Required, Prior-Wave Entries Must Be Trimmed
 
-**Trigger**: IAA session-120 (2026-03-03) — Wave 14 Addendum A fourth invocation attempt
-**Root Cause**: SCOPE_DECLARATION.md Wave 14 section used table format (`| \`file\` | type | incident |`) instead of list format (`- \`file\` - description`). The BL-027 `validate-scope-to-diff.sh` script parses ONLY list-format declarations using regex `^\s*-\s+\`[^`]+\`\s+-\s+`. Table-format declarations are completely invisible to the script, yielding 0 declared files from the entire Wave 14 section. Additionally, prior-wave list-format entries (from previous PRs already merged to `origin/main`) remain in SCOPE_DECLARATION — they appear as "EXTRA" declarations in BL-027's set comparison since they are not in the current PR's diff.
+**Trigger**: IAA session-120 (2026-03-03)
 
 **Permanent Rule**:
-1. SCOPE_DECLARATION.md file declarations MUST use list format only: `- \`path/to/file\` - one-line description`. Never use table format for file declarations in SCOPE_DECLARATION.
-2. SCOPE_DECLARATION.md must be trimmed on each PR branch to contain ONLY the files changed in that PR's diff (`git diff --name-only origin/main...HEAD`). Prior-wave entries (already merged to origin/main) must be removed.
-3. ALL files in the PR diff must be declared — including IAA workspace files, parking-station files, and any agent session memory files committed as evidence artifacts.
-4. Reference format template: the Wave 13 Addendum B+C section (sessions 095/116) as the canonical format example — it previously passed BL-027.
-
-**Self-Check Before IAA Invocation**:
-```bash
-# Step 1: Get exact PR diff file count
-git diff --name-only origin/main...HEAD | wc -l
-
-# Step 2: Get list-format declaration count from SCOPE_DECLARATION  
-grep -E '^\s*-\s+`[^`]+`\s+-\s+' SCOPE_DECLARATION.md | wc -l
-
-# These counts MUST match. If they don't: fix SCOPE_DECLARATION before invoking IAA.
-```
-
-**IAA Enforcement**: During §4.3, manually simulate `validate-scope-to-diff.sh` by running both commands above and confirming equal counts. If the script is unavailable (shallow clone), the manual count comparison is the equivalent check.
+1. SCOPE_DECLARATION.md file declarations MUST use list format: `- \`path/to/file\` - one-line description`
+2. Must be trimmed to contain ONLY files in current PR diff
+3. ALL PR diff files must be declared
 
 **Status**: ACTIVE — from session-120 (2026-03-03)
+
+---
+
+### A-029 — Artifact Immutability §4.3b: PREHANDOVER Proof is Read-Only Post-Commit
+
+**Effective**: 2026-03-04 | **Authority**: CS2 (PR 1298 — `AGENT_HANDOVER_AUTOMATION.md` v1.1.3 §4.3b)
+**Supersedes**: A-025 (PENDING requirement) for the `iaa_audit_token` field in PREHANDOVER proofs.
+
+**Rule**: Per `AGENT_HANDOVER_AUTOMATION.md` v1.1.3 §4.3b, the PREHANDOVER proof is **read-only after initial commit**:
+
+1. The `iaa_audit_token` field in the PREHANDOVER proof MUST be pre-populated with the expected reference at initial commit time: `IAA-session-NNN-waveY-YYYYMMDD-PASS`.
+2. After the IAA issues its verdict, the IAA writes its token to a **new dedicated file** only: `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`.
+3. No agent (including the IAA) may edit the PREHANDOVER proof post-commit to update `iaa_audit_token`.
+4. A-025's requirement to commit with `iaa_audit_token: PENDING` is superseded. PENDING is no longer the correct pre-commit value for PREHANDOVER proofs.
+
+**IAA check (Phase 3)**:
+> A-029: For any `iaa_audit_token` field in a committed PREHANDOVER proof:
+> - If value is `PENDING` → FLAG as A-029 violation (old pattern, superseded by §4.3b). Flag only — do not hard-fail on first invocation if this is clearly a legacy proof from before 2026-03-04.
+> - If value is expected reference format (`IAA-session-NNN-waveY-YYYYMMDD-PASS`) → check that the dedicated token file exists at `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md` OR apply CORE-019 First Invocation Exception.
+> - If dedicated token file is absent on a re-invocation (not first invocation) → FAIL (INC-PREHANDOVER-MUTATE-001).
+
+**Circular Dependency Resolution**:
+A-029 and CORE-019 previously created a circular dependency: A-029 requires the expected token reference to be pre-populated, but CORE-019 required the token file to exist, which it cannot on the first invocation. This is resolved by the **CORE-019 First Invocation Exception** (added in iaa-core-invariants-checklist.md v2.7.0): on the first invocation for session-NNN, the absence of the token file is expected and not a failure. The file is created by THIS invocation's Step 4.3 output.
+
+**Violation class**: INC-PREHANDOVER-MUTATE-001
+
+**Status**: ACTIVE — from 2026-03-04 (PR 1298 / AGENT_HANDOVER_AUTOMATION.md v1.1.3 §4.3b)
+
+---
+
+### A-029b — Carry-Forward Mandate: Leftovers from Prior Jobs Block Token Until Resolved
+
+**Triggered by**: maturion-isms PR #892 IAA session-097-20260304 — FFA-05 CFM issued for
+two pre-existing CI YAML failures.
+
+**Canon references**:
+- `INDEPENDENT_ASSURANCE_AGENT_CANON.md` §Intelligence-Led Reasoning — "Carry-forward authority"
+- `STOP_AND_FIX_DOCTRINE.md` §3.2 — "If you see it, you own it."
+- `ZERO_TOLERANCE_FINDING_PROTOCOL.md` §3
+- `OPOJD_COMPLETE_JOB_HANDOVER_DOCTRINE.md` §2.4
+
+**Permanent Rule**:
+When the IAA identifies ANY of the following originating in a prior job/PR (not the current PR):
+- CI failures (failing workflows, YAML parse errors)
+- Broken wires (missing integrations, schema gaps)
+- Open governance violations not yet remediated
+- Pre-existing test failures in scope of the working area
+
+The IAA MUST:
+1. Issue a **Carry-Forward Mandate (CFM)** as FFA-05 in the REJECTION-PACKAGE.
+2. Require one of: (a) inline fix in current PR, (b) tracked blocking issue referenced in PREHANDOVER, or (c) CS2 written exception.
+3. If none present → ASSURANCE-TOKEN BLOCKED.
+
+**Prohibited**: "pre-existing", "not introduced by this PR", "out of scope", "separate ticket" — all prohibited per STOP_AND_FIX_DOCTRINE.md §3.5.
+
+**Status**: ACTIVE — from session-097 (2026-03-04)
+
+---
+
+## Adding New Rules
+
+When a new governance failure pattern is identified during a session, IAA adds a new entry following the format above. Each new rule:
+- Gets the next sequential ID (A-030 is the next available ID)
+- References the incident that triggered it
+- States the permanent rule precisely
+- Defines how the rule is checked in the phase steps
+
+All updates to this file must be committed as part of the session bundle for that invocation.
 
 ---
 
@@ -655,42 +508,18 @@ grep -E '^\s*-\s+`[^`]+`\s+-\s+' SCOPE_DECLARATION.md | wc -l
 | 1.0.0 | 2026-02-25 | Initial registry with A-001, A-002, A-003 |
 | 1.1.0 | 2026-02-27 | A-004 (bootstrap directive), A-005 (agent contract immutability) added |
 | 1.2.0 | 2026-02-28 | A-006 (PHASE_A_ADVISORY fabrication), A-015 (Tier 2 patches require ceremony), A-016 (cross-PR token reuse), A-017 (REJECTION-as-PASS citation) added |
-| 1.3.0 | 2026-03-02 | A-018 renumbered from duplicate A-004 (post-merge retrospective); A-019 renumbered from duplicate A-016 (trigger table misapplication); duplicate rule ID deduplication patch (maturion-isms#IAA-TIER2) |
-| 1.4.0 | 2026-03-02 | A-020 (PREHANDOVER template staleness — template must be kept current with overlay requirements) added from session-088 Wave 13 REJECTION-PACKAGE learning |
-| 1.5.0 | 2026-03-02 | A-021 (commit and push before IAA invocation — working-tree fix is not a committed fix) codified from sessions 090/091 CANDIDATE; A-022 (re-evaluate trigger categories on every invocation — do not carry forward prior session classification) added from session-092 OVL-KG-004 finding |
-| 1.6.0 | 2026-03-03 | A-023 (OVL-AC-012 ripple assessment is a standing PREHANDOVER requirement for all AGENT_CONTRACT PRs) codified from recurring pattern sessions 084–101 |
-| 1.7.0 | 2026-03-03 | A-024 (secret field naming — `secret:` prohibited in agent contracts; must use `secret_env_var:`) added from CI scanner failures (job 65529138120) |
-| 1.8.0 | 2026-03-03 | Conflict resolution: A-023 collision fixed — PR #816 rule renumbered to A-025 (ceremony PENDING rule); A-023 now = OVL-AC-012 ripple assessment; A-024 = secret field naming; A-025 = ceremony PENDING pre-fill prohibition |
-| 1.9.0 | 2026-03-03 | A-026 (SCOPE_DECLARATION.md must match PR diff exactly before IAA invocation — stale declaration = BL-027 merge gate parity failure) added from session-116 (Wave 13 Addendum B+C re-invocation) |
-| 2.0.0 | 2026-03-03 | A-027 (third-consecutive A-021 failure = systemic workflow gap — Pre-IAA Commit Gate required) added from session-119 (Wave 14 Addendum A — third A-021 failure on same branch); header version corrected from 1.8.0 to 2.0.0 (header/index discrepancy resolved) |
-| 2.1.0 | 2026-03-03 | A-028 (SCOPE_DECLARATION format compliance — list format required, prior-wave entries must be trimmed) added from session-120 (Wave 14 Addendum A — fourth invocation; BL-027 fails due to table format and phantom prior-wave entries) |
-| 2.2.0 | 2026-03-04 | A-029 ARTIFACT-IMMUTABILITY-4.3b locked in; supersedes A-025 PENDING requirement per AGENT_HANDOVER_AUTOMATION.md v1.1.3 §4.3b (PR 1298) |
-
----
-
-### A-029 — Artifact Immutability §4.3b: PREHANDOVER Proof is Read-Only Post-Commit
-
-**Effective**: 2026-03-04 | **Authority**: CS2 (PR 1298 — `AGENT_HANDOVER_AUTOMATION.md` v1.1.3 §4.3b)
-**Supersedes**: A-025 (PENDING requirement) for the `iaa_audit_token` field in PREHANDOVER proofs.
-
-**Rule**: Per `AGENT_HANDOVER_AUTOMATION.md` v1.1.3 §4.3b, the PREHANDOVER proof is **read-only after initial commit**. The following applies to all agent classes:
-
-1. The `iaa_audit_token` field in the PREHANDOVER proof MUST be pre-populated with the expected reference at initial commit time: `IAA-session-NNN-waveY-YYYYMMDD-PASS`.
-2. After the IAA issues its verdict, the IAA writes its token to a **new dedicated file** only: `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`.
-3. No agent (including the IAA) may edit the PREHANDOVER proof post-commit to update `iaa_audit_token`.
-4. A-025's requirement to commit with `iaa_audit_token: PENDING` is superseded. PENDING is no longer the correct pre-commit value.
-
-**IAA check (Phase 3)**:
-> A-029: For any `iaa_audit_token` field in a committed PREHANDOVER proof:
-> - If value is `PENDING` → FLAG as A-029 violation (old pattern, superseded by §4.3b).
-> - If value is expected reference format (`IAA-session-NNN-waveY-YYYYMMDD-PASS`) → check that the dedicated token file exists at `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`.
-> - If dedicated token file is absent → FAIL (INC-PREHANDOVER-MUTATE-001).
-
-**Violation class**: INC-PREHANDOVER-MUTATE-001
-
-**Status**: ACTIVE — from 2026-03-04 (PR 1298 / AGENT_HANDOVER_AUTOMATION.md v1.1.3 §4.3b)
+| 1.3.0 | 2026-03-02 | A-018 renumbered from duplicate A-004; A-019 renumbered from duplicate A-016; duplicate rule ID deduplication |
+| 1.4.0 | 2026-03-02 | A-020 (PREHANDOVER template staleness) added from session-088 |
+| 1.5.0 | 2026-03-02 | A-021 (commit before invoke), A-022 (re-evaluate trigger categories) added |
+| 1.6.0 | 2026-03-03 | A-023 (OVL-AC-012 ripple assessment) codified |
+| 1.7.0 | 2026-03-03 | A-024 (secret field naming) added |
+| 1.8.0 | 2026-03-03 | A-025 (ceremony PENDING rule), A-023/024/025 conflict resolution |
+| 1.9.0 | 2026-03-03 | A-026 (SCOPE_DECLARATION must match PR diff) added |
+| 2.0.0 | 2026-03-03 | A-027 (third A-021 = systemic gap) added |
+| 2.1.0 | 2026-03-03 | A-028 (SCOPE_DECLARATION format compliance) added |
+| 2.2.0 | 2026-03-04 | A-029 ARTIFACT-IMMUTABILITY-4.3b added; supersedes A-025 PENDING requirement |
+| 2.3.0 | 2026-03-04 | **BREAKING FIX**: Active Override block added at top — A-029 supersedes A-025 clearly stated. A-025 marked SUPERSEDED with residual scope. A-029 updated with Circular Dependency Resolution note explaining CORE-019 First Invocation Exception. A-029b (Carry-Forward Mandate from session-097) promoted to named rule. A-006 updated to reference dedicated token file instead of verbatim section. A-015 fix procedure updated. Next sequential ID updated to A-030. |
 
 ---
 
 **Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
-
