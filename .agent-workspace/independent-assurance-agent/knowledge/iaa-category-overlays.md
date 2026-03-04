@@ -1,9 +1,9 @@
 # IAA Category Overlays
 
 **Agent**: independent-assurance-agent
-**Version**: 2.2.0
+**Version**: 2.3.0
 **Status**: ACTIVE
-**Last Updated**: 2026-03-02
+**Last Updated**: 2026-03-03
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -82,6 +82,7 @@ Applied when PR category is `AAWP_MAT`.
 | OVL-AM-005 | Wave gap register trace | PREHANDOVER proof or session memory must include a link to the gap register entry for this wave's work, or explicitly state "no gap register entry applicable" with a brief justification. A blank or absent gap register reference = REJECTION-PACKAGE. |
 | OVL-AM-006 | Environment parity validation | PREHANDOVER must explicitly state whether the change affects dev, staging, and production environments differently. Must identify any environment with different post-deployment behavior. An explicit "no environment impact" statement is acceptable when justified. Absent = REJECTION-PACKAGE. |
 | OVL-AM-007 | Session memory learning note coverage | Session memory must contain at least one concrete, non-blank learning note in the `learning_notes` or `suggestions` field. If a repeat failure pattern is identified (same failure as any prior session), the session memory must explicitly reference the prior session ID(s) and flag for root-cause analysis. A blank or placeholder learning note = REJECTION-PACKAGE. |
+| OVL-AM-008 | End-to-end wiring verification | For any PR touching schema migrations, API endpoint definitions, Supabase hooks, or frontend data hooks: the PREHANDOVER must include an **End-to-End Wiring Trace** section containing ALL of the following: (a) **Writers** — which runtime clients write to each new/modified table or endpoint (frontend anon key, AI Gateway service role, edge function, etc.); (b) **Readers** — which hooks or components read from it and what columns/fields they expect; (c) **Shape compatibility** — confirmation that writer payload fields map correctly to table columns or API response fields consumed by readers (field names, types, nullable constraints); (d) **Auth/RLS model** — explicit statement of which Supabase key each writer uses (anon key = subject to RLS, service role = bypasses RLS) and whether the RLS policy is consistent with that access pattern; (e) **FK/dependency chain** — confirmation that all foreign key references (e.g. `audit_id → audits.id`) will resolve correctly given the current migration order and production data state. An explicit "not applicable" is acceptable ONLY for PRs that contain no schema, API, or hook changes — and must be stated with justification. Absent, blank, or boilerplate wiring trace = REJECTION-PACKAGE. |
 
 ---
 
@@ -119,6 +120,7 @@ Applied when PR category is `KNOWLEDGE_GOVERNANCE`.
 | 2.0.0 | 2026-02-28 | Fully populated from INDEPENDENT_ASSURANCE_AGENT_CANON.md; OVL-CI-004 added (workflow policy correctness check from IAA session-017 suggestion); AGENT_INTEGRITY overlay added; STUB status removed |
 | 2.1.0 | 2026-03-02 | AGENT_CONTRACT: OVL-AC-011 (drift check), OVL-AC-012 (ripple assessment) added; CANON_GOVERNANCE: OVL-CG-005 (drift/integrity hash), OVL-CG-006 (CANON_INVENTORY update confirmed) added; CI_WORKFLOW: OVL-CI-005 (CI check run result), OVL-CI-006 (environment parity) added; AAWP_MAT: OVL-AM-004 (architecture ripple/impact plan), OVL-AM-005 (wave gap trace), OVL-AM-006 (environment parity), OVL-AM-007 (session memory learning notes) added (maturion-isms#IAA-TIER2 Wave 13+) |
 | 2.2.0 | 2026-03-02 | KNOWLEDGE_GOVERNANCE overlay added (OVL-KG-001 through OVL-KG-005) — formalises Tier 2 knowledge patch audit requirements (maturion-isms#IAA-TIER2) |
+| 2.3.0 | 2026-03-03 | AAWP_MAT: OVL-AM-008 (end-to-end wiring verification) added — requires Writers/Readers/Shape/Auth/FK trace in PREHANDOVER for any schema, API, or hook-touching PR. Addresses IAA substantive gap identified by CS2 on 2026-03-03 (PRs #865, #868). |
 
 ---
 

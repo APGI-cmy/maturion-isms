@@ -16,7 +16,7 @@
 | `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 2.1.0 | PRESENT — Rules A-001 through A-028 active (A-028: SCOPE_DECLARATION list format required, prior-wave entries must be trimmed; A-027: third-consecutive A-021 failure = systemic workflow gap; A-026: SCOPE_DECLARATION.md must match PR diff exactly; A-025: ceremony artifacts must use PENDING until Post-ASSURANCE-TOKEN ceremony) |
 | `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.5.0 | ACTIVE — CORE-001 to CORE-022; CORE-022 enforces secret field naming compliance |
 | `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.1.0 | ACTIVE — KNOWLEDGE_GOVERNANCE trigger category added |
-| `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE) | 2.2.0 | ACTIVE — OVL-KG-001 through OVL-KG-005 added |
+| `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE) | 2.3.0 | ACTIVE — OVL-KG-001 through OVL-KG-005 added; OVL-AM-008 (end-to-end wiring verification) added |
 | `session-memory-template.md` | Standard session memory template for IAA invocations | 1.0.0 | PRESENT |
 | `IAA_ZERO_SEVERITY_TOLERANCE.md` | Tier 2 operational note for Zero-Severity-Tolerance Rule — prohibited language table, machine-readable logic, exception procedure | 1.0.0 | ACTIVE |
 
