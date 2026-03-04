@@ -16,16 +16,29 @@ import { AI_AGENT_OPTIONS, AI_GATEWAY_URL } from './aiAssistantConfig';
 export type { AIAgentOption, AIAssistantMessage };
 export { AI_AGENT_OPTIONS };
 
+/**
+ * ContextPayload — criteria context pre-injected into the AI chat session.
+ * Passed from CriteriaCard when user clicks "Explore further levels" (FR-096).
+ */
+type ContextPayload = {
+  criteria_name: string;
+  current_level?: number;
+  next_level_guidance?: string;
+};
+
 interface EmbeddedAIAssistantProps {
   /** Override the default agent selection */
   defaultAgentId?: string;
   /** Whether the panel starts open */
   initiallyOpen?: boolean;
+  /** Criteria context payload — pre-seeds the AI session with evaluation context (FR-096) */
+  contextPayload?: ContextPayload;
 }
 
 export function EmbeddedAIAssistant({
   defaultAgentId = 'routine',
   initiallyOpen = false,
+  contextPayload,
 }: EmbeddedAIAssistantProps) {
   const [isOpen, setIsOpen] = useState(initiallyOpen);
   const [selectedAgentId, setSelectedAgentId] = useState(defaultAgentId);
@@ -37,6 +50,30 @@ export function EmbeddedAIAssistant({
 
   const selectedAgent =
     AI_AGENT_OPTIONS.find((a) => a.id === selectedAgentId) ?? AI_AGENT_OPTIONS[0];
+
+  // Seed initial messages when contextPayload is provided (FR-096 — context injection).
+  // When the user opens the chat from a criteria card, the AI session is pre-loaded
+  // with { criteria_name, current_level, next_level_guidance } as a system context message.
+  useEffect(() => {
+    if (contextPayload) {
+      const contextParts: string[] = [
+        `Criteria: ${contextPayload.criteria_name}`,
+      ];
+      if (contextPayload.current_level !== undefined) {
+        contextParts.push(`Current maturity level: ${contextPayload.current_level}`);
+      }
+      if (contextPayload.next_level_guidance) {
+        contextParts.push(`Guidance to improve: ${contextPayload.next_level_guidance}`);
+      }
+      const contextMessage: AIAssistantMessage = {
+        id: `ctx-${Date.now()}`,
+        role: 'assistant',
+        content: `I have context for this criteria session:\n${contextParts.join('\n')}\n\nHow can I help you explore further levels or understand what's needed to improve?`,
+        timestamp: new Date(),
+      };
+      setMessages([contextMessage]);
+    }
+  }, [contextPayload]);
 
   useEffect(() => {
     if (isOpen) {
@@ -152,6 +189,20 @@ export function EmbeddedAIAssistant({
           aria-modal="false"
           data-testid="ai-assistant-panel"
         >
+          {/* Context indicator — shown when contextPayload is injected (FR-096) */}
+          {contextPayload && (
+            <div
+              data-testid="ai-context-indicator"
+              className="ai-context-indicator px-3 py-1.5 bg-blue-50 border-b border-blue-100 text-xs text-blue-700"
+              aria-label="AI context loaded from criteria card"
+            >
+              📌 Context loaded: <strong>{contextPayload.criteria_name}</strong>
+              {contextPayload.current_level !== undefined && (
+                <span> — Level {contextPayload.current_level}</span>
+              )}
+            </div>
+          )}
+
           {/* Header with agent/model selector */}
           <div className="ai-assistant-header">
             <span className="ai-assistant-title">AI Assistant</span>
