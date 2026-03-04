@@ -1,5 +1,124 @@
 # Wave Current Tasks — foreman-v2-agent
 
+**Wave**: Wave 14 Batch B — Evidence Interaction, AI Evaluation Triggers, Results Table & Report Generation
+**Session**: session-141
+**Date**: 2026-03-04
+**Issue**: #909 (Wave 14 Batch B)
+**Branch**: copilot/implement-evidence-interaction-model
+**CS2 Authorization**: Issue #909 opened by @APGI-cmy (CS2 direct); re-alignment directive issued by CS2 on this PR
+**Source authority**: modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md v1.0
+**FRS/TRS**: FR-093–FR-099 / TR-093–TR-099
+**Depends on**: Wave 14 Batch A (#917)
+
+---
+
+## Wave 14 Batch B — Task List
+
+### Subwave 14.5 — Evidence Card Interaction Model (GAP-W05)
+**Test ID**: T-W14-UX-005
+
+| # | Task | Builder | Status |
+|---|------|---------|--------|
+| TASK-W14-BB-001 | Create migration `20260305000003_wave14_evidence_schema.sql`: ADD COLUMN findings_text TEXT, deleted BOOLEAN NOT NULL DEFAULT false, storage_path TEXT to evidence table; DROP old type CHECK; ADD new CHECK including 'file' and 'voice' | schema-builder | 🔴 PENDING |
+| TASK-W14-BB-002 | Create `modules/mat/frontend/src/components/evidence/EvidenceUploadPanel.tsx` — 6 evidence types, Remove/Replace tiles, storage path `${organisationId}/${auditId}/criteria/${criterionId}/` | ui-builder | 🔴 PENDING |
+
+### Subwave 14.6 — Submit Button as AI Evaluation Trigger (GAP-W06)
+**Test ID**: T-W14-UX-006
+
+| # | Task | Builder | Status |
+|---|------|---------|--------|
+| TASK-W14-BB-003 | Create migration `20260305000004_wave14_evaluations.sql`: CREATE TABLE criteria_evaluations (proposed_level, confidence_score, rationale, findings_summary, next_level_guidance, next_plus_one_taster, status: pending_review/confirmed/overridden, evaluated_by); CREATE TABLE evaluation_overrides (justification NOT NULL); RLS org-isolation | schema-builder | 🔴 PENDING |
+
+### Subwave 14.7 — AI Next-Level Guidance Surface (GAP-W07)
+**Test ID**: T-W14-UX-007
+
+| # | Task | Builder | Status |
+|---|------|---------|--------|
+| TASK-W14-BB-004 | Create `modules/mat/frontend/src/components/criteria/CriteriaCard.tsx` — render proposed_level badge, next_level_guidance ("What to improve"), next_plus_one_taster ("Where you're heading"), "Explore further levels" link | ui-builder | 🔴 PENDING |
+
+### Subwave 14.8 — AI Chat Context Injection (GAP-W08)
+**Test ID**: T-W14-UX-008
+
+| # | Task | Builder | Status |
+|---|------|---------|--------|
+| TASK-W14-BB-005 | Update `modules/mat/frontend/src/components/common/EmbeddedAIAssistant.tsx` — add contextPayload prop { criteria_name, current_level, next_level_guidance }; use contextPayload in session init; render data-testid="ai-context-indicator" when contextPayload is set | ui-builder | 🔴 PENDING |
+
+### Subwave 14.9 — Audit Results Table (GAP-W09)
+**Test ID**: T-W14-UX-009
+
+| # | Task | Builder | Status |
+|---|------|---------|--------|
+| TASK-W14-BB-006 | Create `modules/mat/frontend/src/components/audit/AuditResultsTable.tsx` — columns: Domain, MPS, Criteria, Findings Summary, Rating, Recommendations; excluded criteria "Excluded" label; sortable/filterable | ui-builder | 🔴 PENDING |
+| TASK-W14-BB-007 | Update `modules/mat/frontend/src/pages/AuditManagementPage.tsx` — add Results tab | ui-builder | 🔴 PENDING |
+
+### Subwave 14.10 — Dashboard Outstanding Work Drill-Down and Create Report Gate (GAP-W10)
+**Test ID**: T-W14-UX-010
+
+| # | Task | Builder | Status |
+|---|------|---------|--------|
+| TASK-W14-BB-008 | Update `modules/mat/frontend/src/pages/DashboardPage.tsx` — add Submitted/Outstanding/Excluded metrics; reference criteria_evaluations with 'confirmed'/'overridden' gate statuses; wire Create Report gate | ui-builder | 🔴 PENDING |
+
+### Subwave 14.11 — Create Report Button as Final AI Trigger (GAP-W11)
+**Test ID**: T-W14-UX-011
+
+| # | Task | Builder | Status |
+|---|------|---------|--------|
+| TASK-W14-BB-009 | Create migration `20260305000006_wave14_audit_reports.sql`: CREATE TABLE audit_reports (storage_path NOT NULL, status: generating/final/failed); INSERT INTO storage.buckets for 'reports'; RLS org-isolation SELECT | schema-builder | 🔴 PENDING |
+
+---
+
+## RED QA Gates (must stay RED until migrations and components delivered)
+
+| Test ID | Subwave | File | Current State |
+|---------|---------|------|---------------|
+| T-W14-UX-005 | 14.5 | evidence-upload-panel.test.ts | 🔴 RED |
+| T-W14-UX-006 | 14.6 | ai-evaluation-trigger.test.ts | 🔴 RED |
+| T-W14-UX-007 | 14.7 | next-level-guidance-surface.test.ts | 🔴 RED |
+| T-W14-UX-008 | 14.8 | ai-chat-context-injection.test.ts | 🔴 RED |
+| T-W14-UX-009 | 14.9 | audit-results-table.test.ts | 🔴 RED |
+| T-W14-UX-010 | 14.10 | dashboard-create-report-gate.test.ts | 🔴 RED |
+| T-W14-UX-011 | 14.11 | create-report-generation.test.ts | 🔴 RED |
+
+---
+
+## Builder Assignments Summary
+
+| Builder | Tasks | Deliverables |
+|---------|-------|-------------|
+| schema-builder | TASK-W14-BB-001, -003, -009 | 3 migration files |
+| ui-builder | TASK-W14-BB-002, -004, -005, -006, -007, -008 | 6 components/pages |
+
+---
+
+## IAA Pre-Brief Gate
+
+- [ ] IAA Pre-Brief exists at `.agent-admin/assurance/iaa-prebrief-wave14-batchB.md`
+- Pre-Brief MUST exist before ANY builder task is delegated
+
+## Wave Completion Gate
+
+- [ ] IAA Pre-Brief received and read in full
+- [ ] TASK-W14-BB-001 🟢 DONE (migration: evidence schema)
+- [ ] TASK-W14-BB-002 🟢 DONE (component: EvidenceUploadPanel)
+- [ ] TASK-W14-BB-003 🟢 DONE (migration: evaluations tables)
+- [ ] TASK-W14-BB-004 🟢 DONE (component: CriteriaCard)
+- [ ] TASK-W14-BB-005 🟢 DONE (component: EmbeddedAIAssistant update)
+- [ ] TASK-W14-BB-006 🟢 DONE (component: AuditResultsTable)
+- [ ] TASK-W14-BB-007 🟢 DONE (page: AuditManagementPage Results tab)
+- [ ] TASK-W14-BB-008 🟢 DONE (page: DashboardPage metrics + gate)
+- [ ] TASK-W14-BB-009 🟢 DONE (migration: audit_reports)
+- [ ] All 7 RED gate tests GREEN
+- [ ] QP evaluation: PASS on all builder deliverables
+- [ ] §4.3 Merge gate parity: PASS
+- [ ] IAA assurance token received
+- [ ] Session memory written (session-141)
+- [ ] PREHANDOVER proof committed
+- [ ] CS2 notified for merge approval
+
+---
+
+<!-- prior wave records preserved below for archival -->
+
 **Wave**: Wave 14 Batch A / Access, Identity & Assignment Implementation (issue #909)
 **Session ID**: session-140
 **Date**: 2026-03-04
