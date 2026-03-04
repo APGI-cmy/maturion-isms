@@ -2497,3 +2497,54 @@ Task 13.C.2: qa-builder     → Add column-level and table-name-drift schema tes
 | 2026-03-03 | ALL GAPS REMEDIATED | INC-W13-EVIDENCE-TABLE-001, INC-W13-SCORES-TABLE-001, INC-W13-ORG-SETTINGS-001, INC-W13-BUCKET-001, INC-W13-COL-TEST-001 — all FIXED |
 | 2026-03-03 | TESTS GREEN | T-W13-SCH-5 to T-W13-SCH-12: 8/8 GREEN (file-based, no env vars required) |
 | 2026-03-03 | WAVE CLOSED | All audit gaps logged and remediated; T-W13-SCH-11 drift guard prevents this class of gap from reaching production undetected |
+
+
+---
+
+## Wave 14 — Addendum A: Column Mapping Remediation (INC-W14-COL-MAPPING-001)
+**Date**: 2026-03-03  
+**Authority**: CS2 (Johan Ras)  
+**Incident**: INC-W14-COL-MAPPING-001
+
+### Context
+Post-merge evaluation of Wave 13 (PR #865) revealed that PR #865 fixed table-level drift but did not address column-level drift between the frontend hook payloads, the data architecture spec, and the active Supabase migrations. Two P0 production blockers remain:
+1. `profiles.full_name` — missing from migration (app: Save Profile broken)
+2. `audits.criteria_approved` — missing from migration (app: Create Audit broken)
+
+### Task List
+
+| Task ID | Agent | Description | Status |
+|---|---|---|---|
+| W14-A-001 | schema-builder | Add `20260304000000_profiles_add_full_name_and_preferences.sql` | ✅ DONE |
+| W14-A-002 | schema-builder | Add `20260304000001_audits_add_criteria_approved.sql` | ✅ DONE |
+| W14-A-003 | schema-builder | Add `20260304000002_audit_scores_table.sql` | ✅ DONE |
+| W14-A-004 | qa-builder | Add `modules/mat/tests/wave14/column-mapping.test.ts` (T-W14-COL-001 to T-W14-COL-006) | ✅ DONE |
+| W14-A-005 | foreman | Update `data-architecture.md §1.1.2` to include `full_name` and `preferences` | ✅ DONE |
+| W14-A-006 | foreman | Update FRS (FR-078–FR-081) + TRS (TR-078–TR-081) per INC-W14-COL-MAPPING-001 | ✅ DONE |
+| W14-A-007 | foreman | Add RCA §9 entry to `RCA_WAVE12_POST_DEPLOYMENT_WIRING_FAILURES_20260302.md` | ✅ DONE |
+| W14-A-008 | foreman | Update `FAIL-ONLY-ONCE.md` with rule A-027 (column-level drift must be caught at QA-to-Red) | ✅ DONE |
+
+### Acceptance Criteria
+- [x] T-W14-COL-001 to T-W14-COL-006 all GREEN in CI
+- [ ] Save Profile works end-to-end in production (requires migration applied to Supabase)
+- [ ] Create Audit works end-to-end in production (requires migration applied to Supabase)
+- [x] RCA §9 added
+- [x] FAIL-ONLY-ONCE rule A-027 codified
+
+### Incident Registry
+
+| ID | Description | Priority | Status |
+|---|---|---|---|
+| INC-W14-PROFILES-COL-001 | `profiles.full_name` column missing | 🔴 P0 | REMEDIATED |
+| INC-W14-PROFILES-COL-002 | `profiles.preferences` JSONB column missing | 🔴 P0 | REMEDIATED |
+| INC-W14-AUDITS-COL-001 | `audits.criteria_approved` column missing | 🔴 P0 | REMEDIATED |
+| INC-W14-SCORES-COL-001 | `scores.override_justification` name alignment | 🟡 LOW | REMEDIATED — hook writes `override_justification` directly; migration column name matches |
+| INC-W13-AUDIT-SCORES-001 | `audit_scores` table no migration (carry-forward) | 🟡 LOW | REMEDIATED |
+
+### State Machine
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-03 | P0 GAPS IDENTIFIED | INC-W14-PROFILES-COL-001, INC-W14-PROFILES-COL-002, INC-W14-AUDITS-COL-001 identified from production errors |
+| 2026-03-03 | MIGRATIONS CREATED | 3 migrations added; T-W14-COL-001 to T-W14-COL-006 all GREEN |
+| 2026-03-03 | DOCUMENTATION UPDATED | data-architecture.md, FRS, TRS, BUILD_PROGRESS_TRACKER, FAIL-ONLY-ONCE, RCA updated |

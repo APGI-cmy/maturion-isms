@@ -1,7 +1,7 @@
 # IAA FAIL-ONLY-ONCE Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 2.0.0
+**Version**: 2.1.0
 **Last Updated**: 2026-03-03
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -601,97 +601,50 @@ authorised mechanism for populating ceremony artifact token fields with non-PEND
 
 ---
 
-### A-027 — GitHub Actions Script Injection: `${{ }}` Inside `github-script` Template Literals Is Prohibited
+### A-027 — Third-Consecutive A-021 Failure = Systemic Workflow Gap — Pre-IAA Commit Gate Required
 
-**Triggered by**: IAA session-120 (2026-03-03) — `copilot/add-re-anchor-workflow` OVL-CI-004 finding.
-The `foreman-reanchor.yml` workflow embedded `${{ steps.wave_tasks.outputs.tasks_snippet }}` directly
-inside a JavaScript template literal in an `actions/github-script` step. Although backticks were escaped
-via `sed`, the `${...}` template expression injection vector remained open. This is a well-known GitHub
-Actions security anti-pattern (GitHub Security Advisory GHSA-mfwh-5m23-j46w pattern; CWE-1336).
-
-**Incident**: Workflow `foreman-reanchor.yml` in PR `copilot/add-re-anchor-workflow` used:
-```javascript
-const tasksSnippet = `${{ steps.wave_tasks.outputs.tasks_snippet }}`;
-```
-This embeds file content (from `wave-current-tasks.md` on a PR branch) verbatim into JavaScript source
-code before execution. A malicious `wave-current-tasks.md` with `${require('fs').readFileSync(...)}` or
-`${process.env.GITHUB_TOKEN}` content could exfiltrate data or execute arbitrary code. The workflow
-holds `pull-requests: write` and `issues: write` permissions.
+**Trigger**: IAA session-119 (2026-03-03) — Wave 14 Addendum A third re-invocation attempt (sessions 118 and 119 both failed A-021 on same branch copilot/fix-schema-mapping-issues)
+**Root Cause**: When A-021 (commit before invoke) fires three or more times consecutively on the same PR/branch, the root cause is no longer individual oversight but a systemic gap in the producing agent's pre-IAA workflow. The PREHANDOVER proof is written to disk, the implementation commit is made, but the governance artifact commit (PREHANDOVER + session memory + governance fixes) is deferred until after IAA responds — which is the precise anti-pattern A-021 was designed to prevent.
 
 **Permanent Rule**:
-In any `actions/github-script` (or equivalent JS runner) step, GitHub Actions expression `${{ }}` values
-that originate from untrusted or potentially attacker-influenced sources (step outputs, PR branch file
-content, issue body content, comment body content) MUST be passed via `env:` variables and accessed
-via `process.env.VARIABLE_NAME`, NOT embedded directly in template literals or string concatenation.
+When A-021 fires on a PR for the third time, IAA must cite this rule in the REJECTION-PACKAGE and record the systemic gap in learning notes. The producing agent (foreman) must add a "Pre-IAA Commit Gate" section to the PREHANDOVER template requiring explicit evidence that:
+1. `git status --short | grep -E "^\?\?"` returns no untracked governance files before IAA invocation
+2. `git log --oneline -1` output is pasted (showing governance files are in the latest commit)
+3. SCOPE_DECLARATION matches the committed diff (A-026 self-check)
 
-The correct pattern is:
-```yaml
-- name: Post comment
-  uses: actions/github-script@v7
-  env:
-    USER_CONTENT: ${{ steps.read_file.outputs.content }}
-  with:
-    script: |
-      const userContent = process.env.USER_CONTENT || '';
-```
+Any PREHANDOVER proof that cannot produce these three evidence snippets is self-disqualifying before IAA is even invoked.
 
-**IAA Enforcement** (CI_WORKFLOW overlay OVL-CI-004):
-During OVL-CI-004 check, scan the workflow file for the regex pattern:
-`\$\{\{[^}]+\}\}` appearing inside a `script:` block of a `github-script` step (or any `run:` step
-that uses the value in a context that could lead to code execution). Any match where the expression
-output may contain user/file/attacker-influenced content = OVL-CI-004 FAIL.
+**IAA Enforcement**: On every re-invocation, run `git status --short` and check for `??` on PREHANDOVER and session memory files. If `??` is found, cite A-021 and A-027 together.
 
-**Trusted expression exceptions** (PASS — these are safe):
-- `${{ github.event_name }}`, `${{ github.repository }}` — GitHub-controlled metadata
-- `${{ steps.X.outputs.tasks_found }}` where output is `'true'`/`'false'` only (boolean, controlled)
-- `${{ context.repo.owner }}` — repository metadata
-
-**Always flag as FAIL**:
-- `${{ steps.X.outputs.Y }}` where Y may contain file content, user input, issue body, comment body
-- `${{ github.event.comment.body }}`, `${{ github.event.issue.body }}`, `${{ github.event.pull_request.title }}`
-  (if used directly in code, not just for boolean `contains()` checks)
-
-**Fix Procedure**:
-1. Identify all `${{ }}` expressions inside `script:` blocks
-2. Move attacker-influenced values to `env:` block above the step
-3. Access via `process.env.VARIABLE_NAME` in the JavaScript code
-4. Re-test the workflow
-
-**Applies To**: All CI_WORKFLOW PRs containing `actions/github-script` steps or equivalent
-
-**Status**: ACTIVE — from session-120 (2026-03-03)
+**Status**: ACTIVE — from session-119 (2026-03-03)
 
 ---
 
-### A-028 — SCOPE_DECLARATION.md File Entries Must Use Hyphen Separator, Not Em Dash
+### A-028 — SCOPE_DECLARATION Format Compliance — List Format Required, Prior-Wave Entries Must Be Trimmed
 
-**Triggered by**: session-122 (2026-03-03) — PARITY-001/A-026 F-013 finding on `copilot/add-re-anchor-workflow`
-
-**Incident**: SCOPE_DECLARATION.md was updated 3 times on this PR (sessions 120, 121, 122) without detecting that all file entries used em dash (`—`) as the separator between backtick-quoted paths and descriptions (e.g., `` - `.github/workflows/foreman-reanchor.yml` — description ``). The `validate-scope-to-diff.sh` BL-027 script uses two grep patterns to extract declared files: (1) primary: `grep -E '^\s*-\s+`[^`]+`\s+-\s+'` (requires hyphen ` - `); (2) fallback: `grep -E '^\s*-\s+[^\s`].*\.(ext)'` (requires non-backtick line start). Em dash fails the primary pattern. Backtick-prefixed paths fail the fallback. Result: SCOPE_COUNT=0, CHANGED_COUNT>0 → CI exits "SCOPE_DECLARATION.md is empty or malformed" → BL-027 FAIL. The failure was silent to human review because em dash looks similar to hyphen.
+**Trigger**: IAA session-120 (2026-03-03) — Wave 14 Addendum A fourth invocation attempt
+**Root Cause**: SCOPE_DECLARATION.md Wave 14 section used table format (`| \`file\` | type | incident |`) instead of list format (`- \`file\` - description`). The BL-027 `validate-scope-to-diff.sh` script parses ONLY list-format declarations using regex `^\s*-\s+\`[^`]+\`\s+-\s+`. Table-format declarations are completely invisible to the script, yielding 0 declared files from the entire Wave 14 section. Additionally, prior-wave list-format entries (from previous PRs already merged to `origin/main`) remain in SCOPE_DECLARATION — they appear as "EXTRA" declarations in BL-027's set comparison since they are not in the current PR's diff.
 
 **Permanent Rule**:
-SCOPE_DECLARATION.md file list entries must use hyphen (` - `) as the separator between the backtick-quoted file path and the description. Em dash (` — `) is prohibited in file list entries.
+1. SCOPE_DECLARATION.md file declarations MUST use list format only: `- \`path/to/file\` - one-line description`. Never use table format for file declarations in SCOPE_DECLARATION.
+2. SCOPE_DECLARATION.md must be trimmed on each PR branch to contain ONLY the files changed in that PR's diff (`git diff --name-only origin/main...HEAD`). Prior-wave entries (already merged to origin/main) must be removed.
+3. ALL files in the PR diff must be declared — including IAA workspace files, parking-station files, and any agent session memory files committed as evidence artifacts.
+4. Reference format template: the Wave 13 Addendum B+C section (sessions 095/116) as the canonical format example — it previously passed BL-027.
 
-**Correct format** (from `governance/templates/SCOPE_DECLARATION_TEMPLATE.md`):
-```markdown
-- `path/to/file.ext` - Brief description
-```
-
-**Prohibited format**:
-```markdown
-- `path/to/file.ext` — Brief description  ← em dash — INVALID
-```
-
-**IAA verification step (mandatory before every §4.3 parity check)**:
-Run the following before assessing SCOPE_DECLARATION content:
+**Self-Check Before IAA Invocation**:
 ```bash
+# Step 1: Get exact PR diff file count
+git diff --name-only origin/main...HEAD | wc -l
+
+# Step 2: Get list-format declaration count from SCOPE_DECLARATION  
 grep -E '^\s*-\s+`[^`]+`\s+-\s+' SCOPE_DECLARATION.md | wc -l
+
+# These counts MUST match. If they don't: fix SCOPE_DECLARATION before invoking IAA.
 ```
-Result must be > 0. If 0 → FORMAT FAILURE → REJECTION-PACKAGE before content comparison.
 
-**Applies To**: All PRs that contain or modify SCOPE_DECLARATION.md
+**IAA Enforcement**: During §4.3, manually simulate `validate-scope-to-diff.sh` by running both commands above and confirming equal counts. If the script is unavailable (shallow clone), the manual count comparison is the equivalent check.
 
-**Status**: ACTIVE — from session-122 (2026-03-03)
+**Status**: ACTIVE — from session-120 (2026-03-03)
 
 ---
 
@@ -709,8 +662,8 @@ Result must be > 0. If 0 → FORMAT FAILURE → REJECTION-PACKAGE before content
 | 1.7.0 | 2026-03-03 | A-024 (secret field naming — `secret:` prohibited in agent contracts; must use `secret_env_var:`) added from CI scanner failures (job 65529138120) |
 | 1.8.0 | 2026-03-03 | Conflict resolution: A-023 collision fixed — PR #816 rule renumbered to A-025 (ceremony PENDING rule); A-023 now = OVL-AC-012 ripple assessment; A-024 = secret field naming; A-025 = ceremony PENDING pre-fill prohibition |
 | 1.9.0 | 2026-03-03 | A-026 (SCOPE_DECLARATION.md must match PR diff exactly before IAA invocation — stale declaration = BL-027 merge gate parity failure) added from session-116 (Wave 13 Addendum B+C re-invocation) |
-| 2.0.0 | 2026-03-03 | A-027 (GitHub Actions script injection — `${{ }}` inside github-script template literals prohibited; must use `env:` variable pattern) added from session-120 OVL-CI-004 finding (copilot/add-re-anchor-workflow) |
-| 2.1.0 | 2026-03-03 | A-028 (SCOPE_DECLARATION.md file entries must use hyphen separator ` - ` not em dash ` — `; em dash causes BL-027 to parse 0 files → "empty or malformed" on CI) added from session-122 PARITY-001 F-013 finding |
+| 2.0.0 | 2026-03-03 | A-027 (third-consecutive A-021 failure = systemic workflow gap — Pre-IAA Commit Gate required) added from session-119 (Wave 14 Addendum A — third A-021 failure on same branch); header version corrected from 1.8.0 to 2.0.0 (header/index discrepancy resolved) |
+| 2.1.0 | 2026-03-03 | A-028 (SCOPE_DECLARATION format compliance — list format required, prior-wave entries must be trimmed) added from session-120 (Wave 14 Addendum A — fourth invocation; BL-027 fails due to table format and phantom prior-wave entries) |
 
 ---
 

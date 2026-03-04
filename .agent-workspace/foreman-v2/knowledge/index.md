@@ -15,15 +15,14 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 
 ### Files
 
-| File | Purpose | Version | Notes |
-|------|---------|---------|-------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.7.0 | |
-| `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 2.4.0 | |
-| `specialist-registry.md` | Registry of all delegable agents with capabilities and separation-of-duties boundary | 1.0.0 | |
-| `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 | |
-| `prehandover-template.md` | **PHASE 4 §S-009** — PREHANDOVER proof template with mandatory IAA Agent Response (verbatim) section per FAIL-ONLY-ONCE v1.8.0 S-009; `## Environment Parity` section per OVL-CI-006 | 1.2.0 | |
-| `FM_QP_ENHANCED_QUICK_REFERENCE.md` | **Quality Professor Mode** — Quick reference for Builder Referral Protocol (QP-FAIL-001–007) and Progress Tracker Enforcement; Tier 3 canonical authority: `governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` v1.0.0 | 1.0.0 | |
-| `WAVE-CURRENT-TASKS-PROTOCOL.md` | Mandates creation and maintenance of `wave-current-tasks.md` at wave start; defines Re-Anchor Pulse data contract | 1.0.0 | ACTIVE — wave-current-tasks.md is a required wave evidence artifact from this version onward |
+| File | Purpose | Version |
+|------|---------|---------|
+| `index.md` (this file) | Knowledge entry point and version reference | 1.6.4 |
+| `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 2.5.0 |
+| `specialist-registry.md` | Registry of all delegable agents with capabilities and separation-of-duties boundary | 1.0.0 |
+| `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 |
+| `prehandover-template.md` | **PHASE 4 §S-009** — PREHANDOVER proof template with mandatory IAA Agent Response (verbatim) section per FAIL-ONLY-ONCE v1.8.0 S-009; `## Environment Parity` section per OVL-CI-006 | 1.2.0 |
+| `FM_QP_ENHANCED_QUICK_REFERENCE.md` | **Quality Professor Mode** — Quick reference for Builder Referral Protocol (QP-FAIL-001–007) and Progress Tracker Enforcement; Tier 3 canonical authority: `governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` v1.0.0 | 1.0.0 |
 
 ---
 
