@@ -224,3 +224,4 @@
 | 2026-03-04 | independent-assurance-agent | session-126 | Phase 4.3 | Add A-029: Full BL-027 script required as pre-IAA SCOPE_DECLARATION self-check — not format-only grep | session-126-20260304.md |
 | 2026-03-04 | independent-assurance-agent | session-126 | Phase 3 | governance-liaison-isms PREHANDOVER template: add two-step pre-IAA gate (validate-scope-to-diff.sh exit 0 + wc -l match) | session-126-20260304.md |
 | 2026-03-04 | independent-assurance-agent | session-126 | Phase 4.3 | Orphaned remediation file reminder: fix commits that add new files must update SCOPE_DECLARATION in same commit | session-126-20260304.md |
+| 2026-03-04 | independent-assurance-agent | session-127 | Phase 4.3 | Producing agents must add mandatory pre-invocation SCOPE_DECLARATION self-validation to PREHANDOVER template: `git diff --name-only origin/main...HEAD | wc -l` vs BL-027 grep count — eliminate recurring A-026/A-028 failures | session-127-20260304.md |
