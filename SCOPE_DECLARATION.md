@@ -1,29 +1,41 @@
-# Scope Declaration — governance-liaison-isms Session-045
+# Scope Declaration — foreman-v2-agent Session-099 — Wave 14 UX Workflow Gap Remediation
 
-**PR**: `copilot/propagate-governance-changes-e45c6ae2-8853-4ff3-bb03-1720769d28b6`
-**Session**: governance-liaison-isms session-045-20260304
+**PR**: `copilot/governance-remediation-fix`
+**Session**: foreman-v2-agent session-099-20260304
 **Date**: 2026-03-04
 **Authority**: BL-027 (MERGE_GATE_PHILOSOPHY.md)
-**Task**: Fix CI label validation error in ripple-integration.yml + governance artifacts for ripple 61ab7b83
-**Issue**: APGI-cmy/maturion-isms#876
-**IAA Token**: IAA-session-132-20260304-PASS (ASSURANCE-TOKEN)
+**Task**: Wave 14 governance remediation — FRS/TRS addendum, RED QA suite, impl plan, BUILD_PROGRESS_TRACKER
+**Issue**: APGI-cmy/maturion-isms#909
+**IAA Token**: IAA-session-099-wave14-20260304-PASS (expected — pending re-invocation after this fix)
 
 ---
 
 ## Files Declared
 
-- `.agent-admin/assurance/iaa-token-session-132-20260304.md` - IAA ASSURANCE-TOKEN artifact
-- `.agent-admin/assurance/rejection-package-session-130-20260304.md` - IAA session-130 REJECTION-PACKAGE
-- `.agent-admin/assurance/rejection-package-session-131-20260304.md` - IAA session-131 REJECTION-PACKAGE
-- `.agent-admin/governance/ripple-log.json` - Added liaison-escalated entry for ripple 61ab7b83 (48 events)
-- `.agent-admin/governance/sync_state.json` - Updated canonical_commit to 61ab7b83, last_ripple_dispatch_id, last_liaison_session
-- `.agent-workspace/governance-liaison-isms/escalation-inbox/escalation-agent-contracts-61ab7b83-20260304.md` - ESC-AGENTFILE-61AB7B83-20260304 for CodexAdvisor-agent.md
-- `.agent-workspace/governance-liaison-isms/memory/session-045-20260304.md` - Session memory for session-045
-- `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md` - 1 session-045 suggestion appended
-- `.agent-workspace/independent-assurance-agent/memory/session-130-20260304.md` - IAA session-130 memory
-- `.agent-workspace/independent-assurance-agent/memory/session-131-20260304.md` - IAA session-131 memory
-- `.agent-workspace/independent-assurance-agent/memory/session-132-20260304.md` - IAA session-132 memory
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station updates
-- `.github/workflows/ripple-integration.yml` - Added continue-on-error to create_pr_standard and create_pr_draft steps
-- `PREHANDOVER_PROOF_SESSION_045_RIPPLE_61AB7B83.md` - PREHANDOVER proof for this session
+- `.agent-admin/assurance/iaa-prebrief-wave14.md` - IAA Pre-Brief for Wave 14 (committed by IAA agent, SHA 602fffb)
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-099-wave14-20260304.md` - PREHANDOVER proof for session-099
+- `.agent-workspace/foreman-v2/memory/session-099-20260304.md` - Session memory for foreman session-099
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Session-099 suggestion appended
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated for Wave 14 tasks
+- `modules/mat/00-app-description/BUILD_PROGRESS_TRACKER.md` - Governance failure heading + 14 gap entries (Wave 14)
+- `modules/mat/01-frs/functional-requirements.md` - FRS v1.9.0 — FR-089 to FR-102 (GAP-W01 to GAP-W14)
+- `modules/mat/01.5-trs/technical-requirements-specification.md` - TRS v1.8.0 — TR-089 to TR-102 (GAP-W01 to GAP-W14)
+- `modules/mat/03-implementation-plan/implementation-plan.md` - v2.5.0 — Wave 14 section (14 subwaves)
+- `modules/mat/tests/wave14/ai-chat-context-injection.test.ts` - T-W14-UX-008 RED test
+- `modules/mat/tests/wave14/ai-evaluation-trigger.test.ts` - T-W14-UX-006 RED test
+- `modules/mat/tests/wave14/audit-results-table.test.ts` - T-W14-UX-009 RED test
+- `modules/mat/tests/wave14/create-report-generation.test.ts` - T-W14-UX-011 RED test
+- `modules/mat/tests/wave14/dashboard-create-report-gate.test.ts` - T-W14-UX-010 RED test
+- `modules/mat/tests/wave14/evidence-upload-panel.test.ts` - T-W14-UX-005 RED test
+- `modules/mat/tests/wave14/invite-auditor.test.ts` - T-W14-UX-002 RED test
+- `modules/mat/tests/wave14/invite-evidence-submitter.test.ts` - T-W14-UX-004 RED test
+- `modules/mat/tests/wave14/level-descriptor-tables.test.ts` - T-W14-UX-012 RED test
+- `modules/mat/tests/wave14/new-tables-rls.test.ts` - T-W14-UX-015 RED test
+- `modules/mat/tests/wave14/next-level-guidance-surface.test.ts` - T-W14-UX-007 RED test
+- `modules/mat/tests/wave14/onboarding-guard.test.ts` - T-W14-UX-001 RED test
+- `modules/mat/tests/wave14/responsibility-cascade.test.ts` - T-W14-UX-014 RED test
+- `modules/mat/tests/wave14/scoring-rules-report-access.test.ts` - T-W14-UX-016 RED test
+- `modules/mat/tests/wave14/scoring-tables.test.ts` - T-W14-UX-013 RED test
+- `modules/mat/tests/wave14/toggle-exclude-cascade.test.ts` - T-W14-UX-003 RED test
+- `modules/mat/tests/wave14/wave14-ux-gap-red-suite-spec.md` - RED QA suite specification (16 test descriptions)
 - `SCOPE_DECLARATION.md` - This file
