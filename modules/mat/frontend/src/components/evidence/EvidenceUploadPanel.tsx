@@ -25,7 +25,7 @@ interface EvidenceUploadPanelProps {
 }
 
 const EVIDENCE_TYPES: {
-  type: EvidenceUploadPanelProps['criterionId'] extends string ? EvidenceItem['type'] : never;
+  type: EvidenceItem['type'];
   label: string;
   icon: string;
   accept?: string;

@@ -49,20 +49,17 @@ export function DashboardPage() {
   // outstandingCount: non-excluded criteria without a confirmed/overridden evaluation
   // excludedCount: criteria marked excluded = true
   // Gate: Create Report is disabled while outstandingCount > 0
-  const submittedCount = metrics?.submittedCount ?? 0;
-  const outstandingCount = metrics?.outstandingCount ?? 0;
-  const excludedCount = metrics?.excludedCount ?? 0;
 
-  // Create Report gate: all non-excluded criteria must have status IN ('confirmed', 'overridden')
-  const isCreateReportEnabled = outstandingCount === 0;
-
-  // Derived metrics for display
-  const displayMetrics = useMemo(() => ({
-    submittedCount,
-    outstandingCount,
-    excludedCount,
-    isCreateReportEnabled,
-  }), [submittedCount, outstandingCount, excludedCount, isCreateReportEnabled]);
+  // Derived metrics for display — computed from metrics data
+  const displayMetrics = useMemo(() => {
+    const outstanding = metrics?.outstandingCount ?? 0;
+    return {
+      submittedCount: metrics?.submittedCount ?? 0,
+      outstandingCount: outstanding,
+      excludedCount: metrics?.excludedCount ?? 0,
+      isCreateReportEnabled: outstanding === 0,
+    };
+  }, [metrics]);
 
   // Loading skeleton (MAT-T-0099)
   if (isLoading) {
