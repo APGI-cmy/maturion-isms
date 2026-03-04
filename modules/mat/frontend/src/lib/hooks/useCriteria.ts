@@ -116,7 +116,8 @@ export function useUploadCriteria() {
         .eq('id', user.id)
         .single();
 
-      if (profileError || !profile?.organisation_id) {
+      if (profileError) throw new Error('Failed to fetch user profile.');
+      if (!profile?.organisation_id) {
         throw new Error('Your account is not linked to an organisation.');
       }
       const organisationId = profile.organisation_id;
