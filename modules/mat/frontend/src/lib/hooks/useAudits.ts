@@ -11,13 +11,13 @@ export interface Audit {
   id: string;
   organisation_id: string;
   title: string;
-  organisation_name: string;
-  facility_location?: string;
+  description?: string;
+  framework?: string;
+  target_date?: string;
   audit_lead_id?: string;
   audit_period_start?: string;
   audit_period_end?: string;
-  status: 'not_started' | 'in_progress' | 'under_review' | 'completed' | 'archived';
-  criteria_approved: boolean;
+  status: 'draft' | 'active' | 'completed' | 'archived';
   created_by: string;
   created_at: string;
   updated_at: string;
@@ -26,8 +26,9 @@ export interface Audit {
 
 export interface CreateAuditInput {
   title: string;
-  organisation_name: string;
-  facility_location?: string;
+  description?: string;
+  framework?: string;
+  target_date?: string;
   audit_lead_id?: string;
   audit_period_start?: string;
   audit_period_end?: string;
@@ -93,18 +94,32 @@ export function useCreateAudit() {
         throw new Error('User not authenticated');
       }
 
-      // TODO: Get organisation_id from user profile
-      // For now, using a placeholder
-      const organisation_id = user.user_metadata?.organisation_id || '00000000-0000-0000-0000-000000000000';
+      // Resolve organisation_id from profiles table — canonical source of truth
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('organisation_id')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError || !profile?.organisation_id) {
+        throw new Error(
+          'Your account is not linked to an organisation. Please contact your administrator.'
+        );
+      }
 
       const { data, error } = await supabase
         .from('audits')
         .insert({
-          ...input,
-          organisation_id,
+          title: input.title,
+          description: input.description,
+          framework: input.framework,
+          target_date: input.target_date,
+          audit_lead_id: input.audit_lead_id,
+          audit_period_start: input.audit_period_start,
+          audit_period_end: input.audit_period_end,
+          organisation_id: profile.organisation_id,
           created_by: user.id,
-          status: 'not_started',
-          criteria_approved: false,
+          status: 'draft',
         })
         .select()
         .single();
