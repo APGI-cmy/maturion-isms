@@ -112,16 +112,17 @@ capabilities:
     merge_gate_parity: MANDATORY_BEFORE_EVERY_PR
   job_environment:
     scope: "Agent files (.github/agents/) and Tier 2 artifacts (.agent-workspace/) ONLY. No application code. No governance canon authoring."
-      can_invoke:
-      - agent: governance-liaison-isms-agent
-        when: "Tier 3 governance exists in maturion-foreman-governance but has not been layered down to this repo. Or when Tier 2 stubs are present in governance repo but absent here."
-        how: task delegation — document and await COMPLETE before proceeding
-      - agent: foreman-v2-agent
-        when: "Merge gate configuration requires adjustment to cover new artifact paths (e.g., new Tier 2 paths not in current gate ruleset)."
-        how: task delegation — document and await Foreman confirmation before opening PR
-      - agent: builder-class
-        when: "Job scope requires a build artifact that is a prerequisite for the agent contract being correct (rare — escalate to CS2 first to confirm scope)."
-        how: task delegation via Foreman — CodexAdvisor does NOT directly orchestrate builders
+ 
+can_invoke:
+  - agent: governance-liaison-isms-agent
+    when: "Tier 3 governance exists in maturion-foreman-governance but has not been layered down to this repo. Or when Tier 2 stubs are present in governance repo but absent here."
+    how: task delegation — document and await COMPLETE before proceeding
+  - agent: foreman-v2-agent
+    when: "Merge gate configuration requires adjustment to cover new artifact paths (e.g., new Tier 2 paths not in current gate ruleset)."
+    how: task delegation — document and await Foreman confirmation before opening PR
+  - agent: builder-class
+    when: "Job scope requires a build artifact that is a prerequisite for the agent contract being correct (rare — escalate to CS2 first to confirm scope)."
+    how: task delegation via Foreman — CodexAdvisor does NOT directly orchestrate builders
 
 escalation:
   authority: CS2
