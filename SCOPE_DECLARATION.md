@@ -24,7 +24,7 @@ This PR delivers governance layer-down for ripple event 6523fe8d from `APGI-cmy/
 
 ## Files Changed
 
-**Total Files**: 15
+**Total Files**: 21
 
 All files in this PR are explicitly listed below (required by BL-027):
 
@@ -38,11 +38,17 @@ All files in this PR are explicitly listed below (required by BL-027):
 - `.agent-admin/governance/sync_state.json` - UPDATED: canonical_commit=6523fe8d, sync_pending=true
 - `.agent-admin/prehandover/PREHANDOVER_PROOF_session-044-20260304.md` - NEW: PREHANDOVER proof artifact
 - `.agent-workspace/governance-liaison-isms/escalation-inbox/escalation-agent-contracts-6523fe8d-20260304.md` - NEW: ESC-AGENTFILE-6523FE8D-20260304 escalation
-- `.agent-workspace/governance-liaison-isms/memory/.archive/session-039-20260303.md` - ARCHIVED: session-039 rotated to archive (>5 sessions)
+- `.agent-workspace/governance-liaison-isms/memory/.archive/session-039-20260303.md` - ARCHIVED: session-039 rotated to archive (>5 governance liaison sessions)
 - `.agent-workspace/governance-liaison-isms/memory/session-044-20260304.md` - NEW: session memory
 - `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md` - UPDATED: session-044 suggestion appended
-- `.agent-workspace/independent-assurance-agent/memory/session-124-20260304.md` - NEW: IAA session-124 memory (REJECTION-PACKAGE - remediation in progress)
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - UPDATED: IAA session-124 suggestion appended
+- `.agent-workspace/independent-assurance-agent/memory/.archive/session-115-20260303.md` - ARCHIVED: IAA session-115 rotated to archive (>5 IAA sessions)
+- `.agent-workspace/independent-assurance-agent/memory/.archive/session-116-20260303.md` - ARCHIVED: IAA session-116 rotated to archive (>5 IAA sessions)
+- `.agent-workspace/independent-assurance-agent/memory/.archive/session-117-20260303.md` - ARCHIVED: IAA session-117 rotated to archive (>5 IAA sessions)
+- `.agent-workspace/independent-assurance-agent/memory/.archive/session-118-20260303.md` - ARCHIVED: IAA session-118 rotated to archive (>5 IAA sessions)
+- `.agent-workspace/independent-assurance-agent/memory/.archive/session-119-20260303.md` - ARCHIVED: IAA session-119 rotated to archive (>5 IAA sessions)
+- `.agent-workspace/independent-assurance-agent/memory/session-124-20260304.md` - NEW: IAA session-124 memory (REJECTION-PACKAGE - 8 procedural failures; substantive work sound)
+- `.agent-workspace/independent-assurance-agent/memory/session-125-20260304.md` - NEW: IAA session-125 memory (REJECTION-PACKAGE - em-dash format + stale text)
+- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - UPDATED: IAA session-124 and session-125 suggestions appended
 
 ---
 

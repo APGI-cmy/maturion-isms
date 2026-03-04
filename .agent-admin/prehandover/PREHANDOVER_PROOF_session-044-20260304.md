@@ -81,8 +81,8 @@ Per A-009 (FAIL-ONLY-ONCE.md), the following files were NOT modified and are esc
 
 ```yaml
 iaa_audit_token: PENDING
-iaa_session: IAA-session-125-20260304
-iaa_invocation_attempt: 2 (second — REJECTION-PACKAGE received; third invocation pending)
+iaa_session: IAA-session-126-20260304
+iaa_invocation_attempt: 3 (third — REJECTION-PACKAGE received; fourth invocation pending)
 ```
 
 ### First IAA Invocation: IAA-session-124-20260304 — REJECTION-PACKAGE
@@ -158,14 +158,40 @@ Token reference: IAA-session-125-20260304-REJECTED
 ═══════════════════════════════════════════════════════════════════════
 ```
 
-### Third IAA Invocation (post-remediation)
+### Third IAA Invocation: IAA-session-126-20260304 — REJECTION-PACKAGE
 
-Both failures remediated:
-- SCOPE_DECLARATION.md em-dashes replaced with ` - ` (BL-027 format); verified 15 matches
-- PREHANDOVER Section 4 row A-014 updated: stale PHASE_A_ADVISORY removed
-- All files committed and pushed
+IAA issued REJECTION-PACKAGE (token: IAA-session-126-20260304-REJECTED). 1 failure cited. Substantive work again noted as sound.
 
-IAA re-invoked (third invocation) - result recorded below.
+**Failure cited by IAA:**
+1. A-026 count mismatch — SCOPE_DECLARATION.md listed 15 files but actual diff had 21 files (6 IAA session archive files not listed). Fixed: added 6 missing files; total updated to 21; verified 21 declared = 21 in diff.
+
+**IAA verbatim output (third invocation):**
+
+```
+═══════════════════════════════════════════════════════════════════════
+REJECTION-PACKAGE
+PR: copilot/propagate-governance-changes-cc3ac819-9829-49d2-9eff-980eda1bd197
+    governance-liaison-isms session-044-20260304 — THIRD invocation
+
+1 check FAILED. Merge blocked. STOP-AND-FIX required.
+
+FAILURES:
+  A-026 count mismatch — 21 files in diff, 15 declared in SCOPE_DECLARATION.md
+  (6 IAA session archive files missing: sessions 115-119 + session-125)
+
+NOTE: Substantive governance work remains sound.
+Token reference: IAA-session-126-20260304-REJECTED
+═══════════════════════════════════════════════════════════════════════
+```
+
+### Fourth IAA Invocation (post-remediation)
+
+Single failure remediated:
+- SCOPE_DECLARATION.md updated: 6 missing IAA archive/session files added; total updated 15→21
+- Verified: `grep -cE '^\s*-\s+\`[^`]+\`\s+-\s+' SCOPE_DECLARATION.md` = 21; diff file count = 21
+- Files committed and pushed
+
+IAA re-invoked (fourth invocation) - result recorded below.
 
 ---
 
