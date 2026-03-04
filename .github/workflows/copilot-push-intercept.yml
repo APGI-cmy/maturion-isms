@@ -1,4 +1,4 @@
-# Purpose: Intercept @copilot push/commit attempts mid-session and inject a
+# Purpose: Intercept @copilot+claude-sonnet-4.6 push/commit attempts mid-session and inject a
 # one-line redirect before the agent spends 10 minutes reasoning about 403s.
 # Authority: CS2 (Johan Ras) — operational efficiency directive
 
@@ -18,9 +18,10 @@ jobs:
   intercept-push-reasoning:
     name: "intercept/push-reasoning"
     runs-on: ubuntu-latest
-    # Only fire on comments that mention @copilot AND contain push/commit/token reasoning
+    # Only fire on PR-related comments that mention @copilot+claude-sonnet-4.6 AND contain push/commit/token reasoning
     if: >-
-      contains(github.event.comment.body, '@copilot') &&
+      (github.event_name == 'pull_request_review_comment' || github.event.issue.pull_request != null) &&
+      contains(github.event.comment.body, '@copilot+claude-sonnet-4.6') &&
       (
         (contains(github.event.comment.body, 'push') && contains(github.event.comment.body, '403')) ||
         contains(github.event.comment.body, 'push failed') ||
@@ -52,6 +53,7 @@ jobs:
               repo: context.repo.repo,
               issue_number: issueNumber,
               per_page: 100,
+              sort: 'created',
               direction: 'desc',
             });
 
@@ -66,7 +68,7 @@ jobs:
             const body = [
               '> **[PUSH-INTERCEPT — Governance Watchdog]**',
               '>',
-              '> @copilot **Stop. Do not push. Do not reason about push failures, 403 errors, tokens, or credentials.**',
+              '> @copilot+claude-sonnet-4.6 **Stop. Do not push. Do not reason about push failures, 403 errors, tokens, or credentials.**',
               '>',
               '> **Your only job right now:** produce your output as text in this PR comment thread.',
               '> CS2 will commit and push on your behalf during merge.',
