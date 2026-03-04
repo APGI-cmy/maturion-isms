@@ -176,13 +176,12 @@ export function useCreateOrganisation() {
         .insert({ id: newOrgId, name });
       if (orgError) throw new Error(`Failed to create organisation: ${orgError.message}`);
 
-      // 2. Upsert profile with organisation_id and full_name
+      // 2. Upsert profile with organisation_id and display_name
       const { error: profileError } = await supabase
         .from('profiles')
         .upsert({
           id: user.id,
           organisation_id: newOrgId,
-          full_name: ownerFullName,
           display_name: ownerFullName,
           email: user.email,
           updated_at: new Date().toISOString(),

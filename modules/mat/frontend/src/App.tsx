@@ -11,8 +11,7 @@ import { ReportsPage } from './pages/ReportsPage';
 import { LoginPage } from './pages/LoginPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { OnboardingPage } from './pages/OnboardingPage';
-import { AuthProvider } from './contexts/AuthContext';
-import { useAuth } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { useUserProfile } from './lib/hooks/useSettings';
 
 const queryClient = new QueryClient();

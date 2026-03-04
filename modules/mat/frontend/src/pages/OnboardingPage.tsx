@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCreateOrganisation } from '../lib/hooks/useSettings';
-import { useUserProfile } from '../lib/hooks/useSettings';
+import { useCreateOrganisation, useUserProfile } from '../lib/hooks/useSettings';
 
 export function OnboardingPage() {
   const navigate = useNavigate();
@@ -9,7 +8,7 @@ export function OnboardingPage() {
   const createOrganisation = useCreateOrganisation();
 
   const [step, setStep] = useState<1 | 2>(1);
-  const [fullName, setFullName] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [organisationName, setOrganisationName] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -40,7 +39,7 @@ export function OnboardingPage() {
     try {
       await createOrganisation.mutateAsync({
         name: organisationName,
-        ownerFullName: fullName,
+        ownerFullName: displayName,
       });
       navigate('/');
     } catch (err: unknown) {
@@ -67,14 +66,14 @@ export function OnboardingPage() {
         {step === 1 && (
           <form className="space-y-4" onSubmit={handleNameNext}>
             <div>
-              <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-1">
-                Your name
+              <label htmlFor="display_name" className="block text-sm font-medium text-gray-700 mb-1">
+                Your display name
               </label>
               <input
                 type="text"
-                id="full_name"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
+                id="display_name"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 placeholder="Jane Smith"
                 required
