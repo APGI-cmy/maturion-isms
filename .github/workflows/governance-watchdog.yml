@@ -1,0 +1,426 @@
+# Authority: IAA_PRE_BRIEF_PROTOCOL.md v1.1.0, INDEPENDENT_ASSURANCE_AGENT_CANON.md, foreman-v2-agent contract Phase 0
+# Purpose: Automated governance gap detection — catch missing pre-brief, missing IAA token at handover, and work without PR
+# Implements: Living Agent System v6.x.0 proactive assurance layer
+
+name: Governance Watchdog
+
+on:
+  push:
+    branches-ignore:
+      - main
+  pull_request:
+    # FIX-4: Added 'opened' so Gap 2 also fires when a PR is created directly as
+    # ready (not via DRAFT → ready_for_review transition), closing the blind spot
+    # where non-draft PRs never trigger a ready_for_review event.
+    types: [opened, ready_for_review, synchronize]
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+
+  # ── Gap 1 ─────────────────────────────────────────────────────────────────
+  # Foreman commits to a branch with no open PR
+  gap1-no-pr-for-branch:
+    name: "watchdog/gap1-no-pr-for-branch"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: Check for open PR and post alert if missing
+        uses: actions/github-script@v7
+        env:
+          PUSH_BRANCH: ${{ github.ref_name }}
+          PUSH_SHA: ${{ github.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+        with:
+          script: |
+            const branch = process.env.PUSH_BRANCH;
+            const sha = process.env.PUSH_SHA;
+
+            // Guard: exempt governance/liaison/ripple/dependabot/copilot branches
+            // FIX-3: Added 'copilot/' — Copilot coding agent branches (e.g. copilot/fix-xyz)
+            // are created atomically with a PR; false alerts on these branches are noise.
+            const exemptPrefixes = [
+              'governance/',
+              'ripple-',
+              'governance-alignment',
+              'dependabot/',
+              'copilot/',
+            ];
+            for (const prefix of exemptPrefixes) {
+              if (branch.startsWith(prefix)) {
+                core.info(`Branch '${branch}' is exempt (matches prefix '${prefix}') — skipping Gap 1.`);
+                return;
+              }
+            }
+
+            // Guard: skip if ALL changed files are pure governance artifacts
+            // Get list of commits in this push and their files
+            let changedFiles = [];
+            try {
+              // For a normal push, compare before..after
+              const before = process.env.PUSH_BEFORE;
+              if (before && before !== '0000000000000000000000000000000000000000') {
+                const compareResult = await github.rest.repos.compareCommitsWithBasehead({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  basehead: `${before}...${sha}`,
+                });
+                changedFiles = (compareResult.data.files || []).map(f => f.filename);
+              } else {
+                // Initial push / force-push — cannot compare, so do not apply governance-only guard
+                changedFiles = ['__unknown__'];
+              }
+            } catch (e) {
+              core.warning(`Could not retrieve changed files: ${e.message}`);
+              changedFiles = ['__unknown__'];
+            }
+
+            const governanceOnlyPrefixes = ['governance/', '.agent-workspace/', '.agent-admin/'];
+            const allGovernanceOnly = changedFiles.length > 0 &&
+              changedFiles.every(f => governanceOnlyPrefixes.some(p => f.startsWith(p)));
+
+            if (allGovernanceOnly) {
+              core.info('All changed files are governance artifacts — skipping Gap 1.');
+              return;
+            }
+
+            // Check for open PR on this branch
+            const { data: pulls } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              head: `${context.repo.owner}:${branch}`,
+              per_page: 1,
+            });
+
+            if (pulls.length > 0) {
+              core.info(`Open PR #${pulls[0].number} exists for branch '${branch}' — no gap detected.`);
+              return;
+            }
+
+            // No open PR — post commit comment alert
+            const body = [
+              '## ⚠️ GOVERNANCE WATCHDOG — No PR Detected',
+              '',
+              `@copilot **Foreman attention required.** Commits were pushed to branch \`${branch}\` but no open PR exists.`,
+              '',
+              'Per the foreman-v2-agent contract and IAA_PRE_BRIEF_PROTOCOL.md §Trigger:',
+              '- A PR must exist before wave work begins',
+              '- The IAA Pre-Brief is triggered automatically on the first push **to an open PR branch**',
+              '- Without an open PR, the Pre-Brief cannot fire and IAA cannot audit your wave',
+              '',
+              '**Action required:**',
+              '1. Open a PR immediately (DRAFT is acceptable)',
+              '2. The pre-brief injection will fire automatically when the PR is opened / the branch is pushed again',
+              '3. Do not proceed with further implementation commits until the pre-brief is confirmed',
+              '',
+              '*Governance Watchdog — automated gap detection | Authority: IAA_PRE_BRIEF_PROTOCOL.md, foreman-v2-agent contract Phase 0*',
+            ].join('\n');
+
+            await github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: sha,
+              body,
+            });
+
+            core.warning(`Gap 1 alert posted: no open PR found for branch '${branch}'.`);
+
+  # ── Gap 2 ─────────────────────────────────────────────────────────────────
+  # PR marked ready for review but no IAA pre-brief artifact exists
+  gap2-ready-pr-missing-prebrief:
+    name: "watchdog/gap2-ready-pr-missing-prebrief"
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'pull_request' &&
+      (github.event.action == 'ready_for_review' ||
+       (github.event.action == 'opened' && !github.event.pull_request.draft))
+    steps:
+      - name: Check PR for ripple/liaison guard
+        id: guard
+        uses: actions/github-script@v7
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_LABELS: ${{ toJSON(github.event.pull_request.labels) }}
+        with:
+          script: |
+            const title = (process.env.PR_TITLE || '').toLowerCase();
+            const labelsRaw = process.env.PR_LABELS || '[]';
+            let labels = [];
+            try { labels = JSON.parse(labelsRaw).map(l => (l.name || '').toLowerCase()); } catch {}
+
+            // Guard: ripple/liaison PR titles
+            if (
+              title.includes('[wip] update governance artifacts') ||
+              title.includes('ripple:')
+            ) {
+              core.setOutput('skip', 'true');
+              core.info('Guard: PR title matches ripple/liaison pattern — skipping Gap 2.');
+              return;
+            }
+
+            // Guard: labels — agent:liaison OR (governance AND automated)
+            const hasLiaison = labels.includes('agent:liaison');
+            const hasGovernance = labels.includes('governance');
+            const hasAutomated = labels.includes('automated');
+            if (hasLiaison || (hasGovernance && hasAutomated)) {
+              core.setOutput('skip', 'true');
+              core.info('Guard: PR labels indicate liaison/automated governance PR — skipping Gap 2.');
+              return;
+            }
+
+            core.setOutput('skip', 'false');
+
+      - name: Checkout PR head branch
+        if: steps.guard.outputs.skip != 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+
+      - name: Check for IAA pre-brief artifact and post alert if missing
+        if: steps.guard.outputs.skip != 'true'
+        uses: actions/github-script@v7
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+        with:
+          script: |
+            const { execSync } = require('child_process');
+
+            // Search for any iaa-prebrief-wave*.md in .agent-admin/assurance/
+            const fs = require('fs');
+            let prebriefExists = false;
+            try {
+              if (fs.existsSync('.agent-admin/assurance')) {
+                // Use -print -quit instead of | head -1 to avoid SIGPIPE on some shells
+                const result = execSync(
+                  'find .agent-admin/assurance -name "iaa-prebrief-wave*.md" -print -quit',
+                  { encoding: 'utf8' }
+                ).trim();
+                prebriefExists = result.length > 0;
+              }
+            } catch (e) {
+              prebriefExists = false;
+            }
+
+            if (prebriefExists) {
+              core.info('IAA pre-brief artifact found — no gap detected.');
+              return;
+            }
+
+            const branch = process.env.PR_BRANCH;
+            const prNumber = parseInt(process.env.PR_NUMBER, 10);
+
+            const body = [
+              '## ⚠️ GOVERNANCE WATCHDOG — Pre-Brief Missing for Ready PR',
+              '',
+              `@copilot You are the **Independent Assurance Agent (IAA)**. This PR is **open for review** (either newly opened as ready or marked ready from draft) but **no IAA pre-brief artifact** was found on branch \`${branch}\`.`,
+              '',
+              'Per Phase 0 of the foreman-v2-agent contract and IAA_PRE_BRIEF_PROTOCOL.md:',
+              '- A pre-wave pre-brief is mandatory **before** wave work begins',
+              '- The pre-brief must exist before this PR can proceed to the merge gate',
+              '- Marking a PR ready without a pre-brief is a Phase 0 protocol violation',
+              '',
+              `**Detected:** PR is ready for review (opened as ready or transitioned from draft) with no \`.agent-admin/assurance/iaa-prebrief-wave*.md\` found on \`${branch}\``,
+              '**Required:** IAA pre-brief artifact at `.agent-admin/assurance/iaa-prebrief-wave<N>.md`',
+              '',
+              '### Your obligations (from `IAA_PRE_BRIEF_PROTOCOL.md` v1.1.0):',
+              '1. Read `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` in full',
+              '2. Identify all qualifying tasks per `INDEPENDENT_ASSURANCE_AGENT_CANON.md §Trigger Table`',
+              '3. For each qualifying task, declare which proof phases (1–4) are required, which evidence artifacts will be checked, and which canon overlays apply',
+              '4. Generate the Pre-Brief artifact at `.agent-admin/assurance/iaa-prebrief-wave<N>.md`',
+              '5. Commit the Pre-Brief artifact to this branch as a **new file only**',
+              '6. Confirm completion by replying to this comment',
+              '',
+              '**If no qualifying tasks are found**: Reply confirming `PHASE_A_ADVISORY` status.',
+              '',
+              '*Governance Watchdog — automated gap detection | Authority: IAA_PRE_BRIEF_PROTOCOL.md v1.1.0, INDEPENDENT_ASSURANCE_AGENT_CANON.md §Proactive Assurance v1.1.0*',
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body,
+            });
+
+            core.warning(`Gap 2 alert posted on PR #${prNumber}: no IAA pre-brief found on branch '${branch}'.`);
+
+  # ── Gap 3 ─────────────────────────────────────────────────────────────────
+  # PREHANDOVER proof pushed with iaa_audit_token: PENDING while handover language is present
+  gap3-prehandover-pending-token:
+    name: "watchdog/gap3-prehandover-pending-token"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.event.action == 'synchronize'
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          # Use full history so we can diff between before/after SHAs for synchronize events
+          fetch-depth: 0
+
+      - name: Detect PREHANDOVER changes and check for PENDING token
+        id: detect
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.event.after }}
+        run: |
+          # Determine diff range for this PR synchronize update.
+          # github.event.before/after are available for synchronize events; validate they are
+          # 40-char hex SHAs before using them so we fall back gracefully if ever absent.
+          if [[ "$BEFORE_SHA" =~ ^[0-9a-f]{40}$ ]] && [[ "$AFTER_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "Using diff range $BEFORE_SHA...$AFTER_SHA from pull_request.synchronize event"
+            CHANGED=$(git diff --name-only "$BEFORE_SHA...$AFTER_SHA" 2>/dev/null || echo "")
+          else
+            echo "Event before/after SHAs not available or invalid; falling back to HEAD-only diff"
+            CHANGED=$(git diff-tree --no-commit-id --name-only -r HEAD 2>/dev/null || echo "")
+          fi
+
+          PREHANDOVER_FILE=""
+          for f in $CHANGED; do
+            basename_f=$(basename "$f")
+            if [[ "$basename_f" == PREHANDOVER*.md ]]; then
+              PREHANDOVER_FILE="$f"
+              break
+            fi
+          done
+
+          if [ -z "$PREHANDOVER_FILE" ]; then
+            echo "prehandover_changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "prehandover_changed=true" >> "$GITHUB_OUTPUT"
+          echo "prehandover_file=$PREHANDOVER_FILE" >> "$GITHUB_OUTPUT"
+
+          # Check iaa_audit_token value
+          if grep -q 'iaa_audit_token:' "$PREHANDOVER_FILE"; then
+            TOKEN_VALUE=$(grep 'iaa_audit_token:' "$PREHANDOVER_FILE" | head -1 | sed 's/.*iaa_audit_token:[[:space:]]*//')
+            if echo "$TOKEN_VALUE" | grep -qi 'PENDING'; then
+              echo "token_pending=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "token_pending=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            # Field entirely absent — also a gap
+            echo "token_pending=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check handover keywords and post alert if gap detected
+        if: steps.detect.outputs.prehandover_changed == 'true' && steps.detect.outputs.token_pending == 'true'
+        uses: actions/github-script@v7
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PREHANDOVER_FILE: ${{ steps.detect.outputs.prehandover_file }}
+        with:
+          script: |
+            const prNumber = parseInt(process.env.PR_NUMBER, 10);
+            const prBody = (process.env.PR_BODY || '').toLowerCase();
+
+            // synchronize events do not populate github.event.commits;
+            // fetch the head commit message via the API instead
+            let commitMsg = '';
+            try {
+              const { data: commit } = await github.rest.repos.getCommit({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: process.env.HEAD_SHA,
+              });
+              commitMsg = (commit.commit.message || '').toLowerCase();
+            } catch (e) {
+              core.warning(`Could not fetch commit message: ${e.message}`);
+            }
+
+            // Also read the PREHANDOVER file content so the keyword scan covers
+            // handover language inside the proof itself, not only PR body / commit msg.
+            const fs = require('fs');
+            let prehandoverContent = '';
+            const prehandoverFile = process.env.PREHANDOVER_FILE || '';
+            try {
+              // Guard against path traversal: git diff output shouldn't produce '../' paths,
+              // but validate explicitly before passing to fs calls.
+              if (prehandoverFile && !prehandoverFile.includes('..') && fs.existsSync(prehandoverFile)) {
+                prehandoverContent = fs.readFileSync(prehandoverFile, 'utf8').toLowerCase();
+              }
+            } catch (e) {
+              core.warning(`Could not read PREHANDOVER file content: ${e.message}`);
+            }
+
+            const combined = prBody + ' ' + commitMsg + ' ' + prehandoverContent;
+
+            // Check for handover/closure keywords
+            const handoverKeywords = [
+              'session summary',
+              'wave closure',
+              'wave closed',
+              'phase complete',
+              'handover',
+              'prehandover',
+              'ready for review',
+              'merge ready',
+            ];
+
+            const hasHandoverLanguage = handoverKeywords.some(kw => combined.includes(kw));
+
+            if (!hasHandoverLanguage) {
+              core.info('No handover language detected — skipping Gap 3 alert.');
+              return;
+            }
+
+            // Idempotency guard: fetch newest 10 comments in descending order
+            // to avoid missing an existing alert when the PR has >100 comments.
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              per_page: 10,
+              sort: 'created',
+              direction: 'desc',
+            });
+
+            const alreadyPosted = comments.some(c =>
+              c.body && c.body.includes('GOVERNANCE WATCHDOG — IAA Token Missing')
+            );
+
+            if (alreadyPosted) {
+              core.info('Gap 3 alert already posted in recent comments — skipping to prevent spam.');
+              return;
+            }
+
+            const body = [
+              '## ⚠️ GOVERNANCE WATCHDOG — IAA Token Missing at Handover',
+              '',
+              '@copilot **Foreman attention required.** A `PREHANDOVER` proof was pushed to this PR with `iaa_audit_token: PENDING`, but handover or wave-closure language was detected in this commit.',
+              '',
+              'Per FAIL-ONLY-ONCE A-014 (foreman-v2-agent registry) and IAA_PRE_BRIEF_PROTOCOL.md §Final Gate:',
+              '- The IAA **must** be invoked **before** handover',
+              '- The `ASSURANCE-TOKEN` must be recorded in the PREHANDOVER proof',
+              '- Handing over with `iaa_audit_token: PENDING` is an automatic merge gate failure (A-021)',
+              '',
+              '**Detected:** `PREHANDOVER` proof with `iaa_audit_token: PENDING` + handover language in this push',
+              '**Required:** IAA invocation → `ASSURANCE-TOKEN` → recorded verbatim in PREHANDOVER proof',
+              '',
+              '### Action required:',
+              '1. Invoke IAA: use `/iaa-prebrief` or type `@copilot As IAA (independent-assurance-agent), please audit this PR...`',
+              '2. Paste the verbatim IAA response into the PREHANDOVER proof',
+              '3. Update `iaa_audit_token:` to the issued token (format: `IAA-session-NNN-YYYYMMDD-PASS`)',
+              '4. Commit and push the updated PREHANDOVER proof',
+              '',
+              '*Governance Watchdog — automated gap detection | Authority: foreman-v2-agent FAIL-ONLY-ONCE A-014, A-021, AGENT_HANDOVER_AUTOMATION.md §4.3*',
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body,
+            });
+
+            core.warning(`Gap 3 alert posted on PR #${prNumber}: PREHANDOVER with PENDING token + handover language detected.`);
