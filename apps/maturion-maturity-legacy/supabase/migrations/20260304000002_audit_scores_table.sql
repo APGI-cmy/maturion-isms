@@ -1,23 +1,15 @@
--- Wave 14 Addendum A: Create audit_scores table
+-- Wave 14 Addendum A: Extend audit_scores table with criterion-level columns
 -- Incident: INC-W13-AUDIT-SCORES-001 (carry-forward from Wave 13)
 -- Architecture: TR-081 (Wave 14 Addendum A TRS)
--- Idempotent: CREATE TABLE IF NOT EXISTS and DO $$ guards
+-- Note: The audit_scores table was created by migration 20260303000006 without criterion_id.
+-- This migration adds the missing columns idempotently via ADD COLUMN IF NOT EXISTS.
 
-CREATE TABLE IF NOT EXISTS public.audit_scores (
-  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  audit_id        UUID NOT NULL REFERENCES public.audits(id) ON DELETE CASCADE,
-  criterion_id    UUID NOT NULL REFERENCES public.criteria(id) ON DELETE CASCADE,
-  organisation_id UUID NOT NULL REFERENCES public.organisations(id) ON DELETE CASCADE,
-  maturity_level  NUMERIC(3,1) NOT NULL CHECK (maturity_level >= 0 AND maturity_level <= 5),
-  score_source    TEXT NOT NULL DEFAULT 'ai' CHECK (score_source IN ('ai', 'human', 'override')),
-  confirmed       BOOLEAN NOT NULL DEFAULT false,
-  confirmed_by    UUID REFERENCES auth.users(id),
-  confirmed_at    TIMESTAMPTZ,
-  created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at      TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-ALTER TABLE public.audit_scores ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.audit_scores
+  ADD COLUMN IF NOT EXISTS criterion_id  UUID REFERENCES public.criteria(id) ON DELETE CASCADE,
+  ADD COLUMN IF NOT EXISTS score_source  TEXT NOT NULL DEFAULT 'ai' CHECK (score_source IN ('ai', 'human', 'override')),
+  ADD COLUMN IF NOT EXISTS confirmed     BOOLEAN NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS confirmed_by  UUID REFERENCES auth.users(id),
+  ADD COLUMN IF NOT EXISTS confirmed_at  TIMESTAMPTZ;
 
 -- Index: fast lookup by audit
 DO $$ BEGIN
