@@ -151,6 +151,53 @@ export function useUpdateOrganisationSettings() {
   });
 }
 
+export interface CreateOrganisationInput {
+  name: string;
+  ownerFullName: string;
+}
+
+/**
+ * Create a new organisation and link it to the current user's profile
+ */
+export function useCreateOrganisation() {
+  const queryClient = useQueryClient();
+
+  return useMutation<{ organisationId: string }, Error, CreateOrganisationInput>({
+    mutationFn: async ({ name, ownerFullName }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      // 1. Create organisation — generate ID client-side to avoid RLS SELECT
+      //    chicken-and-egg: the user has no profile link yet so a server-side
+      //    RETURNING/select would return 0 rows under current RLS policies.
+      const newOrgId = crypto.randomUUID();
+      const { error: orgError } = await supabase
+        .from('organisations')
+        .insert({ id: newOrgId, name });
+      if (orgError) throw new Error(`Failed to create organisation: ${orgError.message}`);
+
+      // 2. Upsert profile with organisation_id and full_name
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          organisation_id: newOrgId,
+          full_name: ownerFullName,
+          display_name: ownerFullName,
+          email: user.email,
+          updated_at: new Date().toISOString(),
+        });
+      if (profileError) throw new Error(`Failed to update profile: ${profileError.message}`);
+
+      return { organisationId: newOrgId };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-profile'] });
+      queryClient.invalidateQueries({ queryKey: ['organisation-settings'] });
+    },
+  });
+}
+
 /**
  * Upload organisation logo
  */
