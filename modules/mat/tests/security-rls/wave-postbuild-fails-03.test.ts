@@ -237,7 +237,7 @@ describe('Wave postbuild-fails-03 — current_setting RLS Fix Guard + Storage Pa
     const hasBareEvidencePath = source.includes('`evidence/${criterionId}');
     expect(
       hasBareEvidencePath,
-      'useEvidence.ts MUST NOT use the bare upload path `evidence/${criterionId} — ' +
+      'useEvidence.ts MUST NOT use the bare upload path `evidence/${criterionId}` — ' +
       'this path is missing the organisationId prefix and enables cross-org storage path collisions. ' +
       'ui-builder must prepend organisationId, e.g. `${organisationId}/evidence/${criterionId}/...`'
     ).toBe(false);
@@ -273,10 +273,10 @@ describe('Wave postbuild-fails-03 — current_setting RLS Fix Guard + Storage Pa
     const source = fs.readFileSync(hookPath, 'utf-8');
 
     // Negative assertion (RED guard): old bare path WITHOUT org prefix must NOT be present
-    const hasBarecriteriaPath = source.includes('`criteria/${auditId}');
+    const hasBareCriteriaPath = source.includes('`criteria/${auditId}');
     expect(
-      hasBarecriteriaPath,
-      'useCriteria.ts MUST NOT use the bare upload path `criteria/${auditId} — ' +
+      hasBareCriteriaPath,
+      'useCriteria.ts MUST NOT use the bare upload path `criteria/${auditId}` — ' +
       'this path is missing the organisationId prefix and enables cross-org storage path collisions. ' +
       'ui-builder must prepend organisationId, e.g. `${organisationId}/criteria/${auditId}/...`'
     ).toBe(false);
