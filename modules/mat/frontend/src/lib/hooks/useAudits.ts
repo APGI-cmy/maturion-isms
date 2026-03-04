@@ -14,9 +14,6 @@ export interface Audit {
   description?: string;
   framework?: string;
   target_date?: string;
-  audit_lead_id?: string;
-  audit_period_start?: string;
-  audit_period_end?: string;
   status: 'draft' | 'active' | 'completed' | 'archived';
   created_by: string;
   created_at: string;
@@ -29,9 +26,6 @@ export interface CreateAuditInput {
   description?: string;
   framework?: string;
   target_date?: string;
-  audit_lead_id?: string;
-  audit_period_start?: string;
-  audit_period_end?: string;
 }
 
 /**
@@ -114,9 +108,6 @@ export function useCreateAudit() {
           description: input.description,
           framework: input.framework,
           target_date: input.target_date,
-          audit_lead_id: input.audit_lead_id,
-          audit_period_start: input.audit_period_start,
-          audit_period_end: input.audit_period_end,
           organisation_id: profile.organisation_id,
           created_by: user.id,
           status: 'draft',

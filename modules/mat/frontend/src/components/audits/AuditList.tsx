@@ -51,8 +51,9 @@ export function AuditList() {
 
   // Filter audits
   const filteredAudits = audits.filter(audit => {
-    const matchesSearch = audit.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         audit.organisation_id.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      searchTerm === '' ||
+      audit.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || audit.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -100,9 +101,8 @@ export function AuditList() {
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <h4 className="font-semibold text-lg">{audit.title}</h4>
-                <p className="text-sm text-gray-600">{audit.organisation_id}</p>
                 {audit.description && (
-                  <p className="text-sm text-gray-500">{audit.description}</p>
+                  <p className="text-sm text-gray-500">Description: {audit.description}</p>
                 )}
                 <div className="flex gap-4 mt-2 text-sm text-gray-500">
                   <span>Status: <span className="font-medium">{audit.status.replace('_', ' ')}</span></span>
