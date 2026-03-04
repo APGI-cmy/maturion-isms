@@ -664,6 +664,31 @@ grep -E '^\s*-\s+`[^`]+`\s+-\s+' SCOPE_DECLARATION.md | wc -l
 | 1.9.0 | 2026-03-03 | A-026 (SCOPE_DECLARATION.md must match PR diff exactly before IAA invocation — stale declaration = BL-027 merge gate parity failure) added from session-116 (Wave 13 Addendum B+C re-invocation) |
 | 2.0.0 | 2026-03-03 | A-027 (third-consecutive A-021 failure = systemic workflow gap — Pre-IAA Commit Gate required) added from session-119 (Wave 14 Addendum A — third A-021 failure on same branch); header version corrected from 1.8.0 to 2.0.0 (header/index discrepancy resolved) |
 | 2.1.0 | 2026-03-03 | A-028 (SCOPE_DECLARATION format compliance — list format required, prior-wave entries must be trimmed) added from session-120 (Wave 14 Addendum A — fourth invocation; BL-027 fails due to table format and phantom prior-wave entries) |
+| 2.2.0 | 2026-03-04 | A-029 ARTIFACT-IMMUTABILITY-4.3b locked in; supersedes A-025 PENDING requirement per AGENT_HANDOVER_AUTOMATION.md v1.1.3 §4.3b (PR 1298) |
+
+---
+
+### A-029 — Artifact Immutability §4.3b: PREHANDOVER Proof is Read-Only Post-Commit
+
+**Effective**: 2026-03-04 | **Authority**: CS2 (PR 1298 — `AGENT_HANDOVER_AUTOMATION.md` v1.1.3 §4.3b)
+**Supersedes**: A-025 (PENDING requirement) for the `iaa_audit_token` field in PREHANDOVER proofs.
+
+**Rule**: Per `AGENT_HANDOVER_AUTOMATION.md` v1.1.3 §4.3b, the PREHANDOVER proof is **read-only after initial commit**. The following applies to all agent classes:
+
+1. The `iaa_audit_token` field in the PREHANDOVER proof MUST be pre-populated with the expected reference at initial commit time: `IAA-session-NNN-waveY-YYYYMMDD-PASS`.
+2. After the IAA issues its verdict, the IAA writes its token to a **new dedicated file** only: `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`.
+3. No agent (including the IAA) may edit the PREHANDOVER proof post-commit to update `iaa_audit_token`.
+4. A-025's requirement to commit with `iaa_audit_token: PENDING` is superseded. PENDING is no longer the correct pre-commit value.
+
+**IAA check (Phase 3)**:
+> A-029: For any `iaa_audit_token` field in a committed PREHANDOVER proof:
+> - If value is `PENDING` → FLAG as A-029 violation (old pattern, superseded by §4.3b).
+> - If value is expected reference format (`IAA-session-NNN-waveY-YYYYMMDD-PASS`) → check that the dedicated token file exists at `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`.
+> - If dedicated token file is absent → FAIL (INC-PREHANDOVER-MUTATE-001).
+
+**Violation class**: INC-PREHANDOVER-MUTATE-001
+
+**Status**: ACTIVE — from 2026-03-04 (PR 1298 / AGENT_HANDOVER_AUTOMATION.md v1.1.3 §4.3b)
 
 ---
 

@@ -62,13 +62,16 @@ iaa_oversight:
     - prehandover_proof
     - session_memory
     - wave_evidence_bundle
-  invocation_step: "Phase 4 Step 4.3a — IAA Independent Audit"
+  invocation_step: "Phase 4 Step 4.3a (invoke IAA after commit of PREHANDOVER proof)"
   verdict_handling:
-    pass: record_audit_token_and_proceed_to_merge_gate
+    pass: write_token_to_dedicated_file_then_proceed_to_merge_gate
     stop_and_fix: halt_handover_return_to_phase3_step3_5
     escalate: route_to_cs2_do_not_release_merge_gate
   advisory_phase: PHASE_A_ADVISORY
   policy_ref: AGCFPP-001
+  artifact_immutability:
+    prehandover_proof: read_only_after_initial_commit
+    iaa_token: write_to_dedicated_file_only
   rationale: >
     Foreman QAs builders. IAA QAs Foreman. Double-layer QA is intentional
     and required. Foreman's role as QA agent does NOT exempt it from IAA
@@ -123,6 +126,18 @@ capabilities:
   merge_gate_parity:
     local_check_before_pr: MANDATORY
     enforcement: BLOCKING
+
+can_invoke:
+  - agent: builder-class
+    when: "Wave task requires implementation"
+    how: task delegation
+  - agent: independent-assurance-agent
+    when: "Phase 4 Step 4.3a (mandatory) and wave-start Pre-Brief"
+    how: tool call via task(agent_type)
+
+cannot_invoke:
+  - self (SELF-MOD-FM-001)
+  - .github/agents/*.md writes (CodexAdvisor + CS2)
 
 escalation:
   authority: CS2
@@ -564,7 +579,7 @@ Must contain all of the following — no omissions:
 - CANON_INVENTORY alignment: CONFIRMED (hash check passed)
 - Bundle completeness: all required artifacts present (list each)
 - `merge_gate_parity: PASS` (§4.3 compliance confirmed)
-- `iaa_audit_token: PENDING` (to be updated after Step 4.3a)
+- `iaa_audit_token: IAA-session-NNN-waveY-YYYYMMDD-PASS` (expected reference recorded at commit time — see §4.3b)
 - CS2 authorization evidence: [source — comment link or issue reference]
 - Required checklist lines:
   - `[x] Zero test failures`
@@ -572,7 +587,7 @@ Must contain all of the following — no omissions:
   - `[x] Zero deprecation warnings`
   - `[x] Zero compiler/linter warnings`
   - `[x] §4.3 Merge gate parity check: all required_checks match CI — PASS`
-  - `[ ] IAA audit token recorded` ← updated to `[x]` after Step 4.3a
+  - `[x] IAA audit token: PASS (token reference recorded at commit time — see §4.3b)`
 
 **Step 4.3 — Generate session memory:**
 
@@ -623,7 +638,7 @@ Output:
 > Awaiting: IAA verdict."
 
 IAA verdict handling:
-- **IAA PASS** → Proceed to Step 4.3b to record the token in the PREHANDOVER proof and complete the token update ceremony.
+- **IAA PASS** → Proceed to Step 4.3b to commit the IAA token to a dedicated file and complete the token update ceremony.
 - **IAA STOP-AND-FIX** → Halt handover immediately. Address every cited finding. Re-run QP (Phase 3 Step 3.5). Re-generate PREHANDOVER proof. Re-invoke IAA. Do NOT release merge gate until IAA PASS is received.
 - **IAA ESCALATE** → Do not release merge gate. Route to CS2 for resolution before any merge.
 
@@ -635,43 +650,30 @@ If IAA is not yet deployed (Phase A advisory mode):
 
 In all cases (PASS or Phase A advisory): proceed to Step 4.3b to complete the PREHANDOVER token update ceremony before advancing to Step 4.4.
 
-**Step 4.3b — PREHANDOVER Token Update Ceremony (MANDATORY — BLOCKING):**
+**Step 4.3b — Token Update Ceremony (MANDATORY — BLOCKING):**
 
 **[FM_H] EXECUTE AFTER IAA VERDICT — BEFORE MERGE GATE RELEASE. NOT OPTIONAL.**
 
-This ceremony closes the artifact bundle integrity loop by recording the IAA assurance verdict
-in the PREHANDOVER proof before the PR is opened. A PREHANDOVER proof with
-`iaa_audit_token: PENDING` at merge gate release is a **HANDOVER BLOCKER**.
+Per `AGENT_HANDOVER_AUTOMATION.md` v1.1.3 §4.3b: PREHANDOVER proof is read-only post-commit.
+The IAA token MUST be written to a dedicated new file only — never into the PREHANDOVER proof.
 
 **Sequence:**
-1. Receive IAA verdict (PASS token, PHASE_A_ADVISORY status, STOP-AND-FIX, or ESCALATE).
-2. Open the PREHANDOVER proof: `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-NNN-YYYYMMDD.md`
-3. Locate the `iaa_audit_token: PENDING` field.
-4. Replace `PENDING` with the actual token or advisory status received from IAA:
-   - IAA PASS → `iaa_audit_token: IAA-WAVE{N}-YYYYMMDD-PASS`
-   - Phase A advisory → `iaa_audit_token: PHASE_A_ADVISORY — [date]`
-5. Update the `[ ] IAA audit token recorded` checklist line to `[x] IAA audit token recorded: [token]`.
-6. Save the updated PREHANDOVER proof.
+1. The PREHANDOVER proof already records the expected token reference at initial commit time
+   (field: `iaa_audit_token: IAA-session-NNN-waveY-YYYYMMDD-PASS`). Do NOT edit it post-commit.
+2. After IAA verdict, the IAA writes its token to a dedicated new file:
+   `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`
+3. Commit the token file as a **new file only** — no amendments to any existing committed artifact.
+4. If IAA issues REJECTION-PACKAGE: IAA writes a new rejection artifact; return to Phase 3
+   Step 3.5, fix all gaps, re-initiate handover with a fresh PREHANDOVER proof in a new commit.
 
-**Manual flow:**
-Edit the PREHANDOVER proof file directly. Replace the `PENDING` placeholder with the token string
-received from IAA. Confirm the file is saved and the checklist line is updated before proceeding.
+Output:
 
-**Automated flow:**
-If a CI or automation script performs the token update, it must:
-- Write the token to `iaa_audit_token` in the PREHANDOVER proof.
-- Flip the `[ ] IAA audit token recorded` checklist item to `[x]`.
-- Commit the updated file to the PR branch before the merge gate check runs.
-
-Output (after update is confirmed):
-
-> "PREHANDOVER token update ceremony: COMPLETE.
-> PREHANDOVER proof: [path]
-> iaa_audit_token: [token or PHASE_A_ADVISORY]
-> IAA audit token recorded: [x]
+> "Token ceremony: COMPLETE.
+> IAA token file: `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`
+> PREHANDOVER proof: unchanged (read-only post-commit).
 > Integrity loop: CLOSED."
 
-If the update cannot be confirmed → **HANDOVER BLOCKER. Do not release merge gate.**
+If token file absent → **HANDOVER BLOCKER. Do not release merge gate.**
 
 **Step 4.4 — Release merge gate:**
 

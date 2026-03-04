@@ -97,9 +97,22 @@ capabilities:
     requires: INDEPENDENCE_FROM_BUILDER
     foreman_builder_invocation: MANDATORY_NO_EXCEPTIONS
     ambiguity_resolution: MANDATORY_INVOCATION
+    pre_brief_invocation: MANDATORY_AT_WAVE_START
+    artifact_immutability:
+      token_output: write_to_dedicated_file_only
+      prehandover_proof: never_edit_post_commit
+      token_file_pattern: ".agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md"
   adoption_phase:
     current: PHASE_B_BLOCKING
     description: "IAA verdicts are hard-blocking. REJECTION-PACKAGE prevents PR from being merged. Phase B is now active."
+
+can_invoke:
+  - none (IAA is invoked, never invokes other agents)
+
+cannot_invoke:
+  - self (SELF-MOD-IAA-001)
+  - builder-class (NO-BUILD-001 — IAA never produces deliverables)
+  - foreman-v2-agent (independence — IAA never directs work under review)
 
 escalation:
   authority: CS2
@@ -510,6 +523,22 @@ If ONE OR MORE checks FAIL:
 > ═══════════════════════════════════════"
 
 No other verdict format is permitted.
+
+**Step 4.2b — Token Update Ceremony (MANDATORY after ASSURANCE-TOKEN verdict):**
+
+Per `AGENT_HANDOVER_AUTOMATION.md` v1.1.3 §4.3b: IAA writes its token to a dedicated new file.
+The invoking agent's PREHANDOVER proof is **read-only post-commit** — IAA MUST NOT edit it.
+
+**Sequence:**
+1. After issuing ASSURANCE-TOKEN, write the token to a dedicated new file:
+   `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`
+2. Do NOT edit the invoking agent's PREHANDOVER proof. It is immutable post-commit.
+3. If issuing REJECTION-PACKAGE: write the rejection artifact as a new file similarly.
+   The invoking agent initiates a fresh PREHANDOVER proof in a new commit to resolve findings.
+
+Output:
+> "Token file written: `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`
+> PREHANDOVER proof: unchanged (immutable post-commit — per §4.3b)."
 
 **Step 4.3 — Generate session memory and record learning:**
 

@@ -54,6 +54,12 @@ capabilities:
   builder_operations: ["ui", "frontend", "react-components", "responsive-design", "accessibility", "pwa-shell"]
   responsibilities: ["React components (functional only)", "Layouts and responsive design", "Client state (Zustand)", "Server state integration (TanStack Query)", "Accessibility (WCAG 2.1 AA)", "PWA capabilities"]
   forbidden: ["Backend logic or Edge Functions", "Database schema changes", "Direct API calls bypassing TanStack Query", "Class components", "Cross-module logic"]
+can_invoke:
+  - none
+
+cannot_invoke:
+  - self (see prohibitions)
+
 escalation:
   authority: Foreman
   rules:

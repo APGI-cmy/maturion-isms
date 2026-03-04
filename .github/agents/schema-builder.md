@@ -54,6 +54,12 @@ capabilities:
   builder_operations: ["database", "schema", "migrations", "rls-policies"]
   responsibilities: ["Table creation", "RLS policies", "Indexes and constraints", "Migrations and seed data"]
   forbidden: ["Application code (Edge Functions, frontend)", "AI services", "Cross-module logic"]
+can_invoke:
+  - none
+
+cannot_invoke:
+  - self (see prohibitions)
+
 escalation:
   authority: Foreman
   rules:

@@ -54,6 +54,12 @@ capabilities:
   builder_operations: ["performance-testing", "security-scanning", "accessibility-auditing", "compliance-validation", "regression-management"]
   responsibilities: ["Performance testing (load, stress, spike)", "Security scanning (SAST, dependency, container)", "Accessibility auditing (WCAG 2.1 AA)", "Compliance validation (GDPR, POPIA)", "Regression suite management"]
   forbidden: ["Implementing feature code", "Modifying architecture specifications", "Weakening test assertions", "Skipping performance/security tests"]
+can_invoke:
+  - none
+
+cannot_invoke:
+  - self (see prohibitions)
+
 escalation:
   authority: Foreman
   rules:

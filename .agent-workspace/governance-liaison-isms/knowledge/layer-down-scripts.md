@@ -110,3 +110,15 @@ echo "Sync state updated: $TIMESTAMP | commit=$CANONICAL_COMMIT | version=$CANON
 *Authority: CS2 (Johan Ras) | LIVING_AGENT_SYSTEM.md v6.2.0*  
 *Policy: governance/canon/CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md*  
 *Created: 2026-02-25 | Status: ACTIVE*
+
+---
+
+## Full Layer-Down Protocol (7 Steps) — migrated from contract §3.1
+
+1. **Review Canonical Manifest**: Fetch CANON_INVENTORY.json from canonical source. Identify changed files (version, SHA256, layer_down_status). Filter for PUBLIC_API canons only.
+2. **Validate Checksums**: Use Script 1 (above) for each changed file. Any SHA256 mismatch triggers HALT-005 — do not write the file.
+3. **Fetch Canonical Files**: Download files from canonical repository. Verify SHA256 before writing locally. Preserve version headers and metadata.
+4. **Agent Contract Changes**: Review agent contracts for canonical references only (READ-ONLY). If agent contracts need updates → HALT. Escalate to CS2. Request CodexAdvisor assignment. Do NOT write to `.github/agents/*.md` files.
+5. **Validate PR Gates**: Ensure merge gate interface checks configured. Verify governance/alignment gate enabled. Test changes in isolated branch.
+6. **Execute Prehandover Verification**: Generate evidence artifact bundle. Include: file checksums, version alignment, test results. Attach MANDATORY PREHANDOVER_PROOF.
+7. **Update Sync State**: Use Script 2 (above). Record: timestamp, canonical_commit, canonical_inventory_version, files_updated. Set `sync_pending: false` and `drift_detected: false` on successful completion.

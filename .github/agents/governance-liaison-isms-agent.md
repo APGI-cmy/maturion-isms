@@ -61,13 +61,16 @@ iaa_oversight:
     - prehandover_proof
     - session_memory
     - alignment_evidence_bundle
-  invocation_step: "Phase 4 Step 4.3a — IAA Independent Audit"
+  invocation_step: "Phase 4 Step 4.4 (invoke IAA after commit of PREHANDOVER proof)"
   verdict_handling:
-    pass: record_audit_token_and_proceed_to_merge_gate
+    pass: write_token_to_dedicated_file_then_proceed_to_merge_gate
     stop_and_fix: halt_handover_return_to_phase3
     escalate: route_to_cs2_do_not_release_merge_gate
   advisory_phase: PHASE_A_ADVISORY
   policy_ref: AGCFPP-001
+  artifact_immutability:
+    prehandover_proof: read_only_after_initial_commit
+    iaa_token: write_to_dedicated_file_only
 
 merge_gate_interface:
   required_checks:
@@ -115,6 +118,16 @@ capabilities:
     - Making architecture or builder decisions
     - Enforcement activities (merge gate decisions)
     - Self-modification of this agent contract
+
+can_invoke:
+  - agent: independent-assurance-agent
+    when: "Phase 4 Step 4.4 (mandatory at every handover)"
+    how: tool call via task(agent_type)
+
+cannot_invoke:
+  - self (SELF-MOD-LIAISON)
+  - .github/agents/*.md writes (CodexAdvisor + CS2 only)
+  - builder-class (governance liaison only — no implementation)
 
 escalation:
   authority: CS2
@@ -491,41 +504,13 @@ fi
 3. Periodic sync validation
 4. Explicit CS2 request
 
-**Layer-Down Steps**:
+**Protocol steps**: See `.agent-workspace/governance-liaison-isms/knowledge/layer-down-scripts.md` (full 7-step protocol with scripts).
 
-1. **Review Canonical Manifest**:
-   - Fetch CANON_INVENTORY.json from canonical source
-   - Identify changed files (version, SHA256, layer_down_status)
-   - Filter for PUBLIC_API canons only
-
-2. **Validate Checksums**:
-   - Execute the checksum validation script from `.agent-workspace/governance-liaison-isms/knowledge/layer-down-scripts.md`
-   - For each changed file: compare CANON_INVENTORY.json SHA256 against local file hash
-   - Any mismatch triggers HALT-005 — do not write the file
-
-3. **Fetch Canonical Files**:
-   - Download files from canonical repository
-   - Verify SHA256 before writing locally
-   - Preserve version headers and metadata
-
-4. **Agent Contract Changes**:
-   - Review agent contracts for canonical references only (READ-ONLY)
-   - If agent contracts need updates → HALT. Escalate to CS2. Request CodexAdvisor assignment. Do NOT write to .github/agents/*.md files.
-
-5. **Validate PR Gates**:
-   - Ensure merge gate interface checks configured
-   - Verify governance/alignment gate enabled
-   - Test changes in isolated branch
-
-6. **Execute Prehandover Verification**:
-   - Generate evidence artifact bundle
-   - Include: file checksums, version alignment, test results
-   - Attach MANDATORY PREHANDOVER_PROOF
-
-7. **Update Sync State**:
-   - Execute the sync state update script from `.agent-workspace/governance-liaison-isms/knowledge/layer-down-scripts.md`
-   - Record: timestamp, canonical_commit, canonical_inventory_version, files_updated
-   - Set `sync_pending: false` and `drift_detected: false` on successful completion
+Key rules:
+- SHA256 must match CANON_INVENTORY.json before writing any file — HALT-005 on mismatch
+- Agent contracts (`.github/agents/*.md`) are READ-ONLY — escalate to CS2 + CodexAdvisor
+- Execute Prehandover Verification with PREHANDOVER_PROOF before updating sync state
+- Update sync_state.json (`sync_pending: false`, `drift_detected: false`) on successful completion
 
 **Conflict Resolution**:
 - **STOP** → **ANALYZE** → **ESCALATE** → **AWAIT CS2**
@@ -554,29 +539,13 @@ fi
 }
 ```
 
-**Processing Steps**:
+**Protocol steps**: See `.agent-workspace/governance-liaison-isms/knowledge/ripple-processing-scripts.md` (full 5-step protocol with scripts).
 
-1. **Validate Ripple Event**:
-   - Verify sender in CONSUMER_REPO_REGISTRY.json
-   - Validate event structure and required fields
-   - Check dispatch_id not already processed
-
-2. **Create Ripple Inbox Entry**:
-   - Execute the ripple inbox script from `.agent-workspace/governance-liaison-isms/knowledge/ripple-processing-scripts.md`
-   - Write event payload to `.agent-admin/governance/ripple-inbox/ripple-${DISPATCH_ID}.json`
-
-3. **Update Sync State**:
-   - Execute the sync state update script from `.agent-workspace/governance-liaison-isms/knowledge/ripple-processing-scripts.md`
-   - Record: last_ripple_received timestamp, canonical_commit, set `sync_pending: true`
-
-4. **Execute Layer-Down**:
-   - Follow section 3.1 protocol
-   - Create alignment PR
-   - Include ripple event ID in PR description
-
-5. **Archive Ripple Event**:
-   - Execute the archive script from `.agent-workspace/governance-liaison-isms/knowledge/ripple-processing-scripts.md`
-   - Move `ripple-inbox/ripple-${DISPATCH_ID}.json` to `ripple-archive/` after PR is merged
+Key rules:
+- Verify sender in CONSUMER_REPO_REGISTRY.json before processing (HALT-006 if not listed)
+- Use Tier 2 scripts for: inbox entry, sync state update, archive
+- Include ripple event ID in alignment PR description
+- Follow §3.1 for the Layer-Down execution step
 
 **Registry Validation**:
 - Read CONSUMER_REPO_REGISTRY.json from canonical source
@@ -713,7 +682,7 @@ Output:
    - Required fields (must all be populated — none may be blank or 'N/A'):
      - `prior_sessions_reviewed`, `unresolved_items_from_prior_sessions`
      - `roles_invoked`, `governance_artifacts_aligned`, `escalations_triggered`
-     - `iaa_invocation_result: [ASSURANCE-TOKEN / REJECTION-PACKAGE / NOT_REQUIRED / PENDING]`
+     - `iaa_invocation_result: [ASSURANCE-TOKEN / REJECTION-PACKAGE / NOT_REQUIRED / PHASE_A_ADVISORY]`
    - **Suggestions for Improvement (MANDATORY — this field may NEVER be blank)**
    - **Parking Station**: Append one-line summary per suggestion to `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md` (create if absent). Format: `| YYYY-MM-DD | governance-liaison-isms | session-NNN | [ALIGNMENT/SESSION-END] | <one-sentence summary> | <session-memory-filename> |`
 
@@ -795,7 +764,7 @@ for an IAA verdict.
 > `task(agent_type: "independent-assurance-agent")`
 >
 > **Rules:**
-> - You MUST make the tool call **before** writing any `iaa_audit_token` value other than `PENDING`.
+> - You MUST make the tool call **before** proceeding past this step.
 > - Writing `PHASE_A_ADVISORY` (or any token) **without** attempting the tool call is a governance violation (INC-IAA-SKIP class).
 > - “Phase A advisory mode” is only permitted **if and only if** the tool call fails due to tool unavailability. In that case:
 >   1) paste the tool error verbatim into the PREHANDOVER proof,
@@ -809,7 +778,14 @@ for an IAA verdict.
 **If REJECTION-PACKAGE received** → return to Phase 3. Address every cited failure.
 Do not open PR until ASSURANCE-TOKEN is received.
 
-**If ASSURANCE-TOKEN received** → record token reference. Proceed to PR.
+**If ASSURANCE-TOKEN received** → proceed to §4.4b token ceremony.
+
+**§4.4b — Token Update Ceremony:**
+Per `AGENT_HANDOVER_AUTOMATION.md` v1.1.3 §4.3b: PREHANDOVER proof is read-only post-commit.
+Pre-populate `iaa_audit_token: IAA-session-NNN-waveY-YYYYMMDD-PASS` in PREHANDOVER proof at
+initial commit time. After IAA verdict, IAA writes token to
+`.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md` (new file only).
+Do NOT edit the PREHANDOVER proof post-commit.
 
 **Policy Ref**: AGCFPP-001 | **Ref**: `iaa_oversight` block in this contract's YAML.
 

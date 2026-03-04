@@ -54,6 +54,12 @@ capabilities:
   builder_operations: ["integration", "api-contract-validation", "inter-module-endpoints", "override-analysis"]
   responsibilities: ["Integration endpoints", "API contract validation", "Override analysis pipeline"]
   forbidden: ["Core MAT business logic", "Frontend UI logic", "Database schema changes"]
+can_invoke:
+  - none
+
+cannot_invoke:
+  - self (see prohibitions)
+
 escalation:
   authority: Foreman
   rules:

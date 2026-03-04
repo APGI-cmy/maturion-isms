@@ -54,6 +54,12 @@ capabilities:
   builder_operations: ["api", "backend", "business-logic", "data-processing"]
   responsibilities: ["API routes", "Business logic", "Data validation"]
   forbidden: ["Frontend UI logic", "Cross-module logic", "Database schema changes"]
+can_invoke:
+  - none
+
+cannot_invoke:
+  - self (see prohibitions)
+
 escalation:
   authority: Foreman
   rules:

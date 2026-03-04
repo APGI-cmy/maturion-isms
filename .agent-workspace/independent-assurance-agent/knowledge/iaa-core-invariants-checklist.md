@@ -69,9 +69,12 @@ PASS if:
 - `iaa_audit_token` contains a real IAA session token (`IAA-session-NNN-YYYYMMDD-PASS` format), AND
 - `## IAA Agent Response (verbatim)` section contains the verbatim IAA agent output block.
 
-**PENDING is a valid mid-ceremony state (PASS — ceremony in progress)**:
-- `iaa_audit_token: PENDING` with `## IAA Agent Response (verbatim)` section present (awaiting population) = PASS (ceremony in progress) — conditional on Post-ASSURANCE-TOKEN ceremony completion.
-- Do not fail a PREHANDOVER proof solely because `iaa_audit_token: PENDING` — this is the correct state at invocation time. Distinguish this clearly from PHASE_A_ADVISORY fabrication (see A-006).
+**PENDING is a valid mid-ceremony state for PREHANDOVER proofs committed before 2026-03-04 only (SUPERSEDED by A-029)**:
+- Per `AGENT_HANDOVER_AUTOMATION.md` v1.1.3 §4.3b and FAIL-ONLY-ONCE A-029 (effective 2026-03-04):
+  PREHANDOVER proofs committed on or after 2026-03-04 MUST have `iaa_audit_token` pre-populated with
+  the expected reference (`IAA-session-NNN-waveY-YYYYMMDD-PASS`) — NOT `PENDING`.
+- For pre-2026-03-04 proofs: `iaa_audit_token: PENDING` with `## IAA Agent Response (verbatim)` section present was valid. Do not retroactively fail prior sessions.
+- For post-2026-03-04 proofs: `iaa_audit_token: PENDING` is a protocol violation (A-029 / INC-PREHANDOVER-MUTATE-001). Fail.
 
 **Copy-paste requirement**: The `## IAA Agent Response (verbatim)` section must contain the complete IAA output block copied character-for-character from the IAA tool output — from the opening `ASSURANCE-TOKEN` / `REJECTION-PACKAGE` header to the end of the block. Paraphrasing, summarising, or partial copying is not permitted. Any deviation from the exact IAA output constitutes an INC-IAA-SKIP-001 breach.
 
@@ -86,7 +89,7 @@ CORE-018 is the first check applied on every triggered invocation. Before evalua
 1. Confirm PREHANDOVER proof file exists on the PR branch
 2. Confirm session memory file exists on the PR branch
 3. Confirm `iaa_audit_token` field is present in the PREHANDOVER proof AND is non-empty AND is not a generic placeholder ("TODO", "TBD", "placeholder", etc.)
-4. Confirm `## IAA Agent Response (verbatim)` section is present in the PREHANDOVER proof (content may be empty ONLY if `iaa_audit_token: PENDING`)
+4. Confirm `## IAA Agent Response (verbatim)` section is present in the PREHANDOVER proof (content may be empty ONLY if `iaa_audit_token: PENDING` AND proof committed before 2026-03-04; see A-029)
 
 If any of the four conditions fails → REJECTION-PACKAGE immediately. Do not continue to overlay checks.
 
