@@ -107,6 +107,57 @@ DO $$ BEGIN
   END IF;
 END $$;
 
+-- RLS UPDATE policy: org isolation — status transitions (pending_review → confirmed/overridden)
+-- (W14-BB-003-R05: UPDATE required for AI evaluation confirm/override workflow)
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename  = 'criteria_evaluations'
+      AND policyname = 'criteria_evaluations_update'
+  ) THEN
+    CREATE POLICY criteria_evaluations_update
+      ON public.criteria_evaluations
+      FOR UPDATE
+      USING (
+        organisation_id IN (
+          SELECT organisation_id
+          FROM public.profiles
+          WHERE id = auth.uid()
+        )
+      )
+      WITH CHECK (
+        organisation_id IN (
+          SELECT organisation_id
+          FROM public.profiles
+          WHERE id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
+
+-- RLS DELETE policy: org isolation — evaluation cleanup within org scope
+-- (W14-BB-003-R05: DELETE required for audit trail management)
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename  = 'criteria_evaluations'
+      AND policyname = 'criteria_evaluations_delete'
+  ) THEN
+    CREATE POLICY criteria_evaluations_delete
+      ON public.criteria_evaluations
+      FOR DELETE
+      USING (
+        organisation_id IN (
+          SELECT organisation_id
+          FROM public.profiles
+          WHERE id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
+
 -- ---------------------------------------------------------------------------
 -- TABLE: public.evaluation_overrides
 -- Tracks manual Lead Auditor overrides of AI-proposed evaluations.

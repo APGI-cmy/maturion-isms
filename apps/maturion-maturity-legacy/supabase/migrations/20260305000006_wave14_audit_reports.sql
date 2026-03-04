@@ -112,3 +112,40 @@ DO $$ BEGIN
       );
   END IF;
 END $$;
+
+-- ---------------------------------------------------------------------------
+-- STORAGE OBJECTS POLICY: reports bucket
+-- Controls read/write access to objects within the 'reports' bucket.
+-- Path convention: reports/{organisation_id}/{audit_id}/filename.pdf
+-- Policy: authenticated users may access objects whose first path segment
+-- matches their organisation_id (from public.profiles).
+-- (W14-BB-009-R06: storage.buckets INSERT alone is insufficient; objects policy required)
+-- ---------------------------------------------------------------------------
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'storage'
+      AND tablename  = 'objects'
+      AND policyname = 'reports_objects_policy'
+  ) THEN
+    CREATE POLICY reports_objects_policy
+      ON storage.objects
+      FOR ALL
+      USING (
+        bucket_id = 'reports'
+        AND split_part(name, '/', 1) IN (
+          SELECT organisation_id::text
+          FROM public.profiles
+          WHERE id = auth.uid()
+        )
+      )
+      WITH CHECK (
+        bucket_id = 'reports'
+        AND split_part(name, '/', 1) IN (
+          SELECT organisation_id::text
+          FROM public.profiles
+          WHERE id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
