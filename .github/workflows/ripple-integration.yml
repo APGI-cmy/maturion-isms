@@ -358,12 +358,15 @@ jobs:
 
       # ── Create PR — standard path (no agent files changed) ──
       # Defect 2 fix: separate steps with literal draft: false / draft: true
+      # Defect 3 fix: continue-on-error prevents label validation failures from
+      # losing the pull-request-number output and triggering "Alignment Script Error"
       - name: Create ripple PR (standard — no agent files)
         if: >
           steps.align.outputs.drift_detected == 'true' &&
           steps.escalation.outputs.require_cs2 == 'false' &&
           steps.existing_pr.outputs.skip_pr_creation != 'true'
         id: create_pr_standard
+        continue-on-error: true
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
@@ -404,6 +407,7 @@ jobs:
           steps.escalation.outputs.require_cs2 == 'true' &&
           steps.existing_pr.outputs.skip_pr_creation != 'true'
         id: create_pr_draft
+        continue-on-error: true
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
