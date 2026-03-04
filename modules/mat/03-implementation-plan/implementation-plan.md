@@ -1,11 +1,11 @@
 # MAT — Implementation Plan
 
 **Module**: MAT (Manual Audit Tool)  
-**Version**: v2.4.0  
-**Status**: APPROVED  
-**Owner**: Foreman (FM)  
-**Created**: 2026-02-13  
-**Last Updated**: 2026-03-04  
+**Version**: v2.5.0
+**Status**: APPROVED
+**Owner**: Foreman (FM)
+**Created**: 2026-02-13
+**Last Updated**: 2026-03-04
 **Authority**: Derived from Architecture (modules/mat/02-architecture/), FRS (modules/mat/01-frs/functional-requirements.md), TRS (modules/mat/01.5-trs/technical-requirements-specification.md), Test Registry (governance/TEST_REGISTRY.json)
 
 ---
@@ -54,8 +54,9 @@ MAT is built in **thirteen waves** (Wave 0–Wave 12, plus Waves 5.5 and 5.6), w
 | 11 | **Supabase Persistent Memory Wiring** | qa-builder, schema-builder, api-builder | Sequential (11.1→11.2→11.3) | T-075-SUP-1–T-075-SUP-4, T-076-SUP-1 | 2 days |
 | 12 | **Full Functionality & Build Wiring Verification** | qa-builder, api-builder, ui-builder, integration-builder | Sequential (12.1→12.2→12.3→12.4) | T-W12-QAV-1–8, T-W12-API-1–7, T-W12-UI-1–9, T-W12-INT-1–7 | 3 days |
 | 13 | **Live Deployment Wiring Regression Fix & Continuous Improvement** *(OPEN — awaiting CS2 wave-start)* | schema-builder, api-builder, ui-builder, integration-builder, qa-builder | Sequential (13.1→13.2→13.3→13.4→13.5) | T-W13-SCH-1–4, T-W13-AUTH-1–4, T-W13-WIRE-1–8, T-W13-E2E-1–5, T-W13-CI-1–3 | 4 days |
+| 14.1–14.14 | **🔴 UX Workflow Gap Remediation** *(GAP-W01–GAP-W14 — RED, awaiting RED QA tests + builder delegation)* | qa-builder, schema-builder, api-builder, ui-builder | Sequential per subwave | T-W14-UX-001–T-W14-UX-016 (all RED) | TBD |
 
-**Total Estimated Duration**: ~41 working days (8.5 weeks) for Waves 0–6. Waves 7–9 duration TBD — blocked on AIMC delivery. Wave 10 COMPLETE (2 days). Wave 11 COMPLETE (2 days). Wave 12 COMPLETE (3 days — session-078/080/081, 2026-03-01).
+**Total Estimated Duration**: ~41 working days (8.5 weeks) for Waves 0–6. Waves 7–9 duration TBD — blocked on AIMC delivery. Wave 10 COMPLETE (2 days). Wave 11 COMPLETE (2 days). Wave 12 COMPLETE (3 days — session-078/080/081, 2026-03-01). Wave 14: TBD — FRS/TRS/RED QA spec complete; builder delegation pending.
 
 > **⚠️ AIMC BLOCKER — Waves 7, 8, 9**: These waves CANNOT start or pass their gate until the upstream
 > AIMC wave is confirmed complete by POLC/CS2. All AI test cases for these waves are RED and will
@@ -67,6 +68,8 @@ MAT is built in **thirteen waves** (Wave 0–Wave 12, plus Waves 5.5 and 5.6), w
 > **Change Note (v2.0.0, 2026-03-01)**: Wave 12 (Full Functionality & Build Wiring Verification) added. Wave count updated to thirteen. This wave orchestrates the comprehensive cross-domain QA sweep required after the Supabase Persistent Memory integration (Wave 11). Four builder domains: qa-builder (Task 12.1 — Supabase persistence E2E + coverage audit), api-builder (Task 12.2 — API contract verification), ui-builder (Task 12.3 — frontend flow verification), integration-builder (Task 12.4 — cross-component E2E). Acceptance criterion 15 added. CS2 authorization: issue #709 opened by @APGI-cmy.
 
 > **Change Note (v2.1.0, 2026-03-01)**: Wave 12 plan augmented per CS2 instruction (PR #710 review, 2026-03-01). 11 new test IDs added closing W12-GAP-001–007: T-W12-QAV-6 (RLS cross-org MAT API), T-W12-QAV-7 (MFA FR-031), T-W12-QAV-8 (RCA 98-test regression), T-W12-API-6 (AI scoring pipeline E2E), T-W12-API-7 (report generation E2E/RCA G-14), T-W12-UI-6 (offline sync/RCA G-16), T-W12-UI-7 (RCA G-03 criteria hierarchy), T-W12-UI-8 (RCA G-04 evidence modal), T-W12-UI-9 (mobile viewport/RCA G-15), T-W12-INT-6 (CWT production Vercel URL/§4.2), T-W12-INT-7 (photo capture/RCA G-07). Total Wave 12 tests: 31. Final test count target: 461 (430+31). Wave 12 Gap Register added to §2.13. CWT mandate per §4.2 satisfied by T-W12-INT-6. Acceptance criterion 15 updated.
+
+> **Change Note (v2.4.0, 2026-03-04)**: Wave 14 (UX Workflow Gap Remediation, GAP-W01–GAP-W14) added per governance issue #909, CS2 authorisation. 14 gap subwaves defined. FRS addendum FR-089–FR-102 and TRS addendum TR-089–TR-102 added. RED QA spec with 16 tests (T-W14-UX-001 to T-W14-UX-016) created. BUILD_PROGRESS_TRACKER.md updated with governance failure heading and 14 gap entries. All subwaves are RED (BLOCKED) pending qa-builder RED test implementation and per-subwave builder delegation. Source authority: MAT_UX_WORKFLOW_AND_WIRING.md v1.0.
 
 > **Change Note (v1.8.0, 2026-02-23)**: Post-Delivery Gap Analysis & RCA complete. Remediation waves 2R, 4R, and 5.6R added to address gaps G-03, G-04, G-07, G-10, G-14, G-15, G-16 identified in `modules/mat/05-rca/MAT_APP_V2_RCA.md` v1.0.0. **Pre-Build Functionality Assessment Gate (PBFAG)** added to Derivation Chain between QA-to-Red and Implementation Plan — this gate is mandatory for all future build phases. Wave count updated to fourteen (plus remediation waves). See BUILD_PROGRESS_TRACKER.md Post-Delivery Gap Analysis section.
 
@@ -2248,6 +2251,117 @@ potentially missing RLS coverage for the full multi-tenant isolation model.
 - [ ] OVL-AM-008 end-to-end wiring trace completed by schema-builder
 - [ ] IAA post-handover ASSURANCE-TOKEN received
 
+**End of Implementation Plan (pre-Wave 14)**
+
+---
+
+## Wave 14 — UX Workflow Gap Remediation (GAP-W01–GAP-W14)
+
+**Date**: 2026-03-04
+**Issue**: #909
+**Authority**: CS2 (Johan Ras / @APGI-cmy)
+**Session**: session-099
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave14.md`
+**Source authority**: `modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md` v1.0
+**FRS addendum**: FR-089 to FR-102
+**TRS addendum**: TR-089 to TR-102
+**RED QA spec**: `modules/mat/tests/wave14/wave14-ux-gap-red-suite-spec.md`
+
+### Context
+
+Post-delivery governance review identified 14 critical UX workflow and backend wiring gaps not addressed in any prior wave. These gaps were catalogued in `MAT_UX_WORKFLOW_AND_WIRING.md` (v1.0, CS2 direct, 2026-03-04) as GAP-W01 through GAP-W14.
+
+These gaps include: sign-up/onboarding flow, invite auditor and evidence submitter workflows, toggle-exclude cascade, evidence card interaction model, AI evaluation trigger, next-level guidance surface, AI chat entry point, audit results table, dashboard gating, Create Report button, level descriptor cards, scoring method wiring, and responsibility cascade.
+
+**ALL 14 subwaves are currently RED (BLOCKED). No builder may begin implementation without:**
+1. RED QA tests defined (complete — see `wave14-ux-gap-red-suite-spec.md`)
+2. FRS addendum approved (FR-089 to FR-102 — added in this session)
+3. TRS addendum approved (TR-089 to TR-102 — added in this session)
+4. Architecture frozen for each subwave (Foreman must freeze before each builder delegation)
+
+### Gap Wave Overview
+
+| Subwave | Name | Gap Ref | Builder | Status |
+|---------|------|---------|---------|--------|
+| 14.1 | Sign-Up, Onboarding, and First-Use Flow | GAP-W01 | ui-builder + schema-builder | 🔴 RED |
+| 14.2 | Invite Auditor UX and Acceptance Flow | GAP-W02 | ui-builder + schema-builder + api-builder | 🔴 RED |
+| 14.3 | Toggle Exclude with Cascade | GAP-W03 | schema-builder + ui-builder | 🔴 RED |
+| 14.4 | Invite Evidence Submitter (Criteria-Scoped) | GAP-W04 | ui-builder + schema-builder | 🔴 RED |
+| 14.5 | Evidence Card Interaction Model | GAP-W05 | ui-builder + schema-builder | 🔴 RED |
+| 14.6 | Submit Button as AI Evaluation Trigger | GAP-W06 | api-builder + schema-builder + ui-builder | 🔴 RED |
+| 14.7 | AI Next-Level Guidance Surface | GAP-W07 | ui-builder | 🔴 RED |
+| 14.8 | AI Chat UI Context Injection from Criteria Card | GAP-W08 | ui-builder | 🔴 RED |
+| 14.9 | Audit Results Table | GAP-W09 | ui-builder + api-builder | 🔴 RED |
+| 14.10 | Dashboard Outstanding Work Drill-Down and Create Report Gate | GAP-W10 | ui-builder + api-builder | 🔴 RED |
+| 14.11 | Create Report Button as Final AI Trigger | GAP-W11 | api-builder + schema-builder + ui-builder | 🔴 RED |
+| 14.12 | Level Descriptor Cards | GAP-W12 | schema-builder + ui-builder | 🔴 RED |
+| 14.13 | Scoring and Rating Method Wired Through DB | GAP-W13 | schema-builder + api-builder | 🔴 RED |
+| 14.14 | Responsibility Cascade Rule | GAP-W14 | schema-builder + ui-builder | 🔴 RED |
+
+### RED QA Tests
+
+All 16 RED tests are specified in `modules/mat/tests/wave14/wave14-ux-gap-red-suite-spec.md`:
+
+| Test ID | Subwave | Description |
+|---------|---------|-------------|
+| T-W14-UX-001 | 14.1 | Onboarding guard blocks users without org |
+| T-W14-UX-002 | 14.2 | Invite Auditor modal creates invitation + triggers email |
+| T-W14-UX-003 | 14.3 | Toggle exclude domain cascades to child MPS and criteria |
+| T-W14-UX-004 | 14.4 | Invite Evidence Submitter creates criteria-scoped access |
+| T-W14-UX-005 | 14.5 | Evidence upload panel supports all 6 types and stores files |
+| T-W14-UX-006 | 14.6 | Submit button triggers AI evaluation and creates criteria_evaluations row |
+| T-W14-UX-007 | 14.7 | Criteria card shows next-level guidance and taster after evaluation |
+| T-W14-UX-008 | 14.8 | AI chat panel pre-loads criteria context on open from criteria card |
+| T-W14-UX-009 | 14.9 | Audit results table renders all criteria with correct columns |
+| T-W14-UX-010 | 14.10 | Dashboard gating: Create Report disabled until all criteria evaluated |
+| T-W14-UX-011 | 14.11 | Create Report generates PDF and stores audit_reports row |
+| T-W14-UX-012 | 14.12 | Level descriptors exist on criteria, MPS, and domain cards |
+| T-W14-UX-013 | 14.13 | Scoring tables exist and default rule is seeded |
+| T-W14-UX-014 | 14.14 | Responsibility cascade defaults to Lead Auditor when no assignment |
+| T-W14-UX-015 | ALL | All new tables have org-isolation RLS (cross-org access denied) |
+| T-W14-UX-016 | 14.13 | Scoring rules table global default readable at report time |
+
+### Tasks
+
+| ID | Description | Builder | Status | Artifact |
+|----|-------------|---------|--------|----------|
+| TASK-W14-001 | FRS addendum FR-089–FR-102 | foreman | ✅ DONE | `01-frs/functional-requirements.md` v1.9.0 |
+| TASK-W14-002 | TRS addendum TR-089–TR-102 | foreman | ✅ DONE | `01.5-trs/technical-requirements-specification.md` v1.8.0 |
+| TASK-W14-003 | RED QA suite spec (16 tests) | foreman (spec) | ✅ DONE | `tests/wave14/wave14-ux-gap-red-suite-spec.md` |
+| TASK-W14-004 | Implementation plan Wave 14 gap waves | foreman | ✅ DONE | This section |
+| TASK-W14-005 | BUILD_PROGRESS_TRACKER.md governance failure heading + 14 gap entries | foreman | ✅ DONE | `00-app-description/BUILD_PROGRESS_TRACKER.md` |
+| TASK-W14-006 | RED test files T-W14-UX-001 to T-W14-UX-016 (implementation) | qa-builder | 🔴 PENDING | `tests/wave14/` |
+| TASK-W14-007 | Subwave 14.1 schema migrations + UI (onboarding guard) | schema-builder + ui-builder | 🔴 PENDING | TBD |
+| TASK-W14-008 | Subwave 14.2 schema + Edge Function + UI (invite auditor) | schema-builder + api-builder + ui-builder | 🔴 PENDING | TBD |
+| TASK-W14-009 | Subwave 14.3 schema cascade trigger + UI (toggle exclude) | schema-builder + ui-builder | 🔴 PENDING | TBD |
+| TASK-W14-010 | Subwave 14.4 schema + UI (invite evidence submitter) | schema-builder + ui-builder | 🔴 PENDING | TBD |
+| TASK-W14-011 | Subwave 14.5 UI (evidence card, MediaRecorder, tiles) | ui-builder + schema-builder | 🔴 PENDING | TBD |
+| TASK-W14-012 | Subwave 14.6 schema + API + UI (AI evaluation trigger) | schema-builder + api-builder + ui-builder | 🔴 PENDING | TBD |
+| TASK-W14-013 | Subwave 14.7 UI (next-level guidance surface) | ui-builder | 🔴 PENDING | TBD |
+| TASK-W14-014 | Subwave 14.8 UI (AI chat context injection) | ui-builder | 🔴 PENDING | TBD |
+| TASK-W14-015 | Subwave 14.9 UI + API (audit results table) | ui-builder + api-builder | 🔴 PENDING | TBD |
+| TASK-W14-016 | Subwave 14.10 UI + API (dashboard + create report gate) | ui-builder + api-builder | 🔴 PENDING | TBD |
+| TASK-W14-017 | Subwave 14.11 API + schema + UI (create report + PDF) | api-builder + schema-builder + ui-builder | 🔴 PENDING | TBD |
+| TASK-W14-018 | Subwave 14.12 schema + UI (level descriptor cards) | schema-builder + ui-builder | 🔴 PENDING | TBD |
+| TASK-W14-019 | Subwave 14.13 schema (scoring tables + seed) | schema-builder | 🔴 PENDING | TBD |
+| TASK-W14-020 | Subwave 14.14 schema + UI (responsibility cascade) | schema-builder + ui-builder | 🔴 PENDING | TBD |
+
+> ⚠️ **BLOCKER**: Tasks TASK-W14-006 through TASK-W14-020 MUST NOT begin until:
+> 1. RED QA tests are commissioned to and delivered by qa-builder (TASK-W14-006)
+> 2. Architecture documents for each subwave are frozen by Foreman
+> 3. CS2 wave-start authorisation is obtained for each subwave delegation
+
+### Acceptance Criteria
+
+- [ ] FR-089 to FR-102 added to FRS (14 requirements — ✅ DONE)
+- [ ] TR-089 to TR-102 added to TRS (14 requirements — ✅ DONE)
+- [ ] 16 RED test descriptions specified in `wave14-ux-gap-red-suite-spec.md` (✅ DONE)
+- [ ] 14 gap entries recorded in BUILD_PROGRESS_TRACKER.md (see Wave 14 section — ✅ DONE)
+- [ ] RED test files T-W14-UX-001 to T-W14-UX-016 FAIL before any implementation (qa-builder task — 🔴 PENDING)
+- [ ] Each subwave implementation turns its corresponding tests GREEN (per-subwave — 🔴 PENDING)
+- [ ] T-W14-UX-015 (all-tables RLS) passes GREEN after all subwaves complete (🔴 PENDING)
+- [ ] All prior wave tests remain GREEN (no regression) after Wave 14 implementation
+
 **End of Implementation Plan**
 
-**Next Step**: Builder appointment (modules/mat/04-builder-appointment/builder-contract.md)
+**Next Step**: Commission qa-builder for TASK-W14-006 (RED test file implementation)
