@@ -1,35 +1,32 @@
 name: Governance Ripple Sync
 
 # Authority: CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md, LIVING_AGENT_SYSTEM.md v6.2.0
-# Purpose: Consumer-side listener for repository_dispatch ripple events from the canonical
-#          governance repo (APGI-cmy/maturion-foreman-governance).
+# Purpose: Manual-recovery fallback for governance ripple operations.
+#
+# ── ARCHITECTURE CHANGE — 2026-03-04 ────────────────────────────────────────────
+# The `repository_dispatch: governance_ripple` (Signal 2) trigger was RETIRED as of
+# maturion-foreman-governance PR #1292 (LAYER-DOWN-DEDUP-2026-03-03).
+#
+# NEW CANONICAL LAYER-DOWN CHAIN (Signal 1 only):
+#   governance push
+#     → governance-layer-down-dispatch.yml  (in maturion-foreman-governance)
+#       → [Layer-Down] issue created in each consumer repo (governance + layer-down labels)
+#         → ripple-integration.yml  (in this repo, triggered by the issues event)
+#           → ripple PR created
+#
+# This workflow is now in MANUAL-ONLY mode.  It can be triggered via workflow_dispatch
+# for recovery purposes (e.g. re-running alignment manually against a specific commit).
+# It will NOT be triggered automatically by the layer-down chain.
+#
+# See ripple-integration.yml for the active automated path.
+# ────────────────────────────────────────────────────────────────────────────────
 #
 # TERMINOLOGY (per ECOSYSTEM_VOCABULARY.md v1.1.0):
 # - LAYERING DOWN : Cross-repo distribution of governance artefacts (upstream → this repo).
 # - RIPPLING      : Within-repo integration/synchronisation.
-#
-# Trigger: governance-ripple-dispatch.yml in maturion-foreman-governance dispatches a
-#          repository_dispatch event of type "governance_ripple" to each consumer repo.
-#          This workflow catches that event, runs the alignment script, and creates a
-#          governance liaison ISSUE (governance + layer-down labels).
-#          ripple-integration.yml then processes that issue and creates the PR.
-#          (New protocol: dispatch → governance issue → PR via ripple-integration.yml)
-#
-# Root-cause note (Issue #N, 2026-02-23):
-#   ripple-integration.yml only responds to *issues* with governance+layer-down labels.
-#   The canonical dispatch sends repository_dispatch events — which were silently ignored
-#   because no handler existed.  This workflow closes that gap.
-#
-# Governance note: Direct PR creation was removed per governance issue
-#   [Governance] Remove legacy ripple layer-down automation (direct layer-down PR creation).
-#   This workflow now only creates governance liaison issues; PRs are created by
-#   ripple-integration.yml in response to those issues (new protocol: issue → review → PR).
 
 on:
-  repository_dispatch:
-    types: [governance_ripple]
-
-  # Manual re-trigger for testing and recovery
+  # Manual recovery trigger only — repository_dispatch: governance_ripple retired (PR #1292)
   workflow_dispatch:
     inputs:
       canonical_commit:
@@ -41,12 +38,10 @@ permissions:
   contents: write
   issues: write
 
-# Prevent race-condition duplicate issues: if two repository_dispatch events arrive
-# for the same commit SHA simultaneously, cancel the second run (the first will create
-# the issue; the idempotency guard in the liaison_issue step handles any edge cases).
-# workflow_dispatch runs are keyed by github.run_id so they never cancel each other.
+# Prevent accidental concurrent manual runs from overlapping.
+# Each workflow_dispatch run is keyed by github.run_id so they never cancel each other.
 concurrency:
-  group: governance-ripple-sync-${{ github.event.client_payload.commit_sha || github.run_id }}
+  group: governance-ripple-sync-${{ github.run_id }}
   cancel-in-progress: true
 
 jobs:
@@ -81,17 +76,11 @@ jobs:
       - name: Extract ripple payload
         id: payload
         run: |
-          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
-            SOURCE_REPO="${{ github.event.client_payload.source_repo }}"
-            COMMIT_SHA="${{ github.event.client_payload.commit_sha }}"
-            COMMIT_MSG="${{ github.event.client_payload.commit_message }}"
-            RIPPLE_TS="${{ github.event.client_payload.timestamp }}"
-          else
-            SOURCE_REPO="APGI-cmy/maturion-foreman-governance"
-            COMMIT_SHA="${{ github.event.inputs.canonical_commit }}"
-            COMMIT_MSG="manual trigger"
-            RIPPLE_TS="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          fi
+          # workflow_dispatch only (repository_dispatch trigger retired PR #1292)
+          SOURCE_REPO="APGI-cmy/maturion-foreman-governance"
+          COMMIT_SHA="${{ github.event.inputs.canonical_commit }}"
+          COMMIT_MSG="manual trigger"
+          RIPPLE_TS="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
           echo "source_repo=${SOURCE_REPO:-APGI-cmy/maturion-foreman-governance}" >> $GITHUB_OUTPUT
           echo "canonical_commit=${COMMIT_SHA:-unknown}" >> $GITHUB_OUTPUT
@@ -210,7 +199,7 @@ jobs:
             echo ''
             echo '## Context'
             echo "- Session: governance-ripple-sync-${{ github.run_id }}"
-            echo "- Triggered by: repository_dispatch from ${{ steps.payload.outputs.source_repo }}"
+            echo "- Triggered by: workflow_dispatch (manual recovery mode) from ${{ steps.payload.outputs.source_repo }}"
             echo "- Canonical commit: ${{ steps.metadata.outputs.canonical_commit }}"
             echo "- Canonical version: ${{ steps.metadata.outputs.canonical_version }}"
             echo "- Files updated: ${{ steps.metadata.outputs.files_updated }}"
@@ -244,7 +233,7 @@ jobs:
             '{schema_version:"1.0.0",type:"layer_down_received",timestamp:$ts,
               source_repo:$src,canonical_commit:$commit,
               requires_cs2_approval:($cs2=="true"),escalated:($cs2=="true"),
-              trigger:"repository_dispatch"}' \
+              trigger:"workflow_dispatch"}' \
             > "$RECORD"
           echo "Receipt recorded: $RECORD"
 
@@ -270,8 +259,8 @@ jobs:
 
           ISSUE_BODY=$(printf '%s\n\n%s\n\n%s\n%s\n%s\n%s\n%s\n\n%s\n\n%s\n%s' \
             '## Governance Layer-Down — Liaison Action Required' \
-            'A `repository_dispatch` governance ripple event was received from the canonical source. Per **CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md**, the governance liaison agent must verify, ripple, and confirm integration.' \
-            "- **Trigger**: \`repository_dispatch\` from \`${{ steps.payload.outputs.source_repo }}\`" \
+            'A manual `workflow_dispatch` recovery trigger was executed. Per **CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md**, the governance liaison agent must verify, ripple, and confirm integration.' \
+            "- **Trigger**: \`workflow_dispatch\` (manual recovery mode) from \`${{ steps.payload.outputs.source_repo }}\`" \
             "- **Canonical commit**: \`${COMMIT}\`" \
             "- **Canonical version**: \`${VERSION}\`" \
             "- **Files layered down**: ${FILES}" \
