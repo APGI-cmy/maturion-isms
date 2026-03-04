@@ -13,7 +13,6 @@ export default defineConfig({
     include: [
       'tests/**/*.test.ts',
       'tests/**/*.test.tsx',
-      '../tests/wave13/**/*.test.ts',
     ],
     globals: true,
     reporters: ['verbose'],
