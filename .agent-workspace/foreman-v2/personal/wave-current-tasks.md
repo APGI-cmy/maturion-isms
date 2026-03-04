@@ -1,5 +1,25 @@
 # Wave Current Tasks — foreman-v2-agent
 
+**Wave**: Wave 14 / Governance Remediation: UX Workflow Gaps (issue #909)
+**Session ID**: session-099
+**Date**: 2026-03-04
+**Branch**: copilot/governance-remediation-fix
+**CS2 Authorization**: Issue #909 opened by @APGI-cmy (CS2 direct); assigns foreman-v2-agent
+
+---
+
+## Outstanding Tasks (update as each is completed)
+
+| # | Task | Builder | Status | PR / Evidence |
+|---|------|---------|--------|---------------|
+| 1 | FRS addendum FR-089–FR-102 (GAP-W01–W14) | foreman-v2-agent (planning artifact) | 🟢 DONE | this PR |
+| 2 | TRS addendum TR-089–TR-102 (GAP-W01–W14) | foreman-v2-agent (planning artifact) | 🟢 DONE | this PR |
+| 3 | RED QA suite spec document (wave14-ux-gap-red-suite.md) | foreman-v2-agent (spec) + qa-builder (implementation) | 🟡 IN PROGRESS | this PR |
+| 4 | Implementation plan updated with Wave 14 gap waves | foreman-v2-agent (planning artifact) | 🟢 DONE | this PR |
+| 5 | BUILD_PROGRESS_TRACKER.md governance failure heading + gap log | foreman-v2-agent (planning artifact) | 🟢 DONE | this PR |
+| 6 | RED test files implementation (T-W14-UX-001 to T-W14-UX-016) | qa-builder | 🔴 PENDING | TBD |
+
+**Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED
 > ⚠️ **POLC BREACH RECORD — SELF-BREACH-SESSION-101-001**
 > Session 101 (2026-03-04): Foreman directly implemented BD-022 migration and BD-017 frontend
 > validation changes instead of delegating to schema-builder and ui-builder. This is a
@@ -34,12 +54,26 @@
 
 | PR # | Token | Date |
 |------|-------|------|
+| — | PENDING | — |
 | copilot/fix-organisation-name-type-mismatch | IAA-session-138-wave-bd022-bd017-20260304-PASS | 2026-03-04 |
 
 ---
 
 ## Wave Completion Gate
 
+- [ ] All tasks above show 🟢 DONE
+- [ ] All PRs have ASSURANCE-TOKEN
+- [ ] Session memory written
+- [ ] PREHANDOVER proof committed
+- [ ] CS2 notified for merge approval
+
+---
+
+<!-- original template content below -->
+# Wave Current Tasks — foreman-v2-agent (ORIGINAL TEMPLATE — DO NOT USE)
+
+**Wave**: Wave postbuild-fails-02 / MAT Supabase RLS Full Remediation
+**Session ID**: session-098
 - [x] All tasks above show 🟢 DONE
 - [x] IAA Pre-Brief exists at .agent-admin/assurance/iaa-prebrief-wave-bd022-bd017.md
 - [x] IAA assurance token received: IAA-session-138-wave-bd022-bd017-20260304-PASS
