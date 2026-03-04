@@ -2,7 +2,7 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 2.3.0
+**Knowledge Version**: 2.4.0
 **Last Updated**: 2026-03-04
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
@@ -12,7 +12,7 @@
 
 | File | Purpose | Version | Status |
 |------|---------|---------|--------|
-| `index.md` (this file) | Knowledge entry point and version reference | 2.2.0 | PRESENT |
+| `index.md` (this file) | Knowledge entry point and version reference | 2.4.0 | PRESENT |
 | `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 2.3.0 | PRESENT — Rules A-001 through A-030 active (A-030: CORE-019 re-invocation carve-out — correction addendum is the resolution path when PREHANDOVER is A-029-immutable) |
 | `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.6.0 | ACTIVE — CORE-001 to CORE-022; CORE-016 PENDING carve-out updated per A-029 |
 | `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.1.0 | ACTIVE — KNOWLEDGE_GOVERNANCE trigger category added |
@@ -31,6 +31,7 @@
 - `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md` v1.0.0
 - `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.0.0
 - `governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md` (AGCFPP-001)
+- `governance/canon/COMBINED_TESTING_PATTERN.md` — CST/CWT canonical pattern (authority for §CST/CWT Orchestration Prompting below)
 
 ---
 
@@ -97,6 +98,91 @@ All previously stub files have been fully populated (as of 2026-02-28):
 
 ---
 
+## CST / CWT / FCWT Orchestration Prompting (IAA Responsibility)
+
+**Canonical Authority**: `governance/canon/COMBINED_TESTING_PATTERN.md`
+
+### Purpose
+
+IAA must, at its discretion and in full accordance with the governance canon, identify the appropriate moment during its review of a wave or subwave PR to prompt the Foreman to execute a Combined Subwave Test (CST), Combined Wave Test (CWT), or Final Complete Wave Test (FCWT). This responsibility exists because IAA is the independent observer with full cross-wave visibility — it is uniquely positioned to detect when integration convergence points have been reached but integration testing has not been commissioned.
+
+Failure to prompt testing at the correct time is itself a governance gap and must be recorded as a finding.
+
+---
+
+### Definitions (from `COMBINED_TESTING_PATTERN.md`)
+
+| Test Type | When | Mandate | Blocking |
+|-----------|------|---------|----------|
+| **CST** — Combined Subwave Testing | Mid-wave, when multiple subwaves or modules converge and must interact | Strategic — apply when integration risk justifies it | Blocks wave completion if failures exist |
+| **CWT** — Combined Wave Testing | After wave QA passes (cumulative regression GREEN), before IBWR completion | **Mandatory — always required** | Blocks IBWR if CWT PASS not achieved |
+| **FCWT** — Final Complete Wave Test | After all remediation waves complete, before production sign-over | **Mandatory** | Blocks production deployment / formal sign-over |
+
+---
+
+### IAA Prompting Obligation
+
+IAA **must** evaluate the following at every AAWP/MAT deliverable PR review and at every wave gate review:
+
+#### CST Prompt Conditions (discretionary — apply when risk warrants)
+
+Prompt the Foreman to commission a CST **if ALL of the following are true**:
+1. The PR closes a subwave that introduces a cross-module or cross-architectural-boundary integration point (e.g., frontend consuming a new backend API, service consuming a new DB migration, auth module integrating with a new table's RLS)
+2. A prior CST has not already been recorded for this convergence point in the current wave
+3. The integration risk is non-trivial (new tables, new hooks, new RLS policies, new storage paths, new AI invocation endpoints)
+
+**Prompt wording IAA should use:**
+> "This subwave closes a cross-boundary integration point. Per `COMBINED_TESTING_PATTERN.md` §4.2, a CST checkpoint is warranted before wave completion. Please commission CST for [describe scope: subwaves/modules] and record the result in the wave reconciliation artefact before proceeding."
+
+#### CWT Prompt Conditions (mandatory — always required before IBWR)
+
+Prompt the Foreman to commission a CWT **before any IBWR completion** if:
+1. Wave QA has passed (cumulative regression GREEN)
+2. No CWT PASS evidence is present in the IBWR artefact or PREHANDOVER proof
+
+This is **not discretionary**. Absence of CWT PASS evidence in an IBWR is a REJECTION-PACKAGE finding.
+
+**Prompt wording IAA should use:**
+> "No CWT PASS evidence is recorded in this IBWR. Per `COMBINED_TESTING_PATTERN.md` §5.2, CWT is a constitutional requirement before IBWR completion. IBWR CANNOT close without a CWT PASS verdict. Please execute CWT covering all waves through Wave [N] and all modules in this wave, and record the result before re-submitting."
+
+#### FCWT Prompt Conditions (mandatory — before production sign-over)
+
+Prompt the Foreman to commission an FCWT **if**:
+1. The PR or wave being reviewed is the final wave or a postbuild remediation wave prior to formal production sign-over / CWT-on-production
+2. No FCWT PASS evidence is present in the handover artefact
+
+**Prompt wording IAA should use:**
+> "This wave targets production sign-over. Per implementation plan §2.7 (Task 6.4) and `COMBINED_TESTING_PATTERN.md`, an FCWT (Final Complete Wave Test) is required to confirm all wave interdependencies function correctly end-to-end on the live deployment before formal sign-over. Please commission and record FCWT before closing this wave."
+
+---
+
+### IAA Audit Check for CST/CWT/FCWT Evidence
+
+When reviewing an IBWR, PREHANDOVER proof, or wave closure artefact, IAA **must** verify:
+
+| Check ID | What to verify | Missing = |
+|----------|---------------|-----------|
+| OVL-AM-CST-01 | If convergence point exists in wave: CST checkpoint recorded OR documented rationale for skip (per §4.2 "CST may be skipped if cumulative regression provides sufficient integration assurance") | Advisory finding if no rationale; REJECTION if wave claimed complete and CST was clearly warranted |
+| OVL-AM-CWT-01 | IBWR artefact contains CWT PASS verdict with scope (waves covered, modules covered, scenarios covered) | **REJECTION-PACKAGE** — CWT is mandatory, no exceptions |
+| OVL-AM-FCWT-01 | Final production sign-over / Task 6.4 CWT: FCWT PASS verdict present in handover artefact | **REJECTION-PACKAGE** — FCWT is mandatory before sign-over |
+
+---
+
+### Scope of This Rule
+
+This rule applies to:
+- All AAWP/MAT deliverable PRs (waves, subwaves, remediation waves, postbuild waves)
+- All wave gate reviews
+- All IBWR and PREHANDOVER proof reviews
+- All production deployment and sign-over PRs
+
+This rule does **not** apply to:
+- Session memory only PRs
+- Doc-only / parking station PRs
+- Agent contract PRs where no wave deliverable is included
+
+---
+
 ## Operating Model Summary
 
 IAA operates with a single objective: binary verdict.
@@ -128,6 +214,7 @@ that produced the work under review. Every invocation is logged in session memor
 | 2.1.0 | 2026-03-03 | FAIL-ONLY-ONCE.md v2.1.0 — A-028 (SCOPE_DECLARATION format compliance — list format required, prior-wave entries must be trimmed) added from session-120 (Wave 14 Addendum A fourth invocation) |
 | 2.2.0 | 2026-03-04 | FAIL-ONLY-ONCE.md v2.2.0 (A-029 ARTIFACT-IMMUTABILITY §4.3b); iaa-core-invariants-checklist.md v2.6.0 (CORE-016 PENDING carve-out updated per A-029) |
 | 2.3.0 | 2026-03-04 | FAIL-ONLY-ONCE.md v2.3.0 (A-030 CORE-019 re-invocation carve-out — correction addendum path for immutable-PREHANDOVER re-invocation scenarios); index updated to 2.3.0 (session-098b) |
+| 2.4.0 | 2026-03-04 | Added §CST/CWT/FCWT Orchestration Prompting — IAA discretionary and mandatory obligation to prompt Foreman for CST/CWT/FCWT at appropriate wave gates; added OVL-AM-CST-01, OVL-AM-CWT-01, OVL-AM-FCWT-01 audit checks; added COMBINED_TESTING_PATTERN.md to constitutional canon references (CS2 directive 2026-03-04) |
 
 ---
 
