@@ -12,6 +12,7 @@
 
 - `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-045-20260304.md` - PREHANDOVER proof for this session
 - `.agent-workspace/CodexAdvisor-agent/memory/session-045-20260304.md` - Session memory for this session
+- `.agent-workspace/CodexAdvisor-agent/parking-station/suggestions-log.md` - 3 session-045 suggestions appended
 - `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` - A-028 added (PREHANDOVER immutability); version bumped to v2.6.0
 - `.agent-workspace/foreman-v2/knowledge/prehandover-template.md` - §4.3b token ceremony; PENDING replaced with expected reference format; temporal ordering fixed
 - `.agent-workspace/governance-liaison-isms/knowledge/index.md` - layer-down-scripts and ripple-processing-scripts bumped to v1.1.0
