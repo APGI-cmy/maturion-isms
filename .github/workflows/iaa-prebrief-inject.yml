@@ -20,12 +20,11 @@ jobs:
   iaa-prebrief-inject:
     runs-on: ubuntu-latest
 
-    if: |
-      (github.event_name == 'push') ||
-      (github.event_name == 'issue_comment' && (
-        github.event.comment.body == '/iaa-prebrief' ||
-        startsWith(github.event.comment.body, '/iaa-prebrief ')
-      ))
+    if: >-
+      github.event_name == 'push' ||
+      (github.event_name == 'issue_comment' &&
+       (github.event.comment.body == '/iaa-prebrief' ||
+        startsWith(github.event.comment.body, '/iaa-prebrief ')))
 
     steps:
       # ── PUSH path ────────────────────────────────────────────────────────────
@@ -193,10 +192,7 @@ jobs:
             const issueNumber = parseInt(prNumberEnv, 10);
 
             const taskSection = tasksFound
-              ? `
-${tasksSnippet}
-...
-`
+              ? '\n' + tasksSnippet + '\n...\n'
               : '> ⚠️ `wave-current-tasks.md` was not found on this branch. Ensure the Foreman has committed it before proceeding.';
 
             const body = [
@@ -253,10 +249,7 @@ ${tasksSnippet}
             const targetNumber = parseInt(process.env.ISSUE_PR_NUMBER || process.env.ISSUE_NUMBER, 10);
 
             const taskSection = tasksFound
-              ? `
-${tasksSnippet}
-...
-`
+              ? '\n' + tasksSnippet + '\n...\n'
               : '> ⚠️ `wave-current-tasks.md` was not found on this branch. Ensure the Foreman has committed it before proceeding.';
 
             const body = [

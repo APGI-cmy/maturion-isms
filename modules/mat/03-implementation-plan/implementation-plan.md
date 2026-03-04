@@ -2141,6 +2141,31 @@ This implementation plan is accepted when:
 
 ---
 
+---
+
+## Wave postbuild-fails-01 — Supabase RLS Fix
+
+**Date**: 2026-03-04
+**Issue**: #891
+**Authority**: CS2 (Johan Ras / @APGI-cmy)
+
+### Context
+
+Post-deployment testing of the live MAT app revealed two P0 production blockers:
+- F-001: `profiles` RLS INSERT/UPDATE violation on profile save
+- F-002: `audits` RLS INSERT violation on audit creation
+
+Root cause: missing `handle_new_user()` trigger and missing profiles/audits INSERT+UPDATE RLS policies.
+
+### Tasks
+
+| ID | Description | Artifact |
+|----|-------------|----------|
+| TASK-PBF-01-001 | Supabase sync audit | `supabase-sync-audit-20260304.md` |
+| TASK-PBF-01-002 | RLS fix migration | `20260304000003_fix_rls_policies_postbuild.sql` |
+| TASK-PBF-01-003 | QA tests T-PBF-001 to T-PBF-004 | `wave-postbuild-fails-01.test.ts` |
+| TASK-PBF-01-004 | Governance updates | FRS, TRS, BUILD_PROGRESS_TRACKER, TEST_REGISTRY |
+
 **End of Implementation Plan**
 
 **Next Step**: Builder appointment (modules/mat/04-builder-appointment/builder-contract.md)
