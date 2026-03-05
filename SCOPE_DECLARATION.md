@@ -79,3 +79,31 @@ updated. Escalation ESC-AGENTFILE-29E76ECF-20260304 created for CS2 review.
 - Zero governance canon files layered down (payload contained only agent contract file)
 - CodexAdvisor-agent.md escalated to CS2 per A-015 (ESC-AGENTFILE-29E76ECF-20260304)
 - SHA256 correction documented in CORRECTION_ADDENDUM (A-030)
+
+---
+
+# Scope Declaration — foreman-v2-agent Session 142 — Wave 14 Batch C
+
+**PR**: `copilot/finalise-mat-gap-closure`
+**Sessions**: session-142
+**Wave**: Wave 14 Batch C — Finalise MAT Remaining Gap Closure and QA Acceptance
+**Issue**: #909
+**Date**: 2026-03-05
+**Authority**: A-026, A-028 (FAIL-ONLY-ONCE v2.6.0), AGCFPP-001
+
+## Files Declared
+
+### Added
+
+- `apps/maturion-maturity-legacy/supabase/migrations/20260305000005_wave14_level_descriptors.sql` - GAP-W12/FR-100: criteria_level_descriptors + mps_level_descriptors + domain_level_descriptors tables with UNIQUE constraints, org-isolation RLS SELECT policies
+- `apps/maturion-maturity-legacy/supabase/migrations/20260305000007_wave14_scoring_tables.sql` - GAP-W13/FR-101: maturity_levels (5 seed rows), scoring_rules (global default), aggregate_scores (UPSERT UNIQUE), RLS posture (maturity_levels/scoring_rules public-read, aggregate_scores org-isolated)
+- `modules/mat/05-build-evidence/wave14-postimplementation-assurance-report.md` - Wave 14 Post-Implementation Assurance Report: all 15 GAPs tick-list, screenshot QA attestation, drill-down capability attestation, QA sign-off
+- `modules/mat/05-build-evidence/app-management-centre-watchdog-readiness.md` - MAT App Management Centre Watchdog Readiness: health check endpoints, event hooks, monitoring surfaces, integration interface contract
+- `.agent-admin/assurance/iaa-prebrief-wave14-batchC.md` - IAA Pre-Brief for Wave 14 Batch C
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-142-wave14-batchC-20260305.md` - Foreman PREHANDOVER session-142
+- `.agent-workspace/foreman-v2/memory/session-142-wave14-batchC-20260305.md` - Foreman session memory session-142
+
+### Modified
+
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated with Wave 14 Batch C tasks
+- `SCOPE_DECLARATION.md` - This file — scope declaration for session-142 Wave 14 Batch C
