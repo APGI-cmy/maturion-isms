@@ -75,7 +75,7 @@ Workflow Gap Remediation across three delivery batches, closing all 15 identifie
 |-------|-------|-------|--------|
 | Wave 14 Batch A (T-W14-UX-001–004, T-W14-COL-001–006, T-W14-UX-014–015) | 7 | 37 | ✅ 37/37 GREEN |
 | Wave 14 Batch B (T-W14-UX-005–011) | 7 | 40 | ✅ 40/40 GREEN |
-| Wave 14 Batch C (T-W14-UX-012, T-W14-UX-013, T-W14-UX-016) | 3 | 20 | ✅ 20/20 GREEN |
+| Wave 14 Batch C (T-W14-UX-012, T-W14-UX-013, T-W14-UX-016) | 3 | 27 | ✅ 27/27 GREEN |
 | **TOTAL WAVE 14** | **17** | **104** | ✅ **104/104 GREEN (per CWT evidence)** |
 
 Pre-existing live-env failures (unchanged throughout Wave 14): 9

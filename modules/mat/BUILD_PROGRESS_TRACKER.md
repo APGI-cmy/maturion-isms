@@ -2808,7 +2808,7 @@ remediation plan for the 8 tables still carrying unverified or incomplete RLS co
 
 ### Test Results
 
-- 20 Wave 14 Batch C gate tests GREEN (T-W14-UX-012a–f, T-W14-UX-013a–g, T-W14-UX-016a–g)
+- 27 Wave 14 Batch C gate tests GREEN (T-W14-UX-012a–f, T-W14-UX-013a–g, T-W14-UX-016a–g)
 - 0 regressions
 
 ### IAA Rejection History (Batch C)
@@ -2859,7 +2859,7 @@ pending FCWT and production sign-over by CS2.
 |-------------|-------|--------|
 | Wave 14 Batch A (T-W14-UX-001–004, T-W14-COL-001–006, T-W14-UX-014–015) | 37 | ✅ 37/37 GREEN |
 | Wave 14 Batch B (T-W14-UX-005–011) | 40 | ✅ 40/40 GREEN |
-| Wave 14 Batch C (T-W14-UX-012a–f, T-W14-UX-013a–g, T-W14-UX-016a–g) | 20 | ✅ 20/20 GREEN |
+| Wave 14 Batch C (T-W14-UX-012a–f, T-W14-UX-013a–g, T-W14-UX-016a–g) | 27 | ✅ 27/27 GREEN |
 | **WAVE 14 TOTAL** | **104** | ✅ **104/104 GREEN (CWT evidence)** |
 | Full suite | 715 | 706 GREEN / 9 EXPECTED RED (live-env only) |
 | Wave 14 regressions | 0 | ✅ ZERO |

@@ -291,3 +291,4 @@
 | 2026-03-05 | independent-assurance-agent | session-147 | Phase 4 | Multi-session SCOPE_DECLARATION structure — per-session sections would prevent A-026 omissions (reinforces session-142 finding) | session-147-20260305.md |
 
 | 2026-03-05 | independent-assurance-agent | session-148 | Phase 4 | A-026 clarifying note needed: IAA ceremony artifacts from prior REJECTION-PACKAGE commits (session memory, rejection token, parking station log) are excluded from producing-agent SCOPE_DECLARATION requirement — these are IAA ceremony artifacts, not deliverables | session-148-20260305.md |
+| 2026-03-05 | independent-assurance-agent | session-150 | Phase 3 | IBWR CWT tally protocol gap: use test runner count (from vitest output), not spec-label sub-test ID count, to avoid arithmetic contradictions where batch sums ≠ total | session-150-wave14-ibwr-20260305.md |

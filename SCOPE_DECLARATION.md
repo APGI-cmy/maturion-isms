@@ -101,3 +101,25 @@
 - `modules/mat/BUILD_PROGRESS_TRACKER.md` - Wave 14 Batch A/B/C sections added; IBWR section added; postbuild-fails-02 closed; Current Stage updated to FCWT READY
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated for IBWR session-143 task list
 - `SCOPE_DECLARATION.md` - This file — scope declaration for session-143 IBWR (A-026 compliance)
+
+---
+
+# Scope Declaration — foreman-v2-agent Session 143 v2 — Wave 14 IBWR Correction (A-030)
+
+**PR**: `copilot/update-wave-14-ibwr-tracker`
+**Session**: session-143 v2 (correction addendum — A-030 pattern)
+**Correction Type**: A-030 — CWT Batch C test count corrected (20→27) per IAA REJECTION-PACKAGE (session-150)
+**Date**: 2026-03-05
+
+## Correction Summary
+
+IAA session-150 issued REJECTION-PACKAGE FINDING-IBWR-001: CWT tally arithmetic inconsistency.
+IBWR §3 and BUILD_PROGRESS_TRACKER CWT tally both stated Batch C = 20 tests.
+Correct count = 27 (37+40+27=104 ✓ per CWT runner output and state machine entry).
+Fix: "20" → "27" in both documents.
+
+## Files Corrected
+
+- `.agent-admin/assurance/ibwr-wave14-session-143-20260305.md` - §3 CWT Tally: Batch C 20→27; 20/20→27/27
+- `modules/mat/BUILD_PROGRESS_TRACKER.md` - IBWR CWT tally: Batch C 20→27; Batch C section test results 20→27
+- `SCOPE_DECLARATION.md` - This correction addendum
