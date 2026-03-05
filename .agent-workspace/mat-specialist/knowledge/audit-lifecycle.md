@@ -1,10 +1,11 @@
-# Audit Lifecycle Guide — Stub v1.0.0
+# Audit Lifecycle Guide — Stub v1.1.0
 
 **Agent:** mat-specialist  
 **Tier:** 2 (Cached / File-Based)  
 **Status:** STUB — Phase 3 MVP  
 **Authority:** CS2 (Johan Ras)  
-**Date:** 2026-02-21
+**Date:** 2026-02-21  
+**Updated:** 2026-03-05
 
 > **STUB NOTICE**: This knowledge base file is a placeholder. Full content to be authored in Phase 3 implementation sprint.
 
@@ -49,4 +50,24 @@ Defines the end-to-end MAT audit lifecycle used by the mat-specialist to guide u
 
 ---
 
-**Authority:** CS2 | **Status:** STUB | **Phase:** 3 MVP | **Date:** 2026-02-21
+**Authority:** CS2 | **Status:** STUB | **Phase:** 3 MVP | **Date:** 2026-02-21 | **Updated:** 2026-03-05
+
+---
+
+## IAA Token Date Accuracy (A-030)
+
+When citing an IAA audit token in any artifact (PREHANDOVER proof, session memory, PR body):
+- The date component MUST match the actual token file date
+- Look up the actual filename: `ls .agent-admin/assurance/iaa-token-session-NNN-*`
+- Do NOT use the session date — for multi-batch waves, the token is issued on a different day
+- Correct format: `IAA-session-NNN-waveY-YYYYMMDD-PASS` where YYYYMMDD = token file date
+- Incorrect token dates have triggered REJECTION-PACKAGEs — this is enforced by A-030
+
+---
+
+## Version History
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.1.0 | 2026-03-05 | IAA Token Date Accuracy (A-030) section added per Wave GovImpr TASK-GI-003 |
+| 1.0.0 | 2026-02-21 | Initial stub |
