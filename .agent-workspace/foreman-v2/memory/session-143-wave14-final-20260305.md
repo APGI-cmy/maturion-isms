@@ -109,7 +109,7 @@ This session completes the governance closure for all Wave 14 work:
 
 | Batch | Session | Migrations | IAA Token |
 |-------|---------|-----------|-----------|
-| Batch A | session-140 | 000000–000003 | IAA-session-140-wave14-batchA-20260305-PASS |
+| Batch A | session-140 | 000000–000003 | IAA-session-140-wave14-batchA-20260304-PASS |
 | Batch B | session-141 | 000003–000006 | IAA-session-141-v4-wave14-batchB-20260305-PASS |
 | Batch C | session-142 | 000005, 000007–000008 | IAA-session-142-v3-wave14-batchC-20260305-PASS |
 | Final | session-143 | Governance closure | IAA-session-143-wave14-final-20260305-PASS (expected) |
