@@ -19,12 +19,14 @@
 - `modules/mat/05-build-evidence/fcwt-final-certificate-20260305.md` - FCWT Final Certificate: all waves 0–14, production readiness declared
 - `modules/mat/05-build-evidence/fcwt-final-evidence-bundle-20260305.md` - FCWT Evidence Bundle: all CWT/CST/FCWT tokens by wave, test count progression 25→783
 
-### Modified (session-144 FCWT deliverables)
+### Modified (session-144 FCWT deliverables + CI lockfile fix)
 
 - `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Session-144 parking station entry added (FCWT test count scope improvement note)
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated for session-144 FCWT-Final task list
 - `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA session parking station entry (session-IAA-fcwt-final)
+- `.github/workflows/liveness.yml` - Reverted --no-frozen-lockfile workaround; lockfile now properly synced
 - `modules/mat/BUILD_PROGRESS_TRACKER.md` - v1.3 → v1.4: FCWT Final section added; 774/783 GREEN recorded; IAA ASSURANCE-TOKEN ISSUED recorded
+- `pnpm-lock.yaml` - Updated to include @playwright/test@^1.44.0 for modules/mat (added in commit 6059bb1 without lockfile sync)
 - `SCOPE_DECLARATION.md` - This file (updated for session-144 scope per A-026/A-028 compliance; all FCWT artifacts declared)
 
 ---
