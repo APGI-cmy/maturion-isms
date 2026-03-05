@@ -26,6 +26,7 @@
 - `modules/mat/frontend/src/components/common/EmbeddedAIAssistant.tsx` - GAP-W08/FR-096: contextPayload prop (criteria_name, current_level, next_level_guidance) + ai-context-indicator data-testid
 - `modules/mat/frontend/src/pages/AuditManagementPage.tsx` - GAP-W09/FR-097: Results tab added with AuditResultsTable
 - `modules/mat/frontend/src/pages/DashboardPage.tsx` - GAP-W10/FR-098: Submitted/Outstanding/Excluded metrics + Create Report gate (criteria_evaluations, confirmed/overridden)
+- `modules/mat/frontend/src/lib/hooks/useAuditMetrics.ts` - GAP-W10/FR-098: AuditMetrics interface extended (submittedCount, outstandingCount, excludedCount); criteria_evaluations queries added for dashboard gate metrics
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated with Wave 14 Batch B tasks
 - `SCOPE_DECLARATION.md` - This file — scope declaration for session-141 Wave 14 Batch B
 

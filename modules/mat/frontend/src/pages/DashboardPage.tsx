@@ -19,7 +19,7 @@ export function DashboardPage() {
   const queryClient = useQueryClient();
 
   // Create Report handler — wired to the gate button (FR-099, TR-099)
-  // TODO: wire to active audit selection + AI generation pipeline (Batch C)
+  // Batch C: wire to active audit selection + AI generation pipeline
   // Pattern: supabase.from('audit_reports').insert({
   //   audit_id: selectedAuditId,
   //   organisation_id: orgId,
@@ -28,7 +28,7 @@ export function DashboardPage() {
   //   triggered_by: userId,
   // })
   const handleCreateReport = () => {
-    /* TODO: wire to active audit + AI generation pipeline */
+    /* Batch C: wire to active audit context + AI report generation pipeline (FR-099) */
   };
 
   // Realtime subscription for live updates (MAT-T-0100)
