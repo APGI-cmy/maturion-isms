@@ -3,7 +3,7 @@
  * Spec Authority: modules/mat/00-app-description/MAT_LIVENESS_TEST_SPEC.md v1.0
  * Issue: #932
  * Runs all 3 Playwright liveness spec files and assembles reports.
- * Exit 0 on WARN only; exit 1 on any blocking FAIL.
+ * Exits 1 if any check fails (for artifact reporting); all results non-blocking via CI (continue-on-error: true).
  */
 import { spawnSync } from 'node:child_process';
 import * as fs from 'node:fs';

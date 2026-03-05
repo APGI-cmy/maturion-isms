@@ -1,9 +1,9 @@
 name: MAT Liveness Tests
 
 # Triggered automatically after a successful MAT deployment, or manually.
-# IAA policy OVL-CI-001:
-#   WARN  → exit 0  (CI success — do NOT fail deploy on WARN)
-#   FAIL  → exit 1  (blocking checks only — CI failure)
+# All liveness results are non-blocking at CI level (continue-on-error: true).
+# Runner exits 1 on any test failure for artifact reporting; CI job continues regardless.
+# Review the uploaded liveness-evidence artifact for PASS/FAIL assessment.
 on:
   workflow_run:
     workflows: ["Deploy MAT Frontend to Vercel"]
@@ -43,8 +43,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run MAT liveness tests
-        # continue-on-error: WARN exits 0 — only blocking FAIL exits 1.
-        # This ensures deploy is not blocked by non-blocking liveness warnings.
+        # continue-on-error: true — liveness failures never block CI; all results captured in artifact.
         continue-on-error: true
         env:
           BASE_URL: ${{ inputs.base_url || vars.LIVENESS_BASE_URL || 'https://mat.example.com' }}
