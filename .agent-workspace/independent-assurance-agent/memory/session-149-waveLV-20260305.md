@@ -11,10 +11,10 @@
 | `pr_category` | AAWP_MAT + CI_WORKFLOW |
 | `checks_executed` | 50 |
 | `checks_passed` | 50 |
-| `checks_failed` | 0 |
-| `merge_gate_parity_result` | PASS |
-| `verdict` | ASSURANCE-TOKEN |
-| `token_reference` | IAA-session-142-waveLV-20260305-PASS |
+| `checks_failed` | 1 |
+| `merge_gate_parity_result` | FAIL — F-149-001 (CodeQL: missing GITHUB_TOKEN permissions block) |
+| `verdict` | REJECTION-PACKAGE |
+| `token_reference` | N/A — REJECTION-PACKAGE issued |
 | `adoption_phase_at_time_of_verdict` | PHASE_B_BLOCKING |
 | `prior_sessions_reviewed` | session-143, session-144, session-145, session-146, session-147-prebrief-waveLV, session-148-waveLV |
 | `re_invocation_context` | F-142-001 fix applied per session-148 REJECTION-PACKAGE |
@@ -40,9 +40,19 @@ Fix is 3 comment lines only. No functional code changed. Implementation (continu
 | A-029 (PREHANDOVER immutability) | YES | PASS — PREHANDOVER read-only; new token file written |
 | A-030 (CORE-019 re-invocation carve-out) | YES | PASS — session-148 REJECTION-PACKAGE token (commit 09c67c0) = correction addendum |
 
+## failures_cited
+
+| Finding ID | Check | Description | Fix Required |
+|-----------|-------|-------------|-------------|
+| F-149-001 | CodeQL: actions/missing-workflow-permissions | liveness.yml job `liveness` (line 22-86) has no explicit `permissions:` block. GITHUB_TOKEN defaults to over-broad permissions. CodeQL alert: `actions/missing-workflow-permissions`. | Add `permissions: contents: read` to the liveness job definition in .github/workflows/liveness.yml. |
+
+## Supersession Notice
+
+⚠️ A premature ASSURANCE-TOKEN was committed to `.agent-admin/assurance/iaa-token-session-142-waveLV-20260305.md` before the mandatory codeql_checker step completed. That token is REVOKED by `.agent-admin/assurance/iaa-rejection-session-149-waveLV-20260305.md`. The REJECTION-PACKAGE is the operative verdict.
+
 ## Substantive Assessment
 
-The Wave LV MAT Liveness Test Suite is substantively correct and fully complete. The fix correctly resolves the only finding from session-148 (F-142-001). The CI architecture (continue-on-error: true) is intentional and correct for a post-deploy observational liveness suite — liveness failures must not block CI; they are captured in the uploaded evidence artifact for operator review. The fix aligns all documentation with this architecture. No new findings.
+The Wave LV MAT Liveness Test Suite is substantively correct and fully complete. F-142-001 is RESOLVED. One new finding surfaced by CodeQL: missing explicit GITHUB_TOKEN permissions block in liveness.yml. This is a principle-of-least-privilege security requirement. Fix is a 2-line addition to liveness.yml. On re-invocation after fix, ASSURANCE-TOKEN is expected immediately (only F-149-001 remains).
 
 ## Advisory Observations (non-blocking, carried forward from session-148)
 
@@ -55,16 +65,22 @@ The Wave LV MAT Liveness Test Suite is substantively correct and fully complete.
 
 2. **Comments-only fix in CI workflows**: A comment-only fix to a workflow file does not require new CI evidence under OVL-CI-005 when: (a) the PREHANDOVER is A-029-immutable, (b) the workflow is post-deploy-only and cannot run in PR CI, and (c) the YAML structure is unchanged. The original PREHANDOVER CI PASS evidence covers YAML structural validity.
 
-3. **Conditional test.skip() in Playwright liveness suites**: `test.skip()` inside an `if (!gatewayAvailable)` condition is NOT test debt — it is proper Playwright test dependency chaining. IAA must distinguish between unconditional `.skip()` (test debt = BD-012 FAIL) and conditional runtime skips (valid pattern). The `aiGatewayAvailable` flag in mat-ai-health.spec.ts is a canonical example of legitimate conditional skip pattern.
+4. **Missing GITHUB_TOKEN permissions block is a standalone check gap**: Session-148 passed BD-016 (no hardcoded secrets) but didn't surface the missing `permissions:` block. CodeQL's `actions/missing-workflow-permissions` check is specifically designed to catch this. Future CI workflow reviews must include an explicit check: "Does every job in the workflow have an explicit `permissions:` block?" This should be added as OVL-CI-006 or a new FAIL-ONLY-ONCE rule A-031.
 
 ## Suggestions for Improvement (MANDATORY)
 
-**S-IAA-149**: The re-invocation ceremony for comments-only fixes is disproportionately heavy relative to the risk. CS2 should consider a "minor-fix fast-path" (for verified comment-only, doc-only, or 1-3 line non-logic changes) where IAA verifies the diff is genuinely comment-only and carries forward all prior PASS verdicts with a fast re-audit stamp, rather than re-executing all 50 checks. This would require a new explicit A-030b rule or a CS2 carve-out. The current session demonstrates the pattern works, but the ceremony overhead is high for 3 changed comment lines.
+**S-IAA-149a**: The re-invocation ceremony for comments-only fixes is disproportionately heavy relative to the risk. CS2 should consider a "minor-fix fast-path" for verified comment-only, doc-only, or 1-3 line non-logic changes where IAA carries forward all prior PASS verdicts with a fast re-audit stamp. This would require a new explicit rule or CS2 carve-out.
+
+**S-IAA-149b**: OVL-CI should include an explicit check (OVL-CI-006 candidate): "Every workflow job must declare an explicit `permissions:` block with minimal required permissions." This check should be added to the CI_WORKFLOW overlay to prevent missing-permissions issues from bypassing BD-016 (which focuses on hardcoded secrets, not token permissions). Codify as FAIL-ONLY-ONCE A-031: "GitHub Actions workflow jobs must declare explicit `permissions:` blocks — missing permissions block = FAIL."
 
 ## fail_only_once_updates
 
-No new FAIL-ONLY-ONCE rules added this session. A-030 worked as designed. Patterns learned have been recorded in learning_notes. If the "comments-only fast path" suggestion (S-IAA-149) recurs in another session, consider formalizing as A-031.
+**A-031 PROPOSED** (from session-149 finding F-149-001):
+> "GitHub Actions workflow jobs must declare explicit `permissions:` blocks limiting GITHUB_TOKEN to minimum required. A job without a `permissions:` block inherits repository defaults (potentially write access). Fix: add `permissions: contents: read` (or minimum required). Checked via CodeQL `actions/missing-workflow-permissions`. Failure to declare = REJECTION-PACKAGE. Category: OVL-CI-WORKFLOW."
+>
+> Status: PROPOSED — pending CS2 approval to add to FAIL-ONLY-ONCE registry as A-031 and to iaa-category-overlays.md as OVL-CI-006.
 
 ## parking_station_entry
 
+| 2026-03-05 | independent-assurance-agent | session-149 | PHASE-4 | OVL-CI-006 candidate: GitHub Actions jobs must have explicit permissions block (CodeQL: missing-workflow-permissions) — F-149-001 | session-149-waveLV-20260305.md |
 | 2026-03-05 | independent-assurance-agent | session-149 | PHASE-4 | Re-invocation ceremony overhead is high for comment-only fixes; consider CS2-authorized fast-path for verified comment/doc-only re-audits — A-030b candidate | session-149-waveLV-20260305.md |

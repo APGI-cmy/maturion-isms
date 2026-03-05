@@ -285,3 +285,4 @@
 | 2026-03-05 | independent-assurance-agent | session-148 | PHASE-3 | OVL-CI-001/003: continue-on-error comment contradiction in liveness.yml/runner.ts — propose OVL-CI-006 check for continue-on-error alignment | session-148-waveLV-20260305.md |
 
 | 2026-03-05 | independent-assurance-agent | session-149 | PHASE-4 | Re-invocation ceremony overhead is high for comment-only fixes; consider CS2-authorized fast-path for verified comment/doc-only re-audits — A-030b candidate | session-149-waveLV-20260305.md |
+| 2026-03-05 | independent-assurance-agent | session-149 | PHASE-4 | OVL-CI-006 candidate: GitHub Actions jobs must have explicit permissions block (CodeQL: missing-workflow-permissions) — F-149-001 | session-149-waveLV-20260305.md |
