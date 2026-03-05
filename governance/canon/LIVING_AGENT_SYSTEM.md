@@ -1,7 +1,8 @@
 # LIVING_AGENT_SYSTEM
 
-**Status**: CANONICAL | **Version**: 1.1.0 | **Authority**: CS2  
-**Date**: 2026-02-24
+**Status**: CANONICAL | **Version**: 1.2.0 | **Authority**: CS2  
+**Date**: 2026-02-24  
+**Amended**: 2026-03-04 — v1.2.0: Clarified §Working Phase & Output — agents create only new immutable files during a session; all post-commit evidence is append-only; direct artifact mutation after commit is prohibited (CS2 auth: APGI-cmy/maturion-foreman-governance issue — Artifact Immutability &amp; Append-Only Proof Protocols)
 
 ---
 
@@ -86,6 +87,27 @@ This leads to:
 - Efficiency improvements
 - Blockers encountered
 - Governance gaps identified
+
+**Output — Artifact Immutability Rule (Constitutional)**:
+
+> Agents may only **create new, immutable files** during a session. All post-commit evidence
+> is **append-only**. Direct artifact mutation after commit is **prohibited**.
+
+This means:
+
+| Action | Allowed? |
+|--------|----------|
+| Create a new evidence file | ✅ YES |
+| Append a new row to a FAIL-ONLY-ONCE registry | ✅ YES (append-only) |
+| Create a new session memory file | ✅ YES |
+| Write IAA token to a new dedicated token file | ✅ YES |
+| Create a new parking-station suggestion file per session | ✅ YES |
+| Edit a PREHANDOVER proof after initial commit | ❌ NO — immutable post-commit |
+| Write IAA token into an already-committed PREHANDOVER proof | ❌ NO — use dedicated token file |
+| Append to a shared cross-agent mutable file on a wave branch | ❌ NO — use per-agent/per-session files |
+| Delete or overwrite any prior evidence artifact | ❌ NO |
+
+**Authority**: `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` §Artifact Immutability Rule
 
 ### 2.5 Pre-Build Reality Check Gate (Foreman — MANDATORY)
 
