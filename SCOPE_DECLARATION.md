@@ -1,10 +1,40 @@
-# Scope Declaration — governance-liaison-isms Session 048 — Ripple 29e76ecf
+# Scope Declaration — foreman-v2-agent Session 141 — Wave 14 Batch B
 
-**PR**: `copilot/propagate-governance-changes-551dc2cd-cb1b-40cb-a0a6-f3b74d039f88`
-**Sessions**: session-048-20260305
-**Wave**: Governance Ripple — [Layer-Down] Propagate Governance Changes - 2026-03-04 (29e76ecf)
-**Issue**: #935
-**Date**: 2026-03-05
+**PR**: `copilot/implement-evidence-interaction-model`
+**Sessions**: session-141
+**Wave**: Wave 14 Batch B — Evidence Interaction, AI Evaluation Triggers, Results Table & Report Generation
+**Issue**: #909
+**Date**: 2026-03-04
+**Authority**: BL-027 (MERGE_GATE_PHILOSOPHY.md)
+
+## Files Declared
+
+### Added
+
+- `apps/maturion-maturity-legacy/supabase/migrations/20260305000003_wave14_evidence_schema.sql` - GAP-W05/FR-093: evidence table column evolution (findings_text, deleted BOOLEAN, storage_path, type CHECK update for 'file'/'voice')
+- `apps/maturion-maturity-legacy/supabase/migrations/20260305000004_wave14_evaluations.sql` - GAP-W06/FR-094: criteria_evaluations + evaluation_overrides tables + RLS
+- `apps/maturion-maturity-legacy/supabase/migrations/20260305000006_wave14_audit_reports.sql` - GAP-W11/FR-099: audit_reports table + reports storage bucket + RLS
+- `modules/mat/frontend/src/components/evidence/EvidenceUploadPanel.tsx` - GAP-W05/FR-093: 6-type evidence upload panel with Remove/Replace tiles
+- `modules/mat/frontend/src/components/criteria/CriteriaCard.tsx` - GAP-W07/FR-095: AI guidance surface (next_level_guidance, next_plus_one_taster, Explore further levels)
+- `modules/mat/frontend/src/components/audit/AuditResultsTable.tsx` - GAP-W09/FR-097: audit results table with Domain/MPS/Criteria/Rating columns and excluded treatment
+- `.agent-admin/assurance/iaa-prebrief-wave14-batchB.md` - IAA Pre-Brief for Wave 14 Batch B
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-141-wave14-batchB-20260304.md` - Foreman PREHANDOVER session-141
+- `.agent-workspace/foreman-v2/memory/session-141-wave14-batchB-20260304.md` - Foreman session memory session-141
+
+### Modified
+
+- `modules/mat/frontend/src/components/common/EmbeddedAIAssistant.tsx` - GAP-W08/FR-096: contextPayload prop (criteria_name, current_level, next_level_guidance) + ai-context-indicator data-testid
+- `modules/mat/frontend/src/pages/AuditManagementPage.tsx` - GAP-W09/FR-097: Results tab added with AuditResultsTable
+- `modules/mat/frontend/src/pages/DashboardPage.tsx` - GAP-W10/FR-098: Submitted/Outstanding/Excluded metrics + Create Report gate (criteria_evaluations, confirmed/overridden)
+- `modules/mat/frontend/src/lib/hooks/useAuditMetrics.ts` - GAP-W10/FR-098: AuditMetrics interface extended (submittedCount, outstandingCount, excludedCount); criteria_evaluations queries added for dashboard gate metrics
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated with Wave 14 Batch B tasks
+- `SCOPE_DECLARATION.md` - This file — scope declaration for session-141 Wave 14 Batch B
+
+**PR**: `copilot/implement-onboarding-and-assignment`
+**Sessions**: session-140
+**Wave**: Wave 14 Batch A — Onboarding, Assignment, Exclude Cascade, and Org-Isolation Foundations
+**Issue**: #909
+**Date**: 2026-03-04
 **Authority**: A-009, A-015 (FAIL-ONLY-ONCE v1.5.0), AGCFPP-001
 
 ## Summary

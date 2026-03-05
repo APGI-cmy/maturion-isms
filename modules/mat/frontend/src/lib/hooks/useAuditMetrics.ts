@@ -13,6 +13,12 @@ export interface AuditMetrics {
   averageMaturity: number;
   inProgressAudits: number;
   completedAudits: number;
+  /** Wave 14 — FR-098: criteria with status IN ('confirmed', 'overridden') in criteria_evaluations */
+  submittedCount: number;
+  /** Wave 14 — FR-098: non-excluded criteria without a confirmed/overridden evaluation */
+  outstandingCount: number;
+  /** Wave 14 — FR-098: criteria WHERE excluded = true */
+  excludedCount: number;
 }
 
 /**
@@ -81,12 +87,51 @@ export function useAuditMetrics() {
         averageMaturity = 0.0;
       }
 
+      // Wave 14 — FR-098: submittedCount
+      // Count criteria_evaluations rows with status IN ('confirmed', 'overridden')
+      let submittedCount = 0;
+      let outstandingCount = 0;
+      let excludedCount = 0;
+      try {
+        const { count: submittedRaw, error: submittedError } = await supabase
+          .from('criteria_evaluations')
+          .select('*', { count: 'exact', head: true })
+          .in('status', ['confirmed', 'overridden']);
+
+        if (!submittedError) {
+          submittedCount = submittedRaw || 0;
+        }
+
+        // outstandingCount: criteria WHERE excluded = false AND NOT IN evaluated set
+        const { count: totalCriteria } = await supabase
+          .from('criteria')
+          .select('*', { count: 'exact', head: true })
+          .eq('excluded', false);
+
+        outstandingCount = Math.max(0, (totalCriteria || 0) - submittedCount);
+
+        // excludedCount: criteria WHERE excluded = true
+        const { count: excludedRaw, error: excludedError } = await supabase
+          .from('criteria')
+          .select('*', { count: 'exact', head: true })
+          .eq('excluded', true);
+
+        if (!excludedError) {
+          excludedCount = excludedRaw || 0;
+        }
+      } catch {
+        // Tables may not exist yet in all environments — default to 0
+      }
+
       return {
         totalAudits: totalAudits || 0,
         completionRate,
         averageMaturity,
         inProgressAudits: inProgressAudits || 0,
         completedAudits: completedAudits || 0,
+        submittedCount,
+        outstandingCount,
+        excludedCount,
       };
     },
     // Refetch every 30 seconds for near-real-time updates
