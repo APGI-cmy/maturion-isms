@@ -44,7 +44,7 @@
 
 | # | Task ID | Description | Builder | Status |
 |---|---------|-------------|---------|--------|
-| 1 | TASK-W14-BC-001 | Create migration `20260305000005_wave14_level_descriptors.sql`: CREATE TABLE public.criteria_level_descriptors (id UUID PK, criteria_id UUID FK NOT NULL, level INTEGER NOT NULL, descriptor_text TEXT NOT NULL, UNIQUE(criteria_id, level)); CREATE TABLE public.mps_level_descriptors (id UUID PK, mps_id UUID FK NOT NULL, level INTEGER NOT NULL, descriptor_text TEXT NOT NULL, UNIQUE(mps_id, level)); CREATE TABLE public.domain_level_descriptors (id UUID PK, domain_id UUID FK NOT NULL, level INTEGER NOT NULL, descriptor_text TEXT NOT NULL, UNIQUE(domain_id, level)); RLS: org-isolation SELECT policies for all 3 tables | schema-builder | 🔴 PENDING |
+| 1 | TASK-W14-BC-001 | Create migration `20260305000005_wave14_level_descriptors.sql`: CREATE TABLE public.criteria_level_descriptors (id UUID PK, criteria_id UUID FK NOT NULL, level INTEGER NOT NULL, descriptor_text TEXT NOT NULL, UNIQUE(criteria_id, level)); CREATE TABLE public.mps_level_descriptors (id UUID PK, mps_id UUID FK NOT NULL, level INTEGER NOT NULL, descriptor_text TEXT NOT NULL, UNIQUE(mps_id, level)); CREATE TABLE public.domain_level_descriptors (id UUID PK, domain_id UUID FK NOT NULL, level INTEGER NOT NULL, descriptor_text TEXT NOT NULL, UNIQUE(domain_id, level)); RLS: org-isolation SELECT policies for all 3 tables | schema-builder | 🟢 DONE |
 
 ### Subwave 14.C.2 — Scoring Tables and Default Rule (GAP-W13)
 **Test ID**: T-W14-UX-013 + T-W14-UX-016
@@ -52,20 +52,20 @@
 
 | # | Task ID | Description | Builder | Status |
 |---|---------|-------------|---------|--------|
-| 2 | TASK-W14-BC-002 | Create migration `20260305000007_wave14_scoring_tables.sql`: CREATE TABLE public.maturity_levels (id UUID PK, name TEXT NOT NULL, level_number INTEGER NOT NULL UNIQUE, description TEXT); INSERT 5 seed rows (Basic=1, Reactive=2, Compliant=3, Proactive=4, Resilient=5); CREATE TABLE public.scoring_rules (id UUID PK, organisation_id UUID NULLABLE FK organisations, aggregation_method TEXT NOT NULL DEFAULT 'weighted_average'); INSERT global default seed (organisation_id=NULL, aggregation_method='weighted_average'); CREATE TABLE public.aggregate_scores (id UUID PK, audit_id UUID FK NOT NULL, level_type TEXT NOT NULL, scope_id UUID, score NUMERIC, UNIQUE(audit_id, level_type, scope_id)); RLS: maturity_levels and scoring_rules publicly readable (global reference); aggregate_scores org-isolated; fallback COALESCE for missing scoring rule | schema-builder | 🔴 PENDING |
+| 2 | TASK-W14-BC-002 | Create migration `20260305000007_wave14_scoring_tables.sql`: CREATE TABLE public.maturity_levels (id UUID PK, name TEXT NOT NULL, level_number INTEGER NOT NULL UNIQUE, description TEXT); INSERT 5 seed rows (Basic=1, Reactive=2, Compliant=3, Proactive=4, Resilient=5); CREATE TABLE public.scoring_rules (id UUID PK, organisation_id UUID NULLABLE FK organisations, aggregation_method TEXT NOT NULL DEFAULT 'weighted_average'); INSERT global default seed (organisation_id=NULL, aggregation_method='weighted_average'); CREATE TABLE public.aggregate_scores (id UUID PK, audit_id UUID FK NOT NULL, level_type TEXT NOT NULL, scope_id UUID, score NUMERIC, UNIQUE(audit_id, level_type, scope_id)); RLS: maturity_levels and scoring_rules publicly readable (global reference); aggregate_scores org-isolated; fallback COALESCE for missing scoring rule | schema-builder | 🟢 DONE |
 
 ### Subwave 14.C.3 — Post-Implementation Assurance Report (Issue Scope)
 **Test ID**: N/A (governance/documentation artifact)
 
 | # | Task ID | Description | Builder | Status |
 |---|---------|-------------|---------|--------|
-| 3 | TASK-W14-BC-003 | Create `modules/mat/05-build-evidence/wave14-postimplementation-assurance-report.md` — full UX workflow green/red tick-list against all 15 GAPs (W01–W15), screenshot references (placeholder), drill-down capability attestation, signed-off QA acceptance | mat-specialist | 🔴 PENDING |
+| 3 | TASK-W14-BC-003 | Create `modules/mat/05-build-evidence/wave14-postimplementation-assurance-report.md` — full UX workflow green/red tick-list against all 15 GAPs (W01–W15), screenshot references (placeholder), drill-down capability attestation, signed-off QA acceptance | mat-specialist | 🟢 DONE |
 
 ### Subwave 14.C.4 — App Management Centre Watchdog Readiness (Issue Scope)
 
 | # | Task ID | Description | Builder | Status |
 |---|---------|-------------|---------|--------|
-| 4 | TASK-W14-BC-004 | Create `modules/mat/05-build-evidence/app-management-centre-watchdog-readiness.md` — document MAT readiness for future watchdog/monitoring integration: health check endpoints, key event hooks, monitoring surfaces, integration interface contract | mat-specialist | 🔴 PENDING |
+| 4 | TASK-W14-BC-004 | Create `modules/mat/05-build-evidence/app-management-centre-watchdog-readiness.md` — document MAT readiness for future watchdog/monitoring integration: health check endpoints, key event hooks, monitoring surfaces, integration interface contract | mat-specialist | 🟢 DONE |
 
 ---
 
@@ -90,3 +90,12 @@
 - [ ] Session memory written
 - [ ] PREHANDOVER proof committed
 - [ ] CS2 notified for merge approval
+
+---
+
+## Wave 14 Batch C — COMPLETE
+
+**All 4 tasks 🟢 DONE**
+**IAA ASSURANCE-TOKEN**: `IAA-session-142-v3-wave14-batchC-20260305-PASS` (IAA session-149)
+**Token file**: `.agent-admin/assurance/iaa-token-session-142-v3-wave14-batchC-20260305.md`
+**Wave 14 Status**: ✅ ALL 15 GAPs CLOSED — One-time build milestone ACHIEVED for MAT

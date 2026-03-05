@@ -121,3 +121,8 @@ updated. Escalation ESC-AGENTFILE-29E76ECF-20260304 created for CS2 review.
 ### PREHANDOVER v3 Correction Addendum (A-030 pattern)
 
 - `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-142-v3-wave14-batchC-20260305.md` - PREHANDOVER proof v3: correction addendum acknowledging all prior IAA findings resolved; complete bundle with IAA ceremony artifacts
+
+### IAA Session-149 Governance Artifacts (ASSURANCE-TOKEN ceremony record)
+
+- `.agent-admin/assurance/iaa-token-session-142-v3-wave14-batchC-20260305.md` - IAA ASSURANCE-TOKEN (session-149) — Wave 14 Batch C v3 PASS — all 35+ checks PASS — merge gate released
+- `.agent-workspace/independent-assurance-agent/memory/session-149-wave14-batchC-v3-20260305.md` - IAA session-149 session memory (ASSURANCE-TOKEN invocation)
