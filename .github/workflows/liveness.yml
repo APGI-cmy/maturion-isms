@@ -18,6 +18,8 @@ on:
 
 jobs:
   liveness:
+    permissions:
+      contents: read
     # Only run on successful deploy OR when manually triggered
     if: >-
       github.event_name == 'workflow_dispatch' ||
