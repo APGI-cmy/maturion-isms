@@ -1,127 +1,18 @@
-# Scope Declaration — foreman-v2-agent Session 143 — Wave 14 Final Migrations Governance Closure
+# SCOPE_DECLARATION — Wave GovImpr — IAA Governance & Template Improvements
+# Session: foreman-v2-agent session-155 | Branch: copilot/update-iaa-governance-templates
+# Date: 2026-03-05 | Authority: CS2 (@APGI-cmy)
+# Cleared per A-029 before writing (cat /dev/null > SCOPE_DECLARATION.md)
 
-**PR**: `copilot/apply-wave-14-migrations`
-**Session**: session-143 (foreman-v2-agent)
-**Task**: Wave 14 Final — Apply Final Supabase Migrations (000000–000008) with PREHANDOVER Proof and IAA Token
-**Date**: 2026-03-05
-**Authority**: CS2 directive (Wave 14 Final governance closure)
-
-## Files Declared
-
-### Modified (session-143 producing agent deliverables)
-
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated for session-143: Wave 14 Final Migrations wave context
-- `modules/mat/00-app-description/BUILD_PROGRESS_TRACKER.md` - v1.2 → v1.3: All 15 Wave 14 GAPs marked ✅ CLOSED; migration↔GAP mapping table added; IAA tokens for Batches A/B/C recorded (correct dates); Change Log v1.3 entry; "Next Update" updated to Wave 14 CLOSED state
-- `SCOPE_DECLARATION.md` - This file (updated for session-143 scope per A-026/A-028 compliance)
-
-### Added (session-143 producing agent deliverables)
-
-- `.agent-admin/assurance/iaa-prebrief-wave14-final.md` - IAA Pre-Brief for Wave 14 Final (IAA pre-brief session); 2 qualifying tasks, 2 EXEMPT; high-risk rules A-026/A-029/A-023/A-021 flagged
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-143-wave14-final-20260305.md` - Foreman PREHANDOVER proof session-143: migration↔GAP table (9 migrations, 15 GAPs), bundle completeness, §4.3 merge gate parity PASS, iaa_audit_token pre-populated per A-028
-- `.agent-workspace/foreman-v2/memory/session-143-wave14-final-20260305.md` - Foreman session memory session-143: Wave 14 Final governance closure; Batch A token date corrected (FINDING-002 fix)
-
-### IAA Ceremony Artifacts (IAA sessions 152 and 153)
-
-- `.agent-admin/assurance/iaa-token-session-143-wave14-final-20260305.md` - IAA ASSURANCE-TOKEN (session-153 re-invocation PASS — all 38 checks PASS); overwrites session-152 REJECTION-PACKAGE per §4.3b re-invocation pattern
-- `.agent-workspace/independent-assurance-agent/memory/session-152-wave14-final-20260305.md` - IAA session-152 session memory (REJECTION-PACKAGE ceremony: FINDING-001/002/003)
-- `.agent-workspace/independent-assurance-agent/memory/session-153-wave14-final-20260305.md` - IAA session-153 session memory (ASSURANCE-TOKEN ceremony)
-- `.agent-workspace/independent-assurance-agent/memory/breach-registry.md` - IAA breach registry stub (new file — created by IAA session-153)
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station updated (IAA session-152 and session-153 entries)
-
----
-
-**Wave**: Wave 14 Final — Apply Final Supabase Migrations (000000–000008)
-**Issue**: Wave 14 Final Migrations governance closure
-**Date**: 2026-03-05
-**Authority**: A-026, A-028 (FAIL-ONLY-ONCE v2.6.0), AGCFPP-001
-### Added
-
-- `.agent-admin/assurance/iaa-prebrief-waveLV-20260305.md` - IAA Pre-Brief artifact for Wave LV (PHASE_B_BLOCKING)
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-142-waveLV-20260305.md` - PREHANDOVER proof session-142
-- `.agent-workspace/foreman-v2/memory/session-142-waveLV-20260305.md` - Foreman session-142 memory
-- `.env.example` - All 8 liveness env vars documented (LIVENESS_TEST_EMAIL, LIVENESS_TEST_PASSWORD, BASE_URL, AI_*_URL, AI_*_MS)
-- `.github/workflows/liveness.yml` - CI post-deploy trigger (workflow_run + workflow_dispatch; WARN=exit0; secrets via GitHub secrets)
-- `modules/mat/tests/liveness/.gitignore` - Excludes liveness-evidence/ and reports/
-- `modules/mat/tests/liveness/README-LIVENESS.md` - Usage docs with env vars and run instructions
-- `modules/mat/tests/liveness/fixtures/test-criteria-document.pdf` - Minimal valid PDF fixture for criteria upload tests
-- `modules/mat/tests/liveness/fixtures/test-evidence.pdf` - Minimal valid PDF fixture for evidence upload tests
-- `modules/mat/tests/liveness/mat-ai-health.spec.ts` - AI health probes LV-AI-01..06 + AI-layer checks (15 checks)
-- `modules/mat/tests/liveness/mat-liveness.spec.ts` - ALL AUTO/AUTO+MANUAL Playwright liveness checks (LV-00 to LV-10, 41 checks)
-- `modules/mat/tests/liveness/mat-visual.spec.ts` - 5 VISUAL screenshot checks
-- `modules/mat/tests/liveness/report-assembler.ts` - Report assembler (machine JSON + human Markdown + manual checklist per spec §3/§5)
-- `modules/mat/tests/liveness/runner.ts` - Liveness runner (orchestrates 3 spec files, exit 0 on WARN, exit 1 on blocking FAIL)
-- `modules/mat/tests/wave-lv/liveness-gate.test.ts` - Wave LV Red QA gate (T-LV-GATE-001..009): 9 file-existence meta-tests
-
-### Modified
-
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated with Wave 14 Batch C tasks
-- `SCOPE_DECLARATION.md` - This file — scope declaration for session-142 Wave 14 Batch C
-
-### STOP-AND-FIX Additions (IAA REJECTION-PACKAGE remediation)
-
-- `modules/mat/05-build-evidence/wave14-cwt-evidence-20260305.md` - FINDING-BC-002 fix: Wave 14 Combined Wave Test evidence — formal CWT PASS verdict, 104/104 Wave 14 tests GREEN, 15/15 GAPs closed (OVL-AM-CWT-01)
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-142-v2-wave14-batchC-20260305.md` - PREHANDOVER proof v2 (STOP-AND-FIX resolutions: FINDING-BC-001 partial index + FINDING-BC-002 CWT evidence)
-
-### IAA Session-147 Governance Artifacts (REJECTION-PACKAGE ceremony record)
-
-- `.agent-admin/assurance/iaa-token-session-142-wave14-batchC-20260305.md` - IAA session-147 REJECTION-PACKAGE token (FINDING-BC-001: aggregate_scores partial index; FINDING-BC-002: CWT evidence missing)
-- `.agent-workspace/independent-assurance-agent/memory/session-147-wave14-batchC-20260305.md` - IAA session-147 session memory (first rejection invocation for Wave 14 Batch C)
-
-### PREHANDOVER v3 Correction Addendum (A-030 pattern)
-
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-142-v3-wave14-batchC-20260305.md` - PREHANDOVER proof v3: correction addendum acknowledging all prior IAA findings resolved; complete bundle with IAA ceremony artifacts
-
-### IAA Session-149 Governance Artifacts (ASSURANCE-TOKEN ceremony record)
-
-- `.agent-admin/assurance/iaa-token-session-142-v3-wave14-batchC-20260305.md` - IAA ASSURANCE-TOKEN (session-149) — Wave 14 Batch C v3 PASS — all 35+ checks PASS — merge gate released
-- `.agent-workspace/independent-assurance-agent/memory/session-149-wave14-batchC-v3-20260305.md` - IAA session-149 session memory (ASSURANCE-TOKEN invocation)
-
----
-
-# Scope Declaration — foreman-v2-agent Session 143 — Wave 14 IBWR
-
-**PR**: `copilot/update-wave-14-ibwr-tracker`
-**Session**: session-143
-**Wave**: Wave 14 IBWR — In-Between Wave Reconciliation (Final)
-**Issue**: Wave 14 IBWR: Formal In-Between Wave Reconciliation & Progress Tracker Update
-**Date**: 2026-03-05
-**Authority**: A-026, A-028 (FAIL-ONLY-ONCE v2.6.0)
-
-## Files Declared
-
-### Added
-
-- `.agent-admin/assurance/ibwr-wave14-session-143-20260305.md` - Formal Wave 14 IBWR artifact: 15/15 GAPs closed, 104/104 tests GREEN, 4 IAA tokens referenced, CWT PASS, FCWT readiness declared
-- `.agent-workspace/foreman-v2/memory/session-143-wave14-ibwr-20260305.md` - Foreman session memory for IBWR session-143
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-143-wave14-ibwr-20260305.md` - PREHANDOVER proof for session-143 IBWR
-
-### Modified
-
-- `modules/mat/BUILD_PROGRESS_TRACKER.md` - Wave 14 Batch A/B/C sections added; IBWR section added; postbuild-fails-02 closed; Current Stage updated to FCWT READY
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated for IBWR session-143 task list
-- `SCOPE_DECLARATION.md` - This file — scope declaration for session-143 IBWR (A-026 compliance)
-
----
-
-# Scope Declaration — foreman-v2-agent Session 143 v2 — Wave 14 IBWR Correction (A-030)
-
-**PR**: `copilot/update-wave-14-ibwr-tracker`
-**Session**: session-143 v2 (correction addendum — A-030 pattern)
-**Correction Type**: A-030 — CWT Batch C test count corrected (20→27) per IAA REJECTION-PACKAGE (session-150)
-**Date**: 2026-03-05
-
-## Correction Summary
-
-IAA session-150 issued REJECTION-PACKAGE FINDING-IBWR-001: CWT tally arithmetic inconsistency.
-IBWR §3 and BUILD_PROGRESS_TRACKER CWT tally both stated Batch C = 20 tests.
-Correct count = 27 (37+40+27=104 ✓ per CWT runner output and state machine entry).
-Fix: "20" → "27" in both documents.
-
-## Files Corrected
-
-- `.agent-admin/assurance/ibwr-wave14-session-143-20260305.md` - §3 CWT Tally: Batch C 20→27; 20/20→27/27
-- `modules/mat/BUILD_PROGRESS_TRACKER.md` - IBWR CWT tally: Batch C 20→27; Batch C section test results 20→27
-- `SCOPE_DECLARATION.md` - This correction addendum
-- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Session-142 suggestion appended
-- `.gitignore` - Added liveness-evidence/ and reports/ exclusions
-- `modules/mat/package.json` - Added npm scripts: liveness and liveness:report
+- `.agent-admin/assurance/iaa-prebrief-waveGovImpr-20260305.md` - IAA Pre-Brief artifact for Wave GovImpr (IAA session-154)
+- `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` - Updated v2.6.0→v2.7.0: A-029, A-030, OVL-CI-006 candidate, S-017–S-020, delegation protocol
+- `.agent-workspace/foreman-v2/knowledge/prehandover-template.md` - Updated v1.4.0→v1.5.0: SCOPE_DECLARATION ceremony section, IAA token date accuracy note
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-155-waveGovImpr-20260305.md` - PREHANDOVER proof for this session
+- `.agent-workspace/foreman-v2/memory/session-155-20260305.md` - Session memory for this session
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave GovImpr task list (updated)
+- `.agent-workspace/independent-assurance-agent/memory/session-154-prebrief-waveGovImpr-20260305.md` - IAA Pre-Brief session memory
+- `.agent-workspace/mat-specialist/knowledge/audit-lifecycle.md` - Updated v1.0.0→v1.1.0: A-030 IAA token date accuracy section
+- `.agent-workspace/mat-specialist/knowledge/index.md` - Created: mat-specialist Tier 2 knowledge index v1.0.0
+- `.github/workflows/copilot-setup-steps.yml` - Added permissions: contents: read (OVL-CI-006)
+- `.github/workflows/provider-model-ban.yml` - Added permissions: contents: read (OVL-CI-006)
+- `modules/mat/tests/liveness/README-LIVENESS.md` - Added explicit env var warnings (BASE_URL, LIVENESS_TEST_PASSWORD fallbacks)
+- `SCOPE_DECLARATION.md` - This file: Wave GovImpr scope declaration (A-029 fresh-overwrite applied)

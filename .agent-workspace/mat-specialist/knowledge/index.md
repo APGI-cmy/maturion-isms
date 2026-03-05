@@ -12,10 +12,10 @@
 
 | Filename | Description | Version | Status |
 |----------|-------------|---------|--------|
-| `audit-lifecycle.md` | End-to-end MAT audit lifecycle: Plan → Prepare → Conduct → Review → Report → Close. Includes IAA token date accuracy (A-030). | 1.1.0 | STUB (partial content) |
-| `compliance-mapping.md` | Compliance framework mapping: LDCS domains to ISO/NIST/PCI-DSS controls | — | STUB |
-| `criteria-structure.md` | Domain → MPS → Criteria hierarchy and traceability structure | — | STUB |
-| `domain-model.md` | MAT domain model: maturity levels, scoring rubrics, domain definitions | — | STUB |
+| `audit-lifecycle.md` | End-to-end MAT audit lifecycle: Plan → Prepare → Conduct → Review → Report → Close. Includes IAA token date accuracy (A-030). | 1.1.0 | ACTIVE |
+| `compliance-mapping.md` | Compliance framework mapping: LDCS domains to ISO/NIST/PCI-DSS controls | — | PLANNED — not yet created |
+| `criteria-structure.md` | Domain → MPS → Criteria hierarchy and traceability structure | — | PLANNED — not yet created |
+| `domain-model.md` | MAT domain model: maturity levels, scoring rubrics, domain definitions | — | PLANNED — not yet created |
 
 ---
 

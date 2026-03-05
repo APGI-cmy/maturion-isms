@@ -12,6 +12,9 @@ on:
     paths:
       - 'modules/mat/src/**'
 
+permissions:
+  contents: read
+
 jobs:
   provider-model-ban:
     name: "AIMC Compliance / provider-model-ban"
