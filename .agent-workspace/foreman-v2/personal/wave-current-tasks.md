@@ -1,6 +1,7 @@
 # Wave Current Tasks — foreman-v2-agent
 
 **Wave**: Wave 14 Final — Apply Final Supabase Migrations (000000–000008) with PREHANDOVER Proof and IAA Token
+**Wave**: Wave 14 IBWR — Formal In-Between Wave Reconciliation & Progress Tracker Update
 **Session**: session-143
 **Wave**: Wave LV (MAT Liveness Test Suite) — 6 sub-waves (LV-RED, LV-1 through LV-5)
 **Session**: session-142
@@ -78,6 +79,21 @@
 **Source authority**: modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md v1.0
 **FRS/TRS**: FR-089 to FR-102 / TR-089 to TR-102
 **Depends on**: Wave 14 Batch A (session-140), Wave 14 Batch B (session-141), Wave 14 Batch C (session-142)
+**Issue**: Wave 14 IBWR
+**Branch**: copilot/update-wave-14-ibwr-tracker
+**CS2 Authorization**: Issue opened by @APGI-cmy (CS2 direct)
+**Prior wave**: Wave 14 Batch C (session-142, copilot/finalise-mat-gap-closure)
+
+## IBWR Task List
+
+| Task | Description | Owner | Status |
+|------|-------------|-------|--------|
+| IBWR-001 | Create Wave 14 IBWR artifact | foreman | ✅ DONE |
+| IBWR-002 | Update BUILD_PROGRESS_TRACKER.md | foreman | ✅ DONE |
+| IBWR-003 | Create PREHANDOVER proof (session-143) | foreman | ✅ DONE |
+| IBWR-004 | Create session memory (session-143) | foreman | ✅ DONE |
+| IBWR-005 | Update SCOPE_DECLARATION.md | foreman | ✅ DONE |
+| IBWR-006 | Invoke IAA for independent audit | IAA | 🔴 PENDING |
 
 ---
 
