@@ -125,8 +125,12 @@ DO $$ BEGIN
       CREATE POLICY criteria_level_descriptors_org_select ON public.criteria_level_descriptors
         FOR SELECT
         USING (
-          organisation_id IN (
-            SELECT organisation_id FROM public.profiles WHERE profiles.id = auth.uid()
+          criteria_id IN (
+            SELECT c.id
+            FROM public.criteria c
+            WHERE c.organisation_id IN (
+              SELECT organisation_id FROM public.profiles WHERE id = auth.uid()
+            )
           )
         );
     END IF;
@@ -171,8 +175,12 @@ DO $$ BEGIN
       CREATE POLICY aggregate_scores_org_select ON public.aggregate_scores
         FOR SELECT
         USING (
-          organisation_id IN (
-            SELECT organisation_id FROM public.profiles WHERE profiles.id = auth.uid()
+          audit_id IN (
+            SELECT a.id
+            FROM public.audits a
+            WHERE a.organisation_id IN (
+              SELECT organisation_id FROM public.profiles WHERE id = auth.uid()
+            )
           )
         );
     END IF;
