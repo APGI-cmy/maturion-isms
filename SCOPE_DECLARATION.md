@@ -76,3 +76,28 @@
 
 - `.agent-admin/assurance/iaa-token-session-142-v3-wave14-batchC-20260305.md` - IAA ASSURANCE-TOKEN (session-149) — Wave 14 Batch C v3 PASS — all 35+ checks PASS — merge gate released
 - `.agent-workspace/independent-assurance-agent/memory/session-149-wave14-batchC-v3-20260305.md` - IAA session-149 session memory (ASSURANCE-TOKEN invocation)
+
+---
+
+# Scope Declaration — foreman-v2-agent Session 143 — Wave 14 IBWR
+
+**PR**: `copilot/update-wave-14-ibwr-tracker`
+**Session**: session-143
+**Wave**: Wave 14 IBWR — In-Between Wave Reconciliation (Final)
+**Issue**: Wave 14 IBWR: Formal In-Between Wave Reconciliation & Progress Tracker Update
+**Date**: 2026-03-05
+**Authority**: A-026, A-028 (FAIL-ONLY-ONCE v2.6.0)
+
+## Files Declared
+
+### Added
+
+- `.agent-admin/assurance/ibwr-wave14-session-143-20260305.md` - Formal Wave 14 IBWR artifact: 15/15 GAPs closed, 104/104 tests GREEN, 4 IAA tokens referenced, CWT PASS, FCWT readiness declared
+- `.agent-workspace/foreman-v2/memory/session-143-wave14-ibwr-20260305.md` - Foreman session memory for IBWR session-143
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-143-wave14-ibwr-20260305.md` - PREHANDOVER proof for session-143 IBWR
+
+### Modified
+
+- `modules/mat/BUILD_PROGRESS_TRACKER.md` - Wave 14 Batch A/B/C sections added; IBWR section added; postbuild-fails-02 closed; Current Stage updated to FCWT READY
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated for IBWR session-143 task list
+- `SCOPE_DECLARATION.md` - This file — scope declaration for session-143 IBWR (A-026 compliance)
