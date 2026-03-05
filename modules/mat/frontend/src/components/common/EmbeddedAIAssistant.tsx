@@ -33,12 +33,15 @@ interface EmbeddedAIAssistantProps {
   initiallyOpen?: boolean;
   /** Criteria context payload — pre-seeds the AI session with evaluation context (FR-096) */
   contextPayload?: ContextPayload;
+  /** Organisation identifier — scopes AI requests to the correct tenant (FR-072) */
+  organisationId?: string;
 }
 
 export function EmbeddedAIAssistant({
   defaultAgentId = 'routine',
   initiallyOpen = false,
   contextPayload,
+  organisationId = 'default',
 }: EmbeddedAIAssistantProps) {
   const [isOpen, setIsOpen] = useState(initiallyOpen);
   const [selectedAgentId, setSelectedAgentId] = useState(defaultAgentId);
@@ -113,7 +116,7 @@ export function EmbeddedAIAssistant({
           agent: selectedAgent.agentId,
           input: { text },
           context: {
-            organisationId: 'default', // TODO: wire real org context
+            organisationId,
             sessionId: `session-${Date.now()}`,
           },
         }),
