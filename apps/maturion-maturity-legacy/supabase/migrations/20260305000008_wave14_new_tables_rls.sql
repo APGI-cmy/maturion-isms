@@ -182,5 +182,10 @@ END $$;
 -- ---------------------------------------------------------------------------
 -- maturity_levels — globally readable reference table (TR-101)
 -- No restrictive SELECT policy. Grant read access to all authenticated users.
+-- Guard: skipped if table does not yet exist (Batch A/B-only deployment)
 -- ---------------------------------------------------------------------------
-GRANT SELECT ON public.maturity_levels TO authenticated;
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'maturity_levels') THEN
+    EXECUTE 'GRANT SELECT ON public.maturity_levels TO authenticated';
+  END IF;
+END $$;
