@@ -59,3 +59,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
+
+# MAT Liveness test outputs
+modules/mat/tests/liveness/liveness-evidence/
+modules/mat/tests/liveness/reports/
