@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0.0",
+  "type": "layer_down_received",
+  "timestamp": "2026-03-04T08:28:24Z",
+  "source_issue": "921",
+  "canonical_commit": "4e2e193c3cfedf04441e26076759d718b92db5a3",
+  "dispatch_id": "4e2e193c",
+  "trigger": "Reinstate mandatory commit step for IAA invocation",
+  "changed_paths": [
+    ".github/agents/CodexAdvisor-agent.md"
+  ],
+  "requires_cs2_approval": true,
+  "escalated": true,
+  "escalation_ref": "ESC-AGENTFILE-4E2E193C-20260304",
+  "session": "session-047-20260304",
+  "notes": "A-015 (CS2-authorized): CodexAdvisor-agent.md escalated directly to CS2. No governance canon files in payload. No files layered down. Local contract v3.4.0 is newer than canonical v3.2.0 — layer-up situation. CS2 must determine authoritative version."
+}
