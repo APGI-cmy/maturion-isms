@@ -11,20 +11,22 @@
 ### Modified (session-143 producing agent deliverables)
 
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated for session-143: Wave 14 Final Migrations wave context
-- `modules/mat/00-app-description/BUILD_PROGRESS_TRACKER.md` - v1.2 → v1.3: All 15 Wave 14 GAPs marked ✅ CLOSED; migration↔GAP mapping table added; IAA tokens for Batches A/B/C recorded; Change Log v1.3 entry added
+- `modules/mat/00-app-description/BUILD_PROGRESS_TRACKER.md` - v1.2 → v1.3: All 15 Wave 14 GAPs marked ✅ CLOSED; migration↔GAP mapping table added; IAA tokens for Batches A/B/C recorded (correct dates); Change Log v1.3 entry; "Next Update" updated to Wave 14 CLOSED state
 - `SCOPE_DECLARATION.md` - This file (updated for session-143 scope per A-026/A-028 compliance)
 
 ### Added (session-143 producing agent deliverables)
 
 - `.agent-admin/assurance/iaa-prebrief-wave14-final.md` - IAA Pre-Brief for Wave 14 Final (IAA pre-brief session); 2 qualifying tasks, 2 EXEMPT; high-risk rules A-026/A-029/A-023/A-021 flagged
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-143-wave14-final-20260305.md` - Foreman PREHANDOVER proof session-143: migration↔GAP table, bundle completeness, §4.3 merge gate parity PASS, iaa_audit_token pre-populated per A-028
-- `.agent-workspace/foreman-v2/memory/session-143-wave14-final-20260305.md` - Foreman session memory session-143: Wave 14 Final governance closure
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-143-wave14-final-20260305.md` - Foreman PREHANDOVER proof session-143: migration↔GAP table (9 migrations, 15 GAPs), bundle completeness, §4.3 merge gate parity PASS, iaa_audit_token pre-populated per A-028
+- `.agent-workspace/foreman-v2/memory/session-143-wave14-final-20260305.md` - Foreman session memory session-143: Wave 14 Final governance closure; Batch A token date corrected (FINDING-002 fix)
 
-### IAA Ceremony Artifacts (IAA session-152 — REJECTION-PACKAGE / re-invocation ceremony)
+### IAA Ceremony Artifacts (IAA sessions 152 and 153)
 
-- `.agent-admin/assurance/iaa-token-session-143-wave14-final-20260305.md` - IAA session-152 REJECTION-PACKAGE (FINDING-001: stale SCOPE_DECLARATION; FINDING-002: Batch A token date 20260305→20260304; FINDING-003: stale "Next Update" line); v2 re-invocation token will be written to same file after ASSURANCE-TOKEN
-- `.agent-workspace/independent-assurance-agent/memory/session-152-wave14-final-20260305.md` - IAA session-152 session memory (rejection ceremony)
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station (IAA ceremony record)
+- `.agent-admin/assurance/iaa-token-session-143-wave14-final-20260305.md` - IAA ASSURANCE-TOKEN (session-153 re-invocation PASS — all 38 checks PASS); overwrites session-152 REJECTION-PACKAGE per §4.3b re-invocation pattern
+- `.agent-workspace/independent-assurance-agent/memory/session-152-wave14-final-20260305.md` - IAA session-152 session memory (REJECTION-PACKAGE ceremony: FINDING-001/002/003)
+- `.agent-workspace/independent-assurance-agent/memory/session-153-wave14-final-20260305.md` - IAA session-153 session memory (ASSURANCE-TOKEN ceremony)
+- `.agent-workspace/independent-assurance-agent/memory/breach-registry.md` - IAA breach registry stub (new file — created by IAA session-153)
+- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station updated (IAA session-152 and session-153 entries)
 
 ---
 
