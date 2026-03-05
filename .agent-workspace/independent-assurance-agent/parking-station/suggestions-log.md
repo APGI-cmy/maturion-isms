@@ -281,3 +281,6 @@
 | 2026-03-05 | independent-assurance-agent | session-145 | Phase 3 A-026 | SCOPE_DECLARATION update must use git diff output mechanically not memory reconstruction — liaison missed session-144 IAA files when updating SCOPE_DECLARATION | session-145-20260305.md |
 | 2026-03-05 | independent-assurance-agent | session-146 | Phase 4 | Pre-declaration pattern should be formally codified in A-026 — clarify that forward-declared IAA artifacts per A-029 are compliant with "exact match" requirement | session-146-20260305.md |
 | 2026-03-05 | independent-assurance-agent | session-146 | Phase 4 | 4 invocations on this PR highlights need for a structured pre-IAA local checklist for liaison agent to prevent A-021/A-026 compounding re-invocation cycles | session-146-20260305.md |
+
+| 2026-03-05 | independent-assurance-agent | session-147 | Phase 3 BD-TIER-2 | Add AAWP_MAT overlay check: nullable column in UNIQUE constraint + documented ON CONFLICT UPSERT pattern — verify NULL conflict detection works | session-147-wave14-batchC-20260305.md |
+| 2026-03-05 | independent-assurance-agent | session-147 | Phase 0 Pre-Brief | Pre-brief phase-0 logic: if batch closes ALL remaining wave GAPs, auto-add CWT as QUALIFYING required artifact to pre-brief | session-147-wave14-batchC-20260305.md |
