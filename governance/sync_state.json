@@ -3,16 +3,16 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "last_sync": {
-    "timestamp": "2026-03-04T08:22:46Z",
-    "session_id": "align-20260304-082246",
+    "timestamp": "2026-03-05T08:51:31Z",
+    "session_id": "align-20260305-085131",
     "executed_by": "governance-liaison-isms-agent",
     "canonical_inventory_version": "1.0.0",
     "canonical_inventory_date": "2026-03-01",
-    "total_canons_synced": 2,
+    "total_canons_synced": 4,
     "sync_method": "layer-down-automated",
     "sync_status": "SUCCESS",
-    "canonical_commit": "61ab7b83d2bae691f1a861581871bbb28c07d578",
-    "ripple_pr": "879",
+    "canonical_commit": "c05e5784e72689de47ef3aa77f5d029b1b53d809",
+    "ripple_pr": "pending",
     "files_layered_down": [
       "governance/canon/ACTIVATION_STATE_MODEL.md",
       "governance/canon/AGENT_ROLE_GATE_APPLICABILITY.md",
@@ -32,7 +32,7 @@
       "missing": 0
     },
     "drift_detected": false,
-    "last_drift_check": "2026-03-04T08:22:46Z"
+    "last_drift_check": "2026-03-05T08:51:31Z"
   },
   "integrity": {
     "evidence_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_evidence.log",
@@ -93,7 +93,7 @@
     "files_layered_down": 0,
     "pr_required": false,
     "sync_pending": true,
-    "notes": "Ripple 29e76ecf contains .github/agents/CodexAdvisor-agent.md change \u2014 A-009/A-015 escalation trigger. No governance canon files changed. Per A-015: CodexAdvisor-agent.md escalated directly to CS2 (ESC-AGENTFILE-29E76ECF-20260304). Local v3.4.0 is newer than canonical v3.3.0. CS2 to determine authoritative version."
+    "notes": "Ripple 29e76ecf contains .github/agents/CodexAdvisor-agent.md change — A-009/A-015 escalation trigger. No governance canon files changed. Per A-015: CodexAdvisor-agent.md escalated directly to CS2 (ESC-AGENTFILE-29E76ECF-20260304). Local v3.4.0 is newer than canonical v3.3.0. CS2 to determine authoritative version."
   },
   "liaison_confirmation": {
     "timestamp": "2026-03-02T15:45:04Z",
