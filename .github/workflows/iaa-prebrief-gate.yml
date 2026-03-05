@@ -1,0 +1,86 @@
+name: IAA Pre-Brief Gate
+
+# Reminder/detection gate: checks whether wave-current-tasks.md has been committed
+# to the PR branch. Posts a reminder comment if missing. Does NOT hard-block CI.
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  iaa-prebrief-gate:
+    runs-on: ubuntu-latest
+
+    # Only run for foreman PRs: branches starting with 'copilot/' (GitHub Copilot
+    # coding agent branch naming convention) or PRs authored by the Copilot bot.
+    if: >-
+      startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot'
+
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+
+      - name: Check for wave-current-tasks.md
+        id: check
+        run: |
+          if git ls-files --error-unmatch "wave-current-tasks.md" 2>/dev/null || \
+             find . -name "wave-current-tasks.md" -not -path "./.git/*" | grep -q .; then
+            echo "iaa_prebrief_found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "iaa_prebrief_found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Post reminder comment (wave-current-tasks.md missing)
+        if: steps.check.outputs.iaa_prebrief_found == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const MARKER = '## 🔴 IAA Pre-Brief Gate: MISSING';
+
+            // Idempotency guard: skip if an active reminder comment already exists
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              per_page: 100,
+            });
+            const alreadyPosted = comments.some(
+              (c) => c.body && c.body.includes(MARKER)
+            );
+            if (alreadyPosted) {
+              core.notice('IAA Pre-Brief reminder comment already present — skipping duplicate.');
+              return;
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: [
+                '## 🔴 IAA Pre-Brief Gate: MISSING `wave-current-tasks.md`',
+                '',
+                '@Copilot — This PR has not yet committed `wave-current-tasks.md` to the branch.',
+                '',
+                'Per `foreman-v2-agent` Phase 2 Step 2.7 and `IAA_PRE_BRIEF_PROTOCOL.md` v1:',
+                '',
+                '> **DO NOT delegate to any builder until `wave-current-tasks.md` is committed and the IAA Pre-Brief artifact is received.**',
+                '',
+                'Please commit `wave-current-tasks.md` now. The IAA Pre-Brief Injection workflow will fire automatically once the file is pushed.',
+                '',
+                '**Authority**: CS2 — @APGI-cmy',
+              ].join('\n'),
+            });
+
+      - name: Log IAA Pre-Brief file detected
+        if: steps.check.outputs.iaa_prebrief_found == 'true'
+        run: |
+          echo "::notice::IAA Pre-Brief file (wave-current-tasks.md) detected on this branch — gate passed."

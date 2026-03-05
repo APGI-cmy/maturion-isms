@@ -59,19 +59,37 @@ jobs:
         with:
           script: |
             const agentId = '${{ steps.detect.outputs.agent_id }}';
-            const body = `## ⚠️ AGENT PREFLIGHT REQUIRED — CALL \`agent_bootstrap\` FIRST
-
-            **Before reading this issue/PR body, before reading any repository file, call:**
-
-            \`\`\`
-            agent_bootstrap(agent_id: "${agentId}")
-            \`\`\`
-
-            This is your **required first tool call** in every session. Skipping is a **GOV-BREACH-AIMC-W5-002 POLC violation** and will cause your PR to be blocked by the CI preflight gate.
-
-            The \`agent_bootstrap\` tool is provided by the \`agent-bootstrap\` MCP server registered in \`.mcp.json\`. It returns your full agent contract file. Read it in full and complete Phase 1 before proceeding.
-
-            **Authority**: CS2 (Johan Ras / @APGI-cmy)`;
+            const body = [
+              '## ⚠️ AGENT PREFLIGHT REQUIRED — CALL `agent_bootstrap` FIRST',
+              '',
+              '**Before reading this issue/PR body, before reading any repository file, call:**',
+              '',
+              '```',
+              `agent_bootstrap(agent_id: "${agentId}")`,
+              '```',
+              '',
+              'This is your **required first tool call** in every session. Skipping is a **GOV-BREACH-AIMC-W5-002 POLC violation** and will cause your PR to be blocked by the CI preflight gate.',
+              '',
+              'The `agent_bootstrap` tool is provided by the `agent-bootstrap` MCP server registered in `.mcp.json`. It returns your full agent contract file. Read it in full and complete **Phase 1** before you continue reading this issue/PR body. Then follow the remaining phases exactly as specified in your contract, including completing **Phase 2 Step 2.7** before delegating or proceeding to later phases.',
+              '',
+              '---',
+              '',
+              '## 🔴 MANDATORY BLOCKING STEP — Phase 2, Step 2.7: IAA Pre-Brief',
+              '',
+              '**THIS STEP MUST BE COMPLETED BEFORE YOU DELEGATE ANY WORK TO ANY BUILDER.**',
+              '',
+              'After completing Phase 1 and Phase 2 Steps 2.1–2.6, you MUST:',
+              '',
+              '1. Commit `wave-current-tasks.md` to your PR branch (see `IAA_PRE_BRIEF_PROTOCOL.md` v1).',
+              '2. Wait for the IAA Pre-Brief artifact to be returned.',
+              '3. Record the Pre-Brief result in session memory.',
+              '',
+              '**DO NOT proceed to Phase 3 or delegate to any builder until this is done.**',
+              '',
+              'Skipping this step is a governance breach. CS2 will have to intervene manually if this step is skipped — which has been happening on every PR. This comment exists to prevent that.',
+              '',
+              '**Authority**: CS2 (Johan Ras / @APGI-cmy) — `foreman-v2-agent` contract Phase 2 Step 2.7, `IAA_PRE_BRIEF_PROTOCOL.md` v1.',
+            ].join('\n');
 
             const isIssue = context.eventName === 'issues';
             if (isIssue) {
