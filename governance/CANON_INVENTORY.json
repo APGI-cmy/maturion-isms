@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-03-03",
+  "last_updated": "2026-03-04",
   "total_canons": 191,
-  "generation_timestamp": "2026-02-21T16:30:00Z",
+  "generation_timestamp": "2026-03-04T07:09:46Z",
   "canon_entry_schema": {
     "description": "Schema for canon entries in CANON_INVENTORY.json",
     "required_fields": [
@@ -258,20 +258,20 @@
     },
     {
       "filename": "AGENT_HANDOVER_AUTOMATION.md",
-      "version": "1.1.2",
-      "file_hash": "280efc805b140ccbab71a96b2d10896b5094d2a5f55775a4e17fe17944fdd6b8",
-      "effective_date": "2026-02-24",
+      "version": "1.1.3",
+      "file_hash": "6107c1ad92b703cbc59cae68ff9bb7648fa6fd797c62496d811c1385c1ac5e4e",
+      "effective_date": "2026-03-04",
       "description": "Canonical governance document: AGENT_HANDOVER_AUTOMATION",
       "type": "canon",
       "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "280efc805b140ccbab71a96b2d10896b5094d2a5f55775a4e17fe17944fdd6b8",
+      "file_hash_sha256": "6107c1ad92b703cbc59cae68ff9bb7648fa6fd797c62496d811c1385c1ac5e4e",
       "ripple_dispatched": "2026-02-24",
       "ripple_log": ".agent-admin/governance/ripple-logs/ripple-agent-handover-parity-20260224.md",
       "ripple_in_repo_status": "COMPLETE",
       "ripple_consumer_status": "PENDING \u2014 layer-down issues to be created in consumer repos",
-      "last_updated": "2026-02-24",
-      "change_note": "v1.1.2: Added Agent Contract File Modification Prohibition subsection in \u00a74.3 with CodexAdvisor handoff pathway."
+      "last_updated": "2026-03-04",
+      "change_note": "v1.1.3: Added \u00a74.3b Token Update Ceremony (PREHANDOVER proof read-only post-commit; IAA token to dedicated file); append-only session artifact rules."
     },
     {
       "filename": "AGENT_INDUCTION_PROTOCOL.md",
@@ -1373,15 +1373,17 @@
     },
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-      "version": "1.1.0",
-      "file_hash": "bc83390755ec9c06c726d380c472d8c9d6ec78b92e10940e3e6a612ee8b0db03",
-      "file_hash_sha256": "bc83390755ec9c06c726d380c472d8c9d6ec78b92e10940e3e6a612ee8b0db03",
-      "effective_date": "2026-03-03",
+      "version": "1.2.0",
+      "file_hash": "995e9da7e119c312f5aa72f2f83199a8634d4a05b0e211e747e0ac6ef110abe8",
+      "file_hash_sha256": "995e9da7e119c312f5aa72f2f83199a8634d4a05b0e211e747e0ac6ef110abe8",
+      "effective_date": "2026-03-04",
       "description": "Defines the Independent Assurance Agent (IAA) class: role, hard-trigger authority, independence requirements, five-phase delivery proof protocol, binary output (ASSURANCE-TOKEN / REJECTION-PACKAGE), trigger table, and Proactive Assurance Pre-Brief Protocol with Wave Checklist Invocation Gate.",
       "type": "canon",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "layer_down_status": "INTERNAL",
-      "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA); amended via issue: Create Canon: IAA Pre-Brief Protocol (Proactive Assurance Criteria Declaration)"
+      "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA); amended via issue: Create Canon: IAA Pre-Brief Protocol (Proactive Assurance Criteria Declaration)",
+      "last_updated": "2026-03-04",
+      "change_note": "v1.2.0: Added \u00a7Artifact Immutability Rule; amended \u00a7Token Ceremony to use dedicated IAA token file; prohibited shared mutable files for all agent classes."
     },
     {
       "filename": "IAA_PRE_BRIEF_PROTOCOL.md",
@@ -1474,16 +1476,16 @@
     },
     {
       "filename": "LIVING_AGENT_SYSTEM.md",
-      "version": "1.1.0",
-      "file_hash": "eb0933820bbc2b9a7600672309ea7bc36d4a49885eccd5c37fa4467894f09e9e",
-      "effective_date": "unknown",
+      "version": "1.2.0",
+      "file_hash": "2ff416262bbdefdb9ccc6b3152afe922bef592eacecbb6ab57deadf74e92261e",
+      "effective_date": "2026-03-04",
       "description": "Canonical governance document: LIVING_AGENT_SYSTEM",
       "type": "canon",
       "path": "governance/canon/LIVING_AGENT_SYSTEM.md",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "eb0933820bbc2b9a7600672309ea7bc36d4a49885eccd5c37fa4467894f09e9e",
-      "last_updated": "2026-02-24",
-      "change_note": "v1.1.0: Added Agent Contract File Protection section (constitutional prohibition on agents modifying .github/agents/ files). Updated Prohibition #1."
+      "file_hash_sha256": "2ff416262bbdefdb9ccc6b3152afe922bef592eacecbb6ab57deadf74e92261e",
+      "last_updated": "2026-03-04",
+      "change_note": "v1.2.0: Clarified \u00a7Working Phase & Output \u2014 agents create only new immutable files; all post-commit evidence is append-only; direct artifact mutation after commit is prohibited."
     },
     {
       "filename": "MANDATORY_CANONICAL_PROGRESS_RECORDING_AND_WAVE_CLOSURE_CERTIFICATION.md",
