@@ -1,9 +1,9 @@
 # IAA Category Overlays
 
 **Agent**: independent-assurance-agent
-**Version**: 3.0.0
+**Version**: 3.1.0
 **Status**: ACTIVE
-**Last Updated**: 2026-03-04
+**Last Updated**: 2026-03-05
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -133,10 +133,10 @@ Applied when PR category is `AGENT_CONTRACT`.
 
 | Check ID | Check Name | Pass Condition |
 |----------|-----------|----------------|
-| OVL-AC-ADM-001 | PREHANDOVER proof exists | Covered by CERT-001 |
-| OVL-AC-ADM-002 | Session memory exists | Covered by CERT-002 |
-| OVL-AC-ADM-003 | Tier 2 stub present | `.agent-workspace/<agent>/knowledge/index.md` exists |
-| OVL-AC-ADM-004 | Character count within limit | Contract body <= 30,000 characters |
+| OVL-AC-ADM-001 | PREHANDOVER proof exists | PREHANDOVER proof file is present in the PR bundle. Binary existence check only — IAA does not audit content quality, sequential numbering, or completeness of notes. Pass: file present. Fail: absent → state once "Create PREHANDOVER proof" and move on. Covered by CERT-001. |
+| OVL-AC-ADM-002 | Session memory exists | Session memory file is present in the PR bundle. Binary existence check only — IAA does not audit content quality, session numbering correctness, or completeness of prior-session references. Pass: file present. Fail: absent → state once "Create session memory" and move on. Covered by CERT-002. |
+| OVL-AC-ADM-003 | Tier 2 stub present | `.agent-workspace/<agent-id>/knowledge/index.md` exists for the agent whose contract is being reviewed. Confirms Tier 2 knowledge infrastructure is in place per `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`. Absence means agent cannot load Tier 2 knowledge at runtime. |
+| OVL-AC-ADM-004 | Character count within limit | Contract body ≤ 30,000 characters. If limit is exceeded: IAA flags bloat, identifies inline Tier 2 content (scripts, checklists, templates) as migration targets, and issues REJECTION-PACKAGE with specific items to migrate. See `IAA_AGENT_CONTRACT_AUDIT_STANDARD.md` §6.3 for migration guidance. |
 
 ---
 
@@ -216,3 +216,18 @@ Applied when PR category is `AGENT_INTEGRITY`.
 |----------|-----------|---------------|
 | OVL-AI-001 | CS2 authorisation verified | Any change to `governance/quality/agent-integrity/` requires explicit CS2 (@APGI-cmy) written authorisation. Absent = immediate REJECTION-PACKAGE. |
 | OVL-AI-002 | Change intent matches governance strategy | Does the agent-integrity change serve the constitutional quality goals? Is it coherent with the existing integrity framework? Flag any divergence.
+
+---
+
+## Version History
+
+| Version | Date | Change |
+|---------|------|--------|
+| 2.2.0 | 2026-03-02 | OVL-KG-001 through OVL-KG-005 (KNOWLEDGE_GOVERNANCE overlay added); OVL-AM-008 (end-to-end wiring verification) added to BUILD_DELIVERABLE overlay |
+| 3.0.0 | 2026-03-04 | Major restructure: BUILD_DELIVERABLE overlay (BD-001 through BD-024, FFA Summary); AGENT_INTEGRITY overlay (OVL-AI-001, OVL-AI-002); Orientation Mandate section added; AGENT_CONTRACT Admin Checks (OVL-AC-ADM-001 through OVL-AC-ADM-004) added as existence-only stubs |
+| 3.1.0 | 2026-03-05 | OVL-AC-ADM-001 through OVL-AC-ADM-004 descriptions completed with full pass conditions per `IAA_AGENT_CONTRACT_AUDIT_STANDARD.md` §5 Step AC-07 alignment; version history table added (governance-liaison-isms session-050 — CS2 directive issue #966) |
+
+---
+
+**Authority**: CS2 (Johan Ras / @APGI-cmy)
+**Living Agent System**: v6.2.0
