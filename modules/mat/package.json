@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "seed:ldcs": "tsx scripts/seed-ldcs-canonical.ts",
-    "seed:ldcs:dry-run": "DRY_RUN=true tsx scripts/seed-ldcs-canonical.ts"
+    "seed:ldcs:dry-run": "DRY_RUN=true tsx scripts/seed-ldcs-canonical.ts",
+    "liveness": "npx playwright test tests/liveness/ --reporter=json",
+    "liveness:report": "tsx tests/liveness/report-assembler.ts --last-run"
   },
   "dependencies": {
     "@maturion/ai-centre": "workspace:*",

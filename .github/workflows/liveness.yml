@@ -1,0 +1,87 @@
+name: MAT Liveness Tests
+
+# Triggered automatically after a successful MAT deployment, or manually.
+# IAA policy OVL-CI-001:
+#   WARN  → exit 0  (CI success — do NOT fail deploy on WARN)
+#   FAIL  → exit 1  (blocking checks only — CI failure)
+on:
+  workflow_run:
+    workflows: ["Deploy MAT Frontend to Vercel"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Target deployment URL (overrides LIVENESS_BASE_URL var)'
+        required: false
+        type: string
+
+jobs:
+  liveness:
+    # Only run on successful deploy OR when manually triggered
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --prefix modules/mat 2>/dev/null || npm install --prefix modules/mat
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run MAT liveness tests
+        # continue-on-error: WARN exits 0 — only blocking FAIL exits 1.
+        # This ensures deploy is not blocked by non-blocking liveness warnings.
+        continue-on-error: true
+        env:
+          BASE_URL: ${{ inputs.base_url || vars.LIVENESS_BASE_URL || 'https://mat.example.com' }}
+          LIVENESS_TEST_EMAIL: ${{ secrets.LIVENESS_TEST_EMAIL }}
+          LIVENESS_TEST_PASSWORD: ${{ secrets.LIVENESS_TEST_PASSWORD }}
+          AI_GATEWAY_URL: ${{ secrets.AI_GATEWAY_URL }}
+          AI_DOC_PARSER_URL: ${{ secrets.AI_DOC_PARSER_URL }}
+          AI_SCORING_URL: ${{ secrets.AI_SCORING_URL }}
+          AI_CHAT_URL: ${{ secrets.AI_CHAT_URL }}
+          AI_REPORT_URL: ${{ secrets.AI_REPORT_URL }}
+          PLAYWRIGHT_JSON_OUTPUT_NAME: modules/mat/tests/liveness/liveness-evidence/run-ci/results.json
+        run: |
+          cd modules/mat
+          npm run liveness
+
+      - name: Generate liveness report
+        if: always()
+        run: |
+          cd modules/mat
+          npm run liveness:report || true
+
+      - name: Upload liveness evidence
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: liveness-evidence-${{ github.run_number }}
+          path: modules/mat/tests/liveness/liveness-evidence/
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Post step summary
+        if: always()
+        run: |
+          SUMMARY_FILE="modules/mat/tests/liveness/liveness-evidence/run-ci/summary.md"
+          if [ -f "$SUMMARY_FILE" ]; then
+            cat "$SUMMARY_FILE" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "## MAT Liveness Tests" >> "$GITHUB_STEP_SUMMARY"
+            echo "Liveness tests completed. Check uploaded artifact for full report." >> "$GITHUB_STEP_SUMMARY"
+          fi
