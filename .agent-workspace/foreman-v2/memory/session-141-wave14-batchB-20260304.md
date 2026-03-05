@@ -84,10 +84,14 @@ Pre-existing Batch C RED tests: 20 (intentional, unchanged from prior state).
 
 ## Handover Status
 
-PREHANDOVER proof committed at:
-`.agent-workspace/foreman-v2/memory/PREHANDOVER-session-141-wave14-batchB-20260304.md`
+PREHANDOVER proof v4 committed at:
+`.agent-workspace/foreman-v2/memory/PREHANDOVER-session-141-v4-wave14-batchB-20260305.md`
 
-IAA independent audit: IN PROGRESS (Step 4.3a).
+IAA independent audit: **COMPLETE — ASSURANCE-TOKEN ISSUED**
+Token: `IAA-session-141-v4-wave14-batchB-20260305-PASS`
+Token file: `.agent-admin/assurance/iaa-token-session-141-v4-wave14-batchB-20260305.md`
+
+Merge gate: **RELEASED** — Awaiting CS2 review and merge approval.
 
 ## Suggestions for Improvement
 
