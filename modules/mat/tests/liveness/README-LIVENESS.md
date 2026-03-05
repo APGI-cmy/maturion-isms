@@ -33,13 +33,22 @@ npx playwright install chromium
 
 ### Environment Variables
 
+> ⚠️ **WARNING — Silent Test Misfires**
+>
+> | Variable | Fallback if NOT set | Risk |
+> |----------|---------------------|------|
+> | `BASE_URL` | `http://localhost:3000` | **Tests run against localhost, not production. All checks produce false PASSes/FAILs. Deploy liveness is NOT verified.** Set this to your actual deployment URL before running. |
+> | `LIVENESS_TEST_PASSWORD` | `LivenessTest!2026` | Safe for local dev/test only. **Do NOT use the fallback in production or CI environments.** Always set explicitly via secrets. |
+>
+> **If `BASE_URL` is not set, liveness tests will NOT verify your deployed application.**
+
 Copy `.env.example` to `.env.local` and populate:
 
 ```bash
 # Required
-BASE_URL=https://your-mat-deployment.vercel.app
+BASE_URL=https://your-mat-deployment.vercel.app  # REQUIRED — no fallback for production use
 LIVENESS_TEST_EMAIL=liveness@yourdomain.com
-LIVENESS_TEST_PASSWORD=YourSecurePassword123!
+LIVENESS_TEST_PASSWORD=YourSecurePassword123!  # REQUIRED in CI — fallback exists for local dev only
 
 # AI endpoint probes (required for mat-ai-health.spec.ts)
 AI_GATEWAY_URL=https://your-ai-gateway/health
@@ -55,6 +64,9 @@ AI_REPORT_TIMEOUT_MS=120000
 ```
 
 ### Run All Liveness Tests
+
+> **Before running**: Verify `BASE_URL` and `LIVENESS_TEST_PASSWORD` are set in your environment.
+> Run `echo $BASE_URL` to confirm. If empty, export them first or create `.env.local`.
 
 ```bash
 # Run all AUTO checks

@@ -3,9 +3,9 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 2.6.0  
+**Version**: 2.7.0  
 **Created**: 2026-02-24  
-**Updated**: 2026-03-04  
+**Updated**: 2026-03-05  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -36,6 +36,8 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 
 > **ID Namespace Note**: IDs in this file (A-001–A-008) are local to this Tier 2 ISMS operational registry. The canonical FAIL-ONLY-ONCE registry in `APGI-cmy/maturion-foreman-governance` uses a separate series (A-01, A-18, A-19, A-20, A-21, …). Rules from both registries are binding on the Foreman. IDs from the canonical registry must not be renumbered when referenced in this file — cite them as-is (e.g. "see canonical A-18").
 
+> **FAIL-ONLY-ONCE Entry Delegation Protocol**: New A-rule proposals and improvement suggestions may be approved by the IAA agent (independent-assurance-agent) without direct CS2 sign-off, subject to the following: (a) if the proposal is aligned with existing governance canon → IAA may approve and the Foreman locks it in as ISMS-local rule; (b) if the proposal requires changes to governance canon or is cross-repo → IAA escalates to CS2; (c) if outside current canonical scope but of governance value → IAA registers as "layer-up candidate" (added to S-xxx series and escalated to CS2 via Foreman parking station). This delegation reduces CS2 bottleneck for routine governance improvements while preserving CS2 authority over canonical changes.
+
 | ID | Rule | Source |
 |----|------|--------|
 | A-001 | Foreman NEVER writes, edits, or commits production code. All implementation is delegated to builder agents. Self-implementation under any justification (time pressure, urgency, no builder available) is a POLC violation. | `FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` |
@@ -58,6 +60,10 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-018 | §4.3-EXECUTE-BEFORE-PR (CS2 — 2026-03-03): The §4.3 Pre-Handover Merge Gate Parity Check MUST be EXECUTED (not only documented) before any PR is opened or `report_progress` is called for a handover commit. Every required CI check must be run locally via its actual script or equivalent command; the result must be a declared PASS or documented pre-existing FAIL with evidence that the failure is not introduced by this session's changes. Writing `§4.3 Merge gate parity: PASS` in a PREHANDOVER proof without having run the checks is a documentation fabrication equivalent to writing a fake IAA token. The CI is confirmatory — the Foreman must be the first to find failures, not CI. Violation class: INC-MERGE-GATE-PARITY-001. | CS2 — maturion-isms#856 PR comment (2026-03-03) |
 | A-027 | COLUMN-LEVEL-DRIFT-QA-TO-RED (CS2 — 2026-03-03): For every new or modified frontend hook that writes to Supabase, the QA-to-Red test suite for that wave MUST include at least one file-based test asserting the written column exists in the migration SQL. It is insufficient to test only table existence (T-W13-SCH-11 pattern). Column-level alignment must be separately asserted. Any PR that introduces or modifies a `.from('table').insert({...})` payload without a corresponding `T-WXX-COL-NNN` column-level test MUST be rejected at QA gate. Triggered by: INC-W14-COL-MAPPING-001. | INC-W14-COL-MAPPING-001 (2026-03-03) |
 | A-028 | PREHANDOVER-PROOF-IMMUTABILITY (CS2 — 2026-03-04): Per `AGENT_HANDOVER_AUTOMATION.md` v1.1.3 §4.3b, the PREHANDOVER proof is READ-ONLY after initial commit. The `iaa_audit_token` field MUST be pre-populated with the expected reference (format: `IAA-session-NNN-waveY-YYYYMMDD-PASS`) at initial commit time — NOT with `PENDING`. After IAA verdict, the IAA writes its token to `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md` (new dedicated file). No agent may edit the PREHANDOVER proof post-commit to update the `iaa_audit_token` field. A PREHANDOVER proof committed with `PENDING` in `iaa_audit_token` is a protocol violation. Violation class: INC-PREHANDOVER-MUTATE-001. | CS2 — PR 1298 (AGENT_HANDOVER_AUTOMATION.md v1.1.3) 2026-03-04 |
+| A-029 | SCOPE_DECLARATION-FRESH-OVERWRITE (CS2 — 2026-03-05): Before writing any SCOPE_DECLARATION.md content, the file MUST be cleared with `cat /dev/null > SCOPE_DECLARATION.md`. Stale content from prior sessions has caused three IAA rejections (sessions 116, 120, 152). Any SCOPE_DECLARATION.md written without first clearing it is a protocol violation. Violation class: INC-SCOPE-STALE-001. | Issue #GovImpr (2026-03-05) |
+| A-030 | IAA-TOKEN-DATE-ACCURACY (CS2 — 2026-03-05): When citing an IAA audit token in any artifact (PREHANDOVER proof, session memory, PR body), the date component MUST match the actual token file date — look up the actual `.agent-admin/assurance/iaa-token-session-NNN-*` filename. Using the session date instead of the actual token filename date is a format violation (extends A-015). Applies especially to multi-batch waves where the IAA token may be issued on a different date than the session. Violation class: INC-IAA-TOKEN-DATE-001. | Issue #GovImpr (2026-03-05) |
+
+> **OVL-CI-006 CANDIDATE (PENDING CS2 APPROVAL — A-031)**: Every GitHub Actions workflow job must declare an explicit `permissions:` block. This is pending formalisation as A-031. Until CS2 approves: treat as a STRONG RECOMMENDATION. Any PR that adds or modifies workflow files without explicit `permissions:` on every job should be flagged at QP evaluation. Builder task spec: add `permissions: contents: read` (or more specific) to jobs missing explicit permissions.
 
 ---
 
@@ -386,6 +392,10 @@ These items are tracked and must be reviewed each session. If assigned to the cu
 | S-014 | Add explicit documentation in `specialist-registry.md` and `session-memory-template.md` that `general-purpose` agent is NOT an inducted ISMS agent and MUST NEVER be used for committed-artifact implementation work. Consider adding a Foreman self-check: before every `task()` call, verify `agent_type` is in the inducted ISMS agent list (qa-builder, schema-builder, api-builder, ui-builder, integration-builder, mat-specialist, pit-specialist, criteria-generator-agent, document-parser-agent, report-writer-agent, risk-platform-agent, maturity-scoring-agent). This rule is now codified as A-017. | INC-GENERAL-PURPOSE-001 (2026-03-02) | OPEN |
 | S-015 | Auth layer tests MUST verify App.tsx wiring (AuthProvider/QueryClientProvider/ProtectedRoute) and LoginPage real Supabase auth calls — not only API-layer functions. Test coverage gap at app-wiring level allowed production first-user signup to remain broken even with T-W13-AUTH-1–4 passing GREEN. CI should enforce that auth tests cover the full React application auth wire-up, not just individual API helper functions. | INC-AUTH-PROVIDER-001 (2026-03-03) | OPEN |
 | S-016 | Add mandatory pre-PR execution checklist to Foreman session workflow: before calling `report_progress` for a handover commit, EXECUTE `.github/scripts/validate-yaml.sh`, `.github/scripts/validate-tracker-update.sh`, and `.github/scripts/validate-scope-to-diff.sh` and paste the actual script output into the PREHANDOVER proof §4.3 section. A §4.3 section with PASS/FAIL written without pasted script output is a documentation fabrication and a HANDOVER BLOCKER. CI is confirmatory — Foreman must find failures first. This rule is now codified as A-018. | INC-MERGE-GATE-PARITY-001 (2026-03-03) | OPEN |
+| S-017 | SCOPE_DECLARATION fresh-overwrite step in PREHANDOVER ceremony — prehandover-template.md must include explicit `cat /dev/null > SCOPE_DECLARATION.md` instruction before scope writing step. Prevents stale content IAA rejections (sessions 116, 120, 152). A-029 locked in. | Issue #GovImpr (2026-03-05) | OPEN |
+| S-018 | IAA token date accuracy — task briefs and mat-specialist templates must require lookup of actual assurance token filename/date. Incorrect token date (session date vs actual token file date) triggered a REJECTION-PACKAGE. A-030 locked in. | Issue #GovImpr (2026-03-05) | OPEN |
+| S-019 | OVL-CI-006 workflow job permissions — every GitHub Actions workflow job must declare explicit permissions: block. Two workflows currently missing (copilot-setup-steps.yml, provider-model-ban.yml). Candidate for A-031 pending CS2 approval. | Issue #GovImpr (2026-03-05) | OPEN |
+| S-020 | FAIL-ONLY-ONCE delegation to IAA — instead of CS2 direct sign-off on each FAIL-ONLY-ONCE entry, delegate approval/escalation to IAA agent: IAA approves if aligned with governance; escalates to CS2 if governance-canon-changing; registers as "layer-up candidate" if outside canonical scope but of value. Reduces CS2 bottleneck for routine governance improvements. | Issue #GovImpr (2026-03-05) | OPEN |
 
 ---
 
@@ -395,9 +405,9 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 2.5.0
+fail_only_once_version: 2.7.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
@@ -407,7 +417,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 ---
 
 *Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523, maturion-isms#855, maturion-isms#856 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-03-03 | Version: 2.5.0 | Status: ACTIVE*
+*Last Updated: 2026-03-05 | Version: 2.7.0 | Status: ACTIVE*
 
 ---
 
@@ -417,6 +427,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 |---------|------|--------|
 | 2.5.0 | 2026-03-03 | A-027 added: column-level drift must be caught at QA-to-Red (INC-W14-COL-MAPPING-001); header version corrected from 2.2.0 to 2.5.0 (stale — footer was already at 2.5.0) |
 | 2.6.0 | 2026-03-04 | A-028 PREHANDOVER-PROOF-IMMUTABILITY locked in (INC-PREHANDOVER-MUTATE-001); §4.3b token ceremony update |
+| 2.7.0 | 2026-03-05 | A-029 SCOPE_DECLARATION-FRESH-OVERWRITE locked in; A-030 IAA-TOKEN-DATE-ACCURACY locked in; OVL-CI-006 A-031 candidate documented; S-017–S-020 improvement suggestions added; IAA delegation protocol added to Section 1 preamble |
 | 2.4.0 | 2026-03-03 | A-018 §4.3-EXECUTE-BEFORE-PR locked in (INC-MERGE-GATE-PARITY-001 / S-016); S-016 improvement suggestion added |
 | 2.3.0 | 2026-03-03 | A-015 IAA-TOKEN-FORMAT locked in (INC-IAA-TOKEN-001 / S-012); Section 4 attestation block updated |
 | 2.2.0 | 2026-03-02 | A-017 ISMS-AGENTS-ONLY locked in (INC-GENERAL-PURPOSE-001 / S-014) |
