@@ -45,7 +45,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --filter @maturion/mat --no-frozen-lockfile
+        run: pnpm install --filter @maturion/mat
 
       - name: Install Playwright browsers
         run: |

@@ -2,8 +2,9 @@
 
 **Module**: Mat  
 **Module Slug**: mat  
-**Last Updated**: 2026-03-01  
-**Updated By**: foreman-v2-agent (session-082-progress-tracker-reconciliation-20260301)
+**Version**: v1.4  
+**Last Updated**: 2026-03-05  
+**Updated By**: qa-builder (session-144-fcwt-final-20260305)
 
 ---
 
@@ -2917,3 +2918,76 @@ pending FCWT and production sign-over by CS2.
 | 2026-03-05 | CWT COMPLETE | 104/104 Wave 14 tests GREEN across all batches; wave14-cwt-evidence-20260305.md |
 | 2026-03-05 | ✅ IBWR COMPLETE | session-143 — all 15 GAPs closed, all tokens issued, all evidence committed |
 | 2026-03-05 | 🚀 FCWT READY | Signalled to CS2 for FCWT and production sign-over |
+| 2026-03-05 | ✅ FCWT FINAL COMPLETE | session-144 — 774/783 GREEN (9 EXPECTED RED), 0 new failures; PRODUCTION READY |
+
+---
+
+## ✅ FCWT FINAL COMPLETE — PRODUCTION READINESS CERTIFIED
+
+**Session**: session-144
+**Date**: 2026-03-05
+**FCWT Artifact**: `modules/mat/05-build-evidence/fcwt-final-certificate-20260305.md`
+**Evidence Bundle**: `modules/mat/05-build-evidence/fcwt-final-evidence-bundle-20260305.md`
+**Run Log**: `modules/mat/05-build-evidence/fcwt-final-run-log-20260305.txt`
+**Authority**: CS2 (Johan Ras / @APGI-cmy) — Issue #909
+**Status**: ✅ CI-CERTIFIED PRODUCTION READY
+
+### FCWT Final Test Results
+
+| Metric | Value |
+|--------|-------|
+| Total tests | 783 |
+| GREEN (CI-testable) | 774 |
+| EXPECTED RED (production-only live-env) | 9 |
+| New genuine failures | **0** |
+| Test files | 86 (84 passed, 2 failed — both EXPECTED RED files) |
+| Duration | 9.17s (< 12-minute target ✅) |
+| FCWT verdict | **PASS** |
+
+### Expected RED Tests (Unchanged — Pre-Existing)
+
+| Test ID | Reason |
+|---------|--------|
+| T-W13-SCH-1 | Requires live Supabase (`VITE_SUPABASE_URL` not set in CI) |
+| T-W13-SCH-2 | Requires live Supabase (`VITE_SUPABASE_URL` not set in CI) |
+| T-W13-SCH-3 | Requires live Supabase (`VITE_SUPABASE_URL` not set in CI) |
+| T-W13-SCH-4 | Requires production env secrets (not set in CI) |
+| T-W13-E2E-1 | Requires live Vercel deployment |
+| T-W13-E2E-2 | Requires live Vercel deployment |
+| T-W13-E2E-3 | Requires live Vercel deployment |
+| T-W13-E2E-4 | Requires live Vercel deployment |
+| T-W13-E2E-5 | Requires live Vercel deployment |
+
+### Production Readiness Declaration
+
+**Status**: ✅ **PRODUCTION READY** (CI-certified)
+
+All 774 CI-testable tests pass. All 28 GAPs closed. Architecture frozen. Evidence chain complete from Wave 0 to Wave 14. FCWT Final executed with zero new failures.
+
+**Deployment team actions still required**:
+- Apply 9 Wave 14 Supabase migrations to production
+- Configure production environment variables
+- Deploy MAT frontend to Vercel production
+- Re-run T-W13-SCH and T-W13-E2E tests against live environment post-deployment
+
+### IAA Assurance Tokens (FCWT Final)
+
+| Token | Verdict |
+|-------|---------|
+| `IAA-session-140-wave14-batchA-20260304-PASS` | ✅ Batch A (37/37) |
+| `IAA-session-141-v4-wave14-batchB-20260305-PASS` | ✅ Batch B (40/40) |
+| `IAA-session-142-v3-wave14-batchC-20260305-PASS` | ✅ Batch C (27/27) |
+| `IAA-session-143-wave14-final-20260305-PASS` | ✅ Wave 14 Final (104/104) |
+| `IAA-session-143-v2-wave14-ibwr-20260305-PASS` | ✅ Wave 14 IBWR |
+| `IAA-session-144-fcwt-final-20260305-PASS` | ✅ FCWT Final (ASSURANCE-TOKEN ISSUED — IAA session, 33/33 PASS) |
+
+### FCWT State Machine
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-05 | FCWT INITIATED | qa-builder session-144; `iaa-prebrief-fcwt-final-session-144.md` PHASE_B_BLOCKING |
+| 2026-03-05 | TESTS EXECUTED | 783 total; 774 GREEN; 9 EXPECTED RED; 0 new failures |
+| 2026-03-05 | CERTIFICATE CREATED | `fcwt-final-certificate-20260305.md` |
+| 2026-03-05 | EVIDENCE BUNDLE CREATED | `fcwt-final-evidence-bundle-20260305.md` |
+| 2026-03-05 | BPT UPDATED | v1.3 → v1.4; FCWT Final section added |
+| 2026-03-05 | ✅ FCWT FINAL COMPLETE | CI-CERTIFIED PRODUCTION READY; pending CS2 deployment sign-over |
