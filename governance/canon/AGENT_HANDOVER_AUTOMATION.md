@@ -2,7 +2,7 @@
 
 **Status**: CANONICAL | **Version**: 1.1.3 | **Authority**: CS2  
 **Date**: 2026-02-24  
-**Amended**: 2026-03-04 — v1.1.3: Added §4.3b Token Update Ceremony (PREHANDOVER proof is read-only post-commit; IAA token written to dedicated file); added per-session append-only artifact requirement (CS2 auth: APGI-cmy/maturion-foreman-governance issue — Artifact Immutability & Append-Only Proof Protocols)
+**Amended**: 2026-03-04 — v1.1.3: Added §4.3b Token Update Ceremony (PREHANDOVER proof is read-only post-commit; IAA token written to dedicated file); added per-session append-only artifact requirement (CS2 auth: APGI-cmy/maturion-foreman-governance issue — Artifact Immutability &amp; Append-Only Proof Protocols)
 
 ---
 
@@ -518,6 +518,8 @@ Agent: <agent-type>
 **Full policy**: `governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md`  
 **Incident reference**: `governance/incidents/INCIDENT-2026-02-24-PR517-AGENT-CONTRACT-BREACH.md`
 
+
+
 ## Section 4.3b: Token Update Ceremony (IAA Token — Append-Only, Dedicated File)
 
 **Purpose**: Govern how the IAA writes its assurance verdict. The PREHANDOVER proof is
@@ -602,8 +604,6 @@ cause merge conflicts and artifact drift. Each agent writes its own new file; no
 another agent's committed artifact.
 
 **Full specification**: `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` §Artifact Immutability Rule
-
-**Purpose**: Verify agent-class-specific compliance requirements and create escalations if needed.
 
 **Template**:
 
