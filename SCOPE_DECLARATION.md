@@ -17,27 +17,35 @@ updated. Escalation ESC-AGENTFILE-29E76ECF-20260304 created for CS2 review.
 
 ## Files Declared
 
-### Added
+### Added (governance-liaison-isms session-048)
 - `.agent-admin/build-evidence/session-048/PREHANDOVER_PROOF_session-048-20260305.md` - PREHANDOVER proof for session-048
-- `.agent-admin/build-evidence/session-048/CORRECTION_ADDENDUM_session-048-20260305.md` - A-030 correction addendum addressing FFA-01, FFA-02, FFA-03
+- `.agent-admin/build-evidence/session-048/CORRECTION_ADDENDUM_session-048-20260305.md` - A-030 correction addendum (FFA-01/02/03)
 - `.agent-admin/ripple/layer-down-received-20260304T083040Z.json` - Immutable ripple receipt for dispatch_id 29e76ecf
 - `.agent-workspace/governance-liaison-isms/escalation-inbox/escalation-agent-contracts-29e76ecf-20260304.md` - CS2 escalation ESC-AGENTFILE-29E76ECF-20260304
 - `.agent-workspace/governance-liaison-isms/memory/session-048-20260305.md` - Session memory for session-048
+
+### Added (IAA sessions — REJECTION-PACKAGEs during handover)
 - `.agent-admin/assurance/iaa-token-session-143-20260305.md` - IAA session-143 token file (REJECTION-PACKAGE)
-- `.agent-workspace/independent-assurance-agent/memory/session-143-20260305.md` - IAA session memory
+- `.agent-workspace/independent-assurance-agent/memory/session-143-20260305.md` - IAA session-143 memory
+- `.agent-admin/assurance/iaa-token-session-144-wave-none-20260305.md` - IAA session-144 token file (REJECTION-PACKAGE)
+- `.agent-workspace/independent-assurance-agent/memory/session-144-20260305.md` - IAA session-144 memory
+- `.agent-admin/assurance/iaa-token-session-145-20260305.md` - IAA session-145 token file (REJECTION-PACKAGE)
+- `.agent-workspace/independent-assurance-agent/memory/session-145-20260305.md` - IAA session-145 memory
+- `.agent-admin/assurance/iaa-token-session-146-20260305.md` - IAA session-146 token file (expected 4th invocation)
+- `.agent-workspace/independent-assurance-agent/memory/session-146-20260305.md` - IAA session-146 memory (expected 4th invocation)
+
+### Archived (renamed — S6-05 rotation)
+- `.agent-workspace/governance-liaison-isms/memory/.archive/session-042-20260303.md` - Archived per S6-05
+- `.agent-workspace/governance-liaison-isms/memory/.archive/session-043-20260303.md` - Archived per S6-05
 
 ### Modified
-- `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` - Updated canonical_version to 3.3.0, new escalation ref ESC-AGENTFILE-29E76ECF-20260304
+- `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` - Updated canonical_version 3.3.0, escalation_ref ESC-AGENTFILE-29E76ECF-20260304
 - `governance/sync_state.json` - last_ripple_check updated to commit 29e76ecf
 - `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md` - Session-048 suggestion appended
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA session-143 entries
-- `SCOPE_DECLARATION.md` - This file (updated from session-047 to session-048)
-
-### Archived (renamed)
-- `.agent-workspace/governance-liaison-isms/memory/.archive/session-042-20260303.md` - Archived per S6-05 rotation
-- `.agent-workspace/governance-liaison-isms/memory/.archive/session-043-20260303.md` - Archived per S6-05 rotation
+- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA session-143/144/145 entries
+- `SCOPE_DECLARATION.md` - This file (updated for session-048, A-026 compliance)
 
 ## Governance Actions
 - Zero governance canon files layered down (payload contained only agent contract file)
 - CodexAdvisor-agent.md escalated to CS2 per A-015 (ESC-AGENTFILE-29E76ECF-20260304)
-- SCOPE_DECLARATION.md
+- SHA256 correction documented in CORRECTION_ADDENDUM (A-030)
