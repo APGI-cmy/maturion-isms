@@ -124,9 +124,19 @@ This is the production readiness gate before CS2 sign-off.
 
 ---
 
-## ## IAA Agent Response (verbatim)
+## IAA Agent Response (verbatim)
 
-*(To be populated with IAA's verbatim response when IAA is invoked in Phase 4 Step 4.3a.)*
+```
+═══════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: branch copilot/run-fcwt-for-entire-build — FCWT-Final
+    (Final Combined Wave Testing, all MAT waves 0–14)
+All 33 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-144-fcwt-final-20260305-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate
+═══════════════════════════════════════════════════════════
+```
 
 ---
 

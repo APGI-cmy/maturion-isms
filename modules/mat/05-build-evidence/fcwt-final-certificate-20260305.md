@@ -245,7 +245,7 @@ The MAT module is hereby declared **PRODUCTION READY** subject to the following 
 | `IAA-session-142-v3-wave14-batchC-20260305-PASS` | ✅ ASSURANCE-TOKEN | Wave 14 Batch C (27/27 tests, GAP-W12–W13) |
 | `IAA-session-143-wave14-final-20260305-PASS` | ✅ ASSURANCE-TOKEN | Wave 14 Final (104/104, all 15 GAPs, IBWR) |
 | `IAA-session-143-v2-wave14-ibwr-20260305-PASS` | ✅ ASSURANCE-TOKEN | Wave 14 IBWR (BPT v1.3, progress tracker) |
-| `IAA-session-144-fcwt-final-20260305-PASS` | ✅ ASSURANCE-TOKEN (EXPECTED) | FCWT Final (this session — all waves 0–14, 774/783 GREEN) |
+| `IAA-session-144-fcwt-final-20260305-PASS` | ✅ ASSURANCE-TOKEN ISSUED — IAA session (33/33 checks PASS, PHASE_B_BLOCKING) | FCWT Final (this session — all waves 0–14, 774/783 GREEN) |
 
 **IAA audit token**: `IAA-session-144-fcwt-final-20260305-PASS`
 **IAA invocation**: PHASE_B_BLOCKING — invoked via qa-builder session-144, 2026-03-05

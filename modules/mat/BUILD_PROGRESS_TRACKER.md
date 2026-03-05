@@ -2979,7 +2979,7 @@ All 774 CI-testable tests pass. All 28 GAPs closed. Architecture frozen. Evidenc
 | `IAA-session-142-v3-wave14-batchC-20260305-PASS` | ✅ Batch C (27/27) |
 | `IAA-session-143-wave14-final-20260305-PASS` | ✅ Wave 14 Final (104/104) |
 | `IAA-session-143-v2-wave14-ibwr-20260305-PASS` | ✅ Wave 14 IBWR |
-| `IAA-session-144-fcwt-final-20260305-PASS` | ✅ FCWT Final (this session — EXPECTED) |
+| `IAA-session-144-fcwt-final-20260305-PASS` | ✅ FCWT Final (ASSURANCE-TOKEN ISSUED — IAA session, 33/33 PASS) |
 
 ### FCWT State Machine
 
