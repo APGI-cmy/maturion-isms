@@ -107,3 +107,8 @@ updated. Escalation ESC-AGENTFILE-29E76ECF-20260304 created for CS2 review.
 
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated with Wave 14 Batch C tasks
 - `SCOPE_DECLARATION.md` - This file — scope declaration for session-142 Wave 14 Batch C
+
+### STOP-AND-FIX Additions (IAA REJECTION-PACKAGE remediation)
+
+- `modules/mat/05-build-evidence/wave14-cwt-evidence-20260305.md` - FINDING-BC-002 fix: Wave 14 Combined Wave Test evidence — formal CWT PASS verdict, 104/104 Wave 14 tests GREEN, 15/15 GAPs closed (OVL-AM-CWT-01)
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-142-v2-wave14-batchC-20260305.md` - PREHANDOVER proof v2 (STOP-AND-FIX resolutions: FINDING-BC-001 partial index + FINDING-BC-002 CWT evidence)
