@@ -1,5 +1,61 @@
 # Wave Current Tasks — foreman-v2-agent
 
+**Wave**: FCWT-Final — Final Combined Wave Testing for Entire Build (All Waves 0–14)
+**Session**: session-144
+**Date**: 2026-03-05
+**Issue**: Run FCWT (Final Combined Wave Testing) for Entire Build
+**Branch**: copilot/run-fcwt-for-entire-build
+**CS2 Authorization**: Issue assigned to foreman-v2-agent by @APGI-cmy
+**Protocol Reference**: FINAL_COMPLETE_WAVE_TEST_PROTOCOL.md v1.0.0
+
+---
+
+## FCWT Scope
+
+Final Combined Wave Testing covers all waves of the MAT (Manual Audit Tool) build:
+- Waves 0–9.11 (core build)
+- Wave 10–13 (advanced features + CI-certified auth/wiring)
+- Wave 14 (UX workflow gap remediation — all batches A/B/C, all 15 GAPs closed)
+- Postbuild waves (postbuild-fails-01/02/03)
+
+Known baseline: 706 GREEN / 715 total (9 EXPECTED RED = pre-existing live-env only)
+FCWT entrance criterion: 100% CI-testable tests GREEN, 0 regressions from Wave 14
+
+---
+
+## FCWT Task List
+
+| # | Task ID | Description | Builder | Status |
+|---|---------|-------------|---------|--------|
+| 1 | TASK-FCWT-001 | Execute full test suite (npx vitest run) — confirm 706+ GREEN, document exact count, produce FCWT run log | qa-builder | 🔴 PENDING |
+| 2 | TASK-FCWT-002 | Create FCWT certificate `modules/mat/05-build-evidence/fcwt-final-certificate-20260305.md` covering all waves 0–14 | qa-builder | 🔴 PENDING |
+| 3 | TASK-FCWT-003 | Create FCWT evidence bundle `modules/mat/05-build-evidence/fcwt-final-evidence-bundle-20260305.md` listing all prior CWT/CST tokens and wave completion evidence | qa-builder | 🔴 PENDING |
+| 4 | TASK-FCWT-004 | Update BUILD_PROGRESS_TRACKER.md to record FCWT results and production readiness sign-off | mat-specialist | 🔴 PENDING |
+
+---
+
+## Sequencing
+
+```
+TASK-FCWT-001 (qa-builder: test execution)
+  ↓ FOREMAN QP EVALUATION
+TASK-FCWT-002 (qa-builder: certificate)
+TASK-FCWT-003 (qa-builder: evidence bundle)
+  ↓ FOREMAN QP EVALUATION
+TASK-FCWT-004 (mat-specialist: BUILD_PROGRESS_TRACKER)
+  ↓ FOREMAN QP EVALUATION + PHASE 4 (PREHANDOVER + IAA)
+```
+
+---
+
+## Governance
+
+- IAA Category: AAWP_MAT
+- Each substantive task = PREHANDOVER proof + IAA gate before merge
+- CS2 sign-off required before production deployment
+
+---
+
 **Wave**: Wave 14 Final — Apply Final Supabase Migrations (000000–000008) with PREHANDOVER Proof and IAA Token
 **Wave**: Wave 14 IBWR — Formal In-Between Wave Reconciliation & Progress Tracker Update
 **Session**: session-143
