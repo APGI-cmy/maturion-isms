@@ -286,3 +286,8 @@
 | 2026-03-05 | independent-assurance-agent | session-147 | Phase 0 Pre-Brief | Pre-brief phase-0 logic: if batch closes ALL remaining wave GAPs, auto-add CWT as QUALIFYING required artifact to pre-brief | session-147-wave14-batchC-20260305.md |
 | 2026-03-05 | independent-assurance-agent | session-149 | Phase 0 | Add wave-close CWT detector to pre-brief Phase 0 logic — auto-flag CWT QUALIFYING when final batch closes all GAPs | session-149-wave14-batchC-v3-20260305.md |
 | 2026-03-05 | independent-assurance-agent | session-149 | PREHANDOVER | Add "IAA Rejection Ceremony Record" section to PREHANDOVER template to prevent FINDING-BC-003 class errors in future rejection cycles | session-149-wave14-batchC-v3-20260305.md |
+| 2026-03-05 | independent-assurance-agent | session-147 | Phase 4 | CodexAdvisor PREHANDOVER template needs Pre-IAA Commit Gate (git status + git log evidence) to prevent recurring A-021 violations | session-147-20260305.md |
+| 2026-03-05 | independent-assurance-agent | session-147 | Phase 4 | A-023 ripple assessment section missing from CodexAdvisor PREHANDOVER template — add default boilerplate | session-147-20260305.md |
+| 2026-03-05 | independent-assurance-agent | session-147 | Phase 4 | Multi-session SCOPE_DECLARATION structure — per-session sections would prevent A-026 omissions (reinforces session-142 finding) | session-147-20260305.md |
+
+| 2026-03-05 | independent-assurance-agent | session-148 | Phase 4 | A-026 clarifying note needed: IAA ceremony artifacts from prior REJECTION-PACKAGE commits (session memory, rejection token, parking station log) are excluded from producing-agent SCOPE_DECLARATION requirement — these are IAA ceremony artifacts, not deliverables | session-148-20260305.md |
