@@ -292,3 +292,4 @@
 
 | 2026-03-05 | independent-assurance-agent | session-148 | Phase 4 | A-026 clarifying note needed: IAA ceremony artifacts from prior REJECTION-PACKAGE commits (session memory, rejection token, parking station log) are excluded from producing-agent SCOPE_DECLARATION requirement — these are IAA ceremony artifacts, not deliverables | session-148-20260305.md |
 | 2026-03-05 | independent-assurance-agent | session-150 | Phase 3 | IBWR CWT tally protocol gap: use test runner count (from vitest output), not spec-label sub-test ID count, to avoid arithmetic contradictions where batch sums ≠ total | session-150-wave14-ibwr-20260305.md |
+| 2026-03-05 | independent-assurance-agent | session-151 | Phase 3/4 | A-030 re-invocation pattern confirmed; CORE-019 should explicitly document A-030 exception path; v2 token naming convention (-v2-) should be codified in CORE-016 detail section | session-151-wave14-ibwr-v2-20260305.md |
