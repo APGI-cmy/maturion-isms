@@ -48,7 +48,9 @@ jobs:
         run: pnpm install --filter @maturion/mat
 
       - name: Install Playwright browsers
-        run: pnpm --filter @maturion/mat exec playwright install --with-deps chromium
+        run: |
+          cd modules/mat
+          npx playwright install --with-deps chromium
 
       - name: Run MAT liveness tests
         # continue-on-error: true — liveness failures never block CI; all results captured in artifact.
