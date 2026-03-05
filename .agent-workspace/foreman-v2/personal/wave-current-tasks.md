@@ -1,14 +1,14 @@
 # Wave Current Tasks — foreman-v2-agent
 
-**Wave**: Wave 14 Batch C — Finalise MAT Remaining Gap Closure and QA Acceptance
-**Session**: session-142
+**Wave**: Wave 14 Final — Apply Final Supabase Migrations (000000–000008) with PREHANDOVER Proof and IAA Token
+**Session**: session-143
 **Date**: 2026-03-05
-**Issue**: #909 (Wave 14 Batch C)
-**Branch**: copilot/fix-wave14-batch-c-mat-gap-closure
-**CS2 Authorization**: Issue opened by @APGI-cmy (CS2 direct); re-alignment directive issued by CS2 on this PR
+**Issue**: Wave 14 Final Migrations (apply-wave-14-migrations branch)
+**Branch**: copilot/apply-wave-14-migrations
+**CS2 Authorization**: Issue assigned to foreman-v2-agent by CS2-directed automation
 **Source authority**: modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md v1.0
 **FRS/TRS**: FR-089 to FR-102 / TR-089 to TR-102
-**Depends on**: Wave 14 Batch A (#917), Wave 14 Batch B (session-141)
+**Depends on**: Wave 14 Batch A (session-140), Wave 14 Batch B (session-141), Wave 14 Batch C (session-142)
 
 ---
 

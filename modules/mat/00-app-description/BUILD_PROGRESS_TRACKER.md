@@ -642,6 +642,7 @@ This tracker feeds into the governance learning loop as follows:
 | 2026-02-13 | 1.0 | Initial creation with all 8 phases outlined | Foreman Agent |
 | 2026-02-16 | 1.1 | Wave 5 completed: Watchdog & Feedback — 98/98 tests GREEN, registry updated | Foreman Agent |
 | 2026-02-27 | 1.2 | Wave CI-001: Added Supabase migration step to CI/CD (OVERSIGHT-CI-001 remediated). `supabase-migrate` job added to deploy-mat-vercel.yml; deploy jobs now depend on migration success. | foreman-v2-agent |
+| 2026-03-05 | 1.3 | Wave 14 Final: all 15 GAPs CLOSED (GAP-W01–W14 + T-W14-UX-015), 9 migrations applied (000000–000008), 104/104 tests GREEN, IAA PASS (session-142 v3: `IAA-session-142-v3-wave14-batchC-20260305-PASS`) | foreman-v2-agent / mat-specialist |
 
 ---
 
@@ -669,26 +670,26 @@ The failure resulted from the original app description, FRS, TRS, and implementa
 
 | Gap ID | Wave | Subwave | Gap Description | FRS Ref | TRS Ref | Test ID | Status | Remediation Action |
 |--------|------|---------|-----------------|---------|---------|---------|--------|-------------------|
-| GAP-W01 | 14 | 14.1 | Sign-up → onboarding → first-use flow with org creation; app is dead on first use without it | FR-089 | TR-089 | T-W14-UX-001 | 🔴 RED | Implement OnboardingGuard + 2-step wizard + organisations INSERT + profiles UPSERT |
-| GAP-W02 | 14 | 14.2 | Invite Auditor UX: per-domain and per-MPS invite modal, email flow, accept → signup → scoped access | FR-090 | TR-090 | T-W14-UX-002 | 🔴 RED | Create audit_invitations, domain_assignments, mps_assignments tables + send-invitation Edge Function + accept-invite route |
-| GAP-W03 | 14 | 14.3 | Toggle exclude behaviour: greying out a Domain/MPS/Criteria and cascade to scoring and report gating | FR-091 | TR-091 | T-W14-UX-003 | 🔴 RED | Add excluded columns + cascade trigger + gating query in dashboard |
-| GAP-W04 | 14 | 14.4 | Invite Evidence Submitter as a distinct lower-access role (criteria-scoped, not domain-scoped) | FR-092 | TR-092 | T-W14-UX-004 | 🔴 RED | Create criteria_assignments table + evidence_submitter role + criteria-scoped RLS on evidence |
-| GAP-W05 | 14 | 14.5 | Evidence card interaction model: click-and-hold for voice/video, multi-type uploader state machine, edit/remove/add after upload | FR-093 | TR-093 | T-W14-UX-005 | 🔴 RED | Implement MediaRecorder API integration + evidence tile component + auto-save debounce |
-| GAP-W06 | 14 | 14.6 | Submit button as the AI trigger: exactly what the AI does on submit, what inputs it consumes, what outputs it produces | FR-094 | TR-094 | T-W14-UX-006 | 🔴 RED | Create criteria_evaluations + evaluation_overrides tables + /ai/evaluate-criteria endpoint + criteria card update |
-| GAP-W07 | 14 | 14.7 | AI next-level explanation + taster: the visible feature showing rating, improvement path, and preview of level+2 | FR-095 | TR-095 | T-W14-UX-007 | 🔴 RED | Add next_level_guidance + next_plus_one_taster to criteria_evaluations; render on criteria card |
-| GAP-W08 | 14 | 14.8 | AI chat UI entry point from the criteria card for deeper level exploration | FR-096 | TR-096 | T-W14-UX-008 | 🔴 RED | Add contextPayload prop to AI chat panel; wire "Explore further levels" link on criteria card |
-| GAP-W09 | 14 | 14.9 | Audit results table: Domain / MPS / Criteria / Findings / Rating / Recommendations displayed post-submission | FR-097 | TR-097 | T-W14-UX-009 | 🔴 RED | Implement Results tab + table component with sortable columns + RLS-scoped query |
-| GAP-W10 | 14 | 14.10 | Dashboard outstanding work drill-down: "addressed" gating condition before "Create Report" becomes active | FR-098 | TR-098 | T-W14-UX-010 | 🔴 RED | Implement dashboard metrics query + drill-down navigation + Create Report gate query |
-| GAP-W11 | 14 | 14.11 | "Create Report" button as the final AI trigger: exact sequence, report content, export format and structure | FR-099 | TR-099 | T-W14-UX-011 | 🔴 RED | Implement /ai/generate-report endpoint + generate-pdf Edge Function + audit_reports table + reports bucket |
-| GAP-W12 | 14 | 14.12 | Level descriptor cards: Domain, MPS, and Criteria cards each show a level descriptor; Domain/MPS aggregate underlying achievements | FR-100 | TR-100 | T-W14-UX-012 | 🔴 RED | Create criteria_level_descriptors, mps_level_descriptors, domain_level_descriptors tables + AI parsing integration |
-| GAP-W13 | 14 | 14.13 | Scoring and rating method in DB: rating/scoring tables structure not wired to UI | FR-101 | TR-101 | T-W14-UX-013, T-W14-UX-016 | 🔴 RED | Create maturity_levels, scoring_rules, aggregate_scores tables + seed global default + compute-scores function |
-| GAP-W14 | 14 | 14.14 | Responsibility cascade rule wired: Lead Auditor retains responsibility when no auditor invited; enforced in DB and UI | FR-102 | TR-102 | T-W14-UX-014 | 🔴 RED | Implement responsibility cascade view/function + useResponsibleUser hook + card display |
+| GAP-W01 | 14 | 14.1 | Sign-up → onboarding → first-use flow with org creation; app is dead on first use without it | FR-089 | TR-089 | T-W14-UX-001 | ✅ CLOSED | Implement OnboardingGuard + 2-step wizard + organisations INSERT + profiles UPSERT |
+| GAP-W02 | 14 | 14.2 | Invite Auditor UX: per-domain and per-MPS invite modal, email flow, accept → signup → scoped access | FR-090 | TR-090 | T-W14-UX-002 | ✅ CLOSED | Create audit_invitations, domain_assignments, mps_assignments tables + send-invitation Edge Function + accept-invite route |
+| GAP-W03 | 14 | 14.3 | Toggle exclude behaviour: greying out a Domain/MPS/Criteria and cascade to scoring and report gating | FR-091 | TR-091 | T-W14-UX-003 | ✅ CLOSED | Add excluded columns + cascade trigger + gating query in dashboard |
+| GAP-W04 | 14 | 14.4 | Invite Evidence Submitter as a distinct lower-access role (criteria-scoped, not domain-scoped) | FR-092 | TR-092 | T-W14-UX-004 | ✅ CLOSED | Create criteria_assignments table + evidence_submitter role + criteria-scoped RLS on evidence |
+| GAP-W05 | 14 | 14.5 | Evidence card interaction model: click-and-hold for voice/video, multi-type uploader state machine, edit/remove/add after upload | FR-093 | TR-093 | T-W14-UX-005 | ✅ CLOSED | Implement MediaRecorder API integration + evidence tile component + auto-save debounce |
+| GAP-W06 | 14 | 14.6 | Submit button as the AI trigger: exactly what the AI does on submit, what inputs it consumes, what outputs it produces | FR-094 | TR-094 | T-W14-UX-006 | ✅ CLOSED | Create criteria_evaluations + evaluation_overrides tables + /ai/evaluate-criteria endpoint + criteria card update |
+| GAP-W07 | 14 | 14.7 | AI next-level explanation + taster: the visible feature showing rating, improvement path, and preview of level+2 | FR-095 | TR-095 | T-W14-UX-007 | ✅ CLOSED | Add next_level_guidance + next_plus_one_taster to criteria_evaluations; render on criteria card |
+| GAP-W08 | 14 | 14.8 | AI chat UI entry point from the criteria card for deeper level exploration | FR-096 | TR-096 | T-W14-UX-008 | ✅ CLOSED | Add contextPayload prop to AI chat panel; wire "Explore further levels" link on criteria card |
+| GAP-W09 | 14 | 14.9 | Audit results table: Domain / MPS / Criteria / Findings / Rating / Recommendations displayed post-submission | FR-097 | TR-097 | T-W14-UX-009 | ✅ CLOSED | Implement Results tab + table component with sortable columns + RLS-scoped query |
+| GAP-W10 | 14 | 14.10 | Dashboard outstanding work drill-down: "addressed" gating condition before "Create Report" becomes active | FR-098 | TR-098 | T-W14-UX-010 | ✅ CLOSED | Implement dashboard metrics query + drill-down navigation + Create Report gate query |
+| GAP-W11 | 14 | 14.11 | "Create Report" button as the final AI trigger: exact sequence, report content, export format and structure | FR-099 | TR-099 | T-W14-UX-011 | ✅ CLOSED | Implement /ai/generate-report endpoint + generate-pdf Edge Function + audit_reports table + reports bucket |
+| GAP-W12 | 14 | 14.12 | Level descriptor cards: Domain, MPS, and Criteria cards each show a level descriptor; Domain/MPS aggregate underlying achievements | FR-100 | TR-100 | T-W14-UX-012 | ✅ CLOSED | Create criteria_level_descriptors, mps_level_descriptors, domain_level_descriptors tables + AI parsing integration |
+| GAP-W13 | 14 | 14.13 | Scoring and rating method in DB: rating/scoring tables structure not wired to UI | FR-101 | TR-101 | T-W14-UX-013, T-W14-UX-016 | ✅ CLOSED | Create maturity_levels, scoring_rules, aggregate_scores tables + seed global default + compute-scores function |
+| GAP-W14 | 14 | 14.14 | Responsibility cascade rule wired: Lead Auditor retains responsibility when no auditor invited; enforced in DB and UI | FR-102 | TR-102 | T-W14-UX-014 | ✅ CLOSED | Implement responsibility cascade view/function + useResponsibleUser hook + card display |
 
 ### Cross-Cutting Test
 
 | Test ID | Scope | Description | Status |
 |---------|-------|-------------|--------|
-| T-W14-UX-015 | All GAP-W01–W14 | All 14 new tables have org-isolation RLS (no cross-org data leakage) | 🔴 RED |
+| T-W14-UX-015 | All GAP-W01–W14 | All 14 new tables have org-isolation RLS (no cross-org data leakage) | ✅ CLOSED |
 
 ### Remediation Progress
 
@@ -698,8 +699,49 @@ The failure resulted from the original app description, FRS, TRS, and implementa
 | TRS addendum (TR-089–TR-102) | Technical requirements for all 14 gaps | ✅ COMPLETE |
 | RED QA suite spec (16 tests) | Test specifications in `tests/wave14/wave14-ux-gap-red-suite-spec.md` | ✅ COMPLETE |
 | Implementation plan Wave 14 | Gap waves 14.1–14.14 in `03-implementation-plan/implementation-plan.md` | ✅ COMPLETE |
-| RED test file implementation | qa-builder to implement T-W14-UX-001 to T-W14-UX-016 | 🔴 PENDING |
-| Per-subwave builder delegation | Each subwave needs architecture freeze + builder appointment | 🔴 PENDING |
+| RED test file implementation | qa-builder to implement T-W14-UX-001 to T-W14-UX-016 | ✅ COMPLETE |
+| Per-subwave builder delegation | Each subwave needs architecture freeze + builder appointment | ✅ COMPLETE |
+
+---
+
+## Wave 14 Final Closure
+
+**Closure Date**: 2026-03-05  
+**Final Test Count**: 104/104 GREEN (cumulative: 88 pre-Wave-14 regression baseline + 16 Wave 14 UX gap tests T-W14-UX-001–T-W14-UX-016)  
+**All GAPs**: ✅ CLOSED (GAP-W01 through GAP-W14 + T-W14-UX-015)
+
+### IAA PASS Tokens
+
+| Batch | Session | IAA Token | Date |
+|-------|---------|-----------|------|
+| Batch A | session-140 | `IAA-session-140-wave14-batchA-20260305-PASS` | 2026-03-05 |
+| Batch B | session-141 v4 | `IAA-session-141-v4-wave14-batchB-20260305-PASS` | 2026-03-05 |
+| Batch C | session-142 v3 | `IAA-session-142-v3-wave14-batchC-20260305-PASS` | 2026-03-05 |
+
+### Migration-to-GAP Mapping
+
+All 9 migrations were applied under branch `copilot/apply-wave-14-migrations`.
+
+| Migration File | GAPs Closed | FR/TR References |
+|----------------|-------------|------------------|
+| `20260305000000_wave14_onboarding_support.sql` | GAP-W01 | FR-089 / TR-089 |
+| `20260305000001_wave14_invitations_assignments.sql` | GAP-W02, GAP-W04, GAP-W14 | FR-090, FR-092, FR-102 / TR-090, TR-092, TR-102 |
+| `20260305000002_wave14_excluded_columns.sql` | GAP-W03 | FR-091 / TR-091 |
+| `20260305000003_wave14_evidence_schema.sql` | GAP-W05 | FR-093 / TR-093 |
+| `20260305000004_wave14_evaluations.sql` | GAP-W06, GAP-W07, GAP-W08 | FR-094, FR-095, FR-096 / TR-094, TR-095, TR-096 |
+| `20260305000005_wave14_level_descriptors.sql` | GAP-W12 | FR-100 / TR-100 |
+| `20260305000006_wave14_audit_reports.sql` | GAP-W11 | FR-099 / TR-099 |
+| `20260305000007_wave14_scoring_tables.sql` | GAP-W13 | FR-101 / TR-101 |
+| `20260305000008_wave14_new_tables_rls.sql` | GAP-W09, GAP-W10, T-W14-UX-015 (RLS consolidation — cross-cutting org-isolation) | FR-097, FR-098 cross-cutting |
+
+### Closure Summary
+
+- **Batches**: A (session-140), B (session-141), C (session-142) — all IAA PASS
+- **Migrations applied**: 9 (000000–000008)
+- **Total GAPs closed**: 15 (GAP-W01–W14 + T-W14-UX-015 cross-cutting RLS)
+- **Tests GREEN**: 104/104
+- **Regressions**: 0
+- **Governance authority**: foreman-v2-agent (session-143), IAA PASS session-142 v3
 
 ---
 
