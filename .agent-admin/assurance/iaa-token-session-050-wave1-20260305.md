@@ -1,13 +1,14 @@
-# IAA Verdict — session-050 — wave1 — 2026-03-05
+# IAA Verdict — session-050 — wave1 — 2026-03-05 (Re-invocation)
 
 **Agent**: independent-assurance-agent  
-**Session**: session-149 (IAA internal) / auditing session-050 (governance-liaison-isms)  
+**IAA Session**: session-150-20260305 (auditing governance-liaison-isms session-050-20260305, re-invocation)
 **Date**: 2026-03-05  
 **PR Branch**: `copilot/formalise-ovl-ac-adm-overlay`  
 **Issue**: APGI-cmy/maturion-isms#966 — Formalise OVL-AC-ADM Overlay Series  
-**Invoking Agent**: governance-liaison-isms  
+**Invoking Agent**: governance-liaison-isms (session-050-20260305)  
 **Producing Agent**: governance-liaison-isms (session-050-20260305), class: liaison  
 **Adoption Phase**: PHASE_B_BLOCKING  
+**Prior Verdict**: REJECTION-PACKAGE (session-149 — procedural: A-021 staged-not-committed + A-026 stale SCOPE)
 
 ---
 
@@ -17,107 +18,124 @@
 ═══════════════════════════════════════
 REJECTION-PACKAGE
 PR: copilot/formalise-ovl-ac-adm-overlay — Formalise OVL-AC-ADM Overlay Series (issue #966)
-2 check(s) FAILED. Merge blocked. STOP-AND-FIX required.
+1 check FAILED. Merge blocked. STOP-AND-FIX required.
 
-FAILURES:
+FAILURE:
 
-CORE-018 / A-021: Session-050 changes staged but not committed
-  Finding: All five session-050 deliverables (iaa-category-overlays.md, index.md,
-  PREHANDOVER_PROOF_session-050-20260305.md, session-050-20260305.md, suggestions-log.md)
-  are in the git staging area ("Changes to be committed") but have NOT been committed to
-  the branch. Branch HEAD is commit 9634070 ("Initial plan") — none of the session-050
-  governance work exists in any committed state. `git diff --name-only origin/main...HEAD`
-  returns empty. CORE-018 requires evidence artifacts to be present "on the branch."
-  FAIL-ONLY-ONCE A-021: "Commit and push BEFORE invoking IAA — working-tree-only fix is
-  not a committed fix and will fail IAA audit."
-  Fix required: git commit -m "feat(governance): Formalise OVL-AC-ADM overlay series —
-  iaa-category-overlays.md v3.1.0, index.md v2.6.0 (issue #966)" && git push.
-  Do this BEFORE the SCOPE_DECLARATION fix. Do NOT amend — create a new commit.
+A-026 / CORE-021 / BL-027: SCOPE_DECLARATION.md missing one file from PR diff
 
-A-026: SCOPE_DECLARATION.md is stale — does not match session-050 deliverables
-  Finding: SCOPE_DECLARATION.md on this branch covers session-049/046 for
-  copilot/create-iaa-agent-audit-standard. Declares files from prior session, references
-  wrong PR. No SCOPE_DECLARATION.md exists for session-050. Per FAIL-ONLY-ONCE A-026:
-  SCOPE_DECLARATION.md must match `git diff --name-only origin/main...HEAD` exactly before
-  IAA invocation — stale = BL-027 merge gate parity failure.
-  Fix required: Create/update SCOPE_DECLARATION.md at repository root declaring the five
-  session-050 files, referencing PR copilot/formalise-ovl-ac-adm-overlay and issue #966.
-  Commit (new commit) and push. Then re-invoke IAA.
+  Finding: SCOPE_DECLARATION.md declares 8 files but `git diff --name-only
+  origin/main...HEAD` returns 9 files. The file present in the branch diff
+  but absent from SCOPE_DECLARATION.md is:
 
-This PR must not be opened until both failures are resolved and IAA is re-invoked.
+    .agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md
+
+  This file was committed to the branch by session-149 (prior IAA REJECTION-PACKAGE
+  ceremony, Phase 4.3) as part of IAA's standard session-end parking-station update.
+  The governance-liaison-isms correctly pre-declared 2 of the 3 IAA session-149
+  ceremony artifacts (session-149 memory + rejection token file) but omitted the
+  third (IAA parking station update).
+
+  Per FAIL-ONLY-ONCE A-026: SCOPE_DECLARATION.md must match
+  `git diff --name-only origin/main...HEAD` exactly before IAA invocation.
+  Partial declaration = BL-027 merge gate parity failure.
+
+  Fix required:
+  1. Add `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md`
+     to the "Modified" section of SCOPE_DECLARATION.md.
+  2. Do NOT amend commit 2c5f1be. Create a new commit.
+  3. git add SCOPE_DECLARATION.md && git commit -m "chore: A-026 — add IAA parking
+     station log to SCOPE_DECLARATION (session-050 re-invocation fix)"
+  4. git push.
+  5. Re-invoke IAA (third invocation for this session).
+
+  IMPORTANT — A-031 carve-out (codified this session, see session-150 memory):
+  Upon re-invocation, the diff will include TWO new IAA ceremony artifacts:
+    - .agent-workspace/independent-assurance-agent/memory/session-150-20260305.md
+    - Updated .agent-admin/assurance/iaa-token-session-050-wave1-20260305.md
+  Per A-031 (codified this session), producing agents MAY either:
+    (a) Declare these IAA ceremony artifacts in SCOPE_DECLARATION (fully compliant), OR
+    (b) Add the following note to SCOPE_DECLARATION: "IAA ceremony artifacts from
+        session-150 rejection excluded under A-031 carve-out" (also compliant).
+  Either approach will satisfy A-026 on re-invocation.
+
+This PR must not be opened until the failure is resolved and IAA is re-invoked.
 Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE.
 ═══════════════════════════════════════
 ```
 
 ---
 
-## Check Results Summary
+## Substantive Assessment (All Checks PASS — only procedural finding)
+
+The governance content delivered in commit 2c5f1be is of **high quality**. The prior
+session-149 procedural failure (A-021 staged-not-committed) is **fully resolved**.
+
+| Category | Result |
+|----------|--------|
+| OVL-AC-ADM-001: PREHANDOVER proof exists | PASS ✅ — Clear binary check, CERT-001 retained |
+| OVL-AC-ADM-002: Session memory exists | PASS ✅ — Clear binary check, CERT-002 retained |
+| OVL-AC-ADM-003: Tier 2 stub present | PASS ✅ — THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md reference correct |
+| OVL-AC-ADM-004: Character count within limit | PASS ✅ — Bloat response, §6.3 migration guidance cross-reference correct |
+| Version history table added | PASS ✅ — Retroactive v2.2.0 and v3.0.0 entries accurate |
+| index.md stale version corrected | PASS ✅ — 2.3.0→3.1.0 correction verified; SHA256 checksums match |
+| SHA256 checksums in PREHANDOVER | PASS ✅ — iaa-category-overlays.md: 9870209b... ✅; index.md: 963c9028... ✅ |
+| Cross-references | PASS ✅ — All 4 referenced files/sections verified present |
+
+**On re-invocation after the one procedural fix (SCOPE_DECLARATION.md update), this PR is
+expected to PASS substantive review with zero substantive findings.**
+
+---
+
+## Full Check Results
 
 | Check | Verdict | Notes |
 |-------|---------|-------|
-| FAIL-ONLY-ONCE A-001 | PASS ✅ | IAA invocation evidence present (iaa_audit_token pre-populated per A-029) |
-| FAIL-ONLY-ONCE A-002 | PASS ✅ | No class exemption claim |
-| FAIL-ONLY-ONCE A-003 | PASS ✅ | Category unambiguous: KNOWLEDGE_GOVERNANCE |
-| FAIL-ONLY-ONCE A-021 | **FAIL ❌** | Changes staged but not committed — see CORE-018 |
-| FAIL-ONLY-ONCE A-022 | PASS ✅ | KNOWLEDGE_GOVERNANCE confirmed |
-| FAIL-ONLY-ONCE A-026 | **FAIL ❌** | SCOPE_DECLARATION.md stale (session-049/046 scope) |
-| FAIL-ONLY-ONCE A-029 | PASS ✅ | iaa_audit_token pre-populated with expected reference |
-| CORE-006 | PASS ✅ | CANON_INVENTORY not modified |
-| CORE-007 | PASS ✅ | No placeholder content in changes |
-| CORE-013 | PASS ✅ | IAA invocation evidence present in PREHANDOVER proof |
+| A-001 | PASS ✅ | iaa_audit_token present and valid (A-029 pre-populated format) |
+| A-002 | PASS ✅ | No class exemption claim |
+| A-003 | PASS ✅ | Category KNOWLEDGE_GOVERNANCE — unambiguous |
+| A-015 | PASS ✅ | Full PREHANDOVER ceremony present (CERT-001–004 all PASS) |
+| A-021 | PASS ✅ | Commit 2c5f1be confirmed on branch — session-149 root cause RESOLVED |
+| A-022 | PASS ✅ | KNOWLEDGE_GOVERNANCE confirmed; no new trigger categories found |
+| **A-026** | **FAIL ❌** | SCOPE_DECLARATION missing IAA parking station log (1 file) |
+| A-029 | PASS ✅ | PREHANDOVER immutable; IAA writes to dedicated token file |
+| A-030 | PASS ✅ | Re-invocation carve-out applied — session-149 rejection = correction addendum |
+| CORE-001–012 | N/A ✅ | Not AGENT_CONTRACT |
+| CORE-013 | PASS ✅ | IAA invocation evidence present |
 | CORE-014 | PASS ✅ | No class exemption claim |
-| CORE-015 | PASS ✅ | Session memory file exists and is complete |
-| CORE-016 | PASS ✅ | First Invocation Exception — token file created this session |
+| CORE-015 | PASS ✅ | Session memory present on branch |
+| CORE-016 | PASS ✅ | IAA token file present on branch |
 | CORE-017 | PASS ✅ | No .github/agents/ modifications |
-| **CORE-018** | **FAIL ❌** | Evidence artifacts staged only, not committed to branch |
-| CORE-019 | PASS ✅ | First Invocation Exception — no prior IAA session-050 memory |
-| CORE-020 | PASS ✅ | Zero partial pass rule applied |
-| CORE-021 | PASS ✅ | Zero-severity-tolerance enforced |
-| OVL-KG-001 | PASS ✅ | OVL-AC-ADM descriptions are clear and operationally actionable |
-| OVL-KG-002 | N/A ✅ | Stub formalisation, not a new FAIL-ONLY-ONCE rule |
-| OVL-KG-003 | PASS ✅ | No duplication in descriptions |
-| OVL-KG-004 | PASS ✅ | All cross-references verified: CERT-001/002, THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md, IAA_AGENT_CONTRACT_AUDIT_STANDARD.md §5/§6.3 — all present |
-| OVL-KG-ADM-001 | PASS ✅ | PREHANDOVER ceremony artifacts exist |
-| OVL-KG-ADM-002 | PASS ✅ | Versions bumped: overlays 3.0.0→3.1.0, index 2.5.0→2.6.0 |
-| OVL-KG-ADM-003 | PASS ✅ | index.md updated (2.3.0→3.1.0 corrected) |
-| MERGE GATE: merge-gate/verdict | **FAIL ❌** | No committed session-050 changes on branch |
-| MERGE GATE: governance/alignment | PASS ✅ | Governance content correct and canon-aligned |
-| MERGE GATE: stop-and-fix/enforcement | PASS ✅ | No .github/agents/ modifications |
+| CORE-018 | PASS ✅ | All 4 evidence artifact conditions met |
+| CORE-019 | PASS ✅ | A-030 re-invocation carve-out applied |
+| CORE-020 | PASS ✅ | Zero partial pass — all checks executed with direct verification |
+| **CORE-021** | **FAIL ❌** | A-026 finding triggers mandatory REJECTION-PACKAGE |
+| CORE-022 | N/A ✅ | No agent contract files |
+| OVL-KG-001 | PASS ✅ | All four descriptions operationally clear and actionable |
+| OVL-KG-002 | N/A ✅ | Stub formalisation — no incident trigger required |
+| OVL-KG-003 | PASS ✅ | No duplication |
+| OVL-KG-004 | PASS ✅ | All cross-references verified present |
+| OVL-KG-ADM-001 | PASS ✅ | PREHANDOVER ceremony complete |
+| OVL-KG-ADM-002 | PASS ✅ | Knowledge versions bumped |
+| OVL-KG-ADM-003 | PASS ✅ | index.md updated correctly |
+| PARITY: merge-gate/verdict | **FAIL ❌** | BL-027: SCOPE_DECLARATION mismatch (root: A-026) |
+| PARITY: governance/alignment | PASS ✅ | Content quality and canon alignment confirmed |
+| PARITY: stop-and-fix/enforcement | PASS ✅ | No unauthorized agent contract writes |
 
-**Total**: 26 checks executed, 23 PASS, **3 FAIL** (A-021 + A-026 + CORE-018/merge-gate; root cause is A-021 — commit state)
-
----
-
-## Substantive Assessment (Informational — not a blocking finding)
-
-The governance content delivered is of **high quality**:
-
-- OVL-AC-ADM-001/002: Correctly framed as binary existence checks. "State once and move on" instruction 
-  aligns precisely with Orientation Mandate. CERT-001/002 cross-references retained correctly.
-- OVL-AC-ADM-003: Canonical reference to THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md added. 
-  Absence impact described clearly.
-- OVL-AC-ADM-004: Bloat response protocol, migration target identification, REJECTION-PACKAGE trigger, 
-  IAA_AGENT_CONTRACT_AUDIT_STANDARD.md §6.3 cross-reference — all present and correct.
-- Version history table: Retroactive entries for v2.2.0 and v3.0.0 are accurate per commit history. 
-  v3.1.0 entry correctly summarises this session's work.
-- index.md correction: Stale 2.3.0→3.1.0 fix is correct. Both SHA256 checksums verified against 
-  PREHANDOVER proof declarations (match confirmed).
-
-**On re-invocation after the two procedural fixes, this PR is expected to PASS substantive review.**
+**Total**: 30 checks executed, 27 PASS, **3 FAIL** (A-026 + CORE-021 + merge-gate/verdict — all same root cause)
 
 ---
 
-## Required Fix Sequence
+## Token History (this file)
 
-1. `git commit -m "feat(governance): Formalise OVL-AC-ADM overlay series — iaa-category-overlays.md v3.1.0, index.md v2.6.0 (issue #966)"` — commits all 5 staged session-050 files
-2. Create/update `SCOPE_DECLARATION.md` declaring session-050 scope (5 files: iaa-category-overlays.md, index.md, PREHANDOVER_PROOF_session-050-20260305.md, session-050-20260305.md, suggestions-log.md; PR: copilot/formalise-ovl-ac-adm-overlay; issue: #966)
-3. `git add SCOPE_DECLARATION.md && git commit -m "chore: add SCOPE_DECLARATION for session-050 (A-026)"`
-4. `git push`
-5. Re-invoke IAA
+| Session | Date | Verdict | Root Cause |
+|---------|------|---------|-----------|
+| session-149 | 2026-03-05 | REJECTION-PACKAGE | A-021 staged-not-committed + A-026 stale SCOPE_DECLARATION |
+| session-150 | 2026-03-05 | REJECTION-PACKAGE | A-026: SCOPE_DECLARATION missing IAA parking station log |
 
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
 **Living Agent System**: v6.2.0  
-**IAA Session**: session-149-20260305  
-**Token reference**: IAA-session-050-wave1-20260305-REJECTION (first invocation)
+**IAA Session**: session-150-20260305  
+**Token reference**: IAA-session-050-wave1-20260305-REJECTION-2 (second invocation)

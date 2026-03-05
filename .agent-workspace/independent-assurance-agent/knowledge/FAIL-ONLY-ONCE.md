@@ -1,8 +1,8 @@
 # IAA FAIL-ONLY-ONCE Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 2.3.0
-**Last Updated**: 2026-03-04
+**Version**: 2.4.0
+**Last Updated**: 2026-03-05
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -489,10 +489,58 @@ The IAA MUST:
 
 ---
 
+## Rule A-031 — IAA Ceremony Artifact A-026 Carve-Out
+
+**Triggered by**: Sessions 142, 146, 148, 149, 150 (2026-03-04/05) — recurring pattern where IAA's
+own ceremony artifacts (parking station updates, session memory, rejection token) committed to a
+shared branch during a prior REJECTION-PACKAGE session appear in `git diff --name-only origin/main...HEAD`
+but are not declared in SCOPE_DECLARATION.md. Producing agents have no visibility into IAA's internal
+parking station writes, causing repeated A-026 failures on legitimate PRs.
+
+**Root cause**: A-026 requires EXACT match of `git diff` against SCOPE_DECLARATION, but IAA writes
+to `.agent-workspace/independent-assurance-agent/` (its own write path) during every rejection
+ceremony. These IAA-owned files are not the producing agent's deliverables. Producing agents cannot
+reliably predict every IAA parking station entry that IAA will write.
+
+**Permanent Rule**:
+
+When IAA ceremony artifacts from a prior REJECTION-PACKAGE commit are present in the PR branch diff
+(i.e., IAA ran a rejection ceremony on this branch, writing session memory, rejection token, and/or
+parking station updates), producing agents have TWO compliant options for SCOPE_DECLARATION:
+
+**Option A (full declaration — always compliant):**
+Declare ALL files in `git diff --name-only origin/main...HEAD` in SCOPE_DECLARATION.md, including
+IAA ceremony artifacts. Ensures zero ambiguity. Recommended for clarity.
+
+**Option B (A-031 carve-out — compliant when explicitly invoked):**
+Add the following note to SCOPE_DECLARATION.md under "Governance Actions":
+  > "IAA ceremony artifacts from session-NNN rejection committed on branch (IAA session memory,
+  > IAA rejection token, IAA parking station update) excluded from declaration per A-031 carve-out.
+  > These are IAA-owned files; producing agent deliverables are fully declared above."
+When this note is present, IAA will verify that the only undeclared files in the diff match the
+pattern `.agent-workspace/independent-assurance-agent/` and/or `.agent-admin/assurance/iaa-token-*.md`
+from prior rejection sessions. Any other undeclared file = A-026 FAIL (carve-out does not apply).
+
+**What this rule does NOT exempt:**
+- The producing agent's own deliverables must ALWAYS be declared
+- SCOPE_DECLARATION.md itself must be declared
+- IAA ceremony artifacts from FUTURE IAA invocations (current session) must be declared or use A-031 note
+
+**How this is checked in Phase 3 (A-026 evaluation):**
+When evaluating A-026, if a mismatch is detected, IAA first checks whether the undeclared files
+are exclusively IAA ceremony artifacts from a prior rejection on this branch. If YES and if the
+A-031 carve-out note is present in SCOPE_DECLARATION.md → A-026 PASS. If YES but carve-out note
+is absent → A-026 FAIL (add carve-out note or declare the files). If NO (undeclared file is
+not an IAA ceremony artifact) → A-026 FAIL regardless.
+
+**Status**: ACTIVE — from session-150 (2026-03-05)
+
+---
+
 ## Adding New Rules
 
 When a new governance failure pattern is identified during a session, IAA adds a new entry following the format above. Each new rule:
-- Gets the next sequential ID (A-030 is the next available ID)
+- Gets the next sequential ID (A-032 is the next available ID)
 - References the incident that triggered it
 - States the permanent rule precisely
 - Defines how the rule is checked in the phase steps
@@ -519,6 +567,7 @@ All updates to this file must be committed as part of the session bundle for tha
 | 2.1.0 | 2026-03-03 | A-028 (SCOPE_DECLARATION format compliance) added |
 | 2.2.0 | 2026-03-04 | A-029 ARTIFACT-IMMUTABILITY-4.3b added; supersedes A-025 PENDING requirement |
 | 2.3.0 | 2026-03-04 | **BREAKING FIX**: Active Override block added at top — A-029 supersedes A-025 clearly stated. A-025 marked SUPERSEDED with residual scope. A-029 updated with Circular Dependency Resolution note explaining CORE-019 First Invocation Exception. A-029b (Carry-Forward Mandate from session-097) promoted to named rule. A-006 updated to reference dedicated token file instead of verbatim section. A-015 fix procedure updated. Next sequential ID updated to A-030. |
+| 2.4.0 | 2026-03-05 | A-031 (IAA ceremony artifact A-026 carve-out) codified — resolves recurring pattern from sessions 142, 146, 148, 149, 150 where IAA's own parking station/session memory/token file from prior rejection ceremony causes A-026 failures; produces two compliant options (full declaration or explicit A-031 carve-out note); next sequential ID updated to A-032. |
 
 ---
 
