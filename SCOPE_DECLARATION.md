@@ -1,11 +1,35 @@
-# Scope Declaration — governance-liaison-isms Session 050 — Formalise OVL-AC-ADM Overlay Series
+# Scope Declaration — foreman-v2-agent Session 143 — Wave 14 Final Migrations Governance Closure
 
-**PR**: `copilot/formalise-ovl-ac-adm-overlay`
-**Session**: session-050 (governance-liaison-isms)
-**Task**: Formalise OVL-AC-ADM-001 through OVL-AC-ADM-004 in iaa-category-overlays.md; fix stale IAA index version reference
-**Issue**: APGI-cmy/maturion-isms#966 (Formalise OVL-AC-ADM Overlay Series in iaa-category-overlays.md v2.4.0)
+**PR**: `copilot/apply-wave-14-migrations`
+**Session**: session-143 (foreman-v2-agent)
+**Task**: Wave 14 Final — Apply Final Supabase Migrations (000000–000008) with PREHANDOVER Proof and IAA Token
 **Date**: 2026-03-05
-**Authority**: CS2 directive (governance administration)
+**Authority**: CS2 directive (Wave 14 Final governance closure)
+
+## Files Declared
+
+### Modified
+
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated for session-143: Wave 14 Final Migrations wave context
+- `modules/mat/00-app-description/BUILD_PROGRESS_TRACKER.md` - v1.2 → v1.3: All 15 Wave 14 GAPs marked ✅ CLOSED; migration↔GAP mapping table added; IAA tokens for Batches A/B/C recorded; Change Log v1.3 entry added
+
+### Added
+
+- `.agent-admin/assurance/iaa-prebrief-wave14-final.md` - IAA Pre-Brief for Wave 14 Final (session-152, IAA pre-brief agent); 2 qualifying tasks, 2 EXEMPT; high-risk rules A-026/A-029/A-023/A-021 flagged
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-143-wave14-final-20260305.md` - Foreman PREHANDOVER proof session-143: migration↔GAP table, bundle completeness, §4.3 merge gate parity PASS, iaa_audit_token pre-populated per A-028
+- `.agent-workspace/foreman-v2/memory/session-143-wave14-final-20260305.md` - Foreman session memory session-143: Wave 14 Final governance closure
+- `SCOPE_DECLARATION.md` - This file (updated for session-143 scope per A-026/A-028 compliance)
+
+### IAA Token (to be added after IAA verdict)
+
+- `.agent-admin/assurance/iaa-token-session-143-wave14-final-20260305.md` - IAA ASSURANCE-TOKEN for Wave 14 Final (written by IAA per §4.3b — dedicated file)
+
+---
+
+**Wave**: Wave 14 Final — Apply Final Supabase Migrations (000000–000008)
+**Issue**: Wave 14 Final Migrations governance closure
+**Date**: 2026-03-05
+**Authority**: A-026, A-028 (FAIL-ONLY-ONCE v2.6.0), AGCFPP-001
 
 ## Files Declared
 
