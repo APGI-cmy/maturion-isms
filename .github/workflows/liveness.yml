@@ -54,6 +54,7 @@ jobs:
 
       - name: Run MAT liveness tests
         # continue-on-error: true — liveness failures never block CI; all results captured in artifact.
+        # Using || true to ensure pnpm exit code 1 does not kill the job before artifact upload.
         continue-on-error: true
         env:
           BASE_URL: ${{ inputs.base_url || vars.LIVENESS_BASE_URL || 'https://mat.example.com' }}
@@ -64,10 +65,11 @@ jobs:
           AI_SCORING_URL: ${{ secrets.AI_SCORING_URL }}
           AI_CHAT_URL: ${{ secrets.AI_CHAT_URL }}
           AI_REPORT_URL: ${{ secrets.AI_REPORT_URL }}
-          PLAYWRIGHT_JSON_OUTPUT_NAME: modules/mat/tests/liveness/liveness-evidence/run-ci/results.json
+          # Path relative to modules/mat (CWD when tests run) — avoids doubled path in report-assembler
+          PLAYWRIGHT_JSON_OUTPUT_NAME: tests/liveness/liveness-evidence/run-ci/results.json
         run: |
           cd modules/mat
-          pnpm run liveness
+          pnpm run liveness || true
 
       - name: Generate liveness report
         if: always()
