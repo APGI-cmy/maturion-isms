@@ -8,6 +8,7 @@ on:
 
 permissions:
   pull-requests: write
+  issues: write
   contents: read
 
 jobs:
@@ -42,10 +43,28 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const prNumber = context.payload.pull_request.number;
+            const MARKER = '## 🔴 IAA Pre-Brief Gate: MISSING';
+
+            // Idempotency guard: skip if an active reminder comment already exists
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              per_page: 100,
+            });
+            const alreadyPosted = comments.some(
+              (c) => c.body && c.body.includes(MARKER)
+            );
+            if (alreadyPosted) {
+              core.notice('IAA Pre-Brief reminder comment already present — skipping duplicate.');
+              return;
+            }
+
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.payload.pull_request.number,
+              issue_number: prNumber,
               body: [
                 '## 🔴 IAA Pre-Brief Gate: MISSING `wave-current-tasks.md`',
                 '',
