@@ -286,3 +286,6 @@
 
 | 2026-03-05 | independent-assurance-agent | session-149 | PHASE-4 | Re-invocation ceremony overhead is high for comment-only fixes; consider CS2-authorized fast-path for verified comment/doc-only re-audits — A-030b candidate | session-149-waveLV-20260305.md |
 | 2026-03-05 | independent-assurance-agent | session-149 | PHASE-4 | OVL-CI-006 candidate: GitHub Actions jobs must have explicit permissions block (CodeQL: missing-workflow-permissions) — F-149-001 | session-149-waveLV-20260305.md |
+
+| 2026-03-05 | independent-assurance-agent | session-150 | PHASE-4 | A-031 still PROPOSED: formalise OVL-CI-006 (explicit permissions block per workflow job) as standing FAIL-ONLY-ONCE rule — second confirmed incident (F-149-001) | session-150-waveLV-20260305.md |
+| 2026-03-05 | independent-assurance-agent | session-150 | PHASE-4 | Top-level `permissions: {}` + per-job grants pattern advisory for future CI workflow reviews | session-150-waveLV-20260305.md |
