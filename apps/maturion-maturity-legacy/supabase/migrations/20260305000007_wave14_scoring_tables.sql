@@ -26,13 +26,20 @@
 --   - scoring_rules: SELECT for all authenticated (global default visible to all orgs)
 --   - aggregate_scores: org-isolation SELECT via audit_id → audits.organisation_id
 --
--- NOTE — NULL UNIQUE semantics (aggregate_scores):
---   The UNIQUE constraint on (audit_id, level_type, scope_id) where scope_id is NULLABLE
---   leverages PostgreSQL's standard behaviour: NULLs in UNIQUE constraints are treated as
---   distinct from each other. This is intentional — scope_id = NULL represents the overall
---   (audit-level) aggregate score, and multiple overall scores are NOT expected. In practice
---   scope_id will be NULL only for the overall score row, so uniqueness is preserved.
---   ON CONFLICT (audit_id, level_type, scope_id) DO UPDATE is the intended UPSERT pattern.
+-- NOTE — Two-layer uniqueness strategy (aggregate_scores):
+--   Layer 1 — UNIQUE constraint on (audit_id, level_type, scope_id):
+--     Handles rows where scope_id IS NOT NULL (criteria / MPS / domain scores).
+--     ON CONFLICT (audit_id, level_type, scope_id) DO UPDATE fires correctly for
+--     these rows because the constraint columns are fully non-NULL.
+--
+--   Layer 2 — Partial unique index aggregate_scores_overall_unique
+--     on (audit_id, level_type) WHERE scope_id IS NULL:
+--     Handles the overall (audit-level) score row where scope_id IS NULL.
+--     PostgreSQL UNIQUE constraints treat NULLs as distinct from each other, so
+--     ON CONFLICT WILL NOT fire via the UNIQUE constraint alone for NULL scope_id.
+--     The partial index closes this gap — it enforces exactly one overall score row
+--     per (audit_id, level_type) and allows ON CONFLICT DO UPDATE to target it.
+--     See: IAA FINDING-BC-001 (repeated compute runs would insert duplicate overall rows).
 --
 -- Migration is idempotent: CREATE TABLE IF NOT EXISTS, ON CONFLICT DO NOTHING for seed data,
 -- DO $$ IF NOT EXISTS for policies.
@@ -137,10 +144,8 @@ END $$;
 -- level_type: 'criteria' | 'mps' | 'domain' | 'overall'
 -- scope_id:   FK to the entity being scored (NULL for overall/audit-level score)
 --
--- UNIQUE (audit_id, level_type, scope_id) enables ON CONFLICT DO UPDATE (UPSERT).
--- NOTE — NULL scope_id: PostgreSQL treats NULLs as distinct in UNIQUE constraints.
--- For the 'overall' level_type (scope_id = NULL), only one overall score per audit
--- is expected. Application code must use ON CONFLICT DO UPDATE to handle re-computation.
+-- UNIQUE (audit_id, level_type, scope_id) handles non-NULL scope_id rows (layer 1).
+-- For NULL scope_id rows (overall scores), see partial index below (layer 2).
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.aggregate_scores (
   id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -153,6 +158,15 @@ CREATE TABLE IF NOT EXISTS public.aggregate_scores (
 );
 
 ALTER TABLE public.aggregate_scores ENABLE ROW LEVEL SECURITY;
+
+-- Partial unique index for overall (audit-level) scores where scope_id IS NULL.
+-- Required because the UNIQUE constraint on (audit_id, level_type, scope_id) treats
+-- NULL scope_id values as distinct, preventing ON CONFLICT DO UPDATE from firing.
+-- This partial index enforces: only ONE overall score per (audit_id, level_type).
+-- Fixes IAA FINDING-BC-001.
+CREATE UNIQUE INDEX IF NOT EXISTS aggregate_scores_overall_unique
+  ON public.aggregate_scores (audit_id, level_type)
+  WHERE scope_id IS NULL;
 
 -- Index: fast lookup by audit
 DO $$ BEGIN
