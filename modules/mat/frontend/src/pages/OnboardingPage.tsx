@@ -65,7 +65,7 @@ export function OnboardingPage() {
         )}
 
         {step === 1 && (
-          <form className="space-y-4" onSubmit={handleNameNext}>
+          <form data-testid="onboarding-step-1" className="space-y-4" onSubmit={handleNameNext}>
             <div>
               <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-1">
                 Your name
@@ -91,7 +91,7 @@ export function OnboardingPage() {
         )}
 
         {step === 2 && (
-          <form className="space-y-4" onSubmit={handleCreateOrg}>
+          <form data-testid="onboarding-step-2" className="space-y-4" onSubmit={handleCreateOrg}>
             <div>
               <label htmlFor="organisation_name" className="block text-sm font-medium text-gray-700 mb-1">
                 Organisation name
