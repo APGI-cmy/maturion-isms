@@ -338,4 +338,3 @@ class DocumentParser:
                 "needs_human_review": True,
                 "source_anchor": "parse_failed",
             }
-
