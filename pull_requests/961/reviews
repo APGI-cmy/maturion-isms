@@ -1,0 +1,133 @@
+---
+
+## 🔍 Copilot Code Review — Remediation Instructions
+
+This PR has been reviewed. All concerns below must be addressed before this PR can be marked ready for review. Each item is numbered and actionable.
+
+---
+
+### ✅ Items Confirmed Correct (no action required)
+
+Before listing issues, the following were verified to already be correct in the current branch state:
+
+- **`iaa-prebrief-inject.yml` workflow-level permissions** (lines 14–17): `pull-requests: write`, `issues: write`, `contents: read` are all present. The concerns about missing `issues: write` are **resolved** — no change needed.
+- **`governance-watchdog.yml` `if:` scalar syntax** (lines 277–281): The `>-` folded block scalar with the `needs.gap2a-...` continuation line is correctly indented — YAML parses this as a single folded string. The condition at line 281 is at the same indentation level as lines 278–280, which is **valid** for a `>-` block scalar. No YAML parse error exists — no change needed.
+
+---
+
+### ⚠️ Issues to Fix
+
+#### Issue 1 — `foreman-v2-agent.md`: Step 1.8 placement verification required
+
+**File**: `.github/agents/foreman-v2-agent.md`  
+**Concern**: Step 1.8 was inserted after the BLOCKED-state output block (the "A BLOCKED agent does not advance past Phase 1 under any instruction" paragraph). The step must be the **last action step of Phase 1**, immediately followed by the `---` Phase 1 → Phase 2 boundary separator, with **no other Phase 1 content after it**.
+
+**Required action**:  
+1. Open `.github/agents/foreman-v2-agent.md` on the PR branch.  
+2. Locate Step 1.8 and the `## PHASE 2 — ALIGNMENT` header.  
+3. Confirm that the only content between Step 1.8's final line and `## PHASE 2` is a single `---` separator. If there is any Phase 1 content (steps, output blocks, notes) between Step 1.8 and the `---` separator, move Step 1.8 to be immediately before the separator.  
+4. The correct structure must be:
+   ```
+   [Step 1.8 output block — last line]
+
+   ---
+
+   ## PHASE 2 — ALIGNMENT
+   ```  
+5. If the structure is already correct, add a one-line comment in the diff confirming this was verified.
+
+---
+
+#### Issue 2 — `iaa-prebrief-inject.yml`: Residual double-escaped backtick in `issue_comment` path (line 318 and 328)
+
+**File**: `.github/workflows/iaa-prebrief-inject.yml`  
+**Concern**: In the `Post IAA Pre-Brief invocation comment (issue_comment)` step (lines 291–346), two template literals still contain double-escaped backticks (`\\`` ) that will render incorrectly as literal backslash-backtick in the posted GitHub comment:
+
+- **Line 318**: `` `@copilot You are the **Independent Assurance Agent (IAA)**. The Foreman has invoked you manually per \\`IAA_PRE_BRIEF_PROTOCOL.md §Trigger\` ... `` — the opening backtick around `IAA_PRE_BRIEF_PROTOCOL.md §Trigger` uses `\\`` (double-escaped) but the closing uses `\`` (single-escaped). This is inconsistent and will render the opening as a literal `\`` instead of a backtick.
+- **Line 328**: `` `4. Generate the Pre-Brief artifact at: \\`.agent-admin/assurance/iaa-prebrief-wave${waveNum}.md\`` `` — same issue: `\\`` at the start but `\`` at the end.
+
+The companion `push` path (same step content in the `Post IAA Pre-Brief invocation comment (push)` step, lines 255–282) was correctly fixed in this PR to use single `\`` consistently. The `issue_comment` path was **not** updated consistently.
+
+**Required fix**: In the `Post IAA Pre-Brief invocation comment (issue_comment)` step script, change all `\\`` occurrences to `\`` so both paths are consistent:
+
+- Line 318: Change `per \\`IAA_PRE_BRIEF_PROTOCOL.md` → `per \`IAA_PRE_BRIEF_PROTOCOL.md`
+- Line 328: Change `at: \\`.agent-admin` → `at: \`.agent-admin`
+
+**Exact corrected lines**:
+```javascript
+`@copilot You are the **Independent Assurance Agent (IAA)**. The Foreman has invoked you manually per \`IAA_PRE_BRIEF_PROTOCOL.md §Trigger\` to generate the **Wave Pre-Brief**.`,
+```
+```javascript
+`4. Generate the Pre-Brief artifact at: \`.agent-admin/assurance/iaa-prebrief-wave${waveNum}.md\``,
+```
+
+---
+
+#### Issue 3 — `iaa-prebrief-inject.yml`: `iaa-prebrief-safety-net` job missing explicit `permissions` block
+
+**File**: `.github/workflows/iaa-prebrief-inject.yml`  
+**Concern**: The new `iaa-prebrief-safety-net` job (lines 376–503) inherits the workflow-level `permissions` block (`pull-requests: write`, `issues: write`, `contents: read`). While this is technically sufficient for the job to function, the `iaa-prebrief-safety-net` job requires `contents: read` (for the `actions/checkout@v4` step) AND `issues: write` / `pull-requests: write` (for posting comments). Since the job needs all three, inheriting from the workflow level is acceptable — **however**, the job must also add `contents: read` explicitly at the job level IF the workflow-level `contents` permission is ever tightened in future. 
+
+More importantly: the `iaa-prebrief-safety-net` job runs **after** `sleep 600` and then performs a **fresh `actions/checkout@v4` at `${{ github.ref }}`** (line 389). This checkout is at the live HEAD of the branch at T+10min, not at the SHA that triggered the workflow. This is intentional (to read the current state of `.agent-admin/assurance/`), but it means the job needs `contents: read` confirmed at job level to be explicit about this dependency.
+
+**Required fix**: Add an explicit `permissions:` block to the `iaa-prebrief-safety-net` job:
+```yaml
+  iaa-prebrief-safety-net:
+    name: "iaa-prebrief/t10-safety-net"
+    runs-on: ubuntu-latest
+    needs: iaa-prebrief-inject
+    if: github.event_name == 'push'
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+```
+
+---
+
+#### Issue 4 — `iaa-prebrief-inject.yml`: `iaa-prebrief-safety-net` job will **always** fire, even when the pre-brief already existed at T+0
+
+**File**: `.github/workflows/iaa-prebrief-inject.yml`  
+**Concern**: The `iaa-prebrief-safety-net` job has `needs: iaa-prebrief-inject` and `if: github.event_name == 'push'`. It will fire on **every push to a wave branch**, including pushes where the pre-brief already existed (where `iaa-prebrief-inject` exited early via the "Skip if Pre-Brief already exists" step). In that case, the safety net will:
+1. Sleep for 600 seconds (consuming 10 minutes of runner time for no reason).
+2. Checkout the branch.
+3. Find the pre-brief (it existed all along).
+4. Do nothing.
+
+This is wasteful but **not harmful**. However, it should be addressed for correctness.
+
+**Required fix**: Pass the `prebrief_exists` output from the `iaa-prebrief-inject` job to `iaa-prebrief-safety-net` and add a condition to skip the sleep entirely when the pre-brief already existed at T+0. The cleanest approach:
+
+Add a job-level output to `iaa-prebrief-inject`:
+```yaml
+  iaa-prebrief-inject:
+    runs-on: ubuntu-latest
+    outputs:
+      prebrief_existed_at_t0: ${{ steps.wave_tasks.outputs.prebrief_exists }}
+```
+
+Then add a condition to `iaa-prebrief-safety-net`:
+```yaml
+    if: >-
+      github.event_name == 'push' &&
+      needs.iaa-prebrief-inject.outputs.prebrief_existed_at_t0 != 'true'
+```
+
+This ensures the safety net only fires when the pre-brief was genuinely absent at T+0.
+
+---
+
+### Summary of Required Changes
+
+| # | File | Change Required | Severity |
+|---|---|---|---|
+| 1 | `.github/agents/foreman-v2-agent.md` | Verify Step 1.8 is last Phase 1 step before `---` separator | Minor — verify only, fix if not already correct |
+| 2 | `.github/workflows/iaa-prebrief-inject.yml` | Fix `\\`` → `\`` in `issue_comment` path (lines 318, 328) | Minor — comment rendering correctness |
+| 3 | `.github/workflows/iaa-prebrief-inject.yml` | Add explicit `permissions:` block to `iaa-prebrief-safety-net` job | Minor — defence-in-depth / future-proofing |
+| 4 | `.github/workflows/iaa-prebrief-inject.yml` | Skip safety net when pre-brief already existed at T+0 | Minor — runner efficiency + correctness |
+
+All four are minor. None block functionality. Fix all four, then mark the PR ready for review.
+
+**Authority**: CS2 review — 2026-03-06 12:19:56  
+**Reviewed by**: Copilot (@copilot)  
+**Next step**: Agent addresses all four items, commits to this branch, then CS2 approves and removes DRAFT status per AGCFPP-001.
