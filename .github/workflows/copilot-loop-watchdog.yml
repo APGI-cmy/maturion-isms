@@ -14,6 +14,10 @@ jobs:
   copilot/loop-watchdog:
     name: copilot/loop-watchdog
     runs-on: ubuntu-latest
+    timeout-minutes: 8
+    concurrency:
+      group: copilot-loop-watchdog
+      cancel-in-progress: false
     steps:
       - name: Detect and recover looping Copilot sessions
         uses: actions/github-script@v7
@@ -46,9 +50,7 @@ jobs:
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   issue_number: pr.number,
-                  per_page: 30,
-                  sort: 'created',
-                  direction: 'desc',
+                  per_page: 100,
                 }),
                 github.rest.repos.listCommits({
                   owner: context.repo.owner,
@@ -58,7 +60,7 @@ jobs:
                 }),
               ]);
 
-              const comments = commentsRes.data;
+              const comments = commentsRes.data.slice(-30);
               const commits = commitsRes.data;
 
               // Step 3 — Apply Two-Key Rule
