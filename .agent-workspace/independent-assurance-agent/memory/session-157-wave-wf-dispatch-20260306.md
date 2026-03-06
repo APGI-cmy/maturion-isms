@@ -131,4 +131,31 @@ No new FAIL-ONLY-ONCE rules added this session. The OVL-CI-005 governance-gate c
 
 ---
 
+## RE-INVOCATION VERDICT UPDATE (session-157b continuation — 2026-03-06)
+
+**Re-invocation triggered by**: foreman-v2-agent (post FINDING-WFD-001 correction — commit 42a9ae2c)
+**Re-invocation context**: Prior push of ASSURANCE-TOKEN failed with 403. Token file retained REJECTION-PACKAGE content. Re-invocation executed to finalize token file.
+
+**All checks re-executed: 21/21 PASS**
+
+| Check category | Result |
+|----------------|--------|
+| FAIL-ONLY-ONCE (6 rules: A-001, A-002, A-021, A-026, A-029, A-030) | 6/6 PASS |
+| Core invariants (10 applicable) | 10/10 PASS |
+| CI_WORKFLOW overlay (OVL-CI-001 to -005) | 5/5 PASS |
+| Merge gate parity (validate-scope-to-diff EXIT 0, validate-yaml EXIT 0, CANON hashes) | 3/3 PASS |
+
+**Final verdict: ASSURANCE-TOKEN**
+**Token reference**: IAA-session-157-wave-wf-dispatch-20260306-PASS
+**Token file updated**: `.agent-admin/assurance/iaa-token-session-157-wave-wf-dispatch-20260306.md`
+**A-030 carve-out applied**: Committed REJECTION-PACKAGE served as correction addendum evidence; CORE-019 satisfied.
+**PREHANDOVER proof**: NOT modified — immutable per A-029.
+
+**Additional learning note (re-invocation)**:
+- A-030 re-invocation flow functions correctly: committed REJECTION-PACKAGE → correction commit → ASSURANCE-TOKEN re-invocation completed cleanly.
+- OVL-CI-005 governance-gate carve-out applied in both invocations without issue. Pattern is now stable. A-031 candidate confirmed.
+- SCOPE_DECLARATION integrity maintained: only 3 files modified in re-invocation commit (token, parking station, this session memory — all already declared). validate-scope-to-diff.sh: 11/11 EXIT 0.
+
+---
+
 *Authority: CS2 (@APGI-cmy) | independent-assurance-agent v6.2.0 | PHASE_B_BLOCKING*
