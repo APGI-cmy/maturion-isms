@@ -143,7 +143,7 @@ jobs:
     needs: test
     permissions:
       contents: read
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
     steps:
       - name: Trigger Render deploy
         env:
@@ -206,7 +206,7 @@ jobs:
     needs: [deploy-production]
     permissions:
       contents: read
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
