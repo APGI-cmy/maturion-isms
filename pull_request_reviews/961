@@ -1,0 +1,115 @@
+## 🔍 Copilot Code Review — PR #961
+
+I have reviewed both workflow files (`iaa-prebrief-inject.yml` and `governance-watchdog.yml`) and the agent contract changes on branch `copilot/resolve-codexadvisor-issue`. Here is my full assessment.
+
+---
+
+### ✅ Confirmed Correct — No Changes Needed
+
+1. **`iaa-prebrief-inject.yml` workflow-level permissions** (lines 14–17): `pull-requests: write`, `issues: write`, `contents: read` — all present and correct.
+2. **`governance-watchdog.yml` `gap2-ready-pr-missing-prebrief` `if:` condition** (lines 277–281): The `>-` YAML folded scalar correctly spans lines 278–281. The `needs.gap2a-...` output reference on line 281 is valid within the folded scalar — no YAML syntax error.
+3. **`governance-watchdog.yml` `gap2a-prebrief-gate-before-iaa-second-tier` gate consolidation** (lines 256–269): The `gate_final` step correctly defaults to `clear` when neither `gate` nor `gate_exempt` produced an output. This is safe.
+4. **`iaa-prebrief-inject.yml` push path backtick escaping** (lines 255–282): `\`` escaping in the `Post IAA Pre-Brief invocation comment (push)` step is consistent and correct.
+
+---
+
+### ⚠️ Issues Requiring Fixes Before Merge
+
+#### Issue 1 — `iaa-prebrief-inject.yml`: Inconsistent backtick escaping in `issue_comment` path
+
+**Lines**: 318, 328  
+**Severity**: Minor — cosmetic/rendering bug but affects IAA invocation text  
+
+The `Post IAA Pre-Brief invocation comment (issue_comment)` step (line 291 onward) has inconsistent backtick escaping compared to the `push` path. Specifically:
+
+- **Line 318**: Opens with `\`` (double-escaped) but closes with `
+`` (single-escaped):  
+  ```js
+  `@copilot ... per \`IAA_PRE_BRIEF_PROTOCOL.md §Trigger
+` to generate...`
+  ```  
+  The `\`` will render as a literal backslash-backtick (`
+``) in the posted GitHub comment instead of a backtick.
+
+- **Line 328**: Same issue — `\`` at the start, `
+`` at the end:  
+  ```js
+  `4. Generate the Pre-Brief artifact at: \`.agent-admin/assurance/iaa-prebrief-wave${waveNum}.md
+```
+  ```
+
+**Fix required**: Change `\`` → `
+`` on both lines 318 and 328:
+```js
+// Line 318:
+`@copilot You are the **Independent Assurance Agent (IAA)**. The Foreman has invoked you manually per 
+`IAA_PRE_BRIEF_PROTOCOL.md §Trigger
+` to generate the **Wave Pre-Brief**.`,
+
+// Line 328:
+`4. Generate the Pre-Brief artifact at: 
+`.agent-admin/assurance/iaa-prebrief-wave${waveNum}.md
+`,
+```
+
+---
+
+#### Issue 2 — `iaa-prebrief-inject.yml`: `iaa-prebrief-safety-net` job missing explicit `permissions:` block
+
+**Lines**: 376–380  
+**Severity**: Minor — defence-in-depth / future-proofing  
+
+The `iaa-prebrief-safety-net` job inherits workflow-level permissions. This is functionally sufficient but should be made explicit for the job, since it performs both `actions/checkout@v4` (requires `contents: read`) and comment posting (requires `issues: write` + `pull-requests: write`).
+
+**Fix required**: Add:
+```yaml
+  iaa-prebrief-safety-net:
+    name: "iaa-prebrief/t10-safety-net"
+    runs-on: ubuntu-latest
+    needs: iaa-prebrief-inject
+    if: github.event_name == 'push'
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+```
+
+---
+
+#### Issue 3 — `iaa-prebrief-inject.yml`: Safety net fires unnecessarily when pre-brief already existed at T+0
+
+**Lines**: 376–380  
+**Severity**: Minor — runner efficiency  
+
+When the `iaa-prebrief-inject` job exits early via "Skip if Pre-Brief already exists" (because `prebrief_exists == 'true'`), the `iaa-prebrief-safety-net` job still runs: it sleeps 600 seconds, checks out, finds the pre-brief, and exits. This wastes 10 minutes of runner time on every repeat push to a wave branch where the pre-brief is already committed.
+
+**Fix required**: Add a `prebrief_existed_at_t0` job output to `iaa-prebrief-inject`, then condition `iaa-prebrief-safety-net` to skip when it's `true`:
+
+```yaml
+  iaa-prebrief-inject:
+    runs-on: ubuntu-latest
+    outputs:
+      prebrief_existed_at_t0: ${{ steps.wave_tasks.outputs.prebrief_exists }}
+    ...
+
+  iaa-prebrief-safety-net:
+    ...
+    if: >-
+      github.event_name == 'push' &&
+      needs.iaa-prebrief-inject.outputs.prebrief_existed_at_t0 != 'true'
+```
+
+---
+
+### Summary
+
+| # | File | Issue | Severity |
+|---|---|---|---|
+| 1 | `iaa-prebrief-inject.yml` | Fix `\`` → `
+`` on lines 318, 328 (issue_comment path) | Minor |
+| 2 | `iaa-prebrief-inject.yml` | Add `permissions:` to `iaa-prebrief-safety-net` job | Minor |
+| 3 | `iaa-prebrief-inject.yml` | Skip safety net when pre-brief existed at T+0 | Minor |
+
+All three are minor, none block functionality. Fix all three, push to this branch, then this PR is ready for CS2 merge approval.
+
+**Reviewed by**: @copilot — 2026-03-06
