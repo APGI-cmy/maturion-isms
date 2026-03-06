@@ -1,0 +1,23 @@
+{
+  "session": "session-051-20260306",
+  "ripple_events_received": [
+    {
+      "dispatch_id": "6b4f735c",
+      "canonical_commit": "6b4f735c0e99341256fa7bd218f8db28681101c1",
+      "timestamp": "2026-03-05T09:43:30Z",
+      "trigger": "Update CodexAdvisor-agent.md",
+      "sender": "APGI-cmy/maturion-foreman-governance",
+      "changed_paths": [
+        ".github/agents/CodexAdvisor-agent.md"
+      ],
+      "processing_status": "ESCALATED_TO_CS2",
+      "escalation_ref": "ESC-AGENTFILE-6B4F735C-20260305",
+      "files_layered_down": [],
+      "files_escalated": [
+        ".github/agents/CodexAdvisor-agent.md"
+      ],
+      "governance_canon_drift": false,
+      "alignment_pr_required": false
+    }
+  ]
+}
