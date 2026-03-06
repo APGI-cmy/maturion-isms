@@ -7,13 +7,13 @@
 - **Module**: MAT (Manual Audit Tool)
 - **Artifact Type**: App Description (Upstream Authority)
 - **Status**: Draft (to be marked **Authoritative** only after approval)
-- **Version**: v1.3
+- **Version**: v1.4
 - **Owner**: Johan Ras (Product Owner / Human Authority)
 - **Authority**: Johan Ras
 - **Applies To**: MAT module within maturion-isms repository (and any downstream FRS/Architecture artifacts)
 - **Approval Date**: N/A (Draft)
-- **Last Updated**: 2026-02-27
-- **Supersedes / Superseded By**: v1.2 → v1.3 (Wave 10 AI gateway memory wiring gap added)
+- **Last Updated**: 2026-03-06
+- **Supersedes / Superseded By**: v1.2 → v1.3 (Wave 10 AI gateway memory wiring gap added); v1.3 → v1.4 (Wave 15 correction — criteria parsing pipeline concretised; post-delivery oversight INC-POST-FCWT-CRITERIA-PIPELINE-001 recorded)
 
 > **Governance note**: Per **APP_DESCRIPTION_REQUIREMENT_POLICY.md**, no FRS/Architecture may be treated as authoritative without an authoritative App Description, and downstream artifacts must explicitly derive from this document.
 
@@ -348,27 +348,58 @@ Criteria documents may be:
 
 No assumptions may be made about formatting.
 
-### 6.2 Parsing Pipeline (Conceptual)
+### 6.2 Parsing Pipeline (Concrete)
 
-1. **Ingest**
-   - Convert documents into an intermediate representation:
-     - text blocks
-     - tables
-     - headings
-     - coordinates / page references
-     - source anchors
+The criteria parsing pipeline is triggered when the Lead Auditor uploads a criteria document. The full concrete flow is:
 
-2. **AI Structure Extraction**
-   - AI proposes Domain → MPS → Criteria hierarchy
+1. **User uploads criteria document → Supabase Storage**
+   - File stored in bucket `criteria-documents` under `{organisation_id}/{audit_id}/`
+   - `INSERT INTO public.criteria_documents` record created with `status = 'pending_parse'`
 
-3. **Deterministic Validation**
-   - Schema validation
-   - Coverage validation
-   - No-hallucination validation
-   - Numbering validation
+2. **Frontend fires `useTriggerAIParsing` → calls Supabase Edge Function `invoke-ai-parse-criteria`**
+   - React hook `useTriggerAIParsing` invokes the Edge Function asynchronously
+   - Payload: `{ auditId: string, filePath: string }`
 
-4. **Human Review Gate**
-   - Lead Auditor must approve before audit execution
+3. **Edge Function fetches file from Storage → calls AI Gateway `/parse` endpoint**
+   - Edge Function (`supabase/functions/invoke-ai-parse-criteria/index.ts`) retrieves the file buffer from Supabase Storage
+   - Calls AI Gateway `/parse` endpoint with the file content and `auditId`
+
+4. **AI Gateway `DocumentParser` extracts structure → returns JSON conforming to §15.1 Criteria Structure Schema**
+   - `DocumentParser.parse()` (`apps/mat-ai-gateway/services/parsing.py`):
+     - Extracts text: `pypdf2` for PDF, `python-docx` for DOCX
+     - Builds extraction prompt with §15.1 schema as the required output format
+     - Calls GPT-4 Turbo (128K context window) with structured output mode
+     - Validates response against §15.1 schema
+   - Returns JSON hierarchy of Domains → MPS → Criteria
+
+5. **Edge Function writes Domain → MPS → Criteria rows to DB**
+   - Inserts parsed records into `public.domains`, `public.mini_performance_standards`, `public.criteria` tables (all linked to `audit_id`)
+   - All inserts executed within a DB transaction — failure rolls back the entire parse job
+   - Updates `criteria_documents.status` to `pending_review` on success, `parse_failed` on failure
+
+6. **Frontend polls for completion → renders Criteria Hierarchy panel**
+   - `useCriteria.ts` polls for parse status
+   - On completion, the Criteria Hierarchy panel renders the full Domain → MPS → Criteria tree
+   - Items flagged `needs_human_review = true` are highlighted for Lead Auditor attention
+
+### 6.2.1 Document Format Handling (Mandatory)
+
+The AI MUST handle all of the following document types:
+
+- **Well-structured documents** (e.g., LDCS with numbered sections MPS 1–25):
+  - AI maps numbered sections directly to Domain/MPS/Criteria hierarchy
+  - High-confidence extraction; minimal `needs_human_review` flags expected
+
+- **Poorly structured or free-text documents**:
+  - AI constructs the Domain → MPS → Criteria hierarchy from context and semantic content
+  - All extracted items MUST be flagged with `needs_human_review = true`
+  - AI includes rationale for each structural decision in the warnings array
+
+- **Mixed-format documents** (tables, prose, annexes):
+  - Tables: AI extracts rows as criteria candidates
+  - Prose sections: AI segments into discrete criteria statements
+  - Annexes: AI parses and maps to appropriate MPS; flags ambiguous annexe content for review
+  - Non-criteria content (preamble, disclaimers, headers) is explicitly marked as excluded from hierarchy
 
 ---
 
@@ -1209,6 +1240,6 @@ The following gaps from the same audit are **RESOLVED** (Wave postbuild-fails-01
 ## End of Document
 
 **Document Version**: v1.4
-**Last Updated**: 2026-03-04
+**Last Updated**: 2026-03-06
 **Status**: Draft (awaiting approval — Wave postbuild-fails-02 remediation in progress)
 **Next Review**: After Wave postbuild-fails-02 merge and schema-builder migration delivery

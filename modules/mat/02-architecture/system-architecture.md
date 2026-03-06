@@ -639,3 +639,178 @@ This matrix verifies that every component has at least one connection (Wiring In
 ---
 
 *End of MAT System Architecture v1.0.0*
+
+---
+
+## §4 — Criteria Parsing Pipeline Architecture (Wave 15)
+
+**Added**: 2026-03-06 | **Authority**: Wave 15 Oversight | **Incident**: INC-POST-FCWT-CRITERIA-PIPELINE-001
+
+This section concretises the criteria parsing pipeline architecture that was architecturally designed in the original App Description (§6.2, §15.1, §16.6) but lacked explicit component-level wiring documentation. It is added in Wave 15 post-delivery oversight remediation.
+
+---
+
+### §4.1 Component Map
+
+```
+┌────────────────┐     ┌──────────────────────────────┐     ┌────────────────────────────────┐
+│   Frontend     │────>│  Supabase Edge Function       │────>│  AI Gateway                    │
+│ CriteriaUpload │     │  invoke-ai-parse-criteria     │     │  /parse endpoint               │
+│ .tsx           │     │  (supabase/functions/         │     │  (apps/mat-ai-gateway/         │
+│                │     │   invoke-ai-parse-criteria/   │     │   services/parsing.py)         │
+│ useTriggerAI   │     │   index.ts)                   │     │                                │
+│ Parsing.ts     │<────│                               │<────│  DocumentParser.parse()        │
+└────────────────┘     └──────────────────────────────┘     └────────────────────────────────┘
+        │                          │                                      │
+        │                          │ writes                               │ invokes
+        │                          ▼                                      ▼
+        │               ┌─────────────────┐                    ┌──────────────────┐
+        │ polls          │   Supabase DB   │                    │  GPT-4 Turbo     │
+        └──────────────> │   domains       │                    │  128K context    │
+                         │   mini_perf_std │                    │  structured JSON │
+                         │   criteria      │                    │  output mode     │
+                         └─────────────────┘                    └──────────────────┘
+```
+
+---
+
+### §4.2 Edge Function Specification
+
+**Function**: `invoke-ai-parse-criteria`  
+**Location**: `supabase/functions/invoke-ai-parse-criteria/index.ts`  
+**Runtime**: Supabase Edge Functions (Deno)
+
+**Input**:
+```json
+{
+  "auditId": "string",
+  "filePath": "string"
+}
+```
+
+**Actions**:
+1. Fetch file buffer from Supabase Storage using `filePath`
+2. Call AI Gateway `/parse` endpoint with file content and `auditId`
+3. Receive parsed hierarchy JSON from AI Gateway
+4. Write parsed hierarchy to DB (within a DB transaction):
+   - INSERT into `domains` table
+   - INSERT into `mini_performance_standards` table
+   - INSERT into `criteria` table
+5. Update `criteria_documents.status` to `pending_review` (success) or `parse_failed` (failure)
+
+**Output**:
+```json
+{
+  "success": true,
+  "domainsCreated": 5,
+  "criteriaCreated": 112,
+  "warnings": ["string"]
+}
+```
+
+**Error output**:
+```json
+{
+  "success": false,
+  "error": "string",
+  "domainsCreated": 0,
+  "criteriaCreated": 0,
+  "warnings": []
+}
+```
+
+---
+
+### §4.3 AI Gateway `DocumentParser` Specification
+
+**Service**: `DocumentParser`  
+**Location**: `apps/mat-ai-gateway/services/parsing.py`  
+**Endpoint**: `POST /parse`
+
+**Input**: file buffer + MIME type + `auditId`
+
+**Process**:
+1. Extract text:
+   - PDF: use `pypdf2`
+   - DOCX: use `python-docx`
+   - Other formats: attempt text extraction; flag unsupported format in warnings
+2. Build extraction prompt incorporating §15.1 Criteria Structure Schema as the required output format
+3. Call GPT-4 Turbo (`gpt-4-turbo-2024-04-09`) with structured output mode and 128K context window
+4. Validate response JSON against §15.1 schema
+5. Return validated JSON hierarchy
+
+**Output**: JSON conforming to App Description §15.1 Criteria Structure Schema:
+```json
+{
+  "domains": [
+    {
+      "number": "1",
+      "title": "string",
+      "description": "string",
+      "mps": [
+        {
+          "number": "1.1",
+          "title": "string",
+          "criteria": [
+            {
+              "number": "1.1.1",
+              "statement": "string",
+              "source_anchor": "string",
+              "needs_human_review": false,
+              "confidence": 0.95
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "warnings": ["string"],
+  "coverage_report": {}
+}
+```
+
+**Error handling**: Parsing failures return:
+```json
+{
+  "error": "string",
+  "partial_output": {}
+}
+```
+
+---
+
+### §4.4 DB Write-Back Specification
+
+All write-back operations for a single parse job MUST execute within a single DB transaction. A failure at any insert stage rolls back all inserts for that job.
+
+| Table | Columns Written |
+|-------|----------------|
+| `domains` | `audit_id`, `number`, `title`, `description` |
+| `mini_performance_standards` | `domain_id`, `number`, `title` |
+| `criteria` | `mps_id`, `number`, `statement`, `source_anchor`, `needs_review` |
+
+**Transaction invariant**: If any insert fails, the entire parse job is rolled back and `criteria_documents.status` is set to `parse_failed`.
+
+---
+
+### §4.5 Frontend Polling Specification
+
+**Hook**: `useCriteria.ts`
+
+**Polling behaviour**:
+- Polls `criteria_documents.status` after Edge Function is invoked
+- Terminates polling on status: `pending_review` (success) or `parse_failed` (failure)
+- On `pending_review`: renders Criteria Hierarchy panel with full Domain → MPS → Criteria tree
+- On `parse_failed`: surfaces error message per FR-103 (Parsing Resilience and Error Surface)
+- Polling timeout: 5 minutes → display "Parsing is taking longer than expected. You will be notified when complete."
+
+---
+
+## Wave 15 Correction Note
+
+This section (§4) was added in Wave 15 (2026-03-06) to concretise the criteria parsing pipeline architecture per **INC-POST-FCWT-CRITERIA-PIPELINE-001**. The pipeline was architecturally designed in the original App Description (§6.2, §15.1, §16.6) but implementation-level component wiring documentation was deferred. Wave 15 post-delivery oversight identified this gap and directed its remediation across:
+
+- App Description §6.2 and §6.2.1 (v1.3 → v1.4)
+- MAT UX Workflow & Wiring Specification (Step 2a added)
+- FRS FR-005 acceptance criteria 7–14; FR-103 added
+- System Architecture §4 (this section)

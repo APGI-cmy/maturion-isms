@@ -1,0 +1,952 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.4 [39m[90m/home/runner/work/maturion-isms/maturion-isms[39m
+
+ [31m×[39m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-001] Edge Function invoke-ai-parse-criteria/index.ts exists[32m 8[2mms[22m[39m
+[31m   → [RED STATE — EXPECTED before Wave 15 implementation]
+Edge Function not found: /home/runner/work/maturion-isms/maturion-isms/supabase/functions/invoke-ai-parse-criteria/index.ts
+schema-builder / api-builder must create this file to turn this test GREEN.
+File: supabase/functions/invoke-ai-parse-criteria/index.ts: expected false to be true // Object.is equality[39m
+ [31m×[39m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-002] Edge Function handles missing filePath — returns error payload[32m 1[2mms[22m[39m
+[31m   → [RED STATE — EXPECTED before Wave 15 implementation]
+Edge Function not found: /home/runner/work/maturion-isms/maturion-isms/supabase/functions/invoke-ai-parse-criteria/index.ts
+schema-builder / api-builder must create this file to turn this test GREEN.
+File: supabase/functions/invoke-ai-parse-criteria/index.ts: expected false to be true // Object.is equality[39m
+ [31m×[39m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-003] AI Gateway /parse endpoint is defined in services/parsing.py (not stub)[32m 1[2mms[22m[39m
+[31m   → [T-W15-CP-003] parsing.py must define a FastAPI route for /parse.
+The current file is a stub with no router. Add: router = APIRouter() and
+@router.post('/parse') to expose the endpoint as required by the architecture.: expected '"""\nservices/parsing.py — Document P…' to match /@router\.(post|get)|APIRouter\(\)|ap…/i[39m
+ [31m×[39m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-004] DocumentParser.parse() contains text extraction logic (pypdf2 or python-docx)[32m 1[2mms[22m[39m
+[31m   → [T-W15-CP-004] parsing.py must import a text-extraction library.
+Add: `import pypdf2` (or `from pypdf2 import PdfReader`) for PDF support, and/or
+`from docx import Document` (python-docx) for DOCX support.
+The current stub returns a static dict without reading document content.: expected '"""\nservices/parsing.py — Document P…' to match /pypdf2|PdfReader|python[-_]docx|from…/i[39m
+ [31m×[39m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-005] DocumentParser.parse() calls GPT-4 Turbo (OpenAI client present in parsing.py)[32m 1[2mms[22m[39m
+[31m   → [T-W15-CP-005] parsing.py must import openai and invoke the GPT-4 Turbo model.
+Add: `import openai` or `from openai import OpenAI` and call the client with
+model="gpt-4-turbo" or "gpt-4-turbo-preview".
+The current stub returns a static dict without calling any AI model.: expected '"""\nservices/parsing.py — Document P…' to match /openai|OpenAI/i[39m
+ [31m×[39m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-006] AI Gateway /parse response schema includes source_anchor field[32m 1[2mms[22m[39m
+[31m   → [T-W15-CP-006] parsing.py /parse response must include a `source_anchor` field.
+Add `source_anchor` to the return dict / Pydantic response model to trace
+each extracted criterion back to its source section in the original document.
+Current stub response: { status, task_id, document_url, tenant_id } — no source_anchor.: expected '"""\nservices/parsing.py — Document P…' to match /source_anchor/i[39m
+ [31m×[39m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-007] Edge Function contains DB insert logic for domains table[32m 0[2mms[22m[39m
+[31m   → [RED STATE — EXPECTED before Wave 15 implementation]
+Edge Function not found: /home/runner/work/maturion-isms/maturion-isms/supabase/functions/invoke-ai-parse-criteria/index.ts
+schema-builder / api-builder must create this file to turn this test GREEN.
+File: supabase/functions/invoke-ai-parse-criteria/index.ts: expected false to be true // Object.is equality[39m
+ [31m×[39m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-008] Edge Function contains DB insert logic for mini_performance_standards table[32m 0[2mms[22m[39m
+[31m   → [RED STATE — EXPECTED before Wave 15 implementation]
+Edge Function not found: /home/runner/work/maturion-isms/maturion-isms/supabase/functions/invoke-ai-parse-criteria/index.ts
+schema-builder / api-builder must create this file to turn this test GREEN.
+File: supabase/functions/invoke-ai-parse-criteria/index.ts: expected false to be true // Object.is equality[39m
+ [31m×[39m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-009] Edge Function contains DB insert logic for criteria table[32m 1[2mms[22m[39m
+[31m   → [RED STATE — EXPECTED before Wave 15 implementation]
+Edge Function not found: /home/runner/work/maturion-isms/maturion-isms/supabase/functions/invoke-ai-parse-criteria/index.ts
+schema-builder / api-builder must create this file to turn this test GREEN.
+File: supabase/functions/invoke-ai-parse-criteria/index.ts: expected false to be true // Object.is equality[39m
+ [31m×[39m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-010] useCriteria.ts contains parse-status polling logic[32m 1[2mms[22m[39m
+[31m   → [T-W15-CP-010] useCriteria.ts must include parse-status polling logic.
+Add a `useParseStatus` hook (or similar) with `refetchInterval` that polls
+the parsing task status until it resolves to "completed" or "failed".
+Current implementation has no polling — useTriggerAIParsing() is fire-and-forget.: expected '/**\n * Custom hooks for criteria man…' to match /refetchInterval|useParseStatus|parse…/i[39m
+ [31m×[39m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-011] CriteriaUpload.tsx surfaces explicit inline error messages per FR-103[32m 1[2mms[22m[39m
+[31m   → [T-W15-CP-011] CriteriaUpload.tsx must have a rendered error state for upload failures (FR-103).
+Add: an `uploadError` state variable + a JSX element with `data-testid="criteria-upload-error"`
+that renders the error message inline in the component instead of calling `alert()`.
+Current code calls `alert(...)` on upload failure — this violates FR-103.: expected '/**\n * Criteria Upload Component\n *…' to match /data-testid=["']criteria-upload-erro…/i[39m
+ [31m×[39m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-012] DocumentParser or Edge Function contains needs_human_review flag logic[32m 0[2mms[22m[39m
+[31m   → [T-W15-CP-012] parsing.py or the Edge Function must include `needs_human_review` or `needs_review` flag logic.
+Add: a boolean field to the parse() return dict that is set to True when AI confidence
+is below threshold, signalling that the extracted criteria require human review.
+Example: `needs_human_review: confidence_score < 0.8`: expected '"""\nservices/parsing.py — Document P…' to match /needs_human_review|needs_review/i[39m
+ [31m×[39m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-013] Edge Function or AI Gateway contains LDCS-pattern detection (25 MPS / numbered hierarchy)[32m 0[2mms[22m[39m
+[31m   → [T-W15-CP-013] parsing.py or Edge Function must contain LDCS-pattern detection.
+Add: logic that identifies the LDCS numbered hierarchy (e.g. regex for "X.Y criteria numbers",
+reference to 25 MPS, or LDCS document structure constants).
+This ensures the AI parser correctly handles LDCS-format compliance documents.: expected '"""\nservices/parsing.py — Document P…' to match /ldcs|LDCS|25.*mps|mps.*25|\d+\.\d+\.…/i[39m
+ [31m×[39m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-014] Parsing outcome is logged to audit trail (audit_logs table insert present)[32m 0[2mms[22m[39m
+[31m   → [RED STATE — EXPECTED before Wave 15 implementation]
+Edge Function not found: /home/runner/work/maturion-isms/maturion-isms/supabase/functions/invoke-ai-parse-criteria/index.ts
+schema-builder / api-builder must create this file to turn this test GREEN.
+File: supabase/functions/invoke-ai-parse-criteria/index.ts: expected false to be true // Object.is equality[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 14 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-001] Edge Function invoke-ai-parse-criteria/index.ts exists
+[31m[1mAssertionError[22m: [RED STATE — EXPECTED before Wave 15 implementation]
+Edge Function not found: /home/runner/work/maturion-isms/maturion-isms/supabase/functions/invoke-ai-parse-criteria/index.ts
+schema-builder / api-builder must create this file to turn this test GREEN.
+File: supabase/functions/invoke-ai-parse-criteria/index.ts: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m readEdgeFunction modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m73:5[22m[39m
+    [90m 71| [39m    `schema-builder / api-builder must create this file to turn this t…
+    [90m 72| [39m    [32m`File: supabase/functions/invoke-ai-parse-criteria/index.ts`[39m[33m,[39m
+    [90m 73| [39m  )[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m    [31m^[39m
+    [90m 74| [39m  [35mreturn[39m fs[33m.[39m[34mreadFileSync[39m([33mEDGE_FN_PATH[39m[33m,[39m [32m'utf-8'[39m)[33m;[39m
+    [90m 75| [39m}
+[90m [2m❯[22m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m105:5[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/14]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-002] Edge Function handles missing filePath — returns error payload
+[31m[1mAssertionError[22m: [RED STATE — EXPECTED before Wave 15 implementation]
+Edge Function not found: /home/runner/work/maturion-isms/maturion-isms/supabase/functions/invoke-ai-parse-criteria/index.ts
+schema-builder / api-builder must create this file to turn this test GREEN.
+File: supabase/functions/invoke-ai-parse-criteria/index.ts: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m readEdgeFunction modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m73:5[22m[39m
+    [90m 71| [39m    `schema-builder / api-builder must create this file to turn this t…
+    [90m 72| [39m    [32m`File: supabase/functions/invoke-ai-parse-criteria/index.ts`[39m[33m,[39m
+    [90m 73| [39m  )[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m    [31m^[39m
+    [90m 74| [39m  [35mreturn[39m fs[33m.[39m[34mreadFileSync[39m([33mEDGE_FN_PATH[39m[33m,[39m [32m'utf-8'[39m)[33m;[39m
+    [90m 75| [39m}
+[90m [2m❯[22m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m120:17[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/14]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-003] AI Gateway /parse endpoint is defined in services/parsing.py (not stub)
+[31m[1mAssertionError[22m: [T-W15-CP-003] parsing.py must define a FastAPI route for /parse.
+The current file is a stub with no router. Add: router = APIRouter() and
+@router.post('/parse') to expose the endpoint as required by the architecture.: expected '"""\nservices/parsing.py — Document P…' to match /@router\.(post|get)|APIRouter\(\)|ap…/i[39m
+
+[32m- Expected:[39m 
+/@router\.(post|get)|APIRouter\(\)|app\.(post|get)\s*\(\s*['\"]/i
+
+[31m+ Received:[39m 
+"\"\"\"
+services/parsing.py — Document Parsing service stub.
+
+Architecture reference: modules/mat/02-architecture/system-architecture.md §3.4
+  \"Document Parsing: GPT-4 Turbo, PDF/DOCX → structured criteria JSON\"
+\"\"\"
+
+from __future__ import annotations
+
+
+class DocumentParser:
+    \"\"\"
+    Parses compliance documents (PDF, DOCX) into structured criteria JSON.
+
+    Uses GPT-4 Turbo to extract and normalise audit criteria from uploaded
+    documents.  Full implementation is wired in a later wave; this stub
+    satisfies the architectural interface contract.
+    \"\"\"
+
+    def parse(self, document_url: str, tenant_id: str) -> dict:
+        \"\"\"
+        Parse a document from *document_url* and return structured criteria JSON.
+
+        Parameters
+        ----------
+        document_url:
+            Publicly accessible URL of the document to parse (PDF or DOCX).
+        tenant_id:
+            Tenant scoping key used for audit trail and multi-tenancy isolation.
+
+        Returns
+        -------
+        dict
+            Structured result containing extracted criteria or task queue entry.
+        \"\"\"
+        return {
+            \"status\": \"queued\",
+            \"task_id\": \"stub\",
+            \"document_url\": document_url,
+            \"tenant_id\": tenant_id,
+        }
+"
+
+[36m [2m❯[22m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m154:7[22m[39m
+    [90m152| [39m      "The current file is a stub with no router. Add: router = APIRou…
+    [90m153| [39m      "@router.post('/parse') to expose the endpoint as required by th…
+    [90m154| [39m    ).toMatch(/@router\.(post|get)|APIRouter\(\)|app\.(post|get)\s*\(\…
+    [90m   | [39m      [31m^[39m
+    [90m155| [39m  })[33m;[39m
+    [90m156| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/14]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-004] DocumentParser.parse() contains text extraction logic (pypdf2 or python-docx)
+[31m[1mAssertionError[22m: [T-W15-CP-004] parsing.py must import a text-extraction library.
+Add: `import pypdf2` (or `from pypdf2 import PdfReader`) for PDF support, and/or
+`from docx import Document` (python-docx) for DOCX support.
+The current stub returns a static dict without reading document content.: expected '"""\nservices/parsing.py — Document P…' to match /pypdf2|PdfReader|python[-_]docx|from…/i[39m
+
+[32m- Expected:[39m 
+/pypdf2|PdfReader|python[-_]docx|from docx import|import docx/i
+
+[31m+ Received:[39m 
+"\"\"\"
+services/parsing.py — Document Parsing service stub.
+
+Architecture reference: modules/mat/02-architecture/system-architecture.md §3.4
+  \"Document Parsing: GPT-4 Turbo, PDF/DOCX → structured criteria JSON\"
+\"\"\"
+
+from __future__ import annotations
+
+
+class DocumentParser:
+    \"\"\"
+    Parses compliance documents (PDF, DOCX) into structured criteria JSON.
+
+    Uses GPT-4 Turbo to extract and normalise audit criteria from uploaded
+    documents.  Full implementation is wired in a later wave; this stub
+    satisfies the architectural interface contract.
+    \"\"\"
+
+    def parse(self, document_url: str, tenant_id: str) -> dict:
+        \"\"\"
+        Parse a document from *document_url* and return structured criteria JSON.
+
+        Parameters
+        ----------
+        document_url:
+            Publicly accessible URL of the document to parse (PDF or DOCX).
+        tenant_id:
+            Tenant scoping key used for audit trail and multi-tenancy isolation.
+
+        Returns
+        -------
+        dict
+            Structured result containing extracted criteria or task queue entry.
+        \"\"\"
+        return {
+            \"status\": \"queued\",
+            \"task_id\": \"stub\",
+            \"document_url\": document_url,
+            \"tenant_id\": tenant_id,
+        }
+"
+
+[36m [2m❯[22m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m176:7[22m[39m
+    [90m174| [39m      [32m'`from docx import Document` (python-docx) for DOCX support.\n'[39m [33m+[39m
+    [90m175| [39m      'The current stub returns a static dict without reading document…
+    [90m176| [39m    ).toMatch(/pypdf2|PdfReader|python[-_]docx|from docx import|import…
+    [90m   | [39m      [31m^[39m
+    [90m177| [39m  })[33m;[39m
+    [90m178| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/14]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-005] DocumentParser.parse() calls GPT-4 Turbo (OpenAI client present in parsing.py)
+[31m[1mAssertionError[22m: [T-W15-CP-005] parsing.py must import openai and invoke the GPT-4 Turbo model.
+Add: `import openai` or `from openai import OpenAI` and call the client with
+model="gpt-4-turbo" or "gpt-4-turbo-preview".
+The current stub returns a static dict without calling any AI model.: expected '"""\nservices/parsing.py — Document P…' to match /openai|OpenAI/i[39m
+
+[32m- Expected:[39m 
+/openai|OpenAI/i
+
+[31m+ Received:[39m 
+"\"\"\"
+services/parsing.py — Document Parsing service stub.
+
+Architecture reference: modules/mat/02-architecture/system-architecture.md §3.4
+  \"Document Parsing: GPT-4 Turbo, PDF/DOCX → structured criteria JSON\"
+\"\"\"
+
+from __future__ import annotations
+
+
+class DocumentParser:
+    \"\"\"
+    Parses compliance documents (PDF, DOCX) into structured criteria JSON.
+
+    Uses GPT-4 Turbo to extract and normalise audit criteria from uploaded
+    documents.  Full implementation is wired in a later wave; this stub
+    satisfies the architectural interface contract.
+    \"\"\"
+
+    def parse(self, document_url: str, tenant_id: str) -> dict:
+        \"\"\"
+        Parse a document from *document_url* and return structured criteria JSON.
+
+        Parameters
+        ----------
+        document_url:
+            Publicly accessible URL of the document to parse (PDF or DOCX).
+        tenant_id:
+            Tenant scoping key used for audit trail and multi-tenancy isolation.
+
+        Returns
+        -------
+        dict
+            Structured result containing extracted criteria or task queue entry.
+        \"\"\"
+        return {
+            \"status\": \"queued\",
+            \"task_id\": \"stub\",
+            \"document_url\": document_url,
+            \"tenant_id\": tenant_id,
+        }
+"
+
+[36m [2m❯[22m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m197:7[22m[39m
+    [90m195| [39m      [32m'model="gpt-4-turbo" or "gpt-4-turbo-preview".\n'[39m [33m+[39m
+    [90m196| [39m      'The current stub returns a static dict without calling any AI m…
+    [90m197| [39m    )[33m.[39m[34mtoMatch[39m([36m/openai|OpenAI/i[39m)[33m;[39m
+    [90m   | [39m      [31m^[39m
+    [90m198| [39m    [90m// Also verify the GPT-4 Turbo model string is referenced[39m
+    [90m199| [39m    [34mexpect[39m(
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/14]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-006] AI Gateway /parse response schema includes source_anchor field
+[31m[1mAssertionError[22m: [T-W15-CP-006] parsing.py /parse response must include a `source_anchor` field.
+Add `source_anchor` to the return dict / Pydantic response model to trace
+each extracted criterion back to its source section in the original document.
+Current stub response: { status, task_id, document_url, tenant_id } — no source_anchor.: expected '"""\nservices/parsing.py — Document P…' to match /source_anchor/i[39m
+
+[32m- Expected:[39m 
+/source_anchor/i
+
+[31m+ Received:[39m 
+"\"\"\"
+services/parsing.py — Document Parsing service stub.
+
+Architecture reference: modules/mat/02-architecture/system-architecture.md §3.4
+  \"Document Parsing: GPT-4 Turbo, PDF/DOCX → structured criteria JSON\"
+\"\"\"
+
+from __future__ import annotations
+
+
+class DocumentParser:
+    \"\"\"
+    Parses compliance documents (PDF, DOCX) into structured criteria JSON.
+
+    Uses GPT-4 Turbo to extract and normalise audit criteria from uploaded
+    documents.  Full implementation is wired in a later wave; this stub
+    satisfies the architectural interface contract.
+    \"\"\"
+
+    def parse(self, document_url: str, tenant_id: str) -> dict:
+        \"\"\"
+        Parse a document from *document_url* and return structured criteria JSON.
+
+        Parameters
+        ----------
+        document_url:
+            Publicly accessible URL of the document to parse (PDF or DOCX).
+        tenant_id:
+            Tenant scoping key used for audit trail and multi-tenancy isolation.
+
+        Returns
+        -------
+        dict
+            Structured result containing extracted criteria or task queue entry.
+        \"\"\"
+        return {
+            \"status\": \"queued\",
+            \"task_id\": \"stub\",
+            \"document_url\": document_url,
+            \"tenant_id\": tenant_id,
+        }
+"
+
+[36m [2m❯[22m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m225:7[22m[39m
+    [90m223| [39m      'each extracted criterion back to its source section in the orig…
+    [90m224| [39m      'Current stub response: { status, task_id, document_url, tenant_…
+    [90m225| [39m    )[33m.[39m[34mtoMatch[39m([36m/source_anchor/i[39m)[33m;[39m
+    [90m   | [39m      [31m^[39m
+    [90m226| [39m  })[33m;[39m
+    [90m227| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/14]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-007] Edge Function contains DB insert logic for domains table
+[31m[1mAssertionError[22m: [RED STATE — EXPECTED before Wave 15 implementation]
+Edge Function not found: /home/runner/work/maturion-isms/maturion-isms/supabase/functions/invoke-ai-parse-criteria/index.ts
+schema-builder / api-builder must create this file to turn this test GREEN.
+File: supabase/functions/invoke-ai-parse-criteria/index.ts: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m readEdgeFunction modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m73:5[22m[39m
+    [90m 71| [39m    `schema-builder / api-builder must create this file to turn this t…
+    [90m 72| [39m    [32m`File: supabase/functions/invoke-ai-parse-criteria/index.ts`[39m[33m,[39m
+    [90m 73| [39m  )[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m    [31m^[39m
+    [90m 74| [39m  [35mreturn[39m fs[33m.[39m[34mreadFileSync[39m([33mEDGE_FN_PATH[39m[33m,[39m [32m'utf-8'[39m)[33m;[39m
+    [90m 75| [39m}
+[90m [2m❯[22m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m239:17[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/14]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-008] Edge Function contains DB insert logic for mini_performance_standards table
+[31m[1mAssertionError[22m: [RED STATE — EXPECTED before Wave 15 implementation]
+Edge Function not found: /home/runner/work/maturion-isms/maturion-isms/supabase/functions/invoke-ai-parse-criteria/index.ts
+schema-builder / api-builder must create this file to turn this test GREEN.
+File: supabase/functions/invoke-ai-parse-criteria/index.ts: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m readEdgeFunction modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m73:5[22m[39m
+    [90m 71| [39m    `schema-builder / api-builder must create this file to turn this t…
+    [90m 72| [39m    [32m`File: supabase/functions/invoke-ai-parse-criteria/index.ts`[39m[33m,[39m
+    [90m 73| [39m  )[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m    [31m^[39m
+    [90m 74| [39m  [35mreturn[39m fs[33m.[39m[34mreadFileSync[39m([33mEDGE_FN_PATH[39m[33m,[39m [32m'utf-8'[39m)[33m;[39m
+    [90m 75| [39m}
+[90m [2m❯[22m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m257:17[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/14]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-009] Edge Function contains DB insert logic for criteria table
+[31m[1mAssertionError[22m: [RED STATE — EXPECTED before Wave 15 implementation]
+Edge Function not found: /home/runner/work/maturion-isms/maturion-isms/supabase/functions/invoke-ai-parse-criteria/index.ts
+schema-builder / api-builder must create this file to turn this test GREEN.
+File: supabase/functions/invoke-ai-parse-criteria/index.ts: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m readEdgeFunction modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m73:5[22m[39m
+    [90m 71| [39m    `schema-builder / api-builder must create this file to turn this t…
+    [90m 72| [39m    [32m`File: supabase/functions/invoke-ai-parse-criteria/index.ts`[39m[33m,[39m
+    [90m 73| [39m  )[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m    [31m^[39m
+    [90m 74| [39m  [35mreturn[39m fs[33m.[39m[34mreadFileSync[39m([33mEDGE_FN_PATH[39m[33m,[39m [32m'utf-8'[39m)[33m;[39m
+    [90m 75| [39m}
+[90m [2m❯[22m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m275:17[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/14]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-010] useCriteria.ts contains parse-status polling logic
+[31m[1mAssertionError[22m: [T-W15-CP-010] useCriteria.ts must include parse-status polling logic.
+Add a `useParseStatus` hook (or similar) with `refetchInterval` that polls
+the parsing task status until it resolves to "completed" or "failed".
+Current implementation has no polling — useTriggerAIParsing() is fire-and-forget.: expected '/**\n * Custom hooks for criteria man…' to match /refetchInterval|useParseStatus|parse…/i[39m
+
+[32m- Expected:[39m 
+/refetchInterval|useParseStatus|parseStatus|parse.?status|polling/i
+
+[31m+ Received:[39m 
+"/**
+ * Custom hooks for criteria management
+ * FRS: FR-004 to FR-009
+ * TRS: TR-047, TR-016, TR-028
+ * Task: 5.6.3 (Criteria Management CRUD)
+ */
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '../supabase';
+
+export interface Criterion {
+  id: string;
+  audit_id: string;
+  mps_id: string;
+  number: string;
+  title: string;
+  name?: string;
+  description?: string;
+  status: string;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CriteriaUploadInput {
+  auditId: string;
+  file: File;
+}
+
+export interface MiniPerformanceStandard {
+  id: string;
+  domain_id: string;
+  number: string;
+  name: string;
+  title?: string;
+  sort_order: number;
+  criteria?: Criterion[];
+}
+
+export interface Domain {
+  id: string;
+  audit_id: string;
+  name: string;
+  title?: string;
+  sort_order: number;
+  mini_performance_standards?: MiniPerformanceStandard[];
+}
+
+/**
+ * Fetch criteria tree for an audit (hierarchical: Domain → MPS → Criteria)
+ */
+export function useCriteriaTree(auditId: string) {
+  return useQuery<Domain[], Error>({
+    queryKey: ['criteria-tree', auditId],
+    queryFn: async () => {
+      // Fetch domains with nested MPS and criteria
+      const { data: domains, error: domainsError } = await supabase
+        .from('domains')
+        .select(`
+          *,
+          mini_performance_standards (
+            *,
+            criteria (*)
+          )
+        `)
+        .eq('audit_id', auditId)
+        .order('sort_order', { ascending: true });
+
+      if (domainsError) {
+        throw new Error(`Failed to fetch criteria tree: ${domainsError.message}`);
+      }
+
+      return domains || [];
+    },
+    enabled: !!auditId,
+  });
+}
+
+/**
+ * Upload criteria document to Supabase Storage
+ */
+export function useUploadCriteria() {
+  const queryClient = useQueryClient();
+
+  return useMutation<{ path: string; hash: string }, Error, CriteriaUploadInput>({
+    mutationFn: async ({ auditId, file }) => {
+      // Validate file type
+      const allowedTypes = [
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      ];
+      
+      if (!allowedTypes.includes(file.type)) {
+        throw new Error('Invalid file type. Only PDF, DOCX, and XLSX files are allowed.');
+      }
+
+      // Validate file size (max 10MB)
+      const maxSize = 10 * 1024 * 1024;
+      if (file.size > maxSize) {
+        throw new Error('File size exceeds 10MB limit.');
+      }
+
+      // Compute SHA-256 hash
+      const arrayBuffer = await file.arrayBuffer();
+      const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+      // Fetch authenticated user and their organisation_id (required for RLS-compliant storage paths)
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Authentication required to import criteria');
+
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('organisation_id')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError) throw new Error(`Failed to fetch user profile: ${profileError.message}`);
+      if (!profile?.organisation_id) {
+        throw new Error('Your account is not linked to an organisation.');
+      }
+      const organisationId = profile.organisation_id;
+
+      // Upload to Supabase Storage
+      // Path must start with organisationId to satisfy RLS: split_part(name, '/', 1) = organisation_id
+      const filePath = `${organisationId}/criteria/${auditId}/${Date.now()}-${file.name}`;
+      const { data, error } = await supabase.storage
+        .from('audit-documents')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (error) {
+        throw new Error(`Failed to upload file: ${error.message}`);
+      }
+
+      return { path: data.path, hash };
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['criteria-tree', variables.auditId] });
+    },
+  });
+}
+
+/**
+ * Trigger AI parsing for uploaded criteria document
+ */
+export function useTriggerAIParsing() {
+  return useMutation<void, Error, { auditId: string; filePath: string }>({
+    mutationFn: async ({ auditId, filePath }) => {
+      // Call Edge Function to trigger AI parsing
+      const { data, error } = await supabase.functions.invoke('invoke-ai-parse-criteria', {
+        body: { auditId, filePath }
+      });
+
+      if (error) {
+        throw new Error(`Failed to trigger AI parsing: ${error.message}`);
+      }
+
+      return data;
+    },
+  });
+}
+"
+
+[36m [2m❯[22m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m307:7[22m[39m
+    [90m305| [39m      'the parsing task status until it resolves to "completed" or "fa…
+    [90m306| [39m      'Current implementation has no polling — useTriggerAIParsing() i…
+    [90m307| [39m    ).toMatch(/refetchInterval|useParseStatus|parseStatus|parse.?statu…
+    [90m   | [39m      [31m^[39m
+    [90m308| [39m  })[33m;[39m
+    [90m309| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/14]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-011] CriteriaUpload.tsx surfaces explicit inline error messages per FR-103
+[31m[1mAssertionError[22m: [T-W15-CP-011] CriteriaUpload.tsx must have a rendered error state for upload failures (FR-103).
+Add: an `uploadError` state variable + a JSX element with `data-testid="criteria-upload-error"`
+that renders the error message inline in the component instead of calling `alert()`.
+Current code calls `alert(...)` on upload failure — this violates FR-103.: expected '/**\n * Criteria Upload Component\n *…' to match /data-testid=["']criteria-upload-erro…/i[39m
+
+[32m- Expected:[39m 
+/data-testid=["']criteria-upload-error["']|uploadError/i
+
+[31m+ Received:[39m 
+"/**
+ * Criteria Upload Component
+ * FRS: FR-004 (Criteria Upload)
+ * TRS: TR-047
+ * Task: 5.6.3 (Criteria Management CRUD)
+ */
+import { useState } from 'react';
+import { useUploadCriteria, useTriggerAIParsing } from '../../lib/hooks/useCriteria';
+
+interface CriteriaUploadProps {
+  auditId: string;
+}
+
+export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
+  const uploadCriteria = useUploadCriteria();
+  const triggerParsing = useTriggerAIParsing();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [dragActive, setDragActive] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [aiParsingWarning, setAiParsingWarning] = useState<string | null>(null);
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setSelectedFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) return;
+
+    try {
+      setUploadProgress(50);
+      setAiParsingWarning(null);
+      const result = await uploadCriteria.mutateAsync({ auditId, file: selectedFile });
+      setUploadProgress(75);
+      
+      // Trigger AI parsing — graceful degradation: upload succeeds even if Edge Function unavailable
+      try {
+        await triggerParsing.mutateAsync({ auditId, filePath: result.path });
+      } catch (parsingError) {
+        console.warn('[CriteriaUpload] AI parsing unavailable — upload succeeded, parsing pending:', parsingError);
+        setAiParsingWarning('Upload complete. AI parsing is currently unavailable — your document has been saved and can be manually processed once the parsing service is restored.');
+      }
+
+      setUploadProgress(100);
+      
+      alert('Criteria document uploaded and parsing initiated!');
+      setSelectedFile(null);
+      setUploadProgress(0);
+    } catch (error) {
+      setUploadProgress(0);
+      alert(`Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
+  return (
+    <div className=\"criteria-upload p-6 bg-white border border-gray-200 rounded shadow-sm\">
+      <h3 className=\"text-xl font-semibold mb-4\">Upload Criteria</h3>
+      
+      <div
+        className={`border-2 border-dashed rounded-lg p-8 text-center ${
+          dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+        }`}
+        onDragEnter={handleDrag}
+        onDragLeave={handleDrag}
+        onDragOver={handleDrag}
+        onDrop={handleDrop}
+      >
+        <input
+          type=\"file\"
+          id=\"criteria-file-input\"
+          accept=\".pdf,.docx\"
+          onChange={handleFileChange}
+          className=\"hidden\"
+          aria-label=\"Upload criteria file\"
+        />
+        
+        <label htmlFor=\"criteria-file-input\" className=\"cursor-pointer\">
+          <div className=\"space-y-2\">
+            <p className=\"text-gray-600\">
+              Drag and drop a file here, or click to select
+            </p>
+            <p className=\"text-sm text-gray-500\">
+              Supported formats: PDF, DOCX (max 10MB)
+            </p>
+          </div>
+        </label>
+
+        {selectedFile && (
+          <div className=\"mt-4 p-4 bg-gray-50 rounded\">
+            <p className=\"font-medium\">{selectedFile.name}</p>
+            <p className=\"text-sm text-gray-500\">
+              {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+            </p>
+          </div>
+        )}
+      </div>
+
+      {uploadProgress > 0 && uploadProgress < 100 && (
+        <div className=\"mt-4\">
+          <div className=\"w-full bg-gray-200 rounded-full h-4\" role=\"progressbar\" aria-valuenow={uploadProgress} aria-valuemin={0} aria-valuemax={100}>
+            <div className=\"bg-blue-600 h-4 rounded-full transition-all\" style={{ width: `${uploadProgress}%` }}></div>
+          </div>
+          <p className=\"text-sm text-gray-600 mt-2 text-center\">{uploadProgress}% complete</p>
+        </div>
+      )}
+
+      <button
+        onClick={handleUpload}
+        disabled={!selectedFile || uploadCriteria.isPending}
+        className=\"mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed\"
+      >
+        {uploadCriteria.isPending ? 'Uploading...' : 'Upload and Parse'}
+      </button>
+
+      {aiParsingWarning && (
+        <div
+          data-testid=\"criteria-upload-ai-parsing-warning\"
+          className=\"mt-4 p-4 bg-yellow-50 border border-yellow-400 rounded\"
+          role=\"alert\"
+        >
+          <p className=\"text-yellow-800 text-sm\">{aiParsingWarning}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+"
+
+[36m [2m❯[22m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m334:7[22m[39m
+    [90m332| [39m      'that renders the error message inline in the component instead …
+    [90m333| [39m      'Current code calls `alert(...)` on upload failure — this violat…
+    [90m334| [39m    ).toMatch(/data-testid=["']criteria-upload-error["']|uploadError/i…
+    [90m   | [39m      [31m^[39m
+    [90m335| [39m  })[33m;[39m
+    [90m336| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/14]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-012] DocumentParser or Edge Function contains needs_human_review flag logic
+[31m[1mAssertionError[22m: [T-W15-CP-012] parsing.py or the Edge Function must include `needs_human_review` or `needs_review` flag logic.
+Add: a boolean field to the parse() return dict that is set to True when AI confidence
+is below threshold, signalling that the extracted criteria require human review.
+Example: `needs_human_review: confidence_score < 0.8`: expected '"""\nservices/parsing.py — Document P…' to match /needs_human_review|needs_review/i[39m
+
+[32m- Expected:[39m 
+/needs_human_review|needs_review/i
+
+[31m+ Received:[39m 
+"\"\"\"
+services/parsing.py — Document Parsing service stub.
+
+Architecture reference: modules/mat/02-architecture/system-architecture.md §3.4
+  \"Document Parsing: GPT-4 Turbo, PDF/DOCX → structured criteria JSON\"
+\"\"\"
+
+from __future__ import annotations
+
+
+class DocumentParser:
+    \"\"\"
+    Parses compliance documents (PDF, DOCX) into structured criteria JSON.
+
+    Uses GPT-4 Turbo to extract and normalise audit criteria from uploaded
+    documents.  Full implementation is wired in a later wave; this stub
+    satisfies the architectural interface contract.
+    \"\"\"
+
+    def parse(self, document_url: str, tenant_id: str) -> dict:
+        \"\"\"
+        Parse a document from *document_url* and return structured criteria JSON.
+
+        Parameters
+        ----------
+        document_url:
+            Publicly accessible URL of the document to parse (PDF or DOCX).
+        tenant_id:
+            Tenant scoping key used for audit trail and multi-tenancy isolation.
+
+        Returns
+        -------
+        dict
+            Structured result containing extracted criteria or task queue entry.
+        \"\"\"
+        return {
+            \"status\": \"queued\",
+            \"task_id\": \"stub\",
+            \"document_url\": document_url,
+            \"tenant_id\": tenant_id,
+        }
+"
+
+[36m [2m❯[22m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m366:7[22m[39m
+    [90m364| [39m      'is below threshold, signalling that the extracted criteria requ…
+    [90m365| [39m      [32m"Example: `needs_human_review: confidence_score < 0.8`"[39m[33m,[39m
+    [90m366| [39m    )[33m.[39m[34mtoMatch[39m([36m/needs_human_review|needs_review/i[39m)[33m;[39m
+    [90m   | [39m      [31m^[39m
+    [90m367| [39m  })[33m;[39m
+    [90m368| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/14]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-013] Edge Function or AI Gateway contains LDCS-pattern detection (25 MPS / numbered hierarchy)
+[31m[1mAssertionError[22m: [T-W15-CP-013] parsing.py or Edge Function must contain LDCS-pattern detection.
+Add: logic that identifies the LDCS numbered hierarchy (e.g. regex for "X.Y criteria numbers",
+reference to 25 MPS, or LDCS document structure constants).
+This ensures the AI parser correctly handles LDCS-format compliance documents.: expected '"""\nservices/parsing.py — Document P…' to match /ldcs|LDCS|25.*mps|mps.*25|\d+\.\d+\.…/i[39m
+
+[32m- Expected:[39m 
+/ldcs|LDCS|25.*mps|mps.*25|\d+\.\d+\.\d+.*pattern|numbered.*hierarchy|hierarchy.*numbered/i
+
+[31m+ Received:[39m 
+"\"\"\"
+services/parsing.py — Document Parsing service stub.
+
+Architecture reference: modules/mat/02-architecture/system-architecture.md §3.4
+  \"Document Parsing: GPT-4 Turbo, PDF/DOCX → structured criteria JSON\"
+\"\"\"
+
+from __future__ import annotations
+
+
+class DocumentParser:
+    \"\"\"
+    Parses compliance documents (PDF, DOCX) into structured criteria JSON.
+
+    Uses GPT-4 Turbo to extract and normalise audit criteria from uploaded
+    documents.  Full implementation is wired in a later wave; this stub
+    satisfies the architectural interface contract.
+    \"\"\"
+
+    def parse(self, document_url: str, tenant_id: str) -> dict:
+        \"\"\"
+        Parse a document from *document_url* and return structured criteria JSON.
+
+        Parameters
+        ----------
+        document_url:
+            Publicly accessible URL of the document to parse (PDF or DOCX).
+        tenant_id:
+            Tenant scoping key used for audit trail and multi-tenancy isolation.
+
+        Returns
+        -------
+        dict
+            Structured result containing extracted criteria or task queue entry.
+        \"\"\"
+        return {
+            \"status\": \"queued\",
+            \"task_id\": \"stub\",
+            \"document_url\": document_url,
+            \"tenant_id\": tenant_id,
+        }
+"
+
+[36m [2m❯[22m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m396:7[22m[39m
+    [90m394| [39m      [32m'reference to 25 MPS, or LDCS document structure constants).\n'[39m [33m+[39m
+    [90m395| [39m      'This ensures the AI parser correctly handles LDCS-format compli…
+    [90m396| [39m    ).toMatch(/ldcs|LDCS|25.*mps|mps.*25|\d+\.\d+\.\d+.*pattern|number…
+    [90m   | [39m      [31m^[39m
+    [90m397| [39m  })[33m;[39m
+    [90m398| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/14]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts[2m > [22mWave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)[2m > [22m[T-W15-CP-014] Parsing outcome is logged to audit trail (audit_logs table insert present)
+[31m[1mAssertionError[22m: [RED STATE — EXPECTED before Wave 15 implementation]
+Edge Function not found: /home/runner/work/maturion-isms/maturion-isms/supabase/functions/invoke-ai-parse-criteria/index.ts
+schema-builder / api-builder must create this file to turn this test GREEN.
+File: supabase/functions/invoke-ai-parse-criteria/index.ts: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m readEdgeFunction modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m73:5[22m[39m
+    [90m 71| [39m    `schema-builder / api-builder must create this file to turn this t…
+    [90m 72| [39m    [32m`File: supabase/functions/invoke-ai-parse-criteria/index.ts`[39m[33m,[39m
+    [90m 73| [39m  )[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m    [31m^[39m
+    [90m 74| [39m  [35mreturn[39m fs[33m.[39m[34mreadFileSync[39m([33mEDGE_FN_PATH[39m[33m,[39m [32m'utf-8'[39m)[33m;[39m
+    [90m 75| [39m}
+[90m [2m❯[22m modules/mat/tests/wave15/wave15-criteria-parsing.test.ts:[2m413:17[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/14]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m14 failed[39m[22m[90m (14)[39m
+[2m   Start at [22m 11:45:23
+[2m   Duration [22m 319ms[2m (transform 38ms, setup 0ms, collect 37ms, tests 17ms, environment 0ms, prepare 65ms)[22m
+

@@ -1,8 +1,12 @@
 /**
  * Criteria Upload Component
- * FRS: FR-004 (Criteria Upload)
+ * FRS: FR-004 (Criteria Upload), FR-103 (Error Surfacing)
  * TRS: TR-047
  * Task: 5.6.3 (Criteria Management CRUD)
+ *
+ * Wave 15 — T-W15-IMPL-002 (ui-builder)
+ * FR-103: Upload component MUST surface explicit error messages — not silent fail.
+ *   uploadError state replaces alert() for upload failures.
  */
 import { useState } from 'react';
 import { useUploadCriteria, useTriggerAIParsing } from '../../lib/hooks/useCriteria';
@@ -18,6 +22,8 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
   const [dragActive, setDragActive] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [aiParsingWarning, setAiParsingWarning] = useState<string | null>(null);
+  // FR-103: inline error state — replaces alert() for upload failures
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -48,9 +54,12 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
   const handleUpload = async () => {
     if (!selectedFile) return;
 
+    // FR-103: clear previous errors before each upload attempt
+    setUploadError(null);
+    setAiParsingWarning(null);
+
     try {
       setUploadProgress(50);
-      setAiParsingWarning(null);
       const result = await uploadCriteria.mutateAsync({ auditId, file: selectedFile });
       setUploadProgress(75);
       
@@ -72,8 +81,11 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
       setSelectedFile(null);
       setUploadProgress(0);
     } catch (error) {
+      // FR-103: surface upload failure as inline error, not browser alert
       setUploadProgress(0);
-      alert(`Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setUploadError(
+        error instanceof Error ? error.message : 'Upload failed due to an unknown error. Please try again.',
+      );
     }
   };
 
@@ -144,6 +156,18 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
           role="alert"
         >
           <p className="text-yellow-800 text-sm">{aiParsingWarning}</p>
+        </div>
+      )}
+
+      {/* FR-103: inline upload error — replaces alert() */}
+      {uploadError && (
+        <div
+          data-testid="criteria-upload-error"
+          className="mt-4 p-4 bg-red-50 border border-red-400 rounded"
+          role="alert"
+        >
+          <p className="text-red-800 text-sm font-medium">Upload failed</p>
+          <p className="text-red-700 text-sm mt-1">{uploadError}</p>
         </div>
       )}
     </div>

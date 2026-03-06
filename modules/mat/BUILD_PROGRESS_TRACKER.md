@@ -2,9 +2,9 @@
 
 **Module**: Mat  
 **Module Slug**: mat  
-**Version**: v1.5  
+**Version**: v1.6  
 **Last Updated**: 2026-03-06  
-**Updated By**: foreman-v2-agent (post-fcwt-production-failures-remediation-20260306)
+**Updated By**: foreman-v2-agent (wave15-orchestration-20260306)
 
 ---
 
@@ -3118,4 +3118,122 @@ the upload workflow. Full AI parsing will be restored when the Edge Function is 
 | 2026-03-06 | T-PFCWT-001–005 GREEN | 5/5 post-FCWT RED gate tests passing — immediate mitigation complete |
 | 2026-03-06 | FAIL-ONLY-ONCE UPDATED | INC-POST-FCWT-SORT-ORDER-001 + INC-POST-FCWT-EDGE-FN-001 + A-032 candidate recorded |
 | ⏳ TBD | F2-D DEFERRED | Full Edge Function (invoke-ai-parse-criteria) — future wave |
+
+
+---
+
+## Wave 15 — Post-Delivery Oversight Remediation: Criteria Parsing Pipeline
+
+**Wave**: 15  
+**Oversight ID**: INC-POST-FCWT-CRITERIA-PIPELINE-001  
+**Issue**: Wave 15 — Criteria Parsing Pipeline: Edge Function + AI Gateway + UI Integration  
+**Branch**: `copilot/initiate-wave-15-orchestration`  
+**CS2 Authorization**: Issue opened and assigned by @APGI-cmy — 2026-03-06  
+**IAA Category**: `AAWP_MAT` — OVL-AM-001 through OVL-AM-008 apply  
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave15.md` — COMMITTED  
+**Wave State**: 🔴 PENDING BUILD  
+**Last Updated**: 2026-03-06  
+
+---
+
+### Post-Delivery Oversight: Criteria Parsing Pipeline
+
+**Detected**: 2026-03-06 (post-FCWT live testing with Lucara Diamond Control Standard (LDCS) document)  
+**Classification**: Post-FCWT gap — architecture-to-implementation gap — two components were architecturally designed (App Description §6.2, §16.6, §15.1) but implementation was deferred and never completed before FCWT.
+
+**Root Cause**:
+1. **Supabase Edge Function `invoke-ai-parse-criteria`** — does not exist in production. Identified in PR #955 as `INC-POST-FCWT-EDGE-FN-001` and deferred. The frontend calls `supabase.functions.invoke('invoke-ai-parse-criteria', ...)` but no function exists.
+2. **AI Gateway `DocumentParser`** — `apps/mat-ai-gateway/services/parsing.py` returns `{"status": "queued", "task_id": "stub"}` and does nothing. No text extraction, no GPT-4 Turbo call, no structured JSON output.
+
+**Consequence**: Criteria upload UI works (file goes to Supabase Storage) but parsing silently fails — no criteria hierarchy is ever created. The LDCS test document (100 pages, 25 Minimum Performance Standards, numbered sub-criteria) uploaded fine but produced zero criteria hierarchy output.
+
+**Why it escaped FCWT**: The post-FCWT graceful degradation fix (PR #955, INC-POST-FCWT-EDGE-FN-001) added error surface in the UI but deliberately deferred the full Edge Function implementation. This Wave formalises and delivers that deferred implementation.
+
+---
+
+### Wave 15 Governance Batch (this PR — `copilot/initiate-wave-15-orchestration`)
+
+| Task | Builder | Deliverable | Status |
+|------|---------|-------------|--------|
+| T-W15-GOV-001 | foreman-v2 | `modules/mat/BUILD_PROGRESS_TRACKER.md` — Wave 15 section | ✅ THIS ENTRY |
+| T-W15-GOV-002 | mat-specialist | `modules/mat/00-app-description/app-description.md` → v1.4 — §6.2 concretised | ✅ DONE |
+| T-W15-GOV-003 | mat-specialist | `modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md` — parsing cycle added | ✅ DONE |
+| T-W15-GOV-004 | mat-specialist | `modules/mat/01-frs/functional-requirements.md` → v2.0.0 — FR-005 expanded + FR-103 added | ✅ DONE |
+| T-W15-GOV-005 | mat-specialist | `modules/mat/02-architecture/system-architecture.md` — §Criteria Parsing Pipeline Architecture | ✅ DONE |
+| T-W15-QA-001 | qa-builder | `modules/mat/tests/wave15/wave15-criteria-parsing.test.ts` — 14 RED tests (T-W15-CP-001 to T-W15-CP-014) | ✅ DELIVERED |
+
+### Wave 15 Batch A — Edge Function + AI Gateway (separate PR, api-builder)
+
+| Task | Builder | Deliverable | Status |
+|------|---------|-------------|--------|
+| T-W15-IMPL-001a | api-builder | `supabase/functions/invoke-ai-parse-criteria/index.ts` | 🔴 PENDING |
+| T-W15-IMPL-001b | api-builder | Real `DocumentParser.parse()` in `apps/mat-ai-gateway/services/parsing.py` | 🔴 PENDING |
+| T-W15-IMPL-001c | api-builder | DB write-back logic (transaction-wrapped inserts to `domains`, `mps`, `criteria`) | 🔴 PENDING |
+
+**Env Vars Required**: `AI_GATEWAY_URL`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
+
+### Wave 15 Batch B — UI Integration (separate PR, ui-builder)
+
+| Task | Builder | Deliverable | Status |
+|------|---------|-------------|--------|
+| T-W15-IMPL-002a | ui-builder | `CriteriaUpload.tsx` — replace silent failure with FR-103 error surfacing | 🔴 PENDING |
+| T-W15-IMPL-002b | ui-builder | `useCriteria.ts` hook — add polling logic for parse job completion | 🔴 PENDING |
+| T-W15-IMPL-002c | ui-builder | Criteria Hierarchy panel — render populated tree from DB when polling resolves | 🔴 PENDING |
+
+### Wave 15 Batch C — QA RED → GREEN (separate PR, qa-builder)
+
+| Task | Builder | Deliverable | Status |
+|------|---------|-------------|--------|
+| T-W15-IMPL-003 | qa-builder | T-W15-CP-001 to T-W15-CP-014 all GREEN | 🔴 PENDING |
+
+### CST Gate (mandatory — between Batch A and Batch B)
+
+Per IAA Pre-Brief: CST is mandatory after Wave 15 Batch A (convergence point: Edge Function + UI both live). CWT is mandatory before IBWR for Wave 15.
+
+---
+
+### Wave 15 Tests
+
+| Test ID | Description | Status |
+|---------|-------------|--------|
+| T-W15-CP-001 | Edge Function `invoke-ai-parse-criteria` exists and returns HTTP 200 for valid input | 🔴 PENDING RED |
+| T-W15-CP-002 | Edge Function returns error payload for missing `filePath` | 🔴 PENDING RED |
+| T-W15-CP-003 | AI Gateway `/parse` endpoint returns valid JSON conforming to §15.1 schema | 🔴 PENDING RED |
+| T-W15-CP-004 | DocumentParser extracts hierarchy from a well-structured PDF (numbered sections) | 🔴 PENDING RED |
+| T-W15-CP-005 | DocumentParser extracts hierarchy from an unstructured free-text document | 🔴 PENDING RED |
+| T-W15-CP-006 | All extracted criteria have a non-null `source_anchor` | 🔴 PENDING RED |
+| T-W15-CP-007 | DB write-back: `domains` table contains rows after successful parse | 🔴 PENDING RED |
+| T-W15-CP-008 | DB write-back: `mini_performance_standards` rows link to correct domain | 🔴 PENDING RED |
+| T-W15-CP-009 | DB write-back: `criteria` rows link to correct MPS | 🔴 PENDING RED |
+| T-W15-CP-010 | UI Criteria Hierarchy panel renders parsed domains after polling completes | 🔴 PENDING RED |
+| T-W15-CP-011 | UI shows error banner on Edge Function failure (not silent) | 🔴 PENDING RED |
+| T-W15-CP-012 | Unstructured document: all extracted items flagged `needs_human_review = true` | 🔴 PENDING RED |
+| T-W15-CP-013 | LDCS integration test: 25 MPS extracted, each with correct sub-criteria count | 🔴 PENDING RED |
+| T-W15-CP-014 | Parsing job logged in audit trail with timestamp and outcome | 🔴 PENDING RED |
+
+---
+
+### Wave 15 Completion Gates
+
+- [ ] All governance documentation tasks T-W15-GOV-001 to T-W15-GOV-006 complete
+- [ ] RED QA suite committed (T-W15-QA-001) — 14 tests all RED
+- [ ] Governance Batch IAA ASSURANCE-TOKEN received
+- [ ] Batch A IAA ASSURANCE-TOKEN received
+- [ ] Batch B IAA ASSURANCE-TOKEN received
+- [ ] Batch C IAA ASSURANCE-TOKEN received (all 14 tests GREEN)
+- [ ] CWT PASS for Wave 15
+- [ ] Oversight INC-POST-FCWT-CRITERIA-PIPELINE-001 explicitly marked CLOSED with evidence
+
+### Wave 15 State Machine
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-06 | OVERSIGHT DETECTED | INC-POST-FCWT-CRITERIA-PIPELINE-001: parsing pipeline silently failing in production |
+| 2026-03-06 | WAVE 15 INITIATED | Foreman received CS2 issue; Phase 1 preflight complete; IAA Pre-Brief committed |
+| 2026-03-06 | GOVERNANCE BATCH OPEN | Documentation + RED QA being built in this PR |
+| ⏳ TBD | BATCH A | Edge Function + AI Gateway + DB write-back |
+| ⏳ TBD | BATCH B | UI error surfacing + polling + hierarchy panel |
+| ⏳ TBD | BATCH C | QA RED → GREEN (all 14 tests) |
+| ⏳ TBD | CWT | Mandatory before wave closure |
+| ⏳ TBD | WAVE 15 COMPLETE | Oversight closed; IBWR submitted |
 

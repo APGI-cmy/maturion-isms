@@ -149,6 +149,29 @@ Step 2 — Create Your Organisation
 4. Result written to: `public.domains`, `public.mps`, `public.criteria` (linked to `audit_id`)
 5. Status updated to `pending_review`
 
+#### Step 2a — Concrete Parse Cycle Wiring (Wave 15)
+
+The complete, concretised wiring for the upload-to-parse cycle is:
+
+```
+UI (CriteriaUpload.tsx)
+  → useTriggerAIParsing hook (fires on upload success)
+    → Supabase Edge Function: invoke-ai-parse-criteria
+        (supabase/functions/invoke-ai-parse-criteria/index.ts)
+      → AI Gateway /parse endpoint
+          (apps/mat-ai-gateway/services/parsing.py → DocumentParser.parse())
+        → DB write-back:
+            INSERT INTO public.domains
+            INSERT INTO public.mini_performance_standards
+            INSERT INTO public.criteria
+  → Frontend polling: useCriteria.ts (polls criteria_documents.status)
+    → Criteria Hierarchy panel renders (Domain → MPS → Criteria tree)
+```
+
+**Polling behaviour:** `useCriteria.ts` polls `criteria_documents.status` until status reaches `pending_review` (success) or `parse_failed` (error). On `parse_failed`, the UI surfaces a clear error message — silent failures are prohibited (see FR-103).
+
+**DB write-back is transactional:** All domain/MPS/criteria inserts for a single parse job are wrapped in a DB transaction. A partial failure rolls back all inserts for that job.
+
 **Screen: Criteria Review**
 - User sees proposed structure tree (Domain → MPS → Criteria)
 - User can edit names/numbers before approval
@@ -661,3 +684,18 @@ The Foreman should commission RED gate tests (failing because the feature is not
 ---
 
 *This document was generated from CS2 verbal specification (2026-03-04) and gap analysis against existing MAT app description artifacts. It is authoritative for the purposes of RED QA suite commissioning and FRS gap remediation.*
+
+---
+
+## Wave 15 Correction — 2026-03-06
+
+> **Wave 15 correction — 2026-03-06 — parsing workflow wiring concretised per INC-POST-FCWT-CRITERIA-PIPELINE-001**
+
+In Wave 15 post-delivery oversight review, it was identified that the criteria parsing pipeline wiring lacked concrete end-to-end specification. Specifically, the upstream/downstream bindings between `CriteriaUpload.tsx`, `useTriggerAIParsing`, the Supabase Edge Function `invoke-ai-parse-criteria`, the AI Gateway `/parse` endpoint, DB write-back, `useCriteria.ts` polling, and the Criteria Hierarchy panel were defined only at a high level in STEP 2.
+
+**Correction applied:** Step 2a (Concrete Parse Cycle Wiring) was added to STEP 2 above, providing the full, explicit component-to-component wiring diagram for the parse cycle. This correction is traceable to incident INC-POST-FCWT-CRITERIA-PIPELINE-001 and mirrors the architectural concretisation recorded in:
+- App Description §6.2 and §6.2.1 (v1.4)
+- System Architecture §4 (Criteria Parsing Pipeline Architecture)
+- FRS FR-005 acceptance criteria 7–14 and FR-103 (Parsing Resilience and Error Surface)
+
+No functional behaviour was changed by this correction — only the wiring documentation was made explicit.
