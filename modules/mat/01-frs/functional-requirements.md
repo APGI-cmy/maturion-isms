@@ -2123,7 +2123,7 @@ The system MUST surface parsing errors explicitly to the user. Silent failures a
 3. Parsing timeout (>5 minutes) → display: "Parsing is taking longer than expected. You will be notified when complete."
 4. All parsing failure events are logged to the audit trail.
 
-**Note on numbering**: FR-102 is already assigned to "Responsibility Cascade Rule Wired in DB and UI (GAP-W14)". This requirement is assigned FR-103 per Wave 15 governance direction. The original delegation specified FR-102 for this requirement, but FR-102 was pre-occupied. Foreman to record this in the incidence log.
+**Note on numbering**: FR-102 is already assigned to "Responsibility Cascade Rule Wired in DB and UI (GAP-W14)". This requirement is assigned FR-103 per Wave 15 governance direction. The original delegation specified FR-102 for this requirement, but FR-102 was pre-occupied. Foreman recorded this in: `modules/mat/BUILD_PROGRESS_TRACKER.md` Wave 15 section; `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` task T-W15-GOV-004 notes; and `session-wave15-orchestration-20260306.md` session memory.
 
 ---
 

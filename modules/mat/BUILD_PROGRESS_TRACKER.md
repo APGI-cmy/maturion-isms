@@ -3156,10 +3156,10 @@ the upload workflow. Full AI parsing will be restored when the Edge Function is 
 | Task | Builder | Deliverable | Status |
 |------|---------|-------------|--------|
 | T-W15-GOV-001 | foreman-v2 | `modules/mat/BUILD_PROGRESS_TRACKER.md` — Wave 15 section | ✅ THIS ENTRY |
-| T-W15-GOV-002 | mat-specialist | `modules/mat/00-app-description/app-description.md` → v1.4 — §6.2 concretised | 🔴 PENDING |
-| T-W15-GOV-003 | mat-specialist | `modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md` — parsing cycle added | 🔴 PENDING |
-| T-W15-GOV-004 | mat-specialist | `modules/mat/01-frs/functional-requirements.md` → v2.0.0 — FR-005 expanded + FR-103 added | 🔴 PENDING |
-| T-W15-GOV-005 | mat-specialist | `modules/mat/02-architecture/system-architecture.md` — §Criteria Parsing Pipeline Architecture | 🔴 PENDING |
+| T-W15-GOV-002 | mat-specialist | `modules/mat/00-app-description/app-description.md` → v1.4 — §6.2 concretised | ✅ DONE |
+| T-W15-GOV-003 | mat-specialist | `modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md` — parsing cycle added | ✅ DONE |
+| T-W15-GOV-004 | mat-specialist | `modules/mat/01-frs/functional-requirements.md` → v2.0.0 — FR-005 expanded + FR-103 added | ✅ DONE |
+| T-W15-GOV-005 | mat-specialist | `modules/mat/02-architecture/system-architecture.md` — §Criteria Parsing Pipeline Architecture | ✅ DONE |
 | T-W15-QA-001 | qa-builder | `modules/mat/tests/wave15/wave15-criteria-parsing.test.ts` — 14 RED tests (T-W15-CP-001 to T-W15-CP-014) | ✅ DELIVERED |
 
 ### Wave 15 Batch A — Edge Function + AI Gateway (separate PR, api-builder)

@@ -33,7 +33,7 @@ The criteria upload UI works (file goes to Supabase Storage), but parsing silent
 | 2 | T-W15-GOV-002 | Update app-description.md to v1.4 — concretise §6.2 Parsing Pipeline, version bump, history entry | mat-specialist | 🔴 PENDING | — |
 | 3 | T-W15-GOV-003 | Update MAT_UX_WORKFLOW_AND_WIRING.md — add UI→Edge Fn→AI Gateway→DB→poll cycle | mat-specialist | 🔴 PENDING | — |
 | 4 | T-W15-GOV-004 | Update functional-requirements.md to v2.0.0 — expand FR-005 (8 new ACs), add FR-102 | mat-specialist | 🔴 PENDING | — |
-| 5 | T-W15-GOV-005 | Update system-architecture.md — add §Criteria Parsing Pipeline Architecture section | mat-specialist | 🔴 PENDING | — |
+| 5 | T-W15-GOV-005 | Update system-architecture.md — add §Criteria Parsing Pipeline Architecture section | mat-specialist | 🟢 DONE | This PR |
 | 6 | T-W15-QA-001 | Create RED QA suite: src/test/wave15-criteria-parsing.test.ts (T-W15-CP-001 to T-W15-CP-014) | qa-builder | 🔴 PENDING | — |
 | 7 | T-W15-IMPL-001 | Batch A: Edge Function `invoke-ai-parse-criteria` + real DocumentParser.parse() + DB write-back | api-builder | 🔴 PENDING | — |
 | 8 | T-W15-IMPL-002 | Batch B: CriteriaUpload.tsx error surfacing + useCriteria.ts polling + Hierarchy panel | ui-builder | 🔴 PENDING | — |

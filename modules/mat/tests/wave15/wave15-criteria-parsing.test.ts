@@ -27,6 +27,8 @@
  * vitest.config.ts (include glob for modules/mat/tests). This file is placed at
  * `modules/mat/tests/wave15/wave15-criteria-parsing.test.ts` to match the
  * established convention and be picked up by the existing test runner.
+ * Decision recorded in: `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
+ * and session memory `session-wave15-orchestration-20260306.md`.
  */
 import { describe, it, expect } from 'vitest';
 import * as fs from 'node:fs';
