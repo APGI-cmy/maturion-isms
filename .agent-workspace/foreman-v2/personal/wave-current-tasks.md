@@ -1,107 +1,56 @@
-# Wave Current Tasks — Wave UX-Alert-Fix
-# Session: session-156
-# Date: 2026-03-06
-# Branch: copilot/fix-ux-alert-issue
-# Issue: Fix UX: alert fires on AI parsing failure in CriteriaUpload.tsx
-# Authority: CS2 (@APGI-cmy) — Foreman re-alignment directive (new_requirement comment)
-# Protocol Reference: IAA_PRE_BRIEF_PROTOCOL.md v1.1.0 §Trigger
+# Wave Current Tasks — foreman-v2-agent
+
+**Wave**: Wave WF-Dispatch — Workflow Manual Dispatch Fix
+**Session**: session-157-wave-wf-dispatch-20260306
+**Date**: 2026-03-06
+**Issue**: copilot/fix-workflow-trigger-conditions — fix: allow deploy-production and cwt jobs to run on workflow_dispatch
+**Branch**: copilot/fix-workflow-trigger-conditions
+**CS2 Authorization**: `@foreman-v2-agent please take over and complete this job` — posted by @APGI-cmy in PR/issue
+**Protocol Reference**: IAA_PRE_BRIEF_PROTOCOL.md v1.1.0 §Trigger
 
 ---
 
-## Wave Identity
+## Wave Context
 
-| Field | Value |
-|---|---|
-| Wave ID | wave-ux-alert-fix |
-| Session | session-156 |
-| Date | 2026-03-06 |
-| Branch | copilot/fix-ux-alert-issue |
-| Issue | Fix UX: alert fires on AI parsing failure in CriteriaUpload.tsx |
-| Triggering Incident | INC-POST-FCWT-EDGE-FN-001 (UX advisory observation from PR #955) |
-| IAA Pre-Brief | PENDING — awaiting IAA Pre-Brief artifact |
+The workflow `.github/workflows/deploy-mat-ai-gateway.yml` had `workflow_dispatch:` in its
+`on:` triggers but the `deploy-production` and `cwt` jobs had `if:` conditions that only
+allowed them to run on `push` to `main`. A previous Copilot session (non-ISMS agent) made
+the 2-line code fix. The Foreman is now taking over to provide the governance ceremony
+required by the governance-ceremony-gate for `.github/workflows/**` changes.
 
----
-
-## Wave Tasks
-
-### TASK-UX-001 — Write Red QA Test (T-PFCWT-006)
-**Builder**: qa-builder
-**File**: `modules/mat/tests/postfcwt/ai-parsing-graceful.test.ts`
-**Description**: Add test T-PFCWT-006 that asserts the alert in CriteriaUpload.tsx is conditional — it must only fire when parsing succeeded (no aiParsingWarning set). The test must read CriteriaUpload.tsx source and assert the pattern. Must be RED before ui-builder begins.
-**Acceptance criteria**:
-- Test file-reads CriteriaUpload.tsx source
-- Asserts alert call is inside a conditional guard checking parsing success
-- Test FAILS before the fix is applied (RED gate confirmed)
-- No modifications to CriteriaUpload.tsx in this task
-
-**Qualifying for IAA**: YES
-**Evidence required**: test file diff, RED run result
+**POLC NOTE**: The implementation was performed by a non-ISMS general-purpose Copilot agent
+before Foreman was assigned. No builder delegation is needed — the change is already applied
+and correct. This session's scope is: QP evaluation of the existing change + governance
+ceremony completion (PREHANDOVER proof + session memory + IAA audit + token ceremony +
+SCOPE_DECLARATION + PR body governance block).
 
 ---
 
-### TASK-UX-002 — Fix CriteriaUpload.tsx alert pattern
-**Builder**: ui-builder
-**File**: `modules/mat/frontend/src/components/criteria/CriteriaUpload.tsx`
-**Description**: Fix handleUpload so alert only fires when AI parsing succeeded. If inner catch is taken (aiParsingWarning set), skip the alert — warning element is the only user feedback.
-**Acceptance criteria**:
-- Alert fires ONLY when parsing succeeded (parsingSucceeded === true after inner try/catch)
-- If AI parsing fails (inner catch taken), alert is NOT called
-- data-testid="criteria-upload-ai-parsing-warning" remains visible when parsing fails
-- T-PFCWT-006 turns GREEN
-- T-PFCWT-004 and T-PFCWT-005 remain GREEN (no regression)
-- No other tests broken
+## Tasks
 
-**Qualifying for IAA**: YES
-**Evidence required**: component diff, test run (all GREEN including T-PFCWT-006)
-**DEPENDENCY**: TASK-UX-001 must be complete and RED-confirmed before this task begins.
+| ID | Task | Builder | IAA Qualifying? |
+|----|------|---------|-----------------|
+| TASK-WFD-001 | QP evaluate the 2-line workflow change against the problem statement spec | Foreman (QP mode) | YES — touches .github/workflows/** (governance-ceremony gate) |
+| TASK-WFD-002 | Clear SCOPE_DECLARATION.md per A-029 and write correct scope (1 workflow file + governance artifacts) | Foreman (governance artifact) | YES |
+| TASK-WFD-003 | Write PREHANDOVER proof (session-157) | Foreman (Phase 4) | YES |
+| TASK-WFD-004 | Write session memory (session-157) | Foreman (Phase 4) | YES |
+| TASK-WFD-005 | Invoke IAA Final Audit | IAA (independent-assurance-agent) | YES — mandatory |
+| TASK-WFD-006 | Token ceremony: IAA writes iaa-token-session-157-wave-wf-dispatch-20260306.md | IAA (independent-assurance-agent) | YES |
+| TASK-WFD-007 | Update PR body with ## Governance block | Foreman (via report_progress) | YES |
 
 ---
 
-## Qualifying Tasks (IAA Gate Required)
+## Acceptance Criteria
 
-| Task | Category | Qualifying? | Reason |
-|------|----------|-------------|--------|
-| TASK-UX-001 | AAWP_MAT | YES | RED gate test for MAT module |
-| TASK-UX-002 | AAWP_MAT | YES | Production frontend component change |
-
----
-
-## Expected Artifacts for IAA Handover
-
-| # | Artifact | Builder | Status |
-|---|---------|---------|--------|
-| 1 | `modules/mat/tests/postfcwt/ai-parsing-graceful.test.ts` (T-PFCWT-006 GREEN) | qa-builder | PENDING |
-| 2 | `modules/mat/frontend/src/components/criteria/CriteriaUpload.tsx` (conditional alert) | ui-builder | PENDING |
-| 3 | PREHANDOVER proof | foreman | PENDING |
-| 4 | IAA ASSURANCE-TOKEN | IAA | PENDING |
+- `deploy-production` job `if:` condition at line 146 matches spec exactly: `(github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'`
+- `cwt` job `if:` condition at line 209 matches spec exactly: `(github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'`
+- `deploy-preview` job `if:` condition at line 57 UNCHANGED: `github.event_name == 'pull_request'`
+- No other lines in the workflow file changed
+- SCOPE_DECLARATION.md cleared and rewritten with correct scope
+- PREHANDOVER proof exists at `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-157-wave-wf-dispatch-20260306.md`
+- IAA token exists at `.agent-admin/assurance/iaa-token-session-157-wave-wf-dispatch-20260306.md`
+- PR body contains `## Governance` block with IAA Category, IAA Audit Token, PREHANDOVER Proof
 
 ---
 
-## Re-Anchor Pulse Data
-
-| Field | Value |
-|---|---|
-| wave_id | wave-ux-alert-fix |
-| session_id | session-156 |
-| total_tasks | 2 |
-| qualifying_tasks | 2 |
-| exempt_tasks | 0 |
-| builders_required | qa-builder, ui-builder |
-| iaa_prebrief_required | YES |
-| estimated_test_delta | +1 (T-PFCWT-006) |
-| files_modified | modules/mat/tests/postfcwt/ai-parsing-graceful.test.ts, modules/mat/frontend/src/components/criteria/CriteriaUpload.tsx |
-
----
-
-## Wave Completion Gate
-
-- [ ] IAA Pre-Brief invoked
-- [ ] IAA Pre-Brief artifact received at `.agent-admin/assurance/iaa-prebrief-wave-ux-alert-fix.md`
-- [ ] TASK-UX-001 complete: T-PFCWT-006 written and RED-confirmed
-- [ ] TASK-UX-002 complete: CriteriaUpload.tsx conditional alert fix
-- [ ] QP Evaluation: PASS
-- [ ] §4.3 Merge gate parity check: executed
-- [ ] IAA ASSURANCE-TOKEN received
-- [ ] PREHANDOVER proof committed
-- [ ] Session memory written
-- [ ] CS2 notified for merge approval
+*Authority: CS2 (@APGI-cmy) | Wave WF-Dispatch | 2026-03-06*
