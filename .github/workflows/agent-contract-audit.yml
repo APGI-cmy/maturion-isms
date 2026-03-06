@@ -67,9 +67,11 @@ jobs:
             exit 0
           fi
 
-          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
-          git fetch origin "${BASE_BRANCH}" --depth=1 2>/dev/null || true
-          CHANGED_FILES=$(git diff --name-only "origin/${BASE_BRANCH}...HEAD" 2>/dev/null || \
+          # Use the exact base SHA from the PR event to avoid shallow-fetch corruption.
+          # git fetch --depth=1 after a full-history checkout creates a shallow boundary
+          # that causes git log to include main-branch commits erroneously.
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          CHANGED_FILES=$(git diff --name-only "${BASE_SHA}...HEAD" 2>/dev/null || \
                           git diff --name-only HEAD~1 2>/dev/null || true)
 
           AGENT_FILES=""
@@ -227,9 +229,11 @@ jobs:
           echo "PR Author: $PR_AUTHOR"
           echo ""
 
-          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
-          git fetch origin "${BASE_BRANCH}" --depth=1 2>/dev/null || true
-          COMMITS=$(git log "origin/${BASE_BRANCH}..HEAD" --pretty=format:"%H|%an|%ae" 2>/dev/null || true)
+          # Use the exact base SHA from the PR event to avoid shallow-fetch corruption.
+          # git fetch --depth=1 after a full-history checkout creates a shallow boundary
+          # that causes git log to include main-branch commits erroneously.
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          COMMITS=$(git log "${BASE_SHA}..HEAD" --pretty=format:"%H|%an|%ae" 2>/dev/null || true)
 
           VIOLATION_FOUND=false
           VIOLATION_DETAILS=""
