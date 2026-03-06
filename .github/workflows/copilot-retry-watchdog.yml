@@ -1,0 +1,108 @@
+name: Copilot Retry Watchdog
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  retry-stopped-sessions:
+    name: "copilot/retry-stopped-sessions"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Detect stopped Copilot sessions and post retry comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const stoppedSignals = [
+              'copilot stopped work due to an error',
+              'access denied error from git',
+              'encountered an access denied error',
+            ];
+
+            const retryMarker = 'GitHub internal process stopped your previous session';
+            const oneHourMs = 60 * 60 * 1000;
+            const now = Date.now();
+
+            // 1. Find all open PRs assigned to 'copilot'
+            const { data: allPRs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 50,
+            });
+
+            const copilotPRs = allPRs.filter(pr =>
+              pr.assignees && pr.assignees.some(a => a.login === 'copilot')
+            );
+
+            if (copilotPRs.length === 0) {
+              core.info('No open PRs assigned to copilot — nothing to do.');
+              return;
+            }
+
+            for (const pr of copilotPRs) {
+              const prNumber = pr.number;
+
+              // 2. Collect text to scan: PR body + recent comments (last 30, descending)
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                per_page: 30,
+                sort: 'created',
+                direction: 'desc',
+              });
+
+              const prBody = (pr.body || '').toLowerCase();
+              const commentBodies = comments.map(c => (c.body || '').toLowerCase());
+              const allText = [prBody, ...commentBodies].join('\n');
+
+              // Check for stopped-work signals
+              const stoppedDetected = stoppedSignals.some(signal => allText.includes(signal));
+
+              if (!stoppedDetected) {
+                core.info(`PR #${prNumber}: no stopped-work signal detected — skipping.`);
+                continue;
+              }
+
+              // 3. Idempotency guard: skip if retry comment already posted in the last 1 hour
+              const recentRetry = comments.some(c => {
+                if (!c.body || !c.body.includes(retryMarker)) return false;
+                const age = now - new Date(c.created_at).getTime();
+                return age < oneHourMs;
+              });
+
+              if (recentRetry) {
+                core.info(`PR #${prNumber}: retry comment already posted within the last hour — skipping to prevent spam.`);
+                continue;
+              }
+
+              // 4. Post the retry comment
+              const body = [
+                '## 🔄 Copilot Session Auto-Retry',
+                '',
+                '@copilot Please proceed and finish the job.',
+                '',
+                'A GitHub internal process stopped your previous session — this is an automated retry trigger.',
+                'Your work was not lost. Please resume from where you left off and complete the task.',
+                '',
+                '*Copilot Retry Watchdog — automated recovery | This comment was posted automatically because the session was detected as stopped.*',
+              ].join('\n');
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body,
+              });
+
+              core.warning(`PR #${prNumber}: stopped-work signal detected — retry comment posted.`);
+            }
