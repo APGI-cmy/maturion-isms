@@ -3,12 +3,12 @@
 **Module**: MAT (Manual Audit Tool)
 **Artifact Type**: Functional Requirements Specification
 **Status**: COMPLETE
-**Version**: v1.9.0  
+**Version**: v2.0.0  
 **Owner**: Foreman (FM)  
-**Authority**: Derived from App Description v1.3 (modules/mat/00-app-description/app-description.md); UX Workflow & Wiring Specification v1.0 (modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md)
+**Authority**: Derived from App Description v1.4 (modules/mat/00-app-description/app-description.md); UX Workflow & Wiring Specification v1.0 (modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md)
 **Applies To**: MAT module within maturion-isms repository
 **Created**: 2026-02-13
-**Last Updated**: 2026-03-04
+**Last Updated**: 2026-03-06
 
 ---
 
@@ -141,6 +141,14 @@ The system MUST invoke AI to parse uploaded criteria documents and extract a thr
 4. AI includes warnings for ambiguous or uncertain extractions.
 5. Items with confidence < 0.85 are flagged with `needs_human_review = true`.
 6. Parsing progress is displayed to the user.
+7. Edge Function `invoke-ai-parse-criteria` is deployed and reachable from the frontend.
+8. The Edge Function fetches the file from Supabase Storage using the stored `filePath`.
+9. The AI Gateway endpoint `/parse` is called with the file content and `auditId`.
+10. Parsed hierarchy is written to DB: `domains`, `mini_performance_standards`, `criteria` tables.
+11. Frontend polls for parse completion; Criteria Hierarchy panel updates when complete.
+12. If parsing fails, a clear error is surfaced in the UI (not a silent failure).
+13. Parsing supports both well-structured (numbered sections) and unstructured (free-form) documents.
+14. For unstructured documents, AI constructs a best-effort hierarchy and flags all items with `needs_human_review = true`.
 
 **Edge Cases**:
 - Documents with no discernible structure: AI must flag the entire document for manual structuring.
@@ -1605,6 +1613,8 @@ This FRS is derived from the MAT App Description v1.2 (`modules/mat/00-app-descr
 **Next Stage**: This FRS feeds into the TRS (Technical Requirements Specification) at `modules/mat/01.5-trs/`.
 
 **Change Log**:
+- v2.0.0 (2026-03-06): FR-005 expanded — acceptance criteria 7–14 added (Wave 15 oversight, concrete pipeline wiring); FR-103 added (Parsing Resilience and Error Surface); Wave 15 oversight INC-POST-FCWT-CRITERIA-PIPELINE-001 recorded. Authority derived from App Description v1.4.
+- v1.9.0 (2026-03-04): Added FR-089 through FR-102 (Wave 14 GAP-W01–GAP-W14 — UX workflow gaps, scoring, responsibility cascade). FRS extended to 102 requirements.
 - v1.8.0 (2026-03-04): Added FR-084 through FR-088 (Wave postbuild-fails-02 — Full RLS Remediation, GAP-006–GAP-013). All 5 requirements marked 🔴 NEEDS REMEDIATION pending schema-builder migration delivery. FRS extended to 88 requirements.
 - v1.7.0 (2026-03-04): Added FR-082, FR-083 (Wave postbuild-fails-01 — RLS Fix, handle_new_user trigger). FRS extended to 83 requirements.
 - v1.6.0 (2026-03-03): Added FR-078 through FR-081 (Wave 14 Addendum A — Column Mapping Remediation INC-W14-COL-MAPPING-001). FRS extended to 81 requirements.
@@ -2095,6 +2105,25 @@ The system MUST enforce the responsibility cascade rule at all hierarchy levels 
 
 **Test**: T-W14-UX-014
 **Gap ref**: GAP-W14
+
+---
+
+### FR-103: Parsing Resilience and Error Surface
+
+**Priority**: P0
+**Source**: Wave 15 Oversight — Post-delivery gap remediation (INC-POST-FCWT-CRITERIA-PIPELINE-001)
+
+The system MUST surface parsing errors explicitly to the user. Silent failures are prohibited.
+
+**Description**: Whenever the criteria parsing pipeline encounters a failure at any stage — Edge Function invocation, AI Gateway processing, or DB write-back — the frontend MUST display a clear, human-readable error message. No parsing failure may result in a UI state that appears successful or produces no feedback.
+
+**Acceptance Criteria**:
+1. If Edge Function invocation fails → display: "Document parsing could not be started. Please try again."
+2. If AI Gateway returns error → display: "AI parsing failed. Please review the document manually or retry."
+3. Parsing timeout (>5 minutes) → display: "Parsing is taking longer than expected. You will be notified when complete."
+4. All parsing failure events are logged to the audit trail.
+
+**Note on numbering**: FR-102 is already assigned to "Responsibility Cascade Rule Wired in DB and UI (GAP-W14)". This requirement is assigned FR-103 per Wave 15 governance direction. The original delegation specified FR-102 for this requirement, but FR-102 was pre-occupied. Foreman to record this in the incidence log.
 
 ---
 
