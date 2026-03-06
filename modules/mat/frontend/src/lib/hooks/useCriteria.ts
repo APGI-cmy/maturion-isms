@@ -163,3 +163,47 @@ export function useTriggerAIParsing() {
     },
   });
 }
+
+/**
+ * Poll AI parsing task status until terminal state (completed / failed)
+ *
+ * Wave 15 — T-W15-IMPL-002 (ui-builder)
+ * FR requirement: The UI must reflect parsing progress in real time.
+ *
+ * Uses TanStack Query refetchInterval to poll parse status every 3 seconds
+ * until the task reaches "completed" or "failed" terminal state.
+ */
+export function useParseStatus(auditId: string | null, taskId: string | null) {
+  return useQuery<{ status: string; parse_status?: string; error?: string }, Error>({
+    queryKey: ['parse-status', auditId, taskId],
+    queryFn: async () => {
+      if (!taskId || !auditId) return { status: 'idle' };
+
+      const { data, error } = await supabase
+        .from('parse_tasks')
+        .select('status, error_message, created_at, updated_at')
+        .eq('id', taskId)
+        .eq('audit_id', auditId)
+        .single();
+
+      if (error) {
+        throw new Error(`Failed to fetch parse status: ${error.message}`);
+      }
+
+      return {
+        status: data?.status ?? 'unknown',
+        parse_status: data?.status,
+        error: data?.error_message,
+      };
+    },
+    enabled: !!taskId && !!auditId,
+    // polling: refetch every 3 s until terminal state
+    refetchInterval: (query) => {
+      const status = query.state.data?.status;
+      if (status === 'completed' || status === 'failed') {
+        return false; // stop polling at terminal state
+      }
+      return 3000; // poll every 3 seconds
+    },
+  });
+}

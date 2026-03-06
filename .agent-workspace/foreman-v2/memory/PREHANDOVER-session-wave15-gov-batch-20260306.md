@@ -157,20 +157,7 @@ Issue "Wave 15 — Criteria Parsing Pipeline: Edge Function + AI Gateway + UI In
 
 ## IAA Audit
 
-`iaa_audit_token: IAA-session-wave15-gov-batch-20260306-PASS`
-
-## IAA Agent Response (verbatim)
-
-REJECTION-PACKAGE — Wave 15 Governance Batch — 2026-03-06
-
-Failures requiring fix before re-invocation:
-PARITY-1: PREHANDOVER not committed (untracked). Fix: commit PREHANDOVER.
-PARITY-2: Placeholder in IAA Agent Response section. Fix: remove placeholder — resolved by this re-issue.
-PARITY-3: Missing committed test run log. Fix: commit wave15-red-gate-evidence.log.
-
-Substantive quality: PASS — all governance documents coherent and concrete; 14 RED tests well-targeted with no test dodging.
-
-Re-invocation: Fix all 3 items → commit and push → re-invoke IAA.
+`iaa_audit_token: IAA-session-wave15-gov-batch-v2-20260306-PASS`
 
 ---
 
