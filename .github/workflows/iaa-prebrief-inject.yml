@@ -178,22 +178,79 @@ jobs:
           TASKS_SNIPPET: ${{ steps.wave_tasks.outputs.tasks_snippet }}
           WAVE_NUM: ${{ steps.wave_tasks.outputs.wave_num }}
           PR_NUMBER: ${{ steps.find_pr.outputs.pr_number }}
+          GH_REF: ${{ github.ref }}
         with:
           script: |
             const tasksFound = process.env.TASKS_FOUND === 'true';
             const tasksSnippet = process.env.TASKS_SNIPPET || '';
             const waveNum = (process.env.WAVE_NUM || 'unknown').trim();
             const prNumberEnv = process.env.PR_NUMBER || '';
-
-            if (!prNumberEnv) {
-              core.notice('No PR found for this branch push — skipping comment. Create a PR first, then use /iaa-prebrief to invoke manually.');
-              return;
-            }
-            const issueNumber = parseInt(prNumberEnv, 10);
+            const branchRef = (process.env.GH_REF || '').replace('refs/heads/', '');
 
             const taskSection = tasksFound
               ? '\n' + tasksSnippet + '\n...\n'
               : '> ⚠️ `wave-current-tasks.md` was not found on this branch. Ensure the Foreman has committed it before proceeding.';
+
+            if (!prNumberEnv) {
+              // No open PR — post on the linked issue instead of silently dropping.
+              // Resolve issue number from wave-current-tasks.md **Issue**: field,
+              // or fall back to branch name convention (e.g. fix/NNN-title → issue NNN).
+              const fs = require('fs');
+              let issueNumber = null;
+
+              const tasksFile = '.agent-workspace/foreman-v2/personal/wave-current-tasks.md';
+              if (fs.existsSync(tasksFile)) {
+                const fileContent = fs.readFileSync(tasksFile, 'utf8');
+                const issueMatch = fileContent.match(/\*\*Issue\*\*:\s*#?(\d+)/i);
+                if (issueMatch) {
+                  issueNumber = parseInt(issueMatch[1], 10);
+                }
+              }
+
+              if (!issueNumber) {
+                const branchMatch = branchRef.match(/[\/\-](\d{3,})/);
+                if (branchMatch) {
+                  issueNumber = parseInt(branchMatch[1], 10);
+                }
+              }
+
+              if (!issueNumber) {
+                core.warning(`No PR found and could not resolve issue number from branch '${branchRef}' — Pre-Brief reminder could not be delivered. Create a PR and use /iaa-prebrief to invoke manually.`);
+                return;
+              }
+
+              const noPrBody = [
+                '## ⚠️ IAA Pre-Brief Reminder — No Open PR Found',
+                '',
+                `**Trigger**: \`wave-current-tasks.md\` was pushed to branch \`${branchRef}\``,
+                '**Status**: Pre-Brief reminder triggered but **no open PR was found** for this branch.',
+                '',
+                '> ⛔ Per **foreman-v2-agent contract Step 1.8**, you may not proceed past Phase 1 until the IAA Pre-Brief has been performed.',
+                '',
+                '### Required actions:',
+                '1. **Open a PR immediately** (DRAFT is acceptable) for the wave branch',
+                '2. **Invoke the IAA Pre-Brief** per Step 1.8 by commenting `/iaa-prebrief` on the PR',
+                '3. **Do not begin any implementation work** until the Pre-Brief artifact is committed to `.agent-admin/assurance/iaa-prebrief-wave[N].md`',
+                '',
+                '### CS2 escalation notice',
+                '> The pre-brief reminder workflow (`iaa-prebrief-inject.yml`) fired but could not deliver the Pre-Brief invocation to a PR because no open PR exists for this branch.',
+                '> @APGI-cmy — governance safety net triggered on push without PR. Agent must open PR before proceeding.',
+                '',
+                '*IAA Pre-Brief Injection — Authority: foreman-v2-agent contract Step 1.8, IAA_PRE_BRIEF_PROTOCOL.md v1.1.0*',
+              ].join('\n');
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                body: noPrBody,
+              });
+
+              core.warning(`No PR found — Pre-Brief reminder posted on issue #${issueNumber} instead.`);
+              return;
+            }
+
+            const issueNumber = parseInt(prNumberEnv, 10);
 
             const body = [
               '## 🔍 IAA Pre-Brief Invocation',
@@ -201,7 +258,7 @@ jobs:
               '**Trigger**: `wave-current-tasks.md` pushed to this branch',
               '**Action Required**: IAA — generate Pre-Brief for this wave',
               '',
-              `@copilot You are the **Independent Assurance Agent (IAA)**. The Foreman has committed \\`wave-current-tasks.md\` for this wave. You are now invoked per \\`IAA_PRE_BRIEF_PROTOCOL.md §Trigger\` to generate the **Wave Pre-Brief**.`,
+              `@copilot You are the **Independent Assurance Agent (IAA)**. The Foreman has committed \`wave-current-tasks.md\` for this wave. You are now invoked per \`IAA_PRE_BRIEF_PROTOCOL.md §Trigger\` to generate the **Wave Pre-Brief**.`,
               '',
               '### Your obligations (from `IAA_PRE_BRIEF_PROTOCOL.md` v1.1.0):',
               '',
@@ -211,7 +268,7 @@ jobs:
               '   - Which proof phases (1–4) are required',
               '   - Which evidence artifacts will be checked',
               '   - Which canon overlays apply',
-              `4. Generate the Pre-Brief artifact at: \\`.agent-admin/assurance/iaa-prebrief-wave${waveNum}.md\``,
+              `4. Generate the Pre-Brief artifact at: \`.agent-admin/assurance/iaa-prebrief-wave${waveNum}.md\``,
               '5. Commit the Pre-Brief artifact to this branch as a **new file only** (do NOT modify any existing committed artifact)',
               '6. Confirm completion by replying to this comment with the Pre-Brief artifact path and a summary of qualifying tasks found',
               '',
@@ -311,3 +368,136 @@ jobs:
                 'See `IAA_PRE_BRIEF_PROTOCOL.md §Trigger` for requirements.',
               ].join('\n'),
             });
+
+  # ── T+10min Safety Net ────────────────────────────────────────────────────
+  # Fires 10 minutes after the initial push to a wave branch and checks
+  # whether the IAA Pre-Brief artifact has been committed. If still absent,
+  # posts a governance watchdog alert to the PR and/or linked issue.
+  iaa-prebrief-safety-net:
+    name: "iaa-prebrief/t10-safety-net"
+    runs-on: ubuntu-latest
+    needs: iaa-prebrief-inject
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Wait 10 minutes (T+10 safety net window)
+        run: sleep 600
+
+      - name: Checkout branch at current state
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 1
+
+      - name: Read wave number from wave-current-tasks.md
+        id: wave_info
+        run: |
+          TASKS_FILE=".agent-workspace/foreman-v2/personal/wave-current-tasks.md"
+          if [ -f "$TASKS_FILE" ]; then
+            WAVE_NUM=$(grep -m1 -oP '(?<=\*\*Wave\*\*:\s)(Wave\s+)?\K\S+' "$TASKS_FILE" || echo "unknown")
+            echo "wave_num=$WAVE_NUM" >> "$GITHUB_OUTPUT"
+          else
+            echo "wave_num=unknown" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check if pre-brief artifact exists at T+10min
+        id: check_prebrief
+        run: |
+          WAVE_NUM="${{ steps.wave_info.outputs.wave_num }}"
+          ASSURANCE_DIR=".agent-admin/assurance"
+          if [ "$WAVE_NUM" != "unknown" ] && [ -f "${ASSURANCE_DIR}/iaa-prebrief-wave${WAVE_NUM}.md" ] && ! grep -qi "SUPERSEDED" "${ASSURANCE_DIR}/iaa-prebrief-wave${WAVE_NUM}.md" 2>/dev/null; then
+            echo "prebrief_exists=true" >> "$GITHUB_OUTPUT"
+          elif [ "$WAVE_NUM" = "unknown" ] && find "$ASSURANCE_DIR" -name "iaa-prebrief-wave*.md" -print -quit 2>/dev/null | grep -q .; then
+            echo "prebrief_exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prebrief_exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Post T+10min safety net warning if pre-brief still absent
+        if: steps.check_prebrief.outputs.prebrief_exists == 'false'
+        uses: actions/github-script@v7
+        env:
+          GH_REF: ${{ github.ref }}
+          WAVE_NUM: ${{ steps.wave_info.outputs.wave_num }}
+        with:
+          script: |
+            const branchRef = (process.env.GH_REF || '').replace('refs/heads/', '');
+            const waveNum = (process.env.WAVE_NUM || 'unknown').trim();
+
+            const warningBody = [
+              '## ⚠️ GOVERNANCE WATCHDOG — Pre-Brief Not Detected (T+10min)',
+              '',
+              'The IAA Pre-Brief artifact has **not** been committed 10 minutes after the first push to this branch.',
+              '',
+              '**Agent instruction**: Stop all work. Invoke IAA Pre-Brief per Step 1.8 before continuing.',
+              '',
+              '**CS2 escalation**: The pre-brief reminder workflow fired but no pre-brief was performed.',
+              `@APGI-cmy — T+10min safety net triggered on branch \`${branchRef}\` with no pre-brief artifact found.`,
+              '',
+              '### Possible causes:',
+              '1. Agent skipped Step 1.8 (IAA Pre-Brief Invocation)',
+              '2. `wave-current-tasks.md` not yet pushed to the branch',
+              '3. Branch does not match `paths:` filter in `iaa-prebrief-inject.yml`',
+              '4. Pre-brief artifact committed to wrong path (must be `.agent-admin/assurance/iaa-prebrief-wave[N].md`)',
+              '5. GitHub Actions queue delay exceeded the safety net window',
+              '',
+              '### Required actions:',
+              '1. If no PR exists: open a PR immediately (DRAFT is acceptable)',
+              '2. Invoke the IAA Pre-Brief by commenting `/iaa-prebrief` on the PR',
+              `3. Ensure the Pre-Brief artifact is committed to \`.agent-admin/assurance/iaa-prebrief-wave${waveNum}.md\``,
+              '4. Do not proceed with further implementation until the artifact is confirmed',
+              '',
+              '*IAA Pre-Brief Safety Net (T+10min) — Authority: foreman-v2-agent contract Step 1.8, IAA_PRE_BRIEF_PROTOCOL.md v1.1.0*',
+            ].join('\n');
+
+            // Try to post to open PR first
+            const { data: pulls } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              head: `${context.repo.owner}:${branchRef}`,
+              per_page: 1,
+            });
+
+            if (pulls.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pulls[0].number,
+                body: warningBody,
+              });
+              core.warning(`T+10min safety net: Pre-Brief still absent. Alert posted on PR #${pulls[0].number}.`);
+              return;
+            }
+
+            // No PR — attempt to resolve issue from wave-current-tasks.md or branch name
+            const fs = require('fs');
+            let issueNumber = null;
+
+            const tasksFile = '.agent-workspace/foreman-v2/personal/wave-current-tasks.md';
+            if (fs.existsSync(tasksFile)) {
+              const fileContent = fs.readFileSync(tasksFile, 'utf8');
+              const issueMatch = fileContent.match(/\*\*Issue\*\*:\s*#?(\d+)/i);
+              if (issueMatch) {
+                issueNumber = parseInt(issueMatch[1], 10);
+              }
+            }
+
+            if (!issueNumber) {
+              const branchMatch = branchRef.match(/[\/\-](\d{3,})/);
+              if (branchMatch) {
+                issueNumber = parseInt(branchMatch[1], 10);
+              }
+            }
+
+            if (issueNumber) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                body: warningBody,
+              });
+              core.warning(`T+10min safety net: Pre-Brief still absent. Alert posted on issue #${issueNumber}.`);
+            } else {
+              core.warning(`T+10min safety net: Pre-Brief still absent but could not resolve PR or issue number for branch '${branchRef}'.`);
+            }
