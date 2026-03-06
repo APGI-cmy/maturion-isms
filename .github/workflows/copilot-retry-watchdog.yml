@@ -40,7 +40,7 @@ jobs:
             });
 
             const copilotPRs = allPRs.filter(pr =>
-              pr.assignees && pr.assignees.some(a => a.login === 'copilot')
+              pr.assignees && pr.assignees.some(a => a.login.toLowerCase() === 'copilot')
             );
 
             if (copilotPRs.length === 0) {
