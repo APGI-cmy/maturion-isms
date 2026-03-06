@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "type": "layer_down_received",
+  "timestamp": "2026-03-05T09:43:30Z",
+  "canonical_commit": "6b4f735c0e99341256fa7bd218f8db28681101c1",
+  "dispatch_id": "6b4f735c",
+  "trigger": "Update CodexAdvisor-agent.md",
+  "changed_paths": [
+    ".github/agents/CodexAdvisor-agent.md"
+  ],
+  "requires_cs2_approval": true,
+  "escalated": true,
+  "escalation_ref": "ESC-AGENTFILE-6B4F735C-20260305",
+  "session": "session-051-20260306",
+  "notes": "A-015 (CS2-authorized): CodexAdvisor-agent.md escalated directly to CS2. No governance canon files in payload. No files layered down."
+}

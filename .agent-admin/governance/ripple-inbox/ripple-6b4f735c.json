@@ -1,0 +1,20 @@
+{
+  "event_type": "governance_ripple",
+  "canonical_commit": "6b4f735c0e99341256fa7bd218f8db28681101c1",
+  "inventory_version": "1.0.0",
+  "changed_paths": [
+    ".github/agents/CodexAdvisor-agent.md"
+  ],
+  "sender": "APGI-cmy/maturion-foreman-governance",
+  "dispatch_id": "6b4f735c",
+  "timestamp": "2026-03-05T09:43:30Z",
+  "trigger": "Update CodexAdvisor-agent.md",
+  "processing_status": "ESCALATED_TO_CS2",
+  "processing_notes": "A-015 (CS2-authorized): ripple payload contains .github/agents/CodexAdvisor-agent.md — this file must be escalated directly to CS2 only, not routed to CodexAdvisor-agent. No governance canon files in this payload. Zero files layered down.",
+  "files_layered_down": [],
+  "files_escalated": [
+    ".github/agents/CodexAdvisor-agent.md"
+  ],
+  "escalation_ref": "ESC-AGENTFILE-6B4F735C-20260305",
+  "session": "session-051-20260306"
+}
