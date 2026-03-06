@@ -2,9 +2,9 @@
 
 **Module**: Mat  
 **Module Slug**: mat  
-**Version**: v1.4  
-**Last Updated**: 2026-03-05  
-**Updated By**: qa-builder (session-144-fcwt-final-20260305)
+**Version**: v1.5  
+**Last Updated**: 2026-03-06  
+**Updated By**: foreman-v2-agent (post-fcwt-production-failures-remediation-20260306)
 
 ---
 
@@ -1273,8 +1273,8 @@ Track the progression through the canonical module lifecycle stages.
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 5 (Build Execution — **Wave 14 IBWR COMPLETE ✅ — FINAL WAVE COMPLETE — FCWT READY**) | Wave 12 COMPLETE | Wave 13 CST/CWT/FCWT CI-CERTIFIED COMPLETE ✅ | Wave 14 (GAP-W01–W15): ALL 3 BATCHES COMPLETE, CWT PASS (104/104), IAA TOKENS ISSUED ✅ | Wave postbuild-fails-01/02/03 COMPLETE ✅ | IBWR: session-143 / 2026-03-05
-**Overall Progress**: 706 tests GREEN (post-Wave 14 Batch C, 2026-03-05). Wave 14: T-W14-UX-001–016 ✅ | T-W14-COL-001–006 ✅ (all 104 Wave 14 tests GREEN). T-W13-AUTH-1–4 ✅ | T-W13-CI-1–3 ✅ | T-W13-WIRE-1–8 ✅ | T-PBF-001–004 ✅ | T-PBF2-001–008 ✅ | T-PBF3-001–007 ✅. Pre-existing live-env failures: 9 (EXPECTED RED — require VITE_SUPABASE_URL in CI; unchanged)
+**Current Stage**: Stage 5 (Build Execution — **FCWT CI-CERTIFIED COMPLETE ✅ | Post-FCWT Production Failures ACTIVE 🔴**)
+**Overall Progress**: 774 CI-testable tests GREEN (FCWT Final, session-144, 2026-03-05). 9 EXPECTED RED (live-env). Post-FCWT production failures: INC-POST-FCWT-SORT-ORDER-001 (domains.sort_order missing) + INC-POST-FCWT-EDGE-FN-001 (invoke-ai-parse-criteria Edge Function missing). Both under active remediation. 779 CI-testable tests GREEN post-remediation (5 new T-PFCWT-001–005 GREEN).
 **Blockers**:
 - 🚨 **AUDIT CREATION BLOCKED** (2026-03-03): Production surfaces `Could not find the 'audit_period_end' column of 'audits' in the schema cache` — migration `20260302000000_mat_core_tables.sql` omits `audit_period_start` and `audit_period_end` columns. New migration required. Fix delegated to schema-builder. RCA: F-02 addendum (INC-W13-AUDIT-SCHEMA-001).
 - 🚨 **PROFILE SAVE BROKEN** (2026-03-03): `useSettings.ts` writes to `user_profiles` table which does not exist — correct table is `profiles`. Fix delegated to ui-builder. RCA: F-10 addendum (INC-W13-PROFILE-TABLE-001).
@@ -1304,7 +1304,18 @@ Track the progression through the canonical module lifecycle stages.
 - ✅ **Wave 11 COMPLETE (2026-03-01)**: Supabase Persistent Memory Wiring — `SupabasePersistentMemoryAdapter` implemented, `buildPersistentMemory()` wired, `supabaseWiring: "active"`, 430/430 tests GREEN (session-075; IAA: IAA-session-021-20260301-PASS)
 - ✅ **Wave 12 COMPLETE (2026-03-01)**: Full Functionality & Build Wiring Verification — qa-builder Task 12.1 (+34), api-builder Task 12.2 (+10), ui-builder Task 12.3 (+42), integration-builder Task 12.4 (+38); 554/554 total GREEN; all W12-GAP-001–007 resolved; deploy-mat-ai-gateway.yml wired for Render (session-078/080/081; IAA: IAA-session-026-20260301-PASS / IAA-session-029-20260301-PASS / IAA-session-030-20260301-PASS)
 
-**Next Steps**: 
+**Next Steps**:
+
+> **Post-FCWT Current Priority Actions (2026-03-06 update)**:
+> 1. ✅ Wave 14 Batch A/B/C — MERGED
+> 2. ✅ FCWT Final — CI-CERTIFIED PRODUCTION READY (session-144, 2026-03-05)
+> 3. 🔴 Apply Wave 14 + Post-FCWT migrations to Supabase production (9 Wave 14 + 1 sort_order migration)
+> 4. 🔴 Deploy MAT frontend to Vercel production
+> 5. 🔴 INC-POST-FCWT-SORT-ORDER-001: sort_order migration + RED gate tests (T-PFCWT-001–003 GREEN ✅)
+> 6. 🔴 INC-POST-FCWT-EDGE-FN-001: AI parsing graceful degradation (immediate mitigation) + full Edge Function (future wave) (T-PFCWT-004–005 GREEN ✅)
+> 7. ⏳ Re-run T-W13-SCH and T-W13-E2E tests against live environment post-deployment
+> 8. ⏳ Execute MAT Liveness Test Suite (workflow_dispatch against live Vercel URL once secrets configured)
+
 1. ~~Create `01.5-trs/` folder in module structure~~
 2. ~~Develop TRS based on FRS requirements (FR-001 to FR-069)~~
 3. ~~Complete Architecture with TRS constraints~~
@@ -2991,3 +3002,120 @@ All 774 CI-testable tests pass. All 28 GAPs closed. Architecture frozen. Evidenc
 | 2026-03-05 | EVIDENCE BUNDLE CREATED | `fcwt-final-evidence-bundle-20260305.md` |
 | 2026-03-05 | BPT UPDATED | v1.3 → v1.4; FCWT Final section added |
 | 2026-03-05 | ✅ FCWT FINAL COMPLETE | CI-CERTIFIED PRODUCTION READY; pending CS2 deployment sign-over |
+| 2026-03-06 | 🔴 POST-FCWT FAILURES DETECTED | INC-POST-FCWT-SORT-ORDER-001 (domains.sort_order missing) + INC-POST-FCWT-EDGE-FN-001 (invoke-ai-parse-criteria Edge Function missing). FCWT CI verdict unchanged (CI tests do not cover live-env schema or Edge Function existence). Both failures recorded and remediated in this PR (T-PFCWT-001–005 GREEN). |
+
+---
+
+## 🔴 WAVE POST-FCWT PRODUCTION FAILURES — REMEDIATION IN PROGRESS
+
+**Issue**: Post-FCWT Production Failures (INC-POST-FCWT-SORT-ORDER-001 + INC-POST-FCWT-EDGE-FN-001)  
+**Detected**: 2026-03-06 (live testing post-FCWT deployment)  
+**Authority**: CS2 (Johan Ras / @APGI-cmy)  
+**Status**: 🔴 FAILURES DETECTED → REMEDIATION IN PROGRESS
+
+> **FCWT CI verdict is unchanged.** CI tests do not cover live-env schema column existence or
+> Supabase Edge Function deployment. The FCWT certification (session-144, 774/783 GREEN) remains
+> valid for CI-testable tests. These are live-env gaps not catchable in the CI-only pipeline.
+
+---
+
+### INC-POST-FCWT-SORT-ORDER-001 — `column domains.sort_order does not exist`
+
+**Classification**: Schema-to-hook drift (same class as INC-W14-COL-MAPPING-001 / A-027)  
+**Observed**: Criteria page fails to load criteria tree post-deployment.  
+**Error**: `Failed to load criteria tree: column domains.sort_order does not exist`
+
+**RCA**: `useCriteriaTree()` in `modules/mat/frontend/src/lib/hooks/useCriteria.ts` calls
+`.order('sort_order', { ascending: true })` on the `domains`, `mini_performance_standards`,
+and `criteria` tables. The `sort_order` column is defined in the TypeScript interface
+(`Domain.sort_order`) and referenced in the frontend hook — but no migration had ever added
+this column to any of these three tables. Schema-to-hook drift.
+
+**Fail-Only-Once**: This is a recurrence of the same class as INC-W14-COL-MAPPING-001.
+A-027 (column-level drift must be caught at QA-to-Red) should have prevented this.
+The WGI-07/WGI-08 structural governance improvements from Wave 13 Addendum C (mandatory table
+pathway audit, column-level schema tests) were not applied to `.order('sort_order')` usage.
+**A-027 extension**: `.order('column_name')` calls are column references and MUST be covered
+by column-level migration tests — not only `.select()` and `.insert()` calls.
+
+**Deliverables**:
+
+| Task | Builder | Deliverable | Status |
+|------|---------|-------------|--------|
+| F1-A | schema-builder | `20260306000000_domains_sort_order.sql` — ADD COLUMN sort_order to domains, mini_performance_standards, criteria | ✅ DONE |
+| F1-B | qa-builder | `modules/mat/tests/postfcwt/sort-order-columns.test.ts` — T-PFCWT-001, T-PFCWT-002, T-PFCWT-003 | ✅ GREEN |
+| F1-C | foreman | BPT + FAIL-ONLY-ONCE registry update (INC-POST-FCWT-SORT-ORDER-001) | ✅ THIS ENTRY |
+
+**Tests**:
+- [x] T-PFCWT-001: migration file exists and contains sort_order addition for domains — GREEN
+- [x] T-PFCWT-002: migration contains sort_order addition for mini_performance_standards — GREEN
+- [x] T-PFCWT-003: migration contains sort_order addition for criteria — GREEN
+
+---
+
+### INC-POST-FCWT-EDGE-FN-001 — `Failed to trigger AI parsing: Failed to send a request to the Edge Function`
+
+**Classification**: Architecture-to-implementation gap — missing Edge Function  
+**Observed**: Criteria document upload succeeds (file lands in storage) but surfaces hard error.  
+**Error**: `Failed to update profile: Failed to trigger AI parsing: Failed to send a request to the Edge Function`
+
+**RCA**: `useTriggerAIParsing()` in `useCriteria.ts` calls
+`supabase.functions.invoke('invoke-ai-parse-criteria', ...)`. The Edge Function
+`invoke-ai-parse-criteria` **does not exist** — it was never created. No migration, no
+deployment, no function file exists in the repository. The upload to storage succeeds; only
+the AI parsing trigger step fails. The AI parsing pipeline (FR-007 / GAP-W02 criteria upload
+flow) assumed an Edge Function would exist at runtime but it was never delivered as a wave
+deliverable.
+
+**Fail-Only-Once**: RCA-MAT-API-GATEWAY-001 (Wave 6) established "Serverless API proxy is a
+mandatory Wave 6 deliverable whenever provider keys are required." The same principle applies
+to Supabase Edge Functions: if the frontend calls `supabase.functions.invoke(fn-name)`, the
+Edge Function must exist as a named deliverable in the implementation plan and PREHANDOVER
+proof. This gap is codified as **A-032 candidate** (Layer-Up for IAA review).
+
+**Deliverables**:
+
+| Task | Builder | Deliverable | Status |
+|------|---------|-------------|--------|
+| F2-A | ui-builder | `CriteriaUpload.tsx` — wrap triggerParsing in try/catch; render warning element (not hard error) on parsing failure | ✅ DONE |
+| F2-B | qa-builder | `modules/mat/tests/postfcwt/ai-parsing-graceful.test.ts` — T-PFCWT-004, T-PFCWT-005 | ✅ GREEN |
+| F2-C | foreman | BPT + FAIL-ONLY-ONCE registry update (INC-POST-FCWT-EDGE-FN-001) + A-032 Layer-Up candidate | ✅ THIS ENTRY |
+| F2-D | api-builder | Full Edge Function `invoke-ai-parse-criteria/index.ts` | ⏳ DEFERRED — Future Wave (see below) |
+
+**Tests**:
+- [x] T-PFCWT-004: CriteriaUpload.tsx wraps triggerParsing.mutateAsync in inner try/catch — parsing failure does not propagate to upload error path — GREEN
+- [x] T-PFCWT-005: UI renders warning element (`data-testid="criteria-upload-ai-parsing-warning"`) when AI parsing fails — GREEN
+
+**Task F2-D Assessment (Foreman)**:  
+The full Edge Function implementation (`invoke-ai-parse-criteria/index.ts`) requires:
+- Supabase Edge Function runtime (`deno`)
+- AIMC Gateway integration (no direct provider calls)
+- `AI_DOC_PARSER_URL` / `AI_GATEWAY_URL` env var consumption
+- Full deployment to Supabase Edge Functions
+
+This is a non-trivial implementation that cannot be validated in the CI-only pipeline and
+requires live Supabase deployment to test. **Assessment: defer to a dedicated future wave
+(Wave Post-FCWT-F2D)**. The immediate mitigation (Task F2-A — graceful degradation) unblocks
+the upload workflow. Full AI parsing will be restored when the Edge Function is deployed.
+
+---
+
+### Post-FCWT Test Tally
+
+| Batch | Tests | Result |
+|-------|-------|--------|
+| T-PFCWT-001–003 (sort_order migration) | 3 | ✅ 3/3 GREEN |
+| T-PFCWT-004–005 (AI parsing graceful) | 2 | ✅ 2/2 GREEN |
+| **POST-FCWT TOTAL** | **5** | ✅ **5/5 GREEN** |
+| Full suite (post-remediation) | 788 | 779 GREEN / 9 EXPECTED RED (live-env) |
+
+### State Machine
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-06 | FAILURES DETECTED | INC-POST-FCWT-SORT-ORDER-001 + INC-POST-FCWT-EDGE-FN-001 detected in live environment |
+| 2026-03-06 | REMEDIATION IN PROGRESS | Tasks F1-A, F1-B, F2-A, F2-B, F1-C, F2-C delegated and executed |
+| 2026-03-06 | T-PFCWT-001–005 GREEN | 5/5 post-FCWT RED gate tests passing — immediate mitigation complete |
+| 2026-03-06 | FAIL-ONLY-ONCE UPDATED | INC-POST-FCWT-SORT-ORDER-001 + INC-POST-FCWT-EDGE-FN-001 + A-032 candidate recorded |
+| ⏳ TBD | F2-D DEFERRED | Full Edge Function (invoke-ai-parse-criteria) — future wave |
+

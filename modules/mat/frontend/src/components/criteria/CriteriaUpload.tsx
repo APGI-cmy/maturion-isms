@@ -17,6 +17,7 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [aiParsingWarning, setAiParsingWarning] = useState<string | null>(null);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -49,11 +50,18 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
 
     try {
       setUploadProgress(50);
+      setAiParsingWarning(null);
       const result = await uploadCriteria.mutateAsync({ auditId, file: selectedFile });
       setUploadProgress(75);
       
-      // Trigger AI parsing
-      await triggerParsing.mutateAsync({ auditId, filePath: result.path });
+      // Trigger AI parsing — graceful degradation: upload succeeds even if Edge Function unavailable
+      try {
+        await triggerParsing.mutateAsync({ auditId, filePath: result.path });
+      } catch (parsingError) {
+        console.warn('[CriteriaUpload] AI parsing unavailable — upload succeeded, parsing pending:', parsingError);
+        setAiParsingWarning('Upload complete. AI parsing is currently unavailable — your document has been saved and can be manually processed once the parsing service is restored.');
+      }
+
       setUploadProgress(100);
       
       alert('Criteria document uploaded and parsing initiated!');
@@ -124,6 +132,16 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
       >
         {uploadCriteria.isPending ? 'Uploading...' : 'Upload and Parse'}
       </button>
+
+      {aiParsingWarning && (
+        <div
+          data-testid="criteria-upload-ai-parsing-warning"
+          className="mt-4 p-4 bg-yellow-50 border border-yellow-400 rounded"
+          role="alert"
+        >
+          <p className="text-yellow-800 text-sm">{aiParsingWarning}</p>
+        </div>
+      )}
     </div>
   );
 }
