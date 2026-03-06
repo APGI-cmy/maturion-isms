@@ -1,27 +1,20 @@
 # SCOPE DECLARATION
 
-**Wave**: Wave Post-FCWT Production Failures (sort_order Migration + Edge Function Gap + BPT Update)
-**Branch**: copilot/sort-order-migration-update
-**Session**: session-postfcwt-prodfails-20260306
+**Wave**: Wave WF-Dispatch — Workflow Manual Dispatch Fix
+**Branch**: copilot/fix-workflow-trigger-conditions
+**Session**: session-157-wave-wf-dispatch-20260306
 **Date**: 2026-03-06
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
+**PR**: #959
 
 ## Files Changed in This PR
 
-- `.agent-admin/assurance/iaa-prebrief-wave-postfcwt-prodfails.md` - IAA Pre-Brief for this wave (committed by IAA, SHA 2667ed0)
-- `.agent-admin/assurance/iaa-token-session-postfcwt-prodfails-20260306.md` - IAA rejection token v1 (PARITY-1 finding — superseded)
-- `.agent-admin/assurance/iaa-token-session-postfcwt-prodfails-v2-20260306.md` - IAA ASSURANCE-TOKEN v2: IAA-session-postfcwt-prodfails-v2-20260306-PASS
-- `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` - v2.7.0→v2.8.0: INC-POST-FCWT-SORT-ORDER-001, INC-POST-FCWT-EDGE-FN-001, A-032 candidate, S-021-S-022
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-postfcwt-prodfails-20260306.md` - PREHANDOVER proof for this wave (immutable post-commit)
-- `.agent-workspace/foreman-v2/memory/session-postfcwt-prodfails-20260306.md` - Foreman session memory
-- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Parking station updated with S-021/S-022
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave Post-FCWT Production Failures task list
-- `.agent-workspace/independent-assurance-agent/memory/session-postfcwt-prodfails-20260306.md` - IAA session memory v1 (rejection)
-- `.agent-workspace/independent-assurance-agent/memory/session-postfcwt-prodfails-v2-20260306.md` - IAA session memory v2 (PASS)
+- `.github/workflows/deploy-mat-ai-gateway.yml` - 2-line change: `deploy-production` job (line 146) and `cwt` job (line 209) `if:` conditions updated to include `|| github.event_name == 'workflow_dispatch'`
+- `.agent-admin/assurance/iaa-prebrief-wave-wf-dispatch-20260306.md` - IAA Pre-Brief for this wave (committed by IAA)
+- `.agent-admin/assurance/iaa-token-session-157-wave-wf-dispatch-20260306.md` - IAA ASSURANCE-TOKEN (to be committed by IAA after Final Audit)
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-157-wave-wf-dispatch-20260306.md` - PREHANDOVER proof for this wave (immutable post-commit)
+- `.agent-workspace/foreman-v2/memory/session-157-wave-wf-dispatch-20260306.md` - Foreman session memory
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave WF-Dispatch task list
+- `.agent-workspace/independent-assurance-agent/memory/session-157-wave-wf-dispatch-20260306.md` - IAA session memory (committed by IAA)
 - `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station (committed by IAA)
-- `SCOPE_DECLARATION.md` - self-declaration
-- `apps/maturion-maturity-legacy/supabase/migrations/20260306000000_domains_sort_order.sql` - TASK-F1-A: ADD COLUMN sort_order to domains, mini_performance_standards, criteria
-- `modules/mat/BUILD_PROGRESS_TRACKER.md` - TASK-F1-C/F2-C: v1.4→v1.5 Post-FCWT production failures section + stage + next steps
-- `modules/mat/frontend/src/components/criteria/CriteriaUpload.tsx` - TASK-F2-A: inner try/catch for AI parsing, warning element
-- `modules/mat/tests/postfcwt/ai-parsing-graceful.test.ts` - TASK-F2-B: T-PFCWT-004, T-PFCWT-005
-- `modules/mat/tests/postfcwt/sort-order-columns.test.ts` - TASK-F1-B: T-PFCWT-001, T-PFCWT-002, T-PFCWT-003
+- `SCOPE_DECLARATION.md` - this file
