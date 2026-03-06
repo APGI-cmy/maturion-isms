@@ -64,4 +64,26 @@ describe('Post-FCWT — AI Parsing Graceful Degradation (INC-POST-FCWT-EDGE-FN-0
     ).toMatch(/aiParsingWarning[\s\S]*?criteria-upload-ai-parsing-warning/);
   });
 
+  it('T-PFCWT-006: CriteriaUpload.tsx alert is only called when AI parsing succeeds (not when parsing fails)', () => {
+    const src = fs.readFileSync(CRITERIA_UPLOAD_PATH, 'utf-8');
+
+    // Assert: a boolean flag tracking parsing success must be declared before the alert call.
+    // The fix requires introducing a variable (e.g. parsingSucceeded) that is set to true
+    // only when the inner try block completes without error.
+    expect(
+      src,
+      'CriteriaUpload.tsx must declare a "parsingSucceeded" (or equivalent) flag to track ' +
+      'whether AI parsing completed successfully — the alert must NOT fire when parsing failed'
+    ).toMatch(/\bparsingSucceeded\b/);
+
+    // Assert: the success alert is wrapped in a conditional guard keyed on the parsing outcome.
+    // Pattern: if (parsingSucceeded) { ... alert( ... ) ... }
+    expect(
+      src,
+      'CriteriaUpload.tsx must wrap the success alert inside a conditional block that checks ' +
+      'parsing outcome (e.g. "if (parsingSucceeded) { alert(...) }") — ' +
+      'the current unconditional alert fires even when AI parsing failed, which is the bug being fixed'
+    ).toMatch(/if\s*\(\s*parsingSucceeded\s*\)\s*\{[\s\S]*?alert\s*\(/);
+  });
+
 });
