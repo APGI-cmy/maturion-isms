@@ -55,16 +55,20 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
       setUploadProgress(75);
       
       // Trigger AI parsing — graceful degradation: upload succeeds even if Edge Function unavailable
+      let parsingSucceeded = false;
       try {
         await triggerParsing.mutateAsync({ auditId, filePath: result.path });
+        parsingSucceeded = true;
       } catch (parsingError) {
         console.warn('[CriteriaUpload] AI parsing unavailable — upload succeeded, parsing pending:', parsingError);
         setAiParsingWarning('Upload complete. AI parsing is currently unavailable — your document has been saved and can be manually processed once the parsing service is restored.');
       }
 
       setUploadProgress(100);
-      
-      alert('Criteria document uploaded and parsing initiated!');
+
+      if (parsingSucceeded) {
+        alert('Criteria document uploaded and parsing initiated!');
+      }
       setSelectedFile(null);
       setUploadProgress(0);
     } catch (error) {
