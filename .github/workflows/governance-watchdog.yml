@@ -131,11 +131,13 @@ jobs:
 
   # ── Gap 2A ────────────────────────────────────────────────────────────────
   # Pre-Brief gate: must run before any IAA second-tier artifact processing.
-  # Fires on all PR events so downstream jobs can detect whether a pre-brief exists.
+  # Fires only on opened/ready_for_review to avoid re-posting on every synchronize.
   gap2a-prebrief-gate-before-iaa-second-tier:
     name: "watchdog/gap2a-prebrief-gate"
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: >-
+      github.event_name == 'pull_request' &&
+      (github.event.action == 'opened' || github.event.action == 'ready_for_review')
     outputs:
       prebrief_gate: ${{ steps.gate_final.outputs.prebrief_gate }}
     steps:
@@ -191,16 +193,20 @@ jobs:
             const { execSync } = require('child_process');
             const fs = require('fs');
 
-            // Exempt PRs: set gate to clear and skip blocking
-            // (guard step already handles this but gate step also needs a default output)
+            // Use broader pattern: iaa-prebrief-*.md (covers slug-based names like
+            // iaa-prebrief-wave14-batchB.md and non-numeric slugs). Exclude SUPERSEDED artifacts.
             let prebriefExists = false;
             try {
               if (fs.existsSync('.agent-admin/assurance')) {
                 const result = execSync(
-                  'find .agent-admin/assurance -name "iaa-prebrief-wave*.md" -print -quit',
+                  'find .agent-admin/assurance -name "iaa-prebrief-*.md" -print -quit',
                   { encoding: 'utf8' }
                 ).trim();
-                prebriefExists = result.length > 0;
+                if (result.length > 0) {
+                  // Exclude SUPERSEDED artifacts
+                  const fileContent = fs.readFileSync(result, 'utf8');
+                  prebriefExists = !fileContent.toLowerCase().includes('superseded');
+                }
               }
             } catch (e) {
               prebriefExists = false;
@@ -215,10 +221,30 @@ jobs:
             const branch = process.env.PR_BRANCH;
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
 
+            // Idempotency guard — skip if we already posted this alert
+            try {
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                per_page: 10,
+                sort: 'created',
+                direction: 'desc',
+              });
+              if (comments.some(c => c.body && c.body.includes('<!-- gap2a-prebrief-gate-blocked -->'))) {
+                core.info('Gap 2A: blocking comment already posted — skipping to prevent spam.');
+                core.setOutput('prebrief_gate', 'blocked');
+                return;
+              }
+            } catch (e) {
+              core.warning(`Gap 2A: could not check existing comments for idempotency: ${e.message}`);
+            }
+
             // Set gate to blocked
             core.setOutput('prebrief_gate', 'blocked');
 
             const body = [
+              '<!-- gap2a-prebrief-gate-blocked -->',
               '## 🛑 IAA SECOND-TIER GATE — Pre-Brief Artifact Missing',
               '',
               'The IAA cannot proceed with second-tier verification (FFA checks, PREHANDOVER proof, assurance token) because **no pre-brief artifact exists** for this wave.',

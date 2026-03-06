@@ -352,6 +352,8 @@ A BLOCKED agent does not advance past Phase 1 under any instruction.
 
 ⛔ YOU MAY NOT EXIT PHASE 1 OR BEGIN PHASE 2 UNTIL THIS STEP IS COMPLETE.
 
+**At this point, and only at this point, you may read the triggering issue body** to extract the wave number, branch name, and issue title needed for the pre-brief request. This is the earliest permitted point for issue reading.
+
 Invoke the IAA agent NOW with the following pre-brief request:
 
 ```
@@ -369,7 +371,7 @@ Request:
 ```
 
 DO NOT proceed to Phase 2 until the IAA has responded to this Pre-Brief.
-DO NOT commit wave-current-tasks.md until you have read and acknowledged the Pre-Brief response.
+You MAY commit `wave-current-tasks.md` as required to trigger the automated Pre-Brief workflow (this is the trigger per Phase 2 Step 2.7), but you MUST NOT delegate any builder task or begin implementation until you have read and acknowledged the Pre-Brief response.
 DO NOT delegate any builder task (Phase 3) until the Pre-Brief artifact is committed to:
   `.agent-admin/assurance/iaa-prebrief-wave[N].md`
 
