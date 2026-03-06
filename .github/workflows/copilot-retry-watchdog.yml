@@ -51,19 +51,21 @@ jobs:
             for (const pr of copilotPRs) {
               const prNumber = pr.number;
 
-              // 2. Collect text to scan: PR body + recent comments (last 30, descending)
-              const { data: comments } = await github.rest.issues.listComments({
+              // 2. Collect text to scan: recent comments only (last 30, ascending then sliced)
+              // Note: listComments does not support sort/direction — fetch up to 100 ascending
+              // and slice the last 30 to get the most recent comments.
+              const { data: rawComments } = await github.rest.issues.listComments({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: prNumber,
-                per_page: 30,
-                sort: 'created',
-                direction: 'desc',
+                per_page: 100,
               });
+              const comments = rawComments.slice(-30);
 
-              const prBody = (pr.body || '').toLowerCase();
+              // Scan comments only (not the PR body) to avoid false positives from
+              // description text that may legitimately contain stop-signal strings.
               const commentBodies = comments.map(c => (c.body || '').toLowerCase());
-              const allText = [prBody, ...commentBodies].join('\n');
+              const allText = commentBodies.join('\n');
 
               // Check for stopped-work signals
               const stoppedDetected = stoppedSignals.some(signal => allText.includes(signal));
