@@ -10,13 +10,15 @@
  * NOTE: This is intentionally separate from api/ai/health.ts which reports
  * AI gateway status at /api/ai/health. This endpoint serves the top-level
  * deployment health check required by the E2E CWT test suite.
- *
- * Uses @vercel/node VercelRequest/VercelResponse so Vercel's runtime routes
- * this function correctly without applying authentication middleware.
  */
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { IncomingMessage, ServerResponse } from 'node:http';
 
-export default function handler(_req: VercelRequest, res: VercelResponse): void {
+export default function handler(
+  _req: IncomingMessage,
+  res: ServerResponse,
+): void {
+  res.setHeader('Content-Type', 'application/json');
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.status(200).json({ status: 'healthy' });
+  res.writeHead(200);
+  res.end(JSON.stringify({ status: 'healthy' }));
 }
