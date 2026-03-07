@@ -1,26 +1,29 @@
 # SCOPE DECLARATION
 
-**Wave**: Wave 15 — Schema Drift Remediation (parse_tasks migration)
-**Branch**: copilot/add-migration-for-parse-tasks-table
-**Session**: session-wave15-schemadrift-20260307
+**Wave**: Wave OVL-INJ — Add OVL-INJ-001 Injection Audit Trail check to IAA PREHANDOVER canon
+**Branch**: copilot/add-injection-audit-trail-check
+**Session**: session-waveOVLINJ-20260307
 **Date**: 2026-03-07
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**PR**: copilot/add-migration-for-parse-tasks-table
+**Issue**: [CodexAdvisor] Add OVL-INJ-001: Injection Audit Trail check to IAA PREHANDOVER canon
 
 ## Files Changed in This PR
 
-### Schema Drift Fix (T-W15-SCH-001)
-- `apps/maturion-maturity-legacy/supabase/migrations/20260307000001_parse_tasks_table.sql` - new; CREATE TABLE public.parse_tasks + RLS SELECT policy (org-isolation); fixes T-W13-SCH-11
+### IAA Canon (T-OVLINJ-002)
+- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` - v1.3.0→v1.4.0; §Injection Audit Trail section added; OVL-INJ-001 as REJECTION-PACKAGE trigger; AGCFPP-001 linked in References; amendment entry added
 
-### Governance Artifacts (T-W15-SCH-002)
-- `modules/mat/00-app-description/BUILD_PROGRESS_TRACKER.md` - Wave 15 Schema Drift section added; RCA INC-W15-SCHEMA-DRIFT-001 recorded
+### CANON_INVENTORY (T-OVLINJ-004)
+- `governance/CANON_INVENTORY.json` - IAA canon entry updated: version 1.2.0→1.4.0; SHA256 hash refreshed; description and change_note updated
+
+### IAA Knowledge — Overlays (T-OVLINJ-001)
+- `.agent-workspace/independent-assurance-agent/knowledge/iaa-category-overlays.md` - v3.1.0→v3.2.0; INJECTION_AUDIT_TRAIL overlay added with OVL-INJ-001, OVL-INJ-ADM-001, OVL-INJ-ADM-002; signature strings documented
+
+### IAA Knowledge — Index (T-OVLINJ-003)
+- `.agent-workspace/independent-assurance-agent/knowledge/index.md` - v2.6.0→v2.7.0; iaa-category-overlays.md version reference updated to 3.2.0; version history entry added
 
 ### IAA Protocol Artifacts
-- `.agent-admin/assurance/iaa-prebrief-wave15-schemadrift.md` - IAA Pre-Brief for wave15-schemadrift
-- `.agent-admin/assurance/iaa-token-session-wave15-schemadrift-wave15-20260307.md` - IAA assurance token
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave15-schemadrift-wave15-20260307.md` - PREHANDOVER proof
-- `.agent-workspace/foreman-v2/memory/session-wave15-schemadrift-20260307.md` - Foreman session memory
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - updated; T-W15-SCH-001 and T-W15-SCH-002 added
-- `.agent-workspace/independent-assurance-agent/memory/session-wave15-schemadrift-20260307.md` - IAA session memory
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station log
+- `.agent-admin/assurance/iaa-prebrief-waveOVLINJ-20260307.md` - IAA Pre-Brief for Wave OVL-INJ
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - updated for Wave OVL-INJ tasks
+
+### Ceremony Artifacts
 - `SCOPE_DECLARATION.md` - this file

@@ -1373,17 +1373,17 @@
     },
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-      "version": "1.2.0",
-      "file_hash": "995e9da7e119c312f5aa72f2f83199a8634d4a05b0e211e747e0ac6ef110abe8",
-      "file_hash_sha256": "995e9da7e119c312f5aa72f2f83199a8634d4a05b0e211e747e0ac6ef110abe8",
-      "effective_date": "2026-03-04",
-      "description": "Defines the Independent Assurance Agent (IAA) class: role, hard-trigger authority, independence requirements, five-phase delivery proof protocol, binary output (ASSURANCE-TOKEN / REJECTION-PACKAGE), trigger table, and Proactive Assurance Pre-Brief Protocol with Wave Checklist Invocation Gate.",
+      "version": "1.4.0",
+      "file_hash": "9853da7bc2f068f4544a74492e559e196a24b3733055409f005cde946b00e53b",
+      "file_hash_sha256": "9853da7bc2f068f4544a74492e559e196a24b3733055409f005cde946b00e53b",
+      "effective_date": "2026-03-07",
+      "description": "Defines the Independent Assurance Agent (IAA) class: role, hard-trigger authority, independence requirements, five-phase delivery proof protocol, binary output (ASSURANCE-TOKEN / REJECTION-PACKAGE), trigger table, Proactive Assurance Pre-Brief Protocol with Wave Checklist Invocation Gate, and Injection Audit Trail mandatory PREHANDOVER check (OVL-INJ-001) with AGCFPP-001 gate link.",
       "type": "canon",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "layer_down_status": "INTERNAL",
-      "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA); amended via issue: Create Canon: IAA Pre-Brief Protocol (Proactive Assurance Criteria Declaration)",
-      "last_updated": "2026-03-04",
-      "change_note": "v1.2.0: Added \u00a7Artifact Immutability Rule; amended \u00a7Token Ceremony to use dedicated IAA token file; prohibited shared mutable files for all agent classes."
+      "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA); amended via issues: Create Canon: IAA Pre-Brief Protocol (Proactive Assurance Criteria Declaration); [CodexAdvisor] Add OVL-INJ-001: Injection Audit Trail check to IAA PREHANDOVER canon",
+      "last_updated": "2026-03-07",
+      "change_note": "v1.4.0: Added \u00a7Injection Audit Trail section (OVL-INJ-001 mandatory PREHANDOVER check); documented audit trail signature strings from iaa-prebrief-inject.yml; linked with CodexAdvisor gate AGCFPP-001; OVL-INJ-001 added as REJECTION-PACKAGE trigger; AGCFPP-001 added to References."
     },
     {
       "filename": "IAA_PRE_BRIEF_PROTOCOL.md",
