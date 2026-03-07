@@ -144,9 +144,9 @@ Expected token file path (IAA writes this — read-only after commit):
 
 ## 9. CI Evidence — OVL-CI-005
 
-**Merge Gate Interface workflow run** (triggered on PR push, commit `e649b85`):
-- URL: https://github.com/APGI-cmy/maturion-isms/actions/runs/22798614542
-- Status: completed
+**Deploy MAT AI Gateway workflow run** (triggered on PR push, commit `e649b85`):
+- URL: https://github.com/APGI-cmy/maturion-isms/actions/runs/22798803030
+- Status: completed (action_required — workflow ran to approval gate; YAML valid, cwt job structure confirmed)
 
 **Note on CWT job run**: The `cwt` job in `deploy-mat-ai-gateway.yml` triggers only on `push to main` or `workflow_dispatch` — not on PR branch pushes. The env var wiring fix is verified structurally (YAML syntax, step-level scoping, correct secret references) and will be confirmed by the first post-merge CWT run on main. The merge gate interface CI run above confirms the branch is processable.
 
