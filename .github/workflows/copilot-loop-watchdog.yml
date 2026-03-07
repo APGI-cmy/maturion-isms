@@ -1,0 +1,233 @@
+name: Copilot Loop Watchdog
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'   # every 10 minutes
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to target directly (overrides full scan, for testing only)'
+        required: false
+        default: ''
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  copilot/loop-watchdog:
+    name: copilot/loop-watchdog
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    concurrency:
+      group: copilot-loop-watchdog
+      cancel-in-progress: false
+    steps:
+      - name: Detect and recover looping Copilot sessions
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Step 1 — Find open Copilot PRs
+            const { data: pulls } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+            const copilotPRs = pulls.filter(pr =>
+              pr.assignees && pr.assignees.some(a => (a.login || '').toLowerCase() === 'copilot')
+            );
+
+            // workflow_dispatch override: if pr_number input provided, target only that PR
+            const manualPrNumber = context.payload.inputs && context.payload.inputs.pr_number
+              ? parseInt(context.payload.inputs.pr_number, 10)
+              : null;
+            const targetPRs = manualPrNumber
+              ? copilotPRs.filter(pr => pr.number === manualPrNumber)
+              : copilotPRs;
+
+            if (manualPrNumber && targetPRs.length === 0) {
+              core.warning(`Manual override: PR #${manualPrNumber} not found among open Copilot PRs. Aborting.`);
+            }
+
+            core.info(`Processing ${targetPRs.length} PR(s).`);
+
+            // Similarity check helper: normalize text, compare first 120 chars
+            function normalize(text) {
+              return (text || '').toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 120);
+            }
+
+            for (const pr of targetPRs) {
+              try {
+                core.info(`Checking PR #${pr.number}: ${pr.title}`);
+
+                // Step 2 — Fetch last 30 PR comments (issue + review) and last 10 commits
+                const [commentsRes, reviewCommentsRes, commitsRes] = await Promise.all([
+                  github.rest.issues.listComments({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: pr.number,
+                    per_page: 100,
+                  }),
+                  github.rest.pulls.listReviewComments({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    pull_number: pr.number,
+                    per_page: 100,
+                  }),
+                  github.rest.repos.listCommits({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    sha: pr.head.ref,
+                    per_page: 10,
+                  }),
+                ]);
+
+                // Merge issue comments + review comments, sort by created_at, take last 30
+                const allComments = [
+                  ...commentsRes.data,
+                  ...reviewCommentsRes.data,
+                ].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+                const comments = allComments.slice(-30);
+                const commits = commitsRes.data;
+
+                // Step 3 — Apply Two-Key Rule
+
+                // Key 1 — Comment repetition check
+                const twentyMinAgo = new Date(Date.now() - 20 * 60 * 1000);
+                const recentCopilotComments = comments.filter(c =>
+                  (c.user.login === 'copilot[bot]' || c.user.login === 'copilot') &&
+                  new Date(c.created_at) > twentyMinAgo
+                );
+
+                const normalized = recentCopilotComments.map(c => normalize(c.body));
+
+                let repeatCount = 0;
+                for (let i = 0; i < normalized.length; i++) {
+                  for (let j = i + 1; j < normalized.length; j++) {
+                    const shorter = Math.min(normalized[i].length, normalized[j].length);
+                    if (shorter === 0) continue;
+                    let matches = 0;
+                    for (let k = 0; k < shorter; k++) {
+                      if (normalized[i][k] === normalized[j][k]) matches++;
+                    }
+                    if (matches / shorter > 0.8) repeatCount++;
+                  }
+                }
+
+                const key1 = recentCopilotComments.length >= 3 && repeatCount >= 1;
+
+                // Key 2 — No commit progress check
+                const sixtyMinAgo = new Date(Date.now() - 60 * 60 * 1000);
+                const recentCommits = commits.filter(c =>
+                  new Date(c.commit.author.date) > sixtyMinAgo
+                );
+                const key2 = recentCommits.length === 0;
+
+                core.info(`PR #${pr.number} — Key1 (repeat comments): ${key1}, Key2 (no recent commits): ${key2}`);
+                core.info(`  recentCopilotComments: ${recentCopilotComments.length}, repeatCount: ${repeatCount}, recentCommits: ${recentCommits.length}`);
+
+                if (!key1 || !key2) {
+                  core.info(`PR #${pr.number} — Two-Key Rule not met, skipping.`);
+                  continue;
+                }
+
+                // Safety guard — agent posted a non-repeat comment in last 5 min
+                const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000);
+                // Derive repeatPattern from the most frequently occurring normalised string
+                const repeatPattern = (() => {
+                  if (normalized.length === 0) return '';
+                  const freq = {};
+                  for (const n of normalized) freq[n] = (freq[n] || 0) + 1;
+                  return Object.entries(freq).sort((a, b) => b[1] - a[1])[0][0];
+                })();
+                const veryRecentNonRepeat = comments.some(c =>
+                  (c.user.login === 'copilot[bot]' || c.user.login === 'copilot') &&
+                  new Date(c.created_at) > fiveMinAgo &&
+                  normalize(c.body).substring(0, 120) !== repeatPattern
+                );
+
+                if (veryRecentNonRepeat) {
+                  core.info(`PR #${pr.number} — Agent posted a non-repeat comment in last 5 min, skipping.`);
+                  continue;
+                }
+
+                // Idempotency guard — already recovered in last 2 hours
+                const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+                const alreadyRecovered = comments.some(c =>
+                  (c.body || '').includes('Loop Watchdog — automated loop recovery') &&
+                  new Date(c.created_at) > twoHoursAgo
+                );
+
+                if (alreadyRecovered) {
+                  core.info(`PR #${pr.number} — Already recovered in last 2 hours, skipping.`);
+                  continue;
+                }
+
+                // Step 4 — Recover: post warning, close, wait, reopen, post follow-up
+
+                // 1. Post warning comment BEFORE closing
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pr.number,
+                  body: [
+                    '## 🔁 Copilot Loop Watchdog — Loop Detected',
+                    '',
+                    '@copilot Your session appears to be stuck in a thinking loop (repeated comments with no commit progress detected).',
+                    '',
+                    'This PR will be automatically closed and reopened to reset your session. All your work is preserved — no commits will be lost.',
+                    '',
+                    'When the session restarts, please re-read the original issue and continue from your last committed state.',
+                    '',
+                    '*Loop Watchdog — automated loop recovery | Authority: copilot-loop-watchdog.yml*',
+                  ].join('\n'),
+                });
+
+                // 2. Close the PR
+                await github.rest.pulls.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: pr.number,
+                  state: 'closed',
+                });
+
+                // 3. Wait 15 seconds
+                await new Promise(r => setTimeout(r, 15000));
+
+                // 4. Reopen the PR
+                await github.rest.pulls.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: pr.number,
+                  state: 'open',
+                });
+
+                // 5. Post follow-up comment after reopening
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pr.number,
+                  body: [
+                    '## ✅ Session Reset — Please Continue',
+                    '',
+                    '@copilot Your previous looping session has been terminated and a fresh session has started.',
+                    '',
+                    'Please:',
+                    '1. Re-read the original issue/task description',
+                    '2. Review your last committed state on this branch',
+                    '3. Continue from where you left off — do NOT start over',
+                    '',
+                    'All previous work is intact.',
+                    '',
+                    '*Loop Watchdog — automated loop recovery | Authority: copilot-loop-watchdog.yml*',
+                  ].join('\n'),
+                });
+
+                // 6. Log warning
+                core.warning(`Loop recovery executed on PR #${pr.number}`);
+              } catch (err) {
+                core.error(`PR #${pr.number} — watchdog error (skipping): ${err.message}`);
+              }
+            }
