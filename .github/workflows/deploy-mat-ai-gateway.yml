@@ -234,6 +234,8 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           MAT_E2E_TEST_TOKEN: ${{ secrets.MAT_E2E_TEST_TOKEN }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          MAT_E2E_REFRESH_TOKEN: ${{ secrets.MAT_E2E_REFRESH_TOKEN }}
         run: set -o pipefail && pnpm test | tee cwt-test-output.log
       - name: Upload CWT test results
         if: always()
