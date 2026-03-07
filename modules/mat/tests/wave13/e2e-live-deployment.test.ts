@@ -123,7 +123,7 @@ describe('T-W13-E2E: Full E2E CWT Against Live Deployment', () => {
     // Auth with test token
     const { error: authError } = await client.auth.setSession({
       access_token: testToken!,
-      refresh_token: '',
+      refresh_token: process.env.MAT_E2E_REFRESH_TOKEN ?? '',
     });
     expect(authError, `Auth failed: ${authError?.message}`).toBeNull();
 
