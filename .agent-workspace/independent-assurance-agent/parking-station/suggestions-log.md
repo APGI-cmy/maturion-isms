@@ -326,3 +326,5 @@
 | 2026-03-06 | independent-assurance-agent | session-156 | Phase 4 | wave-current-tasks.md accumulated prior-wave entries — should be trimmed to current wave per A-028 before IAA invocation | session-156-wave-ux-alert-fix-20260306.md |
 | 2026-03-06 | independent-assurance-agent | session-157 | Phase 4 | governance-liaison contract advisory_phase: PHASE_A_ADVISORY is stale (IAA is PHASE_B_BLOCKING) — stale field enables INC-IAA-SKIP pattern; add explicit pre-IAA commit gate + PREHANDOVER existence check to governance-liaison Phase 4 | session-157-govliaison-051-audit-20260306.md |
 | 2026-03-06 | independent-assurance-agent | session-158 | Phase 4 | For re-invocation sessions, add formal Prior Failures Re-Verification section as standard template section | session-158-govliaison-051-reaudit-20260306.md |
+
+| 2026-03-07 | independent-assurance-agent | session-wave15-schemadrift-20260307 | Phase 3/4 | Add mandatory pre-IAA commit gate to PREHANDOVER template: verify all declared artifacts are in committed diff before invoking IAA | session-wave15-schemadrift-20260307.md |
