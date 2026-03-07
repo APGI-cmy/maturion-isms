@@ -329,3 +329,5 @@
 
 | 2026-03-07 | independent-assurance-agent | session-wave15-schemadrift-20260307 | Phase 3/4 | Add mandatory pre-IAA commit gate to PREHANDOVER template: verify all declared artifacts are in committed diff before invoking IAA | session-wave15-schemadrift-20260307.md |
 | 2026-03-07 | independent-assurance-agent | session-wave15-schemadrift-reinvocation | Phase 4 | In-place token file update is the correct re-invocation pattern when token file is already in SCOPE_DECLARATION — no SCOPE update needed | session-wave15-schemadrift-20260307.md |
+| 2026-03-07 | independent-assurance-agent | session-InjAudit-20260307 | Phase 4 | validate-scope-to-diff.sh reads ROOT-LEVEL SCOPE_DECLARATION.md — producers must update root file not just foreman workspace file; consider adding explicit note to script header naming the file it reads | session-InjAudit-20260307.md |
+| 2026-03-07 | independent-assurance-agent | session-InjAudit-20260307 | Phase 3 | OVL-CI-005: New workflows triggered by ready_for_review cannot have run before IAA — producers must use workflow_dispatch to test pre-IAA and include run URL in PREHANDOVER before committing | session-InjAudit-20260307.md |

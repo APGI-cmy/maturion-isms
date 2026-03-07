@@ -1,18 +1,19 @@
-# SCOPE_DECLARATION — Wave 15 Governance Batch
+# SCOPE_DECLARATION — Wave InjAudit
 
-**Session**: session-wave15-orchestration-20260306
-**Wave**: 15 — Post-Delivery Oversight Remediation (Criteria Parsing Pipeline)
-**Branch**: copilot/initiate-wave-15-orchestration
-**Cleared**: yes (A-029 — cat /dev/null > SCOPE_DECLARATION.md executed before this write)
+**Session**: session-InjAudit-20260307
+**Wave**: InjAudit — New Workflow: injection-audit-report.yml
+**Branch**: copilot/create-injection-audit-report-workflow
+**Cleared**: yes (prior Wave 15 scope cleared before this write)
 
 ## Declared Files in Scope
 
-- `modules/mat/BUILD_PROGRESS_TRACKER.md` - Wave 15 section added; version bumped to v1.6
-- `modules/mat/00-app-description/app-description.md` - v1.4; §6.2 Parsing Pipeline concretised; document format handling guidance added
-- `modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md` - Step 2a concrete parse cycle wiring added; Wave 15 correction note
-- `modules/mat/01-frs/functional-requirements.md` - v2.0.0; FR-005 expanded (ACs 7-14); FR-103 added (Parsing Resilience and Error Surface, P0)
-- `modules/mat/02-architecture/system-architecture.md` - §4 Criteria Parsing Pipeline Architecture added
-- `modules/mat/tests/wave15/wave15-criteria-parsing.test.ts` - new; 14 RED gate tests T-W15-CP-001 to T-W15-CP-014
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - updated for Wave 15; task statuses updated
-- `.agent-admin/assurance/iaa-prebrief-wave15.md` - new; IAA Pre-Brief artifact
-
+- `.agent-admin/assurance/iaa-prebrief-InjAudit.md` - new; IAA Pre-Brief artifact
+- `.agent-admin/assurance/iaa-token-session-InjAudit-waveInjAudit-20260307.md` - new; IAA token file (§4.3b)
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-InjAudit-waveInjAudit-20260307.md` - new; PREHANDOVER proof v1 (read-only post-commit)
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-InjAudit-waveInjAudit-20260307-v2.md` - new; PREHANDOVER proof v2 (F-1 + F-2 remediation)
+- `.agent-workspace/foreman-v2/memory/session-InjAudit-20260307.md` - new; foreman session memory
+- `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md` - updated; InjAudit scope
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - updated; InjAudit wave
+- `.agent-workspace/independent-assurance-agent/memory/session-InjAudit-20260307.md` - new; IAA session memory
+- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - updated; IAA suggestions log
+- `.github/workflows/injection-audit-report.yml` - new; deliverable
