@@ -198,14 +198,19 @@ jobs:
             let prebriefExists = false;
             try {
               if (fs.existsSync('.agent-admin/assurance')) {
-                const result = execSync(
-                  'find .agent-admin/assurance -name "iaa-prebrief-*.md" -print -quit',
+                const allFilesRaw = execSync(
+                  'find .agent-admin/assurance -name "iaa-prebrief-*.md"',
                   { encoding: 'utf8' }
                 ).trim();
-                if (result.length > 0) {
-                  // Exclude SUPERSEDED artifacts
-                  const fileContent = fs.readFileSync(result, 'utf8');
-                  prebriefExists = !fileContent.toLowerCase().includes('superseded');
+                if (allFilesRaw.length > 0) {
+                  const allFiles = allFilesRaw.split('\n').filter(Boolean);
+                  prebriefExists = allFiles.some(f => {
+                    try {
+                      return !fs.readFileSync(f, 'utf8').toLowerCase().includes('superseded');
+                    } catch {
+                      return false;
+                    }
+                  });
                 }
               }
             } catch (e) {
