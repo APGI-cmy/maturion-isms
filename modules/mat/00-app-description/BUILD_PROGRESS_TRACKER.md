@@ -780,3 +780,128 @@ All 9 migrations were applied under branch `copilot/apply-wave-14-migrations`.
 |----------------|--------------|-----|
 | `20260307000001_parse_tasks_table.sql` | `public.parse_tasks` | SELECT: org-isolation via `audit_id → audits.organisation_id` |
 
+---
+
+## Wave CWT-EnvVars — Supabase CI Secrets Setup
+
+**Wave Slug**: wave-cwt-envvars  
+**Date**: 2026-03-07  
+**Branch**: copilot/fix-supabase-env-vars-for-tests  
+**Tasks**: T-CWT-EV-001, T-CWT-EV-002  
+**Status**: ✅ DELIVERED
+
+This section documents how the CWT (Combined Wave Test) job receives Supabase credentials, how to generate the required JWT token, and which tests are expected to turn GREEN as a result.
+
+---
+
+### Background
+
+The CWT job in `.github/workflows/deploy-mat-ai-gateway.yml` runs the full `pnpm test` suite on every push to `main` and on `workflow_dispatch`. Several integration and E2E tests require live Supabase credentials to connect to the test database:
+
+- `VITE_SUPABASE_URL` — the Supabase project URL (used by the Vite/Vitest test runner)
+- `VITE_SUPABASE_ANON_KEY` — the Supabase anonymous (public) API key
+- `MAT_E2E_TEST_TOKEN` — a Supabase JWT access token for an authenticated test user
+
+Without these environment variables, the affected tests fail with connection/auth errors and are counted as RED.
+
+---
+
+### How the Env Vars Are Wired
+
+The `env:` block is added at **step level** on the `Run Combined Wave Tests` step only (not at the `cwt:` job level), to limit secret exposure to the test runner step alone:
+
+```yaml
+# File: .github/workflows/deploy-mat-ai-gateway.yml
+# Job: cwt
+# Step: Run Combined Wave Tests (MAT-T-0001–0098)
+
+- name: Run Combined Wave Tests (MAT-T-0001–0098)
+  shell: bash
+  env:
+    VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+    VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+    MAT_E2E_TEST_TOKEN: ${{ secrets.MAT_E2E_TEST_TOKEN }}
+  run: set -o pipefail && pnpm test | tee cwt-test-output.log
+```
+
+All three values are sourced from GitHub Actions repository secrets of the same name. No values are hardcoded in the workflow file.
+
+---
+
+### How to Generate the MAT_E2E_TEST_TOKEN
+
+`MAT_E2E_TEST_TOKEN` must be a valid Supabase JWT access token for a test user in the project. There are two supported methods:
+
+#### Method A — Supabase Dashboard
+
+1. Go to the **Supabase Dashboard** → select your project
+2. Navigate to **Authentication → Users**
+3. Create a new test user (or select an existing one dedicated to CI)
+4. On the user detail page, click **"Generate JWT token"** (or copy the session token shown after sign-in)
+5. Copy the resulting `access_token` value — this is your `MAT_E2E_TEST_TOKEN`
+
+#### Method B — Supabase REST Auth API
+
+Send a `POST` request to the Supabase Auth token endpoint with the test user's credentials:
+
+```
+POST {SUPABASE_PROJECT_URL}/auth/v1/token?grant_type=password
+Content-Type: application/json
+
+{
+  "email": "<test-user-email>",
+  "password": "<test-user-password>"
+}
+```
+
+From the JSON response, copy the value of the `access_token` field. That value is your `MAT_E2E_TEST_TOKEN`.
+
+> **Note**: JWT tokens expire. If the token is used for CI you may need to refresh it periodically, or use a long-lived service role token if your Supabase RLS policies permit it for the test user.
+
+---
+
+### Where to Add the GitHub Repository Secrets
+
+All three secrets must be added to the repository before the CWT job will pass the affected tests:
+
+1. Go to the GitHub repository page
+2. Navigate to **Settings → Secrets and variables → Actions**
+3. Click **"New repository secret"** for each of the following:
+
+| Secret Name | Value |
+|-------------|-------|
+| `VITE_SUPABASE_URL` | The Supabase project URL (e.g., `https://<project-ref>.supabase.co`) |
+| `VITE_SUPABASE_ANON_KEY` | The Supabase anonymous (public) API key from **Project Settings → API** |
+| `MAT_E2E_TEST_TOKEN` | The JWT access token generated in the step above |
+
+> **Security**: Never commit actual token or key values to source code or documentation. The table above describes the format/source only — paste the real values directly into the GitHub secret field.
+
+---
+
+### Expected Test Outcomes After Secret Setup
+
+Once the three repository secrets are populated and the CWT job runs with the updated workflow, the following tests are expected to transition from RED to GREEN:
+
+| Test ID | Description | Expected Outcome |
+|---------|-------------|-----------------|
+| T-W13-SCH-1 | Schema validation (Supabase connection required) | 🟢 GREEN |
+| T-W13-SCH-2 | Schema validation (Supabase connection required) | 🟢 GREEN |
+| T-W13-SCH-3 | Schema validation (Supabase connection required) | 🟢 GREEN |
+| T-W13-SCH-4 | Schema validation (Supabase connection required) | 🟢 GREEN |
+| T-W13-E2E-2 | E2E auth flow (requires authenticated test user) | 🟢 GREEN |
+| T-W13-E2E-3 | E2E data fetch (requires authenticated test user) | 🟢 GREEN |
+| T-W13-E2E-4 | E2E mutation (requires authenticated test user) | 🟢 GREEN |
+| T-W13-E2E-5 | E2E session handling (requires authenticated test user) | 🟢 GREEN |
+
+**Out of scope — separate fix required**:
+
+| Test ID | Description | Why Excluded |
+|---------|-------------|-------------|
+| T-W13-E2E-1 | Live deployment `/health` endpoint check | Requires a separate `/health` route fix in the deployed application; env vars alone will not resolve this test |
+
+---
+
+### Security Declaration
+
+This documentation section contains **no hardcoded secret values** of any kind. All credential values (Supabase URL, anon key, JWT tokens) must be entered directly into GitHub repository secrets by a human operator. This section describes the process only. Compliance: BD-016 satisfied.
+
