@@ -748,3 +748,35 @@ All 9 migrations were applied under branch `copilot/apply-wave-14-migrations`.
 **End of BUILD_PROGRESS_TRACKER.md**
 
 **Next Update**: Wave 14 CLOSED. All 15 GAPs resolved. No further updates required for Wave 14.
+
+---
+
+## Wave 15 — Schema Drift Incident
+
+**Wave**: 15 (Schema Drift Hotfix)
+**Date Detected**: 2026-03-07
+**CWT Gate Failed**: T-W13-SCH-11 (`schema-existence.test.ts`)
+**Issue Reference**: #971
+
+### Root Cause Analysis (RCA) — Schema Drift: `parse_tasks` table
+
+| Field | Detail |
+|-------|--------|
+| **Incident ID** | INC-W15-SCHEMA-DRIFT-001 |
+| **Classification** | Schema Drift — introduced Wave 15 |
+| **Detected by** | CWT RED gate T-W13-SCH-11 (`no frontend hook references a table absent from all migrations`) |
+| **Symptom** | `Table 'parse_tasks' referenced in frontend hooks has no migration` |
+| **Root Cause** | Wave 15 (Criteria Parsing Pipeline) added `useParseStatus()` hook in `useCriteria.ts` (line 183) which polls `parse_tasks` for AI parse task status. The table was designed but no corresponding Supabase migration was committed alongside the hook implementation. |
+| **Introduced by** | Wave 15 implementation — session-wave15-impl-20260306 |
+| **Scope** | `modules/mat/frontend/src/lib/hooks/useCriteria.ts` references `parse_tasks`; no migration existed in `apps/maturion-maturity-legacy/supabase/migrations/` |
+| **Resolution** | Added `20260307000001_parse_tasks_table.sql` — `CREATE TABLE public.parse_tasks` with 6 columns, CHECK constraint on `status`, FK to `public.audits(id) ON DELETE CASCADE`, `ENABLE ROW LEVEL SECURITY`, and SELECT policy (org-isolation via `audit_id → audits.organisation_id → profiles.organisation_id`). Idempotent (`CREATE TABLE IF NOT EXISTS`, `DO $$ BEGIN IF NOT EXISTS … END $$`). |
+| **Verification** | T-W13-SCH-11 passes GREEN after migration is present |
+| **Prevention** | Schema drift guard T-W13-SCH-11 will catch any future frontend hook referencing an unmigrated table at CI time |
+| **Status** | ✅ REMEDIATED — PR #971 |
+
+### Migration Added
+
+| Migration File | Table Created | RLS |
+|----------------|--------------|-----|
+| `20260307000001_parse_tasks_table.sql` | `public.parse_tasks` | SELECT: org-isolation via `audit_id → audits.organisation_id` |
+
