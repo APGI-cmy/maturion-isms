@@ -1,0 +1,250 @@
+# Purpose: Scan all PR comments for injection workflow markers, count how many times
+# each injection fired, and whether the agent acknowledged/responded. Post a summary
+# table as a PR comment for use by the IAA PREHANDOVER token process.
+# Authority: CS2 (Johan Ras / @APGI-cmy) — IAA_PRE_BRIEF_PROTOCOL.md v1.1.0
+
+name: Injection Audit Report
+
+on:
+  pull_request:
+    types: [ready_for_review]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to generate the injection audit report for'
+        required: true
+        type: string
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  injection-audit:
+    name: "injection/audit-report"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate and post injection audit table
+        uses: actions/github-script@v7
+        env:
+          INPUT_PR_NUMBER: ${{ inputs.pr_number || '' }}
+        with:
+          script: |
+            // ── Resolve PR number ──────────────────────────────────────────────────
+            let prNumber;
+            if (context.eventName === 'workflow_dispatch') {
+              const raw = (process.env.INPUT_PR_NUMBER || '').trim();
+              prNumber = parseInt(raw, 10);
+              if (isNaN(prNumber) || prNumber <= 0) {
+                core.setFailed('workflow_dispatch: pr_number input is required and must be a positive integer.');
+                return;
+              }
+            } else {
+              prNumber = context.payload.pull_request.number;
+            }
+
+            // ── Injection marker definitions ───────────────────────────────────────
+            // Each entry maps a human-readable label to the exact marker string
+            // embedded in the corresponding injection workflow's comment body.
+            const INJECTIONS = [
+              {
+                id:       'agent-bootstrap',
+                label:    '[AGENT BOOTSTRAP REQUIRED] — Agent Preflight Required',
+                marker:   'AGENT PREFLIGHT REQUIRED',
+                workflow: 'agent-bootstrap-inject.yml',
+              },
+              {
+                id:       'iaa-prebrief-invocation',
+                label:    'IAA PRE-BRIEF REQUEST — Pre-Brief Invocation',
+                marker:   'IAA Pre-Brief Invocation',
+                workflow: 'iaa-prebrief-inject.yml',
+              },
+              {
+                id:       'iaa-prebrief-t10',
+                label:    '🔴 Pre-Brief Not Detected (T+10min)',
+                marker:   'Pre-Brief Not Detected (T+10min)',
+                workflow: 'iaa-prebrief-inject.yml (T+10 safety net)',
+              },
+              {
+                id:       'iaa-prebrief-gate',
+                label:    '## 🔴 IAA Pre-Brief Gate: MISSING',
+                marker:   'IAA Pre-Brief Gate: MISSING',
+                workflow: 'iaa-prebrief-gate.yml',
+              },
+              {
+                id:       'foreman-reanchor',
+                label:    '🔄 FOREMAN RE-ANCHOR',
+                marker:   'FOREMAN RE-ANCHOR',
+                workflow: 'foreman-reanchor.yml',
+              },
+              {
+                id:       'iaa-second-tier-gate',
+                label:    '🛑 IAA SECOND-TIER GATE — Pre-Brief Artifact Missing',
+                marker:   'IAA SECOND-TIER GATE',
+                workflow: 'governance-watchdog.yml (gap2a)',
+              },
+              {
+                id:       'iaa-prebrief-artifact-missing',
+                label:    '⚠️ IAA Pre-Brief artifact not found',
+                marker:   'GOVERNANCE WATCHDOG — Pre-Brief Missing for Ready PR',
+                workflow: 'governance-watchdog.yml (gap2)',
+              },
+              {
+                id:       'iaa-assurance-token-missing',
+                label:    '⚠️ IAA assurance token not found',
+                marker:   'GOVERNANCE WATCHDOG — IAA Token Missing',
+                workflow: 'governance-watchdog.yml (gap3)',
+              },
+              {
+                id:       'push-intercept',
+                label:    'PUSH-INTERCEPT',
+                marker:   'PUSH-INTERCEPT',
+                workflow: 'copilot-push-intercept.yml',
+              },
+            ];
+
+            // ── Copilot bot login identities ───────────────────────────────────────
+            const COPILOT_LOGINS = new Set([
+              'copilot[bot]',
+              'copilot-swe-agent[bot]',
+              'copilot',
+              'github-copilot[bot]',
+            ]);
+
+            const isCopilotLogin = (login) =>
+              COPILOT_LOGINS.has((login || '').toLowerCase());
+
+            // ── Fetch all PR comments (paginated) ──────────────────────────────────
+            let allComments = [];
+            let page = 1;
+            while (true) {
+              const { data } = await github.rest.issues.listComments({
+                owner:        context.repo.owner,
+                repo:         context.repo.repo,
+                issue_number: prNumber,
+                per_page:     100,
+                page,
+              });
+              allComments = allComments.concat(data);
+              if (data.length < 100) break;
+              page++;
+            }
+
+            core.info(`PR #${prNumber}: ${allComments.length} comment(s) fetched for audit.`);
+
+            // ── Idempotency guard ──────────────────────────────────────────────────
+            const AUDIT_MARKER = '<!-- injection-audit-report -->';
+            const existingAudit = allComments.find(
+              (c) => c.body && c.body.includes(AUDIT_MARKER),
+            );
+            if (existingAudit) {
+              core.info('Injection audit report already posted — skipping duplicate.');
+              return;
+            }
+
+            // ── Analyse each injection type ────────────────────────────────────────
+            const results = INJECTIONS.map((inj) => {
+              // Find all injection comments matching this marker
+              const injectionComments = allComments.filter(
+                (c) => c.body && c.body.includes(inj.marker),
+              );
+
+              // Determine if the agent replied after ANY injection of this type
+              let agentResponded = false;
+              for (const injComment of injectionComments) {
+                const injTime = new Date(injComment.created_at).getTime();
+                const agentReply = allComments.find(
+                  (c) =>
+                    isCopilotLogin(c.user && c.user.login) &&
+                    new Date(c.created_at).getTime() > injTime,
+                );
+                if (agentReply) {
+                  agentResponded = true;
+                  break;
+                }
+              }
+
+              const firstFired =
+                injectionComments.length > 0
+                  ? injectionComments[0].created_at
+                  : null;
+
+              return {
+                ...inj,
+                count:          injectionComments.length,
+                firstFired,
+                agentResponded: injectionComments.length > 0 ? agentResponded : null,
+              };
+            });
+
+            // ── Build summary statistics ───────────────────────────────────────────
+            const firedResults      = results.filter((r) => r.count > 0);
+            const acknowledgedCount = firedResults.filter((r) => r.agentResponded === true).length;
+            const unacknowledgedCount = firedResults.filter((r) => r.agentResponded === false).length;
+
+            const overallStatus =
+              firedResults.length === 0
+                ? '✅ No injections fired on this PR'
+                : unacknowledgedCount === 0
+                ? `✅ All ${firedResults.length} injection type(s) acknowledged by agent`
+                : `⚠️ ${unacknowledgedCount} injection type(s) fired but not acknowledged`;
+
+            // ── Build table rows ───────────────────────────────────────────────────
+            const tableRows = results
+              .map((r) => {
+                const countCell   = r.count > 0 ? `**${r.count}**` : '0';
+                const firstCell   = r.firstFired
+                  ? r.firstFired.substring(0, 16).replace('T', ' ') + ' UTC'
+                  : '—';
+                const ackCell     =
+                  r.count === 0
+                    ? '—'
+                    : r.agentResponded
+                    ? '✅ Yes'
+                    : '❌ No';
+                return `| ${r.label} | \`${r.workflow}\` | ${countCell} | ${firstCell} | ${ackCell} |`;
+              })
+              .join('\n');
+
+            // ── Assemble the comment body ──────────────────────────────────────────
+            const body = [
+              AUDIT_MARKER,
+              '## 📊 Injection Audit Report',
+              '',
+              `> **PR #${prNumber}** — Generated on \`${context.eventName}\` event`,
+              '> This report is used by the IAA PREHANDOVER token process to verify injection lifecycle compliance.',
+              '> Reference this table when completing the PREHANDOVER proof.',
+              '',
+              '### Injection Lifecycle Summary',
+              '',
+              '| Injection Type | Source Workflow | Times Fired | First Fired (UTC) | Agent Acknowledged |',
+              '|----------------|-----------------|:-----------:|:-----------------:|:-----------------:|',
+              tableRows,
+              '',
+              '---',
+              '',
+              `**Overall status**: ${overallStatus}`,
+              `**Total injection types fired**: ${firedResults.length} / ${results.length}`,
+              `**Agent acknowledged**: ${acknowledgedCount} / ${firedResults.length}`,
+              '',
+              '> **IAA PREHANDOVER note**: Unacknowledged injections (❌) indicate governance gaps.',
+              '> All ❌ items must be resolved before the merge gate is released.',
+              '> A clean audit report (all fired injections acknowledged, or zero injections fired) is required for ASSURANCE-TOKEN.',
+              '',
+              '*Injection Audit Report — automated | Authority: injection-audit-report.yml | CS2: @APGI-cmy*',
+            ].join('\n');
+
+            // ── Post the comment ───────────────────────────────────────────────────
+            await github.rest.issues.createComment({
+              owner:        context.repo.owner,
+              repo:         context.repo.repo,
+              issue_number: prNumber,
+              body,
+            });
+
+            core.info(
+              `Injection audit report posted on PR #${prNumber}: ` +
+              `${firedResults.length} type(s) fired, ` +
+              `${acknowledgedCount} acknowledged, ` +
+              `${unacknowledgedCount} unacknowledged.`,
+            );
