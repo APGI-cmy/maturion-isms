@@ -1,0 +1,141 @@
+name: Copilot Retry Watchdog
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  pull_request_target:
+    types: [opened, reopened]
+  workflow_dispatch:
+
+concurrency:
+  group: copilot-retry-watchdog
+  cancel-in-progress: true
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  retry-stopped-sessions:
+    name: "copilot/retry-stopped-sessions"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Detect stopped Copilot sessions and post retry comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const stoppedSignals = [
+              'copilot stopped work due to an error',
+              'access denied error from git',
+              'encountered an access denied error',
+            ];
+
+            const retryMarker = 'GitHub internal process stopped your previous session';
+            const oneHourMs = 60 * 60 * 1000;
+            const now = Date.now();
+
+            // 1. Determine which PRs to inspect (optimize for pull_request_target events)
+            let targetPRs = [];
+
+            if (context.eventName === 'pull_request_target') {
+              const pr = context.payload.pull_request;
+
+              if (!pr) {
+                core.info('No pull_request payload found — nothing to do.');
+                return;
+              }
+
+              const isAssignedToCopilot =
+                pr.assignees && pr.assignees.some(a => a.login.toLowerCase() === 'copilot');
+
+              if (!isAssignedToCopilot) {
+                core.info('Current PR is not assigned to copilot — nothing to do.');
+                return;
+              }
+
+              targetPRs = [pr];
+            } else {
+              const { data: allPRs } = await github.rest.pulls.list({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                per_page: 100,
+              });
+
+              const copilotPRs = allPRs.filter(pr =>
+                pr.assignees && pr.assignees.some(a => a.login.toLowerCase() === 'copilot')
+              );
+
+              if (copilotPRs.length === 0) {
+                core.info('No open PRs assigned to copilot — nothing to do.');
+                return;
+              }
+
+              targetPRs = copilotPRs;
+            }
+
+            for (const pr of targetPRs) {
+              const prNumber = pr.number;
+
+              try {
+                // 2. Collect text to scan: recent comments only (last 30, ascending then sliced)
+                // Note: listComments does not support sort/direction — fetch up to 100 ascending
+                // and slice the last 30 to get the most recent comments.
+                const { data: rawComments } = await github.rest.issues.listComments({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  per_page: 100,
+                });
+                const comments = rawComments.slice(-30);
+
+                // Scan comments only (not the PR body) to avoid false positives from
+                // description text that may legitimately contain stop-signal strings.
+                const commentBodies = comments.map(c => (c.body || '').toLowerCase());
+                const allText = commentBodies.join('\n');
+
+                // Check for stopped-work signals
+                const stoppedDetected = stoppedSignals.some(signal => allText.includes(signal));
+
+                if (!stoppedDetected) {
+                  core.info(`PR #${prNumber}: no stopped-work signal detected — skipping.`);
+                  continue;
+                }
+
+                // 3. Idempotency guard: skip if retry comment already posted in the last 1 hour
+                const recentRetry = comments.some(c => {
+                  if (!c.body || !c.body.includes(retryMarker)) return false;
+                  const age = now - new Date(c.created_at).getTime();
+                  return age < oneHourMs;
+                });
+
+                if (recentRetry) {
+                  core.info(`PR #${prNumber}: retry comment already posted within the last hour — skipping to prevent spam.`);
+                  continue;
+                }
+
+                // 4. Post the retry comment
+                const body = [
+                  '## 🔄 Copilot Session Auto-Retry',
+                  '',
+                  '@copilot Please proceed and finish the job.',
+                  '',
+                  'A GitHub internal process stopped your previous session — this is an automated retry trigger.',
+                  'Your work was not lost. Please resume from where you left off and complete the task.',
+                  '',
+                  '*Copilot Retry Watchdog — automated recovery | This comment was posted automatically because the session was detected as stopped.*',
+                ].join('\n');
+
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  body,
+                });
+
+                core.warning(`PR #${prNumber}: stopped-work signal detected — retry comment posted.`);
+              } catch (err) {
+                core.error(`PR #${prNumber}: error during processing — ${err.message}`);
+              }
+            }
