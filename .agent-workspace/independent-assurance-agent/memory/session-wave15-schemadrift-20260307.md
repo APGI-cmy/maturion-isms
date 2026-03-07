@@ -101,3 +101,45 @@ Entry appended to `.agent-workspace/independent-assurance-agent/parking-station/
 ---
 
 *Authority: CS2 (@APGI-cmy) | independent-assurance-agent v6.2.0 | PHASE_B_BLOCKING*
+
+---
+
+## RE-INVOCATION ADDENDUM — session-wave15-schemadrift-reinvocation-20260307
+
+| Field | Value |
+|-------|-------|
+| `re_invocation_id` | session-wave15-schemadrift-reinvocation-20260307 |
+| `re_invocation_date` | 2026-03-07 |
+| `checks_executed` | 51 |
+| `checks_passed` | 51 |
+| `checks_failed` | 0 |
+| `merge_gate_parity_result` | PASS — validate-scope-to-diff.sh EXIT 0 (10/10), governance/alignment PASS, stop-and-fix/enforcement PASS |
+| `verdict` | ASSURANCE-TOKEN |
+| `token_reference` | IAA-session-wave15-schemadrift-wave15-20260307-PASS |
+| `adoption_phase_at_time_of_verdict` | PHASE_B_BLOCKING |
+
+### Prior Failure Re-Verification
+
+| # | Failure | Resolved | Evidence |
+|---|---------|---------|---------|
+| F-1 | PREHANDOVER proof untracked | ✅ | `git ls-files` → PRESENT in commit 5f0650b |
+| F-2 | BUILD_PROGRESS_TRACKER staged-not-committed | ✅ | In git diff; RCA INC-W15-SCHEMA-DRIFT-001 committed |
+| F-3 | Session memory untracked | ✅ | `git ls-files` → PRESENT in commit 5f0650b |
+| F-4 | SCOPE_DECLARATION stale (BL-027) | ✅ | validate-scope-to-diff.sh EXIT 0, 10/10 exact match |
+| F-5 | Session memory not on branch (same root as F-3) | ✅ | Same resolution as F-3 |
+
+### fail_only_once_updates (re-invocation)
+
+No new rules warranted. All existing rules (A-021, A-026, A-029, A-030) continue to function correctly and caught all failures in first invocation.
+
+### Learning Notes (re-invocation)
+
+1. **A-030 re-invocation carve-out is working correctly**: The REJECTION-PACKAGE token file from first invocation served perfectly as the correction addendum. Re-invocation proceeded cleanly without needing to invent new architecture.
+2. **In-place token file update is the correct re-invocation pattern**: Updating the existing token file (already in SCOPE_DECLARATION) preserves the 10-file scope set. No SCOPE_DECLARATION update needed for re-invocation token updates when the token file was already declared.
+3. **Remediation quality was high**: All 5 failures were resolved correctly in one commit (5f0650b). The fix sequence from the REJECTION-PACKAGE was followed exactly. Zero re-invocation complications.
+
+### Suggestions for Improvement (re-invocation addendum — MANDATORY)
+
+Re-invocation proceeded cleanly. Continuous improvement note: The pre-IAA commit gate suggestion from the first invocation (mandate committing all ceremony artifacts before IAA invocation) would have prevented all 5 failures. Recommend formalising this in PREHANDOVER template — this suggestion is now in the parking station and has been carried forward.
+
+*Authority: CS2 (@APGI-cmy) | independent-assurance-agent v6.2.0 | PHASE_B_BLOCKING*

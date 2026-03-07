@@ -328,3 +328,4 @@
 | 2026-03-06 | independent-assurance-agent | session-158 | Phase 4 | For re-invocation sessions, add formal Prior Failures Re-Verification section as standard template section | session-158-govliaison-051-reaudit-20260306.md |
 
 | 2026-03-07 | independent-assurance-agent | session-wave15-schemadrift-20260307 | Phase 3/4 | Add mandatory pre-IAA commit gate to PREHANDOVER template: verify all declared artifacts are in committed diff before invoking IAA | session-wave15-schemadrift-20260307.md |
+| 2026-03-07 | independent-assurance-agent | session-wave15-schemadrift-reinvocation | Phase 4 | In-place token file update is the correct re-invocation pattern when token file is already in SCOPE_DECLARATION — no SCOPE update needed | session-wave15-schemadrift-20260307.md |

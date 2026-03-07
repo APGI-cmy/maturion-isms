@@ -1,7 +1,8 @@
 # IAA Token — Wave 15 Schema Drift Remediation (parse_tasks migration)
 
-**Token type**: REJECTION-PACKAGE
-**Session ID**: session-wave15-schemadrift-20260307
+**Token type**: ASSURANCE-TOKEN
+**Session ID**: session-wave15-schemadrift-reinvocation-20260307
+**Original Session ID**: session-wave15-schemadrift-20260307
 **Date**: 2026-03-07
 **Agent**: independent-assurance-agent v6.2.0 / contract v2.2.0
 **PR Branch**: copilot/add-migration-for-parse-tasks-table
@@ -9,21 +10,37 @@
 **Wave**: Wave 15 — Schema Drift Remediation (parse_tasks migration)
 **Wave Slug**: wave15-schemadrift
 **Adoption Phase**: PHASE_B_BLOCKING — hard gate ACTIVE
+**Invocation Type**: RE-INVOCATION after STOP-AND-FIX remediation
 **Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave15-schemadrift.md`
 **PREHANDOVER proof reviewed**: `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave15-schemadrift-wave15-20260307.md`
 
 ---
 
-## Invocation Context
+## Re-Invocation Context
 
 | Field | Value |
 |-------|-------|
-| Invoked by | foreman-v2-agent (via CS2-authorised task, Issue #971) |
+| Invoked by | foreman-v2-agent (CS2-authorised, Issue #971) |
 | Work produced by | schema-builder (T-W15-SCH-001) + foreman-v2-agent (T-W15-SCH-002) |
 | Producing agent class | builder + foreman |
 | PR category | AAWP_MAT |
 | IAA triggered | YES |
 | Independence check | CONFIRMED — IAA did not produce any artifact in this PR |
+| Prior invocation | REJECTION-PACKAGE (5 ceremony failures — all resolved) |
+
+---
+
+## Prior REJECTION-PACKAGE Failures — Resolution Verified
+
+| # | Prior Failure | Resolution | Verification |
+|---|--------------|------------|-------------|
+| F-1 | PREHANDOVER proof untracked | Committed in 5f0650b | `git ls-files` → PRESENT ✅ |
+| F-2 | BUILD_PROGRESS_TRACKER staged-not-committed | Committed in cc83991 | `git diff --name-only origin/main...HEAD` → PRESENT ✅ |
+| F-3 | Foreman session memory untracked | Committed in 5f0650b | `git ls-files` → PRESENT ✅ |
+| F-4 | SCOPE_DECLARATION.md stale (BL-027 fail) | Updated for wave15-schemadrift branch | `validate-scope-to-diff.sh` EXIT 0, 10/10 ✅ |
+| F-5 | Session memory not on branch (same as F-3) | Same resolution as F-3 | CONFIRMED ✅ |
+
+**All 5 REJECTION-PACKAGE failures: RESOLVED ✅**
 
 ---
 
@@ -31,118 +48,58 @@
 
 | Category | Checks | PASS | FAIL |
 |----------|--------|------|------|
-| FAIL-ONLY-ONCE learning | 5 | 3 | 2 |
-| Core invariants (CORE-001 to CORE-022) | 22 | 17 | 3 |
-| AAWP_MAT BUILD_DELIVERABLE overlay (BD-001 to BD-024) | 24 | 23 | 1 |
-| Merge gate parity (3 checks) | 3 | 2 | 1 |
-| **TOTAL** | **39** | **33** | **5** |
+| FAIL-ONLY-ONCE learning (A-001, A-002, A-021, A-026, A-029, A-030) | 6 | 6 | 0 |
+| Core invariants — CORE-005, 006, 007, 013, 014, 015, 016, 017, 018, 019, 020, 021 (applicable to AAWP_MAT) | 12 | 12 | 0 |
+| AAWP_MAT overlay BD-001 through BD-024 | 24 | 24 | 0 |
+| FFA Summary (FFA-01 through FFA-06) | 6 | 6 | 0 |
+| Merge gate parity (3 checks) | 3 | 3 | 0 |
+| **TOTAL** | **51** | **51** | **0** |
 
 ---
 
-## Migration SQL Quality (INFORMATIONAL — Technical Checks All PASS)
+## Migration SQL Quality (confirmed from first invocation — unchanged)
 
-The migration `20260307000001_parse_tasks_table.sql` is **technically correct**.  
-All 19 Pre-Brief checks PASS:
+Migration `20260307000001_parse_tasks_table.sql` — all 19 Pre-Brief technical checks PASS.
 
-| # | Check | Result |
-|---|-------|--------|
-| 1 | `id uuid PRIMARY KEY DEFAULT gen_random_uuid()` | ✅ PASS |
-| 2 | `audit_id uuid NOT NULL REFERENCES public.audits(id) ON DELETE CASCADE` | ✅ PASS |
-| 3 | `status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','processing','completed','failed'))` | ✅ PASS |
-| 4 | `error_message text` | ✅ PASS |
-| 5 | `created_at timestamptz NOT NULL DEFAULT now()` | ✅ PASS |
-| 6 | `updated_at timestamptz NOT NULL DEFAULT now()` | ✅ PASS |
-| 7 | `ENABLE ROW LEVEL SECURITY` | ✅ PASS |
-| 8 | SELECT policy org-isolation: `audit_id IN (SELECT a.id FROM public.audits a WHERE a.organisation_id IN (SELECT organisation_id FROM public.profiles WHERE id = auth.uid()))` | ✅ PASS |
-| 9 | `CREATE TABLE IF NOT EXISTS` (idempotent) | ✅ PASS |
-| 10 | `DO $$ BEGIN IF NOT EXISTS … END $$` (idempotent policy guard via pg_policies check) | ✅ PASS |
-| 11 | Exactly 6 declared columns (id, audit_id, status, error_message, created_at, updated_at) | ✅ PASS |
-| 12 | No stubs, TODOs, FIXMEs, or placeholders | ✅ PASS |
-| 13 | `CREATE TABLE IF NOT EXISTS public.parse_tasks` pattern present — T-W13-SCH-11 PASS | ✅ PASS |
-| 14-19 | RLS SELECT policy present; auth.uid() chain verified; FK cascade delete; no secrets; no injection vectors; architecture alignment | ✅ ALL PASS |
+| Column | Type & Constraints | Status |
+|--------|-------------------|--------|
+| id | `uuid PRIMARY KEY DEFAULT gen_random_uuid()` | ✅ |
+| audit_id | `uuid NOT NULL REFERENCES public.audits(id) ON DELETE CASCADE` | ✅ |
+| status | `text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','processing','completed','failed'))` | ✅ |
+| error_message | `text` (nullable) | ✅ |
+| created_at | `timestamptz NOT NULL DEFAULT now()` | ✅ |
+| updated_at | `timestamptz NOT NULL DEFAULT now()` | ✅ |
 
-**BUILD_PROGRESS_TRACKER.md** (T-W15-SCH-002) content is also **correct** — Wave 15 Schema Drift RCA with INC-W15-SCHEMA-DRIFT-001 fully documented.
-
-> **This REJECTION-PACKAGE is PURELY for uncommitted ceremony artifacts.** No migration SQL changes required.
+- ENABLE ROW LEVEL SECURITY: ✅
+- SELECT policy org-isolation (`auth.uid()` → profiles → organisation_id → audits → parse_tasks): ✅
+- CREATE TABLE IF NOT EXISTS (idempotent): ✅
+- DO $$ BEGIN IF NOT EXISTS … END $$ (idempotent policy guard): ✅
+- Zero stubs, TODOs, FIXMEs, placeholders: ✅
+- T-W13-SCH-11 passes GREEN: ✅
 
 ---
 
-## Failures (5 Total)
+## Functional Fitness Assessment
 
-### FAILURE 1 — CORE-018 / CORE-013: PREHANDOVER proof not committed
-
-- **Check**: CORE-018 condition (a); CORE-013
-- **Evidence**: `git ls-files .agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave15-schemadrift-wave15-20260307.md` → `error: pathspec did not match any file(s) known to git`
-- **Status**: `??` UNTRACKED in git status. NOT in `git diff --name-only origin/main...HEAD`.
-- **PREHANDOVER claim**: "✅ Committed (This file)" — **INACCURATE**
-- **Fix**: `git add .agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave15-schemadrift-wave15-20260307.md`
-
-### FAILURE 2 — BD-001 / A-021: BUILD_PROGRESS_TRACKER.md staged but not committed
-
-- **Check**: BD-001 (full scope delivered); A-021 (commit before IAA)
-- **Evidence**: `git status --short` shows `M  modules/mat/00-app-description/BUILD_PROGRESS_TRACKER.md` — staged, NOT committed
-- **Git diff confirm**: `git diff --name-only origin/main...HEAD` does NOT include BUILD_PROGRESS_TRACKER.md
-- **PREHANDOVER claim**: "✅ Committed" — **INACCURATE**
-- **Fix**: File is already staged. Commit only: `git commit -m "gov: add Wave 15 Schema Drift RCA to BUILD_PROGRESS_TRACKER"`
-
-### FAILURE 3 — CORE-015: Foreman session memory not committed
-
-- **Check**: CORE-015 (session memory present)
-- **Evidence**: `git ls-files .agent-workspace/foreman-v2/memory/session-wave15-schemadrift-20260307.md` → `error: pathspec did not match any file(s) known to git`
-- **Status**: `??` UNTRACKED. Not in PREHANDOVER evidence bundle (5-artifact bundle does not list session memory).
-- **Fix**: `git add .agent-workspace/foreman-v2/memory/session-wave15-schemadrift-20260307.md`
-
-### FAILURE 4 — A-026 / BL-027 (Merge Gate Parity FAIL): SCOPE_DECLARATION.md stale
-
-- **Check**: A-026; Merge gate parity check 1 (validate-scope-to-diff.sh exits 1)
-- **Evidence**: SCOPE_DECLARATION.md declares branch `copilot/initiate-wave-15-orchestration`, date 2026-03-06, session `session-wave15-impl-20260306`. Lists 20 files from prior Wave 15 impl PR.
-- **Actual diff** (3 files): `.agent-admin/assurance/iaa-prebrief-wave15-schemadrift.md`, `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`, `apps/maturion-maturity-legacy/supabase/migrations/20260307000001_parse_tasks_table.sql`
-- **Validation script**: `validate-scope-to-diff.sh` EXIT 1 — 2 files missing, 19 extra
-- **Fix**: Update SCOPE_DECLARATION.md for branch `copilot/add-migration-for-parse-tasks-table` and list all 6 files that will be in the final diff after committing FAILURES 1–3
-
-### FAILURE 5 — CORE-018 condition (b): Session memory not on branch
-
-- **Check**: CORE-018 condition (b)
-- **Evidence**: Session memory untracked (same root cause as FAILURE 3)
-- **Fix**: Same as FAILURE 3 (bundled)
-
----
-
-## Complete Fix Sequence
-
-```bash
-# Step 1: Stage all uncommitted artifacts
-git add modules/mat/00-app-description/BUILD_PROGRESS_TRACKER.md \
-        .agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave15-schemadrift-wave15-20260307.md \
-        .agent-workspace/foreman-v2/memory/session-wave15-schemadrift-20260307.md
-
-# Step 2: Commit ceremony artifacts
-git commit -m "gov: commit ceremony artifacts for wave15-schemadrift (PREHANDOVER, session-memory, RCA)"
-
-# Step 3: Update SCOPE_DECLARATION.md for this PR
-# Set Wave: Wave 15 — Schema Drift Remediation (parse_tasks migration)
-# Set Branch: copilot/add-migration-for-parse-tasks-table
-# Set Session: session-wave15-schemadrift-20260307
-# Set Date: 2026-03-07
-# List ONLY files in final diff:
-#   - apps/maturion-maturity-legacy/supabase/migrations/20260307000001_parse_tasks_table.sql
-#   - .agent-workspace/foreman-v2/personal/wave-current-tasks.md
-#   - .agent-admin/assurance/iaa-prebrief-wave15-schemadrift.md
-#   - modules/mat/00-app-description/BUILD_PROGRESS_TRACKER.md
-#   - .agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave15-schemadrift-wave15-20260307.md
-#   - .agent-workspace/foreman-v2/memory/session-wave15-schemadrift-20260307.md
-#   - SCOPE_DECLARATION.md (this file itself)
-git add SCOPE_DECLARATION.md
-git commit -m "gov: update SCOPE_DECLARATION for wave15-schemadrift hotfix"
-
-# Step 4: Push
-git push
-
-# Step 5: Verify merge gate
-bash .github/scripts/validate-scope-to-diff.sh  # Must exit 0
-
-# Step 6: Re-invoke IAA
 ```
+FFA-01 Delivery Completeness: PASS — 10/10 files declared and present in diff
+FFA-02 Wiring Verification:   PASS — parse_tasks wired to useCriteria.ts consumer; FK to audits confirmed
+FFA-03 Integration Fit:       PASS — adds missing schema existing frontend hook already expects
+FFA-04 Security:              PASS — RLS active, org-isolation SELECT policy, no secrets, no injection
+FFA-05 Code Quality:          PASS — idiomatic DDL, idempotent guards, clean structure, zero debt
+FFA-06 One-Time Build:        PASS — T-W13-SCH-11 RED gate clears on merge; no further fix required
+FFA-CARRY-FORWARD:            NONE
+```
+
+---
+
+## Merge Gate Parity (§4.3)
+
+| Check | Local Result |
+|-------|-------------|
+| validate-scope-to-diff.sh (BL-027) | PASS — EXIT 0, 10/10 exact match |
+| governance/alignment | PASS — 191 canons, 0 bad hashes, IAA canon + AGCFPP-001 present |
+| stop-and-fix/enforcement | PASS — all 5 prior failures resolved and committed |
 
 ---
 
@@ -150,22 +107,30 @@ bash .github/scripts/validate-scope-to-diff.sh  # Must exit 0
 
 ```
 ═══════════════════════════════════════════════════════════════════════
-REJECTION-PACKAGE
+ASSURANCE-TOKEN
 PR: copilot/add-migration-for-parse-tasks-table — Issue #971
-5 check(s) FAILED. Merge blocked. STOP-AND-FIX required.
-Token reference: IAA-session-wave15-schemadrift-wave15-20260307-REJECTION
+Wave: Wave 15 — Schema Drift Remediation (parse_tasks migration)
+All 51 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-wave15-schemadrift-wave15-20260307-PASS
 Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+Re-invocation: all 5 REJECTION-PACKAGE failures resolved and verified.
 ═══════════════════════════════════════════════════════════════════════
 ```
 
-> **No PR may be opened until all 5 failures are resolved, fix sequence executed, and IAA re-invoked.**
-> The migration SQL is correct and requires no changes. Re-invocation after committing ceremony artifacts and updating SCOPE_DECLARATION.md is expected to produce ASSURANCE-TOKEN.
+---
+
+## CWT Gate Impact
+
+Upon merge, T-W13-SCH-11 (`no frontend hook references a table absent from all migrations`) will pass GREEN.
+The `CREATE TABLE IF NOT EXISTS public.parse_tasks` pattern satisfies the test assertion.
+The CWT RED gate that triggered Wave 15 will clear.
 
 ---
 
-## CWT Gate Assessment
+## Note on PREHANDOVER Proof
 
-T-W13-SCH-11 (`no frontend hook references a table absent from all migrations`) — **WILL PASS** once this PR is merged. The migration creates `public.parse_tasks` at `CREATE TABLE IF NOT EXISTS public.parse_tasks (` — the `CREATE TABLE.*parse_tasks` pattern is present and unambiguous. The CWT RED gate that triggered this wave will clear upon merge.
+The PREHANDOVER proof `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave15-schemadrift-wave15-20260307.md` is **NOT modified** by this token issuance — it is read-only post-commit per §4.3b (A-029). The `iaa_audit_token: IAA-session-wave15-schemadrift-wave15-20260307-PASS` pre-populated reference in the PREHANDOVER proof is confirmed by this ASSURANCE-TOKEN.
 
 ---
 
