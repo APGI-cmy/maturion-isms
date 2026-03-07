@@ -36,7 +36,7 @@ jobs:
               per_page: 100,
             });
             const copilotPRs = pulls.filter(pr =>
-              pr.assignees && pr.assignees.some(a => a.login === 'copilot')
+              pr.assignees && pr.assignees.some(a => (a.login || '').toLowerCase() === 'copilot')
             );
 
             // workflow_dispatch override: if pr_number input provided, target only that PR
