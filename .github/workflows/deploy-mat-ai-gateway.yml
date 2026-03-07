@@ -230,6 +230,10 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Run Combined Wave Tests (MAT-T-0001–0098)
         shell: bash
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          MAT_E2E_TEST_TOKEN: ${{ secrets.MAT_E2E_TEST_TOKEN }}
         run: set -o pipefail && pnpm test | tee cwt-test-output.log
       - name: Upload CWT test results
         if: always()
