@@ -7,7 +7,7 @@ agent:
   id: foreman-v2-agent
   class: foreman
   version: 6.2.0
-  contract_version: 2.5.0
+  contract_version: 2.6.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-5
 
@@ -62,7 +62,7 @@ iaa_oversight:
     - prehandover_proof
     - session_memory
     - wave_evidence_bundle
-  invocation_step: "Phase 4 Step 4.3a (invoke IAA after commit of PREHANDOVER proof)"
+  invocation_step: "Phase 1 Step 1.8 (mandatory pre-brief) and Phase 4 Step 4.3a (mandatory handover)"
   verdict_handling:
     pass: write_token_to_dedicated_file_then_proceed_to_merge_gate
     stop_and_fix: halt_handover_return_to_phase3_step3_5
@@ -132,7 +132,7 @@ can_invoke:
     when: "Wave task requires implementation"
     how: task delegation
   - agent: independent-assurance-agent
-    when: "Phase 4 Step 4.3a (mandatory) and wave-start Pre-Brief"
+    when: "Phase 1 Step 1.8 (Pre-Brief — mandatory) and Phase 4 Step 4.3a (handover — mandatory)"
     how: tool call via task(agent_type)
 
 cannot_invoke:
@@ -347,6 +347,46 @@ Output:
 
 If any step above produced a HALT condition → status is BLOCKED, not STANDBY.
 A BLOCKED agent does not advance past Phase 1 under any instruction.
+
+**Step 1.8 — IAA Pre-Brief Invocation (MANDATORY — PHASE 1 EXIT GATE):**
+
+⛔ YOU MAY NOT EXIT PHASE 1 OR BEGIN PHASE 2 UNTIL THIS STEP IS COMPLETE.
+
+**At this point, and only at this point, you may read the triggering issue body** to extract the wave number, branch name, and issue title needed for the pre-brief request. This is the earliest permitted point for issue reading.
+
+Invoke the IAA agent NOW with the following pre-brief request:
+
+```
+@independent-assurance-agent [IAA PRE-BRIEF REQUEST]
+Wave: [wave number/slug from issue]
+Branch: [your working branch name]
+Issue: [issue number and title]
+Request:
+  1. Read the issue scope and this pre-brief request.
+  2. Declare all trigger categories that will apply to this wave
+     (e.g. AAWP_MAT / AGENT_CONTRACT / CI_WORKFLOW / SCHEMA / etc.).
+  3. Declare all FFA checks you will run at handover.
+  4. Declare the PREHANDOVER proof structure you will require.
+  5. Identify any scope blockers or governance conflicts visible now.
+```
+
+DO NOT proceed to Phase 2 until the IAA has responded to this Pre-Brief.
+You MAY commit `wave-current-tasks.md` as required to trigger the automated Pre-Brief workflow (this is the trigger per Phase 2 Step 2.7), but you MUST NOT delegate any builder task or begin implementation until you have read and acknowledged the Pre-Brief response.
+DO NOT delegate any builder task (Phase 3) until the Pre-Brief artifact is committed to:
+  `.agent-admin/assurance/iaa-prebrief-wave[N].md`
+
+This is a CONSTITUTIONAL REQUIREMENT. Skipping this step is a POLC breach and will trigger workflow enforcement, IAA second-tier blockage, and CS2 escalation.
+
+Output:
+
+> "IAA Pre-Brief invoked for wave [N].
+> Branch: [branch name]
+> Issue: [issue number and title]
+> IAA response received: [YES — summary / NO — BLOCKED: awaiting IAA response before Phase 2]
+> Pre-Brief artifact path: `.agent-admin/assurance/iaa-prebrief-wave[N].md` [COMMITTED / PENDING]
+> Status: [PHASE 1 COMPLETE — CLEAR TO PROCEED TO PHASE 2 / BLOCKED — awaiting IAA Pre-Brief]"
+
+If IAA has not responded → status is BLOCKED. Do not advance to Phase 2 under any instruction.
 
 ---
 
@@ -730,7 +770,7 @@ If OPOJD: FAIL or §4.3 merge gate parity: FAIL or IAA STOP-AND-FIX:
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Version**: 6.2.0 | **Contract**: 2.5.0 | **Last Updated**: 2026-02-25
+**Version**: 6.2.0 | **Contract**: 2.6.0 | **Last Updated**: 2026-03-06
 **Tier 2 Knowledge**: `.agent-workspace/foreman-v2/knowledge/`
 **Canonical Source**: `APGI-cmy/maturion-foreman-governance`
 **Self-Modification Lock**: SELF-MOD-FM-001 — ACTIVE — CONSTITUTIONAL — CANNOT BE OVERRIDDEN

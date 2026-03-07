@@ -129,15 +129,182 @@ jobs:
 
             core.warning(`Gap 1 alert posted: no open PR found for branch '${branch}'.`);
 
+  # ── Gap 2A ────────────────────────────────────────────────────────────────
+  # Pre-Brief gate: must run before any IAA second-tier artifact processing.
+  # Fires only on opened/ready_for_review to avoid re-posting on every synchronize.
+  gap2a-prebrief-gate-before-iaa-second-tier:
+    name: "watchdog/gap2a-prebrief-gate"
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'pull_request' &&
+      (github.event.action == 'opened' || github.event.action == 'ready_for_review')
+    outputs:
+      prebrief_gate: ${{ steps.gate_final.outputs.prebrief_gate }}
+    steps:
+      - name: Check PR for ripple/liaison guard
+        id: guard
+        uses: actions/github-script@v7
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_LABELS: ${{ toJSON(github.event.pull_request.labels) }}
+        with:
+          script: |
+            const title = (process.env.PR_TITLE || '').toLowerCase();
+            const labelsRaw = process.env.PR_LABELS || '[]';
+            let labels = [];
+            try { labels = JSON.parse(labelsRaw).map(l => (l.name || '').toLowerCase()); } catch {}
+
+            if (
+              title.includes('[wip] update governance artifacts') ||
+              title.includes('ripple:')
+            ) {
+              core.setOutput('skip', 'true');
+              core.info('Guard: PR title matches ripple/liaison pattern — skipping Gap 2A.');
+              return;
+            }
+
+            const hasLiaison = labels.includes('agent:liaison');
+            const hasGovernance = labels.includes('governance');
+            const hasAutomated = labels.includes('automated');
+            if (hasLiaison || (hasGovernance && hasAutomated)) {
+              core.setOutput('skip', 'true');
+              core.info('Guard: PR labels indicate liaison/automated governance PR — skipping Gap 2A.');
+              return;
+            }
+
+            core.setOutput('skip', 'false');
+
+      - name: Checkout PR head branch
+        if: steps.guard.outputs.skip != 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+
+      - name: Check for IAA pre-brief artifact and set gate output
+        id: gate
+        if: steps.guard.outputs.skip != 'true'
+        uses: actions/github-script@v7
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+        with:
+          script: |
+            const { execSync } = require('child_process');
+            const fs = require('fs');
+
+            // Use broader pattern: iaa-prebrief-*.md (covers slug-based names like
+            // iaa-prebrief-wave14-batchB.md and non-numeric slugs). Exclude SUPERSEDED artifacts.
+            let prebriefExists = false;
+            try {
+              if (fs.existsSync('.agent-admin/assurance')) {
+                const result = execSync(
+                  'find .agent-admin/assurance -name "iaa-prebrief-*.md" -print -quit',
+                  { encoding: 'utf8' }
+                ).trim();
+                if (result.length > 0) {
+                  // Exclude SUPERSEDED artifacts
+                  const fileContent = fs.readFileSync(result, 'utf8');
+                  prebriefExists = !fileContent.toLowerCase().includes('superseded');
+                }
+              }
+            } catch (e) {
+              prebriefExists = false;
+            }
+
+            if (prebriefExists) {
+              core.info('IAA pre-brief artifact found — Gap 2A gate: CLEAR.');
+              core.setOutput('prebrief_gate', 'clear');
+              return;
+            }
+
+            const branch = process.env.PR_BRANCH;
+            const prNumber = parseInt(process.env.PR_NUMBER, 10);
+
+            // Idempotency guard — skip if we already posted this alert
+            try {
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                per_page: 10,
+                sort: 'created',
+                direction: 'desc',
+              });
+              if (comments.some(c => c.body && c.body.includes('<!-- gap2a-prebrief-gate-blocked -->'))) {
+                core.info('Gap 2A: blocking comment already posted — skipping to prevent spam.');
+                core.setOutput('prebrief_gate', 'blocked');
+                return;
+              }
+            } catch (e) {
+              core.warning(`Gap 2A: could not check existing comments for idempotency: ${e.message}`);
+            }
+
+            // Set gate to blocked
+            core.setOutput('prebrief_gate', 'blocked');
+
+            const body = [
+              '<!-- gap2a-prebrief-gate-blocked -->',
+              '## 🛑 IAA SECOND-TIER GATE — Pre-Brief Artifact Missing',
+              '',
+              'The IAA cannot proceed with second-tier verification (FFA checks, PREHANDOVER proof, assurance token) because **no pre-brief artifact exists** for this wave.',
+              '',
+              '**Agent instruction**: Stop all handover preparation. Return to Step 1.8. Invoke the IAA Pre-Brief now and commit the artifact to `.agent-admin/assurance/iaa-prebrief-wave[N].md` before continuing.',
+              '',
+              '**CS2 escalation**: The pre-brief reminder workflow (`iaa-prebrief-inject.yml`) did not prevent this gap.',
+              '',
+              '### Possible reasons the reminder did not fire:',
+              '1. `wave-current-tasks.md` was not pushed before implementation began',
+              '2. The branch push occurred before an open PR existed (silent-drop — see companion fix in `iaa-prebrief-inject.yml`)',
+              '3. The pre-brief artifact was committed to an incorrect path',
+              '4. GitHub Actions queue delay exceeded the safety net window',
+              '5. Agent bypassed the workflow trigger by committing directly without `wave-current-tasks.md`',
+              '',
+              `@APGI-cmy — IAA second-tier gate blocked on PR for branch \`${branch}\`. Pre-brief artifact absent.`,
+              '',
+              '*Governance Watchdog — Gap 2A | Authority: IAA_PRE_BRIEF_PROTOCOL.md v1.1.0, foreman-v2-agent contract Step 1.8*',
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body,
+            });
+
+            core.warning(`Gap 2A: Pre-brief artifact missing on branch '${branch}'. Second-tier gate BLOCKED.`);
+
+      - name: Set gate to clear when guard exempts this PR
+        id: gate_exempt
+        if: steps.guard.outputs.skip == 'true'
+        run: echo "prebrief_gate=clear" >> "$GITHUB_OUTPUT"
+
+      - name: Consolidate gate output
+        id: gate_final
+        if: always()
+        run: |
+          # Use gate output if available, otherwise gate_exempt output, otherwise default to clear
+          GATE="${{ steps.gate.outputs.prebrief_gate }}"
+          GATE_EXEMPT="${{ steps.gate_exempt.outputs.prebrief_gate }}"
+          if [ -n "$GATE" ]; then
+            echo "prebrief_gate=$GATE" >> "$GITHUB_OUTPUT"
+          elif [ -n "$GATE_EXEMPT" ]; then
+            echo "prebrief_gate=$GATE_EXEMPT" >> "$GITHUB_OUTPUT"
+          else
+            echo "prebrief_gate=clear" >> "$GITHUB_OUTPUT"
+          fi
+
   # ── Gap 2 ─────────────────────────────────────────────────────────────────
   # PR marked ready for review but no IAA pre-brief artifact exists
   gap2-ready-pr-missing-prebrief:
     name: "watchdog/gap2-ready-pr-missing-prebrief"
     runs-on: ubuntu-latest
+    needs: [gap2a-prebrief-gate-before-iaa-second-tier]
     if: >-
       github.event_name == 'pull_request' &&
       (github.event.action == 'ready_for_review' ||
-       (github.event.action == 'opened' && !github.event.pull_request.draft))
+       (github.event.action == 'opened' && !github.event.pull_request.draft)) &&
+      needs.gap2a-prebrief-gate-before-iaa-second-tier.outputs.prebrief_gate != 'blocked'
     steps:
       - name: Check PR for ripple/liaison guard
         id: guard
