@@ -18,9 +18,6 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { SupabasePersistentMemoryAdapter } from '../../memory/SupabasePersistentMemoryAdapter.js';
 import { Capability } from '../../types/index.js';
 import { makeTestSupabaseClient } from '../../../../../api/ai/__test-utils__/makeTestSupabaseClient.js';
-import {
-  buildPersistentMemory,
-} from '../../../../../api/ai/request.js';
 
 // ---------------------------------------------------------------------------
 // Test utilities
@@ -42,14 +39,14 @@ function makeErrorOnInsertClient() {
           }),
           order: () => Promise.resolve({ data: null, error: null }),
         }),
+        order: () => Promise.resolve({ data: null, error: null }),
       }),
       delete: () => ({
         eq: () => ({
           lt: () => Promise.resolve({ count: 0, error: null }),
         }),
       }),
-    }),
-  };
+    });
 }
 
 /** Build a stub client that always returns an error on select */
@@ -65,14 +62,14 @@ function makeErrorOnSelectClient() {
           }),
           order: () => Promise.resolve({ data: null, error: new Error('select failed') }),
         }),
+        order: () => Promise.resolve({ data: null, error: new Error('select failed') }),
       }),
       delete: () => ({
         eq: () => ({
           lt: () => Promise.resolve({ count: 0, error: null }),
         }),
       }),
-    }),
-  };
+    });
 }
 
 /** Build a stub client that returns an error on delete */
@@ -91,8 +88,7 @@ function makeErrorOnDeleteClient() {
           lt: () => Promise.resolve({ count: null, error: new Error('delete failed') }),
         }),
       }),
-    }),
-  };
+    });
 }
 
 /** Build a stub client that returns null count on delete (covers the null-count branch) */
@@ -111,8 +107,7 @@ function makeNullCountDeleteClient() {
           lt: () => Promise.resolve({ count: null, error: null }),
         }),
       }),
-    }),
-  };
+    });
 }
 
 // ---------------------------------------------------------------------------
@@ -175,17 +170,18 @@ describe('T-W12-QAV-1: ai_memory CRUD E2E — Insert → query → expire cycle'
 // ---------------------------------------------------------------------------
 // T-W12-QAV-2: Persistent memory cross-invocation (unit)
 // ---------------------------------------------------------------------------
-
 describe('T-W12-QAV-2: Persistent memory cross-invocation — second retrieve() includes first persist() context', () => {
-  it('T-W12-QAV-2: two sequential persist() calls via buildPersistentMemory(); second retrieve() returns both entries', async () => {
+  it('T-W12-QAV-2: two sequential persist() calls via isolated adapter; second retrieve() returns both entries', async () => {
     // References: Wave 11 Supabase wiring, Wave 12 Task 12.1
     // Type: unit | Priority: P0
     // Acceptance: second retrieve() includes context from first persist()
-    // Note: test uses degraded-mode adapter (no SUPABASE_URL) which is backed
-    //       by makeDegradedSupabaseClient() — satisfies "stub Supabase client" spec.
+    // Note: uses a fresh isolated makeTestSupabaseClient() per test to avoid
+    //       shared state pollution from other tests in this file. Using a
+    //       module-level singleton (buildPersistentMemory) causes cross-test
+    //       contamination when the in-memory store accumulates entries.
 
-    // Get adapter from factory (degraded mode in test environment = in-memory client)
-    const adapter = buildPersistentMemory();
+    const client = makeTestSupabaseClient();
+    const adapter = new SupabasePersistentMemoryAdapter(client as unknown as MockSupabaseClient);
 
     const now = Date.now();
 
@@ -225,7 +221,6 @@ describe('T-W12-QAV-2: Persistent memory cross-invocation — second retrieve() 
 // ---------------------------------------------------------------------------
 // T-W12-QAV-3: Organisation isolation — ai_memory
 // ---------------------------------------------------------------------------
-
 describe('T-W12-QAV-3: Organisation isolation — retrieve under org-B returns empty when only org-A data exists', () => {
   it('T-W12-QAV-3: persist under org-A; retrieve under org-B; result is strictly empty', async () => {
     // References: GRS-008 (tenant isolation), Wave 12 Task 12.1
@@ -273,7 +268,6 @@ describe('T-W12-QAV-3: Organisation isolation — retrieve under org-B returns e
 // ---------------------------------------------------------------------------
 // T-W12-QAV-4: pruneExpired() coverage
 // ---------------------------------------------------------------------------
-
 describe('T-W12-QAV-4: pruneExpired() — expires_at < NOW() records deleted; active records retained', () => {
   it('T-W12-QAV-4: time-bounded pruneExpired() correctly separates expired from active entries', async () => {
     // References: GRS-008, Wave 11 Supabase Persistent Memory, Wave 12 Task 12.1
@@ -356,7 +350,6 @@ describe('T-W12-QAV-4: pruneExpired() — expires_at < NOW() records deleted; ac
 //   - pruneExpired() error path (error thrown)
 //   - toRow/fromRow helpers (all optional fields: null id, sessionId, userId, expiresAt)
 // ---------------------------------------------------------------------------
-
 describe('T-W12-QAV-5: Coverage threshold — SupabasePersistentMemoryAdapter (≥90% line coverage)', () => {
   afterEach(() => {
     vi.restoreAllMocks();
