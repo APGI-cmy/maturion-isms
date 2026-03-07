@@ -1,10 +1,11 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.3.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.4.0 | **Authority**: CS2
 **Date**: 2026-03-03
 **Amended**: 2026-03-03 — v1.1.0: Added §Proactive Assurance — Pre-Brief Protocol
 **Amended**: 2026-03-04 — v1.2.1: Added §CS2 Direct Review Track
 **Amended**: 2026-03-04 — v1.3.0: Added §Risk-Tiered Ceremony Table + §Functional Fitness Assessment (FFA)
+**Amended**: 2026-03-07 — v1.4.0: Added §Injection Audit Trail mandatory PREHANDOVER check (OVL-INJ-001); documented audit trail signature strings; linked with CodexAdvisor gate AGCFPP-001
 
 ---
 
@@ -78,6 +79,7 @@ The IAA has **non-bypassable merge block authority** for qualifying PRs:
 - Agent cites improvement suggestions inline instead of parking them (inline suggestions are a process boundary violation)
 - Any FFA check fails for a Tier 2 (build) PR (see §Functional Fitness Assessment)
 - A Carry-Forward Mandate (CFM) is issued and not resolved before merge
+- **OVL-INJ-001 check fails**: No injection audit trail evidence found for a PR where IAA is required at handover (T1 or T2 per §Risk-Tiered Ceremony Table — see §Injection Audit Trail)
 
 ---
 
@@ -548,12 +550,78 @@ and the IAA independently review identical content under human oversight.
 
 ---
 
+## Injection Audit Trail
+
+**Added**: v1.4.0 — 2026-03-07
+**Authority**: CS2 (Johan Ras / @APGI-cmy)
+**CodexAdvisor Gate**: AGCFPP-001 (`governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md`)
+
+### Purpose
+
+For every PR where IAA is required at handover (T1 — agent contract changes, or T2 — build
+deliverables, per the §Risk-Tiered Ceremony Table), the IAA MUST confirm that the IAA
+Pre-Brief injection pipeline ran before any qualifying builder task was delegated. This
+prevents agents from bypassing the injection workflow by manually creating Pre-Brief
+artifacts without the workflow audit trail.
+
+The `iaa-prebrief-inject.yml` workflow is the **canonical injection mechanism**. Its PR
+comment posts are the audit trail. OVL-INJ-001 verifies this trail is present.
+
+### Mandatory PREHANDOVER Check — OVL-INJ-001
+
+The IAA MUST execute `OVL-INJ-001` (see `iaa-category-overlays.md` §INJECTION_AUDIT_TRAIL)
+on every handover where IAA is required (T1 or T2). This check is applied after the universal
+CERT gate and before category-specific overlay checks. It is in addition to, not a replacement
+for, the CERT gate and Core Invariants.
+
+### Audit Trail Signature Strings
+
+The `iaa-prebrief-inject.yml` workflow identifies itself with the following footer strings
+in PR comments. IAA uses these as the primary injection evidence:
+
+| Injection Scenario | Signature String |
+|-------------------|-----------------|
+| Normal injection | `*IAA Pre-Brief Injection — Authority: foreman-v2-agent contract Step 1.8, IAA_PRE_BRIEF_PROTOCOL.md v1.1.0*` |
+| Safety net (T+10 min) | `*IAA Pre-Brief Safety Net (T+10min) — Authority: foreman-v2-agent contract Step 1.8, IAA_PRE_BRIEF_PROTOCOL.md v1.1.0*` |
+
+### AGCFPP-001 Gate Link
+
+`AGENT_CONTRACT_FILE_PROTECTION_POLICY.md` (AGCFPP-001) governs the
+`agent-contract-audit.yml` CI gate, which enforces CodexAdvisor write authority for
+`.github/agents/` modifications. OVL-INJ-001 extends this enforcement layer: for any PR
+that triggers the AGCFPP-001 audit gate, the IAA also verifies that the injection audit
+trail is present, ensuring the full pre-brief pipeline preceded the agent contract change.
+A missing injection trail on an AGENT_CONTRACT PR = dual failure (AGCFPP-001 + OVL-INJ-001).
+
+### Evidence Acceptance Hierarchy
+
+IAA accepts injection trail evidence in this order of preference:
+
+1. **Signature string in PR comment** — `iaa-prebrief-inject.yml` footer present in PR comment history
+2. **Pre-Brief artifact committed** — `.agent-admin/assurance/iaa-prebrief-wave<N>.md` (or `iaa-prebrief-<slug>.md`) present, non-empty, non-placeholder, and committed before any builder task artifact
+3. **CI check run record** — `iaa-prebrief-inject` job appears in the PR's CI check history
+
+Any one tier satisfies OVL-INJ-001. All three absent = REJECTION-PACKAGE.
+
+### Failure Consequence
+
+OVL-INJ-001 failure triggers REJECTION-PACKAGE:
+
+> `OVL-INJ-001 FAIL: No injection audit trail found. The iaa-prebrief-inject.yml workflow
+> must run and deliver the Pre-Brief invocation before qualifying tasks are delegated.
+> No signature string, committed pre-brief artifact, or CI check run was found for this wave.
+> Fix: Commit wave-current-tasks.md to trigger the workflow, or invoke /iaa-prebrief manually.
+> Re-invoke IAA once the trail is established.`
+
+---
+
 ## References
 
 - `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0 — Living Agent framework
 - `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` — Knowledge architecture
 - `governance/canon/AGENT_CONTRACT_ARCHITECTURE.md` — Four-phase contract architecture
 - `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` v1.0.0 — IAA Pre-Brief Protocol (proactive assurance)
+- `governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md` (AGCFPP-001) — CodexAdvisor write authority gate; linked with OVL-INJ-001
 - `governance/quality/agent-integrity/` — Agent integrity reference store
 - `governance/CANON_INVENTORY.json` — Canon hash registry
 - `governance/GATE_REQUIREMENTS_INDEX.json` — Gate requirements
