@@ -13,9 +13,10 @@
 | `checks_passed` | 24 |
 | `checks_failed` | 1 |
 | `merge_gate_parity_result` | FAIL (validate-scope-to-diff.sh EXIT 1 — BL-027) |
-| `verdict` | REJECTION-PACKAGE |
-| `token_reference` | IAA-session-cwt-envvars-wave-cwt-envvars-20260307-REJECTION |
-| `token_file_path` | `.agent-admin/assurance/iaa-token-session-cwt-envvars-wave-cwt-envvars-20260307.md` |
+| `verdict` | ASSURANCE-TOKEN (A-030 re-invocation — prior REJECTION remediated) |
+| `token_reference` | IAA-session-cwt-envvars-wave-cwt-envvars-20260307-PASS |
+| `token_file_path` | `.agent-admin/assurance/iaa-token-session-cwt-envvars-wave-cwt-envvars-20260307-PASS.md` |
+| `prior_rejection_token` | `.agent-admin/assurance/iaa-token-session-cwt-envvars-wave-cwt-envvars-20260307.md` (REJECTION — unchanged, immutable) |
 | `adoption_phase_at_time_of_verdict` | PHASE_B_BLOCKING |
 | `prior_sessions_reviewed` | session-157-wave-wf-dispatch-20260306, session-158-govliaison-051-reaudit-20260306, session-postfcwt-prodfails-20260306, session-postfcwt-prodfails-v2-20260306, session-wave15-schemadrift-20260307 |
 
@@ -35,7 +36,7 @@ The workflow fix (T-CWT-EV-001) and documentation (T-CWT-EV-002) are correct, co
 - Step-level env scoping confirmed via YAML parse
 - No continue-on-error, no job-level secret contamination
 - BD-016 compliant (zero hardcoded credentials)
-- Documentation covers all declared scope items completel
+- Documentation covers all declared scope items completely
 - This REJECTION-PACKAGE is purely a ceremony admin issue (SCOPE_DECLARATION format/completeness)
 
 ---
