@@ -28,7 +28,7 @@
 
 | # | Task ID | Task | Builder | Status | PR / Evidence |
 |---|---------|------|---------|--------|---------------|
-| 1 | T-T075-ISO-001 | Update T-075-1 test in `api/ai/request.test.ts`: use fresh `makeTestSupabaseClient()` + unique `organisationId` (`org-red-${Date.now()}`) to isolate from cross-run contamination | qa-builder | 🔴 PENDING | — |
+| 1 | T-T075-ISO-001 | Update T-075-1 test in `api/ai/request.test.ts`: use fresh `makeTestSupabaseClient()` + unique `organisationId` (`org-red-${Date.now()}-${random}`) to isolate from cross-run contamination | qa-builder | 🟢 DONE | IAA ASSURANCE-TOKEN: IAA-session-patch-T075-isolation-20260308-PASS |
 
 **Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED
 
@@ -38,16 +38,16 @@
 
 | PR # | Token | Date |
 |------|-------|------|
-| — | PENDING | — |
+| copilot/fix-isolate-build-persistent-memory-test | IAA-session-patch-T075-isolation-20260308-PASS | 2026-03-08 |
 
 ---
 
 ## Wave Completion Gate
 
-- [ ] T-T075-ISO-001: T-075-1 test updated — unique org ID + fresh test client
-- [ ] `expect(results).toHaveLength(1)` passes consistently regardless of workflow concurrency
-- [ ] IAA ASSURANCE-TOKEN received
-- [ ] Session memory written
-- [ ] PREHANDOVER proof committed
+- [x] T-T075-ISO-001: T-075-1 test updated — unique org ID + fresh test client
+- [x] `expect(results).toHaveLength(1)` passes consistently regardless of workflow concurrency
+- [x] IAA ASSURANCE-TOKEN received: IAA-session-patch-T075-isolation-20260308-PASS
+- [x] Session memory written
+- [x] PREHANDOVER proof committed
 - [ ] CS2 notified for merge approval
 

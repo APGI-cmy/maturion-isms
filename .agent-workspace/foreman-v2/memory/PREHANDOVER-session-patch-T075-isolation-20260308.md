@@ -150,12 +150,25 @@ Issue "[Agent Task] fix(test): Isolate buildPersistentMemory() test (T-075) from
 <!-- §4.3b: Pre-populated at commit time. Not PENDING. -->
 `iaa_audit_token: IAA-session-patch-T075-isolation-20260308-PASS`
 
-[IAA ASSURANCE-TOKEN — to be pasted verbatim after IAA verdict is received]
+ASSURANCE-TOKEN issued on R3 re-invocation (SHA 609d074). All 45 checks PASS.
 
 ## IAA Agent Response (verbatim)
 <!-- MANDATORY PER S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) -->
 
-[IAA agent output pasted verbatim here — ASSURANCE-TOKEN block]
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/fix-isolate-build-persistent-memory-test
+    fix(test): Isolate buildPersistentMemory() test (T-075) from shared state contamination
+    R3 re-invocation after R2 REJECTION-PACKAGE (A-026/BL-027 remediated)
+All 45 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-patch-T075-isolation-20260308-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+═══════════════════════════════════════
+```
+
+Token file: `.agent-admin/assurance/iaa-token-session-patch-T075-isolation-20260308-PASS.md` (SHA 609d074)
 
 ---
 
