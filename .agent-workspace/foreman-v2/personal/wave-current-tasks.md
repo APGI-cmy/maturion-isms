@@ -1,57 +1,45 @@
-# Wave Current Tasks — foreman-v2-agent
+# Wave Current Tasks — foreman-v2-agent — fix-e2e-w13-liveness
 
-**Wave**: breach-rca-20260308 — Governance Breach RCA: Foreman bootstrap skip + direct implementation (PRs #986, #990)
-**Session**: session-rca-breach-20260308
+**Wave**: fix-e2e-w13-liveness
+**Branch**: copilot/fix-e2e-liveness-failures
+**Issue**: maturion-isms — E2E liveness failures T-W13-E2E-1 and T-W13-E2E-4
 **Date**: 2026-03-08
-**Issue**: fail-only-once: Foreman bootstrap and implementation breach — Phase 1 + NO-IMPLEMENT-001 (PRs #986, #990, 2026-03-08)
-**Branch**: copilot/fix-foreman-bootstrap-issue
-**CS2 Authorization**: Issue opened and assigned by @APGI-cmy directly
+**Session**: session-fix-e2e-w13-liveness-20260308
+**CS2 Authorization**: Issue assigned by @APGI-cmy directly
 **Protocol Reference**: IAA_PRE_BRIEF_PROTOCOL.md v1.1.0 §Trigger
-**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-breach-rca-20260308.md` — COMMITTED (SHA: 0518d42)
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-fix-e2e-w13-liveness.md` — PENDING
 
 ---
 
 ## Wave Context
 
-**Wave Slug**: breach-rca-20260308
-**Root cause summary**: On 2026-03-08, foreman-v2-agent directly implemented production test code (PR #986) and CI workflow code (PR #990) without Phase 1 bootstrap, without IAA Pre-Brief, and without qa-builder/integration-builder delegation. No session memory was written. Two IAA rejection packages were issued before final assurance token was granted. This wave records the formal RCA, locks in the new A-rule, and writes the missing session memory.
+**Wave Slug**: fix-e2e-w13-liveness
+**Summary**: Two E2E test failures in `modules/mat/tests/wave13/e2e-live-deployment.test.ts`:
+1. T-W13-E2E-1 fails in CI because live production URLs are network-blocked unless E2E_ENABLED is set
+2. T-W13-E2E-4 fails because the audits insert lacks `organisation_id` required by RLS policy
 
-**Scope (governance artifacts only — no production code):**
-1. `FAIL-ONLY-ONCE.md` — add INC-BOOTSTRAP-IMPL-001 incident record + new A-rule (A-018b or sequential new ID) + version bump
-2. `.agent-workspace/foreman-v2/memory/session-rca-breach-20260308.md` — write missing session memory for 2026-03-08 breach
-3. `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` — append parking station entry
-4. `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-rca-breach-20260308.md` — handover proof
-5. `.agent-admin/assurance/iaa-prebrief-breach-rca-20260308.md` — IAA Pre-Brief (PENDING)
+**Delegated to**: qa-builder
 
 ---
 
 ## Outstanding Tasks
 
-| # | Task ID | Task | Builder | Status | PR / Evidence |
-|---|---------|------|---------|--------|---------------|
-| 1 | T-RCA-001 | Add INC-BOOTSTRAP-IMPL-001 incident + new A-rule to FAIL-ONLY-ONCE.md (v2.9.0) | foreman-v2-agent (governance doc — not production code) | 🟢 DONE | SHA: 8b50322 |
-| 2 | T-RCA-002 | Write session memory `session-rca-breach-20260308.md` capturing bootstrap steps, mode transitions, roles invoked, breach registry update | foreman-v2-agent (governance doc) | 🟢 DONE | SHA: 8b50322 |
-| 3 | T-RCA-003 | Append parking station entry for S-023 improvement suggestion | foreman-v2-agent (governance doc) | 🟢 DONE | SHA: 8b50322 |
+| # | Task ID | Task | Builder | Status |
+|---|---------|------|---------|--------|
+| 1 | T-001 | Add `if (!process.env.E2E_ENABLED) return;` guard to T-W13-E2E-1 | qa-builder | 🔴 PENDING |
+| 2 | T-002 | Query profiles for organisation_id after signIn; include in audits insert in T-W13-E2E-4 | qa-builder | 🔴 PENDING |
 
-**Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED
-
----
-
-## IAA Tokens Received This Wave
-
-| PR # | Token | Date |
-|------|-------|------|
-| copilot/fix-foreman-bootstrap-issue | `IAA-session-rca-breach-20260308-wavebreachRCA-20260308-PASS` | 2026-03-08 |
+**Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE | ❌ BLOCKED
 
 ---
 
 ## Wave Completion Gate
 
-- [x] IAA Pre-Brief received and committed at `.agent-admin/assurance/iaa-prebrief-breach-rca-20260308.md`
-- [x] T-RCA-001: INC-BOOTSTRAP-IMPL-001 added to FAIL-ONLY-ONCE.md
-- [x] T-RCA-002: Session memory written
-- [x] T-RCA-003: Parking station entry appended
-- [x] IAA ASSURANCE-TOKEN received: `IAA-session-rca-breach-20260308-wavebreachRCA-20260308-PASS`
-- [x] Session memory written
-- [x] PREHANDOVER proof committed (SHA: 8b50322)
+- [ ] IAA Pre-Brief committed
+- [ ] T-001: T-W13-E2E-1 guard added
+- [ ] T-002: T-W13-E2E-4 organisation_id fixed
+- [ ] QP evaluation: PASS
+- [ ] Session memory written
+- [ ] PREHANDOVER proof committed
+- [ ] IAA ASSURANCE-TOKEN received
 - [ ] CS2 notified for merge approval
