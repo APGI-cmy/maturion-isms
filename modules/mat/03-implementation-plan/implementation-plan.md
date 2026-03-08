@@ -2571,3 +2571,51 @@ Test Files  1 passed (1)  [wave15 original]
 **End of Implementation Plan**
 
 **Wave 15R Status (2026-03-08)**: ✅ CLOSED — CWT PASS (81/81 tests GREEN + 45/45 Python tests GREEN) — IBWR COMPLETE — PR #1002 merged to main — INC-WAVE15-PARSE-001 REMEDIATED — Governance closure issue #1003.
+
+
+---
+
+## Wave upload-doclist-fix — Upload Audit Log Design Gap Fix (2026-03-08)
+
+**Status**: ⏳ IN PROGRESS — awaiting IAA final audit and CS2 review  
+**CS2 Authority**: "fix(app/api): Criteria document upload — AI parsing never triggers, uploaded documents never show"  
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave-upload-doclist-fix.md`  
+**Parent incident**: INC-WUF-DOCLIST-001
+
+### Problem
+
+Post-Wave-15R: uploaded documents NEVER appeared in the UI Uploaded Documents list when the Edge Function was unavailable. `useUploadCriteria` wrote no `audit_log` on success; `useUploadedDocuments` queried only `criteria_parsed`/`criteria_parse_failed`. Design gap: upload success is decoupled from list visibility.
+
+### Solution Architecture
+
+```
+BEFORE (broken):
+  upload → storage → triggerParsing → [Edge Fn fails] → no audit_log → document invisible
+
+AFTER (fixed):
+  upload → storage → write audit_log(criteria_upload) → triggerParsing
+    → [Edge Fn success] → write audit_log(criteria_parsed) → doc shows COMPLETE
+    → [Edge Fn fail] → write audit_log(criteria_parse_failed) OR doc shows PENDING
+    → [Edge Fn unreachable] → doc shows PENDING (criteria_upload entry always present)
+```
+
+### Deliverables
+
+| Task ID | Builder | Deliverable | Status |
+|---------|---------|-------------|--------|
+| T-WUF-QA-001 | qa-builder | 10 RED gate tests in `wave-upload-doclist-fix.test.ts` | ✅ DONE |
+| T-WUF-API-001 | api-builder | `useCriteria.ts`: audit_log write + query expansion + deduplication | ✅ DONE |
+| T-WUF-UI-001 | ui-builder | `CriteriaUpload.tsx`: explicit `criteria_upload → PENDING` branch | ✅ DONE |
+| T-WUF-GOV-001 | foreman-v2 | FAIL-ONLY-ONCE v3.3.0; BUILD_PROGRESS_TRACKER; implementation-plan | ✅ DONE |
+
+### Acceptance Criteria
+
+- [x] Uploaded documents appear in UI list immediately after storage upload, even when Edge Function unavailable
+- [x] Status badge: PENDING (criteria_upload) / COMPLETE (criteria_parsed) / FAILED (criteria_parse_failed)
+- [x] No duplicate entries (Map-based deduplication with STATUS_PRIORITY)
+- [x] All existing 81 tests remain GREEN; 10 new tests GREEN
+- [x] TypeScript 0 errors, CodeQL 0 alerts
+- [x] FAIL-ONLY-ONCE INC-WUF-DOCLIST-001 registered
+- [x] BUILD_PROGRESS_TRACKER updated
+
+**End of Implementation Plan — wave-upload-doclist-fix**

@@ -3315,3 +3315,43 @@ Per IAA Pre-Brief: CST is mandatory after Wave 15 Batch A (convergence point: Ed
 | ⏳ TBD | CWT | Mandatory before wave closure |
 | ⏳ TBD | WAVE 15R COMPLETE | INC-WAVE15-PARSE-001 CLOSED; IBWR submitted |
 
+
+
+## Wave upload-doclist-fix — Upload Audit Log Design Gap Fix (2026-03-08)
+
+> **CS2 Authority**: CS2 issue "fix(app/api): Criteria document upload — AI parsing never triggers, uploaded documents never show"
+> **IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave-upload-doclist-fix.md` — COMMITTED (SHA: 99ee260)
+> **Parent incident**: INC-WUF-DOCLIST-001
+
+### Root Cause Summary
+
+Post-Wave-15R production investigation revealed that even when the Edge Function was unavailable, the Uploaded Documents list always showed "No documents uploaded yet." Root cause: `useUploadCriteria` wrote no `audit_log` entry on upload success. `useUploadedDocuments` queried only `criteria_parsed`/`criteria_parse_failed`. If the Edge Function fails client-side, no server code runs, no audit_log row is written, and the document is invisible.
+
+### Fix Summary
+
+| Component | Change |
+|-----------|--------|
+| `useCriteria.ts` — `useUploadCriteria` | Writes `audit_log(action='criteria_upload')` after storage upload succeeds (non-fatal try/catch) |
+| `useCriteria.ts` — `useUploadedDocuments` | Expanded query to `['criteria_upload', 'criteria_parsed', 'criteria_parse_failed']`; Map-based deduplication with STATUS_PRIORITY |
+| `CriteriaUpload.tsx` — `getParseStatus()` | Explicit `criteria_upload → 'PENDING'` branch added |
+| `UploadedDocument` interface | `resource_id: string \| null` added; docstring updated to list all three valid action values |
+
+### Tests
+
+| Test Suite | Count | Status |
+|-----------|-------|--------|
+| `modules/mat/tests/wave-upload-doclist-fix/wave-upload-doclist-fix.test.ts` | 10 | ✅ GREEN |
+| Existing mat module tests (wave15, wave15r, etc.) | 81 | ✅ GREEN (no regressions) |
+| Full repo suite | 530/538 | ✅ (8 pre-existing E2E failures requiring live env vars) |
+
+### Wave State Machine
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-08 | INITIATED | CS2 issue; IAA Pre-Brief committed |
+| 2026-03-08 | T-WUF-QA-001 COMPLETE | qa-builder: 10 RED gate tests confirmed |
+| 2026-03-08 | T-WUF-API-001 COMPLETE | api-builder: hook fixes; 8/10 tests GREEN |
+| 2026-03-08 | T-WUF-UI-001 COMPLETE | ui-builder: CriteriaUpload.tsx fix; 10/10 tests GREEN |
+| 2026-03-08 | T-WUF-GOV-001 COMPLETE | foreman: FAIL-ONLY-ONCE v3.3.0; BUILD_PROGRESS_TRACKER updated; implementation-plan updated |
+| ⏳ PENDING | PREHANDOVER + IAA AUDIT | Phase 4 ceremony pending |
+| ⏳ PENDING | CS2 REVIEW | Awaiting CS2 merge approval |
