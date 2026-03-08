@@ -3,7 +3,7 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 2.9.0  
+**Version**: 3.0.0  
 **Created**: 2026-02-24  
 **Updated**: 2026-03-08  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
@@ -450,6 +450,40 @@ No `.agent-workspace/foreman-v2/memory/session-*-20260308.md` was present before
 
 ---
 
+---
+
+### INC-WAVE15-PARSE-001 — Wave 15 Criteria Parsing Pipeline Not Functional in Production
+**Date**: 2026-03-08  
+**Severity**: CRITICAL  
+**Status**: OPEN — remediation in progress (Wave 15R)  
+**Source**: CS2 issue maturion-isms#996; live production testing by @APGI-cmy on 2026-03-08
+
+**What happened**: Wave 15 was declared complete on 2026-03-06 with an IAA ASSURANCE-TOKEN (`IAA-session-wave15-impl-20260306-PASS`). On 2026-03-08, CS2 confirmed via live production testing that the criteria parsing pipeline was entirely non-functional:
+1. The Supabase Edge Function `invoke-ai-parse-criteria` was **never deployed** to the Supabase project — only existed in the codebase. CS2 deployed it manually via CLI.
+2. The `AI_GATEWAY_URL` secret was **not set** in Supabase Edge Function secrets — only existed in local `.env`. CS2 corrected this.
+3. The frontend `CriteriaUpload` component still shows yellow warning "AI parsing is currently unavailable" after uploading — indicating Edge Function invocation continues to fail.
+4. **UX gaps**: No list of previously uploaded documents, no per-document parse status, no retry mechanism, no inline error log.
+5. `apps/mat-ai-gateway` reachability from the deployed Edge Function is unverified.
+
+**Root cause (5-Why)**:
+1. **Why did the pipeline fail in production?** Edge Function existed in code but was never deployed to the Supabase project.
+2. **Why was deployment not verified?** The Wave 15 PREHANDOVER proof checked code existence only — not runtime deployment state. No A-rule required deployment confirmation.
+3. **Why was the `AI_GATEWAY_URL` not set?** It was listed as a required env var but only in local `.env` — not configured in Supabase project secrets. No test validated the secret from a deployed context.
+4. **Why was this not caught at the QA gate?** Wave 15 Batch C tests ran in a test environment with mocked Edge Function invocations — they did not exercise the live Supabase deployed function.
+5. **Why does this recur?** This is the second Edge Function deployment gap (INC-POST-FCWT-EDGE-FN-001 was the first). A-032 candidate (EDGE-FUNCTION-AS-DELIVERABLE / S-022) was not yet locked in. Pattern now qualifies for immediate A-032 lock-in.
+
+**Corrective action (maturion-isms#996 / session-wave15r-gov-20260308)**:
+1. Wave 15 marked as FAILED in `modules/mat/03-implementation-plan/implementation-plan.md` and `modules/mat/BUILD_PROGRESS_TRACKER.md`.
+2. Wave 15R remediation plan committed: Batch A (api-builder: verify deployment + secrets + gateway), Batch B (ui-builder: document list + retry UX), Batch C (qa-builder: 5 RED + 14 existing = 19 tests GREEN).
+3. FR-005, FR-103, TR-037 annotated as NOT YET SATISFIED IN PRODUCTION.
+4. App Description §6.2 annotated with production gap reference.
+5. This incident registered in FAIL-ONLY-ONCE v3.0.0.
+6. Improvement suggestion S-024 added: Immediate lock-in of A-032 (EDGE-FUNCTION-AS-DELIVERABLE).
+
+**Open improvement**: S-024 — Lock in A-032 (EDGE-FUNCTION-AS-DELIVERABLE) as a mandatory A-rule immediately based on second recurrence (INC-POST-FCWT-EDGE-FN-001 → INC-WAVE15-PARSE-001). Every PREHANDOVER proof that lists a Supabase Edge Function as a deliverable MUST include a "Deployed: YES/NO" confirmation line. A PREHANDOVER proof with "Deployed: N/A" or missing this line when an Edge Function is invoked by the frontend is a HANDOVER BLOCKER. *(See Section 3, item S-024.)*
+
+---
+
 | ID | Description | Origin | Status |
 |----|-------------|--------|--------|
 | S-001 | Extend `align-governance.sh` with a pre-flight diff check that warns (BLOCKER) when local version has MORE sections than canonical — prevents silent learning loss | GV-001-20260221 | OPEN |
@@ -475,6 +509,7 @@ No `.agent-workspace/foreman-v2/memory/session-*-20260308.md` was present before
 | S-021 | A-027 extension — table pathway audit (WGI-07/WGI-08) must include `.order('column_name')` calls as column references (not only `.select()` and `.insert()` patterns). Sort_order recurrence (INC-POST-FCWT-SORT-ORDER-001) occurred because the WGI-07/WGI-08 audit protocol covered select/insert patterns but not order-by column names. Update qa-builder task brief template and table-pathway-audit checklist to include: "For every `.order('X')` call on a Supabase table, assert column X exists in a migration." Extend T-PFCWT pattern to all future waves. | INC-POST-FCWT-SORT-ORDER-001 (2026-03-06) | OPEN |
 | S-022 | Edge Function delivery gate — every wave PREHANDOVER proof template must include a line: "Supabase Edge Functions invoked by frontend: [list fn-names or N/A]. All listed functions confirmed deployed: [YES/N/A]." A PREHANDOVER proof that lists an Edge Function as invoked but not confirmed deployed is a HANDOVER BLOCKER. This is the implementation check for A-032 (candidate). | INC-POST-FCWT-EDGE-FN-001 (2026-03-06) | OPEN |
 | S-023 | Pre-Brief existence CI gate — add a CI check that fails the PR when implementation file changes (non-governance paths) are present on the branch but no `.agent-admin/assurance/iaa-prebrief-<wave-slug>.md` artifact exists. This is the machine-level enforcement of A-031 (PRE-BRIEF-BEFORE-DELEGATION), preventing retroactive Pre-Brief commits after implementation work has begun — the root-cause pattern of INC-BOOTSTRAP-IMPL-001 and three prior preflight violations. | INC-BOOTSTRAP-IMPL-001 (2026-03-08) | OPEN |
+| S-024 | Lock in A-032 (EDGE-FUNCTION-AS-DELIVERABLE) as a mandatory A-rule based on second recurrence (INC-POST-FCWT-EDGE-FN-001 → INC-WAVE15-PARSE-001). Every PREHANDOVER proof that lists a Supabase Edge Function as a deliverable MUST include a "Deployed: YES/NO" confirmation line. A PREHANDOVER proof with "Deployed: N/A" or missing this line when an Edge Function is invoked by the frontend is a HANDOVER BLOCKER. Escalate to CS2 for A-032 formal lock-in. | INC-WAVE15-PARSE-001 (2026-03-08) | OPEN |
 
 ---
 
@@ -486,7 +521,7 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 fail_only_once_attested: true
 fail_only_once_version: 2.9.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
@@ -504,6 +539,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.0.0 | 2026-03-08 | INC-WAVE15-PARSE-001 recorded (Wave 15 criteria parsing pipeline not functional in production — confirmed by CS2 live testing); S-024 added (A-032 EDGE-FUNCTION-AS-DELIVERABLE escalation for immediate lock-in); version bumped to 3.0.0 due to new major incident class |
 | 2.9.0 | 2026-03-08 | INC-BOOTSTRAP-IMPL-001 recorded (PRs #986/#990 Phase 1 bootstrap skip + NO-IMPLEMENT-001); A-031 PRE-BRIEF-BEFORE-DELEGATION locked in; OVL-CI-006 candidate renumbered to next-ID-after-A-031; S-023 improvement suggestion added |
 | 2.8.0 | 2026-03-06 | INC-POST-FCWT-SORT-ORDER-001 + INC-POST-FCWT-EDGE-FN-001 recorded; A-032 candidate (EDGE-FUNCTION-AS-DELIVERABLE) registered as Layer-Up; A-027 extension (.order() calls are column references); S-021–S-022 improvement suggestions added |
 | 2.5.0 | 2026-03-03 | A-027 added: column-level drift must be caught at QA-to-Red (INC-W14-COL-MAPPING-001); header version corrected from 2.2.0 to 2.5.0 (stale — footer was already at 2.5.0) |

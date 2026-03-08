@@ -3,12 +3,12 @@
 **Module**: MAT (Manual Audit Tool)
 **Artifact Type**: Functional Requirements Specification
 **Status**: COMPLETE
-**Version**: v2.0.0  
+**Version**: v2.1.0  
 **Owner**: Foreman (FM)  
-**Authority**: Derived from App Description v1.4 (modules/mat/00-app-description/app-description.md); UX Workflow & Wiring Specification v1.0 (modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md)
+**Authority**: Derived from App Description v1.5 (modules/mat/00-app-description/app-description.md); UX Workflow & Wiring Specification v1.0 (modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md)
 **Applies To**: MAT module within maturion-isms repository
 **Created**: 2026-02-13
-**Last Updated**: 2026-03-06
+**Last Updated**: 2026-03-08
 
 ---
 
@@ -127,6 +127,8 @@ The system MUST allow the Lead Auditor to upload one or more criteria documents 
 
 **Priority**: P0
 **Source**: App Description §6.2, §15.1
+
+> ⚠️ **PRODUCTION GAP — INC-WAVE15-PARSE-001 (2026-03-08)**: FR-005 acceptance criteria 7–14 are **NOT yet satisfied in production**. The Edge Function was never deployed; the `AI_GATEWAY_URL` secret was not configured; AI Gateway reachability is unverified. Remediation: Wave 15R Batch A (api-builder). See `BUILD_PROGRESS_TRACKER.md` §INC-WAVE15-PARSE-001.
 
 The system MUST invoke AI to parse uploaded criteria documents and extract a three-level hierarchy:
 
@@ -1613,6 +1615,7 @@ This FRS is derived from the MAT App Description v1.2 (`modules/mat/00-app-descr
 **Next Stage**: This FRS feeds into the TRS (Technical Requirements Specification) at `modules/mat/01.5-trs/`.
 
 **Change Log**:
+- v2.1.0 (2026-03-08): FR-005 and FR-103 annotated as NOT YET SATISFIED IN PRODUCTION (INC-WAVE15-PARSE-001). Production gap confirmed by CS2 on 2026-03-08. Remediation via Wave 15R. Authority derived from App Description v1.5.
 - v2.0.0 (2026-03-06): FR-005 expanded — acceptance criteria 7–14 added (Wave 15 oversight, concrete pipeline wiring); FR-103 added (Parsing Resilience and Error Surface); Wave 15 oversight INC-POST-FCWT-CRITERIA-PIPELINE-001 recorded. Authority derived from App Description v1.4.
 - v1.9.0 (2026-03-04): Added FR-089 through FR-102 (Wave 14 GAP-W01–GAP-W14 — UX workflow gaps, scoring, responsibility cascade). FRS extended to 102 requirements.
 - v1.8.0 (2026-03-04): Added FR-084 through FR-088 (Wave postbuild-fails-02 — Full RLS Remediation, GAP-006–GAP-013). All 5 requirements marked 🔴 NEEDS REMEDIATION pending schema-builder migration delivery. FRS extended to 88 requirements.
@@ -2112,6 +2115,8 @@ The system MUST enforce the responsibility cascade rule at all hierarchy levels 
 
 **Priority**: P0
 **Source**: Wave 15 Oversight — Post-delivery gap remediation (INC-POST-FCWT-CRITERIA-PIPELINE-001)
+
+> ⚠️ **PRODUCTION GAP — INC-WAVE15-PARSE-001 (2026-03-08)**: FR-103 is **NOT yet satisfied in production**. The frontend currently shows a yellow "AI parsing is currently unavailable" warning after upload. No uploaded document list, no per-document parse status, no retry button, no inline error log are rendered. Remediation: Wave 15R Batch B (ui-builder). See `BUILD_PROGRESS_TRACKER.md` §INC-WAVE15-PARSE-001.
 
 The system MUST surface parsing errors explicitly to the user. Silent failures are prohibited.
 

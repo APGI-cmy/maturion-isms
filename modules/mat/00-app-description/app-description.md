@@ -7,13 +7,13 @@
 - **Module**: MAT (Manual Audit Tool)
 - **Artifact Type**: App Description (Upstream Authority)
 - **Status**: Draft (to be marked **Authoritative** only after approval)
-- **Version**: v1.4
+- **Version**: v1.5
 - **Owner**: Johan Ras (Product Owner / Human Authority)
 - **Authority**: Johan Ras
 - **Applies To**: MAT module within maturion-isms repository (and any downstream FRS/Architecture artifacts)
 - **Approval Date**: N/A (Draft)
-- **Last Updated**: 2026-03-06
-- **Supersedes / Superseded By**: v1.2 → v1.3 (Wave 10 AI gateway memory wiring gap added); v1.3 → v1.4 (Wave 15 correction — criteria parsing pipeline concretised; post-delivery oversight INC-POST-FCWT-CRITERIA-PIPELINE-001 recorded)
+- **Last Updated**: 2026-03-08
+- **Supersedes / Superseded By**: v1.2 → v1.3 (Wave 10 AI gateway memory wiring gap added); v1.3 → v1.4 (Wave 15 correction — criteria parsing pipeline concretised; post-delivery oversight INC-POST-FCWT-CRITERIA-PIPELINE-001 recorded); v1.4 → v1.5 (Wave 15 production failure confirmed — INC-WAVE15-PARSE-001 recorded; §6.2 production gap noted; Wave 15R remediation planned)
 
 > **Governance note**: Per **APP_DESCRIPTION_REQUIREMENT_POLICY.md**, no FRS/Architecture may be treated as authoritative without an authoritative App Description, and downstream artifacts must explicitly derive from this document.
 
@@ -349,6 +349,8 @@ Criteria documents may be:
 No assumptions may be made about formatting.
 
 ### 6.2 Parsing Pipeline (Concrete)
+
+> ⚠️ **PRODUCTION GAP — INC-WAVE15-PARSE-001 (2026-03-08)**: This pipeline was declared implemented in Wave 15 but confirmed **not functional in production** by CS2 on 2026-03-08. Root cause: Edge Function was never deployed; `AI_GATEWAY_URL` secret was not configured; AI Gateway reachability unverified. See `BUILD_PROGRESS_TRACKER.md` §INC-WAVE15-PARSE-001 and `implementation-plan.md` §Wave 15R for remediation plan (Wave 15R).
 
 The criteria parsing pipeline is triggered when the Lead Auditor uploads a criteria document. The full concrete flow is:
 
