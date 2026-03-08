@@ -2619,3 +2619,72 @@ AFTER (fixed):
 - [x] BUILD_PROGRESS_TRACKER updated
 
 **End of Implementation Plan — wave-upload-doclist-fix**
+
+---
+
+## Wave: wave-audit-log-column-fix — audit_logs Column Mismatch Postmortem Fix
+
+**Date**: 2026-03-08  
+**Branch**: `copilot/fix-document-upload-issues`  
+**Authority**: CS2 (@APGI-cmy) — "fix(criteria-upload): audit_logs insert/query column mismatches prevent uploaded documents from appearing"  
+**Parent incident**: INC-ALCF-001  
+**Prior wave**: wave-upload-doclist-fix (PR #1007, merged 2026-03-08)  
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave-audit-log-column-fix.md`  
+**Implementation Plan Version**: 2.8.0
+
+### Problem Statement
+
+Post-merge audit of wave-upload-doclist-fix (PR #1007) identified that despite IAA R3 PASS, the
+implementation contained schema column mismatches in `useCriteria.ts`:
+
+1. `useUploadCriteria` INSERT used non-existent columns (`user_id`, `resource_type`, `resource_id`) and omitted required NOT NULL column `organisation_id` → DB INSERT fails silently inside try/catch.
+2. `useUploadedDocuments` SELECT included non-existent column `resource_id` → "Failed to load uploaded documents" error.
+3. `UploadedDocument` interface included `resource_id: string | null` mirroring a non-existent column.
+4. Deduplication key referenced `row.resource_id` (always undefined/null).
+
+**How it escaped the IAA gate**: IAA FFA-007 checked that INSERT fields were "present" in code but did not read the migration DDL to cross-check column names. The silent try/catch made DB failures invisible to tests (which used Supabase mocks). New A-rule S-028 (SCHEMA-COLUMN-COMPLIANCE-MANDATORY) closes this gap.
+
+### Fix Architecture
+
+```
+Actual audit_logs schema (from 20260308000001_audit_logs_table.sql):
+  id, audit_id, organisation_id (NOT NULL), action, file_path, details, created_by, created_at
+
+useUploadCriteria INSERT fix:
+  BEFORE: { audit_id, user_id, action, resource_type, resource_id, details }  ← WRONG
+  AFTER:  { audit_id, organisation_id, action, file_path, created_by, details }  ← CORRECT
+
+useUploadedDocuments SELECT fix:
+  BEFORE: 'id, resource_id, file_path, action, details, created_at'  ← resource_id non-existent
+  AFTER:  'id, file_path, action, details, created_at, created_by'   ← all valid columns
+
+UploadedDocument interface fix:
+  BEFORE: { id, resource_id: string|null, file_path, action, details, created_at }
+  AFTER:  { id, file_path, action, details, created_at, created_by: string|null }
+
+Deduplication key fix:
+  BEFORE: row.resource_id ?? row.details?.file_path ?? row.file_path ?? ''
+  AFTER:  row.details?.file_path ?? row.file_path ?? ''
+```
+
+### Deliverables
+
+| Task ID | Builder | Deliverable | Status |
+|---------|---------|-------------|--------|
+| T-ALCF-QA-001 | qa-builder | 7 RED gate tests in `wave-audit-log-column-fix.test.ts` | ✅ DONE |
+| T-ALCF-API-001 | api-builder | `useCriteria.ts`: INSERT/SELECT/interface/dedup key corrected | ✅ DONE |
+| T-ALCF-GOV-001 | foreman-v2 | FAIL-ONLY-ONCE v3.4.0; BUILD_PROGRESS_TRACKER; implementation-plan | ✅ DONE |
+
+### Acceptance Criteria
+
+- [x] `useUploadCriteria` INSERT uses: `audit_id`, `organisation_id`, `action`, `file_path`, `created_by`, `details`
+- [x] No non-existent columns: `user_id`, `resource_type`, `resource_id` removed from INSERT
+- [x] `useUploadedDocuments` SELECT does not include `resource_id`
+- [x] `UploadedDocument` interface does not include `resource_id`
+- [x] Deduplication key: `details?.file_path ?? file_path` (no `resource_id` reference)
+- [x] All 7 T-ALCF tests GREEN; 879 total tests passing (no regressions)
+- [x] TypeScript 0 errors
+- [x] INC-ALCF-001 registered in FAIL-ONLY-ONCE v3.4.0
+- [x] S-028 SCHEMA-COLUMN-COMPLIANCE-MANDATORY added to improvement log
+
+**End of Implementation Plan — wave-audit-log-column-fix**

@@ -3355,3 +3355,48 @@ Post-Wave-15R production investigation revealed that even when the Edge Function
 | 2026-03-08 | T-WUF-GOV-001 COMPLETE | foreman: FAIL-ONLY-ONCE v3.3.0; BUILD_PROGRESS_TRACKER updated; implementation-plan updated |
 | ⏳ PENDING | PREHANDOVER + IAA AUDIT | Phase 4 ceremony pending |
 | ⏳ PENDING | CS2 REVIEW | Awaiting CS2 merge approval |
+
+
+
+## Wave audit-log-column-fix — audit_logs Column Mismatch Fix (2026-03-08)
+
+> **CS2 Authority**: CS2 issue "fix(criteria-upload): audit_logs insert/query column mismatches prevent uploaded documents from appearing; migration drift and governance gaps require postmortem / scope closure"
+> **IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave-audit-log-column-fix.md` — COMMITTED
+> **Parent incident**: INC-ALCF-001 (schema column mismatch escaped IAA gate in wave-upload-doclist-fix)
+> **Prior wave**: wave-upload-doclist-fix (PR #1007, merged 2026-03-08)
+
+### Root Cause Summary
+
+Post-merge investigation of wave-upload-doclist-fix (PR #1007) revealed that the implementation
+passed IAA R3 PASS but used non-existent `audit_logs` columns (`user_id`, `resource_type`,
+`resource_id`) and omitted the required NOT NULL `organisation_id`. INSERT was silently failing
+inside a try/catch. SELECT queried non-existent `resource_id` → "Failed to load uploaded documents."
+
+### Fix Summary
+
+| Component | Change |
+|-----------|--------|
+| `useCriteria.ts` — `useUploadCriteria` INSERT | Removed non-existent columns (`user_id`, `resource_type`, `resource_id`); added `organisation_id: organisationId` (NOT NULL), `file_path: data.path`, `created_by: user.id` |
+| `useCriteria.ts` — `useUploadedDocuments` SELECT | Removed non-existent `resource_id`; added `created_by` |
+| `useCriteria.ts` — `UploadedDocument` interface | Removed `resource_id: string \| null`; added `created_by: string \| null` |
+| `useCriteria.ts` — deduplication key | Removed `row.resource_id ??`; key is now `row.details?.file_path ?? row.file_path ?? ''` |
+
+### Tests
+
+| Test Suite | Count | Status |
+|-----------|-------|--------|
+| `modules/mat/tests/wave-audit-log-column-fix/wave-audit-log-column-fix.test.ts` | 7 | ✅ GREEN (was 7 RED before fix) |
+| `modules/mat/tests/wave-upload-doclist-fix/wave-upload-doclist-fix.test.ts` | 10 | ✅ GREEN (no regressions) |
+| Full mat module suite | 879 | ✅ (8 pre-existing env-var failures, unrelated) |
+
+### Wave State Machine
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-08 | INITIATED | CS2 FOREMAN RE-ALIGNMENT directive; wave-current-tasks.md created |
+| 2026-03-08 | IAA PRE-BRIEF COMMITTED | iaa-prebrief-wave-audit-log-column-fix.md; dependency chain unblocked |
+| 2026-03-08 | T-ALCF-QA-001 COMPLETE | qa-builder: 7 RED gate tests confirmed (T-ALCF-001 through T-ALCF-007) |
+| 2026-03-08 | T-ALCF-API-001 COMPLETE | api-builder: column fix applied; 7/7 tests GREEN; 879 total GREEN |
+| 2026-03-08 | T-ALCF-GOV-001 IN PROGRESS | foreman: FAIL-ONLY-ONCE v3.4.0; BUILD_PROGRESS_TRACKER + implementation-plan updating |
+| ⏳ PENDING | PREHANDOVER + IAA AUDIT | Phase 4 ceremony pending |
+| ⏳ PENDING | CS2 REVIEW | Awaiting CS2 merge approval |
