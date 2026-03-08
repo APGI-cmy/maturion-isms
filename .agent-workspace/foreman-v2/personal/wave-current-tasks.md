@@ -1,3 +1,59 @@
+# Wave Current Tasks — foreman-v2-agent — T-W15R-QA-001 (create-red-tests-wave-15r)
+
+**Wave**: Wave 15R Batch C — T-W15R-QA-001 (governance closure for qa-builder RED test delegation)
+**Branch**: copilot/create-red-tests-wave-15r
+**Issue**: maturion-isms#1000 — T-W15R-QA-001 — 5 RED tests for Wave 15R UX features
+**Date**: 2026-03-08
+**Session**: session-T-W15R-QA-001-20260308
+**CS2 Authorization**: Issue #1000 opened directly by @APGI-cmy; "Please finish this job" directive 2026-03-08
+**Protocol Reference**: IAA_PRE_BRIEF_PROTOCOL.md v1.1.0 §Trigger
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave15r-qa001.md` — PENDING
+
+---
+
+## GOVERNANCE CONTEXT — INC-OPOJD-W15R-QA-001 Recovery
+
+Issue #1000 was created to recover the OPOJD failure recorded as INC-OPOJD-W15R-QA-001:
+during the wave15r-gov governance session, qa-builder was delegated T-W15R-QA-001 (5 RED tests)
+but no GitHub issue was created. The tests were delivered in Wave 15R and merged to main.
+
+**Current test status**: `modules/mat/tests/wave15r/wave15r-ux-features.test.ts` — 35 assertions
+covering T-W15R-UX-001 through T-W15R-UX-005. Tests are GREEN (implementation is complete).
+The QA-to-Red gate sequence was bypassed (tests written post-implementation). This is recorded
+in FAIL-ONLY-ONCE v3.2.0 as INC-OPOJD-W15R-QA-001 (REMEDIATED).
+
+**Purpose of this PR**: Governance closure — produce proper governance artifacts for issue #1000
+to close the OPOJD recovery loop. CS2 authorization: "Please finish this job" directive.
+
+---
+
+## Tasks — T-W15R-QA-001
+
+| Task ID | Description | Builder | Status |
+|---------|-------------|---------|--------|
+| GOVERNANCE-001 | wave-current-tasks.md created for this wave | foreman-v2-agent (governance) | ✅ DONE |
+| GOVERNANCE-002 | IAA Pre-Brief invoked | foreman-v2-agent → IAA | 🔴 PENDING |
+| GOVERNANCE-003 | SCOPE_DECLARATION.md updated for this wave | foreman-v2-agent (governance) | 🔴 PENDING |
+| QP-EVAL-001 | QP evaluation of qa-builder deliverable (wave15r-ux-features.test.ts on main) | foreman-v2-agent (QP mode) | 🔴 PENDING |
+| PREHANDOVER-001 | PREHANDOVER proof + session memory written | foreman-v2-agent (governance) | 🔴 PENDING |
+| IAA-AUDIT-001 | IAA final audit invoked | foreman-v2-agent → IAA | 🔴 PENDING |
+| MERGE-001 | Merge gate released | foreman-v2-agent | 🔴 PENDING |
+
+---
+
+## Wave Completion Gate
+
+- [ ] IAA Pre-Brief published at `.agent-admin/assurance/iaa-prebrief-wave15r-qa001.md`
+- [ ] QP evaluation of qa-builder deliverable: PASS
+- [ ] PREHANDOVER proof committed
+- [ ] IAA ASSURANCE-TOKEN received
+- [ ] CS2 notified for merge approval
+
+---
+
+# ───────────────────────────────────────────────
+# ARCHIVED — wave15r-closure (previous wave)
+# ───────────────────────────────────────────────
 # Wave Current Tasks — foreman-v2-agent — wave15r-closure
 
 **Wave**: wave15r-closure
