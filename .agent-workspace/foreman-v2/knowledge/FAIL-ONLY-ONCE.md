@@ -3,7 +3,7 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 3.2.0  
+**Version**: 3.3.0  
 **Created**: 2026-02-24  
 **Updated**: 2026-03-08  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
@@ -542,6 +542,35 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 
 ---
 
+### INC-WUF-DOCLIST-001 — Upload-Without-Audit-Log Design Gap: Documents Invisible After Upload When Edge Function Fails
+**Date**: 2026-03-08  
+**Severity**: MAJOR  
+**Status**: REMEDIATED — wave-upload-doclist-fix; 10/10 tests GREEN  
+**Source**: CS2 issue "fix(app/api): Criteria document upload — AI parsing never triggers, uploaded documents never show"
+
+**What happened**: Even after Wave 15R was merged, the Uploaded Documents list always showed "No documents uploaded yet." when the Edge Function was unavailable. `useUploadCriteria` wrote no `audit_log` entry on upload success. `useUploadedDocuments` only queried `action IN ('criteria_parsed', 'criteria_parse_failed')`. When the Edge Function fails (not deployed, `AI_GATEWAY_URL` not set, network error), no Edge Function code runs, no audit_log row is written, and the document is permanently invisible in the UI.
+
+**Root cause (5-Why)**:
+1. **Why are documents invisible?** UI document list requires an `audit_log` row with action `'criteria_parsed'` or `'criteria_parse_failed'`. If parsing fails client-side (no Edge Function response), no row is written.
+2. **Why does upload success not guarantee visibility?** The document-list data source is `audit_logs` (parsing outcomes), NOT Supabase Storage (upload outcomes). Upload success writes nothing to audit_logs.
+3. **Why was this not caught in Wave 15R?** Wave 15R Batch B tested the document list UI with mocked data. No test verified the behaviour when the Edge Function is entirely unreachable.
+4. **Why was the design gap not identified?** Wave 15R architecture assumed the Edge Function always runs (success OR fail path). If the Supabase function invoke fails client-side, no server-side code executes, so no audit_log row is ever written.
+5. **Why is this a recurrence?** Third occurrence of "downstream step as sole evidence source" (INC-POST-FCWT-EDGE-FN-001, INC-WAVE15-PARSE-001). Write evidence BEFORE the downstream step, not after.
+
+**Corrective action (wave-upload-doclist-fix)**:
+1. `useUploadCriteria` now writes `audit_log(action='criteria_upload')` after storage upload succeeds (non-fatal try/catch).
+2. `useUploadedDocuments` query expanded to include `'criteria_upload'`; Map-based deduplication with STATUS_PRIORITY (criteria_parsed=3 > criteria_parse_failed=2 > criteria_upload=1).
+3. `getParseStatus()` gains explicit `criteria_upload → 'PENDING'` branch.
+4. `UploadedDocument` interface docstring updated to list all three valid action values.
+5. 10 RED→GREEN tests (T-WUF-001 through T-WUF-005) validate the fix.
+6. This incident registered in FAIL-ONLY-ONCE v3.3.0.
+
+**Learning**: Upstream steps that produce user-visible resources MUST write evidence immediately after success — not rely on downstream processing (parsing) as the sole visibility source.
+
+**Open improvement**: S-027 — WRITE-EVIDENCE-EARLY-INVARIANT: Every hook that creates a user-visible resource (upload, create, import) MUST write an `audit_log` entry immediately after the resource creation succeeds — BEFORE optional downstream processing. Downstream processing may update the entry but MUST NOT be the sole visibility source. *(See Section 3, item S-027.)*
+
+---
+
 | ID | Description | Origin | Status |
 |----|-------------|--------|--------|
 | S-001 | Extend `align-governance.sh` with a pre-flight diff check that warns (BLOCKER) when local version has MORE sections than canonical — prevents silent learning loss | GV-001-20260221 | OPEN |
@@ -570,6 +599,7 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 | S-024 | Lock in A-032 (EDGE-FUNCTION-AS-DELIVERABLE) as a mandatory A-rule based on second recurrence (INC-POST-FCWT-EDGE-FN-001 → INC-WAVE15-PARSE-001). Every PREHANDOVER proof that lists a Supabase Edge Function as a deliverable MUST include a "Deployed: YES/NO" confirmation line. A PREHANDOVER proof with "Deployed: N/A" or missing this line when an Edge Function is invoked by the frontend is a HANDOVER BLOCKER. Escalate to CS2 for A-032 formal lock-in. | INC-WAVE15-PARSE-001 (2026-03-08) | OPEN |
 | S-025 | DELEGATION-ISSUE-REQUIRED: Every delegation to a builder agent MUST have a corresponding GitHub issue created and linked before the Foreman exits Phase 3 (or before the governance session's Phase 4 handover). A delegation noted as "PENDING" or "delegated separately" without a GitHub issue number is an incomplete delegation and a Phase 4 OPOJD gate failure. The Foreman MUST verify each row in the session memory "Agents Delegated To" table has a corresponding maturion-isms issue URL before writing the PREHANDOVER proof. Triggered by: INC-OPOJD-W15R-QA-001. Candidate for next A-rule (A-033). | INC-OPOJD-W15R-QA-001 (2026-03-08) | OPEN |
 | S-026 | GOVERNANCE-CLOSURE-PRE-BRIEF-MANDATORY: Governance-only closure sessions (CWT evidence, IBWR, implementation plan updates, session memory, PREHANDOVER proof, FAIL-ONLY-ONCE registry updates) are AAWP_MAT and KNOWLEDGE_GOVERNANCE deliverables. They ARE subject to the mandatory IAA Pre-Brief (A-031). No wave type — including post-merge closure, governance-only, or evidence-compilation sessions — is exempt from Pre-Brief. The Foreman MUST invoke IAA Pre-Brief via `task(agent_type: "independent-assurance-agent", ...)` before committing ANY artifact on ANY new wave branch. The phrase "governance-only, no production code" is NOT a valid exemption criterion. Triggered by: INC-PREBRIEF-GOVERNANCE-CLOSURE-001 (CS2 re-alignment, 2026-03-08). | INC-PREBRIEF-GOVERNANCE-CLOSURE-001 (2026-03-08) | OPEN |
+| S-027 | WRITE-EVIDENCE-EARLY-INVARIANT: Every hook that creates a user-visible resource (upload, create, import) MUST write an `audit_log` entry or equivalent immediately after the resource creation succeeds — BEFORE any optional downstream processing (parsing, validation, indexing). Downstream processing may update the entry (action change, details enrichment) but MUST NOT be the sole visibility source. This is the engineering complement to A-004 (OPOJD) applied at the data layer. Triggered by: INC-WUF-DOCLIST-001 (2026-03-08). | INC-WUF-DOCLIST-001 (2026-03-08) | OPEN |
 
 ---
 
@@ -579,9 +609,9 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 3.2.0
+fail_only_once_version: 3.3.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024, S-025, S-026]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024, S-025, S-026, S-027]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
@@ -591,7 +621,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 ---
 
 *Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523, maturion-isms#855, maturion-isms#856, maturion-isms#1013, maturion-isms#999, maturion-isms#1003 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-03-08 | Version: 3.2.0 | Status: ACTIVE*
+*Last Updated: 2026-03-08 | Version: 3.3.0 | Status: ACTIVE*
 
 ---
 
@@ -599,6 +629,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.3.0 | 2026-03-08 | INC-WUF-DOCLIST-001 recorded (Upload-Without-Audit-Log design gap: documents invisible after upload when Edge Function fails); S-027 WRITE-EVIDENCE-EARLY-INVARIANT added; FAIL-ONLY-ONCE version bumped; attestation template updated to 3.3.0 |
 | 3.2.0 | 2026-03-08 | INC-PREBRIEF-GOVERNANCE-CLOSURE-001 recorded (IAA Pre-Brief skipped for governance-only closure session; CS2 FOREMAN RE-ALIGNMENT issued; PHASE_A_ADVISORY fabricated token voided); S-026 GOVERNANCE-CLOSURE-PRE-BRIEF-MANDATORY added; INC-OPOJD-W15R-QA-001 severity corrected from MEDIUM to MODERATE; retroactive Pre-Brief invoked via IAA task tool; CORRECTION-ADDENDUM committed |
 | 3.1.0 | 2026-03-08 | INC-OPOJD-W15R-QA-001 recorded (missing GitHub issue for T-W15R-QA-001 qa-builder delegation); S-025 DELEGATION-ISSUE-REQUIRED added; footer version corrected from stale 2.9.0 to 3.1.0; maturion-isms#1000 created as corrective action |
 | 3.0.0 | 2026-03-08 | INC-WAVE15-PARSE-001 recorded (Wave 15 criteria parsing pipeline not functional in production — confirmed by CS2 live testing); S-024 added (A-032 EDGE-FUNCTION-AS-DELIVERABLE escalation for immediate lock-in); version bumped to 3.0.0 due to new major incident class |

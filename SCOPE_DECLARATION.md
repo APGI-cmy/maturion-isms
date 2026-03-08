@@ -1,41 +1,40 @@
-# Scope Declaration — T-W15R-QA-001 — 2026-03-08
+# Scope Declaration — wave-upload-doclist-fix — 2026-03-08
 
-**Wave**: T-W15R-QA-001 (Wave 15R Batch C governance closure)
-**Branch**: copilot/create-red-tests-wave-15r
-**Session**: session-T-W15R-QA-001-20260308
-**PR**: #1005 — gov(wave15r-qa001): T-W15R-QA-001 governance closure
-**Authority**: CS2 (Johan Ras / @APGI-cmy) — "Please finish this job" directive, issue #1000, 2026-03-08
-**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave15r-qa001.md` — COMMITTED
+**Wave**: wave-upload-doclist-fix  
+**Branch**: `copilot/fix-ai-parsing-trigger`  
+**Session**: session-wave-upload-doclist-fix-20260308  
+**Authority**: CS2 (Johan Ras / @APGI-cmy) — "fix(app/api): Criteria document upload — AI parsing never triggers, uploaded documents never show"  
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave-upload-doclist-fix.md` (SHA: 99ee260)
 
 ## Scope
 
-This PR produces governance closure artifacts for issue #1000 (T-W15R-QA-001 OPOJD recovery).
-The qa-builder deliverable (`wave15r-ux-features.test.ts`, 35 assertions, 5 describe blocks
-covering T-W15R-UX-001 through T-W15R-UX-005) was delivered in Wave 15R and is on main.
-QP evaluation: 35/35 GREEN, QP VERDICT: PASS.
+This PR fixes the production bug where uploaded criteria documents never appeared in the
+Uploaded Documents list when the Edge Function was unavailable. Fix: (a) `useUploadCriteria`
+now writes `audit_log(action='criteria_upload')` after storage upload succeeds; (b)
+`useUploadedDocuments` queries all three actions with Map-based deduplication; (c)
+`getParseStatus()` explicitly handles `criteria_upload` → PENDING.
 
-No production code, tests, CI scripts, or agent contracts are modified. All changes are
-governance documents on the `copilot/create-red-tests-wave-15r` branch.
+## IAA Ceremony Artifacts (IAA-Authored — A-031 Carve-Out)
 
-## Governance Notes — IAA Ceremony Artifacts (A-031 Carve-Out)
-
-IAA ceremony artifacts committed on this branch during rejection sessions are excluded from
-the producing-agent declaration per A-031. All `.agent-admin/assurance/iaa-token-*-REJECTION*.md`
-files and all `.agent-workspace/independent-assurance-agent/memory/` and
-`.agent-workspace/independent-assurance-agent/parking-station/` files that appear in
-`git diff --name-only origin/main...HEAD` but are not listed under Files Changed below were
-committed by IAA during rejection ceremony sessions on this branch and are IAA-owned files.
-All producing-agent (foreman-v2-agent) deliverables are fully declared in Files Changed.
+Files committed on this branch by independent-assurance-agent during rejection sessions.
+IAA-owned artifacts declared here to satisfy SCOPE_DECLARATION exact-match gate.
 
 ## Files Changed
 
-- `SCOPE_DECLARATION.md` - Updated for wave T-W15R-QA-001
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated for wave T-W15R-QA-001
-- `.agent-admin/assurance/iaa-prebrief-wave15r-qa001.md` - IAA Pre-Brief artifact (IAA-authored)
-- `.agent-workspace/independent-assurance-agent/memory/session-prebrief-wave15r-qa001-20260308.md` - IAA session memory (IAA-authored)
+- `.agent-admin/assurance/iaa-prebrief-wave-upload-doclist-fix.md` - IAA Pre-Brief (IAA-authored)
+- `.agent-admin/assurance/iaa-rejection-session-wave-upload-doclist-fix-20260308-R1.md` - IAA R1 rejection (IAA-authored)
+- `.agent-admin/assurance/iaa-rejection-session-wave-upload-doclist-fix-20260308-R2.md` - IAA R2 rejection (IAA-authored)
+- `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` - INC-WUF-DOCLIST-001 registered; v3.3.0
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave-upload-doclist-fix-20260308.md` - PREHANDOVER proof
+- `.agent-workspace/foreman-v2/memory/session-wave-upload-doclist-fix-20260308.md` - Session memory
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Parking station S-027
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave task list for wave-upload-doclist-fix
+- `.agent-workspace/independent-assurance-agent/memory/session-wave-upload-doclist-fix-20260308-R2.md` - IAA R2 session memory (IAA-authored)
+- `.agent-workspace/independent-assurance-agent/memory/session-wave-upload-doclist-fix-20260308.md` - IAA R1 session memory (IAA-authored)
 - `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station (IAA-authored)
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-T-W15R-QA-001-wave15r-qa001-20260308.md` - PREHANDOVER proof
-- `.agent-workspace/foreman-v2/memory/session-T-W15R-QA-001-20260308.md` - Session memory
-- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Parking station update
-- `.agent-workspace/foreman-v2/memory/CORRECTION-ADDENDUM-session-T-W15R-QA-001-20260308.md` - CORRECTION-ADDENDUM (A-030 — CORE-007 fix)
-- `.agent-admin/assurance/iaa-token-session-T-W15R-QA-001-wave15r-qa001-20260308.md` - IAA ASSURANCE-TOKEN (added after IAA-AUDIT-001 re-invocation)
+- `SCOPE_DECLARATION.md` - Updated for wave-upload-doclist-fix
+- `modules/mat/03-implementation-plan/implementation-plan.md` - Wave entry
+- `modules/mat/BUILD_PROGRESS_TRACKER.md` - Wave entry
+- `modules/mat/frontend/src/components/criteria/CriteriaUpload.tsx` - getParseStatus criteria_upload branch
+- `modules/mat/frontend/src/lib/hooks/useCriteria.ts` - audit_log write + query expansion + deduplication
+- `modules/mat/tests/wave-upload-doclist-fix/wave-upload-doclist-fix.test.ts` - 10 RED to GREEN tests

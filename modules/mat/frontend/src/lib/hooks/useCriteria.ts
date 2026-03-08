@@ -42,10 +42,11 @@ export interface UploadedDocumentDetails {
 
 /**
  * Row from audit_logs representing an uploaded criteria document.
- * `action` is 'criteria_parsed' (success) or 'criteria_parse_failed' (failure).
+ * `action` is 'criteria_upload' (pending), 'criteria_parsed' (success), or 'criteria_parse_failed' (failure).
  */
 export interface UploadedDocument {
   id: string;
+  resource_id: string | null;
   file_path: string | null;
   action: string;
   details: UploadedDocumentDetails;
@@ -162,6 +163,27 @@ export function useUploadCriteria() {
         throw new Error(`Failed to upload file: ${error.message}`);
       }
 
+      // Write immediate audit_log entry so document appears in UI even if Edge Function fails
+      // Failure to write audit_log is non-fatal: upload result still returned
+      try {
+        await supabase.from('audit_logs').insert({
+          audit_id: auditId,
+          user_id: user.id,
+          action: 'criteria_upload',
+          resource_type: 'criteria_document',
+          resource_id: data.path,
+          details: {
+            file_path: data.path,
+            file_name: file.name,
+            file_size: file.size,
+            hash,
+          },
+        });
+      } catch (err) {
+        // Non-fatal: audit_log write failure must not block the upload result
+        console.warn('[useUploadCriteria] audit_log write failed; document may not appear in list', err);
+      }
+
       return { path: data.path, hash };
     },
     onSuccess: (_, variables) => {
@@ -194,9 +216,10 @@ export function useTriggerAIParsing() {
 /**
  * Fetch uploaded criteria documents for an audit from audit_logs.
  *
- * Wave 15R — T-W15R-UI-001 (ui-builder)
- * Queries audit_logs filtered by audit_id and action IN ('criteria_parsed', 'criteria_parse_failed').
- * Returns documents ordered by created_at descending (most recent first).
+ * Wave 15R — T-W15R-UI-001 (ui-builder) / T-WUF-API-001 (api-builder)
+ * Queries audit_logs filtered by audit_id and action IN ('criteria_upload', 'criteria_parsed', 'criteria_parse_failed').
+ * Returns documents ordered by created_at descending, then deduplicated by resource_id/file_path
+ * keeping the highest-priority status row per document (criteria_parsed > criteria_parse_failed > criteria_upload).
  */
 export function useUploadedDocuments(auditId: string) {
   const queryClient = useQueryClient();
@@ -206,16 +229,40 @@ export function useUploadedDocuments(auditId: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('audit_logs')
-        .select('id, file_path, action, details, created_at')
+        .select('id, resource_id, file_path, action, details, created_at')
         .eq('audit_id', auditId)
-        .in('action', ['criteria_parsed', 'criteria_parse_failed'])
+        .in('action', ['criteria_upload', 'criteria_parsed', 'criteria_parse_failed'])
         .order('created_at', { ascending: false });
 
       if (error) {
         throw new Error(`Failed to fetch uploaded documents: ${error.message}`);
       }
 
-      return (data ?? []) as UploadedDocument[];
+      // Deduplicate by resource_id/file_path using a Map, keeping best-status row per document.
+      // Priority: criteria_parsed (3) > criteria_parse_failed (2) > criteria_upload (1)
+      const STATUS_PRIORITY: Record<string, number> = {
+        criteria_parsed: 3,
+        criteria_parse_failed: 2,
+        criteria_upload: 1,
+      };
+
+      const deduplicationMap = new Map<string, UploadedDocument>();
+      for (const row of (data ?? [])) {
+        const key = row.resource_id ?? row.details?.file_path ?? row.file_path ?? '';
+        const existing = deduplicationMap.get(key);
+        if (!existing) {
+          deduplicationMap.set(key, row);
+        } else {
+          const existingPriority = STATUS_PRIORITY[existing.action] ?? 0;
+          const rowPriority = STATUS_PRIORITY[row.action] ?? 0;
+          if (rowPriority > existingPriority) {
+            deduplicationMap.set(key, row);
+          }
+        }
+      }
+      const deduplicated = Array.from(deduplicationMap.values());
+
+      return deduplicated as UploadedDocument[];
     },
     enabled: !!auditId,
   });
