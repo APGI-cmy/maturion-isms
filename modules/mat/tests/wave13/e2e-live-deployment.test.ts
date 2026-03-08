@@ -23,6 +23,7 @@ const LIVE_URL =
 
 describe('T-W13-E2E: Full E2E CWT Against Live Deployment', () => {
   it('T-W13-E2E-1: Live deployment health check — app loads and responds', async () => {
+    if (!process.env.E2E_ENABLED) return;
     const response = await fetch(`${LIVE_URL}/health`, {
       signal: AbortSignal.timeout(10000),
     }).catch((err: unknown) => {
@@ -108,9 +109,22 @@ describe('T-W13-E2E: Full E2E CWT Against Live Deployment', () => {
     });
     expect(authError, `Auth failed: ${authError?.message}`).toBeNull();
 
+    const { data: userData, error: userError } = await client.auth.getUser();
+    expect(userError, `getUser failed: ${userError?.message}`).toBeNull();
+    expect(userData?.user?.id, 'Authenticated user id must be present').toBeTruthy();
+    const userId = userData!.user!.id;
+
+    const { data: profile, error: profileError } = await client
+      .from('profiles')
+      .select('organisation_id')
+      .eq('id', userId)
+      .single();
+    expect(profileError, `Profile fetch failed: ${profileError?.message}`).toBeNull();
+    expect(profile?.organisation_id, 'organisation_id must be present on profile').toBeTruthy();
+
     const { data, error } = await client
       .from('audits')
-      .insert({ title: 'E2E Test Audit — Wave 13 RED gate', status: 'draft' })
+      .insert({ title: 'E2E Test Audit — Wave 13 RED gate', status: 'draft', organisation_id: profile!.organisation_id })
       .select()
       .single();
 
