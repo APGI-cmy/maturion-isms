@@ -1,11 +1,11 @@
 # MAT — Implementation Plan
 
 **Module**: MAT (Manual Audit Tool)  
-**Version**: v2.5.0
+**Version**: v2.6.0
 **Status**: APPROVED
 **Owner**: Foreman (FM)
 **Created**: 2026-02-13
-**Last Updated**: 2026-03-04
+**Last Updated**: 2026-03-08
 **Authority**: Derived from Architecture (modules/mat/02-architecture/), FRS (modules/mat/01-frs/functional-requirements.md), TRS (modules/mat/01.5-trs/technical-requirements-specification.md), Test Registry (governance/TEST_REGISTRY.json)
 
 ---
@@ -2081,6 +2081,7 @@ This implementation plan is accepted when:
 18. Wave postbuild-fails-02 (Full RLS Remediation) DEFINED (Issue #897): GAP-006 to GAP-013 recorded; 8 tables with unverified RLS coverage; T-PBF2-001 to T-PBF2-008 RED gate tests pending; schema-builder and qa-builder delegation pending
 
 **Change Log**:
+- v2.6.0 (2026-03-08): Wave 15R CLOSED. CWT PASS (81/81 wave15r tests GREEN + 45/45 Python AI gateway tests GREEN). IBWR complete (`.agent-admin/assurance/ibwr-wave15r-20260308.md`). CWT evidence committed (`modules/mat/05-build-evidence/wave15r-cwt-evidence-20260308.md`). INC-WAVE15-PARSE-001 REMEDIATED. PR #1002 merged to main. Governance closure issue #1003. (session-wave15r-closure-20260308)
 - v2.4.0 (2026-03-04): Wave postbuild-fails-02 (Full Supabase RLS Remediation) added. All 13 gaps from supabase-sync-audit-20260304.md recorded (GAP-001 to GAP-013). GAP-001–GAP-005 CLOSED (postbuild-fails-01). GAP-006–GAP-013 OPEN — 8 tables (organisations, domains, mini_performance_standards, criteria, evidence, scores, organisation_settings, audit_scores) require RLS policy verification and migration. 8 RED gate test IDs defined (T-PBF2-001 to T-PBF2-008). 5-task delegation plan: foreman (TASK-PBF2-001 to TASK-PBF2-003) + qa-builder (TASK-PBF2-004) + schema-builder (TASK-PBF2-005). Acceptance criteria 17 and 18 added. IAA Pre-Brief: iaa-prebrief-wave-postbuild-fails-02.md. (session-098)
 - v2.3.0 (2026-03-02): Post-Wave 12 live deployment failures analysed (RCA MAT-RCA-002). PBFAG checklist extended with checks 9–13 (E2E auth, schema existence, full-flow wiring, major page content, env var audit — all mandatory per WE_ONLY_FAIL_ONCE doctrine). Wave 13 (Live Deployment Wiring Regression Fix & Continuous Improvement) added (§2.14): 5-task sequential plan (schema-builder+integration-builder → api-builder → ui-builder → integration-builder+qa-builder → integration-builder); 24 RED gate test IDs (T-W13-SCH-1–4, T-W13-AUTH-1–4, T-W13-WIRE-1–8, T-W13-E2E-1–5, T-W13-CI-1–3); 7 gap register entries (W13-GAP-001–007). Wave count updated to fourteen. Acceptance criterion 16 added. (session-084)
 - v2.2.0 (2026-03-01): Wave 12 status updated to COMPLETE (session-078/080/081). 554/554 tests GREEN (430 baseline + 124 sub-tests from 31 test IDs). All W12-GAP-001–007 resolved and confirmed GREEN. deploy-mat-ai-gateway.yml wired for Render platform; ecs-task-def.json removed. Version updated: v2.1.0 → v2.2.0. Total duration note updated. IAA tokens: IAA-session-026/029/030-20260301-PASS. Progress tracker reconciliation per issue [Agent Task] Update all progress trackers for MAT module and Combined Execution Plan.
@@ -2569,4 +2570,4 @@ Test Files  1 passed (1)  [wave15 original]
 
 **End of Implementation Plan**
 
-**Wave 15R Status (2026-03-08)**: ALL BATCHES COMPLETE — 81/81 tests GREEN — Awaiting CWT + CS2 review for IBWR closure.
+**Wave 15R Status (2026-03-08)**: ✅ CLOSED — CWT PASS (81/81 tests GREEN + 45/45 Python tests GREEN) — IBWR COMPLETE — PR #1002 merged to main — INC-WAVE15-PARSE-001 REMEDIATED — Governance closure issue #1003.
