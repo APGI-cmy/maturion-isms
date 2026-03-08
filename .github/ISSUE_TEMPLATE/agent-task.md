@@ -6,30 +6,50 @@ labels: ""
 assignees: ""
 ---
 
-> ⚠️ **MANDATORY AGENT PREFLIGHT — DO NOT SKIP — READ BEFORE PROCEEDING**
+> ---
+> # 🛑 STOP. DO NOT READ THIS ISSUE YET.
+> ---
 >
-> Before reading anything below this banner, the assigned agent MUST:
+> **YOUR FIRST AND ONLY ACTION RIGHT NOW IS:**
 >
-> 1. **Call `agent_bootstrap` FIRST** — this is your required first tool call, before reading
->    any file or this issue body:
->    ```
->    agent_bootstrap(agent_id: "<your-agent-id>")
->    ```
->    Determine your `agent_id` from the assignee field or issue title.
->    The tool returns your full contract file. Read it in full before proceeding.
+> ```
+> agent_bootstrap(agent_id: "<your-agent-id>")
+> ```
 >
-> 2. **Complete Phase 1 IN FULL** and produce declared output for every step.
+> Determine your `agent_id` from the assignee field or issue title.
 >
-> 3. **Record Phase 1 evidence** in your session memory file at
->    `.agent-workspace/<agent-id>/memory/session-NNN-YYYYMMDD.md`
+> **DO NOT:**
+> - ❌ Read this issue body
+> - ❌ Read any file in the repository
+> - ❌ Take any action whatsoever
 >
-> **Failure to call `agent_bootstrap` first is a POLC breach —
-> GOV-BREACH-AIMC-W5-002 — and will cause your PR to be blocked by the CI preflight gate.**
+> **...until `agent_bootstrap` has returned your full contract AND you have completed Phase 1 IN FULL with all declared evidence produced.**
+>
+> ---
+>
+> ## ⛔ YOUR PR WILL BE BLOCKED AT THE MERGE GATE IF YOU SKIP THIS
+>
+> The CI merge gate runs automated checks for the following artifacts.
+> If ANY are absent, the merge gate check **FAILS** and your PR **cannot be merged — no exceptions, no overrides**:
+>
+> | Required Artifact | Path |
+> |---|---|
+> | Session memory file | `.agent-workspace/<agent-id>/memory/session-*-YYYYMMDD.md` |
+> | IAA Pre-Brief artifact | `.agent-admin/assurance/iaa-prebrief-wave*.md` |
+> | FAIL-ONLY-ONCE attestation | Must appear in session memory |
+>
+> This is not a warning. This is a **hard enforcement boundary** set by CS2 (@APGI-cmy).
+>
+> Skipping bootstrap = **GOV-BREACH-AIMC-W5-002** — logged to FAIL-ONLY-ONCE — **blocks ALL future sessions until remediated by CS2**.
+>
+> ---
 >
 > **Authority**: CS2 (Johan Ras / @APGI-cmy)
 > **Governed by**: `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0
-
----
+>
+> ---
+> # ✅ Only read below this line AFTER Phase 1 is complete and evidenced in session memory.
+> ---
 
 ## Task Description
 
