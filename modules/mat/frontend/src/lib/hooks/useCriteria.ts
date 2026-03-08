@@ -46,11 +46,11 @@ export interface UploadedDocumentDetails {
  */
 export interface UploadedDocument {
   id: string;
-  resource_id: string | null;
   file_path: string | null;
   action: string;
   details: UploadedDocumentDetails;
   created_at: string;
+  created_by: string | null;
 }
 
 export interface MiniPerformanceStandard {
@@ -168,10 +168,10 @@ export function useUploadCriteria() {
       try {
         await supabase.from('audit_logs').insert({
           audit_id: auditId,
-          user_id: user.id,
+          organisation_id: organisationId,
           action: 'criteria_upload',
-          resource_type: 'criteria_document',
-          resource_id: data.path,
+          file_path: data.path,
+          created_by: user.id,
           details: {
             file_path: data.path,
             file_name: file.name,
@@ -229,7 +229,7 @@ export function useUploadedDocuments(auditId: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('audit_logs')
-        .select('id, resource_id, file_path, action, details, created_at')
+        .select('id, file_path, action, details, created_at, created_by')
         .eq('audit_id', auditId)
         .in('action', ['criteria_upload', 'criteria_parsed', 'criteria_parse_failed'])
         .order('created_at', { ascending: false });
@@ -248,7 +248,7 @@ export function useUploadedDocuments(auditId: string) {
 
       const deduplicationMap = new Map<string, UploadedDocument>();
       for (const row of (data ?? [])) {
-        const key = row.resource_id ?? row.details?.file_path ?? row.file_path ?? '';
+        const key = row.details?.file_path ?? row.file_path ?? '';
         const existing = deduplicationMap.get(key);
         if (!existing) {
           deduplicationMap.set(key, row);
