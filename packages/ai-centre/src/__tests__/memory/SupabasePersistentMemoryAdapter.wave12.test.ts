@@ -1,18 +1,18 @@
 /**
- * Wave 12 QA Validation -- SupabasePersistentMemoryAdapter
+ * Wave 12 QA Validation — SupabasePersistentMemoryAdapter
  *
  * Test IDs: T-W12-QAV-1 through T-W12-QAV-5
- * Task: 12.1 -- Full Functionality & Build Wiring Verification (MAT module)
+ * Task: 12.1 — Full Functionality & Build Wiring Verification (MAT module)
  *
  * Covers:
- *   T-W12-QAV-1  ai_memory CRUD E2E cycle (insert -> query -> expire)
+ *   T-W12-QAV-1  ai_memory CRUD E2E cycle (insert → query → expire)
  *   T-W12-QAV-2  Persistent memory cross-invocation (two sequential persists)
- *   T-W12-QAV-3  Organisation isolation -- org-B retrieve returns empty when only org-A data exists
- *   T-W12-QAV-4  pruneExpired() -- expired records deleted, active records retained
- *   T-W12-QAV-5  Coverage threshold -- all code paths exercised (>=90% line coverage evidence)
+ *   T-W12-QAV-3  Organisation isolation — org-B retrieve returns empty when only org-A data exists
+ *   T-W12-QAV-4  pruneExpired() — expired records deleted, active records retained
+ *   T-W12-QAV-5  Coverage threshold — all code paths exercised (≥90% line coverage evidence)
  *
- * References: GRS-008 | APS s7.2 | Wave 11 Supabase Persistent Memory Wiring | Wave 12 Task 12.1
- * Forbidden: no expect(true).toBe(true) stubs | no mocking entire Supabase away (adapter logic must execute)
+ * References: GRS-008 | APS §7.2 | Wave 11 Supabase Persistent Memory Wiring | Wave 12 Task 12.1
+ * Forbidden: ❌ expect(true).toBe(true) stubs | ❌ mocking entire Supabase away (adapter logic must execute)
  */
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { SupabasePersistentMemoryAdapter } from '../../memory/SupabasePersistentMemoryAdapter.js';
@@ -115,9 +115,9 @@ function makeNullCountDeleteClient() {
 }
 
 // ---------------------------------------------------------------------------
-// T-W12-QAV-1: ai_memory CRUD E2E -- Insert -> query -> expire cycle
+// T-W12-QAV-1: ai_memory CRUD E2E — Insert → query → expire cycle
 // ---------------------------------------------------------------------------
-describe('T-W12-QAV-1: ai_memory CRUD E2E -- Insert -> query -> expire cycle', () => {
+describe('T-W12-QAV-1: ai_memory CRUD E2E — Insert → query → expire cycle', () => {
   it('T-W12-QAV-1: persist() inserts entry, retrieve() returns it, pruneExpired() removes expired entries and leaves active ones', async () => {
     const client = makeTestSupabaseClient();
     const adapter = new SupabasePersistentMemoryAdapter(client as unknown as MockSupabaseClient);
@@ -165,7 +165,7 @@ describe('T-W12-QAV-1: ai_memory CRUD E2E -- Insert -> query -> expire cycle', (
 // ---------------------------------------------------------------------------
 // T-W12-QAV-2: Persistent memory cross-invocation (unit)
 // ---------------------------------------------------------------------------
-describe('T-W12-QAV-2: Persistent memory cross-invocation -- second retrieve() includes first persist() context', () => {
+describe('T-W12-QAV-2: Persistent memory cross-invocation — second retrieve() includes first persist() context', () => {
   it('T-W12-QAV-2: two sequential persist() calls via isolated adapter; second retrieve() returns both entries', async () => {
     const client = makeTestSupabaseClient();
     const adapter = new SupabasePersistentMemoryAdapter(client as unknown as MockSupabaseClient);
@@ -202,9 +202,9 @@ describe('T-W12-QAV-2: Persistent memory cross-invocation -- second retrieve() i
 });
 
 // ---------------------------------------------------------------------------
-// T-W12-QAV-3: Organisation isolation -- ai_memory
+// T-W12-QAV-3: Organisation isolation — ai_memory
 // ---------------------------------------------------------------------------
-describe('T-W12-QAV-3: Organisation isolation -- retrieve under org-B returns empty when only org-A data exists', () => {
+describe('T-W12-QAV-3: Organisation isolation — retrieve under org-B returns empty when only org-A data exists', () => {
   it('T-W12-QAV-3: persist under org-A; retrieve under org-B; result is strictly empty', async () => {
     const client = makeTestSupabaseClient();
     const adapterOrgA = new SupabasePersistentMemoryAdapter(client as unknown as MockSupabaseClient);
@@ -229,7 +229,6 @@ describe('T-W12-QAV-3: Organisation isolation -- retrieve under org-B returns em
     });
 
     const orgBResults = await adapterOrgB.retrieve({ organisationId: 'org-B' });
-
     expect(orgBResults).toHaveLength(0);
     expect(orgBResults).toEqual([]);
 
@@ -242,13 +241,12 @@ describe('T-W12-QAV-3: Organisation isolation -- retrieve under org-B returns em
 // ---------------------------------------------------------------------------
 // T-W12-QAV-4: pruneExpired() coverage
 // ---------------------------------------------------------------------------
-describe('T-W12-QAV-4: pruneExpired() -- expires_at < NOW() records deleted; active records retained', () => {
+describe('T-W12-QAV-4: pruneExpired() — expires_at < NOW() records deleted; active records retained', () => {
   it('T-W12-QAV-4: time-bounded pruneExpired() correctly separates expired from active entries', async () => {
     const client = makeTestSupabaseClient();
     const adapter = new SupabasePersistentMemoryAdapter(client as unknown as MockSupabaseClient);
 
     const now = Date.now();
-
     const expiredAt = new Date(now - 120_000).toISOString();
     const activeAt = new Date(now + 600_000).toISOString();
     const noExpiry = undefined;
@@ -297,14 +295,14 @@ describe('T-W12-QAV-4: pruneExpired() -- expires_at < NOW() records deleted; act
 });
 
 // ---------------------------------------------------------------------------
-// T-W12-QAV-5: Coverage threshold -- SupabasePersistentMemoryAdapter (>=90% line coverage)
+// T-W12-QAV-5: Coverage threshold — SupabasePersistentMemoryAdapter (≥90% line coverage)
 // ---------------------------------------------------------------------------
-describe('T-W12-QAV-5: Coverage threshold -- SupabasePersistentMemoryAdapter (>=90% line coverage)', () => {
+describe('T-W12-QAV-5: Coverage threshold — SupabasePersistentMemoryAdapter (≥90% line coverage)', () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  it('T-W12-QAV-5a: persist() success path -- row inserted without error', async () => {
+  it('T-W12-QAV-5a: persist() success path — row inserted without error', async () => {
     const client = makeTestSupabaseClient();
     const adapter = new SupabasePersistentMemoryAdapter(client as unknown as MockSupabaseClient);
 
@@ -317,7 +315,7 @@ describe('T-W12-QAV-5: Coverage threshold -- SupabasePersistentMemoryAdapter (>=
     })).resolves.toBeUndefined();
   });
 
-  it('T-W12-QAV-5b: persist() error path -- throws when Supabase returns error', async () => {
+  it('T-W12-QAV-5b: persist() error path — throws when Supabase returns error', async () => {
     const errorClient = makeErrorOnInsertClient();
     const adapter = new SupabasePersistentMemoryAdapter(errorClient as unknown as MockSupabaseClient);
 
@@ -330,7 +328,7 @@ describe('T-W12-QAV-5: Coverage threshold -- SupabasePersistentMemoryAdapter (>=
     })).rejects.toThrow('insert failed');
   });
 
-  it('T-W12-QAV-5c: retrieve() with sessionId -- scoped query returns matching entries', async () => {
+  it('T-W12-QAV-5c: retrieve() with sessionId — scoped query returns matching entries', async () => {
     const client = makeTestSupabaseClient();
     const adapter = new SupabasePersistentMemoryAdapter(client as unknown as MockSupabaseClient);
 
@@ -348,7 +346,7 @@ describe('T-W12-QAV-5: Coverage threshold -- SupabasePersistentMemoryAdapter (>=
     expect(results[0]!.sessionId).toBe('sess-cov');
   });
 
-  it('T-W12-QAV-5d: retrieve() without sessionId -- org-scoped query returns all org entries', async () => {
+  it('T-W12-QAV-5d: retrieve() without sessionId — org-scoped query returns all org entries', async () => {
     const client = makeTestSupabaseClient();
     const adapter = new SupabasePersistentMemoryAdapter(client as unknown as MockSupabaseClient);
 
@@ -372,7 +370,7 @@ describe('T-W12-QAV-5: Coverage threshold -- SupabasePersistentMemoryAdapter (>=
     expect(results).toHaveLength(2);
   });
 
-  it('T-W12-QAV-5e: retrieve() with limit -- slices to limit count', async () => {
+  it('T-W12-QAV-5e: retrieve() with limit — slices to limit count', async () => {
     const client = makeTestSupabaseClient();
     const adapter = new SupabasePersistentMemoryAdapter(client as unknown as MockSupabaseClient);
 
@@ -390,14 +388,14 @@ describe('T-W12-QAV-5: Coverage threshold -- SupabasePersistentMemoryAdapter (>=
     expect(results).toHaveLength(3);
   });
 
-  it('T-W12-QAV-5f: retrieve() error path -- throws when Supabase returns error', async () => {
+  it('T-W12-QAV-5f: retrieve() error path — throws when Supabase returns error', async () => {
     const errorClient = makeErrorOnSelectClient();
     const adapter = new SupabasePersistentMemoryAdapter(errorClient as unknown as MockSupabaseClient);
 
     await expect(adapter.retrieve({ organisationId: 'org-cov' })).rejects.toThrow('select failed');
   });
 
-  it('T-W12-QAV-5g: pruneExpired() success -- returns non-null count of deleted rows', async () => {
+  it('T-W12-QAV-5g: pruneExpired() success — returns non-null count of deleted rows', async () => {
     const client = makeTestSupabaseClient();
     const adapter = new SupabasePersistentMemoryAdapter(client as unknown as MockSupabaseClient);
 
@@ -415,7 +413,7 @@ describe('T-W12-QAV-5: Coverage threshold -- SupabasePersistentMemoryAdapter (>=
     expect(count).toBe(1);
   });
 
-  it('T-W12-QAV-5h: pruneExpired() null count -- returns 0 when Supabase returns count: null', async () => {
+  it('T-W12-QAV-5h: pruneExpired() null count — returns 0 when Supabase returns count: null', async () => {
     const nullCountClient = makeNullCountDeleteClient();
     const adapter = new SupabasePersistentMemoryAdapter(nullCountClient as unknown as MockSupabaseClient);
 
@@ -423,14 +421,14 @@ describe('T-W12-QAV-5: Coverage threshold -- SupabasePersistentMemoryAdapter (>=
     expect(count).toBe(0);
   });
 
-  it('T-W12-QAV-5i: pruneExpired() error path -- throws when Supabase returns error', async () => {
+  it('T-W12-QAV-5i: pruneExpired() error path — throws when Supabase returns error', async () => {
     const errorClient = makeErrorOnDeleteClient();
     const adapter = new SupabasePersistentMemoryAdapter(errorClient as unknown as MockSupabaseClient);
 
     await expect(adapter.pruneExpired('org-cov-i')).rejects.toThrow('delete failed');
   });
 
-  it('T-W12-QAV-5j: fromRow/toRow -- optional fields (null id, sessionId, userId, expiresAt) map correctly', async () => {
+  it('T-W12-QAV-5j: fromRow/toRow — optional fields (null id, sessionId, userId, expiresAt) map correctly', async () => {
     const client = makeTestSupabaseClient();
     const adapter = new SupabasePersistentMemoryAdapter(client as unknown as MockSupabaseClient);
 
