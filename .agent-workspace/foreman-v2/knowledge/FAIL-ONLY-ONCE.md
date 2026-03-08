@@ -3,7 +3,7 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 3.0.0  
+**Version**: 3.1.0  
 **Created**: 2026-02-24  
 **Updated**: 2026-03-08  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
@@ -484,6 +484,30 @@ No `.agent-workspace/foreman-v2/memory/session-*-20260308.md` was present before
 
 ---
 
+### INC-OPOJD-W15R-QA-001 — OPOJD Failure: Missing GitHub Issue for T-W15R-QA-001 qa-builder Delegation
+**Date**: 2026-03-08  
+**Severity**: MEDIUM  
+**Status**: REMEDIATED — maturion-isms#1000 created (2026-03-08); INC recorded in FAIL-ONLY-ONCE v3.1.0  
+**Source**: CS2 issue maturion-isms#999; IAA governance review GOV-006 scope blockers
+
+**What happened**: During the wave15r-gov governance session (session-wave15r-gov-20260308), Foreman delegated T-W15R-QA-001 (5 RED tests for Wave 15R UX features) to qa-builder. The delegation was recorded in governance paperwork — session memory, PREHANDOVER proof, and wave-current-tasks.md. However, **no GitHub issue was created** to formally commission the qa-builder work. The omission was not caught at the Phase 3 Quality Professor step or the Phase 4 OPOJD gate, as these checks inspected artifact existence rather than issue existence. The gap was identified by IAA governance review (GOV-006 scope blockers) and reported by CS2 in issue #999.
+
+**Root cause (5-Why)**:
+1. **Why was no issue created for T-W15R-QA-001?** The wave15r-gov session focused on governance document authoring. When the qa-builder delegation was noted as "🔴 PENDING (delegated separately)", no issue-creation step was taken before Phase 4 handover.
+2. **Why was this not caught at Phase 4?** The OPOJD gate and QP evaluation check for artifact existence (PREHANDOVER proof, session memory, test evidence) — not for the existence of GitHub issues corresponding to each delegated task.
+3. **Why is a GitHub issue required for each delegation?** A GitHub issue is the formal commission record for builder work. Without it, there is no traceable, searchable, assignable record of the delegation, making the builder's work undiscoverable and untrackable in GitHub.
+4. **Why did the session memory not flag this?** The session memory listed the delegation as "PENDING (separate delegated task)" — treating a future action (create issue) as already delegated. This deferred the issue creation without recording it as an open action item.
+5. **Why does this gap class exist?** No A-rule requires a GitHub issue to exist before a builder delegation is recorded as complete. The OPOJD gate (A-004) validates delivery completeness of the builder's output — not the completeness of the delegation commission itself. This is a delegation-tracking gap.
+
+**Corrective action (maturion-isms#999 / session-wave15r-opojd-20260308)**:
+1. GitHub issue maturion-isms#1000 created for T-W15R-QA-001 with full test scope (T-W15R-UX-001 through T-W15R-UX-005), RED gate requirement, and Batch C context.
+2. This incident registered in FAIL-ONLY-ONCE v3.1.0.
+3. Improvement suggestion S-025 added: DELEGATION-ISSUE-REQUIRED — every builder delegation MUST have a corresponding GitHub issue before the wave handover phase.
+
+**Open improvement**: S-025 — DELEGATION-ISSUE-REQUIRED: Every builder delegation MUST have a corresponding GitHub issue linked before Phase 3 exit. "PENDING (delegated separately)" without an issue URL is an incomplete delegation. *(See Section 3, item S-025 for full text.)*
+
+---
+
 | ID | Description | Origin | Status |
 |----|-------------|--------|--------|
 | S-001 | Extend `align-governance.sh` with a pre-flight diff check that warns (BLOCKER) when local version has MORE sections than canonical — prevents silent learning loss | GV-001-20260221 | OPEN |
@@ -510,6 +534,7 @@ No `.agent-workspace/foreman-v2/memory/session-*-20260308.md` was present before
 | S-022 | Edge Function delivery gate — every wave PREHANDOVER proof template must include a line: "Supabase Edge Functions invoked by frontend: [list fn-names or N/A]. All listed functions confirmed deployed: [YES/N/A]." A PREHANDOVER proof that lists an Edge Function as invoked but not confirmed deployed is a HANDOVER BLOCKER. This is the implementation check for A-032 (candidate). | INC-POST-FCWT-EDGE-FN-001 (2026-03-06) | OPEN |
 | S-023 | Pre-Brief existence CI gate — add a CI check that fails the PR when implementation file changes (non-governance paths) are present on the branch but no `.agent-admin/assurance/iaa-prebrief-<wave-slug>.md` artifact exists. This is the machine-level enforcement of A-031 (PRE-BRIEF-BEFORE-DELEGATION), preventing retroactive Pre-Brief commits after implementation work has begun — the root-cause pattern of INC-BOOTSTRAP-IMPL-001 and three prior preflight violations. | INC-BOOTSTRAP-IMPL-001 (2026-03-08) | OPEN |
 | S-024 | Lock in A-032 (EDGE-FUNCTION-AS-DELIVERABLE) as a mandatory A-rule based on second recurrence (INC-POST-FCWT-EDGE-FN-001 → INC-WAVE15-PARSE-001). Every PREHANDOVER proof that lists a Supabase Edge Function as a deliverable MUST include a "Deployed: YES/NO" confirmation line. A PREHANDOVER proof with "Deployed: N/A" or missing this line when an Edge Function is invoked by the frontend is a HANDOVER BLOCKER. Escalate to CS2 for A-032 formal lock-in. | INC-WAVE15-PARSE-001 (2026-03-08) | OPEN |
+| S-025 | DELEGATION-ISSUE-REQUIRED: Every delegation to a builder agent MUST have a corresponding GitHub issue created and linked before the Foreman exits Phase 3 (or before the governance session's Phase 4 handover). A delegation noted as "PENDING" or "delegated separately" without a GitHub issue number is an incomplete delegation and a Phase 4 OPOJD gate failure. The Foreman MUST verify each row in the session memory "Agents Delegated To" table has a corresponding maturion-isms issue URL before writing the PREHANDOVER proof. Triggered by: INC-OPOJD-W15R-QA-001. Candidate for next A-rule (A-033). | INC-OPOJD-W15R-QA-001 (2026-03-08) | OPEN |
 
 ---
 
@@ -519,9 +544,9 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 2.9.0
+fail_only_once_version: 3.1.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024, S-025]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
@@ -530,8 +555,8 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 ---
 
-*Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523, maturion-isms#855, maturion-isms#856, maturion-isms#1013 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-03-08 | Version: 2.9.0 | Status: ACTIVE*
+*Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523, maturion-isms#855, maturion-isms#856, maturion-isms#1013, maturion-isms#999 | LIVING_AGENT_SYSTEM.md v6.2.0*  
+*Last Updated: 2026-03-08 | Version: 3.1.0 | Status: ACTIVE*
 
 ---
 
@@ -539,6 +564,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.1.0 | 2026-03-08 | INC-OPOJD-W15R-QA-001 recorded (missing GitHub issue for T-W15R-QA-001 qa-builder delegation); S-025 DELEGATION-ISSUE-REQUIRED added; footer version corrected from stale 2.9.0 to 3.1.0; maturion-isms#1000 created as corrective action |
 | 3.0.0 | 2026-03-08 | INC-WAVE15-PARSE-001 recorded (Wave 15 criteria parsing pipeline not functional in production — confirmed by CS2 live testing); S-024 added (A-032 EDGE-FUNCTION-AS-DELIVERABLE escalation for immediate lock-in); version bumped to 3.0.0 due to new major incident class |
 | 2.9.0 | 2026-03-08 | INC-BOOTSTRAP-IMPL-001 recorded (PRs #986/#990 Phase 1 bootstrap skip + NO-IMPLEMENT-001); A-031 PRE-BRIEF-BEFORE-DELEGATION locked in; OVL-CI-006 candidate renumbered to next-ID-after-A-031; S-023 improvement suggestion added |
 | 2.8.0 | 2026-03-06 | INC-POST-FCWT-SORT-ORDER-001 + INC-POST-FCWT-EDGE-FN-001 recorded; A-032 candidate (EDGE-FUNCTION-AS-DELIVERABLE) registered as Layer-Up; A-027 extension (.order() calls are column references); S-021–S-022 improvement suggestions added |
