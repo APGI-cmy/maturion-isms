@@ -341,3 +341,4 @@
 | 2026-03-08 | independent-assurance-agent | iaa-prebrief-breach-rca-20260308 | Phase 0 | wave-current-tasks.md should include a `iaa_prebrief_path` field updated when Pre-Brief is issued, giving Foreman a clear signal that the Pre-Brief is ready for reference | session-iaa-prebrief-breach-rca-20260308.md |
 
 | 2026-03-08 | independent-assurance-agent | session-rca-breach-20260308-R1 | Phase 4 | Pre-IAA Commit Gate in PREHANDOVER template needs MANDATORY CHECKPOINT formatting — Foreman wrote PREHANDOVER speculatively before committing (A-021/A-027 third consecutive failure) (S-024) | session-rca-breach-20260308-R1.md |
+| 2026-03-08 | independent-assurance-agent | session-rca-breach-20260308-R2 | Phase 4 | S-025: Two-step commit pattern for PREHANDOVER proof (deliverables first, PREHANDOVER second) enables real SHA population in git log section, eliminating [post-commit SHA] notation | session-rca-breach-20260308-R2.md |
