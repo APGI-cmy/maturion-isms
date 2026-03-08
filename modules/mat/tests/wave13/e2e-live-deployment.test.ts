@@ -19,7 +19,7 @@ import { describe, it, expect } from 'vitest';
 
 const LIVE_URL =
   process.env.VITE_LIVE_DEPLOYMENT_URL ||
-  'https://matfrontend-93ooodm29-rassie-ras-projects.vercel.app';
+  'https://mat.maturion.com';
 
 describe('T-W13-E2E: Full E2E CWT Against Live Deployment', () => {
   it('T-W13-E2E-1: Live deployment health check — app loads and responds', async () => {
@@ -137,6 +137,7 @@ describe('T-W13-E2E: Full E2E CWT Against Live Deployment', () => {
         status: 'draft',
         organisation_id: profile!.organisation_id,
         organisation_name: org!.name,
+        created_by: userId,
       })
       .select()
       .single();
