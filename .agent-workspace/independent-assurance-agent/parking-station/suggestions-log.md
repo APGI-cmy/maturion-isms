@@ -352,3 +352,4 @@
 | 2026-03-08 | independent-assurance-agent | session-T-W15R-QA-001-wave15r-qa001-20260308 | [PHASE-3] | PREHANDOVER git log field recurrently unfilled at commit — PREHANDOVER template git log field should use harder-to-miss format (not bracket placeholder) to prevent commit before fill | session-T-W15R-QA-001-wave15r-qa001-20260308.md |
 
 | 2026-03-08 | independent-assurance-agent | session-T-W15R-QA-001-R2-wave15r-qa001-20260308 | Phase 3 | A-031 cascade pattern: PREHANDOVER template should include re-invocation checklist prompting check for IAA ceremony artifacts in diff before re-invoking IAA | session-T-W15R-QA-001-R2-wave15r-qa001-20260308.md |
+| 2026-03-08 | independent-assurance-agent | session-T-W15R-QA-001-R3-wave15r-qa001-20260308 | [PHASE-4] | A-031 carve-out added proactively on re-invocation prevents R2-cascade — recommend PREHANDOVER template re-invocation checklist | session-T-W15R-QA-001-R3-wave15r-qa001-20260308.md |
