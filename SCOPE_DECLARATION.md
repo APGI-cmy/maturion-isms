@@ -14,14 +14,17 @@ This PR contains ONLY governance and planning documentation changes. No producti
 
 - `.agent-admin/assurance/iaa-prebrief-wave15r.md` - IAA Pre-Brief for Wave 15R (IAA agent authored)
 - `.agent-admin/assurance/iaa-token-session-wave15r-gov-20260308-REJECTION.md` - IAA first-pass rejection artifact (IAA authored)
+- `.agent-admin/assurance/iaa-token-session-wave15r-gov-20260308-R2-REJECTION.md` - IAA second-pass rejection artifact (IAA authored)
 - `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` - INC-WAVE15-PARSE-001 + S-024 + v3.0.0
 - `.agent-workspace/foreman-v2/knowledge/index.md` - FAIL-ONLY-ONCE version 2.9.0→3.0.0 + index v1.9.0
+- `.agent-workspace/foreman-v2/memory/CORRECTION-ADDENDUM-CORE007-wave15r-gov-20260308.md` - CORE-007 correction addendum (PREHANDOVER git log placeholder resolution)
 - `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave15r-gov-20260308.md` - PREHANDOVER proof
 - `.agent-workspace/foreman-v2/memory/session-wave15r-gov-20260308.md` - Session memory
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated for wave15r-gov
 - `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - S-024 entry added
 - `.agent-workspace/independent-assurance-agent/memory/session-prebrief-wave15r-20260308.md` - IAA Pre-Brief session memory
-- `.agent-workspace/independent-assurance-agent/memory/session-wave15r-gov-20260308.md` - IAA audit session memory
+- `.agent-workspace/independent-assurance-agent/memory/session-wave15r-gov-20260308-R2.md` - IAA R2 audit session memory (authored by IAA in R2 rejection commit)
+- `.agent-workspace/independent-assurance-agent/memory/session-wave15r-gov-20260308.md` - IAA R1 audit session memory
 - `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station update
 - `.github/workflows/deploy-mat-ai-gateway.yml` - Pre-existing trailing newline fix (yamllint compliance)
 - `SCOPE_DECLARATION.md` - This file
