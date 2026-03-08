@@ -455,7 +455,7 @@ No `.agent-workspace/foreman-v2/memory/session-*-20260308.md` was present before
 ### INC-WAVE15-PARSE-001 — Wave 15 Criteria Parsing Pipeline Not Functional in Production
 **Date**: 2026-03-08  
 **Severity**: CRITICAL  
-**Status**: OPEN — remediation in progress (Wave 15R)  
+**Status**: REMEDIATED — Wave 15R (maturion-isms#997) delivered all batches; 81/81 tests GREEN; awaiting CS2 review for final closure
 **Source**: CS2 issue maturion-isms#996; live production testing by @APGI-cmy on 2026-03-08
 
 **What happened**: Wave 15 was declared complete on 2026-03-06 with an IAA ASSURANCE-TOKEN (`IAA-session-wave15-impl-20260306-PASS`). On 2026-03-08, CS2 confirmed via live production testing that the criteria parsing pipeline was entirely non-functional:

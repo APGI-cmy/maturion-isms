@@ -7,23 +7,82 @@
  * Wave 15 — T-W15-IMPL-002 (ui-builder)
  * FR-103: Upload component MUST surface explicit error messages — not silent fail.
  *   uploadError state replaces alert() for upload failures.
+ *
+ * Wave 15R — T-W15R-UI-001 / T-W15R-UI-002 / T-W15R-UI-003 / T-W15R-UI-004 (ui-builder)
+ * - DocumentsList: shows previously uploaded documents with parse status badge
+ * - Per-document retry button (T-W15R-UI-002)
+ * - Inline error log per failed document (T-W15R-UI-003 / FR-103 full)
+ * - alert() replaced with inline success state (T-W15R-UI-003)
  */
 import { useState } from 'react';
-import { useUploadCriteria, useTriggerAIParsing } from '../../lib/hooks/useCriteria';
+import {
+  useUploadCriteria,
+  useTriggerAIParsing,
+  useUploadedDocuments,
+  type UploadedDocument,
+} from '../../lib/hooks/useCriteria';
 
 interface CriteriaUploadProps {
   auditId: string;
 }
 
+/** Maps audit_logs action → normalised parse-status badge value */
+function getParseStatus(doc: UploadedDocument): 'PENDING' | 'PROCESSING' | 'COMPLETE' | 'FAILED' {
+  if (doc.action === 'criteria_parsed') return 'COMPLETE';
+  if (doc.action === 'criteria_parse_failed') return 'FAILED';
+  return 'PENDING';
+}
+
+const BADGE_CLASSES: Record<string, string> = {
+  PENDING: 'bg-gray-100 text-gray-700 border border-gray-300',
+  PROCESSING: 'bg-blue-100 text-blue-700 border border-blue-300',
+  COMPLETE: 'bg-green-100 text-green-700 border border-green-300',
+  FAILED: 'bg-red-100 text-red-700 border border-red-300',
+};
+
+/** Human-readable timestamp */
+function formatTimestamp(iso: string): string {
+  try {
+    return new Date(iso).toLocaleString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch {
+    return iso;
+  }
+}
+
+/** Derive a display-friendly filename from the stored file_path or details */
+function getDisplayName(doc: UploadedDocument): string {
+  const filePath = doc.file_path ?? doc.details?.file_path ?? '';
+  if (filePath) {
+    // Strip leading org/criteria/<auditId>/ prefix and timestamp
+    const parts = filePath.split('/');
+    const lastPart = parts[parts.length - 1] ?? filePath;
+    // Remove leading timestamp prefix (e.g. "1709900000000-myfile.pdf" → "myfile.pdf")
+    return lastPart.replace(/^\d+-/, '');
+  }
+  return 'Unknown document';
+}
+
 export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
   const uploadCriteria = useUploadCriteria();
   const triggerParsing = useTriggerAIParsing();
+  const uploadedDocuments = useUploadedDocuments(auditId);
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [aiParsingWarning, setAiParsingWarning] = useState<string | null>(null);
   // FR-103: inline error state — replaces alert() for upload failures
   const [uploadError, setUploadError] = useState<string | null>(null);
+  // T-W15R-UI-003: inline success state — replaces alert() for upload success
+  const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
+  // T-W15R-UI-002: track which doc is being retried
+  const [retryingDocId, setRetryingDocId] = useState<string | null>(null);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -54,8 +113,9 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
   const handleUpload = async () => {
     if (!selectedFile) return;
 
-    // FR-103: clear previous errors before each upload attempt
+    // FR-103: clear previous errors/messages before each upload attempt
     setUploadError(null);
+    setUploadSuccess(null);
     setAiParsingWarning(null);
 
     try {
@@ -75,9 +135,14 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
 
       setUploadProgress(100);
 
+      // T-W15R-UI-003: replace alert() with inline success message
       if (parsingSucceeded) {
-        alert('Criteria document uploaded and parsing initiated!');
+        setUploadSuccess('Criteria document uploaded and parsing initiated!');
       }
+
+      // Refresh the uploaded documents list
+      uploadedDocuments.invalidate();
+
       setSelectedFile(null);
       setUploadProgress(0);
     } catch (error) {
@@ -86,6 +151,22 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
       setUploadError(
         error instanceof Error ? error.message : 'Upload failed due to an unknown error. Please try again.',
       );
+    }
+  };
+
+  // T-W15R-UI-002: per-document retry handler
+  const handleRetry = async (doc: UploadedDocument) => {
+    const filePath = doc.file_path ?? doc.details?.file_path ?? '';
+    if (!filePath) return;
+
+    setRetryingDocId(doc.id);
+    try {
+      await triggerParsing.mutateAsync({ auditId, filePath });
+      uploadedDocuments.invalidate();
+    } catch (retryError) {
+      console.warn('[CriteriaUpload] Retry parse failed:', retryError);
+    } finally {
+      setRetryingDocId(null);
     }
   };
 
@@ -159,6 +240,18 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
         </div>
       )}
 
+      {/* T-W15R-UI-003: inline upload success — replaces alert() */}
+      {uploadSuccess && (
+        <div
+          data-testid="criteria-upload-success"
+          className="mt-4 p-4 bg-green-50 border border-green-400 rounded"
+          role="status"
+          aria-live="polite"
+        >
+          <p className="text-green-800 text-sm font-medium">{uploadSuccess}</p>
+        </div>
+      )}
+
       {/* FR-103: inline upload error — replaces alert() */}
       {uploadError && (
         <div
@@ -170,6 +263,95 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
           <p className="text-red-700 text-sm mt-1">{uploadError}</p>
         </div>
       )}
+
+      {/* T-W15R-UI-001: Uploaded documents list with parse status badge */}
+      <section className="mt-8" aria-label="Uploaded documents">
+        <h4 className="text-base font-semibold mb-3 text-gray-800">Uploaded Documents</h4>
+
+        {uploadedDocuments.isLoading && (
+          <p className="text-sm text-gray-500">Loading documents…</p>
+        )}
+
+        {uploadedDocuments.isError && (
+          <p className="text-sm text-red-600">Failed to load uploaded documents.</p>
+        )}
+
+        {!uploadedDocuments.isLoading &&
+          !uploadedDocuments.isError &&
+          (uploadedDocuments.data?.length ?? 0) === 0 && (
+            <p
+              data-testid="documents-empty-state"
+              className="text-sm text-gray-500 italic"
+            >
+              No documents uploaded yet.
+            </p>
+          )}
+
+        {(uploadedDocuments.data?.length ?? 0) > 0 && (
+          <ul className="space-y-3" aria-label="Document list">
+            {uploadedDocuments.data!.map((doc) => {
+              const status = getParseStatus(doc);
+              const isRetrying = retryingDocId === doc.id;
+              const errorMessage = doc.details?.error;
+
+              return (
+                <li
+                  key={doc.id}
+                  className="flex flex-col sm:flex-row sm:items-start gap-3 p-4 bg-gray-50 border border-gray-200 rounded-lg"
+                >
+                  {/* Document info */}
+                  <div className="flex-1 min-w-0">
+                    <p
+                      data-testid="document-name"
+                      className="font-medium text-sm text-gray-900 truncate"
+                    >
+                      {getDisplayName(doc)}
+                    </p>
+                    <p
+                      data-testid="document-upload-time"
+                      className="text-xs text-gray-500 mt-0.5"
+                    >
+                      {formatTimestamp(doc.created_at)}
+                    </p>
+
+                    {/* T-W15R-UI-003: inline error per failed document */}
+                    {status === 'FAILED' && errorMessage && (
+                      <p
+                        data-testid="document-parse-error"
+                        className="text-xs text-red-600 mt-1"
+                        role="alert"
+                      >
+                        {errorMessage}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Parse status badge */}
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span
+                      data-testid="parse-status-badge"
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${BADGE_CLASSES[status] ?? BADGE_CLASSES['PENDING']}`}
+                    >
+                      {status}
+                    </span>
+
+                    {/* T-W15R-UI-002: per-document retry button */}
+                    <button
+                      data-testid="retry-parse-button"
+                      onClick={() => void handleRetry(doc)}
+                      disabled={isRetrying || triggerParsing.isPending}
+                      aria-label={`Parse ${getDisplayName(doc)} now`}
+                      className="px-3 py-1 text-xs font-medium bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      {isRetrying ? 'Parsing…' : 'Parse Now'}
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }

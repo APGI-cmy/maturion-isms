@@ -20,6 +20,11 @@ const AI_GATEWAY_URL = Deno.env.get('AI_GATEWAY_URL') ?? '';
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 
+// T-W15R-API-002: Startup validation log — runs once at cold-start before any request handling
+console.log(
+  `[invoke-ai-parse-criteria] AI_GATEWAY_URL configured: ${AI_GATEWAY_URL ? 'YES' : 'NO (MISSING)'}`,
+);
+
 // SSRF mitigation: only accept known-safe AI Gateway URLs (must be internal)
 function validateAiGatewayUrl(url: string): void {
   if (!url) {
@@ -55,10 +60,19 @@ Deno.serve(async (req: Request): Promise<Response> => {
     return new Response(null, {
       headers: {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       },
     });
+  }
+
+  // T-W15R-API-001: Health check endpoint — returns 200 for deployment verification
+  const url = new URL(req.url);
+  if (req.method === 'GET' && url.pathname.endsWith('/health')) {
+    return new Response(
+      JSON.stringify({ status: 'healthy', function: 'invoke-ai-parse-criteria' }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
   }
 
   if (req.method !== 'POST') {

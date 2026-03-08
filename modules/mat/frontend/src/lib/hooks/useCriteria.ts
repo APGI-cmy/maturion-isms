@@ -3,6 +3,9 @@
  * FRS: FR-004 to FR-009
  * TRS: TR-047, TR-016, TR-028
  * Task: 5.6.3 (Criteria Management CRUD)
+ *
+ * Wave 15R — T-W15R-UI-001 / T-W15R-UI-004 (ui-builder)
+ * Added: useUploadedDocuments hook, useParseStatus terminal-state fixes
  */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../supabase';
@@ -24,6 +27,29 @@ export interface Criterion {
 export interface CriteriaUploadInput {
   auditId: string;
   file: File;
+}
+
+export interface UploadedDocumentDetails {
+  file_path?: string;
+  error?: string;
+  domains_inserted?: number;
+  mps_inserted?: number;
+  criteria_inserted?: number;
+  // Index signature required: `details` is a JSONB column and may contain additional arbitrary keys
+  // depending on which Edge Function action wrote the row. All defined properties above are typed explicitly.
+  [key: string]: unknown;
+}
+
+/**
+ * Row from audit_logs representing an uploaded criteria document.
+ * `action` is 'criteria_parsed' (success) or 'criteria_parse_failed' (failure).
+ */
+export interface UploadedDocument {
+  id: string;
+  file_path: string | null;
+  action: string;
+  details: UploadedDocumentDetails;
+  created_at: string;
 }
 
 export interface MiniPerformanceStandard {
@@ -140,6 +166,7 @@ export function useUploadCriteria() {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['criteria-tree', variables.auditId] });
+      queryClient.invalidateQueries({ queryKey: ['uploaded-documents', variables.auditId] });
     },
   });
 }
@@ -165,19 +192,61 @@ export function useTriggerAIParsing() {
 }
 
 /**
+ * Fetch uploaded criteria documents for an audit from audit_logs.
+ *
+ * Wave 15R — T-W15R-UI-001 (ui-builder)
+ * Queries audit_logs filtered by audit_id and action IN ('criteria_parsed', 'criteria_parse_failed').
+ * Returns documents ordered by created_at descending (most recent first).
+ */
+export function useUploadedDocuments(auditId: string) {
+  const queryClient = useQueryClient();
+
+  const query = useQuery<UploadedDocument[], Error>({
+    queryKey: ['uploaded-documents', auditId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('audit_logs')
+        .select('id, file_path, action, details, created_at')
+        .eq('audit_id', auditId)
+        .in('action', ['criteria_parsed', 'criteria_parse_failed'])
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw new Error(`Failed to fetch uploaded documents: ${error.message}`);
+      }
+
+      return (data ?? []) as UploadedDocument[];
+    },
+    enabled: !!auditId,
+  });
+
+  const invalidate = () =>
+    queryClient.invalidateQueries({ queryKey: ['uploaded-documents', auditId] });
+
+  return { ...query, invalidate };
+}
+
+/**
  * Poll AI parsing task status until terminal state (completed / failed)
  *
  * Wave 15 — T-W15-IMPL-002 (ui-builder)
  * FR requirement: The UI must reflect parsing progress in real time.
  *
+ * Wave 15R — T-W15R-UI-004 (ui-builder)
+ * - Returns { status: 'PENDING' } when parse_tasks has no entry yet (handles pre-creation gap)
+ * - Terminal states: COMPLETE, FAILED (uppercase) + completed, failed (backward compat)
+ * - Invalidates uploaded-documents on terminal state so document list refreshes
+ *
  * Uses TanStack Query refetchInterval to poll parse status every 3 seconds
- * until the task reaches "completed" or "failed" terminal state.
+ * until the task reaches a terminal state.
  */
 export function useParseStatus(auditId: string | null, taskId: string | null) {
+  const queryClient = useQueryClient();
+
   return useQuery<{ status: string; parse_status?: string; error?: string }, Error>({
     queryKey: ['parse-status', auditId, taskId],
     queryFn: async () => {
-      if (!taskId || !auditId) return { status: 'idle' };
+      if (!taskId || !auditId) return { status: 'PENDING' };
 
       const { data, error } = await supabase
         .from('parse_tasks')
@@ -186,13 +255,20 @@ export function useParseStatus(auditId: string | null, taskId: string | null) {
         .eq('audit_id', auditId)
         .single();
 
+      // No row yet — task is still being created; treat as PENDING
+      if (error?.code === 'PGRST116') {
+        return { status: 'PENDING' };
+      }
+
       if (error) {
         throw new Error(`Failed to fetch parse status: ${error.message}`);
       }
 
+      const rawStatus = data?.status ?? 'PENDING';
+
       return {
-        status: data?.status ?? 'unknown',
-        parse_status: data?.status,
+        status: rawStatus,
+        parse_status: rawStatus,
         error: data?.error_message,
       };
     },
@@ -200,8 +276,18 @@ export function useParseStatus(auditId: string | null, taskId: string | null) {
     // polling: refetch every 3 s until terminal state
     refetchInterval: (query) => {
       const status = query.state.data?.status;
-      if (status === 'completed' || status === 'failed') {
-        return false; // stop polling at terminal state
+      const isTerminal =
+        status === 'COMPLETE' ||
+        status === 'FAILED' ||
+        status === 'completed' ||
+        status === 'failed';
+
+      if (isTerminal) {
+        // Refresh document list when parse resolves
+        if (auditId) {
+          queryClient.invalidateQueries({ queryKey: ['uploaded-documents', auditId] });
+        }
+        return false; // stop polling
       }
       return 3000; // poll every 3 seconds
     },
