@@ -2,9 +2,9 @@
 
 **Module**: Mat  
 **Module Slug**: mat  
-**Version**: v1.6  
-**Last Updated**: 2026-03-06  
-**Updated By**: foreman-v2-agent (wave15-orchestration-20260306)
+**Version**: v1.7  
+**Last Updated**: 2026-03-08  
+**Updated By**: foreman-v2-agent (wave15r-gov-20260308)
 
 ---
 
@@ -3231,9 +3231,87 @@ Per IAA Pre-Brief: CST is mandatory after Wave 15 Batch A (convergence point: Ed
 | 2026-03-06 | OVERSIGHT DETECTED | INC-POST-FCWT-CRITERIA-PIPELINE-001: parsing pipeline silently failing in production |
 | 2026-03-06 | WAVE 15 INITIATED | Foreman received CS2 issue; Phase 1 preflight complete; IAA Pre-Brief committed |
 | 2026-03-06 | GOVERNANCE BATCH OPEN | Documentation + RED QA being built in this PR |
-| ⏳ TBD | BATCH A | Edge Function + AI Gateway + DB write-back |
-| ⏳ TBD | BATCH B | UI error surfacing + polling + hierarchy panel |
-| ⏳ TBD | BATCH C | QA RED → GREEN (all 14 tests) |
+| ❌ FAILED | BATCH A | Edge Function committed but never deployed; AI_GATEWAY_URL not set |
+| ❌ FAILED | BATCH B | FR-103 partial; document list/retry/error log missing |
+| ❌ FAILED | BATCH C | 14 tests still RED in production |
+| 2026-03-08 | WAVE 15 CONFIRMED FAILED | CS2 live testing: Edge Function not deployed; UI warning persists; INC-WAVE15-PARSE-001 registered |
+| ⏳ TBD | WAVE 15R INITIATED | Remediation plan Wave 15R (see below) |
+
+---
+
+## 🔴 Wave 15 — FAILED (2026-03-08)
+
+> **INC-WAVE15-PARSE-001** — Criteria parsing pipeline not functional in production. Confirmed by CS2 (@APGI-cmy) via live testing on 2026-03-08.
+
+### Incident: INC-WAVE15-PARSE-001
+
+| Field | Value |
+|-------|-------|
+| **Incident ID** | INC-WAVE15-PARSE-001 |
+| **Date Detected** | 2026-03-08 |
+| **Detected By** | CS2 (@APGI-cmy) — live production testing |
+| **Severity** | CRITICAL (production pipeline non-functional) |
+| **Status** | 🔴 OPEN — remediation in progress (Wave 15R) |
+
+### Symptoms (as confirmed by CS2 on 2026-03-08)
+
+1. **Edge Function never deployed**: `invoke-ai-parse-criteria` was not present in Supabase project until CS2 deployed manually via CLI.
+2. **Secret not configured**: `AI_GATEWAY_URL` was not set in Supabase Edge Function secrets until corrected by CS2.
+3. **UI warning persists**: Frontend `CriteriaUpload` component shows yellow "AI parsing is currently unavailable" warning after uploading a document.
+4. **UI UX gaps**: No uploaded document list, no per-document parse status, no retry mechanism, no inline error log.
+5. **AI Gateway reachability unverified**: Whether `apps/mat-ai-gateway` is reachable from the deployed Edge Function remains unconfirmed.
+
+### Root Cause (5-Why)
+
+1. **Why did the pipeline fail?** Edge Function was never deployed — it existed only in the codebase, not in the live Supabase project.
+2. **Why was deployment not verified?** No deployment verification step was included in the Wave 15 PREHANDOVER proof. The proof checked code existence, not runtime deployment state.
+3. **Why was the secret not configured?** `AI_GATEWAY_URL` was listed as a required env var in the Wave 15 plan but was not added to Supabase project secrets — only to local `.env`.
+4. **Why was this not caught at QA gate?** Wave 15 Batch C tests ran in a test environment with mocked Edge Function — they did not validate the deployed production Edge Function.
+5. **Why does this pattern recur?** INC-POST-FCWT-EDGE-FN-001 had the same root cause. A-032 candidate (EDGE-FUNCTION-AS-DELIVERABLE / S-022) was not yet locked in as a FAIL-ONLY-ONCE A-rule. The pattern is now escalated for A-032 lock-in.
+
+### FAIL-ONLY-ONCE Learning
+
+- **Cross-reference**: INC-POST-FCWT-EDGE-FN-001 (same pattern, third occurrence)
+- **A-rule candidate**: A-032 (EDGE-FUNCTION-AS-DELIVERABLE) — pending CS2 formal lock-in
+- **Registry entry**: INC-WAVE15-PARSE-001 added to `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md`
+- **PREHANDOVER proof requirement (S-022)**: All future PREHANDOVER proofs must include: "Supabase Edge Functions invoked by frontend: [list]. All listed functions confirmed deployed: [YES/N/A]."
+
+### State Machine: INC-WAVE15-PARSE-001
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-08 | OPEN | CS2 live testing confirms pipeline non-functional; INC registered |
+| ⏳ TBD | REMEDIATION IN PROGRESS | Wave 15R Batch A: api-builder verifies deployment + secrets + gateway |
+| ⏳ TBD | REMEDIATION IN PROGRESS | Wave 15R Batch B: ui-builder adds document list + retry + error log |
+| ⏳ TBD | REMEDIATION IN PROGRESS | Wave 15R Batch C: qa-builder all 19 tests GREEN |
+| ⏳ TBD | CLOSED | CWT PASS; all 19 tests GREEN; deployment confirmed; CS2 sign-off |
+
+### Cross-References
+
+- Implementation plan: `modules/mat/03-implementation-plan/implementation-plan.md` §Wave 15 FAILED + §Wave 15R
+- FRS: FR-005, FR-103 — annotated as not yet satisfied in production
+- TRS: TR-005 series, TR-103 — annotated as unverified in production
+- FAIL-ONLY-ONCE: `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` INC-WAVE15-PARSE-001
+
+---
+
+## Wave 15R — Remediation In Progress (2026-03-08)
+
+> **CS2 Authority**: Issue #996 (2026-03-08)
+> **IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave15r.md` — COMMITTED
+> **Parent incident**: INC-WAVE15-PARSE-001
+
+### Wave 15R State Machine
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-08 | WAVE 15R INITIATED | CS2 issue #996; foreman-v2-agent governance session; IAA Pre-Brief committed |
+| 2026-03-08 | GOVERNANCE BATCH COMPLETE | Documentation, INC registration, Wave 15R plan (this PR) |
+| ⏳ TBD | BATCH C — RED QA | qa-builder delivers T-W15R-UX-001 to T-W15R-UX-005 (5 RED tests) |
+| ⏳ TBD | BATCH A | api-builder: verify Edge Function deployed + AI Gateway reachable + DB write-back |
+| ⏳ TBD | CST GATE (MANDATORY) | CST between Batch A and Batch B — HARD GATE |
+| ⏳ TBD | BATCH B | ui-builder: document list + retry button + inline error log |
+| ⏳ TBD | QA GREEN | qa-builder: all 19 tests (14 + 5 new) GREEN |
 | ⏳ TBD | CWT | Mandatory before wave closure |
-| ⏳ TBD | WAVE 15 COMPLETE | Oversight closed; IBWR submitted |
+| ⏳ TBD | WAVE 15R COMPLETE | INC-WAVE15-PARSE-001 CLOSED; IBWR submitted |
 

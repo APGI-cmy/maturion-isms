@@ -2362,6 +2362,171 @@ All 16 RED tests are specified in `modules/mat/tests/wave14/wave14-ux-gap-red-su
 - [ ] T-W14-UX-015 (all-tables RLS) passes GREEN after all subwaves complete (🔴 PENDING)
 - [ ] All prior wave tests remain GREEN (no regression) after Wave 14 implementation
 
+---
+
+## Wave 15 — FAILED (2026-03-08)
+
+> **INC-WAVE15-PARSE-001** — Criteria parsing pipeline not functional in production. Recorded 2026-03-08 by CS2 (@APGI-cmy) via live production testing.
+
+### What Was Declared Complete vs. What Was Verified in Production
+
+| Item | Declared (2026-03-06) | Verified in Production (2026-03-08) |
+|------|----------------------|--------------------------------------|
+| Edge Function `invoke-ai-parse-criteria` | ✅ DONE (IAA ASSURANCE-TOKEN issued) | ❌ **NEVER DEPLOYED** — CS2 deployed manually via CLI on 2026-03-08 |
+| `AI_GATEWAY_URL` secret | ✅ DONE (declared configured) | ❌ **NOT SET** in Supabase Edge Function secrets — corrected by CS2 on 2026-03-08 |
+| `DocumentParser.parse()` implementation | ✅ DONE (real implementation) | ⚠️ **REACHABILITY UNVERIFIED** — AI Gateway reachability from Edge Function not confirmed |
+| UI error surfacing (FR-103) | ✅ DONE | ❌ **YELLOW WARNING PERSISTS** — frontend still shows "AI parsing is currently unavailable" after upload |
+| UI: uploaded document list | Not included in Wave 15 scope | ❌ **MISSING** — UX gap identified |
+| UI: per-document parse status badge | Not included in Wave 15 scope | ❌ **MISSING** — UX gap identified |
+| UI: per-document "Parse Now" retry button | Not included in Wave 15 scope | ❌ **MISSING** — UX gap identified |
+| UI: inline error log per document | Not included in Wave 15 scope | ❌ **MISSING** — UX gap identified |
+| DB write-back (domains/mps/criteria) | ✅ DONE (declared) | ⚠️ **UNVERIFIED** — dependent on Edge Function + AI Gateway connectivity |
+
+### Root Cause
+
+1. **Edge Function deployment was never verified** as part of the Wave 15 handover. The PREHANDOVER proof did not include a deployed Edge Function confirmation (S-022 / INC-POST-FCWT-EDGE-FN-001 pattern). A-032 candidate (EDGE-FUNCTION-AS-DELIVERABLE) was not yet locked in as an A-rule.
+2. **`AI_GATEWAY_URL` secret** was listed in env var requirements but was never validated as set in the deployed Supabase project secrets.
+3. **AI Gateway reachability** from the deployed Edge Function in the Supabase runtime was never tested end-to-end — only unit-level tests were run.
+4. **UI UX gaps** (document list, retry button, error log) were outside the declared Wave 15 scope but represent production usability failures — the parse status is invisible to users.
+
+### Wave 15 Batch Status (FAILED)
+
+| Batch | Tasks | Status |
+|-------|-------|--------|
+| Governance Batch | T-W15-GOV-001 to T-W15-GOV-005, T-W15-QA-001 | ✅ DONE (documentation complete, RED tests committed) |
+| Batch A — Edge Function + AI Gateway | T-W15-IMPL-001a, 001b, 001c | ❌ FAILED (code committed but deployment verification absent) |
+| Batch B — UI Integration | T-W15-IMPL-002a, 002b, 002c | ❌ FAILED (partial: FR-103 error surfacing present but non-functional; document list/retry missing) |
+| Batch C — QA RED → GREEN | T-W15-IMPL-003 | ❌ FAILED (14 tests still RED in production) |
+
+### FAIL-ONLY-ONCE Reference
+
+- **Incident**: INC-WAVE15-PARSE-001 (registered in `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md`)
+- **Cross-reference**: INC-POST-FCWT-EDGE-FN-001 (pattern: Edge Function declared delivered but never deployed)
+- **Learning**: A-032 candidate (S-022): PREHANDOVER proof MUST confirm Edge Function deployed before wave closure.
+
+---
+
+## Wave 15R — Wave 15 Remediation: Criteria Parsing Pipeline (2026-03-08)
+
+> **Authority**: CS2 (Johan Ras / @APGI-cmy) — issue #996 (2026-03-08)
+> **IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave15r.md` — COMMITTED
+> **Prerequisite**: Wave 15 FAILED state documented above.
+
+### Objective
+
+Fully remediate the criteria parsing pipeline so that:
+1. The Edge Function `invoke-ai-parse-criteria` is verifiably deployed and reachable.
+2. The `AI_GATEWAY_URL` is confirmed resolving from the Edge Function runtime.
+3. The AI Gateway `/parse` endpoint is reachable and returns valid JSON.
+4. The UI renders a list of uploaded documents with parse status badges.
+5. Per-document "Parse Now" retry buttons are functional.
+6. Inline error logs are surfaced per document when parsing fails.
+7. All 14 Wave 15 RED tests + 5 new Wave 15R tests pass GREEN.
+
+### Wave 15R Architecture
+
+**CST Gate is mandatory** between Batch A and Batch B — this is a HARD GATE per IAA Pre-Brief OVL-AM-CST-01. Batch B MUST NOT begin until Batch A CST PASS evidence is present.
+
+**CWT** is mandatory before Wave 15R IBWR closure.
+
+### Wave 15R Batches
+
+#### Batch A — API Verification + AI Gateway (api-builder)
+
+| Task ID | Builder | Deliverable | Status |
+|---------|---------|-------------|--------|
+| T-W15R-API-001 | api-builder | Verify `invoke-ai-parse-criteria` Edge Function is deployed and returns HTTP 200 for valid input | 🔴 PENDING |
+| T-W15R-API-002 | api-builder | Confirm `AI_GATEWAY_URL` resolves correctly from Edge Function runtime (env var validation + log evidence) | 🔴 PENDING |
+| T-W15R-API-003 | api-builder | End-to-end test: Edge Function → AI Gateway → DB write-back (T-W15R-E2E-001) | 🔴 PENDING |
+| T-W15R-API-004 | api-builder | Fix any `parsing.py` stub issues in `apps/mat-ai-gateway/services/parsing.py` | 🔴 PENDING |
+
+**Env Vars Required**: `AI_GATEWAY_URL`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (all must be confirmed set in Supabase project secrets)
+
+**CST Gate (mandatory — HARD GATE before Batch B)**:
+- T-W15R-API-001 through T-W15R-API-003 all GREEN
+- `invoke-ai-parse-criteria` confirmed deployed in Supabase project
+- AI Gateway `/parse` endpoint returning valid JSON
+- CST PASS evidence committed to branch before any Batch B work begins
+
+#### Batch B — UI Remediation (ui-builder)
+
+> ⛔ **BLOCKED UNTIL CST GATE PASSES** — Do NOT begin until Batch A CST evidence is present on branch.
+
+| Task ID | Builder | Deliverable | Status |
+|---------|---------|-------------|--------|
+| T-W15R-UI-001 | ui-builder | Add uploaded documents list to `CriteriaUpload.tsx` with parse status badge per document | 🔴 PENDING |
+| T-W15R-UI-002 | ui-builder | Add per-document "Parse Now" retry button to `CriteriaUpload.tsx` | 🔴 PENDING |
+| T-W15R-UI-003 | ui-builder | Add inline error log per document in `CriteriaUpload.tsx` (FR-103 full implementation) | 🔴 PENDING |
+| T-W15R-UI-004 | ui-builder | Ensure `useParseStatus` polling hook reflects real Edge Function status (not silent failure) | 🔴 PENDING |
+
+#### Batch C — QA RED → GREEN (qa-builder)
+
+| Task ID | Builder | Deliverable | Status |
+|---------|---------|-------------|--------|
+| T-W15R-QA-001 | qa-builder | 5 new RED tests for Wave 15R UX features (see §Wave 15R RED Tests below) | 🔴 PENDING |
+| T-W15R-QA-002 | qa-builder | All 14 original Wave 15 tests (T-W15-CP-001 to T-W15-CP-014) GREEN | 🔴 PENDING |
+| T-W15R-QA-003 | qa-builder | All 5 new Wave 15R tests (T-W15R-UX-001 to T-W15R-UX-005) GREEN | 🔴 PENDING |
+
+### Wave 15R RED Tests (delegated to qa-builder — T-W15R-QA-001)
+
+| Test ID | Description | Priority |
+|---------|-------------|----------|
+| T-W15R-UX-001 | UI renders list of previously uploaded documents with filename and upload timestamp | HIGH |
+| T-W15R-UX-002 | UI renders parse status badge for each document (`PENDING`, `PROCESSING`, `COMPLETE`, `FAILED`) | HIGH |
+| T-W15R-UX-003 | Per-document "Parse Now" retry button is visible and calls Edge Function when clicked | HIGH |
+| T-W15R-UX-004 | Inline error message is displayed per document when Edge Function returns a failure response | HIGH |
+| T-W15R-UX-005 | Parse status badge updates from `PROCESSING` to `COMPLETE` when polling resolves successfully | MEDIUM |
+
+> ⚠️ **RED GATE**: All 5 tests above MUST be RED (failing) BEFORE any implementation begins. qa-builder MUST commit the failing test files and confirm RED before Batch B begins.
+
+### Wave 15R Tasks (Governance — this PR)
+
+| Task ID | Builder | Deliverable | Status |
+|---------|---------|-------------|--------|
+| T-W15R-GOV-001 | foreman-v2 | `modules/mat/03-implementation-plan/implementation-plan.md` — Wave 15 FAILED + Wave 15R plan | ✅ THIS ENTRY |
+| T-W15R-GOV-002 | foreman-v2 | `modules/mat/BUILD_PROGRESS_TRACKER.md` — INC-WAVE15-PARSE-001 section | ✅ THIS PR |
+| T-W15R-GOV-003 | foreman-v2 | `modules/mat/00-app-description/app-description.md` — §6.2 production gap annotation | ✅ THIS PR |
+| T-W15R-GOV-004 | foreman-v2 | `modules/mat/01-frs/functional-requirements.md` — FR-005 + FR-103 not satisfied in production | ✅ THIS PR |
+| T-W15R-GOV-005 | foreman-v2 | `modules/mat/01.5-trs/technical-requirements-specification.md` — Wave 15R TRs annotated | ✅ THIS PR |
+| T-W15R-GOV-006 | foreman-v2 | `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` — INC-WAVE15-PARSE-001 + S-024 | ✅ THIS PR |
+| T-W15R-QA-001 | qa-builder | 5 RED tests for Wave 15R UX features (T-W15R-UX-001 to T-W15R-UX-005) | 🔴 DELEGATED (separate PR) |
+
+### Acceptance Criteria
+
+- [ ] Wave 15 FAILED section in implementation plan (✅ THIS ENTRY)
+- [ ] Wave 15R remediation plan with Batch A/B/C (✅ THIS ENTRY)
+- [ ] CST Gate explicitly declared as MANDATORY between Batch A and Batch B (✅ ABOVE)
+- [ ] BUILD_PROGRESS_TRACKER.md contains INC-WAVE15-PARSE-001 (🔴 PENDING — T-W15R-GOV-002)
+- [ ] App Description §6.2 annotated with production gap reference (🔴 PENDING — T-W15R-GOV-003)
+- [ ] FRS FR-005 + FR-103 annotated as not satisfied in production (🔴 PENDING — T-W15R-GOV-004)
+- [ ] TRS corresponding requirements annotated (🔴 PENDING — T-W15R-GOV-005)
+- [ ] FAIL-ONLY-ONCE INC-WAVE15-PARSE-001 registered (🔴 PENDING — T-W15R-GOV-006)
+- [ ] 5 RED tests delegated to qa-builder (T-W15R-QA-001 — 🔴 PENDING)
+- [ ] Batch A CST Gate defined with scope (✅ ABOVE)
+- [ ] No implementation code written by Foreman (✅ CONFIRMED)
+
+### Wave 15R State Machine
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-08 | PRODUCTION FAILURE CONFIRMED | CS2 live testing: Edge Function never deployed; `AI_GATEWAY_URL` not set; UI showing warning |
+| 2026-03-08 | WAVE 15R INITIATED | CS2 issue #996; foreman-v2-agent governance session; IAA Pre-Brief committed |
+| 2026-03-08 | GOVERNANCE BATCH IN PROGRESS | Documentation, INC registration, Wave 15R plan (this PR) |
+| ⏳ TBD | BATCH C — RED QA | qa-builder delivers 5 new RED tests |
+| ⏳ TBD | BATCH A | api-builder: verify Edge Function deployed + AI Gateway reachable + DB write-back |
+| ⏳ TBD | CST GATE | Mandatory before Batch B |
+| ⏳ TBD | BATCH B | ui-builder: document list + retry UX + inline error log |
+| ⏳ TBD | QA GREEN | qa-builder: all 19 tests (14 original + 5 new) GREEN |
+| ⏳ TBD | CWT | Mandatory before wave closure |
+| ⏳ TBD | WAVE 15R COMPLETE | INC-WAVE15-PARSE-001 closed; IBWR submitted |
+
+> ⚠️ **BLOCKER**: Batch A MUST NOT begin until:
+> 1. RED QA suite (T-W15R-UX-001 to T-W15R-UX-005) is commissioned to and delivered RED by qa-builder (T-W15R-QA-001)
+> 2. Architecture for Batch A is frozen by Foreman (this section)
+> 3. CS2 wave-start authorisation obtained for Batch A delegation to api-builder
+
+---
+
 **End of Implementation Plan**
 
-**Next Step**: Commission qa-builder for TASK-W14-006 (RED test file implementation)
+**Next Step**: Commission qa-builder for T-W15R-QA-001 (5 RED test files for Wave 15R UX features)
