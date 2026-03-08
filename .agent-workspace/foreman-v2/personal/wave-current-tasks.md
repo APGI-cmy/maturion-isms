@@ -1,3 +1,91 @@
+# Wave Current Tasks — foreman-v2-agent — wave-upload-doclist-fix
+
+**Wave**: wave-upload-doclist-fix  
+**Branch**: `copilot/fix-ai-parsing-trigger`  
+**Date**: 2026-03-08  
+**Session**: session-wave-upload-doclist-fix-20260308  
+**Authority**: CS2 (@APGI-cmy) — "fix(app/api): Criteria document upload — AI parsing never triggers, uploaded documents never show"  
+**Protocol Reference**: IAA_PRE_BRIEF_PROTOCOL.md v1.1.0 §Trigger  
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave-upload-doclist-fix.md` — PENDING IAA RESPONSE
+
+---
+
+## Wave Summary
+
+Post-Wave-15R production investigation: criteria parsing pipeline still non-functional. Two root problems:
+
+1. **Code bug (PRIMARY)**: When Edge Function fails (any reason), NO `audit_log` row is written for the uploaded document. `useUploadedDocuments` queries `audit_logs` with `action IN ('criteria_parsed', 'criteria_parse_failed')`. If parsing never runs, the document NEVER appears in the UI list. **Fix**: write `audit_log(action='criteria_upload')` immediately on upload success, BEFORE parsing is attempted. Expand `useUploadedDocuments` query to include `'criteria_upload'` action.
+
+2. **Governance gap**: If parsing write-back to audit_logs is the only visibility mechanism, the upload pipeline is fragile. FRS/TRS/tests must be aligned to reflect the upload-then-parse pattern.
+
+---
+
+## Architecture: Upload Audit Log Pattern (Fixed)
+
+**Current (broken) flow**:
+```
+upload → storage (succeeds) → triggerParsing → Edge Fn (fails/unavailable)
+  → catch: yellow warning → no audit_log written → document list always empty
+```
+
+**Fixed flow**:
+```
+upload → storage (succeeds) → write audit_log(action='criteria_upload') → triggerParsing
+  → if parsing succeeds: Edge Fn writes audit_log(action='criteria_parsed')
+  → if parsing fails (fn deployed): Edge Fn writes audit_log(action='criteria_parse_failed')
+  → if fn not deployed: inner catch: yellow warning shown
+useUploadedDocuments → query(['criteria_upload','criteria_parsed','criteria_parse_failed'])
+  → deduplicated by resource_id → always shows docs → status: PENDING|COMPLETE|FAILED
+```
+
+---
+
+## Task Registry
+
+| Task ID | Assigned To | Description | Status |
+|---------|-------------|-------------|--------|
+| T-WUF-QA-001 | qa-builder | Define RED gate tests: (a) `useUploadCriteria` writes `criteria_upload` to audit_logs; (b) `useUploadedDocuments` queries include `criteria_upload` action; (c) `getParseStatus` maps `criteria_upload` → PENDING; (d) document list shows entry even when parsing fails | 🔴 NOT STARTED |
+| T-WUF-API-001 | api-builder | Fix `useUploadCriteria` hook: write `audit_log(action='criteria_upload')` after storage upload succeeds. Fix `useUploadedDocuments`: expand `action IN (...)` to include `'criteria_upload'`; client-side deduplicate by `resource_id` keeping best-status entry (criteria_parsed > criteria_parse_failed > criteria_upload) | 🔴 NOT STARTED |
+| T-WUF-UI-001 | ui-builder | Fix `CriteriaUpload.tsx`: update `getParseStatus()` to return `'PENDING'` for `action === 'criteria_upload'` | 🔴 NOT STARTED |
+| T-WUF-GOV-001 | foreman-v2 | Governance: register INC-WUF-DOCLIST-001 in FAIL-ONLY-ONCE; update BUILD_PROGRESS_TRACKER; confirm FRS FR-004/FR-103 and TRS TR-047 alignment; add wave entry to implementation-plan.md | 🔴 NOT STARTED |
+
+---
+
+## Dependency Chain
+
+```
+IAA Pre-Brief received
+  ↓
+T-WUF-QA-001 (RED gate tests — qa-builder)
+  ↓ CST Gate: QA→API (all new tests RED-confirmed)
+T-WUF-API-001 (api-builder: hook fixes)
+  ↓ CST Gate: API→UI (hook changes GREEN)
+T-WUF-UI-001 (ui-builder: component fix)
+  ↓ all tests GREEN (QA confirms 81+N tests GREEN)
+T-WUF-GOV-001 (foreman: governance closure)
+  ↓ Phase 4: PREHANDOVER proof + session memory + IAA final audit
+  ↓ CS2 review
+```
+
+---
+
+## Acceptance Criteria
+
+- [ ] Uploaded documents appear in the UI list IMMEDIATELY after storage upload, even when Edge Function unavailable
+- [ ] Status badge shows PENDING for `criteria_upload` action; COMPLETE for `criteria_parsed`; FAILED for `criteria_parse_failed`
+- [ ] No duplicate entries in document list (deduplicated by resource_id)
+- [ ] All existing 81 tests remain GREEN; new RED→GREEN tests cover upload-audit-log pattern
+- [ ] FRS FR-004/FR-103 and TRS TR-047 confirmed aligned
+- [ ] FAIL-ONLY-ONCE INC-WUF-DOCLIST-001 registered
+- [ ] BUILD_PROGRESS_TRACKER updated
+- [ ] IAA final assurance PASS token received before merge gate release
+
+---
+
+# ───────────────────────────────────────────────
+# ARCHIVED — T-W15R-QA-001 (previous wave)
+# ───────────────────────────────────────────────
+
 # Wave Current Tasks — foreman-v2-agent — T-W15R-QA-001 (create-red-tests-wave-15r)
 
 **Wave**: Wave 15R Batch C — T-W15R-QA-001 (governance closure for qa-builder RED test delegation)
