@@ -1,73 +1,55 @@
-# Wave Current Tasks — foreman-v2-agent — wave15r-impl
+# Wave Current Tasks — foreman-v2-agent — wave15r-closure
 
-**Wave**: wave15r-impl
-**Branch**: copilot/commission-api-ui-qa-builders
-**Issue**: maturion-isms#997 — Wave 15R: Foreman orchestration — commission api-builder, ui-builder, and qa-builder for end-to-end criteria parsing pipeline
+**Wave**: wave15r-closure
+**Branch**: copilot/run-cwt-and-ibwr-for-closure
+**Issue**: maturion-isms#1003 — Wave 15R: Run CWT and IBWR after remediation merge for governance closure
 **Date**: 2026-03-08
-**Session**: session-wave15r-impl-20260308
-**CS2 Authorization**: Issue #997 opened directly by @APGI-cmy
+**Session**: session-wave15r-closure-correction-20260308
+**CS2 Authorization**: Issue #1003 opened directly by @APGI-cmy
 **Protocol Reference**: IAA_PRE_BRIEF_PROTOCOL.md v1.1.0 §Trigger
-**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave15r-impl.md` — COMMITTED (SHA fa924ed)
-**Ceremony Model**: Option B — Consolidated PR (all batches on single PR copilot/commission-api-ui-qa-builders)
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave15r-closure.md` — RETROACTIVE (see INC-PREBRIEF-GOVERNANCE-CLOSURE-001)
+**Ceremony Model**: Governance-only closure session — no builder delegation
+
+---
+
+## BREACH NOTE — INC-PREBRIEF-GOVERNANCE-CLOSURE-001
+
+This wave-current-tasks.md was NOT created before the initial wave15r-closure session commit.
+That is the violation being remediated in this correction session.
+CS2 issued a FOREMAN RE-ALIGNMENT directive (maturion-isms#1003 comment, 2026-03-08).
 
 ---
 
 ## Wave Context
 
-**Wave Slug**: wave15r-impl
-**Summary**: Wave 15 was declared complete on 2026-03-06 but confirmed FAILED in production on 2026-03-08 by CS2.
-Root cause: Edge Function never deployed; `AI_GATEWAY_URL` not configured; UI missing document list, retry mechanism, and inline error log.
-This implementation session commissions Batch A (api-builder), Batch B (ui-builder), and Batch C (qa-builder) to fully remediate INC-WAVE15-PARSE-001.
+**Wave Slug**: wave15r-closure
+**Summary**: Post-merge governance closure for Wave 15R (Criteria Parsing Pipeline Remediation).
+PR #1002 was merged to main on 2026-03-08. This closure session compiles the CWT evidence,
+produces the IBWR, and closes the governance loop for INC-WAVE15-PARSE-001.
 
-**Remediation of**: INC-WAVE15-PARSE-001 (OPEN → REMEDIATED upon wave closure)
-
----
-
-## Outstanding Tasks
-
-| # | Task ID | Task | Builder | Status |
-|---|---------|------|---------|--------|
-| 1 | T-W15R-API-001 | Verify `invoke-ai-parse-criteria` Edge Function is deployed and returns HTTP 200 for valid input | api-builder | 🔴 PENDING |
-| 2 | T-W15R-API-002 | Confirm `AI_GATEWAY_URL` resolves correctly from Edge Function runtime | api-builder | 🔴 PENDING |
-| 3 | T-W15R-API-003 | End-to-end verification: Edge Function → AI Gateway → DB write-back | api-builder | 🔴 PENDING |
-| 4 | T-W15R-API-004 | Verify/fix any stub issues in `apps/mat-ai-gateway/services/parsing.py` (may be N/A) | api-builder | 🔴 PENDING |
-| 5 | T-W15R-API-PLAN | Update `modules/mat/03-implementation-plan/implementation-plan.md` with Batch A findings | api-builder | 🔴 PENDING |
-| 6 | T-W15R-UI-001 | Add uploaded documents list to `CriteriaUpload.tsx` with parse status badge per document | ui-builder | ⛔ BLOCKED (Batch A gate) |
-| 7 | T-W15R-UI-002 | Add per-document "Parse Now" retry button | ui-builder | ⛔ BLOCKED (Batch A gate) |
-| 8 | T-W15R-UI-003 | Add inline error log per document in `CriteriaUpload.tsx` (FR-103 full implementation) | ui-builder | ⛔ BLOCKED (Batch A gate) |
-| 9 | T-W15R-UI-004 | Ensure `useParseStatus` polling hook reflects real Edge Function status (not silent failure) | ui-builder | ⛔ BLOCKED (Batch A gate) |
-| 10 | T-W15R-QA-001 | Write 5 RED→GREEN tests (T-W15R-UX-001 to T-W15R-UX-005) | qa-builder | ⛔ BLOCKED (Batch B gate) |
-| 11 | T-W15R-QA-002 | Confirm all 14 original Wave 15 tests (T-W15-CP-001 to T-W15-CP-014) remain GREEN | qa-builder | ⛔ BLOCKED (Batch B gate) |
-| 12 | T-W15R-QA-003 | All 5 new Wave 15R tests GREEN after Batch B implementation | qa-builder | ⛔ BLOCKED (Batch B gate) |
-
-**Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE | ❌ BLOCKED (hard gate) | ⛔ BLOCKED (gated on prior batch)
+No production code, tests, or CI scripts are modified. All changes are governance documents.
 
 ---
 
-## Wave Completion Gate
+## Tasks — wave15r-closure
 
-- [x] IAA Pre-Brief committed (`.agent-admin/assurance/iaa-prebrief-wave15r-impl.md`)
-- [x] wave-current-tasks.md updated for wave15r-impl
-- [x] Ceremony model declared: Option B (consolidated PR)
-- [ ] Batch A: T-W15R-API-001 through T-W15R-API-PLAN — api-builder DELIVERED
-- [ ] Batch A QP evaluation: PASS
-- [ ] CST Gate A→B: PASS evidence committed to branch
-- [ ] Batch B: T-W15R-UI-001 through T-W15R-UI-004 — ui-builder DELIVERED
-- [ ] Batch B QP evaluation: PASS
-- [ ] CST Gate B→C: PASS evidence committed to branch
-- [ ] Batch C: T-W15R-QA-001 through T-W15R-QA-003 — qa-builder DELIVERED
-- [ ] Batch C QP evaluation: PASS
-- [ ] All 19 tests GREEN (14 original + 5 new)
-- [ ] QP evaluation: PASS
-- [ ] Session memory written
-- [ ] PREHANDOVER proof committed
-- [ ] IAA ASSURANCE-TOKEN received
-- [ ] CS2 notified for merge approval
-- [ ] INC-WAVE15-PARSE-001 status updated to REMEDIATED
+| Task ID | Description | Builder | Status |
+|---------|-------------|---------|--------|
+| CWT-W15R-001 | Compile CWT evidence (vitest 81/81 GREEN + pytest 45/45 GREEN) | foreman-v2-agent (governance only) | ✅ DONE |
+| IBWR-W15R-001 | Produce IBWR with all 7 INC-WAVE15-PARSE-001 root causes closed | foreman-v2-agent (governance only) | ✅ DONE |
+| IMPL-PLAN-001 | Update implementation plan v2.6.0 — Wave 15R status CLOSED | foreman-v2-agent (governance only) | ✅ DONE |
+| CORRECTION-001 | Record INC-PREBRIEF-GOVERNANCE-CLOSURE-001 in FAIL-ONLY-ONCE registry | foreman-v2-agent (governance only) | IN PROGRESS |
+| CORRECTION-002 | Create wave-current-tasks.md (retroactive) | foreman-v2-agent (governance only) | ✅ DONE (this file) |
+| CORRECTION-003 | Invoke IAA Pre-Brief and create pre-brief artifact | foreman-v2-agent (governance only) | IN PROGRESS |
+| CORRECTION-004 | Create CORRECTION-ADDENDUM for wave15r-closure session | foreman-v2-agent (governance only) | PENDING |
 
-## Re-Anchor Pulse Data
+---
 
-**Last Re-Anchor**: 2026-03-08T12:42:00Z
-**Branch**: copilot/commission-api-ui-qa-builders
-**Active PREHANDOVER**: PENDING
-**Wave Completion**: IN PROGRESS
+**IAA Pre-Brief Qualifying Tasks (per A-031):**
+- CWT-W15R-001: N/A (already complete — corrective session)
+- IBWR-W15R-001: N/A (already complete — corrective session)
+- CORRECTION-001 through CORRECTION-004: Governance correction — IAA review of violation recording
+
+> This wave-current-tasks.md was created retroactively as part of INC-PREBRIEF-GOVERNANCE-CLOSURE-001
+> corrective action. Per A-031: retroactive Pre-Brief does not fully satisfy the rule — the
+> violation has been recorded in FAIL-ONLY-ONCE registry.
