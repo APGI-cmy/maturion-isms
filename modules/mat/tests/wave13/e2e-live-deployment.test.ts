@@ -82,13 +82,18 @@ describe('T-W13-E2E: Full E2E CWT Against Live Deployment', () => {
   });
 
   it('T-W13-E2E-4: Full audit creation flow — create audit, verify persists, cleanup', async () => {
-    const testToken = process.env.MAT_E2E_TEST_TOKEN;
+    const email = process.env.LIVENESS_TEST_EMAIL;
+    const password = process.env.LIVENESS_TEST_PASSWORD;
     const supabaseUrl = process.env.VITE_SUPABASE_URL;
     const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
 
     expect(
-      testToken,
-      'MAT_E2E_TEST_TOKEN must be set — integration-builder must add it to CI secrets and local .env.test'
+      email,
+      'LIVENESS_TEST_EMAIL must be set — add it to CI secrets and local .env.test'
+    ).toBeTruthy();
+    expect(
+      password,
+      'LIVENESS_TEST_PASSWORD must be set — add it to CI secrets and local .env.test'
     ).toBeTruthy();
 
     expect(supabaseUrl, 'VITE_SUPABASE_URL must be set').toBeTruthy();
@@ -97,9 +102,9 @@ describe('T-W13-E2E: Full E2E CWT Against Live Deployment', () => {
     const { createClient } = await import('@supabase/supabase-js');
     const client = createClient(supabaseUrl!, supabaseAnonKey!);
 
-    const { error: authError } = await client.auth.setSession({
-      access_token: testToken!,
-      refresh_token: process.env.MAT_E2E_REFRESH_TOKEN ?? '',
+    const { error: authError } = await client.auth.signInWithPassword({
+      email: email!,
+      password: password!,
     });
     expect(authError, `Auth failed: ${authError?.message}`).toBeNull();
 
@@ -118,13 +123,18 @@ describe('T-W13-E2E: Full E2E CWT Against Live Deployment', () => {
   });
 
   it('T-W13-E2E-5: All major tables are accessible after token auth', async () => {
-    const testToken = process.env.MAT_E2E_TEST_TOKEN;
+    const email = process.env.LIVENESS_TEST_EMAIL;
+    const password = process.env.LIVENESS_TEST_PASSWORD;
     const supabaseUrl = process.env.VITE_SUPABASE_URL;
     const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
 
     expect(
-      testToken,
-      'MAT_E2E_TEST_TOKEN must be set — integration-builder must configure it'
+      email,
+      'LIVENESS_TEST_EMAIL must be set — add it to CI secrets and local .env.test'
+    ).toBeTruthy();
+    expect(
+      password,
+      'LIVENESS_TEST_PASSWORD must be set — add it to CI secrets and local .env.test'
     ).toBeTruthy();
 
     expect(supabaseUrl, 'VITE_SUPABASE_URL must be set').toBeTruthy();
@@ -133,10 +143,11 @@ describe('T-W13-E2E: Full E2E CWT Against Live Deployment', () => {
     const { createClient } = await import('@supabase/supabase-js');
     const client = createClient(supabaseUrl!, supabaseAnonKey!);
 
-    await client.auth.setSession({
-      access_token: testToken!,
-      refresh_token: process.env.MAT_E2E_REFRESH_TOKEN ?? '',
+    const { error: signInError } = await client.auth.signInWithPassword({
+      email: email!,
+      password: password!,
     });
+    expect(signInError, `Auth failed: ${signInError?.message}`).toBeNull();
 
     const tables = ['audits', 'domains', 'criteria'] as const;
     for (const table of tables) {
