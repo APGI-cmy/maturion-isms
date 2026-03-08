@@ -1,26 +1,30 @@
 # Wave Current Tasks — foreman-v2-agent
 
-**Wave**: Patch-T075-Isolation — Fix T-075 test isolation: buildPersistentMemory() shared state contamination
-**Session**: session-patch-T075-20260308
+**Wave**: fix-e2e-test-auth-method — Replace setSession with signInWithPassword in T-W13-E2E-4/5 for stable CI auth
+**Session**: session-fix-e2e-auth-20260308
 **Date**: 2026-03-08
-**Issue**: [Agent Task] fix(test): Isolate buildPersistentMemory() test (T-075) from shared state contamination
-**Branch**: copilot/fix-isolate-build-persistent-memory-test
+**Issue**: fix(test/e2e): Replace setSession with signInWithPassword in T-W13-E2E-4 for stable auth
+**Branch**: copilot/fix-e2e-test-auth-method
 **CS2 Authorization**: Issue opened and assigned by @APGI-cmy directly
 **Protocol Reference**: IAA_PRE_BRIEF_PROTOCOL.md v1.1.0 §Trigger
-**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-patch-T075-isolation.md` — PENDING
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-fix-e2e-test-auth-method.md` — COMMITTED
 
 ---
 
 ## Wave Context
 
-**Wave Slug**: patch-T075-isolation
-**Root cause**: T-075-1 "non-null behaviour" test in `api/ai/request.test.ts` calls `buildPersistentMemory()` directly, which uses the real Supabase client when env vars are set. The fixed `organisationId: 'org-red-001'` causes entries from concurrent/parallel workflow runs to accumulate, producing up to 9 results when the test expects exactly 1.
+**Wave Slug**: fix-e2e-test-auth-method
+**Root cause**: `T-W13-E2E-4` and `T-W13-E2E-5` use `client.auth.setSession({ access_token, refresh_token })` with the secrets `MAT_E2E_TEST_TOKEN` and `MAT_E2E_REFRESH_TOKEN`. Refresh tokens are single-use and expire after each run, requiring operator intervention and manual rotation for every CI test run.
 
-**Failing test:**
-- T-075-1: `buildPersistentMemory() stores and retrieves entries (non-null behaviour)` — AssertionError: expected array to have length 1 but got 9
+**Failing tests (expected in CI without manual rotation):**
+- T-W13-E2E-4: Full audit creation flow — fails because `MAT_E2E_REFRESH_TOKEN` is consumed after first use
+- T-W13-E2E-5: All major tables accessible after token auth — same root cause
 
-**Scope (single file change):**
-1. `api/ai/request.test.ts` — update T-075-1 test to use a unique `organisationId` per run (`org-red-${Date.now()}`) and a fresh `makeTestSupabaseClient()` backed `SupabasePersistentMemoryAdapter` instead of calling `buildPersistentMemory()` with the real Supabase client
+**Solution**: Replace `setSession` with `signInWithPassword({ email, password })` using `LIVENESS_TEST_EMAIL` and `LIVENESS_TEST_PASSWORD` — secrets already in GitHub Actions that do not expire or get consumed.
+
+**Scope (files changed):**
+1. `modules/mat/tests/wave13/e2e-live-deployment.test.ts` — replace `setSession` with `signInWithPassword` in T-W13-E2E-4 and T-W13-E2E-5, switch env vars from `MAT_E2E_TEST_TOKEN`/`MAT_E2E_REFRESH_TOKEN` to `LIVENESS_TEST_EMAIL`/`LIVENESS_TEST_PASSWORD`
+2. `.github/workflows/deploy-mat-ai-gateway.yml` — remove `MAT_E2E_TEST_TOKEN` and `MAT_E2E_REFRESH_TOKEN` from CWT job env block, add `LIVENESS_TEST_EMAIL` and `LIVENESS_TEST_PASSWORD`
 
 ---
 
@@ -28,7 +32,7 @@
 
 | # | Task ID | Task | Builder | Status | PR / Evidence |
 |---|---------|------|---------|--------|---------------|
-| 1 | T-T075-ISO-001 | Update T-075-1 test in `api/ai/request.test.ts`: use fresh `makeTestSupabaseClient()` + unique `organisationId` (`org-red-${Date.now()}-${random}`) to isolate from cross-run contamination | qa-builder | 🟢 DONE | IAA ASSURANCE-TOKEN: IAA-session-patch-T075-isolation-20260308-PASS |
+| 1 | T-E2E-AUTH-001 | Replace `setSession` with `signInWithPassword` in T-W13-E2E-4 and T-W13-E2E-5; update CI workflow env vars | integration-builder | 🟢 DONE | Committed: `9f118d3` |
 
 **Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED
 
@@ -38,16 +42,15 @@
 
 | PR # | Token | Date |
 |------|-------|------|
-| copilot/fix-isolate-build-persistent-memory-test | IAA-session-patch-T075-isolation-20260308-PASS | 2026-03-08 |
+| copilot/fix-e2e-test-auth-method | PENDING | — |
 
 ---
 
 ## Wave Completion Gate
 
-- [x] T-T075-ISO-001: T-075-1 test updated — unique org ID + fresh test client
-- [x] `expect(results).toHaveLength(1)` passes consistently regardless of workflow concurrency
-- [x] IAA ASSURANCE-TOKEN received: IAA-session-patch-T075-isolation-20260308-PASS
-- [x] Session memory written
-- [x] PREHANDOVER proof committed
+- [x] T-E2E-AUTH-001: `setSession` replaced with `signInWithPassword` in both T-W13-E2E-4 and T-W13-E2E-5
+- [x] CI workflow env vars updated — removed expiring token secrets, added stable credential secrets
+- [ ] IAA ASSURANCE-TOKEN received
+- [ ] Session memory written
+- [ ] PREHANDOVER proof committed
 - [ ] CS2 notified for merge approval
-
