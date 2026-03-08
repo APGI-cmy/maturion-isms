@@ -17,6 +17,16 @@ QP evaluation: 35/35 GREEN, QP VERDICT: PASS.
 No production code, tests, CI scripts, or agent contracts are modified. All changes are
 governance documents on the `copilot/create-red-tests-wave-15r` branch.
 
+## Governance Notes — IAA Ceremony Artifacts (A-031 Carve-Out)
+
+IAA ceremony artifacts committed on this branch during rejection sessions are excluded from
+the producing-agent declaration per A-031. All `.agent-admin/assurance/iaa-token-*-REJECTION*.md`
+files and all `.agent-workspace/independent-assurance-agent/memory/` and
+`.agent-workspace/independent-assurance-agent/parking-station/` files that appear in
+`git diff --name-only origin/main...HEAD` but are not listed under Files Changed below were
+committed by IAA during rejection ceremony sessions on this branch and are IAA-owned files.
+All producing-agent (foreman-v2-agent) deliverables are fully declared in Files Changed.
+
 ## Files Changed
 
 - `SCOPE_DECLARATION.md` - Updated for wave T-W15R-QA-001
