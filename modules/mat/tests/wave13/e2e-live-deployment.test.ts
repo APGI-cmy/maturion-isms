@@ -122,9 +122,22 @@ describe('T-W13-E2E: Full E2E CWT Against Live Deployment', () => {
     expect(profileError, `Profile fetch failed: ${profileError?.message}`).toBeNull();
     expect(profile?.organisation_id, 'organisation_id must be present on profile').toBeTruthy();
 
+    const { data: org, error: orgError } = await client
+      .from('organisations')
+      .select('name')
+      .eq('id', profile!.organisation_id)
+      .single();
+    expect(orgError, `Organisation fetch failed: ${orgError?.message}`).toBeNull();
+    expect(org?.name, 'organisation name must be present').toBeTruthy();
+
     const { data, error } = await client
       .from('audits')
-      .insert({ title: 'E2E Test Audit — Wave 13 RED gate', status: 'draft', organisation_id: profile!.organisation_id })
+      .insert({
+        title: 'E2E Test Audit — Wave 13 RED gate',
+        status: 'draft',
+        organisation_id: profile!.organisation_id,
+        organisation_name: org!.name,
+      })
       .select()
       .single();
 
