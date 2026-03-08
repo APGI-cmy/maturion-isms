@@ -113,7 +113,6 @@ function extractUploadedDocumentInterface(content: string): string {
   const match = content.match(/interface UploadedDocument(?!\w)/);
   if (!match || match.index === undefined) return '';
   const startIdx = match.index;
-  if (startIdx === -1) return '';
 
   // Locate the opening brace of the interface body
   const braceStart = content.indexOf('{', startIdx);
