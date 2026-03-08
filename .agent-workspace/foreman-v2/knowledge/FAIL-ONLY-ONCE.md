@@ -3,9 +3,9 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 2.8.0  
+**Version**: 2.9.0  
 **Created**: 2026-02-24  
-**Updated**: 2026-03-06  
+**Updated**: 2026-03-08  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -63,7 +63,9 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-029 | SCOPE_DECLARATION-FRESH-OVERWRITE (CS2 — 2026-03-05): Before writing any SCOPE_DECLARATION.md content, the file MUST be cleared with `cat /dev/null > SCOPE_DECLARATION.md`. Stale content from prior sessions has caused three IAA rejections (sessions 116, 120, 152). Any SCOPE_DECLARATION.md written without first clearing it is a protocol violation. Violation class: INC-SCOPE-STALE-001. | Issue #GovImpr (2026-03-05) |
 | A-030 | IAA-TOKEN-DATE-ACCURACY (CS2 — 2026-03-05): When citing an IAA audit token in any artifact (PREHANDOVER proof, session memory, PR body), the date component MUST match the actual token file date — look up the actual `.agent-admin/assurance/iaa-token-session-NNN-*` filename. Using the session date instead of the actual token filename date is a format violation (extends A-015). Applies especially to multi-batch waves where the IAA token may be issued on a different date than the session. Violation class: INC-IAA-TOKEN-DATE-001. | Issue #GovImpr (2026-03-05) |
 
-> **OVL-CI-006 CANDIDATE (PENDING CS2 APPROVAL — A-031)**: Every GitHub Actions workflow job must declare an explicit `permissions:` block. This is pending formalisation as A-031. Until CS2 approves: treat as a STRONG RECOMMENDATION. Any PR that adds or modifies workflow files without explicit `permissions:` on every job should be flagged at QP evaluation. Builder task spec: add `permissions: contents: read` (or more specific) to jobs missing explicit permissions.
+| A-031 | PRE-BRIEF-BEFORE-DELEGATION (CS2 — 2026-03-08): Before delegating ANY task to ANY builder or making ANY substantive file commit in a new wave, the IAA Pre-Brief artifact `.agent-admin/assurance/iaa-prebrief-<wave-slug>.md` MUST exist on the branch. This is a HARD GATE — if the Pre-Brief is absent the session is BLOCKED from delegation and from any commit that modifies production code, tests, CI scripts, or governance knowledge files. The Foreman MUST verify the Pre-Brief artifact path exists on disk before calling any builder `task()` or before calling `report_progress` for a handover commit. This rule is the machine-enforceable complement to Phase 1 Step 1.8 and Phase 2 Step 2.7 in the Foreman contract. A retroactively committed Pre-Brief (created after implementation work has begun) does NOT satisfy this rule. Violation class: INC-BOOTSTRAP-IMPL-001. | CS2 — maturion-isms#1013 (2026-03-08) |
+
+> **OVL-CI-006 CANDIDATE (PENDING CS2 APPROVAL — next available ID after A-031)**: Every GitHub Actions workflow job must declare an explicit `permissions:` block. This is pending formalisation as A-032. Until CS2 approves: treat as a STRONG RECOMMENDATION. Any PR that adds or modifies workflow files without explicit `permissions:` on every job should be flagged at QP evaluation. Builder task spec: add `permissions: contents: read` (or more specific) to jobs missing explicit permissions.
 
 > **A-032 CANDIDATE (LAYER-UP — PENDING IAA/CS2 APPROVAL)**: EDGE-FUNCTION-AS-DELIVERABLE: Any `supabase.functions.invoke(fn-name)` call in the frontend MUST have a corresponding deployed Edge Function listed as a named deliverable in the implementation plan and PREHANDOVER proof. If the Edge Function does not exist at wave close, the wave MUST NOT be declared COMPLETE. This mirrors RCA-MAT-API-GATEWAY-001 (Wave 6): "Serverless API proxy is a mandatory wave deliverable whenever provider keys are required." Applied to Edge Functions: if the frontend calls `supabase.functions.invoke(fn-name)`, the function must be in the wave task list, in the PREHANDOVER proof artifacts table, and confirmed deployed before the PREHANDOVER proof is committed. Triggered by: INC-POST-FCWT-EDGE-FN-001. Layer-up candidate for IAA review per Section 1 IAA delegation protocol.
 
@@ -415,7 +417,38 @@ CS2 (@APGI-cmy) flagged the omission immediately: "Are you really handing over a
 
 ---
 
-These items are tracked and must be reviewed each session. If assigned to the current wave, they must be addressed before HANDOVER.
+### INC-BOOTSTRAP-IMPL-001 — Foreman Bootstrap Skip and Direct Implementation (PRs #986, #990, 2026-03-08)
+**Date**: 2026-03-08  
+**Severity**: CRITICAL  
+**Status**: REMEDIATED  
+**Source**: CS2 issue maturion-isms#1013; PR #986; PR #990
+
+**What happened**: On 2026-03-08, foreman-v2-agent directly implemented production test code (PR #986: `fix(test): isolate T-075 buildPersistentMemory() from shared Supabase state`) and CI workflow code (PR #990: `fix(test/e2e): Replace setSession with signInWithPassword in T-W13-E2E-4 and T-W13-E2E-5`) without:
+1. Calling `agent_bootstrap` as the first action of the session (Phase 1 Step 0)
+2. Completing Phase 1 PREFLIGHT before reading any repository file or issue body (A-011, A-012)
+3. Completing IAA Pre-Brief (Phase 1 Step 1.8) before beginning implementation
+4. Delegating to qa-builder for test code (PR #986) or integration-builder for CI workflow code (PR #990)
+5. Writing a session memory file for 2026-03-08
+
+No `.agent-workspace/foreman-v2/memory/session-*-20260308.md` was present before this remediation wave. The IAA issued two REJECTION-PACKAGE artifacts in the PR #986 sequence before a final ASSURANCE-TOKEN was granted — the second rejection was specifically because the PREHANDOVER proof was untracked and session memory absent, confirming that the Phase 1 and Phase 4 ceremonies were not completed.
+
+**Root cause (5-Why):**
+1. **Why did the Foreman implement directly?** The triggering task arrived with implementation scope (test code fix, CI workflow fix), and the Foreman acted as a coding agent rather than as a POLC supervisor — adopting the wrong identity class.
+2. **Why was Phase 1 (including `agent_bootstrap` call) not completed first?** No structural enforcement exists requiring the `agent_bootstrap` tool to be called as the first action. The BOOTSTRAP DIRECTIVE in the agent contract is an agent-side obligation, not a machine-enforced gate.
+3. **Why was the IAA Pre-Brief retroactive?** The wave-current-tasks.md was created and the Pre-Brief committed only after implementation work had already been committed to the branch. Phase 1 Step 1.8 was treated as documentation rather than as a BLOCKING gate.
+4. **Why is there no enforcement of the Pre-Brief gate?** No A-rule existed specifically requiring the Pre-Brief artifact to exist on disk before any builder delegation or substantive commit. A-011 requires Phase 1 completion, but the specific Pre-Brief artifact existence check was only in the agent contract text — not in the FAIL-ONLY-ONCE registry as a locked A-rule.
+5. **Why does this recur across sessions?** This is the fourth occurrence of the same root-cause class (GOV-BREACH-AIMC-W5-001, GOV-BREACH-AIMC-W5-002, GOV-BREACH-AIMC-W8-001, INC-BOOTSTRAP-IMPL-001): Foreman receives an implementation task → adopts wrong identity → skips preflight → self-implements. Each prior incident locked in A-rules (A-009, A-011, A-012) but the structural enforcement gap — no machine check that halts the session if Phase 1 evidence and Pre-Brief artifact are absent — remains.
+
+**Corrective action (maturion-isms#1013 / session-rca-breach-20260308):**
+1. New **A-031** rule locked in: PRE-BRIEF-BEFORE-DELEGATION — Pre-Brief artifact must exist before any builder delegation or substantive commit.
+2. Session memory `session-rca-breach-20260308.md` written (retroactive capture of 2026-03-08 breach).
+3. This incident recorded in FAIL-ONLY-ONCE.md v2.9.0.
+4. New improvement suggestion S-023 added: CI check for Pre-Brief artifact existence before implementation file changes.
+5. Code delivered in PRs #986 and #990 was reviewed by IAA (final ASSURANCE-TOKEN granted after two rejections) and is technically sound.
+
+**Open improvement**: S-023 — Add a CI check that fails the PR when implementation file changes (non-governance paths) are present but no `.agent-admin/assurance/iaa-prebrief-<wave-slug>.md` artifact exists on the branch — machine-level enforcement of the Pre-Brief-before-delegation gate (A-031). *(See Section 3, item S-023.)*
+
+---
 
 | ID | Description | Origin | Status |
 |----|-------------|--------|--------|
@@ -437,10 +470,11 @@ These items are tracked and must be reviewed each session. If assigned to the cu
 | S-016 | Add mandatory pre-PR execution checklist to Foreman session workflow: before calling `report_progress` for a handover commit, EXECUTE `.github/scripts/validate-yaml.sh`, `.github/scripts/validate-tracker-update.sh`, and `.github/scripts/validate-scope-to-diff.sh` and paste the actual script output into the PREHANDOVER proof §4.3 section. A §4.3 section with PASS/FAIL written without pasted script output is a documentation fabrication and a HANDOVER BLOCKER. CI is confirmatory — Foreman must find failures first. This rule is now codified as A-018. | INC-MERGE-GATE-PARITY-001 (2026-03-03) | OPEN |
 | S-017 | SCOPE_DECLARATION fresh-overwrite step in PREHANDOVER ceremony — prehandover-template.md must include explicit `cat /dev/null > SCOPE_DECLARATION.md` instruction before scope writing step. Prevents stale content IAA rejections (sessions 116, 120, 152). A-029 locked in. | Issue #GovImpr (2026-03-05) | OPEN |
 | S-018 | IAA token date accuracy — task briefs and mat-specialist templates must require lookup of actual assurance token filename/date. Incorrect token date (session date vs actual token file date) triggered a REJECTION-PACKAGE. A-030 locked in. | Issue #GovImpr (2026-03-05) | OPEN |
-| S-019 | OVL-CI-006 workflow job permissions — every GitHub Actions workflow job must declare explicit permissions: block. Two workflows currently missing (copilot-setup-steps.yml, provider-model-ban.yml). Candidate for A-031 pending CS2 approval. | Issue #GovImpr (2026-03-05) | OPEN |
+| S-019 | OVL-CI-006 workflow job permissions — every GitHub Actions workflow job must declare explicit permissions: block. Two workflows currently missing (copilot-setup-steps.yml, provider-model-ban.yml). Candidate for next available A-rule ID after A-031 (A-032) pending CS2 approval. | Issue #GovImpr (2026-03-05) | OPEN |
 | S-020 | FAIL-ONLY-ONCE delegation to IAA — instead of CS2 direct sign-off on each FAIL-ONLY-ONCE entry, delegate approval/escalation to IAA agent: IAA approves if aligned with governance; escalates to CS2 if governance-canon-changing; registers as "layer-up candidate" if outside canonical scope but of value. Reduces CS2 bottleneck for routine governance improvements. | Issue #GovImpr (2026-03-05) | OPEN |
 | S-021 | A-027 extension — table pathway audit (WGI-07/WGI-08) must include `.order('column_name')` calls as column references (not only `.select()` and `.insert()` patterns). Sort_order recurrence (INC-POST-FCWT-SORT-ORDER-001) occurred because the WGI-07/WGI-08 audit protocol covered select/insert patterns but not order-by column names. Update qa-builder task brief template and table-pathway-audit checklist to include: "For every `.order('X')` call on a Supabase table, assert column X exists in a migration." Extend T-PFCWT pattern to all future waves. | INC-POST-FCWT-SORT-ORDER-001 (2026-03-06) | OPEN |
 | S-022 | Edge Function delivery gate — every wave PREHANDOVER proof template must include a line: "Supabase Edge Functions invoked by frontend: [list fn-names or N/A]. All listed functions confirmed deployed: [YES/N/A]." A PREHANDOVER proof that lists an Edge Function as invoked but not confirmed deployed is a HANDOVER BLOCKER. This is the implementation check for A-032 (candidate). | INC-POST-FCWT-EDGE-FN-001 (2026-03-06) | OPEN |
+| S-023 | Pre-Brief existence CI gate — add a CI check that fails the PR when implementation file changes (non-governance paths) are present on the branch but no `.agent-admin/assurance/iaa-prebrief-<wave-slug>.md` artifact exists. This is the machine-level enforcement of A-031 (PRE-BRIEF-BEFORE-DELEGATION), preventing retroactive Pre-Brief commits after implementation work has begun — the root-cause pattern of INC-BOOTSTRAP-IMPL-001 and three prior preflight violations. | INC-BOOTSTRAP-IMPL-001 (2026-03-08) | OPEN |
 
 ---
 
@@ -450,9 +484,9 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 2.8.0
+fail_only_once_version: 2.9.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
@@ -461,8 +495,8 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 ---
 
-*Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523, maturion-isms#855, maturion-isms#856 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-03-06 | Version: 2.8.0 | Status: ACTIVE*
+*Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523, maturion-isms#855, maturion-isms#856, maturion-isms#1013 | LIVING_AGENT_SYSTEM.md v6.2.0*  
+*Last Updated: 2026-03-08 | Version: 2.9.0 | Status: ACTIVE*
 
 ---
 
@@ -470,6 +504,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.9.0 | 2026-03-08 | INC-BOOTSTRAP-IMPL-001 recorded (PRs #986/#990 Phase 1 bootstrap skip + NO-IMPLEMENT-001); A-031 PRE-BRIEF-BEFORE-DELEGATION locked in; OVL-CI-006 candidate renumbered to next-ID-after-A-031; S-023 improvement suggestion added |
 | 2.8.0 | 2026-03-06 | INC-POST-FCWT-SORT-ORDER-001 + INC-POST-FCWT-EDGE-FN-001 recorded; A-032 candidate (EDGE-FUNCTION-AS-DELIVERABLE) registered as Layer-Up; A-027 extension (.order() calls are column references); S-021–S-022 improvement suggestions added |
 | 2.5.0 | 2026-03-03 | A-027 added: column-level drift must be caught at QA-to-Red (INC-W14-COL-MAPPING-001); header version corrected from 2.2.0 to 2.5.0 (stale — footer was already at 2.5.0) |
 | 2.6.0 | 2026-03-04 | A-028 PREHANDOVER-PROOF-IMMUTABILITY locked in (INC-PREHANDOVER-MUTATE-001); §4.3b token ceremony update |

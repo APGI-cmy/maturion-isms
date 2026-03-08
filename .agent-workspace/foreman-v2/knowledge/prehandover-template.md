@@ -1,8 +1,8 @@
 # PREHANDOVER Proof Template — Foreman v2
 
 **Agent**: foreman-v2
-**Version**: 1.5.0
-**Last Updated**: 2026-03-05
+**Version**: 1.6.0
+**Last Updated**: 2026-03-08
 **Purpose**: Template for generating Phase 4 PREHANDOVER proof artifacts per S-009 (FAIL-ONLY-ONCE v1.8.0)
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -16,6 +16,7 @@
 | 1.3.0 | 2026-03-03 | Add `## End-to-End Wiring Trace (OVL-AM-008)` section — mandatory for PRs touching schema migrations, API endpoints, Supabase hooks, or frontend data hooks |
 | 1.4.0 | 2026-03-04 | Post-ASSURANCE-TOKEN Ceremony rewritten with explicit temporal ordering per §4.3b (CR-2 fix); PENDING replaced with expected reference format per A-028/A-029 |
 | 1.5.0 | 2026-03-05 | SCOPE_DECLARATION Ceremony section added (A-029 / INC-SCOPE-STALE-001); IAA token date accuracy note added (A-030) |
+| 1.6.0 | 2026-03-08 | Pre-IAA Commit Gate section added (A-021 / INC-BOOTSTRAP-IMPL-001 / R1 fix) — mandatory STOP checkpoint requiring actual `git status` + `git log --oneline -5` output before IAA invocation |
 | 1.1.0 | 2026-03-01 | Add `## IAA Agent Response (verbatim)` mandatory section per S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) |
 | 1.0.0 | 2026-02-25 | Initial template |
 
@@ -103,7 +104,27 @@ Scope written: [list each file in diff matching `- \`path\` - desc` format]
 
 ---
 
-## §4.3 Merge Gate Parity
+## Pre-IAA Commit Gate (MANDATORY STOP — A-021)
+
+> ⛔ **HARD STOP — DO NOT INVOKE IAA UNTIL THIS SECTION IS COMPLETE.**
+>
+> Per A-021 (CORE-018): ALL PREHANDOVER artifacts — PREHANDOVER proof, session memory, FAIL-ONLY-ONCE.md updates, SCOPE_DECLARATION.md, parking station — MUST be committed to the branch BEFORE invoking the IAA for the final audit. The IAA will issue a REJECTION-PACKAGE if any artifact is untracked or unstaged at the time of invocation.
+>
+> Paste ACTUAL command outputs below — no placeholders permitted. A PREHANDOVER proof with `[to be populated]` in this section is a protocol violation.
+
+**Pre-commit `git status` output:**
+```
+[paste actual output of: git status]
+```
+
+**`git log --oneline -5` output AFTER committing all deliverables:**
+```
+[paste actual output after committing — first line MUST be the commit that adds these artifacts]
+```
+
+All ceremony artifacts staged and committed before IAA invocation: ✅
+
+---
 
 Local test run: [N] tests passed, [N] failed, [N] skipped — [N] test files.
 `merge_gate_parity: PASS`
