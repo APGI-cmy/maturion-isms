@@ -179,9 +179,9 @@ export function useUploadCriteria() {
             hash,
           },
         });
-      } catch {
+      } catch (err) {
         // Non-fatal: audit_log write failure must not block the upload result
-        console.warn('[useUploadCriteria] audit_log write failed; document may not appear in list');
+        console.warn('[useUploadCriteria] audit_log write failed; document may not appear in list', err);
       }
 
       return { path: data.path, hash };
@@ -237,7 +237,7 @@ export function useUploadedDocuments(auditId: string) {
         throw new Error(`Failed to fetch uploaded documents: ${error.message}`);
       }
 
-      // Deduplicate by resource_id/file_path, keeping best-status row per document.
+      // Deduplicate by resource_id/file_path using a Map, keeping best-status row per document.
       // Priority: criteria_parsed (3) > criteria_parse_failed (2) > criteria_upload (1)
       const STATUS_PRIORITY: Record<string, number> = {
         criteria_parsed: 3,
@@ -245,21 +245,21 @@ export function useUploadedDocuments(auditId: string) {
         criteria_upload: 1,
       };
 
-      const deduplicated = (data ?? []).reduce<UploadedDocument[]>((acc, row) => {
+      const deduplicationMap = new Map<string, UploadedDocument>();
+      for (const row of (data ?? [])) {
         const key = row.resource_id ?? row.details?.file_path ?? row.file_path ?? '';
-        const existing = acc.find(d => (d.resource_id ?? d.details?.file_path ?? d.file_path ?? '') === key);
+        const existing = deduplicationMap.get(key);
         if (!existing) {
-          acc.push(row);
+          deduplicationMap.set(key, row);
         } else {
           const existingPriority = STATUS_PRIORITY[existing.action] ?? 0;
           const rowPriority = STATUS_PRIORITY[row.action] ?? 0;
           if (rowPriority > existingPriority) {
-            const idx = acc.indexOf(existing);
-            acc[idx] = row;
+            deduplicationMap.set(key, row);
           }
         }
-        return acc;
-      }, []);
+      }
+      const deduplicated = Array.from(deduplicationMap.values());
 
       return deduplicated as UploadedDocument[];
     },
