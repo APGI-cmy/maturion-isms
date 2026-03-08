@@ -216,9 +216,10 @@ export function useTriggerAIParsing() {
 /**
  * Fetch uploaded criteria documents for an audit from audit_logs.
  *
- * Wave 15R — T-W15R-UI-001 (ui-builder)
- * Queries audit_logs filtered by audit_id and action IN ('criteria_parsed', 'criteria_parse_failed').
- * Returns documents ordered by created_at descending (most recent first).
+ * Wave 15R — T-W15R-UI-001 (ui-builder) / T-WUF-API-001 (api-builder)
+ * Queries audit_logs filtered by audit_id and action IN ('criteria_upload', 'criteria_parsed', 'criteria_parse_failed').
+ * Returns documents ordered by created_at descending, then deduplicated by resource_id/file_path
+ * keeping the highest-priority status row per document (criteria_parsed > criteria_parse_failed > criteria_upload).
  */
 export function useUploadedDocuments(auditId: string) {
   const queryClient = useQueryClient();

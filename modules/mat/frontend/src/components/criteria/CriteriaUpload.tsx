@@ -30,6 +30,8 @@ interface CriteriaUploadProps {
 function getParseStatus(doc: UploadedDocument): 'PENDING' | 'PROCESSING' | 'COMPLETE' | 'FAILED' {
   if (doc.action === 'criteria_parsed') return 'COMPLETE';
   if (doc.action === 'criteria_parse_failed') return 'FAILED';
+  // criteria_upload: document uploaded but parsing not yet attempted or unavailable
+  if (doc.action === 'criteria_upload') return 'PENDING';
   return 'PENDING';
 }
 
