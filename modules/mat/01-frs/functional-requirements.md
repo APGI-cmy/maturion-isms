@@ -3,12 +3,12 @@
 **Module**: MAT (Manual Audit Tool)
 **Artifact Type**: Functional Requirements Specification
 **Status**: COMPLETE
-**Version**: v2.1.0  
+**Version**: v2.2.0  
 **Owner**: Foreman (FM)  
 **Authority**: Derived from App Description v1.5 (modules/mat/00-app-description/app-description.md); UX Workflow & Wiring Specification v1.0 (modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md)
 **Applies To**: MAT module within maturion-isms repository
 **Created**: 2026-02-13
-**Last Updated**: 2026-03-08
+**Last Updated**: 2026-03-09
 
 ---
 
@@ -1615,6 +1615,7 @@ This FRS is derived from the MAT App Description v1.2 (`modules/mat/00-app-descr
 **Next Stage**: This FRS feeds into the TRS (Technical Requirements Specification) at `modules/mat/01.5-trs/`.
 
 **Change Log**:
+- v2.2.0 | 2026-03-09 | FR-104 through FR-111 added — completeness review gap traceability (wave-mat-gov-process). 8 new requirements covering: AI criterion scoring via Edge Function (FR-104, GAP-001/004), report generation via Edge Function (FR-105, GAP-002/005), evidence collection page routing (FR-106, GAP-003), feedback/recommendations UI (FR-107, GAP-006/020), reports listing page (FR-108, GAP-007), toast notification system (FR-109, GAP-008), comprehensive audit logging (FR-110, GAP-016), and RLS completeness for scores/audit_scores (FR-111, GAP-011/012). FRS extended to 111 requirements.
 - v2.1.0 (2026-03-08): FR-005 and FR-103 annotated as NOT YET SATISFIED IN PRODUCTION (INC-WAVE15-PARSE-001). Production gap confirmed by CS2 on 2026-03-08. Remediation via Wave 15R. Authority derived from App Description v1.5.
 - v2.0.0 (2026-03-06): FR-005 expanded — acceptance criteria 7–14 added (Wave 15 oversight, concrete pipeline wiring); FR-103 added (Parsing Resilience and Error Surface); Wave 15 oversight INC-POST-FCWT-CRITERIA-PIPELINE-001 recorded. Authority derived from App Description v1.4.
 - v1.9.0 (2026-03-04): Added FR-089 through FR-102 (Wave 14 GAP-W01–GAP-W14 — UX workflow gaps, scoring, responsibility cascade). FRS extended to 102 requirements.
@@ -2129,6 +2130,159 @@ The system MUST surface parsing errors explicitly to the user. Silent failures a
 4. All parsing failure events are logged to the audit trail.
 
 **Note on numbering**: FR-102 is already assigned to "Responsibility Cascade Rule Wired in DB and UI (GAP-W14)". This requirement is assigned FR-103 per Wave 15 governance direction. The original delegation specified FR-102 for this requirement, but FR-102 was pre-occupied. Foreman recorded this in: `modules/mat/BUILD_PROGRESS_TRACKER.md` Wave 15 section; `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` task T-W15-GOV-004 notes; and `session-wave15-orchestration-20260306.md` session memory.
+
+---
+
+### FR-104: AI-Assisted Criterion Scoring via Edge Function
+
+**Priority**: P1  
+**Source Gap**: GAP-001, GAP-004  
+**Status**: 🔴 OPEN — `invoke-ai-score-criterion` Edge Function not yet implemented; Wave 16.3 (BLOCKED on Wave 16.5)
+
+The system MUST provide AI-assisted maturity scoring for individual criteria via a dedicated Supabase Edge Function.
+
+**Acceptance Criteria**:
+1. A `supabase.functions.invoke('invoke-ai-score-criterion', { audit_id, criteria_id })` call succeeds and returns a structured score object containing a maturity level and `gap_analysis` JSONB.
+2. The returned score is persisted to the `scores` table with `gap_analysis` JSONB populated (fields: `immediate`, `medium_term`, `long_term`).
+3. The `useTriggerAIScoring()` hook in `ReviewTable` no longer fails at runtime when called for an authenticated org member.
+4. The Edge Function is idempotent — re-invoking for the same `(audit_id, criteria_id)` pair upserts the score rather than creating a duplicate.
+5. A task-tracker pattern (poll on `score_tasks` or real-time subscription on `scores`) provides UI feedback while scoring is in progress.
+
+**Dependencies**: GAP-004 (AIMC scoring capability wiring — Wave 16.5 must complete first), GAP-001 (Edge Function implementation — Wave 16.3)  
+**Test ID Reference**: T-W16.3-API-001, T-W16.3-API-002
+
+---
+
+### FR-105: Audit Report Generation via Edge Function
+
+**Priority**: P1  
+**Source Gap**: GAP-002, GAP-005  
+**Status**: 🔴 OPEN — `generate-audit-report` Edge Function not yet implemented; Wave 16.4 (BLOCKED on Wave 16.5 + 16.3)
+
+The system MUST generate complete audit reports via a dedicated Supabase Edge Function triggered by the Lead Auditor.
+
+**Acceptance Criteria**:
+1. A `supabase.functions.invoke('generate-audit-report', { audit_id })` call succeeds when all non-excluded criteria have confirmed/overridden evaluations.
+2. The generated report is stored in the `reports` Supabase Storage bucket and an `audit_reports` row is inserted with `storage_path`, `triggered_by`, and `generated_at`.
+3. The function returns a time-limited signed URL for immediate download; the `/reports` page displays the report in its listing with a working download button.
+4. The Edge Function uses the AIMC `reporting` capability for content generation (no direct provider calls).
+5. Report generation failure is surfaced to the user via a toast notification; the partial `audit_reports` row is marked with `status = 'failed'` for observability.
+
+**Dependencies**: GAP-005 (AIMC reporting capability wiring — Wave 16.5), GAP-001/FR-104 (scoring must complete before report generation), GAP-002 (Edge Function implementation — Wave 16.4)  
+**Test ID Reference**: T-W16.4-API-001, T-W16.4-API-002
+
+---
+
+### FR-106: Evidence Collection Page (Fully Wired)
+
+**Priority**: P0  
+**Source Gap**: GAP-003  
+**Status**: 🔴 OPEN — `/evidence` page route renders a stub component instead of `EvidenceCollection.tsx`; Wave 16.1
+
+The system MUST route the `/evidence` page to the fully implemented `EvidenceCollection.tsx` component so the evidence collection workflow is reachable from main navigation.
+
+**Acceptance Criteria**:
+1. Navigating to `/evidence` renders the `EvidenceCollection.tsx` component (not the stub placeholder); the component mounts without errors for an authenticated user with an active audit.
+2. All evidence upload, list, and delete operations available in `EvidenceCollection.tsx` are functional on the `/evidence` page without any regressions.
+3. The main navigation link to "Evidence" is wired to `/evidence` and highlights as active when on that route.
+
+**Dependencies**: None — frontend routing fix only  
+**Test ID Reference**: T-W16.1-UI-001, T-W16.1-UI-002
+
+---
+
+### FR-107: Feedback and Recommendations UI
+
+**Priority**: P1  
+**Source Gap**: GAP-006, GAP-020  
+**Status**: 🔴 OPEN — `gap_analysis` JSONB data exists in DB but is never rendered; no dedicated recommendations page; Wave 16.2
+
+The system MUST surface AI-generated gap analysis and improvement recommendations to the Lead Auditor via a dedicated UI page.
+
+**Acceptance Criteria**:
+1. A Feedback/Recommendations page fetches `scores.gap_analysis` JSONB for all criteria in the active audit and renders the `immediate`, `medium_term`, and `long_term` recommendation arrays per criterion.
+2. The page also renders `criteria_evaluations.next_level_guidance` where present, grouped by Domain and MPS for navigation.
+3. The `ReviewTable` component includes an inline expand/collapse panel that shows `gap_analysis` data for each scored criterion without requiring navigation away from the scoring view.
+4. All displayed recommendations are read-only; no editing of AI-generated content is permitted from this view.
+
+**Dependencies**: FR-104 (AI Scoring must populate `gap_analysis`), FR-106 (Evidence Collection page wired)  
+**Test ID Reference**: T-W16.2-UI-001, T-W16.2-UI-002
+
+---
+
+### FR-108: Reports Listing Page
+
+**Priority**: P1  
+**Source Gap**: GAP-007  
+**Status**: 🔴 OPEN — `/reports` page is a stub; `audit_reports` table exists but no UI lists it; Wave 16.2
+
+The system MUST provide a Reports page that lists all previously generated audit reports for the current audit, with re-download functionality.
+
+**Acceptance Criteria**:
+1. The `/reports` page fetches rows from the `audit_reports` table for the active audit and displays them in a list with `generated_at`, `triggered_by`, and a "Download" button.
+2. The "Download" button calls the Supabase Storage signed URL API and initiates a browser download of the report file; signed URLs are refreshed on demand (not cached).
+3. The page shows a meaningful empty state ("No reports generated yet") when the `audit_reports` table has no rows for the current audit.
+
+**Dependencies**: FR-105 (Report Generation Edge Function must populate `audit_reports`)  
+**Test ID Reference**: T-W16.2-UI-001, T-W16.2-UI-002
+
+---
+
+### FR-109: Toast Notification System
+
+**Priority**: P1  
+**Source Gap**: GAP-008  
+**Status**: 🔴 OPEN — 29 `window.alert()` calls across 8 frontend files create blocking UX; Wave 16.2
+
+The system MUST use a non-blocking toast notification system for all user-facing feedback messages; blocking `window.alert()` calls are prohibited.
+
+**Acceptance Criteria**:
+1. A `react-hot-toast` (or equivalent) library is installed and a global `<Toaster />` component is mounted in `_app.tsx`.
+2. All 29 existing `window.alert()` calls across the frontend are replaced with `toast.success()`, `toast.error()`, or `toast.loading()` as appropriate.
+3. Destructive actions (delete audit, delete evidence, cancel assessment) display a confirmation dialog before proceeding — either via `window.confirm()` or a custom modal component.
+4. No `window.alert()` call remains in the codebase after Wave 16.2 is merged.
+
+**Dependencies**: None — standalone frontend change  
+**Test ID Reference**: T-W16.2-UI-001, T-W16.2-UI-002
+
+---
+
+### FR-110: Comprehensive Audit Logging
+
+**Priority**: P1  
+**Source Gap**: GAP-016  
+**Status**: 🔴 OPEN — audit logging covers only criteria parsing; evidence uploads, score changes, and report generation are not logged; Wave 16.6
+
+The system MUST write `audit_logs` entries for all significant lifecycle events, not only criteria parsing.
+
+**Acceptance Criteria**:
+1. An `audit_logs` INSERT with `action = 'evidence_upload'` and `organisation_id NOT NULL` is written every time a user successfully uploads an evidence file.
+2. An `audit_logs` INSERT with `action = 'score_confirmed'` is written when a Lead Auditor confirms an AI-generated score in `ReviewTable`.
+3. An `audit_logs` INSERT with `action = 'score_overridden'` is written when a Lead Auditor overrides an AI-generated score with a manual rating.
+4. An `audit_logs` INSERT with `action = 'report_generated'` and `organisation_id NOT NULL` is written when the `generate-audit-report` Edge Function successfully creates a report.
+5. All four new `action` values use valid column names from the `audit_logs` schema; no non-existent columns are referenced.
+
+**Dependencies**: FR-106 (evidence upload path), FR-104 (scoring path), FR-105 (report generation path)  
+**Test ID Reference**: T-W16.6-SCH-001, T-W16.6-SCH-002
+
+---
+
+### FR-111: Scores and Audit Scores RLS Completeness
+
+**Priority**: P0  
+**Source Gap**: GAP-011, GAP-012  
+**Status**: 🔴 OPEN — `scores` and `audit_scores` tables have SELECT RLS policies but are missing INSERT and UPDATE policies; Wave 16.6
+
+The system MUST have complete RLS policies on the `scores` and `audit_scores` tables covering SELECT, INSERT, and UPDATE operations for org-scoped access.
+
+**Acceptance Criteria**:
+1. An INSERT RLS policy on `scores` permits authenticated users who are the Lead Auditor of the associated audit (via `audits.created_by = auth.uid()` and matching `organisation_id`) to insert score rows.
+2. An UPDATE RLS policy on `scores` permits the same Lead Auditor scope to update existing score rows.
+3. INSERT and UPDATE RLS policies on `audit_scores` follow the same pattern as the `scores` policies defined in AC-1 and AC-2.
+4. A migration file contains all four new RLS policies; the migration does not alter existing SELECT policies.
+
+**Dependencies**: None — schema-only change  
+**Test ID Reference**: T-W16.6-SCH-001, T-W16.6-SCH-002
 
 ---
 

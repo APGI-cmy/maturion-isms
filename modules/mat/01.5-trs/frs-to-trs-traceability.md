@@ -169,6 +169,14 @@ This document provides a complete mapping between every Functional Requirement (
 | TR-068 | Data Anonymization | FR-026, FR-058, FR-066 |
 | TR-069 | Video Processing Pipeline | FR-017 |
 | TR-070 | Audio Processing | FR-014, FR-020, FR-021 |
+| TR-103 | AI Scoring Edge Function (Deno Runtime) | FR-104 |
+| TR-104 | Report Generation Edge Function (Deno Runtime) | FR-105 |
+| TR-105 | Evidence Collection Page Routing Fix | FR-106 |
+| TR-106 | Feedback/Recommendations UI Component | FR-107 |
+| TR-107 | Reports Listing Page | FR-108 |
+| TR-108 | Toast Notification System | FR-109 |
+| TR-109 | Audit Logging Completeness | FR-110 |
+| TR-110 | Scores/Audit Scores RLS INSERT + UPDATE Policies | FR-111 |
 
 ---
 
@@ -182,6 +190,7 @@ This document provides a complete mapping between every Functional Requirement (
 | TRS Requirements traced to FRS | 70 / 70 (100%) |
 | Cross-cutting TRS (all FR) | 6 (TR-051, TR-055, TR-056, TR-058, TR-059, TR-060) |
 | Infrastructure TRS (derived from TRS) | 3 (TR-064, TR-065, TR-066) |
+| Completeness Gap Addendum (v2.2.0 / v2.0.0) | 8 new FR→TR pairs: FR-104→TR-103, FR-105→TR-104, FR-106→TR-105, FR-107→TR-106, FR-108→TR-107, FR-109→TR-108, FR-110→TR-109, FR-111→TR-110 |
 
 **Coverage**: 100% — Every FRS requirement has at least one corresponding TRS technical constraint. Every TRS requirement traces back to one or more FRS requirements (or to other TRS requirements for infrastructure concerns).
 
@@ -189,9 +198,12 @@ This document provides a complete mapping between every Functional Requirement (
 
 ## Document Authority
 
-**FRS Source**: `modules/mat/01-frs/functional-requirements.md` v1.0.0
-**TRS Source**: `modules/mat/01.5-trs/technical-requirements-specification.md` v1.0.0
+**FRS Source**: `modules/mat/01-frs/functional-requirements.md` v2.2.0
+**TRS Source**: `modules/mat/01.5-trs/technical-requirements-specification.md` v2.0.0
 **Governance Reference**: `governance/strategy/MODULE_LIFECYCLE_AND_REPO_STRUCTURE_STRATEGY.md` §4.1
+
+**Change Log**:
+- v1.1.0 | 2026-03-09 | FR-104→TR-103 through FR-111→TR-110 added — completeness review gap traceability (wave-mat-gov-process). 8 new FR→TR mappings for Wave 16 gap resolution. Updated coverage summary and document authority versions.
 
 ---
 

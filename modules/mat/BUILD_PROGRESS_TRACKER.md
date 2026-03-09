@@ -2,9 +2,9 @@
 
 **Module**: Mat  
 **Module Slug**: mat  
-**Version**: v1.7  
-**Last Updated**: 2026-03-08  
-**Updated By**: foreman-v2-agent (wave15r-gov-20260308)
+**Version**: v1.8  
+**Last Updated**: 2026-03-09  
+**Updated By**: foreman-v2-agent (wave-mat-gov-process)
 
 ---
 
@@ -3400,3 +3400,82 @@ inside a try/catch. SELECT queried non-existent `resource_id` → "Failed to loa
 | 2026-03-08 | T-ALCF-GOV-001 IN PROGRESS | foreman: FAIL-ONLY-ONCE v3.4.0; BUILD_PROGRESS_TRACKER + implementation-plan updating |
 | ⏳ PENDING | PREHANDOVER + IAA AUDIT | Phase 4 ceremony pending |
 | ⏳ PENDING | CS2 REVIEW | Awaiting CS2 merge approval |
+
+
+---
+
+## Completeness Review — End-to-End Pipeline Assessment (PR #1016 — 2026-03-09)
+
+> **Source Report**: `docs/completeness-review/compliance-workflow-completeness-report-20260309.md`  
+> **Author**: foreman-v2-agent (POLC-Orchestration / Quality Professor mode)  
+> **Wave**: wave-mat-gov-process  
+> **Branch**: copilot/implement-governance-process-mat  
+> **Governance Action**: 25 gaps documented; Wave 16 sub-waves defined in `modules/mat/03-implementation-plan/implementation-plan.md` v2.7.0; FRS v2.2.0 (FR-104–FR-111); TRS v2.0.0 (TR-103–TR-110).
+
+### Pipeline Summary (~45% Functional)
+
+| Workflow Stage | Status | Notes |
+|---|---|---|
+| Document upload (standards, evidence) | ✅ FUNCTIONAL | Storage + audit_logs wired |
+| AI criteria parsing (document → domain/MPS/criteria) | ✅ FUNCTIONAL | `invoke-ai-parse-criteria` Edge Function deployed |
+| Parse status tracking | ✅ FUNCTIONAL | Polling on `parse_tasks` table |
+| Criteria tree display | ✅ FUNCTIONAL | Hierarchical UI with `CriteriaTree` component |
+| Evidence collection UI | ⚠️ PARTIAL | `EvidenceCollection.tsx` exists; `/evidence` page is a stub (GAP-003) |
+| Lead Auditor maturity scoring (confirm/override) | ⚠️ PARTIAL | Manual UI works in `ReviewTable`; AI scoring blocked (GAP-001) |
+| AI-driven criterion scoring | ❌ NOT FUNCTIONAL | `invoke-ai-score-criterion` Edge Function missing (GAP-001) |
+| Feedback and recommendations UI | ❌ NOT IMPLEMENTED | `gap_analysis` JSONB exists in DB; no UI renders it (GAP-006, GAP-020) |
+| Report generation | ❌ NOT FUNCTIONAL | `generate-audit-report` Edge Function missing (GAP-002) |
+| Report download | ❌ NOT FUNCTIONAL | Blocked on report generation (GAP-007) |
+| AI capability routing (scoring, reporting) | ❌ BLOCKED | AIMC Waves 3–4 not yet complete (GAP-004, GAP-005) |
+
+---
+
+### Completeness Gap Register — All 25 Gaps
+
+| GAP-ID | Severity | Description | Planned Wave | Status |
+|--------|----------|-------------|--------------|--------|
+| GAP-001 | CRITICAL | `invoke-ai-score-criterion` Edge Function missing — AI scoring completely non-functional | Wave 16.3 | 🚫 BLOCKED (needs Wave 16.5) |
+| GAP-002 | CRITICAL | `generate-audit-report` Edge Function missing — report generation completely non-functional | Wave 16.4 | 🚫 BLOCKED (needs Wave 16.5 + 16.3) |
+| GAP-003 | CRITICAL | `/evidence` page is a stub component — evidence collection workflow unreachable | Wave 16.1 | 🔴 OPEN |
+| GAP-004 | CRITICAL | AIMC `scoring` capability wiring incomplete — `invoke-ai-score-criterion` cannot route to AI | Wave 16.5 | 🔴 OPEN (cross-module) |
+| GAP-005 | CRITICAL | AIMC `reporting` capability wiring incomplete — `generate-audit-report` cannot route to AI | Wave 16.5 | 🔴 OPEN (cross-module) |
+| GAP-006 | HIGH | No feedback/recommendations UI — `gap_analysis` JSONB in DB never displayed | Wave 16.2 | 🔴 OPEN |
+| GAP-007 | HIGH | `/reports` page is a stub — no way to list or re-download previously generated reports | Wave 16.2 | 🔴 OPEN |
+| GAP-008 | HIGH | No toast notification system — 29 `alert()` calls across 8 files create poor UX | Wave 16.2 | 🔴 OPEN |
+| GAP-009 | HIGH | `CriteriaModal` shows mock/hardcoded data — criterion detail view not wired to backend | Wave 16.2 | 🔴 OPEN |
+| GAP-010 | HIGH | No long-running task tracker for report generation — no UI feedback for async scoring | Wave 16.3 | 🚫 BLOCKED (needs Wave 16.5) |
+| GAP-011 | HIGH | `scores` INSERT/UPDATE RLS policies incomplete — writes may be blocked | Wave 16.6 | 🔴 OPEN |
+| GAP-012 | HIGH | `audit_scores` INSERT/UPDATE RLS policies incomplete — same pattern as GAP-011 | Wave 16.6 | 🔴 OPEN |
+| GAP-013 | HIGH | No ARC portal frontend — feedback approval workflow endpoints exist but no UI | Wave 16.7 | 🔴 OPEN |
+| GAP-014 | MEDIUM | Interview recording playback not implemented — audio saved but no player UI | Wave 16.2 | 🔴 OPEN |
+| GAP-015 | MEDIUM | No global audit selection context — each page manages its own `auditId` state | Wave 16.2 | 🔴 OPEN |
+| GAP-016 | MEDIUM | Audit logging covers only criteria parsing — evidence uploads, score changes, report generation not logged | Wave 16.6 | 🔴 OPEN |
+| GAP-017 | MEDIUM | `POST /api/ai/request` lacks JWT authentication — `organisationId` from body only | Wave 16.6 | 🔴 OPEN |
+| GAP-018 | MEDIUM | `mat-ai-gateway` deployment instructions not in repo — deployment dependency undocumented | Wave 16.8 | 🔴 OPEN |
+| GAP-019 | MEDIUM | `evidence_submissions` table referenced but no migration exists — potential runtime error | Wave 16.6 | 🔴 OPEN |
+| GAP-020 | MEDIUM | Score `gap_analysis` JSONB never displayed — rich data computed but invisible to users | Wave 16.2 | 🔴 OPEN |
+| GAP-021 | LOW | No database webhooks for async processing — all Edge Function calls are synchronous/frontend-initiated | Wave 16.9 | ⏸ PARKED |
+| GAP-022 | LOW | No `report_requests` table — `audit_reports` doubles as both request and result | Wave 16.9 | ⏸ PARKED |
+| GAP-023 | LOW | `control_standards` concept not explicitly modelled — referenced in requirements; implemented as criteria top-level | Wave 16.9 | ⏸ PARKED |
+| GAP-024 | LOW | No unsaved-changes warnings or confirmation dialogs for destructive actions | Wave 16.2 | 🔴 OPEN |
+| GAP-025 | LOW | `useAuditMetrics` polling (30s) has no stop condition — continuous polling even when hidden | Wave 16.2 | 🔴 OPEN |
+
+---
+
+### Wave 16.x State Machines
+
+| Wave | Name | Status | Blocking Condition |
+|------|------|--------|--------------------|
+| 16.1 | Evidence Collection Page Wire | 🔴 OPEN — awaiting RED QA gate + ui-builder delegation | None — immediately actionable |
+| 16.2 | Frontend UX Completeness | 🔴 OPEN — awaiting RED QA gate + ui-builder delegation | None — immediately actionable |
+| 16.3 | AI Scoring Edge Function | 🚫 BLOCKED | Requires Wave 16.5 (AIMC Waves 3–4 complete) |
+| 16.4 | Report Generation Edge Function | 🚫 BLOCKED | Requires Wave 16.5 + Wave 16.3 complete |
+| 16.5 | AIMC Scoring+Reporting Wiring | 🔴 OPEN — cross-module | AIMC must deliver Waves 3–4 (scoring + reporting capabilities) |
+| 16.6 | Schema + Audit Completeness | 🔴 OPEN — awaiting RED QA gate + builder delegation | None — independently actionable |
+| 16.7 | ARC Portal Frontend | 🔴 OPEN — awaiting RED QA gate + ui-builder delegation | None — independently actionable |
+| 16.8 | Documentation Gaps | 🔴 OPEN — assigned mat-specialist | None |
+| 16.9 | Future Considerations | ⏸ PARKED | CS2 architectural decision required |
+
+---
+
+**Reference**: `docs/completeness-review/compliance-workflow-completeness-report-20260309.md`
