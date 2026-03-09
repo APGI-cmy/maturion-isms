@@ -209,7 +209,7 @@ def _call_gpt4_turbo(document_text: str) -> dict[str, Any]:
             {"role": "system", "content": _SYSTEM_PROMPT},
             {
                 "role": "user",
-                "content": f"Extract the criteria hierarchy from this compliance document:\n\n{document_text[:12000]}",
+                "content": f"Extract the criteria hierarchy from this compliance document:\n\n{document_text[:60000]}",
             },
         ],
         response_format={"type": "json_object"},
