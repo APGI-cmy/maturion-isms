@@ -47,7 +47,6 @@ MAX_DOCUMENT_CHARS = 60000  # GPT-4 Turbo supports ~480K chars; 60K covers a ful
 
 # -- Request / Response models --------------------------------------------------
 
-
 class ParseRequest(BaseModel):
     """
     Request model for the /parse endpoint.
@@ -165,6 +164,7 @@ def _detect_ldcs_pattern(text: str) -> bool:
     has_ldcs_marker = any(marker.lower() in text.lower() for marker in LDCS_MARKERS)
     return has_numbered_hierarchy or has_ldcs_marker
 
+
 # -- GPT-4 Turbo structured extraction -----------------------------------------
 
 _SYSTEM_PROMPT_LINES = [
@@ -189,13 +189,13 @@ _SYSTEM_PROMPT_LINES = [
     '      "number": "...",',
     '      "title": "...",',
     '      "description": "...",',
-    '      "source_anchor": "<page or section reference in source document>"
+    '      "source_anchor": "<page or section reference in source document>"',
     "    }",
     "  ]",
     "}",
     "",
     "source_anchor must reference the section or page number in the source document for traceability.",
-]
+]  
 _SYSTEM_PROMPT = "\n".join(_SYSTEM_PROMPT_LINES)
 
 
@@ -219,10 +219,10 @@ def _call_gpt4_turbo(document_text: str) -> dict[str, Any]:
         temperature=0.1,
     )
 
-    return json.loads(response.choices[0].message.content or "{}");
+    return json.loads(response.choices[0].message.content or "{}").
+
 
 # -- FastAPI route --------------------------------------------------------------
-
 
 @router.post("/parse", response_model=ParseResponse)
 async def parse_document(request: ParseRequest) -> ParseResponse:
@@ -270,7 +270,6 @@ async def parse_document(request: ParseRequest) -> ParseResponse:
     except Exception as exc:
         logger.exception("Document parsing failed for tenant=%s", request.tenant_id)
         raise HTTPException(status_code=500, detail=str(exc)) from exc
-
 
 class DocumentParser:
     """
