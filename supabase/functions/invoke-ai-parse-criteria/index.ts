@@ -171,7 +171,6 @@ async function backgroundParse({
         file_path: filePath,
         created_by: userId ?? null,
         details: {
-          file_path: filePath,
           domains_inserted: 0,
           mps_inserted: 0,
           criteria_inserted: 0,
@@ -319,7 +318,6 @@ async function backgroundParse({
       file_path: filePath,
       created_by: userId ?? null,
       details: {
-        file_path: filePath,
         domains_inserted: insertedDomains?.length ?? 0,
         mps_inserted: insertedMps?.length ?? 0,
         criteria_inserted: validCriteriaList.length,
@@ -360,6 +358,16 @@ async function backgroundParse({
         created_by: userId ?? null,
         details: { error: message, outcome: 'failure' },
       });
+      if (auditId) {
+        await supabase.from('audit_logs').insert({
+          audit_id: auditId,
+          organisation_id: organisationId ?? null,
+          action: 'criteria_parse_failed',
+          file_path: filePath ?? null,
+          created_by: userId ?? null,
+          details: { error: message, outcome: 'failure' },
+        });
+      }
     } catch {
       // Audit logging failure must not mask original error
     }
