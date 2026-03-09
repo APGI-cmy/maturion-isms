@@ -165,10 +165,18 @@ describe('Wave session-refresh-auth-fix — useTriggerAIParsing session guard (T
     ).toMatch(/supabase\.auth\.(getSession|refreshSession)\(\)/);
 
     // Assert execution order: getSession/refreshSession index must be before functions.invoke index
-    const getSessionIdx = Math.max(
+    // Use the position of whichever session method appears first in the function body.
+    // This is the method actually acting as the session guard — it must appear before
+    // supabase.functions.invoke(). Math.max is intentionally avoided: if both strings
+    // were present, Math.max would return the later index, which could cause a false
+    // positive on the ordering check if the second call appeared after invoke.
+    const getSessionCandidates = [
       fn.indexOf('supabase.auth.getSession'),
       fn.indexOf('supabase.auth.refreshSession'),
-    );
+    ].filter(idx => idx >= 0);
+    const getSessionIdx = getSessionCandidates.length > 0
+      ? Math.min(...getSessionCandidates)
+      : -1;
     const invokeIdx = fn.indexOf('supabase.functions.invoke');
 
     expect(
@@ -178,10 +186,17 @@ describe('Wave session-refresh-auth-fix — useTriggerAIParsing session guard (T
 
     expect(
       getSessionIdx,
+      '[T-SRAF-001] useTriggerAIParsing must call supabase.auth.getSession() or ' +
+      'supabase.auth.refreshSession() before invoking the Edge Function.\n' +
+      'Neither call was found in the function body.',
+    ).toBeGreaterThanOrEqual(0);
+
+    expect(
+      getSessionIdx,
       '[T-SRAF-001 RED — EXPECTED before T-SRAF-API-001 implementation]\n' +
-      'supabase.auth.getSession() must be called BEFORE supabase.functions.invoke().\n' +
+      'supabase.auth.getSession() or supabase.auth.refreshSession() must be called BEFORE supabase.functions.invoke().\n' +
       `getSession index: ${getSessionIdx}, functions.invoke index: ${invokeIdx}\n` +
-      'Reorder the calls so getSession precedes functions.invoke in the function body.',
+      'Reorder the calls so the session call precedes functions.invoke in the function body.',
     ).toBeLessThan(invokeIdx);
   });
 
