@@ -1,4 +1,4 @@
-# SCOPE DECLARATION
+# Scope Declaration — wave-audit-log-column-fix — 2026-03-08
 
 **Wave**: InjAudit — New Workflow: injection-audit-report.yml
 **Branch**: copilot/create-injection-audit-report-workflow
@@ -7,7 +7,7 @@
 **Authority**: CS2 (Johan Ras / @APGI-cmy) — [CS2-Direct] label
 **PR**: copilot/create-injection-audit-report-workflow (#978)
 
-## Files Changed in This PR
+## Scope
 
 ### Deliverable (T-INJAUDIT-CI-001)
 - `.github/workflows/injection-audit-report.yml` - new; injection audit report workflow

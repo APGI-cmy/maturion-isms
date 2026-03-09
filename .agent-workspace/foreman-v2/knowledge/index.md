@@ -2,8 +2,8 @@
 
 **Agent**: foreman-v2  
 **Contract Version**: 2.5.0  
-**Knowledge Version**: 1.7.0  
-**Last Updated**: 2026-03-03  
+**Knowledge Version**: 2.1.0  
+**Last Updated**: 2026-03-08  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -17,11 +17,11 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 
 | File | Purpose | Version |
 |------|---------|---------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.6.4 |
-| `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 2.5.0 |
+| `index.md` (this file) | Knowledge entry point and version reference | 2.1.0 |
+| `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 3.4.0 |
 | `specialist-registry.md` | Registry of all delegable agents with capabilities and separation-of-duties boundary | 1.0.0 |
 | `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 |
-| `prehandover-template.md` | **PHASE 4 §S-009** — PREHANDOVER proof template with mandatory IAA Agent Response (verbatim) section per FAIL-ONLY-ONCE v1.8.0 S-009; `## Environment Parity` section per OVL-CI-006 | 1.2.0 |
+| `prehandover-template.md` | **PHASE 4 §S-009** — PREHANDOVER proof template with mandatory IAA Agent Response (verbatim) section per FAIL-ONLY-ONCE v1.8.0 S-009; `## Environment Parity` section per OVL-CI-006; `## Pre-IAA Commit Gate` MANDATORY STOP section per A-021 | 1.6.0 |
 | `FM_QP_ENHANCED_QUICK_REFERENCE.md` | **Quality Professor Mode** — Quick reference for Builder Referral Protocol (QP-FAIL-001–007) and Progress Tracker Enforcement; Tier 3 canonical authority: `governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` v1.0.0 | 1.0.0 |
 
 ---
@@ -29,7 +29,7 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 ## Governance Ceremony Merge Gate
 
 **Workflow**: `.github/workflows/governance-ceremony-gate.yml`  
-**Authority**: FAIL-ONLY-ONCE v2.2.0 (A-010, A-014, A-015, A-016)  
+**Authority**: FAIL-ONLY-ONCE v3.4.0 (A-010, A-014, A-015, A-016, A-031)  
 **Violation class**: GOV-BREACH-AIMC-W5-002  
 
 This gate blocks merging of any PR that touches governed paths unless the full governance ceremony is complete. It is **Foreman-owned** and runs on all pull requests.
@@ -121,6 +121,10 @@ All verb classification and mode-switching decisions MUST reference `ECOSYSTEM_V
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.1.0 | 2026-03-08 | FAIL-ONLY-ONCE.md bumped to v3.4.0 — INC-ALCF-001 registered (schema column mismatch escaped IAA gate: audit_logs INSERT/SELECT used non-existent columns; REMEDIATED in wave-audit-log-column-fix); S-028 SCHEMA-COLUMN-COMPLIANCE-MANDATORY added; index version bumped per OVL-KG-002 |
+| 2.0.0 | 2026-03-08 | FAIL-ONLY-ONCE.md bumped to v3.1.0 — INC-OPOJD-W15R-QA-001 recorded (missing GitHub issue for T-W15R-QA-001 delegation); S-025 DELEGATION-ISSUE-REQUIRED added; footer version corrected; maturion-isms#1000 created; index bumped per OVL-KG-002 |
+| 1.9.0 | 2026-03-08 | FAIL-ONLY-ONCE.md bumped to v3.0.0 — INC-WAVE15-PARSE-001 recorded (Wave 15 criteria parsing pipeline not functional in production); S-024 added (A-032 lock-in escalation); index bumped per OVL-KG-002 |
+| 1.8.0 | 2026-03-08 | FAIL-ONLY-ONCE.md bumped to v2.9.0 — INC-BOOTSTRAP-IMPL-001 recorded (PRs #986/#990 Phase 1 bootstrap skip + NO-IMPLEMENT-001); A-031 PRE-BRIEF-BEFORE-DELEGATION locked in; S-023 improvement suggestion added |
 | 1.7.0 | 2026-03-03 | WAVE-CURRENT-TASKS-PROTOCOL.md v1.0.0 added — wave-current-tasks.md mandate and Re-Anchor Pulse data contract |
 | 1.6.4 | 2026-03-02 | prehandover-template.md bumped to v1.2.0 — `## Environment Parity` section added (OVL-CI-006 / A-020 7-session recurring flag resolved, issue #815) |
 | 1.6.3 | 2026-03-02 | FM_QP_ENHANCED_QUICK_REFERENCE.md added (v1.0.0) — Layer-Down propagation of FM_QUALITY_PROTOCOL_ENHANCED_SOP.md v1.0.0 (canonical commit 7792913259b0); Builder Referral Protocol and Progress Tracker Enforcement Tier 2 stub |

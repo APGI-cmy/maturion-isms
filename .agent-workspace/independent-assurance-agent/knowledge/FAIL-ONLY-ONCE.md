@@ -1,8 +1,8 @@
 # IAA FAIL-ONLY-ONCE Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 2.4.0
-**Last Updated**: 2026-03-05
+**Version**: 2.5.0
+**Last Updated**: 2026-03-08
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -549,6 +549,49 @@ All updates to this file must be committed as part of the session bundle for tha
 
 ---
 
+## Rule A-032 — Schema Column Compliance Check (IAA BD-005/BD-006 Mandatory Extension)
+
+**Triggered by**: INC-ALCF-001 (maturion-isms, 2026-03-08) — wave-upload-doclist-fix PR #1007 merged
+with column mismatches between `useCriteria.ts` INSERT/SELECT and the actual `audit_logs` schema.
+
+**Incident summary**: IAA reviewed wave-upload-doclist-fix (session-wave-upload-doclist-fix-20260308)
+and explicitly stated `resource_id in UploadedDocument: All good` — which was incorrect.
+The INSERT used non-existent columns (`user_id`, `resource_type`, `resource_id`) and omitted the
+required NOT NULL `organisation_id`. The SELECT included non-existent `resource_id`. All DB errors
+were silently swallowed by a non-fatal `try/catch` wrapper. The QA tests used mocked Supabase
+clients that returned whatever columns were queried — no schema contract validation.
+The column mismatch caused every `audit_logs` write to fail silently, and every query for uploaded
+documents to return a "Failed to load" error. Root cause: IAA did not read the migration DDL file
+during the BD-005/BD-006 end-to-end wiring check. The migration was in a legacy app path
+(`apps/maturion-maturity-legacy/supabase/migrations/`) not the standard `supabase/migrations/` path.
+
+**Permanent Rule**:
+For any PR that contains Supabase INSERT or SELECT operations on a named table:
+1. IAA MUST locate and directly read the migration DDL file for that table.
+2. IAA MUST cross-check every column name used in INSERT values against the schema definition.
+3. IAA MUST cross-check every column name used in SELECT strings against the schema definition.
+4. Any column name used in code that does NOT appear in the migration schema = REJECTION-PACKAGE.
+5. The migration file path MUST be cited in the IAA's FFA evidence output.
+6. A non-fatal `try/catch` wrapper does NOT exempt a PR from schema compliance checks.
+   Silent failure modes are not "acceptable" — the column names must still be verified against DDL.
+7. Mocked Supabase tests do NOT satisfy schema compliance evidence. IAA must verify schema
+   compliance by reading the DDL directly, independent of test coverage.
+
+**Check in Phase 3 (BD-TIER-2 — executed as part of BD-005/BD-006)**:
+> A-032 Schema Column Compliance:
+> Locate migration DDL for each table modified by INSERT/SELECT in the PR.
+> For each INSERT: verify every key in the insert object exists as a column in the schema.
+> For each SELECT: verify every column name in the select string exists in the schema.
+> Evidence: cite migration file path and list each column with ✅/❌ status.
+> If any ❌ found → REJECTION-PACKAGE.
+
+**Incident reference**: INC-ALCF-001 | Remediated in: wave-audit-log-column-fix (2026-03-08)
+**IAA self-governance action**: Added by independent-assurance-agent during session-wave-audit-log-column-fix-20260308 final audit, per Pre-Brief §7 "shared responsibility between foreman-v2-agent and IAA self-governance."
+
+**Status**: ACTIVE — enforced on all AAWP_MAT PRs containing INSERT/SELECT operations
+
+---
+
 ## Version History
 
 | Version | Date | Change |
@@ -568,6 +611,7 @@ All updates to this file must be committed as part of the session bundle for tha
 | 2.2.0 | 2026-03-04 | A-029 ARTIFACT-IMMUTABILITY-4.3b added; supersedes A-025 PENDING requirement |
 | 2.3.0 | 2026-03-04 | **BREAKING FIX**: Active Override block added at top — A-029 supersedes A-025 clearly stated. A-025 marked SUPERSEDED with residual scope. A-029 updated with Circular Dependency Resolution note explaining CORE-019 First Invocation Exception. A-029b (Carry-Forward Mandate from session-097) promoted to named rule. A-006 updated to reference dedicated token file instead of verbatim section. A-015 fix procedure updated. Next sequential ID updated to A-030. |
 | 2.4.0 | 2026-03-05 | A-031 (IAA ceremony artifact A-026 carve-out) codified — resolves recurring pattern from sessions 142, 146, 148, 149, 150 where IAA's own parking station/session memory/token file from prior rejection ceremony causes A-026 failures; produces two compliant options (full declaration or explicit A-031 carve-out note); next sequential ID updated to A-032. |
+| 2.5.0 | 2026-03-08 | A-032 (Schema Column Compliance Check) added — INC-ALCF-001: schema column mismatch escaped IAA gate in wave-upload-doclist-fix; audit_logs INSERT/SELECT used non-existent columns (user_id, resource_type, resource_id); organisation_id NOT NULL omitted; silent try/catch made failure invisible. IAA self-governance action per Pre-Brief §7 shared responsibility clause. Next sequential ID: A-033. |
 
 ---
 

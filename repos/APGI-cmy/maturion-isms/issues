@@ -1,0 +1,82 @@
+## Wave 13 — Foreman Investigation Request
+
+**Raised by:** @APGI-cmy (via Copilot Chat)
+**Date:** 2026-03-07 15:02:29
+**RCA Reference:** MAT-RCA-002
+**Scope:** MAT module — E2E live deployment suite + memory adapter unit suite
+
+---
+
+## Background
+
+PR #984 (merged 2026-03-07) wired up the `/health` Vercel serverless function and `vercel.json` rewrite to address T-W13-E2E-1. That code path is now on `main`. However, running the full Wave 13 E2E suite and the Wave 12 memory adapter test suite reveals that the test and deployment environment still has multiple unresolved failures that need investigation and remediation.
+
+This issue asks **foreman** to take ownership of the full picture, diagnose each failure using whatever tools, logs, CI data, and code inspection you have available, and produce fixes or actions for each. Do **not** apply hard-coded workarounds — understand each problem at its root and fix it properly.
+
+---
+
+## Known Symptoms (as of 2026-03-07)
+
+These are observed symptoms, not prescriptive root causes. Foreman should verify and dig deeper.
+
+### 1. T-W13-E2E-1 — `/health` still returns HTTP 401 on the live Vercel preview deployment
+
+`api/health.ts` and the `vercel.json` rewrite are now deployed, but `GET /health` is returning **401** before the serverless function even executes. This suggests the Vercel project has **Deployment Protection** (preview authentication / Vercel Access) enabled at the project level, intercepting all requests — including public ones — before they reach function handlers.
+
+Foreman should investigate: what is the Vercel project's deployment protection configuration? Is this the correct project/deployment URL? Is there a way to mark `/health` as exempt, or does the project need a different protection policy?
+
+### 2. T-W13-E2E-4 — `AuthSessionMissingError` on audit creation flow
+
+The full audit creation flow test requires `MAT_E2E_TEST_TOKEN` and `MAT_E2E_REFRESH_TOKEN` to be set as CI secrets (GitHub Actions) and available in the test environment. Currently they are either missing or the tokens are expired/invalid.
+
+Foreman should investigate: are these secrets configured in the repository? Are the token values still valid? What does the Supabase auth state look like for the test user?
+
+### 3. T-W13-E2E-2 and T-W13-E2E-3 — Supabase env vars missing or `audits` table absent
+
+Tests probe the production Supabase schema for the `public.audits` table and check that the auth API is reachable. These may fail because `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` are not set in CI, or because the schema migration for `public.audits` has not been applied to the production database.
+
+Foreman should investigate: are Supabase env vars available in the CI environment for E2E jobs? Has the `public.audits` migration been applied?
+
+### 4. `SupabasePersistentMemoryAdapter.wave12.test.ts` — Entire suite fails to parse (esbuild transform error)
+
+The whole Wave 12 memory adapter test suite is failing with an esbuild/TypeScript parse error. The symptom is something like `Expected "}" but found ";"` in the test utility file at approximately the `makeErrorOnInsertClient()` helper function. This is a syntax error in the test utilities (likely a missing closing brace in an arrow function returning an object literal) that causes esbuild to reject the entire file.
+
+Foreman should inspect the test utilities in `packages/ai-centre/src/__tests__/memory/SupabasePersistentMemoryAdapter.wave12.test.ts` and related imports (e.g. `api/ai/__test-utils__/makeTestSupabaseClient.ts`) for the syntax error, fix it, and verify the suite parses and runs.
+
+### 5. Test isolation failure — shared `buildPersistentMemory()` singleton accumulates state across tests
+
+Somewhere in the test suite (likely `api/ai/request.test.ts` around the memory-related tests), a `buildPersistentMemory()` singleton is shared across test cases, causing entries to accumulate and assertion counts to be wrong (e.g. `toHaveLength(1)` receiving 5).
+
+Foreman should investigate what is causing shared state, whether it is a module-level singleton, missing `beforeEach`/`afterEach` teardown, or something else — and resolve it without simply skipping tests.
+
+---
+
+## What Foreman Should Do
+
+1. **Verify each symptom independently** — reproduce it, understand the actual failure mode, and don't assume the description above is complete or perfectly accurate.
+2. **Investigate root causes** using all available tools: CI logs, Vercel dashboard, Supabase project config, code search, git history, and test runner output.
+3. **Propose and implement fixes** in whatever order makes the most sense — these may be code changes, CI configuration, infrastructure settings, or documentation updates.
+4. **Do not apply guesses or workarounds** — each fix should be grounded in confirmed diagnosis.
+5. **Update this issue** with findings and progress as you go.
+6. When all 5 symptom areas are resolved and the Wave 13 E2E suite + Wave 12 memory adapter suite are green, close this issue.
+
+---
+
+## Acceptance Criteria
+
+- [ ] `T-W13-E2E-1`: `GET /health` on the live deployment returns HTTP 200 with `{ status: 'healthy' }` — no auth block
+- [ ] `T-W13-E2E-2`: `public.audits` table is reachable via Supabase API (schema migration applied, env vars set)
+- [ ] `T-W13-E2E-3`: Supabase auth API is reachable from the CI E2E environment
+- [ ] `T-W13-E2E-4`: Audit creation flow completes without `AuthSessionMissingError` (tokens valid, CI secrets set)
+- [ ] `SupabasePersistentMemoryAdapter.wave12.test.ts`: Suite parses and all tests pass (syntax error fixed)
+- [ ] Memory adapter shared-state isolation resolved — no cross-test contamination
+- [ ] No regressions introduced in existing passing tests
+
+---
+
+## Related
+
+- PR #984 — Add /health Vercel serverless function (merged)
+- `modules/mat/tests/wave13/e2e-live-deployment.test.ts` — Wave 13 RED gate
+- `packages/ai-centre/src/__tests__/memory/SupabasePersistentMemoryAdapter.wave12.test.ts`
+- MAT-RCA-002

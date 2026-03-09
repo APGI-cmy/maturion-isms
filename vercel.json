@@ -6,6 +6,7 @@
   "installCommand": "cd modules/mat/frontend && npm install",
   "devCommand": "cd modules/mat/frontend && npm run dev",
   "rewrites": [
+    { "source": "/health", "destination": "/api/health" },
     {
       "source": "/((?!api/|assets/|manifest\\.json$|sw\\.js$).*)",
       "destination": "/index.html"
