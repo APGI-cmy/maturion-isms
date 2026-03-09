@@ -199,7 +199,12 @@ export function useUploadCriteria() {
 export function useTriggerAIParsing() {
   return useMutation<void, Error, { auditId: string; filePath: string }>({
     mutationFn: async ({ auditId, filePath }) => {
-      // Call Edge Function to trigger AI parsing
+      // Refresh session before invoking Edge Function to ensure Authorization header is valid
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session) {
+        throw new Error('Authentication required. Please sign in again.');
+      }
+
       const { data, error } = await supabase.functions.invoke('invoke-ai-parse-criteria', {
         body: { auditId, filePath }
       });
