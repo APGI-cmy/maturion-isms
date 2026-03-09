@@ -10,6 +10,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../supabase';
 
+/** Terminal status values for criteria_documents.status */
+const CRITERIA_DOCUMENT_TERMINAL_STATUSES = new Set(['pending_review', 'parse_failed']);
+
 export interface Criterion {
   id: string;
   audit_id: string;
@@ -277,6 +280,67 @@ export function useUploadedDocuments(auditId: string) {
     queryClient.invalidateQueries({ queryKey: ['uploaded-documents', auditId] });
 
   return { ...query, invalidate };
+}
+
+/**
+ * Poll criteria_documents.status for a specific auditId + filePath until terminal state.
+ *
+ * Hotfix (issue #1019): The Edge Function now returns 202 Accepted immediately and runs
+ * the AI parse in the background via EdgeRuntime.waitUntil(). The fast path writes
+ * status='processing' to criteria_documents. This hook polls that status column every
+ * 3 seconds until it transitions to 'pending_review' (success) or 'parse_failed' (error).
+ *
+ * Terminal states: 'pending_review', 'parse_failed'
+ * Non-terminal: 'processing', 'pending_parse'
+ *
+ * Invalidates 'uploaded-documents' and 'criteria-tree' queries on terminal state.
+ */
+export function usePollCriteriaDocumentStatus(
+  auditId: string | null,
+  filePath: string | null,
+) {
+  const queryClient = useQueryClient();
+
+  return useQuery<{ status: string }, Error>({
+    queryKey: ['criteria-document-status', auditId, filePath],
+    queryFn: async () => {
+      if (!auditId || !filePath) return { status: 'pending_parse' };
+
+      const { data, error } = await supabase
+        .from('criteria_documents')
+        .select('status')
+        .eq('audit_id', auditId)
+        .eq('file_path', filePath)
+        .single();
+
+      // No row yet — treat as pre-creation state
+      if (error?.code === 'PGRST116') {
+        return { status: 'pending_parse' };
+      }
+
+      if (error) {
+        throw new Error(`Failed to fetch criteria document status: ${error.message}`);
+      }
+
+      return { status: data?.status ?? 'pending_parse' };
+    },
+    enabled: !!auditId && !!filePath,
+    // polling: refetch every 3 s until terminal state
+    refetchInterval: (query) => {
+      const status = query.state.data?.status;
+      const isTerminal = CRITERIA_DOCUMENT_TERMINAL_STATUSES.has(status ?? '');
+
+      if (isTerminal) {
+        // Refresh document list and criteria tree when parse resolves
+        if (auditId) {
+          queryClient.invalidateQueries({ queryKey: ['uploaded-documents', auditId] });
+          queryClient.invalidateQueries({ queryKey: ['criteria-tree', auditId] });
+        }
+        return false; // stop polling
+      }
+      return 3000; // poll every 3 seconds
+    },
+  });
 }
 
 /**
