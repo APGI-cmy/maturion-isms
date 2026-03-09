@@ -1,4 +1,3 @@
-"""
 services/parsing.py — Document Parsing service (Wave 15 implementation).
 
 Architecture reference: modules/mat/02-architecture/system-architecture.md §4
@@ -7,6 +6,7 @@ Architecture reference: modules/mat/02-architecture/system-architecture.md §4
 
 FRS: FR-005 (criteria parsing pipeline), FR-103 (error surfacing)
 Wave: 15 — Post-Delivery Oversight Remediation (T-W15-IMPL-001)
+
 """
 
 from __future__ import annotations
@@ -95,7 +95,9 @@ class ParseResponse(BaseModel):
 # ── Text extraction helpers ─────────────────────────────────────────────────────
 
 def _extract_text_from_pdf(content: bytes) -> str:
-    """Extract raw text from a PDF document using PyPDF2."""
+    """
+    Extract raw text from a PDF document using PyPDF2.
+    """
     reader = PdfReader(io.BytesIO(content))
     pages = []
     for page in reader.pages:
@@ -106,7 +108,9 @@ def _extract_text_from_pdf(content: bytes) -> str:
 
 
 def _extract_text_from_docx(content: bytes) -> str:
-    """Extract raw text from a DOCX document using python-docx."""
+    """
+    Extract raw text from a DOCX document using python-docx.
+    """
     doc = DocxDocument(io.BytesIO(content))
     return "\n".join(para.text for para in doc.paragraphs if para.text.strip())
 
@@ -161,7 +165,9 @@ def _extract_document_text(document_url: str) -> tuple[str, str]:
 
 
 def _detect_ldcs_pattern(text: str) -> bool:
-    """Detect whether the document text follows the LDCS numbered hierarchy."""
+    """
+    Detect whether the document text follows the LDCS numbered hierarchy.
+    """
     has_numbered_hierarchy = bool(LDCS_NUMBERED_HIERARCHY_PATTERN.search(text))
     has_ldcs_marker = any(marker.lower() in text.lower() for marker in LDCS_MARKERS)
     return has_numbered_hierarchy or has_ldcs_marker
@@ -169,7 +175,7 @@ def _detect_ldcs_pattern(text: str) -> bool:
 
 # ── GPT-4 Turbo structured extraction ──────────────────────────────────────────
 
-_SYSTEM_PROMPT = """\
+_SYSTEM_PROMPT = """
 You are an expert compliance document analyser specialised in extracting structured audit criteria
 from compliance frameworks such as the LDCS (Local Delivery Compliance Standard).
 
@@ -201,7 +207,9 @@ source_anchor must reference the section or page number in the source document f
 
 
 def _call_gpt4_turbo(document_text: str) -> dict[str, Any]:
-    """Call GPT-4 Turbo to extract structured criteria from document text."""
+    """
+    Call GPT-4 Turbo to extract structured criteria from document text.
+    """
     client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
     response = client.chat.completions.create(
@@ -210,7 +218,10 @@ def _call_gpt4_turbo(document_text: str) -> dict[str, Any]:
             {"role": "system", "content": _SYSTEM_PROMPT},
             {
                 "role": "user",
-                "content": f"Extract the criteria hierarchy from this compliance document:\n\n{document_text[:MAX_DOCUMENT_CHARS]}",
+                "content": (
+                    "Extract the criteria hierarchy from this compliance document:\n\n"
+                    f"{document_text[:MAX_DOCUMENT_CHARS]}"
+                ),
             },
         ],
         response_format={"type": "json_object"},
@@ -218,7 +229,7 @@ def _call_gpt4_turbo(document_text: str) -> dict[str, Any]:
     )
 
     import json
-    return json.loads(response.choices[0].message.content or "{}")
+    return json.loads(response.choices[0].message.content or "{}").
 
 
 # ── FastAPI route ───────────────────────────────────────────────────────────────
