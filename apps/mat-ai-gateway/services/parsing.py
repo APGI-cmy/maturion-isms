@@ -186,7 +186,7 @@ Return a JSON object with this schema:
   ],
   "criteria": [
     {{
-      "mps_number": "..",
+      "mps_number": "...",
       "number": "...",
       "title": "...",
       "description": "...",
@@ -219,9 +219,9 @@ def _call_gpt4_turbo(document_text: str) -> dict[str, Any]:
         temperature=0.1,
     )
 
-    return json.loads(response.choices[0].message.content or "{}")["""
-# -- FastAPI route --------------------------------------------------------------
+    return json.loads(response.choices[0].message.content or "{}")[""""
 
+# -- FastAPI route --------------------------------------------------------------
 
 @router.post("/parse", response_model=ParseResponse)
 async def parse_document(request: ParseRequest) -> ParseResponse:
