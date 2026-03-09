@@ -20,6 +20,8 @@ import {
   useTriggerAIParsing,
   useUploadedDocuments,
   usePollCriteriaDocumentStatus,
+  useDeleteCriteriaDocument,
+  useReparseCriteriaDocument,
   type UploadedDocument,
 } from '../../lib/hooks/useCriteria';
 
@@ -77,6 +79,8 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
   const uploadCriteria = useUploadCriteria();
   const triggerParsing = useTriggerAIParsing();
   const uploadedDocuments = useUploadedDocuments(auditId);
+  const deleteCriteriaDocument = useDeleteCriteriaDocument(auditId);
+  const reparseCriteriaDocument = useReparseCriteriaDocument(auditId);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
@@ -90,6 +94,13 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
   const [retryingDocId, setRetryingDocId] = useState<string | null>(null);
   // Track which file path is currently being polled after a parse trigger
   const [pollingFilePath, setPollingFilePath] = useState<string | null>(null);
+  // Delete confirmation: stores filePath of the doc pending deletion, or null
+  const [confirmDeleteFilePath, setConfirmDeleteFilePath] = useState<string | null>(null);
+  // Re-parse confirmation: stores filePath of the doc pending re-parse, or null
+  const [confirmReparseFilePath, setConfirmReparseFilePath] = useState<string | null>(null);
+  // Inline action error (delete / re-parse failures)
+  const [actionError, setActionError] = useState<string | null>(null);
+
   const pollStatus = usePollCriteriaDocumentStatus(auditId, pollingFilePath);
   const { invalidate: invalidateUploadedDocuments } = uploadedDocuments;
 
@@ -189,6 +200,37 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
     }
   };
 
+  // Confirm delete: called after user acknowledges the confirmation prompt.
+  const handleConfirmDelete = async () => {
+    if (!confirmDeleteFilePath) return;
+    const filePath = confirmDeleteFilePath;
+    setConfirmDeleteFilePath(null);
+    setActionError(null);
+    try {
+      await deleteCriteriaDocument.mutateAsync({ filePath });
+    } catch (err) {
+      setActionError(
+        err instanceof Error ? err.message : 'Failed to delete document. Please try again.',
+      );
+    }
+  };
+
+  // Confirm re-parse: called after user acknowledges the confirmation prompt.
+  const handleConfirmReparse = async () => {
+    if (!confirmReparseFilePath) return;
+    const filePath = confirmReparseFilePath;
+    setConfirmReparseFilePath(null);
+    setActionError(null);
+    try {
+      await reparseCriteriaDocument.mutateAsync({ filePath });
+      setPollingFilePath(filePath);
+    } catch (err) {
+      setActionError(
+        err instanceof Error ? err.message : 'Failed to start re-parse. Please try again.',
+      );
+    }
+  };
+
   return (
     <div className="criteria-upload p-6 bg-white border border-gray-200 rounded shadow-sm">
       <h3 className="text-xl font-semibold mb-4">Upload Criteria</h3>
@@ -283,6 +325,104 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
         </div>
       )}
 
+      {/* Inline error for delete / re-parse actions */}
+      {actionError && (
+        <div
+          data-testid="criteria-action-error"
+          className="mt-4 p-4 bg-red-50 border border-red-400 rounded"
+          role="alert"
+        >
+          <p className="text-red-800 text-sm font-medium">Action failed</p>
+          <p className="text-red-700 text-sm mt-1">{actionError}</p>
+          <button
+            className="mt-2 text-xs text-red-600 underline"
+            onClick={() => setActionError(null)}
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
+      {/* Delete confirmation banner */}
+      {confirmDeleteFilePath && (
+        <div
+          data-testid="delete-confirmation"
+          className="mt-4 p-4 bg-red-50 border border-red-300 rounded"
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="delete-confirm-heading"
+        >
+          <p
+            id="delete-confirm-heading"
+            className="text-red-800 text-sm font-semibold"
+          >
+            Delete document and all parsed criteria?
+          </p>
+          <p className="text-red-700 text-xs mt-1">
+            This will permanently remove all domains, MPS entries, and criteria parsed for this
+            audit. This action cannot be undone.
+          </p>
+          <div className="mt-3 flex gap-2">
+            <button
+              data-testid="delete-confirm-button"
+              onClick={() => void handleConfirmDelete()}
+              disabled={deleteCriteriaDocument.isPending}
+              className="px-3 py-1 text-xs font-medium bg-red-600 text-white rounded hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-red-500"
+            >
+              {deleteCriteriaDocument.isPending ? 'Deleting…' : 'Yes, delete'}
+            </button>
+            <button
+              data-testid="delete-cancel-button"
+              onClick={() => setConfirmDeleteFilePath(null)}
+              disabled={deleteCriteriaDocument.isPending}
+              className="px-3 py-1 text-xs font-medium bg-white text-gray-700 border border-gray-300 rounded hover:bg-gray-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gray-400"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Re-parse confirmation banner */}
+      {confirmReparseFilePath && (
+        <div
+          data-testid="reparse-confirmation"
+          className="mt-4 p-4 bg-yellow-50 border border-yellow-300 rounded"
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="reparse-confirm-heading"
+        >
+          <p
+            id="reparse-confirm-heading"
+            className="text-yellow-800 text-sm font-semibold"
+          >
+            Re-parse document? All existing criteria will be replaced.
+          </p>
+          <p className="text-yellow-700 text-xs mt-1">
+            This will delete all currently parsed domains, MPS entries, and criteria for this
+            audit and re-trigger AI parsing from the uploaded document.
+          </p>
+          <div className="mt-3 flex gap-2">
+            <button
+              data-testid="reparse-confirm-button"
+              onClick={() => void handleConfirmReparse()}
+              disabled={reparseCriteriaDocument.isPending}
+              className="px-3 py-1 text-xs font-medium bg-yellow-600 text-white rounded hover:bg-yellow-700 disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            >
+              {reparseCriteriaDocument.isPending ? 'Starting re-parse…' : 'Yes, re-parse'}
+            </button>
+            <button
+              data-testid="reparse-cancel-button"
+              onClick={() => setConfirmReparseFilePath(null)}
+              disabled={reparseCriteriaDocument.isPending}
+              className="px-3 py-1 text-xs font-medium bg-white text-gray-700 border border-gray-300 rounded hover:bg-gray-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gray-400"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* T-W15R-UI-001: Uploaded documents list with parse status badge */}
       <section className="mt-8" aria-label="Uploaded documents">
         <h4 className="text-base font-semibold mb-3 text-gray-800">Uploaded Documents</h4>
@@ -314,6 +454,10 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
               const docFilePath = doc.file_path ?? doc.details?.file_path ?? null;
               const isPolling = !!pollingFilePath && pollingFilePath === docFilePath;
               const errorMessage = doc.details?.error;
+              const isAnyActionPending =
+                deleteCriteriaDocument.isPending ||
+                reparseCriteriaDocument.isPending ||
+                triggerParsing.isPending;
 
               return (
                 <li
@@ -347,8 +491,8 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
                     )}
                   </div>
 
-                  {/* Parse status badge */}
-                  <div className="flex items-center gap-2 shrink-0">
+                  {/* Parse status badge + actions */}
+                  <div className="flex items-center gap-2 shrink-0 flex-wrap">
                     <span
                       data-testid="parse-status-badge"
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${BADGE_CLASSES[status] ?? BADGE_CLASSES['PENDING']}`}
@@ -356,15 +500,43 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
                       {status}
                     </span>
 
-                    {/* T-W15R-UI-002: per-document retry button */}
+                    {/* Parse Now / Re-parse (Replace) button */}
+                    {status === 'COMPLETE' ? (
+                      <button
+                        data-testid="reparse-button"
+                        onClick={() => {
+                          if (docFilePath) setConfirmReparseFilePath(docFilePath);
+                        }}
+                        disabled={isAnyActionPending || isPolling || !docFilePath}
+                        aria-label={`Re-parse ${getDisplayName(doc)} (replaces existing criteria)`}
+                        className="px-3 py-1 text-xs font-medium bg-yellow-500 text-white rounded hover:bg-yellow-600 disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                      >
+                        Re-parse
+                      </button>
+                    ) : (
+                      /* T-W15R-UI-002: per-document parse/retry button */
+                      <button
+                        data-testid="retry-parse-button"
+                        onClick={() => void handleRetry(doc)}
+                        disabled={isRetrying || isPolling || triggerParsing.isPending}
+                        aria-label={`Parse ${getDisplayName(doc)} now`}
+                        className="px-3 py-1 text-xs font-medium bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        {isRetrying || isPolling ? 'Parsing…' : 'Parse Now'}
+                      </button>
+                    )}
+
+                    {/* Delete button — requires confirmation */}
                     <button
-                      data-testid="retry-parse-button"
-                      onClick={() => void handleRetry(doc)}
-                      disabled={isRetrying || isPolling || triggerParsing.isPending}
-                      aria-label={`Parse ${getDisplayName(doc)} now`}
-                      className="px-3 py-1 text-xs font-medium bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      data-testid="delete-document-button"
+                      onClick={() => {
+                        if (docFilePath) setConfirmDeleteFilePath(docFilePath);
+                      }}
+                      disabled={isAnyActionPending || !docFilePath}
+                      aria-label={`Delete ${getDisplayName(doc)} and its parsed criteria`}
+                      className="px-3 py-1 text-xs font-medium bg-white text-red-600 border border-red-300 rounded hover:bg-red-50 disabled:bg-gray-50 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-red-400"
                     >
-                      {isRetrying || isPolling ? 'Parsing…' : 'Parse Now'}
+                      Delete
                     </button>
                   </div>
                 </li>

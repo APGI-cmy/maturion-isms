@@ -7,7 +7,7 @@
  * Wave 15R — T-W15R-UI-001 / T-W15R-UI-004 (ui-builder)
  * Added: useUploadedDocuments hook, useParseStatus terminal-state fixes
  */
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useCallback } from '@tanstack/react-query';
 import { supabase } from '../supabase';
 
 /** Terminal status values for criteria_documents.status */
@@ -276,10 +276,124 @@ export function useUploadedDocuments(auditId: string) {
     enabled: !!auditId,
   });
 
-  const invalidate = () =>
-    queryClient.invalidateQueries({ queryKey: ['uploaded-documents', auditId] });
+  const invalidate = useCallback(
+    () => queryClient.invalidateQueries({ queryKey: ['uploaded-documents', auditId] }),
+    [queryClient, auditId],
+  );
 
   return { ...query, invalidate };
+}
+
+/**
+ * Delete a criteria document and its associated parsed data (domains → MPS → criteria).
+ *
+ * This is a surgical, audit-scoped delete:
+ *   1. Deletes all domains for the audit (cascades to mini_performance_standards → criteria).
+ *   2. Deletes the criteria_documents record for the specific audit + file_path.
+ *   3. Deletes audit_logs entries for the file (criteria_upload / criteria_parsed / criteria_parse_failed).
+ *
+ * Safety guarantee: only rows matching the given auditId are affected.
+ * Unrelated audits are never touched.
+ */
+export function useDeleteCriteriaDocument(auditId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, { filePath: string }>({
+    mutationFn: async ({ filePath }) => {
+      // Step 1: Delete all domains for this audit — cascades to MPS and criteria.
+      // The current schema does not track which domain/MPS/criterion came from which
+      // source document, so all parsed criteria for the audit are removed.
+      const { error: domainsError } = await supabase
+        .from('domains')
+        .delete()
+        .eq('audit_id', auditId);
+      if (domainsError) {
+        throw new Error(`Failed to delete criteria data: ${domainsError.message}`);
+      }
+
+      // Step 2: Delete the criteria_documents tracking row for this specific file.
+      const { error: docError } = await supabase
+        .from('criteria_documents')
+        .delete()
+        .eq('audit_id', auditId)
+        .eq('file_path', filePath);
+      if (docError) {
+        throw new Error(`Failed to delete criteria document record: ${docError.message}`);
+      }
+
+      // Step 3: Delete audit_log entries for this file (criteria-related actions only).
+      const { error: logsError } = await supabase
+        .from('audit_logs')
+        .delete()
+        .eq('audit_id', auditId)
+        .eq('file_path', filePath)
+        .in('action', ['criteria_upload', 'criteria_parsed', 'criteria_parse_failed']);
+      if (logsError) {
+        throw new Error(`Failed to delete audit log entries: ${logsError.message}`);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['uploaded-documents', auditId] });
+      queryClient.invalidateQueries({ queryKey: ['criteria-tree', auditId] });
+    },
+  });
+}
+
+/**
+ * Re-parse (replace) a criteria document.
+ *
+ * Safe re-parse sequence for a given audit + file:
+ *   1. Deletes all domains for the audit (cascades to MPS → criteria) — clears stale data.
+ *   2. Upserts criteria_documents to status='processing' to reset the parse state.
+ *   3. Triggers the AI Edge Function to re-parse the document.
+ *
+ * UI contract: callers MUST obtain explicit user confirmation before invoking this mutation.
+ * The UI must warn that all previously parsed criteria for this audit will be removed.
+ */
+export function useReparseCriteriaDocument(auditId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, { filePath: string }>({
+    mutationFn: async ({ filePath }) => {
+      // Step 1: Delete all domains — cascades to MPS and criteria.
+      const { error: domainsError } = await supabase
+        .from('domains')
+        .delete()
+        .eq('audit_id', auditId);
+      if (domainsError) {
+        throw new Error(`Failed to clear criteria data for re-parse: ${domainsError.message}`);
+      }
+
+      // Step 2: Upsert criteria_documents to 'processing' — reset parse state for this file.
+      const { error: upsertError } = await supabase
+        .from('criteria_documents')
+        .upsert(
+          { audit_id: auditId, file_path: filePath, status: 'processing' },
+          { onConflict: 'audit_id,file_path' },
+        );
+      if (upsertError) {
+        throw new Error(`Failed to reset criteria document status: ${upsertError.message}`);
+      }
+
+      // Step 3: Refresh session and trigger the AI Edge Function re-parse.
+      const { data: { session }, error: sessionError } = await supabase.auth.refreshSession();
+      if (sessionError || !session) {
+        throw new Error('Authentication required. Please sign in again.');
+      }
+
+      const { error: fnError } = await supabase.functions.invoke('invoke-ai-parse-criteria', {
+        body: { auditId, filePath },
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      if (fnError) {
+        throw new Error(`Failed to trigger re-parse: ${fnError.message}`);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['uploaded-documents', auditId] });
+      queryClient.invalidateQueries({ queryKey: ['criteria-tree', auditId] });
+    },
+  });
 }
 
 /**
