@@ -1,12 +1,12 @@
 """
-services/parsing.py -- Document Parsing service (Wave 15 implementation).
+services/parsing.py — Document Parsing service (Wave 15 implementation).
 
-Architecture reference: modules/mat/02-architecture/system-architecture.md s4
-  "Criteria Parsing Pipeline: CriteriaUpload -> invoke-ai-parse-criteria ->
-   AI Gateway DocumentParser -> DB write-back (domains, mini_performance_standards, criteria)"
+Architecture reference: modules/mat/02-architecture/system-architecture.md §4
+  "Criteria Parsing Pipeline: CriteriaUpload → invoke-ai-parse-criteria →
+   AI Gateway DocumentParser → DB write-back (domains, mini_performance_standards, criteria)"
 
 FRS: FR-005 (criteria parsing pipeline), FR-103 (error surfacing)
-Wave: 15 -- Post-Delivery Oversight Remediation (T-W15-IMPL-001)
+Wave: 15 — Post-Delivery Oversight Remediation (T-W15-IMPL-001)
 """
 
 from __future__ import annotations
@@ -30,10 +30,10 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-# Trusted Supabase Storage base URL -- from env var only, never user-provided
+# Trusted Supabase Storage base URL — from env var only, never user-provided
 SUPABASE_STORAGE_URL = os.environ.get("SUPABASE_STORAGE_URL", "").rstrip("/")
 
-# -- LDCS document structure constants -----------------------------------------
+# ── LDCS document structure constants ──────────────────────────────────────────
 # The LDCS (Local Delivery Compliance Standard) uses 25 MPS across multiple domains.
 # Criteria are numbered in a hierarchical X.Y.Z pattern.
 LDCS_NUMBERED_HIERARCHY_PATTERN = re.compile(r"\b\d+\.\d+(?:\.\d+)?\b")
@@ -45,8 +45,7 @@ CONFIDENCE_REVIEW_THRESHOLD = 0.75  # flag needs_human_review when below this
 MAX_DOCUMENT_CHARS = 60000  # GPT-4 Turbo supports ~480K chars; 60K covers a full LDCS document
 
 
-# -- Request / Response models --------------------------------------------------
-
+# ── Request / Response models ───────────────────────────────────────────────────
 
 class ParseRequest(BaseModel):
     """
@@ -56,7 +55,6 @@ class ParseRequest(BaseModel):
     The AI Gateway extracts only the path and query components from this URL and combines
     them with the trusted SUPABASE_STORAGE_URL base from the environment (SSRF mitigation).
     """
-
     document_url: str
     tenant_id: str
     file_path: str | None = None
@@ -95,8 +93,7 @@ class ParseResponse(BaseModel):
     tenant_id: str
 
 
-# -- Text extraction helpers ----------------------------------------------------
-
+# ── Text extraction helpers ─────────────────────────────────────────────────────
 
 def _extract_text_from_pdf(content: bytes) -> str:
     """Extract raw text from a PDF document using PyPDF2."""
@@ -115,6 +112,9 @@ def _extract_text_from_docx(content: bytes) -> str:
     return "\n".join(para.text for para in doc.paragraphs if para.text.strip())
 
 
+# SSRF mitigation: only extract path+query from the signed URL and combine
+# with the trusted storage base URL from the environment.
+# This ensures the scheme and hostname are never user-controlled.
 def _build_safe_fetch_url(document_url: str) -> str:
     """
     Build a safe fetch URL by using the trusted SUPABASE_STORAGE_URL base
@@ -124,11 +124,13 @@ def _build_safe_fetch_url(document_url: str) -> str:
     not from the user-provided signed URL string.
     """
     parsed = urllib.parse.urlparse(document_url)
+    # Only use path and query from the signed URL (never scheme or host)
     path = parsed.path.lstrip("/")
-    query = "?{}".format(parsed.query) if parsed.query else ""
+    query = f"?{parsed.query}" if parsed.query else ""
     if not SUPABASE_STORAGE_URL:
         raise ValueError("SUPABASE_STORAGE_URL environment variable is not configured")
-    return "{}/{}{}".format(SUPABASE_STORAGE_URL, path, query)
+    return f"{SUPABASE_STORAGE_URL}/{path}{query}"
+
 
 def _extract_document_text(document_url: str) -> tuple[str, str]:
     """
@@ -152,6 +154,7 @@ def _extract_document_text(document_url: str) -> tuple[str, str]:
     elif "wordprocessingml" in content_type or document_url.lower().endswith(".docx"):
         return _extract_text_from_docx(content), "docx"
     else:
+        # Attempt PDF first, then DOCX
         try:
             return _extract_text_from_pdf(content), "pdf"
         except Exception:
@@ -165,38 +168,37 @@ def _detect_ldcs_pattern(text: str) -> bool:
     return has_numbered_hierarchy or has_ldcs_marker
 
 
-# -- GPT-4 Turbo structured extraction -----------------------------------------
+# ── GPT-4 Turbo structured extraction ──────────────────────────────────────────
 
-_SYSTEM_PROMPT_LINES = [
-    "You are an expert compliance document analyser specialised in extracting structured audit criteria",
-    "from compliance frameworks such as the LDCS (Local Delivery Compliance Standard).",
-    "",
-    "The LDCS defines " + str(LDCS_MPS_TOTAL) + " Mini Performance Standards (MPS) organised under multiple Domains.",
-    'Criteria are identified by hierarchical numbers (e.g. "3.2.1").',
-    "",
-    "Extract the full Domain -> MPS -> Criteria hierarchy from the document text.",
-    "",
-    "Return a JSON object with this schema:",
-    "{",
-    '  "confidence_score": <float 0.0-1.0>,',
-    '  "domains": [{"name": "...", "sort_order": <int>}],',
-    '  "mini_performance_standards": [',
-    '    {"domain_name": "...", "name": "...", "number": "...", "sort_order": <int>}',
-    "  ],",
-    '  "criteria": [',
-    "    {",
-    '      "mps_number": "...",',
-    '      "number": "...",',
-    '      "title": "...",',
-    '      "description": "...",',
-    '      "source_anchor": "<page or section reference in source document>"
-    "    }",
-    "  ]",
-    "}",
-    "",
-    "source_anchor must reference the section or page number in the source document for traceability.",
-]
-_SYSTEM_PROMPT = "\n".join(_SYSTEM_PROMPT_LINES)
+_SYSTEM_PROMPT = """\
+You are an expert compliance document analyser specialised in extracting structured audit criteria
+from compliance frameworks such as the LDCS (Local Delivery Compliance Standard).
+
+The LDCS defines {mps_count} Mini Performance Standards (MPS) organised under multiple Domains.
+Criteria are identified by hierarchical numbers (e.g. "3.2.1").
+
+Extract the full Domain → MPS → Criteria hierarchy from the document text.
+
+Return a JSON object with this schema:
+{{
+  "confidence_score": <float 0.0-1.0>,
+  "domains": [{{"name": "...", "sort_order": <int>}}],
+  "mini_performance_standards": [
+    {{"domain_name": "...", "name": "...", "number": "...", "sort_order": <int>}}
+  ],
+  "criteria": [
+    {{
+      "mps_number": "...",
+      "number": "...",
+      "title": "...",
+      "description": "...",
+      "source_anchor": "<page or section reference in source document>"
+    }}
+  ]
+}}
+
+source_anchor must reference the section or page number in the source document for traceability.
+""".format(mps_count=LDCS_MPS_TOTAL)
 
 
 def _call_gpt4_turbo(document_text: str) -> dict[str, Any]:
@@ -210,8 +212,8 @@ def _call_gpt4_turbo(document_text: str) -> dict[str, Any]:
             {
                 "role": "user",
                 "content": (
-                    "Extract the criteria hierarchy from this compliance document:\n\n"
-                    + document_text[:MAX_DOCUMENT_CHARS]
+                    "Extract the criteria hierarchy from this compliance document:"
+                    f"\n\n{document_text[:MAX_DOCUMENT_CHARS]}"
                 ),
             },
         ],
@@ -219,30 +221,38 @@ def _call_gpt4_turbo(document_text: str) -> dict[str, Any]:
         temperature=0.1,
     )
 
-    return json.loads(response.choices[0].message.content or "{}")["document"]
+    return json.loads(response.choices[0].message.content or "{}")
 
-# -- FastAPI route --------------------------------------------------------------
+
+# ── FastAPI route ───────────────────────────────────────────────────────────────
 
 @router.post("/parse", response_model=ParseResponse)
 async def parse_document(request: ParseRequest) -> ParseResponse:
     """
-    Parse a compliance document and return structured Domain -> MPS -> Criteria hierarchy.
+    Parse a compliance document and return structured Domain → MPS → Criteria hierarchy.
 
     Security: document_url must be a signed Supabase Storage URL; external URLs are
     rejected by the invoking Edge Function (SSRF mitigation at the Edge Function layer).
     """
     try:
+        # 1. Extract document text
         document_text, _doc_format = _extract_document_text(request.document_url)
+
+        # 2. Detect LDCS pattern
         ldcs_detected = _detect_ldcs_pattern(document_text)
+
+        # 3. Call GPT-4 Turbo for structured extraction
         extracted = _call_gpt4_turbo(document_text)
 
         confidence_score: float = float(extracted.get("confidence_score", 0.5))
         needs_human_review: bool = confidence_score < CONFIDENCE_REVIEW_THRESHOLD
 
+        # 4. Build typed response
         domains = [DomainResult(**d) for d in extracted.get("domains", [])]
         mps_list = [MpsResult(**m) for m in extracted.get("mini_performance_standards", [])]
         criteria_list = [CriterionResult(**c) for c in extracted.get("criteria", [])]
 
+        # source_anchor summary: reference to first criterion or "document root"
         source_anchor = criteria_list[0].source_anchor if criteria_list else "document root"
 
         logger.info(
@@ -273,15 +283,15 @@ async def parse_document(request: ParseRequest) -> ParseResponse:
 
 class DocumentParser:
     """
-    Programmatic interface to DocumentParser -- wraps the /parse endpoint logic
+    Programmatic interface to DocumentParser — wraps the /parse endpoint logic
     for use outside of the HTTP layer (e.g. batch processing, tests).
 
-    Architecture reference: modules/mat/02-architecture/system-architecture.md s4
+    Architecture reference: modules/mat/02-architecture/system-architecture.md §4
     """
 
     def parse(self, document_url: str, tenant_id: str) -> dict:
         """
-        Parse a document from document_url and return structured criteria JSON.
+        Parse a document from *document_url* and return structured criteria JSON.
 
         Parameters
         ----------
