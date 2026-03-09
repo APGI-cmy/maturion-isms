@@ -1,35 +1,29 @@
-# Scope Declaration — wave-audit-log-column-fix — 2026-03-08
+# Scope Declaration — wave-session-refresh-auth-fix — 2026-03-09
 
-**Wave**: InjAudit — New Workflow: injection-audit-report.yml
-**Branch**: copilot/create-injection-audit-report-workflow
-**Session**: session-InjAudit-20260307
-**Date**: 2026-03-07
-**Authority**: CS2 (Johan Ras / @APGI-cmy) — [CS2-Direct] label
-**PR**: copilot/create-injection-audit-report-workflow (#978)
+**Wave**: wave-session-refresh-auth-fix  
+**Branch**: `copilot/fix-session-refresh-auth-header`  
+**Session**: session-wave-session-refresh-auth-fix-20260309  
+**Authority**: CS2 (Johan Ras / @APGI-cmy) — "Bug: Edge Function returns 401 unless session is refreshed before parsing (fix useCriteria.ts mutation)" — CS2 FOREMAN RE-ALIGNMENT directive 2026-03-09  
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave-session-refresh-auth-fix.md`
 
 ## Scope
 
-### Deliverable (T-INJAUDIT-CI-001)
-- `.github/workflows/injection-audit-report.yml` - new; injection audit report workflow
+Single-function bug fix: `useTriggerAIParsing` in `modules/mat/frontend/src/lib/hooks/useCriteria.ts` now calls `supabase.auth.getSession()` before `supabase.functions.invoke('invoke-ai-parse-criteria', ...)` to ensure a valid JWT Authorization header is always sent. Governance: register INC-AUTHFIX-IMPL-001 in FAIL-ONLY-ONCE v3.5.0. No schema changes, no migration changes, no Edge Function changes, no CI workflow changes.
 
-### IAA Protocol Artifacts
-- `.agent-admin/assurance/iaa-prebrief-InjAudit.md` - new; IAA Pre-Brief artifact
-- `.agent-admin/assurance/iaa-token-session-InjAudit-waveInjAudit-20260307.md` - new; IAA REJECTION-PACKAGE v1 token
-- `.agent-admin/assurance/iaa-token-session-InjAudit-waveInjAudit-20260307-v3.md` - new; IAA REJECTION-PACKAGE v3 token
+## IAA Ceremony Artifacts (IAA-Authored — A-031 Carve-Out)
 
-### Foreman Governance Artifacts
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-InjAudit-waveInjAudit-20260307.md` - new; PREHANDOVER proof v1 (immutable)
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-InjAudit-waveInjAudit-20260307-v2.md` - new; PREHANDOVER proof v2 (immutable)
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-InjAudit-waveInjAudit-20260307-v3.md` - new; PREHANDOVER proof v3 (F-1 fix + OVL-CI-005 documented)
-- `.agent-workspace/foreman-v2/memory/session-InjAudit-20260307.md` - new; foreman session memory
-- `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md` - updated; InjAudit wave scope (workspace copy)
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - updated; InjAudit wave
+Files committed on this branch by independent-assurance-agent during the final audit.
+IAA-owned artifacts declared here to satisfy SCOPE_DECLARATION exact-match gate.
 
-### IAA Memory (IAA-authored)
-- `.agent-workspace/independent-assurance-agent/memory/session-InjAudit-20260307.md` - new; IAA session memory
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - updated by IAA
+## Files Changed
 
-### This File
-- `SCOPE_DECLARATION.md` - this file (root-level merge gate input; F-1 fix from IAA REJECTION-PACKAGE)
-
-
+- `.agent-admin/assurance/iaa-prebrief-wave-session-refresh-auth-fix.md` - IAA Pre-Brief (IAA-authored)
+- `.agent-admin/assurance/iaa-token-session-wave-session-refresh-auth-fix-20260309.md` - IAA ASSURANCE-TOKEN (IAA-authored)
+- `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` - INC-AUTHFIX-IMPL-001 registered; S-029 noted; v3.5.0
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave-session-refresh-auth-fix-20260309.md` - PREHANDOVER proof
+- `.agent-workspace/foreman-v2/memory/session-wave-session-refresh-auth-fix-20260309.md` - Session memory
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Parking station S-007 promotion entry
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave task list for wave-session-refresh-auth-fix
+- `SCOPE_DECLARATION.md` - Updated for wave-session-refresh-auth-fix
+- `modules/mat/frontend/src/lib/hooks/useCriteria.ts` - Session refresh guard in useTriggerAIParsing
+- `modules/mat/tests/wave-session-refresh-auth-fix/wave-sraf-session-refresh.test.ts` - 4 RED to GREEN tests
