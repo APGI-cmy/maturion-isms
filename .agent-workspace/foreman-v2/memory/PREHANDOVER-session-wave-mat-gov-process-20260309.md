@@ -138,11 +138,20 @@ Issue opened by @APGI-cmy and assigned to foreman-v2-agent. CS2 re-alignment dir
 
 ## IAA Audit
 
-`iaa_audit_token: IAA-session-wave-mat-gov-process-20260309-PASS`
+`iaa_audit_token: IAA-session-wave-mat-gov-process-20260309-R4-PASS`
 
 ## IAA Agent Response (verbatim)
 
-[AWAITING IAA ASSURANCE-TOKEN — will be populated before commit]
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/implement-governance-process-mat (wave-mat-gov-process) — R4
+All cited R3 failures RESOLVED. All checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval — @APGI-cmy).
+Token reference: IAA-session-wave-mat-gov-process-20260309-R4-PASS
+Adoption phase: PHASE_B_BLOCKING
+═══════════════════════════════════════
+```
 
 ---
 
