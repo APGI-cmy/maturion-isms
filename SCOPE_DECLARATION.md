@@ -1,14 +1,14 @@
-# Scope Declaration — wave-audit-log-column-fix — 2026-03-08
+# Scope Declaration — wave-session-refresh-auth-fix — 2026-03-09
 
-**Wave**: wave-audit-log-column-fix  
-**Branch**: `copilot/fix-document-upload-issues`  
-**Session**: session-wave-audit-log-column-fix-20260308  
-**Authority**: CS2 (Johan Ras / @APGI-cmy) — "fix(criteria-upload): audit_logs insert/query column mismatches prevent uploaded documents from appearing; migration drift and governance gaps require postmortem / scope closure"  
-**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave-audit-log-column-fix.md`
+**Wave**: wave-session-refresh-auth-fix  
+**Branch**: `copilot/fix-session-refresh-auth-header`  
+**Session**: session-wave-session-refresh-auth-fix-20260309  
+**Authority**: CS2 (Johan Ras / @APGI-cmy) — "Bug: Edge Function returns 401 unless session is refreshed before parsing (fix useCriteria.ts mutation)" — CS2 FOREMAN RE-ALIGNMENT directive 2026-03-09  
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave-session-refresh-auth-fix.md`
 
 ## Scope
 
-This PR fixes schema column mismatches in `useCriteria.ts` that were introduced in wave-upload-doclist-fix (PR #1007). The `useUploadCriteria` INSERT used non-existent columns (`user_id`, `resource_type`, `resource_id`) and omitted required NOT NULL `organisation_id`. The `useUploadedDocuments` SELECT included non-existent `resource_id`. Fix: correct INSERT/SELECT column names, update `UploadedDocument` interface, fix deduplication key. Governance: register INC-ALCF-001 in FAIL-ONLY-ONCE v3.4.0, add S-028 (SCHEMA-COLUMN-COMPLIANCE-MANDATORY), update BUILD_PROGRESS_TRACKER and implementation-plan.
+Single-function bug fix: `useTriggerAIParsing` in `modules/mat/frontend/src/lib/hooks/useCriteria.ts` now calls `supabase.auth.getSession()` before `supabase.functions.invoke('invoke-ai-parse-criteria', ...)` to ensure a valid JWT Authorization header is always sent. Governance: register INC-AUTHFIX-IMPL-001 in FAIL-ONLY-ONCE v3.5.0. No schema changes, no migration changes, no Edge Function changes, no CI workflow changes.
 
 ## IAA Ceremony Artifacts (IAA-Authored — A-031 Carve-Out)
 
@@ -17,20 +17,13 @@ IAA-owned artifacts declared here to satisfy SCOPE_DECLARATION exact-match gate.
 
 ## Files Changed
 
-- `.agent-admin/assurance/iaa-prebrief-wave-audit-log-column-fix.md` - IAA Pre-Brief (IAA-authored)
-- `.agent-admin/assurance/iaa-token-session-wave-audit-log-column-fix-20260308.md` - IAA ASSURANCE-TOKEN (IAA-authored)
-- `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` - INC-ALCF-001 registered; S-028 added; v3.4.0
-- `.agent-workspace/foreman-v2/knowledge/index.md` - Knowledge version bumped to 2.1.0
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave-audit-log-column-fix-20260308.md` - PREHANDOVER proof
-- `.agent-workspace/foreman-v2/memory/session-wave-audit-log-column-fix-20260308.md` - Session memory
-- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Parking station S-028
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave task list for wave-audit-log-column-fix
-- `.agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md` - IAA FAIL-ONLY-ONCE A-032 added (IAA-authored)
-- `.agent-workspace/independent-assurance-agent/knowledge/index.md` - IAA knowledge index updated (IAA-authored)
-- `.agent-workspace/independent-assurance-agent/memory/session-wave-audit-log-column-fix-20260308.md` - IAA session memory (IAA-authored)
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station (IAA-authored)
-- `SCOPE_DECLARATION.md` - Updated for wave-audit-log-column-fix
-- `modules/mat/03-implementation-plan/implementation-plan.md` - Wave entry for wave-audit-log-column-fix
-- `modules/mat/BUILD_PROGRESS_TRACKER.md` - Wave entry for wave-audit-log-column-fix
-- `modules/mat/frontend/src/lib/hooks/useCriteria.ts` - INSERT/SELECT column fix; UploadedDocument interface; dedup key
-- `modules/mat/tests/wave-audit-log-column-fix/wave-audit-log-column-fix.test.ts` - 7 RED to GREEN tests
+- `.agent-admin/assurance/iaa-prebrief-wave-session-refresh-auth-fix.md` - IAA Pre-Brief (IAA-authored)
+- `.agent-admin/assurance/iaa-token-session-wave-session-refresh-auth-fix-20260309.md` - IAA ASSURANCE-TOKEN (IAA-authored)
+- `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` - INC-AUTHFIX-IMPL-001 registered; S-029 noted; v3.5.0
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave-session-refresh-auth-fix-20260309.md` - PREHANDOVER proof
+- `.agent-workspace/foreman-v2/memory/session-wave-session-refresh-auth-fix-20260309.md` - Session memory
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Parking station S-007 promotion entry
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave task list for wave-session-refresh-auth-fix
+- `SCOPE_DECLARATION.md` - Updated for wave-session-refresh-auth-fix
+- `modules/mat/frontend/src/lib/hooks/useCriteria.ts` - Session refresh guard in useTriggerAIParsing
+- `modules/mat/tests/wave-session-refresh-auth-fix/wave-sraf-session-refresh.test.ts` - 4 RED to GREEN tests
