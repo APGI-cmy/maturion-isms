@@ -13,6 +13,10 @@
  * - Per-document retry button (T-W15R-UI-002)
  * - Inline error log per failed document (T-W15R-UI-003 / FR-103 full)
  * - alert() replaced with inline success state (T-W15R-UI-003)
+ *
+ * fix: destructure `invalidate` from uploadedDocuments before useEffect so that
+ *   react-hooks/exhaustive-deps is satisfied without adding the whole object to
+ *   the dependency array (which would cause an infinite render loop).
  */
 import { useState, useEffect } from 'react';
 import {
@@ -62,13 +66,13 @@ function formatTimestamp(iso: string): string {
 
 /** Derive a display-friendly filename from the stored file_path or details */
 function getDisplayName(doc: UploadedDocument): string {
-  const filePath = doc.file_path ?? doc.details?.file_path ?? '';
+  const filePath = doc.file_path ?? doc.details?.file_path ?? '');
   if (filePath) {
     // Strip leading org/criteria/<auditId>/ prefix and timestamp
     const parts = filePath.split('/');
     const lastPart = parts[parts.length - 1] ?? filePath;
     // Remove leading timestamp prefix (e.g. "1709900000000-myfile.pdf" → "myfile.pdf")
-    return lastPart.replace(/^\d+-/, '');
+    return lastPart.replace(/\^\d+-/, '');
   }
   return 'Unknown document';
 }
@@ -92,13 +96,18 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
   const [pollingFilePath, setPollingFilePath] = useState<string | null>(null);
   const pollStatus = usePollCriteriaDocumentStatus(auditId, pollingFilePath);
 
+  // Destructure invalidate so the useEffect dependency array can reference a
+  // stable function reference rather than the entire uploadedDocuments object
+  // (which changes every render and would trigger an infinite loop).
+  const { invalidate: invalidateUploadedDocuments } = uploadedDocuments;
+
   useEffect(() => {
     const status = pollStatus.data?.status;
     if (status === 'pending_review' || status === 'parse_failed') {
       setPollingFilePath(null);
-      uploadedDocuments.invalidate();
+      invalidateUploadedDocuments();
     }
-  }, [pollStatus.data?.status]);
+  }, [pollStatus.data?.status, invalidateUploadedDocuments]);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -195,7 +204,7 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
       <div
         className={`border-2 border-dashed rounded-lg p-8 text-center ${
           dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
-        }`}
+        }`} 
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
