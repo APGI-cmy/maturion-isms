@@ -186,14 +186,17 @@ Deno.serve(async (req: Request): Promise<Response> => {
     // If the AI returned zero domains (e.g. gateway unreachable or not configured),
     // skip all DB inserts and return a successful zero-count response.
     if (domains.length === 0) {
-      const { error: emptyStatusError } = await supabase
+      const { data: emptyUpdatedRows, error: emptyStatusError } = await supabase
         .from('criteria_documents')
         .update({ status: 'pending_review' })
         .eq('audit_id', auditId)
-        .eq('file_path', filePath);
+        .eq('file_path', filePath)
+        .select('id');
 
       if (emptyStatusError) {
         console.warn(`[invoke-ai-parse-criteria] Failed to update criteria_documents status (empty result): ${emptyStatusError.message}`);
+      } else if (!emptyUpdatedRows || emptyUpdatedRows.length === 0) {
+        console.warn(`[invoke-ai-parse-criteria] WARN: criteria_documents row not found for audit_id=${auditId} file_path=${filePath} — status not updated`);
       }
 
       await supabase.from('audit_logs').insert({
@@ -227,12 +230,18 @@ Deno.serve(async (req: Request): Promise<Response> => {
       );
     }
 
+    // TODO(T-W15-TXN): Architecture §4.4 requires all Domain/MPS/criteria inserts to run in a
+    // single DB transaction with full rollback on failure. Current implementation uses sequential
+    // inserts — a failure after domains are inserted but before criteria are inserted will leave
+    // partial data. A tracked follow-up task must implement a Postgres function (RPC) or
+    // Supabase transaction wrapper to satisfy this requirement.
     // ── DB write-back: Domain → MPS → Criteria hierarchy ──────────────────────
 
-    // 1. Insert domains — includes organisation_id (NOT NULL) and number (INTEGER)
+    // 1. Upsert domains — includes organisation_id (NOT NULL) and number (INTEGER)
+    //    onConflict: 'audit_id,number' handles retries without 23505 uniqueness errors
     const { data: insertedDomains, error: domainsError } = await supabase
       .from('domains')
-      .insert(
+      .upsert(
         domains.map((d, idx) => ({
           audit_id: auditId,
           organisation_id: organisationId,
@@ -240,18 +249,20 @@ Deno.serve(async (req: Request): Promise<Response> => {
           name: d.name,
           description: d.description ?? null,
         })),
+        { onConflict: 'audit_id,number', ignoreDuplicates: false },
       )
       .select('id, name, number');
 
     if (domainsError) {
-      throw new Error(`Failed to insert domains: ${domainsError.message}`);
+      throw new Error(`Failed to upsert domains: ${domainsError.message}`);
     }
 
     const domainMap = new Map<string, { id: string; number: number }>(
       (insertedDomains ?? []).map(d => [d.name, { id: d.id, number: d.number }]),
     );
 
-    // 2. Insert mini_performance_standards — includes audit_id, organisation_id (both NOT NULL)
+    // 2. Upsert mini_performance_standards — includes audit_id, organisation_id (both NOT NULL)
+    //    onConflict: 'audit_id,number' handles retries without 23505 uniqueness errors
     const validMpsList = mpsList.filter(m => domainMap.has(m.domain_name));
     if (validMpsList.length < mpsList.length) {
       const missingDomains = mpsList
@@ -262,7 +273,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
     const { data: insertedMps, error: mpsError } = await supabase
       .from('mini_performance_standards')
-      .insert(
+      .upsert(
         validMpsList.map((m, idx) => ({
           domain_id: domainMap.get(m.domain_name)!.id,
           audit_id: auditId,
@@ -271,11 +282,12 @@ Deno.serve(async (req: Request): Promise<Response> => {
           name: m.name,
           description: m.description ?? null,
         })),
+        { onConflict: 'audit_id,number', ignoreDuplicates: false },
       )
       .select('id, number, domain_id');
 
     if (mpsError) {
-      throw new Error(`Failed to insert mini_performance_standards: ${mpsError.message}`);
+      throw new Error(`Failed to upsert mini_performance_standards: ${mpsError.message}`);
     }
 
     // Map AI's original MPS number string → { id, domain_id } from inserted rows
@@ -296,8 +308,9 @@ Deno.serve(async (req: Request): Promise<Response> => {
       ]),
     );
 
-    // 3. Insert criteria — includes domain_id, organisation_id (both NOT NULL),
+    // 3. Upsert criteria — includes domain_id, organisation_id (both NOT NULL),
     //    number as INTEGER, description (maps title + description), guidance from source_anchor
+    //    onConflict: 'audit_id,number' handles retries without 23505 uniqueness errors
     const validCriteriaList = criteriaList.filter(c => mpsMap.has(c.mps_number));
     if (validCriteriaList.length < criteriaList.length) {
       const missingMps = criteriaList
@@ -308,7 +321,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
     const { error: criteriaError } = await supabase
       .from('criteria')
-      .insert(
+      .upsert(
         validCriteriaList.map((c, idx) => {
           const mpsEntry = mpsMap.get(c.mps_number);
           return {
@@ -323,21 +336,25 @@ Deno.serve(async (req: Request): Promise<Response> => {
             guidance: c.source_anchor ?? null,
           };
         }),
+        { onConflict: 'audit_id,number', ignoreDuplicates: false },
       );
 
     if (criteriaError) {
-      throw new Error(`Failed to insert criteria: ${criteriaError.message}`);
+      throw new Error(`Failed to upsert criteria: ${criteriaError.message}`);
     }
 
     // 4. Update criteria_documents.status → pending_review (architecture §4.2)
-    const { error: statusError } = await supabase
+    const { data: updatedStatusRows, error: statusError } = await supabase
       .from('criteria_documents')
       .update({ status: 'pending_review' })
       .eq('audit_id', auditId)
-      .eq('file_path', filePath);
+      .eq('file_path', filePath)
+      .select('id');
 
     if (statusError) {
       console.warn(`[invoke-ai-parse-criteria] Failed to update criteria_documents status: ${statusError.message}`);
+    } else if (!updatedStatusRows || updatedStatusRows.length === 0) {
+      console.warn(`[invoke-ai-parse-criteria] WARN: criteria_documents row not found for audit_id=${auditId} file_path=${filePath} — status not updated`);
     }
 
     // 5. Audit trail: log parsing outcome to audit_logs
@@ -376,11 +393,17 @@ Deno.serve(async (req: Request): Promise<Response> => {
     // Update criteria_documents.status → parse_failed (architecture §4.2)
     try {
       if (auditId && filePath) {
-        await supabase
+        const { data: failedStatusRows, error: failedStatusError } = await supabase
           .from('criteria_documents')
           .update({ status: 'parse_failed' })
           .eq('audit_id', auditId)
-          .eq('file_path', filePath);
+          .eq('file_path', filePath)
+          .select('id');
+        if (failedStatusError) {
+          console.warn(`[invoke-ai-parse-criteria] Failed to update criteria_documents status to parse_failed: ${failedStatusError.message}`);
+        } else if (!failedStatusRows || failedStatusRows.length === 0) {
+          console.warn(`[invoke-ai-parse-criteria] WARN: criteria_documents row not found for audit_id=${auditId} file_path=${filePath} — status not updated`);
+        }
       }
     } catch {
       // Status update failure must not mask original error
