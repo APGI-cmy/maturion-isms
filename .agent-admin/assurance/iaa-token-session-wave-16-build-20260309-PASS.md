@@ -52,7 +52,7 @@ Authority: CS2 only (@APGI-cmy)
 | A-001 (invocation evidence present) | YES | PASS — PREHANDOVER proof committed at `9ac0d3ec`; `iaa_audit_token: IAA-session-wave-16-build-20260309-PASS` |
 | A-002 (no class exceptions) | YES | PASS — no agent contract changes; no exemption claimed |
 | A-021 (commit before invoking) | YES | PASS — git status clean; all artifacts committed before invocation |
-| A-026 (SCOPE_DECLARATION must match diff) | YES | PASS — 8 declared files = 8 files in diff; exact match confirmed |
+| A-026 (SCOPE_DECLARATION must match diff) | YES | PASS — 10 declared files = 10 files in diff; exact match confirmed |
 | A-028 (SCOPE_DECLARATION format compliance) | YES | PASS — list format, no prior-wave entries |
 | A-029 (PREHANDOVER immutability §4.3b) | YES | PASS — expected reference pre-populated; token file written by IAA this session |
 | A-031 (IAA ceremony artifact carve-out) | YES | PASS — IAA Pre-Brief session memory and parking station noted as A-031 carve-out; correctly declared in diff |
@@ -86,7 +86,7 @@ Authority: CS2 only (@APGI-cmy)
 
 | Check | Verdict | Notes |
 |-------|---------|-------|
-| BD-001 (Full scope delivered) | PASS ✅ | All 5 committed artifacts in diff; token pending → delivered this session |
+| BD-001 (Full scope delivered) | PASS ✅ | All 10 declared artifacts in diff (5 governance/ceremony + 5 A-031 carve-out files); all committed |
 | BD-002 (No stub/TODO in production paths) | PASS ✅ | No production code; governance artifacts fully populated |
 | BD-003 (One-time build) | PASS ✅ | Wave plan complete and actionable post-merge |
 | BD-004 (No leftover debt) | PASS ✅ | Clean wave boundary; wave-15r closure confirmed |
@@ -108,7 +108,7 @@ Authority: CS2 only (@APGI-cmy)
 |-------|-------------|
 | YAML validation | PASS ✅ |
 | Working tree clean | PASS ✅ (0 uncommitted changes) |
-| SCOPE_DECLARATION vs diff exact match | PASS ✅ (8 = 8, exact match) |
+| SCOPE_DECLARATION vs diff exact match | PASS ✅ (10 = 10, exact match) |
 | Canon hash verification | PASS ✅ (191 entries, 0 issues) |
 | No .github/agents/ modifications | PASS ✅ |
 | Pre-Brief committed before ceremony artifacts | PASS ✅ (8f96703 < 9ac0d3ec) |

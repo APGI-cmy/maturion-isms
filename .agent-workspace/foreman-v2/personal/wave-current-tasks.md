@@ -46,7 +46,7 @@ PARKED:
 | T-W16-IMPL-003 | Implement Wave 16.6 — RLS policies for scores/audit_scores, audit logging expansion, JWT auth on POST /api/ai/request, evidence_submissions migration | schema-builder + api-builder | 🔴 BLOCKED | Blocked on T-W16-QA-003 RED gate PASS |
 | T-W16-IMPL-004 | Implement Wave 16.7 — ARC portal frontend page | ui-builder | 🔴 BLOCKED | Blocked on T-W16-QA-004 RED gate PASS |
 | T-W16-DOC-001 | Wave 16.8 — mat-ai-gateway deployment docs, configuration guide, ENV var reference | mat-specialist | 🔴 PENDING | No RED gate required (documentation only) |
-| T-W16-FM-001 | Foreman Phase 4 closure: PREHANDOVER proof, session memory, IAA audit, token ceremony | foreman-v2-agent | �� PENDING | Phase 4 ceremony |
+| T-W16-FM-001 | Foreman Phase 4 closure: PREHANDOVER proof, session memory, IAA audit, token ceremony | foreman-v2-agent | 🟢 DONE | PREHANDOVER proof + session memory committed; IAA ASSURANCE-TOKEN received (IAA-session-wave-16-build-20260309-PASS) |
 
 ---
 
@@ -70,7 +70,7 @@ PARKED:
 
 - Type: AAWP_MAT — production frontend/schema/API implementation
 - Pre-Brief required: YES — mandatory per A-031 before ANY builder delegation
-- FFA checks: schema column compliance (A-028), No `.github/agents/` changes, no CI workflow changes
+- FFA checks: schema column compliance (A-032), No `.github/agents/` changes, no CI workflow changes
 
 ---
 
@@ -80,9 +80,9 @@ PARKED:
 wave: wave-16-build
 session: session-wave-16-build-20260309
 branch: copilot/orchestrate-wave-16-build
-status: PRE_BRIEF_PENDING
+status: IAA_PASS_TOKEN_RECEIVED
 tasks_total: 10
-tasks_complete: 0
-last_updated: 2026-03-09T13:48:00Z
-blocking: IAA_PRE_BRIEF_REQUIRED — A-031
+tasks_complete: 9
+last_updated: 2026-03-09T15:34:00Z
+blocking: none — IAA ASSURANCE-TOKEN received; awaiting CS2 merge approval
 ```

@@ -67,7 +67,7 @@ CANON_INVENTORY alignment: CONFIRMED.
 | 3 | IAA Pre-Brief | `.agent-admin/assurance/iaa-prebrief-wave-16-build.md` | ✅ Committed (SHA 8f96703) |
 | 4 | PREHANDOVER proof | `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave-16-build-20260309.md` | ✅ This file |
 | 5 | Session memory | `.agent-workspace/foreman-v2/memory/session-wave-16-build-20260309.md` | ✅ Created |
-| 6 | IAA token | `.agent-admin/assurance/iaa-token-session-wave-16-build-20260309-PASS.md` | ⏳ Pending IAA formal audit |
+| 6 | IAA token | `.agent-admin/assurance/iaa-token-session-wave-16-build-20260309-PASS.md` | ✅ ASSURANCE-TOKEN ISSUED — 58/58 PASS (SHA b7e4045) |
 
 ---
 
@@ -119,7 +119,7 @@ Pre-IAA git log (latest 4 commits above origin/main):
 ## IAA Audit Token
 
 `iaa_audit_token: IAA-session-wave-16-build-20260309-PASS`
-*(Expected reference per A-028/§4.3b — pre-populated at commit time; IAA token file is separate)*
+*(Expected reference per A-029/§4.3b — pre-populated at commit time; IAA token file is separate)*
 
 ---
 

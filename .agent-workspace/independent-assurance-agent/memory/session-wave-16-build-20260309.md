@@ -28,7 +28,7 @@
 | A-001 (invocation evidence present) | YES | PASS — PREHANDOVER proof committed at `9ac0d3ec` |
 | A-002 (no class exceptions) | YES | PASS — no agent contract changes |
 | A-021 (commit before invoking) | YES | PASS — clean working tree confirmed |
-| A-026 (SCOPE_DECLARATION must match diff) | YES | PASS — 8 = 8 exact match |
+| A-026 (SCOPE_DECLARATION must match diff) | YES | PASS — 10 = 10 exact match |
 | A-028 (SCOPE_DECLARATION format) | YES | PASS — list format, no prior-wave entries |
 | A-029 (PREHANDOVER immutability §4.3b) | YES | PASS — expected reference pre-populated |
 | A-031 (IAA ceremony artifact carve-out) | YES | PASS — correctly noted in SCOPE_DECLARATION |
