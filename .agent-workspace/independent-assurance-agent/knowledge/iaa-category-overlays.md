@@ -1,9 +1,9 @@
 # IAA Category Overlays
 
 **Agent**: independent-assurance-agent
-**Version**: 3.1.0
+**Version**: 3.2.0
 **Status**: ACTIVE
-**Last Updated**: 2026-03-05
+**Last Updated**: 2026-03-07
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -208,6 +208,76 @@ Applied when PR category is `KNOWLEDGE_GOVERNANCE`.
 
 ---
 
+## INJECTION_AUDIT_TRAIL Overlay
+
+Applied when PR is T1 or T2 qualifying (IAA required at handover — see §Risk-Tiered Ceremony
+Table in `INDEPENDENT_ASSURANCE_AGENT_CANON.md`: T1 = agent contract changes, T2 = build
+deliverables). This overlay is checked **after** the universal CERT gate and **before** any
+category-specific (AGENT_CONTRACT, CANON_GOVERNANCE, etc.) overlay checks. It ensures the
+IAA Pre-Brief injection pipeline ran before any qualifying task was delegated — not just that
+a Pre-Brief artifact exists. When the wave model is in use, OVL-INJ-001 also expects a
+`wave-current-tasks.md` audit trail; if that file is absent on a qualifying T1/T2 PR, treat
+the overlay as an explicit fail / missing-evidence tier rather than skipping it.
+
+**Trigger**: Always applied alongside AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW,
+AAWP_MAT, KNOWLEDGE_GOVERNANCE, or AGENT_INTEGRITY overlays when the PR is T1 or T2
+(i.e., IAA is required at handover per the §Risk-Tiered Ceremony Table).
+
+**AGCFPP-001 gate link**: For AGENT_CONTRACT PRs, `agent-contract-audit.yml`
+(`governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md`) checks for IAA assurance token
+presence. OVL-INJ-001 extends this by verifying the injection pipeline fired — ensuring the
+CodexAdvisor gate was preceded by the full injection audit trail, not a retrospective
+manual invocation.
+
+### Audit Trail Signature Strings
+
+The `iaa-prebrief-inject.yml` workflow posts PR comments with one of the following footers:
+
+| Scenario | Signature String |
+|----------|-----------------|
+| Normal injection (post on PR) | `*IAA Pre-Brief Injection — Authority: foreman-v2-agent contract Step 1.8, IAA_PRE_BRIEF_PROTOCOL.md v1.1.0*` |
+| Safety net (T+10 min check) | `*IAA Pre-Brief Safety Net (T+10min) — Authority: foreman-v2-agent contract Step 1.8, IAA_PRE_BRIEF_PROTOCOL.md v1.1.0*` |
+
+IAA checks for at least one of these strings in the PR comment history, or for the canonical
+Pre-Brief artifact on the branch, as the primary evidence of injection.
+
+### OVL-INJ-001 Check
+
+| Check ID | Check Name | What IAA Does |
+|----------|-----------|---------------|
+| OVL-INJ-001 | Injection Audit Trail | Confirm that evidence of the Pre-Brief injection pipeline is present on this PR. Evidence hierarchy and pass/fail criteria are defined in the subsections below. |
+
+#### Evidence Acceptance Hierarchy (any one tier satisfies OVL-INJ-001)
+
+| Evidence Tier | What to Look For |
+|---------------|-----------------|
+| **Tier 1 — Signature string** | A PR comment containing the `iaa-prebrief-inject.yml` signature string (see §Audit Trail Signature Strings above) is present in the PR comment history. |
+| **Tier 2 — Artifact committed** | Pre-Brief artifact at `.agent-admin/assurance/iaa-prebrief-wave<N>.md` or `.agent-admin/assurance/iaa-prebrief-<slug>.md` is present on the branch, non-empty, non-placeholder, and was committed before any builder task artifact. |
+| **Tier 3 — CI check run** | `iaa-prebrief-inject` job appears in the PR's CI check history with a completed (success, skipped, or neutral) status. |
+
+#### Pass Condition
+
+At least one evidence tier is satisfied.
+
+#### Fail Condition (triggers REJECTION-PACKAGE)
+
+No evidence from any tier is present. IAA states:
+
+> `OVL-INJ-001 FAIL: No injection audit trail found. The iaa-prebrief-inject.yml workflow`
+> `must run and deliver the Pre-Brief invocation before qualifying tasks are delegated.`
+> `No signature string, committed pre-brief artifact, or CI check run was found for this wave.`
+> `Fix: Commit wave-current-tasks.md to trigger the workflow, or invoke /iaa-prebrief manually.`
+> `Re-invoke IAA once the trail is established.`
+
+### Admin Checks
+
+| Check ID | Check Name | Pass Condition |
+|----------|-----------|----------------|
+| OVL-INJ-ADM-001 | Pre-Brief artifact non-empty | `.agent-admin/assurance/iaa-prebrief-wave<N>.md` contains substantive content — not a blank file, stub, or placeholder-only file. Binary existence check is CERT-004; this confirms content is meaningful. |
+| OVL-INJ-ADM-002 | Pre-Brief references correct wave | Pre-Brief artifact header declares the same wave number or slug as `wave-current-tasks.md` on the branch. Mismatch = cross-wave reuse violation. |
+
+---
+
 ## AGENT_INTEGRITY Overlay
 
 Applied when PR category is `AGENT_INTEGRITY`.
@@ -226,6 +296,7 @@ Applied when PR category is `AGENT_INTEGRITY`.
 | 2.2.0 | 2026-03-02 | OVL-KG-001 through OVL-KG-005 (KNOWLEDGE_GOVERNANCE overlay added); OVL-AM-008 (end-to-end wiring verification) added to BUILD_DELIVERABLE overlay |
 | 3.0.0 | 2026-03-04 | Major restructure: BUILD_DELIVERABLE overlay (BD-001 through BD-024, FFA Summary); AGENT_INTEGRITY overlay (OVL-AI-001, OVL-AI-002); Orientation Mandate section added; AGENT_CONTRACT Admin Checks (OVL-AC-ADM-001 through OVL-AC-ADM-004) added as existence-only stubs |
 | 3.1.0 | 2026-03-05 | OVL-AC-ADM-001 through OVL-AC-ADM-004 descriptions completed with full pass conditions per `IAA_AGENT_CONTRACT_AUDIT_STANDARD.md` §5 Step AC-07 alignment; version history table added (governance-liaison-isms session-050 — CS2 directive issue #966) |
+| 3.2.0 | 2026-03-07 | Added `INJECTION_AUDIT_TRAIL` overlay with `OVL-INJ-001` (Injection Audit Trail mandatory PREHANDOVER check), `OVL-INJ-ADM-001` (pre-brief non-empty), `OVL-INJ-ADM-002` (pre-brief wave reference match); documented audit trail signature strings from `iaa-prebrief-inject.yml`; linked with CodexAdvisor gate AGCFPP-001 (CodexAdvisor-agent — CS2 directive issue [CodexAdvisor] Add OVL-INJ-001) |
 
 ---
 

@@ -123,6 +123,14 @@ T-SRAF-GOV-001 completion (PREHANDOVER proof + session memory)
 
 # Wave Current Tasks — foreman-v2-agent
 
+**Wave**: Wave OVL-INJ — Add OVL-INJ-001 Injection Audit Trail check to IAA PREHANDOVER canon
+**Session**: session-waveOVLINJ-20260307
+**Date**: 2026-03-07
+**Issue**: [CodexAdvisor] Add OVL-INJ-001: Injection Audit Trail check to IAA PREHANDOVER canon
+**Branch**: copilot/add-injection-audit-trail-check
+**CS2 Authorization**: Issue opened and assigned to CodexAdvisor by @APGI-cmy directly
+**Protocol Reference**: IAA_PRE_BRIEF_PROTOCOL.md v1.1.0 §Trigger
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-waveOVLINJ-20260307.md` — COMPLETED
 **Wave**: InjAudit — New Workflow: injection-audit-report.yml
 **Session**: session-InjAudit-20260307
 **Date**: 2026-03-07
@@ -160,6 +168,20 @@ Root causes per issue:
 
 ---
 
+**Governance Change**: Add mandatory PREHANDOVER check `OVL-INJ-001: Injection Audit Trail`
+to the IAA canon and category overlays.
+
+**Scope**:
+1. A new `INJECTION_AUDIT_TRAIL` overlay section added to `iaa-category-overlays.md`
+   (containing `OVL-INJ-001`) — requires that an injection audit trail (posted via the
+   audit workflow) is present before the IAA issues a token at handover.
+2. `INDEPENDENT_ASSURANCE_AGENT_CANON.md` updated to reference the new overlay and link
+   with CodexAdvisor gate `AGCFPP-001`.
+3. `CANON_INVENTORY.json` updated with refreshed hashes for modified canon files.
+4. IAA knowledge `index.md` version bumped to reflect updated `iaa-category-overlays.md`.
+
+**IAA Trigger Categories**: CANON_GOVERNANCE + KNOWLEDGE_GOVERNANCE (MIXED)
+**IAA Phase Mode**: PHASE_B_BLOCKING
 ## Architecture: Correct audit_logs Schema
 
 **Actual audit_logs columns** (from migration `20260308000001_audit_logs_table.sql`):
@@ -181,6 +203,12 @@ Root causes per issue:
 
 ## Task Registry
 
+| # | Task ID | Task | Builder | Status | PR / Evidence |
+|---|---------|------|---------|--------|---------------|
+| 1 | T-OVLINJ-001 | Add `OVL-INJ-001` overlay + `INJECTION_AUDIT_TRAIL` section to `iaa-category-overlays.md` v3.1.0→v3.2.0 | CodexAdvisor-agent | 🔴 PENDING | This PR |
+| 2 | T-OVLINJ-002 | Update `INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.3.0→v1.4.0 — add §INJECTION_AUDIT_TRAIL mandatory PREHANDOVER check; link with AGCFPP-001 | CodexAdvisor-agent | 🔴 PENDING | This PR |
+| 3 | T-OVLINJ-003 | Bump IAA knowledge `index.md` v2.6.0→v2.7.0 — reflect updated `iaa-category-overlays.md` version | CodexAdvisor-agent | 🔴 PENDING | This PR |
+| 4 | T-OVLINJ-004 | Update `governance/CANON_INVENTORY.json` — refresh hashes for `INDEPENDENT_ASSURANCE_AGENT_CANON.md` | CodexAdvisor-agent | 🔴 PENDING | This PR |
 | Task ID | Assigned To | Description | Status |
 |---------|-------------|-------------|--------|
 | T-ALCF-QA-001 | qa-builder | Define RED gate tests for column fix: (a) INSERT uses correct columns (organisation_id, created_by, NOT resource_type/resource_id/user_id); (b) SELECT does not include resource_id; (c) UploadedDocument interface has no resource_id field | 🔴 NOT STARTED |
@@ -303,6 +331,7 @@ T-WUF-GOV-001 (foreman: governance closure)
 
 | PR # | Batch | Token | Date |
 |------|-------|-------|------|
+| — | Wave OVL-INJ | PENDING | — |
 | — | T-INJAUDIT-CI-001 | PENDING | — |
 ## Acceptance Criteria
 
@@ -366,6 +395,13 @@ to close the OPOJD recovery loop. CS2 authorization: "Please finish this job" di
 
 ## Wave Completion Gate
 
+- [ ] T-OVLINJ-001: iaa-category-overlays.md v3.2.0 committed with OVL-INJ-001 section
+- [ ] T-OVLINJ-002: INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.4.0 committed
+- [ ] T-OVLINJ-003: IAA knowledge index.md v2.7.0 committed
+- [ ] T-OVLINJ-004: CANON_INVENTORY.json updated and committed
+- [ ] IAA Pre-Brief artifact exists at `.agent-admin/assurance/iaa-prebrief-waveOVLINJ-20260307.md`
+- [ ] IAA ASSURANCE-TOKEN received for this PR
+- [ ] CS2 notified for merge approval
 - [ ] T-INJAUDIT-CI-001 complete — `injection-audit-report.yml` workflow created and validated
 - [ ] IAA ASSURANCE-TOKEN received for this PR
 - [ ] Session memory written
