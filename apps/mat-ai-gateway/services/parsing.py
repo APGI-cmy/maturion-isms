@@ -12,6 +12,7 @@ Wave: 15 — Post-Delivery Oversight Remediation (T-W15-IMPL-001)
 from __future__ import annotations
 
 import io
+import json
 import logging
 import os
 import re
@@ -220,7 +221,6 @@ def _call_gpt4_turbo(document_text: str) -> dict[str, Any]:
         temperature=0.1,
     )
 
-    import json
     return json.loads(response.choices[0].message.content or "{}")
 
 
