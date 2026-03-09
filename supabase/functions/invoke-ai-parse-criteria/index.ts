@@ -12,6 +12,10 @@
  *
  * Security: SSRF mitigated — file path is storage-internal only; no external URL fetch.
  *   AI_GATEWAY_URL is env-var-only, validated to be a known internal URL pattern.
+ *
+ * Hotfix (issue #1019): Restructured to fire-and-forget async pattern using
+ *   EdgeRuntime.waitUntil() to prevent EarlyDrop termination on Supabase free plan.
+ *   Fast path returns 202 Accepted immediately; AI Gateway call runs in background.
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
@@ -54,82 +58,49 @@ function detectLdcsPattern(documentText: string): boolean {
   return hasNumberedHierarchy || hasLdcsMarker;
 }
 
-Deno.serve(async (req: Request): Promise<Response> => {
-  // CORS preflight
-  if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-client-info, apikey',
-      },
-    });
-  }
+// ── Background parse: domain/MPS/criteria types ───────────────────────────────
 
-  // T-W15R-API-001: Health check endpoint — returns 200 for deployment verification
-  const url = new URL(req.url);
-  if (req.method === 'GET' && url.pathname.endsWith('/health')) {
-    return new Response(
-      JSON.stringify({ status: 'healthy', function: 'invoke-ai-parse-criteria' }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } },
-    );
-  }
+interface ParsedDomain {
+  name: string;
+  description?: string;
+}
 
-  if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
+interface ParsedMps {
+  domain_name: string;
+  name: string;
+  number: string;
+  description?: string;
+}
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-  let auditId: string | undefined;
-  let filePath: string | undefined;
-  let userId: string | undefined;
+interface ParsedCriterion {
+  mps_number: string;
+  number: string;
+  title?: string;
+  description?: string;
+  source_anchor?: string;
+}
 
+// ── Background parse task ──────────────────────────────────────────────────────
+// Dispatched via EdgeRuntime.waitUntil() — runs after 202 is returned to the caller.
+// Performs the long-running AI Gateway call and all DB write-back operations.
+
+interface BackgroundParseArgs {
+  // deno-lint-ignore no-explicit-any
+  supabase: any;
+  auditId: string;
+  filePath: string;
+  organisationId: string;
+  userId: string | undefined;
+}
+
+async function backgroundParse({
+  supabase,
+  auditId,
+  filePath,
+  organisationId,
+  userId,
+}: BackgroundParseArgs): Promise<void> {
   try {
-    // Validate request body
-    const body = await req.json().catch(() => ({}));
-    auditId = body.auditId;
-    filePath = body.filePath;
-
-    // FR-103: structured error when required parameter is absent
-    if (!filePath) {
-      return new Response(
-        JSON.stringify({ error: 'filePath is required', code: 'MISSING_FILE_PATH' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } },
-      );
-    }
-
-    if (!auditId) {
-      return new Response(
-        JSON.stringify({ error: 'auditId is required', code: 'MISSING_AUDIT_ID' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } },
-      );
-    }
-
-    // Resolve organisation_id from the audit record — required for all inserts
-    const { data: auditData, error: auditError } = await supabase
-      .from('audits')
-      .select('organisation_id')
-      .eq('id', auditId)
-      .single();
-
-    if (auditError || !auditData?.organisation_id) {
-      throw new Error(
-        `Failed to resolve organisation_id for audit ${auditId}: ${auditError?.message ?? 'audit not found'}`,
-      );
-    }
-
-    const organisationId = auditData.organisation_id;
-
-    // Resolve caller identity for audit trail
-    const authHeader = req.headers.get('Authorization') ?? '';
-    if (authHeader.startsWith('Bearer ')) {
-      const { data: { user } } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
-      userId = user?.id;
-    }
-
     // Invoke AI Gateway DocumentParser (skip if AI_GATEWAY_URL is not configured)
     let parseResult: Record<string, unknown> = {};
     if (AI_GATEWAY_URL) {
@@ -167,16 +138,10 @@ Deno.serve(async (req: Request): Promise<Response> => {
     }
 
     // Extract structured hierarchy from parse result
-    const domains: Array<{ name: string; description?: string }> = parseResult.domains ?? [];
-    const mpsList: Array<{ domain_name: string; name: string; number: string; description?: string }> =
+    const domains: ParsedDomain[] = parseResult.domains ?? [];
+    const mpsList: ParsedMps[] =
       parseResult.mini_performance_standards ?? [];
-    const criteriaList: Array<{
-      mps_number: string;
-      number: string;
-      title?: string;
-      description?: string;
-      source_anchor?: string;
-    }> = parseResult.criteria ?? [];
+    const criteriaList: ParsedCriterion[] = parseResult.criteria ?? [];
 
     const needsHumanReview: boolean = (parseResult.needs_human_review as boolean) ?? false;
     const isLdcsDocument: boolean =
@@ -184,7 +149,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
     // ── Handle empty parse results gracefully (architecture §4.2) ──────────────
     // If the AI returned zero domains (e.g. gateway unreachable or not configured),
-    // skip all DB inserts and return a successful zero-count response.
+    // skip all DB inserts and update status to pending_review.
     if (domains.length === 0) {
       const { data: emptyUpdatedRows, error: emptyStatusError } = await supabase
         .from('criteria_documents')
@@ -201,10 +166,10 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
       await supabase.from('audit_logs').insert({
         audit_id: auditId,
-        user_id: userId ?? null,
+        organisation_id: organisationId,
         action: 'criteria_parsed',
-        resource_type: 'criteria_document',
-        resource_id: filePath,
+        file_path: filePath,
+        created_by: userId ?? null,
         details: {
           file_path: filePath,
           domains_inserted: 0,
@@ -217,17 +182,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
         },
       });
 
-      return new Response(
-        JSON.stringify({
-          success: true,
-          domains_inserted: 0,
-          mps_inserted: 0,
-          criteria_inserted: 0,
-          needs_human_review: needsHumanReview,
-          ldcs_document: isLdcsDocument,
-        }),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
+      return;
     }
 
     // TODO(T-W15-TXN): Architecture §4.4 requires all Domain/MPS/criteria inserts to run in a
@@ -242,7 +197,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
     const { data: insertedDomains, error: domainsError } = await supabase
       .from('domains')
       .upsert(
-        domains.map((d, idx) => ({
+        domains.map((d: ParsedDomain, idx: number) => ({
           audit_id: auditId,
           organisation_id: organisationId,
           number: idx + 1,           // INTEGER, 1-based sequential
@@ -258,23 +213,22 @@ Deno.serve(async (req: Request): Promise<Response> => {
     }
 
     const domainMap = new Map<string, { id: string; number: number }>(
-      (insertedDomains ?? []).map(d => [d.name, { id: d.id, number: d.number }]),
-    );
+      (insertedDomains ?? []).map((d: { id: string; name: string; number: number }) => [d.name, { id: d.id, number: d.number }]),    );
 
     // 2. Upsert mini_performance_standards — includes audit_id, organisation_id (both NOT NULL)
     //    onConflict: 'audit_id,number' handles retries without 23505 uniqueness errors
-    const validMpsList = mpsList.filter(m => domainMap.has(m.domain_name));
+    const validMpsList = mpsList.filter((m: ParsedMps) => domainMap.has(m.domain_name));
     if (validMpsList.length < mpsList.length) {
       const missingDomains = mpsList
-        .filter(m => !domainMap.has(m.domain_name))
-        .map(m => m.domain_name);
+        .filter((m: ParsedMps) => !domainMap.has(m.domain_name))
+        .map((m: ParsedMps) => m.domain_name);
       console.warn(`[invoke-ai-parse-criteria] Skipping MPS with unresolved domain references: ${missingDomains.join(', ')}`);
     }
 
     const { data: insertedMps, error: mpsError } = await supabase
       .from('mini_performance_standards')
       .upsert(
-        validMpsList.map((m, idx) => ({
+        validMpsList.map((m: ParsedMps, idx: number) => ({
           domain_id: domainMap.get(m.domain_name)!.id,
           audit_id: auditId,
           organisation_id: organisationId,
@@ -299,7 +253,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
       );
     }
     const mpsMap = new Map<string, { id: string; domain_id: string }>(
-      validMpsList.map((m, idx) => [
+      validMpsList.map((m: ParsedMps, idx: number) => [
         m.number,
         {
           id: safeMps[idx].id,
@@ -311,18 +265,18 @@ Deno.serve(async (req: Request): Promise<Response> => {
     // 3. Upsert criteria — includes domain_id, organisation_id (both NOT NULL),
     //    number as INTEGER, description (maps title + description), guidance from source_anchor
     //    onConflict: 'audit_id,number' handles retries without 23505 uniqueness errors
-    const validCriteriaList = criteriaList.filter(c => mpsMap.has(c.mps_number));
+    const validCriteriaList = criteriaList.filter((c: ParsedCriterion) => mpsMap.has(c.mps_number));
     if (validCriteriaList.length < criteriaList.length) {
       const missingMps = criteriaList
-        .filter(c => !mpsMap.has(c.mps_number))
-        .map(c => c.mps_number);
+        .filter((c: ParsedCriterion) => !mpsMap.has(c.mps_number))
+        .map((c: ParsedCriterion) => c.mps_number);
       console.warn(`[invoke-ai-parse-criteria] Skipping criteria with unresolved MPS references: ${[...new Set(missingMps)].join(', ')}`);
     }
 
     const { error: criteriaError } = await supabase
       .from('criteria')
       .upsert(
-        validCriteriaList.map((c, idx) => {
+        validCriteriaList.map((c: ParsedCriterion, idx: number) => {
           const mpsEntry = mpsMap.get(c.mps_number);
           return {
             mps_id: mpsEntry?.id,
@@ -360,10 +314,10 @@ Deno.serve(async (req: Request): Promise<Response> => {
     // 5. Audit trail: log parsing outcome to audit_logs
     await supabase.from('audit_logs').insert({
       audit_id: auditId,
-      user_id: userId ?? null,
+      organisation_id: organisationId,
       action: 'criteria_parsed',
-      resource_type: 'criteria_document',
-      resource_id: filePath,
+      file_path: filePath,
+      created_by: userId ?? null,
       details: {
         file_path: filePath,
         domains_inserted: insertedDomains?.length ?? 0,
@@ -375,35 +329,22 @@ Deno.serve(async (req: Request): Promise<Response> => {
         outcome: 'success',
       },
     });
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        domains_inserted: insertedDomains?.length ?? 0,
-        mps_inserted: insertedMps?.length ?? 0,
-        criteria_inserted: validCriteriaList.length,
-        needs_human_review: needsHumanReview,
-        ldcs_document: isLdcsDocument,
-      }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } },
-    );
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
+    console.error(`[invoke-ai-parse-criteria] Background parse failed: ${message}`);
 
     // Update criteria_documents.status → parse_failed (architecture §4.2)
     try {
-      if (auditId && filePath) {
-        const { data: failedStatusRows, error: failedStatusError } = await supabase
-          .from('criteria_documents')
-          .update({ status: 'parse_failed' })
-          .eq('audit_id', auditId)
-          .eq('file_path', filePath)
-          .select('id');
-        if (failedStatusError) {
-          console.warn(`[invoke-ai-parse-criteria] Failed to update criteria_documents status to parse_failed: ${failedStatusError.message}`);
-        } else if (!failedStatusRows || failedStatusRows.length === 0) {
-          console.warn(`[invoke-ai-parse-criteria] WARN: criteria_documents row not found for audit_id=${auditId} file_path=${filePath} — status not updated`);
-        }
+      const { data: failedStatusRows, error: failedStatusError } = await supabase
+        .from('criteria_documents')
+        .update({ status: 'parse_failed' })
+        .eq('audit_id', auditId)
+        .eq('file_path', filePath)
+        .select('id');
+      if (failedStatusError) {
+        console.warn(`[invoke-ai-parse-criteria] Failed to update criteria_documents status to parse_failed: ${failedStatusError.message}`);
+      } else if (!failedStatusRows || failedStatusRows.length === 0) {
+        console.warn(`[invoke-ai-parse-criteria] WARN: criteria_documents row not found for audit_id=${auditId} file_path=${filePath} — status not updated`);
       }
     } catch {
       // Status update failure must not mask original error
@@ -411,23 +352,123 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
     // Audit trail: log failure
     try {
-      if (auditId) {
-        await supabase.from('audit_logs').insert({
-          audit_id: auditId,
-          user_id: userId ?? null,
-          action: 'criteria_parse_failed',
-          resource_type: 'criteria_document',
-          resource_id: filePath ?? null,
-          details: { error: message, outcome: 'failure' },
-        });
-      }
+      await supabase.from('audit_logs').insert({
+        audit_id: auditId,
+        organisation_id: organisationId,
+        action: 'criteria_parse_failed',
+        file_path: filePath,
+        created_by: userId ?? null,
+        details: { error: message, outcome: 'failure' },
+      });
     } catch {
       // Audit logging failure must not mask original error
     }
+  }
+}
 
+Deno.serve(async (req: Request): Promise<Response> => {
+  // CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response(null, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-client-info, apikey',
+      },
+    });
+  }
+
+  // T-W15R-API-001: Health check endpoint — returns 200 for deployment verification
+  const url = new URL(req.url);
+  if (req.method === 'GET' && url.pathname.endsWith('/health')) {
     return new Response(
-      JSON.stringify({ error: message, code: 'PARSE_FAILED' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } },
+      JSON.stringify({ status: 'healthy', function: 'invoke-ai-parse-criteria' }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
     );
   }
+
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  // ── FAST SYNCHRONOUS PATH — must complete before returning response ──────────
+  // All operations here must be fast (<200ms). The AI Gateway call is dispatched
+  // via EdgeRuntime.waitUntil() and runs after the 202 response is sent.
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+  // Validate request body
+  const body = await req.json().catch(() => ({}));
+  const auditId: string | undefined = body.auditId;
+  const filePath: string | undefined = body.filePath;
+
+  // FR-103: structured error when required parameter is absent
+  if (!filePath) {
+    return new Response(
+      JSON.stringify({ error: 'filePath is required', code: 'MISSING_FILE_PATH' }),
+      { status: 400, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } },
+    );
+  }
+
+  if (!auditId) {
+    return new Response(
+      JSON.stringify({ error: 'auditId is required', code: 'MISSING_AUDIT_ID' }),
+      { status: 400, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } },
+    );
+  }
+
+  // Resolve organisation_id from the audit record — required for all inserts
+  const { data: auditData, error: auditError } = await supabase
+    .from('audits')
+    .select('organisation_id')
+    .eq('id', auditId)
+    .single();
+
+  if (auditError || !auditData?.organisation_id) {
+    const message = `Failed to resolve organisation_id for audit ${auditId}: ${auditError?.message ?? 'audit not found'}`;
+    return new Response(
+      JSON.stringify({ error: message, code: 'AUDIT_NOT_FOUND' }),
+      { status: 400, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } },
+    );
+  }
+
+  const organisationId: string = auditData.organisation_id;
+
+  // Resolve caller identity for audit trail
+  let userId: string | undefined;
+  const authHeader = req.headers.get('Authorization') ?? '';
+  if (authHeader.startsWith('Bearer ')) {
+    const { data: { user } } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+    userId = user?.id;
+  }
+
+  // Write status = 'processing' to criteria_documents so the frontend can poll it
+  const { error: processingStatusError } = await supabase
+    .from('criteria_documents')
+    .update({ status: 'processing' })
+    .eq('audit_id', auditId)
+    .eq('file_path', filePath);
+
+  if (processingStatusError) {
+    console.warn(`[invoke-ai-parse-criteria] Failed to set criteria_documents status=processing: ${processingStatusError.message}`);
+  }
+
+  // Dispatch background work — runs after 202 is sent; not blocked by EarlyDrop
+  // deno-lint-ignore no-explicit-any
+  (EdgeRuntime as any).waitUntil(backgroundParse({
+    supabase,
+    auditId,
+    filePath,
+    organisationId,
+    userId,
+  }));
+
+  // Return 202 IMMEDIATELY — the AI Gateway call runs in the background
+  return new Response(
+    JSON.stringify({ accepted: true, status: 'processing' }),
+    { status: 202, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } },
+  );
 });
