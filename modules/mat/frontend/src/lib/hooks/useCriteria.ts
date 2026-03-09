@@ -200,7 +200,7 @@ export function useTriggerAIParsing() {
   return useMutation<void, Error, { auditId: string; filePath: string }>({
     mutationFn: async ({ auditId, filePath }) => {
       // Refresh session before invoking Edge Function to ensure Authorization header is valid
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      const { data: { session }, error: sessionError } = await supabase.auth.refreshSession();
       if (sessionError || !session) {
         throw new Error('Authentication required. Please sign in again.');
       }
