@@ -41,6 +41,7 @@ LDCS_MARKERS = ["LDCS", "Local Delivery Compliance Standard", "mini performance 
 
 GPT_MODEL = "gpt-4-turbo"
 CONFIDENCE_REVIEW_THRESHOLD = 0.75  # flag needs_human_review when below this
+MAX_DOCUMENT_CHARS = 60000  # GPT-4 Turbo supports ~480K chars; 60K covers a full LDCS document
 
 
 # ── Request / Response models ───────────────────────────────────────────────────
@@ -209,7 +210,7 @@ def _call_gpt4_turbo(document_text: str) -> dict[str, Any]:
             {"role": "system", "content": _SYSTEM_PROMPT},
             {
                 "role": "user",
-                "content": f"Extract the criteria hierarchy from this compliance document:\n\n{document_text[:12000]}",
+                "content": f"Extract the criteria hierarchy from this compliance document:\n\n{document_text[:MAX_DOCUMENT_CHARS]}",
             },
         ],
         response_format={"type": "json_object"},
