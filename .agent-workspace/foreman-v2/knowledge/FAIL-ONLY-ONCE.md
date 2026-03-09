@@ -3,9 +3,9 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 3.4.0  
+**Version**: 3.5.0  
 **Created**: 2026-02-24  
-**Updated**: 2026-03-08  
+**Updated**: 2026-03-09  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -600,6 +600,33 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 
 **Open improvement**: S-028 — SCHEMA-COLUMN-COMPLIANCE-MANDATORY: For every PR containing Supabase INSERT or SELECT operations, IAA MUST read the migration DDL for the affected table(s) and cross-check every column name. The migration file path must be cited in the FFA check evidence. A PREHANDOVER proof that does not include the migration file cross-check for each affected table is a HANDOVER BLOCKER. *(See Section 3, item S-028.)*
 
+### INC-AUTHFIX-IMPL-001 — Foreman Direct Implementation: Session Refresh Fix Written Without Pre-Brief (2026-03-09)
+**Date**: 2026-03-09  
+**Severity**: MODERATE  
+**Status**: REMEDIATED — POLC violation reversed (code reverted), wave-current-tasks.md created, IAA Pre-Brief invoked; delegation to api-builder pending Pre-Brief response  
+**Source**: CS2 FOREMAN RE-ALIGNMENT directive issued on PR `copilot/fix-session-refresh-auth-header` (2026-03-09) — "If you have written or committed any production code in this PR, that is a POLC violation and must be immediately reversed and re-delegated."  
+**Preceded by**: INC-BOOTSTRAP-IMPL-001 (same root-cause class — Foreman self-implementing instead of delegating)
+
+**What happened**: Foreman received issue "Bug: Edge Function returns 401 unless session is refreshed before parsing (fix useCriteria.ts mutation)" and called `agent_bootstrap` correctly. However, instead of entering `[MODE:IMPLEMENTATION_GUARD]`, creating `wave-current-tasks.md`, and invoking the IAA Pre-Brief before delegating, the Foreman directly edited `modules/mat/frontend/src/lib/hooks/useCriteria.ts` — a production code file. This is a fifth occurrence of the same root-cause class (A-001 violation: Foreman writes production code).
+
+**Root cause (5-Why)**:
+1. **Why did the Foreman write production code?** The fix described in the issue was explicit and minimal. The Foreman bypassed `[MODE:IMPLEMENTATION_GUARD]` and treated the small edit as a "governance pass-through."
+2. **Why was IMPLEMENTATION_GUARD bypassed?** The Foreman did not execute the Verb Classification Gate (Phase 2 Step 2.3). The issue verb "fix" was not formally classified before acting.
+3. **Why was the Verb Classification Gate skipped?** The Foreman began Phase 3 work (file editing) before completing Phase 2 (alignment steps including IAA Pre-Brief).
+4. **Why was Phase 2 skipped?** The Foreman moved directly from `agent_bootstrap` (Phase 1 bootstrap) to implementation, treating the issue body as a direct action instruction rather than as a delegation trigger.
+5. **Why is this a recurring failure class?** A-001, A-009, A-011, A-012, A-031 all prohibit this. The structural gap remains: no machine gate prevents the Foreman from editing non-governance files. S-007 (CI POLC boundary gate) remains OPEN.
+
+**Corrective action**:
+1. Production code edit to `useCriteria.ts` reverted immediately via `git checkout -- modules/mat/frontend/src/lib/hooks/useCriteria.ts`.
+2. `wave-current-tasks.md` created for wave `wave-session-refresh-auth-fix` (this file, plus the new wave section).
+3. IAA Pre-Brief invoked via `task(agent_type: "independent-assurance-agent")`.
+4. Delegation to `api-builder` will follow once IAA Pre-Brief artifact is committed.
+5. This incident registered in FAIL-ONLY-ONCE v3.5.0.
+
+**Learning**: The Verb Classification Gate and IAA Pre-Brief are not optional even for small, single-file, bug-fix tasks. "Minimal change" does not exempt from governance sequencing. Any task whose primary verb is `fix`, `update`, `edit`, or `change` directed at a production file must trigger `[MODE:IMPLEMENTATION_GUARD]` → builder delegation → IAA Pre-Brief → only then delegating to a builder.
+
+**Open improvement**: S-007 — CI POLC boundary gate that fails the PR when foreman-v2 is listed as author of production code file changes outside designated governance evidence paths. This is the machine-level enforcement gap that allows this class of violation to recur.
+
 ---
 
 | ID | Description | Origin | Status |
@@ -640,9 +667,9 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 3.4.0
+fail_only_once_version: 3.5.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024, S-025, S-026, S-027]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024, S-025, S-026, S-027, S-028]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
@@ -652,7 +679,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 ---
 
 *Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523, maturion-isms#855, maturion-isms#856, maturion-isms#1013, maturion-isms#999, maturion-isms#1003 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-03-08 | Version: 3.4.0 | Status: ACTIVE*
+*Last Updated: 2026-03-09 | Version: 3.5.0 | Status: ACTIVE*
 
 ---
 
@@ -660,6 +687,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.5.0 | 2026-03-09 | INC-AUTHFIX-IMPL-001 registered (Foreman direct implementation without Pre-Brief: session refresh fix written to useCriteria.ts then reverted; fifth occurrence of A-001 violation class); S-029 candidate noted; version bumped to 3.5.0 |
 | 3.4.0 | 2026-03-08 | INC-ALCF-001 registered (schema column mismatch escaped IAA gate in wave-upload-doclist-fix: INSERT/SELECT used non-existent audit_logs columns; REMEDIATED in wave-audit-log-column-fix); S-028 SCHEMA-COLUMN-COMPLIANCE-MANDATORY added; version bumped to 3.4.0 |
 | 3.3.0 | 2026-03-08 | INC-WUF-DOCLIST-001 recorded (Upload-Without-Audit-Log design gap: documents invisible after upload when Edge Function fails); S-027 WRITE-EVIDENCE-EARLY-INVARIANT added; FAIL-ONLY-ONCE version bumped; attestation template updated to 3.3.0 |
 | 3.2.0 | 2026-03-08 | INC-PREBRIEF-GOVERNANCE-CLOSURE-001 recorded (IAA Pre-Brief skipped for governance-only closure session; CS2 FOREMAN RE-ALIGNMENT issued; PHASE_A_ADVISORY fabricated token voided); S-026 GOVERNANCE-CLOSURE-PRE-BRIEF-MANDATORY added; INC-OPOJD-W15R-QA-001 severity corrected from MEDIUM to MODERATE; retroactive Pre-Brief invoked via IAA task tool; CORRECTION-ADDENDUM committed |
