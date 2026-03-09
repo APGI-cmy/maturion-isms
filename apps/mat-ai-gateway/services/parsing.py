@@ -130,7 +130,6 @@ def _build_safe_fetch_url(document_url: str) -> str:
         raise ValueError("SUPABASE_STORAGE_URL environment variable is not configured")
     return "{}/{}{}".format(SUPABASE_STORAGE_URL, path, query)
 
-
 def _extract_document_text(document_url: str) -> tuple[str, str]:
     """
     Download document from Supabase Storage and extract text.
@@ -180,7 +179,7 @@ _SYSTEM_PROMPT_LINES = [
     "Return a JSON object with this schema:",
     "{",
     '  "confidence_score": <float 0.0-1.0>,',
-    '  "domains": [{"name": "...", "sort_order": <int>}],' + ",
+    '  "domains": [{"name": "...", "sort_order": <int>}],',
     '  "mini_performance_standards": [',
     '    {"domain_name": "...", "name": "...", "number": "...", "sort_order": <int>}',
     "  ],",
@@ -190,7 +189,146 @@ _SYSTEM_PROMPT_LINES = [
     '      "number": "...",',
     '      "title": "...",',
     '      "description": "...",',
-    '      "source_anchor": "<page or section reference in source document>"',
+    '      "source_anchor": "<page or section reference in source document>"
     "    }",
     "  ]",
     "}",
+    "",
+    "source_anchor must reference the section or page number in the source document for traceability.",
+]
+_SYSTEM_PROMPT = "\n".join(_SYSTEM_PROMPT_LINES)
+
+
+def _call_gpt4_turbo(document_text: str) -> dict[str, Any]:
+    """Call GPT-4 Turbo to extract structured criteria from document text."""
+    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+    response = client.chat.completions.create(
+        model=GPT_MODEL,
+        messages=[
+            {"role": "system", "content": _SYSTEM_PROMPT},
+            {
+                "role": "user",
+                "content": (
+                    "Extract the criteria hierarchy from this compliance document:\n\n"
+                    + document_text[:MAX_DOCUMENT_CHARS]
+                ),
+            },
+        ],
+        response_format={"type": "json_object"},
+        temperature=0.1,
+    )
+
+    return json.loads(response.choices[0].message.content or "{}")["document"]
+
+# -- FastAPI route --------------------------------------------------------------
+
+@router.post("/parse", response_model=ParseResponse)
+async def parse_document(request: ParseRequest) -> ParseResponse:
+    """
+    Parse a compliance document and return structured Domain -> MPS -> Criteria hierarchy.
+
+    Security: document_url must be a signed Supabase Storage URL; external URLs are
+    rejected by the invoking Edge Function (SSRF mitigation at the Edge Function layer).
+    """
+    try:
+        document_text, _doc_format = _extract_document_text(request.document_url)
+        ldcs_detected = _detect_ldcs_pattern(document_text)
+        extracted = _call_gpt4_turbo(document_text)
+
+        confidence_score: float = float(extracted.get("confidence_score", 0.5))
+        needs_human_review: bool = confidence_score < CONFIDENCE_REVIEW_THRESHOLD
+
+        domains = [DomainResult(**d) for d in extracted.get("domains", [])]
+        mps_list = [MpsResult(**m) for m in extracted.get("mini_performance_standards", [])]
+        criteria_list = [CriterionResult(**c) for c in extracted.get("criteria", [])]
+
+        source_anchor = criteria_list[0].source_anchor if criteria_list else "document root"
+
+        logger.info(
+            "Parsed document for tenant=%s ldcs=%s criteria=%d needs_review=%s",
+            request.tenant_id,
+            ldcs_detected,
+            len(criteria_list),
+            needs_human_review,
+        )
+
+        return ParseResponse(
+            status="completed",
+            domains=domains,
+            mini_performance_standards=mps_list,
+            criteria=criteria_list,
+            needs_human_review=needs_human_review,
+            ldcs_detected=ldcs_detected,
+            confidence_score=confidence_score,
+            source_anchor=source_anchor,
+            document_url=request.document_url,
+            tenant_id=request.tenant_id,
+        )
+
+    except Exception as exc:
+        logger.exception("Document parsing failed for tenant=%s", request.tenant_id)
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+class DocumentParser:
+    """
+    Programmatic interface to DocumentParser -- wraps the /parse endpoint logic
+    for use outside of the HTTP layer (e.g. batch processing, tests).
+
+    Architecture reference: modules/mat/02-architecture/system-architecture.md s4
+    """
+
+    def parse(self, document_url: str, tenant_id: str) -> dict:
+        """
+        Parse a document from document_url and return structured criteria JSON.
+
+        Parameters
+        ----------
+        document_url:
+            Signed URL of the document to parse (PDF or DOCX).
+        tenant_id:
+            Tenant scoping key for audit trail and multi-tenancy isolation.
+
+        Returns
+        -------
+        dict
+            Structured result with domains, mini_performance_standards, criteria,
+            source_anchor, needs_human_review, ldcs_detected, and confidence_score.
+        """
+        try:
+            document_text, _fmt = _extract_document_text(document_url)
+            ldcs_detected = _detect_ldcs_pattern(document_text)
+            extracted = _call_gpt4_turbo(document_text)
+
+            confidence_score = float(extracted.get("confidence_score", 0.5))
+            needs_human_review = confidence_score < CONFIDENCE_REVIEW_THRESHOLD
+
+            source_anchor = (
+                extracted.get("criteria", [{}])[0].get("source_anchor", "document root")
+                if extracted.get("criteria")
+                else "document root"
+            )
+
+            return {
+                "status": "completed",
+                "domains": extracted.get("domains", []),
+                "mini_performance_standards": extracted.get("mini_performance_standards", []),
+                "criteria": extracted.get("criteria", []),
+                "needs_human_review": needs_human_review,
+                "ldcs_detected": ldcs_detected,
+                "confidence_score": confidence_score,
+                "source_anchor": source_anchor,
+                "document_url": document_url,
+                "tenant_id": tenant_id,
+            }
+        except Exception as exc:
+            logger.exception("DocumentParser.parse failed for tenant=%s", tenant_id)
+            return {
+                "status": "failed",
+                "error": str(exc),
+                "document_url": document_url,
+                "tenant_id": tenant_id,
+                "needs_human_review": True,
+                "source_anchor": "parse_failed",
+            }
