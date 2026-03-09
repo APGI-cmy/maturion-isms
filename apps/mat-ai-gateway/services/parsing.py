@@ -47,7 +47,6 @@ MAX_DOCUMENT_CHARS = 60000  # GPT-4 Turbo supports ~480K chars; 60K covers a ful
 
 # -- Request / Response models --------------------------------------------------
 
-
 class ParseRequest(BaseModel):
     """
     Request model for the /parse endpoint.
@@ -99,7 +98,9 @@ class ParseResponse(BaseModel):
 
 
 def _extract_text_from_pdf(content: bytes) -> str:
-    """Extract raw text from a PDF document using PyPDF2."""
+    """
+    Extract raw text from a PDF document using PyPDF2.
+    """
     reader = PdfReader(io.BytesIO(content))
     pages = []
     for page in reader.pages:
@@ -110,7 +111,9 @@ def _extract_text_from_pdf(content: bytes) -> str:
 
 
 def _extract_text_from_docx(content: bytes) -> str:
-    """Extract raw text from a DOCX document using python-docx."""
+    """
+    Extract raw text from a DOCX document using python-docx.
+    """
     doc = DocxDocument(io.BytesIO(content))
     return "\n".join(para.text for para in doc.paragraphs if para.text.strip())
 
@@ -160,7 +163,9 @@ def _extract_document_text(document_url: str) -> tuple[str, str]:
 
 
 def _detect_ldcs_pattern(text: str) -> bool:
-    """Detect whether the document text follows the LDCS numbered hierarchy."""
+    """
+    Detect whether the document text follows the LDCS numbered hierarchy.
+    """
     has_numbered_hierarchy = bool(LDCS_NUMBERED_HIERARCHY_PATTERN.search(text))
     has_ldcs_marker = any(marker.lower() in text.lower() for marker in LDCS_MARKERS)
     return has_numbered_hierarchy or has_ldcs_marker
@@ -178,7 +183,7 @@ _SYSTEM_PROMPT_LINES = [
     "Extract the full Domain -> MPS -> Criteria hierarchy from the document text.",
     "",
     "Return a JSON object with this schema:",
-    "{",  
+    "{",
     '  "confidence_score": <float 0.0-1.0>,',
     '  "domains": [{"name": "...", "sort_order": <int>}],',
     '  "mini_performance_standards": [',
@@ -190,7 +195,7 @@ _SYSTEM_PROMPT_LINES = [
     '      "number": "...",',
     '      "title": "...",',
     '      "description": "...",',
-    '      "source_anchor": "<page or section reference in source document>"',
+    '      "source_anchor": "<page or section reference in source document>"
     "    }",
     "  ]",
     "}",
@@ -201,7 +206,9 @@ _SYSTEM_PROMPT = "\n".join(_SYSTEM_PROMPT_LINES)
 
 
 def _call_gpt4_turbo(document_text: str) -> dict[str, Any]:
-    """Call GPT-4 Turbo to extract structured criteria from document text."""
+    """
+    Call GPT-4 Turbo to extract structured criteria from document text.
+    """
     client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
     response = client.chat.completions.create(
@@ -224,7 +231,6 @@ def _call_gpt4_turbo(document_text: str) -> dict[str, Any]:
 
 
 # -- FastAPI route --------------------------------------------------------------
-
 
 @router.post("/parse", response_model=ParseResponse)
 async def parse_document(request: ParseRequest) -> ParseResponse:
