@@ -3,12 +3,12 @@
 **Module**: MAT (Manual Audit Tool)
 **Artifact Type**: Technical Requirements Specification
 **Status**: COMPLETE
-**Version**: v1.9.0  
+**Version**: v2.0.0  
 **Owner**: Foreman (FM)  
-**Authority**: Derived from FRS v2.1.0 (`modules/mat/01-frs/functional-requirements.md`)
+**Authority**: Derived from FRS v2.2.0 (`modules/mat/01-frs/functional-requirements.md`)
 **Applies To**: MAT module within maturion-isms repository
 **Created**: 2026-02-13
-**Last Updated**: 2026-03-08
+**Last Updated**: 2026-03-09
 
 ---
 
@@ -1523,6 +1523,7 @@ This TRS is derived from the MAT FRS v1.5.0 (`modules/mat/01-frs/functional-requ
 **Traceability**: Complete FRS-to-TRS mapping available in `frs-to-trs-traceability.md`.
 
 **Change Log**:
+- v2.0.0 | 2026-03-09 | TR-103 through TR-110 added — completeness review gap traceability (wave-mat-gov-process). 8 new technical requirements covering: AI scoring Edge Function (TR-103, FR-104), report generation Edge Function (TR-104, FR-105), evidence collection page routing (TR-105, FR-106), feedback/recommendations UI (TR-106, FR-107), reports listing page (TR-107, FR-108), toast notification system (TR-108, FR-109), audit logging completeness (TR-109, FR-110), and scores/audit_scores RLS INSERT+UPDATE policies (TR-110, FR-111). TRS extended to 110 requirements. Derives from FRS v2.2.0.
 - v1.9.0 (2026-03-08): TR-037 (AI Document Parsing Pipeline) and related TRs (TR-019, TR-031) annotated as NOT YET VERIFIED IN PRODUCTION (INC-WAVE15-PARSE-001). Production gap confirmed by CS2 on 2026-03-08. Remediation via Wave 15R. Derives from FRS v2.1.0.
 - v1.8.0 (2026-03-04): Added TR-089 through TR-102 (Wave 14 gap waves — UX workflow, scoring, responsibility cascade). TRS extended to 102 requirements. Derives from FRS v1.9.0.
 - v1.7.0 (2026-03-04): Added TR-084 through TR-088 (Wave postbuild-fails-02 — Full RLS Remediation, GAP-006–GAP-013). All 5 requirements marked 🔴 NEEDS REMEDIATION. TRS extended to 88 requirements.
@@ -1988,6 +1989,197 @@ Technical implementation of the responsibility cascade:
 
 **Migration file**: Cascade view/function added to migration file alongside assignment tables (see TR-090, TR-092).
 **Test**: T-W14-UX-014
+
+---
+
+### TR-103: AI Scoring Edge Function (Deno Runtime)
+
+**Derives From**: FR-104  
+**Priority**: P1  
+**Status**: 🔴 OPEN — BLOCKED on TR-105 (AIMC scoring wiring) completing first
+
+Technical implementation of the AI criterion scoring Edge Function:
+
+1. Runtime: Deno (Supabase Edge Function environment); deployed to `supabase/functions/invoke-ai-score-criterion/`.
+2. Invocation: `supabase.functions.invoke('invoke-ai-score-criterion', { body: { audit_id: string, criteria_id: string } })` — called from the `useTriggerAIScoring()` hook in `ReviewTable`.
+3. AIMC routing: The function calls the AIMC `scoring` capability via the `@maturion/ai-centre` Gateway using `aimc.scoring.scoreCriterion({ audit_id, criteria_id, criteria_text, evidence_ids })`.
+4. Score persistence: On success, the function UPSERTS a row into the `scores` table with columns: `audit_id`, `criteria_id`, `organisation_id`, `maturity_level` (VARCHAR), `numeric_score` (NUMERIC), `gap_analysis` (JSONB — fields: `immediate: string[]`, `medium_term: string[]`, `long_term: string[]`), `created_by` (auth.uid()), `created_at`.
+5. Task tracking: The function writes a `score_tasks` row (or updates a `parse_tasks`-pattern equivalent) with `status = 'processing'` on start and `status = 'complete'` or `status = 'failed'` on completion, enabling frontend polling.
+6. Idempotency: Uses `ON CONFLICT (audit_id, criteria_id) DO UPDATE` to prevent duplicate score rows.
+7. Error handling: Returns a structured JSON error `{ error: string, code: string }` on failure; never returns a 200 with an empty body on error.
+
+**Constraints**:
+1. No direct AI provider calls (no OpenAI, Anthropic, etc.) — all AI calls MUST route through the AIMC Gateway.
+2. The `gap_analysis` JSONB MUST be written even if empty arrays — a NULL `gap_analysis` column is not acceptable.
+3. Auth: The Edge Function MUST verify the caller is authenticated (JWT present and valid) before processing.
+
+**Migration file**: If a new `score_tasks` table is required, a migration must be created; otherwise the existing `parse_tasks` pattern is reused.
+**Test**: T-W16.3-API-001, T-W16.3-API-002
+
+---
+
+### TR-104: Report Generation Edge Function (Deno Runtime)
+
+**Derives From**: FR-105  
+**Priority**: P1  
+**Status**: 🔴 OPEN — BLOCKED on TR-105 (AIMC reporting wiring) AND TR-103 (scoring complete)
+
+Technical implementation of the audit report generation Edge Function:
+
+1. Runtime: Deno (Supabase Edge Function environment); deployed to `supabase/functions/generate-audit-report/`.
+2. Invocation: `supabase.functions.invoke('generate-audit-report', { body: { audit_id: string } })` — called from the "Create Report" button handler.
+3. AIMC routing: The function calls the AIMC `reporting` capability via `aimc.reporting.generateAuditReport({ audit_id, domains_json, scores_json, evidence_summary })`.
+4. Storage: The generated report (PDF or HTML) is uploaded to the `reports` Supabase Storage bucket at path `{organisation_id}/{audit_id}/{uuid}.{ext}`.
+5. `audit_reports` row: After successful storage upload, INSERT a row with: `audit_id`, `organisation_id`, `storage_path`, `triggered_by` (auth.uid()), `generated_at` (now()), `status = 'final'`.
+6. Return value: The function returns a JSON object `{ signed_url: string, report_id: string }` where `signed_url` is a time-limited (24 h) Supabase Storage signed URL for immediate download.
+7. Failure handling: On AIMC or storage failure, sets `status = 'failed'` on the `audit_reports` row; returns structured error JSON; frontend surfaces a toast error.
+
+**Constraints**:
+1. No direct AI provider calls — all AI calls route through the AIMC Gateway.
+2. Signed URLs MUST have an expiry of ≤ 24 hours; clients MUST re-request via the `/reports` listing page to obtain a fresh URL after expiry.
+3. The function MUST gate on all non-excluded criteria having `status IN ('confirmed', 'overridden')` before generating the report; a 422 error is returned if the gating condition is not met.
+
+**Migration file**: `audit_reports` table migration may already exist (TR-099); confirm before creating a new one.
+**Test**: T-W16.4-API-001, T-W16.4-API-002
+
+---
+
+### TR-105: Evidence Collection Page Routing Fix
+
+**Derives From**: FR-106  
+**Priority**: P0  
+**Status**: 🔴 OPEN — immediately actionable; Next.js routing fix only
+
+Technical implementation of the evidence collection page routing fix:
+
+1. Scope: Next.js route fix only — no backend or schema changes.
+2. The file `modules/mat/frontend/src/pages/evidence.tsx` (or equivalent) MUST import and render `EvidenceCollection.tsx` from `modules/mat/frontend/src/components/EvidenceCollection.tsx` instead of the current stub component.
+3. The navigation link for "Evidence" in the main `Navigation.tsx` component MUST point to `/evidence` and must apply the active-link style class when the current route matches `/evidence` or `/evidence/*`.
+4. No props drilling required — `EvidenceCollection.tsx` reads `auditId` from the URL or from context (whichever pattern is used by the component).
+
+**Constraints**:
+1. The change MUST NOT modify `EvidenceCollection.tsx` itself — only the page route file.
+2. If `auditId` is required and not in the URL, the page MUST redirect to the audit selection flow rather than rendering with `auditId = undefined`.
+
+**Migration file**: None — frontend-only change.
+**Test**: T-W16.1-UI-001, T-W16.1-UI-002
+
+---
+
+### TR-106: Feedback/Recommendations UI Component
+
+**Derives From**: FR-107  
+**Priority**: P1  
+**Status**: 🔴 OPEN — immediately actionable once TR-103 delivers `gap_analysis` JSONB
+
+Technical implementation of the feedback and recommendations UI:
+
+1. New component `FeedbackRecommendations.tsx` (or equivalent) is added to `modules/mat/frontend/src/components/`.
+2. Data fetching: The component uses a `useGapAnalysis(auditId)` TanStack Query hook that SELECT from `scores` (`gap_analysis`, `criteria_id`) and `criteria_evaluations` (`next_level_guidance`, `criteria_id`) for the given `audit_id`.
+3. Render: Groups recommendations by Domain → MPS → Criteria hierarchy; for each criteria shows three accordions/sections: `immediate` actions, `medium_term` actions, `long_term` actions.
+4. `criteria_evaluations.next_level_guidance` is rendered beneath the gap analysis for each criterion if present.
+5. The component is accessible from a `/feedback` or `/recommendations` page route AND from an inline expandable panel in `ReviewTable.tsx`.
+6. All JSONB field names accessed match the schema: `gap_analysis.immediate`, `gap_analysis.medium_term`, `gap_analysis.long_term` (not camelCase variants).
+
+**Constraints**:
+1. The component is read-only — no editing of AI-generated recommendations.
+2. If `gap_analysis` is NULL for a criterion, the component renders "No AI analysis available" rather than crashing or showing empty.
+
+**Migration file**: None — frontend-only change.
+**Test**: T-W16.2-UI-001, T-W16.2-UI-002
+
+---
+
+### TR-107: Reports Listing Page
+
+**Derives From**: FR-108  
+**Priority**: P1  
+**Status**: 🔴 OPEN — immediately actionable once TR-104 populates `audit_reports`
+
+Technical implementation of the reports listing page:
+
+1. A `useAuditReports(auditId)` TanStack Query hook queries the `audit_reports` table, selecting: `id`, `generated_at`, `triggered_by`, `storage_path`, `status`.
+2. The `/reports` page renders a list of `audit_reports` rows with: formatted `generated_at` timestamp, `triggered_by` display name (joined from `profiles` or displayed as user ID), and a "Download" button.
+3. The "Download" button triggers `supabase.storage.from('reports').createSignedUrl(storage_path, 86400)` on click and initiates a browser file download using the resulting signed URL.
+4. Empty state: When `audit_reports` has no rows for the current audit, display the text "No reports generated yet. Use the 'Create Report' button on the dashboard when all criteria are assessed."
+5. The reports page is reachable via the main navigation and is the target of the "Create Report" button's post-generation redirect.
+
+**Constraints**:
+1. Signed URLs MUST be requested on-demand (per click) — pre-fetching and caching signed URLs is prohibited to avoid serving expired URLs.
+2. The page MUST filter by the current `auditId` — it must not display reports from other audits in the same organisation.
+
+**Migration file**: None — frontend-only change.
+**Test**: T-W16.2-UI-001, T-W16.2-UI-002
+
+---
+
+### TR-108: Toast Notification System
+
+**Derives From**: FR-109  
+**Priority**: P1  
+**Status**: 🔴 OPEN — immediately actionable; standalone frontend change
+
+Technical implementation of the toast notification system:
+
+1. Package: `react-hot-toast` (or a project-approved equivalent such as `sonner` or `react-toastify`) is added to `modules/mat/frontend/package.json`.
+2. Mount: A global `<Toaster />` component is added to `modules/mat/frontend/src/pages/_app.tsx` (or the equivalent root layout file) so notifications are available on all pages.
+3. Migration: All 29 `window.alert()` calls across the frontend are replaced — `alert('success message')` → `toast.success(...)`, `alert('error message')` → `toast.error(...)`, loading states → `toast.loading(...)`.
+4. Confirmation dialogs for destructive actions: Delete audit, delete evidence, and cancel assessment flows MUST call `window.confirm()` or render a custom confirmation modal before proceeding — they MUST NOT use `window.alert()` as a confirmation mechanism.
+5. No `window.alert()` call remains in the codebase after Wave 16.2 is merged; a TypeScript lint rule or grep CI check enforces this.
+
+**Constraints**:
+1. Toast duration: success toasts ≥ 3 s; error toasts ≥ 5 s.
+2. The Toaster position defaults to `top-right` unless the design system specifies otherwise.
+
+**Migration file**: None — frontend-only change; package.json update only.
+**Test**: T-W16.2-UI-001, T-W16.2-UI-002
+
+---
+
+### TR-109: Audit Logging Completeness
+
+**Derives From**: FR-110  
+**Priority**: P1  
+**Status**: 🔴 OPEN — independently actionable across evidence, scoring, and report generation paths
+
+Technical implementation of comprehensive audit logging:
+
+1. `evidence_upload` event: In the `useUploadEvidence` hook (or equivalent), after a successful `supabase.storage.upload()` call, INSERT into `audit_logs`: `{ audit_id, organisation_id, action: 'evidence_upload', file_path: storagePath, created_by: user.id, details: { file_name, file_type, file_size } }`. `organisation_id` MUST NOT be NULL.
+2. `score_confirmed` event: In the `useConfirmScore` hook (or equivalent), after a successful score confirmation DB write, INSERT into `audit_logs`: `{ audit_id, organisation_id, action: 'score_confirmed', created_by: user.id, details: { criteria_id, confirmed_level, previous_ai_level } }`.
+3. `score_overridden` event: In the `useOverrideScore` hook (or equivalent), after a successful manual override write, INSERT into `audit_logs`: `{ audit_id, organisation_id, action: 'score_overridden', created_by: user.id, details: { criteria_id, overridden_level, previous_level, override_reason } }`.
+4. `report_generated` event: In the `generate-audit-report` Edge Function, after a successful `audit_reports` INSERT, INSERT into `audit_logs`: `{ audit_id, organisation_id, action: 'report_generated', created_by: triggered_by_user_id, details: { report_id, storage_path } }`.
+5. All INSERT column names MUST be validated against the `audit_logs` schema DDL (columns: `id`, `audit_id`, `organisation_id`, `action`, `file_path`, `details`, `created_by`, `created_at`) before implementation — no non-existent columns.
+
+**Constraints**:
+1. Audit log writes MUST use a non-fatal `try/catch` pattern — a failed audit log write must never cause the parent operation to fail.
+2. `organisation_id NOT NULL` constraint must be satisfied for all four new action types — the `organisationId` value must be available in each hook/function context before the INSERT.
+
+**Migration file**: None for audit_logs schema — existing table; new action values are data-level additions only.
+**Test**: T-W16.6-SCH-001, T-W16.6-SCH-002
+
+---
+
+### TR-110: Scores/Audit Scores RLS INSERT + UPDATE Policies
+
+**Derives From**: FR-111  
+**Priority**: P0  
+**Status**: 🔴 OPEN — independently actionable; schema migration only
+
+Technical implementation of complete RLS policies on `scores` and `audit_scores`:
+
+1. `scores` INSERT policy: `CREATE POLICY "scores_insert_lead_auditor" ON public.scores FOR INSERT WITH CHECK (organisation_id = auth.uid_to_organisation_id() AND EXISTS (SELECT 1 FROM public.audits WHERE id = scores.audit_id AND created_by = auth.uid()))` — or the pattern that matches existing SELECT policies on the table.
+2. `scores` UPDATE policy: `CREATE POLICY "scores_update_lead_auditor" ON public.scores FOR UPDATE USING (organisation_id = auth.uid_to_organisation_id() AND EXISTS (SELECT 1 FROM public.audits WHERE id = scores.audit_id AND created_by = auth.uid()))`.
+3. `audit_scores` INSERT policy: Same pattern as scores INSERT, scoped to `audit_scores.organisation_id`.
+4. `audit_scores` UPDATE policy: Same pattern as scores UPDATE, scoped to `audit_scores.organisation_id`.
+5. All four policies are in a single migration file named `{timestamp}_scores_audit_scores_rls_insert_update.sql`.
+6. The migration MUST NOT alter or drop existing SELECT policies on either table.
+
+**Constraints**:
+1. The exact RLS helper function name (e.g., `auth.uid_to_organisation_id()` or inline subquery) MUST match the pattern used by existing SELECT policies on `scores` and `audit_scores` — copy the existing pattern, do not invent a new one.
+2. After migration, an authenticated Lead Auditor MUST be able to INSERT and UPDATE scores for their own audit; a user from a different organisation MUST NOT be able to INSERT or UPDATE scores for another org's audit.
+
+**Migration file**: New migration — `{timestamp}_scores_audit_scores_rls_insert_update.sql`.
+**Test**: T-W16.6-SCH-001, T-W16.6-SCH-002
 
 ---
 

@@ -1,11 +1,11 @@
 # MAT — Implementation Plan
 
 **Module**: MAT (Manual Audit Tool)  
-**Version**: v2.6.0
+**Version**: v2.7.0
 **Status**: APPROVED
 **Owner**: Foreman (FM)
 **Created**: 2026-02-13
-**Last Updated**: 2026-03-08
+**Last Updated**: 2026-03-09
 **Authority**: Derived from Architecture (modules/mat/02-architecture/), FRS (modules/mat/01-frs/functional-requirements.md), TRS (modules/mat/01.5-trs/technical-requirements-specification.md), Test Registry (governance/TEST_REGISTRY.json)
 
 ---
@@ -55,6 +55,15 @@ MAT is built in **thirteen waves** (Wave 0–Wave 12, plus Waves 5.5 and 5.6), w
 | 12 | **Full Functionality & Build Wiring Verification** | qa-builder, api-builder, ui-builder, integration-builder | Sequential (12.1→12.2→12.3→12.4) | T-W12-QAV-1–8, T-W12-API-1–7, T-W12-UI-1–9, T-W12-INT-1–7 | 3 days |
 | 13 | **Live Deployment Wiring Regression Fix & Continuous Improvement** *(OPEN — awaiting CS2 wave-start)* | schema-builder, api-builder, ui-builder, integration-builder, qa-builder | Sequential (13.1→13.2→13.3→13.4→13.5) | T-W13-SCH-1–4, T-W13-AUTH-1–4, T-W13-WIRE-1–8, T-W13-E2E-1–5, T-W13-CI-1–3 | 4 days |
 | 14.1–14.14 | **🔴 UX Workflow Gap Remediation** *(GAP-W01–GAP-W14 — RED, awaiting RED QA tests + builder delegation)* | qa-builder, schema-builder, api-builder, ui-builder | Sequential per subwave | T-W14-UX-001–T-W14-UX-016 (all RED) | TBD |
+| 16.1 | **Evidence Collection Page Wire** *(GAP-003 — CRITICAL)* | ui-builder | Sequential | T-W16.1-UI-001–T-W16.1-UI-002 | TBD |
+| 16.2 | **Frontend UX Completeness** *(GAP-006,007,008,009,014,015,020,024,025 — HIGH)* | ui-builder | Sequential | T-W16.2-UI-001–T-W16.2-UI-002 | TBD |
+| 16.3 | **AI Scoring Edge Function** *(GAP-001,010 — CRITICAL, BLOCKED)* | api-builder | Sequential | T-W16.3-API-001–T-W16.3-API-002 | BLOCKED: W12-GAP-004 + 16.5 |
+| 16.4 | **Report Generation Edge Function** *(GAP-002 — CRITICAL, BLOCKED)* | api-builder | Sequential | T-W16.4-API-001–T-W16.4-API-002 | BLOCKED: W12-GAP-003 + 16.5 + 16.3 |
+| 16.5 | **AIMC Scoring+Reporting Wiring** *(GAP-004,005 — CRITICAL)* | integration-builder | Sequential | T-W16.5-INT-001–T-W16.5-INT-002 | AIMC Waves 3–4 first |
+| 16.6 | **Schema + Audit Completeness** *(GAP-011,012,016,017,019 — HIGH)* | schema-builder + api-builder | Sequential | T-W16.6-SCH-001–T-W16.6-SCH-002 | No |
+| 16.7 | **ARC Portal Frontend** *(GAP-013 — HIGH)* | ui-builder | Sequential | T-W16.7-UI-001–T-W16.7-UI-002 | No |
+| 16.8 | **Documentation Gaps** *(GAP-018 — MEDIUM)* | mat-specialist | Sequential | — | No |
+| 16.9 | **Future Considerations** *(GAP-021,022,023 — LOW, PARKED)* | TBD | Parked | — | Parked |
 
 **Total Estimated Duration**: ~41 working days (8.5 weeks) for Waves 0–6. Waves 7–9 duration TBD — blocked on AIMC delivery. Wave 10 COMPLETE (2 days). Wave 11 COMPLETE (2 days). Wave 12 COMPLETE (3 days — session-078/080/081, 2026-03-01). Wave 14: TBD — FRS/TRS/RED QA spec complete; builder delegation pending.
 
@@ -68,6 +77,8 @@ MAT is built in **thirteen waves** (Wave 0–Wave 12, plus Waves 5.5 and 5.6), w
 > **Change Note (v2.0.0, 2026-03-01)**: Wave 12 (Full Functionality & Build Wiring Verification) added. Wave count updated to thirteen. This wave orchestrates the comprehensive cross-domain QA sweep required after the Supabase Persistent Memory integration (Wave 11). Four builder domains: qa-builder (Task 12.1 — Supabase persistence E2E + coverage audit), api-builder (Task 12.2 — API contract verification), ui-builder (Task 12.3 — frontend flow verification), integration-builder (Task 12.4 — cross-component E2E). Acceptance criterion 15 added. CS2 authorization: issue #709 opened by @APGI-cmy.
 
 > **Change Note (v2.1.0, 2026-03-01)**: Wave 12 plan augmented per CS2 instruction (PR #710 review, 2026-03-01). 11 new test IDs added closing W12-GAP-001–007: T-W12-QAV-6 (RLS cross-org MAT API), T-W12-QAV-7 (MFA FR-031), T-W12-QAV-8 (RCA 98-test regression), T-W12-API-6 (AI scoring pipeline E2E), T-W12-API-7 (report generation E2E/RCA G-14), T-W12-UI-6 (offline sync/RCA G-16), T-W12-UI-7 (RCA G-03 criteria hierarchy), T-W12-UI-8 (RCA G-04 evidence modal), T-W12-UI-9 (mobile viewport/RCA G-15), T-W12-INT-6 (CWT production Vercel URL/§4.2), T-W12-INT-7 (photo capture/RCA G-07). Total Wave 12 tests: 31. Final test count target: 461 (430+31). Wave 12 Gap Register added to §2.13. CWT mandate per §4.2 satisfied by T-W12-INT-6. Acceptance criterion 15 updated.
+
+> **Change Note (v2.7.0, 2026-03-09)**: Wave 16 — Completeness Gap Resolution added per PR #1016 completeness review (foreman-v2-agent, wave-mat-gov-process). 9 sub-waves defined (16.1–16.9) covering all 25 gaps from `docs/completeness-review/compliance-workflow-completeness-report-20260309.md`. Wave 16.1 (Evidence Collection Page Wire — CRITICAL, GAP-003) and Wave 16.2 (Frontend UX Completeness — HIGH, GAP-006/007/008/009/014/015/020/024/025) are immediately actionable. Wave 16.3 (AI Scoring Edge Function — GAP-001/010) and Wave 16.4 (Report Generation Edge Function — GAP-002) are BLOCKED pending Wave 16.5 (AIMC Scoring+Reporting Wiring — GAP-004/005) which itself requires AIMC Waves 3–4. Wave 16.6 (Schema+Audit Completeness — HIGH) and Wave 16.7 (ARC Portal Frontend — HIGH) are independently actionable. Wave 16.8 (Documentation — MEDIUM) assigned to mat-specialist. Wave 16.9 (Future Considerations — LOW) PARKED. FRS addendum FR-104–FR-111 and TRS addendum TR-103–TR-110 added. Wave overview table updated.
 
 > **Change Note (v2.4.0, 2026-03-04)**: Wave 14 (UX Workflow Gap Remediation, GAP-W01–GAP-W14) added per governance issue #909, CS2 authorisation. 14 gap subwaves defined. FRS addendum FR-089–FR-102 and TRS addendum TR-089–TR-102 added. RED QA spec with 16 tests (T-W14-UX-001 to T-W14-UX-016) created. BUILD_PROGRESS_TRACKER.md updated with governance failure heading and 14 gap entries. All subwaves are RED (BLOCKED) pending qa-builder RED test implementation and per-subwave builder delegation. Source authority: MAT_UX_WORKFLOW_AND_WIRING.md v1.0.
 
@@ -2079,8 +2090,10 @@ This implementation plan is accepted when:
 16. ✅ Post-Wave 12 Live Deployment RCA complete (`modules/mat/05-rca/RCA_WAVE12_POST_DEPLOYMENT_WIRING_FAILURES_20260302.md` v1.0.0); PBFAG updated with checks 9–13 (E2E auth, schema existence, full-flow wiring, major page content, env var audit); Wave 13 defined (§2.14) with 24 RED gate test IDs; wave count updated to fourteen
 17. ✅ Wave postbuild-fails-01 (RLS Fix) COMPLETE (PR #895): profiles SELECT/INSERT/UPDATE + audits INSERT + handle_new_user() trigger; T-PBF-001 to T-PBF-004 GREEN; IAA-session-097-20260304-PASS
 18. Wave postbuild-fails-02 (Full RLS Remediation) DEFINED (Issue #897): GAP-006 to GAP-013 recorded; 8 tables with unverified RLS coverage; T-PBF2-001 to T-PBF2-008 RED gate tests pending; schema-builder and qa-builder delegation pending
+19. ✅ Wave 16 — Completeness Gap Resolution DEFINED (2026-03-09): 25 gaps from end-to-end completeness review (PR #1016) documented; 9 sub-waves (16.1–16.9) defined; FRS addendum FR-104–FR-111 and TRS addendum TR-103–TR-110 added; Wave 16.1 and 16.2 immediately actionable; Wave 16.3/16.4 BLOCKED on AIMC Waves 3–4 via Wave 16.5
 
 **Change Log**:
+- v2.7.0 (2026-03-09): Wave 16 Completeness Gap Resolution added. 9 sub-waves (16.1–16.9) defined covering all 25 gaps from `docs/completeness-review/compliance-workflow-completeness-report-20260309.md` (~45% pipeline functional). Wave 16.1 (Evidence Collection Page Wire, CRITICAL, GAP-003) and 16.2 (Frontend UX Completeness, HIGH, 9 gaps) immediately actionable. Wave 16.3 (AI Scoring Edge Function, CRITICAL) and 16.4 (Report Generation, CRITICAL) BLOCKED pending 16.5 (AIMC Scoring+Reporting Wiring) which requires AIMC Waves 3–4. Wave 16.6 (Schema+Audit), 16.7 (ARC Portal Frontend) independently actionable. Wave 16.8 (Documentation) assigned mat-specialist. Wave 16.9 (Future Considerations) PARKED. FRS addendum FR-104–FR-111, TRS addendum TR-103–TR-110, BUILD_PROGRESS_TRACKER v1.8 updated. (wave-mat-gov-process / PR #1016)
 - v2.6.0 (2026-03-08): Wave 15R CLOSED. CWT PASS (81/81 wave15r tests GREEN + 45/45 Python AI gateway tests GREEN). IBWR complete (`.agent-admin/assurance/ibwr-wave15r-20260308.md`). CWT evidence committed (`modules/mat/05-build-evidence/wave15r-cwt-evidence-20260308.md`). INC-WAVE15-PARSE-001 REMEDIATED. PR #1002 merged to main. Governance closure issue #1003. (session-wave15r-closure-20260308)
 - v2.4.0 (2026-03-04): Wave postbuild-fails-02 (Full Supabase RLS Remediation) added. All 13 gaps from supabase-sync-audit-20260304.md recorded (GAP-001 to GAP-013). GAP-001–GAP-005 CLOSED (postbuild-fails-01). GAP-006–GAP-013 OPEN — 8 tables (organisations, domains, mini_performance_standards, criteria, evidence, scores, organisation_settings, audit_scores) require RLS policy verification and migration. 8 RED gate test IDs defined (T-PBF2-001 to T-PBF2-008). 5-task delegation plan: foreman (TASK-PBF2-001 to TASK-PBF2-003) + qa-builder (TASK-PBF2-004) + schema-builder (TASK-PBF2-005). Acceptance criteria 17 and 18 added. IAA Pre-Brief: iaa-prebrief-wave-postbuild-fails-02.md. (session-098)
 - v2.3.0 (2026-03-02): Post-Wave 12 live deployment failures analysed (RCA MAT-RCA-002). PBFAG checklist extended with checks 9–13 (E2E auth, schema existence, full-flow wiring, major page content, env var audit — all mandatory per WE_ONLY_FAIL_ONCE doctrine). Wave 13 (Live Deployment Wiring Regression Fix & Continuous Improvement) added (§2.14): 5-task sequential plan (schema-builder+integration-builder → api-builder → ui-builder → integration-builder+qa-builder → integration-builder); 24 RED gate test IDs (T-W13-SCH-1–4, T-W13-AUTH-1–4, T-W13-WIRE-1–8, T-W13-E2E-1–5, T-W13-CI-1–3); 7 gap register entries (W13-GAP-001–007). Wave count updated to fourteen. Acceptance criterion 16 added. (session-084)
@@ -2688,3 +2701,167 @@ Deduplication key fix:
 - [x] S-028 SCHEMA-COLUMN-COMPLIANCE-MANDATORY added to improvement log
 
 **End of Implementation Plan — wave-audit-log-column-fix**
+
+---
+
+## Wave 16 — Completeness Gap Resolution (2026-03-09)
+
+**Authority**: PR #1016 completeness review — foreman-v2-agent (wave-mat-gov-process)  
+**Source Report**: `docs/completeness-review/compliance-workflow-completeness-report-20260309.md`  
+**Pipeline Status at Review**: ~45% functional — 25 gaps identified  
+**Version Note**: v2.7.0 (2026-03-09): Wave 16 Completeness Gap Resolution added per PR #1016 completeness review (foreman-v2-agent, wave-mat-gov-process).
+
+### Wave 16 Overview
+
+This wave resolves all 25 gaps documented in the end-to-end completeness review. The pipeline is ~45% functional; three critical gaps block full adoption: missing `invoke-ai-score-criterion` Edge Function (GAP-001), missing `generate-audit-report` Edge Function (GAP-002), and the `/evidence` page wired to a stub component (GAP-003).
+
+| Sub-wave | Name | Priority | Gaps | Status |
+|----------|------|----------|------|--------|
+| 16.1 | Evidence Collection Page Wire | CRITICAL | GAP-003 | 🔴 OPEN |
+| 16.2 | Frontend UX Completeness | HIGH | GAP-006,007,008,009,014,015,020,024,025 | 🔴 OPEN |
+| 16.3 | AI Scoring Edge Function | CRITICAL (BLOCKED) | GAP-001,010 | 🚫 BLOCKED |
+| 16.4 | Report Generation Edge Function | CRITICAL (BLOCKED) | GAP-002 | 🚫 BLOCKED |
+| 16.5 | AIMC Scoring+Reporting Wiring | CRITICAL | GAP-004,005 | 🔴 OPEN (cross-module) |
+| 16.6 | Schema + Audit Completeness | HIGH | GAP-011,012,016,017,019 | 🔴 OPEN |
+| 16.7 | ARC Portal Frontend | HIGH | GAP-013 | 🔴 OPEN |
+| 16.8 | Documentation Gaps | MEDIUM | GAP-018 | 🔴 OPEN |
+| 16.9 | Future Considerations | LOW | GAP-021,022,023 | ⏸ PARKED |
+
+---
+
+### Wave 16.1 — Evidence Collection Page Wire
+
+**Name**: Evidence Collection Page Wire  
+**Priority**: CRITICAL  
+**Gaps Addressed**: GAP-003 (`/evidence` page wired to stub component)  
+**Builder Assignment**: ui-builder  
+**Dependency**: None — frontend routing fix only  
+**Red QA Gate Requirement**: At least 2 RED tests must be written and confirmed RED before implementation begins; tests must assert that navigating to `/evidence` renders the `EvidenceCollection.tsx` component (not the stub) and that the component mounts without errors.
+
+**Acceptance Criteria**:
+1. The `/evidence` page route renders `EvidenceCollection.tsx` (not the placeholder stub); a navigation test confirms the component is reachable from the main navigation.
+2. All existing evidence-related tests continue to pass GREEN; no regressions introduced by the routing change.
+
+---
+
+### Wave 16.2 — Frontend UX Completeness
+
+**Name**: Frontend UX Completeness  
+**Priority**: HIGH  
+**Gaps Addressed**: GAP-006 (feedback/recommendations UI), GAP-007 (`/reports` page stub), GAP-008 (no toast notification system), GAP-009 (`CriteriaModal` mock data), GAP-014 (interview recording playback), GAP-015 (no global audit selection context), GAP-020 (score `gap_analysis` JSONB never displayed), GAP-024 (no unsaved-changes warnings), GAP-025 (`useAuditMetrics` polling stop condition)  
+**Builder Assignment**: ui-builder  
+**Dependency**: None — all gaps are frontend-only changes  
+**Red QA Gate Requirement**: At least 2 RED tests per addressed gap must be written before implementation; tests should cover the happy-path render of the feedback/recommendations page, the reports listing page, and toast notification display on a mutating action.
+
+**Acceptance Criteria**:
+1. A dedicated Feedback/Recommendations page renders `scores.gap_analysis` (immediate/medium/long_term arrays) and `criteria_evaluations.next_level_guidance` for the active audit; the `/reports` page lists `audit_reports` rows with signed URL download buttons.
+2. All 29 `window.alert()` calls across the frontend are replaced with a `react-hot-toast` (or equivalent) toast notification; the global `Toaster` is mounted in `_app.tsx`; destructive actions display a confirmation dialog before proceeding.
+
+---
+
+### Wave 16.3 — AI Scoring Edge Function
+
+**Name**: AI Scoring Edge Function  
+**Priority**: CRITICAL (BLOCKED)  
+**Gaps Addressed**: GAP-001 (`invoke-ai-score-criterion` Edge Function missing), GAP-010 (no long-running task tracker for scoring)  
+**Builder Assignment**: api-builder  
+**Dependency**: BLOCKED — requires AIMC Wave 3 scoring capability (W12-GAP-004) AND Wave 16.5 (AIMC Scoring+Reporting Wiring) to complete first  
+**Red QA Gate Requirement**: At least 2 RED tests must be written asserting that `supabase.functions.invoke('invoke-ai-score-criterion', { audit_id, criteria_id })` returns a score object containing a `gap_analysis` JSONB field and writes a row to the `scores` table; tests must be RED before builder is appointed.
+
+**Acceptance Criteria**:
+1. The `invoke-ai-score-criterion` Supabase Edge Function (Deno runtime) is deployed; it calls the AIMC scoring capability via `supabase.functions.invoke`, writes the returned score to the `scores` table with `gap_analysis` JSONB populated, and returns a success response; `useTriggerAIScoring()` in the frontend no longer fails at runtime.
+2. A long-running task tracker exists for scoring operations (either a `score_tasks` table following the `parse_tasks` pattern, or a real-time subscription on the `scores` table); the UI displays progress feedback while scoring is in progress.
+
+---
+
+### Wave 16.4 — Report Generation Edge Function
+
+**Name**: Report Generation Edge Function  
+**Priority**: CRITICAL (BLOCKED)  
+**Gaps Addressed**: GAP-002 (`generate-audit-report` Edge Function missing)  
+**Builder Assignment**: api-builder  
+**Dependency**: BLOCKED — requires AIMC Wave 3 reporting capability (W12-GAP-003) AND Wave 16.5 (AIMC Scoring+Reporting Wiring) AND Wave 16.3 (AI Scoring Edge Function) to complete first  
+**Red QA Gate Requirement**: At least 2 RED tests must be written asserting that `supabase.functions.invoke('generate-audit-report', { audit_id })` writes a row to `audit_reports` and returns a signed URL; tests must be RED before builder is appointed.
+
+**Acceptance Criteria**:
+1. The `generate-audit-report` Supabase Edge Function (Deno runtime) is deployed; it calls the AIMC reporting capability, writes the report to the `reports` storage bucket, inserts a row into `audit_reports` with `storage_path` and `triggered_by`, and returns a time-limited signed URL; the `/reports` page can re-download previously generated reports.
+2. The entire `/reports` route is functional end-to-end: the "Create Report" button triggers the Edge Function, a loading indicator appears, and on completion the report appears in the reports list with a working download link.
+
+---
+
+### Wave 16.5 — AIMC Scoring+Reporting Wiring
+
+**Name**: AIMC Scoring+Reporting Wiring  
+**Priority**: CRITICAL  
+**Gaps Addressed**: GAP-004 (AIMC `scoring` capability wiring incomplete), GAP-005 (AIMC `reporting` capability wiring incomplete)  
+**Builder Assignment**: integration-builder  
+**Dependency**: Cross-module — AIMC must complete Waves 3 (scoring) and 4 (reporting) before this wave can begin; no MAT-side blocker once AIMC delivers  
+**Red QA Gate Requirement**: At least 2 RED integration tests must verify that `api/ai/request.ts` correctly routes `scoring` and `reporting` capability calls through the AIMC Gateway; tests must be RED before builder is appointed.
+
+**Acceptance Criteria**:
+1. The `scoring` capability route in `api/ai/request.ts` and `packages/ai-centre/` is fully wired to the AIMC Gateway; a test call to `aimc.scoring.scoreCriterion(input)` returns a structured response without a "capability not found" error.
+2. The `reporting` capability route is fully wired to the AIMC Gateway; a test call to `aimc.reporting.generateAuditReport(input)` returns a structured report without a "capability not found" error; both capabilities are reflected in the AIMC capability registry.
+
+---
+
+### Wave 16.6 — Schema + Audit Completeness
+
+**Name**: Schema + Audit Completeness  
+**Priority**: HIGH  
+**Gaps Addressed**: GAP-011 (`scores` INSERT/UPDATE RLS policies incomplete), GAP-012 (`audit_scores` INSERT/UPDATE RLS policies incomplete), GAP-016 (audit logging covers only criteria parsing), GAP-017 (`POST /api/ai/request` lacks JWT authentication), GAP-019 (`evidence_submissions` table referenced but no migration)  
+**Builder Assignment**: schema-builder + api-builder  
+**Dependency**: None — independently actionable  
+**Red QA Gate Requirement**: At least 2 RED tests must be written asserting that INSERT operations on the `scores` and `audit_scores` tables succeed for authenticated org members (RLS allows); tests must be RED before builder is appointed.
+
+**Acceptance Criteria**:
+1. INSERT and UPDATE RLS policies on `scores` and `audit_scores` tables match the existing SELECT pattern (org-scoped, Lead Auditor role); audit_log entries are written for `evidence_upload`, `score_confirmed`, `score_overridden`, and `report_generated` actions with `organisation_id NOT NULL`; `evidence_submissions` migration exists or all code references to the table are removed.
+2. `POST /api/ai/request` validates the caller's JWT before processing; `organisationId` is verified against the authenticated session's `auth.uid()` rather than being accepted from the request body alone.
+
+---
+
+### Wave 16.7 — ARC Portal Frontend
+
+**Name**: ARC Portal Frontend  
+**Priority**: HIGH  
+**Gaps Addressed**: GAP-013 (no ARC portal frontend — feedback approval workflow endpoints exist but no UI)  
+**Builder Assignment**: ui-builder  
+**Dependency**: None — ARC API endpoints already exist; this is a pure frontend build  
+**Red QA Gate Requirement**: At least 2 RED tests must be written asserting that an ARC operator can view pending feedback items and submit an approval or rejection; tests must be RED before builder is appointed.
+
+**Acceptance Criteria**:
+1. An ARC Review portal page is implemented and accessible to users with the ARC operator role; it lists all pending feedback items with criteria details, AI-generated recommendations, and approve/reject action buttons wired to the existing ARC API endpoints.
+2. Approved feedback is reflected in the audit's criteria evaluation status; rejected feedback returns to the submitter with the ARC operator's comment; all ARC actions are logged to `audit_logs`.
+
+---
+
+### Wave 16.8 — Documentation Gaps
+
+**Name**: Documentation Gaps  
+**Priority**: MEDIUM  
+**Gaps Addressed**: GAP-018 (`mat-ai-gateway` deployment instructions not in repository)  
+**Builder Assignment**: mat-specialist  
+**Dependency**: None  
+**Red QA Gate Requirement**: N/A — documentation-only wave; no code gate required.
+
+**Acceptance Criteria**:
+1. A deployment runbook for the `mat-ai-gateway` service is added to `docs/runbooks/mat-ai-gateway-deployment.md`; it covers environment variables, Render deployment steps, health check verification, and rollback procedure.
+2. The runbook is cross-referenced from `modules/mat/02-architecture/ai-architecture.md` and from the `.env.example` file where `AI_GATEWAY_URL` is declared.
+
+---
+
+### Wave 16.9 — Future Considerations (PARKED)
+
+**Name**: Future Considerations  
+**Priority**: LOW  
+**Gaps Addressed**: GAP-021 (no database webhooks for async processing), GAP-022 (no `report_requests` table), GAP-023 (`control_standards` concept not explicitly modelled)  
+**Builder Assignment**: TBD  
+**Dependency**: Parked — requires CS2 architectural decision before any implementation  
+**Red QA Gate Requirement**: N/A — parked; no implementation work until CS2 decides.
+
+**Acceptance Criteria**:
+1. CS2 has reviewed and issued a go/no-go architectural decision on each of GAP-021, GAP-022, and GAP-023 before any builder is appointed.
+2. If approved, each gap is promoted to a new implementation sub-wave with full FRS/TRS/RED QA gate ceremony before builder delegation begins.
+
+---
+
+**End of Wave 16 — Completeness Gap Resolution**
