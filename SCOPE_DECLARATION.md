@@ -13,16 +13,17 @@
 ```
 .agent-admin/assurance/iaa-prebrief-wave16.md
 .agent-admin/assurance/iaa-token-session-wave16-orchestration-20260309.md
+.agent-workspace/foreman-v2/memory/CORRECTION-ADDENDUM-wave16-orchestration-A021-20260309.md
 .agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave16-orchestration-20260309.md
 .agent-workspace/foreman-v2/memory/session-wave16-orchestration-20260309.md
 .agent-workspace/foreman-v2/personal/wave-current-tasks.md
 .agent-workspace/independent-assurance-agent/memory/session-wave16-orchestration-20260309.md
 .agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md
-modules/mat/BUILD_PROGRESS_TRACKER.md
 SCOPE_DECLARATION.md
+modules/mat/BUILD_PROGRESS_TRACKER.md
 ```
 
-Note: `iaa-token-session-wave16-orchestration-20260309.md` is the IAA REJECTION-PACKAGE token from R1 — STOP-AND-FIX in progress. After correction and re-invocation, the PASS token will replace or supplement this.
+**Note**: `.agent-admin/assurance/iaa-token-session-wave16-orchestration-20260309.md` is the IAA R1 REJECTION-PACKAGE token. After IAA re-invocation and ASSURANCE-TOKEN (PASS) issuance, the PASS token file will be added (new file per §4.3b). The SCOPE_DECLARATION will be updated at that point per A-026.
 
 ## No Production Code Committed
 
@@ -30,4 +31,4 @@ This session is a pure governance/orchestration kick-off. No production code, mi
 
 ## A-026 Compliance
 
-SCOPE_DECLARATION.md matches the git diff output above exactly (including this file when committed).
+SCOPE_DECLARATION.md matches the git diff output above exactly (including this file per self-reference).
