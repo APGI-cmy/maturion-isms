@@ -130,17 +130,21 @@ describe('Wave session-refresh-auth-fix — useTriggerAIParsing session guard (T
 
   // ── T-SRAF-001: getSession called before invoke ────────────────────────────
 
-  it('[T-SRAF-001] mutationFn calls supabase.auth.getSession() before supabase.functions.invoke()', () => {
+  it('[T-SRAF-001] mutationFn calls supabase.auth.getSession() or supabase.auth.refreshSession() before supabase.functions.invoke()', () => {
     /*
      * RED:  useTriggerAIParsing currently calls supabase.functions.invoke() directly
      *       without first calling supabase.auth.getSession(). The string
      *       'supabase.auth.getSession' does not appear in the function body at all.
      *
-     * GREEN: api-builder adds `supabase.auth.getSession()` as the FIRST async call
-     *        inside mutationFn, before the `supabase.functions.invoke(...)` call.
+     * GREEN: api-builder adds `supabase.auth.getSession()` (or the stronger
+     *        `supabase.auth.refreshSession()`) as the FIRST async call inside
+     *        mutationFn, before the `supabase.functions.invoke(...)` call.
+     *        Both getSession and refreshSession are acceptable — refreshSession
+     *        forces a token refresh rather than reading a cached session.
      *
      * Assertion (execution order):
-     *   1. supabase.auth.getSession is present in the function body.
+     *   1. supabase.auth.getSession or supabase.auth.refreshSession is present
+     *      in the function body.
      *   2. Its position (character index) within the function body is strictly
      *      less than the position of supabase.functions.invoke — proving it is
      *      called first.
@@ -150,17 +154,29 @@ describe('Wave session-refresh-auth-fix — useTriggerAIParsing session guard (T
      */
     const fn = readUseTriggerAIParsing();
 
-    // Assert presence: getSession must appear in the function body
+    // Assert presence: getSession or refreshSession must appear in the function body
     expect(
       fn,
       '[T-SRAF-001 RED — EXPECTED before T-SRAF-API-001 implementation]\n' +
-      'useTriggerAIParsing mutationFn does not call supabase.auth.getSession().\n' +
+      'useTriggerAIParsing mutationFn does not call supabase.auth.getSession() or supabase.auth.refreshSession().\n' +
       'api-builder must add: const { data: { session }, error: sessionError } = await supabase.auth.getSession();\n' +
+      '  (or the equivalent call using supabase.auth.refreshSession())\n' +
       'This call must appear BEFORE supabase.functions.invoke(...) in the function body.',
-    ).toMatch(/supabase\.auth\.getSession\(\)/);
+    ).toMatch(/supabase\.auth\.(getSession|refreshSession)\(\)/);
 
-    // Assert execution order: getSession index must be before functions.invoke index
-    const getSessionIdx = fn.indexOf('supabase.auth.getSession');
+    // Assert execution order: getSession/refreshSession index must be before functions.invoke index
+    // Use the position of whichever session method appears first in the function body.
+    // This is the method actually acting as the session guard — it must appear before
+    // supabase.functions.invoke(). Math.max is intentionally avoided: if both strings
+    // were present, Math.max would return the later index, which could cause a false
+    // positive on the ordering check if the second call appeared after invoke.
+    const getSessionCandidates = [
+      fn.indexOf('supabase.auth.getSession'),
+      fn.indexOf('supabase.auth.refreshSession'),
+    ].filter(idx => idx >= 0);
+    const getSessionIdx = getSessionCandidates.length > 0
+      ? Math.min(...getSessionCandidates)
+      : -1;
     const invokeIdx = fn.indexOf('supabase.functions.invoke');
 
     expect(
@@ -170,10 +186,17 @@ describe('Wave session-refresh-auth-fix — useTriggerAIParsing session guard (T
 
     expect(
       getSessionIdx,
+      '[T-SRAF-001] useTriggerAIParsing must call supabase.auth.getSession() or ' +
+      'supabase.auth.refreshSession() before invoking the Edge Function.\n' +
+      'Neither call was found in the function body.',
+    ).toBeGreaterThanOrEqual(0);
+
+    expect(
+      getSessionIdx,
       '[T-SRAF-001 RED — EXPECTED before T-SRAF-API-001 implementation]\n' +
-      'supabase.auth.getSession() must be called BEFORE supabase.functions.invoke().\n' +
+      'supabase.auth.getSession() or supabase.auth.refreshSession() must be called BEFORE supabase.functions.invoke().\n' +
       `getSession index: ${getSessionIdx}, functions.invoke index: ${invokeIdx}\n` +
-      'Reorder the calls so getSession precedes functions.invoke in the function body.',
+      'Reorder the calls so the session call precedes functions.invoke in the function body.',
     ).toBeLessThan(invokeIdx);
   });
 

@@ -239,10 +239,10 @@ describe('Wave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)',
     const src = readEdgeFunction();
     expect(
       src,
-      "[T-W15-CP-007] Edge Function must insert rows into the `domains` table.\n" +
-      "Add: `await supabase.from('domains').insert([...])` after parsing is complete.\n" +
+      "[T-W15-CP-007] Edge Function must insert or upsert rows into the `domains` table.\n" +
+      "Add: `await supabase.from('domains').insert([...])` or `.upsert([...])` after parsing is complete.\n" +
       "The domains table is the root of the Domain → MPS → Criteria hierarchy.",
-    ).toMatch(/from\s*\(\s*['"`]domains['"`]\s*\)\s*\.insert|insert.*domains/i);
+    ).toMatch(/from\s*\(\s*['"`]domains['"`]\s*\)\s*\.(insert|upsert)|(?:insert|upsert).*domains/i);
   });
 
   it('[T-W15-CP-008] Edge Function contains DB insert logic for mini_performance_standards table', () => {
@@ -257,10 +257,10 @@ describe('Wave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)',
     const src = readEdgeFunction();
     expect(
       src,
-      "[T-W15-CP-008] Edge Function must insert rows into the `mini_performance_standards` table.\n" +
-      "Add: `await supabase.from('mini_performance_standards').insert([...])` after domains are inserted.\n" +
+      "[T-W15-CP-008] Edge Function must insert or upsert rows into the `mini_performance_standards` table.\n" +
+      "Add: `await supabase.from('mini_performance_standards').insert([...])` or `.upsert([...])` after domains are inserted.\n" +
       "MPS are the second tier of the Domain → MPS → Criteria hierarchy.",
-    ).toMatch(/from\s*\(\s*['"`]mini_performance_standards['"`]\s*\)\s*\.insert|insert.*mini_performance_standards/i);
+    ).toMatch(/from\s*\(\s*['"`]mini_performance_standards['"`]\s*\)\s*\.(insert|upsert)|(?:insert|upsert).*mini_performance_standards/i);
   });
 
   it('[T-W15-CP-009] Edge Function contains DB insert logic for criteria table', () => {
@@ -275,10 +275,10 @@ describe('Wave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)',
     const src = readEdgeFunction();
     expect(
       src,
-      "[T-W15-CP-009] Edge Function must insert rows into the `criteria` table.\n" +
-      "Add: `await supabase.from('criteria').insert([...])` after MPS rows are inserted.\n" +
+      "[T-W15-CP-009] Edge Function must insert or upsert rows into the `criteria` table.\n" +
+      "Add: `await supabase.from('criteria').insert([...])` or `.upsert([...])` after MPS rows are inserted.\n" +
       "criteria are leaf nodes in the Domain → MPS → Criteria hierarchy.",
-    ).toMatch(/from\s*\(\s*['"`]criteria['"`]\s*\)\s*\.insert|insert.*\bcriteria\b/i);
+    ).toMatch(/from\s*\(\s*['"`]criteria['"`]\s*\)\s*\.(insert|upsert)|(?:insert|upsert).*\bcriteria\b/i);
   });
 
   // ── useCriteria.ts: parse-status polling ────────────────────────────────────
