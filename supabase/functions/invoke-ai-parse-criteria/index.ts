@@ -130,7 +130,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
     const documentUrl = signedUrlData.signedUrl;
 
     // Invoke AI Gateway DocumentParser
-    const parseResponse = await fetch(`${AI_GATEWAY_URL}/parse`, {
+    const parseResponse = await fetch(`${AI_GATEWAY_URL}/api/v1/parse`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
