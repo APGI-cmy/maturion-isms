@@ -2,13 +2,13 @@
 
 **Wave**: wave16-orchestration — Wave 16 Completeness Gap Resolution Kick-Off
 **Branch**: copilot/orchestrate-wave-16-build-again
-**Session**: session-wave16-orchestration-20260309 (with finish-20260309 follow-up)
+**Session**: session-wave16-orchestration-20260309 + session-wave16-finish-20260309
 **Date**: 2026-03-09
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ## Changed Files
 
-`git diff --name-only origin/main...HEAD` (final exact output — 13 files):
+`git diff --name-only origin/main...HEAD` (final exact output — 14 files):
 
 ```
 .agent-admin/assurance/iaa-prebrief-wave16.md
@@ -16,6 +16,7 @@
 .agent-admin/assurance/iaa-token-session-wave16-orchestration-20260309.md
 .agent-workspace/foreman-v2/memory/CORRECTION-ADDENDUM-wave16-orchestration-A021-20260309.md
 .agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave16-orchestration-20260309.md
+.agent-workspace/foreman-v2/memory/session-wave16-finish-20260309.md
 .agent-workspace/foreman-v2/memory/session-wave16-orchestration-20260309.md
 .agent-workspace/foreman-v2/parking-station/suggestions-log.md
 .agent-workspace/foreman-v2/personal/wave-current-tasks.md
@@ -26,11 +27,9 @@ SCOPE_DECLARATION.md
 modules/mat/BUILD_PROGRESS_TRACKER.md
 ```
 
-**A-026 Correction Note**: Previous version of this file listed 12 files and omitted
-`.agent-workspace/foreman-v2/parking-station/suggestions-log.md`, which was added in commit
-`6cf1916` (S-030 parking station log update) AFTER the IAA R2 ASSURANCE-TOKEN was issued
-(SHA `205eb32`). This update corrects the A-026 compliance gap. The IAA ASSURANCE-TOKEN remains
-valid — the additional commit is a governance artifact (parking station log), not production code.
+**Note**: `session-wave16-finish-20260309.md` is the follow-up session memory for the
+"finish this job" continuation session (CI investigation, A-026 correction).
+`parking-station/suggestions-log.md` contains S-030 and S-031 suggestions.
 
 **IAA Tokens**:
 - `.agent-admin/assurance/iaa-token-session-wave16-orchestration-20260309.md` — IAA R1 REJECTION-PACKAGE (SHA 700250c)
@@ -44,4 +43,4 @@ This session is a pure governance/orchestration kick-off. No production code, mi
 
 ## A-026 Compliance
 
-SCOPE_DECLARATION.md now matches the git diff output above exactly (13 files including this file).
+SCOPE_DECLARATION.md matches the git diff output above exactly (14 files including this file).
