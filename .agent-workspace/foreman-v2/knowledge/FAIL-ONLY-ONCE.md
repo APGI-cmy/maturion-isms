@@ -3,7 +3,7 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 3.3.0  
+**Version**: 3.4.0  
 **Created**: 2026-02-24  
 **Updated**: 2026-03-08  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
@@ -571,6 +571,37 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 
 ---
 
+### INC-ALCF-001 — Schema Column Mismatch Escaped IAA Gate: audit_logs INSERT/SELECT Used Non-Existent Columns
+**Date**: 2026-03-08  
+**Severity**: MAJOR  
+**Status**: REMEDIATED — wave-audit-log-column-fix; 7/7 T-ALCF tests GREEN; INSERT/SELECT corrected  
+**Source**: CS2 issue "fix(criteria-upload): audit_logs insert/query column mismatches prevent uploaded documents from appearing; migration drift and governance gaps require postmortem / scope closure"  
+**Preceded by**: INC-WUF-DOCLIST-001 (wave-upload-doclist-fix, PR #1007 — introduced the mismatch)
+
+**What happened**: The wave-upload-doclist-fix PR (#1007) was merged with ASSURANCE-TOKEN (IAA R3 PASS). Despite receiving an IAA pass, the implementation wrote to non-existent `audit_logs` columns (`user_id`, `resource_type`, `resource_id`) and omitted the required NOT NULL column `organisation_id`. The SELECT also queried `resource_id`. Because the INSERT is wrapped in a non-fatal `try/catch`, the DB error was silenced. The uploaded document list still showed "Failed to load uploaded documents" due to the SELECT failure.
+
+**Root cause (5-Why)**:
+1. **Why did INSERT fail silently?** `useUploadCriteria` wraps the `audit_logs.insert()` in a `try/catch` — DB column errors are caught and console.warn'd, not surfaced to the user or test assertions.
+2. **Why did SELECT fail?** `useUploadedDocuments` queried `.select('id, resource_id, ...')`. `resource_id` does not exist in the `audit_logs` schema → Supabase returns an error → "Failed to load uploaded documents."
+3. **Why were the wrong column names used?** The api-builder in the previous wave used column names derived from the Edge Function's audit_logs schema (`user_id`, `resource_type`, `resource_id`) rather than reading the actual migration file for the frontend-inserted table.
+4. **Why did the IAA gate not catch it?** IAA's FFA checks for wave-upload-doclist-fix did not include reading the migration file directly. FFA-007 checked that fields were "present" in the INSERT — it verified code structure, not schema compliance. No check cross-referenced INSERT/SELECT column names against the migration DDL.
+5. **Why is this a new failure class?** Schema compliance checks existed for `.order()` (A-027 extension) and column-level drift (A-027) but no A-rule mandated reading the migration file at the IAA gate for all INSERT/SELECT operations.
+
+**Corrective action (wave-audit-log-column-fix)**:
+1. `useUploadCriteria` INSERT corrected: removed `user_id`, `resource_type`, `resource_id`; added `organisation_id: organisationId` (NOT NULL), `file_path: data.path`, `created_by: user.id`.
+2. `useUploadedDocuments` SELECT corrected: removed `resource_id`; added `created_by`.
+3. `UploadedDocument` interface corrected: removed `resource_id: string | null`; added `created_by: string | null`.
+4. Deduplication key corrected: `row.details?.file_path ?? row.file_path` (removed `row.resource_id ??`).
+5. 7 RED→GREEN tests (T-ALCF-001 through T-ALCF-007) validate each column fix.
+6. IAA adds A-031 (Schema Column Compliance Check) — per Pre-Brief FFA-016–018 and IAA self-governance.
+7. This incident registered in FAIL-ONLY-ONCE v3.4.0.
+
+**Learning**: IAA schema compliance checks MUST read the migration file for affected tables and cross-check every column name used in INSERT/SELECT statements. Silent try/catch wrappers and mock-based tests cannot substitute for schema contract verification. The IAA Pre-Brief for this wave introduced new FFA checks (FFA-016 through FFA-018) to enforce this going forward.
+
+**Open improvement**: S-028 — SCHEMA-COLUMN-COMPLIANCE-MANDATORY: For every PR containing Supabase INSERT or SELECT operations, IAA MUST read the migration DDL for the affected table(s) and cross-check every column name. The migration file path must be cited in the FFA check evidence. A PREHANDOVER proof that does not include the migration file cross-check for each affected table is a HANDOVER BLOCKER. *(See Section 3, item S-028.)*
+
+---
+
 | ID | Description | Origin | Status |
 |----|-------------|--------|--------|
 | S-001 | Extend `align-governance.sh` with a pre-flight diff check that warns (BLOCKER) when local version has MORE sections than canonical — prevents silent learning loss | GV-001-20260221 | OPEN |
@@ -601,15 +632,15 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 | S-026 | GOVERNANCE-CLOSURE-PRE-BRIEF-MANDATORY: Governance-only closure sessions (CWT evidence, IBWR, implementation plan updates, session memory, PREHANDOVER proof, FAIL-ONLY-ONCE registry updates) are AAWP_MAT and KNOWLEDGE_GOVERNANCE deliverables. They ARE subject to the mandatory IAA Pre-Brief (A-031). No wave type — including post-merge closure, governance-only, or evidence-compilation sessions — is exempt from Pre-Brief. The Foreman MUST invoke IAA Pre-Brief via `task(agent_type: "independent-assurance-agent", ...)` before committing ANY artifact on ANY new wave branch. The phrase "governance-only, no production code" is NOT a valid exemption criterion. Triggered by: INC-PREBRIEF-GOVERNANCE-CLOSURE-001 (CS2 re-alignment, 2026-03-08). | INC-PREBRIEF-GOVERNANCE-CLOSURE-001 (2026-03-08) | OPEN |
 | S-027 | WRITE-EVIDENCE-EARLY-INVARIANT: Every hook that creates a user-visible resource (upload, create, import) MUST write an `audit_log` entry or equivalent immediately after the resource creation succeeds — BEFORE any optional downstream processing (parsing, validation, indexing). Downstream processing may update the entry (action change, details enrichment) but MUST NOT be the sole visibility source. This is the engineering complement to A-004 (OPOJD) applied at the data layer. Triggered by: INC-WUF-DOCLIST-001 (2026-03-08). | INC-WUF-DOCLIST-001 (2026-03-08) | OPEN |
 
----
+| S-028 | SCHEMA-COLUMN-COMPLIANCE-MANDATORY: For every PR containing Supabase INSERT or SELECT operations, IAA MUST read the migration DDL for the affected table(s) and cross-check every column name used. The migration file path must be cited in the FFA check evidence. A PREHANDOVER proof that does not include the migration file cross-check for each affected table is a HANDOVER BLOCKER. Silent try/catch wrappers and mock-based tests cannot substitute for schema contract verification. Triggered by: INC-ALCF-001 (2026-03-08). | INC-ALCF-001 (2026-03-08) | OPEN |
 
-## Section 4: Attestation Protocol
+---
 
 When completing PREFLIGHT §1.3, record the following block in the **session memory preamble**:
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 3.3.0
+fail_only_once_version: 3.4.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
 open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024, S-025, S-026, S-027]
 ```
@@ -621,7 +652,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 ---
 
 *Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523, maturion-isms#855, maturion-isms#856, maturion-isms#1013, maturion-isms#999, maturion-isms#1003 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-03-08 | Version: 3.3.0 | Status: ACTIVE*
+*Last Updated: 2026-03-08 | Version: 3.4.0 | Status: ACTIVE*
 
 ---
 
@@ -629,6 +660,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.4.0 | 2026-03-08 | INC-ALCF-001 registered (schema column mismatch escaped IAA gate in wave-upload-doclist-fix: INSERT/SELECT used non-existent audit_logs columns; REMEDIATED in wave-audit-log-column-fix); S-028 SCHEMA-COLUMN-COMPLIANCE-MANDATORY added; version bumped to 3.4.0 |
 | 3.3.0 | 2026-03-08 | INC-WUF-DOCLIST-001 recorded (Upload-Without-Audit-Log design gap: documents invisible after upload when Edge Function fails); S-027 WRITE-EVIDENCE-EARLY-INVARIANT added; FAIL-ONLY-ONCE version bumped; attestation template updated to 3.3.0 |
 | 3.2.0 | 2026-03-08 | INC-PREBRIEF-GOVERNANCE-CLOSURE-001 recorded (IAA Pre-Brief skipped for governance-only closure session; CS2 FOREMAN RE-ALIGNMENT issued; PHASE_A_ADVISORY fabricated token voided); S-026 GOVERNANCE-CLOSURE-PRE-BRIEF-MANDATORY added; INC-OPOJD-W15R-QA-001 severity corrected from MEDIUM to MODERATE; retroactive Pre-Brief invoked via IAA task tool; CORRECTION-ADDENDUM committed |
 | 3.1.0 | 2026-03-08 | INC-OPOJD-W15R-QA-001 recorded (missing GitHub issue for T-W15R-QA-001 qa-builder delegation); S-025 DELEGATION-ISSUE-REQUIRED added; footer version corrected from stale 2.9.0 to 3.1.0; maturion-isms#1000 created as corrective action |

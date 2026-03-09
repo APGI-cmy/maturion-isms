@@ -1,3 +1,94 @@
+# Wave Current Tasks — foreman-v2-agent — wave-audit-log-column-fix
+
+**Wave**: wave-audit-log-column-fix  
+**Branch**: `copilot/fix-document-upload-issues`  
+**Date**: 2026-03-08  
+**Session**: session-wave-audit-log-column-fix-20260308  
+**Authority**: CS2 (@APGI-cmy) — "fix(criteria-upload): audit_logs insert/query column mismatches prevent uploaded documents from appearing; migration drift and governance gaps require postmortem / scope closure"  
+**Protocol Reference**: IAA_PRE_BRIEF_PROTOCOL.md v1.1.0 §Trigger  
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave-audit-log-column-fix.md` — PENDING IAA RESPONSE  
+**Prior Wave**: wave-upload-doclist-fix (PR #1007 — merged 2026-03-08)
+
+---
+
+## Wave Summary
+
+Post-merge investigation of wave-upload-doclist-fix (PR #1007) reveals that the implementation
+passed governance checks but introduced column mismatches against the actual `audit_logs` schema.
+The previous fix wrote `audit_log(action='criteria_upload')` but used non-existent columns
+(`user_id`, `resource_type`, `resource_id`) and omitted required NOT NULL column `organisation_id`.
+The SELECT also queries `resource_id` which does not exist in the schema.
+
+Root causes per issue:
+1. `useUploadCriteria` inserts `user_id` (non-existent), `resource_type` (non-existent),
+   `resource_id` (non-existent), and omits `organisation_id` (NOT NULL → insert fails at DB).
+2. `useUploadedDocuments` selects `resource_id` (non-existent → SELECT fails → "Failed to load").
+3. Migration path drift: audit_logs migration lives under legacy path.
+
+---
+
+## Architecture: Correct audit_logs Schema
+
+**Actual audit_logs columns** (from migration `20260308000001_audit_logs_table.sql`):
+- `id UUID PRIMARY KEY`
+- `audit_id UUID NOT NULL REFERENCES audits(id)`
+- `organisation_id UUID NOT NULL REFERENCES organisations(id)` ← REQUIRED, was missing
+- `action TEXT NOT NULL`
+- `file_path TEXT`
+- `details JSONB`
+- `created_by UUID REFERENCES auth.users(id)` ← was wrongly named `user_id`
+- `created_at TIMESTAMPTZ NOT NULL`
+
+**Columns that do NOT exist** (were incorrectly used):
+- `user_id` — must be `created_by`
+- `resource_type` — does not exist, must be removed
+- `resource_id` — does not exist, must be removed from both INSERT and SELECT
+
+---
+
+## Task Registry
+
+| Task ID | Assigned To | Description | Status |
+|---------|-------------|-------------|--------|
+| T-ALCF-QA-001 | qa-builder | Define RED gate tests for column fix: (a) INSERT uses correct columns (organisation_id, created_by, NOT resource_type/resource_id/user_id); (b) SELECT does not include resource_id; (c) UploadedDocument interface has no resource_id field | 🔴 NOT STARTED |
+| T-ALCF-API-001 | api-builder | Fix `useUploadCriteria` insert: replace `user_id`→`created_by`, add `organisation_id`, remove `resource_type`, remove `resource_id`. Fix `useUploadedDocuments` select: remove `resource_id`. Update `UploadedDocument` interface: remove `resource_id` field. Fix deduplication key to use `details?.file_path ?? file_path`. | 🔴 NOT STARTED |
+| T-ALCF-GOV-001 | foreman-v2 | Governance: register INC-ALCF-001 in FAIL-ONLY-ONCE (schema column mismatch escaped IAA gate in previous wave); update BUILD_PROGRESS_TRACKER; update SCOPE_DECLARATION; add wave entry to implementation-plan.md; postmortem on how column mismatch escaped the previous IAA gate | 🔴 NOT STARTED |
+
+---
+
+## Dependency Chain
+
+```
+IAA Pre-Brief received
+  ↓
+T-ALCF-QA-001 (RED gate tests — qa-builder)
+  ↓ CST Gate: QA→API (all new tests RED-confirmed)
+T-ALCF-API-001 (api-builder: column fix)
+  ↓ all tests GREEN
+T-ALCF-GOV-001 (foreman: governance closure)
+  ↓ Phase 4: PREHANDOVER proof + session memory + IAA final audit
+  ↓ CS2 review
+```
+
+---
+
+## Acceptance Criteria
+
+- [ ] `useUploadCriteria` insert uses: `audit_id`, `organisation_id`, `action`, `created_by`, `details` (NO `user_id`, `resource_type`, `resource_id`)
+- [ ] `useUploadedDocuments` select does NOT include `resource_id`
+- [ ] `UploadedDocument` interface does NOT include `resource_id` field
+- [ ] Deduplication key uses `details?.file_path ?? file_path` (no `resource_id` reference)
+- [ ] All existing tests remain GREEN (no regressions)
+- [ ] INC-ALCF-001 registered in FAIL-ONLY-ONCE
+- [ ] BUILD_PROGRESS_TRACKER updated
+- [ ] IAA final assurance PASS token received before merge gate release
+
+---
+
+# ───────────────────────────────────────────────
+# ARCHIVED — wave-upload-doclist-fix (previous wave)
+# ───────────────────────────────────────────────
+
 # Wave Current Tasks — foreman-v2-agent — wave-upload-doclist-fix
 
 **Wave**: wave-upload-doclist-fix  
