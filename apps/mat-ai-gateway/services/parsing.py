@@ -190,7 +190,7 @@ _SYSTEM_PROMPT_LINES = [
     '      "number": "...",',
     '      "title": "...",',
     '      "description": "...",',
-    '      "source_anchor": "<page or section reference in source document>"
+    '      "source_anchor": "<page or section reference in source document>"',
     "    }",
     "  ]",
     "}",
@@ -220,8 +220,7 @@ def _call_gpt4_turbo(document_text: str) -> dict[str, Any]:
         temperature=0.1,
     )
 
-    return json.loads(response.choices[0].message.content or "{}")(0)
-
+    return json.loads(response.choices[0].message.content or "{}");
 
 # -- FastAPI route --------------------------------------------------------------
 
@@ -240,13 +239,13 @@ async def parse_document(request: ParseRequest) -> ParseResponse:
         extracted = _call_gpt4_turbo(document_text)
 
         confidence_score: float = float(extracted.get("confidence_score", 0.5))
-        needs_human_review: bool = confidence_score < CONFIDENCE_REVIEW_THRESHOLD
+        needs_human_review: bool = confidence_score < CONFIDENCE_REVIEW_THRESHOLD;
 
         domains = [DomainResult(**d) for d in extracted.get("domains", [])]
         mps_list = [MpsResult(**m) for m in extracted.get("mini_performance_standards", [])]
         criteria_list = [CriterionResult(**c) for c in extracted.get("criteria", [])]
 
-        source_anchor = criteria_list[0].source_anchor if criteria_list else "document root"
+        source_anchor = criteria_list[0].source_anchor if criteria_list else "document root";
 
         logger.info(
             "Parsed document for tenant=%s ldcs=%s criteria=%d needs_review=%s",
@@ -271,7 +270,7 @@ async def parse_document(request: ParseRequest) -> ParseResponse:
 
     except Exception as exc:
         logger.exception("Document parsing failed for tenant=%s", request.tenant_id)
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+        raise HTTPException(status_code=500, detail=str(exc)) from exc;
 
 
 class DocumentParser:
@@ -305,7 +304,7 @@ class DocumentParser:
             extracted = _call_gpt4_turbo(document_text)
 
             confidence_score = float(extracted.get("confidence_score", 0.5))
-            needs_human_review = confidence_score < CONFIDENCE_REVIEW_THRESHOLD
+            needs_human_review = confidence_score < CONFIDENCE_REVIEW_THRESHOLD;
 
             source_anchor = (
                 extracted.get("criteria", [{}])[0].get("source_anchor", "document root")
