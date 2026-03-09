@@ -91,14 +91,15 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
   // Track which file path is currently being polled after a parse trigger
   const [pollingFilePath, setPollingFilePath] = useState<string | null>(null);
   const pollStatus = usePollCriteriaDocumentStatus(auditId, pollingFilePath);
+  const { invalidate: invalidateUploadedDocuments } = uploadedDocuments;
 
   useEffect(() => {
     const status = pollStatus.data?.status;
     if (status === 'pending_review' || status === 'parse_failed') {
       setPollingFilePath(null);
-      uploadedDocuments.invalidate();
+      invalidateUploadedDocuments();
     }
-  }, [pollStatus.data?.status]);
+  }, [pollStatus.data?.status, invalidateUploadedDocuments]);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -158,7 +159,7 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
       }
 
       // Refresh the uploaded documents list
-      uploadedDocuments.invalidate();
+      invalidateUploadedDocuments();
 
       setSelectedFile(null);
       setUploadProgress(0);
@@ -180,7 +181,7 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
     try {
       await triggerParsing.mutateAsync({ auditId, filePath });
       setPollingFilePath(filePath);
-      uploadedDocuments.invalidate();
+      invalidateUploadedDocuments();
     } catch (retryError) {
       console.warn('[CriteriaUpload] Retry parse failed:', retryError);
     } finally {
