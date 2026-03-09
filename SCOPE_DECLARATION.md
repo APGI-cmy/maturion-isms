@@ -9,10 +9,12 @@
 ## Changed Files
 
 - `.agent-admin/assurance/iaa-prebrief-wave-16-build.md` - IAA Pre-Brief artifact for wave-16-build
+- `.agent-admin/assurance/iaa-token-session-wave-16-build-20260309-PASS.md` - IAA ASSURANCE-TOKEN 58/58 PASS (A-031 carve-out)
 - `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave-16-build-20260309.md` - PREHANDOVER proof for wave-16-build
 - `.agent-workspace/foreman-v2/memory/session-wave-16-build-20260309.md` - Foreman session memory for wave-16-build
 - `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - S-029 improvement suggestion appended
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave current tasks — Wave 16 build orchestration
 - `.agent-workspace/independent-assurance-agent/memory/session-prebrief-wave-16-build-20260309.md` - IAA Pre-Brief session memory (A-031 carve-out)
+- `.agent-workspace/independent-assurance-agent/memory/session-wave-16-build-20260309.md` - IAA formal audit session memory (A-031 carve-out)
 - `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station (A-031 carve-out)
 - `SCOPE_DECLARATION.md` - Fresh scope declaration for wave-16-build (A-029)
