@@ -358,16 +358,6 @@ async function backgroundParse({
         created_by: userId ?? null,
         details: { error: message, outcome: 'failure' },
       });
-      if (auditId) {
-        await supabase.from('audit_logs').insert({
-          audit_id: auditId,
-          organisation_id: organisationId ?? null,
-          action: 'criteria_parse_failed',
-          file_path: filePath ?? null,
-          created_by: userId ?? null,
-          details: { error: message, outcome: 'failure' },
-        });
-      }
     } catch {
       // Audit logging failure must not mask original error
     }

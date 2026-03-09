@@ -14,11 +14,12 @@
  * - Inline error log per failed document (T-W15R-UI-003 / FR-103 full)
  * - alert() replaced with inline success state (T-W15R-UI-003)
  */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   useUploadCriteria,
   useTriggerAIParsing,
   useUploadedDocuments,
+  usePollCriteriaDocumentStatus,
   type UploadedDocument,
 } from '../../lib/hooks/useCriteria';
 
@@ -27,7 +28,9 @@ interface CriteriaUploadProps {
 }
 
 /** Maps audit_logs action → normalised parse-status badge value */
-function getParseStatus(doc: UploadedDocument): 'PENDING' | 'PROCESSING' | 'COMPLETE' | 'FAILED' {
+function getParseStatus(doc: UploadedDocument, pollingFilePath: string | null = null): 'PENDING' | 'PROCESSING' | 'COMPLETE' | 'FAILED' {
+  const docFilePath = doc.file_path ?? doc.details?.file_path ?? null;
+  if (pollingFilePath && docFilePath && pollingFilePath === docFilePath) return 'PROCESSING';
   if (doc.action === 'criteria_parsed') return 'COMPLETE';
   if (doc.action === 'criteria_parse_failed') return 'FAILED';
   // criteria_upload: document uploaded but parsing not yet attempted or unavailable
@@ -85,6 +88,17 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
   // T-W15R-UI-002: track which doc is being retried
   const [retryingDocId, setRetryingDocId] = useState<string | null>(null);
+  // Track which file path is currently being polled after a parse trigger
+  const [pollingFilePath, setPollingFilePath] = useState<string | null>(null);
+  const pollStatus = usePollCriteriaDocumentStatus(auditId, pollingFilePath);
+
+  useEffect(() => {
+    const status = pollStatus.data?.status;
+    if (status === 'pending_review' || status === 'parse_failed') {
+      setPollingFilePath(null);
+      uploadedDocuments.invalidate();
+    }
+  }, [pollStatus.data?.status]);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -140,6 +154,7 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
       // T-W15R-UI-003: replace alert() with inline success message
       if (parsingSucceeded) {
         setUploadSuccess('Criteria document uploaded and parsing initiated!');
+        setPollingFilePath(result.path);
       }
 
       // Refresh the uploaded documents list
@@ -164,6 +179,7 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
     setRetryingDocId(doc.id);
     try {
       await triggerParsing.mutateAsync({ auditId, filePath });
+      setPollingFilePath(filePath);
       uploadedDocuments.invalidate();
     } catch (retryError) {
       console.warn('[CriteriaUpload] Retry parse failed:', retryError);
@@ -292,8 +308,10 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
         {(uploadedDocuments.data?.length ?? 0) > 0 && (
           <ul className="space-y-3" aria-label="Document list">
             {uploadedDocuments.data!.map((doc) => {
-              const status = getParseStatus(doc);
+              const status = getParseStatus(doc, pollingFilePath);
               const isRetrying = retryingDocId === doc.id;
+              const docFilePath = doc.file_path ?? doc.details?.file_path ?? null;
+              const isPolling = !!pollingFilePath && pollingFilePath === docFilePath;
               const errorMessage = doc.details?.error;
 
               return (
@@ -341,11 +359,11 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
                     <button
                       data-testid="retry-parse-button"
                       onClick={() => void handleRetry(doc)}
-                      disabled={isRetrying || triggerParsing.isPending}
+                      disabled={isRetrying || isPolling || triggerParsing.isPending}
                       aria-label={`Parse ${getDisplayName(doc)} now`}
                       className="px-3 py-1 text-xs font-medium bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      {isRetrying ? 'Parsing…' : 'Parse Now'}
+                      {isRetrying || isPolling ? 'Parsing…' : 'Parse Now'}
                     </button>
                   </div>
                 </li>
