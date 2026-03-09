@@ -122,6 +122,11 @@ All 29 assertions pass (29/29 GREEN).
 | LIM-002 | Storage object (the uploaded file itself) is not deleted | Intentional: preserves the original file for re-parse; manual cleanup via Supabase console if needed |
 | LIM-003 | Delete does not remove `criteria_evaluations`, `domain_assignments`, `mps_assignments`, `criteria_assignments` cascade data | These cascade from domain ON DELETE CASCADE in the Supabase schema |
 
+> **Note**: RLS policies for `domains` DELETE, `criteria_documents` INSERT/UPDATE/DELETE, and
+> `audit_logs` DELETE are added by migration
+> `apps/maturion-maturity-legacy/supabase/migrations/20260309000003_criteria_delete_reparse_rls.sql`.
+> This closes the RLS gap identified by IAA REJECTION-PACKAGE BD-015 (R1 round).
+
 ---
 
 ## 6. Completeness Gap Tracking

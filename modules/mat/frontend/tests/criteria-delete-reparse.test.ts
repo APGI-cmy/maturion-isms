@@ -21,6 +21,7 @@
  *   T-DEL-012: CriteriaUpload renders delete confirmation with cancel + confirm buttons
  *   T-DEL-013: CriteriaUpload renders re-parse confirmation with cancel + confirm buttons
  *   T-DEL-014: Delete and re-parse actions are scoped to audit_id only
+ *   T-DEL-015: RLS migration 20260309000003 adds all 5 required policies (BD-015)
  *
  * FRS: FR-004 (Criteria management), FR-103 (Error surfacing)
  * Governance overlay: governance/overlays/OVL-CRITERIA-DELETE-REPARSE.md
@@ -275,3 +276,50 @@ describe('[T-DEL-014] Delete and re-parse hooks are scoped to audit_id only', ()
     expect(auditScopeCount).toBeGreaterThanOrEqual(deleteCount);
   });
 });
+
+// ---------------------------------------------------------------------------
+// T-DEL-015: RLS migration exists for all 5 required policies (BD-015 IAA gate)
+// ---------------------------------------------------------------------------
+describe('[T-DEL-015] RLS migration adds all 5 required policies for delete/reparse ops', () => {
+  const RLS_MIGRATION_PATH = path.resolve(
+    process.cwd(),
+    '../../../apps/maturion-maturity-legacy/supabase/migrations/20260309000003_criteria_delete_reparse_rls.sql',
+  );
+
+  it('RLS migration file 20260309000003_criteria_delete_reparse_rls.sql exists', () => {
+    expect(fs.existsSync(RLS_MIGRATION_PATH)).toBe(true);
+  });
+
+  it('domains_delete_org_isolation policy is present', () => {
+    const content = fs.readFileSync(RLS_MIGRATION_PATH, 'utf-8');
+    expect(content).toContain('domains_delete_org_isolation');
+  });
+
+  it('criteria_documents_insert_org_isolation policy is present', () => {
+    const content = fs.readFileSync(RLS_MIGRATION_PATH, 'utf-8');
+    expect(content).toContain('criteria_documents_insert_org_isolation');
+  });
+
+  it('criteria_documents_update_org_isolation policy is present', () => {
+    const content = fs.readFileSync(RLS_MIGRATION_PATH, 'utf-8');
+    expect(content).toContain('criteria_documents_update_org_isolation');
+  });
+
+  it('criteria_documents_delete_org_isolation policy is present', () => {
+    const content = fs.readFileSync(RLS_MIGRATION_PATH, 'utf-8');
+    expect(content).toContain('criteria_documents_delete_org_isolation');
+  });
+
+  it('audit_logs_delete_org_isolation policy is present', () => {
+    const content = fs.readFileSync(RLS_MIGRATION_PATH, 'utf-8');
+    expect(content).toContain('audit_logs_delete_org_isolation');
+  });
+
+  it('all 5 policies use idempotent IF NOT EXISTS guards', () => {
+    const content = fs.readFileSync(RLS_MIGRATION_PATH, 'utf-8');
+    // Each policy should be wrapped in a DO $$ BEGIN ... IF NOT EXISTS guard
+    const ifNotExistsCount = (content.match(/IF NOT EXISTS/g) ?? []).length;
+    expect(ifNotExistsCount).toBeGreaterThanOrEqual(5);
+  });
+});
+
