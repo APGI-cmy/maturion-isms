@@ -607,11 +607,11 @@ Any one tier satisfies OVL-INJ-001. All three absent = REJECTION-PACKAGE.
 
 OVL-INJ-001 failure triggers REJECTION-PACKAGE:
 
-> `OVL-INJ-001 FAIL: No injection audit trail found. The iaa-prebrief-inject.yml workflow
+> OVL-INJ-001 FAIL: No injection audit trail found. The iaa-prebrief-inject.yml workflow
 > must run and deliver the Pre-Brief invocation before qualifying tasks are delegated.
 > No signature string, committed pre-brief artifact, or CI check run was found for this wave.
 > Fix: Commit wave-current-tasks.md to trigger the workflow, or invoke /iaa-prebrief manually.
-> Re-invoke IAA once the trail is established.`
+> Re-invoke IAA once the trail is established.
 
 ---
 
@@ -620,7 +620,7 @@ OVL-INJ-001 failure triggers REJECTION-PACKAGE:
 - `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0 — Living Agent framework
 - `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` — Knowledge architecture
 - `governance/canon/AGENT_CONTRACT_ARCHITECTURE.md` — Four-phase contract architecture
-- `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` v1.0.0 — IAA Pre-Brief Protocol (proactive assurance)
+- `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` v1.1.0 — IAA Pre-Brief Protocol (proactive assurance)
 - `governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md` (AGCFPP-001) — CodexAdvisor write authority gate; linked with OVL-INJ-001
 - `governance/quality/agent-integrity/` — Agent integrity reference store
 - `governance/CANON_INVENTORY.json` — Canon hash registry
@@ -628,4 +628,4 @@ OVL-INJ-001 failure triggers REJECTION-PACKAGE:
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.3.0 | Effective: 2026-02-24 | Amended: 2026-03-04*
+*Authority: CS2 (Johan Ras) | Version: 1.4.0 | Effective: 2026-02-24 | Amended: 2026-03-07*

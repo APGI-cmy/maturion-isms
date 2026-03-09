@@ -1374,8 +1374,8 @@
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "version": "1.4.0",
-      "file_hash": "9853da7bc2f068f4544a74492e559e196a24b3733055409f005cde946b00e53b",
-      "file_hash_sha256": "9853da7bc2f068f4544a74492e559e196a24b3733055409f005cde946b00e53b",
+      "file_hash": "0a5f860b18287ab47692a8d8d088bec39f863bbaa22d72054d4a3787811bbade",
+      "file_hash_sha256": "0a5f860b18287ab47692a8d8d088bec39f863bbaa22d72054d4a3787811bbade",
       "effective_date": "2026-03-07",
       "description": "Defines the Independent Assurance Agent (IAA) class: role, hard-trigger authority, independence requirements, five-phase delivery proof protocol, binary output (ASSURANCE-TOKEN / REJECTION-PACKAGE), trigger table, Proactive Assurance Pre-Brief Protocol with Wave Checklist Invocation Gate, and Injection Audit Trail mandatory PREHANDOVER check (OVL-INJ-001) with AGCFPP-001 gate link.",
       "type": "canon",

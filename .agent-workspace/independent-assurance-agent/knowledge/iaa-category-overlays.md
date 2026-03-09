@@ -212,10 +212,12 @@ Applied when PR category is `KNOWLEDGE_GOVERNANCE`.
 
 Applied when PR is T1 or T2 qualifying (IAA required at handover — see §Risk-Tiered Ceremony
 Table in `INDEPENDENT_ASSURANCE_AGENT_CANON.md`: T1 = agent contract changes, T2 = build
-deliverables) AND the wave has a `wave-current-tasks.md` on the branch. This overlay is checked
-**after** the universal CERT gate and **before** any category-specific (AGENT_CONTRACT,
-CANON_GOVERNANCE, etc.) overlay checks. It ensures the IAA Pre-Brief injection pipeline ran
-before any qualifying task was delegated — not just that a Pre-Brief artifact exists.
+deliverables). This overlay is checked **after** the universal CERT gate and **before** any
+category-specific (AGENT_CONTRACT, CANON_GOVERNANCE, etc.) overlay checks. It ensures the
+IAA Pre-Brief injection pipeline ran before any qualifying task was delegated — not just that
+a Pre-Brief artifact exists. When the wave model is in use, OVL-INJ-001 also expects a
+`wave-current-tasks.md` audit trail; if that file is absent on a qualifying T1/T2 PR, treat
+the overlay as an explicit fail / missing-evidence tier rather than skipping it.
 
 **Trigger**: Always applied alongside AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW,
 AAWP_MAT, KNOWLEDGE_GOVERNANCE, or AGENT_INTEGRITY overlays when the PR is T1 or T2
@@ -272,7 +274,7 @@ No evidence from any tier is present. IAA states:
 | Check ID | Check Name | Pass Condition |
 |----------|-----------|----------------|
 | OVL-INJ-ADM-001 | Pre-Brief artifact non-empty | `.agent-admin/assurance/iaa-prebrief-wave<N>.md` contains substantive content — not a blank file, stub, or placeholder-only file. Binary existence check is CERT-004; this confirms content is meaningful. |
-| OVL-INJ-ADM-002 | Pre-Brief references correct wave | Pre-Brief artifact header declares the same wave number or slug as `wave-current-tasks.md` on the branch. Mismatch = cross-wave reuse violation (FAIL-ONLY-ONCE A-016). |
+| OVL-INJ-ADM-002 | Pre-Brief references correct wave | Pre-Brief artifact header declares the same wave number or slug as `wave-current-tasks.md` on the branch. Mismatch = cross-wave reuse violation. |
 
 ---
 

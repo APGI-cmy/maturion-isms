@@ -1,35 +1,31 @@
-# Scope Declaration — wave-audit-log-column-fix — 2026-03-08
+# Scope Declaration — wave-OVL-INJ — 2026-03-07
 
-**Wave**: InjAudit — New Workflow: injection-audit-report.yml
-**Branch**: copilot/create-injection-audit-report-workflow
-**Session**: session-InjAudit-20260307
+**Wave**: OVL-INJ — Add OVL-INJ-001 Injection Audit Trail check to IAA PREHANDOVER canon
+**Branch**: copilot/add-injection-audit-trail-check
+**Session**: session-waveOVLINJ-20260307
 **Date**: 2026-03-07
-**Authority**: CS2 (Johan Ras / @APGI-cmy) — [CS2-Direct] label
-**PR**: copilot/create-injection-audit-report-workflow (#978)
+**Authority**: CS2 (Johan Ras / @APGI-cmy) — issue assigned to CodexAdvisor-agent
+**PR**: copilot/add-injection-audit-trail-check (#980)
 
 ## Scope
 
-### Deliverable (T-INJAUDIT-CI-001)
-- `.github/workflows/injection-audit-report.yml` - new; injection audit report workflow
+### Deliverables (T-OVLINJ-001 through T-OVLINJ-004)
+- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` - amended to v1.4.0; added §Injection Audit Trail, OVL-INJ-001 REJECTION-PACKAGE trigger, AGCFPP-001 reference
+- `.agent-workspace/independent-assurance-agent/knowledge/iaa-category-overlays.md` - updated to v3.2.0; added INJECTION_AUDIT_TRAIL overlay section with OVL-INJ-001
+- `.agent-workspace/independent-assurance-agent/knowledge/index.md` - updated to v2.7.0; version reference and history for iaa-category-overlays.md v3.2.0
+- `governance/CANON_INVENTORY.json` - IAA canon entry updated to v1.4.0 with refreshed SHA256 hash
 
 ### IAA Protocol Artifacts
-- `.agent-admin/assurance/iaa-prebrief-InjAudit.md` - new; IAA Pre-Brief artifact
-- `.agent-admin/assurance/iaa-token-session-InjAudit-waveInjAudit-20260307.md` - new; IAA REJECTION-PACKAGE v1 token
-- `.agent-admin/assurance/iaa-token-session-InjAudit-waveInjAudit-20260307-v3.md` - new; IAA REJECTION-PACKAGE v3 token
+- `.agent-admin/assurance/iaa-prebrief-waveOVLINJ-20260307.md` - new; IAA Pre-Brief for Wave OVL-INJ
 
-### Foreman Governance Artifacts
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-InjAudit-waveInjAudit-20260307.md` - new; PREHANDOVER proof v1 (immutable)
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-InjAudit-waveInjAudit-20260307-v2.md` - new; PREHANDOVER proof v2 (immutable)
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-InjAudit-waveInjAudit-20260307-v3.md` - new; PREHANDOVER proof v3 (F-1 fix + OVL-CI-005 documented)
-- `.agent-workspace/foreman-v2/memory/session-InjAudit-20260307.md` - new; foreman session memory
-- `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md` - updated; InjAudit wave scope (workspace copy)
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - updated; InjAudit wave
+### CodexAdvisor Governance Artifacts
+- `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-waveOVLINJ-20260307.md` - new; PREHANDOVER proof for Wave OVL-INJ
+- `.agent-workspace/CodexAdvisor-agent/memory/session-waveOVLINJ-20260307.md` - new; CodexAdvisor session memory
+- `.agent-workspace/CodexAdvisor-agent/parking-station/suggestions-log.md` - updated; parking station
 
-### IAA Memory (IAA-authored)
-- `.agent-workspace/independent-assurance-agent/memory/session-InjAudit-20260307.md` - new; IAA session memory
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - updated by IAA
+### Foreman Artifacts
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - updated; OVL-INJ wave tasks
 
 ### This File
-- `SCOPE_DECLARATION.md` - this file (root-level merge gate input; F-1 fix from IAA REJECTION-PACKAGE)
-
+- `SCOPE_DECLARATION.md` - this file (root-level merge gate input; BL-027 compliance)
 

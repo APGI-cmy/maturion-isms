@@ -291,7 +291,7 @@ CodexAdvisor-agent must produce a PREHANDOVER proof file committed to the branch
 invoking IAA at handover. The file must contain the following fields and sections:
 
 ### Required File
-**Path**: `.agent-workspace/codexadvisor-agent/memory/PREHANDOVER-waveOVLINJ-20260307.md`
+**Path**: `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-waveOVLINJ-20260307.md`
 (or equivalent PREHANDOVER path for CodexAdvisor-agent)
 
 ### Required Fields (per A-029 — PREHANDOVER Immutability)
@@ -332,7 +332,7 @@ invoking IAA at handover. The file must contain the following fields and section
 
 **SCOPE_DECLARATION.md** (per A-026 + A-028):
 - Must be present as a committed file on the branch
-- Must list exactly and only the 4 files modified in this PR
+- Must list all and only the files modified in this PR
 - Must not carry forward entries from prior waves
 - Must match `git diff --name-only origin/main...HEAD` exactly at invocation time
 
