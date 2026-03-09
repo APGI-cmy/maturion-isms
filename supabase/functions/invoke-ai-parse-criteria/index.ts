@@ -108,8 +108,20 @@ Deno.serve(async (req: Request): Promise<Response> => {
       );
     }
 
-    // Validate AI Gateway URL (SSRF mitigation: BD-018)
-    validateAiGatewayUrl(AI_GATEWAY_URL);
+    // Resolve organisation_id from the audit record — required for all inserts
+    const { data: auditData, error: auditError } = await supabase
+      .from('audits')
+      .select('organisation_id')
+      .eq('id', auditId)
+      .single();
+
+    if (auditError || !auditData?.organisation_id) {
+      throw new Error(
+        `Failed to resolve organisation_id for audit ${auditId}: ${auditError?.message ?? 'audit not found'}`,
+      );
+    }
+
+    const organisationId = auditData.organisation_id;
 
     // Resolve caller identity for audit trail
     const authHeader = req.headers.get('Authorization') ?? '';
@@ -118,72 +130,128 @@ Deno.serve(async (req: Request): Promise<Response> => {
       userId = user?.id;
     }
 
-    // Generate a signed URL for the file (storage-internal, no external URLs)
-    const { data: signedUrlData, error: signedUrlError } = await supabase.storage
-      .from('audit-documents')
-      .createSignedUrl(filePath, 300); // 5-minute TTL
+    // Invoke AI Gateway DocumentParser (skip if AI_GATEWAY_URL is not configured)
+    let parseResult: Record<string, unknown> = {};
+    if (AI_GATEWAY_URL) {
+      // Validate AI Gateway URL (SSRF mitigation: BD-018)
+      validateAiGatewayUrl(AI_GATEWAY_URL);
 
-    if (signedUrlError || !signedUrlData?.signedUrl) {
-      throw new Error(`Failed to create signed URL: ${signedUrlError?.message ?? 'unknown error'}`);
+      // Generate a signed URL for the file (storage-internal, no external URLs)
+      const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+        .from('audit-documents')
+        .createSignedUrl(filePath, 300); // 5-minute TTL
+
+      if (signedUrlError || !signedUrlData?.signedUrl) {
+        throw new Error(`Failed to create signed URL: ${signedUrlError?.message ?? 'unknown error'}`);
+      }
+
+      const documentUrl = signedUrlData.signedUrl;
+
+      const parseResponse = await fetch(`${AI_GATEWAY_URL}/api/v1/parse`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          document_url: documentUrl,
+          tenant_id: auditId,
+          file_path: filePath,
+        }),
+      });
+
+      if (!parseResponse.ok) {
+        throw new Error(`AI Gateway returned ${parseResponse.status}: ${await parseResponse.text()}`);
+      }
+
+      parseResult = await parseResponse.json();
+    } else {
+      console.warn('[invoke-ai-parse-criteria] AI_GATEWAY_URL is not set — skipping AI parse, returning empty result');
     }
-
-    const documentUrl = signedUrlData.signedUrl;
-
-    // Invoke AI Gateway DocumentParser
-    const parseResponse = await fetch(`${AI_GATEWAY_URL}/api/v1/parse`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        document_url: documentUrl,
-        tenant_id: auditId,
-        file_path: filePath,
-      }),
-    });
-
-    if (!parseResponse.ok) {
-      throw new Error(`AI Gateway returned ${parseResponse.status}: ${await parseResponse.text()}`);
-    }
-
-    const parseResult = await parseResponse.json();
 
     // Extract structured hierarchy from parse result
-    const domains: Array<{ name: string; sort_order: number }> = parseResult.domains ?? [];
-    const mpsList: Array<{ domain_name: string; name: string; number: string; sort_order: number }> =
+    const domains: Array<{ name: string; description?: string }> = parseResult.domains ?? [];
+    const mpsList: Array<{ domain_name: string; name: string; number: string; description?: string }> =
       parseResult.mini_performance_standards ?? [];
     const criteriaList: Array<{
       mps_number: string;
       number: string;
-      title: string;
-      description: string;
-      source_anchor: string;
+      title?: string;
+      description?: string;
+      source_anchor?: string;
     }> = parseResult.criteria ?? [];
 
-    const needsHumanReview: boolean = parseResult.needs_human_review ?? false;
-    const isLdcsDocument: boolean = parseResult.ldcs_detected ?? detectLdcsPattern(JSON.stringify(parseResult));
+    const needsHumanReview: boolean = (parseResult.needs_human_review as boolean) ?? false;
+    const isLdcsDocument: boolean =
+      (parseResult.ldcs_detected as boolean) ?? detectLdcsPattern(JSON.stringify(parseResult));
+
+    // ── Handle empty parse results gracefully (architecture §4.2) ──────────────
+    // If the AI returned zero domains (e.g. gateway unreachable or not configured),
+    // skip all DB inserts and return a successful zero-count response.
+    if (domains.length === 0) {
+      const { error: emptyStatusError } = await supabase
+        .from('criteria_documents')
+        .update({ status: 'pending_review' })
+        .eq('audit_id', auditId)
+        .eq('file_path', filePath);
+
+      if (emptyStatusError) {
+        console.warn(`[invoke-ai-parse-criteria] Failed to update criteria_documents status (empty result): ${emptyStatusError.message}`);
+      }
+
+      await supabase.from('audit_logs').insert({
+        audit_id: auditId,
+        user_id: userId ?? null,
+        action: 'criteria_parsed',
+        resource_type: 'criteria_document',
+        resource_id: filePath,
+        details: {
+          file_path: filePath,
+          domains_inserted: 0,
+          mps_inserted: 0,
+          criteria_inserted: 0,
+          needs_human_review: needsHumanReview,
+          ldcs_document: isLdcsDocument,
+          ldcs_mps_expected: LDCS_MPS_COUNT,
+          outcome: 'success',
+        },
+      });
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          domains_inserted: 0,
+          mps_inserted: 0,
+          criteria_inserted: 0,
+          needs_human_review: needsHumanReview,
+          ldcs_document: isLdcsDocument,
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    }
 
     // ── DB write-back: Domain → MPS → Criteria hierarchy ──────────────────────
 
-    // 1. Insert domains
+    // 1. Insert domains — includes organisation_id (NOT NULL) and number (INTEGER)
     const { data: insertedDomains, error: domainsError } = await supabase
       .from('domains')
       .insert(
         domains.map((d, idx) => ({
           audit_id: auditId,
+          organisation_id: organisationId,
+          number: idx + 1,           // INTEGER, 1-based sequential
           name: d.name,
-          sort_order: d.sort_order ?? idx,
+          description: d.description ?? null,
         })),
       )
-      .select('id, name');
+      .select('id, name, number');
 
     if (domainsError) {
       throw new Error(`Failed to insert domains: ${domainsError.message}`);
     }
 
-    const domainMap = new Map<string, string>(
-      (insertedDomains ?? []).map(d => [d.name, d.id]),
+    const domainMap = new Map<string, { id: string; number: number }>(
+      (insertedDomains ?? []).map(d => [d.name, { id: d.id, number: d.number }]),
     );
 
-    // 2. Insert mini_performance_standards (only those whose domain was successfully inserted)
+    // 2. Insert mini_performance_standards — includes audit_id, organisation_id (both NOT NULL)
     const validMpsList = mpsList.filter(m => domainMap.has(m.domain_name));
     if (validMpsList.length < mpsList.length) {
       const missingDomains = mpsList
@@ -196,23 +264,40 @@ Deno.serve(async (req: Request): Promise<Response> => {
       .from('mini_performance_standards')
       .insert(
         validMpsList.map((m, idx) => ({
-          domain_id: domainMap.get(m.domain_name),
+          domain_id: domainMap.get(m.domain_name)!.id,
+          audit_id: auditId,
+          organisation_id: organisationId,
+          number: idx + 1,           // INTEGER, 1-based sequential
           name: m.name,
-          number: m.number,
-          sort_order: m.sort_order ?? idx,
+          description: m.description ?? null,
         })),
       )
-      .select('id, number');
+      .select('id, number, domain_id');
 
     if (mpsError) {
       throw new Error(`Failed to insert mini_performance_standards: ${mpsError.message}`);
     }
 
-    const mpsMap = new Map<string, string>(
-      (insertedMps ?? []).map(m => [m.number, m.id]),
+    // Map AI's original MPS number string → { id, domain_id } from inserted rows
+    // (relies on insert order matching validMpsList order)
+    const safeMps = insertedMps ?? [];
+    if (safeMps.length !== validMpsList.length) {
+      throw new Error(
+        `MPS insert count mismatch: expected ${validMpsList.length}, got ${safeMps.length}`,
+      );
+    }
+    const mpsMap = new Map<string, { id: string; domain_id: string }>(
+      validMpsList.map((m, idx) => [
+        m.number,
+        {
+          id: safeMps[idx].id,
+          domain_id: safeMps[idx].domain_id,
+        },
+      ]),
     );
 
-    // 3. Insert criteria (only those whose MPS was successfully inserted)
+    // 3. Insert criteria — includes domain_id, organisation_id (both NOT NULL),
+    //    number as INTEGER, description (maps title + description), guidance from source_anchor
     const validCriteriaList = criteriaList.filter(c => mpsMap.has(c.mps_number));
     if (validCriteriaList.length < criteriaList.length) {
       const missingMps = criteriaList
@@ -224,24 +309,38 @@ Deno.serve(async (req: Request): Promise<Response> => {
     const { error: criteriaError } = await supabase
       .from('criteria')
       .insert(
-        validCriteriaList.map((c, idx) => ({
-          audit_id: auditId,
-          mps_id: mpsMap.get(c.mps_number),
-          number: c.number,
-          title: c.title,
-          description: c.description,
-          status: 'draft',
-          sort_order: idx,
-          source_anchor: c.source_anchor,
-          needs_human_review: needsHumanReview,
-        })),
+        validCriteriaList.map((c, idx) => {
+          const mpsEntry = mpsMap.get(c.mps_number);
+          return {
+            mps_id: mpsEntry?.id,
+            domain_id: mpsEntry?.domain_id,
+            audit_id: auditId,
+            organisation_id: organisationId,
+            number: idx + 1,          // INTEGER, 1-based sequential
+            description: c.title
+              ? `${c.title}${c.description ? ': ' + c.description : ''}`
+              : (c.description ?? ''),
+            guidance: c.source_anchor ?? null,
+          };
+        }),
       );
 
     if (criteriaError) {
       throw new Error(`Failed to insert criteria: ${criteriaError.message}`);
     }
 
-    // 4. Audit trail: log parsing outcome to audit_logs
+    // 4. Update criteria_documents.status → pending_review (architecture §4.2)
+    const { error: statusError } = await supabase
+      .from('criteria_documents')
+      .update({ status: 'pending_review' })
+      .eq('audit_id', auditId)
+      .eq('file_path', filePath);
+
+    if (statusError) {
+      console.warn(`[invoke-ai-parse-criteria] Failed to update criteria_documents status: ${statusError.message}`);
+    }
+
+    // 5. Audit trail: log parsing outcome to audit_logs
     await supabase.from('audit_logs').insert({
       audit_id: auditId,
       user_id: userId ?? null,
@@ -273,6 +372,19 @@ Deno.serve(async (req: Request): Promise<Response> => {
     );
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
+
+    // Update criteria_documents.status → parse_failed (architecture §4.2)
+    try {
+      if (auditId && filePath) {
+        await supabase
+          .from('criteria_documents')
+          .update({ status: 'parse_failed' })
+          .eq('audit_id', auditId)
+          .eq('file_path', filePath);
+      }
+    } catch {
+      // Status update failure must not mask original error
+    }
 
     // Audit trail: log failure
     try {
