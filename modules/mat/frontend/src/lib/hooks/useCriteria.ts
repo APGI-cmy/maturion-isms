@@ -206,7 +206,8 @@ export function useTriggerAIParsing() {
       }
 
       const { data, error } = await supabase.functions.invoke('invoke-ai-parse-criteria', {
-        body: { auditId, filePath }
+        body: { auditId, filePath },
+        headers: { Authorization: `Bearer ${session.access_token}` }
       });
 
       if (error) {
