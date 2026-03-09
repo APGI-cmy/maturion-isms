@@ -17,6 +17,7 @@
 
 ### IAA Protocol Artifacts
 - `.agent-admin/assurance/iaa-prebrief-waveOVLINJ-20260307.md` - new; IAA Pre-Brief for Wave OVL-INJ
+- `.agent-admin/assurance/iaa-token-session-waveOVLINJ-20260307.md` - new; IAA ASSURANCE-TOKEN (PASS) for Wave OVL-INJ
 
 ### CodexAdvisor Governance Artifacts
 - `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-waveOVLINJ-20260307.md` - new; PREHANDOVER proof for Wave OVL-INJ
@@ -25,6 +26,10 @@
 
 ### Foreman Artifacts
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - updated; OVL-INJ wave tasks
+
+### IAA Memory (IAA-authored)
+- `.agent-workspace/independent-assurance-agent/memory/session-waveOVLINJ-20260307.md` - new; IAA session memory for Wave OVL-INJ
+- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - updated; IAA parking station
 
 ### This File
 - `SCOPE_DECLARATION.md` - this file (root-level merge gate input; BL-027 compliance)
