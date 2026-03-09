@@ -274,6 +274,25 @@ jobs:
             echo "SUPABASE_DB_URL not set — skipping live schema check (CI secret required)"
           fi
 
+      - name: schema-verification — verify public.audit_logs exists
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          echo "Verifying schema — checking public.audit_logs table exists..."
+          # Schema verification: public.audit_logs must be present (Wave 15R migration)
+          # Required by useCriteria.ts useUploadedDocuments() and useUploadCriteria()
+          if [ -n "$SUPABASE_DB_URL" ]; then
+            result=$(psql "$SUPABASE_DB_URL" -t -A -c \
+              "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='audit_logs';" 2>/dev/null || echo "0")
+            if [ "$result" != "1" ]; then
+              echo "FAIL: public.audit_logs not found — migration 20260308000001_audit_logs_table.sql may not have been applied"
+              exit 1
+            fi
+            echo "PASS: public.audit_logs verified"
+          else
+            echo "SUPABASE_DB_URL not set — skipping live schema check (CI secret required)"
+          fi
+
   deploy-preview:
     name: Deploy Preview
     runs-on: ubuntu-latest
@@ -341,7 +360,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `✅ **Preview deployment ready!**\n\n🔗 Preview URL: ${{ steps.deploy.outputs.preview-url }}`
+              body: `✅ **Preview deployment ready!\n\n🔗 Preview URL: ${{ steps.deploy.outputs.preview-url }}`
             })
 
   deploy-production:

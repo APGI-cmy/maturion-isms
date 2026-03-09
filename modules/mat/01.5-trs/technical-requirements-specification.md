@@ -3,12 +3,12 @@
 **Module**: MAT (Manual Audit Tool)
 **Artifact Type**: Technical Requirements Specification
 **Status**: COMPLETE
-**Version**: v1.8.0  
+**Version**: v1.9.0  
 **Owner**: Foreman (FM)  
-**Authority**: Derived from FRS v1.9.0 (`modules/mat/01-frs/functional-requirements.md`)
+**Authority**: Derived from FRS v2.1.0 (`modules/mat/01-frs/functional-requirements.md`)
 **Applies To**: MAT module within maturion-isms repository
 **Created**: 2026-02-13
-**Last Updated**: 2026-03-04
+**Last Updated**: 2026-03-08
 
 ---
 
@@ -677,6 +677,8 @@ The system MUST be implemented as a Progressive Web App.
 
 **Derives From**: FR-005, FR-006, FR-007
 **Priority**: P0
+
+> ⚠️ **PRODUCTION GAP — INC-WAVE15-PARSE-001 (2026-03-08)**: TR-037 constraints are **NOT YET VERIFIED IN PRODUCTION**. The Edge Function (`invoke-ai-parse-criteria`) was never deployed; `AI_GATEWAY_URL` not set; AI Gateway reachability unverified. Remediation: Wave 15R Batch A (api-builder). See `BUILD_PROGRESS_TRACKER.md` §INC-WAVE15-PARSE-001.
 
 Document parsing MUST follow a validated pipeline.
 
@@ -1521,6 +1523,8 @@ This TRS is derived from the MAT FRS v1.5.0 (`modules/mat/01-frs/functional-requ
 **Traceability**: Complete FRS-to-TRS mapping available in `frs-to-trs-traceability.md`.
 
 **Change Log**:
+- v1.9.0 (2026-03-08): TR-037 (AI Document Parsing Pipeline) and related TRs (TR-019, TR-031) annotated as NOT YET VERIFIED IN PRODUCTION (INC-WAVE15-PARSE-001). Production gap confirmed by CS2 on 2026-03-08. Remediation via Wave 15R. Derives from FRS v2.1.0.
+- v1.8.0 (2026-03-04): Added TR-089 through TR-102 (Wave 14 gap waves — UX workflow, scoring, responsibility cascade). TRS extended to 102 requirements. Derives from FRS v1.9.0.
 - v1.7.0 (2026-03-04): Added TR-084 through TR-088 (Wave postbuild-fails-02 — Full RLS Remediation, GAP-006–GAP-013). All 5 requirements marked 🔴 NEEDS REMEDIATION. TRS extended to 88 requirements.
 - v1.6.0 (2026-03-04): Added TR-082, TR-083 (Wave postbuild-fails-01 — RLS Fix). TRS extended to 83 requirements.
 - v1.5.0 (2026-03-03): Added TR-078 through TR-081 (Wave 14 Addendum A — Column Mapping Remediation INC-W14-COL-MAPPING-001). TRS extended to 81 requirements.

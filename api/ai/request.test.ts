@@ -528,14 +528,22 @@ describe('buildAICentre adapters — non-null requirement (T-073 through T-075)'
 
   // T-075-1 ----------------------------------------------------------------
   it('buildPersistentMemory() stores and retrieves entries (non-null behaviour)', async () => {
-    // RED: buildPersistentMemory is undefined (not exported) — throws at call site
-    const adapter = (buildPersistentMemory as unknown as () => unknown)() as {
-      persist(entry: Record<string, unknown>): Promise<void>;
-      retrieve(params: { organisationId: string }): Promise<Array<{ content: string }>>;
-    };
+    // Use a fresh in-memory test client and a unique org ID per run to prevent
+    // cross-run contamination from concurrent workflow runs writing to a shared
+    // Supabase instance. This guarantees toHaveLength(1) regardless of parallelism.
+    const { SupabasePersistentMemoryAdapter } = await import(
+      '../../packages/ai-centre/src/memory/SupabasePersistentMemoryAdapter.js'
+    );
+
+    const mockClient = makeTestSupabaseClient();
+    const adapter = new SupabasePersistentMemoryAdapter(
+      mockClient as unknown as ConstructorParameters<typeof SupabasePersistentMemoryAdapter>[0],
+    );
+
+    const orgId = `org-red-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
     await adapter.persist({
-      organisationId: 'org-red-001',
+      organisationId: orgId,
       sessionId: 'sess-red-001',
       role: 'user',
       content: 'test memory entry',
@@ -543,7 +551,7 @@ describe('buildAICentre adapters — non-null requirement (T-073 through T-075)'
       timestamp: Date.now(),
     });
 
-    const results = await adapter.retrieve({ organisationId: 'org-red-001' });
+    const results = await adapter.retrieve({ organisationId: orgId });
     // Null stub always returns [] — real PersistentMemoryAdapter retains entries.
     expect(results).toHaveLength(1);
     expect(results[0]!.content).toBe('test memory entry');
