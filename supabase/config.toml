@@ -1,0 +1,4 @@
+project_id = "ujucvyyspfxlxlfdamda"
+
+[functions.invoke-ai-parse-criteria]
+verify_jwt = false
