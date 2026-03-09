@@ -168,35 +168,36 @@ def _detect_ldcs_pattern(text: str) -> bool:
 
 # -- GPT-4 Turbo structured extraction -----------------------------------------
 
-_SYSTEM_PROMPT = """
-You are an expert compliance document analyser specialised in extracting structured audit criteria
-from compliance frameworks such as the LDCS (Local Delivery Compliance Standard).
-
-The LDCS defines {mps_count} Mini Performance Standards (MPS) organised under multiple Domains.
-Criteria are identified by hierarchical numbers (e.g. "3.2.1").
-
-Extract the full Domain -> MPS -> Criteria hierarchy from the document text.
-
-Return a JSON object with this schema:
-{{
-  "confidence_score": <float 0.0-1.0>,
-  "domains": [{{"name": "...", "sort_order": <int>}}],
-  "mini_performance_standards": [
-    {{"domain_name": "...", "name": "...", "number": "...", "sort_order": <int>}}
-  ],
-  "criteria": [
-    {{
-      "mps_number": "...",
-      "number": "...",
-      "title": "...",
-      "description": "...",
-      "source_anchor": "<page or section reference in source document>"
-    }}
-  ]
-}}
-
-source_anchor must reference the section or page number in the source document for traceability.
-""".format(mps_count=LDCS_MPS_TOTAL)
+_SYSTEM_PROMPT_LINES = [
+    "You are an expert compliance document analyser specialised in extracting structured audit criteria",
+    "from compliance frameworks such as the LDCS (Local Delivery Compliance Standard).",
+    "",
+    "The LDCS defines " + str(LDCS_MPS_TOTAL) + " Mini Performance Standards (MPS) organised under multiple Domains.",
+    'Criteria are identified by hierarchical numbers (e.g. "3.2.1").',
+    "",
+    "Extract the full Domain -> MPS -> Criteria hierarchy from the document text.",
+    "",
+    "Return a JSON object with this schema:",
+    "{",  
+    '  "confidence_score": <float 0.0-1.0>,',
+    '  "domains": [{"name": "...", "sort_order": <int>}],',
+    '  "mini_performance_standards": [',
+    '    {"domain_name": "...", "name": "...", "number": "...", "sort_order": <int>}',
+    "  ],",
+    '  "criteria": [',
+    "    {",
+    '      "mps_number": "...",',
+    '      "number": "...",',
+    '      "title": "...",',
+    '      "description": "...",',
+    '      "source_anchor": "<page or section reference in source document>"',
+    "    }",
+    "  ]",
+    "}",
+    "",
+    "source_anchor must reference the section or page number in the source document for traceability.",
+]
+_SYSTEM_PROMPT = "\n".join(_SYSTEM_PROMPT_LINES)
 
 
 def _call_gpt4_turbo(document_text: str) -> dict[str, Any]:
@@ -219,9 +220,11 @@ def _call_gpt4_turbo(document_text: str) -> dict[str, Any]:
         temperature=0.1,
     )
 
-    return json.loads(response.choices[0].message.content or "{}")[""""
+    return json.loads(response.choices[0].message.content or "{}");
+
 
 # -- FastAPI route --------------------------------------------------------------
+
 
 @router.post("/parse", response_model=ParseResponse)
 async def parse_document(request: ParseRequest) -> ParseResponse:
