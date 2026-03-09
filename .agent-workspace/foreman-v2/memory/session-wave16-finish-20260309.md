@@ -53,7 +53,7 @@ prior_sessions_reviewed:
    - `polc-boundary-gate.yml` FAILURE: Check 3 scans ALL session memory files for "(implemented|wrote).*code" pattern. Historical breach-documentation session files (session-rca-breach, session-postfcwt-prodfails, session-101, session-wave5-polc-RCA) trigger false positives. This is a pre-existing issue affecting all Foreman PRs; NOT caused by wave16-orchestration commits.
    - `copilot-loop-watchdog.yml` FAILURE: Scheduled watchdog run; failure unrelated to PR content
 
-2. **A-026 Gap Fixed**: SCOPE_DECLARATION.md was missing `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` (added in commit `6cf1916` AFTER IAA R2 token was issued). Updated to list 13 files accurately.
+2. **A-026 Gap Fixed**: SCOPE_DECLARATION.md was missing `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` (added in commit `6cf1916` AFTER IAA R2 token was issued). Updated to list all 14 files accurately (13 original + `session-wave16-finish-20260309.md` from this follow-up session).
 
 ### Agents Delegated To
 
