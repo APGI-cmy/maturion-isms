@@ -2,8 +2,8 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 2.7.0
-**Last Updated**: 2026-03-07
+**Knowledge Version**: 2.8.0
+**Last Updated**: 2026-03-10
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -12,11 +12,11 @@
 
 | File | Purpose | Version | Status |
 |------|---------|---------|--------|
-| `index.md` (this file) | Knowledge entry point and version reference | 2.7.0 | PRESENT |
+| `index.md` (this file) | Knowledge entry point and version reference | 2.8.0 | PRESENT |
 | `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 2.5.0 | PRESENT — Rules A-001 through A-032 active (A-032: Schema Column Compliance Check — IAA must read migration DDL directly for all PRs containing INSERT/SELECT operations; INC-ALCF-001 self-governance closure) |
 | `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.6.0 | ACTIVE — CORE-001 to CORE-022; CORE-016 PENDING carve-out updated per A-029 |
 | `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.1.0 | ACTIVE — KNOWLEDGE_GOVERNANCE trigger category added |
-| `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE, INJECTION_AUDIT_TRAIL) | 3.2.0 | ACTIVE — OVL-INJ-001 Injection Audit Trail check added (v3.2.0); OVL-AC-ADM-001 through OVL-AC-ADM-004 fully formalised with complete pass conditions; version history table added |
+| `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE, INJECTION_AUDIT_TRAIL) | 3.3.0 | ACTIVE — OVL-CI-005 Inherent Limitation Exception added (v3.3.0, S-033): self-referential workflow PRs may satisfy OVL-CI-005 via YAML validation + pattern parity + workflow_dispatch retention |
 | `session-memory-template.md` | Standard session memory template for IAA invocations | 1.0.0 | PRESENT |
 | `IAA_ZERO_SEVERITY_TOLERANCE.md` | Tier 2 operational note for Zero-Severity-Tolerance Rule — prohibited language table, machine-readable logic, exception procedure | 1.0.0 | ACTIVE |
 | `IAA_AGENT_CONTRACT_AUDIT_STANDARD.md` | **AGENT_CONTRACT Audit Standard** — mandatory audit steps, pre-approval doctrine, protected components checklist, tier placement discipline, decision matrix for all agent contract PRs reviewed by IAA | 1.0.0 | ACTIVE — Load at Step 2.4 when PR category is AGENT_CONTRACT |
@@ -221,6 +221,7 @@ that produced the work under review. Every invocation is logged in session memor
 | 2.5.0 | 2026-03-05 | IAA_AGENT_CONTRACT_AUDIT_STANDARD.md v1.0.0 added — codifies mandatory audit steps, pre-approval doctrine, protected components checklist, tier placement discipline, and decision matrix for AGENT_CONTRACT PRs (CS2 directive — governance-liaison-isms session-049-20260305) |
 | 2.6.0 | 2026-03-05 | iaa-category-overlays.md → v3.1.0: OVL-AC-ADM-001 through OVL-AC-ADM-004 descriptions completed with full pass conditions; version history table added; index version reference corrected from stale 2.3.0 to 3.1.0 (governance-liaison-isms session-050 — CS2 directive issue #966) |
 | 2.7.0 | 2026-03-08 | FAIL-ONLY-ONCE.md → v2.5.0 (A-032 Schema Column Compliance Check — IAA self-governance closure for INC-ALCF-001; per Pre-Brief wave-audit-log-column-fix §7 shared responsibility clause); index version and key rules table updated (session-wave-audit-log-column-fix-20260308) |
+| 2.8.0 | 2026-03-10 | iaa-category-overlays.md → v3.3.0 (S-033: OVL-CI-005 Inherent Limitation Exception documented for self-referential workflow PRs; three required substitutes defined; retroactive incident acceptance policy formalised); PR #1053 |
 
 ---
 
