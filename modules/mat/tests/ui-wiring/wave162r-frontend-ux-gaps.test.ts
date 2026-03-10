@@ -100,7 +100,7 @@ describe('T-W162R-014: GAP-014 — Audio player for evidence playback', () => {
     'components/evidence/EvidenceCollection.tsx'
   );
 
-  it('T-W162R-014a: EvidenceCollection component must contain an <audio element tag', () => {
+  it('T-W162R-014a: EvidenceCollection component must contain an <audio> element tag', () => {
     expect(
       existsSync(evidenceComponentPath),
       'components/evidence/EvidenceCollection.tsx must exist'
@@ -118,11 +118,12 @@ describe('T-W162R-014: GAP-014 — Audio player for evidence playback', () => {
   it('T-W162R-014b: EvidenceCollection must conditionally render audio player for type=audio or type=interview', () => {
     const src = readFileSync(evidenceComponentPath, 'utf-8');
 
-    // RED: currently no conditional logic for audio/interview playback
-    const hasAudioConditional =
-      (src.includes("=== 'audio'") || src.includes('=== "audio"')) &&
-      (src.includes("=== 'interview'") || src.includes('=== "interview"') ||
-       src.includes("audio'") || src.includes('audio"'));
+    // RED: currently no conditional logic for audio/interview playback.
+    // The implementation must render a player only for audio and interview evidence types.
+    const hasAudioTypeCheck =
+      src.includes("=== 'audio'") || src.includes('=== "audio"');
+    const hasInterviewTypeCheck =
+      src.includes("=== 'interview'") || src.includes('=== "interview"');
 
     // Must also have the <audio element to be a real player (not just type checks)
     expect(
@@ -131,9 +132,13 @@ describe('T-W162R-014: GAP-014 — Audio player for evidence playback', () => {
     ).toContain('<audio');
 
     expect(
-      hasAudioConditional,
-      'EvidenceCollection.tsx must conditionally render audio player for ' +
-        "type === 'audio' or type === 'interview'"
+      hasAudioTypeCheck,
+      "EvidenceCollection.tsx must check for type === 'audio' to conditionally render player"
+    ).toBe(true);
+
+    expect(
+      hasInterviewTypeCheck,
+      "EvidenceCollection.tsx must check for type === 'interview' to conditionally render player"
     ).toBe(true);
 
     // BD-018: audio src must be bound from data (not hardcoded / unsafe)
