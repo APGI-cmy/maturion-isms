@@ -4,14 +4,14 @@
  * TRS: TR-050, TR-053
  * Task: 5.6.5
  */
-import { useState } from 'react';
 import { useAudits } from '../lib/hooks/useAudits';
+import { useAuditContext } from '../contexts/AuditContext';
 import { ReviewTable } from '../components/scoring/ReviewTable';
 import { ReportGenerator } from '../components/reports/ReportGenerator';
 
 export function ScoringPage() {
   const { data: audits } = useAudits();
-  const [selectedAuditId, setSelectedAuditId] = useState<string>('');
+  const { selectedAuditId, setSelectedAuditId } = useAuditContext();
 
   // Get the first audit if none selected
   const auditId = selectedAuditId || audits?.[0]?.id || '';

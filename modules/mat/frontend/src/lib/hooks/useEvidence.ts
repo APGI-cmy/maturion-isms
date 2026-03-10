@@ -19,6 +19,8 @@ export interface Evidence {
   metadata?: Record<string, unknown>;
   created_at: string;
   created_by: string;
+  /** Signed playback URL for audio/interview items; generated in useCriterionEvidence (1 h TTL) */
+  signed_url?: string | null;
 }
 
 export interface EvidenceUploadInput {
@@ -46,7 +48,27 @@ export function useCriterionEvidence(criterionId: string) {
         throw new Error(`Failed to fetch evidence: ${error.message}`);
       }
 
-      return data || [];
+      const rows: Evidence[] = data || [];
+
+      // Generate signed playback URLs for audio/interview items (1 hour TTL)
+      return Promise.all(
+        rows.map(async (item) => {
+          if ((item.type === 'audio' || item.type === 'interview') && item.file_path) {
+            try {
+              const { data: signedData, error: signedError } = await supabase.storage
+                .from('audit-documents')
+                .createSignedUrl(item.file_path, 3600);
+              return {
+                ...item,
+                signed_url: signedError ? null : signedData?.signedUrl ?? null,
+              };
+            } catch {
+              return { ...item, signed_url: null };
+            }
+          }
+          return item;
+        }),
+      );
     },
     enabled: !!criterionId,
   });

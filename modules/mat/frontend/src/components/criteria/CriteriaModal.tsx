@@ -7,6 +7,10 @@ import { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { X } from 'lucide-react';
 import { EvidenceCollection } from '../evidence/EvidenceCollection';
+import { InterviewRecorder } from '../evidence/InterviewRecorder';
+import type { InterviewMetadata } from '../evidence/InterviewRecorder';
+import { useUploadEvidence } from '../../lib/hooks/useEvidence';
+import { useCriterionScore } from '../../lib/hooks/useScoring';
 
 interface CriteriaModalProps {
   criterion: {
@@ -27,8 +31,11 @@ export function CriteriaModal({ criterion, isOpen, onClose }: CriteriaModalProps
   const [notUsed, setNotUsed] = useState(false);
   const [notUsedReason, setNotUsedReason] = useState('');
   const [notUsedJustification, setNotUsedJustification] = useState('');
+  const [findings, setFindings] = useState<string>('');
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const uploadEvidence = useUploadEvidence();
+  const { data: criterionScore } = useCriterionScore(criterion?.id ?? '');
 
   // Focus trap and keyboard navigation
   useEffect(() => {
@@ -167,6 +174,16 @@ export function CriteriaModal({ criterion, isOpen, onClose }: CriteriaModalProps
                   {criterion.description || 'No description available.'}
                 </p>
               </div>
+              {criterionScore && (
+                <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-md">
+                  <p className="text-sm font-medium text-gray-700">
+                    Maturity Level: <span className="font-semibold text-blue-700">{criterionScore.maturity_level ?? '—'}</span>
+                  </p>
+                  {criterionScore.rationale && (
+                    <p className="text-sm text-gray-600 mt-1">{criterionScore.rationale}</p>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
@@ -253,6 +270,8 @@ export function CriteriaModal({ criterion, isOpen, onClose }: CriteriaModalProps
               <h3 className="text-lg font-medium text-gray-900 mb-3">Findings Summary</h3>
               <div className="space-y-4">
                 <textarea
+                  value={findings}
+                  onChange={(e) => setFindings(e.target.value)}
                   className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   rows={8}
                   placeholder="Enter findings summary for this criterion..."
@@ -269,14 +288,27 @@ export function CriteriaModal({ criterion, isOpen, onClose }: CriteriaModalProps
           {activeTab === 'interview' && (
             <div id="interview-panel" role="tabpanel" aria-labelledby="interview-tab">
               <h3 className="text-lg font-medium text-gray-900 mb-3">Interview Recording</h3>
-              <div className="space-y-4">
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                  <p className="text-gray-600">Interview recording interface will be implemented in Task 5.6.4</p>
-                  <p className="text-sm text-gray-500 mt-2">
-                    Will support: Audio recording, transcript display, segment tagging
-                  </p>
-                </div>
-              </div>
+              <InterviewRecorder
+                onRecordingComplete={async (file: File, metadata: InterviewMetadata) => {
+                  try {
+                    await uploadEvidence.mutateAsync({
+                      criterionId: criterion.id,
+                      type: 'interview',
+                      file,
+                      metadata: {
+                        interviewee_name: metadata.interviewee_name,
+                        interviewee_role: metadata.interviewee_role,
+                        consent_given: metadata.consent_given,
+                      },
+                    });
+                    toast.success('Interview recording saved successfully!');
+                  } catch (err) {
+                    toast.error(
+                      `Failed to save interview recording: ${err instanceof Error ? err.message : 'Unknown error'}`
+                    );
+                  }
+                }}
+              />
             </div>
           )}
         </div>
@@ -293,7 +325,7 @@ export function CriteriaModal({ criterion, isOpen, onClose }: CriteriaModalProps
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             onClick={() => {
               // Save logic would go here
-              toast('Save functionality will be implemented with backend integration');
+              toast(`Save functionality will be implemented with backend integration. Findings: ${findings || '(none)'}`);
               onClose();
             }}
           >
