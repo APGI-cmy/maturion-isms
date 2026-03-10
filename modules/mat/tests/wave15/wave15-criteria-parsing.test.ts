@@ -185,7 +185,9 @@ describe('Wave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)',
      * GREEN: parsing.py imports the OpenAI client and calls it with model="gpt-4.1"
      *        to process the extracted document text.
      *
-     * Architecture ref: §3.4 "GPT-4.1" as the parsing model (upgraded from gpt-4-turbo in PR #1040).
+     * Implementation ref: parsing.py GPT_MODEL = "gpt-4.1" (upgraded from gpt-4-turbo in PR #1040).
+     * Note: system-architecture.md §3.4 still lists GPT-4 Turbo; the architecture doc is
+     * pending update to reflect the PR #1040 model upgrade.
      */
     const src = readParsingPy();
     expect(
@@ -199,7 +201,7 @@ describe('Wave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)',
     expect(
       src,
       '[T-W15-CP-005] parsing.py must reference "gpt-4.1" as the model.\n' +
-      'The architecture specifies GPT-4.1 for document parsing — use exactly this model.',
+      'Implementation uses GPT-4.1 per PR #1040 upgrade — use exactly this model.',
     ).toMatch(/gpt-4\.1/i);
   });
 
