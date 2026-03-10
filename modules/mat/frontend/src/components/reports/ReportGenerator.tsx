@@ -5,6 +5,7 @@
  * Task: 5.6.5
  */
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useGenerateReport } from '../../lib/hooks/useScoring';
 import { FileText, Download, Loader2 } from 'lucide-react';
 
@@ -29,9 +30,9 @@ export function ReportGenerator({ auditId, auditTitle }: ReportGeneratorProps) {
       link.click();
       document.body.removeChild(link);
 
-      alert(`${selectedFormat.toUpperCase()} report generated successfully!`);
+      toast.success(`${selectedFormat.toUpperCase()} report generated successfully!`);
     } catch (err) {
-      alert(`Failed to generate report: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      toast.error(`Failed to generate report: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
   };
 

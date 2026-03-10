@@ -136,6 +136,8 @@ export function useAuditMetrics() {
     },
     // Refetch every 30 seconds for near-real-time updates
     refetchInterval: 30000,
+    // GAP-025: Do not poll when the browser tab is hidden/not visible
+    refetchIntervalInBackground: false,
     // Keep data fresh for 5 seconds
     staleTime: 5000,
   });

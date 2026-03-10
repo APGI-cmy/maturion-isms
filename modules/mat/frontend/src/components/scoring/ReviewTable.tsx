@@ -5,6 +5,7 @@
  * Task: 5.6.5
  */
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useAuditScores, useConfirmScore, useOverrideScore } from '../../lib/hooks/useScoring';
 import { Check, Edit2, AlertCircle } from 'lucide-react';
 
@@ -26,15 +27,15 @@ export function ReviewTable({ auditId }: ReviewTableProps) {
   const handleConfirm = async (scoreId: string, criterionId: string) => {
     try {
       await confirmScore.mutateAsync({ scoreId, criterionId, auditId });
-      alert('Score confirmed successfully!');
+      toast.success('Score confirmed successfully!');
     } catch (err) {
-      alert(`Failed to confirm score: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      toast.error(`Failed to confirm score: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
   };
 
   const handleOverride = async (scoreId: string, criterionId: string) => {
     if (!overrideJustification.trim() || overrideValue < 0 || overrideValue > 5) {
-      alert('Please provide a valid override score (0-5) and justification');
+      toast.error('Please provide a valid override score (0-5) and justification');
       return;
     }
 
@@ -49,9 +50,9 @@ export function ReviewTable({ auditId }: ReviewTableProps) {
       setEditingScoreId(null);
       setOverrideValue(0);
       setOverrideJustification('');
-      alert('Score override saved successfully!');
+      toast.success('Score override saved successfully!');
     } catch (err) {
-      alert(`Failed to override score: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      toast.error(`Failed to override score: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
   };
 

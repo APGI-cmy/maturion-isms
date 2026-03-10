@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'react-hot-toast';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Layout } from './components/Layout';
 import { AuditManagementPage } from './pages/AuditManagementPage';
@@ -11,6 +12,8 @@ import { ReportsPage } from './pages/ReportsPage';
 import { LoginPage } from './pages/LoginPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { OnboardingPage } from './pages/OnboardingPage';
+import { FeedbackPage } from './pages/FeedbackPage';
+import ArcPortalPage from './pages/arc/index';
 import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './contexts/AuthContext';
 import { useUserProfile } from './lib/hooks/useSettings';
@@ -53,9 +56,16 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <ErrorBoundary>
+          {/* GAP-008: Global toast notification provider (replaces all window.alert calls) */}
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 4000,
+              style: { maxWidth: '420px' },
+            }}
+          />
           <Router>
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
+            <Routes>              <Route path="/login" element={<LoginPage />} />
               <Route element={<ProtectedRoute />}>
                 <Route path="/onboarding" element={<OnboardingPage />} />
                 <Route element={<OnboardingGuard />}>
@@ -68,6 +78,9 @@ function App() {
                     <Route path="dashboard" element={<DashboardPage />} />
                     <Route path="reports" element={<ReportsPage />} />
                     <Route path="settings" element={<SettingsPage />} />
+                    <Route path="feedback" element={<FeedbackPage />} />
+                    <Route path="recommendations" element={<FeedbackPage />} />
+                    <Route path="arc" element={<ArcPortalPage />} />
                   </Route>
                 </Route>
               </Route>

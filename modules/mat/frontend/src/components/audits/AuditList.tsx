@@ -6,6 +6,7 @@
  */
 import { useAudits, useDeleteAudit } from '../../lib/hooks/useAudits';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 export function AuditList() {
   const { data: audits, isLoading, error } = useAudits();
@@ -63,7 +64,7 @@ export function AuditList() {
       try {
         await deleteAudit.mutateAsync(id);
       } catch (error) {
-        alert(`Failed to delete audit: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        toast.error(`Failed to delete audit: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     }
   };

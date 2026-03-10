@@ -4,6 +4,7 @@
  * Task: 5.6.6
  */
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useUserProfile, useUpdateUserProfile, useOrganisationSettings, useUpdateOrganisationSettings, useUploadOrganisationLogo } from '../lib/hooks/useSettings';
 import { User, Building2, Save, Loader2 } from 'lucide-react';
 
@@ -58,15 +59,15 @@ export function SettingsPage() {
           notifications,
         },
       });
-      alert('Profile updated successfully!');
+      toast.success('Profile updated successfully!');
     } catch (err) {
-      alert(`Failed to update profile: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      toast.error(`Failed to update profile: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
   };
 
   const handleSaveOrganisation = async () => {
     if (!userProfile?.organisation_id) {
-      alert('No organisation ID found');
+      toast.error('No organisation ID found');
       return;
     }
 
@@ -91,9 +92,9 @@ export function SettingsPage() {
         },
       });
       setSelectedLogo(null);
-      alert('Organisation settings updated successfully!');
+      toast.success('Organisation settings updated successfully!');
     } catch (err) {
-      alert(`Failed to update organisation settings: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      toast.error(`Failed to update organisation settings: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
   };
 

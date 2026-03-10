@@ -4,6 +4,7 @@
  * TRS: TR-047
  */
 import { useState, useEffect, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { X } from 'lucide-react';
 import { EvidenceCollection } from '../evidence/EvidenceCollection';
 
@@ -292,7 +293,7 @@ export function CriteriaModal({ criterion, isOpen, onClose }: CriteriaModalProps
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             onClick={() => {
               // Save logic would go here
-              alert('Save functionality will be implemented with backend integration');
+              toast('Save functionality will be implemented with backend integration');
               onClose();
             }}
           >

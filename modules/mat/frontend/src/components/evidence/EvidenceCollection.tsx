@@ -5,6 +5,7 @@
  * Task: 5.6.4
  */
 import { useState, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { useCriterionEvidence, useUploadEvidence, useDeleteEvidence } from '../../lib/hooks/useEvidence';
 import { FileText, Image, Mic, Video, Upload, Trash2, Check, BookOpen } from 'lucide-react';
 import { InterviewRecorder } from './InterviewRecorder';
@@ -43,7 +44,7 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
 
   const handleTextSubmit = async () => {
     if (!textContent.trim()) {
-      alert('Please enter some text');
+      toast.error('Please enter some text');
       return;
     }
 
@@ -54,9 +55,9 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
         content: textContent,
       });
       setTextContent('');
-      alert('Text evidence saved successfully!');
+      toast.success('Text evidence saved successfully!');
     } catch (err) {
-      alert(`Failed to save text evidence: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      toast.error(`Failed to save text evidence: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
   };
 
@@ -68,7 +69,7 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
 
   const handleFileUpload = async () => {
     if (!selectedFile) {
-      alert('Please select a file');
+      toast.error('Please select a file');
       return;
     }
 
@@ -82,9 +83,9 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
-      alert(`${activeTab} evidence uploaded successfully!`);
+      toast.success(`${activeTab} evidence uploaded successfully!`);
     } catch (err) {
-      alert(`Failed to upload ${activeTab}: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      toast.error(`Failed to upload ${activeTab}: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
   };
 
@@ -120,9 +121,9 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
             type: activeTab,
             file,
           });
-          alert(`${activeTab} recording saved successfully!`);
+          toast.success(`${activeTab} recording saved successfully!`);
         } catch (err) {
-          alert(`Failed to save recording: ${err instanceof Error ? err.message : 'Unknown error'}`);
+          toast.error(`Failed to save recording: ${err instanceof Error ? err.message : 'Unknown error'}`);
         }
 
         // Clean up
@@ -141,7 +142,7 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
         setRecordingTime(prev => prev + 1);
       }, 1000);
     } catch (err) {
-      alert(`Failed to start recording: ${err instanceof Error ? err.message : 'Permission denied'}`);
+      toast.error(`Failed to start recording: ${err instanceof Error ? err.message : 'Permission denied'}`);
     }
   };
 
@@ -159,9 +160,9 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
 
     try {
       await deleteEvidence.mutateAsync({ id: evidenceId, criterionId, filePath });
-      alert('Evidence deleted successfully!');
+      toast.success('Evidence deleted successfully!');
     } catch (err) {
-      alert(`Failed to delete evidence: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      toast.error(`Failed to delete evidence: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
   };
 
@@ -441,7 +442,7 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
                 },
               });
             } catch (err) {
-              alert(
+              toast.error(
                 `Failed to save interview recording: ${err instanceof Error ? err.message : 'Unknown error'}`
               );
             }
