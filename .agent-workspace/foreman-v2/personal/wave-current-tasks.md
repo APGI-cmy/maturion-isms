@@ -51,11 +51,11 @@ This wave delivers the four deferred frontend UX gaps from the original Wave 16.
 
 | ID | Task | Builder | Status | PR / Evidence |
 |----|------|---------|--------|---------------|
-| T-W162R-QA-001 | Write RED QA suite for GAP-009, GAP-014, GAP-015, GAP-024 | qa-builder | 🔴 PENDING — awaiting IAA Pre-Brief | — |
-| T-W162R-UI-001 | Implement GAP-009: Wire CriteriaModal to backend hooks | ui-builder | 🔴 PENDING — awaiting RED QA gate | T-W162R-QA-001 |
-| T-W162R-UI-002 | Implement GAP-014: Audio playback in EvidenceCollection | ui-builder | 🔴 PENDING — awaiting RED QA gate | T-W162R-QA-001 |
-| T-W162R-UI-003 | Implement GAP-015: AuditContext global provider | ui-builder | 🔴 PENDING — awaiting RED QA gate | T-W162R-QA-001 |
-| T-W162R-UI-004 | Implement GAP-024: Replace confirm() with state-based confirmation dialogs | ui-builder | 🔴 PENDING — awaiting RED QA gate | T-W162R-QA-001 |
+| T-W162R-QA-001 | Write RED QA suite for GAP-009, GAP-014, GAP-015, GAP-024 | qa-builder | 🟢 DONE | SHA b46f0f5d, 635e502e |
+| T-W162R-UI-001 | Implement GAP-009: Wire CriteriaModal to backend hooks | ui-builder | 🟢 DONE | SHA b2acbc1f, 01507329 |
+| T-W162R-UI-002 | Implement GAP-014: Audio playback in EvidenceCollection | ui-builder | 🟢 DONE | SHA b2acbc1f |
+| T-W162R-UI-003 | Implement GAP-015: AuditContext global provider | ui-builder | 🟢 DONE | SHA b2acbc1f |
+| T-W162R-UI-004 | Implement GAP-024: Replace confirm() with state-based confirmation dialogs | ui-builder | 🟢 DONE | SHA b2acbc1f |
 
 **Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED
 
@@ -107,23 +107,23 @@ Branch: copilot/implement-deferred-frontend-ux-gaps
 
 | PR # | Token | Date |
 |------|-------|------|
-| — | PENDING | — |
+| #1048 | IAA-wave16-2R-20260310-PASS | 2026-03-10 |
 
 ---
 
 ## Wave Completion Gate
 
-- [ ] IAA Pre-Brief published at `.agent-admin/assurance/iaa-prebrief-wave16-2R.md`
-- [ ] T-W162R-QA-001 — RED QA suite confirmed failing
-- [ ] T-W162R-UI-001 — GAP-009 implemented, 100% GREEN
-- [ ] T-W162R-UI-002 — GAP-014 implemented, 100% GREEN
-- [ ] T-W162R-UI-003 — GAP-015 implemented, 100% GREEN
-- [ ] T-W162R-UI-004 — GAP-024 implemented, 100% GREEN
-- [ ] QP evaluation: PASS
-- [ ] §4.3 Merge gate parity: PASS
-- [ ] PREHANDOVER proof committed
-- [ ] IAA ASSURANCE-TOKEN received
-- [ ] CS2 notified for merge approval
+- [x] IAA Pre-Brief published at `.agent-admin/assurance/iaa-prebrief-wave16-2R.md`
+- [x] T-W162R-QA-001 — RED QA suite confirmed failing
+- [x] T-W162R-UI-001 — GAP-009 implemented, 100% GREEN
+- [x] T-W162R-UI-002 — GAP-014 implemented, 100% GREEN
+- [x] T-W162R-UI-003 — GAP-015 implemented, 100% GREEN
+- [x] T-W162R-UI-004 — GAP-024 implemented, 100% GREEN
+- [x] QP evaluation: PASS
+- [x] §4.3 Merge gate parity: PASS
+- [x] PREHANDOVER proof committed
+- [x] IAA ASSURANCE-TOKEN received — `IAA-wave16-2R-20260310-PASS` (SHA b3b9b9a)
+- [x] CS2 notified for merge approval
 
 ---
 
@@ -134,12 +134,14 @@ wave: wave16-2R
 session: session-wave16-2R-20260310
 branch: copilot/implement-deferred-frontend-ux-gaps
 issue: "maturion-isms — Wave 16.2R: Remediation — Implement Deferred Frontend UX Gaps"
-status: IAA_PRE_BRIEF_PENDING
+status: ASSURANCE_TOKEN_PASS
 tasks_total: 5
-tasks_open: 5
-tasks_done: 0
-last_updated: 2026-03-10T11:08:53Z
-blocking: IAA_PRE_BRIEF_REQUIRED
+tasks_open: 0
+tasks_done: 5
+last_updated: 2026-03-10T13:38:20Z
+iaa_token: "IAA-wave16-2R-20260310-PASS"
+iaa_token_file: ".agent-admin/assurance/iaa-token-session-wave16-2R-20260310.md"
+blocking: CS2_MERGE_APPROVAL_REQUIRED
 ```
 
 # Wave Current Tasks — foreman-v2-agent — wave16-full-batch
