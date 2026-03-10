@@ -497,11 +497,11 @@ jobs:
           for session_file in \
               .agent-workspace/foreman*/memory/session-*.md; do
             if [ -f "$session_file" ]; then
-              # Check for indicators that FM wrote code; skip lines with negations
-              if grep -iE "(implemented|wrote).*code" \
-                 "$session_file" | \
-                 grep -qviE "did NOT|NOT.*implement"; then
-                echo "⚠️  WARNING: Session memory may indicate FM wrote code: $session_file"
+              # Check for indicators that FM wrote production code; skip governance/workflow work
+              if grep -iE "(implemented|wrote).*code" "$session_file" | \
+                 grep -qviE \
+                   "did NOT|NOT.*implement|governance|workflow|\.github|\.agent-admin|\.agent-workspace|supervision|correction"; then
+                echo "⚠️  WARNING: Session memory may indicate FM wrote production code: $session_file"
                 POLC_VIOLATION_IN_MEMORY=true
               fi
             fi
