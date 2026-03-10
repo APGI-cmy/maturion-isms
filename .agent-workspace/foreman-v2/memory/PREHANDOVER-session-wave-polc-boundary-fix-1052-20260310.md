@@ -185,11 +185,40 @@ Issue maturion-isms#1052 opened by @APGI-cmy and assigns Copilot. CS2 re-alignme
 **IAA R2 Expected Token** (pre-populated per A-029):
 `iaa_audit_token: IAA-session-wave-polc-boundary-fix-1052-20260310-PASS`
 
-IAA R2 independent audit conducted via `task(agent_type: "independent-assurance-agent")`. ASSURANCE-TOKEN or REJECTION-PACKAGE committed to `.agent-admin/assurance/iaa-token-session-wave-polc-boundary-fix-1052-20260310.md`.
+IAA R2 independent audit conducted via `task(agent_type: "independent-assurance-agent")`. ASSURANCE-TOKEN issued. Token committed to `.agent-admin/assurance/iaa-token-session-wave-polc-boundary-fix-1052-20260310.md`.
 
 ## IAA Agent Response (verbatim)
 
-[IAA R2 ASSURANCE-TOKEN or REJECTION-PACKAGE response to be pasted verbatim after R2 invocation]
+```
+═══════════════════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+
+PR: copilot/fix-poll-validation-issue — Fix POLC Boundary Gate False Positives on Copilot Builder PRs (Issue #1052)
+Wave: wave-polc-boundary-fix-1052
+
+All 25 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+
+Token reference: IAA-session-wave-polc-boundary-fix-1052-20260310-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate, token is binding.
+
+R1 Verification Summary — All 8 Failures Corrected:
+  CORE-018/015/013/016 — Artifacts untracked: RESOLVED — 9 ceremony artifacts committed at df5edc2
+  CORE-007 — Fabricated git log: RESOLVED — honest format; real prior commits shown
+  OVL-CI-005 — No CI run URL: RESOLVED — URL documented (runs/22908522470, SHA 296f283)
+  OVL-INJ-001 — Pre-brief untracked: RESOLVED — pre-brief committed at df5edc2
+  A-026 — Stale SCOPE_DECLARATION: RESOLVED — freshly overwritten; matches PR diff
+
+Substantive Quality Confirmed:
+  T-POLC-FIX-001 (label bypass): PASS — specific, non-gameable, pre-empts foreman check only when label present
+  T-POLC-FIX-002 (diff-filter scoping): PASS — diff-filter=A scopes to PR-introduced files; empty-result handled
+  All 3 merge gate jobs preserved: PASS — no gate weakening
+  YAML valid. CodeQL: 0 alerts.
+
+IAA Agent: independent-assurance-agent v6.2.0
+Authority: CS2 (Johan Ras / @APGI-cmy)
+═══════════════════════════════════════════════════════════════════════
+```
 
 ---
 

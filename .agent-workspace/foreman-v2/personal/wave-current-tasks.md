@@ -75,7 +75,7 @@ No executable test suite exists for CI YAML files in this repository. Validation
 - [x] CodeQL security scan: 0 alerts
 - [x] Automated code review: completed
 - [x] IAA pre-brief artifact: `.agent-admin/assurance/iaa-prebrief-wave-polc-boundary-fix-1052.md`
-- [ ] PREHANDOVER proof + IAA final audit + token ceremony
+- [x] PREHANDOVER proof + IAA final audit + token ceremony: COMPLETE (IAA-session-wave-polc-boundary-fix-1052-20260310-PASS)
 - [ ] CS2 merge approval
 
 ---
@@ -102,12 +102,14 @@ wave: wave-polc-boundary-fix-1052
 session: session-wave-polc-boundary-fix-1052-20260310
 branch: copilot/fix-poll-validation-issue
 issue: "maturion-isms#1052 — Bug: POLC Boundary Validation fires false positives on Copilot PRs where agent is acting as builder (not Foreman)"
-status: IAA_PRE_BRIEF_PENDING
+status: ASSURANCE_TOKEN_PASS
 tasks_total: 2
 tasks_open: 0
-tasks_done: 0
+tasks_done: 2
 last_updated: 2026-03-10T16:27:27Z
-blocking: IAA_FINAL_AUDIT_REQUIRED
+iaa_token: "IAA-session-wave-polc-boundary-fix-1052-20260310-PASS"
+iaa_token_file: ".agent-admin/assurance/iaa-token-session-wave-polc-boundary-fix-1052-20260310.md"
+blocking: CS2_MERGE_APPROVAL_REQUIRED
 ```
 
 ---
