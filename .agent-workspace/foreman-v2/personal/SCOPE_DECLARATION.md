@@ -1,18 +1,23 @@
-# SCOPE_DECLARATION — wave-criteria-delete-reparse (R2)
+# SCOPE DECLARATION — wave-wf-contract-audit-20260310
 
-**Session**: session-wave-criteria-delete-reparse-20260309-R2
-**Wave**: wave-criteria-delete-reparse — Document Delete + Re-parse function
-**Branch**: copilot/add-document-delete-reparse-function
-**Cleared**: yes (R1 scope extended for R2 fix)
+**Wave**: wave-wf-contract-audit-20260310
+**Branch**: copilot/update-agent-contract-audit-workflow
+**Date**: 2026-03-10
+**Fresh overwrite**: YES (cat /dev/null > before writing — per A-029)
 
-## Declared Files in Scope
+## Files Modified (git diff origin/main...HEAD --name-only)
 
-- `modules/mat/frontend/src/lib/hooks/useCriteria.ts` - updated; useCallback + useDeleteCriteriaDocument + useReparseCriteriaDocument
-- `modules/mat/frontend/src/components/criteria/CriteriaUpload.tsx` - updated; delete/reparse UI + confirmation dialogs
-- `modules/mat/frontend/tests/criteria-delete-reparse.test.ts` - updated; 36 assertions (T-DEL-001 to T-DEL-015)
-- `governance/overlays/OVL-CRITERIA-DELETE-REPARSE.md` - updated; §5 RLS note added
-- `apps/maturion-maturity-legacy/supabase/migrations/20260309000003_criteria_delete_reparse_rls.sql` - new; 5 RLS policies
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - updated; wave-criteria-delete-reparse
+| File | Type | Justification |
+|------|------|---------------|
+| `.github/workflows/agent-contract-audit.yml` | CI workflow | PRIMARY — trigger migration `pull_request` → `pull_request_target` + checkout ref |
+| `.agent-admin/assurance/iaa-prebrief-wave-wf-contract-audit-20260310.md` | IAA governance artifact | PRE-BRIEF — written by IAA agent (excluded per A-031 carve-out) |
+| `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` | Governance knowledge | GOVERNANCE — breach registration INC-WCA-PREBRIEF-IMPL-001 + A-033 rule |
+| `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Governance personal | GOVERNANCE — wave task register (excluded per A-031 carve-out) |
 
+## Out of Scope
 
-- `SCOPE_DECLARATION.md` - updated; root-level merge gate input (F-1 fix)
+- No `.github/agents/` files (A-013 — N/A)
+- No product code (apps/, modules/, supabase/, packages/)
+- No schema migrations
+- No frontend changes
+- No test files

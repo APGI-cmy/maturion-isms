@@ -5,7 +5,7 @@
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
 **Version**: 3.5.0  
 **Created**: 2026-02-24  
-**Updated**: 2026-03-09  
+**Updated**: 2026-03-10  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -64,6 +64,8 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-030 | IAA-TOKEN-DATE-ACCURACY (CS2 — 2026-03-05): When citing an IAA audit token in any artifact (PREHANDOVER proof, session memory, PR body), the date component MUST match the actual token file date — look up the actual `.agent-admin/assurance/iaa-token-session-NNN-*` filename. Using the session date instead of the actual token filename date is a format violation (extends A-015). Applies especially to multi-batch waves where the IAA token may be issued on a different date than the session. Violation class: INC-IAA-TOKEN-DATE-001. | Issue #GovImpr (2026-03-05) |
 
 | A-031 | PRE-BRIEF-BEFORE-DELEGATION (CS2 — 2026-03-08): Before delegating ANY task to ANY builder or making ANY substantive file commit in a new wave, the IAA Pre-Brief artifact `.agent-admin/assurance/iaa-prebrief-<wave-slug>.md` MUST exist on the branch. This is a HARD GATE — if the Pre-Brief is absent the session is BLOCKED from delegation and from any commit that modifies production code, tests, CI scripts, or governance knowledge files. The Foreman MUST verify the Pre-Brief artifact path exists on disk before calling any builder `task()` or before calling `report_progress` for a handover commit. This rule is the machine-enforceable complement to Phase 1 Step 1.8 and Phase 2 Step 2.7 in the Foreman contract. A retroactively committed Pre-Brief (created after implementation work has begun) does NOT satisfy this rule. Violation class: INC-BOOTSTRAP-IMPL-001. | CS2 — maturion-isms#1013 (2026-03-08) |
+
+| A-033 | NO-COMPLEXITY-THRESHOLD-EXEMPTION (CS2 — 2026-03-10): There is NO minimum file count, line count, or complexity threshold below which the mandatory pre-wave governance sequence (Phase 1 PREFLIGHT → wave-current-tasks.md → IAA Pre-Brief → builder delegation) may be skipped. A 1-line fix, a 1-file CI workflow change, and a 200-file wave all require identical governance sequence. The Foreman's cognitive shortcut "small explicit fix = safe to implement directly" is a persistent violation class (seventh occurrence: INC-WCA-PREBRIEF-IMPL-001). Any PR touching `.github/workflows/`, `apps/`, `modules/`, `supabase/`, or `packages/` paths authored by foreman-v2-agent is a POLC violation regardless of the change scope. Violation class: INC-BOOTSTRAP-IMPL-001. | CS2 re-alignment directive — maturion-isms PR copilot/update-agent-contract-audit-workflow (2026-03-10); INC-WCA-PREBRIEF-IMPL-001 |
 
 > **OVL-CI-006 CANDIDATE (PENDING CS2 APPROVAL — next available ID after A-031)**: Every GitHub Actions workflow job must declare an explicit `permissions:` block. This is pending formalisation as A-032. Until CS2 approves: treat as a STRONG RECOMMENDATION. Any PR that adds or modifies workflow files without explicit `permissions:` on every job should be flagged at QP evaluation. Builder task spec: add `permissions: contents: read` (or more specific) to jobs missing explicit permissions.
 
@@ -659,6 +661,31 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 
 ---
 
+### INC-WCA-PREBRIEF-IMPL-001 — Foreman Direct Implementation Without Pre-Brief: Agent-Contract-Audit Workflow
+**Date**: 2026-03-10
+**Severity**: MAJOR
+**Status**: REMEDIATED
+**Source**: CS2 FOREMAN RE-ALIGNMENT directive issued on PR `copilot/update-agent-contract-audit-workflow` (2026-03-10) — "You opened this PR without invoking the IAA to generate the Wave Pre-Brief. This is a constitutional gate failure. You are PROHIBITED from delegating any qualifying task to any builder until the IAA Pre-Brief exists on this branch."
+**Preceded by**: INC-LDCS-PREBRIEF-IMPL-001 (same root-cause class — seventh occurrence of A-001 violation: Foreman writes production code before completing Phase 1/2 governance sequence)
+
+**What happened**: Foreman received issue "Update agent-contract-audit workflow to use pull_request_target trigger for Copilot agent compatibility" and called `agent_bootstrap` correctly. However, instead of creating `wave-current-tasks.md`, invoking the IAA Pre-Brief, and delegating to a builder, the Foreman directly edited `.github/workflows/agent-contract-audit.yml` — a CI workflow file — and committed the changes via `report_progress` before Phase 2 alignment or IAA Pre-Brief. The Foreman also ran `code_review` and `codeql_checker` without executing the full Phase 4 handover sequence (no PREHANDOVER proof, no IAA final audit, no token ceremony). CS2 issued a re-alignment directive requiring compliance with the mandatory pre-wave protocol.
+
+**Root cause**: Same persistent pattern as INC-LDCS-PREBRIEF-IMPL-001: Foreman received an issue with explicit before/after specifications (the issue body contained exact YAML snippets) and treated this as a "direct execution" task rather than a specification requiring builder delegation. The Verb Classification Gate was not run. Phase 2 alignment was not executed before file edits began. A-009 (IMPLEMENTATION_GUARD) was bypassed.
+
+**Corrective action** (COMPLETE):
+1. CS2 re-alignment directive acknowledged (2026-03-10).
+2. `wave-current-tasks.md` created retroactively for wave `wave-wf-contract-audit-20260310` (SHA 1547c1f).
+3. This FAIL-ONLY-ONCE entry registered (INC-WCA-PREBRIEF-IMPL-001).
+4. IAA Pre-Brief invoked via `task(agent_type: "independent-assurance-agent")` — artifact committed at `.agent-admin/assurance/iaa-prebrief-wave-wf-contract-audit-20260310.md` (SHA de6493f).
+5. A-033 (NO-COMPLEXITY-THRESHOLD-EXEMPTION) locked in FAIL-ONLY-ONCE.md.
+6. SCOPE_DECLARATION.md written with fresh overwrite (A-029).
+7. Phase 4 handover sequence executed in full: PREHANDOVER proof (SHA b6bad57) → session memory (SHA b6bad57) → IAA final audit → ASSURANCE-TOKEN PASS → token ceremony.
+8. IAA ASSURANCE-TOKEN: IAA-session-wave-wf-contract-audit-20260310-20260310-PASS
+
+**Learning**: Identical to INC-LDCS-PREBRIEF-IMPL-001 learning. A-033 (NO-COMPLEXITY-THRESHOLD-EXEMPTION) now explicitly names the persistent shortcut pattern. There is NO minimum complexity threshold below which governance sequence may be skipped. S-007 + S-023 remain highest-priority machine-enforcement improvements (eighth recommendation to CS2 to schedule these).
+
+---
+
 | ID | Description | Origin | Status |
 |----|-------------|--------|--------|
 | S-001 | Extend `align-governance.sh` with a pre-flight diff check that warns (BLOCKER) when local version has MORE sections than canonical — prevents silent learning loss | GV-001-20260221 | OPEN |
@@ -691,15 +718,19 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 
 | S-028 | SCHEMA-COLUMN-COMPLIANCE-MANDATORY: For every PR containing Supabase INSERT or SELECT operations, IAA MUST read the migration DDL for the affected table(s) and cross-check every column name used. The migration file path must be cited in the FFA check evidence. A PREHANDOVER proof that does not include the migration file cross-check for each affected table is a HANDOVER BLOCKER. Silent try/catch wrappers and mock-based tests cannot substitute for schema contract verification. Triggered by: INC-ALCF-001 (2026-03-08). | INC-ALCF-001 (2026-03-08) | OPEN |
 
+| S-032 | IAA-TOKEN-SEARCH-PATTERN-ALIGNMENT: The `iaa-assurance-check` job in `agent-contract-audit.yml` (and any other CI job searching for IAA token files) uses the pattern `assurance-token-*.md`. The IAA agent's actual output filename format is `iaa-token-session-*.md`. These patterns do not match — the CI search will always miss the IAA token file. CI job must be updated to search for `iaa-token-session-*.md` (or a glob pattern covering both formats until a single canonical format is enforced). Raised by: IAA during wave-wf-contract-audit-20260310 final audit. Blocker risk: HIGH — CI currently cannot confirm IAA token presence automatically. | INC-WCA-PREBRIEF-IMPL-001 / IAA wave-wf-contract-audit-20260310 (2026-03-10) | OPEN |
+
+| S-033 | OVL-CI-005-INHERENT-LIMITATION-EXCEPTION: IAA overlay OVL-CI-005 requires CI evidence (run URL or log snippet) for CI workflow changes. For self-referential workflow changes (workflows whose trigger path does not overlap with the PR's changed file paths), a full CI run cannot be produced before merge. IAA FFA category overlay documentation must explicitly document this inherent-limitation exception: "For CI_WORKFLOW changes where the workflow trigger path is orthogonal to this PR's changed files, OVL-CI-005 is satisfied by: (1) YAML syntax validation, (2) pattern parity evidence with an approved equivalent workflow, and (3) retention of workflow_dispatch for manual validation." Raised by: IAA during wave-wf-contract-audit-20260310 final audit. | IAA wave-wf-contract-audit-20260310 (2026-03-10) | OPEN |
+
 ---
 
 When completing PREFLIGHT §1.3, record the following block in the **session memory preamble**:
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 3.6.0
+fail_only_once_version: 3.7.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024, S-025, S-026, S-027, S-028]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024, S-025, S-026, S-027, S-028, S-032, S-033]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
