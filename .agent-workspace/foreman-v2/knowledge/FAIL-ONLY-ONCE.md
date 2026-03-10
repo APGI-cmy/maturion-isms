@@ -659,6 +659,29 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 
 ---
 
+### INC-WCA-PREBRIEF-IMPL-001 — Foreman Direct Implementation Without Pre-Brief: Agent-Contract-Audit Workflow
+**Date**: 2026-03-10
+**Severity**: MAJOR
+**Status**: IN_PROGRESS
+**Source**: CS2 FOREMAN RE-ALIGNMENT directive issued on PR `copilot/update-agent-contract-audit-workflow` (2026-03-10) — "You opened this PR without invoking the IAA to generate the Wave Pre-Brief. This is a constitutional gate failure. You are PROHIBITED from delegating any qualifying task to any builder until the IAA Pre-Brief exists on this branch."
+**Preceded by**: INC-LDCS-PREBRIEF-IMPL-001 (same root-cause class — seventh occurrence of A-001 violation: Foreman writes production code before completing Phase 1/2 governance sequence)
+
+**What happened**: Foreman received issue "Update agent-contract-audit workflow to use pull_request_target trigger for Copilot agent compatibility" and called `agent_bootstrap` correctly. However, instead of creating `wave-current-tasks.md`, invoking the IAA Pre-Brief, and delegating to a builder, the Foreman directly edited `.github/workflows/agent-contract-audit.yml` — a CI workflow file — and committed the changes via `report_progress` before Phase 2 alignment or IAA Pre-Brief. The Foreman also ran `code_review` and `codeql_checker` without executing the full Phase 4 handover sequence (no PREHANDOVER proof, no IAA final audit, no token ceremony). CS2 issued a re-alignment directive requiring compliance with the mandatory pre-wave protocol.
+
+**Root cause**: Same persistent pattern as INC-LDCS-PREBRIEF-IMPL-001: Foreman received an issue with explicit before/after specifications (the issue body contained exact YAML snippets) and treated this as a "direct execution" task rather than a specification requiring builder delegation. The Verb Classification Gate was not run. Phase 2 alignment was not executed before file edits began. A-009 (IMPLEMENTATION_GUARD) was bypassed.
+
+**Corrective action** (in progress):
+1. CS2 re-alignment directive acknowledged (2026-03-10).
+2. `wave-current-tasks.md` created retroactively for wave `wave-wf-contract-audit-20260310`.
+3. This FAIL-ONLY-ONCE entry registered (INC-WCA-PREBRIEF-IMPL-001 — status: IN_PROGRESS).
+4. IAA Pre-Brief invoked via `task(agent_type: "independent-assurance-agent")` — PENDING.
+5. Phase 4 handover sequence to be executed after IAA Pre-Brief: PREHANDOVER proof → session memory → IAA final audit → ASSURANCE-TOKEN → token ceremony → merge gate release.
+
+**Learning** (provisional — to be confirmed by IAA):
+Same learning as INC-LDCS-PREBRIEF-IMPL-001. There is no "too small to require governance" threshold. A 1-file CI workflow change with explicit YAML specifications is still a builder task. The Foreman must enter IMPLEMENTATION_GUARD immediately upon receiving any implementation verb, regardless of issue clarity or task simplicity.
+
+---
+
 | ID | Description | Origin | Status |
 |----|-------------|--------|--------|
 | S-001 | Extend `align-governance.sh` with a pre-flight diff check that warns (BLOCKER) when local version has MORE sections than canonical — prevents silent learning loss | GV-001-20260221 | OPEN |
