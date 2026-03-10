@@ -13,6 +13,8 @@ export function AuditList() {
   const deleteAudit = useDeleteAudit();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [confirmDeleteTitle, setConfirmDeleteTitle] = useState<string>('');
 
   if (isLoading) {
     return (
@@ -59,14 +61,26 @@ export function AuditList() {
     return matchesSearch && matchesStatus;
   });
 
-  const handleDelete = async (id: string, title: string) => {
-    if (window.confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)) {
-      try {
-        await deleteAudit.mutateAsync(id);
-      } catch (error) {
-        toast.error(`Failed to delete audit: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      }
+  const handleDelete = (id: string, title: string) => {
+    setConfirmDeleteId(id);
+    setConfirmDeleteTitle(title);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!confirmDeleteId) return;
+    const id = confirmDeleteId;
+    setConfirmDeleteId(null);
+    setConfirmDeleteTitle('');
+    try {
+      await deleteAudit.mutateAsync(id);
+    } catch (error) {
+      toast.error(`Failed to delete audit: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setConfirmDeleteId(null);
+    setConfirmDeleteTitle('');
   };
 
   return (
@@ -127,6 +141,40 @@ export function AuditList() {
                 </button>
               </div>
             </div>
+            {/* Delete confirmation banner — matches CriteriaUpload.tsx pattern (GAP-024) */}
+            {confirmDeleteId === audit.id && (
+              <div
+                className="mt-4 p-4 bg-red-50 border border-red-300 rounded"
+                role="alertdialog"
+                aria-modal="true"
+                aria-labelledby="audit-delete-confirm-heading"
+              >
+                <p
+                  id="audit-delete-confirm-heading"
+                  className="text-red-800 text-sm font-semibold"
+                >
+                  Delete audit &ldquo;{confirmDeleteTitle}&rdquo;? This action cannot be undone.
+                </p>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    onClick={() => void handleConfirmDelete()}
+                    disabled={deleteAudit.isPending}
+                    className="px-3 py-1 text-xs font-medium bg-red-600 text-white rounded hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-red-500"
+                    aria-label="Confirm delete audit"
+                  >
+                    {deleteAudit.isPending ? 'Deleting…' : 'Yes, delete'}
+                  </button>
+                  <button
+                    onClick={handleCancelDelete}
+                    disabled={deleteAudit.isPending}
+                    className="px-3 py-1 text-xs font-medium bg-white text-gray-700 border border-gray-300 rounded hover:bg-gray-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gray-400"
+                    aria-label="Cancel delete audit"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </li>
         ))}
       </ul>

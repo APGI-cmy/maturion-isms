@@ -15,6 +15,7 @@ import { OnboardingPage } from './pages/OnboardingPage';
 import { FeedbackPage } from './pages/FeedbackPage';
 import ArcPortalPage from './pages/arc/index';
 import { AuthProvider } from './contexts/AuthContext';
+import { AuditProvider } from './contexts/AuditContext';
 import { useAuth } from './contexts/AuthContext';
 import { useUserProfile } from './lib/hooks/useSettings';
 
@@ -55,6 +56,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <AuditProvider>
         <ErrorBoundary>
           {/* GAP-008: Global toast notification provider (replaces all window.alert calls) */}
           <Toaster
@@ -88,6 +90,7 @@ function App() {
             </Routes>
           </Router>
         </ErrorBoundary>
+        </AuditProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

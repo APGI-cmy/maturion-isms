@@ -27,6 +27,8 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [confirmDeleteFilePath, setConfirmDeleteFilePath] = useState<string | undefined>(undefined);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -153,17 +155,28 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
     }
   };
 
-  const handleDelete = async (evidenceId: string, filePath?: string) => {
-    if (!confirm('Are you sure you want to delete this evidence?')) {
-      return;
-    }
+  const handleDelete = (evidenceId: string, filePath?: string) => {
+    setConfirmDeleteId(evidenceId);
+    setConfirmDeleteFilePath(filePath);
+  };
 
+  const handleConfirmDelete = async () => {
+    if (!confirmDeleteId) return;
+    const id = confirmDeleteId;
+    const filePath = confirmDeleteFilePath;
+    setConfirmDeleteId(null);
+    setConfirmDeleteFilePath(undefined);
     try {
-      await deleteEvidence.mutateAsync({ id: evidenceId, criterionId, filePath });
+      await deleteEvidence.mutateAsync({ id, criterionId, filePath });
       toast.success('Evidence deleted successfully!');
     } catch (err) {
       toast.error(`Failed to delete evidence: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setConfirmDeleteId(null);
+    setConfirmDeleteFilePath(undefined);
   };
 
   const formatTime = (seconds: number) => {
@@ -455,6 +468,42 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Collected Evidence ({evidence?.length || 0})
         </h3>
+
+        {/* Delete confirmation banner — matches CriteriaUpload.tsx pattern (GAP-024) */}
+        {confirmDeleteId && (
+          <div
+            className="mb-4 p-4 bg-red-50 border border-red-300 rounded"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="evidence-delete-confirm-heading"
+          >
+            <p
+              id="evidence-delete-confirm-heading"
+              className="text-red-800 text-sm font-semibold"
+            >
+              Are you sure you want to delete this evidence? This action cannot be undone.
+            </p>
+            <div className="mt-3 flex gap-2">
+              <button
+                onClick={() => void handleConfirmDelete()}
+                disabled={deleteEvidence.isPending}
+                className="px-3 py-1 text-xs font-medium bg-red-600 text-white rounded hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-red-500"
+                aria-label="Confirm delete evidence"
+              >
+                {deleteEvidence.isPending ? 'Deleting…' : 'Yes, delete'}
+              </button>
+              <button
+                onClick={handleCancelDelete}
+                disabled={deleteEvidence.isPending}
+                className="px-3 py-1 text-xs font-medium bg-white text-gray-700 border border-gray-300 rounded hover:bg-gray-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gray-400"
+                aria-label="Cancel delete evidence"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
         {evidence && evidence.length > 0 ? (
           <div className="space-y-2">
             {evidence.map((item) => (
@@ -472,6 +521,15 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
                   )}
                   {item.file_name && (
                     <p className="text-sm text-gray-500 mt-1">{item.file_name}</p>
+                  )}
+                  {/* GAP-014: Audio playback for audio and interview evidence types (BD-018: src from signed storage URL) */}
+                  {(item.type === 'audio' || item.type === 'interview') && item.signed_url && (
+                    <audio
+                      controls
+                      className="w-full mt-2"
+                      aria-label="Audio playback"
+                      src={item.signed_url}
+                    />
                   )}
                   <p className="text-xs text-gray-400 mt-1">
                     {new Date(item.created_at).toLocaleString()}

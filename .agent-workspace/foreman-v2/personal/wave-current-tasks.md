@@ -126,6 +126,19 @@ blocking: IAA_PRE_BRIEF_REQUIRED
 
 # --- PRIOR WAVE RECORD (wave-gov-improvement-s032-s033-s007-s023) ARCHIVED BELOW ---
 
+# Wave Current Tasks — foreman-v2-agent — wave16-2R
+
+**Wave**: wave16-2R — Wave 16.2R Remediation: Deferred Frontend UX Gaps (GAP-009, GAP-014, GAP-015, GAP-024)
+**Session**: session-wave16-2R-20260310
+**Date**: 2026-03-10
+**Branch**: copilot/implement-deferred-frontend-ux-gaps
+**Triggering Issue**: maturion-isms — "Wave 16.2R: Remediation — Implement Deferred Frontend UX Gaps (GAP-009, GAP-014, GAP-015, GAP-024)"
+**CS2 Authorization**: Issue opened by @APGI-cmy and assigns foreman-v2-agent
+**Agent**: foreman-v2-agent v6.2.0
+**Mode**: POLC-Orchestration
+**Governance Source**: `modules/mat/03-implementation-plan/implementation-plan.md` v2.7.0; `docs/completeness-review/compliance-workflow-completeness-report-20260309.md`
+**Prior Session**: wave16-full-batch (PR #1038 merged) — Wave 16.2 partial delivery; GAP-009, GAP-014, GAP-015, GAP-024 explicitly marked deferred
+# Wave Current Tasks — foreman-v2-agent — wave-gov-improvement-s032-s033-s007-s023
 
 **Wave**: wave-gov-improvement-s032-s033-s007-s023 — Governance Improvements: CI Token Pattern Fix, OVL-CI-005 Exception Documentation, POLC Boundary Machine Enforcement
 **Session**: session-gov-improvement-s032-s033-s007-s023-20260310
@@ -140,6 +153,35 @@ blocking: IAA_PRE_BRIEF_REQUIRED
 
 ## Wave Summary
 
+This wave delivers the four deferred frontend UX gaps from the original Wave 16.2 sub-wave. All four gaps are pure frontend changes in `modules/mat/frontend/`. No schema migrations, Edge Functions, or backend changes are in scope.
+
+### Gaps to be Addressed
+
+| Gap ID | Description | Component | Acceptance Criteria |
+|--------|-------------|-----------|---------------------|
+| GAP-009 | `CriteriaModal` shows mock/hardcoded data | `CriteriaModal.tsx` | Wire modal to fetch from `criteria`, `criteria_evaluations`, and `scores` tables via existing hooks; remove any hardcoded/mock data; real criterion data renders in all 5 tabs |
+| GAP-014 | Interview recording playback not implemented | `EvidenceCollection.tsx` | Add `<audio>` player element in evidence list for items of `type='interview'` and `type='audio'` with accessible controls; playback works for uploaded and recorded audio |
+| GAP-015 | No global audit selection context | `contexts/` + `App.tsx` + consuming pages | Create `AuditContext` provider wrapping the router; provide `selectedAuditId` + setter; all pages that currently manage local `auditId` state switch to consuming `useAuditContext()`; URL param approach is an acceptable alternative |
+| GAP-024 | No unsaved-changes warnings or confirmation dialogs | `AuditList.tsx`, `EvidenceCollection.tsx` | Replace native `window.confirm()` / `confirm()` calls with accessible state-based inline confirmation banners (matching the `CriteriaUpload.tsx` pattern); all destructive actions have ARIA-labelled confirm/cancel controls and loading states |
+
+### Files in Scope
+
+| File | Gap(s) | Change Type |
+|------|--------|-------------|
+| `modules/mat/frontend/src/components/criteria/CriteriaModal.tsx` | GAP-009 | Enhancement — wire to hooks |
+| `modules/mat/frontend/src/components/evidence/EvidenceCollection.tsx` | GAP-014, GAP-024 | Enhancement — audio player + confirmation banner |
+| `modules/mat/frontend/src/components/audits/AuditList.tsx` | GAP-024 | Enhancement — confirmation banner |
+| `modules/mat/frontend/src/contexts/AuditContext.tsx` | GAP-015 | New file — context provider |
+| `modules/mat/frontend/src/App.tsx` | GAP-015 | Wrap router with AuditContext |
+| Pages consuming `auditId` local state | GAP-015 | Switch to `useAuditContext()` |
+
+### Files Out of Scope
+
+- No `.github/agents/` files (agent contract immutability — A-013)
+- No schema migrations
+- No Supabase Edge Functions
+- No backend API routes
+- No mat-ai-gateway changes
 This wave delivers three governance system defect fixes:
 
 1. **S-032** — Fix CI token file pattern mismatch in `agent-contract-audit.yml`
@@ -163,6 +205,27 @@ This wave delivers three governance system defect fixes:
 
 ## Task Register
 
+| ID | Task | Builder | Status | PR / Evidence |
+|----|------|---------|--------|---------------|
+| T-W162R-QA-001 | Write RED QA suite for GAP-009, GAP-014, GAP-015, GAP-024 | qa-builder | 🟢 DONE | SHA b46f0f5d, 635e502e |
+| T-W162R-UI-001 | Implement GAP-009: Wire CriteriaModal to backend hooks | ui-builder | 🟢 DONE | SHA b2acbc1f, 01507329 |
+| T-W162R-UI-002 | Implement GAP-014: Audio playback in EvidenceCollection | ui-builder | 🟢 DONE | SHA b2acbc1f |
+| T-W162R-UI-003 | Implement GAP-015: AuditContext global provider | ui-builder | 🟢 DONE | SHA b2acbc1f |
+| T-W162R-UI-004 | Implement GAP-024: Replace confirm() with state-based confirmation dialogs | ui-builder | 🟢 DONE | SHA b2acbc1f |
+
+**Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED
+
+---
+
+## Execution Sequence
+
+1. **IAA Pre-Brief** → This file commit triggers automated Pre-Brief injection workflow
+2. **T-W162R-QA-001** → qa-builder writes RED tests for all 4 gaps (all must be failing before builder delegation)
+3. **T-W162R-UI-001 through T-W162R-UI-004** → ui-builder implements all 4 gaps in one delegation (they are parallel/independent frontend changes)
+4. **QP Evaluation** → Foreman evaluates deliverables: 100% GREEN, zero warnings, zero skipped tests
+5. **§4.3 Merge Gate Parity Check** → Local run of all CI checks
+6. **IAA Final Audit** → PREHANDOVER proof + Session memory submitted to IAA
+7. **CS2 Merge Approval** → Merge gate released to @APGI-cmy
 | ID | Task | File | Status |
 |----|------|------|--------|
 | T-GOV-001 | Fix CI token search pattern to include `iaa-token-session-*.md` | `.github/workflows/agent-contract-audit.yml` | COMMITTED (PR #1053) |
@@ -187,6 +250,11 @@ This wave delivers three governance system defect fixes:
 
 ## Architecture Frozen Status
 
+These gaps are pure frontend enhancements documented in:
+- `docs/completeness-review/compliance-workflow-completeness-report-20260309.md` (defines acceptance criteria)
+- `modules/mat/03-implementation-plan/implementation-plan.md` v2.7.0 (lists GAP-009, GAP-014, GAP-015, GAP-024 as outstanding)
+
+The architecture is frozen: no new tables, no new Edge Functions, no backend changes. All implementation uses existing hooks (`useCriteria`, `useEvidence`, `useAudits`) and the established `CriteriaUpload.tsx` confirmation banner pattern.
 This wave covers CI workflow files and governance documentation — no formal architecture
 document required. Patterns are frozen by prior approved implementations:
 - `polc-boundary-gate.yml` refactor: named jobs match `merge_gate_interface.required_checks`
@@ -198,6 +266,45 @@ document required. Patterns are frozen by prior approved implementations:
 
 ## Red QA Gate
 
+**MANDATORY**: `T-W162R-QA-001` (qa-builder) MUST be complete and all tests must be confirmed failing (RED) before foreman delegates to ui-builder. Delegation to ui-builder without RED QA = HALT-005.
+
+Minimum test requirements per gap:
+- GAP-009: ≥ 2 tests — (1) CriteriaModal fetches real data from hook, (2) no mock/hardcoded data rendered
+- GAP-014: ≥ 2 tests — (1) audio player present for type='audio', (2) audio player present for type='interview'
+- GAP-015: ≥ 2 tests — (1) AuditContext provides selectedAuditId, (2) pages consume context not local state
+- GAP-024: ≥ 2 tests — (1) native confirm() not called in AuditList, (2) native confirm() not called in EvidenceCollection; ≥ 1 accessibility test (ARIA labels on confirm banner)
+
+---
+
+## IAA Pre-Brief Trigger
+
+This file commit triggers the automated IAA Pre-Brief injection workflow.
+Wave: wave16-2R
+Branch: copilot/implement-deferred-frontend-ux-gaps
+
+---
+
+## IAA Tokens Received This Wave
+
+| PR # | Token | Date |
+|------|-------|------|
+| #1048 | IAA-wave16-2R-20260310-PASS | 2026-03-10 |
+
+---
+
+## Wave Completion Gate
+
+- [x] IAA Pre-Brief published at `.agent-admin/assurance/iaa-prebrief-wave16-2R.md`
+- [x] T-W162R-QA-001 — RED QA suite confirmed failing
+- [x] T-W162R-UI-001 — GAP-009 implemented, 100% GREEN
+- [x] T-W162R-UI-002 — GAP-014 implemented, 100% GREEN
+- [x] T-W162R-UI-003 — GAP-015 implemented, 100% GREEN
+- [x] T-W162R-UI-004 — GAP-024 implemented, 100% GREEN
+- [x] QP evaluation: PASS
+- [x] §4.3 Merge gate parity: PASS
+- [x] PREHANDOVER proof committed
+- [x] IAA ASSURANCE-TOKEN received — `IAA-wave16-2R-20260310-PASS` (SHA b3b9b9a)
+- [x] CS2 notified for merge approval
 This wave modifies CI workflow files and governance documentation. No executable test suite
 exists for CI YAML files in this repository. Validation:
 - YAML syntax: `python3 -c "import yaml; yaml.safe_load(open(...))"` — both workflow files PASS
@@ -230,6 +337,20 @@ Branch: copilot/implement-governance-improvements
 ## Re-Anchor Pulse
 
 ```yaml
+wave: wave16-2R
+session: session-wave16-2R-20260310
+branch: copilot/implement-deferred-frontend-ux-gaps
+issue: "maturion-isms — Wave 16.2R: Remediation — Implement Deferred Frontend UX Gaps"
+status: ASSURANCE_TOKEN_PASS
+tasks_total: 5
+tasks_open: 0
+tasks_done: 5
+last_updated: 2026-03-10T13:38:20Z
+iaa_token: "IAA-wave16-2R-20260310-PASS"
+iaa_token_file: ".agent-admin/assurance/iaa-token-session-wave16-2R-20260310.md"
+blocking: CS2_MERGE_APPROVAL_REQUIRED
+```
+
 wave: wave-gov-improvement-s032-s033-s007-s023
 session: session-gov-improvement-s032-s033-s007-s023-20260310
 branch: copilot/implement-governance-improvements
