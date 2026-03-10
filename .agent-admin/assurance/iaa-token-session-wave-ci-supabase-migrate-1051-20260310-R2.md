@@ -145,7 +145,7 @@ which is a deployment infrastructure concern outside this PR's scope.
 After CS2 pushes branch to origin and CI run completes:
 
 1. Document CI run URL (or confirmed pass evidence) in a correction addendum:
-   `.agent-admin/assurance/iaa-correction-addendum-wave-ci-supabase-migrate-1051-20260310.md`
+   `.agent-admin/assurance/iaa-correction-addendum-wave-ci-supabase-migrate-1051-20260310-R2.md`
 2. Invoke IAA: `@independent-assurance-agent Please re-assure PR wave-ci-supabase-migrate-1051 (R3 — post-CI)`
 3. IAA will verify OVL-CI-005 is satisfied and issue ASSURANCE-TOKEN if all checks pass.
 4. Note: IAA will also check SCOPE_DECLARATION.md is updated per advisory item 1 above (A-026).
