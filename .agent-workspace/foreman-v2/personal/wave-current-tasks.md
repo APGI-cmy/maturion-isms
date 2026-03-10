@@ -96,7 +96,7 @@ Branch: copilot/orchestrate-wave-16-build-another-one
 wave: wave16-full-batch
 session: session-wave16-full-batch-20260310
 branch: copilot/orchestrate-wave-16-build-another-one
-status: IAA_PRE_BRIEF_PENDING
+status: IAA_ASSURANCE_TOKEN_PASS
 tasks_total: 16
 tasks_actionable: 9
 tasks_blocked: 6
