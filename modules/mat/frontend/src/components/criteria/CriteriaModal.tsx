@@ -22,12 +22,11 @@ interface CriteriaModalProps {
   } | null;
   isOpen: boolean;
   onClose: () => void;
-  auditId?: string;
 }
 
 type TabId = 'description' | 'not-used' | 'evidence' | 'findings' | 'interview';
 
-export function CriteriaModal({ criterion, isOpen, onClose, auditId: _auditId }: CriteriaModalProps) {
+export function CriteriaModal({ criterion, isOpen, onClose }: CriteriaModalProps) {
   const [activeTab, setActiveTab] = useState<TabId>('description');
   const [notUsed, setNotUsed] = useState(false);
   const [notUsedReason, setNotUsedReason] = useState('');

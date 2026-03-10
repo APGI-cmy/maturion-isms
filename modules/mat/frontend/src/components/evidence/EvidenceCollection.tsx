@@ -155,7 +155,7 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
     }
   };
 
-  const handleDelete = async (evidenceId: string, filePath?: string) => {
+  const handleDelete = (evidenceId: string, filePath?: string) => {
     setConfirmDeleteId(evidenceId);
     setConfirmDeleteFilePath(filePath);
   };
@@ -522,13 +522,13 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
                   {item.file_name && (
                     <p className="text-sm text-gray-500 mt-1">{item.file_name}</p>
                   )}
-                  {/* GAP-014: Audio playback for audio and interview evidence types (BD-018: src from validated storage path) */}
-                  {(item.type === 'audio' || item.type === 'interview') && item.file_path && (
+                  {/* GAP-014: Audio playback for audio and interview evidence types (BD-018: src from signed storage URL) */}
+                  {(item.type === 'audio' || item.type === 'interview') && item.signed_url && (
                     <audio
                       controls
                       className="w-full mt-2"
                       aria-label="Audio playback"
-                      src={item.file_path}
+                      src={item.signed_url}
                     />
                   )}
                   <p className="text-xs text-gray-400 mt-1">
