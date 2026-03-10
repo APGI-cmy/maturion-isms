@@ -147,9 +147,10 @@ END $$;
 -- GAP-019: evidence_submissions table
 -- Referenced by: EvidenceSubmissionInterface.tsx, test-data-sources-api function
 -- Column names aligned with types.ts Row definition and existing codebase usage.
--- NOTE: organisation_id uses the maturion-isms convention (not organization_id).
---       The legacy component uses organization_id — bridged via a column alias
---       comment. The canonical column is organisation_id for RLS consistency.
+-- NOTE: organisation_id follows the maturion-isms British-spelling convention
+--       used consistently across all tables (audits, scores, audit_scores, etc.).
+--       Any legacy code referencing organization_id (American spelling) must be
+--       updated to use organisation_id to query this table.
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS evidence_submissions (
   id                       UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
