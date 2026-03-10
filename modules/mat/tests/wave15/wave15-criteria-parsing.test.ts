@@ -178,29 +178,29 @@ describe('Wave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)',
 
   // ── AI Gateway: GPT-4 Turbo call ────────────────────────────────────────────
 
-  it('[T-W15-CP-005] DocumentParser.parse() calls GPT-4 Turbo (OpenAI client present in parsing.py)', () => {
+  it('[T-W15-CP-005] DocumentParser.parse() calls GPT-4.1 (OpenAI client present in parsing.py)', () => {
     /*
      * RED:  parsing.py stub has no OpenAI import or API call. The parse() method
      *       returns a static "queued" dict immediately.
-     * GREEN: parsing.py imports the OpenAI client and calls it with model="gpt-4-turbo"
-     *        (or "gpt-4-turbo-preview") to process the extracted document text.
+     * GREEN: parsing.py imports the OpenAI client and calls it with model="gpt-4.1"
+     *        to process the extracted document text.
      *
-     * Architecture ref: §3.4 "GPT-4 Turbo" as the parsing model.
+     * Architecture ref: §3.4 "GPT-4.1" as the parsing model (upgraded from gpt-4-turbo in PR #1040).
      */
     const src = readParsingPy();
     expect(
       src,
-      '[T-W15-CP-005] parsing.py must import openai and invoke the GPT-4 Turbo model.\n' +
+      '[T-W15-CP-005] parsing.py must import openai and invoke the GPT-4.1 model.\n' +
       'Add: `import openai` or `from openai import OpenAI` and call the client with\n' +
-      'model="gpt-4-turbo" or "gpt-4-turbo-preview".\n' +
+      'model="gpt-4.1".\n' +
       'The current stub returns a static dict without calling any AI model.',
     ).toMatch(/openai|OpenAI/i);
-    // Also verify the GPT-4 Turbo model string is referenced
+    // Also verify the GPT-4.1 model string is referenced (upgraded from gpt-4-turbo in PR #1040)
     expect(
       src,
-      '[T-W15-CP-005] parsing.py must reference "gpt-4-turbo" as the model.\n' +
-      'The architecture specifies GPT-4 Turbo for document parsing — use exactly this model.',
-    ).toMatch(/gpt-4-turbo/i);
+      '[T-W15-CP-005] parsing.py must reference "gpt-4.1" as the model.\n' +
+      'The architecture specifies GPT-4.1 for document parsing — use exactly this model.',
+    ).toMatch(/gpt-4\.1/i);
   });
 
   // ── AI Gateway: source_anchor in response ──────────────────────────────────
