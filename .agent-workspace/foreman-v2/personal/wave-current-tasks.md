@@ -460,15 +460,17 @@ Branch: copilot/fix-supabase-migrate-ci-job-failure
 
 ```yaml
 wave: wave-ci-supabase-migrate-1051
-session: session-wave-ci-supabase-migrate-1051-20260310
+session: session-wave-ci-supabase-migrate-1051-20260310-R2
 branch: copilot/fix-supabase-migrate-ci-job-failure
 issue: "maturion-isms#1051 — Bug: supabase-migrate CI job fails when Wave 16.6 migration already applied to production"
-status: IAA_PRE_BRIEF_PENDING
+status: CI_APPROVAL_REQUIRED_AWAITING_CS2
 tasks_total: 1
-tasks_open: 1
-tasks_done: 0
-last_updated: 2026-03-10T14:36:00Z
-blocking: IAA_PRE_BRIEF_REQUIRED
+tasks_open: 0
+tasks_done: 1
+last_updated: 2026-03-10T17:00:00Z
+iaa_status: REJECTION_R3 (OVL-CI-005 — needs CS2 CI approval + job evidence)
+ci_run_url: https://github.com/APGI-cmy/maturion-isms/actions/runs/22914288734
+blocking: CS2_MUST_APPROVE_CI_RUN_THEN_UPDATE_ADDENDUM_THEN_INVOKE_IAA_R4
 ```
 
 ---
