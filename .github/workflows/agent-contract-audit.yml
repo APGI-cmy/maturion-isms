@@ -376,12 +376,16 @@ jobs:
 
           TOKEN_FOUND=false
 
-          # Check 1: .agent-admin/assurance/assurance-token-*.md artifact in repo
+          # Check 1: IAA token files in .agent-admin/assurance/
+          # Canonical pattern: iaa-token-session-*.md (S-032 fix)
+          # Legacy pattern: assurance-token-*.md (retained for backward compat)
           ASSURANCE_DIR=".agent-admin/assurance"
           if [ -d "$ASSURANCE_DIR" ]; then
-            TOKEN_FILES=$(find "$ASSURANCE_DIR" -name "assurance-token-*.md" 2>/dev/null | head -5)
+            TOKEN_FILES=$(find "$ASSURANCE_DIR" \
+              \( -name "iaa-token-session-*.md" -o -name "assurance-token-*.md" \) \
+              2>/dev/null | head -10)
             if [ -n "$TOKEN_FILES" ]; then
-              echo "📄 Assurance token files found in repository:"
+              echo "📄 IAA token files found in repository:"
               echo "$TOKEN_FILES" | sed 's/^/   /'
               echo ""
               # Check if any token file contains ASSURANCE-TOKEN (not REJECTION-PACKAGE)
@@ -454,7 +458,8 @@ jobs:
             echo "  modifications by CodexAdvisor before merge is permitted."
             echo ""
             echo "REQUIRED: One of the following must be present:"
-            echo "  a) .agent-admin/assurance/assurance-token-NNN.md with ASSURANCE-TOKEN"
+            echo "  a) .agent-admin/assurance/iaa-token-session-*.md with ASSURANCE-TOKEN"
+            echo "     (canonical format per S-032 fix; legacy assurance-token-*.md also accepted)"
             echo "  b) IAA session memory referencing this PR with ASSURANCE-TOKEN"
             echo "  c) PR description containing IAA token (format: IAA-XXXX-YYYYMMDD-PASS)"
             echo "  d) CodexAdvisor PREHANDOVER proof referencing IAA invocation"

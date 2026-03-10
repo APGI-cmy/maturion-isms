@@ -1,9 +1,9 @@
 # IAA Category Overlays
 
 **Agent**: independent-assurance-agent
-**Version**: 3.2.0
+**Version**: 3.3.0
 **Status**: ACTIVE
-**Last Updated**: 2026-03-07
+**Last Updated**: 2026-03-10
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -179,9 +179,43 @@ Applied when PR category is `CI_WORKFLOW`.
 | OVL-CI-002 | Merge gate integrity | All required merge gate checks remain present and non-weakened. Any gate removed, softened, or made optional = REJECTION-PACKAGE. |
 | OVL-CI-003 | Silent failure risk | Are there code paths where a failure would be swallowed silently (e.g., unguarded `continue-on-error`, missing exit code checks)? Any silent failure path = REJECTION-PACKAGE with specific line. |
 | OVL-CI-004 | Environment parity | Does the workflow behave consistently across dev/staging/production? If environments produce different gate outcomes, this must be explicitly stated and justified. |
-| OVL-CI-005 | CI evidence present | When any workflow file is modified: PREHANDOVER must include a CI check run URL or log snippet confirming the workflow executed successfully post-change. Claim without evidence = REJECTION-PACKAGE.
+| OVL-CI-005 | CI evidence present | When any workflow file is modified: PREHANDOVER must include a CI check run URL or log snippet confirming the workflow executed successfully post-change. Claim without evidence = REJECTION-PACKAGE. **Inherent Limitation Exception (S-033)**: For self-referential workflow PRs where the modified workflow's trigger path is orthogonal to this PR's changed file paths (e.g., a workflow that only fires on `push` to `main`, or that fires on a different event type than what this PR would trigger), a full CI run of the *modified* workflow cannot physically be produced before merge. In these cases OVL-CI-005 is satisfied by: (1) YAML syntax validation evidence (e.g., `yamllint` or `actionlint` output), (2) pattern parity evidence demonstrating structural equivalence with an approved, previously-run equivalent workflow, and (3) confirmation that `workflow_dispatch` is retained on the modified workflow to enable manual post-merge validation by CS2. The PREHANDOVER proof MUST explicitly invoke this exception clause with justification — a bare claim of "CI passed" without evidence still triggers REJECTION-PACKAGE. Retroactive incidents (PR merged before CI ran) are accepted for self-referential workflows only when all three conditions above are documented. |
 
 ---
+
+### OVL-CI-005 Inherent Limitation Exception — Detailed Guidance
+
+> **Authority**: S-033 governance improvement (2026-03-10). Applies to CI_WORKFLOW PRs only.
+
+A **self-referential workflow PR** is one where:
+- The PR modifies workflow file(s) in `.github/workflows/`, AND
+- The modified workflow's trigger conditions (`on:` events) are satisfied by the *merge* event
+  or by conditions that only apply after the PR is merged (e.g., `push` to `main`, `schedule`,
+  `workflow_dispatch` requiring a merged workflow file on the default branch).
+
+**Why this exception is necessary**: GitHub Actions workflows only execute from the default
+branch (or explicitly named branches). A new or significantly modified workflow that triggers
+on `push: main` or `pull_request_target` with a `head.ref` that doesn't match this PR's branch
+cannot produce a CI run URL before merge — the run will only happen after merge. Requiring CI
+evidence before merge for such workflows creates a circular dependency that is physically
+impossible to satisfy.
+
+**The three required substitutes**:
+1. **YAML syntax validation** — `actionlint` or `yamllint` clean run on the modified file,
+   with output included in PREHANDOVER. This confirms the workflow is syntactically valid.
+2. **Pattern parity evidence** — A documented comparison of the modified workflow's trigger,
+   job, and step structure against an approved equivalent workflow that has a verified CI
+   run URL. Differences must be listed and justified.
+3. **`workflow_dispatch` trigger retained** — The modified workflow MUST retain or add a
+   `workflow_dispatch:` trigger so CS2 can manually validate it post-merge without waiting
+   for the natural trigger event.
+
+**Retroactive incident acceptance**: When a self-referential workflow PR is merged before
+CI could run (e.g., because the merge itself is required to trigger the first run), the
+subsequent first-run CI result is accepted as the post-merge validation. The PREHANDOVER
+proof for such PRs must include a "Retroactive CI Validation" section with the run URL
+once it becomes available (typically added as a follow-up commit to the governance evidence
+log, not to the PREHANDOVER artifact itself, which is read-only post-commit per §4.3b).
 
 ## KNOWLEDGE_GOVERNANCE Overlay
 
