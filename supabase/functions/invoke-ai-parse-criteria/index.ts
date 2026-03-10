@@ -264,16 +264,16 @@ async function backgroundParse({
     // 3. Upsert criteria — includes domain_id, organisation_id (both NOT NULL),
     //    number as INTEGER, description (maps title + description), guidance from source_anchor
     //    onConflict: 'audit_id,number' handles retries without 23505 uniqueness errors
-    const validCriteriaList = criteriaList.filter((c: ParsedCriterion) => {
-      if (mpsMap.has(c.mps_number)) return true;
-      // Normalised: e.g., strip 'MPS ' or trailing zeros, compare numeric value
-      return !![...mpsMap.keys()].find(k => String(Number(k)) === String(Number(c.mps_number)));
-    });
+    // Normalise an MPS number string to its numeric value for fallback matching
+    // e.g. "MPS 6", "6.0", "06" all normalise to "6"
+    const normaliseMpsNumber = (v: string): string => String(Number(v));
     // Helper: resolve the actual mpsMap key for a criterion (handles normalised fallback)
     const resolveMpsKey = (mpsNumber: string): string | undefined => {
       if (mpsMap.has(mpsNumber)) return mpsNumber;
-      return [...mpsMap.keys()].find(k => String(Number(k)) === String(Number(mpsNumber)));
+      const norm = normaliseMpsNumber(mpsNumber);
+      return [...mpsMap.keys()].find(k => normaliseMpsNumber(k) === norm);
     };
+    const validCriteriaList = criteriaList.filter((c: ParsedCriterion) => resolveMpsKey(c.mps_number) !== undefined);
     if (validCriteriaList.length < criteriaList.length) {
       const missingMps = criteriaList
         .filter((c: ParsedCriterion) => !resolveMpsKey(c.mps_number))
@@ -285,6 +285,7 @@ async function backgroundParse({
       .from('criteria')
       .upsert(
         validCriteriaList.map((c: ParsedCriterion, idx: number) => {
+          // resolveMpsKey is guaranteed non-null: validCriteriaList is pre-filtered to only resolvable entries
           const mpsEntry = mpsMap.get(resolveMpsKey(c.mps_number)!);
           return {
             mps_id: mpsEntry?.id,
