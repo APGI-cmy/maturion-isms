@@ -10,7 +10,7 @@ name: Agent Contract Audit
 # Violation class: AGCFPP-001
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize, reopened]
     paths:
       - '.github/agents/**'
@@ -40,6 +40,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Detect changed agent contract files
         id: detect
@@ -206,6 +207,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Verify actor authority for agent contract changes
         run: |
@@ -349,6 +351,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Check for IAA assurance token artifact
         env:
