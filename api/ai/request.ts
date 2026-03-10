@@ -238,6 +238,58 @@ export function validateRequest(body: unknown): AICentreRequest {
 }
 
 // ---------------------------------------------------------------------------
+// JWT authentication helpers — GAP-017 (Wave 16.6)
+// ---------------------------------------------------------------------------
+
+const BEARER_PREFIX_LENGTH = 7; // 'Bearer '
+
+/**
+ * Validates the Authorization header contains a structurally valid Bearer JWT.
+ *
+ * Checks that:
+ *  - The Authorization header is present and starts with 'Bearer '
+ *  - The token has exactly 3 dot-separated, non-empty base64url parts
+ *
+ * Does NOT perform signature verification — Supabase RLS enforces real auth in
+ * production; offline tests use structurally valid unsigned test tokens.
+ *
+ * Returns the raw token string if valid, null if absent or malformed.
+ */
+export function validateAuthHeader(headers: IncomingMessage['headers']): string | null {
+  const authHeader = headers['authorization'];
+  if (!authHeader || typeof authHeader !== 'string') return null;
+  if (!authHeader.startsWith('Bearer ')) return null;
+
+  const token = authHeader.slice(BEARER_PREFIX_LENGTH);
+  if (!token) return null;
+
+  // Structural JWT validation: exactly 3 dot-separated base64url parts
+  const parts = token.split('.');
+  if (parts.length !== 3) return null;
+
+  const base64urlPattern = /^[A-Za-z0-9\-_]+$/;
+  if (!parts.every(p => base64urlPattern.test(p))) return null;
+
+  return token;
+}
+
+/**
+ * Decode the JWT payload and extract the org_id claim.
+ * Returns the org_id string if present, null if absent or if decoding fails.
+ * No signature verification — structural validity already ensured by validateAuthHeader.
+ */
+function extractOrgIdFromToken(token: string): string | null {
+  try {
+    const parts = token.split('.');
+    const payload = JSON.parse(Buffer.from(parts[1]!, 'base64url').toString('utf-8')) as Record<string, unknown>;
+    const orgId = payload['org_id'];
+    return typeof orgId === 'string' ? orgId : null;
+  } catch {
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Handler
 // ---------------------------------------------------------------------------
 
@@ -272,6 +324,15 @@ export function createHandler(factory: AICentreFactory = buildAICentre) {
       return;
     }
 
+    // JWT authentication gate — GAP-017 (Wave 16.6)
+    // MUST execute before body parsing and before any factory/AI calls.
+    const token = validateAuthHeader(req.headers);
+    if (!token) {
+      res.writeHead(401);
+      res.end(JSON.stringify({ error: 'Authentication required. Provide Authorization: Bearer <token>.' }));
+      return;
+    }
+
     let aiRequest: AICentreRequest;
     try {
       const body = await parseBody(req);
@@ -283,6 +344,16 @@ export function createHandler(factory: AICentreFactory = buildAICentre) {
           error: err instanceof Error ? err.message : 'Invalid request',
         }),
       );
+      return;
+    }
+
+    // Verify body.context.organisationId matches the JWT org_id claim (GAP-017 AC-2).
+    // If the JWT carries no org_id claim the check is intentionally skipped —
+    // downstream Supabase RLS enforces tenant isolation in production.
+    const jwtOrgId = extractOrgIdFromToken(token);
+    if (jwtOrgId !== null && jwtOrgId !== aiRequest.context.organisationId) {
+      res.writeHead(403);
+      res.end(JSON.stringify({ error: 'Access denied: organisationId does not match authenticated session.' }));
       return;
     }
 

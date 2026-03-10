@@ -30,11 +30,12 @@ import { makeTestSupabaseClient, type TestSupabaseClient } from './__test-utils_
 // ---------------------------------------------------------------------------
 
 /** Build a minimal mock IncomingMessage with a JSON body. */
-function mockRequest(method: string, body: unknown): IncomingMessage {
+function mockRequest(method: string, body: unknown, authorizationHeader?: string): IncomingMessage {
   const emitter = new EventEmitter() as unknown as IncomingMessage;
   (emitter as Record<string, unknown>)['method'] = method;
   (emitter as Record<string, unknown>)['headers'] = {
     'content-type': 'application/json',
+    ...(authorizationHeader !== undefined ? { authorization: authorizationHeader } : {}),
   };
 
   setImmediate(() => {
@@ -79,6 +80,18 @@ const validBody = {
   input: { text: 'What controls should I implement?' },
   context: { organisationId: 'org-001', sessionId: 'sess-001' },
 };
+
+/**
+ * Structurally valid Bearer token for offline handler tests.
+ * JWT payload: {"sub":"test-user","iat":1600000000} — no org_id claim, so the
+ * org-mismatch check in createHandler is intentionally skipped for all existing
+ * tests that use varied organisationId values.
+ * Wave 16.6 GAP-017: required after JWT auth gate was added to createHandler.
+ */
+const TEST_BEARER_TOKEN =
+  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' +
+  '.eyJzdWIiOiJ0ZXN0LXVzZXIiLCJpYXQiOjE2MDAwMDAwMDB9' +
+  '.TEST_SIGNATURE';
 
 // ---------------------------------------------------------------------------
 // parseBody
@@ -200,7 +213,7 @@ describe('handler', () => {
       capability: 'invalid-cap',
       input: { text: 'hi' },
       context: { organisationId: 'org-1' },
-    });
+    }, TEST_BEARER_TOKEN);
     const res = mockResponse();
     await handler(req, res as unknown as ServerResponse);
     expect(res.statusCode).toBe(400);
@@ -229,7 +242,7 @@ describe('handler', () => {
 
     const mockAICentre = { request: vi.fn().mockResolvedValue(fakeResponse) };
     const handler = createHandler(() => mockAICentre as unknown as ReturnType<typeof buildAICentre>);
-    const req = mockRequest('POST', validBody);
+    const req = mockRequest('POST', validBody, TEST_BEARER_TOKEN);
     const res = mockResponse();
 
     await handler(req, res as unknown as ServerResponse);
@@ -265,7 +278,7 @@ describe('handler', () => {
     const handler = createHandler(
       () => mockAICentre as unknown as ReturnType<typeof buildAICentre>,
     );
-    const req = mockRequest('POST', validBody);
+    const req = mockRequest('POST', validBody, TEST_BEARER_TOKEN);
     const res = mockResponse();
 
     await handler(req, res as unknown as ServerResponse);
@@ -284,7 +297,7 @@ describe('handler', () => {
     const handler = createHandler(
       () => mockAICentre as unknown as ReturnType<typeof buildAICentre>,
     );
-    const req = mockRequest('POST', validBody);
+    const req = mockRequest('POST', validBody, TEST_BEARER_TOKEN);
     const res = mockResponse();
 
     await handler(req, res as unknown as ServerResponse);

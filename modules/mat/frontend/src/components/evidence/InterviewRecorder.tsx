@@ -7,6 +7,7 @@
  * Reuses MediaRecorder pipeline from audio recording.
  */
 import { useState, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { Mic, Square, Check } from 'lucide-react';
 
 export interface InterviewMetadata {
@@ -67,7 +68,7 @@ export function InterviewRecorder({ onRecordingComplete }: InterviewRecorderProp
         setRecordingTime((prev) => prev + 1);
       }, 1000);
     } catch (err) {
-      alert(
+      toast.error(
         `Failed to start recording: ${err instanceof Error ? err.message : 'Failed to access microphone'}`
       );
     }

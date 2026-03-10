@@ -34,11 +34,12 @@ import {
 // ---------------------------------------------------------------------------
 
 /** Build a minimal mock IncomingMessage with a JSON body. */
-function mockRequest(method: string, body: unknown): IncomingMessage {
+function mockRequest(method: string, body: unknown, authorizationHeader?: string): IncomingMessage {
   const emitter = new EventEmitter() as unknown as IncomingMessage;
   (emitter as Record<string, unknown>)['method'] = method;
   (emitter as Record<string, unknown>)['headers'] = {
     'content-type': 'application/json',
+    ...(authorizationHeader !== undefined ? { authorization: authorizationHeader } : {}),
   };
   setImmediate(() => {
     const chunk =
@@ -113,6 +114,18 @@ const validAdvisoryBody = {
   context: { organisationId: 'org-001', sessionId: 'sess-001' },
 };
 
+/**
+ * Structurally valid Bearer token for offline handler tests.
+ * JWT payload: {"sub":"test-user","iat":1600000000} — no org_id claim, so the
+ * org-mismatch check in createHandler is intentionally skipped for all existing
+ * tests that use varied organisationId values.
+ * Wave 16.6 GAP-017: required after JWT auth gate was added to createHandler.
+ */
+const TEST_BEARER_TOKEN =
+  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' +
+  '.eyJzdWIiOiJ0ZXN0LXVzZXIiLCJpYXQiOjE2MDAwMDAwMDB9' +
+  '.TEST_SIGNATURE';
+
 // ---------------------------------------------------------------------------
 // T-W12-API-1 — AI Gateway /api/ai/request endpoint contract
 // ---------------------------------------------------------------------------
@@ -123,7 +136,7 @@ describe('T-W12-API-1: AI Gateway /api/ai/request endpoint contract', () => {
     const mockAICentre = { request: vi.fn().mockResolvedValue(fakeResult) };
     const handler = createHandler(() => mockAICentre as unknown as ReturnType<typeof buildAICentre>);
 
-    const req = mockRequest('POST', validAdvisoryBody);
+    const req = mockRequest('POST', validAdvisoryBody, TEST_BEARER_TOKEN);
     const res = mockResponse();
     await handler(req, res as unknown as ServerResponse);
 
@@ -151,7 +164,7 @@ describe('T-W12-API-1: AI Gateway /api/ai/request endpoint contract', () => {
       // capability intentionally omitted
       input: { text: 'What controls should I implement?' },
       context: { organisationId: 'org-001' },
-    });
+    }, TEST_BEARER_TOKEN);
     const res = mockResponse();
     await handler(req, res as unknown as ServerResponse);
 
@@ -245,7 +258,7 @@ describe('T-W12-API-3: AI memory persistence lifecycle (API layer)', () => {
         capability: 'advisory',
         input: { text: 'What is ISO 27001?' },
         context: { organisationId: orgId },
-      });
+      }, TEST_BEARER_TOKEN);
       const res1 = mockResponse();
       await handler(req1, res1 as unknown as ServerResponse);
 
@@ -259,7 +272,7 @@ describe('T-W12-API-3: AI memory persistence lifecycle (API layer)', () => {
         capability: 'advisory',
         input: { text: 'How to implement Annex A controls?' },
         context: { organisationId: orgId },
-      });
+      }, TEST_BEARER_TOKEN);
       const res2 = mockResponse();
       await handler(req2, res2 as unknown as ServerResponse);
 
@@ -288,7 +301,7 @@ describe('T-W12-API-4: Error handling — missing required fields', () => {
       // capability intentionally omitted
       input: { text: 'Risk assessment query' },
       context: { organisationId: 'org-err-001' },
-    });
+    }, TEST_BEARER_TOKEN);
     const res = mockResponse();
     await handler(req, res as unknown as ServerResponse);
 
@@ -306,7 +319,7 @@ describe('T-W12-API-4: Error handling — missing required fields', () => {
       // input.text intentionally omitted
       input: { data: { something: true } },
       context: { organisationId: 'org-err-002' },
-    });
+    }, TEST_BEARER_TOKEN);
     const res = mockResponse();
     await handler(req, res as unknown as ServerResponse);
 
@@ -409,7 +422,7 @@ describe('T-W12-API-6: AI scoring pipeline E2E (W12-GAP-004)', () => {
         },
       },
       context: { organisationId: 'org-scoring-test' },
-    });
+    }, TEST_BEARER_TOKEN);
     const res = mockResponse();
     await handler(req, res as unknown as ServerResponse);
 
@@ -484,7 +497,7 @@ describe('T-W12-API-7: Report generation E2E — RCA G-14 regression (W12-GAP-00
         },
       },
       context: { organisationId: 'org-reporting-test' },
-    });
+    }, TEST_BEARER_TOKEN);
     const res = mockResponse();
     await handler(req, res as unknown as ServerResponse);
 

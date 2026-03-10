@@ -2633,14 +2633,14 @@ remediation plan for the 8 tables still carrying unverified or incomplete RLS co
 | GAP-003 | `profiles` | No SELECT policy — `useUserProfile` reads may fail with RLS enabled | 🔴 P0 | ✅ CLOSED (postbuild-fails-01: `profiles_select_own` added) |
 | GAP-004 | `audits` | No INSERT policy — `useCreateAudit` INSERT violated `audits` RLS | 🔴 P0 | ✅ CLOSED (postbuild-fails-01: `audits_insert_authenticated` added) |
 | GAP-005 | (trigger) | No `handle_new_user()` trigger — new auth users had no `profiles` row | 🔴 P0 | ✅ CLOSED (postbuild-fails-01: trigger + function added) |
-| GAP-006 | `organisations` | No documented INSERT/UPDATE policies — org creation/update flows unguarded | 🟡 HIGH | 🔴 OPEN |
-| GAP-007 | `domains` | SELECT policy only — no INSERT/UPDATE policies for domain management | 🟡 HIGH | 🔴 OPEN |
-| GAP-008 | `mini_performance_standards` | No documented policies — read-only guard absent | 🟡 HIGH | 🔴 OPEN |
+| GAP-006 | `organisations` | No documented INSERT/UPDATE policies — org creation/update flows unguarded | 🟡 HIGH | ✅ RESOLVED |
+| GAP-007 | `domains` | SELECT policy only — no INSERT/UPDATE policies for domain management | 🟡 HIGH | ✅ RESOLVED |
+| GAP-008 | `mini_performance_standards` | No documented policies — read-only guard absent | 🟡 HIGH | ✅ RESOLVED |
 | GAP-009 | `criteria` | SELECT policy only — no INSERT/UPDATE policies for criteria management | 🟡 HIGH | 🔴 OPEN |
 | GAP-010 | `evidence` | No documented policies — evidence INSERT/UPDATE/DELETE unguarded | 🔴 P0 | 🔴 OPEN |
-| GAP-011 | `scores` | No documented policies — scoring INSERT/UPDATE unguarded | 🔴 P0 | 🔴 OPEN |
-| GAP-012 | `organisation_settings` | No documented policies — settings INSERT/UPDATE unguarded | 🟡 HIGH | 🔴 OPEN |
-| GAP-013 | `audit_scores` | No documented policies — audit score INSERT/UPDATE unguarded | 🟡 HIGH | 🔴 OPEN |
+| GAP-011 | `scores` | No documented policies — scoring INSERT/UPDATE unguarded | 🔴 P0 | ✅ RESOLVED |
+| GAP-012 | `organisation_settings` | No documented policies — settings INSERT/UPDATE unguarded | 🟡 HIGH | ✅ RESOLVED |
+| GAP-013 | `audit_scores` | No documented policies — audit score INSERT/UPDATE unguarded | 🟡 HIGH | ✅ RESOLVED |
 
 ### Untested Frontend Hook Paths (RED Gate)
 
@@ -3436,29 +3436,29 @@ inside a try/catch. SELECT queried non-existent `resource_id` → "Failed to loa
 |--------|----------|-------------|--------------|--------|
 | GAP-001 | CRITICAL | `invoke-ai-score-criterion` Edge Function missing — AI scoring completely non-functional | Wave 16.3 | 🚫 BLOCKED (needs Wave 16.5) |
 | GAP-002 | CRITICAL | `generate-audit-report` Edge Function missing — report generation completely non-functional | Wave 16.4 | 🚫 BLOCKED (needs Wave 16.5 + 16.3) |
-| GAP-003 | CRITICAL | `/evidence` page is a stub component — evidence collection workflow unreachable | Wave 16.1 | 🔴 OPEN |
+| GAP-003 | CRITICAL | `/evidence` page is a stub component — evidence collection workflow unreachable | Wave 16.1 | ✅ RESOLVED |
 | GAP-004 | CRITICAL | AIMC `scoring` capability wiring incomplete — `invoke-ai-score-criterion` cannot route to AI | Wave 16.5 | 🔴 OPEN (cross-module) |
 | GAP-005 | CRITICAL | AIMC `reporting` capability wiring incomplete — `generate-audit-report` cannot route to AI | Wave 16.5 | 🔴 OPEN (cross-module) |
-| GAP-006 | HIGH | No feedback/recommendations UI — `gap_analysis` JSONB in DB never displayed | Wave 16.2 | 🔴 OPEN |
-| GAP-007 | HIGH | `/reports` page is a stub — no way to list or re-download previously generated reports | Wave 16.2 | 🔴 OPEN |
-| GAP-008 | HIGH | No toast notification system — 29 `alert()` calls across 8 files create poor UX | Wave 16.2 | 🔴 OPEN |
+| GAP-006 | HIGH | No feedback/recommendations UI — `gap_analysis` JSONB in DB never displayed | Wave 16.2 | ✅ RESOLVED |
+| GAP-007 | HIGH | `/reports` page is a stub — no way to list or re-download previously generated reports | Wave 16.2 | ✅ RESOLVED |
+| GAP-008 | HIGH | No toast notification system — 29 `alert()` calls across 8 files create poor UX | Wave 16.2 | ✅ RESOLVED |
 | GAP-009 | HIGH | `CriteriaModal` shows mock/hardcoded data — criterion detail view not wired to backend | Wave 16.2 | 🔴 OPEN |
 | GAP-010 | HIGH | No long-running task tracker for report generation — no UI feedback for async scoring | Wave 16.3 | 🚫 BLOCKED (needs Wave 16.5) |
-| GAP-011 | HIGH | `scores` INSERT/UPDATE RLS policies incomplete — writes may be blocked | Wave 16.6 | 🔴 OPEN |
-| GAP-012 | HIGH | `audit_scores` INSERT/UPDATE RLS policies incomplete — same pattern as GAP-011 | Wave 16.6 | 🔴 OPEN |
-| GAP-013 | HIGH | No ARC portal frontend — feedback approval workflow endpoints exist but no UI | Wave 16.7 | 🔴 OPEN |
+| GAP-011 | HIGH | `scores` INSERT/UPDATE RLS policies incomplete — writes may be blocked | Wave 16.6 | ✅ RESOLVED |
+| GAP-012 | HIGH | `audit_scores` INSERT/UPDATE RLS policies incomplete — same pattern as GAP-011 | Wave 16.6 | ✅ RESOLVED |
+| GAP-013 | HIGH | No ARC portal frontend — feedback approval workflow endpoints exist but no UI | Wave 16.7 | ✅ RESOLVED |
 | GAP-014 | MEDIUM | Interview recording playback not implemented — audio saved but no player UI | Wave 16.2 | 🔴 OPEN |
 | GAP-015 | MEDIUM | No global audit selection context — each page manages its own `auditId` state | Wave 16.2 | 🔴 OPEN |
-| GAP-016 | MEDIUM | Audit logging covers only criteria parsing — evidence uploads, score changes, report generation not logged | Wave 16.6 | 🔴 OPEN |
-| GAP-017 | MEDIUM | `POST /api/ai/request` lacks JWT authentication — `organisationId` from body only | Wave 16.6 | 🔴 OPEN |
-| GAP-018 | MEDIUM | `mat-ai-gateway` deployment instructions not in repo — deployment dependency undocumented | Wave 16.8 | 🔴 OPEN |
-| GAP-019 | MEDIUM | `evidence_submissions` table referenced but no migration exists — potential runtime error | Wave 16.6 | 🔴 OPEN |
-| GAP-020 | MEDIUM | Score `gap_analysis` JSONB never displayed — rich data computed but invisible to users | Wave 16.2 | 🔴 OPEN |
+| GAP-016 | MEDIUM | Audit logging covers only criteria parsing — evidence uploads, score changes, report generation not logged | Wave 16.6 | ✅ RESOLVED |
+| GAP-017 | MEDIUM | `POST /api/ai/request` lacks JWT authentication — `organisationId` from body only | Wave 16.6 | ✅ RESOLVED |
+| GAP-018 | MEDIUM | `mat-ai-gateway` deployment instructions not in repo — deployment dependency undocumented | Wave 16.8 | ✅ RESOLVED |
+| GAP-019 | MEDIUM | `evidence_submissions` table referenced but no migration exists — potential runtime error | Wave 16.6 | ✅ RESOLVED |
+| GAP-020 | MEDIUM | Score `gap_analysis` JSONB never displayed — rich data computed but invisible to users | Wave 16.2 | ✅ RESOLVED |
 | GAP-021 | LOW | No database webhooks for async processing — all Edge Function calls are synchronous/frontend-initiated | Wave 16.9 | ⏸ PARKED |
 | GAP-022 | LOW | No `report_requests` table — `audit_reports` doubles as both request and result | Wave 16.9 | ⏸ PARKED |
 | GAP-023 | LOW | `control_standards` concept not explicitly modelled — referenced in requirements; implemented as criteria top-level | Wave 16.9 | ⏸ PARKED |
 | GAP-024 | LOW | No unsaved-changes warnings or confirmation dialogs for destructive actions | Wave 16.2 | 🔴 OPEN |
-| GAP-025 | LOW | `useAuditMetrics` polling (30s) has no stop condition — continuous polling even when hidden | Wave 16.2 | 🔴 OPEN |
+| GAP-025 | LOW | `useAuditMetrics` polling (30s) has no stop condition — continuous polling even when hidden | Wave 16.2 | ✅ RESOLVED |
 
 ---
 
@@ -3466,14 +3466,14 @@ inside a try/catch. SELECT queried non-existent `resource_id` → "Failed to loa
 
 | Wave | Name | Status | Blocking Condition |
 |------|------|--------|--------------------|
-| 16.1 | Evidence Collection Page Wire | 🟡 ORCHESTRATION STARTED — RED QA gate pending | None — immediately actionable |
-| 16.2 | Frontend UX Completeness | 🟡 ORCHESTRATION STARTED — RED QA gate pending | None — immediately actionable (after 16.1) |
+| 16.1 | Evidence Collection Page Wire | ✅ COMPLETE — GAP-003 resolved (evidence/index.tsx → real EvidenceCollection) | None |
+| 16.2 | Frontend UX Completeness | ✅ COMPLETE — GAP-006,007,008,020,025 resolved (FeedbackPage, ReportsPage, toast, metrics stop) | None |
 | 16.3 | AI Scoring Edge Function | 🚫 BLOCKED | Requires Wave 16.5 (AIMC Waves 3–4 complete) |
 | 16.4 | Report Generation Edge Function | 🚫 BLOCKED | Requires Wave 16.5 + Wave 16.3 complete |
 | 16.5 | AIMC Scoring+Reporting Wiring | 🟡 ORCHESTRATION STARTED — cross-module | AIMC must deliver Waves 3–4 (scoring + reporting capabilities) |
-| 16.6 | Schema + Audit Completeness | 🟡 ORCHESTRATION STARTED — RED QA gate pending | None — independently actionable |
-| 16.7 | ARC Portal Frontend | 🟡 ORCHESTRATION STARTED — RED QA gate pending | None — independently actionable |
-| 16.8 | Documentation Gaps | 🟡 ORCHESTRATION STARTED — assigned mat-specialist | None |
+| 16.6 | Schema + Audit Completeness | ✅ COMPLETE — GAP-011,012,016,017,019 resolved (RLS, JWT auth, evidence_submissions) | None |
+| 16.7 | ARC Portal Frontend | ✅ COMPLETE — GAP-013 resolved (ARC portal page with approve/reject) | None |
+| 16.8 | Documentation Gaps | ✅ COMPLETE — GAP-018 resolved (mat-ai-gateway deployment runbook) | None |
 | 16.9 | Future Considerations | ⏸ PARKED | CS2 architectural decision required |
 
 ---

@@ -1,1 +1,1 @@
-export * from '../EvidenceCollectionPage';
+export * from '../../components/evidence/EvidenceCollection';

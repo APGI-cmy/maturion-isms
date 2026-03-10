@@ -313,6 +313,7 @@ flag it as a governance violation and halt.
 | Health Check Endpoint           | `api/ai/health.ts`                                               |
 | Memory Runbook                  | `api/ai/AI_GATEWAY_MEMORY_RUNBOOK.md`                            |
 | Supabase Memory Migration       | `packages/ai-centre/supabase/migrations/001_ai_memory.sql`       |
+| `mat-ai-gateway` Deployment Runbook | `docs/runbooks/mat-ai-gateway-deployment.md` (env vars, Render steps, health check, rollback) |
 
 **Change Log**:
 - v3.0.0 (2026-02-27): Added §9 (AI Gateway Collaborator Architecture — Wave 10), §10 (Health Check Endpoint), §11 (Memory Runbook Reference). Documents replacement of null stubs with real adapter implementations. Architecture freeze effective on merge per CS2 directive. TRS Requirements extended to TR-073–TR-077.

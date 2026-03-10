@@ -5,6 +5,7 @@
  * Task: 5.6.2 (Audit Management CRUD)
  */
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useCreateAudit } from '../../lib/hooks/useAudits';
 
 export function AuditCreationForm() {
@@ -58,9 +59,9 @@ export function AuditCreationForm() {
         audit_period_end: '',
       });
       setErrors({});
-      alert('Audit created successfully!');
+      toast.success('Audit created successfully!');
     } catch (error) {
-      alert(`Failed to create audit: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast.error(`Failed to create audit: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
