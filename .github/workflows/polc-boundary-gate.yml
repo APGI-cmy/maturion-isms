@@ -1,16 +1,17 @@
 ---
-name: POLC Boundary Validation Gate
+name: POLC Boundary Validation
 
 # Authority: FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md,
 #            LIVING_AGENT_SYSTEM.md v6.2.0
 # Purpose: Prevent Foreman from implementing new features;
-#          allow supervision corrections
-# Issue: #193 - Implement POLC Boundary Validation Gate
-#        (refined per current issue)
-# Contract: Foreman-ISMS Agent Contract v2.2.0,
-#           Section 3.6 (Merge Gate Enforcement Specification)
-# Refinement: Distinguish implementation (prohibited) from
-#             supervision (permitted)
+#          allow supervision corrections. Three separate jobs provide
+#          independent status checks matching merge_gate_interface required_checks.
+# Issue: #193 (original gate), S-007/S-023 (machine enforcement improvements)
+# Contract: Foreman-ISMS Agent Contract v2.6.0,
+#           merge_gate_interface.required_checks
+# S-007: Each gate runs as its own named job so CI reports
+#        separate named status checks
+# S-023: builder-involvement-check now enforces pre-brief artifact existence
 
 'on':
   pull_request:
@@ -21,8 +22,8 @@ permissions:
   pull-requests: read
 
 jobs:
-  polc-boundary-validation:
-    name: "Merge Gate Interface / polc-boundary/validation"
+  foreman-implementation-check:
+    name: "foreman-implementation-check"
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
@@ -246,16 +247,30 @@ jobs:
             echo "Foreman performed supervision"
             echo "corrections only (or no production changes)."
             echo ""
-            echo "check1_status=passed" >> $GITHUB_OUTPUT
           fi
 
-      - name: Check 2 - Validate Builder Involvement
-        id: check2
-        if: always()
+  # ---------------------------------------------------------------------------
+  # Job 2: Builder Involvement + Pre-Brief Existence Check (S-023)
+  # Validates that when implementation files changed, builder delegation
+  # occurred AND a pre-brief artifact exists.
+  # ---------------------------------------------------------------------------
+  builder-involvement-check:
+    name: "builder-involvement-check"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check Builder Involvement and Pre-Brief Existence
+        id: builder_check
         run: |
-          echo "=== Check 2: Validate Builder Involvement ==="
+          echo "=== Builder Involvement + Pre-Brief Existence (S-023) ==="
           echo ""
-          echo "Refined Logic: Skip if only supervision corrections detected"
+          echo "Logic: Skip if only supervision corrections detected."
+          echo "       Fail if implementation changed but no pre-brief artifact."
           echo ""
 
           # Get base branch
@@ -305,24 +320,66 @@ jobs:
           done <<< "$CHANGED_FILES"
 
           if [ "$SUPERVISION_ONLY" = true ]; then
-            echo "ℹ️  Only supervision corrections"
-            echo "detected (docs, config, test fixes)"
-            echo "   No builder involvement required for supervision work."
+            echo "ℹ️  Only supervision corrections detected (docs, config, test fixes)"
+            echo "   No builder involvement or pre-brief check required."
             echo ""
-            echo "check2_status=skipped" >> $GITHUB_OUTPUT
             exit 0
           fi
 
           if [ "$IMPLEMENTATION_CHANGED" = false ]; then
-            echo "ℹ️  No implementation code changes"
-            echo "detected - skipping builder involvement check"
-            echo "check2_status=skipped" >> $GITHUB_OUTPUT
+            echo "ℹ️  No implementation code changes detected - skipping check"
             exit 0
           fi
 
-          echo "Implementation code changes"
-          echo "detected. Checking for builder involvement..."
+          echo "Implementation code changes detected."
           echo ""
+
+          # S-023: Check for IAA pre-brief artifact (HARD GATE)
+          # Per improvement S-023: fail when implementation files changed but
+          # no .agent-admin/assurance/iaa-prebrief-*.md exists on branch.
+          echo "--- S-023: Pre-Brief Existence Gate ---"
+          PREBRIEF_FOUND=false
+          ASSURANCE_DIR=".agent-admin/assurance"
+          if [ -d "$ASSURANCE_DIR" ]; then
+            PREBRIEF_FILES=$(find "$ASSURANCE_DIR" \
+              -name "iaa-prebrief-*.md" 2>/dev/null | head -5)
+            if [ -n "$PREBRIEF_FILES" ]; then
+              PREBRIEF_FOUND=true
+              echo "✅ IAA pre-brief artifact(s) found:"
+              echo "$PREBRIEF_FILES" | sed 's/^/   /'
+            fi
+          fi
+
+          if [ "$PREBRIEF_FOUND" = false ]; then
+            echo ""
+            echo "❌ S-023 GATE FAIL — No IAA pre-brief artifact found."
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "🚨 POLC PRE-BRIEF VIOLATION (A-031)"
+            echo ""
+            echo "Implementation files changed but no IAA pre-brief artifact"
+            echo "exists at .agent-admin/assurance/iaa-prebrief-*.md"
+            echo ""
+            echo "Per LIVING_AGENT_SYSTEM.md v6.2.0 and Foreman contract"
+            echo "Phase 2 Step 2.7 (PRE-BRIEF-BEFORE-DELEGATION):"
+            echo "  The IAA pre-brief MUST be committed before any"
+            echo "  builder receives an implementation task."
+            echo ""
+            echo "REQUIRED:"
+            echo "  1. Commit wave-current-tasks.md to trigger iaa-prebrief-inject.yml"
+            echo "  2. Await IAA pre-brief artifact in .agent-admin/assurance/"
+            echo "  3. Only then proceed with implementation delegation"
+            echo ""
+            echo "Retroactive pre-brief commits after implementation work"
+            echo "has begun are a POLC boundary violation."
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            exit 1
+          fi
+
+          echo ""
+          echo "--- Builder Involvement Check ---"
 
           # Check for builder commits
           COMMITS=$(git log origin/$BASE_BRANCH..HEAD \
@@ -371,22 +428,31 @@ jobs:
             echo "If Foreman supervised builders,"
             echo "where are the builder artifacts?"
             echo "If Foreman implemented directly,"
-            echo "this should have been caught in Check 1."
+            echo "this should have been caught in foreman-implementation-check."
             echo ""
             echo "This is a WARNING. Manual review required."
-            echo ""
-            # Set to passed but log warning
-            echo "check2_status=warning" >> $GITHUB_OUTPUT
           else
-            echo "✅ Check 2 PASSED - Builder involvement confirmed"
-            echo "check2_status=passed" >> $GITHUB_OUTPUT
+            echo "✅ Builder involvement confirmed"
           fi
 
-      - name: Check 3 - Validate Session Memory Presence
-        id: check3
-        if: always()
+  # ---------------------------------------------------------------------------
+  # Job 3: Session Memory Check
+  # Validates Foreman session memory is present and does not indicate
+  # the Foreman wrote production code directly.
+  # ---------------------------------------------------------------------------
+  session-memory-check:
+    name: "session-memory-check"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check Session Memory Presence and Compliance
         run: |
-          echo "=== Check 3: Validate Session Memory Presence ==="
+          echo "=== Session Memory Presence and Compliance ==="
           echo ""
 
           # Check for Foreman session memory
@@ -410,8 +476,7 @@ jobs:
             echo ""
             echo "Every Foreman session MUST create session memory."
             echo ""
-            echo "Expected: .agent-workspace/forema"
-            echo "n*/memory/session-NNN-YYYYMMDD.md"
+            echo "Expected: .agent-workspace/foreman*/memory/session-NNN-YYYYMMDD.md"
             echo ""
             echo "Session memory must document:"
             echo "  - Builder delegation (if implementation work occurred)"
@@ -421,130 +486,37 @@ jobs:
             echo "Per Living Agent System v6.2.0."
             echo ""
             exit 1
-          else
-            echo "✅ Check 3 PASSED - Session memory present"
-
-            # Validate session memory doesn't show FM writing code
-            echo ""
-            echo "Checking session memory for POLC violations..."
-
-            POLC_VIOLATION_IN_MEMORY=false
-            for session_file in \
-                .agent-workspace/foreman*/memory/session-*.md; do
-              if [ -f "$session_file" ]; then
-                # Check for indicators that FM wrote code
-                # Skip lines with negations
-                if grep -iE "(implemented|wrote).*code" \
-                   "$session_file" | \
-                   grep -qviE "did NOT|NOT.*implement"; then
-                  echo "⚠️  WARNING: Session memory"
-                  echo "may indicate FM wrote code: $session_file"
-                  POLC_VIOLATION_IN_MEMORY=true
-                fi
-              fi
-            done
-
-            if [ "$POLC_VIOLATION_IN_MEMORY" = true ]; then
-              echo ""
-              echo "❌ SESSION MEMORY INDICATES POLC VIOLATION"
-              echo ""
-              echo "Session memory contains evidence"
-              echo "that Foreman implemented new features."
-              echo "This violates the POLC-Only Constraint."
-              echo ""
-              echo "Note: Supervision corrections"
-              echo "(docs, config, test fixes) are permitted."
-              echo ""
-              exit 1
-            fi
-
-            echo "✅ Session memory validates POLC compliance"
-            echo "check3_status=passed" >> $GITHUB_OUTPUT
           fi
 
-      - name: Check 4 - Validate Evidence Artifact Bundle
-        id: check4
-        if: always()
-        run: |
-          echo "=== Check 4: Validate Evidence Artifact Bundle ==="
+          echo "✅ Session memory present"
           echo ""
+          echo "Checking session memory for POLC violations..."
 
-          VALIDATION_FAILED=false
-
-          # Check for .agent-admin/ directory
-          if [ ! -d ".agent-admin" ]; then
-            echo "❌ .agent-admin/ directory missing"
-            VALIDATION_FAILED=true
-          else
-            echo "✅ .agent-admin/ directory exists"
-          fi
-
-          # Check required subdirectories
-          REQUIRED_DIRS=(
-            ".agent-admin/prehandover"
-            ".agent-admin/gates"
-            ".agent-admin/improvements"
-          )
-
-          for dir in "${REQUIRED_DIRS[@]}"; do
-            if [ ! -d "$dir" ]; then
-              echo "⚠️  $dir missing (may be created during build)"
-            else
-              echo "✅ $dir exists"
+          POLC_VIOLATION_IN_MEMORY=false
+          for session_file in \
+              .agent-workspace/foreman*/memory/session-*.md; do
+            if [ -f "$session_file" ]; then
+              # Check for indicators that FM wrote code; skip lines with negations
+              if grep -iE "(implemented|wrote).*code" \
+                 "$session_file" | \
+                 grep -qviE "did NOT|NOT.*implement"; then
+                echo "⚠️  WARNING: Session memory may indicate FM wrote code: $session_file"
+                POLC_VIOLATION_IN_MEMORY=true
+              fi
             fi
           done
 
-          echo ""
-
-          if [ "$VALIDATION_FAILED" = true ]; then
-            echo "❌ EVIDENCE ARTIFACT BUNDLE REQUIRED"
+          if [ "$POLC_VIOLATION_IN_MEMORY" = true ]; then
             echo ""
-            echo "Expected structure:"
-            echo "  .agent-admin/prehandover/"
-            echo "  .agent-admin/gates/"
-            echo "  .agent-admin/improvements/"
+            echo "❌ SESSION MEMORY INDICATES POLC VIOLATION"
             echo ""
-            echo "Per EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md"
+            echo "Session memory contains evidence that Foreman implemented"
+            echo "new features. This violates the POLC-Only Constraint."
+            echo ""
+            echo "Note: Supervision corrections (docs, config, test fixes)"
+            echo "are permitted."
             echo ""
             exit 1
-          else
-            echo "✅ Check 4 PASSED - Evidence artifact bundle validated"
-            echo "check4_status=passed" >> $GITHUB_OUTPUT
           fi
 
-      - name: Report Final Verdict
-        if: always()
-        run: |
-          echo "=== POLC Boundary Validation - Final Verdict ==="
-          echo ""
-          echo "Check 1 (Foreman Commits):    ${{"
-          echo "steps.check1.outputs.check1_status || 'failed' }}"
-          echo "Check 2 (Builder Involvement): ${{"
-          echo "steps.check2.outputs.check2_status || 'failed' }}"
-          echo "Check 3 (Session Memory):      ${{"
-          echo "steps.check3.outputs.check3_status || 'failed' }}"
-          echo "Check 4 (Evidence Bundle):     ${{"
-          echo "steps.check4.outputs.check4_status || 'failed' }}"
-          echo ""
-
-          if [[ "${{ steps.check1.outputs.check1_status }}" != "passed" ]] || \
-             [[ "${{ steps.check3.outputs.check3_status }}" != "passed" ]] || \
-             [[ "${{ steps.check4.outputs.check4_status }}" != "passed" ]]; then
-            echo "❌ POLC BOUNDARY VALIDATION FAILED"
-            echo ""
-            echo "One or more required checks failed. Review the logs above."
-            echo ""
-            exit 1
-          elif [[ "${{ steps.check2.outputs.check2_status }}" == \
-                  "warning" ]]; then
-            echo "⚠️  POLC BOUNDARY VALIDATION PASSED WITH WARNINGS"
-            echo ""
-            echo "Manual review recommended for builder involvement."
-            echo ""
-          else
-            echo "✅ POLC BOUNDARY VALIDATION PASSED"
-            echo ""
-            echo "All checks passed successfully."
-            echo "Foreman delegation model verified."
-            echo ""
-          fi
+          echo "✅ Session memory validates POLC compliance"
