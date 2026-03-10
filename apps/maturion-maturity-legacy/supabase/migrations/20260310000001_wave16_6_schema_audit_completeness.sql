@@ -279,7 +279,8 @@ DO $$ BEGIN
     CREATE POLICY evidence_submissions_insert_authenticated ON public.evidence_submissions
       FOR INSERT
       WITH CHECK (
-        organisation_id IN (
+        submitted_by = auth.uid()
+        AND organisation_id IN (
           SELECT organisation_id
           FROM public.profiles
           WHERE id = auth.uid()

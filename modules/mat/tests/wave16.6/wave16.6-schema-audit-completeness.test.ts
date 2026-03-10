@@ -204,3 +204,24 @@ describe('T-W16.6-SCH-005: Wave 16.6 migration creates evidence_submissions tabl
     ).toBe(true);
   });
 });
+
+// ---------------------------------------------------------------------------
+// T-W16.6-SCH-006 — evidence_submissions INSERT RLS binds submitted_by to auth.uid()
+// ---------------------------------------------------------------------------
+
+describe('T-W16.6-SCH-006: evidence_submissions INSERT policy enforces submitted_by = auth.uid()', () => {
+  it('INSERT policy WITH CHECK clause contains submitted_by = auth.uid()', () => {
+    // GREEN: INSERT policy must bind submitted_by to the current user to prevent
+    // impersonation within the same org (security finding addressed post-IAA).
+    const content = migrationContent();
+    const hasSubmittedByCheck =
+      content.includes('evidence_submissions_insert_authenticated') &&
+      /submitted_by\s*=\s*auth\.uid\(\)/.test(content);
+    expect(
+      hasSubmittedByCheck,
+      'Expected the evidence_submissions INSERT RLS policy to include ' +
+        '"submitted_by = auth.uid()" in its WITH CHECK clause to prevent ' +
+        'impersonation of other submitters within the same organisation.',
+    ).toBe(true);
+  });
+});
