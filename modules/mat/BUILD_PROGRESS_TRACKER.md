@@ -2,9 +2,9 @@
 
 **Module**: Mat  
 **Module Slug**: mat  
-**Version**: v1.8  
+**Version**: v1.9  
 **Last Updated**: 2026-03-09  
-**Updated By**: foreman-v2-agent (wave-mat-gov-process)
+**Updated By**: foreman-v2-agent (wave16-orchestration)
 
 ---
 
@@ -3466,15 +3466,47 @@ inside a try/catch. SELECT queried non-existent `resource_id` → "Failed to loa
 
 | Wave | Name | Status | Blocking Condition |
 |------|------|--------|--------------------|
-| 16.1 | Evidence Collection Page Wire | 🔴 OPEN — awaiting RED QA gate + ui-builder delegation | None — immediately actionable |
-| 16.2 | Frontend UX Completeness | 🔴 OPEN — awaiting RED QA gate + ui-builder delegation | None — immediately actionable |
+| 16.1 | Evidence Collection Page Wire | 🟡 ORCHESTRATION STARTED — RED QA gate pending | None — immediately actionable |
+| 16.2 | Frontend UX Completeness | 🟡 ORCHESTRATION STARTED — RED QA gate pending | None — immediately actionable (after 16.1) |
 | 16.3 | AI Scoring Edge Function | 🚫 BLOCKED | Requires Wave 16.5 (AIMC Waves 3–4 complete) |
 | 16.4 | Report Generation Edge Function | 🚫 BLOCKED | Requires Wave 16.5 + Wave 16.3 complete |
-| 16.5 | AIMC Scoring+Reporting Wiring | 🔴 OPEN — cross-module | AIMC must deliver Waves 3–4 (scoring + reporting capabilities) |
-| 16.6 | Schema + Audit Completeness | 🔴 OPEN — awaiting RED QA gate + builder delegation | None — independently actionable |
-| 16.7 | ARC Portal Frontend | 🔴 OPEN — awaiting RED QA gate + ui-builder delegation | None — independently actionable |
-| 16.8 | Documentation Gaps | 🔴 OPEN — assigned mat-specialist | None |
+| 16.5 | AIMC Scoring+Reporting Wiring | 🟡 ORCHESTRATION STARTED — cross-module | AIMC must deliver Waves 3–4 (scoring + reporting capabilities) |
+| 16.6 | Schema + Audit Completeness | 🟡 ORCHESTRATION STARTED — RED QA gate pending | None — independently actionable |
+| 16.7 | ARC Portal Frontend | 🟡 ORCHESTRATION STARTED — RED QA gate pending | None — independently actionable |
+| 16.8 | Documentation Gaps | 🟡 ORCHESTRATION STARTED — assigned mat-specialist | None |
 | 16.9 | Future Considerations | ⏸ PARKED | CS2 architectural decision required |
+
+---
+
+## Wave 16 — Orchestration Kick-Off (2026-03-09)
+
+**Status**: ORCHESTRATION STARTED — 2026-03-09  
+**Session**: session-wave16-orchestration-20260309  
+**Authority**: Issue "Orchestrate Wave 16 Implementation Build for Completeness Gaps (see PR #1020)" — CS2 (@APGI-cmy)  
+**Governance Overlay**: PR #1020 (FRS v2.2.0, TRS v2.0.0, implementation-plan.md v2.7.0, tracker v1.8 → now v1.9)
+
+### Orchestration Start Declaration
+
+Foreman-v2-agent formally kicks off Wave 16 build orchestration. All 9 sub-waves registered. Task register committed to `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`. IAA pre-brief received and committed at SHA `02b43b0`. BUILD_PROGRESS_TRACKER.md updated to v1.9.
+
+**Immediately Actionable Sub-Waves** (no external dependencies — delegations to follow in sub-wave sessions):
+1. Wave 16.1 — Evidence Collection Page Wire (CRITICAL, GAP-003): qa-builder (RED) → ui-builder (implementation)
+2. Wave 16.2 — Frontend UX Completeness (HIGH, 9 gaps): qa-builder (RED) → ui-builder (implementation)
+3. Wave 16.6 — Schema + Audit Completeness (HIGH, GAP-011/012/016/017/019): qa-builder (RED) → schema-builder + api-builder
+4. Wave 16.7 — ARC Portal Frontend (HIGH, GAP-013): qa-builder (RED) → ui-builder
+5. Wave 16.8 — Documentation Gaps (MEDIUM, GAP-018): mat-specialist (documentation only)
+
+**Blocked Sub-Waves** (external dependencies):
+- Wave 16.5 — AIMC Scoring+Reporting Wiring: blocked on AIMC Waves 3–4 delivery
+- Wave 16.3 — AI Scoring Edge Function: blocked on Wave 16.5
+- Wave 16.4 — Report Generation Edge Function: blocked on Wave 16.3 + 16.5
+
+**Parked** (CS2 architectural decision required):
+- Wave 16.9 — Future Considerations (GAP-021/022/023)
+
+### Version History Entry
+
+**v1.9 (2026-03-09)**: Wave 16 orchestration kick-off: all 9 sub-wave statuses updated from OPEN/BLOCKED/PARKED to ORCHESTRATION STARTED; task register published; IAA pre-brief committed; immediately actionable sub-waves (16.1, 16.2, 16.6, 16.7, 16.8) queued for sub-wave sessions; blocked waves (16.3, 16.4 pending AIMC; 16.5 cross-module); 16.9 parked.
 
 ---
 
