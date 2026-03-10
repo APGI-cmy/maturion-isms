@@ -9,11 +9,12 @@ import { CriteriaUpload } from '../components/criteria/CriteriaUpload';
 import { CriteriaTree } from '../components/criteria/CriteriaTree';
 import { CriteriaModal } from '../components/criteria/CriteriaModal';
 import { useAudits } from '../lib/hooks/useAudits';
+import { useAuditContext } from '../contexts/AuditContext';
 import type { Criterion } from '../lib/hooks/useCriteria';
 
 export function CriteriaManagementPage() {
   const { data: audits } = useAudits();
-  const [selectedAuditId, setSelectedAuditId] = useState<string>('');
+  const { selectedAuditId, setSelectedAuditId } = useAuditContext();
   const [selectedCriterion, setSelectedCriterion] = useState<Criterion | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
