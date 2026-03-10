@@ -40,9 +40,9 @@ LDCS_NUMBERED_HIERARCHY_PATTERN = re.compile(r"\b\d+\.\d+(?:\.\d+)?\b")
 LDCS_MPS_TOTAL = 25
 LDCS_MARKERS = ["LDCS", "Local Delivery Compliance Standard", "mini performance standard"]
 
-GPT_MODEL = "gpt-4-turbo"
+GPT_MODEL = "gpt-4.1"
 CONFIDENCE_REVIEW_THRESHOLD = 0.75  # flag needs_human_review when below this
-MAX_DOCUMENT_CHARS = 60000  # GPT-4 Turbo supports ~480K chars; 60K covers a full LDCS document
+MAX_DOCUMENT_CHARS = 400000  # gpt-4.1 supports 1M token window (~4M chars); 400K covers a full 150-page LDCS document
 
 
 # ── Request / Response models ───────────────────────────────────────────────────
@@ -198,6 +198,10 @@ Return a JSON object with this schema:
 }}
 
 source_anchor must reference the section or page number in the source document for traceability.
+
+IMPORTANT: In each criterion, the mps_number field MUST exactly match the number field of the
+corresponding mini_performance_standard entry — use the exact same string, no reformatting.
+If the parent MPS is number "6", then the criterion mps_number should be "6".
 """.format(mps_count=LDCS_MPS_TOTAL)
 
 

@@ -1,46 +1,17 @@
-# Scope Declaration — wave16-orchestration — 2026-03-09
+# SCOPE DECLARATION — wave-ldcs-parse-bugfix — 2026-03-10
 
-**Wave**: wave16-orchestration — Wave 16 Completeness Gap Resolution Kick-Off
-**Branch**: copilot/orchestrate-wave-16-build-again
-**Session**: session-wave16-orchestration-20260309 + session-wave16-finish-20260309
-**Date**: 2026-03-09
-**Authority**: CS2 (Johan Ras / @APGI-cmy)
+**Wave**: wave-ldcs-parse-bugfix  
+**Branch**: copilot/fix-ldcs-parsing-issues  
+**Issue**: maturion-isms#1039  
+**Session**: session-wave-ldcs-parse-bugfix-20260310  
 
-## Changed Files
+## Files Changed (git diff origin/main...HEAD --name-only)
 
-`git diff --name-only origin/main...HEAD` (final exact output — 14 files):
+- `apps/mat-ai-gateway/services/parsing.py` — GPT model upgrade, MAX_DOCUMENT_CHARS increase, _SYSTEM_PROMPT mps_number instruction
+- `supabase/functions/invoke-ai-parse-criteria/index.ts` — normaliseMpsNumber/resolveMpsKey helpers, criteria_per_mps audit trail
+- `.agent-admin/assurance/iaa-prebrief-wave-ldcs-parse-bugfix.md` — IAA Pre-Brief artifact (governance)
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — wave task register (governance)
 
-```
-.agent-admin/assurance/iaa-prebrief-wave16.md
-.agent-admin/assurance/iaa-token-session-wave16-orchestration-20260309-R2.md
-.agent-admin/assurance/iaa-token-session-wave16-orchestration-20260309.md
-.agent-workspace/foreman-v2/memory/CORRECTION-ADDENDUM-wave16-orchestration-A021-20260309.md
-.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave16-orchestration-20260309.md
-.agent-workspace/foreman-v2/memory/session-wave16-finish-20260309.md
-.agent-workspace/foreman-v2/memory/session-wave16-orchestration-20260309.md
-.agent-workspace/foreman-v2/parking-station/suggestions-log.md
-.agent-workspace/foreman-v2/personal/wave-current-tasks.md
-.agent-workspace/independent-assurance-agent/memory/session-wave16-orchestration-20260309-R2.md
-.agent-workspace/independent-assurance-agent/memory/session-wave16-orchestration-20260309.md
-.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md
-SCOPE_DECLARATION.md
-modules/mat/BUILD_PROGRESS_TRACKER.md
-```
+Total: 4 files. No test files modified (existing 45 tests cover the gateway service).
 
-**Note**: `session-wave16-finish-20260309.md` is the follow-up session memory for the
-"finish this job" continuation session (CI investigation, A-026 correction).
-`parking-station/suggestions-log.md` contains S-030 and S-031 suggestions.
-
-**IAA Tokens**:
-- `.agent-admin/assurance/iaa-token-session-wave16-orchestration-20260309.md` — IAA R1 REJECTION-PACKAGE (SHA 700250c)
-- `.agent-admin/assurance/iaa-token-session-wave16-orchestration-20260309-R2.md` — IAA R2 ASSURANCE-TOKEN PASS (SHA 205eb32) ✅
-
-**Token Reference**: `IAA-session-wave16-orchestration-20260309-R2-PASS`
-
-## No Production Code Committed
-
-This session is a pure governance/orchestration kick-off. No production code, migrations, edge functions, frontend components, CI scripts, or test files are included in this scope.
-
-## A-026 Compliance
-
-SCOPE_DECLARATION.md matches the git diff output above exactly (14 files including this file).
+*Scope written per A-029 | 2026-03-10*
