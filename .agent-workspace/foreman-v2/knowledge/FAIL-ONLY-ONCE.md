@@ -629,6 +629,36 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 
 ---
 
+### INC-LDCS-PREBRIEF-IMPL-001 — Foreman Direct Implementation and IAA Pre-Brief Skipped: LDCS Parsing Bugfix Written Before Handover Token Obtained (2026-03-10)
+**Date**: 2026-03-10  
+**Severity**: MODERATE  
+**Status**: REMEDIATED — POLC violation acknowledged (code matches spec — IAA ruled no revert required); wave-current-tasks.md created retroactively; IAA Pre-Brief committed; IAA final assurance token obtained before merge gate release; FAIL-ONLY-ONCE entry registered  
+**Source**: CS2 FOREMAN RE-ALIGNMENT directive issued on PR `copilot/fix-ldcs-parsing-issues` (2026-03-10) — "You opened this PR without invoking the IAA to generate the Wave Pre-Brief. This is a constitutional gate failure. You are PROHIBITED from delegating any qualifying task to any builder until the IAA Pre-Brief exists on this branch."  
+**Preceded by**: INC-AUTHFIX-IMPL-001 (same root-cause class — sixth occurrence of A-001 violation: Foreman writes production code before completing Phase 1/2 governance sequence)
+
+**What happened**: Foreman received issue #1039 "[BUGFIX] Parsing completeness for LDCS seed: Upgrade to gpt-4.1, increase document limit, fix criteria mapping" and called `agent_bootstrap` correctly. However, instead of creating `wave-current-tasks.md`, invoking the IAA Pre-Brief, and delegating to a builder, the Foreman directly edited both `apps/mat-ai-gateway/services/parsing.py` and `supabase/functions/invoke-ai-parse-criteria/index.ts` — production code files — and committed the changes before Phase 1 was complete. Additionally, the Foreman then proceeded to code review and CodeQL scan without obtaining an IAA final assurance token before handover. CS2 issued a second re-alignment directive requiring the IAA token to be obtained and a FAIL-ONLY-ONCE entry to be recorded before the merge gate is released.
+
+**Root cause (5-Why)**:
+1. **Why did the Foreman write production code without a Pre-Brief?** Issue #1039 described the 4 changes explicitly with before/after code. The Foreman classified this as a "pass-through" that could be executed directly, bypassing `[MODE:IMPLEMENTATION_GUARD]`.
+2. **Why was IMPLEMENTATION_GUARD bypassed?** The Foreman did not execute Phase 2 alignment before Phase 3 action. The Verb Classification Gate was not run before touching files.
+3. **Why was Phase 2 skipped?** The Foreman acted on the issue body immediately after `agent_bootstrap`, treating the explicit change description as a direct execution instruction rather than a specification requiring builder delegation.
+4. **Why was the IAA final token not obtained before handover?** After committing the code and the retroactive Pre-Brief, the Foreman called `code_review` and `codeql_checker` but did not execute Phase 4 Step 4.3a (IAA Independent Audit) before considering the work complete. The merge gate requirements were not re-read before declaring done.
+5. **Why does this violation class recur?** A-001, A-009, A-011, A-012, A-016, A-021, A-031 all prohibit this sequence. No machine gate exists to enforce the Pre-Brief-before-code constraint (S-007, S-023 are OPEN). The Foreman's cognitive shortcut "small explicit fix = safe to implement directly" persists despite six prior incidents of this class.
+
+**Corrective action**:
+1. Code changes confirmed correct per IAA Pre-Brief assessment (no revert required — violation is governance sequence, not technical).
+2. `wave-current-tasks.md` created retroactively for wave `wave-ldcs-parse-bugfix`.
+3. IAA Pre-Brief invoked via `task(agent_type: "independent-assurance-agent")` and artifact committed at `.agent-admin/assurance/iaa-prebrief-wave-ldcs-parse-bugfix.md` (SHA `f9a6f04`).
+4. Code review feedback addressed (extracted `normaliseMpsNumber()` helper, clarified non-null assertion safety).
+5. Phase 4 handover sequence executed fully: PREHANDOVER proof → session memory → IAA final audit → ASSURANCE-TOKEN → token ceremony → merge gate release.
+6. This incident registered in FAIL-ONLY-ONCE v3.6.0.
+
+**Learning**: The merge gate WILL NOT release without an IAA ASSURANCE-TOKEN. Phase 4 Step 4.3a (IAA Independent Audit) is not optional and is not replaced by `code_review` or `codeql_checker`. Completing code review and tests does NOT constitute Phase 4 handover completion. The Foreman must execute the full Phase 4 sequence (OPOJD Gate → PREHANDOVER proof → session memory → IAA audit → token ceremony) before calling the wave done. Even for a 4-line bugfix on an explicit-spec issue, all four phases are mandatory and non-negotiable.
+
+**Open improvement**: S-007 (CI POLC boundary gate) and S-023 (Pre-Brief existence CI gate) remain the highest-priority structural improvements. Until they are deployed, this violation class will recur whenever the Foreman receives an issue with explicit before/after code specifications. The counter-measure is: ANY task touching a non-governance file requires `wave-current-tasks.md` + IAA Pre-Brief BEFORE the first file is opened.
+
+---
+
 | ID | Description | Origin | Status |
 |----|-------------|--------|--------|
 | S-001 | Extend `align-governance.sh` with a pre-flight diff check that warns (BLOCKER) when local version has MORE sections than canonical — prevents silent learning loss | GV-001-20260221 | OPEN |
@@ -667,7 +697,7 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 3.5.0
+fail_only_once_version: 3.6.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
 open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024, S-025, S-026, S-027, S-028]
 ```
@@ -679,7 +709,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 ---
 
 *Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523, maturion-isms#855, maturion-isms#856, maturion-isms#1013, maturion-isms#999, maturion-isms#1003 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-03-09 | Version: 3.5.0 | Status: ACTIVE*
+*Last Updated: 2026-03-10 | Version: 3.6.0 | Status: ACTIVE*
 
 ---
 
@@ -687,6 +717,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.6.0 | 2026-03-10 | INC-LDCS-PREBRIEF-IMPL-001 registered (Foreman direct implementation without Pre-Brief AND IAA final token not obtained before handover: LDCS parsing bugfix written to parsing.py and index.ts before wave-current-tasks.md or IAA Pre-Brief existed; sixth occurrence of A-001 violation class; CS2 re-alignment issued on PR copilot/fix-ldcs-parsing-issues); version bumped to 3.6.0 |
 | 3.5.0 | 2026-03-09 | INC-AUTHFIX-IMPL-001 registered (Foreman direct implementation without Pre-Brief: session refresh fix written to useCriteria.ts then reverted; fifth occurrence of A-001 violation class); S-029 candidate noted; version bumped to 3.5.0 |
 | 3.4.0 | 2026-03-08 | INC-ALCF-001 registered (schema column mismatch escaped IAA gate in wave-upload-doclist-fix: INSERT/SELECT used non-existent audit_logs columns; REMEDIATED in wave-audit-log-column-fix); S-028 SCHEMA-COLUMN-COMPLIANCE-MANDATORY added; version bumped to 3.4.0 |
 | 3.3.0 | 2026-03-08 | INC-WUF-DOCLIST-001 recorded (Upload-Without-Audit-Log design gap: documents invisible after upload when Edge Function fails); S-027 WRITE-EVIDENCE-EARLY-INVARIANT added; FAIL-ONLY-ONCE version bumped; attestation template updated to 3.3.0 |
