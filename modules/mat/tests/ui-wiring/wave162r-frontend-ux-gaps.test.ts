@@ -53,17 +53,17 @@ describe('T-W162R-009: GAP-009 — CriteriaModal wired to real data hooks', () =
   it('T-W162R-009b: CriteriaModal must import at least one real data hook', () => {
     const src = readFileSync(modalPath, 'utf-8');
 
-    // RED: currently imports only useState/useEffect/useRef — no data hooks
-    const hasDataHook =
-      src.includes('useCriteria') ||
-      src.includes('useScoring') ||
-      src.includes('useCriterionEvaluation') ||
-      src.includes('useCriteriaEvaluations');
+    // Must be an actual import statement, not just a string in a comment
+    const hasDataHookImport =
+      /import\s*\{[^}]*useCriterionScore[^}]*\}/.test(src) ||
+      /import\s*\{[^}]*useCriteriaTree[^}]*\}/.test(src) ||
+      /import\s*\{[^}]*useScoring[^}]*\}/.test(src) ||
+      /import\s*\{[^}]*useCriterionEvaluation[^}]*\}/.test(src);
 
     expect(
-      hasDataHook,
-      'CriteriaModal.tsx must import at least one data hook ' +
-        '(useCriteria, useScoring, useCriterionEvaluation, or useCriteriaEvaluations)'
+      hasDataHookImport,
+      'CriteriaModal.tsx must have an actual import statement for a real data hook ' +
+        '(useCriterionScore, useCriteriaTree, useScoring, or useCriterionEvaluation)'
     ).toBe(true);
   });
 

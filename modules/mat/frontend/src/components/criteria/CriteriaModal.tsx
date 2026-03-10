@@ -10,7 +10,7 @@ import { EvidenceCollection } from '../evidence/EvidenceCollection';
 import { InterviewRecorder } from '../evidence/InterviewRecorder';
 import type { InterviewMetadata } from '../evidence/InterviewRecorder';
 import { useUploadEvidence } from '../../lib/hooks/useEvidence';
-// useCriteriaTree (from useCriteria) available for future criterion evaluation wiring (GAP-009)
+import { useCriterionScore } from '../../lib/hooks/useScoring';
 
 interface CriteriaModalProps {
   criterion: {
@@ -36,8 +36,7 @@ export function CriteriaModal({ criterion, isOpen, onClose, auditId: _auditId }:
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const uploadEvidence = useUploadEvidence();
-
-  // auditId is available for future real data wiring (useCriteriaTree/useCriterionEvaluation)
+  const { data: criterionScore } = useCriterionScore(criterion?.id ?? '');
 
   // Focus trap and keyboard navigation
   useEffect(() => {
@@ -176,6 +175,16 @@ export function CriteriaModal({ criterion, isOpen, onClose, auditId: _auditId }:
                   {criterion.description || 'No description available.'}
                 </p>
               </div>
+              {criterionScore && (
+                <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-md">
+                  <p className="text-sm font-medium text-gray-700">
+                    Maturity Level: <span className="font-semibold text-blue-700">{criterionScore.maturity_level ?? '—'}</span>
+                  </p>
+                  {criterionScore.rationale && (
+                    <p className="text-sm text-gray-600 mt-1">{criterionScore.rationale}</p>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
