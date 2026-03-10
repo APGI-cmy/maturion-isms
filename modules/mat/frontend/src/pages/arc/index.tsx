@@ -20,6 +20,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../contexts/AuthContext';
 import { CheckCircle, XCircle, Clock, Loader2, AlertCircle, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { getSessionToken } from '../../lib/supabase';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -50,18 +51,13 @@ interface ApprovePayload {
 
 /**
  * Fetch pending feedback items from the ARC API.
- * The x-arc-token header is expected to come from env in production;
- * for the frontend portal it is read from VITE_ARC_TOKEN if available.
+ * Authenticates via the caller's Supabase session JWT (Authorization: Bearer).
+ * No client-side secrets are used — the token is the Supabase session token.
  */
-async function fetchPendingFeedback(): Promise<PendingFeedbackItem[]> {
-  const arcToken = import.meta.env['VITE_ARC_TOKEN'] ?? '';
-  const organisationId = import.meta.env['VITE_ORGANISATION_ID'] ?? '';
-
-  const url = `/api/ai/feedback/pending${organisationId ? `?organisationId=${encodeURIComponent(organisationId)}` : ''}`;
-
-  const res = await fetch(url, {
+async function fetchPendingFeedback(token: string): Promise<PendingFeedbackItem[]> {
+  const res = await fetch('/api/ai/feedback/pending', {
     headers: {
-      'x-arc-token': arcToken,
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
   });
@@ -78,6 +74,7 @@ async function fetchPendingFeedback(): Promise<PendingFeedbackItem[]> {
 
 /**
  * Submit an approve or reject decision for a feedback item.
+ * Authenticates via the caller's Supabase session JWT (Authorization: Bearer).
  * audit_logs are written server-side by the approve endpoint
  * (see api/ai/feedback/approve.ts) using the reviewedBy field.
  *
@@ -85,13 +82,11 @@ async function fetchPendingFeedback(): Promise<PendingFeedbackItem[]> {
  * The approve endpoint writes to audit_logs automatically.
  * The reviewedBy field ensures each ARC action is attributable to the operator.
  */
-async function submitFeedbackDecision(payload: ApprovePayload): Promise<void> {
-  const arcToken = import.meta.env['VITE_ARC_TOKEN'] ?? '';
-
+async function submitFeedbackDecision(payload: ApprovePayload, token: string): Promise<void> {
   const res = await fetch('/api/ai/feedback/approve', {
     method: 'POST',
     headers: {
-      'x-arc-token': arcToken,
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),
@@ -110,18 +105,28 @@ async function submitFeedbackDecision(payload: ApprovePayload): Promise<void> {
 // ---------------------------------------------------------------------------
 
 function usePendingFeedback() {
+  const { session } = useAuth();
   return useQuery<PendingFeedbackItem[], Error>({
     queryKey: ['arc-pending-feedback'],
-    queryFn: fetchPendingFeedback,
+    queryFn: async () => {
+      const token = await getSessionToken();
+      if (!token) throw new Error('Not authenticated');
+      return fetchPendingFeedback(token);
+    },
     staleTime: 30000,
     refetchIntervalInBackground: false,
+    enabled: !!session,
   });
 }
 
 function useFeedbackDecision() {
   const queryClient = useQueryClient();
   return useMutation<void, Error, ApprovePayload>({
-    mutationFn: submitFeedbackDecision,
+    mutationFn: async (payload) => {
+      const token = await getSessionToken();
+      if (!token) throw new Error('Not authenticated');
+      return submitFeedbackDecision(payload, token);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['arc-pending-feedback'] });
     },

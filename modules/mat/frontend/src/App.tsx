@@ -65,7 +65,8 @@ function App() {
             }}
           />
           <Router>
-            <Routes>              <Route path="/login" element={<LoginPage />} />
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
               <Route element={<ProtectedRoute />}>
                 <Route path="/onboarding" element={<OnboardingPage />} />
                 <Route element={<OnboardingGuard />}>

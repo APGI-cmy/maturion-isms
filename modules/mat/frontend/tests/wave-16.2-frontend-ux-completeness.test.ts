@@ -48,7 +48,7 @@ const FRONTEND_ROOT = path.resolve(__dirname, '..');
 const SRC = path.join(FRONTEND_ROOT, 'src');
 const PAGES = path.join(SRC, 'pages');
 const HOOKS = path.join(SRC, 'lib', 'hooks');
-const COMPONENTS = path.join(SRC, 'components');
+const _COMPONENTS = path.join(SRC, 'components');
 
 // ---------------------------------------------------------------------------
 // Utility: recursively collect all .ts / .tsx files under a directory
