@@ -79,13 +79,15 @@ wave: wave-ldcs-parse-bugfix
 session: session-wave-ldcs-parse-bugfix-20260310
 branch: copilot/fix-ldcs-parsing-issues
 issue: "maturion-isms#1039"
-status: IAA_FINAL_AUDIT_PENDING
+status: ASSURANCE_TOKEN_PASS
 tasks_total: 4
 tasks_committed_pre_protocol: 4
 tasks_committed_correctly: 0
 last_updated: 2026-03-10T07:32:23Z
-blocking: IAA_FINAL_ASSURANCE_TOKEN_REQUIRED
+iaa_token: "IAA-session-wave-ldcs-parse-bugfix-20260310-PASS"
+iaa_token_file: ".agent-admin/assurance/iaa-token-session-wave-ldcs-parse-bugfix-20260310.md"
 polc_violation: "foreman wrote production code before IAA pre-brief — registered INC-LDCS-PREBRIEF-IMPL-001 in FAIL-ONLY-ONCE v3.6.0"
+blocking: "CS2_MERGE_APPROVAL_REQUIRED"
 ```
 
 

@@ -186,14 +186,44 @@ Issue maturion-isms#1039 opened and assigned by @APGI-cmy (CS2). Authorization i
 
 `iaa_audit_token: IAA-session-wave-ldcs-parse-bugfix-20260310-PASS`
 
-<!-- A-030: Token date MUST match actual token file date. Token file: .agent-admin/assurance/iaa-token-session-wave-ldcs-parse-bugfix-20260310.md -->
-
-IAA verdict: [to be populated after IAA invocation — verbatim response pasted below]
+IAA verdict: ASSURANCE-TOKEN PASS — 47/47 checks PASS. All 8 Pre-Brief items resolved. Merge permitted subject to CS2 approval.
 
 ## IAA Agent Response (verbatim)
-<!-- MANDATORY PER S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) -->
 
-[IAA agent output pasted verbatim after invocation]
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/fix-ldcs-parsing-issues
+Issue: maturion-isms#1039 — "[BUGFIX] Parsing completeness for LDCS seed: Upgrade to
+       gpt-4.1, increase document limit, fix criteria mapping"
+
+All 47 checks PASS. Merge gate parity: PASS. Zero failures.
+
+All 8 Pre-Brief items resolved:
+  ✅ BLOCKER-1: POLC Violation Correction Addendum present in PREHANDOVER
+  ✅ ADVISORY-1: resolveMpsKey(c.mps_number)! safe by pre-filter invariant
+  ✅ ADVISORY-2: gpt-4.1 confirmed released, non-deprecated (OpenAI April 2025)
+  ✅ ADVISORY-3: normaliseMpsNumber LDCS-compatible; _SYSTEM_PROMPT enforces exact-match
+  ✅ ADVISORY-4: audit_logs.details JSONB confirmed in migration DDL
+  ✅ BD-TIER-1: All 4 tasks (T-LDCS-BF-001–004) present in diff
+  ✅ INC-LDCS-PREBRIEF-IMPL-001: Registered in FAIL-ONLY-ONCE v3.6.0 with 5-Why
+  ✅ OVL-INJ-001: Pre-Brief SHA f9a6f04 referenced in PREHANDOVER proof
+
+FFA Verdict: PASS across all 6 dimensions.
+
+Merge permitted (subject to CS2 approval @APGI-cmy).
+Token reference: IAA-session-wave-ldcs-parse-bugfix-20260310-PASS
+Token file: .agent-admin/assurance/iaa-token-session-wave-ldcs-parse-bugfix-20260310.md
+Committed: SHA 8809313b
+
+Carry-Forward Mandate (non-blocking):
+  CFM-LDCS-001: Resolve T-W15-TXN (DB transaction atomicity for criteria pipeline)
+  before next wave modifying criteria insert pipeline. Does NOT block this merge.
+
+Adoption phase: PHASE_B_BLOCKING — hard gate enforced.
+Authority: CS2 ONLY (@APGI-cmy)
+═══════════════════════════════════════
+```
 
 ---
 
