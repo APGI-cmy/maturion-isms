@@ -28,8 +28,6 @@ import * as path from 'node:path';
 // Paths
 // ---------------------------------------------------------------------------
 
-const REPO_ROOT = path.resolve(process.cwd(), '../..'); // navigate from frontend/ up to repo root
-
 /**
  * Resolve paths relative to the frontend source directory.
  * The test file lives at modules/mat/frontend/tests/ so __dirname is that dir.
