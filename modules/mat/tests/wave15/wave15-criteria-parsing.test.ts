@@ -176,7 +176,7 @@ describe('Wave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)',
     ).toMatch(/pypdf2|PdfReader|python[-_]docx|from docx import|import docx/i);
   });
 
-  // ── AI Gateway: GPT-4 Turbo call ────────────────────────────────────────────
+  // ── AI Gateway: GPT-4.1 call ───────────────────────────────────────────────
 
   it('[T-W15-CP-005] DocumentParser.parse() calls GPT-4.1 (OpenAI client present in parsing.py)', () => {
     /*
