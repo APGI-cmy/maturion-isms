@@ -10,7 +10,7 @@ import { EvidenceCollection } from '../evidence/EvidenceCollection';
 import { InterviewRecorder } from '../evidence/InterviewRecorder';
 import type { InterviewMetadata } from '../evidence/InterviewRecorder';
 import { useUploadEvidence } from '../../lib/hooks/useEvidence';
-import { useCriteriaTree } from '../../lib/hooks/useCriteria';
+// useCriteriaTree (from useCriteria) available for future criterion evaluation wiring (GAP-009)
 
 interface CriteriaModalProps {
   criterion: {
@@ -27,7 +27,7 @@ interface CriteriaModalProps {
 
 type TabId = 'description' | 'not-used' | 'evidence' | 'findings' | 'interview';
 
-export function CriteriaModal({ criterion, isOpen, onClose, auditId }: CriteriaModalProps) {
+export function CriteriaModal({ criterion, isOpen, onClose, auditId: _auditId }: CriteriaModalProps) {
   const [activeTab, setActiveTab] = useState<TabId>('description');
   const [notUsed, setNotUsed] = useState(false);
   const [notUsedReason, setNotUsedReason] = useState('');
@@ -37,9 +37,7 @@ export function CriteriaModal({ criterion, isOpen, onClose, auditId }: CriteriaM
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const uploadEvidence = useUploadEvidence();
 
-  // Fetch real criteria data for this audit via useCriteriaTree
-  // TODO: wire to real evaluation hook when available (e.g. useCriterionEvaluation)
-  const { data: _criteriaTree } = useCriteriaTree(auditId ?? '');
+  // auditId is available for future real data wiring (useCriteriaTree/useCriterionEvaluation)
 
   // Focus trap and keyboard navigation
   useEffect(() => {

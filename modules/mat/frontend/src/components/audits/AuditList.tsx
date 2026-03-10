@@ -78,6 +78,11 @@ export function AuditList() {
     }
   };
 
+  const handleCancelDelete = () => {
+    setConfirmDeleteId(null);
+    setConfirmDeleteTitle('');
+  };
+
   return (
     <div className="audit-list">
       <div className="flex justify-between items-center mb-4">
@@ -160,7 +165,7 @@ export function AuditList() {
                     {deleteAudit.isPending ? 'Deleting…' : 'Yes, delete'}
                   </button>
                   <button
-                    onClick={() => { setConfirmDeleteId(null); setConfirmDeleteTitle(''); }}
+                    onClick={handleCancelDelete}
                     disabled={deleteAudit.isPending}
                     className="px-3 py-1 text-xs font-medium bg-white text-gray-700 border border-gray-300 rounded hover:bg-gray-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gray-400"
                     aria-label="Cancel delete audit"

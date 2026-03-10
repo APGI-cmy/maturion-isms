@@ -174,6 +174,11 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
     }
   };
 
+  const handleCancelDelete = () => {
+    setConfirmDeleteId(null);
+    setConfirmDeleteFilePath(undefined);
+  };
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -488,7 +493,7 @@ export function EvidenceCollection({ criterionId }: EvidenceCollectionProps) {
                 {deleteEvidence.isPending ? 'Deleting…' : 'Yes, delete'}
               </button>
               <button
-                onClick={() => { setConfirmDeleteId(null); setConfirmDeleteFilePath(undefined); }}
+                onClick={handleCancelDelete}
                 disabled={deleteEvidence.isPending}
                 className="px-3 py-1 text-xs font-medium bg-white text-gray-700 border border-gray-300 rounded hover:bg-gray-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gray-400"
                 aria-label="Cancel delete evidence"

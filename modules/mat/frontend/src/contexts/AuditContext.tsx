@@ -11,10 +11,7 @@ interface AuditContextValue {
   setSelectedAuditId: (id: string) => void;
 }
 
-const AuditContext = createContext<AuditContextValue>({
-  selectedAuditId: '',
-  setSelectedAuditId: () => {},
-});
+const AuditContext = createContext<AuditContextValue | null>(null);
 AuditContext.displayName = 'AuditContext';
 
 export function AuditProvider({ children }: { children: React.ReactNode }) {
