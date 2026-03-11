@@ -365,6 +365,116 @@ blocking: GOVERNANCE_CEREMONY_ARTIFACTS_REQUIRED
 
 ---
 
+# Wave Current Tasks — foreman-v2-agent — wave-ci-supabase-migrate-1051
+
+**Wave**: wave-ci-supabase-migrate-1051 — CI Bug Fix: supabase-migrate job fails on already-applied Wave 16.6 migration
+**Session**: session-wave-ci-supabase-migrate-1051-20260310
+**Date**: 2026-03-10
+**Branch**: copilot/fix-supabase-migrate-ci-job-failure
+**Triggering Issue**: maturion-isms#1051 — "Bug: `supabase-migrate` CI job fails when Wave 16.6 migration already applied to production"
+**CS2 Authorization**: Issue #1051 opened by @APGI-cmy and assigns Copilot
+**Agent**: foreman-v2-agent v6.2.0
+**Mode**: POLC-Orchestration
+
+---
+
+## Wave Summary
+
+The `supabase-migrate` CI job in `.github/workflows/deploy-mat-vercel.yml` fails when the Wave 16.6 migration (`20260310000001_wave16_6_schema_audit_completeness.sql`) was applied to the live Supabase instance (via Supabase Dashboard or branch-protection bypass) but was **not registered** in the `legacy_migrations` tracking table. CI then attempts to re-apply the migration and fails.
+
+### Fix Required
+
+| # | Fix | Scope |
+|---|-----|-------|
+| 1 | Pre-register Wave 16.6 migration in `legacy_migrations` with `ON CONFLICT DO NOTHING` so CI skips it | `.github/workflows/deploy-mat-vercel.yml` — `Apply pending migrations` step |
+| 2 | Add belt-and-suspenders: change migration loop INSERT to use `ON CONFLICT DO NOTHING` | `.github/workflows/deploy-mat-vercel.yml` — migration loop |
+| 3 | Add schema-verification step for `evidence_submissions` table (GAP-019, introduced in Wave 16.6) | `.github/workflows/deploy-mat-vercel.yml` — `schema-verification` job |
+
+### Files in Scope
+
+| File | Change |
+|------|--------|
+| `.github/workflows/deploy-mat-vercel.yml` | Pre-registration step + idempotency hardening + schema verification |
+
+### Files Out of Scope
+
+- No `.github/agents/` files
+- No production code (apps/, modules/, packages/)
+- No schema migration files — migration SQL is already idempotent (IF NOT EXISTS guards present)
+- No frontend changes
+
+---
+
+## Task Register
+
+| ID | Task | Builder | Status | PR / Evidence |
+|----|------|---------|--------|---------------|
+| T-CI-1051-INT-001 | Update `deploy-mat-vercel.yml`: pre-register Wave 16.6 migration, harden INSERT with ON CONFLICT DO NOTHING, add evidence_submissions schema verification step | integration-builder | 🔴 PENDING | — |
+
+**Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED
+
+---
+
+## Architecture Frozen Status
+
+This is a CI workflow bug fix. No formal architecture document is required. The pattern is frozen by prior approved implementations:
+- `legacy_migrations` tracking table pattern: frozen from Wave CI-001 (session-070, PR merged)
+- `ON CONFLICT DO NOTHING` is standard PostgreSQL idempotency pattern
+- Schema verification step: follows the established pattern in the `schema-verification` job (lines 249–295 of current `deploy-mat-vercel.yml`)
+
+**Architecture: FROZEN** — CI workflow enhancement only, no new tables or application logic.
+
+---
+
+## Red QA Gate
+
+This wave modifies a CI YAML workflow file. No executable unit test suite exists for CI YAML files in this repository. Validation follows the established pattern from wave-gov-improvement-s032-s033-s007-s023:
+- YAML syntax: `python3 -c "import yaml; yaml.safe_load(open(...))"` on modified file
+- CodeQL security scan: 0 alerts
+- Automated code review: 0 blocking comments
+
+**RED QA gate exemption**: CI-workflow-only change — consistent with prior approved CI-only waves.
+
+---
+
+## Gating Checks
+
+- [ ] IAA Pre-Brief artifact: **PENDING — this file commit is the trigger**
+- [ ] T-CI-1051-INT-001 — integration-builder implements fix
+- [ ] YAML syntax validation: PASS
+- [ ] CodeQL: 0 alerts
+- [ ] PREHANDOVER proof + IAA final audit + token ceremony
+- [ ] CS2 merge approval
+
+---
+
+## IAA Pre-Brief Trigger
+
+This file commit triggers the automated IAA Pre-Brief injection workflow.
+Wave: wave-ci-supabase-migrate-1051
+Branch: copilot/fix-supabase-migrate-ci-job-failure
+
+---
+
+## Re-Anchor Pulse
+
+```yaml
+wave: wave-ci-supabase-migrate-1051
+session: session-wave-ci-supabase-migrate-1051-20260310-R2
+branch: copilot/fix-supabase-migrate-ci-job-failure
+issue: "maturion-isms#1051 — Bug: supabase-migrate CI job fails when Wave 16.6 migration already applied to production"
+status: CI_APPROVAL_REQUIRED_AWAITING_CS2
+tasks_total: 1
+tasks_open: 0
+tasks_done: 1
+last_updated: 2026-03-10T17:00:00Z
+iaa_status: REJECTION_R3 (OVL-CI-005 — needs CS2 CI approval + job evidence)
+ci_run_url: https://github.com/APGI-cmy/maturion-isms/actions/runs/22914288734
+blocking: CS2_MUST_APPROVE_CI_RUN_THEN_UPDATE_ADDENDUM_THEN_INVOKE_IAA_R4
+```
+
+---
+
 # --- PRIOR WAVE RECORD (wave-wf-contract-audit-20260310) ARCHIVED BELOW ---
 # Wave Current Tasks — foreman-v2-agent — wave16-full-batch
 
