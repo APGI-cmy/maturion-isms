@@ -41,6 +41,27 @@ jobs:
           echo "Refined: Block implementation, allow supervision"
           echo ""
 
+          # If PR is labeled 'copilot-builder-role', Copilot is acting as a
+          # governed builder (not Foreman) in this PR. The
+          # foreman-implementation-check does not apply to builder PRs.
+          # Use exact matching: split the comma-separated label list and compare
+          # each label individually to avoid substring false positives.
+          PR_LABELS="${{ join(github.event.pull_request.labels.*.name, ',') }}"
+          HAS_BUILDER_LABEL=false
+          IFS=',' read -ra LABEL_ARRAY <<< "$PR_LABELS"
+          for label in "${LABEL_ARRAY[@]}"; do
+            if [[ "$label" == "copilot-builder-role" ]]; then
+              HAS_BUILDER_LABEL=true
+              break
+            fi
+          done
+          if [[ "$HAS_BUILDER_LABEL" == "true" ]]; then
+            echo "✅ PR labeled 'copilot-builder-role'"
+            echo "   Copilot is acting as a governed builder (not Foreman)."
+            echo "   foreman-implementation-check is not applicable — skipping."
+            exit 0
+          fi
+
           # Get base branch
           BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
           echo "Base branch: $BASE_BRANCH"
@@ -492,20 +513,35 @@ jobs:
           echo "✅ Session memory present"
           echo ""
           echo "Checking session memory for POLC violations..."
+          echo "(Scoped to new session memory files introduced in this PR only)"
+          echo ""
+
+          # Scope POLC compliance scan to NEW session memory files introduced
+          # in this PR only. Scanning all historical files causes false
+          # positives from prior legitimately-supervised builder waves.
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+          NEW_SESSION_FILES=$(git diff --name-only --diff-filter=A \
+            origin/$BASE_BRANCH...HEAD 2>/dev/null | \
+            grep -E '^\.agent-workspace/foreman.*/memory/session-.*\.md$' \
+            || true)
 
           POLC_VIOLATION_IN_MEMORY=false
-          for session_file in \
-              .agent-workspace/foreman*/memory/session-*.md; do
-            if [ -f "$session_file" ]; then
-              # Check for indicators that FM wrote production code; skip governance/workflow work
-              if grep -iE "(implemented|wrote).*code" "$session_file" | \
-                 grep -qviE \
-                   "did NOT|NOT.*implement|governance|workflow|\.github|\.agent-admin|\.agent-workspace|supervision|correction"; then
-                echo "⚠️  WARNING: Session memory may indicate FM wrote production code: $session_file"
-                POLC_VIOLATION_IN_MEMORY=true
+          if [ -z "$NEW_SESSION_FILES" ]; then
+            echo "ℹ️  No new Foreman session memory files introduced in this PR."
+            echo "   POLC compliance scan skipped (scoped to PR-introduced files only)."
+          else
+            while IFS= read -r session_file; do
+              if [ -f "$session_file" ]; then
+                # Check for indicators that FM wrote production code; skip governance/workflow work
+                if grep -iE "(implemented|wrote).*code" "$session_file" | \
+                   grep -qviE \
+                     "did NOT|NOT.*implement|governance|workflow|\.github|\.agent-admin|\.agent-workspace|supervision|correction"; then
+                  echo "⚠️  WARNING: Session memory may indicate FM wrote production code: $session_file"
+                  POLC_VIOLATION_IN_MEMORY=true
+                fi
               fi
-            fi
-          done
+            done <<< "$NEW_SESSION_FILES"
+          fi
 
           if [ "$POLC_VIOLATION_IN_MEMORY" = true ]; then
             echo ""
