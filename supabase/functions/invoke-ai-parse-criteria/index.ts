@@ -117,6 +117,7 @@ async function backgroundParse({
       }
 
       const documentUrl = signedUrlData.signedUrl;
+      console.log(`[invoke-ai-parse-criteria] Signed URL generated for host: ${new URL(documentUrl).hostname}`);
 
       const parseResponse = await fetch(`${AI_GATEWAY_URL}/api/v1/parse`, {
         method: 'POST',
@@ -133,6 +134,12 @@ async function backgroundParse({
       }
 
       parseResult = await parseResponse.json();
+
+      // Check for application-level failure — gateway returns HTTP 200 with status:"failed" on parse errors
+      if (parseResult.status === 'failed') {
+        const gatewayError = parseResult.error != null ? String(parseResult.error) : 'AI Gateway returned status: failed with no error message';
+        throw new Error(`AI Gateway parse failed: ${gatewayError}`);
+      }
     } else {
       console.warn('[invoke-ai-parse-criteria] AI_GATEWAY_URL is not set — skipping AI parse, returning empty result');
     }

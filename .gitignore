@@ -63,3 +63,6 @@ __pycache__/
 # MAT Liveness test outputs
 modules/mat/tests/liveness/liveness-evidence/
 modules/mat/tests/liveness/reports/
+
+# Supabase CLI temp files
+supabase/.tmp/
