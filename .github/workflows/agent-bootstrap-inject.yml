@@ -1,11 +1,15 @@
 name: Agent Bootstrap Inject
 
+# DISABLED — Wave: disable-automatic-injections-and-reinforce-contract (issue #1061)
+# Automatic comment injections are on hold. File preserved for future AMC use.
+# To re-enable: restore the original event triggers below.
 on:
-  issues:
-    types: [opened]
-  # FIX: Changed from pull_request to pull_request_target to bypass Copilot agent approval gate
-  pull_request_target:
-    types: [opened]
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual trigger'
+        required: false
+        default: 'Manual activation'
 
 permissions:
   issues: write
