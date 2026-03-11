@@ -15,7 +15,6 @@ from __future__ import annotations
 import importlib
 import sys
 import types
-import urllib.parse
 
 import pytest
 
@@ -72,10 +71,8 @@ def _install_stubs():
 
 @pytest.fixture()
 def build_safe_fetch_url(monkeypatch):
-    """
-    Return the _build_safe_fetch_url function, re-imported fresh so that
-    SUPABASE_STORAGE_URL can be patched per-test via monkeypatch.setenv.
-    """
+    """Return the _build_safe_fetch_url function, re-imported fresh so that
+    SUPABASE_STORAGE_URL can be patched per-test via monkeypatch.setenv."""
     package_root = str(
         (__import__("pathlib").Path(__file__).parent.parent).resolve()
     )
