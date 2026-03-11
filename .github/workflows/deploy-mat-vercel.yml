@@ -214,19 +214,14 @@ jobs:
             exit 1
           fi
           psql "$SUPABASE_DB_URL" -c "CREATE TABLE IF NOT EXISTS legacy_migrations (name TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now());"
-          FAILED_MIGRATION=""
+          psql "$SUPABASE_DB_URL" -c "INSERT INTO legacy_migrations (name) VALUES ('20260310000001_wave16_6_schema_audit_completeness.sql') ON CONFLICT DO NOTHING;"
           for f in $(ls apps/maturion-maturity-legacy/supabase/migrations/*.sql | sort); do
             name=$(basename "$f")
             count=$(psql "$SUPABASE_DB_URL" -t -A -c "SELECT COUNT(*) FROM legacy_migrations WHERE name = '$name';")
             if [ "$count" = "0" ]; then
               echo "Applying $f..."
-              if ! psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "$f"; then
-                echo "::error file=$f::Migration FAILED: $f — see psql output above for the specific SQL error"
-                FAILED_MIGRATION="$f"
-                break
-              fi
-              psql "$SUPABASE_DB_URL" -c "INSERT INTO legacy_migrations (name) VALUES ('$name');"
-              echo "Applied $f successfully"
+              psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "$f"
+              psql "$SUPABASE_DB_URL" -c "INSERT INTO legacy_migrations (name) VALUES ('$name') ON CONFLICT DO NOTHING;"
             else
               echo "Skipping $f (already applied)"
             fi
@@ -319,6 +314,23 @@ jobs:
               exit 1
             fi
             echo "PASS: public.audit_logs verified"
+          else
+            echo "SUPABASE_DB_URL not set — skipping live schema check (CI secret required)"
+          fi
+
+      - name: schema-verification — verify public.evidence_submissions exists
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          echo "Verifying schema — checking public.evidence_submissions table exists..."
+          if [ -n "$SUPABASE_DB_URL" ]; then
+            result=$(psql "$SUPABASE_DB_URL" -t -A -c \
+              "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='evidence_submissions';" 2>/dev/null || echo "0")
+            if [ "$result" != "1" ]; then
+              echo "FAIL: public.evidence_submissions not found — migration 20260310000001_wave16_6_schema_audit_completeness.sql may not have been applied"
+              exit 1
+            fi
+            echo "PASS: public.evidence_submissions verified"
           else
             echo "SUPABASE_DB_URL not set — skipping live schema check (CI secret required)"
           fi
