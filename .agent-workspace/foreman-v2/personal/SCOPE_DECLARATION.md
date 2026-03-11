@@ -13,6 +13,9 @@
 | `modules/mat/tests/wave17/wave17-criteria-title-fix.test.ts` | QA tests | RED→GREEN gate — T-W17-CP-001 through T-W17-CP-005 |
 | `.agent-admin/assurance/iaa-prebrief-wave-ai-criteria-creation-fix.md` | IAA governance artifact | PRE-BRIEF — written by IAA agent |
 | `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` | Governance knowledge | GOVERNANCE — INC-CRITERIA-DISPLAY-PREBRIEF-IMPL-001 REMEDIATED; version bumped to 3.9.0 |
+| `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave-ai-criteria-creation-fix-20260311.md` | Foreman memory | PHASE 4 — PREHANDOVER proof artifact |
+| `.agent-workspace/foreman-v2/memory/session-wave-ai-criteria-creation-fix-20260311.md` | Foreman memory | PHASE 4 — session memory artifact |
+| `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` | Foreman parking station | GOVERNANCE — improvement suggestion S-WAVE-AI-CRITERIA-001 appended |
 | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Governance personal | GOVERNANCE — wave task register (current wave) |
 | `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md` | Governance personal | GOVERNANCE — this file (scope declaration for A-026/A-028) |
 
