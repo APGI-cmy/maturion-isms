@@ -123,6 +123,9 @@ END $$;
 --   evidence_upload, score_confirmed, score_overridden, report_generated
 -- Existing action types carried forward:
 --   criteria_parsed, criteria_parse_failed
+-- NOT VALID: constraint is added without validating existing rows, which may
+-- contain legacy action values recorded before this constraint was defined.
+-- New INSERT/UPDATE operations are still validated against the allowed list.
 -- ---------------------------------------------------------------------------
 DO $$ BEGIN
   IF NOT EXISTS (
@@ -139,7 +142,7 @@ DO $$ BEGIN
         'score_confirmed',
         'score_overridden',
         'report_generated'
-      ));
+      )) NOT VALID;
   END IF;
 END $$;
 

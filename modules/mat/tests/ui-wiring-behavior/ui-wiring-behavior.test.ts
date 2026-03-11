@@ -221,8 +221,8 @@ describe('CAT-13: UI Wiring and Data Fetching Behavior', () => {
       // Assert: Component imports and uses the delete hook
       expect(listSrc).toContain('useDeleteAudit');
 
-      // Assert: Confirmation dialog shown before deletion
-      expect(listSrc).toContain('window.confirm');
+      // Assert: Confirmation dialog shown before deletion (custom React confirm state, not window.confirm)
+      expect(listSrc).toContain('confirmDeleteId');
 
       const hookSrc = readFileSync(
         resolve(FRONTEND_SRC, 'lib/hooks/useAudits.ts'),

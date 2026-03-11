@@ -115,8 +115,8 @@ export function createHandler(factory: FeedbackPipelineFactory = buildFeedbackPi
     const isArcTokenAuth = typeof arcTokenHeader === 'string' && expectedToken && arcTokenHeader === expectedToken;
 
     if (!isJwtAuth && !isArcTokenAuth) {
-      res.writeHead(401);
-      res.end(JSON.stringify({ error: 'Unauthorized. Provide Authorization: Bearer <token> or x-arc-token header.' }));
+      res.writeHead(403);
+      res.end(JSON.stringify({ error: 'Forbidden. Valid x-arc-token or Authorization header required.' }));
       return;
     }
 
