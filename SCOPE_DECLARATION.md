@@ -19,6 +19,7 @@ All files modified in this wave (git diff --name-only origin/main...HEAD):
 | `.agent-admin/assurance/iaa-token-session-wave-disable-automatic-injections-20260311.md` | NEW | IAA_TOKEN |
 | `.agent-workspace/foreman-v2/memory/PREHANDOVER-wave-disable-automatic-injections-20260311.md` | NEW | CEREMONY |
 | `.agent-workspace/foreman-v2/memory/session-wave-disable-automatic-injections-20260311.md` | NEW | CEREMONY |
+| `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` | MODIFIED | CEREMONY |
 | `.agent-workspace/independent-assurance-agent/knowledge/iaa-category-overlays.md` | MODIFIED | KNOWLEDGE_GOVERNANCE |
 | `.agent-workspace/independent-assurance-agent/knowledge/index.md` | MODIFIED | KNOWLEDGE_GOVERNANCE |
 | `.agent-workspace/independent-assurance-agent/memory/session-wave-disable-automatic-injections-20260311.md` | NEW | IAA_SESSION |
