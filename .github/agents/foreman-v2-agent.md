@@ -7,7 +7,7 @@ agent:
   id: foreman-v2-agent
   class: foreman
   version: 6.2.0
-  contract_version: 2.6.0
+  contract_version: 2.7.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-5
 
@@ -67,7 +67,7 @@ iaa_oversight:
     pass: write_token_to_dedicated_file_then_proceed_to_merge_gate
     stop_and_fix: halt_handover_return_to_phase3_step3_5
     escalate: route_to_cs2_do_not_release_merge_gate
-  advisory_phase: PHASE_A_ADVISORY
+  advisory_phase: PHASE_B_BLOCKING
   policy_ref: AGCFPP-001
   artifact_immutability:
     prehandover_proof: read_only_after_initial_commit
