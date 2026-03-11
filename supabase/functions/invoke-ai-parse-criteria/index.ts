@@ -137,7 +137,7 @@ async function backgroundParse({
 
       // Check for application-level failure — gateway returns HTTP 200 with status:"failed" on parse errors
       if (parseResult.status === 'failed') {
-        const gatewayError = (parseResult.error as string) ?? 'AI Gateway returned status: failed with no error message';
+        const gatewayError = parseResult.error != null ? String(parseResult.error) : 'AI Gateway returned status: failed with no error message';
         throw new Error(`AI Gateway parse failed: ${gatewayError}`);
       }
     } else {
