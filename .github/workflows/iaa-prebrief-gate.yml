@@ -3,10 +3,17 @@ name: IAA Pre-Brief Gate
 # Reminder/detection gate: checks whether an IAA Pre-Brief artifact exists in
 # .agent-admin/assurance/ on the PR branch. Posts a reminder comment if missing.
 # Does NOT hard-block CI.
+#
+# DISABLED — Wave: disable-automatic-injections-and-reinforce-contract (issue #1061)
+# Automatic injection gate is on hold. File preserved for future AMC use.
+# To re-enable: restore the original event triggers below.
 on:
-  # FIX: Changed from pull_request to pull_request_target to bypass Copilot agent approval gate
-  pull_request_target:
-    types: [opened, synchronize, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual trigger'
+        required: false
+        default: 'Manual activation'
 
 permissions:
   pull-requests: write

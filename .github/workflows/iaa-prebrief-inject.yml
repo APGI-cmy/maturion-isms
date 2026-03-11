@@ -1,18 +1,15 @@
 name: IAA Pre-Brief Injection
 
-# Fires when wave-current-tasks.md is pushed to a non-main branch,
-# when a Copilot-authored PR is opened/synced (pull_request_target),
-# or on-demand when CS2/Foreman types /iaa-prebrief in a comment.
+# DISABLED — Wave: disable-automatic-injections-and-reinforce-contract (issue #1061)
+# Automatic injection workflows are on hold. File preserved for future AMC use.
+# To re-enable: restore the original event triggers below.
 on:
-  push:
-    branches-ignore:
-      - main
-    paths:
-      - '.agent-workspace/foreman-v2/personal/wave-current-tasks.md'
-  pull_request_target:
-    types: [opened, synchronize, ready_for_review]
-  issue_comment:
-    types: [created]
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual trigger'
+        required: false
+        default: 'Manual activation'
 
 permissions:
   pull-requests: write

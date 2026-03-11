@@ -2,11 +2,18 @@ name: Foreman Re-Anchor Pulse
 
 # Fires on every PR push to a wave/AAWP/MAT PR,
 # and on-demand when CS2 types /foreman-anchor in a comment.
+#
+# DISABLED — Wave: disable-automatic-injections-and-reinforce-contract (issue #1061)
+# Automatic re-anchor injection is on hold. File preserved for future AMC use.
+# Re-anchor reminders are now embedded directly in foreman-v2-agent.md contract.
+# To re-enable: restore the original event triggers below.
 on:
-  pull_request:
-    types: [synchronize, review_requested]
-  issue_comment:
-    types: [created]
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual trigger'
+        required: false
+        default: 'Manual activation'
 
 permissions:
   pull-requests: write

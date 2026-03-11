@@ -2,12 +2,14 @@
 # each injection fired, and whether the agent acknowledged/responded. Post a summary
 # table as a PR comment for use by the IAA PREHANDOVER token process.
 # Authority: CS2 (Johan Ras / @APGI-cmy) — IAA_PRE_BRIEF_PROTOCOL.md v1.1.0
+#
+# DISABLED — Wave: disable-automatic-injections-and-reinforce-contract (issue #1061)
+# Automatic injection audit is on hold. File preserved for future AMC use.
+# workflow_dispatch kept for manual audit runs only.
 
 name: Injection Audit Report
 
 on:
-  pull_request:
-    types: [ready_for_review]
   workflow_dispatch:
     inputs:
       pr_number:
