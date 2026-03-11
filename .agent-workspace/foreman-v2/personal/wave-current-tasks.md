@@ -36,7 +36,7 @@
 
 ## Re-Anchor Pulse
 
-**Status**: IAA_PRE_BRIEF_PENDING → CLEAR_TO_DELEGATE (Pre-Brief committed SHA 5478deb)
-**Tasks done**: 0 / 3
+**Status**: ASSURANCE_TOKEN_PASS — IAA-session-wave-ai-criteria-creation-fix-20260311-R2-PASS
+**Tasks done**: 3 / 3
 **Blockers**: None
 

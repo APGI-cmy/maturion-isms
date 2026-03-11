@@ -108,6 +108,12 @@ STANDBY → POLC-Orchestration → Implementation Guard (rejected self-implement
 
 ---
 
+## IAA Final Audit
+
+- R1: REJECTION-PACKAGE — A-026/CORE-021 (SCOPE_DECLARATION.md missing 3 files) — FIXED
+- R2: ASSURANCE-TOKEN — IAA-session-wave-ai-criteria-creation-fix-20260311-R2-PASS
+- Token file: `.agent-admin/assurance/iaa-token-session-wave-ai-criteria-creation-fix-20260311.md`
+
 ## IAA Pre-Brief Compliance
 - Pre-Brief artifact: `.agent-admin/assurance/iaa-prebrief-wave-ai-criteria-creation-fix.md` ✅
 - Pre-Brief committed before any implementation: ✅ (SHA 5478deb — initial commit; schema migration added in subsequent delegation)

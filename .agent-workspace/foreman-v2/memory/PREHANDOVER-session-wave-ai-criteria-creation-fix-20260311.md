@@ -137,6 +137,22 @@ Commit history will be confirmed at IAA invocation time. All ceremony artifacts 
 
 ## IAA Agent Response (verbatim)
 
-[IAA response to be pasted verbatim after IAA invocation — this section is mandatory per S-009]
+```
+═══════════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: wave-ai-criteria-creation-fix / copilot/fix-ai-criteria-creation-failure
+R2 FAST-PASS: 1 previously-failed check (A-026/CORE-021) now PASS.
+All 36 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-wave-ai-criteria-creation-fix-20260311-R2-PASS
+Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
+Authority: CS2 ONLY (@APGI-cmy)
+═══════════════════════════════════════════════════════════════
+```
+
+**IAA token file**: `.agent-admin/assurance/iaa-token-session-wave-ai-criteria-creation-fix-20260311.md`
+
+R1 REJECTION-PACKAGE: A-026/CORE-021 — SCOPE_DECLARATION.md missing 3 ceremony files → FIXED in commit e883723.
+R2: All 36 FFA checks PASS. ASSURANCE-TOKEN issued.
 
 *Authority: foreman-v2-agent v6.2.0 | CS2: @APGI-cmy*
