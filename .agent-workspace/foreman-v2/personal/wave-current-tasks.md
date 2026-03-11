@@ -654,8 +654,8 @@ have been verified as already present in the codebase. The primary remaining del
 wave: wave-16.2-gap-remediation
 session: session-wave-16.2-gap-remediation-20260311
 branch: copilot/fix-criteria-modal-backend
-status: IAA_FINAL_AUDIT_PENDING
+status: ASSURANCE_TOKEN_PASS
 tasks_total: 7
-tasks_done: 6
+tasks_done: 7
 last_updated: 2026-03-11
 ```
