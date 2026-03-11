@@ -191,6 +191,16 @@ async function backgroundParse({
     // Supabase transaction wrapper to satisfy this requirement.
     // ── DB write-back: Domain → MPS → Criteria hierarchy ──────────────────────
 
+    // Clear stale hierarchy rows before writing new ones — ensures re-parse is idempotent.
+    // ON DELETE CASCADE propagates: domains → mini_performance_standards → criteria.
+    const { error: clearError } = await supabase
+      .from('domains')
+      .delete()
+      .eq('audit_id', auditId);
+    if (clearError) {
+      throw new Error(`Failed to clear stale domain data before parse: ${clearError.message}`);
+    }
+
     // 1. Upsert domains — includes organisation_id (NOT NULL) and number (INTEGER)
     //    onConflict: 'audit_id,number' handles retries without 23505 uniqueness errors
     const { data: insertedDomains, error: domainsError } = await supabase
@@ -286,7 +296,7 @@ async function backgroundParse({
       console.warn(`[invoke-ai-parse-criteria] Skipping criteria with unresolved MPS references: ${[...new Set(missingMps)].join(', ')}`);
     }
 
-    const { error: criteriaError } = await supabase
+    const { data: insertedCriteria, error: criteriaError } = await supabase
       .from('criteria')
       .upsert(
         validCriteriaList.map((c: ParsedCriterion, idx: number) => {
@@ -298,14 +308,14 @@ async function backgroundParse({
             audit_id: auditId,
             organisation_id: organisationId,
             number: idx + 1,          // INTEGER, 1-based sequential
-            description: c.title
-              ? `${c.title}${c.description ? ': ' + c.description : ''}`
-              : (c.description ?? ''),
+            title: c.title ?? null,
+            description: c.description ?? null,
             guidance: c.source_anchor ?? null,
           };
         }),
         { onConflict: 'audit_id,number', ignoreDuplicates: false },
-      );
+      )
+      .select('id');
 
     if (criteriaError) {
       throw new Error(`Failed to upsert criteria: ${criteriaError.message}`);
@@ -335,7 +345,7 @@ async function backgroundParse({
       details: {
         domains_inserted: insertedDomains?.length ?? 0,
         mps_inserted: insertedMps?.length ?? 0,
-        criteria_inserted: validCriteriaList.length,
+        criteria_inserted: insertedCriteria?.length ?? 0,
         criteria_per_mps: Object.fromEntries([...mpsMap.keys()].map(k => [k, validCriteriaList.filter((c: ParsedCriterion) => resolveMpsKey(c.mps_number) === k).length])),
         needs_human_review: needsHumanReview,
         ldcs_document: isLdcsDocument,
