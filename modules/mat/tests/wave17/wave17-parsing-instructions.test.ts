@@ -372,7 +372,7 @@ describe(
         '[T-W17-QA-010] FAIL — _SYSTEM_PROMPT missing "VERBATIM"/"verbatim" guardrail.\n' +
         'Required to ensure description fields contain complete criterion text.\n' +
         `File: ${PARSING_PY_PATH}`,
-      ).toMatch(/[Vv][Ee][Rr][Bb][Aa][Tt][Ii][Mm]/);
+      ).toMatch(/verbatim/i);
 
       // Must contain domains in JSON schema spec
       expect(
