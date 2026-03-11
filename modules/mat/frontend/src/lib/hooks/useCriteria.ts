@@ -201,8 +201,8 @@ export function useUploadCriteria() {
  * Trigger AI parsing for uploaded criteria document
  */
 export function useTriggerAIParsing() {
-  return useMutation<void, Error, { auditId: string; filePath: string }>({
-    mutationFn: async ({ auditId, filePath }) => {
+  return useMutation<void, Error, { auditId: string; filePath: string; user_instructions?: string | null }>({
+    mutationFn: async ({ auditId, filePath, user_instructions }) => {
       // Refresh session before invoking Edge Function to ensure Authorization header is valid
       const { data: { session }, error: sessionError } = await supabase.auth.refreshSession();
       if (sessionError || !session) {
@@ -210,7 +210,11 @@ export function useTriggerAIParsing() {
       }
 
       const { data, error } = await supabase.functions.invoke('invoke-ai-parse-criteria', {
-        body: { auditId, filePath },
+        body: {
+          auditId,
+          filePath,
+          ...(user_instructions != null ? { user_instructions } : {}),
+        },
         headers: { Authorization: `Bearer ${session.access_token}` }
       });
 

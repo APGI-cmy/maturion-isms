@@ -24,6 +24,8 @@ import {
   useReparseCriteriaDocument,
   type UploadedDocument,
 } from '../../lib/hooks/useCriteria';
+import { supabase } from '../../lib/supabase';
+import { ParsingInstructionsModal } from './ParsingInstructionsModal';
 
 interface CriteriaUploadProps {
   auditId: string;
@@ -100,6 +102,9 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
   const [confirmReparseFilePath, setConfirmReparseFilePath] = useState<string | null>(null);
   // Inline action error (delete / re-parse failures)
   const [actionError, setActionError] = useState<string | null>(null);
+  // Wave 17: pending parse state — set after upload, before modal confirm
+  const [pendingParseFilePath, setPendingParseFilePath] = useState<string | null>(null);
+  const [pendingParseFileName, setPendingParseFileName] = useState<string | null>(null);
 
   const pollStatus = usePollCriteriaDocumentStatus(auditId, pollingFilePath);
   const { invalidate: invalidateUploadedDocuments } = uploadedDocuments;
@@ -150,24 +155,13 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
       setUploadProgress(50);
       const result = await uploadCriteria.mutateAsync({ auditId, file: selectedFile });
       setUploadProgress(75);
-      
-      // Trigger AI parsing — graceful degradation: upload succeeds even if Edge Function unavailable
-      let parsingSucceeded = false;
-      try {
-        await triggerParsing.mutateAsync({ auditId, filePath: result.path });
-        parsingSucceeded = true;
-      } catch (parsingError) {
-        console.warn('[CriteriaUpload] AI parsing unavailable — upload succeeded, parsing pending:', parsingError);
-        setAiParsingWarning('Upload complete. AI parsing is currently unavailable — your document has been saved and can be manually processed once the parsing service is restored.');
-      }
 
       setUploadProgress(100);
 
-      // T-W15R-UI-003: replace alert() with inline success message
-      if (parsingSucceeded) {
-        setUploadSuccess('Criteria document uploaded and parsing initiated!');
-        setPollingFilePath(result.path);
-      }
+      // Wave 17: Show parsing instructions modal before triggering AI parse
+      setPendingParseFilePath(result.path);
+      setPendingParseFileName(selectedFile.name);
+      setUploadSuccess('Criteria document uploaded! Please provide parsing instructions.');
 
       // Refresh the uploaded documents list
       invalidateUploadedDocuments();
@@ -197,6 +191,65 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
       console.warn('[CriteriaUpload] Retry parse failed:', retryError);
     } finally {
       setRetryingDocId(null);
+    }
+  };
+
+  // Wave 17: Parsing instructions modal handlers
+  const handleParsingConfirm = async (instructions: string, saveAsTemplate?: { name: string }) => {
+    const filePath = pendingParseFilePath;
+    const userInstructions = instructions.trim() || null;
+    setPendingParseFilePath(null);
+    setPendingParseFileName(null);
+    setUploadSuccess(null);
+
+    if (!filePath) return;
+
+    // Save template if requested
+    if (saveAsTemplate && instructions.trim()) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const { error: saveError } = await supabase
+          .from('parsing_instruction_templates')
+          .insert({
+            name: saveAsTemplate.name,
+            instructions: instructions.trim(),
+            created_by: session?.user?.id ?? null,
+          });
+        if (saveError) {
+          console.warn('[CriteriaUpload] Failed to save template:', saveError.message);
+        }
+      } catch (err) {
+        console.warn('[CriteriaUpload] Template save error:', err);
+      }
+    }
+
+    try {
+      await triggerParsing.mutateAsync({ auditId, filePath, user_instructions: userInstructions });
+      setPollingFilePath(filePath);
+      setUploadSuccess('Criteria document uploaded and parsing initiated!');
+      invalidateUploadedDocuments();
+    } catch (parsingError) {
+      console.warn('[CriteriaUpload] AI parsing unavailable — upload succeeded, parsing pending:', parsingError);
+      setAiParsingWarning('Upload complete. AI parsing is currently unavailable — your document has been saved and can be manually processed once the parsing service is restored.');
+    }
+  };
+
+  const handleParsingCancel = async () => {
+    const filePath = pendingParseFilePath;
+    setPendingParseFilePath(null);
+    setPendingParseFileName(null);
+    setUploadSuccess(null);
+
+    if (!filePath) return;
+
+    try {
+      await triggerParsing.mutateAsync({ auditId, filePath, user_instructions: null });
+      setPollingFilePath(filePath);
+      setUploadSuccess('Criteria document uploaded and parsing initiated!');
+      invalidateUploadedDocuments();
+    } catch (parsingError) {
+      console.warn('[CriteriaUpload] AI parsing unavailable — upload succeeded, parsing pending:', parsingError);
+      setAiParsingWarning('Upload complete. AI parsing is currently unavailable — your document has been saved and can be manually processed once the parsing service is restored.');
     }
   };
 
@@ -545,6 +598,14 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
           </ul>
         )}
       </section>
+
+      {/* Wave 17: Parsing Instructions Modal */}
+      <ParsingInstructionsModal
+        isOpen={pendingParseFilePath !== null}
+        onConfirm={(instructions, saveAsTemplate) => void handleParsingConfirm(instructions, saveAsTemplate)}
+        onCancel={() => void handleParsingCancel()}
+        fileName={pendingParseFileName ?? undefined}
+      />
     </div>
   );
 }
