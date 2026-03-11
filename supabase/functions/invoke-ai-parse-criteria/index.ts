@@ -194,7 +194,7 @@ async function backgroundParse({
       return;
     }
 
-    // TODO(T-W15-TXN): Architecture §4.4 requires all Domain/MPS/criteria inserts to run in a
+    // T-W15-TXN (tracked): Architecture §4.4 requires all Domain/MPS/criteria inserts to run in a
     // single DB transaction with full rollback on failure. Current implementation uses sequential
     // inserts — a failure after domains are inserted but before criteria are inserted will leave
     // partial data. A tracked follow-up task must implement a Postgres function (RPC) or

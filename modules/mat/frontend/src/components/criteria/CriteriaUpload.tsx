@@ -217,6 +217,8 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
           });
         if (saveError) {
           console.warn('[CriteriaUpload] Failed to save template:', saveError.message);
+        } else {
+          setUploadSuccess(`Template "${saveAsTemplate.name}" saved.`);
         }
       } catch (err) {
         console.warn('[CriteriaUpload] Template save error:', err);

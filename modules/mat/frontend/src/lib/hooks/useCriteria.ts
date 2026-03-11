@@ -213,7 +213,7 @@ export function useTriggerAIParsing() {
         body: {
           auditId,
           filePath,
-          ...(user_instructions != null ? { user_instructions } : {}),
+          user_instructions: user_instructions ?? null,
         },
         headers: { Authorization: `Bearer ${session.access_token}` }
       });

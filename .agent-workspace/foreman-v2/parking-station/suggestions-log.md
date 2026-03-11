@@ -36,3 +36,4 @@
 | 2026-03-11 | foreman-v2-agent | session-wave-disable-automatic-injections-20260311 | [SESSION-END] | contract_version and advisory_phase YAML fields should be co-updated with substantive contract changes to prevent REJECTION-PACKAGE cycle for missing field bumps | session-wave-disable-automatic-injections-20260311.md |
 
 | 2026-03-11 | foreman-v2-agent | session-wave-ai-criteria-creation-fix-20260311 | IMPROVEMENT | S-WAVE-AI-CRITERIA-001: Add CI check to cross-validate Edge Function upsert columns against migration DDL (A-032 complement) | session-wave-ai-criteria-creation-fix-20260311.md |
+| 2026-03-11 | foreman-v2-agent | session-wave17-orchestration-20260311 | improvement | Multi-tenancy: UNIQUE(name) on parsing_instruction_templates is global — consider (created_by, name) scoping in future wave | session-wave17-orchestration-20260311.md |

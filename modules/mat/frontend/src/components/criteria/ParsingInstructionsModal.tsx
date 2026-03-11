@@ -92,6 +92,7 @@ export function ParsingInstructionsModal({
   };
 
   const handleConfirm = () => {
+    if (!instructions.trim()) return;
     const saveAs =
       saveAsTemplate && templateName.trim()
         ? { name: templateName.trim() }

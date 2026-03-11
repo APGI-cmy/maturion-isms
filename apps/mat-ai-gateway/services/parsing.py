@@ -222,11 +222,14 @@ def _call_gpt4_turbo(document_text: str, user_instructions: str | None = None) -
     """Call GPT model to extract structured criteria from document text."""
     client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
-    # Build user message: inject parsing instructions when provided
+    # Build user message: inject parsing instructions when provided.
+    # Structural separation (BD-017/BD-018): user_instructions are wrapped in XML-like
+    # delimiters to create a clear boundary between user-provided instructions and the
+    # document text, reducing prompt injection risk.
     if user_instructions:
         user_message = (
-            f"Parsing instructions for this document:\n\n{user_instructions}\n\n"
-            f"Document text:\n\n{document_text[:MAX_DOCUMENT_CHARS]}"
+            f"<instructions>\n{user_instructions}\n</instructions>\n\n"
+            f"<document>\n{document_text[:MAX_DOCUMENT_CHARS]}\n</document>"
         )
     else:
         user_message = (
