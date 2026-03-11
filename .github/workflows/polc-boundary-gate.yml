@@ -44,8 +44,18 @@ jobs:
           # If PR is labeled 'copilot-builder-role', Copilot is acting as a
           # governed builder (not Foreman) in this PR. The
           # foreman-implementation-check does not apply to builder PRs.
+          # Use exact matching: split the comma-separated label list and compare
+          # each label individually to avoid substring false positives.
           PR_LABELS="${{ join(github.event.pull_request.labels.*.name, ',') }}"
-          if [[ "$PR_LABELS" == *"copilot-builder-role"* ]]; then
+          HAS_BUILDER_LABEL=false
+          IFS=',' read -ra LABEL_ARRAY <<< "$PR_LABELS"
+          for label in "${LABEL_ARRAY[@]}"; do
+            if [[ "$label" == "copilot-builder-role" ]]; then
+              HAS_BUILDER_LABEL=true
+              break
+            fi
+          done
+          if [[ "$HAS_BUILDER_LABEL" == "true" ]]; then
             echo "✅ PR labeled 'copilot-builder-role'"
             echo "   Copilot is acting as a governed builder (not Foreman)."
             echo "   foreman-implementation-check is not applicable — skipping."

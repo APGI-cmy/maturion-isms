@@ -76,7 +76,7 @@ Adoption phase: PHASE_B_BLOCKING — hard gate, ASSURANCE-TOKEN is binding.
 | CORE-013 | IAA invocation evidence | PASS ✅ (PREHANDOVER with valid token reference committed) |
 | CORE-014 | No class exemption claim | PASS ✅ |
 | CORE-015 | Session memory present | PASS ✅ |
-| CORE-016 | IAA verdict evidenced (§4.3b) | PASS ✅ (A-030 carve-out — R2 re-invocation; token file overwrtten this session) |
+| CORE-016 | IAA verdict evidenced (§4.3b) | PASS ✅ (A-030 carve-out — R2 re-invocation; token file overwritten this session) |
 | CORE-017 | No .github/agents/ modifications | PASS ✅ (workflow only — not agents directory) |
 | CORE-018 | Complete evidence artifact sweep | PASS ✅ (all 4 §4.3b conditions met) |
 | CORE-019 | IAA token cross-verification | PASS ✅ (A-030 carve-out — R2 re-invocation) |
