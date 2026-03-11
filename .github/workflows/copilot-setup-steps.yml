@@ -28,10 +28,12 @@ jobs:
       # REQ-TU-001: Use MATURION_BOT_TOKEN for checkout so that subsequent git push
       # operations (agent write-back during the Copilot session) are authenticated
       # with the correct token and are not blocked by GITHUB_TOKEN scope restrictions.
+      # Falls back to github.token when MATURION_BOT_TOKEN is not available (e.g.
+      # Copilot environment where repository secrets may not be injected).
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.MATURION_BOT_TOKEN }}
+          token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
 
       - name: Configure git identity for bot operations
         run: |
