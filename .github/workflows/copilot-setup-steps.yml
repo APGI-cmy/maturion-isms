@@ -4,19 +4,39 @@ name: Copilot Setup Steps
 # Adds a preflight self-test for the agent-bootstrap MCP server so that
 # missing dist/ files (MODULE_NOT_FOUND) surface as a clear Node stack trace
 # rather than the generic "MCP error -32000: Connection closed".
+#
+# Token policy: REQ-TU-001 / REQ-TU-002 (GOVERNANCE_TOKEN_USAGE_REQUIREMENTS.md)
+# All write operations use secrets.MATURION_BOT_TOKEN. GITHUB_TOKEN is prohibited
+# for any step that mutates repository state.
 
 on:
   workflow_dispatch: {}
 
+# REQ-TU-004: Explicit write permissions required for agent push operations.
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   copilot-setup-steps:
     runs-on: ubuntu-latest
     steps:
+      # REQ-TU-003: Token identity evidence — must appear before any write operation.
+      - name: Token identity evidence
+        run: |
+          echo "EXEC_IDENTITY: MATURION_BOT_TOKEN in use for write operations"
+
+      # REQ-TU-001: Use MATURION_BOT_TOKEN for checkout so that subsequent git push
+      # operations (agent write-back during the Copilot session) are authenticated
+      # with the correct token and are not blocked by GITHUB_TOKEN scope restrictions.
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.MATURION_BOT_TOKEN }}
+
+      - name: Configure git identity for bot operations
+        run: |
+          git config --global user.name "Maturion Bot"
+          git config --global user.email "bot@maturion.ai"
 
       - name: Agent-bootstrap MCP preflight self-test (Linux)
         shell: bash
