@@ -266,7 +266,12 @@ async function backgroundParse({
     //    onConflict: 'audit_id,number' handles retries without 23505 uniqueness errors
     // Normalise an MPS number string to its numeric value for fallback matching
     // e.g. "MPS 6", "6.0", "06" all normalise to "6"
-    const normaliseMpsNumber = (v: string): string => String(Number(v));
+    const normaliseMpsNumber = (v: string): string => {
+      // Strip any leading alphabetic prefix (e.g. "MPS 6" → "6", "MPS 6.0" → "6")
+      const stripped = v.trim().replace(/^[A-Za-z]+\s*/, '');
+      const num = Number(stripped);
+      return isNaN(num) ? v.trim() : String(num);
+    };
     // Helper: resolve the actual mpsMap key for a criterion (handles normalised fallback)
     const resolveMpsKey = (mpsNumber: string): string | undefined => {
       if (mpsMap.has(mpsNumber)) return mpsNumber;
