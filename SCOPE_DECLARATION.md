@@ -1,10 +1,10 @@
-# SCOPE_DECLARATION — wave-criteria-display-bugfix-1049
+# SCOPE_DECLARATION — wave-fix-vercel-supabase-migration
 
-**Wave**: wave-criteria-display-bugfix-1049
-**Session**: session-wave-criteria-display-bugfix-1049-20260310
-**Date**: 2026-03-10
-**Branch**: copilot/fix-column-mapping-issue
-**Issue**: maturion-isms#1049 — "Bug: Criteria Not Displayed After Parsing — Column Mapping Mismatch"
+**Wave**: wave-fix-vercel-supabase-migration
+**Session**: session-wave-fix-vercel-supabase-migration-20260311
+**Date**: 2026-03-11
+**Branch**: copilot/fix-vercel-supabase-migration
+**Issue**: maturion-isms#1057 — "Fix failing deployment: Vercel Apply Supabase Migrations check (Deploy MAT Frontend)"
 **Agent**: foreman-v2-agent v6.2.0
 
 ---
@@ -12,31 +12,24 @@
 ## Files Modified in This Wave (branch diff vs main)
 
 ### Production Code (wave deliverables)
-1. `supabase/functions/invoke-ai-parse-criteria/index.ts`
-   - `normaliseMpsNumber` function: strips alphabetic prefix before `Number()` conversion
-   - Before: `String(Number(v))` — returns "NaN" for "MPS 6"
-   - After: strips `/^[A-Za-z]+\s*/`, uses `isNaN` guard
+1. `apps/maturion-maturity-legacy/supabase/migrations/20260310000001_wave16_6_schema_audit_completeness.sql`
+   - Added `NOT VALID` to `audit_logs_action_check` CHECK constraint
+   - Fixes: "check constraint audit_logs_action_check is violated by some row" CI error
+   - Updated comment to explain NOT VALID semantics
 
-2. `modules/mat/tests/wave-criteria-display-bugfix/criteria-display-bugfix.test.ts`
-   - NEW FILE: 5 regression tests T-WCDB-001 to T-WCDB-005
+2. `.github/workflows/deploy-mat-vercel.yml`
+   - "Apply pending migrations" step: added SUPABASE_DB_URL empty-check, ::error:: annotations, per-file success logging, FAILED_MIGRATION break pattern
+   - "Apply AIMC package migrations" step: same improvements applied symmetrically
 
 ### Governance Artifacts
-3. `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` — v3.8.0, INC-CRITERIA-DISPLAY-PREBRIEF-IMPL-001
-4. `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — wave entry
-5. `.agent-admin/assurance/iaa-prebrief-wave-criteria-display-bugfix-1049.md` — IAA Pre-Brief
-6. `.agent-workspace/independent-assurance-agent/memory/session-prebrief-criteria-display-20260310.md` — IAA memory
-7. `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` — IAA parking
-8. `.agent-admin/assurance/iaa-token-session-wave-criteria-display-bugfix-1049-20260310.md` — IAA rejection artifact (REJECTION-PACKAGE R1)
-9. `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave-criteria-display-bugfix-1049-20260310.md` — PREHANDOVER proof
-10. `.agent-workspace/foreman-v2/memory/session-wave-criteria-display-bugfix-1049-20260310.md` — session memory
-11. `SCOPE_DECLARATION.md` — this file
+3. `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — updated for this wave
+4. `.agent-admin/assurance/iaa-prebrief-wave-fix-vercel-supabase-migration.md` — IAA Pre-Brief
+5. `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave-fix-vercel-supabase-migration-20260311.md` — PREHANDOVER proof
+6. `.agent-workspace/foreman-v2/memory/session-wave-fix-vercel-supabase-migration-20260311.md` — session memory
+7. `.agent-admin/assurance/iaa-token-session-wave-fix-vercel-supabase-migration-20260311.md` — IAA token
 
----
-
-## Files NOT Modified in This Wave
-
+### Out of Scope (not modified)
 - No `.github/agents/` files
-- No `.github/workflows/` files
-- No schema migration files
-- No frontend hook files
-- No architecture documents
+- No frontend code
+- No new table schemas
+- No backend API routes
