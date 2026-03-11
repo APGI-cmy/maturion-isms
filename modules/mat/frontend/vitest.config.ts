@@ -13,6 +13,7 @@ export default defineConfig({
     include: [
       'tests/**/*.test.ts',
       'tests/**/*.test.tsx',
+      '../tests/ui-wiring/**/*.test.ts',
     ],
     globals: true,
     reporters: ['verbose'],
