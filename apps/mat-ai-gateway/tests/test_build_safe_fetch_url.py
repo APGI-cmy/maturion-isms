@@ -15,7 +15,6 @@ from __future__ import annotations
 import importlib
 import sys
 import types
-import urllib.parse
 
 import pytest
 
