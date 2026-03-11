@@ -122,6 +122,11 @@ def _build_safe_fetch_url(document_url: str) -> str:
 
     This prevents SSRF: the scheme and hostname come from a trusted env var,
     not from the user-provided signed URL string.
+
+    Path deduplication: if SUPABASE_STORAGE_URL already contains a path prefix
+    (e.g. "/storage/v1") and the signed URL path also starts with that same prefix,
+    the prefix is stripped from the signed URL path before concatenation to avoid
+    producing a doubled path such as "/storage/v1/storage/v1/...".
     """
     parsed = urllib.parse.urlparse(document_url)
     # Only use path and query from the signed URL (never scheme or host)
@@ -129,7 +134,13 @@ def _build_safe_fetch_url(document_url: str) -> str:
     query = f"?{parsed.query}" if parsed.query else ""
     if not SUPABASE_STORAGE_URL:
         raise ValueError("SUPABASE_STORAGE_URL environment variable is not configured")
-    return f"{SUPABASE_STORAGE_URL}/{path}{query}"
+    base = SUPABASE_STORAGE_URL.rstrip("/")
+    # Strip any path prefix that SUPABASE_STORAGE_URL already contains,
+    # to prevent duplication (e.g. /storage/v1/storage/v1/...).
+    base_path_prefix = urllib.parse.urlparse(base).path.lstrip("/")
+    if base_path_prefix and path.startswith(base_path_prefix):
+        path = path[len(base_path_prefix):].lstrip("/")
+    return f"{base}/{path}{query}"
 
 
 def _extract_document_text(document_url: str) -> tuple[str, str]:
