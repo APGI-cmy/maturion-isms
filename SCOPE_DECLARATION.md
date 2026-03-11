@@ -39,3 +39,12 @@ All files modified in this wave (git diff --name-only origin/main...HEAD):
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave-disable-automatic-injections-and-reinforce-contract.md`
+
+---
+
+**A-031 Carve-Out Note:**
+> IAA ceremony artifacts committed on this branch by the IAA agent (IAA session memory files,
+> IAA rejection token files, IAA parking station updates) from R1 rejection (commit de3ceaf),
+> R2 rejection (commit e5bd632), and any R3/R4 IAA invocation artifacts are excluded from the
+> scope table above per A-031 carve-out. These are IAA-owned files committed by IAA after
+> PREHANDOVER was committed; producing agent deliverables are fully declared in the table above.
