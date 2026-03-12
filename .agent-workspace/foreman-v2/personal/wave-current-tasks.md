@@ -240,3 +240,35 @@ tasks_done: 7
 last_updated: 2026-03-11
 ```
 
+
+
+---
+
+## CI Gateway Fix — Issue #1085 (Session: session-ci-gateway-fix-20260312)
+
+**Wave**: CI Gateway Fix
+**Branch**: copilot/fix-ci-gateway-failure
+**Session**: session-ci-gateway-fix-20260312
+**Date**: 2026-03-12
+
+### Tasks
+
+| ID | Task | Status |
+|----|------|--------|
+| T-CI-001 | Investigate typecheck-api failure root cause | ✅ DONE |
+| T-CI-002 | Investigate authority-check never-fires root cause | ✅ DONE |
+| T-CI-003 | Sync pnpm-lock.yaml @testing-library/dom specifier | ✅ DONE |
+| T-CI-004 | Confirm deploy-mat-vercel.yml --no-frozen-lockfile fix in main | ✅ CONFIRMED (PR #1084) |
+| T-CI-005 | Confirm authority-check job in agent-contract-audit.yml | ✅ CONFIRMED (PR #1084) |
+
+### Re-Anchor Pulse
+
+```yaml
+wave: ci-gateway-fix
+session: session-ci-gateway-fix-20260312
+branch: copilot/fix-ci-gateway-failure
+status: COMPLETE
+tasks_total: 5
+tasks_done: 5
+last_updated: 2026-03-12
+```
