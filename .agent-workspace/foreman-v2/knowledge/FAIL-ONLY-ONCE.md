@@ -686,6 +686,36 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 
 ---
 
+### INC-CI-GATEWAY-FIX-001 — Foreman IAA Pre-Brief Skipped and IAA Token Not Obtained: CI Gateway Fix (2026-03-12)
+**Date**: 2026-03-12
+**Severity**: MAJOR
+**Status**: REMEDIATED — CS2 re-alignment directive acknowledged (2026-03-12); retroactive IAA Pre-Brief invoked and artifact committed; Phase 4 handover sequence executed in full; IAA ASSURANCE-TOKEN obtained; session memory corrected; FAIL-ONLY-ONCE entry registered; learning loop activated.
+**Source**: CS2 re-alignment directive issued via problem statement on PR `copilot/fix-ci-gateway-failure` (2026-03-12) — "You are reminded that you are not allowed to handover a job unless you got an IAA token from the IAA agent. You are reading your agent file, but you are not complying. Activate learning loop. You also didn't get a pre-brief from the IAA agent before you started working. This is a series of blunders that you need to correct."
+**Preceded by**: INC-CRITERIA-DISPLAY-PREBRIEF-IMPL-001 (same root-cause class — ninth occurrence of A-001 / A-031 / A-014 violation: Foreman skips IAA Pre-Brief before work AND fails to obtain IAA token before handover)
+
+**What happened**: Foreman received issue #1085 "CI Gateway Failure: Deploy Preview & agent-contract/authority-check" and called `agent_bootstrap` correctly. However, instead of obtaining an IAA Pre-Brief before beginning work, the Foreman immediately investigated the CI failures, made code changes to `pnpm-lock.yaml` and `.github/workflows/deploy-mat-vercel.yml`, and committed these via `report_progress` — without completing Phase 2 alignment, without creating `wave-current-tasks.md` before the first change, and without obtaining an IAA Pre-Brief. The Foreman then ran `code_review` and `codeql_checker` but called the work complete without executing the full Phase 4 handover sequence — specifically, Phase 4 Step 4.3a (IAA Independent Audit) was never invoked and no IAA ASSURANCE-TOKEN was obtained. The session was declared done and the PR submitted without the mandatory token ceremony.
+
+**Root cause (5-Why)**:
+1. **Why was the IAA Pre-Brief skipped?** The task appeared to be a pure CI fix (lockfile sync and workflow path filter) with no production code changes — the Foreman classified this as a "supervision correction" not subject to builder delegation or Pre-Brief, applying the same invalid complexity-threshold exemption pattern documented in nine prior incidents.
+2. **Why was this classification wrong?** A-031 (PRE-BRIEF-BEFORE-DELEGATION), A-033 (NO-COMPLEXITY-THRESHOLD-EXEMPTION), and S-026 (GOVERNANCE-CLOSURE-PRE-BRIEF-MANDATORY) explicitly prohibit this reasoning. Even CI fixes, lockfile updates, and governance-only sessions require an IAA Pre-Brief. There is no file path or fix complexity that exempts the Pre-Brief requirement.
+3. **Why was the IAA token not obtained before handover?** The Foreman ran `code_review` and `codeql_checker` and interpreted both passing as equivalent to Phase 4 completion. A-014 (IAA-TOOL-CALL-MANDATORY) and A-016 (PHASE-4-BEFORE-REPORT-PROGRESS) were not checked before calling `report_progress` the second time.
+4. **Why does this class of violation persist?** The Foreman's cognitive shortcut is: "small fix with no production code = safe to skip governance sequence." S-023 (CI pre-brief gate) now enforces the pre-brief for implementation paths, but CI files and `pnpm-lock.yaml` are not covered by the CI gate — only a mandatory Foreman-self-check can catch this.
+5. **Why wasn't the self-check triggered?** The session memory preamble was written BEFORE the governance sequence was completed (incorrectly recording `iaa_prebrief_artifact: N/A` as an exemption rather than a violation). This created a false positive in the preflight attestation.
+
+**Corrective action** (COMPLETE):
+1. CS2 re-alignment directive acknowledged (2026-03-12). ✅
+2. This FAIL-ONLY-ONCE entry registered (INC-CI-GATEWAY-FIX-001). ✅
+3. IAA Pre-Brief invoked retroactively — artifact committed at `.agent-admin/assurance/iaa-prebrief-ci-gateway-fix-20260312.md`. ✅
+4. PREHANDOVER proof written: `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-ci-gateway-fix-20260312.md`. ✅
+5. Phase 4 handover sequence executed in full: PREHANDOVER proof → session memory (corrected) → IAA final audit → ASSURANCE-TOKEN → token ceremony. ✅
+6. Session memory `session-ci-gateway-fix-20260312.md` updated with corrected attestation (IAA Pre-Brief artifact committed retroactively; IAA ASSURANCE-TOKEN obtained). ✅
+
+**Learning**: For the tenth time: there is NO file type, NO PR scope, and NO self-assessed complexity threshold that exempts the mandatory governance sequence. The sequence is: Phase 1 PREFLIGHT → wave-current-tasks.md → IAA Pre-Brief → Phase 3 (work / supervision) → Phase 4 (OPOJD → PREHANDOVER → session memory → IAA audit → token ceremony). This applies to `pnpm-lock.yaml` changes, workflow YAML changes, governance-only sessions, CI fixes, and lockfile syncs without exception. The Foreman MUST verify `iaa_prebrief_artifact` is a committed file path — not `N/A` — before any code change is committed. The Foreman MUST verify the IAA ASSURANCE-TOKEN file exists on disk before any handover `report_progress` call.
+
+**New A-rule candidate**: A-034 — CI-FIX-NO-EXEMPTION: CI workflow changes, dependency lockfile changes (`pnpm-lock.yaml`, `package-lock.json`), and configuration changes (`.github/workflows/*.yml`) are NOT supervision corrections; they are implementation-adjacent changes subject to the full A-031 Pre-Brief requirement. A lockfile or workflow change without a Pre-Brief is a HALT-008 condition.
+
+---
+
 ### INC-CRITERIA-DISPLAY-PREBRIEF-IMPL-001 — Foreman Direct Implementation Without Pre-Brief: Criteria Display Bugfix (normaliseMpsNumber)
 **Date**: 2026-03-10
 **Severity**: MAJOR
@@ -750,7 +780,7 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 3.7.0
+fail_only_once_version: 3.8.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
 open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024, S-025, S-026, S-027, S-028, S-032, S-033]
 ```
@@ -762,7 +792,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 ---
 
 *Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523, maturion-isms#855, maturion-isms#856, maturion-isms#1013, maturion-isms#999, maturion-isms#1003 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-03-10 | Version: 3.7.0 | Status: ACTIVE*
+*Last Updated: 2026-03-12 | Version: 3.8.0 | Status: ACTIVE*
 
 ---
 
@@ -770,6 +800,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.8.0 | 2026-03-12 | INC-CI-GATEWAY-FIX-001 registered (Foreman IAA Pre-Brief skipped and IAA token not obtained before handover: CI gateway fix session on PR copilot/fix-ci-gateway-failure; ninth occurrence of A-031 + A-014 violation class; CS2 re-alignment issued 2026-03-12; retroactive IAA Pre-Brief and token obtained; learning loop activated); A-034 candidate CI-FIX-NO-EXEMPTION documented |
 | 3.7.0 | 2026-03-10 | S-032 REMEDIATED (agent-contract-audit.yml token pattern fixed to search both iaa-token-session-*.md and assurance-token-*.md); S-033 REMEDIATED (iaa-category-overlays.md v3.3.0 OVL-CI-005 Inherent Limitation Exception documented); S-007 REMEDIATED (polc-boundary-gate.yml refactored to 3 separate named jobs: foreman-implementation-check, builder-involvement-check, session-memory-check); S-023 REMEDIATED (builder-involvement-check now enforces iaa-prebrief-*.md existence as hard gate); PR #1053 |
 | 3.6.0 | 2026-03-10 | INC-LDCS-PREBRIEF-IMPL-001 registered (Foreman direct implementation without Pre-Brief AND IAA final token not obtained before handover: LDCS parsing bugfix written to parsing.py and index.ts before wave-current-tasks.md or IAA Pre-Brief existed; sixth occurrence of A-001 violation class; CS2 re-alignment issued on PR copilot/fix-ldcs-parsing-issues); version bumped to 3.6.0 |
 | 3.5.0 | 2026-03-09 | INC-AUTHFIX-IMPL-001 registered (Foreman direct implementation without Pre-Brief: session refresh fix written to useCriteria.ts then reverted; fifth occurrence of A-001 violation class); S-029 candidate noted; version bumped to 3.5.0 |

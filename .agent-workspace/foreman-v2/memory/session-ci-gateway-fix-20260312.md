@@ -13,16 +13,22 @@
 
 ```yaml
 fail_only_once_attested: true
-fail_only_once_version: 3.7.0
+fail_only_once_version: 3.8.0
 unresolved_breaches: none
 canon_inventory_check: PASS
 tier2_loaded: true
 prior_sessions_reviewed: [session-wave17-orchestration-20260311, session-wave16-2R-20260310, session-wave16-finish-20260309, session-wave16-full-batch-20260310, session-wave15r-opojd-20260308]
 unresolved_items_from_prior_sessions: none
-iaa_prebrief_artifact: N/A — CI-fix session (no implementation delegation)
-prebrief_wave: ci-gateway-fix
-prebrief_tasks_count: 0
+iaa_prebrief_artifact: .agent-admin/assurance/iaa-prebrief-ci-gateway-fix-20260312.md
+prebrief_wave: ci-gateway-fix-20260312
+prebrief_tasks_count: 2
 ```
+
+> ⚠️ CORRECTED ATTESTATION: The original session-ci-gateway-fix-20260312 incorrectly recorded
+> `iaa_prebrief_artifact: N/A` as an exemption. This was a governance violation (A-031, A-033).
+> The CS2 Re-Alignment Directive (2026-03-12) required retroactive IAA Pre-Brief and token.
+> This corrected attestation records the actual Pre-Brief artifact path after remediation.
+> FAIL-ONLY-ONCE incident: INC-CI-GATEWAY-FIX-001 (v3.8.0)
 
 ---
 
