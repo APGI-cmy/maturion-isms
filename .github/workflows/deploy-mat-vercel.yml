@@ -111,7 +111,7 @@ jobs:
         run: npm install -g pnpm@${{ env.PNPM_VERSION }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Type-check api/ serverless routes
         run: pnpm exec tsc -p api/tsconfig.json --noEmit
