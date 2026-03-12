@@ -91,6 +91,7 @@ interface BackgroundParseArgs {
   filePath: string;
   organisationId: string;
   userId: string | undefined;
+  userInstructions: string | null;
 }
 
 async function backgroundParse({
@@ -99,6 +100,7 @@ async function backgroundParse({
   filePath,
   organisationId,
   userId,
+  userInstructions,
 }: BackgroundParseArgs): Promise<void> {
   try {
     // Invoke AI Gateway DocumentParser (skip if AI_GATEWAY_URL is not configured)
@@ -126,6 +128,7 @@ async function backgroundParse({
           document_url: documentUrl,
           tenant_id: auditId,
           file_path: filePath,
+          ...(userInstructions != null ? { user_instructions: userInstructions } : {}),
         }),
       });
 
@@ -191,7 +194,7 @@ async function backgroundParse({
       return;
     }
 
-    // TODO(T-W15-TXN): Architecture §4.4 requires all Domain/MPS/criteria inserts to run in a
+    // T-W15-TXN (tracked): Architecture §4.4 requires all Domain/MPS/criteria inserts to run in a
     // single DB transaction with full rollback on failure. Current implementation uses sequential
     // inserts — a failure after domains are inserted but before criteria are inserted will leave
     // partial data. A tracked follow-up task must implement a Postgres function (RPC) or
@@ -435,6 +438,12 @@ Deno.serve(async (req: Request): Promise<Response> => {
   const body = await req.json().catch(() => ({}));
   const auditId: string | undefined = body.auditId;
   const filePath: string | undefined = body.filePath;
+  // Wave 17: read user_instructions; 10 000-char length-bound for safety (BD-017/BD-018).
+  // Limit chosen to accommodate realistic verbose parsing guidance while preventing
+  // excessively large payloads from inflating token costs or enabling DoS.
+  const userInstructions: string | null = typeof body.user_instructions === 'string'
+    ? body.user_instructions.slice(0, 10000)
+    : null;
 
   // FR-103: structured error when required parameter is absent
   if (!filePath) {
@@ -487,6 +496,18 @@ Deno.serve(async (req: Request): Promise<Response> => {
     console.warn(`[invoke-ai-parse-criteria] Failed to set criteria_documents status=processing: ${processingStatusError.message}`);
   }
 
+  // Wave 17 — store parsing_instructions before background dispatch (store intent, not outcome)
+  if (userInstructions != null) {
+    const { error: instrError } = await supabase
+      .from('criteria_documents')
+      .update({ parsing_instructions: userInstructions })
+      .eq('audit_id', auditId)
+      .eq('file_path', filePath);
+    if (instrError) {
+      console.warn(`[invoke-ai-parse-criteria] Failed to store parsing_instructions: ${instrError.message}`);
+    }
+  }
+
   // Dispatch background work — runs after 202 is sent; not blocked by EarlyDrop
   // deno-lint-ignore no-explicit-any
   (EdgeRuntime as any).waitUntil(backgroundParse({
@@ -495,6 +516,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
     filePath,
     organisationId,
     userId,
+    userInstructions,
   }));
 
   // Return 202 IMMEDIATELY — the AI Gateway call runs in the background

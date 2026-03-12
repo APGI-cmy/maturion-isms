@@ -37,3 +37,4 @@
 | 2026-03-11 | foreman-v2-agent | session-wave-16.2-gap-remediation-20260311 | [SESSION-END] | S-W162-001: @testing-library/dom missing as explicit devDependency causes 2 pre-existing test suite failures; recommend adding as explicit peer dep in separate qa wave | session-wave-16.2-gap-remediation-20260311.md |
 
 | 2026-03-11 | foreman-v2-agent | session-wave-ai-criteria-creation-fix-20260311 | IMPROVEMENT | S-WAVE-AI-CRITERIA-001: Add CI check to cross-validate Edge Function upsert columns against migration DDL (A-032 complement) | session-wave-ai-criteria-creation-fix-20260311.md |
+| 2026-03-11 | foreman-v2-agent | session-wave17-orchestration-20260311 | improvement | Multi-tenancy: UNIQUE(name) on parsing_instruction_templates is global — consider (created_by, name) scoping in future wave | session-wave17-orchestration-20260311.md |
