@@ -38,3 +38,4 @@
 
 | 2026-03-11 | foreman-v2-agent | session-wave-ai-criteria-creation-fix-20260311 | IMPROVEMENT | S-WAVE-AI-CRITERIA-001: Add CI check to cross-validate Edge Function upsert columns against migration DDL (A-032 complement) | session-wave-ai-criteria-creation-fix-20260311.md |
 | 2026-03-11 | foreman-v2-agent | session-wave17-orchestration-20260311 | improvement | Multi-tenancy: UNIQUE(name) on parsing_instruction_templates is global — consider (created_by, name) scoping in future wave | session-wave17-orchestration-20260311.md |
+| 2026-03-12 | foreman-v2-agent | session-ci-gateway-fix-20260312 | [GOVERNANCE-CORRECTION] | INC-CI-GATEWAY-FIX-001: A-031/A-033 violated (no Pre-Brief before CI workflow and lockfile changes; no IAA token before handover); learning loop activated; FAIL-ONLY-ONCE v3.8.0; A-034 candidate CI-FIX-NO-EXEMPTION added | session-ci-gateway-fix-20260312.md |

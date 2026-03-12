@@ -612,7 +612,37 @@ For any PR that contains Supabase INSERT or SELECT operations on a named table:
 | 2.3.0 | 2026-03-04 | **BREAKING FIX**: Active Override block added at top — A-029 supersedes A-025 clearly stated. A-025 marked SUPERSEDED with residual scope. A-029 updated with Circular Dependency Resolution note explaining CORE-019 First Invocation Exception. A-029b (Carry-Forward Mandate from session-097) promoted to named rule. A-006 updated to reference dedicated token file instead of verbatim section. A-015 fix procedure updated. Next sequential ID updated to A-030. |
 | 2.4.0 | 2026-03-05 | A-031 (IAA ceremony artifact A-026 carve-out) codified — resolves recurring pattern from sessions 142, 146, 148, 149, 150 where IAA's own parking station/session memory/token file from prior rejection ceremony causes A-026 failures; produces two compliant options (full declaration or explicit A-031 carve-out note); next sequential ID updated to A-032. |
 | 2.5.0 | 2026-03-08 | A-032 (Schema Column Compliance Check) added — INC-ALCF-001: schema column mismatch escaped IAA gate in wave-upload-doclist-fix; audit_logs INSERT/SELECT used non-existent columns (user_id, resource_type, resource_id); organisation_id NOT NULL omitted; silent try/catch made failure invisible. IAA self-governance action per Pre-Brief §7 shared responsibility clause. Next sequential ID: A-033. |
+| 2.6.0 | 2026-03-12 | A-033 (Git-Committed vs Disk Existence — CORE-018 Verification Standard) added — INC-CI-GATEWAY-FIX-001-IAA: IAA evaluated PREHANDOVER as PASS based on disk file existence (`-f` check) when the PREHANDOVER was untracked (never committed to git). Phase 4 `git ls-tree HEAD` revealed file not in any commit. CORE-018(a) must use git verification, not disk existence. Next sequential ID: A-034. |
 
 ---
 
 **Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
+---
+
+### A-033 — CORE-018 Verification Must Use Git, Not Disk (`git ls-tree HEAD`, Not `-f`)
+
+**Triggered by**: INC-CI-GATEWAY-FIX-001-IAA (session-ci-gateway-fix-20260312, 2026-03-12) — IAA assessed CORE-018(a) as PASS because `[ -f "$PREHANDOVER_PATH" ]` returned true (file was on disk). Phase 4 merge gate parity `git ls-tree -r HEAD | grep PREHANDOVER` returned nothing. The PREHANDOVER was UNTRACKED — never committed to git.
+
+**Incident summary**: Foreman created the PREHANDOVER on disk during the governance ceremony but never ran `git add` + `git commit` + `git push` for that file. IAA read it from disk and assessed CORE-018(a) as PASS. Phase 4 git verification with `git ls-tree -r HEAD` and `git ls-files --error-unmatch` confirmed the file was NOT in any git commit. IAA revised the verdict to REJECTION-PACKAGE after Phase 4 discovery.
+
+**Why this matters**: In a real PR context (GitHub Pull Request), only committed files appear in the PR. An uncommitted untracked file on the CI runner is invisible to any reviewer. CORE-018 exists to ensure the governance record is part of the PR — not just on disk.
+
+**Permanent Rule**:
+For CORE-018(a) "PREHANDOVER proof file on branch" — verification MUST use one of:
+- `git ls-tree -r HEAD | grep <filename>` — confirms file is in HEAD commit tree
+- `git show HEAD:<path>` — reads the committed version (also confirms committed)
+- `git ls-files --error-unmatch <path>` — confirms file is tracked in git index
+
+`[ -f "$PATH" ]` disk existence check is INSUFFICIENT for CORE-018(a). A file present on disk but not in git is UNTRACKED and NOT "on the branch" for PR purposes.
+
+**How this is checked in Phase 3 / Phase 4 (CORE-018a evaluation)**:
+> A-033 Git-Committed Verification:
+> Run: `git ls-tree -r HEAD | grep PREHANDOVER-session-<wave>.md`
+> If the file appears: PASS.
+> If the file does NOT appear (or `git ls-files --error-unmatch` fails): FAIL regardless of disk presence.
+> Finding: "PREHANDOVER proof not committed to git — untracked on disk only."
+> Fix required: "git add <path> && git commit && git push"
+
+**Additional scope**: Same rule applies to ALL CORE-018 artifact checks (session memory, token file). Disk presence ≠ committed. Always verify via `git ls-tree HEAD` or `git show HEAD:<path>`.
+
+**Status**: ACTIVE — enforced from session-ci-gateway-fix-20260312 onwards
