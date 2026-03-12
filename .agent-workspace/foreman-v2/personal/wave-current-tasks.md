@@ -186,9 +186,9 @@ have been verified as already present in the codebase. The primary remaining del
 | T-W162-GAP-002 | Verify GAP-014 implementation | EvidenceCollection.tsx | QP scan | ✅ DONE |
 | T-W162-GAP-003 | Verify GAP-015 implementation | AuditContext.tsx + App.tsx | QP scan | ✅ DONE |
 | T-W162-GAP-004 | Verify GAP-024 implementation | AuditList.tsx + EvidenceCollection.tsx | QP scan | ✅ DONE |
-| T-W162-VITEST-001 | Add ui-wiring tests to vitest config | vitest.config.ts | qa-builder | 🔄 PENDING |
-| T-W162-QA-001 | Confirm wave162r tests GREEN | wave162r tests | qa-builder | 🔄 PENDING |
-| T-W162-GOV-001 | Governance ceremony | ceremony files | foreman-v2-agent | 🔄 IN PROGRESS |
+| T-W162-VITEST-001 | Add ui-wiring tests to vitest config | vitest.config.ts | qa-builder | ✅ DONE |
+| T-W162-QA-001 | Confirm wave162r tests GREEN | wave162r tests | qa-builder | ✅ DONE |
+| T-W162-GOV-001 | Governance ceremony | ceremony files | foreman-v2-agent | ✅ DONE |
 
 ---
 
@@ -203,7 +203,4 @@ tasks_total: 7
 tasks_done: 7
 last_updated: 2026-03-11
 ```
-**Status**: ASSURANCE_TOKEN_PASS — IAA-session-wave-ai-criteria-creation-fix-20260311-R2-PASS
-**Tasks done**: 3 / 3
-**Blockers**: None
 

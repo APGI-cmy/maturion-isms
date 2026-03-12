@@ -14,6 +14,7 @@ export default defineConfig({
       'tests/**/*.test.ts',
       'tests/**/*.test.tsx',
       '../tests/ui-wiring/**/*.test.ts',
+      '../tests/ui-wiring/**/*.test.tsx',
     ],
     globals: true,
     reporters: ['verbose'],
