@@ -477,6 +477,27 @@ jobs:
           echo "=== Session Memory Presence and Compliance ==="
           echo ""
 
+          # If PR is labeled 'copilot-builder-role', Copilot is acting as a
+          # governed builder (not Foreman) in this PR.
+          # session-memory-check does not apply to builder PRs — Foreman session
+          # memory is not produced by builder-wave PRs.
+          # Use exact matching to avoid substring false positives.
+          PR_LABELS="${{ join(github.event.pull_request.labels.*.name, ',') }}"
+          HAS_BUILDER_LABEL=false
+          IFS=',' read -ra LABEL_ARRAY <<< "$PR_LABELS"
+          for label in "${LABEL_ARRAY[@]}"; do
+            if [[ "$label" == "copilot-builder-role" ]]; then
+              HAS_BUILDER_LABEL=true
+              break
+            fi
+          done
+          if [[ "$HAS_BUILDER_LABEL" == "true" ]]; then
+            echo "✅ PR labeled 'copilot-builder-role'"
+            echo "   Copilot is acting as a governed builder (not Foreman)."
+            echo "   session-memory-check is not applicable to builder PRs — skipping."
+            exit 0
+          fi
+
           # Check for Foreman session memory
           SESSION_MEMORY_FOUND=false
 
