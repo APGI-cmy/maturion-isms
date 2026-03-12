@@ -335,6 +335,9 @@ importers:
         specifier: ^4.4.7
         version: 4.5.7(@types/react@18.3.28)(react@18.3.1)
     devDependencies:
+      '@testing-library/dom':
+        specifier: ^10.4.0
+        version: 10.4.1
       '@testing-library/jest-dom':
         specifier: ^6.9.1
         version: 6.9.1

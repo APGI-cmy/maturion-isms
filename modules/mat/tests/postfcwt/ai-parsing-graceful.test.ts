@@ -14,7 +14,15 @@
  * All tests are file-based (no live Supabase env required).
  * Tests T-PFCWT-004 to T-PFCWT-005 go GREEN once CriteriaUpload.tsx is updated.
  *
- * Authority: CS2 (Johan Ras / @APGI-cmy) | Date: 2026-03-06
+ * Wave 17 architecture update (2026-03-12): CriteriaUpload.tsx was refactored in Wave 17
+ *      to use a ParsingInstructionsModal flow. Parsing is now triggered from
+ *      handleParsingConfirm / handleParsingCancel (each with their own try/catch),
+ *      replacing the inline inner try/catch in the upload handler. The `parsingSucceeded`
+ *      flag and alert() call were removed — success is now indicated via setUploadSuccess()
+ *      inside the try block, and failure via setAiParsingWarning() in the catch block.
+ *      T-PFCWT-006 assertions updated to reflect this Wave 17 pattern. Intent preserved.
+ *
+ * Authority: CS2 (Johan Ras / @APGI-cmy) | Date: 2026-03-06 | Updated: 2026-03-12
  */
 import { describe, it, expect } from 'vitest';
 import * as fs from 'node:fs';
@@ -64,28 +72,25 @@ describe('Post-FCWT — AI Parsing Graceful Degradation (INC-POST-FCWT-EDGE-FN-0
     ).toMatch(/aiParsingWarning[\s\S]*?criteria-upload-ai-parsing-warning/);
   });
 
-  it('T-PFCWT-006: CriteriaUpload.tsx alert is only called when AI parsing succeeds (not when parsing fails)', () => {
+  it('T-PFCWT-006: CriteriaUpload.tsx sets upload success state only when AI parsing succeeds (not when parsing fails)', () => {
     const src = fs.readFileSync(CRITERIA_UPLOAD_PATH, 'utf-8');
 
-    // Assert: the boolean flag "parsingSucceeded" must appear in the source.
-    // The fix requires this exact identifier — set to true only when the inner try block
-    // completes without throwing, and left false when the inner catch fires.
+    // Wave 17 replaces the `parsingSucceeded` flag and `alert()` with state-based feedback.
+    // Assert: setUploadSuccess is called only inside the try block that wraps
+    // triggerParsing.mutateAsync — it must NOT be called unconditionally after parsing.
     expect(
       src,
-      'CriteriaUpload.tsx must declare a "parsingSucceeded" flag to track ' +
-      'whether AI parsing completed successfully — the alert must NOT fire when parsing failed'
-    ).toMatch(/\bparsingSucceeded\b/);
+      'CriteriaUpload.tsx must call setUploadSuccess only in the try block that wraps ' +
+      'triggerParsing.mutateAsync — success state must NOT be set when parsing fails'
+    ).toMatch(/try\s*\{[\s\S]*?triggerParsing\.mutateAsync[\s\S]*?setUploadSuccess[\s\S]*?\}\s*catch/);
 
-    // Assert: the success alert is wrapped in "if (parsingSucceeded) { ... }".
-    // The lazy [\s\S]*? matches the minimal span from the opening brace to the first
-    // occurrence of "alert(" — in correct fix code this will be inside the block.
-    // This is intentional: we are asserting that "alert(" FOLLOWS "if (parsingSucceeded) {"
-    // somewhere in the source, which is sufficient to detect the absence of the guard.
+    // Assert: setAiParsingWarning is called in the catch block (failure path),
+    // not setUploadSuccess — the two state updates must be in separate code paths.
     expect(
       src,
-      'CriteriaUpload.tsx must wrap the success alert inside "if (parsingSucceeded) { alert(...) }" — ' +
-      'the current unconditional alert fires even when AI parsing failed, which is the bug being fixed'
-    ).toMatch(/if\s*\(\s*parsingSucceeded\s*\)\s*\{[\s\S]*?alert\s*\(/);
+      'CriteriaUpload.tsx must call setAiParsingWarning in the catch block when parsing fails — ' +
+      'the failure path must set a warning, not an upload success state'
+    ).toMatch(/catch\s*\(\s*\w+\s*\)\s*\{[\s\S]*?setAiParsingWarning/);
   });
 
 });
