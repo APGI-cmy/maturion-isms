@@ -1,3 +1,28 @@
+# Wave Current Tasks — foreman-v2-agent — wave-cl2-20260313
+
+**Wave**: CL-2 — LKIAC Wave 2: Legacy Knowledge Inventory and Domain Tagging Plan (Parallel Execution Start)
+**Session**: session-wave-cl2-20260313
+**Date**: 2026-03-13
+**Branch**: copilot/cl-2-initiate-knowledge-inventory
+**Triggering Issue**: maturion-isms — "Wave CL-2: LKIAC Wave 2 — Knowledge Inventory, Tagging Plan (Parallel Execution Start)"
+**CS2 Authorization**: Issue opened by CS2 (@APGI-cmy) and assigns foreman-v2-agent; constitutes valid CS2 wave-start authorization per foreman contract §2.1
+**Agent**: foreman-v2-agent v6.2.0
+**Mode**: POLC-Orchestration
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-cl2-knowledge-inventory.md` — COMMITTED (SHA 4178ea9)
+
+---
+
+## Wave CL-2 Context
+
+**Programme**: LKIAC  
+**Type**: Audit/research — produces planning documents  
+**Priority**: HIGH — critical path dependency for CL-6 through CL-15  
+**Parallel With**: CL-4 (no interdependency — both start after CL-0 ✅)  
+**Existing Draft Deliverables** (from 2026-03-01 session-078):
+- CL-2-D1: `.agent-workspace/audit/LKIAC-W2-legacy-inventory-20260301.md` — DRAFT, awaiting CP-2
+- CL-2-D2+D3: `.agent-workspace/audit/LKIAC-W2-domain-tag-map-20260301.md` — DRAFT, awaiting CP-2
+
+**Blockers**: NONE — CL-0 cleared; CS2 wave-start issued; draft deliverables present and structurally complete.
 # Wave Current Tasks — foreman-v2-agent — wave14-execution-start-20260313
 
 **Wave**: Wave 14 — UX Workflow Gap Remediation (Execution Start, GAP-W01–GAP-W14)
@@ -156,28 +181,60 @@ iaa_token: PENDING
 
 | # | Task ID | Description | Delegated To | Status |
 |---|---------|-------------|--------------|--------|
-| 1 | T-SWEEP-001 | Read and analyse MAT implementation plan | Foreman (read-only) | COMPLETE ✅ |
-| 2 | T-SWEEP-002 | Read and analyse AIMC/LKIAC combined execution plan | Foreman (read-only) | COMPLETE ✅ |
-| 3 | T-SWEEP-003 | Survey session memory for all outstanding wave statuses | Foreman (read-only) | COMPLETE ✅ |
-| 4 | T-SWEEP-004 | Produce status sweep document | Foreman | COMPLETE ✅ |
-| 5 | T-SWEEP-005 | Update wave-current-tasks.md | Foreman | COMPLETE ✅ |
-| 6 | T-SWEEP-006 | Governance ceremony (PREHANDOVER proof + session memory) | Foreman | COMPLETE ✅ |
+| 1 | T-CL2-001 | Phase 1 preflight + IAA Pre-Brief invocation | Foreman | COMPLETE ✅ |
+| 2 | T-CL2-002 | Phase 2 alignment — CS2 auth, verb classification, arch/QA gate | Foreman | COMPLETE ✅ |
+| 3 | T-CL2-003 | Update wave-current-tasks.md for CL-2 | Foreman | COMPLETE ✅ |
+| 4 | T-CL2-004 | Update plan registry — CL-2 status to STARTED, team assignments logged, Amendment v1.5.0 | Foreman | COMPLETE ✅ |
+| 5 | T-CL2-005 | Create acceptance gate CL-2-A1 document | Foreman | COMPLETE ✅ |
+| 6 | T-CL2-006 | Governance ceremony — PREHANDOVER proof + session memory + IAA final audit + token | Foreman | COMPLETE ✅ |
+
+---
+
+## Team Assignments (Logged)
+
+| Deliverable | Responsible Agent | Status |
+|---|---|---|
+| CL-2-D1: Legacy knowledge inventory | `mat-specialist` | DRAFT exists (2026-03-01) — pending CP-2 sign-off |
+| CL-2-D2: Domain tagging mapping | `mat-specialist` | DRAFT exists (2026-03-01) — pending CP-2 sign-off |
+| CL-2-D3: Extended source taxonomy | `governance-liaison-isms-agent` | Combined into CL-2-D2 (2026-03-01) — pending CP-2 |
+| CL-2-A1 acceptance gate | Foreman | PRODUCED this session |
 
 ---
 
 ## Re-Anchor Pulse
 
 ```yaml
-status: COMPLETE
-wave: wave-status-sweep-20260312
-session: session-wave-status-sweep-20260312
-branch: copilot/commission-foreman-analogy-sweep
-iaa_prebrief_artifact: .agent-admin/assurance/iaa-prebrief-wave-status-sweep-20260312.md
-last_updated: 2026-03-12
+status: ASSURANCE_TOKEN_PASS
+wave: wave-cl2-20260313
+session: session-wave-cl2-20260313
+branch: copilot/cl-2-initiate-knowledge-inventory
+iaa_prebrief_artifact: .agent-admin/assurance/iaa-prebrief-cl2-knowledge-inventory.md
+last_updated: 2026-03-13
 tasks_done: 6
 tasks_total: 6
-iaa_token: NOT_REQUIRED (EXEMPT wave — no triggering artifacts)
+iaa_token: IAA-session-wave-cl2-20260313-PASS
+iaa_token_file: .agent-admin/assurance/iaa-token-session-wave-cl2-20260313.md
+iaa_token_sha: 6e998370
 ```
+
+---
+
+# --- PRIOR WAVE RECORD (wave-status-sweep-20260312) ARCHIVED BELOW ---
+
+# Wave Current Tasks — foreman-v2-agent — wave-status-sweep-20260312
+
+**Wave**: wave-status-sweep-20260312 — Foreman Analogy Sweep: All Outstanding Waves and Plans (MAT, AIMC, LKIAC)
+**Session**: session-wave-status-sweep-20260312
+**Date**: 2026-03-12
+**Branch**: copilot/commission-foreman-analogy-sweep
+**Triggering Issue**: maturion-isms — "Foreman Analogy Request: Sweep all outstanding waves and cross-program plans (MAT, AIMC, LKIAC)"
+**CS2 Authorization**: Issue opened by CS2 (@APGI-cmy) and assigns foreman-v2-agent; constitutes valid CS2 wave-start authorization per foreman contract §2.1
+**Agent**: foreman-v2-agent v6.2.0
+**Mode**: POLC-Orchestration/Analysis
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave-status-sweep-20260312.md` — COMMITTED (SHA a400e34)
+
+**Tasks**: T-SWEEP-001 through T-SWEEP-006 — ALL COMPLETE ✅  
+**Status**: COMPLETE (2026-03-12)
 
 ---
 
