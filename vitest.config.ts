@@ -10,5 +10,11 @@ export default defineConfig({
     ],
     globals: true,
     reporters: ['verbose'],
+    env: {
+      // Normalize VITE_LIVE_DEPLOYMENT_URL: strip trailing slash so that
+      // fetch(`${liveUrl}/`) produces a valid URL even when the secret value
+      // was stored with a trailing slash (T-W13-E2E-1/2/4/5 fix).
+      VITE_LIVE_DEPLOYMENT_URL: (process.env.VITE_LIVE_DEPLOYMENT_URL ?? '').replace(/\/$/, ''),
+    },
   },
 });
