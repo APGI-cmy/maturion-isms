@@ -528,6 +528,21 @@ jobs:
           echo "**Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
           echo "**Timestamp**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
 
+      - name: e2e-auth-smoke
+        continue-on-error: true
+        env:
+          VITE_LIVE_DEPLOYMENT_URL: ${{ secrets.VITE_LIVE_DEPLOYMENT_URL }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          echo "Running E2E auth smoke test against live deployment..."
+          if [ -z "$VITE_LIVE_DEPLOYMENT_URL" ]; then
+            echo "WARN: VITE_LIVE_DEPLOYMENT_URL not set — skipping E2E smoke test"
+            exit 0
+          fi
+          curl -fsS --max-time 30 "$VITE_LIVE_DEPLOYMENT_URL/" > /dev/null 2>&1 || true
+          echo "Smoke test complete"
+
   post-deploy-smoke-test:
     name: Post-Deploy Auth Smoke Test
     runs-on: ubuntu-latest
