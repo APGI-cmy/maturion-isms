@@ -24,25 +24,26 @@
 | 5 | T-CL4-005 | Create CL-4 plan registry with all Category A/B/C tasks | Foreman | COMPLETE ✅ |
 | 6 | T-CL4-006 | Verify prior audit artifacts (BLOCKER-CL4-001 resolution) | Foreman | COMPLETE ✅ |
 | 7 | T-CL4-007 | Surface blockers to CS2 in plan registry | Foreman | COMPLETE ✅ |
-| 8 | T-CL4-008 | Create session memory | Foreman | IN PROGRESS |
-| 9 | T-CL4-009 | Create PREHANDOVER proof | Foreman | IN PROGRESS |
-| 10 | T-CL4-010 | IAA final audit + token ceremony | IAA | PENDING |
-| 11 | T-CL4-011 | Merge gate release | Foreman | PENDING |
+| 8 | T-CL4-008 | Create session memory | Foreman | COMPLETE ✅ |
+| 9 | T-CL4-009 | Create PREHANDOVER proof | Foreman | COMPLETE ✅ |
+| 10 | T-CL4-010 | IAA final audit + token ceremony (R3) | IAA | COMPLETE ✅ |
+| 11 | T-CL4-011 | Merge gate release | Foreman | COMPLETE ✅ |
 
 ---
 
 ## Re-Anchor Pulse
 
 ```yaml
-status: IN_PROGRESS
+status: ASSURANCE_TOKEN_PASS
 wave: cl-4-aimc-audit-phase-a
 session: session-wave-cl-4-aimc-audit-phase-a-20260313
 branch: copilot/cl-4-launch-audit-verification
 iaa_prebrief_artifact: .agent-admin/assurance/iaa-prebrief-waveCL-4-launch-20260313.md
 last_updated: 2026-03-13
-tasks_done: 7
+tasks_done: 11
 tasks_total: 11
-iaa_token: PENDING
+iaa_token: IAA-session-wave-cl-4-aimc-audit-phase-a-20260313-R3-PASS
+iaa_token_file: .agent-admin/assurance/iaa-token-session-wave-cl-4-aimc-audit-phase-a-20260313-R3.md
 ```
 
 ---
