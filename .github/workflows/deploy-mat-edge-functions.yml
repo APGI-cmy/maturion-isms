@@ -30,6 +30,16 @@ jobs:
     name: Deploy Edge Functions to Supabase
     runs-on: ubuntu-latest
     steps:
+      - name: Validate MATURION_BOT_TOKEN is configured
+        env:
+          MATURION_BOT_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
+        run: |
+          if [ -z "$MATURION_BOT_TOKEN" ]; then
+            echo "Error: The MATURION_BOT_TOKEN secret is not set or is empty."
+            echo "Please configure MATURION_BOT_TOKEN in the repository or organization secrets before running this workflow."
+            exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
