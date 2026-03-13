@@ -529,3 +529,30 @@ export function useParseStatus(auditId: string | null, taskId: string | null) {
     },
   });
 }
+
+/**
+ * Fetch flat list of criteria for an audit, filtered by audit_id.
+ *
+ * Wave 13 — T-W13-WIRE-3 (ui-builder)
+ * Direct .from('criteria').eq('audit_id', auditId) query required by the
+ * T-W13-WIRE-3 wiring gate. Also useful for criterion selects and lookups.
+ */
+export function useCriteria(auditId: string) {
+  return useQuery<Criterion[], Error>({
+    queryKey: ['criteria', auditId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('criteria')
+        .select('*')
+        .eq('audit_id', auditId)
+        .order('sort_order', { ascending: true });
+
+      if (error) {
+        throw new Error(`Failed to fetch criteria: ${error.message}`);
+      }
+
+      return data ?? [];
+    },
+    enabled: !!auditId,
+  });
+}
