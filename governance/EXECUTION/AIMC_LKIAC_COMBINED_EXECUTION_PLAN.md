@@ -2,12 +2,13 @@
 
 **Document Type**: Foreman POLC Planning Output — Combined Execution Roadmap  
 **Status**: DRAFT — Awaiting CS2 Review and Wave-Start Authorisation  
-**Version**: 1.4.0  
+**Version**: 1.5.0  
 **Date**: 2026-03-01  
 **Produced By**: foreman-v2-agent v6.2.0 (session 075, Wave COMBINED-PLAN)  
 **Amendment v1.2.0**: v1.2.0 — 2026-03-01: CL-3-D2 gap resolution — added CL-3.5, extended CL-13 QA module scope (session-079).  
 **Amendment v1.3.0**: v1.3.0 — 2026-03-01: CL-13 scope extended per kick-off issue — D5/D6/D7 added for QA modules (GAP-001/002/003 resolution, session-080).  
 **Amendment v1.4.0**: v1.4.0 — 2026-03-01: Wave CL-0 and CL-1 status updated to COMPLETE; FAIL-ONLY-ONCE registry version corrected to v1.9.0; next workstream steps documented (session-082, progress tracker reconciliation).  
+**Amendment v1.5.0**: v1.5.0 — 2026-03-13: CP-1 gate closure recorded — maturion-advisor.md persona content confirmed complete at v1.0.0; CP-1 closure artifact produced at `.agent-admin/checkpoints/cp-1-closure-20260313.md`; CL-1 CP-1 status updated to PENDING CS2 SIGN-OFF (session-cp-1-persona-gate-closure-20260313).  
 **Triggering Issue**: [maturion-isms#704](https://github.com/APGI-cmy/maturion-isms/issues/704)  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
 **Location**: `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md`
@@ -149,7 +150,8 @@ The following 16 waves (CL-0 through CL-15) constitute the full combined AIMC + 
 
 ### Wave CL-1: LKIAC Wave 1 — Maturion Persona Migration
 
-**Status: COMPLETE — 2026-03-01** (CL-1-D1: 5 RED gate tests → GREEN; CL-1-D2: maturion-advisor.md created at `packages/ai-centre/src/agents/`; CL-1-D3: AIMC_PERSONA_LIFECYCLE.md §2 registry updated to v1.1.0; 226/226 tests GREEN — session-078, IAA-session-027-20260301-PASS)
+**Status: COMPLETE — 2026-03-01** (CL-1-D1: 5 RED gate tests → GREEN; CL-1-D2: maturion-advisor.md created at `packages/ai-centre/src/agents/`; CL-1-D3: AIMC_PERSONA_LIFECYCLE.md §2 registry updated to v1.1.0; 226/226 tests GREEN — session-078, IAA-session-027-20260301-PASS)  
+**CP-1 Gate**: PENDING CS2 SIGN-OFF — Foreman closure artifact produced at `.agent-admin/checkpoints/cp-1-closure-20260313.md` (2026-03-13, session-cp-1-persona-gate-closure-20260313). maturion-advisor.md confirmed present and complete at v1.0.0. Awaiting CS2 (@APGI-cmy) approval comment on CP-1 issue.
 
 **Programme**: LKIAC  
 **Source**: LKIAC-001 §5 Wave 1; §2.1; §3.2  
@@ -180,7 +182,7 @@ The following 16 waves (CL-0 through CL-15) constitute the full combined AIMC + 
 
 **RED Gate**: `qa-builder` produces CL-1-D1 (failing) BEFORE `api-builder` creates CL-1-D2.
 
-**CS2 Checkpoint (CP-1)**: CS2 reviews persona content in CL-1-D2 before activation (per LKIAC-001 §5 Wave 1 gate).
+**CS2 Checkpoint (CP-1)**: CS2 reviews persona content in CL-1-D2 before activation (per LKIAC-001 §5 Wave 1 gate). Foreman closure artifact: `.agent-admin/checkpoints/cp-1-closure-20260313.md` — PENDING CS2 SIGN-OFF.
 
 **Responsible Agents**: `qa-builder` (RED gate), `api-builder` (persona file), `governance-liaison-isms-agent` (registry)
 
