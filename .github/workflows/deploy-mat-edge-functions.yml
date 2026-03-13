@@ -18,8 +18,8 @@ on:
 #   gh run list --workflow=deploy-mat-edge-functions.yml --repo APGI-cmy/maturion-isms --limit 3
 #
 # Verify Edge Function health directly:
-#   Invoke-RestMethod -Uri "https://ujucvyyspfxlxlfdamda.supabase.co/functions/v1/invoke-ai-parse-criteria/health" `
-#     -Headers @{ Authorization = "Bearer <SUPABASE_ANON_KEY>" }
+#   Invoke-RestMethod -Uri "https://ujucvyyspfxlxlfdamda.supabase.co/functions/v1/invoke-ai-parse-criteria/health"
+#
 # ──────────────────────────────────────────────────────────────────────────────
 
 permissions:
@@ -60,12 +60,10 @@ jobs:
         id: health-check
         env:
           SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
           HEALTH_URL="https://${SUPABASE_PROJECT_REF}.supabase.co/functions/v1/invoke-ai-parse-criteria/health"
           echo "Running health check: $HEALTH_URL"
-          RESPONSE=$(curl -fsS --max-time 15 "$HEALTH_URL" \
-            -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+          RESPONSE=$(curl -fsS --max-time 15 "$HEALTH_URL")
           echo "Health check response: $RESPONSE"
           {
             echo "health_response<<EOF"
