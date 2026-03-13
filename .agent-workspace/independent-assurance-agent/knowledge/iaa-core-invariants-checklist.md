@@ -1,9 +1,9 @@
 # IAA Core Invariants Checklist
 
 **Agent**: independent-assurance-agent
-**Version**: 2.8.0
+**Version**: 2.9.0
 **Status**: ACTIVE
-**Last Updated**: 2026-03-04
+**Last Updated**: 2026-03-13
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -28,7 +28,7 @@ IAA's primary obligation (90%) is substance:
 - For BUILD PRs: does the delivered code actually work, is it safe, and will it produce a
   functional result first time?
 - For GOVERNANCE PRs: does the change align with strategy, avoid contradictions, and close
-  gaps rather than create them?
+gaps rather than create them?
 
 **Do NOT spend more than 10% of session effort on the checks in this file.**
 A session that produces 20 CORE check findings and zero substantive observations has
@@ -79,6 +79,7 @@ All checks below are applied on every qualifying PR invocation.
 | CORE-020 | Zero partial pass rule | Any core or overlay check that cannot be verified due to missing, blank, or unverifiable evidence = REJECTION-PACKAGE for that check. No assumed passes. Absence of evidence = failing check. A PR with partial evidence must not receive ASSURANCE-TOKEN under any category or class. | ALL | REJECTION-PACKAGE |
 | CORE-021 | Zero-severity-tolerance | Any finding identified during the assurance review — regardless of perceived severity, wording, or delivery size — MUST produce REJECTION-PACKAGE. Prohibited: using terms "minor", "trivial", "cosmetic", "small", "negligible", "low-impact", "soft-pass", or "acceptable" to characterise a finding as passable. The only valid exception is an explicit written CS2 waiver quoted verbatim in the output. See `IAA_ZERO_SEVERITY_TOLERANCE.md` for full operational guidance. | ALL | REJECTION-PACKAGE |
 | CORE-022 | Secret field naming compliance | Agent contract files must use `secret_env_var:` — never `secret:` — in `governance.execution_identity` blocks and any YAML block. Scan the PR diff for the pattern `secret: "` in any `.github/agents/*.md` file (excluding `_archive/`). If found: FAIL. Enforces FAIL-ONLY-ONCE A-024. Prevents CI secret scanner false positives that block all gate checks. | AGENT_CONTRACT | REJECTION-PACKAGE |
+| CORE-023 | Workflow integrity ripple check | If the PR touches any file that is referenced by, executed by, or depended upon by `.github/workflows/*.yml` files (including test runners, build scripts, Edge Function paths, schema migration steps, or any path listed in workflow `paths:` triggers), IAA must verify: (a) all affected workflow files remain syntactically valid after the delivered changes, (b) any changed file paths are reflected in workflow `paths:` filters if applicable, (c) no workflow job is silently broken by the delivered changes. **Scope trigger**: applies when the PR diff includes changes to test files, frontend source, Edge Function source, schema migrations, build configuration, or any file type that workflows invoke or reference. If the PR does NOT touch any workflow-adjacent file, IAA records `CORE-023: N/A — no workflow-adjacent changes detected` and proceeds. See **CORE-023 Detail** below. | ALL | REJECTION-PACKAGE |
 
 ---
 
@@ -180,6 +181,50 @@ This check MUST be run on every NON-first-invocation. First invocations are exem
 
 ---
 
+## CORE-023 Detail — Workflow Integrity Ripple Check (Added 2026-03-13)
+
+**Governing principle**: Workflow integrity is a handover condition. A delivery that silently breaks a CI pipeline is functionally incomplete even if all other checks pass. The IAA must not treat `.github/workflows/` as out of scope merely because the PR did not directly modify those files — indirect impact through changed paths, renamed functions, or modified test targets counts.
+
+### Scope Trigger — When CORE-023 Applies
+
+CORE-023 is **active** when the PR diff contains changes to any of the following file types or paths:
+
+| File type / path pattern | Reason workflows are affected |
+|--------------------------|-------------------------------|
+| `modules/*/tests/**` | Workflow test runner jobs reference test file paths and patterns |
+| `modules/*/frontend/src/**` | Build workflows compile frontend source; path changes break build steps |
+| `supabase/functions/**` | Workflow deploy jobs reference Edge Function paths by name |
+| `supabase/migrations/**` | Workflow schema migration jobs run migration files in order |
+| `package.json`, `vite.config.*`, `tsconfig.*` | Build/test tooling config — workflow steps invoke these directly |
+| Any file listed in a workflow `paths:` trigger filter | A change to a trigger-listed path affects which runs are triggered |
+
+CORE-023 is **N/A** when the PR diff contains only:
+- Governance/docs files (`.md` outside `supabase/`, `modules/`)
+- Session memory artifacts
+- IAA token/ceremony files
+
+### CORE-023 PASS Conditions
+
+1. For each affected workflow identified: IAA opens the workflow YAML and confirms it is syntactically valid with the delivered changes in place (no broken `run:` paths, no missing referenced files).
+2. If the PR renames or moves a file that a workflow references by path: the workflow has been updated to reflect the new path, OR the producing agent has documented in the PREHANDOVER proof that no workflow references the old path (with evidence).
+3. No workflow job is left in a state where it would silently pass while skipping the intended check (e.g., a `paths:` filter that no longer matches any delivered file, causing the job to be skipped entirely).
+
+### CORE-023 FAIL Conditions
+
+- A workflow's `run:` step references a file path that no longer exists after the PR changes → FAIL
+- A workflow's `paths:` trigger filter no longer matches any file in the PR, causing the gate job to be silently skipped → FAIL
+- The PR changes a test file pattern but the workflow `run: vitest` command uses a hardcoded path that now misses those tests → FAIL
+- The producing agent's PREHANDOVER proof claims "no workflow impact" but the IAA finds a direct path reference in a workflow YAML that matches a changed file → FAIL
+
+### CORE-023 N/A Recording
+
+When CORE-023 does not apply, IAA records exactly:
+> `CORE-023: N/A — no workflow-adjacent changes detected in PR diff.`
+
+This explicit N/A record is required. Silence is not acceptable.
+
+---
+
 ## Version History
 
 | Version | Date | Change |
@@ -187,13 +232,14 @@ This check MUST be run on every NON-first-invocation. First invocations are exem
 | 1.0.0 | 2026-02-25 | Initial STUB (placeholder from canon) |
 | 2.0.0 | 2026-02-28 | Fully populated from INDEPENDENT_ASSURANCE_AGENT_CANON.md; CORE-016 added (A-014 IAA tool call evidence); CORE-017 added (A-005/A-013 agent file immutability); STUB status removed |
 | 2.1.0 | 2026-03-01 | CORE-016: added explicit copy-paste-only requirement — verbatim full block, never paraphrase (maturion-isms#699) |
-| 2.2.0 | 2026-03-02 | CORE-016: added PENDING mid-ceremony PASS state clarification (session-083 suggestion); CORE-018 added (complete evidence artifact sweep before overlay checks); CORE-019 added (IAA token cross-verification — A-016/A-017 enforcement at core level); CORE-020 added (zero partial pass rule — any unverifiable check = REJECTION-PACKAGE); CORE-018/019 detail sections added (maturion-isms#IAA-TIER2 Wave 13+) |
+| 2.2.0 | 2026-03-02 | CORE-016: added PENDING mid-ceremony PASS state clarification (session-083 suggestion); CORE-018 added (complete evidence artifact sweep before overlay checks); CORE-019 added (IAA token cross-verification — A-016/A-017 enforcement at core level); CORE-018/019 detail sections added (maturion-isms#IAA-TIER2 Wave 13+) |
 | 2.3.0 | 2026-03-02 | CORE-007: added explicit PENDING carve-out note — do not flag `iaa_audit_token: PENDING` or `## IAA Agent Response (verbatim)` placeholder entries as placeholder violations (maturion-isms#IAA-TIER2) |
 | 2.4.0 | 2026-03-02 | CORE-021 added: Zero-Severity-Tolerance enforcement — any finding regardless of perceived severity triggers REJECTION-PACKAGE; prohibited language table enforced (maturion-isms IAA Policy issue) |
 | 2.5.0 | 2026-03-03 | CORE-022 added: Secret field naming compliance — `secret:` prohibited in agent contracts; must use `secret_env_var:`; enforces FAIL-ONLY-ONCE A-024 (maturion-isms feature issue, CI scanner failures job 65529138120) |
 | 2.6.0 | 2026-03-04 | CORE-016 PENDING carve-out updated — post-2026-03-04 PREHANDOVER proofs must use expected reference format not PENDING (A-029 supersession per §4.3b); CORE-018 note updated accordingly |
 | 2.7.0 | 2026-03-04 | **BREAKING FIX**: CORE-016, CORE-018, CORE-019 fully rewritten to match §4.3b architecture (A-029). Verbatim response requirement moved from PREHANDOVER proof to dedicated token file. First Invocation Exception added to CORE-019 to break the circular dependency loop. Architecture Alignment Note added at top of file. CORE-007 carve-out updated for expected reference format. |
 | 2.8.0 | 2026-03-04 | Orientation Mandate section added — 90/10 rule codified in checklist; ceremony checks explicitly framed as 10% layer; substantive review as 90% primary obligation (CS2 directive) |
+| 2.9.0 | 2026-03-13 | CORE-023 added: Workflow integrity ripple check — IAA must verify CI/CD workflows are not silently broken by workflow-adjacent file changes; scope trigger table, PASS/FAIL conditions, and N/A recording requirement defined (CS2 directive 2026-03-13) |
 
 ---
 
