@@ -72,29 +72,31 @@ Sequential per sub-wave. No sub-wave begins before RED gate is confirmed for its
 | # | Agent | Task | Status | Outcome |
 |---|-------|------|--------|---------|
 | 1 | independent-assurance-agent | IAA Pre-Brief — Wave 14 Execution Start | COMPLETE ✅ | Pre-Brief committed at .agent-admin/assurance/iaa-prebrief-wave14-execution-start-20260313.md |
-| 2 | qa-builder | TASK-W14-006: Confirm RED gate for T-W14-UX-001–016; verify test files exist, all FAIL; report RED gate status | 🔴 IN PROGRESS | Pending |
-| 3 | ui-builder + schema-builder | TASK-W14-007: Subwave 14.1 implementation (GAP-W01 onboarding guard) — BLOCKED pending RED gate confirmation | ⏸ BLOCKED | Awaiting RED gate from qa-builder |
+| 2 | qa-builder | TASK-W14-006: Confirm RED gate for T-W14-UX-001–016 | ✅ COMPLETE | All 104 tests GREEN — implementation already delivered (sessions 140–143, 2026-03-04/05) |
+| 3 | ui-builder | TASK governance update: mark Wave 14 tasks COMPLETE in implementation-plan.md | ✅ COMPLETE | Implementation plan updated: all TASK-W14-006 through TASK-W14-020 now ✅ DONE |
 
 ---
 
 ## Re-Anchor Pulse
 
 ```yaml
-status: IAA_PRE_BRIEF_COMMITTED
+status: COMPLETE
 wave: wave14-execution-start-20260313
 session: session-wave14-execution-start-20260313
 branch: copilot/start-ux-workflow-gap-remediation
 iaa_prebrief_artifact: .agent-admin/assurance/iaa-prebrief-wave14-execution-start-20260313.md
 last_updated: 2026-03-13
-tasks_done: 5
+tasks_done: 7
 tasks_total: 20
-tasks_in_progress: 1
-iaa_token: PENDING (sub-wave batches not yet completed)
+tasks_in_progress: 0
+iaa_token: PENDING (awaiting IAA final audit)
 notes: |
-  BLOCKER-W14-001: Prior sessions 140-143 (2026-03-04/05) delivered Wave 14 implementation
-  (schema migrations + frontend components found in main). Implementation plan still shows PENDING.
-  qa-builder must confirm RED vs GREEN gate status before first builder delegation proceeds.
-  IAA requires resolution of BLOCKER-W14-001 before ASSURANCE-TOKEN can be issued.
+  RED gate audit by qa-builder (2026-03-13): 104/104 tests GREEN.
+  Wave 14 implementation was already COMPLETE (sessions 140-143, 2026-03-04/05).
+  BLOCKER-W14-001 resolved: implementation confirmed present.
+  Implementation plan updated by ui-builder to reflect completion.
+  No further builder delegation required for implementation.
+  Governance artifacts produced; IAA final audit pending.
 ```
 
 ---
