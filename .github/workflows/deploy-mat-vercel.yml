@@ -532,13 +532,26 @@ jobs:
         continue-on-error: true
         env:
           VITE_LIVE_DEPLOYMENT_URL: ${{ steps.deploy.outputs.production-url }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: |
           echo "Running E2E auth smoke test against live deployment..."
           if [ -z "$VITE_LIVE_DEPLOYMENT_URL" ]; then
             echo "WARN: VITE_LIVE_DEPLOYMENT_URL not set — skipping E2E smoke test"
             exit 0
           fi
-          curl -fsS --max-time 30 "$VITE_LIVE_DEPLOYMENT_URL/" > /dev/null 2>&1
+          echo "Checking deployed app is reachable: $VITE_LIVE_DEPLOYMENT_URL"
+          curl -fsS --max-time 30 "$VITE_LIVE_DEPLOYMENT_URL/" > /dev/null
+          if [ -n "$VITE_SUPABASE_URL" ]; then
+            echo "Checking Supabase auth endpoint is reachable..."
+            response=$(curl -s -o /dev/null -w "%{http_code}" \
+              "${VITE_SUPABASE_URL}/auth/v1/settings" \
+              -H "apikey: ${VITE_SUPABASE_ANON_KEY}" 2>/dev/null || echo "000")
+            echo "Supabase auth endpoint returned HTTP $response"
+            [ "$response" = "200" ] || [ "$response" = "401" ] && echo "PASS: auth endpoint reachable" || echo "WARN: auth endpoint returned $response"
+          else
+            echo "SKIP: VITE_SUPABASE_URL not set — skipping auth endpoint check"
+          fi
           echo "Smoke test complete"
 
   post-deploy-smoke-test:
