@@ -11,11 +11,14 @@
  * ──────────────────────────────────────────────────────────────────────────────
  * RED GATE CONTRACT
  * ──────────────────────────────────────────────────────────────────────────────
- * ALL 24 tests in this file MUST FAIL (RED) at commit time.
- * They will turn GREEN only when the relevant builder delivers the implementation:
+ * Tests in this file start RED and turn GREEN progressively as sub-waves land:
  *
- *   T-W13-SCH-1–4  → schema-builder (Task 13.1 — migration + env var audit)
- *   T-W13-CI-1–2   → schema-builder (Task 13.1 — CI schema-existence-check job)
+ *   T-W13-CI-1–2   → GREEN after schema-builder Task 13.1 (this PR)
+ *   T-W13-SCH-1–4  → GREEN after schema-builder Task 13.1 (requires live Supabase secrets)
+ *   T-W13-AUTH-1–4 → GREEN after api-builder Task 13.2
+ *   T-W13-WIRE-1–8 → GREEN after ui-builder Task 13.3
+ *   T-W13-E2E-1–5  → GREEN after integration-builder Task 13.4
+ *   T-W13-CI-3     → GREEN after integration-builder Task 13.5
  *   T-W13-AUTH-1–4 → api-builder    (Task 13.2 — auth session wiring fix)
  *   T-W13-WIRE-1–8 → ui-builder     (Task 13.3 — frontend UI wiring fix)
  *   T-W13-E2E-1–5  → integration-builder + qa-builder (Task 13.4 — full E2E CWT)
@@ -321,9 +324,14 @@ describe('13.2 — Auth Session Wiring', () => {
   });
 
   // ── T-W13-AUTH-2 ─────────────────────────────────────────────────────────────
-  it('[T-W13-AUTH-2] Session token forwarded to audit create API', async () => {
-    // RED: fails until api-builder adds getAuthenticatedClient/getSessionToken
-    //      to lib/supabase.ts and wires it through lib/api/audits.ts.
+  it('[T-W13-AUTH-2] Authenticated session can reach audits table via Supabase (RLS gate for audit create API)', async () => {
+    // RED: fails until LIVENESS_TEST_EMAIL/PASSWORD env vars are set.
+    //
+    // This test validates that an authenticated session token grants SELECT
+    // access to public.audits (the RLS pre-condition for api-builder to wire
+    // the session token through lib/api/audits.ts in Task 13.2).
+    // It intentionally does NOT exercise the app-level createAudit() path —
+    // that is covered by T-W13-WIRE-1 once ui-builder delivers Task 13.3.
 
     const email = getEnv('LIVENESS_TEST_EMAIL');
     const password = getEnv('LIVENESS_TEST_PASSWORD');
@@ -831,9 +839,15 @@ describe('13.4 — E2E CWT (Full Audit Lifecycle vs Live Vercel URL)', () => {
   });
 
   // ── T-W13-E2E-2 ──────────────────────────────────────────────────────────────
-  it('[T-W13-E2E-2] Settings profile update succeeds via live deployment', async () => {
-    // RED: fails until VITE_LIVE_DEPLOYMENT_URL is set and profile update
-    //      is fully wired in the live deployment.
+  it('[T-W13-E2E-2] Live deployment reachable and profile row accessible for authenticated user (settings E2E probe)', async () => {
+    // RED: fails until VITE_LIVE_DEPLOYMENT_URL + LIVENESS_TEST_EMAIL are set.
+    //
+    // Probes that (a) the live deployment responds with HTTP 200 and
+    // (b) the authenticated user can SELECT their profile row via Supabase.
+    // This is a reachability/RLS pre-condition check for the settings page —
+    // it does NOT perform an actual profile update through the live app UI/API.
+    // Full settings wiring (update + persist) is covered by T-W13-WIRE-6/7
+    // once ui-builder delivers Task 13.3.
 
     const liveUrl = getEnv('VITE_LIVE_DEPLOYMENT_URL');
     const supabaseUrl = getEnv('VITE_SUPABASE_URL');

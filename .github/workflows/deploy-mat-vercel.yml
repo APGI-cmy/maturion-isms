@@ -303,7 +303,7 @@ jobs:
             fi
             echo "PASS: public.audits verified"
           else
-            echo "ERROR: SUPABASE_DB_URL not set — cannot run schema-existence-check. Configure the secret."
+            echo "ERROR: SUPABASE_DB_URL not set — cannot run schema-verification. Configure the secret."
             exit 1
           fi
 

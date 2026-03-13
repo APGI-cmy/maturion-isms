@@ -9,6 +9,7 @@
 CREATE OR REPLACE VIEW public.mps AS
   SELECT * FROM public.mini_performance_standards;
 
--- Grant access to authenticated and anonymous roles
+-- Grant SELECT to authenticated role only.
+-- anon is intentionally excluded: mini_performance_standards is RLS-protected
+-- and granting to anon could bypass org-scoped policies for unauthenticated users.
 GRANT SELECT ON public.mps TO authenticated;
-GRANT SELECT ON public.mps TO anon;

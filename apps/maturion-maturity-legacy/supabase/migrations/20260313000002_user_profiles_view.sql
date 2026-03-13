@@ -11,6 +11,7 @@
 CREATE OR REPLACE VIEW public.user_profiles AS
   SELECT * FROM public.profiles;
 
--- Grant access to authenticated and anonymous roles
+-- Grant SELECT to authenticated role only.
+-- anon is intentionally excluded: profiles contains PII (email, etc.) and
+-- granting to anon would expose all rows to unauthenticated users, bypassing RLS.
 GRANT SELECT ON public.user_profiles TO authenticated;
-GRANT SELECT ON public.user_profiles TO anon;
