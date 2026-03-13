@@ -80,7 +80,7 @@ Sequential per sub-wave. No sub-wave begins before RED gate is confirmed for its
 ## Re-Anchor Pulse
 
 ```yaml
-status: COMPLETE
+status: ASSURANCE_TOKEN_PASS
 wave: wave14-execution-start-20260313
 session: session-wave14-execution-start-20260313
 branch: copilot/start-ux-workflow-gap-remediation
@@ -89,14 +89,15 @@ last_updated: 2026-03-13
 tasks_done: 7
 tasks_total: 20
 tasks_in_progress: 0
-iaa_token: PENDING (awaiting IAA final audit)
+iaa_token: IAA-session-wave14-execution-start-20260313-R2-PASS
 notes: |
   RED gate audit by qa-builder (2026-03-13): 104/104 tests GREEN.
   Wave 14 implementation was already COMPLETE (sessions 140-143, 2026-03-04/05).
   BLOCKER-W14-001 resolved: implementation confirmed present.
   Implementation plan updated by ui-builder to reflect completion.
   No further builder delegation required for implementation.
-  Governance artifacts produced; IAA final audit pending.
+  IAA R2 ASSURANCE-TOKEN issued: IAA-session-wave14-execution-start-20260313-R2-PASS.
+  Merge gate released. Awaiting CS2 (@APGI-cmy) review and approval.
 ```
 
 ---
