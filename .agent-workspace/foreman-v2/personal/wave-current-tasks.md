@@ -1,3 +1,110 @@
+# Wave Current Tasks — foreman-v2-agent — wave14-execution-start-20260313
+
+**Wave**: Wave 14 — UX Workflow Gap Remediation (Execution Start, GAP-W01–GAP-W14)
+**Session**: session-wave14-execution-start-20260313
+**Date**: 2026-03-13
+**Branch**: copilot/start-ux-workflow-gap-remediation
+**Triggering Issue**: maturion-isms — "MAT Wave 14: UX Workflow Gap Remediation — Execution Start (GAP-W01–W14)"
+**CS2 Authorization**: Issue opened by CS2 (@APGI-cmy) and assigns foreman-v2-agent; constitutes valid CS2 wave-start authorization per foreman contract §2.1
+**Agent**: foreman-v2-agent v6.2.0
+**Mode**: POLC-Orchestration
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave14-execution-start-20260313.md` — COMMITTED (SHA 905eb10)
+**FRS Reference**: FR-089–FR-102
+**TRS Reference**: TR-089–TR-102
+**RED QA Spec**: `modules/mat/tests/wave14/wave14-ux-gap-red-suite-spec.md`
+**Source Authority**: `modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md` v1.0
+
+---
+
+## Wave 14 Task Register — Full Sub-Wave + Task Listing
+
+### Sub-Wave Priority Sequence (GAP-W01 → GAP-W14)
+
+Sequential per sub-wave. No sub-wave begins before RED gate is confirmed for its test(s).
+
+| Priority | Sub-Wave | Name | Gap Ref | Builder(s) | RED Tests |
+|----------|----------|------|---------|-----------|-----------|
+| 1 | 14.1 | Sign-Up, Onboarding, and First-Use Flow | GAP-W01 | ui-builder + schema-builder | T-W14-UX-001 |
+| 2 | 14.2 | Invite Auditor UX and Acceptance Flow | GAP-W02 | ui-builder + schema-builder + api-builder | T-W14-UX-002 |
+| 3 | 14.3 | Toggle Exclude with Cascade | GAP-W03 | schema-builder + ui-builder | T-W14-UX-003 |
+| 4 | 14.4 | Invite Evidence Submitter (Criteria-Scoped) | GAP-W04 | ui-builder + schema-builder | T-W14-UX-004 |
+| 5 | 14.5 | Evidence Card Interaction Model | GAP-W05 | ui-builder + schema-builder | T-W14-UX-005 |
+| 6 | 14.6 | Submit Button as AI Evaluation Trigger | GAP-W06 | api-builder + schema-builder + ui-builder | T-W14-UX-006 |
+| 7 | 14.7 | AI Next-Level Guidance Surface | GAP-W07 | ui-builder | T-W14-UX-007 |
+| 8 | 14.8 | AI Chat UI Context Injection from Criteria Card | GAP-W08 | ui-builder | T-W14-UX-008 |
+| 9 | 14.9 | Audit Results Table | GAP-W09 | ui-builder + api-builder | T-W14-UX-009 |
+| 10 | 14.10 | Dashboard Outstanding Work Drill-Down and Create Report Gate | GAP-W10 | ui-builder + api-builder | T-W14-UX-010 |
+| 11 | 14.11 | Create Report Button as Final AI Trigger | GAP-W11 | api-builder + schema-builder + ui-builder | T-W14-UX-011 |
+| 12 | 14.12 | Level Descriptor Cards | GAP-W12 | schema-builder + ui-builder | T-W14-UX-012 |
+| 13 | 14.13 | Scoring and Rating Method Wired Through DB | GAP-W13 | schema-builder + api-builder | T-W14-UX-013, T-W14-UX-016 |
+| 14 | 14.14 | Responsibility Cascade Rule | GAP-W14 | schema-builder + ui-builder | T-W14-UX-014 |
+| 15 | ALL | RLS Cross-Org Isolation | ALL | schema-builder | T-W14-UX-015 |
+
+### Full Task Register
+
+| # | Task ID | Description | Builder | Status |
+|---|---------|-------------|---------|--------|
+| 1 | TASK-W14-001 | FRS addendum FR-089–FR-102 | foreman | ✅ DONE |
+| 2 | TASK-W14-002 | TRS addendum TR-089–TR-102 | foreman | ✅ DONE |
+| 3 | TASK-W14-003 | RED QA suite spec (16 tests) | foreman (spec) | ✅ DONE |
+| 4 | TASK-W14-004 | Implementation plan Wave 14 gap waves | foreman | ✅ DONE |
+| 5 | TASK-W14-005 | BUILD_PROGRESS_TRACKER.md governance failure heading + 14 gap entries | foreman | ✅ DONE |
+| 6 | TASK-W14-006 | RED test files T-W14-UX-001 to T-W14-UX-016 (RED gate confirmation) | qa-builder | 🔴 IN PROGRESS |
+| 7 | TASK-W14-007 | Subwave 14.1 schema migrations + UI (onboarding guard) | schema-builder + ui-builder | 🔴 PENDING |
+| 8 | TASK-W14-008 | Subwave 14.2 schema + Edge Function + UI (invite auditor) | schema-builder + api-builder + ui-builder | 🔴 PENDING |
+| 9 | TASK-W14-009 | Subwave 14.3 schema cascade trigger + UI (toggle exclude) | schema-builder + ui-builder | 🔴 PENDING |
+| 10 | TASK-W14-010 | Subwave 14.4 schema + UI (invite evidence submitter) | schema-builder + ui-builder | 🔴 PENDING |
+| 11 | TASK-W14-011 | Subwave 14.5 UI (evidence card, MediaRecorder, tiles) | ui-builder + schema-builder | 🔴 PENDING |
+| 12 | TASK-W14-012 | Subwave 14.6 schema + API + UI (AI evaluation trigger) | schema-builder + api-builder + ui-builder | 🔴 PENDING |
+| 13 | TASK-W14-013 | Subwave 14.7 UI (next-level guidance surface) | ui-builder | 🔴 PENDING |
+| 14 | TASK-W14-014 | Subwave 14.8 UI (AI chat context injection) | ui-builder | 🔴 PENDING |
+| 15 | TASK-W14-015 | Subwave 14.9 UI + API (audit results table) | ui-builder + api-builder | 🔴 PENDING |
+| 16 | TASK-W14-016 | Subwave 14.10 UI + API (dashboard + create report gate) | ui-builder + api-builder | 🔴 PENDING |
+| 17 | TASK-W14-017 | Subwave 14.11 API + schema + UI (create report + PDF) | api-builder + schema-builder + ui-builder | 🔴 PENDING |
+| 18 | TASK-W14-018 | Subwave 14.12 schema + UI (level descriptor cards) | schema-builder + ui-builder | 🔴 PENDING |
+| 19 | TASK-W14-019 | Subwave 14.13 schema (scoring tables + seed) | schema-builder | 🔴 PENDING |
+| 20 | TASK-W14-020 | Subwave 14.14 schema + UI (responsibility cascade) | schema-builder + ui-builder | 🔴 PENDING |
+
+---
+
+## Delegations
+
+| # | Agent | Task | Status | Outcome |
+|---|-------|------|--------|---------|
+| 1 | independent-assurance-agent | IAA Pre-Brief — Wave 14 Execution Start | COMPLETE ✅ | Pre-Brief committed at .agent-admin/assurance/iaa-prebrief-wave14-execution-start-20260313.md |
+| 2 | qa-builder | TASK-W14-006: Confirm RED gate for T-W14-UX-001–016 | ✅ COMPLETE | All 104 tests GREEN — implementation already delivered (sessions 140–143, 2026-03-04/05) |
+| 3 | ui-builder | TASK governance update: mark Wave 14 tasks COMPLETE in implementation-plan.md | ✅ COMPLETE | Implementation plan updated: all TASK-W14-006 through TASK-W14-020 now ✅ DONE |
+
+---
+
+## Re-Anchor Pulse
+
+```yaml
+status: ASSURANCE_TOKEN_PASS
+wave: wave14-execution-start-20260313
+session: session-wave14-execution-start-20260313
+branch: copilot/start-ux-workflow-gap-remediation
+iaa_prebrief_artifact: .agent-admin/assurance/iaa-prebrief-wave14-execution-start-20260313.md
+last_updated: 2026-03-13
+tasks_done: 7
+tasks_total: 20
+tasks_in_progress: 0
+iaa_token: IAA-session-wave14-execution-start-20260313-R2-PASS
+notes: |
+  RED gate audit by qa-builder (2026-03-13): 104/104 tests GREEN.
+  Wave 14 implementation was already COMPLETE (sessions 140-143, 2026-03-04/05).
+  BLOCKER-W14-001 resolved: implementation confirmed present.
+  Implementation plan updated by ui-builder to reflect completion.
+  No further builder delegation required for implementation.
+  IAA R2 ASSURANCE-TOKEN issued: IAA-session-wave14-execution-start-20260313-R2-PASS.
+  Merge gate released. Awaiting CS2 (@APGI-cmy) review and approval.
+```
+
+---
+
+# --- PRIOR WAVE RECORD (wave-status-sweep-20260312) ARCHIVED BELOW ---
+
+# Wave Current Tasks — foreman-v2-agent — wave-status-sweep-20260312
 # Wave Current Tasks — foreman-v2-agent — cp-1-persona-gate-closure-20260313
 
 **Wave**: cp-1-persona-gate-closure-20260313 — CP-1 CS2 Checkpoint: maturion-advisor.md Persona Gate Closure
