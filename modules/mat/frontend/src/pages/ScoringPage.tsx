@@ -22,6 +22,9 @@ export function ScoringPage() {
   return (
     <div className="max-w-7xl mx-auto">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">AI Scoring Review</h1>
+      {auditMetrics.isLoading && (
+        <p className="text-sm text-gray-500 mb-2">Loading metrics…</p>
+      )}
 
       {/* Audit Selector */}
       {audits && audits.length > 0 && (
