@@ -412,3 +412,5 @@
 | 2026-03-12 | independent-assurance-agent | session-ci-gateway-fix-20260312 | Phase 4 CORE-018 | CRITICAL: IAA must verify PREHANDOVER via git ls-tree HEAD, not disk -f check. Disk existence ≠ committed. PREHANDOVER was on disk (untracked) but not in any git commit — caused initial PASS then REJECTION-PACKAGE on git verification | session-ci-gateway-fix-20260312.md |
 | 2026-03-12 | independent-assurance-agent | session-wave-status-sweep-prebrief-20260312 | Phase 0 | Add Phase 0 Step 0.2a: cross-reference prior pre-briefs against IAA session memory to detect potential bypass | session-wave-status-sweep-prebrief-20260312.md |
 | 2026-03-12 | independent-assurance-agent | session-wave-status-sweep-prebrief-20260312 | Phase 0 | Flag AIMC plan staleness delta in Pre-Briefs for AIMC-touching waves | session-wave-status-sweep-prebrief-20260312.md |
+
+| 2026-03-12 | independent-assurance-agent | session-wave13-prebrief-20260312 | Phase 0 | Future pre-briefs should include machine-readable YAML checklist per sub-task for direct copy into PREHANDOVER proofs to reduce format errors | session-wave13-prebrief-20260312.md |
