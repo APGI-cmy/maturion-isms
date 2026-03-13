@@ -580,12 +580,20 @@ describe('13.3 — UI Wiring', () => {
     ).toBe(true);
 
     const source = fs.readFileSync(criteriaHookPath, 'utf-8');
-    // Hook must query criteria table with an audit_id filter (live wiring)
+    // Hook must query criteria table AND filter by audit_id (live wiring)
+    // Pattern requires both: .from('criteria') AND audit_id in the same source file,
+    // preventing false positive from a criteria query that ignores the audit filter.
     expect(
       source,
       "[T-W13-WIRE-3] useCriteria.ts must query criteria table with audit_id filter — " +
-        "currently the hook may not be wired to a live auditId parameter.",
-    ).toMatch(/criteria.*audit_id|\.from\('criteria'\)/);
+        "currently the hook may not be wired to a live auditId parameter. " +
+        "Expected: .from('criteria') AND .eq('audit_id', ...) or .filter('audit_id', ...)",
+    ).toMatch(/from\(['"]criteria['"]\)/);
+    expect(
+      source,
+      "[T-W13-WIRE-3] useCriteria.ts must filter criteria by audit_id — " +
+        "add .eq('audit_id', auditId) to the criteria query",
+    ).toMatch(/audit_id/);
   });
 
   // ── T-W13-WIRE-4 ─────────────────────────────────────────────────────────────
@@ -655,9 +663,10 @@ describe('13.3 — UI Wiring', () => {
     const source = fs.readFileSync(useEvidencePath, 'utf-8');
     expect(
       source,
-      "[T-W13-WIRE-5] useEvidence.ts must contain refetch or invalidate logic — " +
-        "evidence count must update after submission.",
-    ).toMatch(/refetch|invalidate|count|evidence/i);
+      "[T-W13-WIRE-5] useEvidence.ts must contain refetch or query invalidation logic — " +
+        "evidence count must update after submission. " +
+        "Add refetch(), invalidateQueries(), or equivalent after evidence INSERT.",
+    ).toMatch(/refetch|invalidate.*[Qq]uer|[Qq]uer.*invalidate/i);
   });
 
   // ── T-W13-WIRE-6 ─────────────────────────────────────────────────────────────
@@ -695,8 +704,9 @@ describe('13.3 — UI Wiring', () => {
     expect(
       source,
       '[T-W13-WIRE-6] ScoringPage.tsx must use a live data hook (useScoring or useAuditMetrics) — ' +
-        'placeholder/empty content is not acceptable.',
-    ).toMatch(/useScoring|useAuditMetrics|scores|data-testid/i);
+        'placeholder/empty content is not acceptable. ' +
+        'Pattern: const ... = useScoring(...) or const ... = useAuditMetrics(...)',
+    ).toMatch(/use(?:Scoring|AuditMetrics)|data-testid=['"][^'"]+['"]/i);
   });
 
   // ── T-W13-WIRE-7 ─────────────────────────────────────────────────────────────
@@ -733,8 +743,9 @@ describe('13.3 — UI Wiring', () => {
     expect(
       source,
       '[T-W13-WIRE-7] ReportsPage.tsx must use a live data hook or render real report content — ' +
-        'placeholder/empty content is not acceptable.',
-    ).toMatch(/useReport|report|data-testid|Report/i);
+        'placeholder/empty content is not acceptable. ' +
+        'Pattern: const ... = useReport(...) OR data-testid attribute on report content',
+    ).toMatch(/use[A-Z][a-zA-Z]*[Rr]eport|data-testid=['"][^'"]+['"]/i);
   });
 
   // ── T-W13-WIRE-8 ─────────────────────────────────────────────────────────────
@@ -772,8 +783,9 @@ describe('13.3 — UI Wiring', () => {
     expect(
       source,
       '[T-W13-WIRE-8] DashboardPage.tsx must use a live data hook or render real dashboard content — ' +
-        'placeholder/empty/static content is not acceptable.',
-    ).toMatch(/useDashboard|useAudit|data-testid|Dashboard/i);
+        'placeholder/empty/static content is not acceptable. ' +
+        'Pattern: const ... = useDashboard(...) or const ... = useAudit(...) OR data-testid attribute',
+    ).toMatch(/use(?:Dashboard|Audit[A-Z])|data-testid=['"][^'"]+['"]/i);
   });
 });
 
