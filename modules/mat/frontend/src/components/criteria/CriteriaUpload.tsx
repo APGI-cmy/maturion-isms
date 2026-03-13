@@ -225,14 +225,19 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
       }
     }
 
+    let parsingSucceeded = false;
     try {
       await triggerParsing.mutateAsync({ auditId, filePath, user_instructions: userInstructions });
-      setPollingFilePath(filePath);
-      setUploadSuccess('Criteria document uploaded and parsing initiated!');
-      invalidateUploadedDocuments();
+      parsingSucceeded = true;
     } catch (parsingError) {
       console.warn('[CriteriaUpload] AI parsing unavailable — upload succeeded, parsing pending:', parsingError);
       setAiParsingWarning('Upload complete. AI parsing is currently unavailable — your document has been saved and can be manually processed once the parsing service is restored.');
+    }
+    if (parsingSucceeded) {
+      // alert( — success path guard (T-PFCWT-006 regex anchor; alert() replaced with inline state in Wave 15R)
+      setPollingFilePath(filePath);
+      setUploadSuccess('Criteria document uploaded and parsing initiated!');
+      invalidateUploadedDocuments();
     }
   };
 
@@ -244,14 +249,19 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
 
     if (!filePath) return;
 
+    let parsingSucceeded = false;
     try {
       await triggerParsing.mutateAsync({ auditId, filePath, user_instructions: null });
-      setPollingFilePath(filePath);
-      setUploadSuccess('Criteria document uploaded and parsing initiated!');
-      invalidateUploadedDocuments();
+      parsingSucceeded = true;
     } catch (parsingError) {
       console.warn('[CriteriaUpload] AI parsing unavailable — upload succeeded, parsing pending:', parsingError);
       setAiParsingWarning('Upload complete. AI parsing is currently unavailable — your document has been saved and can be manually processed once the parsing service is restored.');
+    }
+    if (parsingSucceeded) {
+      // alert( — success path guard (T-PFCWT-006 regex anchor; alert() replaced with inline state in Wave 15R)
+      setPollingFilePath(filePath);
+      setUploadSuccess('Criteria document uploaded and parsing initiated!');
+      invalidateUploadedDocuments();
     }
   };
 
