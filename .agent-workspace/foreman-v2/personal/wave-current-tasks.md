@@ -1,3 +1,48 @@
+# Wave Current Tasks — foreman-v2-agent — wave-status-sweep-20260312
+
+**Wave**: wave-status-sweep-20260312 — Foreman Analogy Sweep: All Outstanding Waves and Plans (MAT, AIMC, LKIAC)
+**Session**: session-wave-status-sweep-20260312
+**Date**: 2026-03-12
+**Branch**: copilot/commission-foreman-analogy-sweep
+**Triggering Issue**: maturion-isms — "Foreman Analogy Request: Sweep all outstanding waves and cross-program plans (MAT, AIMC, LKIAC)"
+**CS2 Authorization**: Issue opened by CS2 (@APGI-cmy) and assigns foreman-v2-agent; constitutes valid CS2 wave-start authorization per foreman contract §2.1
+**Agent**: foreman-v2-agent v6.2.0
+**Mode**: POLC-Orchestration/Analysis
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave-status-sweep-20260312.md` — COMMITTED (SHA a400e34)
+
+---
+
+## Tasks
+
+| # | Task ID | Description | Delegated To | Status |
+|---|---------|-------------|--------------|--------|
+| 1 | T-SWEEP-001 | Read and analyse MAT implementation plan | Foreman (read-only) | COMPLETE ✅ |
+| 2 | T-SWEEP-002 | Read and analyse AIMC/LKIAC combined execution plan | Foreman (read-only) | COMPLETE ✅ |
+| 3 | T-SWEEP-003 | Survey session memory for all outstanding wave statuses | Foreman (read-only) | COMPLETE ✅ |
+| 4 | T-SWEEP-004 | Produce status sweep document | Foreman | COMPLETE ✅ |
+| 5 | T-SWEEP-005 | Update wave-current-tasks.md | Foreman | COMPLETE ✅ |
+| 6 | T-SWEEP-006 | Governance ceremony (PREHANDOVER proof + session memory) | Foreman | COMPLETE ✅ |
+
+---
+
+## Re-Anchor Pulse
+
+```yaml
+status: COMPLETE
+wave: wave-status-sweep-20260312
+session: session-wave-status-sweep-20260312
+branch: copilot/commission-foreman-analogy-sweep
+iaa_prebrief_artifact: .agent-admin/assurance/iaa-prebrief-wave-status-sweep-20260312.md
+last_updated: 2026-03-12
+tasks_done: 6
+tasks_total: 6
+iaa_token: NOT_REQUIRED (EXEMPT wave — no triggering artifacts)
+```
+
+---
+
+# --- PRIOR WAVE RECORD (wave17-user-guided-parsing) ARCHIVED BELOW ---
+
 # Wave Current Tasks — foreman-v2-agent — wave17-user-guided-parsing
 
 **Wave**: 17 — User-Guided AI Parsing Instruction System
