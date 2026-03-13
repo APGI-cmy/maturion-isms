@@ -168,6 +168,7 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_LIVE_DEPLOYMENT_URL: ${{ secrets.VITE_LIVE_DEPLOYMENT_URL }}
         run: |
           echo "Running env-var-audit..."
           if [ -z "$VITE_SUPABASE_URL" ] || [ "$VITE_SUPABASE_URL" = "https://placeholder.supabase.co" ]; then
@@ -178,7 +179,11 @@ jobs:
             echo "FAIL: VITE_SUPABASE_ANON_KEY is not set or is a placeholder value"
             exit 1
           fi
-          echo "PASS: All required env vars validated"
+          if [ -z "$VITE_LIVE_DEPLOYMENT_URL" ] || [ "$VITE_LIVE_DEPLOYMENT_URL" = "https://placeholder.vercel.app" ]; then
+            echo "FAIL: VITE_LIVE_DEPLOYMENT_URL is not set or is a placeholder value (Wave 13 WGI-02)"
+            exit 1
+          fi
+          echo "PASS: All required env vars validated (including VITE_LIVE_DEPLOYMENT_URL)"
 
       - name: Build application
         run: npm run build
@@ -298,7 +303,8 @@ jobs:
             fi
             echo "PASS: public.audits verified"
           else
-            echo "SUPABASE_DB_URL not set — skipping live schema check (CI secret required)"
+            echo "ERROR: SUPABASE_DB_URL not set — cannot run schema-verification. Configure the secret."
+            exit 1
           fi
 
       - name: schema-verification — verify public.audit_logs exists
@@ -337,10 +343,55 @@ jobs:
             echo "SUPABASE_DB_URL not set — skipping live schema check (CI secret required)"
           fi
 
+  schema-existence-check:
+    name: Schema Existence Check
+    runs-on: ubuntu-latest
+    needs: [supabase-migrate]
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: schema-existence-check — verify core tables exist in schema cache
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          echo "Running schema-existence-check (Wave 13 WGI-01)..."
+          TABLES="audits criteria mps domains evidence"
+          FAILED=""
+          if [ -n "$SUPABASE_DB_URL" ]; then
+            for TABLE in $TABLES; do
+              result=$(psql "$SUPABASE_DB_URL" -t -A -c \
+                "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='${TABLE}';" 2>/dev/null || echo "0")
+              if [ "$result" != "1" ]; then
+                echo "FAIL: public.${TABLE} not found in schema cache"
+                FAILED="${FAILED} public.${TABLE}"
+              else
+                echo "PASS: public.${TABLE} verified"
+              fi
+            done
+            # Explicit check for public.mps (Wave 13 migration: 20260313000001_mps_view.sql)
+            mps_result=$(psql "$SUPABASE_DB_URL" -t -A -c \
+              "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='mps';" 2>/dev/null || echo "0")
+            if [ "$mps_result" != "1" ]; then
+              echo "FAIL: public.mps view not found — ensure 20260313000001_mps_view.sql migration was applied"
+              FAILED="${FAILED} public.mps(view)"
+            fi
+            if [ -n "$FAILED" ]; then
+              echo "::error::schema-existence-check FAILED — missing tables:${FAILED}"
+              exit 1
+            fi
+            echo "PASS: All required schema objects verified"
+          else
+            echo "ERROR: SUPABASE_DB_URL not set — cannot run schema-existence-check."
+            exit 1
+          fi
+
   deploy-preview:
     name: Deploy Preview
     runs-on: ubuntu-latest
-    needs: [build, supabase-migrate]
+    needs: [build, supabase-migrate, schema-existence-check]
     if: github.event_name == 'pull_request'
     environment:
       name: preview
@@ -410,7 +461,7 @@ jobs:
   deploy-production:
     name: Deploy Production
     runs-on: ubuntu-latest
-    needs: [build, supabase-migrate]
+    needs: [build, supabase-migrate, schema-existence-check]
     if: >
       (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
       (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
