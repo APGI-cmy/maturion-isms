@@ -1,14 +1,15 @@
-# Wave Current Tasks — foreman-v2-agent — wave-status-sweep-20260312
+# Wave Current Tasks — foreman-v2-agent — wave-cl-4-aimc-audit-phase-a
 
-**Wave**: wave-status-sweep-20260312 — Foreman Analogy Sweep: All Outstanding Waves and Plans (MAT, AIMC, LKIAC)
-**Session**: session-wave-status-sweep-20260312
-**Date**: 2026-03-12
-**Branch**: copilot/commission-foreman-analogy-sweep
-**Triggering Issue**: maturion-isms — "Foreman Analogy Request: Sweep all outstanding waves and cross-program plans (MAT, AIMC, LKIAC)"
+**Wave**: CL-4 — AIMC Audit Phase A: Foundation Verification (Parallel Execution Start)
+**Session**: session-wave-cl-4-aimc-audit-phase-a-20260313
+**Date**: 2026-03-13
+**Branch**: copilot/cl-4-launch-audit-verification
+**Triggering Issue**: Wave CL-4: AIMC Audit Phase A — Foundation Verification (Parallel Execution Start)
 **CS2 Authorization**: Issue opened by CS2 (@APGI-cmy) and assigns foreman-v2-agent; constitutes valid CS2 wave-start authorization per foreman contract §2.1
 **Agent**: foreman-v2-agent v6.2.0
-**Mode**: POLC-Orchestration/Analysis
-**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave-status-sweep-20260312.md` — COMMITTED (SHA a400e34)
+**Mode**: POLC-Orchestration
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-waveCL-4-launch-20260313.md` — COMMITTED (SHA fbcef8b)
+**Plan Registry**: `.agent-admin/waves/cl-4-aimc-audit-phase-a-plan-registry.md`
 
 ---
 
@@ -16,27 +17,32 @@
 
 | # | Task ID | Description | Delegated To | Status |
 |---|---------|-------------|--------------|--------|
-| 1 | T-SWEEP-001 | Read and analyse MAT implementation plan | Foreman (read-only) | COMPLETE ✅ |
-| 2 | T-SWEEP-002 | Read and analyse AIMC/LKIAC combined execution plan | Foreman (read-only) | COMPLETE ✅ |
-| 3 | T-SWEEP-003 | Survey session memory for all outstanding wave statuses | Foreman (read-only) | COMPLETE ✅ |
-| 4 | T-SWEEP-004 | Produce status sweep document | Foreman | COMPLETE ✅ |
-| 5 | T-SWEEP-005 | Update wave-current-tasks.md | Foreman | COMPLETE ✅ |
-| 6 | T-SWEEP-006 | Governance ceremony (PREHANDOVER proof + session memory) | Foreman | COMPLETE ✅ |
+| 1 | T-CL4-001 | Phase 1 — Identity & Preflight complete | Foreman | COMPLETE ✅ |
+| 2 | T-CL4-002 | IAA Pre-Brief invoked and committed | IAA | COMPLETE ✅ |
+| 3 | T-CL4-003 | Phase 2 — Alignment (CS2 auth, verb classification, architecture frozen) | Foreman | COMPLETE ✅ |
+| 4 | T-CL4-004 | Update wave-current-tasks.md for CL-4 | Foreman | COMPLETE ✅ |
+| 5 | T-CL4-005 | Create CL-4 plan registry with all Category A/B/C tasks | Foreman | COMPLETE ✅ |
+| 6 | T-CL4-006 | Verify prior audit artifacts (BLOCKER-CL4-001 resolution) | Foreman | COMPLETE ✅ |
+| 7 | T-CL4-007 | Surface blockers to CS2 in plan registry | Foreman | COMPLETE ✅ |
+| 8 | T-CL4-008 | Create session memory | Foreman | IN PROGRESS |
+| 9 | T-CL4-009 | Create PREHANDOVER proof | Foreman | IN PROGRESS |
+| 10 | T-CL4-010 | IAA final audit + token ceremony | IAA | PENDING |
+| 11 | T-CL4-011 | Merge gate release | Foreman | PENDING |
 
 ---
 
 ## Re-Anchor Pulse
 
 ```yaml
-status: COMPLETE
-wave: wave-status-sweep-20260312
-session: session-wave-status-sweep-20260312
-branch: copilot/commission-foreman-analogy-sweep
-iaa_prebrief_artifact: .agent-admin/assurance/iaa-prebrief-wave-status-sweep-20260312.md
-last_updated: 2026-03-12
-tasks_done: 6
-tasks_total: 6
-iaa_token: NOT_REQUIRED (EXEMPT wave — no triggering artifacts)
+status: IN_PROGRESS
+wave: cl-4-aimc-audit-phase-a
+session: session-wave-cl-4-aimc-audit-phase-a-20260313
+branch: copilot/cl-4-launch-audit-verification
+iaa_prebrief_artifact: .agent-admin/assurance/iaa-prebrief-waveCL-4-launch-20260313.md
+last_updated: 2026-03-13
+tasks_done: 7
+tasks_total: 11
+iaa_token: PENDING
 ```
 
 ---
