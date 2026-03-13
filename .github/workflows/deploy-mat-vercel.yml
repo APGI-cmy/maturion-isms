@@ -384,7 +384,8 @@ jobs:
             fi
             echo "PASS: All required schema objects verified"
           else
-            echo "SUPABASE_DB_URL not set — skipping live schema check (CI secret required)"
+            echo "ERROR: SUPABASE_DB_URL not set — cannot run schema-existence-check."
+            exit 1
           fi
 
   deploy-preview:
