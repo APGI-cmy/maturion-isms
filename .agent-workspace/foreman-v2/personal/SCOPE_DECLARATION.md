@@ -23,3 +23,15 @@ All files in this PR are governance/orchestration artifacts only (wave-current-t
 plan registry, session memory, PREHANDOVER proof, IAA pre-brief, scope declaration).
 No implementation artifacts (no code, schemas, migrations, CI workflows).
 IAA Pre-Brief declared EXEMPT category for this launch wave.
+
+## A-031 Carve-Out
+
+IAA ceremony artifacts from R1 rejection ceremony
+(session-wave-cl-4-aimc-audit-phase-a-20260313) committed on this branch are
+excluded from the files table above per A-031 carve-out. These are IAA-owned files;
+all Foreman deliverables are fully declared above.
+
+Excluded files:
+- `.agent-admin/assurance/iaa-token-session-wave-cl-4-aimc-audit-phase-a-20260313.md` (IAA R1 rejection token)
+- `.agent-workspace/independent-assurance-agent/memory/session-wave-cl-4-aimc-audit-phase-a-20260313.md` (IAA R1 session memory)
+- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` (IAA R1 parking station update)
