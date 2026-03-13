@@ -16,12 +16,15 @@ export function ScoringPage() {
 
   // Get the first audit if none selected
   const auditId = selectedAuditId || audits?.[0]?.id || '';
-  const _auditMetrics = useAuditMetrics(); // intentionally prefetches metrics; unused local suppressed per varsIgnorePattern (T-W13-WIRE-6)
+  const auditMetrics = useAuditMetrics(); // T-W13-WIRE-6: live data hook requirement
   const selectedAudit = audits?.find(a => a.id === auditId);
 
   return (
     <div className="max-w-7xl mx-auto">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">AI Scoring Review</h1>
+      {auditMetrics.isLoading && (
+        <p className="text-sm text-gray-500 mb-2">Loading metrics…</p>
+      )}
 
       {/* Audit Selector */}
       {audits && audits.length > 0 && (
