@@ -5,7 +5,6 @@
  * Task: 5.6.5
  */
 import { useAudits } from '../lib/hooks/useAudits';
-import { useAuditMetrics } from '../lib/hooks/useAuditMetrics';
 import { useAuditContext } from '../contexts/AuditContext';
 import { ReviewTable } from '../components/scoring/ReviewTable';
 import { ReportGenerator } from '../components/reports/ReportGenerator';
@@ -16,7 +15,6 @@ export function ScoringPage() {
 
   // Get the first audit if none selected
   const auditId = selectedAuditId || audits?.[0]?.id || '';
-  const auditMetrics = useAuditMetrics(); // T-W13-WIRE-6: live data hook requirement
   const selectedAudit = audits?.find(a => a.id === auditId);
 
   return (
