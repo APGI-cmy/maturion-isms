@@ -150,10 +150,10 @@ gh workflow run deploy-mat-edge-functions.yml --repo APGI-cmy/maturion-isms
 # Check status
 gh run list --workflow=deploy-mat-edge-functions.yml --repo APGI-cmy/maturion-isms --limit 3
 
-# Verify health directly (replace <SUPABASE_ANON_KEY> with the actual key)
-Invoke-RestMethod -Uri "https://ujucvyyspfxlxlfdamda.supabase.co/functions/v1/invoke-ai-parse-criteria/health" `
-  -Headers @{ Authorization = "Bearer <SUPABASE_ANON_KEY>" }
+# Verify health directly (unauthenticated health check)
+Invoke-RestMethod -Uri "https://ujucvyyspfxlxlfdamda.supabase.co/functions/v1/invoke-ai-parse-criteria/health"
 ```
+
 
 **Required GitHub Secrets** (configured in repo settings):
 
@@ -161,7 +161,6 @@ Invoke-RestMethod -Uri "https://ujucvyyspfxlxlfdamda.supabase.co/functions/v1/in
 |--------|-------------|
 | `SUPABASE_ACCESS_TOKEN` | Supabase CLI authentication token |
 | `SUPABASE_PROJECT_REF` | Project ref (`ujucvyyspfxlxlfdamda`) |
-| `SUPABASE_ANON_KEY` | Anon key for health-check verification |
 | `MATURION_BOT_TOKEN` | Repo checkout token (per token governance policy) |
 
 ---
