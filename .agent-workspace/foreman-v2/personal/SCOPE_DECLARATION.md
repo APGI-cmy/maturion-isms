@@ -1,52 +1,31 @@
-# SCOPE DECLARATION — wave17-user-guided-parsing
+# SCOPE DECLARATION — Wave 13 Execution Start
 
-**Wave**: 17 — User-Guided AI Parsing Instruction System
-**Branch**: copilot/implement-user-guided-ai-parsing
-**Date**: 2026-03-11
+**Wave**: 13 — Live Deployment Wiring Regression Fix & Continuous Improvement (Execution Start)
+**Branch**: copilot/mat-wave-13-live-deployment-fix
+**Date**: 2026-03-13
 **Fresh overwrite**: YES (per A-029)
 
 ## Files Modified (git diff origin/main...HEAD --name-only)
 
 | File | Type | Justification |
 |------|------|---------------|
-| `apps/maturion-maturity-legacy/supabase/migrations/20260311000002_wave17_parsing_instructions.sql` | Schema migration | Batch A — adds parsing_instructions column + parsing_instruction_templates table + RLS + seed |
-| `apps/mat-ai-gateway/services/parsing.py` | AI Gateway | Batch B — ParseRequest.user_instructions, _SYSTEM_PROMPT rewrite, _call_gpt4_turbo update |
-| `supabase/functions/invoke-ai-parse-criteria/index.ts` | Edge Function | Batch C — user_instructions forwarding + DB storage; also TODO→tracked comment fix |
-| `modules/mat/frontend/src/components/criteria/ParsingInstructionsModal.tsx` | UI component (new) | Batch D — new modal component |
-| `modules/mat/frontend/src/components/criteria/CriteriaUpload.tsx` | UI component | Batch D — modal integration + pending parse state |
-| `modules/mat/frontend/src/lib/hooks/useCriteria.ts` | Frontend hook | Batch D — useTriggerAIParsing user_instructions |
-| `modules/mat/tests/wave17/wave17-parsing-instructions.test.ts` | QA tests (new) | Batch E — T-W17-QA-001 through T-W17-QA-012 |
-| `.agent-admin/assurance/iaa-prebrief-wave17-user-guided-parsing.md` | IAA governance artifact | PRE-BRIEF — written by IAA agent |
-| `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave17-orchestration-20260311.md` | Foreman memory | PHASE 4 — PREHANDOVER proof artifact |
-| `.agent-workspace/foreman-v2/memory/session-wave17-orchestration-20260311.md` | Foreman memory | PHASE 4 — session memory artifact |
-| `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` | Foreman parking station | GOVERNANCE — improvement suggestion appended |
-| `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Governance personal | GOVERNANCE — wave task register updated to Wave 17 |
-| `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md` | Governance personal | GOVERNANCE — this file (scope declaration for A-026/A-028) |
-
-## Out of Scope
-
-- No `.github/agents/` files (A-013 — N/A)
-- No `.github/workflows/` files (no CI changes)
-- No changes to core migration files from prior waves
-
-
-## Files Modified (git diff origin/main...HEAD --name-only)
-
-| File | Type | Justification |
-|------|------|---------------|
-| `apps/maturion-maturity-legacy/supabase/migrations/20260311000001_criteria_add_title_column.sql` | Schema migration | PRIMARY FIX — adds `title TEXT` to criteria table; drops NOT NULL on description |
-| `modules/mat/tests/wave17/wave17-criteria-title-fix.test.ts` | QA tests | RED→GREEN gate — T-W17-CP-001 through T-W17-CP-005 |
-| `.agent-admin/assurance/iaa-prebrief-wave-ai-criteria-creation-fix.md` | IAA governance artifact | PRE-BRIEF — written by IAA agent |
-| `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` | Governance knowledge | GOVERNANCE — INC-CRITERIA-DISPLAY-PREBRIEF-IMPL-001 REMEDIATED; version bumped to 3.9.0 |
-| `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave-ai-criteria-creation-fix-20260311.md` | Foreman memory | PHASE 4 — PREHANDOVER proof artifact |
-| `.agent-workspace/foreman-v2/memory/session-wave-ai-criteria-creation-fix-20260311.md` | Foreman memory | PHASE 4 — session memory artifact |
-| `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` | Foreman parking station | GOVERNANCE — improvement suggestion S-WAVE-AI-CRITERIA-001 appended |
-| `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Governance personal | GOVERNANCE — wave task register (current wave) |
-| `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md` | Governance personal | GOVERNANCE — this file (scope declaration for A-026/A-028) |
-
-## Out of Scope
-
-- No `.github/agents/` files (A-013 — N/A)
-- No `.github/workflows/` files (no CI changes)
-- No frontend product code (modules/mat/frontend/)
-- No Edge Function code changes (code already correct, schema was missing)
+| `.agent-admin/assurance/iaa-prebrief-wave13-live-deployment-fix.md` | IAA governance | Pre-Brief artifact — required per A-031 |
+| `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Governance | Wave 13 task register — BLOCKER-1 resolution |
+| `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md` | Governance | This file — A-026 compliance |
+| `modules/mat/tests/wave13/wave13-gate.test.ts` | Test | 24 RED gate tests (all Wave 13 IDs) |
+| `modules/mat/tests/wave13/auth-app-wiring.test.tsx` | Test | Auth app wiring tests |
+| `modules/mat/tests/wave13/auth-session-wiring.test.ts` | Test | Auth session wiring tests |
+| `modules/mat/tests/wave13/ci-gates.test.ts` | Test | CI gate tests |
+| `modules/mat/tests/wave13/e2e-live-deployment.test.ts` | Test | E2E live deployment tests |
+| `modules/mat/tests/wave13/frontend-page-wiring.test.tsx` | Test | Frontend page wiring tests |
+| `modules/mat/tests/wave13/schema-existence.test.ts` | Test | Schema existence tests |
+| `.github/workflows/deploy-mat-vercel.yml` | CI | schema-existence-check job + env-var-audit fix + F-03 exit 1 |
+| `apps/maturion-maturity-legacy/supabase/migrations/20260313000001_mps_view.sql` | Schema | public.mps view migration |
+| `apps/maturion-maturity-legacy/supabase/migrations/20260313000002_user_profiles_view.sql` | Schema | public.user_profiles view migration |
+| `.agent-admin/prehandover/proof-wave13-task13.1-20260313.md` | Governance | schema-builder PREHANDOVER proof |
+| `modules/mat/05-build-evidence/PBFAG-mat-20260313.md` | Governance | PBFAG Wave 13 baseline — BLOCKER-2 resolution |
+| `.agent-workspace/schema-builder/memory/session-wave13-task13.1-20260313.md` | Governance | schema-builder session memory |
+| `.agent-workspace/qa-builder/memory/session-wave13-red-gate-20260313.md` | Governance | qa-builder session memory |
+| `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave13-execution-start-20260313.md` | Governance | Foreman PREHANDOVER proof |
+| `.agent-workspace/foreman-v2/memory/session-wave13-execution-start-20260313.md` | Governance | Foreman session memory |
+| `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` | Governance | Parking station entry |

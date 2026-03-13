@@ -303,7 +303,8 @@ jobs:
             fi
             echo "PASS: public.audits verified"
           else
-            echo "SUPABASE_DB_URL not set — skipping live schema check (CI secret required)"
+            echo "ERROR: SUPABASE_DB_URL not set — cannot run schema-existence-check. Configure the secret."
+            exit 1
           fi
 
       - name: schema-verification — verify public.audit_logs exists
