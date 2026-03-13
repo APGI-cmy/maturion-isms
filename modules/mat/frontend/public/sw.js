@@ -18,6 +18,18 @@ self.addEventListener('install', (event) => {
 
 // Fetch from cache when offline
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+
+  // Pass through cross-origin requests (Supabase, etc.) without interception
+  if (url.origin !== self.location.origin) {
+    return; // Let the browser handle cross-origin requests natively
+  }
+
+  // Only cache GET requests for same-origin resources
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((response) => {
       // Return cached version or fetch from network
