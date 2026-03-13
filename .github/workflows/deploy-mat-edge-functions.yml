@@ -67,7 +67,11 @@ jobs:
           RESPONSE=$(curl -fsS --max-time 15 "$HEALTH_URL" \
             -H "Authorization: Bearer $SUPABASE_ANON_KEY")
           echo "Health check response: $RESPONSE"
-          echo "health_response=$RESPONSE" >> "$GITHUB_OUTPUT"
+          {
+            echo "health_response<<EOF"
+            echo "$RESPONSE"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Write step summary
         if: always()
