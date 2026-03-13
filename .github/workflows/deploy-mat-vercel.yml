@@ -531,9 +531,7 @@ jobs:
       - name: e2e-auth-smoke
         continue-on-error: true
         env:
-          VITE_LIVE_DEPLOYMENT_URL: ${{ secrets.VITE_LIVE_DEPLOYMENT_URL }}
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_LIVE_DEPLOYMENT_URL: ${{ steps.deploy.outputs.production-url }}
         run: |
           echo "Running E2E auth smoke test against live deployment..."
           if [ -z "$VITE_LIVE_DEPLOYMENT_URL" ]; then
