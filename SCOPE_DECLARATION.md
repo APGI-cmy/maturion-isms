@@ -1,21 +1,20 @@
-# SCOPE_DECLARATION — wave-status-sweep-20260312
+# SCOPE_DECLARATION — cp-1-persona-gate-closure-20260313
 
-**Wave**: wave-status-sweep-20260312
-**Session**: session-wave-status-sweep-20260312
-**Date**: 2026-03-12
-**Branch**: copilot/commission-foreman-analogy-sweep
+**Wave**: cp-1-persona-gate-closure-20260313
+**Session**: session-cp-1-persona-gate-closure-20260313
+**Date**: 2026-03-13
+**Branch**: copilot/cp-1-update-maturion-advisor-sign-off
 
 ## Files in Scope (this wave only)
 
-- `.agent-admin/assurance/iaa-prebrief-wave-status-sweep-20260312.md`
-- `.agent-admin/status-sweep/status-sweep-wave-status-sweep-20260312.md`
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
-- `.agent-workspace/foreman-v2/memory/session-wave-status-sweep-20260312.md`
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave-status-sweep-20260312.md`
-- `.agent-workspace/independent-assurance-agent/memory/session-wave-status-sweep-prebrief-20260312.md`
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md`
-- `SCOPE_DECLARATION.md`
+- `.agent-admin/assurance/iaa-prebrief-cp-1-persona-gate-closure-20260313.md`
+- `.agent-admin/checkpoints/cp-1-closure-20260313.md`
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cp-1-persona-gate-closure-20260313.md`
+- `.agent-workspace/foreman-v2/memory/session-cp-1-persona-gate-closure-20260313.md`
 - `.agent-workspace/foreman-v2/parking-station/suggestions-log.md`
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
+- `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md`
+- `SCOPE_DECLARATION.md`
 
 ## Files Out of Scope
 

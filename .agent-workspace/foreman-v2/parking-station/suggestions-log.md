@@ -41,3 +41,5 @@
 | 2026-03-12 | foreman-v2-agent | session-ci-gateway-fix-20260312 | [GOVERNANCE-CORRECTION] | INC-CI-GATEWAY-FIX-001: A-031/A-033 violated (no Pre-Brief before CI workflow and lockfile changes; no IAA token before handover); learning loop activated; FAIL-ONLY-ONCE v3.8.0; A-034 candidate CI-FIX-NO-EXEMPTION added | session-ci-gateway-fix-20260312.md |
 
 | 2026-03-12 | foreman-v2-agent | session-wave-status-sweep-20260312 | [SESSION-END] | S-SWEEP-001: MAT implementation-plan.md and AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md are stale (last updated 2026-03-09 and 2026-03-01 respectively). A plan-update wave should be scheduled to record all Wave 16 sub-wave completions and Wave 17 completion. Requires AAWP_MAT IAA category (plan modification trigger). | status-sweep-wave-status-sweep-20260312.md |
+
+| 2026-03-13 | foreman-v2-agent | session-cp-1-persona-gate-closure-20260313 | TEMPLATE-GAP | CP checkpoint closure templates absent from Tier 2 knowledge — consistent field coverage not enforced | cp-1-closure-20260313.md |
