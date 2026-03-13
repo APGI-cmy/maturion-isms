@@ -2,12 +2,13 @@
 
 **Document Type**: Foreman POLC Planning Output — Combined Execution Roadmap  
 **Status**: DRAFT — Awaiting CS2 Review and Wave-Start Authorisation  
-**Version**: 1.4.0  
-**Date**: 2026-03-01  
+**Version**: 1.5.0  
+**Date**: 2026-03-13  
 **Produced By**: foreman-v2-agent v6.2.0 (session 075, Wave COMBINED-PLAN)  
 **Amendment v1.2.0**: v1.2.0 — 2026-03-01: CL-3-D2 gap resolution — added CL-3.5, extended CL-13 QA module scope (session-079).  
 **Amendment v1.3.0**: v1.3.0 — 2026-03-01: CL-13 scope extended per kick-off issue — D5/D6/D7 added for QA modules (GAP-001/002/003 resolution, session-080).  
 **Amendment v1.4.0**: v1.4.0 — 2026-03-01: Wave CL-0 and CL-1 status updated to COMPLETE; FAIL-ONLY-ONCE registry version corrected to v1.9.0; next workstream steps documented (session-082, progress tracker reconciliation).  
+**Amendment v1.5.0**: v1.5.0 — 2026-03-13: Wave CL-2 status updated to STARTED; team assignments logged (mat-specialist: CL-2-D1+D2, governance-liaison-isms-agent: CL-2-D3); existing draft deliverables (2026-03-01) referenced; acceptance gate CL-2-A1 produced; parallel execution with CL-4 confirmed; Section 14 workstream status updated (session-wave-cl2-20260313, IAA Pre-Brief SHA 4178ea9).  
 **Triggering Issue**: [maturion-isms#704](https://github.com/APGI-cmy/maturion-isms/issues/704)  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
 **Location**: `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md`
@@ -218,6 +219,8 @@ The following 16 waves (CL-0 through CL-15) constitute the full combined AIMC + 
 **CS2 Checkpoint (CP-2)**: CS2 reviews and signs off the domain tagging mapping (CL-2-D2) before migration (CL-5) may begin (per LKIAC-001 §5 Wave 2 gate).
 
 **Responsible Agents**: `mat-specialist` (inventory + mapping), `governance-liaison-isms-agent` (taxonomy)
+
+**Status: STARTED — 2026-03-13** (session-wave-cl2-20260313; issue: maturion-isms — "Wave CL-2: LKIAC Wave 2 — Knowledge Inventory, Tagging Plan (Parallel Execution Start)"; CS2 authorization: issue opened by CS2 (@APGI-cmy); existing draft deliverables CL-2-D1 and CL-2-D2+D3 produced 2026-03-01 reviewed and referenced; running in parallel with CL-4; acceptance gate CL-2-A1 committed at `.agent-admin/assurance/cl2-a1-acceptance-gate-20260313.md`; IAA Pre-Brief SHA 4178ea9)
 
 ---
 
@@ -1013,16 +1016,16 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 
 ---
 
-## 14. Current Workstream Status (as of 2026-03-01)
+## 14. Current Workstream Status (as of 2026-03-13)
 
 | Artefact | Current State | Next Step(s) | Responsible Agent | Blockers |
 |---|---|---|---|---|
 | CL-0: Governance Foundation | ✅ COMPLETE (2026-03-01) | None — gate closed | governance-liaison-isms-agent | None |
 | CL-1: Maturion Persona Migration | ✅ COMPLETE (2026-03-01) | CP-1 CS2 review pending | qa-builder / api-builder / governance-liaison-isms-agent | Awaiting CP-1 CS2 sign-off |
-| CL-2: Legacy Knowledge Inventory | ⏳ PENDING | mat-specialist to execute legacy Supabase audit | mat-specialist | CL-0 cleared; awaiting wave-start issue from CS2 |
+| CL-2: Legacy Knowledge Inventory | ⏳ IN PROGRESS — STARTED 2026-03-13 | Draft deliverables (CL-2-D1, CL-2-D2+D3) present from 2026-03-01; awaiting CP-2 CS2 sign-off | mat-specialist (D1+D2), governance-liaison-isms-agent (D3) | None — CL-0 cleared; CS2 wave-start issued; drafts structurally complete |
 | CL-3: Deprecation Register Activation | ⏳ PENDING | governance-liaison-isms-agent to produce LKIAC_DEPRECATION_REGISTER.md | governance-liaison-isms-agent | CL-0 cleared; awaiting wave-start issue from CS2 |
 | CL-3.5: AI Data Sources Registry | ⏳ PENDING (PROPOSED — CP-3.5 awaiting CS2 approval) | qa-builder RED gate → schema-builder migration → api-builder Edge Functions | qa-builder / schema-builder / api-builder / ui-builder | CP-3.5 CS2 schema approval required before build begins |
-| CL-4: AIMC Audit Phase A | ⏳ PENDING | qa-builder to execute T-A-001–T-C-010 audit suite | qa-builder / integration-builder / schema-builder | CL-0 cleared; awaiting wave-start issue from CS2 |
+| CL-4: AIMC Audit Phase A | ⏳ PENDING | qa-builder to execute T-A-001–T-C-010 audit suite | qa-builder / integration-builder / schema-builder | CL-0 cleared; awaiting wave-start issue from CS2; running in parallel with CL-2 |
 | CL-5: Knowledge Upload Centre Spec | ⏳ IN PROGRESS — v1.1.0 CP-5 decisions incorporated | CP-5 COMPLETE; awaiting CL-5-D2 upload arch review | api-builder (CL-5-D2) | CL-5-D2 (upload arch review) still outstanding |
 | CL-6 through CL-15 | ⏳ PENDING | Per dependency chain §5 | Per §4 wave definitions | All blocked on CL-2–CL-5 completion |
 | MAT Module | ✅ COMPLETE — Wave 12 COMPLETE (554/554 GREEN) | Awaiting AIMC CL waves for Waves 7–9 integration | foreman-v2-agent (oversight) | MAT Waves 7–9 blocked on AIMC CL-12 |
@@ -1030,6 +1033,7 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 ---
 
 *Produced by foreman-v2-agent v6.2.0, session 075, under CS2 authority (Johan Ras / @APGI-cmy).*  
+*Updated by foreman-v2-agent v6.2.0, session-wave-cl2-20260313 (Amendment v1.5.0): CL-2 status updated to STARTED.*  
 *This document is a POLC Planning Output. It does NOT constitute a wave closure or merge gate release.*  
 *Wave execution may NOT begin for any wave until CS2 has reviewed this plan and issued formal wave-start authorisation for the specific wave(s).*  
-*Authority: LIVING_AGENT_SYSTEM.md v6.2.0 | LKIAC-001 v1.0.0 | 2026-03-01*
+*Authority: LIVING_AGENT_SYSTEM.md v6.2.0 | LKIAC-001 v1.0.0 | 2026-03-13*
