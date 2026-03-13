@@ -3,7 +3,7 @@
  * FRS: FR-025 to FR-026 (Settings)
  * Task: 5.6.6
  */
-import { useState } from 'react';
+import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useUserProfile, useUpdateUserProfile, useOrganisationSettings, useUpdateOrganisationSettings, useUploadOrganisationLogo } from '../lib/hooks/useSettings';
 import { User, Building2, Save, Loader2 } from 'lucide-react';
@@ -363,5 +363,3 @@ export function SettingsPage() {
   );
 }
 
-// Import React for useEffect
-import * as React from 'react';

@@ -1,0 +1,111 @@
+name: Deploy MAT Edge Functions
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'supabase/functions/**'
+      - '.github/workflows/deploy-mat-edge-functions.yml'
+  workflow_dispatch:
+
+# ── CS2 Manual Deployment (PowerShell) ──────────────────────────────────────
+# Trigger this workflow manually from PowerShell:
+#
+#   gh workflow run deploy-mat-edge-functions.yml --repo APGI-cmy/maturion-isms
+#
+# Check status:
+#   gh run list --workflow=deploy-mat-edge-functions.yml --repo APGI-cmy/maturion-isms --limit 3
+#
+# Verify Edge Function health directly:
+#   Invoke-RestMethod -Uri "https://ujucvyyspfxlxlfdamda.supabase.co/functions/v1/invoke-ai-parse-criteria/health"
+#
+# ──────────────────────────────────────────────────────────────────────────────
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-edge-functions:
+    name: Deploy Edge Functions to Supabase
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate MATURION_BOT_TOKEN is configured
+        env:
+          MATURION_BOT_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
+        run: |
+          if [ -z "$MATURION_BOT_TOKEN" ]; then
+            echo "Error: The MATURION_BOT_TOKEN secret is not set or is empty."
+            echo "Please configure MATURION_BOT_TOKEN in the repository or organization secrets before running this workflow."
+            exit 1
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.MATURION_BOT_TOKEN }}
+
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: 1.153.5
+
+      - name: Link Supabase project
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          supabase link --project-ref "$SUPABASE_PROJECT_REF"
+
+      - name: Deploy invoke-ai-parse-criteria
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          echo "Deploying invoke-ai-parse-criteria to project $SUPABASE_PROJECT_REF ..."
+          supabase functions deploy invoke-ai-parse-criteria --project-ref "$SUPABASE_PROJECT_REF"
+          echo "Deploy complete."
+
+      - name: Verify Edge Function health
+        id: health-check
+        env:
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          HEALTH_URL="https://${SUPABASE_PROJECT_REF}.supabase.co/functions/v1/invoke-ai-parse-criteria/health"
+          echo "Running health check: $HEALTH_URL"
+          RESPONSE=$(curl -fsS --max-time 15 "$HEALTH_URL")
+          echo "Health check response: $RESPONSE"
+          {
+            echo "health_response<<EOF"
+            echo "$RESPONSE"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Write step summary
+        if: always()
+        env:
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          echo "## Edge Function Deploy Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Field | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Function | \`invoke-ai-parse-criteria\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Project ref | \`${SUPABASE_PROJECT_REF}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Triggered by | \`${{ github.event_name }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Commit | \`${{ github.sha }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "${{ steps.health-check.outputs.health_response }}" ]; then
+            echo "### Health Check Result" >> "$GITHUB_STEP_SUMMARY"
+            echo '```json' >> "$GITHUB_STEP_SUMMARY"
+            echo "${{ steps.health-check.outputs.health_response }}" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "### Health Check Result" >> "$GITHUB_STEP_SUMMARY"
+            echo "> Health check did not return a response (deploy may have failed)." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Manual trigger (PowerShell)**:" >> "$GITHUB_STEP_SUMMARY"
+          echo '```powershell' >> "$GITHUB_STEP_SUMMARY"
+          echo "gh workflow run deploy-mat-edge-functions.yml --repo APGI-cmy/maturion-isms" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
