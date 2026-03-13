@@ -35,7 +35,7 @@
 | 3 | T-CL2-003 | Update wave-current-tasks.md for CL-2 | Foreman | COMPLETE ✅ |
 | 4 | T-CL2-004 | Update plan registry — CL-2 status to STARTED, team assignments logged, Amendment v1.5.0 | Foreman | COMPLETE ✅ |
 | 5 | T-CL2-005 | Create acceptance gate CL-2-A1 document | Foreman | COMPLETE ✅ |
-| 6 | T-CL2-006 | Governance ceremony — PREHANDOVER proof + session memory + IAA final audit + token | Foreman | IN PROGRESS ⏳ |
+| 6 | T-CL2-006 | Governance ceremony — PREHANDOVER proof + session memory + IAA final audit + token | Foreman | COMPLETE ✅ |
 
 ---
 
@@ -53,15 +53,17 @@
 ## Re-Anchor Pulse
 
 ```yaml
-status: IN_PROGRESS
+status: ASSURANCE_TOKEN_PASS
 wave: wave-cl2-20260313
 session: session-wave-cl2-20260313
 branch: copilot/cl-2-initiate-knowledge-inventory
 iaa_prebrief_artifact: .agent-admin/assurance/iaa-prebrief-cl2-knowledge-inventory.md
 last_updated: 2026-03-13
-tasks_done: 5
+tasks_done: 6
 tasks_total: 6
-iaa_token: PENDING (Phase 4 Step 4.3a — IAA final audit not yet invoked)
+iaa_token: IAA-session-wave-cl2-20260313-PASS
+iaa_token_file: .agent-admin/assurance/iaa-token-session-wave-cl2-20260313.md
+iaa_token_sha: 6e998370
 ```
 
 ---
