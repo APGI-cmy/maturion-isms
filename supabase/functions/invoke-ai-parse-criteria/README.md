@@ -137,6 +137,34 @@ If you see `NO (MISSING)`, re-run step 2.
 
 ---
 
+## CI/CD Auto-Deploy
+
+The Edge Function is automatically deployed via `.github/workflows/deploy-mat-edge-functions.yml` when:
+- Any file under `supabase/functions/` is merged to `main`
+
+**Manual deploy (CS2 PowerShell)**:
+```powershell
+# Trigger via GitHub CLI
+gh workflow run deploy-mat-edge-functions.yml --repo APGI-cmy/maturion-isms
+
+# Check status
+gh run list --workflow=deploy-mat-edge-functions.yml --repo APGI-cmy/maturion-isms --limit 3
+
+# Verify health directly (unauthenticated health check)
+Invoke-RestMethod -Uri "https://ujucvyyspfxlxlfdamda.supabase.co/functions/v1/invoke-ai-parse-criteria/health"
+```
+
+
+**Required GitHub Secrets** (configured in repo settings):
+
+| Secret | Description |
+|--------|-------------|
+| `SUPABASE_ACCESS_TOKEN` | Supabase CLI authentication token |
+| `SUPABASE_PROJECT_REF` | Project ref (`ujucvyyspfxlxlfdamda`) |
+| `MATURION_BOT_TOKEN` | Repo checkout token (per token governance policy) |
+
+---
+
 ## Security Notes
 
 - **SSRF mitigation**: The AI Gateway URL is read exclusively from the `AI_GATEWAY_URL` environment variable; it is never supplied by the request body. URL format is validated (must start with `http://` or `https://`).
