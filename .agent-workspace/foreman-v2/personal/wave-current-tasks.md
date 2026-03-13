@@ -105,15 +105,49 @@ notes: |
 # --- PRIOR WAVE RECORD (wave-status-sweep-20260312) ARCHIVED BELOW ---
 
 # Wave Current Tasks — foreman-v2-agent — wave-status-sweep-20260312
+# Wave Current Tasks — foreman-v2-agent — cp-1-persona-gate-closure-20260313
 
-**Wave**: wave-status-sweep-20260312 — Foreman Analogy Sweep: All Outstanding Waves and Plans (MAT, AIMC, LKIAC)
-**Session**: session-wave-status-sweep-20260312
-**Date**: 2026-03-12
-**Branch**: copilot/commission-foreman-analogy-sweep
-**Triggering Issue**: maturion-isms — "Foreman Analogy Request: Sweep all outstanding waves and cross-program plans (MAT, AIMC, LKIAC)"
+**Wave**: cp-1-persona-gate-closure-20260313 — CP-1 CS2 Checkpoint: maturion-advisor.md Persona Gate Closure
+**Session**: session-cp-1-persona-gate-closure-20260313
+**Date**: 2026-03-13
+**Branch**: copilot/cp-1-update-maturion-advisor-sign-off
+**Triggering Issue**: maturion-isms — "CP-1: CS2 Sign-Off — maturion-advisor.md Persona Gate Closure"
 **CS2 Authorization**: Issue opened by CS2 (@APGI-cmy) and assigns foreman-v2-agent; constitutes valid CS2 wave-start authorization per foreman contract §2.1
 **Agent**: foreman-v2-agent v6.2.0
-**Mode**: POLC-Orchestration/Analysis
+**Mode**: POLC-Orchestration
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-cp-1-persona-gate-closure-20260313.md` — COMMITTED (SHA 27b5517)
+
+---
+
+## Tasks
+
+| # | Task ID | Description | Delegated To | Status |
+|---|---------|-------------|--------------|--------|
+| 1 | T-CP1-001 | Read and confirm `maturion-advisor.md` completeness at v1.0.0 | Foreman (read-only) | COMPLETE ✅ |
+| 2 | T-CP1-002 | Create `.agent-admin/checkpoints/cp-1-closure-20260313.md` | Foreman | COMPLETE ✅ |
+| 3 | T-CP1-003 | Update `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md` CL-1 CP-1 status | Foreman | COMPLETE ✅ |
+| 4 | T-CP1-004 | Update `wave-current-tasks.md` | Foreman | COMPLETE ✅ |
+| 5 | T-CP1-005 | Governance ceremony: PREHANDOVER proof + session memory + IAA final audit | Foreman | IN PROGRESS |
+
+---
+
+## Re-Anchor Pulse
+
+```yaml
+status: IAA_PRE_BRIEF_PENDING
+wave: cp-1-persona-gate-closure-20260313
+session: session-cp-1-persona-gate-closure-20260313
+branch: copilot/cp-1-update-maturion-advisor-sign-off
+iaa_prebrief_artifact: .agent-admin/assurance/iaa-prebrief-cp-1-persona-gate-closure-20260313.md
+last_updated: 2026-03-13
+tasks_done: 4
+tasks_total: 5
+iaa_token: PENDING
+```
+
+---
+
+# --- PRIOR WAVE RECORD (wave-status-sweep-20260312) ARCHIVED BELOW ---
 **IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave-status-sweep-20260312.md` — COMMITTED (SHA a400e34)
 
 ---
