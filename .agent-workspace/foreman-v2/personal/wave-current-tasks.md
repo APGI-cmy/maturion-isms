@@ -21,21 +21,22 @@
 | 3 | T-SWEEP-003 | Survey session memory for all outstanding wave statuses | Foreman (read-only) | COMPLETE ✅ |
 | 4 | T-SWEEP-004 | Produce status sweep document | Foreman | COMPLETE ✅ |
 | 5 | T-SWEEP-005 | Update wave-current-tasks.md | Foreman | COMPLETE ✅ |
-| 6 | T-SWEEP-006 | Governance ceremony (PREHANDOVER proof + session memory) | Foreman | PENDING |
+| 6 | T-SWEEP-006 | Governance ceremony (PREHANDOVER proof + session memory) | Foreman | COMPLETE ✅ |
 
 ---
 
 ## Re-Anchor Pulse
 
 ```yaml
-status: GOVERNANCE_CEREMONY
+status: COMPLETE
 wave: wave-status-sweep-20260312
 session: session-wave-status-sweep-20260312
 branch: copilot/commission-foreman-analogy-sweep
 iaa_prebrief_artifact: .agent-admin/assurance/iaa-prebrief-wave-status-sweep-20260312.md
-last_updated: 2026-03-12
-tasks_done: 5
+last_updated: 2026-03-13
+tasks_done: 6
 tasks_total: 6
+iaa_token: NOT_REQUIRED (EXEMPT wave — no triggering artifacts)
 ```
 
 ---
