@@ -540,7 +540,7 @@ jobs:
             echo "WARN: VITE_LIVE_DEPLOYMENT_URL not set — skipping E2E smoke test"
             exit 0
           fi
-          curl -fsS --max-time 30 "$VITE_LIVE_DEPLOYMENT_URL/" > /dev/null 2>&1 || true
+          curl -fsS --max-time 30 "$VITE_LIVE_DEPLOYMENT_URL/" > /dev/null 2>&1
           echo "Smoke test complete"
 
   post-deploy-smoke-test:
