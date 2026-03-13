@@ -61,6 +61,7 @@ As of 2026-03-12 (post-Wave 17 merge):
 | wave-wf-contract-audit-20260310 | Agent-Contract-Audit Workflow Trigger | PR merged 2026-03-10, IAA PASS | ✅ COMPLETE |
 | wave-fix-vercel-supabase-migration | Vercel Supabase Migration Fix | PR merged 2026-03-11, IAA PASS | ✅ COMPLETE |
 | wave-16.2-gap-remediation | Wave 16.2 CriteriaModal Backend + UX gaps | PR merged 2026-03-11, IAA PASS | ✅ COMPLETE |
+| **16.8** | **Documentation Gaps** | wave16-full-batch-20260310; mat-specialist delivered GAP-018: deployment runbook | ✅ COMPLETE |
 | 17 | User-Guided AI Parsing Instruction System (MAT-DES-PARSE-001) | PR #1081 merged 2026-03-11 | ✅ COMPLETE |
 | ci-gateway-fix | Deploy Preview & authority-check CI gateway fix | PR merged 2026-03-12 | ✅ COMPLETE |
 
@@ -85,15 +86,6 @@ The following waves are actionable immediately once CS2 issues wave-start author
 | **Blocker** | CS2 wave-start issue not yet opened |
 
 > ⚠️ **NEXT ACTION (CS2)**: Open a Wave 13 wave-start issue assigned to foreman-v2-agent to begin orchestration.
-
----
-
-#### Wave 16.8 — Documentation Gaps
-
-| Field | Value |
-|-------|-------|
-| **Status** | ✅ COMPLETE (wave16-full-batch-20260310; mat-specialist delivered deployment runbook per doc waiver in IAA pre-brief) |
-| **Notes** | mat-specialist delivered GAP-018: mat-ai-gateway deployment runbook |
 
 ---
 
@@ -154,7 +146,7 @@ The following MAT waves cannot start until the corresponding AIMC waves are deli
 | Wave 8 — AIMC Analysis Integration | 🚫 BLOCKED | AIMC Wave 4 (Analysis Gateway) = CL-12b |
 | Wave 9 — AIMC Embeddings/RAG Integration | 🚫 BLOCKED | AIMC Wave 5 (Embeddings/RAG Gateway) = CL-12c |
 
-> **Cross-programme critical path**: MAT Waves 7, 8, 9, 16.3, 16.4, 16.5 are ALL blocked until AIMC CL-12 delivers the corresponding module integrations. CL-12 itself cannot start until CL-9 and CL-11 complete. CL-9 requires CL-1 ✅ + CL-7 + CL-8. CL-8 requires CL-6. CL-6 requires CL-2 ✅ + CL-4. **The current bottleneck is that CL-2 through CL-5 have not yet received CS2 wave-start issues.**
+> **Cross-programme critical path**: MAT Waves 7, 8, 9, 16.3, 16.4, 16.5 are ALL blocked until AIMC CL-12 delivers the corresponding module integrations. CL-12 itself cannot start until CL-9 and CL-11 complete. CL-9 requires CL-1 ✅ + CL-7 + CL-8. CL-8 requires CL-6. CL-6 requires CL-2 ⏳ + CL-4. **The current bottleneck is that CL-2 through CL-5 have not yet received CS2 wave-start issues.**
 
 ---
 
@@ -245,7 +237,7 @@ All of these waves are awaiting completion of the parallel entry-gate waves (CL-
 
 | Wave | Entry Gate | Name | Current Blocker |
 |------|-----------|------|-----------------|
-| CL-6 | CL-2 ✅ & CL-4 ⏳ | LKIAC W3: Knowledge Re-ingestion | CL-4 not started |
+| CL-6 | CL-2 ⏳ & CL-4 ⏳ | LKIAC W3: Knowledge Re-ingestion | CL-2 not started, CL-4 not started |
 | CL-7 | CL-4 ⏳ | PersonaLoader Improvements | CL-4 not started |
 | CL-8 | CL-6 ⏳ & CL-7 ⏳ | LKIAC W4: Domain Specialist Routing | CL-6, CL-7 not started |
 | CL-9 | CL-1 ✅ & CL-7 ⏳ & CL-8 ⏳ | AIMC Audit Phase B: Persona Domain Review | CL-7, CL-8 not started |
@@ -382,7 +374,7 @@ The single highest-leverage action CS2 can take is to open wave-start issues for
 |----------|-------|
 | MAT waves COMPLETE | 22 (Waves 0–12 + remediation + Wave 15R + bugfix waves + Wave 16.1/16.2/16.6/16.7/16.8 + Wave 17 + CI fix) |
 | MAT waves OPEN (unblocked, awaiting CS2) | 2 (Wave 13, Wave 14) |
-| MAT waves BLOCKED on AIMC | 5 (Waves 7, 8, 9, 16.3, 16.4, 16.5 — 16.5 unblocks 16.3 and 16.4) |
+| MAT waves BLOCKED on AIMC | 6 (Waves 7, 8, 9, 16.3, 16.4, 16.5) |
 | MAT waves PARKED | 1 (Wave 16.9) |
 | AIMC/LKIAC waves COMPLETE | 2 (CL-0, CL-1) |
 | AIMC/LKIAC waves IN PROGRESS | 1 (CL-5 — partially) |
