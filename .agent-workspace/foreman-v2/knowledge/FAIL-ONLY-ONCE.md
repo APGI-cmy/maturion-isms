@@ -738,6 +738,40 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 
 ---
 
+### INC-W18-CRITERIA-PIPELINE-001 — Wave 18 Production: Eight Critical Gaps in MAT Criteria Parsing Pipeline
+**Date**: 2026-03-15
+**Severity**: CRITICAL
+**Status**: OPEN — Wave 18 remediation in progress (maturion-isms#1114); governance overlays complete; builder delegation pending IAA Pre-Brief confirmation
+**Source**: CS2 issue maturion-isms#1114; live production testing by @APGI-cmy on 2026-03-15
+
+**What happened**: End-to-end testing of the MAT Criteria Upload → Parse → Review pipeline against the LDCS compliance document confirmed eight critical gaps that render the pipeline entirely non-functional:
+1. **Upload blocked** — `Failed to upload file: Failed to fetch` — RLS/bucket/profile config prevents all uploads (Frontend → Storage) — CRITICAL
+2. **guidance column corrupted** — Edge Function writes `source_anchor` (page reference) into the `guidance` column instead of actual guidance text — CRITICAL
+3. **intent_statement missing** — `criteria` table has no `intent_statement` column; intent statements are never extracted or stored — CRITICAL
+4. **AI prompt incomplete** — AI system prompt does not extract `intent_statement` or `guidance` as distinct fields — CRITICAL
+5. **Maturity descriptors not extracted** — AI system prompt does not extract 5-level maturity descriptors per criterion at parse time — HIGH
+6. **Descriptor tables empty** — `criteria_level_descriptors`, `mps_level_descriptors`, `domain_level_descriptors` tables exist but Edge Function never writes to them — HIGH
+7. **No Criteria Review screen** — Post-parse the user cannot see, edit, or approve extracted structure before it is locked — HIGH
+8. **source_anchor lost** — `source_anchor` (traceability reference) is not stored separately — lost when repurposed as `guidance` — MEDIUM
+
+**Root cause (5-Why)**:
+1. **Why is upload blocked?** RLS policy on the storage bucket or documents table is too restrictive — the authenticated user lacks the INSERT/UPLOAD permission required. Profile existence may be a prerequisite not met.
+2. **Why is the guidance column corrupted?** The Edge Function write-back logic was not aligned with the AI gateway's response schema — `source_anchor` was mapped to `guidance` without a schema contract test.
+3. **Why is intent_statement missing?** The `criteria` table migration did not include `intent_statement` as a column; the AI prompt and Edge Function write-back were written against an incomplete schema.
+4. **Why are maturity descriptors not extracted?** The AI system prompt was scoped to the minimum viable extraction (criteria text + MPS mapping) without specifying the full 5-level descriptor structure required by the LDCS format.
+5. **Why was this not caught at QA gate?** Wave 15 and wave-ldcs-parse-bugfix tests exercised partial pipeline paths (Edge Function invocation, column normalisation) but did not assert end-to-end content correctness — no test validated actual extracted field values against document content, and no test existed for the descriptor tables.
+
+**Corrective action (maturion-isms#1114 / session-wave18-orchestration-20260315)**:
+1. This incident registered in FAIL-ONLY-ONCE v3.9.0 as governance overlay (Phase 1 of Wave 18). ✅
+2. IAA Pre-Brief committed at `.agent-admin/assurance/iaa-prebrief-wave18-criteria-parsing-repair.md` (SHA 70fcab7). ✅
+3. wave-current-tasks.md created with all 8 gap remediations tracked (T-W18-004 through T-W18-009). ✅
+4. Improvement suggestion S-034 added: END-TO-END-CONTENT-ASSERTION-MANDATORY. See Section 3.
+5. Builder delegation (qa-builder, schema-builder, api-builder, ui-builder) to follow after governance overlays complete.
+
+**Open improvement**: S-034 — END-TO-END-CONTENT-ASSERTION-MANDATORY. QA tests for Edge Function write-back and AI parsing MUST assert actual extracted content values (not just schema existence or function invocation success). A test that asserts a field exists in the schema but does not assert the field has the correct value from the document is insufficient. Triggered by: INC-W18-CRITERIA-PIPELINE-001. *(See Section 3, item S-034.)*
+
+---
+
 | ID | Description | Origin | Status |
 |----|-------------|--------|--------|
 | S-001 | Extend `align-governance.sh` with a pre-flight diff check that warns (BLOCKER) when local version has MORE sections than canonical — prevents silent learning loss | GV-001-20260221 | OPEN |
@@ -774,15 +808,17 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 
 | S-033 | OVL-CI-005-INHERENT-LIMITATION-EXCEPTION: IAA overlay OVL-CI-005 requires CI evidence (run URL or log snippet) for CI workflow changes. For self-referential workflow changes (workflows whose trigger path does not overlap with the PR's changed file paths), a full CI run cannot be produced before merge. IAA FFA category overlay documentation must explicitly document this inherent-limitation exception: "For CI_WORKFLOW changes where the workflow trigger path is orthogonal to this PR's changed files, OVL-CI-005 is satisfied by: (1) YAML syntax validation, (2) pattern parity evidence with an approved equivalent workflow, and (3) retention of workflow_dispatch for manual validation." Raised by: IAA during wave-wf-contract-audit-20260310 final audit. | IAA wave-wf-contract-audit-20260310 (2026-03-10) | REMEDIATED — 2026-03-10: iaa-category-overlays.md v3.3.0 updated with OVL-CI-005 Inherent Limitation Exception section and detailed guidance for retroactive incident acceptance. PR #1053. |
 
+| S-034 | END-TO-END-CONTENT-ASSERTION-MANDATORY: QA tests for Edge Function write-back and AI parsing pipelines MUST assert actual extracted content values from a real (or representative) document — not only schema column existence or Edge Function invocation success. A test that asserts a column exists in the migration but does not assert the column receives the correct field value from the AI response is insufficient. For every new or modified AI extraction field (e.g., `intent_statement`, `guidance`, maturity descriptors), qa-builder MUST add a test that: (1) posts a known document excerpt to the AI gateway, (2) asserts the response contains the expected field with non-null content, and (3) asserts the Edge Function writes that field correctly into the `criteria` table. This rule is the QA-gate complement to S-028 (schema column compliance) applied at the content extraction layer. Triggered by: INC-W18-CRITERIA-PIPELINE-001 (2026-03-15). | INC-W18-CRITERIA-PIPELINE-001 (2026-03-15) | OPEN |
+
 ---
 
 When completing PREFLIGHT §1.3, record the following block in the **session memory preamble**:
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 3.8.0
+fail_only_once_version: 3.9.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024, S-025, S-026, S-027, S-028, S-032, S-033]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024, S-025, S-026, S-027, S-028, S-032, S-033, S-034]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
@@ -792,7 +828,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 ---
 
 *Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523, maturion-isms#855, maturion-isms#856, maturion-isms#1013, maturion-isms#999, maturion-isms#1003 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-03-12 | Version: 3.8.0 | Status: ACTIVE*
+*Last Updated: 2026-03-15 | Version: 3.9.0 | Status: ACTIVE*
 
 ---
 
@@ -800,6 +836,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.9.0 | 2026-03-15 | INC-W18-CRITERIA-PIPELINE-001 registered (8 critical production gaps in MAT Criteria Parsing Pipeline confirmed by CS2 live testing — maturion-isms#1114; Wave 18 remediation in progress); S-034 END-TO-END-CONTENT-ASSERTION-MANDATORY added; attestation block updated to v3.9.0 |
 | 3.8.0 | 2026-03-12 | INC-CI-GATEWAY-FIX-001 registered (Foreman IAA Pre-Brief skipped and IAA token not obtained before handover: CI gateway fix session on PR copilot/fix-ci-gateway-failure; ninth occurrence of A-031 + A-014 violation class; CS2 re-alignment issued 2026-03-12; retroactive IAA Pre-Brief and token obtained; learning loop activated); A-034 candidate CI-FIX-NO-EXEMPTION documented |
 | 3.7.0 | 2026-03-10 | S-032 REMEDIATED (agent-contract-audit.yml token pattern fixed to search both iaa-token-session-*.md and assurance-token-*.md); S-033 REMEDIATED (iaa-category-overlays.md v3.3.0 OVL-CI-005 Inherent Limitation Exception documented); S-007 REMEDIATED (polc-boundary-gate.yml refactored to 3 separate named jobs: foreman-implementation-check, builder-involvement-check, session-memory-check); S-023 REMEDIATED (builder-involvement-check now enforces iaa-prebrief-*.md existence as hard gate); PR #1053 |
 | 3.6.0 | 2026-03-10 | INC-LDCS-PREBRIEF-IMPL-001 registered (Foreman direct implementation without Pre-Brief AND IAA final token not obtained before handover: LDCS parsing bugfix written to parsing.py and index.ts before wave-current-tasks.md or IAA Pre-Brief existed; sixth occurrence of A-001 violation class; CS2 re-alignment issued on PR copilot/fix-ldcs-parsing-issues); version bumped to 3.6.0 |
