@@ -10,6 +10,7 @@
 - `.agent-workspace/independent-assurance-agent/memory/session-prebrief-wave18-criteria-parsing-20260315.md` - IAA Pre-Brief session memory
 - `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station
 - `.agent-workspace/qa-builder/memory/session-001-20260315.md` - qa-builder session memory
+- `SCOPE_DECLARATION.md` - Wave 18 scope declaration (this file)
 - `apps/mat-ai-gateway/services/parsing.py` - T-W18-007: Extended system prompt with intent_statement, guidance, maturity_descriptors; renamed stale comment to GPT-4.1; added TypedDicts
 - `apps/maturion-maturity-legacy/supabase/migrations/20260315000001_wave18_criteria_intent_source_anchor.sql` - T-W18-005: ADD COLUMN intent_statement TEXT, source_anchor TEXT to criteria table
 - `apps/maturion-maturity-legacy/supabase/migrations/20260315000002_wave18_upload_rls_fix.sql` - T-W18-006: Fix upload RLS — replace broken audit_documents_org_insert policy; add criteria_documents_insert guard

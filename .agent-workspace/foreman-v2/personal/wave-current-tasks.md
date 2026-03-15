@@ -51,16 +51,16 @@ Eight confirmed critical gaps in the MAT Criteria Upload → Parse → Review pi
 ## Re-Anchor Pulse
 
 ```yaml
-status: IAA_PRE_BRIEF_PENDING
+status: ASSURANCE_TOKEN_PASS
 wave: wave18-criteria-parsing-repair
 session: session-wave18-orchestration-20260315
 branch: copilot/repair-mat-criteria-parsing-pipeline
 iaa_prebrief_artifact: .agent-admin/assurance/iaa-prebrief-wave18-criteria-parsing-repair.md
 last_updated: 2026-03-15
-tasks_done: 2
+tasks_done: 12
 tasks_total: 12
-iaa_token: PENDING
-iaa_token_file: PENDING
+iaa_token: IAA-wave18-criteria-parsing-repair-20260315-PASS
+iaa_token_file: .agent-admin/assurance/iaa-token-session-wave18-criteria-parsing-repair-20260315.md
 ```
 
 ---
