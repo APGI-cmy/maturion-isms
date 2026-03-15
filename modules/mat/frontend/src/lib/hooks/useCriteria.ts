@@ -18,10 +18,18 @@ export interface Criterion {
   id: string;
   audit_id: string;
   mps_id: string;
+  domain_id?: string;
+  organisation_id?: string;
   number: string;
   title: string;
   name?: string;
   description?: string;
+  /** Wave 18: intent statement extracted by AI parser (T-W18-009). */
+  intent_statement?: string;
+  /** Wave 18: guidance text extracted by AI parser (T-W18-009). */
+  guidance?: string;
+  /** Wave 18: source anchor / traceability reference extracted by AI parser (T-W18-009). */
+  source_anchor?: string;
   status: string;
   sort_order: number;
   created_at: string;
