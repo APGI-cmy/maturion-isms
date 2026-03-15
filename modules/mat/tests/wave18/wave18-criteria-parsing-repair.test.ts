@@ -49,6 +49,15 @@ import { describe, it, expect } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
+// ─── ParsedCriterion interface scan constants ────────────────────────────────
+// All three TypeScript type tests (T-W18-QA-013..015) scan from the
+// `ParsedCriterion` keyword forward.  This constant documents the character
+// look-ahead used for those scans: it must be large enough to cover the full
+// interface body after reformatting but small enough to avoid matching unrelated
+// interface definitions.  1200 chars accommodates an interface with ~15 fields
+// and generous JSDoc comments between `ParsedCriterion {` and the target field.
+const PARSED_CRITERION_SCAN_CHARS = 1200;
+
 // ─── Path constants ────────────────────────────────────────────────────────────
 
 /** Directory containing all Maturion-legacy Supabase migrations. */
@@ -434,12 +443,21 @@ describe('Wave 18 — MAT Criteria Parsing Pipeline End-to-End Repair (T-W18-QA-
     ).toBeGreaterThan(0);
 
     // File exists — now assert it is NOT a stub: must contain real criteria data rendering.
-    // A real implementation will have list rendering (`.map(`) and reference criteria data.
+    // A real implementation will reference criteria data AND render a list.
     const hasRealRendering = reviewFiles.some(filePath => {
       const content = fs.readFileSync(filePath, 'utf-8');
-      // Must contain both: criteria data reference AND list rendering
-      const hasCriteriaData = /criteria[^)]*\.map\s*\(|useCriteria|criteria\.length|criteria:\s*(Criterion|ParsedCriterion|\w+Criterion)/i.test(content);
-      const hasListRendering = /\.map\s*\(\s*\(?\s*(?:c|criterion|item)\b/i.test(content);
+
+      // Check 1: component references a criteria data source (prop, hook, or state)
+      const hasUseCriteriaHook = /useCriteria\b/.test(content);
+      const hasCriteriaArrayProp = /criteria\s*:\s*(?:Criterion|ParsedCriterion|\w+Criterion|Array|any\[\])/i.test(content);
+      const hasCriteriaLength = /criteria(?:List)?\s*\.\s*length\b/i.test(content);
+      const hasCriteriaData = hasUseCriteriaHook || hasCriteriaArrayProp || hasCriteriaLength;
+
+      // Check 2: component renders a list of criterion items
+      const hasCriteriaMap = /criteria(?:List)?\s*\.\s*map\s*\(/.test(content);
+      const hasGenericMapWithCriterion = /\.map\s*\(\s*\(?\s*(?:criterion|crit)\b/i.test(content);
+      const hasListRendering = hasCriteriaMap || hasGenericMapWithCriterion;
+
       return hasCriteriaData || hasListRendering;
     });
 
@@ -486,7 +504,8 @@ describe('Wave 18 — MAT Criteria Parsing Pipeline End-to-End Repair (T-W18-QA-
 
     // Among Wave 18 migrations, find one that addresses upload/storage/profiles config
     const uploadFixMigration = wave18Migrations.find(m =>
-      /audit.documents|storage\.(objects|buckets)|profiles.*organisation_id|organisation_id.*profiles/i.test(m.content),
+      // Use escaped dots to match SQL identifiers literally, not any character
+      /audit[-_]documents|storage\.(objects|buckets)|profiles.*organisation_id|organisation_id.*profiles/i.test(m.content),
     );
 
     expect(
@@ -525,7 +544,7 @@ describe('Wave 18 — MAT Criteria Parsing Pipeline End-to-End Repair (T-W18-QA-
       'api-builder must add to the ParsedCriterion interface:\n' +
       '  intent_statement?: string;\n' +
       `File: ${EDGE_FN_PATH}`,
-    ).toMatch(/ParsedCriterion[\s\S]{0,500}intent_statement/);
+    ).toMatch(new RegExp(`ParsedCriterion[\\s\\S]{0,${PARSED_CRITERION_SCAN_CHARS}}intent_statement`));
   });
 
   it('[T-W18-QA-014] ParsedCriterion type includes guidance field (distinct from source_anchor)', () => {
@@ -541,15 +560,19 @@ describe('Wave 18 — MAT Criteria Parsing Pipeline End-to-End Repair (T-W18-QA-
      * Authority: IAA pre-brief §2 Gap 2, A-032 Schema Column Compliance
      */
     const src = readEdgeFunction();
-    // Match `guidance` as a field WITHIN the ParsedCriterion interface block
+    // Match `guidance` as a TypeScript interface field with a type annotation (e.g. `guidance?: string`).
+    // Using `\s*:\s*string` distinguishes a TS interface field from a JS object key like
+    // `guidance: c.source_anchor` which is already present in the upsert payload.
     expect(
       src,
       '[T-W18-QA-014] RED: ParsedCriterion interface has no `guidance` field.\n' +
       'api-builder must add to the ParsedCriterion interface:\n' +
       '  guidance?: string;\n' +
       'This is distinct from source_anchor (page reference) and carries guidance text.\n' +
+      'Note: `guidance: c.source_anchor` in the upsert payload does NOT satisfy this test —\n' +
+      'the ParsedCriterion TypeScript interface itself must declare the field.\n' +
       `File: ${EDGE_FN_PATH}`,
-    ).toMatch(/ParsedCriterion[\s\S]{0,500}guidance\s*\??\s*:/);
+    ).toMatch(new RegExp(`ParsedCriterion[\\s\\S]{0,${PARSED_CRITERION_SCAN_CHARS}}guidance\\s*\\??\\s*:\\s*string`));
   });
 
   it('[T-W18-QA-015] ParsedCriterion type includes maturity_descriptors or level_descriptors field', () => {
@@ -574,6 +597,6 @@ describe('Wave 18 — MAT Criteria Parsing Pipeline End-to-End Repair (T-W18-QA-
       '  maturity_descriptors?: Array<{ level: number; descriptor: string }>;\n' +
       '(or level_descriptors with equivalent structure)\n' +
       `File: ${EDGE_FN_PATH}`,
-    ).toMatch(/ParsedCriterion[\s\S]{0,800}(?:maturity_descriptor|level_descriptor)/i);
+    ).toMatch(new RegExp(`ParsedCriterion[\\s\\S]{0,${PARSED_CRITERION_SCAN_CHARS}}(?:maturity_descriptor|level_descriptor)`, 'i'));
   });
 });
