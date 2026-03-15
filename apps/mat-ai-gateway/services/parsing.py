@@ -67,9 +67,12 @@ class ParseRequest(BaseModel):
 class CriterionResult(BaseModel):
     mps_number: str
     number: str
-    title: str
-    description: str
-    source_anchor: str
+    title: str = ""
+    description: str = ""
+    source_anchor: str = ""
+    intent_statement: str = ""
+    guidance: str = ""
+    maturity_descriptors: list[dict[str, Any]] = []
 
 
 class MpsResult(BaseModel):
@@ -77,11 +80,13 @@ class MpsResult(BaseModel):
     name: str
     number: str
     sort_order: int
+    level_descriptors: list[dict[str, Any]] = []
 
 
 class DomainResult(BaseModel):
     name: str
     sort_order: int
+    level_descriptors: list[dict[str, Any]] = []
 
 
 class ParseResponse(BaseModel):
@@ -273,15 +278,17 @@ CRITICAL RULES:
   including all intent statements, required actions, sub-items, and bullets, word for word.
   Summarisation is PROHIBITED. This is a legal compliance document.
 - title fields contain a SHORT label only (5-8 words).
-- intent_statement: the single-sentence statement of what this criterion aims to achieve
-  (the 'why' behind the requirement). Extract verbatim if present; summarise in one sentence if not.
-- guidance: practical implementation guidance text from the document (distinct from description).
-  Use empty string if no specific guidance text exists for this criterion.
+- intent_statement: extract VERBATIM from the document if an explicit intent or purpose
+  statement is present. Use empty string "" if no intent statement is present —
+  do NOT summarise, paraphrase, or invent.
+- guidance: extract VERBATIM implementation guidance text from the document if present
+  (distinct from description). Use empty string "" if absent — do NOT invent.
 - source_anchor must reference the section or page number in the source document for traceability.
-- maturity_descriptors: for each criterion, provide 5 maturity level descriptions (levels 1-5).
-  Level 1 = initial/ad-hoc, Level 5 = optimised/exemplary. Extract from document if present;
-  infer plausible descriptors from the criterion context if not explicit.
-- level_descriptors in domains and mini_performance_standards follow the same 5-level pattern.
+- maturity_descriptors: extract the 5 maturity level descriptions (levels 1-5) VERBATIM
+  from the document if explicitly provided. Use empty array [] if not present —
+  do NOT infer or fabricate descriptors. Level 1 = initial/ad-hoc, Level 5 = optimised/exemplary.
+- level_descriptors in domains and mini_performance_standards follow the same rule:
+  extract VERBATIM if present, empty array [] if absent.
 - In each criterion, mps_number MUST exactly match the number field of the corresponding
   mini_performance_standard entry — use the exact same string, no reformatting.
 The user will tell you how to interpret this specific document's structure.

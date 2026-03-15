@@ -338,6 +338,28 @@ async function backgroundParse({
       throw new Error(`Failed to upsert criteria: ${criteriaError.message}`);
     }
 
+    // Re-query criteria ordered by number for deterministic descriptor association.
+    // PostgREST upsert+select does not guarantee return order matches input order,
+    // so index-aligning insertedCriteria with validCriteriaList is unsafe.
+    const { data: orderedCriteriaRows, error: orderQueryError } = await supabase
+      .from('criteria')
+      .select('id, number')
+      .eq('audit_id', auditId)
+      .order('number', { ascending: true });
+
+    if (orderQueryError) {
+      console.warn(`[invoke-ai-parse-criteria] Failed to re-query criteria for descriptor association: ${orderQueryError.message}`);
+    }
+
+    // Build number → id map (number is unique within an audit)
+    const criteriaNumberToId = new Map<number, string>();
+    for (const row of (orderedCriteriaRows ?? [])) {
+      criteriaNumberToId.set(row.number as number, row.id as string);
+    }
+
+    // Collect descriptor write errors to surface in audit_logs
+    const descriptorErrors: string[] = [];
+
     // Write domain-level descriptors (Gap 6 fix)
     // Uses domainMap (keyed by name) — safe against upsert order variation
     const domainDescriptorRows: Array<{ domain_id: string; level: number; descriptor_text: string }> = [];
@@ -358,7 +380,9 @@ async function backgroundParse({
         .from('domain_level_descriptors')
         .upsert(domainDescriptorRows, { onConflict: 'domain_id,level', ignoreDuplicates: false });
       if (dlDescError) {
-        console.warn(`[invoke-ai-parse-criteria] domain_level_descriptors write failed: ${dlDescError.message}`);
+        const msg = `domain_level_descriptors: ${dlDescError.message}`;
+        console.warn(`[invoke-ai-parse-criteria] ${msg}`);
+        descriptorErrors.push(msg);
       }
     }
 
@@ -382,20 +406,24 @@ async function backgroundParse({
         .from('mps_level_descriptors')
         .upsert(mpsDescriptorRows, { onConflict: 'mps_id,level', ignoreDuplicates: false });
       if (mlDescError) {
-        console.warn(`[invoke-ai-parse-criteria] mps_level_descriptors write failed: ${mlDescError.message}`);
+        const msg = `mps_level_descriptors: ${mlDescError.message}`;
+        console.warn(`[invoke-ai-parse-criteria] ${msg}`);
+        descriptorErrors.push(msg);
       }
     }
 
     // Write criteria-level descriptors (Gap 6 fix)
-    // Index alignment: validCriteriaList and insertedCriteria share order (ignoreDuplicates:false ensures all rows returned)
+    // Uses criteriaNumberToId map (keyed by number field) — deterministic, unaffected by
+    // upsert return order. Each criterion was assigned number = idx + 1 in the upsert above.
     const criteriaDescriptorRows: Array<{ criteria_id: string; level: number; descriptor_text: string }> = [];
     for (const [idx, c] of validCriteriaList.entries()) {
       if (!c.maturity_descriptors || c.maturity_descriptors.length === 0) continue;
-      const criteriaRow = (insertedCriteria ?? [])[idx];
-      if (!criteriaRow) continue;
+      const criteriaNumber = idx + 1; // matches number: idx + 1 from the upsert above
+      const criteriaId = criteriaNumberToId.get(criteriaNumber);
+      if (!criteriaId) continue;
       for (const desc of c.maturity_descriptors) {
         criteriaDescriptorRows.push({
-          criteria_id: criteriaRow.id,
+          criteria_id: criteriaId,
           level: desc.level,
           descriptor_text: desc.descriptor_text,
         });
@@ -406,7 +434,9 @@ async function backgroundParse({
         .from('criteria_level_descriptors')
         .upsert(criteriaDescriptorRows, { onConflict: 'criteria_id,level', ignoreDuplicates: false });
       if (clDescError) {
-        console.warn(`[invoke-ai-parse-criteria] criteria_level_descriptors write failed: ${clDescError.message}`);
+        const msg = `criteria_level_descriptors: ${clDescError.message}`;
+        console.warn(`[invoke-ai-parse-criteria] ${msg}`);
+        descriptorErrors.push(msg);
       }
     }
 
@@ -439,7 +469,8 @@ async function backgroundParse({
         needs_human_review: needsHumanReview,
         ldcs_document: isLdcsDocument,
         ldcs_mps_expected: LDCS_MPS_COUNT,
-        outcome: 'success',
+        outcome: descriptorErrors.length > 0 ? 'partial_success' : 'success',
+        ...(descriptorErrors.length > 0 && { descriptor_errors: descriptorErrors }),
       },
     });
   } catch (error) {

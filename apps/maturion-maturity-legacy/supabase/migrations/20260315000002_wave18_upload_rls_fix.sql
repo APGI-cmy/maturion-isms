@@ -6,77 +6,73 @@
 --
 -- Purpose:
 --   Gap 1 — Upload fails with "Failed to upload file: Failed to fetch".
---            Root cause: the existing audit-documents INSERT policy on storage.objects
---            performs an org lookup JOIN through profiles, which fails when the
---            authenticated user does not yet have a matching profiles row, or when
---            the profiles.organisation_id look-up chain produces no rows.
 --
---            Fix strategy:
---              a) Replace the bucket INSERT policy with a simpler auth.uid() IS NOT NULL
---                 check so uploads are never blocked by a missing profile row.  The
---                 org-isolation check is still enforced on READ (SELECT) and DELETE.
---              b) Add a guardrail INSERT policy on criteria_documents that uses the same
---                 lightweight auth.uid() check, matching the pattern needed by the
---                 upload flow.
+--   Root cause analysis:
+--     The audit-documents INSERT policy (audit_documents_org_insert_v2, from
+--     20260303000005_audit_documents_rls_hardening.sql) requires that the
+--     uploaded file path starts with the user's profiles.organisation_id:
+--
+--         split_part(name, '/', 1) = (SELECT organisation_id::text
+--                                     FROM public.profiles
+--                                     WHERE id = auth.uid())
+--
+--     This fails when:
+--       a) The frontend uploads to a path that does not start with the user's
+--          organisation_id (path must be /{org_id}/filename, not /filename).
+--       b) The authenticated user has no profiles row with a non-null
+--          organisation_id yet.
+--
+--   Fix strategy:
+--     * Preserve org-path-prefix isolation — do NOT widen to auth.uid() IS NOT NULL
+--       as that bypasses cross-tenant write protection and reintroduces INC-W13-BUCKET-RLS-001.
+--     * Remove any previously added permissive bypass policy that conflicts with
+--       audit_documents_org_insert_v2.
+--     * Application contract: the frontend upload hook must:
+--         1. Ensure the user has a profiles row with a non-null organisation_id
+--            before initiating an upload (created at signup).
+--         2. Prefix the upload path with the user's organisation_id:
+--            /{organisation_id}/{audit_id}/{filename}
+--     * The existing criteria_documents_insert_org_isolation policy from
+--       20260309000003 already covers criteria_documents INSERT correctly.
 --
 -- A-032 DDL self-check:
 --   References: audit-documents (bucket_id), storage.objects, profiles.organisation_id
 --   Regex tested by T-W18-QA-012:
---     /audit[-_]documents|storage\.(objects|buckets)|profiles.*organisation_id|organisation_id.*profiles/i
+--     /audit[-_]documents|storage\.(objects|buckets)|profiles.*organisation_id/i
 --   ✓  "audit-documents"            → matches audit[-_]documents
 --   ✓  "storage.objects"            → matches storage\.(objects|buckets)
 --   ✓  "profiles.organisation_id"  → matches profiles.*organisation_id
 --
--- Idempotency: DROP POLICY IF EXISTS + IF NOT EXISTS guards.
+-- Idempotency: DROP POLICY IF EXISTS guards.
 -- ─────────────────────────────────────────────────────────────────────────────
 
--- ── 1. storage.objects — replace audit-documents INSERT policy ────────────────
--- Drop the old policy that requires a profiles.organisation_id lookup.
+-- ── 1. storage.objects — remove any permissive bypass policy ─────────────────
+-- The secure policy audit_documents_org_insert_v2 (from migration 20260303000005)
+-- uses split_part(name, '/', 1) = profiles.organisation_id and must remain as the
+-- sole INSERT policy for the audit-documents bucket.
+--
+-- Drop any previously added permissive fallback that bypasses org-path-prefix
+-- isolation and effectively nullifies audit_documents_org_insert_v2 (Postgres
+-- evaluates RLS policies with OR semantics — one permissive policy grants access
+-- even if a restrictive policy would deny).
 DROP POLICY IF EXISTS "audit_documents_org_insert" ON storage.objects;
 
--- Re-create with a lightweight check: any authenticated user may upload.
--- Organisation isolation is still enforced at the SELECT and DELETE layers.
-CREATE POLICY "audit_documents_org_insert"
-  ON storage.objects
-  FOR INSERT
-  TO authenticated
-  WITH CHECK (
-    bucket_id = 'audit-documents'
-    AND auth.uid() IS NOT NULL
-  );
+-- ── 2. criteria_documents — no additional INSERT policy required ──────────────
+-- criteria_documents_insert_org_isolation (from 20260309000003_criteria_delete_reparse_rls.sql)
+-- already provides the correct org-scoped INSERT policy for criteria_documents.
+-- No fallback policy is added here: the existing policy must remain the sole guard.
 
--- ── 2. criteria_documents — ensure INSERT policy exists ───────────────────────
--- The profiles.organisation_id chain may be absent for new users; add a fallback
--- INSERT policy that does not depend on a profiles row being present.
-DO $$ BEGIN
-  IF NOT EXISTS (
-    SELECT 1
-    FROM pg_policies
-    WHERE schemaname = 'public'
-      AND tablename  = 'criteria_documents'
-      AND policyname = 'criteria_documents_insert'
-  ) THEN
-    CREATE POLICY "criteria_documents_insert"
-      ON public.criteria_documents
-      FOR INSERT
-      TO authenticated
-      WITH CHECK (auth.uid() IS NOT NULL);
-  END IF;
-END $$;
-
--- ── Commentary: profiles.organisation_id dependency ───────────────────────────
--- The upload failure chain:
---   1. Frontend calls supabase.storage.from('audit-documents').upload(...)
---   2. Supabase Storage evaluates the INSERT policy on storage.objects
---   3. The old policy ran:
---        organisation_id = (SELECT organisation_id FROM profiles WHERE id = auth.uid())
---      If profiles has no row for the user this subquery returns NULL, causing
---      the WITH CHECK to evaluate to FALSE → RLS default-deny → "Failed to fetch"
---   4. The new policy skips the profiles.organisation_id lookup entirely for INSERT,
---      relying only on auth.uid() IS NOT NULL (i.e. the user is authenticated).
+-- ── Commentary: path format requirement ──────────────────────────────────────
+-- audit_documents_org_insert_v2 (in effect from 20260303000005) enforces:
+--   split_part(name, '/', 1) = (SELECT organisation_id::text
+--                                FROM public.profiles
+--                                WHERE id = auth.uid())
 --
--- This does not weaken overall data isolation because:
---   • READ policies still filter by organisation_id via profiles lookup
---   • DELETE policies still filter by organisation_id via profiles lookup
---   • The file path itself encodes the audit_id/org_id for further validation
+-- For uploads to succeed:
+--   1. The user must have a profiles row where organisation_id IS NOT NULL.
+--      This row is created at signup — uploads MUST NOT be attempted before
+--      profile creation completes.
+--   2. The storage object name must begin with the user's organisation_id:
+--         /{organisation_id}/{audit_id}/{filename}
+--      The frontend upload hook is responsible for constructing this path.
 -- ─────────────────────────────────────────────────────────────────────────────

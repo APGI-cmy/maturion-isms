@@ -12,6 +12,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCriteria, type Criterion } from '../../lib/hooks/useCriteria';
 import { supabase } from '../../lib/supabase';
 
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const PAGE_SIZE = 25;
+
 // ─── Types ──────────────────────────────────────────────────────────────────
 
 interface CriteriaApprovalProps {
@@ -63,7 +67,7 @@ function CriterionRow({ criterion }: CriterionRowProps) {
 
       {/* Description */}
       {description && (
-        <div className="mt-2 text-sm text-gray-700">
+        <div className="mt-2 text-sm text-gray-700" id={`desc-${criterion.id}`}>
           <span className="font-medium text-gray-500 mr-1">Description:</span>
           {displayDescription}
           {description.length > 200 && (
@@ -111,6 +115,7 @@ function CriterionRow({ criterion }: CriterionRowProps) {
 
 export function CriteriaApproval({ auditId, filePath, onApproved }: CriteriaApprovalProps) {
   const queryClient = useQueryClient();
+  const [page, setPage] = useState(0);
 
   // Fetch the flat criteria list for this audit
   const { data: criteria, isLoading, isError, error } = useCriteria(auditId);
@@ -179,6 +184,10 @@ export function CriteriaApproval({ auditId, filePath, onApproved }: CriteriaAppr
   }
 
   // ── Main render ────────────────────────────────────────────────────────────
+  const totalCriteria = criteria.length;
+  const pageCount = Math.ceil(totalCriteria / PAGE_SIZE);
+  const pagedCriteria = criteria.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
   return (
     <div className="criteria-approval">
       {/* Header */}
@@ -186,7 +195,7 @@ export function CriteriaApproval({ auditId, filePath, onApproved }: CriteriaAppr
         <h3 className="text-lg font-semibold text-gray-900">
           Review Parsed Criteria
           <span className="ml-2 text-sm font-normal text-gray-500">
-            ({criteria.length} {criteria.length === 1 ? 'criterion' : 'criteria'})
+            ({totalCriteria} {totalCriteria === 1 ? 'criterion' : 'criteria'})
           </span>
         </h3>
 
@@ -216,16 +225,48 @@ export function CriteriaApproval({ auditId, filePath, onApproved }: CriteriaAppr
         </div>
       )}
 
-      {/* Criteria list */}
+      {/* Criteria list (paginated) */}
       <ul
         className="criteria-list divide-y divide-gray-100"
         aria-label="Parsed criteria list"
         aria-live="polite"
       >
-        {criteria.map(criterion => (
+        {pagedCriteria.map(criterion => (
           <CriterionRow key={criterion.id} criterion={criterion} />
         ))}
       </ul>
+
+      {/* Pagination controls */}
+      {pageCount > 1 && (
+        <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-200">
+          <p className="text-sm text-gray-600">
+            Showing {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, totalCriteria)} of {totalCriteria}
+          </p>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              onClick={() => setPage(p => p - 1)}
+              disabled={page === 0}
+              aria-label="Previous page"
+            >
+              ← Previous
+            </button>
+            <span className="px-3 py-1 text-sm text-gray-600">
+              {page + 1} / {pageCount}
+            </span>
+            <button
+              type="button"
+              className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              onClick={() => setPage(p => p + 1)}
+              disabled={page >= pageCount - 1}
+              aria-label="Next page"
+            >
+              Next →
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
