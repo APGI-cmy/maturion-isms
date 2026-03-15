@@ -63,6 +63,7 @@ function detectLdcsPattern(documentText: string): boolean {
 interface ParsedDomain {
   name: string;
   description?: string;
+  level_descriptors?: Array<{ level: number; descriptor_text: string }>;
 }
 
 interface ParsedMps {
@@ -70,6 +71,7 @@ interface ParsedMps {
   name: string;
   number: string;
   description?: string;
+  level_descriptors?: Array<{ level: number; descriptor_text: string }>;
 }
 
 interface ParsedCriterion {
@@ -77,7 +79,10 @@ interface ParsedCriterion {
   number: string;
   title?: string;
   description?: string;
+  intent_statement?: string;
+  guidance?: string;
   source_anchor?: string;
+  maturity_descriptors?: Array<{ level: number; descriptor_text: string }>;
 }
 
 // ── Background parse task ──────────────────────────────────────────────────────
@@ -320,7 +325,9 @@ async function backgroundParse({
             number: idx + 1,          // INTEGER, 1-based sequential
             title: c.title ?? null,
             description: c.description ?? null,
-            guidance: c.source_anchor ?? null,
+            intent_statement: c.intent_statement ?? null,    // Gap 3 fix
+            guidance: c.guidance ?? null,                    // Bug 2 fix: was c.source_anchor
+            source_anchor: c.source_anchor ?? null,          // Gap 8 fix
           };
         }),
         { onConflict: 'audit_id,number', ignoreDuplicates: false },
@@ -329,6 +336,78 @@ async function backgroundParse({
 
     if (criteriaError) {
       throw new Error(`Failed to upsert criteria: ${criteriaError.message}`);
+    }
+
+    // Write domain-level descriptors (Gap 6 fix)
+    // Uses domainMap (keyed by name) — safe against upsert order variation
+    const domainDescriptorRows: Array<{ domain_id: string; level: number; descriptor_text: string }> = [];
+    for (const d of domains) {
+      if (!d.level_descriptors || d.level_descriptors.length === 0) continue;
+      const domainId = domainMap.get(d.name)?.id;
+      if (!domainId) continue;
+      for (const desc of d.level_descriptors) {
+        domainDescriptorRows.push({
+          domain_id: domainId,
+          level: desc.level,
+          descriptor_text: desc.descriptor_text,
+        });
+      }
+    }
+    if (domainDescriptorRows.length > 0) {
+      const { error: dlDescError } = await supabase
+        .from('domain_level_descriptors')
+        .upsert(domainDescriptorRows, { onConflict: 'domain_id,level', ignoreDuplicates: false });
+      if (dlDescError) {
+        console.warn(`[invoke-ai-parse-criteria] domain_level_descriptors write failed: ${dlDescError.message}`);
+      }
+    }
+
+    // Write MPS-level descriptors (Gap 6 fix)
+    // Uses mpsMap (keyed by number) — safe against upsert order variation
+    const mpsDescriptorRows: Array<{ mps_id: string; level: number; descriptor_text: string }> = [];
+    for (const m of validMpsList) {
+      if (!m.level_descriptors || m.level_descriptors.length === 0) continue;
+      const mpsEntry = mpsMap.get(m.number) ?? mpsMap.get(resolveMpsKey(m.number) ?? '');
+      if (!mpsEntry?.id) continue;
+      for (const desc of m.level_descriptors) {
+        mpsDescriptorRows.push({
+          mps_id: mpsEntry.id,
+          level: desc.level,
+          descriptor_text: desc.descriptor_text,
+        });
+      }
+    }
+    if (mpsDescriptorRows.length > 0) {
+      const { error: mlDescError } = await supabase
+        .from('mps_level_descriptors')
+        .upsert(mpsDescriptorRows, { onConflict: 'mps_id,level', ignoreDuplicates: false });
+      if (mlDescError) {
+        console.warn(`[invoke-ai-parse-criteria] mps_level_descriptors write failed: ${mlDescError.message}`);
+      }
+    }
+
+    // Write criteria-level descriptors (Gap 6 fix)
+    // Index alignment: validCriteriaList and insertedCriteria share order (ignoreDuplicates:false ensures all rows returned)
+    const criteriaDescriptorRows: Array<{ criteria_id: string; level: number; descriptor_text: string }> = [];
+    for (const [idx, c] of validCriteriaList.entries()) {
+      if (!c.maturity_descriptors || c.maturity_descriptors.length === 0) continue;
+      const criteriaRow = (insertedCriteria ?? [])[idx];
+      if (!criteriaRow) continue;
+      for (const desc of c.maturity_descriptors) {
+        criteriaDescriptorRows.push({
+          criteria_id: criteriaRow.id,
+          level: desc.level,
+          descriptor_text: desc.descriptor_text,
+        });
+      }
+    }
+    if (criteriaDescriptorRows.length > 0) {
+      const { error: clDescError } = await supabase
+        .from('criteria_level_descriptors')
+        .upsert(criteriaDescriptorRows, { onConflict: 'criteria_id,level', ignoreDuplicates: false });
+      if (clDescError) {
+        console.warn(`[invoke-ai-parse-criteria] criteria_level_descriptors write failed: ${clDescError.message}`);
+      }
     }
 
     // 4. Update criteria_documents.status → pending_review (architecture §4.2)
