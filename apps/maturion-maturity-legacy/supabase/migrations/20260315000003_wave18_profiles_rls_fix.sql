@@ -128,6 +128,11 @@ END $$;
 --                                 FROM public.profiles
 --                                 WHERE id = auth.uid())
 --
+-- Here `name` is the storage object path (the full key inside the bucket, e.g.
+-- 'acme-corp-uuid/audit-123/report.pdf').  split_part(name, '/', 1) extracts
+-- the first path segment — which must equal the user's organisation_id for the
+-- upload to be permitted.  This is the org-path-prefix isolation invariant.
+--
 -- remains the sole INSERT guard for the audit-documents bucket.  Any migration
 -- that weakens this check reintroduces INC-W13-BUCKET-RLS-001 and must not be
 -- merged.
