@@ -2873,3 +2873,78 @@ This wave resolves all 25 gaps documented in the end-to-end completeness review.
 ---
 
 **End of Wave 16 — Completeness Gap Resolution**
+
+---
+
+## Wave 17 — User-Guided Parsing (2026-03-11)
+
+**Authority**: CS2  
+**Status**: COMPLETE — PR merged  
+**Version Note**: Wave 17 adds user-guided parsing instructions to the AI Gateway and criteria_documents table.
+
+### Overview
+
+Wave 17 introduced the ability for Lead Auditors to supply parsing instructions alongside criteria document uploads. This allows the AI Gateway to be directed toward specific parsing strategies for unusual or ambiguous documents.
+
+| Component | Change |
+|-----------|--------|
+| AI Gateway | `user_instructions` field added to parse request payload |
+| `criteria_documents` table | `parsing_instructions` column added (nullable TEXT) |
+| `useTriggerAIParsing` hook | Passes `parsing_instructions` from upload form to Edge Function |
+
+### Wave 17 State Machine
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-11 | COMPLETE | PR merged; user_instructions and parsing_instructions wired end-to-end |
+
+---
+
+**End of Wave 17 — User-Guided Parsing**
+
+---
+
+## Wave 18 — MAT Criteria Parsing Pipeline End-to-End Repair (2026-03-15)
+
+**Authority**: CS2 — PR #1115  
+**Status**: COMPLETE — PR #1115 merged 2026-03-15  
+**Version Note**: v2.8.0 (2026-03-15): Wave 18 end-to-end repair of Criteria Upload → Parse → Review pipeline; 8 production gaps resolved.
+
+### Overview
+
+Wave 18 identified and resolved 8 production gaps in the Criteria Upload → Parse → Review pipeline. The AI system prompt was updated to extract `intent_statement`, `guidance`, `maturity_descriptors`, and `level_descriptors` verbatim from source compliance documents. Schema migrations added `criteria.intent_statement` and `criteria.source_anchor` columns. The Edge Function was extended to write to `criteria_level_descriptors`, `mps_level_descriptors`, and `domain_level_descriptors`. A new `CriteriaApproval.tsx` UI component enables Lead Auditor review and approval of parsed criteria.
+
+### Task Register
+
+| Task ID | Owner | Description | Status |
+|---------|-------|-------------|--------|
+| T-W18-SCHEMA-001 | schema-builder | Add `criteria.intent_statement` column migration | ✅ DONE |
+| T-W18-SCHEMA-002 | schema-builder | Add `criteria.source_anchor` column migration | ✅ DONE |
+| T-W18-API-001 | api-builder | Update AI system prompt: verbatim extraction of intent_statement, guidance, maturity_descriptors, level_descriptors | ✅ DONE |
+| T-W18-API-002 | api-builder | Edge Function: write to criteria_level_descriptors, mps_level_descriptors, domain_level_descriptors | ✅ DONE |
+| T-W18-API-003 | api-builder | RLS: remove audit_documents_org_insert bypass policy; add profiles row backfill | ✅ DONE |
+| T-W18-UI-001 | ui-builder | Implement CriteriaApproval.tsx — full criteria review/approval UI | ✅ DONE |
+
+### Wave 18 Post-Merge Hotfix (PR #1116 — copilot/fix-wave-18-post-merge-hotfixes)
+
+| Task ID | Fix | Status |
+|---------|-----|--------|
+| T-W18P-001 | Pydantic models: `sort_order` defaults added | ✅ DONE |
+| T-W18P-002 | Pydantic models: `model_config extra='ignore'` applied | ✅ DONE |
+| T-W18P-003 | Prompt: verbatim-only rule applied consistently to `title` field | ✅ DONE |
+| T-W18P-004 | Descriptor index alignment: verified and documented | ✅ DONE |
+| T-W18P-005 | Profiles RLS: backfill migration and `UPDATE` policy added | ✅ DONE |
+| T-W18P-006 | Governance artifacts updated to reflect Wave 18 completion | ✅ DONE |
+
+### Wave 18 State Machine
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-15 | INITIATED | 8 production gaps identified in Criteria Upload → Parse → Review pipeline |
+| 2026-03-15 | QA GREEN | All Wave 18 tests GREEN |
+| 2026-03-15 | COMPLETE | PR #1115 merged |
+| 2026-03-15 | POST-MERGE HOTFIX | PR #1116: Pydantic defaults, verbatim title rule, descriptor alignment, profiles RLS backfill |
+
+---
+
+**End of Wave 18 — MAT Criteria Parsing Pipeline End-to-End Repair**

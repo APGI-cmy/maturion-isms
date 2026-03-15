@@ -7,13 +7,13 @@
 - **Module**: MAT (Manual Audit Tool)
 - **Artifact Type**: App Description (Upstream Authority)
 - **Status**: Draft (to be marked **Authoritative** only after approval)
-- **Version**: v1.5
+- **Version**: v1.6
 - **Owner**: Johan Ras (Product Owner / Human Authority)
 - **Authority**: Johan Ras
 - **Applies To**: MAT module within maturion-isms repository (and any downstream FRS/Architecture artifacts)
 - **Approval Date**: N/A (Draft)
-- **Last Updated**: 2026-03-08
-- **Supersedes / Superseded By**: v1.2 → v1.3 (Wave 10 AI gateway memory wiring gap added); v1.3 → v1.4 (Wave 15 correction — criteria parsing pipeline concretised; post-delivery oversight INC-POST-FCWT-CRITERIA-PIPELINE-001 recorded); v1.4 → v1.5 (Wave 15 production failure confirmed — INC-WAVE15-PARSE-001 recorded; §6.2 production gap noted; Wave 15R remediation planned)
+- **Last Updated**: 2026-03-15
+- **Supersedes / Superseded By**: v1.2 → v1.3 (Wave 10 AI gateway memory wiring gap added); v1.3 → v1.4 (Wave 15 correction — criteria parsing pipeline concretised; post-delivery oversight INC-POST-FCWT-CRITERIA-PIPELINE-001 recorded); v1.4 → v1.5 (Wave 15 production failure confirmed — INC-WAVE15-PARSE-001 recorded; §6.2 production gap noted; Wave 15R remediation planned); v1.5 → v1.6 (Wave 18 — criteria parsing now extracts intent_statement, guidance, maturity_descriptors, and level_descriptors verbatim; CriteriaApproval UI added)
 
 > **Governance note**: Per **APP_DESCRIPTION_REQUIREMENT_POLICY.md**, no FRS/Architecture may be treated as authoritative without an authoritative App Description, and downstream artifacts must explicitly derive from this document.
 
@@ -1239,9 +1239,64 @@ The following gaps from the same audit are **RESOLVED** (Wave postbuild-fails-01
 
 ---
 
+## Section 22 — Wave 18 Criteria Parsing Enhancements (2026-03-15)
+
+**Added**: v1.6 (2026-03-15) | **Authority**: CS2 | **PR**: #1115
+
+### Overview
+
+Wave 18 delivered an end-to-end repair of the Criteria Upload → Parse → Review pipeline, resolving 8 production gaps. The criteria parsing capability was substantially enhanced: the AI system prompt now instructs GPT-4 Turbo to extract content **verbatim** from the source compliance document, preserving the original wording of titles, intent statements, guidance, maturity descriptors, and level descriptors.
+
+### New Schema Columns
+
+| Column | Table | Description |
+|--------|-------|-------------|
+| `intent_statement` | `criteria` | Verbatim statement of intent extracted from the compliance document |
+| `source_anchor` | `criteria` | Verbatim source reference (section, clause, or page) from the compliance document |
+
+### New Extraction Fields
+
+The AI Gateway `DocumentParser` now extracts the following fields in addition to the existing Domain → MPS → Criteria hierarchy:
+
+| Field | Description |
+|-------|-------------|
+| `intent_statement` | Verbatim statement of what the criterion requires (from source document) |
+| `guidance` | Verbatim guidance text associated with the criterion |
+| `maturity_descriptors` | Verbatim descriptors describing maturity levels for the criterion |
+| `level_descriptors` | Verbatim descriptors for each individual maturity level |
+
+### New Database Tables (Level Descriptors)
+
+The Edge Function (`invoke-ai-parse-criteria`) now writes to three new junction tables:
+
+| Table | Purpose |
+|-------|---------|
+| `criteria_level_descriptors` | Per-criterion, per-level verbatim descriptor text |
+| `mps_level_descriptors` | Per-MPS, per-level verbatim descriptor text |
+| `domain_level_descriptors` | Per-domain, per-level verbatim descriptor text |
+
+### New Frontend Component
+
+`CriteriaApproval.tsx` — added in Wave 18. Enables the Lead Auditor to review the AI-parsed criteria (including extracted intent statements, guidance, and level descriptors) and approve or flag individual items for correction before scoring begins.
+
+### RLS Changes
+
+- `audit_documents_org_insert` bypass policy removed (security hardening)
+- `profiles` table: backfill migration added so all existing users have a profile row; `UPDATE` policy added
+
+### Post-Merge Hotfix (PR #1116)
+
+After PR #1115 merged, a post-merge hotfix branch `copilot/fix-wave-18-post-merge-hotfixes` was created to address:
+- Pydantic model robustness: `sort_order` defaults and `extra='ignore'` config
+- Prompt: verbatim-only rule applied consistently to `title` field
+- Descriptor index alignment verified
+- Profiles RLS: backfill migration and `UPDATE` policy
+
+---
+
 ## End of Document
 
-**Document Version**: v1.4
-**Last Updated**: 2026-03-06
-**Status**: Draft (awaiting approval — Wave postbuild-fails-02 remediation in progress)
-**Next Review**: After Wave postbuild-fails-02 merge and schema-builder migration delivery
+**Document Version**: v1.6
+**Last Updated**: 2026-03-15
+**Status**: Draft (to be marked Authoritative after CS2 approval)
+**Next Review**: After Wave 18 post-merge hotfix (PR #1116) merge
