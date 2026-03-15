@@ -48,3 +48,4 @@
 | 2026-03-13 | foreman-v2-agent | session-wave14-execution-start-20260313 | IMPROVEMENT | Implementation plan staleness detection gap — plan updates must be part of builder handover QP criteria | session-wave14-execution-start-20260313.md |
 
 | 2026-03-13 | foreman-v2-agent | session-cp-1-persona-gate-closure-20260313 | TEMPLATE-GAP | CP checkpoint closure templates absent from Tier 2 knowledge — consistent field coverage not enforced | cp-1-closure-20260313.md |
+| 2026-03-15 | foreman-v2-agent | session-wave18-orchestration-20260315 | IMPROVEMENT | S-034 END-TO-END-CONTENT-ASSERTION-MANDATORY: QA tests for AI parsing must assert extracted content values not just schema existence. Triggered by INC-W18-CRITERIA-PIPELINE-001. | FAIL-ONLY-ONCE.md |

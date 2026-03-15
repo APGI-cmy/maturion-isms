@@ -17,7 +17,7 @@ import logging
 import os
 import re
 import urllib.parse
-from typing import Any
+from typing import Any, TypedDict
 
 import httpx
 from PyPDF2 import PdfReader as PdfReader
@@ -67,9 +67,12 @@ class ParseRequest(BaseModel):
 class CriterionResult(BaseModel):
     mps_number: str
     number: str
-    title: str
-    description: str
-    source_anchor: str
+    title: str = ""
+    description: str = ""
+    source_anchor: str = ""
+    intent_statement: str = ""
+    guidance: str = ""
+    maturity_descriptors: list[dict[str, Any]] = []
 
 
 class MpsResult(BaseModel):
@@ -77,11 +80,13 @@ class MpsResult(BaseModel):
     name: str
     number: str
     sort_order: int
+    level_descriptors: list[dict[str, Any]] = []
 
 
 class DomainResult(BaseModel):
     name: str
     sort_order: int
+    level_descriptors: list[dict[str, Any]] = []
 
 
 class ParseResponse(BaseModel):
@@ -95,6 +100,33 @@ class ParseResponse(BaseModel):
     source_anchor: str
     document_url: str
     tenant_id: str
+
+
+# ── Typed AI response shapes (TypedDicts) ────────────────────────────────────────
+
+class ParsedCriterion(TypedDict, total=False):
+    mps_number: str
+    number: str
+    title: str
+    description: str
+    intent_statement: str
+    guidance: str
+    source_anchor: str
+    maturity_descriptors: list[dict]  # [{"level": int, "descriptor_text": str}]
+
+
+class ParsedMPS(TypedDict, total=False):
+    domain_name: str
+    name: str
+    number: str
+    sort_order: int
+    level_descriptors: list[dict]  # [{"level": int, "descriptor_text": str}]
+
+
+class ParsedDomain(TypedDict, total=False):
+    name: str
+    sort_order: int
+    level_descriptors: list[dict]  # [{"level": int, "descriptor_text": str}]
 
 
 # ── Text extraction helpers ─────────────────────────────────────────────────────
@@ -183,16 +215,40 @@ def _detect_ldcs_pattern(text: str) -> bool:
     return has_numbered_hierarchy or has_ldcs_marker
 
 
-# ── GPT-4 Turbo structured extraction ──────────────────────────────────────────
+# ── GPT-4.1 structured extraction ──────────────────────────────────────────────
 
 _SYSTEM_PROMPT = """\
 You are Maturion, an expert compliance document analyser.
 Your output MUST always be a JSON object matching this exact schema:
 {
   "confidence_score": <float 0.0-1.0>,
-  "domains": [{"name": "...", "sort_order": <int>}],
+  "domains": [
+    {
+      "name": "...",
+      "sort_order": <int>,
+      "level_descriptors": [
+        {"level": 1, "descriptor_text": "..."},
+        {"level": 2, "descriptor_text": "..."},
+        {"level": 3, "descriptor_text": "..."},
+        {"level": 4, "descriptor_text": "..."},
+        {"level": 5, "descriptor_text": "..."}
+      ]
+    }
+  ],
   "mini_performance_standards": [
-    {"domain_name": "...", "name": "...", "number": "...", "sort_order": <int>}
+    {
+      "domain_name": "...",
+      "name": "...",
+      "number": "...",
+      "sort_order": <int>,
+      "level_descriptors": [
+        {"level": 1, "descriptor_text": "..."},
+        {"level": 2, "descriptor_text": "..."},
+        {"level": 3, "descriptor_text": "..."},
+        {"level": 4, "descriptor_text": "..."},
+        {"level": 5, "descriptor_text": "..."}
+      ]
+    }
   ],
   "criteria": [
     {
@@ -200,7 +256,16 @@ Your output MUST always be a JSON object matching this exact schema:
       "number": "...",
       "title": "...",
       "description": "...",
-      "source_anchor": "<page or section reference in source document>"
+      "intent_statement": "...",
+      "guidance": "...",
+      "source_anchor": "<page or section reference in source document>",
+      "maturity_descriptors": [
+        {"level": 1, "descriptor_text": "..."},
+        {"level": 2, "descriptor_text": "..."},
+        {"level": 3, "descriptor_text": "..."},
+        {"level": 4, "descriptor_text": "..."},
+        {"level": 5, "descriptor_text": "..."}
+      ]
     }
   ]
 }
@@ -211,7 +276,17 @@ CRITICAL RULES:
   including all intent statements, required actions, sub-items, and bullets, word for word.
   Summarisation is PROHIBITED. This is a legal compliance document.
 - title fields contain a SHORT label only (5-8 words).
+- intent_statement: extract VERBATIM from the document if an explicit intent or purpose
+  statement is present. Use empty string "" if no intent statement is present —
+  do NOT summarise, paraphrase, or invent.
+- guidance: extract VERBATIM implementation guidance text from the document if present
+  (distinct from description). Use empty string "" if absent — do NOT invent.
 - source_anchor must reference the section or page number in the source document for traceability.
+- maturity_descriptors: extract the 5 maturity level descriptions (levels 1-5) VERBATIM
+  from the document if explicitly provided. Use empty array [] if not present —
+  do NOT infer or fabricate descriptors. Level 1 = initial/ad-hoc, Level 5 = optimised/exemplary.
+- level_descriptors in domains and mini_performance_standards follow the same rule:
+  extract VERBATIM if present, empty array [] if absent.
 - In each criterion, mps_number MUST exactly match the number field of the corresponding
   mini_performance_standard entry — use the exact same string, no reformatting.
 The user will tell you how to interpret this specific document's structure.
