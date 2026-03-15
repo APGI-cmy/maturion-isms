@@ -24,7 +24,7 @@ from PyPDF2 import PdfReader as PdfReader
 from docx import Document as DocxDocument
 from fastapi import APIRouter, HTTPException
 from openai import OpenAI
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +58,8 @@ class ParseRequest(BaseModel):
     user_instructions: optional caller-supplied parsing guidance injected into the user-role
     message (BD-017/BD-018 prompt injection mitigation — never concatenated into system prompt).
     """
+    model_config = ConfigDict(extra='ignore')
+
     document_url: str
     tenant_id: str
     file_path: str | None = None
@@ -65,6 +67,8 @@ class ParseRequest(BaseModel):
 
 
 class CriterionResult(BaseModel):
+    model_config = ConfigDict(extra='ignore')
+
     mps_number: str
     number: str
     title: str = ""
@@ -76,20 +80,26 @@ class CriterionResult(BaseModel):
 
 
 class MpsResult(BaseModel):
+    model_config = ConfigDict(extra='ignore')
+
     domain_name: str
     name: str
     number: str
-    sort_order: int
+    sort_order: int = 0
     level_descriptors: list[dict[str, Any]] = []
 
 
 class DomainResult(BaseModel):
+    model_config = ConfigDict(extra='ignore')
+
     name: str
-    sort_order: int
+    sort_order: int = 0
     level_descriptors: list[dict[str, Any]] = []
 
 
 class ParseResponse(BaseModel):
+    model_config = ConfigDict(extra='ignore')
+
     status: str
     domains: list[DomainResult]
     mini_performance_standards: list[MpsResult]
@@ -275,7 +285,8 @@ CRITICAL RULES:
 - description fields MUST contain the COMPLETE VERBATIM text of each criterion —
   including all intent statements, required actions, sub-items, and bullets, word for word.
   Summarisation is PROHIBITED. This is a legal compliance document.
-- title fields contain a SHORT label only (5-8 words).
+- title: extract the VERBATIM title or label of the criterion as it appears in the document.
+  If no distinct title is present, use the first 5–8 significant words of the description verbatim.
 - intent_statement: extract VERBATIM from the document if an explicit intent or purpose
   statement is present. Use empty string "" if no intent statement is present —
   do NOT summarise, paraphrase, or invent.
