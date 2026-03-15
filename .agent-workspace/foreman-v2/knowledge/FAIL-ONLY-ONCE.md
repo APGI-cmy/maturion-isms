@@ -741,7 +741,7 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 ### INC-W18-CRITERIA-PIPELINE-001 — Wave 18 Production: Eight Critical Gaps in MAT Criteria Parsing Pipeline
 **Date**: 2026-03-15
 **Severity**: CRITICAL
-**Status**: OPEN — Wave 18 remediation in progress (maturion-isms#1114); governance overlays complete; builder delegation pending IAA Pre-Brief confirmation
+**Status**: REMEDIATED — Wave 18 (PR #1115) merged 2026-03-15; all 8 gaps repaired; Wave 18 post-merge hotfixes (maturion-isms#1116) complete — RLS backfill, Pydantic defaults, verbatim-only prompt fix, descriptor index verification, governance artifacts updated. IAA Final Audit token pending issuance (Phase 4.3a). Open improvement S-034 (content assertion) remains as a future wave improvement.
 **Source**: CS2 issue maturion-isms#1114; live production testing by @APGI-cmy on 2026-03-15
 
 **What happened**: End-to-end testing of the MAT Criteria Upload → Parse → Review pipeline against the LDCS compliance document confirmed eight critical gaps that render the pipeline entirely non-functional:
