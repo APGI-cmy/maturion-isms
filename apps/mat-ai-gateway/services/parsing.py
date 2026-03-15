@@ -17,7 +17,7 @@ import logging
 import os
 import re
 import urllib.parse
-from typing import Any
+from typing import Any, TypedDict
 
 import httpx
 from PyPDF2 import PdfReader as PdfReader
@@ -100,6 +100,33 @@ class ParseResponse(BaseModel):
     source_anchor: str
     document_url: str
     tenant_id: str
+
+
+# ── Typed AI response shapes (TypedDicts) ────────────────────────────────────────
+
+class ParsedCriterion(TypedDict, total=False):
+    mps_number: str
+    number: str
+    title: str
+    description: str
+    intent_statement: str
+    guidance: str
+    source_anchor: str
+    maturity_descriptors: list[dict]  # [{"level": int, "descriptor_text": str}]
+
+
+class ParsedMPS(TypedDict, total=False):
+    domain_name: str
+    name: str
+    number: str
+    sort_order: int
+    level_descriptors: list[dict]  # [{"level": int, "descriptor_text": str}]
+
+
+class ParsedDomain(TypedDict, total=False):
+    name: str
+    sort_order: int
+    level_descriptors: list[dict]  # [{"level": int, "descriptor_text": str}]
 
 
 # ── Text extraction helpers ─────────────────────────────────────────────────────
@@ -189,35 +216,6 @@ def _detect_ldcs_pattern(text: str) -> bool:
 
 
 # ── GPT-4.1 structured extraction ──────────────────────────────────────────────
-
-# ── TypedDicts for structured AI response fields ────────────────────────────────
-from typing import TypedDict
-
-
-class ParsedCriterion(TypedDict, total=False):
-    mps_number: str
-    number: str
-    title: str
-    description: str
-    intent_statement: str
-    guidance: str
-    source_anchor: str
-    maturity_descriptors: list[dict]  # [{"level": int, "descriptor_text": str}]
-
-
-class ParsedMPS(TypedDict, total=False):
-    domain_name: str
-    name: str
-    number: str
-    sort_order: int
-    level_descriptors: list[dict]  # [{"level": int, "descriptor_text": str}]
-
-
-class ParsedDomain(TypedDict, total=False):
-    name: str
-    sort_order: int
-    level_descriptors: list[dict]  # [{"level": int, "descriptor_text": str}]
-
 
 _SYSTEM_PROMPT = """\
 You are Maturion, an expert compliance document analyser.
