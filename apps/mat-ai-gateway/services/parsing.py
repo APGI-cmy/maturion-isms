@@ -380,7 +380,10 @@ def _call_gpt(document_text: str, user_instructions: str | None = None, model: s
 
     # O-series models (o1, o3, o4-mini, etc.) do not accept temperature
     O_SERIES_MODELS = {"o1", "o1-mini", "o1-preview", "o3", "o3-mini", "o4-mini"}
-    extra_kwargs: dict[str, Any] = {"max_tokens": 32000 if use_model in {GPT_MODEL_LARGE, GPT_MODEL_PRO} else 16000}
+    # gpt-5.4 and gpt-5.4-pro require max_completion_tokens (not max_tokens)
+    COMPLETION_TOKENS_MODELS = {GPT_MODEL_LARGE, GPT_MODEL_PRO}
+    token_key = "max_completion_tokens" if use_model in COMPLETION_TOKENS_MODELS else "max_tokens"
+    extra_kwargs: dict[str, Any] = {token_key: 32000 if use_model in COMPLETION_TOKENS_MODELS else 16000}
     if use_model not in O_SERIES_MODELS:
         extra_kwargs["temperature"] = 0.1
 
