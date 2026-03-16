@@ -43,7 +43,7 @@ function validateAiGatewayUrl(url: string): void {
 // LDCS numbered-hierarchy pattern: matches "X.Y.Z" criteria identifiers
 // The LDCS defines 25 MPS across multiple domains — this regex detects LDCS-format documents
 const LDCS_HIERARCHY_PATTERN = /\b\d+\.\d+(?:\.\d+)?\b/;
-const LDCS_MPS_COUNT = 25;
+const LDCS_MPS_COUNT = 26;
 const LDCS_DOCUMENT_MARKERS = ['LDCS', 'Local Delivery Compliance Standard', 'mini performance standard'];
 
 /**
@@ -117,7 +117,7 @@ async function backgroundParse({
       // Generate a signed URL for the file (storage-internal, no external URLs)
       const { data: signedUrlData, error: signedUrlError } = await supabase.storage
         .from('audit-documents')
-        .createSignedUrl(filePath, 300); // 5-minute TTL
+        .createSignedUrl(filePath, 1800); // 30-minute TTL — covers o3 extraction time for large LDCS documents (10–25 min)
 
       if (signedUrlError || !signedUrlData?.signedUrl) {
         throw new Error(`Failed to create signed URL: ${signedUrlError?.message ?? 'unknown error'}`);

@@ -23,6 +23,7 @@ import {
   usePollCriteriaDocumentStatus,
   useDeleteCriteriaDocument,
   useReparseCriteriaDocument,
+  useClearCriteriaForReparse,
   type UploadedDocument,
 } from '../../lib/hooks/useCriteria';
 import { supabase } from '../../lib/supabase';
@@ -84,6 +85,7 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
   const uploadedDocuments = useUploadedDocuments(auditId);
   const deleteCriteriaDocument = useDeleteCriteriaDocument(auditId);
   const reparseCriteriaDocument = useReparseCriteriaDocument(auditId);
+  const clearCriteriaForReparse = useClearCriteriaForReparse(auditId);
   const queryClient = useQueryClient();
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -140,6 +142,8 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
   // Wave 17: pending parse state — set after upload, before modal confirm
   const [pendingParseFilePath, setPendingParseFilePath] = useState<string | null>(null);
   const [pendingParseFileName, setPendingParseFileName] = useState<string | null>(null);
+  // Track whether the ParsingInstructionsModal was opened for a re-parse (vs. fresh upload)
+  const [isReparse, setIsReparse] = useState(false);
 
   const pollStatus = usePollCriteriaDocumentStatus(auditId, pollingFilePath);
   const { invalidate: invalidateUploadedDocuments } = uploadedDocuments;
@@ -247,9 +251,11 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
   const handleParsingConfirm = async (instructions: string, saveAsTemplate?: { name: string }) => {
     const filePath = pendingParseFilePath;
     const userInstructions = instructions.trim() || null;
+    const wasReparse = isReparse;
     setPendingParseFilePath(null);
     setPendingParseFileName(null);
     setUploadSuccess(null);
+    setIsReparse(false);
 
     if (!filePath) return;
 
@@ -280,12 +286,16 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
       parsingSucceeded = true;
     } catch (parsingError) {
       console.warn('[CriteriaUpload] AI parsing unavailable — upload succeeded, parsing pending:', parsingError);
-      setAiParsingWarning('Upload complete. AI parsing is currently unavailable — your document has been saved and can be manually processed once the parsing service is restored.');
+      if (wasReparse) {
+        setActionError('Re-parse trigger failed. Your document is saved but parsing could not be initiated — please try again.');
+      } else {
+        setAiParsingWarning('Upload complete. AI parsing is currently unavailable — your document has been saved and can be manually processed once the parsing service is restored.');
+      }
     }
     if (parsingSucceeded) {
       // alert( — success path guard (T-PFCWT-006 regex anchor; alert() replaced with inline state in Wave 15R)
       setPollingFilePath(filePath);
-      setUploadSuccess('Criteria document uploaded and parsing initiated!');
+      setUploadSuccess(wasReparse ? 'Re-parse initiated!' : 'Criteria document uploaded and parsing initiated!');
       invalidateUploadedDocuments();
     }
   };
@@ -295,6 +305,7 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
     setPendingParseFilePath(null);
     setPendingParseFileName(null);
     setUploadSuccess(null);
+    setIsReparse(false);
 
     if (!filePath) return;
 
@@ -333,11 +344,18 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
   const handleConfirmReparse = async () => {
     if (!confirmReparseFilePath) return;
     const filePath = confirmReparseFilePath;
+    const docForReparse = uploadedDocuments.data?.find(
+      (d) => (d.file_path ?? d.details?.file_path) === filePath,
+    );
     setConfirmReparseFilePath(null);
     setActionError(null);
     try {
-      await reparseCriteriaDocument.mutateAsync({ filePath });
-      setPollingFilePath(filePath);
+      // Step 1+2: clear stale data and reset status to 'processing'
+      await clearCriteriaForReparse.mutateAsync({ filePath });
+      // Step 3: open modal so user can provide/confirm parsing instructions
+      setIsReparse(true);
+      setPendingParseFilePath(filePath);
+      setPendingParseFileName(docForReparse ? getDisplayName(docForReparse) : null);
     } catch (err) {
       setActionError(
         err instanceof Error ? err.message : 'Failed to start re-parse. Please try again.',
@@ -520,15 +538,15 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
             <button
               data-testid="reparse-confirm-button"
               onClick={() => void handleConfirmReparse()}
-              disabled={reparseCriteriaDocument.isPending}
+              disabled={clearCriteriaForReparse.isPending}
               className="px-3 py-1 text-xs font-medium bg-yellow-600 text-white rounded hover:bg-yellow-700 disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-yellow-500"
             >
-              {reparseCriteriaDocument.isPending ? 'Starting re-parse…' : 'Yes, re-parse'}
+              {clearCriteriaForReparse.isPending ? 'Clearing data…' : 'Yes, re-parse'}
             </button>
             <button
               data-testid="reparse-cancel-button"
               onClick={() => setConfirmReparseFilePath(null)}
-              disabled={reparseCriteriaDocument.isPending}
+              disabled={clearCriteriaForReparse.isPending}
               className="px-3 py-1 text-xs font-medium bg-white text-gray-700 border border-gray-300 rounded hover:bg-gray-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gray-400"
             >
               Cancel
@@ -571,6 +589,7 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
               const isAnyActionPending =
                 deleteCriteriaDocument.isPending ||
                 reparseCriteriaDocument.isPending ||
+                clearCriteriaForReparse.isPending ||
                 triggerParsing.isPending;
 
               return (
