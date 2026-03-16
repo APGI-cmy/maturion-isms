@@ -41,14 +41,14 @@ function validateAiGatewayUrl(url: string): void {
 }
 
 // LDCS numbered-hierarchy pattern: matches "X.Y.Z" criteria identifiers
-// The LDCS defines 25 MPS across multiple domains — this regex detects LDCS-format documents
+// The LDCS defines 26 MPS across multiple domains — this regex detects LDCS-format documents
 const LDCS_HIERARCHY_PATTERN = /\b\d+\.\d+(?:\.\d+)?\b/;
 const LDCS_MPS_COUNT = 26;
 const LDCS_DOCUMENT_MARKERS = ['LDCS', 'Local Delivery Compliance Standard', 'mini performance standard'];
 
 /**
  * Determine if a document body appears to follow the LDCS numbered hierarchy
- * (Domain > MPS (25 total) > Criteria with X.Y.Z numbering).
+ * (Domain > MPS (26 total) > Criteria with X.Y.Z numbering).
  */
 function detectLdcsPattern(documentText: string): boolean {
   const hasNumberedHierarchy = LDCS_HIERARCHY_PATTERN.test(documentText);
