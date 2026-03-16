@@ -14,7 +14,8 @@
  * - Inline error log per failed document (T-W15R-UI-003 / FR-103 full)
  * - alert() replaced with inline success state (T-W15R-UI-003)
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   useUploadCriteria,
   useTriggerAIParsing,
@@ -83,6 +84,7 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
   const uploadedDocuments = useUploadedDocuments(auditId);
   const deleteCriteriaDocument = useDeleteCriteriaDocument(auditId);
   const reparseCriteriaDocument = useReparseCriteriaDocument(auditId);
+  const queryClient = useQueryClient();
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
@@ -94,8 +96,41 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
   // T-W15R-UI-002: track which doc is being retried
   const [retryingDocId, setRetryingDocId] = useState<string | null>(null);
-  // Track which file path is currently being polled after a parse trigger
-  const [pollingFilePath, setPollingFilePath] = useState<string | null>(null);
+  // Track which file path is currently being polled — persisted to sessionStorage
+  // so polling resumes correctly when the user switches tabs and returns.
+  const [pollingFilePath, setPollingFilePathState] = useState<string | null>(() => {
+    try {
+      return sessionStorage.getItem(`criteria-polling-${auditId}`) ?? null;
+    } catch {
+      return null;
+    }
+  });
+
+  // Ensure pollingFilePath stays in sync when auditId changes without unmounting.
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem(`criteria-polling-${auditId}`);
+      setPollingFilePathState(stored ?? null);
+    } catch {
+      // If sessionStorage is unavailable, fall back to no active polling file for this audit.
+      setPollingFilePathState(null);
+    }
+  }, [auditId]);
+
+  const setPollingFilePath = useCallback((filePath: string | null) => {
+    setPollingFilePathState(filePath);
+    try {
+      const key = `criteria-polling-${auditId}`;
+      if (filePath) {
+        sessionStorage.setItem(key, filePath);
+      } else {
+        sessionStorage.removeItem(key);
+      }
+    } catch {
+      // sessionStorage unavailable (e.g. private browsing with restrictions) — degraded but functional
+    }
+  }, [auditId]);
+
   // Delete confirmation: stores filePath of the doc pending deletion, or null
   const [confirmDeleteFilePath, setConfirmDeleteFilePath] = useState<string | null>(null);
   // Re-parse confirmation: stores filePath of the doc pending re-parse, or null
@@ -115,7 +150,21 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
       setPollingFilePath(null);
       invalidateUploadedDocuments();
     }
-  }, [pollStatus.data?.status, invalidateUploadedDocuments]);
+  }, [pollStatus.data?.status, invalidateUploadedDocuments, setPollingFilePath]);
+
+  // Re-poll immediately when the user returns to this tab
+  useEffect(() => {
+    if (!pollingFilePath) return;
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        queryClient.invalidateQueries({
+          queryKey: ['criteria-document-status', auditId, pollingFilePath],
+        });
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [pollingFilePath, auditId, queryClient]);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
