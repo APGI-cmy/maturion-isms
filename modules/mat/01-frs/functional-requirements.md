@@ -2286,4 +2286,48 @@ The system MUST have complete RLS policies on the `scores` and `audit_scores` ta
 
 ---
 
+---
+
+### FR-112: Criteria Parsing — Verbatim Field Extraction (Wave 18)
+
+**Priority**: P0  
+**Source**: Wave 18 — maturion-isms#1114 (8 production gaps)  
+**Status**: ✅ COMPLETE — PR #1115 merged 2026-03-15
+
+The criteria parsing pipeline MUST extract and store the following fields **verbatim** from the source compliance document:
+
+**Acceptance Criteria**:
+1. The `criteria` table MUST have an `intent_statement TEXT` column for verbatim intent statements.
+2. The `criteria` table MUST have a `source_anchor TEXT` column for section/page references (traceability).
+3. The AI system prompt MUST instruct the model to extract `intent_statement`, `guidance`, and `source_anchor` as distinct verbatim fields — not summaries or paraphrases.
+4. The AI system prompt MUST instruct the model to extract `maturity_descriptors` (5-level array) per criterion verbatim.
+5. The AI system prompt MUST instruct the model to extract `level_descriptors` (5-level array) per domain and MPS verbatim.
+6. The Edge Function write-back MUST map AI response `guidance` → DB `guidance` (not `source_anchor`).
+7. The Edge Function write-back MUST map AI response `source_anchor` → DB `source_anchor`.
+8. The Edge Function MUST write maturity descriptor rows to `criteria_level_descriptors`, `mps_level_descriptors`, and `domain_level_descriptors`.
+
+**Dependencies**: FR-005 (criteria parsing pipeline)  
+**Test ID Reference**: T-W18-QA-001 through T-W18-QA-015
+
+---
+
+### FR-113: Criteria Review / Approval Screen (Wave 18)
+
+**Priority**: P1  
+**Source**: Wave 18 — Gap 7 (no Criteria Review screen)  
+**Status**: ✅ COMPLETE — PR #1115 merged 2026-03-15
+
+After AI parsing completes, the Lead Auditor MUST be able to review, edit, and approve the extracted criteria structure before scoring begins.
+
+**Acceptance Criteria**:
+1. A `CriteriaApproval` screen MUST render the full parsed criteria hierarchy (Domain → MPS → Criteria).
+2. Each criterion MUST display its `title`, `description`, `intent_statement`, `guidance`, `source_anchor`, and maturity descriptors.
+3. The Lead Auditor MUST be able to flag individual criteria for correction.
+4. The screen MUST display live data from the `criteria` table (not mock data).
+
+**Dependencies**: FR-005 (criteria parsing), FR-112 (verbatim field extraction)  
+**Test ID Reference**: T-W18-QA-011
+
+---
+
 *END OF FUNCTIONAL REQUIREMENTS SPECIFICATION*

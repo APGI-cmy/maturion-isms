@@ -2183,4 +2183,46 @@ Technical implementation of complete RLS policies on `scores` and `audit_scores`
 
 ---
 
+---
+
+### TR-111: Criteria Parsing Pydantic Serialization Hardening (Wave 18 Post-Merge)
+
+**Derives From**: FR-112  
+**Priority**: P0  
+**Status**: ✅ COMPLETE — PR #1116 (Wave 18 post-merge hotfix) merged 2026-03-16
+
+Technical implementation of Pydantic model hardening in `apps/mat-ai-gateway/services/parsing.py`:
+
+1. All five Pydantic models (`ParseRequest`, `CriterionResult`, `MpsResult`, `DomainResult`, `ParseResponse`) MUST have `model_config = ConfigDict(extra='ignore')` — unknown fields from the AI response are silently discarded rather than raising `ValidationError`.
+2. `MpsResult.sort_order` and `DomainResult.sort_order` MUST have `default=0` — AI responses that omit `sort_order` must not cause `ValidationError`.
+3. The AI system prompt `_SYSTEM_PROMPT` MUST apply the verbatim-only rule consistently to all fields including `title` — the instruction `title fields contain a SHORT label only (5-8 words)` contradicts verbatim-only and is replaced with a verbatim extraction instruction.
+
+**Constraints**:
+1. `extra='ignore'` MUST NOT be applied to fields that are actually required by the schema — only extra/unexpected fields are discarded.
+2. Existing Pydantic field definitions (all required extraction fields) are preserved unchanged.
+
+**Migration file**: None (Python code change only)  
+**Test**: T-W18-QA-003, T-W18-QA-004, T-W18-QA-005
+
+---
+
+### TR-112: RLS Profiles Row Gap Fix (Wave 18 Post-Merge)
+
+**Derives From**: FR-112, FR-002 (authentication / org isolation)  
+**Priority**: P0  
+**Status**: ✅ COMPLETE — PR #1116 (Wave 18 post-merge hotfix) merged 2026-03-16
+
+Technical implementation of `profiles` row completeness for the `audit_documents_org_insert_v2` RLS policy:
+
+1. A migration MUST backfill missing `public.profiles (id, email, role='staff')` rows for any `auth.users` entries with no corresponding profiles row (`ON CONFLICT DO NOTHING`).
+2. A `profiles_insert_own` policy MUST exist (idempotent): `FOR INSERT WITH CHECK (auth.uid() = id)`.
+3. A `profiles_update_own` policy MUST exist (idempotent): `FOR UPDATE USING (auth.uid() = id) WITH CHECK (auth.uid() = id)` — required so the org-assignment flow can set `organisation_id`.
+4. `audit_documents_org_insert_v2` (org-path-prefix: `split_part(name,'/',1) = profiles.organisation_id`) MUST remain unchanged — no permissive bypass added (INC-W13-BUCKET-RLS-001 protection).
+5. Application contract: uploads MUST NOT be attempted before `profiles.organisation_id IS NOT NULL`; upload path MUST be prefixed `/{organisation_id}/`.
+
+**Migration file**: `20260315000003_wave18_profiles_rls_fix.sql`  
+**Test**: T-W18-QA-012
+
+---
+
 *END OF TECHNICAL REQUIREMENTS SPECIFICATION*

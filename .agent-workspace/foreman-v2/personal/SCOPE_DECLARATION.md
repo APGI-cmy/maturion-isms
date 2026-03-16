@@ -1,31 +1,40 @@
-# SCOPE DECLARATION — Wave 13 Execution Start
+# SCOPE_DECLARATION — Wave 18 Post-Merge Hotfix
+# Session: session-wave18-postmerge-hotfix-20260315
+# Branch: copilot/fix-wave-18-post-merge-hotfixes
+# Date: 2026-03-15 (v2 — correction addendum per IAA FINDING-1)
+# Authority: A-026 / A-029 (SCOPE_DECLARATION-FRESH-OVERWRITE — cleared before writing)
 
-**Wave**: 13 — Live Deployment Wiring Regression Fix & Continuous Improvement (Execution Start)
-**Branch**: copilot/mat-wave-13-live-deployment-fix
-**Date**: 2026-03-13
-**Fresh overwrite**: YES (per A-029)
+## Declared Changed Files
 
-## Files Modified (git diff origin/main...HEAD --name-only)
+### Production Code Fixes
+- apps/mat-ai-gateway/services/parsing.py
+- apps/maturion-maturity-legacy/supabase/migrations/20260315000003_wave18_profiles_rls_fix.sql
+- supabase/functions/invoke-ai-parse-criteria/index.ts
 
-| File | Type | Justification |
-|------|------|---------------|
-| `.agent-admin/assurance/iaa-prebrief-wave13-live-deployment-fix.md` | IAA governance | Pre-Brief artifact — required per A-031 |
-| `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Governance | Wave 13 task register — BLOCKER-1 resolution |
-| `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md` | Governance | This file — A-026 compliance |
-| `modules/mat/tests/wave13/wave13-gate.test.ts` | Test | 24 RED gate tests (all Wave 13 IDs) |
-| `modules/mat/tests/wave13/auth-app-wiring.test.tsx` | Test | Auth app wiring tests |
-| `modules/mat/tests/wave13/auth-session-wiring.test.ts` | Test | Auth session wiring tests |
-| `modules/mat/tests/wave13/ci-gates.test.ts` | Test | CI gate tests |
-| `modules/mat/tests/wave13/e2e-live-deployment.test.ts` | Test | E2E live deployment tests |
-| `modules/mat/tests/wave13/frontend-page-wiring.test.tsx` | Test | Frontend page wiring tests |
-| `modules/mat/tests/wave13/schema-existence.test.ts` | Test | Schema existence tests |
-| `.github/workflows/deploy-mat-vercel.yml` | CI | schema-existence-check job + env-var-audit fix + F-03 exit 1 |
-| `apps/maturion-maturity-legacy/supabase/migrations/20260313000001_mps_view.sql` | Schema | public.mps view migration |
-| `apps/maturion-maturity-legacy/supabase/migrations/20260313000002_user_profiles_view.sql` | Schema | public.user_profiles view migration |
-| `.agent-admin/prehandover/proof-wave13-task13.1-20260313.md` | Governance | schema-builder PREHANDOVER proof |
-| `modules/mat/05-build-evidence/PBFAG-mat-20260313.md` | Governance | PBFAG Wave 13 baseline — BLOCKER-2 resolution |
-| `.agent-workspace/schema-builder/memory/session-wave13-task13.1-20260313.md` | Governance | schema-builder session memory |
-| `.agent-workspace/qa-builder/memory/session-wave13-red-gate-20260313.md` | Governance | qa-builder session memory |
-| `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave13-execution-start-20260313.md` | Governance | Foreman PREHANDOVER proof |
-| `.agent-workspace/foreman-v2/memory/session-wave13-execution-start-20260313.md` | Governance | Foreman session memory |
-| `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` | Governance | Parking station entry |
+### Governance Artifacts
+- modules/mat/00-app-description/app-description.md
+- modules/mat/03-implementation-plan/implementation-plan.md
+- modules/mat/BUILD_PROGRESS_TRACKER.md
+
+### Session/Assurance Artifacts
+- .agent-admin/assurance/iaa-prebrief-wave18-postmerge-hotfix-20260315.md
+- .agent-admin/assurance/iaa-prebrief-wave18-postmerge-hotfix-IAA-response-20260315.md
+- .agent-admin/assurance/iaa-rejection-session-wave18postmerge-hotfix-20260315.md
+- .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+- .agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md
+- .agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave18-postmerge-hotfix-20260315.md
+- .agent-workspace/foreman-v2/memory/PREHANDOVER-ADDENDUM-session-wave18-postmerge-hotfix-20260315.md
+- .agent-workspace/foreman-v2/memory/session-wave18-postmerge-hotfix-20260315.md
+- .agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md
+- .agent-workspace/independent-assurance-agent/memory/session-prebrief-wave18-postmerge-hotfix-20260315.md
+- .agent-workspace/independent-assurance-agent/memory/session-wave18-postmerge-hotfix-20260315-AUDIT.md
+- .agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md
+
+## POLC Boundary Declaration
+
+All production code changes were made by inducted ISMS specialist agents:
+- T-W18P-001 (RLS migration): schema-builder
+- T-W18P-002/003/004 (Pydantic, Prompt, Descriptor Index): api-builder
+- T-W18P-006 (Governance docs): mat-specialist
+
+foreman-v2-agent authored: governance artifacts only (pre-brief, wave-current-tasks, SCOPE_DECLARATION, PREHANDOVER, PREHANDOVER addendum, session memory, FAIL-ONLY-ONCE status update)
