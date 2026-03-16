@@ -44,6 +44,7 @@ GPT_MODEL = "gpt-4.1"
 GPT_MODEL_LARGE = "gpt-5.4"     # escalation model for large/complex documents (LDCS, >10 MPS)
 GPT_MODEL_PRO = "gpt-5.4-pro"   # highest-effort model for low-confidence or failed parses
 LDCS_ESCALATION_THRESHOLD = 10  # escalate to gpt-5.4 if document has more than this many MPS
+LDCS_MIN_CRITERIA_EXPECTED = LDCS_MPS_TOTAL  # minimum expected criteria count for a full LDCS document (1 per MPS)
 CONFIDENCE_REVIEW_THRESHOLD = 0.75  # flag needs_human_review when below this
 MAX_DOCUMENT_CHARS = 400000  # gpt-5.4 supports 1M token window (~4M chars); 400K covers a full 150-page LDCS document
 
@@ -499,20 +500,32 @@ async def parse_document(request: ParseRequest) -> ParseResponse:
         ldcs_detected = _detect_ldcs_pattern(document_text)
 
         # 3. Call GPT for structured extraction
-        extracted = _call_gpt(document_text, user_instructions=request.user_instructions)
+        # For LDCS documents, use gpt-5.4 directly for pass 1 — gpt-4.1 hits output token limits
+        # on large LDCS documents (26 MPS, ~180 criteria) and returns partial results with
+        # finish_reason="stop" (not "length"), bypassing the truncation escalation guard.
+        if ldcs_detected:
+            logger.warning(
+                "LDCS document detected — using %s for pass 1 to ensure full extraction",
+                GPT_MODEL_LARGE,
+            )
+            extracted = _call_gpt(document_text, user_instructions=request.user_instructions, model=GPT_MODEL_LARGE)
+        else:
+            extracted = _call_gpt(document_text, user_instructions=request.user_instructions)
 
-        # 4. Two-pass strategy: if LDCS confirmed but no criteria were extracted despite
-        # domains and MPS being present, the single-pass approach hit the output token limit.
-        # Run a second focused pass using gpt-5.4 to extract criteria only.
+        # 4. Two-pass strategy: if LDCS confirmed but criteria count is below the expected minimum
+        # (fewer criteria than MPS — clearly partial extraction), run a second focused pass using
+        # gpt-5.4 to extract criteria only.
         if (
             ldcs_detected
-            and len(extracted.get("criteria", [])) == 0
+            and len(extracted.get("mini_performance_standards", [])) >= LDCS_ESCALATION_THRESHOLD
+            and len(extracted.get("criteria", [])) < LDCS_MIN_CRITERIA_EXPECTED
             and len(extracted.get("domains", [])) > 0
-            and len(extracted.get("mini_performance_standards", [])) > 0
         ):
             logger.warning(
-                "LDCS document pass 1 returned 0 criteria despite domains+MPS present — "
-                "running pass 2 with gpt-5.4 for criteria-only extraction"
+                "LDCS document pass 1 returned only %d criteria (expected >= %d) — "
+                "running pass 2 with gpt-5.4 for criteria-only extraction",
+                len(extracted.get("criteria", [])),
+                LDCS_MIN_CRITERIA_EXPECTED,
             )
             extracted["criteria"] = _call_gpt_criteria_only(
                 document_text,
@@ -589,20 +602,29 @@ class DocumentParser:
         try:
             document_text, _fmt = _extract_document_text(document_url)
             ldcs_detected = _detect_ldcs_pattern(document_text)
-            extracted = _call_gpt(document_text, user_instructions=user_instructions)
 
-            # Two-pass strategy: if LDCS confirmed but no criteria extracted despite
-            # domains and MPS being present, the single-pass approach hit the output token limit.
-            # Run a second focused pass using gpt-5.4 to extract criteria only.
+            # For LDCS documents, use gpt-5.4 directly for pass 1
+            if ldcs_detected:
+                logger.warning(
+                    "LDCS document detected — using %s for pass 1 to ensure full extraction",
+                    GPT_MODEL_LARGE,
+                )
+                extracted = _call_gpt(document_text, user_instructions=user_instructions, model=GPT_MODEL_LARGE)
+            else:
+                extracted = _call_gpt(document_text, user_instructions=user_instructions)
+
+            # Two-pass guard: partial criteria → run criteria-only pass
             if (
                 ldcs_detected
-                and len(extracted.get("criteria", [])) == 0
+                and len(extracted.get("mini_performance_standards", [])) >= LDCS_ESCALATION_THRESHOLD
+                and len(extracted.get("criteria", [])) < LDCS_MIN_CRITERIA_EXPECTED
                 and len(extracted.get("domains", [])) > 0
-                and len(extracted.get("mini_performance_standards", [])) > 0
             ):
                 logger.warning(
-                    "LDCS document pass 1 returned 0 criteria despite domains+MPS present — "
-                    "running pass 2 with gpt-5.4 for criteria-only extraction"
+                    "LDCS document pass 1 returned only %d criteria (expected >= %d) — "
+                    "running pass 2 with gpt-5.4 for criteria-only extraction",
+                    len(extracted.get("criteria", [])),
+                    LDCS_MIN_CRITERIA_EXPECTED,
                 )
                 extracted["criteria"] = _call_gpt_criteria_only(
                     document_text,
