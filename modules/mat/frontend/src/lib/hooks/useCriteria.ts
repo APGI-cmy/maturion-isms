@@ -410,6 +410,45 @@ export function useReparseCriteriaDocument(auditId: string) {
 }
 
 /**
+ * Clear parsed criteria data and reset criteria_documents status to 'processing'
+ * in preparation for a re-parse. Does NOT trigger the Edge Function.
+ *
+ * Used by CriteriaUpload to clear stale data before showing the
+ * ParsingInstructionsModal for re-parse flows.
+ */
+export function useClearCriteriaForReparse(auditId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, { filePath: string }>({
+    mutationFn: async ({ filePath }) => {
+      // Step 1: Delete all domains for this audit — cascades to MPS and criteria.
+      const { error: domainsError } = await supabase
+        .from('domains')
+        .delete()
+        .eq('audit_id', auditId);
+      if (domainsError) {
+        throw new Error(`Failed to clear criteria data for re-parse: ${domainsError.message}`);
+      }
+
+      // Step 2: Upsert criteria_documents to 'processing' — reset parse state.
+      const { error: upsertError } = await supabase
+        .from('criteria_documents')
+        .upsert(
+          { audit_id: auditId, file_path: filePath, status: 'processing' },
+          { onConflict: 'audit_id,file_path' },
+        );
+      if (upsertError) {
+        throw new Error(`Failed to reset criteria document status: ${upsertError.message}`);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['uploaded-documents', auditId] });
+      queryClient.invalidateQueries({ queryKey: ['criteria-tree', auditId] });
+    },
+  });
+}
+
+/**
  * Poll criteria_documents.status for a specific auditId + filePath until terminal state.
  *
  * Hotfix (issue #1019): The Edge Function now returns 202 Accepted immediately and runs
