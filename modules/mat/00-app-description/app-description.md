@@ -1245,7 +1245,7 @@ The following gaps from the same audit are **RESOLVED** (Wave postbuild-fails-01
 
 ### Overview
 
-Wave 18 delivered an end-to-end repair of the Criteria Upload → Parse → Review pipeline, resolving 8 production gaps. The criteria parsing capability was substantially enhanced: the AI system prompt now instructs GPT-4 Turbo to extract content **verbatim** from the source compliance document, preserving the original wording of titles, intent statements, guidance, maturity descriptors, and level descriptors.
+Wave 18 delivered an end-to-end repair of the Criteria Upload → Parse → Review pipeline, resolving 8 production gaps. The criteria parsing capability was substantially enhanced: the AI system prompt now instructs the configured OpenAI model to extract content **verbatim** from the source compliance document, preserving the original wording of titles, intent statements, guidance, maturity descriptors, and level descriptors.
 
 ### New Schema Columns
 
