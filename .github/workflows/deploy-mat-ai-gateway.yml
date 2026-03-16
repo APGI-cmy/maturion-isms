@@ -81,7 +81,7 @@ jobs:
             echo "Render staging deploy trigger failed with HTTP $RESPONSE"
             exit 1
           fi
-          DEPLOY_ID=$(jq -r '.id // empty' /tmp/render-staging-response.json)
+          DEPLOY_ID=$(jq -r '.deploy.id // .id // empty' /tmp/render-staging-response.json)
           if [ -z "$DEPLOY_ID" ]; then
             echo "Failed to extract deploy ID from response"
             exit 1
