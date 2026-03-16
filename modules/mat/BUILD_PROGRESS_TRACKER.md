@@ -3506,8 +3506,76 @@ Foreman-v2-agent formally kicks off Wave 16 build orchestration. All 9 sub-waves
 
 ### Version History Entry
 
-**v1.9 (2026-03-09)**: Wave 16 orchestration kick-off: all 9 sub-wave statuses updated from OPEN/BLOCKED/PARKED to ORCHESTRATION STARTED; task register published; IAA pre-brief committed; immediately actionable sub-waves (16.1, 16.2, 16.6, 16.7, 16.8) queued for sub-wave sessions; blocked waves (16.3, 16.4 pending AIMC; 16.5 cross-module); 16.9 parked.
+**v1.9 (2026-03-09)**: Wave 16 orchestration kick-off: all 9 sub-wave statuses updated from OPEN/BLOCKED/PARKED to ORCHESTRATION STARTED; task register published; IAA pre-brief committed; immediately actionable sub-waves (16.1, 16.2, 16.6, 16.7, 16.8) queued for sub-wave sessions; blocked waves (16.3, 16.4 pending AIMC; 16.5 cross-module); 16.9 parked.  
+**v2.0 (2026-03-15)**: Wave 17 and Wave 18 completion entries added; Pipeline Summary updated to reflect Wave 18 AI criteria parsing improvements.
 
 ---
 
 **Reference**: `docs/completeness-review/compliance-workflow-completeness-report-20260309.md`
+
+---
+
+## Wave 17 — User-Guided Parsing (2026-03-11)
+
+**Status**: COMPLETE — PR merged  
+**Capability added**: `user_instructions` field in AI Gateway; `parsing_instructions` column in `criteria_documents`
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-11 | COMPLETE | PR merged; user_instructions and parsing_instructions wired end-to-end |
+
+---
+
+## Wave 18 — MAT Criteria Parsing Pipeline End-to-End Repair (2026-03-15)
+
+**Status**: COMPLETE — PR #1115 merged 2026-03-15  
+**Fixes**: 8 production gaps in the Criteria Upload → Parse → Review pipeline
+
+### Capabilities Added
+
+| Component | Change |
+|-----------|--------|
+| `criteria.intent_statement` column | Schema migration — stores verbatim intent statement extracted from compliance document |
+| `criteria.source_anchor` column | Schema migration — stores verbatim source reference (section/clause/page) from compliance document |
+| AI system prompt | Extracts `intent_statement`, `guidance`, `maturity_descriptors`, `level_descriptors` verbatim from source |
+| Edge Function | Writes to `criteria_level_descriptors`, `mps_level_descriptors`, `domain_level_descriptors` junction tables |
+| RLS | `audit_documents_org_insert` bypass policy removed; `profiles` row backfill migration added |
+| `CriteriaApproval.tsx` | Full criteria review/approval UI — Lead Auditor can review, approve, or flag parsed criteria |
+
+### Wave 18 Post-Merge Hotfix (#1116)
+
+| Fix | Detail |
+|-----|--------|
+| Pydantic models | `sort_order` defaults added; `model_config extra='ignore'` applied |
+| Prompt verbatim rule | Verbatim-only rule applied consistently to `title` field |
+| Descriptor index alignment | Verified and documented |
+| Profiles RLS | Backfill migration and `UPDATE` policy added |
+
+### Wave 18 State Machine
+
+| Date | Status | Note |
+|------|--------|------|
+| 2026-03-15 | INITIATED | 8 production gaps identified in Criteria Upload → Parse → Review pipeline |
+| 2026-03-15 | COMPLETE | PR #1115 merged; all 8 gaps resolved |
+| 2026-03-15 | POST-MERGE HOTFIX | PR #1116 (copilot/fix-wave-18-post-merge-hotfixes): Pydantic defaults, verbatim title rule, descriptor alignment, profiles RLS backfill |
+
+---
+
+### Updated Pipeline Summary (~65% Functional)
+
+> **Updated 2026-03-15** post Wave 18 merge. Previous estimate was ~45% Functional (PR #1016, 2026-03-09).
+
+| Workflow Stage | Status | Notes |
+|---|---|---|
+| Document upload (standards, evidence) | ✅ FUNCTIONAL | Storage + audit_logs wired |
+| AI criteria parsing (document → domain/MPS/criteria) | ✅ FUNCTIONAL (ENHANCED) | Wave 18: now extracts intent_statement, guidance, maturity_descriptors, level_descriptors verbatim |
+| Parse status tracking | ✅ FUNCTIONAL | Polling on `parse_tasks` table |
+| Criteria tree display | ✅ FUNCTIONAL | Hierarchical UI with `CriteriaTree` component |
+| Criteria review/approval UI | ✅ FUNCTIONAL | `CriteriaApproval.tsx` added in Wave 18 (was missing) |
+| Evidence collection UI | ⚠️ PARTIAL | `EvidenceCollection.tsx` exists; `/evidence` page is a stub (GAP-003) |
+| Lead Auditor maturity scoring (confirm/override) | ⚠️ PARTIAL | Manual UI works in `ReviewTable`; AI scoring blocked (GAP-001) |
+| AI-driven criterion scoring | ❌ NOT FUNCTIONAL | `invoke-ai-score-criterion` Edge Function missing (GAP-001) |
+| Feedback and recommendations UI | ❌ NOT IMPLEMENTED | `gap_analysis` JSONB exists in DB; no UI renders it (GAP-006, GAP-020) |
+| Report generation | ❌ NOT FUNCTIONAL | `generate-audit-report` Edge Function missing (GAP-002) |
+| Report download | ❌ NOT FUNCTIONAL | Blocked on report generation (GAP-007) |
+| AI capability routing (scoring, reporting) | ❌ BLOCKED | AIMC Waves 3–4 not yet complete (GAP-004, GAP-005) |

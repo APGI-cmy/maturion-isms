@@ -351,7 +351,11 @@ async function backgroundParse({
       console.warn(`[invoke-ai-parse-criteria] Failed to re-query criteria for descriptor association: ${orderQueryError.message}`);
     }
 
-    // Build number → id map (number is unique within an audit)
+    // Build number → id map (number is unique within an audit).
+    // criteriaNumber = idx + 1 is safe here because:
+    //   (1) domains.delete() CASCADE-deletes all stale criteria for this audit_id before this upsert;
+    //   (2) the upsert assigns number = idx + 1 sequentially (no pre-existing rows can collide);
+    //   (3) the re-query above orders by number ascending, ensuring a deterministic 1-based mapping.
     const criteriaNumberToId = new Map<number, string>();
     for (const row of (orderedCriteriaRows ?? [])) {
       criteriaNumberToId.set(row.number as number, row.id as string);
