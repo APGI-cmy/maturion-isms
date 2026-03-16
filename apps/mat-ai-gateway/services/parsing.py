@@ -34,13 +34,15 @@ router = APIRouter()
 SUPABASE_STORAGE_URL = os.environ.get("SUPABASE_STORAGE_URL", "").rstrip("/")
 
 # ── LDCS document structure constants ──────────────────────────────────────────
-# The LDCS (Local Delivery Compliance Standard) uses 25 MPS across multiple domains.
+# The LDCS (Local Delivery Compliance Standard) uses 26 MPS across multiple domains.
 # Criteria are numbered in a hierarchical X.Y.Z pattern.
 LDCS_NUMBERED_HIERARCHY_PATTERN = re.compile(r"\b\d+\.\d+(?:\.\d+)?\b")
-LDCS_MPS_TOTAL = 25
+LDCS_MPS_TOTAL = 26
 LDCS_MARKERS = ["LDCS", "Local Delivery Compliance Standard", "mini performance standard"]
 
 GPT_MODEL = "gpt-4.1"
+GPT_MODEL_LARGE = "o3"   # escalation model for large/complex documents
+LDCS_ESCALATION_THRESHOLD = 10  # escalate if document has more than this many MPS
 CONFIDENCE_REVIEW_THRESHOLD = 0.75  # flag needs_human_review when below this
 MAX_DOCUMENT_CHARS = 400000  # gpt-4.1 supports 1M token window (~4M chars); 400K covers a full 150-page LDCS document
 
@@ -225,7 +227,7 @@ def _detect_ldcs_pattern(text: str) -> bool:
     return has_numbered_hierarchy or has_ldcs_marker
 
 
-# ── GPT-4.1 structured extraction ──────────────────────────────────────────────
+# ── GPT structured extraction ───────────────────────────────────────────────────
 
 _SYSTEM_PROMPT = """\
 You are Maturion, an expert compliance document analyser.
@@ -303,10 +305,61 @@ CRITICAL RULES:
 The user will tell you how to interpret this specific document's structure.
 """
 
+_CRITERIA_ONLY_SYSTEM_PROMPT = """\
+You are Maturion, an expert compliance document analyser.
+Your output MUST be a JSON object containing ONLY a "criteria" array:
+{
+  "criteria": [
+    {
+      "mps_number": "...",
+      "number": "...",
+      "title": "...",
+      "description": "...",
+      "intent_statement": "...",
+      "guidance": "...",
+      "source_anchor": "<page or section reference in source document>",
+      "maturity_descriptors": [
+        {"level": 1, "descriptor_text": "..."},
+        {"level": 2, "descriptor_text": "..."},
+        {"level": 3, "descriptor_text": "..."},
+        {"level": 4, "descriptor_text": "..."},
+        {"level": 5, "descriptor_text": "..."}
+      ]
+    }
+  ]
+}
+CRITICAL RULES:
+- Extract ONLY the criteria array — do NOT include domains or mini_performance_standards.
+- For each MPS number provided in the context, extract ALL criteria that belong to it.
+- description fields MUST contain the COMPLETE VERBATIM text of each criterion —
+  including all intent statements, required actions, sub-items, and bullets, word for word.
+  Summarisation is PROHIBITED. This is a legal compliance document.
+- title: extract the VERBATIM title or label of the criterion as it appears in the document.
+  If no distinct title is present, use the first 5–8 significant words of the description verbatim.
+- mps_number MUST exactly match the number field of the parent MPS from the provided MPS list.
+- source_anchor must reference the section or page number in the source document for traceability.
+- NEVER invent, fabricate, or hallucinate criteria. Only extract what is in the document.
+"""
 
-def _call_gpt4_turbo(document_text: str, user_instructions: str | None = None) -> dict[str, Any]:
-    """Call GPT model to extract structured criteria from document text."""
+
+def _call_gpt(document_text: str, user_instructions: str | None = None, model: str | None = None) -> dict[str, Any]:
+    """Call GPT model to extract structured criteria from document text.
+
+    Automatically escalates to GPT_MODEL_LARGE if the response is truncated
+    (finish_reason="length") — implementing the AI policy auto-escalation requirement.
+
+    Parameters
+    ----------
+    document_text:
+        Full document text to parse.
+    user_instructions:
+        Optional caller-supplied guidance injected into the user-role message
+        (BD-017/BD-018 prompt injection mitigation).
+    model:
+        GPT model to use. Defaults to GPT_MODEL. Pass GPT_MODEL_LARGE to force escalation.
+    """
     client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+    use_model = model or GPT_MODEL
 
     # Build user message: inject parsing instructions when provided.
     # Structural separation (BD-017/BD-018): user_instructions are wrapped in XML-like
@@ -323,17 +376,100 @@ def _call_gpt4_turbo(document_text: str, user_instructions: str | None = None) -
             f"\n\n{document_text[:MAX_DOCUMENT_CHARS]}"
         )
 
+    # gpt-4.1 supports temperature; o-series models (o1, o3, etc.) do not
+    extra_kwargs: dict[str, Any] = {"max_tokens": 16000}
+    if use_model == GPT_MODEL:
+        extra_kwargs["temperature"] = 0.1
+
     response = client.chat.completions.create(
-        model=GPT_MODEL,
+        model=use_model,
         messages=[
             {"role": "system", "content": _SYSTEM_PROMPT},
             {"role": "user", "content": user_message},
         ],
         response_format={"type": "json_object"},
-        temperature=0.1,
+        **extra_kwargs,
     )
 
+    if response.choices[0].finish_reason == "length":
+        if use_model != GPT_MODEL_LARGE:
+            logger.warning(
+                "%s response truncated — escalating to %s for document parsing",
+                use_model,
+                GPT_MODEL_LARGE,
+            )
+            return _call_gpt(document_text, user_instructions=user_instructions, model=GPT_MODEL_LARGE)
+        raise ValueError(
+            f"GPT response was truncated using {use_model} (finish_reason=length) — "
+            "document requires model escalation"
+        )
+
     return json.loads(response.choices[0].message.content or "{}")
+
+
+def _call_gpt_criteria_only(
+    document_text: str,
+    mps_list: list[dict[str, Any]],
+    user_instructions: str | None = None,
+) -> list[dict[str, Any]]:
+    """Second-pass GPT call using o3 to extract ONLY criteria for an LDCS document.
+
+    Used when the first pass extracted domains and MPS but returned 0 criteria —
+    indicating the single-pass approach exhausted the output token budget.
+    Provides the already-extracted MPS list as context and asks o3 to extract criteria only.
+
+    Parameters
+    ----------
+    document_text:
+        Full document text.
+    mps_list:
+        List of MPS dicts already extracted in pass 1 (number + name used as context).
+    user_instructions:
+        Optional caller-supplied guidance forwarded from the original parse request.
+    """
+    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+    mps_context = json.dumps(
+        [{"number": m.get("number", ""), "name": m.get("name", "")} for m in mps_list],
+        indent=2,
+    )
+
+    base_message = (
+        f"The following MPS (Mini Performance Standards) were already extracted from this document:\n"
+        f"{mps_context}\n\n"
+        f"Now extract ALL criteria for every MPS listed above from the document below.\n"
+        f"For each criterion, set mps_number to exactly match its parent MPS's number field.\n\n"
+    )
+
+    if user_instructions:
+        user_message = (
+            f"<instructions>\n{user_instructions}\n</instructions>\n\n"
+            f"{base_message}"
+            f"<document>\n{document_text[:MAX_DOCUMENT_CHARS]}\n</document>"
+        )
+    else:
+        user_message = (
+            f"{base_message}"
+            f"<document>\n{document_text[:MAX_DOCUMENT_CHARS]}\n</document>"
+        )
+
+    response = client.chat.completions.create(
+        model=GPT_MODEL_LARGE,
+        messages=[
+            {"role": "system", "content": _CRITERIA_ONLY_SYSTEM_PROMPT},
+            {"role": "user", "content": user_message},
+        ],
+        response_format={"type": "json_object"},
+    )
+
+    if response.choices[0].finish_reason == "length":
+        raise ValueError(
+            f"GPT response was truncated using {GPT_MODEL_LARGE} in criteria-only extraction "
+            "(finish_reason=length) — document exceeds maximum processing capacity"
+        )
+
+    result = json.loads(response.choices[0].message.content or "{}")
+    return result.get("criteria", [])
 
 
 # ── FastAPI route ───────────────────────────────────────────────────────────────
@@ -353,8 +489,27 @@ async def parse_document(request: ParseRequest) -> ParseResponse:
         # 2. Detect LDCS pattern
         ldcs_detected = _detect_ldcs_pattern(document_text)
 
-        # 3. Call GPT-4 Turbo for structured extraction
-        extracted = _call_gpt4_turbo(document_text, user_instructions=request.user_instructions)
+        # 3. Call GPT for structured extraction
+        extracted = _call_gpt(document_text, user_instructions=request.user_instructions)
+
+        # 4. Two-pass strategy: if LDCS confirmed but no criteria were extracted despite
+        # domains and MPS being present, the single-pass approach hit the output token limit.
+        # Run a second focused pass using o3 to extract criteria only.
+        if (
+            ldcs_detected
+            and len(extracted.get("criteria", [])) == 0
+            and len(extracted.get("domains", [])) > 0
+            and len(extracted.get("mini_performance_standards", [])) > 0
+        ):
+            logger.warning(
+                "LDCS document pass 1 returned 0 criteria despite domains+MPS present — "
+                "running pass 2 with o3 for criteria-only extraction"
+            )
+            extracted["criteria"] = _call_gpt_criteria_only(
+                document_text,
+                extracted["mini_performance_standards"],
+                user_instructions=request.user_instructions,
+            )
 
         confidence_score: float = float(extracted.get("confidence_score", 0.5))
         needs_human_review: bool = confidence_score < CONFIDENCE_REVIEW_THRESHOLD
@@ -425,7 +580,26 @@ class DocumentParser:
         try:
             document_text, _fmt = _extract_document_text(document_url)
             ldcs_detected = _detect_ldcs_pattern(document_text)
-            extracted = _call_gpt4_turbo(document_text, user_instructions=user_instructions)
+            extracted = _call_gpt(document_text, user_instructions=user_instructions)
+
+            # Two-pass strategy: if LDCS confirmed but no criteria extracted despite
+            # domains and MPS being present, the single-pass approach hit the output token limit.
+            # Run a second focused pass using o3 to extract criteria only.
+            if (
+                ldcs_detected
+                and len(extracted.get("criteria", [])) == 0
+                and len(extracted.get("domains", [])) > 0
+                and len(extracted.get("mini_performance_standards", [])) > 0
+            ):
+                logger.warning(
+                    "LDCS document pass 1 returned 0 criteria despite domains+MPS present — "
+                    "running pass 2 with o3 for criteria-only extraction"
+                )
+                extracted["criteria"] = _call_gpt_criteria_only(
+                    document_text,
+                    extracted["mini_performance_standards"],
+                    user_instructions=user_instructions,
+                )
 
             confidence_score = float(extracted.get("confidence_score", 0.5))
             needs_human_review = confidence_score < CONFIDENCE_REVIEW_THRESHOLD
