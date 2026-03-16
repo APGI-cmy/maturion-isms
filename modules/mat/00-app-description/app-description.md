@@ -1267,7 +1267,7 @@ The AI Gateway `DocumentParser` now extracts the following fields in addition to
 
 ### New Database Tables (Level Descriptors)
 
-The Edge Function (`invoke-ai-parse-criteria`) now writes to three new junction tables:
+The Edge Function (`invoke-ai-parse-criteria`) now writes to the existing level-descriptor junction tables (introduced in Wave 14):
 
 | Table | Purpose |
 |-------|---------|
