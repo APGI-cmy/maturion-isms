@@ -370,7 +370,7 @@ The criteria parsing pipeline is triggered when the Lead Auditor uploads a crite
    - `DocumentParser.parse()` (`apps/mat-ai-gateway/services/parsing.py`):
      - Extracts text: `pypdf2` for PDF, `python-docx` for DOCX
      - Builds extraction prompt with §15.1 schema as the required output format
-     - Calls GPT-4 Turbo (128K context window) with structured output mode
+     - Calls GPT-4.1 with structured output mode
      - Validates response against §15.1 schema
    - Returns JSON hierarchy of Domains → MPS → Criteria
 
