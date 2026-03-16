@@ -10,7 +10,7 @@ from __future__ import annotations
 from typing import Union
 
 from fastapi import APIRouter
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from services.image_analysis import ImageAnalyser
 from services.parsing import DocumentParser
@@ -38,6 +38,17 @@ class ParseRequest(BaseModel):
     document_url: str
     tenant_id: str
     user_instructions: str | None = None
+
+    @field_validator("user_instructions")
+    @classmethod
+    def escape_user_instructions(cls, v: str | None) -> str | None:
+        """
+        Escape angle brackets in user_instructions to prevent breaking
+        surrounding <instructions>...</instructions> wrappers downstream.
+        """
+        if v is None:
+            return v
+        return v.replace("<", "&lt;").replace(">", "&gt;")
 
 
 class ScoreRequest(BaseModel):
