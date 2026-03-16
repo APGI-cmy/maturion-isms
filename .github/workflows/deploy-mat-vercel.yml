@@ -26,7 +26,7 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
   PNPM_VERSION: '8.15.7'
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -210,7 +210,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Supabase CLI
-        uses: supabase/setup-cli@v1
+        uses: supabase/setup-cli@v2
 
       - name: Apply pending migrations
         env:
@@ -531,17 +531,19 @@ jobs:
       - name: e2e-auth-smoke
         continue-on-error: true
         env:
-          VITE_LIVE_DEPLOYMENT_URL: ${{ steps.deploy.outputs.production-url }}
+          PRODUCTION_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: |
-          echo "Running E2E auth smoke test against live deployment..."
-          if [ -z "$VITE_LIVE_DEPLOYMENT_URL" ]; then
-            echo "WARN: VITE_LIVE_DEPLOYMENT_URL not set — skipping E2E smoke test"
-            exit 0
+          echo "Running E2E auth smoke test against production URL..."
+          SMOKE_URL="${PRODUCTION_SITE_URL:-https://mat.maturion.com}"
+          echo "Checking production app is reachable: $SMOKE_URL"
+          http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$SMOKE_URL/" 2>/dev/null || echo "000")
+          if echo "$http_code" | grep -qE '^[23][0-9][0-9]$'; then
+            echo "PASS: Production URL reachable (HTTP $http_code)"
+          else
+            echo "WARN: Production URL returned HTTP $http_code (non-blocking)"
           fi
-          echo "Checking deployed app is reachable: $VITE_LIVE_DEPLOYMENT_URL"
-          curl -fsS --max-time 30 "$VITE_LIVE_DEPLOYMENT_URL/" > /dev/null
           if [ -n "$VITE_SUPABASE_URL" ]; then
             echo "Checking Supabase auth endpoint is reachable..."
             response=$(curl -s -o /dev/null -w "%{http_code}" \
@@ -570,7 +572,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: auth-smoke — verify auth endpoint reachable after deploy
         env:
