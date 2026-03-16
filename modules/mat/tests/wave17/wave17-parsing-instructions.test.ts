@@ -198,23 +198,26 @@ describe(
       ).toMatch(/\buser_instructions\s*:\s*str\s*\|\s*None\s*=\s*None/);
     });
 
-    // ── T-W17-QA-004 — _call_gpt4_turbo accepts user_instructions parameter ──
+    // ── T-W17-QA-004 — _call_gpt (formerly _call_gpt4_turbo) accepts user_instructions parameter ──
 
     it('[T-W17-QA-004] parsing.py _call_gpt4_turbo function accepts user_instructions parameter', () => {
       /*
-       * GREEN STATE: The _call_gpt4_turbo function signature in parsing.py includes
+       * GREEN STATE: The _call_gpt / _call_gpt4_turbo function signature in parsing.py includes
        * a `user_instructions` parameter (str | None), so it can accept optional
        * guidance from the request and inject it into the user-role message.
+       *
+       * Note: _call_gpt4_turbo was renamed to _call_gpt in the o3 escalation upgrade.
+       * This test accepts both the old and new function name.
        */
       const src = readFile(PARSING_PY_PATH, 'AI Gateway parsing.py');
 
-      // Match function definition with user_instructions parameter
+      // Match function definition with user_instructions parameter (accepts renamed _call_gpt too)
       expect(
         src,
-        '[T-W17-QA-004] FAIL — _call_gpt4_turbo in parsing.py does not accept `user_instructions` parameter.\n' +
-        'Required signature: def _call_gpt4_turbo(document_text: str, user_instructions: str | None = None)\n' +
+        '[T-W17-QA-004] FAIL — _call_gpt4_turbo/_call_gpt in parsing.py does not accept `user_instructions` parameter.\n' +
+        'Required signature: def _call_gpt(document_text: str, user_instructions: str | None = None)\n' +
         `File: ${PARSING_PY_PATH}`,
-      ).toMatch(/def\s+_call_gpt4_turbo\s*\([^)]*user_instructions/);
+      ).toMatch(/def\s+_call_gpt(?:4_turbo)?\s*\([^)]*user_instructions/);
     });
 
     // ── T-W17-QA-005 — ParsingInstructionsModal.tsx exists ──────────────────
