@@ -438,3 +438,6 @@
 | 2026-03-16 | independent-assurance-agent | session-wave-node-ripple-20260316 | Phase 3 | CI ripple waves still trigger A-021/A-026/OVL-CI-005 — add micro-checklist to Foreman CI wave template | session-wave-node-ripple-20260316.md |
 | 2026-03-16 | independent-assurance-agent | session-wave-node-ripple-20260316 | Phase 4 | SCOPE_DECLARATION auto-generation from git diff would eliminate A-026 systematically | session-wave-node-ripple-20260316.md |
 | 2026-03-16 | independent-assurance-agent | session-wave-node-ripple-20260316 | Phase 4 | S-033 template snippet needed in Foreman PREHANDOVER template for CI workflow PRs | session-wave-node-ripple-20260316.md |
+| 2026-03-16 | independent-assurance-agent | session-wave-node-ripple-20260316-R2 | Phase 4 | Add A-029 iaa_audit_token -PASS pre-population step to Foreman PREHANDOVER template | session-wave-node-ripple-20260316-R2.md |
+| 2026-03-16 | independent-assurance-agent | session-wave-node-ripple-20260316-R2 | Phase 4 | Add mandatory git status+log pre-commit checkpoint to Foreman workflow (A-021 prevention) | session-wave-node-ripple-20260316-R2.md |
+| 2026-03-16 | independent-assurance-agent | session-wave-node-ripple-20260316-R2 | Phase 4 | OVL-INJ-001: Use EXEMPT (T2=NO: reason) notation instead of PHASE_A_ADVISORY for pre-brief exemptions | session-wave-node-ripple-20260316-R2.md |
