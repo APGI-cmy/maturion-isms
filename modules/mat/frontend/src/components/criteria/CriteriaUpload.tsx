@@ -106,6 +106,17 @@ export function CriteriaUpload({ auditId }: CriteriaUploadProps) {
     }
   });
 
+  // Ensure pollingFilePath stays in sync when auditId changes without unmounting.
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem(`criteria-polling-${auditId}`);
+      setPollingFilePathState(stored ?? null);
+    } catch {
+      // If sessionStorage is unavailable, fall back to no active polling file for this audit.
+      setPollingFilePathState(null);
+    }
+  }, [auditId]);
+
   const setPollingFilePath = useCallback((filePath: string | null) => {
     setPollingFilePathState(filePath);
     try {
