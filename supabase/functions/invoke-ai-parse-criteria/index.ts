@@ -166,17 +166,16 @@ async function backgroundParse({
     // If the AI returned zero domains (e.g. gateway unreachable or not configured),
     // skip all DB inserts and update status to pending_review.
     if (domains.length === 0) {
-      const { data: emptyUpdatedRows, error: emptyStatusError } = await supabase
+      const { error: emptyStatusError } = await supabase
         .from('criteria_documents')
-        .update({ status: 'pending_review' })
-        .eq('audit_id', auditId)
-        .eq('file_path', filePath)
+        .upsert(
+          { audit_id: auditId, file_path: filePath, status: 'pending_review' },
+          { onConflict: 'audit_id,file_path' },
+        )
         .select('id');
 
       if (emptyStatusError) {
         console.warn(`[invoke-ai-parse-criteria] Failed to update criteria_documents status (empty result): ${emptyStatusError.message}`);
-      } else if (!emptyUpdatedRows || emptyUpdatedRows.length === 0) {
-        console.warn(`[invoke-ai-parse-criteria] WARN: criteria_documents row not found for audit_id=${auditId} file_path=${filePath} — status not updated`);
       }
 
       await supabase.from('audit_logs').insert({
@@ -445,17 +444,16 @@ async function backgroundParse({
     }
 
     // 4. Update criteria_documents.status → pending_review (architecture §4.2)
-    const { data: updatedStatusRows, error: statusError } = await supabase
+    const { error: statusError } = await supabase
       .from('criteria_documents')
-      .update({ status: 'pending_review' })
-      .eq('audit_id', auditId)
-      .eq('file_path', filePath)
+      .upsert(
+        { audit_id: auditId, file_path: filePath, status: 'pending_review' },
+        { onConflict: 'audit_id,file_path' },
+      )
       .select('id');
 
     if (statusError) {
       console.warn(`[invoke-ai-parse-criteria] Failed to update criteria_documents status: ${statusError.message}`);
-    } else if (!updatedStatusRows || updatedStatusRows.length === 0) {
-      console.warn(`[invoke-ai-parse-criteria] WARN: criteria_documents row not found for audit_id=${auditId} file_path=${filePath} — status not updated`);
     }
 
     // 5. Audit trail: log parsing outcome to audit_logs
@@ -483,16 +481,15 @@ async function backgroundParse({
 
     // Update criteria_documents.status → parse_failed (architecture §4.2)
     try {
-      const { data: failedStatusRows, error: failedStatusError } = await supabase
+      const { error: failedStatusError } = await supabase
         .from('criteria_documents')
-        .update({ status: 'parse_failed' })
-        .eq('audit_id', auditId)
-        .eq('file_path', filePath)
+        .upsert(
+          { audit_id: auditId, file_path: filePath, status: 'parse_failed' },
+          { onConflict: 'audit_id,file_path' },
+        )
         .select('id');
       if (failedStatusError) {
         console.warn(`[invoke-ai-parse-criteria] Failed to update criteria_documents status to parse_failed: ${failedStatusError.message}`);
-      } else if (!failedStatusRows || failedStatusRows.length === 0) {
-        console.warn(`[invoke-ai-parse-criteria] WARN: criteria_documents row not found for audit_id=${auditId} file_path=${filePath} — status not updated`);
       }
     } catch {
       // Status update failure must not mask original error
@@ -599,12 +596,15 @@ Deno.serve(async (req: Request): Promise<Response> => {
     userId = user?.id;
   }
 
-  // Write status = 'processing' to criteria_documents so the frontend can poll it
+  // Write status = 'processing' to criteria_documents so the frontend can poll it.
+  // Uses upsert so the row is created if it does not yet exist (the upload hook writes
+  // to audit_logs, not criteria_documents, so no row may be present at this point).
   const { error: processingStatusError } = await supabase
     .from('criteria_documents')
-    .update({ status: 'processing' })
-    .eq('audit_id', auditId)
-    .eq('file_path', filePath);
+    .upsert(
+      { audit_id: auditId, file_path: filePath, status: 'processing' },
+      { onConflict: 'audit_id,file_path' },
+    );
 
   if (processingStatusError) {
     console.warn(`[invoke-ai-parse-criteria] Failed to set criteria_documents status=processing: ${processingStatusError.message}`);
