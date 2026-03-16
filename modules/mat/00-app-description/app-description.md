@@ -1265,7 +1265,7 @@ The AI Gateway `DocumentParser` now extracts the following fields in addition to
 | `maturity_descriptors` | Verbatim descriptors describing maturity levels for the criterion |
 | `level_descriptors` | Verbatim descriptors for each individual maturity level |
 
-### New Database Tables (Level Descriptors)
+### Level Descriptor Tables (Populated by Wave 18)
 
 The Edge Function (`invoke-ai-parse-criteria`) now writes to the existing level-descriptor junction tables (introduced in Wave 14):
 
