@@ -23,7 +23,7 @@ Ripple Node.js version 20→22 and verify Supabase CLI tags across all CI/CD wor
 | 3 | T-WNR-003 | Scan all workflows for supabase/setup-cli@v2 | Foreman (scan) | ✅ VERIFIED CLEAN |
 | 4 | T-WNR-004 | Verify deploy-mat-vercel.yml already on 22 | Foreman (scan) | ✅ VERIFIED |
 | 5 | T-WNR-005 | Verify deploy-mat-edge-functions.yml on @v1 | Foreman (scan) | ✅ VERIFIED |
-| 6 | T-WNR-IAA | IAA Phase 4 audit + token | independent-assurance-agent | ⏳ R2 INVOKED (R1 REJECTION addressed) |
+| 6 | T-WNR-IAA | IAA Phase 4 audit + token | independent-assurance-agent | ✅ ASSURANCE-TOKEN PASS (R2) |
 
 ---
 
@@ -31,11 +31,11 @@ Ripple Node.js version 20→22 and verify Supabase CLI tags across all CI/CD wor
 
 ```yaml
 re_anchor_pulse:
-  status: IAA_R2_INVOKED
-  tasks_done: 5
-  tasks_pending: 1
+  status: ASSURANCE_TOKEN_PASS
+  tasks_done: 6
+  tasks_pending: 0
   iaa_prebrief: PHASE_A_ADVISORY
-  iaa_assurance_token: PENDING
+  iaa_assurance_token: IAA-session-wave-node-ripple-20260316-PASS
   session: session-wave-node-ripple-20260316
   date: 2026-03-16
 ```
