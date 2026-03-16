@@ -41,10 +41,11 @@ LDCS_MPS_TOTAL = 26
 LDCS_MARKERS = ["LDCS", "Local Delivery Compliance Standard", "mini performance standard"]
 
 GPT_MODEL = "gpt-4.1"
-GPT_MODEL_LARGE = "o3"   # escalation model for large/complex documents
-LDCS_ESCALATION_THRESHOLD = 10  # escalate if document has more than this many MPS
+GPT_MODEL_LARGE = "gpt-5.4"     # escalation model for large/complex documents (LDCS, >10 MPS)
+GPT_MODEL_PRO = "gpt-5.4-pro"   # highest-effort model for low-confidence or failed parses
+LDCS_ESCALATION_THRESHOLD = 10  # escalate to gpt-5.4 if document has more than this many MPS
 CONFIDENCE_REVIEW_THRESHOLD = 0.75  # flag needs_human_review when below this
-MAX_DOCUMENT_CHARS = 400000  # gpt-4.1 supports 1M token window (~4M chars); 400K covers a full 150-page LDCS document
+MAX_DOCUMENT_CHARS = 400000  # gpt-5.4 supports 1M token window (~4M chars); 400K covers a full 150-page LDCS document
 
 
 # ── Request / Response models ───────────────────────────────────────────────────
@@ -376,9 +377,10 @@ def _call_gpt(document_text: str, user_instructions: str | None = None, model: s
             f"\n\n{document_text[:MAX_DOCUMENT_CHARS]}"
         )
 
-    # gpt-4.1 supports temperature; o-series models (o1, o3, etc.) do not
-    extra_kwargs: dict[str, Any] = {"max_tokens": 16000}
-    if use_model == GPT_MODEL:
+    # O-series models (o1, o3, o4-mini, etc.) do not accept temperature
+    O_SERIES_MODELS = {"o1", "o1-mini", "o1-preview", "o3", "o3-mini", "o4-mini"}
+    extra_kwargs: dict[str, Any] = {"max_tokens": 32000 if use_model in {GPT_MODEL_LARGE, GPT_MODEL_PRO} else 16000}
+    if use_model not in O_SERIES_MODELS:
         extra_kwargs["temperature"] = 0.1
 
     response = client.chat.completions.create(
@@ -392,16 +394,23 @@ def _call_gpt(document_text: str, user_instructions: str | None = None, model: s
     )
 
     if response.choices[0].finish_reason == "length":
-        if use_model != GPT_MODEL_LARGE:
+        if use_model == GPT_MODEL:
             logger.warning(
                 "%s response truncated — escalating to %s for document parsing",
                 use_model,
                 GPT_MODEL_LARGE,
             )
             return _call_gpt(document_text, user_instructions=user_instructions, model=GPT_MODEL_LARGE)
+        elif use_model == GPT_MODEL_LARGE:
+            logger.warning(
+                "%s response truncated — escalating to %s for document parsing",
+                use_model,
+                GPT_MODEL_PRO,
+            )
+            return _call_gpt(document_text, user_instructions=user_instructions, model=GPT_MODEL_PRO)
         raise ValueError(
             f"GPT response was truncated using {use_model} (finish_reason=length) — "
-            "document requires model escalation"
+            "document requires manual review"
         )
 
     return json.loads(response.choices[0].message.content or "{}")
@@ -412,11 +421,11 @@ def _call_gpt_criteria_only(
     mps_list: list[dict[str, Any]],
     user_instructions: str | None = None,
 ) -> list[dict[str, Any]]:
-    """Second-pass GPT call using o3 to extract ONLY criteria for an LDCS document.
+    """Second-pass GPT call using gpt-5.4 to extract ONLY criteria for an LDCS document.
 
     Used when the first pass extracted domains and MPS but returned 0 criteria —
     indicating the single-pass approach exhausted the output token budget.
-    Provides the already-extracted MPS list as context and asks o3 to extract criteria only.
+    Provides the already-extracted MPS list as context and asks gpt-5.4 to extract criteria only.
 
     Parameters
     ----------
@@ -494,7 +503,7 @@ async def parse_document(request: ParseRequest) -> ParseResponse:
 
         # 4. Two-pass strategy: if LDCS confirmed but no criteria were extracted despite
         # domains and MPS being present, the single-pass approach hit the output token limit.
-        # Run a second focused pass using o3 to extract criteria only.
+        # Run a second focused pass using gpt-5.4 to extract criteria only.
         if (
             ldcs_detected
             and len(extracted.get("criteria", [])) == 0
@@ -503,7 +512,7 @@ async def parse_document(request: ParseRequest) -> ParseResponse:
         ):
             logger.warning(
                 "LDCS document pass 1 returned 0 criteria despite domains+MPS present — "
-                "running pass 2 with o3 for criteria-only extraction"
+                "running pass 2 with gpt-5.4 for criteria-only extraction"
             )
             extracted["criteria"] = _call_gpt_criteria_only(
                 document_text,
@@ -584,7 +593,7 @@ class DocumentParser:
 
             # Two-pass strategy: if LDCS confirmed but no criteria extracted despite
             # domains and MPS being present, the single-pass approach hit the output token limit.
-            # Run a second focused pass using o3 to extract criteria only.
+            # Run a second focused pass using gpt-5.4 to extract criteria only.
             if (
                 ldcs_detected
                 and len(extracted.get("criteria", [])) == 0
@@ -593,7 +602,7 @@ class DocumentParser:
             ):
                 logger.warning(
                     "LDCS document pass 1 returned 0 criteria despite domains+MPS present — "
-                    "running pass 2 with o3 for criteria-only extraction"
+                    "running pass 2 with gpt-5.4 for criteria-only extraction"
                 )
                 extracted["criteria"] = _call_gpt_criteria_only(
                     document_text,
