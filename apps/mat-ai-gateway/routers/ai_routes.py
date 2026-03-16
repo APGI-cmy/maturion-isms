@@ -37,6 +37,7 @@ _analyser = ImageAnalyser()
 class ParseRequest(BaseModel):
     document_url: str
     tenant_id: str
+    user_instructions: str | None = None
 
 
 class ScoreRequest(BaseModel):
@@ -77,6 +78,7 @@ def parse_document(request: ParseRequest) -> dict:
     return _parser.parse(
         document_url=request.document_url,
         tenant_id=request.tenant_id,
+        user_instructions=request.user_instructions,
     )
 
 
