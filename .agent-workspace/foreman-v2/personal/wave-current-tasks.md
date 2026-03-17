@@ -5,22 +5,22 @@
 **Branch**: copilot/wave-19-holistic-mat-criteria-repair
 **Foreman Session**: session-wave19-orchestration-20260317
 **IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave19-criteria-parsing-repair.md`
-**Status**: PHASE 3 — DELEGATION IN PROGRESS
+**Status**: PHASE 3 — BATCH A COMPLETE (RED), BATCHES B/C/D IN PROGRESS
 
 ---
 
 ## Re-Anchor Pulse
 
 ```yaml
-status: DELEGATION_IN_PROGRESS
+status: BATCH_A_COMPLETE_DELEGATING_BATCHES_BCD
 iaa_prebrief: COMMITTED
-batch_a_status: PENDING
-batch_b_status: PENDING (depends on batch_a)
-batch_c_status: PENDING (depends on batch_b)
-batch_d_status: PENDING (depends on batch_a)
+batch_a_status: COMPLETE (16 RED tests written — T-W19-001 through T-W19-016)
+batch_b_status: IN_PROGRESS (schema-builder delegated)
+batch_c_status: IN_PROGRESS (api-builder delegated)
+batch_d_status: IN_PROGRESS (ui-builder delegated)
 batch_e_status: PENDING (depends on batch_b+c)
 batch_f_status: PENDING (depends on batch_a-e)
-tasks_done: 0
+tasks_done: 12
 tasks_total: 16
 last_updated: 2026-03-17
 ```
