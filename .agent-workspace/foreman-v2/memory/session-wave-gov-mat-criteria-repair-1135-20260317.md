@@ -52,10 +52,18 @@ open_improvements_reviewed: [S-034]
 new_incidents_registered: none
 ```
 
+## Artifact Finalization Note
+> **As-of commit 37eff68** (2026-03-17): Phase 4.3a token ceremony COMPLETE.
+> IAA ASSURANCE-TOKEN committed at SHA 492103a — `.agent-admin/assurance/iaa-token-session-wave-gov-mat-criteria-repair-1135-20260317.md`
+> Token reference: `IAA-session-wave-gov-mat-criteria-repair-1135-20260317-PASS`
+> PREHANDOVER proof, SCOPE_DECLARATION, and wave-current-tasks.md all updated in commit 37eff68 to reflect PASS status.
+> Any statement in this session memory written before commit 37eff68 should be read as "as-of the initial session close" — the token ceremony was completed in a follow-up commit by a subsequent session invoked by CS2 PR comment.
+
 ## Suggestions for Improvement
-1. IAA Final Audit could not be completed due to session time constraint — IAA Phase 4.3a token ceremony is PENDING.
+1. (Resolved) IAA Final Audit could not be completed in the initial session due to time constraint — Phase 4.3a was subsequently executed after CS2 authorization via PR comment and is now COMPLETE (see Artifact Finalization Note above).
+2. **Future pattern**: When Phase 4 artifacts are produced across multiple commits or sessions, add an artifact-finalization note in session memory that either (a) links to the commit that completes the token ceremony, or (b) marks earlier statements with "as-of commit \<SHA\>" to avoid confusion between partial-session state and final state.
 
 ## Parking Station
 `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` — append pending.
 
-*Session closed (partial): 2026-03-17 | Authority: CS2 (@APGI-cmy)*
+*Session closed (finalized): 2026-03-17 | Authority: CS2 (@APGI-cmy)*
