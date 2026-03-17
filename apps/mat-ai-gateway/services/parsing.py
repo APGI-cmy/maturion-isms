@@ -165,11 +165,6 @@ def _extract_text_from_docx(content: bytes) -> str:
 # SSRF mitigation: only extract path+query from the signed URL and combine
 # with the trusted storage base URL from the environment.
 # This ensures the scheme and hostname are never user-controlled.
-# Path deduplication: if SUPABASE_STORAGE_URL already contains a path prefix
-# (e.g. "/storage/v1") and the signed URL path also starts with that same prefix,
-# the prefix is stripped from the signed URL path before concatenation to avoid
-# producing a doubled path such as "/storage/v1/storage/v1/...".
-
 def _build_safe_fetch_url(document_url: str) -> str:
     """
     Build a safe fetch URL by using the trusted SUPABASE_STORAGE_URL base
@@ -177,7 +172,12 @@ def _build_safe_fetch_url(document_url: str) -> str:
 
     This prevents SSRF: the scheme and hostname come from a trusted env var,
     not from the user-provided signed URL string.
-    """
+
+    Path deduplication: if SUPABASE_STORAGE_URL already contains a path prefix
+    (e.g. "/storage/v1") and the signed URL path also starts with that same prefix,
+    the prefix is stripped from the signed URL path before concatenation to avoid
+    producing a doubled path such as "/storage/v1/storage/v1/...".
+    """  
     parsed = urllib.parse.urlparse(document_url)
     # Only use path and query from the signed URL (never scheme or host)
     path = parsed.path.lstrip("/")
@@ -202,7 +202,7 @@ def _extract_document_text(document_url: str) -> tuple[str, str]:
     the user-provided URL.
 
     Returns (extracted_text, format) where format is 'pdf' or 'docx'.
-    """
+    """  
     safe_url = _build_safe_fetch_url(document_url)
     response = httpx.get(safe_url, follow_redirects=False, timeout=30)
     response.raise_for_status()
@@ -228,9 +228,10 @@ def _detect_ldcs_pattern(text: str) -> bool:
     has_ldcs_marker = any(marker.lower() in text.lower() for marker in LDCS_MARKERS)
     return has_numbered_hierarchy or has_ldcs_marker
 
+
 # ── GPT structured extraction ───────────────────────────────────────────────────
 
-_SYSTEM_PROMPT = """
+_SYSTEM_PROMPT = """\
 You are Maturion, an expert compliance document analyser.
 Your output MUST always be a JSON object matching this exact schema:
 {
@@ -306,7 +307,7 @@ CRITICAL RULES:
 The user will tell you how to interpret this specific document's structure.
 """
 
-_CRITERIA_ONLY_SYSTEM_PROMPT = """
+_CRITERIA_ONLY_SYSTEM_PROMPT = """\
 You are Maturion, an expert compliance document analyser.
 Your output MUST be a JSON object containing ONLY a "criteria" array:
 {
@@ -442,7 +443,7 @@ def _call_gpt_criteria_only(
     client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
     mps_context = json.dumps(
-        [{"number": m.get("number", ""), "name": m.get("name", "") } for m in mps_list],
+        [{"number": m.get("number", ""), "name": m.get("name", "")} for m in mps_list],
         indent=2,
     )
 
