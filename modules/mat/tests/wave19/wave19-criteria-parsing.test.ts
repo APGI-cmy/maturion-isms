@@ -495,6 +495,11 @@ describe('Wave 19 — GAP-PARSE-003: audit_logs parse events must have correct s
     // Find the zero-domain/empty-result branch (when domains.length === 0)
     // The bug: this branch currently writes 'criteria_parsed' with criteria_inserted: 0
     // After fix: this branch should write 'criteria_parse_failed'
+    //
+    // 1000-char lookahead: the zero-domain branch writes criteria_parsed within approximately
+    // 400 chars of `domains.length === 0` (the audit_logs insert follows the upsert in the
+    // same branch). 1000 chars is conservative to accommodate reformatting while staying
+    // well short of reaching unrelated code sections.
     const zeroDomainCriteriaParseSuccess = /domains\.length\s*===\s*0[\s\S]{0,1000}action:\s*['"]criteria_parsed['"]/
       .test(edgeFn);
 
@@ -749,10 +754,9 @@ describe('Wave 19 — GAP-PARSE-009: usePollCriteriaDocumentStatus must have a p
     const pollFnBody = hook.slice(pollFnIdx, Math.min(hook.length, pollFnIdx + 3000));
 
     // Check for any timeout/max-iteration guard
-    const hasTimeoutGuard = (
-      /MAX_POLL|POLL_MAX|MAX_ITER|pollCount|poll_count|iterationCount|timeoutMs|pollTimeout/.test(pollFnBody) ||
-      /refetchInterval[\s\S]{0,500}>\s*[56]\d{2}/.test(pollFnBody) // counter > 500 (approx 600)
-    );
+    // Primary pattern: named constant for max iterations (the canonical fix)
+    const hasPrimaryTimeoutGuard = /MAX_POLL|POLL_MAX|MAX_ITER|pollCount|poll_count|iterationCount|timeoutMs|pollTimeout/.test(pollFnBody);
+    const hasTimeoutGuard = hasPrimaryTimeoutGuard;
     expect(
       hasTimeoutGuard,
       '[T-W19-013] RED: usePollCriteriaDocumentStatus has no poll timeout guard.\n' +

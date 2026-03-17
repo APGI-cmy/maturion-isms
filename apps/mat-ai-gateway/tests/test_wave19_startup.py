@@ -189,18 +189,28 @@ class TestSUPABASEStorageUrlStartupValidation:
             "not just URLs from the trusted Supabase Storage bucket."
         )
 
-        # Verify it's an acceptable exception type (not a random import error)
+        # Verify it's an acceptable exception type (not a common unrelated error)
         exc_type_name = type(caught_exception).__name__
+        # Exclude common unrelated errors that would indicate a code bug rather than
+        # intentional startup validation: NameError, AttributeError, ImportError, KeyError
+        _unrelated_errors = (NameError, AttributeError, ImportError, KeyError, TypeError)
+        if isinstance(caught_exception, _unrelated_errors):
+            pytest.fail(
+                f"[T-W19-016] Unrelated {exc_type_name} raised instead of startup validation error.\n"
+                f"Exception: {caught_exception}\n"
+                "This likely indicates a code bug, not missing SUPABASE_STORAGE_URL validation.\n"
+                "Expected: ValueError, RuntimeError, OSError, SystemExit, or pydantic.ValidationError\n"
+                "with a message referencing SUPABASE_STORAGE_URL."
+            )
         is_acceptable = (
             isinstance(caught_exception, _ACCEPTABLE_STARTUP_EXCEPTIONS)
             or "ValidationError" in exc_type_name  # pydantic
-            or "Error" in exc_type_name
-            or "Exception" in exc_type_name
         )
         assert is_acceptable, (
             f"[T-W19-016] Unexpected exception type: {exc_type_name}: {caught_exception}\n"
             "Expected: ValueError, RuntimeError, OSError, SystemExit, or pydantic.ValidationError\n"
-            "The app should raise an explicit, descriptive startup error."
+            "The app should raise an explicit, descriptive startup error when "
+            "SUPABASE_STORAGE_URL is empty."
         )
 
     def test_absent_supabase_storage_url_raises_at_startup(self, monkeypatch):
@@ -254,9 +264,11 @@ class TestSUPABASEStorageUrlStartupValidation:
             caught_exception = exc
 
         if caught_exception is None:
-            pytest.skip(
-                f"No exception raised for {_TARGET_VAR}=''. "
-                "test_empty_supabase_storage_url_raises_at_startup covers this case."
+            pytest.fail(
+                f"[T-W19-016] No exception raised for {_TARGET_VAR}=''. "
+                "The startup validation does not exist — "
+                "test_empty_supabase_storage_url_raises_at_startup catches the primary RED gate, "
+                "but this test verifies that when an exception IS raised, it mentions the variable name."
             )
 
         error_repr = str(caught_exception).lower()
