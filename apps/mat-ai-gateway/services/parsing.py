@@ -90,6 +90,8 @@ class MpsResult(BaseModel):
     name: str
     number: str
     sort_order: int = 0
+    intent_statement: str = ""
+    guidance: str = ""
     level_descriptors: list[dict[str, Any]] = []
 
 
