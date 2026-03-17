@@ -20,7 +20,7 @@
 # │                     --actor <user> [--token-value <token>]                  │
 # │                                                                             │
 # │  Commands:                                                                  │
-# │    bootstrap    Generate full pre-brief + wave-current-tasks stub           │
+# │    bootstrap    Generate governance pre-brief placeholder artifact          │
 # │    iaa-prebrief Generate an IAA pre-brief placeholder artifact              │
 # │    iaa-token    Commit a named IAA audit token file                         │
 # │                                                                             │
