@@ -108,10 +108,10 @@ Per IAA Pre-Brief advisory, S-033 compliance is required for comment-triggered w
 
 2. **Pattern parity against approved equivalent workflow**: `maturion-iaa-bootstrap.yml` follows the same structural pattern as `governance-ripple-sync.yml` (approved, merged):
    - MATURION_BOT_TOKEN guard as first step
-   - `actions/checkout@v4` with `token: ${{ secrets.MATURION_BOT_TOKEN }}`
-   - Git config with `user.name "Maturion Bot"` and `user.email "bot@maturion.ai"`
-   - Commit with conventional commit message
-   - `git push origin HEAD`
+   - Workflow uses `secrets.MATURION_BOT_TOKEN` for all write operations
+   - Governance artifacts are written/updated via the GitHub Contents API (no `git add`/`git commit`/`git push` shell commands)
+   - API writes produce repository commits authored as "Maturion Bot" with conventional-style commit messages
+   - Write-path restrictions enforced: only governance/assurance and `.agent-workspace` evidence paths are mutated
 
 3. **`workflow_dispatch` retained**: Yes — `workflow_dispatch` trigger is present with inputs for `pr_number`, `command`, and `token_value`.
 
