@@ -37,7 +37,8 @@ artifacts with correct structure and path conventions.
 ## Build (when implemented)
 
 ```bash
-# Build context is .github/ so that COPY scripts/agent-runner.sh resolves correctly
+# Run from REPO ROOT.
+# Build context is .github/ so that Dockerfile COPY scripts/agent-runner.sh resolves correctly.
 docker build -t maturion-agent-runner -f .github/runner/Dockerfile .github/
 ```
 
