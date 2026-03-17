@@ -157,7 +157,7 @@ FFA Result (Governance-Documentation Wave Adaptation):
 | A-026 | `SCOPE_DECLARATION.md` must match `git diff --name-only origin/main...HEAD` exactly |
 | A-028 | SCOPE_DECLARATION format: list format, prior-wave entries trimmed |
 | A-029 | PREHANDOVER proof immutable post-commit; IAA writes dedicated token file |
-| A-031 | IAA's own ceremony files (this Pre-Brief) excluded from SCOPE_DECLARATION per A-031 carve-out |
+| A-031 | Pre-brief-before-delegation gate — Foreman must complete and commit PREHANDOVER proof before delegation to IAA |
 
 ---
 
