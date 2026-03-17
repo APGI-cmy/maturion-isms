@@ -261,10 +261,19 @@ jobs:
           # WRITE PATH RESTRICTION: only these two paths are allowed.
           ALLOWED_PATHS=(".agent-admin/assurance" ".agent-workspace")
 
-          # Collect new/modified files under allowed paths only.
+          # Collect new/modified files under allowed paths only using git status
+          # instead of fragile mtime-based heuristics.
           ARTIFACT_FILES=()
-          while IFS= read -r -d '' f; do
-            REL="${f#./}"
+          while IFS= read -r line; do
+            # Porcelain format: "XY path", where XY is the status and path may contain spaces.
+            STATUS="${line:0:2}"
+            REL="${line:3}"
+
+            # Skip empty paths defensively.
+            if [ -z "$REL" ]; then
+              continue
+            fi
+
             ALLOWED=false
             for AP in "${ALLOWED_PATHS[@]}"; do
               if [[ "$REL" == "${AP}/"* ]]; then ALLOWED=true; break; fi
@@ -272,8 +281,7 @@ jobs:
             if [ "$ALLOWED" = "true" ]; then
               ARTIFACT_FILES+=("$REL")
             fi
-          done < <(find .agent-admin/assurance .agent-workspace \
-            -type f -newer .git/HEAD -print0 2>/dev/null || true)
+          done < <(git status --porcelain=v1 -- .agent-admin/assurance .agent-workspace 2>/dev/null || true)
 
           if [ "${#ARTIFACT_FILES[@]}" -eq 0 ]; then
             echo "No new governance artifacts — nothing to commit."
