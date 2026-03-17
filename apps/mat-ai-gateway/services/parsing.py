@@ -228,6 +228,7 @@ def _detect_ldcs_pattern(text: str) -> bool:
     has_ldcs_marker = any(marker.lower() in text.lower() for marker in LDCS_MARKERS)
     return has_numbered_hierarchy or has_ldcs_marker
 
+
 # ── GPT structured extraction ───────────────────────────────────────────────────
 
 _SYSTEM_PROMPT = """
@@ -416,7 +417,7 @@ def _call_gpt(document_text: str, user_instructions: str | None = None, model: s
             "document requires manual review"
         )
 
-    return json.loads(response.choices[0].message.content or "{}").
+    return json.loads(response.choices[0].message.content or "{}")
 
 
 def _call_gpt_criteria_only(
@@ -442,7 +443,7 @@ def _call_gpt_criteria_only(
     client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
     mps_context = json.dumps(
-        [{"number": m.get("number", ""), "name": m.get("name", "") } for m in mps_list],
+        [{"number": m.get("number", ""), "name": m.get("name", "")} for m in mps_list],
         indent=2,
     )
 
