@@ -416,7 +416,7 @@ def _call_gpt(document_text: str, user_instructions: str | None = None, model: s
             "document requires manual review"
         )
 
-    return json.loads(response.choices[0].message.content or "{}").
+    return json.loads(response.choices[0].message.content or "{}")
 
 
 def _call_gpt_criteria_only(
