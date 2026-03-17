@@ -128,7 +128,9 @@ The system MUST allow the Lead Auditor to upload one or more criteria documents 
 **Priority**: P0
 **Source**: App Description §6.2, §15.1
 
-> ⚠️ **PRODUCTION GAP — INC-WAVE15-PARSE-001 (2026-03-08)**: FR-005 acceptance criteria 7–14 are **NOT yet satisfied in production**. The Edge Function was never deployed; the `AI_GATEWAY_URL` secret was not configured; AI Gateway reachability is unverified. Remediation: Wave 15R Batch A (api-builder). See `BUILD_PROGRESS_TRACKER.md` §INC-WAVE15-PARSE-001.
+> ⚠️ **PRODUCTION GAP — INC-WAVE15-PARSE-001 (2026-03-08) + INC-PARSE-PIPELINE-001 (2026-03-17)**: FR-005 acceptance criteria 7–14 are **NOT yet satisfied in production**. CS2 SQL probes (2026-03-17) confirmed 0 rows in `audit_logs` parse events and 0 rows in `criteria`. Root causes: `AI_GATEWAY_URL` not configured (GAP-PARSE-006); `criteria.number` INTEGER cannot store LDCS hierarchical IDs (GAP-PARSE-001); `mini_performance_standards` missing `intent_statement`/`guidance` columns (GAP-PARSE-002). Full gap register: `CRITERIA-PARSING-GAP-REGISTER.md`. Remediation: Wave 19 (see `WAVE-19-PLAN-PROPOSAL.md`). Acceptance criteria 2 below must also be updated to reflect LDCS hierarchical IDs (not re-numbered).
+
+> ⚠️ **FR-005 Acceptance Criterion 2 Correction** (Wave 19 Planning, 2026-03-17; updated text below): Acceptance Criterion 2 is revised to distinguish LDCS from other criteria documents. For LDCS documents, criteria identifiers are **not renumbered** — they must be stored verbatim (e.g., "1.4.1"). For non-LDCS criteria documents without predefined hierarchical IDs, a sequential numbering scheme MAY be applied (Domains = `N`, MPS = `N.N`, Criteria = `N.N.N`) to construct a consistent three-level hierarchy. The `criteria.number` column must therefore be TEXT (not INTEGER). See GAP-PARSE-001, GAP-PARSE-012.
 
 The system MUST invoke AI to parse uploaded criteria documents and extract a three-level hierarchy:
 
@@ -138,7 +140,9 @@ The system MUST invoke AI to parse uploaded criteria documents and extract a thr
 
 **Acceptance Criteria**:
 1. AI produces output conforming to the Criteria Structure Schema (App Description §15.1).
-2. Sequential numbering is applied: Domains = `N`, MPS = `N.N`, Criteria = `N.N.N`.
+2. Criteria hierarchy identifiers are handled as follows:
+   - For LDCS documents: existing hierarchical IDs (e.g., `1.4.1`) are preserved verbatim for Domains, MPS, and Criteria (no renumbering is performed by the parser).
+   - For other criteria documents without predefined hierarchical IDs: a sequential numbering scheme MAY be applied (Domains = `N`, MPS = `N.N`, Criteria = `N.N.N`) to produce a consistent three-level hierarchy.
 3. Source anchors linking each criterion back to the source document are preserved.
 4. AI includes warnings for ambiguous or uncertain extractions.
 5. Items with confidence < 0.85 are flagged with `needs_human_review = true`.
