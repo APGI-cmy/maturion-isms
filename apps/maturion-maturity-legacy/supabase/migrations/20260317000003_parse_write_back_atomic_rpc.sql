@@ -212,7 +212,7 @@ BEGIN
       audit_id,
       organisation_id,
       number,
-      name,
+      title,
       description,
       intent_statement,
       source_anchor
@@ -223,7 +223,7 @@ BEGIN
       v_audit_id,
       v_organisation_id,
       v_crit->>'number',          -- TEXT — supports "1.4.1" LDCS format (GAP-PARSE-001)
-      v_crit->>'name',
+      v_crit->>'title',
       v_crit->>'description',
       v_crit->>'intent_statement',
       v_crit->>'source_anchor'
