@@ -49,3 +49,4 @@
 
 | 2026-03-13 | foreman-v2-agent | session-cp-1-persona-gate-closure-20260313 | TEMPLATE-GAP | CP checkpoint closure templates absent from Tier 2 knowledge — consistent field coverage not enforced | cp-1-closure-20260313.md |
 | 2026-03-15 | foreman-v2-agent | session-wave18-orchestration-20260315 | IMPROVEMENT | S-034 END-TO-END-CONTENT-ASSERTION-MANDATORY: QA tests for AI parsing must assert extracted content values not just schema existence. Triggered by INC-W18-CRITERIA-PIPELINE-001. | FAIL-ONLY-ONCE.md |
+| 2026-03-17 | foreman-v2-agent | session-waveiaabootstrap-20260317 | IMPROVEMENT | Establish DEPRECATED.md registry in .github/workflows/ for tracking disabled-to-removal workflow lifecycle. Four DISABLED workflows cleaned up in this wave without formal deprecation trail. | PREHANDOVER-session-waveiaabootstrap-20260317.md |

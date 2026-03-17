@@ -1,29 +1,31 @@
-# Wave Current Tasks — foreman-v2-agent — Wave Node/CLI Ripple
+# Wave Current Tasks — foreman-v2-agent — Wave maturion-iaa-bootstrap
 
-**Wave**: Wave Node/CLI Ripple — CI/CD workflow Node.js & Supabase CLI version corrections
-**Session**: session-wave-node-ripple-20260316
-**Date**: 2026-03-16
-**Branch**: copilot/update-node-supabase-cli-workflows
-**Triggering Issue**: maturion-isms#1121 — "Foreman Orchestration: Ripple Node.js & Supabase CLI version corrections throughout CI/CD workflows"
-**CS2 Authorization**: Issue opened by CS2 (@APGI-cmy) with Priority: Critical — constitutes valid CS2 wave-start authorization per foreman contract §2.1
+**Wave**: maturion-iaa-bootstrap — Adopt standardized Maturion agent bootstrap workflow
+**Session**: session-waveiaabootstrap-20260317
+**Date**: 2026-03-17
+**Branch**: copilot/adopt-standardized-bootstrap-workflow
+**Triggering Issue**: maturion-isms — Adopt standardized Maturion agent bootstrap workflow for governance ceremonies
+**CS2 Authorization**: Issue opened by CS2 (@APGI-cmy) — constitutes valid CS2 wave-start authorization per foreman contract §2.1
 **Agent**: foreman-v2-agent v6.2.0
 **Mode**: POLC-Orchestration → Phase-4-Handover
-**IAA Pre-Brief**: PHASE_A_ADVISORY (small CI config ripple; no architecture/production changes)
+**IAA Pre-Brief**: PHASE_B_BLOCKING — artifact at `.agent-admin/assurance/iaa-prebrief-waveiaabootstrap-20260317.md`
 
 ---
 
 ## Wave Scope
 
-Ripple Node.js version 20→22 and verify Supabase CLI tags across all CI/CD workflows.
+Replace four DISABLED legacy injection workflows with a single comment-triggered
+`maturion-iaa-bootstrap.yml` workflow. Add stub agent runner and container scaffolding.
 
 | # | Task ID | Description | Delegated To | Status |
 |---|---------|-------------|--------------|--------|
-| 1 | T-WNR-001 | deploy-mat-ai-gateway.yml: node-version 20→22 | Foreman (CI config) | ✅ COMPLETE |
-| 2 | T-WNR-002 | liveness.yml: node-version 20→22 | Foreman (CI config) | ✅ COMPLETE |
-| 3 | T-WNR-003 | Scan all workflows for supabase/setup-cli@v2 | Foreman (scan) | ✅ VERIFIED CLEAN |
-| 4 | T-WNR-004 | Verify deploy-mat-vercel.yml already on 22 | Foreman (scan) | ✅ VERIFIED |
-| 5 | T-WNR-005 | Verify deploy-mat-edge-functions.yml on @v1 | Foreman (scan) | ✅ VERIFIED |
-| 6 | T-WNR-IAA | IAA Phase 4 audit + token | independent-assurance-agent | ✅ ASSURANCE-TOKEN PASS (R2) |
+| 1 | T-IAB-001 | Create maturion-iaa-bootstrap.yml | Copilot coding agent | ✅ COMPLETE |
+| 2 | T-IAB-002 | Create .github/scripts/agent-runner.sh stub | Copilot coding agent | ✅ COMPLETE |
+| 3 | T-IAB-003 | Remove 4 DISABLED conflicting workflows | Copilot coding agent | ✅ COMPLETE |
+| 4 | T-IAB-004 | Create .github/runner/ container scaffolding | Copilot coding agent | ✅ COMPLETE |
+| 5 | T-IAB-005 | MATURION_BOT_TOKEN wired in new workflow | Copilot coding agent | ✅ COMPLETE |
+| 6 | T-IAB-006 | Write path restriction enforced | Copilot coding agent | ✅ COMPLETE |
+| 7 | T-IAB-IAA | IAA Phase 4 audit + token | independent-assurance-agent | ⏳ PENDING |
 
 ---
 
@@ -31,15 +33,15 @@ Ripple Node.js version 20→22 and verify Supabase CLI tags across all CI/CD wor
 
 ```yaml
 re_anchor_pulse:
-  status: ASSURANCE_TOKEN_PASS
+  status: IAA_PRE_BRIEF_COMMITTED
   tasks_done: 6
-  tasks_pending: 0
-  iaa_prebrief: PHASE_A_ADVISORY
-  iaa_assurance_token: IAA-session-wave-node-ripple-20260316-PASS
-  session: session-wave-node-ripple-20260316
-  date: 2026-03-16
+  tasks_pending: 1
+  iaa_prebrief: PHASE_B_BLOCKING
+  iaa_assurance_token: PENDING
+  session: session-waveiaabootstrap-20260317
+  date: 2026-03-17
 ```
 
 ---
 
-*Wave authorized by CS2 — maturion-isms#1121. POLC-Orchestration mode. No Foreman implementation.*
+*Wave authorized by CS2 — issue opened by @APGI-cmy. POLC-Orchestration mode. No Foreman implementation.*

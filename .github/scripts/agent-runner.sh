@@ -1,0 +1,241 @@
+#!/bin/bash
+# agent-runner.sh — Maturion Governance Agent Runner (STUB)
+#
+# Authority: LIVING_AGENT_SYSTEM.md v6.2.0, IAA_PRE_BRIEF_PROTOCOL.md v1.1.0
+# Purpose:   Stub agent execution mechanism for governance ceremony automation.
+#            Called by .github/workflows/maturion-iaa-bootstrap.yml to generate
+#            governance artifacts committed to PR branches.
+#
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │  STUB — INTENTIONAL PLACEHOLDER                                             │
+# │                                                                             │
+# │  This script is a labelled intentional stub. It generates placeholder      │
+# │  governance artifacts with correct structure and path conventions.          │
+# │  Future iterations will replace this stub with:                             │
+# │    - A container runner (see .github/runner/Dockerfile)                     │
+# │    - Actual agent logic invoked via the Maturion agent bootstrap MCP tool   │
+# │                                                                             │
+# │  Usage:                                                                     │
+# │    agent-runner.sh --command <cmd> --pr-number <n> --branch <b>            │
+# │                     --actor <user> [--token-value <token>]                  │
+# │                                                                             │
+# │  Commands:                                                                  │
+# │    bootstrap    Generate full pre-brief + wave-current-tasks stub           │
+# │    iaa-prebrief Generate an IAA pre-brief placeholder artifact              │
+# │    iaa-token    Commit a named IAA audit token file                         │
+# │                                                                             │
+# │  Allowed write paths (enforced by workflow before commit):                  │
+# │    .agent-admin/assurance/                                                  │
+# │    .agent-workspace/                                                        │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+set -euo pipefail
+
+# ── Defaults ──────────────────────────────────────────────────────────────────
+COMMAND=""
+PR_NUMBER=""
+BRANCH=""
+ACTOR=""
+TOKEN_VALUE=""
+
+# ── Argument parsing ──────────────────────────────────────────────────────────
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --command)       COMMAND="$2";      shift 2 ;;
+    --pr-number)     PR_NUMBER="$2";    shift 2 ;;
+    --branch)        BRANCH="$2";       shift 2 ;;
+    --actor)         ACTOR="$2";        shift 2 ;;
+    --token-value)   TOKEN_VALUE="$2";  shift 2 ;;
+    *)
+      echo "::error::Unknown argument: $1"
+      exit 1
+      ;;
+  esac
+done
+
+# ── Validation ────────────────────────────────────────────────────────────────
+if [ -z "$COMMAND" ]; then
+  echo "::error::--command is required"
+  exit 1
+fi
+if [ -z "$PR_NUMBER" ]; then
+  echo "::error::--pr-number is required"
+  exit 1
+fi
+
+# ── Shared state ──────────────────────────────────────────────────────────────
+DATESTAMP=$(date -u +"%Y%m%d")
+TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+SLUG="pr${PR_NUMBER}-${DATESTAMP}"
+ASSURANCE_DIR=".agent-admin/assurance"
+WORKSPACE_DIR=".agent-workspace"
+
+mkdir -p "$ASSURANCE_DIR"
+
+echo "=== Maturion Agent Runner (STUB) ==="
+echo "Command:    $COMMAND"
+echo "PR:         $PR_NUMBER"
+echo "Branch:     $BRANCH"
+echo "Actor:      $ACTOR"
+echo "Timestamp:  $TIMESTAMP"
+echo ""
+
+# ── Command dispatch ──────────────────────────────────────────────────────────
+
+case "$COMMAND" in
+
+  # ── bootstrap: pre-brief + runner invocation notice ─────────────────────
+  bootstrap)
+    PREBRIEF_FILE="${ASSURANCE_DIR}/iaa-prebrief-bootstrap-${SLUG}.md"
+
+    # Idempotency: skip if a non-SUPERSEDED pre-brief already exists for this PR
+    EXISTING=$(find "$ASSURANCE_DIR" -name "iaa-prebrief-*${DATESTAMP}*.md" \
+      -type f 2>/dev/null \
+      | while IFS= read -r f; do grep -qiL "SUPERSEDED" "$f" && echo "$f"; done \
+      | head -1 || true)
+    if [ -n "$EXISTING" ]; then
+      echo "IAA pre-brief already present for today (${EXISTING}) — skipping duplicate."
+      exit 0
+    fi
+
+    cat > "$PREBRIEF_FILE" <<EOF
+# IAA Pre-Brief Artifact — Bootstrap (STUB)
+
+**Artifact Type**: IAA_PRE_BRIEF_STUB
+**Generated By**: agent-runner.sh (STUB) via maturion-iaa-bootstrap.yml
+**Wave**: bootstrap-pr${PR_NUMBER}
+**PR**: #${PR_NUMBER}
+**Branch**: ${BRANCH}
+**Actor**: ${ACTOR}
+**Date**: ${TIMESTAMP}
+**Status**: STUB — pending replacement with live agent output
+
+---
+
+## Notice
+
+This artifact was generated by the stub agent runner. It confirms that:
+1. The bootstrap workflow triggered correctly.
+2. The agent runner script executed.
+3. Artifacts were committed to the correct paths.
+
+When live agent logic is implemented (see \`.github/runner/Dockerfile\`),
+this stub will be replaced with a real IAA pre-brief.
+
+---
+
+## Allowed Write Paths
+
+- \`.agent-admin/assurance/\`
+- \`.agent-workspace/\`
+
+---
+
+*Authority: CS2 (Johan Ras / @APGI-cmy)*
+*STUB — See .github/runner/Dockerfile for container runner roadmap.*
+EOF
+
+    echo "bootstrap: pre-brief stub written → ${PREBRIEF_FILE}"
+    ;;
+
+  # ── iaa-prebrief: generate pre-brief placeholder ─────────────────────────
+  iaa-prebrief)
+    PREBRIEF_FILE="${ASSURANCE_DIR}/iaa-prebrief-${SLUG}.md"
+
+    # Idempotency: skip if a non-SUPERSEDED pre-brief already exists for this PR
+    EXISTING=$(find "$ASSURANCE_DIR" -name "iaa-prebrief-*${DATESTAMP}*.md" \
+      -type f 2>/dev/null \
+      | while IFS= read -r f; do grep -qiL "SUPERSEDED" "$f" && echo "$f"; done \
+      | head -1 || true)
+    if [ -n "$EXISTING" ]; then
+      echo "IAA pre-brief already present for today (${EXISTING}) — skipping duplicate."
+      exit 0
+    fi
+
+    cat > "$PREBRIEF_FILE" <<EOF
+# IAA Pre-Brief Artifact — PR #${PR_NUMBER}
+
+**Artifact Type**: IAA_PRE_BRIEF_STUB
+**Generated By**: agent-runner.sh (STUB) via maturion-iaa-bootstrap.yml /iaa-prebrief
+**PR**: #${PR_NUMBER}
+**Branch**: ${BRANCH}
+**Actor**: ${ACTOR}
+**Date**: ${TIMESTAMP}
+**Status**: STUB — pending replacement with live IAA agent output
+
+---
+
+## Trigger Categories
+
+| Category | Status |
+|----------|--------|
+| CI_WORKFLOW | DETECTED — review required |
+| PRE_BRIEF_ASSURANCE | TRIGGERED |
+
+---
+
+## Scope
+
+Branch: \`${BRANCH}\`
+Triggered by: ${ACTOR} via \`/iaa-prebrief\` comment
+
+---
+
+## Note
+
+Replace this stub with a live IAA Pre-Brief by invoking the independent-assurance-agent
+via the task tool in the Copilot agent session.
+
+---
+
+*Authority: CS2 (Johan Ras / @APGI-cmy)*
+*STUB — See .github/runner/Dockerfile for container runner roadmap.*
+EOF
+
+    echo "iaa-prebrief: stub artifact written → ${PREBRIEF_FILE}"
+    ;;
+
+  # ── iaa-token: commit named audit token file ──────────────────────────────
+  iaa-token)
+    if [ -z "$TOKEN_VALUE" ]; then
+      echo "::error::--token-value is required for iaa-token command"
+      exit 1
+    fi
+
+    # Sanitise token value for filename (keep alphanumeric, dash, underscore)
+    SAFE_TOKEN=$(echo "$TOKEN_VALUE" | tr -cd '[:alnum:]_-' | cut -c1-80)
+    TOKEN_FILE="${ASSURANCE_DIR}/iaa-token-${SAFE_TOKEN}-${DATESTAMP}.md"
+
+    # Idempotency: skip if token file already exists
+    if [ -f "$TOKEN_FILE" ]; then
+      echo "IAA token file already present (${TOKEN_FILE}) — skipping duplicate."
+      exit 0
+    fi
+
+    cat > "$TOKEN_FILE" <<EOF
+# IAA Audit Token
+
+**Token**: ${TOKEN_VALUE}
+**PR**: #${PR_NUMBER}
+**Branch**: ${BRANCH}
+**Committed By**: ${ACTOR} via \`/iaa-token\` (maturion-iaa-bootstrap.yml)
+**Date**: ${TIMESTAMP}
+
+---
+
+*Authority: CS2 (Johan Ras / @APGI-cmy)*
+*AGENT_HANDOVER_AUTOMATION.md §4.3b: token written to dedicated new file only.*
+EOF
+
+    echo "iaa-token: token file written → ${TOKEN_FILE}"
+    ;;
+
+  *)
+    echo "::error::Unknown command: ${COMMAND}"
+    echo "Valid commands: bootstrap, iaa-prebrief, iaa-token"
+    exit 1
+    ;;
+esac
+
+echo ""
+echo "Agent runner (STUB) complete."

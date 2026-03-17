@@ -1,0 +1,294 @@
+name: Maturion IAA Bootstrap
+
+# Authority: LIVING_AGENT_SYSTEM.md v6.2.0, IAA_PRE_BRIEF_PROTOCOL.md v1.1.0
+# Purpose: Comment-triggered governance ceremony automation. Generates and commits
+#          IAA Pre-Brief and governance token artifacts to PR feature branches.
+#          Replaces the legacy injection workflow suite (agent-bootstrap-inject.yml,
+#          iaa-prebrief-inject.yml, iaa-prebrief-gate.yml, injection-audit-report.yml)
+#          which were disabled in Wave: disable-automatic-injections-and-reinforce-contract.
+#
+# Allowed write paths: .agent-admin/assurance/** and .agent-workspace/**
+# Token: MATURION_BOT_TOKEN (required for artifact commit pushes)
+#
+# Trigger commands (PR comment):
+#   /maturion-bootstrap          — run full bootstrap (pre-brief + agent runner)
+#   /iaa-prebrief                — generate IAA pre-brief artifact only
+#   /iaa-token <token-value>     — commit an IAA audit token file
+#
+# Container runner: .github/runner/ (see Dockerfile for deterministic execution)
+# Agent runner stub: .github/scripts/agent-runner.sh
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to target (required for workflow_dispatch)'
+        required: true
+        type: string
+      command:
+        description: 'Command to run: bootstrap | iaa-prebrief | iaa-token'
+        required: true
+        default: 'bootstrap'
+        type: choice
+        options:
+          - bootstrap
+          - iaa-prebrief
+          - iaa-token
+      token_value:
+        description: 'IAA token value (only required when command=iaa-token)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+# Prevent concurrent bootstrap runs on the same PR
+concurrency:
+  group: maturion-iaa-bootstrap-${{ github.event.issue.number || github.event.inputs.pr_number }}
+  cancel-in-progress: false
+
+jobs:
+  # ── GATE: parse comment and decide whether to run ─────────────────────────
+  parse-command:
+    name: "bootstrap/parse-command"
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.parse.outputs.should_run }}
+      command: ${{ steps.parse.outputs.command }}
+      pr_number: ${{ steps.parse.outputs.pr_number }}
+      token_value: ${{ steps.parse.outputs.token_value }}
+      actor: ${{ steps.parse.outputs.actor }}
+    steps:
+      - name: Parse trigger and command
+        id: parse
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body || '' }}
+          COMMENT_AUTHOR: ${{ github.event.comment.user.login || '' }}
+          IS_PR_COMMENT: ${{ github.event.issue.pull_request != null }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || '' }}
+          WD_PR_NUMBER: ${{ github.event.inputs.pr_number || '' }}
+          WD_COMMAND: ${{ github.event.inputs.command || '' }}
+          WD_TOKEN_VALUE: ${{ github.event.inputs.token_value || '' }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+
+          SHOULD_RUN=false
+          COMMAND=""
+          PR_NUMBER=""
+          TOKEN_VALUE=""
+          ACTOR=""
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            # Manual trigger always runs
+            SHOULD_RUN=true
+            COMMAND="$WD_COMMAND"
+            PR_NUMBER="$WD_PR_NUMBER"
+            TOKEN_VALUE="$WD_TOKEN_VALUE"
+            ACTOR="workflow_dispatch"
+          elif [ "$EVENT_NAME" = "issue_comment" ]; then
+            # Only fire on PR comments (not issue comments)
+            if [ "$IS_PR_COMMENT" != "true" ]; then
+              echo "Not a PR comment — skipping."
+              echo "should_run=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+
+            # Parse command from comment body
+            BODY_FIRST_LINE=$(echo "$COMMENT_BODY" | head -1 | xargs)
+
+            if echo "$BODY_FIRST_LINE" | grep -qE "^/maturion-bootstrap(\s|$)"; then
+              COMMAND="bootstrap"
+              SHOULD_RUN=true
+            elif echo "$BODY_FIRST_LINE" | grep -qE "^/iaa-prebrief(\s|$)"; then
+              COMMAND="iaa-prebrief"
+              SHOULD_RUN=true
+            elif echo "$BODY_FIRST_LINE" | grep -qE "^/iaa-token(\s|$)"; then
+              COMMAND="iaa-token"
+              TOKEN_VALUE=$(echo "$BODY_FIRST_LINE" | sed 's|^/iaa-token[[:space:]]*||')
+              SHOULD_RUN=true
+            fi
+
+            PR_NUMBER="$ISSUE_NUMBER"
+            ACTOR="$COMMENT_AUTHOR"
+          fi
+
+          echo "should_run=$SHOULD_RUN"   >> "$GITHUB_OUTPUT"
+          echo "command=$COMMAND"          >> "$GITHUB_OUTPUT"
+          echo "pr_number=$PR_NUMBER"      >> "$GITHUB_OUTPUT"
+          echo "token_value=$TOKEN_VALUE"  >> "$GITHUB_OUTPUT"
+          echo "actor=$ACTOR"              >> "$GITHUB_OUTPUT"
+
+          echo "=== Parse result ==="
+          echo "should_run: $SHOULD_RUN"
+          echo "command:    $COMMAND"
+          echo "pr_number:  $PR_NUMBER"
+          echo "actor:      $ACTOR"
+
+  # ── MAIN: run bootstrap on the PR branch ──────────────────────────────────
+  run-bootstrap:
+    name: "bootstrap/run"
+    runs-on: ubuntu-latest
+    needs: parse-command
+    if: needs.parse-command.outputs.should_run == 'true'
+    steps:
+      # ── Token guard — must be first ────────────────────────────────────────
+      - name: Validate MATURION_BOT_TOKEN
+        env:
+          TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::error::MATURION_BOT_TOKEN is not set or empty."
+            echo "::error::All governance artifact commit pushes require MATURION_BOT_TOKEN."
+            echo "::error::Fallback to GITHUB_TOKEN is prohibited (Maturion governance policy Gap 5)."
+            exit 1
+          fi
+          echo "MATURION_BOT_TOKEN is present — token validation passed."
+
+      # ── Resolve PR head branch ────────────────────────────────────────────
+      - name: Resolve PR head branch
+        id: pr-info
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
+          PR_NUMBER: ${{ needs.parse-command.outputs.pr_number }}
+        run: |
+          set -euo pipefail
+          PR_DATA=$(gh api "repos/${{ github.repository }}/pulls/${PR_NUMBER}" \
+            --jq '{"head_ref": .head.ref, "head_sha": .head.sha, "state": .state}')
+          HEAD_REF=$(echo "$PR_DATA" | jq -r '.head_ref')
+          HEAD_SHA=$(echo "$PR_DATA" | jq -r '.head_sha')
+          PR_STATE=$(echo "$PR_DATA" | jq -r '.state')
+
+          if [ "$PR_STATE" != "open" ]; then
+            echo "::error::PR #${PR_NUMBER} is not open (state: ${PR_STATE}). Cannot commit artifacts."
+            exit 1
+          fi
+
+          echo "head_ref=$HEAD_REF"   >> "$GITHUB_OUTPUT"
+          echo "head_sha=$HEAD_SHA"   >> "$GITHUB_OUTPUT"
+          echo "PR branch: $HEAD_REF ($HEAD_SHA)"
+
+      # ── Checkout PR head branch with bot token ────────────────────────────
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.MATURION_BOT_TOKEN }}
+          ref: ${{ steps.pr-info.outputs.head_ref }}
+          fetch-depth: 1
+
+      # ── Configure Git identity ────────────────────────────────────────────
+      - name: Configure Git
+        run: |
+          git config --global user.name "Maturion Bot"
+          git config --global user.email "bot@maturion.ai"
+
+      # ── Run agent runner stub ─────────────────────────────────────────────
+      - name: Run agent runner
+        env:
+          COMMAND: ${{ needs.parse-command.outputs.command }}
+          PR_NUMBER: ${{ needs.parse-command.outputs.pr_number }}
+          TOKEN_VALUE: ${{ needs.parse-command.outputs.token_value }}
+          ACTOR: ${{ needs.parse-command.outputs.actor }}
+          BRANCH: ${{ steps.pr-info.outputs.head_ref }}
+        run: |
+          chmod +x .github/scripts/agent-runner.sh
+          .github/scripts/agent-runner.sh \
+            --command "$COMMAND" \
+            --pr-number "$PR_NUMBER" \
+            --branch "$BRANCH" \
+            --actor "$ACTOR" \
+            --token-value "$TOKEN_VALUE"
+
+      # ── Restrict and commit — only allowed write paths ────────────────────
+      - name: Enforce write path restriction and commit artifacts
+        id: commit
+        env:
+          COMMAND: ${{ needs.parse-command.outputs.command }}
+          PR_NUMBER: ${{ needs.parse-command.outputs.pr_number }}
+        run: |
+          set -euo pipefail
+
+          # WRITE PATH RESTRICTION: only .agent-admin/assurance/ and .agent-workspace/
+          # Any file outside these paths is rejected — governance security boundary.
+          ALLOWED_PATHS=(".agent-admin/assurance" ".agent-workspace")
+          VIOLATION=false
+
+          for CHANGED in $(git status --porcelain | awk '{print $NF}'); do
+            ALLOWED=false
+            for ALLOWED_PATH in "${ALLOWED_PATHS[@]}"; do
+              if [[ "$CHANGED" == "${ALLOWED_PATH}/"* ]]; then
+                ALLOWED=true
+                break
+              fi
+            done
+            if [ "$ALLOWED" = "false" ]; then
+              echo "::error::Write path violation: '${CHANGED}' is outside allowed paths."
+              echo "::error::Allowed paths: .agent-admin/assurance/, .agent-workspace/"
+              VIOLATION=true
+            fi
+          done
+
+          if [ "$VIOLATION" = "true" ]; then
+            echo "::error::Write path restriction FAILED. Aborting commit."
+            exit 1
+          fi
+
+          # Stage only the allowed paths
+          git add .agent-admin/assurance/ .agent-workspace/ 2>/dev/null || true
+
+          if git diff --cached --quiet; then
+            echo "No governance artifacts to commit — nothing changed."
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          DATESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          git commit -m "chore(governance): bootstrap ${COMMAND} artifacts for PR #${PR_NUMBER} [${DATESTAMP}]"
+          git push origin HEAD
+          echo "committed=true" >> "$GITHUB_OUTPUT"
+          echo "Governance artifacts committed and pushed."
+
+      # ── Post acknowledgement comment ──────────────────────────────────────
+      - name: Post result comment
+        if: github.event_name == 'issue_comment'
+        uses: actions/github-script@v7
+        env:
+          COMMAND: ${{ needs.parse-command.outputs.command }}
+          COMMITTED: ${{ steps.commit.outputs.committed }}
+          BRANCH: ${{ steps.pr-info.outputs.head_ref }}
+        with:
+          github-token: ${{ secrets.MATURION_BOT_TOKEN }}
+          script: |
+            const command  = process.env.COMMAND   || 'unknown';
+            const committed = process.env.COMMITTED || 'false';
+            const branch   = process.env.BRANCH    || 'unknown';
+            const prNumber = context.payload.issue.number;
+
+            const statusIcon = committed === 'true' ? '✅' : 'ℹ️';
+            const statusMsg  = committed === 'true'
+              ? 'Governance artifacts committed to branch.'
+              : 'No new artifacts generated (idempotent — artifacts already present).';
+
+            const body = [
+              `## ${statusIcon} Maturion IAA Bootstrap — \`/${command}\``,
+              '',
+              `**Branch**: \`${branch}\``,
+              `**Result**: ${statusMsg}`,
+              '',
+              '### Allowed write paths',
+              '- `.agent-admin/assurance/`',
+              '- `.agent-workspace/`',
+              '',
+              '*Authority: CS2 (Johan Ras / @APGI-cmy) — IAA_PRE_BRIEF_PROTOCOL.md v1.1.0*',
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body,
+            });
