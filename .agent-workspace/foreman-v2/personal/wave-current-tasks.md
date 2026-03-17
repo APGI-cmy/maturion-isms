@@ -25,7 +25,7 @@ Replace four DISABLED legacy injection workflows with a single comment-triggered
 | 4 | T-IAB-004 | Create .github/runner/ container scaffolding | Copilot coding agent | ✅ COMPLETE |
 | 5 | T-IAB-005 | MATURION_BOT_TOKEN wired in new workflow | Copilot coding agent | ✅ COMPLETE |
 | 6 | T-IAB-006 | Write path restriction enforced | Copilot coding agent | ✅ COMPLETE |
-| 7 | T-IAB-IAA | IAA Phase 4 audit + token | independent-assurance-agent | ⏳ PENDING |
+| 7 | T-IAB-IAA | IAA Phase 4 audit + token | independent-assurance-agent | ❌ REJECTED — FIX REQUIRED |
 
 ---
 
@@ -33,11 +33,11 @@ Replace four DISABLED legacy injection workflows with a single comment-triggered
 
 ```yaml
 re_anchor_pulse:
-  status: IAA_PRE_BRIEF_COMMITTED
+  status: IAA_PHASE4_REJECTED
   tasks_done: 6
   tasks_pending: 1
   iaa_prebrief: PHASE_B_BLOCKING
-  iaa_assurance_token: PENDING
+  iaa_assurance_token: REJECTED
   session: session-waveiaabootstrap-20260317
   date: 2026-03-17
 ```
