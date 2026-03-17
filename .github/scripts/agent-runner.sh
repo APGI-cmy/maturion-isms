@@ -89,7 +89,7 @@ case "$COMMAND" in
     PREBRIEF_FILE="${ASSURANCE_DIR}/iaa-prebrief-bootstrap-${SLUG}.md"
 
     # Idempotency: skip if a non-SUPERSEDED pre-brief already exists for this PR
-    EXISTING=$(find "$ASSURANCE_DIR" -name "iaa-prebrief-*${DATESTAMP}*.md" \
+    EXISTING=$(find "$ASSURANCE_DIR" -name "iaa-prebrief-*${SLUG}*.md" \
       -type f 2>/dev/null \
       | while IFS= read -r f; do grep -qiL "SUPERSEDED" "$f" && echo "$f"; done \
       | head -1 || true)
