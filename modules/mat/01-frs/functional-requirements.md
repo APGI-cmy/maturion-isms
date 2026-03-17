@@ -128,7 +128,9 @@ The system MUST allow the Lead Auditor to upload one or more criteria documents 
 **Priority**: P0
 **Source**: App Description §6.2, §15.1
 
-> ⚠️ **PRODUCTION GAP — INC-WAVE15-PARSE-001 (2026-03-08)**: FR-005 acceptance criteria 7–14 are **NOT yet satisfied in production**. The Edge Function was never deployed; the `AI_GATEWAY_URL` secret was not configured; AI Gateway reachability is unverified. Remediation: Wave 15R Batch A (api-builder). See `BUILD_PROGRESS_TRACKER.md` §INC-WAVE15-PARSE-001.
+> ⚠️ **PRODUCTION GAP — INC-WAVE15-PARSE-001 (2026-03-08) + INC-PARSE-PIPELINE-001 (2026-03-17)**: FR-005 acceptance criteria 7–14 are **NOT yet satisfied in production**. CS2 SQL probes (2026-03-17) confirmed 0 rows in `audit_logs` parse events and 0 rows in `criteria`. Root causes: `AI_GATEWAY_URL` not configured (GAP-PARSE-006); `criteria.number` INTEGER cannot store LDCS hierarchical IDs (GAP-PARSE-001); `mini_performance_standards` missing `intent_statement`/`guidance` columns (GAP-PARSE-002). Full gap register: `CRITERIA-PARSING-GAP-REGISTER.md`. Remediation: Wave 19 (see `WAVE-19-PLAN-PROPOSAL.md`). Acceptance criteria 2 below must also be updated to reflect LDCS hierarchical IDs (not re-numbered).
+
+> ⚠️ **FR-005 Acceptance Criterion 2 Correction** (Wave 19 Planning, 2026-03-17): The statement "Sequential numbering is applied: Domains = N, MPS = N.N, Criteria = N.N.N" is INCORRECT for LDCS documents. LDCS criteria identifiers are **not renumbered** — they must be stored verbatim (e.g., "1.4.1"). The `criteria.number` column must be TEXT (not INTEGER). See GAP-PARSE-001, GAP-PARSE-012.
 
 The system MUST invoke AI to parse uploaded criteria documents and extract a three-level hierarchy:
 

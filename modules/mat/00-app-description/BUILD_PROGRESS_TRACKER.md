@@ -905,3 +905,66 @@ Once the three repository secrets are populated and the CWT job runs with the up
 
 This documentation section contains **no hardcoded secret values** of any kind. All credential values (Supabase URL, anon key, JWT tokens) must be entered directly into GitHub repository secrets by a human operator. This section describes the process only. Compliance: BD-016 satisfied.
 
+
+---
+
+## Wave 19 Planning — MAT Criteria Parsing Holistic Repair
+
+**Planning Issue**: maturion-isms#1135 — [GOV] MAT Criteria Parsing Holistic Repair
+**Planning Wave**: wave-gov-mat-criteria-repair-1135 (governance-only)
+**Implementation Wave**: Wave 19 (pending CS2 authorization for Issue #2)
+**Date**: 2026-03-17
+**Gap Register**: See `CRITERIA-PARSING-GAP-REGISTER.md`
+**Wave Plan Proposal**: See `WAVE-19-PLAN-PROPOSAL.md`
+
+---
+
+### INC-PARSE-PIPELINE-001 — MAT Criteria Parsing Pipeline Entirely Non-Functional in Production
+
+| Field | Value |
+|-------|-------|
+| **Incident ID** | INC-PARSE-PIPELINE-001 |
+| **Classification** | Production Critical — end-to-end pipeline failure |
+| **Detected** | 2026-03-17 |
+| **Status** | 🔴 OPEN — Remediation: Wave 19 |
+| **Root Cause Summary** | `AI_GATEWAY_URL` not configured in Supabase Edge Function secrets (primary); `criteria.number` INTEGER cannot represent LDCS hierarchical IDs (compound failure); 10 additional gaps identified |
+| **Production Evidence** | CS2 SQL probes (issue #1135 screenshots): 0 rows in `audit_logs` for parse events; 0 rows in `criteria` |
+| **Gaps Registered** | GAP-PARSE-001 through GAP-PARSE-012 (see CRITERIA-PARSING-GAP-REGISTER.md) |
+| **Impact** | LDCS compliance pipeline entirely non-functional; no criteria extracted from any uploaded document |
+| **Remediation Plan** | Wave 19 — 6 batches: QA-to-Red (qa-builder), Schema Migrations (schema-builder), API/Edge Fn (api-builder), UI (ui-builder), Environment Config (integration-builder), E2E Validation (qa-builder + mat-specialist) |
+| **Pending CS2 Authorization** | Issue #2 must be opened by CS2 to commence implementation |
+
+---
+
+### GAP Summary Table — Wave 19
+
+| Gap ID | Severity | Component | Root Cause | Status | Wave |
+|--------|----------|-----------|------------|--------|------|
+| GAP-PARSE-001 | 🔴 CRITICAL | criteria.number is INTEGER | Type mismatch: LDCS IDs like "1.4.1" cannot be stored | 🔴 OPEN | 19 |
+| GAP-PARSE-002 | 🔴 CRITICAL | MPS table missing intent_statement + guidance | Schema never included LDCS MPS-level content fields | 🔴 OPEN | 19 |
+| GAP-PARSE-003 | 🔴 CRITICAL | No audit_logs parse events in production | Compound: GAP-PARSE-006 + GAP-PARSE-001 prevent any audit_log write | 🔴 OPEN | 19 |
+| GAP-PARSE-004 | 🟠 HIGH | Silent success with 0 inserts | No minimum-count assertion before writing criteria_parsed | 🔴 OPEN | 19 |
+| GAP-PARSE-005 | 🟠 HIGH | No DB transaction | Sequential INSERTs without BEGIN/COMMIT | 🔴 OPEN | 19 |
+| GAP-PARSE-006 | 🔴 CRITICAL | AI_GATEWAY_URL not configured | Env var absent in Supabase Edge Function secrets | 🔴 OPEN | 19 |
+| GAP-PARSE-007 | 🟡 MEDIUM | Legacy overlap drift | Two MAT implementations; schema alignment unverified | 🟡 MONITORING | 19 |
+| GAP-PARSE-008 | 🟠 HIGH | AI Gateway MpsResult missing intent/guidance | AI system prompt + Pydantic model scope gap | 🔴 OPEN | 19 |
+| GAP-PARSE-009 | 🟠 HIGH | Infinite polling on silent failure | No poll timeout in usePollCriteriaDocumentStatus | 🔴 OPEN | 19 |
+| GAP-PARSE-010 | 🟡 MEDIUM | No content assertions in QA tests | S-034 — tests verify schema not content | 🔴 OPEN | 19 |
+| GAP-PARSE-011 | 🟠 HIGH | SUPABASE_STORAGE_URL unverified | Render env var not confirmed; startup validation absent | 🔴 OPEN | 19 |
+| GAP-PARSE-012 | 🔴 CRITICAL | Edge Function discards LDCS criteria IDs | `idx+1` workaround for INTEGER type constraint | 🔴 OPEN | 19 |
+
+---
+
+### Wave 19 Build Tracker Placeholder
+
+> **Status**: PENDING CS2 AUTHORIZATION (Issue #2)
+> This section will be populated with test results once Wave 19 implementation begins.
+
+| Batch | Builder | Tasks | Tests | Status |
+|-------|---------|-------|-------|--------|
+| A — QA-to-Red | qa-builder | T-W19A-001 to T-W19A-012 | T-W19-001 to T-W19-016 | ⏳ PENDING |
+| B — Schema | schema-builder | T-W19B-001 to T-W19B-004 | T-W19-002, T-W19-003, T-W19-008 | ⏳ PENDING |
+| C — API/Edge Fn | api-builder | T-W19C-001 to T-W19C-009 | T-W19-001 to T-W19-016 | ⏳ PENDING |
+| D — UI | ui-builder | T-W19D-001 | T-W19-013 | ⏳ PENDING |
+| E — Integration | integration-builder | T-W19E-001 to T-W19E-004 | T-W19-009, T-W19-011 | ⏳ PENDING |
+| F — E2E Validation | qa-builder + mat-specialist | T-W19F-001 to T-W19F-003 | T-W19-014, T-W19-015 | ⏳ PENDING |
