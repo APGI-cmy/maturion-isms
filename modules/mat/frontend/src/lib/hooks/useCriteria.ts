@@ -7,7 +7,7 @@
  * Wave 15R — T-W15R-UI-001 / T-W15R-UI-004 (ui-builder)
  * Added: useUploadedDocuments hook, useParseStatus terminal-state fixes
  */
-import { useCallback } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../supabase';
 
@@ -466,8 +466,12 @@ export function usePollCriteriaDocumentStatus(
   filePath: string | null,
 ) {
   const queryClient = useQueryClient();
+  // GAP-PARSE-009: Prevent infinite polling by capping at 30 minutes (AD-W19-003)
+  const MAX_POLL_ITERATIONS = 600; // 30 minutes at 3-second intervals
+  const pollCount = useRef(0);
+  const [pollTimeoutError, setPollTimeoutError] = useState<string | null>(null);
 
-  return useQuery<{ status: string }, Error>({
+  const query = useQuery<{ status: string }, Error>({
     queryKey: ['criteria-document-status', auditId, filePath],
     queryFn: async () => {
       if (!auditId || !filePath) return { status: 'pending_parse' };
@@ -490,10 +494,10 @@ export function usePollCriteriaDocumentStatus(
 
       return { status: data?.status ?? 'pending_parse' };
     },
-    enabled: !!auditId && !!filePath,
-    // polling: refetch every 3 s until terminal state
-    refetchInterval: (query) => {
-      const status = query.state.data?.status;
+    enabled: !!auditId && !!filePath && !pollTimeoutError,
+    // polling: refetch every 3 s until terminal state or timeout
+    refetchInterval: (q) => {
+      const status = q.state.data?.status;
       const isTerminal = CRITERIA_DOCUMENT_TERMINAL_STATUSES.has(status ?? '');
 
       if (isTerminal) {
@@ -502,11 +506,28 @@ export function usePollCriteriaDocumentStatus(
           queryClient.invalidateQueries({ queryKey: ['uploaded-documents', auditId] });
           queryClient.invalidateQueries({ queryKey: ['criteria-tree', auditId] });
         }
+        pollCount.current = 0;
         return false; // stop polling
       }
+
+      // GAP-PARSE-009: enforce maximum poll count to prevent infinite polling
+      pollCount.current += 1;
+      if (pollCount.current >= MAX_POLL_ITERATIONS) {
+        setPollTimeoutError(
+          'Document parsing took longer than 30 minutes. Please try uploading the document again.',
+        );
+        return false; // stop polling
+      }
+
       return 3000; // poll every 3 seconds
     },
   });
+
+  return {
+    ...query,
+    error: pollTimeoutError ? new Error(pollTimeoutError) : query.error,
+    pollTimeoutError,
+  };
 }
 
 /**
