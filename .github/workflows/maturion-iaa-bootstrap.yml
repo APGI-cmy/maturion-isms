@@ -186,19 +186,27 @@ jobs:
         run: |
           set -euo pipefail
           PR_DATA=$(gh api "repos/${{ github.repository }}/pulls/${PR_NUMBER}" \
-            --jq '{"head_ref": .head.ref, "head_sha": .head.sha, "state": .state}')
+            --jq '{"head_ref": .head.ref, "head_sha": .head.sha, "state": .state, "head_repo_full_name": .head.repo.full_name}')
           HEAD_REF=$(echo "$PR_DATA" | jq -r '.head_ref')
           HEAD_SHA=$(echo "$PR_DATA" | jq -r '.head_sha')
           PR_STATE=$(echo "$PR_DATA" | jq -r '.state')
+          HEAD_REPO_FULL_NAME=$(echo "$PR_DATA" | jq -r '.head_repo_full_name')
 
           if [ "$PR_STATE" != "open" ]; then
             echo "::error::PR #${PR_NUMBER} is not open (state: ${PR_STATE}). Cannot commit artifacts."
             exit 1
           fi
 
+          if [ "$HEAD_REPO_FULL_NAME" != "${{ github.repository }}" ]; then
+            echo "::error::Unsupported PR source repository: ${HEAD_REPO_FULL_NAME}."
+            echo "::error::Fork-based pull requests are not supported for governance artifact pushes."
+            echo "::error::Please open the PR from a branch in ${GITHUB_REPOSITORY} instead."
+            exit 1
+          fi
+
           echo "head_ref=$HEAD_REF"   >> "$GITHUB_OUTPUT"
           echo "head_sha=$HEAD_SHA"   >> "$GITHUB_OUTPUT"
-          echo "PR branch: $HEAD_REF ($HEAD_SHA)"
+          echo "PR branch: $HEAD_REF ($HEAD_SHA) from $HEAD_REPO_FULL_NAME"
 
       # ── Checkout repo default branch to get trusted agent-runner.sh ───────
       # Security: We checkout the DEFAULT BRANCH (not the PR HEAD branch) to
