@@ -441,3 +441,4 @@
 | 2026-03-16 | independent-assurance-agent | session-wave-node-ripple-20260316-R2 | Phase 4 | Add A-029 iaa_audit_token -PASS pre-population step to Foreman PREHANDOVER template | session-wave-node-ripple-20260316-R2.md |
 | 2026-03-16 | independent-assurance-agent | session-wave-node-ripple-20260316-R2 | Phase 4 | Add mandatory git status+log pre-commit checkpoint to Foreman workflow (A-021 prevention) | session-wave-node-ripple-20260316-R2.md |
 | 2026-03-16 | independent-assurance-agent | session-wave-node-ripple-20260316-R2 | Phase 4 | OVL-INJ-001: Use EXEMPT (T2=NO: reason) notation instead of PHASE_A_ADVISORY for pre-brief exemptions | session-wave-node-ripple-20260316-R2.md |
+| 2026-03-17 | independent-assurance-agent | session-waveiaabootstrap-20260317 | PHASE_3 | Dockerfile COPY path consistency should be explicit OVL-CI-001 sub-condition for PRs introducing container scaffolding | session-waveiaabootstrap-20260317.md |
