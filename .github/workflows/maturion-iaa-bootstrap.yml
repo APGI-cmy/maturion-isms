@@ -149,6 +149,34 @@ jobs:
           fi
           echo "MATURION_BOT_TOKEN is present — token validation passed."
 
+      # ── Authorization guard — trusted collaborators only ──────────────────
+      # Security: issue_comment fires from the default branch context, but the
+      # subsequent checkout targets the PR HEAD branch. To prevent a malicious
+      # PR author from triggering execution of their own modified agent-runner.sh
+      # with MATURION_BOT_TOKEN + contents:write, we require the comment author
+      # to have at minimum 'write' permission on the repository.
+      - name: Verify comment author has write permission
+        if: github.event_name == 'issue_comment'
+        env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
+          ACTOR: ${{ needs.parse-command.outputs.actor }}
+        run: |
+          set -euo pipefail
+          PERM=$(gh api \
+            "repos/${{ github.repository }}/collaborators/${ACTOR}/permission" \
+            --jq '.permission' 2>/dev/null || echo "none")
+          echo "Comment author '${ACTOR}' permission: ${PERM}"
+          case "$PERM" in
+            admin|write|maintain)
+              echo "Authorization: PASS — '${ACTOR}' has '${PERM}' access."
+              ;;
+            *)
+              echo "::error::Authorization FAILED: '${ACTOR}' has '${PERM}' access."
+              echo "::error::Bootstrap commands require write (or higher) repository permission."
+              exit 1
+              ;;
+          esac
+
       # ── Resolve PR head branch ────────────────────────────────────────────
       - name: Resolve PR head branch
         id: pr-info
@@ -172,12 +200,17 @@ jobs:
           echo "head_sha=$HEAD_SHA"   >> "$GITHUB_OUTPUT"
           echo "PR branch: $HEAD_REF ($HEAD_SHA)"
 
-      # ── Checkout PR head branch with bot token ────────────────────────────
-      - name: Checkout PR branch
+      # ── Checkout repo default branch to get trusted agent-runner.sh ───────
+      # Security: We checkout the DEFAULT BRANCH (not the PR HEAD branch) to
+      # ensure agent-runner.sh comes from trusted, merged code — not from the
+      # PR author's potentially malicious branch. The agent runner only writes
+      # to .agent-admin/assurance/ and .agent-workspace/ and the results are
+      # committed to the PR branch via git push (not via the checkout ref).
+      - name: Checkout default branch (trusted agent-runner.sh)
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.MATURION_BOT_TOKEN }}
-          ref: ${{ steps.pr-info.outputs.head_ref }}
+          ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 1
 
       # ── Configure Git identity ────────────────────────────────────────────
@@ -186,7 +219,10 @@ jobs:
           git config --global user.name "Maturion Bot"
           git config --global user.email "bot@maturion.ai"
 
-      # ── Run agent runner stub ─────────────────────────────────────────────
+      # ── Run agent runner stub (from trusted default-branch checkout) ──────
+      # Security: agent-runner.sh executes HERE while agent-runner.sh still
+      # points to the trusted default-branch version. Any artifacts it creates
+      # are untracked files — git will not remove them on branch switch.
       - name: Run agent runner
         env:
           COMMAND: ${{ needs.parse-command.outputs.command }}
@@ -203,54 +239,72 @@ jobs:
             --actor "$ACTOR" \
             --token-value "$TOKEN_VALUE"
 
-      # ── Restrict and commit — only allowed write paths ────────────────────
-      - name: Enforce write path restriction and commit artifacts
+      # ── Push artifacts to PR branch via GitHub API (no git checkout) ────────
+      # Security: We never check out the PR branch. Artifacts are pushed directly
+      # via the GitHub Contents API, preventing untrusted PR code from executing
+      # in the context of a privileged workflow with MATURION_BOT_TOKEN.
+      - name: Push governance artifacts to PR branch via API
         id: commit
         env:
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
           COMMAND: ${{ needs.parse-command.outputs.command }}
           PR_NUMBER: ${{ needs.parse-command.outputs.pr_number }}
+          PR_BRANCH: ${{ steps.pr-info.outputs.head_ref }}
         run: |
           set -euo pipefail
 
-          # WRITE PATH RESTRICTION: only .agent-admin/assurance/ and .agent-workspace/
-          # Any file outside these paths is rejected — governance security boundary.
+          REPO="${{ github.repository }}"
+          COMMITTED=false
+          DATESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          COMMIT_MSG="chore(governance): bootstrap ${COMMAND} artifacts for PR #${PR_NUMBER} [${DATESTAMP}]"
+
+          # WRITE PATH RESTRICTION: only these two paths are allowed.
           ALLOWED_PATHS=(".agent-admin/assurance" ".agent-workspace")
-          VIOLATION=false
 
-          for CHANGED in $(git status --porcelain | awk '{print $NF}'); do
+          # Collect new/modified files under allowed paths only.
+          ARTIFACT_FILES=()
+          while IFS= read -r -d '' f; do
+            REL="${f#./}"
             ALLOWED=false
-            for ALLOWED_PATH in "${ALLOWED_PATHS[@]}"; do
-              if [[ "$CHANGED" == "${ALLOWED_PATH}/"* ]]; then
-                ALLOWED=true
-                break
-              fi
+            for AP in "${ALLOWED_PATHS[@]}"; do
+              if [[ "$REL" == "${AP}/"* ]]; then ALLOWED=true; break; fi
             done
-            if [ "$ALLOWED" = "false" ]; then
-              echo "::error::Write path violation: '${CHANGED}' is outside allowed paths."
-              echo "::error::Allowed paths: .agent-admin/assurance/, .agent-workspace/"
-              VIOLATION=true
+            if [ "$ALLOWED" = "true" ]; then
+              ARTIFACT_FILES+=("$REL")
             fi
-          done
+          done < <(find .agent-admin/assurance .agent-workspace \
+            -type f -newer .git/HEAD -print0 2>/dev/null || true)
 
-          if [ "$VIOLATION" = "true" ]; then
-            echo "::error::Write path restriction FAILED. Aborting commit."
-            exit 1
-          fi
-
-          # Stage only the allowed paths
-          git add .agent-admin/assurance/ .agent-workspace/ 2>/dev/null || true
-
-          if git diff --cached --quiet; then
-            echo "No governance artifacts to commit — nothing changed."
+          if [ "${#ARTIFACT_FILES[@]}" -eq 0 ]; then
+            echo "No new governance artifacts — nothing to commit."
             echo "committed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          DATESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-          git commit -m "chore(governance): bootstrap ${COMMAND} artifacts for PR #${PR_NUMBER} [${DATESTAMP}]"
-          git push origin HEAD
-          echo "committed=true" >> "$GITHUB_OUTPUT"
-          echo "Governance artifacts committed and pushed."
+          for FILE in "${ARTIFACT_FILES[@]}"; do
+            CONTENT=$(base64 -w 0 "$FILE")
+            # Get existing file SHA if the file already exists on the branch
+            EXISTING_SHA=$(gh api \
+              "repos/${REPO}/contents/${FILE}?ref=${PR_BRANCH}" \
+              --jq '.sha' 2>/dev/null || echo "")
+            if [ -n "$EXISTING_SHA" ]; then
+              gh api --method PUT "repos/${REPO}/contents/${FILE}" \
+                -f message="$COMMIT_MSG" \
+                -f content="$CONTENT" \
+                -f branch="$PR_BRANCH" \
+                -f sha="$EXISTING_SHA"
+            else
+              gh api --method PUT "repos/${REPO}/contents/${FILE}" \
+                -f message="$COMMIT_MSG" \
+                -f content="$CONTENT" \
+                -f branch="$PR_BRANCH"
+            fi
+            echo "Pushed: ${FILE}"
+            COMMITTED=true
+          done
+
+          echo "committed=${COMMITTED}" >> "$GITHUB_OUTPUT"
+          echo "Governance artifacts pushed to branch ${PR_BRANCH}."
 
       # ── Post acknowledgement comment ──────────────────────────────────────
       - name: Post result comment

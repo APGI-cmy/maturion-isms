@@ -17,8 +17,8 @@
 #        /workspace/.agent-admin/assurance/
 #        /workspace/.agent-workspace/
 #
-# Build:
-#   docker build -t maturion-agent-runner .github/runner/
+# Build (build context must be .github/ so that COPY scripts/agent-runner.sh resolves):
+#   docker build -t maturion-agent-runner -f .github/runner/Dockerfile .github/
 #
 # Run (from repo root):
 #   docker run --rm \
