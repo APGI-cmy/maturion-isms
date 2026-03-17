@@ -52,6 +52,12 @@ COPY failed: file not found in build context or excluded by .dockerignore: scrip
 
 This is an inconsistency between the Dockerfile COPY path, the README build command, and the actual file structure. The scaffold documents incorrect state.
 
+**Addendum (post-README fix)**: After this rejection artifact was created, `README.md` was updated to document the build command as:
+```
+docker build -t maturion-agent-runner -f .github/runner/Dockerfile .github/
+```
+This sets the Docker build context to `.github/`, where `scripts/agent-runner.sh` exists at `./scripts/agent-runner.sh`, so the Dockerfile instruction `COPY scripts/agent-runner.sh /usr/local/bin/agent-runner.sh` is now valid. The analysis above reflects the pre-fix README state and is retained here as an immutable historical record of the original rejection condition.
+
 **Fix required (choose one)**:
 
 **OPTION A** — Update Dockerfile line 58:
