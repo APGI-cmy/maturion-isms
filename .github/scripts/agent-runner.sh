@@ -200,6 +200,10 @@ EOF
 
     # Sanitise token value for filename (keep alphanumeric, dash, underscore)
     SAFE_TOKEN=$(echo "$TOKEN_VALUE" | tr -cd '[:alnum:]_-' | cut -c1-80)
+    if [ -z "$SAFE_TOKEN" ]; then
+      echo "::error::Sanitized token value is empty; --token-value must contain at least one alphanumeric, dash, or underscore character"
+      exit 1
+    fi
     TOKEN_FILE="${ASSURANCE_DIR}/iaa-token-${SAFE_TOKEN}-${DATESTAMP}.md"
 
     # Idempotency: skip if token file already exists
