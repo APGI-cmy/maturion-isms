@@ -194,4 +194,13 @@ The root cause is running PR-branch code in a privileged `issue_comment` workflo
 
 **OPTION C**: Remove the `issue_comment` trigger entirely. Rely on `workflow_dispatch` only (which already requires actor to have workflow dispatch permission — a trusted control).
 
-**Total failures**: FINDING-1 (Dockerfile COPY path) + FINDING-2 (untrusted checkout security vulnerability) = **2 failures**.
+### Remediation status (post-PR)
+
+In PR `copilot/adopt-standardized-bootstrap-workflow`, the `maturion-iaa-bootstrap` workflow was updated to:
+- Check out the repository **default (base) branch** for the `.github/scripts/agent-runner.sh` script.
+- Execute the agent runner **from that trusted base branch checkout**, rather than from the PR branch.
+- Avoid executing any PR-branch workflow code in the privileged `issue_comment` context.
+
+As a result, the CodeQL alert `actions/untrusted-checkout/high` associated with this workflow is now **remediated**. The description above reflects the **pre-fix state at the time of this IAA rejection**, not the current behavior of the workflow.
+
+**Total failures at time of rejection**: FINDING-1 (Dockerfile COPY path) + FINDING-2 (untrusted checkout security vulnerability) = **2 failures**.
