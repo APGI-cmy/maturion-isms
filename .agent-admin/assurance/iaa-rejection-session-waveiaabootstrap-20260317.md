@@ -132,3 +132,60 @@ token file upon re-invocation.
 **IAA Agent**: independent-assurance-agent v6.2.0
 **Self-Modification Lock**: SELF-MOD-IAA-001 — ACTIVE
 **Adoption Phase**: PHASE_B_BLOCKING — hard gate ACTIVE
+
+---
+
+## ADDENDUM — FINDING-2 (CodeQL HIGH severity security alert)
+
+**Finding**: FINDING-2
+**Check**: OVL-CI-001 workflow policy correctness / OVL-CI-003 silent failure risk / CORE-021 zero-severity-tolerance
+**Severity**: HIGH — untrusted checkout in privileged workflow (CodeQL alert: actions/untrusted-checkout/high)
+**Location**: `.github/workflows/maturion-iaa-bootstrap.yml` lines 176–204
+
+### Description
+
+The workflow uses the `issue_comment` event trigger. The `issue_comment` event runs workflows **with full access to repository secrets and write permissions** — regardless of whether the PR is from a fork or a collaborator.
+
+The `run-bootstrap` job:
+1. Checks out the **PR HEAD branch** (potentially from an untrusted fork): `ref: ${{ steps.pr-info.outputs.head_ref }}`
+2. **Executes code from that checked-out branch**: `chmod +x .github/scripts/agent-runner.sh && .github/scripts/agent-runner.sh ...`
+
+**Attack vector**: A malicious actor submits a PR from a fork with a tampered `.github/scripts/agent-runner.sh`. Anyone (or an automated bot) comments `/maturion-bootstrap` on that PR. The malicious script executes with:
+- `MATURION_BOT_TOKEN` accessible in environment
+- `contents: write` + `pull-requests: write` + `issues: write` permissions
+- The `git push origin HEAD` capability
+
+The write-path restriction step runs **after** the script — a malicious script could exfiltrate the token before reaching that step.
+
+### Fix required
+
+The root cause is running PR-branch code in a privileged `issue_comment` workflow. The fix is to NOT execute code from the PR branch:
+
+**OPTION A (Recommended)**: Run the agent-runner script from the **BASE branch**, not the PR branch. Check out the default branch first to get the trusted script, then use the GitHub API to commit artifacts directly to the PR branch (without additional checkout):
+```yaml
+- name: Checkout base branch (trusted script source)
+  uses: actions/checkout@v4
+  with:
+    token: ${{ secrets.MATURION_BOT_TOKEN }}
+    ref: ${{ github.event.repository.default_branch }}  # base branch — trusted
+```
+
+**OPTION B**: Add an actor authorization check BEFORE the checkout step — only allow actors who are collaborators/org members with write access:
+```yaml
+- name: Authorize actor
+  env:
+    GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
+    ACTOR: ${{ needs.parse-command.outputs.actor }}
+  run: |
+    set -euo pipefail
+    PERMISSION=$(gh api "repos/${{ github.repository }}/collaborators/${ACTOR}/permission" \
+      --jq '.permission' 2>/dev/null || echo "none")
+    if [[ "$PERMISSION" != "admin" && "$PERMISSION" != "write" && "$PERMISSION" != "maintain" ]]; then
+      echo "::error::Actor '${ACTOR}' does not have write access. Aborting."
+      exit 1
+    fi
+```
+
+**OPTION C**: Remove the `issue_comment` trigger entirely. Rely on `workflow_dispatch` only (which already requires actor to have workflow dispatch permission — a trusted control).
+
+**Total failures**: FINDING-1 (Dockerfile COPY path) + FINDING-2 (untrusted checkout security vulnerability) = **2 failures**.

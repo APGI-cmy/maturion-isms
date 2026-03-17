@@ -11,8 +11,8 @@ producing_agent: Copilot coding agent (builder class) under Foreman orchestratio
 producing_agent_class: builder
 pr_category: CI_WORKFLOW (primary) + PRE_BRIEF_ASSURANCE (overlay)
 checks_executed: 21
-checks_passed: 20
-checks_failed: 1
+checks_passed: 19
+checks_failed: 2
 merge_gate_parity_result: PASS (all three gate checks confirmed locally)
 verdict: REJECTION-PACKAGE
 token_reference: IAA-REJECTION-session-waveiaabootstrap-20260317
@@ -33,6 +33,10 @@ failures_cited:
     check: OVL-CI-001 / CORE-021
     detail: ".github/runner/Dockerfile line 58 has 'COPY scripts/agent-runner.sh' but build context per README is .github/runner/ — no scripts/ subdirectory exists there; actual script is at .github/scripts/agent-runner.sh; docker build will fail when Phase 2 is implemented"
     fix_required: "Update Dockerfile COPY path to '../scripts/agent-runner.sh' OR update README build command to use '.github/' as context — three options documented in rejection artifact"
+  - finding: FINDING-2
+    check: OVL-CI-001 / OVL-CI-003 / CORE-021
+    detail: "issue_comment trigger + checkout of PR HEAD branch + execution of checked-out script = untrusted code execution with MATURION_BOT_TOKEN access (CodeQL HIGH: actions/untrusted-checkout/high)"
+    fix_required: "Run agent-runner.sh from BASE branch only (not PR HEAD branch) OR add collaborator authorization check before checkout OR remove issue_comment trigger and use workflow_dispatch only"
 
 fail_only_once_rules_applied:
   - rule: A-001
