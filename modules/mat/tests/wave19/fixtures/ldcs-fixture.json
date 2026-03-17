@@ -1,0 +1,35 @@
+{
+  "_comment": "Wave 19 LDCS E2E test fixture — GAP-PARSE-010 / T-W19F-001",
+  "_authority": "WAVE-19-PLAN-PROPOSAL.md T-W19F-001 / T-W19-014",
+  "_wave": "Wave 19 — MAT Criteria Parsing Holistic Repair",
+  "document_type": "LDCS",
+  "description": "Representative LDCS (Local Delivery Compliance Standard) parse output for E2E content assertion tests. Defines the expected structural output of the MAT criteria parsing pipeline when given a standard LDCS document.",
+  "expected_output": {
+    "domains_count": 5,
+    "mps_count": 26,
+    "criteria_count": 130,
+    "sample_criteria_number": "1.4.1",
+    "has_intent_statement": true,
+    "criteria_number_format": "hierarchical",
+    "criteria_number_pattern": "^\\d+\\.\\d+\\.\\d+$"
+  },
+  "sample_domain": {
+    "name": "Governance and Leadership",
+    "number": 1
+  },
+  "sample_mps": {
+    "name": "Organisational Governance",
+    "number": "1",
+    "intent_statement": "The organisation has effective governance structures that provide clear leadership and accountability for service delivery."
+  },
+  "sample_criterion": {
+    "number": "1.4.1",
+    "title": "Governance framework",
+    "description": "The organisation has a documented governance framework that is reviewed annually."
+  },
+  "validation_rules": {
+    "criteria_number_must_be_text": true,
+    "mps_intent_statement_must_be_non_null": true,
+    "domains_must_cascade_to_criteria": true
+  }
+}
