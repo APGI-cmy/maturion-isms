@@ -143,12 +143,8 @@ EOF
     PREBRIEF_FILE="${ASSURANCE_DIR}/iaa-prebrief-${SLUG}.md"
 
     # Idempotency: skip if a non-SUPERSEDED pre-brief already exists for this PR
-    EXISTING=$(find "$ASSURANCE_DIR" -name "iaa-prebrief-*${DATESTAMP}*.md" \
-      -type f 2>/dev/null \
-      | while IFS= read -r f; do grep -qiL "SUPERSEDED" "$f" && echo "$f"; done \
-      | head -1 || true)
-    if [ -n "$EXISTING" ]; then
-      echo "IAA pre-brief already present for today (${EXISTING}) — skipping duplicate."
+    if [ -f "$PREBRIEF_FILE" ] && grep -qiL "SUPERSEDED" "$PREBRIEF_FILE" >/dev/null 2>&1; then
+      echo "IAA pre-brief already present for this PR (${PREBRIEF_FILE}) — skipping duplicate."
       exit 0
     fi
 
