@@ -25,7 +25,7 @@
 - `modules/mat/01.5-trs/technical-requirements-specification.md` — Updated TR-037 gap flag (INC-PARSE-PIPELINE-001) + TR-009 not-yet-verified annotation
 
 ### IAA Ceremony Files (A-031 carve-out)
-- IAA token file: **PENDING (not yet issued)** — will be written by IAA at Phase 4.3b in a follow-up session; token path will be `.agent-admin/assurance/iaa-token-session-wave-gov-mat-criteria-repair-1135-20260317.md` once issued
+- `.agent-admin/assurance/iaa-token-session-wave-gov-mat-criteria-repair-1135-20260317.md` — IAA ASSURANCE-TOKEN (written by IAA Phase 4.3a — token: `IAA-session-wave-gov-mat-criteria-repair-1135-20260317-PASS`, 23/23 checks PASS)
 
 ## No-Implementation Attestation
 No production code, schema migrations, test files, or CI workflow files were created or modified in this wave.

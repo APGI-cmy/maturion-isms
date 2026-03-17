@@ -33,7 +33,7 @@ mode_transitions: [PREFLIGHT → POLC-Orchestration → Phase-4-Handover]
 | Agent | Task | Status |
 |-------|------|--------|
 | independent-assurance-agent | IAA Pre-Brief | ✅ COMPLETE (SHA 16d648e) |
-| independent-assurance-agent | IAA Final Audit | ⏳ PENDING (Phase 4.3a — time constraint) |
+| independent-assurance-agent | IAA Final Audit | ✅ COMPLETE (Phase 4.3a — token issued 2026-03-17) |
 
 ## Deliverables Produced
 - CRITERIA-PARSING-GAP-REGISTER.md (12 gaps, Deliverables A1/B1/C1/G1)

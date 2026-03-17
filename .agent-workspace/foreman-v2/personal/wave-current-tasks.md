@@ -32,7 +32,7 @@ Governance-documentation-only wave. Foreman surveys the MAT criteria parsing pip
 | 8 | T-GOV-008 | Update technical-requirements-specification.md — add gap flags for parsing TRs (TR-037, TR-009) | Foreman | ✅ COMPLETE |
 | 9 | T-GOV-009 | Create WAVE-19-PLAN-PROPOSAL.md — wave plan for Issue #2 | Foreman | ✅ COMPLETE |
 | 10 | T-GOV-010 | Create SCOPE_DECLARATION.md for this wave | Foreman | ✅ COMPLETE |
-| 11 | T-GOV-IAA | IAA Phase 4 Final Audit + token | independent-assurance-agent | ⏳ PENDING (Phase 4.3a) |
+| 11 | T-GOV-IAA | IAA Phase 4 Final Audit + token | independent-assurance-agent | ✅ COMPLETE (token: IAA-session-wave-gov-mat-criteria-repair-1135-20260317-PASS) |
 | 12 | T-GOV-1137 | Issue #1137 (Wave 19 implementation issue) created but **unassigned** — must be assigned to Copilot (or appropriate agent) by CS2 (@APGI-cmy) before Wave 19 can commence | CS2 | ⏳ PENDING CS2 ASSIGNMENT |
 
 ---
@@ -64,10 +64,12 @@ branch: copilot/gov-mat-criteria-repair
 iaa_prebrief_artifact: .agent-admin/assurance/iaa-prebrief-wave-gov-mat-criteria-repair-1135.md
 iaa_prebrief_committed: true
 iaa_prebrief_sha: 16d648e
-status: ASSURANCE_TOKEN_PENDING
+status: ASSURANCE_TOKEN_PASS
+iaa_token: IAA-session-wave-gov-mat-criteria-repair-1135-20260317-PASS
+iaa_token_file: .agent-admin/assurance/iaa-token-session-wave-gov-mat-criteria-repair-1135-20260317.md
 tasks_total: 12
-tasks_done: 11
-tasks_pending: [T-GOV-IAA, T-GOV-1137]
+tasks_done: 12
+tasks_pending: [T-GOV-1137 — pending CS2 assignment of Issue #1137]
 mode: POLC-Orchestration (governance-planning-only)
 governance_docs_to_update: [CRITERIA-PARSING-GAP-REGISTER.md, BUILD_PROGRESS_TRACKER.md, app-description.md, MAT_UX_WORKFLOW_AND_WIRING.md, functional-requirements.md, technical-requirements-specification.md, WAVE-19-PLAN-PROPOSAL.md]
 governance_docs_updated: [CRITERIA-PARSING-GAP-REGISTER.md (new), WAVE-19-PLAN-PROPOSAL.md (new), BUILD_PROGRESS_TRACKER.md, app-description.md, MAT_UX_WORKFLOW_AND_WIRING.md, functional-requirements.md, technical-requirements-specification.md]

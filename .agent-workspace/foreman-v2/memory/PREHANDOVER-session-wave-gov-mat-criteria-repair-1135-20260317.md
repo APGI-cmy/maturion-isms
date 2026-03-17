@@ -106,14 +106,14 @@ SCOPE_DECLARATION.md written with fresh overwrite (A-029). Content matches diff.
 
 ---
 
-## IAA Audit Token (Pre-Populated per A-028)
+## IAA Audit Token (Resolved per §4.3b)
 
 ```
-iaa_audit_token: PENDING — IAA Final Audit (Phase 4.3a) not yet invoked due to session time constraint.
-Token will be: IAA-session-wave-gov-mat-criteria-repair-1135-20260317-PASS (expected, once issued)
+iaa_audit_token: IAA-session-wave-gov-mat-criteria-repair-1135-20260317-PASS
 ```
 
-> ⚠️ **HANDOVER BLOCKER**: IAA ASSURANCE-TOKEN is not yet issued. Merge gate CANNOT be released until IAA Phase 4.3a audit completes and token is committed at `.agent-admin/assurance/iaa-token-session-wave-gov-mat-criteria-repair-1135-20260317.md`.
+IAA Final Audit (Phase 4.3a) complete — 23/23 checks PASS. ASSURANCE-TOKEN issued.
+Token file: `.agent-admin/assurance/iaa-token-session-wave-gov-mat-criteria-repair-1135-20260317.md`
 
 ---
 
@@ -140,6 +140,6 @@ Token will be: IAA-session-wave-gov-mat-criteria-repair-1135-20260317-PASS (expe
 - [x] Evidence artifacts present ✅
 - [x] Architecture followed ✅ (no code changes)
 - [x] §4.3 Merge gate parity: PASS ✅
-- [ ] IAA ASSURANCE-TOKEN: **PENDING** — Phase 4.3a not yet executed
+- [x] IAA ASSURANCE-TOKEN: **PASS** — `IAA-session-wave-gov-mat-criteria-repair-1135-20260317-PASS` (Phase 4.3a complete, 23/23 checks PASS)
 
-OPOJD: **CONDITIONAL PASS** (all docs delivered; IAA token ceremony pending — merge gate blocked until token issued)
+OPOJD: **PASS** (all gates cleared; merge gate released pending CS2 approval)
