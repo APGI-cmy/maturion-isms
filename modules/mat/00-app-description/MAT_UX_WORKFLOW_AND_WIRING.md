@@ -699,3 +699,60 @@ In Wave 15 post-delivery oversight review, it was identified that the criteria p
 - FRS FR-005 acceptance criteria 7–14 and FR-103 (Parsing Resilience and Error Surface)
 
 No functional behaviour was changed by this correction — only the wiring documentation was made explicit.
+---
+
+## Wave 19 Planning Correction — 2026-03-17 — Known Wiring Gaps in Parse Cycle
+
+> **Wave 19 planning correction — 2026-03-17 — wiring gaps identified in production pipeline (issue #1135)**
+
+CS2 production testing (issue #1135) confirmed that the parse cycle documented in Step 2a above does not function end-to-end in the production environment. The following corrections document the known wiring gaps identified during holistic gap analysis (wave-gov-mat-criteria-repair-1135):
+
+### Gap: AI_GATEWAY_URL Missing — Complete Pipeline Break
+
+**Step 2a Segment**: Step 3 ("Edge Function calls AI Gateway") — **DOES NOT EXECUTE**
+
+The Edge Function `invoke-ai-parse-criteria` calls `${AI_GATEWAY_URL}/api/v1/parse` where `AI_GATEWAY_URL = Deno.env.get('AI_GATEWAY_URL') ?? ''`. This variable is not configured in the Supabase project's Edge Function secrets. The background task fails with `TypeError: Invalid URL` immediately, before any DB writes. The 202 ACCEPTED response is returned to the frontend regardless.
+
+**Wiring gap**: `useTriggerAIParsing()` → (Edge Fn background task) → ~~`${AI_GATEWAY_URL}/api/v1/parse`~~ → FAILS SILENTLY
+
+**Remediation**: GAP-PARSE-006 (Wave 19, integration-builder)
+
+---
+
+### Gap: criteria.number Type Mismatch — Criteria Write Would Fail
+
+**Step 2a Segment**: Step 4 (DB write-back, criteria INSERT) — **WOULD FAIL even if AI Gateway were reachable**
+
+LDCS documents use hierarchical criteria identifiers like "1.4.1", "2.7.5". The `criteria.number` column is `INTEGER NOT NULL`. The Edge Function works around this by using `idx + 1` (sequential counter), completely discarding the LDCS identifier. This means the parsed structure has no traceability back to the source document.
+
+**Wiring gap**: AI extracts `c.number = "1.4.1"` → Edge Fn stores `number = idx+1` → LDCS ID lost
+
+**Remediation**: GAP-PARSE-001, GAP-PARSE-012 (Wave 19, schema-builder + api-builder)
+
+---
+
+### Gap: MPS Intent/Guidance — Never Extracted or Stored
+
+**Step 2a Segment**: Step 3 (AI extraction) + Step 4 (DB write-back) — **LDCS CONTENT LOST**
+
+LDCS documents contain MPS-level Intent statements and Guidance text that define the purpose and compliance expectation for each MPS. The AI system prompt does not request extraction of these fields. `MpsResult` has no `intent_statement` or `guidance` fields. The `mini_performance_standards` table has no corresponding columns.
+
+**Wiring gap**: LDCS MPS intent/guidance → ~~AI extraction~~ → ~~DB storage~~ → NOT RENDERED IN UI
+
+**Remediation**: GAP-PARSE-002, GAP-PARSE-008 (Wave 19, schema-builder + api-builder)
+
+---
+
+### Gap: Infinite Polling on Silent Failure
+
+**Step 2a Segment**: Step 5 (Frontend polls `criteria_documents.status`) — **POLLS FOREVER**
+
+If the Edge Function background task fails before updating `criteria_documents.status`, the status remains 'processing'. `usePollCriteriaDocumentStatus` polls every 3 seconds indefinitely with no timeout. The UI is permanently stuck in a loading state with no user-visible error.
+
+**Wiring gap**: `criteria_documents.status = 'processing'` (stuck) → `usePollCriteriaDocumentStatus` polls forever → no error surfaced
+
+**Remediation**: GAP-PARSE-009 (Wave 19, ui-builder)
+
+---
+
+*Wave 19 corrections: gap analysis by foreman-v2-agent v6.2.0, issue #1135, 2026-03-17*

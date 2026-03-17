@@ -179,6 +179,8 @@ Backend API endpoints MUST meet the following response time targets.
 **Derives From**: FR-005, FR-017, FR-023, FR-035
 **Priority**: P0
 
+> ⚠️ **NOT YET VERIFIED IN PRODUCTION (2026-03-17)**: TR-009 constraint 1 (criteria parsing < 60 seconds) is untested — the pipeline has never successfully completed in production (INC-PARSE-PIPELINE-001). For large LDCS documents (26 MPS, 180+ criteria), the two-pass extraction strategy may exceed 60 seconds. Load testing against LDCS fixture is required in Wave 19 Batch F (T-W19F-002). See `CRITERIA-PARSING-GAP-REGISTER.md` GAP-PARSE-010.
+
 AI processing endpoints MUST meet the following performance targets.
 
 **Constraints**:
@@ -678,7 +680,7 @@ The system MUST be implemented as a Progressive Web App.
 **Derives From**: FR-005, FR-006, FR-007
 **Priority**: P0
 
-> ⚠️ **PRODUCTION GAP — INC-WAVE15-PARSE-001 (2026-03-08)**: TR-037 constraints are **NOT YET VERIFIED IN PRODUCTION**. The Edge Function (`invoke-ai-parse-criteria`) was never deployed; `AI_GATEWAY_URL` not set; AI Gateway reachability unverified. Remediation: Wave 15R Batch A (api-builder). See `BUILD_PROGRESS_TRACKER.md` §INC-WAVE15-PARSE-001.
+> ⚠️ **PRODUCTION GAP — INC-WAVE15-PARSE-001 (2026-03-08) + INC-PARSE-PIPELINE-001 (2026-03-17)**: TR-037 constraints are **NOT YET VERIFIED IN PRODUCTION**. CS2 SQL probes (2026-03-17) confirmed 0 rows in `audit_logs` parse events and 0 rows in `criteria` — the pipeline has never successfully completed in production. Root causes: (1) `AI_GATEWAY_URL` not configured in Supabase Edge Function secrets (GAP-PARSE-006); (2) `criteria.number` is INTEGER — cannot store LDCS hierarchical IDs like "1.4.1" (GAP-PARSE-001, GAP-PARSE-012); (3) `mini_performance_standards` missing `intent_statement`/`guidance` columns (GAP-PARSE-002); (4) no DB transaction on write-back (GAP-PARSE-005); plus 8 additional gaps. Full gap register: `modules/mat/00-app-description/CRITERIA-PARSING-GAP-REGISTER.md`. Remediation: Wave 19 (see `modules/mat/00-app-description/WAVE-19-PLAN-PROPOSAL.md`). Previous remediation reference (Wave 15R Batch A) is superseded by Wave 19 holistic repair plan.
 
 Document parsing MUST follow a validated pipeline.
 

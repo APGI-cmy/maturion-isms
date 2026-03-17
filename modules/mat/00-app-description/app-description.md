@@ -1294,9 +1294,61 @@ After PR #1115 merged, a post-merge hotfix branch `copilot/fix-wave-18-post-merg
 
 ---
 
+## Section 23 — Wave 19 Holistic Gap Register (2026-03-17): Criteria Parsing Pipeline — Expectations vs Reality
+
+**Governance Issue**: maturion-isms#1135 — [GOV] MAT Criteria Parsing Holistic Repair
+**Wave**: wave-gov-mat-criteria-repair-1135 (planning only; implementation: Wave 19)
+
+### Current Production State (as of 2026-03-17)
+
+CS2 SQL probes against the production database confirmed that the MAT criteria parsing pipeline is **entirely non-functional**:
+
+- `SELECT ... FROM audit_logs WHERE action IN ('criteria_parsed','criteria_parse_failed')` → **0 rows**
+- `SELECT audit_id, count(*) FROM criteria GROUP BY audit_id` → **0 rows**
+
+No criteria have ever been successfully parsed and stored in the production environment.
+
+### Parsing Pipeline: Documented Expectations vs Confirmed Reality
+
+| Pipeline Stage | Documented Expectation (§6.3, Wave 18) | Confirmed Reality |
+|---------------|----------------------------------------|-------------------|
+| Document Upload | File stored in storage bucket; `criteria_documents` status='pending_parse' created | ✅ Working (Wave 18 RLS fix) |
+| Parse Trigger | Edge Function returns 202 ACCEPTED; background task begins | ⚠️ 202 returned but background task fails immediately |
+| AI Gateway Call | `${AI_GATEWAY_URL}/api/v1/parse` called; structure extracted | 🔴 NEVER CALLED — `AI_GATEWAY_URL` not configured in Supabase secrets |
+| DB Write-Back | domains, MPS, criteria written to DB | 🔴 NEVER EXECUTES — blocked by AI Gateway call failure |
+| Criteria Number | LDCS hierarchical IDs (e.g., "1.4.1") preserved | 🔴 WOULD FAIL — `criteria.number` is INTEGER (cannot store "1.4.1") |
+| MPS Intent/Guidance | MPS-level Intent + Guidance extracted and stored | 🔴 COLUMNS DO NOT EXIST in `mini_performance_standards` |
+| Audit Log | `criteria_parsed` or `criteria_parse_failed` written | 🔴 NEVER WRITTEN — 0 rows confirmed |
+| UI Status Update | Poll reaches terminal state; criteria tree loads | 🔴 STATUS STUCK at 'processing' forever (no timeout) |
+
+### Identified Gaps (Summary)
+
+See `CRITERIA-PARSING-GAP-REGISTER.md` for full register. Summary:
+
+| Gap ID | Severity | Description |
+|--------|----------|-------------|
+| GAP-PARSE-001 | 🔴 CRITICAL | `criteria.number` INTEGER cannot represent LDCS hierarchical IDs ("1.4.1") |
+| GAP-PARSE-002 | 🔴 CRITICAL | `mini_performance_standards` missing `intent_statement` + `guidance` columns |
+| GAP-PARSE-003 | 🔴 CRITICAL | No audit_logs parse events in production (0 rows) |
+| GAP-PARSE-004 | 🟠 HIGH | Silent success — pipeline can complete with 0 inserts |
+| GAP-PARSE-005 | 🟠 HIGH | No DB transaction — partial writes possible |
+| GAP-PARSE-006 | 🔴 CRITICAL | `AI_GATEWAY_URL` not configured in Supabase Edge Function secrets |
+| GAP-PARSE-007 | 🟡 MEDIUM | Legacy overlap drift — schema alignment unverified |
+| GAP-PARSE-008 | 🟠 HIGH | AI Gateway `MpsResult` missing `intent_statement`/`guidance` fields |
+| GAP-PARSE-009 | 🟠 HIGH | `usePollCriteriaDocumentStatus` polls forever on silent failure |
+| GAP-PARSE-010 | 🟡 MEDIUM | No end-to-end content assertions in QA tests |
+| GAP-PARSE-011 | 🟠 HIGH | `SUPABASE_STORAGE_URL` unverified in Render production |
+| GAP-PARSE-012 | 🔴 CRITICAL | Edge Function uses `idx+1` — LDCS criteria IDs entirely discarded |
+
+### Remediation
+
+Wave 19 (pending CS2 authorization for Issue #2). See `WAVE-19-PLAN-PROPOSAL.md` for full task breakdown.
+
+---
+
 ## End of Document
 
-**Document Version**: v1.6
-**Last Updated**: 2026-03-15
+**Document Version**: v1.7
+**Last Updated**: 2026-03-17
 **Status**: Draft (to be marked Authoritative after CS2 approval)
-**Next Review**: After Wave 18 post-merge hotfix (PR #1116) merge
+**Next Review**: After Wave 19 implementation (Issue #2) completes
