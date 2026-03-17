@@ -37,6 +37,7 @@
 | `modules/mat/00-app-description/app-description.md` | Modified — Section 23 production state + gap summary | ✅ COMPLETE |
 | `modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md` | Modified — Wave 19 wiring gap corrections section | ✅ COMPLETE |
 | `modules/mat/01-frs/functional-requirements.md` | Modified — FR-005 gap flag updated (INC-PARSE-PIPELINE-001) | ✅ COMPLETE |
+| `modules/mat/01.5-trs/technical-requirements-specification.md` | Modified — TR-037 gap flag updated (INC-PARSE-PIPELINE-001) + TR-009 not-yet-verified annotation | ✅ COMPLETE |
 | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Modified — updated for this wave | ✅ COMPLETE |
 | `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md` | Modified — fresh overwrite per A-029 | ✅ COMPLETE |
 
@@ -108,8 +109,11 @@ SCOPE_DECLARATION.md written with fresh overwrite (A-029). Content matches diff.
 ## IAA Audit Token (Pre-Populated per A-028)
 
 ```
-iaa_audit_token: IAA-session-wave-gov-mat-criteria-repair-1135-20260317-PASS
+iaa_audit_token: PENDING — IAA Final Audit (Phase 4.3a) not yet invoked due to session time constraint.
+Token will be: IAA-session-wave-gov-mat-criteria-repair-1135-20260317-PASS (expected, once issued)
 ```
+
+> ⚠️ **HANDOVER BLOCKER**: IAA ASSURANCE-TOKEN is not yet issued. Merge gate CANNOT be released until IAA Phase 4.3a audit completes and token is committed at `.agent-admin/assurance/iaa-token-session-wave-gov-mat-criteria-repair-1135-20260317.md`.
 
 ---
 
@@ -136,5 +140,6 @@ iaa_audit_token: IAA-session-wave-gov-mat-criteria-repair-1135-20260317-PASS
 - [x] Evidence artifacts present ✅
 - [x] Architecture followed ✅ (no code changes)
 - [x] §4.3 Merge gate parity: PASS ✅
+- [ ] IAA ASSURANCE-TOKEN: **PENDING** — Phase 4.3a not yet executed
 
-OPOJD: **PASS**
+OPOJD: **CONDITIONAL PASS** (all docs delivered; IAA token ceremony pending — merge gate blocked until token issued)

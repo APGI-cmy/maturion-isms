@@ -29,10 +29,11 @@ Governance-documentation-only wave. Foreman surveys the MAT criteria parsing pip
 | 5 | T-GOV-005 | Update app-description.md — parsing pipeline expectations vs reality section | Foreman | ✅ COMPLETE |
 | 6 | T-GOV-006 | Update MAT_UX_WORKFLOW_AND_WIRING.md — correct Step 2a parse wiring, known gaps | Foreman | ✅ COMPLETE |
 | 7 | T-GOV-007 | Update functional-requirements.md — add gap flags for parsing FRs | Foreman | ✅ COMPLETE |
-| 8 | T-GOV-008 | Update technical-requirements-specification.md — add gap flags for parsing TRs | Foreman | ✅ COMPLETE |
+| 8 | T-GOV-008 | Update technical-requirements-specification.md — add gap flags for parsing TRs (TR-037, TR-009) | Foreman | ✅ COMPLETE |
 | 9 | T-GOV-009 | Create WAVE-19-PLAN-PROPOSAL.md — wave plan for Issue #2 | Foreman | ✅ COMPLETE |
 | 10 | T-GOV-010 | Create SCOPE_DECLARATION.md for this wave | Foreman | ✅ COMPLETE |
 | 11 | T-GOV-IAA | IAA Phase 4 Final Audit + token | independent-assurance-agent | ⏳ PENDING (Phase 4.3a) |
+| 12 | T-GOV-1137 | Issue #1137 (Wave 19 implementation issue) created but **unassigned** — must be assigned to Copilot (or appropriate agent) by CS2 (@APGI-cmy) before Wave 19 can commence | CS2 | ⏳ PENDING CS2 ASSIGNMENT |
 
 ---
 
@@ -64,12 +65,14 @@ iaa_prebrief_artifact: .agent-admin/assurance/iaa-prebrief-wave-gov-mat-criteria
 iaa_prebrief_committed: true
 iaa_prebrief_sha: 16d648e
 status: ASSURANCE_TOKEN_PENDING
-tasks_total: 11
-tasks_done: 10
-tasks_pending: [T-GOV-IAA]
+tasks_total: 12
+tasks_done: 11
+tasks_pending: [T-GOV-IAA, T-GOV-1137]
 mode: POLC-Orchestration (governance-planning-only)
 governance_docs_to_update: [CRITERIA-PARSING-GAP-REGISTER.md, BUILD_PROGRESS_TRACKER.md, app-description.md, MAT_UX_WORKFLOW_AND_WIRING.md, functional-requirements.md, technical-requirements-specification.md, WAVE-19-PLAN-PROPOSAL.md]
+governance_docs_updated: [CRITERIA-PARSING-GAP-REGISTER.md (new), WAVE-19-PLAN-PROPOSAL.md (new), BUILD_PROGRESS_TRACKER.md, app-description.md, MAT_UX_WORKFLOW_AND_WIRING.md, functional-requirements.md, technical-requirements-specification.md]
 no_implementation_constraint: CONFIRMED
+issue_1137_assignment_note: Issue #1137 created but unassigned — CS2 must assign before Wave 19 commences
 ```
 
 ---

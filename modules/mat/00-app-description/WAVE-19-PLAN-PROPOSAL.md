@@ -14,7 +14,8 @@
 ## Wave Overview
 
 Wave 19 repairs all 12 gaps identified in `CRITERIA-PARSING-GAP-REGISTER.md`. The pipeline requires:
-1. Schema migrations (criteria.number → TEXT, MPS intent/guidance columns, atomic write-back RPC)
+1. Schema migrations (`criteria.number` → TEXT; MPS `intent_statement`/`guidance` columns; atomic write-back RPC)
+   - **Note**: `mini_performance_standards.number` stays INTEGER — only `criteria.number` changes to TEXT (see AD-W19-001)
 2. AI Gateway updates (MpsResult model + system prompt)
 3. Edge Function updates (use c.number, write MPS intent/guidance, zero-insert assertion, startup validation)
 4. UI update (poll timeout)
@@ -163,7 +164,7 @@ Wave 19 repairs all 12 gaps identified in `CRITERIA-PARSING-GAP-REGISTER.md`. Th
 
 | Decision | Options | Recommendation |
 |----------|---------|----------------|
-| AD-W19-001: MPS number type | Keep INTEGER with normaliseMpsNumber / Change to TEXT | **Change to TEXT** — MPS numbers like "6.0" are currently normalised to "6" (working), but TEXT is safer for future flexibility |
+| AD-W19-001: criteria.number type | Keep INTEGER (current) / Change to TEXT | **Change to TEXT** — LDCS criteria identifiers are hierarchical strings like "1.4.1" that cannot be stored as INTEGER. The Edge Function currently uses `idx+1` as a workaround (see GAP-PARSE-012). Migration: `ALTER TABLE criteria ALTER COLUMN number TYPE TEXT`. **Note: `mini_performance_standards.number` remains INTEGER** — LDCS MPS numbers are simple integers (1–26) and the existing `normaliseMpsNumber()` function correctly handles variants like "MPS 6" → 6. No MPS number column type change is required. |
 | AD-W19-002: Atomic write-back approach | (a) Supabase RPC (recommended) / (b) Postgres function / (c) Application-level retry | **Supabase RPC** — single call, single transaction, compatible with Edge Function Deno runtime |
 | AD-W19-003: Poll timeout duration | 15 min / 30 min / 60 min / configurable | **30 min** — matches AI Gateway TR-009 (< 60s expected) with generous buffer for large documents |
 

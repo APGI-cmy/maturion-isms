@@ -22,9 +22,10 @@
 - `modules/mat/00-app-description/app-description.md` — Added Section 23 (production state + gap summary)
 - `modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md` — Added Wave 19 wiring gap corrections
 - `modules/mat/01-frs/functional-requirements.md` — Updated FR-005 gap flag (INC-PARSE-PIPELINE-001)
+- `modules/mat/01.5-trs/technical-requirements-specification.md` — Updated TR-037 gap flag (INC-PARSE-PIPELINE-001) + TR-009 not-yet-verified annotation
 
 ### IAA Ceremony Files (A-031 carve-out)
-- `.agent-admin/assurance/iaa-token-session-wave-gov-mat-criteria-repair-1135-20260317.md` — IAA token file (written by IAA at Phase 4.3b)
+- IAA token file: **PENDING (not yet issued)** — will be written by IAA at Phase 4.3b in a follow-up session; token path will be `.agent-admin/assurance/iaa-token-session-wave-gov-mat-criteria-repair-1135-20260317.md` once issued
 
 ## No-Implementation Attestation
 No production code, schema migrations, test files, or CI workflow files were created or modified in this wave.
