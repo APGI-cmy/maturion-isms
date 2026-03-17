@@ -165,6 +165,11 @@ def _extract_text_from_docx(content: bytes) -> str:
 # SSRF mitigation: only extract path+query from the signed URL and combine
 # with the trusted storage base URL from the environment.
 # This ensures the scheme and hostname are never user-controlled.
+# Path deduplication: if SUPABASE_STORAGE_URL already contains a path prefix
+# (e.g. "/storage/v1") and the signed URL path also starts with that same prefix,
+# the prefix is stripped from the signed URL path before concatenation to avoid
+# producing a doubled path such as "/storage/v1/storage/v1/...".
+
 def _build_safe_fetch_url(document_url: str) -> str:
     """
     Build a safe fetch URL by using the trusted SUPABASE_STORAGE_URL base
@@ -172,11 +177,6 @@ def _build_safe_fetch_url(document_url: str) -> str:
 
     This prevents SSRF: the scheme and hostname come from a trusted env var,
     not from the user-provided signed URL string.
-
-    Path deduplication: if SUPABASE_STORAGE_URL already contains a path prefix
-    (e.g. "/storage/v1") and the signed URL path also starts with that same prefix,
-    the prefix is stripped from the signed URL path before concatenation to avoid
-    producing a doubled path such as "/storage/v1/storage/v1/...".
     """
     parsed = urllib.parse.urlparse(document_url)
     # Only use path and query from the signed URL (never scheme or host)
@@ -228,10 +228,9 @@ def _detect_ldcs_pattern(text: str) -> bool:
     has_ldcs_marker = any(marker.lower() in text.lower() for marker in LDCS_MARKERS)
     return has_numbered_hierarchy or has_ldcs_marker
 
-
 # ── GPT structured extraction ───────────────────────────────────────────────────
 
-_SYSTEM_PROMPT = """\
+_SYSTEM_PROMPT = """
 You are Maturion, an expert compliance document analyser.
 Your output MUST always be a JSON object matching this exact schema:
 {
@@ -307,7 +306,7 @@ CRITICAL RULES:
 The user will tell you how to interpret this specific document's structure.
 """
 
-_CRITERIA_ONLY_SYSTEM_PROMPT = """\
+_CRITERIA_ONLY_SYSTEM_PROMPT = """
 You are Maturion, an expert compliance document analyser.
 Your output MUST be a JSON object containing ONLY a "criteria" array:
 {
@@ -380,7 +379,10 @@ def _call_gpt(document_text: str, user_instructions: str | None = None, model: s
 
     # O-series models (o1, o3, o4-mini, etc.) do not accept temperature
     O_SERIES_MODELS = {"o1", "o1-mini", "o1-preview", "o3", "o3-mini", "o4-mini"}
-    extra_kwargs: dict[str, Any] = {"max_tokens": 32000 if use_model in {GPT_MODEL_LARGE, GPT_MODEL_PRO} else 16000}
+    # gpt-5.4 and gpt-5.4-pro require max_completion_tokens (not max_tokens)
+    COMPLETION_TOKENS_MODELS = {GPT_MODEL_LARGE, GPT_MODEL_PRO}
+    token_key = "max_completion_tokens" if use_model in COMPLETION_TOKENS_MODELS else "max_tokens"
+    extra_kwargs: dict[str, Any] = {token_key: 32000 if use_model in COMPLETION_TOKENS_MODELS else 16000}
     if use_model not in O_SERIES_MODELS:
         extra_kwargs["temperature"] = 0.1
 
@@ -414,7 +416,7 @@ def _call_gpt(document_text: str, user_instructions: str | None = None, model: s
             "document requires manual review"
         )
 
-    return json.loads(response.choices[0].message.content or "{}")
+    return json.loads(response.choices[0].message.content or "{}").
 
 
 def _call_gpt_criteria_only(
@@ -440,7 +442,7 @@ def _call_gpt_criteria_only(
     client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
     mps_context = json.dumps(
-        [{"number": m.get("number", ""), "name": m.get("name", "")} for m in mps_list],
+        [{"number": m.get("number", ""), "name": m.get("name", "") } for m in mps_list],
         indent=2,
     )
 
@@ -470,6 +472,7 @@ def _call_gpt_criteria_only(
             {"role": "user", "content": user_message},
         ],
         response_format={"type": "json_object"},
+        max_completion_tokens=32000,  # gpt-5.4 requires max_completion_tokens, not max_tokens
     )
 
     if response.choices[0].finish_reason == "length":
