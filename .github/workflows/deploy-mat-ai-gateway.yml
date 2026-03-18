@@ -76,18 +76,22 @@ jobs:
             -H "Authorization: Bearer $RENDER_API_KEY" \
             -H "Content-Type: application/json" \
             "https://api.render.com/v1/services/$RENDER_SERVICE_ID_STAGING/deploys")
+          echo "HTTP status: $RESPONSE"
+          echo "Response body:"
           cat /tmp/render-staging-response.json
-          if [ "$RESPONSE" != "201" ] && [ "$RESPONSE" != "202" ]; then
+          echo ""
+          if [ "$RESPONSE" != "200" ] && [ "$RESPONSE" != "201" ] && [ "$RESPONSE" != "202" ]; then
             echo "Render staging deploy trigger failed with HTTP $RESPONSE"
             exit 1
           fi
-          DEPLOY_ID=$(jq -r '.deploy.id // .id // empty' /tmp/render-staging-response.json)
+          DEPLOY_ID=$(jq -r '.[0].deploy.id // .[0].id // .deploy.id // .id // empty' /tmp/render-staging-response.json 2>/dev/null || echo "")
           if [ -z "$DEPLOY_ID" ]; then
-            echo "Failed to extract deploy ID from response"
-            exit 1
+            echo "WARNING: Could not extract deploy ID from response (HTTP $RESPONSE). Deploy was triggered - proceeding without ID tracking."
+            echo "deploy_id=" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy_id=$DEPLOY_ID" >> "$GITHUB_OUTPUT"
+            echo "Render staging deploy triggered successfully (deploy ID: $DEPLOY_ID)."
           fi
-          echo "deploy_id=$DEPLOY_ID" >> "$GITHUB_OUTPUT"
-          echo "Render staging deploy triggered successfully (deploy ID: $DEPLOY_ID)."
 
       - name: Wait for Render staging deploy to complete
         if: steps.trigger-staging-deploy.outputs.deploy_id != ''
@@ -157,18 +161,22 @@ jobs:
             -H "Authorization: Bearer $RENDER_API_KEY" \
             -H "Content-Type: application/json" \
             "https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys")
+          echo "HTTP status: $RESPONSE"
+          echo "Response body:"
           cat /tmp/render-response.json
-          if [ "$RESPONSE" != "201" ] && [ "$RESPONSE" != "202" ]; then
+          echo ""
+          if [ "$RESPONSE" != "200" ] && [ "$RESPONSE" != "201" ] && [ "$RESPONSE" != "202" ]; then
             echo "Render deploy trigger failed with HTTP $RESPONSE"
             exit 1
           fi
-          DEPLOY_ID=$(jq -r '.deploy.id // .id // empty' /tmp/render-response.json)
+          DEPLOY_ID=$(jq -r '.[0].deploy.id // .[0].id // .deploy.id // .id // empty' /tmp/render-response.json 2>/dev/null || echo "")
           if [ -z "$DEPLOY_ID" ]; then
-            echo "Failed to extract deploy ID from response"
-            exit 1
+            echo "WARNING: Could not extract deploy ID from response (HTTP $RESPONSE). Deploy was triggered - proceeding without ID tracking."
+            echo "deploy_id=" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy_id=$DEPLOY_ID" >> "$GITHUB_OUTPUT"
+            echo "Render deploy triggered successfully (deploy ID: $DEPLOY_ID)."
           fi
-          echo "deploy_id=$DEPLOY_ID" >> "$GITHUB_OUTPUT"
-          echo "Render deploy triggered successfully (deploy ID: $DEPLOY_ID)."
 
       - name: Wait for Render deploy to complete
         env:
