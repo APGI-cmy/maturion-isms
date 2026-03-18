@@ -566,7 +566,7 @@ Document result as `merge_gate_parity: PASS` in PREHANDOVER proof (required fiel
 
 ## PHASE 4 — HANDOVER
 
-**[FM_H] ONLY EXECUTE AFTER QP PASS AND §4.3 MERGE GATE PARITY PASS. BOTH. NOT ONE.**
+**[FM_H] ONLY EXECUTE AFTER: QP PASS + §4.3 MERGE GATE PARITY PASS + wave-reconciliation-checklist.md executed.**
 
 You are releasing to the merge gate and then to CS2. Your output must be clean and provably correct.
 
@@ -626,7 +626,7 @@ Required fields — all must be populated, none may be blank or 'N/A':
 - `mode_transitions: [list mode → mode transitions in order]`
 - `agents_delegated_to: [list builder agents and tasks]`
 - `escalations_triggered: [list by HALT/ESC id, or 'none']`
-- `separation_violations_detected: [list any POLC boundary violations detected, or 'none']`
+- `separation_violations_detected: [POLC boundary violations, or 'none']`
 - `fail_only_once_attested: true`
 - `fail_only_once_version: [version from registry]`
 - `unresolved_breaches: [incident IDs or 'none']`
@@ -658,7 +658,7 @@ In all cases: proceed to Step 4.3b before Step 4.4.
 
 **[FM_H] EXECUTE AFTER IAA VERDICT — BEFORE MERGE GATE RELEASE.**
 
-Per `AGENT_HANDOVER_AUTOMATION.md` §4.3b: PREHANDOVER proof is read-only post-commit. IAA token goes to a dedicated new file only.
+Per `AGENT_HANDOVER_AUTOMATION.md` §4.3b: PREHANDOVER proof is read-only post-commit. IAA token: dedicated new file only.
 
 1. PREHANDOVER proof records expected token reference at commit time (`iaa_audit_token: IAA-session-NNN-waveY-YYYYMMDD-PASS`). Do NOT edit post-commit.
 2. IAA writes token to: `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`

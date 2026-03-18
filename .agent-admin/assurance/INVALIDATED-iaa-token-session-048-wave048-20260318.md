@@ -1,3 +1,14 @@
+# ⚠️ INVALIDATED — Superseded by IAA-session-048-R3-20260318-PASS
+
+**Invalidation reason**: This token was issued under PHASE_A_ADVISORY (advisory mode). The PR
+subsequently required PHASE_B_BLOCKING standard (hard gate). R1 and R2 invocations were followed
+by R3 which superseded all prior tokens. See `iaa-token-session-048-R3-wave048-20260318.md`.
+**Valid token**: `IAA-session-048-R3-20260318-PASS` — file: `iaa-token-session-048-R3-wave048-20260318.md`
+**Invalidated by**: CodexAdvisor-agent session-049 (GOV-CONCERN-B remediation, 2026-03-18)
+**Convention**: `INVALIDATED-` prefix per `.agent-admin/assurance/INVALIDATED-PREFIX-CONVENTION.md`
+
+---
+
 # IAA Token — Session 048 | Wave 048 | 2026-03-18
 
 **Token Reference**: IAA-session-048-20260318-PASS
