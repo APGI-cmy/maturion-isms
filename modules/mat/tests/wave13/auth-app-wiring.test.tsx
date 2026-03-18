@@ -200,7 +200,7 @@ describe('T-W13-AUTH-APP: Auth App Wiring', () => {
     expect(
       source,
       'AuthContext.tsx must import useQueryClient from @tanstack/react-query'
-    ).toMatch(/import.*useQueryClient.*@tanstack\/react-query|import.*@tanstack\/react-query.*useQueryClient/);
+    ).toMatch(/import\s+\{[^}]*useQueryClient[^}]*\}\s+from\s+['"]@tanstack\/react-query['"]/);
 
     // AuthContext must call queryClient.clear() to evict stale data on auth transitions
     expect(
@@ -208,10 +208,10 @@ describe('T-W13-AUTH-APP: Auth App Wiring', () => {
       'AuthContext.tsx must call queryClient.clear() to prevent cross-user stale data after sign-out/sign-in'
     ).toMatch(/queryClient\.clear\(\)/);
 
-    // AuthContext must guard the clear() call on SIGNED_OUT or SIGNED_IN events
+    // AuthContext must guard the clear() call using an explicit event === 'SIGNED_OUT' or event === 'SIGNED_IN' check
     expect(
       source,
-      "AuthContext.tsx must check for 'SIGNED_OUT' or 'SIGNED_IN' event before clearing cache"
-    ).toMatch(/SIGNED_OUT|SIGNED_IN/);
+      "AuthContext.tsx must check `event === 'SIGNED_OUT'` or `event === 'SIGNED_IN'` before clearing cache"
+    ).toMatch(/event\s*===\s*['"]SIGNED_OUT['"]|event\s*===\s*['"]SIGNED_IN['"]/);
   });
 });
