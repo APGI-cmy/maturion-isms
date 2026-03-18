@@ -250,7 +250,7 @@ describe('Wave 19 — GAP-PARSE-001: criteria.number must be TEXT for LDCS hiera
     ).toBeGreaterThan(0);
   });
 
-  it('[T-W19-015] criteria.number base DDL is NOT defined as INTEGER (blocking LDCS IDs)', () => {
+  it('[T-W19-015] criteria.number base DDL remains INTEGER; migration converts to TEXT', () => {
     /*
      * Gap: GAP-PARSE-001 — The base migration defines criteria.number as INTEGER NOT NULL.
      * This makes it impossible to store hierarchical LDCS criterion numbers like "1.4.1".
