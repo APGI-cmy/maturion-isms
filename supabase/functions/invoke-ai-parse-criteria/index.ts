@@ -71,6 +71,8 @@ interface ParsedMps {
   name: string;
   number: string;
   description?: string;
+  intent_statement?: string;
+  guidance?: string;
   level_descriptors?: Array<{ level: number; descriptor_text: string }>;
 }
 
@@ -163,39 +165,11 @@ async function backgroundParse({
       (parseResult.ldcs_detected as boolean) ?? detectLdcsPattern(JSON.stringify(parseResult));
 
     // ── Handle empty parse results gracefully (architecture §4.2) ──────────────
-    // If the AI returned zero domains (e.g. gateway unreachable or not configured),
-    // skip all DB inserts and update status to pending_review.
+    // GAP-PARSE-003/GAP-PARSE-004: If the AI returned zero domains (e.g. gateway
+    // unreachable or not configured), throw an error so the catch block writes
+    // criteria_parse_failed instead of silently declaring success.
     if (domains.length === 0) {
-      const { error: emptyStatusError } = await supabase
-        .from('criteria_documents')
-        .upsert(
-          { audit_id: auditId, file_path: filePath, status: 'pending_review' },
-          { onConflict: 'audit_id,file_path' },
-        )
-        .select('id');
-
-      if (emptyStatusError) {
-        console.warn(`[invoke-ai-parse-criteria] Failed to update criteria_documents status (empty result): ${emptyStatusError.message}`);
-      }
-
-      await supabase.from('audit_logs').insert({
-        audit_id: auditId,
-        organisation_id: organisationId,
-        action: 'criteria_parsed',
-        file_path: filePath,
-        created_by: userId ?? null,
-        details: {
-          domains_inserted: 0,
-          mps_inserted: 0,
-          criteria_inserted: 0,
-          needs_human_review: needsHumanReview,
-          ldcs_document: isLdcsDocument,
-          ldcs_mps_expected: LDCS_MPS_COUNT,
-          outcome: 'success',
-        },
-      });
-
-      return;
+      throw new Error('AI Gateway returned empty result — 0 domains extracted. Parse failed.');
     }
 
     // T-W15-TXN (tracked): Architecture §4.4 requires all Domain/MPS/criteria inserts to run in a
@@ -220,10 +194,10 @@ async function backgroundParse({
     const { data: insertedDomains, error: domainsError } = await supabase
       .from('domains')
       .upsert(
-        domains.map((d: ParsedDomain, idx: number) => ({
+        domains.map((d: ParsedDomain, domainIdx: number) => ({
           audit_id: auditId,
           organisation_id: organisationId,
-          number: idx + 1,           // INTEGER, 1-based sequential
+          number: domainIdx + 1,         // INTEGER, 1-based sequential
           name: d.name,
           description: d.description ?? null,
         })),
@@ -251,14 +225,29 @@ async function backgroundParse({
     const { data: insertedMps, error: mpsError } = await supabase
       .from('mini_performance_standards')
       .upsert(
-        validMpsList.map((m: ParsedMps, idx: number) => ({
-          domain_id: domainMap.get(m.domain_name)!.id,
-          audit_id: auditId,
-          organisation_id: organisationId,
-          number: idx + 1,           // INTEGER, 1-based sequential
-          name: m.name,
-          description: m.description ?? null,
-        })),
+        validMpsList.map((m: ParsedMps, mpsIdx: number) => {
+          // Prefer the AI-extracted MPS number if available; fall back to sequential index
+          const fromAi = m as unknown as { number?: string | number | null };
+          const rawNumber = fromAi.number;
+          let parsedNumber =
+            rawNumber !== undefined && rawNumber !== null
+              ? Number.parseInt(String(rawNumber).trim(), 10)
+              : Number.NaN;
+          if (!Number.isFinite(parsedNumber) || parsedNumber <= 0) {
+            parsedNumber = mpsIdx + 1; // fallback to original sequential behaviour
+          }
+
+          return {
+            domain_id: domainMap.get(m.domain_name)!.id,
+            audit_id: auditId,
+            organisation_id: organisationId,
+            number: parsedNumber, // INTEGER, derived from AI or 1-based sequential fallback
+            name: m.name,
+            description: m.description ?? null,
+            intent_statement: m.intent_statement ?? null,
+            guidance: m.guidance ?? null,
+          };
+        }),
         { onConflict: 'audit_id,number', ignoreDuplicates: false },
       )
       .select('id, number, domain_id');
@@ -321,7 +310,7 @@ async function backgroundParse({
             domain_id: mpsEntry?.domain_id,
             audit_id: auditId,
             organisation_id: organisationId,
-            number: idx + 1,          // INTEGER, 1-based sequential
+            number: c.number,          // TEXT, AI-extracted LDCS hierarchical ID (e.g. "1.4.1")
             title: c.title ?? null,
             description: c.description ?? null,
             intent_statement: c.intent_statement ?? null,    // Gap 3 fix
@@ -350,14 +339,15 @@ async function backgroundParse({
       console.warn(`[invoke-ai-parse-criteria] Failed to re-query criteria for descriptor association: ${orderQueryError.message}`);
     }
 
-    // Build number → id map (number is unique within an audit).
-    // criteriaNumber = idx + 1 is safe here because:
-    //   (1) domains.delete() CASCADE-deletes all stale criteria for this audit_id before this upsert;
-    //   (2) the upsert assigns number = idx + 1 sequentially (no pre-existing rows can collide);
-    //   (3) the re-query above orders by number ascending, ensuring a deterministic 1-based mapping.
-    const criteriaNumberToId = new Map<number, string>();
+    // Build number → id map (number is TEXT, AI-extracted LDCS hierarchical ID).
+    // The re-query above orders by number ascending, ensuring a deterministic mapping.
+    // Note: number is now TEXT (per migration 20260317000001) — c.number is used directly
+    // in the upsert above instead of sequential index (GAP-PARSE-001/GAP-PARSE-012 fix).
+    // String() coercion is defensive: Supabase client may return number if schema migration
+    // has not yet propagated to the type layer, ensuring consistent Map key type.
+    const criteriaNumberToId = new Map<string, string>();
     for (const row of (orderedCriteriaRows ?? [])) {
-      criteriaNumberToId.set(row.number as number, row.id as string);
+      criteriaNumberToId.set(String(row.number), row.id as string);
     }
 
     // Collect descriptor write errors to surface in audit_logs
@@ -416,13 +406,14 @@ async function backgroundParse({
     }
 
     // Write criteria-level descriptors (Gap 6 fix)
-    // Uses criteriaNumberToId map (keyed by number field) — deterministic, unaffected by
-    // upsert return order. Each criterion was assigned number = idx + 1 in the upsert above.
+    // Uses criteriaNumberToId map (keyed by c.number TEXT field) — deterministic, unaffected by
+    // upsert return order. Each criterion was assigned number = c.number (AI-extracted TEXT ID).
     const criteriaDescriptorRows: Array<{ criteria_id: string; level: number; descriptor_text: string }> = [];
-    for (const [idx, c] of validCriteriaList.entries()) {
+    for (const c of validCriteriaList) {
       if (!c.maturity_descriptors || c.maturity_descriptors.length === 0) continue;
-      const criteriaNumber = idx + 1; // matches number: idx + 1 from the upsert above
-      const criteriaId = criteriaNumberToId.get(criteriaNumber);
+      // String() coercion is defensive: c.number is TEXT per ParsedCriterion, but explicit
+      // coercion ensures Map key consistency regardless of runtime type variation.
+      const criteriaId = criteriaNumberToId.get(String(c.number));
       if (!criteriaId) continue;
       for (const desc of c.maturity_descriptors) {
         criteriaDescriptorRows.push({
@@ -441,6 +432,14 @@ async function backgroundParse({
         console.warn(`[invoke-ai-parse-criteria] ${msg}`);
         descriptorErrors.push(msg);
       }
+    }
+
+    // GAP-PARSE-004: Zero-insert assertion — treat empty result as failure
+    const domainsInserted = insertedDomains?.length ?? 0;
+    const mpsInserted = insertedMps?.length ?? 0;
+    const criteriaInserted = insertedCriteria?.length ?? 0;
+    if (domainsInserted === 0 && mpsInserted === 0 && criteriaInserted === 0) {
+      throw new Error('Zero inserts — AI Gateway returned empty result. Treating as parse failure.');
     }
 
     // 4. Update criteria_documents.status → pending_review (architecture §4.2)
@@ -503,7 +502,7 @@ async function backgroundParse({
         action: 'criteria_parse_failed',
         file_path: filePath,
         created_by: userId ?? null,
-        details: { error: message, outcome: 'failure' },
+        details: { reason: message, error: message, outcome: 'failure' },
       });
     } catch {
       // Audit logging failure must not mask original error
@@ -537,6 +536,14 @@ Deno.serve(async (req: Request): Promise<Response> => {
       status: 405,
       headers: { 'Content-Type': 'application/json' },
     });
+  }
+
+  // GAP-PARSE-006: Startup validation — return 500 if AI_GATEWAY_URL not configured
+  if (!AI_GATEWAY_URL) {
+    return new Response(
+      JSON.stringify({ error: 'AI_GATEWAY_URL not configured', code: 'MISSING_ENV' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } },
+    );
   }
 
   // ── FAST SYNCHRONOUS PATH — must complete before returning response ──────────
