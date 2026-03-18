@@ -1,9 +1,9 @@
 # IAA Category Overlays
 
 **Agent**: independent-assurance-agent
-**Version**: 3.4.0
+**Version**: 3.5.0
 **Status**: ACTIVE
-**Last Updated**: 2026-03-11
+**Last Updated**: 2026-03-17
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -42,6 +42,44 @@ Before any category-specific checks, run these existence checks only. Each is bi
 Applied when PR category is `AAWP_MAT`, `MAT_DELIVERABLE`, or any T2 PR delivering executable application behaviour (schema migrations, API endpoints, frontend components, hooks, Supabase operations, integrations, workflows, services).
 
 > **Mindset**: IAA acts as a senior engineer reviewing the delivery. The question is not "did the agent follow the ceremony?" The question is "will this build actually work, be safe, scale, and deliver the intended user outcome — the first time it is deployed?"
+
+### BD-000 — User Journey Trace (Blocking — Applies to ALL Build PRs Impacting App Behaviour)
+
+> **Mandatory for any PR that changes user-visible behaviour, user flows, form submissions, data mutations, query results, navigation, or state transitions.**
+
+IAA must explicitly trace the user journey end-to-end against the implementation diff for every affected flow.
+
+**Step 1 — Journey Declaration Verification:**
+
+The PR description or issue must declare the user journey for each changed flow in the form:
+> "The user does X → the system does Y → the user sees Z."
+
+If no journey declaration is present in the PR for a behaviour-changing diff → **REJECTION-PACKAGE.**
+
+| Check ID | Check Name | What IAA Does |
+|----------|-----------|---------------|
+| BD-000-A | Journey declaration present | Verify the PR or issue contains explicit user journey declaration(s) for every changed user flow. Missing declaration for any flow = REJECTION-PACKAGE. |
+| BD-000-B | Journey step-by-step trace | For each declared journey: trace each step against the implementation (component → hook → API → DB → response → UI update). Identify any break or mismatch at each step. Any broken step = REJECTION-PACKAGE with specific step and mismatch. |
+| BD-000-C | Edge case declaration | For each flow, the PR must declare at least one non-happy-path edge case (e.g., empty state, validation error, network failure, unauthorised user). If zero edge cases are declared or handled → REJECTION-PACKAGE. |
+| BD-000-D | Edge case implementation verified | For each declared edge case: verify that the implementation handles it (error state, fallback UI, graceful failure, validation message). Declared but unimplemented edge cases = REJECTION-PACKAGE. |
+
+**Output format IAA must use:**
+
+```
+BD-000 User Journey Trace:
+  Flow: [name of user journey]
+  Declared: [YES / NO — if NO: REJECTION-PACKAGE]
+  Journey: [User does X → system does Y → user sees Z]
+  Steps traced:
+    → [step 1]: [implementation found / BREAK — describe mismatch]
+    → [step 2]: [implementation found / BREAK — describe mismatch]
+    ...
+  Edge cases declared: [list]
+  Edge cases implemented: [PASS / FAIL — list any unhandled]
+  BD-000 Verdict: [PASS ✅ / FAIL ❌ — cite step]
+```
+
+Repeat for every affected user flow in the PR.
 
 ### BD-TIER-1 — Delivery Completeness (Blocking)
 
@@ -310,6 +348,7 @@ Applied when PR category is `AGENT_INTEGRITY`.
 | 3.2.0 | 2026-03-07 | Added `INJECTION_AUDIT_TRAIL` overlay with `OVL-INJ-001` (Injection Audit Trail mandatory PREHANDOVER check), `OVL-INJ-ADM-001` (pre-brief non-empty), `OVL-INJ-ADM-002` (pre-brief wave reference match); documented audit trail signature strings from `iaa-prebrief-inject.yml`; linked with CodexAdvisor gate AGCFPP-001 (CodexAdvisor-agent — CS2 directive issue [CodexAdvisor] Add OVL-INJ-001) |
 | 3.3.0 | 2026-03-10 | OVL-CI-005 Inherent Limitation Exception documented for self-referential workflow PRs; three required substitutes defined; retroactive incident acceptance policy formalised (S-033, PR #1053) |
 | 3.4.0 | 2026-03-11 | Renamed `INJECTION_AUDIT_TRAIL` overlay to `PRE_BRIEF_ASSURANCE`; removed injection pipeline signature string requirement; OVL-INJ-001 now requires Pre-Brief artifact existence only (issue #1061 — disable automatic injections) |
+| 3.5.0 | 2026-03-17 | BD-000 User Journey Trace section added (BD-000-A through BD-000-D) — mandatory for all build PRs impacting app behaviour; user journey declaration, step-by-step trace, edge case declaration and verification checks; issue [IAA functional behaviour strengthening] |
 
 ---
 
