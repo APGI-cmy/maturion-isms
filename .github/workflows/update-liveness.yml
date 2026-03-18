@@ -1,0 +1,350 @@
+name: Update Liveness Status
+
+# Keeps .agent-workspace/liveness/last-known-good.md in sync automatically.
+#
+# Two trigger modes:
+#   1. Automatic: fires after a successful deployment workflow completes on main.
+#      Marks the deployed component(s) as OK.
+#   2. Manual (workflow_dispatch): Foreman, IAA, or CS2 can set any component
+#      to OK / DEGRADED / MONITORING with a custom note (e.g., post-incident
+#      remediation, liveness investigation).
+#
+# The job commits the updated markdown directly to the triggering branch (main
+# for automatic; the input branch for manual runs).  It uses GITHUB_TOKEN with
+# contents:write permission — no external secrets required.
+
+on:
+  # ── Automatic: after successful MAT frontend deployment ──────────────────
+  workflow_run:
+    workflows:
+      - "Deploy MAT Frontend to Vercel"
+      - "Deploy MAT Edge Functions"
+      - "Deploy MAT AI Gateway"
+    types: [completed]
+    branches: [main]
+
+  # ── Manual: Foreman / IAA / CS2 incident update ──────────────────────────
+  workflow_dispatch:
+    inputs:
+      component:
+        description: >
+          Component name to update (must match table row exactly, e.g. mat-frontend).
+          Use "ALL_DEPLOYABLE" to mark all auto-deployable components OK after a full
+          release. Leave blank when triggered by workflow_run (auto-detected).
+        required: false
+        type: string
+      status:
+        description: 'New status for the component'
+        required: false
+        default: 'OK'
+        type: choice
+        options:
+          - OK
+          - DEGRADED
+          - MONITORING
+          - UNKNOWN
+      notes:
+        description: 'Short note recorded in the Notes column (max 120 chars)'
+        required: false
+        type: string
+      incident_id:
+        description: >
+          Incident ID to open or close (e.g. INC-XYZ-001).
+          If provided and status=DEGRADED → opens the incident in Active Incidents.
+          If provided and status=OK → marks the incident RESOLVED.
+        required: false
+        type: string
+
+# ── Permissions ──────────────────────────────────────────────────────────────
+permissions:
+  contents: write
+
+jobs:
+  update-liveness:
+    name: Update last-known-good.md
+    runs-on: ubuntu-latest
+    # For workflow_run: only proceed when the triggering workflow succeeded
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.conclusion == 'success')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Fetch full history so we can commit back
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine component and status (automatic mode)
+        id: detect
+        if: github.event_name == 'workflow_run'
+        run: |
+          WORKFLOW="${{ github.event.workflow_run.name }}"
+          echo "Triggered by: $WORKFLOW"
+
+          case "$WORKFLOW" in
+            "Deploy MAT Frontend to Vercel")
+              echo "components=mat-frontend,mat-api-routes,mat-auth-flows" >> "$GITHUB_OUTPUT"
+              echo "status=OK" >> "$GITHUB_OUTPUT"
+              echo "notes=Deployed successfully (run #${{ github.event.workflow_run.run_number }})" >> "$GITHUB_OUTPUT"
+              ;;
+            "Deploy MAT Edge Functions")
+              echo "components=supabase-edge-functions" >> "$GITHUB_OUTPUT"
+              echo "status=OK" >> "$GITHUB_OUTPUT"
+              echo "notes=Edge functions deployed (run #${{ github.event.workflow_run.run_number }})" >> "$GITHUB_OUTPUT"
+              ;;
+            "Deploy MAT AI Gateway")
+              echo "components=mat-ai-gateway" >> "$GITHUB_OUTPUT"
+              echo "status=OK" >> "$GITHUB_OUTPUT"
+              echo "notes=AI gateway deployed (run #${{ github.event.workflow_run.run_number }})" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "components=" >> "$GITHUB_OUTPUT"
+              echo "status=OK" >> "$GITHUB_OUTPUT"
+              echo "notes=Deployment completed" >> "$GITHUB_OUTPUT"
+              ;;
+          esac
+
+      - name: Determine component and status (manual mode)
+        id: detect-manual
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          COMPONENT="${{ inputs.component }}"
+          STATUS="${{ inputs.status }}"
+          NOTES="${{ inputs.notes }}"
+
+          if [ "$COMPONENT" = "ALL_DEPLOYABLE" ]; then
+            echo "components=mat-frontend,mat-api-routes,mat-auth-flows,supabase-edge-functions,mat-ai-gateway" >> "$GITHUB_OUTPUT"
+          else
+            echo "components=$COMPONENT" >> "$GITHUB_OUTPUT"
+          fi
+          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+          echo "notes=$NOTES" >> "$GITHUB_OUTPUT"
+
+      - name: Update last-known-good.md
+        id: update
+        run: |
+          python3 << 'EOF'
+          import re
+          import sys
+          import os
+          from datetime import date
+
+          LIVENESS_FILE = ".agent-workspace/liveness/last-known-good.md"
+
+          # Resolve inputs from environment
+          event_name = os.environ.get("EVENT_NAME", "")
+          if event_name == "workflow_dispatch":
+              raw_components = os.environ.get("COMPONENTS_MANUAL", "").strip()
+              new_status     = os.environ.get("STATUS_MANUAL", "OK").strip()
+              new_notes      = os.environ.get("NOTES_MANUAL", "").strip()
+          else:
+              raw_components = os.environ.get("COMPONENTS_AUTO", "").strip()
+              new_status     = os.environ.get("STATUS_AUTO", "OK").strip()
+              new_notes      = os.environ.get("NOTES_AUTO", "").strip()
+
+          components = [c.strip() for c in raw_components.split(",") if c.strip()]
+
+          if not components:
+              print("No components specified — nothing to update.")
+              sys.exit(0)
+
+          today = date.today().isoformat()
+
+          with open(LIVENESS_FILE, "r") as f:
+              content = f.read()
+
+          # Update the header "Last Updated" date
+          content = re.sub(
+              r"(\*\*Last Updated\*\*:) [\d-]+",
+              f"\\1 {today}",
+              content,
+              count=1,
+          )
+
+          changed = []
+          for component in components:
+              # Match the table row for this component (pipe-delimited markdown table)
+              # Row format: | component | STATUS | YYYY-MM-DD | Notes |
+              pattern = re.compile(
+                  r"(\|\s*" + re.escape(component) + r"\s*\|)\s*\w+\s*(\|)\s*[\d-]+\s*(\|)[^\|]*(\|)",
+                  re.IGNORECASE,
+              )
+              note_text = new_notes if new_notes else f"Updated by CI — {today}"
+              # Truncate notes to 120 chars to keep table tidy
+              note_text = note_text[:120]
+              replacement = f"\\1 {new_status} \\2 {today} \\3 {note_text} \\4"
+              new_content, n = re.subn(pattern, replacement, content)
+              if n > 0:
+                  content = new_content
+                  changed.append(component)
+                  print(f"  Updated: {component} → {new_status} ({today})")
+              else:
+                  print(f"  WARNING: component '{component}' not found in liveness table — skipping")
+
+          if not changed:
+              print("No rows updated. Check component names match the table exactly.")
+              sys.exit(0)
+
+          with open(LIVENESS_FILE, "w") as f:
+              f.write(content)
+
+          print(f"last-known-good.md updated for: {', '.join(changed)}")
+          EOF
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          COMPONENTS_AUTO: ${{ steps.detect.outputs.components }}
+          STATUS_AUTO: ${{ steps.detect.outputs.status }}
+          NOTES_AUTO: ${{ steps.detect.outputs.notes }}
+          COMPONENTS_MANUAL: ${{ steps.detect-manual.outputs.components }}
+          STATUS_MANUAL: ${{ steps.detect-manual.outputs.status }}
+          NOTES_MANUAL: ${{ steps.detect-manual.outputs.notes }}
+
+      - name: Open or resolve incident entry (DEGRADED / OK resolution)
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          inputs.incident_id != '' &&
+          (inputs.status == 'DEGRADED' || inputs.status == 'OK')
+        run: |
+          python3 << 'EOF'
+          import re
+          import os
+          from datetime import date
+
+          LIVENESS_FILE = ".agent-workspace/liveness/last-known-good.md"
+
+          incident_id = os.environ.get("INCIDENT_ID", "").strip()
+          component   = os.environ.get("COMPONENT", "").strip()
+          status      = os.environ.get("STATUS", "").strip()
+          notes       = os.environ.get("NOTES", "").strip()
+          today       = date.today().isoformat()
+
+          if not incident_id:
+              exit(0)
+
+          with open(LIVENESS_FILE, "r") as f:
+              content = f.read()
+
+          if status == "DEGRADED":
+              # Append a new incident entry in the Active Incidents section
+              new_incident = f"""
+          ### {incident_id} — {component} — {notes or 'Component degraded'}
+          **Opened**: {today}
+          **Component**: {component}
+          **Status**: OPEN
+          **Description**: {notes or 'Component degraded — see deployment logs for details'}
+          **Resolution**: (pending)
+          **Closed**: (pending)
+
+          """
+              # Insert after the Active Incidents header / none marker
+              content = re.sub(
+                  r"(\*\(None at time of baseline establishment[^)]*\)\*)",
+                  new_incident + "\n\\1",
+                  content,
+                  count=1,
+              )
+              # If the none marker was already replaced by a previous incident, append before ---
+              if new_incident not in content:
+                  # Find the Active Incidents section and append
+                  content = re.sub(
+                      r"(## Active Incidents\n)",
+                      f"\\1{new_incident}",
+                      content,
+                      count=1,
+                  )
+
+          elif status == "OK":
+              # Update the existing incident entry to RESOLVED
+              content = re.sub(
+                  r"(### " + re.escape(incident_id) + r"[^\n]*\n"
+                  r"(?:[^\n]*\n)*?"
+                  r"\*\*Status\*\*:) OPEN",
+                  f"\\1 RESOLVED",
+                  content,
+              )
+              content = re.sub(
+                  r"(### " + re.escape(incident_id) + r"[^\n]*\n"
+                  r"(?:[^\n]*\n)*?"
+                  r"\*\*Closed\*\*:) \(pending\)",
+                  f"\\1 {today}",
+                  content,
+              )
+
+              # Append to incident history table
+              summary = notes or f"{incident_id} resolved"
+              history_row = f"| {incident_id} | {component} | (see Active Incidents) | {today} | {summary} |"
+              # Check if already in history
+              history_section = content.split("## Incident History")[1] if "## Incident History" in content else ""
+              if incident_id not in history_section:
+                  content = re.sub(
+                      r"(## Incident History\n\n[^\n]*\n[^\n]*\n)",
+                      f"\\1{history_row}\n",
+                      content,
+                      count=1,
+                  )
+
+          with open(LIVENESS_FILE, "w") as f:
+              f.write(content)
+
+          print(f"Incident {incident_id} processed for component {component} (status={status})")
+          EOF
+        env:
+          INCIDENT_ID: ${{ inputs.incident_id }}
+          COMPONENT: ${{ inputs.component }}
+          STATUS: ${{ inputs.status }}
+          NOTES: ${{ inputs.notes }}
+
+      - name: Commit and push updated liveness file
+        run: |
+          git config user.name  "Maturion Bot"
+          git config user.email "bot@maturion.com"
+
+          git add .agent-workspace/liveness/last-known-good.md
+
+          # Only commit if there are staged changes
+          if git diff --cached --quiet; then
+            echo "No changes to commit — liveness file already up to date."
+          else
+            if [ "${{ github.event_name }}" = "workflow_run" ]; then
+              MSG="ci(liveness): auto-update after ${{ github.event.workflow_run.name }} run #${{ github.event.workflow_run.run_number }}"
+            else
+              COMP="${{ inputs.component }}"
+              STAT="${{ inputs.status }}"
+              MSG="ci(liveness): manual update — ${COMP} → ${STAT} [workflow_dispatch]"
+            fi
+            git commit -m "$MSG"
+            # Push to the branch that triggered this workflow.
+            # For workflow_run triggers this is always main (branches filter: [main]).
+            # For workflow_dispatch this is the default branch of the repo.
+            TARGET_BRANCH="${{ github.event.workflow_run.head_branch || github.ref_name }}"
+            git push origin "HEAD:${TARGET_BRANCH:-main}"
+            echo "Liveness file committed and pushed to ${TARGET_BRANCH:-main}."
+          fi
+
+      - name: Post step summary
+        if: always()
+        run: |
+          echo "## Liveness Update Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            echo "**Trigger**: Automatic — ${{ github.event.workflow_run.name }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "**Run**: #${{ github.event.workflow_run.run_number }} (conclusion: ${{ github.event.workflow_run.conclusion }})" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "**Trigger**: Manual (workflow_dispatch)" >> "$GITHUB_STEP_SUMMARY"
+            echo "**Component**: ${{ inputs.component }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "**Status**: ${{ inputs.status }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "**Notes**: ${{ inputs.notes }}" >> "$GITHUB_STEP_SUMMARY"
+            if [ -n "${{ inputs.incident_id }}" ]; then
+              echo "**Incident ID**: ${{ inputs.incident_id }}" >> "$GITHUB_STEP_SUMMARY"
+            fi
+          fi
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**File updated**: \`.agent-workspace/liveness/last-known-good.md\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Current Liveness State" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          grep -A 30 "## Component Liveness Status" .agent-workspace/liveness/last-known-good.md | head -20 >> "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"

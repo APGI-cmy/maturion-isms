@@ -1,31 +1,36 @@
-# SCOPE_DECLARATION — wave-gov-mat-criteria-repair-1135
+# SCOPE_DECLARATION — wave20-atomic-write-back
 
-**Wave**: wave-gov-mat-criteria-repair-1135
-**Branch**: copilot/gov-mat-criteria-repair
-**Issue**: maturion-isms#1135
-**Date**: 2026-03-17
-**Type**: Governance documentation only — NO production code, NO migrations, NO tests, NO CI changes
+**Wave**: Wave 20 — Wire parse_write_back_atomic RPC into Edge Function for atomic DB write-back
+**Branch**: copilot/implement-wire-parse-write-back-rpc
+**Issue**: maturion-isms#1143
+**Date**: 2026-03-18
+**Type**: BUILD wave — schema migration, Edge Function code, tests, documentation
 
 ## Files Changed (must match `git diff --name-only origin/main...HEAD`)
 
-### New Files
-- `.agent-admin/assurance/iaa-prebrief-wave-gov-mat-criteria-repair-1135.md` — IAA Pre-Brief artifact (committed by IAA, SHA 16d648e)
-- `modules/mat/00-app-description/CRITERIA-PARSING-GAP-REGISTER.md` — Gap register (Deliverables A1, B1, C1, G1)
-- `modules/mat/00-app-description/WAVE-19-PLAN-PROPOSAL.md` — Wave plan proposal for Issue #2
-- `.agent-workspace/foreman-v2/memory/session-wave-gov-mat-criteria-repair-1135-20260317.md` — Session memory (Phase 4)
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave-gov-mat-criteria-repair-1135-20260317.md` — PREHANDOVER proof (Phase 4)
+### New Files (production)
+- `apps/maturion-maturity-legacy/supabase/migrations/20260318000001_fix_parse_write_back_atomic_status.sql` — Wave 20 RPC correction: status `'pending_review'`, service_role support, GRANT EXECUTE
 
-### Modified Files
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — Updated for this wave
-- `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md` — This file (fresh overwrite per A-029)
-- `modules/mat/00-app-description/BUILD_PROGRESS_TRACKER.md` — Added INC-PARSE-PIPELINE-001 + Wave 19 GAP table
-- `modules/mat/00-app-description/app-description.md` — Added Section 23 (production state + gap summary)
-- `modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md` — Added Wave 19 wiring gap corrections
-- `modules/mat/01-frs/functional-requirements.md` — Updated FR-005 gap flag (INC-PARSE-PIPELINE-001)
-- `modules/mat/01.5-trs/technical-requirements-specification.md` — Updated TR-037 gap flag (INC-PARSE-PIPELINE-001) + TR-009 not-yet-verified annotation
+### Modified Files (production)
+- `supabase/functions/invoke-ai-parse-criteria/index.ts` — sequential upserts replaced with atomic RPC call
+- `supabase/functions/invoke-ai-parse-criteria/README.md` — atomic write-back path documented
 
-### IAA Ceremony Files (A-031 carve-out)
-- `.agent-admin/assurance/iaa-token-session-wave-gov-mat-criteria-repair-1135-20260317.md` — IAA ASSURANCE-TOKEN (written by IAA Phase 4.3a — token: `IAA-session-wave-gov-mat-criteria-repair-1135-20260317-PASS`, 23/23 checks PASS)
+### New Files (tests)
+- `modules/mat/tests/wave20/wave20-atomic-write-back.test.ts` — 8 new tests T-W20-001 through T-W20-008
 
-## No-Implementation Attestation
-No production code, schema migrations, test files, or CI workflow files were created or modified in this wave.
+### Modified Files (tests)
+- `modules/mat/tests/wave15/wave15-criteria-parsing.test.ts` — T-W15-CP-007/008/009 updated for RPC pattern
+- `modules/mat/tests/wave19/wave19-criteria-parsing.test.ts` — T-W19-004 updated for RPC path
+
+### IAA Ceremony Files
+- `.agent-admin/assurance/iaa-prebrief-wave20-atomic-write-back.md` — IAA Pre-Brief artifact
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks-wave20.md` — Wave 20 task registry
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave20-atomic-write-back-20260318.md` — PREHANDOVER proof
+- `.agent-workspace/foreman-v2/memory/session-wave20-atomic-write-back-20260318.md` — Foreman session memory
+- `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md` — This file (Wave 20 overwrite)
+- `.agent-admin/assurance/iaa-token-session-wave20-atomic-write-back-20260318.md` — IAA REJECTION-PACKAGE R1 (committed by IAA at aed08091)
+- `.agent-admin/assurance/iaa-token-session-wave20-atomic-write-back-20260318-R2.md` — IAA ASSURANCE-TOKEN R2 (expected after IAA R2 PASS)
+
+## No Implementation by Foreman Attestation
+Foreman did not write any production code. All production changes were delegated to
+copilot-swe-agent (api-builder role) and committed at 116b6ae.
