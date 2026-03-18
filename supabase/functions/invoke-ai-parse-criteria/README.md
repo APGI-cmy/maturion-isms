@@ -26,7 +26,7 @@ All domain, MPS, and criteria rows are written in a **single atomic PL/pgSQL tra
 
 The RPC also stamps `criteria_documents.status = 'pending_review'` on success.
 
-Descriptor writes (`domain_level_descriptors`, `mps_level_descriptors`, `criteria_level_descriptors`) are performed as separate upserts after the atomic RPC, as they are not included in the core hierarchy transaction.
+Descriptor writes (`domain_level_descriptors`, `mps_level_descriptors`, `criteria_level_descriptors`) are performed as separate upserts after the atomic RPC, as they are not included in the core hierarchy transaction. See [Descriptor Write-Back Atomicity](#descriptor-write-back-atomicity) below.
 
 ### Migration requirements
 
@@ -36,6 +36,48 @@ Descriptor writes (`domain_level_descriptors`, `mps_level_descriptors`, `criteri
 | `20260318000001_fix_parse_write_back_atomic_status.sql` | Fixes status value (`pending_review`), adds `service_role` support, grants `service_role` EXECUTE (Wave 20) |
 
 Both migrations must be applied before deploying this Edge Function version.
+
+---
+
+## Re-Parse Semantics
+
+The `parse_write_back_atomic` RPC uses `ON CONFLICT DO NOTHING` for criteria inserts. This has important implications for re-parse workflows:
+
+- **First parse**: all domain, MPS, and criteria rows are inserted; `criteria_inserted` equals the number of extracted criteria.
+- **Re-parse of identical document**: the domain / MPS rows conflict on `(audit_id, name/number)` and are silently skipped; `criteria_inserted` will be **0**. This is expected and correct — the data is already in the database.
+- **Assertion guard**: the Edge Function checks `domains_inserted == 0 AND mps_inserted == 0 AND criteria_inserted == 0` and throws a parse-failure error. **Re-parsing an identical document is currently treated as a failure** — this is a known limitation, not intentional design. Operators should not re-parse already-ingested documents until this is resolved.
+- **Partial re-parse** (e.g. new criteria added to an existing document): new rows are inserted; existing rows are silently skipped. Insert counts reflect only the newly added rows.
+
+> **Wave 21+ improvement**: Extend the RPC to return an `already_exists` flag or counts of skipped rows, so callers can distinguish a genuine re-parse no-op from an empty AI result.
+
+---
+
+## Descriptor Write-Back Atomicity
+
+`domain_level_descriptors`, `mps_level_descriptors`, and `criteria_level_descriptors` are written via sequential upserts **after** the `parse_write_back_atomic` RPC returns. This is a deliberate architectural decision confirmed in Wave 20:
+
+| Concern | Decision |
+|---------|---------|
+| Core hierarchy atomicity | Enforced — domains / MPS / criteria are written inside a single PL/pgSQL transaction via the RPC. |
+| Descriptor atomicity | **Not enforced** — descriptors are non-critical enrichment data written outside the transaction. |
+| Failure handling | Descriptor failures are non-fatal. They are logged to `audit_logs` with `outcome='partial_success'` and surfaced to operators. The core hierarchy remains committed. |
+| Rationale | Descriptors are not required for audit scoring or criteria review. Including them in the transaction would increase transaction scope and rollback risk for non-critical data. |
+
+> **Wave 21+ review note**: As the system matures and descriptors become more central to scoring, consider whether to include descriptor writes in the atomic transaction or to introduce a separate compensating transaction pattern.
+
+---
+
+## Post-RPC Re-Query Round-Trips
+
+After the atomic RPC call, the Edge Function performs **2–3 additional DB round-trips** to recover the UUIDs of inserted rows before writing descriptors:
+
+1. Re-query `domains` for `(id, name, number)` — builds `domainMap`
+2. Re-query `mini_performance_standards` for `(id, number, domain_id)` — builds `mpsMap`
+3. Re-query `criteria` for `(id, number)` — builds `criteriaNumberToId`
+
+This is necessary because `parse_write_back_atomic` returns insert counts only, not the inserted row IDs.
+
+The pattern is functional and well-documented, but adds latency on large documents (100+ criteria). **Wave 21+ improvement**: extend the RPC to return inserted row IDs alongside counts (e.g. as JSONB arrays), eliminating these re-queries.
 
 ---
 

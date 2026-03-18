@@ -87,6 +87,18 @@ interface ParsedCriterion {
   maturity_descriptors?: Array<{ level: number; descriptor_text: string }>;
 }
 
+// ── RPC response type ─────────────────────────────────────────────────────────
+// parse_write_back_atomic returns a single JSON object with insert counts.
+// Supabase JS v2 types RPC responses as `unknown`; this interface provides a
+// typed surface for the response without requiring a full generated client.
+// Wave 21+ DX note: if a typed Supabase client is generated, replace this cast
+// with the generated type for `Database['public']['Functions']['parse_write_back_atomic']['Returns']`.
+interface WriteBackRpcResult {
+  domains_inserted?: number;
+  mps_inserted?: number;
+  criteria_inserted?: number;
+}
+
 // ── Background parse task ──────────────────────────────────────────────────────
 // Dispatched via EdgeRuntime.waitUntil() — runs after 202 is returned to the caller.
 // Performs the long-running AI Gateway call and all DB write-back operations.
@@ -315,18 +327,43 @@ async function backgroundParse({
       throw new Error(`Atomic write-back failed: ${rpcError.message}`);
     }
 
-    const domainsInserted: number  = (rpcData as { domains_inserted?: number })?.domains_inserted ?? 0;
-    const mpsInserted: number      = (rpcData as { mps_inserted?: number })?.mps_inserted ?? 0;
-    const criteriaInserted: number = (rpcData as { criteria_inserted?: number })?.criteria_inserted ?? 0;
+    const rpcResult = (rpcData ?? {}) as WriteBackRpcResult;
+    const domainsInserted: number  = rpcResult.domains_inserted  ?? 0;
+    const mpsInserted: number      = rpcResult.mps_inserted      ?? 0;
+    // NOTE — re-parse semantics: the RPC uses ON CONFLICT DO NOTHING for criteria inserts.
+    // When a document is re-parsed and all criteria rows already exist in the DB (same
+    // audit_id + number), `criteria_inserted` will be 0. The same applies to domains and
+    // MPS if they already exist. See the zero-insert guard below for how this is handled.
+    const criteriaInserted: number = rpcResult.criteria_inserted ?? 0;
 
     // GAP-PARSE-004: Zero-insert assertion — treat empty result as failure.
+    // KNOWN LIMITATION: Re-parsing an identical document (one whose domain/MPS/criteria rows
+    // are already in the DB) will produce 0 for all three counts (ON CONFLICT DO NOTHING on
+    // all three tables) and will throw here. This means identical re-parses are currently
+    // treated as failures rather than as idempotent no-ops. This is a known limitation;
+    // operators should not re-parse already-ingested documents until this is addressed.
+    // Wave 21+ improvement: extend the RPC to return an `already_exists` flag or skipped-row
+    // counts so callers can distinguish a genuine re-parse no-op from an empty AI result.
     if (domainsInserted === 0 && mpsInserted === 0 && criteriaInserted === 0) {
       throw new Error('Zero inserts — AI Gateway returned empty result. Treating as parse failure.');
     }
 
     // ── Re-query IDs for descriptor association ────────────────────────────────
-    // The atomic RPC does not return the inserted row IDs. Re-query the three tables
-    // so the descriptor writes below can reference the correct foreign keys.
+    // KNOWN LIMITATION (Wave 21+ improvement): The parse_write_back_atomic RPC returns
+    // insert counts only — it does not return the inserted row IDs. This requires two
+    // extra DB round-trips (one for domains, one for MPS) plus one for criteria to
+    // recover the UUIDs needed to associate descriptors with their parent rows.
+    //
+    // The pattern is functionally correct but adds latency. A future Wave 21+ improvement
+    // would extend the RPC to return inserted IDs alongside counts, eliminating these
+    // re-queries. Filed as advisory observation in issue #1148 (Wave 21+ backlog).
+    //
+    // Design note: descriptor tables (domain_level_descriptors, mps_level_descriptors,
+    // criteria_level_descriptors) are written OUTSIDE the atomic RPC transaction.
+    // This is a deliberate architectural decision (confirmed Wave 20): descriptors are
+    // non-critical enrichment data. A descriptor write failure does not invalidate the
+    // core hierarchy (domains / MPS / criteria) which is already committed. Failures are
+    // logged in audit_logs with outcome='partial_success' and surfaced to operators.
 
     const { data: dbDomains } = await supabase
       .from('domains')
