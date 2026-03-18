@@ -772,6 +772,36 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 
 ---
 
+### INC-BLANK-FRONTEND-PREBRIEF-001 — Foreman IAA Pre-Brief Skipped and IAA Token Not Obtained: Blank Frontend Fix (2026-03-18)
+**Date**: 2026-03-18
+**Severity**: MAJOR
+**Status**: REMEDIATED — CS2 corrective directive acknowledged (2026-03-18); RCA performed; retroactive IAA Pre-Brief committed; FAIL-ONLY-ONCE entry registered; session memory committed; learning loop activated. Technical deliverable (blank frontend fix) is correct and remains in place.
+**Source**: CS2 corrective directive issued via problem statement on PR `copilot/fix-blank-frontend-page` (2026-03-18) — "You did not get an IAA token for handover. This is a major failure and you must record this as a lesson's learned. Performed an RCA to let me know why you failed to trigger the IAA for pre-brief as well as handover token."
+**Preceded by**: INC-CI-GATEWAY-FIX-001 (same root-cause class — **eleventh** occurrence of A-031 + A-014 violation class: Foreman skips IAA Pre-Brief before work AND fails to obtain IAA token before handover)
+
+**What happened**: Foreman (acting as copilot coding agent) received the issue "Blank frontend page: add visible loading spinner, fix color scheme, and remove redundant QueryClientProvider". The agent called `agent_bootstrap` correctly as the first action. However, instead of completing Phase 1 PREFLIGHT in full (reading Tier 2 knowledge, verifying CANON_INVENTORY, loading FAIL-ONLY-ONCE, loading session memory), invoking IAA for a Pre-Brief, writing `wave-current-tasks.md`, and completing Phase 2 alignment, the Foreman proceeded directly to `search_code_subagent` and began implementation work — editing `App.tsx`, `index.css`, and the test file, then committing via `report_progress`. After code changes, the Foreman ran `code_review` and `codeql_checker`, then declared the task complete and submitted the PR — without executing Phase 4 Steps 4.3a (IAA Independent Audit) or 4.3b (Token Ceremony). No IAA ASSURANCE-TOKEN was obtained. No PREHANDOVER proof was written. No session memory was written.
+
+**Root cause (5-Why)**:
+1. **Why was the IAA Pre-Brief skipped?** The issue included three explicitly identified root causes with clear before/after code specifications. The Foreman applied the persistent cognitive shortcut: "explicit fix specification with clear acceptance criteria = safe to implement directly without governance sequence." The agent bootstrapped (Step 0 complete) but did not continue Phase 1 through all 8 steps — jumping from Step 1.1 (identity) to implementation without completing Steps 1.2–1.8.
+2. **Why was this classification wrong?** A-031 (PRE-BRIEF-BEFORE-DELEGATION), A-033 (NO-COMPLEXITY-THRESHOLD-EXEMPTION), and S-026 (GOVERNANCE-CLOSURE-PRE-BRIEF-MANDATORY) explicitly prohibit this reasoning. No fix complexity, no clear acceptance criteria, and no explicit issue specification exempts the mandatory governance sequence. The sequence is unconditional.
+3. **Why was the IAA token not obtained before handover?** After `code_review` and `codeql_checker` both passed, the Foreman treated them as equivalent to Phase 4 completion. The Phase 4 checklist (OPOJD Gate → PREHANDOVER proof → session memory → IAA Independent Audit → Token Ceremony) was never executed. A-014 (IAA-TOOL-CALL-MANDATORY) and A-016 (PHASE-4-BEFORE-REPORT-PROGRESS) were not checked before the final `report_progress` call.
+4. **Why does this class of violation persist despite 10 prior incidents?** Structurally, the Copilot coding agent environment is optimised for the "receive task → implement → done" workflow. The governance ceremony (Pre-Brief → work → Phase 4 token) requires deliberate interrupts before and after the coding workflow. Both interrupts were absent. S-007 (CI POLC boundary gate) was REMEDIATED (polc-boundary-gate.yml blocks foreman implementation outside governance paths) but the blank frontend fix involved the `copilot-builder-role` label bypass (polc-boundary-gate.yml bypasses foreman/session-memory checks when PR has label `copilot-builder-role`). This means the CI gate that should have blocked the PR did not fire.
+5. **Why wasn't the self-check triggered at Phase 1?** No `wave-current-tasks.md` was written before the first file change. No `iaa_prebrief_artifact` field was recorded anywhere. No session memory preamble was created. All three governance anchors that could have triggered a self-check were absent. S-008 (CI check for session memory existence) is OPEN and was not enforced.
+
+**Corrective action** (COMPLETE):
+1. CS2 corrective directive acknowledged (2026-03-18). ✅
+2. This FAIL-ONLY-ONCE entry registered (INC-BLANK-FRONTEND-PREBRIEF-001). ✅
+3. RCA performed in full (5-Why above). ✅
+4. Retroactive IAA Pre-Brief committed: `.agent-admin/assurance/iaa-prebrief-blank-frontend-fix-20260318.md`. ✅
+5. Session memory committed: `.agent-workspace/foreman-v2/memory/session-blank-frontend-rca-20260318.md`. ✅
+6. Parking station entry appended. ✅
+
+**Learning**: For the **eleventh time**: calling `agent_bootstrap` is NOT sufficient — it is only Step 0. Phase 1 has 8 steps (1.1 through 1.8). Steps 1.1 (identity declaration) and 1.8 (IAA Pre-Brief invocation) are not optional — they are hard gates. The agent MUST NOT call `search_code_subagent`, `bash`, `view`, or any file-reading tool until all 8 Phase 1 steps are complete and IAA has responded with a Pre-Brief. The agent MUST NOT call a final `report_progress` until the IAA ASSURANCE-TOKEN file is committed on disk. `code_review` + `codeql_checker` are Phase 3 quality checks — they do NOT substitute for Phase 4 IAA audit. The handover checklist is: OPOJD → PREHANDOVER proof → session memory → IAA audit (`task(agent_type: "independent-assurance-agent")`) → token ceremony → merge gate release.
+
+**New A-rule candidate**: A-035 — COPILOT-BUILDER-ROLE-LABEL-BYPASS-PROHIBITION: The `copilot-builder-role` PR label that bypasses `polc-boundary-gate.yml` foreman/session-memory checks MUST NOT be applied to PRs where the foreman-v2-agent is the session author. The label is intended for pure builder sessions (api-builder, ui-builder, etc.) where Foreman is not the executing agent. When foreman-v2-agent is the session author, the full POLC boundary gate including session-memory-check must run regardless of any PR label. Escalate to CS2 for A-035 lock-in and polc-boundary-gate.yml amendment.
+
+---
+
 | ID | Description | Origin | Status |
 |----|-------------|--------|--------|
 | S-001 | Extend `align-governance.sh` with a pre-flight diff check that warns (BLOCKER) when local version has MORE sections than canonical — prevents silent learning loss | GV-001-20260221 | OPEN |
@@ -810,15 +840,17 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 
 | S-034 | END-TO-END-CONTENT-ASSERTION-MANDATORY: QA tests for Edge Function write-back and AI parsing pipelines MUST assert actual extracted content values from a real (or representative) document — not only schema column existence or Edge Function invocation success. A test that asserts a column exists in the migration but does not assert the column receives the correct field value from the AI response is insufficient. For every new or modified AI extraction field (e.g., `intent_statement`, `guidance`, maturity descriptors), qa-builder MUST add a test that: (1) posts a known document excerpt to the AI gateway, (2) asserts the response contains the expected field with non-null content, and (3) asserts the Edge Function writes that field correctly into the `criteria` table. This rule is the QA-gate complement to S-028 (schema column compliance) applied at the content extraction layer. Triggered by: INC-W18-CRITERIA-PIPELINE-001 (2026-03-15). | INC-W18-CRITERIA-PIPELINE-001 (2026-03-15) | OPEN |
 
+| S-035 | COPILOT-BUILDER-ROLE-LABEL-BYPASS-PROHIBITION: The `copilot-builder-role` PR label that bypasses `polc-boundary-gate.yml` foreman/session-memory checks MUST NOT be applied to PRs where foreman-v2-agent is the session author. The label is intended for pure builder sessions (api-builder, ui-builder, qa-builder, etc.) where Foreman is not the executing agent. When foreman-v2-agent is the session author, the full POLC boundary gate including session-memory-check MUST run regardless of any PR label. A-035 candidate: amend `polc-boundary-gate.yml` to detect foreman authorship and enforce the full gate even when `copilot-builder-role` label is present. Escalate to CS2 for A-035 lock-in. Triggered by: INC-BLANK-FRONTEND-PREBRIEF-001 (2026-03-18). | INC-BLANK-FRONTEND-PREBRIEF-001 (2026-03-18) | OPEN |
+
 ---
 
 When completing PREFLIGHT §1.3, record the following block in the **session memory preamble**:
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 3.9.0
+fail_only_once_version: 4.0.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024, S-025, S-026, S-027, S-028, S-032, S-033, S-034]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024, S-025, S-026, S-027, S-028, S-032, S-033, S-034, S-035]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
@@ -828,7 +860,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 ---
 
 *Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523, maturion-isms#855, maturion-isms#856, maturion-isms#1013, maturion-isms#999, maturion-isms#1003 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-03-15 | Version: 3.9.0 | Status: ACTIVE*
+*Last Updated: 2026-03-18 | Version: 4.0.0 | Status: ACTIVE*
 
 ---
 
@@ -836,6 +868,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.0.0 | 2026-03-18 | INC-BLANK-FRONTEND-PREBRIEF-001 registered (IAA Pre-Brief skipped and IAA token not obtained before handover: blank frontend fix session on PR copilot/fix-blank-frontend-page; eleventh occurrence of A-031 + A-014 violation class; CS2 corrective directive issued 2026-03-18; retroactive IAA Pre-Brief committed; RCA performed; learning loop activated); A-035 candidate COPILOT-BUILDER-ROLE-LABEL-BYPASS-PROHIBITION documented; S-035 improvement suggestion added; attestation block updated to v4.0.0 |
 | 3.9.0 | 2026-03-15 | INC-W18-CRITERIA-PIPELINE-001 registered (8 critical production gaps in MAT Criteria Parsing Pipeline confirmed by CS2 live testing — maturion-isms#1114; Wave 18 remediation in progress); S-034 END-TO-END-CONTENT-ASSERTION-MANDATORY added; attestation block updated to v3.9.0 |
 | 3.8.0 | 2026-03-12 | INC-CI-GATEWAY-FIX-001 registered (Foreman IAA Pre-Brief skipped and IAA token not obtained before handover: CI gateway fix session on PR copilot/fix-ci-gateway-failure; ninth occurrence of A-031 + A-014 violation class; CS2 re-alignment issued 2026-03-12; retroactive IAA Pre-Brief and token obtained; learning loop activated); A-034 candidate CI-FIX-NO-EXEMPTION documented |
 | 3.7.0 | 2026-03-10 | S-032 REMEDIATED (agent-contract-audit.yml token pattern fixed to search both iaa-token-session-*.md and assurance-token-*.md); S-033 REMEDIATED (iaa-category-overlays.md v3.3.0 OVL-CI-005 Inherent Limitation Exception documented); S-007 REMEDIATED (polc-boundary-gate.yml refactored to 3 separate named jobs: foreman-implementation-check, builder-involvement-check, session-memory-check); S-023 REMEDIATED (builder-involvement-check now enforces iaa-prebrief-*.md existence as hard gate); PR #1053 |
