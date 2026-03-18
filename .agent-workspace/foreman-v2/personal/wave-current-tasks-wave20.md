@@ -5,6 +5,7 @@
 **Branch**: copilot/implement-wire-parse-write-back-rpc
 **Foreman Session**: session-wave20-atomic-write-back-20260318
 **IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave20-atomic-write-back.md`
+**iaa_prebrief_path**: .agent-admin/assurance/iaa-prebrief-wave20-atomic-write-back.md
 **Status**: PHASE 4 — AWAITING IAA AUDIT
 
 ---

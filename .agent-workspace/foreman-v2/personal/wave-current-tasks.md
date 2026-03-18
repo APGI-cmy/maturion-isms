@@ -5,6 +5,7 @@
 **Branch**: copilot/wave-19-holistic-mat-criteria-repair
 **Foreman Session**: session-wave19-orchestration-20260317
 **IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave19-criteria-parsing-repair.md`
+**iaa_prebrief_path**: .agent-admin/assurance/iaa-prebrief-wave19-criteria-parsing-repair.md
 **Status**: PHASE 3 — BATCH A COMPLETE (RED), BATCHES B/C/D IN PROGRESS
 
 ---

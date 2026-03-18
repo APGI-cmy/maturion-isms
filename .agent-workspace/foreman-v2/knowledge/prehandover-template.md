@@ -1,8 +1,8 @@
 # PREHANDOVER Proof Template — Foreman v2
 
 **Agent**: foreman-v2
-**Version**: 1.6.0
-**Last Updated**: 2026-03-08
+**Version**: 1.7.0
+**Last Updated**: 2026-03-18
 **Purpose**: Template for generating Phase 4 PREHANDOVER proof artifacts per S-009 (FAIL-ONLY-ONCE v1.8.0)
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -17,8 +17,7 @@
 | 1.4.0 | 2026-03-04 | Post-ASSURANCE-TOKEN Ceremony rewritten with explicit temporal ordering per §4.3b (CR-2 fix); PENDING replaced with expected reference format per A-028/A-029 |
 | 1.5.0 | 2026-03-05 | SCOPE_DECLARATION Ceremony section added (A-029 / INC-SCOPE-STALE-001); IAA token date accuracy note added (A-030) |
 | 1.6.0 | 2026-03-08 | Pre-IAA Commit Gate section added (A-021 / INC-BOOTSTRAP-IMPL-001 / R1 fix) — mandatory STOP checkpoint requiring actual `git status` + `git log --oneline -5` output before IAA invocation |
-| 1.1.0 | 2026-03-01 | Add `## IAA Agent Response (verbatim)` mandatory section per S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) |
-| 1.0.0 | 2026-02-25 | Initial template |
+| 1.7.0 | 2026-03-18 | IAA Token Self-Certification Guard section added (issue #structural-gate) — `PHASE_B_BLOCKING_TOKEN` field check; Pre-Brief path check added to bundle completeness |
 
 ---
 
@@ -249,6 +248,40 @@ After IAA issues ASSURANCE-TOKEN:
 - Pre-populate `iaa_audit_token` with the expected reference format at commit time (not PENDING)
 - Never claim PASS for a session that returned a REJECTION-PACKAGE
 - Never paraphrase or summarise the IAA response — verbatim paste only
+
+---
+
+## IAA Token Self-Certification Guard (MANDATORY VERIFICATION)
+
+Before accepting any IAA token as valid, verify the following. A FAILING token is a
+**HANDOVER BLOCKER** — do not release the merge gate.
+
+**Step 1 — Token file exists:**
+```bash
+ls .agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md
+# MUST exist. Absent = IAA-SKIP-001 violation.
+```
+
+**Step 2 — PHASE_B_BLOCKING_TOKEN field present:**
+```bash
+grep "PHASE_B_BLOCKING_TOKEN:" .agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md
+# MUST be present and non-empty. Missing = IAA-SELF-CERT-001 violation.
+```
+
+**Step 3 — Token value is not PHASE_A_ADVISORY:**
+```bash
+grep "PHASE_A_ADVISORY" .agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md
+# MUST return NO MATCH. Any match = IAA-PHASE-A-BYPASS-001 violation.
+```
+
+Record in PREHANDOVER proof:
+```
+iaa_token_self_cert_guard:
+  token_file_exists: [YES / NO]
+  phase_b_blocking_token_present: [YES / NO]
+  phase_a_advisory_absent: [YES / NO]
+  guard_result: [PASS / FAIL — IAA-SELF-CERT-001]
+```
 
 ---
 
