@@ -613,6 +613,7 @@ For any PR that contains Supabase INSERT or SELECT operations on a named table:
 | 2.4.0 | 2026-03-05 | A-031 (IAA ceremony artifact A-026 carve-out) codified — resolves recurring pattern from sessions 142, 146, 148, 149, 150 where IAA's own parking station/session memory/token file from prior rejection ceremony causes A-026 failures; produces two compliant options (full declaration or explicit A-031 carve-out note); next sequential ID updated to A-032. |
 | 2.5.0 | 2026-03-08 | A-032 (Schema Column Compliance Check) added — INC-ALCF-001: schema column mismatch escaped IAA gate in wave-upload-doclist-fix; audit_logs INSERT/SELECT used non-existent columns (user_id, resource_type, resource_id); organisation_id NOT NULL omitted; silent try/catch made failure invisible. IAA self-governance action per Pre-Brief §7 shared responsibility clause. Next sequential ID: A-033. |
 | 2.6.0 | 2026-03-12 | A-033 (Git-Committed vs Disk Existence — CORE-018 Verification Standard) added — INC-CI-GATEWAY-FIX-001-IAA: IAA evaluated PREHANDOVER as PASS based on disk file existence (`-f` check) when the PREHANDOVER was untracked (never committed to git). Phase 4 `git ls-tree HEAD` revealed file not in any commit. CORE-018(a) must use git verification, not disk existence. Next sequential ID: A-034. |
+| 2.7.0 | 2026-03-17 | A-034 (FUNCTIONAL-BEHAVIOUR-REGISTRY reading — mandatory for BUILD/AAWP_MAT PRs; niggle patterns as blocking checks), A-035 (niggle pattern library application — stack-specific patterns in niggle-pattern-library.md must be applied to relevant code areas) added — CS2 IAA functional behaviour strengthening issue. Next sequential ID: A-036. |
 
 ---
 
@@ -646,3 +647,49 @@ For CORE-018(a) "PREHANDOVER proof file on branch" — verification MUST use one
 **Additional scope**: Same rule applies to ALL CORE-018 artifact checks (session memory, token file). Disk presence ≠ committed. Always verify via `git ls-tree HEAD` or `git show HEAD:<path>`.
 
 **Status**: ACTIVE — enforced from session-ci-gateway-fix-20260312 onwards
+
+---
+
+### A-034 — FUNCTIONAL-BEHAVIOUR-REGISTRY Reading Mandatory for BUILD PRs
+
+**Triggered by**: CS2 Issue — IAA functional behaviour strengthening (2026-03-17) — systematic pattern where "works except..." bugs pass IAA review because historical niggle patterns are not re-applied as mandatory checks.
+
+**Incident pattern**: IAA repeatedly approves PRs where a feature appears functionally wired but exhibits known behavioural failure modes (e.g., cache not invalidated after mutation, stale state after save, optimistic update not rolled back on error). These failures are caught post-merge, logged informally, but not converted to re-testable checks. The same patterns recur.
+
+**Permanent Rule**:
+For any PR classified as BUILD or AAWP_MAT, IAA MUST at Step 3.1:
+1. Open `.agent-workspace/independent-assurance-agent/knowledge/FUNCTIONAL-BEHAVIOUR-REGISTRY.md`.
+2. For each registered niggle entry: determine whether the area of code touched by this PR is relevant to that niggle pattern.
+3. If relevant: apply the niggle as an explicit testable check against the PR diff — with the same blocking weight as a FAIL-ONLY-ONCE rule.
+4. If the check fails → REJECTION-PACKAGE citing the niggle pattern ID and the specific code location.
+5. A niggle pattern matched but not checked = REJECTION-PACKAGE (same weight as unchecked FAIL-ONLY-ONCE rule).
+
+**How this is checked in Phase 3 (Step 3.1 FUNCTIONAL-BEHAVIOUR-REGISTRY learning)**:
+> A-034 FUNCTIONAL-BEHAVIOUR-REGISTRY:
+> Open FUNCTIONAL-BEHAVIOUR-REGISTRY.md. For each entry: is this PR touching relevant code?
+> If YES: apply the registered check. Evidence: [what was found]. Verdict: PASS ✅ / FAIL ❌.
+> If FAIL: REJECTION-PACKAGE citing niggle ID and specific code location.
+
+**Status**: ACTIVE — enforced on all BUILD/AAWP_MAT PRs
+
+---
+
+### A-035 — Niggle Pattern Library Must Be Applied to Relevant Code Areas
+
+**Triggered by**: CS2 Issue — IAA functional behaviour strengthening (2026-03-17) — stack-specific failure patterns (TanStack Query cache invalidation, Supabase RLS gotchas, Zustand store leakage) are not systematically checked despite being well-known recurring failure modes in this stack.
+
+**Permanent Rule**:
+For any PR classified as BUILD or AAWP_MAT, IAA MUST at Step 3.1:
+1. Open `.agent-workspace/independent-assurance-agent/knowledge/niggle-pattern-library.md`.
+2. Identify which stack-specific patterns are relevant to the code changed in this PR (by technology area: TanStack Query, Supabase, Zustand, Next.js routing, etc.).
+3. For each relevant pattern: execute the described check against the PR diff.
+4. If a known pattern is violated → REJECTION-PACKAGE citing the pattern ID and specific code.
+5. A relevant pattern not checked = REJECTION-PACKAGE (omission is itself a failure).
+
+**How this is checked in Phase 3 (Step 3.1 niggle pattern check)**:
+> A-035 Niggle Pattern Library:
+> Open niggle-pattern-library.md. Identify relevant patterns for this PR's code areas.
+> For each relevant pattern: check the diff. Evidence: [what was found]. Verdict: PASS ✅ / FAIL ❌.
+> If FAIL: REJECTION-PACKAGE citing pattern ID and specific violation.
+
+**Status**: ACTIVE — enforced on all BUILD/AAWP_MAT PRs
