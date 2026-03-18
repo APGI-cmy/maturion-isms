@@ -2,8 +2,8 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 3.0.0
-**Last Updated**: 2026-03-17
+**Knowledge Version**: 3.1.0
+**Last Updated**: 2026-03-18
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -20,7 +20,7 @@
 | `session-memory-template.md` | Standard session memory template for IAA invocations | 1.0.0 | PRESENT |
 | `IAA_ZERO_SEVERITY_TOLERANCE.md` | Tier 2 operational note for Zero-Severity-Tolerance Rule — prohibited language table, machine-readable logic, exception procedure | 1.0.0 | ACTIVE |
 | `IAA_AGENT_CONTRACT_AUDIT_STANDARD.md` | **AGENT_CONTRACT Audit Standard** — mandatory audit steps, pre-approval doctrine, protected components checklist, tier placement discipline, decision matrix for all agent contract PRs reviewed by IAA | 1.0.0 | ACTIVE — Load at Step 2.4 when PR category is AGENT_CONTRACT |
-| `FUNCTIONAL-BEHAVIOUR-REGISTRY.md` | **Functional Behaviour Registry** — post-merge behavioural failure patterns (niggles) that must never recur; each entry is a permanent mandatory check for BUILD PRs | 1.0.0 | ACTIVE — Read at Step 3.1 for all BUILD/AAWP_MAT PRs; governed by FAIL-ONLY-ONCE A-034 |
+| `FUNCTIONAL-BEHAVIOUR-REGISTRY.md` | **Functional Behaviour Registry** — post-merge behavioural failure patterns (niggles) that must never recur; each entry is a permanent mandatory check for BUILD PRs | 1.1.0 | ACTIVE — Read at Step 3.1 for all BUILD/AAWP_MAT PRs; governed by FAIL-ONLY-ONCE A-034; v1.1.0 adds NBR-005 (schema migration column mismatch silently masked by try/catch — INC-ALCF-001) |
 | `niggle-pattern-library.md` | **Niggle Pattern Library** — stack-specific failure patterns for Next.js/Supabase/TanStack Query/Zustand/TypeScript stack; IAA applies relevant patterns to BUILD PR diffs | 1.0.0 | ACTIVE — Read at Step 3.1 for all BUILD/AAWP_MAT PRs; governed by FAIL-ONLY-ONCE A-035 |
 
 ---
@@ -229,6 +229,7 @@ that produced the work under review. Every invocation is logged in session memor
 | 2.8.0 | 2026-03-10 | iaa-category-overlays.md → v3.3.0 (S-033: OVL-CI-005 Inherent Limitation Exception documented for self-referential workflow PRs; three required substitutes defined; retroactive incident acceptance policy formalised); PR #1053 |
 | 2.9.0 | 2026-03-11 | iaa-category-overlays.md → v3.4.0 (INJECTION_AUDIT_TRAIL renamed to PRE_BRIEF_ASSURANCE; removed injection pipeline signature string requirement; OVL-INJ-001 artifact-existence-only); INDEPENDENT_ASSURANCE_AGENT_CANON.md → v1.5.0 (same model change); issue #1061 |
 | 3.0.0 | 2026-03-17 | FUNCTIONAL-BEHAVIOUR-REGISTRY.md v1.0.0 added (post-merge niggle registry — NBR-001 through NBR-004; FAIL-ONLY-ONCE A-034); niggle-pattern-library.md v1.0.0 added (stack patterns for TanStack Query, Supabase, Zustand, Next.js, TypeScript — FAIL-ONLY-ONCE A-035); iaa-category-overlays.md → v3.5.0 (BD-000 User Journey Trace — BD-000-A through BD-000-D); FAIL-ONLY-ONCE.md → v2.7.0 (A-034, A-035); IAA contract → v2.3.0 (Step 2.3b liveness signal check; Step 3.1 FUNCTIONAL-BEHAVIOUR-REGISTRY reference); liveness/last-known-good.md baseline created — CS2 IAA functional behaviour strengthening mandate |
+| 3.1.0 | 2026-03-18 | FUNCTIONAL-BEHAVIOUR-REGISTRY.md → v1.1.0 (NBR-005 added: schema migration column mismatch silently masked by try/catch — INC-ALCF-001, wave-audit-log-column-fix 2026-03-08); index file version updated to 2.8.0→2.8.0 (table self-ref); CS2 mandate: wave 19/20 retrospective (issue #[wave-19-20-retro]) |
 
 ---
 
