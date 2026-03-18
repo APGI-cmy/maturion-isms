@@ -32,6 +32,11 @@ router = APIRouter()
 
 # Trusted Supabase Storage base URL — from env var only, never user-provided
 SUPABASE_STORAGE_URL = os.environ.get("SUPABASE_STORAGE_URL", "").rstrip("/")
+if not SUPABASE_STORAGE_URL:
+    # Wave 19 (T-W19-016): Fail fast at startup when Supabase Storage base URL is not configured
+    raise RuntimeError(
+        "SUPABASE_STORAGE_URL environment variable must be set to a non-empty Supabase Storage base URL."
+    )
 
 # ── LDCS document structure constants ──────────────────────────────────────────
 # The LDCS (Local Delivery Compliance Standard) uses 26 MPS across multiple domains.
