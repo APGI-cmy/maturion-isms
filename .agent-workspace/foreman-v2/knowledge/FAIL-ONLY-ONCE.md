@@ -3,7 +3,7 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 4.0.0  
+**Version**: 4.0.1  
 **Created**: 2026-02-24  
 **Updated**: 2026-03-18  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
@@ -896,7 +896,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 | Version | Date | Change |
 |---------|------|--------|
-| 4.0.0 | 2026-03-18 | INC-BLANK-FRONTEND-PREBRIEF-001 registered (IAA Pre-Brief skipped and IAA token not obtained before handover: blank frontend fix session on PR copilot/fix-blank-frontend-page; eleventh occurrence of A-031 + A-014 violation class; CS2 corrective directive issued 2026-03-18; retroactive IAA Pre-Brief committed; RCA performed; learning loop activated); A-035 candidate COPILOT-BUILDER-ROLE-LABEL-BYPASS-PROHIBITION documented; S-035 improvement suggestion added; attestation block updated to v4.0.0 |
+| 4.0.1 | 2026-03-18 | INC-BLANK-FRONTEND-PREBRIEF-001 registered (IAA Pre-Brief skipped and IAA token not obtained before handover: blank frontend fix session on PR copilot/fix-blank-frontend-page; eleventh occurrence of A-031 + A-014 violation class; CS2 corrective directive issued 2026-03-18; retroactive IAA Pre-Brief committed; RCA performed; learning loop activated); A-035 candidate COPILOT-BUILDER-ROLE-LABEL-BYPASS-PROHIBITION documented; S-035 improvement suggestion added; attestation block updated to v4.0.1 |
 | 4.0.0 | 2026-03-18 | INC-CI-LIVENESS-FIX-001 registered (Foreman IAA Pre-Brief skipped and IAA token not obtained before handover: CI liveness workflow fix session on PR copilot/fix-ci-update-liveness-workflow; eleventh occurrence of A-031 + A-014 violation class; CS2 re-alignment issued 2026-03-18; RCA completed; lessons learned file committed; A-034 CI-FIX-NO-EXEMPTION formally locked in as mandatory rule; S-035 CI-PREBRIEF-GATE-WORKFLOW-PATH-EXTENSION added; version bumped to 4.0.0 — major version due to formal lock-in of A-034 after candidate status at v3.8.0) |
 | 3.9.0 | 2026-03-15 | INC-W18-CRITERIA-PIPELINE-001 registered (8 critical production gaps in MAT Criteria Parsing Pipeline confirmed by CS2 live testing — maturion-isms#1114; Wave 18 remediation in progress); S-034 END-TO-END-CONTENT-ASSERTION-MANDATORY added; attestation block updated to v3.9.0 |
 | 3.8.0 | 2026-03-12 | INC-CI-GATEWAY-FIX-001 registered (Foreman IAA Pre-Brief skipped and IAA token not obtained before handover: CI gateway fix session on PR copilot/fix-ci-gateway-failure; ninth occurrence of A-031 + A-014 violation class; CS2 re-alignment issued 2026-03-12; retroactive IAA Pre-Brief and token obtained; learning loop activated); A-034 candidate CI-FIX-NO-EXEMPTION documented |
