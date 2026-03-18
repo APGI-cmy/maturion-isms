@@ -124,7 +124,7 @@ describe('T-W13-AUTH-APP: Auth App Wiring', () => {
     expect(
       mainSrc,
       'main.tsx must use <QueryClientProvider client={...}> to wrap the App'
-    ).toMatch(/QueryClientProvider/);
+    ).toMatch(/<QueryClientProvider[\s>]/);
 
     // Assert: App.tsx does NOT double-wrap (no <QueryClientProvider> in App.tsx JSX)
     const appSrc = fs.readFileSync(APP_FILE, 'utf-8');
