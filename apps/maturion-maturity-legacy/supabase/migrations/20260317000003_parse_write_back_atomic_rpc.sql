@@ -235,8 +235,8 @@ BEGIN
 
   -- ── Step 4: Stamp the document as processed ───────────────────────────────
   UPDATE public.criteria_documents
-     SET processing_status = 'processed',
-         updated_at        = now()
+     SET status     = 'processed',
+         updated_at = now()
    WHERE id = p_document_id;
 
   -- ── Step 5: Return summary counts ─────────────────────────────────────────
