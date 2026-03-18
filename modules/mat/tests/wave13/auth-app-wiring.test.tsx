@@ -184,4 +184,34 @@ describe('T-W13-AUTH-APP: Auth App Wiring', () => {
       'LoginPage.tsx must call supabase.auth.signInWithPassword, supabase.auth.signUp, or supabase.auth — implement real Supabase auth'
     ).toMatch(/signInWithPassword|signUp|supabase\.auth/);
   });
+
+  it('T-W13-AUTH-APP-6: AuthContext clears the react-query cache on auth transitions (SIGNED_OUT / SIGNED_IN)', () => {
+    // Removing the redundant QueryClientProvider from App.tsx means all components
+    // now share the single configured QueryClient from main.tsx (staleTime: 5 min).
+    // Session-agnostic query keys (e.g. ['user-profile'], ['audits']) would serve
+    // the previous user's cached data to a newly signed-in user for up to 5 minutes.
+    //
+    // Fix: AuthContext must call queryClient.clear() on SIGNED_OUT and SIGNED_IN
+    // events so the cache is always clean after an auth transition.
+
+    const source = fs.readFileSync(AUTH_CONTEXT_FILE, 'utf-8');
+
+    // AuthContext must import useQueryClient to access the shared QueryClient
+    expect(
+      source,
+      'AuthContext.tsx must import useQueryClient from @tanstack/react-query'
+    ).toMatch(/import.*useQueryClient.*@tanstack\/react-query|import.*@tanstack\/react-query.*useQueryClient/);
+
+    // AuthContext must call queryClient.clear() to evict stale data on auth transitions
+    expect(
+      source,
+      'AuthContext.tsx must call queryClient.clear() to prevent cross-user stale data after sign-out/sign-in'
+    ).toMatch(/queryClient\.clear\(\)/);
+
+    // AuthContext must guard the clear() call on SIGNED_OUT or SIGNED_IN events
+    expect(
+      source,
+      "AuthContext.tsx must check for 'SIGNED_OUT' or 'SIGNED_IN' event before clearing cache"
+    ).toMatch(/SIGNED_OUT|SIGNED_IN/);
+  });
 });
