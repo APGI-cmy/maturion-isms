@@ -177,7 +177,7 @@ jobs:
 
       - name: Checkout PR head branch
         if: steps.guard.outputs.skip != 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 1
@@ -349,7 +349,7 @@ jobs:
 
       - name: Checkout PR head branch
         if: steps.guard.outputs.skip != 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 1
@@ -431,7 +431,7 @@ jobs:
     if: github.event_name == 'pull_request_target' && github.event.action == 'synchronize'
     steps:
       - name: Checkout PR head branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           # Use full history so we can diff between before/after SHAs for synchronize events

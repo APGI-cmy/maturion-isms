@@ -35,7 +35,7 @@ jobs:
       changed_files_list: ${{ steps.detect.outputs.changed_files_list }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
@@ -202,7 +202,7 @@ jobs:
     if: needs.agent-contract-diff-report.outputs.agent_files_changed == 'true'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
@@ -346,7 +346,7 @@ jobs:
     if: needs.agent-contract-diff-report.outputs.agent_files_changed == 'true'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}

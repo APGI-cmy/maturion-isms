@@ -36,7 +36,7 @@ jobs:
 
       - name: Checkout (push event — read wave-current-tasks.md at pushed SHA)
         if: github.event_name == 'push'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.sha }}
           fetch-depth: 1
@@ -143,7 +143,7 @@ jobs:
 
       - name: Checkout PR head or default branch (issue_comment event)
         if: github.event_name == 'issue_comment'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           # If comment is on a PR, check out its head SHA; otherwise default branch
           ref: ${{ steps.resolve_ref.outputs.ref || github.event.repository.default_branch }}
@@ -573,7 +573,7 @@ jobs:
         run: sleep 600
 
       - name: Checkout branch at current state
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.ref }}
           fetch-depth: 1
