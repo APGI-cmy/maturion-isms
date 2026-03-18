@@ -1,9 +1,9 @@
 # IAA Category Overlays
 
 **Agent**: independent-assurance-agent
-**Version**: 3.5.0
+**Version**: 3.6.0
 **Status**: ACTIVE
-**Last Updated**: 2026-03-17
+**Last Updated**: 2026-03-18
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -17,6 +17,8 @@
 > For GOVERNANCE changes: 90% of IAA effort goes on whether the governance change aligns with the strategy it serves, whether obvious gaps exist against the intended design, and whether it creates contradictions. 10% goes on ceremony admin (existence checks only).
 >  
 > **Session numbers, file sequence IDs, version bump history, cross-reference consistency** — these are agent self-maintenance responsibilities. IAA does NOT investigate these. If a version number was not bumped, note it once and move on. Do not spend time on it.
+> 
+> **Scope note**: "Cross-reference consistency" refers to agent self-maintenance links (session cross-references, learning note references, sequential session IDs, etc.). It does not exempt declared-state integrity checks. Any file that declares an incorrect current version is making a false statement about its own state — this is a governance integrity finding, not a housekeeping finding. OVL-KG-ADM-002 and OVL-KG-ADM-003 are integrity checks governed by the admin layer.
 >  
 > **The FAIL-ONLY-ONCE and session memory files** are agent learning artifacts. IAA checks only: were they created? Yes/No. That is the complete check. IAA does not audit their content, completeness of notes, prior session references, or sequential numbering. Agents are responsible for maintaining their own learning artifacts.
 
@@ -275,8 +277,10 @@ Applied when PR category is `KNOWLEDGE_GOVERNANCE`.
 | Check ID | Check Name | Pass Condition |
 |----------|-----------|----------------|
 | OVL-KG-ADM-001 | PREHANDOVER ceremony complete | Covered by CERT-001 through CERT-004 |
-| OVL-KG-ADM-002 | Knowledge version bumped | Modified Tier 2 file has incremented version |
+| OVL-KG-ADM-002 | Knowledge version bumped and consistent | Modified Tier 2 file's header-declared version matches the version registered in the agent's `index.md` AND is higher than the prior version. A mismatch between the file header and the index = FAIL; this is a declared-state integrity check, not a cross-reference consistency check (see Orientation Mandate scope note). |
 | OVL-KG-ADM-003 | Index.md updated | Agent knowledge index reflects updated file versions |
+
+> **Timestamp carve-out**: A stale `Last Updated` field is agent self-maintenance. IAA may note it as an observation but it does not independently drive a REJECTION-PACKAGE. The version mismatch is the finding.
 
 ---
 
@@ -349,6 +353,7 @@ Applied when PR category is `AGENT_INTEGRITY`.
 | 3.3.0 | 2026-03-10 | OVL-CI-005 Inherent Limitation Exception documented for self-referential workflow PRs; three required substitutes defined; retroactive incident acceptance policy formalised (S-033, PR #1053) |
 | 3.4.0 | 2026-03-11 | Renamed `INJECTION_AUDIT_TRAIL` overlay to `PRE_BRIEF_ASSURANCE`; removed injection pipeline signature string requirement; OVL-INJ-001 now requires Pre-Brief artifact existence only (issue #1061 — disable automatic injections) |
 | 3.5.0 | 2026-03-17 | BD-000 User Journey Trace section added (BD-000-A through BD-000-D) — mandatory for all build PRs impacting app behaviour; user journey declaration, step-by-step trace, edge case declaration and verification checks; issue [IAA functional behaviour strengthening] |
+| 3.6.0 | 2026-03-18 | Orientation Mandate scope note added — clarifies "cross-reference consistency" vs. declared-state integrity; OVL-KG-ADM-002 pass condition sharpened (file header version must match index.md registration AND exceed prior version — mismatch = FAIL); timestamp carve-out note added (stale Last Updated field is observation only, not REJECTION-PACKAGE trigger); issue [clarify audit scope cross-reference consistency and version bump history] |
 
 ---
 
