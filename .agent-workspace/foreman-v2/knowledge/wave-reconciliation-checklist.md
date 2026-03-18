@@ -91,6 +91,16 @@ If new NBR entries were added this wave:
 - [ ] Record new NBR IDs in PREHANDOVER proof section `## Post-Wave NBR Entries`
 - [ ] No explicit IAA notification required — IAA reads the registry file directly
 
+**B-3. Token file invalidation audit (if multiple IAA rounds this wave)**
+
+If this wave triggered more than one IAA invocation round (R2, R3, etc.):
+
+- [ ] Identify all superseded IAA token files in `.agent-admin/assurance/` for this session
+- [ ] Rename each superseded file with `INVALIDATED-` prefix using `git mv`
+- [ ] Add invalidation header to each renamed file per convention
+- [ ] See `.agent-admin/assurance/INVALIDATED-PREFIX-CONVENTION.md` for full procedure
+- [ ] If single IAA round only → state: "Single IAA round — no token invalidation required."
+
 ---
 
 ### Section C — Last Known Good Liveness File
@@ -144,6 +154,7 @@ Add the following block to the PREHANDOVER proof under `## Wave Reconciliation C
 ### B — NBR Registry Sync
 - B-1 Registry current: [YES / NO — describe gap]
 - B-2 IAA awareness: [N/A (no new entries) / RECORDED — NBR-NNN through NBR-NNN]
+- B-3 Token file audit: [Single round — N/A / Multi-round — INVALIDATED- prefix applied to: list files]
 
 ### C — Last Known Good Liveness File
 - C-1 Liveness file: [CURRENT — last updated YYYY-MM-DD / STALE — updated now]
@@ -162,6 +173,7 @@ Add the following block to the PREHANDOVER proof under `## Wave Reconciliation C
 | Version | Date | Change |
 |---------|------|--------|
 | 1.0.0 | 2026-03-18 | Initial checklist — CS2 mandate from issue #[wave-19-20-retro] closing post-wave registry and liveness automation gaps identified in PR #1142 review |
+| 1.1.0 | 2026-03-18 | WAVE-RECONCIL-001 + GOV-CONCERN-B follow-up: added B-3 (token file invalidation audit); added B-3 evidence field; cross-reference to INVALIDATED-PREFIX-CONVENTION.md |
 
 ---
 
