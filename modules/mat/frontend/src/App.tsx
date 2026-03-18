@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Loader2 } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Layout } from './components/Layout';
@@ -19,14 +19,13 @@ import { AuditProvider } from './contexts/AuditContext';
 import { useAuth } from './contexts/AuthContext';
 import { useUserProfile } from './lib/hooks/useSettings';
 
-const queryClient = new QueryClient();
-
 function ProtectedRoute() {
   const { session, loading } = useAuth();
   if (loading) {
     return (
-      <div role="status" aria-live="polite" className="min-h-screen flex items-center justify-center">
-        <span className="sr-only">Loading…</span>
+      <div role="status" aria-live="polite" aria-label="Loading…" className="min-h-screen flex items-center justify-center bg-white">
+        <Loader2 className="h-8 w-8 animate-spin text-sky-500" aria-hidden="true" />
+        <span className="ml-3 text-gray-600">Loading…</span>
       </div>
     );
   }
@@ -38,8 +37,9 @@ function OnboardingGuard() {
   const { data: profile, isLoading, isFetching } = useUserProfile();
   if (isLoading || isFetching) {
     return (
-      <div role="status" aria-live="polite" className="min-h-screen flex items-center justify-center">
-        <span className="sr-only">Loading…</span>
+      <div role="status" aria-live="polite" aria-label="Loading…" className="min-h-screen flex items-center justify-center bg-white">
+        <Loader2 className="h-8 w-8 animate-spin text-sky-500" aria-hidden="true" />
+        <span className="ml-3 text-gray-600">Loading…</span>
       </div>
     );
   }
@@ -54,10 +54,9 @@ function OnboardingGuard() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <AuditProvider>
-        <ErrorBoundary>
+    <AuthProvider>
+      <AuditProvider>
+      <ErrorBoundary>
           {/* GAP-008: Global toast notification provider (replaces all window.alert calls) */}
           <Toaster
             position="top-right"
@@ -90,9 +89,8 @@ function App() {
             </Routes>
           </Router>
         </ErrorBoundary>
-        </AuditProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+      </AuditProvider>
+    </AuthProvider>
   );
 }
 

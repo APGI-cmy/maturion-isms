@@ -94,34 +94,44 @@ describe('T-W13-AUTH-APP: Auth App Wiring', () => {
     ).toMatch(/AuthProvider/);
   });
 
-  it('T-W13-AUTH-APP-3: App.tsx imports and wraps the app with QueryClientProvider', () => {
-    // RED: fails until ui-builder adds QueryClientProvider to App.tsx
+  it('T-W13-AUTH-APP-3: main.tsx provides the app with QueryClientProvider', () => {
+    // Updated: QueryClientProvider was previously double-wrapped (both App.tsx and main.tsx).
+    // The redundant wrapper has been removed from App.tsx; main.tsx is now the single
+    // source of truth for QueryClient configuration (staleTime, retry).
     //
-    // App.tsx must import QueryClientProvider and QueryClient from @tanstack/react-query
-    // and wrap the app so that all useMutation / useQuery hooks work.
-    // Without this, any component calling a react-query hook will throw:
-    //   "No QueryClient set, use QueryClientProvider to set one"
+    // App.tsx must NOT double-wrap with QueryClientProvider — that causes the inner
+    // client (with default settings) to shadow the configured one in main.tsx.
     //
-    // Currently App.tsx has no import of QueryClientProvider.
+    // This test verifies that main.tsx imports and uses QueryClientProvider so that
+    // all useMutation / useQuery hooks work throughout the app.
+
+    const mainFile = path.join(FRONTEND_SRC, 'main.tsx');
 
     expect(
-      fs.existsSync(APP_FILE),
-      `App.tsx not found at ${APP_FILE}`
+      fs.existsSync(mainFile),
+      `main.tsx not found at ${mainFile}`
     ).toBe(true);
 
-    const source = fs.readFileSync(APP_FILE, 'utf-8');
+    const mainSrc = fs.readFileSync(mainFile, 'utf-8');
 
-    // RED: QueryClientProvider is not imported from @tanstack/react-query
+    // Assert: QueryClientProvider is imported in main.tsx
     expect(
-      source,
-      'App.tsx must import QueryClientProvider from @tanstack/react-query'
+      mainSrc,
+      'main.tsx must import QueryClientProvider from @tanstack/react-query'
     ).toMatch(/import.*QueryClientProvider.*@tanstack\/react-query|import.*@tanstack\/react-query.*QueryClientProvider/);
 
-    // RED: <QueryClientProvider> is not used in JSX
+    // Assert: <QueryClientProvider> is used in main.tsx JSX
     expect(
-      source,
-      'App.tsx must use <QueryClientProvider client={...}> to wrap the app'
+      mainSrc,
+      'main.tsx must use <QueryClientProvider client={...}> to wrap the App'
     ).toMatch(/QueryClientProvider/);
+
+    // Assert: App.tsx does NOT double-wrap (no <QueryClientProvider> in App.tsx JSX)
+    const appSrc = fs.readFileSync(APP_FILE, 'utf-8');
+    expect(
+      appSrc,
+      'App.tsx must NOT contain a <QueryClientProvider> wrapper (redundant double-wrap removed — use main.tsx provider only)'
+    ).not.toMatch(/<QueryClientProvider/);
   });
 
   it('T-W13-AUTH-APP-4: App.tsx has auth-guarded routes (ProtectedRoute or login redirect)', () => {
