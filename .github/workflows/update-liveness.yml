@@ -20,6 +20,9 @@ on:
       - "Deploy MAT Frontend to Vercel"
       - "Deploy MAT Edge Functions"
       - "Deploy MAT AI Gateway"
+      # ── Add new deploy workflows here as components emerge ────────────────
+      # - "Deploy MAT AI Chat"         # mat-ai-chat (add when workflow exists)
+      # - "Deploy Scoring Service"     # scoring-service (add when workflow exists)
     types: [completed]
     branches: [main]
 
@@ -100,6 +103,17 @@ jobs:
               echo "status=OK" >> "$GITHUB_OUTPUT"
               echo "notes=AI gateway deployed (run #${{ github.event.workflow_run.run_number }})" >> "$GITHUB_OUTPUT"
               ;;
+            # ── Add new component mappings here as deployments emerge ─────────
+            # "Deploy MAT AI Chat")
+            #   echo "components=mat-ai-chat" >> "$GITHUB_OUTPUT"
+            #   echo "status=OK" >> "$GITHUB_OUTPUT"
+            #   echo "notes=AI chat deployed (run #${{ github.event.workflow_run.run_number }})" >> "$GITHUB_OUTPUT"
+            #   ;;
+            # "Deploy Scoring Service")
+            #   echo "components=scoring-service" >> "$GITHUB_OUTPUT"
+            #   echo "status=OK" >> "$GITHUB_OUTPUT"
+            #   echo "notes=Scoring service deployed (run #${{ github.event.workflow_run.run_number }})" >> "$GITHUB_OUTPUT"
+            #   ;;
             *)
               echo "components=" >> "$GITHUB_OUTPUT"
               echo "status=OK" >> "$GITHUB_OUTPUT"
@@ -116,6 +130,7 @@ jobs:
           NOTES="${{ inputs.notes }}"
 
           if [ "$COMPONENT" = "ALL_DEPLOYABLE" ]; then
+            # Update this list when new deployable components are added (mat-ai-chat, scoring-service, etc.)
             echo "components=mat-frontend,mat-api-routes,mat-auth-flows,supabase-edge-functions,mat-ai-gateway" >> "$GITHUB_OUTPUT"
           else
             echo "components=$COMPONENT" >> "$GITHUB_OUTPUT"

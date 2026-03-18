@@ -1,7 +1,7 @@
 # IAA Functional Behaviour Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 1.1.0
+**Version**: 1.2.0
 **Last Updated**: 2026-03-18
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -39,6 +39,7 @@ When a post-merge behavioural failure is identified:
 ### NBR-001 — TanStack Query: Mutation Does Not Invalidate Affected Query Cache
 
 **Incident date**: (template — populate on first real incident)
+**Last reviewed**: 2026-03-18 — confirmed template pattern; no real incident recorded yet
 **Symptom**: User saves/updates a record. Save appears to succeed (no error shown). User navigates
 away and returns. The old data is displayed — the list or detail view has not refreshed. The
 mutation succeeded in the database but the cache was not invalidated, so the UI continues to
@@ -67,6 +68,7 @@ React Query) in combination with a query that reads the same data entity.
 ### NBR-002 — Supabase: RLS Policy Allows Read but Silently Blocks Write for Non-Owner
 
 **Incident date**: (template — populate on first real incident)
+**Last reviewed**: 2026-03-18 — confirmed template pattern; no real incident recorded yet
 **Symptom**: User successfully loads data (read works). User submits a form or triggers a mutation.
 The operation appears to complete (no visible error, or a generic "something went wrong"). Data is
 not saved. No error is surfaced in the UI because the Supabase client returns an empty result
@@ -97,6 +99,7 @@ operation, OR modifies RLS policies on a table that has both read and write flow
 ### NBR-003 — Zustand Store: State Not Reset Between User Sessions or Route Transitions
 
 **Incident date**: (template — populate on first real incident)
+**Last reviewed**: 2026-03-18 — confirmed template pattern; no real incident recorded yet
 **Symptom**: User completes a flow (e.g., completes a wizard, submits a form, logs out). User
 navigates to a different resource or starts a new session. The Zustand store retains state from
 the previous interaction. The new resource shows data from the previous one (store leakage),
@@ -125,6 +128,7 @@ multi-step flow, wizard, form, or resource-scoped view.
 ### NBR-004 — Optimistic Update Not Rolled Back on Mutation Error
 
 **Incident date**: (template — populate on first real incident)
+**Last reviewed**: 2026-03-18 — confirmed template pattern; no real incident recorded yet
 **Symptom**: User performs an action (e.g., deletes a record, reorders items). The UI immediately
 updates to reflect the expected outcome (optimistic update). The server request fails. The UI
 does not revert — the user now sees a state that does not match the database.
@@ -190,6 +194,23 @@ was only discovered during a separate liveness investigation.
 
 ---
 
+## NBR Aging Policy
+
+Template entries (those with `Incident date: (template — ...)`) are **preventive patterns**
+registered before any real incident occurs. They do not age out. Update the incident date only
+when a confirmed real incident matching the pattern is recorded — then replace the template
+placeholder with the actual date and add a wave reference.
+
+For **real incident entries** (those with a concrete date, e.g., NBR-005), the `Last reviewed`
+field should be updated during every wave reconciliation checklist execution. If a real-incident
+NBR entry has not been reviewed in more than 90 days, the Foreman wave reconciliation checklist
+(Section B) should flag it for reassessment and update the `Last reviewed` date.
+
+**Review schedule**: At minimum once per wave close, via the wave reconciliation checklist
+(`.agent-workspace/foreman-v2/knowledge/wave-reconciliation-checklist.md` Section B).
+
+---
+
 ## Next Sequential ID
 
 **NBR-006** — reserve for next registered incident.
@@ -202,6 +223,7 @@ was only discovered during a separate liveness investigation.
 |---------|------|--------|
 | 1.0.0 | 2026-03-17 | Initial registry with 4 template entries (NBR-001 through NBR-004) covering TanStack Query cache invalidation, Supabase RLS silent write block, Zustand store leakage, and optimistic update rollback — CS2 IAA functional behaviour strengthening mandate |
 | 1.1.0 | 2026-03-18 | NBR-005 added — Schema migration column mismatch silently masked by try/catch; triggered by INC-ALCF-001 (wave-audit-log-column-fix 2026-03-08); wave 19/20 retrospective CS2 mandate (issue #[wave-19-20-retro], PR #1142 review) |
+| 1.2.0 | 2026-03-18 | NBR-AGING-001 follow-up — added Last reviewed field to NBR-001–004 (confirmed templates); added NBR Aging Policy section with 90-day review cycle for real incident entries; cross-reference to wave-reconciliation-checklist.md Section B |
 
 ---
 
