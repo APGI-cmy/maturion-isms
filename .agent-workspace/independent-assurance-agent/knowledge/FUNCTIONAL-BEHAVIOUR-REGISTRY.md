@@ -148,9 +148,51 @@ with an `onMutate` callback.
 
 ---
 
+### NBR-005 — Schema Migration: Column Mismatch Silently Masked by Try/Catch in Write Path
+
+**Incident date**: 2026-03-08
+**Wave reference**: wave-audit-log-column-fix (INC-ALCF-001)
+**Symptom**: A schema migration was merged that created a table without the columns the application
+code expected. The application's audit log write path was wrapped in a broad `try/catch` block.
+When the INSERT failed due to the missing columns (`user_id`, `resource_type`, `resource_id`;
+`organisation_id NOT NULL` constraint omitted), the error was swallowed silently. Audit logs
+stopped being written entirely with no visible UI error or console warning to the user.
+Post-merge, the system appeared to function correctly for all business flows — the silent failure
+was only discovered during a separate liveness investigation.
+
+**Root cause**: Two compounding failures:
+1. The migration created the `audit_logs` table with a schema that did not match the columns
+   referenced in the application INSERT statement (INC-ALCF-001 column set mismatch).
+2. The application INSERT was inside a `try { ... } catch { /* ignored */ }` block. When the
+   INSERT failed, the error was discarded, and the calling code continued as if the write had
+   succeeded.
+
+**Code area trigger**: Any PR that:
+- Introduces or modifies a database schema migration **AND** touches the corresponding
+  application write path for that table, OR
+- Wraps a database write operation (Supabase INSERT/UPDATE/DELETE) in a `try/catch` block
+  without re-throwing or at minimum logging the error.
+
+**Permanent check**:
+> NBR-005: For every schema migration in the PR diff:
+> 1. Identify the table(s) being created or altered.
+> 2. Search the application code for all INSERT/UPDATE/DELETE statements targeting those tables.
+> 3. Verify that every column referenced in the application code exists in the migration
+>    (column name must match exactly — case-sensitive).
+> 4. Verify that all NOT NULL columns in the migration are provided in the application INSERT.
+> 5. For every Supabase write in the PR diff wrapped in `try/catch`: verify the `catch` block
+>    either re-throws, calls a monitoring function, or at minimum `console.error`s the failure.
+>    A `catch` that silently discards the error → REJECTION-PACKAGE.
+> 6. If any column mismatch or silent-catch pattern is found → REJECTION-PACKAGE.
+> Evidence: cite the migration file, the application INSERT, and the column diff.
+
+**Status**: ACTIVE — applies to all PRs containing schema migrations paired with application writes
+
+---
+
 ## Next Sequential ID
 
-**NBR-005** — reserve for next registered incident.
+**NBR-006** — reserve for next registered incident.
 
 ---
 
@@ -159,6 +201,7 @@ with an `onMutate` callback.
 | Version | Date | Change |
 |---------|------|--------|
 | 1.0.0 | 2026-03-17 | Initial registry with 4 template entries (NBR-001 through NBR-004) covering TanStack Query cache invalidation, Supabase RLS silent write block, Zustand store leakage, and optimistic update rollback — CS2 IAA functional behaviour strengthening mandate |
+| 1.1.0 | 2026-03-18 | NBR-005 added — Schema migration column mismatch silently masked by try/catch; triggered by INC-ALCF-001 (wave-audit-log-column-fix 2026-03-08); wave 19/20 retrospective CS2 mandate (issue #[wave-19-20-retro], PR #1142 review) |
 
 ---
 
