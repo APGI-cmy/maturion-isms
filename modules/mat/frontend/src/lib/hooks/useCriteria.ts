@@ -7,7 +7,7 @@
  * Wave 15R — T-W15R-UI-001 / T-W15R-UI-004 (ui-builder)
  * Added: useUploadedDocuments hook, useParseStatus terminal-state fixes
  */
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../supabase';
 
@@ -470,6 +470,12 @@ export function usePollCriteriaDocumentStatus(
   const MAX_POLL_ITERATIONS = 600; // 30 minutes at 3-second intervals
   const pollCount = useRef(0);
   const [pollTimeoutError, setPollTimeoutError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Reset polling state when switching to a different audit or file
+    pollCount.current = 0;
+    setPollTimeoutError(null);
+  }, [auditId, filePath]);
 
   const query = useQuery<{ status: string }, Error>({
     queryKey: ['criteria-document-status', auditId, filePath],
