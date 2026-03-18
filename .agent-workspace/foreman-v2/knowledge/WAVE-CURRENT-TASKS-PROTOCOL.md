@@ -1,7 +1,7 @@
 # WAVE-CURRENT-TASKS-PROTOCOL
 
-**Version**: 1.0.0
-**Date**: 2026-03-03
+**Version**: 1.1.0
+**Date**: 2026-03-18
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Status**: ACTIVE
 
@@ -33,7 +33,10 @@ Codifies the `wave-current-tasks.md` creation and maintenance requirement for fo
 
 9. Confirm all tasks show 🟢 DONE
 10. Check the Wave Completion Gate checklist
-11. The `wave-current-tasks.md` file is part of the wave evidence bundle
+11. **Execute the Wave Reconciliation Checklist** (`wave-reconciliation-checklist.md`) — mandatory
+    before PR open. Covers: post-wave incident → NBR entry, liveness verification, and evidence
+    completeness. Record result in PREHANDOVER proof under `## Wave Reconciliation Checklist`.
+12. The `wave-current-tasks.md` file is part of the wave evidence bundle
 
 ---
 
@@ -59,6 +62,7 @@ The Re-Anchor Pulse workflow (`.github/workflows/foreman-reanchor.yml`) reads th
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1.0 | 2026-03-18 | Added mandatory Step 11 — Wave Reconciliation Checklist (`wave-reconciliation-checklist.md`) at wave close before PR open; CS2 mandate from wave 19/20 retrospective |
 | 1.0.0 | 2026-03-03 | Initial protocol — wave-current-tasks.md creation mandate, Re-Anchor Pulse integration, absence behaviour |
 
 ---
