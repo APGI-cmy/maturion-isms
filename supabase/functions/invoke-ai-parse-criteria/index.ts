@@ -434,6 +434,14 @@ async function backgroundParse({
       }
     }
 
+    // GAP-PARSE-004: Zero-insert assertion — treat empty result as failure
+    const domainsInserted = insertedDomains?.length ?? 0;
+    const mpsInserted = insertedMps?.length ?? 0;
+    const criteriaInserted = insertedCriteria?.length ?? 0;
+    if (domainsInserted === 0 && mpsInserted === 0 && criteriaInserted === 0) {
+      throw new Error('Zero inserts — AI Gateway returned empty result. Treating as parse failure.');
+    }
+
     // 4. Update criteria_documents.status → pending_review (architecture §4.2)
     const { error: statusError } = await supabase
       .from('criteria_documents')
@@ -445,14 +453,6 @@ async function backgroundParse({
 
     if (statusError) {
       console.warn(`[invoke-ai-parse-criteria] Failed to update criteria_documents status: ${statusError.message}`);
-    }
-
-    // GAP-PARSE-004: Zero-insert assertion — treat empty result as failure
-    const domainsInserted = insertedDomains?.length ?? 0;
-    const mpsInserted = insertedMps?.length ?? 0;
-    const criteriaInserted = insertedCriteria?.length ?? 0;
-    if (domainsInserted === 0 && mpsInserted === 0 && criteriaInserted === 0) {
-      throw new Error('Zero inserts — AI Gateway returned empty result. Treating as parse failure.');
     }
 
     // 5. Audit trail: log parsing outcome to audit_logs
