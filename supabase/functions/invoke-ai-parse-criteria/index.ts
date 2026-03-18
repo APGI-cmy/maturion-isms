@@ -225,16 +225,29 @@ async function backgroundParse({
     const { data: insertedMps, error: mpsError } = await supabase
       .from('mini_performance_standards')
       .upsert(
-        validMpsList.map((m: ParsedMps, mpsIdx: number) => ({
-          domain_id: domainMap.get(m.domain_name)!.id,
-          audit_id: auditId,
-          organisation_id: organisationId,
-          number: mpsIdx + 1,            // INTEGER, 1-based sequential
-          name: m.name,
-          description: m.description ?? null,
-          intent_statement: m.intent_statement ?? null,
-          guidance: m.guidance ?? null,
-        })),
+        validMpsList.map((m: ParsedMps, mpsIdx: number) => {
+          // Prefer the AI-extracted MPS number if available; fall back to sequential index
+          const fromAi = m as unknown as { number?: string | number | null };
+          const rawNumber = fromAi.number;
+          let parsedNumber =
+            rawNumber !== undefined && rawNumber !== null
+              ? Number.parseInt(String(rawNumber).trim(), 10)
+              : Number.NaN;
+          if (!Number.isFinite(parsedNumber) || parsedNumber <= 0) {
+            parsedNumber = mpsIdx + 1; // fallback to original sequential behaviour
+          }
+
+          return {
+            domain_id: domainMap.get(m.domain_name)!.id,
+            audit_id: auditId,
+            organisation_id: organisationId,
+            number: parsedNumber, // INTEGER, derived from AI or 1-based sequential fallback
+            name: m.name,
+            description: m.description ?? null,
+            intent_statement: m.intent_statement ?? null,
+            guidance: m.guidance ?? null,
+          };
+        }),
         { onConflict: 'audit_id,number', ignoreDuplicates: false },
       )
       .select('id, number, domain_id');
