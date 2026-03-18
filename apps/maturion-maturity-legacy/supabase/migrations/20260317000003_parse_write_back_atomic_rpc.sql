@@ -232,7 +232,9 @@ BEGIN
     )
     ON CONFLICT DO NOTHING;     -- Idempotent: skip if same criteria already exists
 
-    v_criteria_inserted := v_criteria_inserted + 1;
+    IF FOUND THEN
+      v_criteria_inserted := v_criteria_inserted + 1;
+    END IF;
   END LOOP;
 
   -- ── Step 4: Stamp the document as processed ───────────────────────────────
