@@ -172,15 +172,27 @@ async function backgroundParse({
       throw new Error('AI Gateway returned empty result — 0 domains extracted. Parse failed.');
     }
 
-    // T-W15-TXN (tracked): Architecture §4.4 requires all Domain/MPS/criteria inserts to run in a
-    // single DB transaction with full rollback on failure. Current implementation uses sequential
-    // inserts — a failure after domains are inserted but before criteria are inserted will leave
-    // partial data. A tracked follow-up task must implement a Postgres function (RPC) or
-    // Supabase transaction wrapper to satisfy this requirement.
-    // ── DB write-back: Domain → MPS → Criteria hierarchy ──────────────────────
+    // ── Resolve the criteria_documents row ID (required by the atomic RPC) ─────
+    // The upsert to status='processing' was performed in the synchronous fast path
+    // (before the 202 was returned), so the row should exist here. The error
+    // handling below is defensive: if a timing edge case or upsert failure
+    // prevented the row from being created, we surface the error rather than
+    // sending an undefined document_id to the RPC.
+    const { data: docData, error: docError } = await supabase
+      .from('criteria_documents')
+      .select('id')
+      .eq('audit_id', auditId)
+      .eq('file_path', filePath)
+      .single();
+    if (docError || !docData?.id) {
+      throw new Error(`Failed to find criteria_documents row: ${docError?.message ?? 'not found'}`);
+    }
+    const documentId: string = docData.id;
 
-    // Clear stale hierarchy rows before writing new ones — ensures re-parse is idempotent.
-    // ON DELETE CASCADE propagates: domains → mini_performance_standards → criteria.
+    // ── Pre-clear stale hierarchy rows ─────────────────────────────────────────
+    // Delete domains first (ON DELETE CASCADE propagates to mini_performance_standards
+    // and criteria). This ensures a re-parse starts with a clean slate before the
+    // atomic RPC writes the new hierarchy.
     const { error: clearError } = await supabase
       .from('domains')
       .delete()
@@ -189,95 +201,45 @@ async function backgroundParse({
       throw new Error(`Failed to clear stale domain data before parse: ${clearError.message}`);
     }
 
-    // 1. Upsert domains — includes organisation_id (NOT NULL) and number (INTEGER)
-    //    onConflict: 'audit_id,number' handles retries without 23505 uniqueness errors
-    const { data: insertedDomains, error: domainsError } = await supabase
-      .from('domains')
-      .upsert(
-        domains.map((d: ParsedDomain, domainIdx: number) => ({
-          audit_id: auditId,
-          organisation_id: organisationId,
-          number: domainIdx + 1,         // INTEGER, 1-based sequential
-          name: d.name,
-          description: d.description ?? null,
-        })),
-        { onConflict: 'audit_id,number', ignoreDuplicates: false },
-      )
-      .select('id, name, number');
+    // ── Build domain number map (name → 1-based sequential integer) ────────────
+    const domainNumberByName = new Map<string, number>();
+    domains.forEach((d: ParsedDomain, idx: number) => domainNumberByName.set(d.name, idx + 1));
 
-    if (domainsError) {
-      throw new Error(`Failed to upsert domains: ${domainsError.message}`);
-    }
-
-    const domainMap = new Map<string, { id: string; number: number }>(
-      (insertedDomains ?? []).map((d: { id: string; name: string; number: number }) => [d.name, { id: d.id, number: d.number }]),    );
-
-    // 2. Upsert mini_performance_standards — includes audit_id, organisation_id (both NOT NULL)
-    //    onConflict: 'audit_id,number' handles retries without 23505 uniqueness errors
-    const validMpsList = mpsList.filter((m: ParsedMps) => domainMap.has(m.domain_name));
+    // ── Resolve MPS numbers ────────────────────────────────────────────────────
+    // Filter to MPS whose domain_name was recognised, preserving original behaviour.
+    const validMpsList = mpsList.filter((m: ParsedMps) => domainNumberByName.has(m.domain_name));
     if (validMpsList.length < mpsList.length) {
       const missingDomains = mpsList
-        .filter((m: ParsedMps) => !domainMap.has(m.domain_name))
+        .filter((m: ParsedMps) => !domainNumberByName.has(m.domain_name))
         .map((m: ParsedMps) => m.domain_name);
       console.warn(`[invoke-ai-parse-criteria] Skipping MPS with unresolved domain references: ${missingDomains.join(', ')}`);
     }
 
-    const { data: insertedMps, error: mpsError } = await supabase
-      .from('mini_performance_standards')
-      .upsert(
-        validMpsList.map((m: ParsedMps, mpsIdx: number) => {
-          // Prefer the AI-extracted MPS number if available; fall back to sequential index
-          const fromAi = m as unknown as { number?: string | number | null };
-          const rawNumber = fromAi.number;
-          let parsedNumber =
-            rawNumber !== undefined && rawNumber !== null
-              ? Number.parseInt(String(rawNumber).trim(), 10)
-              : Number.NaN;
-          if (!Number.isFinite(parsedNumber) || parsedNumber <= 0) {
-            parsedNumber = mpsIdx + 1; // fallback to original sequential behaviour
-          }
+    // Resolve each MPS to an integer number (same logic as before; kept consistent).
+    interface MpsResolved extends ParsedMps { resolvedNumber: number; }
+    const mpsResolved: MpsResolved[] = validMpsList.map((m: ParsedMps, mpsIdx: number) => {
+      const rawNumber = (m as unknown as { number?: string | number | null }).number;
+      let parsedNumber =
+        rawNumber !== undefined && rawNumber !== null
+          ? Number.parseInt(String(rawNumber).trim(), 10)
+          : Number.NaN;
+      if (!Number.isFinite(parsedNumber) || parsedNumber <= 0) {
+        parsedNumber = mpsIdx + 1; // fallback to original sequential behaviour
+      }
+      return { ...m, resolvedNumber: parsedNumber };
+    });
 
-          return {
-            domain_id: domainMap.get(m.domain_name)!.id,
-            audit_id: auditId,
-            organisation_id: organisationId,
-            number: parsedNumber, // INTEGER, derived from AI or 1-based sequential fallback
-            name: m.name,
-            description: m.description ?? null,
-            intent_statement: m.intent_statement ?? null,
-            guidance: m.guidance ?? null,
-          };
-        }),
-        { onConflict: 'audit_id,number', ignoreDuplicates: false },
-      )
-      .select('id, number, domain_id');
+    // Maps for resolving criteria MPS references (preserved for descriptor writes).
+    // mpsIntByAiNumber  : AI's m.number string → resolved integer MPS number
+    // mpsDomainNumberByAiNumber : AI's m.number string → parent domain integer number
+    const mpsIntByAiNumber = new Map<string, number>();
+    const mpsDomainNumberByAiNumber = new Map<string, number>();
+    mpsResolved.forEach((m: MpsResolved) => {
+      mpsIntByAiNumber.set(m.number, m.resolvedNumber);
+      mpsDomainNumberByAiNumber.set(m.number, domainNumberByName.get(m.domain_name)!);
+    });
 
-    if (mpsError) {
-      throw new Error(`Failed to upsert mini_performance_standards: ${mpsError.message}`);
-    }
-
-    // Map AI's original MPS number string → { id, domain_id } from inserted rows
-    // (relies on insert order matching validMpsList order)
-    const safeMps = insertedMps ?? [];
-    if (safeMps.length !== validMpsList.length) {
-      throw new Error(
-        `MPS insert count mismatch: expected ${validMpsList.length}, got ${safeMps.length}`,
-      );
-    }
-    const mpsMap = new Map<string, { id: string; domain_id: string }>(
-      validMpsList.map((m: ParsedMps, idx: number) => [
-        m.number,
-        {
-          id: safeMps[idx].id,
-          domain_id: safeMps[idx].domain_id,
-        },
-      ]),
-    );
-
-    // 3. Upsert criteria — includes domain_id, organisation_id (both NOT NULL),
-    //    number as INTEGER, description (maps title + description), guidance from source_anchor
-    //    onConflict: 'audit_id,number' handles retries without 23505 uniqueness errors
-    // Normalise an MPS number string to its numeric value for fallback matching
+    // Normalise an MPS number string to its numeric value for fallback matching.
     // e.g. "MPS 6", "6.0", "06" all normalise to "6"
     const normaliseMpsNumber = (v: string): string => {
       // Strip any leading alphabetic prefix (e.g. "MPS 6" → "6", "MPS 6.0" → "6")
@@ -285,13 +247,16 @@ async function backgroundParse({
       const num = Number(stripped);
       return isNaN(num) ? v.trim() : String(num);
     };
-    // Helper: resolve the actual mpsMap key for a criterion (handles normalised fallback)
+    // Helper: resolve the AI's mps_number string to the key used in mpsIntByAiNumber.
     const resolveMpsKey = (mpsNumber: string): string | undefined => {
-      if (mpsMap.has(mpsNumber)) return mpsNumber;
+      if (mpsIntByAiNumber.has(mpsNumber)) return mpsNumber;
       const norm = normaliseMpsNumber(mpsNumber);
-      return [...mpsMap.keys()].find(k => normaliseMpsNumber(k) === norm);
+      return [...mpsIntByAiNumber.keys()].find(k => normaliseMpsNumber(k) === norm);
     };
-    const validCriteriaList = criteriaList.filter((c: ParsedCriterion) => resolveMpsKey(c.mps_number) !== undefined);
+
+    const validCriteriaList = criteriaList.filter(
+      (c: ParsedCriterion) => resolveMpsKey(c.mps_number) !== undefined,
+    );
     if (validCriteriaList.length < criteriaList.length) {
       const missingMps = criteriaList
         .filter((c: ParsedCriterion) => !resolveMpsKey(c.mps_number))
@@ -299,36 +264,99 @@ async function backgroundParse({
       console.warn(`[invoke-ai-parse-criteria] Skipping criteria with unresolved MPS references: ${[...new Set(missingMps)].join(', ')}`);
     }
 
-    const { data: insertedCriteria, error: criteriaError } = await supabase
-      .from('criteria')
-      .upsert(
-        validCriteriaList.map((c: ParsedCriterion, idx: number) => {
-          // resolveMpsKey is guaranteed non-null: validCriteriaList is pre-filtered to only resolvable entries
-          const mpsEntry = mpsMap.get(resolveMpsKey(c.mps_number)!);
-          return {
-            mps_id: mpsEntry?.id,
-            domain_id: mpsEntry?.domain_id,
-            audit_id: auditId,
-            organisation_id: organisationId,
-            number: c.number,          // TEXT, AI-extracted LDCS hierarchical ID (e.g. "1.4.1")
-            title: c.title ?? null,
-            description: c.description ?? null,
-            intent_statement: c.intent_statement ?? null,    // Gap 3 fix
-            guidance: c.guidance ?? null,                    // Bug 2 fix: was c.source_anchor
-            source_anchor: c.source_anchor ?? null,          // Gap 8 fix
-          };
-        }),
-        { onConflict: 'audit_id,number', ignoreDuplicates: false },
-      )
-      .select('id');
+    // ── Build RPC payloads ─────────────────────────────────────────────────────
+    const p_domains = domains.map((d: ParsedDomain) => ({
+      number:      domainNumberByName.get(d.name)!,
+      name:        d.name,
+      description: d.description ?? null,
+      sort_order:  domainNumberByName.get(d.name)!,
+    }));
 
-    if (criteriaError) {
-      throw new Error(`Failed to upsert criteria: ${criteriaError.message}`);
+    const p_mps = mpsResolved.map((m: MpsResolved) => ({
+      domain_number:    domainNumberByName.get(m.domain_name)!,
+      number:           m.resolvedNumber,
+      name:             m.name,
+      description:      m.description ?? null,
+      intent_statement: m.intent_statement ?? null,
+      guidance:         m.guidance ?? null,
+    }));
+
+    const p_criteria = validCriteriaList.map((c: ParsedCriterion) => {
+      const aiMpsKey = resolveMpsKey(c.mps_number)!;
+      return {
+        mps_number:       mpsIntByAiNumber.get(aiMpsKey)!,
+        domain_number:    mpsDomainNumberByAiNumber.get(aiMpsKey)!,
+        number:           c.number,           // TEXT, AI-extracted LDCS hierarchical ID
+        title:            c.title ?? null,
+        description:      c.description ?? null,
+        intent_statement: c.intent_statement ?? null,
+        guidance:         c.guidance ?? null,
+        source_anchor:    c.source_anchor ?? null,
+      };
+    });
+
+    // ── Atomic DB write-back via parse_write_back_atomic RPC (GAP-PARSE-005) ───
+    // All three upserts (domains, MPS, criteria) execute inside a single PL/pgSQL
+    // transaction. If any step fails, PostgreSQL rolls back all prior upserts,
+    // preventing orphaned partial data. The RPC also stamps the criteria_documents
+    // row as 'pending_review' on success.
+    //
+    // Wave 20 (T-W20-001): replaces the previous sequential supabase-js upserts.
+    const { data: rpcData, error: rpcError } = await supabase.rpc(
+      'parse_write_back_atomic',
+      {
+        p_document_id: documentId,
+        p_domains,
+        p_mps,
+        p_criteria,
+      },
+    );
+    if (rpcError) {
+      throw new Error(`Atomic write-back failed: ${rpcError.message}`);
     }
 
+    const domainsInserted: number  = (rpcData as { domains_inserted?: number })?.domains_inserted ?? 0;
+    const mpsInserted: number      = (rpcData as { mps_inserted?: number })?.mps_inserted ?? 0;
+    const criteriaInserted: number = (rpcData as { criteria_inserted?: number })?.criteria_inserted ?? 0;
+
+    // GAP-PARSE-004: Zero-insert assertion — treat empty result as failure.
+    if (domainsInserted === 0 && mpsInserted === 0 && criteriaInserted === 0) {
+      throw new Error('Zero inserts — AI Gateway returned empty result. Treating as parse failure.');
+    }
+
+    // ── Re-query IDs for descriptor association ────────────────────────────────
+    // The atomic RPC does not return the inserted row IDs. Re-query the three tables
+    // so the descriptor writes below can reference the correct foreign keys.
+
+    const { data: dbDomains } = await supabase
+      .from('domains')
+      .select('id, name, number')
+      .eq('audit_id', auditId);
+
+    const domainMap = new Map<string, { id: string; number: number }>(
+      (dbDomains ?? []).map((d: { id: string; name: string; number: number }) => [
+        d.name, { id: d.id, number: d.number },
+      ]),
+    );
+
+    const { data: dbMps } = await supabase
+      .from('mini_performance_standards')
+      .select('id, number, domain_id')
+      .eq('audit_id', auditId);
+
+    // Rebuild mpsMap keyed by the AI's original m.number string, matched to DB row via
+    // resolvedNumber (same integer the RPC used for the ON CONFLICT key).
+    const mpsMap = new Map<string, { id: string; domain_id: string }>();
+    mpsResolved.forEach((m: MpsResolved) => {
+      const dbRow = (dbMps ?? []).find(
+        (row: { id: string; number: number; domain_id: string }) => row.number === m.resolvedNumber,
+      );
+      if (dbRow) {
+        mpsMap.set(m.number, { id: dbRow.id, domain_id: dbRow.domain_id });
+      }
+    });
+
     // Re-query criteria ordered by number for deterministic descriptor association.
-    // PostgREST upsert+select does not guarantee return order matches input order,
-    // so index-aligning insertedCriteria with validCriteriaList is unsafe.
     const { data: orderedCriteriaRows, error: orderQueryError } = await supabase
       .from('criteria')
       .select('id, number')
@@ -340,9 +368,6 @@ async function backgroundParse({
     }
 
     // Build number → id map (number is TEXT, AI-extracted LDCS hierarchical ID).
-    // The re-query above orders by number ascending, ensuring a deterministic mapping.
-    // Note: number is now TEXT (per migration 20260317000001) — c.number is used directly
-    // in the upsert above instead of sequential index (GAP-PARSE-001/GAP-PARSE-012 fix).
     // String() coercion is defensive: Supabase client may return number if schema migration
     // has not yet propagated to the type layer, ensuring consistent Map key type.
     const criteriaNumberToId = new Map<string, string>();
@@ -434,28 +459,8 @@ async function backgroundParse({
       }
     }
 
-    // GAP-PARSE-004: Zero-insert assertion — treat empty result as failure
-    const domainsInserted = insertedDomains?.length ?? 0;
-    const mpsInserted = insertedMps?.length ?? 0;
-    const criteriaInserted = insertedCriteria?.length ?? 0;
-    if (domainsInserted === 0 && mpsInserted === 0 && criteriaInserted === 0) {
-      throw new Error('Zero inserts — AI Gateway returned empty result. Treating as parse failure.');
-    }
-
-    // 4. Update criteria_documents.status → pending_review (architecture §4.2)
-    const { error: statusError } = await supabase
-      .from('criteria_documents')
-      .upsert(
-        { audit_id: auditId, file_path: filePath, status: 'pending_review' },
-        { onConflict: 'audit_id,file_path' },
-      )
-      .select('id');
-
-    if (statusError) {
-      console.warn(`[invoke-ai-parse-criteria] Failed to update criteria_documents status: ${statusError.message}`);
-    }
-
-    // 5. Audit trail: log parsing outcome to audit_logs
+    // Audit trail: log parsing outcome to audit_logs.
+    // Note: criteria_documents.status is stamped 'pending_review' by the RPC above.
     await supabase.from('audit_logs').insert({
       audit_id: auditId,
       organisation_id: organisationId,
@@ -463,10 +468,10 @@ async function backgroundParse({
       file_path: filePath,
       created_by: userId ?? null,
       details: {
-        domains_inserted: insertedDomains?.length ?? 0,
-        mps_inserted: insertedMps?.length ?? 0,
-        criteria_inserted: insertedCriteria?.length ?? 0,
-        criteria_per_mps: Object.fromEntries([...mpsMap.keys()].map(k => [k, validCriteriaList.filter((c: ParsedCriterion) => resolveMpsKey(c.mps_number) === k).length])),
+        domains_inserted: domainsInserted,
+        mps_inserted: mpsInserted,
+        criteria_inserted: criteriaInserted,
+        criteria_per_mps: Object.fromEntries([...mpsIntByAiNumber.keys()].map(k => [k, validCriteriaList.filter((c: ParsedCriterion) => resolveMpsKey(c.mps_number) === k).length])),
         needs_human_review: needsHumanReview,
         ldcs_document: isLdcsDocument,
         ldcs_mps_expected: LDCS_MPS_COUNT,

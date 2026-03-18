@@ -232,55 +232,73 @@ describe('Wave 15 — Criteria Parsing Pipeline (T-W15-CP-001 to T-W15-CP-014)',
   it('[T-W15-CP-007] Edge Function contains DB insert logic for domains table', () => {
     /*
      * RED:  supabase/functions/invoke-ai-parse-criteria/index.ts does not exist.
-     * GREEN: Edge Function exists AND inserts parsed domain rows into the `domains`
-     *        table using the Supabase client (e.g. `supabase.from('domains').insert(...)`).
+     * GREEN: Edge Function exists AND writes parsed domain rows into the `domains`
+     *        table using the Supabase client — either via:
+     *          (a) the legacy direct upsert: `supabase.from('domains').insert/upsert(...)`
+     *          (b) the Wave 20 atomic RPC: `supabase.rpc('parse_write_back_atomic', {...})`
+     *              which performs the insert inside a single PL/pgSQL transaction.
      *
      * The parsing pipeline must persist extracted criteria in the hierarchical
      * Domain → MPS → Criteria structure. Domains are the top-level entity.
      */
     const src = readEdgeFunction();
+    const hasDirectUpsert = /from\s*\(\s*['"`]domains['"`]\s*\)\s*\.(insert|upsert)|(?:insert|upsert).*domains/i.test(src);
+    const hasAtomicRpc = /supabase\.rpc\s*\(\s*['"`]parse_write_back_atomic['"`]/i.test(src);
     expect(
-      src,
-      "[T-W15-CP-007] Edge Function must insert or upsert rows into the `domains` table.\n" +
-      "Add: `await supabase.from('domains').insert([...])` or `.upsert([...])` after parsing is complete.\n" +
+      hasDirectUpsert || hasAtomicRpc,
+      "[T-W15-CP-007] Edge Function must persist domains — either via:\n" +
+      "  (a) `await supabase.from('domains').insert/upsert([...])`\n" +
+      "  (b) `await supabase.rpc('parse_write_back_atomic', { p_domains, ... })`\n" +
       "The domains table is the root of the Domain → MPS → Criteria hierarchy.",
-    ).toMatch(/from\s*\(\s*['"`]domains['"`]\s*\)\s*\.(insert|upsert)|(?:insert|upsert).*domains/i);
+    ).toBe(true);
   });
 
   it('[T-W15-CP-008] Edge Function contains DB insert logic for mini_performance_standards table', () => {
     /*
      * RED:  supabase/functions/invoke-ai-parse-criteria/index.ts does not exist.
-     * GREEN: Edge Function exists AND inserts parsed MPS rows into the
-     *        `mini_performance_standards` table.
+     * GREEN: Edge Function exists AND writes parsed MPS rows into the
+     *        `mini_performance_standards` table — either via:
+     *          (a) the legacy direct upsert: `supabase.from('mini_performance_standards').insert/upsert(...)`
+     *          (b) the Wave 20 atomic RPC: `supabase.rpc('parse_write_back_atomic', {...})`
+     *              which includes the MPS insert in a single PL/pgSQL transaction.
      *
      * mini_performance_standards are the second tier in the hierarchy.
      * Each domain contains multiple MPS (the LDCS defines 25 MPS).
      */
     const src = readEdgeFunction();
+    const hasDirectUpsert = /from\s*\(\s*['"`]mini_performance_standards['"`]\s*\)\s*\.(insert|upsert)|(?:insert|upsert).*mini_performance_standards/i.test(src);
+    const hasAtomicRpc = /supabase\.rpc\s*\(\s*['"`]parse_write_back_atomic['"`]/i.test(src);
     expect(
-      src,
-      "[T-W15-CP-008] Edge Function must insert or upsert rows into the `mini_performance_standards` table.\n" +
-      "Add: `await supabase.from('mini_performance_standards').insert([...])` or `.upsert([...])` after domains are inserted.\n" +
+      hasDirectUpsert || hasAtomicRpc,
+      "[T-W15-CP-008] Edge Function must persist MPS — either via:\n" +
+      "  (a) `await supabase.from('mini_performance_standards').insert/upsert([...])`\n" +
+      "  (b) `await supabase.rpc('parse_write_back_atomic', { p_mps, ... })`\n" +
       "MPS are the second tier of the Domain → MPS → Criteria hierarchy.",
-    ).toMatch(/from\s*\(\s*['"`]mini_performance_standards['"`]\s*\)\s*\.(insert|upsert)|(?:insert|upsert).*mini_performance_standards/i);
+    ).toBe(true);
   });
 
   it('[T-W15-CP-009] Edge Function contains DB insert logic for criteria table', () => {
     /*
      * RED:  supabase/functions/invoke-ai-parse-criteria/index.ts does not exist.
-     * GREEN: Edge Function exists AND inserts parsed criteria rows into the
-     *        `criteria` table (leaf nodes of the hierarchy).
+     * GREEN: Edge Function exists AND writes parsed criteria rows into the
+     *        `criteria` table — either via:
+     *          (a) the legacy direct upsert: `supabase.from('criteria').insert/upsert(...)`
+     *          (b) the Wave 20 atomic RPC: `supabase.rpc('parse_write_back_atomic', {...})`
+     *              which includes the criteria insert in a single PL/pgSQL transaction.
      *
      * criteria are the leaf tier: Domain → MPS → Criteria.
      * Each criterion maps to a single auditable requirement.
      */
     const src = readEdgeFunction();
+    const hasDirectUpsert = /from\s*\(\s*['"`]criteria['"`]\s*\)\s*\.(insert|upsert)|(?:insert|upsert).*\bcriteria\b/i.test(src);
+    const hasAtomicRpc = /supabase\.rpc\s*\(\s*['"`]parse_write_back_atomic['"`]/i.test(src);
     expect(
-      src,
-      "[T-W15-CP-009] Edge Function must insert or upsert rows into the `criteria` table.\n" +
-      "Add: `await supabase.from('criteria').insert([...])` or `.upsert([...])` after MPS rows are inserted.\n" +
+      hasDirectUpsert || hasAtomicRpc,
+      "[T-W15-CP-009] Edge Function must persist criteria — either via:\n" +
+      "  (a) `await supabase.from('criteria').insert/upsert([...])`\n" +
+      "  (b) `await supabase.rpc('parse_write_back_atomic', { p_criteria, ... })`\n" +
       "criteria are leaf nodes in the Domain → MPS → Criteria hierarchy.",
-    ).toMatch(/from\s*\(\s*['"`]criteria['"`]\s*\)\s*\.(insert|upsert)|(?:insert|upsert).*\bcriteria\b/i);
+    ).toBe(true);
   });
 
   // ── useCriteria.ts: parse-status polling ────────────────────────────────────

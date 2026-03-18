@@ -1,9 +1,9 @@
 # invoke-ai-parse-criteria — Supabase Edge Function
 
-**Wave**: 15 / 15R  
+**Wave**: 15 / 15R / 20  
 **Architecture ref**: `modules/mat/02-architecture/system-architecture.md §4`  
 **FRS**: FR-005 (criteria parsing pipeline), FR-103 (error surfacing)  
-**Task**: T-W15-IMPL-001 / T-W15R-API-001, T-W15R-API-002
+**Task**: T-W15-IMPL-001 / T-W15R-API-001, T-W15R-API-002 / T-W20-001
 
 ---
 
@@ -12,11 +12,30 @@
 This Edge Function is the entry point for the Criteria Parsing Pipeline:
 
 ```
-CriteriaUpload (UI) → invoke-ai-parse-criteria (Edge Fn) → AI Gateway /parse → DB write-back
-                                                           (domains, mini_performance_standards, criteria)
+CriteriaUpload (UI) → invoke-ai-parse-criteria (Edge Fn) → AI Gateway /parse → atomic DB write-back
+                                                           (parse_write_back_atomic RPC)
 ```
 
-It receives a document reference (`filePath`, `auditId`), generates a signed Supabase Storage URL, calls the AI Gateway `/parse` endpoint (GPT-4 Turbo extraction), and writes the resulting `domains → MPS → criteria` hierarchy back to the database.
+It receives a document reference (`filePath`, `auditId`), generates a signed Supabase Storage URL, calls the AI Gateway `/parse` endpoint (GPT-4 Turbo extraction), and writes the resulting `domains → MPS → criteria` hierarchy back to the database using the `parse_write_back_atomic` PostgreSQL RPC — a single, atomic transaction that prevents orphaned partial data on failure.
+
+---
+
+## DB Write-Back — Atomic RPC (Wave 20)
+
+All domain, MPS, and criteria rows are written in a **single atomic PL/pgSQL transaction** via `parse_write_back_atomic`. If any step fails, PostgreSQL automatically rolls back all prior inserts, ensuring no orphaned rows are left in the database.
+
+The RPC also stamps `criteria_documents.status = 'pending_review'` on success.
+
+Descriptor writes (`domain_level_descriptors`, `mps_level_descriptors`, `criteria_level_descriptors`) are performed as separate upserts after the atomic RPC, as they are not included in the core hierarchy transaction.
+
+### Migration requirements
+
+| Migration | Purpose |
+|-----------|---------|
+| `20260317000003_parse_write_back_atomic_rpc.sql` | Creates the `parse_write_back_atomic` RPC function (Wave 19) |
+| `20260318000001_fix_parse_write_back_atomic_status.sql` | Fixes status value (`pending_review`), adds `service_role` support, grants `service_role` EXECUTE (Wave 20) |
+
+Both migrations must be applied before deploying this Edge Function version.
 
 ---
 
