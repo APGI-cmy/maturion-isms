@@ -61,6 +61,7 @@ on:
 # ── Permissions ──────────────────────────────────────────────────────────────
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   update-liveness:
@@ -74,7 +75,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           # Fetch full history so we can commit back
           fetch-depth: 0
@@ -312,32 +313,66 @@ jobs:
           STATUS: ${{ inputs.status }}
           NOTES: ${{ inputs.notes }}
 
-      - name: Commit and push updated liveness file
+      - name: Commit and open auto-merge PR for liveness update
         run: |
           git config user.name  "Maturion Bot"
           git config user.email "bot@maturion.com"
 
           git add .agent-workspace/liveness/last-known-good.md
 
-          # Only commit if there are staged changes
+          # Only proceed if there are staged changes
           if git diff --cached --quiet; then
             echo "No changes to commit — liveness file already up to date."
-          else
-            if [ "${{ github.event_name }}" = "workflow_run" ]; then
-              MSG="ci(liveness): auto-update after ${{ github.event.workflow_run.name }} run #${{ github.event.workflow_run.run_number }}"
-            else
-              COMP="${{ inputs.component }}"
-              STAT="${{ inputs.status }}"
-              MSG="ci(liveness): manual update — ${COMP} → ${STAT} [workflow_dispatch]"
-            fi
-            git commit -m "$MSG"
-            # Push to the branch that triggered this workflow.
-            # For workflow_run triggers this is always main (branches filter: [main]).
-            # For workflow_dispatch this is the default branch of the repo.
-            TARGET_BRANCH="${{ github.event.workflow_run.head_branch || github.ref_name }}"
-            git push origin "HEAD:${TARGET_BRANCH:-main}"
-            echo "Liveness file committed and pushed to ${TARGET_BRANCH:-main}."
+            exit 0
           fi
+
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            TRIGGER_WORKFLOW="${{ github.event.workflow_run.name }}"
+            RUN_NUMBER="${{ github.event.workflow_run.run_number }}"
+            MSG="ci(liveness): auto-update after ${TRIGGER_WORKFLOW} run #${RUN_NUMBER}"
+            PR_BODY="Automated liveness update triggered by **${TRIGGER_WORKFLOW}** workflow run #${RUN_NUMBER}.
+
+This PR was opened automatically by the Update Liveness Status workflow because main has branch protection rules that require changes to be made via pull request."
+          else
+            COMP="${{ inputs.component }}"
+            STAT="${{ inputs.status }}"
+            MSG="ci(liveness): manual update — ${COMP} → ${STAT} [workflow_dispatch]"
+            PR_BODY="Manual liveness update: \`${COMP}\` → \`${STAT}\`
+
+This PR was opened automatically by the Update Liveness Status workflow (workflow_dispatch trigger)."
+          fi
+
+          # Create a short-lived branch for this update
+          BRANCH="ci/liveness-auto-update-${{ github.run_id }}"
+          git checkout -b "$BRANCH"
+          git commit -m "$MSG"
+          git push origin "$BRANCH"
+
+          # Ensure the ci/liveness-auto label exists (idempotent)
+          gh label create "ci/liveness-auto" \
+            --color "0075ca" \
+            --description "Automated liveness file update — safe to auto-merge" \
+            2>/dev/null || true
+
+          # Open the PR against main and capture the URL
+          PR_URL=$(gh pr create \
+            --title "$MSG" \
+            --body "$PR_BODY" \
+            --label "ci/liveness-auto" \
+            --base main \
+            --head "$BRANCH")
+
+          echo "PR created: $PR_URL"
+
+          # Enable auto-merge (squash) so the PR merges once all checks pass.
+          # If auto-merge is disabled at the repo level this command logs a warning
+          # but does not fail the workflow — the PR will remain open for manual merge.
+          gh pr merge "$PR_URL" --auto --squash \
+            || echo "WARNING: auto-merge could not be enabled (may require repo setting). PR is open for manual review."
+
+          echo "Liveness PR opened: ${PR_URL}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Post step summary
         if: always()

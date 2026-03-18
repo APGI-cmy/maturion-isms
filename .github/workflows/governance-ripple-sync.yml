@@ -62,7 +62,7 @@ jobs:
           echo "MATURION_BOT_TOKEN is present — token validation passed."
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           token: ${{ secrets.MATURION_BOT_TOKEN }}

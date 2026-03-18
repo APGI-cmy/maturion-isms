@@ -45,14 +45,14 @@ jobs:
     steps:
       - name: Checkout PR branch (pull_request events — to read wave-current-tasks.md)
         if: github.event_name == 'pull_request'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 1
 
       - name: Checkout default branch (issue_comment events — to read wave-current-tasks.md)
         if: github.event_name == 'issue_comment'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1
 
