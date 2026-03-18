@@ -343,7 +343,7 @@ This PR was opened automatically by the Update Liveness Status workflow (workflo
           fi
 
           # Create a short-lived branch for this update
-          BRANCH="ci/liveness-auto-update-${{ github.run_id }}"
+          BRANCH="ci/liveness-auto-update-${{ github.run_id }}-attempt-${{ github.run_attempt }}"
           git checkout -b "$BRANCH"
           git commit -m "$MSG"
           git push origin "$BRANCH"
