@@ -215,6 +215,7 @@ BEGIN
       title,
       description,
       intent_statement,
+      guidance,
       source_anchor
     )
     VALUES (
@@ -226,6 +227,7 @@ BEGIN
       v_crit->>'title',
       v_crit->>'description',
       v_crit->>'intent_statement',
+      v_crit->>'guidance',
       v_crit->>'source_anchor'
     )
     ON CONFLICT DO NOTHING;     -- Idempotent: skip if same criteria already exists
