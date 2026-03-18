@@ -614,13 +614,13 @@ Its presence in a token file proves the token was issued by the IAA, not self-au
 A PR is **auto-rejected** at the CI gate (`governance-ceremony/verdict`) if any of the
 following are true:
 
-| Condition | Violation Class |
-|-----------|----------------|
-| IAA token file absent (but handover claims IAA PASS) | IAA-SKIP-001 |
-| `PHASE_B_BLOCKING_TOKEN:` field missing from token file | IAA-SELF-CERT-001 |
-| Token file authored by the same agent as the PREHANDOVER proof | IAA-SELF-CERT-002 |
-| Token value is `PHASE_A_ADVISORY` | IAA-PHASE-A-BYPASS-001 |
-| Token value is blank or `PENDING` | IAA-SELF-CERT-001 |
+| Condition | Violation Class | CI Enforced |
+|-----------|----------------|-------------|
+| IAA token file absent (but handover claims IAA PASS) | IAA-SKIP-001 | YES — `iaa-prebrief-check` job |
+| `PHASE_B_BLOCKING_TOKEN:` field missing from token file | IAA-SELF-CERT-001 | YES — `iaa-token-self-cert-check` job |
+| Token file authored by the same agent as the PREHANDOVER proof | IAA-SELF-CERT-002 | NO — human-review only (git author analysis not CI-automatable) |
+| Token value is `PHASE_A_ADVISORY` | IAA-PHASE-A-BYPASS-001 | YES — `iaa-token-self-cert-check` job |
+| Token value is blank or `PENDING` | IAA-SELF-CERT-001 | YES — `iaa-token-self-cert-check` job |
 
 ### CI Enforcement
 
