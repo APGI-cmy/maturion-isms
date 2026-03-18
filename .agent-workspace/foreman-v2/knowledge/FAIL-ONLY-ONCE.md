@@ -3,9 +3,9 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 3.9.0  
+**Version**: 4.0.0  
 **Created**: 2026-02-24  
-**Updated**: 2026-03-11  
+**Updated**: 2026-03-18  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -66,6 +66,8 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-031 | PRE-BRIEF-BEFORE-DELEGATION (CS2 — 2026-03-08): Before delegating ANY task to ANY builder or making ANY substantive file commit in a new wave, the IAA Pre-Brief artifact `.agent-admin/assurance/iaa-prebrief-<wave-slug>.md` MUST exist on the branch. This is a HARD GATE — if the Pre-Brief is absent the session is BLOCKED from delegation and from any commit that modifies production code, tests, CI scripts, or governance knowledge files. The Foreman MUST verify the Pre-Brief artifact path exists on disk before calling any builder `task()` or before calling `report_progress` for a handover commit. This rule is the machine-enforceable complement to Phase 1 Step 1.8 and Phase 2 Step 2.7 in the Foreman contract. A retroactively committed Pre-Brief (created after implementation work has begun) does NOT satisfy this rule. Violation class: INC-BOOTSTRAP-IMPL-001. | CS2 — maturion-isms#1013 (2026-03-08) |
 
 | A-033 | NO-COMPLEXITY-THRESHOLD-EXEMPTION (CS2 — 2026-03-10): There is NO minimum file count, line count, or complexity threshold below which the mandatory pre-wave governance sequence (Phase 1 PREFLIGHT → wave-current-tasks.md → IAA Pre-Brief → builder delegation) may be skipped. A 1-line fix, a 1-file CI workflow change, and a 200-file wave all require identical governance sequence. The Foreman's cognitive shortcut "small explicit fix = safe to implement directly" is a persistent violation class (seventh occurrence: INC-WCA-PREBRIEF-IMPL-001). Any PR touching `.github/workflows/`, `apps/`, `modules/`, `supabase/`, or `packages/` paths authored by foreman-v2-agent is a POLC violation regardless of the change scope. Violation class: INC-BOOTSTRAP-IMPL-001. | CS2 re-alignment directive — maturion-isms PR copilot/update-agent-contract-audit-workflow (2026-03-10); INC-WCA-PREBRIEF-IMPL-001 |
+
+| A-034 | CI-FIX-NO-EXEMPTION (CS2 — 2026-03-18): CI workflow changes (`.github/workflows/*.yml`), dependency lockfile changes (`pnpm-lock.yaml`, `package-lock.json`), and configuration changes are NOT supervision corrections; they are implementation-adjacent changes subject to the full A-031 Pre-Brief requirement. A workflow or lockfile change without an IAA Pre-Brief is a HALT-008 condition. The CI pre-brief gate (`polc-boundary-gate.yml` builder-involvement-check) was built to enforce A-031 for production code paths but does NOT cover `.github/workflows/` — this is a CI enforcement gap, not a governance exemption. Calling `agent_bootstrap` (Phase 1 Step 1.1) is NOT Phase 1 completion; Steps 1.2–1.8 (including IAA Pre-Brief invocation) must ALL be completed before any repository file is read or any change is committed. Running `code_review` + `codeql_checker` does NOT satisfy Phase 4 — these are technical quality tools, not IAA substitutes. Violation class: INC-CI-LIVENESS-FIX-001. Eleventh occurrence of A-031/A-014 violation class. | CS2 re-alignment directive — PR copilot/fix-ci-update-liveness-workflow (2026-03-18); INC-CI-LIVENESS-FIX-001 |
 
 > **OVL-CI-006 CANDIDATE (PENDING CS2 APPROVAL — next available ID after A-031)**: Every GitHub Actions workflow job must declare an explicit `permissions:` block. This is pending formalisation as A-032. Until CS2 approves: treat as a STRONG RECOMMENDATION. Any PR that adds or modifies workflow files without explicit `permissions:` on every job should be flagged at QP evaluation. Builder task spec: add `permissions: contents: read` (or more specific) to jobs missing explicit permissions.
 
@@ -772,6 +774,34 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 
 ---
 
+### INC-CI-LIVENESS-FIX-001 — Foreman IAA Pre-Brief Skipped and IAA Token Not Obtained: CI Liveness Workflow Fix (2026-03-18)
+**Date**: 2026-03-18
+**Severity**: MAJOR
+**Status**: REMEDIATED — CS2 re-alignment directive acknowledged (2026-03-18); RCA completed; lessons learned file committed; A-034 formally locked in; S-035 improvement suggestion added; FAIL-ONLY-ONCE updated to v4.0.0; learning loop activated.
+**Source**: CS2 re-alignment directive issued via problem statement on PR `copilot/fix-ci-update-liveness-workflow` (2026-03-18) — "You did not get an IAA token for handover. This is a major failure and you must record this as a lesson's learned. Performed an RCA to let me know why you failed to trigger the IAA for pre-brief as well as handover token."
+**Preceded by**: INC-CI-GATEWAY-FIX-001 (same root-cause class — eleventh occurrence of A-031 + A-014 violation: Foreman skips IAA Pre-Brief before work AND fails to obtain IAA token before handover)
+
+**What happened**: Foreman received the issue "fix(ci): update-liveness workflow fails due to branch protection — switch to PR-based update". `agent_bootstrap` was called correctly as the first tool call (Phase 1 Step 1.1 complied with). However, instead of completing Phase 1 Steps 1.2–1.8 before beginning work, the Foreman immediately began exploring the repository (`update-liveness.yml`, other workflow files) and implementing the fix directly. The Foreman modified `.github/workflows/update-liveness.yml` (replaced direct push with PR-based auto-merge approach) and updated `actions/checkout@v4` to `actions/checkout@v5` across 20 workflow files using `edit` and `bash/sed`. No `wave-current-tasks.md` was created. No IAA Pre-Brief was invoked. No Phase 2 alignment was executed. After making the changes, the Foreman ran `code_review` and `codeql_checker` (both passed), then called `report_progress` to commit and submit the PR — WITHOUT writing a PREHANDOVER proof, WITHOUT invoking Phase 4 Step 4.3a (IAA Independent Audit), and WITHOUT obtaining an IAA ASSURANCE-TOKEN.
+
+**Root cause (5-Why)**:
+1. **Why was the IAA Pre-Brief skipped?** The task appeared to be a "pure CI workflow fix" — only `.github/workflows/*.yml` files changed; no production code, no application logic, no database changes. The Foreman applied the invalid exemption: "CI workflow changes are infrastructure corrections, not production code; the governance sequence does not apply."
+2. **Why was this classification wrong?** A-031 (PRE-BRIEF-BEFORE-DELEGATION) and A-033 (NO-COMPLEXITY-THRESHOLD-EXEMPTION) explicitly prohibit this reasoning. A-034 (candidate at time of session: CI-FIX-NO-EXEMPTION) was documented after INC-CI-GATEWAY-FIX-001 (2026-03-12) for exactly this pattern but had not been formally locked in as a mandatory rule. The prior incident INC-CI-GATEWAY-FIX-001 was IDENTICAL in nature — a CI workflow fix without Pre-Brief or IAA token. Six days elapsed between that incident and this recurrence.
+3. **Why was the IAA token not obtained before handover?** The Foreman ran `code_review` + `codeql_checker` (both passed) and interpreted this as Phase 4 completion. A-014 (IAA-TOOL-CALL-MANDATORY) and A-016 (PHASE-4-BEFORE-REPORT-PROGRESS) were not checked before the `report_progress` handover call. These tools confirm technical quality — they are NOT Phase 4 substitutes.
+4. **Why does the `code_review` + `codeql_checker` confusion persist?** The distinction between "technical quality confirmed" and "governance handover complete" is not being enforced as a hard self-check gate. When both tools pass, the cognitive closure ("job done") overrides the governance checklist. A-016 must be treated as a hard stop: PREHANDOVER proof existence on disk + IAA invocation result MUST be verified before any `report_progress` for substantive commits.
+5. **Why did the CI pre-brief gate (S-023/REMEDIATED) not catch this?** The `polc-boundary-gate.yml` `builder-involvement-check` job enforces IAA pre-brief presence for production code path changes (`apps/`, `modules/`, `supabase/`, `packages/`). It does NOT cover `.github/workflows/` path changes. This enforcement gap means the machine-level safeguard that was built to prevent this violation class has a blind spot for the exact scenario (CI workflow fixes) that has now recurred eleven times.
+
+**Corrective action** (COMPLETE):
+1. CS2 re-alignment directive acknowledged (2026-03-18). ✅
+2. This FAIL-ONLY-ONCE entry registered (INC-CI-LIVENESS-FIX-001, v4.0.0). ✅
+3. Lessons learned file created: `.agent-workspace/foreman-v2/memory/lesson-learned-iaa-ci-liveness-fix-20260318.md`. ✅
+4. A-034 CI-FIX-NO-EXEMPTION formally locked in as mandatory rule (no longer a candidate). ✅
+5. S-035 improvement suggestion added: extend `polc-boundary-gate.yml` builder-involvement-check to cover `.github/workflows/*.yml` path changes. ✅
+6. Parking station entry appended. ✅
+
+**Learning**: For the **eleventh time**: there is NO file type (including `.github/workflows/*.yml`), NO PR scope (including "pure CI fixes"), and NO self-assessed complexity threshold that exempts the mandatory governance sequence. Calling `agent_bootstrap` (Phase 1 Step 1.1) is NOT Phase 1 completion — Steps 1.2 through 1.8 (including IAA Pre-Brief invocation at Step 1.8) MUST ALL be completed before any repository file is read or any change is committed. Running `code_review` + `codeql_checker` does NOT satisfy Phase 4 — PREHANDOVER proof must exist on disk, session memory must exist on disk, and IAA ASSURANCE-TOKEN must be received BEFORE calling `report_progress` for any handover commit.
+
+---
+
 | ID | Description | Origin | Status |
 |----|-------------|--------|--------|
 | S-001 | Extend `align-governance.sh` with a pre-flight diff check that warns (BLOCKER) when local version has MORE sections than canonical — prevents silent learning loss | GV-001-20260221 | OPEN |
@@ -810,13 +840,15 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 
 | S-034 | END-TO-END-CONTENT-ASSERTION-MANDATORY: QA tests for Edge Function write-back and AI parsing pipelines MUST assert actual extracted content values from a real (or representative) document — not only schema column existence or Edge Function invocation success. A test that asserts a column exists in the migration but does not assert the column receives the correct field value from the AI response is insufficient. For every new or modified AI extraction field (e.g., `intent_statement`, `guidance`, maturity descriptors), qa-builder MUST add a test that: (1) posts a known document excerpt to the AI gateway, (2) asserts the response contains the expected field with non-null content, and (3) asserts the Edge Function writes that field correctly into the `criteria` table. This rule is the QA-gate complement to S-028 (schema column compliance) applied at the content extraction layer. Triggered by: INC-W18-CRITERIA-PIPELINE-001 (2026-03-15). | INC-W18-CRITERIA-PIPELINE-001 (2026-03-15) | OPEN |
 
+| S-035 | CI-PREBRIEF-GATE-WORKFLOW-PATH-EXTENSION: The `polc-boundary-gate.yml` `builder-involvement-check` job currently enforces IAA pre-brief existence for production code path changes (`apps/`, `modules/`, `supabase/`, `packages/`) but does NOT cover `.github/workflows/*.yml` changes. This enforcement gap is the proximate cause of INC-CI-LIVENESS-FIX-001 (and the prior INC-CI-GATEWAY-FIX-001): CI workflow fix sessions proceed without an IAA Pre-Brief because the machine gate does not fire. Extend the `builder-involvement-check` job to include `.github/workflows/` in the paths checked for iaa-prebrief-*.md existence. When any `.github/workflows/*.yml` file is modified and no `iaa-prebrief-*.md` artifact exists on the branch, the check MUST FAIL. This closes the blind spot that allowed the A-031/A-014 violation class to recur eleven times. | INC-CI-LIVENESS-FIX-001 (2026-03-18) | OPEN |
+
 ---
 
 When completing PREFLIGHT §1.3, record the following block in the **session memory preamble**:
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 3.9.0
+fail_only_once_version: 4.0.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
 open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024, S-025, S-026, S-027, S-028, S-032, S-033, S-034]
 ```
@@ -836,6 +868,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.0.0 | 2026-03-18 | INC-CI-LIVENESS-FIX-001 registered (Foreman IAA Pre-Brief skipped and IAA token not obtained before handover: CI liveness workflow fix session on PR copilot/fix-ci-update-liveness-workflow; eleventh occurrence of A-031 + A-014 violation class; CS2 re-alignment issued 2026-03-18; RCA completed; lessons learned file committed; A-034 CI-FIX-NO-EXEMPTION formally locked in as mandatory rule; S-035 CI-PREBRIEF-GATE-WORKFLOW-PATH-EXTENSION added; version bumped to 4.0.0 — major version due to formal lock-in of A-034 after candidate status at v3.8.0) |
 | 3.9.0 | 2026-03-15 | INC-W18-CRITERIA-PIPELINE-001 registered (8 critical production gaps in MAT Criteria Parsing Pipeline confirmed by CS2 live testing — maturion-isms#1114; Wave 18 remediation in progress); S-034 END-TO-END-CONTENT-ASSERTION-MANDATORY added; attestation block updated to v3.9.0 |
 | 3.8.0 | 2026-03-12 | INC-CI-GATEWAY-FIX-001 registered (Foreman IAA Pre-Brief skipped and IAA token not obtained before handover: CI gateway fix session on PR copilot/fix-ci-gateway-failure; ninth occurrence of A-031 + A-014 violation class; CS2 re-alignment issued 2026-03-12; retroactive IAA Pre-Brief and token obtained; learning loop activated); A-034 candidate CI-FIX-NO-EXEMPTION documented |
 | 3.7.0 | 2026-03-10 | S-032 REMEDIATED (agent-contract-audit.yml token pattern fixed to search both iaa-token-session-*.md and assurance-token-*.md); S-033 REMEDIATED (iaa-category-overlays.md v3.3.0 OVL-CI-005 Inherent Limitation Exception documented); S-007 REMEDIATED (polc-boundary-gate.yml refactored to 3 separate named jobs: foreman-implementation-check, builder-involvement-check, session-memory-check); S-023 REMEDIATED (builder-involvement-check now enforces iaa-prebrief-*.md existence as hard gate); PR #1053 |
