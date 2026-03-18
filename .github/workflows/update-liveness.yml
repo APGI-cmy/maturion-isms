@@ -10,8 +10,8 @@ name: Update Liveness Status
 #      remediation, liveness investigation).
 #
 # The job commits the updated markdown directly to the triggering branch (main
-# for automatic; the input branch for manual runs).  It uses GITHUB_TOKEN with
-# contents:write permission — no external secrets required.
+# for automatic; the input branch for manual runs).  It uses MATURION_BOT_TOKEN
+# for repository write operations in accordance with repo token governance.
 
 on:
   # ── Automatic: after successful MAT frontend deployment ──────────────────
@@ -372,7 +372,7 @@ This PR was opened automatically by the Update Liveness Status workflow (workflo
 
           echo "Liveness PR opened: ${PR_URL}"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
 
       - name: Post step summary
         if: always()
