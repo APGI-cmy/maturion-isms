@@ -367,7 +367,7 @@ This PR was opened automatically by the Update Liveness Status workflow (workflo
           # Enable auto-merge (squash) so the PR merges once all checks pass.
           # If auto-merge is disabled at the repo level this command logs a warning
           # but does not fail the workflow — the PR will remain open for manual merge.
-          gh pr merge "$PR_URL" --auto --squash \
+          gh pr merge "$PR_URL" --auto --squash --delete-branch \
             || echo "WARNING: auto-merge could not be enabled (may require repo setting). PR is open for manual review."
 
           echo "Liveness PR opened: ${PR_URL}"
