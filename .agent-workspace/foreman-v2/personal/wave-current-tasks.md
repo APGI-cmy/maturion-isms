@@ -1,82 +1,96 @@
-# Wave Current Tasks — foreman-v2-agent — Wave GOV MAT Criteria Repair (Issue #1135)
+# Wave 19 — MAT Criteria Parsing Holistic Repair — Current Tasks
 
-**Wave**: wave-gov-mat-criteria-repair-1135 — MAT Criteria Parsing Holistic Repair: Gap Register + Governance Updates + Foreman Plan
-**Session**: session-wave-gov-mat-criteria-repair-1135-20260317
-**Date**: 2026-03-17
-**Branch**: copilot/gov-mat-criteria-repair
-**Triggering Issue**: maturion-isms#1135 — "[GOV] MAT Criteria Parsing Holistic Repair — Gap Register + Governance Updates + Foreman Plan (NO IMPLEMENTATION)"
-**CS2 Authorization**: Issue opened by CS2 (@APGI-cmy) and assigns this agent — constitutes valid CS2 wave-start authorization per foreman contract §2.1
-**Agent**: foreman-v2-agent v6.2.0
-**Mode**: POLC-Orchestration (governance/planning only — no builder delegation, no code changes)
-**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave-gov-mat-criteria-repair-1135.md` — COMMITTED (SHA 16d648e)
-
----
-
-## Wave Scope
-
-Governance-documentation-only wave. Foreman surveys the MAT criteria parsing pipeline, produces a comprehensive gap register, updates governance documents to record identified gaps, and produces a Wave Plan Proposal for Issue #2 (implementation wave). NO production code, migrations, tests, or CI changes in this issue.
-
----
-
-## Tasks
-
-| # | Task ID | Description | Owner | Status |
-|---|---------|-------------|-------|--------|
-| 1 | T-GOV-001 | Phase 1 PREFLIGHT + IAA Pre-Brief | Foreman | ✅ COMPLETE |
-| 2 | T-GOV-002 | Codebase survey (pipeline, schema, Edge Fn, AI Gateway, env vars, FRS/TRS) | Foreman | ✅ COMPLETE |
-| 3 | T-GOV-003 | Create CRITERIA-PARSING-GAP-REGISTER.md (Deliverables A1, B1, C1, G1) | Foreman | ✅ COMPLETE |
-| 4 | T-GOV-004 | Update BUILD_PROGRESS_TRACKER.md — new incidents + remediation placeholders | Foreman | ✅ COMPLETE |
-| 5 | T-GOV-005 | Update app-description.md — parsing pipeline expectations vs reality section | Foreman | ✅ COMPLETE |
-| 6 | T-GOV-006 | Update MAT_UX_WORKFLOW_AND_WIRING.md — correct Step 2a parse wiring, known gaps | Foreman | ✅ COMPLETE |
-| 7 | T-GOV-007 | Update functional-requirements.md — add gap flags for parsing FRs | Foreman | ✅ COMPLETE |
-| 8 | T-GOV-008 | Update technical-requirements-specification.md — add gap flags for parsing TRs (TR-037, TR-009) | Foreman | ✅ COMPLETE |
-| 9 | T-GOV-009 | Create WAVE-19-PLAN-PROPOSAL.md — wave plan for Issue #2 | Foreman | ✅ COMPLETE |
-| 10 | T-GOV-010 | Create SCOPE_DECLARATION.md for this wave | Foreman | ✅ COMPLETE |
-| 11 | T-GOV-IAA | IAA Phase 4 Final Audit + token | independent-assurance-agent | ✅ COMPLETE (token: IAA-session-wave-gov-mat-criteria-repair-1135-20260317-PASS) |
-| 12 | T-GOV-1137 | Issue #1137 (Wave 19 implementation issue) created but **unassigned** — must be assigned to Copilot (or appropriate agent) by CS2 (@APGI-cmy) before Wave 19 can commence | CS2 | ⏳ PENDING CS2 ASSIGNMENT |
-
----
-
-## Gap Register Summary (Seed + Discovered)
-
-| Gap ID | Severity | Component | Status |
-|--------|----------|-----------|--------|
-| GAP-PARSE-001 | 🔴 CRITICAL | criteria.number is INTEGER — cannot store LDCS hierarchical IDs (1.4.1) | 🔴 OPEN |
-| GAP-PARSE-002 | 🔴 CRITICAL | mini_performance_standards missing intent_statement + guidance columns | 🔴 OPEN |
-| GAP-PARSE-003 | 🔴 CRITICAL | No audit_logs parse events in production (0 rows confirmed) | 🔴 OPEN |
-| GAP-PARSE-004 | 🟠 HIGH | Silent success: pipeline can complete with 0 inserts | 🔴 OPEN |
-| GAP-PARSE-005 | 🟠 HIGH | No DB transaction — partial writes possible on failure | 🔴 OPEN |
-| GAP-PARSE-006 | 🔴 CRITICAL | AI_GATEWAY_URL not configured in Supabase Edge Function secrets | 🔴 OPEN |
-| GAP-PARSE-007 | 🟡 MEDIUM | Legacy overlap drift — two MAT implementations, schema alignment risk | 🟡 MONITORING |
-| GAP-PARSE-008 | 🟠 HIGH | AI Gateway MpsResult missing intent_statement + guidance fields | 🔴 OPEN |
-| GAP-PARSE-009 | 🟠 HIGH | usePollCriteriaDocumentStatus polls forever on silent background task failure | 🔴 OPEN |
-| GAP-PARSE-010 | 🟡 MEDIUM | No content assertions in QA tests (S-034) | 🔴 OPEN |
-| GAP-PARSE-011 | 🟠 HIGH | SUPABASE_STORAGE_URL may not be configured in Render production | 🔴 OPEN |
-| GAP-PARSE-012 | 🔴 CRITICAL | Edge Function number mapping uses idx+1 — LDCS hierarchical structure entirely lost | 🔴 OPEN |
+**Wave**: Wave 19
+**Issue**: maturion-isms#1137
+**Branch**: copilot/wave-19-holistic-mat-criteria-repair
+**Foreman Session**: session-wave19-orchestration-20260317
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave19-criteria-parsing-repair.md`
+**Status**: PHASE 3 — BATCH A COMPLETE (RED), BATCHES B/C/D IN PROGRESS
 
 ---
 
 ## Re-Anchor Pulse
 
 ```yaml
-wave: wave-gov-mat-criteria-repair-1135
-branch: copilot/gov-mat-criteria-repair
-iaa_prebrief_artifact: .agent-admin/assurance/iaa-prebrief-wave-gov-mat-criteria-repair-1135.md
-iaa_prebrief_committed: true
-iaa_prebrief_sha: 16d648e
-status: ASSURANCE_TOKEN_PASS
-iaa_token: IAA-session-wave-gov-mat-criteria-repair-1135-20260317-PASS
-iaa_token_file: .agent-admin/assurance/iaa-token-session-wave-gov-mat-criteria-repair-1135-20260317.md
-tasks_total: 12
+status: BATCH_A_COMPLETE_DELEGATING_BATCHES_BCD
+iaa_prebrief: COMMITTED
+batch_a_status: COMPLETE (16 RED tests written — T-W19-001 through T-W19-016)
+batch_b_status: IN_PROGRESS (schema-builder delegated)
+batch_c_status: IN_PROGRESS (api-builder delegated)
+batch_d_status: IN_PROGRESS (ui-builder delegated)
+batch_e_status: PENDING (depends on batch_b+c)
+batch_f_status: PENDING (depends on batch_a-e)
 tasks_done: 12
-tasks_pending: [T-GOV-1137 — pending CS2 assignment of Issue #1137]
-mode: POLC-Orchestration (governance-planning-only)
-governance_docs_to_update: [CRITERIA-PARSING-GAP-REGISTER.md, BUILD_PROGRESS_TRACKER.md, app-description.md, MAT_UX_WORKFLOW_AND_WIRING.md, functional-requirements.md, technical-requirements-specification.md, WAVE-19-PLAN-PROPOSAL.md]
-governance_docs_updated: [CRITERIA-PARSING-GAP-REGISTER.md (new), WAVE-19-PLAN-PROPOSAL.md (new), BUILD_PROGRESS_TRACKER.md, app-description.md, MAT_UX_WORKFLOW_AND_WIRING.md, functional-requirements.md, technical-requirements-specification.md]
-no_implementation_constraint: CONFIRMED
-issue_1137_assignment_note: Issue #1137 created but unassigned — CS2 must assign before Wave 19 commences
+tasks_total: 16
+last_updated: 2026-03-17
 ```
 
 ---
 
-*Authority: CS2 (@APGI-cmy) | LIVING_AGENT_SYSTEM.md v6.2.0 | Contract: 2.7.0*
+## Task Registry
+
+### Batch A — QA-to-Red (BLOCKING — must complete first)
+| Task | Test | Status |
+|------|------|--------|
+| T-W19A-001 | T-W19-002 criteria.number TEXT assertion | PENDING |
+| T-W19A-002 | T-W19-001/015 criteria.number = '1.4.1' format | PENDING |
+| T-W19A-003 | T-W19-003 MPS intent_statement column | PENDING |
+| T-W19A-004 | T-W19-004/012 MPS intent_statement non-null | PENDING |
+| T-W19A-005 | T-W19-005/006 audit_logs criteria_parsed row | PENDING |
+| T-W19A-006 | T-W19-007 zero-insert → criteria_parse_failed | PENDING |
+| T-W19A-007 | T-W19-008 criteria INSERT fail → rollback atomicity | PENDING |
+| T-W19A-008 | T-W19-010 Edge Fn startup validation | PENDING |
+| T-W19A-009 | T-W19-013 poll timeout user error | PENDING |
+| T-W19A-010 | T-W19-016 AI Gateway startup ValueError | PENDING |
+| T-W19A-011 | T-W19-011 CI schema validation | PENDING |
+| T-W19A-012 | T-W19-014 E2E LDCS fixture content | PENDING |
+
+### Batch B — Schema Migrations (depends on Batch A RED)
+| Task | Migration | Status |
+|------|-----------|--------|
+| T-W19B-001 | 20260317000001 criteria.number → TEXT | PENDING |
+| T-W19B-002 | 20260317000002 MPS intent_statement/guidance | PENDING |
+| T-W19B-003 | 20260317000003 parse_write_back_atomic RPC | PENDING |
+| T-W19B-004 | RLS policies for new MPS columns | PENDING |
+
+### Batch C — API/Edge Function (depends on Batch B)
+| Task | File | Status |
+|------|------|--------|
+| T-W19C-001 | Edge Fn: c.number (not idx+1) | PENDING |
+| T-W19C-002 | Edge Fn: MPS intent_statement + guidance | PENDING |
+| T-W19C-003 | Edge Fn: zero-insert assertion | PENDING |
+| T-W19C-004 | Edge Fn: atomic RPC wired | PENDING |
+| T-W19C-005 | Edge Fn: startup validation (AI_GATEWAY_URL) | PENDING |
+| T-W19C-006 | AI Gateway: MpsResult fields | PENDING |
+| T-W19C-007 | AI Gateway: system prompt update | PENDING |
+| T-W19C-008 | AI Gateway: SUPABASE_STORAGE_URL assertion | PENDING |
+| T-W19C-009 | Edge Fn: MPS number via normaliseMpsNumber TEXT | PENDING |
+
+### Batch D — UI (depends on Batch A)
+| Task | File | Status |
+|------|------|--------|
+| T-W19D-001 | Poll timeout 30min useCriteria.ts | PENDING |
+
+### Batch E — Integration (depends on B+C)
+| Task | Description | Status |
+|------|-------------|--------|
+| T-W19E-001 | AI_GATEWAY_URL Supabase secrets | PENDING |
+| T-W19E-002 | SUPABASE_STORAGE_URL Render env | PENDING |
+| T-W19E-003 | .env.example update | PENDING |
+| T-W19E-004 | CI schema validation check | PENDING |
+
+### Batch F — E2E Validation (depends on A-E)
+| Task | Description | Status |
+|------|-------------|--------|
+| T-W19F-001 | LDCS test fixture | PENDING |
+| T-W19F-002 | E2E test upload→criteria | PENDING |
+| T-W19F-003 | E2E staging smoke test | PENDING |
+
+---
+
+## Delegation Log
+
+| Timestamp | Builder | Batch | Status |
+|-----------|---------|-------|--------|
+| 2026-03-17T16:00 | qa-builder | Batch A | DELEGATED |
+

@@ -25,6 +25,7 @@ _REQUIRED_ENV_VARS: dict[str, str] = {
     "OPENAI_API_KEY": "test-openai-key-fixture",
     "SUPABASE_URL": "https://test-project.supabase.co",
     "SUPABASE_SERVICE_ROLE_KEY": "test-supabase-service-role-key-fixture",
+    "SUPABASE_STORAGE_URL": "https://test-project.supabase.co/storage/v1",
 }
 
 _APP_MODULE = "main"
