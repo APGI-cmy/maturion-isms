@@ -391,32 +391,40 @@ describe('Wave 19 — GAP-PARSE-002/GAP-PARSE-008: MPS intent_statement extracti
      *        column being written. Searching the file for `intent_statement` in proximity
      *        to `mini_performance_standards` yields no match — the field is never written.
      *
-     * GREEN: api-builder (T-W19C-002) adds `intent_statement: m.intent_statement` (or
-     *        equivalent) to the MPS insert/upsert body, after MpsResult is updated to
-     *        include this field (T-W19C-006 / T-W19-012).
+     * GREEN (Wave 19): api-builder (T-W19C-002) adds `intent_statement: m.intent_statement`
+     *        to the direct MPS upsert body.
+     * GREEN (Wave 20): api-builder (T-W20-001) replaces the direct MPS upsert with
+     *        supabase.rpc('parse_write_back_atomic', { p_mps: [..., { intent_statement }] }).
+     *        The intent_statement field is included in the p_mps payload object.
      *
      * Authority: GAP-PARSE-002, WAVE-19-PLAN-PROPOSAL.md T-W19C-002
      */
     const edgeFn = readEdgeFunction();
 
-    // The Edge Function must write intent_statement when inserting/upserting MPS rows.
-    // Check for `intent_statement` in proximity to the mini_performance_standards insert
-    // (within 3000 chars of the `mini_performance_standards` insert block)
+    // Accept either:
+    // (a) Direct MPS upsert with intent_statement: check near 'mini_performance_standards'
+    // (b) Atomic RPC path: check for intent_statement in the p_mps payload building section
     const mpsInsertIdx = edgeFn.indexOf("'mini_performance_standards'");
-    expect(
-      mpsInsertIdx,
-      '[T-W19-004] RED: Could not find mini_performance_standards insert block in Edge Function.',
-    ).toBeGreaterThan(-1);
 
-    const mpsInsertBlock = edgeFn.slice(
-      Math.max(0, mpsInsertIdx - 500),
-      Math.min(edgeFn.length, mpsInsertIdx + 3000),
-    );
-    const writesIntentStatement = /intent_statement/.test(mpsInsertBlock);
+    // For path (a): intent_statement within 3000 chars of mini_performance_standards reference
+    const mpsInsertBlock = mpsInsertIdx >= 0
+      ? edgeFn.slice(Math.max(0, mpsInsertIdx - 500), Math.min(edgeFn.length, mpsInsertIdx + 3000))
+      : '';
+    const directUpsertWritesIntentStatement = /intent_statement/.test(mpsInsertBlock);
+
+    // For path (b): intent_statement in the p_mps payload construction (near the RPC call)
+    const rpcIdx = edgeFn.search(/supabase\.rpc\s*\(\s*['"`]parse_write_back_atomic['"`]/i);
+    const rpcBlock = rpcIdx >= 0
+      ? edgeFn.slice(Math.max(0, rpcIdx - 3000), Math.min(edgeFn.length, rpcIdx + 1000))
+      : '';
+    const rpcPayloadWritesIntentStatement = /intent_statement/.test(rpcBlock);
+
+    const writesIntentStatement = directUpsertWritesIntentStatement || rpcPayloadWritesIntentStatement;
     expect(
       writesIntentStatement,
       '[T-W19-004] RED: Edge Function does not write `intent_statement` to mini_performance_standards.\n' +
-      'api-builder must add `intent_statement: m.intent_statement` to the MPS upsert body.\n' +
+      'Either add `intent_statement: m.intent_statement` to the MPS upsert body, OR\n' +
+      "include `intent_statement` in the p_mps payload passed to supabase.rpc('parse_write_back_atomic').\n" +
       `Edge Function path: ${EDGE_FN_PATH}`,
     ).toBe(true);
   });
