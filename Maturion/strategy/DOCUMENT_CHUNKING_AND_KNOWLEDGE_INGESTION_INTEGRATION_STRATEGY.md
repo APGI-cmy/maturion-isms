@@ -4,7 +4,7 @@
 |-------|-------|
 | **Document Type** | Strategy — CS2 Planning Output |
 | **Status** | CS2-AUTHORISED — Foreman Alignment Plan produced at `governance/EXECUTION/MAT_KNOWLEDGE_INGESTION_ALIGNMENT_PLAN.md` v1.0.0 |
-| **Version** | 1.0.0 |
+| **Version** | 1.0.1 |
 | **Date** | 2026-03-19 |
 | **Author** | GitHub Copilot (on behalf of CS2) |
 | **Location** | `Maturion/strategy/DOCUMENT_CHUNKING_AND_KNOWLEDGE_INGESTION_INTEGRATION_STRATEGY.md` |
