@@ -1387,15 +1387,16 @@
     },
     {
       "filename": "IAA_PRE_BRIEF_PROTOCOL.md",
-      "version": "1.1.0",
-      "file_hash": "c4f8d171ca9c9683025f6e7a14cf7c6908362a9c1e24f3c6ed0735453ef7238f",
-      "file_hash_sha256": "c4f8d171ca9c9683025f6e7a14cf7c6908362a9c1e24f3c6ed0735453ef7238f",
-      "effective_date": "2026-03-03",
+      "version": "1.2.0",
+      "file_hash": "db7c3ff310586f759c1338dcfb8335c6568a31c359b2648377296d77f8794b6c",
+      "file_hash_sha256": "db7c3ff310586f759c1338dcfb8335c6568a31c359b2648377296d77f8794b6c",
+      "effective_date": "2026-03-18",
       "description": "Defines the IAA Pre-Brief Protocol: proactive assurance criteria declaration at wave start, wave-current-tasks.md checklist schema, Foreman checklist management obligations, IAA invocation gate (CHECKLIST-GATE-001 to CHECKLIST-GATE-005), Pre-Brief Amendment protocol, wave_checklist PREHANDOVER field, and cross-agent interactions.",
       "type": "canon",
       "path": "governance/canon/IAA_PRE_BRIEF_PROTOCOL.md",
       "layer_down_status": "INTERNAL",
-      "provenance": "CS2-authorised via issue: Create Canon: IAA Pre-Brief Protocol (Proactive Assurance Criteria Declaration)"
+      "provenance": "CS2-authorised via issue: Create Canon: IAA Pre-Brief Protocol (Proactive Assurance Criteria Declaration)",
+      "change_note": "v1.2.0: PHASE_A_ADVISORY escape hatch removed; CS2-escalation-only IAA Unavailability Protocol added; iaa_prebrief_path field added to wave file header schema; IAA Token Self-Certification Guard section added (PHASE_B_BLOCKING_TOKEN requirement); rejection criteria table updated with CI enforcement column per S-035 structural gate issue"
     },
     {
       "filename": "INITIALIZATION_COMPLETENESS_GATE.md",

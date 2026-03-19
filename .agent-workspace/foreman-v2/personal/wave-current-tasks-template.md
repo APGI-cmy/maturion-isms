@@ -5,6 +5,7 @@
 **Date**: <!-- YYYY-MM-DD -->
 **Branch**: <!-- e.g. fix/wave13-schema-audit -->
 **CS2 Authorization**: <!-- link to CS2 approval comment -->
+**iaa_prebrief_path**: PENDING
 
 ---
 
@@ -39,5 +40,7 @@
 ---
 
 *Instructions: Copy this template to `wave-current-tasks.md` (same directory) at wave start. Update the task table after each builder delegation and each IAA verdict. The re-anchor workflow reads the first 500 chars of this file — keep the task table near the top.*
+
+*`iaa_prebrief_path` field: Set to `PENDING` at wave start. Update to the Pre-Brief artifact path once the IAA issues the Pre-Brief (e.g., `.agent-admin/assurance/iaa-prebrief-wave<N>.md`). A value of `PENDING` blocks all file-write and report_progress actions per IAA_PRE_BRIEF_PROTOCOL.md v1.2.0.*
 
 *Do NOT rename this template file. The active file must be named exactly `wave-current-tasks.md`.*

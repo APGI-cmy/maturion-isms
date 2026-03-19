@@ -1,10 +1,13 @@
 # IAA PRE-BRIEF PROTOCOL
 
-**Status**: CANONICAL | **Version**: 1.1.0 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.2.0 | **Authority**: CS2  
 **Date**: 2026-03-03  
 **Amended**: 2026-03-03 — v1.1.0: Added §Wave Checklist Management, §Foreman Handover Gate,
 §IAA Invocation Gate, §Mid-Wave Task Addition, wave_checklist PREHANDOVER field, and commit
-discipline requirements
+discipline requirements  
+**Amended**: 2026-03-18 — v1.2.0: Removed PHASE_A_ADVISORY escape hatch; replaced with
+CS2-escalation-only path (§IAA Unavailability Protocol). PHASE_A_ADVISORY deferral abolished.
+`iaa_prebrief_path` field added to wave-current-tasks.md schema (§Wave Task List Schema).
 
 ---
 
@@ -54,10 +57,14 @@ with a `PRE-BRIEF` action flag.
 2. The wave task list contains at least one qualifying task (per §Qualifying Tasks below)
 3. No Pre-Brief already exists for this wave number
 
-If the IAA tool call fails or is unavailable, the Foreman records `PHASE_A_ADVISORY` status
-and the Pre-Brief is deferred until IAA is accessible. Wave execution **may proceed** in
-`PHASE_A_ADVISORY` mode, but Pre-Brief must be completed before the first qualifying PR opens
-for review.
+If the IAA tool call fails or is unavailable, the Foreman MUST NOT proceed. The Foreman MUST:
+1. Record the tool failure in session memory with timestamp and error detail.
+2. Post a comment on the current wave issue notifying CS2 (@APGI-cmy) of IAA unavailability.
+3. HALT all wave execution immediately. Do not write files, call `report_progress`, or open PRs.
+4. Await explicit CS2 written instruction before resuming any wave action.
+
+The `PHASE_A_ADVISORY` deferral mode is **abolished**. There is no IAA-unavailable bypass.
+Wave execution requires an active, committed IAA Pre-Brief. No Pre-Brief = no build actions.
 
 ---
 
@@ -248,6 +255,28 @@ by an indented metadata block:
 **Prohibited**: Removing a task line from the checklist at any point. Silent removal is a
 governance violation equivalent to modifying evidence in-place.
 
+### Wave File Header Schema
+
+The `wave-current-tasks.md` file MUST include the following header fields:
+
+```markdown
+**Wave**: <N>
+**Session ID**: <foreman-session-id>
+**Date**: <YYYY-MM-DD>
+**Branch**: <branch-name>
+**Foreman Session**: foreman-v2
+**CS2 Authorization**: <reference or PENDING>
+**iaa_prebrief_path**: PENDING | <path/to/iaa-prebrief-*.md>
+**Status**: <phase-status-token>  <!-- e.g., PHASE_A_PREBRIEF, PHASE_B_BUILD, COMPLETE -->
+```
+
+The `iaa_prebrief_path` field is a machine-readable gate signal:
+- `PENDING` — Pre-Brief has not yet been issued. **Build actions are BLOCKED.** No file-write,
+  `report_progress`, or PR open is permitted until this field is resolved.
+- `<path>` — Pre-Brief artifact path. Build actions are permitted once the referenced file exists.
+
+The CI preflight gate reads this field. A value of `PENDING` causes the CI gate to fail.
+
 ### Example Checklist
 
 ```markdown
@@ -255,7 +284,7 @@ governance violation equivalent to modifying evidence in-place.
 
 **Wave**: 10
 **Foreman**: foreman-v2
-**IAA Pre-Brief**: .agent-admin/assurance/iaa-prebrief-wave10.md
+**iaa_prebrief_path**: .agent-admin/assurance/iaa-prebrief-wave10.md
 **Status**: IN PROGRESS
 
 ---
@@ -565,6 +594,60 @@ IAA's final verdict, which cross-references Phase 0 (Pre-Brief) and the wave che
 
 ---
 
+## IAA Token Self-Certification Guard
+
+### Purpose
+
+This section defines the structural guard that prevents Foreman self-authoring of IAA tokens.
+A self-authored token bypasses the double-layer QA model and is a constitutional violation.
+
+### PHASE_B_BLOCKING_TOKEN Field Requirement
+
+Every IAA token file (`.agent-admin/assurance/iaa-token-*.md`) MUST contain the field:
+
+```
+PHASE_B_BLOCKING_TOKEN: <value>
+```
+
+This field is **contractually producible only by the IAA** (per `independent-assurance-agent.md`
+§Phase 4). It MUST NOT appear in PREHANDOVER proofs or session memory authored by Foreman.
+Its presence in a token file proves the token was issued by the IAA, not self-authored.
+
+### Rejection Criteria
+
+A PR is **auto-rejected** by the applicable CI gates (e.g. `preflight-evidence-gate`) if any
+of the following CI-enforced conditions are true:
+
+| Condition | Violation Class | CI Enforced |
+|-----------|----------------|-------------|
+| IAA token file absent (but handover claims IAA PASS) | IAA-SKIP-001 | NO — human-review only (currently not CI-automated) |
+| `PHASE_B_BLOCKING_TOKEN:` field missing from token file | IAA-SELF-CERT-001 | YES — `iaa-token-self-cert-check` job |
+| Token file authored by the same agent as the PREHANDOVER proof | IAA-SELF-CERT-002 | NO — human-review only (git author analysis not CI-automatable) |
+| Token value is `PHASE_A_ADVISORY` | IAA-PHASE-A-BYPASS-001 | YES — `iaa-token-self-cert-check` job |
+| Token value is blank or `PENDING` | IAA-SELF-CERT-001 | YES — `iaa-token-self-cert-check` job |
+
+### CI Enforcement
+
+The `preflight-evidence-gate` workflow’s `iaa-token-self-cert-check` job checks for
+`PHASE_B_BLOCKING_TOKEN:` in the IAA token file and fails the check if the field is
+absent or the value is invalid.
+
+---
+
+## IAA Unavailability Protocol
+
+When the IAA tool call fails or is unavailable, the **only** permitted path is:
+
+1. Record tool failure in session memory (timestamp + error).
+2. Post an issue comment on the current wave issue: `@APGI-cmy IAA unavailable — [error]. Wave halted per IAA_PRE_BRIEF_PROTOCOL.md v1.2.0.`
+3. HALT. Do not write files, call `report_progress`, or open PRs.
+4. Await explicit CS2 written authorisation to resume.
+
+**PHASE_A_ADVISORY is abolished.** There is no fallback or deferral path. No Pre-Brief = no
+build actions. IAA availability is a prerequisite, not a nice-to-have.
+
+---
+
 ## References
 
 - `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.1.0 — IAA class definition and trigger table
@@ -577,4 +660,4 @@ IAA's final verdict, which cross-references Phase 0 (Pre-Brief) and the wave che
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.1.0 | Effective: 2026-03-03*
+*Authority: CS2 (Johan Ras) | Version: 1.2.0 | Effective: 2026-03-18*

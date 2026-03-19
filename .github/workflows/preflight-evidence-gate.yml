@@ -3,13 +3,18 @@ name: Preflight Evidence Gate
 # Authority: LIVING_AGENT_SYSTEM.md v6.2.0, AGENT_PREFLIGHT_PATTERN.md v1.0.0
 # Purpose: Block PRs from agent-driven work unless the active agent's session memory
 #          contains a non-empty phase_1_preflight evidence block.
+#          Also enforces IAA Pre-Brief gate per IAA_PRE_BRIEF_PROTOCOL.md v1.2.0:
+#          wave-current-tasks.md must exist AND an iaa-prebrief-*.md must exist in
+#          .agent-admin/assurance/ before any foreman PR may be merged.
 # Violation class: GOV-BREACH-AIMC-W5-002 (preflight skip)
+#                  HALT-008 (pre-brief or wave tasks absent before file-write/PR open)
 # Assignee: Copilot (automation script / CI infra update)
 
 on:
   # FIX: Changed from pull_request to pull_request_target to bypass Copilot agent approval gate
   pull_request_target:
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -184,4 +189,192 @@ jobs:
             echo "  - copilot-instructions.md (repo-root enforcement)"
             echo ""
             exit 1
+          fi
+
+
+  iaa-prebrief-check:
+    name: "preflight/iaa-prebrief-existence"
+    runs-on: ubuntu-latest
+
+    # Only enforce for Copilot/foreman PRs: branches starting with 'copilot/'
+    # or PRs authored by the Copilot bot
+    if: >-
+      startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot'
+
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+
+      - name: Check IAA Pre-Brief and Wave Tasks existence (HALT-008)
+        id: prebrief_check
+        run: |
+          echo "=== IAA Pre-Brief Existence Gate (HALT-008) ==="
+          echo "Authority: IAA_PRE_BRIEF_PROTOCOL.md v1.2.0"
+          echo "Violation class: HALT-008 (prebrief_or_wavetasks_absent)"
+          echo ""
+
+          FAIL=false
+
+          # ----------------------------------------------------------------
+          # Check 1: wave-current-tasks.md must exist on this branch
+          # ----------------------------------------------------------------
+          WAVE_TASKS_PATH=".agent-workspace/foreman-v2/personal/wave-current-tasks.md"
+          if [ -f "$WAVE_TASKS_PATH" ]; then
+            echo "✅ wave-current-tasks.md found at: $WAVE_TASKS_PATH"
+          else
+            echo "❌ MISSING: $WAVE_TASKS_PATH"
+            FAIL=true
+          fi
+
+          # ----------------------------------------------------------------
+          # Check 2: iaa-prebrief-*.md must exist in .agent-admin/assurance/
+          # ----------------------------------------------------------------
+          ASSURANCE_DIR=".agent-admin/assurance"
+          PREBRIEF_FOUND=false
+          PREBRIEF_PATH=""
+          if [ -d "$ASSURANCE_DIR" ]; then
+            while IFS= read -r -d '' f; do
+              if ! grep -qi "SUPERSEDED" "$f" 2>/dev/null; then
+                PREBRIEF_FOUND=true
+                PREBRIEF_PATH="$f"
+                break
+              fi
+            done < <(find "$ASSURANCE_DIR" -name "iaa-prebrief-*.md" -print0 2>/dev/null)
+          fi
+
+          if $PREBRIEF_FOUND; then
+            echo "✅ IAA Pre-Brief artifact found at: $PREBRIEF_PATH"
+          else
+            echo "❌ MISSING: No active iaa-prebrief-*.md in $ASSURANCE_DIR"
+            FAIL=true
+          fi
+
+          # ----------------------------------------------------------------
+          # Check 3: iaa_prebrief_path field in wave-current-tasks.md must
+          #          not be PENDING (if the file exists)
+          # ----------------------------------------------------------------
+          if [ -f "$WAVE_TASKS_PATH" ]; then
+            if grep -q "iaa_prebrief_path:.*PENDING" "$WAVE_TASKS_PATH" 2>/dev/null; then
+              echo "❌ iaa_prebrief_path is still PENDING in $WAVE_TASKS_PATH"
+              echo "   Update iaa_prebrief_path to the Pre-Brief artifact path before opening a PR."
+              FAIL=true
+            elif grep -q "iaa_prebrief_path:" "$WAVE_TASKS_PATH" 2>/dev/null; then
+              PREBRIEF_FIELD=$(grep "iaa_prebrief_path:" "$WAVE_TASKS_PATH" | head -1)
+              echo "✅ iaa_prebrief_path field resolved: $PREBRIEF_FIELD"
+            else
+              echo "⚠️  iaa_prebrief_path field absent from $WAVE_TASKS_PATH"
+              echo "   Add iaa_prebrief_path per wave-current-tasks-template.md (IAA_PRE_BRIEF_PROTOCOL.md v1.2.0)"
+              FAIL=true
+            fi
+          fi
+
+          echo ""
+          echo "=== IAA Pre-Brief Gate Result ==="
+          echo ""
+
+          if [ "$FAIL" = true ]; then
+            echo "❌ FAIL — IAA Pre-Brief gate: HALT-008"
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "🚨 HALT-008 — PRE-BRIEF GATE FAILED"
+            echo ""
+            echo "Before any file-write, report_progress, or PR open, Foreman MUST verify:"
+            echo "  (a) wave-current-tasks.md exists at: .agent-workspace/foreman-v2/personal/wave-current-tasks.md"
+            echo "  (b) iaa-prebrief-*.md exists in: .agent-admin/assurance/"
+            echo "  (c) iaa_prebrief_path field in wave-current-tasks.md is NOT PENDING"
+            echo ""
+            echo "Per IAA_PRE_BRIEF_PROTOCOL.md v1.2.0:"
+            echo "  - PHASE_A_ADVISORY is abolished. There is no IAA-unavailable bypass."
+            echo "  - If IAA is unavailable, HALT and notify CS2 (@APGI-cmy) via issue comment."
+            echo "  - No Pre-Brief = no build actions."
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            exit 1
+          else
+            echo "✅ PASS — IAA Pre-Brief gate passed. All pre-brief artifacts present."
+            echo ""
+            echo "Per IAA_PRE_BRIEF_PROTOCOL.md v1.2.0 and foreman-v2-agent.md HALT-008."
+          fi
+
+  iaa-token-self-cert-check:
+    name: "preflight/iaa-token-self-certification"
+    runs-on: ubuntu-latest
+
+    # Only enforce for Copilot/foreman PRs
+    if: >-
+      startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot'
+
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+
+      - name: Check IAA token self-certification guard
+        id: token_self_cert_check
+        run: |
+          echo "=== IAA Token Self-Certification Guard ==="
+          echo "Authority: IAA_PRE_BRIEF_PROTOCOL.md v1.2.0 §IAA Token Self-Certification Guard"
+          echo ""
+
+          ASSURANCE_DIR=".agent-admin/assurance"
+          TOKEN_FILES=$(find "$ASSURANCE_DIR" -name "iaa-token-*.md" 2>/dev/null | head -20)
+
+          if [ -z "$TOKEN_FILES" ]; then
+            echo "ℹ️  No IAA token files found in $ASSURANCE_DIR — skipping self-cert check."
+            echo "   (Token check is only enforced when token files are present on this branch.)"
+            exit 0
+          fi
+
+          FAIL=false
+          while IFS= read -r token_file; do
+            echo "Checking token file: $token_file"
+
+            # Check 1: PHASE_B_BLOCKING_TOKEN field must be present and non-empty
+            if grep -q "PHASE_B_BLOCKING_TOKEN:" "$token_file" 2>/dev/null; then
+              TOKEN_VALUE=$(grep "PHASE_B_BLOCKING_TOKEN:" "$token_file" | head -1 | sed 's/.*PHASE_B_BLOCKING_TOKEN://;s/^[[:space:]]*//;s/[[:space:]]*$//')
+              if [ -z "$TOKEN_VALUE" ]; then
+                echo "  ❌ PHASE_B_BLOCKING_TOKEN field is EMPTY or whitespace-only in $token_file — IAA-SELF-CERT-001"
+                FAIL=true
+              elif [ "$TOKEN_VALUE" = "PENDING" ]; then
+                echo "  ❌ PHASE_B_BLOCKING_TOKEN is PENDING in $token_file — IAA-SELF-CERT-002"
+                FAIL=true
+              else
+                echo "  ✅ PHASE_B_BLOCKING_TOKEN present and non-empty, value: $TOKEN_VALUE"
+              fi
+            else
+              echo "  ❌ PHASE_B_BLOCKING_TOKEN field MISSING from $token_file — IAA-SELF-CERT-001"
+              FAIL=true
+            fi
+
+            # Check 2: Token must not be PHASE_A_ADVISORY
+            if grep -q "PHASE_A_ADVISORY" "$token_file" 2>/dev/null; then
+              echo "  ❌ Token contains PHASE_A_ADVISORY — IAA-PHASE-A-BYPASS-001"
+              FAIL=true
+            else
+              echo "  ✅ No PHASE_A_ADVISORY in token file"
+            fi
+
+          done <<< "$TOKEN_FILES"
+
+          echo ""
+          if [ "$FAIL" = true ]; then
+            echo "❌ FAIL — IAA token self-certification guard failed"
+            echo ""
+            echo "Violation: IAA-SELF-CERT-001, IAA-SELF-CERT-002 or IAA-PHASE-A-BYPASS-001"
+            echo "The IAA token file must contain a PHASE_B_BLOCKING_TOKEN field (non-empty, not PENDING)."
+            echo "This field is only contractually producible by the IAA."
+            echo "Its absence, a PENDING value, or a PHASE_A_ADVISORY value indicates self-authoring."
+            echo ""
+            exit 1
+          else
+            echo "✅ PASS — All IAA token files pass self-certification guard."
           fi
