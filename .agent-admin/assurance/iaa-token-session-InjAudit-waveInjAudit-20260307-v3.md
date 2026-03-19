@@ -9,6 +9,7 @@
 **Producing Agent**: Copilot (CS2-Direct)
 **IAA Agent**: independent-assurance-agent v6.2.0
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: REJECTION-PACKAGE-InjAudit-waveInjAudit-20260307-v3
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
