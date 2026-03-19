@@ -12,14 +12,15 @@
 ## Re-Anchor Pulse
 
 ```yaml
-status: PHASE_3_POLC_ORCHESTRATION_IN_PROGRESS
+status: PHASE_4_HANDOVER_COMPLETE
 wave: dckis-alignment-plan
 iaa_prebrief: COMMITTED
-task_1_alignment_plan: IN_PROGRESS
-task_2_dckis_header_update: PENDING
-task_3_session_memory: PENDING
-task_4_prehandover: PENDING
-tasks_done: 0
+iaa_r2_token: IAA-session-dckis-alignment-plan-20260319-R2-PASS
+task_1_alignment_plan: DONE
+task_2_dckis_header_update: DONE
+task_3_session_memory: DONE
+task_4_prehandover: DONE
+tasks_done: 4
 tasks_total: 4
 last_updated: 2026-03-19
 ```
@@ -30,10 +31,10 @@ last_updated: 2026-03-19
 
 | # | Task | Assigned Agent | Status | PR / Evidence |
 |---|------|----------------|--------|---------------|
-| T-DCKIS-001 | Produce MAT Knowledge Ingestion Alignment Plan document | foreman-v2-agent (planning output) | 🟡 IN PROGRESS | `governance/EXECUTION/MAT_KNOWLEDGE_INGESTION_ALIGNMENT_PLAN.md` |
-| T-DCKIS-002 | Update DCKIS strategy document header (DRAFT → CS2-AUTHORISED per issue) | governance-liaison-isms-agent | 🔴 PENDING | `Maturion/strategy/DOCUMENT_CHUNKING_AND_KNOWLEDGE_INGESTION_INTEGRATION_STRATEGY.md` |
-| T-DCKIS-003 | Write session memory | foreman-v2-agent (governance admin) | 🔴 PENDING | `.agent-workspace/foreman-v2/memory/session-dckis-alignment-plan-20260319.md` |
-| T-DCKIS-004 | Write PREHANDOVER proof | foreman-v2-agent (governance admin) | 🔴 PENDING | `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-dckis-alignment-plan-20260319.md` |
+| T-DCKIS-001 | Produce MAT Knowledge Ingestion Alignment Plan document | foreman-v2-agent (planning output) | 🟢 DONE | `governance/EXECUTION/MAT_KNOWLEDGE_INGESTION_ALIGNMENT_PLAN.md` — committed 3982db0 |
+| T-DCKIS-002 | Update DCKIS strategy document header (DRAFT → CS2-AUTHORISED per issue) | foreman-v2-agent | 🟢 DONE | `Maturion/strategy/DOCUMENT_CHUNKING_AND_KNOWLEDGE_INGESTION_INTEGRATION_STRATEGY.md` — committed 3982db0 |
+| T-DCKIS-003 | Write session memory | foreman-v2-agent (governance admin) | 🟢 DONE | `.agent-workspace/foreman-v2/memory/session-dckis-alignment-plan-20260319.md` — committed 3982db0 |
+| T-DCKIS-004 | Write PREHANDOVER proof | foreman-v2-agent (governance admin) | 🟢 DONE | `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-dckis-alignment-plan-20260319.md` — committed 3982db0 |
 
 **Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED
 
@@ -43,16 +44,18 @@ last_updated: 2026-03-19
 
 | PR # | Token | Date |
 |------|-------|------|
-| — | PENDING | — |
+| IAA Pre-Brief | Committed at b403b44 | 2026-03-19 |
+| IAA R1 | IAA-session-dckis-alignment-plan-20260319-REJECTION | 2026-03-19 |
+| IAA R2 | IAA-session-dckis-alignment-plan-20260319-R2-PASS | 2026-03-19 |
 
 ---
 
 ## Wave Completion Gate
 
-- [ ] T-DCKIS-001: Alignment Plan document committed
-- [ ] T-DCKIS-002: DCKIS header updated (delegated to governance-liaison)
-- [ ] T-DCKIS-003: Session memory written
-- [ ] T-DCKIS-004: PREHANDOVER proof committed
-- [ ] IAA final audit invoked and ASSURANCE-TOKEN received
-- [ ] Token ceremony complete
+- [x] T-DCKIS-001: Alignment Plan document committed
+- [x] T-DCKIS-002: DCKIS header updated
+- [x] T-DCKIS-003: Session memory written
+- [x] T-DCKIS-004: PREHANDOVER proof committed
+- [x] IAA R2 ASSURANCE-TOKEN received: `IAA-session-dckis-alignment-plan-20260319-R2-PASS`
+- [x] Token file committed: `.agent-admin/assurance/iaa-token-session-dckis-alignment-plan-20260319-R2.md`
 - [ ] CS2 notified for merge approval
