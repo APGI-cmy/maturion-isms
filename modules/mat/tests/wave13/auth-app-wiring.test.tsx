@@ -94,34 +94,44 @@ describe('T-W13-AUTH-APP: Auth App Wiring', () => {
     ).toMatch(/AuthProvider/);
   });
 
-  it('T-W13-AUTH-APP-3: App.tsx imports and wraps the app with QueryClientProvider', () => {
-    // RED: fails until ui-builder adds QueryClientProvider to App.tsx
+  it('T-W13-AUTH-APP-3: main.tsx provides the app with QueryClientProvider', () => {
+    // Updated: QueryClientProvider was previously double-wrapped (both App.tsx and main.tsx).
+    // The redundant wrapper has been removed from App.tsx; main.tsx is now the single
+    // source of truth for QueryClient configuration (staleTime, retry).
     //
-    // App.tsx must import QueryClientProvider and QueryClient from @tanstack/react-query
-    // and wrap the app so that all useMutation / useQuery hooks work.
-    // Without this, any component calling a react-query hook will throw:
-    //   "No QueryClient set, use QueryClientProvider to set one"
+    // App.tsx must NOT double-wrap with QueryClientProvider — that causes the inner
+    // client (with default settings) to shadow the configured one in main.tsx.
     //
-    // Currently App.tsx has no import of QueryClientProvider.
+    // This test verifies that main.tsx imports and uses QueryClientProvider so that
+    // all useMutation / useQuery hooks work throughout the app.
+
+    const mainFile = path.join(FRONTEND_SRC, 'main.tsx');
 
     expect(
-      fs.existsSync(APP_FILE),
-      `App.tsx not found at ${APP_FILE}`
+      fs.existsSync(mainFile),
+      `main.tsx not found at ${mainFile}`
     ).toBe(true);
 
-    const source = fs.readFileSync(APP_FILE, 'utf-8');
+    const mainSrc = fs.readFileSync(mainFile, 'utf-8');
 
-    // RED: QueryClientProvider is not imported from @tanstack/react-query
+    // Assert: QueryClientProvider is imported in main.tsx
     expect(
-      source,
-      'App.tsx must import QueryClientProvider from @tanstack/react-query'
+      mainSrc,
+      'main.tsx must import QueryClientProvider from @tanstack/react-query'
     ).toMatch(/import.*QueryClientProvider.*@tanstack\/react-query|import.*@tanstack\/react-query.*QueryClientProvider/);
 
-    // RED: <QueryClientProvider> is not used in JSX
+    // Assert: <QueryClientProvider> is used in main.tsx JSX
     expect(
-      source,
-      'App.tsx must use <QueryClientProvider client={...}> to wrap the app'
-    ).toMatch(/QueryClientProvider/);
+      mainSrc,
+      'main.tsx must use <QueryClientProvider client={...}> to wrap the App'
+    ).toMatch(/<QueryClientProvider[\s>]/);
+
+    // Assert: App.tsx does NOT double-wrap (no <QueryClientProvider> in App.tsx JSX)
+    const appSrc = fs.readFileSync(APP_FILE, 'utf-8');
+    expect(
+      appSrc,
+      'App.tsx must NOT contain a <QueryClientProvider> wrapper (redundant double-wrap removed — use main.tsx provider only)'
+    ).not.toMatch(/<QueryClientProvider/);
   });
 
   it('T-W13-AUTH-APP-4: App.tsx has auth-guarded routes (ProtectedRoute or login redirect)', () => {
@@ -173,5 +183,35 @@ describe('T-W13-AUTH-APP: Auth App Wiring', () => {
       source,
       'LoginPage.tsx must call supabase.auth.signInWithPassword, supabase.auth.signUp, or supabase.auth — implement real Supabase auth'
     ).toMatch(/signInWithPassword|signUp|supabase\.auth/);
+  });
+
+  it('T-W13-AUTH-APP-6: AuthContext clears the react-query cache on auth transitions (SIGNED_OUT / SIGNED_IN)', () => {
+    // Removing the redundant QueryClientProvider from App.tsx means all components
+    // now share the single configured QueryClient from main.tsx (staleTime: 5 min).
+    // Session-agnostic query keys (e.g. ['user-profile'], ['audits']) would serve
+    // the previous user's cached data to a newly signed-in user for up to 5 minutes.
+    //
+    // Fix: AuthContext must call queryClient.clear() on SIGNED_OUT and SIGNED_IN
+    // events so the cache is always clean after an auth transition.
+
+    const source = fs.readFileSync(AUTH_CONTEXT_FILE, 'utf-8');
+
+    // AuthContext must import useQueryClient to access the shared QueryClient
+    expect(
+      source,
+      'AuthContext.tsx must import useQueryClient from @tanstack/react-query'
+    ).toMatch(/import\s+\{[^}]*useQueryClient[^}]*\}\s+from\s+['"]@tanstack\/react-query['"]/);
+
+    // AuthContext must call queryClient.clear() to evict stale data on auth transitions
+    expect(
+      source,
+      'AuthContext.tsx must call queryClient.clear() to prevent cross-user stale data after sign-out/sign-in'
+    ).toMatch(/queryClient\.clear\(\)/);
+
+    // AuthContext must guard the clear() call using an explicit event === 'SIGNED_OUT' or event === 'SIGNED_IN' check
+    expect(
+      source,
+      "AuthContext.tsx must check `event === 'SIGNED_OUT'` or `event === 'SIGNED_IN'` before clearing cache"
+    ).toMatch(/event\s*===\s*['"]SIGNED_OUT['"]|event\s*===\s*['"]SIGNED_IN['"]/);
   });
 });
