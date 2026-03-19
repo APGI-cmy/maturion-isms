@@ -13,7 +13,7 @@
 | **Location** | `governance/EXECUTION/MAT_KNOWLEDGE_INGESTION_ALIGNMENT_PLAN.md` |
 | **IAA Pre-Brief** | `.agent-admin/assurance/iaa-prebrief-dckis-alignment-plan.md` |
 
-> **Note on DCKIS Strategy Document Header**: The `DOCUMENT_CHUNKING_AND_KNOWLEDGE_INGESTION_INTEGRATION_STRATEGY.md` currently reads `DRAFT — Awaiting CS2 Review`. The CS2 GitHub issue triggering this alignment plan constitutes CS2 approval of the strategy. `governance-liaison-isms-agent` is tasked (Task T-DCKIS-002) to update the header to `CS2-AUTHORISED` citing the triggering issue. No implementation wave may begin for any Pipeline 2 work until that header update is merged.
+> **Note on DCKIS Strategy Document Header**: The `DOCUMENT_CHUNKING_AND_KNOWLEDGE_INGESTION_INTEGRATION_STRATEGY.md` header is set to `CS2-AUTHORISED`, with the CS2 GitHub issue that triggered this alignment plan cited as the approving authority. No implementation wave may begin for any Pipeline 2 work unless this CS2 authorisation remains in force and wave-specific CS2 wave-start authorisation has been granted.
 
 ---
 
