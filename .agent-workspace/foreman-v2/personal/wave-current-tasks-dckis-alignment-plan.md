@@ -1,4 +1,4 @@
-# Wave DCKIS-ALIGNMENT-PLAN — MAT Knowledge Ingestion Alignment Plan — Current Tasks
+# Wave DCKIS-ALIGNMENT-PLAN — MAT Knowledge Ingestion Alignment Plan — Historical Snapshot (not current wave state)
 
 **Wave**: DCKIS Alignment Plan (DCKIS v1.0.0 — Wave Strategy for Document Chunking Integration)
 **Session ID**: session-dckis-alignment-plan-20260319
@@ -9,10 +9,12 @@
 
 ---
 
-## Re-Anchor Pulse
+## Re-Anchor Pulse (Historical Snapshot)
+
+_This file captures an early Phase 3 snapshot of the wave state. For the canonical current status (including final IAA R2 token), see `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`._
 
 ```yaml
-status: PHASE_3_POLC_ORCHESTRATION_IN_PROGRESS
+status: SNAPSHOT_PHASE_3_POLC_ORCHESTRATION_IN_PROGRESS
 wave: dckis-alignment-plan
 iaa_prebrief: COMMITTED
 task_1_alignment_plan: IN_PROGRESS
@@ -21,6 +23,9 @@ task_3_session_memory: PENDING
 task_4_prehandover: PENDING
 tasks_done: 0
 tasks_total: 4
+snapshot: true
+snapshot_label: "Early Phase 3 state — superseded by wave-current-tasks.md"
+final_wave_state: COMPLETED_IAA_R2
 last_updated: 2026-03-19
 ```
 
