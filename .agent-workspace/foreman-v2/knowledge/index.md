@@ -2,7 +2,7 @@
 
 **Agent**: foreman-v2  
 **Contract Version**: 2.5.0  
-**Knowledge Version**: 2.2.0  
+**Knowledge Version**: 2.3.0  
 **Last Updated**: 2026-03-18  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
@@ -18,7 +18,7 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 | File | Purpose | Version |
 |------|---------|---------|
 | `index.md` (this file) | Knowledge entry point and version reference | 2.1.0 |
-| `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 3.9.0 |
+| `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 4.0.0 |
 | `specialist-registry.md` | Registry of all delegable agents with capabilities and separation-of-duties boundary | 1.0.0 |
 | `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 |
 | `prehandover-template.md` | **PHASE 4 §S-009** — PREHANDOVER proof template with mandatory IAA Agent Response (verbatim) section per FAIL-ONLY-ONCE v1.8.0 S-009; `## Environment Parity` section per OVL-CI-006; `## Pre-IAA Commit Gate` MANDATORY STOP section per A-021 | 1.6.0 |
@@ -123,6 +123,7 @@ All verb classification and mode-switching decisions MUST reference `ECOSYSTEM_V
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.3.0 | 2026-03-18 | FAIL-ONLY-ONCE.md bumped to v4.0.0 — INC-BLANK-FRONTEND-PREBRIEF-001 registered (IAA Pre-Brief and handover token skipped: blank frontend fix; eleventh occurrence of A-031+A-014 violation class); S-035 COPILOT-BUILDER-ROLE-LABEL-BYPASS-PROHIBITION added; A-035 candidate documented; index version bumped per OVL-KG-ADM-002 |
 | 2.2.0 | 2026-03-18 | wave-reconciliation-checklist.md v1.0.0 added — post-wave incident → NBR entry mandatory checklist, liveness verification, evidence completeness gate; WAVE-CURRENT-TASKS-PROTOCOL.md bumped to v1.1.0 with wave-close reconciliation step; CS2 mandate from wave 19/20 retrospective (PR #1142 review) |
 | 2.1.0 | 2026-03-08 | FAIL-ONLY-ONCE.md bumped to v3.4.0 — INC-ALCF-001 registered (schema column mismatch escaped IAA gate: audit_logs INSERT/SELECT used non-existent columns; REMEDIATED in wave-audit-log-column-fix); S-028 SCHEMA-COLUMN-COMPLIANCE-MANDATORY added; index version bumped per OVL-KG-002 |
 | 2.0.0 | 2026-03-08 | FAIL-ONLY-ONCE.md bumped to v3.1.0 — INC-OPOJD-W15R-QA-001 recorded (missing GitHub issue for T-W15R-QA-001 delegation); S-025 DELEGATION-ISSUE-REQUIRED added; footer version corrected; maturion-isms#1000 created; index bumped per OVL-KG-002 |
