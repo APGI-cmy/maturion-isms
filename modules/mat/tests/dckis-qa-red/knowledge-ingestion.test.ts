@@ -203,10 +203,10 @@ describe('DCKIS-QA-RED — Pipeline 2 MAT Knowledge Ingestion (12 RED gate tests
     //   - domainSourceMap / domainToSource / DOMAIN_SOURCE_MAP object literals
     //   - switch (domain) { case ...: source = ... }
     //   - domain: 'X', source: 'Y'  (explicit field pair in a record/tuple)
-    const hasDomainMapping =
-      /domainSourceMap|domainToSource|DOMAIN_SOURCE_MAP|domain.*:\s*['"].*['"].*source|switch\s*\(.*domain/i.test(
-        content,
-      );
+    const hasDomainMapObject = /domainSourceMap|domainToSource|DOMAIN_SOURCE_MAP/i.test(content);
+    const hasSwitchStatement  = /switch\s*\(.*domain/i.test(content);
+    const hasDomainSourcePair = /domain.*:\s*['"].*['"].*source/i.test(content);
+    const hasDomainMapping    = hasDomainMapObject || hasSwitchStatement || hasDomainSourcePair;
 
     expect(
       hasDomainMapping,
@@ -363,10 +363,12 @@ describe('DCKIS-QA-RED — Pipeline 2 MAT Knowledge Ingestion (12 RED gate tests
     //   - ['.docx', '.pdf', '.txt', '.md'] (array literal)
     //   - /\.(docx|pdf|txt|md)$/ (regex literal)
     //   - if (!allowedExtensions.includes(ext)) / throw / return error
-    const hasValidationLogic =
-      /allowedExt|validExt|ALLOWED_EXT|\['\.docx|\/\\\.\(docx|extension.*includes|includes.*extension|ext.*not.*allowed|invalid.*ext|unsupported.*file/i.test(
-        content,
-      );
+    const hasAllowedExtArray    = /allowedExt|validExt|ALLOWED_EXT|\['\.docx/i.test(content);
+    const hasExtensionRegex     = /\/\\\.\(docx/i.test(content);
+    const hasValidationIdent    = /extension.*includes|includes.*extension/i.test(content);
+    const hasValidationConditional = /ext.*not.*allowed|invalid.*ext|unsupported.*file/i.test(content);
+    const hasValidationLogic    =
+      hasAllowedExtArray || hasExtensionRegex || hasValidationIdent || hasValidationConditional;
     expect(
       hasValidationLogic,
       'useKnowledgeDocuments must contain explicit file extension validation logic ' +
