@@ -7,7 +7,7 @@ agent:
   id: foreman-v2-agent
   class: foreman
   version: 6.2.0
-  contract_version: 2.7.0
+  contract_version: 2.8.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-5
 
