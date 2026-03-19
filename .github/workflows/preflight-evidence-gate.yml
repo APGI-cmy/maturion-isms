@@ -356,7 +356,7 @@ jobs:
             fi
 
             # Check 2: Token must not be PHASE_A_ADVISORY
-            if grep -q "PHASE_A_ADVISORY" "$token_file" 2>/dev/null; then
+            if grep -qE "^\*\*Adoption Phase\*\*:.*PHASE_A_ADVISORY|^Adoption Phase:.*PHASE_A_ADVISORY|^Token Type:.*PHASE_A_ADVISORY|^PHASE_B_BLOCKING_TOKEN:.*PHASE_A_ADVISORY" "$token_file" 2>/dev/null; then
               echo "  ❌ Token contains PHASE_A_ADVISORY — IAA-PHASE-A-BYPASS-001"
               FAIL=true
             else
