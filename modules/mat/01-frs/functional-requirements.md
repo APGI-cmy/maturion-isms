@@ -2334,4 +2334,56 @@ After AI parsing completes, the Lead Auditor MUST be able to review, edit, and a
 
 ---
 
+## Pipeline 2 — Knowledge Upload Functional Requirements (DCKIS v1.0.0)
+
+**Wave**: DCKIS-GOV-001 (governance) → DCKIS-QA-RED (RED gate tests) → DCKIS-IMPL-001 (api-builder) → DCKIS-IMPL-002 (ui-builder)
+**Source**: `governance/EXECUTION/MAT_KNOWLEDGE_INGESTION_ALIGNMENT_PLAN.md` v1.0.0 §6
+**ADR-005 isolation**: Pipeline 2 requirements MUST NOT conflict with or modify any Pipeline 1 behaviour.
+
+### FR-KU-001 — Knowledge Document Upload
+**Description**: A Content Administrator can upload guidance documents, training materials, organisational policies, and reference documents to the MAT Knowledge Base via a dedicated Knowledge Upload panel distinct from the Criteria Upload panel.
+
+**Acceptance Criteria**:
+1. The Knowledge Upload panel is reachable from the MAT navigation
+2. The Knowledge Upload panel does NOT share any code path, route, or upload handler with the Criteria Upload panel (Pipeline 1)
+3. Supported file types: `.docx`, `.pdf`, `.txt`, `.md`
+4. File size limits consistent with existing evidence upload constraints
+5. Uploaded documents appear in the `ai_knowledge` table (not `criteria`, `domains`, or `mini_performance_standards`)
+
+### FR-KU-002 — Chunk Preflight Tester
+**Description**: Before finalising a knowledge document upload, the system presents a QA preflight view showing the document split into chunks (chunk size = 2000 characters, overlap = 200 characters, sentence-boundary aware). The Content Administrator can approve or reject the chunk split before any AI processing credits are consumed.
+
+**Acceptance Criteria**:
+1. Chunk preview is generated locally (client-side) before network call
+2. Chunk count, average chunk length, and first 3 chunks are shown
+3. Approve action proceeds to embedding generation
+4. Reject/Cancel action discards without any database write
+
+### FR-KU-003 — Domain Tagging at Upload
+**Description**: The Content Administrator selects a domain (`source`) from the AIMC-governed taxonomy at upload time. The selected domain is stored in the `ai_knowledge.source` column.
+
+**Acceptance Criteria**:
+1. Domain selector presents: `general`, `iso27001`, `nist`, `pci-dss`, `soc2`, `risk-management`
+2. Domain selection is mandatory (upload cannot proceed without selection)
+3. Selected domain is stored in `ai_knowledge.source` for every chunk produced by the upload
+
+### FR-KU-004 — ARC Approval Status Display
+**Description**: Uploaded knowledge documents are visible in a list within the MAT UI, showing their current ARC approval status (`pending`, `approved`, `rejected`).
+
+**Acceptance Criteria**:
+1. Knowledge Documents List panel shows document name, upload date, domain tag, and approval status
+2. `pending` status is visually distinguished from `approved` and `rejected`
+3. The list is scoped to the current organisation (`organisation_id`)
+4. Content Administrators cannot bypass the `pending` state — documents enter `ai_knowledge` with `approval_status = 'pending'` only
+
+### FR-KU-005 — Re-upload and Retry
+**Description**: If a knowledge document upload fails at any stage, the Content Administrator can retry without duplicate data being written to `ai_knowledge`.
+
+**Acceptance Criteria**:
+1. A failed upload that wrote partial chunks can be retried cleanly (duplicate detection at chunk level)
+2. Smart Chunk Reuse: if pre-approved chunks exist for the same document content, the upload short-circuits embedding generation and reuses stored chunks
+3. Retry UI feedback is distinct from "first upload in progress" state
+
+---
+
 *END OF FUNCTIONAL REQUIREMENTS SPECIFICATION*

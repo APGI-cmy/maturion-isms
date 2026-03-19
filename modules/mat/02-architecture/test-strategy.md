@@ -255,3 +255,45 @@ Pipeline stages (all must pass):
 - [ ] Architecture sections frozen for all features
 - [ ] QA-to-Red tests exist and are RED
 - [ ] QA-to-Red precondition satisfied
+
+---
+
+## Pipeline 2 — Knowledge Ingestion Test Coverage (DCKIS v1.0.0)
+
+**Wave reference**: DCKIS-QA-RED (RED gate tests written before implementation — tests must be RED/failing before any Pipeline 2 implementation begins)
+**Source**: `governance/EXECUTION/MAT_KNOWLEDGE_INGESTION_ALIGNMENT_PLAN.md` v1.0.0
+**ADR-005 isolation**: T-KU-008 is an absolute isolation test. Pipeline 1 (criteria table, domains, mini_performance_standards) must remain completely unaffected by any Pipeline 2 operation.
+
+### RED Gate Test Inventory
+
+| Test ID | Description | FR/TR Reference |
+|---------|-------------|----------------|
+| T-KU-001 | Knowledge Upload panel renders with file picker and domain selector | FR-KU-001, FR-KU-003 |
+| T-KU-002 | Chunk Preflight Tester shows local chunk preview with size=2000 and overlap=200 before upload | FR-KU-002, TR-KU-001 |
+| T-KU-003 | Domain selection at upload time maps to valid AIMC `source` taxonomy value | FR-KU-003, TR-KU-003 |
+| T-KU-004 | Uploaded document appears in `ai_knowledge` with `approval_status = 'pending'` | FR-KU-001, TR-KU-003 |
+| T-KU-005 | Uploaded document appears in `ai_knowledge` with correct `organisation_id` scoping | TR-KU-004 |
+| T-KU-006 | ARC approval status (`pending` / `approved` / `rejected`) is visible in the MAT UI | FR-KU-004 |
+| T-KU-007 | Re-upload of same document triggers Smart Chunk Reuse (no duplicate embedding cost) | ADR-002 |
+| T-KU-008 | Pipeline 2 upload does NOT affect criteria table or Pipeline 1 workflow | ADR-005, FR-KU-001 |
+| T-KU-009 | File validation rejects invalid file types (non-.docx/.pdf/.txt/.md) | TR-KU-001 |
+| T-KU-010 | Re-upload / retry flow works after a failed upload attempt | FR-KU-005 |
+| T-KU-011 | process-document-v2 Edge Function produces correct chunk count from .docx test fixture | TR-KU-001 |
+| T-KU-012 | process-document-v2 Edge Function produces 1536-dim embedding for each chunk | TR-KU-002 |
+
+### Test Requirements Notes
+
+These test IDs reference requirements in FR-KU-001–005 and TR-KU-001–004. Tests will be written as RED (failing) in wave DCKIS-QA-RED, before any implementation begins.
+
+**ADR-005 isolation test note**: T-KU-008 is an absolute isolation test. Pipeline 1 (criteria table, domains, mini_performance_standards) must remain completely unaffected by any Pipeline 2 operation. A failure of T-KU-008 is an automatic REJECTION-PACKAGE at IAA handover regardless of any other test results.
+
+### Test Coverage Summary
+
+| Coverage Area | Test IDs | Builder Responsible (Implementation) |
+|---------------|----------|--------------------------------------|
+| UI rendering and interaction | T-KU-001, T-KU-002, T-KU-003, T-KU-006 | ui-builder (DCKIS-IMPL-002) |
+| Database write correctness | T-KU-004, T-KU-005 | api-builder (DCKIS-IMPL-001) + schema-builder (DCKIS-SCH-001) |
+| Pipeline isolation | T-KU-008 | api-builder (DCKIS-IMPL-001) |
+| File validation | T-KU-009 | api-builder (DCKIS-IMPL-001) |
+| Retry and resilience | T-KU-010, T-KU-007 | api-builder (DCKIS-IMPL-001) |
+| Edge Function correctness | T-KU-011, T-KU-012 | api-builder (DCKIS-IMPL-001) |

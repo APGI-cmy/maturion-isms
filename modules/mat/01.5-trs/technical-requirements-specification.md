@@ -2227,4 +2227,46 @@ Technical implementation of `profiles` row completeness for the `audit_documents
 
 ---
 
+## Pipeline 2 — Knowledge Upload Technical Requirements (DCKIS v1.0.0)
+
+**Wave**: DCKIS-GOV-001 (governance) → DCKIS-QA-RED (RED gate tests) → DCKIS-IMPL-001 (api-builder) → DCKIS-SCH-001 (schema-builder) → DCKIS-IMPL-002 (ui-builder)
+**Source**: `governance/EXECUTION/MAT_KNOWLEDGE_INGESTION_ALIGNMENT_PLAN.md` v1.0.0 §7
+**ADR-005 isolation**: Pipeline 2 technical implementations MUST NOT touch Pipeline 1 tables (`criteria`, `domains`, `mini_performance_standards`) or Pipeline 1 Edge Functions.
+
+### TR-KU-001 — Chunk-Based Ingestion
+**Description**: The Pipeline 2 ingestion backend (`process-document-v2`) chunks documents using the proven parameters: chunk size = 2000 characters, overlap = 200 characters, sentence-boundary aware splitting.
+
+**Technical Constraints**:
+1. Chunking algorithm: identical to legacy `splitTextIntoChunks(text, 2000, 200)` implementation
+2. File format support: `.docx` (mammoth extraction), `.pdf` (text layer extraction), `.txt` / `.md` (plain text)
+3. Empty chunks are discarded before embedding
+4. Minimum chunk length: 50 characters (discard shorter artefacts)
+
+### TR-KU-002 — Embedding Generation
+**Description**: Each chunk produced by Pipeline 2 is embedded using an OpenAI-compatible 1536-dimension embedding model via the AIMC AI Gateway.
+
+**Technical Constraints**:
+1. Embedding dimensions: 1536
+2. Embedding calls MUST route through AIMC AI Gateway (`/api/ai/embed` or equivalent) — direct OpenAI API calls are prohibited
+3. Embedding failure on any chunk causes the entire upload to fail (no partial writes)
+
+### TR-KU-003 — AIMC Knowledge Store Integration
+**Description**: Pipeline 2 output writes to `ai_knowledge` with mandatory AIMC governance fields.
+
+**Technical Constraints**:
+1. All rows written with `approval_status = 'pending'` — never `approved` on insert
+2. `source` field populated from AIMC taxonomy (FR-KU-003 domain selection)
+3. `organisation_id` set to the uploading user's organisation (RLS-verified)
+4. Chunk metadata fields: `chunk_index` (0-based), `chunk_size`, `chunk_overlap`, `source_document_name`
+
+### TR-KU-004 — Organisation-ID Scoping
+**Description**: All knowledge documents and chunks written by Pipeline 2 are scoped to the uploading user's organisation.
+
+**Technical Constraints**:
+1. `organisation_id` is set server-side (Edge Function reads from authenticated user's profile) — not client-supplied
+2. RLS policy on `ai_knowledge` MUST enforce `organisation_id` isolation on SELECT and INSERT
+3. Cross-organisation chunk access is prohibited
+
+---
+
 *END OF TECHNICAL REQUIREMENTS SPECIFICATION*

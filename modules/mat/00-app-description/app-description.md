@@ -405,6 +405,76 @@ The AI MUST handle all of the following document types:
 
 ---
 
+### 6.3 Knowledge Document Upload (Pipeline 2)
+
+**Pipeline**: Pipeline 2 — DCKIS v1.0.0 (distinct from Pipeline 1 — Criteria Upload)
+**Actor**: Content Administrator
+**Wave**: DCKIS-GOV-001 (governance) → DCKIS-IMPL-001 (api-builder) → DCKIS-IMPL-002 (ui-builder)
+**Source**: `governance/EXECUTION/MAT_KNOWLEDGE_INGESTION_ALIGNMENT_PLAN.md` v1.0.0
+
+#### Purpose
+
+Enables Content Administrators to upload guidance documents, training materials, organisational policies, and reference documents to the MAT Knowledge Base. These documents are stored in the AIMC-governed `ai_knowledge` table and are used to augment AI-assisted maturity assessments via retrieval-augmented generation (RAG).
+
+This pipeline is **architecturally distinct** from Pipeline 1 (Criteria Upload). It operates through a separate Knowledge Upload panel, a separate route, and a separate upload handler (`process-document-v2` Edge Function). Zero code paths are shared with Pipeline 1.
+
+#### Document Types Supported
+
+| Format | Extraction Method |
+|--------|------------------|
+| `.docx` | mammoth text extraction |
+| `.pdf` | text layer extraction |
+| `.txt` | plain text |
+| `.md` | plain text / Markdown |
+
+#### Target Table
+
+All Pipeline 2 output writes to `ai_knowledge` (the AIMC canonical knowledge store — ADR-001).
+
+> ⚠️ **Pipeline isolation invariant (ADR-005)**: Pipeline 2 does NOT write to `criteria`, `domains`, or `mini_performance_standards`. Writing to these tables from a Pipeline 2 upload is a hard architectural violation.
+
+#### AIMC Governance Link
+
+Knowledge documents enter `ai_knowledge` with `approval_status = 'pending'` per the ARC Protocol (ADR-003). Documents are not available for AI retrieval until `approval_status` is set to `approved` by an authorised approver. Content Administrators cannot self-approve their own uploads.
+
+#### Domain Tagging
+
+At upload time, the Content Administrator selects a `source` value from the AIMC taxonomy. This domain tag is stored in `ai_knowledge.source` for every chunk produced by the upload.
+
+| AIMC Source Taxonomy Value | Domain |
+|---------------------------|--------|
+| `general` | General / cross-domain |
+| `iso27001` | ISO 27001 Information Security |
+| `nist` | NIST Cybersecurity Framework |
+| `pci-dss` | PCI-DSS Payment Card Security |
+| `soc2` | SOC 2 Trust Services Criteria |
+| `risk-management` | Risk Management |
+
+Domain selection is mandatory — upload cannot proceed without a domain selection.
+
+#### Pipeline 2 Flow Summary
+
+```
+Content Administrator uploads file (.docx / .pdf / .txt / .md)
+  → Knowledge Upload panel (MAT Frontend)
+    → Local chunk preview (chunk size = 2000 chars, overlap = 200 chars, sentence-boundary aware)
+      → Content Administrator approves chunk split (Chunk Preflight Tester)
+        → process-document-v2 Edge Function invoked
+          → Embedding generation via AIMC AI Gateway (1536-dim)
+            → ai_knowledge table (approval_status = 'pending')
+              → Knowledge Documents List displays ARC status
+```
+
+#### Post-Upload Display
+
+After upload, the Knowledge Documents List panel shows:
+- Document name
+- Upload date
+- Domain tag (`source`)
+- ARC approval status: `pending` / `approved` / `rejected`
+
+---
+
 ## 7. Parsing Guardrails (Mandatory)
 
 ### 7.1 No Hallucination Rule

@@ -2948,3 +2948,86 @@ Wave 18 identified and resolved 8 production gaps in the Criteria Upload → Par
 ---
 
 **End of Wave 18 — MAT Criteria Parsing Pipeline End-to-End Repair**
+
+---
+
+## Wave 19 — Knowledge Upload Centre Integration (Pipeline 2 — DCKIS v1.0.0)
+
+**Wave ID**: Wave 19
+**Type**: Pipeline 2 — Knowledge Upload Centre Integration (DCKIS v1.0.0)
+**Status**: DCKIS-GOV-001 (governance amendments — this wave) → DCKIS-QA-RED → DCKIS-IMPL-001 → DCKIS-SCH-001 → DCKIS-IMPL-002
+**Source**: DCKIS strategy `Maturion/strategy/DOCUMENT_CHUNKING_AND_KNOWLEDGE_INGESTION_INTEGRATION_STRATEGY.md` v1.0.0 (CS2-authorised)
+**Alignment Plan**: `governance/EXECUTION/MAT_KNOWLEDGE_INGESTION_ALIGNMENT_PLAN.md` v1.0.0
+**Authority**: CS2 (@APGI-cmy)
+
+### Wave 19 Overview
+
+Wave 19 integrates the legacy document chunking and knowledge ingestion pipeline (Pipeline 2) into the MAT module as the Knowledge Upload Centre. This is a complete, architecturally distinct pipeline that operates independently from Pipeline 1 (Criteria Upload — Waves 1–18).
+
+**ADR-005 hard constraint**: Pipeline 1 files and code paths are UNTOUCHABLE in Wave 19 scope. Any change to `criteria`, `domains`, `mini_performance_standards` tables or Pipeline 1 Edge Functions is a Wave 19 scope violation.
+
+### Wave 19 Builder Assignments
+
+| Wave Slug | Builder | Scope |
+|-----------|---------|-------|
+| DCKIS-GOV-001 | governance-liaison-isms-agent | Governance document amendments (7 deliverables: GOV-001-D1–D7) |
+| DCKIS-QA-RED | qa-builder | RED gate test suite (T-KU-001 through T-KU-012) — written before implementation |
+| DCKIS-IMPL-001 | api-builder | `process-document-v2` Edge Function re-host and re-target to `ai_knowledge` |
+| DCKIS-SCH-001 | schema-builder | `ai_knowledge` schema delta assessment and migration (if required) |
+| DCKIS-IMPL-002 | ui-builder | MAT Frontend Knowledge Upload UI (Knowledge Upload panel, Chunk Preflight Tester, Knowledge Documents List) |
+
+### Wave 19 RED Gate Test IDs
+
+RED gate tests are defined in wave DCKIS-QA-RED and must be written (RED/failing) before any implementation begins.
+
+| Test ID | Description |
+|---------|-------------|
+| T-KU-001 | Knowledge Upload panel renders with file picker and domain selector |
+| T-KU-002 | Chunk Preflight Tester shows local chunk preview with size=2000 and overlap=200 before upload |
+| T-KU-003 | Domain selection at upload time maps to valid AIMC `source` taxonomy value |
+| T-KU-004 | Uploaded document appears in `ai_knowledge` with `approval_status = 'pending'` |
+| T-KU-005 | Uploaded document appears in `ai_knowledge` with correct `organisation_id` scoping |
+| T-KU-006 | ARC approval status (`pending` / `approved` / `rejected`) is visible in the MAT UI |
+| T-KU-007 | Re-upload of same document triggers Smart Chunk Reuse (no duplicate embedding cost) |
+| T-KU-008 | Pipeline 2 upload does NOT affect criteria table or Pipeline 1 workflow |
+| T-KU-009 | File validation rejects invalid file types (non-.docx/.pdf/.txt/.md) |
+| T-KU-010 | Re-upload / retry flow works after a failed upload attempt |
+| T-KU-011 | process-document-v2 Edge Function produces correct chunk count from .docx test fixture |
+| T-KU-012 | process-document-v2 Edge Function produces 1536-dim embedding for each chunk |
+
+### Wave 19 Entry Criteria
+
+- [x] DCKIS strategy CS2-authorised (`Maturion/strategy/DOCUMENT_CHUNKING_AND_KNOWLEDGE_INGESTION_INTEGRATION_STRATEGY.md` v1.0.0)
+- [x] Alignment Plan (`governance/EXECUTION/MAT_KNOWLEDGE_INGESTION_ALIGNMENT_PLAN.md` v1.0.0) merged
+- [ ] CS2 wave-start authorisation received for each sub-wave before that sub-wave begins
+- [ ] DCKIS-GOV-001 (governance amendments) merged before DCKIS-QA-RED begins
+- [ ] DCKIS-QA-RED (RED gate tests) merged before DCKIS-IMPL-001 begins
+- [ ] DCKIS-SCH-001 (schema delta) assessed before DCKIS-IMPL-001 begins
+
+### Wave 19 Exit Criteria
+
+- All 7 GOV-001-D1–D7 governance deliverables merged (DCKIS-GOV-001 complete)
+- IAA audit token received for DCKIS-GOV-001
+- No production code changed in DCKIS-GOV-001 wave
+- RED gate tests T-KU-001 through T-KU-012 written and RED (DCKIS-QA-RED complete)
+- `process-document-v2` Edge Function re-hosted and targeting `ai_knowledge` (DCKIS-IMPL-001 complete)
+- `ai_knowledge` schema delta verified and applied if required (DCKIS-SCH-001 complete)
+- MAT Frontend Knowledge Upload UI implemented and wired (DCKIS-IMPL-002 complete)
+- All 12 RED gate tests GREEN post-implementation
+- Pipeline 1 completely unaffected (ADR-005 verified by T-KU-008)
+
+### Wave 19 State Machine
+
+```
+DCKIS-GOV-001 (governance-liaison-isms-agent)
+  ↓ MERGED
+DCKIS-QA-RED (qa-builder) — RED gate tests written
+  ↓ MERGED
+DCKIS-SCH-001 (schema-builder) — ai_knowledge schema delta
+  ↓ ASSESSED
+DCKIS-IMPL-001 (api-builder) — process-document-v2 Edge Function
+  ↓ MERGED
+DCKIS-IMPL-002 (ui-builder) — MAT Frontend Knowledge Upload UI
+  ↓ MERGED + ALL TESTS GREEN
+Wave 19 COMPLETE
+```

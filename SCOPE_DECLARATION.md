@@ -1,37 +1,36 @@
-# Wave 19 MAT Criteria Parsing Holistic Repair — Scope Declaration
-# Authority: A-026/A-029 (SCOPE_DECLARATION-FRESH-OVERWRITE)
-# Session: session-wave19-orchestration-20260317
-# Issue: maturion-isms#1137
-# Branch: copilot/wave-19-holistic-mat-criteria-repair
-# NOTE: Per A-031, Foreman does not appear as author of production code files below.
-#       All production code changes are authored by inducted builder agents.
+# SCOPE DECLARATION — Wave DCKIS-GOV-001
 
-## Batch A — QA RED Suite (qa-builder)
-- `modules/mat/tests/wave19/wave19-criteria-parsing.test.ts` — T-W19-001..T-W19-015 RED gate tests
-- `apps/mat-ai-gateway/tests/test_wave19_startup.py` — T-W19-016 Python startup validation test
+**Agent**: governance-liaison-isms-agent v6.2.0
+**Wave**: DCKIS-GOV-001 — MAT Governance Document Amendments
+**Session**: session-052-20260319
+**Date**: 2026-03-19
+**Branch**: copilot/dckis-gov-001-update-governance-docs
+**Authority**: CS2 (@APGI-cmy) via Foreman delegation
 
-## Batch B — Schema Migrations (schema-builder)
-- `apps/maturion-maturity-legacy/supabase/migrations/20260317000001_criteria_number_text.sql` — criteria.number TYPE TEXT (GAP-PARSE-001)
-- `apps/maturion-maturity-legacy/supabase/migrations/20260317000002_mps_intent_guidance.sql` — MPS intent_statement/guidance columns (GAP-PARSE-002)
-- `apps/maturion-maturity-legacy/supabase/migrations/20260317000003_parse_write_back_atomic_rpc.sql` — atomic write-back RPC (GAP-PARSE-005)
+## Declared Scope: Files Modified
 
-## Batch C — API/Edge Function (api-builder)
-- `supabase/functions/invoke-ai-parse-criteria/index.ts` — 6 fixes: c.number, MPS intent_statement, zero-domain throw, reason field, zero-insert assertion, AI_GATEWAY_URL 500
-- `apps/mat-ai-gateway/services/parsing.py` — MpsResult intent_statement/guidance fields (GAP-PARSE-008)
+Per `git diff --name-only` output (governance documentation only — zero production code):
 
-## Batch D — UI (ui-builder)
-- `modules/mat/frontend/src/lib/hooks/useCriteria.ts` — MAX_POLL_ITERATIONS=600 poll timeout (GAP-PARSE-009)
+1. `modules/mat/00-app-description/app-description.md` — GOV-001-D1: Added §6.3 Knowledge Document Upload (Pipeline 2)
+2. `modules/mat/00-app-description/MAT_UX_WORKFLOW_AND_WIRING.md` — GOV-001-D2: Added STEP 2b Knowledge Upload workflow
+3. `modules/mat/01-frs/functional-requirements.md` — GOV-001-D3: Added FR-KU-001 through FR-KU-005
+4. `modules/mat/01.5-trs/technical-requirements-specification.md` — GOV-001-D4: Added TR-KU-001 through TR-KU-004
+5. `modules/mat/02-architecture/system-architecture.md` — GOV-001-D5: Added §4.6 Knowledge Ingestion Pipeline Architecture
+6. `modules/mat/03-implementation-plan/implementation-plan.md` — GOV-001-D6: Added Wave 19 Knowledge Upload Centre Integration
+7. `modules/mat/02-architecture/test-strategy.md` — GOV-001-D7: Added Pipeline 2 Knowledge Ingestion Test Coverage
 
-## Batch E — Integration (integration-builder)
-- `.github/scripts/validate-mat-schema-alignment.sh` — CI schema alignment validation (GAP-PARSE-007)
+## ADR-005 Compliance Attestation
 
-## Batch F — E2E Fixture (qa-builder)
-- `modules/mat/tests/wave19/fixtures/ldcs-fixture.json` — LDCS E2E content assertion fixture (GAP-PARSE-010)
+Pipeline 1 files UNTOUCHED. Verified by `git diff --name-only`:
+- No changes to `criteria`, `domains`, or `mini_performance_standards` related files
+- No changes to any Wave 1–18 implementation files
+- No changes to Pipeline 1 Edge Functions
+- No production code changes (governance documentation only)
 
-## Governance Artifacts (foreman-v2-agent)
-- `.agent-admin/assurance/iaa-prebrief-wave19-criteria-parsing-repair.md` — IAA Pre-Brief
-- `.agent-admin/assurance/iaa-rejection-session-wave19-orchestration-20260317.md` — IAA R1 rejection
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave19-orchestration-20260317.md` — PREHANDOVER Proof
-- `.agent-workspace/foreman-v2/memory/session-wave19-orchestration-20260317.md` — Session Memory
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — Wave 19 task tracking
-- `SCOPE_DECLARATION.md` — Wave 19 scope declaration (this file)
+## Out-of-Scope Files (NOT modified)
+
+All Pipeline 1 files, all production code, all agent contracts, all CI workflows, all canonical governance files.
+
+---
+
+*Authority: governance-liaison-isms-agent v6.2.0 | Wave DCKIS-GOV-001 | 2026-03-19*
