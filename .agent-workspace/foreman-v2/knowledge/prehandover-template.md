@@ -19,7 +19,7 @@
 | 1.4.0 | 2026-03-04 | Post-ASSURANCE-TOKEN Ceremony rewritten with explicit temporal ordering per §4.3b (CR-2 fix); PENDING replaced with expected reference format per A-028/A-029 |
 | 1.5.0 | 2026-03-05 | SCOPE_DECLARATION Ceremony section added (A-029 / INC-SCOPE-STALE-001); IAA token date accuracy note added (A-030) |
 | 1.6.0 | 2026-03-08 | Pre-IAA Commit Gate section added (A-021 / INC-BOOTSTRAP-IMPL-001 / R1 fix) — mandatory STOP checkpoint requiring actual `git status` + `git log --oneline -5` output before IAA invocation |
-| 1.7.0 | 2026-03-18 | IAA Token Self-Certification Guard section added (issue #structural-gate) — `PHASE_B_BLOCKING_TOKEN` field check; Pre-Brief path check added to bundle completeness |
+| 1.7.0 | 2026-03-18 | IAA Token Self-Certification Guard section added (governance directive STRUCTURAL-GATE) — `PHASE_B_BLOCKING_TOKEN` field check; Pre-Brief path check added to bundle completeness |
 
 ---
 
