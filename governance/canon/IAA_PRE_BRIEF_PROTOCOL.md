@@ -611,12 +611,12 @@ Its presence in a token file proves the token was issued by the IAA, not self-au
 
 ### Rejection Criteria
 
-A PR is **auto-rejected** at the CI gate (`governance-ceremony/verdict`) if any of the
-following are true:
+A PR is **auto-rejected** by the applicable CI gates (e.g. `preflight-evidence-gate`) if any
+of the following CI-enforced conditions are true:
 
 | Condition | Violation Class | CI Enforced |
 |-----------|----------------|-------------|
-| IAA token file absent (but handover claims IAA PASS) | IAA-SKIP-001 | YES — `iaa-prebrief-check` job |
+| IAA token file absent (but handover claims IAA PASS) | IAA-SKIP-001 | NO — human-review only (currently not CI-automated) |
 | `PHASE_B_BLOCKING_TOKEN:` field missing from token file | IAA-SELF-CERT-001 | YES — `iaa-token-self-cert-check` job |
 | Token file authored by the same agent as the PREHANDOVER proof | IAA-SELF-CERT-002 | NO — human-review only (git author analysis not CI-automatable) |
 | Token value is `PHASE_A_ADVISORY` | IAA-PHASE-A-BYPASS-001 | YES — `iaa-token-self-cert-check` job |
@@ -624,8 +624,9 @@ following are true:
 
 ### CI Enforcement
 
-The `governance-ceremony/verdict` CI job checks for `PHASE_B_BLOCKING_TOKEN:` in the
-IAA token file and fails the check if the field is absent or the value is invalid.
+The `preflight-evidence-gate` workflow’s `iaa-token-self-cert-check` job checks for
+`PHASE_B_BLOCKING_TOKEN:` in the IAA token file and fails the check if the field is
+absent or the value is invalid.
 
 ---
 
