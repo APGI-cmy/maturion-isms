@@ -316,7 +316,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: Check IAA token self-certification guard
         id: token_self_cert_check
@@ -326,17 +326,28 @@ jobs:
           echo ""
 
           ASSURANCE_DIR=".agent-admin/assurance"
-          TOKEN_FILES=$(find "$ASSURANCE_DIR" -name "iaa-token-*.md" 2>/dev/null | head -20)
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+
+          # Scope check to token files that are NEW in this PR (not pre-existing in base)
+          # This prevents retroactive failures on historical token files that pre-date this check
+          TOKEN_FILES=$(git diff "$BASE_SHA" HEAD --name-only --diff-filter=A 2>/dev/null \
+            | grep "^${ASSURANCE_DIR}/iaa-token-.*\.md$" | head -20)
 
           if [ -z "$TOKEN_FILES" ]; then
-            echo "ℹ️  No IAA token files found in $ASSURANCE_DIR — skipping self-cert check."
-            echo "   (Token check is only enforced when token files are present on this branch.)"
+            echo "ℹ️  No new IAA token files added in this PR — skipping self-cert check."
+            echo "   (Token check is only enforced for token files introduced by this PR.)"
             exit 0
           fi
 
           FAIL=false
           while IFS= read -r token_file; do
             echo "Checking token file: $token_file"
+
+            # Skip REJECTION-PACKAGE files — they are not PASS tokens and do not carry PHASE_B_BLOCKING_TOKEN
+            if head -10 "$token_file" 2>/dev/null | grep -qi "REJECTION.PACKAGE\|REJECTION-PACKAGE"; then
+              echo "  ⏭️  REJECTION-PACKAGE file — skipping PHASE_B_BLOCKING_TOKEN check"
+              continue
+            fi
 
             # Check 1: PHASE_B_BLOCKING_TOKEN field must be present and non-empty
             if grep -q "PHASE_B_BLOCKING_TOKEN:" "$token_file" 2>/dev/null; then

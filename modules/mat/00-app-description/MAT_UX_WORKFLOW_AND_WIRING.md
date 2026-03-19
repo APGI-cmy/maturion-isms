@@ -190,6 +190,114 @@ UI (CriteriaUpload.tsx)
 
 ---
 
+### STEP 2b — Knowledge Upload (Pipeline 2 — DCKIS v1.0.0)
+
+**Actor**: Content Administrator
+**Trigger**: Content Administrator navigates to the Knowledge Upload panel (distinct from STEP 2: Criteria Upload panel — separate route, separate UI, zero shared code path)
+**Wave**: DCKIS-GOV-001 (governance) → DCKIS-IMPL-001 (api-builder) → DCKIS-IMPL-002 (ui-builder)
+**Source**: `governance/EXECUTION/MAT_KNOWLEDGE_INGESTION_ALIGNMENT_PLAN.md` v1.0.0
+
+**Isolation invariant (ADR-005)**: STEP 2b shares NO code path, route, or upload handler with STEP 2 (Pipeline 1). This is an architectural constraint that must never be violated.
+
+#### UI Components
+
+| Component | Purpose |
+|-----------|---------|
+| Knowledge Upload panel | File picker accepting `.docx`, `.pdf`, `.txt`, `.md` |
+| Domain selector | AIMC taxonomy dropdown (mandatory — upload blocked without selection) |
+| Chunk Preflight Tester view | Local preview of document chunks before submission |
+
+#### Domain Selector Values (AIMC Taxonomy)
+
+- `general` — General / cross-domain
+- `iso27001` — ISO 27001 Information Security
+- `nist` — NIST Cybersecurity Framework
+- `pci-dss` — PCI-DSS Payment Card Security
+- `soc2` — SOC 2 Trust Services Criteria
+- `risk-management` — Risk Management
+
+Domain selection is **mandatory**. The Upload button is disabled until a domain is selected.
+
+#### Pipeline Flow
+
+```
+Content Administrator uploads file (.docx / .pdf / .txt / .md)
+  → Knowledge Upload panel validates file type and size
+    → Local chunk preview generated (client-side)
+        chunk_size = 2000 characters, overlap = 200 characters, sentence-boundary aware
+      → Chunk Preflight Tester view displays:
+          - Chunk count
+          - Average chunk length
+          - First 3 chunks preview
+        → Content Administrator approves chunk split
+          → process-document-v2 Edge Function invoked (POST)
+              Payload: { file, source: <AIMC domain>, organisation_id }
+            → Embedding generation via AIMC AI Gateway (/api/ai/embed)
+                1536-dimension embeddings per chunk
+              → INSERT INTO ai_knowledge (content, embedding, source, organisation_id,
+                  approval_status = 'pending', chunk_index, chunk_size, chunk_overlap,
+                  source_document_name)
+                → Knowledge Documents List updated (approval_status = 'pending')
+```
+
+#### Reject / Cancel Behaviour
+
+If the Content Administrator clicks **Reject** or **Cancel** at the Chunk Preflight Tester view:
+- No database write occurs
+- No Edge Function is called
+- No embedding credits are consumed
+- Upload form resets to initial state
+
+#### Post-Upload Display: Knowledge Documents List
+
+After a successful upload, the Knowledge Documents List panel shows:
+
+| Column | Source |
+|--------|--------|
+| Document name | `ai_knowledge.source_document_name` (first chunk) |
+| Upload date | `ai_knowledge.created_at` |
+| Domain tag | `ai_knowledge.source` |
+| ARC approval status | `ai_knowledge.approval_status` (`pending` / `approved` / `rejected`) |
+
+The list is scoped to `organisation_id`. `pending` status is visually distinguished from `approved` and `rejected`.
+
+#### Table Target
+
+`ai_knowledge` (NOT `criteria`, `domains`, or `mini_performance_standards`).
+
+Key columns written by Pipeline 2:
+
+| Column | Value |
+|--------|-------|
+| `content` | Chunk text (≥ 50 characters; shorter artefacts discarded) |
+| `embedding` | 1536-dim vector from AIMC AI Gateway |
+| `source` | AIMC taxonomy value selected by Content Administrator |
+| `approval_status` | Always `'pending'` on insert (ADR-003) |
+| `organisation_id` | Set server-side from authenticated user (not client-supplied) |
+| `chunk_index` | 0-based index of this chunk within the source document |
+| `chunk_size` | 2000 |
+| `chunk_overlap` | 200 |
+| `source_document_name` | Original filename |
+
+#### ARC Approval Status Display
+
+- `pending` — Document is awaiting ARC review. Not yet available for AI retrieval.
+- `approved` — Document has passed ARC review. Available for AI-assisted maturity assessment.
+- `rejected` — Document was rejected by ARC review. Not used in AI retrieval.
+
+Content Administrators cannot bypass the `pending` state — all documents enter `ai_knowledge` with `approval_status = 'pending'` only.
+
+#### Wiring Required
+
+- `ai_knowledge` table: `id`, `content`, `embedding`, `source`, `approval_status`, `organisation_id`, `chunk_index`, `chunk_size`, `chunk_overlap`, `source_document_name`, `created_at`
+- `process-document-v2` Edge Function: `packages/ai-centre/supabase/functions/process-document-v2/index.ts`
+- AIMC AI Gateway embed endpoint: `/api/ai/embed` (1536-dim)
+- RLS on `ai_knowledge`: `organisation_id` isolation on SELECT and INSERT (server-side enforcement)
+- Knowledge Upload panel component: `modules/mat/frontend/src/components/knowledge/`
+- Chunk Preflight Tester component: `modules/mat/frontend/src/components/knowledge/`
+
+---
+
 ### STEP 3 — Domain, MPS & Criteria Card Interaction Model
 
 After criteria are approved, the audit execution screen displays cards at three levels.

@@ -814,3 +814,97 @@ This section (§4) was added in Wave 15 (2026-03-06) to concretise the criteria 
 - MAT UX Workflow & Wiring Specification (Step 2a added)
 - FRS FR-005 acceptance criteria 7–14; FR-103 added
 - System Architecture §4 (this section)
+
+---
+
+## §4.6 — Knowledge Ingestion Pipeline Architecture (Pipeline 2 — DCKIS v1.0.0)
+
+**Wave**: DCKIS-GOV-001 (governance) → DCKIS-IMPL-001 (api-builder) → DCKIS-SCH-001 (schema-builder) → DCKIS-IMPL-002 (ui-builder)
+**Source**: `governance/EXECUTION/MAT_KNOWLEDGE_INGESTION_ALIGNMENT_PLAN.md` v1.0.0
+**Pipeline isolation invariant (ADR-005)**: Pipeline 2 operates independently. Zero shared code paths with Pipeline 1 (Criteria Upload). This is an architectural constraint that must never be violated.
+
+### §4.6.1 Component Diagram
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                  MAT Frontend                           │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         Knowledge Upload Panel                   │   │
+│  │  - File picker (.docx / .pdf / .txt / .md)      │   │
+│  │  - Domain selector (AIMC taxonomy)              │   │
+│  │  - Chunk Preflight Tester view                  │   │
+│  │    (local preview: size=2000, overlap=200)      │   │
+│  └──────────────────────┬──────────────────────────┘   │
+│                         │ Approve                        │
+│                         ▼                               │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │       process-document-v2 Edge Function          │  │
+│  │  packages/ai-centre/supabase/functions/          │  │
+│  │  process-document-v2/index.ts                    │  │
+│  │                                                  │  │
+│  │  1. Extract text (mammoth / pdf / plain text)    │  │
+│  │  2. splitTextIntoChunks(text, 2000, 200)         │  │
+│  │  3. Discard chunks < 50 chars                    │  │
+│  │  4. Call AIMC AI Gateway /api/ai/embed per chunk │  │
+│  │  5. INSERT INTO ai_knowledge (per chunk)         │  │
+│  └──────┬────────────────────────┬───────────────────  │
+│         │                        │                      │
+│         ▼                        ▼                      │
+│  ┌─────────────────┐   ┌──────────────────────────┐   │
+│  │  ai_knowledge   │   │   AIMC AI Gateway        │   │
+│  │  (Supabase)     │   │   /api/ai/embed           │   │
+│  │                 │   │   (1536-dim embeddings)   │   │
+│  │  approval_status│   └──────────────────────────┘   │
+│  │  = 'pending'    │                                   │
+│  └─────────────────┘                                   │
+└─────────────────────────────────────────────────────────┘
+```
+
+### §4.6.2 Data Flow Narrative
+
+1. **Upload**: Content Administrator uploads a document file (`.docx`, `.pdf`, `.txt`, `.md`) via the Knowledge Upload panel. Domain selection (`source`) is mandatory at this step.
+
+2. **Local chunk preview**: Client-side chunking algorithm splits the document text into chunks (size=2000 chars, overlap=200 chars, sentence-boundary aware). The Chunk Preflight Tester view displays: chunk count, average chunk length, and first 3 chunks.
+
+3. **Approve**: Content Administrator reviews the chunk preview and clicks Approve. If Reject/Cancel is clicked, no network call is made and no database write occurs.
+
+4. **Edge Function invocation**: On approval, the `process-document-v2` Edge Function is invoked. The Edge Function:
+   - Extracts full document text (mammoth for `.docx`, text layer for `.pdf`, plain text for `.txt`/`.md`)
+   - Applies `splitTextIntoChunks(text, 2000, 200)` chunking
+   - Discards empty chunks and chunks shorter than 50 characters
+   - Sets `organisation_id` server-side from the authenticated user's profile (not client-supplied)
+
+5. **Embedding**: For each chunk, the Edge Function calls the AIMC AI Gateway `/api/ai/embed` endpoint to generate a 1536-dimension embedding. Direct OpenAI API calls are prohibited (TR-KU-002).
+
+6. **ai_knowledge write**: Each chunk is inserted into `ai_knowledge` with `approval_status = 'pending'` (ADR-003). No partial writes — if any embedding fails, the entire upload fails (TR-KU-002 constraint 3).
+
+7. **Knowledge Documents List**: After successful upload, the Knowledge Documents List panel shows the uploaded document with `approval_status = 'pending'`.
+
+### §4.6.3 Table Target: `ai_knowledge`
+
+All Pipeline 2 output writes to `ai_knowledge`. Key columns:
+
+| Column | Description | Constraint |
+|--------|-------------|------------|
+| `id` | UUID primary key | Auto-generated |
+| `content` | Chunk text | ≥ 50 characters |
+| `embedding` | 1536-dim vector | Generated via AIMC AI Gateway |
+| `source` | AIMC taxonomy domain | From FR-KU-003 domain selection |
+| `approval_status` | ARC governance status | Always `'pending'` on insert (ADR-003) |
+| `organisation_id` | Organisation scope | Set server-side (RLS-enforced) |
+| `chunk_index` | 0-based chunk position | Within source document |
+| `chunk_size` | Chunk size parameter | 2000 |
+| `chunk_overlap` | Overlap parameter | 200 |
+| `source_document_name` | Original filename | Stored with every chunk |
+
+> ⚠️ **Pipeline isolation invariant**: Pipeline 2 NEVER writes to `criteria`, `domains`, or `mini_performance_standards`. Writing to these tables from a Pipeline 2 operation is an ADR-005 violation.
+
+### §4.6.4 ADR References
+
+| ADR | Title | Constraint |
+|-----|-------|------------|
+| ADR-001 | AIMC canonical knowledge store | All Pipeline 2 output target: `ai_knowledge` |
+| ADR-002 | Smart Chunk Reuse | If pre-approved chunks exist for the same document content, the upload short-circuits embedding generation and reuses stored chunks |
+| ADR-003 | approval_status = 'pending' on insert | All knowledge documents enter `ai_knowledge` with `approval_status = 'pending'` only |
+| ADR-004 | AIMC source taxonomy | Domain tagging uses governed AIMC taxonomy values: `general`, `iso27001`, `nist`, `pci-dss`, `soc2`, `risk-management` |
+| ADR-005 | Pipeline 1 and Pipeline 2 are architecturally separate | Zero shared code paths between Pipeline 1 (Criteria Upload) and Pipeline 2 (Knowledge Upload). This architectural constraint must never be violated. |
