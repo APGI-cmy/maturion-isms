@@ -1,12 +1,12 @@
-# Wave DCKIS-GOV-001 — MAT Governance Document Amendments — Current Tasks
+# Wave DCKIS-CL5D2 — Architecture Review for Pipeline 2 Rehosting — Current Tasks
 
-**Wave**: DCKIS-GOV-001 (MAT Governance Document Amendments — Pipeline 2 Additions to 7 MAT Governance Docs)
-**Session ID**: session-dckis-gov-001-20260319
+**Wave**: DCKIS-CL5D2 (CL-5-D2: Upload Architecture Review — Pipeline 2 Re-hosting Entry Gate)
+**Session ID**: session-dckis-cl5d2-20260319
 **Date**: 2026-03-19
-**Branch**: copilot/dckis-gov-001-update-governance-docs
-**CS2 Authorization**: GitHub issue "[governance-liaison] DCKIS-GOV-001: MAT Governance Document Amendments — Pipeline 2 additions to 7 MAT governance docs" opened and assigned to foreman-v2-agent by CS2 (@APGI-cmy)
-**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-dckis-gov-001.md` — COMMITTED (SHA: 0e2ef46)
-**iaa_prebrief_path**: .agent-admin/assurance/iaa-prebrief-dckis-gov-001.md
+**Branch**: copilot/dckis-cl5d2-architecture-review
+**CS2 Authorization**: GitHub issue "[api-builder] DCKIS-CL5D2: Architecture Review for Pipeline 2 Rehosting (Entry Gate)" opened and assigned — CS2 authorization confirmed
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-dckis-cl5d2.md` — COMMITTED (SHA: c262a5d)
+**iaa_prebrief_path**: .agent-admin/assurance/iaa-prebrief-dckis-cl5d2.md
 **Alignment Plan Source**: `governance/EXECUTION/MAT_KNOWLEDGE_INGESTION_ALIGNMENT_PLAN.md` v1.0.0
 
 ---
@@ -15,19 +15,14 @@
 
 ```yaml
 status: PHASE_4_HANDOVER_COMPLETE
-wave: dckis-gov-001
-iaa_prebrief: COMMITTED (0e2ef46)
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-dckis-gov-001.md
-iaa_token: IAA-session-052-dckis-gov-001-20260319-PASS
-task_d1_app_description: DONE
-task_d2_ux_workflow: DONE
-task_d3_frs: DONE
-task_d4_trs: DONE
-task_d5_system_architecture: DONE
-task_d6_implementation_plan: DONE
-task_d7_test_strategy: DONE
-tasks_done: 7
-tasks_total: 7
+wave: dckis-cl5d2
+iaa_prebrief: COMMITTED (c262a5d)
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-dckis-cl5d2.md
+iaa_token: IAA-session-dckis-cl5d2-20260319-PASS
+task_cl5d2_d1_architecture_review: DONE
+task_cl5d2_d2_cep_update: DONE
+tasks_done: 2
+tasks_total: 2
 last_updated: 2026-03-19
 ```
 
@@ -37,15 +32,32 @@ last_updated: 2026-03-19
 
 | # | Task | Deliverable ID | Assigned Agent | Status | Evidence |
 |---|------|----------------|----------------|--------|---------|
-| T-GOV-001-D1 | Add §6.3 Knowledge Document Upload to app-description.md | GOV-001-D1 | governance-liaison-isms-agent | 🟢 DONE | SHA 3c1e5e6 |
-| T-GOV-001-D2 | Add STEP 2b Knowledge Upload workflow to MAT_UX_WORKFLOW_AND_WIRING.md | GOV-001-D2 | governance-liaison-isms-agent | 🟢 DONE | SHA 3c1e5e6 |
-| T-GOV-001-D3 | Append FR-KU-001 to FR-KU-005 to functional-requirements.md | GOV-001-D3 | governance-liaison-isms-agent | 🟢 DONE | SHA 3c1e5e6 |
-| T-GOV-001-D4 | Append TR-KU-001 to TR-KU-004 to technical-requirements-specification.md | GOV-001-D4 | governance-liaison-isms-agent | 🟢 DONE | SHA 3c1e5e6 |
-| T-GOV-001-D5 | Add §4.6 Pipeline 2 architecture to system-architecture.md | GOV-001-D5 | governance-liaison-isms-agent | 🟢 DONE | SHA 3c1e5e6 |
-| T-GOV-001-D6 | Add Wave 19 (Knowledge Upload Centre Integration) to implementation-plan.md | GOV-001-D6 | governance-liaison-isms-agent | 🟢 DONE | SHA 3c1e5e6 |
-| T-GOV-001-D7 | Add Pipeline 2 test section to test-strategy.md | GOV-001-D7 | governance-liaison-isms-agent | 🟢 DONE | SHA 3c1e5e6 |
+| T-CL5D2-D1 | Produce architecture review document for process-document-v2 re-hosting | CL5D2-D1 | api-builder | 🟢 DONE | SHA 38ac469b |
+| T-CL5D2-D2 | Update AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md — record CL-5-D2 COMPLETE + CL-5 COMPLETE | CL5D2-D2 | api-builder | 🟢 DONE | SHA 38ac469b |
 
 **Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED
+
+---
+
+## Architecture Review Scope (per DCKIS Alignment Plan §4, IAA Pre-Brief)
+
+The review must cover all 5 topics from DCKIS-CL5D2 specification:
+
+1. Confirm `process-document-v2` can be re-hosted in `packages/ai-centre/supabase/functions/`
+2. Schema delta: legacy `ai_document_chunks` columns vs. AIMC `ai_knowledge` columns — identify gaps
+3. Smart Chunk Reuse portability (`chunked_from_tester` / `approved_via_tester` fields)
+4. Dependency migration: env vars, secrets, storage bucket references
+5. Explicit PASS/FAIL verdict on re-hosting feasibility
+
+**Deliverable location**: `.agent-workspace/audit/AIMC-P1-upload-arch-review-20260319.md`
+
+---
+
+## Dependencies
+
+- **DCKIS-GOV-001**: MERGED ✅ (commit 3ba5d43; IAA token: IAA-session-052-dckis-gov-001-20260319-PASS)
+- **IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-dckis-cl5d2.md` — COMMITTED ✅
+- **Source files accessible**: `apps/maturion-maturity-legacy/supabase/functions/process-document-v2/index.ts` ✅
 
 ---
 
@@ -53,26 +65,8 @@ last_updated: 2026-03-19
 
 | Token Type | Token | Date |
 |------------|-------|------|
-| Pre-Brief | iaa-prebrief-dckis-gov-001.md (SHA: 0e2ef46) | 2026-03-19 |
-| Handover | IAA-session-052-dckis-gov-001-20260319-PASS (SHA: 3a209eb) | 2026-03-19 |
-
----
-
-## Critical Blocker Resolutions (from IAA pre-brief)
-
-| Blocker | Finding | Resolution |
-|---|---|---|
-| BLOCKER-01 | §4.3 in system-architecture.md already in use | §4.6 used instead ✅ |
-| BLOCKER-02 | Wave 17 in implementation-plan.md already in use | Wave 19 used instead ✅ |
-
----
-
-## Dependencies
-
-- **Alignment Plan**: `governance/EXECUTION/MAT_KNOWLEDGE_INGESTION_ALIGNMENT_PLAN.md` v1.0.0 — MERGED ✅
-- **CS2 Wave-Start Auth**: GitHub issue DCKIS-GOV-001 — CONFIRMED ✅
-- **IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-dckis-gov-001.md` — COMMITTED ✅
-- **IAA Token**: `iaa-token-session-052-dckis-gov-001-20260319.md` — COMMITTED ✅
+| Pre-Brief | iaa-prebrief-dckis-cl5d2.md (SHA: c262a5d) | 2026-03-19 |
+| Handover | IAA-session-dckis-cl5d2-20260319-PASS (SHA: c123267) | 2026-03-19 |
 
 ---
 

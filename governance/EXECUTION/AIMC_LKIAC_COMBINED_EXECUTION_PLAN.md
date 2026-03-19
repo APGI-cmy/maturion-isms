@@ -9,6 +9,7 @@
 **Amendment v1.3.0**: v1.3.0 — 2026-03-01: CL-13 scope extended per kick-off issue — D5/D6/D7 added for QA modules (GAP-001/002/003 resolution, session-080).  
 **Amendment v1.4.0**: v1.4.0 — 2026-03-01: Wave CL-0 and CL-1 status updated to COMPLETE; FAIL-ONLY-ONCE registry version corrected to v1.9.0; next workstream steps documented (session-082, progress tracker reconciliation).  
 **Amendment v1.5.0**: v1.5.0 — 2026-03-13: CP-1 gate closure recorded — maturion-advisor.md persona content confirmed complete at v1.0.0; CP-1 closure artifact produced at `.agent-admin/checkpoints/cp-1-closure-20260313.md`; CL-1 CP-1 status updated to PENDING CS2 SIGN-OFF (session-cp-1-persona-gate-closure-20260313).  
+**Amendment v1.6.0**: v1.6.0 — 2026-03-19: CL-5-D2 upload architecture review delivered by api-builder (Wave DCKIS-CL5D2, session-dckis-cl5d2-20260319); artefact at `.agent-workspace/audit/AIMC-P1-upload-arch-review-20260319.md`; PASS verdict on `process-document-v2` re-hosting feasibility; CL-5-D2 recorded COMPLETE; CL-5 recorded COMPLETE (both deliverables now delivered — CL-5-D1 previously complete; CL-5-D2 now complete).  
 **Triggering Issue**: [maturion-isms#704](https://github.com/APGI-cmy/maturion-isms/issues/704)  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
 **Location**: `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md`
@@ -379,6 +380,8 @@ any migration is applied.
 **CS2 Checkpoint (CP-5)**: CS2 approves specification before CL-10 (upload endpoint implementation) begins.
 
 **Responsible Agents**: `governance-liaison-isms-agent` (spec), `api-builder` (architecture review)
+
+**Status: COMPLETE — 2026-03-19** (CL-5-D1: `AIMC_KNOWLEDGE_UPLOAD_CENTRE_SPECIFICATION.md` previously delivered by governance-liaison-isms-agent; CL-5-D2: upload architecture review delivered by api-builder — `.agent-workspace/audit/AIMC-P1-upload-arch-review-20260319.md`, PASS verdict, Wave DCKIS-CL5D2, session-dckis-cl5d2-20260319, IAA token: IAA-session-dckis-cl5d2-20260319-PASS)
 
 ---
 
@@ -1017,7 +1020,7 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 
 ---
 
-## 14. Current Workstream Status (as of 2026-03-13)
+## 14. Current Workstream Status (as of 2026-03-19)
 
 | Artefact | Current State | Next Step(s) | Responsible Agent | Blockers |
 |---|---|---|---|---|
@@ -1027,7 +1030,7 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 | CL-3: Deprecation Register Activation | ⏳ PENDING | governance-liaison-isms-agent to produce LKIAC_DEPRECATION_REGISTER.md | governance-liaison-isms-agent | CL-0 cleared; awaiting wave-start issue from CS2 |
 | CL-3.5: AI Data Sources Registry | ⏳ PENDING (PROPOSED — CP-3.5 awaiting CS2 approval) | qa-builder RED gate → schema-builder migration → api-builder Edge Functions | qa-builder / schema-builder / api-builder / ui-builder | CP-3.5 CS2 schema approval required before build begins |
 | CL-4: AIMC Audit Phase A | ⏳ PENDING | qa-builder to execute T-A-001–T-C-010 audit suite | qa-builder / integration-builder / schema-builder | CL-0 cleared; awaiting wave-start issue from CS2; running in parallel with CL-2 |
-| CL-5: Knowledge Upload Centre Spec | ⏳ IN PROGRESS — v1.1.0 CP-5 decisions incorporated | CP-5 COMPLETE; awaiting CL-5-D2 upload arch review | api-builder (CL-5-D2) | CL-5-D2 (upload arch review) still outstanding |
+| CL-5: Knowledge Upload Centre Spec | ✅ COMPLETE — 2026-03-19 | CL-5-D1 (spec) previously delivered; CL-5-D2 (arch review) delivered Wave DCKIS-CL5D2 — artefact at `.agent-workspace/audit/AIMC-P1-upload-arch-review-20260319.md`, PASS verdict | api-builder (CL-5-D2) | None — both deliverables complete |
 | CL-6 through CL-15 | ⏳ PENDING | Per dependency chain §5 | Per §4 wave definitions | All blocked on CL-2–CL-5 completion |
 | MAT Module | ✅ COMPLETE — Wave 12 COMPLETE (554/554 GREEN) | Awaiting AIMC CL waves for Waves 7–9 integration | foreman-v2-agent (oversight) | MAT Waves 7–9 blocked on AIMC CL-12 |
 
@@ -1035,6 +1038,7 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 
 *Produced by foreman-v2-agent v6.2.0, session 075, under CS2 authority (Johan Ras / @APGI-cmy).*  
 *Updated by foreman-v2-agent v6.2.0, session-wave-cl2-20260313 (Amendment v1.5.0): CL-2 status updated to STARTED.*  
+*Updated by api-builder, session-dckis-cl5d2-20260319 (Amendment v1.6.0): CL-5-D2 COMPLETE; CL-5 COMPLETE.*  
 *This document is a POLC Planning Output. It does NOT constitute a wave closure or merge gate release.*  
 *Wave execution may NOT begin for any wave until CS2 has reviewed this plan and issued formal wave-start authorisation for the specific wave(s).*  
-*Authority: LIVING_AGENT_SYSTEM.md v6.2.0 | LKIAC-001 v1.0.0 | 2026-03-13*
+*Authority: LIVING_AGENT_SYSTEM.md v6.2.0 | LKIAC-001 v1.0.0 | 2026-03-19*
