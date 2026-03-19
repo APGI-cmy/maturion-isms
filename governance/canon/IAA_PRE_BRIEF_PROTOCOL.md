@@ -257,13 +257,17 @@ governance violation equivalent to modifying evidence in-place.
 
 ### Wave File Header Schema
 
-The wave checklist file MUST include the following header fields:
+The `wave-current-tasks.md` file MUST include the following header fields:
 
 ```markdown
 **Wave**: <N>
-**Foreman**: foreman-v2
+**Session ID**: <foreman-session-id>
+**Date**: <YYYY-MM-DD>
+**Branch**: <branch-name>
+**Foreman Session**: foreman-v2
+**CS2 Authorization**: <reference or PENDING>
 **iaa_prebrief_path**: PENDING | <path/to/iaa-prebrief-*.md>
-**Status**: IN PROGRESS | COMPLETE
+**Status**: <phase-status-token>  <!-- e.g., PHASE_A_PREBRIEF, PHASE_B_BUILD, COMPLETE -->
 ```
 
 The `iaa_prebrief_path` field is a machine-readable gate signal:
