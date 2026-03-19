@@ -63,7 +63,7 @@ Re-hosting requires the following code-level changes (scope for DCKIS-IMPL-001):
 | A-1 | Table retarget | Change `.from('ai_document_chunks').insert(...)` to `.from('ai_knowledge').insert(...)` |
 | A-2 | Field mapping | Map legacy chunk record fields to `ai_knowledge` schema (see §2 Schema Delta below) |
 | A-3 | `approval_status` default | Add `approval_status: 'pending'` on every chunk insert (ADR-003) |
-| A-4 | `source` field | Add `source` field (AIMC domain taxonomy label) on insert (ADR-001) |
+| A-4 | `source` field | Add `source` field (AIMC domain taxonomy label) on insert (ADR-004) |
 | A-5 | Spelling variant | Change `organization_id` (US) to `organisation_id` (UK) for AIMC schema alignment |
 | A-6 | Smart Chunk Reuse | Port `chunked_from_tester` / `approved_via_tester` detection logic from `process-ai-document` (see §3) |
 | A-7 | Auxiliary tables | Confirm `ai_documents`, `processing_pipeline_status`, `qa_metrics` exist in AIMC Supabase project |
