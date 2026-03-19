@@ -8,6 +8,7 @@
 **Issued by**: independent-assurance-agent v6.2.0 (contract 2.3.0)
 **Authority**: CS2 (@APGI-cmy)
 **Adoption phase**: PHASE_B_BLOCKING — hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-dckis-cl5d2-20260319-PASS
 **Architecture**: §4.3b — token written to dedicated file; PREHANDOVER proofs are immutable post-commit
 
 ---
