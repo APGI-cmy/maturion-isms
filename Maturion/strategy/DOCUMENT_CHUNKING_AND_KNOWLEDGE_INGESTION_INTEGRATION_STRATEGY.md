@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document Type** | Strategy — CS2 Planning Output |
-| **Status** | DRAFT — Awaiting CS2 Review and Foreman Alignment |
-| **Version** | 1.0.0 |
+| **Status** | CS2-AUTHORISED — Foreman Alignment Plan produced at `governance/EXECUTION/MAT_KNOWLEDGE_INGESTION_ALIGNMENT_PLAN.md` v1.0.0 |
+| **Version** | 1.0.1 |
 | **Date** | 2026-03-19 |
 | **Author** | GitHub Copilot (on behalf of CS2) |
 | **Location** | `Maturion/strategy/DOCUMENT_CHUNKING_AND_KNOWLEDGE_INGESTION_INTEGRATION_STRATEGY.md` |
@@ -387,6 +387,7 @@ This strategy is considered complete and the integration successful when:
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 1.0.1 | 2026-03-19 | foreman-v2-agent v6.2.0 | Updated status from DRAFT to CS2-AUTHORISED — Foreman Alignment Plan produced (MAT_KNOWLEDGE_INGESTION_ALIGNMENT_PLAN.md v1.0.0) per CS2-authorised GitHub issue |
 | 1.0.0 | 2026-03-19 | GitHub Copilot (CS2 direction) | Initial strategy document — drafted following investigation of legacy chunking system and integration opportunity identification |
 
 ---
