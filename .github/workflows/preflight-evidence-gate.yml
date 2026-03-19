@@ -340,12 +340,15 @@ jobs:
 
             # Check 1: PHASE_B_BLOCKING_TOKEN field must be present and non-empty
             if grep -q "PHASE_B_BLOCKING_TOKEN:" "$token_file" 2>/dev/null; then
-              TOKEN_VALUE=$(grep "PHASE_B_BLOCKING_TOKEN:" "$token_file" | head -1 | sed 's/.*PHASE_B_BLOCKING_TOKEN://;s/^[[:space:]]*//')
+              TOKEN_VALUE=$(grep "PHASE_B_BLOCKING_TOKEN:" "$token_file" | head -1 | sed 's/.*PHASE_B_BLOCKING_TOKEN://;s/^[[:space:]]*//;s/[[:space:]]*$//')
               if [ -z "$TOKEN_VALUE" ]; then
-                echo "  ❌ PHASE_B_BLOCKING_TOKEN field is EMPTY in $token_file — IAA-SELF-CERT-001"
+                echo "  ❌ PHASE_B_BLOCKING_TOKEN field is EMPTY or whitespace-only in $token_file — IAA-SELF-CERT-001"
+                FAIL=true
+              elif [ "$TOKEN_VALUE" = "PENDING" ]; then
+                echo "  ❌ PHASE_B_BLOCKING_TOKEN is PENDING in $token_file — IAA-SELF-CERT-002"
                 FAIL=true
               else
-                echo "  ✅ PHASE_B_BLOCKING_TOKEN present and non-empty"
+                echo "  ✅ PHASE_B_BLOCKING_TOKEN present and non-empty, value: $TOKEN_VALUE"
               fi
             else
               echo "  ❌ PHASE_B_BLOCKING_TOKEN field MISSING from $token_file — IAA-SELF-CERT-001"
@@ -366,10 +369,10 @@ jobs:
           if [ "$FAIL" = true ]; then
             echo "❌ FAIL — IAA token self-certification guard failed"
             echo ""
-            echo "Violation: IAA-SELF-CERT-001 or IAA-PHASE-A-BYPASS-001"
-            echo "The IAA token file must contain a PHASE_B_BLOCKING_TOKEN field (non-empty)."
+            echo "Violation: IAA-SELF-CERT-001, IAA-SELF-CERT-002 or IAA-PHASE-A-BYPASS-001"
+            echo "The IAA token file must contain a PHASE_B_BLOCKING_TOKEN field (non-empty, not PENDING)."
             echo "This field is only contractually producible by the IAA."
-            echo "Its absence or a PHASE_A_ADVISORY value indicates self-authoring."
+            echo "Its absence, a PENDING value, or a PHASE_A_ADVISORY value indicates self-authoring."
             echo ""
             exit 1
           else
