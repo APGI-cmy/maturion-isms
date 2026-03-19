@@ -21,6 +21,8 @@ Merge permitted (subject to CS2 approval).
 
 **Token reference**: `IAA-session-052-dckis-gov-001-20260319-PASS`  
 **Adoption phase**: PHASE_B_BLOCKING — this token is a hard gate (not advisory)
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-052-dckis-gov-001-20260319-PASS
 ## ═══════════════════════════════════════
 
 ---
