@@ -111,7 +111,7 @@ This alignment plan is a governance document shaping wave sequencing for a CS2-a
 
 ## IAA Audit Token (pre-populated — see §4.3b)
 
-`iaa_audit_token: IAA-session-dckis-alignment-plan-20260319-PASS` *(expected reference at commit time — see §4.3b token ceremony)*
+`iaa_audit_token: IAA-session-dckis-alignment-plan-20260319-R2-PASS` *(committed assurance token reference — see §4.3b token ceremony)*
 
 ---
 
