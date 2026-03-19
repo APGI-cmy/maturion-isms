@@ -197,15 +197,21 @@ describe('DCKIS-QA-RED — Pipeline 2 MAT Knowledge Ingestion (12 RED gate tests
   it('[T-KU-003] Domain selection maps to valid AIMC source taxonomy value in useKnowledgeDocuments', () => {
     const content = requireFile(USE_KNOWLEDGE_DOCUMENTS);
 
-    // The hook must reference domain-to-source mapping logic.
-    // Acceptable patterns: a domainSourceMap object, a switch/case on domain,
-    // or an explicit reference to the `source` field with domain values.
+    // The hook must reference domain-to-source mapping logic via an explicit
+    // map/object/switch-case that assigns a `source` value from a domain input.
+    // Accepted patterns:
+    //   - domainSourceMap / domainToSource / DOMAIN_SOURCE_MAP object literals
+    //   - switch (domain) { case ...: source = ... }
+    //   - domain: 'X', source: 'Y'  (explicit field pair in a record/tuple)
     const hasDomainMapping =
-      /domainSource|domain.*source|source.*domain|AIMC|taxonomy/i.test(content);
+      /domainSourceMap|domainToSource|DOMAIN_SOURCE_MAP|domain.*:\s*['"].*['"].*source|switch\s*\(.*domain/i.test(
+        content,
+      );
 
     expect(
       hasDomainMapping,
-      'useKnowledgeDocuments must contain domain-to-source mapping logic (domainSourceMap, taxonomy reference, or domain→source assignment)',
+      'useKnowledgeDocuments must contain explicit domain-to-source mapping logic ' +
+      '(e.g. const domainSourceMap = { ... }, switch(domain) { case ...: source = }, or similar object/record mapping)',
     ).toBe(true);
   });
 
@@ -352,15 +358,19 @@ describe('DCKIS-QA-RED — Pipeline 2 MAT Knowledge Ingestion (12 RED gate tests
     expect(content, 'useKnowledgeDocuments must accept .txt files').toMatch(/\.txt/i);
     expect(content, 'useKnowledgeDocuments must accept .md files').toMatch(/\.md/i);
 
-    // Must contain validation/rejection logic (not just accept attribute).
+    // Must contain an explicit allow-list of extensions (array or regex literal)
+    // and rejection/validation logic.  Accepted patterns:
+    //   - ['.docx', '.pdf', '.txt', '.md'] (array literal)
+    //   - /\.(docx|pdf|txt|md)$/ (regex literal)
+    //   - if (!allowedExtensions.includes(ext)) / throw / return error
     const hasValidationLogic =
-      /invalid.*ext|unsupported.*file|allow.*list|allowedExt|validExt|extension.*check/i.test(
+      /allowedExt|validExt|ALLOWED_EXT|\['\.docx|\/\\\.\(docx|extension.*includes|includes.*extension|ext.*not.*allowed|invalid.*ext|unsupported.*file/i.test(
         content,
       );
     expect(
       hasValidationLogic,
       'useKnowledgeDocuments must contain explicit file extension validation logic ' +
-      '(allowedExtensions check, error on invalid type, etc.)',
+      '(e.g. const allowedExtensions = [...], regex /\\.(docx|pdf|txt|md)$/, or conditional reject on invalid extension)',
     ).toBe(true);
   });
 
@@ -413,12 +423,19 @@ describe('DCKIS-QA-RED — Pipeline 2 MAT Knowledge Ingestion (12 RED gate tests
       'process-document-v2 must define chunk overlap of 200 (CHUNK_OVERLAP = 200 or equivalent)',
     ).toMatch(/200/);
 
-    // Must also reference a chunking/splitting function or loop.
+    // Must also reference an actual chunking/splitting function call or loop
+    // that operates on text.  Accepted invocation patterns:
+    //   - chunkText(  splitText(  splitDocument(  splitIntoChunks(
+    //   - .split(  applied inside a chunking function body (not a bare .split)
+    //   - for (...) { chunks.push(  (explicit chunking loop)
     const hasChunkLogic =
-      /chunk|split|slice|splitText|chunkText|splitDocument/i.test(content);
+      /chunkText\s*\(|splitText\s*\(|splitDocument\s*\(|splitIntoChunks\s*\(|chunks\.push\s*\(|chunkDocument\s*\(/i.test(
+        content,
+      );
     expect(
       hasChunkLogic,
-      'process-document-v2 must contain chunk-splitting logic (chunkText, splitText, splitDocument, or equivalent loop)',
+      'process-document-v2 must contain a chunk-splitting function call or loop ' +
+      '(e.g. chunkText(), splitText(), splitDocument(), splitIntoChunks(), or chunks.push() accumulation loop)',
     ).toBe(true);
   });
 
@@ -440,14 +457,19 @@ describe('DCKIS-QA-RED — Pipeline 2 MAT Knowledge Ingestion (12 RED gate tests
       '(e.g. vector(1536), EMBEDDING_DIM = 1536, dimensions: 1536)',
     ).toMatch(/1536/);
 
-    // Must reference an embedding API call (createEmbedding, embed, embeddings.create, etc.).
+    // Must reference an actual embedding API function call (with parenthesis),
+    // not just a comment or variable name.  Accepted invocation patterns:
+    //   - createEmbedding(  generateEmbedding(  embedText(
+    //   - embeddings.create(  openai.embeddings.create(
+    //   - client.embeddings(  ai.embed(
     const hasEmbeddingCall =
-      /embed|createEmbedding|embeddings\.create|generateEmbedding/i.test(
+      /createEmbedding\s*\(|generateEmbedding\s*\(|embedText\s*\(|embeddings\.create\s*\(|\.embeddings\s*\(|ai\.embed\s*\(/i.test(
         content,
       );
     expect(
       hasEmbeddingCall,
-      'process-document-v2 must call an embedding API (createEmbedding, embed, embeddings.create, or equivalent)',
+      'process-document-v2 must call an embedding API function ' +
+      '(e.g. createEmbedding(), generateEmbedding(), embeddings.create(), embedText(), or equivalent invocation)',
     ).toBe(true);
   });
 });
