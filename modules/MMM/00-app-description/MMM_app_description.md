@@ -1256,6 +1256,418 @@ MMM must be born architecturally complete, including:
 - lockfile
 - error-handling/recovery patterns
 
+## 39A. Build Lifecycle Stages
+
+MMM must be built through the canonical lifecycle stages in strict order, with no stage-skipping.
+
+The minimum required sequence is:
+
+1. Strategy  
+2. App Description  
+3. FRS  
+4. TRS  
+5. Architecture  
+6. QA-to-Red  
+7. PBFAG  
+8. Wave Plan  
+9. Build Waves  
+10. Physical Verification  
+11. Deployment Wave  
+12. Commissioning / Activation
+
+No implementation work may bypass this derivation chain.
+
+---
+
+## 39B. Requirements Derivation Chain
+
+MMM must follow a strict requirements derivation chain:
+
+- App Description defines canonical product and governance intent
+- FRS derives functional requirements from the App Description
+- TRS derives technical requirements from the FRS
+- Architecture derives implementation design from the TRS
+
+Architecture may not begin on unresolved or contradictory upstream requirements.
+
+---
+
+## 39C. Technology Stack Authority Rule
+
+The technology stack for MMM must be authoritatively declared in the TRS.
+
+Any discrepancy between App Description, FRS, TRS, Architecture, or historical source material must be resolved before implementation begins.
+
+No architecture or build work may proceed while stack ambiguity exists.
+
+---
+
+## 39D. Deliverable Artifacts
+
+The MMM build is not considered complete unless all required artifacts are explicitly delivered.
+
+Deliverables must include at minimum:
+
+- the application itself
+- App Description
+- FRS
+- TRS
+- Architecture artifacts
+- QA-to-Red / QA-to-Green suite
+- deployment artifacts
+- runbooks
+- compliance/governance artifacts
+- tracker updates
+- required agent/admin artifacts
+
+The phrase "done" may never mean that only files exist. It must mean usable deliverables exist.
+
+---
+
+## 39E. Component Definition of Done
+
+Every MMM component must have a strict Definition of Done.
+
+A component is only "done" when it is:
+
+- functionally wired
+- integrated
+- test-covered as required
+- physically verified where UI is involved
+- connected to real dependencies where intended
+- compliant with auth, RLS, telemetry, and error-handling requirements
+- reflected accurately in tracker and governance artifacts
+
+File presence alone does not qualify as completion.
+
+---
+
+## 39F. Test-First Guarantee
+
+MMM must follow a test-first build discipline.
+
+For every build wave:
+
+- QA-to-Red must exist before implementation begins
+- remediation tests must exist for known prior oversights
+- wave-close is prohibited until relevant red-to-green evidence exists
+
+This is mandatory for both backend and UI-facing work.
+
+---
+
+## 39G. Physical Verification Gate
+
+For every UI-affecting build wave, browser-based physical verification is mandatory.
+
+Physical verification must confirm at minimum:
+
+- the screen renders
+- the intended interaction works
+- data wiring is real
+- state persists as intended
+- no placeholder-only behavior is being passed as complete
+
+Component-level logic is not enough. Real browser verification is required.
+
+---
+
+## 39H. PBFAG Gate
+
+Before builder appointment or implementation wave start, MMM must pass the PBFAG gate.
+
+The PBFAG checklist must include at minimum:
+
+- upstream artifacts present and coherent
+- unresolved contradictions surfaced
+- QA-to-Red prepared
+- dependencies identified
+- auth model defined
+- schema impact understood
+- edge/service impact understood
+- tracker ready for wave execution
+
+No builder appointment should occur before this gate is satisfied.
+
+---
+
+## 39I. Agent Authority Chain
+
+MMM must explicitly define and respect the agent authority chain.
+
+This includes:
+
+- constitutional boundaries
+- operational gates
+- what agents may and may not decide
+- where human approval is mandatory
+- how wake-up, session closure, and handoff discipline are preserved
+
+This section must align with the mandatory cross-app agent model already defined earlier in the document.
+
+---
+
+## 39J. Schema-to-Hook Validation
+
+For every schema-affecting wave, MMM must require schema-to-hook validation.
+
+This means:
+
+- every new or changed column must be mapped to the consuming hook, service, and form state
+- no schema change is considered complete until usage wiring is verified
+- migration success is not enough; application-path usage must also be verified
+
+This requirement is especially critical for evidence, findings, framework, approval, and dashboard state.
+
+---
+
+## 39K. Table Pathway Audit
+
+Before any build wave is closed, MMM must enumerate and verify all database access pathways relevant to that wave.
+
+This includes explicit auditing of:
+
+- every `.from()` call
+- all mutation and query pathways
+- their calling hooks and services
+- their auth and RLS implications
+- their error handling and telemetry behavior
+
+No wave should close while unknown table pathways remain.
+
+---
+
+## 39L. RLS Audit Gate
+
+MMM may not be considered deployable unless row-level security and access control are fully audited for all relevant CRUD paths.
+
+This requires:
+
+- create, read, update, and delete pathway review
+- role and scope validation
+- invitation, approval, and evidence access review
+- service/user boundary review
+- deployment-blocking status if coverage is incomplete
+
+---
+
+## 39M. Auth Wiring Checklist
+
+MMM must require a full auth wiring checklist before any protected user journey is marked complete.
+
+At minimum this includes:
+
+- AuthProvider or equivalent root wiring
+- ProtectedRoute or protected layout behavior
+- real login flow
+- session persistence
+- logout flow
+- role and scope propagation
+- protected API access behavior
+
+Mock auth or partial auth does not satisfy completion.
+
+---
+
+## 39N. AI Integration Rule
+
+All AI integration in MMM must occur through the AIMC gateway and approved platform routing only.
+
+No direct provider calls may exist in MMM application code unless explicitly approved by canon and reflected in TRS.
+
+This applies to:
+
+- chat
+- framework generation
+- evidence interpretation
+- scoring support
+- findings generation
+- advisory flows
+
+---
+
+## 39O. Edge Function Registry
+
+Every edge, serverless, or backend function used by MMM must be explicitly registered and verified.
+
+The registry must include:
+
+- function name
+- purpose
+- caller
+- auth model
+- deployment status
+- environment dependency
+- health or verification status
+
+No hidden or ad hoc function usage is allowed.
+
+---
+
+## 39P. Deployment Wave Requirement
+
+MMM must include a dedicated deployment wave.
+
+This wave must verify:
+
+- production build readiness
+- environment readiness
+- deployment artifact correctness
+- service wiring
+- health endpoints
+- runtime verification
+- commissioning prerequisites
+- final CWT or production validation as required by governance
+
+Deployment is not an afterthought. It is a first-class wave.
+
+---
+
+## 39Q. Secret Naming Convention
+
+All secrets and environment variables for MMM must follow canonical naming rules.
+
+At minimum:
+
+- production secrets must use consistent uppercase naming
+- `.env.example` must be canonical and complete
+- secret usage must match runtime code exactly
+- no undocumented secret dependency is allowed
+
+---
+
+## 39R. Deployment Runbook
+
+Every deployable MMM component must have a runbook.
+
+Runbooks must cover at minimum:
+
+- deploy steps
+- rollback steps
+- dependency prerequisites
+- environment variables
+- health verification
+- post-deploy checks
+- failure recovery steps
+
+---
+
+## 39S. Notification and UX Messaging Patterns
+
+MMM must not rely on raw `alert()` patterns or undefined feedback behavior.
+
+The app description must require a consistent notification model covering:
+
+- success
+- error
+- warning
+- long-running operations
+- background sync and update states
+- evidence upload outcomes
+- approval outcomes
+- export and report outcomes
+
+A toast or notification system, or approved equivalent, must be specified downstream.
+
+---
+
+## 39T. Shared State Architecture
+
+MMM must define a shared state architecture for cross-page and cross-workflow behavior.
+
+This must explicitly cover state ownership for:
+
+- framework context
+- current organisation
+- current domain, MPS, and criterion context
+- evidence modal or workspace state
+- findings draft state
+- report and export state
+- user preferences
+- AI interaction context
+
+State location may not be left implicit.
+
+---
+
+## 39U. API Authentication Rule
+
+All user-contextual MMM endpoints must require proper authenticated access, typically JWT-based or an approved equivalent.
+
+No user-contextual API may be treated as complete without:
+
+- authenticated identity
+- scope-aware authorization
+- auditability
+- error handling
+- telemetry
+
+---
+
+## 39V. Audit Log Design
+
+MMM must define an explicit audit log design.
+
+This must include:
+
+- action types
+- actor identity
+- target entity
+- timestamping
+- before/after logic where relevant
+- deduplication rules
+- query and access patterns
+- retention expectations
+- escalation-significant events
+
+This is particularly important for:
+
+- framework edits
+- evidence decisions
+- scoring changes
+- overrides
+- approvals
+- PIT exports
+- report generation
+
+---
+
+## 39W. Tracker Update Requirement
+
+Every MMM implementation wave and PR must update the relevant tracker artifacts.
+
+Tracker updates must reflect:
+
+- what changed
+- what remains blocked
+- red/green movement
+- dependency status
+- validation status
+- deviations from plan
+- remediation items
+
+No wave is complete if the tracker is stale.
+
+---
+
+## 39X. State Persistence Specification
+
+MMM must explicitly define where every user-facing setting and stateful preference lives.
+
+This includes:
+
+- organisation selection
+- framework selection
+- current navigation position
+- dashboard filters
+- evidence workspace drafts
+- offline queue state
+- AI conversation context where retained
+- UI preferences
+- role and scope context where cached
+
+The app description must state that this persistence model is mandatory and must be specified downstream.
+
 ---
 
 ## 40. Security and Integrity Principles
