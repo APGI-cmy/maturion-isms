@@ -13,6 +13,7 @@ export function Layout() {
     { name: 'Evidence', path: '/evidence', icon: '📁' },
     { name: 'Scoring', path: '/scoring', icon: '⭐' },
     { name: 'Reports', path: '/reports', icon: '📄' },
+    { name: 'Knowledge', path: '/knowledge', icon: '🧠' },
     { name: 'Settings', path: '/settings', icon: '⚙️' },
   ];
 
