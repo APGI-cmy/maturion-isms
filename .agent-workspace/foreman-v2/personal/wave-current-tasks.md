@@ -1,6 +1,41 @@
 # Wave Current Tasks — foreman-v2-agent
 
-## Active Wave: DCKIS-IMPL-002
+## Active Wave: DCKIS-CL11
+
+wave: DCKIS-CL11
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-dckis-cl11.md
+
+### Wave Description
+Programme Close-Out — LKIAC CEP & Documentation Finalisation.
+Wave DCKIS-CL11 updates the AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md with CL-11 status documentation (Amendment v1.7.0) and prepares CL-3 deprecation entries in LKIAC_DEPRECATION_REGISTER.md.
+
+CS2 Authorization: GitHub issue "[governance-liaison] DCKIS-CL11: Programme Close-Out — LKIAC CEP & Documentation Finalisation" opened by CS2 and assigned to governance-liaison-isms-agent.
+
+Entry criteria: All implementation (IMPL) waves merged (DCKIS-IMPL-002 merged to main — PR #1182).
+
+### Deliverables
+
+| ID | Artefact | Path | Status |
+|----|---------|------|--------|
+| CL11-D1 | AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md Amendment v1.7.0: CL-11 documentation | governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md | PENDING |
+| CL11-D2 | LKIAC_DEPRECATION_REGISTER.md: CL-3 deprecation entries prepared | governance/aimc/LKIAC_DEPRECATION_REGISTER.md | PENDING |
+| CL11-D3 | Close-out summary posted as issue comment | GitHub issue comment | PENDING |
+
+### Constraints
+- governance-liaison-isms-agent handles all documentation
+- Foreman does NOT edit AIMC documents directly (NO-IMPLEMENT-001)
+- Architecture document updates only — no code changes
+
+### Status
+- IAA Pre-Brief: PENDING
+- Delegation: PENDING
+
+### Updated
+2026-03-20
+
+---
+
+## Previous Wave (archived): DCKIS-IMPL-002
 
 wave: DCKIS-IMPL-002
 iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-dckis-impl-002.md
