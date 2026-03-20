@@ -6,9 +6,12 @@
 | **Owner**     | Johan Ras                                              |
 | **Date**      | 2026-03-20                                             |
 | **Module Role** | Core Governance Engine — All other modules are dependencies of this module |
-| **Version**   | 3.0                                                    |
+| **Version**   | 3.0.1-batch1                                           |
 | **Supersedes**| ROADMAP_APP_DESCRIPTION_v2.0.md                        |
+| **Remediation** | T-MRR-001 Batch 1 — Source fidelity, ambiguity preservation, evidence expansion (Issue #1186) |
 | **Interoperability** | MAT, RADAM, PIT, Watchdog, Incident Management, Risk Management |
+
+> *(Inferred Design Recommendation: The "Core Governance Engine" label used in the Module Role field above is not the term used in the source document. The source describes the Maturity Roadmap as the central compliance measurement tool against which all other modules produce evidence. This label is a reasonable editorial inference and is preserved for build clarity, but should be confirmed with the product owner before use in user-facing content.)*
 
 ---
 
@@ -25,6 +28,7 @@
 6. [Marketing Opportunities](#6-marketing-opportunities)
 7. [Cross-Module References](#7-cross-module-references)
 8. [Traceability to v2.0](#8-traceability-to-v20)
+9. [Batch 1 Remediation Notes (T-MRR-001, Issue #1186)](#9-batch-1-remediation-notes-t-mrr-001-issue-1186)
 
 ---
 
@@ -56,6 +60,8 @@ The tools designed across the ISMS platform are intended to help implement the e
 
 > **Strategic Position:** The Roadmap is the Governance Brain. MAT is the Audit Execution layer. RADAM is the Automation Layer. PIT is the Implementation Engine. Watchdog provides AI Oversight. ISO 42001 alignment is mandatory.
 
+> **[Inferred Design Recommendation]** The "Governance Brain / Audit Execution / Automation Layer / AI Oversight" framing and the term "Core Governance Engine" in the table above are editorial labels not used verbatim in the source document. The source describes the Maturity Roadmap as the central compliance measurement tool against which all other modules produce evidence. These labels are reasonable design inferences and preserved for build clarity, but should be confirmed with the product owner before use in user-facing content.
+
 ---
 
 ## 3. Pre-Subscription User Journey
@@ -79,6 +85,8 @@ Free Assessment
 The post-subscription module landing page mirrors the main landing page in layout — it shows all module cards with short tutorial pages. Modules with an active paid subscription are available for navigation. Modules not yet subscribed to link back to their tutorial pages and the **Subscribe → Sign-up → Get to Know You → Module** loop.
 
 > **Note:** If a user subscribes without completing the free assessment, they should be prompted to complete it before beginning audit model configuration, because the free assessment establishes the baseline maturity level that informs all subsequent AI behaviour.
+
+> **[Source Ambiguity]** The source document describes the free online assessment as the practical exercise for the Maturity Roadmap. It is unclear whether other modules will also offer practical exercises in the pre-subscription journey, or what form these would take. This is left open for product-owner confirmation.
 
 ---
 
@@ -284,9 +292,29 @@ Evidence Management is where evidence is attached for AI evaluation. Supported e
 
 > **Important:** Document uploads alone — particularly in a fully paper-driven process — can achieve at most a **Compliant** rating. Higher levels require system integrations and automated evidence.
 
-#### 4.1.10.1 Evidence Approval and Sign-Off Process
+#### 4.1.10.0 Evidence Classification
 
-1. Evidence is uploaded; the AI evaluates it and provides:
+Evidence in the Maturity Roadmap is classified along two primary dimensions:
+
+**Upload vs Connected Evidence:**
+
+| Type | Description | Examples |
+|---|---|---|
+| **Document Evidence (Uploaded)** | Files manually uploaded by users — all file formats supported | Policies, procedures, screenshots, reports, certificates |
+| **Live / System-Integrated Evidence** | Direct database linkups or platform integrations that feed evidence automatically | Incident Management linkup, PIT implementation data, Risk Management platform integration |
+
+> **Important:** Higher maturity levels (Proactive, Resilient) require system-integrated evidence. Document-only evidence caps the organisation at the **Compliant** maturity level. This is a core constraint of the evidence model and must be reflected in AI evaluations and user-facing messaging.
+
+**Source Classification:**
+
+Each evidence item carries a source integrity record identifying:
+- Who provided the evidence (the uploading or linked user)
+- What system or process it originates from
+- The date and provenance of the evidence
+
+#### 4.1.10.1 Evidence Acceptance, Query, and Escalation Flow
+
+1. Evidence is uploaded or connected; the AI evaluates it and provides:
    - A **maturity level rating**
    - A **descriptor** explaining why this rating was assigned and what is still outstanding to reach full compliance at this level or advance to the next
 2. A **"Re-evaluate Evidence"** prompt allows the AI to be triggered again with updated evidence.
@@ -300,6 +328,11 @@ Evidence Management is where evidence is attached for AI evaluation. Supported e
 - Deny the rating with a reason
 - Refer to an **independent external auditor** (with a notice that this incurs costs)
 
+**Audit Trail and Override Logging:**
+
+- All decisions — accept, query, deny, override — are **logged in the database** with reason codes and the identity of the deciding user.
+- AI may be overridden by a human reviewer, but **all human overrides are logged** and made available to the Maturion AI for continuous self-learning. This is the core Maturion self-learning mechanism: human judgements feed back into model improvement over time.
+
 #### 4.1.10.2 Non-Acceptance Categories
 
 | Category | Description | Resolution |
@@ -308,7 +341,45 @@ Evidence Management is where evidence is attached for AI evaluation. Supported e
 | **Evidence insufficient — unable to comply** | Compliance is delayed due to budget, resource, or skills constraints. | Due dates are postponed and the open item is tracked in the PIT as an implementation task. |
 | **Criteria not relevant** | The user believes the criterion does not apply to the organisation. | A formal request for criteria removal or modification is raised, following the standard three-tier approval process. |
 
-#### 4.1.10.3 Independent Auditor Process
+**Evidence Relevance Review:** If a specific piece of evidence is deemed entirely "not relevant" to the criterion it was submitted against — as distinct from the organisation claiming the *criterion itself* does not apply — it may be removed from the criterion record. This decision is logged in the audit trail with the reason and the identity of the reviewing user. Note: removal of evidence does not require the three-tier approval process; removal of a *criterion* (see "Criteria not relevant" row above) does.
+
+#### 4.1.10.3 Evidence Freshness and Staleness
+
+Evidence has a temporal validity dimension that must be tracked by the system:
+
+- Each evidence item has an **effective date** (the date the evidence was produced or became valid) and a **review frequency** (how often it must be refreshed or re-confirmed).
+- Evidence that has passed its review date is flagged as **stale** in the system.
+- Stale evidence **may reduce a maturity rating** if the underlying criterion expires — the AI must factor evidence currency into its evaluation.
+
+**Re-evaluation Workflow:**
+
+1. The system notifies the responsible user that evidence is approaching or has passed its review date.
+2. The user either **re-uploads updated evidence** or **confirms the existing evidence remains current**.
+3. The AI **re-evaluates** the evidence against the criterion.
+4. The maturity rating is **updated** based on the re-evaluation outcome.
+
+> **Note:** The "Re-evaluate Evidence" prompt (see Section 4.1.10.1) is also the mechanism for re-evaluation following a staleness notification.
+
+#### 4.1.10.4 Evidence Traceability and Audit Trail
+
+Every evidence decision is recorded in the database to ensure full traceability:
+
+- Each evidence item is linked to: the specific criterion it was submitted against, the user who uploaded or approved it, the date and time of each decision, and the reason code for any non-acceptance or override.
+- Human overrides are **specifically flagged** in the audit trail and made available to the Maturion AI for continuous learning (see Section 4.1.10.1).
+- The full evidence history — including superseded evidence, re-evaluations, and escalation chains — is retained and queryable.
+
+> **[Suggested Enhancement]** Evidence provenance and tamper-evident handling: the source document suggests audit-grade evidence integrity but does not mandate specific technical mechanisms (e.g., cryptographic hashing, timestamping, immutable storage). These are suggested implementation enhancements for build consideration, particularly for organisations requiring defensible evidence at the Proactive or Resilient maturity levels.
+
+#### 4.1.10.5 Budget, Resource, and Skills Constraints
+
+When a user cannot comply with a criterion due to budget, resource, or skills limitations, the system handles this as a structured open item:
+
+- The compliance item is tracked as an **open implementation task** in the PIT module.
+- The **due date is postponed** with a formal reason recorded in the system.
+- The constraint type is classified as one of: **Budget**, **Resource**, or **Skills** — and this classification is stored against the open item.
+- The **review frequency** for these constrained items should be configurable in the system, so that they are periodically re-assessed and do not become permanently deferred without deliberate action.
+
+#### 4.1.10.6 Independent Auditor Process
 
 - Independent auditor requests must be **budgeted for** by the company and are escalatable within the department based on internal approval.
 - The request is forwarded to the **APGI Independent Audit Coordinator** (currently Jorrie Jordaan; contact managed via a configurable role-based address in the platform — do not hard-code an individual's email address in the system), who assigns an auditor from APGI's auditor panel based on experience and background.
@@ -414,11 +485,15 @@ When the company advances an overall maturity level, the dashboard displays a **
 
 ## 4.3 Part 3: User Registration and Roles
 
+> **[Source Ambiguity]** The source document uses the terms "implementation users" and "build users" somewhat interchangeably when describing who manages audit configuration. Final product role naming should be confirmed with the product owner.
+
 ### 4.3.1 User Onboarding Model
 
 - The **original user** signs up after subscription.
 - All subsequent users are **invited** by an existing user already in the system.
 - Invitations are **role-specific**: each invite is accompanied by a radio checklist that invites the new user to become the owner of specific areas.
+
+> **[Source Ambiguity]** The source document suggests the main user may invite "other organisations" to the platform. It is unclear whether this refers to external third-party organisations, subsidiary companies, or internal organisational substructures. This requires confirmation before user hierarchy implementation.
 
 ### 4.3.2 User Hierarchy
 
@@ -463,6 +538,12 @@ Maturion AI must maintain **constant real-time situational awareness** across al
 - **Override tracking** is mandatory: all AI overrides, with reasons, must be recorded and made available for Maturion self-learning.
 - **Model version tracking** is mandatory.
 - **AI must be integrated with Watchdog** for AI oversight and **ISO 42001** alignment. ISO 42001 is the international standard for AI Management Systems; key requirements relevant to this module include: establishing AI risk management processes, maintaining records of AI decision-making and overrides, ensuring human oversight mechanisms (the human-in-the-loop approval process), and conducting regular reviews of AI model performance and bias. See Watchdog module documentation for the specific control mapping.
+
+> **[Inferred Design Recommendation]** The requirements for "AI confidence scoring" and "model version tracking" as mandatory fields are implementation inferences drawn from best-practice AI governance (ISO 42001 alignment). The source document does not prescribe these specific technical mechanisms. They are included as design recommendations for build consideration.
+
+> **[Suggested Enhancement]** Transcript anchor / metadata structures for AI-generated content are a suggested implementation enhancement not directly stated in the source. The source implies AI-generated content should be traceable; specific metadata architecture is an engineering inference.
+
+> **[Source Note — Open for AI Proposals]** The source document explicitly invites AI suggestions for improvement in several areas. Some AI governance requirements in this section are conceptual and remain open to refinement through the build process.
 
 ---
 
@@ -520,6 +601,20 @@ The following table maps sections of this v3.0 document to their corresponding s
 
 ---
 
-*End of Document — ROADMAP_APP_DESCRIPTION_v3.0.md*
+## 9. Batch 1 Remediation Notes (T-MRR-001, Issue #1186)
+
+The following changes were made in this batch as part of the source-fidelity remediation:
+
+| Change | Section | Description |
+|--------|---------|-------------|
+| Source labeling | Throughout | Inferred/enhanced content labeled with [Inferred Design Recommendation], [Suggested Enhancement], or [Source Note — Open for AI Proposals] tags |
+| Ambiguity preservation | §3, §4.3, §5 | Source ambiguities around "implementation users"/"build users", "other organisations" phrasing, and open conceptual areas annotated with [Source Ambiguity] notes |
+| Evidence section expansion | §4.1.10 | Evidence governance model expanded with: classification (4.1.10.0), freshness/staleness (4.1.10.3), traceability and audit trail (4.1.10.4), budget/skills constraints (4.1.10.5); Independent Auditor Process renumbered to 4.1.10.6 |
+| Module role label | §2 | "Core Governance Engine" label annotated as Inferred Design Recommendation (header footer note and Section 2) |
+| AI section labels | §5 | AI confidence scoring and model version tracking labeled as Inferred Design Recommendations; transcript anchors labeled as Suggested Enhancement; open AI proposal areas annotated |
+
+---
+
+*End of Document — ROADMAP_APP_DESCRIPTION_v3.0.md (v3.0.1-batch1)*
 *Supersedes: ROADMAP_APP_DESCRIPTION_v2.0.md*
 *Source: modules/maturity-roadmap/word_upload.md (commit 3541ea8)*
