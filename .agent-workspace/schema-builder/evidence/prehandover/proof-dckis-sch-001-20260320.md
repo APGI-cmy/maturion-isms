@@ -23,6 +23,7 @@ Schema-builder wave DCKIS-SCH-001: add Pipeline 2 chunk metadata columns to `ai_
 | 2 | Schema documentation | `packages/ai-centre/supabase/migrations/008_ai_knowledge_chunk_metadata_schema_doc.md` | ✅ CREATED |
 | 3 | Foreman wave-current-tasks.md | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | ✅ CREATED |
 | 4 | IAA pre-brief | `.agent-admin/assurance/iaa-prebrief-dckis-sch-001.md` | ✅ CREATED |
+| 5 | Schema-builder session memory | `.agent-workspace/schema-builder/memory/session-dckis-sch-001-20260320.md` | ✅ CREATED |
 
 ---
 
@@ -99,9 +100,11 @@ CREATE POLICY ai_knowledge_org_insert ON ai_knowledge
 
 ## 7. IAA Invocation
 
-**Status**: PHASE_A_ADVISORY  
+**Status**: PHASE_B_BLOCKING  
 **Pre-brief filed at**: `.agent-admin/assurance/iaa-prebrief-dckis-sch-001.md`  
-**Action**: Logged for IAA review upon deployment per AGCFPP-001.
+**iaa_audit_token**: IAA-session-dckis-sch-001-20260320-PASS  
+**iaa_phase**: PHASE_B_BLOCKING  
+**Token artifact**: `.agent-admin/assurance/iaa-token-session-dckis-sch-001-20260320.md`
 
 ---
 

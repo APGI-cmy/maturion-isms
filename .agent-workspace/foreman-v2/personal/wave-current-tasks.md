@@ -3,7 +3,7 @@
 ## Active Wave: DCKIS-SCH-001
 
 wave: DCKIS-SCH-001
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-dckis-qa-red.md
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-dckis-sch-001.md
 
 ### Task Summary
 - schema-builder implements chunk metadata migration for ai_knowledge
