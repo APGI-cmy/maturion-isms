@@ -92,8 +92,8 @@ The following Pipeline 1 files were checked and NOT modified:
 - **Pre-brief read**: YES — `.agent-admin/assurance/iaa-prebrief-dckis-impl-002.md`
 - **Adoption phase**: PHASE_B_BLOCKING
 - **IAA invocation result**: PHASE_B_ADVISORY — builder handover complete; IAA invocation initiated for Phase 1-4 assurance
-- **iaa_audit_token**: Pending IAA session execution
-- **double_qa_confirmed**: Foreman QA (build) + IAA QA (handover) — pending IAA session
+- **iaa_audit_token**: IAA-session-dckis-impl-002-20260320-R3-PASS
+- **double_qa_confirmed**: Foreman QA (build) + IAA QA (R3 session, 46/46 checks PASS, 0 CodeQL alerts)
 
 ---
 

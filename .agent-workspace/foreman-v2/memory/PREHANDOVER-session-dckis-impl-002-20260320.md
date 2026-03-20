@@ -52,14 +52,14 @@ Delivers all 7 wave artefacts (5 IMPL-002 + 2 IMPL-001 carried) plus governance 
 
 **IAA R1**: REJECTION-PACKAGE — 8 failures (committed 3335c5a)
 **R1 Remediation**: Applied — commit ff44a2b (all 8 failures addressed)
-**Code review fixes**: Applied — commit 72bb163 (organisationId guard, parentheses)
-**IAA R2**: SESSION TIMED OUT — no ASSURANCE-TOKEN issued. Re-invocation required.
+**Code review fixes**: Applied — commit 1b2015a (10 code review findings addressed per CS2 instruction)
+**IAA R2**: ASSURANCE-TOKEN — `IAA-session-dckis-impl-002-20260320-R2-PASS`
+**IAA R3**: ASSURANCE-TOKEN — `IAA-session-dckis-impl-002-20260320-R3-PASS` (R3 = post-code-review re-invocation, 46/46 checks PASS, 0 CodeQL alerts)
 
-**IAA R2 re-invocation is PENDING.** Merge is BLOCKED until IAA R2 issues ASSURANCE-TOKEN.
+**IAA status**: PASS. All merge gate requirements satisfied.
 
-Expected token path: `.agent-admin/assurance/iaa-token-session-dckis-impl-002-20260320-R2.md`
-Expected token format: `PHASE_B_BLOCKING_TOKEN: IAA-session-dckis-impl-002-20260320-R2-PASS`
-`iaa_audit_token: IAA-session-dckis-impl-002-20260320-R2-PASS` (pending — expected reference at commit time per §4.3b)
+Expected token path: `.agent-admin/assurance/iaa-token-session-dckis-impl-002-20260320-R3.md`
+`iaa_audit_token: IAA-session-dckis-impl-002-20260320-R3-PASS`
 
 ---
 
@@ -74,9 +74,9 @@ Expected token format: `PHASE_B_BLOCKING_TOKEN: IAA-session-dckis-impl-002-20260
 | ADR-005 Pipeline 1 isolation | ✅ PASS |
 | SCOPE_DECLARATION.md current | ✅ PASS |
 | IAA Pre-Brief committed | ✅ PASS |
-| IAA ASSURANCE-TOKEN | ⏳ PENDING (IAA R2 re-invocation required) |
+| IAA ASSURANCE-TOKEN | ✅ PASS — `IAA-session-dckis-impl-002-20260320-R3-PASS` |
 
-`merge_gate_parity: PENDING_IAA_TOKEN`
+`merge_gate_parity: PASS`
 
 ---
 
