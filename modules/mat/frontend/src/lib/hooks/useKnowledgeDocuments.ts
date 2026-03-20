@@ -138,13 +138,18 @@ async function uploadWithRetry(
   // Get current user's organisation_id from the session
   const { data: { session } } = await supabase.auth.getSession();
   const organisationId = session?.user?.user_metadata?.organisation_id as string | undefined;
+  if (!organisationId) {
+    throw new Error(
+      'Upload failed: organisation_id is required but not found in session. Please log in again.',
+    );
+  }
 
   // Invoke the process-document-v2 Edge Function (handles INSERT internally)
   const { error } = await supabase.functions.invoke('process-document-v2', {
     body: {
       content: fileContent,
       source,
-      ...(organisationId ? { organisation_id: organisationId } : {}),
+      organisation_id: organisationId,
       source_document_name: params.file.name,
       chunked_from_tester: false,
     },
