@@ -14,6 +14,7 @@ import { SettingsPage } from './pages/SettingsPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { FeedbackPage } from './pages/FeedbackPage';
 import ArcPortalPage from './pages/arc/index';
+import { KnowledgeUploadPage } from './pages/KnowledgeUploadPage';
 import { AuthProvider } from './contexts/AuthContext';
 import { AuditProvider } from './contexts/AuditContext';
 import { useAuth } from './contexts/AuthContext';
@@ -83,6 +84,7 @@ function App() {
                     <Route path="feedback" element={<FeedbackPage />} />
                     <Route path="recommendations" element={<FeedbackPage />} />
                     <Route path="arc" element={<ArcPortalPage />} />
+                    <Route path="knowledge" element={<KnowledgeUploadPage />} />
                   </Route>
                 </Route>
               </Route>
