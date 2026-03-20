@@ -23,6 +23,13 @@ const DEFAULT_CHUNK_OVERLAP = 200;
 /** Maximum number of chunk previews to display in the UI */
 const MAX_PREVIEW_CHUNKS = 20;
 
+/**
+ * Maximum characters to display per chunk in the preview list.
+ * Balances readability with performance — full chunk content (up to CHUNK_SIZE=2000 chars)
+ * is not needed for boundary validation.
+ */
+const MAX_CHUNK_PREVIEW_CHARS = 300;
+
 interface ChunkPreview {
   index: number;
   content: string;
@@ -219,8 +226,8 @@ export function DocumentChunkTester(): React.ReactElement {
                     </span>
                   </div>
                   <pre className="text-xs text-gray-700 whitespace-pre-wrap break-words font-mono leading-relaxed">
-                    {chunk.content.slice(0, 300)}
-                    {chunk.content.length > 300 && (
+                    {chunk.content.slice(0, MAX_CHUNK_PREVIEW_CHARS)}
+                    {chunk.content.length > MAX_CHUNK_PREVIEW_CHARS && (
                       <span className="text-gray-400"> …[truncated]</span>
                     )}
                   </pre>

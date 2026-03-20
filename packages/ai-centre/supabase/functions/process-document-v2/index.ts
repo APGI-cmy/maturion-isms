@@ -251,6 +251,9 @@ serve(async (req: Request): Promise<Response> => {
             source_document_name: source_document_name ?? null,
             chunk_index: i,
             chunk_size: chunked_from_tester ? (chunkContent.length) : CHUNK_SIZE,
+            // When using pre-validated chunks from DocumentChunkTester, record overlap as 0
+            // because the tester chunks are passed as discrete units — the overlap was already
+            // applied by the tester's chunkText() function before they were transmitted.
             chunk_overlap: chunked_from_tester ? 0 : CHUNK_OVERLAP,
             approval_status: 'pending',
           });

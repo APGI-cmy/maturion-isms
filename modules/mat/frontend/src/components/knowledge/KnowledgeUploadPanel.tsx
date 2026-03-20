@@ -51,12 +51,17 @@ export function KnowledgeUploadPanel(): React.ReactElement {
       setValidationError('Please select a file to upload.');
       return;
     }
-    await uploadDocument({ file: selectedFile, domain: selectedDomain });
-    // Reset file input on success
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+    try {
+      await uploadDocument({ file: selectedFile, domain: selectedDomain });
+      // Reset file input only on successful upload
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      setSelectedFile(null);
+    } catch {
+      // Error is handled by useKnowledgeDocuments (uploadError state)
+      // Do NOT clear the file selection so the user can retry
     }
-    setSelectedFile(null);
   }
 
   return (

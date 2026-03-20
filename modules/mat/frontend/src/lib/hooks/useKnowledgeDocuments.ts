@@ -121,6 +121,9 @@ function sleep(ms: number): Promise<void> {
 /**
  * Upload a knowledge document to Supabase with retry logic and exponential backoff.
  * T-KU-010: retry / retryCount / backoff logic.
+ *
+ * Note: Direct insert is used for the basic upload record (pending for processing).
+ * The process-document-v2 Edge Function handles full chunking and embedding.
  */
 async function uploadWithRetry(
   params: KnowledgeUploadParams,
@@ -131,7 +134,12 @@ async function uploadWithRetry(
   // Read file content for storage
   const fileContent = await params.file.text();
 
+  // Get current user's organisation_id from the session
+  const { data: { session } } = await supabase.auth.getSession();
+  const organisationId = session?.user?.user_metadata?.organisation_id as string | undefined;
+
   const { error } = await supabase.from('ai_knowledge').insert({
+    ...(organisationId ? { organisation_id: organisationId } : {}),
     source,
     content: fileContent,
     source_document_name: params.file.name,
