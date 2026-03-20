@@ -18,7 +18,7 @@
 | `source_document_name` | `TEXT`      | YES      | —        | Original filename stored with every chunk for traceability       |
 | `document_id`        | `TEXT`        | YES      | —        | Chunk-to-document linkage for traceability                        |
 | `content_hash`       | `TEXT`        | YES      | —        | Deterministic hash for deduplication / Smart Chunk Reuse         |
-| `metadata`           | `JSONB`       | YES      | `'{}'`   | Processing provenance (ingestion params, model info, etc.)       |
+| `metadata`           | `JSONB`       | YES      | `'{}'::jsonb` | Processing provenance (ingestion params, model info, etc.)       |
 
 All new columns are nullable to preserve backward compatibility with existing rows.
 
@@ -57,7 +57,7 @@ CREATE TABLE document_chunks (
   source_document_name TEXT,             -- ← now present in ai_knowledge (§4.6.3)
   content         TEXT NOT NULL,
   content_hash    TEXT,                  -- ← now present in ai_knowledge (gap 3 resolved)
-  metadata        JSONB DEFAULT '{}',    -- ← now present in ai_knowledge (gap 4 resolved)
+  metadata        JSONB DEFAULT '{}'::jsonb,    -- ← now present in ai_knowledge (gap 4 resolved)
   organisation_id TEXT NOT NULL,
   embedding       vector(1536),
   created_at      TIMESTAMPTZ DEFAULT now()
@@ -72,7 +72,7 @@ ALTER TABLE ai_knowledge
   ADD COLUMN IF NOT EXISTS source_document_name   TEXT,
   ADD COLUMN IF NOT EXISTS document_id            TEXT,
   ADD COLUMN IF NOT EXISTS content_hash           TEXT,
-  ADD COLUMN IF NOT EXISTS metadata               JSONB DEFAULT '{}';
+  ADD COLUMN IF NOT EXISTS metadata               JSONB DEFAULT '{}'::jsonb;
 ```
 
 ---
@@ -84,7 +84,7 @@ ALTER TABLE ai_knowledge
 | Gap 1  | Missing chunk-to-document linkage        | `document_id TEXT` column added ✅                       |
 | Gap 2  | No chunk ordering field                  | `chunk_index INTEGER` column added (§4.6.3) ✅          |
 | Gap 3  | No deduplication / Smart Chunk Reuse hash | `content_hash TEXT` + `idx_ai_knowledge_content_hash` index ✅ |
-| Gap 4  | No processing provenance store           | `metadata JSONB DEFAULT '{}'` column added ✅            |
+| Gap 4  | No processing provenance store           | `metadata JSONB DEFAULT '{}'::jsonb` column added ✅    |
 
 **Additional §4.6.3 columns** also resolved in this migration:
 - `chunk_size INTEGER DEFAULT 2000`

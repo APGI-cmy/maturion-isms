@@ -22,7 +22,7 @@ ALTER TABLE ai_knowledge
   -- Deterministic hash for deduplication / Smart Chunk Reuse (AIMC-P1-upload-arch-review-20260319.md §2.4 gap 3)
   ADD COLUMN IF NOT EXISTS content_hash           TEXT,
   -- Processing provenance — stores ingestion parameters, model info, etc. (AIMC-P1-upload-arch-review-20260319.md §2.4 gap 4)
-  ADD COLUMN IF NOT EXISTS metadata               JSONB DEFAULT '{}';
+  ADD COLUMN IF NOT EXISTS metadata               JSONB DEFAULT '{}'::jsonb;
 
 -- Index on content_hash for efficient deduplication lookups (Smart Chunk Reuse)
 CREATE INDEX IF NOT EXISTS idx_ai_knowledge_content_hash

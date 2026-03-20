@@ -67,9 +67,9 @@ Tests T-KU-001 through T-KU-003, T-KU-006 through T-KU-012 remain RED — outsid
 
 ## 6. IAA Invocation Status
 
-**Status**: PHASE_A_ADVISORY — IAA not yet deployed. Invocation logged for IAA review.
+**Status**: PHASE_B_BLOCKING — IAA deployed as a blocking gate for this wave.
 
-This pre-brief is filed per AGCFPP-001 mandate. Upon IAA deployment, the independent-assurance-agent must verify:
+This pre-brief is filed per AGCFPP-001 mandate. Under PHASE_B_BLOCKING, the independent-assurance-agent must verify, before merge:
 - Migration SQL matches architecture spec (§4.6.3 + §2.4 gaps)
 - RLS INSERT policy correctly scoped to `ai_knowledge` with `WITH CHECK`
 - T-KU-004 and T-KU-005 are GREEN
