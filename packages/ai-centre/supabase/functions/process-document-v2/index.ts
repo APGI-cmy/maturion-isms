@@ -20,7 +20,6 @@
  */
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 // ─── Configuration Constants ──────────────────────────────────────────────────
 
@@ -151,6 +150,12 @@ async function createEmbedding(text: string): Promise<number[]> {
 // ─── Main Handler ─────────────────────────────────────────────────────────────
 
 serve(async (req: Request): Promise<Response> => {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  };
+
   // CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, {
@@ -165,7 +170,7 @@ serve(async (req: Request): Promise<Response> => {
   if (req.method !== 'POST') {
     return new Response(
       JSON.stringify({ error: 'Method not allowed. Use POST.' }),
-      { status: 405, headers: { 'Content-Type': 'application/json' } },
+      { status: 405, headers: { 'Content-Type': 'application/json', ...corsHeaders } },
     );
   }
 
@@ -175,7 +180,7 @@ serve(async (req: Request): Promise<Response> => {
   } catch {
     return new Response(
       JSON.stringify({ error: 'Invalid JSON request body' }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } },
+      { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } },
     );
   }
 
@@ -183,17 +188,24 @@ serve(async (req: Request): Promise<Response> => {
     content,
     source,
     source_document_name,
-    organisation_id,
     chunked_from_tester = false,
     pre_validated_chunks,
   } = body;
 
-  if (!content || !source || !organisation_id) {
+  // Validate required fields (organisation_id resolved server-side from JWT)
+  if (!content || !source) {
     return new Response(
-      JSON.stringify({
-        error: 'Missing required fields: content, source, organisation_id',
-      }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } },
+      JSON.stringify({ error: 'Missing required fields: content, source' }),
+      { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } },
+    );
+  }
+
+  // Validate Authorization header and resolve organisation_id server-side
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return new Response(
+      JSON.stringify({ error: 'Unauthorized: Authorization header with Bearer token is required' }),
+      { status: 401, headers: { 'Content-Type': 'application/json', ...corsHeaders } },
     );
   }
 
@@ -203,11 +215,38 @@ serve(async (req: Request): Promise<Response> => {
   if (!supabaseUrl || !supabaseServiceKey) {
     return new Response(
       JSON.stringify({ error: 'Supabase configuration missing' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } },
+      { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } },
     );
   }
 
-  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  // Use caller's JWT to authenticate (validates token; prevents arbitrary org writes)
+  const userToken = authHeader.replace('Bearer ', '');
+  const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+  const supabaseUser = createClient(supabaseUrl, supabaseServiceKey, {
+    global: { headers: { Authorization: `Bearer ${userToken}` } },
+  });
+
+  // Resolve organisation_id from profiles — trusted server-side source
+  const { data: { user }, error: userError } = await supabaseUser.auth.getUser();
+  if (userError || !user?.id) {
+    return new Response(
+      JSON.stringify({ error: 'Unauthorized: invalid or expired token' }),
+      { status: 401, headers: { 'Content-Type': 'application/json', ...corsHeaders } },
+    );
+  }
+  const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+  const { data: profile, error: profileError } = await supabaseAdmin
+    .from('profiles')
+    .select('organisation_id')
+    .eq('id', user.id)
+    .single();
+  const organisation_id = profile?.organisation_id as string | undefined;
+  if (profileError || !organisation_id) {
+    return new Response(
+      JSON.stringify({ error: 'Unauthorized: organisation_id could not be resolved from user profile' }),
+      { status: 403, headers: { 'Content-Type': 'application/json', ...corsHeaders } },
+    );
+  }
 
   try {
     let chunks: string[];
@@ -220,6 +259,15 @@ serve(async (req: Request): Promise<Response> => {
      */
     if (chunked_from_tester && pre_validated_chunks && pre_validated_chunks.length > 0) {
       // Smart Chunk Reuse path: use pre-validated chunks from DocumentChunkTester
+      // Enforce the same max-chunk limit as the standard path to prevent excessive cost.
+      if (pre_validated_chunks.length > MAX_CHUNKS_PER_INVOCATION) {
+        return new Response(
+          JSON.stringify({
+            error: `Too many pre_validated_chunks provided: maximum allowed is ${MAX_CHUNKS_PER_INVOCATION}`,
+          }),
+          { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } },
+        );
+      }
       chunks = pre_validated_chunks;
     } else {
       // Standard path: split the document text into chunks
@@ -241,7 +289,7 @@ serve(async (req: Request): Promise<Response> => {
         // Insert chunk into ai_knowledge table
         // SCOPE ISOLATION (T-KU-008): ONLY writes to ai_knowledge
         // NEVER writes to: criteria, domains, mini_performance_standards
-        const { error: insertError } = await supabase
+        const { error: insertError } = await supabaseAdmin
           .from('ai_knowledge')
           .insert({
             organisation_id,
@@ -250,11 +298,10 @@ serve(async (req: Request): Promise<Response> => {
             embedding,
             source_document_name: source_document_name ?? null,
             chunk_index: i,
-            chunk_size: chunked_from_tester ? chunkContent.length : CHUNK_SIZE,
-            // When using pre-validated chunks from DocumentChunkTester, record overlap as 0
-            // because the tester chunks are passed as discrete units — the overlap was already
-            // applied by the tester's chunkText() function before they were transmitted.
-            chunk_overlap: chunked_from_tester ? 0 : CHUNK_OVERLAP,
+            // Store the configured chunking parameters used during ingestion.
+            // For tester-provided chunks, these match the tester's configuration.
+            chunk_size: CHUNK_SIZE,
+            chunk_overlap: CHUNK_OVERLAP,
             approval_status: 'pending',
           });
 
@@ -280,13 +327,13 @@ serve(async (req: Request): Promise<Response> => {
 
     return new Response(JSON.stringify(response), {
       status: errors.length > 0 && successCount === 0 ? 500 : 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return new Response(
       JSON.stringify({ error: `Processing failed: ${message}` }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } },
+      { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } },
     );
   }
 });

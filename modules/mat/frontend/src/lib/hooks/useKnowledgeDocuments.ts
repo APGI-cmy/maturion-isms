@@ -132,15 +132,37 @@ async function uploadWithRetry(
 ): Promise<void> {
   const source = domainSourceMap[params.domain] ?? 'general';
 
+  // File.text() does not extract text from binary formats (PDF/DOCX).
+  // Reject binary files with a clear error until server-side extraction is supported.
+  const isBinaryFormat = ['.pdf', '.docx'].some((ext) =>
+    params.file.name.toLowerCase().endsWith(ext),
+  );
+  if (isBinaryFormat) {
+    throw new Error(
+      `${params.file.name} is a binary format. PDF and DOCX text extraction is not yet supported. ` +
+        `Please convert to .txt or .md and re-upload.`,
+    );
+  }
+
   // Read file content to pass to the Edge Function
   const fileContent = await params.file.text();
 
-  // Get current user's organisation_id from the session
+  // Resolve organisation_id from the profiles table — canonical source of truth in MAT frontend.
+  // user_metadata is unreliable; profiles.organisation_id is always correct.
   const { data: { session } } = await supabase.auth.getSession();
-  const organisationId = session?.user?.user_metadata?.organisation_id as string | undefined;
-  if (!organisationId) {
+  const userId = session?.user?.id;
+  if (!userId) {
+    throw new Error('Upload failed: not authenticated. Please log in again.');
+  }
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('organisation_id')
+    .eq('id', userId)
+    .single();
+  const organisationId = profile?.organisation_id as string | undefined;
+  if (profileError || !organisationId) {
     throw new Error(
-      'Upload failed: organisation_id is required but not found in session. Please log in again.',
+      'Upload failed: organisation_id could not be resolved from your profile. Please contact support.',
     );
   }
 

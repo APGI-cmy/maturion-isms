@@ -46,6 +46,8 @@ function chunkText(
   chunkOverlap: number,
 ): ChunkPreview[] {
   if (!text.trim()) return [];
+  // Clamp overlap to be strictly less than size to prevent infinite loop
+  const safeOverlap = Math.min(chunkOverlap, chunkSize - 1);
   const chunks: ChunkPreview[] = [];
   let start = 0;
   let index = 0;
@@ -55,7 +57,7 @@ function chunkText(
     const content = text.slice(start, end);
     chunks.push({ index, content, charCount: content.length });
     index += 1;
-    start += chunkSize - chunkOverlap;
+    start += chunkSize - safeOverlap;
     if (start >= text.length) break;
   }
 
@@ -85,7 +87,7 @@ export function DocumentChunkTester(): React.ReactElement {
   function handleChunkOverlapChange(event: React.ChangeEvent<HTMLInputElement>): void {
     const value = parseInt(event.target.value, 10);
     if (!isNaN(value) && value >= 0) {
-      setChunkOverlap(value);
+      setChunkOverlap(Math.min(value, chunkSize - 1));
     }
   }
 
@@ -104,11 +106,8 @@ export function DocumentChunkTester(): React.ReactElement {
         🔬 Chunk Preflight Tester
       </h2>
       <p className="text-sm text-gray-500 mb-4">
-        Preview how your document will be split into chunks before uploading.
-        Validated chunks can be passed directly to the pipeline via Smart Chunk Reuse
-        (
-        <code className="text-xs bg-gray-100 px-1 rounded">chunked_from_tester: true</code>
-        ).
+        This tool mirrors the Smart Chunk Reuse logic used in the ingestion pipeline,
+        but runs entirely in the browser as a local preview with no data uploaded.
       </p>
 
       {/* Configuration controls */}
@@ -146,7 +145,7 @@ export function DocumentChunkTester(): React.ReactElement {
             id="chunk-overlap-input"
             type="number"
             min={0}
-            max={500}
+            max={chunkSize - 1}
             step={10}
             value={chunkOverlap}
             onChange={handleChunkOverlapChange}

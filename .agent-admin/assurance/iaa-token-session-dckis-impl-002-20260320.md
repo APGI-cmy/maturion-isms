@@ -1,4 +1,6 @@
-# IAA Verdict Artifact — DCKIS-IMPL-002
+# IAA Verdict Artifact — DCKIS-IMPL-002 — REJECTION-PACKAGE
+
+<!-- REJECTION-PACKAGE — this artifact is skipped by iaa-token-self-certification CI gate -->
 
 **Agent**: independent-assurance-agent v6.2.0
 **Session ID**: session-dckis-impl-002-20260320
