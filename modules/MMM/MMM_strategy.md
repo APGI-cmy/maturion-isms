@@ -762,6 +762,62 @@ This is necessary because:
 
 ## 19. Governance Rules for the MMM Build
 
+The MMM build must follow the existing ecosystem discipline.
+
+### 19.1 Build derivation chain
+
+The build sequence remains:
+
+1. Strategy  
+2. App Description  
+3. FRS  
+4. TRS  
+5. QA-to-Red suite  
+6. PBFAG / pre-build gate  
+7. QA-to-Green build execution  
+8. Wave implementation plan  
+9. Build execution  
+10. validation, audit, and convergence reviews
+
+### 19.2 Additional mandatory step
+For MMM specifically, one additional artifact should be inserted between Strategy and App Description or directly after the App Description structure is settled:
+
+- **Canonical Ownership and Migration Map**
+
+This artifact should define:
+- what MMM owns
+- what AIMC owns
+- what PIT owns
+- what is harvested from MAT
+- what is harvested from Roadmap
+- what is harvested from legacy
+- what is retired
+- what is parallel-run temporarily
+- what remains traceability-only
+
+### 19.3 Strategic rule
+No implementation may begin before:
+- the MMM app description is stabilised,
+- the ownership map is explicit,
+- and the QA-to-Red discipline is in place.
+
+### 19.4 Cross-app completeness rule
+
+In addition to product-specific strategy requirements, MMM must also satisfy the mandatory cross-app component baseline applicable to all Maturion applications.
+
+Accordingly, the MMM app description cannot be considered complete unless it explicitly accommodates:
+
+- agent-system requirements
+- watchdog and QIW oversight requirements
+- performance and telemetry requirements
+- feedback and learning-loop requirements
+- compliance and governance evidence requirements
+- startup and commissioning requirements
+- architecture completeness requirements
+- platform AI feature requirements :contentReference[oaicite:13]{index=13}
+
+---
+
 ## 19A. Mandatory Cross-App Governance Baseline for MMM
 
 MMM is not only a product convergence initiative.  
@@ -943,60 +999,6 @@ Therefore:
 - the wave implementation plan must allocate delivery responsibility for them
 
 No MMM specification should be treated as complete unless these cross-app obligations have been explicitly incorporated. :contentReference[oaicite:11]{index=11}
-
-The MMM build must follow the existing ecosystem discipline.
-
-### 19.1 Build derivation chain
-
-The build sequence remains:
-
-1. Strategy  
-2. App Description  
-3. FRS  
-4. TRS  
-5. QA-to-Red suite  
-6. PBFAG / pre-build gate  
-7. QA-to-Green build execution  
-8. Wave implementation plan  
-9. Build execution  
-10. validation, audit, and convergence reviews
-
-### 19.2 Additional mandatory step
-For MMM specifically, one additional artifact should be inserted between Strategy and App Description or directly after the App Description structure is settled:
-
-- **Canonical Ownership and Migration Map**
-
-This artifact should define:
-- what MMM owns
-- what AIMC owns
-- what PIT owns
-- what is harvested from MAT
-- what is harvested from Roadmap
-- what is harvested from legacy
-- what is retired
-- what is parallel-run temporarily
-- what remains traceability-only
-
-### 19.3 Strategic rule
-No implementation may begin before:
-- the MMM app description is stabilised,
-- the ownership map is explicit,
-- and the QA-to-Red discipline is in place.
-
-### 19.4 Cross-app completeness rule
-
-In addition to product-specific strategy requirements, MMM must also satisfy the mandatory cross-app component baseline applicable to all Maturion applications.
-
-Accordingly, the MMM app description cannot be considered complete unless it explicitly accommodates:
-
-- agent-system requirements
-- watchdog and QIW oversight requirements
-- performance and telemetry requirements
-- feedback and learning-loop requirements
-- compliance and governance evidence requirements
-- startup and commissioning requirements
-- architecture completeness requirements
-- platform AI feature requirements :contentReference[oaicite:13]{index=13}
 
 ---
 
