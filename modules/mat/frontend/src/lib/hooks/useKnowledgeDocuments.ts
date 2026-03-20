@@ -119,11 +119,12 @@ function sleep(ms: number): Promise<void> {
 }
 
 /**
- * Upload a knowledge document to Supabase with retry logic and exponential backoff.
+ * Upload a knowledge document via the process-document-v2 Edge Function with retry
+ * logic and exponential backoff.
  * T-KU-010: retry / retryCount / backoff logic.
  *
- * Note: Direct insert is used for the basic upload record (pending for processing).
- * The process-document-v2 Edge Function handles full chunking and embedding.
+ * The process-document-v2 Edge Function handles chunking, embedding, and INSERT
+ * into ai_knowledge internally — no direct INSERT is performed here.
  */
 async function uploadWithRetry(
   params: KnowledgeUploadParams,
@@ -131,19 +132,22 @@ async function uploadWithRetry(
 ): Promise<void> {
   const source = domainSourceMap[params.domain] ?? 'general';
 
-  // Read file content for storage
+  // Read file content to pass to the Edge Function
   const fileContent = await params.file.text();
 
   // Get current user's organisation_id from the session
   const { data: { session } } = await supabase.auth.getSession();
   const organisationId = session?.user?.user_metadata?.organisation_id as string | undefined;
 
-  const { error } = await supabase.from('ai_knowledge').insert({
-    ...(organisationId ? { organisation_id: organisationId } : {}),
-    source,
-    content: fileContent,
-    source_document_name: params.file.name,
-    approval_status: 'pending',
+  // Invoke the process-document-v2 Edge Function (handles INSERT internally)
+  const { error } = await supabase.functions.invoke('process-document-v2', {
+    body: {
+      content: fileContent,
+      source,
+      ...(organisationId ? { organisation_id: organisationId } : {}),
+      source_document_name: params.file.name,
+      chunked_from_tester: false,
+    },
   });
 
   if (error) {

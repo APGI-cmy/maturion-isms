@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'supabase/functions/**'
+      - 'packages/ai-centre/supabase/functions/**'
       - '.github/workflows/deploy-mat-edge-functions.yml'
   workflow_dispatch:
 
