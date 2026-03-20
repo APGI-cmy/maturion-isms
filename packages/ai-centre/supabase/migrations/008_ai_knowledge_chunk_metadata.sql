@@ -31,6 +31,7 @@ CREATE INDEX IF NOT EXISTS idx_ai_knowledge_content_hash
 -- INSERT RLS policy: enforce organisation_id isolation on write.
 -- Existing 003_ai_knowledge.sql has a SELECT USING policy only.
 -- This policy adds the WITH CHECK clause so inserts are scoped to the caller's organisation.
+DROP POLICY IF EXISTS ai_knowledge_org_insert ON ai_knowledge;
 CREATE POLICY ai_knowledge_org_insert ON ai_knowledge
   FOR INSERT
   WITH CHECK (organisation_id = current_setting('app.current_organisation_id', true));
