@@ -616,6 +616,19 @@ MMM may never implement:
 - its own fallback logic outside AIMC
 - its own ungoverned prompt and model routing layer
 
+### 14.5 Platform AI feature obligations
+
+In addition to routing AI through AIMC, MMM must also comply with the Maturion platform AI feature baseline.
+
+This means MMM should be designed to accommodate, where appropriate:
+
+- embedded AI assistant/chat
+- context-aware AI guidance in the interface
+- governed AI task routing
+- explicit AI capability declaration in agent configuration
+- dual-pattern AI usage across front-office and back-office contexts where relevant
+
+These platform AI features must be reflected in the app description as native product/application requirements, not treated merely as optional later enhancements. :contentReference[oaicite:12]{index=12}
 ---
 
 ## 15. Strategic Treatment of Legacy Assets
@@ -749,6 +762,188 @@ This is necessary because:
 
 ## 19. Governance Rules for the MMM Build
 
+## 19A. Mandatory Cross-App Governance Baseline for MMM
+
+MMM is not only a product convergence initiative.  
+It is also a new canonical Maturion application and must therefore fully comply with the mandatory cross-app governance baseline defined in the Maturion canon. These requirements are not optional implementation extras; they are part of the minimum definition of a complete, commissionable Maturion app. :contentReference[oaicite:1]{index=1}
+
+Accordingly, the MMM App Description, FRS, TRS, QA-to-Red suite, wave plan, and implementation build must all explicitly accommodate the following mandatory cross-app component categories.
+
+### 19A.1 Agent System and Contracts
+
+MMM must be created as a governed application with the required agent-operating structure, including:
+
+- `.agent` file
+- `.agent-workspace/` structure
+- wake-up and session-closure compatibility
+- any agent class-specific requirements applicable to the app build or operational mode
+
+This requirement applies both to the application repository/build environment and to any embedded AI operating assumptions reflected in the MMM app design. :contentReference[oaicite:2]{index=2}
+
+### 19A.2 Watchdog and Oversight
+
+MMM must include Watchdog-compatible oversight and Quality Integrity Watchdog (QIW) compatibility where applicable.
+
+This includes support for monitored quality/integrity channels across at least:
+
+- build
+- lint
+- test
+- deploy
+- runtime
+
+MMM must be designed so that QA, operational anomalies, integrity concerns, and governance breaches can be surfaced through the appropriate watchdog and oversight mechanisms. :contentReference[oaicite:3]{index=3}
+
+### 19A.3 Performance Measurement
+
+MMM must include a formal performance-measurement baseline covering both AI and application performance.
+
+This must include, where applicable:
+
+- AI performance metrics
+  - token usage
+  - latency
+  - cost
+- application metrics
+  - p50 latency
+  - p95 latency
+  - p99 latency
+  - throughput
+  - error rates
+- relevant service metrics for critical MMM services and dependencies
+
+Because MMM will be AI-enabled, evidence-heavy, and operationally important, performance measurement must be treated as a first-class design requirement, not a post-build optimisation concern. :contentReference[oaicite:4]{index=4}
+
+### 19A.4 Observability and Telemetry
+
+MMM must ship with baseline observability and telemetry capabilities required for a governed Maturion application.
+
+This includes, at minimum:
+
+- `/api/health`
+- structured JSON logging
+- runtime telemetry
+- dashboard/status APIs as appropriate, including patterns such as:
+  - `/api/[app]/status`
+  - `/metrics`
+  - `/health`
+
+The app description and downstream specs must explicitly account for the telemetry needs of:
+
+- framework creation/import
+- evidence operations
+- AI interactions
+- findings and recommendation generation
+- dashboard publication
+- report generation
+- PIT export pathways :contentReference[oaicite:5]{index=5}
+
+### 19A.5 Feedback and Learning
+
+MMM must integrate into the Maturion feedback and learning-loop model.
+
+This includes accommodation for:
+
+- Tier-0 / Tier-1 learning integration where applicable
+- BL / FL-CI learning structures where applicable
+- layer-up feedback mechanisms
+- continuous improvement recording in `.agent-admin/improvements/`
+
+This requirement applies both to:
+- app-quality/process learning
+- and to structured operational improvement feedback arising from app usage and QA outcomes :contentReference[oaicite:6]{index=6}
+
+### 19A.6 Compliance and Governance Evidence
+
+MMM must distinguish clearly between:
+
+1. **business evidence**
+   - evidence uploaded and managed by users against maturity criteria
+
+and
+
+2. **application governance evidence**
+   - evidence proving that MMM itself is a governed and compliant Maturion application
+
+MMM must include the required application governance evidence and compliance artifacts, including:
+
+- `.agent-admin/` bundle
+  - prehandover
+  - gates
+  - RCA
+  - improvements
+  - governance materials
+- compliance baseline artifacts such as:
+  - `COMPLIANCE_SCOPE.md`
+  - `CONTROL_MAPPING.md`
+  - `EVIDENCE_CATALOG.md`
+  - `AUDIT_REPORT.md`
+- `GOVERNANCE_INVENTORY.json`
+
+This distinction is critical and must remain explicit throughout the app description and downstream specifications. :contentReference[oaicite:7]{index=7}
+
+### 19A.7 Startup and Commissioning
+
+MMM must be designed as an application that is progressively commissioned under governance, not merely built and deployed.
+
+The MMM delivery must therefore accommodate:
+
+- `APP_STARTUP_REQUIREMENTS.md`
+- runtime readiness verification
+- progressive activation states:
+  - `INSTALLED`
+  - `VALIDATED`
+  - `COMMISSIONED`
+  - `ACTIVATED`
+
+The app description and TRS must explicitly reflect that MMM is only considered operational once it has passed the required commissioning readiness criteria. :contentReference[oaicite:8]{index=8}
+
+### 19A.8 Architecture Completeness
+
+MMM must satisfy the architecture-completeness baseline for Maturion apps.
+
+This includes explicit accommodation for:
+
+- deployment target declaration
+- `.env.example`
+- build entrypoints
+- runtime entrypoints
+- dependency manifest
+- lock file
+- consistent error-handling and recovery patterns
+
+These are baseline completeness requirements and must be assumed from the outset in the MMM app design. :contentReference[oaicite:9]{index=9}
+
+### 19A.9 Platform AI Features
+
+Because MMM is an AI-enabled Maturion application, it must also include the required platform AI feature baseline.
+
+This includes:
+
+- embedded AI assistant / chat capability where appropriate
+- context-aware AI in the user interface
+- agent file entries defining relevant `ai_capabilities`
+- AI task routing through governed platform patterns
+- support for the dual-pattern model where applicable:
+  - back-office AI usage
+  - front-office AI usage
+
+This requirement sits alongside, and does not replace, the strategic rule that MMM must consume AI through AIMC rather than building a separate uncontrolled AI layer. :contentReference[oaicite:10]{index=10}
+
+### 19A.10 Strategic Implication
+
+The mandatory cross-app baseline must be treated as a binding design input for MMM.
+
+Therefore:
+
+- the MMM App Description must include these cross-app obligations explicitly
+- the FRS must translate them into functional and operational requirements
+- the TRS must translate them into technical implementation requirements
+- the QA-to-Red suite must test for their presence and completeness
+- the wave implementation plan must allocate delivery responsibility for them
+
+No MMM specification should be treated as complete unless these cross-app obligations have been explicitly incorporated. :contentReference[oaicite:11]{index=11}
+
 The MMM build must follow the existing ecosystem discipline.
 
 ### 19.1 Build derivation chain
@@ -787,6 +982,21 @@ No implementation may begin before:
 - the MMM app description is stabilised,
 - the ownership map is explicit,
 - and the QA-to-Red discipline is in place.
+
+### 19.4 Cross-app completeness rule
+
+In addition to product-specific strategy requirements, MMM must also satisfy the mandatory cross-app component baseline applicable to all Maturion applications.
+
+Accordingly, the MMM app description cannot be considered complete unless it explicitly accommodates:
+
+- agent-system requirements
+- watchdog and QIW oversight requirements
+- performance and telemetry requirements
+- feedback and learning-loop requirements
+- compliance and governance evidence requirements
+- startup and commissioning requirements
+- architecture completeness requirements
+- platform AI feature requirements :contentReference[oaicite:13]{index=13}
 
 ---
 
@@ -892,7 +1102,14 @@ It should contain at least:
 18. Versioning and traceability  
 19. Migration and decommission rules  
 20. Open design issues / confirmation items  
-
+21. Mandatory Cross-App Governance Components  
+22. Agent and AI Operating Model  
+23. Watchdog / QIW / Oversight  
+24. Observability, Telemetry, and Metrics  
+25. Startup, Commissioning, and Activation  
+26. Compliance Baseline and Governance Evidence  
+27. Architecture Completeness Requirements
+    
 ---
 
 ## 23. Immediate Strategic Decisions Already Agreed
