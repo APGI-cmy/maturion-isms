@@ -45,6 +45,7 @@ This document is intended to be the upstream authority for:
 
 MMM is not a patch to MAT or Roadmap.  
 MMM is the new canonical maturity capability.
+This document is intended not only to define product behavior, but also to serve as a one-time-build constitutional foundation from which downstream requirements, architecture, QA, and wave implementation must be derived without omission of known historical failure modes.
 
 ---
 
@@ -1256,9 +1257,13 @@ MMM must be born architecturally complete, including:
 - lockfile
 - error-handling/recovery patterns
 
+The architecture completeness baseline above is supplemented by the one-time-build and delivery-governance requirements that follow. These are mandatory for MMM and are not optional downstream process preferences.
+
+---
+
 ## 39A. Build Lifecycle Stages
 
-MMM must be built through the canonical lifecycle stages in strict order, with no stage-skipping.
+The following sections define MMM's mandatory one-time-build delivery doctrine.
 
 The minimum required sequence is:
 
@@ -1434,6 +1439,8 @@ This includes explicit auditing of:
 - their error handling and telemetry behavior
 
 No wave should close while unknown table pathways remain.
+
+This includes explicit auditing of all database access pathways, including every query/mutation entrypoint (for example, `.from()` calls where applicable), their calling hooks/services, their auth/RLS implications, and their error-handling and telemetry behavior.
 
 ---
 
@@ -1698,6 +1705,7 @@ The following require confirmation during FRS/TRS derivation:
 8. What exact first canonical version and folder structure will be used?
 9. Which dashboard elements are MVP and which are staged?
 10. Which approval/escalation variants require phase-based rollout?
+11. Which one-time-build governance sections are mandatory at MVP enforcement level versus mandatory as downstream FRS/TRS derived controls?
 
 ---
 
