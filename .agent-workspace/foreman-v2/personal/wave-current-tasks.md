@@ -1,12 +1,12 @@
-# Wave DCKIS-CL5D2 — Architecture Review for Pipeline 2 Rehosting — Current Tasks
+# Wave DCKIS-QA-RED — Pipeline 2 RED Gate Test Suite — Current Tasks
 
-**Wave**: DCKIS-CL5D2 (CL-5-D2: Upload Architecture Review — Pipeline 2 Re-hosting Entry Gate)
-**Session ID**: session-dckis-cl5d2-20260319
+**Wave**: DCKIS-QA-RED (Pipeline 2 RED Gate Test Suite — Knowledge Ingestion)
+**Session ID**: session-dckis-qa-red-20260319
 **Date**: 2026-03-19
-**Branch**: copilot/dckis-cl5d2-architecture-review
-**CS2 Authorization**: GitHub issue "[api-builder] DCKIS-CL5D2: Architecture Review for Pipeline 2 Rehosting (Entry Gate)" opened and assigned — CS2 authorization confirmed
-**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-dckis-cl5d2.md` — COMMITTED (SHA: c262a5d)
-**iaa_prebrief_path**: .agent-admin/assurance/iaa-prebrief-dckis-cl5d2.md
+**Branch**: copilot/dckis-qa-red-execute-failing-tests-again
+**CS2 Authorization**: GitHub issue "[qa-builder] DCKIS-QA-RED: Execute 12 RED Gate Failing Tests — Knowledge Ingestion" — CS2-opened, qa-builder assigned
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-dckis-qa-red.md` — COMMITTED
+**iaa_prebrief_path**: .agent-admin/assurance/iaa-prebrief-dckis-qa-red.md
 **Alignment Plan Source**: `governance/EXECUTION/MAT_KNOWLEDGE_INGESTION_ALIGNMENT_PLAN.md` v1.0.0
 
 ---
