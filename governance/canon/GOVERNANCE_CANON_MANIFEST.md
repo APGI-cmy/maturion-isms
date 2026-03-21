@@ -198,6 +198,7 @@ It serves to:
 | Canon File | Version | Layer-Down Status | Downstream Repos | Last Updated |
 |-----------|---------|-------------------|------------------|--------------|
 | `FM_RUNTIME_ENFORCEMENT_AND_AWARENESS_MODEL.md` | 1.0.0 | PUBLIC_API | FM App | 2026-01-05 |
+| `GOVERNANCE_WATCHDOG_CANON.md` | 1.0.1 | PUBLIC_API | All Repos | 2026-03-04 |
 | `MATURION_RUNTIME_EXECUTION_MONITOR_SPEC.md` | 1.0.0 | PUBLIC_API | FM App | 2026-01-05 |
 | `WATCHDOG_AUTHORITY_AND_SCOPE.md` | 1.0.0 | OPTIONAL | FM App | 2026-01-13 |
 | `WATCHDOG_COGNITIVE_OBSERVATION_PROTOCOL.md` | 1.0.0 | OPTIONAL | FM App | 2026-01-05 |
