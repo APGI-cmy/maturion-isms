@@ -15,7 +15,8 @@
     "files_layered_down": [
       "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
       "governance/canon/GOVERNANCE_WATCHDOG_CANON.md"
-    ]
+    ],
+    "ripple_pr": "copilot/layer-down-propagate-governance-changes"
   },
   "alignment_status": {
     "overall": "ALIGNED",
