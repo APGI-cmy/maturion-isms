@@ -22,7 +22,8 @@
 **Merge permitted (subject to CS2 approval).**
 
 **Token reference**: IAA-session-053-wave1-20260321-PASS  
-**Adoption phase**: PHASE_B_BLOCKING — hard gate ACTIVE
+**Adoption phase**: PHASE_B_BLOCKING — hard gate ACTIVE  
+**PHASE_B_BLOCKING_TOKEN**: IAA-session-053-wave1-20260321-PASS
 
 ## ═══════════════════════════════════════
 
