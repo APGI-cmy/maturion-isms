@@ -3,16 +3,16 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory \u2014 tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
-  "last_updated": "2026-03-05",
-  "last_ripple_commit": "29e76ecfe99bb75a8f5568239677780f6d80678a",
-  "last_ripple_timestamp": "2026-03-04T08:30:40Z",
+  "last_updated": "2026-03-30",
+  "last_ripple_commit": "57efff77166d2475695eb95245a074d8d496ef5f",
+  "last_ripple_timestamp": "2026-03-21T07:55:01Z",
   "alignment_summary": {
-    "total_artifacts": 12,
-    "aligned": 8,
+    "total_artifacts": 15,
+    "aligned": 10,
     "drifted": 0,
     "missing": 0,
-    "escalated": 5,
-    "overall_status": "PARTIAL \u2014 AGENT CONTRACT FILES ESCALATED TO CS2"
+    "escalated": 4,
+    "overall_status": "PARTIAL \u2014 AGENT CONTRACT FILES ESCALATED TO CS2; CANON_INVENTORY HASH INCONSISTENCY NOTED FOR GOVERNANCE_CANON_MANIFEST.md"
   },
   "artifacts": [
     {
@@ -160,6 +160,40 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
       "last_verified": "2026-03-04T06:19:59Z"
+    },
+    {
+      "filename": "APP_DESCRIPTION_REQUIREMENT_POLICY.md",
+      "path": "governance/policy/APP_DESCRIPTION_REQUIREMENT_POLICY.md",
+      "canonical_version": "2.0",
+      "local_version": "2.0",
+      "canonical_hash_sha256": "ce73cf29144121602f7e4ec893570430493498e7d962667a963a14720d128255",
+      "local_hash_sha256": "ce73cf29144121602f7e4ec893570430493498e7d962667a963a14720d128255",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-03-30T06:26:19Z"
+    },
+    {
+      "filename": "APP_DESCRIPTION_TEMPLATE.md",
+      "path": "governance/templates/APP_DESCRIPTION_TEMPLATE.md",
+      "canonical_version": "1.0",
+      "local_version": "1.0",
+      "canonical_hash_sha256": "63da7bc543b3d252c55e38b32e0fad63356e2f9da8d233f3b950dde000269be9",
+      "local_hash_sha256": "63da7bc543b3d252c55e38b32e0fad63356e2f9da8d233f3b950dde000269be9",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-03-30T06:26:19Z"
+    },
+    {
+      "filename": "GOVERNANCE_CANON_MANIFEST.md",
+      "path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
+      "canonical_version": "1.0.0",
+      "local_version": "1.0.0",
+      "canonical_hash_sha256": "c4341a7e91a8299eb0bf8f5766e4b38c036df87d02728bb6f0c9889c59f160c5",
+      "local_hash_sha256": "c3f2412e46fb50bfe8296efb46211c0e861a0c606bdfbc1487758b593a6c95f1",
+      "alignment_status": "HASH_INCONSISTENCY_IN_CANON_INVENTORY",
+      "layer_down_status": "INTERNAL",
+      "last_verified": "2026-03-30T06:26:19Z",
+      "notes": "CANON_INVENTORY hash (c4341a7e) does not match actual file at canonical commit 57efff77 (c3f2412e). Pre-existing inconsistency in canonical source. File content layered down \u2014 actual file hash verified consistent between canonical commit and main branch."
     }
   ],
   "metadata": {
