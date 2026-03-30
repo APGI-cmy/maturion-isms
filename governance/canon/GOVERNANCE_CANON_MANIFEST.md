@@ -237,7 +237,9 @@ These policies are located in `governance/policy/` and establish constitutional 
 | `QA_POLICY_MASTER.md` | 1.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-01-05 | N/A |
 | `BUILDER_QA_HANDOVER_POLICY.md` | 1.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 | N/A |
 | `PR_GATE_FAILURE_HANDLING_PROTOCOL.md` | 1.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 | N/A |
-| `APP_DESCRIPTION_REQUIREMENT_POLICY.md` | 1.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 | N/A |
+| `APP_DESCRIPTION_REQUIREMENT_POLICY.md` | 2.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-03-20 | APP_DESCRIPTION_REQUIREMENT_POLICY_V2.0 |
+| `APP_DESCRIPTION_TEMPLATE.md` *(governance/templates/)* | 1.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-03-20 | N/A |
+| `APP_DESCRIPTION_CREATION_CHECKLIST.md` *(governance/checklists/)* | 1.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-03-20 | APP_DESCRIPTION_CREATION_CHECKLIST_V1.0 |
 | `FM_MATURION_DELEGATED_ACTION_POLICY.md` | 1.0 | PUBLIC_API | FM App | 2026-01-05 | N/A |
 
 **Note**: POLICY-NO-ONLY-LANGUAGE is a constitutional policy with Tier-0 authority, banning minimizing language when describing test failures, warnings, or technical debt. It enforces T0-002 (Governance Supremacy Rule) and T0-003 (Zero Test Debt Constitutional Rule). See also: Bootstrap Learning BL-022.
@@ -249,9 +251,9 @@ These policies are located in `governance/policy/` and establish constitutional 
 ## 4. Governance Public API Summary
 
 **Total Canon Files**: 88  
-**Total Policy Files**: 9  
-**Combined Total**: 97  
-**PUBLIC_API**: 68 files (70%)  
+**Total Policy Files**: 11  
+**Combined Total**: 99  
+**PUBLIC_API**: 70 files (71%)  
 **OPTIONAL**: 16 files (16%)  
 **INTERNAL**: 13 files (13%)  
 **DEPRECATED**: 0 files (0%)
@@ -326,6 +328,7 @@ When a breaking change is required:
 | 2026-01-11 | Added AUTOMATED_DEPRECATION_DETECTION_GATE policy to Section 3.14, updated totals | Governance Administrator Agent |
 | 2026-01-14 | Added COMBINED_TESTING_PATTERN.md and PRE_IMPLEMENTATION_BEHAVIOR_REVIEW_PROTOCOL.md to Section 3.2, updated totals | Governance Administrator Agent |
 | 2026-01-19 | BOOTSTRAP_EXECUTION_LEARNINGS.md → PUBLIC_API (All Repos), updated totals | Agent Contract Administrator |
+| 2026-03-20 | APP_DESCRIPTION_REQUIREMENT_POLICY.md v1.0 → v2.0; added APP_DESCRIPTION_TEMPLATE.md and APP_DESCRIPTION_CREATION_CHECKLIST.md to §3.14; updated totals (97→99) | governance-repo-administrator-v2 (issue #1312, PR #1313) |
 
 ### 7.2 Layer-Down Completion Tracking
 
