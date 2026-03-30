@@ -3,25 +3,20 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "last_sync": {
-    "timestamp": "2026-03-05T08:51:24Z",
-    "session_id": "align-20260305-085124",
+    "timestamp": "2026-03-21T07:37:00Z",
+    "session_id": "session-053-20260321",
     "executed_by": "governance-liaison-isms-agent",
     "canonical_inventory_version": "1.0.0",
-    "canonical_inventory_date": "2026-03-01",
-    "total_canons_synced": 4,
+    "canonical_inventory_date": "2026-03-04",
+    "total_canons_synced": 2,
     "sync_method": "layer-down-automated",
     "sync_status": "SUCCESS",
-    "canonical_commit": "c05e5784e72689de47ef3aa77f5d029b1b53d809",
-    "ripple_pr": "937",
+    "canonical_commit": "4303aee2d2adf96e7d17e410cfe63edac49eacc5",
     "files_layered_down": [
-      "governance/canon/ACTIVATION_STATE_MODEL.md",
-      "governance/canon/AGENT_ROLE_GATE_APPLICABILITY.md",
-      "governance/canon/APP_STARTUP_REQUIREMENTS_DECLARATION.md",
-      "governance/canon/BUILD_TREE_EXECUTION_MODEL.md",
-      "governance/canon/GOVERNANCE_LAYERDOWN_CONTRACT.md",
-      "governance/canon/PR_GATE_EVALUATION_AND_ROLE_PROTOCOL.md",
-      "governance/CANON_INVENTORY.json"
-    ]
+      "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
+      "governance/canon/GOVERNANCE_WATCHDOG_CANON.md"
+    ],
+    "ripple_pr": "copilot/layer-down-propagate-governance-changes"
   },
   "alignment_status": {
     "overall": "ALIGNED",
@@ -32,7 +27,7 @@
       "missing": 0
     },
     "drift_detected": false,
-    "last_drift_check": "2026-03-05T08:51:24Z"
+    "last_drift_check": "2026-03-21T07:37:00Z"
   },
   "integrity": {
     "evidence_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_evidence.log",
@@ -82,18 +77,18 @@
     "governance_liaison_contract": ".github/agents/governance-liaison.md"
   },
   "last_ripple_check": {
-    "timestamp": "2026-03-04T08:30:40Z",
-    "session_id": "session-048-20260305",
+    "timestamp": "2026-03-21T07:37:00Z",
+    "session_id": "session-053-20260321",
     "executed_by": "governance-liaison-isms-agent",
-    "canonical_commit": "29e76ecfe99bb75a8f5568239677780f6d80678a",
+    "canonical_commit": "4303aee2d2adf96e7d17e410cfe63edac49eacc5",
     "canonical_inventory_version": "1.0.0",
-    "result": "ESCALATED_TO_CS2",
-    "drift_detected": false,
-    "agent_files_changed": true,
-    "files_layered_down": 0,
-    "pr_required": false,
-    "sync_pending": true,
-    "notes": "Ripple 29e76ecf contains .github/agents/CodexAdvisor-agent.md change — A-009/A-015 escalation trigger. No governance canon files changed. Per A-015: CodexAdvisor-agent.md escalated directly to CS2 (ESC-AGENTFILE-29E76ECF-20260304). Local v3.4.0 is newer than canonical v3.3.0. CS2 to determine authoritative version."
+    "result": "LAYERED_DOWN",
+    "drift_detected": true,
+    "agent_files_changed": false,
+    "files_layered_down": 2,
+    "pr_required": true,
+    "sync_pending": false,
+    "notes": "Ripple 4303aee2 contains GOVERNANCE_CANON_MANIFEST.md and GOVERNANCE_WATCHDOG_CANON.md (new). Both layered down. No agent contract files changed. Auto-close eligible."
   },
   "liaison_confirmation": {
     "timestamp": "2026-03-02T15:45:04Z",
