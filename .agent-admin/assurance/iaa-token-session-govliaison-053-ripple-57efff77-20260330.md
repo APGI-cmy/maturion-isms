@@ -6,6 +6,8 @@
 **Date**: 2026-03-30
 **Authority**: CS2 only (Johan Ras / @APGI-cmy)
 
+PHASE_B_BLOCKING_TOKEN: IAA-session-053-ripple-57efff77-20260330-PASS
+
 ---
 
 ## ═══════════════════════════════════════
