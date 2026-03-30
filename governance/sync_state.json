@@ -4,7 +4,7 @@
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "last_sync": {
     "timestamp": "2026-03-21T07:37:00Z",
-    "session_id": "layer-down-20260321-073700",
+    "session_id": "session-053-20260321",
     "executed_by": "governance-liaison-isms-agent",
     "canonical_inventory_version": "1.0.0",
     "canonical_inventory_date": "2026-03-04",
@@ -78,7 +78,7 @@
   },
   "last_ripple_check": {
     "timestamp": "2026-03-21T07:37:00Z",
-    "session_id": "layer-down-20260321-073700",
+    "session_id": "session-053-20260321",
     "executed_by": "governance-liaison-isms-agent",
     "canonical_commit": "4303aee2d2adf96e7d17e410cfe63edac49eacc5",
     "canonical_inventory_version": "1.0.0",

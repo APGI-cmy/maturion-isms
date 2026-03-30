@@ -58,7 +58,7 @@ SHA256 verified against canonical source: `ede3270a5ae33db8cf066a0f8bb92a6d4fc18
 ### sync_state.json (updated)
 
 - `last_sync` reflects this layer-down (canonical_commit: `4303aee2...`, ripple_pr set, files_layered_down: 2)
-- `last_ripple_check`: result = LAYERED_DOWN, drift_detected: true → corrected, sync_pending: false
+- `last_ripple_check`: result = LAYERED_DOWN, drift_detected: true (detected in canonical check), sync_pending: false (resolved by layer-down)
 
 ---
 
@@ -125,3 +125,19 @@ CANON_INVENTORY and alignment inventory updates are idempotent (same entries, sa
 ✅ COMPLETE — 2 governance artifacts layered down from canonical commit `4303aee2`. No agent
 contract files modified. All SHA256 hashes verified. Inventory artifacts updated. Merge gate
 parity confirmed.
+
+---
+
+## 9. PR Review Amendments (2026-03-30)
+
+The following amendments were applied per PR review feedback on `copilot/layer-down-propagate-governance-changes`:
+
+| File | Change | Updated SHA256 |
+|------|--------|----------------|
+| `governance/canon/GOVERNANCE_WATCHDOG_CANON.md` | REQ-GWC-404 clarification: `statuses: write`/`checks: write` not required for workflow token (REQ-GWC-801 routes mutations via `MATURION_BOT_TOKEN`); version bumped 1.0.1 → 1.0.2 | `f578c6443858d588c6953d6935b977d9f735d50f3a04f36d8f6b64342f4240b0` |
+| `governance/canon/GOVERNANCE_CANON_MANIFEST.md` | `GOVERNANCE_WATCHDOG_CANON.md` Last Updated corrected 2026-03-04 → 2026-03-21 | `445cfe2cde30b33b06381cc9c8d530bb9c43c5cb20c7a56e0f8131df6afd0592` |
+| `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` | `metadata.last_updated_by` corrected to current session; artifact hashes updated | updated |
+| `governance/sync_state.json` | `session_id` standardized to `session-053-20260321` in both `last_sync` and `last_ripple_check` | updated |
+| `.agent-workspace/governance-liaison-isms/memory/session-053-20260321.md` | R2 invocation status corrected (was "Pending", now "COMPLETE — ASSURANCE-TOKEN received") | updated |
+
+All inventory files (`governance/CANON_INVENTORY.json`, `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json`) updated with new SHA256 values.
