@@ -3,15 +3,15 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory \u2014 tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
-  "last_updated": "2026-03-05",
-  "last_ripple_commit": "29e76ecfe99bb75a8f5568239677780f6d80678a",
-  "last_ripple_timestamp": "2026-03-04T08:30:40Z",
+  "last_updated": "2026-03-21",
+  "last_ripple_commit": "4303aee2d2adf96e7d17e410cfe63edac49eacc5",
+  "last_ripple_timestamp": "2026-03-21T07:33:54Z",
   "alignment_summary": {
-    "total_artifacts": 12,
-    "aligned": 8,
+    "total_artifacts": 14,
+    "aligned": 10,
     "drifted": 0,
     "missing": 0,
-    "escalated": 5,
+    "escalated": 4,
     "overall_status": "PARTIAL \u2014 AGENT CONTRACT FILES ESCALATED TO CS2"
   },
   "artifacts": [
@@ -160,6 +160,28 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
       "last_verified": "2026-03-04T06:19:59Z"
+    },
+    {
+      "filename": "GOVERNANCE_CANON_MANIFEST.md",
+      "path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
+      "canonical_version": "1.0.0",
+      "local_version": "1.0.0",
+      "canonical_hash_sha256": "445cfe2cde30b33b06381cc9c8d530bb9c43c5cb20c7a56e0f8131df6afd0592",
+      "local_hash_sha256": "445cfe2cde30b33b06381cc9c8d530bb9c43c5cb20c7a56e0f8131df6afd0592",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "INTERNAL",
+      "last_verified": "2026-03-30T06:08:50Z"
+    },
+    {
+      "filename": "GOVERNANCE_WATCHDOG_CANON.md",
+      "path": "governance/canon/GOVERNANCE_WATCHDOG_CANON.md",
+      "canonical_version": "1.0.2",
+      "local_version": "1.0.2",
+      "canonical_hash_sha256": "f578c6443858d588c6953d6935b977d9f735d50f3a04f36d8f6b64342f4240b0",
+      "local_hash_sha256": "f578c6443858d588c6953d6935b977d9f735d50f3a04f36d8f6b64342f4240b0",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-03-30T06:08:50Z"
     }
   ],
   "metadata": {
@@ -167,7 +189,7 @@
     "governing_protocol": "GOVERNANCE_RIPPLE_MODEL.md v1.1.0",
     "canonical_checklist": "GOVERNANCE_RIPPLE_CHECKLIST_PROTOCOL.md",
     "created_by": "governance-liaison-isms session-035",
-    "last_updated_by": "governance-liaison-isms session-048-20260305"
+    "last_updated_by": "governance-liaison-isms layer-down-20260321-073700"
   },
-  "last_updated_by": "governance-liaison-isms session-048-20260305"
+  "last_updated_by": "governance-liaison-isms layer-down-20260321-073700"
 }
