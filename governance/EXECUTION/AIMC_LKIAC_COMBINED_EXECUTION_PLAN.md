@@ -2,7 +2,7 @@
 
 **Document Type**: Foreman POLC Planning Output — Combined Execution Roadmap  
 **Status**: DRAFT — Awaiting CS2 Review and Wave-Start Authorisation  
-**Version**: 1.5.0  
+**Version**: 1.7.0  
 **Date**: 2026-03-01  
 **Produced By**: foreman-v2-agent v6.2.0 (session 075, Wave COMBINED-PLAN)  
 **Amendment v1.2.0**: v1.2.0 — 2026-03-01: CL-3-D2 gap resolution — added CL-3.5, extended CL-13 QA module scope (session-079).  
@@ -10,6 +10,7 @@
 **Amendment v1.4.0**: v1.4.0 — 2026-03-01: Wave CL-0 and CL-1 status updated to COMPLETE; FAIL-ONLY-ONCE registry version corrected to v1.9.0; next workstream steps documented (session-082, progress tracker reconciliation).  
 **Amendment v1.5.0**: v1.5.0 — 2026-03-13: CP-1 gate closure recorded — maturion-advisor.md persona content confirmed complete at v1.0.0; CP-1 closure artifact produced at `.agent-admin/checkpoints/cp-1-closure-20260313.md`; CL-1 CP-1 status updated to PENDING CS2 SIGN-OFF (session-cp-1-persona-gate-closure-20260313).  
 **Amendment v1.6.0**: v1.6.0 — 2026-03-19: CL-5-D2 upload architecture review delivered by api-builder (Wave DCKIS-CL5D2, session-dckis-cl5d2-20260319); artefact at `.agent-workspace/audit/AIMC-P1-upload-arch-review-20260319.md`; PASS verdict on `process-document-v2` re-hosting feasibility; CL-5-D2 recorded COMPLETE; CL-5 recorded COMPLETE (both deliverables now delivered — CL-5-D1 previously complete; CL-5-D2 now complete).  
+**Amendment v1.7.0**: v1.7.0 — 2026-03-20: DCKIS programme close-out — Wave CL-11 Knowledge Upload Centre deliverables recorded; CL-11 status updated per DCKIS-IMPL-002 merge (PR #1182, SHA 27f1990); CL-3 deprecation register entries prepared; workstream status table updated.  
 **Triggering Issue**: [maturion-isms#704](https://github.com/APGI-cmy/maturion-isms/issues/704)  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
 **Location**: `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md`
@@ -585,6 +586,22 @@ any migration is applied.
 
 ### Wave CL-11: Knowledge Upload Centre + ARC Operationalisation
 
+**Status: IN PROGRESS — 2026-03-20** (CL-11-D2: process-document-v2 upload endpoint COMPLETE (DCKIS-IMPL-002); RED gate CL-11-D1 COMPLETE (DCKIS-QA-RED); schema CL-11-D5 COMPLETE (DCKIS-SCH-001); CL-11-D6 ARC protocol review COMPLETE (DCKIS-GOV-001); awaiting CP-11 CS2 approval)
+
+#### DCKIS Programme Deliverables (CL-11 mapping)
+
+| DCKIS Wave | Deliverable | CL-11 Mapping | Status |
+|---|---|---|---|
+| DCKIS-IMPL-002 | `process-document-v2` Edge Function (chunking + embedding pipeline) | CL-11-D2 (upload endpoint) | ✅ COMPLETE — PR #1182 merged |
+| DCKIS-IMPL-002 | `KnowledgeUploadPanel.tsx` (knowledge upload UI) | CL-11-D2 (upload UI component) | ✅ COMPLETE |
+| DCKIS-IMPL-002 | `DocumentChunkTester.tsx` (chunk parameter testing UI) | CL-11-D2 (test utility UI) | ✅ COMPLETE |
+| DCKIS-IMPL-002 | `KnowledgeDocumentsList.tsx` (documents list with approval status) | CL-11-D2 (approval status UI) | ✅ COMPLETE |
+| DCKIS-IMPL-002 | `useKnowledgeDocuments.ts` hook (binary validation, org_id via profiles) | CL-11-D2 (data hook) | ✅ COMPLETE |
+| DCKIS-QA-RED | T-KU-001 through T-KU-012 test suite (12/12 GREEN) | CL-11-D1 (RED gate → GREEN) | ✅ COMPLETE |
+| DCKIS-SCH-001 | `ai_knowledge` chunk metadata columns, RLS policies (T-KU-004, T-KU-005 GREEN) | CL-11-D5 (schema audit) | ✅ COMPLETE |
+| DCKIS-GOV-001 | Governance documentation for DCKIS programme | CL-11-D6 (ARC protocol review) | ✅ COMPLETE |
+| DCKIS-CL5D2 | Upload architecture review — PASS verdict (`.agent-workspace/audit/AIMC-P1-upload-arch-review-20260319.md`) | CL-11 architecture gate | ✅ COMPLETE |
+
 **Programme**: AIMC Audit Phase D  
 **Source**: AIMC Audit Plan §8; §4.4 (T-D-001 to T-D-006); GAP-007, GAP-008, GAP-009  
 **Type**: Implementation + audit — RED gate → api-builder → GREEN
@@ -600,14 +617,14 @@ any migration is applied.
 
 **Deliverables**:
 
-| ID | Deliverable | Assigned To | Location |
-|---|---|---|---|
-| CL-11-D1 | RED gate test: `POST /api/ai/knowledge/upload` test — sets `approval_status = 'pending'`, requires service role auth, returns correct schema | `qa-builder` | Upload endpoint test path |
-| CL-11-D2 | Implementation: `POST /api/ai/knowledge/upload` endpoint per specification | `api-builder` | `api/ai/knowledge/upload.ts` |
-| CL-11-D3 | ARC approval endpoint audit (GAP-008): `POST /api/ai/feedback/approve` enforces CS2-only access — 403 on unauthorised (T-G-002) | `qa-builder` | `api/ai/feedback/approve` test |
-| CL-11-D4 | Episodic memory write path audit (GAP-009): records confirmed written to `ai_episodic_events` in production flow | `qa-builder` | `EpisodicMemoryAdapter.test.ts` + integration check |
-| CL-11-D5 | Schema audit: T-D-001 — all `ai_knowledge` metadata columns present and correct | `schema-builder` | `.agent-workspace/audit/AIMC-P1-schema-audit-D001-{date}.md` |
-| CL-11-D6 | ARC protocol review: T-D-002/T-D-005 — full protocol walkthrough, all steps confirmed actionable | `governance-liaison-isms-agent` | `.agent-workspace/audit/AIMC-P1-arc-review-{date}.md` |
+| ID | Deliverable | Assigned To | Location | Status |
+|---|---|---|---|---|
+| CL-11-D1 | RED gate test: `POST /api/ai/knowledge/upload` test — sets `approval_status = 'pending'`, requires service role auth, returns correct schema | `qa-builder` | Upload endpoint test path | ✅ COMPLETE — DCKIS-QA-RED (T-KU-001–T-KU-012) |
+| CL-11-D2 | Implementation: `POST /api/ai/knowledge/upload` endpoint per specification | `api-builder` | `api/ai/knowledge/upload.ts` | ✅ COMPLETE — DCKIS-IMPL-002 (process-document-v2 + MAT UI) |
+| CL-11-D3 | ARC approval endpoint audit (GAP-008): `POST /api/ai/feedback/approve` enforces CS2-only access — 403 on unauthorised (T-G-002) | `qa-builder` | `api/ai/feedback/approve` test | ⏳ PENDING — GAP-008 resolution outstanding |
+| CL-11-D4 | Episodic memory write path audit (GAP-009): records confirmed written to `ai_episodic_events` in production flow | `qa-builder` | `EpisodicMemoryAdapter.test.ts` + integration check | ⏳ PENDING — GAP-009 resolution outstanding |
+| CL-11-D5 | Schema audit: T-D-001 — all `ai_knowledge` metadata columns present and correct | `schema-builder` | `.agent-workspace/audit/AIMC-P1-schema-audit-D001-{date}.md` | ✅ COMPLETE — DCKIS-SCH-001 (chunk metadata columns, RLS) |
+| CL-11-D6 | ARC protocol review: T-D-002/T-D-005 — full protocol walkthrough, all steps confirmed actionable | `governance-liaison-isms-agent` | `.agent-workspace/audit/AIMC-P1-arc-review-{date}.md` | ✅ COMPLETE — DCKIS-GOV-001 |
 
 **Exit Criteria**:
 - CL-11-D1 RED before implementation
@@ -1027,11 +1044,12 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 | CL-0: Governance Foundation | ✅ COMPLETE (2026-03-01) | None — gate closed | governance-liaison-isms-agent | None |
 | CL-1: Maturion Persona Migration | ✅ COMPLETE (2026-03-01) | CP-1 CS2 review pending | qa-builder / api-builder / governance-liaison-isms-agent | Awaiting CP-1 CS2 sign-off |
 | CL-2: Legacy Knowledge Inventory | ⏳ IN PROGRESS — STARTED 2026-03-13 | Draft deliverables (CL-2-D1, CL-2-D2+D3) present from 2026-03-01; awaiting CP-2 CS2 sign-off | mat-specialist (D1+D2), governance-liaison-isms-agent (D3) | None — CL-0 cleared; CS2 wave-start issued; drafts structurally complete |
-| CL-3: Deprecation Register Activation | ⏳ PENDING | governance-liaison-isms-agent to produce LKIAC_DEPRECATION_REGISTER.md | governance-liaison-isms-agent | CL-0 cleared; awaiting wave-start issue from CS2 |
+| CL-3: Deprecation Register Activation | ⏳ IN PROGRESS — 2026-03-20 | DEP-001 through DEP-007 entries prepared in LKIAC_DEPRECATION_REGISTER.md v1.3.0 (DCKIS-CL11); awaiting CP-3 CS2 sign-off for decommission gate | governance-liaison-isms-agent | Awaiting CP-3 CS2 sign-off |
 | CL-3.5: AI Data Sources Registry | ⏳ PENDING (PROPOSED — CP-3.5 awaiting CS2 approval) | qa-builder RED gate → schema-builder migration → api-builder Edge Functions | qa-builder / schema-builder / api-builder / ui-builder | CP-3.5 CS2 schema approval required before build begins |
 | CL-4: AIMC Audit Phase A | ⏳ PENDING | qa-builder to execute T-A-001–T-C-010 audit suite | qa-builder / integration-builder / schema-builder | CL-0 cleared; awaiting wave-start issue from CS2; running in parallel with CL-2 |
 | CL-5: Knowledge Upload Centre Spec | ✅ COMPLETE — 2026-03-19 | CL-5-D1 (spec) previously delivered; CL-5-D2 (arch review) delivered Wave DCKIS-CL5D2 — artefact at `.agent-workspace/audit/AIMC-P1-upload-arch-review-20260319.md`, PASS verdict | api-builder (CL-5-D2) | None — both deliverables complete |
-| CL-6 through CL-15 | ⏳ PENDING | Per dependency chain §5 | Per §4 wave definitions | All blocked on CL-2–CL-5 completion |
+| CL-6 through CL-10, CL-12 through CL-15 | ⏳ PENDING | Per dependency chain §5 | Per §4 wave definitions | All blocked on CL-2–CL-5 completion |
+| CL-11: Knowledge Upload Centre + ARC Operationalisation | ⏳ IN PROGRESS — 2026-03-20 | DCKIS-IMPL-002 (PR #1182, SHA 27f1990) merged to main 2026-03-20: process-document-v2 Edge Function, MAT UI components (KnowledgeUploadPanel, DocumentChunkTester, KnowledgeDocumentsList, useKnowledgeDocuments), 12/12 T-KU-xxx GREEN; CL-11-D1 (DCKIS-QA-RED), CL-11-D2 (DCKIS-IMPL-002), CL-11-D5 (DCKIS-SCH-001), CL-11-D6 (DCKIS-GOV-001) COMPLETE; CL-11-D3 (GAP-008 ARC approval audit) and CL-11-D4 (GAP-009 episodic write path) outstanding; awaiting CP-11 CS2 approval | qa-builder (CL-11-D3, CL-11-D4 remaining) | CP-11 CS2 approval required before CL-12 module integration begins |
 | MAT Module | ✅ COMPLETE — Wave 12 COMPLETE (554/554 GREEN) | Awaiting AIMC CL waves for Waves 7–9 integration | foreman-v2-agent (oversight) | MAT Waves 7–9 blocked on AIMC CL-12 |
 
 ---
@@ -1039,6 +1057,7 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 *Produced by foreman-v2-agent v6.2.0, session 075, under CS2 authority (Johan Ras / @APGI-cmy).*  
 *Updated by foreman-v2-agent v6.2.0, session-wave-cl2-20260313 (Amendment v1.5.0): CL-2 status updated to STARTED.*  
 *Updated by api-builder, session-dckis-cl5d2-20260319 (Amendment v1.6.0): CL-5-D2 COMPLETE; CL-5 COMPLETE.*  
+*Updated by governance-liaison-isms-agent, session-dckis-cl11-20260320 (Amendment v1.7.0): CL-11 DCKIS deliverables recorded IN PROGRESS; CL-3 deprecation entries prepared; §14 table updated to 2026-03-20.*    
 *This document is a POLC Planning Output. It does NOT constitute a wave closure or merge gate release.*  
 *Wave execution may NOT begin for any wave until CS2 has reviewed this plan and issued formal wave-start authorisation for the specific wave(s).*  
 *Authority: LIVING_AGENT_SYSTEM.md v6.2.0 | LKIAC-001 v1.0.0 | 2026-03-19*
