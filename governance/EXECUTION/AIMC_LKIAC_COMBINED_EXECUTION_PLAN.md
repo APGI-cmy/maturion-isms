@@ -2,7 +2,7 @@
 
 **Document Type**: Foreman POLC Planning Output — Combined Execution Roadmap  
 **Status**: DRAFT — Awaiting CS2 Review and Wave-Start Authorisation  
-**Version**: 1.7.0  
+**Version**: 1.8.0  
 **Date**: 2026-03-01  
 **Produced By**: foreman-v2-agent v6.2.0 (session 075, Wave COMBINED-PLAN)  
 **Amendment v1.2.0**: v1.2.0 — 2026-03-01: CL-3-D2 gap resolution — added CL-3.5, extended CL-13 QA module scope (session-079).  
@@ -11,6 +11,7 @@
 **Amendment v1.5.0**: v1.5.0 — 2026-03-13: CP-1 gate closure recorded — maturion-advisor.md persona content confirmed complete at v1.0.0; CP-1 closure artifact produced at `.agent-admin/checkpoints/cp-1-closure-20260313.md`; CL-1 CP-1 status updated to PENDING CS2 SIGN-OFF (session-cp-1-persona-gate-closure-20260313).  
 **Amendment v1.6.0**: v1.6.0 — 2026-03-19: CL-5-D2 upload architecture review delivered by api-builder (Wave DCKIS-CL5D2, session-dckis-cl5d2-20260319); artefact at `.agent-workspace/audit/AIMC-P1-upload-arch-review-20260319.md`; PASS verdict on `process-document-v2` re-hosting feasibility; CL-5-D2 recorded COMPLETE; CL-5 recorded COMPLETE (both deliverables now delivered — CL-5-D1 previously complete; CL-5-D2 now complete).  
 **Amendment v1.7.0**: v1.7.0 — 2026-03-20: DCKIS programme close-out — Wave CL-11 Knowledge Upload Centre deliverables recorded; CL-11 status updated per DCKIS-IMPL-002 merge (PR #1182, SHA 27f1990); CL-3 deprecation register entries prepared; workstream status table updated.  
+**Amendment v1.8.0**: v1.8.0 — 2026-04-03: Programme clearance — CP-1, CP-2, CP-3, CP-4 all signed off by CS2 (2026-04-03); CL-2 COMPLETE, CL-3 COMPLETE, CL-4 COMPLETE; CL-12c re-scoped from Maturity Roadmap to MMM (Maturion Maturity Module) integration with AIMC; §14 workstream table updated; CP-2 closure artifact at `.agent-admin/checkpoints/cp-2-closure-20260403.md` (session-cep-v1.8.0-programme-clearance-20260403).  
 **Triggering Issue**: [maturion-isms#704](https://github.com/APGI-cmy/maturion-isms/issues/704)  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
 **Location**: `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md`
@@ -153,7 +154,7 @@ The following 16 waves (CL-0 through CL-15) constitute the full combined AIMC + 
 ### Wave CL-1: LKIAC Wave 1 — Maturion Persona Migration
 
 **Status: COMPLETE — 2026-03-01** (CL-1-D1: 5 RED gate tests → GREEN; CL-1-D2: maturion-advisor.md created at `packages/ai-centre/src/agents/`; CL-1-D3: AIMC_PERSONA_LIFECYCLE.md §2 registry updated to v1.1.0; 226/226 tests GREEN — session-078, IAA-session-027-20260301-PASS)  
-**CP-1 Gate**: PENDING CS2 SIGN-OFF — Foreman closure artifact produced at `.agent-admin/checkpoints/cp-1-closure-20260313.md` (2026-03-13, session-cp-1-persona-gate-closure-20260313). maturion-advisor.md confirmed present and complete at v1.0.0. Awaiting CS2 (@APGI-cmy) approval comment on CP-1 issue.
+**CP-1 Gate**: CLOSED — CS2 signed off 2026-04-03. Foreman closure artifact: `.agent-admin/checkpoints/cp-1-closure-20260313.md` (produced 2026-03-13, session-cp-1-persona-gate-closure-20260313). maturion-advisor.md confirmed present and complete at v1.0.0.
 
 **Programme**: LKIAC  
 **Source**: LKIAC-001 §5 Wave 1; §2.1; §3.2  
@@ -184,7 +185,7 @@ The following 16 waves (CL-0 through CL-15) constitute the full combined AIMC + 
 
 **RED Gate**: `qa-builder` produces CL-1-D1 (failing) BEFORE `api-builder` creates CL-1-D2.
 
-**CS2 Checkpoint (CP-1)**: CS2 reviews persona content in CL-1-D2 before activation (per LKIAC-001 §5 Wave 1 gate). Foreman closure artifact: `.agent-admin/checkpoints/cp-1-closure-20260313.md` — PENDING CS2 SIGN-OFF.
+**CS2 Checkpoint (CP-1)**: CS2 reviews persona content in CL-1-D2 before activation (per LKIAC-001 §5 Wave 1 gate). Foreman closure artifact: `.agent-admin/checkpoints/cp-1-closure-20260313.md` — **CLOSED — CS2 signed off 2026-04-03**.
 
 **Responsible Agents**: `qa-builder` (RED gate), `api-builder` (persona file), `governance-liaison-isms-agent` (registry)
 
@@ -219,11 +220,11 @@ The following 16 waves (CL-0 through CL-15) constitute the full combined AIMC + 
 
 **RED Gate**: N/A (inventory/research wave).
 
-**CS2 Checkpoint (CP-2)**: CS2 reviews and signs off the domain tagging mapping (CL-2-D2) before migration (CL-5) may begin (per LKIAC-001 §5 Wave 2 gate).
+**CS2 Checkpoint (CP-2)**: CS2 reviews and signs off the domain tagging mapping (CL-2-D2) before migration (CL-5) may begin (per LKIAC-001 §5 Wave 2 gate). **CLOSED — CS2 signed off 2026-04-03.** CP-2 closure artifact: `.agent-admin/checkpoints/cp-2-closure-20260403.md`.
 
 **Responsible Agents**: `mat-specialist` (inventory + mapping), `governance-liaison-isms-agent` (taxonomy)
 
-**Status: STARTED — 2026-03-13** (session-wave-cl2-20260313; issue: maturion-isms — "Wave CL-2: LKIAC Wave 2 — Knowledge Inventory, Tagging Plan (Parallel Execution Start)"; CS2 authorization: issue opened by CS2 (@APGI-cmy); existing draft deliverables CL-2-D1 and CL-2-D2+D3 produced 2026-03-01 reviewed and referenced; running in parallel with CL-4; acceptance gate CL-2-A1 committed at `.agent-admin/assurance/cl2-a1-acceptance-gate-20260313.md`; IAA Pre-Brief SHA 4178ea9)
+**Status: COMPLETE — 2026-04-03** (CL-2-D1, CL-2-D2, CL-2-D3 accepted by CS2; extended taxonomy decisions: `ldcs` adopted, `diamond-industry` adopted; `org_page_chunks` scope INCLUDED in CL-6; CL-6 wave-start AUTHORISED. Session-wave-cl2-20260313 → CP-2 closure 2026-04-03.)
 
 ---
 
@@ -254,9 +255,11 @@ The following 16 waves (CL-0 through CL-15) constitute the full combined AIMC + 
 
 **RED Gate**: N/A.
 
-**CS2 Checkpoint (CP-3)**: CS2 reviews and signs off the Deprecation Register (CL-3-D1) per LKIAC-001 §5 Wave 5 gate.
+**CS2 Checkpoint (CP-3)**: CS2 reviews and signs off the Deprecation Register (CL-3-D1) per LKIAC-001 §5 Wave 5 gate. **CLOSED — CS2 signed off 2026-04-03.**
 
 **Responsible Agent**: `governance-liaison-isms-agent`
+
+**Status: COMPLETE — 2026-04-03** (DEP-001 through DEP-007 entries prepared in LKIAC_DEPRECATION_REGISTER.md v1.3.0 (DCKIS-CL11); CP-3 signed off by CS2 2026-04-03.)
 
 ---
 
@@ -346,9 +349,11 @@ any migration is applied.
 
 **RED Gate**: `qa-builder` to add new RED gate tests for any gaps exposed (e.g. T-A-010 Wave 9.11 if not yet covered).
 
-**CS2 Checkpoint (CP-4)**: CS2 reviews Phase A QP verdict before proceeding to CL-6.
+**CS2 Checkpoint (CP-4)**: CS2 reviews Phase A QP verdict before proceeding to CL-6. **CLOSED — CS2 signed off 2026-04-03.**
 
 **Responsible Agents**: `qa-builder` (primary), `schema-builder`, `integration-builder`, `independent-assurance-agent`
+
+**Status: COMPLETE — 2026-04-03** (Phase A AIMC audit completed; CP-4 signed off by CS2 2026-04-03.)
 
 ---
 
@@ -676,16 +681,16 @@ any migration is applied.
 | CL-12b-D3 | Risk Management AIMC wiring: `capability: 'analysis'`, `agent: 'risk-advisor'` | `integration-builder` | `modules/risk-management/` |
 | CL-12b-D4 | Course Crafter AIMC wiring: `capability: 'image-generation'` + `'document-generation'`, `agent: 'course-crafter-advisor'` | `integration-builder` | `modules/course-crafter/` |
 
-#### Sub-Wave CL-12c: ISMS Navigator + Incident Intelligence + Maturity Roadmap Integration
+#### Sub-Wave CL-12c: ISMS Navigator + Incident Intelligence + MMM (Maturion Maturity Module) Integration with AIMC
 
 | ID | Deliverable | Agent | Location |
 |---|---|---|---|
 | CL-12c-D1 | RED gate: ISMS Navigator wiring invariant tests (T-F-005) | `qa-builder` | `modules/isms/tests/wiring-invariants/` |
 | CL-12c-D2 | RED gate: Incident Intelligence wiring invariant tests (T-F-006) | `qa-builder` | `modules/incident-intelligence/tests/wiring-invariants/` |
-| CL-12c-D3 | RED gate: Maturity Roadmap wiring invariant tests (T-F-007) | `qa-builder` | `modules/maturity-roadmap/tests/wiring-invariants/` |
+| CL-12c-D3 | RED gate: MMM (Maturion Maturity Module) AIMC wiring invariant tests (T-F-007) | `qa-builder` | `modules/mmm/tests/wiring-invariants/` |
 | CL-12c-D4 | ISMS Navigator AIMC wiring | `integration-builder` | `modules/isms/` |
 | CL-12c-D5 | Incident Intelligence AIMC wiring | `integration-builder` | `modules/incident-intelligence/` |
-| CL-12c-D6 | Maturity Roadmap AIMC wiring | `integration-builder` | `modules/maturity-roadmap/` |
+| CL-12c-D6 | MMM (Maturion Maturity Module) AIMC wiring | `integration-builder` | `modules/mmm/` |
 
 **Exit Criteria** (per sub-wave, then collectively):
 - All RED gate tests exist and fail before implementation starts
@@ -869,7 +874,7 @@ CL-9 + CL-11 complete:
   └──→ CL-12 (AIMC Audit Phase C: Module Integration)
        ├─ CL-12a (PIT + XDetect)         ─┐
        ├─ CL-12b (Risk + CourseCrafter)  ├─ parallel sub-waves (each requires CS2 wave-start)
-       └─ CL-12c (ISMS+Incidents+Roadmap)─┘
+       └─ CL-12c (ISMS+Incidents+MMM)────┘
 
 CL-8 complete:
   └──→ CL-13 (LKIAC W6: AMC Contract)       can run parallel with CL-9/CL-11
@@ -959,7 +964,7 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 | CL-11 | Upload endpoint test + ARC approval endpoint test | `qa-builder` |
 | CL-12a | PIT + XDetect wiring invariant tests | `qa-builder` |
 | CL-12b | Risk + Course Crafter wiring invariant tests | `qa-builder` |
-| CL-12c | ISMS + Incident Intelligence + Maturity Roadmap wiring tests | `qa-builder` |
+| CL-12c | ISMS + Incident Intelligence + MMM (Maturion Maturity Module) AIMC wiring tests | `qa-builder` |
 | CL-15 | Pre-decommission zero-tolerance check | `qa-builder` |
 
 ---
@@ -983,7 +988,7 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 | CP-11 | Upload endpoint approval | CL-11 | CS2 approves before module wiring |
 | CP-12a | Module wave-start: PIT + XDetect | Before CL-12a | CS2 authorises sub-wave |
 | CP-12b | Module wave-start: Risk + CourseCrafter | Before CL-12b | CS2 authorises sub-wave |
-| CP-12c | Module wave-start: ISMS + Incidents + Roadmap | Before CL-12c | CS2 authorises sub-wave |
+| CP-12c | Module wave-start: ISMS + Incidents + MMM (Maturion Maturity Module) | Before CL-12c | CS2 authorises sub-wave |
 | CP-13 | AMC (App Management Centre) contract canonisation | CL-13 | CS2 canonises integration contract |
 | CP-14 | Governance Certification + AAWP sign-off | CL-14 | CS2 signs updated certification |
 | CP-15 | Individual decommission authorisations + Effectiveness Report | CL-15 | CS2 authorises each decommission; signs off report |
@@ -1037,27 +1042,28 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 
 ---
 
-## 14. Current Workstream Status (as of 2026-03-19)
+## 14. Current Workstream Status (as of 2026-04-03)
 
 | Artefact | Current State | Next Step(s) | Responsible Agent | Blockers |
 |---|---|---|---|---|
 | CL-0: Governance Foundation | ✅ COMPLETE (2026-03-01) | None — gate closed | governance-liaison-isms-agent | None |
-| CL-1: Maturion Persona Migration | ✅ COMPLETE (2026-03-01) | CP-1 CS2 review pending | qa-builder / api-builder / governance-liaison-isms-agent | Awaiting CP-1 CS2 sign-off |
-| CL-2: Legacy Knowledge Inventory | ⏳ IN PROGRESS — STARTED 2026-03-13 | Draft deliverables (CL-2-D1, CL-2-D2+D3) present from 2026-03-01; awaiting CP-2 CS2 sign-off | mat-specialist (D1+D2), governance-liaison-isms-agent (D3) | None — CL-0 cleared; CS2 wave-start issued; drafts structurally complete |
-| CL-3: Deprecation Register Activation | ⏳ IN PROGRESS — 2026-03-20 | DEP-001 through DEP-007 entries prepared in LKIAC_DEPRECATION_REGISTER.md v1.3.0 (DCKIS-CL11); awaiting CP-3 CS2 sign-off for decommission gate | governance-liaison-isms-agent | Awaiting CP-3 CS2 sign-off |
-| CL-3.5: AI Data Sources Registry | ⏳ PENDING (PROPOSED — CP-3.5 awaiting CS2 approval) | qa-builder RED gate → schema-builder migration → api-builder Edge Functions | qa-builder / schema-builder / api-builder / ui-builder | CP-3.5 CS2 schema approval required before build begins |
-| CL-4: AIMC Audit Phase A | ⏳ PENDING | qa-builder to execute T-A-001–T-C-010 audit suite | qa-builder / integration-builder / schema-builder | CL-0 cleared; awaiting wave-start issue from CS2; running in parallel with CL-2 |
+| CL-1: Maturion Persona Migration | ✅ COMPLETE (2026-03-01) | CP-1 CLOSED — CS2 signed off 2026-04-03 | qa-builder / api-builder / governance-liaison-isms-agent | None |
+| CL-2: Legacy Knowledge Inventory | ✅ COMPLETE (2026-04-03) | CP-2 CLOSED — CS2 signed off 2026-04-03; closure artifact at `.agent-admin/checkpoints/cp-2-closure-20260403.md` | mat-specialist (D1+D2), governance-liaison-isms-agent (D3) | None |
+| CL-3: Deprecation Register Activation | ✅ COMPLETE (2026-04-03) | CP-3 CLOSED — CS2 signed off 2026-04-03 | governance-liaison-isms-agent | None |
+| CL-3.5: AI Data Sources Registry | ✅ COMPLETE (2026-03-01) | CP-3.5 CLOSED — CS2 signed off 2026-04-03; DEP-008 status updated to PARALLEL-RUN — SCHEMA DELIVERED | qa-builder / schema-builder / api-builder / ui-builder | None |
+| CL-4: AIMC Audit Phase A | ✅ COMPLETE (2026-04-03) | CP-4 CLOSED — CS2 signed off 2026-04-03 | qa-builder / integration-builder / schema-builder | None |
 | CL-5: Knowledge Upload Centre Spec | ✅ COMPLETE — 2026-03-19 | CL-5-D1 (spec) previously delivered; CL-5-D2 (arch review) delivered Wave DCKIS-CL5D2 — artefact at `.agent-workspace/audit/AIMC-P1-upload-arch-review-20260319.md`, PASS verdict | api-builder (CL-5-D2) | None — both deliverables complete |
-| CL-6 through CL-10, CL-12 through CL-15 | ⏳ PENDING | Per dependency chain §5 | Per §4 wave definitions | All blocked on CL-2–CL-5 completion |
+| CL-6 through CL-10, CL-12 through CL-15 | ⏳ PENDING | CL-6 wave-start AUTHORISED (entry gates CL-2 ✅ + CL-4 ✅ met) — per CP-2 closure 2026-04-03; CS2 to post wave-start issue from CL-6 template | Per §4 wave definitions | None — CL-2, CL-4, CL-5 all COMPLETE |
 | CL-11: Knowledge Upload Centre + ARC Operationalisation | ⏳ IN PROGRESS — 2026-03-20 | DCKIS-IMPL-002 (PR #1182, SHA 27f1990) merged to main 2026-03-20: process-document-v2 Edge Function, MAT UI components (KnowledgeUploadPanel, DocumentChunkTester, KnowledgeDocumentsList, useKnowledgeDocuments), 12/12 T-KU-xxx GREEN; CL-11-D1 (DCKIS-QA-RED), CL-11-D2 (DCKIS-IMPL-002), CL-11-D5 (DCKIS-SCH-001), CL-11-D6 (DCKIS-GOV-001) COMPLETE; CL-11-D3 (GAP-008 ARC approval audit) and CL-11-D4 (GAP-009 episodic write path) outstanding; awaiting CP-11 CS2 approval | qa-builder (CL-11-D3, CL-11-D4 remaining) | CP-11 CS2 approval required before CL-12 module integration begins |
-| MAT Module | ✅ COMPLETE — Wave 12 COMPLETE (554/554 GREEN) | Awaiting AIMC CL waves for Waves 7–9 integration | foreman-v2-agent (oversight) | MAT Waves 7–9 blocked on AIMC CL-12 |
+| MAT Module | ✅ COMPLETE — Wave 12 COMPLETE (554/554 GREEN) | Wave 13 CS2-authorised 2026-04-03 — orchestration started | foreman-v2-agent (oversight) | None — Wave 13 unblocked |
 
 ---
 
 *Produced by foreman-v2-agent v6.2.0, session 075, under CS2 authority (Johan Ras / @APGI-cmy).*  
 *Updated by foreman-v2-agent v6.2.0, session-wave-cl2-20260313 (Amendment v1.5.0): CL-2 status updated to STARTED.*  
 *Updated by api-builder, session-dckis-cl5d2-20260319 (Amendment v1.6.0): CL-5-D2 COMPLETE; CL-5 COMPLETE.*  
-*Updated by governance-liaison-isms-agent, session-dckis-cl11-20260320 (Amendment v1.7.0): CL-11 DCKIS deliverables recorded IN PROGRESS; CL-3 deprecation entries prepared; §14 table updated to 2026-03-20.*    
+*Updated by governance-liaison-isms-agent, session-dckis-cl11-20260320 (Amendment v1.7.0): CL-11 DCKIS deliverables recorded IN PROGRESS; CL-3 deprecation entries prepared; §14 table updated to 2026-03-20.*  
+*Updated by foreman-v2-agent v6.2.0, session-cep-v1.8.0-programme-clearance-20260403 (Amendment v1.8.0): CP-1/CP-2/CP-3/CP-4 CLOSED (CS2 2026-04-03); CL-2/CL-3/CL-4 COMPLETE; CL-12c re-scoped to MMM integration; §14 table updated to 2026-04-03; CP-2 closure artifact committed.*
 *This document is a POLC Planning Output. It does NOT constitute a wave closure or merge gate release.*  
 *Wave execution may NOT begin for any wave until CS2 has reviewed this plan and issued formal wave-start authorisation for the specific wave(s).*  
 *Authority: LIVING_AGENT_SYSTEM.md v6.2.0 | LKIAC-001 v1.0.0 | 2026-03-19*
