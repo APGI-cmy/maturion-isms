@@ -9,15 +9,17 @@
 
 ## Declared Scope: Files Modified
 
-Per `git diff --name-only origin/main...HEAD` (15 files):
+Per `git diff --name-only origin/main...HEAD` (17 files):
 
 - `.agent-admin/assurance/iaa-rejection-session-054-reaudit-20260403-R3.md` - IAA rejection artifact R3 (written by IAA agent)
 - `.agent-admin/assurance/iaa-rejection-session-054-reaudit-20260403.md` - IAA rejection artifact R1 (written by IAA agent)
+- `.agent-admin/assurance/iaa-token-session-054-waveY-20260403.md` - IAA ASSURANCE-TOKEN artifact R4 (written by IAA agent)
 - `.agent-admin/governance/drift-report-align-20260403-150710.md` - Drift report for layer-down session-054
 - `.agent-workspace/governance-liaison-isms/memory/PREHANDOVER-session-054-20260403.md` - PREHANDOVER proof for session-054
 - `.agent-workspace/governance-liaison-isms/memory/session-054-20260403.md` - Session memory for session-054
 - `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md` - Parking station suggestions log (appended)
 - `.agent-workspace/independent-assurance-agent/memory/session-054-reaudit-20260403-R3.md` - IAA R3 session memory (written by IAA agent)
+- `.agent-workspace/independent-assurance-agent/memory/session-054-reaudit-20260403-R4.md` - IAA R4 session memory / ASSURANCE-TOKEN session (written by IAA agent)
 - `.agent-workspace/independent-assurance-agent/memory/session-054-reaudit-20260403.md` - IAA R1 session memory (written by IAA agent)
 - `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station log (written by IAA agent)
 - `SCOPE_DECLARATION.md` - This file (scope declaration for wave layer-down-20260403)
@@ -27,7 +29,7 @@ Per `git diff --name-only origin/main...HEAD` (15 files):
 - `governance/templates/TRS_TEMPLATE.md` - New: Technical Requirements Specification template (layered from canonical)
 - `governance/templates/minimum-architecture-template.md` - New: Minimum architecture template v1.1 (layered from canonical)
 
-**File count: 15 files. Declared file count matches exactly.**
+**File count: 17 files. Declared file count matches exactly.**
 
 ## Out-of-Scope Attestation
 
