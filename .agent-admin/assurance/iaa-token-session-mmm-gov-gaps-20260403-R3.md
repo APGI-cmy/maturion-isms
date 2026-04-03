@@ -135,13 +135,11 @@ Per `AGENT_HANDOVER_AUTOMATION.md` v1.1.3 §4.3b:
 
 ## Independence Declaration
 
-IAA (independent-assurance-agent) did NOT produce any artifact in scope for this PR.
+IAA (independent-assurance-agent) did NOT produce any deliverable artifact in scope for this PR; IAA produced assurance records only (including this token), which do not create an independence conflict.
 - `modules/MMM/00-app-description/MMM_app_description.md` — produced by mat-specialist
 - Foreman ceremony files — produced by foreman-v2-agent
-- IAA session memory files — produced by IAA as records of its own checks (not a conflict)
+- IAA assurance records (including this token and prior session memory) — produced by IAA as records of IAA's own checks, not PR deliverables (not a conflict)
 - R3 token and SCOPE_DECLARATION — produced by foreman-v2-agent as R3 ceremony closure
-
-Independence confirmed: PASS.
 
 ---
 

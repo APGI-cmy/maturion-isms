@@ -18,7 +18,7 @@ Alignment and Specificity Required" opened by CS2 (@APGI-cmy) and assigned to fo
 
 | ID | Artefact | Path | Status |
 |----|---------|------|--------|
-| MMM-GOV-001 | MMM_app_description.md governance gap remediations (P1+P2+P3) | modules/MMM/00-app-description/MMM_app_description.md | PENDING |
+| MMM-GOV-001 | MMM_app_description.md governance gap remediations (P1+P2+P3) | modules/MMM/00-app-description/MMM_app_description.md | DELIVERED / IAA PASS |
 
 ### Acceptance Criteria (per IAA Pre-Brief DOC-FFA checks)
 

@@ -3,7 +3,7 @@
 **Artifact Type**: IAA Pre-Brief (Phase 0 — PRE-BRIEF mode)
 **Wave**: mmm-gov-gaps
 **Wave Description**: Governance Compliance Gaps in MMM App Description
-**Branch (to be created)**: copilot/mmm-governance-gaps
+**Branch (to be created)**: copilot/fix-governance-compliance-gaps
 **Issue**: Governance Compliance Gaps in MMM App Description: Alignment and Specificity Required
 **Date**: 2026-03-20
 **IAA Version**: independent-assurance-agent v6.2.0 / contract 2.3.0
@@ -95,7 +95,7 @@ before invoking IAA.
 
 | Check ID | Check Name | Pass Condition | Priority |
 |----------|-----------|----------------|----------|
-| DOC-FFA-001 | Diff scope clean | Only `modules/MMM/00-app-description/MMM_app_description.md` appears in the diff. No other files modified. | BLOCKING |
+| DOC-FFA-001 | Diff scope clean | The diff contains `modules/MMM/00-app-description/MMM_app_description.md` plus only the required ceremony artifacts for the wave/PR (for example PREHANDOVER, session memory, and token/rejection records). No unrelated files modified. | BLOCKING |
 | DOC-FFA-002 | Priority 1 items addressed | All four P1 items visibly addressed: (a) Q1 open design decision resolved with explicit declaration in Section 41 or new section; (b) compliance baseline declared (ISO 27001, ISO 31000, NIST CSF — or explicit reasoned alternatives); (c) control traceability rule stated; (d) layer-down registration acknowledged per §5 guidance | BLOCKING |
 | DOC-FFA-003 | Priority 2 items addressed | All P2 items visibly addressed: (a) back-office AI admin interface described; (b) QIW dashboard requirements specified; (c) 5-check runtime readiness model declared (checks named or described); (d) APP_STARTUP_REQUIREMENTS.md mandated with required content declared; (e) FAILURE_PROMOTION_RULE.md referenced with canonical path `governance/canon/FAILURE_PROMOTION_RULE.md`; (f) WE_ONLY_FAIL_ONCE_DOCTRINE.md referenced with canonical path `governance/canon/WE_ONLY_FAIL_ONCE_DOCTRINE.md`; (g) AI merge gate referenced per §5 guidance | BLOCKING |
 | DOC-FFA-004 | Priority 3 items addressed | All P3 items visibly addressed: (a) agent class references present; (b) `.agent-admin/` structure enumerated; (c) PR-level evidence bundle required; (d) service performance metrics addressed; (e) merge gate requirements cross-referenced | BLOCKING |

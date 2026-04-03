@@ -1158,10 +1158,10 @@ Until the registry is established, MMM's ripple obligations are declared here: a
 
 Every MMM pull request that delivers wave work must include a complete evidence bundle. The minimum required evidence bundle per PR is:
 
-1. **PREHANDOVER proof** — committed to `.agent-workspace/[agent]/memory/PREHANDOVER-session-NNN-waveY-YYYYMMDD.md`
-2. **Gate results** — CI gate execution results in JSON format (committed as an artifact)
-3. **CI capture** — link to passing CI run that confirms all checks passed
-4. **RCA (when applicable)** — formal root cause analysis when any failure was encountered during the wave
+1. **PREHANDOVER proof** — committed under `.agent-admin/prehandover/` as the PR's prehandover evidence record
+2. **Gate results** — machine-readable CI/merge gate results JSON committed under `.agent-admin/gates/`
+3. **CI capture** — link or reference to the passing CI run that confirms all required checks passed
+4. **RCA (when applicable)** — formal root cause analysis for any failure encountered during the wave, stored under `.agent-admin/` as part of the PR evidence bundle
 
 PRs without a complete evidence bundle must be rejected at the merge gate.
 
@@ -1333,12 +1333,13 @@ Evidence uploaded by users against maturity criteria.
 Evidence proving MMM itself is a governed Maturion application.
 
 MMM must accommodate required governance artifacts such as:
-- `.agent-admin/` — required structure (all 5 subdirectories mandatory):
+- `.agent-admin/` — governed evidence workspace; mandatory subdirectories are defined by canonical evidence-bundle governance and include at minimum:
   - `.agent-admin/assurance/` — IAA pre-brief artifacts, assurance tokens, and audit records
   - `.agent-admin/evidence/` — compliance evidence artifacts and evidence catalog
+  - `.agent-admin/gates/` — merge, readiness, and governance gate records
+  - `.agent-admin/governance/` — governance decisions, inventories, and related control artifacts
   - `.agent-admin/improvements/` — learning loop improvement suggestions and resolutions
-  - `.agent-admin/rca/` — root cause analysis documents for escaped failures
-  - `.agent-admin/scope/` — scope declarations for active waves
+  - `.agent-admin/prehandover/` — prehandover records and handoff evidence bundles
 - `COMPLIANCE_SCOPE.md`
 - `CONTROL_MAPPING.md`
 - `EVIDENCE_CATALOG.md`
@@ -1383,17 +1384,18 @@ MMM must define and maintain `APP_STARTUP_REQUIREMENTS.md` (to be created during
 
 *Implements: `governance/canon/MANDATORY_CROSS_APP_COMPONENTS.md` §7 (Startup & Commissioning)*
 
-### 38.2 5-Check Runtime Readiness Verification Model
+### 38.2 Runtime Readiness Verification Requirements
 
-MMM must include a **5-check runtime readiness verification** sequence before any service is considered ACTIVE. All 5 checks must pass before the activation gate is released:
+MMM must include a **runtime readiness verification** sequence before any service is considered ACTIVE. This sequence must contain a minimum of 5 checks, with the concrete checks defined in `APP_STARTUP_REQUIREMENTS.md` during the FRS/TRS stage. All defined readiness checks must pass before the activation gate is released.
 
-1. **Database Connectivity Check** — Verify database connection is live and responsive
-2. **Authentication Service Check** — Verify authentication provider is reachable and tokens are valid
-3. **AI Gateway Check** — Verify AI gateway/proxy is reachable and responding within SLA
-4. **Governance Artifact Check** — Verify required governance files (`.agent`, `COMPLIANCE_SCOPE.md`, etc.) are present and readable
-5. **Environment Configuration Check** — Verify all required environment variables are set and non-empty
+The readiness verification sequence must cover, at minimum:
+1. platform dependency and connectivity validation
+2. authentication and access pre-condition validation
+3. external/integrated service reachability validation
+4. governance and required artifact availability validation
+5. environment and configuration completeness validation
 
-If any check fails, the service must NOT proceed to ACTIVATED state. Failures must be reported with the specific check name and failure reason.
+If any defined readiness check fails, the service must NOT proceed to ACTIVATED state. Failures must be reported with the specific check name and failure reason.
 
 *Implements: `governance/canon/MANDATORY_CROSS_APP_COMPONENTS.md` §7 (Startup & Commissioning) — runtime readiness gates*
 
