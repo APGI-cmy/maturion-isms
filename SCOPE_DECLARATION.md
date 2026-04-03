@@ -15,7 +15,8 @@
 | `.agent-admin/assurance/iaa-prebrief-cep-v1.8.0-programme-clearance-20260403.md` | NEW | IAA Pre-Brief artifact (Phase 1 Step 1.8) |
 | `.agent-admin/assurance/iaa-rejection-package-session-cep-v1.8.0-programme-clearance-20260403.md` | NEW | IAA rejection package artifact (R1 — REJECTION-PACKAGE, re-invocation pending) |
 | `.agent-admin/assurance/iaa-token-session-cep-v1.8.0-programme-clearance-20260403-R2.md` | NEW | IAA assurance token (R2 — PASS, superseded by R3) |
-| `.agent-admin/assurance/iaa-token-session-cep-v1.8.0-programme-clearance-20260403-R3.md` | NEW | IAA assurance token (R3 — operative merge gate artifact) |
+| `.agent-admin/assurance/iaa-token-session-cep-v1.8.0-programme-clearance-20260403-R3.md` | NEW | IAA assurance token (R3 — superseded by R4; historical record) |
+| `.agent-admin/assurance/iaa-token-session-cep-v1.8.0-programme-clearance-20260403-R4.md` | NEW | IAA assurance token (R4 — operative merge gate artifact, covers HEAD a92f321) |
 | `.agent-admin/checkpoints/cp-2-closure-20260403.md` | NEW | CP-2 gate closure artifact (Task 3) |
 | `.agent-admin/checkpoints/mat-wave-13-ci-preimplemented-disposition-20260403.md` | NEW | MAT Wave 13 CI test pre-implementation disposition (T-W13-CI-1/2/3) |
 | `.agent-admin/templates/cl6-wave-start-issue-20260403.md` | NEW | CL-6 wave-start issue template for CS2 (Task 5) |
@@ -43,5 +44,5 @@
 
 ---
 
-*This declaration matches `git diff origin/main HEAD --name-only` exactly.*
+*This declaration matches `git diff origin/main HEAD --name-only` exactly (19 files: 18 table entries + self).*
 *Authority: A-026 (SCOPE_DECLARATION-FRESH-OVERWRITE), A-029.*
