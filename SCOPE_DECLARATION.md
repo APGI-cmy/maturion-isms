@@ -9,19 +9,25 @@
 
 ## Declared Scope: Files Modified
 
-Per `git diff --name-only origin/main...HEAD` (9 files):
+Per `git diff --name-only origin/main...HEAD` (15 files):
 
-1. `.agent-admin/governance/drift-report-align-20260403-150710.md` — Drift report for layer-down session-054
-2. `.agent-workspace/governance-liaison-isms/memory/PREHANDOVER-session-054-20260403.md` — PREHANDOVER proof for session-054
-3. `.agent-workspace/governance-liaison-isms/memory/session-054-20260403.md` — Session memory for session-054
-4. `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md` — Parking station suggestions log (appended)
-5. `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` — Updated with 3 new template artifact entries
-6. `governance/sync_state.json` — Updated last_ripple_commit and files_layered_down
-7. `governance/templates/FRS_TEMPLATE.md` — New: Functional Requirements Specification template (layered from canonical)
-8. `governance/templates/TRS_TEMPLATE.md` — New: Technical Requirements Specification template (layered from canonical)
-9. `governance/templates/minimum-architecture-template.md` — New: Minimum architecture template v1.1 (layered from canonical)
+- `.agent-admin/assurance/iaa-rejection-session-054-reaudit-20260403-R3.md` - IAA rejection artifact R3 (written by IAA agent)
+- `.agent-admin/assurance/iaa-rejection-session-054-reaudit-20260403.md` - IAA rejection artifact R1 (written by IAA agent)
+- `.agent-admin/governance/drift-report-align-20260403-150710.md` - Drift report for layer-down session-054
+- `.agent-workspace/governance-liaison-isms/memory/PREHANDOVER-session-054-20260403.md` - PREHANDOVER proof for session-054
+- `.agent-workspace/governance-liaison-isms/memory/session-054-20260403.md` - Session memory for session-054
+- `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md` - Parking station suggestions log (appended)
+- `.agent-workspace/independent-assurance-agent/memory/session-054-reaudit-20260403-R3.md` - IAA R3 session memory (written by IAA agent)
+- `.agent-workspace/independent-assurance-agent/memory/session-054-reaudit-20260403.md` - IAA R1 session memory (written by IAA agent)
+- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station log (written by IAA agent)
+- `SCOPE_DECLARATION.md` - This file (scope declaration for wave layer-down-20260403)
+- `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` - Updated with 3 new template artifact entries
+- `governance/sync_state.json` - Updated last_ripple_commit and files_layered_down
+- `governance/templates/FRS_TEMPLATE.md` - New: Functional Requirements Specification template (layered from canonical)
+- `governance/templates/TRS_TEMPLATE.md` - New: Technical Requirements Specification template (layered from canonical)
+- `governance/templates/minimum-architecture-template.md` - New: Minimum architecture template v1.1 (layered from canonical)
 
-**File count: 9 files. Declared file count matches exactly.**
+**File count: 15 files. Declared file count matches exactly.**
 
 ## Out-of-Scope Attestation
 
@@ -36,7 +42,7 @@ All files NOT listed above are out-of-scope and were NOT modified by this wave:
 
 ## ADR Compliance
 
-Governance layer-down only. No ADR conditions triggered. All changes confined to governance/templates/, governance/alignment/, governance/sync_state.json, and agent-workspace/governance-liaison-isms/.
+Governance layer-down only. No ADR conditions triggered. All changes confined to governance/templates/, governance/alignment/, governance/sync_state.json, and agent-workspace/.
 
 ---
 
