@@ -23,6 +23,15 @@ name: Ripple Integration
 #   The `on: issues` trigger has been restored as the active automated path.
 #   governance-ripple-sync.yml is now manual-only (recovery use via workflow_dispatch).
 #
+# DEDUP FIX (2026-03-31, PR #1316):
+#   The `labeled` event type was removed from the `issues` trigger.  When the upstream
+#   governance-layer-down-dispatch.yml creates a layer-down issue with 3 labels in a
+#   single API call, GitHub fires one `opened` event and one `labeled` event per label
+#   (3 total), causing 4 concurrent workflow runs that each create a duplicate ripple PR
+#   before any idempotency guard can detect an existing one.
+#   The `opened` event already fires with all labels present when labels are included in
+#   the issue creation POST body — `labeled` is redundant for automated layer-down issues.
+#
 # Prior RETIREMENT NOTE (Issue #825, 2026-03-03 — superseded 2026-03-04):
 #   The issues trigger was previously retired to prevent duplicate DRAFT PRs caused by
 #   governance-ripple-sync.yml creating an issue AND repository_dispatch both firing.
@@ -37,7 +46,7 @@ on:
   # Signal 1 chain: [Layer-Down] issue → ripple PR (governance-layer-down-dispatch.yml
   # creates the issue; this workflow picks it up automatically).
   issues:
-    types: [opened, labeled]
+    types: [opened]
 
   # Manual trigger — for recovery or targeted re-processing of an existing issue
   workflow_dispatch:
@@ -51,6 +60,10 @@ permissions:
   contents: write
   pull-requests: write
   issues: write
+
+concurrency:
+  group: ripple-integration-issue-${{ github.event.issue.number || github.event.inputs.issue_number }}
+  cancel-in-progress: true
 
 jobs:
   # ──────────────────────────────────────────────────────────────
