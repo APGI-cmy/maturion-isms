@@ -1,48 +1,50 @@
-# SCOPE DECLARATION — foreman-v2-agent
+# SCOPE DECLARATION — Wave mmm-gov-gaps
 
-**Session**: session-cep-v1.8.0-programme-clearance-20260403
-**Wave**: cep-v1.8.0-programme-clearance-20260403
+**Agent**: foreman-v2-agent v6.2.0 (delegating to mat-specialist)
+**Wave**: mmm-gov-gaps — MMM App Description Governance Compliance Gaps
+**Session**: session-mmm-gov-gaps-20260403
 **Date**: 2026-04-03
-**Branch**: copilot/foreman-v2-agent-cep-v1-8-0-update
-**Agent**: foreman-v2-agent v6.2.0 (contract 2.8.0)
+**Branch**: copilot/fix-governance-compliance-gaps
+**Authority**: CS2 (@APGI-cmy) via Foreman delegation
+
+## Declared Scope: Files Modified
+
+Per `git diff --name-only origin/main...HEAD` (15 files):
+
+1. `.agent-admin/assurance/iaa-prebrief-mmm-gov-gaps.md` — IAA pre-brief artifact for wave mmm-gov-gaps
+2. `.agent-admin/assurance/iaa-token-session-mmm-gov-gaps-20260403-R3.md` — IAA assurance token (R3, historical artifact)
+3. `.agent-admin/assurance/iaa-token-session-mmm-gov-gaps-20260403-R4.md` — IAA assurance token (R4 — final, covering review comment fixes)
+4. `.agent-admin/assurance/iaa-token-session-mmm-gov-gaps-20260403.md` — IAA assurance token (R2, historical artifact)
+5. `.agent-admin/assurance/rejection-session-mmm-gov-gaps-20260403.md` — IAA rejection package (R1 — resolved)
+6. `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-gov-gaps-wave-mmm-gov-gaps-20260403.md` — Foreman pre-handover session memory
+7. `.agent-workspace/foreman-v2/memory/session-mmm-gov-gaps-20260403.md` — Foreman session memory
+8. `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` — Foreman parking station suggestions log
+9. `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — Foreman wave task tracking
+10. `.agent-workspace/independent-assurance-agent/memory/session-mmm-gov-gaps-20260403-R2.md` — IAA R2 session memory
+11. `.agent-workspace/independent-assurance-agent/memory/session-mmm-gov-gaps-20260403.md` — IAA initial session memory
+12. `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` — IAA parking station suggestions log
+13. `.agent-workspace/mat-specialist/memory/session-001-20260403.md` — mat-specialist Phase 1 preflight session memory
+14. `SCOPE_DECLARATION.md` — This file (scope declaration for wave mmm-gov-gaps)
+15. `modules/MMM/00-app-description/MMM_app_description.md` — Close 15 governance compliance gaps (v0.1.0 → v0.2.0)
+
+**File count: 15 files. Declared file count matches exactly.**
+
+## Out-of-Scope Attestation
+
+All files NOT listed above are out-of-scope and were NOT modified by this wave:
+
+- No production code changes
+- No schema or migration changes
+- No test changes
+- No CI/CD workflow changes
+- No agent contract changes
+- No canonical governance files modified
+
+## ADR Compliance
+
+Documentation-only wave. No ADR conditions triggered. All substantive changes confined to
+`modules/MMM/00-app-description/MMM_app_description.md`.
 
 ---
 
-## Files Changed in This Wave (git diff origin/main HEAD)
-
-| File | Change Type | Purpose |
-|------|-------------|---------|
-| `.agent-admin/assurance/iaa-prebrief-cep-v1.8.0-programme-clearance-20260403.md` | NEW | IAA Pre-Brief artifact (Phase 1 Step 1.8) |
-| `.agent-admin/assurance/iaa-rejection-package-session-cep-v1.8.0-programme-clearance-20260403.md` | NEW | IAA rejection package artifact (R1 — REJECTION-PACKAGE, re-invocation pending) |
-| `.agent-admin/assurance/iaa-token-session-cep-v1.8.0-programme-clearance-20260403-R2.md` | NEW | IAA assurance token (R2 — PASS, superseded by R3) |
-| `.agent-admin/assurance/iaa-token-session-cep-v1.8.0-programme-clearance-20260403-R3.md` | NEW | IAA assurance token (R3 — superseded by R4; historical record) |
-| `.agent-admin/assurance/iaa-token-session-cep-v1.8.0-programme-clearance-20260403-R4.md` | NEW | IAA assurance token (R4 — operative merge gate artifact, covers HEAD a92f321) |
-| `.agent-admin/checkpoints/cp-2-closure-20260403.md` | NEW | CP-2 gate closure artifact (Task 3) |
-| `.agent-admin/checkpoints/mat-wave-13-ci-preimplemented-disposition-20260403.md` | NEW | MAT Wave 13 CI test pre-implementation disposition (T-W13-CI-1/2/3) |
-| `.agent-admin/templates/cl6-wave-start-issue-20260403.md` | NEW | CL-6 wave-start issue template for CS2 (Task 5) |
-| `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cep-v1.8.0-programme-clearance-20260403.md` | NEW | PREHANDOVER proof (Phase 4) |
-| `.agent-workspace/foreman-v2/memory/session-cep-v1.8.0-programme-clearance-20260403.md` | NEW | Session memory (Phase 4) |
-| `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` | MODIFIED | 2 new parking station entries |
-| `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | MODIFIED | Updated to new wave (cep-v1.8.0-programme-clearance-20260403) |
-| `.agent-workspace/independent-assurance-agent/memory/session-cep-v1.8.0-programme-clearance-20260403-R2.md` | NEW | IAA session memory (R2) |
-| `.agent-workspace/independent-assurance-agent/memory/session-cep-v1.8.0-programme-clearance-20260403.md` | NEW | IAA session memory (R1) |
-| `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` | MODIFIED | IAA parking station entries |
-| `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md` | MODIFIED | Amendment v1.8.0: CP-1/2/3/4 CLOSED, CL-2/3/4 COMPLETE, CL-12c MMM re-scope, §14 updated |
-| `governance/aimc/AIMC_AGENT_ASSIGNMENT_WAVE_PLAN.md` | MODIFIED | CEP version reference v1.4.0 → v1.8.0 |
-| `governance/aimc/LKIAC_DEPRECATION_REGISTER.md` | MODIFIED | DEP-008 PARALLEL-RUN → PARALLEL-RUN — SCHEMA DELIVERED; v1.4.0 |
-
----
-
-## Out of Scope (NOT modified by this session)
-
-- No production code (`apps/`, `modules/`, `packages/`)
-- No Supabase migrations
-- No CI workflows (`.github/workflows/`)
-- No test files (MAT Wave 13 RED gate tests already existed from prior sessions)
-- No agent contract files (`.github/agents/`)
-- No `.mcp.json`, `pnpm-lock.yaml`, or any lockfile
-
----
-
-*This declaration matches `git diff origin/main HEAD --name-only` exactly (19 files: 18 table entries + self).*
-*Authority: A-026 (SCOPE_DECLARATION-FRESH-OVERWRITE), A-029.*
+*Authority: foreman-v2-agent v6.2.0 | Wave mmm-gov-gaps | 2026-04-03*
