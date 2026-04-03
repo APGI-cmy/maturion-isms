@@ -100,7 +100,7 @@ Merge permitted (subject to CS2 approval).
 
 **Token reference**: `IAA-session-mmm-gov-gaps-20260403-PASS`
 
-**PHASE_B_BLOCKING_TOKEN**: `IAA-session-mmm-gov-gaps-20260403-PASS`
+PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-gov-gaps-20260403-PASS
 
 Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
 
