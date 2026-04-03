@@ -77,7 +77,7 @@ All DOC-FFA checks pass:
 - **Session memory**: `.agent-workspace/foreman-v2/memory/session-mmm-gov-gaps-20260403.md`
 - **IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-mmm-gov-gaps.md` (SHA 1bc07c8)
 - **wave-current-tasks.md**: `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
-- **iaa_audit_token**: `IAA-session-mmm-gov-gaps-20260403-PASS` (pre-populated expected reference — §4.3b)
+- **iaa_audit_token**: `IAA-session-mmm-gov-gaps-20260403-R3-PASS` (R3 final token — supersedes R2 reference; R3 issued to cover Defect 1 (superseded HEAD) and Defect 2 (SCOPE_DECLARATION wave mismatch))
 
 ---
 
@@ -118,4 +118,4 @@ GitHub issue "Governance Compliance Gaps in MMM App Description: Alignment and S
 - [x] Zero deprecation warnings (N/A — no code changes)
 - [x] Zero compiler/linter warnings (N/A — no code changes)
 - [x] §4.3 Merge gate parity check: PASS
-- [x] IAA audit token: PASS (token reference: `IAA-session-mmm-gov-gaps-20260403-PASS` — recorded at commit time per §4.3b; IAA to write dedicated token file)
+- [x] IAA audit token: PASS (token reference: `IAA-session-mmm-gov-gaps-20260403-R3-PASS` — R3 final token; R2 `IAA-session-mmm-gov-gaps-20260403-PASS` superseded by R3)
