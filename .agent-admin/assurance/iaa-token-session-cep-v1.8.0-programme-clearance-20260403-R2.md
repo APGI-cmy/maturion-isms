@@ -2,6 +2,7 @@
 
 **Document Type**: IAA_ASSURANCE_TOKEN
 **Token Reference**: IAA-session-cep-v1.8.0-programme-clearance-20260403-R2-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-session-cep-v1.8.0-programme-clearance-20260403-R2-PASS
 **Date**: 2026-04-03
 **IAA Version**: independent-assurance-agent v6.2.0 (contract 2.3.0)
 **Adoption Phase**: PHASE_B_BLOCKING
