@@ -9,22 +9,25 @@
 
 ## Declared Scope: Files Modified
 
-Per `git diff --name-only origin/main...HEAD` (12 files):
+Per `git diff --name-only origin/main...HEAD` (15 files):
 
 1. `.agent-admin/assurance/iaa-prebrief-mmm-gov-gaps.md` — IAA pre-brief artifact for wave mmm-gov-gaps
-2. `.agent-admin/assurance/iaa-token-session-mmm-gov-gaps-20260403.md` — IAA assurance token (R2, historical artifact)
-3. `.agent-admin/assurance/rejection-session-mmm-gov-gaps-20260403.md` — IAA rejection package (R1 — resolved)
-4. `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-gov-gaps-wave-mmm-gov-gaps-20260403.md` — Foreman pre-handover session memory
-5. `.agent-workspace/foreman-v2/memory/session-mmm-gov-gaps-20260403.md` — Foreman session memory
-6. `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` — Foreman parking station suggestions log
-7. `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — Foreman wave task tracking
-8. `.agent-workspace/independent-assurance-agent/memory/session-mmm-gov-gaps-20260403-R2.md` — IAA R2 session memory
-9. `.agent-workspace/independent-assurance-agent/memory/session-mmm-gov-gaps-20260403.md` — IAA initial session memory
-10. `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` — IAA parking station suggestions log
-11. `.agent-workspace/mat-specialist/memory/session-001-20260403.md` — mat-specialist Phase 1 preflight session memory
-12. `modules/MMM/00-app-description/MMM_app_description.md` — Close 15 governance compliance gaps (v0.1.0 → v0.2.0)
+2. `.agent-admin/assurance/iaa-token-session-mmm-gov-gaps-20260403-R3.md` — IAA assurance token (R3, historical artifact)
+3. `.agent-admin/assurance/iaa-token-session-mmm-gov-gaps-20260403-R4.md` — IAA assurance token (R4 — final, covering review comment fixes)
+4. `.agent-admin/assurance/iaa-token-session-mmm-gov-gaps-20260403.md` — IAA assurance token (R2, historical artifact)
+5. `.agent-admin/assurance/rejection-session-mmm-gov-gaps-20260403.md` — IAA rejection package (R1 — resolved)
+6. `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-gov-gaps-wave-mmm-gov-gaps-20260403.md` — Foreman pre-handover session memory
+7. `.agent-workspace/foreman-v2/memory/session-mmm-gov-gaps-20260403.md` — Foreman session memory
+8. `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` — Foreman parking station suggestions log
+9. `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — Foreman wave task tracking
+10. `.agent-workspace/independent-assurance-agent/memory/session-mmm-gov-gaps-20260403-R2.md` — IAA R2 session memory
+11. `.agent-workspace/independent-assurance-agent/memory/session-mmm-gov-gaps-20260403.md` — IAA initial session memory
+12. `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` — IAA parking station suggestions log
+13. `.agent-workspace/mat-specialist/memory/session-001-20260403.md` — mat-specialist Phase 1 preflight session memory
+14. `SCOPE_DECLARATION.md` — This file (scope declaration for wave mmm-gov-gaps)
+15. `modules/MMM/00-app-description/MMM_app_description.md` — Close 15 governance compliance gaps (v0.1.0 → v0.2.0)
 
-**File count: 12 files. Declared file count matches exactly.**
+**File count: 15 files. Declared file count matches exactly.**
 
 ## Out-of-Scope Attestation
 
@@ -36,7 +39,6 @@ All files NOT listed above are out-of-scope and were NOT modified by this wave:
 - No CI/CD workflow changes
 - No agent contract changes
 - No canonical governance files modified
-- `SCOPE_DECLARATION.md` itself is updated as part of R3 ceremony (not listed above as it was a pre-existing file belonging to a prior wave)
 
 ## ADR Compliance
 
