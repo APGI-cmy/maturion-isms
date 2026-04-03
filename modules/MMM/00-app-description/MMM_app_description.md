@@ -7,13 +7,13 @@
 
 - **Module**: MMM — Maturity Model Management
 - **Artifact Type**: App Description (Upstream Authority)
-- **Status**: Draft
-- **Version**: v0.1.0
+- **Status**: Draft (Governance Gaps Resolved — pending CS2 approval)
+- **Version**: v0.2.0
 - **Owner**: Johan Ras
 - **Authority**: Johan Ras / CS2
 - **Applies To**: MMM module within the Maturion ecosystem
 - **Approval Date**: N/A
-- **Last Updated**: 2026-03-20
+- **Last Updated**: 2026-04-03
 - **Supersedes / Replaces Conceptually**:
   - MAT — Manual Audit Tool
   - Maturity Roadmap
@@ -1033,6 +1033,19 @@ The system should support:
 - AI decision logging
 - ISO 42001-aligned oversight expectations
 
+### 26.7 AI Merge Gate Requirement
+
+All MMM code changes that introduce or modify AI features must pass the **Maturion platform AI merge gate** before merge. This gate validates:
+- AI feature compliance with the platform AI capability model
+- AI safety and governance checks
+- AI performance baseline requirements
+
+The platform AI merge gate is governed by `governance/canon/PLATFORM_AI_REQUIREMENTS.md` and enforced via an associated validation script (to be created and registered in `.github/workflows/`).
+
+No AI feature change may be merged without a passing AI merge gate result.
+
+*Implements: `governance/canon/MANDATORY_CROSS_APP_COMPONENTS.md` §5 (Platform AI Features) — AI merge gate*
+
 ---
 
 ## 27. Knowledge and Guidance Model
@@ -1130,6 +1143,42 @@ This includes, at minimum:
 
 These are not optional extras.
 
+### 31.1 Layer-Down Registration
+
+MMM must be registered in `governance/CONSUMER_REPO_REGISTRY.json` when that registry is established as the Maturion layer-down coordination mechanism (registry to be created). Registration is required to:
+- declare MMM as a consumer of governance canon documents
+- establish ripple obligations (MMM must receive and process all governance-ripple events from the canonical governance repository)
+- enable layer-up feedback from MMM to the canonical governance source
+
+Until the registry is established, MMM's ripple obligations are declared here: any change to `governance/canon/` documents that MMM depends on must be reflected in MMM's local governance files within the same PR wave or the next scheduled governance alignment wave.
+
+*Implements: `governance/canon/MANDATORY_CROSS_APP_COMPONENTS.md` — Layer-down propagation rules*
+
+### 31.2 PR-Level Evidence Bundle Requirement
+
+Every MMM pull request that delivers wave work must include a complete evidence bundle. The minimum required evidence bundle per PR is:
+
+1. **PREHANDOVER proof** — committed under `.agent-admin/prehandover/` as the PR's prehandover evidence record
+2. **Gate results** — machine-readable CI/merge gate results JSON committed under `.agent-admin/gates/`
+3. **CI capture** — link or reference to the passing CI run that confirms all required checks passed
+4. **RCA (when applicable)** — formal root cause analysis for any failure encountered during the wave, stored under `.agent-admin/` as part of the PR evidence bundle
+
+PRs without a complete evidence bundle must be rejected at the merge gate.
+
+*Implements: `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md` — evidence bundle completeness requirements*
+
+### 31.3 Merge Gate Requirements
+
+All MMM wave PRs must pass the following governance-mandated merge gate categories:
+
+- **Verdict Gate** — Binary pass/fail verdict aggregating all merge gate checks; must be GREEN before merge
+- **Alignment Gate** — Confirms governance artifact alignment, CANON_INVENTORY hash validity, and layer-down compliance
+- **Stop-and-Fix Gate** — Blocks merge if any STOP-AND-FIX condition is detected (open breaches, failing QA, missing evidence)
+
+These gates are not optional. A PR that has not passed all three gate categories must not be merged under any instruction.
+
+*Implements: `governance/canon/FM_MERGE_GATE_MANAGEMENT_PROTOCOL.md` — merge gate categories and enforcement*
+
 ---
 
 ## 32. Agent and AI Operating Model
@@ -1141,11 +1190,39 @@ MMM must include:
 - relevant `ai_capabilities`
 - compatibility with agent-governed build and operational patterns
 
+### 32.1 Back-Office AI Admin Interface
+
+MMM must include a **two-pane back-office AI administration interface**, separate from the end-user chat interface:
+
+**Pane 1 — Admin AI Chat**:
+- Dedicated admin AI chat interface for operational queries, diagnostics, and governance reporting
+- Accessible only to administrators (not end users)
+- Supports natural-language queries about system state, compliance posture, and user activity
+
+**Pane 2 — AI Telemetry Dashboard**:
+- Real-time AI usage telemetry visible to administrators
+- Displays: token usage, latency, cost, error rates, and AI interaction volume
+- Distinct from the QIW dashboard (see Section 33)
+
+This admin interface is required separately from the end-user AI chat and assessment assistance features.
+
+*Implements: `governance/canon/MANDATORY_CROSS_APP_COMPONENTS.md` §3 (Performance Measurement) — back-office AI admin requirement*
+
+### 32.2 Agent Class Requirements
+
+MMM's agent operating model must reference class-specific requirements:
+
+- **Builder agents** (api-builder, ui-builder, schema-builder, qa-builder, integration-builder): must follow `governance/canon/AGENT_CLASS_SPECIFIC_GATE_PROTOCOLS.md` for all build wave deliverables
+- **Foreman agent** (foreman-v2-agent): must apply POLC-Orchestration model per `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md`
+- **Liaison agent** (governance-liaison-isms-agent): must process governance ripple events per `governance/canon/AGENT_HANDOVER_AUTOMATION.md`
+
+*Implements: `governance/canon/LIVING_AGENT_SYSTEM.md` §5 — agent class definitions and boundaries*
+
 ---
 
 ## 33. Watchdog / QIW / Oversight
 
-MMM must support Watchdog and QIW-aligned visibility where applicable across:
+MMM must support Watchdog and QIW-aligned visibility across:
 - build
 - lint
 - test
@@ -1157,6 +1234,20 @@ MMM must expose enough telemetry and behavior for:
 - integrity monitoring
 - anomaly visibility
 - quality review
+
+### 33.1 QIW Dashboard Requirements
+
+MMM must implement a **Quality Integrity Watchdog (QIW) dashboard** with the following required capabilities:
+
+1. **Real-Time Color Dashboard**: Live color-coded status indicators for all monitored pipeline stages (build, lint, test, deploy, runtime). Each stage must display: GREEN (healthy), AMBER (degraded), or RED (failure/blocked).
+
+2. **7-Day Trend Display**: Historical trend visualization covering at least the last 7 days for each monitored metric, enabling regression detection and pattern visibility.
+
+3. **QIW API**: A programmatic API endpoint exposing QIW status and trend data, enabling integration with external oversight systems, agent oversight queries, and automated escalation pipelines.
+
+These three capabilities are required. The QIW API endpoint must be stable and version-controlled.
+
+*Implements: `governance/canon/MANDATORY_CROSS_APP_COMPONENTS.md` §2 (Watchdog & Oversight)*
 
 ---
 
@@ -1196,6 +1287,18 @@ MMM must define and monitor:
 
 Critical workflow performance expectations should be specified downstream in FRS/TRS.
 
+### 35.1 Inter-Service Performance Requirements
+
+MMM must additionally define and monitor:
+
+- **Inter-service latency** — end-to-end latency for all cross-service calls (MMM → AI gateway, MMM → database, MMM → authentication provider), with p50/p95/p99 targets to be specified in FRS/TRS
+- **Circuit breaker requirements** — MMM must implement circuit breaker patterns for all external service dependencies. Circuit breakers must:
+  - open after a configurable failure threshold
+  - provide fallback behavior (graceful degradation, not hard failure)
+  - expose circuit state via the health/metrics endpoint
+
+*Implements: `governance/canon/MANDATORY_CROSS_APP_COMPONENTS.md` §3 (Performance Measurement)*
+
 ---
 
 ## 36. Feedback and Learning
@@ -1211,6 +1314,16 @@ MMM must integrate with the Maturion learning-loop model, including:
 
 ## 37. Compliance Baseline and Governance Evidence
 
+### 37.0 Compliance Standard Baseline
+
+MMM is required to comply with the following governance frameworks:
+
+- **ISO 27001** — Information Security Management System requirements
+- **ISO 31000** — Risk Management principles and guidelines
+- **NIST CSF** — Cybersecurity Framework (National Institute of Standards and Technology)
+
+These standards are not optional. Compliance evidence must be traceable per Section 37.3 below.
+
 MMM must clearly distinguish:
 
 ### 37.1 Business Evidence
@@ -1220,12 +1333,34 @@ Evidence uploaded by users against maturity criteria.
 Evidence proving MMM itself is a governed Maturion application.
 
 MMM must accommodate required governance artifacts such as:
-- `.agent-admin/`
+- `.agent-admin/` — governed evidence workspace; mandatory subdirectories are defined by canonical evidence-bundle governance and include at minimum:
+  - `.agent-admin/assurance/` — IAA pre-brief artifacts, assurance tokens, and audit records
+  - `.agent-admin/evidence/` — compliance evidence artifacts and evidence catalog
+  - `.agent-admin/gates/` — merge, readiness, and governance gate records
+  - `.agent-admin/governance/` — governance decisions, inventories, and related control artifacts
+  - `.agent-admin/improvements/` — learning loop improvement suggestions and resolutions
+  - `.agent-admin/prehandover/` — prehandover records and handoff evidence bundles
 - `COMPLIANCE_SCOPE.md`
 - `CONTROL_MAPPING.md`
 - `EVIDENCE_CATALOG.md`
 - `AUDIT_REPORT.md`
 - `GOVERNANCE_INVENTORY.json`
+
+### 37.3 Control Traceability Rule
+
+Every compliance control within MMM must be fully traceable across the delivery chain:
+
+**Architecture → QA → Runtime → Evidence**
+
+This means:
+- Every control must be declared in the architecture document (this App Description or FRS/TRS)
+- Every control must have a corresponding QA test or assertion
+- Every control must have a runtime check or enforcement mechanism
+- Every control must produce traceable evidence artifact(s)
+
+Controls without end-to-end traceability are incomplete and must be addressed before any compliance claim is made.
+
+*Implements: `governance/canon/MANDATORY_CROSS_APP_COMPONENTS.md` §6 (Compliance & Evidence)*
 
 ---
 
@@ -1239,10 +1374,30 @@ Required commissioning model:
 - COMMISSIONED
 - ACTIVATED
 
-MMM must include:
-- `APP_STARTUP_REQUIREMENTS.md`
-- readiness verification
-- commissioning readiness gates
+### 38.1 APP_STARTUP_REQUIREMENTS.md Mandate
+
+MMM must define and maintain `APP_STARTUP_REQUIREMENTS.md` (to be created during FRS/TRS stage). This file must specify a **Platform Requirements Section** declaring:
+- minimum platform versions and dependencies
+- environment variable requirements
+- infrastructure pre-conditions
+- dependency health prerequisites
+
+*Implements: `governance/canon/MANDATORY_CROSS_APP_COMPONENTS.md` §7 (Startup & Commissioning)*
+
+### 38.2 Runtime Readiness Verification Requirements
+
+MMM must include a **runtime readiness verification** sequence before any service is considered ACTIVE. This sequence must contain a minimum of 5 checks, with the concrete checks defined in `APP_STARTUP_REQUIREMENTS.md` during the FRS/TRS stage. All defined readiness checks must pass before the activation gate is released.
+
+The readiness verification sequence must cover, at minimum:
+1. platform dependency and connectivity validation
+2. authentication and access pre-condition validation
+3. external/integrated service reachability validation
+4. governance and required artifact availability validation
+5. environment and configuration completeness validation
+
+If any defined readiness check fails, the service must NOT proceed to ACTIVATED state. Failures must be reported with the specific check name and failure reason.
+
+*Implements: `governance/canon/MANDATORY_CROSS_APP_COMPONENTS.md` §7 (Startup & Commissioning) — runtime readiness gates*
 
 ---
 
@@ -1281,6 +1436,18 @@ The minimum required sequence is:
 12. Commissioning / Activation
 
 No implementation work may bypass this derivation chain.
+
+### 39A.1 Failure Promotion and RCA Requirement
+
+MMM must implement the Maturion **Failure Promotion Rule** and **We-Only-Fail-Once Doctrine**:
+
+- Any failure that escapes a quality gate and reaches a later stage must be promoted to a formal incident and recorded in the FAIL-ONLY-ONCE breach registry.
+- A formal Root Cause Analysis (RCA) is required for any escaped failure.
+- The RCA must be committed to `.agent-admin/rca/` before the affected wave can be closed.
+
+*Implements:*
+- `governance/canon/FAILURE_PROMOTION_RULE.md` — failure promotion and incident escalation
+- `governance/canon/WE_ONLY_FAIL_ONCE_DOCTRINE.md` — zero-recurrence mandate and RCA requirement
 
 ---
 
@@ -1695,7 +1862,7 @@ MMM should support:
 
 The following require confirmation during FRS/TRS derivation:
 
-1. Will MMM be a distinct top-level app or a named module in a portal shell?
+1. **RESOLVED**: MMM will be delivered as a **distinct top-level application** within the Maturion portal shell, deployed as its own service with a dedicated deployment target, domain path, and platform version constraints. This decision enables deployment target declaration and platform version constraints to be specified in the FRS and TRS.
 2. Will the label “MAT” survive anywhere as a user-facing work mode name?
 3. Is true offline capability mandatory, or only mobile/portable capture?
 4. What portion of old report-generation logic is retained versus redesigned?

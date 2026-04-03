@@ -1,6 +1,51 @@
 # Wave Current Tasks — foreman-v2-agent
 
-## Active Wave: cep-v1.8.0-programme-clearance-20260403
+## Active Wave: mmm-gov-gaps
+
+wave: mmm-gov-gaps
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-mmm-gov-gaps.md
+
+### Wave Description
+Governance Compliance Gaps in MMM App Description: Alignment and Specificity Required.
+Close 15 governance compliance gaps in `modules/MMM/00-app-description/MMM_app_description.md`
+across Priority 1 (pre-approval showstoppers), Priority 2 (FRS/TRS derivation), and
+Priority 3 (consistency/audit) per the issue specification. Documentation-only wave.
+
+CS2 Authorization: GitHub issue "Governance Compliance Gaps in MMM App Description:
+Alignment and Specificity Required" opened by CS2 (@APGI-cmy) and assigned to foreman.
+
+### Deliverables
+
+| ID | Artefact | Path | Status |
+|----|---------|------|--------|
+| MMM-GOV-001 | MMM_app_description.md governance gap remediations (P1+P2+P3) | modules/MMM/00-app-description/MMM_app_description.md | DELIVERED / IAA PASS |
+
+### Acceptance Criteria (per IAA Pre-Brief DOC-FFA checks)
+
+- DOC-FFA-001: Diff contains only MMM_app_description.md + ceremony files
+- DOC-FFA-002: All 4 Priority 1 items addressed
+- DOC-FFA-003: All Priority 2 items addressed
+- DOC-FFA-004: All Priority 3 items addressed
+- DOC-FFA-005: No placeholder content (STUB/TBD)
+- DOC-FFA-006: Non-existent files noted as "to be created"
+- DOC-FFA-007: Version updated to minimum v0.2.0
+- DOC-FFA-008: Compliance baseline names ISO 27001, ISO 31000, NIST CSF specifically
+- DOC-FFA-009: Q1 design decision explicitly resolved
+
+### Scope Blocker Resolutions (per IAA Pre-Brief)
+- BLOCKER-001 (CONSUMER_REPO_REGISTRY.json): Option A — reference as future artifact
+- BLOCKER-002 (AI merge gate script): Option A — reference governance concept, note script to-be-created
+
+### Status
+- IAA Pre-Brief: COMMITTED (.agent-admin/assurance/iaa-prebrief-mmm-gov-gaps.md, SHA 1bc07c8)
+- Delegation: PENDING → mat-specialist
+
+### Updated
+2026-04-03
+
+---
+
+## Previous Wave (archived): DCKIS-CL11
 
 wave: cep-v1.8.0-programme-clearance-20260403
 iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-cep-v1.8.0-programme-clearance-20260403.md
