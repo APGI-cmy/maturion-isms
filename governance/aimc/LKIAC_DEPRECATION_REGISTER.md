@@ -126,7 +126,7 @@ This register records the assessment, status, and planned disposition of all leg
 | **Component** | Foreman Office App — `DataSourcesManagement.tsx` legacy data source management UI |
 | **Location** | `apps/maturion-maturity-legacy/` |
 | **LKIAC Reference** | LKIAC-SC-8 |
-| **Status** | `PARALLEL-RUN — SCHEMA DELIVERED` |
+| **Status** | `PARALLEL-RUN` |
 | **AIMC Equivalent** | `AIMCDataSourcesPanel.tsx` + `ai_data_sources` table + 4 Edge Functions (connect-data-source, sync-data-source, query-data-source, test-data-sources-api) — CL-3.5 COMPLETE (session-082, 2026-03-01; 244/244 tests GREEN) |
 | **Notes** | CL-3.5 complete (session-082, 2026-03-01). `ai_data_sources` table (migration 007) with RLS, 4 AIMC Edge Functions, and AIMCDataSourcesPanel.tsx admin UI all delivered and 100% GREEN (244/244 tests). DEP-008 status → PARALLEL-RUN per CL-3.5-D5. CP-3.5 formally approved by CS2 2026-04-03. Schema delivery confirmed: `packages/ai-centre/supabase/migrations/007_ai_data_sources.sql`. Decommission of DataSourcesManagement.tsx pending CP-3 decommission gate. |
 | **Gap Registered** | N/A — AIMC equivalent delivered |
@@ -144,7 +144,7 @@ This register records the assessment, status, and planned disposition of all leg
 | DEP-005 | DataQADashboard.tsx | LKIAC-SC-5 | `ACTIVE` | None — gap registered CL-3-D2 | CL-13 ⏳ |
 | DEP-006 | UnifiedQADashboard.tsx | LKIAC-SC-6 | `ACTIVE` | None — gap registered CL-3-D2 | CL-13 ⏳ |
 | DEP-007 | QATestDashboard.tsx | LKIAC-SC-7 | `ACTIVE` | None — gap registered CL-3-D2 | CL-13 ⏳ |
-| DEP-008 | DataSourcesManagement.tsx | LKIAC-SC-8 | `PARALLEL-RUN — SCHEMA DELIVERED` | AIMCDataSourcesPanel.tsx + ai_data_sources | CL-3.5 ✅ |
+| DEP-008 | DataSourcesManagement.tsx | LKIAC-SC-8 | `PARALLEL-RUN` | AIMCDataSourcesPanel.tsx + ai_data_sources | CL-3.5 ✅ |
 
 **Register completeness**: All 8 LKIAC-001 §6 components assessed. CL-3-D1 exit criterion MET. CP-3 CS2 sign-off required for decommission gate.
 

@@ -21,7 +21,7 @@ opened by CS2 (@APGI-cmy) on 2026-04-03 and assigned to foreman-v2-agent.
 | D-3 | DEP-008 status update: PARALLEL-RUN — SCHEMA DELIVERED | governance/aimc/LKIAC_DEPRECATION_REGISTER.md | PENDING |
 | D-4 | CP-2 closure artifact | .agent-admin/checkpoints/cp-2-closure-20260403.md | PENDING |
 | D-5 | MAT Wave 13 orchestration: qa-builder RED gate delegation, mat-specialist + ui-builder commission | wave-current-tasks.md (Wave 13 section) | PENDING |
-| D-6 | CL-6 wave-start issue template | PR comment | PENDING |
+| D-6 | CL-6 wave-start issue template | .agent-admin/templates/cl6-wave-start-issue-20260403.md | PENDING |
 
 ### Constraints
 - Foreman does NOT write production code, schemas, migrations, or tests (NO-IMPLEMENT-001)

@@ -25,7 +25,7 @@ merge_gate_parity_result: FAIL
 
 verdict: REJECTION-PACKAGE
 token_reference: IAA-session-cep-v1.8.0-programme-clearance-20260403-FAIL
-token_file_path: .agent-admin/assurance/iaa-token-session-cep-v1.8.0-programme-clearance-20260403.md
+token_file_path: .agent-admin/assurance/iaa-rejection-package-session-cep-v1.8.0-programme-clearance-20260403.md
 
 adoption_phase_at_time_of_verdict: PHASE_B_BLOCKING
 
