@@ -1,9 +1,10 @@
 # LKIAC Deprecation Register
 
-Version: v1.3.0  
-Date: 2026-03-20  
+Version: v1.4.0  
+Date: 2026-04-03  
 **Amendment v1.2.0**: v1.2.0 — 2026-03-01: CL-3.5-D5 — DEP-008 status updated to `PARALLEL-RUN` per CL-3.5 wave completion (session-082).  
-**Amendment v1.3.0**: v1.3.0 — 2026-03-20: CL-3-D1 entries — DEP-001 through DEP-007 legacy components assessed and recorded; all LKIAC-001 §6 components now registered (DCKIS-CL11, session-dckis-cl11-20260320).
+**Amendment v1.3.0**: v1.3.0 — 2026-03-20: CL-3-D1 entries — DEP-001 through DEP-007 legacy components assessed and recorded; all LKIAC-001 §6 components now registered (DCKIS-CL11, session-dckis-cl11-20260320).  
+**Amendment v1.4.0**: v1.4.0 — 2026-04-03: DEP-008 status updated to `PARALLEL-RUN — SCHEMA DELIVERED`; CP-3.5 CS2 formal sign-off recorded 2026-04-03; schema delivery at `packages/ai-centre/supabase/migrations/007_ai_data_sources.sql` confirmed (session-cep-v1.8.0-programme-clearance-20260403).
 
 ## 1. Purpose
 
@@ -127,7 +128,7 @@ This register records the assessment, status, and planned disposition of all leg
 | **LKIAC Reference** | LKIAC-SC-8 |
 | **Status** | `PARALLEL-RUN` |
 | **AIMC Equivalent** | `AIMCDataSourcesPanel.tsx` + `ai_data_sources` table + 4 Edge Functions (connect-data-source, sync-data-source, query-data-source, test-data-sources-api) — CL-3.5 COMPLETE (session-082, 2026-03-01; 244/244 tests GREEN) |
-| **Notes** | CL-3.5 complete (session-082, 2026-03-01). `ai_data_sources` table (migration 007) with RLS, 4 AIMC Edge Functions, and AIMCDataSourcesPanel.tsx admin UI all delivered and 100% GREEN (244/244 tests). DEP-008 status → PARALLEL-RUN per CL-3.5-D5. Decommission of DataSourcesManagement.tsx pending CS2 sign-off (CP-3). |
+| **Notes** | CL-3.5 complete (session-082, 2026-03-01). `ai_data_sources` table (migration 007) with RLS, 4 AIMC Edge Functions, and AIMCDataSourcesPanel.tsx admin UI all delivered and 100% GREEN (244/244 tests). DEP-008 status → PARALLEL-RUN per CL-3.5-D5. CP-3.5 formally approved by CS2 2026-04-03. Schema delivery confirmed: `packages/ai-centre/supabase/migrations/007_ai_data_sources.sql`. Decommission of DataSourcesManagement.tsx pending CP-3 decommission gate. |
 | **Gap Registered** | N/A — AIMC equivalent delivered |
 
 ---
@@ -154,7 +155,9 @@ This register records the assessment, status, and planned disposition of all leg
 | 2026-03-01 | DEP-008 status updated ACTIVE → PARALLEL-RUN (CL-3.5-D5) — CL-3.5 wave complete: ai_data_sources migration, 4 Edge Functions, admin UI panel, 244/244 GREEN | governance-liaison-isms-agent (session-082) | CL-3.5 exit criteria met. Awaiting CS2 CP-3 sign-off for decommission gate. |
 | 2026-03-20 | DEP-001 through DEP-007 added — CL-3-D1 full register completion (DCKIS-CL11, session-dckis-cl11-20260320). All 8 LKIAC-001 §6 components now assessed. Version bumped v1.2.0 → v1.3.0. | governance-liaison-isms-agent (session-dckis-cl11-20260320) | CL-3-D1 exit criterion met. CP-3 CS2 sign-off required before any decommission gate proceeds. |
 
+| 2026-04-03 | DEP-008 status updated PARALLEL-RUN → PARALLEL-RUN — SCHEMA DELIVERED; CP-3.5 CS2 formal sign-off recorded; schema delivery confirmed at `packages/ai-centre/supabase/migrations/007_ai_data_sources.sql` | foreman-v2-agent (session-cep-v1.8.0-programme-clearance-20260403) | CP-3.5 CS2 signed off 2026-04-03. Amendment v1.8.0 CEP programme clearance. |
+
 ---
 
 Footer:  
-Version: v1.3.0
+Version: v1.4.0
