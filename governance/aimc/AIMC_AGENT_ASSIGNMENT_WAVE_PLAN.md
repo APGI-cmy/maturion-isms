@@ -25,7 +25,7 @@
 - `governance/AUDIT/WAVE9_AIMC_FUNCTIONALITY_AUDIT.md` v1.0.0 (post-Wave 8 functionality audit)
 
 **Combined Execution Plan Reference** (v0.3.0 addition):
-- `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md` v1.4.0 — AIMC + LKIAC Combined Waved Execution Plan; authoritative execution sequence for all CL-* waves; supersedes AAWP standalone sequence for scheduling purposes
+- `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md` v1.8.0 — AIMC + LKIAC Combined Waved Execution Plan; authoritative execution sequence for all CL-* waves; supersedes AAWP standalone sequence for scheduling purposes
 
 **Step Gate**:
 > **IMPORTANT**: This AAWP is a Wave 1 planning deliverable. CS2 MUST review and sign off this document before Step 8 (Wave 2 execution) may commence. No build agent may begin Wave 2 work until CS2 approval is recorded in Section 10.

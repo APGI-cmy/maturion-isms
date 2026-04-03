@@ -1,37 +1,41 @@
 # Wave Current Tasks — foreman-v2-agent
 
-## Active Wave: DCKIS-CL11
+## Active Wave: cep-v1.8.0-programme-clearance-20260403
 
-wave: DCKIS-CL11
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-dckis-cl11.md
+wave: cep-v1.8.0-programme-clearance-20260403
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-cep-v1.8.0-programme-clearance-20260403.md
 
 ### Wave Description
-Programme Close-Out — LKIAC CEP & Documentation Finalisation.
-Wave DCKIS-CL11 updates the AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md with CL-11 status documentation (Amendment v1.7.0) and prepares CL-3 deprecation entries in LKIAC_DEPRECATION_REGISTER.md.
+Programme Clearance — CEP v1.8.0, CP Gate Closures, CL-3.5 Schema, MAT Wave 13 Start.
 
-CS2 Authorization: GitHub issue "[governance-liaison] DCKIS-CL11: Programme Close-Out — LKIAC CEP & Documentation Finalisation" opened by CS2 and assigned to governance-liaison-isms-agent.
-
-Entry criteria: All implementation (IMPL) waves merged (DCKIS-IMPL-002 merged to main — PR #1182).
+Combined Foreman orchestration session with 5 parallel workstreams. CS2 authorization: issue
+"[Foreman Session] Programme clearance — CEP v1.8.0, CP closures, CL-3.5 schema, MAT Wave 13 start"
+opened by CS2 (@APGI-cmy) on 2026-04-03 and assigned to foreman-v2-agent.
 
 ### Deliverables
 
 | ID | Artefact | Path | Status |
 |----|---------|------|--------|
-| CL11-D1 | AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md Amendment v1.7.0: CL-11 documentation | governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md | PENDING |
-| CL11-D2 | LKIAC_DEPRECATION_REGISTER.md: CL-3 deprecation entries prepared | governance/aimc/LKIAC_DEPRECATION_REGISTER.md | PENDING |
-| CL11-D3 | Close-out summary posted as issue comment | GitHub issue comment | PENDING |
+| D-1 | CEP Amendment v1.8.0: CP closures + CL-12c re-scope + §14 update | governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md | PENDING |
+| D-2 | AAWP CEP version reference update to v1.8.0 | governance/aimc/AIMC_AGENT_ASSIGNMENT_WAVE_PLAN.md | PENDING |
+| D-3 | DEP-008 status update: PARALLEL-RUN — SCHEMA DELIVERED | governance/aimc/LKIAC_DEPRECATION_REGISTER.md | PENDING |
+| D-4 | CP-2 closure artifact | .agent-admin/checkpoints/cp-2-closure-20260403.md | PENDING |
+| D-5 | MAT Wave 13 orchestration: qa-builder RED gate delegation, mat-specialist + ui-builder commission | wave-current-tasks.md (Wave 13 section) | PENDING |
+| D-6 | CL-6 wave-start issue template | .agent-admin/templates/cl6-wave-start-issue-20260403.md | PENDING |
 
 ### Constraints
-- governance-liaison-isms-agent handles all documentation
-- Foreman does NOT edit AIMC documents directly (NO-IMPLEMENT-001)
-- Architecture document updates only — no code changes
+- Foreman does NOT write production code, schemas, migrations, or tests (NO-IMPLEMENT-001)
+- Governance documentation updates only for D-1, D-2, D-3, D-4
+- MAT Wave 13 (D-5): delegate RED gate to qa-builder, builders to mat-specialist + ui-builder
+- Architecture for Wave 13 is FROZEN (no new features — wiring fixes only)
+- IAA Pre-Brief artifact must exist before any report_progress call (A-031)
 
 ### Status
-- IAA Pre-Brief: PENDING
-- Delegation: PENDING
+- IAA Pre-Brief: COMMITTED (.agent-admin/assurance/iaa-prebrief-cep-v1.8.0-programme-clearance-20260403.md — SHA 516f404)
+- Delegation: IN_PROGRESS
 
 ### Updated
-2026-03-20
+2026-04-03T12:43:42Z
 
 ---
 
