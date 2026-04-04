@@ -7,14 +7,17 @@
     "session_id": "align-20260403-150605",
     "executed_by": "governance-liaison-isms-agent",
     "canonical_inventory_version": "1.0.0",
-    "canonical_inventory_date": "2026-03-04",
+    "canonical_inventory_date": "2026-03-21",
     "total_canons_synced": 4,
     "sync_method": "layer-down-automated",
     "sync_status": "SUCCESS",
     "canonical_commit": "1d91d51a9aac53f6e2e86189ef4ae4b779c00228",
     "files_layered_down": [
+      "governance/checklists/APP_DESCRIPTION_CREATION_CHECKLIST.md",
       "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
-      "governance/canon/GOVERNANCE_WATCHDOG_CANON.md"
+      "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
+      "governance/CANON_INVENTORY.json",
+      "governance/sync_state.json"
     ],
     "ripple_pr": "1217"
   },

@@ -1,10 +1,12 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.3.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.5.0 | **Authority**: CS2
 **Date**: 2026-03-03
 **Amended**: 2026-03-03 — v1.1.0: Added §Proactive Assurance — Pre-Brief Protocol
 **Amended**: 2026-03-04 — v1.2.1: Added §CS2 Direct Review Track
 **Amended**: 2026-03-04 — v1.3.0: Added §Risk-Tiered Ceremony Table + §Functional Fitness Assessment (FFA)
+**Amended**: 2026-03-07 — v1.4.0: Added §Injection Audit Trail mandatory PREHANDOVER check (OVL-INJ-001); documented audit trail signature strings from iaa-prebrief-inject.yml; linked with CodexAdvisor gate AGCFPP-001
+**Amended**: 2026-03-11 — v1.5.0: Removed injection pipeline signature string requirement (issue #1061); §Injection Audit Trail renamed §Pre-Brief Assurance; OVL-INJ-001 now requires Pre-Brief artifact existence only
 
 ---
 
@@ -78,6 +80,7 @@ The IAA has **non-bypassable merge block authority** for qualifying PRs:
 - Agent cites improvement suggestions inline instead of parking them (inline suggestions are a process boundary violation)
 - Any FFA check fails for a Tier 2 (build) PR (see §Functional Fitness Assessment)
 - A Carry-Forward Mandate (CFM) is issued and not resolved before merge
+- **OVL-INJ-001 check fails**: No IAA Pre-Brief artifact found in `.agent-admin/assurance/` for a PR where IAA is required at handover (T1 or T2 per §Risk-Tiered Ceremony Table — see §Pre-Brief Assurance)
 
 ---
 
@@ -379,53 +382,6 @@ Remediation Required:
 
 ---
 
-## Zero-Severity-Tolerance Policy
-
-**Effective**: v1.1.0 | **Authority**: CS2
-
-The IAA operates under a **zero-severity-tolerance** standard. Any finding — regardless of its perceived severity, size, wording, or scope — **MUST** trigger a `REJECTION-PACKAGE`. There is no concept of a "minor", "trivial", "cosmetic", or "passable" finding.
-
-### Hard Rule
-
-```
-IF finding.exists == TRUE
-THEN verdict = REJECTION-PACKAGE
-REGARDLESS OF finding.perceived_severity
-```
-
-### Prohibited Language
-
-The IAA **MUST NOT** use the following words or phrases to describe a finding when issuing or considering an `ASSURANCE-TOKEN`. Use of any prohibited phrase for a finding that is being passed signals a policy violation and voids the token:
-
-| Prohibited Phrase | Reason |
-|-------------------|--------|
-| "minor"           | Implies finding is passable |
-| "trivial"         | Implies finding is passable |
-| "cosmetic"        | Implies finding is passable |
-| "small"           | Implies finding is passable |
-| "negligible"      | Implies finding is passable |
-| "low-impact"      | Implies finding is passable |
-| "not critical"    | Implies finding is passable |
-| "can be ignored"  | Explicit bypass attempt |
-| "does not affect" | Implies finding is passable |
-| "soft finding"    | Implies finding is passable |
-
-### Rationale
-
-The Zero-Severity-Tolerance standard exists because:
-
-1. **Subjective severity classifications are a bypass vector.** Labelling a finding "minor" is a judgment call that can be gamed or drift over time.
-2. **Zero Test Debt policy.** The governance framework requires 100% clean builds. Any finding left open violates Zero Test Debt.
-3. **Independent assurance credibility.** An IAA that passes PRs with findings — however small — provides false assurance and undermines the independence guarantee.
-
-### Operational Note
-
-The IAA **may** note that a finding is low-complexity to remediate in its `REJECTION-PACKAGE` (to aid the submitting agent), but it **MUST NOT** use that characterisation as a reason to issue an `ASSURANCE-TOKEN` instead.
-
-> **Tier 2 Reference**: `.agent-workspace/independent-assurance-agent/knowledge/IAA_ZERO_SEVERITY_TOLERANCE.md`
-
----
-
 ## IAA Intelligence-Led Reasoning
 
 The IAA applies quality/assurance thinking, not mechanical rule matching. The IAA assesses:
@@ -535,7 +491,7 @@ at this step, before any Phase 1–4 assessment occurs.
 
 ### Full Specification
 
-See `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` v1.0.0 for the complete specification
+See `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` v1.2.0 for the complete specification
 including content requirements, amendment protocol, cross-agent interactions, and example
 template.
 
@@ -595,16 +551,59 @@ and the IAA independently review identical content under human oversight.
 
 ---
 
+## Pre-Brief Assurance
+
+**Added**: v1.4.0 — 2026-03-07
+**Amended**: v1.5.0 — 2026-03-11: Removed injection pipeline requirement; artifact existence is now the sole evidence model (issue #1061)
+**Authority**: CS2 (Johan Ras / @APGI-cmy)
+**CodexAdvisor Gate**: AGCFPP-001 (`governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md`)
+
+### Purpose
+
+For every PR where IAA is required at handover (T1 — agent contract changes, or T2 — build
+deliverables, per the §Risk-Tiered Ceremony Table), the IAA MUST confirm that an IAA
+Pre-Brief artifact was committed to `.agent-admin/assurance/` before any qualifying builder
+task was delegated. This is the sole evidence model; no injection pipeline or signature
+string is required.
+
+### Mandatory PREHANDOVER Check — OVL-INJ-001
+
+The IAA MUST execute `OVL-INJ-001` (see `iaa-category-overlays.md` §PRE_BRIEF_ASSURANCE)
+on every handover where IAA is required (T1 or T2). This check is applied after the universal
+CERT gate and before category-specific overlay checks.
+
+### AGCFPP-001 Gate Link
+
+For AGENT_CONTRACT PRs, `agent-contract-audit.yml` enforces CodexAdvisor write authority.
+OVL-INJ-001 complements this by verifying the Pre-Brief artifact is committed before builder
+delegation — a missing Pre-Brief on an AGENT_CONTRACT PR = dual failure (AGCFPP-001 + OVL-INJ-001).
+
+### Evidence Acceptance (OVL-INJ-001)
+
+**Pass**: A non-empty, non-placeholder Pre-Brief artifact exists at
+`.agent-admin/assurance/iaa-prebrief-<slug>.md` (or `iaa-prebrief-wave<N>.md`) on the branch,
+committed before any builder task artifact.
+
+**Fail** (triggers REJECTION-PACKAGE):
+
+> OVL-INJ-001 FAIL: No IAA Pre-Brief artifact found in `.agent-admin/assurance/`.
+> The Pre-Brief artifact must be committed before any qualifying builder task is delegated.
+> Invoke IAA via `task(agent_type: "independent-assurance-agent")` and commit the returned
+> Pre-Brief artifact before proceeding. Re-invoke IAA at handover once the artifact is present.
+
+---
+
 ## References
 
 - `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0 — Living Agent framework
 - `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` — Knowledge architecture
 - `governance/canon/AGENT_CONTRACT_ARCHITECTURE.md` — Four-phase contract architecture
-- `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` v1.0.0 — IAA Pre-Brief Protocol (proactive assurance)
+- `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` v1.2.0 — IAA Pre-Brief Protocol (proactive assurance)
+- `governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md` (AGCFPP-001) — CodexAdvisor write authority gate; linked with OVL-INJ-001
 - `governance/quality/agent-integrity/` — Agent integrity reference store
 - `governance/CANON_INVENTORY.json` — Canon hash registry
 - `governance/GATE_REQUIREMENTS_INDEX.json` — Gate requirements
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.3.0 | Effective: 2026-02-24 | Amended: 2026-03-04*
+*Authority: CS2 (Johan Ras) | Version: 1.4.0 | Effective: 2026-02-24 | Amended: 2026-03-07*

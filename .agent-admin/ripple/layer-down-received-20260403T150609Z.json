@@ -3,7 +3,7 @@
   "type": "layer_down_received",
   "timestamp": "2026-04-03T15:06:09Z",
   "source_issue": "1216",
-  "canonical_commit": "1d91d51a9aac53f6e2e86189ef4ae4b779c00228  ",
+  "canonical_commit": "1d91d51a9aac53f6e2e86189ef4ae4b779c00228",
   "requires_cs2_approval": false,
   "escalated": false
 }
