@@ -11,6 +11,8 @@
 - **Adoption Phase**: PHASE_B_BLOCKING
 - **Authority**: CS2 only (@APGI-cmy)
 
+PHASE_B_BLOCKING_TOKEN: IAA-session-054-waveY-20260403-PASS
+
 ## Verdict
 
 ═══════════════════════════════════════
