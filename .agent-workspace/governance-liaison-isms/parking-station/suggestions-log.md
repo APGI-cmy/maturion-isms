@@ -80,3 +80,4 @@
 | 2026-03-21 | governance-liaison-isms | session-053 | [ALIGNMENT] | Create PREHANDOVER proof and session memory before first IAA invocation in every layer-down to prevent ceremony-only REJECTION-PACKAGE | session-053-20260321.md |
 | 2026-03-21 | governance-liaison-isms | session-053 | [SESSION-END] | ripple-integration.yml should check for existing open issue with same canonical commit SHA before creating a new one to prevent duplicate ripple issues | session-053-20260321.md |
 | 2026-04-03 | governance-liaison-isms | session-054 | ALIGNMENT | Add governance/templates/ to layer-down protocol documentation with TEMPLATE layer_down_status classification | session-054-20260403.md |
+| 2026-04-05 | governance-liaison-isms | session-055 | [SESSION-END] | sync_state.json files_layered_down should be updated atomically with canonical_commit by ripple-integration workflow to prevent field drift | session-055-20260405.md |
