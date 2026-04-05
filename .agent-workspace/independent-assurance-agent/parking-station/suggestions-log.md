@@ -10,6 +10,7 @@
 
 | Date | Agent | Session | Summary | Detail |
 |------|-------|---------|---------|--------|
+| 2026-04-05 | independent-assurance-agent | session-govpatch-session051-20260405 | Phase 3/4 | Add un-skippable ripple assessment placeholder to CodexAdvisor PREHANDOVER template — recurring A-023 miss (6th occurrence). Add pre-commit QP gate using `git status --porcelain` to catch uncommitted governance artifacts before IAA invocation (A-021/A-033 class prevention). | session-govpatch-session051-20260405.md |
 | 2026-02-24 | independent-assurance-agent | session-026 | SESSION-END | Merge gate failed on invalid sync_state.json JSON syntax (unresolved git conflict markers) — canon update #1201 incoming to enforce local parity checks pre-handover. | `session-026-20260224.md` |
 | 2026-02-25 | independent-assurance-agent | session-001 | Phase 3 | Add IAA check to verify string constants in PREHANDOVER proofs match actual implementation (not just SHA) | session-001-20260225.md |
 | 2026-02-25 | independent-assurance-agent | session-001 | Phase 4 | Require agent footprint markers in commit messages ([agent-id]) to enable POLC audit via git log in single-bot environments | session-001-20260225.md |
@@ -522,6 +523,8 @@
 | 2026-04-05 | independent-assurance-agent | session-054-mmm-mat-harvest-20260405 | SESSION-END | iaa-trigger-table.md missing GOVERNANCE_DOCUMENTATION category — AMBIGUOUS→MANDATORY works but adds reasoning burden | session-054-mmm-mat-harvest-20260405.md |
 
 | 2026-04-05 | independent-assurance-agent | session-055 | SESSION-END | Formalise ORC-FFA-TEMPLATE.md in knowledge/ for standard orchestration wave checks — 3rd consecutive wave with same pattern | session-055-mmm-mat-harvest-foreman-20260405.md |
+| 2026-04-05 | independent-assurance-agent | session-govpatch-session051-20260405-R2 | Phase 4 | Clarify CORE-016/CORE-019 First Invocation Exception language to explicitly cover R2 post-rejection scenarios (rejection session file exists but no token was written) | session-govpatch-session051-20260405-R2.md |
+| 2026-04-05 | independent-assurance-agent | session-govpatch-session051-20260405-R2 | Phase 4 | CodexAdvisor session memory template should mark iaa_invocation_result as UPDATE-AFTER-IAA-RESULT to prevent pre-populated PHASE_A_ADVISORY from being committed with incorrect outcomes | session-govpatch-session051-20260405-R2.md |
 | 2026-04-03 | independent-assurance-agent | session-054-reaudit | MERGE-GATE-PARITY | governance-liaison-isms Pre-IAA Commit Gate should include SCOPE_DECLARATION.md update and validate-scope-to-diff.sh exit code 0 as explicit gate items | session-054-reaudit-20260403.md |
 | 2026-04-03 | independent-assurance-agent | session-054-reaudit-20260403-R3 | Phase 4 | A-026 third occurrence: SCOPE_DECLARATION.md format wrong (numbered list vs bullet); validate-scope-to-diff.sh exit code 1; recommend IAA-file exclusion in script | session-054-reaudit-20260403-R3.md |
 | 2026-04-03 | independent-assurance-agent | session-054-reaudit-20260403-R4 | Phase 4 | A-026 resolved R4: add make validate-scope pre-commit hook so format errors caught before IAA invocation not during it; SCOPE_DECLARATION_TEMPLATE.md should prohibit numbered list examples entirely | session-054-reaudit-20260403-R4.md |
