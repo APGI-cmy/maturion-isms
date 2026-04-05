@@ -1,6 +1,51 @@
 # Wave Current Tasks — foreman-v2-agent
 
-## Active Wave: mmm-gov-gaps
+## Active Wave: aimc-wave-status
+
+wave: aimc-wave-status
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-aimc-wave-status.md
+
+### Wave Description
+Outstanding AIMC/LKIAC Wave Status Confirmation & MMM/MAT/Roadmap Sequencing Risk Analysis.
+Produce a complete status matrix of all 17 AIMC/LKIAC waves (CL-0 through CL-15 incl. CL-3.5),
+identify sequencing risks for MMM/MAT/Roadmap integration, and produce actionable recommendations
+for CS2 per Issue #1209.
+
+CS2 Authorization: GitHub issue #1209 "[Wave Status & Dependency Check] Confirm outstanding
+AIMC/LKIAC waves, resolve MMM/MAT/Roadmap sequencing risk" opened by CS2 (@APGI-cmy) and
+assigned to foreman-v2-agent (Copilot).
+
+### Deliverables
+
+| ID | Artefact | Path | Status |
+|----|---------|------|--------|
+| AIMC-STATUS-001 | AIMC/LKIAC Wave Status Matrix (17 waves) | .agent-workspace/foreman-v2/personal/AIMC_LKIAC_WAVE_STATUS_MATRIX_20260403.md | DELIVERED |
+| AIMC-STATUS-002 | MMM/MAT/Roadmap sequencing risks (embedded in matrix §4) | see above | DELIVERED |
+| AIMC-STATUS-003 | Top actionable recommendations for CS2 (matrix §5) | see above | DELIVERED |
+
+### Acceptance Criteria (per IAA Pre-Brief PLAN-FFA checks)
+
+- PLAN-FFA-001: All 17 waves covered
+- PLAN-FFA-002: Status classifications accurate vs. CEP §14
+- PLAN-FFA-003: All non-COMPLETE waves have outstanding items documented
+- PLAN-FFA-004: MMM/MAT/Roadmap sequencing risks documented with severity
+- PLAN-FFA-005: Legacy code conflicts for MMM identified
+- PLAN-FFA-006: Minimum 3 actionable recommendations produced
+- PLAN-FFA-007: No unauthorised scope expansion
+- PLAN-FFA-008: No placeholder content
+
+### Status
+- IAA Pre-Brief: COMMITTED (.agent-admin/assurance/iaa-prebrief-aimc-wave-status.md)
+- Delegation: COMPLETE (foreman self-produced — planning/analysis wave)
+- Wave status matrix: DELIVERED
+- IAA Token: PASS (.agent-admin/assurance/iaa-token-session-aimc-wave-status-20260403.md)
+
+### Updated
+2026-04-04
+
+---
+
+## Previous Wave (archived): mmm-gov-gaps
 
 wave: mmm-gov-gaps
 iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-mmm-gov-gaps.md
@@ -20,28 +65,13 @@ Alignment and Specificity Required" opened by CS2 (@APGI-cmy) and assigned to fo
 |----|---------|------|--------|
 | MMM-GOV-001 | MMM_app_description.md governance gap remediations (P1+P2+P3) | modules/MMM/00-app-description/MMM_app_description.md | DELIVERED / IAA PASS |
 
-### Acceptance Criteria (per IAA Pre-Brief DOC-FFA checks)
-
-- DOC-FFA-001: Diff contains only MMM_app_description.md + ceremony files
-- DOC-FFA-002: All 4 Priority 1 items addressed
-- DOC-FFA-003: All Priority 2 items addressed
-- DOC-FFA-004: All Priority 3 items addressed
-- DOC-FFA-005: No placeholder content (STUB/TBD)
-- DOC-FFA-006: Non-existent files noted as "to be created"
-- DOC-FFA-007: Version updated to minimum v0.2.0
-- DOC-FFA-008: Compliance baseline names ISO 27001, ISO 31000, NIST CSF specifically
-- DOC-FFA-009: Q1 design decision explicitly resolved
-
-### Scope Blocker Resolutions (per IAA Pre-Brief)
-- BLOCKER-001 (CONSUMER_REPO_REGISTRY.json): Option A — reference as future artifact
-- BLOCKER-002 (AI merge gate script): Option A — reference governance concept, note script to-be-created
-
 ### Status
 - IAA Pre-Brief: COMMITTED (.agent-admin/assurance/iaa-prebrief-mmm-gov-gaps.md, SHA 1bc07c8)
-- Delegation: PENDING → mat-specialist
+- IAA Token (R4): PASS (.agent-admin/assurance/iaa-token-session-mmm-gov-gaps-20260403-R4.md)
+- PR: copilot/fix-governance-compliance-gaps — MERGED (#1214)
 
 ### Updated
-2026-04-03
+2026-04-04
 
 ---
 
