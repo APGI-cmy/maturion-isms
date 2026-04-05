@@ -1,0 +1,78 @@
+---
+name: Routing Governance Check
+
+# Authority: GOV-001, GOV-002, T-C-010
+# Programme: LKIAC-L4 — Routing Governance CI Enforcement
+# Purpose: Detect direct AI provider imports (openai, Anthropic @anthropic-ai/sdk) in
+#          modules/ and apps/ directories. All AI provider access must go through
+#          the AIMC Gateway exclusively. Direct import of OpenAI or Anthropic SDKs
+#          is forbidden outside of the gateway.
+# Parking station: CL-10-D2 (session-cl10-d2d3-20260405)
+# Wave: CL-10 — maturion-isms#1227
+# CS2 Authorization: maturion-isms#1221
+
+on:
+  pull_request:
+    paths:
+      - 'modules/**'
+      - 'apps/**'
+
+permissions:
+  contents: read
+
+jobs:
+  routing-governance-check:
+    name: "AIMC Compliance / routing-governance-check"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Check for direct OpenAI imports
+        run: |
+          echo "Checking for direct OpenAI imports in modules/ and apps/..."
+          echo "Authority: GOV-001, GOV-002 — All AI must route through AIMC Gateway"
+          echo "Excluding: maturion-maturity-legacy (legacy app — GOV exemption)"
+          echo ""
+          # Detect: import { OpenAI } from 'openai'  OR  import OpenAI from 'openai'
+          # Excludes: maturion-maturity-legacy, test/spec files (fixture strings)
+          if grep -rn \
+               --include="*.ts" --include="*.tsx" \
+               --exclude="*.test.ts" --exclude="*.spec.ts" \
+               --exclude-dir="maturion-maturity-legacy" \
+               "from 'openai'\|from \"openai\"" \
+               modules/ apps/; then
+            echo ""
+            echo "❌ BANNED: Direct OpenAI import found in modules/ or apps/"
+            echo "All AI provider access must go through the AIMC Gateway (@maturion/ai-centre)."
+            echo "Direct import from 'openai' package is forbidden."
+            echo "Authority: GOV-001, GOV-002 — LKIAC-L4 Routing Governance"
+            exit 1
+          else
+            echo "✅ No direct OpenAI imports found."
+          fi
+
+      - name: Check for direct Anthropic imports
+        run: |
+          echo "Checking for direct Anthropic SDK imports in modules/ and apps/..."
+          echo "Authority: GOV-001, GOV-002 — All AI must route through AIMC Gateway"
+          echo "Excluding: maturion-maturity-legacy (legacy app — GOV exemption)"
+          echo ""
+          # Detect: import Anthropic from '@anthropic-ai/sdk'
+          #     OR: import { Anthropic } from '@anthropic-ai/sdk'
+          # Excludes: maturion-maturity-legacy, test/spec files (fixture strings)
+          if grep -rn \
+               --include="*.ts" --include="*.tsx" \
+               --exclude="*.test.ts" --exclude="*.spec.ts" \
+               --exclude-dir="maturion-maturity-legacy" \
+               "from '@anthropic-ai/sdk'\|from \"@anthropic-ai/sdk\"" \
+               modules/ apps/; then
+            echo ""
+            echo "❌ BANNED: Direct Anthropic SDK import found in modules/ or apps/"
+            echo "All AI provider access must go through the AIMC Gateway (@maturion/ai-centre)."
+            echo "Direct import from '@anthropic-ai/sdk' package is forbidden."
+            echo "Authority: GOV-001, GOV-002 — LKIAC-L4 Routing Governance"
+            exit 1
+          else
+            echo "✅ No direct Anthropic imports found."
+          fi
