@@ -135,7 +135,7 @@ Per CS2 Directive maturion-isms#1221, item 1:
 | Wave/Task | IAA Token | Phase |
 |-----------|-----------|-------|
 | governance-liaison D-5 | IAA-session-054-mmm-mat-harvest-20260405-PASS | PHASE_B_BLOCKING |
-| Foreman PREHANDOVER (pending) | IAA-session-mmm-mat-harvest-20260405-PASS | PHASE_B_BLOCKING |
+| Foreman PREHANDOVER | IAA-session-mmm-mat-harvest-20260405-PASS | PHASE_B_BLOCKING |
 
 ---
 

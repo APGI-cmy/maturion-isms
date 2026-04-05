@@ -28,8 +28,8 @@ and assigned to foreman-v2-agent (Copilot). CS2 attestation 2026-04-05.
 | D-3 | New GitHub issue: CL-7 wave-start (PersonaLoader improvements) | maturion-isms#1226 | ✅ DONE |
 | D-4 | New GitHub issue: CL-10 wave-start (Routing Governance CI Enforcement) | maturion-isms#1227 | ✅ DONE |
 | D-5 | Governance recording: items 1+4+6 (MAT terminal verdict, MMM AI stubs recorded, Roadmap plan) | governance-liaison-isms-agent — IAA PASS (IAA-session-054-mmm-mat-harvest-20260405-PASS) | ✅ DONE |
-| D-6 | Session memory | .agent-workspace/foreman-v2/memory/session-mmm-mat-harvest-20260405.md | 🔴 PENDING |
-| D-7 | PREHANDOVER proof | .agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-mat-harvest-20260405.md | 🔴 PENDING |
+| D-6 | Session memory | .agent-workspace/foreman-v2/memory/session-mmm-mat-harvest-20260405.md | ✅ DONE |
+| D-7 | PREHANDOVER proof | .agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-mat-harvest-20260405.md | ✅ DONE |
 
 ### Acceptance Criteria
 - All 4 GitHub issues created with correct content and agent assignments
@@ -41,8 +41,9 @@ and assigned to foreman-v2-agent (Copilot). CS2 attestation 2026-04-05.
 - IAA Pre-Brief: COMMITTED (.agent-admin/assurance/iaa-prebrief-mmm-mat-harvest-20260405.md, SHA 011af75)
 - D-1 through D-4 GitHub issues: CREATED (#1224, #1225, #1226, #1227)
 - D-5 governance recordings: DELIVERED (governance-liaison IAA PASS — IAA-session-054-mmm-mat-harvest-20260405-PASS)
-- D-6 session memory: PENDING
-- D-7 PREHANDOVER proof: PENDING
+- D-6 session memory: DELIVERED (.agent-workspace/foreman-v2/memory/session-mmm-mat-harvest-20260405.md)
+- D-7 PREHANDOVER proof: DELIVERED (.agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-mat-harvest-20260405.md)
+- Foreman IAA token: PASS — IAA-session-mmm-mat-harvest-20260405-PASS (SHA 16c06ce)
 
 ### Updated
 2026-04-05

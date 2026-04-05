@@ -18,7 +18,7 @@
 ═══════════════════════════════════════
 ASSURANCE-TOKEN
 PR: copilot/cs2-directive-mmm-mat-roadmap — CEP Amendment v1.9.0 + MAT terminal verdict + Roadmap decommission plan (session-054-mmm-mat-harvest-20260405)
-All 20 checks PASS. Merge gate parity: PASS.
+All 35 checks PASS. Merge gate parity: PASS.
 Merge permitted (subject to CS2 approval).
 Token reference: IAA-session-054-mmm-mat-harvest-20260405-PASS
 Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
