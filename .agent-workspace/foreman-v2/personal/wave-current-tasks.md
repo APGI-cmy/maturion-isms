@@ -21,11 +21,11 @@ Implement runtime YAML front-matter validation in `PersonaLoader.ts` with a type
 
 | ID | Deliverable | Assigned To | Status |
 |---|---|---|---|
-| CL-7-D1 | RED gate test: `PersonaValidationError` thrown on missing/invalid YAML fields | `qa-builder` | PENDING |
-| CL-7-D2 | RED gate test: persona registry sync CI check integration test | `qa-builder` | PENDING |
-| CL-7-D3 | Implementation: `PersonaValidationError` type + runtime YAML validation in `PersonaLoader.ts` | `api-builder` | PENDING (awaiting D1+D2 RED gate) |
-| CL-7-D4 | CI check: persona registry sync workflow | `integration-builder` | PENDING (awaiting D2 RED gate) |
-| CL-7-D5 | Scheduled workflow: quarterly persona review freshness check | `integration-builder` | PENDING |
+| CL-7-D1 | RED gate test: `PersonaValidationError` thrown on missing/invalid YAML fields | `qa-builder` | GREEN ✅ |
+| CL-7-D2 | RED gate test: persona registry sync CI check integration test | `qa-builder` | GREEN ✅ |
+| CL-7-D3 | Implementation: `PersonaValidationError` type + runtime YAML validation in `PersonaLoader.ts` | `api-builder` | GREEN ✅ |
+| CL-7-D4 | CI check: persona registry sync workflow | `integration-builder` | DELIVERED ✅ |
+| CL-7-D5 | Scheduled workflow: quarterly persona review freshness check | `integration-builder` | DELIVERED ✅ |
 
 ---
 
@@ -40,3 +40,4 @@ unresolved_breaches: none
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Foreman**: foreman-v2-agent v6.2.0
+
