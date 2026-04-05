@@ -520,3 +520,5 @@
 
 | 2026-04-05 | independent-assurance-agent | session-054-mmm-mat-harvest-20260405 | SESSION-END | Delegation template gap (2nd occurrence): governance-liaison ceremony artifacts not required by foreman delegation template — add checklist item | session-054-mmm-mat-harvest-20260405.md |
 | 2026-04-05 | independent-assurance-agent | session-054-mmm-mat-harvest-20260405 | SESSION-END | iaa-trigger-table.md missing GOVERNANCE_DOCUMENTATION category — AMBIGUOUS→MANDATORY works but adds reasoning burden | session-054-mmm-mat-harvest-20260405.md |
+
+| 2026-04-05 | independent-assurance-agent | session-055 | SESSION-END | Formalise ORC-FFA-TEMPLATE.md in knowledge/ for standard orchestration wave checks — 3rd consecutive wave with same pattern | session-055-mmm-mat-harvest-foreman-20260405.md |
