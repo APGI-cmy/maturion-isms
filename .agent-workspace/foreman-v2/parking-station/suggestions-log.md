@@ -63,3 +63,5 @@
 | 2026-04-03 | foreman-v2-agent | session-mmm-gov-gaps-20260403 | improvement | S-036: Lightweight doc-ceremony variant for governance-material documentation waves | session-mmm-gov-gaps-20260403.md |
 | 2026-04-03 | foreman-v2-agent | session-cep-v1.8.0-programme-clearance-20260403 | IMPROVEMENT | CL-6 delegated agent pre-brief: when CS2 posts CL-6 wave-start issue, immediately invoke IAA for CL-6 pre-brief before delegating to api-builder/schema-builder/mat-specialist | session-cep-v1.8.0-programme-clearance-20260403.md |
 | 2026-04-03 | foreman-v2-agent | session-cep-v1.8.0-programme-clearance-20260403 | IMPROVEMENT | CP closure ceremony template: standardise CP closure artifact format based on cp-2-closure-20260403.md for all future CP closures | .agent-admin/checkpoints/cp-2-closure-20260403.md |
+
+| 2026-04-05 | foreman-v2-agent | session-mmm-mat-harvest-20260405 | IMPROVEMENT | Wave-start issue template library would reduce composition time for CL-wave issues (only CL-6 had pre-existing template; CL-7, CL-10, CL-11 audit required manual composition) | session-mmm-mat-harvest-20260405 |

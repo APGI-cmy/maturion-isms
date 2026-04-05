@@ -23,11 +23,11 @@ and assigned to foreman-v2-agent (Copilot). CS2 attestation 2026-04-05.
 
 | ID | Artefact | Path | Status |
 |----|---------|------|--------|
-| D-1 | New GitHub issue: CL-11-D3/D4 audit (qa-builder; GAP-008 & GAP-009) | GitHub issue | 🔴 PENDING |
-| D-2 | New GitHub issue: CL-6 wave-start (from template) | GitHub issue | 🔴 PENDING |
-| D-3 | New GitHub issue: CL-7 wave-start (PersonaLoader improvements) | GitHub issue | 🔴 PENDING |
-| D-4 | New GitHub issue: CL-10 wave-start (Routing Governance CI Enforcement) | GitHub issue | 🔴 PENDING |
-| D-5 | Governance recording: items 1+4+6 (MAT terminal verdict, MMM AI stubs recorded, Roadmap plan) | governance-liaison-isms-agent delegation | 🔴 PENDING |
+| D-1 | New GitHub issue: CL-11-D3/D4 audit (qa-builder; GAP-008 & GAP-009) | maturion-isms#1224 | ✅ DONE |
+| D-2 | New GitHub issue: CL-6 wave-start (from template) | maturion-isms#1225 | ✅ DONE |
+| D-3 | New GitHub issue: CL-7 wave-start (PersonaLoader improvements) | maturion-isms#1226 | ✅ DONE |
+| D-4 | New GitHub issue: CL-10 wave-start (Routing Governance CI Enforcement) | maturion-isms#1227 | ✅ DONE |
+| D-5 | Governance recording: items 1+4+6 (MAT terminal verdict, MMM AI stubs recorded, Roadmap plan) | governance-liaison-isms-agent — IAA PASS (IAA-session-054-mmm-mat-harvest-20260405-PASS) | ✅ DONE |
 | D-6 | Session memory | .agent-workspace/foreman-v2/memory/session-mmm-mat-harvest-20260405.md | 🔴 PENDING |
 | D-7 | PREHANDOVER proof | .agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-mat-harvest-20260405.md | 🔴 PENDING |
 
@@ -38,8 +38,11 @@ and assigned to foreman-v2-agent (Copilot). CS2 attestation 2026-04-05.
 - IAA ASSURANCE-TOKEN received
 
 ### Status
-- IAA Pre-Brief: PENDING
-- Delegation: NOT STARTED
+- IAA Pre-Brief: COMMITTED (.agent-admin/assurance/iaa-prebrief-mmm-mat-harvest-20260405.md, SHA 011af75)
+- D-1 through D-4 GitHub issues: CREATED (#1224, #1225, #1226, #1227)
+- D-5 governance recordings: DELIVERED (governance-liaison IAA PASS — IAA-session-054-mmm-mat-harvest-20260405-PASS)
+- D-6 session memory: PENDING
+- D-7 PREHANDOVER proof: PENDING
 
 ### Updated
 2026-04-05
