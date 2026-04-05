@@ -286,7 +286,10 @@ describe('CL-6 RED Gate — Knowledge Re-ingestion Migration Tests', () => {
         /CREATE POLICY ai_knowledge_org_insert[\s\S]*?;/
       );
       expect(policyBlockMatch).not.toBeNull();
-      const policyBlock = policyBlockMatch![0];
+      if (policyBlockMatch === null) {
+        throw new Error('Expected CREATE POLICY ai_knowledge_org_insert block not found in SQL');
+      }
+      const policyBlock = policyBlockMatch[0];
       expect(
         policyBlock,
         'INSERT policy must NOT include `anon` role'
