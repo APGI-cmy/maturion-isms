@@ -17,7 +17,7 @@
       "governance/templates/TRS_TEMPLATE.md",
       "governance/templates/minimum-architecture-template.md"
     ],
-    "ripple_pr": "pending"
+    "ripple_pr": "1229"
   },
   "alignment_status": {
     "overall": "ALIGNED",
