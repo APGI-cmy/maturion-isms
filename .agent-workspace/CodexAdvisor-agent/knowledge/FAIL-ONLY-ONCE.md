@@ -165,7 +165,7 @@ All updates to this file must be committed as part of the session bundle for tha
 **Status**: OPEN
 **Source**: session-aimc-wave-status-20260403 (PR APGI-cmy/maturion-isms#1215), session-cep-v1.8.0-programme-clearance precedence
 **What happened**: Foreman committed `.agent-admin/assurance/iaa-token-...md` as self-certification. Rationale: no builder involved, POLC planning only, cited "independence standard met; precedent exists". This was accepted at merge despite contract and governance policy intention to ban all such self-assessment.
-**Root cause**: Ambiguity in contract/T2 and lack of explicit mechanical/merge-gate prohibition. No corresponding IAA session memory exists for the token file. A-010 + NO-SELFCERT-001 prohibit this explicitly as of this change.
+**Root cause**: Ambiguity in contract/T2 and lack of explicit mechanical/merge-gate prohibition. No corresponding IAA session memory exists for the token file. A-036 + NO-SELFCERT-001 prohibit this explicitly as of this change.
 **Corrective action**: This issue.
 **Open improvement**: CI/merge gate check should reject PRs with IAA token file written by foreman, or absent corresponding IAA session memory file.
 
