@@ -65,3 +65,4 @@
 | 2026-04-03 | foreman-v2-agent | session-cep-v1.8.0-programme-clearance-20260403 | IMPROVEMENT | CP closure ceremony template: standardise CP closure artifact format based on cp-2-closure-20260403.md for all future CP closures | .agent-admin/checkpoints/cp-2-closure-20260403.md |
 
 | 2026-04-05 | foreman-v2-agent | session-mmm-mat-harvest-20260405 | IMPROVEMENT | Wave-start issue template library would reduce composition time for CL-wave issues (only CL-6 had pre-existing template; CL-7, CL-10, CL-11 audit required manual composition) | session-mmm-mat-harvest-20260405.md |
+| 2026-04-05 | foreman-v2-agent | session-cl7-personaloader-20260405 | S-036-candidate | Persona registry sync workflow parses agentIds from markdown table via awk — brittle if table format changes; future improvement: machine-readable registry (JSON/YAML) | session-cl7-personaloader-20260405.md |
