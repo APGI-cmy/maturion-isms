@@ -41,7 +41,7 @@
 --  organisation_id         organisation_id                 Direct map ✅
 --  page_id                 document_id                     Mapped ✅
 --  chunk_text              content                         Mapped ✅
---  embedding               (RE-EMBEDDED — NOT carried fwd) AIMC 1536-dim per T-CL6-CHUNK-002
+--  embedding               (RE-EMBEDDED — NOT carried forward) AIMC 1536-dim per T-CL6-CHUNK-002
 --  source                  source                          Direct map ✅
 --  domain                  domain                          Must be ldcs|diamond-industry ✅
 --
