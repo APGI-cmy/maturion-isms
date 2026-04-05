@@ -2,9 +2,10 @@
 
 ## Status
 **Type**: Canonical Governance Definition  
-**Version**: 1.0.0  
+**Version**: 1.1.0  
 **Authority**: CS2 (Johan Ras / Maturion)  
 **Effective Date**: 2026-02-23  
+**Amended**: 2026-04-05 — v1.1.0: Aligned prerequisites (§3.2) and log template (§5.1) with the 12-stage sequence established by `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0. Added `PRE_BUILD_STAGE_MODEL_CANON.md` as constitutional mandate reference. Issue: APGI-cmy/maturion-foreman-governance#1320.  
 **Owner**: Maturion Engineering Leadership  
 **Applies To**: All modules — MAT, ROADMAP, PIT, AIMC, RADAM, and any future Maturion delivery modules  
 **Precedence**: Subordinate only to GOVERNANCE_PURPOSE_AND_SCOPE.md  
@@ -16,7 +17,7 @@
 
 This canon establishes a **mandatory Pre-Build Reality Check gate** that must be passed before any implementation (build) work may begin in the Maturion module delivery lifecycle.
 
-The gate exists because prior delivery stages — App Description, FRS, TRS, Architecture, Implementation Plan, and Red QA suite — each address a slice of requirements but do not individually guarantee that the **full user intent** has been faithfully captured and will be delivered.  Retrospectives on MAT, ROADMAP, and AIMC modules confirmed that misaligned requirements, ambiguous flows, and overlooked statutory obligations slipped past individual artifact reviews and were only discovered during or after build.
+The gate exists because prior delivery stages — App Description, UX Workflow & Wiring Spec, FRS, TRS, Architecture, Implementation Plan, and Red QA suite — each address a slice of requirements but do not individually guarantee that the **full user intent** has been faithfully captured and will be delivered.  Retrospectives on MAT, ROADMAP, and AIMC modules confirmed that misaligned requirements, ambiguous flows, and overlooked statutory obligations slipped past individual artifact reviews and were only discovered during or after build.
 
 This canon closes that gap by requiring a structured, multi-party **reality-check and gap review** as the explicit gate between the planning/design cluster and the build/ticket cluster.
 
@@ -29,6 +30,7 @@ This canon derives authority from and complements:
 - **GOVERNANCE_PURPOSE_AND_SCOPE.md** — Governance as canonical memory and delivery guardrail
 - **BUILD_PHILOSOPHY.md** — One-Time Build Law; build once, build right
 - **FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md** — Foreman POLC authority over planning, checking
+- **PRE_BUILD_STAGE_MODEL_CANON.md** v1.0.0 — Binding 12-stage end-to-end pre-build sequence
 - **GOVERNANCE_RIPPLE_MODEL.md** — Layer-down obligation when canon is created or updated
 
 ---
@@ -45,14 +47,15 @@ The Pre-Build Reality Check is **MANDATORY** before starting implementation for:
 
 ### 3.2 Prerequisites — Gate Unlocks Only After All Are Complete
 
-The following must all be complete and available for review before the check begins:
+The following must all be complete and available for review before the check begins, in the order mandated by `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0:
 
 1. App Description (approved)
-2. Functional Requirements Specification — FRS (approved)
-3. Technical Requirements Specification — TRS (approved)
-4. Architecture Design (approved)
-5. Implementation Plan (approved)
+2. UX Workflow & Wiring Spec (approved) — mandatory for user-facing builds; Wiring Spec Only for others
+3. Functional Requirements Specification — FRS (approved)
+4. Technical Requirements Specification — TRS (approved)
+5. Architecture Design (approved)
 6. Red QA Suite (signed off by Foreman)
+7. Implementation Plan (approved)
 
 If any prerequisite is missing or unapproved, the gate is **BLOCKED** until it is resolved.
 
@@ -167,6 +170,7 @@ A formal Reality Check Log **must** be created for every gate execution.
 
 ## Prerequisite Checklist
 - [x/o] App Description approved
+- [x/o] UX Workflow & Wiring Spec approved
 - [x/o] FRS approved
 - [x/o] TRS approved
 - [x/o] Architecture approved
@@ -285,6 +289,8 @@ This update must be applied to all module manifests within one delivery cycle of
 ## 10. Version History
 
 **v1.0.0** (2026-02-23): Initial canon creation. Establishes mandatory Pre-Build Reality Check gate, defines process, participants, evidence requirements, and retroactive application mandate. Authority: CS2. Issue: APGI-cmy/maturion-foreman-governance#459.
+
+**v1.1.0** (2026-04-05): Aligned prerequisites (§3.2) with `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 — added UX Workflow & Wiring Spec and reordered to match canonical 12-stage sequence. Updated §1 purpose text and §5.1 Reality Check Log prerequisite checklist. Added `PRE_BUILD_STAGE_MODEL_CANON.md` to §2 constitutional mandate. No semantic change to gate process. Authority: CS2. Issue: APGI-cmy/maturion-foreman-governance#1320.
 
 ---
 

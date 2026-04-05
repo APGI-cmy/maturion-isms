@@ -63,12 +63,12 @@ Copy this checklist into the evidence artifact at the filing location above. Mar
 ## Part B — Mandatory Governance Sections (§5.3)
 
 ### B1 — §AD-01: Build Lifecycle Stages
-- [ ] Canonical stage order is listed (min. App Description → FRS → TRS → Architecture → QA-to-Red → Implementation → Deployment)
+- [ ] Canonical stage order is listed per `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (App Description → UX Workflow & Wiring Spec → FRS → TRS → Architecture → QA-to-Red → PBFAG → Implementation Plan → Builder Checklist → IAA Pre-Brief → Builder Appointment → Build)
 - [ ] Explicit prohibition of skipping or reordering stages is stated
-- [ ] All stages are named
+- [ ] All 12 stages are named
 
 ### B2 — §AD-02: Requirements Derivation Chain
-- [ ] Derivation chain diagram or table is present (App Description → FRS → TRS → Architecture)
+- [ ] Derivation chain diagram or table is present (App Description → UX Workflow & Wiring Spec → FRS → TRS → Architecture)
 - [ ] Cross-linking artifact names are cited for each transition
 - [ ] "Derived from" statement requirement is documented
 

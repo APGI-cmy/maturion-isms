@@ -19,19 +19,22 @@
 
 ### Derivation Statement
 
-> This Functional Requirements Specification is derived from `{APP}_APP_DESCRIPTION.md` version {VERSION}, approved {DATE}. All requirements herein implement the application purpose, scope, and success criteria defined in that authoritative document.
+> This Functional Requirements Specification is derived from `{APP}_APP_DESCRIPTION.md` version {VERSION} and `{APP}_UX_WORKFLOW_WIRING_SPEC.md` version {VERSION}, both approved before this FRS commenced. All requirements herein implement the application purpose, scope, success criteria, user journeys, screen interactions, and wiring logic defined in those authoritative documents.
 
 ### Upstream Authority References
 
 | Artifact | Location | Version | Status |
 |----------|----------|---------|--------|
 | App Description | `docs/governance/{APP}_APP_DESCRIPTION.md` | {VERSION} | Authoritative |
+| UX Workflow & Wiring Spec | `docs/governance/{APP}_UX_WORKFLOW_WIRING_SPEC.md` | {VERSION} | Authoritative |
 
 ### Requirements Derivation Chain (§AD-02)
 
 ```
 App Description: docs/governance/{APP}_APP_DESCRIPTION.md  v{VERSION}
     ↓ derives
+UX Workflow & Wiring Spec: docs/governance/{APP}_UX_WORKFLOW_WIRING_SPEC.md  v{VERSION}
+    ↓ derives (together with App Description)
 FRS (this document): docs/governance/{APP}_FRS.md  v{VERSION}
     ↓ derives
 TRS: docs/governance/{APP}_TRS.md  v{VERSION}
