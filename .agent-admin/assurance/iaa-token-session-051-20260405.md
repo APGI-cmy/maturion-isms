@@ -4,6 +4,7 @@
 **Date**: 2026-04-05
 **IAA Version**: independent-assurance-agent v6.2.0 (contract 2.3.0)
 **Adoption Phase**: PHASE_B_BLOCKING
+**PHASE_B_BLOCKING_TOKEN**: IAA-PHASE-B-session-govpatch-session051-20260405-R2
 **R1 Reference**: IAA-govpatch-session051-20260405-REJECTION (resolved)
 
 ---
