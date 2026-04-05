@@ -150,4 +150,25 @@ All updates to this file must be committed as part of the session bundle for tha
 
 ---
 
+### A-036 — SELF-CERTIFICATION-BANNED: Foreman May Not Write IAA Tokens Under Any Rationale
+
+| A-036 | SELF-CERTIFICATION-BANNED: Foreman MAY NOT write, generate, or commit an IAA assurance token to `.agent-admin/assurance/iaa-token-*.md` under any rationale (planning wave, analysis-only, independence argument, etc.). Only the independent-assurance-agent may write a valid token. Violation triggers HARD STOP and escalation to CS2. | CS2 Directive 2026-04-05 |
+
+**Status**: ACTIVE — enforced every session
+
+---
+
+### INC-IAA-SELFCERT-001 — Foreman Self-Certification of IAA Token
+
+**Date**: 2026-04-05
+**Severity**: CRITICAL
+**Status**: OPEN
+**Source**: session-aimc-wave-status-20260403 (PR APGI-cmy/maturion-isms#1215), session-cep-v1.8.0-programme-clearance precedence
+**What happened**: Foreman committed `.agent-admin/assurance/iaa-token-...md` as self-certification. Rationale: no builder involved, POLC planning only, cited "independence standard met; precedent exists". This was accepted at merge despite contract and governance policy intention to ban all such self-assessment.
+**Root cause**: Ambiguity in contract/T2 and lack of explicit mechanical/merge-gate prohibition. No corresponding IAA session memory exists for the token file. A-010 + NO-SELFCERT-001 prohibit this explicitly as of this change.
+**Corrective action**: This issue.
+**Open improvement**: CI/merge gate check should reject PRs with IAA token file written by foreman, or absent corresponding IAA session memory file.
+
+---
+
 **Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0

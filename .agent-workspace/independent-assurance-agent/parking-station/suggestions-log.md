@@ -10,6 +10,7 @@
 
 | Date | Agent | Session | Summary | Detail |
 |------|-------|---------|---------|--------|
+| 2026-04-05 | independent-assurance-agent | session-govpatch-session051-20260405 | Phase 3/4 | Add un-skippable ripple assessment placeholder to CodexAdvisor PREHANDOVER template — recurring A-023 miss (6th occurrence). Add pre-commit QP gate using `git status --porcelain` to catch uncommitted governance artifacts before IAA invocation (A-021/A-033 class prevention). | session-govpatch-session051-20260405.md |
 | 2026-02-24 | independent-assurance-agent | session-026 | SESSION-END | Merge gate failed on invalid sync_state.json JSON syntax (unresolved git conflict markers) — canon update #1201 incoming to enforce local parity checks pre-handover. | `session-026-20260224.md` |
 | 2026-02-25 | independent-assurance-agent | session-001 | Phase 3 | Add IAA check to verify string constants in PREHANDOVER proofs match actual implementation (not just SHA) | session-001-20260225.md |
 | 2026-02-25 | independent-assurance-agent | session-001 | Phase 4 | Require agent footprint markers in commit messages ([agent-id]) to enable POLC audit via git log in single-bot environments | session-001-20260225.md |
