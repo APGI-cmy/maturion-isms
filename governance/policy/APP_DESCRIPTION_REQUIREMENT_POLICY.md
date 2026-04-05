@@ -184,7 +184,7 @@ Every App Description **MUST** include the following 24 sections. Omission of an
 
 **Requirement**: The App Description MUST define the canonical build lifecycle order.
 
-**Content**: Explicit, ordered list of stages (e.g., App Description → FRS → TRS → Architecture → QA-to-Red → Implementation Plan → Deployment Wave), with a prohibition statement that skipping or reordering stages is forbidden without documented CS2 approval.
+**Content**: Explicit, ordered list of stages per `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0: App Description → UX Workflow & Wiring Spec → FRS → TRS → Architecture → QA-to-Red → PBFAG → Implementation Plan → Builder Checklist → IAA Pre-Brief → Builder Appointment → Build. A prohibition statement that skipping or reordering stages is forbidden without documented CS2 approval is required.
 
 **Evidence of Compliance**: All downstream stages reference this section; Foreman gate checks lifecycle order before allocating builders.
 
@@ -194,7 +194,7 @@ Every App Description **MUST** include the following 24 sections. Omission of an
 
 **Requirement**: The App Description MUST specify the required traceability chain.
 
-**Content**: A derivation diagram or table showing: App Description → FRS → TRS → Architecture, with citations of the cross-linking artifact names expected at each transition. Gaps in the chain are a blocking defect.
+**Content**: A derivation diagram or table showing: App Description → UX Workflow & Wiring Spec → FRS → TRS → Architecture, with citations of the cross-linking artifact names expected at each transition. Gaps in the chain are a blocking defect.
 
 **Evidence of Compliance**: Each downstream artifact contains explicit "derived from" statements referencing the upstream artifact by filename and version.
 

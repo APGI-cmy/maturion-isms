@@ -58,19 +58,20 @@
 ## §5 — Build Lifecycle Stages (§AD-01)
 
 > **Rule**: Stages MUST be executed in the canonical order below. Skipping or reordering is **prohibited** without documented CS2 approval.
+> **Authority**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 — this is the binding canonical sequence.
 
 1. App Description (this document) — Authoritative before any downstream artifact
-2. Functional Requirement Specification (FRS)
-3. Technical Requirements Specification (TRS)
-4. Architecture Compilation
-5. Build Authorization Gate
-6. QA-to-Red (test suite for each wave, before builder allocation)
-7. Pre-Build Functionality Assessment Gate (PBFAG)
-8. Implementation Plan (per wave)
-9. Implementation (builder execution)
-10. Physical Verification Gate (UI waves)
-11. PREHANDOVER Proof
-12. Deployment & Commissioning Wave (final)
+2. UX Workflow & Wiring Spec — user journeys, screen interactions, data flows, wiring (mandatory for user-facing builds; Wiring Spec Only variant for non-user-facing builds)
+3. Functional Requirements Specification (FRS) — derives from App Description + UX Workflow & Wiring Spec
+4. Technical Requirements Specification (TRS)
+5. Architecture
+6. QA-to-Red — RED test suite built and approved before any implementation begins
+7. Pre-Build Functionality Assessment Gate (PBFAG) — mandatory hard gate; all upstream artifacts verified
+8. Implementation Plan — delivery wave breakdown with explicit scope per wave
+9. Builder Checklist — builder role-fit, scope comprehension, and protocol compliance verification
+10. IAA Pre-Brief — mandatory acceptance criteria declaration before builder appointment
+11. Builder Appointment — formal Foreman appointment after all prior gates pass
+12. Build — implementation begins only after all prior stages are complete and gate-passed
 
 **Prohibited**: Skipping any stage, or beginning a downstream stage before the preceding stage is Authoritative. Violations require a governance escalation to CS2.
 
@@ -81,6 +82,8 @@
 ```
 App Description: docs/governance/{APP}_APP_DESCRIPTION.md  v{VERSION}
     ↓ derives
+UX Workflow & Wiring Spec: docs/governance/{APP}_UX_WORKFLOW_WIRING_SPEC.md  v{VERSION}
+    ↓ derives (together with App Description)
 FRS: docs/governance/{APP}_FRS.md  v{VERSION}
     ↓ derives
 TRS: docs/governance/{APP}_TRS.md  v{VERSION}

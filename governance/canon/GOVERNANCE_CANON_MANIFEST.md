@@ -118,6 +118,7 @@ It serves to:
 | `GATE_PREDICTIVE_COMPLIANCE_ANALYSIS.md` | 1.0.0 | OPTIONAL | FM App | 2026-01-05 |
 | `IAA_PRE_BRIEF_PROTOCOL.md` | 1.2.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-04-05 |
 | `INITIALIZATION_COMPLETENESS_GATE.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
+| `PRE_BUILD_REALITY_CHECK_CANON.md` | 1.1.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-04-05 |
 | `PR_GATE_EVALUATION_AND_ROLE_PROTOCOL.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `PR_GATE_PRECONDITION_RULE.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `PR_SCOPE_CONTROL_POLICY.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
@@ -240,9 +241,13 @@ These policies are located in `governance/policy/` and establish constitutional 
 | `BUILDER_QA_HANDOVER_POLICY.md` | 1.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 | N/A |
 | `PR_GATE_FAILURE_HANDLING_PROTOCOL.md` | 1.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 | N/A |
 | `APP_DESCRIPTION_REQUIREMENT_POLICY.md` | 2.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-03-20 | APP_DESCRIPTION_REQUIREMENT_POLICY_V2.0 |
-| `APP_DESCRIPTION_TEMPLATE.md` *(governance/templates/)* | 1.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-03-20 | N/A |
-| `APP_DESCRIPTION_CREATION_CHECKLIST.md` *(governance/checklists/)* | 1.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-03-20 | APP_DESCRIPTION_CREATION_CHECKLIST_V1.0 |
+| `APP_DESCRIPTION_TEMPLATE.md` *(governance/templates/)* | 1.1 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-04-05 | N/A |
+| `APP_DESCRIPTION_CREATION_CHECKLIST.md` *(governance/checklists/)* | 1.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-04-05 | APP_DESCRIPTION_CREATION_CHECKLIST_V1.0 |
+| `BUILDER_CHECKLIST_TEMPLATE.md` *(governance/templates/)* | 1.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-04-05 | N/A |
+| `BUILD_PROGRESS_TRACKER_TEMPLATE.md` *(governance/templates/)* | 1.1 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-04-05 | N/A |
 | `FM_MATURION_DELEGATED_ACTION_POLICY.md` | 1.0 | PUBLIC_API | FM App | 2026-01-05 | N/A |
+| `FRS_TEMPLATE.md` *(governance/templates/)* | 1.1 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-04-05 | N/A |
+| `UX_WORKFLOW_WIRING_SPEC_TEMPLATE.md` *(governance/templates/)* | 1.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-04-05 | N/A |
 
 **Note**: POLICY-NO-ONLY-LANGUAGE is a constitutional policy with Tier-0 authority, banning minimizing language when describing test failures, warnings, or technical debt. It enforces T0-002 (Governance Supremacy Rule) and T0-003 (Zero Test Debt Constitutional Rule). See also: Bootstrap Learning BL-022.
 
@@ -252,12 +257,12 @@ These policies are located in `governance/policy/` and establish constitutional 
 
 ## 4. Governance Public API Summary
 
-**Total Canon Files**: 90  
-**Total Policy Files**: 11  
-**Combined Total**: 101  
-**PUBLIC_API**: 72 files (71%)  
-**OPTIONAL**: 16 files (16%)  
-**INTERNAL**: 13 files (13%)  
+**Total Canon Files**: 91  
+**Total Policy Files**: 15  
+**Combined Total**: 106  
+**PUBLIC_API**: 77 files (73%)  
+**OPTIONAL**: 16 files (15%)  
+**INTERNAL**: 13 files (12%)  
 **DEPRECATED**: 0 files (0%)
 
 ### 4.1 Critical Path Canon (Must-Have for Downstream Repos)
@@ -331,6 +336,8 @@ When a breaking change is required:
 | 2026-01-14 | Added COMBINED_TESTING_PATTERN.md and PRE_IMPLEMENTATION_BEHAVIOR_REVIEW_PROTOCOL.md to Section 3.2, updated totals | Governance Administrator Agent |
 | 2026-01-19 | BOOTSTRAP_EXECUTION_LEARNINGS.md → PUBLIC_API (All Repos), updated totals | Agent Contract Administrator |
 | 2026-03-20 | APP_DESCRIPTION_REQUIREMENT_POLICY.md v1.0 → v2.0; added APP_DESCRIPTION_TEMPLATE.md and APP_DESCRIPTION_CREATION_CHECKLIST.md to §3.14; updated totals (97→99) | governance-repo-administrator-v2 (issue #1312, PR #1313) |
+| 2026-04-05 | Added PRE_BUILD_STAGE_MODEL_CANON.md v1.0.0 to §3.2; updated totals (99→101) | governance-repo-administrator-v2 (issue #1319) |
+| 2026-04-05 | Canon documentation updates for 12-stage pre-build model: APP_DESCRIPTION_TEMPLATE.md v1.0→v1.1; PRE_BUILD_REALITY_CHECK_CANON.md v1.0.0→v1.1.0 added to §3.4; new UX_WORKFLOW_WIRING_SPEC_TEMPLATE.md v1.0 and BUILDER_CHECKLIST_TEMPLATE.md v1.0 added to §3.14; APP_DESCRIPTION_CREATION_CHECKLIST.md date updated; totals updated (101→104) | governance-repo-administrator-v2 (issue #1320) |
 
 ### 7.2 Layer-Down Completion Tracking
 
