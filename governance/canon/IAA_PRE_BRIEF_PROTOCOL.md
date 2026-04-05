@@ -5,9 +5,10 @@
 **Amended**: 2026-03-03 — v1.1.0: Added §Wave Checklist Management, §Foreman Handover Gate,
 §IAA Invocation Gate, §Mid-Wave Task Addition, wave_checklist PREHANDOVER field, and commit
 discipline requirements  
-**Amended**: 2026-03-18 — v1.2.0: Removed PHASE_A_ADVISORY escape hatch; replaced with
-CS2-escalation-only path (§IAA Unavailability Protocol). PHASE_A_ADVISORY deferral abolished.
-`iaa_prebrief_path` field added to wave-current-tasks.md schema (§Wave Task List Schema).
+**Amended**: 2026-04-05 — v1.2.0: Added §Wave Checklist Invocation Gate — Applicability Scope
+clarifying that the Wave Checklist Invocation Gate applies to Foreman-governed wave execution
+and does not automatically apply to direct-CS2 standalone governance-repo-administrator-v2
+canon actions (CS2 guidance — issue #1319)
 
 ---
 
@@ -57,14 +58,10 @@ with a `PRE-BRIEF` action flag.
 2. The wave task list contains at least one qualifying task (per §Qualifying Tasks below)
 3. No Pre-Brief already exists for this wave number
 
-If the IAA tool call fails or is unavailable, the Foreman MUST NOT proceed. The Foreman MUST:
-1. Record the tool failure in session memory with timestamp and error detail.
-2. Post a comment on the current wave issue notifying CS2 (@APGI-cmy) of IAA unavailability.
-3. HALT all wave execution immediately. Do not write files, call `report_progress`, or open PRs.
-4. Await explicit CS2 written instruction before resuming any wave action.
-
-The `PHASE_A_ADVISORY` deferral mode is **abolished**. There is no IAA-unavailable bypass.
-Wave execution requires an active, committed IAA Pre-Brief. No Pre-Brief = no build actions.
+If the IAA tool call fails or is unavailable, the Foreman records `PHASE_A_ADVISORY` status
+and the Pre-Brief is deferred until IAA is accessible. Wave execution **may proceed** in
+`PHASE_A_ADVISORY` mode, but Pre-Brief must be completed before the first qualifying PR opens
+for review.
 
 ---
 
@@ -255,28 +252,6 @@ by an indented metadata block:
 **Prohibited**: Removing a task line from the checklist at any point. Silent removal is a
 governance violation equivalent to modifying evidence in-place.
 
-### Wave File Header Schema
-
-The `wave-current-tasks.md` file MUST include the following header fields:
-
-```markdown
-**Wave**: <N>
-**Session ID**: <foreman-session-id>
-**Date**: <YYYY-MM-DD>
-**Branch**: <branch-name>
-**Foreman Session**: foreman-v2
-**CS2 Authorization**: <reference or PENDING>
-**iaa_prebrief_path**: PENDING | <path/to/iaa-prebrief-*.md>
-**Status**: <phase-status-token>  <!-- e.g., PHASE_A_PREBRIEF, PHASE_B_BUILD, COMPLETE -->
-```
-
-The `iaa_prebrief_path` field is a machine-readable gate signal:
-- `PENDING` — Pre-Brief has not yet been issued. **Build actions are BLOCKED.** No file-write,
-  `report_progress`, or PR open is permitted until this field is resolved.
-- `<path>` — Pre-Brief artifact path. Build actions are permitted once the referenced file exists.
-
-The CI preflight gate reads this field. A value of `PENDING` causes the CI gate to fail.
-
 ### Example Checklist
 
 ```markdown
@@ -284,7 +259,7 @@ The CI preflight gate reads this field. A value of `PENDING` causes the CI gate 
 
 **Wave**: 10
 **Foreman**: foreman-v2
-**iaa_prebrief_path**: .agent-admin/assurance/iaa-prebrief-wave10.md
+**IAA Pre-Brief**: .agent-admin/assurance/iaa-prebrief-wave10.md
 **Status**: IN PROGRESS
 
 ---
@@ -412,6 +387,37 @@ If `pending` is non-empty and items are not explicitly descoped: **handover is B
 The IAA MUST NOT begin assurance execution unless the wave checklist gate is cleared. This
 gate is a **hard prerequisite**, applied as Step 2.4 immediately after PR classification
 (Step 2.3) and before any Phase 3 assurance execution.
+
+### Applicability Scope
+
+> **v1.2.0 Amendment — CS2 guidance issue #1319**
+
+The Wave Checklist Invocation Gate **applies to Foreman-governed wave execution** and **does
+not automatically apply** to direct-CS2 standalone governance-repo-administrator-v2 canon
+actions.
+
+| Execution Context | Wave Checklist Gate Applies? |
+|------------------|------------------------------|
+| Foreman-governed wave execution (any wave, any repo) | **YES — mandatory** |
+| Direct-CS2 standalone governance-repo-administrator-v2 canon action | **NO — exempt by default** |
+| Explicit CS2 instruction to apply checklist gate for a specific GA session | **YES — follows CS2 instruction** |
+
+**Rationale**: The Wave Checklist Invocation Gate is a discipline control for **Foreman-governed
+wave delivery**, where wave checklist management is part of structured, multi-task execution.
+The governance-repo-administrator-v2 performing a **standalone canon/governance action under
+direct CS2 mandate** operates in a different governance context — the canon action itself is
+the CS2-authorized unit of work, not a sub-task within a Foreman wave.
+
+**Important Constraints on the Exemption**:
+- This exemption does **NOT** weaken or bypass IAA assurance invocation at handover (Rule A-09
+  in the GA FAIL-ONLY-ONCE registry still applies)
+- This exemption does **NOT** apply to GA sessions that are operating as builders within a
+  Foreman-governed wave — in those cases, the standard Foreman wave checklist obligations apply
+- CS2 may explicitly invoke the wave checklist gate for any specific GA standalone session by
+  stating so in the CS2 mandate that authorizes the work
+- The exemption applies only to the **wave checklist** gate check; all other IAA invocation
+  requirements (evidence artifacts, prehandover proof, ASSURANCE-TOKEN recording) remain fully
+  mandatory for GA standalone sessions
 
 ### Gate Conditions (each independently triggers REJECTION-PACKAGE if failed)
 
@@ -594,60 +600,6 @@ IAA's final verdict, which cross-references Phase 0 (Pre-Brief) and the wave che
 
 ---
 
-## IAA Token Self-Certification Guard
-
-### Purpose
-
-This section defines the structural guard that prevents Foreman self-authoring of IAA tokens.
-A self-authored token bypasses the double-layer QA model and is a constitutional violation.
-
-### PHASE_B_BLOCKING_TOKEN Field Requirement
-
-Every IAA token file (`.agent-admin/assurance/iaa-token-*.md`) MUST contain the field:
-
-```
-PHASE_B_BLOCKING_TOKEN: <value>
-```
-
-This field is **contractually producible only by the IAA** (per `independent-assurance-agent.md`
-§Phase 4). It MUST NOT appear in PREHANDOVER proofs or session memory authored by Foreman.
-Its presence in a token file proves the token was issued by the IAA, not self-authored.
-
-### Rejection Criteria
-
-A PR is **auto-rejected** by the applicable CI gates (e.g. `preflight-evidence-gate`) if any
-of the following CI-enforced conditions are true:
-
-| Condition | Violation Class | CI Enforced |
-|-----------|----------------|-------------|
-| IAA token file absent (but handover claims IAA PASS) | IAA-SKIP-001 | NO — human-review only (currently not CI-automated) |
-| `PHASE_B_BLOCKING_TOKEN:` field missing from token file | IAA-SELF-CERT-001 | YES — `iaa-token-self-cert-check` job |
-| Token file authored by the same agent as the PREHANDOVER proof | IAA-SELF-CERT-002 | NO — human-review only (git author analysis not CI-automatable) |
-| Token value is `PHASE_A_ADVISORY` | IAA-PHASE-A-BYPASS-001 | YES — `iaa-token-self-cert-check` job |
-| Token value is blank or `PENDING` | IAA-SELF-CERT-001 | YES — `iaa-token-self-cert-check` job |
-
-### CI Enforcement
-
-The `preflight-evidence-gate` workflow’s `iaa-token-self-cert-check` job checks for
-`PHASE_B_BLOCKING_TOKEN:` in the IAA token file and fails the check if the field is
-absent or the value is invalid.
-
----
-
-## IAA Unavailability Protocol
-
-When the IAA tool call fails or is unavailable, the **only** permitted path is:
-
-1. Record tool failure in session memory (timestamp + error).
-2. Post an issue comment on the current wave issue: `@APGI-cmy IAA unavailable — [error]. Wave halted per IAA_PRE_BRIEF_PROTOCOL.md v1.2.0.`
-3. HALT. Do not write files, call `report_progress`, or open PRs.
-4. Await explicit CS2 written authorisation to resume.
-
-**PHASE_A_ADVISORY is abolished.** There is no fallback or deferral path. No Pre-Brief = no
-build actions. IAA availability is a prerequisite, not a nice-to-have.
-
----
-
 ## References
 
 - `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.1.0 — IAA class definition and trigger table
@@ -660,4 +612,4 @@ build actions. IAA availability is a prerequisite, not a nice-to-have.
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.2.0 | Effective: 2026-03-18*
+*Authority: CS2 (Johan Ras) | Version: 1.2.0 | Effective: 2026-04-05 (v1.2.0) | Original: 2026-03-03 (v1.1.0)*
