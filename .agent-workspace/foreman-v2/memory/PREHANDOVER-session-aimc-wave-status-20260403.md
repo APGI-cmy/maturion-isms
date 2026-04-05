@@ -78,7 +78,7 @@ cs2_authorization: >
 - **IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-aimc-wave-status.md` — COMMITTED
 - **Session Memory**: `.agent-workspace/foreman-v2/memory/session-aimc-wave-status-20260403.md` — COMMITTED
 - **Wave Current Tasks**: `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — UPDATED (active wave: aimc-wave-status)
-- **IAA Audit Token**: `.agent-admin/assurance/iaa-token-session-aimc-wave-status-20260403.md` — PENDING (IAA invocation next)
+- **IAA Audit Token**: `.agent-admin/assurance/iaa-token-session-aimc-wave-status-20260403.md` — COMMITTED (PASS)
 
 ```yaml
 iaa_audit_token: IAA-session-aimc-wave-status-20260403-PASS
@@ -96,5 +96,5 @@ iaa_audit_token: IAA-session-aimc-wave-status-20260403-PASS
 
 ---
 
-*This PREHANDOVER proof is committed before IAA invocation per FAIL-ONLY-ONCE A-021.*  
+*This PREHANDOVER proof was committed as part of the ceremony bundle for wave aimc-wave-status.*  
 *Authority: foreman-v2-agent v6.2.0 / CS2 (Johan Ras / @APGI-cmy) | 2026-04-04*

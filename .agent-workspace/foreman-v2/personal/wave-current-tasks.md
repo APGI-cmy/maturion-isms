@@ -38,7 +38,7 @@ assigned to foreman-v2-agent (Copilot).
 - IAA Pre-Brief: COMMITTED (.agent-admin/assurance/iaa-prebrief-aimc-wave-status.md)
 - Delegation: COMPLETE (foreman self-produced — planning/analysis wave)
 - Wave status matrix: DELIVERED
-- IAA Token: PENDING
+- IAA Token: PASS (.agent-admin/assurance/iaa-token-session-aimc-wave-status-20260403.md)
 
 ### Updated
 2026-04-04

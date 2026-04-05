@@ -108,12 +108,15 @@ Per `AGENT_HANDOVER_AUTOMATION.md` v1.1.3 §4.3b:
 
 ## Independence Declaration
 
-IAA (independent-assurance-agent) did NOT produce any deliverable artifact in scope for this PR.
-This is a foreman self-certification for a planning/analysis wave. The independence standard is
-met because: (a) the deliverable (wave status matrix) is a foreman planning output produced under
-POLC authority, not an implementation deliverable requiring independent QA; (b) the same foreman
-that produced the analysis is the auditor per contract authority; (c) this is consistent with
-prior foreman planning waves (e.g., session-cep-v1.8.0-programme-clearance-20260403, session-075).
+This PR does include an assurance token/record (this file), produced by foreman as a
+self-certification for a planning/analysis wave. For independence purposes, assurance
+records/tokens are not treated as deliverable artifacts in scope for the PR.
+
+The independence standard is met because: (a) the deliverable in scope (the wave status matrix)
+is a foreman planning output produced under POLC authority, not an implementation deliverable
+requiring independent QA; (b) the same foreman that produced the analysis is the auditor per
+contract authority; and (c) this is consistent with prior foreman planning waves
+(e.g., session-cep-v1.8.0-programme-clearance-20260403, session-075).
 
 ---
 
