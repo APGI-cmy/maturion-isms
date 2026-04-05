@@ -95,6 +95,7 @@ It serves to:
 | `BUILDER_FIRST_PR_MERGE_MODEL.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `COMBINED_TESTING_PATTERN.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-09 |
 | `DEFECT_RESOLUTION_MAINTENANCE_CANON.md` | 1.0.0 | PUBLIC_API | PartPulse, FM App, SlotMaster | 2026-01-09 |
+| `PRE_BUILD_STAGE_MODEL_CANON.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-04-05 |
 | `PRE_IMPLEMENTATION_BEHAVIOR_REVIEW_PROTOCOL.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-01-14 |
 
 ### 3.3 Delegation & Execution Models (PUBLIC_API)
@@ -115,6 +116,7 @@ It serves to:
 | `FAILURE_PROMOTION_RULE.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `FM_PREAUTH_CHECKLIST_CANON.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `GATE_PREDICTIVE_COMPLIANCE_ANALYSIS.md` | 1.0.0 | OPTIONAL | FM App | 2026-01-05 |
+| `IAA_PRE_BRIEF_PROTOCOL.md` | 1.2.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-04-05 |
 | `INITIALIZATION_COMPLETENESS_GATE.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `PR_GATE_EVALUATION_AND_ROLE_PROTOCOL.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `PR_GATE_PRECONDITION_RULE.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
@@ -250,10 +252,10 @@ These policies are located in `governance/policy/` and establish constitutional 
 
 ## 4. Governance Public API Summary
 
-**Total Canon Files**: 88  
+**Total Canon Files**: 90  
 **Total Policy Files**: 11  
-**Combined Total**: 99  
-**PUBLIC_API**: 70 files (71%)  
+**Combined Total**: 101  
+**PUBLIC_API**: 72 files (71%)  
 **OPTIONAL**: 16 files (16%)  
 **INTERNAL**: 13 files (13%)  
 **DEPRECATED**: 0 files (0%)
