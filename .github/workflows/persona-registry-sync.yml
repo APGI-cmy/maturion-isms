@@ -1,0 +1,164 @@
+# Governance: AIMC_PERSONA_LIFECYCLE.md §2 — Persona Registry Sync Check
+# Purpose: Verify every agentId in the Persona Registry has a corresponding persona file on disk,
+#          and that no orphan persona files exist outside the registry.
+# GOV-003: persona registry sync CI check
+# OVL-CI-005 S-033 exception applies to the workflow_dispatch trigger: manual dispatch cannot be
+#   fully exercised within this PR. Push triggers (main, copilot/**) are exercisable normally.
+#   YAML syntax, pattern parity, and workflow_dispatch trigger are present as required.
+
+name: Persona Registry Sync Check
+
+on:
+  push:
+    branches:
+      - main
+      - 'copilot/**'
+    paths:
+      - 'packages/ai-centre/src/agents/**'
+      - 'governance/aimc/AIMC_PERSONA_LIFECYCLE.md'
+  workflow_dispatch:
+
+jobs:
+  sync-check:
+    name: persona-registry/sync-check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract agentIds from Persona Registry
+        id: extract-registry
+        run: |
+          REGISTRY_FILE="governance/aimc/AIMC_PERSONA_LIFECYCLE.md"
+
+          echo "=== Extracting agentIds from Persona Registry (§2) ==="
+          echo "Registry file: $REGISTRY_FILE"
+
+          # Use awk to:
+          #  1. Scope extraction to the §2 block (## 2. Persona Registry ... ## 3.)
+          #  2. Extract lines that are table data rows (start with "| `")
+          #  3. Split on backtick to get the first-column agentId value
+          # Exclude: header row ("agentId"), empty values, and non-agentId column headers.
+          AGENT_IDS=$(awk '
+            /^## 2\./ { in_section=1; next }
+            /^## [0-9]+\./ { if (in_section) exit }
+            in_section && /^\| `/ {
+              # Extract value between first pair of backticks
+              match($0, /`([^`]+)`/, arr)
+              val = arr[1]
+              # Skip header/non-agentId values
+              if (val != "" && val != "agentId" && val != "last_reviewed" && val != "owner") {
+                print val
+              }
+            }
+          ' "$REGISTRY_FILE" | sort -u)
+
+          if [ -z "$AGENT_IDS" ]; then
+            echo "ERROR: No agentIds extracted from registry. Check table format in §2."
+            exit 1
+          fi
+
+          echo "Registered agentIds:"
+          echo "$AGENT_IDS" | while IFS= read -r id; do echo "  - $id"; done
+
+          # Write to a temp file for use in subsequent steps
+          echo "$AGENT_IDS" > /tmp/registered-agent-ids.txt
+          echo "count=$(echo "$AGENT_IDS" | wc -l | tr -d ' ')" >> "$GITHUB_OUTPUT"
+
+      - name: Check registry → disk (missing persona files)
+        id: check-registry-to-disk
+        run: |
+          AGENTS_DIR="packages/ai-centre/src/agents"
+          VIOLATIONS=0
+          MISSING_FILES=""
+
+          echo "=== Checking every registered agentId has a persona file on disk ==="
+
+          while IFS= read -r agent_id; do
+            EXPECTED_FILE="$AGENTS_DIR/${agent_id}.md"
+            if [ ! -f "$EXPECTED_FILE" ]; then
+              echo "  MISSING: $EXPECTED_FILE"
+              MISSING_FILES="$MISSING_FILES\n  - $agent_id → $EXPECTED_FILE"
+              VIOLATIONS=$((VIOLATIONS + 1))
+            else
+              echo "  OK: $EXPECTED_FILE"
+            fi
+          done < /tmp/registered-agent-ids.txt
+
+          echo "missing_count=$VIOLATIONS" >> "$GITHUB_OUTPUT"
+          if [ "$VIOLATIONS" -gt 0 ]; then
+            echo ""
+            echo "REGISTRY→DISK VIOLATIONS ($VIOLATIONS):"
+            printf "%b\n" "$MISSING_FILES"
+          fi
+
+      - name: Check disk → registry (orphan persona files)
+        id: check-disk-to-registry
+        run: |
+          AGENTS_DIR="packages/ai-centre/src/agents"
+          VIOLATIONS=0
+          ORPHAN_FILES=""
+
+          echo "=== Checking every persona file on disk is listed in the registry ==="
+
+          # Iterate over .md files in agents dir; skip cl7-fixture-* test fixtures
+          for persona_file in "$AGENTS_DIR"/*.md; do
+            [ -f "$persona_file" ] || continue
+            filename=$(basename "$persona_file" .md)
+
+            # Skip test fixture files (cl7-fixture-* prefix)
+            if [[ "$filename" == cl7-fixture-* ]]; then
+              echo "  SKIP (fixture): $filename"
+              continue
+            fi
+
+            if ! grep -qxF "$filename" /tmp/registered-agent-ids.txt; then
+              echo "  ORPHAN: $persona_file (not in registry)"
+              ORPHAN_FILES="$ORPHAN_FILES\n  - $filename → $persona_file"
+              VIOLATIONS=$((VIOLATIONS + 1))
+            else
+              echo "  OK: $persona_file"
+            fi
+          done
+
+          echo "orphan_count=$VIOLATIONS" >> "$GITHUB_OUTPUT"
+          if [ "$VIOLATIONS" -gt 0 ]; then
+            echo ""
+            echo "DISK→REGISTRY VIOLATIONS ($VIOLATIONS orphan files):"
+            printf "%b\n" "$ORPHAN_FILES"
+          fi
+
+      - name: Report sync result and fail on violations
+        run: |
+          MISSING=${{ steps.check-registry-to-disk.outputs.missing_count }}
+          ORPHANS=${{ steps.check-disk-to-registry.outputs.orphan_count }}
+          TOTAL=$((MISSING + ORPHANS))
+
+          echo "=== Persona Registry Sync Summary ==="
+          echo "  Registered agentIds: ${{ steps.extract-registry.outputs.count }}"
+          echo "  Missing persona files (registry → disk): $MISSING"
+          echo "  Orphan persona files (disk → registry):  $ORPHANS"
+          echo "  Total violations: $TOTAL"
+          echo ""
+
+          if [ "$TOTAL" -gt 0 ]; then
+            echo "FAIL: Persona registry is out of sync."
+            echo ""
+            echo "Remediation:"
+            if [ "$MISSING" -gt 0 ]; then
+              echo "  - Create missing persona files at packages/ai-centre/src/agents/<agentId>.md"
+            fi
+            if [ "$ORPHANS" -gt 0 ]; then
+              echo "  - Add orphan personas to the registry table in governance/aimc/AIMC_PERSONA_LIFECYCLE.md §2"
+              echo "    OR remove them if they are no longer needed."
+            fi
+            echo ""
+            echo "Reference: governance/aimc/AIMC_PERSONA_LIFECYCLE.md §2 (Persona Registry)"
+            exit 1
+          fi
+
+          echo "PASS: Persona registry is in sync. All registered personas have files on disk."
+          echo "      No orphan persona files detected."

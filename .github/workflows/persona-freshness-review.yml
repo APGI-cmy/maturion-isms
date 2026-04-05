@@ -1,0 +1,147 @@
+# Governance: AIMC_PERSONA_LIFECYCLE.md §4.1 — Quarterly Review Freshness Check
+# Purpose: Flag personas with overdue quarterly reviews (last_reviewed > 90 days ago).
+# GOV-004: scheduled quarterly review freshness check
+# OVL-CI-005 S-033 exception: this scheduled/dispatch workflow cannot be fully exercised within the PR.
+#   YAML syntax, pattern parity, and workflow_dispatch trigger are present as required.
+
+name: Persona Quarterly Review Freshness Check
+
+on:
+  schedule:
+    - cron: '0 9 * * MON'
+  workflow_dispatch:
+
+jobs:
+  review-check:
+    name: persona-freshness/review-check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check persona review freshness
+        id: freshness-check
+        run: |
+          AGENTS_DIR="packages/ai-centre/src/agents"
+          THRESHOLD_DAYS=90
+          OVERDUE_COUNT=0
+          MISSING_COUNT=0
+          OK_COUNT=0
+          OVERDUE_LIST=""
+          MISSING_LIST=""
+
+          # Epoch seconds for today's date (UTC). Use date string as intermediate to
+          # anchor calculations to midnight UTC for consistent day-boundary arithmetic.
+          TODAY=$(date -u +%Y-%m-%d)
+          TODAY_EPOCH=$(date -u -d "$TODAY" +%s)
+
+          echo "=== Persona Quarterly Review Freshness Check ==="
+          echo "Reference: governance/aimc/AIMC_PERSONA_LIFECYCLE.md §4.1"
+          echo "Date: $TODAY"
+          echo "Threshold: ${THRESHOLD_DAYS} days"
+          echo ""
+
+          shopt -s nullglob
+          for persona_file in "$AGENTS_DIR"/*.md; do
+            [ -f "$persona_file" ] || continue
+            filename=$(basename "$persona_file" .md)
+
+            # Skip test fixture files (cl7-fixture-* prefix)
+            if [[ "$filename" == cl7-fixture-* ]]; then
+              continue
+            fi
+
+            # Verify YAML front-matter block exists (file must start with ---)
+            FIRST_LINE=$(head -1 "$persona_file")
+            if [ "$FIRST_LINE" != "---" ]; then
+              echo "  MISSING (no front-matter): $filename"
+              MISSING_LIST="${MISSING_LIST}  - ${filename}  [no YAML front-matter]\n"
+              MISSING_COUNT=$((MISSING_COUNT + 1))
+              continue
+            fi
+
+            # Extract last_reviewed from YAML front-matter using awk
+            # Reads from first --- to second ---, extracts 'last_reviewed: VALUE'
+            LAST_REVIEWED=$(awk '
+              NR == 1 && /^---/ { in_fm = 1; next }
+              in_fm && /^---/   { exit }
+              in_fm && /^last_reviewed[[:space:]]*:/ {
+                sub(/^last_reviewed[[:space:]]*:[[:space:]]*/, "")
+                gsub(/["\047]/, "")
+                if ($0 != "") { print $0 }
+                exit
+              }
+            ' "$persona_file")
+
+            if [ -z "$LAST_REVIEWED" ]; then
+              echo "  MISSING (no last_reviewed field): $filename"
+              MISSING_LIST="${MISSING_LIST}  - ${filename}  [last_reviewed field absent or empty]\n"
+              MISSING_COUNT=$((MISSING_COUNT + 1))
+              continue
+            fi
+
+            # Validate date format YYYY-MM-DD
+            if ! echo "$LAST_REVIEWED" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'; then
+              echo "  MISSING (invalid date '$LAST_REVIEWED'): $filename"
+              MISSING_LIST="${MISSING_LIST}  - ${filename}  [invalid last_reviewed: '${LAST_REVIEWED}']\n"
+              MISSING_COUNT=$((MISSING_COUNT + 1))
+              continue
+            fi
+
+            # Calculate days since last_reviewed (GNU date); capture error for diagnostics
+            REVIEWED_EPOCH=$(date -u -d "$LAST_REVIEWED" +%s 2>&1)
+            if ! echo "$REVIEWED_EPOCH" | grep -qE '^[0-9]+$'; then
+              DATE_ERR="$REVIEWED_EPOCH"
+              echo "  MISSING (unparseable date '$LAST_REVIEWED'): $filename  [$DATE_ERR]"
+              MISSING_LIST="${MISSING_LIST}  - ${filename}  [unparseable date: '${LAST_REVIEWED}' — ${DATE_ERR}]\n"
+              MISSING_COUNT=$((MISSING_COUNT + 1))
+              continue
+            fi
+
+            DAYS_SINCE=$(( (TODAY_EPOCH - REVIEWED_EPOCH) / 86400 ))
+
+            if [ "$DAYS_SINCE" -gt "$THRESHOLD_DAYS" ]; then
+              echo "  OVERDUE (${DAYS_SINCE} days): $filename  [last_reviewed: $LAST_REVIEWED]"
+              OVERDUE_LIST="${OVERDUE_LIST}  - ${filename}  [last_reviewed: ${LAST_REVIEWED}, ${DAYS_SINCE} days ago]\n"
+              OVERDUE_COUNT=$((OVERDUE_COUNT + 1))
+            else
+              echo "  OK (${DAYS_SINCE} days): $filename  [last_reviewed: $LAST_REVIEWED]"
+              OK_COUNT=$((OK_COUNT + 1))
+            fi
+          done
+
+          TOTAL_FLAGS=$((OVERDUE_COUNT + MISSING_COUNT))
+
+          echo ""
+          echo "=== Freshness Summary ==="
+          echo "  OK (within ${THRESHOLD_DAYS} days): ${OK_COUNT}"
+          echo "  OVERDUE (> ${THRESHOLD_DAYS} days):  ${OVERDUE_COUNT}"
+          echo "  MISSING last_reviewed:            ${MISSING_COUNT}"
+          echo "  Total flagged: ${TOTAL_FLAGS}"
+
+          if [ "$TOTAL_FLAGS" -gt 0 ]; then
+            echo ""
+            if [ "$OVERDUE_COUNT" -gt 0 ]; then
+              echo "OVERDUE personas (${OVERDUE_COUNT}):"
+              printf "%b" "$OVERDUE_LIST"
+            fi
+            if [ "$MISSING_COUNT" -gt 0 ]; then
+              echo "MISSING last_reviewed (${MISSING_COUNT}):"
+              printf "%b" "$MISSING_LIST"
+            fi
+            echo ""
+            echo "Remediation:"
+            echo "  - Update the 'last_reviewed' field in each flagged persona's YAML front-matter"
+            echo "    after completing the quarterly review."
+            echo "  - Review cadence: every 90 days per governance/aimc/AIMC_PERSONA_LIFECYCLE.md §4.1"
+            echo ""
+            echo "FAIL: ${TOTAL_FLAGS} persona(s) require review attention."
+            exit 1
+          fi
+
+          echo ""
+          echo "PASS: All personas are within the ${THRESHOLD_DAYS}-day review window."
+          echo "      No overdue or missing review dates detected."
