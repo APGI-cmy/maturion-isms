@@ -16,9 +16,9 @@ CS2 Authorization: maturion-isms#1221 (2026-04-05) — Item 5: 'CL-7 & CL-10 wav
 
 | ID | Artefact | Agent | Status |
 |----|---------|-------|--------|
-| CL-10-D1 | RED gate test: CI check integration test — test that `import { OpenAI }` in module code fails the gate | qa-builder | PENDING |
-| CL-10-D2 | CI merge gate check: detect direct provider import patterns in `modules/` and `apps/` (excl. `maturion-maturity-legacy`) — fails PR on match | integration-builder | PENDING (awaits D1 RED) |
-| CL-10-D3 | CI merge gate check: detect `expect(true).toBe(true)` stub patterns anywhere in test suite — fails PR on match | integration-builder | PENDING (awaits D1 RED) |
+| CL-10-D1 | RED gate test: CI check integration test — test that `import { OpenAI }` in module code fails the gate | qa-builder | ✅ DONE (SHA 501779e, 9/9 GREEN) |
+| CL-10-D2 | CI merge gate check: detect direct provider import patterns in `modules/` and `apps/` (excl. `maturion-maturity-legacy`) — fails PR on match | integration-builder | ✅ DONE (SHA 43c2d99, workflow_dispatch added f3eb777) |
+| CL-10-D3 | CI merge gate check: detect `expect(true).toBe(true)` stub patterns anywhere in test suite — fails PR on match | integration-builder | ✅ DONE (SHA 43c2d99, workflow_dispatch added f3eb777) |
 
 ### Sequencing
 - **D1 first** (qa-builder delivers RED gate test BEFORE CI implementation begins)
@@ -34,8 +34,12 @@ CS2 Authorization: maturion-isms#1221 (2026-04-05) — Item 5: 'CL-7 & CL-10 wav
 
 ### Status
 - IAA Pre-Brief: COMMITTED (.agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-20260405.md, SHA f9db5ab)
-- D1 (qa-builder RED gate): PENDING
-- D2+D3 (integration-builder CI workflows): PENDING
+- D1 (qa-builder RED gate): ✅ DONE (SHA 501779e)
+- D2+D3 (integration-builder CI workflows): ✅ DONE (SHA 43c2d99 + f3eb777)
+- Ceremony artifacts: ✅ COMMITTED (SHA f3eb777)
+- IAA R1: REJECTION-PACKAGE (SHA 01d530e) — ceremony not committed, OVL-CI-005 absent
+- IAA R2: ASSURANCE-TOKEN PASS (SHA df0216c) — IAA-session-cl10-routing-governance-20260405-R2-PASS
+- Merge gate: RELEASED — awaiting CS2 review (@APGI-cmy)
 
 ### Updated
 2026-04-05

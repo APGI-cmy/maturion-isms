@@ -119,9 +119,15 @@ IAA declared:
 ## IAA Final Audit
 
 ```yaml
-iaa_invocation: PENDING (to be invoked at Phase 4 Step 4.3a)
-iaa_verdict: PENDING
-iaa_token_file: PENDING (.agent-admin/assurance/iaa-token-session-cl10-routing-governance-20260405.md)
+iaa_invocation_r1: REJECTION-PACKAGE (SHA 01d530e) — ceremony artifacts not committed, OVL-CI-005 absent
+iaa_invocation_r2: ASSURANCE-TOKEN (SHA df0216c) — IAA-session-cl10-routing-governance-20260405-R2-PASS
+iaa_verdict: PASS (R2)
+iaa_token_file: .agent-admin/assurance/iaa-token-session-cl10-routing-governance-20260405-R2.md (SHA df0216c)
+iaa_token_self_cert_guard:
+  token_file_exists: YES
+  phase_b_blocking_token_present: YES (PASS)
+  phase_a_advisory_absent: YES
+  guard_result: PASS
 ```
 
 ---
