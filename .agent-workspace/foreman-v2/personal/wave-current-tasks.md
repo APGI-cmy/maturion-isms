@@ -1,6 +1,52 @@
 # Wave Current Tasks — foreman-v2-agent
 
-## Active Wave: aimc-wave-status
+## Active Wave: mmm-mat-harvest-20260405
+
+wave: mmm-mat-harvest-20260405
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-mmm-mat-harvest-20260405.md
+
+### Wave Description
+CS2 Directive: MMM/MAT/Roadmap Harvest — One-Issue Execution/Attestation & Permission, with
+Governance/Agent Boundaries. Orchestration wave covering 6 action items:
+1. Record MMM builds with AI stubs (wiring deferred to CL-12c)
+2. Commission CL-11-D3/D4 audit (qa-builder; GAP-008, GAP-009; new issue)
+3. Post CL-6 wave-start issue from template
+4. Record MAT Wave 13 terminal harvest verdict; MAT closes post-migration
+5. Post CL-7 & CL-10 wave-start issues (parallel with CL-6)
+6. Record Roadmap decommission plan (no CL-12d; survives as migration anchor only)
+
+CS2 Authorization: GitHub issue "CS2 Directive: MMM/MAT/Roadmap Harvest — One-Issue
+Execution/Attestation & Permission, with Governance/Agent Boundaries" opened by CS2 (@APGI-cmy)
+and assigned to foreman-v2-agent (Copilot). CS2 attestation 2026-04-05.
+
+### Deliverables
+
+| ID | Artefact | Path | Status |
+|----|---------|------|--------|
+| D-1 | New GitHub issue: CL-11-D3/D4 audit (qa-builder; GAP-008 & GAP-009) | GitHub issue | 🔴 PENDING |
+| D-2 | New GitHub issue: CL-6 wave-start (from template) | GitHub issue | 🔴 PENDING |
+| D-3 | New GitHub issue: CL-7 wave-start (PersonaLoader improvements) | GitHub issue | 🔴 PENDING |
+| D-4 | New GitHub issue: CL-10 wave-start (Routing Governance CI Enforcement) | GitHub issue | 🔴 PENDING |
+| D-5 | Governance recording: items 1+4+6 (MAT terminal verdict, MMM AI stubs recorded, Roadmap plan) | governance-liaison-isms-agent delegation | 🔴 PENDING |
+| D-6 | Session memory | .agent-workspace/foreman-v2/memory/session-mmm-mat-harvest-20260405.md | 🔴 PENDING |
+| D-7 | PREHANDOVER proof | .agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-mat-harvest-20260405.md | 🔴 PENDING |
+
+### Acceptance Criteria
+- All 4 GitHub issues created with correct content and agent assignments
+- governance-liaison-isms-agent delegation artifact produced for T3 recordings
+- Session memory and PREHANDOVER proof committed
+- IAA ASSURANCE-TOKEN received
+
+### Status
+- IAA Pre-Brief: PENDING
+- Delegation: NOT STARTED
+
+### Updated
+2026-04-05
+
+---
+
+## Previous Wave (archived): aimc-wave-status
 
 wave: aimc-wave-status
 iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-aimc-wave-status.md
