@@ -1,49 +1,73 @@
 # Wave Current Tasks — foreman-v2-agent
 
-## Active Wave: mmm-mat-harvest-20260405
+## Active Wave: cl6-lkiac-wave3-knowledge-reingestion-20260405
 
-wave: mmm-mat-harvest-20260405
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-mmm-mat-harvest-20260405.md
+wave: cl6-lkiac-wave3-knowledge-reingestion-20260405
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-cl6-lkiac-wave3-knowledge-reingestion-20260405.md
 
 ### Wave Description
-CS2 Directive: MMM/MAT/Roadmap Harvest — One-Issue Execution/Attestation & Permission, with
-Governance/Agent Boundaries. Orchestration wave covering 6 action items:
-1. Record MMM builds with AI stubs (wiring deferred to CL-12c)
-2. Commission CL-11-D3/D4 audit (qa-builder; GAP-008, GAP-009; new issue)
-3. Post CL-6 wave-start issue from template
-4. Record MAT Wave 13 terminal harvest verdict; MAT closes post-migration
-5. Post CL-7 & CL-10 wave-start issues (parallel with CL-6)
-6. Record Roadmap decommission plan (no CL-12d; survives as migration anchor only)
+LKIAC Wave 3 of 6 — Knowledge Re-ingestion. Migrate all knowledge embeddings from legacy Supabase
+project (`dmhlxhatogrrrvuruayv`) into the AIMC `ai_knowledge` table. Re-embed using AIMC vector
+model (1536-dim, OpenAI-compatible). Validate migration. Decommission legacy project after verified
+row count match. Architecture FROZEN — migration only, no new AIMC features.
 
-CS2 Authorization: GitHub issue "CS2 Directive: MMM/MAT/Roadmap Harvest — One-Issue
-Execution/Attestation & Permission, with Governance/Agent Boundaries" opened by CS2 (@APGI-cmy)
-and assigned to foreman-v2-agent (Copilot). CS2 attestation 2026-04-05.
+CS2 Authorization: GitHub issue maturion-isms#1225 — "🟢 Wave CL-6: LKIAC Wave 3 — Knowledge
+Re-ingestion (Wave-Start Authorization)" opened by CS2 (@APGI-cmy) on 2026-04-05 and assigned to
+foreman-v2-agent.
+
+Entry Gates confirmed met: CL-2 COMPLETE (CP-2 closure 2026-04-03), CL-4 COMPLETE (CP-4 2026-04-03).
 
 ### Deliverables
 
 | ID | Artefact | Path | Status |
 |----|---------|------|--------|
-| D-1 | New GitHub issue: CL-11-D3/D4 audit (qa-builder; GAP-008 & GAP-009) | maturion-isms#1224 | ✅ DONE |
-| D-2 | New GitHub issue: CL-6 wave-start (from template) | maturion-isms#1225 | ✅ DONE |
-| D-3 | New GitHub issue: CL-7 wave-start (PersonaLoader improvements) | maturion-isms#1226 | ✅ DONE |
-| D-4 | New GitHub issue: CL-10 wave-start (Routing Governance CI Enforcement) | maturion-isms#1227 | ✅ DONE |
-| D-5 | Governance recording: items 1+4+6 (MAT terminal verdict, MMM AI stubs recorded, Roadmap plan) | governance-liaison-isms-agent — IAA PASS (IAA-session-054-mmm-mat-harvest-20260405-PASS) | ✅ DONE |
-| D-6 | Session memory | .agent-workspace/foreman-v2/memory/session-mmm-mat-harvest-20260405.md | ✅ DONE |
-| D-7 | PREHANDOVER proof | .agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-mat-harvest-20260405.md | ✅ DONE |
+| CL6-D1 | RED gate test suite (12 tests T-CL6-*) | modules/mat/tests/cl6/ | PENDING |
+| CL6-D2 | Migration script (TypeScript) | packages/ai-centre/scripts/migrate-knowledge-embeddings.ts | PENDING |
+| CL6-D3 | Semantic search validation report | .agent-admin/reports/cl6-semantic-search-validation.md | PENDING |
+| CL6-D4 | Migration report | .agent-admin/reports/cl6-migration-report.md | PENDING |
+| CL6-D5 | Schema verification confirmation (schema-builder) | .agent-admin/reports/cl6-schema-verification.md | PENDING |
+| CL6-D6 | Domain tag validation (mat-specialist) | .agent-admin/reports/cl6-domain-tag-validation.md | PENDING |
+| CL6-D7 | Session memory | .agent-workspace/foreman-v2/memory/session-cl6-lkiac-wave3-20260405.md | PENDING |
+| CL6-D8 | PREHANDOVER proof | .agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl6-lkiac-wave3-20260405.md | PENDING |
 
 ### Acceptance Criteria
-- All 4 GitHub issues created with correct content and agent assignments
-- governance-liaison-isms-agent delegation artifact produced for T3 recordings
-- Session memory and PREHANDOVER proof committed
-- IAA ASSURANCE-TOKEN received
+- RED gate tests (T-CL6-* x12) defined and FAILING before implementation (qa-builder)
+- api-builder migration script delivers CL-6-D2 AFTER RED tests are GREEN
+- schema-builder confirms ai_knowledge schema correct before migration runs
+- mat-specialist validates all domain tags against CL-2-D2 mapping
+- All 12 RED gate tests GREEN after migration
+- ai_knowledge row count ≥ legacy row count
+- Semantic search validation complete
+- Migration report complete
+- CP-6 CS2 review gate before legacy decommission
+
+### RED Gate Tests (12 tests — must be RED before api-builder delegation)
+
+| Test ID | Agent | Status |
+|---------|-------|--------|
+| T-CL6-CHUNK-001 | qa-builder | PENDING |
+| T-CL6-CHUNK-002 | qa-builder | PENDING |
+| T-CL6-CHUNK-003 | qa-builder | PENDING |
+| T-CL6-DOM-001 | qa-builder | PENDING |
+| T-CL6-DOM-002 | qa-builder | PENDING |
+| T-CL6-WRITE-001 | qa-builder | PENDING |
+| T-CL6-WRITE-002 | qa-builder | PENDING |
+| T-CL6-ARC-001 | qa-builder | PENDING |
+| T-CL6-SCR-001 | qa-builder | PENDING |
+| T-CL6-PIPE-001 | qa-builder | PENDING |
+| T-CL6-ROWCOUNT-001 | qa-builder | PENDING |
+| T-CL6-SEMANTIC-001 | qa-builder | PENDING |
+
+### Delegation Sequence
+1. schema-builder → schema verification (CL6-D5) — PARALLEL with qa-builder
+2. qa-builder → RED gate tests (CL6-D1) — must complete BEFORE api-builder
+3. mat-specialist → domain tag validation (CL6-D6) — PARALLEL with qa-builder
+4. api-builder → migration script (CL6-D2) — ONLY AFTER qa-builder RED gate complete
+5. api-builder (cont.) → run migration, validate row count, semantic search (CL6-D3, CL6-D4)
 
 ### Status
-- IAA Pre-Brief: COMMITTED (.agent-admin/assurance/iaa-prebrief-mmm-mat-harvest-20260405.md, SHA 011af75)
-- D-1 through D-4 GitHub issues: CREATED (#1224, #1225, #1226, #1227)
-- D-5 governance recordings: DELIVERED (governance-liaison IAA PASS — IAA-session-054-mmm-mat-harvest-20260405-PASS)
-- D-6 session memory: DELIVERED (.agent-workspace/foreman-v2/memory/session-mmm-mat-harvest-20260405.md)
-- D-7 PREHANDOVER proof: DELIVERED (.agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-mat-harvest-20260405.md)
-- Foreman IAA token: PASS — IAA-session-mmm-mat-harvest-20260405-PASS (SHA 16c06ce)
+- IAA Pre-Brief: COMMITTED (.agent-admin/assurance/iaa-prebrief-cl6-lkiac-wave3-knowledge-reingestion-20260405.md)
+- Delegation: IN_PROGRESS
 
 ### Updated
 2026-04-05
