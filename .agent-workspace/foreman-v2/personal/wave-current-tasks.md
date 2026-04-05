@@ -1,6 +1,48 @@
 # Wave Current Tasks — foreman-v2-agent
 
-## Active Wave: mmm-mat-harvest-20260405
+## Active Wave: cl-10-routing-governance-ci-enforcement
+
+wave: cl-10-routing-governance-ci-enforcement
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-20260405.md
+
+### Wave Description
+CL-10 — LKIAC-L4: Routing Governance CI Enforcement.
+Machine-enforce GRS-016 (no direct AI provider imports in module code) at the CI merge gate level.
+Implement stub detection CI check. Resolves GOV-001, GOV-002, FAIL-ONLY-ONCE S-002.
+
+CS2 Authorization: maturion-isms#1221 (2026-04-05) — Item 5: 'CL-7 & CL-10 wave-starts go PARALLEL with CL-6'
+
+### Deliverables
+
+| ID | Artefact | Agent | Status |
+|----|---------|-------|--------|
+| CL-10-D1 | RED gate test: CI check integration test — test that `import { OpenAI }` in module code fails the gate | qa-builder | PENDING |
+| CL-10-D2 | CI merge gate check: detect direct provider import patterns in `modules/` and `apps/` (excl. `maturion-maturity-legacy`) — fails PR on match | integration-builder | PENDING (awaits D1 RED) |
+| CL-10-D3 | CI merge gate check: detect `expect(true).toBe(true)` stub patterns anywhere in test suite — fails PR on match | integration-builder | PENDING (awaits D1 RED) |
+
+### Sequencing
+- **D1 first** (qa-builder delivers RED gate test BEFORE CI implementation begins)
+- **D2+D3 second** (integration-builder delivers CI workflows AFTER D1 is confirmed FAILING)
+
+### Acceptance Criteria
+- CL-10-D1 RED before implementation (CI check integration test failing)
+- CL-10-D2: CI check active — `import { OpenAI }` in modules/ fails PR
+- CL-10-D3: CI check active — stub pattern `expect(true).toBe(true)` fails PR
+- Both checks tested GREEN on current codebase (zero violations detected)
+- T-B-001 and T-C-010 audit requirements covered by automated enforcement
+- Zero linter/deprecation warnings
+
+### Status
+- IAA Pre-Brief: COMMITTED (.agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-20260405.md, SHA f9db5ab)
+- D1 (qa-builder RED gate): PENDING
+- D2+D3 (integration-builder CI workflows): PENDING
+
+### Updated
+2026-04-05
+
+---
+
+## Previous Wave (archived): mmm-mat-harvest-20260405
 
 wave: mmm-mat-harvest-20260405
 iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-mmm-mat-harvest-20260405.md
