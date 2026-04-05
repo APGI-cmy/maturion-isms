@@ -16,6 +16,7 @@ on:
     paths:
       - 'modules/**'
       - 'apps/**'
+  workflow_dispatch: {}
 
 permissions:
   contents: read
