@@ -491,7 +491,7 @@ at this step, before any Phase 1–4 assessment occurs.
 
 ### Full Specification
 
-See `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` v1.0.0 for the complete specification
+See `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` v1.2.0 for the complete specification
 including content requirements, amendment protocol, cross-agent interactions, and example
 template.
 
@@ -598,7 +598,7 @@ committed before any builder task artifact.
 - `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0 — Living Agent framework
 - `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` — Knowledge architecture
 - `governance/canon/AGENT_CONTRACT_ARCHITECTURE.md` — Four-phase contract architecture
-- `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` v1.1.0 — IAA Pre-Brief Protocol (proactive assurance)
+- `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` v1.2.0 — IAA Pre-Brief Protocol (proactive assurance)
 - `governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md` (AGCFPP-001) — CodexAdvisor write authority gate; linked with OVL-INJ-001
 - `governance/quality/agent-integrity/` — Agent integrity reference store
 - `governance/CANON_INVENTORY.json` — Canon hash registry

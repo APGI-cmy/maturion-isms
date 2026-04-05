@@ -79,3 +79,4 @@
 | 2026-03-30 | governance-liaison-isms | session-053 | SESSION-END | Ripple dispatch should include explicit layer-down status per file to help consumer repos differentiate INTERNAL vs PUBLIC_API processing paths | session-053-20260330.md |
 | 2026-03-21 | governance-liaison-isms | session-053 | [ALIGNMENT] | Create PREHANDOVER proof and session memory before first IAA invocation in every layer-down to prevent ceremony-only REJECTION-PACKAGE | session-053-20260321.md |
 | 2026-03-21 | governance-liaison-isms | session-053 | [SESSION-END] | ripple-integration.yml should check for existing open issue with same canonical commit SHA before creating a new one to prevent duplicate ripple issues | session-053-20260321.md |
+| 2026-04-03 | governance-liaison-isms | session-054 | ALIGNMENT | Add governance/templates/ to layer-down protocol documentation with TEMPLATE layer_down_status classification | session-054-20260403.md |

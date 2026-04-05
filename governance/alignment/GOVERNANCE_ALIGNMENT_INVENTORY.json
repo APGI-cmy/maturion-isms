@@ -3,12 +3,12 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory \u2014 tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
-  "last_updated": "2026-03-21",
-  "last_ripple_commit": "4303aee2d2adf96e7d17e410cfe63edac49eacc5",
-  "last_ripple_timestamp": "2026-03-21T07:33:54Z",
+  "last_updated": "2026-04-03",
+  "last_ripple_commit": "1d91d51a9aac53f6e2e86189ef4ae4b779c00228",
+  "last_ripple_timestamp": "2026-04-03T15:05:45Z",
   "alignment_summary": {
-    "total_artifacts": 14,
-    "aligned": 10,
+    "total_artifacts": 17,
+    "aligned": 13,
     "drifted": 0,
     "missing": 0,
     "escalated": 4,
@@ -182,6 +182,39 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
       "last_verified": "2026-03-30T06:08:50Z"
+    },
+    {
+      "filename": "FRS_TEMPLATE.md",
+      "path": "governance/templates/FRS_TEMPLATE.md",
+      "canonical_version": "v1.0",
+      "local_version": "v1.0",
+      "canonical_hash_sha256": "57e36dc69b7b1814f8f7355848056b91e0a4d08bfcc6bb59e66189c732ed919e",
+      "local_hash_sha256": "57e36dc69b7b1814f8f7355848056b91e0a4d08bfcc6bb59e66189c732ed919e",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "TEMPLATE",
+      "last_verified": "2026-04-03T15:07:10Z"
+    },
+    {
+      "filename": "TRS_TEMPLATE.md",
+      "path": "governance/templates/TRS_TEMPLATE.md",
+      "canonical_version": "v1.0",
+      "local_version": "v1.0",
+      "canonical_hash_sha256": "f17ff3d2a9d63c804a519875340927ce32edbe9c66ef10cb56100fa77de54ce0",
+      "local_hash_sha256": "f17ff3d2a9d63c804a519875340927ce32edbe9c66ef10cb56100fa77de54ce0",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "TEMPLATE",
+      "last_verified": "2026-04-03T15:07:10Z"
+    },
+    {
+      "filename": "minimum-architecture-template.md",
+      "path": "governance/templates/minimum-architecture-template.md",
+      "canonical_version": "v1.1",
+      "local_version": "v1.1",
+      "canonical_hash_sha256": "0b4b7be650d1b784ccb0f5d62f22f41afb36ec986bf6895947f2c11d3ad11f40",
+      "local_hash_sha256": "0b4b7be650d1b784ccb0f5d62f22f41afb36ec986bf6895947f2c11d3ad11f40",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "TEMPLATE",
+      "last_verified": "2026-04-03T15:07:10Z"
     }
   ],
   "metadata": {
