@@ -530,3 +530,4 @@
 | 2026-04-03 | independent-assurance-agent | session-054-reaudit-20260403-R4 | Phase 4 | A-026 resolved R4: add make validate-scope pre-commit hook so format errors caught before IAA invocation not during it; SCOPE_DECLARATION_TEMPLATE.md should prohibit numbered list examples entirely | session-054-reaudit-20260403-R4.md |
 
 | 2026-04-05 | independent-assurance-agent | session-cl7-personaloader-20260405 | Phase 4 | S-037: Foreman should run git-status check before IAA invocation to confirm all session artifacts are committed | session-cl7-personaloader-20260405.md |
+| 2026-04-05 | independent-assurance-agent | session-cl7-personaloader-20260405-R2 | Phase 4 | Re-invocation: invoking agent should read existing token file verdict before requesting IAA re-confirmation — REJECTION-PACKAGE cannot be confirmed as a valid merge token | session-cl7-personaloader-20260405-R2.md |
