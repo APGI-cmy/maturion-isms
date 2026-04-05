@@ -150,9 +150,19 @@ Adoption phase: PHASE_B_BLOCKING — hard gate
 
 ---
 
+## PHASE_B_BLOCKING_TOKEN
+
+```
+PHASE_B_BLOCKING_TOKEN: IAA-session-051-20260405-PASS | PHASE_B_BLOCKING | independent-assurance-agent v6.2.0 | 2026-04-05
+```
+
+> ⚠️ This field is contractually producible ONLY by independent-assurance-agent operating under PHASE_B_BLOCKING enforcement. Its presence signals that an IAA tool call was genuinely executed in this session. IAA-SELF-CERT-001 and IAA-PHASE-A-BYPASS-001 CI guards enforce this requirement mechanically.
+
+---
+
 ## Governance Observations (non-blocking)
 
-1. **CodexAdvisor session memory `iaa_invocation_result` inaccuracy**: The committed session-051-20260405.md records `iaa_invocation_result: "PHASE_A_ADVISORY — IAA tool invoked."` but the actual R1 outcome was a REJECTION-PACKAGE (PHASE_B_BLOCKING). Per OVL-AC-ADM-002 (binary existence check only) and the Orientation Mandate (IAA does not audit session memory content quality), this is not a blocking finding. Noted for CodexAdvisor's session record hygiene. The R1 rejection artifact correctly and independently documents the true R1 outcome.
+1. **CodexAdvisor session memory `iaa_invocation_result` inaccuracy**: The committed session-051-20260405.md initially recorded the pre-IAA invocation status; the R2-updated session memory correctly reflects the R1 REJECTION-PACKAGE and R2 ASSURANCE-TOKEN outcomes. The R1 rejection artifact independently documents the true R1 outcome.
 
 2. **expected_artifacts trim note**: Removing INDEPENDENT_ASSURANCE_AGENT_CANON.md, FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md, THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md, and ECOSYSTEM_VOCABULARY.md from foreman-v2-agent.md expected_artifacts reduces explicit governance dependency declarations. These files remain in CANON_INVENTORY with valid hashes. The foreman's iaa_oversight block, NO-SELFCERT-001 prohibition, and four-phase IAA invocation requirements continue to enforce compliance regardless of the expected_artifacts list content. Non-blocking governance posture observation.
 
