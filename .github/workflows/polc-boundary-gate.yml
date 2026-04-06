@@ -12,6 +12,11 @@ name: POLC Boundary Validation
 # S-007: Each gate runs as its own named job so CI reports
 #        separate named status checks
 # S-023: builder-involvement-check now enforces pre-brief artifact existence
+# A-035/S-035: copilot-builder-role label no longer bypasses
+#              foreman-implementation-check or session-memory-check when
+#              the PR is authored by foreman-v2-agent (Copilot). The label
+#              is valid only for pure builder sessions. builder-involvement-check
+#              now also covers .github/workflows/ path changes.
 
 'on':
   pull_request:
@@ -56,10 +61,30 @@ jobs:
             fi
           done
           if [[ "$HAS_BUILDER_LABEL" == "true" ]]; then
-            echo "✅ PR labeled 'copilot-builder-role'"
-            echo "   Copilot is acting as a governed builder (not Foreman)."
-            echo "   foreman-implementation-check is not applicable — skipping."
-            exit 0
+            # A-035: copilot-builder-role does NOT bypass this gate when the
+            # PR is authored by foreman-v2-agent. The label is intended for
+            # pure builder sessions (api-builder, ui-builder, etc.) where
+            # Foreman is NOT the executing agent. When foreman-v2-agent is the
+            # session author, the full POLC gate MUST run regardless of label.
+            PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+            IS_FOREMAN_PR=false
+            FOREMAN_AUTHOR_PATTERNS=("Copilot" "copilot-swe-agent" "github-copilot")
+            for fpattern in "${FOREMAN_AUTHOR_PATTERNS[@]}"; do
+              if [[ "$PR_AUTHOR" =~ $fpattern ]]; then
+                IS_FOREMAN_PR=true
+                break
+              fi
+            done
+            if [[ "$IS_FOREMAN_PR" == "false" ]]; then
+              echo "✅ PR labeled 'copilot-builder-role'"
+              echo "   Copilot is acting as a governed builder (not Foreman)."
+              echo "   foreman-implementation-check is not applicable — skipping."
+              exit 0
+            fi
+            echo "⚠️  PR labeled 'copilot-builder-role' but authored by Foreman."
+            echo "   A-035: copilot-builder-role MUST NOT bypass the POLC gate"
+            echo "   when foreman-v2-agent is the session author."
+            echo "   Enforcing full gate regardless of label..."
           fi
 
           # Get base branch
@@ -323,7 +348,8 @@ jobs:
             # Check for implementation files
             if [[ "$file" =~ ^modules/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
                [[ "$file" =~ ^apps/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
-               [[ "$file" =~ ^packages/.*/src/.*\.(ts|tsx|js|jsx)$ ]]; then
+               [[ "$file" =~ ^packages/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
+               [[ "$file" =~ ^\.github/workflows/.*\.yml$ ]]; then
               IMPLEMENTATION_CHANGED=true
               SUPERVISION_ONLY=false
               break
@@ -492,10 +518,30 @@ jobs:
             fi
           done
           if [[ "$HAS_BUILDER_LABEL" == "true" ]]; then
-            echo "✅ PR labeled 'copilot-builder-role'"
-            echo "   Copilot is acting as a governed builder (not Foreman)."
-            echo "   session-memory-check is not applicable to builder PRs — skipping."
-            exit 0
+            # A-035: copilot-builder-role does NOT bypass this gate when the
+            # PR is authored by foreman-v2-agent. The label is intended for
+            # pure builder sessions where Foreman is NOT the executing agent.
+            # When foreman-v2-agent is the session author, the full
+            # session-memory-check MUST run regardless of label.
+            PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+            IS_FOREMAN_PR=false
+            FOREMAN_AUTHOR_PATTERNS=("Copilot" "copilot-swe-agent" "github-copilot")
+            for fpattern in "${FOREMAN_AUTHOR_PATTERNS[@]}"; do
+              if [[ "$PR_AUTHOR" =~ $fpattern ]]; then
+                IS_FOREMAN_PR=true
+                break
+              fi
+            done
+            if [[ "$IS_FOREMAN_PR" == "false" ]]; then
+              echo "✅ PR labeled 'copilot-builder-role'"
+              echo "   Copilot is acting as a governed builder (not Foreman)."
+              echo "   session-memory-check is not applicable to builder PRs — skipping."
+              exit 0
+            fi
+            echo "⚠️  PR labeled 'copilot-builder-role' but authored by Foreman."
+            echo "   A-035: copilot-builder-role MUST NOT bypass session-memory-check"
+            echo "   when foreman-v2-agent is the session author."
+            echo "   Enforcing full check regardless of label..."
           fi
 
           # Check for Foreman session memory
