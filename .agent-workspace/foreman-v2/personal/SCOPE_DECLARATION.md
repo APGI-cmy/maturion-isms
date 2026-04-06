@@ -1,25 +1,48 @@
-# SCOPE_DECLARATION — DCKIS-CL11
+# SCOPE DECLARATION — Wave CL-10 | Session cl10-routing-governance-20260405
 
-**Wave**: DCKIS-CL11 — Programme Close-Out: LKIAC CEP & Documentation Finalisation
-**Branch**: copilot/update-aimc-lkiac-combined-execution-plan
-**Issue**: [governance-liaison] DCKIS-CL11: Programme Close-Out — LKIAC CEP & Documentation Finalisation
-**Date**: 2026-03-20
-**Type**: GOVERNANCE wave — documentation only, no code changes
+**Agent**: foreman-v2-agent
+**Wave**: cl-10-routing-governance-ci-enforcement
+**Branch**: copilot/cl-10-routing-governance-ci-enforcement
+**Date**: 2026-04-05
 
-## Files Changed (must match `git diff --name-only origin/main...HEAD`)
+## Files Added (This Wave)
 
-### Modified Files (governance documentation)
-- `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md` — Amendment v1.7.0: CL-11 DCKIS deliverables recorded; §14 table updated
-- `governance/aimc/LKIAC_DEPRECATION_REGISTER.md` — v1.3.0: CL-3-D1 entries DEP-001 through DEP-007 added
+| Path | Description |
+|------|-------------|
+| `.agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-20260405.md` | IAA Pre-Brief artifact (SHA f9db5ab) |
+| `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Updated for CL-10 active wave |
+| `modules/mat/tests/ci-governance-check/routing-governance-ci.test.ts` | CL-10-D1 RED gate tests (qa-builder) |
+| `.github/workflows/routing-governance-check.yml` | CL-10-D2 provider import CI check (integration-builder) |
+| `.github/workflows/stub-detection-check.yml` | CL-10-D3 stub detection CI check (integration-builder) |
+| `.agent-workspace/qa-builder/memory/PREHANDOVER-session-cl10-d1-20260405.md` | qa-builder PREHANDOVER proof |
+| `.agent-workspace/integration-builder/memory/PREHANDOVER-session-cl10-d2d3-20260405.md` | integration-builder PREHANDOVER proof |
 
-### New/Modified Files (governance ceremony)
-- `.agent-admin/assurance/iaa-prebrief-dckis-cl11.md` — IAA Pre-Brief artifact (SHA 4231f8c)
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — Wave DCKIS-CL11 task registry
-- `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md` — This file (CL11 overwrite)
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-dckis-cl11-20260320.md` — PREHANDOVER proof
-- `.agent-workspace/foreman-v2/memory/session-dckis-cl11-20260320.md` — Foreman session memory
-- `.agent-admin/assurance/iaa-token-session-dckis-cl11-20260320.md` — IAA ASSURANCE-TOKEN
+## Files Modified
 
-## No Implementation by Foreman Attestation
-Foreman did not write any production code. All documentation changes delegated to
-governance-liaison-isms-agent (session-dckis-cl11-20260320).
+None (governance artifacts only — SCOPE_DECLARATION and wave-current-tasks.md are Foreman-owned)
+
+## Files Excluded
+
+- `node_modules/`
+- `dist/`
+- Any file not listed above
+
+## Scope Boundaries
+
+- Production code paths touched: None
+- CI workflows added: 2 (routing-governance-check.yml, stub-detection-check.yml)
+- Existing CI workflows modified: None
+- Agent contract files modified: None
+
+## Amendments (Post-IAA R1 REJECTION-PACKAGE)
+
+Following IAA R1 REJECTION-PACKAGE, two amendments were made:
+
+1. **OVL-CI-005 fix**: `workflow_dispatch: {}` added to:
+   - `.github/workflows/routing-governance-check.yml`
+   - `.github/workflows/stub-detection-check.yml`
+   Both files remain YAML valid (re-verified via python yaml.safe_load).
+
+2. **integration-builder PREHANDOVER updated**: OVL-CI-005 S-033 exception section added with YAML evidence + pattern parity evidence.
+
+Ceremony artifacts committed as one batch per IAA required fix sequence.

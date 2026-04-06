@@ -1,0 +1,59 @@
+---
+name: Stub Detection Check
+
+# Authority: FAIL-ONLY-ONCE S-002
+# Purpose: Detect expect(true).toBe(true) stub patterns in test suite.
+#          These stubs indicate placeholder tests that bypass real test logic.
+#          All tests must contain meaningful assertions.
+# Parking station: CL-10-D3 (session-cl10-d2d3-20260405)
+# Wave: CL-10 — maturion-isms#1227
+# CS2 Authorization: maturion-isms#1221
+
+on:
+  pull_request:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  stub-detection-check:
+    name: "Test Quality / stub-detection-check"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Check for expect(true).toBe(true) stubs
+        run: |
+          echo "Checking for expect(true).toBe(true) stub patterns in test suite..."
+          echo "Authority: FAIL-ONLY-ONCE S-002 — stub tests are forbidden"
+          echo "Scanning: modules/, apps/, packages/ (*.test.ts, *.spec.ts)"
+          echo "Excluding: node_modules/, routing-governance-ci.test.ts (contains pattern as fixture), comment lines"
+          echo ""
+          # Detect: expect(true).toBe(true) — the forbidden stub pattern
+          # Excludes:
+          #   - node_modules/ (always)
+          #   - routing-governance-ci.test.ts (contains the pattern as a string fixture variable, not a real stub)
+          #   - Lines whose code content is a JSDoc/block comment (:[linenum]: *) or line comment (:[linenum]: //)
+          STUB_MATCHES=$(grep -rn 'expect(true).toBe(true)' \
+            --include="*.test.ts" --include="*.spec.ts" \
+            --exclude-dir="node_modules" \
+            modules/ apps/ packages/ 2>/dev/null \
+            | grep -v "routing-governance-ci\.test\.ts" \
+            | grep -v ":[0-9]*: *\*" \
+            | grep -v ":[0-9]*: *//") || true
+
+          if [ -n "$STUB_MATCHES" ]; then
+            echo ""
+            echo "❌ STUB PATTERN DETECTED: expect(true).toBe(true) found in test suite"
+            echo ""
+            echo "$STUB_MATCHES"
+            echo ""
+            echo "Stub tests bypass real test logic and create false test coverage."
+            echo "All tests must contain meaningful assertions."
+            echo "Authority: FAIL-ONLY-ONCE S-002"
+            exit 1
+          else
+            echo "✅ No expect(true).toBe(true) stubs found."
+          fi
