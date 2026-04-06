@@ -17,7 +17,7 @@ name: POLC Boundary Validation
 #              the PR is authored by foreman-v2-agent (Copilot). The label
 #              is valid only for pure builder sessions. builder-involvement-check
 #              now also covers .github/workflows/ path changes.
-# Issue #<NEW>: builder-involvement-check no longer uses commit author identity
+# Issue #1245: builder-involvement-check no longer uses commit author identity
 #              to detect builder involvement (all Copilot agents share the same
 #              copilot-swe-agent[bot] identity). Builder delegation is now proven
 #              via governance evidence: agents_delegated_to: in session memory
@@ -465,6 +465,12 @@ jobs:
                 # The field is a YAML list; entries are lines with "- agent:"
                 # or "  - <agentname>". Match any non-empty list item after
                 # the agents_delegated_to: key.
+                # AWK pattern:
+                #   line 1: enter block when agents_delegated_to: key is found
+                #   line 2: exit block when a non-indented, non-list line follows
+                #   line 3: collect list items (lines starting with optional
+                #           whitespace then "- ") and set found flag
+                #   END:    exit 0 (success) if any list item was found
                 DELEGATED=$(awk '
                   /^agents_delegated_to:/ { in_block=1; next }
                   in_block && /^[^ \t-]/ && !/^[ \t]*-/ { in_block=0 }
