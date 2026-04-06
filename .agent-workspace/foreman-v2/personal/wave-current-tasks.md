@@ -65,11 +65,21 @@ CEP v1.8.0 §Wave CL-6 defines canonical architecture. FROZEN.
 
 - IAA Pre-Brief: COMMITTED (`.agent-admin/assurance/iaa-prebrief-cl6-relaunch-20260406.md` — SHA 76b94d0)
 - Architecture: FROZEN (CEP v1.8.0 §Wave CL-6 — see architecture freeze artifact)
-- RED QA delegation: PENDING — awaiting qa-builder
-- Implementation delegation: PENDING — awaiting api-builder (after RED gate confirmed)
+- CL-6-D1 RED gate: DELIVERED — qa-builder, QP PASS (12/12 tests RED → GREEN after D2)
+- CL-6-D2 migration script: DELIVERED — api-builder, QP PASS
+- CL-6-D3 semantic validation: DELIVERED — qa-builder, QP PASS (80 queries, 8 domains)
+- CL-6-D4 migration report: DELIVERED — api-builder, QP PASS
+- CL-6-D5 schema SQL: DELIVERED — api-builder, QP PASS
+- Tests: 298/298 GREEN (12 CL-6 + 286 pre-existing)
+- PREHANDOVER proof: COMMITTED (`.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl6-relaunch-20260406.md`)
+- Session memory: COMMITTED (`.agent-workspace/foreman-v2/memory/session-cl6-relaunch-20260406.md`)
+- IAA R1: REJECTION-PACKAGE (ceremony files not committed — resolved)
+- IAA R2: ASSURANCE-TOKEN — `IAA-session-cl6-relaunch-20260406-R2-PASS` (`.agent-admin/assurance/iaa-token-session-cl6-relaunch-20260406-R2.md`)
+- Token ceremony: COMPLETE
+- Merge gate: PENDING CS2 review
 
 ### Updated
-2026-04-06
+2026-04-06 (wave complete — awaiting CS2 merge)
 
 ---
 
