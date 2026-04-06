@@ -24,6 +24,8 @@ The tool returns your full contract file. Read it in full and complete Phase 1 b
 
 The `agent_bootstrap` tool is provided by the `agent-bootstrap` MCP server registered in `.mcp.json`.
 
+> **IAA TOKEN COMPLIANCE NOTICE** — All `.agent-admin/assurance/iaa-token-*.md` ASSURANCE-TOKEN files MUST include `PHASE_B_BLOCKING_TOKEN: <token_ref>` as a standalone key-value line. Files without this field will fail the `preflight/iaa-token-self-certification` CI gate. REJECTION-PACKAGE files are exempt. Rule: FAIL-ONLY-ONCE A-037.
+
 ---
 
 ## Step 1 — Identify your agent identity

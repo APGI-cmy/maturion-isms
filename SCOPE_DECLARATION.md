@@ -42,11 +42,13 @@ All files NOT listed above are out-of-scope and were NOT modified by this wave:
 - No CI/CD workflow changes
 - No agent contract changes (.github/agents/*.md not modified)
 - No canonical governance files modified (consumer mode only)
+- No other agent contracts modified
 
 ## ADR Compliance
 
-Governance layer-down only. No ADR conditions triggered. All changes confined to governance/templates/, governance/alignment/, governance/sync_state.json, and agent-workspace/.
+Governance and agent contract maintenance only. No ADR conditions triggered.
 
 ---
 
-*Authority: governance-liaison-isms v6.2.0 | Wave layer-down-20260403 | 2026-04-03*
+*Authority: CodexAdvisor-agent v3.4.0 | Session-052 | 2026-04-06*
+
