@@ -17,6 +17,11 @@ name: POLC Boundary Validation
 #              the PR is authored by foreman-v2-agent (Copilot). The label
 #              is valid only for pure builder sessions. builder-involvement-check
 #              now also covers .github/workflows/ path changes.
+# Issue #<NEW>: builder-involvement-check no longer uses commit author identity
+#              to detect builder involvement (all Copilot agents share the same
+#              copilot-swe-agent[bot] identity). Builder delegation is now proven
+#              via governance evidence: agents_delegated_to: in session memory
+#              and/or builder references in PREHANDOVER proof (PR-new files only).
 
 'on':
   pull_request:
@@ -300,6 +305,10 @@ jobs:
   # Job 2: Builder Involvement + Pre-Brief Existence Check (S-023)
   # Validates that when implementation files changed, builder delegation
   # occurred AND a pre-brief artifact exists.
+  # Builder delegation is proven via governance evidence (NOT commit author
+  # identity — all Copilot agents share copilot-swe-agent[bot]):
+  #   1. agents_delegated_to: field in PR-new Foreman session memory
+  #   2. Builder agent references in PR-new PREHANDOVER proof
   # ---------------------------------------------------------------------------
   builder-involvement-check:
     name: "builder-involvement-check"
@@ -427,60 +436,115 @@ jobs:
           fi
 
           echo ""
-          echo "--- Builder Involvement Check ---"
-
-          # Check for builder commits
-          COMMITS=$(git log origin/$BASE_BRANCH..HEAD \
-            --pretty=format:"%H|%an|%ae")
-
-          BUILDER_PATTERNS=(
-            "ui-builder"
-            "api-builder"
-            "schema-builder"
-            "integration-builder"
-            "qa-builder"
-          )
+          echo "--- Builder Delegation Detection (Evidence-Based) ---"
+          echo ""
+          echo "NOTE: Explicit builder commit identity (author/email) check is"
+          echo "no longer used. In Copilot-based sessions all commits share the"
+          echo "same copilot-swe-agent[bot] identity regardless of whether"
+          echo "Foreman or a builder is the executing agent."
+          echo "Builder delegation is now proven via governance evidence:"
+          echo "  1. agents_delegated_to: field in PR-introduced session memory"
+          echo "  2. Delegated agents listed in PR-introduced PREHANDOVER proof"
+          echo ""
 
           BUILDER_FOUND=false
+          BUILDER_EVIDENCE_SOURCE=""
 
-          while IFS='|' read -r commit_sha commit_author commit_email; do
-            for pattern in "${BUILDER_PATTERNS[@]}"; do
-              if [[ "$commit_author" =~ $pattern ]] || \
-                 [[ "$commit_email" =~ $pattern ]]; then
-                BUILDER_FOUND=true
-                echo "✅ Builder commit found: $commit_sha ($commit_author)"
-                break 2
+          # Primary evidence: agents_delegated_to: field in session memory
+          # Scope to session memory files introduced by this PR only
+          # (--diff-filter=A) to avoid false positives from historical files.
+          NEW_SESSION_FILES=$(git diff --name-only --diff-filter=A \
+            origin/$BASE_BRANCH...HEAD 2>/dev/null | \
+            grep -E '^\.agent-workspace/foreman.*/memory/session-.*\.md$' \
+            || true)
+
+          if [ -n "$NEW_SESSION_FILES" ]; then
+            while IFS= read -r session_file; do
+              if [ -f "$session_file" ]; then
+                # Check for agents_delegated_to: with at least one entry.
+                # The field is a YAML list; entries are lines with "- agent:"
+                # or "  - <agentname>". Match any non-empty list item after
+                # the agents_delegated_to: key.
+                DELEGATED=$(awk '
+                  /^agents_delegated_to:/ { in_block=1; next }
+                  in_block && /^[^ \t-]/ && !/^[ \t]*-/ { in_block=0 }
+                  in_block && /^[ \t]*-[ \t]/ { print; found=1 }
+                  END { exit (found ? 0 : 1) }
+                ' "$session_file" 2>/dev/null || true)
+                if [ -n "$DELEGATED" ]; then
+                  BUILDER_FOUND=true
+                  BUILDER_EVIDENCE_SOURCE="session-memory: $session_file"
+                  SAMPLE=$(echo "$DELEGATED" | head -5)
+                  echo "✅ Builder delegation found in session memory:"
+                  echo "   File: $session_file"
+                  echo "   agents_delegated_to entries (sample):"
+                  echo "$SAMPLE" | sed 's/^/     /'
+                  break
+                fi
               fi
-            done
-          done <<< "$COMMITS"
+            done <<< "$NEW_SESSION_FILES"
+          fi
 
-          # Check for builder completion reports
+          # Secondary evidence: PREHANDOVER proof lists delegated agents.
+          # Scope to PREHANDOVER files introduced by this PR only.
           if [ "$BUILDER_FOUND" = false ]; then
-            if ls .agent-workspace/*/memory/*COMPLETION* 1> /dev/null 2>&1 || \
-               ls .agent-workspace/*/COMPLETION* 1> /dev/null 2>&1; then
-              BUILDER_FOUND=true
-              echo "✅ Builder completion reports found in .agent-workspace/"
+            NEW_PREHANDOVER_FILES=$(git diff --name-only --diff-filter=A \
+              origin/$BASE_BRANCH...HEAD 2>/dev/null | \
+              grep -E '^\.agent-workspace/foreman.*/memory/PREHANDOVER-.*\.md$' \
+              || true)
+            if [ -n "$NEW_PREHANDOVER_FILES" ]; then
+              while IFS= read -r ph_file; do
+                if [ -f "$ph_file" ]; then
+                  # Look for any builder agent reference in PREHANDOVER
+                  if grep -qiE \
+                    "(api-builder|ui-builder|qa-builder|schema-builder|integration-builder|mat-specialist|pit-specialist)" \
+                    "$ph_file" 2>/dev/null; then
+                    BUILDER_FOUND=true
+                    BUILDER_EVIDENCE_SOURCE="prehandover-proof: $ph_file"
+                    echo "✅ Builder delegation found in PREHANDOVER proof:"
+                    echo "   File: $ph_file"
+                    break
+                  fi
+                fi
+              done <<< "$NEW_PREHANDOVER_FILES"
             fi
           fi
 
           echo ""
 
           if [ "$BUILDER_FOUND" = false ]; then
-            echo "⚠️  WARNING: NO BUILDER INVOLVEMENT DETECTED"
+            echo "❌ NO BUILDER DELEGATION EVIDENCE FOUND"
             echo ""
-            echo "Implementation code changed but no builder artifacts found."
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo ""
-            echo "Expected: Builder commits"
-            echo "OR completion reports in .agent-workspace/"
+            echo "🚨 POLC BUILDER DELEGATION VIOLATION"
             echo ""
-            echo "If Foreman supervised builders,"
-            echo "where are the builder artifacts?"
-            echo "If Foreman implemented directly,"
-            echo "this should have been caught in foreman-implementation-check."
+            echo "Implementation files changed but no governance evidence"
+            echo "of builder delegation was found."
             echo ""
-            echo "This is a WARNING. Manual review required."
+            echo "Checked:"
+            echo "  1. agents_delegated_to: field in PR-new session memory"
+            echo "     (.agent-workspace/foreman*/memory/session-*.md)"
+            echo "  2. Builder agent references in PR-new PREHANDOVER proof"
+            echo "     (.agent-workspace/foreman*/memory/PREHANDOVER-*.md)"
+            echo ""
+            echo "Per LIVING_AGENT_SYSTEM.md v6.2.0 and Foreman contract"
+            echo "Phase 3 Step 3.3 (POLC-ORCHESTRATION):"
+            echo "  Foreman MUST delegate implementation to a registered"
+            echo "  builder. The session memory MUST record each delegation"
+            echo "  in the agents_delegated_to: field."
+            echo ""
+            echo "REQUIRED:"
+            echo "  1. Ensure session memory is committed with"
+            echo "     agents_delegated_to: populated (at least one entry)"
+            echo "  2. The field must name the builder agent(s) and task(s)"
+            echo "  3. PREHANDOVER proof should reference the builders involved"
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            exit 1
           else
-            echo "✅ Builder involvement confirmed"
+            echo "✅ Builder delegation confirmed via governance evidence"
+            echo "   Evidence source: $BUILDER_EVIDENCE_SOURCE"
           fi
 
   # ---------------------------------------------------------------------------
