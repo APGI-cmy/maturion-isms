@@ -377,6 +377,17 @@ export class PersonaNotFoundError extends Error {
   }
 }
 
+export class PersonaValidationError extends Error {
+  constructor(agentId: string, reason: string) {
+    super(
+      `Persona '${agentId}' failed YAML front-matter validation: ${reason}. ` +
+        `All required fields (agentId, description, module, version, last_reviewed, owner) ` +
+        `must be present and non-empty per AIMC_PERSONA_LIFECYCLE.md §5.1.`,
+    );
+    this.name = 'PersonaValidationError';
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Telemetry writer (APS §9.2)
 // ---------------------------------------------------------------------------
