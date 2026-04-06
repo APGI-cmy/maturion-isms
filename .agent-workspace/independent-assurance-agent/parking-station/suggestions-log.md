@@ -537,3 +537,5 @@
 
 | 2026-04-05 | independent-assurance-agent | session-cl7-personaloader-20260405 | Phase 4 | S-037: Foreman should run git-status check before IAA invocation to confirm all session artifacts are committed | session-cl7-personaloader-20260405.md |
 | 2026-04-05 | independent-assurance-agent | session-cl7-personaloader-20260405-R2 | Phase 4 | Re-invocation: invoking agent should read existing token file verdict before requesting IAA re-confirmation — REJECTION-PACKAGE cannot be confirmed as a valid merge token | session-cl7-personaloader-20260405-R2.md |
+| 2026-04-06 | independent-assurance-agent | session-056-govliaison-055-layer-down | Phase 4 | REJECTION-PACKAGE token files should be committed to git before session close to preserve audit trail integrity — prior rejection for this PR had no committed token file | session-056-govliaison-055-layer-down-20260406.md |
+| 2026-04-06 | independent-assurance-agent | session-056-govliaison-055-layer-down | Phase 4 | GOVERNANCE_ALIGNMENT_INVENTORY.json schema vs content version distinction would clarify OVL-CG-ADM-002 application scope | session-056-govliaison-055-layer-down-20260406.md |
