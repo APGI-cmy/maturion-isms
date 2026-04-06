@@ -247,7 +247,7 @@ A domain **FAILS** validation when:
 ### 5.1 Pre-Execution Checks (Before Running Queries)
 
 - [ ] **MCHECK-01**: Confirm migration script exited with code 0 (no fatal errors)
-- [ ] **MCHECK-02**: Confirm `ai_knowledge` row count ≥ legacy `ai_documents_chunks` row count
+- [ ] **MCHECK-02**: Confirm `ai_knowledge` row count ≥ legacy `org_page_chunks` row count
 - [ ] **MCHECK-03**: Confirm all 8 domain labels present in `ai_knowledge.source` column via: `SELECT source, COUNT(*) FROM ai_knowledge WHERE approval_status = 'pending' GROUP BY source;`
 - [ ] **MCHECK-04**: Confirm no rows have `source IS NULL` or `source = ''`
 - [ ] **MCHECK-05**: Confirm embedding dimension = 1536 via: `SELECT vector_dims(embedding) FROM ai_knowledge LIMIT 1;`

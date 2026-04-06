@@ -26,12 +26,11 @@ DECLARE
     'organisation_id',
     'content',
     'source',
-    'source_url',
+    'domain',
     'metadata',
     'embedding',
     'content_hash',
     'approval_status',
-    'source_label',
     'created_at'
   ];
   v_col TEXT;
@@ -57,7 +56,7 @@ BEGIN
       'Verify migration chain 003→006→008→009 has been applied.',
       rtrim(v_missing_columns, ', ');
   ELSE
-    RAISE NOTICE 'CL6-FFA-010: All 11 required columns verified present in ai_knowledge.';
+    RAISE NOTICE 'CL6-FFA-010: All 10 required columns verified present in ai_knowledge.';
   END IF;
 END $$;
 
@@ -85,19 +84,17 @@ END $$;
 
 -- Recreate the INSERT policy scoped to authenticated role only.
 -- anon role must NOT have INSERT access to ai_knowledge (CL6-FFA-007).
+-- Uses the same org-isolation predicate as migrations 003 and 008 to stay
+-- consistent with the rest of the schema (current_setting convention).
 CREATE POLICY ai_knowledge_org_insert
   ON public.ai_knowledge
   AS PERMISSIVE
   FOR INSERT
   TO authenticated
   WITH CHECK (
-    -- Org-scoped insert: authenticated user may only insert rows for their own organisation.
-    organisation_id = (
-      SELECT organisation_id
-      FROM public.organisation_members
-      WHERE user_id = auth.uid()
-      LIMIT 1
-    )
+    -- Org-scoped insert: authenticated user may only insert rows for the
+    -- organisation set in the existing session-scoped organisation context.
+    organisation_id = NULLIF(current_setting('app.current_organisation_id', true), '')::text
   );
 
 -- Verify the recreated policy is scoped to authenticated only

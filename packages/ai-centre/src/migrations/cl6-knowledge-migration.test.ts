@@ -88,17 +88,20 @@ describe('CL-6 Schema — ORG_PAGE_CHUNKS_SCHEMA (source→target migration colu
 
   it('T-CL6-SCHEMA-001: ORG_PAGE_CHUNKS_SCHEMA declares all required columns', () => {
     // T-CL6-SCHEMA-001: <schema exports required column names>
+    // These are the TARGET ai_knowledge columns written by the CL-6 migration
+    // (confirmed by migration chain 003→006→008→009).
+    // source_url and source_label do NOT exist as ai_knowledge columns;
+    // source_url is stored in metadata JSONB, source_label maps to domain.
     const requiredColumns = [
       'id',
       'organisation_id',
       'content',
       'source',
-      'source_url',
+      'domain',
       'metadata',
       'embedding',
       'content_hash',
       'approval_status',
-      'source_label',
       'created_at',
     ];
 

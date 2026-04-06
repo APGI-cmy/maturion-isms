@@ -59,8 +59,13 @@ export const DEFAULT_APPROVAL_STATUS = 'pending' as const;
 export const PIPELINE_1_SOURCE_EXCLUSION = ['criteria'] as const;
 
 /**
- * CL6-FFA-010 — Schema descriptor mapping org_page_chunks (source) to
- * ai_knowledge (target) column set, plus the required embedding dimension.
+ * CL6-FFA-010 — Schema descriptor for the TARGET ai_knowledge table columns
+ * that the CL-6 migration writes to.  Derived from migration chain 003→006→008→009:
+ *   003: id, organisation_id, content, source, embedding, created_at
+ *   006: domain, approval_status
+ *   008: content_hash, metadata
+ * source_url and source_label do NOT exist as columns; source_url is stored
+ * inside the metadata JSONB field and source_label maps to the `domain` column.
  */
 export const ORG_PAGE_CHUNKS_SCHEMA = {
   columns: [
@@ -68,12 +73,11 @@ export const ORG_PAGE_CHUNKS_SCHEMA = {
     'organisation_id',
     'content',
     'source',
-    'source_url',
+    'domain',
     'metadata',
     'embedding',
     'content_hash',
     'approval_status',
-    'source_label',
     'created_at',
   ] as string[],
   /** CL6-FFA-003 — Must match AIMC vector model (OpenAI-compatible 1536-dim). */
@@ -133,27 +137,49 @@ type ApprovedSourceLabel = (typeof APPROVED_SOURCE_LABELS)[number];
 type SupabaseClient = any;
 
 interface LegacyRow {
+  /** Primary key from org_page_chunks */
   id: string;
-  organisation_id: string;
-  content: string;
-  source?: string;
-  source_url?: string;
-  metadata?: Record<string, unknown>;
-  embedding?: number[];
-  source_label?: string;
+  /** Legacy org identifier — maps to ai_knowledge.organisation_id */
+  org_id: string;
+  /** FK to org_pages */
+  page_id: string;
+  /** 0-based chunk position */
+  chunk_idx: number;
+  /** Chunk text content — maps to ai_knowledge.content */
+  text: string;
+  /**
+   * Embedding stored as a string in the legacy project (pgvector returned as
+   * "[0.1, 0.2, ...]" via REST).  May also already be a number array if the
+   * Supabase client deserialises it.  Handled by parseEmbedding().
+   */
+  embedding?: string | number[] | null;
   created_at?: string;
+  /** Joined from org_pages — present when .select includes org_pages(...) */
+  org_pages?: {
+    url: string;
+    domain: string;
+  } | null;
 }
 
 interface AimcRow {
   organisation_id: string;
   content: string;
+  /** Page domain used as a human-readable source identifier */
   source: string;
-  source_url: string | null;
+  /**
+   * Governance domain label (from APPROVED_SOURCE_LABELS).
+   * Maps to the ai_knowledge.domain column added in migration 006.
+   */
+  domain: string;
+  /**
+   * JSONB metadata — carries source_url and chunk_idx from legacy row for
+   * traceability.  source_url and source_label do not exist as top-level
+   * ai_knowledge columns; they are stored here instead.
+   */
   metadata: Record<string, unknown>;
   embedding: number[] | null;
   content_hash: string;
   approval_status: typeof DEFAULT_APPROVAL_STATUS;
-  source_label: ApprovedSourceLabel;
   created_at: string;
 }
 
@@ -222,7 +248,9 @@ function getEnvOrThrow(varName: string): string {
 
 /**
  * Fetch a batch of rows from the legacy Supabase project.
- * Reads from the org_page_chunks table (source of migrated knowledge).
+ * Reads from org_page_chunks (joined to org_pages for URL and domain).
+ * Actual legacy columns: id, org_id, page_id, chunk_idx, text, embedding, created_at
+ * org_pages columns (joined): url, domain
  * CL6-FFA-014: URL and service key come from LEGACY_SUPABASE_URL and
  * LEGACY_SUPABASE_SERVICE_KEY environment variables.
  */
@@ -233,9 +261,7 @@ async function fetchLegacyBatch(
 ): Promise<LegacyRow[]> {
   const { data, error } = await legacyClient
     .from('org_page_chunks')
-    .select(
-      'id, organisation_id, content, source, source_url, metadata, embedding, source_label, created_at',
-    )
+    .select('id, org_id, page_id, chunk_idx, text, embedding, created_at, org_pages!inner(url, domain)')
     .range(offset, offset + batchSize - 1);
 
   if (error) {
@@ -245,22 +271,26 @@ async function fetchLegacyBatch(
 }
 
 /**
- * Check whether a content_hash already exists in the AIMC ai_knowledge table.
+ * Batch-check which content_hashes already exist in the AIMC ai_knowledge table.
+ * Returns a Set of hashes that are already present.
  * CL6-FFA-009 — deduplication by SHA-256 content_hash.
+ * Replaces the previous per-row N+1 pattern with a single query per batch.
  */
-async function contentHashExists(
+async function fetchExistingHashes(
   aimcClient: SupabaseClient,
-  contentHash: string,
-): Promise<boolean> {
-  const { count, error } = await aimcClient
+  hashes: string[],
+): Promise<Set<string>> {
+  if (hashes.length === 0) return new Set();
+
+  const { data, error } = await aimcClient
     .from('ai_knowledge')
-    .select('id', { count: 'exact', head: true })
-    .eq('content_hash', contentHash);
+    .select('content_hash')
+    .in('content_hash', hashes);
 
   if (error) {
-    throw new Error(`Failed to check content_hash existence: ${error.message}`);
+    throw new Error(`Failed to batch-check content_hash existence: ${error.message}`);
   }
-  return (count ?? 0) > 0;
+  return new Set((data ?? []).map((r: { content_hash: string }) => r.content_hash));
 }
 
 /**
@@ -282,20 +312,36 @@ async function insertAimcBatch(
 }
 
 /**
- * CL6-FFA-003 / V-002 — Validate or regenerate embedding.
- * If the legacy row has an embedding of the correct dimension (1536), reuse it.
- * Otherwise return null (embedding will need to be re-generated via the AIMC
- * embedding pipeline post-migration).
+ * CL6-FFA-003 / V-002 — Parse and validate an embedding value.
+ * The legacy project stores embeddings as a string "[0.1, 0.2, ...]" (pgvector
+ * returned via REST API) or already as a number array.  If the dimension is
+ * correct (1536) return the numeric array; otherwise return null so the row
+ * is inserted with a null embedding and queued for re-embedding.
+ */
+function parseEmbedding(raw: string | number[] | null | undefined): number[] | null {
+  if (!raw) return null;
+  let arr: unknown = raw;
+  if (typeof raw === 'string') {
+    try {
+      arr = JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  }
+  if (
+    Array.isArray(arr) &&
+    arr.length === ORG_PAGE_CHUNKS_SCHEMA.embeddingDimension
+  ) {
+    return arr as number[];
+  }
+  return null;
+}
+
+/**
+ * @deprecated Use parseEmbedding() which also handles legacy string embeddings.
  */
 function validateEmbedding(embedding?: number[]): number[] | null {
-  if (
-    Array.isArray(embedding) &&
-    embedding.length === ORG_PAGE_CHUNKS_SCHEMA.embeddingDimension
-  ) {
-    return embedding;
-  }
-  // Embedding missing or wrong dimension — leave null for re-embedding
-  return null;
+  return parseEmbedding(embedding);
 }
 
 // ---------------------------------------------------------------------------
@@ -354,51 +400,75 @@ export async function runMigration(): Promise<MigrationResult> {
     const batch = await fetchLegacyBatch(legacyClient, offset, batchSize);
     if (batch.length === 0) break;
 
-    const rowsToInsert: AimcRow[] = [];
+    // ------------------------------------------------------------------
+    // Pre-compute content hashes and filter Pipeline 1 rows upfront so
+    // we can issue a single batch dedup query (CL6-FFA-009 — no N+1).
+    // ------------------------------------------------------------------
+    type CandidateEntry = { row: LegacyRow; hash: string };
+    const candidates: CandidateEntry[] = [];
 
     for (const row of batch) {
+      // V-004 / ADR-005: Skip Pipeline 1 sources (use page domain as the source identifier)
+      const pageDomain = row.org_pages?.domain ?? '';
+      if (isPipeline1Source(pageDomain)) {
+        result.skippedPipeline1++;
+        continue;
+      }
+
+      const contentHash = sha256(row.text);
+      candidates.push({ row, hash: contentHash });
+    }
+
+    // Single batch query — check which hashes already exist in AIMC
+    const existingHashes = await fetchExistingHashes(
+      aimcClient,
+      candidates.map((c) => c.hash),
+    );
+
+    const rowsToInsert: AimcRow[] = [];
+
+    for (const { row, hash: contentHash } of candidates) {
       try {
-        // V-004 / ADR-005: Skip Pipeline 1 sources
-        if (isPipeline1Source(row.source)) {
-          result.skippedPipeline1++;
-          continue;
-        }
-
-        // V-003 / CL6-FFA-009: Compute SHA-256 content_hash
-        const contentHash = sha256(row.content);
-
-        // CL6-FFA-009: Deduplication — skip if content_hash already exists
-        const isDuplicate = await contentHashExists(aimcClient, contentHash);
-        if (isDuplicate) {
+        // CL6-FFA-009: Skip if already migrated
+        if (existingHashes.has(contentHash)) {
           result.skippedDedup++;
           continue;
         }
 
-        // V-001: Resolve approved source label
-        const sourceLabel = resolveSourceLabel(row.source_label ?? row.source);
+        // V-001: Resolve approved governance domain label from page domain
+        const pageDomain = row.org_pages?.domain ?? '';
+        const domain = resolveSourceLabel(pageDomain);
 
-        // V-002: Validate embedding dimension
-        const embedding = validateEmbedding(row.embedding);
+        // V-002: Validate embedding dimension (handles legacy string format)
+        const embedding = parseEmbedding(row.embedding);
 
         const aimcRow: AimcRow = {
-          organisation_id: row.organisation_id,
-          content: row.content,
-          source: row.source ?? 'general',
-          source_url: row.source_url ?? null,
-          metadata: row.metadata ?? {},
+          // Map legacy org_id → organisation_id
+          organisation_id: row.org_id,
+          // Map legacy text → content
+          content: row.text,
+          // Use page domain as human-readable source identifier
+          source: pageDomain || 'general',
+          // Governance domain label (maps to ai_knowledge.domain from migration 006)
+          domain,
+          // Store source_url and chunk context in metadata JSONB for traceability
+          metadata: {
+            source_url: row.org_pages?.url ?? null,
+            chunk_idx: row.chunk_idx,
+            legacy_id: row.id,
+            legacy_page_id: row.page_id,
+          },
           embedding,
           content_hash: contentHash,
           // V-005 / CL6-FFA-005: All migrated rows get approval_status = 'pending'
           approval_status: DEFAULT_APPROVAL_STATUS,
-          source_label: sourceLabel,
           created_at: row.created_at ?? new Date().toISOString(),
         };
 
         rowsToInsert.push(aimcRow);
 
         // Track per-domain counts (CL6-FFA-008 — ARC queue queryability)
-        result.perDomainCounts[sourceLabel] =
-          (result.perDomainCounts[sourceLabel] ?? 0) + 1;
+        result.perDomainCounts[domain] = (result.perDomainCounts[domain] ?? 0) + 1;
       } catch (rowError) {
         // Per-row error isolation — log and continue
         console.error(`Error processing row ${row.id}:`, rowError);
