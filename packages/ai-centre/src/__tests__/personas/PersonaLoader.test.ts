@@ -14,10 +14,9 @@
 import { describe, it, expect } from 'vitest';
 import { PersonaLoader } from '../../personas/PersonaLoader.js';
 import { PersonaNotFoundError, PersonaValidationError } from '../../types/index.js';
-// NOTE (CL-7-D1 / CL-7-D2): PersonaValidationError does NOT yet exist in
-// types/index.ts — it is exported as `undefined` at runtime via esbuild
-// transpilation until D3 adds it.  Tests that reference PersonaValidationError
-// are intentionally RED until D3 is complete.
+// NOTE: PersonaValidationError is expected to be defined and exported from
+// types/index.ts. Tests in this suite may reference it as part of the
+// current PersonaLoader error-contract.
 
 // ---------------------------------------------------------------------------
 // Tests (GRS-010, GRS-028, GRS-029)
@@ -620,6 +619,57 @@ describe('CL-7-D2 — Persona registry sync (RED gate)', () => {
       // GREEN after D3: throws PersonaValidationError for blank field values.
       await expect(
         loader.load('cl7-fixture-blank-fields'),
+      ).rejects.toThrow(PersonaValidationError);
+    },
+  );
+
+  /**
+   * CL-7-T-014
+   * PersonaLoader.load() must throw PersonaValidationError when the YAML
+   * `agentId` field does not exactly match the loaded agentId (filename).
+   *
+   * Fixture: cl7-fixture-wrong-agentid.md (agentId: wrong-id, not matching filename)
+   * Reference: AIMC_PERSONA_LIFECYCLE.md §3.4, §5.1 | APS §8.1
+   */
+  it(
+    'CL-7-T-014: load() throws PersonaValidationError when agentId field does not match filename',
+    async () => {
+      await expect(
+        loader.load('cl7-fixture-wrong-agentid'),
+      ).rejects.toThrow(PersonaValidationError);
+    },
+  );
+
+  /**
+   * CL-7-T-015
+   * PersonaLoader.load() must throw PersonaValidationError when the `version`
+   * field is present but does not conform to semver (N.N.N).
+   *
+   * Fixture: cl7-fixture-invalid-version.md (version: not-semver)
+   * Reference: AIMC_PERSONA_LIFECYCLE.md §5.1 | APS §8.1
+   */
+  it(
+    'CL-7-T-015: load() throws PersonaValidationError when version is not valid semver',
+    async () => {
+      await expect(
+        loader.load('cl7-fixture-invalid-version'),
+      ).rejects.toThrow(PersonaValidationError);
+    },
+  );
+
+  /**
+   * CL-7-T-016
+   * PersonaLoader.load() must throw PersonaValidationError when the
+   * `last_reviewed` field is present but does not conform to YYYY-MM-DD.
+   *
+   * Fixture: cl7-fixture-invalid-last-reviewed.md (last_reviewed: 01/01/2026)
+   * Reference: AIMC_PERSONA_LIFECYCLE.md §5.1 | APS §8.1
+   */
+  it(
+    'CL-7-T-016: load() throws PersonaValidationError when last_reviewed is not YYYY-MM-DD',
+    async () => {
+      await expect(
+        loader.load('cl7-fixture-invalid-last-reviewed'),
       ).rejects.toThrow(PersonaValidationError);
     },
   );
