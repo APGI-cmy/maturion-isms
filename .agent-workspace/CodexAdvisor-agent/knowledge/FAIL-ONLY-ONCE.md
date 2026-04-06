@@ -158,6 +158,14 @@ All updates to this file must be committed as part of the session bundle for tha
 
 ---
 
+### A-037 — IAA ASSURANCE-TOKEN Files MUST Include Machine-Readable PHASE_B_BLOCKING_TOKEN Field
+
+| A-037 | All IAA ASSURANCE-TOKEN files (`.agent-admin/assurance/iaa-token-*.md`) MUST include `PHASE_B_BLOCKING_TOKEN: <token_ref>` as a standalone key: value line. Markdown-only prose is not machine-readable. Absence, empty value, or PENDING will fail the `preflight/iaa-token-self-certification` CI guard. Check in Phase 4 Step 4.2b before committing token file. | CS2 Directive 2026-04-06 (Issue #1249) |
+
+**Status**: ACTIVE — enforced every session
+
+---
+
 ### INC-IAA-SELFCERT-001 — Foreman Self-Certification of IAA Token
 
 **Date**: 2026-04-05
