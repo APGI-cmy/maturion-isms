@@ -1,8 +1,8 @@
 # BUILD PROGRESS TRACKER
 
-**Module**: Risk Management  
-**Module Slug**: risk-management  
-**Last Updated**: 2026-02-13  
+**Module**: Maturity Management Module (MMM)  
+**Module Slug**: MMM  
+**Last Updated**: 2026-04-06  
 **Updated By**: governance-liaison-isms
 
 ---
@@ -13,7 +13,7 @@ Track the progression through the canonical module lifecycle stages.
 
 ### Stage 0: App Description
 **Status**: [x] COMPLETE  
-**Location**: `modules/risk-management/00-app-description/`  
+**Location**: `modules/MMM/00-app-description/`  
 **Key Artifacts**:
 - [x] `app-description.md` - Authoritative intent, scope, users, outputs, constraints
 - [ ] App Description approved by designated authority
@@ -25,7 +25,7 @@ Track the progression through the canonical module lifecycle stages.
 
 ### Stage 1: Functional Requirements Specification (FRS)
 **Status**: [ ] NOT_STARTED | [x] IN_PROGRESS | [ ] COMPLETE  
-**Location**: `modules/risk-management/01-frs/`  
+**Location**: `modules/MMM/01-frs/`  
 **Key Artifacts**:
 - [ ] `functional-requirements.md` - Verifiable requirements derived from App Description
 - [ ] Derivation statement from App Description included
@@ -38,7 +38,7 @@ Track the progression through the canonical module lifecycle stages.
 
 ### Stage 1.5: Technical Requirements Specification (TRS)
 **Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] COMPLETE  
-**Location**: `modules/risk-management/01.5-trs/`  
+**Location**: `modules/MMM/01.5-trs/`  
 **Key Artifacts**:
 - [ ] `technical-requirements-specification.md` - Technical constraints, performance requirements, integration requirements
 - [ ] `frs-to-trs-traceability.md` - Traceability matrix linking FRS to TRS
@@ -52,7 +52,7 @@ Track the progression through the canonical module lifecycle stages.
 
 ### Stage 2: Architecture
 **Status**: [ ] NOT_STARTED | [x] IN_PROGRESS | [ ] COMPLETE  
-**Location**: `modules/risk-management/02-architecture/`  
+**Location**: `modules/MMM/02-architecture/`  
 **Key Artifacts**:
 - [ ] `architecture.md` - Structures and decisions that satisfy FRS and TRS
 - [ ] QA strategy included
@@ -67,7 +67,7 @@ Track the progression through the canonical module lifecycle stages.
 
 ### Stage 3: Implementation Plan
 **Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] COMPLETE  
-**Location**: `modules/risk-management/03-implementation-plan/`  
+**Location**: `modules/MMM/03-implementation-plan/`  
 **Key Artifacts**:
 - [ ] `implementation-plan.md` - Phased plan, acceptance criteria, evidence plan
 - [ ] Dependencies identified and documented
@@ -80,7 +80,7 @@ Track the progression through the canonical module lifecycle stages.
 
 ### Stage 4: Builder Appointment
 **Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] COMPLETE  
-**Location**: `modules/risk-management/04-builder-appointment/`  
+**Location**: `modules/MMM/04-builder-appointment/`  
 **Key Artifacts**:
 - [ ] `builder-contract.md` - Explicit builder agent contract
 - [ ] Responsibilities, constraints, and deliverables defined
@@ -93,7 +93,7 @@ Track the progression through the canonical module lifecycle stages.
 
 ### Stage 5: Build Execution & Evidence
 **Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] COMPLETE  
-**Location**: `modules/risk-management/05-build-evidence/`  
+**Location**: `modules/MMM/05-build-evidence/`  
 **Key Artifacts**:
 - [ ] Implementation code in `apps/` or `packages/`
 - [ ] Test evidence
