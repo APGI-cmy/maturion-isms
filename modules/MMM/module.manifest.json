@@ -1,12 +1,12 @@
 {
-  "module_slug": "risk-management",
-  "module_name": "Risk Management",
-  "status": "migrated-structure",
+  "module_slug": "MMM",
+  "module_name": "Maturity Management Module",
+  "status": "pre-build",
   "owners": [],
-  "canonical_root": "modules/risk-management",
-  "legacy_sources": ["Maturion/Risk Management"],
-  "artifact_lineage": "Legacy artifacts retained in 90-legacy-assets and source location.",
-  "migration_notes": "Canonical stage skeleton created; authoritative module lifecycle now starts under modules/risk-management.",
-  "legacy_pointer": "Maturion/Risk Management/CANONICAL_MODULE_POINTER.md",
-  "last_migrated_at": "2026-02-13"
+  "canonical_root": "modules/MMM",
+  "legacy_sources": ["Maturion/Risk Management", "modules/risk-management"],
+  "artifact_lineage": "Module migrated from Risk Management. Legacy artifacts retained in 90-legacy-assets.",
+  "migration_notes": "Module identity corrected from risk-management to MMM. Canonical stage skeleton active under modules/MMM/.",
+  "legacy_pointer": "modules/MMM/90-legacy-assets/",
+  "last_migrated_at": "2026-04-06"
 }

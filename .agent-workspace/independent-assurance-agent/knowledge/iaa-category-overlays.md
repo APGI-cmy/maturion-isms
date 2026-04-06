@@ -1,9 +1,9 @@
 # IAA Category Overlays
 
 **Agent**: independent-assurance-agent
-**Version**: 3.6.0
+**Version**: 3.8.0
 **Status**: ACTIVE
-**Last Updated**: 2026-03-18
+**Last Updated**: 2026-04-06
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -331,6 +331,33 @@ No Pre-Brief artifact found. IAA states:
 
 ---
 
+## PRE_BUILD_GATES Overlay
+
+Applied when PR category is `PRE_BUILD_STAGE_MODEL` or `MANDATORY_CROSS_APP_COMPONENTS`, or when any BUILD PR includes module lifecycle stage artifacts.
+
+> **Purpose**: Enforce pre-build gate compliance for all ISMS modules before FRS wave builder delegation.  
+> These checks protect against identity mismatches, stale lineage claims, and premature stage advancement.
+
+| Check ID | Check Name | What IAA Does | On Fail |
+|----------|-----------|---------------|---------|
+| OVL-PBG-001 | module.manifest.json slug matches directory | Verify that `module_slug` in `modules/X/module.manifest.json` matches the directory name `X` exactly (e.g., `module_slug: "MMM"` for `modules/MMM/`). Case-sensitive match required. | REJECTION-PACKAGE citing the mismatch. |
+| OVL-PBG-002 | BUILD_PROGRESS_TRACKER module identity consistent | Verify that the module name and slug declared in `modules/X/BUILD_PROGRESS_TRACKER.md` match the corrected `module_slug` and `module_name` in `modules/X/module.manifest.json`. Both must agree. | REJECTION-PACKAGE citing the specific inconsistency fields. |
+| OVL-PBG-003 | Architecture doc references correct module name | Verify that `modules/X/02-architecture/architecture.md` references the correct module name (matching `module_name` in manifest), not a legacy or migrated module name. Any legacy name reference in the architecture doc = REJECTION-PACKAGE. | REJECTION-PACKAGE citing the legacy name found and the correct name required. |
+| OVL-PBG-004 | IAA Pre-Brief exists before FRS wave builder delegation | For any PR that advances a module to FRS stage, initiates a builder appointment, or delegates build work: verify that an IAA Pre-Brief artifact exists at `.agent-admin/assurance/iaa-prebrief-*.md` matching the current wave name. Pre-Brief must be committed before builder delegation. | REJECTION-PACKAGE if no pre-brief artifact matches the wave. State: "IAA Pre-Brief required before FRS wave builder delegation." |
+| OVL-PBG-005 | AGENT_HANDOVER_AUTOMATION version cited in knowledge files matches canonical | When knowledge files reference `AGENT_HANDOVER_AUTOMATION.md`, verify the version cited matches the canonical version recorded in `governance/CANON_INVENTORY.json`. Stale version citation = REJECTION-PACKAGE citing the current canonical version. | REJECTION-PACKAGE citing the stale version found and the canonical version required per CANON_INVENTORY. |
+| OVL-PBG-006 | BUILD_PROGRESS_TRACKER uses full 12-stage model | Verify that `modules/X/BUILD_PROGRESS_TRACKER.md` contains all 12 canonical stages from `PRE_BUILD_STAGE_MODEL_CANON.md`: App Description, UX Workflow & Wiring Spec, FRS, TRS, Architecture, QA-to-Red, PBFAG, Implementation Plan, Builder Checklist, IAA Pre-Brief, Builder Appointment, Build Execution & Evidence. Old shortened models (App Description → FRS → TRS → Architecture) must be flagged. | REJECTION-PACKAGE citing missing stages and requiring rebuild from `governance/templates/BUILD_PROGRESS_TRACKER_TEMPLATE.md`. |
+| OVL-PBG-007 | Architecture doc references full lifecycle sequence | Verify that the Canonical Architecture Sequence in `modules/X/02-architecture/architecture.md` lists all 12 stages, not a shortened subset. | REJECTION-PACKAGE citing the missing stages. |
+| OVL-PBG-008 | Stage gating respected (no skipped stages) | For any PR that advances a module's lifecycle stage, verify that all prior stages in the 12-stage sequence are documented as COMPLETE or have an explicit CS2-approved exception. No stage skipping permitted. | REJECTION-PACKAGE: "Stage N cannot begin until Stage N-1 is complete per PRE_BUILD_STAGE_MODEL_CANON.md." |
+| OVL-PBG-009 | Legacy directory numbering flagged when out of sync | If `modules/X/BUILD_PROGRESS_TRACKER.md` references legacy directory numbers (00-, 01-, 02- etc.) that do not match the canonical stage numbers (01-, 02-, 03- etc.), IAA must flag this as a STRUCTURAL NOTE requiring a migration plan from CS2. | Advisory finding — not REJECTION-PACKAGE, but must be documented. |
+
+**Admin Check:**
+
+| Check ID | Check Name | Pass Condition |
+|----------|-----------|---------------|
+| OVL-PBG-ADM-001 | PRE_BUILD_GATES overlay loaded | IAA must state that OVL-PBG-001 through OVL-PBG-009 have been applied when PR category includes PRE_BUILD_STAGE_MODEL or MANDATORY_CROSS_APP_COMPONENTS. |
+
+---
+
 ## AGENT_INTEGRITY Overlay
 
 Applied when PR category is `AGENT_INTEGRITY`.
@@ -354,6 +381,8 @@ Applied when PR category is `AGENT_INTEGRITY`.
 | 3.4.0 | 2026-03-11 | Renamed `INJECTION_AUDIT_TRAIL` overlay to `PRE_BRIEF_ASSURANCE`; removed injection pipeline signature string requirement; OVL-INJ-001 now requires Pre-Brief artifact existence only (issue #1061 — disable automatic injections) |
 | 3.5.0 | 2026-03-17 | BD-000 User Journey Trace section added (BD-000-A through BD-000-D) — mandatory for all build PRs impacting app behaviour; user journey declaration, step-by-step trace, edge case declaration and verification checks; issue [IAA functional behaviour strengthening] |
 | 3.6.0 | 2026-03-18 | Orientation Mandate scope note added — clarifies "cross-reference consistency" vs. declared-state integrity; OVL-KG-ADM-002 pass condition sharpened (file header version must match index.md registration AND exceed prior version — mismatch = FAIL); timestamp carve-out note added (stale Last Updated field is observation only, not REJECTION-PACKAGE trigger); issue [clarify audit scope cross-reference consistency and version bump history] |
+| 3.7.0 | 2026-04-06 | PRE_BUILD_GATES overlay added (OVL-PBG-001 through OVL-PBG-005, OVL-PBG-ADM-001) — MMM FRS pre-build gate enforcement: manifest slug/directory match, BUILD_PROGRESS_TRACKER identity consistency, architecture doc module name, IAA Pre-Brief existence before builder delegation, AGENT_HANDOVER_AUTOMATION canonical version check; wave: pre-mmm-build-readiness |
+| 3.8.0 | 2026-04-06 | PRE_BUILD_GATES overlay strengthened (OVL-PBG-006 through OVL-PBG-009) — full 12-stage model enforcement: BUILD_PROGRESS_TRACKER 12-stage completeness (OVL-PBG-006), architecture doc full lifecycle sequence (OVL-PBG-007), stage gating no-skip enforcement (OVL-PBG-008), legacy directory numbering advisory flag (OVL-PBG-009); OVL-PBG-ADM-001 updated to reference OVL-PBG-001 through OVL-PBG-009; wave: pre-mmm-build-readiness (CS2 review blockers) |
 
 ---
 

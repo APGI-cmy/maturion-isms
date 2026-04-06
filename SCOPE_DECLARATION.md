@@ -1,35 +1,31 @@
-# SCOPE DECLARATION — Wave layer-down-20260403
+# SCOPE DECLARATION — Wave pre-mmm-build-readiness
 
 **Agent**: governance-liaison-isms v6.2.0
-**Wave**: layer-down-20260403 — Propagate Governance Changes (canonical commit 1d91d51a)
-**Session**: session-054-20260403
-**Date**: 2026-04-03
-**Branch**: copilot/layer-down-propagate-governance-changes-another-one
-**Authority**: CS2 (@APGI-cmy) via governance ripple event (issue #1216)
+**Wave**: pre-mmm-build-readiness — IAA Tier 2 Knowledge Upgrades & MMM Module Identity Clean-up
+**Session**: session-056-20260406
+**Date**: 2026-04-06
+**Branch**: copilot/pre-mmm-build-readiness-orchestration
+**Authority**: CS2 (@APGI-cmy) via Foreman (foreman-v2-agent) wave delegation
 
 ## Declared Scope: Files Modified
 
-Per `git diff --name-only origin/main...HEAD` (17 files):
+Per `git diff --name-only origin/main...HEAD` (this PR):
 
-- `.agent-admin/assurance/iaa-rejection-session-054-reaudit-20260403-R3.md` - IAA rejection artifact R3 (written by IAA agent)
-- `.agent-admin/assurance/iaa-rejection-session-054-reaudit-20260403.md` - IAA rejection artifact R1 (written by IAA agent)
-- `.agent-admin/assurance/iaa-token-session-054-waveY-20260403.md` - IAA ASSURANCE-TOKEN artifact R4 (written by IAA agent)
-- `.agent-admin/governance/drift-report-align-20260403-150710.md` - Drift report for layer-down session-054
-- `.agent-workspace/governance-liaison-isms/memory/PREHANDOVER-session-054-20260403.md` - PREHANDOVER proof for session-054
-- `.agent-workspace/governance-liaison-isms/memory/session-054-20260403.md` - Session memory for session-054
-- `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md` - Parking station suggestions log (appended)
-- `.agent-workspace/independent-assurance-agent/memory/session-054-reaudit-20260403-R3.md` - IAA R3 session memory (written by IAA agent)
-- `.agent-workspace/independent-assurance-agent/memory/session-054-reaudit-20260403-R4.md` - IAA R4 session memory / ASSURANCE-TOKEN session (written by IAA agent)
-- `.agent-workspace/independent-assurance-agent/memory/session-054-reaudit-20260403.md` - IAA R1 session memory (written by IAA agent)
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station log (written by IAA agent)
-- `SCOPE_DECLARATION.md` - This file (scope declaration for wave layer-down-20260403)
-- `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` - Updated with 3 new template artifact entries
-- `governance/sync_state.json` - Updated last_ripple_commit and files_layered_down
-- `governance/templates/FRS_TEMPLATE.md` - New: Functional Requirements Specification template (layered from canonical)
-- `governance/templates/TRS_TEMPLATE.md` - New: Technical Requirements Specification template (layered from canonical)
-- `governance/templates/minimum-architecture-template.md` - New: Minimum architecture template v1.1 (layered from canonical)
+- `.agent-admin/assurance/iaa-prebrief-pre-mmm-build-readiness.md` — IAA Pre-Brief for wave pre-mmm-build-readiness (pre-existing, committed by Foreman)
+- `.agent-admin/build-evidence/session-056/PREHANDOVER_PROOF_SESSION_056.md` — PREHANDOVER proof for session-056
+- `.agent-workspace/foreman-v2/personal/mmm-legacy-capabilities-recommendations.md` — New: recommendations for legacy capabilities directory treatment (created by governance-liaison-isms session-056)
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — Wave task tracking file (Foreman-maintained, pre-existing modification)
+- `.agent-workspace/governance-liaison-isms/memory/session-056-20260406.md` — Session memory for session-056
+- `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md` — Parking station suggestions log (appended)
+- `.agent-workspace/independent-assurance-agent/knowledge/iaa-category-overlays.md` — Updated v3.6.0 → v3.7.0 (PRE_BUILD_GATES overlay added)
+- `.agent-workspace/independent-assurance-agent/knowledge/iaa-trigger-table.md` — Updated v2.1.0 → v2.2.0 (PRE_BUILD_STAGE_MODEL, MANDATORY_CROSS_APP_COMPONENTS triggers added)
+- `.agent-workspace/independent-assurance-agent/knowledge/index.md` — Updated v3.1.0 → v3.2.0 (version bump, AGENT_HANDOVER_AUTOMATION ref update)
+- `modules/MMM/02-architecture/architecture.md` — Rewritten: legacy Risk Management stub replaced with MMM architecture placeholder
+- `modules/MMM/BUILD_PROGRESS_TRACKER.md` — Corrected: risk-management/Risk Management identity references replaced with MMM
+- `modules/MMM/module.manifest.json` — Corrected: module_slug risk-management → MMM, identity corrected throughout
+- `SCOPE_DECLARATION.md` — This file (scope declaration for wave pre-mmm-build-readiness)
 
-**File count: 17 files. Declared file count matches exactly.**
+**File count: 13 files (excluding IAA session/token artifacts written by IAA agent post-verdict).**
 
 ## Out-of-Scope Attestation
 
@@ -38,14 +34,21 @@ All files NOT listed above are out-of-scope and were NOT modified by this wave:
 - No production code changes
 - No schema or migration changes
 - No test changes
+- No .github/agents/ changes
+- No .github/workflows/ changes
+- No modules/risk-management/ changes
+- No modules/MMM/src/ or tests/ changes
+
 - No CI/CD workflow changes
 - No agent contract changes (.github/agents/*.md not modified)
 - No canonical governance files modified (consumer mode only)
+- No other agent contracts modified
 
 ## ADR Compliance
 
-Governance layer-down only. No ADR conditions triggered. All changes confined to governance/templates/, governance/alignment/, governance/sync_state.json, and agent-workspace/.
+Governance and agent contract maintenance only. No ADR conditions triggered.
 
 ---
 
-*Authority: governance-liaison-isms v6.2.0 | Wave layer-down-20260403 | 2026-04-03*
+*Authority: CodexAdvisor-agent v3.4.0 | Session-052 | 2026-04-06*
+
