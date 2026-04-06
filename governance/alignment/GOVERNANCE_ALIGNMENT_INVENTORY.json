@@ -3,18 +3,30 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory \u2014 tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
-  "last_updated": "2026-04-03",
-  "last_ripple_commit": "1d91d51a9aac53f6e2e86189ef4ae4b779c00228",
-  "last_ripple_timestamp": "2026-04-03T15:05:45Z",
+  "last_updated": "2026-04-06",
+  "last_ripple_commit": "843cc6dc4dd88bee911ea21d809e72f28e7b93cf",
+  "last_ripple_timestamp": "2026-04-06T08:55:28Z",
   "alignment_summary": {
-    "total_artifacts": 17,
-    "aligned": 13,
+    "total_artifacts": 18,
+    "aligned": 14,
     "drifted": 0,
     "missing": 0,
     "escalated": 4,
     "overall_status": "PARTIAL \u2014 AGENT CONTRACT FILES ESCALATED TO CS2"
   },
   "artifacts": [
+    {
+      "filename": "AGENT_HANDOVER_AUTOMATION.md",
+      "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
+      "canonical_version": "1.1.4",
+      "local_version": "1.1.4",
+      "canonical_hash_sha256": "39867b98a8d68ceebc3676b8066070e3b410e6f68a954bfd28089e0ef3d24514",
+      "local_hash_sha256": "39867b98a8d68ceebc3676b8066070e3b410e6f68a954bfd28089e0ef3d24514",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-04-06T08:55:50Z",
+      "change_note": "v1.1.4: Added PHASE_B_BLOCKING_TOKEN field to \u00a74.3b token file heredoc; updated version footer. Layered down via ripple PR #1243 (canonical commit 843cc6dc)."
+    },
     {
       "filename": "ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
       "path": "governance/canon/ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
@@ -222,7 +234,7 @@
     "governing_protocol": "GOVERNANCE_RIPPLE_MODEL.md v1.1.0",
     "canonical_checklist": "GOVERNANCE_RIPPLE_CHECKLIST_PROTOCOL.md",
     "created_by": "governance-liaison-isms session-035",
-    "last_updated_by": "governance-liaison-isms layer-down-20260321-073700"
+    "last_updated_by": "governance-liaison-isms session-055 layer-down-843cc6dc-20260406"
   },
-  "last_updated_by": "governance-liaison-isms layer-down-20260321-073700"
+  "last_updated_by": "governance-liaison-isms session-055 layer-down-843cc6dc-20260406"
 }
