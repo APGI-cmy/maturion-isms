@@ -31,7 +31,7 @@ label was not applied before the first workflow runs.
 The `copilot-builder-role` label was added to PR #1233. The POLC workflow explicitly skips
 the `foreman-implementation-check` when this label is present:
 
-```yaml
+```bash
 if [[ "$HAS_BUILDER_LABEL" == "true" ]]; then
   echo "✅ PR labeled 'copilot-builder-role'"
   echo "   Copilot is acting as a governed builder (not Foreman)."
@@ -42,9 +42,9 @@ fi
 
 ## Verification
 
-The POLC workflow triggers on `synchronize` events only (not on `labeled` events). This
-sub-PR commit triggers a new `synchronize` event on PR #1233 so the POLC re-runs with the
-label in place and passes.
+The POLC workflow does not trigger on `labeled` events. This sub-PR commit triggers a new
+`synchronize` event on PR #1233, so the POLC workflow re-runs with the label already in
+place and passes.
 
 ## Governance Note
 
