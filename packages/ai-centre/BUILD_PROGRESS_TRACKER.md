@@ -2,11 +2,215 @@
 
 **Package**: `packages/ai-centre`  
 **Package Slug**: ai-centre  
-**Last Updated**: 2026-02-28  
-**Updated By**: schema-builder (wave9.2 PR — copilot/design-feedback-pipeline-schema)
+**Last Updated**: 2026-04-06  
+**Updated By**: governance-liaison-isms-agent (wave: align-12stage-prebuild-20260406)
+
+> **Classification**: ACTIVE — RETROFIT NOW  
+> **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
+> **Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
 
 ---
 
+## Module Lifecycle Progress
+
+Track the progression through the canonical module lifecycle stages per `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0.
+
+> **Note**: The AI Centre package was built prior to the formalisation of the 12-stage model
+> (effective 2026-04-05). This lifecycle section represents a retrospective mapping of the
+> pre-build work that was executed across build waves. The detailed Build Wave Progress section
+> is preserved below (Section 2) as the authoritative build record. Stages 1–11 are mapped
+> retrospectively; all have been substantively executed even if not formally gate-passed under
+> the 12-stage model.
+
+### Stage 1: App Description
+**Status**: [x] COMPLETE  
+**Location**: `packages/ai-centre/` (package-level specification)  
+**Key Artifacts**:
+- [x] AIMC purpose and scope defined (AI Memory Centre gateway, routing, persona, telemetry, persistent memory)
+- [x] Package conceived with clear module purpose and user value
+
+**Completion Date**: 2026-02-01 (approximate — pre-model)  
+**Notes**: Retrospective mapping. AI Centre purpose and scope were established at project inception.
+Formal `app-description.md` in canonical format was not created (predates 12-stage model).
+
+---
+
+### Stage 2: UX Workflow & Wiring Spec
+**Status**: [x] COMPLETE (N/A — non-user-facing package)  
+**Location**: N/A  
+**Key Artifacts**:
+- [x] Wiring spec: AI gateway request/response contract, provider adapter pattern, persona loading
+- [x] API wiring: POST /api/ai/request contract established
+
+**Completion Date**: 2026-02-01 (approximate — pre-model)  
+**Notes**: AI Centre is a backend package with no direct UI. Per `PRE_BUILD_STAGE_MODEL_CANON.md`
+§4.2: non-user-facing builds may substitute a Wiring Spec Only variant. API contract and adapter
+wiring were established during Wave 1–2 design. Retrospective mapping.
+
+---
+
+### Stage 3: Functional Requirements Specification (FRS)
+**Status**: [x] COMPLETE  
+**Location**: `packages/ai-centre/` (embedded in architecture and wave specifications)  
+**Key Artifacts**:
+- [x] Functional requirements captured in AIMC wave specifications (AAWP v0.2.0)
+- [x] GRS-008: Supabase persistent memory with organisation-level tenant isolation
+- [x] AAD §8.2: PersistentMemoryAdapter constructor requirements
+
+**Completion Date**: 2026-02-01 (approximate — pre-model)  
+**Notes**: Retrospective mapping. Requirements were documented informally across wave specs
+and architecture references rather than a single FRS document.
+
+---
+
+### Stage 4: Technical Requirements Specification (TRS)
+**Status**: [x] COMPLETE  
+**Location**: `packages/ai-centre/` (embedded in architecture references)  
+**Key Artifacts**:
+- [x] APS §7.2/§7.4: RLS policy enforcement at query layer
+- [x] GRS-008: Integration tests must target live Supabase, not in-memory mocks
+- [x] Tool validation: Vitest test framework, SupabaseClient, pgvector
+
+**Completion Date**: 2026-02-13 (TRS stage introduced per governance upgrade)  
+**Notes**: Retrospective mapping. Technical requirements captured in governance references.
+
+---
+
+### Stage 5: Architecture
+**Status**: [x] COMPLETE  
+**Location**: `packages/ai-centre/src/`  
+**Key Artifacts**:
+- [x] Provider adapter pattern (OpenAIAdapter, PerplexityAdapter)
+- [x] MemoryLifecycle with RAG pipeline
+- [x] PersonaLoader with YAML front-matter
+- [x] EpisodicMemoryAdapter + FeedbackPipeline
+- [x] Architecture freeze: `governance/aimc/freezes/ARCH_FREEZE-wave9-track-c-module-integration-20260226.md`
+
+**Completion Date**: 2026-02-25 (approximate — pre-model)  
+**Notes**: Retrospective mapping. Architecture was designed and implemented across Waves 1–5.
+ARCH-FREEZE-WAVE9-TRACK-C-20260226 formally locked the architecture for Wave 9.x.
+
+---
+
+### Stage 6: QA-to-Red
+**Status**: [x] COMPLETE  
+**Location**: `packages/ai-centre/src/__tests__/`  
+**Key Artifacts**:
+- [x] RED test suites written per wave before implementation
+- [x] 179 tests across Waves 2–5, 9.1–9.7
+- [x] Contract tests for all adapters and services
+
+**Completion Date**: Per wave (Wave 2–5, 9.1–9.7 each had RED-before-GREEN cycles)  
+**Notes**: Retrospective mapping. RED-before-GREEN discipline maintained across all waves.
+POLC breach in Wave 5 (GOV-BREACH-AIMC-W5-001) was remediated with correct RED→GREEN cycle.
+
+---
+
+### Stage 7: PBFAG (Pre-Build Functionality Assessment Gate)
+**Status**: [x] COMPLETE  
+**Location**: PREHANDOVER proofs per wave  
+**Key Artifacts**:
+- [x] PREHANDOVER proofs created per wave with QP PASS verdicts
+- [x] GOV-BREACH-AIMC-W5-001 remediated (POLC chain enforced)
+- [x] Quality Professor evaluation performed per wave
+
+**Completion Date**: Per wave  
+**Notes**: Retrospective mapping. Wave-level quality gates served as PBFAG equivalents.
+
+---
+
+### Stage 8: Implementation Plan
+**Status**: [x] COMPLETE  
+**Location**: AAWP v0.2.0 (AI Centre Wave Plan)  
+**Key Artifacts**:
+- [x] AAWP v0.2.0 — Wave-by-wave delivery plan with explicit scope
+- [x] Wave dependencies documented (Wave 9.10 → Wave 9.9 gate)
+- [x] No placeholder waves
+
+**Completion Date**: 2026-02-25 (AAWP v0.2.0)  
+**Notes**: Retrospective mapping. AAWP serves as the Implementation Plan equivalent.
+
+---
+
+### Stage 9: Builder Checklist
+**Status**: [x] COMPLETE  
+**Location**: Per-wave builder delegation records  
+**Key Artifacts**:
+- [x] Builder delegation records per wave (api-builder, schema-builder, qa-builder)
+- [x] POLC chain enforced: Foreman delegates → builder implements → QP verifies
+- [x] Builder contracts verified each wave
+
+**Completion Date**: Per wave  
+**Notes**: Retrospective mapping. Builder checklist equivalent executed via POLC delegation chain.
+
+---
+
+### Stage 10: IAA Pre-Brief
+**Status**: [x] COMPLETE  
+**Location**: IAA assurance tokens per wave  
+**Key Artifacts**:
+- [x] IAA-WAVE9.2+9.5-20260227-PASS
+- [x] IAA-WAVE9.3-20260227-PASS
+- [x] IAA-WAVE9.2+9.4-20260226-PASS
+
+**Completion Date**: Per wave (Waves 9.2–9.7)  
+**Notes**: Retrospective mapping. IAA assurance tokens issued per wave handover.
+
+---
+
+### Stage 11: Builder Appointment
+**Status**: [x] COMPLETE  
+**Location**: Per-wave delegation records  
+**Key Artifacts**:
+- [x] api-builder: appointed for API implementation waves
+- [x] schema-builder: appointed for schema waves
+- [x] qa-builder: delegated for QA work
+
+**Completion Date**: Per wave  
+**Notes**: Retrospective mapping. Formal builder appointments executed via POLC delegation.
+
+---
+
+### Stage 12: Build Execution & Evidence
+**Status**: [ ] IN_PROGRESS  
+**Location**: `packages/ai-centre/src/` + PREHANDOVER proofs per wave  
+**Key Artifacts**:
+- [x] Waves 1–5: COMPLETE (gateway, adapters, memory, RAG, knowledge centre)
+- [x] Wave 7: COMPLETE (PerplexityAdapter + personas)
+- [x] Waves 9.1–9.7: COMPLETE (schema, API, module integrations)
+- [ ] Wave 9.8: PENDING (Course Crafter + ISMS integration)
+- [ ] Wave 9.9: PENDING (Incident Intelligence + Maturity Roadmap — blocked on Wave 9.10)
+- [ ] Wave 9.10: PENDING (remaining personas: incident-intelligence-advisor.md, maturity-roadmap-advisor.md)
+
+**Completion Date**: In progress  
+**Notes**: See detailed Build Wave Progress in Section 2 below for full wave-by-wave evidence.
+
+---
+
+## Current Stage Summary
+
+**Current Stage**: Stage 12 IN_PROGRESS (Waves 9.8, 9.9, 9.10 pending CS2 wave-start)  
+**Overall Progress**: ~85% complete (Stages 1–11 done retrospectively; Stage 12 ~75% done)  
+**Blockers**: Wave 9.9 blocked on Wave 9.10 persona delivery; all pending waves require CS2 wave-start  
+**Next Steps**:
+1. CS2 wave-start for Wave 9.8 (Course Crafter + ISMS integration — no Wave 9.10 dependency)
+2. Wave 9.10: deliver `incident-intelligence-advisor.md` + `maturity-roadmap-advisor.md`
+3. CS2 wave-start for Wave 9.9 after Wave 9.10 complete
+
+---
+
+## Governance Compliance
+
+- [x] Stages 1–11 complete (retrospective mapping — pre-12-stage-model build)
+- [x] Stage 12 IN_PROGRESS per wave plan (AAWP v0.2.0)
+- [x] POLC chain enforced across all waves
+- [x] IAA assurance tokens obtained per wave
+- [x] Evidence artifacts (PREHANDOVER proofs) created per wave
+- [ ] Waves 9.8, 9.9, 9.10 pending
+
+---
+
+---
 ## Overview
 
 The `packages/ai-centre` package implements the AIMC (AI Memory Centre) gateway, routing, persona, telemetry, and persistent memory components for the Maturion ISMS platform. This tracker records build wave progress and governance deviations.
