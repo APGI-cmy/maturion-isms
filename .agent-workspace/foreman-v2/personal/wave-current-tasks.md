@@ -1,6 +1,52 @@
-# Wave Current Tasks — foreman-v2-agent
+# Wave Current Tasks — CL-7: LKIAC-L3 PersonaLoader Improvements
 
-## Active Wave: mmm-mat-harvest-20260405
+## Active Wave: cl-10-routing-governance-ci-enforcement
+
+wave: cl-10-routing-governance-ci-enforcement
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-20260405.md
+
+### Wave Description
+CL-10 — LKIAC-L4: Routing Governance CI Enforcement.
+Machine-enforce GRS-016 (no direct AI provider imports in module code) at the CI merge gate level.
+Implement stub detection CI check. Resolves GOV-001, GOV-002, FAIL-ONLY-ONCE S-002.
+
+CS2 Authorization: maturion-isms#1221 (2026-04-05) — Item 5: 'CL-7 & CL-10 wave-starts go PARALLEL with CL-6'
+
+### Deliverables
+
+| ID | Artefact | Agent | Status |
+|----|---------|-------|--------|
+| CL-10-D1 | RED gate test: CI check integration test — test that `import { OpenAI }` in module code fails the gate | qa-builder | ✅ DONE (SHA 501779e, 9/9 GREEN) |
+| CL-10-D2 | CI merge gate check: detect direct provider import patterns in `modules/` and `apps/` (excl. `maturion-maturity-legacy`) — fails PR on match | integration-builder | ✅ DONE (SHA 43c2d99, workflow_dispatch added f3eb777) |
+| CL-10-D3 | CI merge gate check: detect `expect(true).toBe(true)` stub patterns anywhere in test suite — fails PR on match | integration-builder | ✅ DONE (SHA 43c2d99, workflow_dispatch added f3eb777) |
+
+### Sequencing
+- **D1 first** (qa-builder delivers RED gate test BEFORE CI implementation begins)
+- **D2+D3 second** (integration-builder delivers CI workflows AFTER D1 is confirmed FAILING)
+
+### Acceptance Criteria
+- CL-10-D1 RED before implementation (CI check integration test failing)
+- CL-10-D2: CI check active — `import { OpenAI }` in modules/ fails PR
+- CL-10-D3: CI check active — stub pattern `expect(true).toBe(true)` fails PR
+- Both checks tested GREEN on current codebase (zero violations detected)
+- T-B-001 and T-C-010 audit requirements covered by automated enforcement
+- Zero linter/deprecation warnings
+
+### Status
+- IAA Pre-Brief: COMMITTED (.agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-20260405.md, SHA f9db5ab)
+- D1 (qa-builder RED gate): ✅ DONE (SHA 501779e)
+- D2+D3 (integration-builder CI workflows): ✅ DONE (SHA 43c2d99 + f3eb777)
+- Ceremony artifacts: ✅ COMMITTED (SHA f3eb777)
+- IAA R1: REJECTION-PACKAGE (SHA 01d530e) — ceremony not committed, OVL-CI-005 absent
+- IAA R2: ASSURANCE-TOKEN PASS (SHA df0216c) — IAA-session-cl10-routing-governance-20260405-R2-PASS
+- Merge gate: RELEASED — awaiting CS2 review (@APGI-cmy)
+
+### Updated
+2026-04-05
+
+---
+
+## Previous Wave (archived): mmm-mat-harvest-20260405
 
 wave: mmm-mat-harvest-20260405
 iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-mmm-mat-harvest-20260405.md
@@ -236,60 +282,33 @@ iaa_prebrief_status: COMMITTED (SHA: c545f24)
 
 ## Wave Objective
 
-Revise `modules/maturity-roadmap/00-app-description/ROADMAP_APP_DESCRIPTION_v3.0.md` to be more comprehensive and source-faithful to the original Word document, while preserving the existing document's strong structure, clean hierarchy, and readable product-spec style.
+Implement runtime YAML front-matter validation in `PersonaLoader.ts` with a typed `PersonaValidationError`. Add CI checks for persona registry sync and quarterly freshness review.
+
+**Resolves**: GAP-002, GAP-003, GOV-003, GOV-004
 
 ---
 
-## Tasks
+## Task Breakdown
 
-| ID | Task | Agent | Status |
-|----|------|-------|--------|
-| T-MRR-001 | Revise ROADMAP_APP_DESCRIPTION_v3.0.md per 10-item remediation list from Issue #1184 | mat-specialist | PENDING |
-
----
-
-## Task Details
-
-### T-MRR-001 — Revise ROADMAP_APP_DESCRIPTION_v3.0.md
-
-**Agent**: mat-specialist
-**File to modify**: `modules/maturity-roadmap/00-app-description/ROADMAP_APP_DESCRIPTION_v3.0.md`
-**Source reference**: `modules/maturity-roadmap/00-app-description/Lucara_Diamond_Control_Standard_V4.md` (per IAA pre-brief advisory)
-
-**Priority 1 (Must Fix):**
-1. Separate source-derived requirements from inferred enhancements (label inferred content as "Inferred Design Recommendation", "Suggested Enhancement", or "Implementation Proposal")
-2. Preserve source ambiguity — "implementation users" vs "build users", "other organisations" phrasing, open conceptual areas
-3. Strengthen "continuous live score" concept in Purpose/Overview, Audit Configuration/Scoring Logic, Dashboard, AI, Evidence sections
-4. Expand evidence governance section substantially with: upload/connect/classification, acceptance/query/rejection/escalation, override/not-relevant handling, budget/skills constraints, freshness/staleness, re-evaluation, traceability, document vs live evidence, human override logging
-5. Strengthen dashboard's company-wide visibility/wow-factor — live display, broad visibility, achievement celebration, company screens
-
-**Priority 2 (Should Fix):**
-6. Clarify post-subscription structure note (source has 2 main aspects; Markdown restructures as 3 parts — add acknowledgement note)
-7. Clarify free assessment boundary (mainly MPS level, criteria/evidence after subscription, prompt if not done, baseline locked)
-8. Preserve open conceptual notes from source in dedicated section ("Open Design Notes from Source" or similar)
-
-**Priority 3 (Nice to Improve):**
-9. Reduce over-formalization (label/remove architecture language beyond the Word file)
-10. Add "Source Fidelity Notes" appendix
-
-**IAA Pre-Brief acceptance bar**:
-- CORE-007: No placeholder content (STUB/TODO/FIXME/TBD)
-- DOC-FFA-001: Only ROADMAP_APP_DESCRIPTION_v3.0.md in diff
-- DOC-FFA-002: All 5 Priority 1 items visibly addressed
-- DOC-FFA-003: Priority 2 items 6–8 addressed
-- DOC-FFA-004: Priority 3 items 9–10 (advisory only)
-- DOC-FFA-005: Source fidelity — no over-specification beyond source
-- DOC-FFA-006: Version header accurate
-- DOC-FFA-007: No new stub sections
-- PREHANDOVER proof committed before IAA invocation
-- Session memory committed before IAA invocation
+| ID | Deliverable | Assigned To | Status |
+|---|---|---|---|
+| CL-7-D1 | RED gate test: `PersonaValidationError` thrown on missing/invalid YAML fields | `qa-builder` | GREEN ✅ |
+| CL-7-D2 | RED gate test: persona registry sync CI check integration test | `qa-builder` | GREEN ✅ |
+| CL-7-D3 | Implementation: `PersonaValidationError` type + runtime YAML validation in `PersonaLoader.ts` | `api-builder` | GREEN ✅ |
+| CL-7-D4 | CI check: persona registry sync workflow | `integration-builder` | DELIVERED ✅ |
+| CL-7-D5 | Scheduled workflow: quarterly persona review freshness check | `integration-builder` | DELIVERED ✅ |
 
 ---
 
-## Exit Criteria
+## Governance
 
-- [ ] T-MRR-001 delivered and QP PASS
-- [ ] PREHANDOVER proof written
-- [ ] Session memory written  
-- [ ] IAA invoked and ASSURANCE-TOKEN received
-- [ ] Token ceremony complete
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-cl7-personaloader-20260405.md
+fail_only_once_attested: true
+fail_only_once_version: v4.0.0
+unresolved_breaches: none
+
+---
+
+**Authority**: CS2 (Johan Ras / @APGI-cmy)
+**Foreman**: foreman-v2-agent v6.2.0
+

@@ -574,6 +574,8 @@ Date: $(date +%Y-%m-%d)
 
 ${IAA_VERDICT}
 
+## PHASE_B_BLOCKING_TOKEN: IAA-session-${IAA_SESSION}-$(date +%Y%m%d)-PASS
+
 Phases Verified: 1-${PHASE1}, 2-${PHASE2}, 3-${PHASE3}, 4-${PHASE4}
 Agent Integrity: ${INTEGRITY_RESULT}
 Independence: CONFIRMED
@@ -905,7 +907,7 @@ Before session ends, verify:
 
 ---
 
-**Version**: 1.1.2  
-**Last Updated**: 2026-02-24  
+**Version**: 1.1.4  
+**Last Updated**: 2026-04-06  
 **Authority**: CS2 (Johan Ras)  
 **Living Agent System**: v6.2.0

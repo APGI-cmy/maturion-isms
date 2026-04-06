@@ -1,116 +1,111 @@
 {
-    "version": "1.0.0",
-    "repository": "APGI-cmy/maturion-isms",
-    "canonical_source": "APGI-cmy/maturion-foreman-governance",
-    "last_sync": {
-        "timestamp": "2026-04-05T11:30:00Z",
-        "session_id": "session-055-20260405",
-        "executed_by": "governance-liaison-isms-agent",
-        "canonical_inventory_version": "1.0.0",
-        "canonical_inventory_date": "2026-03-04",
-        "total_canons_synced": 8,
-        "sync_method": "layer-down-automated",
-        "sync_status": "SUCCESS",
-        "canonical_commit": "6bbc3bafa07208249f7532898c8e74b8c460cd4d",
-        "files_layered_down": [
-            "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
-            "governance/canon/PRE_BUILD_REALITY_CHECK_CANON.md",
-            "governance/policy/APP_DESCRIPTION_REQUIREMENT_POLICY.md",
-            "governance/templates/APP_DESCRIPTION_TEMPLATE.md",
-            "governance/templates/BUILDER_CHECKLIST_TEMPLATE.md",
-            "governance/templates/BUILD_PROGRESS_TRACKER_TEMPLATE.md",
-            "governance/templates/FRS_TEMPLATE.md",
-            "governance/templates/UX_WORKFLOW_WIRING_SPEC_TEMPLATE.md"
-        ],
-        "ripple_pr": "1231"
+  "version": "1.0.0",
+  "repository": "APGI-cmy/maturion-isms",
+  "canonical_source": "APGI-cmy/maturion-foreman-governance",
+  "last_sync": {
+    "timestamp": "2026-04-06T08:55:50Z",
+    "session_id": "align-20260406-085550",
+    "executed_by": "governance-liaison-isms-agent",
+    "canonical_inventory_version": "1.0.0",
+    "canonical_inventory_date": "2026-03-04",
+    "total_canons_synced": 2,
+    "sync_method": "layer-down-automated",
+    "sync_status": "SUCCESS",
+    "canonical_commit": "843cc6dc4dd88bee911ea21d809e72f28e7b93cf",
+    "files_layered_down": [
+      "governance/templates/FRS_TEMPLATE.md",
+      "governance/templates/TRS_TEMPLATE.md",
+      "governance/templates/minimum-architecture-template.md"
+    ],
+    "ripple_pr": "1243"
+  },
+  "alignment_status": {
+    "overall": "ALIGNED",
+    "canon_files": {
+      "total": 190,
+      "aligned": 190,
+      "sha256_variance": 0,
+      "missing": 0
     },
-    "alignment_status": {
-        "overall": "ALIGNED",
-        "canon_files": {
-            "total": 190,
-            "aligned": 190,
-            "sha256_variance": 0,
-            "missing": 0
-        },
-        "drift_detected": false,
-        "last_drift_check": "2026-04-05T11:30:00Z"
-    },
-    "integrity": {
-        "evidence_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_evidence.log",
-        "alignment_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_alignment.log",
-        "session_contract": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313.md",
-        "sha256_verified": 96,
-        "sha256_variance_files": [
-            "governance/canon/AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md",
-            "governance/canon/MERGE_GATE_PHILOSOPHY.md",
-            "governance/canon/PENDING_CANON_REFERENCES_INTERIM_GUIDANCE.md",
-            "governance/policy/POLICY-NO-ONLY-LANGUAGE.md",
-            "governance/opojd/OPOJD_COMPLETE_JOB_HANDOVER_DOCTRINE.md",
-            "governance/coordination/CROSS_AGENT_COORDINATION_PROTOCOL.md"
-        ]
-    },
-    "sync_schedule": {
-        "model": "event-driven-plus-scheduled",
-        "automatic_ripple": true,
-        "scheduled_check_frequency": "quarterly",
-        "scheduled_check_months": [
-            1,
-            4,
-            7,
-            10
-        ],
-        "next_scheduled_check": "2026-04-01",
-        "self_alignment_authorized": true
-    },
-    "governance_structure": {
-        "directories": [
-            "governance/canon",
-            "governance/canon/agent-contracts-guidance",
-            "governance/policy",
-            "governance/coordination",
-            "governance/opojd",
-            "governance/agent"
-        ],
-        "top_level_artifacts": [
-            "GOVERNANCE_ARTIFACT_INVENTORY.md",
-            "governance/sync_state.json"
-        ]
-    },
-    "metadata": {
-        "living_agent_system_version": "5.0.0",
-        "layer_down_protocol_version": "1.0.0",
-        "self_alignment_authority": "Issue #999",
-        "governance_liaison_contract": ".github/agents/governance-liaison.md"
-    },
-    "last_ripple_check": {
-        "timestamp": "2026-04-03T15:07:10Z",
-        "session_id": "session-governance-liaison-20260403",
-        "executed_by": "governance-liaison-isms-agent",
-        "canonical_commit": "1d91d51a9aac53f6e2e86189ef4ae4b779c00228",
-        "canonical_inventory_version": "1.0.0",
-        "result": "LAYERED_DOWN",
-        "drift_detected": true,
-        "agent_files_changed": false,
-        "files_layered_down": 3,
-        "pr_required": true,
-        "sync_pending": false,
-        "notes": "Ripple 1d91d51a contains FRS_TEMPLATE.md, TRS_TEMPLATE.md, and minimum-architecture-template.md. All three templates layered down to governance/templates/. No agent contract files changed. Auto-close eligible."
-    },
-    "liaison_confirmation": {
-        "timestamp": "2026-03-02T15:45:04Z",
-        "session_id": "session-036-20260302",
-        "executed_by": "governance-liaison-isms-agent",
-        "canonical_commit": "7792913259b00fab77c2d1be966e923a463853db",
-        "canonical_inventory_version": "1.0.0",
-        "sha256_verified": true,
-        "files_confirmed": [
-            "governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md",
-            "governance/CANON_INVENTORY.json",
-            "governance/sync_state.json"
-        ],
-        "aimc_integration": "NOT_REQUIRED",
-        "cross_references_updated": true,
-        "internal_ripple_complete": true,
-        "status": "SUCCESS"
-    }
+    "drift_detected": false,
+    "last_drift_check": "2026-04-06T08:55:50Z"
+  },
+  "integrity": {
+    "evidence_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_evidence.log",
+    "alignment_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_alignment.log",
+    "session_contract": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313.md",
+    "sha256_verified": 96,
+    "sha256_variance_files": [
+      "governance/canon/AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md",
+      "governance/canon/MERGE_GATE_PHILOSOPHY.md",
+      "governance/canon/PENDING_CANON_REFERENCES_INTERIM_GUIDANCE.md",
+      "governance/policy/POLICY-NO-ONLY-LANGUAGE.md",
+      "governance/opojd/OPOJD_COMPLETE_JOB_HANDOVER_DOCTRINE.md",
+      "governance/coordination/CROSS_AGENT_COORDINATION_PROTOCOL.md"
+    ]
+  },
+  "sync_schedule": {
+    "model": "event-driven-plus-scheduled",
+    "automatic_ripple": true,
+    "scheduled_check_frequency": "quarterly",
+    "scheduled_check_months": [
+      1,
+      4,
+      7,
+      10
+    ],
+    "next_scheduled_check": "2026-04-01",
+    "self_alignment_authorized": true
+  },
+  "governance_structure": {
+    "directories": [
+      "governance/canon",
+      "governance/canon/agent-contracts-guidance",
+      "governance/policy",
+      "governance/coordination",
+      "governance/opojd",
+      "governance/agent"
+    ],
+    "top_level_artifacts": [
+      "GOVERNANCE_ARTIFACT_INVENTORY.md",
+      "governance/sync_state.json"
+    ]
+  },
+  "metadata": {
+    "living_agent_system_version": "5.0.0",
+    "layer_down_protocol_version": "1.0.0",
+    "self_alignment_authority": "Issue #999",
+    "governance_liaison_contract": ".github/agents/governance-liaison.md"
+  },
+  "last_ripple_check": {
+    "timestamp": "2026-04-03T15:07:10Z",
+    "session_id": "session-governance-liaison-20260403",
+    "executed_by": "governance-liaison-isms-agent",
+    "canonical_commit": "1d91d51a9aac53f6e2e86189ef4ae4b779c00228",
+    "canonical_inventory_version": "1.0.0",
+    "result": "LAYERED_DOWN",
+    "drift_detected": true,
+    "agent_files_changed": false,
+    "files_layered_down": 3,
+    "pr_required": true,
+    "sync_pending": false,
+    "notes": "Ripple 1d91d51a contains FRS_TEMPLATE.md, TRS_TEMPLATE.md, and minimum-architecture-template.md. All three templates layered down to governance/templates/. No agent contract files changed. Auto-close eligible."
+  },
+  "liaison_confirmation": {
+    "timestamp": "2026-03-02T15:45:04Z",
+    "session_id": "session-036-20260302",
+    "executed_by": "governance-liaison-isms-agent",
+    "canonical_commit": "7792913259b00fab77c2d1be966e923a463853db",
+    "canonical_inventory_version": "1.0.0",
+    "sha256_verified": true,
+    "files_confirmed": [
+      "governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md",
+      "governance/CANON_INVENTORY.json",
+      "governance/sync_state.json"
+    ],
+    "aimc_integration": "NOT_REQUIRED",
+    "cross_references_updated": true,
+    "internal_ripple_complete": true,
+    "status": "SUCCESS"
+  }
 }
