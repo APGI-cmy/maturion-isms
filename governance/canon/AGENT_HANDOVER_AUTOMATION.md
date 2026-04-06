@@ -1,8 +1,8 @@
 # AGENT_HANDOVER_AUTOMATION
 
-**Status**: CANONICAL | **Version**: 1.1.3 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.1.4 | **Authority**: CS2  
 **Date**: 2026-02-24  
-**Amended**: 2026-03-04 — v1.1.3: Added §4.3b Token Update Ceremony (PREHANDOVER proof is read-only post-commit; IAA token written to dedicated file); added per-session append-only artifact requirement (CS2 auth: APGI-cmy/maturion-foreman-governance issue — Artifact Immutability &amp; Append-Only Proof Protocols)
+**Amended**: 2026-03-04 — v1.1.3: Added §4.3b Token Update Ceremony (PREHANDOVER proof is read-only post-commit; IAA token written to dedicated file); added per-session append-only artifact requirement (CS2 auth: APGI-cmy/maturion-foreman-governance issue — Artifact Immutability &amp; Append-Only Proof Protocols) | v1.1.4: PRE_BUILD_STAGE_MODEL_CANON integration — pre-build gate ceremony requirements added (CS2 auth: 2026-04-06)
 
 ---
 
