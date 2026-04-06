@@ -5,6 +5,7 @@
 **Date**: 2026-04-06
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
+PHASE_B_BLOCKING_TOKEN: IAA-session-foreman-pre-mmm-build-readiness-20260406-PASS
 
 ---
 
