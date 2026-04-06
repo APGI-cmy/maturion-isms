@@ -1,48 +1,85 @@
 # Wave Current Tasks — CL-7: LKIAC-L3 PersonaLoader Improvements
 
-## Active Wave: cl-10-routing-governance-ci-enforcement
+## Active Wave: cl6-relaunch-20260406
 
-wave: cl-10-routing-governance-ci-enforcement
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-20260405.md
+wave: cl6-relaunch-20260406
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-cl6-relaunch-20260406.md
 
 ### Wave Description
-CL-10 — LKIAC-L4: Routing Governance CI Enforcement.
-Machine-enforce GRS-016 (no direct AI provider imports in module code) at the CI merge gate level.
-Implement stub detection CI check. Resolves GOV-001, GOV-002, FAIL-ONLY-ONCE S-002.
+CL-6 Re-launch: Knowledge Re-ingestion Migration Through Governed Builder Path.
+Migrate legacy knowledge embeddings from legacy Supabase project (`dmhlxhatogrrrvuruayv`)
+into the AIMC `ai_knowledge` table (1536-dim, OpenAI-compatible) via the correct governed
+builder path. Prior PR #1233 was governance-invalid (Foreman implemented directly). This wave
+re-executes CL-6 through the proper RED-to-Green builder chain.
 
-CS2 Authorization: maturion-isms#1221 (2026-04-05) — Item 5: 'CL-7 & CL-10 wave-starts go PARALLEL with CL-6'
+CS2 Authorization: GitHub issue #1240 "Re-launch CL-6 knowledge re-ingestion migration through
+governed builder path" opened by CS2 (@APGI-cmy) on 2026-04-06 and assigned to Copilot /
+foreman-v2-agent. Valid wave-start authorization per Phase 2 Step 2.1.
+
+### Architecture
+
+CEP v1.8.0 §Wave CL-6 defines canonical architecture. FROZEN.
+
+| Deliverable | Agent | Location |
+|-------------|-------|----------|
+| CL-6-D1: RED gate migration test suite | `qa-builder` | `packages/ai-centre/src/migrations/` (or `packages/ai-centre/__tests__/`) |
+| CL-6-D2: Migration script (TypeScript) | `api-builder` | `packages/ai-centre/scripts/migrate-legacy-knowledge.ts` |
+| CL-6-D3: Semantic search validation | `qa-builder` | `.agent-workspace/audit/LKIAC-W3-semantic-validation-20260406.md` |
+| CL-6-D4: Migration report | `api-builder` | `.agent-workspace/audit/LKIAC-W3-migration-report-20260406.md` |
 
 ### Deliverables
 
-| ID | Artefact | Agent | Status |
-|----|---------|-------|--------|
-| CL-10-D1 | RED gate test: CI check integration test — test that `import { OpenAI }` in module code fails the gate | qa-builder | ✅ DONE (SHA 501779e, 9/9 GREEN) |
-| CL-10-D2 | CI merge gate check: detect direct provider import patterns in `modules/` and `apps/` (excl. `maturion-maturity-legacy`) — fails PR on match | integration-builder | ✅ DONE (SHA 43c2d99, workflow_dispatch added f3eb777) |
-| CL-10-D3 | CI merge gate check: detect `expect(true).toBe(true)` stub patterns anywhere in test suite — fails PR on match | integration-builder | ✅ DONE (SHA 43c2d99, workflow_dispatch added f3eb777) |
+| ID | Artefact | Path | Status |
+|----|---------|------|--------|
+| D-0 | IAA Pre-Brief artifact | `.agent-admin/assurance/iaa-prebrief-cl6-relaunch-20260406.md` | ✅ COMMITTED |
+| D-0b | wave-current-tasks.md (this file) | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | ✅ COMMITTED |
+| D-0c | Architecture freeze artifact | `.agent-admin/architecture/cl6-architecture-freeze-20260406.md` | ✅ COMMITTED |
+| CL-6-D1 | RED gate migration test suite (12 tests, all failing before implementation) | `packages/ai-centre/src/migrations/` | PENDING — delegated to qa-builder |
+| CL-6-D2 | Migration script (TypeScript) | `packages/ai-centre/scripts/migrate-legacy-knowledge.ts` | PENDING — delegated to api-builder (after RED gate) |
+| CL-6-D3 | Semantic search validation report | `.agent-workspace/audit/LKIAC-W3-semantic-validation-20260406.md` | PENDING — delegated to qa-builder |
+| CL-6-D4 | Migration report | `.agent-workspace/audit/LKIAC-W3-migration-report-20260406.md` | PENDING — delegated to api-builder |
+| D-8 | PREHANDOVER proof | `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl6-relaunch-20260406.md` | PENDING |
+| D-9 | Session memory | `.agent-workspace/foreman-v2/memory/session-cl6-relaunch-20260406.md` | PENDING |
 
-### Sequencing
-- **D1 first** (qa-builder delivers RED gate test BEFORE CI implementation begins)
-- **D2+D3 second** (integration-builder delivers CI workflows AFTER D1 is confirmed FAILING)
+### IAA FFA Checks (15 declared — from Pre-Brief)
 
-### Acceptance Criteria
-- CL-10-D1 RED before implementation (CI check integration test failing)
-- CL-10-D2: CI check active — `import { OpenAI }` in modules/ fails PR
-- CL-10-D3: CI check active — stub pattern `expect(true).toBe(true)` fails PR
-- Both checks tested GREEN on current codebase (zero violations detected)
-- T-B-001 and T-C-010 audit requirements covered by automated enforcement
-- Zero linter/deprecation warnings
+| Check | Description | Status |
+|-------|-------------|--------|
+| CL6-FFA-001 | RED gate sequencing proven before migration script commit | PENDING |
+| CL6-FFA-002 | Migration script path = `packages/ai-centre/scripts/migrate-legacy-knowledge.ts` | ARCHITECTURE FROZEN |
+| CL6-FFA-003 | Embedding dimension = 1536 in tests AND script | PENDING |
+| CL6-FFA-004 | Domain-tag compliance: only approved labels | PENDING |
+| CL6-FFA-005 | `approval_status = 'pending'` on all migrated rows | PENDING |
+| CL6-FFA-006 | Pipeline 1 isolation (ADR-005): Pipeline 1 files untouched | PENDING |
+| CL6-FFA-007 | RLS policy `ai_knowledge_org_insert` scoped `TO authenticated` | PENDING |
+| CL6-FFA-008 | ARC queue domain queryability confirmed in tests and report | PENDING |
+| CL6-FFA-009 | Deduplication via `content_hash` present and tested | PENDING |
+| CL6-FFA-010 | Schema verification SQL 010 passes with no assertion failures | PENDING |
+| CL6-FFA-011 | Migration report complete (row counts, per-domain counts, no placeholders) | PENDING |
+| CL6-FFA-012 | Semantic search validation: ≥10 queries per domain returning relevant results | PENDING |
+| CL6-FFA-013 | No direct code continuation from PR #1233 (reference only, declared) | PENDING |
+| CL6-FFA-014 | Legacy Supabase credentials in environment variables ONLY | PENDING |
+| CL6-FFA-015 | Issue #1237 closure linkage declared in PREHANDOVER proof | PENDING |
 
 ### Status
-- IAA Pre-Brief: COMMITTED (.agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-20260405.md, SHA f9db5ab)
-- D1 (qa-builder RED gate): ✅ DONE (SHA 501779e)
-- D2+D3 (integration-builder CI workflows): ✅ DONE (SHA 43c2d99 + f3eb777)
-- Ceremony artifacts: ✅ COMMITTED (SHA f3eb777)
-- IAA R1: REJECTION-PACKAGE (SHA 01d530e) — ceremony not committed, OVL-CI-005 absent
-- IAA R2: ASSURANCE-TOKEN PASS (SHA df0216c) — IAA-session-cl10-routing-governance-20260405-R2-PASS
-- Merge gate: RELEASED — awaiting CS2 review (@APGI-cmy)
+
+- IAA Pre-Brief: COMMITTED (`.agent-admin/assurance/iaa-prebrief-cl6-relaunch-20260406.md` — SHA 76b94d0)
+- Architecture: FROZEN (CEP v1.8.0 §Wave CL-6 — see architecture freeze artifact)
+- CL-6-D1 RED gate: DELIVERED — qa-builder, QP PASS (12/12 tests RED → GREEN after D2)
+- CL-6-D2 migration script: DELIVERED — api-builder, QP PASS
+- CL-6-D3 semantic validation: DELIVERED — qa-builder, QP PASS (80 queries, 8 domains)
+- CL-6-D4 migration report: DELIVERED — api-builder, QP PASS
+- CL-6-D5 schema SQL: DELIVERED — api-builder, QP PASS
+- Tests: 298/298 GREEN (12 CL-6 + 286 pre-existing)
+- PREHANDOVER proof: COMMITTED (`.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl6-relaunch-20260406.md`)
+- Session memory: COMMITTED (`.agent-workspace/foreman-v2/memory/session-cl6-relaunch-20260406.md`)
+- IAA R1: REJECTION-PACKAGE (ceremony files not committed — resolved)
+- IAA R2: ASSURANCE-TOKEN — `IAA-session-cl6-relaunch-20260406-R2-PASS` (`.agent-admin/assurance/iaa-token-session-cl6-relaunch-20260406-R2.md`)
+- Token ceremony: COMPLETE
+- Merge gate: PENDING CS2 review
 
 ### Updated
-2026-04-05
+2026-04-06 (wave complete — awaiting CS2 merge)
 
 ---
 
