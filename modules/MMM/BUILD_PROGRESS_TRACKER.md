@@ -1,7 +1,7 @@
 # BUILD PROGRESS TRACKER
 
-**Module**: MMM (Maturity Model Management)  
-**Module Slug**: mmm  
+**Module**: MMM (Maturity Management Module)  
+**Module Slug**: MMM  
 **Last Updated**: 2026-04-06  
 **Updated By**: governance-liaison-isms-agent (wave: align-12stage-prebuild-20260406)
 
