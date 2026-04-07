@@ -329,6 +329,20 @@ jobs:
           echo "       Fail if implementation changed but no pre-brief artifact."
           echo ""
 
+          # CS2 sign-off bypass: if the PR carries the 'CS sign-off: approved'
+          # label, CS2 has explicitly authorized this change, waiving the
+          # POLC pre-brief and builder-delegation requirements for this PR.
+          PR_LABELS="${{ join(github.event.pull_request.labels.*.name, ',') }}"
+          IFS=',' read -ra LABEL_ARRAY <<< "$PR_LABELS"
+          for label in "${LABEL_ARRAY[@]}"; do
+            if [[ "$label" == "CS sign-off: approved" ]]; then
+              echo "✅ PASS — PR carries 'CS sign-off: approved' label."
+              echo "   CS2 explicit sign-off detected. Pre-brief and builder-delegation"
+              echo "   requirements waived per CS2 supreme authority (AGCFPP §2)."
+              exit 0
+            fi
+          done
+
           # Get base branch
           BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
 
