@@ -1,20 +1,30 @@
-# Wave Current Tasks — Issue 1253
+# Wave Current Tasks — MMM Pre-Implementation Orchestration
 
-wave: wave-1253-foreman-12stage-alignment
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave-1253-20260407.md
+wave: wave-mmm-pre-impl-orchestration-20260407
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-mmm-pre-impl-orchestration-20260407.md
 
-## Active Wave: wave-1253-foreman-12stage-alignment
+## Active Wave: wave-mmm-pre-impl-orchestration-20260407
 
 ### Wave Description
-Align Foreman contract logic to the canonical 12-stage pre-build model.
-Contract amendment: foreman-v2-agent.md v2.8.0 → v2.9.0.
+POLC-Orchestration wave. Foreman produces consolidated implementation/orchestration plan
+for MMM Pre-Implementation Upgrade (PS-A through PS-I), including batched wave execution
+plan, dependency map, and CS2 decision-gate register.
 
-CS2 Authorization: Issue maturion-isms#1253 opened by @APGI-cmy (CS2) and assigned to
-foreman-v2-agent (Copilot). Comment: "CS: Johan Ras permission provided to codex advisor
-to work on or alter agent files to ensure alignment with this issue: 1253".
+Strategy source: `Maturion/strategy/PRE_MMM_IMPLEMENTATION_UPGRADE_STRATEGY.md` (CS2, 2026-04-07)
+
+CS2 Authorization: Issue opened by @APGI-cmy (CS2) and assigns foreman-v2-agent.
+Issue title: "Orchestrate MMM Pre-Implementation Upgrade: Foreman implementation strategy + batched wave execution plan"
 
 ### Tasks
-- [x] CodexAdvisor: amend foreman-v2-agent.md — add 12-stage pre_build_model YAML,
-      HALT-009/010/011, NO-SKIP-PREBUILD-001, Phase 2 Steps 2.5a/b/c, Phase 3 Steps 3.3/3.4a
-- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave-1253-20260407.md
-- [ ] IAA final audit and token
+- [x] T-01: IAA Pre-Brief invoked — EXEMPT verdict (session-057-prebrief-mmm-pre-impl-orchestration-20260407)
+- [x] T-02: IAA pre-brief artifact committed: .agent-admin/assurance/iaa-prebrief-mmm-pre-impl-orchestration-20260407.md
+- [x] T-03: Implementation plan authored: .agent-admin/foreman/implementation_plan_mmm_upgrade.md
+- [x] T-04: Session memory written: .agent-workspace/foreman-v2/memory/session-158-mmm-pre-impl-orchestration-20260407.md
+- [x] T-05: PREHANDOVER proof written: .agent-workspace/foreman-v2/memory/PREHANDOVER-session-158-mmm-pre-impl-orchestration-20260407.md
+
+### Wave Category
+EXEMPT — governance/planning artifacts only.
+No production code, schema, test, CI workflow, agent contract, or canon file changes.
+
+### Prior Wave (closed)
+wave-1253-foreman-12stage-alignment — iaa-prebrief-wave-1253-20260407.md
