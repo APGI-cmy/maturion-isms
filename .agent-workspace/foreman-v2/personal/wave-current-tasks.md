@@ -1,30 +1,30 @@
-# Wave Current Tasks — MMM Pre-Implementation Orchestration
+# Wave Current Tasks — F-D3-002 JWT Bearer Remediation
 
-wave: wave-mmm-pre-impl-orchestration-20260407
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-mmm-pre-impl-orchestration-20260407.md
+wave: wave-f-d3-002-jwt-bearer-remediation-20260407
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave-f-d3-002-jwt-bearer-remediation-20260407.md
 
-## Active Wave: wave-mmm-pre-impl-orchestration-20260407
+## Active Wave: wave-f-d3-002-jwt-bearer-remediation-20260407
 
 ### Wave Description
-POLC-Orchestration wave. Foreman produces consolidated implementation/orchestration plan
-for MMM Pre-Implementation Upgrade (PS-A through PS-I), including batched wave execution
-plan, dependency map, and CS2 decision-gate register.
+Security remediation wave. Addressing finding F-D3-002 from audit CL-11-D3:
+The JWT Bearer auth path on POST /api/ai/feedback/approve accepts any 3-part token
+without signature or identity verification. Remediation: Remove JWT Bearer path entirely,
+require x-arc-token exclusively (Option B).
 
-Strategy source: `Maturion/strategy/PRE_MMM_IMPLEMENTATION_UPGRADE_STRATEGY.md` (CS2, 2026-04-07)
-
-CS2 Authorization: Issue opened by @APGI-cmy (CS2) and assigns foreman-v2-agent.
-Issue title: "Orchestrate MMM Pre-Implementation Upgrade: Foreman implementation strategy + batched wave execution plan"
+CS2 Authorization: Issue #1272 opened by @APGI-cmy (CS2) and assigns foreman-v2-agent.
+Issue title: "[Remediation] POST /api/ai/feedback/approve — enforce CS2 identity on JWT Bearer path (F-D3-002)"
+Audit artifact: .agent-workspace/audit/CL-11-D3-arc-approval-403-audit-20260405.md
 
 ### Tasks
-- [x] T-01: IAA Pre-Brief invoked — EXEMPT verdict (session-057-prebrief-mmm-pre-impl-orchestration-20260407)
-- [x] T-02: IAA pre-brief artifact committed: .agent-admin/assurance/iaa-prebrief-mmm-pre-impl-orchestration-20260407.md
-- [x] T-03: Implementation plan authored: .agent-admin/foreman/implementation_plan_mmm_upgrade.md
-- [x] T-04: Session memory written: .agent-workspace/foreman-v2/memory/session-158-mmm-pre-impl-orchestration-20260407.md
-- [x] T-05: PREHANDOVER proof written: .agent-workspace/foreman-v2/memory/PREHANDOVER-session-158-mmm-pre-impl-orchestration-20260407.md
+- [x] T-01: IAA Pre-Brief invoked — PHASE_B_BLOCKING (not exempt, code changes)
+- [x] T-02: IAA pre-brief artifact committed: .agent-admin/assurance/iaa-prebrief-wave-f-d3-002-jwt-bearer-remediation-20260407.md
+- [x] T-03: wave-current-tasks.md updated for this wave
+- [ ] T-04: api-builder delegated to implement security fix
+- [ ] T-05: QP evaluation of builder deliverable
+- [ ] T-06: PREHANDOVER proof written
+- [ ] T-07: IAA Phase 2-4 audit token received and committed
+- [ ] T-08: Merge gate released
 
 ### Wave Category
-EXEMPT — governance/planning artifacts only.
-No production code, schema, test, CI workflow, agent contract, or canon file changes.
-
-### Prior Wave (closed)
-wave-1253-foreman-12stage-alignment — iaa-prebrief-wave-1253-20260407.md
+BUILD_DELIVERABLE — security remediation to AI Centre API endpoint.
+Changes: api/ai/feedback/approve.ts (remove JWT Bearer path), api/ai/feedback/approve.test.ts (add 403 test for JWT Bearer)
