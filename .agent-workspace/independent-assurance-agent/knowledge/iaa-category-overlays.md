@@ -1,9 +1,9 @@
 # IAA Category Overlays
 
 **Agent**: independent-assurance-agent
-**Version**: 3.8.0
+**Version**: 4.0.0
 **Status**: ACTIVE
-**Last Updated**: 2026-04-06
+**Last Updated**: 2026-04-07
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -329,6 +329,26 @@ No Pre-Brief artifact found. IAA states:
 | OVL-INJ-ADM-001 | Pre-Brief artifact non-empty | `.agent-admin/assurance/iaa-prebrief-<slug>.md` contains substantive content — not a blank file, stub, or placeholder-only file. |
 | OVL-INJ-ADM-002 | Pre-Brief references correct wave | Pre-Brief artifact header declares the same wave number or slug as `wave-current-tasks.md` on the branch. Mismatch = cross-wave reuse violation. |
 
+### Stage-Readiness View (Pre-Brief Strengthening)
+
+Per PRE_BUILD_STAGE_MODEL_CANON.md §10 (Downstream Actions item 4), IAA Pre-Brief artifacts
+must not only classify tasks but also produce a stage-readiness view.
+
+When IAA generates a Pre-Brief (Phase 0 mode), the artifact MUST declare:
+
+| Required Section | Content |
+|-----------------|---------|
+| Upstream stages complete | Which of Stages 1–10 are documented as COMPLETE for this wave |
+| Artifacts reviewed | Which specific files were examined to establish stage completion |
+| Blockers preventing builder appointment | Any missing stage artifact that blocks Stage 11 |
+| Acceptance conditions | The specific evidence IAA will verify at handover assurance |
+
+A Pre-Brief that only classifies tasks (KNOWLEDGE_GOVERNANCE / AAWP_MAT / etc.) without
+declaring a stage-readiness view is incomplete under PRE_BUILD_STAGE_MODEL_CANON.md §10.
+IAA must self-apply this standard when generating Pre-Brief artifacts.
+
+| OVL-INJ-ADM-003 | Stage-readiness view declared | Pre-Brief artifact contains a stage-readiness section listing which stages 1–10 are COMPLETE/PENDING and which blockers prevent Stage 11 builder appointment. Missing section = advisory finding (not REJECTION-PACKAGE — governance wave pre-briefs may adapt the format). |
+
 ---
 
 ## PRE_BUILD_GATES Overlay
@@ -349,12 +369,19 @@ Applied when PR category is `PRE_BUILD_STAGE_MODEL` or `MANDATORY_CROSS_APP_COMP
 | OVL-PBG-007 | Architecture doc references full lifecycle sequence | Verify that the Canonical Architecture Sequence in `modules/X/02-architecture/architecture.md` lists all 12 stages, not a shortened subset. | REJECTION-PACKAGE citing the missing stages. |
 | OVL-PBG-008 | Stage gating respected (no skipped stages) | For any PR that advances a module's lifecycle stage, verify that all prior stages in the 12-stage sequence are documented as COMPLETE or have an explicit CS2-approved exception. No stage skipping permitted. | REJECTION-PACKAGE: "Stage N cannot begin until Stage N-1 is complete per PRE_BUILD_STAGE_MODEL_CANON.md." |
 | OVL-PBG-009 | Legacy directory numbering flagged when out of sync | If `modules/X/BUILD_PROGRESS_TRACKER.md` references legacy directory numbers (00-, 01-, 02- etc.) that do not match the canonical stage numbers (01-, 02-, 03- etc.), IAA must flag this as a STRUCTURAL NOTE requiring a migration plan from CS2. | Advisory finding — not REJECTION-PACKAGE, but must be documented. |
+| OVL-PBG-010 | Stage 2 — UX Workflow & Wiring Spec present for user-facing builds | For any user-facing module PR that claims Architecture (Stage 5) or later: verify that a UX Workflow & Wiring Spec artifact exists in `modules/X/` directory or is referenced in BUILD_PROGRESS_TRACKER.md as COMPLETE. Non-user-facing builds require a Wiring Spec Only variant (cannot be omitted entirely). | REJECTION-PACKAGE: "UX Workflow & Wiring Spec (Stage 2) is mandatory for user-facing builds before Stage 5+ work proceeds per PRE_BUILD_STAGE_MODEL_CANON.md §Stage 2." |
+| OVL-PBG-011 | Stage 6 — QA-to-Red suite exists before implementation | For any PR that begins or advances build work: verify that a RED QA suite (failing tests derived from FRS/TRS/Architecture) exists and is referenced in BUILD_PROGRESS_TRACKER.md as COMPLETE. | REJECTION-PACKAGE: "QA-to-Red suite (Stage 6) must exist and be signed off before any build work begins per PRE_BUILD_STAGE_MODEL_CANON.md §Stage 6." |
+| OVL-PBG-012 | Stage 7 — PBFAG confirmed before builder delegation | For any PR that appoints a builder or begins build: verify that PBFAG result is documented as PASS in BUILD_PROGRESS_TRACKER.md or an equivalent artifact. | REJECTION-PACKAGE: "PBFAG (Stage 7) must be confirmed PASS before builder delegation per PRE_BUILD_STAGE_MODEL_CANON.md §Stage 7." |
+| OVL-PBG-013 | Stage 9 — Builder Checklist passed before appointment | For any PR that appoints a builder: verify that a Builder Checklist artifact exists for the appointed builder and is marked PASS. | REJECTION-PACKAGE: "Builder Checklist (Stage 9) must PASS for all appointed builders before appointment per PRE_BUILD_STAGE_MODEL_CANON.md §Stage 9." |
+| OVL-PBG-014 | §7.1 — Change-Propagation Audit complete when upstream artifacts changed | For any PR that modifies App Description, UX Workflow, FRS, TRS, or Architecture artifacts: verify a Change-Propagation Audit log entry exists confirming downstream artifacts (QA suite, PBFAG, Implementation Plan, Builder scope) have been updated. | REJECTION-PACKAGE: "Change-Propagation Audit (§7.1) is required when upstream pre-build artifacts change per PRE_BUILD_STAGE_MODEL_CANON.md §7.1." |
+| OVL-PBG-015 | §7.2 — Runtime/Deployment Contract filed before first build wave | For any PR that begins the first build wave of a module: verify a Runtime/Deployment Contract artifact is present (deployment target, env vars, auth assumptions, schema prerequisites, health checks). | REJECTION-PACKAGE: "Runtime/Deployment Contract (§7.2) must be filed before the first build wave per PRE_BUILD_STAGE_MODEL_CANON.md §7.2." |
+| OVL-PBG-016 | §7.3 — Golden Path Verification Pack defined before first build wave | For any PR that begins the first build wave of a module: verify a Golden Path Verification Pack is present (named golden paths, step-by-step descriptions, expected outcomes, pass/fail criteria, QA mapping). | REJECTION-PACKAGE: "Golden Path Verification Pack (§7.3) must be defined before the first build wave per PRE_BUILD_STAGE_MODEL_CANON.md §7.3." |
 
 **Admin Check:**
 
 | Check ID | Check Name | Pass Condition |
 |----------|-----------|---------------|
-| OVL-PBG-ADM-001 | PRE_BUILD_GATES overlay loaded | IAA must state that OVL-PBG-001 through OVL-PBG-009 have been applied when PR category includes PRE_BUILD_STAGE_MODEL or MANDATORY_CROSS_APP_COMPONENTS. |
+| OVL-PBG-ADM-001 | PRE_BUILD_GATES overlay loaded | IAA must state that OVL-PBG-001 through OVL-PBG-016 have been applied when PR category includes PRE_BUILD_STAGE_MODEL or MANDATORY_CROSS_APP_COMPONENTS. |
 
 ---
 
@@ -383,6 +410,7 @@ Applied when PR category is `AGENT_INTEGRITY`.
 | 3.6.0 | 2026-03-18 | Orientation Mandate scope note added — clarifies "cross-reference consistency" vs. declared-state integrity; OVL-KG-ADM-002 pass condition sharpened (file header version must match index.md registration AND exceed prior version — mismatch = FAIL); timestamp carve-out note added (stale Last Updated field is observation only, not REJECTION-PACKAGE trigger); issue [clarify audit scope cross-reference consistency and version bump history] |
 | 3.7.0 | 2026-04-06 | PRE_BUILD_GATES overlay added (OVL-PBG-001 through OVL-PBG-005, OVL-PBG-ADM-001) — MMM FRS pre-build gate enforcement: manifest slug/directory match, BUILD_PROGRESS_TRACKER identity consistency, architecture doc module name, IAA Pre-Brief existence before builder delegation, AGENT_HANDOVER_AUTOMATION canonical version check; wave: pre-mmm-build-readiness |
 | 3.8.0 | 2026-04-06 | PRE_BUILD_GATES overlay strengthened (OVL-PBG-006 through OVL-PBG-009) — full 12-stage model enforcement: BUILD_PROGRESS_TRACKER 12-stage completeness (OVL-PBG-006), architecture doc full lifecycle sequence (OVL-PBG-007), stage gating no-skip enforcement (OVL-PBG-008), legacy directory numbering advisory flag (OVL-PBG-009); OVL-PBG-ADM-001 updated to reference OVL-PBG-001 through OVL-PBG-009; wave: pre-mmm-build-readiness (CS2 review blockers) |
+| 4.0.0 | 2026-04-07 | PRE_BUILD_GATES overlay: OVL-PBG-010 through OVL-PBG-016 added — Stage 2 UX Wiring Spec, Stage 6 QA-to-Red, Stage 7 PBFAG, Stage 9 Builder Checklist, §7.1 Change-Propagation Audit, §7.2 Runtime/Deployment Contract, §7.3 Golden Path Verification Pack enforcement; PRE_BRIEF_ASSURANCE overlay: stage-readiness view requirement and OVL-INJ-ADM-003 added; wave: iaa-12stage-upgrade (issue #1258) |
 
 ---
 
