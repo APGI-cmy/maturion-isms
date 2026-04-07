@@ -265,9 +265,9 @@ setting `INDEPENDENT_ASSURANCE_AGENT_CANON.md` to v1.4.0 with a valid SHA256 has
 
 **Severity**: ADVISORY  
 **Description**: `PRE_BUILD_STAGE_MODEL_CANON.md` is present in CANON_INVENTORY at v1.0.0 with
-hash `91764b68657c0e91...`. Hash format in CANON_INVENTORY uses field `file_hash` (not `file_hash_sha256`).
-IAA will verify this file is accessible and non-placeholder at handover but will not block on
-the hash field name difference since it's a CANON_INVENTORY structural matter, not a wave deliverable.
+hash `91764b68657c0e91...`. This note does not assert any `file_hash` / `file_hash_sha256`
+schema discrepancy in CANON_INVENTORY; IAA will verify this file is accessible and non-placeholder
+at handover, but this item is not a blocker because no wave-specific remediation is required here.
 
 ### NON-BLOCKER-002 — IAA_PRE_BRIEF_PROTOCOL.md Referenced but Not in Wave Scope
 
