@@ -121,6 +121,31 @@ describe('Wave 9.4 — POST /api/ai/feedback/approve', () => {
     expect(res2.statusCode).toBe(403);
   });
 
+  it('W9.4-T-011: returns 403 when Authorization: Bearer token is supplied (JWT path removed — F-D3-002)', async () => {
+    process.env['ARC_APPROVAL_TOKEN'] = 'secret-arc-token';
+
+    const mockFactory = vi.fn();
+    const handler = createHandler(mockFactory);
+
+    // Minimal structural token (a.b.c)
+    const req1 = mockRequest('POST', validApproveBody, {
+      authorization: 'Bearer a.b.c',
+    });
+    const res1 = mockResponse();
+    await handler(req1, res1 as unknown as ServerResponse);
+    expect(res1.statusCode).toBe(403);
+    expect(mockFactory).not.toHaveBeenCalled();
+
+    // Realistic structural JWT (eyJ.eyJ.sig)
+    const req2 = mockRequest('POST', validApproveBody, {
+      authorization: 'Bearer eyJ.eyJ.sig',
+    });
+    const res2 = mockResponse();
+    await handler(req2, res2 as unknown as ServerResponse);
+    expect(res2.statusCode).toBe(403);
+    expect(mockFactory).not.toHaveBeenCalled();
+  });
+
   it('W9.4-T-010: returns 200 with updated event when valid ARC token and payload provided', async () => {
     process.env['ARC_APPROVAL_TOKEN'] = 'secret-arc-token';
 

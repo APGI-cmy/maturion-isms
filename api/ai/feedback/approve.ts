@@ -105,33 +105,17 @@ export function createHandler(factory: FeedbackPipelineFactory = buildFeedbackPi
       return;
     }
 
-    // Authentication: accept either Supabase session JWT (Authorization: Bearer)
-    // or a server-side ARC token (x-arc-token) for backward compatibility.
-    const authHeader = (req.headers as Record<string, string | string[] | undefined>)['authorization'];
+    // Authentication: x-arc-token required (CS2-gated ARC operations).
+    // JWT Bearer path removed — F-D3-002 remediation (Issue #1272).
     const arcTokenHeader = (req.headers as Record<string, string | string[] | undefined>)['x-arc-token'];
     const expectedToken = process.env['ARC_APPROVAL_TOKEN'];
 
-    const isJwtAuth = typeof authHeader === 'string' && authHeader.startsWith('Bearer ');
     const isArcTokenAuth = typeof arcTokenHeader === 'string' && expectedToken && arcTokenHeader === expectedToken;
 
-    if (!isJwtAuth && !isArcTokenAuth) {
+    if (!isArcTokenAuth) {
       res.writeHead(403);
-      res.end(JSON.stringify({ error: 'Forbidden. Valid x-arc-token or Authorization header required.' }));
+      res.end(JSON.stringify({ error: 'Forbidden. Valid x-arc-token required.' }));
       return;
-    }
-
-    // Structural JWT validation (3 dot-separated base64url parts) — signature verification
-    // is intentionally omitted here. Supabase RLS enforces actual auth in production;
-    // offline/CI tests use structurally valid unsigned tokens. Same contract as
-    // api/ai/request.ts validateAuthHeader() (see GAP-017 design note).
-    if (isJwtAuth) {
-      const token = (authHeader as string).slice(7);
-      const parts = token.split('.');
-      if (parts.length !== 3) {
-        res.writeHead(401);
-        res.end(JSON.stringify({ error: 'Unauthorized. Invalid Bearer token format.' }));
-        return;
-      }
     }
 
     let payload: ApproveBody;
