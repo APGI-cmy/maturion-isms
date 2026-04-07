@@ -1,81 +1,77 @@
-# Wave Current Tasks — Align live maturion-isms module artifacts to the canonical 12-stage pre-build model
+# Wave Current Tasks — Pre-MMM Build Readiness
 
-## Active Wave: align-12stage-prebuild-20260406
+## Active Wave: pre-mmm-build-readiness
 
-wave: align-12stage-prebuild-20260406
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-align-12stage-prebuild-20260406.md
+wave: pre-mmm-build-readiness
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-pre-mmm-build-readiness.md
 
-**Wave**: Align live maturion-isms module artifacts to the canonical 12-stage pre-build model
-**Session ID**: session-align-12stage-prebuild-20260406
-**Date**: 2026-04-06
-**Branch**: copilot/align-live-maturation-artifacts
-**CS2 Authorization**: maturion-isms#1255 — opened by CS2 (@APGI-cmy) on 2026-04-06, assigned to Copilot and APGI-cmy
+### Wave Description
+Pre-MMM Build Readiness: Orchestrate Layer-Down, Knowledge Upgrade & Governance Compliance.
 
----
+Orchestrate and delegate all readiness and pre-blocker tasks needed before starting the MMM
+module Functional Requirements Specification (FRS) wave. This covers:
+1. Governance layer-down — COMPLETE (@APGI-cmy confirmed "No Drift Detected")
+2. IAA agent Tier 2/3 knowledge upgrades — COMPLETE (governance-liaison-isms session-056)
+3. MMM module identity cleanup — COMPLETE (governance-liaison-isms session-056)
 
-## Wave Description
+CS2 Authorization: GitHub issue "Pre-MMM Build Readiness: Orchestrate Layer-Down, Knowledge
+Upgrade & Governance Compliance" in APGI-cmy/maturion-isms, assigned to foreman-v2-agent
+(Copilot). @APGI-cmy commented confirming governance alignment. Valid CS2 wave-start
+authorization per Phase 2 Step 2.1 (issue owner = CS2).
 
-Align consumer-repo operating artifacts to the canonical 12-stage pre-build model defined in
-`governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05).
+### Deliverables
 
-The 12-stage model is:
-App Description → UX Workflow & Wiring Spec → FRS → TRS → Architecture → QA-to-Red → PBFAG → Implementation Plan → Builder Checklist → IAA Pre-Brief → Builder Appointment → Build
+| ID | Artefact | Path | Status |
+|----|---------|------|--------|
+| D-0 | IAA Pre-Brief | `.agent-admin/assurance/iaa-prebrief-pre-mmm-build-readiness.md` | ✅ COMMITTED (1b619ce) |
+| D-0b | wave-current-tasks.md | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | ✅ COMMITTED |
+| TASK-2 | IAA knowledge upgrades (trigger table v2.2.0, overlays v3.7.0, index v3.2.0) | `.agent-workspace/independent-assurance-agent/knowledge/` | ✅ DELIVERED (session-056) |
+| TASK-3A | module.manifest.json corrected (MMM) | `modules/MMM/module.manifest.json` | ✅ DELIVERED (session-056) |
+| TASK-3B | BUILD_PROGRESS_TRACKER.md corrected (MMM) | `modules/MMM/BUILD_PROGRESS_TRACKER.md` | ✅ DELIVERED (session-056) |
+| TASK-3C | architecture.md rewritten as MMM | `modules/MMM/02-architecture/architecture.md` | ✅ DELIVERED (session-056) |
+| TASK-3D | Legacy capabilities recommendations | `.agent-workspace/foreman-v2/personal/mmm-legacy-capabilities-recommendations.md` | ✅ DELIVERED (session-056) |
+| D-PREHANDOVER | PREHANDOVER proof | `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-foreman-pre-mmm-build-readiness-20260406.md` | ✅ COMMITTED |
+| D-SESSION | Session memory | `.agent-workspace/foreman-v2/memory/session-foreman-pre-mmm-build-readiness-20260406.md` | ✅ COMMITTED |
 
-Active module trackers currently use old shortened stage sequences (Stage 0, Stage 1, Stage 1.5, Stage 2, Stage 2.5, etc.) inconsistent with the canonical model.
+### IAA FFA Checks (from Pre-Brief — to be verified at Foreman handover)
 
-### Architecture (FROZEN)
-`governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 — canonical stage definitions (immutable).
-`governance/templates/BUILD_PROGRESS_TRACKER_TEMPLATE.md` — canonical tracker format.
+| Check | Description | Status |
+|-------|-------------|--------|
+| KG-TASK2-01 | iaa-trigger-table.md updated and versions accurate | ✅ PASS (v2.2.0) |
+| KG-TASK2-02 | iaa-category-overlays.md updated with PRE_BUILD_GATES section | ✅ PASS (v3.7.0) |
+| KG-TASK2-03 | index.md bumped to v3.2.0 | ✅ PASS |
+| KG-TASK2-04 | AGENT_HANDOVER_AUTOMATION version = v1.1.4 (canonical) | ✅ PASS |
+| MMM-TASK3-01 | module_slug = "MMM" in module.manifest.json | ✅ PASS |
+| MMM-TASK3-02 | BUILD_PROGRESS_TRACKER.md identity = MMM | ✅ PASS |
+| MMM-TASK3-03 | architecture.md references MMM (not legacy) | ✅ PASS |
+| MMM-TASK3-04 | Legacy capabilities recommendations document present | ✅ PASS |
 
----
+### Status
 
-## Outstanding Tasks (update as each is completed)
+- IAA Pre-Brief: ✅ COMMITTED (SHA 1b619ce)
+- Governance layer-down (Task 1): ✅ COMPLETE — @APGI-cmy confirmed
+- TASK-2 (IAA knowledge upgrade): ✅ DELIVERED — governance-liaison-isms session-056, IAA-session-056-R2-PASS
+- TASK-3 (MMM identity cleanup): ✅ DELIVERED — governance-liaison-isms session-056, IAA-session-056-R2-PASS
+- Foreman QP Verdict: ✅ PASS
+- PREHANDOVER proof: ✅ COMMITTED
+- Session memory: ✅ COMMITTED
+- Foreman IAA: PENDING (invoking)
+- Token ceremony: PENDING
+- Merge gate: PENDING CS2 review
 
-| # | Task | Builder | Status | PR / Evidence |
-|---|------|---------|--------|---------------|
-| 1 | Create MODULE_CLASSIFICATION.md — classify all modules as retrofit/fresh-start/historical | governance-liaison-isms-agent | ❌ BLOCKED | governance-liaison hit 429 rate limit; escalate to CS2 |
-| 2 | Update MAT BUILD_PROGRESS_TRACKER.md to 12-stage structure with stage mapping | mat-specialist | ❌ BLOCKED | mat-specialist hit session time limit; research findings documented below |
-| 3 | Update PIT BUILD_PROGRESS_TRACKER.md to 12-stage structure | governance-liaison-isms-agent | ❌ BLOCKED | blocked by governance-liaison rate limit |
-| 4 | Update maturity-roadmap BUILD_PROGRESS_TRACKER.md to 12-stage structure | governance-liaison-isms-agent | ❌ BLOCKED | blocked by governance-liaison rate limit |
-| 5 | Update remaining modules (MMM, amc, course-crafter, incident-intelligence, isms, risk-management, xdetect) BUILD_PROGRESS_TRACKER.md files | governance-liaison-isms-agent | ❌ BLOCKED | blocked by governance-liaison rate limit |
-| 6 | Update packages/ai-centre BUILD_PROGRESS_TRACKER.md | governance-liaison-isms-agent | ❌ BLOCKED | blocked by governance-liaison rate limit |
-
-## A-007 HALT — Builder Agents Unavailable
-
-**Status: BLOCKED — HALT-006 TRIGGERED**
-
-Per A-007: governance-liaison-isms-agent hit 429 rate limit; mat-specialist hit session time limit. Self-implementation is not a permitted fallback. Wave is halted pending CS2 resolution.
-
-## mat-specialist Research Findings (for next session)
-
-mat-specialist completed research before timing out. No files were modified. Key findings:
-- **Stage 7 (PBFAG)**: COMPLETE — `modules/mat/05-build-evidence/PBFAG-mat-20260313.md` exists, all 13 checks PASSED (2026-03-13)
-- **Stage 9 (Builder Checklist)**: COMPLETE (retroactive) — `governance/artifacts/BUILDER_AGENT_FILE_COMPLIANCE_CHECKLIST.md` v1.1.0 created 2026-02-14
-- **Stage 10 (IAA Pre-Brief)**: COMPLETE — multiple wave-level pre-briefs exist
-- **Stage 11 (Builder Appointment)**: COMPLETE — builder contracts recorded 2026-02-13/14
-- **Stage 2 (UX Workflow & Wiring Spec)**: NOT_STARTED — no artifact; MAT predated this stage mandate
-- **Stage 12 (Build)**: ACTIVE — multiple waves delivered
-
-**Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED
-
----
-
-## IAA Tokens Received This Wave
-
-| PR # | Token | Date |
-|------|-------|------|
-| — | PENDING | — |
+### Updated
+2026-04-06 (Foreman Phase 4 in progress)
 
 ---
 
-## Wave Completion Gate
+## Previous Wave (archived): cl6-relaunch-20260406
 
-- [ ] All tasks above show 🟢 DONE
-- [ ] All PRs have ASSURANCE-TOKEN
-- [ ] Session memory written
-- [ ] PREHANDOVER proof committed
-- [ ] CS2 notified for merge approval
+wave: cl6-relaunch-20260406
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-cl6-relaunch-20260406.md
 
----
+### Status
+- IAA R2: ASSURANCE-TOKEN — IAA-session-cl6-relaunch-20260406-R2-PASS
+- PR: copilot/implement-wire-parse-write-back-rpc — PENDING CS2 merge
 
-*Wave authorized by CS2 via maturion-isms#1255 (2026-04-06). PRE_BUILD_STAGE_MODEL_CANON.md v1.0.0 is the governing canon for this alignment wave.*
+### Updated
+2026-04-06 (archived)

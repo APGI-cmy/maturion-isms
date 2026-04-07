@@ -47,6 +47,7 @@ Replace all `[placeholder]` values — no field may be left blank.
 ## Verdict
 - verdict: [ASSURANCE-TOKEN / REJECTION-PACKAGE / EXEMPT]
 - token_reference: [IAA-session-NNN-YYYYMMDD-PASS — if ASSURANCE-TOKEN, else N/A]
+- PHASE_B_BLOCKING_TOKEN: [IAA-session-NNN-YYYYMMDD-PASS — MUST match token_reference; required in token file; absent/PENDING fails CI guard]
 - adoption_phase_at_time_of_verdict: [PHASE_A_ADVISORY / PHASE_B]
 
 ## Failures Cited (if REJECTION-PACKAGE)

@@ -214,6 +214,49 @@ before Architecture can be formally gate-passed.
 - [ ] Build completion evidence
 - [ ] Handover documentation
 
+#### 12.1 Critical Deliverable Validation (Waves 5-7 Lessons)
+
+**Frontend Application Deliverables** (if UI required):
+- [ ] React app (or framework) exists at documented path
+- [ ] App launches successfully in development mode
+- [ ] Production build succeeds without errors
+- [ ] App deployed to staging/production environment
+- [ ] Deployment URL accessible and functional
+- [ ] UI components render correctly
+- [ ] Routing works (if multi-page app)
+
+**Backend Application Deliverables** (if backend required):
+- [ ] API server code exists at documented path
+- [ ] API server starts successfully
+- [ ] Database schema deployed
+- [ ] Database seeded with test data
+- [ ] API endpoints respond correctly
+- [ ] API deployed to staging/production
+- [ ] API URL accessible and functional
+
+**UI-to-Backend Wiring Validation** (MANDATORY if both exist):
+- [ ] Frontend can successfully call backend API
+- [ ] Authentication/authorization flow works
+- [ ] Data flows from UI → API → Database → API → UI
+- [ ] Error handling works (backend errors shown in UI)
+- [ ] CORS configured correctly (no browser errors)
+- [ ] E2E tests covering full workflows PASSING
+
+**Infrastructure Deployment Evidence** (REQUIRED):
+- [ ] Frontend deployment URL documented and accessible
+- [ ] Backend deployment URL documented and accessible
+- [ ] Database connection string configured (secrets secured)
+- [ ] Environment variables configured in deployment platforms
+- [ ] Health check endpoints verified
+- [ ] At least ONE complete workflow demonstrated with screenshots/video
+
+**Prohibition - Wave Closure WITHOUT**:
+- ❌ Frontend deployment (if UI specified in requirements)
+- ❌ Backend deployment (if API specified in requirements)
+- ❌ Database deployment (if data persistence required)
+- ❌ Working E2E workflow demonstration
+- ❌ UI wiring tests (if both UI and backend exist)
+
 **Completion Date**: N/A  
 **Notes**: Core build not yet started. However, as an artifact of Wave 9.6 AIMC integration
 (pre-12-stage), `src/services/aimc-wiring.ts` exists as an AIMC integration component.

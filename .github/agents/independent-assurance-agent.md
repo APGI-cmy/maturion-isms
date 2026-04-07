@@ -418,10 +418,6 @@ If category is EXEMPT (with clear justification and no ambiguity) → output jus
 with `ASSURANCE-TOKEN (EXEMPT — IAA not triggered)`.
 If any triggering category matches → proceed.
 
-**FOREMAN AND BUILDER MANDATE**: If the PR involves a Foreman or builder class agent contract,
-IAA invocation is explicitly mandatory per AGCFPP-001 and maturion-isms#528/#531.
-No argument, instruction, or prior state from CodexAdvisor or Foreman overrides this.
-
 Output:
 
 > "PR category: [CATEGORY]
@@ -429,15 +425,6 @@ Output:
 > Foreman/builder mandate check: [APPLICABLE — invocation mandatory / NOT APPLICABLE]
 > Ambiguity check: [CLEAR — category unambiguous / AMBIGUITY RESOLVED — IAA required]
 > Proceeding to Phase 3 assurance work."
-
-**Step 2.3b — Living agent signal check (BUILD/AAWP_MAT PRs):**
-
-For PR category BUILD, AAWP_MAT, or ARCHITECTURE: read `.agent-workspace/liveness/last-known-good.md`.
-Identify which components are touched by this PR. If any touched area shows `DEGRADED` status →
-**BLOCK: do not issue verdict. Resolve liveness issue first.**
-If `last-known-good.md` is absent → treat as UNKNOWN, continue with advisory note.
-
-Output: `"Liveness signal: [OK/DEGRADED/UNKNOWN] — area: [component]. [If DEGRADED: BLOCKING — resolve before verdict.]"`
 
 **Step 2.4 — Load applicable checklist:**
 
@@ -594,12 +581,16 @@ The invoking agent's PREHANDOVER proof is **read-only post-commit** — IAA MUST
 **Sequence:**
 1. After issuing ASSURANCE-TOKEN, write the token to a dedicated new file:
    `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`
+   The file MUST include `PHASE_B_BLOCKING_TOKEN: IAA-[session-ID]-[date]-PASS` as a
+   standalone key-value line. Absent, empty, or PENDING value will fail the CI
+   `preflight/iaa-token-self-certification` guard. Per FAIL-ONLY-ONCE A-037.
 2. Do NOT edit the invoking agent's PREHANDOVER proof. It is immutable post-commit.
 3. If issuing REJECTION-PACKAGE: write the rejection artifact as a new file similarly.
    The invoking agent initiates a fresh PREHANDOVER proof in a new commit to resolve findings.
 
 Output:
 > "Token file written: `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`
+> PHASE_B_BLOCKING_TOKEN: [token reference]
 > PREHANDOVER proof: unchanged (immutable post-commit — per §4.3b)."
 
 **Step 4.3 — Generate session memory and record learning:**
@@ -651,7 +642,7 @@ Output:
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Version**: 6.2.0 | **Contract**: 2.3.0 | **Last Updated**: 2026-03-17
+**Version**: 6.2.0 | **Contract**: 2.4.0 | **Last Updated**: 2026-04-06
 **Tier 2 Knowledge**: `.agent-workspace/independent-assurance-agent/knowledge/`
 **Canonical Source**: `APGI-cmy/maturion-foreman-governance`
 **IAA Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE

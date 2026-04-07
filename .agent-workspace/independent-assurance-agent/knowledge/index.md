@@ -2,8 +2,8 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 3.1.0
-**Last Updated**: 2026-03-18
+**Knowledge Version**: 3.3.0
+**Last Updated**: 2026-04-06
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -12,11 +12,11 @@
 
 | File | Purpose | Version | Status |
 |------|---------|---------|--------|
-| `index.md` (this file) | Knowledge entry point and version reference | 2.9.0 | PRESENT |
+| `index.md` (this file) | Knowledge entry point and version reference | 3.0.0 | PRESENT |
 | `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 2.5.0 | PRESENT — Rules A-001 through A-032 active (A-032: Schema Column Compliance Check — IAA must read migration DDL directly for all PRs containing INSERT/SELECT operations; INC-ALCF-001 self-governance closure) |
 | `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.6.0 | ACTIVE — CORE-001 to CORE-022; CORE-016 PENDING carve-out updated per A-029 |
-| `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.1.0 | ACTIVE — KNOWLEDGE_GOVERNANCE trigger category added |
-| `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE, PRE_BRIEF_ASSURANCE) | 3.6.0 | ACTIVE — OVL-CI-005 Inherent Limitation Exception (v3.3.0, S-033); INJECTION_AUDIT_TRAIL renamed to PRE_BRIEF_ASSURANCE, artifact-existence-only OVL-INJ-001 (v3.4.0, issue #1061); Orientation Mandate scope note + OVL-KG-ADM-002 sharpened + timestamp carve-out (v3.6.0) |
+| `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.2.0 | ACTIVE — PRE_BUILD_STAGE_MODEL and MANDATORY_CROSS_APP_COMPONENTS trigger categories added (v2.2.0); KNOWLEDGE_GOVERNANCE trigger category present |
+| `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE, PRE_BRIEF_ASSURANCE, PRE_BUILD_GATES) | 3.8.0 | ACTIVE — PRE_BUILD_GATES overlay strengthened (v3.8.0): OVL-PBG-006 (12-stage model in BUILD_PROGRESS_TRACKER), OVL-PBG-007 (architecture doc full lifecycle), OVL-PBG-008 (stage gating no-skip), OVL-PBG-009 (legacy directory numbering advisory); PRE_BUILD_GATES overlay added (v3.7.0) for MMM FRS pre-build gate enforcement (OVL-PBG-001 through OVL-PBG-005); OVL-CI-005 Inherent Limitation Exception (v3.3.0, S-033); INJECTION_AUDIT_TRAIL renamed to PRE_BRIEF_ASSURANCE, artifact-existence-only OVL-INJ-001 (v3.4.0, issue #1061); Orientation Mandate scope note + OVL-KG-ADM-002 sharpened + timestamp carve-out (v3.6.0) |
 | `session-memory-template.md` | Standard session memory template for IAA invocations | 1.0.0 | PRESENT |
 | `IAA_ZERO_SEVERITY_TOLERANCE.md` | Tier 2 operational note for Zero-Severity-Tolerance Rule — prohibited language table, machine-readable logic, exception procedure | 1.0.0 | ACTIVE |
 | `IAA_AGENT_CONTRACT_AUDIT_STANDARD.md` | **AGENT_CONTRACT Audit Standard** — mandatory audit steps, pre-approval doctrine, protected components checklist, tier placement discipline, decision matrix for all agent contract PRs reviewed by IAA | 1.0.0 | ACTIVE — Load at Step 2.4 when PR category is AGENT_CONTRACT |
@@ -32,7 +32,7 @@
 - `governance/canon/AGENT_CONTRACT_ARCHITECTURE.md` v1.0.0
 - `governance/canon/AGENT_PREFLIGHT_PATTERN.md` v1.0.0
 - `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md` v1.0.0
-- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.0.0
+- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.1.4
 - `governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md` (AGCFPP-001)
 - `governance/canon/COMBINED_TESTING_PATTERN.md` — CST/CWT canonical pattern (authority for §CST/CWT Orchestration Prompting below)
 
@@ -230,6 +230,8 @@ that produced the work under review. Every invocation is logged in session memor
 | 2.9.0 | 2026-03-11 | iaa-category-overlays.md → v3.4.0 (INJECTION_AUDIT_TRAIL renamed to PRE_BRIEF_ASSURANCE; removed injection pipeline signature string requirement; OVL-INJ-001 artifact-existence-only); INDEPENDENT_ASSURANCE_AGENT_CANON.md → v1.5.0 (same model change); issue #1061 |
 | 3.0.0 | 2026-03-17 | FUNCTIONAL-BEHAVIOUR-REGISTRY.md v1.0.0 added (post-merge niggle registry — NBR-001 through NBR-004; FAIL-ONLY-ONCE A-034); niggle-pattern-library.md v1.0.0 added (stack patterns for TanStack Query, Supabase, Zustand, Next.js, TypeScript — FAIL-ONLY-ONCE A-035); iaa-category-overlays.md → v3.5.0 (BD-000 User Journey Trace — BD-000-A through BD-000-D); FAIL-ONLY-ONCE.md → v2.7.0 (A-034, A-035); IAA contract → v2.3.0 (Step 2.3b liveness signal check; Step 3.1 FUNCTIONAL-BEHAVIOUR-REGISTRY reference); liveness/last-known-good.md baseline created — CS2 IAA functional behaviour strengthening mandate |
 | 3.1.0 | 2026-03-18 | iaa-category-overlays.md → v3.6.0 (Orientation Mandate scope note clarifying cross-reference consistency vs. declared-state integrity; OVL-KG-ADM-002 pass condition sharpened; timestamp carve-out note added); index.md version reference updated; issue [clarify audit scope cross-reference consistency and version bump history] |
+| 3.2.0 | 2026-04-06 | iaa-trigger-table.md → v2.2.0 (PRE_BUILD_STAGE_MODEL and MANDATORY_CROSS_APP_COMPONENTS trigger categories added; classification decision flow steps 7–8 added); iaa-category-overlays.md → v3.7.0 (PRE_BUILD_GATES overlay added — OVL-PBG-001 through OVL-PBG-005 for MMM FRS pre-build gate enforcement); AGENT_HANDOVER_AUTOMATION.md reference updated from v1.0.0 to v1.1.4 (canonical per CANON_INVENTORY); note: PRE_BUILD_GATES overlay added (v3.2.0) for MMM FRS pre-build gate enforcement; wave: pre-mmm-build-readiness |
+| 3.3.0 | 2026-04-06 | iaa-category-overlays.md → v3.8.0 (PRE_BUILD_GATES overlay strengthened — OVL-PBG-006 full 12-stage BUILD_PROGRESS_TRACKER check, OVL-PBG-007 architecture doc full lifecycle sequence, OVL-PBG-008 stage gating no-skip enforcement, OVL-PBG-009 legacy directory numbering advisory; OVL-PBG-ADM-001 updated to reference OVL-PBG-001 through OVL-PBG-009); wave: pre-mmm-build-readiness CS2 review blockers |
 
 ---
 
