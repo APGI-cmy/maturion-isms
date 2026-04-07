@@ -1124,6 +1124,18 @@ MAT and Roadmap may not be dissolved until:
 ### 30.3 No New Canonical Requirement Drift
 No new canonical requirements should be added to MAT or Roadmap after MMM strategy approval unless explicitly mirrored into MMM.
 
+### 30.4 Deployment Workflow Retention and Retargeting
+
+MAT-specific deployment targets must be discontinued once they are no longer required for an active product path.
+
+Reusable deployment workflow patterns must be preserved and re-targeted to MMM rather than discarded. The governing principle is: retire the obsolete binding, reuse the pattern.
+
+The distinction must be explicit:
+- **Retiring a legacy app deployment binding**: decommissioning MAT as an active deployment target (e.g. Vercel project, CI pipeline producing MAT artifacts) — this is mandatory once MAT is superseded
+- **Preserving reusable deployment scaffolding**: CI workflow logic, environment configuration patterns, secret naming conventions, health check scripts, and runbook templates that remain valid for MMM — these must be harvested and re-targeted rather than deleted
+
+MMM's deployment wave (§39P) and runbook requirements (§39R) must include an explicit step to assess and migrate any reusable deployment workflow infrastructure from MAT where appropriate.
+
 ---
 
 ## 31. Mandatory Cross-App Governance Components
@@ -1705,6 +1717,12 @@ This wave must verify:
 
 Deployment is not an afterthought. It is a first-class wave.
 
+The deployment wave must include a MAT-to-MMM deployment migration assessment:
+- identify all existing MAT deployment workflow patterns
+- classify each as: retire (MAT-specific binding) or adopt (reusable pattern)
+- re-target all classified-adopt patterns to MMM
+- confirm retirement of classified-retire bindings
+
 ---
 
 ## 39Q. Secret Naming Convention
@@ -1733,6 +1751,10 @@ Runbooks must cover at minimum:
 - health verification
 - post-deploy checks
 - failure recovery steps
+
+Where MMM replaces a superseded app (MAT, Roadmap), the runbook must additionally cover:
+- legacy deployment binding retirement (confirm old deployment targets are decommissioned)
+- reusable pattern adoption (document any workflow/configuration harvested from the superseded app)
 
 ---
 
