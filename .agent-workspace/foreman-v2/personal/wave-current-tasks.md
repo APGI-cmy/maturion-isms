@@ -1,4 +1,3 @@
-<<<<<<< copilot/upgrade-iaa-tier-logic
 # Wave Current Tasks — Issue 1258
 
 wave: iaa-12stage-upgrade
@@ -20,33 +19,11 @@ model. This wave aligns IAA logic to the same model. These are parallel but inde
 governance upgrades.
 
 ### Tasks
-- [ ] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-iaa-12stage-upgrade.md
-- [ ] T-IAA-12S-001: Add OVL-PBG-010 to OVL-PBG-016 in iaa-category-overlays.md
-- [ ] T-IAA-12S-002: Strengthen PRE_BRIEF_ASSURANCE overlay with stage-readiness view
-- [ ] T-IAA-12S-003: Add CORE-025 Pre-Brief Stage Readiness Declaration in iaa-core-invariants-checklist.md
-- [ ] T-IAA-12S-004: Add §Pre-Build Stage Assurance section to INDEPENDENT_ASSURANCE_AGENT_CANON.md
-- [ ] T-IAA-12S-005: Update iaa-trigger-table.md for full 12-stage coverage
-- [ ] T-IAA-12S-006: Update index.md with new file versions
-- [ ] IAA final audit and token
-=======
-# Wave Current Tasks — Issue 1266
-
-wave: wave-1266-mmm-39a-12stage-reconcile
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave-1266-20260407.md
-
-## Active Wave: wave-1266-mmm-39a-12stage-reconcile
-
-### Wave Description
-Reconcile and update MMM_app_description.md Section 39A (Build Lifecycle Stages) to match
-the canonical 12-stage pre-build model (PRE_BUILD_STAGE_MODEL_CANON.md v1.0.0).
-
-CS2 Authorization: Issue maturion-isms#1266 opened by @APGI-cmy (CS2) and assigned to
-foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
-
-### Tasks
-- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave-1266-20260407.md
-- [x] governance-liaison-isms-agent: update MMM_app_description.md Section 39A —
-      replace old sequence with canonical 12-stage; add cross-ref to PRE_BUILD_STAGE_MODEL_CANON.md;
-      add merge-gate enforcement note; bump version v0.2.0 → v0.3.0
-- [x] IAA final audit and token — ASSURANCE-TOKEN: IAA-session-wave-1266-20260407-r2-PASS
->>>>>>> main
+- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-iaa-12stage-upgrade.md
+- [x] T-IAA-12S-001: Add OVL-PBG-010 to OVL-PBG-016 in iaa-category-overlays.md
+- [x] T-IAA-12S-002: Strengthen PRE_BRIEF_ASSURANCE overlay with stage-readiness view
+- [x] T-IAA-12S-003: Add CORE-025 Pre-Brief Stage Readiness Declaration in iaa-core-invariants-checklist.md
+- [x] T-IAA-12S-004: Add §Pre-Build Stage Assurance section to INDEPENDENT_ASSURANCE_AGENT_CANON.md
+- [x] T-IAA-12S-005: Update iaa-trigger-table.md for full 12-stage coverage
+- [x] T-IAA-12S-006: Update index.md with new file versions
+- [x] IAA final audit and token — ASSURANCE-TOKEN: IAA-session-iaa-12stage-20260407-PASS
