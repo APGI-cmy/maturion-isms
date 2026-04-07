@@ -1,9 +1,40 @@
 # BUILD PROGRESS TRACKER
 
-**Module**: Maturity Management Module (MMM)  
-**Module Slug**: MMM  
+**Module**: MMM (Maturity Model Management)  
+**Module Slug**: mmm  
 **Last Updated**: 2026-04-06  
-**Updated By**: governance-liaison-isms
+**Updated By**: governance-liaison-isms-agent (wave: align-12stage-prebuild-20260406)
+
+> **Classification**: ACTIVE — RETROFIT NOW  
+> **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
+> **Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
+
+---
+
+## Stage Migration Note
+
+This tracker was migrated from the legacy 6-stage format to the canonical 12-stage format
+per wave `align-12stage-prebuild-20260406` (2026-04-06).
+
+**Anomaly Corrected**: The previous version of this tracker incorrectly referenced "Risk
+Management" as the module name and `risk-management` as the module slug. This was a copy-paste
+error from the original governance layer-down. The module is MMM (Maturity Model Management).
+
+**Old → New Stage Mapping**:
+| Old Stage | Old Name | New Stage | New Name | Status |
+|-----------|----------|-----------|----------|--------|
+| Stage 0 | App Description | Stage 1 | App Description | COMPLETE |
+| Stage 1 | FRS | Stage 3 | FRS | NOT_STARTED (folder empty) |
+| Stage 1.5 | TRS | Stage 4 | TRS | NOT_STARTED |
+| Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS |
+| Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | NOT_STARTED |
+| Stage 4 | Builder Appointment | Stage 11 | Builder Appointment | NOT_STARTED |
+| Stage 5 | Build | Stage 12 | Build | NOT_STARTED (partial AIMC artifact) |
+| — | (new stage) | Stage 2 | UX Workflow & Wiring Spec | NOT_STARTED |
+| — | (new stage) | Stage 6 | QA-to-Red | NOT_STARTED |
+| — | (new stage) | Stage 7 | PBFAG | NOT_STARTED |
+| — | (new stage) | Stage 9 | Builder Checklist | NOT_STARTED |
+| — | (new stage) | Stage 10 | IAA Pre-Brief | NOT_STARTED |
 
 ---
 
@@ -13,19 +44,20 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 
 ### Stage 1: App Description
 **Status**: [x] COMPLETE  
-**Location**: `modules/MMM/01-app-description/`  
+**Location**: `modules/MMM/00-app-description/`  
 **Key Artifacts**:
-- [x] `app-description.md` - Authoritative intent, scope, users, outputs, constraints
-- [x] All §AD-01–§AD-24 sections per `APP_DESCRIPTION_REQUIREMENT_POLICY.md` v2.0 complete
-- [x] App Description approved by designated authority
+- [x] `MMM_app_description.md` — Authoritative intent, scope, users, outputs, constraints
+- [ ] App Description approved by designated authority
 
-**Completion Date**: 2026-04-06  
-**Notes**: Legacy directory numbering: `modules/MMM/00-app-description/` (legacy `00-` prefix; canonical stage numbering uses `01-`). App description approved — governance gaps closed per PR #1214.
+**Completion Date**: 2026-03-20  
+**Notes**: App Description exists as `MMM_app_description.md`. MMM is the convergence strategy
+for the Maturion maturity capability, replacing MAT + Maturity Roadmap + legacy maturity
+capabilities. Approval formalisation required.
 
 ---
 
 ### Stage 2: UX Workflow & Wiring Spec
-**Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] COMPLETE  
+**Status**: [ ] NOT_STARTED  
 **Location**: `modules/MMM/02-ux-workflow-wiring-spec/`  
 **Key Artifacts**:
 - [ ] `ux-workflow-wiring-spec.md` — Complete user journey maps, screen interactions, data flows, wiring
@@ -35,54 +67,57 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 - [ ] No gap between stated journeys and wired system behaviour
 
 **Completion Date**: N/A  
-**Notes**: NOT_STARTED — pending CS2 authorization. This stage must be completed and approved before FRS can be finalized.
+**Notes**: Not started. Required before FRS can be completed.
 
 ---
 
 ### Stage 3: Functional Requirements Specification (FRS)
-**Status**: [ ] NOT_STARTED | [x] IN_PROGRESS | [ ] COMPLETE  
-**Location**: `modules/MMM/03-frs/`  
+**Status**: [ ] NOT_STARTED  
+**Location**: `modules/MMM/01-frs/`  
 **Key Artifacts**:
-- [ ] `functional-requirements.md` - Verifiable requirements derived from App Description + UX Workflow & Wiring Spec
+- [ ] `functional-requirements.md` — Verifiable requirements derived from App Description + UX Workflow & Wiring Spec
 - [ ] Derivation statements from both upstream artifacts included
 - [ ] 100% §AD traceability confirmed; no TBD items
 - [ ] FRS approved by designated authority
 
 **Completion Date**: N/A  
-**Notes**: Legacy directory numbering: `modules/MMM/01-frs/` (legacy `01-` prefix; canonical stage numbering uses `03-`). FRS folder exists; in-progress but blocked on Stage 2 (UX Workflow & Wiring Spec) completion.
+**Notes**: FRS folder exists but is empty. Mapped from old Stage 1.
 
 ---
 
 ### Stage 4: Technical Requirements Specification (TRS)
-**Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] COMPLETE  
+**Status**: [ ] NOT_STARTED  
 **Location**: `modules/MMM/04-trs/`  
 **Key Artifacts**:
-- [ ] `technical-requirements-specification.md` - Technical constraints, performance requirements, integration requirements
-- [ ] `frs-to-trs-traceability.md` - Traceability matrix linking FRS to TRS
+- [ ] `technical-requirements-specification.md` — Technical constraints, performance requirements, integration requirements
+- [ ] `frs-to-trs-traceability.md` — Traceability matrix linking FRS to TRS
 - [ ] Tool validation and quality gate definitions
 - [ ] TRS approved by designated authority
 
 **Completion Date**: N/A  
-**Notes**: NOT_STARTED — awaiting FRS completion.
+**Notes**: Not started. Mapped from old Stage 1.5 (TRS stage introduced 2026-02-13).
 
 ---
 
 ### Stage 5: Architecture
-**Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] COMPLETE  
-**Location**: `modules/MMM/05-architecture/`  
+**Status**: [ ] IN_PROGRESS  
+**Location**: `modules/MMM/02-architecture/`  
 **Key Artifacts**:
-- [ ] `architecture.md` - Structures and decisions that satisfy FRS and TRS
+- [x] `architecture.md` — Architecture document exists
+- [x] `capabilities/` — Capabilities folder exists
 - [ ] All TRS requirements traceable to architecture components
 - [ ] Architecture completeness checklist per `ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md` PASS
 - [ ] Architecture approved by designated authority
 
 **Completion Date**: N/A  
-**Notes**: Legacy directory numbering: `modules/MMM/02-architecture/` (legacy `02-` prefix; canonical stage numbering uses `05-`). NOT_STARTED — placeholder architecture doc exists in legacy directory but architecture content must not begin until Stages 1–4 are complete.
+**Notes**: Architecture is in progress. `architecture.md` and `capabilities/` folder exist.
+Mapped from old Stage 2. Note: App Description and FRS/TRS must be completed and approved
+before Architecture can be formally gate-passed.
 
 ---
 
 ### Stage 6: QA-to-Red
-**Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] COMPLETE  
+**Status**: [ ] NOT_STARTED  
 **Location**: `modules/MMM/06-qa-to-red/`  
 **Key Artifacts**:
 - [ ] Full RED test suite derived from FRS + TRS + Architecture
@@ -91,12 +126,12 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 - [ ] RED QA suite signed off by Foreman (no implementation started)
 
 **Completion Date**: N/A  
-**Notes**: NOT_STARTED — awaiting Stages 3–5 completion.
+**Notes**: Not started. New stage introduced in 12-stage model.
 
 ---
 
 ### Stage 7: PBFAG (Pre-Build Functionality Assessment Gate)
-**Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] PASS  
+**Status**: [ ] NOT_STARTED  
 **Location**: `modules/MMM/07-pbfag/`  
 **Key Artifacts**:
 - [ ] PBFAG checklist completed — all checks PASS
@@ -107,26 +142,26 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 - [ ] PBFAG PASS recorded by Foreman
 
 **Completion Date**: N/A  
-**Notes**: NOT_STARTED — awaiting Stages 3–6 completion.
+**Notes**: Not started. New hard gate in 12-stage model.
 
 ---
 
 ### Stage 8: Implementation Plan
-**Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] COMPLETE  
-**Location**: `modules/MMM/08-implementation-plan/`  
+**Status**: [ ] NOT_STARTED  
+**Location**: `modules/MMM/03-implementation-plan/`  
 **Key Artifacts**:
-- [ ] `implementation-plan.md` - Delivery wave breakdown with explicit scope per wave
+- [ ] `implementation-plan.md` — Delivery wave breakdown with explicit scope per wave
 - [ ] Wave sequencing with dependency declarations
 - [ ] No placeholder waves or TBD scope entries
 - [ ] Implementation Plan approved by Foreman
 
 **Completion Date**: N/A  
-**Notes**: Legacy directory numbering: `modules/MMM/03-implementation-plan/` (legacy `03-` prefix; canonical stage numbering uses `08-`). NOT_STARTED.
+**Notes**: Folder exists but not yet populated. Mapped from old Stage 3.
 
 ---
 
 ### Stage 9: Builder Checklist
-**Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] PASS  
+**Status**: [ ] NOT_STARTED  
 **Location**: `modules/MMM/09-builder-checklist/`  
 **Key Artifacts**:
 - [ ] Builder Checklist completed for each builder candidate
@@ -137,12 +172,12 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 - [ ] Builder Checklist PASS for all appointed builders
 
 **Completion Date**: N/A  
-**Notes**: NOT_STARTED.
+**Notes**: Not started. New hard gate in 12-stage model.
 
 ---
 
 ### Stage 10: IAA Pre-Brief
-**Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] COMPLETE  
+**Status**: [ ] NOT_STARTED  
 **Location**: `modules/MMM/10-iaa-pre-brief/`  
 **Key Artifacts**:
 - [ ] IAA Pre-Brief invoked by Foreman with full context
@@ -151,27 +186,27 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 - [ ] Pre-Brief acknowledged by Foreman and all designated builders
 
 **Completion Date**: N/A  
-**Notes**: NOT_STARTED — this is the FRS build wave pre-brief, distinct from the governance/readiness pre-brief already issued at `.agent-admin/assurance/iaa-prebrief-pre-mmm-build-readiness.md`. The governance readiness pre-brief applies to the current wave only; a separate FRS build wave pre-brief will be required before builder delegation.
+**Notes**: Not started. New stage in 12-stage model.
 
 ---
 
 ### Stage 11: Builder Appointment
-**Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] COMPLETE  
-**Location**: `modules/MMM/11-builder-appointment/`  
+**Status**: [ ] NOT_STARTED  
+**Location**: `modules/MMM/04-builder-appointment/`  
 **Key Artifacts**:
-- [ ] `builder-contract.md` - Explicit builder agent contract
+- [ ] `builder-contract.md` — Explicit builder agent contract
 - [ ] Formal appointment issued by Foreman after all Stages 1–10 gate-passed
 - [ ] Appointment recorded in module tracker
 - [ ] Builder appointed by FM
 
 **Completion Date**: N/A  
-**Notes**: Legacy directory numbering: `modules/MMM/04-builder-appointment/` (legacy `04-` prefix; canonical stage numbering uses `11-`). NOT_STARTED.
+**Notes**: Folder exists but not yet populated. Mapped from old Stage 4.
 
 ---
 
 ### Stage 12: Build Execution & Evidence
-**Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] COMPLETE  
-**Location**: `modules/MMM/12-build-evidence/`  
+**Status**: [ ] NOT_STARTED  
+**Location**: `modules/MMM/05-build-evidence/`  
 **Key Artifacts**:
 - [ ] Implementation code in `apps/` or `packages/`
 - [ ] Test evidence (QA-to-Green per wave)
@@ -223,30 +258,29 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 - ❌ UI wiring tests (if both UI and backend exist)
 
 **Completion Date**: N/A  
-**Notes**: Legacy directory numbering: `modules/MMM/05-build-evidence/` (legacy `05-` prefix; canonical stage numbering uses `12-`). NOT_STARTED.
+**Notes**: Core build not yet started. However, as an artifact of Wave 9.6 AIMC integration
+(pre-12-stage), `src/services/aimc-wiring.ts` exists as an AIMC integration component.
+This is an integration artifact, not a core module build deliverable. Mapped from old Stage 5.
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 2 (UX Workflow & Wiring Spec — pending CS2 authorization)  
-**Overall Progress**: ~8% complete  
-**Blockers**:
-- Stage 2 (UX Workflow & Wiring Spec) requires CS2 authorization before FRS can be completed
-- Stage 3 IAA Pre-Brief issued for governance/readiness wave, not FRS build wave
-
+**Current Stage**: Stage 1 COMPLETE — Stage 2 (UX Workflow & Wiring Spec) next  
+**Overall Progress**: ~10% complete (Stage 1 done; Stages 2–12 not started)  
+**Blockers**: None currently blocking — Stage 2 (UX Workflow & Wiring Spec) awaits CS2 wave-start  
 **Next Steps**:
-1. Obtain CS2 authorization for Stage 2 (UX Workflow & Wiring Spec)
-2. Complete `ux-workflow-wiring-spec.md` in `modules/MMM/02-ux-workflow-wiring-spec/`
-3. Finalize FRS with derivation from both App Description and UX Workflow & Wiring Spec
-4. Proceed through TRS → Architecture → QA-to-Red → PBFAG → Implementation Plan → Builder Checklist → IAA Pre-Brief (FRS build wave) → Builder Appointment → Build
+1. Develop Stage 2 (UX Workflow & Wiring Spec) for MMM
+2. Develop Stage 3 (FRS) after Stage 2 complete
+3. Complete Stage 4 (TRS) after FRS
+4. Formalise Stage 5 (Architecture) approval after TRS complete
 
 ---
 
 ## Governance Compliance
 
 - [ ] All stages proceeding in order (no skipped stages)
-- [ ] Traceability maintained (App Description → UX Workflow & Wiring Spec → FRS → TRS → Architecture)
+- [ ] Traceability maintained (App Description → UX Workflow → FRS → TRS → Architecture)
 - [ ] All required approvals obtained
 - [ ] Evidence artifacts created for each stage
 - [ ] Module manifest up to date
@@ -255,12 +289,19 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 
 ## Notes and Observations
 
-**Legacy Directory Numbering**: The current MMM directory uses legacy numbering (`00-app-description`, `01-frs`, `02-architecture`, `03-implementation-plan`, `04-builder-appointment`, `05-build-evidence`). The canonical stage model (`PRE_BUILD_STAGE_MODEL_CANON.md`) uses 12-stage numbering (`01-` through `12-`). A migration plan from CS2 is required to align directory numbering with canonical stage numbering.
+**Tracker Anomaly Corrected (2026-04-06)**: Previous version of this tracker incorrectly referenced
+"Risk Management" module. The error originated from the initial governance layer-down when MMM
+module structure was created. Corrected in wave `align-12stage-prebuild-20260406`.
 
-**Governance Upgrade**: Full 12-stage model adopted per `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0. Supersedes earlier shortened pre-build stage model.
+**Governance Upgrade (2026-04-06)**: Stage model migrated from legacy 6-stage (Stage 0–5) to
+canonical 12-stage per `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0. See Stage Migration Note above.
+
+**MMM Strategy**: MMM (`MMM_strategy.md`) defines the convergence of MAT, Maturity Roadmap, and
+legacy maturity capabilities into a single Maturity Model Management product. Strategy is in
+DRAFT status pending CS2 review and canonisation.
 
 ---
 
-**Template Version**: 1.0.0 (full 12-stage model)  
-**Template Authority**: `governance/templates/BUILD_PROGRESS_TRACKER_TEMPLATE.md` per `PRE_BUILD_STAGE_MODEL_CANON.md`  
+**Template Version**: 1.0.0 (12-stage model per PRE_BUILD_STAGE_MODEL_CANON.md v1.0.0)  
+**Template Authority**: `governance/templates/BUILD_PROGRESS_TRACKER_TEMPLATE.md`  
 **Last Template Update**: 2026-04-06

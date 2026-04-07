@@ -2,127 +2,231 @@
 
 **Module**: Incident Intelligence  
 **Module Slug**: incident-intelligence  
-**Last Updated**: 2026-02-13  
-**Updated By**: governance-liaison-isms
+**Last Updated**: 2026-04-06  
+**Updated By**: governance-liaison-isms-agent (wave: align-12stage-prebuild-20260406)
+
+> **Classification**: ACTIVE — FRESH START ON NEXT STAGE  
+> **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
+> **Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
+
+---
+
+## Stage Migration Note
+
+This tracker was migrated from the legacy 6-stage format to the canonical 12-stage format
+per wave `align-12stage-prebuild-20260406` (2026-04-06).
+
+**Classification Rationale**: Incident Intelligence has App Description (`app-description.md`)
+but FRS, Architecture, and other stage folders contain limited or no content. The module
+adopts the 12-stage model as a fresh start from Stage 2.
+
+**Old → New Stage Mapping**:
+| Old Stage | Old Name | New Stage | New Name | Status |
+|-----------|----------|-----------|----------|--------|
+| Stage 0 | App Description | Stage 1 | App Description | COMPLETE |
+| Stage 1 | FRS | Stage 3 | FRS | NOT_STARTED |
+| Stage 1.5 | TRS | Stage 4 | TRS | NOT_STARTED |
+| Stage 2 | Architecture | Stage 5 | Architecture | NOT_STARTED |
+| Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | NOT_STARTED |
+| Stage 4 | Builder Appointment | Stage 11 | Builder Appointment | NOT_STARTED |
+| Stage 5 | Build | Stage 12 | Build | NOT_STARTED |
+
+All future work proceeds through the 12-stage model in order.
 
 ---
 
 ## Module Lifecycle Progress
 
-Track the progression through the canonical module lifecycle stages.
+Track the progression through the canonical module lifecycle stages per `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0.
 
-### Stage 0: App Description
+### Stage 1: App Description
 **Status**: [x] COMPLETE  
 **Location**: `modules/incident-intelligence/00-app-description/`  
 **Key Artifacts**:
-- [x] `app-description.md` - Authoritative intent, scope, users, outputs, constraints
+- [x] `app-description.md` — App Description document exists
 - [ ] App Description approved by designated authority
 
-**Completion Date**: In progress  
-**Notes**: App description exists but may need approval formalization
+**Completion Date**: 2026-02-13 (approximate)  
+**Notes**: `app-description.md` exists in `00-app-description/`. Approval formalisation required.
+Architecture folder has a `capabilities/` subdirectory with stub content.
 
 ---
 
-### Stage 1: Functional Requirements Specification (FRS)
-**Status**: [ ] NOT_STARTED | [x] IN_PROGRESS | [ ] COMPLETE  
+### Stage 2: UX Workflow & Wiring Spec
+**Status**: [ ] NOT_STARTED  
+**Location**: `modules/incident-intelligence/02-ux-workflow-wiring-spec/`  
+**Key Artifacts**:
+- [ ] `ux-workflow-wiring-spec.md` — Complete user journey maps, screen interactions, data flows, wiring
+- [ ] All primary and secondary user paths documented
+- [ ] Explicit wiring between UI elements, API endpoints, schema tables, and reporting outputs
+- [ ] Approved by Foreman and client/user representative
+
+**Completion Date**: N/A  
+**Notes**: Not started. This is the next stage after Stage 1 is formally approved.
+
+---
+
+### Stage 3: Functional Requirements Specification (FRS)
+**Status**: [ ] NOT_STARTED  
 **Location**: `modules/incident-intelligence/01-frs/`  
 **Key Artifacts**:
-- [ ] `functional-requirements.md` - Verifiable requirements derived from App Description
-- [ ] Derivation statement from App Description included
+- [ ] `functional-requirements.md` — Verifiable requirements derived from App Description + UX Workflow & Wiring Spec
+- [ ] Derivation statements from both upstream artifacts included
+- [ ] 100% §AD traceability confirmed; no TBD items
 - [ ] FRS approved by designated authority
 
 **Completion Date**: N/A  
-**Notes**: FRS folder exists, content status varies by module
+**Notes**: FRS folder exists but is empty. Not started.
 
 ---
 
-### Stage 1.5: Technical Requirements Specification (TRS)
-**Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] COMPLETE  
-**Location**: `modules/incident-intelligence/01.5-trs/`  
+### Stage 4: Technical Requirements Specification (TRS)
+**Status**: [ ] NOT_STARTED  
+**Location**: `modules/incident-intelligence/04-trs/`  
 **Key Artifacts**:
-- [ ] `technical-requirements-specification.md` - Technical constraints, performance requirements, integration requirements
-- [ ] `frs-to-trs-traceability.md` - Traceability matrix linking FRS to TRS
+- [ ] `technical-requirements-specification.md` — Technical constraints, performance requirements, integration requirements
+- [ ] `frs-to-trs-traceability.md` — Traceability matrix linking FRS to TRS
 - [ ] Tool validation and quality gate definitions
 - [ ] TRS approved by designated authority
 
 **Completion Date**: N/A  
-**Notes**: **NEW STAGE** - TRS stage introduced per governance upgrade. Folder needs to be created.
+**Notes**: Not started.
 
 ---
 
-### Stage 2: Architecture
-**Status**: [ ] NOT_STARTED | [x] IN_PROGRESS | [ ] COMPLETE  
+### Stage 5: Architecture
+**Status**: [ ] NOT_STARTED  
 **Location**: `modules/incident-intelligence/02-architecture/`  
 **Key Artifacts**:
-- [ ] `architecture.md` - Structures and decisions that satisfy FRS and TRS
-- [ ] QA strategy included
-- [ ] True North derived from App Description
-- [ ] References to TRS technical constraints
+- [ ] `architecture.md` — Structures and decisions that satisfy FRS and TRS
+- [ ] All TRS requirements traceable to architecture components
+- [ ] Architecture completeness checklist per `ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md` PASS
 - [ ] Architecture approved by designated authority
 
 **Completion Date**: N/A  
-**Notes**: Architecture folder exists, content status varies by module
+**Notes**: Architecture folder has a stub `capabilities/` subdirectory but no `architecture.md`.
+Not started in the canonical sense.
 
 ---
 
-### Stage 3: Implementation Plan
-**Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] COMPLETE  
-**Location**: `modules/incident-intelligence/03-implementation-plan/`  
+### Stage 6: QA-to-Red
+**Status**: [ ] NOT_STARTED  
+**Location**: `modules/incident-intelligence/06-qa-to-red/`  
 **Key Artifacts**:
-- [ ] `implementation-plan.md` - Phased plan, acceptance criteria, evidence plan
-- [ ] Dependencies identified and documented
-- [ ] Risks and mitigation strategies documented
+- [ ] Full RED test suite derived from FRS + TRS + Architecture
+- [ ] Coverage of all user journeys from Stage 2
+- [ ] QA Catalog alignment confirmed
+- [ ] RED QA suite signed off by Foreman
 
 **Completion Date**: N/A  
-**Notes**: Implementation plan folder exists but likely not populated
+**Notes**: Not started.
 
 ---
 
-### Stage 4: Builder Appointment
-**Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] COMPLETE  
+### Stage 7: PBFAG (Pre-Build Functionality Assessment Gate)
+**Status**: [ ] NOT_STARTED  
+**Location**: `modules/incident-intelligence/07-pbfag/`  
+**Key Artifacts**:
+- [ ] PBFAG checklist completed — all checks PASS
+- [ ] Change-Propagation Audit complete
+- [ ] Runtime/Deployment Contract filed
+- [ ] Golden Path Verification Pack defined
+- [ ] PBFAG PASS recorded by Foreman
+
+**Completion Date**: N/A  
+**Notes**: Not started.
+
+---
+
+### Stage 8: Implementation Plan
+**Status**: [ ] NOT_STARTED  
+**Location**: `modules/incident-intelligence/03-implementation-plan/`  
+**Key Artifacts**:
+- [ ] `implementation-plan.md` — Delivery wave breakdown with explicit scope per wave
+- [ ] Wave sequencing with dependency declarations
+- [ ] No placeholder waves or TBD scope entries
+- [ ] Implementation Plan approved by Foreman
+
+**Completion Date**: N/A  
+**Notes**: Folder exists but not populated.
+
+---
+
+### Stage 9: Builder Checklist
+**Status**: [ ] NOT_STARTED  
+**Location**: `modules/incident-intelligence/09-builder-checklist/`  
+**Key Artifacts**:
+- [ ] Builder Checklist completed for each builder candidate
+- [ ] Builder agent contracts verified as current
+- [ ] Scope, RED QA, and architecture comprehension confirmed
+- [ ] Builder Checklist PASS for all appointed builders
+
+**Completion Date**: N/A  
+**Notes**: Not started.
+
+---
+
+### Stage 10: IAA Pre-Brief
+**Status**: [ ] NOT_STARTED  
+**Location**: `modules/incident-intelligence/10-iaa-pre-brief/`  
+**Key Artifacts**:
+- [ ] IAA Pre-Brief invoked by Foreman with full context
+- [ ] IAA Pre-Brief artifact filed
+- [ ] ASSURANCE-TOKEN or PHASE_A_ADVISORY status recorded
+- [ ] Pre-Brief acknowledged by Foreman and all designated builders
+
+**Completion Date**: N/A  
+**Notes**: Not started.
+
+---
+
+### Stage 11: Builder Appointment
+**Status**: [ ] NOT_STARTED  
 **Location**: `modules/incident-intelligence/04-builder-appointment/`  
 **Key Artifacts**:
-- [ ] `builder-contract.md` - Explicit builder agent contract
-- [ ] Responsibilities, constraints, and deliverables defined
+- [ ] `builder-contract.md` — Explicit builder agent contract
+- [ ] Formal appointment issued by Foreman after all Stages 1–10 gate-passed
+- [ ] Appointment recorded in module tracker
 - [ ] Builder appointed by FM
 
 **Completion Date**: N/A  
-**Notes**: Builder appointment folder exists but likely not populated
+**Notes**: Folder exists but not populated.
 
 ---
 
-### Stage 5: Build Execution & Evidence
-**Status**: [x] NOT_STARTED | [ ] IN_PROGRESS | [ ] COMPLETE  
+### Stage 12: Build Execution & Evidence
+**Status**: [ ] NOT_STARTED  
 **Location**: `modules/incident-intelligence/05-build-evidence/`  
 **Key Artifacts**:
 - [ ] Implementation code in `apps/` or `packages/`
-- [ ] Test evidence
+- [ ] Test evidence (QA-to-Green per wave)
 - [ ] QA validation results
 - [ ] Build completion evidence
 - [ ] Handover documentation
 
 **Completion Date**: N/A  
-**Notes**: Build evidence folder exists but likely not populated
+**Notes**: Build not yet started. Note: Wave 9.9 AIMC integration (persona
+`incident-intelligence-advisor.md`) is pending Wave 9.10 completion.
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 1-2 (FRS/Architecture development in progress)  
-**Overall Progress**: ~15-20% complete  
-**Blockers**: TRS stage newly introduced - needs to be created and populated  
-**Next Steps**: 
-1. Create `01.5-trs/` folder in module structure
-2. Develop TRS based on FRS requirements
-3. Complete Architecture with TRS constraints
-4. Proceed through remaining stages
+**Current Stage**: Stage 1 COMPLETE — Stage 2 (UX Workflow & Wiring Spec) next  
+**Overall Progress**: ~5% complete (Stage 1 done; Stage 2–12 not started)  
+**Blockers**: None currently — Stage 2 awaits CS2 wave-start  
+**Next Steps**:
+1. Formalise Stage 1 (App Description) approval
+2. Develop Stage 2 (UX Workflow & Wiring Spec)
+3. Proceed through stages in order per `PRE_BUILD_STAGE_MODEL_CANON.md`
 
 ---
 
 ## Governance Compliance
 
-- [x] All stages proceeding in order (TRS stage now required between FRS and Architecture)
-- [ ] Traceability maintained (App Description → FRS → TRS → Architecture)
+- [x] Stage 1 complete
+- [ ] All subsequent stages proceeding in order
+- [ ] Traceability maintained (App Description → UX Workflow → FRS → TRS → Architecture)
 - [ ] All required approvals obtained
 - [ ] Evidence artifacts created for each stage
 - [ ] Module manifest up to date
@@ -131,10 +235,19 @@ Track the progression through the canonical module lifecycle stages.
 
 ## Notes and Observations
 
-**Governance Upgrade**: TRS stage introduced 2026-02-13 per issue "Governance Upgrade: Insert Technical Requirements Specification (TRS) Step". This stage prevents downstream implementation failures by capturing technical constraints, performance requirements, and tool validation rules between FRS and Architecture.
+**Governance Upgrade (2026-04-06)**: This module adopts the canonical 12-stage model per
+`PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 as a fresh start. All future work proceeds through
+the 12-stage sequence in order.
+
+**Prior Note (2026-02-13)**: TRS stage introduced per governance upgrade. Now formalised
+as Stage 4 in the 12-stage model.
+
+**AI Dependency**: Wave 9.9 AIMC integration for this module is blocked pending Wave 9.10
+delivery of `incident-intelligence-advisor.md` persona. This is an integration concern
+separate from the core module 12-stage build lifecycle.
 
 ---
 
-**Template Version**: 1.0.0 (includes TRS stage)  
-**Template Authority**: MODULE_LIFECYCLE_AND_REPO_STRUCTURE_STRATEGY.md  
-**Last Template Update**: 2026-02-13
+**Template Version**: 1.0.0 (12-stage model per PRE_BUILD_STAGE_MODEL_CANON.md v1.0.0)  
+**Template Authority**: `governance/templates/BUILD_PROGRESS_TRACKER_TEMPLATE.md`  
+**Last Template Update**: 2026-04-06
