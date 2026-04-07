@@ -1,7 +1,7 @@
-# Wave Current Tasks — MMM Pre-Implementation Orchestration
+# Wave Current Tasks — GAP-009 EpisodicMemoryAdapter Supabase Wiring
 
-wave: wave-mmm-pre-impl-orchestration-20260407
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-mmm-pre-impl-orchestration-20260407.md
+wave: gap-009-episodic-memory-remediation
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-gap-009-episodic-memory-remediation.md
 
 ## Active Wave: wave-mmm-pre-impl-orchestration-20260407
 
