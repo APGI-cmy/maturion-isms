@@ -1,9 +1,9 @@
 # IAA Core Invariants Checklist
 
 **Agent**: independent-assurance-agent
-**Version**: 2.9.0
+**Version**: 3.0.0
 **Status**: ACTIVE
-**Last Updated**: 2026-03-13
+**Last Updated**: 2026-04-07
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -81,6 +81,7 @@ All checks below are applied on every qualifying PR invocation.
 | CORE-022 | Secret field naming compliance | Agent contract files must use `secret_env_var:` — never `secret:` — in `governance.execution_identity` blocks and any YAML block. Scan the PR diff for the pattern `secret: "` in any `.github/agents/*.md` file (excluding `_archive/`). If found: FAIL. Enforces FAIL-ONLY-ONCE A-024. Prevents CI secret scanner false positives that block all gate checks. | AGENT_CONTRACT | REJECTION-PACKAGE |
 | CORE-023 | Workflow integrity ripple check | If the PR touches any file that is referenced by, executed by, or depended upon by `.github/workflows/*.yml` files (including test runners, build scripts, Edge Function paths, schema migration steps, or any path listed in workflow `paths:` triggers), IAA must verify: (a) all affected workflow files remain syntactically valid after the delivered changes, (b) any changed file paths are reflected in workflow `paths:` filters if applicable, (c) no workflow job is silently broken by the delivered changes. **Scope trigger**: applies when the PR diff includes changes to test files, frontend source, Edge Function source, schema migrations, build configuration, or any file type that workflows invoke or reference. If the PR does NOT touch any workflow-adjacent file, IAA records `CORE-023: N/A — no workflow-adjacent changes detected` and proceeds. See **CORE-023 Detail** below. | ALL | REJECTION-PACKAGE |
 | CORE-024 | PHASE_B_BLOCKING_TOKEN field in ASSURANCE-TOKEN file | If this PR adds a new `.agent-admin/assurance/iaa-token-*.md` file that is **not** a REJECTION-PACKAGE: (a) the file MUST contain a `PHASE_B_BLOCKING_TOKEN:` key on its own line, (b) the value must be non-empty and not `PENDING`. Check using: `grep "PHASE_B_BLOCKING_TOKEN:" <token_file>`. Absence, empty value, or PENDING = REJECTION-PACKAGE. REJECTION-PACKAGE token files are exempt (skip the check). Enforces FAIL-ONLY-ONCE A-037 and prevents CI `preflight/iaa-token-self-certification` failures post-merge. | ALL | REJECTION-PACKAGE |
+| CORE-025 | Pre-Brief Stage-Readiness Declaration (for PRE_BUILD_STAGE_MODEL PRs) | When PR category includes PRE_BUILD_STAGE_MODEL or when the PR advances a module's lifecycle stage: verify that the IAA Pre-Brief artifact for this wave declares a stage-readiness view covering: (a) which upstream stages are COMPLETE, (b) which artifacts were reviewed, (c) which blockers prevent builder appointment, (d) which acceptance conditions govern handover. Pre-Brief artifact that omits the stage-readiness view for a PRE_BUILD_STAGE_MODEL PR = advisory finding (IAA must note it and recommend update). | PRE_BUILD_STAGE_MODEL | Advisory — note once, do not REJECTION-PACKAGE on first occurrence; escalate if pattern persists |
 
 ---
 
@@ -241,7 +242,7 @@ This explicit N/A record is required. Silence is not acceptable.
 | 2.7.0 | 2026-03-04 | **BREAKING FIX**: CORE-016, CORE-018, CORE-019 fully rewritten to match §4.3b architecture (A-029). Verbatim response requirement moved from PREHANDOVER proof to dedicated token file. First Invocation Exception added to CORE-019 to break the circular dependency loop. Architecture Alignment Note added at top of file. CORE-007 carve-out updated for expected reference format. |
 | 2.8.0 | 2026-03-04 | Orientation Mandate section added — 90/10 rule codified in checklist; ceremony checks explicitly framed as 10% layer; substantive review as 90% primary obligation (CS2 directive) |
 | 2.9.0 | 2026-03-13 | CORE-023 added: Workflow integrity ripple check — IAA must verify CI/CD workflows are not silently broken by workflow-adjacent file changes; scope trigger table, PASS/FAIL conditions, and N/A recording requirement defined (CS2 directive 2026-03-13) |
-| 3.0.0 | 2026-04-06 | CORE-024 added: PHASE_B_BLOCKING_TOKEN field mandatory in all ASSURANCE-TOKEN files — absence or PENDING value fails CI iaa-token-self-certification guard (CS2 directive 2026-04-06, Issue #1249, FAIL-ONLY-ONCE A-037) |
+| 3.0.0 | 2026-04-07 | CORE-024 added: PHASE_B_BLOCKING_TOKEN field mandatory in all ASSURANCE-TOKEN files — absence or PENDING value fails CI iaa-token-self-certification guard (CS2 directive 2026-04-06, Issue #1249, FAIL-ONLY-ONCE A-037); CORE-025 added: Pre-Brief Stage-Readiness Declaration for PRE_BUILD_STAGE_MODEL PRs — advisory finding when stage-readiness view is missing; wave: iaa-12stage-upgrade (issue #1258) |
 
 ---
 
