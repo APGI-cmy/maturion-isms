@@ -65,6 +65,7 @@ escalation:
   rules:
     - Architecture not frozen -> halt_and_escalate
     - QA-to-Red missing -> halt_and_escalate
+    - Pre-build chain (Stages 1-11) not complete -> halt_and_escalate
     - Governance ambiguity -> halt_and_escalate
     - Canon drift detected -> halt_and_escalate
     - Test debt >0 -> halt_and_escalate
@@ -293,15 +294,19 @@ governance:
 **Build Sequence**:
 1. **B_H**: Verify architecture frozen (if not → HALT, ESCALATE to Foreman)
 2. **B_H**: Verify QA-to-Red tests exist and are RED (if not → HALT, ESCALATE to Foreman)
-3. **B_H**: Derive requirements from RED tests (do not infer or assume)
-4. **B_H**: Implement API routes/handlers to satisfy RED tests
-5. **B_H**: Run tests continuously until 100% GREEN
-6. **B_H**: STOP if any test debt detected (no .skip(), .todo(), commented tests)
-7. **B_H**: Run build to verify no compilation/lint errors
-8. **B_H**: Verify zero warnings (report all to Foreman)
+3. **B_H**: Verify PBFAG passed (if not → HALT, ESCALATE to Foreman)
+4. **B_H**: Verify Builder Checklist satisfied (if not → HALT, ESCALATE to Foreman)
+5. **B_H**: Verify IAA Pre-Brief acknowledged (if not → HALT, ESCALATE to Foreman)
+6. **B_H**: Verify Builder Appointment valid (if not → HALT, ESCALATE to Foreman)
+7. **B_H**: Derive requirements from RED tests (do not infer or assume)
+8. **B_H**: Implement API routes/handlers to satisfy RED tests
+9. **B_H**: Run tests continuously until 100% GREEN
+10. **B_H**: STOP if any test debt detected (no .skip(), .todo(), commented tests)
+11. **B_H**: Run build to verify no compilation/lint errors
+12. **B_H**: Verify zero warnings (report all to Foreman)
 
 **One-Time Build Discipline**:
-- **Pre-Build**: Arch frozen, QA-to-Red RED, dependencies resolved
+- **Pre-Build**: Stages 1-11 complete — scope frozen, PBFAG passed, Builder Checklist satisfied, IAA Pre-Brief acknowledged, Builder Appointment valid
 - **Prohibited**: Start before frozen, trial-and-error, infer from incomplete
 - **Zero Debt**: No .skip(), .todo(), commented, incomplete, partial (99%=FAILURE)
 - **Response to Debt**: STOP, FIX, RE-RUN, VERIFY 100%
