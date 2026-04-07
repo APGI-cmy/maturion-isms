@@ -147,7 +147,7 @@ Exit code: 0 (clean)
 
 **Rationale**: The declared wave scope (per IAA pre-brief §6 BLOCKER-01) covers `approve.ts` only. The `pending.ts` pattern is architecturally different — it uses the JWT payload to extract `organisationId` claims, making remediation non-trivial (requires a separate `organisationId` sourcing strategy). Fixing it within this wave would constitute scope expansion without CS2 authorization. A new remediation issue should be raised for `pending.ts` covering the same F-D3-002 finding.
 
-**Action**: Builder will create a follow-up GitHub issue for `pending.ts` F-D3-002 remediation after this wave merges.
+**Action**: Follow-up issue raised: **maturion-isms#1276** — "[Remediation] GET /api/ai/feedback/pending — enforce CS2 identity on JWT Bearer path (F-D3-002)"
 
 ---
 
