@@ -16,14 +16,17 @@ Parent Issue: #1266 (MMM build lifecycle reconciliation)
 
 ### Tasks
 - [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave1277-20260407.md
-- [ ] governance-liaison-isms-agent: update MMM_app_description.md Section 39B —
+- [x] governance-liaison-isms-agent: update MMM_app_description.md Section 39B —
       change "FRS derives functional requirements from the App Description"
       to "FRS derives functional requirements from the App Description and the UX Workflow & Wiring Spec (Stage 2)";
       bump version v0.3.0 → v0.4.0 with Last Updated 2026-04-07
-- [ ] IAA final audit and token — ASSURANCE-TOKEN: IAA-session-1277-mmm-39b-20260407-PASS
+- [x] IAA REJECTION-PACKAGE: CORE-018(a)(b) — PREHANDOVER/session memory untracked → REMEDIATED
+- [x] IAA ASSURANCE-TOKEN: IAA-session-1277-mmm-39b-20260407-r2-PASS
+      Token file: .agent-admin/assurance/iaa-token-session-1277-mmm-39b-20260407-r2.md
+- [x] WAVE COMPLETE — awaiting CS2 merge (@APGI-cmy)
 
 ### IAA Pre-Brief Summary (from iaa-prebrief-wave1277-20260407.md)
 - Trigger Category: PRE_BUILD_STAGE_MODEL
 - Applicable Overlay: PRE_BUILD_GATES (OVL-PBG-001 through OVL-PBG-009)
 - OVL-PBG-006: BUILD_PROGRESS_TRACKER Stage 2 present — PASS
-- Scope Blockers: SB-001 (only 39B+version), SB-003 (Stage 2 qualifier required)
+- All 21 checks PASS at final audit
