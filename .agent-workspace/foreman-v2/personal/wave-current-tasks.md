@@ -1,30 +1,32 @@
-# Wave Current Tasks — F-D3-002 JWT Bearer Remediation
+# Wave Current Tasks — Issue 1277
 
-wave: wave-f-d3-002-jwt-bearer-remediation-20260407
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave-f-d3-002-jwt-bearer-remediation-20260407.md
+wave: mmm-39b-frs-derivation-fix
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave1277-20260407.md
 
-## Active Wave: wave-f-d3-002-jwt-bearer-remediation-20260407
+## Active Wave: mmm-39b-frs-derivation-fix
 
 ### Wave Description
-Security remediation wave. Addressing finding F-D3-002 from audit CL-11-D3:
-The JWT Bearer auth path on POST /api/ai/feedback/approve accepts any 3-part token
-without signature or identity verification. Remediation: Remove JWT Bearer path entirely,
-require x-arc-token exclusively (Option B).
+Surgical doc-governance fix to modules/MMM/00-app-description/MMM_app_description.md Section 39B.
+Add UX Workflow & Wiring Spec as upstream input to FRS in the Requirements Derivation Chain.
+Bump version v0.3.0 → v0.4.0.
 
-CS2 Authorization: Issue #1272 opened by @APGI-cmy (CS2) and assigns foreman-v2-agent.
-Issue title: "[Remediation] POST /api/ai/feedback/approve — enforce CS2 identity on JWT Bearer path (F-D3-002)"
-Audit artifact: .agent-workspace/audit/CL-11-D3-arc-approval-403-audit-20260405.md
+CS2 Authorization: Issue maturion-isms#1277 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
+foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
+Parent Issue: #1266 (MMM build lifecycle reconciliation)
 
 ### Tasks
-- [x] T-01: IAA Pre-Brief invoked — PHASE_B_BLOCKING (not exempt, code changes)
-- [x] T-02: IAA pre-brief artifact committed: .agent-admin/assurance/iaa-prebrief-wave-f-d3-002-jwt-bearer-remediation-20260407.md
-- [x] T-03: wave-current-tasks.md updated for this wave
-- [x] T-04: api-builder delegated to implement security fix (commit a25f310)
-- [x] T-05: QP evaluation of builder deliverable — PASS (3/3 GREEN)
-- [x] T-06: PREHANDOVER proof written: .agent-admin/prehandover/PREHANDOVER_PROOF_session-057-wave-f-d3-002-20260407.md
-- [x] T-07: IAA Phase 2-4 audit token received: IAA-session-057-wave-f-d3-002-jwt-bearer-remediation-20260407-PASS
-- [x] T-08: Merge gate released — awaiting CS2 (@APGI-cmy) merge approval
+- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave1277-20260407.md
+- [x] governance-liaison-isms-agent: update MMM_app_description.md Section 39B —
+      change "FRS derives functional requirements from the App Description"
+      to "FRS derives functional requirements from the App Description and the UX Workflow & Wiring Spec (Stage 2)";
+      bump version v0.3.0 → v0.4.0 with Last Updated 2026-04-07
+- [x] IAA REJECTION-PACKAGE: CORE-018(a)(b) — PREHANDOVER/session memory untracked → REMEDIATED
+- [x] IAA ASSURANCE-TOKEN: IAA-session-1277-mmm-39b-20260407-r2-PASS
+      Token file: .agent-admin/assurance/iaa-token-session-1277-mmm-39b-20260407-r2.md
+- [x] WAVE COMPLETE — awaiting CS2 merge (@APGI-cmy)
 
-### Wave Category
-BUILD_DELIVERABLE — security remediation to AI Centre API endpoint.
-Changes: api/ai/feedback/approve.ts (remove JWT Bearer path), api/ai/feedback/approve.test.ts (add 403 test for JWT Bearer)
+### IAA Pre-Brief Summary (from iaa-prebrief-wave1277-20260407.md)
+- Trigger Category: PRE_BUILD_STAGE_MODEL
+- Applicable Overlay: PRE_BUILD_GATES (OVL-PBG-001 through OVL-PBG-009)
+- OVL-PBG-006: BUILD_PROGRESS_TRACKER Stage 2 present — PASS
+- All 21 checks PASS at final audit
