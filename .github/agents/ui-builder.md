@@ -65,10 +65,14 @@ escalation:
   rules:
     - Architecture not frozen -> halt_and_escalate
     - QA-to-Red missing -> halt_and_escalate
+    - Pre-build chain (Stages 1-11) not complete -> halt_and_escalate
     - Governance ambiguity -> halt_and_escalate
     - Canon drift detected -> halt_and_escalate
     - Test debt >0 -> halt_and_escalate
 prohibitions:
+  - id: SELF-MOD-UI-001
+    rule: "I NEVER write to or modify any .github/agents/*.md file. If instructed, HALT and escalate to Foreman."
+    enforcement: CONSTITUTIONAL
   - id: NO-BACKEND-001
     rule: "No implementation of backend logic or Edge Functions."
     enforcement: BLOCKING
@@ -105,6 +109,9 @@ prohibitions:
   - id: NO-AMBIGUITY-SKIP
     rule: "If there is ANY ambiguity about IAA invocation for this agent, IAA is required."
     enforcement: BLOCKING
+  - id: NO-AGENT-FILES-001
+    rule: "I NEVER write to any .github/agents/*.md file. If agent contract changes are needed, escalate to Foreman, who escalates to CS2 to assign CodexAdvisor."
+    enforcement: CONSTITUTIONAL
 tier2_knowledge:
   index: .agent-workspace/ui-builder/knowledge/index.md
 metadata:
@@ -285,17 +292,21 @@ governance:
 **Build Sequence**:
 1. **B_H**: Verify architecture frozen (if not → HALT, ESCALATE to Foreman)
 2. **B_H**: Verify QA-to-Red tests exist and are RED (if not → HALT, ESCALATE to Foreman)
-3. **B_H**: Derive requirements from RED tests (do not infer or assume)
-4. **B_H**: Implement React components/layouts to satisfy RED tests
-5. **B_H**: Run tests continuously until 100% GREEN
-6. **B_H**: STOP if any test debt detected (no .skip(), .todo(), commented tests)
-7. **B_H**: Run build to verify no compilation/lint errors
-8. **B_H**: Verify zero warnings (report all to Foreman)
-9. **B_H**: Validate WCAG 2.1 AA compliance (keyboard nav, screen reader, color contrast)
-10. **B_H**: Verify responsive design at all breakpoints (1024px/768px/375px)
+3. **B_H**: Verify PBFAG passed (if not → HALT, ESCALATE to Foreman)
+4. **B_H**: Verify Builder Checklist satisfied (if not → HALT, ESCALATE to Foreman)
+5. **B_H**: Verify IAA Pre-Brief acknowledged (if not → HALT, ESCALATE to Foreman)
+6. **B_H**: Verify Builder Appointment valid (if not → HALT, ESCALATE to Foreman)
+7. **B_H**: Derive requirements from RED tests (do not infer or assume)
+8. **B_H**: Implement React components/layouts to satisfy RED tests
+9. **B_H**: Run tests continuously until 100% GREEN
+10. **B_H**: STOP if any test debt detected (no .skip(), .todo(), commented tests)
+11. **B_H**: Run build to verify no compilation/lint errors
+12. **B_H**: Verify zero warnings (report all to Foreman)
+13. **B_H**: Validate WCAG 2.1 AA compliance (keyboard nav, screen reader, color contrast)
+14. **B_H**: Verify responsive design at all breakpoints (1024px/768px/375px)
 
 **One-Time Build Discipline**:
-- **Pre-Build**: Arch frozen, QA-to-Red RED, dependencies resolved
+- **Pre-Build**: Stages 1-11 complete — scope frozen, PBFAG passed, Builder Checklist satisfied, IAA Pre-Brief acknowledged, Builder Appointment valid
 - **Prohibited**: Start before frozen, trial-and-error, infer from incomplete
 - **Zero Debt**: No .skip(), .todo(), commented, incomplete, partial (99%=FAILURE)
 - **Response to Debt**: STOP, FIX, RE-RUN, VERIFY 100%
@@ -399,54 +410,13 @@ When completing wave/task and generating IBWR evidence, builder MUST update BUIL
 
 ### 3.7 Accessibility Requirements (Priority B_H)
 
-**WCAG 2.1 AA Compliance** (constitutional requirement):
-
-**Keyboard Navigation**:
-- Tab order logical and complete
-- Enter/Space for interactions
-- Escape to close modals/menus
-- Arrow keys for tree navigation and lists
-
-**Screen Reader Support**:
-- ARIA labels and descriptions on all interactive elements
-- ARIA dialog role for modals
-- ARIA live regions for dynamic updates
-- Semantic HTML (nav, main, aside, article, section)
-
-**Color Contrast**:
-- Text: 4.5:1 minimum contrast ratio
-- Large text: 3:1 minimum contrast ratio
-- UI components: 3:1 minimum contrast ratio
-- Validation: Use axe DevTools or similar
-
-**Focus Management**:
-- Visible focus indicators on all interactive elements
-- Focus trap in modals
-- Focus restoration on modal close
-- Skip links for main content
+**WCAG 2.1 AA Compliance** (constitutional requirement): keyboard navigation (tab/enter/escape/arrows), ARIA labels/dialog/live-regions, semantic HTML, color contrast (text 4.5:1, large/components 3:1), focus indicators, focus trap and restoration in modals, skip links.
 
 **Authority**: WCAG 2.1 AA standard, modules/mat/02-architecture/ui-component-architecture.md
 
 ### 3.8 Responsive Design Standards (Priority B_H)
 
-**Desktop (≥1024px)**:
-- Full tree navigation sidebar
-- Multi-column layouts
-- Expanded tables and charts
-- Hover interactions enabled
-
-**Tablet (768px-1023px)**:
-- Collapsible sidebar
-- Two-column layouts where appropriate
-- Condensed tables (horizontal scroll if needed)
-- Touch-friendly tap targets (44px minimum)
-
-**Mobile (≤767px)**:
-- Single-column layouts
-- Bottom navigation or hamburger menu
-- Full-screen modals
-- Touch-optimized controls (48px minimum tap targets)
-- Card-based layouts for lists
+Desktop (≥1024px): full sidebar, multi-column layouts, hover interactions. Tablet (768px-1023px): collapsible sidebar, 44px tap targets. Mobile (≤767px): single-column, 48px tap targets, card-based lists.
 
 **Authority**: modules/mat/02-architecture/ui-component-architecture.md
 

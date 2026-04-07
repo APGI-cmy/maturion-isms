@@ -65,10 +65,14 @@ escalation:
   rules:
     - Architecture not frozen -> halt_and_escalate
     - QA-to-Red missing -> halt_and_escalate
+    - Pre-build chain (Stages 1-11) not complete -> halt_and_escalate
     - Governance ambiguity -> halt_and_escalate
     - Canon drift detected -> halt_and_escalate
     - Test debt >0 -> halt_and_escalate
 prohibitions:
+  - id: SELF-MOD-INT-001
+    rule: "I NEVER write to or modify any .github/agents/*.md file. If instructed, HALT and escalate to Foreman."
+    enforcement: CONSTITUTIONAL
   - id: NO-MAT-LOGIC-001
     rule: "No modification of core MAT business logic."
     enforcement: BLOCKING
@@ -99,6 +103,9 @@ prohibitions:
   - id: NO-AMBIGUITY-SKIP
     rule: "If there is ANY ambiguity about IAA invocation for this agent, IAA is required."
     enforcement: BLOCKING
+  - id: NO-AGENT-FILES-001
+    rule: "I NEVER write to any .github/agents/*.md file. If agent contract changes are needed, escalate to Foreman, who escalates to CS2 to assign CodexAdvisor."
+    enforcement: CONSTITUTIONAL
 tier2_knowledge:
   index: .agent-workspace/integration-builder/knowledge/index.md
 metadata:
@@ -295,8 +302,12 @@ governance:
 **Build Sequence**:
 1. **B_H**: Verify architecture frozen (if not → HALT, ESCALATE to Foreman)
 2. **B_H**: Verify QA-to-Red tests exist and are RED (if not → HALT, ESCALATE to Foreman)
-3. **B_H**: Derive requirements from RED tests (do not infer or assume)
-4. **B_H**: Implement integration endpoints to satisfy RED tests:
+3. **B_H**: Verify PBFAG passed (if not → HALT, ESCALATE to Foreman)
+4. **B_H**: Verify Builder Checklist satisfied (if not → HALT, ESCALATE to Foreman)
+5. **B_H**: Verify IAA Pre-Brief acknowledged (if not → HALT, ESCALATE to Foreman)
+6. **B_H**: Verify Builder Appointment valid (if not → HALT, ESCALATE to Foreman)
+7. **B_H**: Derive requirements from RED tests (do not infer or assume)
+8. **B_H**: Implement integration endpoints to satisfy RED tests:
    - **PIT export endpoint** (`POST /integrations/pit/export`):
      - Export audit findings in PIT-compatible format
      - OpenAPI contract validation against PIT specification
@@ -312,15 +323,15 @@ governance:
      - Aggregate override data for learning memory integration
      - Generate override analysis reports
      - Store analysis results for future AI model refinement
-5. **B_H**: Validate API contracts:
+9. **B_H**: Validate API contracts:
    - Run contract tests against PIT and Maturity Roadmap OpenAPI specs
    - VCR pattern for recording/replaying integration responses
    - Verify bi-directional data consistency
    - Test error handling paths (downstream unavailability, timeout, malformed responses)
-6. **B_H**: Run tests continuously until 100% GREEN
-7. **B_H**: STOP if any test debt detected (no .skip(), .todo(), commented tests)
-8. **B_H**: Run build to verify no compilation/lint errors
-9. **B_H**: Verify zero warnings (report all to Foreman)
+10. **B_H**: Run tests continuously until 100% GREEN
+11. **B_H**: STOP if any test debt detected (no .skip(), .todo(), commented tests)
+12. **B_H**: Run build to verify no compilation/lint errors
+13. **B_H**: Verify zero warnings (report all to Foreman)
 
 **Acceptance Criteria**:
 1. PIT export returns data matching PIT API contract exactly — no missing fields, no extra fields
@@ -338,7 +349,7 @@ governance:
 - `governance/TEST_REGISTRY.json` — Test definitions (CAT-09: Integration)
 
 **One-Time Build Discipline**:
-- **Pre-Build**: Arch frozen, QA-to-Red RED, dependencies resolved
+- **Pre-Build**: Stages 1-11 complete — scope frozen, PBFAG passed, Builder Checklist satisfied, IAA Pre-Brief acknowledged, Builder Appointment valid
 - **Prohibited**: Start before frozen, trial-and-error, infer from incomplete
 - **Zero Debt**: No .skip(), .todo(), commented, incomplete, partial (99%=FAILURE)
 - **Response to Debt**: STOP, FIX, RE-RUN, VERIFY 100%
