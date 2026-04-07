@@ -2,8 +2,8 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 3.3.0
-**Last Updated**: 2026-04-06
+**Knowledge Version**: 3.4.0
+**Last Updated**: 2026-04-07
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -14,9 +14,9 @@
 |------|---------|---------|--------|
 | `index.md` (this file) | Knowledge entry point and version reference | 3.0.0 | PRESENT |
 | `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 2.5.0 | PRESENT — Rules A-001 through A-032 active (A-032: Schema Column Compliance Check — IAA must read migration DDL directly for all PRs containing INSERT/SELECT operations; INC-ALCF-001 self-governance closure) |
-| `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 2.6.0 | ACTIVE — CORE-001 to CORE-022; CORE-016 PENDING carve-out updated per A-029 |
-| `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.2.0 | ACTIVE — PRE_BUILD_STAGE_MODEL and MANDATORY_CROSS_APP_COMPONENTS trigger categories added (v2.2.0); KNOWLEDGE_GOVERNANCE trigger category present |
-| `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE, PRE_BRIEF_ASSURANCE, PRE_BUILD_GATES) | 3.8.0 | ACTIVE — PRE_BUILD_GATES overlay strengthened (v3.8.0): OVL-PBG-006 (12-stage model in BUILD_PROGRESS_TRACKER), OVL-PBG-007 (architecture doc full lifecycle), OVL-PBG-008 (stage gating no-skip), OVL-PBG-009 (legacy directory numbering advisory); PRE_BUILD_GATES overlay added (v3.7.0) for MMM FRS pre-build gate enforcement (OVL-PBG-001 through OVL-PBG-005); OVL-CI-005 Inherent Limitation Exception (v3.3.0, S-033); INJECTION_AUDIT_TRAIL renamed to PRE_BRIEF_ASSURANCE, artifact-existence-only OVL-INJ-001 (v3.4.0, issue #1061); Orientation Mandate scope note + OVL-KG-ADM-002 sharpened + timestamp carve-out (v3.6.0) |
+| `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 3.0.0 | CORE-025 Pre-Brief Stage-Readiness Declaration added for PRE_BUILD_STAGE_MODEL PRs (v3.0.0) |
+| `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.3.0 | PRE_BUILD_STAGE_MODEL trigger row updated with all 12 stages and OVL-PBG-001–016 reference (v2.3.0) |
+| `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE, PRE_BRIEF_ASSURANCE, PRE_BUILD_GATES) | 4.0.0 | PRE_BUILD_GATES overlay complete (OVL-PBG-001 through OVL-PBG-016); PRE_BRIEF_ASSURANCE stage-readiness view (OVL-INJ-ADM-003) added (v4.0.0) |
 | `session-memory-template.md` | Standard session memory template for IAA invocations | 1.0.0 | PRESENT |
 | `IAA_ZERO_SEVERITY_TOLERANCE.md` | Tier 2 operational note for Zero-Severity-Tolerance Rule — prohibited language table, machine-readable logic, exception procedure | 1.0.0 | ACTIVE |
 | `IAA_AGENT_CONTRACT_AUDIT_STANDARD.md` | **AGENT_CONTRACT Audit Standard** — mandatory audit steps, pre-approval doctrine, protected components checklist, tier placement discipline, decision matrix for all agent contract PRs reviewed by IAA | 1.0.0 | ACTIVE — Load at Step 2.4 when PR category is AGENT_CONTRACT |

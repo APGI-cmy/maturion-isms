@@ -1,25 +1,35 @@
-# SCOPE DECLARATION — Wave CL-10 | Session cl10-routing-governance-20260405
+# SCOPE DECLARATION — Wave iaa-12stage-upgrade | Session iaa-12stage-20260407
 
 **Agent**: foreman-v2-agent
-**Wave**: cl-10-routing-governance-ci-enforcement
-**Branch**: copilot/cl-10-routing-governance-ci-enforcement
-**Date**: 2026-04-05
+**Wave**: iaa-12stage-upgrade
+**Branch**: copilot/upgrade-iaa-tier-logic
+**Date**: 2026-04-07
+**Issue**: maturion-isms#1258
+**Authority**: A-026 / A-031
+
+> **A-031 NOTE**: IAA ceremony artifacts (Pre-Brief, PREHANDOVER, session memory, token file)
+> from this wave are carved out of scope tracking per A-031.
 
 ## Files Added (This Wave)
 
 | Path | Description |
 |------|-------------|
-| `.agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-20260405.md` | IAA Pre-Brief artifact (SHA f9db5ab) |
-| `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Updated for CL-10 active wave |
-| `modules/mat/tests/ci-governance-check/routing-governance-ci.test.ts` | CL-10-D1 RED gate tests (qa-builder) |
-| `.github/workflows/routing-governance-check.yml` | CL-10-D2 provider import CI check (integration-builder) |
-| `.github/workflows/stub-detection-check.yml` | CL-10-D3 stub detection CI check (integration-builder) |
-| `.agent-workspace/qa-builder/memory/PREHANDOVER-session-cl10-d1-20260405.md` | qa-builder PREHANDOVER proof |
-| `.agent-workspace/integration-builder/memory/PREHANDOVER-session-cl10-d2d3-20260405.md` | integration-builder PREHANDOVER proof |
+| `.agent-admin/assurance/iaa-prebrief-iaa-12stage-upgrade.md` | IAA Phase 0 Pre-Brief artifact |
+| `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-iaa-12stage-20260407.md` | Foreman PREHANDOVER proof (A-031 carve-out) |
+| `.agent-workspace/foreman-v2/memory/session-iaa-12stage-20260407.md` | Foreman session memory (A-031 carve-out) |
+| `.agent-admin/assurance/iaa-token-session-iaa-12stage-20260407.md` | IAA ASSURANCE-TOKEN (A-031 carve-out) |
 
-## Files Modified
+## Files Modified (This Wave)
 
-None (governance artifacts only — SCOPE_DECLARATION and wave-current-tasks.md are Foreman-owned)
+| Path | Description |
+|------|-------------|
+| `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Updated for iaa-12stage-upgrade active wave |
+| `.agent-workspace/independent-assurance-agent/knowledge/iaa-category-overlays.md` | v3.8.0 → v4.0.0 — OVL-PBG-010–016 added; PRE_BRIEF_ASSURANCE strengthened |
+| `.agent-workspace/independent-assurance-agent/knowledge/iaa-core-invariants-checklist.md` | v2.9.0 → v3.0.0 — CORE-025 Pre-Brief Stage-Readiness Declaration added |
+| `.agent-workspace/independent-assurance-agent/knowledge/iaa-trigger-table.md` | v2.2.0 → v2.3.0 — all 12 stages named; OVL-PBG-001–016 reference |
+| `.agent-workspace/independent-assurance-agent/knowledge/index.md` | v3.3.0 → v3.4.0 — all version entries updated |
+| `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` | v1.3.0 → v1.4.0 — §Pre-Build Stage Assurance added |
+| `governance/CANON_INVENTORY.json` | INDEPENDENT_ASSURANCE_AGENT_CANON.md entry: v1.4.0, hash 86e0a1fd... |
 
 ## Files Excluded
 

@@ -1,39 +1,29 @@
-# Wave Current Tasks — PS-B: Foreman FAIL-ONLY-ONCE v4.2.0
+# Wave Current Tasks — Issue 1258
 
-wave: ps-b-fail-only-once-v420-20260407
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-ps-b-fail-only-once-v420-20260407.md
+wave: iaa-12stage-upgrade
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-iaa-12stage-upgrade.md
 
-## Active Wave: ps-b-fail-only-once-v420-20260407
+## Active Wave: iaa-12stage-upgrade
 
 ### Wave Description
-KNOWLEDGE_GOVERNANCE wave. Upgrade FAIL-ONLY-ONCE.md from v4.1.0 → v4.2.0 with:
-- Duplicate ID dedup (PS-B-01: second A-004 → A-018 documented, PS-B-02: add A-019)
-- Renumber existing A-033→A-036, A-034→A-037, A-035→A-038
-- New rules A-033 (ceremony files in SCOPE_DECLARATION), A-034 (CANON_INVENTORY update), A-035 (DELEGATION-ISSUE-REQUIRED)
-- Completion marker convention [ ]/[x] for incident log (PS-B-06)
+Upgrade the Independent Assurance Agent (IAA) Tier 1 (canon), Tier 2 (knowledge pack),
+and Tier 3 (session/runtime logic) to explicitly enforce the canonical 12-stage pre-build
+model defined in governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md v1.0.0.
 
-CS2 Authorization: Issue #1268 opened and assigned by @APGI-cmy (CS2).
-Issue title: "[PS-B] Foreman FAIL-ONLY-ONCE v4.2.0 — dedup + new A-rules"
+CS2 Authorization: Issue maturion-isms#1258 opened by @APGI-cmy (CS2) and assigned to
+foreman-v2-agent (Copilot).
+
+### Prior Wave Reference
+Previous wave (wave-1253-foreman-12stage-alignment) aligned Foreman contract to 12-stage
+model. This wave aligns IAA logic to the same model. These are parallel but independent
+governance upgrades.
 
 ### Tasks
-- [x] T-01: IAA Pre-Brief invoked — KNOWLEDGE_GOVERNANCE category, NO hard blockers
-- [x] T-02: IAA pre-brief artifact committed: .agent-admin/assurance/iaa-prebrief-ps-b-fail-only-once-v420-20260407.md
-- [ ] T-03: FAIL-ONLY-ONCE.md updated to v4.2.0 (all 6 PS-B changes applied)
-- [ ] T-04: knowledge/index.md updated to reflect FAIL-ONLY-ONCE v4.2.0
-- [ ] T-05: Session memory written
-- [ ] T-06: PREHANDOVER proof written
-- [ ] T-07: IAA final audit token committed
-
-### Wave Category
-KNOWLEDGE_GOVERNANCE — governance knowledge file update.
-Triggers: `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md`
-
-### Handover Requirements
-- FAIL-ONLY-ONCE.md updated to v4.2.0 with all 6 PS-B changes applied
-- No duplicate A-rule IDs remain
-- IAA Pre-Brief artifact committed before work begins ✅
-- Full IAA ceremony (KNOWLEDGE_GOVERNANCE category)
-- CS2 merge authority
-
-### Prior Wave (closed)
-wave-mmm-pre-impl-orchestration-20260407 — iaa-prebrief-mmm-pre-impl-orchestration-20260407.md
+- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-iaa-12stage-upgrade.md
+- [x] T-IAA-12S-001: Add OVL-PBG-010 to OVL-PBG-016 in iaa-category-overlays.md
+- [x] T-IAA-12S-002: Strengthen PRE_BRIEF_ASSURANCE overlay with stage-readiness view
+- [x] T-IAA-12S-003: Add CORE-025 Pre-Brief Stage Readiness Declaration in iaa-core-invariants-checklist.md
+- [x] T-IAA-12S-004: Add §Pre-Build Stage Assurance section to INDEPENDENT_ASSURANCE_AGENT_CANON.md
+- [x] T-IAA-12S-005: Update iaa-trigger-table.md for full 12-stage coverage
+- [x] T-IAA-12S-006: Update index.md with new file versions
+- [x] IAA final audit and token — ASSURANCE-TOKEN: IAA-session-iaa-12stage-20260407-PASS
