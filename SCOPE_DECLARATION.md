@@ -1,54 +1,47 @@
-# SCOPE DECLARATION — Wave pre-mmm-build-readiness
+# SCOPE DECLARATION — Wave ps-b-fail-only-once-v420-20260407
 
-**Agent**: governance-liaison-isms v6.2.0
-**Wave**: pre-mmm-build-readiness — IAA Tier 2 Knowledge Upgrades & MMM Module Identity Clean-up
-**Session**: session-056-20260406
-**Date**: 2026-04-06
-**Branch**: copilot/pre-mmm-build-readiness-orchestration
-**Authority**: CS2 (@APGI-cmy) via Foreman (foreman-v2-agent) wave delegation
+**Agent**: foreman-v2-agent v6.2.0 (contract 2.9.0)
+**Wave**: ps-b-fail-only-once-v420-20260407
+**Session**: session-159
+**Date**: 2026-04-07
+**Branch**: copilot/ps-b-foreman-fail-only-once
+**Issue**: maturion-isms#1268 ([PS-B] Foreman FAIL-ONLY-ONCE v4.2.0 — dedup + new A-rules)
+**Authority**: CS2 (@APGI-cmy)
 
 ## Declared Scope: Files Modified
 
-Per `git diff --name-only origin/main...HEAD` (this PR):
+**Wave Category**: KNOWLEDGE_GOVERNANCE
 
-- `.agent-admin/assurance/iaa-prebrief-pre-mmm-build-readiness.md` — IAA Pre-Brief for wave pre-mmm-build-readiness (pre-existing, committed by Foreman)
-- `.agent-admin/build-evidence/session-056/PREHANDOVER_PROOF_SESSION_056.md` — PREHANDOVER proof for session-056
-- `.agent-workspace/foreman-v2/personal/mmm-legacy-capabilities-recommendations.md` — New: recommendations for legacy capabilities directory treatment (created by governance-liaison-isms session-056)
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — Wave task tracking file (Foreman-maintained, pre-existing modification)
-- `.agent-workspace/governance-liaison-isms/memory/session-056-20260406.md` — Session memory for session-056
-- `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md` — Parking station suggestions log (appended)
-- `.agent-workspace/independent-assurance-agent/knowledge/iaa-category-overlays.md` — Updated v3.6.0 → v3.7.0 (PRE_BUILD_GATES overlay added)
-- `.agent-workspace/independent-assurance-agent/knowledge/iaa-trigger-table.md` — Updated v2.1.0 → v2.2.0 (PRE_BUILD_STAGE_MODEL, MANDATORY_CROSS_APP_COMPONENTS triggers added)
-- `.agent-workspace/independent-assurance-agent/knowledge/index.md` — Updated v3.1.0 → v3.2.0 (version bump, AGENT_HANDOVER_AUTOMATION ref update)
-- `modules/MMM/02-architecture/architecture.md` — Rewritten: legacy Risk Management stub replaced with MMM architecture placeholder
-- `modules/MMM/BUILD_PROGRESS_TRACKER.md` — Corrected: risk-management/Risk Management identity references replaced with MMM
-- `modules/MMM/module.manifest.json` — Corrected: module_slug risk-management → MMM, identity corrected throughout
-- `SCOPE_DECLARATION.md` — This file (scope declaration for wave pre-mmm-build-readiness)
+### Governance Knowledge Files (Tier 2 — agent-workspace)
 
-**File count: 13 files (excluding IAA session/token artifacts written by IAA agent post-verdict).**
+- `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` — Upgraded v4.1.0 → v4.2.0: PS-B-01 through PS-B-06 changes applied (ID Namespace Note, A-019, A-033–A-035 new, A-036–A-038 renumbered, completion marker convention)
+- `.agent-workspace/foreman-v2/knowledge/index.md` — Upgraded v2.4.0 → v2.5.0: FAIL-ONLY-ONCE version reference updated
 
-## Out-of-Scope Attestation
+### Foreman Wave Administration Files (personal workspace)
 
-All files NOT listed above are out-of-scope and were NOT modified by this wave:
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — Updated for ps-b wave (iaa_prebrief_path set)
+- `.agent-workspace/foreman-v2/memory/session-159-ps-b-fail-only-once-v420-20260407.md` — Session memory (new)
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-159-ps-b-fail-only-once-v420-20260407.md` — PREHANDOVER proof (new)
 
-- No production code changes
-- No schema or migration changes
-- No test changes
-- No .github/agents/ changes
-- No .github/workflows/ changes
-- No modules/risk-management/ changes
-- No modules/MMM/src/ or tests/ changes
+### IAA Ceremony Files (A-031 carve-out — not in scope for pre-declaration)
 
-- No CI/CD workflow changes
-- No agent contract changes (.github/agents/*.md not modified)
-- No canonical governance files modified (consumer mode only)
-- No other agent contracts modified
+- `.agent-admin/assurance/iaa-prebrief-ps-b-fail-only-once-v420-20260407.md` — IAA Pre-Brief (committed before changes; A-031 carve-out per A-033)
+- `.agent-admin/assurance/iaa-rejection-session-159-ps-b-fail-only-once-v420-20260407.md` — IAA Rejection Package (procedural rejection; remediated; A-031 carve-out per A-033)
+- `.agent-admin/assurance/iaa-token-session-159-ps-b-fail-only-once-v420-20260407.md` — IAA Token (to be committed by IAA after audit; A-031 carve-out per A-033)
 
-## ADR Compliance
+### Root
 
-Governance and agent contract maintenance only. No ADR conditions triggered.
+- `SCOPE_DECLARATION.md` — This file (fresh overwrite per A-029)
 
----
+## Out of Scope
 
-*Authority: CodexAdvisor-agent v3.4.0 | Session-052 | 2026-04-06*
+- No production code changes (apps/, modules/, supabase/, packages/)
+- No CI workflow changes (.github/workflows/)
+- No agent contract changes (.github/agents/)
+- No migration or schema changes
 
+## IAA Pre-Brief
+
+Pre-Brief artifact: `.agent-admin/assurance/iaa-prebrief-ps-b-fail-only-once-v420-20260407.md`
+Pre-Brief committed: YES (commit 2c398fe — before any substantive changes)
+Category: KNOWLEDGE_GOVERNANCE — MANDATORY
