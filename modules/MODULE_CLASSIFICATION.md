@@ -2,8 +2,9 @@
 
 **Document Type**: Governance Alignment Artifact  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
-**Version**: 1.0.0  
+**Version**: 1.1.0  
 **Effective Date**: 2026-04-06  
+**Last Amended**: 2026-04-07 (CS2 Direction — MAT and Maturity Roadmap classified CLOSED)  
 **Produced By**: governance-liaison-isms-agent (wave: align-12stage-prebuild-20260406)  
 **Issue Reference**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)  
 **Canon Reference**: [`governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md`](../governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md) v1.0.0
@@ -15,8 +16,12 @@
 This document classifies every Maturion module against the canonical 12-Stage Pre-Build Stage
 Model defined in `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05).
 
-All module `BUILD_PROGRESS_TRACKER.md` files have been migrated from the legacy 6-stage format
-to the canonical 12-stage format as part of wave **align-12stage-prebuild-20260406**.
+All non-MAT module `BUILD_PROGRESS_TRACKER.md` files were migrated from the legacy 6-stage
+format to the canonical 12-stage format as part of wave **align-12stage-prebuild-20260406**.
+`modules/mat/BUILD_PROGRESS_TRACKER.md` is left as a legacy artefact — MAT is formally CLOSED
+per CS2 Direction 2026-04-07 (see §8). `modules/maturity-roadmap/BUILD_PROGRESS_TRACKER.md`
+was migrated to 12-stage in this wave prior to the CS2 Direction; no further stages will be
+progressed as Maturity Roadmap is also CLOSED.
 
 ---
 
@@ -49,13 +54,13 @@ No stage may be skipped. Stage order must be respected unless explicitly documen
 
 | Module | Classification | Reason | Retrofit Scope |
 |--------|----------------|--------|----------------|
-| MAT | ACTIVE — RETROFIT NOW | MAT is the most advanced module with completed App Description, FRS, TRS, Architecture, QA-to-Red, Implementation Plan, and active Build waves. Has the most complete 12-stage coverage in the ecosystem. | Full retrofit. All 12 stages mapped. Old Stage 0–5 → new Stages 1, 3, 4, 5, 8, 11. Stages 2, 6, 7, 9, 10 mapped from MAT-specific artifacts. (Handled by mat-specialist — do NOT modify.) |
+| MAT | CLOSED | MAT (Manual Audit Tool) is formally closed. Superseded by MMM (Maturity Model Management), which is the convergence of MAT + Maturity Roadmap. MAT survives as a harvest source and decommission reference only. No new build work will be performed. Authority: CS2 Direction 2026-04-07. | Legacy artefacts preserved as-is. `modules/mat/BUILD_PROGRESS_TRACKER.md` is not modified — left as legacy artefact. No further stage progression required. |
 | MMM | ACTIVE — RETROFIT NOW | MMM has App Description (`MMM_app_description.md`), Architecture (`architecture.md` + `capabilities/`), and AIMC wiring service (`src/services/aimc-wiring.ts`). Significant pre-build and integration work exists. Header anomaly corrected (tracker was wrongly labeled "Risk Management"). | Old stages 0–5 mapped to 12-stage. Stage 1 COMPLETE (App Description). Stage 5 IN_PROGRESS (Architecture). Stages 2, 3, 4, 6, 7, 8, 9, 10 NOT_STARTED. Stage 12 has partial AIMC integration artifact. |
 | amc | ACTIVE — FRESH START ON NEXT STAGE | AMC has App Description and governance foundation complete. Build waves defined but not started. No FRS or Architecture content populated. | Stage 1 COMPLETE. All other stages NOT_STARTED. 12-stage lifecycle section added above existing Build Waves section (waves preserved). |
 | course-crafter | ACTIVE — RETROFIT NOW | Course Crafter has substantial Architecture content (`architecture.md`, `data-contracts/`, `exports/`, `integrations/`, `qa/`, `ui-ux/` folders). Full architecture structure is the most complete outside MAT/PIT. App Description folder is empty — anomaly noted. | Old stages mapped to 12-stage. Stage 1 NOT_STARTED (no app-description.md found — anomaly). Stage 5 IN_PROGRESS (Architecture populated). All other stages NOT_STARTED. |
 | incident-intelligence | ACTIVE — FRESH START ON NEXT STAGE | Incident Intelligence has App Description (`app-description.md`) but FRS and Architecture folders contain only stub content. No implementation work. | Stage 1 COMPLETE. All other stages NOT_STARTED. |
 | isms | ACTIVE — RETROFIT NOW | ISMS has Architecture content (`architecture.md` + `integrations/` folder). Architecture work is in progress. App Description folder is empty — anomaly noted. | Old stages mapped to 12-stage. Stage 1 NOT_STARTED (no app-description.md found). Stage 5 IN_PROGRESS (Architecture populated). All other stages NOT_STARTED. |
-| maturity-roadmap | ACTIVE — FRESH START ON NEXT STAGE | Maturity Roadmap has two versions of App Description (`ROADMAP_APP_DESCRIPTION_v2.0.md`, `ROADMAP_APP_DESCRIPTION_v3.0.md`). Architecture folder is empty. No FRS or implementation content. | Stage 1 COMPLETE (multiple App Description versions exist). All other stages NOT_STARTED. |
+| maturity-roadmap | CLOSED | Maturity Roadmap is formally closed. Superseded by MMM (Maturity Model Management), which is the convergence of MAT + Maturity Roadmap. Maturity Roadmap survives as a harvest source and decommission reference only. No new build work will be performed. `BUILD_PROGRESS_TRACKER.md` was migrated to 12-stage in this wave prior to CS2 Direction 2026-04-07. Authority: CS2 Direction 2026-04-07. | `BUILD_PROGRESS_TRACKER.md` migrated to 12-stage format in this wave (prior to CS2 Direction). No further stage progression required. |
 | pit | ACTIVE — RETROFIT NOW | PIT has the most complete architecture outside MAT: `architecture.md`, `data-contracts/`, `exports/`, `integrations/`, `qa/`, `ui-ux/`, `watchdog/`, `_legacy/`. Also has AIMC wiring service and governance notes. App Description folder is empty — anomaly noted. | Old stages mapped to 12-stage. Stage 1 NOT_STARTED (no app-description.md found). Stage 5 IN_PROGRESS (full Architecture structure). All other stages NOT_STARTED. Stage 12 has AIMC integration artifact. |
 | risk-management | ACTIVE — RETROFIT NOW | Risk Management has Architecture (`architecture.md` + `capabilities/`) and AIMC wiring service from Wave 9.6. App Description folder is empty — anomaly noted. Note: MMM tracker was wrongly assigned risk-management content — anomaly corrected. | Old stages mapped to 12-stage. Stage 1 NOT_STARTED (no app-description.md found). Stage 5 IN_PROGRESS (Architecture populated). All other stages NOT_STARTED. Stage 12 has AIMC integration artifact. |
 | xdetect | ACTIVE — FRESH START ON NEXT STAGE | xDetect has App Description (`app-description.md`) and AIMC wiring service from Wave 9.6, but Architecture and FRS folders are empty. AIMC service is an integration artifact, not a core build stage deliverable. | Stage 1 COMPLETE. All other stages NOT_STARTED. Stage 12 notes AIMC integration artifact. |
@@ -88,7 +93,16 @@ stages in order per `PRE_BUILD_STAGE_MODEL_CANON.md`.
 ### HISTORICAL/FROZEN
 
 No modules were classified as HISTORICAL/FROZEN in this wave. All modules in the Maturion
-ecosystem are active or in early-stage planning.
+ecosystem are active, in early-stage planning, or formally CLOSED.
+
+### CLOSED
+
+The module has been formally closed by CS2 authority and will not receive further build work.
+The module survives as a harvest source and decommission reference only.
+
+**What was done**: Module classified CLOSED. `BUILD_PROGRESS_TRACKER.md` is left as a legacy
+artefact (or migrated to 12-stage if migration occurred prior to the closure decision). No
+further stage progression will be performed.
 
 ---
 
@@ -156,5 +170,26 @@ All future work on any Maturion module MUST use the 12-stage model defined in
 
 ---
 
+## 8. CS2 Direction — 2026-04-07
+
+**Authority**: CS2 (Johan Ras / @APGI-cmy)  
+**Date**: 2026-04-07  
+**Reference**: PR comment — maturion-isms PR (copilot/align-live-maturation-artifacts)
+
+MAT (Manual Audit Tool) is formally closed. It is superseded by MMM (Maturity Model Management),
+which is the convergence of MAT + Maturity Roadmap. MAT and Maturity Roadmap survive as harvest
+sources and decommission references only. No new build work will be performed in either module.
+
+**Directives applied in v1.1.0:**
+
+1. MAT classified as **CLOSED** in this document (§3 table).
+2. Maturity Roadmap classified as **CLOSED** in this document (§3 table).
+3. Task B (MAT `BUILD_PROGRESS_TRACKER.md` update) cancelled — not required for a closing module.
+4. MAT tracker files left as legacy artefacts — not modified.
+5. All other tracker updates and `MODULE_CLASSIFICATION.md` proceed as specified.
+
+---
+
 *Produced by governance-liaison-isms-agent | Wave: align-12stage-prebuild-20260406 | 2026-04-06*  
+*Amended 2026-04-07: CS2 Direction — MAT and Maturity Roadmap classified CLOSED (v1.1.0)*  
 *Authority: CS2 (Johan Ras / @APGI-cmy) | Canon: PRE_BUILD_STAGE_MODEL_CANON.md v1.0.0*
