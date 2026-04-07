@@ -1,20 +1,20 @@
-# Wave Current Tasks — Issue 1253
+# Wave Current Tasks — Issue 1266
 
-wave: wave-1253-foreman-12stage-alignment
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave-1253-20260407.md
+wave: wave-1266-mmm-39a-12stage-reconcile
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave-1266-20260407.md
 
-## Active Wave: wave-1253-foreman-12stage-alignment
+## Active Wave: wave-1266-mmm-39a-12stage-reconcile
 
 ### Wave Description
-Align Foreman contract logic to the canonical 12-stage pre-build model.
-Contract amendment: foreman-v2-agent.md v2.8.0 → v2.9.0.
+Reconcile and update MMM_app_description.md Section 39A (Build Lifecycle Stages) to match
+the canonical 12-stage pre-build model (PRE_BUILD_STAGE_MODEL_CANON.md v1.0.0).
 
-CS2 Authorization: Issue maturion-isms#1253 opened by @APGI-cmy (CS2) and assigned to
-foreman-v2-agent (Copilot). Comment: "CS: Johan Ras permission provided to codex advisor
-to work on or alter agent files to ensure alignment with this issue: 1253".
+CS2 Authorization: Issue maturion-isms#1266 opened by @APGI-cmy (CS2) and assigned to
+foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
 
 ### Tasks
-- [x] CodexAdvisor: amend foreman-v2-agent.md — add 12-stage pre_build_model YAML,
-      HALT-009/010/011, NO-SKIP-PREBUILD-001, Phase 2 Steps 2.5a/b/c, Phase 3 Steps 3.3/3.4a
-- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave-1253-20260407.md
+- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave-1266-20260407.md
+- [ ] governance-liaison-isms-agent: update MMM_app_description.md Section 39A —
+      replace old sequence with canonical 12-stage; add cross-ref to PRE_BUILD_STAGE_MODEL_CANON.md;
+      add merge-gate enforcement note; bump version v0.2.0 → v0.3.0
 - [ ] IAA final audit and token
