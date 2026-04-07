@@ -56,7 +56,7 @@ Per `iaa-trigger-table.md` v2.1.0 and `INDEPENDENT_ASSURANCE_AGENT_CANON.md`:
 | AAWP_MAT | ✅ PRIMARY | `modules/mat/` and `packages/ai-centre/` paths are explicitly listed AAWP_MAT patterns in the trigger table |
 | MIXED | ✅ SECONDARY | PR contains AAWP_MAT triggers + non-trigger module documentation in the same branch |
 | CANON_GOVERNANCE | ❌ Not applicable | Canon is FROZEN (`PRE_BUILD_STAGE_MODEL_CANON.md` is NOT modified — only applied) |
-| AGENT_CONTRACT | ❌ Not applicable | No `.github/agents/` files modified |
+| AGENT_CONTRACT | ❌ Not applicable (this pre-brief) | This pre-brief is scoped to issue #1255 (module tracker alignment). `.github/agents/foreman-v2-agent.md` is modified in the same PR but under issue #1253; AGENT_CONTRACT assurance is covered by the separate IAA session-052-R2 artifacts (`.agent-admin/assurance/iaa-token-session-052-wave1-R2-20260405.md`). |
 | CI_WORKFLOW | ❌ Not applicable | No `.github/workflows/` files modified |
 | KNOWLEDGE_GOVERNANCE | ❌ Not applicable | No `.agent-workspace/*/knowledge/` files modified |
 | EXEMPT | ❌ Prohibited | AMBIGUITY RULE applies — MIXED/AAWP_MAT triggers prevent EXEMPT classification |
@@ -333,7 +333,7 @@ The following items were identified during pre-brief review and must be resolved
 | Universal Ceremony Gate | ✅ Yes | All qualifying PRs |
 | BUILD_DELIVERABLE (AAWP_MAT) | ✅ Yes — PRIMARY | modules/mat/ and packages/ai-centre/ paths |
 | PRE_BRIEF_ASSURANCE (OVL-INJ-001) | ✅ Yes | AAWP_MAT trigger; this pre-brief is the required artifact |
-| AGENT_CONTRACT | ❌ No | No agent contract files in scope |
+| AGENT_CONTRACT | ❌ Not in scope (this pre-brief) | Scoped to issue #1255. `foreman-v2-agent.md` modification (issue #1253) is covered by IAA session-052-R2 token: `.agent-admin/assurance/iaa-token-session-052-wave1-R2-20260405.md` |
 | CANON_GOVERNANCE | ❌ No | Canon not modified (only applied) |
 | CI_WORKFLOW | ❌ No | No CI/workflow changes |
 | KNOWLEDGE_GOVERNANCE | ❌ No | No Tier 2 knowledge changes |

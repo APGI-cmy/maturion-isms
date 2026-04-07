@@ -215,7 +215,7 @@ gate-pass requires upstream stages to be completed first. Mapped from old Stage 
 **Notes**: Core build not yet started. However, as an artifact of Wave 9.6 AIMC integration
 (pre-12-stage), `src/services/aimc-wiring.ts` exists as an AIMC integration component and
 `risk-advisor.md` persona exists in `packages/ai-centre/src/agents/`. These are integration
-artifacts (16 AIMC wiring tests GREEN from Wave 9.6), not core Risk Management build deliverables.
+artifacts (8 AIMC wiring tests GREEN from Wave 9.6), not core Risk Management build deliverables.
 Mapped from old Stage 5.
 
 ---
@@ -253,8 +253,8 @@ canonical 12-stage per `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0. See Stage Migrat
 Insert Technical Requirements Specification (TRS) Step".
 
 **AI Integration**: AIMC wiring (Wave 9.6) complete. `risk-advisor.md` persona delivered.
-16 AIMC wiring tests GREEN (RISK-AIMC-T-001 to T-008 + regression suite). See
-`tests/wiring-invariants/` and `tests/ai-gateway-smoke/` for test evidence.
+8 AIMC wiring tests GREEN (`RISK-AIMC-T-001` to `RISK-AIMC-T-008`), with additional
+regression suite evidence in `tests/wiring-invariants/` and `tests/ai-gateway-smoke/`.
 
 ---
 
