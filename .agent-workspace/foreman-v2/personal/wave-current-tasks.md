@@ -14,7 +14,7 @@ foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
 
 ### Tasks
 - [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave-1266-20260407.md
-- [ ] governance-liaison-isms-agent: update MMM_app_description.md Section 39A —
+- [x] governance-liaison-isms-agent: update MMM_app_description.md Section 39A —
       replace old sequence with canonical 12-stage; add cross-ref to PRE_BUILD_STAGE_MODEL_CANON.md;
       add merge-gate enforcement note; bump version v0.2.0 → v0.3.0
-- [ ] IAA final audit and token
+- [x] IAA final audit and token — ASSURANCE-TOKEN: IAA-session-wave-1266-20260407-r2-PASS
