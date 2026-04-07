@@ -184,8 +184,8 @@ Exit code: 0 (clean)
 
 ```
 iaa_audit_token: IAA-session-057-wave-f-d3-002-jwt-bearer-remediation-20260407-PASS
-iaa_invocation_result: [PENDING — Phase 2-4 invocation to follow]
-double_qa_confirmed: Foreman QA (build) + IAA QA (handover) — IAA pending
+iaa_invocation_result: PASS — Phase 2-4 invocation completed
+double_qa_confirmed: Foreman QA (build) + IAA QA (handover) — confirmed
 ```
 
 ---

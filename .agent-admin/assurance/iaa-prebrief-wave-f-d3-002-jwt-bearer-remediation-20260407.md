@@ -2,7 +2,7 @@
 
 **Wave**: wave-f-d3-002-jwt-bearer-remediation-20260407
 **Issue**: maturion-isms#1272 — [Remediation] POST /api/ai/feedback/approve — enforce CS2 identity on JWT Bearer path (F-D3-002)
-**Branch**: copilot/fix-1272-f-d3-002-jwt-bearer-enforce-cs2-identity
+**Branch**: copilot/f-d3-002-approve-feedback-enforce-cs2
 **Date**: 2026-04-07
 **IAA invocation mode**: PHASE_0_PRE_BRIEF
 **Produced by**: independent-assurance-agent (Phase 0 only — no Phase 2–4 verdict issued here)
@@ -149,7 +149,7 @@ agent: api-builder
 agent_version: <current version>
 issue: maturion-isms#1272
 wave: wave-f-d3-002-jwt-bearer-remediation-20260407
-branch: copilot/fix-1272-f-d3-002-jwt-bearer-enforce-cs2-identity
+branch: <actual PR branch — must match the **Branch** field above exactly>
 
 ## Scope Declaration
 Files modified:
