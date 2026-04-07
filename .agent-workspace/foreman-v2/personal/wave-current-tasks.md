@@ -19,11 +19,11 @@ Audit artifact: .agent-workspace/audit/CL-11-D3-arc-approval-403-audit-20260405.
 - [x] T-01: IAA Pre-Brief invoked — PHASE_B_BLOCKING (not exempt, code changes)
 - [x] T-02: IAA pre-brief artifact committed: .agent-admin/assurance/iaa-prebrief-wave-f-d3-002-jwt-bearer-remediation-20260407.md
 - [x] T-03: wave-current-tasks.md updated for this wave
-- [ ] T-04: api-builder delegated to implement security fix
-- [ ] T-05: QP evaluation of builder deliverable
-- [ ] T-06: PREHANDOVER proof written
-- [ ] T-07: IAA Phase 2-4 audit token received and committed
-- [ ] T-08: Merge gate released
+- [x] T-04: api-builder delegated to implement security fix (commit a25f310)
+- [x] T-05: QP evaluation of builder deliverable — PASS (3/3 GREEN)
+- [x] T-06: PREHANDOVER proof written: .agent-admin/prehandover/PREHANDOVER_PROOF_session-057-wave-f-d3-002-20260407.md
+- [x] T-07: IAA Phase 2-4 audit token received: IAA-session-057-wave-f-d3-002-jwt-bearer-remediation-20260407-PASS
+- [x] T-08: Merge gate released — awaiting CS2 (@APGI-cmy) merge approval
 
 ### Wave Category
 BUILD_DELIVERABLE — security remediation to AI Centre API endpoint.
