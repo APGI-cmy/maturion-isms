@@ -64,7 +64,7 @@ Checks run locally:
 | Agent contracts (5 updated) | `.github/agents/api-builder.md`, `integration-builder.md`, `qa-builder.md`, `schema-builder.md`, `ui-builder.md` | ✅ COMPLETE |
 | PREHANDOVER proof | `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-053-20260407.md` | ✅ THIS FILE |
 | Session memory | `.agent-workspace/CodexAdvisor-agent/memory/session-053-20260407.md` | ✅ COMPLETE |
-| IAA token | `.agent-admin/assurance/iaa-token-session-053-wave1-20260407.md` | ✅ PHASE_A_ADVISORY |
+| IAA token | `.agent-admin/assurance/iaa-token-session-053-wave1-20260407.md` | ✅ R1 REJECTION-PACKAGE — superseded by R2 PREHANDOVER/token |
 
 ---
 
@@ -85,7 +85,7 @@ Checks run locally:
 IAA_REQUIRED: YES
 Reason: Agent contract updates are always IAA-required per trigger table.
 
-`iaa_audit_token`: IAA-session-053-20260407-PASS
+`iaa_audit_token`: IAA-session-053-wave1-20260407-REJECT (R1 — REJECTION-PACKAGE; CORE-012 failure; see R2 PREHANDOVER for resolution: IAA-session-053-wave2-20260407-PASS)
 
 ---
 

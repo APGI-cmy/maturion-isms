@@ -75,7 +75,7 @@ CORE-012 failure: integration-builder, schema-builder, ui-builder were missing `
 | PREHANDOVER proof (R2) | `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-053-R2-20260407.md` | ✅ THIS FILE |
 | Session memory | `.agent-workspace/CodexAdvisor-agent/memory/session-053-20260407.md` | ✅ COMPLETE |
 | IAA rejection token (R1) | `.agent-admin/assurance/iaa-token-session-053-wave1-20260407.md` | ✅ R1 REJECTION |
-| IAA token (R2) | `.agent-admin/assurance/iaa-token-session-053-wave2-20260407.md` | ⏳ PENDING (IAA R2) |
+| IAA token (R2) | `.agent-admin/assurance/iaa-token-session-053-wave2-20260407.md` | ✅ R2 PASS |
 
 ---
 
@@ -96,7 +96,7 @@ CORE-012 failure: integration-builder, schema-builder, ui-builder were missing `
 IAA_REQUIRED: YES
 R2 invocation for CORE-012 fix verification.
 
-`iaa_audit_token`: IAA-session-053-R2-20260407-PASS
+`iaa_audit_token`: IAA-session-053-wave2-20260407-PASS
 
 ---
 
