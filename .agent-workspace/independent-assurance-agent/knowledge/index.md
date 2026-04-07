@@ -22,6 +22,7 @@
 | `IAA_AGENT_CONTRACT_AUDIT_STANDARD.md` | **AGENT_CONTRACT Audit Standard** — mandatory audit steps, pre-approval doctrine, protected components checklist, tier placement discipline, decision matrix for all agent contract PRs reviewed by IAA | 1.0.0 | ACTIVE — Load at Step 2.4 when PR category is AGENT_CONTRACT |
 | `FUNCTIONAL-BEHAVIOUR-REGISTRY.md` | **Functional Behaviour Registry** — post-merge behavioural failure patterns (niggles) that must never recur; each entry is a permanent mandatory check for BUILD PRs | 1.1.0 | ACTIVE — Read at Step 3.1 for all BUILD/AAWP_MAT PRs; governed by FAIL-ONLY-ONCE A-034; v1.1.0 adds NBR-005 (schema migration column mismatch silently masked by try/catch — INC-ALCF-001) |
 | `niggle-pattern-library.md` | **Niggle Pattern Library** — stack-specific failure patterns for Next.js/Supabase/TanStack Query/Zustand/TypeScript stack; IAA applies relevant patterns to BUILD PR diffs | 1.0.0 | ACTIVE — Read at Step 3.1 for all BUILD/AAWP_MAT PRs; governed by FAIL-ONLY-ONCE A-035 |
+| `iaa-high-frequency-checks.md` | **High-Frequency Miss Checks (HFMC)** — 6 named binary checks (HFMC-01 through HFMC-06) for the most recurring preventable failure categories; executed in Phase 3 Step 3.1b | 1.0.0 | ACTIVE — Issue #1282; loaded at Step 3.1b for all IAA invocations |
 
 ---
 
