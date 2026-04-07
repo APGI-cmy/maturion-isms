@@ -123,6 +123,7 @@ jobs:
     env:
       PR_BODY: ${{ github.event.pull_request.body }}
       PR_TITLE: ${{ github.event.pull_request.title }}
+      PR_LABELS: ${{ toJSON(github.event.pull_request.labels) }}
     steps:
       - name: Check for CS2 authorization reference
         run: |
@@ -141,6 +142,15 @@ jobs:
           if [[ "$PR_AUTHOR" == "$CS2_LOGIN" ]]; then
             echo "✅ PASS — PR submitted directly by CS2 (@APGI-cmy)."
             echo "   CS2 has unconditional write authority per AGCFPP §2."
+            exit 0
+          fi
+
+          # If the PR carries the 'CS sign-off: approved' label, CS2 has explicitly
+          # authorized this change via the label mechanism (AGCFPP §2).
+          # Use jq to safely parse the JSON array and match the label name exactly.
+          if echo "$PR_LABELS" | jq -e '.[] | select(.name == "CS sign-off: approved")' > /dev/null 2>&1; then
+            echo "✅ PASS — PR carries 'CS sign-off: approved' label."
+            echo "   CS2 explicit sign-off detected. Authorization confirmed per AGCFPP §2."
             exit 0
           fi
 
