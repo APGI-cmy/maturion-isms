@@ -18,7 +18,7 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 | File | Purpose | Version |
 |------|---------|---------|
 | `index.md` (this file) | Knowledge entry point and version reference | 2.1.0 |
-| `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 4.2.0 |
+| `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 4.3.0 |
 | `specialist-registry.md` | Registry of all delegable agents with capabilities and separation-of-duties boundary | 1.0.0 |
 | `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 |
 | `prehandover-template.md` | **PHASE 4 §S-009** — PREHANDOVER proof template with mandatory IAA Agent Response (verbatim) section per FAIL-ONLY-ONCE v1.8.0 S-009; `## Environment Parity` section per OVL-CI-006; `## Pre-IAA Commit Gate` MANDATORY STOP section per A-021; IAA Token Self-Certification Guard section per S-035 structural gate | 1.7.0 |
@@ -123,6 +123,7 @@ All verb classification and mode-switching decisions MUST reference `ECOSYSTEM_V
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.6.0 | 2026-04-08 | FAIL-ONLY-ONCE.md bumped to v4.3.0 — INC-OPOJD-PSF-001 registered (Foreman OPOJD violation: PS-F Phase 4 incomplete at session termination); S-039 SCOPE_DECLARATION-FORMAT-VERIFICATION added; version history entry v4.3.0 appended. Wave: ps-f-iaa-trigger-table-new-categories (issue #1270). |
 | 2.5.0 | 2026-04-07 | FAIL-ONLY-ONCE.md bumped to v4.2.0 — PS-B-01/02: ID Namespace Note updated; A-019 ARTIFACT-IMMUTABILITY canonical layer-down added. PS-B-03/04/05: A-033→A-036, A-034→A-037, A-035→A-038 renumbered; new A-033 CEREMONY-FILES-IN-SCOPE-DECLARATION, A-034 CANON-INVENTORY-UPDATE-MANDATORY, A-035 DELEGATION-ISSUE-REQUIRED locked in; S-025 REMEDIATED. PS-B-06: Completion marker [ ]/[x] convention added to Section 2 incident log header. Wave: ps-b-fail-only-once-v420-20260407; IAA pre-brief: KNOWLEDGE_GOVERNANCE category. |
 | 2.4.0 | 2026-04-06 | FAIL-ONLY-ONCE.md bumped to v4.1.0 — A-035 COPILOT-BUILDER-ROLE-LABEL-BYPASS-PROHIBITION locked in as mandatory rule; S-035 (both entries) marked REMEDIATED; polc-boundary-gate.yml amended to enforce full POLC gate on Foreman-authored PRs regardless of copilot-builder-role label, and to extend builder-involvement-check to cover .github/workflows/ path changes; PR copilot/disallow-copilot-builder-role-bypass |
 | 2.3.0 | 2026-03-18 | FAIL-ONLY-ONCE.md bumped to v4.0.0 — INC-BLANK-FRONTEND-PREBRIEF-001 registered (IAA Pre-Brief and handover token skipped: blank frontend fix; eleventh occurrence of A-031+A-014 violation class); S-035 COPILOT-BUILDER-ROLE-LABEL-BYPASS-PROHIBITION added; A-035 candidate documented; index version bumped per OVL-KG-ADM-002 |

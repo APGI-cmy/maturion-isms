@@ -837,6 +837,38 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 
 ---
 
+### INC-OPOJD-PSF-001 — OPOJD Violation: PS-F Wave Phase 4 Incomplete at Handover (2026-04-07)
+
+**Date**: 2026-04-07
+**Severity**: MODERATE
+**Status**: REMEDIATED — Phase 4 artifacts completed in follow-on session (2026-04-08); PREHANDOVER proof, session memory, IAA token, and SCOPE_DECLARATION corrected; FAIL-ONLY-ONCE v4.3.0 registered; learning loop activated.
+**Source**: CS2 problem statement (2026-04-08) — "This is an OPOJD violation. jobs are not supposed to be handed over unless its completed. Please complete this job now and record this violation in your continuous improvement feedback loop."
+**Preceded by**: INC-CI-LIVENESS-FIX-001 (same session-termination pattern — wave handed over without complete Phase 4 ceremony)
+
+**What happened**: The PS-F wave (maturion-isms#1270 — IAA Trigger Table new categories) was partially completed in session 160 on 2026-04-07. The Foreman completed Phase 1 (preflight), Phase 2 (alignment), and Phase 3 (orchestration — delegated to CodexAdvisor-agent). CodexAdvisor successfully implemented PS-F-02 (LIAISON_ADMIN) and PS-F-03 (GOVERNANCE_AUDIT) in iaa-trigger-table.md v2.4.0 and returned an IAA audit token. However, the Foreman's session was terminated before Phase 4 was executed. Specifically: (1) no Foreman PREHANDOVER proof was written, (2) no Foreman session memory was written, (3) no IAA token file was committed at `.agent-admin/assurance/iaa-token-session-160-*`, (4) SCOPE_DECLARATION.md used em-dash separator (`—`) instead of hyphen (`-`) causing validate-scope-to-diff.sh to parse 0 declared files. The PR was left in a state where CI gates would fail.
+
+**Root cause (5-Why)**:
+1. **Why was Phase 4 not completed?** The Foreman session was terminated by time limit before Phase 4 artifacts were written. The session report_progress had been called to commit `wave-current-tasks.md`, which pushed the branch, but Phase 4 had not yet been executed.
+2. **Why was the wave handed over without Phase 4?** The session report_progress call was a WIP commit for the wave admin file only, not a Phase 4 handover commit. However, the PR was in a state where it appeared ready for review without the Phase 4 artifacts.
+3. **Why was SCOPE_DECLARATION.md parsed as empty?** CodexAdvisor used em-dash (`—`) as the separator in bullet entries (`- \`path\` — description`), but validate-scope-to-diff.sh requires a hyphen (`-`) separator (`- \`path\` - description`). This format mismatch was not caught in QP evaluation.
+4. **Why wasn't there a recovery mechanism?** No incomplete-Phase-4 detection gate exists. The CI gates (session-memory-check, iaa-prebrief-existence) will fail the PR but only at CI run time, not at wave-close time.
+5. **Why is this recurring?** Session time limits cause forced termination before ceremony completion. There is no "save state" mechanism that triggers an automatic Phase 4 completion on resumption.
+
+**Corrective action** (COMPLETE):
+1. [x] CS2 problem statement acknowledged (2026-04-08).
+2. [x] Phase 4 Phase 4 artifacts completed in follow-on session: PREHANDOVER proof at `PREHANDOVER-session-160-ps-f-iaa-trigger-table-20260408.md`.
+3. [x] Session memory created: `session-160-ps-f-iaa-trigger-table-20260408.md`.
+4. [x] IAA handover audit invoked (Phase 4 Step 4.3a); IAA token file committed.
+5. [x] SCOPE_DECLARATION.md corrected — all 15 wave files declared with hyphen separator format.
+6. [x] FAIL-ONLY-ONCE.md updated to v4.3.0 (this entry).
+7. [x] Parking station entry appended.
+
+**Learning**: A session time limit is NOT a valid exemption from Phase 4. When a session is terminated before Phase 4 is complete, the NEXT session MUST treat completing Phase 4 as its FIRST and ONLY task before doing anything else. Furthermore: SCOPE_DECLARATION.md bullet format MUST use hyphen (`-`), not em-dash (`—`), as the separator. QP evaluation must include a validate-scope-to-diff.sh dry-run check before declaring QP PASS.
+
+**S-039 (new)**: SCOPE_DECLARATION format standardisation — the validate-scope-to-diff.sh script requires `- \`path\` - description` (hyphen separator). QP evaluation template must include a bullet-format verification step: run `grep -c '^\s*-\s+\`[^\`]*\`\s+-\s+' SCOPE_DECLARATION.md` and verify count > 0 before QP PASS. Prevents silent empty-parse failure.
+
+---
+
 | ID | Description | Origin | Status |
 |----|-------------|--------|--------|
 | S-001 | Extend `align-governance.sh` with a pre-flight diff check that warns (BLOCKER) when local version has MORE sections than canonical — prevents silent learning loss | GV-001-20260221 | OPEN |
@@ -877,6 +909,7 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 
 | S-035 | COPILOT-BUILDER-ROLE-LABEL-BYPASS-PROHIBITION: The `copilot-builder-role` PR label that bypasses `polc-boundary-gate.yml` foreman/session-memory checks MUST NOT be applied to PRs where foreman-v2-agent is the session author. The label is intended for pure builder sessions (api-builder, ui-builder, qa-builder, etc.) where Foreman is not the executing agent. When foreman-v2-agent is the session author, the full POLC boundary gate including session-memory-check MUST run regardless of any PR label. A-038 candidate: amend `polc-boundary-gate.yml` to detect foreman authorship and enforce the full gate even when `copilot-builder-role` label is present. Escalate to CS2 for A-038 lock-in. Triggered by: INC-BLANK-FRONTEND-PREBRIEF-001 (2026-03-18). | INC-BLANK-FRONTEND-PREBRIEF-001 (2026-03-18) | REMEDIATED — 2026-04-06: polc-boundary-gate.yml foreman-implementation-check and session-memory-check now detect Foreman PR authorship and enforce the full gate regardless of copilot-builder-role label. A-038 locked in. PR copilot/disallow-copilot-builder-role-bypass. |
 | S-035 | CI-PREBRIEF-GATE-WORKFLOW-PATH-EXTENSION: The `polc-boundary-gate.yml` `builder-involvement-check` job currently enforces IAA pre-brief existence for production code path changes (`apps/`, `modules/`, `supabase/`, `packages/`) but does NOT cover `.github/workflows/*.yml` changes. This enforcement gap is the proximate cause of INC-CI-LIVENESS-FIX-001 (and the prior INC-CI-GATEWAY-FIX-001): CI workflow fix sessions proceed without an IAA Pre-Brief because the machine gate does not fire. Extend the `builder-involvement-check` job to include `.github/workflows/` in the paths checked for iaa-prebrief-*.md existence. When any `.github/workflows/*.yml` file is modified and no `iaa-prebrief-*.md` artifact exists on the branch, the check MUST FAIL. This closes the blind spot that allowed the A-031/A-014 violation class to recur eleven times. | INC-CI-LIVENESS-FIX-001 (2026-03-18) | REMEDIATED — 2026-04-06: polc-boundary-gate.yml builder-involvement-check extended to include `.github/workflows/*.yml` path changes in the implementation-path detection. PR copilot/disallow-copilot-builder-role-bypass. |
+| S-039 | SCOPE_DECLARATION-FORMAT-VERIFICATION: validate-scope-to-diff.sh requires file declarations in format `- \`path\` - description` (hyphen separator). The em-dash `—` used in some SCOPE_DECLARATION.md files causes the script to parse 0 declared files silently. QP evaluation MUST include a dry-run: `grep -c '^\s*-\s+\`[^\`]*\`\s+-\s+' SCOPE_DECLARATION.md` and verify count > 0. A QP evaluation that does not verify this format is incomplete. Triggered by: INC-OPOJD-PSF-001 (2026-04-07). | INC-OPOJD-PSF-001 (2026-04-07) | OPEN |
 
 ---
 
@@ -884,9 +917,9 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 4.2.0
+fail_only_once_version: 4.3.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
-open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024, S-026, S-027, S-028, S-032, S-033, S-034, S-035]
+open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024, S-026, S-027, S-028, S-032, S-033, S-034, S-035, S-039]
 ```
 
 **STOP-AND-FIX trigger**: If `unresolved_breaches` is not `'none'` (i.e. any incident has status `OPEN` or `IN_PROGRESS`) → halt immediately. Do not proceed with any wave work until all listed breaches reach `REMEDIATED` or `ACCEPTED_RISK (CS2)` status.
@@ -896,7 +929,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 ---
 
 *Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523, maturion-isms#855, maturion-isms#856, maturion-isms#1013, maturion-isms#999, maturion-isms#1003 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-04-07 | Version: 4.2.0 | Status: ACTIVE*
+*Last Updated: 2026-04-08 | Version: 4.3.0 | Status: ACTIVE*
 
 ---
 
@@ -904,6 +937,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.3.0 | 2026-04-08 | INC-OPOJD-PSF-001 registered: Foreman OPOJD violation — PS-F wave Phase 4 incomplete at session termination (PREHANDOVER proof, session memory, IAA token not committed before session ended); S-039 SCOPE_DECLARATION-FORMAT-VERIFICATION added; v4.3.0. Wave: ps-f-iaa-trigger-table-new-categories (issue #1270). |
 | 4.2.0 | 2026-04-07 | PS-B-01/02: ID Namespace Note updated to document canonical dedup fix (second canonical A-04 → canonical A-18 = ISMS-local A-018; second canonical A-016 → canonical A-19); A-019 ARTIFACT-IMMUTABILITY added as canonical A-19 layer-down (PS-B-02). PS-B-03/04/05: existing A-033→A-036, A-034→A-037, A-035→A-038 renumbered; new A-033 CEREMONY-FILES-IN-SCOPE-DECLARATION, A-034 CANON-INVENTORY-UPDATE-MANDATORY, A-035 DELEGATION-ISSUE-REQUIRED locked in; S-025 REMEDIATED (codified as A-035). PS-B-06: Corrective action completion marker convention [ ]/[x] added to Section 2 incident log header. All cross-references to A-033/034/035 updated to A-036/037/038. Wave: ps-b-fail-only-once-v420-20260407; IAA pre-brief: iaa-prebrief-ps-b-fail-only-once-v420-20260407.md. |
 | 4.1.0 | 2026-04-06 | A-038 COPILOT-BUILDER-ROLE-LABEL-BYPASS-PROHIBITION locked in as mandatory rule (formerly A-035 at time of commit, renumbered to A-038 in v4.2.0 PS-B); S-035 (both entries) marked REMEDIATED — polc-boundary-gate.yml amended to enforce full gate for Foreman-authored PRs regardless of copilot-builder-role label; PR copilot/disallow-copilot-builder-role-bypass |
 | 4.0.1 | 2026-03-18 | INC-BLANK-FRONTEND-PREBRIEF-001 registered (IAA Pre-Brief skipped and IAA token not obtained before handover: blank frontend fix session on PR copilot/fix-blank-frontend-page; eleventh occurrence of A-031 + A-014 violation class; CS2 corrective directive issued 2026-03-18; retroactive IAA Pre-Brief committed; RCA performed; learning loop activated); A-038 candidate COPILOT-BUILDER-ROLE-LABEL-BYPASS-PROHIBITION documented; S-035 improvement suggestion added; attestation block updated to v4.0.1 |
