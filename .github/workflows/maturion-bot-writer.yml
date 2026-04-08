@@ -60,9 +60,12 @@ jobs:
           git config --global user.email "bot@maturion.ai"
 
       - name: Log bot write operation context
+        env:
+          OPERATION: ${{ inputs.operation }}
+          REF_INPUT: ${{ inputs.ref }}
         run: |
           set -euo pipefail
-          echo "Operation: ${{ inputs.operation }}"
-          echo "Ref: ${{ inputs.ref }}"
+          echo "Operation: ${OPERATION}"
+          echo "Ref: ${REF_INPUT}"
           echo "Bot identity: $(git config user.name) <$(git config user.email)>"
           echo "EXEC_IDENTITY: MATURION_BOT_TOKEN verified and in use"
