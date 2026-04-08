@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0.0",
+  "type": "governance_ripple",
+  "dispatch_id": "b54d57b5-governance-harden-pre-iaa-handover",
+  "timestamp": "2026-04-08T10:58:14Z",
+  "received_at": "2026-04-08T12:19:00Z",
+  "canonical_commit": "b54d57b5864a4df67f5bc44323ebde3807192c39",
+  "inventory_version": "1.0.0",
+  "sender": "APGI-cmy/maturion-foreman-governance",
+  "trigger": "Merge pull request -1330 from APGI-cmy-copilot-governance-harden-pre-iaa-handover",
+  "changed_paths": [
+    ".github/agents/CodexAdvisor-agent.md",
+    ".github/agents/foreman-v2.agent.md",
+    ".github/agents/governance-repo-administrator-v2.agent.md",
+    "governance/canon/AGENT_HANDOVER_AUTOMATION.md"
+  ],
+  "processing_status": "COMPLETE",
+  "governance_file_layer_down": {
+    "status": "SUCCESS",
+    "pr": "1294",
+    "pr_merged_at": "2026-04-08T11:09:32Z",
+    "files_layered_down": [
+      "governance/canon/AGENT_HANDOVER_AUTOMATION.md"
+    ],
+    "executed_by": "CI workflow (align-governance.sh, session align-20260408-105839)"
+  },
+  "agent_file_handling": {
+    "status": "ESCALATED_PER_A015",
+    "files": [
+      {
+        "path": ".github/agents/CodexAdvisor-agent.md",
+        "action": "ESCALATED_TO_CS2_ONLY",
+        "rule": "A-015(1) — CodexAdvisor-agent.md always escalates to CS2 directly",
+        "escalation_ref": "ESC-AGENTFILE-B54D57B5-CA-20260408"
+      },
+      {
+        "path": ".github/agents/foreman-v2.agent.md",
+        "local_path": ".github/agents/foreman-v2-agent.md",
+        "action": "INVOKE_CODEXADVISOR",
+        "rule": "A-015(2) — all other agent files invoke CodexAdvisor-agent via task()",
+        "escalation_ref": "ESC-AGENTFILE-B54D57B5-FV2-20260408"
+      },
+      {
+        "path": ".github/agents/governance-repo-administrator-v2.agent.md",
+        "action": "ESCALATED_TO_CS2_ONLY",
+        "rule": "A-015 — file not present locally; CS2 to decide if introduction to maturion-isms required",
+        "escalation_ref": "ESC-AGENTFILE-B54D57B5-GRA-20260408"
+      }
+    ]
+  },
+  "session": "session-059-20260408",
+  "processed_by": "governance-liaison-isms-agent"
+}
