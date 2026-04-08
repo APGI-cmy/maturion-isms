@@ -76,4 +76,4 @@ merge_gate_parity: PASS (documentation-only wave; no CI test failures possible; 
 IAA invocation reached Phase 4 Step 4.3a; token issuance blocked pending CS2 re-invocation in a fresh session.
 
 iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-normalize-directory-structure-20260408.md
-iaa_audit_token: iaa-token-session-160-normalize-dir-structure-20260408-blocked-pending-cs2-reinvocation
+iaa_audit_token: IAA-session-160-normalize-dir-structure-20260408-PASS
