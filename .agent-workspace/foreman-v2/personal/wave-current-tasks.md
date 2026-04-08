@@ -1,34 +1,34 @@
-# Wave Current Tasks — Issue 1286
+# Wave Current Tasks — Issue 1305
 
-wave: opojd-comment-only-copilot-20260408
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave1286-opojd-20260408.md
+wave: ecap-001-layer-down-implementation
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave1305-ecap-001-20260408.md
 
-## Active Wave: opojd-comment-only-copilot-20260408
+## Active Wave: ecap-001-layer-down-implementation
 
 ### Wave Description
-Align repo to strict comment-only Copilot model — remove write-back assumptions from
-copilot-setup-steps.yml, declare COPILOT_SESSION_MODE/PUSH_DISABLED_INTENTIONAL/OUTPUT_MODE,
-and create a separate maturion-bot-writer.yml for future bot write operations.
+Complete ECAP-001 layer-down implementation in maturion-isms after PR #1296.
+PR #1296 brought the canon files but left inconsistencies/defects that must be corrected.
 
-CS2 Authorization: Issue maturion-isms#1286 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
+CS2 Authorization: Issue maturion-isms#1305 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
 foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
 
 ### Tasks
-- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave1286-opojd-20260408.md
-- [ ] OPOJD-001: Modify .github/workflows/copilot-setup-steps.yml — comment-only mode,
-      remove fallback token, remove git-identity step, add session-mode env vars
-- [ ] OPOJD-002: Create .github/workflows/maturion-bot-writer.yml — separate bot write
-      workflow, explicit write permissions, fail-fast on missing token, no fallback
-- [ ] PREHANDOVER proof: .agent-admin/assurance/PREHANDOVER-session-160-wave-opojd-20260408.md
-- [ ] Session memory: .agent-workspace/foreman-v2/memory/session-160-opojd-comment-only-20260408.md
+- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave1305-ecap-001-20260408.md
+- [ ] AC-001: Fix broken strategy reference in EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md
+- [ ] AC-002: Normalize AGENT_HANDOVER_AUTOMATION.md section header v1.1.6 → v1.0.0
+- [ ] AC-003: Normalize AGENT_HANDOVER_AUTOMATION.md canon reference v1.1.6 → v1.0.0
+- [ ] AC-004: Add §4.3c row to Phase 4 table in AGENT_HANDOVER_AUTOMATION.md
+- [ ] AC-005: Update CANON_INVENTORY.json AGENT_HANDOVER_AUTOMATION entry (version + hash)
+- [ ] AC-006: Verify/reconcile GOVERNANCE_CANON_MANIFEST.md entries/totals
+- [ ] PREHANDOVER proof committed and verified
 - [ ] IAA final audit and token
 
-### IAA Pre-Brief Summary (from iaa-prebrief-wave1286-opojd-20260408.md)
-- Trigger Category: CI_WORKFLOW — MANDATORY
-- Qualifying Tasks: OPOJD-001, OPOJD-002
-- Scope Blockers: SB-001 through SB-006
-- OVL-CI-005 S-033 exception applies — three substitutes required
-- BUILD_DELIVERABLE overlay: NOT APPLICABLE
+### IAA Pre-Brief Summary (from iaa-prebrief-wave1305-ecap-001-20260408.md)
+- Trigger Category: CANON_GOVERNANCE — MANDATORY (all tasks)
+- Qualifying Tasks: AC-001 through AC-006
+- Scope Blockers: SB-001 (strategy fix approach), SB-002 (CRITICAL — hash sequencing), SB-003 (version bump), SB-004 (manifest entry), SB-005 (ripple), SB-006 (wave-current-tasks)
+- FFA Sequence: 17 steps
+- Critical note: CANON_INVENTORY hash must use POST-FIX sha256 (not pre-fix)
 
 ### Previous Wave (Closed)
-wave: mmm-39b-frs-derivation-fix (Issue #1277) — COMPLETE, awaiting CS2 merge
+wave: opojd-comment-only-copilot-20260408 (Issue #1286)
