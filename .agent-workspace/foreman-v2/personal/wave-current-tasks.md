@@ -6,7 +6,7 @@
 **Date**: 2026-04-07
 **Authorized by**: CS2 (@APGI-cmy) — opened issue #1279 directly
 **IAA Category**: PRE_BUILD_STAGE_MODEL
-**iaa_prebrief_path**: .agent-admin/assurance/iaa-prebrief-mmm-deploy-retention-rule.md
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-mmm-deploy-retention-rule.md
 
 ---
 
