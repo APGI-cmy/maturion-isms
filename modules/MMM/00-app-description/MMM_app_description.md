@@ -7,13 +7,14 @@
 
 - **Module**: MMM — Maturity Model Management
 - **Artifact Type**: App Description (Upstream Authority)
-- **Status**: Draft (Governance Gaps Resolved — pending CS2 approval)
-- **Version**: v0.4.0
+- **Status**: Approved
+- **Version**: v0.5.0
 - **Owner**: Johan Ras
 - **Authority**: Johan Ras / CS2
 - **Applies To**: MMM module within the Maturion ecosystem
-- **Approval Date**: N/A
-- **Last Updated**: 2026-04-07
+- **Approval Date**: 2026-04-08
+- **Approved By**: CS2 (Johan Ras / @APGI-cmy) — maturion-isms#1298
+- **Last Updated**: 2026-04-08
 - **Supersedes / Replaces Conceptually**:
   - MAT — Manual Audit Tool
   - Maturity Roadmap

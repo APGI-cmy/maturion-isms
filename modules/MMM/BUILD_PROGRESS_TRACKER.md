@@ -3,7 +3,7 @@
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
 **Last Updated**: 2026-04-08  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure)
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
@@ -43,16 +43,18 @@ error from the original governance layer-down. The module is MMM (Maturity Model
 Track the progression through the canonical module lifecycle stages per `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0.
 
 ### Stage 1: App Description
-**Status**: [x] COMPLETE  
+**Status**: [x] COMPLETE ✅ FORMALLY CLOSED  
 **Location**: `modules/MMM/00-app-description/`  
 **Key Artifacts**:
 - [x] `MMM_app_description.md` — Authoritative intent, scope, users, outputs, constraints
-- [ ] App Description approved by designated authority
+- [x] App Description approved by designated authority
 
 **Completion Date**: 2026-03-20  
-**Notes**: App Description exists as `MMM_app_description.md`. MMM is the convergence strategy
-for the Maturion maturity capability, replacing MAT + Maturity Roadmap + legacy maturity
-capabilities. Approval formalisation required.
+**Approval Date**: 2026-04-08  
+**Approved By**: CS2 (Johan Ras / @APGI-cmy) — maturion-isms#1298  
+**Notes**: App Description `MMM_app_description.md` v0.5.0 formally approved by CS2 via issue #1298
+(2026-04-08). BLK-1 resolved. Stage 1 formally closed. Stage 2 (UX Workflow & Wiring Spec)
+unblocked pending Stage 2 wave-start authorization issue from CS2.
 
 ---
 
@@ -266,14 +268,15 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 1 COMPLETE — Stage 2 (UX Workflow & Wiring Spec) next  
-**Overall Progress**: ~10% complete (Stage 1 done; Stages 2–12 not started)  
-**Blockers**: None currently blocking — Stage 2 (UX Workflow & Wiring Spec) awaits CS2 wave-start  
+**Current Stage**: Stage 1 FORMALLY CLOSED ✅ — Stage 2 (UX Workflow & Wiring Spec) next  
+**Overall Progress**: ~10% complete (Stage 1 formally closed; Stages 2–12 not started)  
+**Blockers**: BLK-1 RESOLVED (CS2 approved app description via #1298, 2026-04-08). Stage 2 awaits CS2 wave-start authorization issue.  
 **Next Steps**:
-1. Develop Stage 2 (UX Workflow & Wiring Spec) for MMM
-2. Develop Stage 3 (FRS) after Stage 2 complete
-3. Complete Stage 4 (TRS) after FRS
-4. Formalise Stage 5 (Architecture) approval after TRS complete
+1. CS2 to open Stage 2 (UX Workflow & Wiring Spec) wave-start authorization issue (BLK-5 is next)
+2. Develop Stage 2 (UX Workflow & Wiring Spec) for MMM
+3. Develop Stage 3 (FRS) after Stage 2 complete
+4. Complete Stage 4 (TRS) after FRS
+5. Formalise Stage 5 (Architecture) approval after TRS complete
 
 ---
 
