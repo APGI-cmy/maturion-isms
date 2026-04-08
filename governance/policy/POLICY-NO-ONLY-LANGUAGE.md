@@ -3,9 +3,10 @@
 ## Status
 Canonical Governance Policy  
 **Policy ID**: POLICY-NO-ONLY-LANGUAGE  
-**Version**: v1.0  
+**Version**: v1.2  
 **Authority**: CS2 (Johan Ras)  
 **Effective Date**: 2026-01-08  
+**Amended**: 2026-04-08 — v1.2: Added "outstanding" to prohibited handover language; updated §3, §4, §8; authority: CS2 — OPOJD hardening (jobs must not be handed over using the word "outstanding")  
 **Triggered By**: PR APGI-cmy/maturion-foreman-office-app#504 (Foundation Wave, ZWZDI Campaign)  
 **Scope**: All repositories, all builders, all PRs  
 **Enforcement**: Mandatory, effective immediately
@@ -47,6 +48,9 @@ Specifically prohibited:
 - ❌ "Trivial issues"
 - ❌ "Small problems"
 - ❌ "Easy fixes"
+- ❌ "Outstanding" items / work / ceremony — presenting a job with "outstanding" obligations is handing over incomplete work
+- ❌ "Still outstanding" — same violation; outstanding = BLOCKED
+- ❌ "The following items remain outstanding" — a job with remaining obligations is not complete
 
 **Required language for complete work:**
 - ✅ "100% tests passing"
@@ -80,6 +84,31 @@ The automated scan is intentionally scoped to **high-confidence** failure/debt p
 ### 3.3 Fixture examples
 
 See `governance/policy/minimizing_language_examples.json` for allowed/prohibited fixture examples used to validate the curated pattern list.
+
+### 3.4 Authority-language exception
+
+Governance and agent contracts routinely use **authority-scoping language** that includes "only" as a permission or scope delimiter — not as minimization. These uses are **explicitly permitted** and will not trigger the automated scanner:
+
+- ✅ "Only CS2 can authorize this change"
+- ✅ "Only applies to governance repository"
+- ✅ "Only when explicitly authorized"
+- ✅ "Only the Governance Administrator may approve"
+
+These phrases define authority boundaries; they do not minimize technical debt or incomplete work. The `only_failure_context` pattern (see §3.1) is scoped to failure/debt terms and the `allowlist` field in `minimizing_language_patterns.json` provides additional insurance against authority-phrasing false positives.
+
+### 3.5 Approved substitute terms for banned 'non-blocking' language
+
+When a technical document or agent contract must convey that something **does not halt execution or does not stop a merge**, the following approved substitutes MUST be used instead of 'non-blocking':
+
+| Context | Banned term | Approved substitute |
+|---------|-------------|---------------------|
+| Alerts / Warnings in build models | `non-blocking` | `execution-continues notification` or `does not halt execution` |
+| Governance / Ripple evolution invariants | `non-blocking` | `merge-transparent` or `does not block merge` |
+| Watchdog soft-stop / advisory findings | `non-blocking` | `ESCALATE for visibility — does not block merge` or `PARKING-STATION eligible` |
+| SAST / QA severity tables | `NON-BLOCKING` | `WARN — FM exception required within 2 weeks; CS2 exception required to defer beyond 2 weeks` (Medium) or `PARKING-STATION eligible` (Low) |
+| Parking-station enhancement proposals | `non-blocking` | Allowed as-is (current validators scan PR/RCA content, not repo files; parking-station files are not scanned by the automated gate) |
+
+**Rationale**: The word 'non-blocking' is indistinguishable to automated scanners from its prohibited test-dodging use. The approved alternatives are equally precise, context-specific, and scanner-safe.
 
 ---
 
@@ -137,6 +166,28 @@ See `governance/policy/minimizing_language_examples.json` for allowed/prohibited
 - "Technical debt present - must be resolved"
 - "Workaround implemented - permanent fix required"
 - "Debt introduced - documented in DEBT_LOG.md"
+
+### 4.5 "Outstanding" Items (v1.2 — OPOJD hardening)
+
+The word **"outstanding"** is prohibited when used to describe obligations, artifacts, or work items that have not been completed at the time of handover. Using "outstanding" to describe incomplete obligations presents a BLOCKED job as if partial completion were acceptable.
+
+**BANNED** ❌:
+- "Outstanding: IAA re-invocation pending"
+- "The following items remain outstanding"
+- "Outstanding items to complete next session"
+- "Outstanding Phase 4 ceremony"
+- "Outstanding — see below"
+- "Still outstanding"
+- Any use of "outstanding" in a handover summary or PR description to denote incomplete obligations
+
+**REQUIRED** ✅:
+- "BLOCKED — [specific item] not complete. Do not merge."
+- "INCOMPLETE — IAA invocation has not been performed. Job is BLOCKED."
+- State: COMPLETE (when all obligations are met) or BLOCKED (when any obligation remains)
+
+**Rationale**: A job with "outstanding" obligations is a BLOCKED job. Describing it as "complete with outstanding items" is a contradiction that normalizes incomplete handovers. Per OPOJD v2.1: a job is COMPLETE only when all required Phase 1–4 obligations have been executed and all required artifacts are committed.
+
+**Related**: `governance/opojd/OPOJD_COMPLETE_JOB_HANDOVER_DOCTRINE.md` v2.1 §1.3.3
 
 ---
 
@@ -556,9 +607,9 @@ By submitting work in the Maturion ecosystem, builders acknowledge:
 
 **Policy Status**: ACTIVE  
 **Enforcement**: IMMEDIATE  
-**Version**: 1.0  
-**Last Updated**: 2026-01-08  
-**Next Review**: 2026-04-08 (quarterly)
+**Version**: 1.2  
+**Last Updated**: 2026-04-08  
+**Next Review**: 2026-07-08 (quarterly)
 
 ---
 

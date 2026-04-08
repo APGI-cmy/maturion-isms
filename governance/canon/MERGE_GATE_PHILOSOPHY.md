@@ -1,11 +1,12 @@
 # MERGE GATE PHILOSOPHY
 
-**Version**: 2.0.0  
-**Date**: 2026-02-11  
+**Version**: 2.1.0  
+**Date**: 2026-04-08  
 **Status**: Active - Constitutional  
 **Type**: Constitutional Governance Rule  
 **Authority**: Supreme - Canonical  
-**Owner**: CS2 (Johan Ras in bootstrap mode, Maturion in production)
+**Owner**: CS2 (Johan Ras in bootstrap mode, Maturion in production)  
+**Amended**: 2026-04-08 — v2.1.0: Added Phase 4 completeness gate requirement; defined machine-enforced Phase 4 artifact checklist; authority: CS2 — OPOJD hardening issue
 
 ---
 
@@ -644,6 +645,56 @@ This checklist provides **exhaustive governance compliance checks** that gates M
 
 ---
 
+## Phase 4 Completeness Gate (v2.1.0 — CONSTITUTIONAL)
+
+> **Canonical Rule**: No PR may be merged if required Phase 4 artifacts are absent.  
+> **Authority**: `governance/opojd/OPOJD_COMPLETE_JOB_HANDOVER_DOCTRINE.md` v2.1
+
+### Required Phase 4 Artifacts
+
+CI merge gate checks MUST verify the presence of the following artifacts. A missing required artifact is a **blocking gate failure** — the gate MUST exit non-zero:
+
+| Artifact | Required Location | Check Condition | Action if Absent |
+|---------|------------------|-----------------|------------------|
+| **PREHANDOVER proof** | `.agent-admin/prehandover/proof-*.md` OR `.agent-admin/prehandover/prehandover_proof*.md` OR `PREHANDOVER_PROOF*.md` (root) | Always required | ❌ FAIL — block merge |
+| **Session memory** | `.agent-workspace/<any-agent>/memory/session-*.md` | Always required | ❌ FAIL — block merge |
+| **IAA assurance token** | `.agent-admin/assurance/assurance-token-*.md` OR `.agent-admin/assurance/iaa-token-session-*.md` | When IAA is required (canon files changed, agent contract changed, labelled deliverable) | ❌ FAIL — block merge |
+
+### Phase 4 Gate Behavior
+
+**Gate passes when**: All applicable Phase 4 artifacts are present and non-empty.
+
+**Gate fails when**: Any applicable Phase 4 artifact is absent.
+
+**Gate failure message MUST include**:
+- Which artifact was missing
+- The canonical rule that requires it
+- The remediation action (complete Phase 4 before reopening PR)
+
+### What Phase 4 Absence Means
+
+A PR missing required Phase 4 artifacts is in **BLOCKED / INCOMPLETE** state per OPOJD v2.1. The CI gate failure makes this machine-enforced. The producing agent must:
+
+1. Complete the missing Phase 4 artifacts (do not defer to next session)
+2. Commit the artifacts to the branch
+3. Re-run pre-handover gate parity checks locally
+4. Push the completed branch
+
+**No PR may be described as "complete" or handed over for CS2 merge review while Phase 4 artifacts are absent. The gate failure is the machine-enforced expression of the OPOJD terminal-state rule.**
+
+### Role Separation (Informational)
+
+| Layer | Responsibility |
+|-------|---------------|
+| Producing agent | Assembles and commits PREHANDOVER proof + session memory |
+| IAA | Issues assurance token (independently, after reviewing evidence) |
+| CI gates | Confirms presence of all required Phase 4 artifacts |
+| CS2 | Makes final merge decision based on assembled evidence |
+
+**CS2 is not the technical pre-handover auditor.** CS2 reviews completed evidence. If Phase 4 artifacts are missing, the CI gate fails before CS2 is involved.
+
+---
+
 ## References
 
 ### Governance Canon
@@ -656,7 +707,7 @@ This checklist provides **exhaustive governance compliance checks** that gates M
 - **AGENT_CLASS_SPECIFIC_GATE_PROTOCOLS.md**: Agent-class gate requirements
 - **PR_GATE_EVALUATION_AND_ROLE_PROTOCOL.md**: Gate evaluation semantics
 - **PR_GATE_FAILURE_HANDLING_PROTOCOL.md**: Gate failure classification
-- **OPOJD_COMPLETE_JOB_HANDOVER_DOCTRINE.md**: Complete handover mandate (v2.0)
+- **OPOJD_COMPLETE_JOB_HANDOVER_DOCTRINE.md**: Complete handover mandate (v2.1)
 - **AGENT_IGNORANCE_PROHIBITION_DOCTRINE.md**: No ignorance excuse doctrine
 - **CROSS_AGENT_COORDINATION_PROTOCOL.md**: Cross-agent coordination for blockers
 - **STOP_AND_FIX_DOCTRINE.md**: Zero tolerance for defects
@@ -669,6 +720,15 @@ This checklist provides **exhaustive governance compliance checks** that gates M
 ---
 
 ## Version History
+
+**Version 2.1.0** (2026-04-08) - Phase 4 Completeness Gate
+- **CONSTITUTIONAL**: Added Phase 4 Completeness Gate section (new §Phase 4 Completeness Gate)
+- **MAJOR**: Machine-enforced Phase 4 artifact checklist: PREHANDOVER proof, session memory, IAA token
+- **MAJOR**: Defined gate as BLOCKING — missing Phase 4 artifacts → gate exit non-zero
+- Aligned with OPOJD v2.1 terminal-state completion semantics
+- Clarified role separation: producing agent → IAA → CI → CS2 merge decision
+- Updated OPOJD cross-reference to v2.1
+- Authority: CS2 (Johan Ras) — issue: OPOJD hardening — forbid handover of Phase 4 incomplete jobs
 
 **Version 2.0.0** (2026-02-11) - CONSTITUTIONAL UPGRADE
 - **MAJOR**: Added constitutional "Pre-Handover Gate Duplication Mandate" section

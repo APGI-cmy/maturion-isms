@@ -3,8 +3,9 @@
 ## Status
 **Type**: Canonical Governance Definition  
 **Authority**: Supreme - Canonical  
-**Version**: 1.0.0  
+**Version**: 1.1.0  
 **Effective Date**: 2025-12-24  
+**Amended**: 2026-04-08 — v1.1.0: Added §14.3 Review Layer Role Separation — CS2 is not the technical pre-handover auditor; producing agent assembles evidence, IAA audits independently, CI enforces mechanically, CS2 decides to merge. Authority: CS2 — OPOJD hardening issue.  
 **Owner**: Maturion Engineering Leadership (Johan Ras)  
 **Precedence**: Subordinate only to GOVERNANCE_PURPOSE_AND_SCOPE.md  
 **Applies To**: All Foreman Instances, All Builder Agents, All Repositories
@@ -1155,6 +1156,27 @@ The Foreman MUST NOT:
 - ❌ QA test framework choices
 
 **Separation**: This is governance definition, not implementation specification.
+
+---
+
+### 14.3 Review Layer Role Separation (v1.1.0)
+
+The handover and merge process involves four distinct layers with non-overlapping responsibilities. Conflating these layers is a governance anti-pattern.
+
+| Layer | Responsibility | What They Do NOT Do |
+|-------|---------------|---------------------|
+| **Producing agent** (Foreman / builder) | Assembles the PREHANDOVER evidence bundle; writes session memory; invokes IAA; commits all Phase 4 artifacts before opening PR | Does NOT make merge decision; does NOT perform independent audit |
+| **IAA (Independent Assurance Agent)** | Reviews Phase 1–4 evidence independently; issues ASSURANCE-TOKEN or REJECTION-PACKAGE | Does NOT write implementation; does NOT approve its own work; does NOT substitute for CI gate |
+| **CI gates** | Mechanically enforce required artifact presence and format per MERGE_GATE_PHILOSOPHY.md §Phase 4 Completeness Gate | Does NOT perform semantic review; does NOT substitute for IAA audit |
+| **CS2** | Makes the final merge decision based on assembled evidence, IAA verdict, CI results, and functional outcome | Does NOT perform the producing agent's Phase 4; does NOT act as technical pre-handover auditor |
+
+**Key implication for the Foreman**:
+
+The Foreman (or any producing agent) MUST deliver a **COMPLETE** job — Phase 4 artifacts committed — before surfacing the PR for CS2 review. CS2 is the merge decision authority, not the Phase 4 completion authority.
+
+A PR handed to CS2 with outstanding Phase 4 artifacts is an OPOJD v2.1 violation. The Foreman is responsible for ensuring this never occurs.
+
+**Related canon**: `governance/opojd/OPOJD_COMPLETE_JOB_HANDOVER_DOCTRINE.md` v2.1 §1.3.4
 
 ---
 
