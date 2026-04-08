@@ -75,3 +75,5 @@
 
 | 2026-04-08 | foreman-v2-agent | session-160 | VIOLATION | INC-OPOJD-PSF-001: PS-F Phase 4 incomplete at session termination — PREHANDOVER proof, session memory, IAA token not committed before session ended; remediated in follow-on session | session-160-ps-f-iaa-trigger-table-20260408.md |
 | 2026-04-08 | foreman-v2-agent | session-160 | IMPROVEMENT | S-039: SCOPE_DECLARATION-FORMAT-VERIFICATION — QP must verify hyphen separator format before declaring PASS; em-dash causes silent 0-file parse in validate-scope-to-diff.sh | session-160-ps-f-iaa-trigger-table-20260408.md |
+| 2026-04-08 | foreman-v2-agent | session-161 | improvement-suggestion | S-040: Auto-create follow-up issue after governance layer-down PR merge to validate implementation quality (pattern: PR#1296 → issue#1305) | session-161-ecap-001-20260408.md |
+| 2026-04-08 | foreman-v2-agent | session-161 | cross-repo-note | app_management_centre may need same AC-002/003/004 corrections for AGENT_HANDOVER_AUTOMATION.md v1.1.6 label | session-161-ecap-001-20260408.md |
