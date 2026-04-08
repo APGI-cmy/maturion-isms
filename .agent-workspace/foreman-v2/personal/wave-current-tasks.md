@@ -1,32 +1,34 @@
-# Wave Current Tasks — Issue 1277
+# Wave Current Tasks — Issue 1286
 
-wave: mmm-39b-frs-derivation-fix
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave1277-20260407.md
+wave: opojd-comment-only-copilot-20260408
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave1286-opojd-20260408.md
 
-## Active Wave: mmm-39b-frs-derivation-fix
+## Active Wave: opojd-comment-only-copilot-20260408
 
 ### Wave Description
-Surgical doc-governance fix to modules/MMM/00-app-description/MMM_app_description.md Section 39B.
-Add UX Workflow & Wiring Spec as upstream input to FRS in the Requirements Derivation Chain.
-Bump version v0.3.0 → v0.4.0.
+Align repo to strict comment-only Copilot model — remove write-back assumptions from
+copilot-setup-steps.yml, declare COPILOT_SESSION_MODE/PUSH_DISABLED_INTENTIONAL/OUTPUT_MODE,
+and create a separate maturion-bot-writer.yml for future bot write operations.
 
-CS2 Authorization: Issue maturion-isms#1277 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
+CS2 Authorization: Issue maturion-isms#1286 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
 foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
-Parent Issue: #1266 (MMM build lifecycle reconciliation)
 
 ### Tasks
-- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave1277-20260407.md
-- [x] governance-liaison-isms-agent: update MMM_app_description.md Section 39B —
-      change "FRS derives functional requirements from the App Description"
-      to "FRS derives functional requirements from the App Description and the UX Workflow & Wiring Spec (Stage 2)";
-      bump version v0.3.0 → v0.4.0 with Last Updated 2026-04-07
-- [x] IAA REJECTION-PACKAGE: CORE-018(a)(b) — PREHANDOVER/session memory untracked → REMEDIATED
-- [x] IAA ASSURANCE-TOKEN: IAA-session-1277-mmm-39b-20260407-r2-PASS
-      Token file: .agent-admin/assurance/iaa-token-session-1277-mmm-39b-20260407-r2.md
-- [x] WAVE COMPLETE — awaiting CS2 merge (@APGI-cmy)
+- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave1286-opojd-20260408.md
+- [ ] OPOJD-001: Modify .github/workflows/copilot-setup-steps.yml — comment-only mode,
+      remove fallback token, remove git-identity step, add session-mode env vars
+- [ ] OPOJD-002: Create .github/workflows/maturion-bot-writer.yml — separate bot write
+      workflow, explicit write permissions, fail-fast on missing token, no fallback
+- [ ] PREHANDOVER proof: .agent-admin/assurance/PREHANDOVER-session-160-wave-opojd-20260408.md
+- [ ] Session memory: .agent-workspace/foreman-v2/memory/session-160-opojd-comment-only-20260408.md
+- [ ] IAA final audit and token
 
-### IAA Pre-Brief Summary (from iaa-prebrief-wave1277-20260407.md)
-- Trigger Category: PRE_BUILD_STAGE_MODEL
-- Applicable Overlay: PRE_BUILD_GATES (OVL-PBG-001 through OVL-PBG-009)
-- OVL-PBG-006: BUILD_PROGRESS_TRACKER Stage 2 present — PASS
-- All 21 checks PASS at final audit
+### IAA Pre-Brief Summary (from iaa-prebrief-wave1286-opojd-20260408.md)
+- Trigger Category: CI_WORKFLOW — MANDATORY
+- Qualifying Tasks: OPOJD-001, OPOJD-002
+- Scope Blockers: SB-001 through SB-006
+- OVL-CI-005 S-033 exception applies — three substitutes required
+- BUILD_DELIVERABLE overlay: NOT APPLICABLE
+
+### Previous Wave (Closed)
+wave: mmm-39b-frs-derivation-fix (Issue #1277) — COMPLETE, awaiting CS2 merge
