@@ -2,8 +2,8 @@
 
 **Module**: PIT (Penetration Intelligence Tool)  
 **Module Slug**: pit  
-**Last Updated**: 2026-04-06  
-**Updated By**: governance-liaison-isms-agent (wave: align-12stage-prebuild-20260406)
+**Last Updated**: 2026-04-08  
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
@@ -25,7 +25,7 @@ stage sequence. The existing Architecture work is valuable and will be preserved
 **Old → New Stage Mapping**:
 | Old Stage | Old Name | New Stage | New Name | Status |
 |-----------|----------|-----------|----------|--------|
-| Stage 0 | App Description | Stage 1 | App Description | NOT_STARTED (folder empty — anomaly) |
+| Stage 0 | App Description | Stage 1 | App Description | RETROFIT_STUB_CREATED — pending CS2 approval |
 | Stage 1 | FRS | Stage 3 | FRS | NOT_STARTED (folder empty) |
 | Stage 1.5 | TRS | Stage 4 | TRS | NOT_STARTED |
 | Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS |
@@ -62,7 +62,7 @@ can proceed through Stages 2–12 in the canonical sequence. The PIT Integration
 
 ### Stage 2: UX Workflow & Wiring Spec
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/02-ux-workflow-wiring-spec/`  
+**Location**: `modules/pit/01-ux-workflow-wiring-spec/`  
 **Key Artifacts**:
 - [ ] `ux-workflow-wiring-spec.md` — Complete user journey maps, screen interactions, data flows, wiring
 - [ ] All primary and secondary user paths documented
@@ -76,7 +76,7 @@ can proceed through Stages 2–12 in the canonical sequence. The PIT Integration
 
 ### Stage 3: Functional Requirements Specification (FRS)
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/01-frs/`  
+**Location**: `modules/pit/02-frs/`  
 **Key Artifacts**:
 - [ ] `functional-requirements.md` — Verifiable requirements derived from App Description + UX Workflow & Wiring Spec
 - [ ] Derivation statements from both upstream artifacts included
@@ -90,7 +90,7 @@ can proceed through Stages 2–12 in the canonical sequence. The PIT Integration
 
 ### Stage 4: Technical Requirements Specification (TRS)
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/04-trs/`  
+**Location**: `modules/pit/03-trs/`  
 **Key Artifacts**:
 - [ ] `technical-requirements-specification.md` — Technical constraints, performance requirements, integration requirements
 - [ ] `frs-to-trs-traceability.md` — Traceability matrix linking FRS to TRS
@@ -104,7 +104,7 @@ can proceed through Stages 2–12 in the canonical sequence. The PIT Integration
 
 ### Stage 5: Architecture
 **Status**: [ ] IN_PROGRESS  
-**Location**: `modules/pit/02-architecture/`  
+**Location**: `modules/pit/04-architecture/`  
 **Key Artifacts**:
 - [x] `architecture.md` — Architecture document exists
 - [x] `data-contracts/` — Data contracts folder exists
@@ -127,7 +127,7 @@ architecture structure is populated. Formal gate-pass requires upstream stages (
 
 ### Stage 6: QA-to-Red
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/06-qa-to-red/`  
+**Location**: `modules/pit/05-qa-to-red/`  
 **Key Artifacts**:
 - [ ] Full RED test suite derived from FRS + TRS + Architecture
 - [ ] Coverage of all user journeys from Stage 2
@@ -141,7 +141,7 @@ architecture structure is populated. Formal gate-pass requires upstream stages (
 
 ### Stage 7: PBFAG (Pre-Build Functionality Assessment Gate)
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/07-pbfag/`  
+**Location**: `modules/pit/06-pbfag/`  
 **Key Artifacts**:
 - [ ] PBFAG checklist completed — all checks PASS
 - [ ] Change-Propagation Audit complete
@@ -156,7 +156,7 @@ architecture structure is populated. Formal gate-pass requires upstream stages (
 
 ### Stage 8: Implementation Plan
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/03-implementation-plan/`  
+**Location**: `modules/pit/07-implementation-plan/`  
 **Key Artifacts**:
 - [ ] `implementation-plan.md` — Delivery wave breakdown with explicit scope per wave
 - [ ] Wave sequencing with dependency declarations
@@ -170,7 +170,7 @@ architecture structure is populated. Formal gate-pass requires upstream stages (
 
 ### Stage 9: Builder Checklist
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/09-builder-checklist/`  
+**Location**: `modules/pit/08-builder-checklist/`  
 **Key Artifacts**:
 - [ ] Builder Checklist completed for each builder candidate
 - [ ] Builder agent contracts verified as current
@@ -185,7 +185,7 @@ architecture structure is populated. Formal gate-pass requires upstream stages (
 
 ### Stage 10: IAA Pre-Brief
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/10-iaa-pre-brief/`  
+**Location**: `modules/pit/09-iaa-pre-brief/`  
 **Key Artifacts**:
 - [ ] IAA Pre-Brief invoked by Foreman with full context
 - [ ] IAA Pre-Brief artifact filed
@@ -199,7 +199,7 @@ architecture structure is populated. Formal gate-pass requires upstream stages (
 
 ### Stage 11: Builder Appointment
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/04-builder-appointment/`  
+**Location**: `modules/pit/10-builder-appointment/`  
 **Key Artifacts**:
 - [ ] `builder-contract.md` — Explicit builder agent contract
 - [ ] Formal appointment issued by Foreman after all Stages 1–10 gate-passed
@@ -213,7 +213,7 @@ architecture structure is populated. Formal gate-pass requires upstream stages (
 
 ### Stage 12: Build Execution & Evidence
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/05-build-evidence/`  
+**Location**: `modules/pit/11-build/`  
 **Key Artifacts**:
 - [ ] Implementation code in `apps/` or `packages/`
 - [ ] Test evidence (QA-to-Green per wave)

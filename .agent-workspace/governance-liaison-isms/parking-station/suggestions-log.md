@@ -87,3 +87,4 @@
 
 | 2026-04-07 | governance-liaison-isms | session-057 | SESSION-END | Pre-brief reading as Phase 2 first action proved highly efficient — pre-brief had already done scope analysis and state validation | session-057-20260407.md |
 | 2026-04-07 | governance-liaison-isms | session-057 | SESSION-END | Old→new stage diff-table in PREHANDOVER proof is valuable standard evidence for any Section 39A-class stage model reconciliation changes | session-057-20260407.md |
+| 2026-04-08 | governance-liaison-isms | session-058 | SESSION-END | Auto-merge ripple workflow should propagate non-CANON_INVENTORY policy JSON files to avoid manual follow-up sessions | session-058-20260408.md |
