@@ -23,7 +23,7 @@ foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
       BLK-1 resolved, DEC-PS-BLK1 resolved
 - [x] PREHANDOVER proof: .agent-workspace/foreman-v2/memory/PREHANDOVER-session-161-mmm-stage1-cs2-approval-20260408.md
 - [x] Session memory: .agent-workspace/foreman-v2/memory/session-161-mmm-stage1-cs2-approval-20260408.md
-- [ ] IAA final audit and token
+- [x] IAA final audit and token — IAA-session-161-wave-mmm-stage1-cs2-approval-20260408-PASS
 
 ### IAA Pre-Brief Summary
 - COMPLETE — `.agent-admin/assurance/iaa-prebrief-wave-mmm-stage1-cs2-approval-20260408.md`

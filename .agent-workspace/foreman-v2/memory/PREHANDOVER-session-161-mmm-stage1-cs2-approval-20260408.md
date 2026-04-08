@@ -166,13 +166,33 @@ A-021 SATISFIED.
 >
 > **Applied Overlay at Final Audit**: PRE_BUILD_GATES (OVL-PBG-001 through OVL-PBG-016). Adoption phase: PHASE_B_BLOCKING.
 
+[IAA Final Audit verbatim — ASSURANCE-TOKEN]:
+
+> **All 40 checks PASS. Merge gate parity: PASS.**
+> Merge permitted (subject to CS2 approval).
+>
+> Token reference: IAA-session-161-wave-mmm-stage1-cs2-approval-20260408-PASS
+> Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+>
+> Checks summary:
+>   HFMC-01 through HFMC-06: 6/6 PASS
+>   CORE-013 through CORE-025: 13/13 PASS (12 AGENT_CONTRACT checks N/A)
+>   OVL-PBG-001 through OVL-PBG-016: 16/16 PASS (1 advisory OVL-PBG-009 — not blocking)
+>   PRE_BRIEF_ASSURANCE: 4/4 PASS
+>   FAIL-ONLY-ONCE A-021/A-029/A-033: 3/3 PASS
+>
+> Advisory (non-blocking):
+>   OVL-PBG-009: Legacy 00- prefix in Stage 1 artifact path — migration plan required from CS2.
+>
+> CS2 authorization: Issue #1298 by @APGI-cmy — CONFIRMED.
+
 ---
 
 ## IAA Token Self-Certification Guard
 
 IAA Token path: `.agent-admin/assurance/iaa-token-session-161-wave-mmm-stage1-cs2-approval-20260408.md`
 Expected `PHASE_B_BLOCKING_TOKEN` value: `IAA-session-161-wave-mmm-stage1-cs2-approval-20260408-PASS`
-Token file committed: PENDING (written after IAA final audit verdict)
+Token file committed: ✅ PRESENT — `PHASE_B_BLOCKING_TOKEN: IAA-session-161-wave-mmm-stage1-cs2-approval-20260408-PASS`
 
 ---
 
