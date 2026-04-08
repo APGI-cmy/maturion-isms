@@ -4,8 +4,8 @@
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory — tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
   "last_updated": "2026-04-08",
-  "last_ripple_commit": "bfe47f6dec7786620065a33f37cdc3cd974f432a",
-  "last_ripple_timestamp": "2026-04-08T08:56:27Z",
+  "last_ripple_commit": "b54d57b5864a4df67f5bc44323ebde3807192c39",
+  "last_ripple_timestamp": "2026-04-08T10:58:14Z",
   "alignment_summary": {
     "total_artifacts": 25,
     "aligned": 20,
@@ -18,14 +18,14 @@
     {
       "filename": "AGENT_HANDOVER_AUTOMATION.md",
       "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
-      "canonical_version": "1.1.4",
-      "local_version": "1.1.4",
-      "canonical_hash_sha256": "39867b98a8d68ceebc3676b8066070e3b410e6f68a954bfd28089e0ef3d24514",
-      "local_hash_sha256": "39867b98a8d68ceebc3676b8066070e3b410e6f68a954bfd28089e0ef3d24514",
+      "canonical_version": "1.2.0",
+      "local_version": "1.2.0",
+      "canonical_hash_sha256": "89b887ced3efb1c508edcf1875aef05f4cc9a75bab3c040c32327bdd1bca3f23",
+      "local_hash_sha256": "89b887ced3efb1c508edcf1875aef05f4cc9a75bab3c040c32327bdd1bca3f23",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-04-06T08:55:50Z",
-      "change_note": "v1.1.4: Added PHASE_B_BLOCKING_TOKEN field to §4.3b token file heredoc; updated version footer. Layered down via ripple PR #1243 (canonical commit 843cc6dc)."
+      "last_verified": "2026-04-08T12:19:00Z",
+      "change_note": "v1.2.0: Added §4.3c Pre-IAA Commit-State Gate (canonical blocking step); defines mandatory git status / HEAD verification checks before IAA invocation; adds PHASE_B_BLOCKING guidance. Layered down via ripple PR #1294 (canonical commit b54d57b5). Note: CANON_INVENTORY.json entry shows version 1.1.6/hash 3b7f72b2 — discrepancy vs local file v1.2.0/hash 89b887ce; flagged for canonical source review."
     },
     {
       "filename": "ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
@@ -102,15 +102,16 @@
       "local_hash_sha256": "17de1f1f0f60fd92c8e12d130bbedaf02dcb05b6a84b772d50788fe47c98ee01",
       "alignment_status": "ESCALATED_TO_CS2",
       "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
-      "last_verified": "2026-03-04T08:30:40Z",
-      "escalation_ref": "ESC-AGENTFILE-29E76ECF-20260304",
+      "last_verified": "2026-04-08T12:19:00Z",
+      "escalation_ref": "ESC-AGENTFILE-B54D57B5-CA-20260408",
       "prior_escalations": [
         "ESC-AGENTFILE-E77B00C7-20260303",
         "ESC-AGENTFILE-61AB7B83-20260304",
         "ESC-AGENTFILE-4981C34F-20260304",
-        "ESC-AGENTFILE-4E2E193C-20260304"
+        "ESC-AGENTFILE-4E2E193C-20260304",
+        "ESC-AGENTFILE-29E76ECF-20260304"
       ],
-      "note": "Local v3.4.0 is NEWER than canonical v3.3.0 — layer-up situation. Canonical ripple 29e76ecf (trigger: Update contract version and last updated date) changed this file. Per A-015: escalated directly to CS2. CS2 must determine authoritative version and whether layer-up PR to canonical source is required."
+      "note": "Local v3.4.0 is NEWER than canonical v3.3.0 — layer-up situation. Canonical ripple 29e76ecf (trigger: Update contract version and last updated date) changed this file. Per A-015: escalated directly to CS2. CS2 must determine authoritative version and whether layer-up PR to canonical source is required. | Ripple b54d57b5 (2026-04-08T10:58:14Z): CodexAdvisor-agent.md changed canonically (trigger: governance-harden-pre-iaa-handover). Escalated to CS2 per A-015(1). CS2 to review canonical changes and determine update path for local consumer copy."
     },
     {
       "filename": "foreman-v2-agent.md",
@@ -121,9 +122,9 @@
       "local_hash_sha256": "d17ea8c41f5f588528d076a37e292849b80f332c7fa432bfa58dba9ed3b8125b",
       "alignment_status": "ESCALATED_TO_CS2",
       "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
-      "last_verified": "2026-03-03T13:03:45Z",
-      "escalation_ref": "ESC-AGENTFILE-6523FE8D-20260304",
-      "note": "Agent contract changed in ripple 6523fe8d (2026-03-04). Escalated to CS2. Also see prior escalation ESC-AGENTFILE-E77B00C7-20260303 from ripple e77b00c7. CS2 to apply via CodexAdvisor-agent + IAA. canonical_hash_sha256 corrected from erroneous 40-char SHA1 to local file SHA256 (canonical source unavailable for comparison; ESCALATED_TO_CS2 status unchanged)."
+      "last_verified": "2026-04-08T12:19:00Z",
+      "escalation_ref": "ESC-AGENTFILE-B54D57B5-FV2-20260408",
+      "note": "Agent contract changed in ripple 6523fe8d (2026-03-04). Escalated to CS2. Also see prior escalation ESC-AGENTFILE-E77B00C7-20260303 from ripple e77b00c7. CS2 to apply via CodexAdvisor-agent + IAA. canonical_hash_sha256 corrected from erroneous 40-char SHA1 to local file SHA256 (canonical source unavailable for comparison; ESCALATED_TO_CS2 status unchanged). | Ripple b54d57b5 (2026-04-08T10:58:14Z): foreman-v2.agent.md changed canonically (trigger: governance-harden-pre-iaa-handover). Per A-015(2): CodexAdvisor-agent invoked to process update to local foreman-v2-agent.md. Pending CodexAdvisor-agent + IAA + CS2 approval."
     },
     {
       "filename": "governance-repo-administrator-v2.agent.md",
@@ -134,9 +135,9 @@
       "local_hash_sha256": null,
       "alignment_status": "ESCALATED_TO_CS2",
       "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
-      "last_verified": "2026-03-03T13:03:45Z",
-      "escalation_ref": "ESC-AGENTFILE-E77B00C7-20260303",
-      "note": "Not present locally. CS2 to decide whether this agent should be introduced to maturion-isms."
+      "last_verified": "2026-04-08T12:19:00Z",
+      "escalation_ref": "ESC-AGENTFILE-B54D57B5-GRA-20260408",
+      "note": "Not present locally. CS2 to decide whether this agent should be introduced to maturion-isms. | Ripple b54d57b5 (2026-04-08T10:58:14Z): governance-repo-administrator-v2.agent.md changed canonically. File not present locally. Escalated to CS2 per A-015 to determine if introduction to maturion-isms is required."
     },
     {
       "filename": "independent-assurance-agent.md",
