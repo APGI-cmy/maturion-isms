@@ -227,9 +227,50 @@ Token file location: `.agent-admin/assurance/iaa-token-session-161-wave1300-2026
 
 ## IAA Agent Response (verbatim)
 
-> ⚠️ THIS SECTION MUST BE POPULATED WITH THE VERBATIM IAA RESPONSE BEFORE PREHANDOVER PROOF IS COMMITTED
+```
+FORMAL VERDICT
 
-[IAA response to be pasted verbatim after IAA invocation at Step 4.3a]
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/produce-mat-roadmap-transition-matrix
+    MMM Harvest Map and Ownership Transition Matrix (Issue #1300)
+
+All 34 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+
+Token reference: IAA-session-161-wave1300-20260408-PASS
+Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
+═══════════════════════════════════════
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-161-wave1300-20260408-PASS
+
+Full Audit Summary:
+| Category                                                              | Checks | PASS | FAIL |
+|-----------------------------------------------------------------------|--------|------|------|
+| HFMC-01–06                                                            | 6      | 6    | 0    |
+| FAIL-ONLY-ONCE learning (A-001, A-002, A-003, A-015, A-023, A-033)   | 5      | 5    | 0    |
+| Core Invariants CORE-005–025 (applicable subset)                      | 16     | 16   | 0    |
+| Substantive Quality SQ-001–007                                        | 7      | 7    | 0    |
+| Total                                                                 | 34     | 34   | 0    |
+
+Merge gate parity: PASS (YAML N/A, scope-to-diff PASS, placeholder check PASS,
+canon hash PASS, POLC boundary PASS, all 3 merge-gate checks PASS).
+
+Key Substantive Findings (positive):
+1. 21-row harvest map with all 10 required columns — verified by direct inspection;
+   zero placeholder rows.
+2. Strategic alignment confirmed — MAT repositioned as audit workbench (not peer product),
+   AIMC/KUC owns all knowledge ingestion, PIT owns action-planning handover, Roadmap
+   backbone drives MMM.
+3. Critical ownership conflict resolved — Domain/MPS/Criteria hierarchy (RR-03): MMM sole
+   owner, MAT copy dissolved.
+4. Human-in-the-loop scoring preserved — MT-08 "Adopt as-is" with explicit mandatory
+   governance statement.
+5. Anti-regression working — A-023, A-033, A-015 all PASS on first attempt.
+
+IAA VERDICT: PASS
+Token file: .agent-admin/assurance/iaa-token-session-161-wave1300-20260408.md
+```
 
 ---
 
