@@ -1,26 +1,53 @@
-# Wave Current Tasks — Issue 1282
+# Wave Current Tasks — foreman-v2-agent
 
-wave: iaa-preventive-controls
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave1282-20260407.md
+**Wave ID**: mmm-deploy-retention-rule
+**Issue**: #1279
+**Branch**: copilot/add-deployment-workflow-retention
+**Date**: 2026-04-07
+**Authorized by**: CS2 (@APGI-cmy) — opened issue #1279 directly
+**IAA Category**: PRE_BUILD_STAGE_MODEL
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-mmm-deploy-retention-rule.md
 
-## Active Wave: iaa-preventive-controls
+---
 
-### Wave Description
-Upgrade IAA contract (independent-assurance-agent.md) to convert recurring review misses
-into mandatory preventive controls. Issue #1282 opened by @APGI-cmy (CS2) and assigned
-to CodexAdvisor-agent (Copilot).
+## Wave Summary
 
-### Prior Wave Reference
-Previous wave (iaa-12stage-upgrade) aligned IAA logic to the canonical 12-stage pre-build
-model. This wave upgrades IAA's assurance model to be preventive, not merely reactive.
+Add explicit deployment workflow retention and retargeting rules to the MMM App Description.
 
-### Tasks
-- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave1282-20260407.md
-- [x] T-IAA-PC-001: Add Phase 0 Step 0.3b — anti-regression obligations in pre-brief
-- [x] T-IAA-PC-002: Add Phase 3 Step 3.1b — 6 named HFMC binary checks
-- [x] T-IAA-PC-003: Add Phase 3 Steps 3.4a/3.4b — failure classification + recurring promotion
-- [x] T-IAA-PC-004: Add prohibition NO-REPEAT-PREVENTABLE-001
-- [x] T-IAA-PC-005: Add YAML capabilities (recurring_failure_promotion, failure_classification, high_frequency_miss_checks)
-- [x] T-IAA-PC-006: Create T2 file iaa-high-frequency-checks.md (HFMC-01 through HFMC-06)
-- [x] T-IAA-PC-007: Update T2 index.md to reference new HFMC file
-- [x] IAA final audit and token — ASSURANCE-TOKEN: IAA-session-054-wave1-20260407-PASS
+## Wave Scope
+
+| File | Change |
+|------|--------|
+| `modules/MMM/00-app-description/MMM_app_description.md` | Add §30.4 (Deployment Workflow Retention and Retargeting), amend §39P, amend §39R |
+
+## Task Breakdown
+
+| Task ID | Description | Assigned To | Status |
+|---------|-------------|-------------|--------|
+| T-MMM-1279-001 | Add deployment workflow retention and retargeting rule to MMM App Description | mat-specialist | PENDING |
+
+## Pre-Build Gates Status
+
+| Gate | Stage | Status | Notes |
+|------|-------|--------|-------|
+| App Description | Stage 1 | THIS WAVE | Creating Stage 1 content |
+| Architecture | Stage 5 | DEFERRED | Not yet applicable |
+| QA-to-Red | Stage 6 | DEFERRED | No executable deliverables |
+| PBFAG | Stage 7 | DEFERRED | Not yet applicable |
+| Implementation Plan | Stage 8 | DEFERRED | Not yet applicable |
+| Builder Checklist | Stage 9 | DEFERRED | Not yet applicable |
+| IAA Pre-Brief | Stage 10 | COMPLETE | iaa-prebrief-mmm-deploy-retention-rule.md |
+
+## Evidence Requirements at Handover
+
+Per IAA Pre-Brief:
+- PREHANDOVER proof with Change-Propagation Audit (OVL-PBG-014)
+- SCOPE_DECLARATION.md matching this PR's files only
+- IAA token from handover invocation
+
+## Active FFA Checks (Blocking)
+
+- OVL-PBG-014: Change-Propagation Audit — MANDATORY in PREHANDOVER proof
+- OVL-INJ-001: Pre-Brief artifact exists — SATISFIED
+- A-021: All PR artifacts committed before IAA invocation
+- A-026/A-028: SCOPE_DECLARATION.md matches this wave only
