@@ -8,12 +8,12 @@
 - **Module**: MMM — Maturity Model Management
 - **Artifact Type**: App Description (Upstream Authority)
 - **Status**: Draft (Governance Gaps Resolved — pending CS2 approval)
-- **Version**: v0.2.0
+- **Version**: v0.4.0
 - **Owner**: Johan Ras
 - **Authority**: Johan Ras / CS2
 - **Applies To**: MMM module within the Maturion ecosystem
 - **Approval Date**: N/A
-- **Last Updated**: 2026-04-03
+- **Last Updated**: 2026-04-07
 - **Supersedes / Replaces Conceptually**:
   - MAT — Manual Audit Tool
   - Maturity Roadmap
@@ -1422,20 +1422,30 @@ The following sections define MMM's mandatory one-time-build delivery doctrine.
 
 The minimum required sequence is:
 
-1. Strategy  
-2. App Description  
+1. App Description  
+2. UX Workflow & Wiring Spec  
 3. FRS  
 4. TRS  
 5. Architecture  
 6. QA-to-Red  
 7. PBFAG  
-8. Wave Plan  
-9. Build Waves  
-10. Physical Verification  
-11. Deployment Wave  
-12. Commissioning / Activation
+8. Implementation Plan  
+9. Builder Checklist  
+10. IAA Pre-Brief  
+11. Builder Appointment  
+12. Build
 
 No implementation work may bypass this derivation chain.
+
+This sequence is the authoritative MMM build lifecycle, derived from and governed by
+`governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0. Stage definitions, gate
+conditions, and mandatory content requirements are specified in that canon document.
+Every stage is a hard gate — no stage may be skipped or reordered without explicit CS2
+written authorisation.
+
+This sequence is enforced at the platform level by the Maturion merge gate CI workflows
+and by the IAA handover ceremony. Any PR that advances MMM past a stage without the
+corresponding gate artifacts committed and verified will be blocked by the platform gates.
 
 ### 39A.1 Failure Promotion and RCA Requirement
 
@@ -1456,7 +1466,7 @@ MMM must implement the Maturion **Failure Promotion Rule** and **We-Only-Fail-On
 MMM must follow a strict requirements derivation chain:
 
 - App Description defines canonical product and governance intent
-- FRS derives functional requirements from the App Description
+- FRS derives functional requirements from the App Description and the UX Workflow & Wiring Spec (Stage 2)
 - TRS derives technical requirements from the FRS
 - Architecture derives implementation design from the TRS
 

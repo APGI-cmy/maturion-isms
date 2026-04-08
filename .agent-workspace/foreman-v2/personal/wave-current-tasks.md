@@ -1,30 +1,32 @@
-# Wave Current Tasks — GAP-009 EpisodicMemoryAdapter Supabase Wiring
+# Wave Current Tasks — Issue 1270
 
-wave: gap-009-episodic-memory-remediation
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-gap-009-episodic-memory-remediation.md
+wave: ps-f-iaa-trigger-table-new-categories
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-ps-f-iaa-trigger-table-20260407.md
 
-## Active Wave: wave-mmm-pre-impl-orchestration-20260407
+## Active Wave: ps-f-iaa-trigger-table-new-categories
 
 ### Wave Description
-POLC-Orchestration wave. Foreman produces consolidated implementation/orchestration plan
-for MMM Pre-Implementation Upgrade (PS-A through PS-I), including batched wave execution
-plan, dependency map, and CS2 decision-gate register.
+Upgrade `.agent-workspace/independent-assurance-agent/knowledge/iaa-trigger-table.md`
+to v2.4.0 by adding LIAISON_ADMIN and GOVERNANCE_AUDIT trigger categories per
+IMPL-PLAN-MMM-PRE-UPGRADE-v1.0.0 §5 Batch 1.
 
-Strategy source: `Maturion/strategy/PRE_MMM_IMPLEMENTATION_UPGRADE_STRATEGY.md` (CS2, 2026-04-07)
+CS2 Authorization: Issue maturion-isms#1270 opened by @APGI-cmy (CS2) and assigned to
+foreman-v2-agent (Copilot). Implementation assignee: CodexAdvisor-agent per
+IMPL-PLAN-MMM-PRE-UPGRADE-v1.0.0 §5.
 
-CS2 Authorization: Issue opened by @APGI-cmy (CS2) and assigns foreman-v2-agent.
-Issue title: "Orchestrate MMM Pre-Implementation Upgrade: Foreman implementation strategy + batched wave execution plan"
+### Prior Wave Reference
+Previous wave (iaa-12stage-upgrade, issue #1258) upgraded iaa-trigger-table.md to v2.3.0
+with PRE_BUILD_STAGE_MODEL and MANDATORY_CROSS_APP_COMPONENTS categories. PS-F-01
+(KNOWLEDGE_GOVERNANCE) was completed in v2.1.0 (2026-03-02).
 
 ### Tasks
-- [x] T-01: IAA Pre-Brief invoked — EXEMPT verdict (session-057-prebrief-mmm-pre-impl-orchestration-20260407)
-- [x] T-02: IAA pre-brief artifact committed: .agent-admin/assurance/iaa-prebrief-mmm-pre-impl-orchestration-20260407.md
-- [x] T-03: Implementation plan authored: .agent-admin/foreman/implementation_plan_mmm_upgrade.md
-- [x] T-04: Session memory written: .agent-workspace/foreman-v2/memory/session-158-mmm-pre-impl-orchestration-20260407.md
-- [x] T-05: PREHANDOVER proof written: .agent-workspace/foreman-v2/memory/PREHANDOVER-session-158-mmm-pre-impl-orchestration-20260407.md
-
-### Wave Category
-EXEMPT — governance/planning artifacts only.
-No production code, schema, test, CI workflow, agent contract, or canon file changes.
-
-### Prior Wave (closed)
-wave-1253-foreman-12stage-alignment — iaa-prebrief-wave-1253-20260407.md
+- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-ps-f-iaa-trigger-table-20260407.md
+- [ ] T-PS-F-01: KNOWLEDGE_GOVERNANCE — already present in v2.1.0 (PS-F-01 SATISFIED)
+- [ ] T-PS-F-02: Add LIAISON_ADMIN trigger category to iaa-trigger-table.md
+- [ ] T-PS-F-03: Add GOVERNANCE_AUDIT trigger category (EXEMPT-classified) to iaa-trigger-table.md
+- [ ] T-PS-F-04: Update classification decision flow steps for LIAISON_ADMIN + GOVERNANCE_AUDIT
+- [ ] T-PS-F-05: Version bump to v2.4.0 + version history entry
+- [ ] T-PS-F-06: Update IAA index.md with new trigger table version
+- [ ] QP evaluation of CodexAdvisor-agent deliverable
+- [ ] PREHANDOVER proof + session memory
+- [ ] IAA final handover audit + token ceremony
