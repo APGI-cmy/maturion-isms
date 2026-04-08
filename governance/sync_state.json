@@ -3,15 +3,15 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "last_sync": {
-    "timestamp": "2026-04-08T10:58:39Z",
-    "session_id": "align-20260408-105839",
+    "timestamp": "2026-04-08T12:16:26Z",
+    "session_id": "align-20260408-121626",
     "executed_by": "governance-liaison-isms-agent",
     "canonical_inventory_version": "1.0.0",
     "canonical_inventory_date": "2026-03-04",
-    "total_canons_synced": 2,
+    "total_canons_synced": 7,
     "sync_method": "layer-down-automated",
     "sync_status": "SUCCESS",
-    "canonical_commit": "b54d57b5864a4df67f5bc44323ebde3807192c39",
+    "canonical_commit": "63cdfb06586f567c456641edd7ca464c47b7751e",
     "files_layered_down": [
       "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
       "governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
@@ -21,7 +21,7 @@
     ],
     "upstream_ripple_pr": "1289",
     "followup_pr": "1290",
-    "ripple_pr": "1294"
+    "ripple_pr": "1296"
   },
   "alignment_status": {
     "overall": "ALIGNED",
@@ -32,7 +32,7 @@
       "missing": 0
     },
     "drift_detected": false,
-    "last_drift_check": "2026-04-08T10:58:39Z"
+    "last_drift_check": "2026-04-08T12:16:26Z"
   },
   "integrity": {
     "evidence_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_evidence.log",

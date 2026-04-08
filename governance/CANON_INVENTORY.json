@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "last_updated": "2026-04-08",
-  "total_canons": 198,
-  "generation_timestamp": "2026-04-05T07:15:36Z",
+  "total_canons": 199,
+  "generation_timestamp": "2026-04-08T10:55:47Z",
   "canon_entry_schema": {
     "description": "Schema for canon entries in CANON_INVENTORY.json",
     "required_fields": [
@@ -258,20 +258,20 @@
     },
     {
       "filename": "AGENT_HANDOVER_AUTOMATION.md",
-      "version": "1.2.0",
-      "file_hash": "84b120c7b19938f43ef16986732e0d4a67c5dbd35fbc92d4494c69b13d4f29f1",
-      "effective_date": "2026-04-08",
+      "version": "1.1.6",
+      "file_hash": "3b7f72b2839912fa03c46378d8c41c15927f60e4cda7286ad8e3a3b5c1e2b971",
+      "effective_date": "2026-04-06",
       "description": "Canonical governance document: AGENT_HANDOVER_AUTOMATION",
       "type": "canon",
       "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "84b120c7b19938f43ef16986732e0d4a67c5dbd35fbc92d4494c69b13d4f29f1",
+      "file_hash_sha256": "3b7f72b2839912fa03c46378d8c41c15927f60e4cda7286ad8e3a3b5c1e2b971",
       "ripple_dispatched": "2026-02-24",
       "ripple_log": ".agent-admin/governance/ripple-logs/ripple-agent-handover-parity-20260224.md",
       "ripple_in_repo_status": "COMPLETE",
       "ripple_consumer_status": "PENDING \u2014 layer-down issues to be created in consumer repos",
       "last_updated": "2026-04-08",
-      "change_note": "v1.2.0: Added §4.3c Pre-IAA Commit-State Gate (canonical blocking step); updated phase structure index; added PHASE_B_BLOCKING guidance; pre-IAA handover discipline hardening"
+      "change_note": "v1.1.6: Added Execution Ceremony Administration Integration section; ECAP-001 canon establishment"
     },
     {
       "filename": "AGENT_INDUCTION_PROTOCOL.md",
@@ -412,6 +412,17 @@
       "layer_up_status": "NONE"
     },
     {
+      "filename": "APP_DESCRIPTION_CREATION_CHECKLIST.md",
+      "version": "1.0",
+      "file_hash": "add632645f85f3214c49f3982faf82c7243a6f0afc663c30da9b30bae6fcf29e",
+      "effective_date": "2026-03-20",
+      "description": "Executable checklist for App Description completeness validation. Gate artifact for Pre-FRS and Pre-Architecture enforcement. Maps all \u00a75.1 and \u00a75.3 sections to binary pass/fail checks.",
+      "type": "checklist",
+      "path": "governance/checklists/APP_DESCRIPTION_CREATION_CHECKLIST.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "add632645f85f3214c49f3982faf82c7243a6f0afc663c30da9b30bae6fcf29e"
+    },
+    {
       "filename": "APP_DESCRIPTION_REQUIREMENT_POLICY.md",
       "version": "2.0",
       "file_hash": "67aa6fa019f963c87fc6ccf1afbb0be8a733f3b6f4b46f0fd398e0844e1ebcd5",
@@ -421,6 +432,17 @@
       "path": "governance/policy/APP_DESCRIPTION_REQUIREMENT_POLICY.md",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "67aa6fa019f963c87fc6ccf1afbb0be8a733f3b6f4b46f0fd398e0844e1ebcd5"
+    },
+    {
+      "filename": "APP_DESCRIPTION_TEMPLATE.md",
+      "version": "1.1",
+      "file_hash": "4769dfb9acea4d06c16d7e88b2976b912dfcb4ca0edad39e0729916ac82bc491",
+      "effective_date": "2026-03-20",
+      "description": "Full App Description template incorporating all \u00a75.1 required sections and \u00a75.3 mandatory governance sections (24 sections). Used as starting point for every new module App Description.",
+      "type": "template",
+      "path": "governance/templates/APP_DESCRIPTION_TEMPLATE.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "4769dfb9acea4d06c16d7e88b2976b912dfcb4ca0edad39e0729916ac82bc491"
     },
     {
       "filename": "APP_STARTUP_REQUIREMENTS_DECLARATION.md",
@@ -1004,6 +1026,19 @@
       "file_hash_sha256": "f16bd300b7a32964772198b4201c9a5077bd41be0b74b5e758131b4d81689d2c"
     },
     {
+      "filename": "EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md",
+      "version": "1.0.0",
+      "file_hash": "8a65c7c556248b5c70f0cecc230c7941e734169a3dbdf85c8358476716309c7f",
+      "file_hash_sha256": "8a65c7c556248b5c70f0cecc230c7941e734169a3dbdf85c8358476716309c7f",
+      "effective_date": "2026-04-08",
+      "description": "Canonical protocol for the execution-ceremony-admin-agent role, authority boundaries, the seven-step canonical handover sequence, and three-part readiness model (substantive, administrative, independent assurance verdict). Formalises ECAS-001 strategy into binding governance.",
+      "type": "canon",
+      "path": "governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md",
+      "layer_down_status": "PUBLIC_API",
+      "last_updated": "2026-04-08",
+      "change_note": "v1.0.0: Initial canon \u2014 ECAP-001; converts ECAS-001 strategy to binding governance"
+    },
+    {
       "filename": "FAILURE_PROMOTION_RULE.md",
       "version": "1",
       "file_hash": "14c86a0ef3180c7eeca8920ca5e88b8d016bd29dd2dbe3b9e8a8a7f71363179f",
@@ -1106,16 +1141,16 @@
     },
     {
       "filename": "FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
-      "version": "1.1.0",
-      "file_hash": "56c2ea0b5f50b479a75d7f1cb05e601c6f971461e3a9dc2a662b9f09a6e306b8",
+      "version": "1.2.0",
+      "file_hash": "c988e6e56012f890e19b4927eda0bdc249050c23b96864829d36437fcf535865",
       "effective_date": "2025-12-24",
       "description": "This document formally defines the **Foreman (FM)** as a **managerial authority** within the Maturion ecosystem, establishing its supervisory responsibilities over builders and the execution process.",
       "type": "canon",
       "path": "governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "56c2ea0b5f50b479a75d7f1cb05e601c6f971461e3a9dc2a662b9f09a6e306b8",
+      "file_hash_sha256": "c988e6e56012f890e19b4927eda0bdc249050c23b96864829d36437fcf535865",
       "last_updated": "2026-04-08",
-      "change_note": "v1.1.0: Added \u00a714.3 Review Layer Role Separation; CS2 role clarification; OPOJD hardening"
+      "change_note": "v1.2.0: Added \u00a79.6 execution-ceremony-admin-agent relationship + \u00a714.4 updated handover sequence; ECAP-001 canon establishment"
     },
     {
       "filename": "FOREMAN_MEMORY_PROTOCOL.md",
@@ -1245,13 +1280,15 @@
     {
       "filename": "GOVERNANCE_CANON_MANIFEST.md",
       "version": "1.0.0",
-      "file_hash": "6abe9914fc9ba4564d8d0f0f906055611448c4518b6db27e651d998312354d68",
+      "file_hash": "53c8f4d26178cdc49dd9dc9cb9ec17e26ed0c9171b2d23360b96f27c5fdb1814",
       "effective_date": "2026-01-05",
       "description": "This manifest is the **single authoritative index** of all canonical governance standards in the maturion-foreman-governance repository.",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "6abe9914fc9ba4564d8d0f0f906055611448c4518b6db27e651d998312354d68"
+      "file_hash_sha256": "53c8f4d26178cdc49dd9dc9cb9ec17e26ed0c9171b2d23360b96f27c5fdb1814",
+      "last_updated": "2026-04-08",
+      "change_note": "v1.0.0: Entry added for EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md; totals updated (Canon Files 92\u219293, Combined Total 107\u2192108, PUBLIC_API 78\u219279); FOREMAN_AUTHORITY and IAA_PRE_BRIEF versions updated"
     },
     {
       "filename": "GOVERNANCE_COMPLETENESS_MODEL.md",
@@ -1419,17 +1456,36 @@
       "file_hash_sha256": "8bcec0b387419dfb023c3b58f965c21320d51ef49a40eae000477f94aaa4f257"
     },
     {
+      "filename": "IAA_PRE_BRIEF_PROTOCOL.md",
+      "version": "1.2.1",
+      "file_hash": "15d220e5bf6167cf8fec640af62db8ec1e67753f00f079028efa48e1ff531a59",
+      "effective_date": "2026-04-05",
+      "description": "IAA Pre-Brief Protocol \u2014 proactive assurance mechanism that shifts quality assurance left by declaring acceptance criteria at wave start. Defines Wave Checklist Invocation Gate (applies to Foreman-governed wave execution; does not automatically apply to direct-CS2 standalone governance-repo-administrator-v2 canon actions).",
+      "type": "canon",
+      "path": "governance/canon/IAA_PRE_BRIEF_PROTOCOL.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "15d220e5bf6167cf8fec640af62db8ec1e67753f00f079028efa48e1ff531a59",
+      "canonical_version": "1.2.1",
+      "local_version": null,
+      "local_extension": false,
+      "layer_up_status": "NONE",
+      "last_updated": "2026-04-08",
+      "change_note": "v1.2.1: Reference update \u2014 added EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md reference; Phase 4 prep by ceremony admin clarified; ECAP-001 canon establishment"
+    },
+    {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-      "version": "1.1.0",
-      "file_hash": "f5d95bc3e877c8177e5742a0fd06f298a97db6ee5836bc8edaa0d203d1615f6b",
-      "file_hash_sha256": "f5d95bc3e877c8177e5742a0fd06f298a97db6ee5836bc8edaa0d203d1615f6b",
+      "version": "1.4.0",
+      "file_hash": "6c2b4e2b22d8601db26145c0f091b6afe022005305810885a16544ae9743ddd7",
+      "file_hash_sha256": "6c2b4e2b22d8601db26145c0f091b6afe022005305810885a16544ae9743ddd7",
       "effective_date": "2026-02-24",
-      "amended_date": "2026-03-02",
+      "amended_date": "2026-04-08",
       "description": "Defines the Independent Assurance Agent (IAA) class: role, hard-trigger authority, independence requirements, five-phase delivery proof protocol, binary output (ASSURANCE-TOKEN / REJECTION-PACKAGE), and trigger table. v1.1.0: Zero-Severity-Tolerance policy added.",
       "type": "canon",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "layer_down_status": "INTERNAL",
-      "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA); v1.1.0 amendment: Enforce zero-severity-tolerance \u2014 any finding triggers rejection"
+      "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA); v1.1.0 amendment: Enforce zero-severity-tolerance \u2014 any finding triggers rejection",
+      "last_updated": "2026-04-08",
+      "change_note": "v1.4.0: Added Execution Ceremony Admin Non-Substitution Rule; ECAP-001 canon establishment"
     },
     {
       "filename": "INITIALIZATION_COMPLETENESS_GATE.md",
@@ -1452,21 +1508,6 @@
       "path": "governance/canon/IN_BETWEEN_WAVE_RECONCILIATION.md",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "65432a46d8d6a86ccfb0409ffd12ce494ab626c6a22c68202e3125d0987dd547"
-    },
-    {
-      "filename": "IAA_PRE_BRIEF_PROTOCOL.md",
-      "version": "1.2.0",
-      "file_hash": "bbf9575d1597731f7e2eb9db0412faecc89c09e99a9f75326f4e3b66751147e5",
-      "effective_date": "2026-04-05",
-      "description": "IAA Pre-Brief Protocol \u2014 proactive assurance mechanism that shifts quality assurance left by declaring acceptance criteria at wave start. Defines Wave Checklist Invocation Gate (applies to Foreman-governed wave execution; does not automatically apply to direct-CS2 standalone governance-repo-administrator-v2 canon actions).",
-      "type": "canon",
-      "path": "governance/canon/IAA_PRE_BRIEF_PROTOCOL.md",
-      "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "bbf9575d1597731f7e2eb9db0412faecc89c09e99a9f75326f4e3b66751147e5",
-      "canonical_version": "1.2.0",
-      "local_version": null,
-      "local_extension": false,
-      "layer_up_status": "NONE"
     },
     {
       "filename": "LAYER_UP_PROTOCOL.md",
@@ -2297,28 +2338,6 @@
       "path": "governance/canon/scope-declaration.template.md",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "06e4173ff8485b6a1af86a91d12484856c5c7f4d193f38ae88e79573e646c5ee"
-    },
-    {
-      "filename": "APP_DESCRIPTION_TEMPLATE.md",
-      "version": "1.1",
-      "file_hash": "4769dfb9acea4d06c16d7e88b2976b912dfcb4ca0edad39e0729916ac82bc491",
-      "effective_date": "2026-03-20",
-      "description": "Full App Description template incorporating all \u00a75.1 required sections and \u00a75.3 mandatory governance sections (24 sections). Used as starting point for every new module App Description.",
-      "type": "template",
-      "path": "governance/templates/APP_DESCRIPTION_TEMPLATE.md",
-      "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "4769dfb9acea4d06c16d7e88b2976b912dfcb4ca0edad39e0729916ac82bc491"
-    },
-    {
-      "filename": "APP_DESCRIPTION_CREATION_CHECKLIST.md",
-      "version": "1.0",
-      "file_hash": "add632645f85f3214c49f3982faf82c7243a6f0afc663c30da9b30bae6fcf29e",
-      "effective_date": "2026-03-20",
-      "description": "Executable checklist for App Description completeness validation. Gate artifact for Pre-FRS and Pre-Architecture enforcement. Maps all \u00a75.1 and \u00a75.3 sections to binary pass/fail checks.",
-      "type": "checklist",
-      "path": "governance/checklists/APP_DESCRIPTION_CREATION_CHECKLIST.md",
-      "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "add632645f85f3214c49f3982faf82c7243a6f0afc663c30da9b30bae6fcf29e"
     }
   ]
 }

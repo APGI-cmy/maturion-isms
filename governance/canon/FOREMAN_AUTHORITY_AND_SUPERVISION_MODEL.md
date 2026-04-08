@@ -3,9 +3,10 @@
 ## Status
 **Type**: Canonical Governance Definition  
 **Authority**: Supreme - Canonical  
-**Version**: 1.1.0  
+**Version**: 1.2.0  
 **Effective Date**: 2025-12-24  
 **Amended**: 2026-04-08 — v1.1.0: Added §14.3 Review Layer Role Separation — CS2 is not the technical pre-handover auditor; producing agent assembles evidence, IAA audits independently, CI enforces mechanically, CS2 decides to merge. Authority: CS2 — OPOJD hardening issue.  
+**Amended**: 2026-04-08 — v1.2.0: Added §9.6 Relationship to execution-ceremony-admin-agent and §14.4 Updated Handover Sequence — formalises the three-role ceremony model (Foreman orchestrates; ceremony-admin prepares bundle; IAA audits independently). Authority: CS2 — ECAP-001 canon establishment issue.  
 **Owner**: Maturion Engineering Leadership (Johan Ras)  
 **Precedence**: Subordinate only to GOVERNANCE_PURPOSE_AND_SCOPE.md  
 **Applies To**: All Foreman Instances, All Builder Agents, All Repositories
@@ -969,6 +970,48 @@ Foreman:
 
 ---
 
+### 9.6 Relationship to execution-ceremony-admin-agent (v1.2.0)
+
+The `execution-ceremony-admin-agent` is an administrator-class agent appointed by the Foreman to own **job-administration and assurance-bundle preparation** for completed jobs. Its introduction does **not** dilute Foreman constitutional accountability.
+
+**Foreman retains full authority over**:
+- all orchestration and substantive acceptance decisions
+- the decision that a job is ready for ceremony preparation
+- the decision that the ceremony bundle is ready for IAA handover
+- the final invocation / handover to IAA
+
+**execution-ceremony-admin-agent owns**:
+- session-memory administration
+- PREHANDOVER generation from canonical templates
+- artifact inventory collation and checksum reconciliation
+- commit-state vs artifact-state consistency verification
+- bundle hygiene remediation
+- return-to-Foreman with the completed ceremony bundle
+
+**Separation**:
+- Foreman = managerial orchestration authority and substantive readiness owner
+- execution-ceremony-admin-agent = ceremony administration authority and administrative readiness owner
+- IAA = independent assurance authority and verdict issuer
+- No role may perform the functions of another role
+
+**Accountability Preservation**: The Foreman is accountable for the ceremony bundle's completeness and accuracy even when the bundle has been prepared by the `execution-ceremony-admin-agent`. Appointment of the ceremony admin is a delegation of administration — not a delegation of accountability.
+
+**Canonical Handover Sequence** (normative — full definition in `EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` §5.2):
+
+```
+1. Foreman completes orchestration and substantive acceptance
+2. Foreman appoints execution-ceremony-admin-agent
+3. execution-ceremony-admin-agent prepares the full ceremony bundle
+4. execution-ceremony-admin-agent returns the bundle to Foreman
+5. Foreman performs initial review of the prepared bundle
+6. Foreman invokes / hands over to IAA
+7. IAA audits independently and issues verdict
+```
+
+**Related canon**: `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` §4–§5
+
+---
+
 ## 10. Authority Hierarchy (Canonical Precedence)
 
 If conflict exists, higher authority prevails:
@@ -1177,6 +1220,31 @@ The Foreman (or any producing agent) MUST deliver a **COMPLETE** job — Phase 4
 A PR handed to CS2 with outstanding Phase 4 artifacts is an OPOJD v2.1 violation. The Foreman is responsible for ensuring this never occurs.
 
 **Related canon**: `governance/opojd/OPOJD_COMPLETE_JOB_HANDOVER_DOCTRINE.md` v2.1 §1.3.4
+
+---
+
+### 14.4 Updated Handover Sequence with Ceremony Administration (v1.2.0)
+
+When the Foreman appoints an `execution-ceremony-admin-agent`, the handover sequence defined in §14.3 is extended as follows:
+
+| Step | Actor | Action |
+|------|-------|--------|
+| 1 | Foreman | Completes orchestration; confirms substantive readiness |
+| 2 | Foreman | Appoints `execution-ceremony-admin-agent` with defined scope |
+| 3 | execution-ceremony-admin-agent | Prepares full ceremony bundle (PREHANDOVER, session memory, evidence, checksums) |
+| 4 | execution-ceremony-admin-agent | Returns bundle to Foreman |
+| 5 | Foreman | Reviews prepared bundle; confirms administrative readiness |
+| 6 | Foreman | Invokes / hands over to IAA |
+| 7 | IAA | Audits independently; issues ASSURANCE-TOKEN or REJECTION-PACKAGE |
+
+The three readiness concepts that govern this sequence:
+- **Substantive readiness** (Foreman's domain) — build delivery is correct and complete
+- **Administrative readiness** (ceremony-admin's domain) — ceremony bundle is complete and consistent
+- **Independent assurance verdict** (IAA's domain) — independent audit complete; verdict issued
+
+**Constraint**: Foreman MUST NOT invoke IAA until both substantive readiness and administrative readiness are confirmed. The ceremony admin does NOT determine substantive readiness; the Foreman does NOT self-perform full ceremony administration when a ceremony admin has been appointed.
+
+**Full normative definition**: `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md`
 
 ---
 

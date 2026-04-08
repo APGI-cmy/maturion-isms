@@ -1,10 +1,11 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.3.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.4.0 | **Authority**: CS2
 **Date**: 2026-03-03
 **Amended**: 2026-03-03 — v1.1.0: Added §Proactive Assurance — Pre-Brief Protocol
 **Amended**: 2026-03-04 — v1.2.1: Added §CS2 Direct Review Track
 **Amended**: 2026-03-04 — v1.3.0: Added §Risk-Tiered Ceremony Table + §Functional Fitness Assessment (FFA)
+**Amended**: 2026-04-08 — v1.4.0: Added §Execution Ceremony Admin Non-Substitution Rule — explicitly prohibits the execution-ceremony-admin-agent from performing IAA functions; reinforces IAA non-producing / non-cleanup-authoring posture relative to the new ceremony admin role; authority: CS2 — ECAP-001 canon establishment issue.
 
 ---
 
@@ -595,16 +596,41 @@ and the IAA independently review identical content under human oversight.
 
 ---
 
+## Execution Ceremony Admin Non-Substitution Rule (v1.4.0)
+
+The `execution-ceremony-admin-agent` role (defined in `EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md`) is an **administrator-class agent** that prepares the ceremony bundle for Foreman review before IAA handover. This role is explicitly **not** a substitute for, extension of, or delegation from the IAA.
+
+### Hard Rules
+
+1. **The IAA MUST NOT perform ceremony administration**. If the IAA discovers administrative defects during audit, it issues a `REJECTION-PACKAGE` — it does NOT remediate the defect. Remediation is returned to the Foreman who directs the `execution-ceremony-admin-agent` or other appropriate role.
+
+2. **The execution-ceremony-admin-agent MUST NOT perform IAA functions**. It does not issue assurance verdicts, it does not invoke itself as an assurance authority, and it does not substitute for the independent audit step.
+
+3. **The execution-ceremony-admin-agent MUST NOT invoke IAA**. Only the Foreman invokes IAA. The ceremony admin returns the bundle to the Foreman; the Foreman then invokes IAA.
+
+4. **Administrative readiness ≠ Independent assurance verdict**. A ceremony bundle that has achieved administrative readiness has NOT been assured. IAA assurance is a separate, subsequent step.
+
+5. **IAA independence is unchanged** by the introduction of the `execution-ceremony-admin-agent`. The IAA assures the bundle that the ceremony admin prepared — it does not assure the ceremony admin's work in isolation. IAA reviews the complete Phase 1–4 evidence package.
+
+### Rationale
+
+The failure mode this rule prevents: the `execution-ceremony-admin-agent` producing a "self-verified" bundle that bypasses independent audit, or the IAA being positioned as a ceremony corrector rather than an independent verdict authority. Both failure modes would degrade the assurance architecture.
+
+**Related canon**: `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` §4.3, §4.4
+
+---
+
 ## References
 
 - `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0 — Living Agent framework
 - `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` — Knowledge architecture
 - `governance/canon/AGENT_CONTRACT_ARCHITECTURE.md` — Four-phase contract architecture
 - `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` v1.0.0 — IAA Pre-Brief Protocol (proactive assurance)
+- `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` v1.0.0 — Ceremony admin role and handover sequence
 - `governance/quality/agent-integrity/` — Agent integrity reference store
 - `governance/CANON_INVENTORY.json` — Canon hash registry
 - `governance/GATE_REQUIREMENTS_INDEX.json` — Gate requirements
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.3.0 | Effective: 2026-02-24 | Amended: 2026-03-04*
+*Authority: CS2 (Johan Ras) | Version: 1.4.0 | Effective: 2026-02-24 | Amended: 2026-04-08*

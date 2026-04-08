@@ -80,7 +80,7 @@ It serves to:
 | `COGNITIVE_CAPABILITY_ORCHESTRATION_MODEL.md` | 1.1.0 | PUBLIC_API | FM App | 2026-01-03 |
 | `COGNITIVE_HYGIENE_AUTHORITY_MODEL.md` | 1.0.0 | OPTIONAL | FM App | 2026-01-05 |
 | `COGNITIVE_HYGIENE_MEMORY_INTEGRATION_MODEL.md` | 1.0.0 | OPTIONAL | FM App | 2026-01-05 |
-| `FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` | 1.1.0 | PUBLIC_API | FM App | 2026-01-03 |
+| `FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` | 1.2.0 | PUBLIC_API | FM App | 2026-04-08 |
 
 ### 3.2 Architecture & Build Models (PUBLIC_API)
 
@@ -106,6 +106,7 @@ It serves to:
 | `DOMAIN_EVOLUTION_RULES.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `DOMAIN_OWNERSHIP_ACCOUNTABILITY.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `DOMAIN_STATE_ENFORCEMENT_RULE.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
+| `EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-04-08 |
 
 ### 3.4 Gate & Enforcement Models (PUBLIC_API)
 
@@ -113,10 +114,11 @@ It serves to:
 |-----------|---------|-------------------|------------------|--------------|
 | `CASCADING_FAILURE_CIRCUIT_BREAKER.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `CI_CONFIRMATORY_NOT_DIAGNOSTIC.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
+| `COMMENT_ONLY_AGENT_SESSION_PROTOCOL.md` | 1.0.0 | PUBLIC_API | All Repos | 2026-04-08 |
 | `FAILURE_PROMOTION_RULE.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `FM_PREAUTH_CHECKLIST_CANON.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `GATE_PREDICTIVE_COMPLIANCE_ANALYSIS.md` | 1.0.0 | OPTIONAL | FM App | 2026-01-05 |
-| `IAA_PRE_BRIEF_PROTOCOL.md` | 1.2.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-04-05 |
+| `IAA_PRE_BRIEF_PROTOCOL.md` | 1.2.1 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-04-08 |
 | `INITIALIZATION_COMPLETENESS_GATE.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `PRE_BUILD_REALITY_CHECK_CANON.md` | 1.1.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-04-05 |
 | `PR_GATE_EVALUATION_AND_ROLE_PROTOCOL.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
@@ -257,10 +259,10 @@ These policies are located in `governance/policy/` and establish constitutional 
 
 ## 4. Governance Public API Summary
 
-**Total Canon Files**: 91  
+**Total Canon Files**: 93  
 **Total Policy Files**: 15  
-**Combined Total**: 106  
-**PUBLIC_API**: 77 files (73%)  
+**Combined Total**: 108  
+**PUBLIC_API**: 79 files (73%)  
 **OPTIONAL**: 16 files (15%)  
 **INTERNAL**: 13 files (12%)  
 **DEPRECATED**: 0 files (0%)
