@@ -3,11 +3,11 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory \u2014 tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
-  "last_updated": "2026-04-06",
-  "last_ripple_commit": "843cc6dc4dd88bee911ea21d809e72f28e7b93cf",
-  "last_ripple_timestamp": "2026-04-06T08:55:28Z",
+  "last_updated": "2026-04-08",
+  "last_ripple_commit": "bfe47f6dec7786620065a33f37cdc3cd974f432a",
+  "last_ripple_timestamp": "2026-04-08T08:56:27Z",
   "alignment_summary": {
-    "total_artifacts": 24,
+    "total_artifacts": 25,
     "aligned": 20,
     "drifted": 0,
     "missing": 0,
@@ -182,7 +182,8 @@
       "local_hash_sha256": "6abe9914fc9ba4564d8d0f0f906055611448c4518b6db27e651d998312354d68",
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
-      "last_verified": "2026-04-05T11:30:00Z"
+      "last_verified": "2026-04-08T09:11:22Z",
+      "change_note": "File changed in canonical commit bfe47f6d (canonise-oopjd-session-mode). Layer-down status: INTERNAL \u2014 no distribution to consumer repos required. Local hash verified matching canonical CANON_INVENTORY entry. CI ripple-integration.yml confirmed: NO_DRIFT_DETECTED."
     },
     {
       "filename": "GOVERNANCE_WATCHDOG_CANON.md",
@@ -293,6 +294,18 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "TEMPLATE",
       "last_verified": "2026-04-05T11:30:00Z"
+    },
+    {
+      "filename": "COMMENT_ONLY_AGENT_SESSION_PROTOCOL.md",
+      "path": "governance/canon/COMMENT_ONLY_AGENT_SESSION_PROTOCOL.md",
+      "canonical_version": "1.0.0",
+      "local_version": null,
+      "canonical_hash_sha256": "3b342b6fa746ad418a767f46c38dca5ff19a5e5f4ee72d766645337e5211b29c",
+      "local_hash_sha256": null,
+      "alignment_status": "NOT_TRACKED",
+      "layer_down_status": "PUBLIC_API \u2014 file exists canonically (commit bfe47f6d) but not yet listed in canonical CANON_INVENTORY.json; automated layer-down not triggered",
+      "last_verified": "2026-04-08T09:11:22Z",
+      "change_note": "New file introduced in canonical commit bfe47f6d (trigger: canonise-oopjd-session-mode). File declares Layer-Down Status: PUBLIC_API. Not yet present in canonical CANON_INVENTORY.json (198 entries). CI ripple-integration.yml confirmed NO_DRIFT_DETECTED because CANON_INVENTORY.json does not include this file. Status: NOT_TRACKED until CANON_INVENTORY.json is updated by canonical source to include this file. No local copy exists. No layer-down action required at this time."
     }
   ],
   "metadata": {
@@ -300,7 +313,7 @@
     "governing_protocol": "GOVERNANCE_RIPPLE_MODEL.md v1.1.0",
     "canonical_checklist": "GOVERNANCE_RIPPLE_CHECKLIST_PROTOCOL.md",
     "created_by": "governance-liaison-isms session-035",
-    "last_updated_by": "governance-liaison-isms session-055 layer-down-843cc6dc-20260406"
+    "last_updated_by": "governance-liaison-isms session-058-20260408 layer-down-bfe47f6d-20260408"
   },
-  "last_updated_by": "governance-liaison-isms session-055 layer-down-843cc6dc-20260406"
+  "last_updated_by": "governance-liaison-isms session-058-20260408 layer-down-bfe47f6d-20260408"
 }

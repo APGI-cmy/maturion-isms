@@ -87,3 +87,4 @@
 
 | 2026-04-07 | governance-liaison-isms | session-057 | SESSION-END | Pre-brief reading as Phase 2 first action proved highly efficient — pre-brief had already done scope analysis and state validation | session-057-20260407.md |
 | 2026-04-07 | governance-liaison-isms | session-057 | SESSION-END | Old→new stage diff-table in PREHANDOVER proof is valuable standard evidence for any Section 39A-class stage model reconciliation changes | session-057-20260407.md |
+| 2026-04-08 | governance-liaison-isms | session-058 | SESSION-END | PUBLIC_API files introduced in canonical repo but absent from CANON_INVENTORY.json are silently skipped by layer-down automation — suggest canonical-side check to flag this gap | session-058-20260408.md |
