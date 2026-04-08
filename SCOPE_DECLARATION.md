@@ -1,47 +1,30 @@
-# SCOPE DECLARATION — Wave ps-b-fail-only-once-v420-20260407
+# SCOPE DECLARATION — Wave: mmm-deploy-retention-rule
 
-**Agent**: foreman-v2-agent v6.2.0 (contract 2.9.0)
-**Wave**: ps-b-fail-only-once-v420-20260407
-**Session**: session-159
+**Wave ID**: mmm-deploy-retention-rule
+**Issue**: #1279
+**Session**: wave-mmm-deploy-retention-20260407
 **Date**: 2026-04-07
-**Branch**: copilot/ps-b-foreman-fail-only-once
-**Issue**: maturion-isms#1268 ([PS-B] Foreman FAIL-ONLY-ONCE v4.2.0 — dedup + new A-rules)
-**Authority**: CS2 (@APGI-cmy)
+**Branch**: copilot/add-deployment-workflow-retention
 
-## Declared Scope: Files Modified
+## Files Changed This Wave
 
-**Wave Category**: KNOWLEDGE_GOVERNANCE
+| File | Change Type | Description |
+|------|-------------|-------------|
+| `modules/MMM/00-app-description/MMM_app_description.md` | MODIFIED | Added §30.4 Deployment Workflow Retention and Retargeting; amended §39P deployment wave assessment; amended §39R legacy-supersession clause |
+| `.agent-admin/assurance/iaa-prebrief-mmm-deploy-retention-rule.md` | ADDED | IAA Pre-Brief artifact for this wave |
+| `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | MODIFIED | Wave task registry updated for this wave |
 
-### Governance Knowledge Files (Tier 2 — agent-workspace)
+## Files NOT Changed
 
-- `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` — Upgraded v4.1.0 → v4.2.0: PS-B-01 through PS-B-06 changes applied (ID Namespace Note, A-019, A-033–A-035 new, A-036–A-038 renumbered, completion marker convention)
-- `.agent-workspace/foreman-v2/knowledge/index.md` — Upgraded v2.4.0 → v2.5.0: FAIL-ONLY-ONCE version reference updated
+All other files in the repository were NOT modified by this wave.
 
-### Foreman Wave Administration Files (personal workspace)
+## Change-Propagation Audit (OVL-PBG-014)
 
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — Updated for ps-b wave (iaa_prebrief_path set)
-- `.agent-workspace/foreman-v2/memory/session-159-ps-b-fail-only-once-v420-20260407.md` — Session memory (new)
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-159-ps-b-fail-only-once-v420-20260407.md` — PREHANDOVER proof (new)
+| Downstream Artifact | Status | Declaration |
+|--------------------|--------|-------------|
+| `modules/MMM/02-architecture/architecture.md` | NOT STARTED | Stage 5 not yet authored. New §30.4/§39P/§39R rules will be reflected when architecture deployment section is written. Alignment deferred to Stage 5 wave. |
+| `modules/MMM/01-frs/` (FRS) | NOT STARTED | Not yet written. No propagation needed. |
+| UX Workflow & Wiring Spec | NOT STARTED | Not yet written. No propagation needed. |
+| TRS | NOT STARTED | Not yet written. No propagation needed. |
 
-### IAA Ceremony Files (A-031 carve-out — not in scope for pre-declaration)
-
-- `.agent-admin/assurance/iaa-prebrief-ps-b-fail-only-once-v420-20260407.md` — IAA Pre-Brief (committed before changes; A-031 carve-out per A-033)
-- `.agent-admin/assurance/iaa-rejection-session-159-ps-b-fail-only-once-v420-20260407.md` — IAA Rejection Package (procedural rejection; remediated; A-031 carve-out per A-033)
-- `.agent-admin/assurance/iaa-token-session-159-ps-b-fail-only-once-v420-20260407.md` — IAA Token (to be committed by IAA after audit; A-031 carve-out per A-033)
-
-### Root
-
-- `SCOPE_DECLARATION.md` — This file (fresh overwrite per A-029)
-
-## Out of Scope
-
-- No production code changes (apps/, modules/, supabase/, packages/)
-- No CI workflow changes (.github/workflows/)
-- No agent contract changes (.github/agents/)
-- No migration or schema changes
-
-## IAA Pre-Brief
-
-Pre-Brief artifact: `.agent-admin/assurance/iaa-prebrief-ps-b-fail-only-once-v420-20260407.md`
-Pre-Brief committed: YES (commit 2c398fe — before any substantive changes)
-Category: KNOWLEDGE_GOVERNANCE — MANDATORY
+**Audit conclusion**: No immediate downstream propagation required. The Stage 1 update introduces deployment retention rules that will be reflected in downstream stages (Stage 2-5) when those documents are authored. No circular dependency or contradiction with existing content detected.
