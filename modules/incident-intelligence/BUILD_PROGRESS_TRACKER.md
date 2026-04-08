@@ -2,8 +2,8 @@
 
 **Module**: Incident Intelligence  
 **Module Slug**: incident-intelligence  
-**Last Updated**: 2026-04-06  
-**Updated By**: governance-liaison-isms-agent (wave: align-12stage-prebuild-20260406)
+**Last Updated**: 2026-04-08  
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure)
 
 > **Classification**: ACTIVE — FRESH START ON NEXT STAGE  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
@@ -54,7 +54,7 @@ Architecture folder has a `capabilities/` subdirectory with stub content.
 
 ### Stage 2: UX Workflow & Wiring Spec
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/incident-intelligence/02-ux-workflow-wiring-spec/`  
+**Location**: `modules/incident-intelligence/01-ux-workflow-wiring-spec/`  
 **Key Artifacts**:
 - [ ] `ux-workflow-wiring-spec.md` — Complete user journey maps, screen interactions, data flows, wiring
 - [ ] All primary and secondary user paths documented
@@ -68,7 +68,7 @@ Architecture folder has a `capabilities/` subdirectory with stub content.
 
 ### Stage 3: Functional Requirements Specification (FRS)
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/incident-intelligence/01-frs/`  
+**Location**: `modules/incident-intelligence/02-frs/`  
 **Key Artifacts**:
 - [ ] `functional-requirements.md` — Verifiable requirements derived from App Description + UX Workflow & Wiring Spec
 - [ ] Derivation statements from both upstream artifacts included
@@ -82,7 +82,7 @@ Architecture folder has a `capabilities/` subdirectory with stub content.
 
 ### Stage 4: Technical Requirements Specification (TRS)
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/incident-intelligence/04-trs/`  
+**Location**: `modules/incident-intelligence/03-trs/`  
 **Key Artifacts**:
 - [ ] `technical-requirements-specification.md` — Technical constraints, performance requirements, integration requirements
 - [ ] `frs-to-trs-traceability.md` — Traceability matrix linking FRS to TRS
@@ -96,7 +96,7 @@ Architecture folder has a `capabilities/` subdirectory with stub content.
 
 ### Stage 5: Architecture
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/incident-intelligence/02-architecture/`  
+**Location**: `modules/incident-intelligence/04-architecture/`  
 **Key Artifacts**:
 - [ ] `architecture.md` — Structures and decisions that satisfy FRS and TRS
 - [ ] All TRS requirements traceable to architecture components
@@ -111,7 +111,7 @@ Not started in the canonical sense.
 
 ### Stage 6: QA-to-Red
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/incident-intelligence/06-qa-to-red/`  
+**Location**: `modules/incident-intelligence/05-qa-to-red/`  
 **Key Artifacts**:
 - [ ] Full RED test suite derived from FRS + TRS + Architecture
 - [ ] Coverage of all user journeys from Stage 2
@@ -125,7 +125,7 @@ Not started in the canonical sense.
 
 ### Stage 7: PBFAG (Pre-Build Functionality Assessment Gate)
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/incident-intelligence/07-pbfag/`  
+**Location**: `modules/incident-intelligence/06-pbfag/`  
 **Key Artifacts**:
 - [ ] PBFAG checklist completed — all checks PASS
 - [ ] Change-Propagation Audit complete
@@ -140,7 +140,7 @@ Not started in the canonical sense.
 
 ### Stage 8: Implementation Plan
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/incident-intelligence/03-implementation-plan/`  
+**Location**: `modules/incident-intelligence/07-implementation-plan/`  
 **Key Artifacts**:
 - [ ] `implementation-plan.md` — Delivery wave breakdown with explicit scope per wave
 - [ ] Wave sequencing with dependency declarations
@@ -154,7 +154,7 @@ Not started in the canonical sense.
 
 ### Stage 9: Builder Checklist
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/incident-intelligence/09-builder-checklist/`  
+**Location**: `modules/incident-intelligence/08-builder-checklist/`  
 **Key Artifacts**:
 - [ ] Builder Checklist completed for each builder candidate
 - [ ] Builder agent contracts verified as current
@@ -168,7 +168,7 @@ Not started in the canonical sense.
 
 ### Stage 10: IAA Pre-Brief
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/incident-intelligence/10-iaa-pre-brief/`  
+**Location**: `modules/incident-intelligence/09-iaa-pre-brief/`  
 **Key Artifacts**:
 - [ ] IAA Pre-Brief invoked by Foreman with full context
 - [ ] IAA Pre-Brief artifact filed
@@ -182,7 +182,7 @@ Not started in the canonical sense.
 
 ### Stage 11: Builder Appointment
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/incident-intelligence/04-builder-appointment/`  
+**Location**: `modules/incident-intelligence/10-builder-appointment/`  
 **Key Artifacts**:
 - [ ] `builder-contract.md` — Explicit builder agent contract
 - [ ] Formal appointment issued by Foreman after all Stages 1–10 gate-passed
@@ -196,7 +196,7 @@ Not started in the canonical sense.
 
 ### Stage 12: Build Execution & Evidence
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/incident-intelligence/05-build-evidence/`  
+**Location**: `modules/incident-intelligence/11-build/`  
 **Key Artifacts**:
 - [ ] Implementation code in `apps/` or `packages/`
 - [ ] Test evidence (QA-to-Green per wave)

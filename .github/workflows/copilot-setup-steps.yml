@@ -5,40 +5,38 @@ name: Copilot Setup Steps
 # missing dist/ files (MODULE_NOT_FOUND) surface as a clear Node stack trace
 # rather than the generic "MCP error -32000: Connection closed".
 #
-# Token policy: REQ-TU-001 / REQ-TU-002 (GOVERNANCE_TOKEN_USAGE_REQUIREMENTS.md)
-# All write operations use secrets.MATURION_BOT_TOKEN. GITHUB_TOKEN is prohibited
-# for any step that mutates repository state.
+# Session model: COMMENT_ONLY — Copilot sessions produce text output only.
+# Push operations are intentionally disabled for Copilot sessions.
+# For bot write operations, use maturion-bot-writer.yml (separate workflow).
 
 on:
   workflow_dispatch: {}
 
-# REQ-TU-004: Explicit write permissions required for agent push operations.
+# Read-only permissions: Copilot sessions do not mutate repository state.
 permissions:
-  contents: write
+  contents: read
+
+# Declare Copilot session mode for all steps and MCP servers.
+env:
+  COPILOT_SESSION_MODE: COMMENT_ONLY
+  PUSH_DISABLED_INTENTIONAL: "true"
+  OUTPUT_MODE: PR_COMMENT_OR_ARTIFACT
 
 jobs:
   copilot-setup-steps:
     runs-on: ubuntu-latest
     steps:
-      # REQ-TU-003: Token identity evidence — must appear before any write operation.
-      - name: Token identity evidence
+      - name: Declare Copilot session mode (comment-only — push intentionally disabled)
         run: |
-          echo "EXEC_IDENTITY: MATURION_BOT_TOKEN in use for write operations"
+          echo "COPILOT_SESSION_MODE=${COPILOT_SESSION_MODE}"
+          echo "PUSH_DISABLED_INTENTIONAL=${PUSH_DISABLED_INTENTIONAL}"
+          echo "OUTPUT_MODE=${OUTPUT_MODE}"
+          echo "COPILOT_SESSION_MODE=${COPILOT_SESSION_MODE}" >> "$GITHUB_ENV"
+          echo "PUSH_DISABLED_INTENTIONAL=${PUSH_DISABLED_INTENTIONAL}" >> "$GITHUB_ENV"
+          echo "OUTPUT_MODE=${OUTPUT_MODE}" >> "$GITHUB_ENV"
 
-      # REQ-TU-001: Use MATURION_BOT_TOKEN for checkout so that subsequent git push
-      # operations (agent write-back during the Copilot session) are authenticated
-      # with the correct token and are not blocked by GITHUB_TOKEN scope restrictions.
-      # Falls back to github.token when MATURION_BOT_TOKEN is not available (e.g.
-      # Copilot environment where repository secrets may not be injected).
       - name: Checkout repository
         uses: actions/checkout@v5
-        with:
-          token: ${{ secrets.MATURION_BOT_TOKEN || github.token }}
-
-      - name: Configure git identity for bot operations
-        run: |
-          git config --global user.name "Maturion Bot"
-          git config --global user.email "bot@maturion.ai"
 
       - name: Agent-bootstrap MCP preflight self-test (Linux)
         shell: bash

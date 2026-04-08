@@ -1,53 +1,34 @@
-# Wave Current Tasks — foreman-v2-agent
+# Wave Current Tasks — Issue 1286
 
-**Wave ID**: mmm-deploy-retention-rule
-**Issue**: #1279
-**Branch**: copilot/add-deployment-workflow-retention
-**Date**: 2026-04-07
-**Authorized by**: CS2 (@APGI-cmy) — opened issue #1279 directly
-**IAA Category**: PRE_BUILD_STAGE_MODEL
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-mmm-deploy-retention-rule.md
+wave: opojd-comment-only-copilot-20260408
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave1286-opojd-20260408.md
 
----
+## Active Wave: opojd-comment-only-copilot-20260408
 
-## Wave Summary
+### Wave Description
+Align repo to strict comment-only Copilot model — remove write-back assumptions from
+copilot-setup-steps.yml, declare COPILOT_SESSION_MODE/PUSH_DISABLED_INTENTIONAL/OUTPUT_MODE,
+and create a separate maturion-bot-writer.yml for future bot write operations.
 
-Add explicit deployment workflow retention and retargeting rules to the MMM App Description.
+CS2 Authorization: Issue maturion-isms#1286 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
+foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
 
-## Wave Scope
+### Tasks
+- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave1286-opojd-20260408.md
+- [ ] OPOJD-001: Modify .github/workflows/copilot-setup-steps.yml — comment-only mode,
+      remove fallback token, remove git-identity step, add session-mode env vars
+- [ ] OPOJD-002: Create .github/workflows/maturion-bot-writer.yml — separate bot write
+      workflow, explicit write permissions, fail-fast on missing token, no fallback
+- [ ] PREHANDOVER proof: .agent-admin/assurance/PREHANDOVER-session-160-wave-opojd-20260408.md
+- [ ] Session memory: .agent-workspace/foreman-v2/memory/session-160-opojd-comment-only-20260408.md
+- [ ] IAA final audit and token
 
-| File | Change |
-|------|--------|
-| `modules/MMM/00-app-description/MMM_app_description.md` | Add §30.4 (Deployment Workflow Retention and Retargeting), amend §39P, amend §39R |
+### IAA Pre-Brief Summary (from iaa-prebrief-wave1286-opojd-20260408.md)
+- Trigger Category: CI_WORKFLOW — MANDATORY
+- Qualifying Tasks: OPOJD-001, OPOJD-002
+- Scope Blockers: SB-001 through SB-006
+- OVL-CI-005 S-033 exception applies — three substitutes required
+- BUILD_DELIVERABLE overlay: NOT APPLICABLE
 
-## Task Breakdown
-
-| Task ID | Description | Assigned To | Status |
-|---------|-------------|-------------|--------|
-| T-MMM-1279-001 | Add deployment workflow retention and retargeting rule to MMM App Description | mat-specialist | PENDING |
-
-## Pre-Build Gates Status
-
-| Gate | Stage | Status | Notes |
-|------|-------|--------|-------|
-| App Description | Stage 1 | THIS WAVE | Creating Stage 1 content |
-| Architecture | Stage 5 | DEFERRED | Not yet applicable |
-| QA-to-Red | Stage 6 | DEFERRED | No executable deliverables |
-| PBFAG | Stage 7 | DEFERRED | Not yet applicable |
-| Implementation Plan | Stage 8 | DEFERRED | Not yet applicable |
-| Builder Checklist | Stage 9 | DEFERRED | Not yet applicable |
-| IAA Pre-Brief | Stage 10 | COMPLETE | iaa-prebrief-mmm-deploy-retention-rule.md |
-
-## Evidence Requirements at Handover
-
-Per IAA Pre-Brief:
-- PREHANDOVER proof with Change-Propagation Audit (OVL-PBG-014)
-- SCOPE_DECLARATION.md matching this PR's files only
-- IAA token from handover invocation
-
-## Active FFA Checks (Blocking)
-
-- OVL-PBG-014: Change-Propagation Audit — MANDATORY in PREHANDOVER proof
-- OVL-INJ-001: Pre-Brief artifact exists — SATISFIED
-- A-021: All PR artifacts committed before IAA invocation
-- A-026/A-028: SCOPE_DECLARATION.md matches this wave only
+### Previous Wave (Closed)
+wave: mmm-39b-frs-derivation-fix (Issue #1277) — COMPLETE, awaiting CS2 merge
