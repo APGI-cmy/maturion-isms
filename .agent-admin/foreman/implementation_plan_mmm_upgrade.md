@@ -35,7 +35,7 @@ The following decisions must be recorded by CS2 before associated work begins:
 | Decision ID | Item | Wave(s) Blocked | Status |
 |-------------|------|-----------------|--------|
 | DEC-PS-G | Approve or decline lightweight doc-ceremony path for MMM doc waves | PS-G | ⏳ PENDING CS2 DECISION |
-| DEC-PS-BLK1 | Formal approval of `MMM_app_description.md` v0.2.0 (Stage 1 gate) | BLK-1 (MMM build start) | ✅ RESOLVED — CS2 approved v0.5.0 via issue #1298 (2026-04-08) |
+| DEC-PS-BLK1 | Formal approval of `MMM_app_description.md` v0.5.0 (Stage 1 gate) | BLK-1 (MMM build start) | ✅ RESOLVED — CS2 approved v0.5.0 via issue #1298 (2026-04-08) |
 | DEC-NB7 | `governance-repo-administrator-v2.agent.md` — introduce or formally defer | NB-7 | ⏳ PENDING |
 | DEC-NB4 | Legacy `02-architecture/capabilities/` dirs — archive vs delete | NB-4 | ⏳ PENDING |
 
@@ -423,7 +423,7 @@ Upon completion of all blocking items and PS-waves, Foreman is cleared to begin 
 
 ```
 Pre-condition gates:
-  BLK-1: CS2 approves MMM_app_description.md v0.2.0  ← CS2 action
+  BLK-1: CS2 approves MMM_app_description.md v0.5.0 ✅ RESOLVED — CS2 approved via issue #1298 (2026-04-08)
   BLK-5: CS2 opens MMM wave-start authorisation issue ← CS2 action (after BLK-1)
   PS-B, PS-F, PS-I merged                             ← Batch 1
   PS-A, PS-E merged                                   ← Batch 2
