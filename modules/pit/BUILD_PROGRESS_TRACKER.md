@@ -3,7 +3,7 @@
 **Module**: PIT (Penetration Intelligence Tool)  
 **Module Slug**: pit  
 **Last Updated**: 2026-04-08  
-**Updated By**: governance-liaison-isms-agent (wave: align-12stage-prebuild-20260406)
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  

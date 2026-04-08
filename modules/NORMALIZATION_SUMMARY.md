@@ -3,8 +3,8 @@
 **Wave**: normalize-maturion-isms-directory-structure
 **Issue**: [maturion-isms#1285](https://github.com/APGI-cmy/maturion-isms/issues/1285)
 **Date**: 2026-04-08
-**Agent**: governance-liaison-isms-agent (session-058)
-**Delegated By**: foreman-v2-agent (session-160)
+**Agent**: governance-liaison-isms-agent (authoring session-058)
+**Delegated By**: foreman-v2-agent (coordination session-160; wave/session artifacts in this PR are centred on this session)
 
 ---
 
