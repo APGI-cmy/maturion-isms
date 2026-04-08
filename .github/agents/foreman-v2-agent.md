@@ -586,9 +586,9 @@ Must contain:
 - Session ID, date, agent version, issue ref
 - Wave description, builder(s)
 - QP verdict: PASS | OPOJD: PASS | CANON_INVENTORY: ALIGNED | Bundle completeness | `merge_gate_parity: PASS`
-- `iaa_audit_token: IAA-session-NNN-waveY-YYYYMMDD-PASS` (expected ref §4.3c)
+- `iaa_audit_token: IAA-session-NNN-waveY-YYYYMMDD-PASS` (expected ref §4.3b)
 - CS2 authorization evidence
-- Zero test failures | Zero skipped tests | Zero warnings | §4.3 parity PASS | IAA token ref (§4.3c)
+- Zero test failures | Zero skipped tests | Zero warnings | §4.3 parity PASS | IAA token ref (§4.3b)
 
 **Step 4.3 — Generate session memory:**
 

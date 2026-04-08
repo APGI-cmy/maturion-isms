@@ -71,7 +71,7 @@ Net result: 29,989 (base) → 29,880 (final) — 120 chars under 30,000 limit.
 | S4 | No placeholder / stub / TODO content | PASS ✅ |
 | S5 | No embedded Tier 2 content in body | PASS ✅ |
 | S6 | `can_invoke`/`cannot_invoke` top-level; `own_contract` in `prohibitions.SELF-MOD-FM-001` | PASS ✅ |
-| S7 | Artifact immutability in PHASE 4 (§4.3c reference) | PASS ✅ |
+| S7 | Artifact immutability in PHASE 4 (§4.3b reference) | PASS ✅ |
 | S8 | IAA token references `.agent-admin/assurance/iaa-token-*` | PASS ✅ |
 
 **QP Overall**: PASS (8/8 gates)
@@ -105,11 +105,9 @@ Note: Tier 2 knowledge stub for foreman-v2-agent not required (foreman Tier 2 is
 
 ---
 
-## IAA Classification and Token Reference
+## iaa_audit_token
 
-**IAA trigger classification**: YES — agent contract update requires IAA
-**IAA invocation**: Pending (invoking in Step 4.4)
-**Expected token reference ID**: `IAA-session-055-20260408-PASS`
+iaa_audit_token: IAA-session-055-20260408-PASS
 
 > ⚠️ **IMMUTABILITY RULE**: This file is READ-ONLY after initial commit. The IAA token is written to a separate dedicated file: `.agent-admin/assurance/iaa-token-session-055-wave1-20260408.md`
 

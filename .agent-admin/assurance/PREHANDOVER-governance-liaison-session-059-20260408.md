@@ -63,8 +63,9 @@ and invokes CodexAdvisor-agent for `foreman-v2-agent.md` update.
 
 - working_tree_status: CLEAN (verified at artifact creation time)
 - unstaged_diffs: NONE
-- session_memory_committed: session-059-20260408.md — committed at HEAD (4ac6a8a)
-- head_commit: 4ac6a8af
+- prehandover_proof_committed: YES — .agent-admin/assurance/PREHANDOVER-governance-liaison-session-059-20260408.md
+- session_memory_committed: session-059-20260408.md — committed at HEAD (4ac6a8af695175404f5ac1ffd53574517389d864)
+- head_commit: 4ac6a8af695175404f5ac1ffd53574517389d864
 - head_commit_title: governance-liaison: session-059 — b54d57b5 ripple tracking, agent file escalation, CodexAdvisor invocation
 - commit_state_gate: PASS (governance-liaison class — administrative artifacts)
 

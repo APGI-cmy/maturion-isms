@@ -5,7 +5,7 @@
 **Raised by**: governance-liaison-isms-agent (session-059-20260408)  
 **Authority required**: CS2 (Johan Ras) + CodexAdvisor-agent  
 **Rule**: A-009, A-015  
-**Status**: OPEN — awaiting CS2 / CodexAdvisor-agent action  
+**Status**: PARTIALLY COMPLETE — foreman-v2-agent changes applied; CS2-only decisions and IAA verdict still pending  
 
 ---
 
