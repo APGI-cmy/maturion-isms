@@ -75,3 +75,4 @@
 
 | 2026-04-08 | foreman-v2-agent | session-160 | VIOLATION | INC-OPOJD-PSF-001: PS-F Phase 4 incomplete at session termination — PREHANDOVER proof, session memory, IAA token not committed before session ended; remediated in follow-on session | session-160-ps-f-iaa-trigger-table-20260408.md |
 | 2026-04-08 | foreman-v2-agent | session-160 | IMPROVEMENT | S-039: SCOPE_DECLARATION-FORMAT-VERIFICATION — QP must verify hyphen separator format before declaring PASS; em-dash causes silent 0-file parse in validate-scope-to-diff.sh | session-160-ps-f-iaa-trigger-table-20260408.md |
+| 2026-04-08 | foreman-v2-agent | session-mmm-cpa-20260408 | IMPROVEMENT | CL-7-WAVE-START-URGENCY: CL-7 PersonaLoader wave-start is critical path for CL-8/9/12; recommend CS2 issue authorization immediately in parallel with MMM Stage 2 | session-mmm-cpa-20260408.md |
