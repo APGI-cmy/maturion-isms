@@ -23,8 +23,8 @@ This PR records the ripple event and updates alignment inventory per issue integ
 
 | File | SHA256 | Change |
 |------|--------|--------|
-| `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` | `1eb0a1b139f277341ece20b0c07a05d8bb8761e2a4152ddcd0e10bad06da4b66` | Updated last_ripple_commit, last_ripple_timestamp; added COMMENT_ONLY_AGENT_SESSION_PROTOCOL.md entry; updated GOVERNANCE_CANON_MANIFEST.md last_verified |
-| `governance/sync_state.json` | `ae91745102f12424846412017bb6d314f6d9f37907726ff5527bcb26b09a7507` | Updated last_sync to record ripple bfe47f6d (no drift) |
+| `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` | `3aeadd792f3bdb46011b503432120db990a6865c06158ff34c82a1b779b8de6d` | Updated last_ripple_commit, last_ripple_timestamp; added COMMENT_ONLY_AGENT_SESSION_PROTOCOL.md entry; updated GOVERNANCE_CANON_MANIFEST.md last_verified |
+| `governance/sync_state.json` | `7fa0d69dcd971a7bd95f94550287f4e0f62fe637d1fb31e60a864a35940c3346` | Updated last_ripple_check to record ripple bfe47f6d (no drift); last_sync reflects most recent layer-down from main (b54d57b) |
 | `.agent-admin/governance/ripple-inbox/ripple-bfe47f6d.json` | `d87d2fdf7c4497b5902749cf2b23e65cac6bd21c1f7b9fca0817d62e4c49e7cf` | Created ripple inbox entry |
 | `.agent-workspace/governance-liaison-isms/memory/session-058-20260408.md` | (session memory) | Session memory created |
 
