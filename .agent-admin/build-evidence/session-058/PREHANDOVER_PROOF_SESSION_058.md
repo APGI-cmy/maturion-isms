@@ -41,9 +41,9 @@ Changed artifacts:
 | File | Expected (CANON_INVENTORY) | Local SHA256 | Match |
 |------|---------------------------|--------------|-------|
 | governance/canon/AGENT_HANDOVER_AUTOMATION.md | cff4158b2646246ea68de535398cc00e60c9c4424cfad7d6e239f51427f01d3c | cff4158b2646246ea68de535398cc00e60c9c4424cfad7d6e239f51427f01d3c | ✅ PASS |
-| governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md | 56c2ea0b5f50b479a75d7f1cb05e6019caa1e91e3e3cc1c9acc39e7e8a3a3c54 | 56c2ea0b5f50b479a75d7f1cb05e6019caa1e91e3e3cc1c9acc39e7e8a3a3c54 | ✅ PASS |
-| governance/canon/MERGE_GATE_PHILOSOPHY.md | 315ee14f3a8abd882f212463983d31d7543e3a5a62e2bc8b9b68fc6614a33e01 | 315ee14f3a8abd882f212463983d31d7543e3a5a62e2bc8b9b68fc6614a33e01 | ✅ PASS |
-| governance/policy/POLICY-NO-ONLY-LANGUAGE.md | 6d50f484cf2ab84527a8c940d471383c3dbb4d11cc8a47fba22c3ce4f07e7c4a | 6d50f484cf2ab84527a8c940d471383c3dbb4d11cc8a47fba22c3ce4f07e7c4a | ✅ PASS |
+| governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md | 56c2ea0b5f50b479a75d7f1cb05e601c6f971461e3a9dc2a662b9f09a6e306b8 | 56c2ea0b5f50b479a75d7f1cb05e601c6f971461e3a9dc2a662b9f09a6e306b8 | ✅ PASS |
+| governance/canon/MERGE_GATE_PHILOSOPHY.md | 315ee14f3a8abd882f212463983d3115ace9adbb64f3a77f2cbdc47e2bca5774 | 315ee14f3a8abd882f212463983d3115ace9adbb64f3a77f2cbdc47e2bca5774 | ✅ PASS |
+| governance/policy/POLICY-NO-ONLY-LANGUAGE.md | 6d50f484cf2ab84527a8c940d47138657ce81c71f93f51a76e19a74220f5dc09 | 6d50f484cf2ab84527a8c940d47138657ce81c71f93f51a76e19a74220f5dc09 | ✅ PASS |
 
 **Note**: `minimizing_language_patterns.json` is a policy JSON file (not tracked in CANON_INVENTORY). Content sourced directly from canonical source `APGI-cmy/maturion-foreman-governance@main/governance/policy/minimizing_language_patterns.json` (git SHA: e9a57f162aa8032a1307f55e3790ccce915dd997).
 
@@ -56,9 +56,13 @@ Changed artifacts:
 
 ---
 
-## IAA Audit Token (Pre-populated)
+## IAA Audit Token
 
-iaa_audit_token: IAA-session-058-wave1-20260408-PASS
+iaa_audit_token: IAA-session-058-wave1-20260408-r2-PASS
+
+Token file: `.agent-admin/assurance/iaa-token-session-058-wave1-20260408-r2.md`
+
+Round 1 IAA invocation returned a REJECTION-PACKAGE (artifacts not committed). Fixes applied (checksums corrected, all artifacts committed). Round 2 invocation issued ASSURANCE-TOKEN (see token file).
 
 ---
 
