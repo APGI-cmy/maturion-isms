@@ -1,26 +1,18 @@
 # Copilot coding agent environment setup steps.
 # Authority: https://docs.github.com/en/copilot/how-tos/agents/copilot-coding-agent/customizing-copilot-coding-agent
 # This file is read by the Copilot coding agent BEFORE it starts work.
-# It configures the git identity and credentials the agent needs to push commits.
 #
-# Token policy: REQ-TU-001 / REQ-TU-002 (GOVERNANCE_TOKEN_USAGE_REQUIREMENTS.md)
-# All write operations use secrets.MATURION_BOT_TOKEN. GITHUB_TOKEN is prohibited
-# for any step that mutates repository state.
+# Session model: COMMENT_ONLY — Copilot sessions produce text/PR-comment output only.
+# Push operations are intentionally disabled for all Copilot sessions.
+# For bot write operations, use .github/workflows/maturion-bot-writer.yml only.
 
 steps:
-  # REQ-TU-003: Token identity evidence — must appear before any write operation.
-  - name: Token identity evidence
+  # Declare session mode — no credentials, no push, comment-only.
+  - name: Declare comment-only session mode (push intentionally disabled)
     run: |
-      echo "EXEC_IDENTITY: MATURION_BOT_TOKEN in use for write operations"
-
-  # REQ-TU-001: Configure git credentials using MATURION_BOT_TOKEN so the agent
-  # can push commits to its working branch without being blocked by GITHUB_TOKEN
-  # scope restrictions or branch protection rules that deny the default app token.
-  - name: Configure git credentials for agent push operations
-    run: |
-      git config --global user.name "Maturion Bot"
-      git config --global user.email "bot@maturion.ai"
-      git config --global url."https://x-access-token:${{ secrets.MATURION_BOT_TOKEN }}@github.com/".insteadOf "https://github.com/"
+      echo "COPILOT_SESSION_MODE: COMMENT_ONLY"
+      echo "PUSH_DISABLED_INTENTIONAL: true"
+      echo "OUTPUT_MODE: PR_COMMENT_OR_ARTIFACT"
 
   # Install Node.js dependencies for MCP server (agent-bootstrap) used during sessions.
   - name: Install agent-bootstrap MCP server dependencies
