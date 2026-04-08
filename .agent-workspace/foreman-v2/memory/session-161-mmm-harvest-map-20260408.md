@@ -140,7 +140,7 @@ A-rules checked and observed:
 ```yaml
 merge_gate_parity: PASS
 checks_run:
-  - validate-scope-to-diff: PASS (7 files declared, all matching git diff)
+  - validate-scope-to-diff: PASS (8 files declared, all matching git diff)
   - validate-yaml: N/A (no YAML changes)
   - validate-tracker-update: N/A (no BUILD_PROGRESS_TRACKER update needed)
 ```

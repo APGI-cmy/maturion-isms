@@ -17,9 +17,9 @@ foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
 ### Tasks
 - [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave1300-mmm-harvest-map-20260408.md
 - [x] MMM-HM-001: Create harvest-map artifact at modules/MMM/harvest-map/harvest-map.md
-- [ ] PREHANDOVER proof: .agent-workspace/foreman-v2/memory/PREHANDOVER-session-161-wave1300-mmm-harvest-map-20260408.md
-- [ ] Session memory: .agent-workspace/foreman-v2/memory/session-161-mmm-harvest-map-20260408.md
-- [ ] IAA final audit and token
+- [x] PREHANDOVER proof: .agent-workspace/foreman-v2/memory/PREHANDOVER-session-161-wave1300-mmm-harvest-map-20260408.md
+- [x] Session memory: .agent-workspace/foreman-v2/memory/session-161-mmm-harvest-map-20260408.md
+- [x] IAA final audit and token
 
 ### IAA Pre-Brief Summary (from iaa-prebrief-wave1300-mmm-harvest-map-20260408.md)
 - Trigger Category: GOVERNANCE_DOCUMENTATION — MANDATORY (A-003 ambiguity rule)

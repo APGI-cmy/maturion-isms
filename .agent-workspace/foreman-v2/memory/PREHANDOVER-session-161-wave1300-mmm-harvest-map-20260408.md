@@ -42,7 +42,7 @@ All artifacts committed to branch `copilot/produce-mat-roadmap-transition-matrix
 | SCOPE_DECLARATION | Governance | `SCOPE_DECLARATION.md` | ✅ |
 | PREHANDOVER Proof (this file) | Governance | `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-161-wave1300-mmm-harvest-map-20260408.md` | ✅ |
 | Session Memory | Governance | `.agent-workspace/foreman-v2/memory/session-161-mmm-harvest-map-20260408.md` | ✅ |
-| IAA Token | Governance | `.agent-admin/assurance/iaa-token-session-161-wave1300-20260408.md` | Pending IAA verdict |
+| IAA Token | Governance | `.agent-admin/assurance/iaa-token-session-161-wave1300-20260408.md` | ✅ PASS |
 
 ---
 
