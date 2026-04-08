@@ -1,29 +1,28 @@
-# SCOPE_DECLARATION — Session 054 (2026-04-07)
+# SCOPE_DECLARATION — Session 055 (2026-04-08)
 
 **Agent**: CodexAdvisor-agent
-**Session**: 054
-**Date**: 2026-04-07
-**Issue**: maturion-isms#1282
-**Wave**: iaa-preventive-controls
+**Session**: 055
+**Date**: 2026-04-08
+**Issue**: maturion-isms#1293 (ripple b54d57b5, A-015(2) escalation)
+**Wave**: foreman-v2-agent-ripple-b54d57b5
 
 ## PR Scope — Files Changed
 
-This declaration lists all files changed or created in this PR.
-Generated to match `git diff origin/main...HEAD --name-only`.
+This declaration lists all files changed or created in this CodexAdvisor session-055 PR.
+Generated to match `git diff 260afbc..76c152a --name-only` (CodexAdvisor session commits).
 
 ### Modified Files
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
-- `.agent-workspace/independent-assurance-agent/knowledge/index.md`
-- `.github/agents/independent-assurance-agent.md`
+- `.github/agents/foreman-v2-agent.md`
+- `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json`
+- `.agent-workspace/governance-liaison-isms/escalation-inbox/escalation-agent-contracts-b54d57b5-20260408.md`
 
 ### New Files
-- `.agent-admin/assurance/iaa-prebrief-wave1282-20260407.md`
-- `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-054-20260407.md`
-- `.agent-workspace/CodexAdvisor-agent/memory/session-054-20260407.md`
-- `.agent-workspace/CodexAdvisor-agent/personal/SCOPE_DECLARATION.md`
-- `.agent-workspace/independent-assurance-agent/knowledge/iaa-high-frequency-checks.md`
+- `.agent-admin/governance/ripple-inbox/ripple-b54d57b5.json`
+- `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-055-20260408.md`
+- `.agent-workspace/CodexAdvisor-agent/memory/session-055-20260408.md`
 
-**Total files in PR**: 8
+**Total files in session-055 scope**: 6
 
-**Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Last updated**: 2026-04-07
+**Authority**: CS2 (Johan Ras / @APGI-cmy), via A-015(2) escalation ESC-AGENTFILE-B54D57B5-FV2-20260408
+**Last updated**: 2026-04-08
+
