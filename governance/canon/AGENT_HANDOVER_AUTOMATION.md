@@ -1,8 +1,9 @@
 # AGENT_HANDOVER_AUTOMATION
 
-**Status**: CANONICAL | **Version**: 1.1.5 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.2.0 | **Authority**: CS2  
 **Date**: 2026-02-24  
-**Amended**: 2026-04-08 — v1.1.5: Added §Phase 4 Terminal State Rule; explicitly forbade "remaining Phase 4 ceremony" and equivalent deferral language; clarified that `report_progress` for the final handover commit MUST NOT be called until all Phase 4 artifacts are committed (PREHANDOVER proof, session memory, IAA assurance artifact where required); authority: CS2 — OPOJD hardening issue.
+**Amended**: 2026-04-08 — v1.2.0: Added §4.3c Pre-IAA Commit-State Gate (canonical blocking step) — required immediately before every IAA invocation in all producing-agent contracts; defines mandatory git status / HEAD verification checks; adds guidance for recording commit-state evidence in PREHANDOVER proof; adds §PHASE_B_BLOCKING note for IAA deployment phase; authority: CS2 — pre-IAA handover discipline hardening issue.  
+**Previous amendment**: 2026-04-08 — v1.1.5: Added §Phase 4 Terminal State Rule; explicitly forbade "remaining Phase 4 ceremony" and equivalent deferral language; clarified that `report_progress` for the final handover commit MUST NOT be called until all Phase 4 artifacts are committed (PREHANDOVER proof, session memory, IAA assurance artifact where required); authority: CS2 — OPOJD hardening issue.
 
 ---
 
@@ -44,7 +45,7 @@ Traditional agent workflows:
 >
 > **Authority**: `governance/opojd/OPOJD_COMPLETE_JOB_HANDOVER_DOCTRINE.md` v2.1
 
-Phase 4 consists of four mandatory sections:
+Phase 4 consists of five mandatory sections:
 
 ```markdown
 ## PHASE 4: HANDOVER SCRIPT (AUTOMATED EVIDENCE/COMPLIANCE/CLOSURE)
@@ -53,8 +54,11 @@ Phase 4 consists of four mandatory sections:
 ### 4.2 Session Memory & Closure
 ### 4.3 Pre-Handover Merge Gate Parity Check (mandatory, BLOCKING)
 ### 4.3b Token Update Ceremony (IAA token — append-only, dedicated file)
+### 4.3c Pre-IAA Commit-State Gate (mandatory, BLOCKING)
 ### 4.4 Compliance Check & Escalation (if needed)
 ```
+
+> **Sequencing note**: §4.3c Pre-IAA Commit-State Gate MUST run immediately before IAA invocation (which each producing-agent contract places after §4.3c). §4.3b Token Update Ceremony runs after IAA has returned a verdict. The canonical ordering is: §4.3 → §4.3c → IAA invocation → §4.3b → §4.4.
 
 ## Section 4.1: Evidence Artifact Generation
 
@@ -541,6 +545,183 @@ Agent: <agent-type>
 
 
 
+## Section 4.3c: Pre-IAA Commit-State Gate (mandatory, BLOCKING)
+
+**Purpose**: Guarantee that the working tree is clean and all intended deliverables are committed
+at HEAD before IAA is invoked. IAA must assess the exact committed state that is being submitted
+for assurance — not an in-progress or partially-committed working tree.
+
+**Problem This Solves**: Producing agents can satisfy §4.3 local parity checks, generate artifacts,
+and invoke IAA while still holding uncommitted changes or artifacts that exist only in the working
+tree. This creates a commit-state / ceremony-state mismatch that IAA cannot detect at invocation
+time but that causes avoidable REJECTION-PACKAGEs and repeated handover hygiene failures.
+
+**Effective**: 2026-04-08 | **Authority**: CS2 | **Added**: v1.2.0
+
+### Rule
+
+> **ABSOLUTE RULE**: No producing-agent contract (Foreman, CodexAdvisor, builder) may invoke the IAA agent
+> if the commit-state gate has not been explicitly run and returned a PASS result. A dirty working tree
+> or uncommitted deliverable at IAA invocation time is a handover hygiene violation.
+
+### Required Checks (minimum — all must PASS)
+
+| Check | Command | PASS condition |
+|-------|---------|----------------|
+| Clean working tree | `git status --porcelain` | Output is empty |
+| No unstaged diffs | `git diff --name-only` | Output is empty |
+| HEAD is the review state | `git show --name-only --format=fuller HEAD` | Displays latest commit with all expected files |
+| PREHANDOVER proof committed | `git show HEAD -- <proof-path>` | File present at HEAD |
+| Session memory committed | `git show HEAD -- <memory-path>` | File present at HEAD |
+| No post-commit mutation | check artifact timestamps vs commit | Artifacts not newer than last commit |
+
+### Template
+
+```markdown
+### 4.3c Pre-IAA Commit-State Gate (<Agent>_H — BLOCKING)
+
+**Authority**: `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.2.0
+
+> **ABSOLUTE RULE (OVF-002)**: This gate MUST pass before IAA is invoked. A dirty working tree
+> or uncommitted deliverable at IAA invocation time is a handover hygiene violation.
+
+> If this step is MISSING from a producing-agent contract, the contract is non-compliant with
+> AGENT_HANDOVER_AUTOMATION.md v1.2.0 and the agent MUST halt and escalate.
+
+> **Consumer note**: The closing fence of the bash block below uses escaped backticks (`` \`\`\` ``) to prevent Markdown fence collision inside this outer code block. When copying this template into an agent contract or script, replace every `` \`\`\` `` (backslash + three backticks) with ` ``` ` (three plain backticks).
+
+```bash
+#!/bin/bash
+# <Agent> Handover - Pre-IAA Commit-State Gate
+# Priority: <Agent>_H  — BLOCKING: do NOT invoke IAA until all checks PASS
+
+echo "🔒 PRE-IAA COMMIT-STATE GATE (BLOCKING)"
+
+COMMIT_STATE_FAILURES=()
+
+# Check 1: Working tree must be clean
+echo "  Checking: working tree status"
+DIRTY_FILES=$(git status --porcelain 2>/dev/null)
+if [ -n "${DIRTY_FILES}" ]; then
+  COMMIT_STATE_FAILURES+=("dirty working tree — uncommitted changes present")
+  echo "  ❌ Working tree: DIRTY"
+  echo "     Dirty files:"
+  git status --porcelain | while read f; do echo "       ${f}"; done
+else
+  echo "  ✅ Working tree: CLEAN"
+fi
+
+# Check 2: No unstaged diffs
+echo "  Checking: unstaged diffs"
+UNSTAGED=$(git diff --name-only 2>/dev/null)
+if [ -n "${UNSTAGED}" ]; then
+  COMMIT_STATE_FAILURES+=("unstaged diffs present: ${UNSTAGED}")
+  echo "  ❌ Unstaged diffs: PRESENT (${UNSTAGED})"
+else
+  echo "  ✅ Unstaged diffs: NONE"
+fi
+
+# Check 3: PREHANDOVER proof exists at HEAD
+echo "  Checking: PREHANDOVER proof at HEAD"
+PROOF_FILES=$(git show HEAD --name-only --format="" 2>/dev/null | grep -E "prehandover|proof" | head -5)
+PROOF_COUNT=$(ls .agent-admin/prehandover/proof-*.md 2>/dev/null | wc -l)
+if [ "${PROOF_COUNT}" -eq 0 ]; then
+  COMMIT_STATE_FAILURES+=("PREHANDOVER proof not found in working tree")
+  echo "  ❌ PREHANDOVER proof: MISSING"
+else
+  # Verify proof is committed, not just present in working tree
+  PROOF_PATH=$(ls .agent-admin/prehandover/proof-*.md 2>/dev/null | head -1)
+  if git ls-files --error-unmatch "${PROOF_PATH}" > /dev/null 2>&1; then
+    echo "  ✅ PREHANDOVER proof: COMMITTED at HEAD (${PROOF_PATH})"
+  else
+    COMMIT_STATE_FAILURES+=("PREHANDOVER proof exists in working tree but is NOT committed: ${PROOF_PATH}")
+    echo "  ❌ PREHANDOVER proof: NOT COMMITTED (${PROOF_PATH})"
+  fi
+fi
+
+# Check 4: Session memory exists at HEAD
+echo "  Checking: session memory at HEAD"
+MEMORY_PATH=$(ls .agent-workspace/<agent>/memory/session-*.md 2>/dev/null | head -1)
+if [ -z "${MEMORY_PATH}" ]; then
+  COMMIT_STATE_FAILURES+=("session memory not found")
+  echo "  ❌ Session memory: MISSING"
+else
+  if git ls-files --error-unmatch "${MEMORY_PATH}" > /dev/null 2>&1; then
+    echo "  ✅ Session memory: COMMITTED at HEAD (${MEMORY_PATH})"
+  else
+    COMMIT_STATE_FAILURES+=("session memory exists in working tree but is NOT committed: ${MEMORY_PATH}")
+    echo "  ❌ Session memory: NOT COMMITTED (${MEMORY_PATH})"
+  fi
+fi
+
+# Check 5: Show HEAD for audit trail
+echo "  HEAD commit state:"
+git show --name-only --format="    Commit: %H%n    Author: %an%n    Date:   %ad%n    Title:  %s" HEAD 2>/dev/null | head -20
+
+# Evaluate
+if [ ${#COMMIT_STATE_FAILURES[@]} -gt 0 ]; then
+  echo ""
+  echo "❌ [<Agent>_H] PRE-IAA COMMIT-STATE GATE FAILED — IAA MUST NOT BE INVOKED"
+  echo "Failures:"
+  for f in "${COMMIT_STATE_FAILURES[@]}"; do echo "  - ${f}"; done
+  echo ""
+  echo "ACTION REQUIRED: Commit all pending changes, re-run §4.3 parity check, then re-run this gate."
+  echo "IAA invocation with a dirty or partially-committed working tree is a handover hygiene violation."
+  exit 1
+fi
+
+echo ""
+echo "✅ [<Agent>_H] PRE-IAA COMMIT-STATE GATE PASSED"
+echo "✅ [<Agent>_H] Working tree is clean. All declared deliverables are committed at HEAD."
+echo "✅ [<Agent>_H] Agent is cleared to invoke IAA."
+\`\`\`
+
+**Commentary**: This gate is **BLOCKING**. If any check fails:
+1. Commit all pending changes that belong to this PR.
+2. Re-run §4.3 Pre-Handover Merge Gate Parity Check from step 1.
+3. Re-run this §4.3c Pre-IAA Commit-State Gate.
+4. Only then invoke IAA.
+```
+
+### Recording Commit-State Evidence in PREHANDOVER Proof
+
+After §4.3c PASS, record the commit-state evidence in the PREHANDOVER proof before committing it.
+The PREHANDOVER proof MUST include (or the check output must be preserved as evidence):
+
+```markdown
+## Commit-State Evidence (§4.3c)
+
+- working_tree_status: CLEAN
+- unstaged_diffs: NONE
+- prehandover_proof_committed: YES — <path>
+- session_memory_committed: YES — <path>
+- head_commit: <full SHA>
+- head_commit_title: <commit message first line>
+- commit_state_gate: PASS
+```
+
+> **Note**: The PREHANDOVER proof itself must be committed before §4.3c runs (it checks that the
+> proof is committed). If the proof is not yet committed, commit it, then run §4.3c.
+
+### IAA Phase Status — PHASE_B_BLOCKING
+
+The IAA is now **operationally PHASE_B_BLOCKING** in the live system. Producing-agent contracts
+that still declare `advisory_phase: PHASE_A_ADVISORY` in their YAML frontmatter are stale and
+must be updated to `advisory_phase: PHASE_B_BLOCKING`.
+
+The `PHASE_A_ADVISORY` response is only valid when the IAA tool call itself returns a
+`deployment-error` — it is NOT a self-declaration that can be written before or without making
+the tool call.
+
+| IAA Tool Call Result | Correct agent response |
+|---------------------|------------------------|
+| ASSURANCE-TOKEN | Record token reference; proceed to §4.3b |
+| REJECTION-PACKAGE | Stop. Fix all failures. Re-run from §4.3. |
+| deployment-error | Record PHASE_A_ADVISORY status; flag PR for IAA review |
+| NOT called | HALT. INC-IAA-SKIP-001. Record in FAIL-ONLY-ONCE. Escalate to CS2. |
+
+
+
 ## Section 4.3b: Token Update Ceremony (IAA Token — Append-Only, Dedicated File)
 
 **Purpose**: Govern how the IAA writes its assurance verdict. The PREHANDOVER proof is
@@ -876,6 +1057,7 @@ Before session ends, verify:
 - [ ] **Personal learnings updated**: Lessons and patterns files updated
 - [ ] **Environment health set**: Status = `SAFE_FOR_HANDOVER`
 - [ ] **Pre-handover merge gate parity check PASSED**: All merge gate checks pass locally (BLOCKING — PR must not be opened until this is ✅)
+- [ ] **Pre-IAA commit-state gate PASSED**: Working tree clean, all deliverables committed at HEAD, PREHANDOVER proof and session memory committed (BLOCKING — IAA must not be invoked until this is ✅)
 - [ ] **Compliance checked**: Agent-specific requirements verified; ALL issues fixed before proceeding
 - [ ] **Escalations created**: Only if genuinely ambiguous blockers remain that cannot be resolved within authority
 - [ ] **Working contract archived**: Ephemeral file can be deleted
@@ -888,6 +1070,7 @@ Before session ends, verify:
 | **No memory rotation** | Memory directory grows unbounded | Always rotate, keep last 5 |
 | **Skipping compliance checks** | Violations discovered at merge time | Always verify compliance before handover |
 | **Opening PR with failing gates** | Gate failure is CI's problem, not agent's | Run merge gate parity check locally; fix ALL failures before opening PR |
+| **Invoking IAA with dirty tree** | IAA reviews wrong state; REJECTION-PACKAGE | Run §4.3c commit-state gate before IAA; commit all changes first |
 | **Escalating resolvable failures** | Ambiguous — hides fixable issues | Escalation only for genuinely ambiguous blockers; fix routine failures directly |
 | **No escalation creation** | Ambiguous blockers undocumented | Auto-generate escalation document when a blocker truly cannot be resolved within authority |
 | **Vague session memory** | No actionable context for next session | Use structured template |
@@ -928,7 +1111,7 @@ Before session ends, verify:
 
 ---
 
-**Version**: 1.1.5  
+**Version**: 1.2.0  
 **Last Updated**: 2026-04-08  
 **Authority**: CS2 (Johan Ras)  
 **Living Agent System**: v6.2.0
