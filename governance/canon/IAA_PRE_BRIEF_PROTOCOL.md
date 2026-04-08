@@ -1,6 +1,6 @@
 # IAA PRE-BRIEF PROTOCOL
 
-**Status**: CANONICAL | **Version**: 1.2.0 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.2.1 | **Authority**: CS2  
 **Date**: 2026-03-03  
 **Amended**: 2026-03-03 — v1.1.0: Added §Wave Checklist Management, §Foreman Handover Gate,
 §IAA Invocation Gate, §Mid-Wave Task Addition, wave_checklist PREHANDOVER field, and commit
@@ -8,7 +8,8 @@ discipline requirements
 **Amended**: 2026-04-05 — v1.2.0: Added §Wave Checklist Invocation Gate — Applicability Scope
 clarifying that the Wave Checklist Invocation Gate applies to Foreman-governed wave execution
 and does not automatically apply to direct-CS2 standalone governance-repo-administrator-v2
-canon actions (CS2 guidance — issue #1319)
+canon actions (CS2 guidance — issue #1319)  
+**Amended**: 2026-04-08 — v1.2.1: Reference update — added `EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` to references; clarified that Phase 4 handover proof may be prepared by `execution-ceremony-admin-agent` under Foreman oversight without affecting IAA independence or Pre-Brief validity; authority: CS2 — ECAP-001 canon establishment issue.
 
 ---
 
@@ -606,10 +607,11 @@ IAA's final verdict, which cross-references Phase 0 (Pre-Brief) and the wave che
 - `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0 — Living Agent framework
 - `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` — Foreman authority model
 - `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md` — Evidence artifact requirements
+- `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` v1.0.0 — Ceremony admin role; Phase 4 handover proof may be prepared by execution-ceremony-admin-agent under Foreman oversight; IAA independence and Pre-Brief validity are unchanged
 - `.agent-workspace/independent-assurance-agent/knowledge/iaa-category-overlays.md` — Overlay definitions
 - `.agent-workspace/independent-assurance-agent/knowledge/iaa-trigger-table.md` — Trigger table
 - `governance/CANON_INVENTORY.json` — Canon hash registry
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.2.0 | Effective: 2026-04-05 (v1.2.0) | Original: 2026-03-03 (v1.1.0)*
+*Authority: CS2 (Johan Ras) | Version: 1.2.1 | Effective: 2026-04-05 (v1.2.0) | Amended: 2026-04-08 (v1.2.1) | Original: 2026-03-03 (v1.1.0)*
