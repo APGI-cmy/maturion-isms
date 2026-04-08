@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
     inputs:
       operation:
-        description: "Bot write operation to perform (e.g. commit-artifact, push-session-memory)"
+        description: "Bot write operation to perform. Supported: commit-artifact, push-session-memory"
         required: true
         type: string
       ref:
@@ -46,7 +46,7 @@ jobs:
             echo "Configure the secret in repository settings and re-run."
             exit 1
           fi
-          echo "MATURION_BOT_TOKEN: PRESENT (length ${#BOT_TOKEN})"
+          echo "MATURION_BOT_TOKEN: PRESENT"
 
       - name: Checkout repository with bot token
         uses: actions/checkout@v5
@@ -59,7 +59,7 @@ jobs:
           git config --global user.name "Maturion Bot"
           git config --global user.email "bot@maturion.ai"
 
-      - name: Log bot write operation context
+      - name: Execute bot write operation
         env:
           OPERATION: ${{ inputs.operation }}
           REF_INPUT: ${{ inputs.ref }}
@@ -69,3 +69,16 @@ jobs:
           echo "Ref: ${REF_INPUT}"
           echo "Bot identity: $(git config user.name) <$(git config user.email)>"
           echo "EXEC_IDENTITY: MATURION_BOT_TOKEN verified and in use"
+          case "${OPERATION}" in
+            commit-artifact)
+              echo "Operation: commit-artifact — ready for artifact commit steps."
+              ;;
+            push-session-memory)
+              echo "Operation: push-session-memory — ready for session-memory push steps."
+              ;;
+            *)
+              echo "ERROR: Unknown operation '${OPERATION}'."
+              echo "Supported operations: commit-artifact, push-session-memory"
+              exit 1
+              ;;
+          esac
