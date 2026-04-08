@@ -37,7 +37,7 @@ most of the agent-executable items.
 
 | ID | Blocker | Owner | Status |
 |----|---------|-------|--------|
-| BLK-1 | `MMM_app_description.md` v0.2.0 pending CS2 formal approval (Stage 1 gate) | CS2 | ⏳ OPEN |
+| BLK-1 | `MMM_app_description.md` v0.5.0 CS2 formal approval (Stage 1 gate) | CS2 | ✅ RESOLVED — CS2 approved via issue #1298 (2026-04-08) |
 | BLK-2 | IAA Tier 2 not updated for PBFAG gate (PRE_BUILD_STAGE_MODEL_CANON.md compliance) | CodexAdvisor → CS2 | ⏳ In #1247 |
 | BLK-3 | IAA Tier 2 not updated for MANDATORY_CROSS_APP_COMPONENTS | CodexAdvisor → CS2 | ⏳ In #1247 |
 | BLK-4 | `CONSUMER_REPO_REGISTRY.json` not layered down to `maturion-isms` | Governance Liaison → CS2 | ⏳ In #1247 |
@@ -287,7 +287,7 @@ The following decisions must be explicitly recorded by CS2 before associated wav
 | Decision ID | Item | Wave | Status |
 |-------------|------|------|--------|
 | DEC-PS-G | Approve or decline lightweight doc-ceremony path for MMM doc waves | PS-G | ⏳ PENDING |
-| DEC-PS-BLK1 | Formal approval of `MMM_app_description.md` v0.2.0 (Stage 1 gate) | BLK-1 | ⏳ PENDING |
+| DEC-PS-BLK1 | Formal approval of `MMM_app_description.md` v0.5.0 (Stage 1 gate) | BLK-1 | ✅ RESOLVED — CS2 approved via issue #1298 (2026-04-08) |
 | DEC-NB7 | `governance-repo-administrator-v2.agent.md` — introduce or formally defer | NB-7 | ⏳ PENDING |
 | DEC-NB4 | Legacy `02-architecture/capabilities/` dirs — archive vs delete | NB-4 | ⏳ PENDING |
 
