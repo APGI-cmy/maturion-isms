@@ -19,7 +19,8 @@
       "governance/policy/POLICY-NO-ONLY-LANGUAGE.md",
       "governance/policy/minimizing_language_patterns.json"
     ],
-    "ripple_pr": "1289"
+    "upstream_ripple_pr": "1289",
+    "followup_pr": "1290"
   },
   "alignment_status": {
     "overall": "ALIGNED",
@@ -37,12 +38,7 @@
     "alignment_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_alignment.log",
     "session_contract": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313.md",
     "sha256_verified": 96,
-    "sha256_variance_files": [
-      "governance/canon/AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md",
-      "governance/canon/PENDING_CANON_REFERENCES_INTERIM_GUIDANCE.md",
-      "governance/opojd/OPOJD_COMPLETE_JOB_HANDOVER_DOCTRINE.md",
-      "governance/coordination/CROSS_AGENT_COORDINATION_PROTOCOL.md"
-    ]
+    "sha256_variance_files": []
   },
   "sync_schedule": {
     "model": "event-driven-plus-scheduled",
@@ -84,7 +80,7 @@
     "canonical_commit": "939f1b0b7622771b0c290f4feaab4215ee086eac",
     "canonical_inventory_version": "1.0.0",
     "result": "LAYERED_DOWN",
-    "drift_detected": true,
+    "drift_detected": false,
     "agent_files_changed": false,
     "files_layered_down": 5,
     "pr_required": true,
