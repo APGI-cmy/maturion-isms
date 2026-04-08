@@ -90,3 +90,5 @@
 | 2026-04-08 | governance-liaison-isms | session-058 | SESSION-END | PUBLIC_API files introduced in canonical repo but absent from CANON_INVENTORY.json are silently skipped by layer-down automation — suggest canonical-side check to flag this gap | session-058-20260408.md |
 | 2026-04-08 | governance-liaison-isms | session-058 | SESSION-END | Auto-merge ripple workflow should propagate non-CANON_INVENTORY policy JSON files to avoid manual follow-up sessions | session-058-20260408.md |
 | 2026-04-08 | governance-liaison-isms | session-059 | SESSION-END | CANON_INVENTORY.json generation should run as final step of any canonical commit that changes canon files, so inventory timestamp always post-dates file changes and hash discrepancies are avoided | session-059-20260408.md |
+| 2026-04-08 | governance-liaison-isms | session-059 | SESSION-END | CANON_INVENTORY.json version/hash for AGENT_HANDOVER_AUTOMATION.md shows 1.1.6/3b7f72b2 but local file is 1.2.0/89b887ce — automated layer-down scripts should verify post-write that CANON_INVENTORY entry matches actual file SHA256 | session-059-20260408.md |
+
