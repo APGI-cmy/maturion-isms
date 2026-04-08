@@ -166,8 +166,8 @@ These are Category E items (ecosystem retirement), not required for MMM function
 | Stage 2 | UX Workflow & Wiring Spec | Stage 1 ✅ | CL-6, CL-7, CL-10, CL-11 | ❌ Required |
 | Stage 3 | FRS | Stage 2 | CL-6→CL-8 (ongoing) | After Stage 2 complete |
 | Stage 4 | TRS | Stage 3 | CL-8→CL-9 (ongoing) | After Stage 3 complete |
-| Stage 5 | Architecture (completion) | Stage 1 ✅ (in progress) | All of above | Clean-up wave + main architecture wave |
-| Stage 6 | QA-to-Red | Stages 3 + 5 | CL-9→CL-12 (ongoing) | After Stages 3+5 |
+| Stage 5 | Architecture (completion) | Stage 4 ✅ (work may be in progress from Stage 1; completion gated on TRS approval) | All of above | Clean-up wave + main architecture wave after Stage 4 approval |
+| Stage 6 | QA-to-Red | Stages 4 + 5 | CL-9→CL-12 (ongoing) | After Stages 4+5 |
 | Stage 7 | PBFAG | Stage 6 | CL-12 (ongoing) | After Stage 6 |
 | Stage 8 | Full Implementation Plan | Stage 7 | CL-12 (ongoing) | After Stage 7 |
 | Stage 9 | Builder Checklist | Stage 8 | CL-12 (ongoing) | After Stage 8 |
@@ -204,12 +204,12 @@ These are Category E items (ecosystem retirement), not required for MMM function
 - Derive from Stage 2 UX Workflow & Wiring Spec (100% journey coverage required)
 - Enumerate ALL Maturity Roadmap capabilities that MMM must absorb (derivation statements required)
 - Enumerate ALL MAT capabilities that MMM must absorb (derivation statements required)
-- AI-dependent requirements flagged as "AI: [functionality via AIMC]" — no stub/TBD, must be explicit
+- AI-dependent requirements flagged as "AI: [functionality via AIMC]" — no placeholders or unresolved items; requirements must be explicit
 - Knowledge upload requirements included (from CL-5 spec and CL-11 architecture)
 
 **Key considerations**:
 - FRS completeness defines what MMM absorbs from MAT and Roadmap — this document is the legal basis for MAT/Roadmap retirement
-- Zero TBD items permitted in FRS
+- No placeholders or unresolved items permitted in FRS
 - Every AI capability must be requirement-specified (even if built with stubs)
 
 **Assigned Agent**: `mat-specialist` (MAT capability translation) + `governance-liaison-isms-agent` (Roadmap capability translation + document structure)  
@@ -430,7 +430,7 @@ GATE E (CL-12c COMPLETE + CP-12 CLOSED):
 | `[CL-9] AIMC Audit Phase B — Persona Domain Review — Foreman Delegation` | Foreman → 4 specialist agents | Gate B (CL-8 + CL-7) | After Gate B |
 | `[CL-12a] AIMC Foundation Re-Verification — Foreman Delegation` | Foreman → qa-builder + integration-builder | Gate C (CL-9 + CL-11) | After Gate C |
 | `[CL-12b-1 through CL-12b-7] Module Integration Waves (7 issues)` | Foreman → api-builder + integration-builder | CL-12a | Sequential, 7 issues |
-| `[CL-13] AMC API Contract — Foreman Delegation` | Foreman → governance-liaison-isms-agent | Gate E (after CL-12c) | After Gate A (CL-8) |
+| `[CL-13] AMC API Contract — Foreman Delegation` | Foreman → governance-liaison-isms-agent | Gate A (CL-8) | After Gate A (CL-8) |
 | `[CL-14] AIMC Governance Certification — Foreman Delegation` | Foreman → governance-liaison-isms-agent | Gate E + CL-10 + CL-7 | After CL-12 |
 | `[CL-15] Legacy Component Decommission — Foreman Delegation` | Foreman → governance-liaison-isms-agent + builders | Gate F (CL-13 + CL-14) | Final gate |
 

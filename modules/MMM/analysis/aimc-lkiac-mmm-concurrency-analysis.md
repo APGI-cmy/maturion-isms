@@ -278,7 +278,7 @@ These advisory items are documented for clean-up:
 1. `architecture.md` references `modules/MMM/01-frs/` — actual path is `modules/MMM/02-frs/`
 2. `architecture.md` lists only partial stage sequence (App Description + FRS with old numbering)
 3. `architecture.md` states FRS → IN_PROGRESS while BUILD_PROGRESS_TRACKER shows NOT_STARTED
-4. Legacy capabilities directory (`modules/MMM/02-architecture/capabilities/` → note: now `modules/MMM/04-architecture/`) contains 79 Risk Management artifacts that belong in `modules/MMM/_legacy/` or `90-legacy-assets/`
+4. Legacy capabilities directory reference should resolve to `modules/MMM/04-architecture/capabilities/`; that directory currently contains 79 Risk Management artifacts that belong in `modules/MMM/_legacy/` or `90-legacy-assets/`
 
 These do not block Stage 2 initiation but must be resolved before Stage 5 (Architecture) can be marked COMPLETE.
 
