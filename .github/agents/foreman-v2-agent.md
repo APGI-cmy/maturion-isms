@@ -641,7 +641,7 @@ IAA verdict handling:
 
 **[FM_H] EXECUTE AFTER IAA VERDICT — BEFORE MERGE GATE RELEASE.**
 
-Per `AGENT_HANDOVER_AUTOMATION.md` §4.3c: PREHANDOVER proof is read-only post-commit. IAA token: dedicated new file only.
+Per `AGENT_HANDOVER_AUTOMATION.md` §4.3b: PREHANDOVER proof is read-only post-commit. IAA token: dedicated new file only.
 
 1. PREHANDOVER proof records expected token reference at commit time (`iaa_audit_token: IAA-session-NNN-waveY-YYYYMMDD-PASS`). Do NOT edit post-commit.
 2. IAA writes token to `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md` (MUST include `PHASE_B_BLOCKING_TOKEN:` field — non-empty, non-PENDING).
