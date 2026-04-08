@@ -40,12 +40,13 @@ mode_transitions: [PREFLIGHT → POLC-Orchestration → Quality-Professor → PO
 
 ## Agents Delegated To
 
-agents_delegated_to: IAA (independent-assurance-agent) — Pre-Brief and final audit for issue maturion-isms#1286
+agents_delegated_to:
+- IAA (independent-assurance-agent): Pre-Brief (phase 0) and final audit for maturion-isms#1286
 
 Note: Foreman executed CI governance file changes directly as own-responsibility artifacts
 (copilot-setup-steps.yml and maturion-bot-writer.yml are CI operational governance —
-not application code). IAA Pre-Brief was obtained before changes. No builder delegation
-required for CI-governance-only wave.
+not application code). IAA Pre-Brief was obtained before changes. No application-builder
+delegation required for CI-governance-only wave per FAIL-ONLY-ONCE A-001 exception.
 
 Issue URL: maturion-isms#1286 (CS2 authorization; Foreman is responsible agent for CI governance files)
 
