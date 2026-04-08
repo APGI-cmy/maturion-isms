@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.1.0",
+  "updated_at": "2026-04-08",
+  "source": "governance/policy/minimizing_language_patterns.json",
+  "patterns": [
+    {
+      "id": "only_failure_context",
+      "pattern": "\\bonly\\b[^.\\n]{0,60}\\b(fail(?:ing|ure|ures)?|warning(?:s)?|issue(?:s)?|problem(?:s)?|debt|error(?:s)?|doc(?:s|umentation)?|lint(?:ing)?|test(?:s)?)\\b",
+      "description": "Only + failure/warning/debt context",
+      "allowlist": [
+        "\\bonly\\b[^.\\n]{0,40}\\b(CS2|Johan|authority|authorized|authorization|permission|permitted|applies to|when explicitly)\\b",
+        "\\bonly\\s+(CS2|Johan|the\\s+governance|the\\s+administrator|applies\\s+to)\\b"
+      ],
+      "allowlist_rationale": "Authority-scoping language uses 'only' as a permission/scope delimiter rather than minimization (e.g., 'Only CS2 can authorize', 'Only applies to governance repository'). These are governance scope statements, not minimizing descriptions of technical debt or incomplete work. See §3.4 of POLICY-NO-ONLY-LANGUAGE.md."
+    },
+    {
+      "id": "just_failure_context",
+      "pattern": "\\bjust\\b[^.\\n]{0,60}\\b(fail(?:ing|ure|ures)?|warning(?:s)?|issue(?:s)?|problem(?:s)?|debt|error(?:s)?|doc(?:s|umentation)?|lint(?:ing)?|test(?:s)?)\\b",
+      "description": "Just + failure/warning/debt context"
+    },
+    {
+      "id": "minor_failure_context",
+      "pattern": "\\bminor\\b[^.\\n]{0,60}\\b(fail(?:ing|ure|ures)?|warning(?:s)?|issue(?:s)?|problem(?:s)?|debt|error(?:s)?|doc(?:s|umentation)?|lint(?:ing)?|test(?:s)?)\\b",
+      "description": "Minor + failure/warning/debt context"
+    },
+    {
+      "id": "non_blocking",
+      "pattern": "\\bnon[- ]?blocking\\b",
+      "description": "Non-blocking phrasing"
+    },
+    {
+      "id": "non_critical",
+      "pattern": "\\bnon[- ]?critical\\b",
+      "description": "Non-critical phrasing"
+    },
+    {
+      "id": "good_enough",
+      "pattern": "\\bgood enough\\b",
+      "description": "Good enough phrasing"
+    },
+    {
+      "id": "trivial_failure_context",
+      "pattern": "\\btrivial\\b[^.\\n]{0,60}\\b(fail(?:ing|ure|ures)?|warning(?:s)?|issue(?:s)?|problem(?:s)?|debt|error(?:s)?|test(?:s)?)\\b",
+      "description": "Trivial + failure/warning/debt context"
+    },
+    {
+      "id": "small_failure_context",
+      "pattern": "\\bsmall\\b[^.\\n]{0,60}\\b(fail(?:ing|ure|ures)?|warning(?:s)?|issue(?:s)?|problem(?:s)?|debt|error(?:s)?|test(?:s)?)\\b",
+      "description": "Small + failure/warning/debt context"
+    },
+    {
+      "id": "easy_fix_context",
+      "pattern": "\\beasy\\b[^.\\n]{0,60}\\b(fix(?:es|ing)?|issue(?:s)?|problem(?:s)?|debt|error(?:s)?|warning(?:s)?|test(?:s)?|fail(?:ing|ure|ures)?)\\b",
+      "description": "Easy + fix/failure context"
+    },
+    {
+      "id": "mostly_complete",
+      "pattern": "\\bmostly\\b\\s+(complete|done|finished|passing|green)\\b",
+      "description": "Mostly complete/passing phrasing"
+    },
+    {
+      "id": "outstanding_handover_context",
+      "pattern": "\\boutstanding\\b[^.\\n]{0,80}\\b(item(?:s)?|work|ceremony|artifact(?:s)?|obligation(?:s)?|action(?:s)?|phase|invocation|pending|remain(?:ing|s)?)\\b",
+      "description": "Outstanding + incomplete-obligation context — presenting a job with outstanding obligations is handing over a BLOCKED job",
+      "allowlist": [
+        "\\boutstanding\\b[^.\\n]{0,40}\\b(performance|result(?:s)?|achievement(?:s)?|quality|contribution(?:s)?)\\b"
+      ],
+      "allowlist_rationale": "Outstanding used as a positive descriptor (e.g., 'outstanding performance') is not minimizing language. The allowlist avoids false positives on complimentary uses."
+    },
+    {
+      "id": "remain_outstanding",
+      "pattern": "\\bremain(?:s|ing)?\\s+outstanding\\b",
+      "description": "Remain(s/ing) outstanding — obligations not fulfilled at handover time"
+    }
+  ]
+}
