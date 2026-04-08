@@ -1,11 +1,10 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.4.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.3.0 | **Authority**: CS2
 **Date**: 2026-03-03
 **Amended**: 2026-03-03 — v1.1.0: Added §Proactive Assurance — Pre-Brief Protocol
 **Amended**: 2026-03-04 — v1.2.1: Added §CS2 Direct Review Track
 **Amended**: 2026-03-04 — v1.3.0: Added §Risk-Tiered Ceremony Table + §Functional Fitness Assessment (FFA)
-**Amended**: 2026-04-07 — v1.4.0: Added §Pre-Build Stage Assurance — explicit 12-stage pre-build model enforcement, stage-readiness view requirements, Pre-Brief strengthening, PRE_BUILD_GATES overlay cross-reference (issue #1258)
 
 ---
 
@@ -140,64 +139,6 @@ provided the applicable ceremony level is satisfied.
 | Docs-only PR | T6 | NO | CS2 approval to merge |
 | Parking station update | T6 | NO | CS2 approval to merge |
 | Admin / housekeeping | T6 | NO | CS2 approval to merge |
-
----
-
-## Pre-Build Stage Assurance
-
-The IAA is the final assurance gate for the 12-stage pre-build model defined in
-`PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0. This section defines how the IAA enforces
-pre-build stage readiness — not only final-gate PR assurance.
-
-### Pre-Build Stage Assurance Scope
-
-IAA pre-build stage assurance operates at two points:
-
-1. **Pre-Brief (Phase 0)** — Before builder delegation: IAA produces a stage-readiness view
-   confirming which stages are complete, which artifacts were reviewed, and which blockers
-   prevent builder appointment.
-
-2. **Handover Assurance (Phase 4)** — After build: IAA verifies that the build was executed
-   only after all pre-build gates were satisfied.
-
-### Stage-Readiness View Requirements
-
-When generating a Pre-Brief artifact, IAA MUST declare:
-
-| View Element | Required Content |
-|-------------|-----------------|
-| Upstream stages complete | List of Stages 1–10 with COMPLETE / PENDING status for this wave |
-| Artifacts reviewed | Specific files examined to establish each stage's completion status |
-| Blockers preventing Stage 11 (Builder Appointment) | Any missing or incomplete stage artifact |
-| Acceptance conditions | The specific evidence IAA will verify during handover assurance |
-
-A Pre-Brief that only classifies tasks without declaring a stage-readiness view is incomplete
-under this canon. IAA must produce the stage-readiness view before builder delegation proceeds.
-
-### Pre-Build Gate Checks (Handover Assurance)
-
-At handover, IAA applies PRE_BUILD_GATES overlay checks (OVL-PBG-001 through OVL-PBG-016)
-to verify that:
-
-- All 12 stages are documented as COMPLETE in BUILD_PROGRESS_TRACKER.md (or equivalent)
-- Stage gating was respected — no stage was skipped
-- Supporting controls (§7.1 Change-Propagation Audit, §7.2 Runtime/Deployment Contract,
-  §7.3 Golden Path Verification Pack) are present before the first build wave
-- UX Workflow & Wiring Spec is present for all user-facing builds (Stage 2)
-- QA-to-Red suite exists before implementation began (Stage 6)
-- PBFAG was confirmed PASS before builder delegation (Stage 7)
-- Builder Checklist was PASS for all appointed builders (Stage 9)
-
-### 90/10 Doctrine Preservation
-
-Pre-build stage assurance applies the same 90/10 doctrine as all other IAA checks:
-- **90%**: Does the pre-build state actually prove the build will work, be safe, and deliver
-  correctly the first time? Are the artifacts substantive and complete, not just present?
-- **10%**: Existence checks — are the required stage artifacts filed and non-placeholder?
-
-IAA does NOT audit the internal quality of stage artifacts beyond what is necessary to assess
-whether the pre-build state is genuinely build-ready. A stage artifact that exists and is
-non-placeholder passes the existence check regardless of minor administrative imperfections.
 
 ---
 
