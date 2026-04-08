@@ -258,20 +258,20 @@
     },
     {
       "filename": "AGENT_HANDOVER_AUTOMATION.md",
-      "version": "1.1.5",
-      "file_hash": "cff4158b2646246ea68de535398cc00e60c9c4424cfad7d6e239f51427f01d3c",
-      "effective_date": "2026-04-06",
+      "version": "1.2.0",
+      "file_hash": "84b120c7b19938f43ef16986732e0d4a67c5dbd35fbc92d4494c69b13d4f29f1",
+      "effective_date": "2026-04-08",
       "description": "Canonical governance document: AGENT_HANDOVER_AUTOMATION",
       "type": "canon",
       "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "cff4158b2646246ea68de535398cc00e60c9c4424cfad7d6e239f51427f01d3c",
+      "file_hash_sha256": "84b120c7b19938f43ef16986732e0d4a67c5dbd35fbc92d4494c69b13d4f29f1",
       "ripple_dispatched": "2026-02-24",
       "ripple_log": ".agent-admin/governance/ripple-logs/ripple-agent-handover-parity-20260224.md",
       "ripple_in_repo_status": "COMPLETE",
       "ripple_consumer_status": "PENDING \u2014 layer-down issues to be created in consumer repos",
       "last_updated": "2026-04-08",
-      "change_note": "v1.1.5: Added Phase 4 Terminal State Rule; forbade remaining Phase 4 ceremony language; OPOJD hardening"
+      "change_note": "v1.2.0: Added §4.3c Pre-IAA Commit-State Gate (canonical blocking step); updated phase structure index; added PHASE_B_BLOCKING guidance; pre-IAA handover discipline hardening"
     },
     {
       "filename": "AGENT_INDUCTION_PROTOCOL.md",
