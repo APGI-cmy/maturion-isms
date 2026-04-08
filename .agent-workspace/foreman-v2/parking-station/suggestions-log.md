@@ -75,3 +75,4 @@
 
 | 2026-04-08 | foreman-v2-agent | session-160 | VIOLATION | INC-OPOJD-PSF-001: PS-F Phase 4 incomplete at session termination — PREHANDOVER proof, session memory, IAA token not committed before session ended; remediated in follow-on session | session-160-ps-f-iaa-trigger-table-20260408.md |
 | 2026-04-08 | foreman-v2-agent | session-160 | IMPROVEMENT | S-039: SCOPE_DECLARATION-FORMAT-VERIFICATION — QP must verify hyphen separator format before declaring PASS; em-dash causes silent 0-file parse in validate-scope-to-diff.sh | session-160-ps-f-iaa-trigger-table-20260408.md |
+| 2026-04-08 | foreman-v2-agent | session-161 | IMPROVEMENT | S-040-CANDIDATE: ADD-HARVEST-MAP-COLUMN-COMPLETENESS-CHECK — CI check for harvest-map.md column completeness in modules/*/harvest-map/ paths | session-161-mmm-harvest-map-20260408.md |

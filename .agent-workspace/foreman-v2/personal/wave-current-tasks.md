@@ -1,34 +1,32 @@
-# Wave Current Tasks — Issue 1286
+# Wave Current Tasks — Issue 1300
 
-wave: opojd-comment-only-copilot-20260408
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave1286-opojd-20260408.md
+wave: mmm-harvest-map
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave1300-mmm-harvest-map-20260408.md
 
-## Active Wave: opojd-comment-only-copilot-20260408
+## Active Wave: mmm-harvest-map
 
 ### Wave Description
-Align repo to strict comment-only Copilot model — remove write-back assumptions from
-copilot-setup-steps.yml, declare COPILOT_SESSION_MODE/PUSH_DISABLED_INTENTIONAL/OUTPUT_MODE,
-and create a separate maturion-bot-writer.yml for future bot write operations.
+Produce the MAT / Maturity Roadmap / Legacy → MMM Harvest Map and Ownership Transition Matrix.
+This is a planning/governance artifact wave — no production code, no schema changes, no builder
+delegation. Foreman produces the convergence planning artifact directly as a POLC-Orchestration
+planning output.
 
-CS2 Authorization: Issue maturion-isms#1286 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
+CS2 Authorization: Issue maturion-isms#1300 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
 foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
 
 ### Tasks
-- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave1286-opojd-20260408.md
-- [ ] OPOJD-001: Modify .github/workflows/copilot-setup-steps.yml — comment-only mode,
-      remove fallback token, remove git-identity step, add session-mode env vars
-- [ ] OPOJD-002: Create .github/workflows/maturion-bot-writer.yml — separate bot write
-      workflow, explicit write permissions, fail-fast on missing token, no fallback
-- [ ] PREHANDOVER proof: .agent-admin/assurance/PREHANDOVER-session-160-wave-opojd-20260408.md
-- [ ] Session memory: .agent-workspace/foreman-v2/memory/session-160-opojd-comment-only-20260408.md
+- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave1300-mmm-harvest-map-20260408.md
+- [x] MMM-HM-001: Create harvest-map artifact at modules/MMM/harvest-map/harvest-map.md
+- [ ] PREHANDOVER proof: .agent-workspace/foreman-v2/memory/PREHANDOVER-session-161-wave1300-mmm-harvest-map-20260408.md
+- [ ] Session memory: .agent-workspace/foreman-v2/memory/session-161-mmm-harvest-map-20260408.md
 - [ ] IAA final audit and token
 
-### IAA Pre-Brief Summary (from iaa-prebrief-wave1286-opojd-20260408.md)
-- Trigger Category: CI_WORKFLOW — MANDATORY
-- Qualifying Tasks: OPOJD-001, OPOJD-002
-- Scope Blockers: SB-001 through SB-006
-- OVL-CI-005 S-033 exception applies — three substitutes required
-- BUILD_DELIVERABLE overlay: NOT APPLICABLE
+### IAA Pre-Brief Summary (from iaa-prebrief-wave1300-mmm-harvest-map-20260408.md)
+- Trigger Category: GOVERNANCE_DOCUMENTATION — MANDATORY (A-003 ambiguity rule)
+- Qualifying Tasks: MMM-HM-001
+- Scope Blockers: SB-001 (no builder), SB-002 (markdown only), SB-003 (all 10 columns), SB-004 (pre-brief first), SB-005 (committed artifacts), SB-006 (no Stage 10 advance)
+- Key FFA check: All 10 columns present, all 3 source systems covered, no placeholder rows
+- PREHANDOVER: must include Ripple/Cross-Agent Assessment section
 
 ### Previous Wave (Closed)
-wave: mmm-39b-frs-derivation-fix (Issue #1277) — COMPLETE, awaiting CS2 merge
+wave: opojd-comment-only-copilot-20260408 (Issue #1286) — PENDING merge
