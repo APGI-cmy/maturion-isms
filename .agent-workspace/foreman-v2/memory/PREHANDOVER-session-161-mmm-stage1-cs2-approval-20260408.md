@@ -70,7 +70,7 @@ CANON_INVENTORY verified in Phase 1: 199 canons, all hashes non-null. No canon c
 | 6 | wave-current-tasks.md | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | ✅ Updated |
 | 7 | PREHANDOVER proof (this file) | `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-161-mmm-stage1-cs2-approval-20260408.md` | ✅ |
 | 8 | Session memory | `.agent-workspace/foreman-v2/memory/session-161-mmm-stage1-cs2-approval-20260408.md` | ✅ |
-| 9 | IAA Token | `.agent-admin/assurance/iaa-token-session-161-wave-mmm-stage1-cs2-approval-20260408.md` | ⏳ PENDING (written after IAA audit) |
+| 9 | IAA Token | `.agent-admin/assurance/iaa-token-session-161-wave-mmm-stage1-cs2-approval-20260408.md` | ✅ Present (committed after IAA audit) |
 
 ---
 

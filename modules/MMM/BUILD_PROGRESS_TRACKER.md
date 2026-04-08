@@ -54,7 +54,7 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 **Approved By**: CS2 (Johan Ras / @APGI-cmy) — maturion-isms#1298  
 **Notes**: App Description `MMM_app_description.md` v0.5.0 formally approved by CS2 via issue #1298
 (2026-04-08). BLK-1 resolved. Stage 1 formally closed. Stage 2 (UX Workflow & Wiring Spec)
-unblocked pending Stage 2 wave-start authorization issue from CS2.
+remains pending CS2 Stage 2 wave-start authorization.
 
 ---
 
