@@ -1,7 +1,7 @@
 # Wave Current Tasks — Issue 1298
 
 wave: mmm-stage1-cs2-approval
-iaa_prebrief_path: PENDING
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave-mmm-stage1-cs2-approval-20260408.md
 
 ## Active Wave: mmm-stage1-cs2-approval
 
@@ -12,7 +12,7 @@ CS2 Authorization: Issue maturion-isms#1298 opened by @APGI-cmy (CS2 = Johan Ras
 foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
 
 ### Tasks
-- [ ] IAA Pre-Brief: PENDING
+- [x] IAA Pre-Brief: COMPLETE — `.agent-admin/assurance/iaa-prebrief-wave-mmm-stage1-cs2-approval-20260408.md` (commit a3f81ba)
 - [ ] APP-DESC-001: Update modules/MMM/00-app-description/MMM_app_description.md —
       Status: Approved, Approval Date: 2026-04-08, version bump v0.4.0 → v0.5.0
 - [ ] TRACKER-001: Update modules/MMM/BUILD_PROGRESS_TRACKER.md —
@@ -26,7 +26,12 @@ foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
 - [ ] IAA final audit and token
 
 ### IAA Pre-Brief Summary
-- PENDING — IAA invocation in progress
+- COMPLETE — `.agent-admin/assurance/iaa-prebrief-wave-mmm-stage1-cs2-approval-20260408.md`
+- Commit: a3f81bac2bf7f68dbffc44eae32b0abb14bd4f75
+- Trigger category: PRE_BUILD_STAGE_MODEL
+- Qualifying tasks: APP-DESC-001, TRACKER-001, IMPL-PLAN-001, STRATEGY-001
+- Scope blockers: NONE
+- Anti-regression obligations: A-021 (ceremony order), A-029 (PREHANDOVER token), A-033 (git not disk)
 
 ### Previous Wave (Closed)
 wave: ps-f-iaa-trigger-table-new-categories (Issue #1270) — COMPLETE, merged
