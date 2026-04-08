@@ -2,7 +2,7 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 3.4.0
+**Knowledge Version**: 3.5.0
 **Last Updated**: 2026-04-07
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
@@ -15,7 +15,7 @@
 | `index.md` (this file) | Knowledge entry point and version reference | 3.0.0 | PRESENT |
 | `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 2.5.0 | PRESENT — Rules A-001 through A-032 active (A-032: Schema Column Compliance Check — IAA must read migration DDL directly for all PRs containing INSERT/SELECT operations; INC-ALCF-001 self-governance closure) |
 | `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 3.0.0 | CORE-025 Pre-Brief Stage-Readiness Declaration added for PRE_BUILD_STAGE_MODEL PRs (v3.0.0) |
-| `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.3.0 | PRE_BUILD_STAGE_MODEL trigger row updated with all 12 stages and OVL-PBG-001–016 reference (v2.3.0) |
+| `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.4.0 | LIAISON_ADMIN and GOVERNANCE_AUDIT trigger categories added; classification decision flow steps 7 (LIAISON_ADMIN) and 10 (GOVERNANCE_AUDIT EXEMPT) added; steps renumbered accordingly (v2.4.0) |
 | `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE, PRE_BRIEF_ASSURANCE, PRE_BUILD_GATES) | 4.0.0 | PRE_BUILD_GATES overlay complete (OVL-PBG-001 through OVL-PBG-016); PRE_BRIEF_ASSURANCE stage-readiness view (OVL-INJ-ADM-003) added (v4.0.0) |
 | `session-memory-template.md` | Standard session memory template for IAA invocations | 1.0.0 | PRESENT |
 | `IAA_ZERO_SEVERITY_TOLERANCE.md` | Tier 2 operational note for Zero-Severity-Tolerance Rule — prohibited language table, machine-readable logic, exception procedure | 1.0.0 | ACTIVE |
@@ -233,6 +233,7 @@ that produced the work under review. Every invocation is logged in session memor
 | 3.1.0 | 2026-03-18 | iaa-category-overlays.md → v3.6.0 (Orientation Mandate scope note clarifying cross-reference consistency vs. declared-state integrity; OVL-KG-ADM-002 pass condition sharpened; timestamp carve-out note added); index.md version reference updated; issue [clarify audit scope cross-reference consistency and version bump history] |
 | 3.2.0 | 2026-04-06 | iaa-trigger-table.md → v2.2.0 (PRE_BUILD_STAGE_MODEL and MANDATORY_CROSS_APP_COMPONENTS trigger categories added; classification decision flow steps 7–8 added); iaa-category-overlays.md → v3.7.0 (PRE_BUILD_GATES overlay added — OVL-PBG-001 through OVL-PBG-005 for MMM FRS pre-build gate enforcement); AGENT_HANDOVER_AUTOMATION.md reference updated from v1.0.0 to v1.1.4 (canonical per CANON_INVENTORY); note: PRE_BUILD_GATES overlay added (v3.2.0) for MMM FRS pre-build gate enforcement; wave: pre-mmm-build-readiness |
 | 3.3.0 | 2026-04-06 | iaa-category-overlays.md → v3.8.0 (PRE_BUILD_GATES overlay strengthened — OVL-PBG-006 full 12-stage BUILD_PROGRESS_TRACKER check, OVL-PBG-007 architecture doc full lifecycle sequence, OVL-PBG-008 stage gating no-skip enforcement, OVL-PBG-009 legacy directory numbering advisory; OVL-PBG-ADM-001 updated to reference OVL-PBG-001 through OVL-PBG-009); wave: pre-mmm-build-readiness CS2 review blockers |
+| 3.5.0 | 2026-04-07 | iaa-trigger-table.md → v2.4.0 (LIAISON_ADMIN and GOVERNANCE_AUDIT trigger categories added; classification decision flow steps 7 (LIAISON_ADMIN) and 10 (GOVERNANCE_AUDIT EXEMPT — after all triggering steps) added; steps renumbered; wave: ps-f-iaa-trigger-table-new-categories (issue #1270)) |
 
 ---
 
