@@ -1,32 +1,32 @@
-# Wave Current Tasks — Issue 1277
+# Wave Current Tasks — Issue 1270
 
-wave: mmm-39b-frs-derivation-fix
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave1277-20260407.md
+wave: ps-f-iaa-trigger-table-new-categories
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-ps-f-iaa-trigger-table-20260407.md
 
-## Active Wave: mmm-39b-frs-derivation-fix
+## Active Wave: ps-f-iaa-trigger-table-new-categories
 
 ### Wave Description
-Surgical doc-governance fix to modules/MMM/00-app-description/MMM_app_description.md Section 39B.
-Add UX Workflow & Wiring Spec as upstream input to FRS in the Requirements Derivation Chain.
-Bump version v0.3.0 → v0.4.0.
+Upgrade `.agent-workspace/independent-assurance-agent/knowledge/iaa-trigger-table.md`
+to v2.4.0 by adding LIAISON_ADMIN and GOVERNANCE_AUDIT trigger categories per
+IMPL-PLAN-MMM-PRE-UPGRADE-v1.0.0 §5 Batch 1.
 
-CS2 Authorization: Issue maturion-isms#1277 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
-foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
-Parent Issue: #1266 (MMM build lifecycle reconciliation)
+CS2 Authorization: Issue maturion-isms#1270 opened by @APGI-cmy (CS2) and assigned to
+foreman-v2-agent (Copilot). Implementation assignee: CodexAdvisor-agent per
+IMPL-PLAN-MMM-PRE-UPGRADE-v1.0.0 §5.
+
+### Prior Wave Reference
+Previous wave (iaa-12stage-upgrade, issue #1258) upgraded iaa-trigger-table.md to v2.3.0
+with PRE_BUILD_STAGE_MODEL and MANDATORY_CROSS_APP_COMPONENTS categories. PS-F-01
+(KNOWLEDGE_GOVERNANCE) was completed in v2.1.0 (2026-03-02).
 
 ### Tasks
-- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave1277-20260407.md
-- [x] governance-liaison-isms-agent: update MMM_app_description.md Section 39B —
-      change "FRS derives functional requirements from the App Description"
-      to "FRS derives functional requirements from the App Description and the UX Workflow & Wiring Spec (Stage 2)";
-      bump version v0.3.0 → v0.4.0 with Last Updated 2026-04-07
-- [x] IAA REJECTION-PACKAGE: CORE-018(a)(b) — PREHANDOVER/session memory untracked → REMEDIATED
-- [x] IAA ASSURANCE-TOKEN: IAA-session-1277-mmm-39b-20260407-r2-PASS
-      Token file: .agent-admin/assurance/iaa-token-session-1277-mmm-39b-20260407-r2.md
-- [x] WAVE COMPLETE — awaiting CS2 merge (@APGI-cmy)
-
-### IAA Pre-Brief Summary (from iaa-prebrief-wave1277-20260407.md)
-- Trigger Category: PRE_BUILD_STAGE_MODEL
-- Applicable Overlay: PRE_BUILD_GATES (OVL-PBG-001 through OVL-PBG-009)
-- OVL-PBG-006: BUILD_PROGRESS_TRACKER Stage 2 present — PASS
-- All 21 checks PASS at final audit
+- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-ps-f-iaa-trigger-table-20260407.md
+- [ ] T-PS-F-01: KNOWLEDGE_GOVERNANCE — already present in v2.1.0 (PS-F-01 SATISFIED)
+- [ ] T-PS-F-02: Add LIAISON_ADMIN trigger category to iaa-trigger-table.md
+- [ ] T-PS-F-03: Add GOVERNANCE_AUDIT trigger category (EXEMPT-classified) to iaa-trigger-table.md
+- [ ] T-PS-F-04: Update classification decision flow steps for LIAISON_ADMIN + GOVERNANCE_AUDIT
+- [ ] T-PS-F-05: Version bump to v2.4.0 + version history entry
+- [ ] T-PS-F-06: Update IAA index.md with new trigger table version
+- [ ] QP evaluation of CodexAdvisor-agent deliverable
+- [ ] PREHANDOVER proof + session memory
+- [ ] IAA final handover audit + token ceremony
