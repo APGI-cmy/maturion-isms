@@ -71,6 +71,7 @@
 | 2026-04-07 | foreman-v2-agent | session-1277-mmm-39b-20260407 | improvement | Add CI linter to validate FRS derivation chain against FRS_TEMPLATE.md | session-1277-mmm-39b-20260407.md |
 | 2026-04-07 | foreman-v2-agent | session-f-d3-002 | IMPROVEMENT | api/ai/feedback/pending.ts carries same F-D3-002 JWT Bearer vulnerability (3-part token accepted without verification, service-role pipeline); separate remediation wave needed | session-f-d3-002-jwt-bearer-remediation-20260407.md |
 | 2026-04-07 | foreman-v2-agent | session-159 | IMPROVEMENT | FAIL-ONLY-ONCE ID Namespace Note should be updated as part of every A-rule addition checklist; consider adding a CI check to detect duplicate A-rule IDs automatically | session-159-ps-b-fail-only-once-v420-20260407.md |
+| 2026-04-08 | foreman-v2-agent | session-160 | S-038-CANDIDATE | GOVERNANCE-FILE-SEPARATION-COMMENT-MANDATE: split-workflow cross-reference comment mandate — codify as A-rule | session-160-opojd-comment-only-20260408.md |
 
 | 2026-04-08 | foreman-v2-agent | session-160 | VIOLATION | INC-OPOJD-PSF-001: PS-F Phase 4 incomplete at session termination — PREHANDOVER proof, session memory, IAA token not committed before session ended; remediated in follow-on session | session-160-ps-f-iaa-trigger-table-20260408.md |
 | 2026-04-08 | foreman-v2-agent | session-160 | IMPROVEMENT | S-039: SCOPE_DECLARATION-FORMAT-VERIFICATION — QP must verify hyphen separator format before declaring PASS; em-dash causes silent 0-file parse in validate-scope-to-diff.sh | session-160-ps-f-iaa-trigger-table-20260408.md |
