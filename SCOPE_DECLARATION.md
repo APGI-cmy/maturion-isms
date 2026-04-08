@@ -18,9 +18,11 @@ Per `git diff --name-only origin/main...HEAD` (this PR):
 - `packages/ai-centre/src/memory/EpisodicMemoryAdapter.ts` — Rewritten: in-memory stub replaced with Supabase-backed implementation (GAP-009 / F-D4-001 remediation)
 - `packages/ai-centre/src/__tests__/memory/EpisodicMemoryAdapter.test.ts` — Updated: mock Supabase client injection, DB write assertions added
 - `PREHANDOVER_PROOF_GAP_009_SUPABASE_INSERT.md` — PREHANDOVER proof for session-gap009-20260407
+- `packages/ai-centre/supabase/migrations/011_ai_episodic_capability_rag.sql` — New: adds 'rag' to ai_episodic_events capability CHECK constraint (resolves IAA CF-001 / Capability.RAG mismatch)
+- `packages/ai-centre/src/__tests__/schema/gap009-episodic-capability-rag.test.ts` — New: 5 schema tests verifying migration 011 (GAP009-SCH-T-001 through T-005)
 - `SCOPE_DECLARATION.md` — This file (scope declaration for wave gap-009-episodic-memory-remediation)
 
-**File count: 7 files (excluding IAA session/token artifacts written by IAA agent post-verdict).**
+**File count: 9 files (excluding IAA session/token artifacts written by IAA agent post-verdict).**
 
 ## Out-of-Scope Attestation
 

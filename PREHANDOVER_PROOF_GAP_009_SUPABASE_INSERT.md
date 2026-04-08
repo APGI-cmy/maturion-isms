@@ -135,14 +135,24 @@ Every Supabase call checks `{ error }` and throws if set:
 
 ---
 
-## IAA Invocation Request
+## IAA Invocation Request (Re-invocation after REJECTION-PACKAGE)
 
-Builder has completed all deliverables. IAA is invoked for Phase 2–4 audit per the
-pre-brief mandate.
+Builder received REJECTION-PACKAGE from first IAA invocation (2026-04-07) citing carry-forward
+CF-001: `Capability.RAG = 'rag'` absent from `ai_episodic_events` CHECK constraint.
+
+### Fix Applied (2026-04-08)
+
+| File | Change |
+|------|--------|
+| `packages/ai-centre/supabase/migrations/011_ai_episodic_capability_rag.sql` | New migration: DROP old anonymous CHECK, ADD named CHECK with 'rag' included |
+| `packages/ai-centre/src/__tests__/schema/gap009-episodic-capability-rag.test.ts` | New schema tests: 5 tests (GAP009-SCH-T-001 through T-005) |
+
+- Test suite: **325/325 GREEN** (32 test files)
+- Migration `011` drops `ai_episodic_events_capability_check` and recreates it with all 9 Capability enum values including `'rag'`
 
 **Expected ASSURANCE-TOKEN**: `IAA-session-gap009-wave-gap-009-20260407-PASS`
 
 ---
 
-*PREHANDOVER PROOF authored by api-builder v6.2.0 | 2026-04-07*
+*PREHANDOVER PROOF authored by api-builder v6.2.0 | 2026-04-07 (updated 2026-04-08)*
 *Authority: CS2 (Johan Ras / @APGI-cmy)*
