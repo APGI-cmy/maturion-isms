@@ -3,12 +3,12 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory \u2014 tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
-  "last_updated": "2026-04-06",
-  "last_ripple_commit": "843cc6dc4dd88bee911ea21d809e72f28e7b93cf",
-  "last_ripple_timestamp": "2026-04-06T08:55:28Z",
+  "last_updated": "2026-04-08",
+  "last_ripple_commit": "939f1b0b7622771b0c290f4feaab4215ee086eac",
+  "last_ripple_timestamp": "2026-04-08T08:33:19Z",
   "alignment_summary": {
-    "total_artifacts": 24,
-    "aligned": 20,
+    "total_artifacts": 27,
+    "aligned": 23,
     "drifted": 0,
     "missing": 0,
     "escalated": 4,
@@ -18,14 +18,14 @@
     {
       "filename": "AGENT_HANDOVER_AUTOMATION.md",
       "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
-      "canonical_version": "1.1.4",
-      "local_version": "1.1.4",
-      "canonical_hash_sha256": "39867b98a8d68ceebc3676b8066070e3b410e6f68a954bfd28089e0ef3d24514",
-      "local_hash_sha256": "39867b98a8d68ceebc3676b8066070e3b410e6f68a954bfd28089e0ef3d24514",
+      "canonical_version": "1.1.5",
+      "local_version": "1.1.5",
+      "canonical_hash_sha256": "cff4158b2646246ea68de535398cc00e60c9c4424cfad7d6e239f51427f01d3c",
+      "local_hash_sha256": "cff4158b2646246ea68de535398cc00e60c9c4424cfad7d6e239f51427f01d3c",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-04-06T08:55:50Z",
-      "change_note": "v1.1.4: Added PHASE_B_BLOCKING_TOKEN field to \u00a74.3b token file heredoc; updated version footer. Layered down via ripple PR #1243 (canonical commit 843cc6dc)."
+      "last_verified": "2026-04-08T08:46:00Z",
+      "change_note": "v1.1.5: OPOJD harden complete jobs improvements. Layered down via ripple (canonical commit 939f1b0b)."
     },
     {
       "filename": "ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
@@ -85,13 +85,14 @@
     {
       "filename": "POLICY-NO-ONLY-LANGUAGE.md",
       "path": "governance/policy/POLICY-NO-ONLY-LANGUAGE.md",
-      "canonical_version": "v1.0",
-      "local_version": "v1.0",
-      "canonical_hash_sha256": "88369fb8b764f063f5d67f0ae1c4caed5587b65412ca11ef083ad6b4ab31b253",
-      "local_hash_sha256": "88369fb8b764f063f5d67f0ae1c4caed5587b65412ca11ef083ad6b4ab31b253",
+      "canonical_version": "v1.2",
+      "local_version": "v1.2",
+      "canonical_hash_sha256": "6d50f484cf2ab84527a8c940d47138657ce81c71f93f51a76e19a74220f5dc09",
+      "local_hash_sha256": "6d50f484cf2ab84527a8c940d47138657ce81c71f93f51a76e19a74220f5dc09",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-03-02T11:23:28Z"
+      "last_verified": "2026-04-08T08:46:00Z",
+      "change_note": "v1.2: Updated policy. Layered down via ripple (canonical commit 939f1b0b)."
     },
     {
       "filename": "CodexAdvisor-agent.md",
@@ -293,6 +294,42 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "TEMPLATE",
       "last_verified": "2026-04-05T11:30:00Z"
+    },
+    {
+      "filename": "FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
+      "path": "governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
+      "canonical_version": "1.1.0",
+      "local_version": "1.1.0",
+      "canonical_hash_sha256": "56c2ea0b5f50b479a75d7f1cb05e601c6f971461e3a9dc2a662b9f09a6e306b8",
+      "local_hash_sha256": "56c2ea0b5f50b479a75d7f1cb05e601c6f971461e3a9dc2a662b9f09a6e306b8",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-04-08T08:46:00Z",
+      "change_note": "v1.1.0: Added in ripple (canonical commit 939f1b0b)."
+    },
+    {
+      "filename": "MERGE_GATE_PHILOSOPHY.md",
+      "path": "governance/canon/MERGE_GATE_PHILOSOPHY.md",
+      "canonical_version": "2.1.0",
+      "local_version": "2.1.0",
+      "canonical_hash_sha256": "315ee14f3a8abd882f212463983d3115ace9adbb64f3a77f2cbdc47e2bca5774",
+      "local_hash_sha256": "315ee14f3a8abd882f212463983d3115ace9adbb64f3a77f2cbdc47e2bca5774",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-04-08T08:46:00Z",
+      "change_note": "v2.1.0: Added in ripple (canonical commit 939f1b0b)."
+    },
+    {
+      "filename": "minimizing_language_patterns.json",
+      "path": "governance/policy/minimizing_language_patterns.json",
+      "canonical_version": "1.1.0",
+      "local_version": "1.1.0",
+      "canonical_hash_sha256": "80fbe2f6bcc9c4c245e1dd2231fa397d2cd761fdee48a321a38cf87d0ceb39a0",
+      "local_hash_sha256": "80fbe2f6bcc9c4c245e1dd2231fa397d2cd761fdee48a321a38cf87d0ceb39a0",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-04-08T08:46:00Z",
+      "change_note": "NEW: Schema v1.1.0 minimizing language patterns JSON. Added in ripple (canonical commit 939f1b0b)."
     }
   ],
   "metadata": {
@@ -300,7 +337,6 @@
     "governing_protocol": "GOVERNANCE_RIPPLE_MODEL.md v1.1.0",
     "canonical_checklist": "GOVERNANCE_RIPPLE_CHECKLIST_PROTOCOL.md",
     "created_by": "governance-liaison-isms session-035",
-    "last_updated_by": "governance-liaison-isms session-055 layer-down-843cc6dc-20260406"
-  },
-  "last_updated_by": "governance-liaison-isms session-055 layer-down-843cc6dc-20260406"
+    "last_updated_by": "governance-liaison-isms session-058 layer-down-939f1b0b-20260408"
+  }
 }
