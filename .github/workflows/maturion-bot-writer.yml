@@ -1,0 +1,68 @@
+name: Maturion Bot Writer
+
+# Purpose: Dedicated write-capable workflow for Maturion Bot operations.
+# This is intentionally SEPARATE from copilot-setup-steps.yml (COMMENT_ONLY model).
+#
+# Separation model:
+#   copilot-setup-steps.yml  — Copilot sessions, read-only, no push, COMMENT_ONLY
+#   maturion-bot-writer.yml  — Bot write operations, explicit write permissions,
+#                              requires MATURION_BOT_TOKEN (no github.token fallback)
+#
+# Fail-fast policy: This workflow MUST NOT silently skip when MATURION_BOT_TOKEN is
+# unavailable. Any missing secret causes an immediate non-zero exit. No continue-on-error
+# on the token check step.
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: "Bot write operation to perform (e.g. commit-artifact, push-session-memory)"
+        required: true
+        type: string
+      ref:
+        description: "Branch ref to operate on"
+        required: false
+        default: "main"
+        type: string
+
+# Explicit write permissions: intentional and required for this workflow only.
+permissions:
+  contents: write
+
+jobs:
+  bot-write:
+    name: "bot/write-operation"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify MATURION_BOT_TOKEN is available (fail-fast — no fallback)
+        shell: bash
+        env:
+          BOT_TOKEN: ${{ secrets.MATURION_BOT_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${BOT_TOKEN:-}" ]; then
+            echo "FATAL: MATURION_BOT_TOKEN is not set or is empty."
+            echo "This workflow requires MATURION_BOT_TOKEN and does not accept github.token as a fallback."
+            echo "Configure the secret in repository settings and re-run."
+            exit 1
+          fi
+          echo "MATURION_BOT_TOKEN: PRESENT (length ${#BOT_TOKEN})"
+
+      - name: Checkout repository with bot token
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.MATURION_BOT_TOKEN }}
+          ref: ${{ inputs.ref }}
+
+      - name: Configure git identity for bot operations
+        run: |
+          git config --global user.name "Maturion Bot"
+          git config --global user.email "bot@maturion.ai"
+
+      - name: Log bot write operation context
+        run: |
+          set -euo pipefail
+          echo "Operation: ${{ inputs.operation }}"
+          echo "Ref: ${{ inputs.ref }}"
+          echo "Bot identity: $(git config user.name) <$(git config user.email)>"
+          echo "EXEC_IDENTITY: MATURION_BOT_TOKEN verified and in use"
