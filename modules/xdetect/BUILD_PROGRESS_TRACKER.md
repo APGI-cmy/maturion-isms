@@ -2,8 +2,8 @@
 
 **Module**: xDetect  
 **Module Slug**: xdetect  
-**Last Updated**: 2026-04-06  
-**Updated By**: governance-liaison-isms-agent (wave: align-12stage-prebuild-20260406)
+**Last Updated**: 2026-04-08  
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure)
 
 > **Classification**: ACTIVE — FRESH START ON NEXT STAGE  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
@@ -55,7 +55,7 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 
 ### Stage 2: UX Workflow & Wiring Spec
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/xdetect/02-ux-workflow-wiring-spec/`  
+**Location**: `modules/xdetect/01-ux-workflow-wiring-spec/`  
 **Key Artifacts**:
 - [ ] `ux-workflow-wiring-spec.md` — Complete user journey maps, screen interactions, data flows, wiring
 - [ ] All primary and secondary user paths documented
@@ -69,7 +69,7 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 
 ### Stage 3: Functional Requirements Specification (FRS)
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/xdetect/01-frs/`  
+**Location**: `modules/xdetect/02-frs/`  
 **Key Artifacts**:
 - [ ] `functional-requirements.md` — Verifiable requirements derived from App Description + UX Workflow & Wiring Spec
 - [ ] Derivation statements from both upstream artifacts included
@@ -83,7 +83,7 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 
 ### Stage 4: Technical Requirements Specification (TRS)
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/xdetect/04-trs/`  
+**Location**: `modules/xdetect/03-trs/`  
 **Key Artifacts**:
 - [ ] `technical-requirements-specification.md` — Technical constraints, performance requirements, integration requirements
 - [ ] `frs-to-trs-traceability.md` — Traceability matrix linking FRS to TRS
@@ -97,7 +97,7 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 
 ### Stage 5: Architecture
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/xdetect/02-architecture/`  
+**Location**: `modules/xdetect/04-architecture/`  
 **Key Artifacts**:
 - [ ] `architecture.md` — Structures and decisions that satisfy FRS and TRS
 - [ ] All TRS requirements traceable to architecture components
@@ -111,7 +111,7 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 
 ### Stage 6: QA-to-Red
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/xdetect/06-qa-to-red/`  
+**Location**: `modules/xdetect/05-qa-to-red/`  
 **Key Artifacts**:
 - [ ] Full RED test suite derived from FRS + TRS + Architecture
 - [ ] Coverage of all user journeys from Stage 2
@@ -125,7 +125,7 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 
 ### Stage 7: PBFAG (Pre-Build Functionality Assessment Gate)
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/xdetect/07-pbfag/`  
+**Location**: `modules/xdetect/06-pbfag/`  
 **Key Artifacts**:
 - [ ] PBFAG checklist completed — all checks PASS
 - [ ] Change-Propagation Audit complete
@@ -140,7 +140,7 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 
 ### Stage 8: Implementation Plan
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/xdetect/03-implementation-plan/`  
+**Location**: `modules/xdetect/07-implementation-plan/`  
 **Key Artifacts**:
 - [ ] `implementation-plan.md` — Delivery wave breakdown with explicit scope per wave
 - [ ] Wave sequencing with dependency declarations
@@ -154,7 +154,7 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 
 ### Stage 9: Builder Checklist
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/xdetect/09-builder-checklist/`  
+**Location**: `modules/xdetect/08-builder-checklist/`  
 **Key Artifacts**:
 - [ ] Builder Checklist completed for each builder candidate
 - [ ] Builder agent contracts verified as current
@@ -168,7 +168,7 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 
 ### Stage 10: IAA Pre-Brief
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/xdetect/10-iaa-pre-brief/`  
+**Location**: `modules/xdetect/09-iaa-pre-brief/`  
 **Key Artifacts**:
 - [ ] IAA Pre-Brief invoked by Foreman with full context
 - [ ] IAA Pre-Brief artifact filed
@@ -182,7 +182,7 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 
 ### Stage 11: Builder Appointment
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/xdetect/04-builder-appointment/`  
+**Location**: `modules/xdetect/10-builder-appointment/`  
 **Key Artifacts**:
 - [ ] `builder-contract.md` — Explicit builder agent contract
 - [ ] Formal appointment issued by Foreman after all Stages 1–10 gate-passed
@@ -196,7 +196,7 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 
 ### Stage 12: Build Execution & Evidence
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/xdetect/05-build-evidence/`  
+**Location**: `modules/xdetect/11-build/`  
 **Key Artifacts**:
 - [ ] Implementation code in `apps/` or `packages/`
 - [ ] Test evidence (QA-to-Green per wave)

@@ -2,8 +2,8 @@
 
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
-**Last Updated**: 2026-04-06  
-**Updated By**: governance-liaison-isms-agent (wave: align-12stage-prebuild-20260406)
+**Last Updated**: 2026-04-08  
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
@@ -23,7 +23,7 @@ created before this module can proceed through the canonical stage sequence.
 **Old → New Stage Mapping**:
 | Old Stage | Old Name | New Stage | New Name | Status |
 |-----------|----------|-----------|----------|--------|
-| Stage 0 | App Description | Stage 1 | App Description | NOT_STARTED (folder empty — anomaly) |
+| Stage 0 | App Description | Stage 1 | App Description | RETROFIT_STUB_CREATED — pending CS2 approval |
 | Stage 1 | FRS | Stage 3 | FRS | NOT_STARTED (folder empty) |
 | Stage 1.5 | TRS | Stage 4 | TRS | NOT_STARTED |
 | Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS |
@@ -59,7 +59,7 @@ can proceed through Stages 2–12 in the canonical sequence.
 
 ### Stage 2: UX Workflow & Wiring Spec
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/02-ux-workflow-wiring-spec/`  
+**Location**: `modules/isms/01-ux-workflow-wiring-spec/`  
 **Key Artifacts**:
 - [ ] `ux-workflow-wiring-spec.md` — Complete user journey maps, screen interactions, data flows, wiring
 - [ ] All primary and secondary user paths documented
@@ -73,7 +73,7 @@ can proceed through Stages 2–12 in the canonical sequence.
 
 ### Stage 3: Functional Requirements Specification (FRS)
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/01-frs/`  
+**Location**: `modules/isms/02-frs/`  
 **Key Artifacts**:
 - [ ] `functional-requirements.md` — Verifiable requirements derived from App Description + UX Workflow & Wiring Spec
 - [ ] Derivation statements from both upstream artifacts included
@@ -87,7 +87,7 @@ can proceed through Stages 2–12 in the canonical sequence.
 
 ### Stage 4: Technical Requirements Specification (TRS)
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/04-trs/`  
+**Location**: `modules/isms/03-trs/`  
 **Key Artifacts**:
 - [ ] `technical-requirements-specification.md` — Technical constraints, performance requirements, integration requirements
 - [ ] `frs-to-trs-traceability.md` — Traceability matrix linking FRS to TRS
@@ -101,7 +101,7 @@ can proceed through Stages 2–12 in the canonical sequence.
 
 ### Stage 5: Architecture
 **Status**: [ ] IN_PROGRESS  
-**Location**: `modules/isms/02-architecture/`  
+**Location**: `modules/isms/04-architecture/`  
 **Key Artifacts**:
 - [x] `architecture.md` — Architecture document exists
 - [x] `integrations/` — Integrations folder exists
@@ -117,7 +117,7 @@ Formal gate-pass requires upstream stages to be completed first. Mapped from old
 
 ### Stage 6: QA-to-Red
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/06-qa-to-red/`  
+**Location**: `modules/isms/05-qa-to-red/`  
 **Key Artifacts**:
 - [ ] Full RED test suite derived from FRS + TRS + Architecture
 - [ ] Coverage of all user journeys from Stage 2
@@ -131,7 +131,7 @@ Formal gate-pass requires upstream stages to be completed first. Mapped from old
 
 ### Stage 7: PBFAG (Pre-Build Functionality Assessment Gate)
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/07-pbfag/`  
+**Location**: `modules/isms/06-pbfag/`  
 **Key Artifacts**:
 - [ ] PBFAG checklist completed — all checks PASS
 - [ ] Change-Propagation Audit complete
@@ -146,7 +146,7 @@ Formal gate-pass requires upstream stages to be completed first. Mapped from old
 
 ### Stage 8: Implementation Plan
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/03-implementation-plan/`  
+**Location**: `modules/isms/07-implementation-plan/`  
 **Key Artifacts**:
 - [ ] `implementation-plan.md` — Delivery wave breakdown with explicit scope per wave
 - [ ] Wave sequencing with dependency declarations
@@ -160,7 +160,7 @@ Formal gate-pass requires upstream stages to be completed first. Mapped from old
 
 ### Stage 9: Builder Checklist
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/09-builder-checklist/`  
+**Location**: `modules/isms/08-builder-checklist/`  
 **Key Artifacts**:
 - [ ] Builder Checklist completed for each builder candidate
 - [ ] Builder agent contracts verified as current
@@ -175,7 +175,7 @@ Formal gate-pass requires upstream stages to be completed first. Mapped from old
 
 ### Stage 10: IAA Pre-Brief
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/10-iaa-pre-brief/`  
+**Location**: `modules/isms/09-iaa-pre-brief/`  
 **Key Artifacts**:
 - [ ] IAA Pre-Brief invoked by Foreman with full context
 - [ ] IAA Pre-Brief artifact filed
@@ -189,7 +189,7 @@ Formal gate-pass requires upstream stages to be completed first. Mapped from old
 
 ### Stage 11: Builder Appointment
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/04-builder-appointment/`  
+**Location**: `modules/isms/10-builder-appointment/`  
 **Key Artifacts**:
 - [ ] `builder-contract.md` — Explicit builder agent contract
 - [ ] Formal appointment issued by Foreman after all Stages 1–10 gate-passed
@@ -203,7 +203,7 @@ Formal gate-pass requires upstream stages to be completed first. Mapped from old
 
 ### Stage 12: Build Execution & Evidence
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/05-build-evidence/`  
+**Location**: `modules/isms/11-build/`  
 **Key Artifacts**:
 - [ ] Implementation code in `apps/` or `packages/`
 - [ ] Test evidence (QA-to-Green per wave)
