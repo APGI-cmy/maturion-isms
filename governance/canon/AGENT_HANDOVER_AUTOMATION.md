@@ -1,8 +1,8 @@
 # AGENT_HANDOVER_AUTOMATION
 
-**Status**: CANONICAL | **Version**: 1.1.4 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.1.5 | **Authority**: CS2  
 **Date**: 2026-02-24  
-**Amended**: 2026-03-04 — v1.1.3: Added §4.3b Token Update Ceremony (PREHANDOVER proof is read-only post-commit; IAA token written to dedicated file); added per-session append-only artifact requirement (CS2 auth: APGI-cmy/maturion-foreman-governance issue — Artifact Immutability &amp; Append-Only Proof Protocols) | v1.1.4: PRE_BUILD_STAGE_MODEL_CANON integration — pre-build gate ceremony requirements added (CS2 auth: 2026-04-06)
+**Amended**: 2026-04-08 — v1.1.5: Added §Phase 4 Terminal State Rule; explicitly forbade "remaining Phase 4 ceremony" and equivalent deferral language; clarified that `report_progress` for the final handover commit MUST NOT be called until all Phase 4 artifacts are committed (PREHANDOVER proof, session memory, IAA assurance artifact where required); authority: CS2 — OPOJD hardening issue.
 
 ---
 
@@ -22,6 +22,27 @@ Traditional agent workflows:
 **Handover automation solves this** by scripting evidence generation, memory management, and compliance verification - making governance adherence automatic, not optional.
 
 ## Handover Phase Structure
+
+> ### ⚠️ PHASE 4 TERMINAL STATE RULE (CONSTITUTIONAL — added v1.1.5)
+>
+> Phase 4 is not post-job administration. **Phase 4 is part of the job.**
+>
+> A job has exactly two valid terminal states:
+>
+> | State | Condition | `report_progress` permitted? |
+> |-------|-----------|------------------------------|
+> | **COMPLETE** | PREHANDOVER proof committed + session memory committed + IAA artifact committed (if required) | ✅ YES |
+> | **BLOCKED / INCOMPLETE** | Any required Phase 4 artifact is absent | ❌ NO — do NOT call `report_progress` as a final handover commit |
+>
+> **Prohibited language** in handover commits or PR descriptions:
+> - ❌ "remaining Phase 4 ceremony"
+> - ❌ "PREHANDOVER still to be completed next session"
+> - ❌ "IAA token still pending but job otherwise complete"
+> - ❌ "work complete; evidence can follow"
+>
+> An agent in BLOCKED / INCOMPLETE state MUST complete the missing artifacts **before** calling `report_progress` on the final commit. Deferring Phase 4 to the next session is an OPOJD v2.1 violation.
+>
+> **Authority**: `governance/opojd/OPOJD_COMPLETE_JOB_HANDOVER_DOCTRINE.md` v2.1
 
 Phase 4 consists of four mandatory sections:
 
@@ -907,7 +928,7 @@ Before session ends, verify:
 
 ---
 
-**Version**: 1.1.4  
-**Last Updated**: 2026-04-06  
+**Version**: 1.1.5  
+**Last Updated**: 2026-04-08  
 **Authority**: CS2 (Johan Ras)  
 **Living Agent System**: v6.2.0
