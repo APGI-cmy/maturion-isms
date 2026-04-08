@@ -1,0 +1,15 @@
+{
+  "event_type": "governance_ripple",
+  "canonical_commit": "bfe47f6dec7786620065a33f37cdc3cd974f432a",
+  "inventory_version": "1.0.0",
+  "changed_paths": [
+    "governance/canon/COMMENT_ONLY_AGENT_SESSION_PROTOCOL.md",
+    "governance/canon/GOVERNANCE_CANON_MANIFEST.md"
+  ],
+  "sender": "APGI-cmy/maturion-foreman-governance",
+  "dispatch_id": "bfe47f6d",
+  "timestamp": "2026-04-08T08:56:27Z",
+  "issue_trigger": "Merge pull request -1328 from APGI-cmy-copilot-governance-canonise-oopjd-session-mode",
+  "ci_result": "NO_DRIFT_DETECTED",
+  "notes": "CI ripple-integration.yml ran align-governance.sh and found no drift. GOVERNANCE_CANON_MANIFEST.md is INTERNAL (layer_down_status=INTERNAL) and already aligned (local hash matches canonical). COMMENT_ONLY_AGENT_SESSION_PROTOCOL.md is PUBLIC_API but not yet listed in canonical CANON_INVENTORY.json — automated layer-down check did not trigger. Session-058 records this ripple and updates alignment inventory."
+}

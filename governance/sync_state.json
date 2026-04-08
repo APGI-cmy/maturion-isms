@@ -39,7 +39,14 @@
     "alignment_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_alignment.log",
     "session_contract": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313.md",
     "sha256_verified": 96,
-    "sha256_variance_files": []
+    "sha256_variance_files": [
+      "governance/canon/AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md",
+      "governance/canon/MERGE_GATE_PHILOSOPHY.md",
+      "governance/canon/PENDING_CANON_REFERENCES_INTERIM_GUIDANCE.md",
+      "governance/policy/POLICY-NO-ONLY-LANGUAGE.md",
+      "governance/opojd/OPOJD_COMPLETE_JOB_HANDOVER_DOCTRINE.md",
+      "governance/coordination/CROSS_AGENT_COORDINATION_PROTOCOL.md"
+    ]
   },
   "sync_schedule": {
     "model": "event-driven-plus-scheduled",
@@ -75,18 +82,18 @@
     "governance_liaison_contract": ".github/agents/governance-liaison.md"
   },
   "last_ripple_check": {
-    "timestamp": "2026-04-08T08:46:00Z",
+    "timestamp": "2026-04-08T09:11:22Z",
     "session_id": "session-058-20260408",
     "executed_by": "governance-liaison-isms-agent",
-    "canonical_commit": "939f1b0b7622771b0c290f4feaab4215ee086eac",
+    "canonical_commit": "bfe47f6dec7786620065a33f37cdc3cd974f432a",
     "canonical_inventory_version": "1.0.0",
-    "result": "LAYERED_DOWN",
     "drift_detected": false,
+    "result": "NO_DRIFT_DETECTED",
     "agent_files_changed": false,
-    "files_layered_down": 5,
-    "pr_required": true,
+    "files_layered_down": 0,
+    "pr_required": false,
     "sync_pending": false,
-    "notes": "Ripple 939f1b0b: AGENT_HANDOVER_AUTOMATION.md (v1.1.5), FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md (v1.1.0), MERGE_GATE_PHILOSOPHY.md (v2.1.0), POLICY-NO-ONLY-LANGUAGE.md (v1.2), minimizing_language_patterns.json (NEW). No agent contract files changed. Auto-close eligible."
+    "notes": "Ripple bfe47f6d contains GOVERNANCE_CANON_MANIFEST.md (INTERNAL — no distribution) and COMMENT_ONLY_AGENT_SESSION_PROTOCOL.md (PUBLIC_API but not in canonical CANON_INVENTORY.json). CI ripple-integration.yml confirmed NO_DRIFT_DETECTED. No layer-down action required."
   },
   "liaison_confirmation": {
     "timestamp": "2026-03-02T15:45:04Z",
