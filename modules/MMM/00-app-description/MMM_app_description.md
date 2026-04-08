@@ -8,7 +8,7 @@
 - **Module**: MMM — Maturity Model Management
 - **Artifact Type**: App Description (Upstream Authority)
 - **Status**: Draft (Governance Gaps Resolved — pending CS2 approval)
-- **Version**: v0.3.0
+- **Version**: v0.4.0
 - **Owner**: Johan Ras
 - **Authority**: Johan Ras / CS2
 - **Applies To**: MMM module within the Maturion ecosystem
@@ -1478,7 +1478,7 @@ MMM must implement the Maturion **Failure Promotion Rule** and **We-Only-Fail-On
 MMM must follow a strict requirements derivation chain:
 
 - App Description defines canonical product and governance intent
-- FRS derives functional requirements from the App Description
+- FRS derives functional requirements from the App Description and the UX Workflow & Wiring Spec (Stage 2)
 - TRS derives technical requirements from the FRS
 - Architecture derives implementation design from the TRS
 

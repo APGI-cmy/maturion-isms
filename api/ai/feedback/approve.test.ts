@@ -17,6 +17,7 @@ import { EventEmitter } from 'node:events';
 
 import { createHandler } from './approve.js';
 import type { FeedbackPipelineInterface, FeedbackEvent } from '../../../packages/ai-centre/src/types/feedback.js';
+import type { BearerValidator } from './approve.js';
 
 // ---------------------------------------------------------------------------
 // Test doubles
@@ -119,6 +120,64 @@ describe('Wave 9.4 — POST /api/ai/feedback/approve', () => {
     const res2 = mockResponse();
     await handler(req2, res2 as unknown as ServerResponse);
     expect(res2.statusCode).toBe(403);
+  });
+
+  it('W9.4-T-011: returns 403 when Bearer token fails Supabase verification (F-D3-002 — structural-only tokens rejected)', async () => {
+    process.env['ARC_APPROVAL_TOKEN'] = 'secret-arc-token';
+
+    const mockFactory = vi.fn();
+    // Simulate a validator that rejects the token (as Supabase would for any forged/structural token)
+    const rejectBearer: BearerValidator = vi.fn().mockResolvedValue(false);
+    const handler = createHandler(mockFactory, rejectBearer);
+
+    // Minimal structural token (a.b.c)
+    const req1 = mockRequest('POST', validApproveBody, {
+      authorization: 'Bearer a.b.c',
+    });
+    const res1 = mockResponse();
+    await handler(req1, res1 as unknown as ServerResponse);
+    expect(res1.statusCode).toBe(403);
+    expect(mockFactory).not.toHaveBeenCalled();
+
+    // Realistic structural JWT (eyJ.eyJ.sig)
+    const req2 = mockRequest('POST', validApproveBody, {
+      authorization: 'Bearer eyJ.eyJ.sig',
+    });
+    const res2 = mockResponse();
+    await handler(req2, res2 as unknown as ServerResponse);
+    expect(res2.statusCode).toBe(403);
+    expect(mockFactory).not.toHaveBeenCalled();
+  });
+
+  it('W9.4-T-012: returns 200 when Supabase-verified Bearer token is provided (ARC portal operator flow)', async () => {
+    process.env['ARC_APPROVAL_TOKEN'] = 'secret-arc-token';
+
+    const mockPipeline: FeedbackPipelineInterface = {
+      submit: vi.fn().mockResolvedValue(approvedEvent),
+      listPending: vi.fn().mockResolvedValue([]),
+      approve: vi.fn().mockResolvedValue(approvedEvent),
+      reject: vi.fn().mockResolvedValue(approvedEvent),
+    };
+    // Simulate a validator that accepts the token (real Supabase session)
+    const acceptBearer: BearerValidator = vi.fn().mockResolvedValue(true);
+    const handler = createHandler(() => mockPipeline, acceptBearer);
+
+    const req = mockRequest('POST', validApproveBody, {
+      authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyLTAxIn0.sig',
+    });
+    const res = mockResponse();
+
+    await handler(req, res as unknown as ServerResponse);
+
+    expect(res.statusCode).toBe(200);
+    const body = JSON.parse(res.body);
+    expect(body).toHaveProperty('id', 'evt-uuid-001');
+    expect(body).toHaveProperty('arcStatus', 'approved');
+    expect(mockPipeline.approve).toHaveBeenCalledWith(
+      validApproveBody.eventId,
+      validApproveBody.reviewedBy,
+      validApproveBody.notes,
+    );
   });
 
   it('W9.4-T-010: returns 200 with updated event when valid ARC token and payload provided', async () => {
