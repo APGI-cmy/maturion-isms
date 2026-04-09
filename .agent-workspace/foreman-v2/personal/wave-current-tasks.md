@@ -18,8 +18,8 @@ foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
 - [x] T2: Workflow Review Artifact (D1) — review all 5 discontinued/active workflows
 - [x] T3: Reimplementation Strategy/Plan (D2+D3)
 - [x] T4: Follow-up Implementation Issues (D4)
-- [ ] T5: PREHANDOVER proof committed
-- [ ] T6: IAA final audit and token
+- [x] T5: PREHANDOVER proof committed
+- [x] T6: IAA final audit and token
 
 ### Workflows Under Review
 - iaa-prebrief-inject.yml (DISABLED — issue #1061)
