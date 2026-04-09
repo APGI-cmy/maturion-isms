@@ -5,7 +5,7 @@
 **Agent Version**: foreman-v2-agent v6.2.0 (contract 2.10.0)
 **Triggering Issue**: maturion-isms#1319 — ECAP-001: Downstream normalization of protected contracts
 **Branch**: copilot/ecap-001-downstream-normalization
-**CS2 Authorization**: Issue maturion-isms#1319 opened by @APGI-cmy (Johan Ras); comment: "CS@ permission granted for all agent file changes by codex advsior that must be invoked for this task."
+**CS2 Authorization**: Issue maturion-isms#1319 opened by @APGI-cmy (Johan Ras); comment: "CS@ permission granted for all agent file changes by codex advsior [sic] that must be invoked for this task."
 
 ---
 
