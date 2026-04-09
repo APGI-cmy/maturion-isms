@@ -14,13 +14,13 @@ foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
 
 ### Tasks
 - [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave1305-ecap-001-20260408.md
-- [ ] AC-001: Fix broken strategy reference in EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md
-- [ ] AC-002: Normalize AGENT_HANDOVER_AUTOMATION.md section header v1.1.6 → v1.0.0
-- [ ] AC-003: Normalize AGENT_HANDOVER_AUTOMATION.md canon reference v1.1.6 → v1.0.0
-- [ ] AC-004: Add §4.3c row to Phase 4 table in AGENT_HANDOVER_AUTOMATION.md
-- [ ] AC-005: Update CANON_INVENTORY.json AGENT_HANDOVER_AUTOMATION entry (version + hash)
-- [ ] AC-006: Verify/reconcile GOVERNANCE_CANON_MANIFEST.md entries/totals
-- [ ] PREHANDOVER proof committed and verified
+- [x] AC-001: Fix broken strategy reference in EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md
+- [x] AC-002: Normalize AGENT_HANDOVER_AUTOMATION.md section header v1.1.6 → v1.0.0
+- [x] AC-003: Normalize AGENT_HANDOVER_AUTOMATION.md canon reference v1.1.6 → v1.0.0
+- [x] AC-004: Add §4.3c row to Phase 4 table in AGENT_HANDOVER_AUTOMATION.md
+- [x] AC-005: Update CANON_INVENTORY.json AGENT_HANDOVER_AUTOMATION entry (version + hash)
+- [x] AC-006: Verify/reconcile GOVERNANCE_CANON_MANIFEST.md entries/totals
+- [x] PREHANDOVER proof committed and verified
 - [ ] IAA final audit and token
 
 ### IAA Pre-Brief Summary (from iaa-prebrief-wave1305-ecap-001-20260408.md)
