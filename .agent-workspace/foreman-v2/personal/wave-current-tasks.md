@@ -1,37 +1,32 @@
-# Wave Current Tasks — Issue 1298
+# Wave Current Tasks — Issue 1300
 
-wave: mmm-stage1-cs2-approval
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave-mmm-stage1-cs2-approval-20260408.md
+wave: mmm-harvest-map
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave1300-mmm-harvest-map-20260408.md
 
-## Active Wave: mmm-stage1-cs2-approval
+## Active Wave: mmm-harvest-map
 
 ### Wave Description
-Formal CS2 approval of MMM App Description to close Stage 1 and unblock Stage 2 prebuild start.
+Produce the MAT / Maturity Roadmap / Legacy → MMM Harvest Map and Ownership Transition Matrix.
+This is a planning/governance artifact wave — no production code, no schema changes, no builder
+delegation. Foreman produces the convergence planning artifact directly as a POLC-Orchestration
+planning output.
 
-CS2 Authorization: Issue maturion-isms#1298 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
+CS2 Authorization: Issue maturion-isms#1300 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
 foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
 
 ### Tasks
-- [x] IAA Pre-Brief: COMPLETE — `.agent-admin/assurance/iaa-prebrief-wave-mmm-stage1-cs2-approval-20260408.md` (commit a3f81ba)
-- [x] APP-DESC-001: Update modules/MMM/00-app-description/MMM_app_description.md —
-      Status: Approved, Approval Date: 2026-04-08, version bump v0.4.0 → v0.5.0
-- [x] TRACKER-001: Update modules/MMM/BUILD_PROGRESS_TRACKER.md —
-      Check Stage 1 approval checkbox, update notes, record Stage 1 formally closed
-- [x] IMPL-PLAN-001: Update .agent-admin/foreman/implementation_plan_mmm_upgrade.md —
-      BLK-1 resolved, DEC-PS-BLK1 resolved
-- [x] STRATEGY-001: Update Maturion/strategy/PRE_MMM_IMPLEMENTATION_UPGRADE_STRATEGY.md —
-      BLK-1 resolved, DEC-PS-BLK1 resolved
-- [x] PREHANDOVER proof: .agent-workspace/foreman-v2/memory/PREHANDOVER-session-161-mmm-stage1-cs2-approval-20260408.md
-- [x] Session memory: .agent-workspace/foreman-v2/memory/session-161-mmm-stage1-cs2-approval-20260408.md
-- [x] IAA final audit and token — IAA-session-161-wave-mmm-stage1-cs2-approval-20260408-PASS
+- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave1300-mmm-harvest-map-20260408.md
+- [x] MMM-HM-001: Create harvest-map artifact at modules/MMM/harvest-map/harvest-map.md
+- [x] PREHANDOVER proof: .agent-workspace/foreman-v2/memory/PREHANDOVER-session-161-wave1300-mmm-harvest-map-20260408.md
+- [x] Session memory: .agent-workspace/foreman-v2/memory/session-161-mmm-harvest-map-20260408.md
+- [x] IAA final audit and token
 
-### IAA Pre-Brief Summary
-- COMPLETE — `.agent-admin/assurance/iaa-prebrief-wave-mmm-stage1-cs2-approval-20260408.md`
-- Commit: a3f81bac2bf7f68dbffc44eae32b0abb14bd4f75
-- Trigger category: PRE_BUILD_STAGE_MODEL
-- Qualifying tasks: APP-DESC-001, TRACKER-001, IMPL-PLAN-001, STRATEGY-001
-- Scope blockers: NONE
-- Anti-regression obligations: A-021 (ceremony order), A-029 (PREHANDOVER token), A-033 (git not disk)
+### IAA Pre-Brief Summary (from iaa-prebrief-wave1300-mmm-harvest-map-20260408.md)
+- Trigger Category: GOVERNANCE_DOCUMENTATION — MANDATORY (A-003 ambiguity rule)
+- Qualifying Tasks: MMM-HM-001
+- Scope Blockers: SB-001 (no builder), SB-002 (markdown only), SB-003 (all 10 columns), SB-004 (pre-brief first), SB-005 (committed artifacts), SB-006 (no Stage 10 advance)
+- Key FFA check: All 10 columns present, all 3 source systems covered, no placeholder rows
+- PREHANDOVER: must include Ripple/Cross-Agent Assessment section
 
 ### Previous Wave (Closed)
-wave: ps-f-iaa-trigger-table-new-categories (Issue #1270) — COMPLETE, merged
+wave: opojd-comment-only-copilot-20260408 (Issue #1286) — PENDING merge
