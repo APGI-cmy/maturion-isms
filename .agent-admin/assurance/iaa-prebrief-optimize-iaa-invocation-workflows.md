@@ -25,7 +25,7 @@
 
 > Note: CANON_INVENTORY uses field `file_hash` (not `file_hash_sha256`). All 199 entries contain valid non-null, non-empty, non-000000 hash values. IAA contract cross-reference note: field naming difference between contract text and actual inventory schema — this is a pre-existing structural discrepancy, not a new gap.
 
-> Note: FAIL-ONLY-ONCE contract reference cites A-037 (PHASE_B_BLOCKING_TOKEN requirement in token files). FAIL-ONLY-ONCE.md registry (v2.5.0) covers A-001 through A-035. A-037 reference in contract is from a newer contract version (2.5.0) that predates the registry. IAA applies the PHASE_B_BLOCKING_TOKEN requirement as stated in the contract regardless of registry gap.
+> Note: FAIL-ONLY-ONCE contract reference cites A-037 (PHASE_B_BLOCKING_TOKEN requirement in token files). FAIL-ONLY-ONCE.md registry (v2.5.0) covers A-001 through A-035. The A-037 reference appears in the newer contract text, which postdates the current IAA registry and is not yet reflected there. IAA applies the PHASE_B_BLOCKING_TOKEN requirement as stated in the contract regardless of the registry gap.
 
 ---
 
