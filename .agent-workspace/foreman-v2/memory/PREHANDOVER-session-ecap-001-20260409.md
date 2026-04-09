@@ -87,13 +87,13 @@ This wave delivers the same changes via the constitutionally correct Foreman →
 CI checks expected to pass:
 - `agent-contract/actor-authority` — commits by copilot-swe-agent[bot] (in CODEX_AUTHORS) ✅
 - `agent-contract/cs2-authorization` — PR description references #1315 and #1319 ✅
-- `agent-contract/iaa-assurance-token` — existing valid ASSURANCE-TOKEN files + new token pending ✅
+- `agent-contract/iaa-assurance-token` — existing valid ASSURANCE-TOKEN files present; new token still pending ⏳
 - `POLC boundary validation/builder-involvement-check` — prebrief exists, new session memory with agents_delegated_to ✅
 - `POLC boundary validation/session-memory-check` — session-*.md files present ✅
 - `preflight/iaa-prebrief-existence` — wave-current-tasks.md with resolved iaa_prebrief_path ✅
-- `preflight/iaa-token-self-certification` — new token file will have PHASE_B_BLOCKING_TOKEN ✅
+- `preflight/iaa-token-self-certification` — pending until the new token file is issued with `PHASE_B_BLOCKING_TOKEN` ⏳
 
-**merge_gate_parity: PASS**
+**merge_gate_parity: PENDING** — token-dependent merge-gate checks remain incomplete until the IAA token is issued in-repo.
 
 ---
 
