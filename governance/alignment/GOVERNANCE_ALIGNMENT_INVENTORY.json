@@ -110,7 +110,7 @@
                 "ESC-AGENTFILE-4981C34F-20260304",
                 "ESC-AGENTFILE-4E2E193C-20260304"
             ],
-            "note": "Local v3.4.0 is NEWER than canonical v3.3.0 — layer-up situation. Canonical ripple 3166bec3 (trigger: Update print statement from -Hello- to -Goodbye-) also changed this file. Per A-015: escalated directly to CS2. CI ripple-integration.yml confirmed NO_DRIFT_DETECTED (local already aligned per CI). Status: ESCALATED_TO_CS2. local_hash_sha256 updated to reflect current local file state."
+            "note": "Local v3.4.0 is NEWER than canonical v3.3.0 — layer-up situation. Canonical ripple 3166bec3 (trigger: Update print statement from -Hello- to -Goodbye-) also changed this file. Per A-015: escalated directly to CS2. CI ripple-integration.yml confirmed NO_DRIFT_DETECTED for ripple/governance-canon drift detection only; it did not assert agent contract version or hash parity with the canonical artifact. This inventory entry therefore remains ESCALATED_TO_CS2 with canonical/local version and hash mismatch recorded above. local_hash_sha256 updated to reflect current local file state."
         },
         {
             "filename": "foreman-v2-agent.md",
