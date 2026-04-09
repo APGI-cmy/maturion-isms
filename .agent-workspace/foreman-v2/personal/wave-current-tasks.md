@@ -1,34 +1,47 @@
-# Wave Current Tasks — Issue 1305
+# Wave Current Tasks — Issue 1319
 
-wave: ecap-001-layer-down-implementation
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave1305-ecap-001-20260408.md
+wave: ecap-001-downstream-normalization-20260409
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-ecap-001-20260409.md
 
-## Active Wave: ecap-001-layer-down-implementation
+**CS2 Authorization**: Issue maturion-isms#1319 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to foreman-v2-agent (Copilot). CS2 comment: "CS@ permission granted for all agent file changes by codex advsior that must be invoked for this task."
+
+**ceremony_admin_appointed**: NO
+**ceremony_admin_agent**: N/A
+**ceremony_admin_scope**: N/A
+**ceremony_admin_return_gate**: Foreman review required before IAA invocation
+
+---
+
+## Active Wave: ecap-001-downstream-normalization-20260409
 
 ### Wave Description
-Complete ECAP-001 layer-down implementation in maturion-isms after PR #1296.
-PR #1296 brought the canon files but left inconsistencies/defects that must be corrected.
+ECAP-001 downstream normalization of all four protected agent contracts (Foreman, IAA, Ceremony Admin, CodexAdvisor),
+runtime templates, specialist registry, and CI actor-authority allowlist via the FULL governed pathway.
 
-CS2 Authorization: Issue maturion-isms#1305 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
-foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
+PR #1315 (copilot/ecap-001-full-downstream-implementation) was created via ChatGPT in direct-edit mode and
+is blocked by CI gates (agent-contract/actor-authority, POLC boundary validation/builder-involvement).
+This wave replays the changes via the governed Foreman → CodexAdvisor → IAA pathway.
 
 ### Tasks
-- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave1305-ecap-001-20260408.md
-- [x] AC-001: Fix broken strategy reference in EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md
-- [x] AC-002: Normalize AGENT_HANDOVER_AUTOMATION.md section header v1.1.6 → v1.0.0
-- [x] AC-003: Normalize AGENT_HANDOVER_AUTOMATION.md canon reference v1.1.6 → v1.0.0
-- [x] AC-004: Add §4.3c row to Phase 4 table in AGENT_HANDOVER_AUTOMATION.md
-- [x] AC-005: Update CANON_INVENTORY.json AGENT_HANDOVER_AUTOMATION entry (version + hash)
-- [x] AC-006: Verify/reconcile GOVERNANCE_CANON_MANIFEST.md entries/totals
-- [x] PREHANDOVER proof committed and verified
+- [x] Phase 1 preflight complete (foreman-v2-agent v6.2.0)
+- [x] IAA Pre-Brief committed: .agent-admin/assurance/iaa-prebrief-ecap-001-20260409.md
+- [x] Foreman delegated to CodexAdvisor-agent for all .github/agents/ modifications
+- [x] T-ECAP-001: Update .github/workflows/agent-contract-audit.yml (add johan.ras@apginc.ca to CS2_EMAILS, add 198982749+Copilot@users.noreply.github.com to CODEX_EMAILS, add CS2_NAMES array)
+- [x] T-ECAP-002: Create .github/agents/execution-ceremony-admin-agent.md (new protected contract)
+- [x] T-ECAP-003: Update .github/agents/CodexAdvisor-agent.md (ECAP administrator_class_coverage + ecap_role_boundary + Step 2.3a)
+- [x] T-ECAP-004: Update .github/agents/foreman-v2-agent.md (boundary normalization — compress identity section)
+- [x] T-ECAP-005: Update .github/agents/independent-assurance-agent.md (three_role_split, ceremony-admin checks, compress HALT/prohibitions)
+- [x] T-ECAP-006: Update governance/canon/AGENT_HANDOVER_AUTOMATION.md (ceremony-admin wave-current-tasks fields documentation)
+- [x] T-ECAP-007: Add .agent-workspace knowledge files (specialist-registry, Foreman playbook, IAA checklist, CodexAdvisor rollout note, wave-tasks template)
+- [x] Session memory committed
+- [x] PREHANDOVER proof committed
 - [ ] IAA final audit and token
 
-### IAA Pre-Brief Summary (from iaa-prebrief-wave1305-ecap-001-20260408.md)
-- Trigger Category: CANON_GOVERNANCE — MANDATORY (all tasks)
-- Qualifying Tasks: AC-001 through AC-006
-- Scope Blockers: SB-001 (strategy fix approach), SB-002 (CRITICAL — hash sequencing), SB-003 (version bump), SB-004 (manifest entry), SB-005 (ripple), SB-006 (wave-current-tasks)
-- FFA Sequence: 17 steps
-- Critical note: CANON_INVENTORY hash must use POST-FIX sha256 (not pre-fix)
+### IAA Pre-Brief Summary
+- Trigger Categories: AGENT_CONTRACT (T-ECAP-002 through T-ECAP-005), CI_WORKFLOW (T-ECAP-001), CANON_GOVERNANCE (T-ECAP-006)
+- Qualifying Tasks: T-ECAP-001 through T-ECAP-007
+- Delegated builder: CodexAdvisor-agent (agent contract modifications, CS2-authorized)
+- CS2 authorization: maturion-isms#1319 (Johan Ras / @APGI-cmy)
 
 ### Previous Wave (Closed)
-wave: opojd-comment-only-copilot-20260408 (Issue #1286)
+wave: ecap-001-layer-down-implementation (Issue #1305, merged)
