@@ -44,6 +44,12 @@ This registry lists all agents Foreman v2 may delegate to, their capabilities, a
 | `governance-liaison-isms-agent` | Governance alignment, ripple processing, canon sync | Any governance canon change | GOVERNANCE_LIAISON_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md |
 | `CodexAdvisor-agent` | Agent file creation/modification (CS2-gated) | Agent contract operations | CS2_AGENT_FILE_AUTHORITY_MODEL.md |
 
+### Administrator Agents
+
+| Agent ID | Capabilities | Delegation Trigger | Authority Doc |
+|----------|--------------|--------------------|--------------|
+| `execution-ceremony-admin-agent` | Administrative Phase 4 bundle preparation: evidence collation, PREHANDOVER assembly, session-memory assembly, §4.3c commit-state verification | Phase 4 ceremony bundle preparation ONLY — after Foreman has accepted substantive readiness (QP PASS + §4.3 parity PASS) | EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md |
+
 ---
 
 ## No-Builder Fallback Protocol
@@ -51,6 +57,21 @@ This registry lists all agents Foreman v2 may delegate to, their capabilities, a
 | Protocol | Trigger | Required Action | Authority Doc |
 |----------|---------|-----------------|---------------|
 | No-builder fallback → halt + escalate to CS2 | Required builder agent is unavailable or cannot be contacted | If required builder agent is unavailable, foreman MUST halt the wave immediately, record reason in session memory, and escalate to CS2. Self-implementation is not permitted. | GOV-BREACH-AIMC-W2-001 RCA, foreman-v2 contract v2.2.0 |
+
+---
+
+## Administrator Agent Boundaries
+
+The `execution-ceremony-admin-agent` is an **administrative agent only**. Separation of duties requires:
+
+| Boundary | execution-ceremony-admin-agent | Foreman | IAA |
+|----------|-------------------------------|---------|-----|
+| Substantive readiness judgment | ❌ PROHIBITED | ✅ ONLY | ❌ N/A |
+| IAA invocation | ❌ PROHIBITED | ✅ ONLY | ❌ N/A |
+| Phase 4 bundle preparation | ✅ IF DELEGATED | ✅ DEFAULT | ❌ N/A |
+| Foreman review of returned bundle | ❌ N/A (returns bundle) | ✅ MANDATORY | ❌ N/A |
+| Merge-gate release | ❌ PROHIBITED | ✅ ONLY | ❌ N/A |
+| ASSURANCE-TOKEN / REJECTION-PACKAGE | ❌ PROHIBITED | ❌ N/A | ✅ ONLY |
 
 ---
 
@@ -65,4 +86,4 @@ Foreman MUST NOT perform any activity listed under an agent's "Capabilities" col
 
 ---
 
-**Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0 | **Version**: 1.1.0 | **Date**: 2026-02-21
+**Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0 | **Version**: 1.2.0 | **Date**: 2026-04-09

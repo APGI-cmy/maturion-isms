@@ -7,6 +7,11 @@
 **CS2 Authorization**: <!-- link to CS2 approval comment -->
 **iaa_prebrief_path**: PENDING
 
+**ceremony_admin_appointed**: NO
+**ceremony_admin_agent**: N/A
+**ceremony_admin_scope**: N/A
+**ceremony_admin_return_gate**: Foreman review required before IAA invocation
+
 ---
 
 ## Outstanding Tasks (update as each is completed)
@@ -36,6 +41,9 @@
 - [ ] Session memory written
 - [ ] PREHANDOVER proof committed
 - [ ] CS2 notified for merge approval
+- [ ] If ceremony-admin appointed, returned bundle reviewed by Foreman
+- [ ] If ceremony-admin appointed, PREHANDOVER proof and session memory were prepared within approved scope
+- [ ] IAA invoked by Foreman, not ceremony-admin
 
 ---
 
