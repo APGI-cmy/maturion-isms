@@ -23,6 +23,7 @@ IAA ceremony files are exempt from scope declaration requirements:
 
 IAA workspace files (independent agent, not under Foreman scope):
 - `.agent-workspace/independent-assurance-agent/memory/session-optimize-iaa-invocation-workflows-20260409.md` - IAA session memory (IAA-authored)
+- `.agent-workspace/independent-assurance-agent/memory/session-optimize-iaa-invocation-workflows-20260409-R2.md` - IAA session memory R2 / STOP-AND-FIX record (IAA-authored)
 - `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station (IAA-authored)
 
 ## Scope Notes

@@ -440,20 +440,22 @@ jobs:
       - name: Detect PREHANDOVER changes and check for PENDING token
         id: detect
         env:
-          BEFORE_SHA: ${{ github.event.before }}
-          AFTER_SHA: ${{ github.event.after }}
+          BEFORE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          AFTER_SHA: ${{ github.event.pull_request.head.sha || github.event.after }}
           EVENT_ACTION: ${{ github.event.action }}
         run: |
           ACTION="$EVENT_ACTION"
           PREHANDOVER_FILE=""
 
           if [[ "$ACTION" == "synchronize" ]]; then
-            # For synchronize: find PREHANDOVER files changed in this push via before/after SHA diff.
+            # For synchronize: diff PR base→head to find all PREHANDOVER changes.
+            # Uses pull_request.base.sha and pull_request.head.sha (PR-context SHAs), with
+            # fallback to github.event.before/after for any push events that may reach this job.
             if [[ "$BEFORE_SHA" =~ ^[0-9a-f]{40}$ ]] && [[ "$AFTER_SHA" =~ ^[0-9a-f]{40}$ ]]; then
-              echo "Using diff range $BEFORE_SHA...$AFTER_SHA from pull_request.synchronize event"
+              echo "Using diff range $BEFORE_SHA...$AFTER_SHA"
               CHANGED=$(git diff --name-only "$BEFORE_SHA...$AFTER_SHA" 2>/dev/null || echo "")
             else
-              echo "Event before/after SHAs not available or invalid; falling back to HEAD-only diff"
+              echo "SHAs not available or invalid; falling back to HEAD-only diff"
               CHANGED=$(git diff-tree --no-commit-id --name-only -r HEAD 2>/dev/null || echo "")
             fi
 
