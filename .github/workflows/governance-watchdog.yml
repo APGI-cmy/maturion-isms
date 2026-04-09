@@ -1,4 +1,4 @@
-# Authority: IAA_PRE_BRIEF_PROTOCOL.md v1.1.0, INDEPENDENT_ASSURANCE_AGENT_CANON.md, foreman-v2-agent contract Phase 0
+# Authority: INDEPENDENT_ASSURANCE_AGENT_CANON.md, AGENT_HANDOVER_AUTOMATION.md, foreman-v2-agent contract Phase 0
 # Purpose: Automated governance gap detection — catch missing pre-brief, missing IAA token at handover, and work without PR
 # Implements: Living Agent System v6.x.0 proactive assurance layer
 
@@ -108,7 +108,7 @@ jobs:
               '',
               `@copilot **Foreman attention required.** Commits were pushed to branch \`${branch}\` but no open PR exists.`,
               '',
-              'Per the foreman-v2-agent contract and IAA_PRE_BRIEF_PROTOCOL.md §Trigger:',
+              'Per the foreman-v2-agent contract (Phase 1 Step 1.8):',
               '- A PR must exist before wave work begins',
               '- The IAA Pre-Brief is triggered automatically on the first push **to an open PR branch**',
               '- Without an open PR, the Pre-Brief cannot fire and IAA cannot audit your wave',
@@ -118,7 +118,7 @@ jobs:
               '2. The pre-brief injection will fire automatically when the PR is opened / the branch is pushed again',
               '3. Do not proceed with further implementation commits until the pre-brief is confirmed',
               '',
-              '*Governance Watchdog — automated gap detection | Authority: IAA_PRE_BRIEF_PROTOCOL.md, foreman-v2-agent contract Phase 0*',
+              '*Governance Watchdog — automated gap detection | Authority: foreman-v2-agent contract Phase 0*',
             ].join('\n');
 
             await github.rest.repos.createCommitComment({
@@ -255,7 +255,7 @@ jobs:
               '',
               'The IAA cannot proceed with second-tier verification (FFA checks, PREHANDOVER proof, assurance token) because **no pre-brief artifact exists** for this wave.',
               '',
-              '**Agent instruction**: Stop all handover preparation. Return to Step 1.8. Invoke the IAA Pre-Brief now and commit the artifact to `.agent-admin/assurance/iaa-prebrief-wave[N].md` before continuing.',
+              '**Agent instruction**: Stop all handover preparation. Return to Step 1.8. Invoke the IAA Pre-Brief now and commit the artifact to `.agent-admin/assurance/iaa-prebrief-<slug>.md` before continuing.',
               '',
               '**CS2 escalation**: The pre-brief reminder workflow (`iaa-prebrief-inject.yml`) did not prevent this gap.',
               '',
@@ -268,7 +268,7 @@ jobs:
               '',
               `@APGI-cmy — IAA second-tier gate blocked on PR for branch \`${branch}\`. Pre-brief artifact absent.`,
               '',
-              '*Governance Watchdog — Gap 2A | Authority: IAA_PRE_BRIEF_PROTOCOL.md v1.1.0, foreman-v2-agent contract Step 1.8*',
+              '*Governance Watchdog — Gap 2A | Authority: foreman-v2-agent contract Step 1.8*',
             ].join('\n');
 
             await github.rest.issues.createComment({
@@ -364,14 +364,14 @@ jobs:
           script: |
             const { execSync } = require('child_process');
 
-            // Search for any iaa-prebrief-wave*.md in .agent-admin/assurance/
+            // Search for any iaa-prebrief-*.md in .agent-admin/assurance/
             const fs = require('fs');
             let prebriefExists = false;
             try {
               if (fs.existsSync('.agent-admin/assurance')) {
                 // Use -print -quit instead of | head -1 to avoid SIGPIPE on some shells
                 const result = execSync(
-                  'find .agent-admin/assurance -name "iaa-prebrief-wave*.md" -print -quit',
+                  'find .agent-admin/assurance -name "iaa-prebrief-*.md" -print -quit',
                   { encoding: 'utf8' }
                 ).trim();
                 prebriefExists = result.length > 0;
@@ -393,25 +393,25 @@ jobs:
               '',
               `@copilot You are the **Independent Assurance Agent (IAA)**. This PR is **open for review** (either newly opened as ready or marked ready from draft) but **no IAA pre-brief artifact** was found on branch \`${branch}\`.`,
               '',
-              'Per Phase 0 of the foreman-v2-agent contract and IAA_PRE_BRIEF_PROTOCOL.md:',
+              'Per Phase 0 (Step 1.8) of the foreman-v2-agent contract:',
               '- A pre-wave pre-brief is mandatory **before** wave work begins',
               '- The pre-brief must exist before this PR can proceed to the merge gate',
               '- Marking a PR ready without a pre-brief is a Phase 0 protocol violation',
               '',
-              `**Detected:** PR is ready for review (opened as ready or transitioned from draft) with no \`.agent-admin/assurance/iaa-prebrief-wave*.md\` found on \`${branch}\``,
-              '**Required:** IAA pre-brief artifact at `.agent-admin/assurance/iaa-prebrief-wave<N>.md`',
+              `**Detected:** PR is ready for review (opened as ready or transitioned from draft) with no \`.agent-admin/assurance/iaa-prebrief-*.md\` found on \`${branch}\``,
+              '**Required:** IAA pre-brief artifact at `.agent-admin/assurance/iaa-prebrief-<slug>.md`',
               '',
-              '### Your obligations (from `IAA_PRE_BRIEF_PROTOCOL.md` v1.1.0):',
+              '### Your obligations (from foreman-v2-agent contract Phase 1 Step 1.8):',
               '1. Read `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` in full',
               '2. Identify all qualifying tasks per `INDEPENDENT_ASSURANCE_AGENT_CANON.md §Trigger Table`',
               '3. For each qualifying task, declare which proof phases (1–4) are required, which evidence artifacts will be checked, and which canon overlays apply',
-              '4. Generate the Pre-Brief artifact at `.agent-admin/assurance/iaa-prebrief-wave<N>.md`',
+              '4. Generate the Pre-Brief artifact at `.agent-admin/assurance/iaa-prebrief-<slug>.md`',
               '5. Commit the Pre-Brief artifact to this branch as a **new file only**',
               '6. Confirm completion by replying to this comment',
               '',
               '**If no qualifying tasks are found**: Reply confirming `PHASE_A_ADVISORY` status.',
               '',
-              '*Governance Watchdog — automated gap detection | Authority: IAA_PRE_BRIEF_PROTOCOL.md v1.1.0, INDEPENDENT_ASSURANCE_AGENT_CANON.md §Proactive Assurance v1.1.0*',
+              '*Governance Watchdog — automated gap detection | Authority: INDEPENDENT_ASSURANCE_AGENT_CANON.md §Proactive Assurance, foreman-v2-agent contract Step 1.8*',
             ].join('\n');
 
             await github.rest.issues.createComment({
@@ -428,7 +428,7 @@ jobs:
   gap3-prehandover-pending-token:
     name: "watchdog/gap3-prehandover-pending-token"
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request_target' && github.event.action == 'synchronize'
+    if: github.event_name == 'pull_request_target' && (github.event.action == 'synchronize' || github.event.action == 'opened' || github.event.action == 'ready_for_review')
     steps:
       - name: Checkout PR head branch
         uses: actions/checkout@v5
@@ -440,28 +440,41 @@ jobs:
       - name: Detect PREHANDOVER changes and check for PENDING token
         id: detect
         env:
-          BEFORE_SHA: ${{ github.event.before }}
-          AFTER_SHA: ${{ github.event.after }}
+          BEFORE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          AFTER_SHA: ${{ github.event.pull_request.head.sha || github.event.after }}
+          EVENT_ACTION: ${{ github.event.action }}
         run: |
-          # Determine diff range for this PR synchronize update.
-          # github.event.before/after are available for synchronize events; validate they are
-          # 40-char hex SHAs before using them so we fall back gracefully if ever absent.
-          if [[ "$BEFORE_SHA" =~ ^[0-9a-f]{40}$ ]] && [[ "$AFTER_SHA" =~ ^[0-9a-f]{40}$ ]]; then
-            echo "Using diff range $BEFORE_SHA...$AFTER_SHA from pull_request.synchronize event"
-            CHANGED=$(git diff --name-only "$BEFORE_SHA...$AFTER_SHA" 2>/dev/null || echo "")
-          else
-            echo "Event before/after SHAs not available or invalid; falling back to HEAD-only diff"
-            CHANGED=$(git diff-tree --no-commit-id --name-only -r HEAD 2>/dev/null || echo "")
-          fi
-
+          ACTION="$EVENT_ACTION"
           PREHANDOVER_FILE=""
-          for f in $CHANGED; do
-            basename_f=$(basename "$f")
-            if [[ "$basename_f" == PREHANDOVER*.md ]]; then
+
+          if [[ "$ACTION" == "synchronize" ]]; then
+            # For synchronize: diff PR base→head to find all PREHANDOVER changes.
+            # Uses pull_request.base.sha and pull_request.head.sha (PR-context SHAs), with
+            # fallback to github.event.before/after for any push events that may reach this job.
+            if [[ "$BEFORE_SHA" =~ ^[0-9a-f]{40}$ ]] && [[ "$AFTER_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+              echo "Using diff range $BEFORE_SHA...$AFTER_SHA"
+              CHANGED=$(git diff --name-only "$BEFORE_SHA...$AFTER_SHA" 2>/dev/null || echo "")
+            else
+              echo "SHAs not available or invalid; falling back to HEAD-only diff"
+              CHANGED=$(git diff-tree --no-commit-id --name-only -r HEAD 2>/dev/null || echo "")
+            fi
+
+            for f in $CHANGED; do
+              basename_f=$(basename "$f")
+              if [[ "$basename_f" == PREHANDOVER*.md ]]; then
+                PREHANDOVER_FILE="$f"
+                break
+              fi
+            done
+          else
+            # For opened/ready_for_review: scan all PREHANDOVER files in the repo.
+            # A PR that is opened or marked ready while already containing a PREHANDOVER
+            # with PENDING token + handover language is a gap regardless of push timing.
+            while IFS= read -r -d '' f; do
               PREHANDOVER_FILE="$f"
               break
-            fi
-          done
+            done < <(find .agent-workspace -name "PREHANDOVER*.md" -print0 2>/dev/null)
+          fi
 
           if [ -z "$PREHANDOVER_FILE" ]; then
             echo "prehandover_changed=false" >> "$GITHUB_OUTPUT"
@@ -570,23 +583,23 @@ jobs:
             const body = [
               '## ⚠️ GOVERNANCE WATCHDOG — IAA Token Missing at Handover',
               '',
-              '@copilot **Foreman attention required.** A `PREHANDOVER` proof was pushed to this PR with `iaa_audit_token: PENDING`, but handover or wave-closure language was detected in this commit.',
+              '@copilot **Foreman attention required.** A `PREHANDOVER` proof was detected on this PR with `iaa_audit_token: PENDING`, but handover or wave-closure language was detected.',
               '',
-              'Per FAIL-ONLY-ONCE A-014 (foreman-v2-agent registry) and IAA_PRE_BRIEF_PROTOCOL.md §Final Gate:',
-              '- The IAA **must** be invoked **before** handover',
-              '- The `ASSURANCE-TOKEN` must be recorded in the PREHANDOVER proof',
+              'Per FAIL-ONLY-ONCE A-014 (foreman-v2-agent registry) and AGENT_HANDOVER_AUTOMATION.md §4.3b:',
+              '- The IAA **must** be invoked **before** handover (Phase 4 Step 4.3b)',
+              '- The `ASSURANCE-TOKEN` must be committed to `.agent-admin/assurance/iaa-token-*.md` with a non-empty `PHASE_B_BLOCKING_TOKEN:`',
               '- Handing over with `iaa_audit_token: PENDING` is an automatic merge gate failure (A-021)',
               '',
-              '**Detected:** `PREHANDOVER` proof with `iaa_audit_token: PENDING` + handover language in this push',
-              '**Required:** IAA invocation → `ASSURANCE-TOKEN` → recorded verbatim in PREHANDOVER proof',
+              '**Detected:** `PREHANDOVER` proof with `iaa_audit_token: PENDING` + handover language',
+              '**Required:** Phase 4 Step 4.3a (pre-IAA commit gate) → Phase 4 Step 4.3b (IAA invocation) → Phase 4 Step 4.3c (token ceremony)',
               '',
               '### Action required:',
-              '1. Invoke IAA: use `/iaa-prebrief` or type `@copilot As IAA (independent-assurance-agent), please audit this PR...`',
-              '2. Paste the verbatim IAA response into the PREHANDOVER proof',
-              '3. Update `iaa_audit_token:` to the issued token (format: `IAA-session-NNN-YYYYMMDD-PASS`)',
-              '4. Commit and push the updated PREHANDOVER proof',
+              '1. Ensure all PREHANDOVER artifacts are committed (Phase 4 Step 4.3a)',
+              '2. Invoke IAA per Phase 4 Step 4.3b: `task(agent_type: "independent-assurance-agent")` — provide PREHANDOVER proof + session memory + evidence bundle',
+              '3. If IAA issues a `REJECTION-PACKAGE` → fix all cited findings, regenerate PREHANDOVER proof (new commit), re-invoke IAA directly (Foreman owns the stop-and-fix loop)',
+              '4. Commit the IAA token file to `.agent-admin/assurance/iaa-token-*.md` with `PHASE_B_BLOCKING_TOKEN:` non-empty (Phase 4 Step 4.3c)',
               '',
-              '*Governance Watchdog — automated gap detection | Authority: foreman-v2-agent FAIL-ONLY-ONCE A-014, A-021, AGENT_HANDOVER_AUTOMATION.md §4.3*',
+              '*Governance Watchdog — automated gap detection | Authority: foreman-v2-agent FAIL-ONLY-ONCE A-014, A-021, AGENT_HANDOVER_AUTOMATION.md §4.3b*',
             ].join('\n');
 
             await github.rest.issues.createComment({

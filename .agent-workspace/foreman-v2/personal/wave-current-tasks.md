@@ -1,34 +1,32 @@
-# Wave Current Tasks — Issue 1305
+# Wave Current Tasks — Issue 1311
 
-wave: ecap-001-layer-down-implementation
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave1305-ecap-001-20260408.md
+wave: optimize-iaa-invocation-workflows
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-optimize-iaa-invocation-workflows.md
 
-## Active Wave: ecap-001-layer-down-implementation
+## Active Wave: optimize-iaa-invocation-workflows
 
 ### Wave Description
-Complete ECAP-001 layer-down implementation in maturion-isms after PR #1296.
-PR #1296 brought the canon files but left inconsistencies/defects that must be corrected.
+Foreman orchestrates selective reimplementation and hardening of the discontinued inject/watchdog
+workflow set in maturion-isms. Planning-only wave: produces review artifact (D1), reimplementation
+strategy/plan (D2+D3), and follow-up implementation issues (D4). No builder delegation in this wave.
 
-CS2 Authorization: Issue maturion-isms#1305 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
+CS2 Authorization: Issue maturion-isms#1311 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
 foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
 
 ### Tasks
-- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave1305-ecap-001-20260408.md
-- [x] AC-001: Fix broken strategy reference in EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md
-- [x] AC-002: Normalize AGENT_HANDOVER_AUTOMATION.md section header v1.1.6 → v1.0.0
-- [x] AC-003: Normalize AGENT_HANDOVER_AUTOMATION.md canon reference v1.1.6 → v1.0.0
-- [x] AC-004: Add §4.3c row to Phase 4 table in AGENT_HANDOVER_AUTOMATION.md
-- [x] AC-005: Update CANON_INVENTORY.json AGENT_HANDOVER_AUTOMATION entry (version + hash)
-- [x] AC-006: Verify/reconcile GOVERNANCE_CANON_MANIFEST.md entries/totals
-- [x] PREHANDOVER proof committed and verified
-- [ ] IAA final audit and token
+- [x] T1: IAA Pre-Brief — .agent-admin/assurance/iaa-prebrief-optimize-iaa-invocation-workflows.md
+- [x] T2: Workflow Review Artifact (D1) — review all 5 discontinued/active workflows
+- [x] T3: Reimplementation Strategy/Plan (D2+D3)
+- [x] T4: Follow-up Implementation Issues (D4)
+- [x] T5: PREHANDOVER proof committed
+- [x] T6: IAA final audit and token
 
-### IAA Pre-Brief Summary (from iaa-prebrief-wave1305-ecap-001-20260408.md)
-- Trigger Category: CANON_GOVERNANCE — MANDATORY (all tasks)
-- Qualifying Tasks: AC-001 through AC-006
-- Scope Blockers: SB-001 (strategy fix approach), SB-002 (CRITICAL — hash sequencing), SB-003 (version bump), SB-004 (manifest entry), SB-005 (ripple), SB-006 (wave-current-tasks)
-- FFA Sequence: 17 steps
-- Critical note: CANON_INVENTORY hash must use POST-FIX sha256 (not pre-fix)
+### Workflows Under Review
+- iaa-prebrief-inject.yml (DISABLED — issue #1061)
+- iaa-prebrief-gate.yml (DISABLED — issue #1061)
+- governance-watchdog.yml (ACTIVE — Gaps 1, 2A, 2, 3)
+- foreman-reanchor.yml (DISABLED — issue #1061, stale IAA wording)
+- injection-audit-report.yml (DISABLED — manual-only)
 
 ### Previous Wave (Closed)
-wave: opojd-comment-only-copilot-20260408 (Issue #1286)
+wave: ecap-001-layer-down-implementation (Issue #1305)
