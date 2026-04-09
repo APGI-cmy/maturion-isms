@@ -8,14 +8,14 @@
 
 ## Files Changed in This Wave
 
-- `.agent-admin/assurance/PREHANDOVER-session-161-ecap-001-20260408.md` - PREHANDOVER proof for this wave
-- `.agent-admin/assurance/iaa-prebrief-wave1305-ecap-001-20260408.md` - IAA Pre-Brief artifact committed by IAA
-- `.agent-admin/assurance/iaa-rejection-session-161-wave1305-ecap-001-20260408.md` - IAA REJECTION-PACKAGE (2 ceremony findings; resolved)
-- `.agent-workspace/foreman-v2/memory/session-161-ecap-001-20260408.md` - Foreman session memory
-- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Parking-station suggestions log updated (S-040)
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave current tasks updated for this wave
-- `.agent-workspace/independent-assurance-agent/memory/session-161-ecap-001-20260408.md` - IAA session memory for this wave
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking-station log updated
+- `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` - AC-001: Fixed broken strategy reference path (maturion/strategy/ → upstream-only note)
+- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` - AC-002/003/004: Normalized ECAP version references v1.1.6→v1.0.0; added §4.3c row to Phase 4 table
+- `governance/CANON_INVENTORY.json` - AC-005: Updated AHM entry (version 1.1.6→1.2.0, hash corrected); updated ECAP hash
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated for this wave (governance artifact)
+- `.agent-admin/assurance/iaa-prebrief-wave1305-ecap-001-20260408.md` - IAA Pre-Brief artifact (committed by IAA session)
+- `.agent-admin/assurance/PREHANDOVER-session-161-ecap-001-20260408.md` - PREHANDOVER proof
+- `.agent-workspace/foreman-v2/memory/session-161-ecap-001-20260408.md` - Session memory
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - S-040 improvement suggestion and cross-repo-note appended (session 161 parking station ceremony)
 - `SCOPE_DECLARATION.md` - This file
 - `governance/CANON_INVENTORY.json` - AC-005: Updated AHM entry (version 1.1.6→1.2.0, hashes corrected); updated ECAP hash
 - `governance/canon/AGENT_HANDOVER_AUTOMATION.md` - AC-002/003/004: Normalized ECAP version references v1.1.6→v1.0.0; added §4.3c row to Phase 4 table
