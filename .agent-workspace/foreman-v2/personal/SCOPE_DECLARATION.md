@@ -1,4 +1,4 @@
-# SCOPE DECLARATION — Wave CL-10 (Re-execution) | Session cl10-d2-20260409
+# SCOPE DECLARATION — Wave CL-10 (Re-execution) | Session cl10-reexec-20260409
 
 **Agent**: foreman-v2-agent (orchestration) + integration-builder (CL-10-D2)
 **Wave**: CL-10 (Re-execution)
@@ -6,6 +6,7 @@
 **Date**: 2026-04-09
 **Issue**: maturion-isms#1313
 **Authority**: A-026 / A-031
+**Revision**: R2 — updated to include Foreman ceremony artifacts (IAA REJECTION-PACKAGE A-026 fix)
 
 > **A-031 NOTE**: IAA ceremony artifacts (Pre-Brief, PREHANDOVER, session memory, token file)
 > from this wave are carved out of scope tracking per A-031. See Exempt section below.
@@ -18,6 +19,11 @@
 | `.agent-workspace/integration-builder/memory/PREHANDOVER-session-cl10-d2-20260409.md` | Integration-builder PREHANDOVER proof |
 | `.agent-workspace/integration-builder/memory/session-cl10-d2-20260409.md` | Integration-builder session memory |
 | `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md` | This file — updated for CL-10 re-execution scope |
+| `.agent-workspace/foreman-v2/personal/cl10-d2-builder-checklist.md` | Foreman Stage-9 Builder Checklist for CL-10-D2 |
+| `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Foreman wave-current-tasks.md updated for CL-10 re-execution |
+| `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl10-reexec-20260409.md` | Foreman PREHANDOVER proof (this session) |
+| `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl10-reexec-R2-20260409.md` | Foreman PREHANDOVER proof R2 (post-REJECTION-PACKAGE fix) |
+| `.agent-workspace/foreman-v2/memory/session-cl10-reexec-20260409.md` | Foreman session memory |
 
 ## Files Modified (This Wave)
 
@@ -67,12 +73,19 @@ They may appear in `git diff origin/main...HEAD --name-only` but are NOT builder
 Expected output at final commit:
 ```
 .agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-ci-enforcement-again.md  ← A-031 exempt
+.agent-admin/assurance/iaa-token-session-cl10-reexec-20260409.md                      ← A-031 exempt (IAA issues this)
+.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl10-reexec-20260409.md        ← Foreman PREHANDOVER
+.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl10-reexec-R2-20260409.md     ← Foreman PREHANDOVER R2
+.agent-workspace/foreman-v2/memory/session-cl10-reexec-20260409.md                    ← Foreman session memory
 .agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md                              ← this file
-.agent-workspace/integration-builder/memory/PREHANDOVER-session-cl10-d2-20260409.md   ← evidence
-.agent-workspace/integration-builder/memory/session-cl10-d2-20260409.md               ← evidence
+.agent-workspace/foreman-v2/personal/cl10-d2-builder-checklist.md                     ← Foreman Builder Checklist
+.agent-workspace/foreman-v2/personal/wave-current-tasks.md                             ← Foreman wave tasks
+.agent-workspace/integration-builder/memory/PREHANDOVER-session-cl10-d2-20260409.md   ← integration-builder evidence
+.agent-workspace/integration-builder/memory/session-cl10-d2-20260409.md               ← integration-builder evidence
 .github/workflows/sub-module-routing-check.yml                                         ← D2 deliverable
 modules/mat/tests/ci-governance-check/routing-governance-ci.test.ts                   ← RED gate tests
 ```
 
-SCOPE_DECLARATION parity: ✅ All non-exempt files are declared above.
+SCOPE_DECLARATION parity: ✅ All non-exempt files declared above.
 A-031 carve-out: ✅ IAA ceremony artifacts explicitly listed in Exempt section.
+Foreman ceremony files: ✅ All 4 files from SHA 7992f3f now declared (R2 fix — A-026 REJECTION-PACKAGE resolution).
