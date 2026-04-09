@@ -3,7 +3,7 @@
 wave: ecap-001-downstream-normalization-20260409
 iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-ecap-001-20260409.md
 
-**CS2 Authorization**: Issue maturion-isms#1319 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to foreman-v2-agent (Copilot). CS2 comment: "CS@ permission granted for all agent file changes by codex advsior that must be invoked for this task."
+**CS2 Authorization**: Issue maturion-isms#1319 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to foreman-v2-agent (Copilot). CS2 comment: "CS@ permission granted for all agent file changes by codex advsior [sic] that must be invoked for this task."
 
 **ceremony_admin_appointed**: NO
 **ceremony_admin_agent**: N/A

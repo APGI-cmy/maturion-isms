@@ -1289,7 +1289,7 @@ These fields are the primary audit trail for the three-role split. Missing or in
 
 ### Foreman Review Before IAA Invocation (Mandatory)
 
-Before Foreman invokes IAA (Step 4.3b), Foreman MUST:
+Before Foreman invokes IAA (Step 4.3c → IAA), Foreman MUST:
 1. Receive the returned ceremony bundle from `execution-ceremony-admin-agent`.
 2. Review bundle completeness: all artifacts listed, PREHANDOVER proof committed, session memory committed, §4.3c gate results recorded.
 3. Confirm no ceremony-admin artifacts claim to invoke IAA, issue a verdict, or approve substantive readiness.
