@@ -1100,7 +1100,7 @@ Before session ends, verify:
 **Approval**: CS2 (Johan Ras)  
 **Effective Date**: 2026-02-17
 
-## Execution Ceremony Administration Integration (v1.0.0)
+## Execution Ceremony Administration Integration (v1.1.6)
 
 When the Foreman appoints an `execution-ceremony-admin-agent` for ceremony bundle preparation, the Phase 4 handover sequence is structured as follows:
 
@@ -1111,7 +1111,6 @@ When the Foreman appoints an `execution-ceremony-admin-agent` for ceremony bundl
 | 4.1 Evidence artifact generation | Producing agent (Foreman / builder) | **execution-ceremony-admin-agent** |
 | 4.2 Session memory & closure | Producing agent (Foreman) | **execution-ceremony-admin-agent** |
 | 4.3 Pre-handover gate parity check | Producing agent | **execution-ceremony-admin-agent** (prepares); Foreman (reviews) |
-| 4.3c Pre-IAA Commit-State Gate | Producing agent | **execution-ceremony-admin-agent** (verifies); Foreman (confirms) |
 | 4.3b Token update ceremony | IAA only | IAA only (unchanged) |
 | 4.4 Compliance check | Producing agent | Foreman (post-bundle review) |
 | IAA invocation | Foreman | **Foreman** (unchanged — Foreman always invokes IAA) |
@@ -1165,7 +1164,7 @@ When the `execution-ceremony-admin-agent` returns the ceremony bundle to the For
 - `governance/canon/AGENT_INDUCTION_PROTOCOL.md` - Phase 2 template
 - `governance/canon/AGENT_PRIORITY_SYSTEM.md` - Priority codes
 - `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md` - Evidence requirements
-- `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` - Execution ceremony admin role and handover sequence (v1.0.0)
+- `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` - Execution ceremony admin role and handover sequence (v1.1.6)
 
 ---
 
