@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-04-08",
+  "last_updated": "2026-04-09",
   "total_canons": 199,
-  "generation_timestamp": "2026-04-08T10:55:47Z",
+  "generation_timestamp": "2026-04-09T07:00:00Z",
   "canon_entry_schema": {
     "description": "Schema for canon entries in CANON_INVENTORY.json",
     "required_fields": [
@@ -258,20 +258,22 @@
     },
     {
       "filename": "AGENT_HANDOVER_AUTOMATION.md",
-      "version": "1.1.6",
-      "file_hash": "3b7f72b2839912fa03c46378d8c41c15927f60e4cda7286ad8e3a3b5c1e2b971",
+      "version": "1.3.0",
+      "canonical_version": "1.3.0",
+      "file_hash": "52c6028add0244a47379d736b80ceafdca93e09f3f8e6688462f3a99cbca76f8",
       "effective_date": "2026-04-06",
+      "amended_date": "2026-04-09",
       "description": "Canonical governance document: AGENT_HANDOVER_AUTOMATION",
       "type": "canon",
       "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "3b7f72b2839912fa03c46378d8c41c15927f60e4cda7286ad8e3a3b5c1e2b971",
+      "file_hash_sha256": "52c6028add0244a47379d736b80ceafdca93e09f3f8e6688462f3a99cbca76f8",
       "ripple_dispatched": "2026-02-24",
       "ripple_log": ".agent-admin/governance/ripple-logs/ripple-agent-handover-parity-20260224.md",
       "ripple_in_repo_status": "COMPLETE",
-      "ripple_consumer_status": "PENDING \u2014 layer-down issues to be created in consumer repos",
-      "last_updated": "2026-04-08",
-      "change_note": "v1.1.6: Added Execution Ceremony Administration Integration section; ECAP-001 canon establishment"
+      "ripple_consumer_status": "PENDING — layer-down issues to be created in consumer repos",
+      "last_updated": "2026-04-09",
+      "change_note": "v1.3.0: ECAP-QC closure — §4.3d scope-declaration parity gate; Administrator evidence checklist drift evidence + metadata requirements; validate-canon-hashes.sh version/canonical_version check"
     },
     {
       "filename": "AGENT_INDUCTION_PROTOCOL.md",
