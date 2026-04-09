@@ -1143,16 +1143,16 @@
     },
     {
       "filename": "FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
-      "version": "1.2.0",
-      "file_hash": "c988e6e56012f890e19b4927eda0bdc249050c23b96864829d36437fcf535865",
+      "version": "1.3.0",
+      "file_hash": "b268ad068773a66430a3492115864e51d1829f8744aa6de70eeb2fe242d240c9",
       "effective_date": "2025-12-24",
       "description": "This document formally defines the **Foreman (FM)** as a **managerial authority** within the Maturion ecosystem, establishing its supervisory responsibilities over builders and the execution process.",
       "type": "canon",
       "path": "governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "c988e6e56012f890e19b4927eda0bdc249050c23b96864829d36437fcf535865",
-      "last_updated": "2026-04-08",
-      "change_note": "v1.2.0: Added \u00a79.6 execution-ceremony-admin-agent relationship + \u00a714.4 updated handover sequence; ECAP-001 canon establishment"
+      "file_hash_sha256": "b268ad068773a66430a3492115864e51d1829f8744aa6de70eeb2fe242d240c9",
+      "last_updated": "2026-04-09",
+      "change_note": "v1.3.0 fix: step 7 \u2014 append-only artifacts / fresh PREHANDOVER proof per round; no editing of committed proofs"
     },
     {
       "filename": "FOREMAN_MEMORY_PROTOCOL.md",
@@ -1282,15 +1282,15 @@
     {
       "filename": "GOVERNANCE_CANON_MANIFEST.md",
       "version": "1.0.0",
-      "file_hash": "53c8f4d26178cdc49dd9dc9cb9ec17e26ed0c9171b2d23360b96f27c5fdb1814",
+      "file_hash": "b740817dd2d0bb0e3cb75612fc2786dbbbaa1bc070837a3a6cc01933057c1f10",
       "effective_date": "2026-01-05",
       "description": "This manifest is the **single authoritative index** of all canonical governance standards in the maturion-foreman-governance repository.",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "53c8f4d26178cdc49dd9dc9cb9ec17e26ed0c9171b2d23360b96f27c5fdb1814",
+      "file_hash_sha256": "b740817dd2d0bb0e3cb75612fc2786dbbbaa1bc070837a3a6cc01933057c1f10",
       "last_updated": "2026-04-08",
-      "change_note": "v1.0.0: Entry added for EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md; totals updated (Canon Files 92\u219293, Combined Total 107\u2192108, PUBLIC_API 78\u219279); FOREMAN_AUTHORITY and IAA_PRE_BRIEF versions updated"
+      "change_note": "v1.0.0: FOREMAN_AUTHORITY v1.2.0\u2192v1.3.0; IAA_PRE_BRIEF v1.2.1\u2192v1.2.2; Foreman IAA re-invocation ownership canonisation issue"
     },
     {
       "filename": "GOVERNANCE_COMPLETENESS_MODEL.md",
@@ -1459,26 +1459,26 @@
     },
     {
       "filename": "IAA_PRE_BRIEF_PROTOCOL.md",
-      "version": "1.2.1",
-      "file_hash": "15d220e5bf6167cf8fec640af62db8ec1e67753f00f079028efa48e1ff531a59",
+      "version": "1.2.2",
+      "file_hash": "3e04013ecd21f7fbf3353c893427e74d4187bec174c60614a2c8a4edfa705cef",
       "effective_date": "2026-04-05",
       "description": "IAA Pre-Brief Protocol \u2014 proactive assurance mechanism that shifts quality assurance left by declaring acceptance criteria at wave start. Defines Wave Checklist Invocation Gate (applies to Foreman-governed wave execution; does not automatically apply to direct-CS2 standalone governance-repo-administrator-v2 canon actions).",
       "type": "canon",
       "path": "governance/canon/IAA_PRE_BRIEF_PROTOCOL.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "15d220e5bf6167cf8fec640af62db8ec1e67753f00f079028efa48e1ff531a59",
-      "canonical_version": "1.2.1",
+      "file_hash_sha256": "3e04013ecd21f7fbf3353c893427e74d4187bec174c60614a2c8a4edfa705cef",
+      "canonical_version": "1.2.2",
       "local_version": null,
       "local_extension": false,
       "layer_up_status": "NONE",
       "last_updated": "2026-04-08",
-      "change_note": "v1.2.1: Reference update \u2014 added EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md reference; Phase 4 prep by ceremony admin clarified; ECAP-001 canon establishment"
+      "change_note": "v1.2.2: Added \u00a7Re-Invocation After Rejection \u2014 Ownership Reference cross-reference; updated References to v1.5.0/v1.3.0 canon versions; Foreman IAA re-invocation ownership canonisation issue"
     },
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-      "version": "1.4.0",
-      "file_hash": "6c2b4e2b22d8601db26145c0f091b6afe022005305810885a16544ae9743ddd7",
-      "file_hash_sha256": "6c2b4e2b22d8601db26145c0f091b6afe022005305810885a16544ae9743ddd7",
+      "version": "1.5.0",
+      "file_hash": "f79752f9f7abd586d1337245ed85639f8676eb8e8e18c908daf0965d9ad1cbac",
+      "file_hash_sha256": "f79752f9f7abd586d1337245ed85639f8676eb8e8e18c908daf0965d9ad1cbac",
       "effective_date": "2026-02-24",
       "amended_date": "2026-04-08",
       "description": "Defines the Independent Assurance Agent (IAA) class: role, hard-trigger authority, independence requirements, five-phase delivery proof protocol, binary output (ASSURANCE-TOKEN / REJECTION-PACKAGE), and trigger table. v1.1.0: Zero-Severity-Tolerance policy added.",
@@ -1486,8 +1486,8 @@
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "layer_down_status": "INTERNAL",
       "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA); v1.1.0 amendment: Enforce zero-severity-tolerance \u2014 any finding triggers rejection",
-      "last_updated": "2026-04-08",
-      "change_note": "v1.4.0: Added Execution Ceremony Admin Non-Substitution Rule; ECAP-001 canon establishment"
+      "last_updated": "2026-04-09",
+      "change_note": "v1.5.0 fix: immutability-compliant re-invocation cycle (fresh PREHANDOVER proof per round); PREHANDOVER pending-marker approach removed; \u00a7References header restored; token naming reconciled with \u00a74.3b"
     },
     {
       "filename": "INITIALIZATION_COMPLETENESS_GATE.md",
