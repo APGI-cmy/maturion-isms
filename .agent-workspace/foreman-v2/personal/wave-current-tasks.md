@@ -1,32 +1,34 @@
-# Wave Current Tasks — Issue 1311
+# Wave Current Tasks — Issue 1326
 
-wave: optimize-iaa-invocation-workflows
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-optimize-iaa-invocation-workflows.md
+wave: cl-7-personaloader-improvements-lkiac-l3
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-cl7-personaloader-20260409.md
 
-## Active Wave: optimize-iaa-invocation-workflows
+## Active Wave: CL-7 (LKIAC-L3 — PersonaLoader Improvements)
 
 ### Wave Description
-Foreman orchestrates selective reimplementation and hardening of the discontinued inject/watchdog
-workflow set in maturion-isms. Planning-only wave: produces review artifact (D1), reimplementation
-strategy/plan (D2+D3), and follow-up implementation issues (D4). No builder delegation in this wave.
+Foreman orchestrates execution of CL-7 PersonaLoader Improvements wave per
+concurrent-prebuild-and-legacy-plan.md (Track 1, Section 1.3). This is the canonical
+foreman execution issue for CL-7 (maturion-isms#1326, branch: copilot/cl-7-lkiac-l3-personaloader-improvements).
 
-CS2 Authorization: Issue maturion-isms#1311 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
-foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
+CS2 Authorization: Issue maturion-isms#1326 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
+foreman-v2-agent (Copilot). Issue author is CS2. CS2 wave-start confirmed.
+
+IAA Pre-Brief: `.agent-admin/assurance/iaa-prebrief-cl7-personaloader-20260409.md` (committed ace5912)
+Prior Pre-Brief Reference: `.agent-admin/assurance/iaa-prebrief-cl7-personaloader-20260405.md`
 
 ### Tasks
-- [x] T1: IAA Pre-Brief — .agent-admin/assurance/iaa-prebrief-optimize-iaa-invocation-workflows.md
-- [x] T2: Workflow Review Artifact (D1) — review all 5 discontinued/active workflows
-- [x] T3: Reimplementation Strategy/Plan (D2+D3)
-- [x] T4: Follow-up Implementation Issues (D4)
-- [x] T5: PREHANDOVER proof committed
-- [x] T6: IAA final audit and token
-
-### Workflows Under Review
-- iaa-prebrief-inject.yml (DISABLED — issue #1061)
-- iaa-prebrief-gate.yml (DISABLED — issue #1061)
-- governance-watchdog.yml (ACTIVE — Gaps 1, 2A, 2, 3)
-- foreman-reanchor.yml (DISABLED — issue #1061, stale IAA wording)
-- injection-audit-report.yml (DISABLED — manual-only)
+- [x] CL-7-D1: RED gate tests — PersonaValidationError on invalid YAML front-matter
+  (`packages/ai-centre/src/__tests__/personas/PersonaLoader.test.ts`)
+- [x] CL-7-D2: RED gate tests — persona registry sync CI check integration test
+  (`packages/ai-centre/src/__tests__/personas/PersonaLoader.test.ts`)
+- [x] CL-7-D3: Implementation — PersonaValidationError type + runtime YAML validation
+  (`packages/ai-centre/src/personas/PersonaLoader.ts`, `packages/ai-centre/src/types/index.ts`)
+- [x] CL-7-D4: CI check — persona registry sync workflow
+  (`.github/workflows/persona-registry-sync.yml`)
+- [x] CL-7-D5: Scheduled workflow — overdue quarterly persona reviews
+  (`.github/workflows/persona-freshness-review.yml`)
+- [ ] T6: QP evaluation and PREHANDOVER proof committed
+- [ ] T7: IAA final audit and token
 
 ### Previous Wave (Closed)
-wave: ecap-001-layer-down-implementation (Issue #1305)
+wave: optimize-iaa-invocation-workflows (Issue #1311)

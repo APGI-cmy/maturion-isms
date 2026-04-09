@@ -1,35 +1,36 @@
-# SCOPE_DECLARATION - Wave optimize-iaa-invocation-workflows
+# SCOPE_DECLARATION - Wave cl-7-personaloader-improvements-lkiac-l3
 
-**Session**: session-162-optimize-iaa-inject-watchdog-20260409
-**Wave**: optimize-iaa-invocation-workflows
-**Issue**: maturion-isms#1311
-**Branch**: copilot/optimize-iaa-invocation-workflows
+**Session**: session-cl7-personaloader-20260409
+**Wave**: CL-7 (LKIAC-L3 PersonaLoader Improvements)
+**Issue**: maturion-isms#1326
+**Branch**: copilot/cl-7-lkiac-l3-personaloader-improvements
 **Date**: 2026-04-09
 
 ## Files Changed in This Wave
 
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave current tasks updated for optimize-iaa-invocation-workflows wave
-- `.agent-workspace/foreman-v2/memory/iaa-inject-watchdog-reimplementation-review-20260409.md` - D1/D2/D3/D4 review artifact: workflow review, reimplementation plan, follow-up issue tree
-- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - S-041 REANCHOR-WORDING-AUDIT and PLANNING-WAVE-TEMPLATE suggestions added
-- `.agent-workspace/foreman-v2/memory/session-162-optimize-iaa-inject-watchdog-20260409.md` - Foreman session memory for this wave
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-162-optimize-iaa-inject-watchdog-20260409.md` - PREHANDOVER proof for this wave
-- `SCOPE_DECLARATION.md` - This file (updated from ECAP-001 wave)
+Governance ceremony artifacts only (no production code changes on this branch):
+
+- `SCOPE_DECLARATION.md` - Updated for CL-7 session (2026-04-09)
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated for CL-7 issue #1326
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl7-personaloader-20260409.md` - PREHANDOVER proof for this session
+- `.agent-workspace/foreman-v2/memory/session-cl7-personaloader-20260409.md` - Session memory for this session
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - S-042 parking station entry
 
 ## Exempt from Scope Declaration (A-031 carve-out)
 
 IAA ceremony files are exempt from scope declaration requirements:
-- `.agent-admin/assurance/iaa-prebrief-optimize-iaa-invocation-workflows.md` - IAA Pre-Brief (committed by IAA)
-- `.agent-admin/assurance/iaa-token-session-162-optimize-iaa-inject-watchdog-20260409.md` - IAA token (committed by IAA)
+- `.agent-admin/assurance/iaa-prebrief-cl7-personaloader-20260409.md` (committed ace5912 by IAA)
+- `.agent-admin/assurance/iaa-token-session-cl7-personaloader-20260409.md` (to be written by IAA)
 
-IAA workspace files (independent agent, not under Foreman scope):
-- `.agent-workspace/independent-assurance-agent/memory/session-optimize-iaa-invocation-workflows-20260409.md` - IAA session memory (IAA-authored)
-- `.agent-workspace/independent-assurance-agent/memory/session-optimize-iaa-invocation-workflows-20260409-R2.md` - IAA session memory R2 / STOP-AND-FIX record (IAA-authored)
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station (IAA-authored)
+## Implementation Status
 
-## Scope Notes
+All CL-7 deliverables (D1–D5) are present in the branch base (implemented in prior session,
+verified by IAA-session-cl7-personaloader-20260405-R2-PASS). No production code changes required.
 
-Planning-only wave. No `.github/workflows/` files were modified. No production code (modules/, packages/)
-was changed. No governance/canon files were modified. All artifacts are governance ceremony and
-planning documents in `.agent-workspace/`. Follow-up implementation waves (Issues 1-4 from D4) will
-require separate IAA invocations when builders modify workflow files.
-
+CL-7 Deliverables (in base):
+- `packages/ai-centre/src/__tests__/personas/PersonaLoader.test.ts` - CL-7-T-001 to CL-7-T-016
+- `packages/ai-centre/src/personas/PersonaLoader.ts` - PersonaValidationError + YAML validation
+- `packages/ai-centre/src/types/index.ts` - PersonaValidationError class exported
+- `packages/ai-centre/src/agents/cl7-fixture-*.md` - 11 test fixture files
+- `.github/workflows/persona-registry-sync.yml` - CL-7-D4
+- `.github/workflows/persona-freshness-review.yml` - CL-7-D5
