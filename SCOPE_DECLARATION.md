@@ -1,29 +1,29 @@
-# SCOPE_DECLARATION - Wave ecap-001-layer-down-implementation
+# SCOPE_DECLARATION - Wave optimize-iaa-invocation-workflows
 
-**Session**: session-161-ecap-001-20260408
-**Wave**: ecap-001-layer-down-implementation
-**Issue**: maturion-isms#1305
-**Branch**: copilot/ecap-001-layer-down-implementation
-**Date**: 2026-04-08
+**Session**: session-162-optimize-iaa-inject-watchdog-20260409
+**Wave**: optimize-iaa-invocation-workflows
+**Issue**: maturion-isms#1311
+**Branch**: copilot/optimize-iaa-invocation-workflows
+**Date**: 2026-04-09
 
 ## Files Changed in This Wave
 
-- `.agent-admin/assurance/PREHANDOVER-session-161-ecap-001-20260408.md` - PREHANDOVER proof for this wave
-- `.agent-admin/assurance/iaa-prebrief-wave1305-ecap-001-20260408.md` - IAA Pre-Brief artifact committed by IAA
-- `.agent-admin/assurance/iaa-rejection-session-161-wave1305-ecap-001-20260408.md` - IAA REJECTION-PACKAGE (2 ceremony findings; resolved)
-- `.agent-workspace/foreman-v2/memory/session-161-ecap-001-20260408.md` - Foreman session memory
-- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Parking-station suggestions log updated (S-040)
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave current tasks updated for this wave
-- `.agent-workspace/independent-assurance-agent/memory/session-161-ecap-001-20260408.md` - IAA session memory for this wave
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking-station log updated
-- `SCOPE_DECLARATION.md` - This file
-- `governance/CANON_INVENTORY.json` - AC-005: Updated AHM entry (version 1.1.6→1.2.0, hashes corrected); updated ECAP hash
-- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` - AC-002/003/004: Normalized ECAP version references v1.1.6→v1.0.0; added §4.3c row to Phase 4 table
-- `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` - AC-001: Fixed broken strategy reference path
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave current tasks updated for optimize-iaa-invocation-workflows wave
+- `.agent-workspace/foreman-v2/memory/iaa-inject-watchdog-reimplementation-review-20260409.md` - D1/D2/D3/D4 review artifact: workflow review, reimplementation plan, follow-up issue tree
+- `.agent-workspace/foreman-v2/memory/session-162-optimize-iaa-inject-watchdog-20260409.md` - Foreman session memory for this wave
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-162-optimize-iaa-inject-watchdog-20260409.md` - PREHANDOVER proof for this wave
+- `SCOPE_DECLARATION.md` - This file (updated from ECAP-001 wave)
+
+## Exempt from Scope Declaration (A-031 carve-out)
+
+IAA ceremony files are exempt from scope declaration requirements:
+- `.agent-admin/assurance/iaa-prebrief-optimize-iaa-invocation-workflows.md` - IAA Pre-Brief (committed by IAA)
+- `.agent-admin/assurance/iaa-token-session-162-optimize-iaa-inject-watchdog-20260409.md` - IAA token (to be committed by IAA at T6)
 
 ## Scope Notes
 
-This wave is a narrow corrective follow-up to PR #1296. No agent contract files (.github/agents/) were changed.
-No production code (modules/, packages/) was changed. GOVERNANCE_CANON_MANIFEST.md was verified but required
-no changes. Full ECAP downstream implementation (ceremony-admin agent contract, agent file updates) is
-out of scope here and tracked in a follow-on issue.
+Planning-only wave. No `.github/workflows/` files were modified. No production code (modules/, packages/)
+was changed. No governance/canon files were modified. All artifacts are governance ceremony and
+planning documents in `.agent-workspace/`. Follow-up implementation waves (Issues 1-4 from D4) will
+require separate IAA invocations when builders modify workflow files.
+
