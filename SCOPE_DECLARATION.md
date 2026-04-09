@@ -1,34 +1,29 @@
-# SCOPE DECLARATION — Wave: mmm-harvest-map
+# SCOPE_DECLARATION - Wave ecap-001-layer-down-implementation
 
-**Wave ID**: mmm-harvest-map
-**Issue**: maturion-isms#1300
-**Session**: session-161-mmm-harvest-map-20260408
+**Session**: session-161-ecap-001-20260408
+**Wave**: ecap-001-layer-down-implementation
+**Issue**: maturion-isms#1305
+**Branch**: copilot/ecap-001-layer-down-implementation
 **Date**: 2026-04-08
-**Branch**: copilot/produce-mat-roadmap-transition-matrix
-**Authority**: foreman-v2-agent v6.2.0 (POLC-Orchestration mode)
 
-## Files Changed This Wave
+## Files Changed in This Wave
 
-- `.agent-admin/assurance/iaa-prebrief-wave1300-mmm-harvest-map-20260408.md` - IAA Pre-Brief artifact for wave mmm-harvest-map (committed first, per A-031)
-- `.agent-admin/assurance/iaa-token-session-161-wave1300-20260408.md` - IAA audit token for session 161, wave mmm-harvest-map
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-161-wave1300-mmm-harvest-map-20260408.md` - PREHANDOVER proof for session 161, wave mmm-harvest-map
-- `.agent-workspace/foreman-v2/memory/session-161-mmm-harvest-map-20260408.md` - Session memory for session 161
-- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Parking station updated with S-040 candidate entry for session 161
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave current tasks updated for wave mmm-harvest-map (issue #1300)
-- `SCOPE_DECLARATION.md` - This scope declaration, updated for wave mmm-harvest-map
-- `modules/MMM/harvest-map/harvest-map.md` - MMM Harvest Map and Ownership Transition Matrix (main deliverable for issue #1300)
+- `.agent-admin/assurance/PREHANDOVER-session-161-ecap-001-20260408.md` - PREHANDOVER proof for this wave
+- `.agent-admin/assurance/iaa-prebrief-wave1305-ecap-001-20260408.md` - IAA Pre-Brief artifact committed by IAA
+- `.agent-admin/assurance/iaa-rejection-session-161-wave1305-ecap-001-20260408.md` - IAA REJECTION-PACKAGE (2 ceremony findings; resolved)
+- `.agent-workspace/foreman-v2/memory/session-161-ecap-001-20260408.md` - Foreman session memory
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Parking-station suggestions log updated (S-040)
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave current tasks updated for this wave
+- `.agent-workspace/independent-assurance-agent/memory/session-161-ecap-001-20260408.md` - IAA session memory for this wave
+- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking-station log updated
+- `SCOPE_DECLARATION.md` - This file
+- `governance/CANON_INVENTORY.json` - AC-005: Updated AHM entry (version 1.1.6→1.2.0, hashes corrected); updated ECAP hash
+- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` - AC-002/003/004: Normalized ECAP version references v1.1.6→v1.0.0; added §4.3c row to Phase 4 table
+- `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` - AC-001: Fixed broken strategy reference path
 
-## Files NOT Changed
+## Scope Notes
 
-All other files in the repository were NOT modified by this wave.
-
-## Change-Propagation Audit (OVL-PBG-014)
-
-| Downstream Artifact | Status | Declaration |
-|--------------------|--------|-------------|
-| `modules/MMM/01-ux-workflow-wiring-spec/` (UX Workflow) | NOT STARTED | Stage 2 not yet authored. Harvest map informs UX Workflow derivation but does not itself constitute Stage 2. No propagation needed yet. |
-| `modules/MMM/02-frs/` (FRS) | NOT STARTED | Not yet written. Harvest map is the bridge to FRS; no circular dependency. |
-| `modules/MMM/03-trs/` (TRS) | NOT STARTED | Not yet written. No propagation needed. |
-| `modules/MMM/04-architecture/` | NOT STARTED | Stage 5 not yet authored. No propagation needed. |
-
-**Audit conclusion**: No immediate downstream propagation required. The harvest map is a planning artifact that informs downstream stage derivation but does not itself modify any existing stage artifacts. No circular dependency or contradiction with existing content detected.
+This wave is a narrow corrective follow-up to PR #1296. No agent contract files (.github/agents/) were changed.
+No production code (modules/, packages/) was changed. GOVERNANCE_CANON_MANIFEST.md was verified but required
+no changes. Full ECAP downstream implementation (ceremony-admin agent contract, agent file updates) is
+out of scope here and tracked in a follow-on issue.

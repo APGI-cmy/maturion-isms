@@ -1,32 +1,34 @@
-# Wave Current Tasks — Issue 1300
+# Wave Current Tasks — Issue 1305
 
-wave: mmm-harvest-map
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave1300-mmm-harvest-map-20260408.md
+wave: ecap-001-layer-down-implementation
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-wave1305-ecap-001-20260408.md
 
-## Active Wave: mmm-harvest-map
+## Active Wave: ecap-001-layer-down-implementation
 
 ### Wave Description
-Produce the MAT / Maturity Roadmap / Legacy → MMM Harvest Map and Ownership Transition Matrix.
-This is a planning/governance artifact wave — no production code, no schema changes, no builder
-delegation. Foreman produces the convergence planning artifact directly as a POLC-Orchestration
-planning output.
+Complete ECAP-001 layer-down implementation in maturion-isms after PR #1296.
+PR #1296 brought the canon files but left inconsistencies/defects that must be corrected.
 
-CS2 Authorization: Issue maturion-isms#1300 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
+CS2 Authorization: Issue maturion-isms#1305 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
 foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
 
 ### Tasks
-- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave1300-mmm-harvest-map-20260408.md
-- [x] MMM-HM-001: Create harvest-map artifact at modules/MMM/harvest-map/harvest-map.md
-- [x] PREHANDOVER proof: .agent-workspace/foreman-v2/memory/PREHANDOVER-session-161-wave1300-mmm-harvest-map-20260408.md
-- [x] Session memory: .agent-workspace/foreman-v2/memory/session-161-mmm-harvest-map-20260408.md
-- [x] IAA final audit and token
+- [x] IAA Pre-Brief: .agent-admin/assurance/iaa-prebrief-wave1305-ecap-001-20260408.md
+- [x] AC-001: Fix broken strategy reference in EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md
+- [x] AC-002: Normalize AGENT_HANDOVER_AUTOMATION.md section header v1.1.6 → v1.0.0
+- [x] AC-003: Normalize AGENT_HANDOVER_AUTOMATION.md canon reference v1.1.6 → v1.0.0
+- [x] AC-004: Add §4.3c row to Phase 4 table in AGENT_HANDOVER_AUTOMATION.md
+- [x] AC-005: Update CANON_INVENTORY.json AGENT_HANDOVER_AUTOMATION entry (version + hash)
+- [x] AC-006: Verify/reconcile GOVERNANCE_CANON_MANIFEST.md entries/totals
+- [x] PREHANDOVER proof committed and verified
+- [ ] IAA final audit and token
 
-### IAA Pre-Brief Summary (from iaa-prebrief-wave1300-mmm-harvest-map-20260408.md)
-- Trigger Category: GOVERNANCE_DOCUMENTATION — MANDATORY (A-003 ambiguity rule)
-- Qualifying Tasks: MMM-HM-001
-- Scope Blockers: SB-001 (no builder), SB-002 (markdown only), SB-003 (all 10 columns), SB-004 (pre-brief first), SB-005 (committed artifacts), SB-006 (no Stage 10 advance)
-- Key FFA check: All 10 columns present, all 3 source systems covered, no placeholder rows
-- PREHANDOVER: must include Ripple/Cross-Agent Assessment section
+### IAA Pre-Brief Summary (from iaa-prebrief-wave1305-ecap-001-20260408.md)
+- Trigger Category: CANON_GOVERNANCE — MANDATORY (all tasks)
+- Qualifying Tasks: AC-001 through AC-006
+- Scope Blockers: SB-001 (strategy fix approach), SB-002 (CRITICAL — hash sequencing), SB-003 (version bump), SB-004 (manifest entry), SB-005 (ripple), SB-006 (wave-current-tasks)
+- FFA Sequence: 17 steps
+- Critical note: CANON_INVENTORY hash must use POST-FIX sha256 (not pre-fix)
 
 ### Previous Wave (Closed)
-wave: opojd-comment-only-copilot-20260408 (Issue #1286) — PENDING merge
+wave: opojd-comment-only-copilot-20260408 (Issue #1286)

@@ -7,7 +7,7 @@
 **Effective Date**: 2026-04-08  
 **Owner**: Maturion Engineering Lead  
 **Canon ID**: ECAP-001  
-**Strategy Reference**: `maturion/strategy/Execution_Ceremony_Administration_Strategy.md` (ECAS-001)
+**Strategy Reference**: `[upstream-only: maturion-foreman-governance/strategy/Execution_Ceremony_Administration_Strategy.md]` (ECAS-001)
 
 > **Amendment Authority**: Only CS2 (Johan Ras / repo owner) may amend this canon. Any PR modifying this file without CS2 sign-off is auto-FAIL at the merge gate.
 
@@ -419,7 +419,7 @@ Only CS2 (Johan Ras) may amend this protocol. Amendments require:
 
 ### 11.2 Relationship to Strategy
 
-This protocol supersedes the strategy document `maturion/strategy/Execution_Ceremony_Administration_Strategy.md` (ECAS-001) for binding governance purposes. The strategy document is retained for historical and rationale reference only.
+This protocol supersedes the strategy document `[upstream-only: maturion-foreman-governance/strategy/Execution_Ceremony_Administration_Strategy.md]` (ECAS-001) for binding governance purposes. The strategy document is retained for historical and rationale reference only.
 
 ### 11.3 Relationship to Other Canon
 

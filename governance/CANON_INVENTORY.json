@@ -258,20 +258,20 @@
     },
     {
       "filename": "AGENT_HANDOVER_AUTOMATION.md",
-      "version": "1.1.6",
-      "file_hash": "3b7f72b2839912fa03c46378d8c41c15927f60e4cda7286ad8e3a3b5c1e2b971",
-      "effective_date": "2026-04-06",
+      "version": "1.2.0",
+      "file_hash": "179d56c68ca69af642f191a670d0e88cf6e557342f75e31b0a687bbe2c43ea1c",
+      "effective_date": "2026-04-08",
       "description": "Canonical governance document: AGENT_HANDOVER_AUTOMATION",
       "type": "canon",
       "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "3b7f72b2839912fa03c46378d8c41c15927f60e4cda7286ad8e3a3b5c1e2b971",
+      "file_hash_sha256": "179d56c68ca69af642f191a670d0e88cf6e557342f75e31b0a687bbe2c43ea1c",
       "ripple_dispatched": "2026-02-24",
       "ripple_log": ".agent-admin/governance/ripple-logs/ripple-agent-handover-parity-20260224.md",
       "ripple_in_repo_status": "COMPLETE",
       "ripple_consumer_status": "PENDING \u2014 layer-down issues to be created in consumer repos",
       "last_updated": "2026-04-08",
-      "change_note": "v1.1.6: Added Execution Ceremony Administration Integration section; ECAP-001 canon establishment"
+      "change_note": "v1.2.0: Normalized ECAP-001 version references (v1.1.6\u2192v1.0.0); added \u00a74.3c to Phase 4 integration table; corrected CANON_INVENTORY metadata from 1.1.6 to 1.2.0"
     },
     {
       "filename": "AGENT_INDUCTION_PROTOCOL.md",
@@ -1028,15 +1028,15 @@
     {
       "filename": "EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md",
       "version": "1.0.0",
-      "file_hash": "8a65c7c556248b5c70f0cecc230c7941e734169a3dbdf85c8358476716309c7f",
-      "file_hash_sha256": "8a65c7c556248b5c70f0cecc230c7941e734169a3dbdf85c8358476716309c7f",
+      "file_hash": "d98be3c8df851a9c2939149801f445db91cec9bf33f21b82783240acc96d4af8",
+      "file_hash_sha256": "d98be3c8df851a9c2939149801f445db91cec9bf33f21b82783240acc96d4af8",
       "effective_date": "2026-04-08",
       "description": "Canonical protocol for the execution-ceremony-admin-agent role, authority boundaries, the seven-step canonical handover sequence, and three-part readiness model (substantive, administrative, independent assurance verdict). Formalises ECAS-001 strategy into binding governance.",
       "type": "canon",
       "path": "governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md",
       "layer_down_status": "PUBLIC_API",
       "last_updated": "2026-04-08",
-      "change_note": "v1.0.0: Initial canon \u2014 ECAP-001; converts ECAS-001 strategy to binding governance"
+      "change_note": "v1.0.0: Fixed broken consumer-repo strategy reference path (maturion/strategy/ \u2192 upstream-only note)"
     },
     {
       "filename": "FAILURE_PROMOTION_RULE.md",
