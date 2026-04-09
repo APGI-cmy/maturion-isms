@@ -1,4 +1,4 @@
-# SCOPE_DECLARATION — Wave ecap-001-layer-down-implementation
+# SCOPE_DECLARATION - Wave ecap-001-layer-down-implementation
 
 **Session**: session-161-ecap-001-20260408  
 **Wave**: ecap-001-layer-down-implementation  
@@ -15,6 +15,7 @@
 - `.agent-admin/assurance/iaa-prebrief-wave1305-ecap-001-20260408.md` - IAA Pre-Brief artifact (committed by IAA session)
 - `.agent-admin/assurance/PREHANDOVER-session-161-ecap-001-20260408.md` - PREHANDOVER proof
 - `.agent-workspace/foreman-v2/memory/session-161-ecap-001-20260408.md` - Session memory
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - S-040 improvement suggestion and cross-repo-note appended (session 161 parking station ceremony)
 - `SCOPE_DECLARATION.md` - This file
 
 ## Files NOT Changed

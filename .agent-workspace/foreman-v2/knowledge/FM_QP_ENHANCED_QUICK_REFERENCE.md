@@ -57,7 +57,27 @@ defined in `FM_QUALITY_PROTOCOL_ENHANCED_SOP.md`. Load at induction alongside `F
 
 ---
 
-## Required Infrastructure
+## Enhancement 3 — SCOPE_DECLARATION Title Format Check (NO-REPEAT-PREVENTABLE-001)
+
+**Trigger**: Any QP review that includes SCOPE_DECLARATION.md.
+
+**FM MUST**:
+1. Verify SCOPE_DECLARATION.md title uses a hyphen separator (U+002D `-`), NOT an em-dash (U+2014 `—`)
+2. Correct format: `# SCOPE_DECLARATION - Wave <wave-name>`
+3. Incorrect format: `# SCOPE_DECLARATION — Wave <wave-name>` (em-dash causes silent 0-file parse in `validate-scope-to-diff.sh`)
+4. If em-dash is present → **BLOCKING** — correct before issuing QP PASS
+
+**Failure Code** (BLOCKING — add to QP failure conditions):
+
+| Code | Condition |
+|------|-----------|
+| QP-FAIL-008 | SCOPE_DECLARATION.md title uses em-dash instead of hyphen separator |
+
+**Authority**: NO-REPEAT-PREVENTABLE-001 — IAA finding SCOPE-FORMAT-001, session-161-ecap-001-20260408
+
+---
+
+
 
 Per SOP §8 (Layer-Down Propagation), this repository MUST maintain:
 - `.agent-admin/quality-professor/` — directory for referral artifacts and REFERRAL_INDEX.md
@@ -79,6 +99,7 @@ Per SOP §8 (Layer-Down Propagation), this repository MUST maintain:
 | Version | Date | Change |
 |---------|------|--------|
 | 1.0.0 | 2026-03-02 | Initial creation — Layer-Down propagation of `FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` v1.0.0 (canonical commit 7792913259b0); Builder Referral Protocol (QP-FAIL-001–007) and Progress Tracker Enforcement Tier 2 stub |
+| 1.1.0 | 2026-04-09 | NO-REPEAT-PREVENTABLE-001: Added Enhancement 3 — SCOPE_DECLARATION Title Format Check (QP-FAIL-008); em-dash vs hyphen blocking check per IAA finding SCOPE-FORMAT-001 session-161-ecap-001-20260408 |
 
 ---
 
