@@ -1,0 +1,34 @@
+{
+    "event_type": "governance_ripple",
+    "canonical_commit": "63cdfb06586f567c456641edd7ca464c47b7751e",
+    "inventory_version": "1.0.0",
+    "changed_paths": [
+        "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
+        "governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md",
+        "governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
+        "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
+        "governance/canon/IAA_PRE_BRIEF_PROTOCOL.md",
+        "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md"
+    ],
+    "sender": "APGI-cmy/maturion-foreman-governance",
+    "dispatch_id": "63cdfb06",
+    "timestamp": "2026-04-08T12:16:03Z",
+    "trigger": "Merge pull request -1332 from APGI-cmy-copilot-create-canon-execution-ceremony-admin",
+    "issue_number": "1305",
+    "processing_status": "COMPLETE",
+    "processing_session": "session-059-20260408",
+    "processing_timestamp": "2026-04-08T13:22:00Z",
+    "files_layered_down": [
+        "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
+        "governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md",
+        "governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
+        "governance/canon/IAA_PRE_BRIEF_PROTOCOL.md"
+    ],
+    "internal_files_not_layered_down": [
+        "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
+        "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md"
+    ],
+    "ripple_pr": "1296",
+    "alignment_outcome": "ALIGNED",
+    "notes": "All 6 files aligned. AGENT_HANDOVER_AUTOMATION.md updated to v1.2.0 (CANON_INVENTORY.json shows stale v1.1.6 hash — inventory lags actual canonical file). CI ripple-integration.yml executed layer-down as PR #1296 (merged). Liaison session-059 updated GOVERNANCE_ALIGNMENT_INVENTORY.json with correct versions and hashes."
+}
