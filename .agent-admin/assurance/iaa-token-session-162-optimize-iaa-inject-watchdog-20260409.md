@@ -34,7 +34,7 @@ PHASE_B_BLOCKING_TOKEN: IAA-session-162-optimize-iaa-inject-watchdog-20260409-PA
 - **Invoked by**: foreman-v2-agent (Phase 4 T6 final audit)
 - **Work produced by**: foreman-v2-agent, class: foreman
 - **Assuring**: Planning-only governance wave — IAA inject/watchdog workflow review and reimplementation planning artifacts
-- **Independence check**: CONFIRMED — IAA did not produce any artifact in this PR
+- **Independence check**: CONFIRMED — IAA did not produce the work under assurance in this PR; IAA-authored artifacts present are limited to assurance/ceremony records (for example, pre-brief, session memory/parking station updates, and this token)
 
 ---
 
