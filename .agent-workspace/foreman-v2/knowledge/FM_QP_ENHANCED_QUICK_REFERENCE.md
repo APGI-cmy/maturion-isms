@@ -2,7 +2,7 @@
 
 **Agent**: foreman-v2  
 **Tier**: 2 (Operational Knowledge — Quick Reference Stub)  
-**Version**: 1.0.0  
+**Version**: 1.1.0  
 **Authority**: CS2 (Johan Ras)  
 **Canonical SOP**: `governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` v1.0.0  
 **Layer-Down Source**: APGI-cmy/maturion-foreman-governance commit `7792913259b00fab77c2d1be966e923a463853db`  
