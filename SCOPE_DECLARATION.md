@@ -12,7 +12,10 @@
 - `governance/canon/AGENT_HANDOVER_AUTOMATION.md` - AC-002/003/004: Normalized ECAP version references v1.1.6→v1.0.0; added §4.3c row to Phase 4 table
 - `governance/CANON_INVENTORY.json` - AC-005: Updated AHM entry (version 1.1.6→1.2.0, hash corrected); updated ECAP hash
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated for this wave (governance artifact)
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Parking-station suggestions log updated in this wave
+- `.agent-workspace/independent-assurance-agent/*` - Independent assurance agent workspace artifacts present in the diff for this wave
 - `.agent-admin/assurance/iaa-prebrief-wave1305-ecap-001-20260408.md` - IAA Pre-Brief artifact (committed by IAA session)
+- `.agent-admin/assurance/iaa-rejection-session-161-wave1305-ecap-001-20260408.md` - IAA rejection artifact present in this wave
 - `.agent-admin/assurance/PREHANDOVER-session-161-ecap-001-20260408.md` - PREHANDOVER proof
 - `.agent-workspace/foreman-v2/memory/session-161-ecap-001-20260408.md` - Session memory
 - `SCOPE_DECLARATION.md` - This file
