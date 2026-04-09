@@ -10,6 +10,7 @@
 
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave current tasks updated for optimize-iaa-invocation-workflows wave
 - `.agent-workspace/foreman-v2/memory/iaa-inject-watchdog-reimplementation-review-20260409.md` - D1/D2/D3/D4 review artifact: workflow review, reimplementation plan, follow-up issue tree
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - S-041 REANCHOR-WORDING-AUDIT and PLANNING-WAVE-TEMPLATE suggestions added
 - `.agent-workspace/foreman-v2/memory/session-162-optimize-iaa-inject-watchdog-20260409.md` - Foreman session memory for this wave
 - `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-162-optimize-iaa-inject-watchdog-20260409.md` - PREHANDOVER proof for this wave
 - `SCOPE_DECLARATION.md` - This file (updated from ECAP-001 wave)
