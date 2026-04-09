@@ -247,15 +247,18 @@ IAA ceremony files are exempt per A-031 carve-out:
 **Pre-commit `git status` output:**
 ```
 On branch copilot/cl-7-lkiac-l3-personaloader-improvements
+Your branch is ahead of 'origin/copilot/cl-7-lkiac-l3-personaloader-improvements' by 2 commits.
+  (use "git push" to publish your local commits)
+
 nothing to commit, working tree clean
 ```
 
 **`git log --oneline -5` output AFTER committing all deliverables:**
 ```
-[to be populated from actual git log after commit — first line will be this governance commit]
-ace5912 IAA Pre-Brief for wave CL-7 (iaa-prebrief-cl7-personaloader-20260409.md)
-f6d7b67 Initial plan
-8aa76f4 [Governance] IAA inject/watchdog workflow reimplementation — re-enable and canon-align (#1312)
+4ea1acb (HEAD -> copilot/cl-7-lkiac-l3-personaloader-improvements) CL-7 governance ceremony: PREHANDOVER proof, session memory, SCOPE_DECLARATION, wave-current-tasks
+ace5912 IAA Phase 0: Pre-Brief for Wave CL-7 new session (2026-04-09) — branch copilot/cl-7-lkiac-l3-personaloader-improvements, issue #1326
+f6d7b67 (origin/copilot/cl-7-lkiac-l3-personaloader-improvements) Initial plan
+8aa76f4 (grafted) [Governance] IAA inject/watchdog workflow reimplementation — re-enable and canon-align (#1312)
 ```
 
 All ceremony artifacts staged and committed before IAA invocation: ✅
