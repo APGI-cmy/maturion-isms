@@ -1,32 +1,39 @@
-# Wave Current Tasks — Issue 1311
+# Wave Current Tasks — Issue #1313
 
-wave: optimize-iaa-invocation-workflows
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-optimize-iaa-invocation-workflows.md
+wave: cl-10-routing-governance-ci-enforcement
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-ci-enforcement-again.md
 
-## Active Wave: optimize-iaa-invocation-workflows
+## Active Wave: CL-10 — Routing Governance CI Enforcement (Re-execution)
 
 ### Wave Description
-Foreman orchestrates selective reimplementation and hardening of the discontinued inject/watchdog
-workflow set in maturion-isms. Planning-only wave: produces review artifact (D1), reimplementation
-strategy/plan (D2+D3), and follow-up implementation issues (D4). No builder delegation in this wave.
+Foreman executes Wave CL-10 per concurrent-prebuild-and-legacy-plan.md §1.4 (Track 1).
+Re-execution wave: CL-10-D1 (routing-governance-check.yml) and CL-10-D3
+(stub-detection-check.yml) are already in the base branch. CL-10-D2 (sub-module routing
+compliance CI check) was the outstanding deliverable — now DELIVERED.
 
-CS2 Authorization: Issue maturion-isms#1311 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
-foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
+CS2 Authorization: Issue maturion-isms#1313 — Authority: Foreman (delegation per CEP v1.8.0,
+CS2 authorized wave-start already issued per maturion-isms#1221).
 
 ### Tasks
-- [x] T1: IAA Pre-Brief — .agent-admin/assurance/iaa-prebrief-optimize-iaa-invocation-workflows.md
-- [x] T2: Workflow Review Artifact (D1) — review all 5 discontinued/active workflows
-- [x] T3: Reimplementation Strategy/Plan (D2+D3)
-- [x] T4: Follow-up Implementation Issues (D4)
-- [x] T5: PREHANDOVER proof committed
-- [x] T6: IAA final audit and token
+- [x] T1: Phase 1 Preflight complete
+- [x] T2: IAA Pre-Brief — .agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-ci-enforcement-again.md (SHA 7794c4d)
+- [x] T3: Phase 2 Alignment — pre-build gates confirmed
+- [x] T4: CL-10-D1 verification — routing-governance-check.yml already in base ✅
+- [x] T5: CL-10-D3 verification — stub-detection-check.yml already in base ✅
+- [x] T6: CL-10-D2 delegation to integration-builder — sub-module routing compliance CI check
+- [x] T7: integration-builder CL-10-D2 handover + QP evaluation (PASS)
+- [ ] T8: PREHANDOVER proof committed (Foreman)
+- [ ] T9: IAA final audit and token
 
-### Workflows Under Review
-- iaa-prebrief-inject.yml (DISABLED — issue #1061)
-- iaa-prebrief-gate.yml (DISABLED — issue #1061)
-- governance-watchdog.yml (ACTIVE — Gaps 1, 2A, 2, 3)
-- foreman-reanchor.yml (DISABLED — issue #1061, stale IAA wording)
-- injection-audit-report.yml (DISABLED — manual-only)
+### Deliverables
+| ID | Deliverable | Agent | Status |
+|----|------------|-------|--------|
+| CL-10-D1 | routing-governance-check.yml | integration-builder | ✅ DONE (in base — 8aa76f4) |
+| CL-10-D2 | sub-module-routing-check.yml | integration-builder | ✅ DELIVERED (SHA 8774b79) |
+| CL-10-D3 | stub-detection-check.yml | integration-builder | ✅ DONE (in base — 8aa76f4) |
+
+### Tests
+- T-C-010-001 through T-C-010-012: 12/12 GREEN ✅
 
 ### Previous Wave (Closed)
-wave: ecap-001-layer-down-implementation (Issue #1305)
+wave: optimize-iaa-invocation-workflows (Issue #1311)
