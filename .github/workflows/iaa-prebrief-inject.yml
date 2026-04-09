@@ -1,9 +1,15 @@
 name: IAA Pre-Brief Injection
 
-# DISABLED — Wave: disable-automatic-injections-and-reinforce-contract (issue #1061)
-# Automatic injection workflows are on hold. File preserved for future AMC use.
-# To re-enable: restore the original event triggers below.
 on:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - '.agent-workspace/foreman-v2/personal/wave-current-tasks.md'
+  pull_request_target:
+    types: [opened, synchronize, ready_for_review]
+  issue_comment:
+    types: [created]
   workflow_dispatch:
     inputs:
       reason:
