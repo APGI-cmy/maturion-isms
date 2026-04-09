@@ -103,7 +103,11 @@ All PREHANDOVER artifacts committed before IAA invocation:
 
 **`git log --oneline -5` output AFTER committing all deliverables:**
 ```
-[populated after commit — see Step 4.3a]
+234206ad Phase 4 ceremony artifacts: session memory, PREHANDOVER, SCOPE_DECLARATION
+d689cd5e D1/D2/D3/D4 complete — workflow review, reimplementation plan, and follow-up issue tree produced
+be27abf1 IAA Phase 0 Pre-Brief — optimize-iaa-invocation-workflows (wave #1311)
+433e2dd2 Phase 1 complete — wave-current-tasks.md initialized for optimize-iaa-invocation-workflows
+e21e74aa Initial plan
 ```
 
 All ceremony artifacts staged and committed before IAA invocation: ✅
