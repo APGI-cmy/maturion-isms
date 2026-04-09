@@ -3,11 +3,9 @@ name: IAA Pre-Brief Gate
 # Reminder/detection gate: checks whether an IAA Pre-Brief artifact exists in
 # .agent-admin/assurance/ on the PR branch. Posts a reminder comment if missing.
 # Does NOT hard-block CI.
-#
-# DISABLED — Wave: disable-automatic-injections-and-reinforce-contract (issue #1061)
-# Automatic injection gate is on hold. File preserved for future AMC use.
-# To re-enable: restore the original event triggers below.
 on:
+  pull_request_target:
+    types: [opened, ready_for_review, synchronize]
   workflow_dispatch:
     inputs:
       reason:
