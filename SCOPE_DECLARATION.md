@@ -21,6 +21,10 @@ IAA ceremony files are exempt from scope declaration requirements:
 - `.agent-admin/assurance/iaa-prebrief-optimize-iaa-invocation-workflows.md` - IAA Pre-Brief (committed by IAA)
 - `.agent-admin/assurance/iaa-token-session-162-optimize-iaa-inject-watchdog-20260409.md` - IAA token (to be committed by IAA at T6)
 
+IAA workspace files (independent agent, not under Foreman scope):
+- `.agent-workspace/independent-assurance-agent/memory/session-optimize-iaa-invocation-workflows-20260409.md` - IAA session memory (IAA-authored)
+- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station (IAA-authored)
+
 ## Scope Notes
 
 Planning-only wave. No `.github/workflows/` files were modified. No production code (modules/, packages/)
