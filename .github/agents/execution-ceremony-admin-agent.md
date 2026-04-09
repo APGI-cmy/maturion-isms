@@ -55,8 +55,16 @@ three_role_split:
   invariant: "Mutually exclusive roles. No substitution permitted. Any role-blurring is a ECAP-001 violation."
 
 merge_gate_interface:
-  required_checks: []
-  parity_required: false
+  required_checks:
+    - "N/A — administrator class, no CI deliverables. Bundle preparation artifacts only."
+  parity_required: true
+  parity_enforcement: BLOCKING
+  note: "Administrator-class agent produces ceremony bundles returned to Foreman. No standalone CI deliverables. Parity enforcement applies to Foreman's merge gate on behalf of this bundle."
+
+tier2_knowledge:
+  index: .agent-workspace/execution-ceremony-admin-agent/knowledge/index.md
+  required_files:
+    - index.md
 
 scope:
   repository: APGI-cmy/maturion-isms
