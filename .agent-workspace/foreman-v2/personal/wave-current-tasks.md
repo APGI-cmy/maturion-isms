@@ -1,7 +1,7 @@
 # Wave Current Tasks — Issue 1311
 
 wave: optimize-iaa-invocation-workflows
-iaa_prebrief_path: PENDING
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-optimize-iaa-invocation-workflows.md
 
 ## Active Wave: optimize-iaa-invocation-workflows
 
@@ -14,10 +14,10 @@ CS2 Authorization: Issue maturion-isms#1311 opened by @APGI-cmy (CS2 = Johan Ras
 foreman-v2-agent (Copilot). Issue author is CS2 (Johan Ras / @APGI-cmy).
 
 ### Tasks
-- [ ] T1: IAA Pre-Brief — .agent-admin/assurance/iaa-prebrief-optimize-iaa-invocation-workflows.md
-- [ ] T2: Workflow Review Artifact (D1) — review all 5 discontinued/active workflows
-- [ ] T3: Reimplementation Strategy/Plan (D2+D3)
-- [ ] T4: Follow-up Implementation Issues (D4)
+- [x] T1: IAA Pre-Brief — .agent-admin/assurance/iaa-prebrief-optimize-iaa-invocation-workflows.md
+- [x] T2: Workflow Review Artifact (D1) — review all 5 discontinued/active workflows
+- [x] T3: Reimplementation Strategy/Plan (D2+D3)
+- [x] T4: Follow-up Implementation Issues (D4)
 - [ ] T5: PREHANDOVER proof committed
 - [ ] T6: IAA final audit and token
 
