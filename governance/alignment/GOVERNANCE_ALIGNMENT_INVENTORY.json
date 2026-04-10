@@ -4,28 +4,29 @@
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory — tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
   "last_updated": "2026-04-09",
-  "last_ripple_commit": "f5b61144679b3676f43d056fdb1ec4dea7131937",
-  "last_ripple_timestamp": "2026-04-09T06:45:14Z",
+  "last_ripple_commit": "5c2f5b393592028d107636090ecb791623ccb27f",
+  "last_ripple_timestamp": "2026-04-09T08:17:43Z",
   "alignment_summary": {
     "total_artifacts": 27,
-    "aligned": 22,
-    "drifted": 0,
+    "aligned": 21,
+    "drifted": 1,
     "missing": 0,
     "escalated": 4,
+    "not_tracked": 1,
     "overall_status": "PARTIAL — AGENT CONTRACT FILES ESCALATED TO CS2"
   },
   "artifacts": [
     {
       "filename": "AGENT_HANDOVER_AUTOMATION.md",
       "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
-      "canonical_version": "1.2.0",
-      "local_version": "1.2.0",
-      "canonical_hash_sha256": "89b887ced3efb1c508edcf1875aef05f4cc9a75bab3c040c32327bdd1bca3f23",
-      "local_hash_sha256": "89b887ced3efb1c508edcf1875aef05f4cc9a75bab3c040c32327bdd1bca3f23",
-      "alignment_status": "ALIGNED",
+      "canonical_version": "1.3.0",
+      "local_version": "1.3.0",
+      "canonical_hash_sha256": "52c6028add0244a47379d736b80ceafdca93e09f3f8e6688462f3a99cbca76f8",
+      "local_hash_sha256": "5b03ff107fc57e33ae18ab4402eaedc0182cfa63f38d3d7cc4fb90bc64a265d4",
+      "alignment_status": "HASH_MISMATCH",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-04-08T13:22:00Z",
-      "change_note": "v1.2.0: Added §4.3c Pre-IAA Commit-State Gate. Layered down via CI ripple PR #1296 (canonical commit 63cdfb06). Note: CANON_INVENTORY.json shows v1.1.6 hash (3b7f72b2...) — inventory appears stale for this file; actual canonical source file is v1.2.0 (hash 89b887ce...) matching local."
+      "last_verified": "2026-04-09T11:10:00Z",
+      "change_note": "PR #1314 (layer-down 5c2f5b39, 2026-04-09): CI automation fixed pre-existing drift by syncing file from canonical source. After subsequent layer-downs, file advanced to v1.3.0 on both canonical and local. HASH_MISMATCH: canonical CANON_INVENTORY records v1.3.0 hash as 52c6028a..., but local file SHA256 is 5b03ff10... — versions agree (1.3.0) but file content differs. Next step: re-sync local file from canonical source in the next layer-down cycle to resolve content drift."
     },
     {
       "filename": "ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
@@ -318,8 +319,8 @@
       "local_hash_sha256": "8a65c7c556248b5c70f0cecc230c7941e734169a3dbdf85c8358476716309c7f",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-04-08T13:22:00Z",
-      "change_note": "New canonical file added in commit 63cdfb06. Layered down via CI ripple PR #1296."
+      "last_verified": "2026-04-09T11:10:00Z",
+      "change_note": "New canonical file added in commit 63cdfb06. Layered down via CI ripple PR #1296. Layer-down 5c2f5b39 (PR #1314) applied 2026-04-09: fixed strategy reference path (upstream-only note → maturion/strategy/Execution_Ceremony_Administration_Strategy.md). Local and canonical hashes aligned at 8a65c7c5..."
     },
     {
       "filename": "FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
@@ -339,7 +340,7 @@
     "governing_protocol": "GOVERNANCE_RIPPLE_MODEL.md v1.1.0",
     "canonical_checklist": "GOVERNANCE_RIPPLE_CHECKLIST_PROTOCOL.md",
     "created_by": "governance-liaison-isms session-035",
-    "last_updated_by": "governance-liaison-isms session-061-20260409 ripple-f5b61144-20260409"
+    "last_updated_by": "governance-liaison-isms session-062-20260409 layer-down-5c2f5b39"
   },
-  "last_updated_by": "governance-liaison-isms session-061-20260409 ripple-f5b61144-20260409"
+  "last_updated_by": "governance-liaison-isms session-062-20260409 layer-down-5c2f5b39"
 }
