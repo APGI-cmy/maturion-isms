@@ -7,7 +7,7 @@
 **Date**: 2026-04-09 / 2026-04-10
 **Authority**: A-026 / A-031
 
-## Files Changed in This Wave
+---
 
 - `.agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-ci-enforcement-again.md` - IAA Pre-Brief for CL-10 re-execution (IAA-authored, A-031 exempt)
 - `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl10-reexec-20260409.md` - Foreman PREHANDOVER proof (R1)

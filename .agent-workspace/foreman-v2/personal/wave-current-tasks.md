@@ -43,4 +43,4 @@ Merge authority: CS2 ONLY.
 - T-C-010-001 through T-C-010-012: 12/12 GREEN ✅
 
 ### Previous Wave (Closed)
-wave: optimize-iaa-invocation-workflows (Issue #1311)
+wave: optimize-iaa-invocation-workflows (Issue #1311, PR #1312 merged)
