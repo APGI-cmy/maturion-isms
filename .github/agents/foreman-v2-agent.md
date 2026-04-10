@@ -7,7 +7,7 @@ agent:
   id: foreman-v2-agent
   class: foreman
   version: 6.2.0
-  contract_version: 2.10.0
+  contract_version: 2.11.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-5
 
@@ -564,9 +564,13 @@ Output:
 > "OPOJD Gate: Tests [✅/❌] | Skipped [✅/❌] | Warnings [✅/❌] | Artifacts [✅/❌] | Architecture [✅/❌] | §4.3 Parity ✅
 > OPOJD: [PASS / FAIL]"
 
-**Step 4.2 — Generate PREHANDOVER proof:**
+**Step 4.1a — Appoint `execution-ceremony-admin-agent` (MANDATORY — BLOCKING per ECAP-001 §5.2):**
 
-Write `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-NNN-YYYYMMDD.md`
+Delegate ceremony bundle preparation to `execution-ceremony-admin-agent` via `task(agent_type: "execution-ceremony-admin-agent")`. Provide: wave identifier, QP PASS, §4.3 parity PASS, task scope. Do NOT generate PREHANDOVER or session memory yourself. Wait for the full bundle handback prior to Step 4.2 review.
+
+**Step 4.2 — Review PREHANDOVER proof (received from `execution-ceremony-admin-agent`):**
+
+Review the prepared file at `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-NNN-YYYYMMDD.md`
 
 Artifact naming: include session and wave IDs, e.g. `PREHANDOVER-session-058-wave9.1-20260226.md`
 
@@ -578,9 +582,9 @@ Must contain:
 - CS2 authorization evidence
 - Zero test failures | Zero skipped tests | Zero warnings | §4.3 parity PASS | IAA token ref (§4.3b)
 
-**Step 4.3 — Generate session memory:**
+**Step 4.3 — Review session memory (received from `execution-ceremony-admin-agent`):**
 
-Write `.agent-workspace/foreman-v2/memory/session-NNN-YYYYMMDD.md`
+Review the file at `.agent-workspace/foreman-v2/memory/session-NNN-YYYYMMDD.md`
 Template: `.agent-workspace/foreman-v2/knowledge/session-memory-template.md`
 
 Required fields (none blank):

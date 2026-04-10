@@ -71,4 +71,4 @@ Foreman MUST NOT perform any activity listed under an agent's "Capabilities" col
 
 ---
 
-**Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0 | **Version**: 1.1.0 | **Date**: 2026-02-21
+**Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0 | **Version**: 1.2.0 | **Date**: 2026-04-10
