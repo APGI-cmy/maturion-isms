@@ -1,11 +1,12 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.4.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.5.0 | **Authority**: CS2
 **Date**: 2026-03-03
 **Amended**: 2026-03-03 — v1.1.0: Added §Proactive Assurance — Pre-Brief Protocol
 **Amended**: 2026-03-04 — v1.2.1: Added §CS2 Direct Review Track
 **Amended**: 2026-03-04 — v1.3.0: Added §Risk-Tiered Ceremony Table + §Functional Fitness Assessment (FFA)
 **Amended**: 2026-04-08 — v1.4.0: Added §Execution Ceremony Admin Non-Substitution Rule — explicitly prohibits the execution-ceremony-admin-agent from performing IAA functions; reinforces IAA non-producing / non-cleanup-authoring posture relative to the new ceremony admin role; authority: CS2 — ECAP-001 canon establishment issue.
+**Amended**: 2026-04-08 — v1.5.0: Amended §Independence Requirements rule 3 — clarified that Foreman is the authorised IAA invoker at Phase 4 handover (not a self-assurance violation); added §IAA Re-Invocation After Rejection — Foreman Ownership defining Foreman-owned stop-and-fix loop, CS2-only exception classes, canonical re-invocation token/session format, prohibited misleading wording, and worked example; authority: CS2 — Foreman IAA re-invocation ownership canonisation issue.
 
 ---
 
@@ -55,7 +56,7 @@ The following failure modes mandate an independent assurance layer:
 
 2. **The IAA operates from its own loaded governance context** — Tier 1 IAA canon (SHA256 verified), Tier 2 agent-integrity reference index, and the PR-specific assurance context as Tier 3.
 
-3. **The IAA is invoked by CS2 or the merge gate workflow** — not by the Builder or Foreman submitting the PR.
+3. **IAA invocation authority by role** — The Foreman is the **authorised invoker** of the IAA at Phase 4 handover (via `task(agent_type: "independent-assurance-agent")`). This is the canonical invocation model and does **not** compromise IAA independence because the IAA operates from its own loaded governance context and issues an independent verdict on the evidence presented. A Builder MUST NOT invoke IAA to assure their own build — in builder-submitted PRs, the Foreman or CS2 is the invoking party. After a `REJECTION-PACKAGE`, the Foreman remains the responsible invoker; see §IAA Re-Invocation After Rejection — Foreman Ownership for full rules.
 
 4. **Only CS2 (Johan Ras / repo owner) may update the IAA agent contract file itself.** Any PR modifying the IAA agent file without CS2 sign-off is auto-FAIL.
 
@@ -620,6 +621,162 @@ The failure mode this rule prevents: the `execution-ceremony-admin-agent` produc
 
 ---
 
+## IAA Re-Invocation After Rejection — Foreman Ownership (v1.5.0)
+
+### Governing Sentence
+
+"If IAA issues a `REJECTION-PACKAGE` for a Foreman-led handover, the Foreman remains
+responsible for correcting the cited failures and re-invoking IAA until a valid
+`ASSURANCE-TOKEN` is issued, unless the PR class is explicitly marked CS2-only by canon."
+
+### Re-Invocation Ownership Rule
+
+| PR Class | Who Owns Correction + Re-Invocation |
+|----------|-------------------------------------|
+| Ordinary Foreman-led handover | **Foreman** — unconditionally |
+| Builder-submitted PR (Foreman as invoker) | **Foreman** — unconditionally |
+| Explicit CS2-only exception class (see below) | **CS2** — by canon designation only |
+
+For **ordinary Foreman-led handovers**, if IAA issues a `REJECTION-PACKAGE`, the Foreman:
+
+1. **STOPS** — does not open a PR or proceed to merge
+2. **CORRECTS** every failure cited in the `REJECTION-PACKAGE`
+3. **PRODUCES** any new evidence artifacts required; creates a fresh PREHANDOVER proof in a new commit (the committed proof is immutable — see AGENT_HANDOVER_AUTOMATION.md §4.3b)
+4. **RE-RUNS** the pre-handover gate parity check (§4.3 / §4.3c of the producing-agent contract)
+5. **RE-INVOKES** IAA: `task(agent_type: "independent-assurance-agent")`
+6. **RECORDS** the new outcome in the new PREHANDOVER proof's `iaa_audit_token` field and in a dedicated token file per §4.3b (append-only; never edits a previously committed proof)
+7. **REPEATS** steps 1–6 until a valid `ASSURANCE-TOKEN` is issued or the PR is
+   classified under a canon-defined CS2-only exception path
+
+This loop is **Foreman-owned** end-to-end. CS2 is not a relay agent in this loop.
+Foreman does not escalate ordinary rejection handling to CS2.
+
+### CS2-Only Exception Classes
+
+"CS2 must directly handle the assurance outcome" applies **only** to these explicitly
+canon-defined exception classes:
+
+| Exception Class | Canon Basis | Why CS2-Owned |
+|-----------------|-------------|---------------|
+| **Structural self-assurance / independence prohibition** | `INDEPENDENT_ASSURANCE_AGENT_CANON.md §Independence Requirements rule 1` | The IAA cannot validly assure its own governing contract — CS2 must directly review |
+| **CS2-direct PR classes** | `§CS2 Direct Review Track` in this canon | CS2 has explicitly designated the PR for direct review, rendering IAA ceremony optional |
+| **IAA contract modification** | `§Independence Requirements rule 4` | Only CS2 may update the IAA agent contract file |
+
+**No other PR class may claim CS2-owned re-invocation by default.** A Foreman-led PR that
+cites "CS2 must re-invoke IAA" for any reason outside the above exception classes is a
+governance defect.
+
+### Prohibited Wording
+
+The following phrases are **PROHIBITED** in PREHANDOVER proofs, PR descriptions, token
+files, session memories, or any governance artifact produced by or about a Foreman-led
+handover, unless the PR is explicitly classified under a canon-defined CS2-only exception
+class:
+
+| Prohibited Phrase | Reason |
+|-------------------|--------|
+| "requires fresh re-invocation by CS2 before merge" | Implies Foreman's responsibility ends at rejection — incorrect for ordinary handovers |
+| "CS2 must re-invoke IAA" | Misattributes ownership; Foreman is the authorised invoker |
+| "IAA re-invocation is required before merge — by CS2" | Combines mandatory PASS requirement (correct) with wrong owner (incorrect) |
+| "awaiting CS2 to trigger IAA re-run" | Implies human-relay responsibility for ordinary correction cycle |
+
+**Allowed wording** for ordinary Foreman-led rejection cases:
+
+- "IAA issued `REJECTION-PACKAGE`; Foreman must correct the cited failures and re-invoke IAA before merge"
+- "Fresh `ASSURANCE-TOKEN` required before merge — Foreman to correct and re-invoke"
+- "REJECTION-PACKAGE received; Foreman completing stop-and-fix; re-invocation pending"
+
+### Canonical Re-Invocation Token/Session Format
+
+When Foreman re-invokes IAA after a rejection, the following naming and recording rules apply:
+
+#### Session Namespace
+
+- The **Foreman session** namespace governs PREHANDOVER proof references (e.g., `session-NNN`)
+- The **IAA session** is a separate namespace and is referenced verbatim as issued by IAA
+- A new IAA session is created for each re-invocation — do not reuse the rejected session ID
+
+#### Token File Naming
+
+The canonical base format is defined in `AGENT_HANDOVER_AUTOMATION.md §4.3b`:
+
+```
+.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md
+```
+
+For re-invocation rounds, an `-rZ` suffix is appended (this naming **supersedes** the base format for round ≥ 1 tokens only; first-invocation tokens omit the suffix):
+
+```
+.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD-rZ.md
+```
+
+Where:
+- `NNN` = Foreman session number (e.g., `042`)
+- `Y` = wave number (e.g., `10`)
+- `YYYYMMDD` = date of this re-invocation token
+- `Z` = re-invocation round number (1 = first re-invocation after rejection; omit suffix for the original first invocation)
+
+Example: `iaa-token-session-042-wave10-20260408-r1.md`
+
+#### Handling Rejected Session References
+
+- **Prior REJECTION-PACKAGE artifacts MUST be retained** — do not delete or overwrite them
+- Rejected session references are kept in `.agent-admin/assurance/` as historical evidence
+- The `rejection-package-<PR#>.md` file remains at the path it was issued; it is not modified
+- The new PASS token is recorded in the new (re-invocation round) PREHANDOVER proof's `iaa_audit_token` field — **never** by editing any already-committed PREHANDOVER proof (see AGENT_HANDOVER_AUTOMATION.md §4.3b)
+
+#### PREHANDOVER Proof Handling During Rejection Cycle
+
+**ABSOLUTE RULE**: A committed PREHANDOVER proof is immutable. Do **NOT** edit it post-commit (see AGENT_HANDOVER_AUTOMATION.md §4.3b). During a rejection/re-invocation cycle:
+
+- The **rejection** artifact is a new dedicated file (e.g., `rejection-package-<PR#>.md`)
+- The Foreman's corrections are committed as new files in a new commit
+- A **fresh PREHANDOVER proof** is created in that new commit for the re-invocation round
+- The fresh proof's `iaa_audit_token` field records the expected token reference for that round
+- When IAA issues the new ASSURANCE-TOKEN, it is written to a new token file per §4.3b — the fresh PREHANDOVER proof is not edited again
+
+Example `iaa_audit_token` in the fresh PREHANDOVER proof (re-invocation round 1):
+
+```yaml
+iaa_audit_token: IAA-session-NNN-20260408-r1-PASS  # expected reference format
+iaa_rejection_reference: .agent-admin/assurance/rejection-package-<PR#>.md
+iaa_reinvocation_round: 1
+```
+
+### Worked Example — Rejection, Correction, Re-Invocation, PASS
+
+```
+Wave 12, Task TASK-12-003 — canon update
+
+ROUND 1 — First invocation:
+  Foreman commits all Phase 4 artifacts (PREHANDOVER proof, session memory).
+  Pre-IAA commit-state gate PASSES.
+  Foreman invokes: task(agent_type: "independent-assurance-agent")
+  IAA result: REJECTION-PACKAGE
+  REJECTION: Phase 4 handover proof missing iaa_prebrief reference; CHECKLIST-GATE-003.
+  Rejection artifact created: rejection-package-1357.md (retained immutably).
+  Committed PREHANDOVER proof is NOT edited.
+
+ROUND 2 — Foreman stop-and-fix:
+  Foreman corrects the cited failure: adds iaa_prebrief reference.
+  Foreman creates a fresh PREHANDOVER proof (new commit) — original proof remains immutable.
+  Fresh PREHANDOVER proof iaa_audit_token: IAA-session-042-20260408-r1-PASS (expected reference)
+  Foreman re-runs §4.3 pre-handover gate parity check — PASSES.
+  Foreman re-runs §4.3c pre-IAA commit-state gate — PASSES.
+  Foreman re-invokes: task(agent_type: "independent-assurance-agent")
+  IAA result: ASSURANCE-TOKEN
+  IAA session: IAA-20260408-042-R1
+  Token file created: iaa-token-session-042-wave12-20260408-r1.md (new append-only artifact)
+
+OUTCOME:
+  Valid ASSURANCE-TOKEN on record.
+  Original REJECTION-PACKAGE retained for audit trail.
+  Foreman opens PR.
+  No CS2 involvement required in the correction/re-invocation cycle.
+```
+
+---
+
 ## References
 
 - `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0 — Living Agent framework
@@ -633,4 +790,4 @@ The failure mode this rule prevents: the `execution-ceremony-admin-agent` produc
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.4.0 | Effective: 2026-02-24 | Amended: 2026-04-08*
+*Authority: CS2 (Johan Ras) | Version: 1.5.0 | Effective: 2026-02-24 | Amended: 2026-04-08 (v1.5.0) | Previous: 2026-04-08 (v1.4.0)*
