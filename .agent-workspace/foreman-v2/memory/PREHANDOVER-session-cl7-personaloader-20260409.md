@@ -220,20 +220,21 @@ This constitutes explicit CS2 wave-start authorization per Phase 2 Step 2.1 crit
 ## SCOPE_DECLARATION Ceremony
 
 Per A-029: SCOPE_DECLARATION.md cleared and rewritten for this wave.
+Scope validated: `validate-scope-to-diff.sh` PASSED (exact set comparison — 6 files).
 
-Scope declared (governance artifacts only — no production code changes on this branch):
+Scope declared (governance ceremony artifacts only — no production code changes on this branch):
 
 ```
-- `SCOPE_DECLARATION.md` - Updated for CL-7 wave session (2026-04-09)
+- `SCOPE_DECLARATION.md` - Updated for CL-7 session (2026-04-09)
+- `.agent-admin/assurance/iaa-prebrief-cl7-personaloader-20260409.md` - IAA Pre-Brief committed by IAA (ace5912)
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated for CL-7 issue #1326
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl7-personaloader-20260409.md` - This file
-- `.agent-workspace/foreman-v2/memory/session-cl7-personaloader-20260409.md` - Session memory
-- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Parking station entry
-- `.agent-admin/assurance/iaa-prebrief-cl7-personaloader-20260409.md` - IAA Pre-Brief (committed ace5912 by IAA)
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl7-personaloader-20260409.md` - PREHANDOVER proof for this session
+- `.agent-workspace/foreman-v2/memory/session-cl7-personaloader-20260409.md` - Session memory for this session
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - S-042 parking station entry
 ```
 
-IAA ceremony files are exempt per A-031 carve-out:
-- `.agent-admin/assurance/iaa-token-session-cl7-personaloader-20260409.md` (to be written by IAA)
+Note: After IAA writes the token file, SCOPE_DECLARATION will be updated to include:
+- `.agent-admin/assurance/iaa-token-session-cl7-personaloader-20260409.md` - IAA token
 
 ---
 
