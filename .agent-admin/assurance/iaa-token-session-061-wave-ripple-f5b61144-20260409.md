@@ -28,7 +28,7 @@ Adoption phase: PHASE_B_BLOCKING — hard gate.
 
 REJECTION-PACKAGE issued in session-061-assurance-20260409 citing 2 failures:
 - **CORE-018**: PREHANDOVER proof absent from branch → **RESOLVED** — PREHANDOVER proof committed at `.agent-workspace/governance-liaison-isms/memory/PREHANDOVER_PROOF_SESSION_061_RIPPLE_F5B61144.md` (commit 4eab9f0)
-- **CORE-007**: Session memory contained `PHASE_A_ADVISORY` assertion unauthorized by IAA → **RESOLVED** — session memory corrected (commit c1e287e), field now contains `iaa_invocation_result: PENDING_IAA_VERDICT` only, no PHASE_A_ADVISORY assertion
+- **CORE-007**: Session memory contained a Phase-A advisory assertion unauthorized by IAA → **RESOLVED** — session memory corrected (commit c1e287e), field now contains `iaa_invocation_result: PENDING_IAA_VERDICT` only, unauthorized phase assertion removed
 
 ---
 
@@ -45,7 +45,7 @@ REJECTION-PACKAGE issued in session-061-assurance-20260409 citing 2 failures:
 | ECAP three-role split | N/A — ceremony_admin not appointed for this session |
 | CORE-005 Governance block | ✅ PASS (N/A — tracking JSON, not agent contract YAML) |
 | CORE-006 CANON_INVENTORY alignment | ✅ PASS — 199 hashes valid, no canon files modified |
-| CORE-007 No placeholder content | ✅ PASS — RESOLVED (PHASE_A_ADVISORY removed from session memory) |
+| CORE-007 No placeholder content | ✅ PASS — RESOLVED (unauthorized phase assertion removed from session memory) |
 | CORE-013 IAA invocation evidence | ✅ PASS — PREHANDOVER proof with IAA token reference present |
 | CORE-014 No class exemption | ✅ PASS — No exemption claimed |
 | CORE-015 Session memory present | ✅ PASS — 92-line file committed |
