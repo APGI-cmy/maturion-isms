@@ -44,6 +44,12 @@ This registry lists all agents Foreman v2 may delegate to, their capabilities, a
 | `governance-liaison-isms-agent` | Governance alignment, ripple processing, canon sync | Any governance canon change | GOVERNANCE_LIAISON_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md |
 | `CodexAdvisor-agent` | Agent file creation/modification (CS2-gated) | Agent contract operations | CS2_AGENT_FILE_AUTHORITY_MODEL.md |
 
+### Administrator Agents
+
+| Agent ID | Capabilities | Delegation Trigger | Authority Doc |
+|----------|--------------|--------------------|--------------|
+| `execution-ceremony-admin-agent` | Phase 4 ceremony bundle preparation: PREHANDOVER assembly, session-memory assembly, evidence collation, §4.3c commit-state verification. Does NOT invoke IAA. Does NOT approve readiness. | Foreman delegates Phase 4 bundle preparation after QP PASS + §4.3 parity PASS | EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md, execution-ceremony-admin-agent.md |
+
 ---
 
 ## No-Builder Fallback Protocol
