@@ -1,58 +1,91 @@
-# SCOPE DECLARATION — Wave iaa-12stage-upgrade | Session iaa-12stage-20260407
+# SCOPE DECLARATION — Wave CL-10 (Re-execution) | Session cl10-reexec-20260409
 
-**Agent**: foreman-v2-agent
-**Wave**: iaa-12stage-upgrade
-**Branch**: copilot/upgrade-iaa-tier-logic
-**Date**: 2026-04-07
-**Issue**: maturion-isms#1258
+**Agent**: foreman-v2-agent (orchestration) + integration-builder (CL-10-D2)
+**Wave**: CL-10 (Re-execution)
+**Branch**: copilot/cl-10-routing-governance-ci-enforcement-again
+**Date**: 2026-04-09
+**Issue**: maturion-isms#1313
 **Authority**: A-026 / A-031
+**Revision**: R2 — updated to include Foreman ceremony artifacts (IAA REJECTION-PACKAGE A-026 fix)
 
 > **A-031 NOTE**: IAA ceremony artifacts (Pre-Brief, PREHANDOVER, session memory, token file)
-> from this wave are carved out of scope tracking per A-031.
+> from this wave are carved out of scope tracking per A-031. See Exempt section below.
 
 ## Files Added (This Wave)
 
 | Path | Description |
 |------|-------------|
-| `.agent-admin/assurance/iaa-prebrief-iaa-12stage-upgrade.md` | IAA Phase 0 Pre-Brief artifact |
-| `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-iaa-12stage-20260407.md` | Foreman PREHANDOVER proof (A-031 carve-out) |
-| `.agent-workspace/foreman-v2/memory/session-iaa-12stage-20260407.md` | Foreman session memory (A-031 carve-out) |
-| `.agent-admin/assurance/iaa-token-session-iaa-12stage-20260407.md` | IAA ASSURANCE-TOKEN (A-031 carve-out) |
+| `.github/workflows/sub-module-routing-check.yml` | CL-10-D2: Sub-module routing compliance CI check (GRS-016) |
+| `.agent-workspace/integration-builder/memory/PREHANDOVER-session-cl10-d2-20260409.md` | Integration-builder PREHANDOVER proof |
+| `.agent-workspace/integration-builder/memory/session-cl10-d2-20260409.md` | Integration-builder session memory |
+| `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md` | This file — updated for CL-10 re-execution scope |
+| `.agent-workspace/foreman-v2/personal/cl10-d2-builder-checklist.md` | Foreman Stage-9 Builder Checklist for CL-10-D2 |
+| `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Foreman wave-current-tasks.md updated for CL-10 re-execution |
+| `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl10-reexec-20260409.md` | Foreman PREHANDOVER proof (this session) |
+| `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl10-reexec-R2-20260409.md` | Foreman PREHANDOVER proof R2 (post-REJECTION-PACKAGE fix) |
+| `.agent-workspace/foreman-v2/memory/session-cl10-reexec-20260409.md` | Foreman session memory |
 
 ## Files Modified (This Wave)
 
 | Path | Description |
 |------|-------------|
-| `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Updated for iaa-12stage-upgrade active wave |
-| `.agent-workspace/independent-assurance-agent/knowledge/iaa-category-overlays.md` | v3.8.0 → v4.0.0 — OVL-PBG-010–016 added; PRE_BRIEF_ASSURANCE strengthened |
-| `.agent-workspace/independent-assurance-agent/knowledge/iaa-core-invariants-checklist.md` | v2.9.0 → v3.0.0 — CORE-025 Pre-Brief Stage-Readiness Declaration added |
-| `.agent-workspace/independent-assurance-agent/knowledge/iaa-trigger-table.md` | v2.2.0 → v2.3.0 — all 12 stages named; OVL-PBG-001–016 reference |
-| `.agent-workspace/independent-assurance-agent/knowledge/index.md` | v3.3.0 → v3.4.0 — all version entries updated |
-| `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` | v1.3.0 → v1.4.0 — §Pre-Build Stage Assurance added |
-| `governance/CANON_INVENTORY.json` | INDEPENDENT_ASSURANCE_AGENT_CANON.md entry: v1.4.0, hash 86e0a1fd... |
+| `modules/mat/tests/ci-governance-check/routing-governance-ci.test.ts` | Added T-C-010-010, T-C-010-011, T-C-010-012 RED gate tests for CL-10-D2 |
+
+## Files Already in Base (NOT Scope of This PR)
+
+The following files were delivered in a prior execution and are already in `origin/main`.
+They will NOT appear in `git diff origin/main...HEAD --name-only` for this branch:
+
+| Path | Description | Merged At |
+|------|-------------|-----------|
+| `.github/workflows/routing-governance-check.yml` | CL-10-D1 | commit 8aa76f4 |
+| `.github/workflows/stub-detection-check.yml` | CL-10-D3 | commit 8aa76f4 |
+
+## Exempt Artifacts (A-031 IAA Ceremony Carve-out)
+
+The following files are IAA ceremony artifacts exempt from scope parity per A-031.
+They may appear in `git diff origin/main...HEAD --name-only` but are NOT builder-produced scope:
+
+| File | Type | A-031 Basis |
+|------|------|-------------|
+| `.agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-ci-enforcement-again.md` | IAA Pre-Brief | A-031 — IAA ceremony artifact (already in branch from prior commits) |
+| `.agent-admin/assurance/iaa-token-session-cl10-reexec-20260409.md` | IAA ASSURANCE-TOKEN | A-031 — IAA-authored, written by IAA only (§4.3b / ECAP-001) |
+| `.agent-workspace/independent-assurance-agent/memory/session-cl10-reexec-*.md` | IAA session memory | A-031 — IAA-authored ceremony artifact |
+| `.agent-workspace/independent-assurance-agent/parking-station/*.md` | IAA parking station | A-031 — IAA-authored ceremony artifact |
 
 ## Files Excluded
 
 - `node_modules/`
 - `dist/`
-- Any file not listed above
+- Any file not listed above (builder scope is exhaustively declared)
 
 ## Scope Boundaries
 
 - Production code paths touched: None
-- CI workflows added: 2 (routing-governance-check.yml, stub-detection-check.yml)
-- Existing CI workflows modified: None
+- CI workflows added: 1 (sub-module-routing-check.yml)
+- CI workflows modified: None (routing-governance-check.yml and stub-detection-check.yml unchanged)
 - Agent contract files modified: None
+- Database schema modified: None
+- Governance canon modified: None
 
-## Amendments (Post-IAA R1 REJECTION-PACKAGE)
+## git diff origin/main...HEAD --name-only (reconciliation)
 
-Following IAA R1 REJECTION-PACKAGE, two amendments were made:
+Expected output at final commit:
+```
+.agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-ci-enforcement-again.md  ← A-031 exempt
+.agent-admin/assurance/iaa-token-session-cl10-reexec-20260409.md                      ← A-031 exempt (IAA issues this)
+.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl10-reexec-20260409.md        ← Foreman PREHANDOVER
+.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl10-reexec-R2-20260409.md     ← Foreman PREHANDOVER R2
+.agent-workspace/foreman-v2/memory/session-cl10-reexec-20260409.md                    ← Foreman session memory
+.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md                              ← this file
+.agent-workspace/foreman-v2/personal/cl10-d2-builder-checklist.md                     ← Foreman Builder Checklist
+.agent-workspace/foreman-v2/personal/wave-current-tasks.md                             ← Foreman wave tasks
+.agent-workspace/integration-builder/memory/PREHANDOVER-session-cl10-d2-20260409.md   ← integration-builder evidence
+.agent-workspace/integration-builder/memory/session-cl10-d2-20260409.md               ← integration-builder evidence
+.github/workflows/sub-module-routing-check.yml                                         ← D2 deliverable
+modules/mat/tests/ci-governance-check/routing-governance-ci.test.ts                   ← RED gate tests
+```
 
-1. **OVL-CI-005 fix**: `workflow_dispatch: {}` added to:
-   - `.github/workflows/routing-governance-check.yml`
-   - `.github/workflows/stub-detection-check.yml`
-   Both files remain YAML valid (re-verified via python yaml.safe_load).
-
-2. **integration-builder PREHANDOVER updated**: OVL-CI-005 S-033 exception section added with YAML evidence + pattern parity evidence.
-
-Ceremony artifacts committed as one batch per IAA required fix sequence.
+SCOPE_DECLARATION parity: ✅ All non-exempt files declared above.
+A-031 carve-out: ✅ IAA ceremony artifacts explicitly listed in Exempt section.
+Foreman ceremony files: ✅ All 4 files from SHA 7992f3f now declared (R2 fix — A-026 REJECTION-PACKAGE resolution).
