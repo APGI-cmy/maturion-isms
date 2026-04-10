@@ -53,9 +53,12 @@ interface ApprovePayload {
  * Fetch pending feedback items from the ARC API.
  * Authenticates via the caller's Supabase session JWT (Authorization: Bearer).
  * No client-side secrets are used — the token is the Supabase session token.
+ * organisationId is required as a query parameter (F-D3-002: JWT claim extraction removed).
  */
-async function fetchPendingFeedback(token: string): Promise<PendingFeedbackItem[]> {
-  const res = await fetch('/api/ai/feedback/pending', {
+async function fetchPendingFeedback(token: string, organisationId: string): Promise<PendingFeedbackItem[]> {
+  const url = new URL('/api/ai/feedback/pending', window.location.origin);
+  url.searchParams.set('organisationId', organisationId);
+  const res = await fetch(url.toString(), {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
@@ -105,13 +108,19 @@ async function submitFeedbackDecision(payload: ApprovePayload, token: string): P
 // ---------------------------------------------------------------------------
 
 function usePendingFeedback() {
-  const { session } = useAuth();
+  const { session, user } = useAuth();
   return useQuery<PendingFeedbackItem[], Error>({
     queryKey: ['arc-pending-feedback'],
     queryFn: async () => {
       const token = await getSessionToken();
       if (!token) throw new Error('Not authenticated');
-      return fetchPendingFeedback(token);
+      // F-D3-002: organisationId is now required as a query parameter.
+      // Read from verified Supabase user metadata (set during provisioning).
+      const meta = user?.user_metadata as Record<string, unknown> | undefined;
+      const appMeta = user?.app_metadata as Record<string, unknown> | undefined;
+      const organisationId = (appMeta?.['org_id'] ?? meta?.['organisation_id'] ?? meta?.['org_id']) as string | undefined;
+      if (!organisationId) throw new Error('Organisation ID not found in session. Contact your administrator.');
+      return fetchPendingFeedback(token, organisationId);
     },
     staleTime: 30000,
     refetchIntervalInBackground: false,
