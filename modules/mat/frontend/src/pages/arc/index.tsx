@@ -118,7 +118,7 @@ function usePendingFeedback() {
       // Read from verified Supabase user metadata (set during provisioning).
       const meta = user?.user_metadata as Record<string, unknown> | undefined;
       const appMeta = user?.app_metadata as Record<string, unknown> | undefined;
-      const organisationId = (appMeta?.['org_id'] ?? meta?.['organisation_id'] ?? meta?.['org_id']) as string | undefined;
+      const organisationId = (appMeta?.['org_id'] ?? meta?.['organisation_id']) as string | undefined;
       if (!organisationId) throw new Error('Organisation ID not found in session. Contact your administrator.');
       return fetchPendingFeedback(token, organisationId);
     },
