@@ -12,6 +12,7 @@
     "drifted": 1,
     "missing": 0,
     "escalated": 4,
+    "not_tracked": 1,
     "overall_status": "PARTIAL — AGENT CONTRACT FILES ESCALATED TO CS2"
   },
   "artifacts": [
