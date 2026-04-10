@@ -23,9 +23,16 @@ CS2 Authorization: Issue for Wave CL-6 opened/assigned by @APGI-cmy (CS2 = Johan
 - [x] T4: PREHANDOVER proof produced
 - [x] T5: Session memory produced
 - [x] T6: SCOPE_DECLARATION.md produced
-- [ ] T7: §4.3 Merge gate parity confirmed
-- [ ] T8: IAA final audit invoked
-- [ ] T9: IAA token committed
+- [x] T7: §4.3 Merge gate parity confirmed
+- [x] T8: IAA final audit invoked (R1 → R2 → R3 ASSURANCE-TOKEN PASS)
+- [x] T9: IAA token committed
+
+IAA Token: .agent-admin/assurance/iaa-token-session-cl6-wave3-20260409.md (committed 705eb53)
+ASSURANCE-TOKEN: IAA-session-cl6-wave3-20260409-PASS
+
+### Status
+MERGE GATE RELEASED. Awaiting CS2 (Johan Ras / @APGI-cmy) review and approval.
+Merge authority: CS2 ONLY.
 
 ### CL-6 Deliverables (all confirmed in main)
 | ID | Path | Status |
