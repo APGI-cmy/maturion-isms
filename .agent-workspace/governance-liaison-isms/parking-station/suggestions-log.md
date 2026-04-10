@@ -96,3 +96,5 @@
 | 2026-04-10 | governance-liaison-isms | session-061 | SESSION-END | Extend sync_state.json last_ripple_check to a list for future multi-ripple batches to avoid losing intermediate ripple records on rapid successive ripple events | session-061-20260410.md |
 | 2026-04-09 | governance-liaison-isms | session-061 | [SESSION-END] | Codify fast-path for agent-file-only ripple with NO_DRIFT_DETECTED in session-memory-template.md | session-061-20260409.md |
 | 2026-04-09 | governance-liaison-isms | session-061 | [SESSION-END] | Add structured ripple_history array to CodexAdvisor-agent.md entry in GOVERNANCE_ALIGNMENT_INVENTORY.json | session-061-20260409.md |
+
+| 2026-04-09 | governance-liaison-isms | session-062 | ALIGNMENT | CI ripple PR should atomically update GOVERNANCE_ALIGNMENT_INVENTORY.json to close auto-close conditions in one step | session-062-20260409.md |
