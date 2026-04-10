@@ -1,47 +1,40 @@
-# Wave Current Tasks — Issue 1319
+# Wave Current Tasks — Issue 1326
 
-wave: ecap-001-downstream-normalization-20260409
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-ecap-001-20260409.md
+wave: cl-7-personaloader-improvements-lkiac-l3
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-cl7-personaloader-20260409.md
 
-**CS2 Authorization**: Issue maturion-isms#1319 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to foreman-v2-agent (Copilot). CS2 comment: "CS@ permission granted for all agent file changes by codex advsior [sic] that must be invoked for this task."
-
-**ceremony_admin_appointed**: NO
-**ceremony_admin_agent**: N/A
-**ceremony_admin_scope**: N/A
-**ceremony_admin_return_gate**: Foreman review required before IAA invocation
-
----
-
-## Active Wave: ecap-001-downstream-normalization-20260409
+## Active Wave: CL-7 (LKIAC-L3 — PersonaLoader Improvements)
 
 ### Wave Description
-ECAP-001 downstream normalization of all four protected agent contracts (Foreman, IAA, Ceremony Admin, CodexAdvisor),
-runtime templates, specialist registry, and CI actor-authority allowlist via the FULL governed pathway.
+Foreman orchestrates execution of CL-7 PersonaLoader Improvements wave per
+concurrent-prebuild-and-legacy-plan.md (Track 1, Section 1.3). This is the canonical
+foreman execution issue for CL-7 (maturion-isms#1326, branch: copilot/cl-7-lkiac-l3-personaloader-improvements).
 
-PR #1315 (copilot/ecap-001-full-downstream-implementation) was created via ChatGPT in direct-edit mode and
-is blocked by CI gates (agent-contract/actor-authority, POLC boundary validation/builder-involvement).
-This wave replays the changes via the governed Foreman → CodexAdvisor → IAA pathway.
+CS2 Authorization: Issue maturion-isms#1326 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
+foreman-v2-agent (Copilot). Issue author is CS2. CS2 wave-start confirmed.
+
+IAA Pre-Brief: `.agent-admin/assurance/iaa-prebrief-cl7-personaloader-20260409.md` (committed ace5912)
+Prior Pre-Brief Reference: `.agent-admin/assurance/iaa-prebrief-cl7-personaloader-20260405.md`
+IAA Token: `.agent-admin/assurance/iaa-token-session-cl7-personaloader-20260409.md` (committed 466b8c48)
+ASSURANCE-TOKEN: IAA-session-cl7-personaloader-20260409-PASS
 
 ### Tasks
-- [x] Phase 1 preflight complete (foreman-v2-agent v6.2.0)
-- [x] IAA Pre-Brief committed: .agent-admin/assurance/iaa-prebrief-ecap-001-20260409.md
-- [x] Foreman delegated to CodexAdvisor-agent for all .github/agents/ modifications
-- [x] T-ECAP-001: Update .github/workflows/agent-contract-audit.yml (add johan.ras@apginc.ca to CS2_EMAILS, add 198982749+Copilot@users.noreply.github.com to CODEX_EMAILS, add CS2_NAMES array)
-- [x] T-ECAP-002: Create .github/agents/execution-ceremony-admin-agent.md (new protected contract)
-- [x] T-ECAP-003: Update .github/agents/CodexAdvisor-agent.md (ECAP administrator_class_coverage + ecap_role_boundary + Step 2.3a)
-- [x] T-ECAP-004: Update .github/agents/foreman-v2-agent.md (boundary normalization — compress identity section)
-- [x] T-ECAP-005: Update .github/agents/independent-assurance-agent.md (three_role_split, ceremony-admin checks, compress HALT/prohibitions)
-- [x] T-ECAP-006: Update governance/canon/AGENT_HANDOVER_AUTOMATION.md (ceremony-admin wave-current-tasks fields documentation)
-- [x] T-ECAP-007: Add .agent-workspace knowledge files (specialist-registry, Foreman playbook, IAA checklist, CodexAdvisor rollout note, wave-tasks template)
-- [x] Session memory committed
-- [x] PREHANDOVER proof committed
-- [ ] IAA final audit and token
+- [x] CL-7-D1: RED gate tests — PersonaValidationError on invalid YAML front-matter
+  (`packages/ai-centre/src/__tests__/personas/PersonaLoader.test.ts`)
+- [x] CL-7-D2: RED gate tests — persona registry sync CI check integration test
+  (`packages/ai-centre/src/__tests__/personas/PersonaLoader.test.ts`)
+- [x] CL-7-D3: Implementation — PersonaValidationError type + runtime YAML validation
+  (`packages/ai-centre/src/personas/PersonaLoader.ts`, `packages/ai-centre/src/types/index.ts`)
+- [x] CL-7-D4: CI check — persona registry sync workflow
+  (`.github/workflows/persona-registry-sync.yml`)
+- [x] CL-7-D5: Scheduled workflow — overdue quarterly persona reviews
+  (`.github/workflows/persona-freshness-review.yml`)
+- [x] T6: QP evaluation PASS + PREHANDOVER proof committed + SCOPE_DECLARATION PASS
+- [x] T7: IAA final audit PASS — ASSURANCE-TOKEN IAA-session-cl7-personaloader-20260409-PASS
 
-### IAA Pre-Brief Summary
-- Trigger Categories: AGENT_CONTRACT (T-ECAP-002 through T-ECAP-005), CI_WORKFLOW (T-ECAP-001), CANON_GOVERNANCE (T-ECAP-006)
-- Qualifying Tasks: T-ECAP-001 through T-ECAP-007
-- Delegated builder: CodexAdvisor-agent (agent contract modifications, CS2-authorized)
-- CS2 authorization: maturion-isms#1319 (Johan Ras / @APGI-cmy)
+### Status
+MERGE GATE RELEASED. Awaiting CS2 (Johan Ras / @APGI-cmy) review and approval.
+Merge authority: CS2 ONLY.
 
 ### Previous Wave (Closed)
-wave: ecap-001-layer-down-implementation (Issue #1305, merged)
+wave: optimize-iaa-invocation-workflows (Issue #1311)
