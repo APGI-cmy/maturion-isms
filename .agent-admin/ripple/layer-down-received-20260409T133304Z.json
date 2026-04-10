@@ -4,6 +4,6 @@
   "timestamp": "2026-04-09T13:33:04Z",
   "source_issue": "1322",
   "canonical_commit": "404c78fa15ba6cc82d65132086e3d04ea70c400f",
-  "requires_cs2_approval": false,
-  "escalated": false
+  "requires_cs2_approval": true,
+  "escalated": true
 }
