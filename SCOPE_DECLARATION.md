@@ -1,35 +1,33 @@
-# SCOPE_DECLARATION - Wave optimize-iaa-invocation-workflows
+# SCOPE_DECLARATION — Wave CL-6 Governance Completion (session-cl6-wave3-20260409)
 
-**Session**: session-162-optimize-iaa-inject-watchdog-20260409
-**Wave**: optimize-iaa-invocation-workflows
-**Issue**: maturion-isms#1311
-**Branch**: copilot/optimize-iaa-invocation-workflows
+**Branch**: copilot/cl-6-migrate-knowledge-embeddings-again
+**PR**: #1325
+**Wave**: cl6-wave3-knowledge-reingestion
+**Session**: cl6-wave3-20260409
 **Date**: 2026-04-09
 
-## Files Changed in This Wave
+---
 
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave current tasks updated for optimize-iaa-invocation-workflows wave
-- `.agent-workspace/foreman-v2/memory/iaa-inject-watchdog-reimplementation-review-20260409.md` - D1/D2/D3/D4 review artifact: workflow review, reimplementation plan, follow-up issue tree
-- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - S-041 REANCHOR-WORDING-AUDIT and PLANNING-WAVE-TEMPLATE suggestions added
-- `.agent-workspace/foreman-v2/memory/session-162-optimize-iaa-inject-watchdog-20260409.md` - Foreman session memory for this wave
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-162-optimize-iaa-inject-watchdog-20260409.md` - PREHANDOVER proof for this wave
-- `SCOPE_DECLARATION.md` - This file (updated from ECAP-001 wave)
+## Declared Files
 
-## Exempt from Scope Declaration (A-031 carve-out)
+All files changed in this wave are declared below using the required `- \`path\` - description` format
+(hyphen separator per S-039 anti-regression):
 
-IAA ceremony files are exempt from scope declaration requirements:
-- `.agent-admin/assurance/iaa-prebrief-optimize-iaa-invocation-workflows.md` - IAA Pre-Brief (committed by IAA)
-- `.agent-admin/assurance/iaa-token-session-162-optimize-iaa-inject-watchdog-20260409.md` - IAA token (committed by IAA)
+- `.agent-admin/assurance/iaa-prebrief-cl6-wave3-20260409.md` - IAA Pre-Brief for Wave CL-6 (IAA artifact)
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave CL-6 current tasks update
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl6-wave3-20260409.md` - PREHANDOVER proof for Wave CL-6 governance completion
+- `.agent-workspace/foreman-v2/memory/session-cl6-wave3-20260409.md` - Session memory for session cl6-wave3-20260409
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Parking station suggestion entry appended
+- `SCOPE_DECLARATION.md` - This scope declaration file
 
-IAA workspace files (independent agent, not under Foreman scope):
-- `.agent-workspace/independent-assurance-agent/memory/session-optimize-iaa-invocation-workflows-20260409.md` - IAA session memory (IAA-authored)
-- `.agent-workspace/independent-assurance-agent/memory/session-optimize-iaa-invocation-workflows-20260409-R2.md` - IAA session memory R2 / STOP-AND-FIX record (IAA-authored)
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station (IAA-authored)
+---
 
-## Scope Notes
+## Post-Ceremony Additions (exempt per A-033)
 
-Planning-only wave. No `.github/workflows/` files were modified. No production code (modules/, packages/)
-was changed. No governance/canon files were modified. All artifacts are governance ceremony and
-planning documents in `.agent-workspace/`. Follow-up implementation waves (Issues 1-4 from D4) will
-require separate IAA invocations when builders modify workflow files.
+The IAA token file `.agent-admin/assurance/iaa-token-session-cl6-wave3-20260409.md` will be
+committed as a separate post-ceremony commit after IAA invocation per §4.3b. It is not
+declared here because it does not exist at scope-declaration time.
 
+---
+
+**Authority**: foreman-v2-agent v6.2.0 / CS2 (@APGI-cmy)
