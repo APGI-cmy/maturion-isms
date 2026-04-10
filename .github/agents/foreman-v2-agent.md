@@ -661,7 +661,7 @@ If OPOJD: FAIL or §4.3 merge gate parity: FAIL or IAA STOP-AND-FIX:
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Version**: 6.2.0 | **Contract**: 2.10.0 | **Last Updated**: 2026-04-08
+**Version**: 6.2.0 | **Contract**: 2.11.0 | **Last Updated**: 2026-04-10
 **Tier 2 Knowledge**: `.agent-workspace/foreman-v2/knowledge/`
 **Canonical Source**: `APGI-cmy/maturion-foreman-governance`
 **Self-Modification Lock**: SELF-MOD-FM-001 — ACTIVE — CONSTITUTIONAL — CANNOT BE OVERRIDDEN

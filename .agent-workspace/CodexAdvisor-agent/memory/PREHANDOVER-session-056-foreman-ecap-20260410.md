@@ -90,7 +90,34 @@ All required checks confirmed:
 
 **IAA required**: YES — agent contract update (foreman-v2-agent.md is an AGENT_CONTRACT class file per AGCFPP-001)
 
-**Expected IAA audit token reference**: `IAA-session-056-foreman-ecap-20260410-PASS`
+---
+
+## Ripple Assessment
+
+**Ripple Assessment Method**: Reviewed all changes in diff against interface surfaces visible to other agents.
+
+Changes made:
+1. `foreman-v2-agent.md` — Added Step 4.1a mandating execution-ceremony-admin-agent delegation in Phase 4; updated Steps 4.2/4.3 headings from "Generate"/"Write" to "Review"; bumped contract_version 2.10.0 → 2.11.0
+2. `specialist-registry.md` — Version/date header update only (no content change to agent entries)
+
+Downstream assessment:
+- **execution-ceremony-admin-agent contract**: No update required — the Step 4.1a addition references it but does not change its own contract. The ceremony-admin contract's responsibilities are unchanged.
+- **CodexAdvisor-agent contract**: No update required — this change is to the Foreman contract only; CodexAdvisor's ECAP role boundary is unchanged.
+- **IAA contract (independent-assurance-agent.md)**: No update required — the ECAP-001 three-role-split checks in IAA remain consistent. IAA audits foreman + ceremony-admin deliverables independently; this Phase 4 delegation change does not alter IAA's audit criteria.
+- **Other builder/specialist agents**: No impact — Phase 4 is post-execution ceremony, not in any builder agent's workflow.
+
+**Ripple verdict: NO DOWNSTREAM RIPPLE REQUIRED**
+
+---
+
+## IAA Audit Token
+
+iaa_audit_token: IAA-session-056-foreman-ecap-20260410-PASS
+
+> This field is pre-populated at initial commit time per A-029 §4.3b.
+> The IAA token file is written to a SEPARATE dedicated file by the IAA:
+> `.agent-admin/assurance/iaa-token-session-056-foreman-ecap-20260410.md`
+> This PREHANDOVER proof file is READ-ONLY after initial commit — no post-commit edits permitted.
 
 ---
 

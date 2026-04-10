@@ -1,32 +1,35 @@
-# SCOPE_DECLARATION - Wave cl-7-personaloader-improvements-lkiac-l3
+# SCOPE_DECLARATION — Session 056 (CodexAdvisor-agent) — Wave foreman-ecap-step41a
 
-**Session**: session-cl7-personaloader-20260409
-**Wave**: CL-7 (LKIAC-L3 PersonaLoader Improvements)
-**Issue**: maturion-isms#1326
-**Branch**: copilot/cl-7-lkiac-l3-personaloader-improvements
-**Date**: 2026-04-10 (updated after IAA token ceremony)
+**Session**: session-056-foreman-ecap-20260410
+**Wave**: foreman-ecap-step41a
+**Issue**: maturion-isms — [Governance] Mandate execution-ceremony-admin-agent appointment in Foreman contract Phase 4
+**Branch**: copilot/fix-execution-ceremony-admin-agent
+**Date**: 2026-04-10
+**Authority**: A-026 / A-031
+
+---
 
 ## Files Changed in This Wave
 
-Governance ceremony artifacts only. All CL-7 implementation deliverables (D1-D5) are in the
-branch base (implemented prior session, verified IAA-session-cl7-personaloader-20260405-R2-PASS).
+- `SCOPE_DECLARATION.md` - Root scope declaration for session-056 (this file)
+- `.agent-admin/assurance/iaa-rejection-session-056-foreman-ecap-20260410.md` - IAA REJECTION-PACKAGE from first invocation (IAA-authored, A-031 exempt)
+- `.agent-admin/assurance/iaa-prebrief-foreman-ecap-step41a-20260410.md` - IAA Pre-Brief for wave foreman-ecap-step41a
+- `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-056-foreman-ecap-20260410.md` - CodexAdvisor PREHANDOVER proof (amended per IAA rejection)
+- `.agent-workspace/CodexAdvisor-agent/memory/session-056-20260410.md` - CodexAdvisor session memory for session-056
+- `.agent-workspace/CodexAdvisor-agent/parking-station/suggestions-log.md` - CodexAdvisor parking station entry
+- `.agent-workspace/CodexAdvisor-agent/personal/SCOPE_DECLARATION.md` - CodexAdvisor personal scope declaration for session-056
+- `.agent-workspace/foreman-v2/knowledge/specialist-registry.md` - Specialist registry header version/date update
+- `.github/agents/foreman-v2-agent.md` - Foreman contract: add Step 4.1a, update Steps 4.2/4.3, bump contract_version 2.10.0→2.11.0, fix footer
 
-- `SCOPE_DECLARATION.md` - Updated for CL-7 session
-- `.agent-admin/assurance/iaa-prebrief-cl7-personaloader-20260409.md` - IAA Pre-Brief (committed ace5912 by IAA)
-- `.agent-admin/assurance/iaa-token-session-cl7-personaloader-20260409.md` - IAA ASSURANCE-TOKEN (committed 466b8c48 by IAA)
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated for CL-7 issue #1326
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl7-personaloader-20260409.md` - PREHANDOVER proof for this session
-- `.agent-workspace/foreman-v2/memory/session-cl7-personaloader-20260409.md` - Foreman session memory for this session
-- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - S-042 parking station entry
-- `.agent-workspace/independent-assurance-agent/memory/session-cl7-personaloader-20260409.md` - IAA session memory
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station entry
+**Total declared files**: 9
 
-## Implementation Status (in base branch, not in this PR diff)
+## Implementation Status
 
-CL-7 implementation deliverables are present in the base of this branch (from prior session):
-packages/ai-centre/src/__tests__/personas/PersonaLoader.test.ts
-packages/ai-centre/src/personas/PersonaLoader.ts
-packages/ai-centre/src/types/index.ts
-packages/ai-centre/src/agents/ (11 test fixture files)
-.github/workflows/persona-registry-sync.yml
-.github/workflows/persona-freshness-review.yml
+All ECAP-001 §5.2 governance changes delivered:
+- Step 4.1a added to Foreman Phase 4 (mandate execution-ceremony-admin-agent ceremony bundle preparation)
+- Steps 4.2/4.3 headings updated from Generate/Write to Review (reflect delegation model)
+- contract_version bumped 2.10.0 → 2.11.0
+- Footer version consistency fixed (2.10.0 → 2.11.0, date updated)
+- specialist-registry.md header synchronized (Knowledge Version 1.0.0 → 1.2.0)
+- PREHANDOVER proof amended with Ripple Assessment and IAA Audit Token sections
+- IAA pre-brief created for this wave

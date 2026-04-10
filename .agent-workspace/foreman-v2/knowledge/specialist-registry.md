@@ -1,8 +1,8 @@
 # Foreman v2 — Specialist Registry (Tier 2 Operational Knowledge)
 
 **Agent**: foreman-v2  
-**Knowledge Version**: 1.0.0  
-**Last Updated**: 2026-02-21  
+**Knowledge Version**: 1.2.0  
+**Last Updated**: 2026-04-10  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
