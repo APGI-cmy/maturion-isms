@@ -3,7 +3,7 @@
 **Agent**: foreman-v2
 **Version**: 1.8.0
 **Last Updated**: 2026-04-09
-**Purpose**: Template for generating Phase 4 PREHANDOVER proof artifacts per S-009 (FAIL-ONLY-ONCE v1.8.0)
+**Purpose**: Template for generating Phase 4 PREHANDOVER proof artifacts per S-009 (FAIL-ONLY-ONCE v4.2.0)
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
