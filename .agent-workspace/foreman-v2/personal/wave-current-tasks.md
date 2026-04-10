@@ -1,40 +1,46 @@
-# Wave Current Tasks — Issue 1326
+# Wave Current Tasks — Issue #1313
 
-wave: cl-7-personaloader-improvements-lkiac-l3
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-cl7-personaloader-20260409.md
+wave: cl-10-routing-governance-ci-enforcement
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-ci-enforcement-again.md
 
-## Active Wave: CL-7 (LKIAC-L3 — PersonaLoader Improvements)
+## Active Wave: CL-10 — Routing Governance CI Enforcement (Re-execution)
 
 ### Wave Description
-Foreman orchestrates execution of CL-7 PersonaLoader Improvements wave per
-concurrent-prebuild-and-legacy-plan.md (Track 1, Section 1.3). This is the canonical
-foreman execution issue for CL-7 (maturion-isms#1326, branch: copilot/cl-7-lkiac-l3-personaloader-improvements).
+Foreman executes Wave CL-10 per concurrent-prebuild-and-legacy-plan.md §1.4 (Track 1).
+Re-execution wave: CL-10-D1 (routing-governance-check.yml) and CL-10-D3
+(stub-detection-check.yml) are already in the base branch. CL-10-D2 (sub-module routing
+compliance CI check) was the outstanding deliverable — now DELIVERED.
 
-CS2 Authorization: Issue maturion-isms#1326 opened by @APGI-cmy (CS2 = Johan Ras) and assigned to
-foreman-v2-agent (Copilot). Issue author is CS2. CS2 wave-start confirmed.
-
-IAA Pre-Brief: `.agent-admin/assurance/iaa-prebrief-cl7-personaloader-20260409.md` (committed ace5912)
-Prior Pre-Brief Reference: `.agent-admin/assurance/iaa-prebrief-cl7-personaloader-20260405.md`
-IAA Token: `.agent-admin/assurance/iaa-token-session-cl7-personaloader-20260409.md` (committed 466b8c48)
-ASSURANCE-TOKEN: IAA-session-cl7-personaloader-20260409-PASS
+CS2 Authorization: Issue maturion-isms#1313 — Authority: Foreman (delegation per CEP v1.8.0,
+CS2 authorized wave-start already issued per maturion-isms#1221).
 
 ### Tasks
-- [x] CL-7-D1: RED gate tests — PersonaValidationError on invalid YAML front-matter
-  (`packages/ai-centre/src/__tests__/personas/PersonaLoader.test.ts`)
-- [x] CL-7-D2: RED gate tests — persona registry sync CI check integration test
-  (`packages/ai-centre/src/__tests__/personas/PersonaLoader.test.ts`)
-- [x] CL-7-D3: Implementation — PersonaValidationError type + runtime YAML validation
-  (`packages/ai-centre/src/personas/PersonaLoader.ts`, `packages/ai-centre/src/types/index.ts`)
-- [x] CL-7-D4: CI check — persona registry sync workflow
-  (`.github/workflows/persona-registry-sync.yml`)
-- [x] CL-7-D5: Scheduled workflow — overdue quarterly persona reviews
-  (`.github/workflows/persona-freshness-review.yml`)
-- [x] T6: QP evaluation PASS + PREHANDOVER proof committed + SCOPE_DECLARATION PASS
-- [x] T7: IAA final audit PASS — ASSURANCE-TOKEN IAA-session-cl7-personaloader-20260409-PASS
+- [x] T1: Phase 1 Preflight complete
+- [x] T2: IAA Pre-Brief — .agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-ci-enforcement-again.md (SHA 7794c4d)
+- [x] T3: Phase 2 Alignment — pre-build gates confirmed
+- [x] T4: CL-10-D1 verification — routing-governance-check.yml already in base ✅
+- [x] T5: CL-10-D3 verification — stub-detection-check.yml already in base ✅
+- [x] T6: CL-10-D2 delegation to integration-builder — sub-module routing compliance CI check
+- [x] T7: integration-builder CL-10-D2 handover + QP evaluation (PASS)
+- [x] T8: PREHANDOVER proof committed (Foreman)
+- [x] T9: IAA final audit and token
+
+IAA Token: .agent-admin/assurance/iaa-token-session-cl10-reexec-20260409.md (committed 0c0690282)
+ASSURANCE-TOKEN: IAA-session-cl10-reexec-R2-20260409-PASS
 
 ### Status
 MERGE GATE RELEASED. Awaiting CS2 (Johan Ras / @APGI-cmy) review and approval.
 Merge authority: CS2 ONLY.
 
+### Deliverables
+| ID | Deliverable | Agent | Status |
+|----|------------|-------|--------|
+| CL-10-D1 | routing-governance-check.yml | integration-builder | ✅ DONE (in base — 8aa76f4) |
+| CL-10-D2 | sub-module-routing-check.yml | integration-builder | ✅ DELIVERED (SHA 8774b79) |
+| CL-10-D3 | stub-detection-check.yml | integration-builder | ✅ DONE (in base — 8aa76f4) |
+
+### Tests
+- T-C-010-001 through T-C-010-012: 12/12 GREEN ✅
+
 ### Previous Wave (Closed)
-wave: optimize-iaa-invocation-workflows (Issue #1311)
+wave: optimize-iaa-invocation-workflows (Issue #1311, PR #1312 merged)
