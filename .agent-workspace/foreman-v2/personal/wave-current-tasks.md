@@ -15,6 +15,8 @@ foreman-v2-agent (Copilot). Issue author is CS2. CS2 wave-start confirmed.
 
 IAA Pre-Brief: `.agent-admin/assurance/iaa-prebrief-cl7-personaloader-20260409.md` (committed ace5912)
 Prior Pre-Brief Reference: `.agent-admin/assurance/iaa-prebrief-cl7-personaloader-20260405.md`
+IAA Token: `.agent-admin/assurance/iaa-token-session-cl7-personaloader-20260409.md` (committed 466b8c48)
+ASSURANCE-TOKEN: IAA-session-cl7-personaloader-20260409-PASS
 
 ### Tasks
 - [x] CL-7-D1: RED gate tests — PersonaValidationError on invalid YAML front-matter
@@ -27,8 +29,12 @@ Prior Pre-Brief Reference: `.agent-admin/assurance/iaa-prebrief-cl7-personaloade
   (`.github/workflows/persona-registry-sync.yml`)
 - [x] CL-7-D5: Scheduled workflow — overdue quarterly persona reviews
   (`.github/workflows/persona-freshness-review.yml`)
-- [ ] T6: QP evaluation and PREHANDOVER proof committed
-- [ ] T7: IAA final audit and token
+- [x] T6: QP evaluation PASS + PREHANDOVER proof committed + SCOPE_DECLARATION PASS
+- [x] T7: IAA final audit PASS — ASSURANCE-TOKEN IAA-session-cl7-personaloader-20260409-PASS
+
+### Status
+MERGE GATE RELEASED. Awaiting CS2 (Johan Ras / @APGI-cmy) review and approval.
+Merge authority: CS2 ONLY.
 
 ### Previous Wave (Closed)
 wave: optimize-iaa-invocation-workflows (Issue #1311)

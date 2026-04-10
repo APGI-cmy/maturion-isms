@@ -256,10 +256,11 @@ nothing to commit, working tree clean
 
 **`git log --oneline -5` output AFTER committing all deliverables:**
 ```
-4ea1acb (HEAD -> copilot/cl-7-lkiac-l3-personaloader-improvements) CL-7 governance ceremony: PREHANDOVER proof, session memory, SCOPE_DECLARATION, wave-current-tasks
-ace5912 IAA Phase 0: Pre-Brief for Wave CL-7 new session (2026-04-09) — branch copilot/cl-7-lkiac-l3-personaloader-improvements, issue #1326
-f6d7b67 (origin/copilot/cl-7-lkiac-l3-personaloader-improvements) Initial plan
-8aa76f4 (grafted) [Governance] IAA inject/watchdog workflow reimplementation — re-enable and canon-align (#1312)
+9af4e95e CL-7 scope fix: SCOPE_DECLARATION matches diff exactly (6 files); update PREHANDOVER scope section
+b28003a3 CL-7 PREHANDOVER: populate Pre-IAA Commit Gate with actual git status/log output
+4ea1acbd CL-7 governance ceremony: PREHANDOVER proof, session memory, SCOPE_DECLARATION, wave-current-tasks
+ace59129 IAA Phase 0: Pre-Brief for Wave CL-7 new session (2026-04-09)
+f6d7b674 Initial plan
 ```
 
 All ceremony artifacts staged and committed before IAA invocation: ✅
@@ -306,11 +307,46 @@ prebrief_tasks_count: 5
 
 `iaa_audit_token: IAA-session-cl7-personaloader-20260409-PASS`
 
-[IAA ASSURANCE-TOKEN or REJECTION-PACKAGE to be pasted verbatim in `## IAA Agent Response (verbatim)` section below after IAA invocation]
+IAA verdict received: **ASSURANCE-TOKEN (PASS)** — all 44 checks PASS. Merge gate parity: PASS.
+Token file: `.agent-admin/assurance/iaa-token-session-cl7-personaloader-20260409.md` (committed 466b8c48)
 
 ## IAA Agent Response (verbatim)
 
-[IAA agent output pasted verbatim here after invocation — MANDATORY per S-009/A-014]
+```
+═══════════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: Wave CL-7 — LKIAC-L3 PersonaLoader Improvements
+    Branch: copilot/cl-7-lkiac-l3-personaloader-improvements
+    Issue: maturion-isms#1326
+    Session: session-cl7-personaloader-20260409
+
+All 44 checks PASS. Merge gate parity: PASS.
+
+CONTEXT NOTE: This session issues a new ASSURANCE-TOKEN for the canonical
+execution branch/issue. The prior token (IAA-session-cl7-personaloader-20260405-R2-PASS)
+was issued for branch copilot/cl-7-personaloader-improvements (issue #1226). It does not
+transfer to this branch. This new token is the authoritative merge authorization for
+copilot/cl-7-lkiac-l3-personaloader-improvements (issue #1326).
+
+SUBSTANTIVE ASSESSMENT: CONFIRMED PASS
+  Implementation (PersonaLoader.ts, types/index.ts, PersonaLoader.test.ts,
+  11x fixture files, persona-registry-sync.yml, persona-freshness-review.yml)
+  is bit-for-bit identical to the version reviewed in session-cl7-personaloader-20260405-R2.
+  All CI checks PASSING (11/11). No regressions.
+
+CERT-001 ANTI-REGRESSION: RESOLVED
+  All governance artifacts confirmed committed to branch via git ls-files.
+  Git status clean (empty --porcelain output). Prior R1 failure pattern: NOT RECURRED.
+
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-cl7-personaloader-20260409-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate confirmed.
+═══════════════════════════════════════════════════════════════
+```
+
+Token file: `.agent-admin/assurance/iaa-token-session-cl7-personaloader-20260409.md`
+Commit: `466b8c48`
+PHASE_B_BLOCKING_TOKEN: `IAA-session-cl7-personaloader-20260409-PASS`
 
 ---
 
