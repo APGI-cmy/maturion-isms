@@ -4,8 +4,8 @@
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory — tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
   "last_updated": "2026-04-09",
-  "last_ripple_commit": "f5b61144679b3676f43d056fdb1ec4dea7131937",
-  "last_ripple_timestamp": "2026-04-09T06:45:14Z",
+  "last_ripple_commit": "5c2f5b393592028d107636090ecb791623ccb27f",
+  "last_ripple_timestamp": "2026-04-09T08:17:43Z",
   "alignment_summary": {
     "total_artifacts": 27,
     "aligned": 21,
