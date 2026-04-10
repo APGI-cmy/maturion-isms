@@ -22,8 +22,15 @@ CS2 authorized wave-start already issued per maturion-isms#1221).
 - [x] T5: CL-10-D3 verification — stub-detection-check.yml already in base ✅
 - [x] T6: CL-10-D2 delegation to integration-builder — sub-module routing compliance CI check
 - [x] T7: integration-builder CL-10-D2 handover + QP evaluation (PASS)
-- [ ] T8: PREHANDOVER proof committed (Foreman)
-- [ ] T9: IAA final audit and token
+- [x] T8: PREHANDOVER proof committed (Foreman)
+- [x] T9: IAA final audit and token
+
+IAA Token: .agent-admin/assurance/iaa-token-session-cl10-reexec-20260409.md (committed 0c0690282)
+ASSURANCE-TOKEN: IAA-session-cl10-reexec-R2-20260409-PASS
+
+### Status
+MERGE GATE RELEASED. Awaiting CS2 (Johan Ras / @APGI-cmy) review and approval.
+Merge authority: CS2 ONLY.
 
 ### Deliverables
 | ID | Deliverable | Agent | Status |

@@ -27,6 +27,7 @@
 IAA ceremony files are exempt from scope declaration requirements per A-031:
 - `.agent-admin/assurance/iaa-token-session-cl10-reexec-20260409.md` - IAA ASSURANCE-TOKEN (IAA-authored, §4.3b)
 - `.agent-workspace/independent-assurance-agent/memory/session-cl10-reexec-R2-20260409.md` - IAA session memory (IAA-authored, A-031 exempt)
+- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station (IAA-authored, A-031 exempt)
 
 ## Scope Notes
 

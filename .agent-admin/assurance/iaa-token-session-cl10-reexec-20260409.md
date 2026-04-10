@@ -1,7 +1,7 @@
 # IAA ASSURANCE-TOKEN — Session cl10-reexec-R2-20260409
 
 **Token Reference**: IAA-session-cl10-reexec-R2-20260409-PASS
-**PHASE_B_BLOCKING_TOKEN**: IAA-session-cl10-reexec-R2-20260409-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-session-cl10-reexec-R2-20260409-PASS
 **Date**: 2026-04-09
 **Agent**: independent-assurance-agent v6.2.0 (contract 2.5.0)
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
