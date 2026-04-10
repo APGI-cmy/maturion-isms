@@ -16,17 +16,17 @@ and agent contract per issue #1271. Changes include:
 CS2 Authorization: Issue maturion-isms#1271 opened and assigned by @APGI-cmy (CS2 = Johan Ras).
 Wave-start authorization confirmed.
 
-IAA Pre-Brief: `.agent-admin/assurance/iaa-prebrief-ps-i-governance-liaison-cleanup-20260410.md` (PENDING)
+IAA Pre-Brief: `.agent-admin/assurance/iaa-prebrief-ps-i-governance-liaison-cleanup-20260410.md` (COMMITTED)
 IAA Token: PENDING
 
 ### Tasks
-- [ ] PS-I-01: Remove `iaa_invocation_result:` field from session memory template
+- [x] PS-I-01: Remove `iaa_invocation_result:` field from session memory template
   (`.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md`)
-- [ ] PS-I-02: Update `advisory_phase: PHASE_A_ADVISORY` → `PHASE_B_BLOCKING`
+- [x] PS-I-02: Update `advisory_phase: PHASE_A_ADVISORY` → `PHASE_B_BLOCKING`
   (`.github/agents/governance-liaison-isms-agent.md`)
-- [ ] PS-I-03: Add mandatory pre-IAA commit gate to liaison PREHANDOVER template
+- [x] PS-I-03: Add mandatory pre-IAA commit gate to liaison PREHANDOVER template
   (`.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md`)
-- [ ] PS-I-04: Add SCOPE_DECLARATION fresh-overwrite instruction
+- [x] PS-I-04: Add SCOPE_DECLARATION fresh-overwrite instruction
   (`.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md`)
 - [ ] T5: QP evaluation PASS + PREHANDOVER proof committed + SCOPE_DECLARATION PASS
 - [ ] T6: IAA final audit PASS

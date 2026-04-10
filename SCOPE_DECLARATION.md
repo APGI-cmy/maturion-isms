@@ -1,32 +1,24 @@
-# SCOPE_DECLARATION - Wave cl-7-personaloader-improvements-lkiac-l3
+# SCOPE_DECLARATION — Wave: ps-i-governance-liaison-cleanup-20260410
 
-**Session**: session-cl7-personaloader-20260409
-**Wave**: CL-7 (LKIAC-L3 PersonaLoader Improvements)
-**Issue**: maturion-isms#1326
-**Branch**: copilot/cl-7-lkiac-l3-personaloader-improvements
-**Date**: 2026-04-10 (updated after IAA token ceremony)
+**Wave**: ps-i-governance-liaison-cleanup-20260410
+**Issue**: maturion-isms#1271
+**Agent**: CodexAdvisor-agent (session-056)
+**Date**: 2026-04-10
+**Branch**: copilot/ps-i-governance-liaison-cleanup
+
+---
 
 ## Files Changed in This Wave
 
-Governance ceremony artifacts only. All CL-7 implementation deliverables (D1-D5) are in the
-branch base (implemented prior session, verified IAA-session-cl7-personaloader-20260405-R2-PASS).
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - PS-I tasks PS-I-01 through PS-I-04 marked complete; IAA pre-brief status updated
+- `.github/agents/governance-liaison-isms-agent.md` - PS-I-02: advisory_phase PHASE_A_ADVISORY → PHASE_B_BLOCKING; SB-001: iaa_invocation_result reference removed from body; contract_version 3.2.0 → 3.3.0; frontmatter trimmed to ≤200 lines; last_updated updated
+- `.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md` - PS-I-01: iaa_invocation_result field removed; PS-I-03: Pre-IAA Commit Gate section added; PS-I-04: SCOPE_DECLARATION Ceremony section added; version bumped to 1.2.0
+- `.agent-workspace/governance-liaison-isms/knowledge/index.md` - session-memory-template.md ref updated to v1.2.0; index version bumped to 1.7.0
+- `.agent-workspace/CodexAdvisor-agent/memory/session-056-20260410.md` - CodexAdvisor session memory for PS-I wave
+- `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-056-20260410.md` - CodexAdvisor PREHANDOVER proof for PS-I wave
+- `SCOPE_DECLARATION.md` - This file — wave scope declaration for PS-I
 
-- `SCOPE_DECLARATION.md` - Updated for CL-7 session
-- `.agent-admin/assurance/iaa-prebrief-cl7-personaloader-20260409.md` - IAA Pre-Brief (committed ace5912 by IAA)
-- `.agent-admin/assurance/iaa-token-session-cl7-personaloader-20260409.md` - IAA ASSURANCE-TOKEN (committed 466b8c48 by IAA)
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated for CL-7 issue #1326
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl7-personaloader-20260409.md` - PREHANDOVER proof for this session
-- `.agent-workspace/foreman-v2/memory/session-cl7-personaloader-20260409.md` - Foreman session memory for this session
-- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - S-042 parking station entry
-- `.agent-workspace/independent-assurance-agent/memory/session-cl7-personaloader-20260409.md` - IAA session memory
-- `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md` - IAA parking station entry
+---
 
-## Implementation Status (in base branch, not in this PR diff)
-
-CL-7 implementation deliverables are present in the base of this branch (from prior session):
-packages/ai-centre/src/__tests__/personas/PersonaLoader.test.ts
-packages/ai-centre/src/personas/PersonaLoader.ts
-packages/ai-centre/src/types/index.ts
-packages/ai-centre/src/agents/ (11 test fixture files)
-.github/workflows/persona-registry-sync.yml
-.github/workflows/persona-freshness-review.yml
+*Authority: CS2 (Johan Ras / @APGI-cmy)*
+*Governed by: AGENT_HANDOVER_AUTOMATION.md §4.3c*
