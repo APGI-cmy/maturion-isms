@@ -10,15 +10,20 @@
 
 ## Files Changed in This Wave
 
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - PS-I tasks PS-I-01 through PS-I-04 marked complete; IAA pre-brief status updated
-- `.github/agents/governance-liaison-isms-agent.md` - PS-I-02: advisory_phase PHASE_A_ADVISORY → PHASE_B_BLOCKING; SB-001: iaa_invocation_result reference removed from body; contract_version 3.2.0 → 3.3.0; frontmatter trimmed to ≤200 lines; last_updated updated
-- `.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md` - PS-I-01: iaa_invocation_result field removed; PS-I-03: Pre-IAA Commit Gate section added; PS-I-04: SCOPE_DECLARATION Ceremony section added; version bumped to 1.2.0
-- `.agent-workspace/governance-liaison-isms/knowledge/index.md` - session-memory-template.md ref updated to v1.2.0; index version bumped to 1.7.0
+- `.agent-admin/assurance/iaa-prebrief-ps-i-governance-liaison-cleanup-20260410.md` - IAA Pre-Brief artifact for PS-I wave (committed before implementation began)
+- `.agent-admin/assurance/iaa-rejection-session-056-ps-i-governance-liaison-20260410.md` - IAA R1 REJECTION-PACKAGE (2 ceremony failures — resolved in R2)
+- `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-056-20260410.md` - CodexAdvisor PREHANDOVER proof R1 (superseded by R2)
+- `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-056-20260410-R2.md` - CodexAdvisor PREHANDOVER proof R2 (ripple section added; replaces R1)
 - `.agent-workspace/CodexAdvisor-agent/memory/session-056-20260410.md` - CodexAdvisor session memory for PS-I wave
-- `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-056-20260410.md` - CodexAdvisor PREHANDOVER proof for PS-I wave
-- `SCOPE_DECLARATION.md` - This file — wave scope declaration for PS-I
+- `.agent-workspace/CodexAdvisor-agent/parking-station/suggestions-log.md` - Parking station entry added: YAML frontmatter line count gate suggestion
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - PS-I tasks PS-I-01 through PS-I-04 marked complete; IAA pre-brief status updated
+- `.agent-workspace/governance-liaison-isms/knowledge/index.md` - session-memory-template.md ref updated to v1.2.0; index version bumped to v1.7.0
+- `.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md` - PS-I-01: iaa_invocation_result field removed; PS-I-03: Pre-IAA Commit Gate section added; PS-I-04: SCOPE_DECLARATION Ceremony section added; version bumped to 1.2.0
+- `.agent-workspace/independent-assurance-agent/memory/session-056-ps-i-governance-liaison-20260410.md` - IAA session memory for R1 invocation
+- `.github/agents/governance-liaison-isms-agent.md` - PS-I-02: advisory_phase PHASE_A_ADVISORY -> PHASE_B_BLOCKING; SB-001: iaa_invocation_result reference removed; contract_version 3.2.0 -> 3.3.0; frontmatter trimmed to 200 lines
+- `SCOPE_DECLARATION.md` - Wave scope declaration for PS-I (all 12 files declared)
 
 ---
 
 *Authority: CS2 (Johan Ras / @APGI-cmy)*
-*Governed by: AGENT_HANDOVER_AUTOMATION.md §4.3c*
+*Governed by: AGENT_HANDOVER_AUTOMATION.md section 4.3c*
