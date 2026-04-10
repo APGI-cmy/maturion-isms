@@ -105,11 +105,27 @@ capabilities:
       the job. Builder contracts follow the same four_phase_canonical pattern and
       must pass QP + IAA before PR open. Foreman must be invoked if builder
       appointment is part of the same delivery wave.
+    administrator_class_coverage:
+      includes: execution-ceremony-admin-agent
+      governed_under: AGCFPP-001
+      note: "The execution-ceremony-admin-agent is an administrator-class agent in the ECAP-001 role surface. Any PR touching its contract requires the same ECAP role-boundary review as Foreman, IAA, or CodexAdvisor contracts."
     file_size_limit:
       max_characters: 30000
       hard_limit_enforcement: BLOCKING
       warn_at_characters: 25000
     requires: CS2_AUTHORIZATION
+  ecap_role_boundary:
+    governed_contracts:
+      - execution-ceremony-admin-agent.md
+      - foreman-v2-agent.md
+      - independent-assurance-agent.md
+      - CodexAdvisor-agent.md
+    non_substitution_invariants:
+      - "CodexAdvisor must not author contract text that blurs administrative preparation, substantive supervisory judgment, or independent assurance verdict authority"
+      - "execution-ceremony-admin-agent: administrative Phase 4 bundle preparation only"
+      - "foreman-v2-agent: substantive supervisory authority only"
+      - "independent-assurance-agent: independent assurance gate only"
+    pr_mention_required: "Any PR touching any of the four governed_contracts must explicitly state ECAP role-boundary preservation in the PR description"
   alignment:
     drift_detection: CANON_INVENTORY_HASH_COMPARE
     schedule_fallback: hourly
@@ -282,6 +298,24 @@ Output:
 > Checklist loaded: [checklist name]
 > Gate count: [N] gates (S1–S[N])
 > All gates must PASS before Phase 4."
+
+**Step 2.3a — ECAP role-boundary review (mandatory when job affects ceremony-admin, Foreman, or IAA contracts):**
+
+If the job touches any file in `capabilities.ecap_role_boundary.governed_contracts` (i.e., any of
+`execution-ceremony-admin-agent.md`, `foreman-v2-agent.md`, `independent-assurance-agent.md`, or
+`CodexAdvisor-agent.md`), perform the ECAP role-boundary review:
+
+1. Confirm the PR description explicitly states ECAP role-boundary preservation.
+2. Confirm no proposed contract text blurs the three-role split:
+   - execution-ceremony-admin-agent: administrative Phase 4 bundle preparation ONLY
+   - foreman-v2-agent: substantive supervisory authority ONLY
+   - independent-assurance-agent: independent assurance gate ONLY
+3. Confirm no text implies ceremony-admin may invoke IAA, approve readiness, or write token files.
+4. Confirm no text implies Foreman may issue ASSURANCE-TOKEN or REJECTION-PACKAGE.
+5. Confirm no text implies IAA may perform ceremony administration.
+
+Output: "ECAP role-boundary review: [PASS — no blurring detected / FAIL — [specific finding]]"
+If FAIL → halt and report to CS2 before proceeding.
 
 **Step 2.4 — Classify IAA trigger:**
 
