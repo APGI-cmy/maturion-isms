@@ -89,7 +89,7 @@ The two failures are ceremony (missing PREHANDOVER proof) and one substantive go
 1. Add a PREHANDOVER proof file to the branch (e.g., `PREHANDOVER_PROOF_SESSION_061_RIPPLE_F5B61144.md`) containing: session reference, ripple reference, `iaa_audit_token: IAA-session-061-wave-ripple-f5b61144-20260409-PASS`, artifact manifest, and A-015 compliance declaration.
 2. Correct session memory field `iaa_invocation_result` — remove the `PHASE_A_ADVISORY` claim; replace with `PENDING_IAA_VERDICT` or omit until IAA has issued its verdict.
 
-**This PR must not be opened until both failures are resolved and IAA is re-invoked.**
+**This PR must not be merged until both failures are resolved and IAA is re-invoked.**
 
 ---
 
