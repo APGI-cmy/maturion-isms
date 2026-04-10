@@ -1,6 +1,6 @@
 # IAA PRE-BRIEF PROTOCOL
 
-**Status**: CANONICAL | **Version**: 1.2.1 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.2.2 | **Authority**: CS2  
 **Date**: 2026-03-03  
 **Amended**: 2026-03-03 — v1.1.0: Added §Wave Checklist Management, §Foreman Handover Gate,
 §IAA Invocation Gate, §Mid-Wave Task Addition, wave_checklist PREHANDOVER field, and commit
@@ -10,6 +10,7 @@ clarifying that the Wave Checklist Invocation Gate applies to Foreman-governed w
 and does not automatically apply to direct-CS2 standalone governance-repo-administrator-v2
 canon actions (CS2 guidance — issue #1319)  
 **Amended**: 2026-04-08 — v1.2.1: Reference update — added `EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` to references; clarified that Phase 4 handover proof may be prepared by `execution-ceremony-admin-agent` under Foreman oversight without affecting IAA independence or Pre-Brief validity; authority: CS2 — ECAP-001 canon establishment issue.
+**Amended**: 2026-04-08 — v1.2.2: Re-invocation ownership cross-reference — added §Re-Invocation After Rejection — Ownership Reference, clarifying that after a `REJECTION-PACKAGE` the Foreman (not CS2) owns the stop-and-fix loop and re-invocation; cross-references INDEPENDENT_ASSURANCE_AGENT_CANON.md §IAA Re-Invocation After Rejection for full rules. Authority: CS2 — Foreman IAA re-invocation ownership canonisation issue.
 
 ---
 
@@ -601,11 +602,34 @@ IAA's final verdict, which cross-references Phase 0 (Pre-Brief) and the wave che
 
 ---
 
+## Re-Invocation After Rejection — Ownership Reference (v1.2.2)
+
+When a Foreman-led handover receives a `REJECTION-PACKAGE`, the **Foreman** (not CS2) owns
+the correction and re-invocation cycle. The Pre-Brief Invocation Gate (§IAA Invocation Gate)
+and the Wave Checklist obligations remain in full force on re-invocation — the Foreman must
+ensure the checklist and Pre-Brief references are correct before re-invoking.
+
+**Key rule**: A Foreman-led PR MUST NOT state or imply "CS2 must re-invoke IAA" or
+"re-invocation by CS2 is required before merge" outside a canon-defined CS2-only exception
+class.
+
+**Allowed wording** for rejection-cycle artifacts:
+
+- "IAA issued `REJECTION-PACKAGE`; Foreman correcting cited failures; re-invocation pending"
+- "Fresh `ASSURANCE-TOKEN` required before merge — Foreman to correct and re-invoke"
+
+**Full specification** (governing sentence, ownership table, CS2-only exception classes,
+token/session format, prohibited wording, worked example):
+
+> `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` §IAA Re-Invocation After Rejection — Foreman Ownership
+
+---
+
 ## References
 
-- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.1.0 — IAA class definition and trigger table
+- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.5.0 — IAA class definition, trigger table, and IAA re-invocation ownership rules
 - `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0 — Living Agent framework
-- `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` — Foreman authority model
+- `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` v1.3.0 — Foreman authority model, §14.5 IAA Rejection Stop-and-Fix Loop
 - `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md` — Evidence artifact requirements
 - `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` v1.0.0 — Ceremony admin role; Phase 4 handover proof may be prepared by execution-ceremony-admin-agent under Foreman oversight; IAA independence and Pre-Brief validity are unchanged
 - `.agent-workspace/independent-assurance-agent/knowledge/iaa-category-overlays.md` — Overlay definitions
@@ -614,4 +638,4 @@ IAA's final verdict, which cross-references Phase 0 (Pre-Brief) and the wave che
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.2.1 | Effective: 2026-04-05 (v1.2.0) | Amended: 2026-04-08 (v1.2.1) | Original: 2026-03-03 (v1.1.0)*
+*Authority: CS2 (Johan Ras) | Version: 1.2.2 | Effective: 2026-04-05 (v1.2.0) | Amended: 2026-04-08 (v1.2.2) | Previous: 2026-04-08 (v1.2.1) | Original: 2026-03-03 (v1.1.0)*
