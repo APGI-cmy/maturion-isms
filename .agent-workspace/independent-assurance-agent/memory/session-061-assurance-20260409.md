@@ -19,13 +19,13 @@
 - fail_only_once_rules_applied: A-001, A-002, A-015, A-029
 - failures_cited:
     - CORE-018: PREHANDOVER proof absent from branch
-    - CORE-007/governance-misalignment: session memory incorrectly asserts PHASE_A_ADVISORY when IAA is PHASE_B_BLOCKING
+    - CORE-007/governance-misalignment: session memory records `iaa_invocation_result: PENDING_IAA_VERDICT` but includes a note asserting PHASE_A_ADVISORY when IAA is PHASE_B_BLOCKING
 
 ## learning_notes
 
 1. LIAISON_ADMIN PRs for governance-tracking-only ripple events are recurring. Agents consistently omit the PREHANDOVER proof on the grounds that "no PR is required." Clarification needed: the PREHANDOVER proof is required for IAA invocation ceremony regardless of whether a layer-down PR is raised. The ceremony is about the TRACKING commit, not the absence of a layer-down PR.
 
-2. The liaison agent asserting `iaa_invocation_result: PHASE_A_ADVISORY` in session memory is a recurring pattern (check prior sessions). The agent does not control IAA's adoption phase. Session memory should record `iaa_audit_token: <expected-ref>` only; the actual result is determined by IAA.
+2. The liaison agent recording `iaa_invocation_result: PENDING_IAA_VERDICT` in session memory while separately adding a note asserting `PHASE_A_ADVISORY` is a recurring pattern (check prior sessions). The agent does not control IAA's adoption phase. Session memory should record `iaa_audit_token: <expected-ref>` only; the actual result is determined by IAA.
 
 ## fail_only_once_updates
 none — patterns noted above are candidates for promotion if they recur in next session
