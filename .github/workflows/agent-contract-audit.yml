@@ -224,15 +224,22 @@ jobs:
           echo ""
 
           # CS2 identity — exact values only (no substring matching to prevent spoofing)
+          # CS2_LOGIN: GitHub username used for PR-author check (unconditional write authority)
           CS2_LOGIN="APGI-cmy"
-          CS2_EMAILS=("johangraz@me.com" "apgi-cmy@users.noreply.github.com" "49699333+APGI-cmy@users.noreply.github.com")
+          # CS2_NAMES: display names CS2 may use in git commits (matched against commit author name)
+          CS2_NAMES=("APGI-cmy" "Johan Ras")
+          # CS2_EMAILS: email addresses CS2 may use in git commits
+          CS2_EMAILS=("johangraz@me.com" "apgi-cmy@users.noreply.github.com"
+                      "49699333+APGI-cmy@users.noreply.github.com"
+                      "johan.ras@apginc.ca")
 
           # CodexAdvisor operates via copilot-swe-agent[bot] as the runtime executor
           # The GitHub Copilot coding agent uses these exact identities:
           CODEX_AUTHORS=("copilot-swe-agent[bot]" "github-copilot[bot]" "Copilot")
           CODEX_EMAILS=("copilot-swe-agent[bot]@users.noreply.github.com"
                         "github-copilot[bot]@users.noreply.github.com"
-                        "198982749+copilot-swe-agent[bot]@users.noreply.github.com")
+                        "198982749+copilot-swe-agent[bot]@users.noreply.github.com"
+                        "198982749+Copilot@users.noreply.github.com")
 
           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
 
@@ -263,13 +270,20 @@ jobs:
             echo "🔍 Commit: ${commit_sha:0:7} | Author: $commit_author <$commit_email>"
             echo "   Agent files: $(echo "$FILES" | tr '\n' ' ')"
 
-            # Check if author is CS2 — exact username or exact email match only
+            # Check if author is CS2 — exact name, username, or email match only
             IS_AUTHORIZED=false
 
-            if [[ "$commit_author" == "$CS2_LOGIN" ]]; then
-              IS_AUTHORIZED=true
-              echo "   ✅ Author is CS2 (username match) — authorized"
-            else
+            # Check CS2 login (GitHub username) or display name
+            for cs2_name in "${CS2_NAMES[@]}"; do
+              if [[ "$commit_author" == "$cs2_name" ]]; then
+                IS_AUTHORIZED=true
+                echo "   ✅ Author is CS2 (name match: ${cs2_name}) — authorized"
+                break
+              fi
+            done
+
+            # Check CS2 email if name did not match
+            if [ "$IS_AUTHORIZED" = false ]; then
               for cs2_email in "${CS2_EMAILS[@]}"; do
                 if [[ "$commit_email" == "$cs2_email" ]]; then
                   IS_AUTHORIZED=true
