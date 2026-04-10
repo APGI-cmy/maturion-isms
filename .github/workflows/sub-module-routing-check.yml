@@ -4,7 +4,7 @@ name: Sub-Module Routing Compliance Check
 # Authority: GOV-001, GOV-002, GRS-016
 # Programme: LKIAC-L4 — Routing Governance CI Enforcement
 # Purpose: Enforce GRS-016 at the package.json dependency level.
-#          Scan all modules/*/package.json and apps/*/package.json for direct
+#          Scan all modules/**/package.json and apps/**/package.json for direct
 #          AI provider SDK dependencies. Direct AI SDK dependencies in sub-modules
 #          or apps are forbidden — all AI provider access must route through the
 #          AIMC Gateway (@maturion/ai-centre) exclusively.
@@ -50,7 +50,7 @@ jobs:
           echo " AIMC Sub-Module Routing Compliance Check"
           echo " Authority: GOV-001, GOV-002, GRS-016 §4.1"
           echo " Banned: openai | @anthropic-ai/sdk | @langchain/* (any)"
-          echo " Scope: modules/*/package.json + apps/*/package.json"
+          echo " Scope: modules/**/package.json + apps/**/package.json"
           echo " Exclusion: apps/maturion-maturity-legacy/ (GOV legacy exemption)"
           echo "========================================================"
           echo ""
@@ -63,8 +63,8 @@ jobs:
 
           # ── Configuration ──────────────────────────────────────────────────────
           SCAN_PATTERNS = [
-              'modules/*/package.json',
-              'apps/*/package.json',
+              'modules/**/package.json',
+              'apps/**/package.json',
           ]
 
           # Legacy exclusion — GOV exemption documented in LEGACY_BOUNDARY.md
@@ -85,7 +85,7 @@ jobs:
           scanned_files = []
 
           for pattern in SCAN_PATTERNS:
-              matched = sorted(glob.glob(pattern))
+              matched = sorted(glob.glob(pattern, recursive=True))
               if not matched:
                   print(f'  [INFO] No files matched pattern: {pattern}')
               for pkg_file in matched:
@@ -100,7 +100,10 @@ jobs:
                       with open(pkg_file, 'r') as f:
                           data = json.load(f)
                   except (json.JSONDecodeError, OSError) as e:
-                      print(f'  [WARN] Could not parse {pkg_file}: {e}')
+                      print(f'  [ERROR] Could not parse {pkg_file}: {e}')
+                      violations.append(
+                          f'  INVALID_PACKAGE_JSON: {pkg_file}: {e}'
+                      )
                       continue
 
                   for section in DEP_SECTIONS:
