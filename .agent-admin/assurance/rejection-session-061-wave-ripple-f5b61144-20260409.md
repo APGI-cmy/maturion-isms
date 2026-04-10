@@ -21,10 +21,10 @@
 - Fix required: governance-liaison-isms must commit a PREHANDOVER proof file to the branch before re-invoking IAA. The file must reference this session (session-061-20260409), the ripple (f5b61144), and include `iaa_audit_token: IAA-session-061-wave-ripple-f5b61144-20260409-PASS` per A-029 architecture.
 
 ### FAILURE 2
-**CORE-007 / Governance Misalignment: Session memory incorrectly asserts PHASE_A_ADVISORY**
-- Finding: The session memory at `.agent-workspace/governance-liaison-isms/memory/session-061-20260409.md` contains the field `iaa_invocation_result: PHASE_A_ADVISORY`. The IAA contract (independent-assurance-agent.md) explicitly states: **"IAA Adoption Phase: PHASE_B_BLOCKING — Hard gate ACTIVE"**. The liaison agent does not have authority to declare IAA's adoption phase. This is a governance misalignment — it records an incorrect operational state as fact.
+**CORE-007 / Governance Misalignment: Session memory contains a pending verdict field while separately asserting PHASE_A_ADVISORY in free text**
+- Finding: The session memory at `.agent-workspace/governance-liaison-isms/memory/session-061-20260409.md` records `iaa_invocation_result: PENDING_IAA_VERDICT`, while also including a free-text note that asserts `PHASE_A_ADVISORY`. The IAA contract (independent-assurance-agent.md) explicitly states: **"IAA Adoption Phase: PHASE_B_BLOCKING — Hard gate ACTIVE"**. The liaison agent does not have authority to declare IAA's adoption phase. This is a governance misalignment — it records an unauthorized phase claim as fact while the verdict field is still pending.
 - Classification: **Substantive** (governance alignment correctness)
-- Fix required: Session memory must be corrected. The `iaa_invocation_result` field should reflect the actual IAA verdict when issued (not pre-assert Phase A advisory). Remove the phase-advisory override claim. IAA determines its own phase per its contract; the producing agent records the outcome only after IAA issues its verdict.
+- Fix required: Session memory must be corrected so the recorded state is auditable and unambiguous. Keep `iaa_invocation_result` aligned to the actual IAA-issued verdict state, and remove or correct the separate free-text `PHASE_A_ADVISORY` claim. IAA determines its own phase per its contract; the producing agent records the outcome only after IAA issues its verdict.
 
 ---
 
