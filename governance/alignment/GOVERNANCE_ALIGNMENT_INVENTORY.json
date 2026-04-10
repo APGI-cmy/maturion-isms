@@ -130,26 +130,26 @@
       "path": ".github/agents/governance-repo-administrator-v2.agent.md",
       "canonical_version": "2.0.0",
       "local_version": null,
-      "canonical_hash_sha256": "7e6e98c3f1356758167a5a2325c233f6d6838ec4",
+      "canonical_hash_sha256": null,
       "local_hash_sha256": null,
       "alignment_status": "ESCALATED_TO_CS2",
       "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
       "last_verified": "2026-03-03T13:03:45Z",
       "escalation_ref": "ESC-AGENTFILE-E77B00C7-20260303",
-      "note": "Not present locally. CS2 to decide whether this agent should be introduced to maturion-isms."
+      "note": "Not present locally. CS2 to decide whether this agent should be introduced to maturion-isms. Canonical SHA-256 is unavailable; previous value was a 40-character non-SHA256 digest and has been cleared to avoid mis-validation."
     },
     {
       "filename": "independent-assurance-agent.md",
       "path": ".github/agents/independent-assurance-agent.md",
       "canonical_version": "2.0.0",
       "local_version": "2.0.0",
-      "canonical_hash_sha256": "104af34806c18a06b5521bd03e75bdbdeeba262a",
+      "canonical_hash_sha256": null,
       "local_hash_sha256": "4bbf5f60d276d79c62428284fee9e5010a509799c53fdd6ab1a64583b98035e0",
       "alignment_status": "ESCALATED_TO_CS2",
       "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
       "last_verified": "2026-03-03T13:03:45Z",
       "escalation_ref": "ESC-AGENTFILE-6523FE8D-20260304",
-      "note": "Agent contract changed in ripple 6523fe8d (2026-03-04) — likely reflects IAA Pre-Brief Protocol integration. Escalated to CS2. Also see prior escalation ESC-AGENTFILE-E77B00C7-20260303. CS2 to apply via CodexAdvisor-agent + IAA."
+      "note": "Agent contract changed in ripple 6523fe8d (2026-03-04) — likely reflects IAA Pre-Brief Protocol integration. Escalated to CS2. Also see prior escalation ESC-AGENTFILE-E77B00C7-20260303. CS2 to apply via CodexAdvisor-agent + IAA. Canonical SHA-256 is unavailable; previous value was a 40-character non-SHA256 digest and has been cleared to avoid mis-validation."
     },
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
