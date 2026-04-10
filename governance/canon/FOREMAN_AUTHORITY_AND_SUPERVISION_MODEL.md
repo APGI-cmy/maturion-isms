@@ -3,10 +3,11 @@
 ## Status
 **Type**: Canonical Governance Definition  
 **Authority**: Supreme - Canonical  
-**Version**: 1.2.0  
+**Version**: 1.3.0  
 **Effective Date**: 2025-12-24  
 **Amended**: 2026-04-08 — v1.1.0: Added §14.3 Review Layer Role Separation — CS2 is not the technical pre-handover auditor; producing agent assembles evidence, IAA audits independently, CI enforces mechanically, CS2 decides to merge. Authority: CS2 — OPOJD hardening issue.  
 **Amended**: 2026-04-08 — v1.2.0: Added §9.6 Relationship to execution-ceremony-admin-agent and §14.4 Updated Handover Sequence — formalises the three-role ceremony model (Foreman orchestrates; ceremony-admin prepares bundle; IAA audits independently). Authority: CS2 — ECAP-001 canon establishment issue.  
+**Amended**: 2026-04-08 — v1.3.0: Added §14.5 IAA Rejection — Foreman Stop-and-Fix Loop — makes Foreman re-invocation ownership explicit after a `REJECTION-PACKAGE`; bans misleading "CS2 must re-invoke IAA" wording for ordinary Foreman-led handovers; cross-references INDEPENDENT_ASSURANCE_AGENT_CANON.md §IAA Re-Invocation After Rejection for full rules. Authority: CS2 — Foreman IAA re-invocation ownership canonisation issue.  
 **Owner**: Maturion Engineering Leadership (Johan Ras)  
 **Precedence**: Subordinate only to GOVERNANCE_PURPOSE_AND_SCOPE.md  
 **Applies To**: All Foreman Instances, All Builder Agents, All Repositories
@@ -1246,6 +1247,59 @@ The three readiness concepts that govern this sequence:
 
 **Full normative definition**: `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md`
 
+### 14.5 IAA Rejection — Foreman Stop-and-Fix Loop (v1.3.0)
+
+When IAA issues a `REJECTION-PACKAGE` for a Foreman-led handover, the Foreman remains
+**fully responsible** for the correction and re-invocation cycle.
+
+#### Governing Rule
+
+> "If IAA issues a `REJECTION-PACKAGE` for a Foreman-led handover, the Foreman remains
+> responsible for correcting the cited failures and re-invoking IAA until a valid
+> `ASSURANCE-TOKEN` is issued, unless the PR class is explicitly marked CS2-only by canon."
+
+#### Foreman Obligations After REJECTION-PACKAGE
+
+| Step | Action | Owner |
+|------|--------|-------|
+| 1 | STOP — do not open a PR | Foreman |
+| 2 | Read the full `REJECTION-PACKAGE` and understand every cited failure | Foreman |
+| 3 | Correct every cited failure; produce any new required evidence artifacts | Foreman |
+| 4 | Re-run pre-handover gate parity check (§4.3 of Foreman contract) | Foreman |
+| 5 | Re-run pre-IAA commit-state gate (§4.3c of Foreman contract) | Foreman |
+| 6 | Re-invoke IAA: `task(agent_type: "independent-assurance-agent")` | Foreman |
+| 7 | Record each outcome via append-only artifacts (new rejection artifact / new token file per §4.3b of AGENT_HANDOVER_AUTOMATION.md). Do **not** edit any already-committed PREHANDOVER proof. If a refreshed PREHANDOVER proof is required for the next round, create a new proof file in a new commit. | Foreman |
+| 8 | Repeat steps 1–7 until `ASSURANCE-TOKEN` issued or CS2-only exception applies | Foreman |
+
+This loop is **Foreman-owned** end-to-end. The Foreman does NOT escalate ordinary rejection
+handling to CS2.
+
+#### What the Foreman Does NOT Do
+
+- ❌ Ask CS2 to re-invoke IAA for an ordinary rejection
+- ❌ State or imply that CS2 must handle the re-invocation
+- ❌ Open a PR with a pending `REJECTION-PACKAGE` and no valid `ASSURANCE-TOKEN`
+- ❌ Use the phrase "requires fresh re-invocation by CS2 before merge" outside a canon-defined CS2-only exception class
+
+#### CS2 Involvement Is NOT Required For
+
+- Ordinary REJECTION-PACKAGE correction cycles
+- Re-invocation of IAA after rejection in any Foreman-led handover
+- Tracking or coordination of the stop-and-fix loop
+
+#### CS2 Involvement IS Required Only For
+
+- Explicit CS2-only exception classes as defined in
+  `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md §IAA Re-Invocation After Rejection — CS2-Only Exception Classes`
+- Structural self-assurance cases (IAA cannot review its own governing contract)
+- Any PR explicitly designated CS2-direct by canon
+
+#### Full Specification
+
+See `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md §IAA Re-Invocation After Rejection — Foreman Ownership`
+for the full specification including prohibited wording, token/session format, and a worked
+example showing rejection → correction → re-invocation → PASS without CS2 relay.
+
 ---
 
 ## 15. Precedence and Final Authority
@@ -1266,4 +1320,4 @@ Foreman authority is superior to:
 
 ---
 
-**End of FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md**
+**End of FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md v1.3.0**
