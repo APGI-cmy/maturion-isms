@@ -1,9 +1,9 @@
 # PREHANDOVER Proof Template — Foreman v2
 
 **Agent**: foreman-v2
-**Version**: 1.7.0
-**Last Updated**: 2026-03-18
-**Purpose**: Template for generating Phase 4 PREHANDOVER proof artifacts per S-009 (FAIL-ONLY-ONCE v1.8.0)
+**Version**: 1.8.0
+**Last Updated**: 2026-04-09
+**Purpose**: Template for generating Phase 4 PREHANDOVER proof artifacts per S-009 (FAIL-ONLY-ONCE v4.2.0)
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -20,6 +20,7 @@
 | 1.5.0 | 2026-03-05 | SCOPE_DECLARATION Ceremony section added (A-029 / INC-SCOPE-STALE-001); IAA token date accuracy note added (A-030) |
 | 1.6.0 | 2026-03-08 | Pre-IAA Commit Gate section added (A-021 / INC-BOOTSTRAP-IMPL-001 / R1 fix) — mandatory STOP checkpoint requiring actual `git status` + `git log --oneline -5` output before IAA invocation |
 | 1.7.0 | 2026-03-18 | IAA Token Self-Certification Guard section added (governance directive STRUCTURAL-GATE) — `PHASE_B_BLOCKING_TOKEN` field check; Pre-Brief path check added to bundle completeness |
+| 1.8.0 | 2026-04-09 | Add `## Ripple/Cross-Agent Assessment` mandatory section (HFMC-01 / NO-REPEAT-PREVENTABLE-001 — recurring IAA rejection pattern). ALL PREHANDOVER proofs must explicitly assess downstream agent/system impact. |
 
 ---
 
@@ -82,6 +83,20 @@ Replace all `[placeholder]` values — no field may be left blank.
 ## CANON_INVENTORY Alignment
 
 [State: verified/not verified, and why]
+
+---
+
+## Ripple/Cross-Agent Assessment
+
+> **HFMC-01 MANDATORY**: Every PREHANDOVER proof MUST contain this section.
+> Explicitly name each agent/system assessed and state the impact conclusion.
+> If governance-ceremony-only wave: state "no code/schema/contract changes — no downstream ripple".
+
+| Agent / System | Impact Assessment | Conclusion |
+|---------------|-------------------|-----------|
+| [agent-name] | [what was assessed] | **[NO IMPACT / IMPACTED — describe]** |
+
+**Downstream ripple conclusion**: [NO IMPACT — governance ceremony artifacts only / IMPACTED — list affected agents/systems]
 
 ---
 
