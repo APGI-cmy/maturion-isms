@@ -94,3 +94,6 @@
 
 | 2026-04-09 | governance-liaison-isms | session-061 | [SESSION-END] | Codify fast-path for agent-file-only ripple with NO_DRIFT_DETECTED in session-memory-template.md | session-061-20260409.md |
 | 2026-04-09 | governance-liaison-isms | session-061 | [SESSION-END] | Add structured ripple_history array to CodexAdvisor-agent.md entry in GOVERNANCE_ALIGNMENT_INVENTORY.json | session-061-20260409.md |
+
+| 2026-04-12 | governance-liaison-isms | session-062 | [SESSION-END] | Add Phase 4 ceremony reminder to session-memory-template.md: all artifacts MUST be committed in same session as content fix | session-062-20260412.md |
+| 2026-04-12 | governance-liaison-isms | session-062 | [SESSION-END] | Pre-session git log check to auto-detect ceremony-incomplete prior sessions on branch | session-062-20260412.md |
