@@ -34,5 +34,15 @@ IAA Token: PENDING
 ### Status
 IAA PRE-BRIEF PENDING — awaiting IAA Pre-Brief artifact before delegation to CodexAdvisor-agent.
 
+### Deliverables
+| ID | Deliverable | Agent | Status |
+|----|------------|-------|--------|
+| CL-10-D1 | routing-governance-check.yml | integration-builder | ✅ DONE (in base — 8aa76f4) |
+| CL-10-D2 | sub-module-routing-check.yml | integration-builder | ✅ DELIVERED (SHA 8774b79) |
+| CL-10-D3 | stub-detection-check.yml | integration-builder | ✅ DONE (in base — 8aa76f4) |
+
+### Tests
+- T-C-010-001 through T-C-010-012: 12/12 GREEN ✅
+
 ### Previous Wave (Closed)
 wave: cl-7-personaloader-improvements-lkiac-l3 (Issue #1326) — CLOSED
