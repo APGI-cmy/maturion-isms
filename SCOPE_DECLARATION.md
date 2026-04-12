@@ -20,8 +20,9 @@
 - `.agent-workspace/CodexAdvisor-agent/personal/SCOPE_DECLARATION.md` - CodexAdvisor personal scope declaration for session-056
 - `.agent-workspace/foreman-v2/knowledge/specialist-registry.md` - Specialist registry header version/date update
 - `.github/agents/foreman-v2-agent.md` - Foreman contract: add Step 4.1a, update Steps 4.2/4.3, bump contract_version 2.10.0→2.11.0, fix footer
+- `.agent-admin/assurance/iaa-token-session-056-foreman-ecap-20260410.md` - IAA ASSURANCE-TOKEN for session-056 wave foreman-ecap-step41a (IAA-authored, A-031)
 
-**Total declared files**: 9
+**Total declared files**: 10
 
 ## Implementation Status
 
