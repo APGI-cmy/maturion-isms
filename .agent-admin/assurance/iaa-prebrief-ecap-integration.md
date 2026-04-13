@@ -163,7 +163,7 @@ Additionally, because this wave modifies the ceremony-admin contract itself:
 **Qualifying Tasks**: 5 (ECAP-A1, ECAP-A2, ECAP-B1, ECAP-B2, ECAP-C1)
 **Trigger Categories**: AGENT_CONTRACT, KNOWLEDGE_GOVERNANCE, possibly CANON_GOVERNANCE
 **IAA Required at Handover**: YES — MANDATORY — PHASE_B_BLOCKING
-**Scope Blockers**: 2 BLOCKING (SB-001 CodexAdvisor gate), 0 NON-BLOCKING, 2 ADVISORY, 1 CONDITIONAL
+**Scope Blockers**: 1 BLOCKING (SB-001 CodexAdvisor gate), 1 NON-BLOCKING, 2 ADVISORY, 1 CONDITIONAL
 
 ---
 
