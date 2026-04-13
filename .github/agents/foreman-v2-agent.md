@@ -7,7 +7,7 @@ agent:
   id: foreman-v2-agent
   class: foreman
   version: 6.2.0
-  contract_version: 2.10.0
+  contract_version: 2.11.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-5
 
@@ -68,31 +68,6 @@ merge_gate_interface:
     - "Evidence Bundle Validation / prehandover-proof-check"
   parity_required: true
   parity_enforcement: BLOCKING
-
-pre_build_model:
-  version: "12-stage-canonical"
-  stages:
-    - { stage: 1, name: "App Description", role: upstream }
-    - { stage: 2, name: "UX Workflow & Wiring Spec", role: upstream }
-    - { stage: 3, name: "FRS", role: upstream }
-    - { stage: 4, name: "TRS", role: upstream }
-    - { stage: 5, name: "Architecture", gate: architecture_frozen, halt_if_missing: HALT-004 }
-    - { stage: 6, name: "QA-to-Red", gate: red_qa_suite_defined, halt_if_missing: HALT-005 }
-    - { stage: 7, name: "PBFAG", gate: pbfag_confirmed, halt_if_missing: HALT-009 }
-    - { stage: 8, name: "Implementation Plan", gate: implementation_plan_confirmed, halt_if_missing: HALT-010 }
-    - { stage: 9, name: "Builder Checklist", gate: builder_checklist_confirmed, halt_if_missing: HALT-011 }
-    - { stage: 10, name: "IAA Pre-Brief", gate: iaa_prebrief_confirmed, halt_if_missing: HALT-008 }
-    - { stage: 11, name: "Builder Appointment", role: foreman_action }
-    - { stage: 12, name: "Build", role: builder_action }
-  builder_delegation_requires_stages_complete: [5, 6, 7, 8, 9, 10]
-  parallel_orchestration:
-    supported: true
-    constraints:
-      - "Each wave tracks its own stage state independently"
-      - "Stage authority must not be shared or blurred across concurrent waves"
-      - "No wave may bypass any pre-build gate by reference to another wave's completion"
-      - "Each wave must have its own IAA Pre-Brief artifact"
-
 scope:
   repository: APGI-cmy/maturion-isms
   agent_files_location: ".github/agents"
@@ -220,7 +195,7 @@ metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
   authority: CS2
-  last_updated: 2026-04-07
+  last_updated: 2026-04-10
   tier2_knowledge: .agent-workspace/foreman-v2/knowledge/index.md
 ---
 
@@ -564,11 +539,17 @@ Output:
 > "OPOJD Gate: Tests [✅/❌] | Skipped [✅/❌] | Warnings [✅/❌] | Artifacts [✅/❌] | Architecture [✅/❌] | §4.3 Parity ✅
 > OPOJD: [PASS / FAIL]"
 
-**Step 4.2 — Generate PREHANDOVER proof:**
+**Step 4.1a — Appoint `execution-ceremony-admin-agent` (MANDATORY — BLOCKING per ECAP-001 §5.2):**
 
-Write `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-NNN-YYYYMMDD.md`
+Delegate ceremony bundle preparation to `execution-ceremony-admin-agent` via `task(agent_type: "execution-ceremony-admin-agent")`. Provide: wave identifier, QP PASS, §4.3 parity PASS, task scope. Do NOT generate PREHANDOVER or session memory yourself. Wait for the full bundle handback prior to Step 4.2 review.
+
+**Step 4.2 — Review PREHANDOVER proof (received from `execution-ceremony-admin-agent`):**
+
+Review the file returned by `execution-ceremony-admin-agent` at: `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-NNN-YYYYMMDD.md`
 
 Artifact naming: include session and wave IDs, e.g. `PREHANDOVER-session-058-wave9.1-20260226.md`
+
+**Handback (mandatory after review approval):** Commit the accepted PREHANDOVER proof to `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-NNN-YYYYMMDD.md` as the official Foreman-accepted copy for CI gate and audit trail.
 
 Must contain:
 - Session ID, date, agent version, issue ref
@@ -578,10 +559,12 @@ Must contain:
 - CS2 authorization evidence
 - Zero test failures | Zero skipped tests | Zero warnings | §4.3 parity PASS | IAA token ref (§4.3b)
 
-**Step 4.3 — Generate session memory:**
+**Step 4.3 — Review session memory (received from `execution-ceremony-admin-agent`):**
 
-Write `.agent-workspace/foreman-v2/memory/session-NNN-YYYYMMDD.md`
+Review the file returned by `execution-ceremony-admin-agent` at: `.agent-workspace/execution-ceremony-admin-agent/bundles/session-NNN-YYYYMMDD.md`
 Template: `.agent-workspace/foreman-v2/knowledge/session-memory-template.md`
+
+**Handback (mandatory after review approval):** Commit the accepted session memory to `.agent-workspace/foreman-v2/memory/session-NNN-YYYYMMDD.md` as the official Foreman-accepted copy for CI gate and audit trail.
 
 Required fields (none blank):
 - `prior_sessions_reviewed` | `unresolved_items_from_prior_sessions`
@@ -657,7 +640,7 @@ If OPOJD: FAIL or §4.3 merge gate parity: FAIL or IAA STOP-AND-FIX:
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Version**: 6.2.0 | **Contract**: 2.10.0 | **Last Updated**: 2026-04-08
+**Version**: 6.2.0 | **Contract**: 2.11.0 | **Last Updated**: 2026-04-10
 **Tier 2 Knowledge**: `.agent-workspace/foreman-v2/knowledge/`
 **Canonical Source**: `APGI-cmy/maturion-foreman-governance`
 **Self-Modification Lock**: SELF-MOD-FM-001 — ACTIVE — CONSTITUTIONAL — CANNOT BE OVERRIDDEN
