@@ -20,19 +20,19 @@ IAA Pre-Brief: PENDING
 
 ### Tasks
 - [x] Phase 1 — Identity & Preflight complete
-- [ ] IAA Pre-Brief invoked and wave record committed
-- [ ] D1 — Update MMM live control document baseline to current state
-  - [ ] Update PRE_MMM_IMPLEMENTATION_UPGRADE_STRATEGY.md blocker statuses
-  - [ ] Update harvest-map.md stale pre-Stage-2 references
-  - [ ] Update harvest-map.md LKIAC open question answers
-  - [ ] Update BUILD_PROGRESS_TRACKER.md as primary live monitor
-- [ ] D2 — Create MMM document classification baseline note
-- [ ] D3 — Define MMM document maintenance protocol
-- [ ] D4 — Reconcile BUILD_PROGRESS_TRACKER as primary live stage-state document
+- [x] IAA Pre-Brief invoked and wave record committed
+- [x] D1 — Update MMM live control document baseline to current state
+  - [x] Update PRE_MMM_IMPLEMENTATION_UPGRADE_STRATEGY.md blocker statuses
+  - [x] Update harvest-map.md stale pre-Stage-2 references
+  - [x] Update harvest-map.md LKIAC open question answers
+  - [x] Update BUILD_PROGRESS_TRACKER.md as primary live monitor
+- [x] D2 — Create MMM document classification baseline note
+- [x] D3 — Define MMM document maintenance protocol
+- [x] D4 — Reconcile BUILD_PROGRESS_TRACKER as primary live stage-state document
 - [ ] Phase 4 handover ceremony
 
 ### Status
-IN_PROGRESS — Phase 1 complete, invoking IAA Pre-Brief
+IN_PROGRESS — D1-D4 complete, proceeding to Phase 4
 
 ### Previous Wave (Closed)
 wave: mmm-stage2-ux-workflow-wiring-spec-20260413 (Issue #1352) — CLOSED

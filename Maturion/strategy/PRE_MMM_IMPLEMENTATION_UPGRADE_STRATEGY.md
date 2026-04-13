@@ -57,7 +57,7 @@ most of the agent-executable items.
 | BLK-1 | `MMM_app_description.md` v0.5.0 CS2 formal approval (Stage 1 gate) | CS2 | ✅ RESOLVED — CS2 approved via issue #1298 (2026-04-08) |
 | BLK-2 | IAA Tier 2 not updated for PBFAG gate (PRE_BUILD_STAGE_MODEL_CANON.md compliance) | CodexAdvisor → CS2 | ✅ RESOLVED — IAA Tier 2 updated: `iaa-trigger-table.md` v2.2.0 includes PRE_BUILD_STAGE_MODEL category; `iaa-category-overlays.md` v3.7.0+ includes PRE_BUILD_GATES overlay (OVL-PBG-001 through OVL-PBG-016) with PBFAG gate enforcement (wave: pre-mmm-build-readiness, 2026-04-06) |
 | BLK-3 | IAA Tier 2 not updated for MANDATORY_CROSS_APP_COMPONENTS | CodexAdvisor → CS2 | ✅ RESOLVED — IAA Tier 2 updated: `iaa-trigger-table.md` v2.2.0 includes MANDATORY_CROSS_APP_COMPONENTS trigger category; `iaa-category-overlays.md` includes corresponding overlay (wave: pre-mmm-build-readiness, 2026-04-06) |
-| BLK-4 | `CONSUMER_REPO_REGISTRY.json` not layered down to `maturion-isms` | Governance Liaison → CS2 | ⏳ OPEN — file does not exist at `governance/CONSUMER_REPO_REGISTRY.json`. Non-blocking for MMM Stage 2 progression; tracked for future governance layer-down. |
+| BLK-4 | `CONSUMER_REPO_REGISTRY.json` not layered down to `maturion-isms` | Governance Liaison → CS2 | ⏳ OPEN — file does not exist at `governance/CONSUMER_REPO_REGISTRY.json`. Non-blocking for MMM progression. Reclassified as an ongoing governance improvement item (not a Stage-2 blocker); tracked in Section 4 Non-Blocking Governance Gaps (NB-10). |
 | BLK-5 | MMM wave-start authorisation issue not yet opened by CS2 | CS2 | ✅ RESOLVED — CS2 opened Stage 2 wave-start via issue #1352 (2026-04-13); Stage 2 UX Workflow & Wiring Spec produced |
 | BLK-6 | Active wave is `cl6-relaunch-20260406`; sequential wave governance applies | CS2 → Foreman | ✅ RESOLVED — MMM waves active and progressing; cl6-relaunch completed; sequential governance no longer blocking MMM |
 
@@ -254,6 +254,7 @@ These items do not block MMM but should be actioned in the next available govern
 | NB-7 | `governance-repo-administrator-v2.agent.md` decision pending (Issue #1228) | CS2 decision |
 | NB-8 | 25+ S-series Foreman FAIL-ONLY-ONCE improvements OPEN (S-001 through S-034) | Batch via Foreman governance wave post-MMM-FRS |
 | NB-9 | IAA FAIL-ONLY-ONCE.md v2.5.0 — no PBFAG gate entry (PRE_BUILD_STAGE_MODEL_CANON published 2026-04-05) | Include in PS-E wave |
+| NB-10 | `CONSUMER_REPO_REGISTRY.json` not layered down to `maturion-isms` (formerly BLK-4) | Non-blocking for MMM; reclassified from blocker to ongoing improvement. Governance Liaison → CS2 direction. |
 
 ---
 

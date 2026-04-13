@@ -278,7 +278,7 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 **Current Stage**: Stage 2 COMPLETE (pending CS2 approval) — Stage 3 (FRS) next  
 **Overall Progress**: ~18% complete (Stage 1 formally closed; Stage 2 produced; Stages 3–12 not started)  
 **Blockers**: None. Stage 2 UX Workflow & Wiring Spec produced (maturion-isms#1352). Awaiting CS2 approval before Stage 3 (FRS) can begin.  
-**LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope COMPLETE (see `modules/MMM/_readiness/lkiac-carryover-closure-note.md`)  
+**LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.  
 **Open Questions**: 5 OPEN (OQ-001 through OQ-004, OQ-007); 1 ANSWERED (OQ-005); 1 PARTIALLY ANSWERED (OQ-006). See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.  
 **Next Steps**:
 1. CS2 to review and approve Stage 2 UX Workflow & Wiring Spec
