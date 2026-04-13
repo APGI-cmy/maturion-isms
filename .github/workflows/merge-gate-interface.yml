@@ -460,3 +460,81 @@ jobs:
           echo "  - Zero tolerance for discovered defects"
           echo "  - All preexisting issues must be fixed"
           echo "  - No test debt allowed"
+
+  # ============================================================================
+  # JOB 6: Governance Artifact Path Enforcement
+  # Authority: GOVERNANCE_ARTIFACT_TAXONOMY.md v2.0.0 §21 (Prescriptive Artifact Allowlist)
+  # Purpose: Enforce that only approved artifact types are created in .agent-admin/assurance/
+  # Added: v1.1.0 (2026-04-13) — GOV-SIMPLIFICATION consolidation
+  # ============================================================================
+  governance-artifact-path-check:
+    name: "governance/artifact-path-enforcement"
+    runs-on: ubuntu-latest
+    needs: classify-pr
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Enforce Approved Artifact Patterns
+        run: |
+          echo "=== Governance Artifact Path Enforcement ==="
+          echo "Authority: GOVERNANCE_ARTIFACT_TAXONOMY.md v2.0.0 §21"
+          echo ""
+
+          # Get new files added in .agent-admin/assurance/ (excluding archive/)
+          NEW_ASSURANCE_FILES=$(git diff --name-only --diff-filter=A origin/${{ github.event.pull_request.base.ref }}...HEAD -- '.agent-admin/assurance/' | grep -v '^\.agent-admin/assurance/archive/' || true)
+
+          if [ -z "$NEW_ASSURANCE_FILES" ]; then
+            echo "✅ No new assurance artifacts detected — PASS"
+            exit 0
+          fi
+
+          echo "New assurance artifacts detected:"
+          echo "$NEW_ASSURANCE_FILES"
+          echo ""
+
+          VIOLATIONS=0
+
+          while IFS= read -r file; do
+            basename=$(basename "$file")
+
+            # Permitted patterns per GOVERNANCE_ARTIFACT_TAXONOMY.md §21.3:
+            # 1. iaa-wave-record-{wave}-{date}.md (consolidated wave record)
+            # 2. iaa-prebrief-{slug}.md (legacy pre-brief — transition period)
+            # 3. iaa-token-session-{NNN}-{wave}-{date}.md (standalone IAA token)
+            # 4. INVALIDATED-{artifact-name}.md (invalidation marker)
+            # 5. PREHANDOVER-*.md (legacy PREHANDOVER — transition period)
+            # 6. assurance-token-*.md (legacy token format — transition period)
+            # 7. iaa-rejection-*.md / rejection-package-*.md (legacy — transition period)
+
+            if echo "$basename" | grep -qE '^iaa-wave-record-.*\.md$'; then
+              echo "  ✅ $basename — matches: IAA Wave Record (consolidated)"
+            elif echo "$basename" | grep -qE '^iaa-prebrief-.*\.md$'; then
+              echo "  ✅ $basename — matches: IAA Pre-Brief (legacy/transition)"
+            elif echo "$basename" | grep -qE '^iaa-token-.*\.md$'; then
+              echo "  ✅ $basename — matches: IAA Token (standalone)"
+            elif echo "$basename" | grep -qE '^INVALIDATED-.*\.md$'; then
+              echo "  ✅ $basename — matches: Invalidation Marker"
+            elif echo "$basename" | grep -qE '^PREHANDOVER-.*\.md$'; then
+              echo "  ✅ $basename — matches: PREHANDOVER (legacy/transition)"
+            elif echo "$basename" | grep -qE '^assurance-token-.*\.md$'; then
+              echo "  ✅ $basename — matches: Assurance Token (legacy/transition)"
+            elif echo "$basename" | grep -qE '^(iaa-rejection-|rejection-package-).*\.md$'; then
+              echo "  ✅ $basename — matches: Rejection Package (legacy/transition)"
+            else
+              echo "  ❌ $basename — VIOLATION: does not match any approved pattern"
+              VIOLATIONS=$((VIOLATIONS + 1))
+            fi
+          done <<< "$NEW_ASSURANCE_FILES"
+
+          echo ""
+          if [ "$VIOLATIONS" -gt 0 ]; then
+            echo "❌ FAIL: $VIOLATIONS artifact(s) do not match approved patterns"
+            echo "   See GOVERNANCE_ARTIFACT_TAXONOMY.md §21 for the prescriptive allowlist"
+            exit 1
+          else
+            echo "✅ All new assurance artifacts match approved patterns — PASS"
+          fi
