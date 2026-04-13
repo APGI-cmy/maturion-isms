@@ -134,6 +134,12 @@ capabilities:
     merge_gate_parity: MANDATORY_BEFORE_EVERY_PR
   job_environment:
     scope: "Agent files (.github/agents/) and Tier 2 artifacts (.agent-workspace/) ONLY. No application code. No governance canon authoring."
+  governance_artifact_taxonomy_ref: governance/canon/GOVERNANCE_ARTIFACT_TAXONOMY.md
+  artifact_allowlist_enforcement: >
+  Before composing any agent contract, verify the artifact types and write paths
+  declared in scope.write_paths are explicitly listed in GOVERNANCE_ARTIFACT_TAXONOMY.md.
+  Any artifact type not in the taxonomy allowlist is PROHIBITED and must not appear
+  in a contract's write_paths.
 
 can_invoke:
   - agent: governance-liaison-isms-agent
@@ -412,6 +418,7 @@ After composing the full file — STOP. Apply the Quality Professor checklist be
 | S6 | `can_invoke`, `cannot_invoke`, `own_contract` are top-level YAML keys | PASS |
 | S7 | Artifact immutability rules present in PHASE 4 (§4.3b reference) | PASS |
 | S8 | IAA token pattern references `.agent-admin/assurance/iaa-token-*` | PASS |
+| S9 | All write_paths declared in scope are present in GOVERNANCE_ARTIFACT_TAXONOMY.md allowlist | PASS |
 
 If ANY gate FAILS → do not write the file. Fix and re-run QP from S1.
 
