@@ -6,6 +6,7 @@
 **Date**: 2026-04-13  
 **CS2 Authorization**: CS2 supplementary instructions provided (binding)  
 **IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-gov-simplification.md` (COMMITTED)
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-gov-simplification.md
 
 ---
 
