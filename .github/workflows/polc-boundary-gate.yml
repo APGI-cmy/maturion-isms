@@ -412,12 +412,24 @@ jobs:
           PREBRIEF_FOUND=false
           ASSURANCE_DIR=".agent-admin/assurance"
           if [ -d "$ASSURANCE_DIR" ]; then
+            # Legacy pattern: standalone iaa-prebrief-*.md
             PREBRIEF_FILES=$(find "$ASSURANCE_DIR" \
               -name "iaa-prebrief-*.md" 2>/dev/null | head -5)
             if [ -n "$PREBRIEF_FILES" ]; then
               PREBRIEF_FOUND=true
-              echo "✅ IAA pre-brief artifact(s) found:"
+              echo "✅ IAA pre-brief artifact(s) found (legacy pattern):"
               echo "$PREBRIEF_FILES" | sed 's/^/   /'
+            fi
+
+            # New pattern (PR #1348): iaa-wave-record-*.md with ## PRE-BRIEF section
+            if [ "$PREBRIEF_FOUND" = false ]; then
+              while IFS= read -r -d '' f; do
+                if grep -q "## PRE-BRIEF" "$f" 2>/dev/null; then
+                  PREBRIEF_FOUND=true
+                  echo "✅ IAA wave-record pre-brief found (new pattern): $f"
+                  break
+                fi
+              done < <(find "$ASSURANCE_DIR" -name "iaa-wave-record-*.md" -print0 2>/dev/null)
             fi
           fi
 
