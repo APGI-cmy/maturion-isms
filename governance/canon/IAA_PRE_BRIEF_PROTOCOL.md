@@ -1,6 +1,6 @@
 # IAA PRE-BRIEF PROTOCOL
 
-**Status**: CANONICAL | **Version**: 1.2.2 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.3.0 | **Authority**: CS2  
 **Date**: 2026-03-03  
 **Amended**: 2026-03-03 — v1.1.0: Added §Wave Checklist Management, §Foreman Handover Gate,
 §IAA Invocation Gate, §Mid-Wave Task Addition, wave_checklist PREHANDOVER field, and commit
@@ -11,6 +11,7 @@ and does not automatically apply to direct-CS2 standalone governance-repo-admini
 canon actions (CS2 guidance — issue #1319)  
 **Amended**: 2026-04-08 — v1.2.1: Reference update — added `EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` to references; clarified that Phase 4 handover proof may be prepared by `execution-ceremony-admin-agent` under Foreman oversight without affecting IAA independence or Pre-Brief validity; authority: CS2 — ECAP-001 canon establishment issue.
 **Amended**: 2026-04-08 — v1.2.2: Re-invocation ownership cross-reference — added §Re-Invocation After Rejection — Ownership Reference, clarifying that after a `REJECTION-PACKAGE` the Foreman (not CS2) owns the stop-and-fix loop and re-invocation; cross-references INDEPENDENT_ASSURANCE_AGENT_CANON.md §IAA Re-Invocation After Rejection for full rules. Authority: CS2 — Foreman IAA re-invocation ownership canonisation issue.
+**Amended**: 2026-04-13 — v1.3.0: Updated to reference consolidated IAA Wave Record model (iaa-wave-record-{wave}-{date}.md); Pre-Brief content now constitutes Section 1 of the consolidated wave record rather than a standalone artifact; artifact path updated from standalone `iaa-prebrief-{slug}.md` to embedded section in `iaa-wave-record-{wave}-{date}.md`; authority: CS2 — GOV-SIMPLIFICATION issue.
 
 ---
 
@@ -137,6 +138,32 @@ discovered during review not listed here.
 
 **IAA signature**: IAA-<YYYYMMDD>-PREBRIEF-WAVE<N>
 ```
+
+> **Note (v1.3.0+)**: The Pre-Brief content defined below may be produced either as a standalone `iaa-prebrief-{slug}.md` artifact (legacy) or as Section 1 of the consolidated `iaa-wave-record-{wave}-{date}.md`. The content requirements are identical regardless of the delivery format. See §Consolidated Artifact Model for details.
+
+---
+
+## Consolidated Artifact Model (v1.3.0+)
+
+As of v1.3.0, the Pre-Brief content is embedded as **Section 1** of the consolidated **IAA Wave Record** (`iaa-wave-record-{wave}-{date}.md`) rather than produced as a standalone artifact.
+
+### Migration from Standalone to Consolidated
+
+| Aspect | Legacy (v1.2.x) | Consolidated (v1.3.0+) |
+|--------|-----------------|------------------------|
+| **Artifact** | `iaa-prebrief-{slug}.md` (standalone) | Section 1 of `iaa-wave-record-{wave}-{date}.md` |
+| **Location** | `.agent-admin/assurance/` | `.agent-admin/assurance/` |
+| **Content** | Identical Pre-Brief sections | Identical Pre-Brief sections |
+| **Immutability** | Whole file immutable after commit | Section 1 immutable after commit (per A-029) |
+| **Lifecycle** | Created at wave start, never modified | Created at wave start as initial section of wave record |
+
+### Transition Period
+
+During the transition period (determined by CS2), both standalone Pre-Brief artifacts and consolidated wave record Pre-Brief sections are accepted. The legacy standalone pattern (`iaa-prebrief-{slug}.md`) will be deprecated once all agent contracts are updated to produce the consolidated format.
+
+### Template Reference
+
+The consolidated Pre-Brief section structure is defined in `governance/templates/iaa-wave-record.template.md` Section 1.
 
 ---
 
