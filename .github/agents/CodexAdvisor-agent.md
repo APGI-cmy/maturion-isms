@@ -136,10 +136,10 @@ capabilities:
     scope: "Agent files (.github/agents/) and Tier 2 artifacts (.agent-workspace/) ONLY. No application code. No governance canon authoring."
   governance_artifact_taxonomy_ref: governance/canon/GOVERNANCE_ARTIFACT_TAXONOMY.md
   artifact_allowlist_enforcement: >
-  Before composing any agent contract, verify the artifact types and write paths
-  declared in scope.write_paths are explicitly listed in GOVERNANCE_ARTIFACT_TAXONOMY.md.
-  Any artifact type not in the taxonomy allowlist is PROHIBITED and must not appear
-  in a contract's write_paths.
+    Before composing any agent contract, verify the artifact types and write paths
+    declared in scope.write_paths are explicitly listed in GOVERNANCE_ARTIFACT_TAXONOMY.md.
+    Any artifact type not in the taxonomy allowlist is PROHIBITED and must not appear
+    in a contract's write_paths.
 
 can_invoke:
   - agent: governance-liaison-isms-agent
