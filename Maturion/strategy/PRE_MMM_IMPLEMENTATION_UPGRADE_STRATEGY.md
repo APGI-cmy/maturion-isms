@@ -9,7 +9,7 @@
 **Governed by**: `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0  
 **Related Issues**: [#1247 — Pre-MMM Build Readiness](https://github.com/APGI-cmy/maturion-isms/issues/1247), [#1358 — MMM Document Normalization](https://github.com/APGI-cmy/maturion-isms/issues/1358)  
 **Authority**: CS2 sign-off required before each wave is started  
-**Document Role**: Historical traceability + ongoing improvement tracker (see §Normalization Note)
+**Document Role**: Ongoing Improvement Tracker (historical traceability context preserved in §Normalization Note)
 
 ---
 

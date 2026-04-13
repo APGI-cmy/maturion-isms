@@ -49,7 +49,7 @@ tier2_loaded: true
 ## IAA Artifacts
 
 - IAA Pre-Brief: `.agent-admin/assurance/iaa-wave-record-mmm-doc-normalization-20260413.md` (COMMITTED)
-- IAA Audit Token: PENDING (Phase 4 audit not yet invoked)
+- IAA Audit Token: `IAA-session-064-mmm-doc-normalization-20260413-PASS` (`.agent-admin/assurance/iaa-wave-record-mmm-doc-normalization-20260413.md`)
 
 ---
 

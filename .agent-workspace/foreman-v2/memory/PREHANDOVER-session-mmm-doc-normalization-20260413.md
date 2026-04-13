@@ -73,7 +73,7 @@ No architecture violations. Documents accurately reflect current MMM state.
 
 ## IAA Audit Token
 
-iaa_audit_token: PENDING — IAA audit not yet invoked
+iaa_audit_token: IAA-session-064-mmm-doc-normalization-20260413-PASS (`.agent-admin/assurance/iaa-wave-record-mmm-doc-normalization-20260413.md`)
 
 ---
 
@@ -92,4 +92,4 @@ merge_gate_parity: PASS
 ---
 
 *Authority: CS2 (Johan Ras / @APGI-cmy) | Issue: maturion-isms#1358*  
-*Produced: 2026-04-13 | Status: PENDING IAA AUDIT*
+*Produced: 2026-04-13 | Status: IAA AUDIT COMPLETE — PASS*

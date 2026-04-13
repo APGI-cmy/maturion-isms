@@ -16,7 +16,7 @@ no schema changes, no builder appointment, no builder delegation.
 CS2 Authorization: Issue maturion-isms#1358 opened by @APGI-cmy (CS2 = Johan Ras).
 Wave-start authorization confirmed (issue opened directly by CS2).
 
-IAA Pre-Brief: PENDING
+IAA Pre-Brief: COMMITTED (wave record at `.agent-admin/assurance/iaa-wave-record-mmm-doc-normalization-20260413.md`)
 
 ### Tasks
 - [x] Phase 1 — Identity & Preflight complete
@@ -29,10 +29,10 @@ IAA Pre-Brief: PENDING
 - [x] D2 — Create MMM document classification baseline note
 - [x] D3 — Define MMM document maintenance protocol
 - [x] D4 — Reconcile BUILD_PROGRESS_TRACKER as primary live stage-state document
-- [ ] Phase 4 handover ceremony
+- [x] Phase 4 handover ceremony
 
 ### Status
-IN_PROGRESS — D1-D4 complete, proceeding to Phase 4
+COMPLETE — D1-D4 complete, IAA audit PASS, PREHANDOVER committed. Awaiting CS2 merge.
 
 ### Previous Wave (Closed)
 wave: mmm-stage2-ux-workflow-wiring-spec-20260413 (Issue #1352) — CLOSED

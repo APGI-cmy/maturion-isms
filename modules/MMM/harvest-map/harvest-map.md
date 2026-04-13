@@ -74,8 +74,8 @@ Backward transitions (e.g. from TRACEABILITY_ONLY back to PARALLEL_RUN) require 
 and must be recorded in the deprecation register with rationale.
 
 **Default source-state**: All capabilities in this harvest map are currently `ACTIVE_SOURCE`.
-The destination equivalent for each capability does not yet exist — MMM is at Stage 2 COMPLETE
-(UX Workflow & Wiring Spec produced, pending CS2 approval). Stage 3 (FRS) is next. No destination
+The destination equivalent for each capability does not yet exist — MMM has produced the Stage 2
+UX Workflow & Wiring Spec, pending CS2 approval. Stage 3 (FRS) is next. No destination
 equivalents have been built yet, so all source capabilities remain `ACTIVE_SOURCE`.
 
 ---
@@ -394,5 +394,5 @@ downstream implications for other modules and agents.
 | **Produced By** | foreman-v2-agent v6.2.0 (POLC-Orchestration mode) |
 | **Original Version** | v0.1.0 (2026-04-08, session-161-mmm-harvest-map-20260408) |
 | **Current Version** | v0.2.1 (2026-04-13, normalization pass per issue #1358) |
-| **IAA Pre-Brief** | `.agent-admin/assurance/iaa-prebrief-mmm-harvest-map-revision-20260413.md` |
-| **Next Step** | CS2 review and approval → proceed to UX Workflow / FRS derivation for MMM |
+| **IAA Pre-Brief** | v0.2.0 / revision: `.agent-admin/assurance/iaa-wave-record-mmm-harvest-map-revision-20260413.md`; v0.2.1 / normalization: `.agent-admin/assurance/iaa-wave-record-mmm-doc-normalization-20260413.md` |
+| **Next Step** | CS2 review/approval of live MMM artifacts → Stage 3 (FRS) wave-start |
