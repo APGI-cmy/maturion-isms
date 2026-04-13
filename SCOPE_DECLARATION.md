@@ -18,8 +18,9 @@
 - `.agent-workspace/foreman-v2/memory/session-164-lkiac-carryover-closure-20260413.md` - Foreman session memory
 - `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-164-lkiac-carryover-closure-20260413.md` - Foreman PREHANDOVER proof
 - `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Foreman parking station entry
+- `.agent-admin/assurance/iaa-token-session-164-lkiac-carryover-closure-20260413.md` - IAA assurance token (PASS)
 
-**Total declared files**: 7
+**Total declared files**: 8
 
 ## Implementation Status
 
