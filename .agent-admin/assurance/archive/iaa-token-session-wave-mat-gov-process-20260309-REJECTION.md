@@ -3,6 +3,7 @@
 **Token Reference**: IAA-session-wave-mat-gov-process-20260309-REJECTION
 **Date**: 2026-03-09
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-mat-gov-process-20260309-REJECTION
 **Verdict**: REJECTION-PACKAGE
 
 ---

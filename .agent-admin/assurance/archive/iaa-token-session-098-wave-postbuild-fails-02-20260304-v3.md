@@ -7,6 +7,7 @@
 **Wave**: Wave postbuild-fails-02 / MAT Supabase RLS Full Remediation
 **Issue**: #897
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-099-wave-postbuild-fails-02-20260304-v3-REJECTION
 **Authority**: CS2 only (@APGI-cmy)
 **HEAD commit reviewed**: cd44579
 **Prior rejections**: 
@@ -106,3 +107,4 @@ Adoption phase: PHASE_B_BLOCKING — hard gate. STOP-AND-FIX is absolute.
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Token**: IAA-session-099-wave-postbuild-fails-02-20260304-v3-REJECTION
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-099-wave-postbuild-fails-02-20260304-v3-REJECTION

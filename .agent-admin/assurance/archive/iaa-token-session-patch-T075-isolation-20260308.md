@@ -9,6 +9,7 @@
 **Producing Agent**: qa-builder (test fix), foreman-v2-agent (coordination)
 **IAA Contract Version**: 2.2.0 | **Knowledge Version**: 2.6.0
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-patch-T075-isolation-20260308-REJECTION
 
 ---
 

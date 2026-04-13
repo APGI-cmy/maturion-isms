@@ -8,6 +8,7 @@
 **Commit reviewed**: 75bac27
 **Date**: 2026-03-05
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-148-waveLV-20260305-REJECTED
 
 ---
 

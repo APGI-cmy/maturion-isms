@@ -9,6 +9,7 @@
 **IAA Session**: session-wave19-orchestration-20260317-R3
 **IAA Version**: independent-assurance-agent v6.2.0 (contract 2.2.0)
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave19-orchestration-20260317-R3-PASS
 **Authority**: CS2 (@APGI-cmy)
 **Round**: R3 (R1 REJECTED, R2 REJECTED, R3 PASS)
 

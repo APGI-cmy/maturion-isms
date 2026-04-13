@@ -51,3 +51,5 @@ Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Issued by**: independent-assurance-agent v6.2.0
 **Merge authority**: CS2 ONLY — no merge without CS2 approval
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-132-20260304-PASS

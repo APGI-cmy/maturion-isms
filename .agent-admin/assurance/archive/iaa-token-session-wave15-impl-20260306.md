@@ -7,6 +7,7 @@
 **Invoking Agent**: foreman-v2-agent
 **Producing Agents**: api-builder (T-W15-IMPL-001), ui-builder (T-W15-IMPL-002)
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave15-impl-20260306-PASS
 
 ---
 

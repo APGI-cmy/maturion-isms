@@ -9,6 +9,7 @@
 **PR / Issue**: maturion-isms#1039 — "[BUGFIX] Parsing completeness for LDCS seed: Upgrade to gpt-4.1, increase document limit, fix criteria mapping"  
 **IAA Agent Version**: independent-assurance-agent v6.2.0  
 **Adoption Phase**: PHASE_B_BLOCKING  
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-ldcs-parse-bugfix-20260310-PASS
 **Authority**: CS2 only (@APGI-cmy)  
 
 ---

@@ -11,6 +11,7 @@
 **Invoking Agent**: foreman-v2-agent
 **Producing Agent**: foreman-v2-agent v6.2.0 (contract 2.7.0)
 **Adoption Phase**: PHASE_B_BLOCKING — hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-cl2-20260313-PASS
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---

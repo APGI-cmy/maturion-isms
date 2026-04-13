@@ -12,6 +12,7 @@
 **Producing Agent**: foreman-v2-agent + qa-builder
 **IAA Agent**: independent-assurance-agent v6.2.0
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-099-wave14-20260304-REJECTION-001
 **Authority**: CS2 only (@APGI-cmy)
 
 ---
@@ -134,5 +135,6 @@ Despite the merge gate failure, IAA records the following substantive quality as
 **Token Reference**: IAA-session-099-wave14-20260304-REJECTION-001
 **IAA Agent**: independent-assurance-agent v6.2.0
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-099-wave14-20260304-REJECTION-001
 **Verdict Issued**: 2026-03-04
 **Authority**: CS2 only (@APGI-cmy)

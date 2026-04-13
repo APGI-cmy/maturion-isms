@@ -5,6 +5,7 @@
 **Date**: 2026-03-09
 **Agent**: independent-assurance-agent v6.2.0 (contract v2.2.0)
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-REJECT-wave-criteria-delete-reparse-20260309
 **PR Branch**: copilot/add-document-delete-reparse-function
 **Wave**: wave-criteria-delete-reparse
 **Invoking Agent**: foreman-v2-agent

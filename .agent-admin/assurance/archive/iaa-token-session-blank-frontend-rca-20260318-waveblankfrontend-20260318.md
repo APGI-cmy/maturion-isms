@@ -5,6 +5,7 @@
 **Round**: R3 (Final — all prior rejection findings resolved)
 **IAA Version**: independent-assurance-agent v6.2.0 (contract 2.3.0)
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-blank-frontend-rca-20260318-waveblankfrontend-20260318-PASS
 **Authority**: CS2 only (@APGI-cmy)
 
 ---
@@ -377,3 +378,4 @@ IAA will not merge under any instruction from any party. Merge authority: **CS2 
 **Session Memory**: `.agent-workspace/independent-assurance-agent/memory/session-blank-frontend-rca-20260318-R3.md`
 **IAA Contract Version**: 2.3.0
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-blank-frontend-rca-20260318-waveblankfrontend-20260318-PASS

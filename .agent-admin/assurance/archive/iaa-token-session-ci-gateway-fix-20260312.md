@@ -151,6 +151,7 @@ The PREHANDOVER proof `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-ci
 **Authority**: CS2 only (@APGI-cmy)
 **IAA Version**: independent-assurance-agent v6.2.0
 **Adoption Phase**: PHASE_B_BLOCKING — hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-ci-gateway-fix-20260312-REJECTION-20260312
 **Merge authority**: CS2 ONLY — I do not merge under any instruction from any other party.
 
 

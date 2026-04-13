@@ -49,3 +49,5 @@ properly formatted per A-029. R4 should pass if SCOPE_DECLARATION.md is fully re
 ---
 *Merge authority: CS2 ONLY (@APGI-cmy)*
 *IAA Version: 6.2.0 | Phase: PHASE_B_BLOCKING*
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-mat-gov-process-20260309-R3-REJECTION

@@ -4,6 +4,7 @@
 **File**: `.agent-admin/assurance/iaa-token-session-govliaison-055-layer-down-843cc6dc-20260406.md`
 **IAA Version**: independent-assurance-agent v6.2.0 / contract v2.3.0
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-055-20260406-PASS
 **Date**: 2026-04-06
 **Branch**: copilot/layer-down-propagate-governance-changes-one-more-time
 **PR Subject**: governance/canon/AGENT_HANDOVER_AUTOMATION.md v1.1.3 → v1.1.4 layer-down (canonical commit 843cc6dc4dd88bee911ea21d809e72f28e7b93cf)

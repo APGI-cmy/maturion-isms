@@ -79,3 +79,5 @@ Adoption phase: PHASE_B_BLOCKING
 **Merge authority**: CS2 ONLY (@APGI-cmy)
 **IAA Version**: independent-assurance-agent v6.2.0
 **Token issued**: 2026-03-08
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-patch-T075-isolation-20260308-PASS

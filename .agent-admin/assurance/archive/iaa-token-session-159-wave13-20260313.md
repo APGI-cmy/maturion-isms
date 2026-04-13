@@ -8,6 +8,7 @@
 **Producing Agents**: foreman-v2-agent (orchestration), qa-builder (RED gate), schema-builder (Task 13.1)
 **PR Category**: MIXED (AAWP_MAT + CI_WORKFLOW)
 **Adoption Phase**: PHASE_B_BLOCKING — hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-159-wave13-20260313-REJECT
 
 ---
 

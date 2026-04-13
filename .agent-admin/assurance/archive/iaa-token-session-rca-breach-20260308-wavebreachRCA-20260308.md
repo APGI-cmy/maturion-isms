@@ -5,6 +5,7 @@
 **Date**: 2026-03-08
 **IAA Version**: independent-assurance-agent v6.2.0 / contract v2.2.0
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-rca-breach-20260308-wavebreachRCA-20260308-PASS
 **Authority**: CS2 only (@APGI-cmy)
 **Branch**: copilot/fix-foreman-bootstrap-issue
 **Wave**: breach-rca-20260308

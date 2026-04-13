@@ -7,6 +7,7 @@
 **Branch**: copilot/start-ux-workflow-gap-remediation
 **Wave**: Wave 14 — UX Workflow Gap Remediation (Execution Start)
 **Adoption Phase**: PHASE_B_BLOCKING — hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave14-execution-start-20260313-REJECTION
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -146,3 +147,4 @@ Required correction addendum fields:
 **IAA Agent**: independent-assurance-agent v6.2.0
 **Session**: session-wave14-execution-start-20260313
 **Contract**: 2.2.0 | **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave14-execution-start-20260313-REJECTION

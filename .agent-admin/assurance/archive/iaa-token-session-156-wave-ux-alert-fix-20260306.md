@@ -29,6 +29,7 @@
 Files available: index.md, FAIL-ONLY-ONCE.md (A-001–A-030), iaa-core-invariants-checklist.md (v2.8.0), iaa-trigger-table.md (v2.1.0), iaa-category-overlays.md (v3.1.0), session-memory-template.md, IAA_ZERO_SEVERITY_TOLERANCE.md, IAA_AGENT_CONTRACT_AUDIT_STANDARD.md.  
 FAIL-ONLY-ONCE registry: PRESENT — A-001 through A-030.  
 Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE.
+PHASE_B_BLOCKING_TOKEN: IAA-session-156-wave-ux-alert-fix-20260306-PASS
 
 **CANON_INVENTORY verified**: 191 canon files, all SHA256 hashes valid (no null, no placeholder, no truncated).  
 IAA canon present: YES — governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md ✅  

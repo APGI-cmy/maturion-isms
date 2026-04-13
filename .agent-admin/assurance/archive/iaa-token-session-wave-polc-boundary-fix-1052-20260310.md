@@ -17,6 +17,7 @@
 **Issue**: maturion-isms#1052 — Bug: POLC Boundary Validation fires false positives on Copilot PRs where agent is acting as builder (not Foreman)
 **IAA Agent**: independent-assurance-agent v6.2.0
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-polc-boundary-fix-1052-20260310-PASS
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Invocation**: R2 — Re-audit after R1 REJECTION-PACKAGE
 

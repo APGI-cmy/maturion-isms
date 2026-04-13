@@ -182,3 +182,5 @@ The following areas are CONFIRMED GREEN and need not be re-examined unless the f
 **Token reference**: IAA-session-dckis-impl-002-20260320-REJECTION  
 **Adoption phase**: PHASE_B_BLOCKING — hard gate ACTIVE  
 **Authority**: CS2 only (@APGI-cmy)
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-dckis-impl-002-20260320-REJECTION

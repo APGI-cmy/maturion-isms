@@ -9,6 +9,7 @@
 **PR Branch**: copilot/add-post-wave-nbr-entry
 **PR Category**: MIXED — CI_WORKFLOW + KNOWLEDGE_GOVERNANCE
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-048-R3-20260318-PASS
 
 ---
 
@@ -19,6 +20,7 @@
 **Merge permitted (subject to CS2 approval).**
 **Token Reference**: IAA-session-048-R3-20260318-PASS
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate. This token authorises merge.
+PHASE_B_BLOCKING_TOKEN: IAA-session-048-R3-20260318-PASS
 ## ═══════════════════════════════════════
 
 ---

@@ -9,6 +9,7 @@
 **Invoking Agent**: foreman-v2-agent (session-143 v2 — re-invocation after REJECTION-PACKAGE session-150)
 **Producing Agent**: foreman-v2-agent (session-143)
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-143-v2-wave14-ibwr-20260305-PASS
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -117,4 +118,5 @@ A-030 re-invocation evidence trail artifact.
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **IAA Version**: 6.2.0 | **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-143-v2-wave14-ibwr-20260305-PASS
 **Merge authority**: CS2 ONLY — no merge without CS2 approval

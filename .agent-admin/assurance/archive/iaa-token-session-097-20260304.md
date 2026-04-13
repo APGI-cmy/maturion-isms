@@ -42,3 +42,5 @@ Invoking agent: foreman-v2-agent (third invocation)
 Adoption phase: PHASE_B_BLOCKING  
 IAA class: assurance | version: 6.2.0  
 PREHANDOVER proof: immutable post-commit — NOT modified by IAA (per §4.3b)
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-097-20260304-PASS

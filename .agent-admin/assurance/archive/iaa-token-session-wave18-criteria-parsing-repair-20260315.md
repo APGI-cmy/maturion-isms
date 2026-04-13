@@ -9,3 +9,5 @@
 **IAA Phase**: PHASE_B_BLOCKING
 **Verdict**: ASSURANCE-TOKEN PASS — 9/9 checks PASS
 **Merge authority**: CS2 ONLY (@APGI-cmy)
+
+PHASE_B_BLOCKING_TOKEN: IAA-wave18-criteria-parsing-repair-20260315-PASS

@@ -7,6 +7,7 @@ All 20 checks PASS. Merge gate parity: PASS.
 Merge permitted (subject to CS2 approval).
 Token reference: IAA-session-wave-wf-contract-audit-20260310-20260310-PASS
 Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-wf-contract-audit-20260310-20260310-PASS
 ═══════════════════════════════════════
 
 **Agent**: independent-assurance-agent v6.2.0

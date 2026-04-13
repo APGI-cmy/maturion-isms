@@ -7,6 +7,7 @@
 **IAA Agent**: independent-assurance-agent v6.2.0
 **Invoked by**: foreman-v2-agent v6.2.0
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-postfcwt-prodfails-20260306-REJECT
 **Authority**: CS2 ONLY (@APGI-cmy)
 
 ---

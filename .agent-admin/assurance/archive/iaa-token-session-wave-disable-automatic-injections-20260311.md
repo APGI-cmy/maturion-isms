@@ -8,6 +8,7 @@
 **Producing Agent**: copilot-swe-agent[bot] (CodexAdvisor proxy per CS2 issue assignment)
 **Invoking Agent**: foreman-v2-agent
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-disable-automatic-injections-20260311-REJECTION
 **Authority**: CS2 ONLY (@APGI-cmy)
 
 ---
@@ -162,3 +163,4 @@ This PR must not be opened until all 7 corrective actions are resolved and IAA i
 **Authority**: CS2 ONLY (@APGI-cmy)
 **IAA Version**: 6.2.0 | Contract v2.2.0
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-disable-automatic-injections-20260311-REJECTION

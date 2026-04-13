@@ -118,6 +118,7 @@ All 8 Pre-Brief declarations verified in session-133 and unchanged in commit 90f
 
 **IAA Agent**: independent-assurance-agent v6.2.0  
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE  
+PHASE_B_BLOCKING_TOKEN: IAA-session-099-wave14-20260304-PASS
 **Issuing session**: IAA session-134 (re-invocation post session-133 REJECTION-PACKAGE)  
 **Authority for merge**: CS2 ONLY (@APGI-cmy)  
 **PREHANDOVER proof**: READ-ONLY (immutable per A-029 / §4.3b) — SHA 8a9af02  

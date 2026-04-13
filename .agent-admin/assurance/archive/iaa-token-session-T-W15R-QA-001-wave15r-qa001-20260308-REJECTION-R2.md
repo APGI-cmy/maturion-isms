@@ -105,3 +105,5 @@ Adoption phase: PHASE_B_BLOCKING
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Produced by**: independent-assurance-agent v6.2.0
 **Session**: session-T-W15R-QA-001-R2-wave15r-qa001-20260308
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-T-W15R-QA-001-wave15r-qa001-20260308-REJECTION-R2

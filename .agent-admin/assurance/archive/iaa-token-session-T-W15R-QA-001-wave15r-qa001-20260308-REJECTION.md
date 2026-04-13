@@ -100,3 +100,5 @@ When re-invoking IAA after fixes:
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Date**: 2026-03-08
 **STOP-AND-FIX mandate**: ACTIVE — no PR opens until ASSURANCE-TOKEN issued
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-T-W15R-QA-001-wave15r-qa001-20260308-REJECTION

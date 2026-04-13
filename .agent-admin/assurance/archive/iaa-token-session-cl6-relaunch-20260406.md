@@ -5,6 +5,7 @@
 **Date**: 2026-04-06
 **IAA Agent**: independent-assurance-agent v6.2.0 / contract 2.3.0
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-cl6-relaunch-20260406-REJECTION-001
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---

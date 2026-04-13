@@ -118,3 +118,5 @@ PREHANDOVER proof `iaa_audit_token: IAA-session-143-wave14-final-20260305-PASS` 
 **IAA Version**: independent-assurance-agent v6.2.0 / contract v2.2.0
 **IAA Internal Session**: session-153
 **Date**: 2026-03-05
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-143-wave14-final-20260305-PASS

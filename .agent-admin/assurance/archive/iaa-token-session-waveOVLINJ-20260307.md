@@ -5,6 +5,7 @@
 **Agent**: independent-assurance-agent v6.2.0 / contract v2.2.0
 **Session**: session-waveOVLINJ-20260307
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-waveOVLINJ-20260307-PASS
 
 ---
 
@@ -170,4 +171,5 @@ IAA proceeds under CS2 explicit authority. Pre-Brief SB-001 acknowledged this ad
 **Token**: IAA-session-waveOVLINJ-20260307-PASS
 **Issued**: 2026-03-07
 **Adoption Phase**: PHASE_B_BLOCKING — hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-waveOVLINJ-20260307-PASS
 **Merge Authority**: CS2 ONLY — IAA does not merge.

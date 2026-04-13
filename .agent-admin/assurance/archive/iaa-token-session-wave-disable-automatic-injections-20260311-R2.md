@@ -8,6 +8,7 @@
 **Producing Agent**: copilot-swe-agent[bot] (CodexAdvisor proxy per CS2 issue assignment)
 **Invoking Agent**: foreman-v2-agent
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-disable-automatic-injections-20260311-R2-REJECTION
 **Authority**: CS2 ONLY (@APGI-cmy)
 **Re-invocation**: R2 (resolving R1 REJECTION-PACKAGE from commit e18eadc/de3ceaf)
 
@@ -87,3 +88,4 @@ Root cause: 1 finding (A-026 SCOPE_DECLARATION missing 1 file).
 **IAA Session**: wave-disable-automatic-injections-20260311-R2
 **Token Reference**: IAA-session-wave-disable-automatic-injections-20260311-R2-REJECTION
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-disable-automatic-injections-20260311-R2-REJECTION

@@ -145,3 +145,5 @@ Foreman must:
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **IAA contract**: `.github/agents/independent-assurance-agent.md` v6.2.0
 **Adoption phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-dckis-alignment-plan-20260319-REJECTION

@@ -82,3 +82,5 @@ Adoption phase: PHASE_B_BLOCKING — hard gate.
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **STOP-AND-FIX mandate**: ACTIVE — no class exceptions
 **Merge authority**: CS2 ONLY
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-T-W15R-QA-001-wave15r-qa001-20260308-PASS

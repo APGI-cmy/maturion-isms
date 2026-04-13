@@ -5,6 +5,7 @@
 **Date**: 2026-03-08
 **Verdict**: REJECTION-PACKAGE
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave15r-impl-20260308-REJECTION
 
 ## Failures Cited
 

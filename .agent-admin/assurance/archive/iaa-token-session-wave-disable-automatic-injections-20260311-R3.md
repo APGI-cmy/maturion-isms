@@ -8,6 +8,7 @@
 **Producing Agent**: copilot-swe-agent[bot] (CodexAdvisor proxy per CS2 issue #1061 assignment)
 **Invoking Agent**: foreman-v2-agent
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-disable-automatic-injections-20260311-R3-REJECTION
 **Authority**: CS2 ONLY (@APGI-cmy)
 **Re-invocation**: R3 (resolving R2 REJECTION-PACKAGE from commit e5bd632)
 
@@ -131,3 +132,4 @@ Fix: 5-line addition to SCOPE_DECLARATION.md (A-031 carve-out note). No substant
 **IAA Session**: wave-disable-automatic-injections-20260311-R3
 **Token Reference**: IAA-session-wave-disable-automatic-injections-20260311-R3-REJECTION
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-disable-automatic-injections-20260311-R3-REJECTION

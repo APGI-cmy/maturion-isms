@@ -5,6 +5,7 @@
 **Date**: 2026-03-05
 **Agent**: independent-assurance-agent v6.2.0 (contract v2.2.0)
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-155-waveGovImpr-20260305-REJECT
 
 **PR / Branch**: `copilot/update-iaa-governance-templates`
 **Invoking Agent**: foreman-v2-agent session-155

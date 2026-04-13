@@ -10,6 +10,7 @@
 **Wave**: Wave 15 — Schema Drift Remediation (parse_tasks migration)
 **Wave Slug**: wave15-schemadrift
 **Adoption Phase**: PHASE_B_BLOCKING — hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave15-schemadrift-wave15-20260307-PASS
 **Invocation Type**: RE-INVOCATION after STOP-AND-FIX remediation
 **Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-wave15-schemadrift.md`
 **PREHANDOVER proof reviewed**: `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-wave15-schemadrift-wave15-20260307.md`

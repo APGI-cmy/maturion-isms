@@ -5,6 +5,7 @@
 **Date**: 2026-03-10
 **IAA Version**: independent-assurance-agent v6.2.0 (Contract v2.2.0)
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-ci-supabase-migrate-1051-20260310-R3-REJECTION
 **Authority**: CS2 only (@APGI-cmy)
 **Prior Verdict**: R2 REJECTION-PACKAGE (OVL-CI-005 — local-only branch)
 

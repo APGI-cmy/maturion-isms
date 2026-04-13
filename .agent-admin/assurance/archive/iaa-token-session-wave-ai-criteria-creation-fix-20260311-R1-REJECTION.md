@@ -9,6 +9,7 @@
 **Invoking Agent**: foreman-v2-agent
 **Producing Agents**: qa-builder (T-W17-QA-001), schema-builder (T-W17-SCH-001)
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-ai-criteria-creation-fix-20260311-R1-REJECTION
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---

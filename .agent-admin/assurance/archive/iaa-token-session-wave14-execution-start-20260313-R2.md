@@ -8,6 +8,7 @@
 **Issued by**: independent-assurance-agent v6.2.0
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave14-execution-start-20260313-R2-PASS
 
 ---
 

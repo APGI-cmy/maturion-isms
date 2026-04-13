@@ -8,6 +8,7 @@
 **Date**: 2026-03-05
 **Invoking Agent**: foreman-v2-agent (session-143)
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-143-wave14-ibwr-20260305-REJECT
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -98,4 +99,5 @@ PASS token to that same file path upon successful re-review.
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **IAA Version**: 6.2.0 | **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-143-wave14-ibwr-20260305-REJECT
 **STOP-AND-FIX mandate**: ACTIVE — no merge until ASSURANCE-TOKEN issued

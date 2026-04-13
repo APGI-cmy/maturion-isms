@@ -7,6 +7,7 @@
 - **Date**: 2026-03-11
 - **IAA Agent**: independent-assurance-agent v6.2.0 / Contract v2.2.0
 - **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-16.2-gap-remediation-20260311-PASS
 - **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---

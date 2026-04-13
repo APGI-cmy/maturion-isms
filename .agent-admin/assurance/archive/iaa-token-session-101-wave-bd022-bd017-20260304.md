@@ -249,3 +249,5 @@ Token reference: IAA-session-138-wave-bd022-bd017-20260304-PASS
 Adoption phase: PHASE_B_BLOCKING — hard gate.
 ═══════════════════════════════════════
 ```
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-138-wave-bd022-bd017-20260304-PASS

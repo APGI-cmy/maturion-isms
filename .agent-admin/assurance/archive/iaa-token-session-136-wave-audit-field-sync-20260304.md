@@ -52,3 +52,5 @@ the canonical and authoritative assurance token for wave audit-field-sync.
 **Merge permitted subject to CS2 approval.**
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **IAA Constitutional Lock**: SELF-MOD-IAA-001 — ACTIVE
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-136-wave-audit-field-sync-20260304-PASS

@@ -8,6 +8,7 @@
 **Wave**: wave15r-impl  
 **Producing Agent(s)**: api-builder, ui-builder, qa-builder (supervised by foreman-v2)  
 **Adoption Phase**: PHASE_B_BLOCKING  
+PHASE_B_BLOCKING_TOKEN: IAA-wave15r-impl-20260308-R2-PASS
 
 ---
 

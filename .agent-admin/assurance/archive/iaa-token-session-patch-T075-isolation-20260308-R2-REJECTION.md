@@ -11,6 +11,7 @@
 **Re-invocation**: YES — follows REJECTION-PACKAGE SHA e105d85 (R1)
 **IAA Contract Version**: 2.2.0 | **Knowledge Version**: 2.6.0
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-patch-T075-isolation-20260308-R2-REJECTION
 
 ---
 

@@ -7,6 +7,7 @@
 **Invoking Agent**: foreman-v2-agent
 **Producing Agents**: foreman-v2-agent (GOV-001), mat-specialist (GOV-002 to GOV-005), qa-builder (QA-001)
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave15-gov-batch-v2-20260306-PASS
 **Supersedes**: IAA-session-wave15-gov-batch-20260306-REJECTION
 
 ---

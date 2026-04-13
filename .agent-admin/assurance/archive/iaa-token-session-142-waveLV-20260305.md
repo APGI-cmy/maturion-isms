@@ -9,6 +9,7 @@
 **Prior commit reviewed (REJECTION)**: 75bac27 (session-148 REJECTION-PACKAGE)
 **Date**: 2026-03-05
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-142-waveLV-20260305-PASS
 **Re-invocation context**: F-142-001 fix applied per session-148 REJECTION-PACKAGE
 
 ---

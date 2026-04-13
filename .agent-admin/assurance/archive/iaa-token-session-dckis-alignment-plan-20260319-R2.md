@@ -138,3 +138,5 @@ Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
 **IAA contract**: `.github/agents/independent-assurance-agent.md` v6.2.0
 **Adoption phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
 **Merge authority**: CS2 ONLY
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-dckis-alignment-plan-20260319-R2-PASS

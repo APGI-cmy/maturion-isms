@@ -8,6 +8,7 @@
 **Producing Agent**: copilot-swe-agent[bot] (CodexAdvisor proxy per CS2 issue #1061 assignment)
 **Invoking Agent**: foreman-v2-agent
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-disable-automatic-injections-20260311-R4-PASS
 **Authority**: CS2 ONLY (@APGI-cmy)
 **Re-invocation**: R4 (resolving R3 REJECTION-PACKAGE from commit cdd1b99)
 
@@ -104,3 +105,4 @@ now covered. R4 artifacts (this token file + session memory) are also covered by
 **IAA Session**: wave-disable-automatic-injections-20260311-R4
 **Token Reference**: IAA-session-wave-disable-automatic-injections-20260311-R4-PASS
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-disable-automatic-injections-20260311-R4-PASS

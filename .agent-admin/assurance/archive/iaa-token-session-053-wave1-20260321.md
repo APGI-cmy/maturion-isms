@@ -9,6 +9,7 @@
 **Producing Agent**: governance-liaison-isms-agent (class: liaison)  
 **IAA Invocation**: R2 (post-R1 REJECTION-PACKAGE)  
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-053-wave1-20260321-PASS
 
 ---
 

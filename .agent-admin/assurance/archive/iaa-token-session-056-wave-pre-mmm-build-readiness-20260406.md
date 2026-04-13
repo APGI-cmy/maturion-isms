@@ -5,6 +5,7 @@
 **Invocation**: RE-INVOCATION R2 (R1 issued REJECTION-PACKAGE)
 **Date**: 2026-04-06
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-056-wave-pre-mmm-build-readiness-20260406-PASS
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---

@@ -7,6 +7,7 @@
 **Date**: 2026-03-08
 **IAA Agent Version**: 6.2.0 | Contract 2.2.0
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-audit-log-column-fix-20260308-PASS
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---

@@ -87,3 +87,5 @@ Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE.
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **IAA Agent**: independent-assurance-agent v6.2.0 | Contract v2.2.0
 **Immutability**: This file is the IAA verdict artifact per §4.3b — PREHANDOVER proof is unchanged
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-046-20260305-REJECT

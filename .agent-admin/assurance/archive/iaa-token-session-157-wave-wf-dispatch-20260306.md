@@ -119,3 +119,5 @@ as A-031+ (governance-gate CI block carve-out for YAML-only changes).
 *Authority: CS2 (@APGI-cmy) | independent-assurance-agent v6.2.0 | PHASE_B_BLOCKING*
 *Token file updated at re-invocation per §4.3b and A-030 correction addendum carve-out*
 *PREHANDOVER proof is immutable post-commit (A-029) — not modified*
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-157-wave-wf-dispatch-20260306-PASS

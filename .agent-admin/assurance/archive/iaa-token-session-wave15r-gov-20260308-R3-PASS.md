@@ -7,6 +7,7 @@
 **Issue**: #996
 **Invocation**: R3 (third invocation — after two ceremony rejections)
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave15r-gov-20260308-R3-PASS
 
 ---
 

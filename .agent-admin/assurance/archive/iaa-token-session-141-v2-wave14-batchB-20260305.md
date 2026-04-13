@@ -154,3 +154,5 @@ Per §4.3b: This REJECTION artifact is written as a dedicated new file. The PREH
 **IAA Version**: v6.2.0 | **Contract**: 2.1.0
 **Date**: 2026-03-05
 **Token Reference**: IAA-session-141-v2-wave14-batchB-20260305-REJECTION
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-141-v2-wave14-batchB-20260305-REJECTION

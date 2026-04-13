@@ -11,6 +11,7 @@
 **PR Category**: CI_WORKFLOW + KNOWLEDGE_GOVERNANCE (MIXED)
 **IAA Agent Version**: independent-assurance-agent v6.2.0 / contract v2.2.0
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-gov-improvement-s032-s033-s007-s023-20260310-REJECTED
 
 ---
 

@@ -46,3 +46,5 @@ Adoption phase: PHASE_B_BLOCKING — hard gate active.
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **IAA Version**: 6.2.0
 **PREHANDOVER proof**: Unchanged (immutable per §4.3b / A-029)
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-144-20260305-REJECT

@@ -137,3 +137,5 @@ and session memory.
 **IAA Version**: independent-assurance-agent v6.2.0
 **Adoption Phase**: PHASE_B_BLOCKING
 **Merge Authority**: CS2 ONLY — IAA does not merge.
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-cl-4-aimc-audit-phase-a-20260313-R3-PASS

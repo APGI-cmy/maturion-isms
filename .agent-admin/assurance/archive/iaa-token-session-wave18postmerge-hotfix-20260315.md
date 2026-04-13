@@ -8,6 +8,7 @@
 **Date**: 2026-03-15
 **Issued by**: independent-assurance-agent v6.2.0
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave18postmerge-hotfix-20260315-PASS-REAUDIT
 **Verdict**: ASSURANCE-TOKEN (PASS)
 
 ## FFA Check Summary

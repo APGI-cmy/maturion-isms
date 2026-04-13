@@ -7,6 +7,7 @@
 **Wave**: wave-ai-criteria-creation-fix
 **IAA Agent**: independent-assurance-agent v6.2.0
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-ai-criteria-creation-fix-20260311-R2-PASS
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---

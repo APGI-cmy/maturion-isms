@@ -9,6 +9,7 @@
 **Re-invocation**: YES — prior REJECTION-PACKAGE `IAA-session-postfcwt-prodfails-20260306-REJECT` (PARITY-1: 4 files undeclared in SCOPE_DECLARATION.md)
 **Fix applied**: SCOPE_DECLARATION.md rewritten (A-029 clear+rewrite) with all 15 changed files; validate-scope-to-diff.sh now passes 15/15
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-postfcwt-prodfails-v2-20260306-PASS
 **Authority**: CS2 ONLY (@APGI-cmy)
 
 ---

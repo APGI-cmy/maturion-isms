@@ -4,6 +4,7 @@
 **Agent**: independent-assurance-agent v6.2.0 (contract 2.3.0)
 **Date**: 2026-04-05
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-054-mmm-mat-harvest-20260405-PASS
 **Branch**: copilot/cs2-directive-mmm-mat-roadmap
 **Invocation Type**: RE-INVOCATION — R2 after REJECTION-PACKAGE on ceremony artifact grounds
 **Invoking Agent**: governance-liaison-isms-agent v3.2.0

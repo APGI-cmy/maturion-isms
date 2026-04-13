@@ -11,6 +11,7 @@ All checks PASS. Merge gate parity: PASS.
 Merge permitted (subject to CS2 approval — @APGI-cmy only).
 Token reference: IAA-session-wave-upload-doclist-fix-20260308-R3-PASS
 Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-upload-doclist-fix-20260308-R3-PASS
 ═══════════════════════════════════════════════════════════════
 
 ## Phase 2 — Alignment

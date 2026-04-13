@@ -5,6 +5,7 @@
 **Round**: R4 — Incremental audit of two CS2-directed commits post-R3 token
 **IAA Version**: independent-assurance-agent v6.2.0 (contract 2.3.0)
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-blank-frontend-rca-20260318-incremental-r4-20260318-PASS
 **Authority**: CS2 only (@APGI-cmy)
 
 ---

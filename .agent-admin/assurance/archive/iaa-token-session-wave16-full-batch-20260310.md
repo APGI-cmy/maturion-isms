@@ -8,6 +8,7 @@
 **IAA Agent**: independent-assurance-agent v6.2.0
 **Date**: 2026-03-10
 **Adoption Phase**: PHASE_B_BLOCKING — HARD GATE ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave16-full-batch-20260310-PASS
 
 ---
 

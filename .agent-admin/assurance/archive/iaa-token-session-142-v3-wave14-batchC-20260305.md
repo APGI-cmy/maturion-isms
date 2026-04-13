@@ -10,6 +10,7 @@
 **Producing Agents**: schema-builder (TASK-W14-BC-001, BC-002, FINDING-BC-001 fix), mat-specialist (TASK-W14-BC-003, BC-004), qa-builder (FINDING-BC-002 fix)
 **Category**: AAWP_MAT
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-142-v3-wave14-batchC-20260305-PASS
 **Invocation**: v3 re-invocation — A-030 correction addendum
 **Prior Rejection History**: session-147 (FINDING-BC-001 + BC-002), session-148 local-only (FINDING-BC-003)
 

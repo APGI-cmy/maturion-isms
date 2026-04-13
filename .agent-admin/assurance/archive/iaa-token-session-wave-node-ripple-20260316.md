@@ -7,6 +7,7 @@
 **Verdict**: **ASSURANCE-TOKEN** ✅
 **Token Reference**: IAA-session-wave-node-ripple-20260316-PASS
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-node-ripple-20260316-PASS
 
 ---
 

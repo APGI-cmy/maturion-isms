@@ -132,3 +132,5 @@ Per `COMBINED_TESTING_PATTERN.md` §5.2.
 
 *Authority: CS2 (Johan Ras / @APGI-cmy). Merge authority: CS2 ONLY.*
 *IAA adoption phase: PHASE_B_BLOCKING — hard gate active.*
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-140-wave14-batchA-20260304-PASS

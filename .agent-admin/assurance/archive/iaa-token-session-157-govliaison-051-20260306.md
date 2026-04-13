@@ -10,6 +10,7 @@ All 14 checks PASS. Merge gate parity: PASS.
 Merge permitted (subject to CS2 approval).
 Token reference: IAA-session-157-govliaison-051-20260306-PASS
 Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-157-govliaison-051-20260306-PASS
 ═══════════════════════════════════════
 
 ## Invocation Context

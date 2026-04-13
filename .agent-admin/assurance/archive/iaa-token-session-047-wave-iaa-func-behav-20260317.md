@@ -5,6 +5,7 @@
 **Date**: 2026-03-17
 **Contract Version**: 2.3.0 (as reviewed)
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-047-wave-iaa-func-behav-20260317-R2-PASS
 
 ---
 

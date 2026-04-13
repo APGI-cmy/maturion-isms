@@ -4,6 +4,7 @@
 **Date**: 2026-03-08
 **IAA Version**: 6.2.0 (contract v2.2.0)
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate active
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave15r-gov-20260308-R2-REJECTION
 **Invocation**: Second invocation (re-invocation after IAA-session-wave15r-gov-20260308-REJECTION)
 
 ---

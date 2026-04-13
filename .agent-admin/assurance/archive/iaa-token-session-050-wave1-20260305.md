@@ -8,6 +8,7 @@
 **Invoking Agent**: governance-liaison-isms (session-050-20260305)  
 **Producing Agent**: governance-liaison-isms (session-050-20260305), class: liaison  
 **Adoption Phase**: PHASE_B_BLOCKING  
+PHASE_B_BLOCKING_TOKEN: IAA-session-050-wave1-20260305-PASS
 **Prior Verdicts**:
 - session-149: REJECTION-PACKAGE (procedural: A-021 staged-not-committed + A-026 stale SCOPE)
 - session-150: REJECTION-PACKAGE (procedural: A-026 SCOPE missing IAA parking station log)

@@ -6,6 +6,7 @@
 **IAA Agent Version**: 6.2.0
 **Contract Version**: 2.2.0
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-cwt-envvars-wave-cwt-envvars-20260307-PASS
 **Verdict**: ASSURANCE-TOKEN
 **Invocation Type**: A-030 RE-INVOCATION (correction path — prior REJECTION remediated)
 **Invoking Agent**: foreman-v2-agent v6.2.0

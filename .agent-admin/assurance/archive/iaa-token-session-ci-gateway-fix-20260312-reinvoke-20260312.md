@@ -5,6 +5,7 @@
 **Date**: 2026-03-12
 **Agent**: independent-assurance-agent v6.2.0 (contract 2.2.0)
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-ci-gateway-fix-20260312-reinvoke-20260312-PASS
 
 ---
 

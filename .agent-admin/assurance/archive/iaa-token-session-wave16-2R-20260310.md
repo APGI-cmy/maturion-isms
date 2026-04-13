@@ -7,6 +7,7 @@
 **Invoking Agent**: foreman-v2-agent (re-invocation after STOP-AND-FIX)  
 **Producing Agent**: foreman-v2-agent + ui-builder  
 **Adoption Phase**: PHASE_B_BLOCKING  
+PHASE_B_BLOCKING_TOKEN: IAA-wave16-2R-20260310-PASS
 
 ---
 

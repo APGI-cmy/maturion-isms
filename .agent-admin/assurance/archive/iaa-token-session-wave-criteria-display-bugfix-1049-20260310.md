@@ -12,6 +12,7 @@ Merge permitted (subject to CS2 approval).
 
 Token reference: IAA-wave-criteria-display-bugfix-1049-20260310-R2-PASS
 Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-wave-criteria-display-bugfix-1049-20260310-R2-PASS
 
 R1 Failures resolved:
   CORE-015: Session memory PRESENT ✅

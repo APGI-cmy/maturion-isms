@@ -107,3 +107,5 @@ PREHANDOVER proof: `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-102-w
 **Issued by**: independent-assurance-agent v6.2.0
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Lock**: SELF-MOD-IAA-001 — ACTIVE
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-140-wave-postbuild-fails-03-20260304-PASS

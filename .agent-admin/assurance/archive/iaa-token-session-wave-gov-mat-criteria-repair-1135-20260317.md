@@ -5,6 +5,7 @@
 **Date**: 2026-03-17
 **Agent**: independent-assurance-agent v6.2.0 (contract 2.2.0)
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-gov-mat-criteria-repair-1135-20260317-PASS
 
 ---
 

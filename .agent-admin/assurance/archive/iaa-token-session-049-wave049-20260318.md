@@ -87,3 +87,5 @@ The PREHANDOVER proof (`PREHANDOVER-session-049-20260318.md`) is read-only post-
 **Contract**: 2.3.0
 **Adoption phase at verdict**: PHASE_B_BLOCKING
 **Self-Modification Lock**: SELF-MOD-IAA-001 — ACTIVE
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-049-20260318-PASS

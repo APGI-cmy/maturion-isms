@@ -169,3 +169,5 @@ Adoption phase: PHASE_B_BLOCKING (hard gate)
 **Wave**: Wave 14 Batch B
 **Session**: session-141-v4
 **Date**: 2026-03-05
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-141-v4-wave14-batchB-20260305-PASS

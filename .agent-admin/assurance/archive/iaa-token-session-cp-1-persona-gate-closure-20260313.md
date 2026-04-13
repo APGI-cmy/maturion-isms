@@ -9,6 +9,7 @@
 **Wave**: cp-1-persona-gate-closure-20260313
 **IAA Agent**: independent-assurance-agent v6.2.0
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-cp-1-persona-gate-closure-20260313-PASS
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---

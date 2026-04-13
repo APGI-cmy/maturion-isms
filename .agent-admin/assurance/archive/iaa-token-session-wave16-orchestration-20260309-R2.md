@@ -10,6 +10,7 @@
 **Producing Agent**: foreman-v2-agent v6.2.0 (class: foreman)
 **PR Category**: AAWP_MAT
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave16-orchestration-20260309-R2-PASS
 **Prior R1 Token**: `.agent-admin/assurance/iaa-token-session-wave16-orchestration-20260309.md` (REJECTION-PACKAGE, SHA 700250c)
 **A-030 Carve-Out**: APPLIED — CORRECTION-ADDENDUM committed at SHA bf3205a documents R1 violation
 

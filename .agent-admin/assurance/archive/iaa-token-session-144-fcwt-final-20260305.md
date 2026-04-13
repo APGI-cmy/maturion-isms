@@ -125,3 +125,5 @@ The MAT module FCWT is substantively complete, genuine, and production-ready (CI
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **IAA Agent**: independent-assurance-agent v6.2.0
 **Merge authority**: CS2 ONLY
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-144-fcwt-final-20260305-PASS

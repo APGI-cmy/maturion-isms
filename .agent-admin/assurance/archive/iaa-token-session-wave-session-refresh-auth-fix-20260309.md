@@ -10,6 +10,7 @@
 **Producing Agents**: qa-builder (T-SRAF-QA-001), api-builder (T-SRAF-API-001)  
 **IAA Version**: independent-assurance-agent v6.2.0  
 **Adoption Phase**: PHASE_B_BLOCKING  
+PHASE_B_BLOCKING_TOKEN: IAA-session-wave-session-refresh-auth-fix-20260309-REJECTION
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
