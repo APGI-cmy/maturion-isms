@@ -375,8 +375,8 @@ This taxonomy defines **8 primary artifact types**:
 - `.agent-workspace/{agent}/memory/session-{id}-{date}.md` (session memory files)
 - `PREHANDOVER-session-{id}-{wave}-{date}.md` (PREHANDOVER proofs — legacy, now embedded in wave records)
 - `wave-current-tasks.md` (wave task tracking)
-- `iaa-token-session-{NNN}-{wave}-{date}.md` (standalone IAA tokens — legacy)
-- `iaa-prebrief-{slug}.md` (IAA pre-briefs — legacy)
+- `iaa-token-session-{NNN}-{wave}-{date}.md` (DEPRECATED — removed in v1.7.0; tokens are now in `## TOKEN` section of wave record)
+- `iaa-prebrief-{slug}.md` (DEPRECATED — removed in v1.7.0; pre-briefs are now in `## PRE-BRIEF` section of wave record)
 
 ### 9.3 Location
 
@@ -645,8 +645,8 @@ __tests__/**/*
 
 ```
 .agent-admin/assurance/iaa-wave-record-*.md
-.agent-admin/assurance/iaa-prebrief-*.md (legacy)
-.agent-admin/assurance/iaa-token-*.md (legacy)
+.agent-admin/assurance/iaa-prebrief-*.md (DEPRECATED — removed in v1.7.0)
+.agent-admin/assurance/iaa-token-*.md (DEPRECATED — removed in v1.7.0)
 .agent-admin/assurance/INVALIDATED-*.md
 .agent-admin/assurance/archive/**/* (archived artifacts)
 ```
@@ -840,11 +840,11 @@ The following are the ONLY permitted assurance artifact types in `.agent-admin/a
 | Artifact Type | File Pattern | Max Per Wave | Created By |
 |---------------|-------------|-------------|------------|
 | IAA Wave Record | `iaa-wave-record-{wave}-{date}.md` | 1 final + 1 INVALIDATED | Foreman (sections 1-2), IAA (section 3) |
-| IAA Pre-Brief (legacy) | `iaa-prebrief-{slug}.md` | 1 | IAA |
-| IAA Token (standalone) | `iaa-token-session-{NNN}-{wave}-{date}.md` | 1 | IAA |
+| IAA Pre-Brief (DEPRECATED) | `iaa-prebrief-{slug}.md` | DEPRECATED — removed in v1.7.0 | N/A |
+| IAA Token (DEPRECATED) | `iaa-token-session-{NNN}-{wave}-{date}.md` | DEPRECATED — removed in v1.7.0 | N/A |
 | Invalidated Marker | `INVALIDATED-{artifact-name}.md` | 1 per artifact | Foreman |
 
-> **Transition Period**: During the transition from the legacy model to the consolidated model, both legacy patterns (separate prebrief + token + PREHANDOVER files) and the new consolidated pattern (iaa-wave-record) are accepted. The legacy patterns will be deprecated once all agents have been updated.
+> **Transition Complete**: As of v1.7.0 (2026-04-13), all agents have been updated to the consolidated IAA Wave Record model. Standalone pre-brief (`iaa-prebrief-*.md`) and standalone token (`iaa-token-*.md`) patterns are FULLY DEPRECATED. New artifact creation using these patterns is prohibited. Existing files are retained for historical reference only.
 
 ### 21.4 Permitted Governance Workspace Artifact Patterns
 
