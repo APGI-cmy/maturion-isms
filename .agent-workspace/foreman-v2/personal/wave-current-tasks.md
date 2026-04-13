@@ -1,39 +1,39 @@
-# Wave Current Tasks — Issue 1345
+# Wave Current Tasks — Issue 1352
 
-wave: mmm-harvest-map-revision-20260413
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-mmm-harvest-map-revision-20260413.md
+wave: mmm-stage2-ux-workflow-wiring-spec-20260413
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-mmm-stage2-ux-wiring.md
 
-## Active Wave: MMM Harvest Map Revision
+## Active Wave: MMM Stage 2 — UX Workflow & Wiring Spec
 
 ### Wave Description
-Foreman revises and hardens the MMM Harvest Map / Ownership Transition Matrix (`modules/MMM/harvest-map/harvest-map.md`)
-so it can serve as the final governance-grade transition-control artifact before MMM Stage 2 / FRS / TRS progression.
+Foreman orchestrates MMM Stage 2 — UX Workflow & Wiring Spec production. This creates the
+complete user journey maps, screen interactions, data flows, and UI → API → schema → reporting
+wiring specification for the Maturity Management Module (MMM).
 
-This is a governance planning artifact revision — no implementation code, no builder delegation.
+This is a Stage 2 prebuild specification wave — no implementation code, no FRS, no TRS,
+no schema changes, no builder appointment.
 
-CS2 Authorization: Issue maturion-isms#1345 opened and assigned by @APGI-cmy (CS2 = Johan Ras).
+CS2 Authorization: Issue maturion-isms#1352 opened and assigned by @APGI-cmy (CS2 = Johan Ras).
 Wave-start authorization confirmed.
 
 IAA Pre-Brief: PENDING
 
 ### Tasks
-- [ ] Revise harvest-map.md with 9 required improvements (D1)
-  - [ ] 1. Add explicit source-state / switchover status model
-  - [ ] 2. Add formal switchover-gate logic
-  - [ ] 3. Reassess overconfident "Adopt as-is" labels
-  - [ ] 4. Strengthen MMM ↔ PIT boundary wording
-  - [ ] 5. Clarify framework-ingestion vs evidence-ingestion
-  - [ ] 6. Tighten legacy retirement treatment
-  - [ ] 7. Explicitly anchor CL-3.5 and CL-13 carry-over obligations
-  - [ ] 8. Add migration-class clarity
-  - [ ] 9. Extend open-questions register
-- [ ] Produce change note / rationale (D2)
-- [ ] Provide final readiness recommendation (D3)
+- [x] Phase 1 — Identity & Preflight complete
 - [ ] IAA Pre-Brief invoked and artifact committed
-- [ ] Phase 4 handover ceremony
+- [ ] Read input documents (app description, strategy, harvest map, tracker)
+- [ ] Produce UX Workflow & Wiring Spec (D1+D2)
+  - [ ] User entry / front door flows
+  - [ ] Framework-origin fork (Mode A/B)
+  - [ ] Common governed ingestion path
+  - [ ] Canonical MMM operating flows
+  - [ ] Boundary and ownership wiring
+- [ ] Capture open questions (D3)
+- [ ] Update BUILD_PROGRESS_TRACKER (D4)
+- [ ] Phase 4 handover ceremony (D5)
 
 ### Status
-IN_PROGRESS — Phase 1 complete, proceeding to IAA Pre-Brief invocation
+IN_PROGRESS — Phase 1 complete, invoking IAA Pre-Brief
 
 ### Previous Wave (Closed)
-wave: ps-i-governance-liaison-cleanup-20260410 (Issue #1271) — CLOSED
+wave: mmm-harvest-map-revision-20260413 (Issue #1345) — CLOSED
