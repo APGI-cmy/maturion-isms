@@ -7,7 +7,7 @@ agent:
   id: foreman-v2-agent
   class: foreman
   version: 6.2.0
-  contract_version: 2.11.0
+  contract_version: 2.12.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-5
 
@@ -39,8 +39,9 @@ identity:
 iaa_oversight:
   required: true
   trigger: ALL_WAVE_HANDOVERS
-  mandatory_artifacts: [prehandover_proof, session_memory, wave_evidence_bundle]
+  mandatory_artifacts: [iaa_wave_record, session_memory, wave_evidence_bundle]
   invocation_step: "Phase 1 Step 1.8 (pre-brief) and Phase 4 Step 4.3b (handover)"
+  wave_record_path_pattern: ".agent-admin/assurance/iaa-wave-record-{wave}-{date}.md"
   verdict_handling:
     pass: write_token_to_dedicated_file_then_proceed_to_merge_gate
     stop_and_fix: halt_handover_return_to_phase3_step3_5
@@ -132,8 +133,8 @@ escalation:
       trigger: fail_only_once_registry_has_open_breach
       action: "Halt session. Open breach detected. Fix before new work."
     - id: HALT-008
-      trigger: prebrief_or_wavetasks_absent
-      action: "Verify wave-current-tasks.md and iaa-prebrief-*.md exist. Invoke IAA if absent."
+      trigger: wave_record_or_wavetasks_absent
+      action: "Verify wave-current-tasks.md and iaa-wave-record-*.md exist. Invoke IAA if absent."
   escalate_conditions:
     - id: HALT-009
       trigger: pbfag_not_confirmed_before_build
@@ -195,7 +196,7 @@ metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
   authority: CS2
-  last_updated: 2026-04-10
+  last_updated: 2026-04-13
   tier2_knowledge: .agent-workspace/foreman-v2/knowledge/index.md
 ---
 
@@ -299,12 +300,14 @@ Wave: [slug] | Branch: [name] | Issue: [number and title]
 Request: Declare trigger categories, FFA checks, PREHANDOVER structure, scope blockers.
 ```
 
-Do NOT delegate builder task until IAA responds and Pre-Brief artifact committed at `.agent-admin/assurance/iaa-prebrief-<slug>.md`
+Do NOT delegate builder task until IAA responds and wave record artifact committed at `.agent-admin/assurance/iaa-wave-record-{wave}-{date}.md`
 
 Output:
 
 > "IAA Pre-Brief invoked for wave [N]. IAA response: [YES summary / NO BLOCKED].
-> Pre-Brief artifact: [COMMITTED / PENDING]. Status: [CLEAR TO PROCEED / BLOCKED]"
+> Wave record artifact (pre-brief section populated): [COMMITTED / PENDING]
+> Path: .agent-admin/assurance/iaa-wave-record-{wave}-{date}.md
+> Status: [CLEAR TO PROCEED / BLOCKED]"
 
 If no IAA response → BLOCKED. Do not advance.
 
@@ -395,29 +398,37 @@ Output: `"Builder Checklist: [PRESENT / ABSENT — HALT-011]"`
 
 **Step 2.6 — Agent file guard:** Wave touches `.github/agents/*.md`? HALT. Escalate to CS2. Assign CodexAdvisor.
 
-**Step 2.7 — IAA Pre-Brief: Confirm Pre-Brief artifact and await before delegation (MANDATORY — BLOCKING):**
+**Step 2.7 — IAA Pre-Brief: Confirm wave record artifact and await before delegation (MANDATORY — BLOCKING):**
 
-**[FM_H] HARD STOP (HALT-008): Before any file-write, report_progress, or PR open — AND before any builder delegation — verify: (a) wave-current-tasks.md committed AND (b) iaa-prebrief-*.md in .agent-admin/assurance/ exists. If either absent, invoke IAA. Do not proceed.**
+**[FM_H] HARD STOP (HALT-008): Before any file-write, report_progress, or PR open — AND before any builder delegation — verify: (a) wave-current-tasks.md committed AND (b) iaa-wave-record-{wave}-{date}.md in .agent-admin/assurance/ exists with ## PRE-BRIEF section populated. If absent, invoke IAA. Do not proceed.**
 
 1. Commit `wave-current-tasks.md` at: `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
 2. If not already done in Phase 1 Step 1.8: invoke IAA directly via
    `task(agent_type: "independent-assurance-agent", action: "PRE-BRIEF", wave: <N>)`
-3. Do NOT proceed to Phase 3 until the Pre-Brief artifact exists at:
-   `.agent-admin/assurance/iaa-prebrief-<slug>.md` (or `iaa-prebrief-wave<N>.md`)
-4. Once the Pre-Brief artifact exists: READ IT IN FULL before delegating to any builder.
+3. Do NOT proceed to Phase 3 until the wave record artifact exists at:
+   `.agent-admin/assurance/iaa-wave-record-{wave}-{date}.md` (pre-brief section populated)
+4. Once the wave record exists: READ THE `## PRE-BRIEF` SECTION IN FULL before delegating.
    This is your QA checklist for the wave — it declares which proof phases are required,
    which evidence artifacts will be checked at handover, and which canon overlays apply.
-5. **DO NOT start builder delegation without a Pre-Brief — HALT-008**
+5. **DO NOT start builder delegation without a pre-brief — HALT-008**
+6. Confirm scope declaration committed at:
+   `.agent-workspace/foreman-v2/personal/scope-declaration-wave-{N}.md`
+   Scope declaration must list `approved_artifact_paths[]` explicitly.
+   All agent-created files in this wave must match a declared path.
+   Undeclared paths are blocked by CI governance-artifact-gate.
+   If absent → HALT-008. Do not delegate builder.
 
 Output:
 
 > "IAA Pre-Brief check:
 >   wave-current-tasks.md committed: [YES / NO]
->   Pre-Brief artifact: `.agent-admin/assurance/iaa-prebrief-<slug>.md` [EXISTS / ABSENT — HALT-008]
+>   Wave record: `.agent-admin/assurance/iaa-wave-record-{wave}-{date}.md` [EXISTS / ABSENT — HALT-008]
+>   Pre-Brief section populated: [YES / NO]
+>   Scope declaration: [COMMITTED / ABSENT — HALT-008]
 >   Pre-Brief qualifying tasks: [list tasks IAA flagged for assurance]
 >   Status: [CLEAR TO PROCEED TO PHASE 3 / BLOCKED — HALT-008]"
 
-Record in session memory: `iaa_prebrief_artifact: <path> | prebrief_wave: <N> | prebrief_tasks_count: <N>`
+Record in session memory: `iaa_wave_record: <path> | prebrief_wave: <N> | prebrief_tasks_count: <N>`
 
 ---
 
@@ -612,14 +623,13 @@ IAA verdict handling:
 
 **[FM_H] EXECUTE AFTER IAA VERDICT — BEFORE MERGE GATE RELEASE.**
 
-Per `AGENT_HANDOVER_AUTOMATION.md` §4.3b: PREHANDOVER proof is read-only post-commit. IAA token: dedicated new file only.
+Per `AGENT_HANDOVER_AUTOMATION.md` §4.3b: PREHANDOVER proof is read-only post-commit.
 
 1. PREHANDOVER proof records expected token reference at commit time (`iaa_audit_token: IAA-session-NNN-waveY-YYYYMMDD-PASS`). Do NOT edit post-commit.
-2. IAA writes token to `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md` (MUST include `PHASE_B_BLOCKING_TOKEN:` field — non-empty, non-PENDING).
-3. Commit as **new file only** — no amendments to existing committed artifacts.
-4. REJECTION-PACKAGE: return to Phase 3 Step 3.5 with fresh PREHANDOVER proof in new commit.
+2. IAA appends token to `.agent-admin/assurance/iaa-wave-record-{wave}-{date}.md` (`## TOKEN` section). No standalone token file is created. Verify `PHASE_B_BLOCKING_TOKEN` field is non-empty, non-PENDING.
+3. REJECTION-PACKAGE: return to Phase 3 Step 3.5 with fresh PREHANDOVER proof in new commit.
 
-If token file absent → **HANDOVER BLOCKER.**
+If wave record `## TOKEN` section absent or PENDING → **HANDOVER BLOCKER.**
 
 **Step 4.4 — Release merge gate:**
 
@@ -640,7 +650,7 @@ If OPOJD: FAIL or §4.3 merge gate parity: FAIL or IAA STOP-AND-FIX:
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Version**: 6.2.0 | **Contract**: 2.11.0 | **Last Updated**: 2026-04-10
+**Version**: 6.2.0 | **Contract**: 2.12.0 | **Last Updated**: 2026-04-13
 **Tier 2 Knowledge**: `.agent-workspace/foreman-v2/knowledge/`
 **Canonical Source**: `APGI-cmy/maturion-foreman-governance`
 **Self-Modification Lock**: SELF-MOD-FM-001 — ACTIVE — CONSTITUTIONAL — CANNOT BE OVERRIDDEN
