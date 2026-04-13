@@ -1,7 +1,7 @@
 # Session Memory Template — governance-liaison-isms
 
 **Agent**: governance-liaison-isms  
-**Contract Version**: 3.2.0  
+**Contract Version**: 3.3.0  
 **Template Version**: 1.2.0  
 **Last Updated**: 2026-04-10  
 **Authority**: CS2 (Johan Ras)
@@ -19,7 +19,7 @@ Copy this template when creating `.agent-workspace/governance-liaison-isms/memor
 - Type: governance-liaison-isms
 - Class: liaison
 - Session ID: session-NNN-YYYYMMDD
-- Contract Version: 3.2.0
+- Contract Version: 3.3.0
 
 ## Phase 1 Preflight Attestation
 
@@ -147,7 +147,7 @@ After clearing, declare ALL files changed in this wave using the required hyphen
 
 Verify the format parses correctly before committing:
 ```
-grep -c '^\s*-\s+`[^`]*`\s+-\s+' SCOPE_DECLARATION.md
+grep -E -c '^[[:space:]]*-[[:space:]]+`[^`]*`[[:space:]]+-[[:space:]]+' SCOPE_DECLARATION.md
 ```
 Count must be > 0.
 

@@ -1,7 +1,7 @@
 # governance-liaison-isms — Tier 2 Knowledge Index
 
 **Agent**: governance-liaison-isms  
-**Contract Version**: 3.2.0  
+**Contract Version**: 3.3.0  
 **Knowledge Version**: 1.7.0  
 **Last Updated**: 2026-04-10  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`

@@ -17,7 +17,7 @@ CS2 Authorization: Issue maturion-isms#1271 opened and assigned by @APGI-cmy (CS
 Wave-start authorization confirmed.
 
 IAA Pre-Brief: `.agent-admin/assurance/iaa-prebrief-ps-i-governance-liaison-cleanup-20260410.md` (COMMITTED)
-IAA Token: PENDING
+IAA Token: `.agent-admin/assurance/iaa-token-session-056-ps-i-governance-liaison-20260410.md` (ISSUED)
 
 ### Tasks
 - [x] PS-I-01: Remove `iaa_invocation_result:` field from session memory template
@@ -28,11 +28,11 @@ IAA Token: PENDING
   (`.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md`)
 - [x] PS-I-04: Add SCOPE_DECLARATION fresh-overwrite instruction
   (`.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md`)
-- [ ] T5: QP evaluation PASS + PREHANDOVER proof committed + SCOPE_DECLARATION PASS
-- [ ] T6: IAA final audit PASS
+- [x] T5: QP evaluation PASS + PREHANDOVER proof committed + SCOPE_DECLARATION PASS
+- [x] T6: IAA final audit PASS
 
 ### Status
-IAA PRE-BRIEF PENDING — awaiting IAA Pre-Brief artifact before delegation to CodexAdvisor-agent.
+WAVE COMPLETE — IAA R2 ASSURANCE-TOKEN issued (`IAA-session-056-R2-20260410-PASS`, 51/51 checks). PR #1333 pending CS2 merge approval.
 
 ### Deliverables
 | ID | Deliverable | Agent | Status |

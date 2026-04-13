@@ -26,7 +26,7 @@
 
 R1 cited 2 failures:
 1. HFMC-01 / AC-05: Missing `## Ripple / Cross-Agent Assessment` in PREHANDOVER proof → **RESOLVED**: PREHANDOVER R2 §8 added with `NO DOWNSTREAM RIPPLE REQUIRED` + 5-point justification ✅
-2. HFMC-02: SCOPE_DECLARATION.md missing 2 files → **RESOLVED**: SCOPE_DECLARATION.md updated to 12 files, exact parity with branch diff ✅
+2. HFMC-02: SCOPE_DECLARATION.md missing 2 files → **RESOLVED**: SCOPE_DECLARATION.md updated to 14 files, exact parity with branch diff ✅
 
 ---
 
