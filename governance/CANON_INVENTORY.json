@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-04-09",
-  "total_canons": 199,
-  "generation_timestamp": "2026-04-09T07:00:00Z",
+  "last_updated": "2026-04-13",
+  "total_canons": 200,
+  "generation_timestamp": "2026-04-13T13:10:00Z",
   "canon_entry_schema": {
     "description": "Schema for canon entries in CANON_INVENTORY.json",
     "required_fields": [
@@ -271,9 +271,9 @@
       "ripple_dispatched": "2026-02-24",
       "ripple_log": ".agent-admin/governance/ripple-logs/ripple-agent-handover-parity-20260224.md",
       "ripple_in_repo_status": "COMPLETE",
-      "ripple_consumer_status": "PENDING — layer-down issues to be created in consumer repos",
+      "ripple_consumer_status": "PENDING \u2014 layer-down issues to be created in consumer repos",
       "last_updated": "2026-04-09",
-      "change_note": "v1.3.0: ECAP-QC closure — §4.3d scope-declaration parity gate; Administrator evidence checklist drift evidence + metadata requirements; validate-canon-hashes.sh version/canonical_version check"
+      "change_note": "v1.3.0: ECAP-QC closure \u2014 \u00a74.3d scope-declaration parity gate; Administrator evidence checklist drift evidence + metadata requirements; validate-canon-hashes.sh version/canonical_version check"
     },
     {
       "filename": "AGENT_INDUCTION_PROTOCOL.md",
@@ -1178,14 +1178,14 @@
     },
     {
       "filename": "FOREMAN_WAVE_PLANNING_AND_ISSUE_ARTIFACT_GENERATION_PROTOCOL.md",
-      "version": "1.1.0",
-      "file_hash": "2d4603796bce3a18209ce09d6bc7a2907f5fbb6accd5b7f71cc88c545eca0cf8",
+      "version": "1.2.0",
+      "file_hash": "08998b247bc22d504311657c4247b117403a9daf7479e92c60976a8ffa0a42cf",
       "effective_date": "2026-02-26",
       "description": "This protocol establishes the **canonical workflow for FM wave planning and issue artifact generation**, defining:\n- Wave planning methodology and decomposition strategy\n- Subwave identification an...",
       "type": "canon",
       "path": "governance/canon/FOREMAN_WAVE_PLANNING_AND_ISSUE_ARTIFACT_GENERATION_PROTOCOL.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "2d4603796bce3a18209ce09d6bc7a2907f5fbb6accd5b7f71cc88c545eca0cf8"
+      "file_hash_sha256": "08998b247bc22d504311657c4247b117403a9daf7479e92c60976a8ffa0a42cf"
     },
     {
       "filename": "FPC_REPOSITORY_LAYERDOWN_GUIDE.md",
@@ -1259,14 +1259,14 @@
     },
     {
       "filename": "GOVERNANCE_ARTIFACT_TAXONOMY.md",
-      "version": "1.0.0",
-      "file_hash": "1d5981d48b922da6cafb25809ae3800815996a747fb3af21e9479a28ae50a851",
+      "version": "2.0.0",
+      "file_hash": "629fdc4599ff128073a56ef527cb552215b022546056a1503228cde83b077365",
       "effective_date": "2026-02-08",
       "description": "This document establishes the **canonical taxonomy** for all governance artifacts, distinguishing governance from executable code, scripts from templates, and defining testing obligations for each ...",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_ARTIFACT_TAXONOMY.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "1d5981d48b922da6cafb25809ae3800815996a747fb3af21e9479a28ae50a851"
+      "file_hash_sha256": "629fdc4599ff128073a56ef527cb552215b022546056a1503228cde83b077365"
     },
     {
       "filename": "GOVERNANCE_BUILDER_SUBMISSION_SURVEY.md",
@@ -1281,14 +1281,14 @@
     },
     {
       "filename": "GOVERNANCE_CANON_MANIFEST.md",
-      "version": "1.0.0",
-      "file_hash": "b740817dd2d0bb0e3cb75612fc2786dbbbaa1bc070837a3a6cc01933057c1f10",
+      "version": "1.1.0",
+      "file_hash": "489e5052cdf606025575a5985c4828bf846b786a83baa7835edfddc22eb99d36",
       "effective_date": "2026-01-05",
       "description": "This manifest is the **single authoritative index** of all canonical governance standards in the maturion-foreman-governance repository.",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "b740817dd2d0bb0e3cb75612fc2786dbbbaa1bc070837a3a6cc01933057c1f10",
+      "file_hash_sha256": "489e5052cdf606025575a5985c4828bf846b786a83baa7835edfddc22eb99d36",
       "last_updated": "2026-04-08",
       "change_note": "v1.0.0: FOREMAN_AUTHORITY v1.2.0\u2192v1.3.0; IAA_PRE_BRIEF v1.2.1\u2192v1.2.2; Foreman IAA re-invocation ownership canonisation issue"
     },
@@ -1459,14 +1459,14 @@
     },
     {
       "filename": "IAA_PRE_BRIEF_PROTOCOL.md",
-      "version": "1.2.2",
-      "file_hash": "3e04013ecd21f7fbf3353c893427e74d4187bec174c60614a2c8a4edfa705cef",
+      "version": "1.3.0",
+      "file_hash": "35ee1ca7a1ce37aadf5b03787f871615ddb6a67dc67b43f0990df68308115203",
       "effective_date": "2026-04-05",
       "description": "IAA Pre-Brief Protocol \u2014 proactive assurance mechanism that shifts quality assurance left by declaring acceptance criteria at wave start. Defines Wave Checklist Invocation Gate (applies to Foreman-governed wave execution; does not automatically apply to direct-CS2 standalone governance-repo-administrator-v2 canon actions).",
       "type": "canon",
       "path": "governance/canon/IAA_PRE_BRIEF_PROTOCOL.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "3e04013ecd21f7fbf3353c893427e74d4187bec174c60614a2c8a4edfa705cef",
+      "file_hash_sha256": "35ee1ca7a1ce37aadf5b03787f871615ddb6a67dc67b43f0990df68308115203",
       "canonical_version": "1.2.2",
       "local_version": null,
       "local_extension": false,
@@ -1476,9 +1476,9 @@
     },
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-      "version": "1.5.0",
-      "file_hash": "f79752f9f7abd586d1337245ed85639f8676eb8e8e18c908daf0965d9ad1cbac",
-      "file_hash_sha256": "f79752f9f7abd586d1337245ed85639f8676eb8e8e18c908daf0965d9ad1cbac",
+      "version": "1.6.0",
+      "file_hash": "507a27ef8b4af4ca8460b92a85538fbadd40bc86e0f1736b6249e8ca0d4b24e3",
+      "file_hash_sha256": "507a27ef8b4af4ca8460b92a85538fbadd40bc86e0f1736b6249e8ca0d4b24e3",
       "effective_date": "2026-02-24",
       "amended_date": "2026-04-08",
       "description": "Defines the Independent Assurance Agent (IAA) class: role, hard-trigger authority, independence requirements, five-phase delivery proof protocol, binary output (ASSURANCE-TOKEN / REJECTION-PACKAGE), and trigger table. v1.1.0: Zero-Severity-Tolerance policy added.",
@@ -2065,14 +2065,14 @@
     },
     {
       "filename": "SCOPE_DECLARATION_SCHEMA.md",
-      "version": "1",
-      "file_hash": "96c0374ac4ee8d0cfc65617c05f8549ac192ff15101708d45640af8a0d17774b",
+      "version": "v2",
+      "file_hash": "10d386eac9723a5fac9d13e02a9875d01eeefc93e91a808f44d0702521e8b0b5",
       "effective_date": "unknown",
       "description": "This schema defines the mandatory structure for a Scope Declaration.",
       "type": "canon",
       "path": "governance/canon/SCOPE_DECLARATION_SCHEMA.md",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "96c0374ac4ee8d0cfc65617c05f8549ac192ff15101708d45640af8a0d17774b"
+      "file_hash_sha256": "10d386eac9723a5fac9d13e02a9875d01eeefc93e91a808f44d0702521e8b0b5"
     },
     {
       "filename": "SCOPE_TO_DIFF_RULE.md",
@@ -2332,14 +2332,25 @@
     },
     {
       "filename": "scope-declaration.template.md",
-      "version": "1",
-      "file_hash": "06e4173ff8485b6a1af86a91d12484856c5c7f4d193f38ae88e79573e646c5ee",
+      "version": "2.0",
+      "file_hash": "ea26952d7468441fad5c93ef0349c9dd99ed29ba9bdc0a449282ad898bb2bc28",
       "effective_date": "unknown",
       "description": "Canonical governance document: scope-declaration.template",
       "type": "canon",
       "path": "governance/canon/scope-declaration.template.md",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "06e4173ff8485b6a1af86a91d12484856c5c7f4d193f38ae88e79573e646c5ee"
+      "file_hash_sha256": "ea26952d7468441fad5c93ef0349c9dd99ed29ba9bdc0a449282ad898bb2bc28"
+    },
+    {
+      "filename": "iaa-wave-record.template.md",
+      "version": "1.0.0",
+      "file_hash": "76091b722468207fb0ab42903fd88259e2b2d278739a6052801b9c057ae74a58",
+      "file_hash_sha256": "76091b722468207fb0ab42903fd88259e2b2d278739a6052801b9c057ae74a58",
+      "effective_date": "2026-04-13",
+      "description": "Consolidated IAA wave record template - merges pre-brief, PREHANDOVER, IAA verdict, and rejection history into single per-wave artifact",
+      "type": "template",
+      "path": "governance/templates/iaa-wave-record.template.md",
+      "layer_down_status": "PUBLIC_API"
     }
   ]
 }
