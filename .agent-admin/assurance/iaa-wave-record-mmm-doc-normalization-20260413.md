@@ -160,7 +160,7 @@ PHASE_B_BLOCKING_TOKEN: IAA-session-064-mmm-doc-normalization-20260413-PASS
 - Stage gating (OVL-PBG-008): No false stage advancement. PASS.
 
 **Observations** (non-blocking):
-1. PREHANDOVER proof `iaa_audit_token` field contains "PENDING" — should be pre-populated with expected reference format in future sessions.
+1. PREHANDOVER proof `iaa_audit_token` field was initially committed as "PENDING" (pre-invocation snapshot); corrected in normalization cleanup commit to `IAA-session-064-mmm-doc-normalization-20260413-PASS`. Final merged state is consistent. Future sessions should pre-populate with expected reference format per A-029.
 2. Legacy directory numbering (00-, 01-) noted as advisory structural observation (OVL-PBG-009).
 
 **Merge permitted** (subject to CS2 approval).
