@@ -231,12 +231,14 @@ jobs:
           fi
 
           # ----------------------------------------------------------------
-          # Check 2: iaa-prebrief-*.md must exist in .agent-admin/assurance/
+          # Check 2: iaa-prebrief-*.md OR iaa-wave-record-*.md (with ## PRE-BRIEF
+          #          section) must exist in .agent-admin/assurance/
           # ----------------------------------------------------------------
           ASSURANCE_DIR=".agent-admin/assurance"
           PREBRIEF_FOUND=false
           PREBRIEF_PATH=""
           if [ -d "$ASSURANCE_DIR" ]; then
+            # Legacy pattern: standalone iaa-prebrief-*.md
             while IFS= read -r -d '' f; do
               if ! grep -qi "SUPERSEDED" "$f" 2>/dev/null; then
                 PREBRIEF_FOUND=true
@@ -244,12 +246,24 @@ jobs:
                 break
               fi
             done < <(find "$ASSURANCE_DIR" -name "iaa-prebrief-*.md" -print0 2>/dev/null)
+
+            # New pattern (PR #1348): iaa-wave-record-*.md with ## PRE-BRIEF section
+            if [ "$PREBRIEF_FOUND" = false ]; then
+              while IFS= read -r -d '' f; do
+                if grep -q "## PRE-BRIEF" "$f" 2>/dev/null && \
+                   ! grep -qi "SUPERSEDED" "$f" 2>/dev/null; then
+                  PREBRIEF_FOUND=true
+                  PREBRIEF_PATH="$f"
+                  break
+                fi
+              done < <(find "$ASSURANCE_DIR" -name "iaa-wave-record-*.md" -print0 2>/dev/null)
+            fi
           fi
 
           if $PREBRIEF_FOUND; then
             echo "✅ IAA Pre-Brief artifact found at: $PREBRIEF_PATH"
           else
-            echo "❌ MISSING: No active iaa-prebrief-*.md in $ASSURANCE_DIR"
+            echo "❌ MISSING: No active iaa-prebrief-*.md or iaa-wave-record-*.md (with ## PRE-BRIEF) in $ASSURANCE_DIR"
             FAIL=true
           fi
 
@@ -260,14 +274,13 @@ jobs:
           if [ -f "$WAVE_TASKS_PATH" ]; then
             if grep -q "iaa_prebrief_path:.*PENDING" "$WAVE_TASKS_PATH" 2>/dev/null; then
               echo "❌ iaa_prebrief_path is still PENDING in $WAVE_TASKS_PATH"
-              echo "   Update iaa_prebrief_path to the Pre-Brief artifact path before opening a PR."
               FAIL=true
-            elif grep -q "iaa_prebrief_path:" "$WAVE_TASKS_PATH" 2>/dev/null; then
-              PREBRIEF_FIELD=$(grep "iaa_prebrief_path:" "$WAVE_TASKS_PATH" | head -1)
-              echo "✅ iaa_prebrief_path field resolved: $PREBRIEF_FIELD"
+            elif grep -qE "iaa_prebrief_path:|iaa_wave_record_path:" "$WAVE_TASKS_PATH" 2>/dev/null; then
+              PREBRIEF_FIELD=$(grep -E "iaa_prebrief_path:|iaa_wave_record_path:" "$WAVE_TASKS_PATH" | head -1)
+              echo "✅ Pre-Brief/wave-record path field resolved: $PREBRIEF_FIELD"
             else
-              echo "⚠️  iaa_prebrief_path field absent from $WAVE_TASKS_PATH"
-              echo "   Add iaa_prebrief_path per wave-current-tasks-template.md (IAA_PRE_BRIEF_PROTOCOL.md v1.2.0)"
+              echo "⚠️  Neither iaa_prebrief_path nor iaa_wave_record_path found in $WAVE_TASKS_PATH"
+              echo "   Add iaa_prebrief_path or iaa_wave_record_path per IAA_PRE_BRIEF_PROTOCOL.md v1.2.0"
               FAIL=true
             fi
           fi
