@@ -66,7 +66,8 @@ after the existing Section 5.6 (Scope Freeze Declaration):
 ### 2.2 Path Pattern Syntax
 
 Patterns use `{parameter}` for variable segments. These are NOT glob wildcards — they are
-named placeholders that match exactly one path segment value.
+named placeholders that match exactly one path segment value. CI expands each `{parameter}`
+to the regex `[A-Za-z0-9_-]+` for matching.
 
 | Pattern | Matches | Does Not Match |
 |---------|---------|----------------|

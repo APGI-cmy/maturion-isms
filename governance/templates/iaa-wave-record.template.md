@@ -67,7 +67,7 @@
 {Reference to CS2 authorization — issue number, comment link, or session reference}
 
 ### 2.7 IAA Audit Token Reference
-- Expected Token: IAA-session-{NNN}-wave{Y}-{YYYYMMDD}-PASS
+- Expected Token: IAA-session-{NNN}-wave-{wave}-{YYYYMMDD}-PASS
 - Token Status: {PENDING_IAA_VERDICT / PASS / REJECTED}
 
 ### 2.8 Environment Parity
@@ -88,9 +88,9 @@
 
 ### 3.1 IAA Verdict
 - Verdict: {ASSURANCE-TOKEN (PASS) / REJECTION-PACKAGE (FAIL)}
-- Token: IAA-session-{NNN}-wave{Y}-{YYYYMMDD}-{PASS/FAIL}
+- Token: IAA-session-{NNN}-wave-{wave}-{YYYYMMDD}-{PASS/FAIL}
 - Date: {YYYY-MM-DD}
-- PHASE_B_BLOCKING_TOKEN: {token_ref}
+- PHASE_B_BLOCKING_TOKEN: {token_ref — reference to the blocking token written by IAA to `.agent-admin/assurance/iaa-token-*`. This field links the wave record to the standalone token file that IAA creates as its formal verdict artifact.}
 
 ### 3.2 IAA Agent Response (verbatim)
 {Verbatim IAA response — pasted without modification. Do not summarise, interpret, or redact.}

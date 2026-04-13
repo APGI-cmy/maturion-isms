@@ -124,8 +124,8 @@ STEP 4: Verdict
 ### 3.3 Pattern Matching Rules
 
 1. **Exact match**: `governance/scope-declaration.md` matches only that exact path
-2. **Parameterised match**: `iaa-wave-record-{wave}-{date}.md` — replace `{param}` with
-   regex `[A-Za-z0-9_-]+`, then match
+2. **Parameterised match**: `iaa-wave-record-{wave}-{date}.md` — replace each `{parameter}` placeholder with
+   regex `[A-Za-z0-9_-]+`, then match the full path
 3. **No glob wildcards**: Patterns like `*.md` or `**/*.md` are rejected for governance paths
 4. **Case-sensitive**: All matching is case-sensitive
 
