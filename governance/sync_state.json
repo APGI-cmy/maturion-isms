@@ -82,10 +82,10 @@
     "governance_liaison_contract": ".github/agents/governance-liaison.md"
   },
   "last_ripple_check": {
-    "timestamp": "2026-04-09T13:22:00Z",
-    "session_id": "session-061-20260409",
+    "timestamp": "2026-04-10T08:11:30Z",
+    "session_id": "session-061-20260410",
     "executed_by": "governance-liaison-isms-agent",
-    "canonical_commit": "f5b61144679b3676f43d056fdb1ec4dea7131937",
+    "canonical_commit": "f68b7d993b080cdd721445f1f39e4b77ad0d150f",
     "canonical_inventory_version": "1.0.0",
     "drift_detected": false,
     "result": "NO_DRIFT_DETECTED_AGENT_FILE_ESCALATED",
@@ -93,7 +93,7 @@
     "files_layered_down": 0,
     "pr_required": false,
     "sync_pending": false,
-    "notes": "Ripple f5b61144 processed. 1 changed artifact: .github/agents/CodexAdvisor-agent.md (trigger: Update CodexAdvisor-agent.md). Per A-015: agent contract file escalated directly to CS2. CI ripple-integration.yml confirmed NO_DRIFT_DETECTED only for governed layer-down/governance canon artifacts (local governance state already aligned); this confirmation did not locally verify alignment of the escalated agent contract file. No governance canon files changed. GOVERNANCE_ALIGNMENT_INVENTORY.json updated in session-061. Canonical version of CodexAdvisor-agent.md updated from 3.3.0 to 4.0.1 in inventory."
+    "notes": "Ripple f68b7d99 processed. 1 changed artifact: .github/agents/CodexAdvisor-agent.md (trigger: Refine CodexAdvisor-agent contract details). Per A-015: CodexAdvisor-agent.md changes are escalated directly to CS2 only. CI ripple-integration.yml confirmed NO_DRIFT_DETECTED for governed layer-down/governance canon artifacts (local governance state already aligned). No governance canon files changed. GOVERNANCE_ALIGNMENT_INVENTORY.json updated in session-061. @APGI-cmy confirmed no PR required."
   },
   "liaison_confirmation": {
     "timestamp": "2026-03-02T15:45:04Z",
