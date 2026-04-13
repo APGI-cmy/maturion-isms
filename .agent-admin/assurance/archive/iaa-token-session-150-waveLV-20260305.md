@@ -9,6 +9,7 @@
 **Commit reviewed**: e203024 (F-149-001 fix — `permissions: contents: read` added to liveness job)
 **Date**: 2026-03-05
 **Adoption Phase**: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-150-waveLV-20260305-PASS
 
 ---
 
