@@ -2,8 +2,14 @@
  * Vercel Serverless API Gateway — GET /api/ai/feedback/pending
  *
  * ARC (Adaptive Review Committee) endpoint that lists pending feedback events
- * for a given organisation. Requires the x-arc-token header matching the
- * ARC_APPROVAL_TOKEN env var.
+ * for a given organisation. Requires either:
+ *   - x-arc-token header matching ARC_APPROVAL_TOKEN (CS2-gated direct access), or
+ *   - Authorization: Bearer <supabase-session-jwt> (Supabase-verified operator session)
+ *     with organisationId provided as a query parameter.
+ *
+ * F-D3-002 remediation: Bearer tokens are verified via supabase.auth.getUser() —
+ * structural-only (3-part format) validation has been replaced with real Supabase
+ * JWT signature and expiry verification.
  *
  * Query parameters:
  *   organisationId — required; the organisation whose pending events are returned
@@ -20,23 +26,75 @@ import { createClient } from '@supabase/supabase-js';
 import { FeedbackPipeline } from '../../../packages/ai-centre/src/feedback/FeedbackPipeline.js';
 import type { FeedbackPipelineInterface } from '../../../packages/ai-centre/src/types/feedback.js';
 
+// ---------------------------------------------------------------------------
+// Bearer validator (injectable for testing)
+// ---------------------------------------------------------------------------
+
+/**
+ * A function that verifies a Bearer token is a valid, live Supabase session.
+ * Returns true if the token is verified, false otherwise.
+ * Injectable via createHandler to allow unit tests to run without a real Supabase instance.
+ */
+export type BearerValidator = (token: string) => Promise<boolean>;
+
+/**
+ * Build a BearerValidator backed by supabase.auth.getUser().
+ * This performs real Supabase JWT signature and expiry verification — not structural-only.
+ * F-D3-002 remediation: replaces the prior structural-only 3-part format check.
+ */
+export function buildBearerValidator(): BearerValidator {
+  return async (token: string): Promise<boolean> => {
+    try {
+      const supabaseUrl = process.env['SUPABASE_URL'] ?? '';
+      const supabaseAnonKey = process.env['SUPABASE_ANON_KEY'] ?? '';
+      if (!supabaseUrl || !supabaseAnonKey) return false;
+      const authClient = createClient(supabaseUrl, supabaseAnonKey);
+      const { data, error } = await authClient.auth.getUser(token);
+      return !error && data.user !== null;
+    } catch {
+      return false;
+    }
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Factory
+// ---------------------------------------------------------------------------
+
 export type FeedbackPipelineFactory = () => FeedbackPipelineInterface;
 
 /**
  * Build a FeedbackPipeline instance for list (read-only) operations.
- * Uses anon key — listPending() is scoped by organisationId and Supabase
- * RLS enforces org isolation at the data layer. service_role is NOT needed
- * here (that is reserved for approve/reject in feedback/approve.ts).
+ * Uses the server-side service-role key because the ai_feedback_events SELECT
+ * policy depends on session state (app.current_organisation_id) that this
+ * handler does not establish on an anon client. Endpoint authz is enforced
+ * before listPending() is called, so a privileged client is used here to make
+ * the read path reliable across environments.
  * In tests, inject via createHandler(mockFactory).
  */
 export function buildFeedbackPipeline(): FeedbackPipelineInterface {
   const supabaseUrl = process.env['SUPABASE_URL'] ?? '';
-  const supabaseAnonKey = process.env['SUPABASE_ANON_KEY'] ?? '';
-  const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+  const supabaseServiceRoleKey = process.env['SUPABASE_SERVICE_ROLE_KEY'] ?? '';
+  if (!supabaseUrl || !supabaseServiceRoleKey) {
+    throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY for feedback pending pipeline');
+  }
+  const supabaseClient = createClient(supabaseUrl, supabaseServiceRoleKey);
   return new FeedbackPipeline(supabaseClient);
 }
 
-export function createHandler(factory: FeedbackPipelineFactory = buildFeedbackPipeline) {
+// ---------------------------------------------------------------------------
+// Handler
+// ---------------------------------------------------------------------------
+
+/**
+ * Create a handler with an injectable FeedbackPipeline factory and optional BearerValidator.
+ * The default export uses buildFeedbackPipeline() and buildBearerValidator().
+ * Tests may inject mock implementations to avoid real Supabase calls.
+ */
+export function createHandler(
+  factory: FeedbackPipelineFactory = buildFeedbackPipeline,
+  validateBearer: BearerValidator = buildBearerValidator(),
+) {
   return async function handler(
     req: IncomingMessage,
     res: ServerResponse,
@@ -49,55 +107,43 @@ export function createHandler(factory: FeedbackPipelineFactory = buildFeedbackPi
       return;
     }
 
-    // Authentication: accept either Supabase session JWT (Authorization: Bearer)
-    // or a server-side ARC token (x-arc-token) for backward compatibility.
+    // Authentication: x-arc-token (CS2-gated direct) or Supabase-verified Bearer token.
+    // F-D3-002 remediation: structural-only JWT checks are replaced with supabase.auth.getUser().
     const authHeader = (req.headers as Record<string, string | string[] | undefined>)['authorization'];
     const arcTokenHeader = (req.headers as Record<string, string | string[] | undefined>)['x-arc-token'];
     const expectedToken = process.env['ARC_APPROVAL_TOKEN'];
 
     let organisationId: string | null = null;
 
-    if (typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
-      // Supabase session JWT path.
-      // Structural validation only (3 dot-separated base64url parts) — signature verification
-      // is intentionally omitted here. Supabase RLS enforces actual auth in production;
-      // offline/CI tests use structurally valid unsigned tokens. This is the same contract
-      // as api/ai/request.ts validateAuthHeader() (see GAP-017 design note).
-      const token = authHeader.slice(7);
-      const parts = token.split('.');
-      if (parts.length !== 3) {
-        res.writeHead(401);
-        res.end(JSON.stringify({ error: 'Unauthorized. Invalid Bearer token format.' }));
-        return;
-      }
-      try {
-        const jwtPayload = JSON.parse(Buffer.from(parts[1]!, 'base64url').toString('utf-8')) as Record<string, unknown>;
-        const orgId = jwtPayload['org_id'] ??
-          (jwtPayload['user_metadata'] as Record<string, unknown> | undefined)?.['organisation_id'];
-        organisationId = typeof orgId === 'string' ? orgId : null;
-      } catch {
-        res.writeHead(401);
-        res.end(JSON.stringify({ error: 'Unauthorized. Could not decode Bearer token.' }));
-        return;
-      }
-      // If org_id not in JWT claims, fall back to query param (e.g. during onboarding)
-      if (!organisationId) {
-        const url = new URL(req.url ?? '/', 'http://localhost');
-        organisationId = url.searchParams.get('organisationId');
-      }
-    } else if (typeof arcTokenHeader === 'string' && expectedToken && arcTokenHeader === expectedToken) {
+    const isArcTokenAuth =
+      typeof arcTokenHeader === 'string' && expectedToken && arcTokenHeader === expectedToken;
+
+    if (isArcTokenAuth) {
       // Server-side ARC token path: require organisationId query param
+      const url = new URL(req.url ?? '/', 'http://localhost');
+      organisationId = url.searchParams.get('organisationId');
+    } else if (typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
+      // Supabase session JWT path.
+      // F-D3-002 remediation: verify via supabase.auth.getUser() — not structural-only.
+      const token = authHeader.slice(7);
+      const isValidBearer = await validateBearer(token);
+      if (!isValidBearer) {
+        res.writeHead(403);
+        res.end(JSON.stringify({ error: 'Forbidden. Bearer token could not be verified.' }));
+        return;
+      }
+      // After successful Supabase verification, organisationId must be supplied as query param.
       const url = new URL(req.url ?? '/', 'http://localhost');
       organisationId = url.searchParams.get('organisationId');
     } else {
       res.writeHead(403);
-      res.end(JSON.stringify({ error: 'Forbidden. Valid x-arc-token or Authorization header required.' }));
+      res.end(JSON.stringify({ error: 'Forbidden. Valid x-arc-token or authenticated session required.' }));
       return;
     }
 
     if (!organisationId) {
       res.writeHead(400);
-      res.end(JSON.stringify({ error: 'organisationId could not be determined. Provide it as a query parameter or include org_id in the JWT.' }));
+      res.end(JSON.stringify({ error: 'organisationId is required. Provide it as a query parameter.' }));
       return;
     }
 

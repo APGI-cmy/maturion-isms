@@ -24,6 +24,7 @@ import { fileURLToPath } from 'node:url';
 
 import { createHandler } from './pending.js';
 import type { FeedbackPipelineInterface, FeedbackEvent } from '../../../packages/ai-centre/src/types/feedback.js';
+import type { BearerValidator } from './pending.js';
 
 // ---------------------------------------------------------------------------
 // Test doubles
@@ -166,5 +167,58 @@ describe('Wave 9.4-FU — GET /api/ai/feedback/pending', () => {
     const body = JSON.parse(res.body);
     expect(body).toHaveProperty('error');
     expect(body.error).toContain('organisationId');
+  });
+
+  it('W9.4-FU-T-005: returns 403 when Bearer token fails Supabase verification (F-D3-002 — structural-only tokens rejected)', async () => {
+    process.env['ARC_APPROVAL_TOKEN'] = 'secret-arc-token';
+
+    const mockFactory = vi.fn();
+    // Simulate a validator that rejects the token (as Supabase would for any forged/structural token)
+    const rejectBearer: BearerValidator = vi.fn().mockResolvedValue(false);
+    const handler = createHandler(mockFactory, rejectBearer);
+
+    // Minimal structural token (a.b.c)
+    const req1 = mockRequest('GET', { authorization: 'Bearer a.b.c' }, '/api/ai/feedback/pending?organisationId=org-001');
+    const res1 = mockResponse();
+    await handler(req1, res1 as unknown as ServerResponse);
+    expect(res1.statusCode).toBe(403);
+    expect(mockFactory).not.toHaveBeenCalled();
+
+    // Realistic structural JWT (eyJ.eyJ.sig)
+    const req2 = mockRequest('GET', { authorization: 'Bearer eyJ.eyJ.sig' }, '/api/ai/feedback/pending?organisationId=org-001');
+    const res2 = mockResponse();
+    await handler(req2, res2 as unknown as ServerResponse);
+    expect(res2.statusCode).toBe(403);
+    expect(mockFactory).not.toHaveBeenCalled();
+  });
+
+  it('W9.4-FU-T-006: returns 200 when Supabase-verified Bearer token is provided with organisationId (ARC portal operator flow)', async () => {
+    process.env['ARC_APPROVAL_TOKEN'] = 'secret-arc-token';
+
+    const mockPipeline: FeedbackPipelineInterface = {
+      submit: vi.fn().mockResolvedValue(pendingEvent),
+      listPending: vi.fn().mockResolvedValue([pendingEvent]),
+      approve: vi.fn().mockResolvedValue(pendingEvent),
+      reject: vi.fn().mockResolvedValue(pendingEvent),
+    };
+    // Simulate a validator that accepts the token (real Supabase session)
+    const acceptBearer: BearerValidator = vi.fn().mockResolvedValue(true);
+    const handler = createHandler(() => mockPipeline, acceptBearer);
+
+    const req = mockRequest(
+      'GET',
+      { authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyLTAxIn0.sig' },
+      '/api/ai/feedback/pending?organisationId=org-001',
+    );
+    const res = mockResponse();
+
+    await handler(req, res as unknown as ServerResponse);
+
+    expect(res.statusCode).toBe(200);
+    const body = JSON.parse(res.body);
+    expect(Array.isArray(body)).toBe(true);
+    expect(body).toHaveLength(1);
+    expect(body[0]).toHaveProperty('id', 'evt-uuid-002');
+    expect(mockPipeline.listPending).toHaveBeenCalledWith('org-001');
   });
 });
