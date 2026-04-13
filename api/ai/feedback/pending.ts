@@ -65,15 +65,20 @@ export type FeedbackPipelineFactory = () => FeedbackPipelineInterface;
 
 /**
  * Build a FeedbackPipeline instance for list (read-only) operations.
- * Uses anon key — listPending() is scoped by organisationId and Supabase
- * RLS enforces org isolation at the data layer. service_role is NOT needed
- * here (that is reserved for approve/reject in feedback/approve.ts).
+ * Uses the server-side service-role key because the ai_feedback_events SELECT
+ * policy depends on session state (app.current_organisation_id) that this
+ * handler does not establish on an anon client. Endpoint authz is enforced
+ * before listPending() is called, so a privileged client is used here to make
+ * the read path reliable across environments.
  * In tests, inject via createHandler(mockFactory).
  */
 export function buildFeedbackPipeline(): FeedbackPipelineInterface {
   const supabaseUrl = process.env['SUPABASE_URL'] ?? '';
-  const supabaseAnonKey = process.env['SUPABASE_ANON_KEY'] ?? '';
-  const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+  const supabaseServiceRoleKey = process.env['SUPABASE_SERVICE_ROLE_KEY'] ?? '';
+  if (!supabaseUrl || !supabaseServiceRoleKey) {
+    throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY for feedback pending pipeline');
+  }
+  const supabaseClient = createClient(supabaseUrl, supabaseServiceRoleKey);
   return new FeedbackPipeline(supabaseClient);
 }
 
