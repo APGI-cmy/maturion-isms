@@ -3,11 +3,13 @@
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
 **Last Updated**: 2026-04-13  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13)
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
+> **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — This is the designated primary operational monitor for MMM stage progress. CS2 should use this document as the main live progress dashboard.  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
-> **Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
+> **Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)  
+> **Update Rule**: This document MUST be updated immediately after every MMM stage issue, wave completion, approval, or readiness/blocker change. Stale tracker text is a governance defect (see `modules/MMM/_readiness/mmm-document-control-baseline.md`).
 
 ---
 
@@ -276,6 +278,8 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 **Current Stage**: Stage 2 COMPLETE (pending CS2 approval) — Stage 3 (FRS) next  
 **Overall Progress**: ~18% complete (Stage 1 formally closed; Stage 2 produced; Stages 3–12 not started)  
 **Blockers**: None. Stage 2 UX Workflow & Wiring Spec produced (maturion-isms#1352). Awaiting CS2 approval before Stage 3 (FRS) can begin.  
+**LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope COMPLETE (see `modules/MMM/_readiness/lkiac-carryover-closure-note.md`)  
+**Open Questions**: 5 OPEN (OQ-001 through OQ-004, OQ-007); 1 ANSWERED (OQ-005); 1 PARTIALLY ANSWERED (OQ-006). See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.  
 **Next Steps**:
 1. CS2 to review and approve Stage 2 UX Workflow & Wiring Spec
 2. CS2 to open Stage 3 (FRS) wave-start authorization issue after Stage 2 approval
@@ -287,15 +291,22 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 
 ## Governance Compliance
 
-- [ ] All stages proceeding in order (no skipped stages)
-- [ ] Traceability maintained (App Description → UX Workflow → FRS → TRS → Architecture)
-- [ ] All required approvals obtained
-- [ ] Evidence artifacts created for each stage
-- [ ] Module manifest up to date
+- [x] All stages proceeding in order (no skipped stages)
+- [x] Traceability maintained (App Description → UX Workflow → FRS → TRS → Architecture)
+- [x] Stage 1 approval obtained (CS2, #1298, 2026-04-08)
+- [ ] Stage 2 approval pending (CS2 review, #1352)
+- [x] Evidence artifacts created for each completed stage
+- [x] Module manifest up to date
+- [x] Document control baseline established (see `modules/MMM/_readiness/mmm-document-control-baseline.md`)
 
 ---
 
 ## Notes and Observations
+
+**Document Normalization (2026-04-13, maturion-isms#1358)**: All MMM pre-build documents have been
+reviewed and normalized to reflect current state. This tracker is now the **designated primary live
+control document** for MMM stage progress. See `modules/MMM/_readiness/mmm-document-control-baseline.md`
+for the full document classification and maintenance protocol.
 
 **Tracker Anomaly Corrected (2026-04-06)**: Previous version of this tracker incorrectly referenced
 "Risk Management" module. The error originated from the initial governance layer-down when MMM
