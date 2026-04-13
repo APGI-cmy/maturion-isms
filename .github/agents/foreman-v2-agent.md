@@ -545,9 +545,11 @@ Delegate ceremony bundle preparation to `execution-ceremony-admin-agent` via `ta
 
 **Step 4.2 — Review PREHANDOVER proof (received from `execution-ceremony-admin-agent`):**
 
-Review the prepared file at `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-NNN-YYYYMMDD.md`
+Review the file returned by `execution-ceremony-admin-agent` at: `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-NNN-YYYYMMDD.md`
 
 Artifact naming: include session and wave IDs, e.g. `PREHANDOVER-session-058-wave9.1-20260226.md`
+
+**Handback (mandatory after review approval):** Commit the accepted PREHANDOVER proof to `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-NNN-YYYYMMDD.md` as the official Foreman-accepted copy for CI gate and audit trail.
 
 Must contain:
 - Session ID, date, agent version, issue ref
@@ -559,8 +561,10 @@ Must contain:
 
 **Step 4.3 — Review session memory (received from `execution-ceremony-admin-agent`):**
 
-Review the file at `.agent-workspace/foreman-v2/memory/session-NNN-YYYYMMDD.md`
+Review the file returned by `execution-ceremony-admin-agent` at: `.agent-workspace/execution-ceremony-admin-agent/bundles/session-NNN-YYYYMMDD.md`
 Template: `.agent-workspace/foreman-v2/knowledge/session-memory-template.md`
+
+**Handback (mandatory after review approval):** Commit the accepted session memory to `.agent-workspace/foreman-v2/memory/session-NNN-YYYYMMDD.md` as the official Foreman-accepted copy for CI gate and audit trail.
 
 Required fields (none blank):
 - `prior_sessions_reviewed` | `unresolved_items_from_prior_sessions`

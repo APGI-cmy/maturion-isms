@@ -207,6 +207,8 @@ Report any failures to Foreman for resolution before proceeding.
 Using the template at `.agent-workspace/foreman-v2/knowledge/prehandover-template.md`:
 Assemble the PREHANDOVER proof with all required sections.
 
+**Output path**: Write to `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-NNN-YYYYMMDD.md` (within `write_paths` authority per §scope.write_paths). Do NOT write to `.agent-workspace/foreman-v2/memory/` — that path is Foreman-owned. Foreman commits the accepted copy there at handback (Step 4.2 handback in foreman-v2-agent.md).
+
 **Critical**: Do NOT include an IAA token or assurance verdict in the PREHANDOVER proof.
 Do NOT include language suggesting ceremony-admin invoked IAA or approved readiness.
 
@@ -214,6 +216,8 @@ Do NOT include language suggesting ceremony-admin invoked IAA or approved readin
 
 Using the template at `.agent-workspace/foreman-v2/knowledge/session-memory-template.md`:
 Assemble session memory with all required fields.
+
+**Output path**: Write to `.agent-workspace/execution-ceremony-admin-agent/bundles/session-NNN-YYYYMMDD.md` (within `write_paths` authority per §scope.write_paths). Do NOT write to `.agent-workspace/foreman-v2/memory/` — that path is Foreman-owned. Foreman commits the accepted copy there at handback (Step 4.3 handback in foreman-v2-agent.md).
 
 **Step 3.5 — Return bundle to Foreman:**
 
