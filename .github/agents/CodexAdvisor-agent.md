@@ -427,7 +427,7 @@ Output:
 > "QP Result: [PASS / FAIL]
 > S1 YAML: [PASS/FAIL] | S2 Phases: [PASS/FAIL] | S3 Count: [PASS/FAIL]
 > S4 No stubs: [PASS/FAIL] | S5 No Tier 2: [PASS/FAIL] | S6 Top-level keys: [PASS/FAIL]
-> S7 Immutability: [PASS/FAIL] | S8 Token pattern: [PASS/FAIL]
+> S7 Immutability: [PASS/FAIL] | S8 Token pattern: [PASS/FAIL] | S9 Taxonomy allowlist: [PASS/FAIL]
 > [If FAIL]: Blocking issues: [list]"
 
 **Step 3.7 — COORDINATE: Assemble the full delivery bundle (RAEC: C)**
@@ -480,7 +480,7 @@ The OPOJD Gate for this agent class evaluates what actually runs:
 Confirm:
 - YAML validation: PASS (no parse errors)
 - Character count: within 30,000 limit
-- Checklist compliance: 100% of applicable S1–S8 gates
+- Checklist compliance: 100% of applicable S1–S9 gates
 - Canon hash verification: all hashes current and non-placeholder
 - Zero placeholder, stub, or TODO content in any delivered artifact
 - Zero embedded Tier 2 content in the agent contract
@@ -509,7 +509,7 @@ Write `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-NNN-YYYYMM
 Include:
 - Agent identity and session ID
 - Job summary and CS2 authorization reference
-- QP verdict: PASS (all S1–S8 gates)
+- QP verdict: PASS (all S1–S9 gates)
 - Merge gate parity: PASS
 - Bundle completeness: all 4 artifacts listed by path
 - IAA trigger classification (from Step 2.4)
