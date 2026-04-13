@@ -20,7 +20,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../contexts/AuthContext';
 import { CheckCircle, XCircle, Clock, Loader2, AlertCircle, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getSessionToken } from '../../lib/supabase';
+import { getSessionToken, supabase } from '../../lib/supabase';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -53,9 +53,12 @@ interface ApprovePayload {
  * Fetch pending feedback items from the ARC API.
  * Authenticates via the caller's Supabase session JWT (Authorization: Bearer).
  * No client-side secrets are used — the token is the Supabase session token.
+ * organisationId is required as a query parameter (F-D3-002: JWT claim extraction removed).
  */
-async function fetchPendingFeedback(token: string): Promise<PendingFeedbackItem[]> {
-  const res = await fetch('/api/ai/feedback/pending', {
+async function fetchPendingFeedback(token: string, organisationId: string): Promise<PendingFeedbackItem[]> {
+  const url = new URL('/api/ai/feedback/pending', window.location.origin);
+  url.searchParams.set('organisationId', organisationId);
+  const res = await fetch(url.toString(), {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
@@ -70,6 +73,25 @@ async function fetchPendingFeedback(token: string): Promise<PendingFeedbackItem[
   }
 
   return res.json() as Promise<PendingFeedbackItem[]>;
+}
+
+async function fetchOrganisationId(userId: string): Promise<string> {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('organisation_id')
+    .eq('id', userId)
+    .single();
+
+  if (error) {
+    throw new Error('Failed to resolve organisation ID from profile.');
+  }
+
+  const organisationId = data?.organisation_id;
+  if (typeof organisationId !== 'string' || organisationId.trim().length === 0) {
+    throw new Error('Organisation ID not found in profile. Contact your administrator.');
+  }
+
+  return organisationId;
 }
 
 /**
@@ -105,13 +127,15 @@ async function submitFeedbackDecision(payload: ApprovePayload, token: string): P
 // ---------------------------------------------------------------------------
 
 function usePendingFeedback() {
-  const { session } = useAuth();
+  const { session, user } = useAuth();
   return useQuery<PendingFeedbackItem[], Error>({
     queryKey: ['arc-pending-feedback'],
     queryFn: async () => {
       const token = await getSessionToken();
       if (!token) throw new Error('Not authenticated');
-      return fetchPendingFeedback(token);
+      if (!user?.id) throw new Error('User profile not found. Please sign in again.');
+      const organisationId = await fetchOrganisationId(user.id);
+      return fetchPendingFeedback(token, organisationId);
     },
     staleTime: 30000,
     refetchIntervalInBackground: false,
