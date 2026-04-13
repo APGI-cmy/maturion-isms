@@ -1,9 +1,9 @@
 # governance-liaison-isms — Tier 2 Knowledge Index
 
 **Agent**: governance-liaison-isms  
-**Contract Version**: 3.2.0  
-**Knowledge Version**: 1.6.0  
-**Last Updated**: 2026-03-04  
+**Contract Version**: 3.3.0  
+**Knowledge Version**: 1.7.0  
+**Last Updated**: 2026-04-10  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -17,12 +17,12 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 
 | File | Purpose | Version |
 |------|---------|---------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.5.0 |
+| `index.md` (this file) | Knowledge entry point and version reference | 1.7.0 |
 | `FAIL-ONLY-ONCE.md` | **PREFLIGHT Attestation** — Breach registry, Universal A-rules, Conditional B-rules, incident log; must be self-attested every session before any work begins | 1.5.0 |
 | `layer-down-scripts.md` | **Phase 3.1 Scripts** — Checksum validation and sync state update scripts for the cross-repository layer-down protocol; full 7-step protocol | 1.1.0 |
 | `ripple-processing-scripts.md` | **Phase 3.2 Scripts** — Ripple inbox creation, sync state update on receipt, and ripple archive scripts; full 5-step protocol | 1.1.0 |
 | `drift-detection-scripts.md` | **Phase 3.3 Scripts** — Drift detection script; compares canonical inventory version against local sync state | 1.0.0 |
-| `session-memory-template.md` | **Phase 4.2 Template** — Session memory and escalation templates for use in Phase 4 session closure | 1.1.0 |
+| `session-memory-template.md` | **Phase 4.2 Template** — Session memory and escalation templates for use in Phase 4 session closure | 1.2.0 |
 
 ---
 
@@ -80,3 +80,4 @@ governance-liaison-isms NEVER executes directly for:
 | 1.4.0 | 2026-03-03 | governance-liaison-isms (session-041, RCA) | Updated FAIL-ONLY-ONCE.md to v1.4.0 (A-013, A-014 added; breach log entries §4.3-SKIP and IAA-SKIP recorded); updated index self-reference to v1.4.0 |
 | 1.5.0 | 2026-03-04 | CodexAdvisor-agent (session-045) | layer-down-scripts.md → v1.1.0 (7-step protocol migrated from contract §3.1); ripple-processing-scripts.md → v1.1.0 (5-step protocol migrated from §3.2) |
 | 1.6.0 | 2026-03-04 | governance-liaison-isms (session-046) | FAIL-ONLY-ONCE.md → v1.5.0 (A-015 added: CS2-authorized agent file routing — CodexAdvisor for non-CodexAdvisor files, CS2 directly for CodexAdvisor-agent.md); index self-reference updated to v1.6.0 |
+| 1.7.0 | 2026-04-10 | CodexAdvisor-agent (session-056) | PS-I: session-memory-template.md → v1.2.0 (iaa_invocation_result field removed, SCOPE_DECLARATION Ceremony and Pre-IAA Commit Gate sections added); index self-reference and last-updated updated to v1.7.0 |
