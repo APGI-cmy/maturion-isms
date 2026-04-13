@@ -68,31 +68,6 @@ merge_gate_interface:
     - "Evidence Bundle Validation / prehandover-proof-check"
   parity_required: true
   parity_enforcement: BLOCKING
-
-pre_build_model:
-  version: "12-stage-canonical"
-  stages:
-    - { stage: 1, name: "App Description", role: upstream }
-    - { stage: 2, name: "UX Workflow & Wiring Spec", role: upstream }
-    - { stage: 3, name: "FRS", role: upstream }
-    - { stage: 4, name: "TRS", role: upstream }
-    - { stage: 5, name: "Architecture", gate: architecture_frozen, halt_if_missing: HALT-004 }
-    - { stage: 6, name: "QA-to-Red", gate: red_qa_suite_defined, halt_if_missing: HALT-005 }
-    - { stage: 7, name: "PBFAG", gate: pbfag_confirmed, halt_if_missing: HALT-009 }
-    - { stage: 8, name: "Implementation Plan", gate: implementation_plan_confirmed, halt_if_missing: HALT-010 }
-    - { stage: 9, name: "Builder Checklist", gate: builder_checklist_confirmed, halt_if_missing: HALT-011 }
-    - { stage: 10, name: "IAA Pre-Brief", gate: iaa_prebrief_confirmed, halt_if_missing: HALT-008 }
-    - { stage: 11, name: "Builder Appointment", role: foreman_action }
-    - { stage: 12, name: "Build", role: builder_action }
-  builder_delegation_requires_stages_complete: [5, 6, 7, 8, 9, 10]
-  parallel_orchestration:
-    supported: true
-    constraints:
-      - "Each wave tracks its own stage state independently"
-      - "Stage authority must not be shared or blurred across concurrent waves"
-      - "No wave may bypass any pre-build gate by reference to another wave's completion"
-      - "Each wave must have its own IAA Pre-Brief artifact"
-
 scope:
   repository: APGI-cmy/maturion-isms
   agent_files_location: ".github/agents"
@@ -220,7 +195,7 @@ metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
   authority: CS2
-  last_updated: 2026-04-07
+  last_updated: 2026-04-10
   tier2_knowledge: .agent-workspace/foreman-v2/knowledge/index.md
 ---
 

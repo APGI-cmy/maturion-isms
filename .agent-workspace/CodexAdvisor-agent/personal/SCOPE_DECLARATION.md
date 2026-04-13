@@ -29,7 +29,7 @@ This declaration covers all files committed by CodexAdvisor-agent (Copilot runti
 
 IAA ceremony artifacts are exempt from scope declaration requirements:
 - IAA rejection file: `.agent-admin/assurance/iaa-rejection-session-056-foreman-ecap-20260410.md` (IAA-authored)
-- IAA token file: `.agent-admin/assurance/iaa-token-session-056-foreman-ecap-20260410.md` (IAA-authored, to be committed by IAA)
+- IAA token file: `.agent-admin/assurance/iaa-token-session-056-foreman-ecap-20260410.md` (IAA-authored, present in this PR)
 
 ## Authority
 
