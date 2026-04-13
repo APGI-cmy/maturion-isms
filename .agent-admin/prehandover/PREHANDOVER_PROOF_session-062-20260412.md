@@ -27,7 +27,7 @@ to reflect ALIGNED status.
 | File | Action | SHA256 (post-commit) |
 |------|--------|----------------------|
 | `governance/canon/AGENT_HANDOVER_AUTOMATION.md` | Re-synced to canonical v1.3.0 content (hash match restored) | 52c6028add0244a47379d736b80ceafdca93e09f3f8e6688462f3a99cbca76f8 |
-| `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` | Updated AGENT_HANDOVER_AUTOMATION entry: alignment_status HASH_MISMATCH→ALIGNED, versions 1.2.0→1.3.0, hashes updated, both last_updated_by synced | 08a509c65d94038b59f9665088e69f593bc57e8a587e0ad102c81b77ab20dc84 |
+| `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` | Updated AGENT_HANDOVER_AUTOMATION entry: alignment_status HASH_MISMATCH→ALIGNED (versions already at 1.3.0), hashes updated; alignment_summary recalculated (drifted 1→0, not_tracked 0→1, aligned 21→22); both last_updated_by synced to session-062 | (updated post-fix) |
 
 **Drift evidence (ECAP-QC-001)**:
 - Before: `governance/canon/AGENT_HANDOVER_AUTOMATION.md` SHA256 was `5b03ff10...` (diverged local content)

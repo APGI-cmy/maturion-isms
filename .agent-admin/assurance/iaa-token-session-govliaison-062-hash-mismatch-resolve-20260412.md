@@ -24,7 +24,7 @@ PHASE_B_BLOCKING_TOKEN: IAA-session-govliaison-062-hash-mismatch-resolve-2026041
 ## ═══════════════════════════════════════
 ## ASSURANCE-TOKEN
 ## PR: copilot/gov-align-resolve-hash-mismatch
-## All 25 checks PASS. Merge gate parity: PASS.
+## All 30 checks PASS. Merge gate parity: PASS.
 ## Merge permitted (subject to CS2 approval).
 ## Token reference: IAA-session-govliaison-062-hash-mismatch-resolve-20260412-PASS
 ## Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
