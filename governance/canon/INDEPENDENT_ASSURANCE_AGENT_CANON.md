@@ -1,12 +1,13 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.5.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.6.0 | **Authority**: CS2
 **Date**: 2026-03-03
 **Amended**: 2026-03-03 — v1.1.0: Added §Proactive Assurance — Pre-Brief Protocol
 **Amended**: 2026-03-04 — v1.2.1: Added §CS2 Direct Review Track
 **Amended**: 2026-03-04 — v1.3.0: Added §Risk-Tiered Ceremony Table + §Functional Fitness Assessment (FFA)
 **Amended**: 2026-04-08 — v1.4.0: Added §Execution Ceremony Admin Non-Substitution Rule — explicitly prohibits the execution-ceremony-admin-agent from performing IAA functions; reinforces IAA non-producing / non-cleanup-authoring posture relative to the new ceremony admin role; authority: CS2 — ECAP-001 canon establishment issue.
 **Amended**: 2026-04-08 — v1.5.0: Amended §Independence Requirements rule 3 — clarified that Foreman is the authorised IAA invoker at Phase 4 handover (not a self-assurance violation); added §IAA Re-Invocation After Rejection — Foreman Ownership defining Foreman-owned stop-and-fix loop, CS2-only exception classes, canonical re-invocation token/session format, prohibited misleading wording, and worked example; authority: CS2 — Foreman IAA re-invocation ownership canonisation issue.
+**Amended**: 2026-04-13 — v1.6.0: Updated to reference consolidated IAA Wave Record model; IAA token and rejection package content now constitute Sections 3 and 4 of the consolidated wave record; artifact path patterns updated; standalone token and rejection files deprecated in favour of consolidated wave record; authority: CS2 — GOV-SIMPLIFICATION issue.
 
 ---
 
@@ -777,6 +778,46 @@ OUTCOME:
 
 ---
 
+## Consolidated Assurance Artifact Model (v1.6.0+)
+
+As of v1.6.0, the IAA assurance output (ASSURANCE-TOKEN or REJECTION-PACKAGE) is embedded in the **consolidated IAA Wave Record** rather than produced as standalone files.
+
+### Output Format Changes
+
+| IAA Output | Legacy (v1.5.x) | Consolidated (v1.6.0+) |
+|------------|-----------------|------------------------|
+| **ASSURANCE-TOKEN** | Standalone `iaa-token-session-{NNN}-{wave}-{date}.md` | Section 3 of `iaa-wave-record-{wave}-{date}.md` + standalone token file (PHASE_B_BLOCKING_TOKEN reference) |
+| **REJECTION-PACKAGE** | Standalone `iaa-rejection-{id}.md` or `rejection-package-{id}.md` | Section 4 of `iaa-wave-record-{wave}-{date}.md` (rejection_history) |
+| **Pre-Brief** | Standalone `iaa-prebrief-{slug}.md` | Section 1 of `iaa-wave-record-{wave}-{date}.md` |
+
+### Immutability Model in Consolidated Format
+
+The consolidated wave record maintains the immutability guarantees required by A-029/A-019:
+
+1. **Section 1 (Pre-Brief)**: Written at wave start. IMMUTABLE after initial commit.
+2. **Section 2 (PREHANDOVER Proof)**: Written at handover. IMMUTABLE after initial commit.
+3. **Section 3 (IAA Verdict)**: Written by IAA in a SUBSEQUENT commit. APPEND-ONLY.
+4. **Section 4 (Rejection History)**: Updated by IAA on each rejection cycle. Capped at 1 INVALIDATED + 1 final.
+
+The IAA MUST still produce the standalone `PHASE_B_BLOCKING_TOKEN` file at `.agent-admin/assurance/iaa-token-session-{NNN}-{wave}-{date}.md` as the CI-readable token artifact. The consolidated wave record Section 3.1 references this standalone token via the `PHASE_B_BLOCKING_TOKEN` field.
+
+### Revision Trail Cap
+
+Per the GOV-SIMPLIFICATION directive:
+- Maximum **1 INVALIDATED** + **1 final** per wave record
+- If a second rejection occurs, the prior INVALIDATED record is archived to `.agent-admin/assurance/archive/`
+- Only the latest INVALIDATED + current attempt are retained in `.agent-admin/assurance/`
+
+### Transition Period
+
+During the transition (determined by CS2), standalone token/rejection files continue to be accepted alongside the consolidated format. The standalone patterns will be fully deprecated once all agents are updated.
+
+### Template Reference
+
+The consolidated format is defined in `governance/templates/iaa-wave-record.template.md`.
+
+---
+
 ## References
 
 - `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0 — Living Agent framework
@@ -790,4 +831,4 @@ OUTCOME:
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.5.0 | Effective: 2026-02-24 | Amended: 2026-04-08 (v1.5.0) | Previous: 2026-04-08 (v1.4.0)*
+*Authority: CS2 (Johan Ras) | Version: 1.6.0 | Effective: 2026-02-24 | Amended: 2026-04-13 (v1.6.0) | Previous: 2026-04-08 (v1.5.0)*

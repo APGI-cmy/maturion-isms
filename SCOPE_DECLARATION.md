@@ -1,33 +1,31 @@
-# SCOPE_DECLARATION — Session 164 (foreman-v2-agent) — Wave LKIAC Carry-over Closure
+# SCOPE_DECLARATION — Session 057 (CodexAdvisor-agent) — Wave agent-contract-wave-record-model
 
-**Session**: session-164-lkiac-carryover-closure-20260413
-**Wave**: LKIAC Carry-over Closure (CL-3.5 + CL-13 dependency closure for MMM readiness)
-**Issue**: maturion-isms#1341
-**Branch**: copilot/complete-lkiac-carry-over-implementation-dependenc
+**Session**: session-057-20260413
+**Wave**: agent-contract-wave-record-model
+**Issue**: maturion-isms — [CODEXADVISOR WAVE] Update agent contracts for single-file assurance artifact model
+**Branch**: copilot/update-agent-contracts-model
 **Date**: 2026-04-13
-**Authority**: CS2 (@APGI-cmy) via issue #1341
+**Authority**: CS2 issue (follow-up to PRs #1348, #1349)
 
 ---
 
 ## Files Changed in This Wave
 
-- `SCOPE_DECLARATION.md` - Root scope declaration for session-164 (this file)
-- `governance/aimc/LKIAC_DEPRECATION_REGISTER.md` - DEP-005/006/007 → PARALLEL-RUN (v1.4.0 → v1.5.0)
-- `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md` - CL-13 extended scope COMPLETE (v1.8.0 → v2.0.0)
-- `modules/MMM/_readiness/lkiac-carryover-closure-note.md` - New: LKIAC carry-over closure note for MMM readiness
-- `.agent-workspace/foreman-v2/memory/session-164-lkiac-carryover-closure-20260413.md` - Foreman session memory
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-164-lkiac-carryover-closure-20260413.md` - Foreman PREHANDOVER proof
-- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Foreman parking station entry
-- `.agent-admin/assurance/iaa-token-session-164-lkiac-carryover-closure-20260413.md` - IAA assurance token (PASS)
+- `SCOPE_DECLARATION.md` - Root scope declaration for session-057 (this file)
+- `.github/agents/independent-assurance-agent.md` — IAA contract: wave record model alignment, standalone artifact prohibitions (v2.5.0→v2.6.0)
+- `.github/agents/foreman-v2-agent.md` — Foreman contract: wave record references, scope declaration gate (v2.11.0→v2.12.0)
+- `.github/agents/execution-ceremony-admin-agent.md` — Ceremony-admin contract: prohibited list, evidence checks (v1.0.0→v1.1.0)
+- `.github/agents/governance-liaison-isms-agent.md` — Liaison contract: restricted write_access, assurance path prohibition (v3.3.0→v3.4.0)
+- `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-057-20260413.md` - CodexAdvisor PREHANDOVER proof
+- `.agent-workspace/CodexAdvisor-agent/memory/session-057-20260413.md` - CodexAdvisor session memory for session-057
 
-**Total declared files**: 8
+**Total declared files**: 7
 
 ## Implementation Status
 
-LKIAC carry-over governance closure complete:
-- DEP-005/006/007 updated ACTIVE → PARALLEL-RUN with correct AIMC equivalent references
-- Deprecation register version bumped v1.4.0 → v1.5.0 with amendment header and audit trail
-- Execution plan updated to v2.0.0 with CL-13 extended scope COMPLETE status
-- Closure note created at modules/MMM/_readiness/lkiac-carryover-closure-note.md
-- All 42 LKIAC carry-over tests verified GREEN (27 CL-3.5 + 15 CL-13)
-- No production code changes. Governance artifact updates only.
+All 4 agent contracts updated for single-file assurance artifact model:
+- Standalone prebrief/token/rejection patterns replaced with iaa-wave-record-{wave}-{date}.md
+- Prohibitions added for standalone artifact creation
+- Governance-liaison write path restricted from .agent-admin/** to .agent-admin/governance/**
+- Scope declaration gate added to Foreman Phase 2 Step 2.7
+- All 4 files pass QP S1-S9 and are under 30,000 character limit

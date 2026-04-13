@@ -6,7 +6,7 @@ agent:
   id: governance-liaison-isms
   class: liaison
   version: 6.2.0
-  contract_version: 3.3.0
+  contract_version: 3.4.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-6
 governance:
@@ -89,7 +89,8 @@ scope:
   write_access:
     - "governance/**"
     - ".agent-workspace/governance-liaison-isms/**"
-    - ".agent-admin/**"
+    - ".agent-admin/governance/**"
+    # .agent-admin/assurance/ is exclusively IAA write territory.
   escalation_required:
     - ".github/agents/**"
     - ".github/workflows/**"
@@ -177,6 +178,9 @@ prohibitions:
   - id: PROHIB-008
     rule: No enforcement decisions — merge gate authority is CI, not liaison
     enforcement: HARD_BLOCK
+  - id: PROHIB-009
+    rule: "MUST NOT write to .agent-admin/assurance/. Path is exclusively IAA-owned. Ref: GOVERNANCE_ARTIFACT_TAXONOMY.md."
+    enforcement: HARD_BLOCK
 
 tier2_knowledge:
   index: .agent-workspace/governance-liaison-isms/knowledge/index.md
@@ -193,7 +197,7 @@ metadata:
   canonical_source: .github/agents/governance-liaison-isms-agent.md
   this_copy: consumer
   authority: CS2
-  last_updated: 2026-04-10
+  last_updated: 2026-04-13
   tier2_knowledge: .agent-workspace/governance-liaison-isms/knowledge/index.md
   contract_architecture: governance/canon/AGENT_CONTRACT_ARCHITECTURE.md
   preflight_pattern: governance/canon/AGENT_PREFLIGHT_PATTERN.md

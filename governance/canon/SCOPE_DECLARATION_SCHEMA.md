@@ -2,7 +2,7 @@
 
 ## Status
 Canonical Governance Specification  
-Version: v1  
+Version: v2  
 Authority: Governance  
 Applies To: All PRs, All Builders, All Repositories
 
@@ -115,6 +115,29 @@ If scope changes, the PR must be closed.
 
 ---
 
+### 5.7 Approved Artifact Paths
+- `APPROVED_ARTIFACT_PATHS:`
+  Bullet list of exact file paths or parameterised patterns that agents are permitted to create during this PR.
+
+  Each entry must be an explicit file path or a parameterised pattern using `{parameter}` syntax (e.g., `{wave}`, `{date}`, `{id}`).
+
+  Example:
+  ```
+  APPROVED_ARTIFACT_PATHS:
+  - .agent-admin/assurance/iaa-wave-record-gov-simplification-20260413.md
+  - .agent-workspace/foreman-v2/memory/session-gov-simplification-20260413.md
+  - .agent-workspace/foreman-v2/memory/PREHANDOVER-session-gov-simplification-20260413.md
+  - governance/scope-declaration.md
+  ```
+
+  **Validation Rules**:
+  - MUST list every new file the PR will create in `.agent-admin/assurance/` or `.agent-workspace/`
+  - Files not listed here but present in the PR diff trigger a CI gate failure
+  - Paths MUST reference patterns from `GOVERNANCE_ARTIFACT_TAXONOMY.md` §21 (Prescriptive Artifact Allowlist)
+  - IAA ceremony files (iaa-prebrief-*.md, iaa-token-*.md) are exempt from this requirement per A-033 carve-out
+
+---
+
 ## 6. Validity Rules
 
 A Scope Declaration is INVALID if:
@@ -122,6 +145,7 @@ A Scope Declaration is INVALID if:
 - More than one responsibility domain is declared
 - OUT_OF_SCOPE does not include required exclusions
 - SCOPE_FROZEN is not YES
+- A Scope Declaration with `APPROVED_ARTIFACT_PATHS:` missing is INVALID for any PR that creates new files in `.agent-admin/assurance/` or `.agent-workspace/` paths.
 
 ---
 

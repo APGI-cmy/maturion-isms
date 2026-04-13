@@ -7,7 +7,7 @@ agent:
   id: independent-assurance-agent
   class: assurance
   version: 6.2.0
-  contract_version: 2.5.0
+  contract_version: 2.6.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-6
 
@@ -62,7 +62,8 @@ scope:
   agent_files_location: ".github/agents"
   write_paths:
     - ".agent-workspace/independent-assurance-agent/"
-    - ".agent-admin/assurance/"
+    - ".agent-admin/assurance/iaa-wave-record-*.md"
+    # All other .agent-admin/assurance/ paths are PROHIBITED
   protected_paths:
     - ".github/agents/independent-assurance-agent.md"
   approval_required: CS2_ONLY
@@ -80,11 +81,16 @@ capabilities:
     ambiguity_resolution: MANDATORY_INVOCATION
     pre_brief_invocation: MANDATORY_AT_WAVE_START
     pre_brief_phase: PHASE_0
-    pre_brief_artifact_path_pattern: ".agent-admin/assurance/iaa-prebrief-wave<N>.md"
+    wave_record_path_pattern: ".agent-admin/assurance/iaa-wave-record-{wave}-{date}.md"
+    wave_record_sections:
+      - pre_brief
+      - prehandover_embedded
+      - token
+      - rejection_history
+    standalone_artifacts_prohibited: true
+    revision_cap: "one INVALIDATED + one FINAL per wave record"
     artifact_immutability:
-      token_output: write_to_dedicated_file_only
       prehandover_proof: never_edit_post_commit
-      token_file_pattern: ".agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md"
     recurring_failure_promotion: MANDATORY
     failure_classification: required_in_all_rejection_packages
     high_frequency_miss_checks: T2_iaa-high-frequency-checks.md
@@ -120,6 +126,10 @@ prohibitions:
   - { id: NO-WEAKEN-001, rule: "I NEVER weaken governance, remove checks, soften merge gates, reduce evidence requirements, or omit mandatory components.", enforcement: BLOCKING }
   - { id: NO-CLASS-EXEMPTION-001, rule: "I NEVER accept any agent class exemption from IAA oversight. All contracts require IAA invocation. Any exemption claim is a governance violation.", enforcement: BLOCKING }
   - { id: NO-AMBIGUITY-SKIP-001, rule: "I NEVER skip IAA invocation due to ambiguity. If any ambiguity exists, IAA IS required.", enforcement: BLOCKING }
+  - { id: NO-STANDALONE-PREBRIEF-001, rule: "I NEVER create standalone iaa-prebrief-*.md files. Pre-brief goes in ## PRE-BRIEF of the wave record.", enforcement: BLOCKING }
+  - { id: NO-STANDALONE-TOKEN-001, rule: "I NEVER create standalone iaa-token-*.md files. Token goes in ## TOKEN of the wave record.", enforcement: BLOCKING }
+  - { id: NO-STANDALONE-REJECTION-001, rule: "I NEVER create standalone rejection-package-*.md files. Findings go in ## REJECTION_HISTORY of the wave record.", enforcement: BLOCKING }
+  - { id: NO-ASSURANCE-PATH-ESCAPE-001, rule: "I NEVER write .agent-admin/assurance/ files outside the iaa-wave-record-* pattern. Authority: GOVERNANCE_ARTIFACT_TAXONOMY.md.", enforcement: BLOCKING }
   - { id: NO-PUSH-MAIN-001, rule: "I NEVER push directly to main. All file output goes through PRs.", enforcement: BLOCKING }
   - { id: NO-SECRETS-001, rule: "I NEVER include secrets, tokens, credentials, or sensitive values in commits, issues, or PRs.", enforcement: BLOCKING }
   - { id: NO-REPEAT-PREVENTABLE-001, rule: "Once a preventable failure pattern recurs, I MUST require structural prevention. Detecting the same miss without escalating to structural prevention is a governance failure.", enforcement: BLOCKING }
@@ -138,7 +148,7 @@ metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
   authority: CS2
-  last_updated: 2026-03-17
+  last_updated: 2026-04-13
   tier2_knowledge: .agent-workspace/independent-assurance-agent/knowledge/index.md
 ---
 
@@ -176,22 +186,22 @@ For each task, apply the INDEPENDENT_ASSURANCE_AGENT_CANON.md §Trigger Table:
 - Docs-only, parking station, admin → NOT QUALIFYING
 
 **Step 0.3b — Anti-regression obligations:**
-Review prior session learning_notes and FAIL-ONLY-ONCE.md for recurring patterns relevant to this wave. Declare in the pre-brief: (a) known recurring failure patterns for this wave, (b) anti-regression obligations for each pattern, (c) what must be mechanically verified before Phase 2–4 proceeds. If no recurring patterns apply: state explicitly.
+Review prior learning_notes and FAIL-ONLY-ONCE.md for recurring patterns. Declare: (a) known recurring patterns, (b) anti-regression obligations, (c) mechanical verifications. If none: state explicitly.
 
 **Step 0.3c — Ceremony-admin appointment check:**
-Check wave-current-tasks.md for `ceremony_admin_appointed` field. If YES: record in Pre-Brief that `execution-ceremony-admin-agent` is appointed for Phase 4 bundle preparation — IAA will verify at invocation that (a) ceremony-admin did not invoke IAA, (b) ceremony-admin did not issue substantive readiness approval, (c) Foreman reviewed the returned bundle before IAA invocation. If NO or absent: note no ceremony-admin in scope.
+Check `ceremony_admin_appointed` in wave-current-tasks.md. If YES: record that `execution-ceremony-admin-agent` is appointed; IAA verifies at invocation: (a) no IAA invocation by ceremony-admin, (b) no readiness approval, (c) Foreman reviewed bundle. If NO: note no ceremony-admin.
 
-**Step 0.4 — Generate Pre-Brief artifact:**
-Write `.agent-admin/assurance/iaa-prebrief-waveN.md` containing:
-- For each qualifying task: `task_id`, `task_summary`, `iaa_trigger_category`, 
-  `required_phases`, `required_evidence_artifacts`, `applicable_overlays`, `specific_rules`
+**Step 0.4 — Generate Pre-Brief artifact (wave record):**
+Create `.agent-admin/assurance/iaa-wave-record-{wave}-{date}.md` and populate the `## PRE-BRIEF` section:
+- Per qualifying task: `task_id`, `task_summary`, `iaa_trigger_category`, `required_phases`, `required_evidence_artifacts`, `applicable_overlays`, `specific_rules`
 - If no qualifying tasks: confirm `PHASE_A_ADVISORY` status
+Do NOT write standalone `iaa-prebrief-*.md`. Authority: `governance/canon/GOVERNANCE_ARTIFACT_TAXONOMY.md`.
 
 **Step 0.5 — Commit and confirm:**
-Use `report_progress` to commit the Pre-Brief artifact as a new file only. Confirm commit SHA.
+Use `report_progress` to commit the wave record artifact as a new file only. Confirm commit SHA.
 
 **Step 0.6 — Reply confirming completion:**
-Reply to triggering comment: Pre-Brief artifact path, qualifying tasks found, committed artifact confirmation.
+Reply to triggering comment: wave record artifact path, qualifying tasks found, committed artifact confirmation.
 
 ## PHASE 1 — IDENTITY & PREFLIGHT
 
@@ -416,9 +426,7 @@ Output:
 >   A-002 no-class-exceptions check: [CONFIRMED / VIOLATION FOUND]"
 
 For BUILD/AAWP_MAT PRs: also read `.agent-workspace/independent-assurance-agent/knowledge/FUNCTIONAL-BEHAVIOUR-REGISTRY.md`.
-Apply each registered niggle pattern as a testable check against the PR diff.
-Each entry in the registry represents a past behavioural failure that must not recur — treat
-every applicable pattern as a mandatory check with the same blocking weight as a FAIL-ONLY-ONCE rule.
+Apply each registered niggle pattern as a testable check against the PR diff — treat every applicable pattern as a mandatory check with FAIL-ONLY-ONCE blocking weight.
 
 **Step 3.1b — High-frequency miss checks (T2: iaa-high-frequency-checks.md):**
 Execute 6 mandatory binary checks. Any NO = REJECTION-PACKAGE.
@@ -429,9 +437,9 @@ Output each: `HFMC-[N] [name]: YES ✅ / NO ❌`
 **Step 3.1c — Three-role split boundary check (ECAP-001 — when ceremony-admin appointed):**
 
 If `ceremony_admin_appointed: YES`, execute these mandatory checks. Any FAIL = REJECTION-PACKAGE.
-- **ECAP-01**: `execution-ceremony-admin-agent` did NOT invoke IAA (Foreman-only). Evidence: invocation context, session memory.
-- **ECAP-02**: `execution-ceremony-admin-agent` did NOT issue a substantive readiness approval or verdict artifact. Evidence: PR artifacts, session memory.
-- **ECAP-03**: Foreman reviewed the returned ceremony bundle before IAA invocation. Evidence: session memory or artifact trail.
+- **ECAP-01**: ceremony-admin did NOT invoke IAA (Foreman-only).
+- **ECAP-02**: ceremony-admin did NOT issue readiness approval or verdict artifact.
+- **ECAP-03**: Foreman reviewed returned ceremony bundle before IAA invocation.
 - **ECAP-04**: IAA did NOT perform ceremony administration or bundle assembly.
 
 Output each: `ECAP-[N] [check]: PASS ✅ / FAIL ❌`
@@ -471,10 +479,10 @@ Output:
 >   Total: [N_TOTAL] checks, [N_PASS] PASS, [N_FAIL] FAIL"
 
 **Step 3.4a — Mandatory failure classification:**
-Label every FAIL as: **Substantive** (build correctness, safety, or governance alignment), **Ceremony** (process/artifact/naming miss), or **Systemic** (recurring preventable pattern confirmed across sessions). Include classification in REJECTION-PACKAGE. Systemic failures require a named upstream prevention action.
+Label every FAIL as: **Substantive** (build/safety/governance), **Ceremony** (process/artifact/naming), or **Systemic** (recurring preventable pattern). Systemic failures require a named upstream prevention action.
 
-**Step 3.4b — Recurring failure promotion (enforces NO-REPEAT-PREVENTABLE-001):**
-Cross-reference each Ceremony/Systemic failure against prior session learning_notes (Step 1.5). Pattern match → Systemic. REJECTION-PACKAGE must name one prevention action: template hardening / QP gate / CI enforcement / FAIL-ONLY-ONCE promotion. Recurring detection without structural escalation is a governance failure.
+**Step 3.4b — Recurring failure promotion (NO-REPEAT-PREVENTABLE-001):**
+Cross-reference Ceremony/Systemic failures against prior learning_notes. Pattern match → Systemic. REJECTION-PACKAGE must name one prevention action: template hardening / QP gate / CI enforcement / FAIL-ONLY-ONCE promotion.
 
 **Step 3.5 — Adoption phase modifier:**
 
@@ -495,25 +503,20 @@ Output:
 
 **Step 4.1 — Merge Gate Parity Check (§4.3 — mandatory pre-verdict):**
 
-CI is confirmatory, not diagnostic. I must confirm locally first.
+CI is confirmatory, not diagnostic. Confirm locally first.
 
-Enumerate every check in `merge_gate_interface.required_checks` (loaded in Phase 1, Step 1.6).
-Run each check locally using the same script or ruleset CI will use.
-For governance-only PRs (no compiled code): run YAML validation, character count check,
-checklist compliance score, and canon hash verification as the local equivalent checks.
-Compare local result to expected CI result for each check.
+Run every check in `merge_gate_interface.required_checks` locally.
+For governance-only PRs: run YAML validation, char count, checklist compliance, canon hash verification.
 
-If ANY check fails locally → **STOP. Do not issue verdict.**
+If ANY check fails → **STOP. Do not issue verdict.**
 
 Output:
 
 > "MERGE GATE PARITY CHECK (§4.3):
->   [For each required check: check name — LOCAL: PASS ✅ / FAIL ❌]
-> Parity result: [PASS — all checks match CI / FAIL — [check name] failed, reason: [reason]]
-> [If FAIL: Issuing REJECTION-PACKAGE. Fix merge gate failures before re-invocation.]"
+>   [check name — LOCAL: PASS ✅ / FAIL ❌]
+> Parity result: [PASS / FAIL — reason]"
 
-If parity FAIL → issue REJECTION-PACKAGE citing merge gate failure(s). Do not advance to Step 4.2.
-If parity PASS → proceed.
+If parity FAIL → issue REJECTION-PACKAGE. If PASS → proceed.
 
 **Step 4.2 — Issue verdict:**
 
@@ -544,27 +547,26 @@ No other verdict format is permitted.
 
 **Step 4.2b — Token Update Ceremony (MANDATORY after ASSURANCE-TOKEN verdict):**
 
-Per `AGENT_HANDOVER_AUTOMATION.md` v1.1.3 §4.3b: IAA writes its token to a dedicated new file.
-The invoking agent's PREHANDOVER proof is **read-only post-commit** — IAA MUST NOT edit it.
+Per `AGENT_HANDOVER_AUTOMATION.md` §4.3b: IAA appends its token to the existing wave record.
+PREHANDOVER proof is **read-only post-commit** — IAA MUST NOT edit it.
 
 **Sequence:**
-1. After issuing ASSURANCE-TOKEN, write the token to a dedicated new file:
-   `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`
-   The file MUST include `PHASE_B_BLOCKING_TOKEN: IAA-[session-ID]-[date]-PASS` as a
-   standalone key-value line. Absent, empty, or PENDING value will fail the CI
-   `preflight/iaa-token-self-certification` guard. Per FAIL-ONLY-ONCE A-037.
-2. Do NOT edit the invoking agent's PREHANDOVER proof. It is immutable post-commit.
-3. If issuing REJECTION-PACKAGE: write the rejection artifact as a new file similarly.
-   The invoking agent initiates a fresh PREHANDOVER proof in a new commit to resolve findings.
+1. Append token under `## TOKEN` section of the existing wave record at
+   `.agent-admin/assurance/iaa-wave-record-{wave}-{date}.md`.
+   MUST include `PHASE_B_BLOCKING_TOKEN: IAA-[session-ID]-[date]-PASS` as a standalone key-value
+   line. Absent/empty/PENDING value fails CI `preflight/iaa-token-self-certification`. Per A-037.
+   Do NOT create a standalone `iaa-token-*.md` file.
+2. Do NOT edit the invoking agent's PREHANDOVER proof (immutable post-commit).
+3. REJECTION-PACKAGE: append findings under `## REJECTION_HISTORY` in the wave record.
+   Do NOT create a standalone rejection file. Each entry: date, finding summary, fix required.
 
-**Token-writing invariant (ECAP-001 / ECAP-02):**
-Token writing is IAA-only. `execution-ceremony-admin-agent` MUST NOT write an IAA token file, issue an ASSURANCE-TOKEN, or issue a REJECTION-PACKAGE. Any artifact trail suggesting ceremony-admin performed the token ceremony is grounds for REJECTION-PACKAGE (see ECAP-02, Step 3.1c).
+**Token-writing invariant (ECAP-001/ECAP-02):**
+Token writing is IAA-only. `execution-ceremony-admin-agent` MUST NOT write tokens or verdicts (ECAP-02, Step 3.1c).
 
 Output:
-> "Token file written: `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`
+> "Token appended to wave record: `.agent-admin/assurance/iaa-wave-record-{wave}-{date}.md` (## TOKEN)
 > PHASE_B_BLOCKING_TOKEN: [token reference]
-> PREHANDOVER proof: unchanged (immutable post-commit — per §4.3b).
-> Token written by: IAA only."
+> PREHANDOVER proof: unchanged (immutable). Token written by: IAA only."
 
 **Step 4.3 — Generate session memory and record learning:**
 
@@ -572,23 +574,20 @@ Write `.agent-workspace/independent-assurance-agent/memory/session-NNN-YYYYMMDD.
 
 Required fields (all mandatory): `session_id`, `date`, `pr_reviewed`, `invoking_agent`, `producing_agent`, `producing_agent_class`, `pr_category`, `checks_executed`, `checks_passed`, `checks_failed`, `merge_gate_parity_result`, `verdict`, `token_reference`, `failures_cited`, `adoption_phase_at_time_of_verdict`, `prior_sessions_reviewed`, `fail_only_once_rules_applied`, `learning_notes`.
 
-**Suggestions for Improvement (MANDATORY — never blank):** At least one concrete improvement suggestion. If none: `"No degradation observed. Note: [observation]."` Blank = HANDOVER BLOCKER.
+**Suggestions for Improvement (MANDATORY — never blank):** At least one suggestion. Blank = HANDOVER BLOCKER.
 
-**Parking Station:** Append to `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md`:
-`| YYYY-MM-DD | independent-assurance-agent | session-NNN | [phase] | <summary> | <session-file> |`
+**Parking Station:** Append to `.agent-workspace/independent-assurance-agent/parking-station/suggestions-log.md`.
 
-**Learning integration:** Review `learning_notes` across last 5 sessions. If recurring pattern found: add to `.agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md` and flag under `fail_only_once_updates`.
+**Learning integration:** Review `learning_notes` across last 5 sessions. If recurring pattern: add to FAIL-ONLY-ONCE.md.
 
 **Step 4.4 — Handover to invoking agent:**
 
-Return the verdict to the invoking agent.
-
-> "Verdict delivered. If ASSURANCE-TOKEN: invoking agent may proceed to open PR. If REJECTION-PACKAGE: invoking agent must resolve ALL cited failures and re-invoke IAA before opening PR. Merge authority: CS2 ONLY."
+Return verdict. ASSURANCE-TOKEN: invoking agent may open PR. REJECTION-PACKAGE: invoking agent must resolve ALL failures and re-invoke IAA. Merge authority: CS2 ONLY.
 
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Version**: 6.2.0 | **Contract**: 2.5.0 | **Last Updated**: 2026-04-07
+**Version**: 6.2.0 | **Contract**: 2.6.0 | **Last Updated**: 2026-04-13
 **Tier 2 Knowledge**: `.agent-workspace/independent-assurance-agent/knowledge/`
 **Canonical Source**: `APGI-cmy/maturion-foreman-governance`
 **IAA Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE

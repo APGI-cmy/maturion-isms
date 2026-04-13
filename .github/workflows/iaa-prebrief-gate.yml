@@ -41,11 +41,22 @@ jobs:
           ASSURANCE_DIR=".agent-admin/assurance"
           PREBRIEF_FOUND=false
           if [ -d "$ASSURANCE_DIR" ]; then
+            # Legacy pattern: standalone iaa-prebrief-*.md
             while IFS= read -r -d '' f; do
               if ! grep -qi "SUPERSEDED" "$f" 2>/dev/null; then
                 PREBRIEF_FOUND=true; break
               fi
             done < <(find "$ASSURANCE_DIR" -name "iaa-prebrief-*.md" -print0 2>/dev/null)
+
+            # New pattern (PR #1348): iaa-wave-record-*.md with ## PRE-BRIEF section
+            if [ "$PREBRIEF_FOUND" = false ]; then
+              while IFS= read -r -d '' f; do
+                if grep -q "## PRE-BRIEF" "$f" 2>/dev/null && \
+                   ! grep -qi "SUPERSEDED" "$f" 2>/dev/null; then
+                  PREBRIEF_FOUND=true; break
+                fi
+              done < <(find "$ASSURANCE_DIR" -name "iaa-wave-record-*.md" -print0 2>/dev/null)
+            fi
           fi
           if $PREBRIEF_FOUND; then
             echo "iaa_prebrief_found=true" >> "$GITHUB_OUTPUT"
