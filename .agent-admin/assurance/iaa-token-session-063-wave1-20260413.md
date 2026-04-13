@@ -103,7 +103,7 @@ The delivered work is well-scoped, technically correct, and aligned with governa
 ## Observations (non-blocking)
 
 - AGENT_HANDOVER_AUTOMATION.md has persistent content drift (v1.3.0 both sides, different SHA256). Future layer-down sessions should attempt a clean re-sync from canonical source. This is correctly noted in the session memory and alignment evidence.
-- The `governance-repo-administrator-v2.agent.md` entry still has a SHA1 hash (40 chars) in canonical_hash_sha256 field rather than SHA256 (64 chars). This pre-dates this session and is not a finding against this PR.
+- The `governance-repo-administrator-v2.agent.md` inventory entry no longer carries the prior non-SHA256 digest in `canonical_hash_sha256`; the field is now `null`. This pre-dates this session and is not a finding against this PR.
 
 ---
 
