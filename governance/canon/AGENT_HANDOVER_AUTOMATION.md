@@ -1274,40 +1274,6 @@ The following rules are **unchanged** regardless of whether a ceremony admin is 
 
 4. **Foreman accountability** — Foreman is accountable for bundle completeness at IAA handover time regardless of who prepared the bundle.
 
-### Wave-Current-Tasks Runtime Template Fields
-
-When `execution-ceremony-admin-agent` is appointed, the producing agent's `wave-current-tasks.md` MUST include these fields (template: `.agent-workspace/foreman-v2/personal/wave-current-tasks-template.md`):
-
-| Field | Required Value |
-|-------|---------------|
-| `ceremony_admin_appointed` | YES |
-| `ceremony_admin_agent` | execution-ceremony-admin-agent |
-| `ceremony_admin_scope` | List of delegated tasks (e.g., evidence collation, PREHANDOVER assembly, session-memory assembly, §4.3c verification) |
-| `ceremony_admin_return_gate` | Foreman review required before IAA invocation |
-
-These fields are the primary audit trail for the three-role split. Missing or incomplete fields are a governance defect.
-
-### Foreman Review Before IAA Invocation (Mandatory)
-
-Before Foreman invokes IAA (Step 4.3c → IAA), Foreman MUST:
-1. Receive the returned ceremony bundle from `execution-ceremony-admin-agent`.
-2. Review bundle completeness: all artifacts listed, PREHANDOVER proof committed, session memory committed, §4.3c gate results recorded.
-3. Confirm no ceremony-admin artifacts claim to invoke IAA, issue a verdict, or approve substantive readiness.
-4. Only then invoke IAA.
-
-This review obligation cannot be delegated. If Foreman has not completed this review, IAA invocation MUST NOT proceed.
-
-### PR Artifact Trail Requirements
-
-Any PR where `execution-ceremony-admin-agent` participated MUST leave an artifact trail showing:
-- **Appointment**: wave-current-tasks.md with `ceremony_admin_appointed: YES` and scope recorded
-- **Delegated scope**: specific tasks delegated (as noted in `ceremony_admin_scope`)
-- **Bundle return**: ceremony bundle return artifact (per Phase 4 Bundle Return Pattern below) committed to the PR
-- **Foreman review**: session memory or PREHANDOVER proof records that Foreman reviewed the returned bundle
-- **IAA invocation by Foreman**: IAA token or REJECTION-PACKAGE records Foreman as the invoking agent (not ceremony-admin)
-
-A PR lacking this trail is missing mandatory handover evidence and must not be merged.
-
 ### Phase 4 Bundle Return Pattern
 
 When the `execution-ceremony-admin-agent` returns the ceremony bundle to the Foreman:
