@@ -1,36 +1,38 @@
-# Wave Current Tasks — Issue #1313
+# Wave Current Tasks — Issue 1271
 
-wave: cl-10-routing-governance-ci-enforcement
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-ci-enforcement-again.md
+wave: ps-i-governance-liaison-cleanup-20260410
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-ps-i-governance-liaison-cleanup-20260410.md
 
-## Active Wave: CL-10 — Routing Governance CI Enforcement (Re-execution)
+## Active Wave: PS-I (Governance Liaison Session Memory Template Cleanup)
 
 ### Wave Description
-Foreman executes Wave CL-10 per concurrent-prebuild-and-legacy-plan.md §1.4 (Track 1).
-Re-execution wave: CL-10-D1 (routing-governance-check.yml) and CL-10-D3
-(stub-detection-check.yml) are already in the base branch. CL-10-D2 (sub-module routing
-compliance CI check) was the outstanding deliverable — now DELIVERED.
+CodexAdvisor-agent implements 4 cleanup changes to the governance-liaison-isms session memory template
+and agent contract per issue #1271. Changes include:
+- PS-I-01: Remove `iaa_invocation_result:` field from template
+- PS-I-02: Update `advisory_phase: PHASE_A_ADVISORY` → `PHASE_B_BLOCKING` in agent contract
+- PS-I-03: Add mandatory pre-IAA commit gate to liaison PREHANDOVER template
+- PS-I-04: Add SCOPE_DECLARATION fresh-overwrite instruction
 
-CS2 Authorization: Issue maturion-isms#1313 — Authority: Foreman (delegation per CEP v1.8.0,
-CS2 authorized wave-start already issued per maturion-isms#1221).
+CS2 Authorization: Issue maturion-isms#1271 opened and assigned by @APGI-cmy (CS2 = Johan Ras).
+Wave-start authorization confirmed.
+
+IAA Pre-Brief: `.agent-admin/assurance/iaa-prebrief-ps-i-governance-liaison-cleanup-20260410.md` (COMMITTED)
+IAA Token: `.agent-admin/assurance/iaa-token-session-056-ps-i-governance-liaison-20260410.md` (ISSUED)
 
 ### Tasks
-- [x] T1: Phase 1 Preflight complete
-- [x] T2: IAA Pre-Brief — .agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-ci-enforcement-again.md (SHA 7794c4d)
-- [x] T3: Phase 2 Alignment — pre-build gates confirmed
-- [x] T4: CL-10-D1 verification — routing-governance-check.yml already in base ✅
-- [x] T5: CL-10-D3 verification — stub-detection-check.yml already in base ✅
-- [x] T6: CL-10-D2 delegation to integration-builder — sub-module routing compliance CI check
-- [x] T7: integration-builder CL-10-D2 handover + QP evaluation (PASS)
-- [x] T8: PREHANDOVER proof committed (Foreman)
-- [x] T9: IAA final audit and token
-
-IAA Token: .agent-admin/assurance/iaa-token-session-cl10-reexec-20260409.md (committed 0c0690282)
-ASSURANCE-TOKEN: IAA-session-cl10-reexec-R2-20260409-PASS
+- [x] PS-I-01: Remove `iaa_invocation_result:` field from session memory template
+  (`.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md`)
+- [x] PS-I-02: Update `advisory_phase: PHASE_A_ADVISORY` → `PHASE_B_BLOCKING`
+  (`.github/agents/governance-liaison-isms-agent.md`)
+- [x] PS-I-03: Add mandatory pre-IAA commit gate to liaison PREHANDOVER template
+  (`.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md`)
+- [x] PS-I-04: Add SCOPE_DECLARATION fresh-overwrite instruction
+  (`.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md`)
+- [x] T5: QP evaluation PASS + PREHANDOVER proof committed + SCOPE_DECLARATION PASS
+- [x] T6: IAA final audit PASS
 
 ### Status
-MERGE GATE RELEASED. Awaiting CS2 (Johan Ras / @APGI-cmy) review and approval.
-Merge authority: CS2 ONLY.
+WAVE COMPLETE — IAA R2 ASSURANCE-TOKEN issued (`IAA-session-056-R2-20260410-PASS`, 51/51 checks). PR #1333 pending CS2 merge approval.
 
 ### Deliverables
 | ID | Deliverable | Agent | Status |
@@ -43,4 +45,4 @@ Merge authority: CS2 ONLY.
 - T-C-010-001 through T-C-010-012: 12/12 GREEN ✅
 
 ### Previous Wave (Closed)
-wave: optimize-iaa-invocation-workflows (Issue #1311, PR #1312 merged)
+wave: cl-7-personaloader-improvements-lkiac-l3 (Issue #1326) — CLOSED
