@@ -1,10 +1,11 @@
 # LKIAC Deprecation Register
 
-Version: v1.4.0  
-Date: 2026-04-03  
+Version: v1.5.0  
+Date: 2026-04-13  
 **Amendment v1.2.0**: v1.2.0 — 2026-03-01: CL-3.5-D5 — DEP-008 status updated to `PARALLEL-RUN` per CL-3.5 wave completion (session-082).  
 **Amendment v1.3.0**: v1.3.0 — 2026-03-20: CL-3-D1 entries — DEP-001 through DEP-007 legacy components assessed and recorded; all LKIAC-001 §6 components now registered (DCKIS-CL11, session-dckis-cl11-20260320).  
-**Amendment v1.4.0**: v1.4.0 — 2026-04-03: DEP-008 status updated to `PARALLEL-RUN — SCHEMA DELIVERED`; CP-3.5 CS2 formal sign-off recorded 2026-04-03; schema delivery at `packages/ai-centre/supabase/migrations/007_ai_data_sources.sql` confirmed (session-cep-v1.8.0-programme-clearance-20260403).
+**Amendment v1.4.0**: v1.4.0 — 2026-04-03: DEP-008 status updated to `PARALLEL-RUN — SCHEMA DELIVERED`; CP-3.5 CS2 formal sign-off recorded 2026-04-03; schema delivery at `packages/ai-centre/supabase/migrations/007_ai_data_sources.sql` confirmed (session-cep-v1.8.0-programme-clearance-20260403).  
+**Amendment v1.5.0**: v1.5.0 — 2026-04-13: LKIAC carry-over closure — DEP-005, DEP-006, DEP-007 status updated `ACTIVE` → `PARALLEL-RUN` per CL-13 extended scope completion (session-083, 2026-03-01; 15 CL-13 tests GREEN). AIMC equivalents delivered: QAOverviewPanel.tsx (D5), UnifiedQASignalView.tsx + qaSignalService.ts (D6), HealthTestResultsView.tsx (D7). Issue #1341.
 
 ## 1. Purpose
 
@@ -84,10 +85,10 @@ This register records the assessment, status, and planned disposition of all leg
 | **Component** | `DataQADashboard.tsx` — legacy data quality assurance dashboard |
 | **Location** | `apps/maturion-maturity-legacy/` |
 | **LKIAC Reference** | LKIAC-SC-5 (CL-3-D2 gap) |
-| **Status** | `ACTIVE` |
-| **AIMC Equivalent** | None delivered — gap registered per CL-3-D2 |
-| **Notes** | No confirmed AIMC equivalent exists for this component. Gap formally registered. AIMC equivalent delivery is in scope for CL-13 (QA Modules, extended scope per Amendment v1.3.0). Decommission requires AIMC equivalent to be live and verified. |
-| **Gap Registered** | CL-13-D5 (QA Dashboard AIMC equivalent — CL-3-D2 gap resolution, Amendment v1.3.0) |
+| **Status** | `PARALLEL-RUN` |
+| **AIMC Equivalent** | `modules/amc/src/components/QAOverviewPanel.tsx` — CL-13 D5 COMPLETE (session-083, 2026-03-01; 15 CL-13 tests GREEN) |
+| **Notes** | CL-13 D5 delivered: QA Overview Panel in AMC module. Live QA signal status panel showing framework status (ACTIVE/INACTIVE), active rules count, running/completed tests, compliance rate. Verified against legacy QADashboard.tsx functionality checklist. Decommission pending CS2 CP-3 sign-off. |
+| **Gap Registered** | N/A — AIMC equivalent delivered (CL-13-D5) |
 
 ---
 
@@ -98,10 +99,10 @@ This register records the assessment, status, and planned disposition of all leg
 | **Component** | `UnifiedQADashboard.tsx` — legacy unified quality assurance dashboard |
 | **Location** | `apps/maturion-maturity-legacy/` |
 | **LKIAC Reference** | LKIAC-SC-6 (CL-3-D2 gap) |
-| **Status** | `ACTIVE` |
-| **AIMC Equivalent** | None delivered — gap registered per CL-3-D2 |
-| **Notes** | No confirmed AIMC equivalent exists for this component. Gap formally registered. AIMC equivalent delivery is in scope for CL-13 (QA Modules, extended scope per Amendment v1.3.0). Decommission requires AIMC equivalent to be live and verified. |
-| **Gap Registered** | CL-13-D6 (Unified QA Dashboard AIMC equivalent — CL-3-D2 gap resolution, Amendment v1.3.0) |
+| **Status** | `PARALLEL-RUN` |
+| **AIMC Equivalent** | `modules/amc/src/components/UnifiedQASignalView.tsx` + `modules/amc/src/services/qaSignalService.ts` — CL-13 D6 COMPLETE (session-083, 2026-03-01) |
+| **Notes** | CL-13 D6 delivered: Unified QA Signal Aggregation View + qaSignalService.ts service layer. Aggregates from watchdog_alerts and qa_metrics signal sources. Shows system health score (0-100%), total/passed/failed test counts. Decommission pending CS2 CP-3 sign-off. |
+| **Gap Registered** | N/A — AIMC equivalent delivered (CL-13-D6) |
 
 ---
 
@@ -112,10 +113,10 @@ This register records the assessment, status, and planned disposition of all leg
 | **Component** | `QATestDashboard.tsx` — legacy quality assurance test dashboard |
 | **Location** | `apps/maturion-maturity-legacy/` |
 | **LKIAC Reference** | LKIAC-SC-7 (CL-3-D2 gap) |
-| **Status** | `ACTIVE` |
-| **AIMC Equivalent** | None delivered — gap registered per CL-3-D2 |
-| **Notes** | No confirmed AIMC equivalent exists for this component. Gap formally registered. AIMC equivalent delivery is in scope for CL-13 (QA Modules, extended scope per Amendment v1.3.0). Decommission requires AIMC equivalent to be live and verified. |
-| **Gap Registered** | CL-13-D7 (QA Test Dashboard AIMC equivalent — CL-3-D2 gap resolution, Amendment v1.3.0) |
+| **Status** | `PARALLEL-RUN` |
+| **AIMC Equivalent** | `modules/amc/src/components/HealthTestResultsView.tsx` — CL-13 D7 COMPLETE (session-083, 2026-03-01) |
+| **Notes** | CL-13 D7 delivered: Health Module Test Results Sub-view. Shows test execution history, test results (name, status, message, timestamp), QA checklist categories (Database & Schema, API Functionality, Security & Permissions, Data Integrity). Supports filtering by test status (passed/failed/warning). Decommission pending CS2 CP-3 sign-off. |
+| **Gap Registered** | N/A — AIMC equivalent delivered (CL-13-D7) |
 
 ---
 
@@ -141,9 +142,9 @@ This register records the assessment, status, and planned disposition of all leg
 | DEP-002 | Legacy Knowledge Base | LKIAC-SC-2 | `ACTIVE` | `ai_knowledge` table (migration pending) | CL-6 ⏳ |
 | DEP-003 | Legacy Supabase | LKIAC-SC-3 | `ACTIVE` | `packages/ai-centre/supabase/` (partial migration) | CL-6+CL-12 ⏳ |
 | DEP-004 | Domain Specialists (no routing) | LKIAC-SC-4 | `ACTIVE` | AIMC specialists + source routing | CL-8 ⏳ |
-| DEP-005 | DataQADashboard.tsx | LKIAC-SC-5 | `ACTIVE` | None — gap registered CL-3-D2 | CL-13 ⏳ |
-| DEP-006 | UnifiedQADashboard.tsx | LKIAC-SC-6 | `ACTIVE` | None — gap registered CL-3-D2 | CL-13 ⏳ |
-| DEP-007 | QATestDashboard.tsx | LKIAC-SC-7 | `ACTIVE` | None — gap registered CL-3-D2 | CL-13 ⏳ |
+| DEP-005 | DataQADashboard.tsx | LKIAC-SC-5 | `PARALLEL-RUN` | `modules/amc/src/components/QAOverviewPanel.tsx` (CL-13-D5) | CL-13 ✅ |
+| DEP-006 | UnifiedQADashboard.tsx | LKIAC-SC-6 | `PARALLEL-RUN` | `UnifiedQASignalView.tsx` + `qaSignalService.ts` (CL-13-D6) | CL-13 ✅ |
+| DEP-007 | QATestDashboard.tsx | LKIAC-SC-7 | `PARALLEL-RUN` | `modules/amc/src/components/HealthTestResultsView.tsx` (CL-13-D7) | CL-13 ✅ |
 | DEP-008 | DataSourcesManagement.tsx | LKIAC-SC-8 | `PARALLEL-RUN` | AIMCDataSourcesPanel.tsx + ai_data_sources | CL-3.5 ✅ |
 
 **Register completeness**: All 8 LKIAC-001 §6 components assessed. CL-3-D1 exit criterion MET. CP-3 CS2 sign-off required for decommission gate.
@@ -156,8 +157,9 @@ This register records the assessment, status, and planned disposition of all leg
 | 2026-03-20 | DEP-001 through DEP-007 added — CL-3-D1 full register completion (DCKIS-CL11, session-dckis-cl11-20260320). All 8 LKIAC-001 §6 components now assessed. Version bumped v1.2.0 → v1.3.0. | governance-liaison-isms-agent (session-dckis-cl11-20260320) | CL-3-D1 exit criterion met. CP-3 CS2 sign-off required before any decommission gate proceeds. |
 
 | 2026-04-03 | DEP-008 status updated PARALLEL-RUN → PARALLEL-RUN — SCHEMA DELIVERED; CP-3.5 CS2 formal sign-off recorded; schema delivery confirmed at `packages/ai-centre/supabase/migrations/007_ai_data_sources.sql` | foreman-v2-agent (session-cep-v1.8.0-programme-clearance-20260403) | CP-3.5 CS2 signed off 2026-04-03. Amendment v1.8.0 CEP programme clearance. |
+| 2026-04-13 | DEP-005, DEP-006, DEP-007 status updated ACTIVE → PARALLEL-RUN per CL-13 extended scope completion (session-083, 2026-03-01; 15 CL-13 tests GREEN). AIMC equivalents: QAOverviewPanel.tsx (D5), UnifiedQASignalView.tsx + qaSignalService.ts (D6), HealthTestResultsView.tsx (D7). All 42 LKIAC carry-over tests verified GREEN (27 CL-3.5 + 15 CL-13) 2026-04-13. Version bumped v1.4.0 → v1.5.0. | foreman-v2-agent (session-164-lkiac-carryover-closure-20260413) | LKIAC carry-over closure. Issue #1341. CL-13 D5/D6/D7 delivery confirmed. Decommission pending CS2 CP-3 sign-off for all PARALLEL-RUN components. |
 
 ---
 
 Footer:  
-Version: v1.4.0
+Version: v1.5.0

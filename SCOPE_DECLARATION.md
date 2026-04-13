@@ -1,37 +1,32 @@
-# SCOPE_DECLARATION — Session 056 (CodexAdvisor-agent) — Wave foreman-ecap-step41a
+# SCOPE_DECLARATION — Session 164 (foreman-v2-agent) — Wave LKIAC Carry-over Closure
 
-**Session**: session-056-foreman-ecap-20260410
-**Wave**: foreman-ecap-step41a
-**Issue**: maturion-isms — [Governance] Mandate execution-ceremony-admin-agent appointment in Foreman contract Phase 4
-**Branch**: copilot/fix-execution-ceremony-admin-agent
-**Date**: 2026-04-10
-**Authority**: A-026 / A-031
+**Session**: session-164-lkiac-carryover-closure-20260413
+**Wave**: LKIAC Carry-over Closure (CL-3.5 + CL-13 dependency closure for MMM readiness)
+**Issue**: maturion-isms#1341
+**Branch**: copilot/complete-lkiac-carry-over-implementation-dependenc
+**Date**: 2026-04-13
+**Authority**: CS2 (@APGI-cmy) via issue #1341
 
 ---
 
 ## Files Changed in This Wave
 
-- `SCOPE_DECLARATION.md` - Root scope declaration for session-056 (this file)
-- `.agent-admin/assurance/iaa-rejection-session-056-foreman-ecap-20260410.md` - IAA REJECTION-PACKAGE from first invocation (IAA-authored, A-031 exempt)
-- `.agent-admin/assurance/iaa-prebrief-foreman-ecap-step41a-20260410.md` - IAA Pre-Brief for wave foreman-ecap-step41a
-- `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-056-foreman-ecap-20260410.md` - CodexAdvisor PREHANDOVER proof (amended per IAA rejection)
-- `.agent-workspace/CodexAdvisor-agent/memory/session-056-20260410.md` - CodexAdvisor session memory for session-056
-- `.agent-workspace/CodexAdvisor-agent/parking-station/suggestions-log.md` - CodexAdvisor parking station entry
-- `.agent-workspace/CodexAdvisor-agent/personal/SCOPE_DECLARATION.md` - CodexAdvisor personal scope declaration for session-056
-- `.agent-workspace/foreman-v2/knowledge/specialist-registry.md` - Specialist registry header version/date update
-- `.github/agents/foreman-v2-agent.md` — Foreman contract: add Step 4.1a, update Steps 4.2/4.3, bump contract_version 2.10.0→2.11.0, fix footer; fix Steps 4.2/4.3 review paths to reference ceremony-admin-owned path with handback semantics
-- `.github/agents/execution-ceremony-admin-agent.md` — execution-ceremony-admin-agent contract: add explicit bundle output paths in Steps 3.3/3.4 (`.agent-workspace/execution-ceremony-admin-agent/bundles/`)
-- `.agent-admin/assurance/iaa-token-session-056-foreman-ecap-20260410.md` - IAA ASSURANCE-TOKEN for session-056 wave foreman-ecap-step41a (IAA-authored, A-031)
+- `SCOPE_DECLARATION.md` - Root scope declaration for session-164 (this file)
+- `governance/aimc/LKIAC_DEPRECATION_REGISTER.md` - DEP-005/006/007 → PARALLEL-RUN (v1.4.0 → v1.5.0)
+- `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md` - CL-13 extended scope COMPLETE (v1.8.0 → v2.0.0)
+- `modules/MMM/_readiness/lkiac-carryover-closure-note.md` - New: LKIAC carry-over closure note for MMM readiness
+- `.agent-workspace/foreman-v2/memory/session-164-lkiac-carryover-closure-20260413.md` - Foreman session memory
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-164-lkiac-carryover-closure-20260413.md` - Foreman PREHANDOVER proof
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Foreman parking station entry
 
-**Total declared files**: 11
+**Total declared files**: 7
 
 ## Implementation Status
 
-All ECAP-001 §5.2 governance changes delivered:
-- Step 4.1a added to Foreman Phase 4 (mandate execution-ceremony-admin-agent ceremony bundle preparation)
-- Steps 4.2/4.3 headings updated from Generate/Write to Review (reflect delegation model)
-- contract_version bumped 2.10.0 → 2.11.0
-- Footer version consistency fixed (2.10.0 → 2.11.0, date updated)
-- specialist-registry.md header synchronized (Knowledge Version 1.0.0 → 1.2.0)
-- PREHANDOVER proof amended with Ripple Assessment and IAA Audit Token sections
-- IAA pre-brief created for this wave
+LKIAC carry-over governance closure complete:
+- DEP-005/006/007 updated ACTIVE → PARALLEL-RUN with correct AIMC equivalent references
+- Deprecation register version bumped v1.4.0 → v1.5.0 with amendment header and audit trail
+- Execution plan updated to v2.0.0 with CL-13 extended scope COMPLETE status
+- Closure note created at modules/MMM/_readiness/lkiac-carryover-closure-note.md
+- All 42 LKIAC carry-over tests verified GREEN (27 CL-3.5 + 15 CL-13)
+- No production code changes. Governance artifact updates only.

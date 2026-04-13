@@ -2,7 +2,7 @@
 
 **Document Type**: Foreman POLC Planning Output — Combined Execution Roadmap  
 **Status**: DRAFT — Awaiting CS2 Review and Wave-Start Authorisation  
-**Version**: 1.8.0  
+**Version**: 2.0.0  
 **Date**: 2026-03-01  
 **Produced By**: foreman-v2-agent v6.2.0 (session 075, Wave COMBINED-PLAN)  
 **Amendment v1.2.0**: v1.2.0 — 2026-03-01: CL-3-D2 gap resolution — added CL-3.5, extended CL-13 QA module scope (session-079).  
@@ -13,6 +13,7 @@
 **Amendment v1.7.0**: v1.7.0 — 2026-03-20: DCKIS programme close-out — Wave CL-11 Knowledge Upload Centre deliverables recorded; CL-11 status updated per DCKIS-IMPL-002 merge (PR #1182, SHA 27f1990); CL-3 deprecation register entries prepared; workstream status table updated.  
 **Amendment v1.8.0**: v1.8.0 — 2026-04-03: Programme clearance — CP-1, CP-2, CP-3, CP-4 all signed off by CS2 (2026-04-03); CL-2 COMPLETE, CL-3 COMPLETE, CL-4 COMPLETE; CL-12c re-scoped from Maturity Roadmap to MMM (Maturion Maturity Module) integration with AIMC; §14 workstream table updated; CP-2 closure artifact at `.agent-admin/checkpoints/cp-2-closure-20260403.md` (session-cep-v1.8.0-programme-clearance-20260403).  
 **Amendment v1.9.0**: v1.9.0 — 2026-04-05: CS2 Directive #1221 execution — (1) MMM builds with AI stubs recorded: wiring deferred to CL-12c wave; (4) MAT Wave 13 declared terminal harvest — MAT closes post-migration; (6) Roadmap decommission declared — no CL-12d, survives as migration anchor only; Wave status matrix updated per directive. Verdict artifact: `.agent-admin/governance/mat-wave13-terminal-verdict-20260405.md`; Decommission plan: `.agent-admin/governance/roadmap-decommission-plan-20260405.md` (session-mmm-mat-harvest-20260405).  
+**Amendment v2.0.0**: v2.0.0 — 2026-04-13: LKIAC carry-over closure — CL-13 extended scope (D5/D6/D7) confirmed COMPLETE (session-083, 2026-03-01; 15 CL-13 tests GREEN). AIMC equivalents delivered: QAOverviewPanel.tsx (D5), UnifiedQASignalView.tsx + qaSignalService.ts (D6), HealthTestResultsView.tsx (D7). DEP-005/006/007 updated to PARALLEL-RUN in deprecation register v1.5.0. All 42 LKIAC carry-over tests verified GREEN (27 CL-3.5 + 15 CL-13) 2026-04-13. Issue #1341.  
 **Triggering Issue**: [maturion-isms#704](https://github.com/APGI-cmy/maturion-isms/issues/704)  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
 **Location**: `governance/EXECUTION/AIMC_LKIAC_COMBINED_EXECUTION_PLAN.md`
@@ -1047,7 +1048,7 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 
 ---
 
-## 14. Current Workstream Status (as of 2026-04-05)
+## 14. Current Workstream Status (as of 2026-04-13)
 
 | Artefact | Current State | Next Step(s) | Responsible Agent | Blockers |
 |---|---|---|---|---|
@@ -1059,6 +1060,7 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 | CL-4: AIMC Audit Phase A | ✅ COMPLETE (2026-04-03) | CP-4 CLOSED — CS2 signed off 2026-04-03 | qa-builder / integration-builder / schema-builder | None |
 | CL-5: Knowledge Upload Centre Spec | ✅ COMPLETE — 2026-03-19 | CL-5-D1 (spec) previously delivered; CL-5-D2 (arch review) delivered Wave DCKIS-CL5D2 — artefact at `.agent-workspace/audit/AIMC-P1-upload-arch-review-20260319.md`, PASS verdict | api-builder (CL-5-D2) | None — both deliverables complete |
 | CL-6 through CL-10, CL-12 through CL-15 | ⏳ PENDING | CL-6 wave-start AUTHORISED (entry gates CL-2 ✅ + CL-4 ✅ met) — per CP-2 closure 2026-04-03; CS2 to post wave-start issue from CL-6 template | Per §4 wave definitions | None — CL-2, CL-4, CL-5 all COMPLETE |
+| CL-13 Extended Scope (D5/D6/D7) | ✅ COMPLETE (2026-03-01) | CL-13-D5 (QAOverviewPanel.tsx), CL-13-D6 (UnifiedQASignalView.tsx + qaSignalService.ts), CL-13-D7 (HealthTestResultsView.tsx) all delivered session-083. DEP-005/006/007 → PARALLEL-RUN (deprecation register v1.5.0). 15/15 CL-13 tests GREEN. | ui-builder, api-builder | None — all 3 deliverables complete |
 | CL-11: Knowledge Upload Centre + ARC Operationalisation | ⏳ IN PROGRESS — 2026-03-20 | DCKIS-IMPL-002 (PR #1182, SHA 27f1990) merged to main 2026-03-20: process-document-v2 Edge Function, MAT UI components (KnowledgeUploadPanel, DocumentChunkTester, KnowledgeDocumentsList, useKnowledgeDocuments), 12/12 T-KU-xxx GREEN; CL-11-D1 (DCKIS-QA-RED), CL-11-D2 (DCKIS-IMPL-002), CL-11-D5 (DCKIS-SCH-001), CL-11-D6 (DCKIS-GOV-001) COMPLETE; CL-11-D3 (GAP-008 ARC approval audit) and CL-11-D4 (GAP-009 episodic write path) outstanding; awaiting CP-11 CS2 approval | qa-builder (CL-11-D3, CL-11-D4 remaining) | CP-11 CS2 approval required before CL-12 module integration begins |
 | MAT Module | ⚠️ TERMINAL HARVEST — Wave 13 in progress (CS2 Directive #1221, 2026-04-05) | All useful MAT artifacts/tests must be migrated into MMM via CL-12c; MAT closes post-migration. Verdict: `.agent-admin/governance/mat-wave13-terminal-verdict-20260405.md` | foreman-v2-agent (oversight), integration-builder (migration via CL-12c) | CL-12c wave-start required (CP-12c gate) |
 | Roadmap Module | ⚠️ DECOMMISSION PENDING — migration anchor only (CS2 Directive #1221, 2026-04-05) | No CL-12d; no new AIMC wiring. Survives as migration anchor until MMM parity confirmed. Plan: `.agent-admin/governance/roadmap-decommission-plan-20260405.md` | foreman-v2-agent (oversight) | MMM parity confirmation required before formal decommission |
@@ -1071,6 +1073,7 @@ CL-3 + CL-13 + CL-14 complete (+ Foreman parity):
 *Updated by governance-liaison-isms-agent, session-dckis-cl11-20260320 (Amendment v1.7.0): CL-11 DCKIS deliverables recorded IN PROGRESS; CL-3 deprecation entries prepared; §14 table updated to 2026-03-20.*  
 *Updated by foreman-v2-agent v6.2.0, session-cep-v1.8.0-programme-clearance-20260403 (Amendment v1.8.0): CP-1/CP-2/CP-3/CP-4 CLOSED (CS2 2026-04-03); CL-2/CL-3/CL-4 COMPLETE; CL-12c re-scoped to MMM integration; §14 table updated to 2026-04-03; CP-2 closure artifact committed.*  
 *Updated by governance-liaison-isms-agent, session-mmm-mat-harvest-20260405 (Amendment v1.9.0): CS2 Directive #1221 recorded — MMM AI stubs status noted in CL-12c; MAT Wave 13 terminal harvest declared; Roadmap decommission declared (no CL-12d); verdict and decommission artifacts committed.*
+*Updated by foreman-v2-agent v6.2.0, session-164-lkiac-carryover-closure-20260413 (Amendment v2.0.0): CL-13 extended scope D5/D6/D7 COMPLETE; DEP-005/006/007 → PARALLEL-RUN; §14 table updated to 2026-04-13; issue #1341.*
 *This document is a POLC Planning Output. It does NOT constitute a wave closure or merge gate release.*  
 *Wave execution may NOT begin for any wave until CS2 has reviewed this plan and issued formal wave-start authorisation for the specific wave(s).*  
 *Authority: LIVING_AGENT_SYSTEM.md v6.2.0 | LKIAC-001 v1.0.0 | 2026-03-19*
