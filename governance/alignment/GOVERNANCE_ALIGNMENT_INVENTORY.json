@@ -3,17 +3,17 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory — tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
-  "last_updated": "2026-04-09",
-  "last_ripple_commit": "5c2f5b393592028d107636090ecb791623ccb27f",
-  "last_ripple_timestamp": "2026-04-09T08:17:43Z",
+  "last_updated": "2026-04-12",
+  "last_ripple_commit": "529d541f2fb85ccea544f16dcf25aefcbb840c69",
+  "last_ripple_timestamp": "2026-04-09T09:10:38Z",
   "alignment_summary": {
     "total_artifacts": 27,
-    "aligned": 21,
-    "drifted": 1,
+    "aligned": 22,
+    "drifted": 0,
     "missing": 0,
     "escalated": 4,
-    "not_tracked": 1,
-    "overall_status": "PARTIAL — AGENT CONTRACT FILES ESCALATED TO CS2"
+    "overall_status": "PARTIAL — AGENT CONTRACT FILES ESCALATED TO CS2",
+    "not_tracked": 1
   },
   "artifacts": [
     {
@@ -22,338 +22,22 @@
       "canonical_version": "1.3.0",
       "local_version": "1.3.0",
       "canonical_hash_sha256": "52c6028add0244a47379d736b80ceafdca93e09f3f8e6688462f3a99cbca76f8",
-      "local_hash_sha256": "5b03ff107fc57e33ae18ab4402eaedc0182cfa63f38d3d7cc4fb90bc64a265d4",
-      "alignment_status": "HASH_MISMATCH",
+      "local_hash_sha256": "52c6028add0244a47379d736b80ceafdca93e09f3f8e6688462f3a99cbca76f8",
+      "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-04-09T11:10:00Z",
-      "change_note": "PR #1314 (layer-down 5c2f5b39, 2026-04-09): CI automation fixed pre-existing drift by syncing file from canonical source. After subsequent layer-downs, file advanced to v1.3.0 on both canonical and local. HASH_MISMATCH: canonical CANON_INVENTORY records v1.3.0 hash as 52c6028a..., but local file SHA256 is 5b03ff10... — versions agree (1.3.0) but file content differs. Next step: re-sync local file from canonical source in the next layer-down cycle to resolve content drift."
+      "last_verified": "2026-04-10T12:00:00Z",
+      "change_note": "v1.3.0: Re-synced from canonical source (commit 529d541f) to resolve HASH_MISMATCH introduced by PR #1320 which added non-canonical content. Local file now matches canonical hash 52c6028a... Resolves GOV-ALIGN issue (PR #1317 layer-down fix)."
     },
-    "artifacts": [
-        {
-            "filename": "AGENT_HANDOVER_AUTOMATION.md",
-            "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
-            "canonical_version": "1.2.0",
-            "local_version": "1.2.0",
-            "canonical_hash_sha256": "89b887ced3efb1c508edcf1875aef05f4cc9a75bab3c040c32327bdd1bca3f23",
-            "local_hash_sha256": "89b887ced3efb1c508edcf1875aef05f4cc9a75bab3c040c32327bdd1bca3f23",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "PUBLIC_API",
-            "last_verified": "2026-04-08T13:22:00Z",
-            "change_note": "v1.2.0: Added §4.3c Pre-IAA Commit-State Gate. Layered down via CI ripple PR #1296 (canonical commit 63cdfb06). Note: CANON_INVENTORY.json shows v1.1.6 hash (3b7f72b2...) — inventory appears stale for this file; actual canonical source file is v1.2.0 (hash 89b887ce...) matching local."
-        },
-        {
-            "filename": "ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
-            "path": "governance/canon/ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
-            "canonical_version": "1.0.0",
-            "local_version": "1.0.0",
-            "canonical_hash_sha256": "1c72a45294640ce51966be64fb2bcf37a47c1366a9488f53a0321ecccca3d9f7",
-            "local_hash_sha256": "1c72a45294640ce51966be64fb2bcf37a47c1366a9488f53a0321ecccca3d9f7",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "OPTIONAL",
-            "last_verified": "2026-03-02T11:23:28Z"
-        },
-        {
-            "filename": "AUTOMATED_QUALITY_TOOLING_CANON.md",
-            "path": "governance/canon/AUTOMATED_QUALITY_TOOLING_CANON.md",
-            "canonical_version": "1.0.0",
-            "local_version": "1.0.0",
-            "canonical_hash_sha256": "c1f052a7dffaf1cf182c9d4aa6cc434ebd5e7a2a7cd1aa243fb6ed132f5fe9a5",
-            "local_hash_sha256": "c1f052a7dffaf1cf182c9d4aa6cc434ebd5e7a2a7cd1aa243fb6ed132f5fe9a5",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "PUBLIC_API",
-            "last_verified": "2026-03-02T11:23:28Z"
-        },
-        {
-            "filename": "BUILD_INTERVENTION_AND_ALERT_MODEL.md",
-            "path": "governance/canon/BUILD_INTERVENTION_AND_ALERT_MODEL.md",
-            "canonical_version": "1.0",
-            "local_version": "1.0",
-            "canonical_hash_sha256": "b74ffd7421f314df6efb882c383b0a24de872eb8a005dd2596632471160491db",
-            "local_hash_sha256": "b74ffd7421f314df6efb882c383b0a24de872eb8a005dd2596632471160491db",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "PUBLIC_API",
-            "last_verified": "2026-03-02T11:23:28Z"
-        },
-        {
-            "filename": "GOVERNANCE_RIPPLE_MODEL.md",
-            "path": "governance/canon/GOVERNANCE_RIPPLE_MODEL.md",
-            "canonical_version": "1.1.0",
-            "local_version": "1.1.0",
-            "canonical_hash_sha256": "00cc56b025a30956d26420ba86328abb2ad2e6894399c7c661721e6c2e42f387",
-            "local_hash_sha256": "00cc56b025a30956d26420ba86328abb2ad2e6894399c7c661721e6c2e42f387",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "PUBLIC_API",
-            "last_verified": "2026-03-02T11:23:28Z"
-        },
-        {
-            "filename": "WATCHDOG_AUTHORITY_AND_SCOPE.md",
-            "path": "governance/canon/WATCHDOG_AUTHORITY_AND_SCOPE.md",
-            "canonical_version": "1.0.0",
-            "local_version": "1.0.0",
-            "canonical_hash_sha256": "36b66652da76236ab1bcc891cd32666ce95879f8bf224c64289d8732881d0063",
-            "local_hash_sha256": "36b66652da76236ab1bcc891cd32666ce95879f8bf224c64289d8732881d0063",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "OPTIONAL",
-            "last_verified": "2026-03-02T11:23:28Z"
-        },
-        {
-            "filename": "POLICY-NO-ONLY-LANGUAGE.md",
-            "path": "governance/policy/POLICY-NO-ONLY-LANGUAGE.md",
-            "canonical_version": "v1.0",
-            "local_version": "v1.0",
-            "canonical_hash_sha256": "88369fb8b764f063f5d67f0ae1c4caed5587b65412ca11ef083ad6b4ab31b253",
-            "local_hash_sha256": "88369fb8b764f063f5d67f0ae1c4caed5587b65412ca11ef083ad6b4ab31b253",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "PUBLIC_API",
-            "last_verified": "2026-03-02T11:23:28Z"
-        },
-        {
-            "filename": "CodexAdvisor-agent.md",
-            "path": ".github/agents/CodexAdvisor-agent.md",
-            "canonical_version": "3.3.0",
-            "local_version": "3.4.0",
-            "canonical_hash_sha256": "0b38455b7c1de7ae17dfdac80f93be4c1712b3964b74205decb8dd18f81c80d4",
-            "local_hash_sha256": "fce4ee6df995faaae1660d190d9ef62da64d81a434218a4d1a024c60b15f01ea",
-            "alignment_status": "ESCALATED_TO_CS2",
-            "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
-            "last_verified": "2026-04-10T08:11:30Z",
-            "escalation_ref": "ESC-AGENTFILE-29E76ECF-20260304",
-            "prior_escalations": [
-                "ESC-AGENTFILE-E77B00C7-20260303",
-                "ESC-AGENTFILE-61AB7B83-20260304",
-                "ESC-AGENTFILE-4981C34F-20260304",
-                "ESC-AGENTFILE-4E2E193C-20260304"
-            ],
-            "note": "Local v3.4.0 is NEWER than canonical v3.3.0 — layer-up situation. Canonical ripple 3166bec3 (trigger: Update print statement from -Hello- to -Goodbye-) also changed this file. Canonical ripple f68b7d99 (trigger: Refine CodexAdvisor-agent contract details) also changed this file. Per A-015: escalated directly to CS2. CI ripple-integration.yml confirmed NO_DRIFT_DETECTED for ripple/governance-canon drift detection only; it did not assert agent contract version or hash parity with the canonical artifact. This inventory entry therefore remains ESCALATED_TO_CS2 with canonical/local version and hash mismatch recorded above. local_hash_sha256 updated to reflect current local file state."
-        },
-        {
-            "filename": "foreman-v2-agent.md",
-            "path": ".github/agents/foreman-v2-agent.md",
-            "canonical_version": "2.3.0",
-            "local_version": "local",
-            "canonical_hash_sha256": "d17ea8c41f5f588528d076a37e292849b80f332c7fa432bfa58dba9ed3b8125b",
-            "local_hash_sha256": "d17ea8c41f5f588528d076a37e292849b80f332c7fa432bfa58dba9ed3b8125b",
-            "alignment_status": "ESCALATED_TO_CS2",
-            "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
-            "last_verified": "2026-03-03T13:03:45Z",
-            "escalation_ref": "ESC-AGENTFILE-6523FE8D-20260304",
-            "note": "Agent contract changed in ripple 6523fe8d (2026-03-04). Escalated to CS2. Also see prior escalation ESC-AGENTFILE-E77B00C7-20260303 from ripple e77b00c7. CS2 to apply via CodexAdvisor-agent + IAA. canonical_hash_sha256 corrected from erroneous 40-char SHA1 to local file SHA256 (canonical source unavailable for comparison; ESCALATED_TO_CS2 status unchanged)."
-        },
-        {
-            "filename": "governance-repo-administrator-v2.agent.md",
-            "path": ".github/agents/governance-repo-administrator-v2.agent.md",
-            "canonical_version": "2.0.0",
-            "local_version": null,
-            "canonical_hash_sha256": "7e6e98c3f1356758167a5a2325c233f6d6838ec4",
-            "local_hash_sha256": null,
-            "alignment_status": "ESCALATED_TO_CS2",
-            "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
-            "last_verified": "2026-03-03T13:03:45Z",
-            "escalation_ref": "ESC-AGENTFILE-E77B00C7-20260303",
-            "note": "Not present locally. CS2 to decide whether this agent should be introduced to maturion-isms."
-        },
-        {
-            "filename": "independent-assurance-agent.md",
-            "path": ".github/agents/independent-assurance-agent.md",
-            "canonical_version": "2.0.0",
-            "local_version": "2.0.0",
-            "canonical_hash_sha256": "104af34806c18a06b5521bd03e75bdbdeeba262a",
-            "local_hash_sha256": "4bbf5f60d276d79c62428284fee9e5010a509799c53fdd6ab1a64583b98035e0",
-            "alignment_status": "ESCALATED_TO_CS2",
-            "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
-            "last_verified": "2026-03-03T13:03:45Z",
-            "escalation_ref": "ESC-AGENTFILE-6523FE8D-20260304",
-            "note": "Agent contract changed in ripple 6523fe8d (2026-03-04) — likely reflects IAA Pre-Brief Protocol integration. Escalated to CS2. Also see prior escalation ESC-AGENTFILE-E77B00C7-20260303. CS2 to apply via CodexAdvisor-agent + IAA."
-        },
-        {
-            "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-            "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-            "canonical_version": "1.4.0",
-            "local_version": "1.4.0",
-            "canonical_hash_sha256": "6c2b4e2b22d8601db26145c0f091b6afe022005305810885a16544ae9743ddd7",
-            "local_hash_sha256": "6c2b4e2b22d8601db26145c0f091b6afe022005305810885a16544ae9743ddd7",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "INTERNAL",
-            "last_verified": "2026-04-08T13:22:00Z",
-            "change_note": "v1.4.0: Updated in canonical commit 63cdfb06. INTERNAL — no consumer distribution required. Hash updated from bc833907... to 6c2b4e2b... via CI ripple PR #1296."
-        },
-        {
-            "filename": "IAA_PRE_BRIEF_PROTOCOL.md",
-            "path": "governance/canon/IAA_PRE_BRIEF_PROTOCOL.md",
-            "canonical_version": "1.2.1",
-            "local_version": "1.2.1",
-            "canonical_hash_sha256": "15d220e5bf6167cf8fec640af62db8ec1e67753f00f079028efa48e1ff531a59",
-            "local_hash_sha256": "15d220e5bf6167cf8fec640af62db8ec1e67753f00f079028efa48e1ff531a59",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "PUBLIC_API",
-            "last_verified": "2026-04-08T13:22:00Z",
-            "change_note": "v1.2.1: Updated in canonical commit 63cdfb06. Layered down via CI ripple PR #1296. Layer_down_status corrected: PUBLIC_API (was incorrectly recorded as INTERNAL in previous entry)."
-        },
-        {
-            "filename": "GOVERNANCE_CANON_MANIFEST.md",
-            "path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
-            "canonical_version": "1.0.0",
-            "local_version": "1.0.0",
-            "canonical_hash_sha256": "53c8f4d26178cdc49dd9dc9cb9ec17e26ed0c9171b2d23360b96f27c5fdb1814",
-            "local_hash_sha256": "53c8f4d26178cdc49dd9dc9cb9ec17e26ed0c9171b2d23360b96f27c5fdb1814",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "INTERNAL",
-            "last_verified": "2026-04-08T13:22:00Z",
-            "change_note": "File changed in canonical commit 63cdfb06. INTERNAL — no consumer distribution required. Hash updated from 6abe9914... to 53c8f4d2... via CI ripple PR #1296."
-        },
-        {
-            "filename": "GOVERNANCE_WATCHDOG_CANON.md",
-            "path": "governance/canon/GOVERNANCE_WATCHDOG_CANON.md",
-            "canonical_version": "1.0.2",
-            "local_version": "1.0.2",
-            "canonical_hash_sha256": "f578c6443858d588c6953d6935b977d9f735d50f3a04f36d8f6b64342f4240b0",
-            "local_hash_sha256": "f578c6443858d588c6953d6935b977d9f735d50f3a04f36d8f6b64342f4240b0",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "PUBLIC_API",
-            "last_verified": "2026-03-30T06:08:50Z"
-        },
-        {
-            "filename": "FRS_TEMPLATE.md",
-            "path": "governance/templates/FRS_TEMPLATE.md",
-            "canonical_version": "1.1",
-            "local_version": "1.1",
-            "canonical_hash_sha256": "681ab97d47db18ff6357c34cf267af315ea225947158cc2dcf70284aa29457fd",
-            "local_hash_sha256": "681ab97d47db18ff6357c34cf267af315ea225947158cc2dcf70284aa29457fd",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "TEMPLATE",
-            "last_verified": "2026-04-05T11:30:00Z"
-        },
-        {
-            "filename": "TRS_TEMPLATE.md",
-            "path": "governance/templates/TRS_TEMPLATE.md",
-            "canonical_version": "v1.0",
-            "local_version": "v1.0",
-            "canonical_hash_sha256": "f17ff3d2a9d63c804a519875340927ce32edbe9c66ef10cb56100fa77de54ce0",
-            "local_hash_sha256": "f17ff3d2a9d63c804a519875340927ce32edbe9c66ef10cb56100fa77de54ce0",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "TEMPLATE",
-            "last_verified": "2026-04-03T15:07:10Z"
-        },
-        {
-            "filename": "minimum-architecture-template.md",
-            "path": "governance/templates/minimum-architecture-template.md",
-            "canonical_version": "v1.1",
-            "local_version": "v1.1",
-            "canonical_hash_sha256": "0b4b7be650d1b784ccb0f5d62f22f41afb36ec986bf6895947f2c11d3ad11f40",
-            "local_hash_sha256": "0b4b7be650d1b784ccb0f5d62f22f41afb36ec986bf6895947f2c11d3ad11f40",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "TEMPLATE",
-            "last_verified": "2026-04-03T15:07:10Z"
-        },
-        {
-            "filename": "PRE_BUILD_REALITY_CHECK_CANON.md",
-            "path": "governance/canon/PRE_BUILD_REALITY_CHECK_CANON.md",
-            "canonical_version": "1.1.0",
-            "local_version": "1.1.0",
-            "canonical_hash_sha256": "eca3d16f5ca0ac6345115f79fbaa4306df29b815caa2eb175d3d31fece2d0bc9",
-            "local_hash_sha256": "eca3d16f5ca0ac6345115f79fbaa4306df29b815caa2eb175d3d31fece2d0bc9",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "PUBLIC_API",
-            "last_verified": "2026-04-05T11:30:00Z"
-        },
-        {
-            "filename": "APP_DESCRIPTION_REQUIREMENT_POLICY.md",
-            "path": "governance/policy/APP_DESCRIPTION_REQUIREMENT_POLICY.md",
-            "canonical_version": "2.0",
-            "local_version": "2.0",
-            "canonical_hash_sha256": "67aa6fa019f963c87fc6ccf1afbb0be8a733f3b6f4b46f0fd398e0844e1ebcd5",
-            "local_hash_sha256": "67aa6fa019f963c87fc6ccf1afbb0be8a733f3b6f4b46f0fd398e0844e1ebcd5",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "PUBLIC_API",
-            "last_verified": "2026-04-05T11:30:00Z"
-        },
-        {
-            "filename": "APP_DESCRIPTION_TEMPLATE.md",
-            "path": "governance/templates/APP_DESCRIPTION_TEMPLATE.md",
-            "canonical_version": "1.1",
-            "local_version": "1.1",
-            "canonical_hash_sha256": "4769dfb9acea4d06c16d7e88b2976b912dfcb4ca0edad39e0729916ac82bc491",
-            "local_hash_sha256": "4769dfb9acea4d06c16d7e88b2976b912dfcb4ca0edad39e0729916ac82bc491",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "TEMPLATE",
-            "last_verified": "2026-04-05T11:30:00Z"
-        },
-        {
-            "filename": "BUILDER_CHECKLIST_TEMPLATE.md",
-            "path": "governance/templates/BUILDER_CHECKLIST_TEMPLATE.md",
-            "canonical_version": "1.0",
-            "local_version": "1.0",
-            "canonical_hash_sha256": "e931a0c554819628dbec73bdeb0321144c99a5caefc4e0c849dbd4ef24fc6a1a",
-            "local_hash_sha256": "e931a0c554819628dbec73bdeb0321144c99a5caefc4e0c849dbd4ef24fc6a1a",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "TEMPLATE",
-            "last_verified": "2026-04-05T11:30:00Z"
-        },
-        {
-            "filename": "BUILD_PROGRESS_TRACKER_TEMPLATE.md",
-            "path": "governance/templates/BUILD_PROGRESS_TRACKER_TEMPLATE.md",
-            "canonical_version": "1.1",
-            "local_version": "1.1",
-            "canonical_hash_sha256": "6c5a6230075872d8106e6761b4b9be914eec70f7a4ad005059613ad57a7695a1",
-            "local_hash_sha256": "6c5a6230075872d8106e6761b4b9be914eec70f7a4ad005059613ad57a7695a1",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "TEMPLATE",
-            "last_verified": "2026-04-05T11:30:00Z"
-        },
-        {
-            "filename": "UX_WORKFLOW_WIRING_SPEC_TEMPLATE.md",
-            "path": "governance/templates/UX_WORKFLOW_WIRING_SPEC_TEMPLATE.md",
-            "canonical_version": "1.0",
-            "local_version": "1.0",
-            "canonical_hash_sha256": "53971ed0cb9fda0bd40b7b6cc519449e232c753a4c3b4dabb5affd02dff4179f",
-            "local_hash_sha256": "53971ed0cb9fda0bd40b7b6cc519449e232c753a4c3b4dabb5affd02dff4179f",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "TEMPLATE",
-            "last_verified": "2026-04-05T11:30:00Z"
-        },
-        {
-            "filename": "COMMENT_ONLY_AGENT_SESSION_PROTOCOL.md",
-            "path": "governance/canon/COMMENT_ONLY_AGENT_SESSION_PROTOCOL.md",
-            "canonical_version": "1.0.0",
-            "local_version": null,
-            "canonical_hash_sha256": "3b342b6fa746ad418a767f46c38dca5ff19a5e5f4ee72d766645337e5211b29c",
-            "local_hash_sha256": null,
-            "alignment_status": "NOT_TRACKED",
-            "layer_down_status": "PUBLIC_API — file exists canonically (commit bfe47f6d) but not yet listed in canonical CANON_INVENTORY.json; automated layer-down not triggered",
-            "last_verified": "2026-04-08T09:11:22Z",
-            "change_note": "New file introduced in canonical commit bfe47f6d (trigger: canonise-oopjd-session-mode). File declares Layer-Down Status: PUBLIC_API. Not yet present in canonical CANON_INVENTORY.json (198 entries). CI ripple-integration.yml confirmed NO_DRIFT_DETECTED because CANON_INVENTORY.json does not include this file. Status: NOT_TRACKED until CANON_INVENTORY.json is updated by canonical source to include this file. No local copy exists. No layer-down action required at this time."
-        },
-        {
-            "filename": "EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md",
-            "path": "governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md",
-            "canonical_version": "1.0.0",
-            "local_version": "1.0.0",
-            "canonical_hash_sha256": "8a65c7c556248b5c70f0cecc230c7941e734169a3dbdf85c8358476716309c7f",
-            "local_hash_sha256": "8a65c7c556248b5c70f0cecc230c7941e734169a3dbdf85c8358476716309c7f",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "PUBLIC_API",
-            "last_verified": "2026-04-08T13:22:00Z",
-            "change_note": "New canonical file added in commit 63cdfb06. Layered down via CI ripple PR #1296."
-        },
-        {
-            "filename": "FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
-            "path": "governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
-            "canonical_version": "1.2.0",
-            "local_version": "1.2.0",
-            "canonical_hash_sha256": "c988e6e56012f890e19b4927eda0bdc249050c23b96864829d36437fcf535865",
-            "local_hash_sha256": "c988e6e56012f890e19b4927eda0bdc249050c23b96864829d36437fcf535865",
-            "alignment_status": "ALIGNED",
-            "layer_down_status": "PUBLIC_API",
-            "last_verified": "2026-04-08T13:22:00Z",
-            "change_note": "v1.2.0: Updated in canonical commit 63cdfb06. Layered down via CI ripple PR #1296."
-        }
-    ],
-    "metadata": {
-        "living_agent_system_version": "6.2.0",
-        "governing_protocol": "GOVERNANCE_RIPPLE_MODEL.md v1.1.0",
-        "canonical_checklist": "GOVERNANCE_RIPPLE_CHECKLIST_PROTOCOL.md",
-        "created_by": "governance-liaison-isms session-035",
-        "last_updated_by": "governance-liaison-isms session-061-20260410 ripple-f68b7d99-20260409"
+    {
+      "filename": "ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
+      "path": "governance/canon/ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
+      "canonical_version": "1.0.0",
+      "local_version": "1.0.0",
+      "canonical_hash_sha256": "1c72a45294640ce51966be64fb2bcf37a47c1366a9488f53a0321ecccca3d9f7",
+      "local_hash_sha256": "1c72a45294640ce51966be64fb2bcf37a47c1366a9488f53a0321ecccca3d9f7",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "OPTIONAL",
+      "last_verified": "2026-03-02T11:23:28Z"
     },
     {
       "filename": "AUTOMATED_QUALITY_TOOLING_CANON.md",
@@ -656,7 +340,7 @@
     "governing_protocol": "GOVERNANCE_RIPPLE_MODEL.md v1.1.0",
     "canonical_checklist": "GOVERNANCE_RIPPLE_CHECKLIST_PROTOCOL.md",
     "created_by": "governance-liaison-isms session-035",
-    "last_updated_by": "governance-liaison-isms session-062-20260409 layer-down-5c2f5b39"
+    "last_updated_by": "governance-liaison-isms session-062-20260412 gov-align-resolve-hash-mismatch"
   },
-  "last_updated_by": "governance-liaison-isms session-062-20260409 layer-down-5c2f5b39"
+  "last_updated_by": "governance-liaison-isms session-062-20260412 gov-align-resolve-hash-mismatch"
 }
