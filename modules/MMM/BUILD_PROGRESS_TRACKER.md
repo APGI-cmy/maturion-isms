@@ -2,8 +2,8 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-04-08  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08)
+**Last Updated**: 2026-04-13  
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
@@ -59,17 +59,22 @@ remains pending CS2 Stage 2 wave-start authorization.
 ---
 
 ### Stage 2: UX Workflow & Wiring Spec
-**Status**: [ ] NOT_STARTED  
+**Status**: [x] COMPLETE — Pending CS2 review and approval  
 **Location**: `modules/MMM/01-ux-workflow-wiring-spec/`  
 **Key Artifacts**:
-- [ ] `ux-workflow-wiring-spec.md` — Complete user journey maps, screen interactions, data flows, wiring
-- [ ] All primary and secondary user paths documented
-- [ ] Explicit wiring between UI elements, API endpoints, schema tables, and reporting outputs
+- [x] `ux-workflow-wiring-spec.md` — Complete user journey maps, screen interactions, data flows, wiring
+- [x] All primary and secondary user paths documented (17 journeys)
+- [x] Explicit wiring between UI elements, API endpoints, schema tables, and reporting outputs
 - [ ] Approved by Foreman and client/user representative
-- [ ] No gap between stated journeys and wired system behaviour
+- [x] No gap between stated journeys and wired system behaviour
 
-**Completion Date**: N/A  
-**Notes**: Not started. Required before FRS can be completed.
+**Completion Date**: 2026-04-13  
+**Produced By**: foreman-v2-agent (POLC-Orchestration mode, wave MMM Stage 2)  
+**Issue**: maturion-isms#1352  
+**Notes**: Stage 2 UX Workflow & Wiring Spec produced covering 17 user journeys (J-01 through J-17),
+complete UI → API → schema wiring tables, MMM ↔ AIMC / PIT / KUC boundary wiring, framework-source
+vs evidence-source ingestion distinction, maturity scoring cascade, and 9 open questions carried
+forward for FRS/TRS/Architecture. Awaiting CS2 approval.
 
 ---
 
@@ -268,13 +273,13 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 1 FORMALLY CLOSED ✅ — Stage 2 (UX Workflow & Wiring Spec) next  
-**Overall Progress**: ~10% complete (Stage 1 formally closed; Stages 2–12 not started)  
-**Blockers**: BLK-1 RESOLVED (CS2 approved app description via #1298, 2026-04-08). Stage 2 awaits CS2 wave-start authorization issue.  
+**Current Stage**: Stage 2 COMPLETE (pending CS2 approval) — Stage 3 (FRS) next  
+**Overall Progress**: ~18% complete (Stage 1 formally closed; Stage 2 produced; Stages 3–12 not started)  
+**Blockers**: None. Stage 2 UX Workflow & Wiring Spec produced (maturion-isms#1352). Awaiting CS2 approval before Stage 3 (FRS) can begin.  
 **Next Steps**:
-1. CS2 to open Stage 2 (UX Workflow & Wiring Spec) wave-start authorization issue (BLK-5 is next)
-2. Develop Stage 2 (UX Workflow & Wiring Spec) for MMM
-3. Develop Stage 3 (FRS) after Stage 2 complete
+1. CS2 to review and approve Stage 2 UX Workflow & Wiring Spec
+2. CS2 to open Stage 3 (FRS) wave-start authorization issue after Stage 2 approval
+3. Develop Stage 3 (FRS) after Stage 2 approved
 4. Complete Stage 4 (TRS) after FRS
 5. Formalise Stage 5 (Architecture) approval after TRS complete
 
