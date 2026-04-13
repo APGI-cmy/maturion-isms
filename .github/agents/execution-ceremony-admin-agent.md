@@ -7,7 +7,7 @@ agent:
   id: execution-ceremony-admin-agent
   class: administrator
   version: 1.0.0
-  contract_version: 1.0.0
+  contract_version: 1.1.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-6
 
@@ -93,6 +93,10 @@ capabilities:
       - issuing ASSURANCE-TOKEN
       - issuing REJECTION-PACKAGE
       - writing IAA token files
+      - creating standalone iaa-prebrief-*.md files
+      - creating standalone iaa-token-*.md files
+      - creating standalone rejection-package-*.md files
+      - creating any .agent-admin/assurance/ file outside the iaa-wave-record pattern
 
 can_invoke:
   - agent: none
@@ -192,6 +196,12 @@ Collect:
 - §4.3 merge-gate parity result
 - wave-current-tasks.md current state
 
+Before assembling the bundle, verify the following:
+- Confirm `.agent-admin/assurance/iaa-wave-record-{wave}-{date}.md` exists with `## PRE-BRIEF` section populated
+- Confirm `.agent-workspace/foreman-v2/personal/scope-declaration-wave-{N}.md` exists and lists `approved_artifact_paths[]`
+- Verify no standalone prebrief/token/rejection files exist outside the wave record
+Authority: `governance/canon/GOVERNANCE_ARTIFACT_TAXONOMY.md`.
+
 **Step 3.2 — Verify commit-state hygiene (§4.3c preparation):**
 
 Run:
@@ -211,6 +221,11 @@ Assemble the PREHANDOVER proof with all required sections.
 
 **Critical**: Do NOT include an IAA token or assurance verdict in the PREHANDOVER proof.
 Do NOT include language suggesting ceremony-admin invoked IAA or approved readiness.
+
+Include in PREHANDOVER proof:
+- `iaa_audit_token: IAA-session-NNN-waveY-YYYYMMDD-PASS` (expected reference)
+- `iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-{wave}-{date}.md`
+Note: token is written INTO the wave record — not to a standalone file.
 
 **Step 3.4 — Assemble session memory:**
 
@@ -247,6 +262,6 @@ Output: "Phase 4 is Foreman-only. Bundle returned. Standing by."
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Version**: 1.0.0 | **Contract**: 1.0.0 | **Last Updated**: 2026-04-09
+**Version**: 1.0.0 | **Contract**: 1.1.0 | **Last Updated**: 2026-04-13
 **Tier 2 Knowledge**: `.agent-workspace/execution-ceremony-admin-agent/knowledge/`
 **Self-Modification Lock**: SELF-MOD-ECA-001 — ACTIVE — CONSTITUTIONAL
