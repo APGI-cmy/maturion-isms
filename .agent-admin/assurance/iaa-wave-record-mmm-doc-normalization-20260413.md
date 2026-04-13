@@ -137,9 +137,33 @@ _To be populated when Foreman invokes IAA for Phase 4 handover._
 
 ## TOKEN
 
-_To be populated after IAA Phase 3–4 assurance verdict._
+**Verdict**: ASSURANCE-TOKEN  
+**Token Reference**: IAA-session-064-mmm-doc-normalization-20260413-PASS  
+**Date**: 2026-04-13  
+**IAA Agent**: independent-assurance-agent v6.2.0 (contract 2.6.0)  
+**PR**: copilot/normalize-pre-build-documents (Issue #1358)  
+**Checks Executed**: 31 | **Passed**: 31 | **Failed**: 0  
+**Merge Gate Parity**: PASS  
+**Adoption Phase**: PHASE_B_BLOCKING  
+**Producing Agent**: foreman-v2-agent v6.2.0 (class: foreman)  
+**Category**: PRE_BUILD_STAGE_MODEL  
+**Overlay Applied**: PRE_BUILD_GATES (OVL-PBG-001 through OVL-PBG-016) + Core Invariants
 
-PHASE_B_BLOCKING_TOKEN: PENDING
+PHASE_B_BLOCKING_TOKEN: IAA-session-064-mmm-doc-normalization-20260413-PASS
+
+**Substantive Quality Summary**:
+- Strategy document (v1.1.0): All blocker statuses factually accurate. No false resolution claims.
+- Harvest map (v0.2.1): Stale references corrected. CL-3.5 ANSWERED, CL-13 PARTIALLY ANSWERED — honest governance.
+- BUILD_PROGRESS_TRACKER: PRIMARY LIVE CONTROL DOCUMENT designation correct and consistent.
+- Document control baseline (v1.0.0): Well-structured, practical, enforceable.
+- Cross-document consistency: No contradictions found.
+- Stage gating (OVL-PBG-008): No false stage advancement. PASS.
+
+**Observations** (non-blocking):
+1. PREHANDOVER proof `iaa_audit_token` field contains "PENDING" — should be pre-populated with expected reference format in future sessions.
+2. Legacy directory numbering (00-, 01-) noted as advisory structural observation (OVL-PBG-009).
+
+**Merge permitted** (subject to CS2 approval).
 
 ---
 
