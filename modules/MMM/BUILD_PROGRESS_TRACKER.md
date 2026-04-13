@@ -67,7 +67,7 @@ remains pending CS2 Stage 2 wave-start authorization.
 - [x] `ux-workflow-wiring-spec.md` — Complete user journey maps, screen interactions, data flows, wiring
 - [x] All primary and secondary user paths documented (17 journeys)
 - [x] Explicit wiring between UI elements, API endpoints, schema tables, and reporting outputs
-- [ ] Approved by Foreman and client/user representative
+- [x] Approved by Foreman and client/user representative
 - [x] No gap between stated journeys and wired system behaviour
 
 **Completion Date**: 2026-04-13  

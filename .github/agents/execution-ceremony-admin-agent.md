@@ -6,8 +6,8 @@ description: "⚠️ READ THIS FILE FIRST (Phase 1) BEFORE THE ISSUE. Administra
 agent:
   id: execution-ceremony-admin-agent
   class: administrator
-  version: 1.0.0
-  contract_version: 1.1.0
+  version: 1.0.0          # agent runtime version — increment on capability changes
+  contract_version: 1.2.0  # governance contract revision — increment on procedure changes
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-6
 
@@ -97,6 +97,7 @@ capabilities:
       - creating standalone iaa-token-*.md files
       - creating standalone rejection-package-*.md files
       - creating any .agent-admin/assurance/ file outside the iaa-wave-record pattern
+  artifact_authority: governance/canon/GOVERNANCE_ARTIFACT_TAXONOMY.md
 
 can_invoke:
   - agent: none
@@ -201,6 +202,12 @@ Before assembling the bundle, verify the following:
 - Confirm `.agent-workspace/foreman-v2/personal/scope-declaration-wave-{N}.md` exists and lists `approved_artifact_paths[]`
 - Verify no standalone prebrief/token/rejection files exist outside the wave record
 Authority: `governance/canon/GOVERNANCE_ARTIFACT_TAXONOMY.md`.
+- Verify that the following ECAP output paths are listed in Foreman's scope declaration
+  (`approved_artifact_paths[]`) at `.agent-workspace/foreman-v2/personal/scope-declaration-wave-{N}.md`:
+  - `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-NNN-YYYYMMDD.md`
+  - `.agent-workspace/execution-ceremony-admin-agent/bundles/session-NNN-YYYYMMDD.md`
+  If either path is absent from `approved_artifact_paths[]` → flag to Foreman before writing any bundle file.
+  Do NOT proceed with bundle assembly until Foreman confirms the paths are declared.
 
 **Step 3.2 — Verify commit-state hygiene (§4.3c preparation):**
 
@@ -223,16 +230,39 @@ Assemble the PREHANDOVER proof with all required sections.
 Do NOT include language suggesting ceremony-admin invoked IAA or approved readiness.
 
 Include in PREHANDOVER proof:
-- `iaa_audit_token: IAA-session-NNN-waveY-YYYYMMDD-PASS` (expected reference)
+- `iaa_audit_token: IAA-session-NNN-waveY-YYYYMMDD-PASS` (expected reference — token is written by IAA into the wave record at ## TOKEN; this field records the expected token reference at bundle-assembly time)
 - `iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-{wave}-{date}.md`
-Note: token is written INTO the wave record — not to a standalone file.
+Note: the actual token is written by IAA ONLY into the wave record. ECAP records the expected reference; IAA writes the actual token. ECAP MUST NOT write or modify the ## TOKEN section.
 
 **Step 3.4 — Assemble session memory:**
 
-Using the template at `.agent-workspace/foreman-v2/knowledge/session-memory-template.md`:
-Assemble session memory with all required fields.
+Using the template at `.agent-workspace/foreman-v2/knowledge/session-memory-template.md`,
+assemble session memory. The following fields are MANDATORY and must not be blank
+(per Foreman Step 4.3 — Foreman will reject the bundle if any are absent):
 
-**Output path**: Write to `.agent-workspace/execution-ceremony-admin-agent/bundles/session-NNN-YYYYMMDD.md` (within `write_paths` authority per §scope.write_paths). Do NOT write to `.agent-workspace/foreman-v2/memory/` — that path is Foreman-owned. Foreman commits the accepted copy there at handback (Step 4.3 handback in foreman-v2-agent.md).
+- `prior_sessions_reviewed`
+- `unresolved_items_from_prior_sessions`
+- `roles_invoked: [list all modes activated this session]`
+- `mode_transitions: [list mode → mode transitions in order]`
+- `agents_delegated_to: [list builder agents and tasks, or "none — administrator class"]`
+- `escalations_triggered: [list by HALT/ESC id, or "none"]`
+- `separation_violations_detected: [POLC boundary violations, or "none"]`
+- `fail_only_once_attested: true`
+- `fail_only_once_version: [version from Foreman FAIL-ONLY-ONCE registry]`
+- `unresolved_breaches: [incident IDs or "none"]`
+
+**Suggestions for Improvement (MANDATORY — never blank):**
+Record at least one concrete improvement suggestion. If none observed:
+`"No degradation observed. Continuous improvement note: [observation]."`
+A blank field is a **HANDOVER BLOCKER** — Foreman will reject the bundle.
+
+**Parking Station (mandatory):**
+Append to `.agent-workspace/foreman-v2/parking-station/suggestions-log.md`:
+`| YYYY-MM-DD | execution-ceremony-admin-agent | session-NNN | [type] | <summary> | <filename> |`
+
+**Output path**: Write to `.agent-workspace/execution-ceremony-admin-agent/bundles/session-NNN-YYYYMMDD.md`
+(within `write_paths` authority per §scope.write_paths). Do NOT write to
+`.agent-workspace/foreman-v2/memory/` — Foreman commits the accepted copy there itself (Step 4.3 handback).
 
 **Step 3.5 — Return bundle to Foreman:**
 
@@ -262,6 +292,6 @@ Output: "Phase 4 is Foreman-only. Bundle returned. Standing by."
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Version**: 1.0.0 | **Contract**: 1.1.0 | **Last Updated**: 2026-04-13
+**Version**: 1.0.0 | **Contract**: 1.2.0 | **Last Updated**: 2026-04-13
 **Tier 2 Knowledge**: `.agent-workspace/execution-ceremony-admin-agent/knowledge/`
 **Self-Modification Lock**: SELF-MOD-ECA-001 — ACTIVE — CONSTITUTIONAL

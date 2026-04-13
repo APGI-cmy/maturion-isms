@@ -1,22 +1,16 @@
-# IAA High-Frequency Miss Checks (HFMC)
+# IAA High-Frequency Checks — CI Enforcement Specification
 
 **Agent**: independent-assurance-agent
-**Version**: 1.0.0
-**Status**: ACTIVE
-**Last Updated**: 2026-04-07
+**Version**: 2.0.0
+**Status**: CI-ENFORCED
+**Last Updated**: 2026-04-13
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Referenced by**: IAA contract Phase 3 Step 3.1b
 
 ---
 
 ## Purpose
 
-These 6 named binary checks (HFMC-01 through HFMC-06) represent the most frequently
-recurring preventable failure categories observed across IAA sessions. Each check is
-binary: YES (pass) or NO (fail). Any NO = REJECTION-PACKAGE. No partial credit.
-
-They are executed in Phase 3 Step 3.1b before the core invariants checklist to surface
-high-frequency misses early and reduce churn in the review cycle.
+These 6 checks are now enforced by CI workflows. This document specifies what CI must check. IAA no longer executes them at session time. Per the 90/10 restructuring (CS2 directive — maturion-isms#1354), mechanical binary checks are CI's responsibility so IAA can focus 90% of session time on substance evaluation.
 
 ---
 
@@ -24,132 +18,104 @@ high-frequency misses early and reduce churn in the review cycle.
 
 ### HFMC-01 — Ripple Assessment Presence
 
-**Check**: Does the PREHANDOVER proof include a `## Ripple/Cross-Agent Assessment` section
-(or equivalent) that evaluates impact on downstream agents?
+**CI must check**: Does the PREHANDOVER proof include a `## Ripple/Cross-Agent Assessment` section (or equivalent) that evaluates impact on downstream agents?
 
-**How to verify**: Look for a `## Ripple` or `## Cross-Agent` section in the PREHANDOVER
-proof file. It must be non-empty and assess impact on at least one other agent or system.
+**How to verify**: Scan PREHANDOVER proof file for `## Ripple` or `## Cross-Agent` heading. Section must be non-empty.
 
-**Required outcome if NO**: Fix required — add a Ripple/Cross-Agent Assessment section
-to the PREHANDOVER proof. Do not re-use a section with empty content.
+**FAIL if**: Section absent or empty.
 
-**Background**: Recurring failure in sessions 051, 052. Confirmed pattern in IAA FAIL-ONLY-ONCE
-registry (A-023). OVL-AC-007 also covers this for agent contract PRs.
+**Background**: Recurring failure in sessions 051, 052. FAIL-ONLY-ONCE A-023.
 
 ---
 
 ### HFMC-02 — SCOPE_DECLARATION.md Parity
 
-**Check**: Does `.agent-workspace/CodexAdvisor-agent/personal/SCOPE_DECLARATION.md`
-(or equivalent scope declaration file) list exactly the same files as the PR diff?
+**CI must check**: Does the scope declaration file list exactly the same files as the PR diff?
 
-**How to verify**: Run `git diff origin/main...HEAD --name-only | sort` and compare to
-SCOPE_DECLARATION.md contents. File lists must match exactly.
+**How to verify**: Run `git diff origin/main...HEAD --name-only | sort` and compare to SCOPE_DECLARATION.md contents. File lists must match exactly.
 
-**Required outcome if NO**: Fix required — update SCOPE_DECLARATION.md to match the
-current PR diff before IAA is re-invoked.
+**FAIL if**: Any file in PR diff not listed in SCOPE_DECLARATION.md, or vice versa.
 
-**Background**: Recurring failure in sessions 052, 050. Confirmed pattern (PARITY-A-026).
+**Background**: Recurring failure in sessions 052, 050. FAIL-ONLY-ONCE PARITY-A-026.
 
 ---
 
 ### HFMC-03 — Committed Artifacts Completeness
 
-**Check**: Are ALL bundle items declared in the PREHANDOVER proof already committed to
-the branch? (No artifacts in PENDING or "will commit" state.)
+**CI must check**: Are ALL bundle items declared in the PREHANDOVER proof already committed to the branch?
 
-**How to verify**: For each file path listed in the PREHANDOVER proof bundle, confirm
-the file exists in the working branch (`git show HEAD:[path]`). Any path not yet committed
-= NO.
+**How to verify**: For each file path listed in the PREHANDOVER proof bundle, confirm the file exists in the working branch (`git show HEAD:[path]`). Any path not yet committed = FAIL.
 
-**Required outcome if NO**: Fix required — commit all pending bundle items, then
-re-invoke IAA.
+**FAIL if**: Any declared bundle item is not committed.
 
-**Background**: IAA R1 rejections frequently cite uncommitted artifacts. Confirmed pattern
-in session 051 (REJECTION R1 failure type 1).
+**Background**: IAA R1 rejections frequently cited uncommitted artifacts. Session 051.
 
 ---
 
 ### HFMC-04 — Pre-Brief Presence
 
-**Check**: Does a valid IAA pre-brief exist at
-`.agent-admin/assurance/iaa-prebrief-wave<N>.md` (where N matches the current wave)?
+**CI must check**: Does a valid IAA wave record with `## PRE-BRIEF` section exist at `.agent-admin/assurance/iaa-wave-record-*.md`?
 
-**How to verify**: Confirm the file exists and is non-empty. If the PR was initiated
-without a wave context, confirm this check is N/A and record justification.
+**How to verify**: Confirm at least one wave record file exists with a non-empty `## PRE-BRIEF` section.
 
-**Required outcome if NO**: Fix required — IAA Pre-Brief must be generated before
-Phase 2–4 assurance proceeds. Invoke IAA in PRE-BRIEF mode if absent.
+**FAIL if**: No wave record with pre-brief section found. N/A if PR was initiated without wave context (record justification).
 
 **Background**: CI enforces `iaa_prebrief_path:` field in wave-current-tasks.md.
-Recurring friction source when pre-brief is skipped at wave start.
 
 ---
 
 ### HFMC-05 — Token Ceremony Correctness
 
-**Check**: Does the IAA token file follow the required naming pattern
-`.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md` AND include a
-non-empty `PHASE_B_BLOCKING_TOKEN: <value>` line?
+**CI must check**: Does the IAA wave record contain a `## TOKEN` section with a valid `PHASE_B_BLOCKING_TOKEN:` line?
 
 **How to verify**:
-1. File exists at the expected path pattern
-2. File contains `PHASE_B_BLOCKING_TOKEN: <non-empty, non-PENDING value>`
-3. File is NOT named iaa-rejection-* (rejection packages are exempt from this check)
+1. Wave record exists at expected path
+2. `## TOKEN` section contains `PHASE_B_BLOCKING_TOKEN: <non-empty, non-PENDING value>`
 
-**Required outcome if NO**: Fix required — write a compliant token file. Per FAIL-ONLY-ONCE
-A-037 and CI gate `preflight/iaa-token-self-certification`.
+**FAIL if**: TOKEN section absent, PHASE_B_BLOCKING_TOKEN missing/empty/PENDING.
 
-**Background**: A-037 added in session-052-20260406 to enforce PHASE_B_BLOCKING_TOKEN
-presence. CI gate blocks PRs with missing or empty token.
+**Background**: FAIL-ONLY-ONCE A-037. CI gate `preflight/iaa-token-self-certification`.
 
 ---
 
 ### HFMC-06 — Evidence Bundle Completeness
 
-**Check**: Are all 4 required bundle items present for agent contract or governance PRs?
+**CI must check**: Are all required bundle items present for agent contract or governance PRs?
 
 Required bundle items:
 1. Agent contract file (`.github/agents/<agent>.md`)
 2. Tier 2 knowledge stub (`.agent-workspace/<agent>/knowledge/index.md` or updated T2 file)
-3. PREHANDOVER proof (`.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-NNN-*.md`)
-4. Session memory (`.agent-workspace/CodexAdvisor-agent/memory/session-NNN-*.md`)
+3. PREHANDOVER proof (`.agent-workspace/*/memory/PREHANDOVER-session-*.md`)
+4. Session memory (`.agent-workspace/*/memory/session-*.md`)
 
-**How to verify**: Confirm all 4 paths exist in the current PR diff.
+**How to verify**: Confirm all 4 path patterns exist in the current PR diff.
 
-**Required outcome if NO**: Fix required — add missing bundle items to the PR before
-re-invoking IAA.
+**FAIL if**: Any required bundle item missing from PR diff.
 
-**Background**: Repeated pattern (BREACH-001 through BREACH-006 in CodexAdvisor breach
-registry). CI checks for session memory and PREHANDOVER. A full evidence bundle prevents
-the most common merge gate failures.
+**Background**: BREACH-001 through BREACH-006 in CodexAdvisor breach registry.
 
 ---
 
-## Output Format
+## CI Workflow Reference
 
-For each check, output:
+These checks are implemented in the following CI workflows:
 
-```
-HFMC-01 Ripple: YES ✅
-HFMC-02 Scope parity: NO ❌ — Finding: SCOPE_DECLARATION.md has 5 files, diff has 7. Missing: [paths]. Fix: update SCOPE_DECLARATION.md.
-HFMC-03 Artifacts committed: YES ✅
-HFMC-04 Pre-brief: YES ✅
-HFMC-05 Token ceremony: YES ✅
-HFMC-06 Evidence bundle: YES ✅
-```
+| Workflow | Checks Enforced |
+|----------|----------------|
+| `preflight-evidence-gate.yml` | HFMC-01, HFMC-02, HFMC-03, HFMC-04, HFMC-05, HFMC-06 |
+| `agent-contract-format-gate.yml` | Supplementary format checks (CORE-001 through CORE-012) |
 
-Any NO triggers immediate REJECTION-PACKAGE. Include HFMC failures in the REJECTION-PACKAGE
-FAILURES list with classification: Ceremony or Systemic (per Step 3.4a/3.4b).
+**Enforcement level**: BLOCKING — PR cannot merge if any HFMC check fails in CI.
 
 ---
 
-## Recurring Pattern Escalation
+## Version History
 
-When the same HFMC check fails repeatedly across sessions:
-1. Classify the failure as **Systemic** (per Step 3.4a)
-2. Per Step 3.4b: REJECTION-PACKAGE must name a required prevention action
-3. Per NO-REPEAT-PREVENTABLE-001: structural prevention is required, not just re-detection
+| Version | Date | Change |
+|---------|------|--------|
+| 1.0.0 | 2026-04-07 | Initial version — IAA-executed checks (Issue #1282) |
+| 2.0.0 | 2026-04-13 | Converted to CI enforcement specification; IAA no longer executes these checks at session time; CI Workflow Reference added; Output Format removed; authority: CS2 — maturion-isms#1354 |
+
+---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Part of IAA contract v2.5.0 upgrade — Issue #1282**
