@@ -1,0 +1,425 @@
+name: Agent Contract Format Gate
+
+# Authority: Issue #1354 — IAA 90/10 restructuring
+# Purpose: Enforce mechanical agent contract format checks in CI.
+#          These checks were previously performed by IAA at session time.
+#          Now CI-enforced per the 90/10 evaluation-to-admin ratio.
+# Check IDs: CORE-001, CORE-003, CORE-004, CORE-005, CORE-007, CORE-008,
+#             CORE-009, CORE-012, plus character-count and frontmatter-line limits.
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  # ============================================================================
+  # JOB 0: Detect which .github/agents/*.md files changed in this PR
+  # ============================================================================
+  detect-changes:
+    name: "agent-contract-format/detect"
+    runs-on: ubuntu-latest
+    outputs:
+      agent_files_changed: ${{ steps.detect.outputs.agent_files_changed }}
+      changed_files: ${{ steps.detect.outputs.changed_files }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Detect changed agent contract files
+        id: detect
+        env:
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          echo "=== Agent Contract Format Gate — Change Detection ==="
+          echo "Authority: Issue #1354 — IAA 90/10 restructuring"
+          echo ""
+
+          # ----------------------------------------------------------------
+          # Bypass for automated governance alignment PRs
+          # ----------------------------------------------------------------
+          if [[ ( "$PR_LABELS" == *"governance"* && "$PR_LABELS" == *"automated"* && "$PR_LABELS" == *"agent:liaison"* ) || \
+               "$PR_BRANCH" == "governance-alignment-auto" ]]; then
+            echo "✅ Automated governance alignment PR detected — bypassing format gate."
+            echo "agent_files_changed=false" >> "$GITHUB_OUTPUT"
+            echo "changed_files=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # ----------------------------------------------------------------
+          # Diff base ↔ head to find changed agent contract files
+          # ----------------------------------------------------------------
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+
+          CHANGED=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- '.github/agents/*.md' | head -50)
+
+          if [ -z "$CHANGED" ]; then
+            echo "ℹ️  No .github/agents/*.md files changed in this PR."
+            echo "agent_files_changed=false" >> "$GITHUB_OUTPUT"
+            echo "changed_files=" >> "$GITHUB_OUTPUT"
+          else
+            echo "Changed agent contract files:"
+            echo "$CHANGED" | sed 's/^/  /'
+            echo ""
+            echo "agent_files_changed=true" >> "$GITHUB_OUTPUT"
+            # Comma-separated for inter-job transfer
+            CHANGED_CSV=$(echo "$CHANGED" | tr '\n' ',' | sed 's/,$//')
+            echo "changed_files=$CHANGED_CSV" >> "$GITHUB_OUTPUT"
+          fi
+
+  # ============================================================================
+  # JOB 1: YAML validation — CORE-001, 003, 004, 005, 008, 009, 012,
+  #         character-count, frontmatter-line-count
+  # ============================================================================
+  yaml-validation:
+    name: "agent-contract-format/yaml-validation"
+    needs: detect-changes
+    if: needs.detect-changes.outputs.agent_files_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Create YAML validation script
+        run: |
+          cat > "$RUNNER_TEMP/validate_contract.py" << 'PYEOF'
+          import os, sys, yaml, re
+
+          filepath = sys.argv[1]
+          with open(filepath) as f:
+              raw = f.read()
+
+          lines = raw.split("\n")
+          passed = 0
+          failed = 0
+
+          # ---------- Character count <= 30,000 ----------
+          char_count = len(raw)
+          if char_count <= 30000:
+              print(f"  ✅ PASS — Character count: {char_count} <= 30,000")
+              passed += 1
+          else:
+              print(f"  ❌ FAIL — Character count: {char_count} > 30,000")
+              failed += 1
+
+          # ---------- Locate YAML frontmatter delimiters ----------
+          delim_indices = [i for i, l in enumerate(lines) if l.strip() == "---"]
+
+          if len(delim_indices) < 2:
+              print("  ❌ CORE-001 FAIL — No valid YAML frontmatter delimiters (need two --- lines)")
+              failed += 1
+              print(f"SUMMARY:passed={passed},failed={failed}")
+              sys.exit(0)
+
+          fm_start = delim_indices[0]
+          fm_end = delim_indices[1]
+          fm_line_count = fm_end - fm_start - 1
+
+          # ---------- Frontmatter <= 200 lines ----------
+          if fm_line_count <= 200:
+              print(f"  ✅ PASS — YAML frontmatter lines: {fm_line_count} <= 200")
+              passed += 1
+          else:
+              print(f"  ❌ FAIL — YAML frontmatter lines: {fm_line_count} > 200")
+              failed += 1
+
+          fm_content = "\n".join(lines[fm_start + 1 : fm_end])
+
+          # ---------- CORE-001: YAML parseable ----------
+          try:
+              data = yaml.safe_load(fm_content)
+              if not isinstance(data, dict):
+                  print("  ❌ CORE-001 FAIL — YAML frontmatter parsed but is not a mapping")
+                  failed += 1
+                  print(f"SUMMARY:passed={passed},failed={failed}")
+                  sys.exit(0)
+              print("  ✅ CORE-001 PASS — YAML frontmatter is parseable")
+              passed += 1
+          except yaml.YAMLError as e:
+              err = str(e).split("\n")[0]
+              print(f"  ❌ CORE-001 FAIL — YAML parse error: {err}")
+              failed += 1
+              print(f"SUMMARY:passed={passed},failed={failed}")
+              sys.exit(0)
+
+          # ---------- CORE-003: agent.contract_version semver ----------
+          agent_block = data.get("agent", {})
+          if not isinstance(agent_block, dict):
+              agent_block = {}
+          cv = str(agent_block.get("contract_version", "")).strip()
+          if cv and re.match(r"^\d+\.\d+\.\d+$", cv):
+              print(f"  ✅ CORE-003 PASS — agent.contract_version: {cv}")
+              passed += 1
+          elif cv:
+              print(f"  ❌ CORE-003 FAIL — agent.contract_version is not valid semver (X.Y.Z): {cv}")
+              failed += 1
+          else:
+              print("  ❌ CORE-003 FAIL — agent.contract_version is missing")
+              failed += 1
+
+          # ---------- CORE-004: identity fields ----------
+          identity = data.get("identity", {})
+          if not isinstance(identity, dict):
+              identity = {}
+          for field in ("role", "mission", "class_boundary"):
+              val = str(identity.get(field, "")).strip()
+              if not val:
+                  print(f"  ❌ CORE-004 FAIL — identity.{field} is missing or empty")
+                  failed += 1
+              elif field == "class_boundary" and len(val) <= 20:
+                  print(f"  ❌ CORE-004 FAIL — identity.class_boundary too short ({len(val)} chars, need >20)")
+                  failed += 1
+              else:
+                  print(f"  ✅ CORE-004 PASS — identity.{field} present ({len(val)} chars)")
+                  passed += 1
+
+          # ---------- CORE-005: governance fields, no placeholders ----------
+          gov = data.get("governance", {})
+          if not isinstance(gov, dict):
+              gov = {}
+          placeholder_pats = ["tbd", "todo", "fixme", "placeholder", "stub", "to be populated"]
+          for field in ("protocol", "version", "canon_inventory"):
+              val = str(gov.get(field, "")).strip()
+              if not val:
+                  print(f"  ❌ CORE-005 FAIL — governance.{field} is missing or empty")
+                  failed += 1
+              elif any(p in val.lower() for p in placeholder_pats):
+                  print(f"  ❌ CORE-005 FAIL — governance.{field} contains placeholder value")
+                  failed += 1
+              else:
+                  print(f"  ✅ CORE-005 PASS — governance.{field} present")
+                  passed += 1
+
+          # ---------- CORE-008: prohibition with enforcement CONSTITUTIONAL ----------
+          prohibitions = data.get("prohibitions", [])
+          if not isinstance(prohibitions, list):
+              prohibitions = []
+          has_constitutional = any(
+              isinstance(p, dict) and str(p.get("enforcement", "")).upper() == "CONSTITUTIONAL"
+              for p in prohibitions
+          )
+          if has_constitutional:
+              print("  ✅ CORE-008 PASS — Found prohibition with enforcement: CONSTITUTIONAL")
+              passed += 1
+          else:
+              print("  ❌ CORE-008 FAIL — No prohibition with enforcement: CONSTITUTIONAL found")
+              failed += 1
+
+          # ---------- CORE-009: merge_gate_interface.required_checks non-empty array ----------
+          mgi = data.get("merge_gate_interface", {})
+          if not isinstance(mgi, dict):
+              mgi = {}
+          rc = mgi.get("required_checks", [])
+          if isinstance(rc, list) and len(rc) > 0:
+              print(f"  ✅ CORE-009 PASS — merge_gate_interface.required_checks has {len(rc)} entries")
+              passed += 1
+          else:
+              print("  ❌ CORE-009 FAIL — merge_gate_interface.required_checks is missing or empty")
+              failed += 1
+
+          # ---------- CORE-012: SELF-MOD-* prohibition with CONSTITUTIONAL enforcement ----------
+          has_selfmod = any(
+              isinstance(p, dict)
+              and str(p.get("id", "")).startswith("SELF-MOD-")
+              and str(p.get("enforcement", "")).upper() == "CONSTITUTIONAL"
+              for p in prohibitions
+          )
+          if has_selfmod:
+              sid = next(
+                  str(p.get("id", ""))
+                  for p in prohibitions
+                  if isinstance(p, dict) and str(p.get("id", "")).startswith("SELF-MOD-")
+              )
+              print(f"  ✅ CORE-012 PASS — Found SELF-MOD prohibition: {sid}")
+              passed += 1
+          else:
+              print("  ❌ CORE-012 FAIL — No prohibition with id SELF-MOD-* and enforcement CONSTITUTIONAL")
+              failed += 1
+
+          print(f"SUMMARY:passed={passed},failed={failed}")
+          PYEOF
+
+      - name: Validate agent contract YAML format
+        env:
+          CHANGED_FILES: ${{ needs.detect-changes.outputs.changed_files }}
+        run: |
+          echo "=== Agent Contract Format Gate — YAML Validation ==="
+          echo "Authority: Issue #1354 — IAA 90/10 restructuring"
+          echo ""
+
+          TOTAL_PASS=0
+          TOTAL_FAIL=0
+
+          IFS=',' read -ra FILES <<< "$CHANGED_FILES"
+
+          for file in "${FILES[@]}"; do
+            [ -z "$file" ] && continue
+
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "Checking: $file"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+            if [ ! -f "$file" ]; then
+              echo "  ⚠️  File not found (may have been deleted) — skipping."
+              echo ""
+              continue
+            fi
+
+            RESULT=$(python3 "$RUNNER_TEMP/validate_contract.py" "$file")
+
+            # Display results (exclude the machine-readable summary line)
+            echo "$RESULT" | grep -v '^SUMMARY:'
+
+            # Parse and accumulate counts
+            SUMMARY_LINE=$(echo "$RESULT" | grep '^SUMMARY:' || echo "SUMMARY:passed=0,failed=0")
+            PY_PASSED=$(echo "$SUMMARY_LINE" | sed 's/.*passed=\([0-9]*\).*/\1/')
+            PY_FAILED=$(echo "$SUMMARY_LINE" | sed 's/.*failed=\([0-9]*\).*/\1/')
+            TOTAL_PASS=$((TOTAL_PASS + PY_PASSED))
+            TOTAL_FAIL=$((TOTAL_FAIL + PY_FAILED))
+
+            echo ""
+          done
+
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "=== YAML Validation Summary ==="
+          echo "  Passed: $TOTAL_PASS"
+          echo "  Failed: $TOTAL_FAIL"
+          echo ""
+
+          if [ "$TOTAL_FAIL" -gt 0 ]; then
+            echo "❌ FAIL — $TOTAL_FAIL check(s) failed. Fix all failures before merge."
+            exit 1
+          else
+            echo "✅ PASS — All YAML validation checks passed."
+          fi
+
+  # ============================================================================
+  # JOB 2: Placeholder / stub detection — CORE-007
+  # ============================================================================
+  placeholder-check:
+    name: "agent-contract-format/placeholder-check"
+    needs: detect-changes
+    if: needs.detect-changes.outputs.agent_files_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Check for stub/placeholder values (CORE-007)
+        env:
+          CHANGED_FILES: ${{ needs.detect-changes.outputs.changed_files }}
+        run: |
+          echo "=== Agent Contract Format Gate — Placeholder Check (CORE-007) ==="
+          echo "Authority: Issue #1354 — IAA 90/10 restructuring"
+          echo ""
+          echo "Forbidden patterns (case-insensitive):"
+          echo "  STUB, TODO:, FIXME:, placeholder, to be populated, TBD"
+          echo "Exempt: iaa_audit_token lines matching IAA-session-NNN-waveY-YYYYMMDD-PASS"
+          echo ""
+
+          FAIL_COUNT=0
+
+          IFS=',' read -ra FILES <<< "$CHANGED_FILES"
+
+          for file in "${FILES[@]}"; do
+            [ -z "$file" ] && continue
+
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "Checking: $file"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+            if [ ! -f "$file" ]; then
+              echo "  ⚠️  File not found (may have been deleted) — skipping."
+              echo ""
+              continue
+            fi
+
+            # Search for forbidden patterns, then exclude exempted iaa_audit_token lines
+            VIOLATIONS=$(grep -niE 'STUB|TODO:|FIXME:|placeholder|to be populated|TBD' "$file" \
+              | grep -viE 'iaa_audit_token.*IAA-session-' \
+              || true)
+
+            if [ -z "$VIOLATIONS" ]; then
+              echo "  ✅ CORE-007 PASS — No stub/placeholder values found"
+            else
+              VIOLATION_COUNT=$(echo "$VIOLATIONS" | wc -l)
+              echo "  ❌ CORE-007 FAIL — $VIOLATION_COUNT stub/placeholder value(s) detected:"
+              echo "$VIOLATIONS" | sed 's/^/    /'
+              ((FAIL_COUNT++))
+            fi
+
+            echo ""
+          done
+
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "=== Placeholder Check Summary ==="
+          echo ""
+
+          if [ "$FAIL_COUNT" -gt 0 ]; then
+            echo "❌ FAIL — $FAIL_COUNT file(s) contain stub/placeholder values."
+            echo ""
+            echo "Remove all STUB, TODO:, FIXME:, placeholder, 'to be populated', and TBD values"
+            echo "from agent contract files before merge."
+            exit 1
+          else
+            echo "✅ PASS — No stub/placeholder values found in any changed files."
+          fi
+
+  # ============================================================================
+  # JOB 3: Verdict — aggregate results from all check jobs
+  # ============================================================================
+  verdict:
+    name: "agent-contract-format/verdict"
+    needs: [detect-changes, yaml-validation, placeholder-check]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Evaluate final verdict
+        run: |
+          echo "=== Agent Contract Format Gate — Final Verdict ==="
+          echo ""
+
+          CHANGES="${{ needs.detect-changes.outputs.agent_files_changed }}"
+          YAML_RESULT="${{ needs.yaml-validation.result }}"
+          PLACEHOLDER_RESULT="${{ needs.placeholder-check.result }}"
+
+          echo "  Change detection:  agent_files_changed=$CHANGES"
+          echo "  YAML validation:   $YAML_RESULT"
+          echo "  Placeholder check: $PLACEHOLDER_RESULT"
+          echo ""
+
+          # No agent files changed — nothing to validate
+          if [ "$CHANGES" != "true" ]; then
+            echo "✅ PASS — No agent contract files changed. Format gate not applicable."
+            exit 0
+          fi
+
+          # Both checks must succeed (skipped counts as no-op pass)
+          if [ "$YAML_RESULT" = "success" ] && [ "$PLACEHOLDER_RESULT" = "success" ]; then
+            echo "✅ PASS — All agent contract format checks passed."
+            exit 0
+          else
+            echo "❌ FAIL — One or more agent contract format checks failed."
+            echo ""
+            [ "$YAML_RESULT" != "success" ] && \
+              echo "  → YAML validation:   $YAML_RESULT"
+            [ "$PLACEHOLDER_RESULT" != "success" ] && \
+              echo "  → Placeholder check: $PLACEHOLDER_RESULT"
+            echo ""
+            echo "Fix all failures and push to re-trigger validation."
+            exit 1
+          fi
