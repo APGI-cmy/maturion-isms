@@ -1,49 +1,39 @@
-# Wave Current Tasks — gov-simplification
+# Wave Current Tasks — Issue 1352
 
-**Wave**: gov-simplification  
-**Branch**: copilot/gov-simplification-consolidate-artifact-model  
-**Issue**: [GOV-SIMPLIFICATION] Consolidate assurance artifact model  
-**Date**: 2026-04-13  
-**CS2 Authorization**: CS2 supplementary instructions provided (binding)  
-**IAA Pre-Brief**: `.agent-admin/assurance/iaa-prebrief-gov-simplification.md` (COMMITTED)
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-gov-simplification.md
+wave: mmm-stage2-ux-workflow-wiring-spec-20260413
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-mmm-stage2-ux-wiring.md
 
----
+## Active Wave: MMM Stage 2 — UX Workflow & Wiring Spec
 
-## Wave Sequencing (CS2 mandated — GAP 6)
+### Wave Description
+Foreman orchestrates MMM Stage 2 — UX Workflow & Wiring Spec production. This creates the
+complete user journey maps, screen interactions, data flows, and UI → API → schema → reporting
+wiring specification for the Maturity Management Module (MMM).
 
-### Wave A — Architecture & Schema Design
-- [ ] T-A1: Define `iaa-wave-record-{wave}-{date}.md` schema/template with sections: pre-brief, PREHANDOVER, IAA token, rejection_history
-- [ ] T-A2: Define scope declaration schema extension with `approved_artifact_paths[]` field
-- [ ] T-A3: Define CI gate specification for governance-artifact-gate.yml (or extension point assessment)
+This is a Stage 2 prebuild specification wave — no implementation code, no FRS, no TRS,
+no schema changes, no builder appointment.
 
-### Wave B — Canon Document Updates
-- [ ] T-B1: Update `GOVERNANCE_ARTIFACT_TAXONOMY.md` — convert to prescriptive allowlist (GAP 7)
-- [ ] T-B2: Update `IAA_PRE_BRIEF_PROTOCOL.md` — reference new consolidated artifact model
-- [ ] T-B3: Update `INDEPENDENT_ASSURANCE_AGENT_CANON.md` — reference new artifact paths/patterns
-- [ ] T-B4: Update `FOREMAN_WAVE_PLANNING_AND_ISSUE_ARTIFACT_GENERATION_PROTOCOL.md` (GAP 5)
-- [ ] T-B5: Update `SCOPE_DECLARATION_SCHEMA.md` — add approved_artifact_paths[] (GAP 4)
-- [ ] T-B6: Update `scope-declaration.template.md` — add approved_artifact_paths[] field (GAP 4)
-- [ ] T-B7: Update `GOVERNANCE_CANON_MANIFEST.md` (GAP 3)
+CS2 Authorization: Issue maturion-isms#1352 opened and assigned by @APGI-cmy (CS2 = Johan Ras).
+Wave-start authorization confirmed.
 
-### Wave C — CI Implementation
-- [ ] T-C1: Implement governance-artifact-gate.yml CI workflow enforcing approved file paths
+IAA Pre-Brief: PENDING
 
-### Wave D — Archival Migration
-- [ ] T-D1: Archive existing `.agent-admin/assurance/` artifacts to `.agent-admin/assurance/archive/`
+### Tasks
+- [x] Phase 1 — Identity & Preflight complete
+- [ ] IAA Pre-Brief invoked and artifact committed
+- [ ] Read input documents (app description, strategy, harvest map, tracker)
+- [ ] Produce UX Workflow & Wiring Spec (D1+D2)
+  - [ ] User entry / front door flows
+  - [ ] Framework-origin fork (Mode A/B)
+  - [ ] Common governed ingestion path
+  - [ ] Canonical MMM operating flows
+  - [ ] Boundary and ownership wiring
+- [ ] Capture open questions (D3)
+- [ ] Update BUILD_PROGRESS_TRACKER (D4)
+- [ ] Phase 4 handover ceremony (D5)
 
-### Wave E — CANON_INVENTORY.json & Parity
-- [ ] T-E1: Update `governance/CANON_INVENTORY.json` with new file hashes (GAP 3)
-- [ ] T-E2: Final parity check
+### Status
+IN_PROGRESS — Phase 1 complete, invoking IAA Pre-Brief
 
----
-
-## Delegation Plan
-
-| Wave | Builder | Justification |
-|------|---------|---------------|
-| A | governance-liaison-isms-agent | Architecture/schema is governance design |
-| B | governance-liaison-isms-agent | Canon document updates |
-| C | qa-builder | CI workflow implementation |
-| D | governance-liaison-isms-agent | Archival is governance operations |
-| E | governance-liaison-isms-agent | CANON_INVENTORY is governance metadata |
+### Previous Wave (Closed)
+wave: mmm-harvest-map-revision-20260413 (Issue #1345) — CLOSED
