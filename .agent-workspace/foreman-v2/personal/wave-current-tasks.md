@@ -1,48 +1,39 @@
-# Wave Current Tasks — Issue 1271
+# Wave Current Tasks — Issue 1345
 
-wave: ps-i-governance-liaison-cleanup-20260410
-iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-ps-i-governance-liaison-cleanup-20260410.md
+wave: mmm-harvest-map-revision-20260413
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-mmm-harvest-map-revision-20260413.md
 
-## Active Wave: PS-I (Governance Liaison Session Memory Template Cleanup)
+## Active Wave: MMM Harvest Map Revision
 
 ### Wave Description
-CodexAdvisor-agent implements 4 cleanup changes to the governance-liaison-isms session memory template
-and agent contract per issue #1271. Changes include:
-- PS-I-01: Remove `iaa_invocation_result:` field from template
-- PS-I-02: Update `advisory_phase: PHASE_A_ADVISORY` → `PHASE_B_BLOCKING` in agent contract
-- PS-I-03: Add mandatory pre-IAA commit gate to liaison PREHANDOVER template
-- PS-I-04: Add SCOPE_DECLARATION fresh-overwrite instruction
+Foreman revises and hardens the MMM Harvest Map / Ownership Transition Matrix (`modules/MMM/harvest-map/harvest-map.md`)
+so it can serve as the final governance-grade transition-control artifact before MMM Stage 2 / FRS / TRS progression.
 
-CS2 Authorization: Issue maturion-isms#1271 opened and assigned by @APGI-cmy (CS2 = Johan Ras).
+This is a governance planning artifact revision — no implementation code, no builder delegation.
+
+CS2 Authorization: Issue maturion-isms#1345 opened and assigned by @APGI-cmy (CS2 = Johan Ras).
 Wave-start authorization confirmed.
 
-IAA Pre-Brief: `.agent-admin/assurance/iaa-prebrief-ps-i-governance-liaison-cleanup-20260410.md` (COMMITTED)
-IAA Token: `.agent-admin/assurance/iaa-token-session-056-ps-i-governance-liaison-20260410.md` (ISSUED)
+IAA Pre-Brief: PENDING
 
 ### Tasks
-- [x] PS-I-01: Remove `iaa_invocation_result:` field from session memory template
-  (`.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md`)
-- [x] PS-I-02: Update `advisory_phase: PHASE_A_ADVISORY` → `PHASE_B_BLOCKING`
-  (`.github/agents/governance-liaison-isms-agent.md`)
-- [x] PS-I-03: Add mandatory pre-IAA commit gate to liaison PREHANDOVER template
-  (`.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md`)
-- [x] PS-I-04: Add SCOPE_DECLARATION fresh-overwrite instruction
-  (`.agent-workspace/governance-liaison-isms/knowledge/session-memory-template.md`)
-- [x] T5: QP evaluation PASS + PREHANDOVER proof committed + SCOPE_DECLARATION PASS
-- [x] T6: IAA final audit PASS
+- [ ] Revise harvest-map.md with 9 required improvements (D1)
+  - [ ] 1. Add explicit source-state / switchover status model
+  - [ ] 2. Add formal switchover-gate logic
+  - [ ] 3. Reassess overconfident "Adopt as-is" labels
+  - [ ] 4. Strengthen MMM ↔ PIT boundary wording
+  - [ ] 5. Clarify framework-ingestion vs evidence-ingestion
+  - [ ] 6. Tighten legacy retirement treatment
+  - [ ] 7. Explicitly anchor CL-3.5 and CL-13 carry-over obligations
+  - [ ] 8. Add migration-class clarity
+  - [ ] 9. Extend open-questions register
+- [ ] Produce change note / rationale (D2)
+- [ ] Provide final readiness recommendation (D3)
+- [ ] IAA Pre-Brief invoked and artifact committed
+- [ ] Phase 4 handover ceremony
 
 ### Status
-WAVE COMPLETE — IAA R2 ASSURANCE-TOKEN issued (`IAA-session-056-R2-20260410-PASS`, 51/51 checks). PR #1333 pending CS2 merge approval.
-
-### Deliverables
-| ID | Deliverable | Agent | Status |
-|----|------------|-------|--------|
-| CL-10-D1 | routing-governance-check.yml | integration-builder | ✅ DONE (in base — 8aa76f4) |
-| CL-10-D2 | sub-module-routing-check.yml | integration-builder | ✅ DELIVERED (SHA 8774b79) |
-| CL-10-D3 | stub-detection-check.yml | integration-builder | ✅ DONE (in base — 8aa76f4) |
-
-### Tests
-- T-C-010-001 through T-C-010-012: 12/12 GREEN ✅
+IN_PROGRESS — Phase 1 complete, proceeding to IAA Pre-Brief invocation
 
 ### Previous Wave (Closed)
-wave: cl-7-personaloader-improvements-lkiac-l3 (Issue #1326) — CLOSED
+wave: ps-i-governance-liaison-cleanup-20260410 (Issue #1271) — CLOSED
