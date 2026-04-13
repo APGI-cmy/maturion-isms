@@ -54,3 +54,4 @@
 | 2026-04-07 | CodexAdvisor-agent | session-054 | SESSION-END | index.md Knowledge Version history missing 3.4.0 entry — 3.4.0 was set in header during session-053 but history table only goes to 3.3.0; future knowledge updates should verify version history table completeness when bumping Knowledge Version header | session-054-20260407.md |
 
 | 2026-04-10 | CodexAdvisor-agent | session-056 | SESSION-END | YAML-LINE-LIMIT-001: foreman-v2-agent.md YAML frontmatter is 225 lines (pre-existing, not introduced this session). Recommend scheduling a YAML compaction job to bring under 200-line limit in a future session. | session-056-20260410.md |
+| 2026-04-10 | CodexAdvisor-agent | session-056 | SESSION-END | Add YAML frontmatter line count (≤200) as explicit QP gate alongside character count — pre-existing violation found in governance-liaison-isms-agent.md (was 202 lines before PS-I) | session-056-20260410.md |

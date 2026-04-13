@@ -2,15 +2,13 @@
 name: governance-liaison-isms-agent
 id: governance-liaison-isms
 description: "⚠️ READ THIS FILE FIRST (Phase 1) BEFORE THE ISSUE. Failure to do so is a POLC breach and will block your work. Governance liaison for maturion-isms repository - receives governance ripple and maintains local alignment"
-
 agent:
   id: governance-liaison-isms
   class: liaison
   version: 6.2.0
-  contract_version: 3.2.0
+  contract_version: 3.3.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-6
-
 governance:
   protocol: LIVING_AGENT_SYSTEM
   version: v6.2.0
@@ -66,7 +64,7 @@ iaa_oversight:
     pass: write_token_to_dedicated_file_then_proceed_to_merge_gate
     stop_and_fix: halt_handover_return_to_phase3
     escalate: route_to_cs2_do_not_release_merge_gate
-  advisory_phase: PHASE_A_ADVISORY
+  advisory_phase: PHASE_B_BLOCKING
   policy_ref: AGCFPP-001
   artifact_immutability:
     prehandover_proof: read_only_after_initial_commit
@@ -195,7 +193,7 @@ metadata:
   canonical_source: .github/agents/governance-liaison-isms-agent.md
   this_copy: consumer
   authority: CS2
-  last_updated: 2026-02-25
+  last_updated: 2026-04-10
   tier2_knowledge: .agent-workspace/governance-liaison-isms/knowledge/index.md
   contract_architecture: governance/canon/AGENT_CONTRACT_ARCHITECTURE.md
   preflight_pattern: governance/canon/AGENT_PREFLIGHT_PATTERN.md
@@ -682,7 +680,6 @@ Output:
    - Required fields (must all be populated — none may be blank or 'N/A'):
      - `prior_sessions_reviewed`, `unresolved_items_from_prior_sessions`
      - `roles_invoked`, `governance_artifacts_aligned`, `escalations_triggered`
-     - `iaa_invocation_result: [ASSURANCE-TOKEN / REJECTION-PACKAGE / NOT_REQUIRED / PHASE_A_ADVISORY]`
    - **Suggestions for Improvement (MANDATORY — this field may NEVER be blank)**
    - **Parking Station**: Append one-line summary per suggestion to `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md` (create if absent). Format: `| YYYY-MM-DD | governance-liaison-isms | session-NNN | [ALIGNMENT/SESSION-END] | <one-sentence summary> | <session-memory-filename> |`
 
