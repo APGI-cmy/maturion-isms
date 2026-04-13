@@ -26,7 +26,7 @@
       "alignment_status": "HASH_MISMATCH",
       "layer_down_status": "PUBLIC_API",
       "last_verified": "2026-04-13T07:18:52Z",
-      "change_note": "v1.3.0: Post-ECAP-001 governance quality closure. Layered down via CI ripple PR #1317 (canonical commit 529d541f, 2026-04-09). Versions match (1.3.0) but SHA256 content hashes differ (canonical 52c6028a... vs local 5b03ff10...). Content drift persists from accumulated layer-down processing differences. Next step: re-sync local file from canonical source to resolve content drift."
+      "change_note": "v1.3.0: Post-ECAP-001 governance quality closure. Layered down via CI ripple PR #1317 (canonical commit 529d541f, 2026-04-09). Versions match (1.3.0) but SHA256 content hashes differ (canonical 52c6028a... vs local 5b03ff10...). Next step: re-sync local file from canonical source to resolve the hash mismatch."
     },
     {
       "filename": "ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
