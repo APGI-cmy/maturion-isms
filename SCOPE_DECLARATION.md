@@ -1,37 +1,31 @@
-# SCOPE_DECLARATION — Session 056 (CodexAdvisor-agent) — Wave foreman-ecap-step41a
+# SCOPE_DECLARATION — Session 057 (CodexAdvisor-agent) — Wave agent-contract-wave-record-model
 
-**Session**: session-056-foreman-ecap-20260410
-**Wave**: foreman-ecap-step41a
-**Issue**: maturion-isms — [Governance] Mandate execution-ceremony-admin-agent appointment in Foreman contract Phase 4
-**Branch**: copilot/fix-execution-ceremony-admin-agent
-**Date**: 2026-04-10
-**Authority**: A-026 / A-031
+**Session**: session-057-20260413
+**Wave**: agent-contract-wave-record-model
+**Issue**: maturion-isms — [CODEXADVISOR WAVE] Update agent contracts for single-file assurance artifact model
+**Branch**: copilot/update-agent-contracts-model
+**Date**: 2026-04-13
+**Authority**: CS2 issue (follow-up to PRs #1348, #1349)
 
 ---
 
 ## Files Changed in This Wave
 
-- `SCOPE_DECLARATION.md` - Root scope declaration for session-056 (this file)
-- `.agent-admin/assurance/iaa-rejection-session-056-foreman-ecap-20260410.md` - IAA REJECTION-PACKAGE from first invocation (IAA-authored, A-031 exempt)
-- `.agent-admin/assurance/iaa-prebrief-foreman-ecap-step41a-20260410.md` - IAA Pre-Brief for wave foreman-ecap-step41a
-- `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-056-foreman-ecap-20260410.md` - CodexAdvisor PREHANDOVER proof (amended per IAA rejection)
-- `.agent-workspace/CodexAdvisor-agent/memory/session-056-20260410.md` - CodexAdvisor session memory for session-056
-- `.agent-workspace/CodexAdvisor-agent/parking-station/suggestions-log.md` - CodexAdvisor parking station entry
-- `.agent-workspace/CodexAdvisor-agent/personal/SCOPE_DECLARATION.md` - CodexAdvisor personal scope declaration for session-056
-- `.agent-workspace/foreman-v2/knowledge/specialist-registry.md` - Specialist registry header version/date update
-- `.github/agents/foreman-v2-agent.md` — Foreman contract: add Step 4.1a, update Steps 4.2/4.3, bump contract_version 2.10.0→2.11.0, fix footer; fix Steps 4.2/4.3 review paths to reference ceremony-admin-owned path with handback semantics
-- `.github/agents/execution-ceremony-admin-agent.md` — execution-ceremony-admin-agent contract: add explicit bundle output paths in Steps 3.3/3.4 (`.agent-workspace/execution-ceremony-admin-agent/bundles/`)
-- `.agent-admin/assurance/iaa-token-session-056-foreman-ecap-20260410.md` - IAA ASSURANCE-TOKEN for session-056 wave foreman-ecap-step41a (IAA-authored, A-031)
+- `SCOPE_DECLARATION.md` - Root scope declaration for session-057 (this file)
+- `.github/agents/independent-assurance-agent.md` — IAA contract: wave record model alignment, standalone artifact prohibitions (v2.5.0→v2.6.0)
+- `.github/agents/foreman-v2-agent.md` — Foreman contract: wave record references, scope declaration gate (v2.11.0→v2.12.0)
+- `.github/agents/execution-ceremony-admin-agent.md` — Ceremony-admin contract: prohibited list, evidence checks (v1.0.0→v1.1.0)
+- `.github/agents/governance-liaison-isms-agent.md` — Liaison contract: restricted write_access, assurance path prohibition (v3.3.0→v3.4.0)
+- `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-057-20260413.md` - CodexAdvisor PREHANDOVER proof
+- `.agent-workspace/CodexAdvisor-agent/memory/session-057-20260413.md` - CodexAdvisor session memory for session-057
 
-**Total declared files**: 11
+**Total declared files**: 7
 
 ## Implementation Status
 
-All ECAP-001 §5.2 governance changes delivered:
-- Step 4.1a added to Foreman Phase 4 (mandate execution-ceremony-admin-agent ceremony bundle preparation)
-- Steps 4.2/4.3 headings updated from Generate/Write to Review (reflect delegation model)
-- contract_version bumped 2.10.0 → 2.11.0
-- Footer version consistency fixed (2.10.0 → 2.11.0, date updated)
-- specialist-registry.md header synchronized (Knowledge Version 1.0.0 → 1.2.0)
-- PREHANDOVER proof amended with Ripple Assessment and IAA Audit Token sections
-- IAA pre-brief created for this wave
+All 4 agent contracts updated for single-file assurance artifact model:
+- Standalone prebrief/token/rejection patterns replaced with iaa-wave-record-{wave}-{date}.md
+- Prohibitions added for standalone artifact creation
+- Governance-liaison write path restricted from .agent-admin/** to .agent-admin/governance/**
+- Scope declaration gate added to Foreman Phase 2 Step 2.7
+- All 4 files pass QP S1-S9 and are under 30,000 character limit
