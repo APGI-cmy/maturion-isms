@@ -64,7 +64,7 @@ in the convergence transition. The following states form the governed transition
 | Source-State | Meaning |
 |---|---|
 | **ACTIVE_SOURCE** | Capability is live in the source system and is the current production path. No destination equivalent exists yet. |
-| **PARALLEL_RUN** | Capability is live in both source and destination simultaneously. Destination equivalent exists but is not yet confirmed as the sole production path. |
+| **PARALLEL_RUN** | Capability is live in both source and destination simultaneously. Destination equivalent exists but is not yet confirmed as the sole production path. Entry: destination capability passes initial deployment verification. Exit: switchover gate conditions SG-1 through SG-5 are satisfied. |
 | **TRACEABILITY_ONLY** | Source capability has been superseded by the destination equivalent. Source is retained for audit trail and historical reference only — no live execution. |
 | **READY_FOR_RETIREMENT** | Source capability has completed the switchover gate (see below). All dependencies on the source have been eliminated. Awaiting formal retirement execution. |
 | **RETIRED** | Source capability has been formally decommissioned. No code, routes, or data paths remain active. Traceability record archived. |
@@ -73,9 +73,8 @@ in the convergence transition. The following states form the governed transition
 Backward transitions (e.g. from TRACEABILITY_ONLY back to PARALLEL_RUN) require explicit CS2 authorization
 and must be recorded in the deprecation register with rationale.
 
-**Default source-state**: All capabilities in this harvest map are currently `ACTIVE_SOURCE` unless
-explicitly noted otherwise. The destination equivalent for each capability does not yet exist — MMM
-is pre-Stage-2.
+**Default source-state**: All capabilities in this harvest map are currently `ACTIVE_SOURCE`.
+The destination equivalent for each capability does not yet exist — MMM is pre-Stage-2.
 
 ---
 
@@ -309,7 +308,7 @@ All open questions surfaced during harvest map production are recorded here. Eac
 | OQ-004 | RR-07 | Has the MMM → PIT export/interface contract been defined? What is the exact data shape, trigger conditions, and handover protocol for findings → PIT import? This contract must be formalised in the MMM FRS. | FRS | Foreman + PIT team |
 | OQ-005 | CL-3.5 | What is the current resolution status of the CL-3.5 data-source registry carry-over? Is the registry complete enough to support framework-source ingestion pathway specification in the FRS? | FRS | Foreman + CS2 |
 | OQ-006 | CL-13 | What is the current resolution status of the CL-13 extended scope QA/dashboard carry-over? Have legacy dashboard components been reconciled with the MMM dashboard specification? | FRS | Foreman + CS2 |
-| OQ-007 | Switchover Gate | What exact rule and evidence standard governs a move from `PARALLEL_RUN` to `TRACEABILITY_ONLY` / `RETIRED`? The switchover gate model in this document provides the framework, but the specific evidence requirements for each capability may vary. Should the switchover gate be parameterised per migration class? | FRS / Architecture | CS2 + Foreman |
+| OQ-007 | Switchover Gate | What exact rule and evidence standard governs a move from `PARALLEL_RUN` to `TRACEABILITY_ONLY` / `RETIRED`? The switchover gate model in this document provides the framework, but the specific evidence requirements for each capability may vary. Should the switchover gate be parameterised per migration class? Must be resolved before the first capability enters `PARALLEL_RUN` (i.e. before any destination equivalent reaches deployment verification). | FRS / Architecture | CS2 + Foreman |
 
 ---
 
