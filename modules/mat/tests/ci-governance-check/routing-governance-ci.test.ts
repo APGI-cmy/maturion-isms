@@ -314,4 +314,91 @@ describe('CL-10 RED Gate — Routing Governance CI Enforcement', () => {
     },
   );
 
+  // ──────────────────────────────────────────────────────────────────────────
+  // T-C-010-010: Sub-module routing compliance check workflow exists
+  // RED: this file does not yet exist (CL-10-D2 not yet delivered)
+  // ──────────────────────────────────────────────────────────────────────────
+  it(
+    'T-C-010-010: sub-module-routing-check.yml workflow file exists',
+    () => {
+      const SUB_MODULE_ROUTING_WORKFLOW = resolveFromRoot(
+        '.github/workflows/sub-module-routing-check.yml',
+      );
+      const exists = fs.existsSync(SUB_MODULE_ROUTING_WORKFLOW);
+      // RED: this file does not yet exist (CL-10-D2 not yet delivered)
+      expect(exists).toBe(true);
+    },
+  );
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // T-C-010-011: Sub-module routing check contains openai package.json scan
+  // RED: workflow does not yet exist
+  // ──────────────────────────────────────────────────────────────────────────
+  it(
+    'T-C-010-011: sub-module-routing-check.yml contains package.json scan for openai',
+    () => {
+      const SUB_MODULE_ROUTING_WORKFLOW = resolveFromRoot(
+        '.github/workflows/sub-module-routing-check.yml',
+      );
+      // RED: file does not exist yet
+      expect(
+        fs.existsSync(SUB_MODULE_ROUTING_WORKFLOW),
+        'sub-module-routing-check.yml must exist before checking its contents',
+      ).toBe(true);
+
+      const content = fs.readFileSync(SUB_MODULE_ROUTING_WORKFLOW, 'utf8');
+
+      // Must contain reference to 'openai' package in a package.json scanning context
+      expect(
+        content.includes('openai'),
+        'Workflow must contain openai in package.json scanning logic',
+      ).toBe(true);
+
+      // Must reference package.json (dependency-level scan, not import scan)
+      expect(
+        content.includes('package.json'),
+        'Workflow must reference package.json files (dependency-level check per GRS-016)',
+      ).toBe(true);
+    },
+  );
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // T-C-010-012: Sub-module routing check contains @anthropic-ai/sdk package.json scan
+  // RED: workflow does not yet exist
+  // ──────────────────────────────────────────────────────────────────────────
+  it(
+    'T-C-010-012: sub-module-routing-check.yml contains package.json scan for @anthropic-ai/sdk',
+    () => {
+      const SUB_MODULE_ROUTING_WORKFLOW = resolveFromRoot(
+        '.github/workflows/sub-module-routing-check.yml',
+      );
+      // RED: file does not exist yet
+      expect(
+        fs.existsSync(SUB_MODULE_ROUTING_WORKFLOW),
+        'sub-module-routing-check.yml must exist before checking its contents',
+      ).toBe(true);
+
+      const content = fs.readFileSync(SUB_MODULE_ROUTING_WORKFLOW, 'utf8');
+
+      // Must contain reference to '@anthropic-ai/sdk' or 'anthropic-ai' in package.json scanning context
+      const hasAnthropicPattern =
+        content.includes('@anthropic-ai/sdk') ||
+        content.includes('anthropic-ai');
+      expect(
+        hasAnthropicPattern,
+        'Workflow must contain @anthropic-ai/sdk in package.json scanning logic',
+      ).toBe(true);
+
+      // Must scan both dependencies and devDependencies (GRS-016 requires both)
+      const scansBothDepTypes =
+        content.includes('devDependencies') ||
+        content.includes('dev_dependencies') ||
+        content.includes('devdeps');
+      expect(
+        scansBothDepTypes,
+        'Workflow must scan both dependencies and devDependencies per GRS-016',
+      ).toBe(true);
+    },
+  );
+
 });

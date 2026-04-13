@@ -1,0 +1,143 @@
+---
+name: Sub-Module Routing Compliance Check
+
+# Authority: GOV-001, GOV-002, GRS-016
+# Programme: LKIAC-L4 — Routing Governance CI Enforcement
+# Purpose: Enforce GRS-016 at the package.json dependency level.
+#          Scan all modules/**/package.json and apps/**/package.json for direct
+#          AI provider SDK dependencies. Direct AI SDK dependencies in sub-modules
+#          or apps are forbidden — all AI provider access must route through the
+#          AIMC Gateway (@maturion/ai-centre) exclusively.
+#
+# Banned packages (GRS-016 §4.1):
+#   - openai            — OpenAI SDK direct dependency
+#   - @anthropic-ai/sdk — Anthropic SDK direct dependency
+#   - @langchain/*      — Any LangChain package (wildcard prefix match)
+#
+# Exclusion: apps/maturion-maturity-legacy/ — Legacy application with GOV exemption.
+#   This app predates the AIMC Gateway routing requirement and has a documented
+#   legacy boundary exemption. See: .agent-workspace/integration-builder/memory/LEGACY_BOUNDARY.md
+#
+# Scans: dependencies AND devDependencies in each package.json (GRS-016 requires both)
+# Fail on: any banned package found in a non-exempt module or app
+# Pass on: zero banned packages found
+#
+# Wave: CL-10 (Re-execution) — maturion-isms#1313
+# CS2 Authorization: maturion-isms#1313 (references maturion-isms#1221 wave-start)
+# Tests: T-C-010-010, T-C-010-011, T-C-010-012
+
+on:
+  pull_request:
+    paths:
+      - 'modules/**/package.json'
+      - 'apps/**/package.json'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  sub-module-routing-check:
+    name: "AIMC Compliance / sub-module-routing-check"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check package.json files for banned AI provider SDK dependencies
+        run: |
+          echo "========================================================"
+          echo " AIMC Sub-Module Routing Compliance Check"
+          echo " Authority: GOV-001, GOV-002, GRS-016 §4.1"
+          echo " Banned: openai | @anthropic-ai/sdk | @langchain/* (any)"
+          echo " Scope: modules/**/package.json + apps/**/package.json"
+          echo " Exclusion: apps/maturion-maturity-legacy/ (GOV legacy exemption)"
+          echo "========================================================"
+          echo ""
+
+          python3 - <<'PYEOF'
+          import json
+          import glob
+          import os
+          import sys
+
+          # ── Configuration ──────────────────────────────────────────────────────
+          SCAN_PATTERNS = [
+              'modules/**/package.json',
+              'apps/**/package.json',
+          ]
+
+          # Legacy exclusion — GOV exemption documented in LEGACY_BOUNDARY.md
+          # apps/maturion-maturity-legacy predates the AIMC Gateway requirement
+          EXCLUDED_DIRS = ['maturion-maturity-legacy']
+
+          # Banned exact package names (GRS-016 §4.1)
+          BANNED_EXACT = ['openai', '@anthropic-ai/sdk']
+
+          # Banned package scope prefixes (GRS-016 §4.1 — wildcard)
+          BANNED_PREFIXES = ['@langchain/']
+
+          # Dependency sections to scan (GRS-016 requires BOTH)
+          DEP_SECTIONS = ['dependencies', 'devDependencies']
+
+          # ── Scan ───────────────────────────────────────────────────────────────
+          violations = []
+          scanned_files = []
+
+          for pattern in SCAN_PATTERNS:
+              matched = sorted(glob.glob(pattern, recursive=True))
+              if not matched:
+                  print(f'  [INFO] No files matched pattern: {pattern}')
+              for pkg_file in matched:
+                  # Check exclusion list
+                  excluded = any(excl in pkg_file for excl in EXCLUDED_DIRS)
+                  if excluded:
+                      print(f'  [SKIP] {pkg_file} — GOV legacy exemption (maturion-maturity-legacy)')
+                      continue
+
+                  scanned_files.append(pkg_file)
+                  try:
+                      with open(pkg_file, 'r') as f:
+                          data = json.load(f)
+                  except (json.JSONDecodeError, OSError) as e:
+                      print(f'  [ERROR] Could not parse {pkg_file}: {e}')
+                      violations.append(
+                          f'  INVALID_PACKAGE_JSON: {pkg_file}: {e}'
+                      )
+                      continue
+
+                  for section in DEP_SECTIONS:
+                      deps = data.get(section, {})
+                      if not isinstance(deps, dict):
+                          continue
+                      for pkg_name in deps:
+                          is_banned = (
+                              pkg_name in BANNED_EXACT or
+                              any(pkg_name.startswith(prefix) for prefix in BANNED_PREFIXES)
+                          )
+                          if is_banned:
+                              violations.append(
+                                  f'  BANNED: {pkg_file} ({section}): {pkg_name}'
+                              )
+
+          # ── Report ─────────────────────────────────────────────────────────────
+          print(f'Scanned {len(scanned_files)} package.json file(s):')
+          for f in scanned_files:
+              print(f'  - {f}')
+          print('')
+
+          if violations:
+              print('❌ BANNED AI PROVIDER SDK DEPENDENCIES FOUND:')
+              print('')
+              for v in violations:
+                  print(v)
+              print('')
+              print('Direct AI SDK dependencies are forbidden in modules/ and apps/.')
+              print('All AI provider access MUST route through the AIMC Gateway')
+              print('(@maturion/ai-centre) exclusively.')
+              print('Authority: GOV-001, GOV-002, GRS-016 §4.1 — LKIAC-L4 Routing Governance')
+              sys.exit(1)
+          else:
+              print('✅ No banned AI provider SDK dependencies found.')
+              print('GRS-016 compliance verified at package.json dependency level.')
+          PYEOF
