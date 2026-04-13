@@ -20,7 +20,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../contexts/AuthContext';
 import { CheckCircle, XCircle, Clock, Loader2, AlertCircle, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getSessionToken } from '../../lib/supabase';
+import { getSessionToken, supabase } from '../../lib/supabase';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -75,6 +75,25 @@ async function fetchPendingFeedback(token: string, organisationId: string): Prom
   return res.json() as Promise<PendingFeedbackItem[]>;
 }
 
+async function fetchOrganisationId(userId: string): Promise<string> {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('organisation_id')
+    .eq('id', userId)
+    .single();
+
+  if (error) {
+    throw new Error('Failed to resolve organisation ID from profile.');
+  }
+
+  const organisationId = data?.organisation_id;
+  if (typeof organisationId !== 'string' || organisationId.trim().length === 0) {
+    throw new Error('Organisation ID not found in profile. Contact your administrator.');
+  }
+
+  return organisationId;
+}
+
 /**
  * Submit an approve or reject decision for a feedback item.
  * Authenticates via the caller's Supabase session JWT (Authorization: Bearer).
@@ -114,12 +133,8 @@ function usePendingFeedback() {
     queryFn: async () => {
       const token = await getSessionToken();
       if (!token) throw new Error('Not authenticated');
-      // F-D3-002: organisationId is now required as a query parameter.
-      // Read from verified Supabase user metadata (set during provisioning).
-      const meta = user?.user_metadata as Record<string, unknown> | undefined;
-      const appMeta = user?.app_metadata as Record<string, unknown> | undefined;
-      const organisationId = (appMeta?.['org_id'] ?? meta?.['organisation_id']) as string | undefined;
-      if (!organisationId) throw new Error('Organisation ID not found in session. Contact your administrator.');
+      if (!user?.id) throw new Error('User profile not found. Please sign in again.');
+      const organisationId = await fetchOrganisationId(user.id);
       return fetchPendingFeedback(token, organisationId);
     },
     staleTime: 30000,
