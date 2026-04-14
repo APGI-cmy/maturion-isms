@@ -76,7 +76,7 @@ All 80 FRS requirements (FR-001 through FR-080) are explicitly traced below.
 | FR-040 | Scoring Cascade | TR-004, TR-022, TR-046 | 6-step cascade latency ≤ 2 s (TR-004); tables for all 4 hierarchy levels (TR-022); indexes (TR-046) |
 | FR-041 | Audit Workbench / Walkabout Mode | TR-007, TR-022, TR-039, TR-040, TR-041, TR-042 | Session load (TR-007); `audit_sessions` table (TR-022); connectivity model (TR-039); queue-and-sync (TR-040); connectivity UI (TR-041); scope boundary (TR-042) |
 | FR-042 | MAT Label Survival Decision (OQ-008 RESOLVED) | TR-053 | Naming standard enforced via environment config and product decisions; no direct TRS requirement (governance note only); TR-053 ensures no conflicting environment labels |
-| FR-043 | Independent Auditor Flow | TR-035, TR-036, TR-038 | Invitation security (TR-035); AUDITOR role permissions (TR-036 extended); all auditor actions in audit_log (TR-038) |
+| FR-043 | Independent Auditor Flow | TR-035, TR-036, TR-038 | Invitation security (TR-035); role-model access controls for the auditor flow (TR-036); all auditor actions in audit_log (TR-038) |
 | FR-044 | Shared Findings Model | TR-022, TR-016 | `findings` table (TR-022); findings in PIT export payload (TR-016) |
 | FR-045 | No Duplicate Truth Rule | TR-024 | Unique constraint on `(assessment_id, criterion_id, storage_ref)` (TR-024) |
 | FR-046 | Output Fork Decision | TR-016, TR-022 | PIT export path (TR-016); `pit_exports` table (TR-022) |
