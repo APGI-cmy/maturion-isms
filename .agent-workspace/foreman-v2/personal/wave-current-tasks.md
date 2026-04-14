@@ -23,11 +23,11 @@ IAA Pre-Brief: COMMITTED (wave record at `.agent-admin/assurance/iaa-wave-record
 ### Tasks
 - [x] Phase 1 — Identity & Preflight complete
 - [x] IAA Pre-Brief invoked and wave record committed
-- [ ] D1 — Update BUILD_PROGRESS_TRACKER.md with explicit CS2 approval fields (governance-liaison-isms-agent)
-- [ ] Phase 4 handover ceremony
+- [x] D1 — Update BUILD_PROGRESS_TRACKER.md with explicit CS2 approval fields (governance-liaison-isms-agent) — QP PASS
+- [ ] Phase 4 handover ceremony (execution-ceremony-admin-agent)
 
 ### Status
-IN PROGRESS — D1 pending delegation to governance-liaison-isms-agent
+PHASE 4 — QP PASS on D1. Awaiting handover ceremony (execution-ceremony-admin-agent).
 
 ### Previous Wave (Closed)
 wave: mmm-doc-normalization-20260413 (Issue #1358) — CLOSED
