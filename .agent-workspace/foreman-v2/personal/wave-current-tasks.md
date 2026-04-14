@@ -38,14 +38,15 @@ IAA Pre-Brief: COMMITTED (wave record at `.agent-admin/assurance/iaa-wave-record
   - [x] Stage 2 CS2 approval reference added (SCB-001 RESOLVED)
   - [x] Stage 3 status updated to IN_PROGRESS with completion details
 - [x] D5-HM — Update harvest-map.md (OQ-004, OQ-006, OQ-007 RESOLVED; v0.3.0)
-- [ ] D6 — Governance ceremony artifacts
-  - [ ] PREHANDOVER proof
-  - [ ] Session memory
-  - [ ] IAA audit + ASSURANCE-TOKEN
+- [x] D6 — Governance ceremony artifacts
+  - [x] PREHANDOVER proof
+  - [x] Session memory
+  - [x] IAA audit + ASSURANCE-TOKEN (IAA-session-mmm-stage3-frs-20260414-PASS)
 
 ### Status
-PENDING CEREMONY — D1 and D5 complete and pushed. Creating ceremony artifacts.
+COMPLETE — D1 PASS, D5-BPT PASS, D5-HM PASS, IAA ASSURANCE-TOKEN PASS. Awaiting CS2 merge.
 
-### Previous Wave (Closed)
+### Previous Waves (Closed)
+wave: mmm-cs2-approval-fields-20260414 (Issue #1361) — CLOSED (merged to main)
 wave: mmm-doc-normalization-20260413 (Issue #1358) — CLOSED
 wave: mmm-stage2-ux-workflow-wiring-spec-20260413 (Issue #1352) — CLOSED
