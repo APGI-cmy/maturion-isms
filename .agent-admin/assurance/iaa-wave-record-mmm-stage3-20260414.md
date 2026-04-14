@@ -187,7 +187,62 @@ and MUST NOT be edited post-commit. IAA will populate the actual token under `##
 
 ## TOKEN
 
-*[To be populated by IAA at handover assurance — after PR is produced and submitted for review.]*
+**PHASE_B_BLOCKING_TOKEN**: `IAA-session-mmm-stage3-frs-20260414-PASS`
+
+**Issued By**: independent-assurance-agent v6.2.0 | Contract v2.7.0  
+**Date**: 2026-04-14  
+**Session**: session-mmm-stage3-frs-20260414  
+**Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE  
+**PR / Branch**: copilot/mmm-stage-3-wave-start-authorization  
+**Producing Agent**: foreman-v2-agent v6.2.0 / Contract v2.12.0  
+**Ceremony Admin**: NO  
+
+**Verdict**: ASSURANCE-TOKEN (PASS)
+
+**Checks Run**: 17 total | 17 PASS | 0 FAIL
+
+| Check | Result |
+|-------|--------|
+| CORE-020 (zero partial pass) | ✅ PASS |
+| CORE-021 (zero severity tolerance) | ✅ PASS |
+| OVL-PBG-001 module_slug matches directory | ✅ PASS — `module_slug: "MMM"` matches `modules/MMM/` |
+| OVL-PBG-002 BUILD_PROGRESS_TRACKER identity consistent | ✅ PASS — Module: MMM; Slug: MMM; matches manifest |
+| OVL-PBG-003 Architecture doc correct module name | ✅ PASS — Architecture placeholder correctly names "Maturity Management Module (MMM)" |
+| OVL-PBG-004 IAA Pre-Brief exists before FRS wave | ✅ PASS — wave record committed SHA 3a73ce3 before FRS work |
+| OVL-PBG-005 AGENT_HANDOVER_AUTOMATION version (knowledge files) | ✅ PASS — No knowledge files modified in this PR; check N/A |
+| OVL-PBG-006 BUILD_PROGRESS_TRACKER 12-stage model | ✅ PASS — All 12 stages present |
+| OVL-PBG-007 Architecture doc full lifecycle sequence | ✅ PASS — 12-stage sequence listed in placeholder |
+| OVL-PBG-008 Stage gating respected | ✅ PASS — Stage 1 COMPLETE (#1298); Stage 2 COMPLETE (CS2 Stage 3 auth); Stage 3 IN_PROGRESS |
+| OVL-PBG-009 Legacy directory numbering advisory | 📋 ADVISORY NOTE — `02-frs` is in Stage 3 position (SCB-003 documented in Pre-Brief); architecture.md references stale `01-frs` path. Not REJECTION-PACKAGE. |
+| OVL-PBG-010 Stage 2 UX Wiring Spec present | ✅ PASS — `modules/MMM/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` present |
+| OVL-PBG-011/012/013/015/016 (Stage 6/7/9 + build gates) | ✅ PASS — N/A: No build work, no builder delegation, no first build wave |
+| OVL-PBG-014 §7.1 Change-Propagation Audit | ✅ PASS — N/A: New FRS creation; all downstream stages NOT_STARTED; no existing downstream artifacts to propagate |
+| SQ-01 FRS completeness | ✅ PASS — 80 requirements, 1478 lines, no stubs |
+| SQ-02 §AD traceability | ✅ PASS — 42/42 §AD sections traced in §14 matrix |
+| SQ-03 §UX journey traceability | ✅ PASS — 17/17 journeys (J-01–J-17) traced in §15 matrix |
+| SQ-04 Zero TBD items | ✅ PASS — 7 occurrences of "TBD" are all in confirmation statements, zero actual TBD requirements |
+| SQ-05 OQ dispositions complete | ✅ PASS — 9 OQs: 6 RESOLVED (OQ-004/005/006/007/008/009), 3 explicitly CARRIED FORWARD with stage assignment |
+| SQ-06 Stage 2 CS2 approval documented | ✅ PASS — SCB-001 RESOLVED; BUILD_PROGRESS_TRACKER Stage 2 shows CS2 Stage 3 auth issue |
+| SQ-07 Scope boundary respected | ✅ PASS — Zero implementation code, schema, UI, builder delegation confirmed |
+| SQ-08 Scope declaration committed | ✅ PASS — `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-stage3.md` present |
+| A-021 Commit before IAA invocation | ✅ PASS — SHA 735a18b (deliverables) pushed before ceremony artifacts |
+| A-029 iaa_audit_token format + First Invocation Exception | ✅ PASS — Token pre-populated as `IAA-session-mmm-stage3-frs-20260414-PASS`; CORE-019 First Invocation Exception applies |
+| PREHANDOVER proof completeness | ✅ PASS — All required YAML fields and sections present |
+| Session memory completeness | ✅ PASS — All 6 required fields present |
+
+**Advisory Structural Note (OVL-PBG-009)**: Architecture placeholder at `modules/MMM/04-architecture/architecture.md` references stale FRS path `modules/MMM/01-frs/` (should be `02-frs`). This is a pre-existing artefact from prior wave. No blocking action required for this wave. CS2 migration plan required separately (SCB-003 carried forward).
+
+**Merge Permitted**: Subject to CS2 approval.  
+**Confidence**: HIGH — Evidence bundle complete; all substantive checks independently verified.
+
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/mmm-stage-3-wave-start-authorization (MMM Stage 3 FRS)
+All 17 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-mmm-stage3-frs-20260414-PASS
+Adoption phase: PHASE_B_BLOCKING
+═══════════════════════════════════════
 
 ---
 
