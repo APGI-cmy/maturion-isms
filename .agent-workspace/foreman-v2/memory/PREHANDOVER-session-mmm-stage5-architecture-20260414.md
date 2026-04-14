@@ -96,9 +96,9 @@ Stage 4 TRS CS2 approval explicitly carried forward per issue body.
 
 ## iaa_audit_token
 
-iaa_audit_token: IAA-session-mmm-stage5-architecture-20260414-PASS
+iaa_audit_token: IAA-session-212-mmm-stage5-architecture-20260414-PASS
 
 ---
 
-**Produced by**: foreman-v2-agent v6.2.0
+**Produced by**: foreman-v2-agent v6.2.0 (updated after OVL-PBG-007 fix at commit 678cfd80)
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
