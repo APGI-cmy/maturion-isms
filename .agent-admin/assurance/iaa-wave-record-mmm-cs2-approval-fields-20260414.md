@@ -149,7 +149,30 @@ The following evidence must be present when IAA is invoked for full assurance:
 
 ## TOKEN
 
-PHASE_B_BLOCKING_TOKEN: PENDING
+PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-cs2-approval-fields-20260414-PASS
+
+**Token Date**: 2026-04-14
+**Checks Run**: 7 binding checks — 7 PASS, 0 FAIL
+**Category**: PRE_BUILD_STAGE_MODEL
+**Overlay**: PRE_BUILD_GATES (OVL-PBG-001 through OVL-PBG-016)
+**Adoption Phase**: PHASE_B_BLOCKING
+**IAA Session**: session-mmm-cs2-approval-fields-iaa-20260414
+**Verdict**: ASSURANCE-TOKEN (PASS) — Merge permitted subject to CS2 approval
+
+**Checks Summary**:
+- CORE-020 (zero partial pass): PASS ✅
+- CORE-021 (zero severity tolerance): PASS ✅
+- OVL-PBG-001 (manifest slug matches directory): PASS ✅
+- OVL-PBG-002 (BUILD_PROGRESS_TRACKER identity consistent): PASS ✅
+- OVL-PBG-006 (full 12-stage model present): PASS ✅
+- OVL-PBG-008 (no stage skipping): PASS ✅
+- OVL-PBG-ADM-001 (overlay fully applied): PASS ✅
+- OVL-PBG-009: ADVISORY STRUCTURAL NOTE only — legacy 0-indexed directory naming (existing condition, not introduced by this wave; per overlay definition not a REJECTION-PACKAGE trigger; CS2 migration plan required separately)
+
+**Primary Deliverable**: `modules/MMM/BUILD_PROGRESS_TRACKER.md` — 11 approval field blocks verified across Stages 1–11. Stage 1 APPROVED (CS2, #1298, 2026-04-08). Stages 2–11 PENDING (N/A). Stage 12 exempt by design.
+
+*Authority: CS2 (Johan Ras / @APGI-cmy)*
+*IAA Contract v2.7.0 | PHASE_B_BLOCKING active*
 
 ---
 
