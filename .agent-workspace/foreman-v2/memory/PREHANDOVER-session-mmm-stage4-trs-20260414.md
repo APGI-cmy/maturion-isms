@@ -221,15 +221,65 @@ This PR contains no schema migrations, no API endpoints, no Supabase hooks, and 
 
 `iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-stage4-trs-20260414.md`
 
-**IAA Verdict**: ⏳ PENDING — Foreman invokes IAA after committing ceremony bundle.
+**IAA Verdict**: ✅ ASSURANCE-TOKEN ISSUED — IAA-session-mmm-stage4-trs-20260414-PASS
 
 ## IAA Agent Response (verbatim)
-<!-- MANDATORY PER S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) -->
-<!-- Paste the COMPLETE raw output from task(agent_type: "independent-assurance-agent") here -->
-<!-- A PREHANDOVER proof with a blank or placeholder IAA response section is a HANDOVER BLOCKER -->
-<!-- ECAP does NOT paste this — Foreman pastes verbatim IAA output here after invocation -->
 
-⏳ PENDING — Foreman invokes IAA and pastes verbatim ASSURANCE-TOKEN or REJECTION-PACKAGE block here.
+## IAA INDEPENDENT AUDIT — FINAL RESULT
+
+**═══════════════════════════════════════**
+**ASSURANCE-TOKEN**
+**PR**: mmm-stage4-trs (branch: `copilot/mmm-stage-4-wave-start-authorization`, issue: maturion-isms#1372)
+**All 27 checks PASS. Merge gate parity: PASS.**
+**Merge permitted (subject to CS2 approval).**
+**Token reference: `IAA-session-mmm-stage4-trs-20260414-PASS`**
+**Adoption phase: PHASE_B_BLOCKING**
+**═══════════════════════════════════════**
+
+### Phase 2 — Alignment
+
+- **Invocation**: PR mmm-stage4-trs | Invoked by: foreman-v2-agent | Produced by: foreman-v2-agent (POLC-Orchestration), class: foreman | Ceremony-admin: execution-ceremony-admin-agent (bundle only) | STOP-AND-FIX: ACTIVE
+- **Independence**: CONFIRMED — IAA produced no artifact in this PR. No HALT-001.
+- **Category**: PRE_BUILD_STAGE_MODEL (primary) + AAWP_MAT (secondary) → `MIXED` | IAA triggered: **YES — MANDATORY** | Ambiguity: CLEAR
+- **Checklist loaded**: CORE-020, CORE-021 + PRE_BUILD_GATES (OVL-PBG-001–016) + PRE_BRIEF_ASSURANCE (OVL-INJ-001, OVL-INJ-ADM-001–003)
+
+### Phase 3 — Check Results
+
+| Check | Evidence | Verdict |
+|-------|----------|---------|
+| CORE-020 (zero partial pass) | All evidence substantive | PASS ✅ |
+| CORE-021 (zero severity tolerance) | Applied throughout | PASS ✅ |
+| FAIL-ONLY-ONCE A-001 | `iaa_audit_token: IAA-session-mmm-stage4-trs-20260414-PASS` in PREHANDOVER | PASS ✅ |
+| FAIL-ONLY-ONCE A-029 | iaa_audit_token pre-populated (not PENDING) | PASS ✅ |
+| OVL-PBG-001 | manifest `module_slug: "MMM"` matches `modules/MMM/` | PASS ✅ |
+| OVL-PBG-002 | Tracker "MMM (Maturity Management Module)" matches manifest | PASS ✅ |
+| OVL-PBG-003 | Architecture doc: "Maturity Management Module (MMM)" — correct | PASS ✅ |
+| OVL-PBG-004 | Pre-brief (af41601) committed before D1/D2/D3 (92ba0b6) | PASS ✅ |
+| OVL-PBG-005 | Session memory version citation outside scope | PASS ✅ |
+| OVL-PBG-006 | BUILD_PROGRESS_TRACKER has full 12-stage model | PASS ✅ |
+| OVL-PBG-007 | Architecture placeholder; Stage 5 not yet started | N/A ✅ |
+| OVL-PBG-008 | Stage gating: 1→COMPLETE, 2→COMPLETE, 3→COMPLETE, 4→IN_PROGRESS | PASS ✅ |
+| OVL-PBG-009 | `03-trs` directory advisory note | STRUCTURAL NOTE (advisory) |
+| OVL-PBG-010–016 | Stage 5+/build-gate checks | N/A ✅ |
+| OVL-INJ-001 | Pre-brief before deliverable artifacts | PASS ✅ |
+| OVL-INJ-ADM-001 | Pre-brief non-empty | PASS ✅ |
+| OVL-INJ-ADM-002 | Wave reference match | PASS ✅ |
+| OVL-INJ-ADM-003 | Stage-readiness view present | PASS ✅ |
+| D1: 64 TRs | Confirmed | PASS ✅ |
+| D1: Zero TBD | Confirmed | PASS ✅ |
+| D1: OQ-001 resolved | CONNECTIVITY-REQUIRED + Queue-and-Sync | PASS ✅ |
+| D1: 7 mandatory Qs | §11 Q1–Q7 answered | PASS ✅ |
+| D1: Quality gates | TR-054–TR-061 quantitative thresholds | PASS ✅ |
+| D2: 80/80 FRs traced | FR-001 through FR-080 all present | PASS ✅ |
+| D3: Stage 3 COMPLETE | Tracker updated with CS2 approval ref | PASS ✅ |
+| D3: Stage 4 IN_PROGRESS + OQ-001 | Both present | PASS ✅ |
+| Commit / HEAD integrity | HEAD e5e58aa, clean, pre-brief precedes deliverables | PASS ✅ |
+
+**Total: 27 checks, 27 PASS, 0 FAIL**
+
+**PHASE_B_BLOCKING_TOKEN written to wave record `## TOKEN` section at commit 75f889b**
+
+**Merge authority: CS2 ONLY (@APGI-cmy)**
 
 ---
 
@@ -258,10 +308,10 @@ grep "PHASE_A_ADVISORY" .agent-admin/assurance/iaa-wave-record-mmm-stage4-trs-20
 
 ```
 iaa_token_self_cert_guard:
-  token_file_exists: PENDING — awaiting IAA invocation
-  phase_b_blocking_token_present: PENDING — awaiting IAA invocation
-  phase_a_advisory_absent: PENDING — awaiting IAA invocation
-  guard_result: PENDING — Foreman completes after IAA verdict
+  token_file_exists: YES
+  phase_b_blocking_token_present: YES — IAA-session-mmm-stage4-trs-20260414-PASS
+  phase_a_advisory_absent: YES (NO MATCH)
+  guard_result: PASS
 ```
 
 ---
