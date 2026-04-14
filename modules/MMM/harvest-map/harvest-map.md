@@ -3,11 +3,11 @@
 **Artifact Type**: Convergence Control Planning Artifact  
 **Module**: MMM — Maturity Model Management  
 **Status**: DRAFT — Revised for CS2 review and approval  
-**Version**: 0.2.0  
+**Version**: 0.2.1  
 **Date**: 2026-04-13  
-**Authority**: CS2 (Johan Ras / @APGI-cmy) — Issues maturion-isms#1300, maturion-isms#1345  
+**Authority**: CS2 (Johan Ras / @APGI-cmy) — Issues maturion-isms#1300, maturion-isms#1345, maturion-isms#1358  
 **Produced By**: foreman-v2-agent (POLC-Orchestration mode)  
-**Revision**: Governance-hardening pass per maturion-isms#1345 (9 required improvements)  
+**Revision**: Governance-hardening pass per maturion-isms#1345 (9 required improvements); normalization pass per maturion-isms#1358 (stale references corrected, LKIAC OQ answers updated)  
 **Inputs Used**:
 - `modules/MMM/00-app-description/MMM_app_description.md` v0.5.0 (CS2-approved, maturion-isms#1298)
 - `modules/MMM/MMM_strategy.md` v0.1.0
@@ -74,7 +74,9 @@ Backward transitions (e.g. from TRACEABILITY_ONLY back to PARALLEL_RUN) require 
 and must be recorded in the deprecation register with rationale.
 
 **Default source-state**: All capabilities in this harvest map are currently `ACTIVE_SOURCE`.
-The destination equivalent for each capability does not yet exist — MMM is pre-Stage-2.
+The destination equivalent for each capability does not yet exist — MMM has produced the Stage 2
+UX Workflow & Wiring Spec, pending CS2 approval. Stage 3 (FRS) is next. No destination
+equivalents have been built yet, so all source capabilities remain `ACTIVE_SOURCE`.
 
 ---
 
@@ -273,8 +275,10 @@ and how they map to the AIMC/KUC ingestion infrastructure. If CL-3.5 is not comp
 framework ingestion pathway cannot be fully specified in the FRS.
 
 **Affected rows**: MT-01, LG-01, LG-02  
-**Status**: Active carry-over — must be resolved before or during FRS derivation  
-**Tracked in**: Open Questions Register (OQ-005)
+**Status**: ✅ RESOLVED — CL-3.5 is COMPLETE (session-082, 2026-03-01; 27/27 tests GREEN).
+DEP-008 at `PARALLEL-RUN`. CP-3.5 CS2-approved 2026-04-03. See
+`modules/MMM/_readiness/lkiac-carryover-closure-note.md` v1.0.0.  
+**Tracked in**: Open Questions Register (OQ-005 — ANSWERED)
 
 ### CL-13 — QA/Dashboard Legacy Carry-Over (Extended Scope)
 
@@ -285,8 +289,11 @@ framework ingestion pathway cannot be fully specified in the FRS.
 must be reconciled with the MMM dashboard before the Roadmap dashboard can be decommissioned.
 
 **Affected rows**: RR-06, LG-03  
-**Status**: Active carry-over — must be resolved before or during FRS derivation  
-**Tracked in**: Open Questions Register (OQ-006)
+**Status**: ✅ RESOLVED (extended scope) — CL-13 extended scope (D5/D6/D7) is COMPLETE
+(session-083, 2026-03-01; 15/15 tests GREEN). DEP-005/006/007 at `PARALLEL-RUN`. CL-13 core
+deliverables (D1–D4) remain PENDING as a separate LKIAC item. See
+`modules/MMM/_readiness/lkiac-carryover-closure-note.md` v1.0.0.  
+**Tracked in**: Open Questions Register (OQ-006 — PARTIALLY ANSWERED)
 
 ### Governance Rule
 
@@ -300,15 +307,15 @@ gap.
 
 All open questions surfaced during harvest map production are recorded here. Each must be answered before the associated Stage of Formalisation artifact (FRS, TRS, or Architecture) is completed.
 
-| # | Ref | Question | Stage Required By | Responsibility |
-|---|---|---|---|---|
-| OQ-001 | MT-05 | What is the minimum offline capability requirement for MMM walkabout mode? Is full offline evidence storage required, or is low-connectivity / cached-submission sufficient? | TRS | CS2 + Product Owner |
-| OQ-002 | LG-03 | Has a component audit of the legacy UI assets been performed? Which components are design-system-compatible and ready for Shared Platform harvesting? | Architecture wave | Foreman + Architecture team |
-| OQ-003 | LG-05 | Has a full duplication audit of legacy vs Roadmap/MAT capabilities been completed? Which legacy components are confirmed duplicates for retirement? This audit must produce a named-component-level artifact before any retirement execution. | Architecture wave | Foreman + Architecture team |
-| OQ-004 | RR-07 | Has the MMM → PIT export/interface contract been defined? What is the exact data shape, trigger conditions, and handover protocol for findings → PIT import? This contract must be formalised in the MMM FRS. | FRS | Foreman + PIT team |
-| OQ-005 | CL-3.5 | What is the current resolution status of the CL-3.5 data-source registry carry-over? Is the registry complete enough to support framework-source ingestion pathway specification in the FRS? | FRS | Foreman + CS2 |
-| OQ-006 | CL-13 | What is the current resolution status of the CL-13 extended scope QA/dashboard carry-over? Have legacy dashboard components been reconciled with the MMM dashboard specification? | FRS | Foreman + CS2 |
-| OQ-007 | Switchover Gate | What exact rule and evidence standard governs a move from `PARALLEL_RUN` to `TRACEABILITY_ONLY` / `RETIRED`? The switchover gate model in this document provides the framework, but the specific evidence requirements for each capability may vary. Should the switchover gate be parameterised per migration class? Must be resolved before the first capability enters `PARALLEL_RUN` (i.e. before any destination equivalent reaches deployment verification). | FRS / Architecture | CS2 + Foreman |
+| # | Ref | Question | Stage Required By | Responsibility | Status |
+|---|---|---|---|---|---|
+| OQ-001 | MT-05 | What is the minimum offline capability requirement for MMM walkabout mode? Is full offline evidence storage required, or is low-connectivity / cached-submission sufficient? | TRS | CS2 + Product Owner | OPEN |
+| OQ-002 | LG-03 | Has a component audit of the legacy UI assets been performed? Which components are design-system-compatible and ready for Shared Platform harvesting? | Architecture wave | Foreman + Architecture team | OPEN |
+| OQ-003 | LG-05 | Has a full duplication audit of legacy vs Roadmap/MAT capabilities been completed? Which legacy components are confirmed duplicates for retirement? This audit must produce a named-component-level artifact before any retirement execution. | Architecture wave | Foreman + Architecture team | OPEN |
+| OQ-004 | RR-07 | Has the MMM → PIT export/interface contract been defined? What is the exact data shape, trigger conditions, and handover protocol for findings → PIT import? This contract must be formalised in the MMM FRS. | FRS | Foreman + PIT team | OPEN |
+| OQ-005 | CL-3.5 | What is the current resolution status of the CL-3.5 data-source registry carry-over? Is the registry complete enough to support framework-source ingestion pathway specification in the FRS? | FRS | Foreman + CS2 | ✅ ANSWERED — CL-3.5 is COMPLETE (session-082, 27/27 tests GREEN, DEP-008 at PARALLEL-RUN, CP-3.5 CS2-approved 2026-04-03). The data-source registry is available to support FRS specification. See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`. |
+| OQ-006 | CL-13 | What is the current resolution status of the CL-13 extended scope QA/dashboard carry-over? Have legacy dashboard components been reconciled with the MMM dashboard specification? | FRS | Foreman + CS2 | ⚠️ PARTIALLY ANSWERED — CL-13 extended scope (D5/D6/D7) is COMPLETE (session-083, 15/15 tests GREEN, DEP-005/006/007 at PARALLEL-RUN). Extended scope dashboard components delivered. CL-13 core deliverables (D1–D4) remain PENDING. Full reconciliation deferred to FRS wave. See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`. |
+| OQ-007 | Switchover Gate | What exact rule and evidence standard governs a move from `PARALLEL_RUN` to `TRACEABILITY_ONLY` / `RETIRED`? The switchover gate model in this document provides the framework, but the specific evidence requirements for each capability may vary. Should the switchover gate be parameterised per migration class? Must be resolved before the first capability enters `PARALLEL_RUN` (i.e. before any destination equivalent reaches deployment verification). | FRS / Architecture | CS2 + Foreman | OPEN |
 
 ---
 
@@ -347,6 +354,9 @@ This is a convergence-control artifact to support lawful and lossless FRS/TRS de
 | CL-3.5 and CL-13 carry-over obligations anchored (v0.2.0) | ✅ See §LKIAC Carry-Over Obligations |
 | Migration-class clarity added (v0.2.0) | ✅ Migration Class column added to all capability rows |
 | Open-question register extended (v0.2.0) | ✅ OQ-004 through OQ-007 added |
+| OQ-005 (CL-3.5) answered (v0.2.1) | ✅ CL-3.5 COMPLETE — see §LKIAC Carry-Over Obligations |
+| OQ-006 (CL-13) partially answered (v0.2.1) | ✅ CL-13 extended scope COMPLETE — see §LKIAC Carry-Over Obligations |
+| Pre-Stage-2 stale references corrected (v0.2.1) | ✅ Default source-state note updated |
 
 ---
 
@@ -378,11 +388,11 @@ downstream implications for other modules and agents.
 
 | Field | Value |
 |---|---|
-| **CS2 Authorization** | maturion-isms#1300 (original), maturion-isms#1345 (revision — opened by @APGI-cmy) |
-| **Wave** | mmm-harvest-map-revision |
-| **Session** | session-mmm-harvest-map-revision-20260413 |
+| **CS2 Authorization** | maturion-isms#1300 (original), maturion-isms#1345 (revision — opened by @APGI-cmy), maturion-isms#1358 (normalization) |
+| **Wave** | mmm-harvest-map-revision (v0.2.0); mmm-doc-normalization (v0.2.1) |
+| **Session** | session-mmm-harvest-map-revision-20260413 (v0.2.0); session-mmm-doc-normalization-20260413 (v0.2.1) |
 | **Produced By** | foreman-v2-agent v6.2.0 (POLC-Orchestration mode) |
 | **Original Version** | v0.1.0 (2026-04-08, session-161-mmm-harvest-map-20260408) |
-| **Current Version** | v0.2.0 (2026-04-13, governance-hardening revision per issue #1345) |
-| **IAA Pre-Brief** | `.agent-admin/assurance/iaa-prebrief-mmm-harvest-map-revision-20260413.md` |
-| **Next Step** | CS2 review and approval → proceed to UX Workflow / FRS derivation for MMM |
+| **Current Version** | v0.2.1 (2026-04-13, normalization pass per issue #1358) |
+| **IAA Pre-Brief** | v0.2.0 / revision: `.agent-admin/assurance/iaa-wave-record-mmm-harvest-map-revision-20260413.md`; v0.2.1 / normalization: `.agent-admin/assurance/iaa-wave-record-mmm-doc-normalization-20260413.md` |
+| **Next Step** | CS2 review/approval of live MMM artifacts → Stage 3 (FRS) wave-start |
