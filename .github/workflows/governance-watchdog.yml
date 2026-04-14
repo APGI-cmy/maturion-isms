@@ -610,3 +610,62 @@ jobs:
             });
 
             core.warning(`Gap 3 alert posted on PR #${prNumber}: PREHANDOVER with PENDING token + handover language detected.`);
+
+  # ── Canon File Ceiling ───────────────────────────────────────────────────
+  # Authority: GOV-SIMPLIFICATION (Issue #1347), canon moratorium Tier 1 action item 3
+  # Purpose: Enforce a hard ceiling on the number of .md files in governance/canon/
+  #          to prevent indefinite canon growth. The canon file moratorium requires
+  #          that new canon files retire or merge an existing one.
+  # Issue: #1358 (CI-HARDENING)
+  # Note: This is an advisory/watchdog check — it does not block merge but
+  #       posts a warning. CS2 can raise the ceiling in this workflow.
+  canon-file-ceiling:
+    name: "watchdog/canon-file-ceiling"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
+
+      - name: Check Canon File Ceiling
+        run: |
+          echo "=== Canon File Ceiling Check (CANON-CEILING-001) ==="
+          echo ""
+
+          # Configurable ceiling — set to current count + 10 as buffer.
+          # Current count at implementation: 177. Ceiling: 187.
+          # To raise the ceiling, CS2 must update this value.
+          CANON_CEILING=187
+
+          CANON_DIR="governance/canon"
+          if [ ! -d "$CANON_DIR" ]; then
+            echo "ℹ️  governance/canon/ directory not found — skipping."
+            exit 0
+          fi
+
+          CURRENT_COUNT=$(find "$CANON_DIR" -maxdepth 1 -name "*.md" | wc -l)
+
+          echo "governance/canon/ file count: $CURRENT_COUNT (ceiling: $CANON_CEILING)"
+
+          if [ "$CURRENT_COUNT" -gt "$CANON_CEILING" ]; then
+            echo ""
+            echo "::warning::CANON-CEILING-001 — governance/canon/ contains $CURRENT_COUNT .md files (ceiling: $CANON_CEILING). The canon file moratorium (GOV-SIMPLIFICATION, Issue #1347) prohibits adding new canon files without retiring an existing one."
+            echo ""
+            echo "⚠️  CANON-CEILING-001 WARNING — governance/canon/ contains $CURRENT_COUNT .md files (ceiling: $CANON_CEILING)."
+            echo ""
+            echo "   The canon file moratorium (GOV-SIMPLIFICATION, Issue #1347) prohibits"
+            echo "   adding new canon files without retiring an existing one."
+            echo ""
+            echo "   To add a new canon file:"
+            echo "   1. Identify a canon file to retire or merge into the new one."
+            echo "   2. Delete or archive the retired file in the same PR."
+            echo "   3. Update governance/CANON_INVENTORY.json to reflect the change."
+            echo "   4. Obtain CS2 approval before merge."
+            echo ""
+            echo "   To raise the ceiling, CS2 must update CANON_CEILING in this workflow."
+            exit 0
+          else
+            echo "✅ CANON-CEILING-001 PASS — File count within ceiling."
+          fi

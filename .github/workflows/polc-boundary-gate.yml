@@ -720,3 +720,156 @@ jobs:
           fi
 
           echo "✅ Session memory validates POLC compliance"
+
+  # ---------------------------------------------------------------------------
+  # Gap 1 — Wave Record Count Cap (WAVE-RECORD-COUNT-001)
+  # Authority: GOVERNANCE_ARTIFACT_TAXONOMY.md — one wave record per wave.
+  # Issue: #1358 (CI-HARDENING)
+  # Prevents agents from creating multiple iaa-wave-record-*.md files in a
+  # single PR. The one-wave-record-per-wave rule was contractual only; this
+  # job enforces it at the CI level.
+  # ---------------------------------------------------------------------------
+  wave-record-count-check:
+    name: "wave-record-count-check"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Check Wave Record Count
+        run: |
+          echo "=== Wave Record Count Check (WAVE-RECORD-COUNT-001) ==="
+          echo ""
+
+          # CS2 sign-off bypass
+          PR_LABELS="${{ join(github.event.pull_request.labels.*.name, ',') }}"
+          IFS=',' read -ra LABEL_ARRAY <<< "$PR_LABELS"
+          for label in "${LABEL_ARRAY[@]}"; do
+            if [[ "$label" == "CS sign-off: approved" ]]; then
+              echo "✅ PASS — PR carries 'CS sign-off: approved' label."
+              echo "   CS2 explicit sign-off detected. Wave record count cap waived."
+              exit 0
+            fi
+          done
+
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+
+          # Count iaa-wave-record-*.md files ADDED (not modified) in this PR
+          WAVE_RECORDS_ADDED=$(git diff --name-only --diff-filter=A \
+            origin/"$BASE_BRANCH"...HEAD \
+            | grep -c '^\.agent-admin/assurance/iaa-wave-record-.*\.md$' || true)
+
+          if [ "$WAVE_RECORDS_ADDED" -gt 1 ]; then
+            echo "❌ WAVE-RECORD-COUNT-001 FAIL — $WAVE_RECORDS_ADDED iaa-wave-record-*.md files added in this PR."
+            echo "   Only ONE wave record file may be created per PR."
+            echo "   Found files:"
+            git diff --name-only --diff-filter=A origin/"$BASE_BRANCH"...HEAD \
+              | grep '^\.agent-admin/assurance/iaa-wave-record-.*\.md$' | sed 's/^/   - /'
+            echo ""
+            echo "   Per GOVERNANCE_ARTIFACT_TAXONOMY.md: one wave record per wave."
+            echo "   If a revision is needed, UPDATE the existing wave record — do not create a second file."
+            exit 1
+          else
+            echo "✅ WAVE-RECORD-COUNT-001 PASS — $WAVE_RECORDS_ADDED wave record file(s) added (within limit)."
+          fi
+
+  # ---------------------------------------------------------------------------
+  # Gap 2 — Foreman Scope Declaration Validation (SCOPE-DECL-001/002)
+  # Authority: foreman-v2-agent Phase 2 Step 2.7 (HALT-008),
+  #            SCOPE_DECLARATION_SCHEMA.md
+  # Issue: #1358 (CI-HARDENING)
+  # When new .agent-workspace/ files are added, a scope declaration must exist
+  # with an APPROVED_ARTIFACT_PATHS: field (or Markdown equivalent).
+  # Previously contractual-only.
+  # ---------------------------------------------------------------------------
+  scope-declaration-check:
+    name: "scope-declaration-check"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Check Scope Declaration
+        run: |
+          echo "=== Scope Declaration Check (SCOPE-DECL-001/002) ==="
+          echo ""
+
+          # CS2 sign-off bypass
+          PR_LABELS="${{ join(github.event.pull_request.labels.*.name, ',') }}"
+          IFS=',' read -ra LABEL_ARRAY <<< "$PR_LABELS"
+          for label in "${LABEL_ARRAY[@]}"; do
+            if [[ "$label" == "CS sign-off: approved" ]]; then
+              echo "✅ PASS — PR carries 'CS sign-off: approved' label."
+              echo "   CS2 explicit sign-off detected. Scope declaration check waived."
+              exit 0
+            fi
+          done
+
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+
+          # Only run if agent-workspace files were added in this PR
+          AGENT_WORKSPACE_ADDED=$(git diff --name-only --diff-filter=A \
+            origin/"$BASE_BRANCH"...HEAD \
+            | grep -c '^\.agent-workspace/' || true)
+
+          if [ "$AGENT_WORKSPACE_ADDED" -eq 0 ]; then
+            echo "ℹ️  No new .agent-workspace/ files added — scope declaration check not applicable."
+            exit 0
+          fi
+
+          echo "New .agent-workspace/ files detected ($AGENT_WORKSPACE_ADDED). Checking scope declaration..."
+
+          # Find scope declaration files added or modified in this PR;
+          # if none were changed in the PR, fall back to matching declarations
+          # already present in the working tree on this branch.
+          SCOPE_DECL_FILES=$(git diff --name-only --diff-filter=AM \
+            origin/"$BASE_BRANCH"...HEAD \
+            | grep '^\.agent-workspace/foreman-v2/personal/scope-declaration-.*\.md$' || true)
+
+          if [ -z "$SCOPE_DECL_FILES" ]; then
+            SCOPE_DECL_FILES=$(find .agent-workspace/foreman-v2/personal -maxdepth 1 -type f \
+              -name 'scope-declaration-*.md' 2>/dev/null | sort || true)
+          fi
+
+          if [ -z "$SCOPE_DECL_FILES" ]; then
+            echo ""
+            echo "❌ SCOPE-DECL-001 FAIL — New .agent-workspace/ files added but no scope declaration found."
+            echo ""
+            echo "   Foreman Phase 2 Step 2.7 requires:"
+            echo "   .agent-workspace/foreman-v2/personal/scope-declaration-wave-{N}.md"
+            echo "   with an APPROVED_ARTIFACT_PATHS: field listing all approved write paths."
+            echo ""
+            echo "   HALT-008: Do not proceed without a committed scope declaration."
+            exit 1
+          fi
+
+          # Verify at least one scope declaration contains approved artifact paths
+          # Accept both the canonical schema marker (APPROVED_ARTIFACT_PATHS:) and
+          # the Markdown heading variant (## Approved Artifact Paths) for
+          # backward compatibility with existing scope declarations.
+          DECL_WITH_PATHS=false
+          while IFS= read -r decl_file; do
+            if [ -f "$decl_file" ] && grep -qiE "(APPROVED_ARTIFACT_PATHS:|## Approved Artifact Paths)" "$decl_file" 2>/dev/null; then
+              DECL_WITH_PATHS=true
+              echo "✅ SCOPE-DECL-001 PASS — Scope declaration found with approved artifact paths:"
+              echo "   File: $decl_file"
+              break
+            fi
+          done <<< "$SCOPE_DECL_FILES"
+
+          if [ "$DECL_WITH_PATHS" = false ]; then
+            echo ""
+            echo "❌ SCOPE-DECL-002 FAIL — Scope declaration found but missing approved artifact paths field."
+            echo ""
+            echo "   The scope declaration MUST contain an APPROVED_ARTIFACT_PATHS: field"
+            echo "   (or a '## Approved Artifact Paths' Markdown section)"
+            echo "   explicitly enumerating every file path this wave is authorised to create."
+            echo "   Per SCOPE_DECLARATION_SCHEMA.md."
+            exit 1
+          fi
