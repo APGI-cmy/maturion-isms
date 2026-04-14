@@ -6,7 +6,7 @@
 **Issue**: maturion-isms#1361
 **Foreman Session**: mmm-cs2-approval-fields-20260414
 **Wave Type**: Governance Documentation Update
-**IAA Category**: KNOWLEDGE_GOVERNANCE
+**IAA Category**: PRE_BUILD_STAGE_MODEL (corrected from KNOWLEDGE_GOVERNANCE per IAA pre-brief reclassification)
 
 ---
 

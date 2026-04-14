@@ -1,91 +1,34 @@
-# SCOPE DECLARATION — Wave CL-10 (Re-execution) | Session cl10-reexec-20260409
+# SCOPE DECLARATION — Wave mmm-cs2-approval-fields | Session mmm-cs2-approval-fields-20260414
 
-**Agent**: foreman-v2-agent (orchestration) + integration-builder (CL-10-D2)
-**Wave**: CL-10 (Re-execution)
-**Branch**: copilot/cl-10-routing-governance-ci-enforcement-again
-**Date**: 2026-04-09
-**Issue**: maturion-isms#1313
-**Authority**: A-026 / A-031
-**Revision**: R2 — updated to include Foreman ceremony artifacts (IAA REJECTION-PACKAGE A-026 fix)
+**Agent**: foreman-v2-agent (orchestration) + governance-liaison-isms-agent (D1)
+**Wave**: mmm-cs2-approval-fields-20260414
+**Branch**: copilot/add-cs2-approval-field
+**Date**: 2026-04-14
+**Issue**: maturion-isms#1361
+**Authority**: A-029 / SCOPE_DECLARATION requirement
+**IAA Trigger Category**: PRE_BUILD_STAGE_MODEL
 
-> **A-031 NOTE**: IAA ceremony artifacts (Pre-Brief, PREHANDOVER, session memory, token file)
-> from this wave are carved out of scope tracking per A-031. See Exempt section below.
-
-## Files Added (This Wave)
+## Files Added / Modified (This Wave)
 
 | Path | Description |
 |------|-------------|
-| `.github/workflows/sub-module-routing-check.yml` | CL-10-D2: Sub-module routing compliance CI check (GRS-016) |
-| `.agent-workspace/integration-builder/memory/PREHANDOVER-session-cl10-d2-20260409.md` | Integration-builder PREHANDOVER proof |
-| `.agent-workspace/integration-builder/memory/session-cl10-d2-20260409.md` | Integration-builder session memory |
-| `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md` | This file — updated for CL-10 re-execution scope |
-| `.agent-workspace/foreman-v2/personal/cl10-d2-builder-checklist.md` | Foreman Stage-9 Builder Checklist for CL-10-D2 |
-| `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Foreman wave-current-tasks.md updated for CL-10 re-execution |
-| `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl10-reexec-20260409.md` | Foreman PREHANDOVER proof (this session) |
-| `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl10-reexec-R2-20260409.md` | Foreman PREHANDOVER proof R2 (post-REJECTION-PACKAGE fix) |
-| `.agent-workspace/foreman-v2/memory/session-cl10-reexec-20260409.md` | Foreman session memory |
+| `modules/MMM/BUILD_PROGRESS_TRACKER.md` | D1: CS2 approval field pattern added to Stages 1–11 |
+| `.agent-admin/assurance/iaa-wave-record-mmm-cs2-approval-fields-20260414.md` | IAA wave record (pre-brief + token) |
+| `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Wave tracking update |
+| `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-cs2-approval-fields.md` | Scope declaration (wave-specific) |
+| `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md` | This file (A-029) |
+| `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-cs2-approval-fields-20260414.md` | PREHANDOVER proof (Foreman-accepted copy) |
+| `.agent-workspace/foreman-v2/memory/session-mmm-cs2-approval-fields-20260414.md` | Session memory (Foreman-accepted copy) |
+| `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-mmm-cs2-approval-fields-20260414.md` | PREHANDOVER proof (ceremony-admin bundle) |
+| `.agent-workspace/execution-ceremony-admin-agent/bundles/session-mmm-cs2-approval-fields-20260414.md` | Session memory (ceremony-admin bundle) |
 
-## Files Modified (This Wave)
+## Out of Scope
 
-| Path | Description |
-|------|-------------|
-| `modules/mat/tests/ci-governance-check/routing-governance-ci.test.ts` | Added T-C-010-010, T-C-010-011, T-C-010-012 RED gate tests for CL-10-D2 |
+- Any code implementation files
+- Any schema or migration files
+- Any agent contract files (.github/agents/)
+- Any other modules outside MMM
+- .github/workflows/* — no CI script changes
 
-## Files Already in Base (NOT Scope of This PR)
-
-The following files were delivered in a prior execution and are already in `origin/main`.
-They will NOT appear in `git diff origin/main...HEAD --name-only` for this branch:
-
-| Path | Description | Merged At |
-|------|-------------|-----------|
-| `.github/workflows/routing-governance-check.yml` | CL-10-D1 | commit 8aa76f4 |
-| `.github/workflows/stub-detection-check.yml` | CL-10-D3 | commit 8aa76f4 |
-
-## Exempt Artifacts (A-031 IAA Ceremony Carve-out)
-
-The following files are IAA ceremony artifacts exempt from scope parity per A-031.
-They may appear in `git diff origin/main...HEAD --name-only` but are NOT builder-produced scope:
-
-| File | Type | A-031 Basis |
-|------|------|-------------|
-| `.agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-ci-enforcement-again.md` | IAA Pre-Brief | A-031 — IAA ceremony artifact (already in branch from prior commits) |
-| `.agent-admin/assurance/iaa-token-session-cl10-reexec-20260409.md` | IAA ASSURANCE-TOKEN | A-031 — IAA-authored, written by IAA only (§4.3b / ECAP-001) |
-| `.agent-workspace/independent-assurance-agent/memory/session-cl10-reexec-*.md` | IAA session memory | A-031 — IAA-authored ceremony artifact |
-| `.agent-workspace/independent-assurance-agent/parking-station/*.md` | IAA parking station | A-031 — IAA-authored ceremony artifact |
-
-## Files Excluded
-
-- `node_modules/`
-- `dist/`
-- Any file not listed above (builder scope is exhaustively declared)
-
-## Scope Boundaries
-
-- Production code paths touched: None
-- CI workflows added: 1 (sub-module-routing-check.yml)
-- CI workflows modified: None (routing-governance-check.yml and stub-detection-check.yml unchanged)
-- Agent contract files modified: None
-- Database schema modified: None
-- Governance canon modified: None
-
-## git diff origin/main...HEAD --name-only (reconciliation)
-
-Expected output at final commit:
-```
-.agent-admin/assurance/iaa-prebrief-cl-10-routing-governance-ci-enforcement-again.md  ← A-031 exempt
-.agent-admin/assurance/iaa-token-session-cl10-reexec-20260409.md                      ← A-031 exempt (IAA issues this)
-.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl10-reexec-20260409.md        ← Foreman PREHANDOVER
-.agent-workspace/foreman-v2/memory/PREHANDOVER-session-cl10-reexec-R2-20260409.md     ← Foreman PREHANDOVER R2
-.agent-workspace/foreman-v2/memory/session-cl10-reexec-20260409.md                    ← Foreman session memory
-.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md                              ← this file
-.agent-workspace/foreman-v2/personal/cl10-d2-builder-checklist.md                     ← Foreman Builder Checklist
-.agent-workspace/foreman-v2/personal/wave-current-tasks.md                             ← Foreman wave tasks
-.agent-workspace/integration-builder/memory/PREHANDOVER-session-cl10-d2-20260409.md   ← integration-builder evidence
-.agent-workspace/integration-builder/memory/session-cl10-d2-20260409.md               ← integration-builder evidence
-.github/workflows/sub-module-routing-check.yml                                         ← D2 deliverable
-modules/mat/tests/ci-governance-check/routing-governance-ci.test.ts                   ← RED gate tests
-```
-
-SCOPE_DECLARATION parity: ✅ All non-exempt files declared above.
-A-031 carve-out: ✅ IAA ceremony artifacts explicitly listed in Exempt section.
-Foreman ceremony files: ✅ All 4 files from SHA 7992f3f now declared (R2 fix — A-026 REJECTION-PACKAGE resolution).
+**Authority**: CS2 (Johan Ras / @APGI-cmy)
+**Wave**: mmm-cs2-approval-fields-20260414
