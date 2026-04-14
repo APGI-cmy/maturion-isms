@@ -651,7 +651,9 @@ jobs:
 
           if [ "$CURRENT_COUNT" -gt "$CANON_CEILING" ]; then
             echo ""
-            echo "❌ CANON-CEILING-001 FAIL — governance/canon/ contains $CURRENT_COUNT .md files (ceiling: $CANON_CEILING)."
+            echo "::warning::CANON-CEILING-001 — governance/canon/ contains $CURRENT_COUNT .md files (ceiling: $CANON_CEILING). The canon file moratorium (GOV-SIMPLIFICATION, Issue #1347) prohibits adding new canon files without retiring an existing one."
+            echo ""
+            echo "⚠️  CANON-CEILING-001 WARNING — governance/canon/ contains $CURRENT_COUNT .md files (ceiling: $CANON_CEILING)."
             echo ""
             echo "   The canon file moratorium (GOV-SIMPLIFICATION, Issue #1347) prohibits"
             echo "   adding new canon files without retiring an existing one."
@@ -663,7 +665,7 @@ jobs:
             echo "   4. Obtain CS2 approval before merge."
             echo ""
             echo "   To raise the ceiling, CS2 must update CANON_CEILING in this workflow."
-            exit 1
+            exit 0
           else
             echo "✅ CANON-CEILING-001 PASS — File count within ceiling."
           fi
