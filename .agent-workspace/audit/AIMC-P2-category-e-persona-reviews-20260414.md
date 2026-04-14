@@ -134,3 +134,112 @@ These are minor gaps only. The persona is substantively complete and domain-accu
 - T-E-007: Update NIST CSF reference to include v2.0 "Govern" function for new course content.
 
 **Reviewer sign-off**: mat-specialist | 2026-04-14 | Wave aimc-audit-phase-2-20260414
+
+---
+
+## PIT Specialist Review — T-E-002, T-E-005
+**Reviewer**: pit-specialist
+**Date**: 2026-04-14
+
+---
+
+### T-E-002: pit-advisor
+
+**Verdict**: PASS
+
+**Domain accuracy**:
+The persona is accurate and well-aligned with the PIT (Project Implementation Tracker) domain. Assessment:
+
+- *Core purpose*: Correctly frames PIT as a module for planning, decomposing, scheduling, and tracking implementation of security controls and risk treatment plans. This is an accurate description of the PIT module's function within the Maturion ISMS platform.
+- *Task generation from WRAC inputs*: The phrase "Task generation from WRAC, Risk Assessment, Control, Bowtie, Incident, and Audit inputs" is domain-accurate. WRAC (Work Risk Assessment and Control) is correctly identified as a source for task generation. The full list of input sources (RA, Control, Bowtie, Incident, Audit) represents the correct upstream modules that feed implementation work into PIT.
+- *Project and task hierarchy*: "Project → Phase → Task → Subtask" hierarchy is explicitly stated and correctly reflects the PIT ontology's structural model. This is precise and accurate.
+- *Scheduling and critical path analysis*: Correctly in scope for PIT. Dependency management and critical path analysis are standard PIT capabilities and accurately described.
+- *CAPEX/OPEX cost estimation and ROI tracking*: Accurate — cost tracking and return-on-investment analysis for control implementation are documented PIT features.
+- *Risk mitigation progress and residual risk trajectory*: Accurate — PIT tracks implementation progress against risk treatment plans; residual risk trajectory is a valid PIT output metric.
+- *Watchdog trigger interpretation*: "Watchdog trigger interpretation and escalation recommendations" is accurate. The PIT watchdog mechanism monitors schedule slippage and threshold breaches; this is a documented PIT feature.
+- *Evidence review and progress log analysis*: Accurate — PIT manages evidence artefacts attached to tasks; progress logs are a core PIT data structure.
+- *Control implementation readiness and completion criteria*: Accurate — PIT tracks control completion status against defined criteria; this is a well-scoped PIT responsibility.
+- *Scope boundaries*: The persona explicitly excludes risk assessments and compliance rulings ("those belong to WRAC, RA, and MAT respectively"). This boundary declaration is correct and prevents scope overlap with mat-advisor and risk-platform workflows. This is a positive governance signal.
+- *"Measurable, verifiable outcome" requirement*: The instruction that "every recommendation must have a measurable, verifiable outcome" is appropriate for an implementation-tracking advisor and consistent with PIT's evidence-based completion model.
+- *PIT ontology reference*: "You reference the PIT ontology in all structural recommendations" — this is a correct grounding instruction ensuring output consistency with the platform's data model.
+
+No domain inaccuracies detected. The persona is appropriately scoped, contains correct technical terminology, and defines clear boundaries against adjacent modules.
+
+**YAML compliance**: PASS
+All six required fields present and correctly populated:
+- `agentId`: ✅ `pit-advisor`
+- `description`: ✅ present and accurate
+- `module`: ✅ `pit`
+- `version`: ✅ `1.0.0`
+- `last_reviewed`: ✅ `2026-02-26`
+- `owner`: ✅ `CS2`
+- `capability`: ✅ `analysis` (additional field — valid, consistent with APS capability declaration pattern)
+
+**Gaps found**:
+1. **No scheduling model reference** — The persona mentions "critical path analysis" but does not specify which scheduling methodology is used (e.g., CPM, Gantt, PERT). For an advisor to give consistent scheduling guidance, the methodology should be explicitly named or referenced to the PIT ontology's scheduling model. Minor gap — non-blocking.
+2. **WRAC acronym undefined** — "WRAC" is used without expansion in the persona body. First-use expansion ("Work Risk Assessment and Control (WRAC)") would improve clarity for users unfamiliar with Maturion's module vocabulary. Minor gap — non-blocking.
+3. **No escalation path defined** — The persona mentions "escalation recommendations" for watchdog triggers but does not specify the escalation target (e.g., risk-platform-agent, human CS2 owner, or specific ISMS role). This leaves escalation behaviour undefined. Low severity.
+
+Overall: Minor gaps only. Persona is substantively complete and domain-accurate for its stated purpose. Content depth is appropriate and comparable to course-crafter-advisor (T-E-007) as a reference standard.
+
+---
+
+### T-E-005: incident-intelligence-advisor
+
+**Verdict**: PASS
+
+**Domain accuracy**:
+The persona is accurate, well-structured, and appropriately scoped for incident analysis and TTP correlation. Assessment:
+
+- *Core purpose*: Correctly frames the module as supporting incident analysis, IOC enrichment, threat correlation, timeline reconstruction, and post-incident reporting. All five functions are legitimate and well-defined incident intelligence capabilities.
+- *Incident analysis and severity classification*: Accurate. Severity classification is a standard incident response triage step and appropriate for this advisor.
+- *IOC correlation across threat feeds*: "Correlation of IOCs across multiple threat intelligence feeds (MISP, STIX/TAXII, VirusTotal, Shodan)" — accurate and technically precise. MISP and STIX/TAXII are industry-standard threat sharing platforms; VirusTotal and Shodan are standard enrichment sources for IP/domain/hash lookups. This is domain-correct tooling.
+- *IOC enrichment*: "IP reputation, domain analysis, file hash lookups, and malware family identification" — accurate, covers the four primary IOC enrichment dimensions used in threat intelligence practice.
+- *Attack timeline reconstruction*: "From log data, endpoint telemetry, and network captures" — accurate. These three data source categories are the standard inputs for timeline reconstruction in incident response.
+- *MITRE ATT&CK TTP mapping*: Explicitly named and accurate. ATT&CK framework mapping for adversary TTP identification is the industry standard and correctly in scope for an incident intelligence module. "Adversary profile development" is a legitimate output of ATT&CK-aligned analysis.
+- *Root cause analysis and impact assessment*: Accurate — both are standard post-incident deliverables.
+- *Post-incident report generation*: "Executive summaries, technical deep-dives, lessons-learned sections" — accurate report structure taxonomy. All three output types are appropriate for different stakeholder audiences.
+- *Evidence chain-of-custody documentation*: "For regulatory and legal purposes" — accurate and important. Chain-of-custody documentation is a compliance requirement in many regulatory frameworks (GDPR breach notification, NIS2, etc.) and correctly in scope.
+- *Containment, eradication, and recovery recommendations*: Accurate — these map directly to the NIST SP 800-61 incident response lifecycle phases (Containment → Eradication → Recovery). Correct domain terminology.
+- *Incident pattern trending and recurrence risk*: Accurate — trend analysis for recurrence prevention is a valid post-incident intelligence function.
+- *Behavioural constraints*: "Does not speculate beyond observable artefacts" and "traces conclusions back to concrete indicators" — these are appropriate epistemic constraints for an evidence-driven incident analysis advisor. The "deep-search capabilities" reference aligns with the `capability: deep-search` YAML declaration.
+
+**Scope overlap check**:
+- *vs. risk-advisor*: Risk-advisor would focus on risk scoring, treatment planning, and risk register management. Incident-intelligence-advisor focuses on forensic analysis, IOC enrichment, and TTP correlation — these are distinct and non-overlapping workflows. No material overlap detected.
+- *vs. xdetect-advisor*: XDETECT focuses on anomaly detection and contraband/threat detection within operational environments. Incident-intelligence-advisor operates post-detection, on confirmed incidents requiring analysis. The boundary is detection (XDETECT) vs. analysis (incident-intelligence). No material overlap detected.
+
+No domain inaccuracies detected. The persona is technically precise, uses correct industry-standard terminology, and maintains clean scope boundaries.
+
+**YAML compliance**: PASS
+All required fields present and correctly populated:
+- `agentId`: ✅ `incident-intelligence-advisor`
+- `description`: ✅ present and accurate
+- `module`: ✅ `incident-intelligence`
+- `version`: ✅ `1.0.0`
+- `last_reviewed`: ✅ `2026-02-28`
+- `owner`: ✅ `CS2`
+- `capability`: ✅ `deep-search` (additional field — valid, aligns with persona body's deep-search capability references)
+
+**Gaps found**:
+1. **No incident classification taxonomy defined** — Severity classification is mentioned but no taxonomy is specified (e.g., P1–P4, NIST SP 800-61 severity levels, or a Maturion-specific model). Without a named taxonomy, severity output may be inconsistent across sessions. Minor gap — non-blocking.
+2. **ATT&CK version not pinned** — MITRE ATT&CK is referenced without a version (currently v15 as of 2024). New ATT&CK versions add/modify techniques; without version anchoring, TTP mapping may produce inconsistent results over time as the framework evolves. Minor gap — non-blocking, but consistent with the NIST CSF version gap noted in other personas.
+3. **No handoff rule for escalation to risk-advisor** — Where incidents have material risk register implications (e.g., new critical vulnerability discovered during incident analysis), there is no defined escalation path to the risk-platform-agent. Low severity — the persona's scope is correctly bounded but a cross-module handoff note would improve workflow clarity.
+
+Overall: Minor gaps only. Persona is substantively complete, technically accurate, and the most detailed persona reviewed in this category. Depth and precision are at a high standard.
+
+---
+
+### Section Summary
+
+| ID | Persona | Verdict | Key Issue |
+|----|---------|---------|-----------|
+| T-E-002 | pit-advisor | PASS | Minor: WRAC acronym undefined; no scheduling model reference; escalation target unspecified |
+| T-E-005 | incident-intelligence-advisor | PASS | Minor: no severity classification taxonomy; ATT&CK version unpinned; no risk-advisor handoff rule |
+
+**Overall section finding**: Both personas PASS. No domain inaccuracies detected in either file. Both personas use correct technical terminology, define appropriate scope boundaries, and include complete YAML front-matter. T-E-005 (incident-intelligence-advisor) is the most technically detailed persona reviewed in this audit wave and should be considered a reference-quality example for the category.
+
+All identified gaps are minor and non-blocking. No immediate remediation required. Recommended to address in the next persona maintenance cycle:
+- T-E-002: Expand WRAC acronym; add scheduling methodology reference; specify watchdog escalation target.
+- T-E-005: Add severity classification taxonomy reference; pin ATT&CK version; add cross-module handoff note for risk register implications.
+
+**Reviewer sign-off**: pit-specialist | 2026-04-14 | Wave aimc-audit-phase-2-20260414
