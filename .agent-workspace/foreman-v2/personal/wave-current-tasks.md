@@ -1,4 +1,52 @@
-# Wave Current Tasks — MMM Stage 4
+# Wave Current Tasks — MMM Stage 5
+
+wave: mmm-stage5-architecture-20260414
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-stage5-architecture-20260414.md
+branch: copilot/mmm-stage-5-wave-start-authorization
+issue: maturion-isms#1378
+status: IN_PROGRESS
+
+## Active Wave: MMM Stage 5 — Architecture
+
+### Status
+IN_PROGRESS — Delegating to mat-specialist for architecture production.
+
+CS2 Authorization: maturion-isms#1378 — opened by @APGI-cmy (CS2 = Johan Ras), 2026-04-14.
+Stage 4 TRS CS2 approval carried forward per issue #1378.
+
+IAA Pre-Brief: COMMITTED (SHA ad5369d)
+IAA ASSURANCE-TOKEN: PENDING — to be issued at handover
+
+### Tasks
+- [x] Phase 1 — Identity & Preflight complete
+- [x] IAA Pre-Brief invoked and wave record committed (SHA ad5369d)
+- [x] Wave-current-tasks.md updated for Stage 5
+- [ ] Scope declaration created
+- [ ] mat-specialist delegated for T-01 through T-11
+- [ ] mat-specialist deliverables received and QP evaluated
+- [ ] Phase 4 ceremony complete
+- [ ] IAA handover audit complete
+- [ ] ASSURANCE-TOKEN issued
+
+### Deliverables (T-01 through T-11)
+
+| # | Task | Deliverable | Status |
+|---|------|-------------|--------|
+| T-01 | Canonical architecture.md (Stage 5 quality) | `modules/MMM/04-architecture/architecture.md` | PENDING |
+| T-02 | capabilities/ disposition per OQ-003 | `modules/MMM/04-architecture/capabilities/` | PENDING |
+| T-03 | TRS → Architecture traceability | in architecture.md | PENDING |
+| T-04 | Architecture completeness PASS | in architecture.md | PENDING |
+| T-05 | OQ-002 resolution | in architecture.md | PENDING |
+| T-06 | OQ-003 resolution | in architecture.md + capabilities/ | PENDING |
+| T-07 | AIMC / PIT / KUC boundary freeze | in architecture.md | PENDING |
+| T-08 | Runtime / deployment topology | in architecture.md | PENDING |
+| T-09 | State persistence architecture | in architecture.md | PENDING |
+| T-10 | BUILD_PROGRESS_TRACKER updated | `modules/MMM/BUILD_PROGRESS_TRACKER.md` | PENDING |
+| T-11 | Harvest map updated OQ-002/OQ-003 | `modules/MMM/harvest-map/harvest-map.md` | PENDING |
+
+---
+
+## Prior Wave Record (MMM Stage 4 — COMPLETE)
 
 wave: mmm-stage4-trs-20260414
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-stage4-trs-20260414.md
