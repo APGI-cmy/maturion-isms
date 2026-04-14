@@ -2,8 +2,8 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-04-13  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13)
+**Last Updated**: 2026-04-14  
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — This is the designated primary operational monitor for MMM stage progress. CS2 should use this document as the main live progress dashboard.  
@@ -52,8 +52,11 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 - [x] App Description approved by designated authority
 
 **Completion Date**: 2026-03-20  
-**Approval Date**: 2026-04-08  
-**Approved By**: CS2 (Johan Ras / @APGI-cmy) — maturion-isms#1298  
+**Approval Required**: Yes
+- [x] Approved by designated authority
+**Approval Date**: 2026-04-08
+**Approved By**: CS2 (Johan Ras / @APGI-cmy)
+**Approval Reference**: maturion-isms#1298
 **Notes**: App Description `MMM_app_description.md` v0.5.0 formally approved by CS2 via issue #1298
 (2026-04-08). BLK-1 resolved. Stage 1 formally closed. Stage 2 (UX Workflow & Wiring Spec)
 remains pending CS2 Stage 2 wave-start authorization.
@@ -73,6 +76,11 @@ remains pending CS2 Stage 2 wave-start authorization.
 **Completion Date**: 2026-04-13  
 **Produced By**: foreman-v2-agent (POLC-Orchestration mode, wave MMM Stage 2)  
 **Issue**: maturion-isms#1352  
+**Approval Required**: Yes
+- [ ] Approved by designated authority
+**Approval Date**: N/A
+**Approved By**: N/A
+**Approval Reference**: maturion-isms#1352
 **Notes**: Stage 2 UX Workflow & Wiring Spec produced covering 17 user journeys (J-01 through J-17),
 complete UI → API → schema wiring tables, MMM ↔ AIMC / PIT / KUC boundary wiring, framework-source
 vs evidence-source ingestion distinction, maturity scoring cascade, and 9 open questions carried
@@ -90,6 +98,11 @@ forward for FRS/TRS/Architecture. Awaiting CS2 approval.
 - [ ] FRS approved by designated authority
 
 **Completion Date**: N/A  
+**Approval Required**: Yes
+- [ ] Approved by designated authority
+**Approval Date**: N/A
+**Approved By**: N/A
+**Approval Reference**: N/A
 **Notes**: FRS folder exists but is empty. Mapped from old Stage 1.
 
 ---
@@ -104,6 +117,11 @@ forward for FRS/TRS/Architecture. Awaiting CS2 approval.
 - [ ] TRS approved by designated authority
 
 **Completion Date**: N/A  
+**Approval Required**: Yes
+- [ ] Approved by designated authority
+**Approval Date**: N/A
+**Approved By**: N/A
+**Approval Reference**: N/A
 **Notes**: Not started. Mapped from old Stage 1.5 (TRS stage introduced 2026-02-13).
 
 ---
@@ -119,6 +137,11 @@ forward for FRS/TRS/Architecture. Awaiting CS2 approval.
 - [ ] Architecture approved by designated authority
 
 **Completion Date**: N/A  
+**Approval Required**: Yes
+- [ ] Approved by designated authority
+**Approval Date**: N/A
+**Approved By**: N/A
+**Approval Reference**: N/A
 **Notes**: Architecture is in progress. `architecture.md` and `capabilities/` folder exist.
 Mapped from old Stage 2. Note: App Description and FRS/TRS must be completed and approved
 before Architecture can be formally gate-passed.
@@ -135,6 +158,11 @@ before Architecture can be formally gate-passed.
 - [ ] RED QA suite signed off by Foreman (no implementation started)
 
 **Completion Date**: N/A  
+**Approval Required**: Yes
+- [ ] Approved by Foreman
+**Approval Date**: N/A
+**Approved By**: N/A
+**Approval Reference**: N/A
 **Notes**: Not started. New stage introduced in 12-stage model.
 
 ---
@@ -151,6 +179,11 @@ before Architecture can be formally gate-passed.
 - [ ] PBFAG PASS recorded by Foreman
 
 **Completion Date**: N/A  
+**Approval Required**: Yes
+- [ ] Approved by Foreman
+**Approval Date**: N/A
+**Approved By**: N/A
+**Approval Reference**: N/A
 **Notes**: Not started. New hard gate in 12-stage model.
 
 ---
@@ -165,6 +198,11 @@ before Architecture can be formally gate-passed.
 - [ ] Implementation Plan approved by Foreman
 
 **Completion Date**: N/A  
+**Approval Required**: Yes
+- [ ] Approved by Foreman
+**Approval Date**: N/A
+**Approved By**: N/A
+**Approval Reference**: N/A
 **Notes**: Folder exists but not yet populated. Mapped from old Stage 3.
 
 ---
@@ -181,6 +219,11 @@ before Architecture can be formally gate-passed.
 - [ ] Builder Checklist PASS for all appointed builders
 
 **Completion Date**: N/A  
+**Approval Required**: Yes
+- [ ] Approved by Foreman
+**Approval Date**: N/A
+**Approved By**: N/A
+**Approval Reference**: N/A
 **Notes**: Not started. New hard gate in 12-stage model.
 
 ---
@@ -195,6 +238,11 @@ before Architecture can be formally gate-passed.
 - [ ] Pre-Brief acknowledged by Foreman and all designated builders
 
 **Completion Date**: N/A  
+**Approval Required**: Yes
+- [ ] Approved by Foreman
+**Approval Date**: N/A
+**Approved By**: N/A
+**Approval Reference**: N/A
 **Notes**: Not started. New stage in 12-stage model.
 
 ---
@@ -209,6 +257,11 @@ before Architecture can be formally gate-passed.
 - [ ] Builder appointed by FM
 
 **Completion Date**: N/A  
+**Approval Required**: Yes
+- [ ] Approved by Foreman
+**Approval Date**: N/A
+**Approved By**: N/A
+**Approval Reference**: N/A
 **Notes**: Folder exists but not yet populated. Mapped from old Stage 4.
 
 ---
