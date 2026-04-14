@@ -22,29 +22,29 @@ IAA Pre-Brief: COMMITTED (wave record at `.agent-admin/assurance/iaa-wave-record
 - [x] Phase 1 — Identity & Preflight complete
 - [x] IAA Pre-Brief invoked and wave record committed (SHA 3a73ce3)
 - [x] wave-current-tasks.md updated for active wave
-- [ ] Scope declaration committed at .agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-stage3.md
-- [ ] D1 — Create modules/MMM/02-frs/functional-requirements.md (FRS artifact)
-  - [ ] Requirements derived from App Description §1–§42 and UX Wiring Spec J-01–J-17
-  - [ ] Requirement IDs (FR-001 through FR-NNN)
-  - [ ] 100% §AD traceability confirmed
-  - [ ] No TBD items
-  - [ ] All 5 functional areas covered
-  - [ ] OQ-004, OQ-007, OQ-008, OQ-009 resolved at FRS stage
-  - [ ] OQ-001, OQ-002, OQ-003 explicitly carried forward to TRS/Architecture
-  - [ ] MMM ↔ AIMC boundary formalized
-  - [ ] MMM ↔ PIT boundary formalized
-  - [ ] Framework-source vs evidence-source distinction formalized
-- [ ] D5-BPT — Update BUILD_PROGRESS_TRACKER.md
-  - [ ] Stage 2 CS2 approval reference added (SCB-001 fix)
-  - [ ] Stage 3 status updated to IN_PROGRESS
-- [ ] D5-HM — Update harvest-map.md (OQ dispositions for FRS-stage OQs)
+- [x] Scope declaration committed at .agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-stage3.md
+- [x] D1 — Create modules/MMM/02-frs/functional-requirements.md (FRS artifact)
+  - [x] Requirements derived from App Description §1–§42 and UX Wiring Spec J-01–J-17 (FR-001–FR-080)
+  - [x] Requirement IDs (FR-001 through FR-080)
+  - [x] 100% §AD traceability confirmed (all 42 sections traced)
+  - [x] No TBD items
+  - [x] All 5 functional areas covered
+  - [x] OQ-004 (PIT contract), OQ-006 (CL-13), OQ-007 (switchover gate), OQ-008 (MAT label), OQ-009 (hybrid mode) RESOLVED
+  - [x] OQ-001, OQ-002, OQ-003 explicitly carried forward to TRS/Architecture
+  - [x] MMM ↔ AIMC boundary formalized (FR-053, FR-063)
+  - [x] MMM ↔ PIT boundary and interface contract formalized (FR-049, FR-054)
+  - [x] Framework-source vs evidence-source distinction formalized (FR-016, FR-056, FR-057)
+- [x] D5-BPT — Update BUILD_PROGRESS_TRACKER.md
+  - [x] Stage 2 CS2 approval reference added (SCB-001 RESOLVED)
+  - [x] Stage 3 status updated to IN_PROGRESS with completion details
+- [x] D5-HM — Update harvest-map.md (OQ-004, OQ-006, OQ-007 RESOLVED; v0.3.0)
 - [ ] D6 — Governance ceremony artifacts
   - [ ] PREHANDOVER proof
   - [ ] Session memory
   - [ ] IAA audit + ASSURANCE-TOKEN
 
 ### Status
-IN_PROGRESS — Phase 1 complete, IAA Pre-Brief committed. Producing FRS artifact.
+PENDING CEREMONY — D1 and D5 complete and pushed. Creating ceremony artifacts.
 
 ### Previous Wave (Closed)
 wave: mmm-doc-normalization-20260413 (Issue #1358) — CLOSED
