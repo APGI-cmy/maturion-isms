@@ -2,13 +2,13 @@
 session_id: session-mmm-stage3-frs-20260414
 date: 2026-04-14
 wave: mmm-stage3-frs
-issue_ref: "MMM Stage 3 wave-start authorization — Functional Requirements Specification (FRS)"
+issue_ref: "maturion-isms#1365 — MMM Stage 3 wave-start authorization — Functional Requirements Specification (FRS)"
 branch: copilot/mmm-stage-3-wave-start-authorization
 producing_agent: foreman-v2-agent
 producing_agent_class: Foreman
 producing_agent_version: "6.2.0"
 contract_version: "2.12.0"
-cs2_authorization: "Stage 3 wave-start authorization issue opened by @APGI-cmy (CS2 = Johan Ras) — constitutes Stage 2 approval and Stage 3 wave-start authorization"
+cs2_authorization: "Stage 3 wave-start maturion-isms#1365 opened by @APGI-cmy (CS2 = Johan Ras); Stage 2 explicitly approved maturion-isms#1352 (2026-04-14)"
 iaa_audit_token: "IAA-session-mmm-stage3-frs-20260414-PASS"
 fail_only_once_attested: true
 fail_only_once_version: "4.2.0"
@@ -23,14 +23,14 @@ merge_gate_parity: PASS
 - **Date**: 2026-04-14
 - **Wave**: mmm-stage3-frs
 - **Agent**: foreman-v2-agent v6.2.0 | Contract v2.12.0
-- **Issue**: MMM Stage 3 wave-start authorization — Functional Requirements Specification (FRS)
+- **Issue**: maturion-isms#1365 — MMM Stage 3 wave-start authorization — Functional Requirements Specification (FRS)
 - **Branch**: copilot/mmm-stage-3-wave-start-authorization
 
 ## CS2 Authorization Evidence
-- **Authorization**: Stage 3 wave-start authorization issue opened by @APGI-cmy (CS2 = Johan Ras)
-- **Authorization Type**: Issue opened directly by CS2 — constitutes Stage 2 approval and Stage 3 wave-start authorization
+- **Authorization**: Stage 3 wave-start maturion-isms#1365 opened by @APGI-cmy (CS2 = Johan Ras)
+- **Authorization Type**: Issue opened directly by CS2 — Stage 3 wave-start authorization
 - **Stage 1 CS2 Approval**: maturion-isms#1298 (2026-04-08) — App Description approved
-- **Stage 2 CS2 Approval**: Stage 3 wave-start authorization issue by @APGI-cmy (2026-04-14)
+- **Stage 2 CS2 Approval**: maturion-isms#1352 (2026-04-14, @APGI-cmy) — UX Workflow & Wiring Spec explicit approval
 
 ## Deliverables
 
@@ -52,7 +52,8 @@ merge_gate_parity: PASS
 
 ### Stage 2 Evidence
 - Stage 2 UX Workflow & Wiring Spec: `modules/MMM/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.1.0
-- Stage 2 CS2 Approval: Stage 3 wave-start authorization issue opened by @APGI-cmy (2026-04-14)
+- Stage 2 CS2 Approval: maturion-isms#1352 (2026-04-14, @APGI-cmy) — explicit CS2 approval of UX Workflow & Wiring Spec
+- Stage 3 Wave-Start Authorization: maturion-isms#1365 (2026-04-14, @APGI-cmy)
 
 ### Stage 3 Evidence
 - Stage 3 FRS: `modules/MMM/02-frs/functional-requirements.md` v0.1.0

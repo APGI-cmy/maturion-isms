@@ -14,7 +14,7 @@ CS2 authorization for Stage 3 wave confirmed via the triggering issue).
 This is a PRE_BUILD_SPECIFICATION wave — no implementation code, no schema, no UI, no builder
 delegation. Foreman produces specification directly in POLC-Orchestration mode.
 
-CS2 Authorization: Stage 3 wave-start authorization issue opened by @APGI-cmy (CS2 = Johan Ras).
+CS2 Authorization: maturion-isms#1365 — Stage 3 wave-start authorization issue opened by @APGI-cmy (CS2 = Johan Ras).
 
 IAA Pre-Brief: COMMITTED (wave record at `.agent-admin/assurance/iaa-wave-record-mmm-stage3-20260414.md`, SHA 3a73ce3)
 

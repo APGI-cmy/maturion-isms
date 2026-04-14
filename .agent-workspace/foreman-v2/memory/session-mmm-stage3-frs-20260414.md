@@ -8,8 +8,8 @@
 - mode: POLC-Orchestration → Quality Professor → POLC-Orchestration
 
 ## Invocation Context
-- triggering_issue: MMM Stage 3 wave-start authorization — Functional Requirements Specification (FRS)
-- cs2_authorization: Stage 3 wave-start authorization issue opened by @APGI-cmy (CS2 = Johan Ras)
+- triggering_issue: maturion-isms#1365 — MMM Stage 3 wave-start authorization — Functional Requirements Specification (FRS)
+- cs2_authorization: Stage 3 wave-start maturion-isms#1365 opened by @APGI-cmy (CS2 = Johan Ras); Stage 2 explicitly approved maturion-isms#1352 (2026-04-14)
 - branch: copilot/mmm-stage-3-wave-start-authorization
 - wave: mmm-stage3-frs-20260414
 
@@ -33,7 +33,7 @@
 - agents_delegated_to:
     - agent: independent-assurance-agent
       purpose: IAA Pre-Brief (wave record at `.agent-admin/assurance/iaa-wave-record-mmm-stage3-20260414.md`)
-      issue: MMM Stage 3 wave-start authorization
+      issue: maturion-isms#1365 — MMM Stage 3 wave-start authorization
       result: Pre-Brief committed SHA 3a73ce3; wave classified PRE_BUILD_STAGE_MODEL (mandatory);
         SCB-001 (Stage 2 CS2 approval reference) identified as blocking and resolved in D5-BPT
 

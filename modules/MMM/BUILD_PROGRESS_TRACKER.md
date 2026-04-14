@@ -75,20 +75,17 @@ remains pending CS2 Stage 2 wave-start authorization.
 
 **Completion Date**: 2026-04-13  
 **Approval Date**: 2026-04-14  
-**Approved By**: CS2 (Johan Ras / @APGI-cmy) — Stage 3 wave-start authorization issue
-  (opening of Stage 3 issue by CS2 constitutes Stage 2 approval and Stage 3 wave authorization)  
+**Approved By**: CS2 (Johan Ras / @APGI-cmy) — maturion-isms#1352  
 **Produced By**: foreman-v2-agent (POLC-Orchestration mode, wave MMM Stage 2)  
 **Issue**: maturion-isms#1352  
 **Approval Required**: Yes
-- [ ] Approved by designated authority
-**Approval Date**: N/A
-**Approved By**: N/A
+- [x] Approved by designated authority (CS2, @APGI-cmy, 2026-04-14, maturion-isms#1352)
 **Approval Reference**: maturion-isms#1352
 **Notes**: Stage 2 UX Workflow & Wiring Spec produced covering 17 user journeys (J-01 through J-17),
 complete UI → API → schema wiring tables, MMM ↔ AIMC / PIT / KUC boundary wiring, framework-source
 vs evidence-source ingestion distinction, maturity scoring cascade, and 9 open questions carried
-forward for FRS/TRS/Architecture. CS2 authorized Stage 3 wave via the Stage 3 triggering issue,
-constituting formal approval of Stage 2 output.
+forward for FRS/TRS/Architecture. CS2 explicitly approved Stage 2 via maturion-isms#1352 (2026-04-14)
+and authorized Stage 3 via maturion-isms#1365 (2026-04-14).
 
 ---
 
@@ -113,7 +110,7 @@ constituting formal approval of Stage 2 output.
 **Approved By**: N/A  
 **Approval Reference**: N/A  
 **Produced By**: foreman-v2-agent (POLC-Orchestration mode, wave mmm-stage3-frs)  
-**Issue**: MMM Stage 3 wave-start authorization issue  
+**Issue**: maturion-isms#1365 (MMM Stage 3 wave-start authorization)  
 **Notes**: Stage 3 FRS produced with 80 functional requirements covering all 5 required
 functional areas: user entry/onboarding, framework lifecycle, assessment execution,
 findings/reporting, and boundary flows. All open questions from harvest map and Stage 2
@@ -361,7 +358,7 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 - [x] All stages proceeding in order (no skipped stages)
 - [x] Traceability maintained (App Description → UX Workflow → FRS → TRS → Architecture)
 - [x] Stage 1 approval obtained (CS2, #1298, 2026-04-08)
-- [x] Stage 2 approval confirmed (CS2 — Stage 3 wave-start authorization issue, 2026-04-14)
+- [x] Stage 2 approval confirmed (CS2, maturion-isms#1352, 2026-04-14)
 - [x] Stage 3 FRS artifact produced (2026-04-14, pending CS2 approval)
 - [x] Evidence artifacts created for each completed stage
 - [x] Module manifest up to date

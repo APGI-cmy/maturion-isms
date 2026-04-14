@@ -4,7 +4,7 @@
 **Contract Version**: 2.7.0  
 **Adoption Phase**: PHASE_B_BLOCKING  
 **Wave**: mmm-stage3-frs  
-**Issue**: maturion-isms#[wave-start-authorization — MMM Stage 3]  
+**Issue**: maturion-isms#1365  
 **Branch**: copilot/mmm-stage-3-wave-start-authorization  
 **CS2 Authorization**: Confirmed — wave-start authorization issue opened directly by @APGI-cmy (CS2 = Johan Ras)  
 **Created**: 2026-04-14  
@@ -75,7 +75,7 @@ NBR checks are not applicable. Anti-regression obligation: NONE for this wave.
 | Stage | Name | Status | Evidence |
 |-------|------|--------|----------|
 | Stage 1 | App Description | ✅ COMPLETE | `MMM_app_description.md` v0.5.0 — CS2 approved 2026-04-08, issue #1298 |
-| Stage 2 | UX Workflow & Wiring Spec | ⚠️ COMPLETE (CS2 Stage 3 authorization implies approval — **MUST be confirmed at handover with explicit issue reference**) | `ux-workflow-wiring-spec.md` — 17 journeys, issue #1352; CS2 Stage 3 wave-start authorization issue = implied Stage 2 approval |
+| Stage 2 | UX Workflow & Wiring Spec | ✅ COMPLETE — CS2 explicitly approved maturion-isms#1352 (2026-04-14, @APGI-cmy); Stage 3 wave authorized maturion-isms#1365 | `ux-workflow-wiring-spec.md` — 17 journeys, maturion-isms#1352 (explicit CS2 approval); Stage 3 wave-start maturion-isms#1365 |
 | Stage 3 | FRS | 🔄 IN PROGRESS (this wave) | `modules/MMM/02-frs/functional-requirements.md` — to be produced |
 | Stage 4 | TRS | ⬜ NOT_STARTED | — |
 | Stage 5 | Architecture | ⬜ IN_PROGRESS (partial legacy) | Legacy artifacts in `_legacy/`; no canonical Stage 5 artifact yet |
@@ -123,22 +123,22 @@ IAA will apply CORE-020 (no partial pass: absent = fail) and CORE-021 (zero seve
 #### Required Fields
 
 ```yaml
-session_id: session-[NNN]
-date: 2026-04-[DD]
+session_id: session-mmm-stage3-frs-20260414
+date: 2026-04-14
 wave: mmm-stage3-frs
-issue_ref: maturion-isms#[issue-number]
+issue_ref: maturion-isms#1365
 branch: copilot/mmm-stage-3-wave-start-authorization
 producing_agent: foreman-v2-agent
 producing_agent_class: Foreman
-cs2_authorization: "Issue maturion-isms#[NNN] opened by @APGI-cmy — wave-start authorization confirmed"
-iaa_audit_token: "IAA-session-[NNN]-mmm-stage3-frs-20260414-PASS"  # pre-populated per A-029
+cs2_authorization: "Issue maturion-isms#1365 opened by @APGI-cmy — wave-start authorization confirmed; Stage 2 explicitly approved maturion-isms#1352"
+iaa_audit_token: "IAA-session-mmm-stage3-frs-20260414-PASS"  # pre-populated per A-029
 fail_only_once_attested: true
 ```
 
 #### Required Sections
 
 1. **`## Deliverables`** — List of all files created/modified with brief description of each
-2. **`## Stage-Gate Evidence`** — Explicit citation of Stage 1 CS2 approval (issue #1298) AND Stage 2 CS2 approval (wave-start authorization issue number). Both must be present.
+2. **`## Stage-Gate Evidence`** — Explicit citation of Stage 1 CS2 approval (issue #1298) AND Stage 2 CS2 approval (maturion-isms#1352) AND Stage 3 wave-start authorization (maturion-isms#1365). All three must be present.
 3. **`## FRS Traceability Summary`** — Confirmation that FRS contains §AD traces + §UX journey traces; no TBDs
 4. **`## Open Question Disposition`** — For each OQ in harvest-map.md: resolved/carried-forward status with reason
 5. **`## Scope Boundary Declaration`** — Explicit statement: "No implementation code, no schema, no UI, no builder delegation in this wave"
@@ -147,11 +147,10 @@ fail_only_once_attested: true
 #### iaa_audit_token Format (A-029)
 
 ```
-IAA-session-[NNN]-mmm-stage3-frs-20260414-PASS
+IAA-session-mmm-stage3-frs-20260414-PASS
 ```
 
-Where `[NNN]` is the Foreman's session number. This value is pre-populated at commit time
-and MUST NOT be edited post-commit. IAA will populate the actual token under `## TOKEN` below.
+Token is pre-populated at commit time and MUST NOT be edited post-commit. IAA will populate the actual token under `## TOKEN` below.
 
 ---
 
@@ -222,7 +221,7 @@ and MUST NOT be edited post-commit. IAA will populate the actual token under `##
 | SQ-03 §UX journey traceability | ✅ PASS — 17/17 journeys (J-01–J-17) traced in §15 matrix |
 | SQ-04 Zero TBD items | ✅ PASS — 7 occurrences of "TBD" are all in confirmation statements, zero actual TBD requirements |
 | SQ-05 OQ dispositions complete | ✅ PASS — 9 OQs: 6 RESOLVED (OQ-004/005/006/007/008/009), 3 explicitly CARRIED FORWARD with stage assignment |
-| SQ-06 Stage 2 CS2 approval documented | ✅ PASS — SCB-001 RESOLVED; BUILD_PROGRESS_TRACKER Stage 2 shows CS2 Stage 3 auth issue |
+| SQ-06 Stage 2 CS2 approval documented | ✅ PASS — SCB-001 RESOLVED; BUILD_PROGRESS_TRACKER Stage 2 shows explicit CS2 approval (maturion-isms#1352, 2026-04-14) |
 | SQ-07 Scope boundary respected | ✅ PASS — Zero implementation code, schema, UI, builder delegation confirmed |
 | SQ-08 Scope declaration committed | ✅ PASS — `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-stage3.md` present |
 | A-021 Commit before IAA invocation | ✅ PASS — SHA 735a18b (deliverables) pushed before ceremony artifacts |

@@ -13,11 +13,11 @@
 - **Date**: 2026-04-14
 - **Owner**: CS2 (Johan Ras / @APGI-cmy)
 - **Produced By**: foreman-v2-agent (POLC-Orchestration mode)
-- **Issue**: maturion-isms#1363 (MMM Stage 3 wave-start authorization)
+- **Issue**: maturion-isms#1365 (MMM Stage 3 wave-start authorization)
 - **Upstream Authority (Stage 1)**: `modules/MMM/00-app-description/MMM_app_description.md` v0.5.0
   — CS2-approved (maturion-isms#1298, 2026-04-08)
 - **Upstream Authority (Stage 2)**: `modules/MMM/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.1.0
-  — Produced wave maturion-isms#1352, CS2 Stage 3 wave-start authorized via triggering issue
+  — Produced maturion-isms#1352, CS2-approved maturion-isms#1352 (2026-04-14); Stage 3 wave authorized maturion-isms#1365
 - **Harvest Map Reference**: `modules/MMM/harvest-map/harvest-map.md` v0.2.1
 - **Supersedes / Prior Spec**: None — first FRS artifact for MMM
 
@@ -1474,5 +1474,5 @@ forward with explicit stage assignment).
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Governed by**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0, Stage 3 definition
-**Wave**: MMM Stage 3 — FRS wave-start authorization issue
+**Wave**: maturion-isms#1365 — MMM Stage 3 wave-start authorization
 **Upstream**: `MMM_app_description.md` v0.5.0 (§AD) | `ux-workflow-wiring-spec.md` v0.1.0 (§UX)
