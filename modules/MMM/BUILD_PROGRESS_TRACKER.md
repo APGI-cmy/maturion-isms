@@ -2,8 +2,8 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-04-13  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13)
+**Last Updated**: 2026-04-14  
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-stage3-frs, 2026-04-14)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — This is the designated primary operational monitor for MMM stage progress. CS2 should use this document as the main live progress dashboard.  
@@ -61,7 +61,7 @@ remains pending CS2 Stage 2 wave-start authorization.
 ---
 
 ### Stage 2: UX Workflow & Wiring Spec
-**Status**: [x] COMPLETE — Pending CS2 review and approval  
+**Status**: [x] COMPLETE ✅ CS2 APPROVED — Stage 3 (FRS) wave authorized  
 **Location**: `modules/MMM/01-ux-workflow-wiring-spec/`  
 **Key Artifacts**:
 - [x] `ux-workflow-wiring-spec.md` — Complete user journey maps, screen interactions, data flows, wiring
@@ -71,26 +71,40 @@ remains pending CS2 Stage 2 wave-start authorization.
 - [x] No gap between stated journeys and wired system behaviour
 
 **Completion Date**: 2026-04-13  
+**Approval Date**: 2026-04-14  
+**Approved By**: CS2 (Johan Ras / @APGI-cmy) — Stage 3 wave-start authorization issue
+  (opening of Stage 3 issue by CS2 constitutes Stage 2 approval and Stage 3 wave authorization)  
 **Produced By**: foreman-v2-agent (POLC-Orchestration mode, wave MMM Stage 2)  
 **Issue**: maturion-isms#1352  
 **Notes**: Stage 2 UX Workflow & Wiring Spec produced covering 17 user journeys (J-01 through J-17),
 complete UI → API → schema wiring tables, MMM ↔ AIMC / PIT / KUC boundary wiring, framework-source
 vs evidence-source ingestion distinction, maturity scoring cascade, and 9 open questions carried
-forward for FRS/TRS/Architecture. Awaiting CS2 approval.
+forward for FRS/TRS/Architecture. CS2 authorized Stage 3 wave via the Stage 3 triggering issue,
+constituting formal approval of Stage 2 output.
 
 ---
 
 ### Stage 3: Functional Requirements Specification (FRS)
-**Status**: [ ] NOT_STARTED  
+**Status**: [x] IN_PROGRESS — FRS artifact produced, pending CS2 review and approval  
 **Location**: `modules/MMM/02-frs/`  
 **Key Artifacts**:
-- [ ] `functional-requirements.md` — Verifiable requirements derived from App Description + UX Workflow & Wiring Spec
-- [ ] Derivation statements from both upstream artifacts included
-- [ ] 100% §AD traceability confirmed; no TBD items
-- [ ] FRS approved by designated authority
+- [x] `functional-requirements.md` — Verifiable requirements derived from App Description + UX Workflow & Wiring Spec (FR-001 through FR-080)
+- [x] Derivation statements from both upstream artifacts included (§AD and §UX source refs on every requirement)
+- [x] 100% §AD traceability confirmed (all 42 sections traced in §14 matrix)
+- [x] All 17 UX journeys traced (§15 matrix)
+- [x] No TBD items — all 9 open questions dispositioned (6 resolved, 3 carried forward with explicit stage assignment)
+- [x] MMM ↔ AIMC boundary formalized (FR-053, FR-063)
+- [x] MMM ↔ PIT boundary and interface contract formalized (FR-049, FR-054)
+- [x] Framework-source vs evidence-source distinction formalized (FR-016, FR-056, FR-057)
+- [ ] FRS approved by designated authority (CS2 review pending)
 
-**Completion Date**: N/A  
-**Notes**: FRS folder exists but is empty. Mapped from old Stage 1.
+**Completion Date**: 2026-04-14  
+**Produced By**: foreman-v2-agent (POLC-Orchestration mode, wave mmm-stage3-frs)  
+**Issue**: MMM Stage 3 wave-start authorization issue  
+**Notes**: Stage 3 FRS produced with 80 functional requirements covering all 5 required
+functional areas: user entry/onboarding, framework lifecycle, assessment execution,
+findings/reporting, and boundary flows. All open questions from harvest map and Stage 2
+spec dispositioned. Awaiting CS2 review and approval before Stage 4 (TRS) begins.
 
 ---
 
@@ -275,17 +289,17 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 2 PRODUCED / pending CS2 approval — Stage 3 (FRS) next after approval  
-**Overall Progress**: ~18% complete (Stage 1 formally closed; Stage 2 produced; Stages 3–12 not started)  
-**Blockers**: None. Stage 2 UX Workflow & Wiring Spec produced (maturion-isms#1352). Awaiting CS2 approval before Stage 3 (FRS) can begin.  
+**Current Stage**: Stage 3 (FRS) IN_PROGRESS — FRS artifact produced, pending CS2 approval  
+**Overall Progress**: ~22% complete (Stage 1 formally closed; Stage 2 CS2-approved; Stage 3 FRS produced pending approval; Stages 4–12 not started)  
+**Blockers**: None. Stage 3 FRS artifact at `modules/MMM/02-frs/functional-requirements.md` v0.1.0 produced. Awaiting CS2 approval before Stage 4 (TRS) begins.  
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.  
-**Open Questions**: 5 OPEN (OQ-001 through OQ-004, OQ-007); 1 ANSWERED (OQ-005); 1 PARTIALLY ANSWERED (OQ-006). See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.  
+**Open Questions**: 3 OPEN — OQ-001 (offline, TRS), OQ-002 (legacy UI, Architecture), OQ-003 (duplication, Architecture). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.  
 **Next Steps**:
-1. CS2 to review and approve Stage 2 UX Workflow & Wiring Spec
-2. CS2 to open Stage 3 (FRS) wave-start authorization issue after Stage 2 approval
-3. Develop Stage 3 (FRS) after Stage 2 approved
-4. Complete Stage 4 (TRS) after FRS
-5. Formalise Stage 5 (Architecture) approval after TRS complete
+1. CS2 to review and approve Stage 3 FRS (`modules/MMM/02-frs/functional-requirements.md`)
+2. CS2 to open Stage 4 (TRS) wave-start authorization issue after Stage 3 approval
+3. Develop Stage 4 (TRS) after FRS approved
+4. Continue Stage 5 (Architecture) after TRS complete
+5. Complete QA-to-Red (Stage 6), PBFAG (Stage 7), Implementation Plan (Stage 8) in sequence
 
 ---
 
@@ -294,7 +308,8 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 - [x] All stages proceeding in order (no skipped stages)
 - [x] Traceability maintained (App Description → UX Workflow → FRS → TRS → Architecture)
 - [x] Stage 1 approval obtained (CS2, #1298, 2026-04-08)
-- [ ] Stage 2 approval pending (CS2 review, #1352)
+- [x] Stage 2 approval confirmed (CS2 — Stage 3 wave-start authorization issue, 2026-04-14)
+- [x] Stage 3 FRS artifact produced (2026-04-14, pending CS2 approval)
 - [x] Evidence artifacts created for each completed stage
 - [x] Module manifest up to date
 - [x] Document control baseline established (see `modules/MMM/_readiness/mmm-document-control-baseline.md`)
