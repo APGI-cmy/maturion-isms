@@ -167,7 +167,19 @@ Ceremony-admin: NOT YET RECORDED in wave-current-tasks.md
 
 ## TOKEN
 
-PHASE_B_BLOCKING_TOKEN: PENDING
+PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage4-trs-20260414-PASS
+
+**Token Issued By**: independent-assurance-agent (v6.2.0, PHASE_B_BLOCKING)
+**Token Date**: 2026-04-14
+**Session**: mmm-stage4-trs-20260414
+**PR/Branch**: copilot/mmm-stage-4-wave-start-authorization
+**Issue**: maturion-isms#1372
+**Checks Run**: 27 substance checks — 27 PASS, 0 FAIL
+**Overlay Applied**: PRE_BUILD_STAGE_MODEL (primary) + AAWP_MAT (secondary) → PRE_BUILD_GATES (OVL-PBG-001–OVL-PBG-016) + PRE_BRIEF_ASSURANCE (OVL-INJ-001, OVL-INJ-ADM-001–003)
+**Verdict**: ASSURANCE-TOKEN — Merge permitted subject to CS2 approval
+**Merge Authority**: CS2 ONLY (@APGI-cmy)
+**Structural Note (OVL-PBG-009)**: Legacy directory `03-trs` does not match canonical Stage 4 numbering. Advisory only — not a REJECTION-PACKAGE trigger. Migration plan at CS2 discretion.
+**Observation (OVL-PBG-005 scope)**: Session memory cites AGENT_HANDOVER_AUTOMATION.md v1.2.0; canonical is v1.3.0. Session memory is an administrative record, not a knowledge file — outside OVL-PBG-005 scope. Logged for S-046-CANDIDATE awareness.
 
 ---
 
