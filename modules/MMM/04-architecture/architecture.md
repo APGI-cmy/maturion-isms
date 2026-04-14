@@ -1489,7 +1489,8 @@ All 66 TRS requirements (TR-001 through TR-066) are traced to architecture secti
 ## A15 — Downstream Guardrails
 
 The following constraints apply to all downstream stages. **Stage 6 (QA-to-Red),
-Stage 7 (PBFAG), Stage 8 (Implementation Plan), and Stage 12 (Builder Appointment)
+Stage 7 (PBFAG), Stage 8 (Implementation Plan), Stage 11 (Builder Appointment),
+and Stage 12 (Build Execution & Evidence)
 must NOT assume or change the following without CS2 authorization and a dedicated
 architecture revision wave:**
 
@@ -1547,7 +1548,14 @@ architecture revision wave:**
 - The commissioning state machine (TR-051) and health endpoint (TR-052) must be in
   the first build wave (they are prerequisites for all other build validation).
 
-### A15.5 — Stage 12 (Builder Appointment) Scope Boundaries
+### A15.5 — Stage 9 (Builder Checklist) and Stage 10 (IAA Pre-Brief) Scope Boundaries
+
+- Stage 9 (Builder Checklist) and Stage 10 (IAA Pre-Brief) are process-gate stages only.
+- They do not modify architecture artifacts. Their scope is to confirm readiness to build.
+- Stage 9 must verify this architecture is frozen and all §A15.1 decisions documented.
+- Stage 10 IAA Pre-Brief must reference this architecture document as the frozen baseline.
+
+### A15.6 — Stage 11 (Builder Appointment) Scope Boundaries
 
 - Builders must not adopt any pattern, schema, or component from the legacy
   `capabilities/` sub-folders (ERM/WRAC artifacts). §A11 OQ-002 resolution is binding.
@@ -1555,6 +1563,18 @@ architecture revision wave:**
 - Builders must confirm understanding of the `mmm_` namespace rule (TR-028) and
   API-mediated cross-module boundary before appointment.
 - The zero-warning CI policy (TR-061) applies from the first commit.
+
+### A15.7 — Stage 12 (Build Execution & Evidence) Scope Boundaries
+
+- Builders must implement strictly from the FRS + TRS + this architecture. No gold-plating.
+- No direct AI provider calls — all AI routing through AIMC (§A15.1 item 1).
+- All database tables must use the `mmm_` prefix namespace (TR-028).
+- The commissioning state machine (CHK-001 through CHK-005 from `APP_STARTUP_REQUIREMENTS.md`)
+  must be implemented in the first build wave.
+- Zero-warning policy (TR-061) is enforced: `tsc --strict`, ESLint `--max-warnings 0`
+  from the first commit forward.
+- Evidence artifacts (test results, coverage reports) must be produced per QA-to-Red
+  suite at each wave boundary.
 
 ---
 
