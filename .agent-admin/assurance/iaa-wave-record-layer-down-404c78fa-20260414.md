@@ -1,7 +1,7 @@
 # IAA Wave Record — Wave: layer-down-404c78fa — 2026-04-14
 
 **Agent**: independent-assurance-agent
-**Session**: session-166-20260414
+**Session**: session-167-20260414
 **Wave**: layer-down-404c78fa
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Adoption Phase**: PHASE_B_BLOCKING
@@ -22,7 +22,7 @@ Anti-regression obligations: no — FUNCTIONAL-BEHAVIOUR-REGISTRY has no registe
 
 ## TOKEN
 
-PHASE_B_BLOCKING_TOKEN: IAA-session-166-layer-down-404c78fa-20260414-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-session-167-layer-down-404c78fa-20260414-PASS
 
 **Issued by**: independent-assurance-agent (re-invocation session, 2026-04-14)
 **Wave**: layer-down-404c78fa
@@ -30,7 +30,7 @@ PHASE_B_BLOCKING_TOKEN: IAA-session-166-layer-down-404c78fa-20260414-PASS
 **Checks**: 18 total — 18 PASS, 0 FAIL
 **Merge gate parity**: PASS
 **Verdict**: ASSURANCE-TOKEN — Merge permitted (subject to CS2 approval)
-**Note**: Re-invocation following REJECTION-PACKAGE (session-166, 5 ceremony failures). All ceremony fixes verified committed at HEAD 1e3e2d70. Substantive content independently re-verified (all 4 hash triple-matches confirmed). Token reference consistent with PREHANDOVER proof pre-populated value (A-029 architecture).
+**Note**: Re-invocation following REJECTION-PACKAGE (session-166, 5 ceremony failures). All ceremony fixes verified committed at HEAD 1e3e2d70. Substantive content independently re-verified (all 4 hash triple-matches confirmed). Token issued under this session (session-167-20260414) — PREHANDOVER and session memory updated accordingly.
 
 ---
 

@@ -105,9 +105,9 @@ merge_gate_parity: PASS
 
 ## IAA Token Reference
 
-iaa_audit_token: IAA-session-166-layer-down-404c78fa-20260414-PASS
+iaa_audit_token: IAA-session-167-layer-down-404c78fa-20260414-PASS
 
-(IAA REJECTION-PACKAGE issued 2026-04-14 on ceremony failures — all substantive content confirmed PASS; re-invocation pending with committed artifacts)
+(Re-invocation PASS issued by IAA session-167-20260414 following session-166 REJECTION-PACKAGE on ceremony failures — all substantive content confirmed PASS in both sessions)
 
 ---
 
