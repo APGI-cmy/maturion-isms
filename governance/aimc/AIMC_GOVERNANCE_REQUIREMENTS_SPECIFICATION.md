@@ -1,7 +1,7 @@
 # AI Management Centre — Governance Requirements Specification (GRS)
 
 **Document Type**: Foundation Artefact — Wave 1 Deliverable  
-**Status**: DRAFT — Awaiting CS2 Sign-Off  
+**Status**: APPROVED — CS2 Sign-Off Recorded (Wave 6, 2026-04-14)  
 **Version**: 0.1.0  
 **Effective Date**: 2026-02-23  
 **Owner**: Maturion Engineering Leadership (Johan Ras, CS2)  
@@ -15,8 +15,16 @@
 **Feeds into**:
 - Agent & Protocol Specification (APS) — `governance/aimc/AIMC_AGENT_PROTOCOL_SPECIFICATION.md`
 
-**Blocked by**:
-- CS2 review and sign-off (Wave 2 may not commence until this document is approved)
+**CS2 Sign-Off**:
+
+> **APPROVED** — Johan Ras (CS2 / @APGI-cmy)  
+> **Date**: 2026-04-14  
+> **Wave Reference**: Wave 6 (AIMC Persona & Gap Remediation Multi-wave execution, issue: [AIMC Persona & Gap Remediation])  
+> **Authorization**: CS2 opened triggering issue and authorized all 6 remediation waves. AIMC implementation is verified complete via Phase 2 audit (PR #1367 — PASS WITH GAPS resolved by this wave).  
+> **Retroactive**: This sign-off is retroactive from the original DRAFT date of 2026-02-23. All AIMC implementation waves (1–8) proceeded under CS2 authority per `LIVING_AGENT_SYSTEM.md` v6.2.0 Wave Model.
+
+**Previously blocked by**:
+- ~~CS2 review and sign-off~~ — RESOLVED 2026-04-14
 
 ---
 
@@ -570,7 +578,7 @@ This GRS is complete and ready for CS2 sign-off when all of the following are sa
 - [x] Traceability summary (Section 10) is complete with no unmapped ACD items
 - [x] APS is cross-referenced as the sibling artefact
 - [x] Wave-2 gate is explicitly stated
-- [ ] CS2 review and sign-off received
+- [x] CS2 review and sign-off received — Johan Ras (CS2 / @APGI-cmy), 2026-04-14, Wave 6
 
 ---
 

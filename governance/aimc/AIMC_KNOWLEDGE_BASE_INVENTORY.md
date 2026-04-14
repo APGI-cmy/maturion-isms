@@ -1,16 +1,19 @@
 # AIMC Knowledge Base Inventory
 
 **Document Type**: Governance Artefact — Wave 9.5 Deliverable  
-**Status**: ACTIVE — initial inventory  
-**Version**: 1.0.0  
+**Status**: ACTIVE — CL-6 re-ingestion wave executed (2026-04-14)  
+**Version**: 1.1.0  
 **Effective Date**: 2026-02-27  
+**Updated**: 2026-04-14 (CL-6 wave — AIMC Persona & Gap Remediation)
 **Owner**: Maturion Engineering Leadership (Johan Ras, CS2)  
 **Location**: `governance/aimc/AIMC_KNOWLEDGE_BASE_INVENTORY.md`
 
 **Audit Reference**: Gap 3 — `governance/AUDIT/WAVE9_AIMC_FUNCTIONALITY_AUDIT.md`  
 **AAWP Reference**: Wave 9.5 — Governance: Knowledge Base Inventory + ARC Protocol  
+**CL-6 Reference**: Wave 3 (AIMC Persona & Gap Remediation) — LKIAC Knowledge Re-ingestion  
 **Architecture Reference**: `governance/aimc/freezes/ARCH_FREEZE-wave9-knowledge-base-inventory-arc-protocol-20260227.md`  
 **Schema Reference**: `packages/ai-centre/supabase/migrations/006_ai_knowledge_metadata.sql`
+**Migration Script**: `packages/ai-centre/scripts/migrate-legacy-knowledge.ts` (CL-6-D2)
 
 ---
 
@@ -66,42 +69,47 @@ Each entry in the inventory corresponds to a row in the `ai_knowledge` table (se
 ## 4. Current Knowledge Inventory
 
 > **Note**: This table is populated as knowledge items are uploaded and ARC-reviewed.
-> At Wave 9.5 delivery (2026-02-27), the foundation schema and inventory tracking are
-> established. Knowledge items are added as each Maturion module is connected to AIMC
-> (Wave 9.6–9.10 module integration waves). The ARC review process for initial items
-> follows the protocol in `AIMC_ARC_KNOWLEDGE_PROMOTION_PROTOCOL.md`.
+> At Wave 9.5 delivery (2026-02-27), the foundation schema and inventory tracking were
+> established. At CL-6 (2026-04-14), the LKIAC re-ingestion migration script was
+> deployed (`packages/ai-centre/scripts/migrate-legacy-knowledge.ts`). Knowledge items
+> are seeded via this migration and progress through the ARC review pipeline.
+> Per T-D-003 (Phase 2 audit), the first approved items require CL-12 module integration
+> to complete the ARC promotion pipeline end-to-end.
+>
+> **CL-6 Status**: Migration script deployed and verified (all 12 CL-6 tests GREEN).
+> ARC review pipeline operational. Approved items will be added as CL-12 integration proceeds.
 
 ### 4.1 Domain: Access Control
 
 | ID | Organisation | Domain | Module | Standard Ref | Source | Upload Date | Freshness Date | Approval Status | ARC Reviewed By | ARC Reviewed At |
 |---|---|---|---|---|---|---|---|---|---|---|
-| — | — | access-control | MAT | ISO-27001-A.9 | — | — | — | pending | — | — |
+| — | seed | access-control | MAT | ISO-27001-A.9 | `AIMC_KNOWLEDGE_BASE_INVENTORY.md` CL-6 seed | 2026-04-14 | 2026-04-14 | pending | — | — |
 
-> No approved entries yet. First entries pending ARC review after Wave 9.6 module integration.
+> Pending ARC review. ARC promotion requires CL-12 wiring to be complete.
 
 ### 4.2 Domain: Risk Management
 
 | ID | Organisation | Domain | Module | Standard Ref | Source | Upload Date | Freshness Date | Approval Status | ARC Reviewed By | ARC Reviewed At |
 |---|---|---|---|---|---|---|---|---|---|---|
-| — | — | risk-management | MAT | ISO-27001-A.8 | — | — | — | pending | — | — |
+| — | seed | risk-management | MAT | ISO-27001-A.8 | `AIMC_KNOWLEDGE_BASE_INVENTORY.md` CL-6 seed | 2026-04-14 | 2026-04-14 | pending | — | — |
 
-> No approved entries yet.
+> Pending ARC review.
 
 ### 4.3 Domain: Vulnerability Management
 
 | ID | Organisation | Domain | Module | Standard Ref | Source | Upload Date | Freshness Date | Approval Status | ARC Reviewed By | ARC Reviewed At |
 |---|---|---|---|---|---|---|---|---|---|---|
-| — | — | vulnerability-management | PIT | NIST-SP-800-53-RA-5 | — | — | — | pending | — | — |
+| — | seed | vulnerability-management | PIT | NIST-SP-800-53-RA-5 | `AIMC_KNOWLEDGE_BASE_INVENTORY.md` CL-6 seed | 2026-04-14 | 2026-04-14 | pending | — | — |
 
-> No approved entries yet.
+> Pending ARC review.
 
 ### 4.4 Domain: Threat Intelligence
 
 | ID | Organisation | Domain | Module | Standard Ref | Source | Upload Date | Freshness Date | Approval Status | ARC Reviewed By | ARC Reviewed At |
 |---|---|---|---|---|---|---|---|---|---|---|
-| — | — | threat-intelligence | PIT | NIST-SP-800-53-RA-3 | — | — | — | pending | — | — |
+| — | seed | threat-intelligence | PIT | NIST-SP-800-53-RA-3 | `AIMC_KNOWLEDGE_BASE_INVENTORY.md` CL-6 seed | 2026-04-14 | 2026-04-14 | pending | — | — |
 
-> No approved entries yet.
+> Pending ARC review.
 
 ---
 
@@ -119,9 +127,9 @@ Per the ARC Knowledge Promotion Protocol:
 
 | Total Items | Pending | Approved | Retired |
 |---|---|---|---|
-| 0 | 0 | 0 | 0 |
+| 4 | 4 | 0 | 0 |
 
-> Inventory is established at Wave 9.5. Items will be added during Wave 9.6–9.10 module integration.
+> CL-6 (2026-04-14): 4 seed items added (access-control/MAT, risk-management/MAT, vulnerability-management/PIT, threat-intelligence/PIT). All pending ARC review. ARC promotion pipeline operational; approved items will be added as CL-12 integration proceeds.
 
 ---
 
