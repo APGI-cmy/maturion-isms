@@ -184,4 +184,23 @@ _To be populated by IAA after handover assurance._
 
 ## REJECTION_HISTORY
 
-No rejections recorded.
+### Rejection 1 — 2026-04-14
+
+**Session**: session-211-mmm-stage5-architecture-20260414
+**IAA Invocation**: Handover assurance (Phase 4 Step 4.3b)
+**Date**: 2026-04-14
+**Branch**: copilot/mmm-stage-5-wave-start-authorization
+**Checks run**: 27 checks (26 PASS, 1 FAIL)
+
+**Failure**: OVL-PBG-007 — Architecture doc lifecycle sequence mislabeling
+
+**Finding Summary**: `modules/MMM/04-architecture/architecture.md` §A15.5 is titled "Stage 12 (Builder Appointment) Scope Boundaries." Per the canonical 12-stage model, Stage 12 = Build Execution & Evidence and Stage 11 = Builder Appointment. Line 1492 also mislabels Stage 12 as "Builder Appointment." Stages 9 and 10 absent from §A15 downstream guardrail enumeration.
+
+**Fix Required**:
+1. Rename §A15.5 header: "Stage 12 (Builder Appointment)" → "Stage 12 (Build Execution & Evidence)"
+2. Update line 1492 reference accordingly
+3. Add §A15.6 or brief acknowledgment for Stage 11 (Builder Appointment) constraints
+4. Add brief scope acknowledgments for Stages 9 (Builder Checklist) and 10 (IAA Pre-Brief for Builder) in §A15
+
+**Classification**: Ceremony — naming/labeling error in downstream guardrail section header
+**Re-invocation required**: YES — Foreman must delegate fix to mat-specialist, commit fresh PREHANDOVER proof, and re-invoke IAA
