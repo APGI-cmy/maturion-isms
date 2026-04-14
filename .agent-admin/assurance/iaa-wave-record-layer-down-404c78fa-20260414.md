@@ -22,7 +22,15 @@ Anti-regression obligations: no — FUNCTIONAL-BEHAVIOUR-REGISTRY has no registe
 
 ## TOKEN
 
-_Reserved for ASSURANCE-TOKEN on successful re-invocation after fixes._
+PHASE_B_BLOCKING_TOKEN: IAA-session-166-layer-down-404c78fa-20260414-PASS
+
+**Issued by**: independent-assurance-agent (re-invocation session, 2026-04-14)
+**Wave**: layer-down-404c78fa
+**PR**: Branch `copilot/layer-down-propagate-governance-changes-c98053e2-80d2-4526-acc1-4b53956429f4` | Issue #1322
+**Checks**: 18 total — 18 PASS, 0 FAIL
+**Merge gate parity**: PASS
+**Verdict**: ASSURANCE-TOKEN — Merge permitted (subject to CS2 approval)
+**Note**: Re-invocation following REJECTION-PACKAGE (session-166, 5 ceremony failures). All ceremony fixes verified committed at HEAD 1e3e2d70. Substantive content independently re-verified (all 4 hash triple-matches confirmed). Token reference consistent with PREHANDOVER proof pre-populated value (A-029 architecture).
 
 ---
 
