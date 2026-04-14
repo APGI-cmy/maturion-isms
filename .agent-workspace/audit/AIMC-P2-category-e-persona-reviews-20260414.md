@@ -243,3 +243,23 @@ All identified gaps are minor and non-blocking. No immediate remediation require
 - T-E-005: Add severity classification taxonomy reference; pin ATT&CK version; add cross-module handoff note for risk register implications.
 
 **Reviewer sign-off**: pit-specialist | 2026-04-14 | Wave aimc-audit-phase-2-20260414
+
+---
+
+## Maturity Scoring Review — T-E-008
+**Reviewer**: maturity-scoring-agent
+**Date**: 2026-04-14
+
+### T-E-008: maturity-roadmap-advisor
+**Verdict**: PARTIAL
+**Domain accuracy**: Largely accurate. The persona correctly covers roadmap generation, remediation planning, control gap prioritisation, phased implementation timelines, quick-win identification, KPI definition, and stakeholder communication. Grounding in ISO 27001 Annex A, NIST CSF, and PCI-DSS is appropriate for ISMS maturity context. The scope boundary with mat-advisor is stated explicitly ("You do not conduct risk assessments directly"). However, the persona does not reference Maturion's Domain→MPS→Criteria scoring model by name — it refers generically to "assessed maturity baseline" and "ISO 27001 Annex A gap analysis outputs" without tying prioritisation logic to the specific three-tier scoring hierarchy used by the platform.
+**YAML compliance**: PASS — all required fields present: agentId, description, module, version, last_reviewed, owner. `capability` field is a bonus field, not missing any mandatory key.
+**Gaps found**:
+- No explicit reference to Maturion's Domain→MPS→Criteria scoring model; gap prioritisation guidance uses generic ISO 27001 framing rather than platform-native scoring tiers.
+- No mention of consuming maturity scores from `mat-advisor` or the assessments API (`apps/mat/api/assessments/**`) as input to roadmap generation.
+- Scope boundary statement references WRAC/RA modules but not `mat-advisor` by its Maturion agent identity; boundary clarity is partial.
+- No reference to PIT integration contract or how roadmap milestones map to PIT project tracking (mentioned in guidance list but no structural detail).
+**Scoring model alignment**: PARTIAL — persona references maturity baseline and level progression modelling from current-to-target state, which aligns conceptually with the scoring model intent. However, it does not name Domain→MPS→Criteria tiers, does not reference maturity level descriptors (L1–L5 or equivalent), and does not describe how criteria coverage percentages translate into roadmap priority weights.
+
+### Section Summary
+The maturity-roadmap-advisor persona is functionally sound and covers the correct planning domain. YAML front-matter is fully compliant. The primary gap is the absence of explicit alignment to Maturion's Domain→MPS→Criteria scoring model: prioritisation guidance is framework-generic rather than platform-native. Scope boundary with mat-advisor is partially stated but could be tightened. Recommend the persona be updated (outside audit scope) to explicitly reference the scoring model tiers and intake path from mat-advisor scores.
