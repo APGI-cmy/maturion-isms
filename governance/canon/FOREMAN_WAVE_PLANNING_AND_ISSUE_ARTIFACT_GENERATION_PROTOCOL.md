@@ -3,8 +3,8 @@
 ## Status
 **Type**: Canonical Governance Protocol  
 **Authority**: Supreme - Canonical  
-**Version**: 1.2.0  
-**Effective Date**: 2026-04-13  
+**Version**: 1.1.0  
+**Effective Date**: 2026-02-26  
 **Owner**: Maturion Engineering Leadership (Johan Ras)  
 **Precedence**: Subordinate to GOVERNANCE_PURPOSE_AND_SCOPE.md  
 **Layer-Down Status**: PUBLIC_API  
@@ -687,51 +687,11 @@ Artifacts created before v1.1.0 of this protocol that use the legacy `session-NN
 
 ---
 
-## Approved Artifact Path Declaration (v1.2.0+)
-
-### Purpose
-
-As of v1.2.0, Foreman MUST include a **declarative list of approved artifact paths** in every wave plan. This list defines the exact files that agents are permitted to create during the wave. Any file created outside this approved list is a CI gate failure.
-
-### Requirement
-
-At the ORGANISING phase of wave planning, Foreman MUST:
-
-1. Declare the approved artifact paths for the wave in `wave-current-tasks.md`
-2. Include these paths in the SCOPE_DECLARATION.md `APPROVED_ARTIFACT_PATHS:` section
-3. Reference the path patterns from `GOVERNANCE_ARTIFACT_TAXONOMY.md` §21 (Prescriptive Artifact Allowlist)
-
-### Approved Path Categories
-
-For each wave, the Foreman declares which of the following artifact paths are approved:
-
-| Category | Path Pattern | When Required |
-|----------|-------------|---------------|
-| IAA Wave Record | `.agent-admin/assurance/iaa-wave-record-{wave}-{date}.md` | Every wave producing qualifying work |
-| Session Memory | `.agent-workspace/foreman-v2/memory/session-{id}-{date}.md` | Every Foreman session |
-| PREHANDOVER Proof | `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-{id}-{wave}-{date}.md` | Every wave handover |
-| Wave Current Tasks | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Every wave |
-| Scope Declaration | `governance/scope-declaration.md` | Every PR |
-
-### CI Enforcement
-
-The approved artifact paths are enforced by the governance artifact path check in `merge-gate-interface.yml`. Files in `.agent-admin/assurance/` that do not match an approved pattern are rejected.
-
-### Consolidated Wave Record
-
-Per the GOV-SIMPLIFICATION consolidation:
-- The IAA Wave Record (`iaa-wave-record-{wave}-{date}.md`) replaces separate prebrief, token, PREHANDOVER, and rejection artifacts
-- See `governance/templates/iaa-wave-record.template.md` for the consolidated format
-- See `GOVERNANCE_ARTIFACT_TAXONOMY.md` §21 for the prescriptive allowlist
-
----
-
 ## 9. Versioning and Evolution
 
-**Current Version**: 1.2.0 (2026-04-13)
+**Current Version**: 1.1.0 (2026-02-26)
 
 **Version History**:
-- **v1.2.0** (2026-04-13) — Added §Approved Artifact Path Declaration per GOV-SIMPLIFICATION; Foreman must now declare approved artifact paths at wave planning; CI enforcement via merge-gate-interface.yml
 - **v1.1.0** (2026-02-26) — Added §5.3 mandatory per-wave artifact naming convention to prevent session ID collisions when multiple waves execute in a single foreman session. Updated §8.1 compliance checklist. References added to AGENT_HANDOVER_AUTOMATION.md and FOREMAN_MEMORY_PROTOCOL.md.
 - **v1.0.0** (2026-02-08) — Initial canonical protocol establishing wave planning methodology, issue artifact generation workflow, and progress tracking requirements
 
@@ -760,6 +720,6 @@ Clear, complete, governance-aligned, audit-ready. No vague criteria, governance 
 ---
 
 **Authority**: GOVERNANCE_PURPOSE_AND_SCOPE.md  
-**Version**: 1.2.0  
-**Effective**: 2026-04-13  
+**Version**: 1.1.0  
+**Effective**: 2026-02-26  
 **Owner**: CS2 (Johan Ras)
