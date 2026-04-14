@@ -161,6 +161,7 @@ FOREMAN NEVER WRITES PRODUCTION CODE
 .agent-workspace/<agent>/
 ├── memory/session-NNN-YYYYMMDD.md             # Last 5 sessions
 ├── memory/.archive/session-*.md               # Older sessions
+├── parking-station/suggestions-log.md         # Per-agent suggestions
 ├── personal/lessons-learned.md                # Cumulative learnings
 ├── personal/patterns.md                       # Observed patterns
 └── escalation-inbox/blocker-*.md              # Unresolved escalations

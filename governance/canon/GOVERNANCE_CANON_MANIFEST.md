@@ -3,7 +3,7 @@
 ## Status
 **Type**: Canonical Governance Index  
 **Authority**: Supreme - Canonical  
-**Version**: 1.1.0  
+**Version**: 1.0.0  
 **Effective Date**: 2026-01-05  
 **Owner**: Maturion Engineering Leadership (Johan Ras)  
 **Purpose**: Authoritative index of all canonical governance standards with layer-down status
@@ -118,8 +118,7 @@ It serves to:
 | `FAILURE_PROMOTION_RULE.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `FM_PREAUTH_CHECKLIST_CANON.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `GATE_PREDICTIVE_COMPLIANCE_ANALYSIS.md` | 1.0.0 | OPTIONAL | FM App | 2026-01-05 |
-| `IAA_PRE_BRIEF_PROTOCOL.md` | 1.3.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-04-13 |
-| `INDEPENDENT_ASSURANCE_AGENT_CANON.md` | 1.6.0 | PUBLIC_API | All Repos | 2026-04-13 |
+| `IAA_PRE_BRIEF_PROTOCOL.md` | 1.2.2 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-04-08 |
 | `INITIALIZATION_COMPLETENESS_GATE.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `PRE_BUILD_REALITY_CHECK_CANON.md` | 1.1.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-04-05 |
 | `PR_GATE_EVALUATION_AND_ROLE_PROTOCOL.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
@@ -141,7 +140,7 @@ It serves to:
 | `GOVERNANCE_PURPOSE_AND_SCOPE.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `GOVERNANCE_RIPPLE_MODEL.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `GOVERNANCE_VERSIONING_AND_SYNC_PROTOCOL.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
-| `GOVERNANCE_ARTIFACT_TAXONOMY.md` | 2.0.0 | PUBLIC_API | All Repos | 2026-04-13 |
+| `PARKING_STATION_PATH_STANDARD.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-04-13 |
 
 ### 3.6 Learning & Improvement Models (PUBLIC_API)
 
@@ -181,7 +180,6 @@ It serves to:
 |-----------|---------|-------------------|------------------|--------------|
 | `IN_BETWEEN_WAVE_RECONCILIATION.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `MANDATORY_CANONICAL_PROGRESS_RECORDING_AND_WAVE_CLOSURE_CERTIFICATION.md` | 1.0.0 | PUBLIC_API | FM App | 2026-01-04 |
-| `FOREMAN_WAVE_PLANNING_AND_ISSUE_ARTIFACT_GENERATION_PROTOCOL.md` | 1.2.0 | PUBLIC_API | All Repos | 2026-04-13 |
 
 ### 3.10 Requirement & Specification Models (PUBLIC_API)
 
@@ -226,12 +224,11 @@ It serves to:
 | `MATURION_CONCEPTUAL_DOCTRINE.md` | 1.0.0 | OPTIONAL | FM App, SlotMaster | 2026-01-05 |
 | `RESPONSIBILITY_DOMAIN_ENTRY.template.md` | 1.0.0 | INTERNAL | N/A | 2026-01-05 |
 | `RESPONSIBILITY_DOMAIN_REGISTRY.md` | 1.0.0 | INTERNAL | N/A | 2026-01-05 |
-| `SCOPE_DECLARATION_SCHEMA.md` | v2 | INTERNAL | N/A | 2026-04-13 |
+| `SCOPE_DECLARATION_SCHEMA.md` | 1.0.0 | INTERNAL | N/A | 2026-01-05 |
 | `VISION_ALIGNMENT_AND_DRIFT_MODEL.md` | 1.0.0 | OPTIONAL | FM App, SlotMaster | 2026-01-05 |
 | `effectiveness.template.md` | 1.0.0 | INTERNAL | N/A | 2026-01-05 |
 | `failure.template.md` | 1.0.0 | INTERNAL | N/A | 2026-01-05 |
 | `scope-declaration.template.md` | 1.0.0 | INTERNAL | N/A | 2026-01-05 |
-| `iaa-wave-record.template.md` | 1.0.0 | PUBLIC_API | All Repos | 2026-04-13 |
 
 ### 3.14 Governance Policies (PUBLIC_API)
 
@@ -395,13 +392,6 @@ This manifest is maintained by the Governance Administrator Agent and reviewed d
 - Major governance evolution milestones
 
 **Review Cadence**: After every canon update, minimum monthly review
-
-**Version History**:
-
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.1.0 | 2026-04-13 | CS2 (Johan Ras) | Updated versions for GOV-SIMPLIFICATION wave: GOVERNANCE_ARTIFACT_TAXONOMY v2.0.0, IAA_PRE_BRIEF_PROTOCOL v1.3.0, INDEPENDENT_ASSURANCE_AGENT_CANON v1.6.0, FOREMAN_WAVE_PLANNING v1.2.0, SCOPE_DECLARATION_SCHEMA v2; added iaa-wave-record.template.md |
-| 1.0.0 | 2026-01-05 | CS2 (Johan Ras) | Initial manifest |
 
 ---
 

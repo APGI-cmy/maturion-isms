@@ -3,8 +3,8 @@
 ## Status
 **Type**: Tier-0 Constitutional Canon  
 **Authority**: Supreme - Constitutional  
-**Version**: 2.0.0  
-**Effective Date**: 2026-04-13  
+**Version**: 1.0.0  
+**Effective Date**: 2026-02-08  
 **Owner**: Maturion Engineering Leadership (Johan Ras)  
 **Layer-Down Status**: PUBLIC_API  
 **Applies To**: All Repositories, All Agents  
@@ -39,7 +39,7 @@ This taxonomy derives authority from and implements:
 
 ## 3. Artifact Type Taxonomy
 
-This taxonomy defines **8 primary artifact types**:
+This taxonomy defines **7 primary artifact types**:
 
 1. **Constitutional Canon** - Tier-0 governance rules (highest authority)
 2. **Governance Documentation** - Policies, protocols, models (tier-1+)
@@ -48,7 +48,6 @@ This taxonomy defines **8 primary artifact types**:
 5. **Governance Evidence** - Reports, audits, validation artifacts
 6. **Application Code** - Production executable artifacts
 7. **Application Tests** - Test suites, QA validation
-8. **Assurance Artifacts** - IAA wave records, session memories, PREHANDOVER proofs
 
 ---
 
@@ -356,64 +355,9 @@ This taxonomy defines **8 primary artifact types**:
 
 ---
 
-## 9. Type 8: Assurance Artifacts
+## 9. Type 6: Application Code
 
 ### 9.1 Definition
-
-**Assurance Artifacts**: Structured records produced during governance assurance workflows — including IAA (Independent Assurance Agent) wave records, session memory files, PREHANDOVER proofs, and wave-current-tasks files. These artifacts provide the audit trail for governance compliance verification and independent assurance.
-
-**Characteristics**:
-- Generated during governance assurance workflows
-- Structured per templates (e.g., `iaa-wave-record.template.md`)
-- Time-stamped and immutable once finalized
-- Subject to prescriptive allowlist (§21)
-- Referenced by merge gate enforcement
-
-### 9.2 Examples
-
-- `iaa-wave-record-{wave}-{date}.md` (consolidated IAA wave records)
-- `.agent-workspace/{agent}/memory/session-{id}-{date}.md` (session memory files)
-- `PREHANDOVER-session-{id}-{wave}-{date}.md` (PREHANDOVER proofs — legacy, now embedded in wave records)
-- `wave-current-tasks.md` (wave task tracking)
-- `iaa-token-session-{NNN}-{wave}-{date}.md` (DEPRECATED — removed in v1.7.0; tokens are now in `## TOKEN` section of wave record)
-- `iaa-prebrief-{slug}.md` (DEPRECATED — removed in v1.7.0; pre-briefs are now in `## PRE-BRIEF` section of wave record)
-
-### 9.3 Location
-
-**Primary**:
-- `.agent-admin/assurance/` (IAA wave records, tokens, pre-briefs)
-- `.agent-workspace/{agent}/memory/` (session memories, PREHANDOVER proofs)
-- `.agent-workspace/{agent}/personal/` (wave-current-tasks)
-
-### 9.4 Governance Properties
-
-| Property | Value |
-|----------|-------|
-| **Ripple Required** | No (assurance artifacts document outcomes, not governance changes) |
-| **Testing Required** | Schema validation (structure), completeness check, allowlist compliance |
-| **Who May Modify** | Foreman (sections 1-2 of wave records), IAA (section 3), Agent (own session memories) |
-| **Version Controlled** | Yes (git history provides audit trail) |
-| **Layer-Down** | No (repo-specific assurance evidence) |
-| **CI Validation** | Allowlist pattern matching (§21), completeness check |
-
-### 9.5 Modification Protocol
-
-**Creation**: Per prescriptive allowlist (§21). Only permitted artifact types and path patterns may be created.
-
-**Modification**: Assurance artifacts are **immutable** after finalization.
-- IAA Wave Records: Foreman writes sections 1-2, IAA writes section 3. No edits after IAA verdict.
-- Session Memories: Immutable after session closure.
-- PREHANDOVER Proofs: Read-only after initial commit (per AGENT_HANDOVER_AUTOMATION.md).
-
-**Invalidation**: Use `INVALIDATED-{artifact-name}.md` marker (max 1 per artifact).
-
-**Archival**: Completed assurance artifacts may be archived to `archive/` subdirectory but never deleted.
-
----
-
-## 10. Type 6: Application Code
-
-### 10.1 Definition
 
 **Application Code**: Production executable artifacts that implement application functionality, business logic, or user-facing features.
 
@@ -424,7 +368,7 @@ This taxonomy defines **8 primary artifact types**:
 - Subject to code quality standards
 - NOT governance (even if in governance repo)
 
-### 10.2 Examples
+### 9.2 Examples
 
 - `src/` (application source code)
 - `apps/` (application implementations)
@@ -433,14 +377,14 @@ This taxonomy defines **8 primary artifact types**:
 
 **Note**: Executable code in governance repository (e.g., `foreman/` implementation) is **application code**, not governance.
 
-### 10.3 Location
+### 9.3 Location
 
 **Primary**:
 - `src/` (consumer repos)
 - `apps/` (consumer repos)
 - `foreman/` (governance repo, but still application code)
 
-### 10.4 Governance Properties
+### 9.4 Governance Properties
 
 | Property | Value |
 |----------|-------|
@@ -451,7 +395,7 @@ This taxonomy defines **8 primary artifact types**:
 | **Layer-Down** | No (application-specific) |
 | **CI Validation** | 100% GREEN tests, linting, security scan, code coverage |
 
-### 10.5 Modification Protocol
+### 9.5 Modification Protocol
 
 **Builder implements**:
 - Per BUILD_PHILOSOPHY.md (One-Time Build Law)
@@ -463,9 +407,9 @@ This taxonomy defines **8 primary artifact types**:
 
 ---
 
-## 11. Type 7: Application Tests
+## 10. Type 7: Application Tests
 
-### 11.1 Definition
+### 10.1 Definition
 
 **Application Tests**: Test suites, QA validation, and test code that validate application functionality.
 
@@ -475,21 +419,21 @@ This taxonomy defines **8 primary artifact types**:
 - Subject to test quality standards
 - NOT governance (even if in governance repo)
 
-### 11.2 Examples
+### 10.2 Examples
 
 - `tests/` (test suites)
 - `qa/` (QA validation)
 - `__tests__/` (test files)
 - `*.test.js`, `*.spec.ts`, etc.
 
-### 11.3 Location
+### 10.3 Location
 
 **Primary**:
 - `tests/` (consumer repos)
 - `qa/` (consumer repos)
 - Co-located with code (e.g., `src/__tests__/`)
 
-### 11.4 Governance Properties
+### 10.4 Governance Properties
 
 | Property | Value |
 |----------|-------|
@@ -500,7 +444,7 @@ This taxonomy defines **8 primary artifact types**:
 | **Layer-Down** | No (application-specific) |
 | **CI Validation** | Test execution (100% GREEN required) |
 
-### 11.5 Modification Protocol
+### 10.5 Modification Protocol
 
 **Foreman creates**: QA (red tests before implementation)
 
@@ -510,7 +454,7 @@ This taxonomy defines **8 primary artifact types**:
 
 ---
 
-## 12. Ripple Trigger Matrix
+## 11. Ripple Trigger Matrix
 
 | Artifact Type | Ripple Required? | Trigger Condition |
 |---------------|------------------|-------------------|
@@ -521,7 +465,6 @@ This taxonomy defines **8 primary artifact types**:
 | Governance Templates (Canonical) | **YES** | If PUBLIC_API template |
 | Governance Templates (Operational) | Optional | If widely used |
 | Governance Evidence | **NO** | Evidence documents outcomes |
-| Assurance Artifacts | **NO** | Assurance artifacts document outcomes |
 | Application Code | **NO** | Not governance |
 | Application Tests | **NO** | Not governance |
 
@@ -529,7 +472,7 @@ This taxonomy defines **8 primary artifact types**:
 
 ---
 
-## 13. Testing Obligation Matrix
+## 12. Testing Obligation Matrix
 
 | Artifact Type | Testing Required | Test Type | Owner |
 |---------------|------------------|-----------|-------|
@@ -538,13 +481,12 @@ This taxonomy defines **8 primary artifact types**:
 | Governance Scripts | **YES** | Unit, integration, dry-run | Builder or Liaison |
 | Governance Templates | Schema | Structure validation | Liaison |
 | Governance Evidence | Schema | Completeness check | Liaison |
-| Assurance Artifacts | Schema, Allowlist | Structure validation, allowlist compliance | Foreman, IAA, Liaison |
 | Application Code | **YES** | Unit, integration, E2E | Builder (supervised by FM) |
 | Application Tests | **YES** | Test execution (100% GREEN) | Builder, FM |
 
 ---
 
-## 14. Self-Alignment Authority Matrix
+## 13. Self-Alignment Authority Matrix
 
 | Artifact Type | Liaison May Self-Align? | CS2 Approval Required? |
 |---------------|-------------------------|------------------------|
@@ -555,15 +497,14 @@ This taxonomy defines **8 primary artifact types**:
 | Governance Scripts (Complex) | NO | **YES** |
 | Governance Templates | YES (improvements) | If structural change |
 | Governance Evidence | YES (creation) | NO (immutable after) |
-| Assurance Artifacts | NO (per allowlist only) | If new artifact types |
 | Application Code | NO | N/A (Builder domain) |
 | Application Tests | NO | N/A (Builder/FM domain) |
 
 ---
 
-## 15. File Path Pattern Recognition
+## 14. File Path Pattern Recognition
 
-### 15.1 Constitutional Canon Patterns
+### 14.1 Constitutional Canon Patterns
 
 ```
 governance/canon/*.md
@@ -575,7 +516,7 @@ WAVE_MODEL.md
 LIVING_AGENT_SYSTEM.md
 ```
 
-### 15.2 Governance Documentation Patterns
+### 14.2 Governance Documentation Patterns
 
 ```
 governance/policy/*.md
@@ -587,7 +528,7 @@ governance/models/*.md
 *_POLICY.md
 ```
 
-### 15.3 Governance Scripts Patterns
+### 14.3 Governance Scripts Patterns
 
 ```
 .github/scripts/*.sh
@@ -597,7 +538,7 @@ scripts/*.js
 scripts/*.py
 ```
 
-### 15.4 Governance Templates Patterns
+### 14.4 Governance Templates Patterns
 
 ```
 governance/templates/*.template.*
@@ -606,7 +547,7 @@ governance/canon/*.template.md
 *.template.json
 ```
 
-### 15.5 Governance Evidence Patterns
+### 14.5 Governance Evidence Patterns
 
 ```
 governance/reports/*.md
@@ -617,7 +558,7 @@ governance/ripple/*-ripple-report.md
 *_SCAN.md
 ```
 
-### 15.6 Application Code Patterns
+### 14.6 Application Code Patterns
 
 ```
 src/**/*
@@ -629,7 +570,7 @@ foreman/src/**/*
 *.py (non-test)
 ```
 
-### 15.7 Application Test Patterns
+### 14.7 Application Test Patterns
 
 ```
 tests/**/*
@@ -641,30 +582,20 @@ __tests__/**/*
 *.spec.ts
 ```
 
-### 15.8 Assurance Artifact Patterns
-
-```
-.agent-admin/assurance/iaa-wave-record-*.md
-.agent-admin/assurance/iaa-prebrief-*.md (DEPRECATED — removed in v1.7.0)
-.agent-admin/assurance/iaa-token-*.md (DEPRECATED — removed in v1.7.0)
-.agent-admin/assurance/INVALIDATED-*.md
-.agent-admin/assurance/archive/**/* (archived artifacts)
-```
-
 ---
 
-## 16. CI/CD Integration Guidance
+## 15. CI/CD Integration Guidance
 
-### 16.1 Automated Type Detection
+### 15.1 Automated Type Detection
 
 **CI workflow should**:
 
-1. **Detect artifact type** from file path patterns (Section 15)
-2. **Apply appropriate validation** per testing obligation matrix (Section 13)
-3. **Trigger ripple** if required per ripple trigger matrix (Section 12)
-4. **Validate authority** per self-alignment matrix (Section 14)
+1. **Detect artifact type** from file path patterns (Section 14)
+2. **Apply appropriate validation** per testing obligation matrix (Section 12)
+3. **Trigger ripple** if required per ripple trigger matrix (Section 11)
+4. **Validate authority** per self-alignment matrix (Section 13)
 
-### 16.2 Example CI Logic
+### 15.2 Example CI Logic
 
 ```yaml
 name: Governance Artifact Validation
@@ -716,9 +647,9 @@ jobs:
 
 ---
 
-## 17. Boundary Cases & Clarifications
+## 16. Boundary Cases & Clarifications
 
-### 17.1 Governance Scripts vs Application Code
+### 16.1 Governance Scripts vs Application Code
 
 **Question**: Is a script that automates governance "governance" or "code"?
 
@@ -727,7 +658,7 @@ jobs:
 - BUT tested like application code (unit tests, integration tests)
 - Builder may implement if code-heavy, but liaison owns governance semantics
 
-### 17.2 Agent Contracts
+### 16.2 Agent Contracts
 
 **Question**: What type are `.agent.md` files?
 
@@ -736,7 +667,7 @@ jobs:
 - Modification requires CS2 approval or specific authority
 - Ripple required if canonical agent contract changed
 
-### 17.3 Runbooks with Code Examples
+### 16.3 Runbooks with Code Examples
 
 **Question**: Is a runbook with bash snippets "documentation" or "script"?
 
@@ -745,7 +676,7 @@ jobs:
 - No dedicated testing required (syntax check sufficient)
 - Liaison may self-align within bounds
 
-### 17.4 Evidence with Templates
+### 16.4 Evidence with Templates
 
 **Question**: Is a completed template "evidence" or "documentation"?
 
@@ -756,16 +687,16 @@ jobs:
 
 ---
 
-## 18. Validation & Maintenance
+## 17. Validation & Maintenance
 
-### 18.1 Taxonomy Validation
+### 17.1 Taxonomy Validation
 
 This taxonomy MUST be validated:
 - **Before use**: All agents and liaisons understand artifact types
 - **During PR review**: Artifact classification is correct
 - **Quarterly**: CS2 reviews for gaps, ambiguities, new artifact types
 
-### 18.2 Taxonomy Evolution
+### 17.2 Taxonomy Evolution
 
 **Changes to this taxonomy**:
 - **MUST** be approved by CS2 (Johan Ras)
@@ -775,9 +706,9 @@ This taxonomy MUST be validated:
 
 ---
 
-## 19. Cross-References
+## 18. Cross-References
 
-### 19.1 Primary Dependencies
+### 18.1 Primary Dependencies
 
 - **GOVERNANCE_PURPOSE_AND_SCOPE.md** - Governance philosophy
 - **GOVERNANCE_RIPPLE_MODEL.md** - Ripple execution requirements
@@ -785,17 +716,15 @@ This taxonomy MUST be validated:
 - **BUILD_PHILOSOPHY.md** - Testing and quality standards
 - **LIVING_AGENT_SYSTEM.md** - Agent lifecycle
 
-### 19.2 Supporting Protocols
+### 18.2 Supporting Protocols
 
 - **AGENT_CONTRACT_PROTECTION_PROTOCOL.md** - Agent contract modification rules
 - **GOVERNANCE_ARTIFACT_INVENTORY.md** - Artifact inventory
 - **GOVERNANCE_COMPLETENESS_MODEL.md** - Governance completeness
-- **governance/templates/iaa-wave-record.template.md** - Consolidated wave record template
-- **merge-gate-interface.yml** - CI enforcement of artifact allowlist
 
 ---
 
-## 20. Summary Decision Tree
+## 19. Summary Decision Tree
 
 **When evaluating an artifact**:
 
@@ -811,76 +740,24 @@ This taxonomy MUST be validated:
 │                         │
 │ NO  → Is it a template? │
 │   YES → Type 4 (Template)
-│   NO  → Is it assurance?│
-│     YES → Type 8 (Assurance)
-│     NO  → Is it evidence?│
-│       YES → Type 5 (Evidence)
-│       NO  → Is it canon? │
-│         YES → Type 1 (Canon)
-│         NO  → Type 2 (Doc)
+│   NO  → Is it evidence? │
+│     YES → Type 5 (Evidence)
+│     NO  → Is it canon?  │
+│       YES → Type 1 (Canon)
+│       NO  → Type 2 (Doc)
 └─────────────────────────┘
 ```
 
 ---
 
-## 21. Prescriptive Artifact Allowlist
-
-### 21.1 Purpose
-
-This section converts the taxonomy from a descriptive catalogue into a **prescriptive enumerated allowlist**. As of v2.0.0, only artifact types explicitly listed in this section are permitted to be created by agents. Any artifact type not in this list is **PROHIBITED**.
-
-### 21.2 Enforcement Statement
-
-> **CONSTITUTIONAL**: Any governance artifact created by any agent that does not match an explicitly permitted type and path pattern in this allowlist is a governance violation. The CI enforcement workflow (`merge-gate-interface.yml` — governance artifact path check) enforces this at merge time.
-
-### 21.3 Permitted Assurance Artifact Types and Path Patterns
-
-The following are the ONLY permitted assurance artifact types in `.agent-admin/assurance/`:
-
-| Artifact Type | File Pattern | Max Per Wave | Created By |
-|---------------|-------------|-------------|------------|
-| IAA Wave Record | `iaa-wave-record-{wave}-{date}.md` | 1 final + 1 INVALIDATED | Foreman (sections 1-2), IAA (section 3) |
-| IAA Pre-Brief (DEPRECATED) | `iaa-prebrief-{slug}.md` | DEPRECATED — removed in v1.7.0 | N/A |
-| IAA Token (DEPRECATED) | `iaa-token-session-{NNN}-{wave}-{date}.md` | DEPRECATED — removed in v1.7.0 | N/A |
-| Invalidated Marker | `INVALIDATED-{artifact-name}.md` | 1 per artifact | Foreman |
-
-> **Transition Complete**: As of v1.7.0 (2026-04-13), all agents have been updated to the consolidated IAA Wave Record model. Standalone pre-brief (`iaa-prebrief-*.md`) and standalone token (`iaa-token-*.md`) patterns are FULLY DEPRECATED. New artifact creation using these patterns is prohibited. Existing files are retained for historical reference only.
-
-### 21.4 Permitted Governance Workspace Artifact Patterns
-
-| Artifact Type | Path Pattern | Created By |
-|---------------|-------------|------------|
-| Session Memory | `.agent-workspace/{agent}/memory/session-{id}-{date}.md` | Agent |
-| PREHANDOVER Proof | `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-{id}-{wave}-{date}.md` | Foreman/ECAA |
-| Wave Current Tasks | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Foreman |
-| Knowledge Files | `.agent-workspace/{agent}/knowledge/*.md` | Agent (governed) |
-
-### 21.5 Prohibited Patterns
-
-The following patterns are explicitly PROHIBITED for new artifact creation:
-- Revision trail files beyond 1 INVALIDATED + 1 final (e.g., R2/R3/R4 suffixed files)
-- Standalone rejection package files (`rejection-package-*.md`) — rejection history is embedded in the IAA Wave Record Section 4
-- Standalone PREHANDOVER files in `.agent-admin/assurance/` (must be in workspace or wave record)
-- Any artifact type not listed in §21.3 or §21.4
-
-### 21.6 CI Enforcement
-
-This allowlist is enforced at merge time by the governance artifact path check in `merge-gate-interface.yml`. The check:
-1. Extracts all new files in `.agent-admin/assurance/` from the PR diff
-2. Validates each filename against the permitted patterns in §21.3
-3. **FAILS** the PR if any file does not match a permitted pattern
-4. **PASSES** if all files match or no files exist in the path
-
----
-
-## 22. Version History
+## 20. Version History
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0.0 | 2026-02-08 | CS2 (Johan Ras) | Initial canonical taxonomy addressing GAP-002 |
-| 2.0.0 | 2026-04-13 | CS2 (Johan Ras) | Converted from descriptive catalogue to prescriptive allowlist per GOV-SIMPLIFICATION issue; added Type 8: Assurance Artifacts; added §21 Prescriptive Artifact Allowlist with CI enforcement; rejection packages now embedded in IAA Wave Record |
 
 ---
 
 **Authority**: CS2 (Johan Ras)  
-**Effective Date**: 2026-04-13
+**Effective Date**: 2026-02-08  
+**Next Review**: 2026-05-08 (Quarterly)
