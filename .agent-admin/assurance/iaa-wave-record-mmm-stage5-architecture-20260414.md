@@ -178,7 +178,21 @@ IAA will issue ASSURANCE-TOKEN for this wave ONLY IF all of the following are sa
 
 ## TOKEN
 
-_To be populated by IAA after handover assurance._
+**PHASE_B_BLOCKING_TOKEN**: IAA-session-212-mmm-stage5-architecture-20260414-PASS
+
+| Field | Value |
+|-------|-------|
+| Session | 212 |
+| Wave | mmm-stage5-architecture-20260414 |
+| Branch | copilot/mmm-stage-5-wave-start-authorization |
+| Issue | maturion-isms#1378 |
+| Date | 2026-04-14 |
+| Checks run | 27 total (26 Session 211 PASS + 3 re-audit; 27 PASS, 0 FAIL) |
+| Re-audit scope | OVL-PBG-007 remediation only (commit 678cfd80) |
+| Verdict | ASSURANCE-TOKEN (PASS) |
+| Adoption phase | PHASE_B_BLOCKING — hard gate ACTIVE |
+| Merge authority | CS2 ONLY (Johan Ras / @APGI-cmy) |
+| Prior rejection | Session 211 REJECTION-PACKAGE (OVL-PBG-007 — stage name mislabeling) — RESOLVED |
 
 ---
 
