@@ -855,7 +855,7 @@ jobs:
           # backward compatibility with existing scope declarations.
           DECL_WITH_PATHS=false
           while IFS= read -r decl_file; do
-            if [ -f "$decl_file" ] && grep -qi "approved.artifact.paths" "$decl_file" 2>/dev/null; then
+            if [ -f "$decl_file" ] && grep -qiE "(APPROVED_ARTIFACT_PATHS:|## Approved Artifact Paths)" "$decl_file" 2>/dev/null; then
               DECL_WITH_PATHS=true
               echo "✅ SCOPE-DECL-001 PASS — Scope declaration found with approved artifact paths:"
               echo "   File: $decl_file"
