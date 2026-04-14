@@ -4,45 +4,54 @@ wave: mmm-stage5-architecture-20260414
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-stage5-architecture-20260414.md
 branch: copilot/mmm-stage-5-wave-start-authorization
 issue: maturion-isms#1378
-status: IN_PROGRESS
+status: COMPLETE — Awaiting Phase 4 ceremony and CS2 review
 
 ## Active Wave: MMM Stage 5 — Architecture
 
 ### Status
-IN_PROGRESS — Delegating to mat-specialist for architecture production.
+COMPLETE (artifact production) — Phase 4 ceremony pending.
 
 CS2 Authorization: maturion-isms#1378 — opened by @APGI-cmy (CS2 = Johan Ras), 2026-04-14.
 Stage 4 TRS CS2 approval carried forward per issue #1378.
 
 IAA Pre-Brief: COMMITTED (SHA ad5369d)
-IAA ASSURANCE-TOKEN: PENDING — to be issued at handover
+IAA ASSURANCE-TOKEN: PENDING — to be issued at Phase 4
 
 ### Tasks
 - [x] Phase 1 — Identity & Preflight complete
 - [x] IAA Pre-Brief invoked and wave record committed (SHA ad5369d)
 - [x] Wave-current-tasks.md updated for Stage 5
-- [ ] Scope declaration created
-- [ ] mat-specialist delegated for T-01 through T-11
-- [ ] mat-specialist deliverables received and QP evaluated
-- [ ] Phase 4 ceremony complete
+- [x] Scope declaration created (updated with all artifacts)
+- [x] mat-specialist delegated for T-01 through T-11
+- [x] mat-specialist deliverables received (first pass)
+- [x] QP evaluation — FAIL (5 missing artifacts)
+- [x] QP remediation order issued to mat-specialist
+- [x] mat-specialist remediation complete (all 5 artifacts produced)
+- [x] QP evaluation — PASS (all artifacts present, verified)
+- [ ] Phase 4 ceremony: PREHANDOVER + session memory
 - [ ] IAA handover audit complete
 - [ ] ASSURANCE-TOKEN issued
 
-### Deliverables (T-01 through T-11)
+### Deliverables (T-01 through T-11) — ALL COMPLETE
 
 | # | Task | Deliverable | Status |
 |---|------|-------------|--------|
-| T-01 | Canonical architecture.md (Stage 5 quality) | `modules/MMM/04-architecture/architecture.md` | PENDING |
-| T-02 | capabilities/ disposition per OQ-003 | `modules/MMM/04-architecture/capabilities/` | PENDING |
-| T-03 | TRS → Architecture traceability | in architecture.md | PENDING |
-| T-04 | Architecture completeness PASS | in architecture.md | PENDING |
-| T-05 | OQ-002 resolution | in architecture.md | PENDING |
-| T-06 | OQ-003 resolution | in architecture.md + capabilities/ | PENDING |
-| T-07 | AIMC / PIT / KUC boundary freeze | in architecture.md | PENDING |
-| T-08 | Runtime / deployment topology | in architecture.md | PENDING |
-| T-09 | State persistence architecture | in architecture.md | PENDING |
-| T-10 | BUILD_PROGRESS_TRACKER updated | `modules/MMM/BUILD_PROGRESS_TRACKER.md` | PENDING |
-| T-11 | Harvest map updated OQ-002/OQ-003 | `modules/MMM/harvest-map/harvest-map.md` | PENDING |
+| T-01 | Canonical architecture.md (Stage 5 quality) | `modules/MMM/04-architecture/architecture.md` | ✅ COMPLETE |
+| T-02 | capabilities/ disposition per OQ-003 | `modules/MMM/04-architecture/capabilities/index.md` | ✅ COMPLETE |
+| T-03 | TRS → Architecture traceability | in architecture.md §A14 (66/66 TRs) | ✅ COMPLETE |
+| T-04 | Architecture completeness PASS | in architecture.md §A13 | ✅ COMPLETE |
+| T-05 | OQ-002 resolution | in architecture.md §A11 | ✅ COMPLETE |
+| T-06 | OQ-003 resolution | in architecture.md §A12 | ✅ COMPLETE |
+| T-07 | AIMC / PIT / KUC boundary freeze | in architecture.md §A6 | ✅ COMPLETE |
+| T-08 | Runtime / deployment topology | in architecture.md §A8 | ✅ COMPLETE |
+| T-09 | State persistence architecture | in architecture.md §A9 | ✅ COMPLETE |
+| T-10 | BUILD_PROGRESS_TRACKER updated | `modules/MMM/BUILD_PROGRESS_TRACKER.md` | ✅ COMPLETE |
+| T-11 | Harvest map updated OQ-002/OQ-003 | `modules/MMM/harvest-map/harvest-map.md` | ✅ COMPLETE |
+| T-R1 | COMPLIANCE_SCOPE.md (TR-037) | `modules/MMM/04-architecture/COMPLIANCE_SCOPE.md` | ✅ COMPLETE |
+| T-R2 | CONTROL_MAPPING.md (TR-037) | `modules/MMM/04-architecture/CONTROL_MAPPING.md` | ✅ COMPLETE |
+| T-R3 | EVIDENCE_CATALOG.md (TR-037) | `modules/MMM/04-architecture/EVIDENCE_CATALOG.md` | ✅ COMPLETE |
+| T-R4 | APP_STARTUP_REQUIREMENTS.md (TR-064) | `modules/MMM/04-architecture/APP_STARTUP_REQUIREMENTS.md` | ✅ COMPLETE |
+| T-R5 | .env.example (TR-053) | `modules/MMM/.env.example` | ✅ COMPLETE |
 
 ---
 

@@ -15,8 +15,13 @@
 
 APPROVED_ARTIFACT_PATHS:
 - `modules/MMM/04-architecture/architecture.md` - Canonical Stage 5 Architecture document
-- `modules/MMM/04-architecture/capabilities/index.md` - Capabilities index (if created)
-- `modules/MMM/BUILD_PROGRESS_TRACKER.md` - Stage 4 COMPLETE + Stage 5 progress update
+- `modules/MMM/04-architecture/capabilities/index.md` - Capabilities index with legacy sub-folder dispositions
+- `modules/MMM/04-architecture/COMPLIANCE_SCOPE.md` - ISO 27001/31000/NIST CSF control scope (TR-037)
+- `modules/MMM/04-architecture/CONTROL_MAPPING.md` - Control-to-requirement traceability (TR-037)
+- `modules/MMM/04-architecture/EVIDENCE_CATALOG.md` - Evidence types per control (TR-037)
+- `modules/MMM/04-architecture/APP_STARTUP_REQUIREMENTS.md` - Commissioning checks CHK-001 through CHK-005 (TR-064)
+- `modules/MMM/.env.example` - All 8 required environment variables documented (TR-053)
+- `modules/MMM/BUILD_PROGRESS_TRACKER.md` - Stage 4 COMPLETE + Stage 5 COMPLETE update
 - `modules/MMM/harvest-map/harvest-map.md` - OQ-002 and OQ-003 resolution update
 - `.agent-admin/assurance/iaa-wave-record-mmm-stage5-architecture-20260414.md` - IAA wave record (PRE-BRIEF + TOKEN sections)
 - `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-stage5-architecture-20260414.md` - PREHANDOVER proof
@@ -32,6 +37,7 @@ APPROVED_ARTIFACT_PATHS:
 ### In Scope
 - Produce canonical architecture.md replacing PLACEHOLDER content
 - Normalize capabilities/ folder — disposition legacy sub-folders (erm-framework, risk-assessment, threat-module, vulnerability-module, wrac) per OQ-003
+- Produce capabilities/index.md documenting legacy sub-folder dispositions
 - Produce TRS → Architecture traceability (TR-001 through TR-066)
 - Pass Architecture completeness checklist (ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md)
 - Resolve OQ-002 (legacy UI / MAT component boundary)
@@ -39,7 +45,12 @@ APPROVED_ARTIFACT_PATHS:
 - Freeze integration boundaries: AIMC, PIT, KUC
 - Define runtime / deployment topology
 - Define state persistence architecture aligned with TRS
-- Update BUILD_PROGRESS_TRACKER (Stage 4 → COMPLETE, Stage 5 → COMPLETE/IN_PROGRESS)
+- Produce COMPLIANCE_SCOPE.md (TR-037)
+- Produce CONTROL_MAPPING.md (TR-037)
+- Produce EVIDENCE_CATALOG.md (TR-037)
+- Produce APP_STARTUP_REQUIREMENTS.md (TR-064)
+- Produce .env.example (TR-053)
+- Update BUILD_PROGRESS_TRACKER (Stage 4 → COMPLETE, Stage 5 → COMPLETE)
 - Update harvest map (OQ-002, OQ-003 OPEN → RESOLVED)
 - Foreman governance artifacts (wave-current-tasks, scope declaration, PREHANDOVER, session memory)
 
