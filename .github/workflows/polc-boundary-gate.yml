@@ -815,7 +815,7 @@ jobs:
           # Only run if agent-workspace files were added in this PR
           AGENT_WORKSPACE_ADDED=$(git diff --name-only --diff-filter=A \
             origin/"$BASE_BRANCH"...HEAD \
-            | grep -c '^\.agent-workspace/' || echo "0")
+            | grep -c '^\.agent-workspace/' || true)
 
           if [ "$AGENT_WORKSPACE_ADDED" -eq 0 ]; then
             echo "ℹ️  No new .agent-workspace/ files added — scope declaration check not applicable."
