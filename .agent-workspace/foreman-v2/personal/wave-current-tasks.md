@@ -1,35 +1,51 @@
-# Wave Current Tasks — Issue 1361
+# Wave Current Tasks — MMM Stage 3
 
-wave: mmm-cs2-approval-fields-20260414
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-cs2-approval-fields-20260414.md
+wave: mmm-stage3-frs-20260414
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-stage3-20260414.md
 
-## Active Wave: MMM CS2 Approval Fields
+## Active Wave: MMM Stage 3 — Functional Requirements Specification (FRS)
 
 ### Wave Description
-Foreman updates MMM BUILD_PROGRESS_TRACKER.md to add explicit CS2 approval fields to each
-approval-gated stage. This resolves issue #1361 (CS2 opened, foreman-v2-agent assigned).
+Foreman produces the Stage 3 FRS artifact for MMM, derived from the approved Stage 1 App
+Description (MMM_app_description.md v0.5.0, CS2-approved maturion-isms#1298) and the produced
+Stage 2 UX Workflow & Wiring Spec (ux-workflow-wiring-spec.md v0.1.0, maturion-isms#1352,
+CS2 authorization for Stage 3 wave confirmed via the triggering issue).
 
-Adding a consistent approval field pattern to all approval-gated stages (Stages 1–11) so
-CS2 can manually mark approvals in the tracker with a dedicated, standardized field.
+This is a PRE_BUILD_SPECIFICATION wave — no implementation code, no schema, no UI, no builder
+delegation. Foreman produces specification directly in POLC-Orchestration mode.
 
-This is a governance documentation update wave — no implementation code, no FRS, no TRS,
-no schema changes, no builder appointment. Delegated to governance-liaison-isms-agent.
+CS2 Authorization: maturion-isms#1365 — Stage 3 wave-start authorization issue opened by @APGI-cmy (CS2 = Johan Ras).
 
-CS2 Authorization: Issue maturion-isms#1361 opened by @APGI-cmy (CS2 = Johan Ras).
-Wave-start authorization confirmed (issue opened directly by CS2).
-
-IAA Pre-Brief: COMMITTED (wave record at `.agent-admin/assurance/iaa-wave-record-mmm-cs2-approval-fields-20260414.md`)
+IAA Pre-Brief: COMMITTED (wave record at `.agent-admin/assurance/iaa-wave-record-mmm-stage3-20260414.md`, SHA 3a73ce3)
 
 ### Tasks
 - [x] Phase 1 — Identity & Preflight complete
-- [x] IAA Pre-Brief invoked and wave record committed
-- [x] D1 — Update BUILD_PROGRESS_TRACKER.md with explicit CS2 approval fields (governance-liaison-isms-agent) — QP PASS
-- [x] Phase 4 handover ceremony (execution-ceremony-admin-agent + IAA audit) — ASSURANCE-TOKEN PASS
+- [x] IAA Pre-Brief invoked and wave record committed (SHA 3a73ce3)
+- [x] wave-current-tasks.md updated for active wave
+- [x] Scope declaration committed at .agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-stage3.md
+- [x] D1 — Create modules/MMM/02-frs/functional-requirements.md (FRS artifact)
+  - [x] Requirements derived from App Description §1–§42 and UX Wiring Spec J-01–J-17 (FR-001–FR-080)
+  - [x] Requirement IDs (FR-001 through FR-080)
+  - [x] 100% §AD traceability confirmed (all 42 sections traced)
+  - [x] No TBD items
+  - [x] All 5 functional areas covered
+  - [x] OQ-004 (PIT contract), OQ-006 (CL-13), OQ-007 (switchover gate), OQ-008 (MAT label), OQ-009 (hybrid mode) RESOLVED
+  - [x] OQ-001, OQ-002, OQ-003 explicitly carried forward to TRS/Architecture
+  - [x] MMM ↔ AIMC boundary formalized (FR-053, FR-063)
+  - [x] MMM ↔ PIT boundary and interface contract formalized (FR-049, FR-054)
+  - [x] Framework-source vs evidence-source distinction formalized (FR-016, FR-056, FR-057)
+- [x] D5-BPT — Update BUILD_PROGRESS_TRACKER.md
+  - [x] Stage 2 CS2 approval reference added (SCB-001 RESOLVED)
+  - [x] Stage 3 status updated to IN_PROGRESS with completion details
+- [x] D5-HM — Update harvest-map.md (OQ-004, OQ-006, OQ-007 RESOLVED; v0.3.0)
+- [x] D6 — Governance ceremony artifacts
+  - [x] PREHANDOVER proof
+  - [x] Session memory
+  - [x] IAA audit + ASSURANCE-TOKEN (IAA-session-mmm-stage3-frs-20260414-PASS)
 
 ### Status
-COMPLETE — D1 PASS, IAA ASSURANCE-TOKEN PASS (IAA-session-mmm-cs2-approval-fields-20260414-PASS). Awaiting CS2 merge.
+COMPLETE — D1 PASS, D5-BPT PASS, D5-HM PASS, IAA ASSURANCE-TOKEN PASS. Awaiting CS2 merge.
 
-### Previous Wave (Closed)
-wave: mmm-doc-normalization-20260413 (Issue #1358) — CLOSED
+### Previous Waves (Closed)
+wave: mmm-cs2-approval-fields-20260414 (Issue #1361) — CLOSED (merged to main)wave: mmm-doc-normalization-20260413 (Issue #1358) — CLOSED
 wave: mmm-stage2-ux-workflow-wiring-spec-20260413 (Issue #1352) — CLOSED
-wave: mmm-harvest-map-revision-20260413 (Issue #1345) — CLOSED
