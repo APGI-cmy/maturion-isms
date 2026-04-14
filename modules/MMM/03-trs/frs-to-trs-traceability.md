@@ -99,9 +99,9 @@ All 80 FRS requirements (FR-001 through FR-080) are explicitly traced below.
 | FR-063 | No Local AI Stack | TR-011, TR-015 | Service-to-service JWT for all AIMC calls (TR-011); all AI via defined endpoints (TR-015) |
 | FR-064 | AI Human Oversight Rule | TR-033 | `maturity_scores` requires `confirmed_by`; AI proposals in separate table (TR-033) |
 | FR-065 | AI Governance Requirements | TR-034, TR-038 | AI interaction audit logging (TR-034); audit_logs technical requirements (TR-038) |
-| FR-066 | Back-Office AI Administration Interface | TR-015, TR-053 | AIMC endpoint contract (TR-015); environment config includes AIMC credentials (TR-053) |
+| FR-066 | Back-Office AI Administration Interface | TR-015, TR-053, TR-066 | AIMC endpoint contract (TR-015); environment config includes AIMC credentials (TR-053); admin-only two-pane AI interface with telemetry dashboard — all five metrics (TR-066) |
 | FR-067 | Health and Telemetry Endpoints | TR-010, TR-052 | Health endpoint response time (TR-010); health endpoint JSON schema (TR-052) |
-| FR-068 | QIW Dashboard | TR-060 | QIW dashboard gate (TR-060) |
+| FR-068 | QIW Dashboard | TR-060, TR-065 | QIW dashboard: colour-coded stage status (GREEN/AMBER/RED), 7-day trend display, four data panels (TR-060); QIW API endpoint `/api/qiw/status` with full status+trend schema (TR-065) |
 | FR-069 | Performance Measurement Baseline | TR-001, TR-002, TR-003 | Page load (TR-001); API SLA (TR-002); concurrent user capacity (TR-003) |
 | FR-070 | Circuit Breaker Requirements | TR-009, TR-014 | Circuit breaker threshold (TR-009); AIMC timeout + retry policy (TR-014) |
 | FR-071 | Compliance Baseline | TR-037, TR-058 | Compliance artifacts (TR-037); security scan gate (TR-058) |
@@ -109,7 +109,7 @@ All 80 FRS requirements (FR-001 through FR-080) are explicitly traced below.
 | FR-073 | Audit Log Design | TR-023, TR-038 | Data retention (TR-023); audit_logs table technical requirements (TR-038) |
 | FR-074 | Tutorial and Help Model | TR-059 | Accessibility gate (TR-059) — help model accessibility confirmed via axe-core |
 | FR-075 | Consistent Notification Model | TR-062 | Notification technical contract (TR-062) |
-| FR-076 | State Persistence Model | TR-063 | localStorage state persistence model (TR-063) |
+| FR-076 | State Persistence Model | TR-063 | All nine state domains technically specified: org selection (Supabase DB), framework selection (Supabase DB), navigation position (localStorage), dashboard filters (user_preferences), evidence drafts (localStorage), offline queue (localStorage per OQ-001), AI context (ai_interactions), UI prefs (user_preferences), role/scope (JWT cache) — TR-063 |
 | FR-077 | Drill-Down Context Visibility | TR-002, TR-046 | API response SLA for drill-down data (TR-002); index on criteria.mps_id for lookup (TR-046) |
 | FR-078 | Collapsibility and Multi-Level Navigation | TR-001, TR-057 | Page load SLA for navigation (TR-001); Lighthouse performance gate (TR-057) |
 | FR-079 | Canonical Data Separation | TR-028 | MMM data namespace isolation (TR-028) |
@@ -124,11 +124,11 @@ All 80 FRS requirements (FR-001 through FR-080) are explicitly traced below.
 | Total FRS requirements | 80 (FR-001 through FR-080) |
 | Total traced | 80 |
 | Untraced | 0 |
-| Total TRS requirements referenced | 64 (TR-001 through TR-064) |
+| Total TRS requirements referenced | 66 (TR-001 through TR-066) |
 | Average TRS references per FR | 2.4 |
 | FRs with multiple TRS references | 47 |
 | FRs with single TRS reference | 33 |
-| **Completeness** | **100%** |
+| **Completeness** | **100% — substantive coverage** |
 
 ---
 

@@ -41,7 +41,7 @@ technical requirements for MMM — Maturity Model Management, derived from:
 3. **Stage 1** — `MMM_app_description.md` v0.5.0 (§AD references)
 4. **Harvest Map** — v0.3.0 (OQ-001 disposition)
 
-The TRS answers eight mandatory questions established by the Stage 4 wave authorization:
+The TRS answers seven mandatory questions established by the Stage 4 wave authorization:
 
 1. What are the performance SLAs for the MMM module?
 2. What is the technical interface contract between MMM and AIMC?
@@ -50,7 +50,9 @@ The TRS answers eight mandatory questions established by the Stage 4 wave author
 5. What are the data isolation and security requirements for multi-organisation deployments?
 6. What infrastructure constraints apply from the existing ISMS stack?
 7. What are the acceptance test definitions and coverage thresholds?
-8. What are the data persistence and retention requirements for all MMM entities?
+
+**Additional coverage area** (beyond authorization-mandated questions): data persistence
+and retention requirements for all MMM entities (TR-021 through TR-029; TR-063).
 
 **Zero TBD items**: All technical requirements in this document carry explicit values,
 decisions, or rationale. No TBD, placeholder, or deferred items appear below.
@@ -966,17 +968,63 @@ MMM must achieve WCAG 2.1 Level AA compliance on all primary user-facing routes:
 **Source**: §AD-25, FR-074  
 **Acceptance**: axe-core CI scan; keyboard navigation confirmed in QA walkthrough.
 
-### TR-060 — QIW Dashboard Gate
-The QIW (Quality Inspection Window) dashboard (FR-068) must display:
-- Test pass rate
-- Coverage percentage
-- Open issues count
-- Security scan status
+### TR-060 — QIW Dashboard Technical Contract
+The QIW (Quality Inspection Window) dashboard (FR-068) must implement:
 
-All four panels populated before Stage 12 build wave completion.
+**(a) Real-time colour-coded pipeline status** — the following five pipeline stages must
+display GREEN/AMBER/RED status indicators, updated on each CI event:
+
+| Stage | GREEN condition | AMBER condition | RED condition |
+|-------|----------------|-----------------|---------------|
+| build | last build PASS | last build WARN | last build FAIL / no data |
+| lint | zero warnings | warnings present | errors present |
+| test | all tests pass | ≥1 skip, 0 fail | ≥1 fail |
+| deploy | last deploy OK | deploy in progress | last deploy failed |
+| runtime | `/api/health` 200 | ≥1 non-critical alert | any critical alert |
+
+**(b) 7-day trend display** — each monitored metric must show a 7-day sparkline or
+trend table (pass/fail counts by day) for: test pass rate, coverage %, open issues, and
+security findings.
+
+**(c) Panel data** — the following panels must be populated before Stage 12 wave
+completion: test pass rate, coverage percentage, open issues count, security scan status.
+
+All panels must be populated with real data (non-zero) before Stage 12 build wave
+completion.
 
 **Source**: FR-068  
-**Acceptance**: QIW dashboard populated with real data; all four panels non-zero.
+**Acceptance**: QIW dashboard renders all five colour-coded stage indicators; 7-day trend
+visible for each metric; all four data panels non-zero; GREEN/AMBER/RED logic confirmed
+in QA walkthrough.
+
+### TR-065 — QIW API Technical Contract
+MMM must expose a QIW API endpoint at `/api/qiw/status` (FR-068(c)):
+
+Request: `GET /api/qiw/status` (authenticated, any role)
+
+Response schema:
+```json
+{
+  "updated_at": "ISO-8601",
+  "stages": {
+    "build": { "status": "GREEN|AMBER|RED", "last_run": "ISO-8601", "detail": "..." },
+    "lint":  { "status": "GREEN|AMBER|RED", "warnings": 0, "errors": 0 },
+    "test":  { "status": "GREEN|AMBER|RED", "pass": 0, "fail": 0, "skip": 0 },
+    "deploy": { "status": "GREEN|AMBER|RED", "last_deploy": "ISO-8601", "detail": "..." },
+    "runtime": { "status": "GREEN|AMBER|RED", "health_url": "/api/health" }
+  },
+  "trends": {
+    "test_pass_rate": [ /* 7 daily values */ ],
+    "coverage": [ /* 7 daily values */ ],
+    "open_issues": [ /* 7 daily values */ ],
+    "security_findings": [ /* 7 daily values */ ]
+  }
+}
+```
+
+**Source**: FR-068(c)  
+**Acceptance**: `GET /api/qiw/status` returns 200 with the above schema; each stage
+status is one of GREEN/AMBER/RED; trend arrays contain ≥ 1 entry each.
 
 ### TR-061 — Zero-Warning CI Policy
 MMM build, lint, and type-check must produce **zero warnings** in CI. Warnings are
@@ -1003,16 +1051,61 @@ All application notifications (FR-075) must use a single notification service:
 paths.
 
 ### TR-063 — State Persistence Model
-Application state that must survive browser refresh (FR-076):
-- Current organisation context: `localStorage` key `mmm_org_id`
-- Active framework filter: `localStorage` key `mmm_framework_filter`
-- Audit session ID (if active): `localStorage` key `mmm_active_audit_session`
+Application state that must survive browser refresh, covering all nine domains from
+FR-076:
 
-Ephemeral state (clears on refresh): form drafts, modal state, selection state.
+| Domain | Persistence Location | Key / Column |
+|--------|---------------------|--------------|
+| Organisation selection (a) | Supabase DB (`profiles.current_org_id`) | server-side, cached in JWT claims |
+| Framework selection (b) | Supabase DB (`profiles.current_framework_id`) | server-side |
+| Navigation position (c) | Client URL + `localStorage` | `mmm_nav_position` (last route) |
+| Dashboard filters (d) | Supabase DB (`user_preferences.filters`) | server-side, keyed by filter name |
+| Evidence workspace drafts (e) | `localStorage` | `mmm_evidence_draft_{id}` |
+| Offline queue state (f) | `localStorage` (per OQ-001 decision, TR-040) | `mmm_audit_queue` |
+| AI conversation context (g) | Supabase DB (`ai_interactions`) | server-side |
+| UI preferences (h) | Supabase DB (`user_preferences.ui`) | server-side |
+| Role and scope context (i) | Server-side + JWT claims cache | refreshed on auth token renewal |
+
+Legacy localStorage keys (previous implementation):
+- `mmm_org_id` — superseded by `profiles.current_org_id`
+- `mmm_framework_filter` — superseded by `user_preferences.filters`
+- `mmm_active_audit_session` — superseded by `mmm_audit_queue` + server-side `ai_interactions`
+
+Ephemeral state (intentionally clears on refresh): modal state, unsaved form fields
+outside designated draft keys, transient UI selection state.
 
 **Source**: FR-076  
-**Acceptance**: State persistence confirmed in QA: reload during active audit session
-restores session context; framework filter persists across navigation.
+**Acceptance**: All nine state domains persist and restore correctly across session reload,
+confirmed in QA against each listed persistence location. Server-side domains confirmed
+via Supabase row read; localStorage domains confirmed via DevTools.
+
+### TR-066 — Back-Office AI Administration Interface Technical Contract
+MMM must implement an admin-only two-pane AI administration interface (FR-066):
+
+**Pane 1 — Admin AI Chat**
+- Dedicated AI chat interface for operational queries, diagnostics, and governance reporting
+- Route: `/admin/ai-chat`
+- Accessible to ADMIN role only (frontend route guard + Supabase RLS on `ai_interactions` where `context_type = 'admin_chat'`)
+- Backed by AIMC endpoint `/api/ai/chat` with `{ "context": "admin", "org_id": "<id>" }` header
+
+**Pane 2 — AI Telemetry Dashboard**
+Real-time AI usage telemetry, refreshed every 60 seconds, displaying:
+
+| Metric | Source table / column | Unit |
+|--------|----------------------|------|
+| Token usage | `ai_interactions.token_count` | tokens / day |
+| Latency | `ai_interactions.duration_ms` | ms p50/p95 |
+| Estimated cost | `ai_interactions.token_count × rate` | USD / day |
+| Error rate | `ai_interactions` where `status = 'error'` / total | % |
+| AI interaction volume | `ai_interactions` count | requests / day |
+
+Both panes must be rendered within a single admin route with a pane-switcher tab control.
+End-user roles (ASSESSOR, VIEWER) must receive 403 on all `/admin/ai-*` routes.
+
+**Source**: FR-066  
+**Acceptance**: Admin AI chat accessible to ADMIN role only; telemetry dashboard displays
+all five metrics with real data; ASSESSOR/VIEWER receive 403 on admin AI routes; all
+five metrics populated in QA walkthrough.
 
 ### TR-064 — Commissioning APP_STARTUP_REQUIREMENTS.md
 Per FR-072 and TR-051, the file `APP_STARTUP_REQUIREMENTS.md` must be produced at
@@ -1182,8 +1275,10 @@ reconnection). Full offline-first deferred to future enhancement wave.
 | TR-062 | Cross-Cutting | FR-075 | ✅ |
 | TR-063 | Cross-Cutting | FR-076 | ✅ |
 | TR-064 | Cross-Cutting | FR-072 | ✅ |
+| TR-065 | Quality Gates | FR-068(c) | ✅ |
+| TR-066 | Security | FR-066 | ✅ |
 
-**Total TRS requirements**: 64 (TR-001 through TR-064)  
+**Total TRS requirements**: 66 (TR-001 through TR-066)  
 **Zero TBD items**: CONFIRMED  
 
 ---

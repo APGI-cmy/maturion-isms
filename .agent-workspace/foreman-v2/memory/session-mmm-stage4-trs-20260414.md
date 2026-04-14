@@ -106,7 +106,8 @@
 ## OQ-001 Resolution Record
 - open_question: OQ-001 — offline/walkabout mode connectivity decision
 - resolution: RESOLVED in D1 (TRS) — CONNECTIVITY-REQUIRED with Queue-and-Sync Progressive Enhancement strategy
-- disposition: Online-first with offline queue; service worker + IndexedDB for audit queue; sync-on-reconnect pattern
+- disposition: CONNECTIVITY-REQUIRED; localStorage-backed audit queue (≤50 events, key `mmm_audit_queue`); automatic sync-on-reconnect; full offline-first (PWA service worker + IndexedDB) explicitly deferred to a future wave
+- rationale: Supabase/Vercel stack constraint; 4G field coverage sufficient for target use cases; satisfies FR-041(g) without full offline-first infrastructure
 - carried_from: Stage 3 FRS (marked deferred); resolved at Stage 4 TRS
 - tracker_entry: BUILD_PROGRESS_TRACKER.md OQ-001 disposition recorded
 
