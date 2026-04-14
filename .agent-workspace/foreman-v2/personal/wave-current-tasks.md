@@ -1,56 +1,48 @@
-# Wave Current Tasks — AIMC Audit Phase 2
+# Wave Current Tasks — MMM Stage 4
 
-wave: aimc-audit-phase-2-20260414
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-aimc-audit-phase-2-20260414.md
-triggering_issue: maturion-isms — [AIMC Audit Phase 2] Orchestrate distributed AIMC audit & consolidate findings
-branch: copilot/aimc-audit-phase-2-orchestrate
-date: 2026-04-14
-cs2_authorization: Issue opened by CS2 (@APGI-cmy) and assigns foreman-v2-agent — valid per §2.1
+wave: mmm-stage4-trs-20260414
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-stage4-trs-20260414.md
+ceremony_admin_appointed: true
 
-## Active Wave: AIMC Audit Phase 2 — Distributed Review & Consolidation
+## Active Wave: MMM Stage 4 — Technical Requirements Specification (TRS)
 
-### Wave Description
-Orchestrate the distributed execution of the AIMC audit as defined in
-`governance/AUDIT/AIMC_PHASE1_AUDIT_AND_TEST_PLAN.md`.
+### Status
+COMPLETE — All deliverables produced, IAA ASSURANCE-TOKEN issued.
+Awaiting CS2 merge.
 
-Phase 1 (CL-4) completed Categories A, B, C (32 tests — all PASS). Phase 2 covers:
-- Category D: Knowledge Upload Centre Readiness
-- Category E: Persona Domain Accuracy (specialist reviews)
-- Category G: Process Testing
-- Parking Station review (improvement suggestions)
-- Comprehensive consolidated audit report synthesis
+CS2 Authorization: maturion-isms#1372 — opened by @APGI-cmy (CS2 = Johan Ras), 2026-04-14.
 
-This is a POLC-Orchestration/audit wave — no production code changes.
-All deliverables are governance audit documents.
-
-### Pre-Build Stages Status
-- Stage 5 (Architecture): N/A — audit orchestration wave; Phase 1 plan is the architecture
-- Stage 6 (Red QA): N/A — no new implementation; existing audit plan is the test specification
-- Stage 7 (PBFAG): CONFIRMED — Phase 1 plan serves as frozen architecture
-- Stage 8 (Implementation Plan): PRESENT — AIMC_PHASE1_AUDIT_AND_TEST_PLAN.md
-- Stage 9 (Builder Checklist): Per-delegation (attached to each delegation)
-- Stage 10 (IAA Pre-Brief): COMPLETE — wave record committed
+IAA Pre-Brief: COMMITTED (SHA af41601)
+IAA ASSURANCE-TOKEN: IAA-session-mmm-stage4-trs-20260414-PASS (committed SHA 75f889b)
 
 ### Tasks
 - [x] Phase 1 — Identity & Preflight complete
-- [x] IAA Pre-Brief invoked and wave record committed
-- [x] D1 — Category D: Knowledge Upload Centre review (governance-liaison-isms-agent)
-- [x] D2 — Category E: Persona Domain Accuracy reviews (mat-specialist, pit-specialist, risk-platform-agent, maturity-scoring-agent)
-- [x] D3 — Category G: Process Testing review (governance-liaison-isms-agent)
-- [x] D4 — Parking Station review (foreman synthesis)
-- [x] D5 — Phase 2 Consolidated Audit Report (`governance/AUDIT/AIMC_PHASE2_AUDIT_CONSOLIDATED_REPORT.md`)
-- [x] Phase 4 handover ceremony (execution-ceremony-admin-agent bundle committed; IAA token issued)
+- [x] IAA Pre-Brief invoked and wave record committed (SHA af41601)
+- [x] wave-current-tasks.md updated for active wave
+- [x] Scope declaration committed at .agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-stage4-trs.md
+- [x] D1 — Create modules/MMM/03-trs/technical-requirements-specification.md (TRS artifact, 64 TRs)
+  - [x] Performance requirements (TR-001 to TR-010)
+  - [x] Integration requirements (AIMC: TR-011-015, PIT: TR-016-018, KUC: TR-019-020)
+  - [x] Data persistence requirements (TR-021-028)
+  - [x] Security requirements (TR-029-038)
+  - [x] Offline/connectivity requirements — OQ-001 DECISION CONNECTIVITY-REQUIRED (TR-039-042)
+  - [x] Scalability requirements (TR-043-047)
+  - [x] Infrastructure constraints (TR-048-053)
+  - [x] Quality gate definitions (TR-054-064)
+  - [x] All 7 mandatory questions answered (TRS §11)
+  - [x] No TBD items
+- [x] D2 — Create modules/MMM/03-trs/frs-to-trs-traceability.md (80/80 FRs traced)
+- [x] D3 — Update BUILD_PROGRESS_TRACKER.md (Stage 3 COMPLETE CS2 ref #1366/#1372, Stage 4 IN_PROGRESS, OQ-001 RESOLVED)
+- [x] D4 — Governance ceremony artifacts
+  - [x] execution-ceremony-admin-agent delegated (ceremony_admin_appointed: true)
+  - [x] PREHANDOVER proof committed (foreman-v2/memory/PREHANDOVER-session-mmm-stage4-trs-20260414.md)
+  - [x] Session memory committed (foreman-v2/memory/session-mmm-stage4-trs-20260414.md)
+  - [x] IAA ASSURANCE-TOKEN ISSUED (IAA-session-mmm-stage4-trs-20260414-PASS, SHA 75f889b)
+  - [x] IAA token self-cert guard: PASS
+  - [x] Merge gate released — awaiting CS2 approval
 
-### Status
-COMPLETE — All deliverables committed. ASSURANCE-TOKEN: IAA-session-aimc-audit-phase-2-20260414-PASS. Awaiting CS2 merge.
-
-### Evidence Artifacts Committed
-- `.agent-workspace/audit/AIMC-P2-category-d-kuc-review-20260414.md`
-- `.agent-workspace/audit/AIMC-P2-category-e-persona-reviews-20260414.md`
-- `.agent-workspace/audit/AIMC-P2-parking-station-review-20260414.md`
-- `governance/AUDIT/AIMC_PHASE2_AUDIT_CONSOLIDATED_REPORT.md`
-- `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-aimc-audit-phase-2-20260414.md`
-- `.agent-workspace/execution-ceremony-admin-agent/bundles/session-aimc-audit-phase-2-20260414.md`
-
-### Previous Wave (Closed)
-wave: mmm-cs2-approval-fields-20260414 (Issue #1361) — CLOSED
+### Previous Waves (Closed)
+wave: mmm-stage3-frs-20260414 (Issue #1365/#1366) — CLOSED (merged to main)
+wave: mmm-cs2-approval-fields-20260414 (Issue #1361) — CLOSED (merged to main)
+wave: mmm-doc-normalization-20260413 (Issue #1358) — CLOSED
+wave: mmm-stage2-ux-workflow-wiring-spec-20260413 (Issue #1352) — CLOSED
