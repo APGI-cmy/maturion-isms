@@ -264,14 +264,14 @@ Functions. AIMC endpoint inventory:
 
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
-| `/api/v1/ai/framework-parse` | POST | Mode A verbatim structure extraction |
-| `/api/v1/ai/framework-generate` | POST | Mode B new framework AI generation |
-| `/api/v1/ai/framework-alter` | POST | AI-proposed altering mechanism |
-| `/api/v1/ai/evidence-evaluate` | POST | Evidence relevance and score proposal |
-| `/api/v1/ai/recommend` | POST | Maturity improvement recommendations |
-| `/api/v1/ai/chat` | POST | Contextual chat (Ask Maturion) |
-| `/api/v1/ai/explain` | POST | Contextual explanation at structural level |
-| `/api/v1/ai/assessment-interpret` | POST | Assessment result interpretation |
+| `/api/ai/framework-parse` | POST | Mode A verbatim structure extraction |
+| `/api/ai/framework-generate` | POST | Mode B new framework AI generation |
+| `/api/ai/framework-alter` | POST | AI-proposed altering mechanism |
+| `/api/ai/evidence-evaluate` | POST | Evidence relevance and score proposal |
+| `/api/ai/recommend` | POST | Maturity improvement recommendations |
+| `/api/ai/chat` | POST | Contextual chat (Ask Maturion) |
+| `/api/ai/explain` | POST | Contextual explanation at structural level |
+| `/api/ai/assessment-interpret` | POST | Assessment result interpretation |
 
 Upload endpoints are excluded from this AIMC inventory and must be specified under the
 MMM ↔ KUC contract section in TR-019/TR-020.
@@ -921,7 +921,7 @@ Coverage excludes: test files, generated code, `dist/`.
 
 ### TR-055 — Integration Test Coverage
 MMM must have integration tests covering:
-- All 10 AIMC endpoints (TR-015) — happy path + error path
+- All 8 AIMC endpoints (TR-015) — happy path + error path
 - Full PIT export sequence (TR-017) — happy path + rejection path
 - Full evidence upload → KUC → classification sequence (TR-019, TR-020)
 - Full scoring cascade (FR-040) — 6-step cascade confirmed
@@ -1144,9 +1144,9 @@ Architecture stage defining:
 |--------|---------|
 | Auth | Service-to-service JWT, 3 600 s TTL (TR-011) |
 | Data format | JSON, canonical AIMC response envelope (TR-012) |
-| Versioning | URI-based (`/api/v1/ai/*`), 30-day migration window (TR-013) |
+| Versioning | Unversioned (`/api/ai/*`), 30-day migration window on future successor (TR-013) |
 | Timeout | Per-operation (30–90 s), 1–2 retries (TR-014) |
-| Endpoints | 10 defined endpoints (TR-015) |
+| Endpoints | 8 AIMC endpoints (TR-015) |
 | Boundary | Zero direct AI provider calls in MMM (TR-011) |
 
 ### Q3: Technical Export Contract — MMM ↔ PIT

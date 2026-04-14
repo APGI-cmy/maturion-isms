@@ -26,13 +26,13 @@ error from the original governance layer-down. The module is MMM (Maturity Model
 | Old Stage | Old Name | New Stage | New Name | Status |
 |-----------|----------|-----------|----------|--------|
 | Stage 0 | App Description | Stage 1 | App Description | COMPLETE |
-| Stage 1 | FRS | Stage 3 | FRS | NOT_STARTED (folder empty) |
-| Stage 1.5 | TRS | Stage 4 | TRS | NOT_STARTED |
+| Stage 1 | FRS | Stage 3 | FRS | COMPLETE |
+| Stage 1.5 | TRS | Stage 4 | TRS | IN_PROGRESS |
 | Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS |
 | Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | NOT_STARTED |
 | Stage 4 | Builder Appointment | Stage 11 | Builder Appointment | NOT_STARTED |
 | Stage 5 | Build | Stage 12 | Build | NOT_STARTED (partial AIMC artifact) |
-| — | (new stage) | Stage 2 | UX Workflow & Wiring Spec | NOT_STARTED |
+| — | (new stage) | Stage 2 | UX Workflow & Wiring Spec | COMPLETE |
 | — | (new stage) | Stage 6 | QA-to-Red | NOT_STARTED |
 | — | (new stage) | Stage 7 | PBFAG | NOT_STARTED |
 | — | (new stage) | Stage 9 | Builder Checklist | NOT_STARTED |
@@ -59,7 +59,7 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 **Approval Reference**: maturion-isms#1298
 **Notes**: App Description `MMM_app_description.md` v0.5.0 formally approved by CS2 via issue #1298
 (2026-04-08). BLK-1 resolved. Stage 1 formally closed. Stage 2 (UX Workflow & Wiring Spec)
-remains pending CS2 Stage 2 wave-start authorization.
+completed and CS2-approved via maturion-isms#1352 (2026-04-14).
 
 ---
 
@@ -125,7 +125,7 @@ Stage 4 (TRS) authorized via maturion-isms#1372 (2026-04-14).
 **Status**: [x] IN_PROGRESS — TRS artifact produced, pending CS2 review and approval  
 **Location**: `modules/MMM/03-trs/`  
 **Key Artifacts**:
-- [x] `technical-requirements-specification.md` — 64 technical requirements (TR-001 through TR-064) covering performance, integration, data persistence, security, offline/connectivity, scalability, infrastructure, and quality gates
+- [x] `technical-requirements-specification.md` — 66 technical requirements (TR-001 through TR-066) covering performance, integration, data persistence, security, offline/connectivity, scalability, infrastructure, and quality gates
 - [x] `frs-to-trs-traceability.md` — Traceability matrix linking all 80 FRs to TRS requirements (100% coverage)
 - [x] OQ-001 resolved — CONNECTIVITY-REQUIRED with Queue-and-Sync Progressive Enhancement (TR-039 through TR-042)
 - [x] All 7 mandatory questions answered (TRS §11)
@@ -143,7 +143,7 @@ Stage 4 (TRS) authorized via maturion-isms#1372 (2026-04-14).
 **Approval Reference**: N/A  
 **Produced By**: foreman-v2-agent (POLC-Orchestration mode, wave mmm-stage4-trs)  
 **Issue**: maturion-isms#1372 (MMM Stage 4 wave-start authorization)  
-**Notes**: Stage 4 TRS produced with 64 technical requirements covering all 8 required
+**Notes**: Stage 4 TRS produced with 66 technical requirements covering all 8 required
 areas: performance, integration, data persistence, security, offline/connectivity,
 scalability, infrastructure, and quality gates. OQ-001 (offline/walkabout mode) resolved
 with CONNECTIVITY-REQUIRED decision and queue-and-sync implementation pattern (TR-039–TR-042).
