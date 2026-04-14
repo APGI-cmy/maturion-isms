@@ -47,6 +47,5 @@ IAA Pre-Brief: COMMITTED (wave record at `.agent-admin/assurance/iaa-wave-record
 COMPLETE — D1 PASS, D5-BPT PASS, D5-HM PASS, IAA ASSURANCE-TOKEN PASS. Awaiting CS2 merge.
 
 ### Previous Waves (Closed)
-wave: mmm-cs2-approval-fields-20260414 (Issue #1361) — CLOSED (merged to main)
-wave: mmm-doc-normalization-20260413 (Issue #1358) — CLOSED
+wave: mmm-cs2-approval-fields-20260414 (Issue #1361) — CLOSED (merged to main)wave: mmm-doc-normalization-20260413 (Issue #1358) — CLOSED
 wave: mmm-stage2-ux-workflow-wiring-spec-20260413 (Issue #1352) — CLOSED

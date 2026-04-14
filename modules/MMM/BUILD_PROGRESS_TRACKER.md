@@ -80,6 +80,8 @@ remains pending CS2 Stage 2 wave-start authorization.
 **Issue**: maturion-isms#1352  
 **Approval Required**: Yes
 - [x] Approved by designated authority (CS2, @APGI-cmy, 2026-04-14, maturion-isms#1352)
+**Approval Date**: 2026-04-14
+**Approved By**: CS2 (Johan Ras / @APGI-cmy)
 **Approval Reference**: maturion-isms#1352
 **Notes**: Stage 2 UX Workflow & Wiring Spec produced covering 17 user journeys (J-01 through J-17),
 complete UI → API → schema wiring tables, MMM ↔ AIMC / PIT / KUC boundary wiring, framework-source
