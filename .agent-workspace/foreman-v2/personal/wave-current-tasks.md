@@ -1,33 +1,39 @@
-# Wave Current Tasks — IAA 90/10 Restructuring
+# Wave Current Tasks — Issue 1358
 
-**Wave**: iaa-90-10-restructuring
-**Issue**: maturion-isms#1354
-**Branch**: copilot/iaa-90-structure-90-10-evaluation-ratio
-**Date**: 2026-04-13
-**Status**: IN_PROGRESS
-**CS2 Authorization**: CS2 opened issue #1354 directly, assigned this agent
-**IAA Pre-Brief**: .agent-admin/assurance/iaa-wave-record-iaa9010-20260413.md (PENDING)
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-iaa9010-20260413.md
-ceremony_admin_appointed: NO
+wave: mmm-doc-normalization-20260413
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-doc-normalization-20260413.md
 
----
+## Active Wave: MMM Document Normalization
 
-## Tasks
+### Wave Description
+Foreman normalizes and operationalizes all MMM pre-build documents to current state.
+Reviews all MMM governance/planning documents, resolves stale content, classifies documents
+into live/historical/reference categories, and establishes maintenance protocol.
 
-| Task ID | Summary | Builder | IAA Category | Status |
-|---------|---------|---------|-------------|--------|
-| T-IAA9010-01 | Rewrite IAA contract: collapse Phase 0/1, remove mechanical checks from Phase 3, reduce session memory | CodexAdvisor-agent | AGENT_CONTRACT | PENDING |
-| T-IAA9010-02 | Restructure iaa-core-invariants-checklist.md: retain CORE-020/021 only, move rest to CI spec | CodexAdvisor-agent | AGENT_CONTRACT | PENDING |
-| T-IAA9010-03 | Convert iaa-high-frequency-checks.md to CI spec document | CodexAdvisor-agent | AGENT_CONTRACT | PENDING |
-| T-IAA9010-04 | Create/extend CI workflow for mechanical checks (HFMC + CORE) | qa-builder | CI_WORKFLOW | PENDING |
-| T-IAA9010-05 | Update INDEPENDENT_ASSURANCE_AGENT_CANON.md to reflect new procedure | CodexAdvisor-agent | CANON_GOVERNANCE | PENDING |
-| T-IAA9010-06 | Update GOVERNANCE_ARTIFACT_TAXONOMY.md — remove deprecated standalone artifact types | CodexAdvisor-agent | CANON_GOVERNANCE | PENDING |
+This is a governance document normalization wave — no implementation code, no FRS, no TRS,
+no schema changes, no builder appointment, no builder delegation.
 
----
+CS2 Authorization: Issue maturion-isms#1358 opened by @APGI-cmy (CS2 = Johan Ras).
+Wave-start authorization confirmed (issue opened directly by CS2).
 
-## Delegation Plan
+IAA Pre-Brief: COMMITTED (wave record at `.agent-admin/assurance/iaa-wave-record-mmm-doc-normalization-20260413.md`)
 
-| Task | Builder | Justification |
-|------|---------|---------------|
-| T-IAA9010-01 through 03, 05-06 | CodexAdvisor-agent | Agent contract + related Tier 2 + canon = CodexAdvisor domain |
-| T-IAA9010-04 | qa-builder | CI workflow implementation |
+### Tasks
+- [x] Phase 1 — Identity & Preflight complete
+- [x] IAA Pre-Brief invoked and wave record committed
+- [x] D1 — Update MMM live control document baseline to current state
+  - [x] Update PRE_MMM_IMPLEMENTATION_UPGRADE_STRATEGY.md blocker statuses
+  - [x] Update harvest-map.md stale pre-Stage-2 references
+  - [x] Update harvest-map.md LKIAC open question answers
+  - [x] Update BUILD_PROGRESS_TRACKER.md as primary live monitor
+- [x] D2 — Create MMM document classification baseline note
+- [x] D3 — Define MMM document maintenance protocol
+- [x] D4 — Reconcile BUILD_PROGRESS_TRACKER as primary live stage-state document
+- [x] Phase 4 handover ceremony
+
+### Status
+COMPLETE — D1-D4 complete, IAA audit PASS, PREHANDOVER committed. Awaiting CS2 merge.
+
+### Previous Wave (Closed)
+wave: mmm-stage2-ux-workflow-wiring-spec-20260413 (Issue #1352) — CLOSED
+wave: mmm-harvest-map-revision-20260413 (Issue #1345) — CLOSED

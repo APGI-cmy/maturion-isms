@@ -1,21 +1,38 @@
 # Pre-MMM Implementation Upgrade Strategy
 
-**Document ID**: PRE-MMM-UPGRADE-STRATEGY-v1.0.0  
-**Status**: ACTIVE — Awaiting CS2 Wave-Start Authorisation per Wave  
-**Version**: 1.0.0  
+**Document ID**: PRE-MMM-UPGRADE-STRATEGY-v1.1.0  
+**Status**: REFERENCE — Primary gating purpose fulfilled; remaining PS-waves tracked as ongoing improvements  
+**Version**: 1.1.0  
 **Created**: 2026-04-07  
+**Last Updated**: 2026-04-13 (normalized per maturion-isms#1358)  
 **Author**: CS2 (Johan Ras / @APGI-cmy) — compiled via Copilot strategic session  
 **Governed by**: `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0  
-**Related Issue**: [#1247 — Pre-MMM Build Readiness](https://github.com/APGI-cmy/maturion-isms/issues/1247)  
-**Authority**: CS2 sign-off required before each wave is started
+**Related Issues**: [#1247 — Pre-MMM Build Readiness](https://github.com/APGI-cmy/maturion-isms/issues/1247), [#1358 — MMM Document Normalization](https://github.com/APGI-cmy/maturion-isms/issues/1358)  
+**Authority**: CS2 sign-off required before each wave is started  
+**Document Role**: Ongoing Improvement Tracker (historical traceability context preserved in §Normalization Note)
 
 ---
 
 ## 1. Purpose & Context
 
-This document records the full set of governance, knowledge, and tooling upgrades that must be
-implemented **before** the MMM (Maturion Maturity Module) build can begin in earnest — specifically
-before the Foreman is authorised to open the MMM Stage 2 (UX Workflow & Wiring Spec) wave.
+This document records the full set of governance, knowledge, and tooling upgrades that were
+identified as prerequisites **before** the MMM (Maturion Maturity Module) build could begin
+in earnest.
+
+> **Normalization Note (2026-04-13, maturion-isms#1358)**: This document was originally written
+> on 2026-04-07 to gate MMM Stage 2. Since then, MMM has progressed materially:
+> - Stage 1 (App Description) was formally approved by CS2 (issue #1298, 2026-04-08)
+> - PS-B (FAIL-ONLY-ONCE v4.2.0) was completed (session-159, IAA PASS)
+> - PS-F (IAA trigger table new categories) was completed (session-160, IAA PASS)
+> - PS-A (Foreman PREHANDOVER template v1.8.0) was completed
+> - Stage 2 (UX Workflow & Wiring Spec) was produced (issue #1352, 2026-04-13)
+> - Harvest map was governance-hardened to v0.2.0 (issue #1345, 2026-04-13)
+> - LKIAC carry-over closure was documented (issue #1341, 2026-04-13)
+>
+> **The primary gating purpose of this document (blocking Stage 2) has been fulfilled.**
+> CS2 authorized Stage 2 to proceed. The remaining PS-waves (PS-C, PS-D, PS-E, PS-G, PS-H, PS-I)
+> are tracked as ongoing governance improvements — valuable but no longer Stage-2 blockers.
+> This document is now a **reference and traceability artifact** with ongoing improvement tracking.
 
 These upgrades were identified from three sources:
 1. **Deep research audit** — full readiness scan of `maturion-isms` conducted 2026-04-07
@@ -38,23 +55,24 @@ most of the agent-executable items.
 | ID | Blocker | Owner | Status |
 |----|---------|-------|--------|
 | BLK-1 | `MMM_app_description.md` v0.5.0 CS2 formal approval (Stage 1 gate) | CS2 | ✅ RESOLVED — CS2 approved via issue #1298 (2026-04-08) |
-| BLK-2 | IAA Tier 2 not updated for PBFAG gate (PRE_BUILD_STAGE_MODEL_CANON.md compliance) | CodexAdvisor → CS2 | ⏳ In #1247 |
-| BLK-3 | IAA Tier 2 not updated for MANDATORY_CROSS_APP_COMPONENTS | CodexAdvisor → CS2 | ⏳ In #1247 |
-| BLK-4 | `CONSUMER_REPO_REGISTRY.json` not layered down to `maturion-isms` | Governance Liaison → CS2 | ⏳ In #1247 |
-| BLK-5 | MMM wave-start authorisation issue not yet opened by CS2 | CS2 | ⏳ OPEN — after BLK-1 |
-| BLK-6 | Active wave is `cl6-relaunch-20260406`; sequential wave governance applies | CS2 → Foreman | ⏳ OPEN |
+| BLK-2 | IAA Tier 2 not updated for PBFAG gate (PRE_BUILD_STAGE_MODEL_CANON.md compliance) | CodexAdvisor → CS2 | ✅ RESOLVED — IAA Tier 2 updated: `iaa-trigger-table.md` v2.2.0 includes PRE_BUILD_STAGE_MODEL category; `iaa-category-overlays.md` v3.7.0+ includes PRE_BUILD_GATES overlay (OVL-PBG-001 through OVL-PBG-016) with PBFAG gate enforcement (wave: pre-mmm-build-readiness, 2026-04-06) |
+| BLK-3 | IAA Tier 2 not updated for MANDATORY_CROSS_APP_COMPONENTS | CodexAdvisor → CS2 | ✅ RESOLVED — IAA Tier 2 updated: `iaa-trigger-table.md` v2.2.0 includes MANDATORY_CROSS_APP_COMPONENTS trigger category; `iaa-category-overlays.md` includes corresponding overlay (wave: pre-mmm-build-readiness, 2026-04-06) |
+| BLK-4 | `CONSUMER_REPO_REGISTRY.json` not layered down to `maturion-isms` | Governance Liaison → CS2 | ⏳ OPEN — file does not exist at `governance/CONSUMER_REPO_REGISTRY.json`. Non-blocking for MMM progression. Reclassified as an ongoing governance improvement item (not a Stage-2 blocker); tracked in Section 4 Non-Blocking Governance Gaps (NB-10). |
+| BLK-5 | MMM wave-start authorisation issue not yet opened by CS2 | CS2 | ✅ RESOLVED — CS2 opened Stage 2 wave-start via issue #1352 (2026-04-13); Stage 2 UX Workflow & Wiring Spec produced |
+| BLK-6 | Active wave is `cl6-relaunch-20260406`; sequential wave governance applies | CS2 → Foreman | ✅ RESOLVED — MMM waves active and progressing; cl6-relaunch completed; sequential governance no longer blocking MMM |
 
 ---
 
 ## 3. Implementation Waves
 
-### PS-A — Foreman PREHANDOVER Template Upgrades
+### PS-A — Foreman PREHANDOVER Template Upgrades ✅ COMPLETE
 
 **Target file**: `.agent-workspace/foreman-v2/knowledge/prehandover-template.md`  
-**Current version**: v1.7.0 → **Target**: v1.8.0  
+**Current version**: v1.7.0 → **Target**: v1.8.0 — **Achieved**: v1.8.0  
 **Assignee**: CodexAdvisor-agent  
 **Dependencies**: PS-B (must complete first — PS-A references new A-rules from PS-B)  
-**Authority**: CS2 wave-start required
+**Authority**: CS2 wave-start required  
+**Completion**: prehandover-template.md is at v1.8.0; all PS-A changes delivered
 
 | ID | Change | Source |
 |----|--------|--------|
@@ -71,13 +89,14 @@ most of the agent-executable items.
 
 ---
 
-### PS-B — Foreman FAIL-ONLY-ONCE Deduplication & New Rules
+### PS-B — Foreman FAIL-ONLY-ONCE Deduplication & New Rules ✅ COMPLETE
 
 **Target file**: `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md`  
-**Current version**: v4.1.0 → **Target**: v4.2.0  
+**Current version**: v4.1.0 → **Target**: v4.2.0 — **Achieved**: v4.2.0  
 **Assignee**: CodexAdvisor-agent  
 **Dependencies**: None — can start immediately  
-**Authority**: CS2 wave-start required
+**Authority**: CS2 wave-start required  
+**Completion**: Session-159 (2026-04-07), IAA PASS (IAA-session-159-ps-b-fail-only-once-v420-20260407-PASS)
 
 | ID | Change | Source |
 |----|--------|--------|
@@ -145,12 +164,13 @@ most of the agent-executable items.
 
 ---
 
-### PS-F — IAA Trigger Table New Categories
+### PS-F — IAA Trigger Table New Categories ✅ COMPLETE
 
 **Target file**: `.agent-workspace/independent-assurance-agent/knowledge/iaa-trigger-table.md`  
 **Assignee**: CodexAdvisor-agent  
 **Dependencies**: None — can start immediately (parallel to PS-B)  
-**Authority**: CS2 wave-start required
+**Authority**: CS2 wave-start required  
+**Completion**: Session-160 (2026-04-08), IAA PASS. KNOWLEDGE_GOVERNANCE, LIAISON_ADMIN, GOVERNANCE_AUDIT categories added.
 
 | ID | Change | Source |
 |----|--------|--------|
@@ -234,6 +254,7 @@ These items do not block MMM but should be actioned in the next available govern
 | NB-7 | `governance-repo-administrator-v2.agent.md` decision pending (Issue #1228) | CS2 decision |
 | NB-8 | 25+ S-series Foreman FAIL-ONLY-ONCE improvements OPEN (S-001 through S-034) | Batch via Foreman governance wave post-MMM-FRS |
 | NB-9 | IAA FAIL-ONLY-ONCE.md v2.5.0 — no PBFAG gate entry (PRE_BUILD_STAGE_MODEL_CANON published 2026-04-05) | Include in PS-E wave |
+| NB-10 | `CONSUMER_REPO_REGISTRY.json` not layered down to `maturion-isms` (formerly BLK-4) | Non-blocking for MMM; reclassified from blocker to ongoing improvement. Governance Liaison → CS2 direction. |
 
 ---
 
@@ -312,15 +333,22 @@ be created for Foreman to orchestrate (each is a delegation-target issue per A-0
 
 ## 8. Relationship to MMM Build
 
-Once all **blocking items (BLK-1 through BLK-6)** are resolved, and waves **PS-B, PS-F, PS-I,
-PS-A, PS-E** are complete, Foreman is cleared to begin the MMM build sequence:
+> **Status update (2026-04-13)**: The blocking items and prerequisite waves have been substantially
+> resolved. MMM Stage 1 is formally closed (CS2 approved, #1298). MMM Stage 2 has been produced
+> (UX Workflow & Wiring Spec, issue #1352). The harvest map has been governance-hardened (v0.2.0,
+> issue #1345). LKIAC carry-over closure has been documented (issue #1341).
+>
+> The remaining PS-waves (PS-C, PS-D, PS-E, PS-G, PS-H, PS-I) are ongoing improvement items
+> and do not block MMM Stage 3 (FRS) or subsequent stages.
+
+The MMM build sequence with current status:
 
 ```
-Stage 1: App Description          — CS2 sign-off (BLK-1)
-Stage 2: UX Workflow & Wiring Spec — First Foreman-delegated MMM wave
-Stage 3: FRS                       — After Stage 2 IAA-PASS
+Stage 1: App Description          — ✅ CS2 approved (BLK-1, #1298, 2026-04-08)
+Stage 2: UX Workflow & Wiring Spec — ✅ PRODUCED — pending CS2 approval (#1352, 2026-04-13)
+Stage 3: FRS                       — ⏳ NEXT — after Stage 2 CS2 approval
 Stage 4: TRS                       — After Stage 3 IAA-PASS
-Stage 5: Architecture              — After Stage 4 IAA-PASS
+Stage 5: Architecture              — After Stage 4 IAA-PASS (architecture.md exists in-progress)
 Stage 6: QA-to-Red                 — After Stage 5 IAA-PASS
 Stage 7: PBFAG                     — After Stage 6 IAA-PASS
 Stage 8: Implementation Plan       — After Stage 7 IAA-PASS
@@ -335,5 +363,5 @@ Stage 12: Implementation           — Governed builder waves begin
 
 ---
 
-*End of document — PRE-MMM-UPGRADE-STRATEGY-v1.0.0*  
-*Filed: 2026-04-07 | CS2 authority: @APGI-cmy | Governed by LIVING_AGENT_SYSTEM.md v6.2.0*
+*End of document — PRE-MMM-UPGRADE-STRATEGY-v1.1.0*  
+*Filed: 2026-04-07 | Normalized: 2026-04-13 (maturion-isms#1358) | CS2 authority: @APGI-cmy | Governed by LIVING_AGENT_SYSTEM.md v6.2.0*
