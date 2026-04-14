@@ -228,15 +228,17 @@ Response payloads from AIMC must conform to the AIMC canonical response envelope
 **Source**: FR-053, §AD-26  
 **Acceptance**: All AIMC call and response shapes confirmed in integration tests.
 
-### TR-013 — AIMC Versioning Strategy
-MMM must use **URI-based API versioning** for all AIMC endpoints: `/api/v1/ai/*`.
+### TR-013 — AIMC Routing and Versioning Strategy
+MMM must use the current AIMC endpoint namespace `/api/ai/*` for all AIMC integrations.
 
-When AIMC publishes a new version (`/api/v2/`), MMM must support a dual-version period of
-**≥ 30 days** before migrating. Migration requires a dedicated implementation wave.
+AIMC is currently treated as an **unversioned URI surface**. If AIMC later publishes a
+URI-versioned successor (for example, `/api/v2/ai/*`), MMM must support a dual-routing
+compatibility period of **≥ 30 days** before migrating. Migration requires a dedicated
+implementation wave.
 
 **Source**: FR-053  
-**Acceptance**: All AIMC calls reference versioned endpoints; version field present in
-integration test fixtures.
+**Acceptance**: All AIMC calls reference the documented `/api/ai/*` endpoint inventory;
+any future versioned AIMC rollout is represented explicitly in integration test fixtures.
 
 ### TR-014 — AIMC Timeout Contract
 All MMM → AIMC HTTP calls must enforce the following timeout values:
