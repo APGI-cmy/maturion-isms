@@ -193,14 +193,12 @@ The task `Phase 4 handover ceremony (execution-ceremony-admin-agent + IAA audit)
 
 ## TOKEN
 
-*Placeholder — to be populated by IAA after Phase 4 handover assurance review.*
+PHASE_B_BLOCKING_TOKEN: IAA-session-aimc-audit-phase-2-20260414-PASS
 
-```
-PHASE_B_BLOCKING_TOKEN: [PENDING ISSUANCE — populated after Phase 4 IAA review]
-Token reference: IAA-session-NNN-wave-aimc-audit-phase-2-20260414-PASS
+Token reference: IAA-session-aimc-audit-phase-2-20260414-PASS
 Issued by: independent-assurance-agent
-Issued after: Phase 4 formal invocation with PR link
-```
+Issued after: Phase 4 formal invocation — execution-ceremony-admin-agent bundle verified
+Session: aimc-audit-phase-2-20260414 | Date: 2026-04-14 | Verdict: ASSURANCE-TOKEN (PASS)
 
 ---
 
