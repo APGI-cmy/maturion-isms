@@ -258,23 +258,24 @@ simulate timeout and verify retry behavior.
 
 ### TR-015 — AIMC Endpoint Inventory
 All MMM → AIMC integration endpoints (FR-053) must be implemented as Supabase Edge
-Functions. Endpoint inventory:
+Functions. AIMC endpoint inventory:
 
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
-| `/api/ai/framework-parse` | POST | Mode A verbatim structure extraction |
-| `/api/ai/framework-generate` | POST | Mode B new framework AI generation |
-| `/api/ai/framework-alter` | POST | AI-proposed altering mechanism |
-| `/api/ai/evidence-evaluate` | POST | Evidence relevance and score proposal |
-| `/api/ai/recommend` | POST | Maturity improvement recommendations |
-| `/api/ai/chat` | POST | Contextual chat (Ask Maturion) |
-| `/api/ai/explain` | POST | Contextual explanation at structural level |
-| `/api/ai/assessment-interpret` | POST | Assessment result interpretation |
-| `/api/upload/framework-source` | POST | Framework-source upload → KUC |
-| `/api/upload/evidence` | POST | Evidence upload → KUC |
+| `/api/v1/ai/framework-parse` | POST | Mode A verbatim structure extraction |
+| `/api/v1/ai/framework-generate` | POST | Mode B new framework AI generation |
+| `/api/v1/ai/framework-alter` | POST | AI-proposed altering mechanism |
+| `/api/v1/ai/evidence-evaluate` | POST | Evidence relevance and score proposal |
+| `/api/v1/ai/recommend` | POST | Maturity improvement recommendations |
+| `/api/v1/ai/chat` | POST | Contextual chat (Ask Maturion) |
+| `/api/v1/ai/explain` | POST | Contextual explanation at structural level |
+| `/api/v1/ai/assessment-interpret` | POST | Assessment result interpretation |
+
+Upload endpoints are excluded from this AIMC inventory and must be specified under the
+MMM ↔ KUC contract section in TR-019/TR-020.
 
 **Source**: FR-053, FR-055, FR-056, FR-057  
-**Acceptance**: All 10 endpoints exist; each tested with valid and invalid payloads.
+**Acceptance**: All 8 AIMC endpoints exist; each tested with valid and invalid payloads.
 
 ### 3.2 MMM ↔ PIT Technical Export Contract
 
