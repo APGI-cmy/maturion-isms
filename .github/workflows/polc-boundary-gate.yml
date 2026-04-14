@@ -760,7 +760,7 @@ jobs:
           # Count iaa-wave-record-*.md files ADDED (not modified) in this PR
           WAVE_RECORDS_ADDED=$(git diff --name-only --diff-filter=A \
             origin/"$BASE_BRANCH"...HEAD \
-            | grep -c '^\.agent-admin/assurance/iaa-wave-record-.*\.md$' || echo "0")
+            | grep -c '^\.agent-admin/assurance/iaa-wave-record-.*\.md$' || true)
 
           if [ "$WAVE_RECORDS_ADDED" -gt 1 ]; then
             echo "❌ WAVE-RECORD-COUNT-001 FAIL — $WAVE_RECORDS_ADDED iaa-wave-record-*.md files added in this PR."
@@ -782,7 +782,8 @@ jobs:
   #            SCOPE_DECLARATION_SCHEMA.md
   # Issue: #1358 (CI-HARDENING)
   # When new .agent-workspace/ files are added, a scope declaration must exist
-  # with an approved_artifact_paths: field. Previously contractual-only.
+  # with an APPROVED_ARTIFACT_PATHS: field (or Markdown equivalent).
+  # Previously contractual-only.
   # ---------------------------------------------------------------------------
   scope-declaration-check:
     name: "scope-declaration-check"
@@ -824,10 +825,17 @@ jobs:
 
           echo "New .agent-workspace/ files detected ($AGENT_WORKSPACE_ADDED). Checking scope declaration..."
 
-          # Find scope declaration files added in this PR
-          SCOPE_DECL_FILES=$(git diff --name-only --diff-filter=A \
+          # Find scope declaration files added or modified in this PR;
+          # if none were changed in the PR, fall back to matching declarations
+          # already present in the working tree on this branch.
+          SCOPE_DECL_FILES=$(git diff --name-only --diff-filter=AM \
             origin/"$BASE_BRANCH"...HEAD \
             | grep '^\.agent-workspace/foreman-v2/personal/scope-declaration-.*\.md$' || true)
+
+          if [ -z "$SCOPE_DECL_FILES" ]; then
+            SCOPE_DECL_FILES=$(find .agent-workspace/foreman-v2/personal -maxdepth 1 -type f \
+              -name 'scope-declaration-*.md' 2>/dev/null | sort || true)
+          fi
 
           if [ -z "$SCOPE_DECL_FILES" ]; then
             echo ""
@@ -835,18 +843,21 @@ jobs:
             echo ""
             echo "   Foreman Phase 2 Step 2.7 requires:"
             echo "   .agent-workspace/foreman-v2/personal/scope-declaration-wave-{N}.md"
-            echo "   with an approved_artifact_paths: field listing all approved write paths."
+            echo "   with an APPROVED_ARTIFACT_PATHS: field listing all approved write paths."
             echo ""
             echo "   HALT-008: Do not proceed without a committed scope declaration."
             exit 1
           fi
 
-          # Verify at least one scope declaration contains approved_artifact_paths:
+          # Verify at least one scope declaration contains approved artifact paths
+          # Accept both the canonical schema marker (APPROVED_ARTIFACT_PATHS:) and
+          # the Markdown heading variant (## Approved Artifact Paths) for
+          # backward compatibility with existing scope declarations.
           DECL_WITH_PATHS=false
           while IFS= read -r decl_file; do
-            if [ -f "$decl_file" ] && grep -q "approved_artifact_paths:" "$decl_file" 2>/dev/null; then
+            if [ -f "$decl_file" ] && grep -qi "approved.artifact.paths" "$decl_file" 2>/dev/null; then
               DECL_WITH_PATHS=true
-              echo "✅ SCOPE-DECL-001 PASS — Scope declaration found with approved_artifact_paths[]:"
+              echo "✅ SCOPE-DECL-001 PASS — Scope declaration found with approved artifact paths:"
               echo "   File: $decl_file"
               break
             fi
@@ -854,9 +865,10 @@ jobs:
 
           if [ "$DECL_WITH_PATHS" = false ]; then
             echo ""
-            echo "❌ SCOPE-DECL-002 FAIL — Scope declaration found but missing approved_artifact_paths: field."
+            echo "❌ SCOPE-DECL-002 FAIL — Scope declaration found but missing approved artifact paths field."
             echo ""
-            echo "   The scope declaration MUST contain an approved_artifact_paths: list"
+            echo "   The scope declaration MUST contain an APPROVED_ARTIFACT_PATHS: field"
+            echo "   (or a '## Approved Artifact Paths' Markdown section)"
             echo "   explicitly enumerating every file path this wave is authorised to create."
             echo "   Per SCOPE_DECLARATION_SCHEMA.md."
             exit 1

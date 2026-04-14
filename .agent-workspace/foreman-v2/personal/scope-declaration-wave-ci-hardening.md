@@ -4,7 +4,7 @@ date: 2026-04-14
 wave: gov-simplification-ci-enforcement
 status: approved
 
-approved_artifact_paths:
+APPROVED_ARTIFACT_PATHS:
   - .github/workflows/polc-boundary-gate.yml
   - .github/workflows/governance-watchdog.yml
   - .agent-workspace/foreman-v2/memory/session-ci-hardening-20260414.md
