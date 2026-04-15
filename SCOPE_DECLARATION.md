@@ -1,31 +1,36 @@
-# SCOPE_DECLARATION — Session 057 (CodexAdvisor-agent) — Wave agent-contract-wave-record-model
+# SCOPE_DECLARATION — foreman-v2-agent — Wave mmm-stage5-architecture-20260414
 
-**Session**: session-057-20260413
-**Wave**: agent-contract-wave-record-model
-**Issue**: maturion-isms — [CODEXADVISOR WAVE] Update agent contracts for single-file assurance artifact model
-**Branch**: copilot/update-agent-contracts-model
-**Date**: 2026-04-13
-**Authority**: CS2 issue (follow-up to PRs #1348, #1349)
+**Session**: session-mmm-stage5-architecture-20260414
+**Wave**: mmm-stage5-architecture-20260414
+**Issue**: maturion-isms#1378 — [MMM Stage 5] Wave-start authorization — Architecture
+**Branch**: copilot/mmm-stage-5-wave-start-authorization
+**Date**: 2026-04-14
+**Authority**: CS2 (Johan Ras / @APGI-cmy)
+**Schema Ref**: governance/canon/SCOPE_DECLARATION_SCHEMA.md §5.7
 
 ---
 
 ## Files Changed in This Wave
 
-- `SCOPE_DECLARATION.md` - Root scope declaration for session-057 (this file)
-- `.github/agents/independent-assurance-agent.md` — IAA contract: wave record model alignment, standalone artifact prohibitions (v2.5.0→v2.6.0)
-- `.github/agents/foreman-v2-agent.md` — Foreman contract: wave record references, scope declaration gate (v2.11.0→v2.12.0)
-- `.github/agents/execution-ceremony-admin-agent.md` — Ceremony-admin contract: prohibited list, evidence checks (v1.0.0→v1.1.0)
-- `.github/agents/governance-liaison-isms-agent.md` — Liaison contract: restricted write_access, assurance path prohibition (v3.3.0→v3.4.0)
-- `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-057-20260413.md` - CodexAdvisor PREHANDOVER proof
-- `.agent-workspace/CodexAdvisor-agent/memory/session-057-20260413.md` - CodexAdvisor session memory for session-057
+APPROVED_ARTIFACT_PATHS:
+- `.agent-admin/assurance/iaa-wave-record-mmm-stage5-architecture-20260414.md` - IAA wave record with PRE-BRIEF and TOKEN sections
+- `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-stage5-architecture.md` - Foreman wave scope declaration
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave task tracking document
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-stage5-architecture-20260414.md` - Foreman PREHANDOVER proof
+- `.agent-workspace/foreman-v2/memory/session-mmm-stage5-architecture-20260414.md` - Foreman session memory
+- `.agent-workspace/independent-assurance-agent/memory/session-210-mmm-stage5-architecture-20260414.md` - IAA session 210 memory (pre-brief)
+- `.agent-workspace/independent-assurance-agent/memory/session-211-mmm-stage5-architecture-20260414.md` - IAA session 211 memory (REJECTION-PACKAGE OVL-PBG-007)
+- `.agent-workspace/independent-assurance-agent/memory/session-212-mmm-stage5-architecture-20260414.md` - IAA session 212 memory (ASSURANCE-TOKEN PASS)
+- `modules/MMM/.env.example` - Environment variables documentation (TR-053)
+- `modules/MMM/04-architecture/APP_STARTUP_REQUIREMENTS.md` - Commissioning checks CHK-001 through CHK-005 (TR-064)
+- `modules/MMM/04-architecture/COMPLIANCE_SCOPE.md` - ISO 27001/31000/NIST CSF control scope (TR-037)
+- `modules/MMM/04-architecture/CONTROL_MAPPING.md` - Control-to-requirement traceability (TR-037)
+- `modules/MMM/04-architecture/EVIDENCE_CATALOG.md` - Evidence types per control (TR-037)
+- `modules/MMM/04-architecture/architecture.md` - Canonical Stage 5 Architecture document replacing PLACEHOLDER
+- `modules/MMM/04-architecture/capabilities/index.md` - Legacy sub-folder disposition index (OQ-002/OQ-003)
+- `modules/MMM/BUILD_PROGRESS_TRACKER.md` - Stage 4 COMPLETE + Stage 5 IN_PROGRESS update
+- `modules/MMM/harvest-map/harvest-map.md` - OQ-002 and OQ-003 OPEN → RESOLVED update
+- `SCOPE_DECLARATION.md` - This file (root scope declaration for this wave)
 
-**Total declared files**: 7
 
-## Implementation Status
 
-All 4 agent contracts updated for single-file assurance artifact model:
-- Standalone prebrief/token/rejection patterns replaced with iaa-wave-record-{wave}-{date}.md
-- Prohibitions added for standalone artifact creation
-- Governance-liaison write path restricted from .agent-admin/** to .agent-admin/governance/**
-- Scope declaration gate added to Foreman Phase 2 Step 2.7
-- All 4 files pass QP S1-S9 and are under 30,000 character limit
