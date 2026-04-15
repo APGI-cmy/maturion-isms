@@ -1,21 +1,62 @@
-# Wave Current Tasks — MMM Stage 5
+# Wave Current Tasks — MMM Stage 6 QA-to-Red
 
-wave: mmm-stage5-architecture-20260414
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-stage5-architecture-20260414.md
-branch: copilot/mmm-stage-5-wave-start-authorization
-issue: maturion-isms#1378
-status: COMPLETE — Phase 4 ceremony complete, IAA ASSURANCE-TOKEN issued, awaiting CS2 review
+wave: mmm-stage6-qa-to-red-20260415
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-stage6-qa-to-red-20260415.md
+branch: copilot/fix-253484265-1108482416-7f518b23-7345-4cfd-a1c8-8403d856d34d
+issue: maturion-isms#1384
+status: COMPLETE — IAA ASSURANCE-TOKEN issued, merge gate released, awaiting CS2 approval
 
-## Active Wave: MMM Stage 5 — Architecture
+## Active Wave: MMM Stage 6 — QA-to-Red
 
 ### Status
-COMPLETE — All deliverables produced. IAA ASSURANCE-TOKEN issued (Session 212). Awaiting CS2 review.
+COMPLETE — All deliverables produced. IAA ASSURANCE-TOKEN issued (IAA-session-mmm-stage6-qa-to-red-20260415-PASS).
+Merge gate released. Awaiting CS2 formal approval.
 
-CS2 Authorization: maturion-isms#1378 — opened by @APGI-cmy (CS2 = Johan Ras), 2026-04-14.
-Stage 4 TRS CS2 approval carried forward per issue #1378.
+CS2 Authorization: maturion-isms#1384 — opened by @APGI-cmy (CS2 = Johan Ras), 2026-04-15.
+Stage 5 Architecture artifacts produced (wave mmm-stage5-architecture-20260414, 2026-04-14), pending CS2 formal approval.
 
-IAA Pre-Brief: COMMITTED (SHA ad5369d)
-IAA ASSURANCE-TOKEN: IAA-session-212-mmm-stage5-architecture-20260414-PASS (issued Session 212)
+### Tasks
+
+#### Phase 1 — Preflight
+- [x] Identity declared (foreman-v2-agent v6.2.0, SELF-MOD-FM-001)
+- [x] Tier 2 knowledge loaded (v2.7.0)
+- [x] CANON_INVENTORY attested (PASS — 200 entries)
+- [x] Session memory reviewed (5 sessions — no unresolved items)
+- [x] FAIL-ONLY-ONCE registry checked (all incidents REMEDIATED)
+- [x] Merge gate requirements loaded (7 checks)
+- [x] IAA Pre-Brief invoked (Step 1.8 — SHA ee6ac83)
+
+#### Scope A — Stage 5 Approval-Readiness Normalization (MANDATORY FIRST)
+- [x] BUILD_PROGRESS_TRACKER.md Current Stage Summary updated (Stage 5 as current stage)
+- [x] BUILD_PROGRESS_TRACKER.md Governance Compliance section updated (Stage 4 approved, Stage 5 artifacts listed, OQ-002/003 resolved)
+- [x] BUILD_PROGRESS_TRACKER.md Stage Migration table normalized
+- [x] Last Updated / Updated By fields corrected
+- [x] IAA wave record pre-brief committed (SHA ee6ac83)
+
+#### Scope B — Stage 6 QA-to-Red
+- [x] IAA Pre-Brief response received (SHA ee6ac83)
+- [x] Scope declaration committed
+- [x] Delegate to qa-builder: Stage 6 QA-to-Red artifacts (modules/MMM/05-qa-to-red/)
+  - [x] D1: Stage 6 artifact set under modules/MMM/05-qa-to-red/
+  - [x] D2: Full RED test suite derived from FRS + TRS + Architecture (176 tests)
+  - [x] D3: All 17 Stage 2 user journeys covered in RED suite (17/17)
+  - [x] D4: Requirement traceability (80/80 FRs, 66/66 TRs)
+  - [x] D5: QA Catalog alignment explicitly confirmed (9 gates PASS)
+  - [x] D6: Foreman sign-off package (scope, coverage map, gaps, no-implementation statement)
+  - [x] D7: BUILD_PROGRESS_TRACKER updated (Stage 6 COMPLETE)
+- [x] QP evaluation of qa-builder deliverable — PASS
+- [x] §4.3 Merge gate parity check — PASS
+
+#### Phase 4 — Handover
+- [x] OPOJD gate pass
+- [x] execution-ceremony-admin-agent ceremony coordination (foreman-v2-agent — see PREHANDOVER justification)
+- [x] PREHANDOVER proof reviewed and committed (SHA ad6dadf9)
+- [x] Session memory reviewed and committed (SHA ad6dadf9)
+- [x] Pre-IAA Commit-State Gate (Step 4.3a) PASS
+- [x] IAA final audit (Step 4.3b) — 19/19 checks PASS (SHA cc2cfa66)
+- [x] Token ceremony complete (Step 4.3c) — PHASE_B_BLOCKING_TOKEN issued
+- [x] Merge gate released — awaiting CS2 approval (maturion-isms#1384)
+
 
 ### Tasks
 - [x] Phase 1 — Identity & Preflight complete
