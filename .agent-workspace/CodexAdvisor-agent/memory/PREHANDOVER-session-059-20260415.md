@@ -94,5 +94,17 @@ Authorization: VALID (issue opened directly by CS2)
 
 ---
 
+## Ripple/Cross-Agent Assessment
+
+**Contracts ripple-updated in this PR**: `foreman-v2-agent.md` (Step 4.1a)
+
+**Reason**: C3/C5 requirements from issue #1380 impose new mandatory fields on the Foreman's ECAP delegation workflow. The Foreman contract is the upstream authority for the ECAP appointment process — it must be updated to codify the pre-delegation hygiene gate and appointment brief requirements so that Foreman and ECAP are synchronized.
+
+**Why only foreman-v2-agent.md**: The ECAP escalation path now routes to Foreman (not CS2 or IAA). The IAA contract and CodexAdvisor contract are unchanged — IAA's role and CodexAdvisor's role-boundary are unaffected by this hardening. The ECAP-001 canon already specifies Foreman escalation (§6.1) — the contract is now aligned with canon.
+
+**Confirmation**: No other agent contracts require updates for this change. The governance-liaison-isms-agent, independent-assurance-agent, schema-builder, api-builder, and other builder contracts are unaffected by ECAP appointment workflow changes.
+
+---
+
 **Immutability**: This file is READ-ONLY after initial commit per AGENT_HANDOVER_AUTOMATION.md §4.3b.
 No agent may modify this file post-commit.
