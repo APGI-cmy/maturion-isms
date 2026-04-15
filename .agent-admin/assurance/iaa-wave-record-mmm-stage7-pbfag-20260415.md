@@ -165,10 +165,34 @@ Per PRE_BRIEF_ASSURANCE overlay (OVL-INJ-ADM-003) and trigger table v2.3.0 requi
 
 ## TOKEN
 
-**Token Status**: PENDING — awaiting IAA Phase 4 final audit invocation
-PHASE_B_BLOCKING_TOKEN: PENDING-UNTIL-HANDOVER
+**Token Status**: ISSUED — IAA Phase 4 final audit COMPLETE
+PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage7-pbfag-20260415-PASS
 
-*(IAA will append the ASSURANCE-TOKEN or REJECTION-PACKAGE here after Phase 4 final audit. PREHANDOVER proof must be committed and all D1–D7 + C1–C2 tasks must be COMPLETE before IAA Phase 4 is invoked.)*
+---
+
+```
+═══════════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: Wave mmm-stage7-pbfag-20260415 | Issue maturion-isms#1387
+Branch: copilot/fix-253484265-1108482416-db6ffe00-4736-4d12-a8ba-ca000c4295c5
+
+All 22 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+
+Token reference: IAA-session-mmm-stage7-pbfag-20260415-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage7-pbfag-20260415-PASS
+
+Adoption phase: PHASE_B_BLOCKING
+Structural advisory: OVL-PBG-009 — Legacy directory numbering (modules/MMM/04-architecture/)
+  — advisory only, not blocking, flagged for CS2 migration planning.
+═══════════════════════════════════════════════════════════════
+```
+
+**Token issued by**: independent-assurance-agent (session-mmm-stage7-pbfag-20260415)
+**Date**: 2026-04-15
+**Checks run**: 22 checks — 22 PASS, 0 FAIL
+**Overlay applied**: PRE_BUILD_STAGE_MODEL → PRE_BUILD_GATES (OVL-PBG-001 through OVL-PBG-016) + Universal Ceremony Gate (CERT-001 through CERT-004)
+**ECAP-001 compliance**: Token written by IAA only — execution-ceremony-admin-agent did NOT write this token.
 
 ---
 
