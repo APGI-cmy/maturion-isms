@@ -22,6 +22,8 @@ APPROVED_ARTIFACT_PATHS:
 - .agent-workspace/foreman-v2/memory/PREHANDOVER-session-aimc-specialist-hardening-20260415.md
 - .agent-workspace/foreman-v2/memory/session-aimc-specialist-hardening-20260415.md
 - .agent-admin/assurance/iaa-wave-record-aimc-specialist-hardening-20260415-20260415.md
+- .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-aimc-specialist-hardening-20260415.md
+- .agent-workspace/execution-ceremony-admin-agent/bundles/session-aimc-specialist-hardening-20260415.md
 
 ---
 

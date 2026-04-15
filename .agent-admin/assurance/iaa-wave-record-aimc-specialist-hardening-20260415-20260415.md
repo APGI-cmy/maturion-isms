@@ -6,8 +6,8 @@
 **Issue**: maturion-isms#1382
 **Title**: [AIMC / Maturion] Harden orchestrator-specialist strategy into an execution-ready source model for MMM convergence
 **Producing Agent(s)**: foreman-v2-agent (class: foreman)
-**IAA Session**: PRE-BRIEF (Phase 0 — not yet assigned session number)
-**Ceremony Admin Appointed**: NOT YET DECLARED — Foreman must confirm before Phase 4
+**IAA Session**: aimc-specialist-hardening-20260415 (Phase 4 — COMPLETE — ASSURANCE-TOKEN issued 2026-04-15)
+**Ceremony Admin Appointed**: YES — execution-ceremony-admin-agent (Phase 4 ceremony complete; ECAP bundles at .agent-workspace/execution-ceremony-admin-agent/bundles/)
 **Wave Record Path**: `.agent-admin/assurance/iaa-wave-record-aimc-specialist-hardening-20260415-20260415.md`
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -145,4 +145,4 @@ Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
 
 ## REJECTION_HISTORY
 
-*(No rejections yet — wave in progress)*
+*(No rejections. Wave complete. ASSURANCE-TOKEN IAA-session-aimc-specialist-hardening-20260415-PASS issued 2026-04-15.)*
