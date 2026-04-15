@@ -1,4 +1,44 @@
-# Wave Current Tasks — MMM Stage 5
+# Wave Current Tasks — AIMC Specialist Hardening
+
+wave: aimc-specialist-hardening-20260415
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-aimc-specialist-hardening-20260415-20260415.md
+branch: copilot/fix-253484265-1108482416-55347de4-d047-4a30-a366-377beba1bdf1
+issue: maturion-isms#1382
+status: IN PROGRESS
+
+## Active Wave: AIMC Specialist Hardening — Orchestrator/Specialist Strategy
+
+### Status
+IN PROGRESS — Strategy-hardening documentation wave.
+
+CS2 Authorization: maturion-isms#1382 — opened by @APGI-cmy (CS2 = Johan Ras), 2026-04-15.
+
+IAA Pre-Brief: COMMITTED (.agent-admin/assurance/iaa-wave-record-aimc-specialist-hardening-20260415-20260415.md)
+IAA ASSURANCE-TOKEN: PENDING
+
+### Tasks
+- [x] Phase 1 — Identity & Preflight complete
+- [x] IAA Pre-Brief invoked and wave record committed
+- [x] Wave-current-tasks.md updated for active wave
+- [x] Scope declaration created
+- [ ] D1 — Harden Maturion/strategy/Maturion_agent_usage_escalation_strategy.md (v2.0.0)
+- [ ] D2 — Strategy delta summary (Appendix A of D1)
+- [ ] D3 — MMM convergence mapping note (Appendix B of D1 + companion file)
+- [ ] D4 — Forward handoff note (Appendix C of D1)
+- [ ] Phase 4 ceremony: PREHANDOVER + session memory + IAA final audit
+
+### Deliverables
+
+| # | Task | Deliverable | Status |
+|---|------|-------------|--------|
+| D1 | Hardened strategy artifact | `Maturion/strategy/Maturion_agent_usage_escalation_strategy.md` v2.0.0 | 🔴 PENDING |
+| D2 | Strategy delta summary | Appendix A in D1 | 🔴 PENDING |
+| D3 | MMM convergence mapping note | Appendix B in D1 + `.agent-workspace/foreman-v2/memory/mmm-convergence-mapping-aimc-specialist-hardening.md` | 🔴 PENDING |
+| D4 | Forward handoff note | Appendix C in D1 | 🔴 PENDING |
+
+---
+
+## Prior Wave Record (MMM Stage 5 — COMPLETE)
 
 wave: mmm-stage5-architecture-20260414
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-stage5-architecture-20260414.md
@@ -6,7 +46,7 @@ branch: copilot/mmm-stage-5-wave-start-authorization
 issue: maturion-isms#1378
 status: COMPLETE — Phase 4 ceremony complete, IAA ASSURANCE-TOKEN issued, awaiting CS2 review
 
-## Active Wave: MMM Stage 5 — Architecture
+## Prior Wave: MMM Stage 5 — Architecture
 
 ### Status
 COMPLETE — All deliverables produced. IAA ASSURANCE-TOKEN issued (Session 212). Awaiting CS2 review.
