@@ -1,7 +1,7 @@
 # AIMC Knowledge Base Inventory
 
 **Document Type**: Governance Artefact — Wave 9.5 Deliverable  
-**Status**: ACTIVE — CL-6 re-ingestion wave executed (2026-04-14)  
+**Status**: ACTIVE — CL-6 SEED STATE (2026-04-14): 4 items seeded, Approved=0, Pending=4 — NOT YET CLOSED (closure requires ≥1 approved item per active module)  
 **Version**: 1.1.0  
 **Effective Date**: 2026-02-27  
 **Updated**: 2026-04-14 (CL-6 wave — AIMC Persona & Gap Remediation)
