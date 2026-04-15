@@ -124,9 +124,14 @@ a maintenance/degraded screen rather than allowing partial operation.
   1. Using a test service role session, execute a spot-check query:
      `SELECT COUNT(*) FROM pg_policies WHERE tablename = 'mmm_evidence' AND policyname LIKE 'org_isolation%'`.
   2. Assert COUNT > 0 (at least one org isolation policy exists on `mmm_evidence`).
-  3. Perform a second check: query `information_schema.tables` to confirm RLS is enabled:
-     `SELECT row_security FROM information_schema.tables WHERE table_name = 'mmm_evidence'`.
-  4. Assert `row_security = 'YES'`.
+  3. Perform a second check: query PostgreSQL system catalogs to confirm RLS is enabled on
+     the target table:
+     `SELECT c.relrowsecurity, c.relforcerowsecurity
+      FROM pg_class AS c
+      JOIN pg_namespace AS n ON n.oid = c.relnamespace
+      WHERE n.nspname = 'public' AND c.relname = 'mmm_evidence' AND c.relkind IN ('r', 'p')`.
+  4. Assert exactly one row is returned and `relrowsecurity = true` (`relforcerowsecurity`
+     may be either `true` or `false` and is not required for this check).
 - **Failure action**:
   - Halt commissioning sequence; do not allow application to enter ACTIVATED state.
   - Set `/api/health` response: `{ "status": "DOWN", "services": { "database": "DOWN" }, "commissioning": { "state": "COMMISSIONED", "failedCheck": "CHK-004", "detail": "RLS policies not active — data isolation not guaranteed" } }`.
