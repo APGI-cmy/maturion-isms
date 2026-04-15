@@ -3,7 +3,7 @@
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
 **Last Updated**: 2026-04-14  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14)
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — This is the designated primary operational monitor for MMM stage progress. CS2 should use this document as the main live progress dashboard.  
@@ -27,8 +27,8 @@ error from the original governance layer-down. The module is MMM (Maturity Model
 |-----------|----------|-----------|----------|--------|
 | Stage 0 | App Description | Stage 1 | App Description | COMPLETE |
 | Stage 1 | FRS | Stage 3 | FRS | COMPLETE |
-| Stage 1.5 | TRS | Stage 4 | TRS | IN_PROGRESS |
-| Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS |
+| Stage 1.5 | TRS | Stage 4 | TRS | COMPLETE |
+| Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS — pending CS2 approval |
 | Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | NOT_STARTED |
 | Stage 4 | Builder Appointment | Stage 11 | Builder Appointment | NOT_STARTED |
 | Stage 5 | Build | Stage 12 | Build | NOT_STARTED (partial AIMC artifact) |
@@ -122,7 +122,7 @@ Stage 4 (TRS) authorized via maturion-isms#1372 (2026-04-14).
 ---
 
 ### Stage 4: Technical Requirements Specification (TRS)
-**Status**: [x] IN_PROGRESS — TRS artifact produced, pending CS2 review and approval  
+**Status**: [x] COMPLETE ✅ CS2 APPROVED — Stage 5 (Architecture) wave authorized  
 **Location**: `modules/MMM/03-trs/`  
 **Key Artifacts**:
 - [x] `technical-requirements-specification.md` — 66 technical requirements (TR-001 through TR-066) covering performance, integration, data persistence, security, offline/connectivity, scalability, infrastructure, and quality gates
@@ -133,44 +133,70 @@ Stage 4 (TRS) authorized via maturion-isms#1372 (2026-04-14).
 - [x] AIMC technical interface contract defined (TR-011 through TR-015)
 - [x] PIT export technical contract defined (TR-016 through TR-018)
 - [x] KUC upload technical contract defined (TR-019, TR-020)
-- [x] TRS approved by designated authority (CS2 review pending)
+- [x] TRS approved by designated authority (CS2 — approval carried forward per maturion-isms#1378)
 
 **Completion Date**: 2026-04-14  
 **Approval Required**: Yes
 - [x] Approved by designated authority
-**Approval Date**: N/A  
-**Approved By**: N/A  
-**Approval Reference**: N/A  
+**Approval Date**: 2026-04-14
+**Approved By**: CS2 (Johan Ras / @APGI-cmy)
+**Approval Reference**: maturion-isms#1378 (CS2 approval carried forward — Stage 5 Architecture wave-start authorization confirms Stage 4 baseline)
 **Produced By**: foreman-v2-agent (POLC-Orchestration mode, wave mmm-stage4-trs)  
 **Issue**: maturion-isms#1372 (MMM Stage 4 wave-start authorization)  
 **Notes**: Stage 4 TRS produced with 66 technical requirements covering all 8 required
 areas: performance, integration, data persistence, security, offline/connectivity,
 scalability, infrastructure, and quality gates. OQ-001 (offline/walkabout mode) resolved
 with CONNECTIVITY-REQUIRED decision and queue-and-sync implementation pattern (TR-039–TR-042).
-All 80 FRs traced to TRS requirements (100% coverage). Awaiting CS2 review and approval
-before Stage 5 Architecture gate-pass proceeds.
+All 80 FRs traced to TRS requirements (100% coverage). CS2 approval carried forward per
+maturion-isms#1378 (Stage 5 Architecture wave-start authorization, 2026-04-14).
 
 ---
 
 ### Stage 5: Architecture
-**Status**: [ ] IN_PROGRESS  
+**Status**: [ ] IN_PROGRESS — Architecture artifacts produced, pending CS2 review and approval  
 **Location**: `modules/MMM/04-architecture/`  
+**Wave**: mmm-stage5-architecture-20260414  
+**Wave Date**: 2026-04-14  
+**Wave Reference**: maturion-isms#1378 (CS2 authorized, foreman-v2-agent delegated to mat-specialist)  
 **Key Artifacts**:
-- [x] `architecture.md` — Architecture document exists
-- [x] `capabilities/` — Capabilities folder exists
-- [ ] All TRS requirements traceable to architecture components
-- [ ] Architecture completeness checklist per `ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md` PASS
+- [x] `architecture.md` — PLACEHOLDER fully replaced with canonical Stage 5 Architecture (v0.1.0, 2026-04-14)
+- [x] `capabilities/index.md` — Legacy sub-folder disposition index (OQ-002/OQ-003 resolution record)
+- [x] `COMPLIANCE_SCOPE.md` — ISO 27001/31000/NIST CSF control scope (TR-037 — COMPLETE)
+- [x] `CONTROL_MAPPING.md` — Control-to-requirement traceability (TR-037 — COMPLETE)
+- [x] `EVIDENCE_CATALOG.md` — Evidence types per control (TR-037 — COMPLETE)
+- [x] `APP_STARTUP_REQUIREMENTS.md` — Commissioning checks CHK-001 through CHK-005 (TR-064 — COMPLETE)
+- [x] `.env.example` — All 8 required environment variables documented (TR-053 — COMPLETE)
+- [x] TRS → Architecture traceability matrix: 66 of 66 TRs addressed (COMPLETE — see architecture.md §A14)
+- [x] Architecture Completeness: PASS (COMPLETE — see architecture.md §A13)
+- [x] OQ-002 resolved — Legacy UI / MAT component boundary (see architecture.md §A11)
+- [x] OQ-003 resolved — Criteria duplication handling (see architecture.md §A12)
 - [ ] Architecture approved by designated authority
 
-**Completion Date**: N/A  
+**Open Items for Architecture Stage Completion**:
+- SC-001 ✅ RESOLVED — Stage 4 tracker updated to COMPLETE with CS2 approval reference
+- SC-002 ✅ RESOLVED — architecture.md PLACEHOLDER fully replaced with canonical content
+- SC-003 ✅ RESOLVED — capabilities/ legacy sub-folders audited and dispositioned
+- SC-004 ✅ RESOLVED — COMPLIANCE_SCOPE.md produced (TR-037) — QP remediation wave 2026-04-14
+- SC-005 ✅ RESOLVED — CONTROL_MAPPING.md produced (TR-037) — QP remediation wave 2026-04-14
+- SC-006 ✅ RESOLVED — EVIDENCE_CATALOG.md produced (TR-037) — QP remediation wave 2026-04-14
+- SC-007 ✅ RESOLVED — APP_STARTUP_REQUIREMENTS.md produced (TR-064) — QP remediation wave 2026-04-14
+- SC-008 ✅ RESOLVED — .env.example produced (TR-053) — QP remediation wave 2026-04-14
+
+**Completion Date**: 2026-04-14  
 **Approval Required**: Yes
 - [ ] Approved by designated authority
 **Approval Date**: N/A
 **Approved By**: N/A
 **Approval Reference**: N/A
-**Notes**: Architecture is in progress. `architecture.md` and `capabilities/` folder exist.
-Mapped from old Stage 2. Note: App Description and FRS/TRS must be completed and approved
-before Architecture can be formally gate-passed.
+**Notes**: Stage 5 Architecture wave mmm-stage5-architecture-20260414 active as of 2026-04-14.
+Primary architecture document (architecture.md v0.1.0) produced with canonical Stage 5 content
+covering all 15 architecture sections (A1 through A15), all 66 TRs traced, Architecture
+Completeness PASS against ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md v1.3, OQ-002 RESOLVED
+(legacy capabilities audit), OQ-003 RESOLVED (duplication handling decision).
+QP remediation wave completed 2026-04-14: all 5 missing companion artifacts produced
+(COMPLIANCE_SCOPE.md, CONTROL_MAPPING.md, EVIDENCE_CATALOG.md, APP_STARTUP_REQUIREMENTS.md,
+.env.example). CS2 review and approval required before Stage 6 (QA-to-Red) wave authorization
+proceeds.
 
 ---
 
