@@ -311,11 +311,40 @@ execution-ceremony-admin-agent (Phase 4 bundle preparation)
 [IAA agent response (verbatim) to be pasted by Foreman after IAA invocation — MANDATORY per A-014/S-009]
 
 ## IAA Agent Response (verbatim)
-<!-- MANDATORY PER S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) -->
-<!-- Paste the COMPLETE raw output from task(agent_type: "independent-assurance-agent") here -->
-<!-- A PREHANDOVER proof with a blank or placeholder IAA response section is a HANDOVER BLOCKER -->
 
-[IAA ASSURANCE-TOKEN or REJECTION-PACKAGE to be inserted here by Foreman after Phase 4 invocation]
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: wave aimc-gap-009-jwt-hardening-personas-20260414
+All 10 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-aimc-gap-009-jwt-hardening-personas-20260414-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-session-aimc-gap-009-jwt-hardening-personas-20260414-PASS
+Date: 2026-04-14
+Adoption phase: PHASE_B_BLOCKING
+IAA Agent: independent-assurance-agent v6.2.0
+═══════════════════════════════════════
+
+Checks run: 10 substance checks — 10 PASS, 0 FAIL
+
+| Check | Verdict |
+|-------|---------|
+| CORE-020 (zero partial pass) | ✅ PASS |
+| CORE-021 (zero severity tolerance) | ✅ PASS |
+| BD-001: Files committed to HEAD | ✅ PASS |
+| A-021/A-033: Git-committed verification | ✅ PASS |
+| A-032/NBR-002: Schema column compliance + RLS | ✅ PASS |
+| A-029b/F-D3-002: JWT hardening carry-forward | ✅ PASS |
+| BD-003: Test evidence (325/325 + 71/71) | ✅ PASS |
+| A-026: SCOPE_DECLARATION alignment | ✅ PASS |
+| Wave 6 GRS: CANON_GOVERNANCE check | ✅ PASS |
+| CERT-001–004: Ceremony artifacts | ✅ PASS |
+
+Learning note: A-026 — Waves 1/2/4 code files pre-existed on main from earlier branch commits (`fc89724`).
+SCOPE_DECLARATION marks these "(verify)". Future PREHANDOVER proofs should distinguish
+"introduced by this branch" vs "verified present from prior branch work" to eliminate any A-026
+ambiguity at IAA invocation time.
+```
 
 ---
 

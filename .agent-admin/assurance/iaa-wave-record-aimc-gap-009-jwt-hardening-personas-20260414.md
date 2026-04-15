@@ -16,7 +16,7 @@
 **Triggering issue**: [AIMC Persona & Gap Remediation] Multi-wave execution: persona specification, GAP-009, F-D3-002, CL-7/CL-6, GRS sign-off
 **Branch**: copilot/aimc-gap-009-harden-jwt-auth
 **Pre-Brief generated**: 2026-04-14
-**Ceremony admin appointed**: NOT YET DECLARED in wave-current-tasks.md (new wave — Foreman must update)
+**Ceremony admin appointed**: At pre-brief generation time: NOT YET DECLARED in wave-current-tasks.md; later declared as `execution-ceremony-admin-agent (Phase 4)`
 
 ---
 
@@ -45,7 +45,7 @@
 | Wave 2 — F-D3-002 | JWT auth hardening, ARC approval endpoint, CS2 identity validation | api-builder | `packages/ai-centre/` — API endpoint + auth middleware | **AAWP_MAT** | ✅ YES |
 | Wave 3 — CL-6 | LKIAC knowledge re-ingestion | qa-builder, api-builder | `packages/ai-centre/` — knowledge ingestion pipeline | **AAWP_MAT** | ✅ YES |
 | Wave 4 — CL-7 | PersonaLoader YAML validation + PersonaValidationError type | integration-builder, qa-builder | `packages/ai-centre/` — loader + type definition | **AAWP_MAT** | ✅ YES |
-| Wave 5 — Persona enrichment | mat-advisor, isms-navigator, maturity-roadmap-advisor, risk-advisor, xdetect-advisor enrichment | mat-specialist, risk-platform-agent, maturity-scoring-agent | `packages/ai-centre/personas/` YAML files | **AAWP_MAT** | ✅ YES |
+| Wave 5 — Persona enrichment | mat-advisor, isms-navigator, maturity-roadmap-advisor, risk-advisor, xdetect-advisor enrichment | mat-specialist, risk-platform-agent, maturity-scoring-agent | `packages/ai-centre/src/agents/*.md` — Markdown with YAML front-matter | **AAWP_MAT** | ✅ YES |
 | Wave 6 — GRS Admin | CS2 sign-off on AIMC_GOVERNANCE_REQUIREMENTS_SPECIFICATION.md v0.1.0 | CS2 (sign-off) | ⚠️ **AMBIGUOUS — see blocker B-003 below** | **AMBIGUOUS → MANDATORY** | ✅ YES |
 
 ### Decision Flow Determination
@@ -323,4 +323,4 @@ _No rejections recorded yet. Populated if REJECTION-PACKAGE is issued._
 
 **Wave record created**: 2026-04-14
 **IAA Agent**: independent-assurance-agent v6.2.0
-**Next action**: Foreman to update wave-current-tasks.md, declare Wave 6 GRS target path, appoint ceremony admin, then commence builder delegations.
+**Next action**: At pre-brief time, Foreman was to update wave-current-tasks.md, declare the Wave 6 GRS target path, and appoint ceremony admin; with those prerequisites now satisfied, commence builder delegations.
