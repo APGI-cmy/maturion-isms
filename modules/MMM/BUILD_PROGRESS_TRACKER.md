@@ -2,8 +2,8 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-04-14  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14)
+**Last Updated**: 2026-04-15  
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — This is the designated primary operational monitor for MMM stage progress. CS2 should use this document as the main live progress dashboard.  
@@ -28,7 +28,7 @@ error from the original governance layer-down. The module is MMM (Maturity Model
 | Stage 0 | App Description | Stage 1 | App Description | COMPLETE |
 | Stage 1 | FRS | Stage 3 | FRS | COMPLETE |
 | Stage 1.5 | TRS | Stage 4 | TRS | COMPLETE |
-| Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS — pending CS2 approval |
+| Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS — artifacts produced, pending CS2 approval |
 | Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | NOT_STARTED |
 | Stage 4 | Builder Appointment | Stage 11 | Builder Appointment | NOT_STARTED |
 | Stage 5 | Build | Stage 12 | Build | NOT_STARTED (partial AIMC artifact) |
@@ -380,16 +380,16 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 4 (TRS) IN_PROGRESS — TRS artifact produced, pending CS2 approval  
-**Overall Progress**: ~33% complete (Stages 1–3 formally closed; Stage 4 TRS produced pending approval; Stages 5–12 not started)  
-**Blockers**: None. Stage 4 TRS artifacts at `modules/MMM/03-trs/` produced. Awaiting CS2 approval before Stage 5 Architecture gate-pass.  
+**Current Stage**: Stage 5 (Architecture) IN_PROGRESS — All architecture artifacts produced, pending CS2 review and approval  
+**Overall Progress**: ~42% complete (Stages 1–4 formally closed and CS2-approved; Stage 5 Architecture artifacts produced pending CS2 approval; Stages 6–12 not started)  
+**Blockers**: None. Stage 5 Architecture artifacts fully produced at `modules/MMM/04-architecture/`. Awaiting CS2 formal approval before Stage 6 QA-to-Red gate-pass.  
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.  
-**Open Questions**: 2 OPEN — OQ-002 (legacy UI, Architecture), OQ-003 (duplication, Architecture). OQ-001 **RESOLVED** at Stage 4 TRS (CONNECTIVITY-REQUIRED decision, TR-039–TR-042). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.  
+**Open Questions**: All RESOLVED through Stage 5. OQ-001 RESOLVED (Stage 4 TRS — CONNECTIVITY-REQUIRED, TR-039–TR-042). OQ-002 RESOLVED (Stage 5 Architecture — capabilities/index.md legacy sub-folder disposition). OQ-003 RESOLVED (Stage 5 Architecture — duplication audit, architecture.md §A12). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.  
 **Next Steps**:
-1. CS2 to review and approve Stage 4 TRS (`modules/MMM/03-trs/technical-requirements-specification.md`)
-2. Proceed to Stage 5 (Architecture) formal gate-pass — resolves OQ-002 and OQ-003
-3. Stage 6 (QA-to-Red) after Architecture gate-pass
-4. Stages 7–10 (PBFAG, Implementation Plan, Builder Checklist, IAA Pre-Brief) in sequence
+1. CS2 to review and formally approve Stage 5 Architecture (`modules/MMM/04-architecture/architecture.md` and companion artifacts)
+2. Stage 6 (QA-to-Red) wave — produce full RED test suite (authorized by maturion-isms#1384)
+3. Stage 7 (PBFAG) after Stage 6 complete
+4. Stages 8–10 (Implementation Plan, Builder Checklist, IAA Pre-Brief) in sequence
 5. Stage 11 (Builder Appointment) after all pre-build gates complete
 
 ---
@@ -401,8 +401,11 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 - [x] Stage 1 approval obtained (CS2, #1298, 2026-04-08)
 - [x] Stage 2 approval confirmed (CS2, maturion-isms#1352, 2026-04-14)
 - [x] Stage 3 FRS artifact produced (2026-04-14, CS2-approved maturion-isms#1366)
-- [x] Stage 4 TRS artifact produced (2026-04-14, pending CS2 approval — maturion-isms#1372)
+- [x] Stage 4 TRS artifact produced (2026-04-14, CS2-approved — maturion-isms#1378 approval carried forward)
 - [x] OQ-001 resolved at Stage 4 TRS (CONNECTIVITY-REQUIRED with queue-and-sync)
+- [x] Stage 5 Architecture artifacts produced (2026-04-14, wave: mmm-stage5-architecture-20260414, 9 artifacts — pending CS2 formal approval)
+- [x] OQ-002 resolved at Stage 5 Architecture (capabilities/index.md legacy sub-folder disposition — architecture.md §A11)
+- [x] OQ-003 resolved at Stage 5 Architecture (duplication audit complete — architecture.md §A12)
 - [x] Evidence artifacts created for each completed stage
 - [x] Module manifest up to date
 - [x] Document control baseline established (see `modules/MMM/_readiness/mmm-document-control-baseline.md`)
