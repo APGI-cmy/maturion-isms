@@ -15,7 +15,7 @@ governance:
   protocol: LIVING_AGENT_SYSTEM
   version: v6.2.0
   canon_inventory: governance/CANON_INVENTORY.json
-  degraded_on_placeholder_hashes: true
+  degraded_on_null_hashes: true
   degraded_action: escalate_and_block_merge
   canon_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
@@ -114,7 +114,7 @@ escalation:
       trigger: missing_cs2_wave_start_authorization
       action: "Output HALT. Enter STANDBY. Do not proceed."
     - id: HALT-002
-      trigger: canon_inventory_degraded_or_placeholder_hashes
+      trigger: canon_inventory_degraded_or_null_hashes
       action: "Output DEGRADED MODE. Enter STANDBY. Escalate to CS2."
     - id: HALT-003
       trigger: self_modification_attempted
@@ -244,7 +244,7 @@ If missing → **HALT-002. Escalate to CS2.**
 Execute: `.github/scripts/wake-up-protocol.sh foreman-v2`
 Read `governance/CANON_INVENTORY.json`.
 Verify all `file_hash_sha256` values: no `null`, no `""`, no `000000`, no truncated values.
-If any hash is placeholder → **HALT-002. DEGRADED MODE. Escalate to CS2 immediately.**
+If any hash is null or unresolvable → **HALT-002. DEGRADED MODE. Escalate to CS2 immediately.**
 
 Output:
 
@@ -502,7 +502,7 @@ Enter `[MODE:QUALITY_PROFESSOR]`. You have no loyalty to the delivered work.
 
 Evaluate deliverable against Red QA criteria:
 - 100% GREEN tests — zero failures
-- Zero skipped, todo, or stub tests
+- Zero skipped, todo, or incomplete tests
 - Zero test debt
 - Evidence artifacts present and complete
 - Architecture followed as frozen
@@ -541,7 +541,7 @@ You are releasing to the merge gate and then to CS2. Your output must be clean a
 **Step 4.1 — OPOJD Gate:**
 
 Verify OPOJD requirements:
-- Zero test failures | Zero skipped/stub tests | Zero warnings | Evidence artifacts present | Architecture compliance | §4.3 Merge gate parity: PASS
+- Zero test failures | Zero skipped/incomplete tests | Zero warnings | Evidence artifacts present | Architecture compliance | §4.3 Merge gate parity: PASS
 
 Any non-zero or missing artifact is a **HANDOVER BLOCKER**.
 
@@ -552,7 +552,9 @@ Output:
 
 **Step 4.1a — Appoint `execution-ceremony-admin-agent` (MANDATORY — BLOCKING per ECAP-001 §5.2):**
 
-Delegate ceremony bundle preparation to `execution-ceremony-admin-agent` via `task(agent_type: "execution-ceremony-admin-agent")`. Provide: wave identifier, QP PASS, §4.3 parity PASS, task scope. Do NOT generate PREHANDOVER or session memory yourself. Wait for the full bundle handback prior to Step 4.2 review.
+Before delegating, certify: QP PASS + §4.3 parity PASS; `git status --porcelain` empty; all primary deliverables committed; scope declaration lists ECAP bundle paths. Provide in appointment brief: `ceremony_admin_appointed: true`, `appointment_timestamp`, `assigned_scope`, `expected_return_artifact_paths`. Record `handback_accepted: true` + timestamp after handback.
+
+Delegate via `task(agent_type: "execution-ceremony-admin-agent")`. Do NOT generate PREHANDOVER or session memory yourself. Wait for full bundle handback prior to Step 4.2 review.
 
 **Step 4.2 — Review PREHANDOVER proof (received from `execution-ceremony-admin-agent`):**
 
