@@ -234,3 +234,40 @@ Adoption phase: PHASE_B_BLOCKING
 **IAA Session Memory Reference**: To be written to `.agent-workspace/independent-assurance-agent/memory/` post-verdict.
 **Wave Record Authority**: IAA-only write authority. ECAP must not modify this file.
 **Immutability**: This wave record entry is authoritative and may not be altered post-commit.
+
+---
+
+## TOKEN
+
+### RE-INVOCATION ASSURANCE-TOKEN — 2026-04-15
+
+**PR**: `copilot/fix-execution-ceremony-admin-agent-again`
+**Wave**: ecap-governance-hardening-20260415
+**Re-invocation context**: FAIL-A-023 resolved — commit 7366865 added `## Ripple/Cross-Agent Assessment` section to PREHANDOVER-session-059-20260415.md
+
+**Re-verification scope**:
+- A-023 (Ripple/Cross-Agent Assessment section): NOW PASS ✅ — Section present at commit 7366865 with full substance (names foreman-v2-agent.md Step 4.1a, explains C3/C5 rationale, confirms no other contracts affected)
+- All 19 prior PASS checks: UNCHANGED ✅ — Commit 7366865 touched only PREHANDOVER file (+12 insertions); no regression in ECAP contract, Foreman contract, Tier 2 knowledge, or session memory
+
+**Final tally**: 20 checks, 20 PASS, 0 FAIL
+
+**Merge gate parity**: PASS ✅
+
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/fix-execution-ceremony-admin-agent-again
+  (execution-ceremony-admin-agent contract hardening — issue #1380
+   RE-INVOCATION: FAIL-A-023 resolved)
+All 20 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-059-20260415-PASS
+Adoption phase: PHASE_B_BLOCKING
+═══════════════════════════════════════
+```
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-059-20260415-PASS
+
+**Token authority**: IAA-only. ECAP must not write tokens or verdicts (ECAP-001/ECAP-002).
+**Merge authority**: CS2 ONLY (@APGI-cmy)
+**Token written**: 2026-04-15
