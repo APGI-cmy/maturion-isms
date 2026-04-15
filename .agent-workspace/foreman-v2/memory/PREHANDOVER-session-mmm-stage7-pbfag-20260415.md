@@ -150,7 +150,7 @@ This wave produces no governance canon changes — pre-build assessment artifact
 
 `iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-stage7-pbfag-20260415.md`
 
-**IAA Verdict**: ⏳ PENDING — Foreman invokes IAA after committing ceremony bundle.
+**IAA Verdict**: ✅ PASS — IAA-session-mmm-stage7-pbfag-20260415-PASS
 
 ## IAA Agent Response (verbatim)
 <!-- MANDATORY PER S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) -->
@@ -158,7 +158,26 @@ This wave produces no governance canon changes — pre-build assessment artifact
 <!-- A PREHANDOVER proof with a blank or placeholder IAA response section is a HANDOVER BLOCKER -->
 <!-- ECAP does NOT paste this — Foreman pastes verbatim IAA output here after invocation -->
 
-⏳ PENDING — Foreman invokes IAA and pastes verbatim ASSURANCE-TOKEN or REJECTION-PACKAGE block here.
+```
+═══════════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: Wave mmm-stage7-pbfag-20260415 | Issue maturion-isms#1387
+Branch: copilot/fix-253484265-1108482416-db6ffe00-4736-4d12-a8ba-ca000c4295c5
+
+All 22 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+
+Token reference: IAA-session-mmm-stage7-pbfag-20260415-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage7-pbfag-20260415-PASS
+
+Adoption phase: PHASE_B_BLOCKING
+Structural advisory: OVL-PBG-009 — Legacy directory numbering (modules/MMM/04-architecture/)
+  — advisory only, not blocking, flagged for CS2 migration planning.
+═══════════════════════════════════════════════════════════════
+```
+
+Token written to wave record: `.agent-admin/assurance/iaa-wave-record-mmm-stage7-pbfag-20260415.md` at SHA a8d2b0c ✅
+`PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage7-pbfag-20260415-PASS` present as standalone line in `## TOKEN` section ✅
 
 ---
 
@@ -187,10 +206,10 @@ grep "PHASE_A_ADVISORY" .agent-admin/assurance/iaa-wave-record-mmm-stage7-pbfag-
 
 ```
 iaa_token_self_cert_guard:
-  token_file_exists: PENDING — awaiting IAA invocation
-  phase_b_blocking_token_present: PENDING — awaiting IAA invocation
-  phase_a_advisory_absent: PENDING — awaiting IAA invocation
-  guard_result: PENDING — Foreman completes after IAA verdict
+  token_file_exists: PASS — .agent-admin/assurance/iaa-wave-record-mmm-stage7-pbfag-20260415.md exists at SHA a8d2b0c
+  phase_b_blocking_token_present: PASS — PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage7-pbfag-20260415-PASS (non-PENDING, standalone line)
+  phase_a_advisory_absent: PASS — no PHASE_A_ADVISORY match in wave record
+  guard_result: PASS — token ceremony complete; IAA-session-mmm-stage7-pbfag-20260415-PASS issued
 ```
 
 ---
