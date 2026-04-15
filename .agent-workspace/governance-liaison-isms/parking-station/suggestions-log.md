@@ -101,5 +101,6 @@
 | 2026-04-12 | governance-liaison-isms | session-062 | [SESSION-END] | Pre-session git log check to auto-detect ceremony-incomplete prior sessions on branch | session-062-20260412.md |
 | 2026-04-09 | governance-liaison-isms | session-062 | ALIGNMENT | CI ripple PR should atomically update GOVERNANCE_ALIGNMENT_INVENTORY.json to close auto-close conditions in one step | session-062-20260409.md |
 | 2026-04-13 | governance-liaison-isms | session-063 | SESSION-END | Add JSON validity check for GOVERNANCE_ALIGNMENT_INVENTORY.json to prevent structural corruption from accumulating across sessions | session-063-20260413.md |
+| 2026-04-14 | governance-liaison-isms | session-064 | [ALIGNMENT] | CI ripple workflow should auto-update GOVERNANCE_ALIGNMENT_INVENTORY.json post-merge to eliminate manual follow-up | session-064-20260414.md |
 | 2026-04-14 | governance-liaison-isms | session-064 | SESSION-END | T-G-001 scope ambiguity in audit plan should be resolved — designation of canonical scope (persona review vs ARC workflow) prevents future dual-review overhead | session-064-20260414.md |
 | 2026-04-14 | governance-liaison-isms | session-064 | SESSION-END | Add scheduled reminder to re-audit T-D-003 after CL-12 module integration completes (zero approved items currently; structural gap resolves only after first ARC approval cycle) | session-064-20260414.md |

@@ -1,8 +1,8 @@
 # Tier 2 Knowledge Index — execution-ceremony-admin-agent
 
 **Agent**: execution-ceremony-admin-agent
-**Knowledge Version**: 1.1.0
-**Last Updated**: 2026-04-13
+**Knowledge Version**: 1.2.0
+**Last Updated**: 2026-04-15
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ## Required Files
@@ -10,6 +10,10 @@
 | File | Description | Status |
 |------|-------------|--------|
 | `index.md` | This file — knowledge directory index | PRESENT |
+| `bundle-checklist.md` | Exact bundle contents, required fields, handback contents, readiness gate | PRESENT |
+| `boundary-decision-rules.md` | Admin-allowed vs forbidden substantive actions, escalation decision tree | PRESENT |
+| `handoff-examples.md` | Annotated good/bad handoff examples | PRESENT |
+| `foreman-ecap-appointment-template.md` | Minimal appointment brief template for Foreman use | PRESENT |
 
 ## Key Reference Documents
 
@@ -30,7 +34,8 @@
 ceremony bundle preparation only: PREHANDOVER proof assembly, session memory assembly,
 evidence artifact collation, and §4.3c commit-state verification.
 
-**It does NOT invoke IAA. It does NOT issue verdicts. It does NOT build.**
+**It does NOT invoke IAA. It does NOT issue verdicts. It does NOT build.
+It does NOT commit primary substantive deliverables. Escalation is to Foreman only.**
 
 ## Three-Role Split Invariants
 
