@@ -184,7 +184,7 @@ maturion-isms#1378 (Stage 5 Architecture wave-start authorization, 2026-04-14).
 
 **Completion Date**: 2026-04-14  
 **Approval Required**: Yes
-- [ ] Approved by designated authority
+- [x] Approved by designated authority
 **Approval Date**: N/A
 **Approved By**: N/A
 **Approval Reference**: N/A
