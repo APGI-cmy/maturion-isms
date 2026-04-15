@@ -1,4 +1,61 @@
-# Wave Current Tasks — MMM Stage 4
+# Wave Current Tasks — MMM Stage 5
+
+wave: mmm-stage5-architecture-20260414
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-stage5-architecture-20260414.md
+branch: copilot/mmm-stage-5-wave-start-authorization
+issue: maturion-isms#1378
+status: COMPLETE — Phase 4 ceremony complete, IAA ASSURANCE-TOKEN issued, awaiting CS2 review
+
+## Active Wave: MMM Stage 5 — Architecture
+
+### Status
+COMPLETE — All deliverables produced. IAA ASSURANCE-TOKEN issued (Session 212). Awaiting CS2 review.
+
+CS2 Authorization: maturion-isms#1378 — opened by @APGI-cmy (CS2 = Johan Ras), 2026-04-14.
+Stage 4 TRS CS2 approval carried forward per issue #1378.
+
+IAA Pre-Brief: COMMITTED (SHA ad5369d)
+IAA ASSURANCE-TOKEN: IAA-session-212-mmm-stage5-architecture-20260414-PASS (issued Session 212)
+
+### Tasks
+- [x] Phase 1 — Identity & Preflight complete
+- [x] IAA Pre-Brief invoked and wave record committed (SHA ad5369d)
+- [x] Wave-current-tasks.md updated for Stage 5
+- [x] Scope declaration created (updated with all artifacts)
+- [x] mat-specialist delegated for T-01 through T-11
+- [x] mat-specialist deliverables received (first pass)
+- [x] QP evaluation — FAIL (5 missing artifacts)
+- [x] QP remediation order issued to mat-specialist
+- [x] mat-specialist remediation complete (all 5 artifacts produced)
+- [x] QP evaluation — PASS (all artifacts present, verified)
+- [x] Phase 4 ceremony: PREHANDOVER + session memory
+- [x] IAA handover audit complete (Session 211 REJECTION-PACKAGE OVL-PBG-007 → Session 212 PASS)
+- [x] ASSURANCE-TOKEN issued: IAA-session-212-mmm-stage5-architecture-20260414-PASS
+
+### Deliverables (T-01 through T-11) — ALL COMPLETE
+
+| # | Task | Deliverable | Status |
+|---|------|-------------|--------|
+| T-01 | Canonical architecture.md (Stage 5 quality) | `modules/MMM/04-architecture/architecture.md` | ✅ COMPLETE |
+| T-02 | capabilities/ disposition per OQ-003 | `modules/MMM/04-architecture/capabilities/index.md` | ✅ COMPLETE |
+| T-03 | TRS → Architecture traceability | in architecture.md §A14 (66/66 TRs) | ✅ COMPLETE |
+| T-04 | Architecture completeness PASS | in architecture.md §A13 | ✅ COMPLETE |
+| T-05 | OQ-002 resolution | in architecture.md §A11 | ✅ COMPLETE |
+| T-06 | OQ-003 resolution | in architecture.md §A12 | ✅ COMPLETE |
+| T-07 | AIMC / PIT / KUC boundary freeze | in architecture.md §A6 | ✅ COMPLETE |
+| T-08 | Runtime / deployment topology | in architecture.md §A8 | ✅ COMPLETE |
+| T-09 | State persistence architecture | in architecture.md §A9 | ✅ COMPLETE |
+| T-10 | BUILD_PROGRESS_TRACKER updated | `modules/MMM/BUILD_PROGRESS_TRACKER.md` | ✅ COMPLETE |
+| T-11 | Harvest map updated OQ-002/OQ-003 | `modules/MMM/harvest-map/harvest-map.md` | ✅ COMPLETE |
+| T-R1 | COMPLIANCE_SCOPE.md (TR-037) | `modules/MMM/04-architecture/COMPLIANCE_SCOPE.md` | ✅ COMPLETE |
+| T-R2 | CONTROL_MAPPING.md (TR-037) | `modules/MMM/04-architecture/CONTROL_MAPPING.md` | ✅ COMPLETE |
+| T-R3 | EVIDENCE_CATALOG.md (TR-037) | `modules/MMM/04-architecture/EVIDENCE_CATALOG.md` | ✅ COMPLETE |
+| T-R4 | APP_STARTUP_REQUIREMENTS.md (TR-064) | `modules/MMM/04-architecture/APP_STARTUP_REQUIREMENTS.md` | ✅ COMPLETE |
+| T-R5 | .env.example (TR-053) | `modules/MMM/.env.example` | ✅ COMPLETE |
+
+---
+
+## Prior Wave Record (MMM Stage 4 — COMPLETE)
 
 wave: mmm-stage4-trs-20260414
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-stage4-trs-20260414.md
