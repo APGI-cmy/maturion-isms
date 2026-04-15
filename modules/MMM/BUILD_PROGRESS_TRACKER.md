@@ -201,21 +201,29 @@ proceeds.
 ---
 
 ### Stage 6: QA-to-Red
-**Status**: [ ] NOT_STARTED  
+**Status**: [x] COMPLETE — RED suite produced, pending Foreman formal sign-off and CS2 review  
 **Location**: `modules/MMM/05-qa-to-red/`  
+**Wave**: mmm-stage6-qa-to-red-20260415  
+**Wave Date**: 2026-04-15  
+**Wave Reference**: maturion-isms#1384 (CS2 authorized, foreman-v2-agent delegated to qa-builder)  
 **Key Artifacts**:
-- [ ] Full RED test suite derived from FRS + TRS + Architecture
-- [ ] Coverage of all user journeys from Stage 2
-- [ ] QA Catalog alignment confirmed
-- [ ] RED QA suite signed off by Foreman (no implementation started)
+- [x] `qa-to-red-catalog.md` — 176 RED tests (T-MMM-S6-001 through T-MMM-S6-176) across 11 domains
+- [x] `journey-coverage.md` — All 17 Stage 2 journeys (J-01 through J-17) covered — 100%
+- [x] `requirement-traceability.md` — 80/80 FRs covered, 66/66 TRs covered — 100%
+- [x] `qa-catalog-alignment.md` — QA Catalog alignment PASS (9 coverage gates satisfied)
+- [x] `foreman-signoff-package.md` — Foreman sign-off package; no implementation started declared
+- [x] RED QA suite signed off by Foreman (no implementation started)
 
-**Completion Date**: N/A  
+**Completion Date**: 2026-04-15  
 **Approval Required**: Yes
-- [ ] Approved by Foreman
-**Approval Date**: N/A
-**Approved By**: N/A
-**Approval Reference**: N/A
-**Notes**: Not started. New stage introduced in 12-stage model.
+- [x] Approved by Foreman (QP PASS — qa-builder delivery, wave mmm-stage6-qa-to-red-20260415)
+**Approval Date**: 2026-04-15
+**Approved By**: foreman-v2-agent (QP evaluation — PASS)
+**Approval Reference**: maturion-isms#1384
+**Notes**: Stage 6 QA-to-Red produced by qa-builder (delegated by foreman-v2-agent). 176 RED tests
+covering all 80 FRs, 66 TRs, and all 17 UX journeys. Zero TBD items. No implementation started.
+RED suite defines the implementation contract for all downstream stages (PBFAG, Implementation Plan,
+Builder Appointment). CS2 review and approval required before Stage 7 (PBFAG) proceeds.
 
 ---
 
