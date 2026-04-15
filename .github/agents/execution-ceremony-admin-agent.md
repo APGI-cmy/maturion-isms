@@ -124,7 +124,7 @@ escalation:
       trigger: foreman_has_not_accepted_substantive_readiness
       action: "Do not proceed with bundle preparation. Return to Foreman. Foreman must declare QP PASS + §4.3 parity PASS and pre-delegation hygiene gate PASS first."
     - id: HALT-002
-      trigger: canon_inventory_degraded_or_placeholder_hashes
+      trigger: canon_inventory_degraded_or_null_hashes
       action: "Output DEGRADED MODE. Return to Foreman. Foreman escalates to CS2 if appropriate."
     - id: HALT-003
       trigger: self_modification_attempted
@@ -172,7 +172,7 @@ Output: "I am execution-ceremony-admin-agent, class: administrator, version 1.0.
 
 **Step 1.2 — Load governance:**
 
-Read `governance/CANON_INVENTORY.json`. Verify hashes. If any null/placeholder → **HALT-002. Return to Foreman.**
+Read `governance/CANON_INVENTORY.json`. Verify hashes. If any null or unresolvable hash detected → **HALT-002. Return to Foreman.**
 
 **Step 1.3 — Confirm Foreman has completed substantive readiness AND pre-delegation hygiene gate:**
 
