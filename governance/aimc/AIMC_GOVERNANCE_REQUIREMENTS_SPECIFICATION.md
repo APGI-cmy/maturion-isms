@@ -1,7 +1,7 @@
 # AI Management Centre — Governance Requirements Specification (GRS)
 
 **Document Type**: Foundation Artefact — Wave 1 Deliverable  
-**Status**: APPROVED — CS2 Sign-Off Recorded (Wave 6, 2026-04-14)  
+**Status**: DRAFT — PENDING CS2 INDEPENDENT SIGN-OFF  
 **Version**: 0.1.0  
 **Effective Date**: 2026-02-23  
 **Owner**: Maturion Engineering Leadership (Johan Ras, CS2)  
@@ -17,14 +17,19 @@
 
 **CS2 Sign-Off**:
 
-> **APPROVED** — Johan Ras (CS2 / @APGI-cmy)  
-> **Date**: 2026-04-14  
-> **Wave Reference**: Wave 6 (AIMC Persona & Gap Remediation Multi-wave execution, issue: [AIMC Persona & Gap Remediation])  
-> **Authorization**: CS2 opened triggering issue and authorized all 6 remediation waves. AIMC implementation is verified complete via Phase 2 audit (PR #1367 — PASS WITH GAPS resolved by this wave).  
-> **Retroactive**: This sign-off is retroactive from the original DRAFT date of 2026-02-23. All AIMC implementation waves (1–8) proceeded under CS2 authority per `LIVING_AGENT_SYSTEM.md` v6.2.0 Wave Model.
+> **STATUS: PENDING INDEPENDENT CS2 SIGN-OFF**
+>
+> This document was prepared for CS2 review under Wave 6 of the AIMC Persona & Gap Remediation wave (issue #1375). The implementation waves (1–5) have been executed and are traceable via `.agent-admin/assurance/iaa-wave-record-aimc-gap-009-jwt-hardening-personas-20260414.md` (ASSURANCE-TOKEN: PASS).
+>
+> **Required for closure**: CS2 (@APGI-cmy) to provide an independent approval event — one of:
+> - An explicit CS2 issue comment on issue #1375 or this PR setting status to `APPROVED`
+> - An explicit CS2 PR review approval on PR #1376
+> - A direct CS2 sign-off commit/reference citing this document
+>
+> Until one of the above is recorded, this document remains `DRAFT`.
 
-**Previously blocked by**:
-- ~~CS2 review and sign-off~~ — RESOLVED 2026-04-14
+**Blocked by**:
+- CS2 independent review and sign-off — PENDING (see sign-off section above)
 
 ---
 
