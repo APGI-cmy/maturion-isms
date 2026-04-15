@@ -552,7 +552,9 @@ Output:
 
 **Step 4.1a — Appoint `execution-ceremony-admin-agent` (MANDATORY — BLOCKING per ECAP-001 §5.2):**
 
-Delegate ceremony bundle preparation to `execution-ceremony-admin-agent` via `task(agent_type: "execution-ceremony-admin-agent")`. Provide: wave identifier, QP PASS, §4.3 parity PASS, task scope. Do NOT generate PREHANDOVER or session memory yourself. Wait for the full bundle handback prior to Step 4.2 review.
+Before delegating, certify: QP PASS + §4.3 parity PASS; `git status --porcelain` empty; all primary deliverables committed; scope declaration lists ECAP bundle paths. Provide in appointment brief: `ceremony_admin_appointed: true`, `appointment_timestamp`, `assigned_scope`, `expected_return_artifact_paths`. Record `handback_accepted: true` + timestamp after handback.
+
+Delegate via `task(agent_type: "execution-ceremony-admin-agent")`. Do NOT generate PREHANDOVER or session memory yourself. Wait for full bundle handback prior to Step 4.2 review.
 
 **Step 4.2 — Review PREHANDOVER proof (received from `execution-ceremony-admin-agent`):**
 
