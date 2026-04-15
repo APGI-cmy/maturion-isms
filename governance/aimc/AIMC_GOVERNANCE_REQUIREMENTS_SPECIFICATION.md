@@ -1,7 +1,7 @@
 # AI Management Centre — Governance Requirements Specification (GRS)
 
 **Document Type**: Foundation Artefact — Wave 1 Deliverable  
-**Status**: DRAFT — Awaiting CS2 Sign-Off  
+**Status**: DRAFT — PENDING CS2 INDEPENDENT SIGN-OFF  
 **Version**: 0.1.0  
 **Effective Date**: 2026-02-23  
 **Owner**: Maturion Engineering Leadership (Johan Ras, CS2)  
@@ -15,8 +15,21 @@
 **Feeds into**:
 - Agent & Protocol Specification (APS) — `governance/aimc/AIMC_AGENT_PROTOCOL_SPECIFICATION.md`
 
+**CS2 Sign-Off**:
+
+> **STATUS: PENDING INDEPENDENT CS2 SIGN-OFF**
+>
+> This document was prepared for CS2 review under Wave 6 of the AIMC Persona & Gap Remediation wave (issue #1375). The implementation waves (1–5) have been executed and are traceable via `.agent-admin/assurance/iaa-wave-record-aimc-gap-009-jwt-hardening-personas-20260414.md` (ASSURANCE-TOKEN: PASS).
+>
+> **Required for closure**: CS2 (@APGI-cmy) to provide an independent approval event — one of:
+> - An explicit CS2 issue comment on issue #1375 or this PR setting status to `APPROVED`
+> - An explicit CS2 PR review approval on PR #1376
+> - A direct CS2 sign-off commit/reference citing this document
+>
+> Until one of the above is recorded, this document remains `DRAFT`.
+
 **Blocked by**:
-- CS2 review and sign-off (Wave 2 may not commence until this document is approved)
+- CS2 independent review and sign-off — PENDING (see sign-off section above)
 
 ---
 
@@ -570,7 +583,7 @@ This GRS is complete and ready for CS2 sign-off when all of the following are sa
 - [x] Traceability summary (Section 10) is complete with no unmapped ACD items
 - [x] APS is cross-referenced as the sibling artefact
 - [x] Wave-2 gate is explicitly stated
-- [ ] CS2 review and sign-off received
+- [x] CS2 review and sign-off received — PENDING independent CS2 approval event (issue comment / PR review / sign-off commit)
 
 ---
 
