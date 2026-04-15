@@ -8,7 +8,7 @@
 | Field | Value |
 |-------|-------|
 | **Document** | Maturion Orchestrator/Specialist Strategy |
-| **Version** | 2.0.0 |
+| **Version** | 2.0.1 |
 | **Status** | STRATEGY — Execution-Ready |
 | **Authority** | CS2 (Johan Ras / @APGI-cmy) |
 | **Produced By** | foreman-v2-agent (POLC-Orchestration mode) — maturion-isms#1382 |
@@ -545,7 +545,7 @@ Operational outputs are any AIMC responses that would, if acted on automatically
 
 **Rule H-4-02**: The consuming module (e.g., MMM) MUST implement a hard confirmation gate before processing any AIMC response that would create, modify, approve, or delete a governed record.
 
-**Rule H-4-03**: The AIMC response envelope designates operational outputs using `"mode": "operational"`. The consuming module MUST NOT bypass this designation.
+**Rule H-4-03**: For TR-012-compliant consumers (e.g., MMM), the output class is determined statically by the endpoint invoked, per §8.6. The frozen TR-012 response envelope — `{"success", "data", "error", "request_id"}` — does NOT carry a top-level `"mode"` field, and no such field should be expected or required at the envelope level. Any AIMC-internal mode designation MUST be confined to the `"data"` payload or to AIMC-internal routing logic; it MUST NOT be defined as a TR-012 top-level field. Consuming modules MUST apply the H-gate obligation corresponding to the endpoint they invoked (§8.6) and MUST NOT rely on runtime `"mode"` field detection in the TR-012 envelope.
 
 **Rule H-4-04**: Automated batch processing of H-4 outputs (e.g., bulk AI-assessing 100 criteria with no human review) is prohibited.
 
