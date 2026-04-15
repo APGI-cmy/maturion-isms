@@ -89,8 +89,8 @@
 | C1 | IAA Wave Record (PRE-BRIEF) | `.agent-admin/assurance/iaa-wave-record-mmm-stage7-pbfag-20260415.md` | 54031bf | ✅ Committed |
 | C2 | Scope Declaration | `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-stage7-pbfag.md` | 277becf | ✅ Committed |
 | C3 | Wave Current Tasks | `.agent-workspace/foreman-v2/personal/wave-current-tasks-mmm-stage7-pbfag-20260415.md` | 277becf | ✅ Committed |
-| C4 | PREHANDOVER Proof (ECAP bundle) | `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-mmm-stage7-pbfag-20260415.md` | PENDING COMMIT | ⏳ Assembled |
-| C5 | Session Memory (this file — ECAP bundle) | `.agent-workspace/execution-ceremony-admin-agent/bundles/session-mmm-stage7-pbfag-20260415.md` | PENDING COMMIT | ⏳ Assembled |
+| C4 | PREHANDOVER Proof (ECAP bundle) | `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-mmm-stage7-pbfag-20260415.md` | ccae616 | ✅ Committed |
+| C5 | Session Memory (this file — ECAP bundle) | `.agent-workspace/execution-ceremony-admin-agent/bundles/session-mmm-stage7-pbfag-20260415.md` | ccae616 | ✅ Committed |
 
 ## Quality Professor Verdict
 - QP_verdict: PASS (confirmed by Foreman after mat-specialist delivery)
@@ -114,12 +114,14 @@
 - trigger_category: PRE_BUILD_STAGE_MODEL (mandatory)
 - iaa_mandatory: YES — MANDATORY
 - expected_token: IAA-session-mmm-stage7-pbfag-20260415-PASS
+- issued_token: IAA-session-mmm-stage7-pbfag-20260415-PASS ✅ ISSUED
 
 ## Stage Progression Record
 - stage_6_token: IAA-session-mmm-stage6-qa-to-red-20260415-PASS (Stage 6 QA-to-Red confirmed PASS)
 - stage_7_pbfag_verdict: EXPLICIT PASS (in modules/MMM/06-pbfag/pbfag-checklist.md)
+- stage_7_iaa_token: IAA-session-mmm-stage7-pbfag-20260415-PASS ✅ ISSUED (2026-04-15)
 - stage_7_tracker_entry: Stage 7 COMPLETE recorded in BUILD_PROGRESS_TRACKER.md at a434634
-- next_stage: Stage 8 (Implementation Plan) — authorized upon IAA ASSURANCE-TOKEN receipt
+- next_stage: Stage 8 (Implementation Plan) — AUTHORIZED (IAA ASSURANCE-TOKEN issued; pending CS2 merge approval)
 
 ## AGENT_HANDOVER_AUTOMATION Version
 - automation_version_cited: AGENT_HANDOVER_AUTOMATION.md v1.2.0
