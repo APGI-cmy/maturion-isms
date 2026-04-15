@@ -583,7 +583,7 @@ This GRS is complete and ready for CS2 sign-off when all of the following are sa
 - [x] Traceability summary (Section 10) is complete with no unmapped ACD items
 - [x] APS is cross-referenced as the sibling artefact
 - [x] Wave-2 gate is explicitly stated
-- [x] CS2 review and sign-off received — Johan Ras (CS2 / @APGI-cmy), 2026-04-14, Wave 6
+- [ ] CS2 review and sign-off received — PENDING independent CS2 approval event (issue comment / PR review / sign-off commit)
 
 ---
 
