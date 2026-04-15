@@ -82,7 +82,7 @@ a maintenance/degraded screen rather than allowing partial operation.
 - **Description**: Verify that the Supabase database schema is current — i.e., the migration
   version matches the expected version for this application release.
 - **Validation**:
-  1. Query `SELECT version FROM supabase_migrations ORDER BY version DESC LIMIT 1` via service role.
+  1. Query `SELECT version FROM supabase_migrations.schema_migrations ORDER BY version DESC LIMIT 1` via service role.
   2. Compare returned migration version against `EXPECTED_MIGRATION_VERSION` constant defined in
      the commissioning Edge Function.
   3. Assert versions match (equality check).

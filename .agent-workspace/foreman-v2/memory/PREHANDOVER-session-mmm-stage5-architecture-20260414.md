@@ -79,7 +79,7 @@ CANON_INVENTORY: ALIGNED (200 entries, all hashes valid — verified at Phase 1)
 | OPOJD | PASS |
 | CANON_INVENTORY | ALIGNED |
 | merge_gate_parity | PASS |
-| iaa_audit_token | IAA-session-mmm-stage5-architecture-20260414-PASS |
+| iaa_audit_token | IAA-session-212-mmm-stage5-architecture-20260414-PASS |
 
 ## CS2 Authorization Evidence
 

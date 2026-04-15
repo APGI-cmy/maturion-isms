@@ -28,7 +28,7 @@ error from the original governance layer-down. The module is MMM (Maturity Model
 | Stage 0 | App Description | Stage 1 | App Description | COMPLETE |
 | Stage 1 | FRS | Stage 3 | FRS | COMPLETE |
 | Stage 1.5 | TRS | Stage 4 | TRS | COMPLETE |
-| Stage 2 | Architecture | Stage 5 | Architecture | COMPLETE (pending CS2 approval) |
+| Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS — pending CS2 approval |
 | Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | NOT_STARTED |
 | Stage 4 | Builder Appointment | Stage 11 | Builder Appointment | NOT_STARTED |
 | Stage 5 | Build | Stage 12 | Build | NOT_STARTED (partial AIMC artifact) |
@@ -153,7 +153,7 @@ maturion-isms#1378 (Stage 5 Architecture wave-start authorization, 2026-04-14).
 ---
 
 ### Stage 5: Architecture
-**Status**: [x] COMPLETE — All Stage 5 Architecture artifacts produced (QP remediation wave mmm-stage5-architecture-20260414)  
+**Status**: [ ] IN_PROGRESS — Architecture artifacts produced, pending CS2 review and approval  
 **Location**: `modules/MMM/04-architecture/`  
 **Wave**: mmm-stage5-architecture-20260414  
 **Wave Date**: 2026-04-14  

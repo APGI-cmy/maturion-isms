@@ -4,18 +4,18 @@ wave: mmm-stage5-architecture-20260414
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-stage5-architecture-20260414.md
 branch: copilot/mmm-stage-5-wave-start-authorization
 issue: maturion-isms#1378
-status: COMPLETE — Awaiting Phase 4 ceremony and CS2 review
+status: COMPLETE — Phase 4 ceremony complete, IAA ASSURANCE-TOKEN issued, awaiting CS2 review
 
 ## Active Wave: MMM Stage 5 — Architecture
 
 ### Status
-COMPLETE (artifact production) — Phase 4 ceremony pending.
+COMPLETE — All deliverables produced. IAA ASSURANCE-TOKEN issued (Session 212). Awaiting CS2 review.
 
 CS2 Authorization: maturion-isms#1378 — opened by @APGI-cmy (CS2 = Johan Ras), 2026-04-14.
 Stage 4 TRS CS2 approval carried forward per issue #1378.
 
 IAA Pre-Brief: COMMITTED (SHA ad5369d)
-IAA ASSURANCE-TOKEN: PENDING — to be issued at Phase 4
+IAA ASSURANCE-TOKEN: IAA-session-212-mmm-stage5-architecture-20260414-PASS (issued Session 212)
 
 ### Tasks
 - [x] Phase 1 — Identity & Preflight complete
@@ -28,9 +28,9 @@ IAA ASSURANCE-TOKEN: PENDING — to be issued at Phase 4
 - [x] QP remediation order issued to mat-specialist
 - [x] mat-specialist remediation complete (all 5 artifacts produced)
 - [x] QP evaluation — PASS (all artifacts present, verified)
-- [ ] Phase 4 ceremony: PREHANDOVER + session memory
-- [ ] IAA handover audit complete
-- [ ] ASSURANCE-TOKEN issued
+- [x] Phase 4 ceremony: PREHANDOVER + session memory
+- [x] IAA handover audit complete (Session 211 REJECTION-PACKAGE OVL-PBG-007 → Session 212 PASS)
+- [x] ASSURANCE-TOKEN issued: IAA-session-212-mmm-stage5-architecture-20260414-PASS
 
 ### Deliverables (T-01 through T-11) — ALL COMPLETE
 

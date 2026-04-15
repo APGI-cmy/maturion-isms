@@ -143,7 +143,7 @@ override log, and AI interaction telemetry.
 
 | Evidence Item | Evidence Type | Source Table / Storage | Retention | Notes |
 |--------------|---------------|------------------------|-----------|-------|
-| Role assignment | EVT-013 | `mmm_organisation_users` (role column) + `mmm_audit_logs` (USER_INVITE) | 7 years | Role declared at invitation scope |
+| Role assignment | EVT-013 | `mmm_profiles` (role column) + `mmm_audit_logs` (USER_INVITE) | 7 years | Role declared at invitation scope |
 | Role change | EVT-005 | `mmm_audit_logs` (USER_ROLE_CHANGE) with before/after state | 7 years | ADMIN must authorise role changes |
 | Permission denial (403) | — | Edge Function HTTP response log | Per Vercel/Supabase log retention | HTTP 403 returned; not explicitly stored in `mmm_audit_logs` |
 | Score override authorisation | EVT-008 | `mmm_override_log` + `mmm_audit_logs` (SCORE_OVERRIDE) | 7 years | ADMIN identity mandatory for override |

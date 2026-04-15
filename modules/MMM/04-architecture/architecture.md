@@ -447,6 +447,10 @@ and the database schema. The following transformations are defined:
 The following core tables constitute the MMM data model. All tables reside in the
 `public` schema with `mmm_` namespace prefix per TR-028.
 
+> **Note**: The diagram below is a **conceptual entity model** — the `mmm_` table prefix is
+> omitted for readability. In the actual schema all table names carry the prefix
+> (e.g. `mmm_organisations`, `mmm_frameworks`, `mmm_profiles`, etc.).
+
 ```
 organisations
     │
