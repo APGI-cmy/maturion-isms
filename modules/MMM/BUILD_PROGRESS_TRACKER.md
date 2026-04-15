@@ -33,7 +33,7 @@ error from the original governance layer-down. The module is MMM (Maturity Model
 | Stage 4 | Builder Appointment | Stage 11 | Builder Appointment | NOT_STARTED |
 | Stage 5 | Build | Stage 12 | Build | NOT_STARTED (partial AIMC artifact) |
 | — | (new stage) | Stage 2 | UX Workflow & Wiring Spec | COMPLETE |
-| — | (new stage) | Stage 6 | QA-to-Red | NOT_STARTED |
+| — | (new stage) | Stage 6 | QA-to-Red | COMPLETE — artifacts produced, pending CS2 approval |
 | — | (new stage) | Stage 7 | PBFAG | NOT_STARTED |
 | — | (new stage) | Stage 9 | Builder Checklist | NOT_STARTED |
 | — | (new stage) | Stage 10 | IAA Pre-Brief | NOT_STARTED |
@@ -388,16 +388,16 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 5 (Architecture) IN_PROGRESS — All architecture artifacts produced, pending CS2 review and approval  
-**Overall Progress**: ~42% complete (Stages 1–4 formally closed and CS2-approved; Stage 5 Architecture artifacts produced pending CS2 approval; Stages 6–12 not started)  
-**Blockers**: None. Stage 5 Architecture artifacts fully produced at `modules/MMM/04-architecture/`. Awaiting CS2 formal approval before Stage 6 QA-to-Red gate-pass.  
+**Current Stage**: Stage 6 (QA-to-Red) COMPLETE — RED suite produced and Foreman QP-signed; pending CS2 review and approval  
+**Overall Progress**: ~50% complete (Stages 1–5 artifacts formally closed and CS2-approved; Stage 6 QA-to-Red artifacts produced pending CS2 approval; Stages 7–12 not started)  
+**Blockers**: None. Stage 6 QA-to-Red artifacts fully produced at `modules/MMM/05-qa-to-red/`. IAA ASSURANCE-TOKEN issued (IAA-session-mmm-stage6-qa-to-red-20260415-PASS). Awaiting CS2 formal approval before Stage 7 PBFAG gate-pass.  
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.  
 **Open Questions**: All RESOLVED through Stage 5. OQ-001 RESOLVED (Stage 4 TRS — CONNECTIVITY-REQUIRED, TR-039–TR-042). OQ-002 RESOLVED (Stage 5 Architecture — capabilities/index.md legacy sub-folder disposition). OQ-003 RESOLVED (Stage 5 Architecture — duplication audit, architecture.md §A12). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.  
 **Next Steps**:
-1. CS2 to review and formally approve Stage 5 Architecture (`modules/MMM/04-architecture/architecture.md` and companion artifacts)
-2. Stage 6 (QA-to-Red) wave — produce full RED test suite (authorized by maturion-isms#1384)
-3. Stage 7 (PBFAG) after Stage 6 complete
-4. Stages 8–10 (Implementation Plan, Builder Checklist, IAA Pre-Brief) in sequence
+1. CS2 to review and formally approve Stage 6 QA-to-Red (`modules/MMM/05-qa-to-red/` artifacts)
+2. Stage 7 (PBFAG) wave — pre-build functionality assessment gate
+3. Stage 8 (Implementation Plan) after Stage 7 complete
+4. Stages 9–10 (Builder Checklist, IAA Pre-Brief) in sequence
 5. Stage 11 (Builder Appointment) after all pre-build gates complete
 
 ---
@@ -414,6 +414,8 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 - [x] Stage 5 Architecture artifacts produced (2026-04-14, wave: mmm-stage5-architecture-20260414, 9 artifacts — pending CS2 formal approval)
 - [x] OQ-002 resolved at Stage 5 Architecture (capabilities/index.md legacy sub-folder disposition — architecture.md §A11)
 - [x] OQ-003 resolved at Stage 5 Architecture (duplication audit complete — architecture.md §A12)
+- [x] Stage 6 QA-to-Red artifacts produced (2026-04-15, wave: mmm-stage6-qa-to-red-20260415, 5 artifacts — pending CS2 formal approval)
+- [x] IAA ASSURANCE-TOKEN issued for Stage 6 (IAA-session-mmm-stage6-qa-to-red-20260415-PASS, 2026-04-15)
 - [x] Evidence artifacts created for each completed stage
 - [x] Module manifest up to date
 - [x] Document control baseline established (see `modules/MMM/_readiness/mmm-document-control-baseline.md`)

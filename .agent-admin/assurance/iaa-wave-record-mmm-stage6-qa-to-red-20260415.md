@@ -18,7 +18,7 @@
 **Foreman Request**: Declare trigger categories, FFA checks, PREHANDOVER structure, scope blockers.
 **Wave Context**: MMM Stage 6 QA-to-Red wave. Two scopes:
   - Scope A: BUILD_PROGRESS_TRACKER normalization for Stage 5 approval-readiness — COMPLETE
-  - Scope B: Stage 6 QA-to-Red artifact production (delegated to qa-builder) — IN PROGRESS
+  - Scope B: Stage 6 QA-to-Red artifact production (delegated to qa-builder) — COMPLETE
 
 ---
 
@@ -96,7 +96,7 @@ FAIL-ONLY-ONCE rules that DO apply (A-series — process rules, not code rules):
 | Stage 3 | FRS | ✅ COMPLETE | CS2 approved #1366 — `modules/MMM/02-frs/functional-requirements.md` v0.1.0 confirmed present on branch |
 | Stage 4 | TRS | ✅ COMPLETE | CS2 approved #1378 — `modules/MMM/03-trs/technical-requirements-specification.md` v0.1.0 confirmed present on branch |
 | Stage 5 | Architecture | ⚠️ PRODUCED / PENDING CS2 MERGE | `modules/MMM/04-architecture/architecture.md` committed (wave mmm-stage5-architecture-20260414); IAA ASSURANCE-TOKEN issued (IAA-session-212-mmm-stage5-architecture-20260414-PASS); formal CS2 merge not yet completed. Stage 6 authorized by CS2 (#1384) while Stage 5 merge is pending — this constitutes the CS2-approved OVL-PBG-008 exception. **IAA will verify at handover that either: (a) Stage 5 has been formally merged to main, OR (b) issue #1384 is re-confirmed as the explicit CS2 exception for Stage 6 proceeding before Stage 5 merge.** |
-| Stage 6 | QA-to-Red | 🔄 IN PROGRESS — this wave | `modules/MMM/05-qa-to-red/` directory initialized; primary artifacts not yet produced (Scope B pending qa-builder delegation) |
+| Stage 6 | QA-to-Red | ✅ COMPLETE — this wave | All 5 artifacts present at `modules/MMM/05-qa-to-red/`; 176 RED tests; 100% FRS/TRS/journey coverage; IAA ASSURANCE-TOKEN PASS |
 | Stage 7 | PBFAG | ❌ NOT STARTED | — |
 | Stage 8 | Implementation Plan | ❌ NOT STARTED | — |
 | Stage 9 | Builder Checklist | ❌ NOT STARTED | — |
@@ -241,4 +241,4 @@ PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage6-qa-to-red-20260415-PASS
 
 ## REJECTION_HISTORY
 
-*(No rejections recorded — wave in progress)*
+*(No rejections recorded — wave COMPLETE, ASSURANCE-TOKEN PASS issued 2026-04-15)*

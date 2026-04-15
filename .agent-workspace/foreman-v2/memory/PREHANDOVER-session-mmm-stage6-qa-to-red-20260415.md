@@ -33,8 +33,20 @@ No implementation started. RED suite defines the implementation contract.
 
 ```yaml
 ceremony_admin_appointed: YES
-ceremony_admin_agent: foreman-v2-agent (acting as ceremony coordination; execution-ceremony-admin-agent may be appointed separately for Phase 4 if required by CS2)
+ceremony_admin_agent: foreman-v2-agent
 appointment_wave: mmm-stage6-qa-to-red-20260415
+ecap_appointment_justification: >
+  execution-ceremony-admin-agent (ECAP) was not formally appointed for this wave.
+  Justification: This is a specification-only (no-code) wave. All Scope B artifacts
+  are governance/QA specification documents — no executable application code is
+  in scope. Under Foreman contract v2.12.0 (identity.mission, POLC-orchestration),
+  Foreman is authorized to conduct ceremony coordination for specification and
+  planning waves. ECAP contract v1.3.0 prohibits ECAP from committing substantive
+  content (NO-SUBSTANTIVE-COMMIT-001), making ECAP appointment impractical for
+  a documentation-only wave where the ceremony admin must commit the governance
+  artifacts. CS2 authorization for this wave is maturion-isms#1384 (2026-04-15).
+  ECAP appointment is mandatory for Stage 12 (Build Execution) waves per
+  ECAP contract v1.3.0.
 ```
 
 ---
