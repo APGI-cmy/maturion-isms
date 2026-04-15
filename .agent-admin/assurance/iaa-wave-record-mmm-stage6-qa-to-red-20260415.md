@@ -228,8 +228,14 @@ Foreman is cleared to proceed with qa-builder delegation.
 
 ## TOKEN
 
-**Token Status**: PENDING — to be issued after IAA final audit (Phase 4 Step 4.3b)
-**PHASE_B_BLOCKING_TOKEN**: PENDING
+**Token Status**: ISSUED — IAA final audit PASS (Phase 4)
+**IAA Session**: session-mmm-stage6-qa-to-red-20260415
+**Issued By**: independent-assurance-agent
+**Issue Date**: 2026-04-15
+**Adoption Phase**: PHASE_B_BLOCKING
+**Verdict**: PASS
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage6-qa-to-red-20260415-PASS
 
 ---
 
