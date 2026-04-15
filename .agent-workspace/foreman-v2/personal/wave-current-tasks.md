@@ -31,10 +31,10 @@ IAA ASSURANCE-TOKEN: PENDING
 
 | # | Task | Deliverable | Status |
 |---|------|-------------|--------|
-| D1 | Hardened strategy artifact | `Maturion/strategy/Maturion_agent_usage_escalation_strategy.md` v2.0.0 | 🔴 PENDING |
-| D2 | Strategy delta summary | Appendix A in D1 | 🔴 PENDING |
-| D3 | MMM convergence mapping note | Appendix B in D1 + `.agent-workspace/foreman-v2/memory/mmm-convergence-mapping-aimc-specialist-hardening.md` | 🔴 PENDING |
-| D4 | Forward handoff note | Appendix C in D1 | 🔴 PENDING |
+| D1 | Hardened strategy artifact | `Maturion/strategy/Maturion_agent_usage_escalation_strategy.md` v2.0.0 | 🟢 DONE |
+| D2 | Strategy delta summary | Appendix A in D1 | 🟢 DONE |
+| D3 | MMM convergence mapping note | Appendix B in D1 | 🟢 DONE |
+| D4 | Forward handoff note | Appendix C in D1 | 🟢 DONE |
 
 ---
 
