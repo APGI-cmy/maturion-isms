@@ -128,7 +128,18 @@ Anti-regression obligations: YES — FAIL-ONLY-ONCE A-001 (IAA invocation eviden
 
 ## TOKEN
 
-*(To be populated by IAA after final audit — this section is reserved)*
+```
+ASSURANCE-TOKEN
+PR: copilot/fix-253484265-1108482416-55347de4-d047-4a30-a366-377beba1bdf1 | Issue #1382
+Wave: aimc-specialist-hardening-20260415
+All 16 checks PASS (12 AC substantive + 4 CERT ceremony). Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+PHASE_B_BLOCKING_TOKEN: IAA-session-aimc-specialist-hardening-20260415-PASS
+Token reference: IAA-session-aimc-specialist-hardening-20260415-PASS
+Issued by: independent-assurance-agent
+Date: 2026-04-15
+Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
+```
 
 ---
 
