@@ -4,16 +4,16 @@
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory \u2014 tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
   "last_updated": "2026-04-14",
-  "last_ripple_commit": "404c78fa15ba6cc82d65132086e3d04ea70c400f",
-  "last_ripple_timestamp": "2026-04-09T13:32:32Z",
+  "last_ripple_commit": "c6c52a632b8a0d4ae1e0a40057b518bf8b9a9d13",
+  "last_ripple_timestamp": "2026-04-14T08:20:28Z",
   "alignment_summary": {
-    "total_artifacts": 27,
-    "aligned": 22,
+    "total_artifacts": 31,
+    "aligned": 26,
     "drifted": 0,
     "missing": 0,
     "escalated": 4,
-    "overall_status": "PARTIAL \u2014 AGENT CONTRACT FILES ESCALATED TO CS2",
-    "not_tracked": 1
+    "not_tracked": 1,
+    "overall_status": "PARTIAL \u2014 AGENT CONTRACT FILES ESCALATED TO CS2"
   },
   "artifacts": [
     {
@@ -21,12 +21,12 @@
       "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
       "canonical_version": "1.3.0",
       "local_version": "1.3.0",
-      "canonical_hash_sha256": "52c6028add0244a47379d736b80ceafdca93e09f3f8e6688462f3a99cbca76f8",
-      "local_hash_sha256": "52c6028add0244a47379d736b80ceafdca93e09f3f8e6688462f3a99cbca76f8",
+      "canonical_hash_sha256": "d4860fab5ec320c9ff32bee261e85e7dea756ce7667b9b1c83d195c03134e3be",
+      "local_hash_sha256": "d4860fab5ec320c9ff32bee261e85e7dea756ce7667b9b1c83d195c03134e3be",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-04-10T12:00:00Z",
-      "change_note": "v1.3.0: Re-synced from canonical source (commit 529d541f) to resolve HASH_MISMATCH introduced by PR #1320 which added non-canonical content. Local file now matches canonical hash 52c6028a... Resolves GOV-ALIGN issue (PR #1317 layer-down fix)."
+      "last_verified": "2026-04-14T08:22:33Z",
+      "change_note": "v1.3.0 (content update): Hash updated from 52c6028a... to d4860fab... in canonical commit c6c52a63 (standardize-per-agent-parking-paths). Layered down via CI ripple PR #1369."
     },
     {
       "filename": "ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
@@ -161,7 +161,7 @@
       "local_hash_sha256": "f79752f9f7abd586d1337245ed85639f8676eb8e8e18c908daf0965d9ad1cbac",
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
-      "last_verified": "2026-04-10T11:13:46Z",
+      "last_verified": "2026-04-14T08:22:33Z",
       "change_note": "v1.5.0: Updated in canonical commit 404c78fa. INTERNAL \u2014 no consumer distribution required. Hash updated from 6c2b4e2b... to f79752f9... via CI ripple PR #1323."
     },
     {
@@ -173,7 +173,7 @@
       "local_hash_sha256": "3e04013ecd21f7fbf3353c893427e74d4187bec174c60614a2c8a4edfa705cef",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-04-10T11:13:46Z",
+      "last_verified": "2026-04-14T08:22:33Z",
       "change_note": "v1.2.2: Updated in canonical commit 404c78fa. Layered down via CI ripple PR #1323. Hash updated from 15d220e5... to 3e04013e..."
     },
     {
@@ -185,8 +185,8 @@
       "local_hash_sha256": "f3b91126d6aaf1bb86dbd8884d08c21eba3fc2ef644b113e3d773f8b5d2aa80b",
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
-      "last_verified": "2026-04-10T11:13:46Z",
-      "change_note": "v1.0.0 (content update): Updated in canonical commit 404c78fa. INTERNAL \u2014 no consumer distribution required. Hash updated from 53c8f4d2... to f3b91126... via CI ripple PR #1323."
+      "last_verified": "2026-04-14T08:22:33Z",
+      "change_note": "v1.0.0 (content update): Re-verified in canonical commit c6c52a63 via ripple PR #1369 (standardize-per-agent-parking-paths). Hash unchanged \u2014 ALIGNED."
     },
     {
       "filename": "GOVERNANCE_WATCHDOG_CANON.md",
@@ -333,6 +333,54 @@
       "layer_down_status": "PUBLIC_API",
       "last_verified": "2026-04-10T11:13:46Z",
       "change_note": "v1.3.0: Updated in canonical commit 404c78fa. Layered down via CI ripple PR #1323."
+    },
+    {
+      "filename": "AGENT_CONTRACT_ARCHITECTURE.md",
+      "path": "governance/canon/AGENT_CONTRACT_ARCHITECTURE.md",
+      "canonical_version": "1.1.0",
+      "local_version": "1.1.0",
+      "canonical_hash_sha256": "ee253d38fe7ad0688b61ae8accda2e53297d8de43c7a3fd0c387b28951445af2",
+      "local_hash_sha256": "ee253d38fe7ad0688b61ae8accda2e53297d8de43c7a3fd0c387b28951445af2",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-04-14T08:22:33Z",
+      "change_note": "v1.1.0: First tracked in GOVERNANCE_ALIGNMENT_INVENTORY. Layered down in canonical commit c6c52a63 (standardize-per-agent-parking-paths) via CI ripple PR #1369."
+    },
+    {
+      "filename": "PARKING_STATION_PATH_STANDARD.md",
+      "path": "governance/canon/PARKING_STATION_PATH_STANDARD.md",
+      "canonical_version": "1.0.0",
+      "local_version": "1.0.0",
+      "canonical_hash_sha256": "a0e9a512e08d8e6829dacf4c7195d8911f314d2d9838c59f6730a84585c8b7ad",
+      "local_hash_sha256": "a0e9a512e08d8e6829dacf4c7195d8911f314d2d9838c59f6730a84585c8b7ad",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-04-14T08:22:33Z",
+      "change_note": "v1.0.0: First tracked in GOVERNANCE_ALIGNMENT_INVENTORY. New file added to consumer repo in canonical commit c6c52a63 (standardize-per-agent-parking-paths) via CI ripple PR #1369."
+    },
+    {
+      "filename": "FOREMAN_WAVE_PLANNING_AND_ISSUE_ARTIFACT_GENERATION_PROTOCOL.md",
+      "path": "governance/canon/FOREMAN_WAVE_PLANNING_AND_ISSUE_ARTIFACT_GENERATION_PROTOCOL.md",
+      "canonical_version": "1.1.0",
+      "local_version": "1.1.0",
+      "canonical_hash_sha256": "2d4603796bce3a18209ce09d6bc7a2907f5fbb6accd5b7f71cc88c545eca0cf8",
+      "local_hash_sha256": "2d4603796bce3a18209ce09d6bc7a2907f5fbb6accd5b7f71cc88c545eca0cf8",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-04-14T08:22:33Z",
+      "change_note": "v1.1.0: First tracked in GOVERNANCE_ALIGNMENT_INVENTORY. Layered down in canonical commit c6c52a63 via CI ripple PR #1369."
+    },
+    {
+      "filename": "GOVERNANCE_ARTIFACT_TAXONOMY.md",
+      "path": "governance/canon/GOVERNANCE_ARTIFACT_TAXONOMY.md",
+      "canonical_version": "1.0.0",
+      "local_version": "1.0.0",
+      "canonical_hash_sha256": "1d5981d48b922da6cafb25809ae3800815996a747fb3af21e9479a28ae50a851",
+      "local_hash_sha256": "1d5981d48b922da6cafb25809ae3800815996a747fb3af21e9479a28ae50a851",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-04-14T08:22:33Z",
+      "change_note": "v1.0.0: First tracked in GOVERNANCE_ALIGNMENT_INVENTORY. Layered down in canonical commit c6c52a63 via CI ripple PR #1369."
     }
   ],
   "metadata": {
@@ -340,7 +388,7 @@
     "governing_protocol": "GOVERNANCE_RIPPLE_MODEL.md v1.1.0",
     "canonical_checklist": "GOVERNANCE_RIPPLE_CHECKLIST_PROTOCOL.md",
     "created_by": "governance-liaison-isms session-035",
-    "last_updated_by": "governance-liaison-isms session-062-20260412 gov-align-resolve-hash-mismatch"
+    "last_updated_by": "governance-liaison-isms session-065-20260416"
   },
-  "last_updated_by": "governance-liaison-isms session-062-20260412 gov-align-resolve-hash-mismatch"
+  "last_updated_by": "governance-liaison-isms session-065-20260416"
 }
