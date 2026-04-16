@@ -155,7 +155,7 @@ ALL specialist outputs MUST pass watchdog validation before returning to the orc
 
 ## 3. Specialist Knowledge Operating Model
 
-> **This section is new in v2.0.0.** It defines the governed model for how specialists access, rank, and use knowledge sources. This is the execution-ready basis for future canon file `governance/canon/SPECIALIST_KNOWLEDGE_MANAGEMENT.md`.
+> **This section is new in v2.0.1.** It defines the governed model for how specialists access, rank, and use knowledge sources. This is the execution-ready basis for future canon file `governance/canon/SPECIALIST_KNOWLEDGE_MANAGEMENT.md`.
 
 ### 3.1 Source Classification
 
@@ -220,7 +220,7 @@ Specialists operate with knowledge from five source classes, ranked by authority
 
 ## 4. Source Priority and Conflict Rules
 
-> **This section is new in v2.0.0.** It defines the governed rules for source priority and conflict resolution. This is the execution-ready basis for future canon enforcement.
+> **This section is new in v2.0.1.** It defines the governed rules for source priority and conflict resolution. This is the execution-ready basis for future canon enforcement.
 
 ### 4.1 Priority Order
 
@@ -276,7 +276,7 @@ The specialist MUST NOT present speculative synthesis as governed information re
 
 ## 5. Freshness and Currency Rules
 
-> **This section is new in v2.0.0.** It defines governed freshness rules for specialist knowledge sources.
+> **This section is new in v2.0.1.** It defines governed freshness rules for specialist knowledge sources.
 
 ### 5.1 When Freshness Matters
 
@@ -342,7 +342,7 @@ Flagging format: `[UNCERTAINTY: {reason}. Class 1/2 sources do not directly addr
 
 ## 6. Shared Memory Boundary Rules
 
-> **This section is new in v2.0.0.** It defines the governed model for shared memory between orchestrator and specialists.
+> **This section is new in v2.0.1.** It defines the governed model for shared memory between orchestrator and specialists.
 
 ### 6.1 Memory Architecture Overview
 
@@ -419,7 +419,7 @@ A specialist's knowledge base is NOT session memory. Knowledge base updates are 
 
 ## 7. Module-Consumer Mode
 
-> **This section is new in v2.0.0.** It defines what it means for a consuming module (such as MMM) to consume AIMC specialist capability as a service.
+> **This section is new in v2.0.1.** It defines what it means for a consuming module (such as MMM) to consume AIMC specialist capability as a service.
 
 ### 7.1 What Module-Consumer Mode Means
 
@@ -494,7 +494,7 @@ Neither party may assume the other will enforce gates that belong to the other p
 
 ## 8. Human-in-the-Loop Boundaries
 
-> **This section is new in v2.0.0.** It defines the governed model for which specialist outputs require human involvement before becoming active.
+> **This section is new in v2.0.1.** It defines the governed model for which specialist outputs require human involvement before becoming active.
 
 ### 8.1 Output Classification Framework
 
@@ -566,7 +566,7 @@ Operational outputs are any AIMC responses that would, if acted on automatically
 
 ## 9. MMM Convergence Section
 
-> **This section is new in v2.0.0.** It explicitly maps what is already governed by MMM artifacts vs. what remains AIMC-strategy-only, and what future bridge artifacts are needed.
+> **This section is new in v2.0.1.** It explicitly maps what is already governed by MMM artifacts vs. what remains AIMC-strategy-only, and what future bridge artifacts are needed.
 
 ### 9.1 What MMM Already Defines (Not Duplicated Here)
 
@@ -610,8 +610,8 @@ The following artifacts do NOT yet exist and must be created in future waves to 
 
 | Artifact | Purpose | Dependency | Priority |
 |---------|---------|------------|---------|
-| `MMM ↔ AIMC Convergence Bridge` | Explicit mapping of MMM consumption model to AIMC specialist runtime model; resolves the gap between MMM's API-level view and AIMC's internal operating model | This strategy (v2.0.0) + CL-12 readiness | HIGH — blocks CL-12c planning |
-| `AIMC Specialist Knowledge Canon` | Canon file `governance/canon/SPECIALIST_KNOWLEDGE_MANAGEMENT.md` implementing the §3 source model | This strategy (v2.0.0) | MEDIUM — required before CL-12 wave |
+| `MMM ↔ AIMC Convergence Bridge` | Explicit mapping of MMM consumption model to AIMC specialist runtime model; resolves the gap between MMM's API-level view and AIMC's internal operating model | This strategy (v2.0.1) + CL-12 readiness | HIGH — blocks CL-12c planning |
+| `AIMC Specialist Knowledge Canon` | Canon file `governance/canon/SPECIALIST_KNOWLEDGE_MANAGEMENT.md` implementing the §3 source model | This strategy (v2.0.1) | MEDIUM — required before CL-12 wave |
 | `Module-Consumer Mode Specification` | Formal contract defining the H-1/H-2/H-3/H-4 gate obligations for consuming modules | This strategy §7–8 | MEDIUM — required before MMM AI feature QA |
 | `AIMC Knowledge Base Inventory v2` | Seeded with at least 1 approved item per active module | CL-12 completion (currently BLOCKED on GAP-009) | LOW — blocked upstream |
 
@@ -630,8 +630,8 @@ This strategy must respect the harvest-map governance model. Key constraints for
 | Wave Type | Sequencing Constraint |
 |-----------|----------------------|
 | CL-12 (7-module AIMC integration) | Must resolve GAP-009 first; then proceed with CL-12 per this strategy's operating model |
-| CL-12c (MMM ↔ AIMC convergence bridge) | Requires: this strategy v2.0.0 + CL-12 completion + MMM Stage 5+ frozen architecture |
-| AIMC Knowledge Canon alignment | Requires: this strategy v2.0.0 as upstream authority |
+| CL-12c (MMM ↔ AIMC convergence bridge) | Requires: this strategy v2.0.1 + CL-12 completion + MMM Stage 5+ frozen architecture |
+| AIMC Knowledge Canon alignment | Requires: this strategy v2.0.1 as upstream authority |
 | MMM AI feature QA | Requires: Module-Consumer Mode Specification (future bridge artifact) |
 | Future specialist additions (new domain) | Must register with orchestrator per §2.5 lifecycle; must define approved knowledge base per §3 model |
 
@@ -743,11 +743,11 @@ Before every response, Maturion verifies:
 - Human-in-the-loop output classification
 - Explicit MMM convergence mapping
 
-**Version 2.0.0 (2026-04-15)** converts the document from an architectural outline into an execution-ready strategy source model.
+**Version 2.0.1 (2026-04-15)** converts the document from an architectural outline into an execution-ready strategy source model.
 
 ### What Changed (Delta Table)
 
-| Area | v1.0.0 State | v2.0.0 State | Change Type |
+| Area | v1.0.0 State | v2.0.1 State | Change Type |
 |------|-------------|-------------|------------|
 | Document purpose | Implicit — collection of canon file outlines | Explicit — governing source model | Structural |
 | Specialist knowledge sources | Not addressed | §3 — five-class source model with definitions | NEW |
@@ -770,7 +770,7 @@ v1.0.0 was a valuable architectural foundations document, but it could not serve
 - MMM AI feature QA planning — no human-in-the-loop framework existed
 - Wave sequencing guidance — no timing constraints for CL-12 → CL-12c → MMM convergence
 
-### How v2.0.0 Supports Canon Alignment and MMM Convergence
+### How v2.0.1 Supports Canon Alignment and MMM Convergence
 
 1. **Canon alignment**: §3, §4, §5, §6 provide the executable basis for `governance/canon/SPECIALIST_KNOWLEDGE_MANAGEMENT.md` and future specialist canon files
 2. **MMM convergence**: §9 maps the governance landscape explicitly — what is frozen, what is open, what bridge artifacts are needed
@@ -821,7 +821,7 @@ The following aspects are NOT defined in MMM artifacts. They are AIMC-internal o
 
 | Artifact | Depends On | Produces | When |
 |---------|-----------|---------|------|
-| MMM ↔ AIMC Convergence Bridge | This strategy (v2.0.0) + CL-12 | Formal interface between MMM consumption model and AIMC internal model | After CL-12, before CL-12c |
+| MMM ↔ AIMC Convergence Bridge | This strategy (v2.0.1) + CL-12 | Formal interface between MMM consumption model and AIMC internal model | After CL-12, before CL-12c |
 | AIMC Specialist Knowledge Canon | This strategy §3 | `governance/canon/SPECIALIST_KNOWLEDGE_MANAGEMENT.md` | Before CL-12 wave start |
 | Module-Consumer Mode Specification | This strategy §7–8 | Formal module-consumer contract for MMM QA | Before MMM AI feature QA-to-Red |
 
@@ -907,7 +907,7 @@ The following constraints must be honoured to prevent AIMC work from conflicting
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Version**: 2.0.0
+**Version**: 2.0.1
 **Date**: 2026-04-15
 **Issue**: maturion-isms#1382
 **Governed by**: `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0
