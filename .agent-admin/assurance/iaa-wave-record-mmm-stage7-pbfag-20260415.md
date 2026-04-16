@@ -198,4 +198,4 @@ Structural advisory: OVL-PBG-009 — Legacy directory numbering (modules/MMM/04-
 
 ## REJECTION_HISTORY
 
-*(No rejections recorded — wave in progress)*
+*(No rejections recorded — wave closed with ASSURANCE-TOKEN issued)*
