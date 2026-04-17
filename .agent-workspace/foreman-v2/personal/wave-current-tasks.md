@@ -1,208 +1,60 @@
-# Wave Current Tasks — MMM Stage 6 QA-to-Red
+# Wave Current Tasks — MMM ↔ AIMC Convergence Bridge
 
-wave: mmm-stage6-qa-to-red-20260415
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-stage6-qa-to-red-20260415.md
-branch: copilot/fix-253484265-1108482416-7f518b23-7345-4cfd-a1c8-8403d856d34d
-issue: maturion-isms#1384
-status: COMPLETE — IAA ASSURANCE-TOKEN issued, merge gate released, awaiting CS2 approval
+wave: mmm-aimc-convergence-bridge-20260417
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-aimc-convergence-bridge-20260417-20260417.md
+branch: copilot/define-mmm-aimc-convergence-bridge
+issue: maturion-isms#1383
+status: IN_PROGRESS — mat-specialist delegated; awaiting deliverable handback
 
-## Active Wave: MMM Stage 6 — QA-to-Red
+## Active Wave: MMM ↔ AIMC Convergence Bridge Definition
 
 ### Status
-COMPLETE — All deliverables produced. IAA ASSURANCE-TOKEN issued (IAA-session-mmm-stage6-qa-to-red-20260415-PASS).
-Merge gate released. Awaiting CS2 formal approval.
+IN_PROGRESS — Phase 3 POLC-Orchestration. mat-specialist appointed for D1–D5 production.
 
-CS2 Authorization: maturion-isms#1384 — opened by @APGI-cmy (CS2 = Johan Ras), 2026-04-15.
-Stage 5 Architecture artifacts produced (wave mmm-stage5-architecture-20260414, 2026-04-14), pending CS2 formal approval.
+CS2 Authorization: maturion-isms#1383 — opened by @APGI-cmy (CS2 = Johan Ras), 2026-04-15.
+Upstream dependencies:
+- Issue #1382 [CLOSED/COMPLETED] — Hardened strategy (Maturion_agent_usage_escalation_strategy.md v2.0.1)
+- Align governance canon issue [CLOSED] per CS2
 
 ### Tasks
 
 #### Phase 1 — Preflight
 - [x] Identity declared (foreman-v2-agent v6.2.0, SELF-MOD-FM-001)
 - [x] Tier 2 knowledge loaded (v2.7.0)
-- [x] CANON_INVENTORY attested (PASS — 200 entries)
+- [x] CANON_INVENTORY attested (PASS — 200 entries, no degraded hashes)
 - [x] Session memory reviewed (5 sessions — no unresolved items)
 - [x] FAIL-ONLY-ONCE registry checked (all incidents REMEDIATED)
 - [x] Merge gate requirements loaded (7 checks)
-- [x] IAA Pre-Brief invoked (Step 1.8 — SHA ee6ac83)
+- [x] IAA Pre-Brief invoked and COMMITTED (.agent-admin/assurance/iaa-wave-record-mmm-aimc-convergence-bridge-20260417-20260417.md)
 
-#### Scope A — Stage 5 Approval-Readiness Normalization (MANDATORY FIRST)
-- [x] BUILD_PROGRESS_TRACKER.md Current Stage Summary updated (Stage 5 as current stage)
-- [x] BUILD_PROGRESS_TRACKER.md Governance Compliance section updated (Stage 4 approved, Stage 5 artifacts listed, OQ-002/003 resolved)
-- [x] BUILD_PROGRESS_TRACKER.md Stage Migration table normalized
-- [x] Last Updated / Updated By fields corrected
-- [x] IAA wave record pre-brief committed (SHA ee6ac83)
-
-#### Scope B — Stage 6 QA-to-Red
-- [x] IAA Pre-Brief response received (SHA ee6ac83)
+#### Phase 2 — Alignment
+- [x] CS2 authorization confirmed (issue opened by @APGI-cmy, assigns this agent)
+- [x] Governance re-confirmed (CANON_INVENTORY clean)
+- [x] Verb classification: "define" → POLC-Orchestration mode
+- [x] Pre-build stages: Stages 1–7 COMPLETE; bridge-definition wave, no builder appointment
+- [x] Agent file guard: NOT triggered (no .github/agents/ changes)
+- [x] IAA Pre-Brief wave record verified: EXISTS, ## PRE-BRIEF populated
 - [x] Scope declaration committed
-- [x] Delegate to qa-builder: Stage 6 QA-to-Red artifacts (modules/MMM/05-qa-to-red/)
-  - [x] D1: Stage 6 artifact set under modules/MMM/05-qa-to-red/
-  - [x] D2: Full RED test suite derived from FRS + TRS + Architecture (176 tests)
-  - [x] D3: All 17 Stage 2 user journeys covered in RED suite (17/17)
-  - [x] D4: Requirement traceability (80/80 FRs, 66/66 TRs)
-  - [x] D5: QA Catalog alignment explicitly confirmed (9 gates PASS)
-  - [x] D6: Foreman sign-off package (scope, coverage map, gaps, no-implementation statement)
-  - [x] D7: BUILD_PROGRESS_TRACKER updated (Stage 6 COMPLETE)
-- [x] QP evaluation of qa-builder deliverable — PASS
-- [x] §4.3 Merge gate parity check — PASS
+
+#### Phase 3 — POLC Orchestration (Bridge-Definition Wave)
+- [x] wave-current-tasks.md committed
+- [x] Scope declaration committed
+- [x] mat-specialist appointed (maturion-isms#1383)
+- [ ] D1: mmm-aimc-specialist-dependency-matrix.md [DELEGATED → mat-specialist]
+- [ ] D2: mmm-ai-capability-consumption-contract.md [DELEGATED → mat-specialist]
+- [ ] D3: cl-12c-readiness-contract.md [DELEGATED → mat-specialist]
+- [ ] D4: mmm-aimc-harvest-map-alignment-note.md [DELEGATED → mat-specialist]
+- [ ] D5: mmm-aimc-forward-handoff-note.md [DELEGATED → mat-specialist]
+- [ ] BUILD_PROGRESS_TRACKER.md updated (bridge artifacts noted)
+- [ ] QP evaluation of mat-specialist deliverables
+- [ ] §4.3 Merge gate parity check
 
 #### Phase 4 — Handover
-- [x] OPOJD gate pass
-- [x] execution-ceremony-admin-agent ceremony coordination (foreman-v2-agent — see PREHANDOVER justification)
-- [x] PREHANDOVER proof reviewed and committed (SHA ad6dadf9)
-- [x] Session memory reviewed and committed (SHA ad6dadf9)
-- [x] Pre-IAA Commit-State Gate (Step 4.3a) PASS
-- [x] IAA final audit (Step 4.3b) — 19/19 checks PASS (SHA cc2cfa66)
-- [x] Token ceremony complete (Step 4.3c) — PHASE_B_BLOCKING_TOKEN issued
-- [x] Merge gate released — awaiting CS2 approval (maturion-isms#1384)
-
----
-
-## Prior Wave Record (AIMC Specialist Hardening — COMPLETE)
-
-wave: aimc-specialist-hardening-20260415
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-aimc-specialist-hardening-20260415-20260415.md
-branch: copilot/fix-253484265-1108482416-55347de4-d047-4a30-a366-377beba1bdf1
-issue: maturion-isms#1382
-status: COMPLETE — IAA ASSURANCE-TOKEN issued, merge gate released, awaiting CS2 approval
-
-## Prior Wave: AIMC Specialist Hardening — Orchestrator/Specialist Strategy
-
-### Status
-COMPLETE — All deliverables produced. IAA ASSURANCE-TOKEN issued.
-Merge gate released. Awaiting CS2 approval.
-
-CS2 Authorization: maturion-isms#1382 — opened by @APGI-cmy (CS2 = Johan Ras), 2026-04-15.
-
-IAA Pre-Brief: COMMITTED (.agent-admin/assurance/iaa-wave-record-aimc-specialist-hardening-20260415-20260415.md)
-IAA ASSURANCE-TOKEN: IAA-session-aimc-specialist-hardening-20260415-PASS
-
-### Tasks
-- [x] Phase 1 — Identity & Preflight complete
-- [x] IAA Pre-Brief invoked and wave record committed
-- [x] Wave-current-tasks.md updated for active wave
-- [x] Scope declaration created
-- [x] D1 — Harden Maturion/strategy/Maturion_agent_usage_escalation_strategy.md (v2.0.0)
-- [x] D2 — Strategy delta summary (Appendix A of D1)
-- [x] D3 — MMM convergence mapping note (Appendix B of D1)
-- [x] D4 — Forward handoff note (Appendix C of D1)
-- [x] Phase 4 ceremony: PREHANDOVER + session memory + IAA final audit — PASS
-- [x] ECAP bundle artifacts committed (.agent-workspace/execution-ceremony-admin-agent/bundles/)
-
-### Deliverables
-
-| # | Task | Deliverable | Status |
-|---|------|-------------|--------|
-| D1 | Hardened strategy artifact | `Maturion/strategy/Maturion_agent_usage_escalation_strategy.md` v2.0.0 | ✅ COMPLETE |
-| D2 | Strategy delta summary | Appendix A in D1 | ✅ COMPLETE |
-| D3 | MMM convergence mapping note | Appendix B in D1 | ✅ COMPLETE |
-| D4 | Forward handoff note | Appendix C in D1 | ✅ COMPLETE |
-
----
-
-## Prior Wave Record (MMM Stage 5 — COMPLETE)
-
-wave: mmm-stage5-architecture-20260414
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-stage5-architecture-20260414.md
-branch: copilot/mmm-stage-5-wave-start-authorization
-issue: maturion-isms#1378
-status: COMPLETE — Phase 4 ceremony complete, IAA ASSURANCE-TOKEN issued, awaiting CS2 review
-
-## Prior Wave: MMM Stage 5 — Architecture
-
-### Status
-COMPLETE — All deliverables produced. IAA ASSURANCE-TOKEN issued (Session 212). Awaiting CS2 review.
-
-CS2 Authorization: maturion-isms#1378 — opened by @APGI-cmy (CS2 = Johan Ras), 2026-04-14.
-Stage 4 TRS CS2 approval carried forward per issue #1378.
-
-IAA Pre-Brief: COMMITTED (SHA ad5369d)
-IAA ASSURANCE-TOKEN: IAA-session-212-mmm-stage5-architecture-20260414-PASS (issued Session 212)
-
-### Tasks
-- [x] Phase 1 — Identity & Preflight complete
-- [x] IAA Pre-Brief invoked and wave record committed (SHA ad5369d)
-- [x] Wave-current-tasks.md updated for Stage 5
-- [x] Scope declaration created (updated with all artifacts)
-- [x] mat-specialist delegated for T-01 through T-11
-- [x] mat-specialist deliverables received (first pass)
-- [x] QP evaluation — FAIL (5 missing artifacts)
-- [x] QP remediation order issued to mat-specialist
-- [x] mat-specialist remediation complete (all 5 artifacts produced)
-- [x] QP evaluation — PASS (all artifacts present, verified)
-- [x] Phase 4 ceremony: PREHANDOVER + session memory
-- [x] IAA handover audit complete (Session 211 REJECTION-PACKAGE OVL-PBG-007 → Session 212 PASS)
-- [x] ASSURANCE-TOKEN issued: IAA-session-212-mmm-stage5-architecture-20260414-PASS
-
-### Deliverables (T-01 through T-11) — ALL COMPLETE
-
-| # | Task | Deliverable | Status |
-|---|------|-------------|--------|
-| T-01 | Canonical architecture.md (Stage 5 quality) | `modules/MMM/04-architecture/architecture.md` | ✅ COMPLETE |
-| T-02 | capabilities/ disposition per OQ-003 | `modules/MMM/04-architecture/capabilities/index.md` | ✅ COMPLETE |
-| T-03 | TRS → Architecture traceability | in architecture.md §A14 (66/66 TRs) | ✅ COMPLETE |
-| T-04 | Architecture completeness PASS | in architecture.md §A13 | ✅ COMPLETE |
-| T-05 | OQ-002 resolution | in architecture.md §A11 | ✅ COMPLETE |
-| T-06 | OQ-003 resolution | in architecture.md §A12 | ✅ COMPLETE |
-| T-07 | AIMC / PIT / KUC boundary freeze | in architecture.md §A6 | ✅ COMPLETE |
-| T-08 | Runtime / deployment topology | in architecture.md §A8 | ✅ COMPLETE |
-| T-09 | State persistence architecture | in architecture.md §A9 | ✅ COMPLETE |
-| T-10 | BUILD_PROGRESS_TRACKER updated | `modules/MMM/BUILD_PROGRESS_TRACKER.md` | ✅ COMPLETE |
-| T-11 | Harvest map updated OQ-002/OQ-003 | `modules/MMM/harvest-map/harvest-map.md` | ✅ COMPLETE |
-| T-R1 | COMPLIANCE_SCOPE.md (TR-037) | `modules/MMM/04-architecture/COMPLIANCE_SCOPE.md` | ✅ COMPLETE |
-| T-R2 | CONTROL_MAPPING.md (TR-037) | `modules/MMM/04-architecture/CONTROL_MAPPING.md` | ✅ COMPLETE |
-| T-R3 | EVIDENCE_CATALOG.md (TR-037) | `modules/MMM/04-architecture/EVIDENCE_CATALOG.md` | ✅ COMPLETE |
-| T-R4 | APP_STARTUP_REQUIREMENTS.md (TR-064) | `modules/MMM/04-architecture/APP_STARTUP_REQUIREMENTS.md` | ✅ COMPLETE |
-| T-R5 | .env.example (TR-053) | `modules/MMM/.env.example` | ✅ COMPLETE |
-
----
-
-## Prior Wave Record (MMM Stage 4 — COMPLETE)
-
-wave: mmm-stage4-trs-20260414
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-stage4-trs-20260414.md
-ceremony_admin_appointed: true
-
-## Active Wave: MMM Stage 4 — Technical Requirements Specification (TRS)
-
-### Status
-COMPLETE — All deliverables produced, IAA ASSURANCE-TOKEN issued.
-Awaiting CS2 merge.
-
-CS2 Authorization: maturion-isms#1372 — opened by @APGI-cmy (CS2 = Johan Ras), 2026-04-14.
-
-IAA Pre-Brief: COMMITTED (SHA af41601)
-IAA ASSURANCE-TOKEN: IAA-session-mmm-stage4-trs-20260414-PASS (committed SHA 75f889b)
-
-### Tasks
-- [x] Phase 1 — Identity & Preflight complete
-- [x] IAA Pre-Brief invoked and wave record committed (SHA af41601)
-- [x] wave-current-tasks.md updated for active wave
-- [x] Scope declaration committed at .agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-stage4-trs.md
-- [x] D1 — Create modules/MMM/03-trs/technical-requirements-specification.md (TRS artifact, 64 TRs)
-  - [x] Performance requirements (TR-001 to TR-010)
-  - [x] Integration requirements (AIMC: TR-011-015, PIT: TR-016-018, KUC: TR-019-020)
-  - [x] Data persistence requirements (TR-021-028)
-  - [x] Security requirements (TR-029-038)
-  - [x] Offline/connectivity requirements — OQ-001 DECISION CONNECTIVITY-REQUIRED (TR-039-042)
-  - [x] Scalability requirements (TR-043-047)
-  - [x] Infrastructure constraints (TR-048-053)
-  - [x] Quality gate definitions (TR-054-064)
-  - [x] All 7 mandatory questions answered (TRS §11)
-  - [x] No TBD items
-- [x] D2 — Create modules/MMM/03-trs/frs-to-trs-traceability.md (80/80 FRs traced)
-- [x] D3 — Update BUILD_PROGRESS_TRACKER.md (Stage 3 COMPLETE CS2 ref #1366/#1372, Stage 4 IN_PROGRESS, OQ-001 RESOLVED)
-- [x] D4 — Governance ceremony artifacts
-  - [x] execution-ceremony-admin-agent delegated (ceremony_admin_appointed: true)
-  - [x] PREHANDOVER proof committed (foreman-v2/memory/PREHANDOVER-session-mmm-stage4-trs-20260414.md)
-  - [x] Session memory committed (foreman-v2/memory/session-mmm-stage4-trs-20260414.md)
-  - [x] IAA ASSURANCE-TOKEN ISSUED (IAA-session-mmm-stage4-trs-20260414-PASS, SHA 75f889b)
-  - [x] IAA token self-cert guard: PASS
-  - [x] Merge gate released — awaiting CS2 approval
-
-### Previous Waves (Closed)
-wave: mmm-stage3-frs-20260414 (Issue #1365/#1366) — CLOSED (merged to main)
-wave: mmm-cs2-approval-fields-20260414 (Issue #1361) — CLOSED (merged to main)
-wave: mmm-doc-normalization-20260413 (Issue #1358) — CLOSED
-wave: mmm-stage2-ux-workflow-wiring-spec-20260413 (Issue #1352) — CLOSED
+- [ ] OPOJD Gate
+- [ ] execution-ceremony-admin-agent appointed (ECAP-001 §5.2)
+- [ ] PREHANDOVER proof committed
+- [ ] Session memory committed
+- [ ] Pre-IAA Commit-State Gate
+- [ ] IAA Final Audit invoked
+- [ ] IAA Token committed (wave record ## TOKEN section)
+- [ ] Merge gate released
