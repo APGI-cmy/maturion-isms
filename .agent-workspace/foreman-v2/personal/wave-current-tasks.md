@@ -4,12 +4,12 @@ wave: mmm-aimc-convergence-bridge-20260417
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-aimc-convergence-bridge-20260417-20260417.md
 branch: copilot/define-mmm-aimc-convergence-bridge
 issue: maturion-isms#1383
-status: IN_PROGRESS — mat-specialist delegated; awaiting deliverable handback
+status: PHASE_1_2_COMPLETE — preflight and IAA pre-brief committed; Phase 3 execution deferred to next delegation wave
 
 ## Active Wave: MMM ↔ AIMC Convergence Bridge Definition
 
 ### Status
-IN_PROGRESS — Phase 3 POLC-Orchestration. mat-specialist appointed for D1–D5 production.
+PHASE_1_2_COMPLETE — This PR delivers Phase 1 (Preflight) and Phase 2 (Alignment) only. IAA Pre-Brief is committed. Phase 3 execution (D1–D5 production) will occur in a separate delegation wave after CS2 merges this PR.
 
 CS2 Authorization: maturion-isms#1383 — opened by @APGI-cmy (CS2 = Johan Ras), 2026-04-15.
 Upstream dependencies:
@@ -36,20 +36,18 @@ Upstream dependencies:
 - [x] IAA Pre-Brief wave record verified: EXISTS, ## PRE-BRIEF populated
 - [x] Scope declaration committed
 
-#### Phase 3 — POLC Orchestration (Bridge-Definition Wave)
-- [x] wave-current-tasks.md committed
-- [x] Scope declaration committed
-- [x] mat-specialist appointed (maturion-isms#1383)
-- [ ] D1: mmm-aimc-specialist-dependency-matrix.md [DELEGATED → mat-specialist]
-- [ ] D2: mmm-ai-capability-consumption-contract.md [DELEGATED → mat-specialist]
-- [ ] D3: cl-12c-readiness-contract.md [DELEGATED → mat-specialist]
-- [ ] D4: mmm-aimc-harvest-map-alignment-note.md [DELEGATED → mat-specialist]
-- [ ] D5: mmm-aimc-forward-handoff-note.md [DELEGATED → mat-specialist]
+#### Phase 3 — POLC Orchestration (Bridge-Definition Wave) [NOT STARTED — deferred to next wave]
+- [ ] Producing agent (mat-specialist) formally delegated via issue comment
+- [ ] D1: mmm-aimc-specialist-dependency-matrix.md [NOT STARTED]
+- [ ] D2: mmm-ai-capability-consumption-contract.md [NOT STARTED]
+- [ ] D3: cl-12c-readiness-contract.md [NOT STARTED]
+- [ ] D4: mmm-aimc-harvest-map-alignment-note.md [NOT STARTED]
+- [ ] D5: mmm-aimc-forward-handoff-note.md [NOT STARTED]
 - [ ] BUILD_PROGRESS_TRACKER.md updated (bridge artifacts noted)
 - [ ] QP evaluation of mat-specialist deliverables
 - [ ] §4.3 Merge gate parity check
 
-#### Phase 4 — Handover
+#### Phase 4 — Handover [NOT STARTED — deferred to next wave]
 - [ ] OPOJD Gate
 - [ ] execution-ceremony-admin-agent appointed (ECAP-001 §5.2)
 - [ ] PREHANDOVER proof committed

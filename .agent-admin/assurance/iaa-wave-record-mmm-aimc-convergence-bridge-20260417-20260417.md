@@ -14,8 +14,8 @@
 
 **Invocation mode**: PRE-BRIEF (Phase 0)  
 **Invoked by**: foreman-v2-agent (via Foreman comment on maturion-isms#1383)  
-**Producing agent**: mat-specialist (appointed by foreman-v2-agent — Phase 3 POLC-Orchestration; awaiting deliverable handback)  
-**Ceremony admin appointed**: NOT YET DECLARED (expected: true, based on prior wave pattern)
+**Producing agent**: Not yet assigned — will be delegated to mat-specialist at Phase 3 execution start, after CS2 merges this preflight PR  
+**Ceremony admin appointed**: NOT YET DECLARED (expected at Phase 3 execution wave)
 
 ---
 
@@ -74,7 +74,7 @@ Upstream stages reviewed against `modules/MMM/BUILD_PROGRESS_TRACKER.md` (last u
 | 11 | Builder Appointment | NOT_STARTED | — | — |
 | 12 | Build Execution | NOT_STARTED | — | — |
 
-> **Disambiguation note**: The `mat-specialist (appointed)` reference in the PRE-BRIEF above is a **wave-level producing-agent appointment** (Phase 3 POLC-Orchestration delegation to produce D1–D5 bridge-definition documents). It is NOT a PRE_BUILD_STAGE_MODEL Stage 11 Builder Appointment. Stage 11 "Builder Appointment" refers to appointing a builder for Stage 12 Build Execution, which remains NOT_STARTED and is out of scope for this wave.
+> **Phase framing note**: This PR is Phase 1–2 preflight only. The producing agent (mat-specialist) has NOT yet been formally delegated — that delegation occurs at Phase 3 execution start, after CS2 merges this PR. The Stage-Readiness View above records the current state of upstream stages as of the IAA Pre-Brief. Stage 11 "Builder Appointment" (for Stage 12 Build Execution) remains NOT_STARTED and is out of scope for this wave.
 
 **Blockers preventing Stage 11 (Builder Appointment)**:
 1. Stages 5–7: IAA tokens issued, awaiting CS2 formal merge approval — these PRs must be merged before Stage 8 proceeds per tracker
@@ -175,5 +175,5 @@ IAA will verify the following at full assurance (Phase 3):
 
 **Wave record created**: 2026-04-17  
 **Created by**: independent-assurance-agent (PRE-BRIEF mode, Phase 0)  
-**Updated**: 2026-04-17 — Producing agent updated to reflect mat-specialist appointment (Phase 3 delegation by foreman-v2-agent).  
-**Next action**: mat-specialist produces D1–D5 deliverables and hands back for Phase 4 ceremony.
+**Updated**: 2026-04-17 — Normalized to Phase 1-2 preflight-only framing; producing agent not yet assigned; Phase 3 execution deferred to next delegation wave.  
+**Next action**: CS2 merges this preflight PR; Foreman then opens Phase 3 execution wave and formally delegates to mat-specialist.
