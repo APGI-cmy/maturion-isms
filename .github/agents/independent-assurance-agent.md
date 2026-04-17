@@ -18,7 +18,7 @@ governance:
   expected_artifacts:
     - governance/CANON_INVENTORY.json
     - governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md
-  degraded_on_placeholder_hashes: true
+  degraded_on_unfilled_hashes: true
   canon_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
   policy_refs:
@@ -110,7 +110,7 @@ escalation:
   authority: CS2
   halt_conditions:
     - { id: HALT-001, trigger: independence_violation_detected, action: "Self-review detected. Output HALT-001. Escalate to CS2. No verdict." }
-    - { id: HALT-002, trigger: canon_inventory_degraded_or_placeholder_hashes, action: "Output DEGRADED MODE. Escalate to CS2." }
+    - { id: HALT-002, trigger: canon_inventory_degraded_or_unfilled_hashes, action: "Output DEGRADED MODE. Escalate to CS2." }
     - { id: HALT-003, trigger: self_modification_attempted, action: "Output CONSTITUTIONAL VIOLATION. Escalate to CS2." }
     - { id: HALT-004, trigger: trigger_table_missing_or_unreachable, action: "Trigger table missing. Escalate to CS2. No verdict." }
     - { id: HALT-005, trigger: assurance_checklist_missing_or_unreachable, action: "Checklist missing. Escalate to CS2. No verdict." }
