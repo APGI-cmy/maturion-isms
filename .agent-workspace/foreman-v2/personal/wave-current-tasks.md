@@ -1,58 +1,52 @@
-# Wave Current Tasks — MMM ↔ AIMC Convergence Bridge
+# Wave Current Tasks — wave-ecap-cde-completion-20260417
 
-wave: mmm-aimc-convergence-bridge-20260417
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-aimc-convergence-bridge-20260417-20260417.md
-branch: copilot/define-mmm-aimc-convergence-bridge
-issue: maturion-isms#1383
-status: PHASE_1_2_COMPLETE — preflight and IAA pre-brief committed; Phase 3 execution deferred to next delegation wave
+**Foreman**: foreman-v2-agent v6.2.0
+**Wave**: wave-ecap-cde-completion-20260417
+**Issue**: maturion-isms#1399 — Complete ECAP implementation wave for #1394: Workstreams C/D/E and proof-of-operation
+**Branch**: copilot/fix-253484265-1108482416-189ebaa2-6f84-4c6a-994f-80ce5f0ae1b8
+**Date**: 2026-04-17
+**CS2 Authorization**: CONFIRMED — issue opened directly by CS2 (@APGI-cmy)
 
-## Active Wave: MMM ↔ AIMC Convergence Bridge Definition
+---
 
-### Status
-PHASE_1_2_COMPLETE — This PR delivers Phase 1 (Preflight) and Phase 2 (Alignment) only. IAA Pre-Brief is committed. Phase 3 execution (D1–D5 production) will occur in a separate delegation wave after CS2 merges this PR.
+## Active Tasks
 
-CS2 Authorization: maturion-isms#1383 — opened by @APGI-cmy (CS2 = Johan Ras), 2026-04-15.
-Upstream dependencies:
-- Issue #1382 [CLOSED/COMPLETED] — Hardened strategy (Maturion_agent_usage_escalation_strategy.md v2.0.1)
-- Align governance canon issue [CLOSED] per CS2
+| # | Task | Agent | Status | Issue |
+|---|------|-------|--------|-------|
+| 1 | Workstream C: execution-ceremony-admin-agent contract hardening | CodexAdvisor-agent | PENDING | maturion-isms#1399 |
+| 2 | Workstream C: foreman-v2-agent §14.6 QP Admin-Compliance Checkpoint | CodexAdvisor-agent | PENDING | maturion-isms#1399 |
+| 3 | Workstream C: independent-assurance-agent ACR-01–ACR-08 addition | CodexAdvisor-agent | PENDING | maturion-isms#1399 |
+| 4 | Workstream D: ripple-integration.yml path expansion (templates/**, checklists/**) | governance-liaison-isms-agent | PENDING | maturion-isms#1399 |
+| 5 | Workstream D: GOVERNANCE_ALIGNMENT_INVENTORY.json automation + SHA256 refresh | governance-liaison-isms-agent | PENDING | maturion-isms#1399 |
+| 6 | Workstream E: ECAP proof-of-operation (reconciliation summary, §14.6, IAA ACR) | ECAP + IAA | PENDING | maturion-isms#1399 |
 
-### Tasks
+---
 
-#### Phase 1 — Preflight
-- [x] Identity declared (foreman-v2-agent v6.2.0, SELF-MOD-FM-001)
-- [x] Tier 2 knowledge loaded (v2.7.0)
-- [x] CANON_INVENTORY attested (PASS — 200 entries, no degraded hashes)
-- [x] Session memory reviewed (5 sessions — no unresolved items)
-- [x] FAIL-ONLY-ONCE registry checked (all incidents REMEDIATED)
-- [x] Merge gate requirements loaded (7 checks)
-- [x] IAA Pre-Brief invoked and COMMITTED (.agent-admin/assurance/iaa-wave-record-mmm-aimc-convergence-bridge-20260417-20260417.md)
+## Pre-Build Gate Status
 
-#### Phase 2 — Alignment
-- [x] CS2 authorization confirmed (issue opened by @APGI-cmy, assigns this agent)
-- [x] Governance re-confirmed (CANON_INVENTORY clean)
-- [x] Verb classification: "define" → POLC-Orchestration mode
-- [x] Pre-build stages: Stages 1–7 COMPLETE; bridge-definition wave, no builder appointment
-- [x] Agent file guard: NOT triggered (no .github/agents/ changes)
-- [x] IAA Pre-Brief wave record verified: EXISTS, ## PRE-BRIEF populated
-- [x] Scope declaration committed
+| Stage | Gate | Status |
+|-------|------|--------|
+| 5 | Architecture frozen | CONFIRMED — ECAP architecture defined in issue #1394 PRs #1395/#1396 |
+| 6 | Red QA suite | N/A — governance documentation wave (no functional code) |
+| 7 | PBFAG | CONFIRMED — templates/checklists exist from prior wave |
+| 8 | Implementation Plan | CONFIRMED — issue #1399 body IS the implementation plan (CS2-authored) |
+| 9 | Builder Checklist | CONFIRMED — workstream breakdown serves as builder checklist |
+| 10 | IAA Pre-Brief | PENDING — invoking IAA at Step 1.8 |
 
-#### Phase 3 — POLC Orchestration (Bridge-Definition Wave) [NOT STARTED — deferred to next wave]
-- [ ] Producing agent (mat-specialist) formally delegated via issue comment
-- [ ] D1: mmm-aimc-specialist-dependency-matrix.md [NOT STARTED]
-- [ ] D2: mmm-ai-capability-consumption-contract.md [NOT STARTED]
-- [ ] D3: cl-12c-readiness-contract.md [NOT STARTED]
-- [ ] D4: mmm-aimc-harvest-map-alignment-note.md [NOT STARTED]
-- [ ] D5: mmm-aimc-forward-handoff-note.md [NOT STARTED]
-- [ ] BUILD_PROGRESS_TRACKER.md updated (bridge artifacts noted)
-- [ ] QP evaluation of mat-specialist deliverables
-- [ ] §4.3 Merge gate parity check
+---
 
-#### Phase 4 — Handover [NOT STARTED — deferred to next wave]
-- [ ] OPOJD Gate
-- [ ] execution-ceremony-admin-agent appointed (ECAP-001 §5.2)
-- [ ] PREHANDOVER proof committed
-- [ ] Session memory committed
-- [ ] Pre-IAA Commit-State Gate
-- [ ] IAA Final Audit invoked
-- [ ] IAA Token committed (wave record ## TOKEN section)
-- [ ] Merge gate released
+## Expected Artifacts
+
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` (this file)
+- `.agent-workspace/foreman-v2/personal/scope-declaration-wave-ecap-cde-completion-20260417.md`
+- `.agent-admin/assurance/iaa-wave-record-ecap-cde-completion-20260417.md`
+- Updated `.github/agents/execution-ceremony-admin-agent.md`
+- Updated `.github/agents/foreman-v2-agent.md`
+- Updated `.github/agents/independent-assurance-agent.md`
+- Updated `.github/workflows/ripple-integration.yml`
+- Updated `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json`
+- Workstream E proof artifacts (reconciliation summary, §14.6 checkpoint, IAA token)
+
+---
+
+**Last updated**: 2026-04-17T12:56:25Z
