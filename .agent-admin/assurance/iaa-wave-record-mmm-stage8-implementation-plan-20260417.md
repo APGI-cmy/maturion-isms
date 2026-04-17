@@ -229,7 +229,26 @@ At final handover assurance (Phase 4), IAA will verify the following:
 
 ## TOKEN
 
-*(Pending — to be written by IAA at Phase 4 final audit completion)*
+**PHASE_B_BLOCKING_TOKEN**: IAA-session-mmm-stage8-implementation-plan-20260417-PASS
+
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/mmm-stage-8-implementation-plan | Issue maturion-isms#1400
+Wave: mmm-stage8-implementation-plan-20260417
+All 38 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-mmm-stage8-implementation-plan-20260417-PASS
+Adoption phase: PHASE_B_BLOCKING
+Date: 2026-04-17
+═══════════════════════════════════════
+```
+
+**Checks run**: 38 total — 38 PASS, 0 FAIL
+**Overlay applied**: PRE_BUILD_STAGE_MODEL → PRE_BUILD_GATES (OVL-PBG-001–016) + ACR-01–08 (ceremony-admin appointed) + CORE-020 + CORE-021
+**FAIL-ONLY-ONCE**: A-001 PRESENT | A-002 CONFIRMED | A-029 CONFIRMED
+**Independence**: IAA did not produce any artifact in this wave — CONFIRMED
+**Git state at audit**: HEAD dd30a8b — tree clean
 
 ---
 
