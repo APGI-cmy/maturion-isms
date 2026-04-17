@@ -7,7 +7,7 @@ agent:
   id: independent-assurance-agent
   class: assurance
   version: 6.2.0
-  contract_version: 2.7.0
+  contract_version: 2.8.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-6
 
@@ -18,7 +18,7 @@ governance:
   expected_artifacts:
     - governance/CANON_INVENTORY.json
     - governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md
-  degraded_on_placeholder_hashes: true
+  degraded_on_unfilled_hashes: true
   canon_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
   policy_refs:
@@ -110,7 +110,7 @@ escalation:
   authority: CS2
   halt_conditions:
     - { id: HALT-001, trigger: independence_violation_detected, action: "Self-review detected. Output HALT-001. Escalate to CS2. No verdict." }
-    - { id: HALT-002, trigger: canon_inventory_degraded_or_placeholder_hashes, action: "Output DEGRADED MODE. Escalate to CS2." }
+    - { id: HALT-002, trigger: canon_inventory_degraded_or_unfilled_hashes, action: "Output DEGRADED MODE. Escalate to CS2." }
     - { id: HALT-003, trigger: self_modification_attempted, action: "Output CONSTITUTIONAL VIOLATION. Escalate to CS2." }
     - { id: HALT-004, trigger: trigger_table_missing_or_unreachable, action: "Trigger table missing. Escalate to CS2. No verdict." }
     - { id: HALT-005, trigger: assurance_checklist_missing_or_unreachable, action: "Checklist missing. Escalate to CS2. No verdict." }
@@ -155,7 +155,7 @@ metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
   authority: CS2
-  last_updated: 2026-04-13
+  last_updated: 2026-04-17
   tier2_knowledge: .agent-workspace/independent-assurance-agent/knowledge/index.md
 ---
 
@@ -201,7 +201,7 @@ Execute 4 silent checks. No mandatory chat output unless something fails:
 
 2. **Tier 2 files present** (silent unless fail): Open `.agent-workspace/independent-assurance-agent/knowledge/index.md`. Confirm all Tier 2A evaluation files present per `tier2_knowledge.tier_2a_evaluation.required_files`. If any missing → output gap and escalate to CS2.
 
-3. **CANON_INVENTORY hashes valid** (silent unless fail): Read `governance/CANON_INVENTORY.json`. Verify all `file_hash_sha256` values: no `null`, no `""`, no `000000`, no truncated values. Confirm `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` is present. If any placeholder hash → **HALT-002. DEGRADED MODE. Escalate to CS2.**
+3. **CANON_INVENTORY hashes valid** (silent unless fail): Read `governance/CANON_INVENTORY.json`. Verify all `file_hash_sha256` values: no `null`, no `""`, no `000000`, no truncated values. Confirm `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` is present. If any hash value is null, empty, or zeroed → **HALT-002. DEGRADED MODE. Escalate to CS2.**
 
 4. **FAIL-ONLY-ONCE rules loaded** (silent unless fail): Load `.agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md`. Attest A-001 (invocation evidence) and A-002 (no class exceptions). Load breach registry — if any open breach with no completed corrective action → HALT. Escalate to CS2.
 
@@ -296,9 +296,24 @@ This is where IAA spends 90% of session time. Evaluate:
 
 All BD-000 to BD-024, OVL-AC/CG/CI/KG checks apply here.
 
+**Step 3.3a — Admin-Ceremony Rejection Triggers (ACR-01–08, ECAP-involved sessions only):**
+
+If `Ceremony-admin: YES` (Step 2.1), apply all 8 ACR auto-reject checks. Any failure = REJECTION-PACKAGE immediately — no partial pass permitted.
+
+- **ACR-01**: ECAP reconciliation summary absent in Tier 3 proof bundle — **AUTO-REJECT**. For any wave where `execution-ceremony-admin-agent` was appointed, the bundle MUST include the populated ECAP reconciliation summary (per `ECAP_RECONCILIATION_SUMMARY.template.md`). Absence = auto-reject.
+- **ACR-02**: Conflicting status wording — PENDING or in-progress language present when ASSURANCE-TOKEN is being issued (AAP-01 variant) — **AUTO-REJECT**
+- **ACR-03**: Session ID, issue number, PR number, wave ID, or branch name inconsistency across ceremony artifacts — **AUTO-REJECT**
+- **ACR-04**: Scope declaration stale — FILES_CHANGED count mismatch with actual diff (AAP-04) — **AUTO-REJECT**
+- **ACR-05**: Stale hash — declared SHA256 does not match committed file state (AAP-05) — **AUTO-REJECT**
+- **ACR-06**: PUBLIC_API ripple obligation silently omitted (AAP-08) — **AUTO-REJECT**
+- **ACR-07**: Declared count or path mismatch across ceremony artifacts (AAP-06, AAP-07) — **AUTO-REJECT**
+- **ACR-08**: Stale artifact path reference — declared path not committed on branch (AAP-03, AAP-09) — **AUTO-REJECT**
+
+Output per ACR check: `ACR-[N]: PASS ✅ / FAIL ❌`
+
 **Step 3.4 — Tally results:**
 
-Count all PASS and FAIL verdicts across Steps 3.1–3.3.
+Count all PASS and FAIL verdicts across Steps 3.1–3.3a.
 > "Total: [N] checks, [N] PASS, [N] FAIL"
 
 **Step 3.4a — Mandatory failure classification:**
@@ -330,7 +345,7 @@ If ANY check fails → **STOP. Do not issue verdict. Issue REJECTION-PACKAGE.**
 
 **Step 4.2 — Issue verdict:**
 
-If ALL checks (Steps 3.1–3.5 + 4.1) PASS:
+If ALL checks (Steps 3.1–3.3a + 4.1) PASS:
 
 > "═══════════════════════════════════════
 > ASSURANCE-TOKEN
@@ -389,7 +404,7 @@ Return verdict. ASSURANCE-TOKEN: invoking agent may open PR. REJECTION-PACKAGE: 
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Version**: 6.2.0 | **Contract**: 2.7.0 | **Last Updated**: 2026-04-13
+**Version**: 6.2.0 | **Contract**: 2.8.0 | **Last Updated**: 2026-04-17
 **Tier 2 Knowledge**: `.agent-workspace/independent-assurance-agent/knowledge/`
 **Canonical Source**: `APGI-cmy/maturion-foreman-governance`
 **IAA Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
