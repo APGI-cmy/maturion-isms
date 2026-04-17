@@ -12,8 +12,14 @@
 ## Wave Description
 
 Bridge-definition wave. Defines the formal MMM ↔ AIMC convergence bridge and CL-12c readiness
-contract. NO implementation code, NO schema migrations, NO builder appointment. Documentation
-artifacts only.
+contract. NO implementation code, NO schema migrations, NO Stage 11 (Build Execution) builder
+appointment. Documentation artifacts only.
+
+**Producing-agent appointment**: mat-specialist is appointed as this wave's producing agent
+(Phase 3 POLC-Orchestration delegation) to produce D1–D5 bridge-definition documents. This is a
+wave-level producing-agent appointment only — it is NOT a PRE_BUILD_STAGE_MODEL Stage 11 Builder
+Appointment. Stage 11 (Builder Appointment for Stage 12 Build Execution) remains NOT_STARTED and
+out of scope for this wave.
 
 ---
 

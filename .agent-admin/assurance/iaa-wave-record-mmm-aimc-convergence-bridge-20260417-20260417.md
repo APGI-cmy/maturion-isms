@@ -74,6 +74,8 @@ Upstream stages reviewed against `modules/MMM/BUILD_PROGRESS_TRACKER.md` (last u
 | 11 | Builder Appointment | NOT_STARTED | — | — |
 | 12 | Build Execution | NOT_STARTED | — | — |
 
+> **Disambiguation note**: The `mat-specialist (appointed)` reference in the PRE-BRIEF above is a **wave-level producing-agent appointment** (Phase 3 POLC-Orchestration delegation to produce D1–D5 bridge-definition documents). It is NOT a PRE_BUILD_STAGE_MODEL Stage 11 Builder Appointment. Stage 11 "Builder Appointment" refers to appointing a builder for Stage 12 Build Execution, which remains NOT_STARTED and is out of scope for this wave.
+
 **Blockers preventing Stage 11 (Builder Appointment)**:
 1. Stages 5–7: IAA tokens issued, awaiting CS2 formal merge approval — these PRs must be merged before Stage 8 proceeds per tracker
 2. Stage 8 (Implementation Plan): NOT_STARTED — must precede Stage 9
