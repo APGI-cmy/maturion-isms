@@ -6,6 +6,7 @@
 **Branch**: copilot/fix-253484265-1108482416-189ebaa2-6f84-4c6a-994f-80ce5f0ae1b8
 **Date**: 2026-04-17
 **CS2 Authorization**: CONFIRMED — issue opened directly by CS2 (@APGI-cmy)
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-ecap-cde-completion-20260417.md
 
 ---
 

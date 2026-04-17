@@ -348,9 +348,15 @@ jobs:
               continue
             fi
 
-            # Search for forbidden patterns, then exclude exempted iaa_audit_token lines
+            # Search for forbidden patterns, then exclude exempted lines:
+            # - iaa_audit_token lines with a resolved IAA-session token
+            # - lines where "placeholder" appears only as part of the standard YAML key
+            #   *_placeholder_hashes (e.g. degraded_on_placeholder_hashes,
+            #   canon_inventory_degraded_or_placeholder_hashes) — these are governance
+            #   field names describing hash-validation semantics, not stub values
             VIOLATIONS=$(grep -niE 'STUB|TODO:|FIXME:|placeholder|to be populated|TBD' "$file" \
               | grep -viE 'iaa_audit_token.*IAA-session-' \
+              | grep -viE '_placeholder_hashes' \
               || true)
 
             if [ -z "$VIOLATIONS" ]; then

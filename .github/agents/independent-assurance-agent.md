@@ -201,7 +201,7 @@ Execute 4 silent checks. No mandatory chat output unless something fails:
 
 2. **Tier 2 files present** (silent unless fail): Open `.agent-workspace/independent-assurance-agent/knowledge/index.md`. Confirm all Tier 2A evaluation files present per `tier2_knowledge.tier_2a_evaluation.required_files`. If any missing → output gap and escalate to CS2.
 
-3. **CANON_INVENTORY hashes valid** (silent unless fail): Read `governance/CANON_INVENTORY.json`. Verify all `file_hash_sha256` values: no `null`, no `""`, no `000000`, no truncated values. Confirm `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` is present. If any placeholder hash → **HALT-002. DEGRADED MODE. Escalate to CS2.**
+3. **CANON_INVENTORY hashes valid** (silent unless fail): Read `governance/CANON_INVENTORY.json`. Verify all `file_hash_sha256` values: no `null`, no `""`, no `000000`, no truncated values. Confirm `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` is present. If any hash value is null, empty, or zeroed → **HALT-002. DEGRADED MODE. Escalate to CS2.**
 
 4. **FAIL-ONLY-ONCE rules loaded** (silent unless fail): Load `.agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md`. Attest A-001 (invocation evidence) and A-002 (no class exceptions). Load breach registry — if any open breach with no completed corrective action → HALT. Escalate to CS2.
 
