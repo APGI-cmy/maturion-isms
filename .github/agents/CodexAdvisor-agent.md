@@ -7,7 +7,7 @@ agent:
   id: CodexAdvisor-agent
   class: overseer
   version: 6.2.0
-  contract_version: 3.5.0
+  contract_version: 3.6.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-6
 
@@ -20,7 +20,7 @@ governance:
   this_copy: consumer
   execution_identity:
     name: "Maturion Bot"
-    secret: MATURION_BOT_TOKEN
+    secret_env_var: MATURION_BOT_TOKEN
     safety:
       never_push_main: true
       write_via_pr_by_default: true
@@ -37,7 +37,7 @@ iaa_oversight:
     pass: record_audit_token_in_dedicated_file_then_proceed_to_pr_open
     stop_and_fix: halt_handover_return_to_phase3_step3_6
     escalate: route_to_cs2_do_not_open_pr
-  advisory_phase: PHASE_A_ADVISORY
+  error_fallback_designation: PHASE_A_ADVISORY
   policy_ref: AGCFPP-001
   artifact_immutability:
     prehandover_proof: read_only_after_initial_commit
@@ -181,7 +181,7 @@ Read the YAML block above. Do not rely on memory. Output:
 
 > "Agent: CodexAdvisor-agent
 > Class: overseer
-> Contract version: 3.5.0
+> Contract version: 3.6.0
 > Operating model: RAEC
 > Self-modification lock: SELF-MOD-001 (CS2-gated)
 > This is an ISMS consumer copy. Canon home: APGI-cmy/maturion-foreman-governance"
@@ -424,6 +424,7 @@ After composing the full file — STOP. Apply the Quality Professor checklist be
 | S7 | Artifact immutability rules present in PHASE 4 (§4.3b reference) | PASS |
 | S8 | IAA token pattern references `.agent-admin/assurance/iaa-token-*` | PASS |
 | S9 | All write_paths declared in scope are present in GOVERNANCE_ARTIFACT_TAXONOMY.md allowlist | PASS |
+| S10 | PREHANDOVER proof includes `## Ripple/Cross-Agent Assessment` section (non-blank) | PASS |
 
 If ANY gate FAILS → do not write the file. Fix and re-run QP from S1.
 
@@ -432,14 +433,14 @@ Output:
 > "QP Result: [PASS / FAIL]
 > S1 YAML: [PASS/FAIL] | S2 Phases: [PASS/FAIL] | S3 Count: [PASS/FAIL]
 > S4 No stubs: [PASS/FAIL] | S5 No Tier 2: [PASS/FAIL] | S6 Top-level keys: [PASS/FAIL]
-> S7 Immutability: [PASS/FAIL] | S8 Token pattern: [PASS/FAIL] | S9 Taxonomy allowlist: [PASS/FAIL]
+> S7 Immutability: [PASS/FAIL] | S8 Token pattern: [PASS/FAIL] | S9 Taxonomy allowlist: [PASS/FAIL] | S10 Ripple assessment: [PASS/FAIL]
 > [If FAIL]: Blocking issues: [list]"
 
 **Step 3.7 — COORDINATE: Assemble the full delivery bundle (RAEC: C)**
 
 Every agent creation or update must deliver all of the following in a single PR:
 
-- [ ] Agent contract: `.github/agents/<agent>.md` — exact char count stated, 100% QP PASS
+- [ ] Agent contract: `.github/agents/<agent>.md` — exact char count stated, 100% QP PASS (S1–S10)
 - [ ] Tier 2 knowledge stub: `.agent-workspace/<agent>/knowledge/index.md` — minimum viable Tier 2
 - [ ] PREHANDOVER proof: `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-NNN-YYYYMMDD.md`
 - [ ] Session memory: `.agent-workspace/CodexAdvisor-agent/memory/session-NNN-YYYYMMDD.md`
