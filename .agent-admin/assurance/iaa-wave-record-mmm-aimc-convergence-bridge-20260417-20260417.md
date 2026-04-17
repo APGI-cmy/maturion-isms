@@ -14,7 +14,7 @@
 
 **Invocation mode**: PRE-BRIEF (Phase 0)  
 **Invoked by**: foreman-v2-agent (via Foreman comment on maturion-isms#1383)  
-**Producing agent**: Not yet assigned (bridge-definition wave — mat-specialist or foreman-v2-agent expected)  
+**Producing agent**: mat-specialist (appointed by foreman-v2-agent — Phase 3 POLC-Orchestration; awaiting deliverable handback)  
 **Ceremony admin appointed**: NOT YET DECLARED (expected: true, based on prior wave pattern)
 
 ---
@@ -173,4 +173,5 @@ IAA will verify the following at full assurance (Phase 3):
 
 **Wave record created**: 2026-04-17  
 **Created by**: independent-assurance-agent (PRE-BRIEF mode, Phase 0)  
-**Next action**: Foreman invokes producing agent. Full IAA assurance (Phases 2–4) at handover.
+**Updated**: 2026-04-17 — Producing agent updated to reflect mat-specialist appointment (Phase 3 delegation by foreman-v2-agent).  
+**Next action**: mat-specialist produces D1–D5 deliverables and hands back for Phase 4 ceremony.
