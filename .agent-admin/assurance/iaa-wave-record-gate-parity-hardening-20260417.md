@@ -20,7 +20,25 @@ Anti-regression obligations: yes — A-023 (ripple assessment), A-029b (carry-fo
 
 ## TOKEN
 
-*No ASSURANCE-TOKEN issued for this wave — see REJECTION_HISTORY below.*
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: gate-parity-hardening-wave-#1402 (re-invocation session-061b-20260417)
+All 18 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-061b-20260417-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-session-061b-20260417-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+═══════════════════════════════════════
+
+### Assurance Summary — Re-invocation session-061b
+
+- **Invoked by**: CodexAdvisor-agent (re-invocation after REJECTION-PACKAGE)
+- **Work produced by**: CodexAdvisor-agent (class: overseer)
+- **PR scope**: 4 agent contracts (foreman-v2-agent v2.14.0, execution-ceremony-admin-agent v1.5.0, independent-assurance-agent v2.9.0, CodexAdvisor-agent v3.6.0) + anti-patterns checklist v1.1.0 + CI workflow + PREHANDOVER proof
+- **CS2 authorization**: Issue #1402
+- **Ceremony-admin**: NO
+- **STOP-AND-FIX findings resolved**: FINDING-1 (ripple assessment), FINDING-2 (advisory_phase ambiguity) + recommended fix (secret_env_var)
+- **Checks run**: 18 total — 18 PASS, 0 FAIL
 
 ---
 
