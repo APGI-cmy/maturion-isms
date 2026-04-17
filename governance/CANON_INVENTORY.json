@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-04-16",
-  "total_canons": 202,
-  "generation_timestamp": "2026-04-16T00:00:00Z",
+  "last_updated": "2026-04-17",
+  "total_canons": 200,
+  "generation_timestamp": "2026-04-13T07:08:00Z",
   "canon_entry_schema": {
     "description": "Schema for canon entries in CANON_INVENTORY.json",
     "required_fields": [
@@ -261,22 +261,22 @@
     },
     {
       "filename": "AGENT_HANDOVER_AUTOMATION.md",
-      "version": "1.3.0",
-      "canonical_version": "1.3.0",
-      "file_hash": "d4860fab5ec320c9ff32bee261e85e7dea756ce7667b9b1c83d195c03134e3be",
+      "version": "1.4.1",
+      "canonical_version": "1.4.1",
+      "file_hash": "55f7f0e4c7f3a3716b6d43fa81679da06350fdd51c943a3cdbb841a01989f113",
       "effective_date": "2026-04-06",
-      "amended_date": "2026-04-13",
+      "amended_date": "2026-04-17",
       "description": "Canonical governance document: AGENT_HANDOVER_AUTOMATION",
       "type": "canon",
       "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "d4860fab5ec320c9ff32bee261e85e7dea756ce7667b9b1c83d195c03134e3be",
+      "file_hash_sha256": "55f7f0e4c7f3a3716b6d43fa81679da06350fdd51c943a3cdbb841a01989f113",
       "ripple_dispatched": "2026-02-24",
       "ripple_log": ".agent-admin/governance/ripple-logs/ripple-agent-handover-parity-20260224.md",
       "ripple_in_repo_status": "COMPLETE",
       "ripple_consumer_status": "PENDING \u2014 layer-down issues to be created in consumer repos",
-      "last_updated": "2026-04-13",
-      "change_note": "v1.3.0: Updated parking station reference in append-only rules table to canonical path per PARKING_STATION_PATH_STANDARD.md v1.0.0"
+      "last_updated": "2026-04-17",
+      "change_note": "v1.4.1: Tightened \u00a74.3e Check C stale-wording scan to final-state artifact set only; superseded pre-token proofs exempt under append-only model; updated AAP-01 auto-fail rule to document final-state scope and superseded-proof exemption. v1.4.0: Added \u00a74.3e Admin Ceremony Compliance Gate (BLOCKING, ECAP jobs) + auto-fail rules table (AAP-01\u2013AAP-09) + checklist item"
     },
     {
       "filename": "AGENT_INDUCTION_PROTOCOL.md",
@@ -1032,16 +1032,18 @@
     },
     {
       "filename": "EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md",
-      "version": "1.0.0",
-      "file_hash": "8a65c7c556248b5c70f0cecc230c7941e734169a3dbdf85c8358476716309c7f",
-      "file_hash_sha256": "8a65c7c556248b5c70f0cecc230c7941e734169a3dbdf85c8358476716309c7f",
+      "version": "1.1.0",
+      "file_hash": "cfb97290bf952b4fc6ffac39c967d87345f3760a6368b692c22144755a05362c",
+      "file_hash_sha256": "cfb97290bf952b4fc6ffac39c967d87345f3760a6368b692c22144755a05362c",
       "effective_date": "2026-04-08",
       "description": "Canonical protocol for the execution-ceremony-admin-agent role, authority boundaries, the seven-step canonical handover sequence, and three-part readiness model (substantive, administrative, independent assurance verdict). Formalises ECAS-001 strategy into binding governance.",
       "type": "canon",
       "path": "governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md",
       "layer_down_status": "PUBLIC_API",
-      "last_updated": "2026-04-08",
-      "change_note": "v1.0.0: Initial canon \u2014 ECAP-001; converts ECAS-001 strategy to binding governance"
+      "last_updated": "2026-04-17",
+      "change_note": "v1.1.0: Added \u00a73.5 Final-State Normalization Duty, \u00a73.6 Ceremony Completeness Invariants, \u00a73.7 Cross-Artifact Reconciliation Duty, \u00a73.8 Commit-State Truth Rule, \u00a73.9 Ripple/Registry Administration Duty, \u00a74.5 Non-Substitution Rule (closed 3-layer stack)",
+      "canonical_version": "1.1.0",
+      "amended_date": "2026-04-17"
     },
     {
       "filename": "FAILURE_PROMOTION_RULE.md",
@@ -1146,16 +1148,18 @@
     },
     {
       "filename": "FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
-      "version": "1.3.0",
-      "file_hash": "b268ad068773a66430a3492115864e51d1829f8744aa6de70eeb2fe242d240c9",
+      "version": "1.4.0",
+      "file_hash": "3e1c27d6e843d000c46e18b962b548e51b6b5da9b982a1851bfa34a10ee0848e",
       "effective_date": "2025-12-24",
       "description": "This document formally defines the **Foreman (FM)** as a **managerial authority** within the Maturion ecosystem, establishing its supervisory responsibilities over builders and the execution process.",
       "type": "canon",
       "path": "governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "b268ad068773a66430a3492115864e51d1829f8744aa6de70eeb2fe242d240c9",
-      "last_updated": "2026-04-09",
-      "change_note": "v1.3.0 fix: step 7 \u2014 append-only artifacts / fresh PREHANDOVER proof per round; no editing of committed proofs"
+      "file_hash_sha256": "3e1c27d6e843d000c46e18b962b548e51b6b5da9b982a1851bfa34a10ee0848e",
+      "last_updated": "2026-04-17",
+      "change_note": "v1.4.0: Added \u00a714.6 Foreman QP Admin-Compliance Checkpoint \u2014 role boundary, required checkpoint output, rules, cross-references",
+      "canonical_version": "1.4.0",
+      "amended_date": "2026-04-17"
     },
     {
       "filename": "FOREMAN_MEMORY_PROTOCOL.md",
@@ -1480,18 +1484,19 @@
     },
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-      "version": "1.5.0",
-      "file_hash": "f79752f9f7abd586d1337245ed85639f8676eb8e8e18c908daf0965d9ad1cbac",
-      "file_hash_sha256": "f79752f9f7abd586d1337245ed85639f8676eb8e8e18c908daf0965d9ad1cbac",
+      "version": "1.6.0",
+      "file_hash": "1d0c37190de3d232495e58d3f1984a1feb042c178227ce46c0229e6fdecc3ae9",
+      "file_hash_sha256": "1d0c37190de3d232495e58d3f1984a1feb042c178227ce46c0229e6fdecc3ae9",
       "effective_date": "2026-02-24",
-      "amended_date": "2026-04-08",
+      "amended_date": "2026-04-17",
       "description": "Defines the Independent Assurance Agent (IAA) class: role, hard-trigger authority, independence requirements, five-phase delivery proof protocol, binary output (ASSURANCE-TOKEN / REJECTION-PACKAGE), and trigger table. v1.1.0: Zero-Severity-Tolerance policy added.",
       "type": "canon",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "layer_down_status": "INTERNAL",
       "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA); v1.1.0 amendment: Enforce zero-severity-tolerance \u2014 any finding triggers rejection",
-      "last_updated": "2026-04-09",
-      "change_note": "v1.5.0 fix: immutability-compliant re-invocation cycle (fresh PREHANDOVER proof per round); PREHANDOVER pending-marker approach removed; \u00a7References header restored; token naming reconciled with \u00a74.3b"
+      "last_updated": "2026-04-17",
+      "change_note": "v1.6.0: Added \u00a7Admin-Ceremony Rejection Triggers (ACR-01 through ACR-08); reinforced non-cleanup-authoring posture relative to ECAP layer",
+      "canonical_version": "1.6.0"
     },
     {
       "filename": "INITIALIZATION_COMPLETENESS_GATE.md",
