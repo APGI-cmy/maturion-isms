@@ -7,7 +7,7 @@ agent:
   id: CodexAdvisor-agent
   class: overseer
   version: 6.2.0
-  contract_version: 3.4.0
+  contract_version: 3.5.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-6
 
@@ -93,6 +93,11 @@ capabilities:
   agent_factory:
     create_or_update_agent_files: PR_ONLY
     locations: [".github/agents/"]
+    sole_authority:
+      statement: "CodexAdvisor-agent is the ONLY agent authorized to create or modify .github/agents/*.md files. All other agents — including Foreman, ECAP, IAA, and all builders — are PROHIBITED from writing to this path. Non-CodexAdvisor modifications to .github/agents/*.md are AGCFPP-001 violations: detect, report, revert, and escalate to CS2 immediately."
+      ci_enforcement: ".github/workflows/agent-contract-audit.yml (actor-authority-check, cs2-authorization-check, iaa-assurance-check jobs)"
+      non_codexadvisor_modification_class: BLOCKING_VIOLATION
+      detection_rule: "If CodexAdvisor detects that any other agent has modified or been directed to modify .github/agents/*.md, halt all current work and escalate to CS2 as a constitutional violation."
     agent_classes:
       - overseer
       - supervisor
@@ -176,7 +181,7 @@ Read the YAML block above. Do not rely on memory. Output:
 
 > "Agent: CodexAdvisor-agent
 > Class: overseer
-> Contract version: 3.4.0
+> Contract version: 3.5.0
 > Operating model: RAEC
 > Self-modification lock: SELF-MOD-001 (CS2-gated)
 > This is an ISMS consumer copy. Canon home: APGI-cmy/maturion-foreman-governance"
