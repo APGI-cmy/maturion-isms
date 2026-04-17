@@ -1,7 +1,7 @@
 # SPECIALIST_KNOWLEDGE_MANAGEMENT
 
-**Status**: CANONICAL | **Version**: 1.0.0 | **Authority**: CS2  
-**Date**: 2026-02-20
+**Status**: CANONICAL | **Version**: 1.1.0 | **Authority**: CS2  
+**Date**: 2026-04-15
 
 ---
 
@@ -173,6 +173,29 @@ The `knowledge-delta.md` file documents any Tier 2 updates discovered during the
 
 ---
 
+## Source Model Governance
+
+The specialist knowledge **SOURCE MODEL** — which source classes are allowed or prohibited, the source trust hierarchy (Tier 1–4), source priority rules, conflict resolution protocol, escalation thresholds, and synthesis prohibitions — is governed by `AIMC_SPECIALIST_OPERATING_MODEL.md` §3–§4.
+
+This canon (`SPECIALIST_KNOWLEDGE_MANAGEMENT.md`) governs how knowledge is **ACQUIRED and VALIDATED** within the specialist's domain — the lifecycle of knowledge from bootstrapping through staleness detection to retirement.
+
+`AIMC_SPECIALIST_OPERATING_MODEL.md` governs which **SOURCES** may supply that knowledge and under what conditions a specialist may act on each source tier.
+
+The two canons are complementary and non-overlapping:
+
+| Concern | Governing Canon |
+|---------|----------------|
+| Knowledge tier taxonomy (Tier 1–3) | `SPECIALIST_KNOWLEDGE_MANAGEMENT.md` (this document) |
+| Allowed/prohibited source classes | `AIMC_SPECIALIST_OPERATING_MODEL.md` §3 |
+| Source trust hierarchy | `AIMC_SPECIALIST_OPERATING_MODEL.md` §3.3 |
+| Source priority and conflict rules | `AIMC_SPECIALIST_OPERATING_MODEL.md` §4 |
+| Knowledge acquisition protocol | `SPECIALIST_KNOWLEDGE_MANAGEMENT.md` (this document) |
+| Staleness detection and retirement | `SPECIALIST_KNOWLEDGE_MANAGEMENT.md` (this document) |
+| Freshness and currency rules | `AIMC_SPECIALIST_OPERATING_MODEL.md` §5 |
+| Public/Tier-4 research use conditions | `AIMC_SPECIALIST_OPERATING_MODEL.md` §3.4, §5.3 |
+
+---
+
 ## Related Canon
 
 - `governance/canon/ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md` - Role definitions
@@ -180,10 +203,11 @@ The `knowledge-delta.md` file documents any Tier 2 updates discovered during the
 - `governance/canon/LAYER_UP_PROTOCOL.md` - Knowledge promotion path
 - `governance/canon/LIVING_AGENT_SYSTEM.md` - Governance framework
 - `governance/canon/AGENT_CONTRACT_ARCHITECTURE.md` - Four-component contract
+- `governance/canon/AIMC_SPECIALIST_OPERATING_MODEL.md` - Source model, priority rules, freshness rules, memory boundaries, human-in-the-loop boundaries
 
 ---
 
-**Version**: 1.0.0  
-**Last Updated**: 2026-02-20  
+**Version**: 1.1.0  
+**Last Updated**: 2026-04-15  
 **Authority**: CS2 (Johan Ras)  
 **Living Agent System**: v6.2.0
