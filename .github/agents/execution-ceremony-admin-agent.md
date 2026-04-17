@@ -340,8 +340,6 @@ Only proceed to return the bundle when all four items are PASS / COMPLETE / PRES
 
 **Step 3.6 — Return bundle to Foreman:**
 
-**Step 3.6 — Return bundle to Foreman:**
-
 Return the complete ceremony bundle to Foreman including:
 - PREHANDOVER proof path
 - Session memory path
