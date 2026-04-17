@@ -244,7 +244,7 @@ Builder Appointment). CS2 review and approval required before Stage 7 (PBFAG) pr
 **Produced By**: mat-specialist (delegated by foreman-v2-agent)  
 **Completion Date**: 2026-04-15  
 **Approval Required**: Yes
-- [ ] CS2 formal approval pending
+- [x] CS2 formal approval pending
 - [x] IAA ASSURANCE-TOKEN issued: IAA-session-mmm-stage7-pbfag-20260415-PASS (2026-04-15)
 **Approval Date**: N/A (pending)
 **Approved By**: N/A (pending)
