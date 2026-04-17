@@ -1,8 +1,10 @@
 # AGENT_HANDOVER_AUTOMATION
 
-**Status**: CANONICAL | **Version**: 1.3.0 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.4.1 | **Authority**: CS2  
 **Date**: 2026-02-24  
-**Amended**: 2026-04-09 — v1.3.0: Post-ECAP-001 governance quality closure (ECAP-QC-001 through ECAP-QC-004) — added §4.3d Scope-Declaration Parity Gate (blocking, pre-IAA); added mandatory drift evidence and metadata correctness requirements to Administrator evidence checklist; updated validate-canon-hashes.sh to catch version/canonical_version mismatches; codified amended_date and timestamp discipline; authority: CS2 — ECAP-001 follow-up quality closure issue.  
+**Amended**: 2026-04-17 — v1.4.1: Tightened §4.3e Check C stale-wording scan to final-state artifact set only — superseded pre-token proofs retained immutably under the append-only model are now explicitly exempt; updated AAP-01 auto-fail rule to document final-state scope and superseded-proof exemption; authority: CS2 — PR review feedback on §4.3e canon collision with append-only proof retention.  
+**Previous amendment**: 2026-04-17 — v1.4.0: Added §4.3e Admin Ceremony Compliance Gate (BLOCKING, pre-IAA, ECAP-involved jobs); added auto-fail rules table for 9 known admin anti-patterns (AAP-01 through AAP-09); updated Phase 4 structure and sequencing note; updated Handover Validation Checklist with admin-compliance gate item; authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack for ECAP, Foreman QP, and IAA.  
+**Previous amendment**: 2026-04-09 — v1.3.0: Post-ECAP-001 governance quality closure (ECAP-QC-001 through ECAP-QC-004) — added §4.3d Scope-Declaration Parity Gate (blocking, pre-IAA); added mandatory drift evidence and metadata correctness requirements to Administrator evidence checklist; updated validate-canon-hashes.sh to catch version/canonical_version mismatches; codified amended_date and timestamp discipline; authority: CS2 — ECAP-001 follow-up quality closure issue.  
 **Previous amendment**: 2026-04-08 — v1.2.0: Added §4.3c Pre-IAA Commit-State Gate (canonical blocking step) — required immediately before every IAA invocation in all producing-agent contracts; defines mandatory git status / HEAD verification checks; adds guidance for recording commit-state evidence in PREHANDOVER proof; adds §PHASE_B_BLOCKING note for IAA deployment phase; authority: CS2 — pre-IAA handover discipline hardening issue.  
 **Previous amendment**: 2026-04-08 — v1.1.5: Added §Phase 4 Terminal State Rule; explicitly forbade "remaining Phase 4 ceremony" and equivalent deferral language; clarified that `report_progress` for the final handover commit MUST NOT be called until all Phase 4 artifacts are committed (PREHANDOVER proof, session memory, IAA assurance artifact where required); authority: CS2 — OPOJD hardening issue.
 
@@ -57,10 +59,11 @@ Phase 4 consists of five mandatory sections:
 ### 4.3b Token Update Ceremony (IAA token — append-only, dedicated file)
 ### 4.3c Pre-IAA Commit-State Gate (mandatory, BLOCKING)
 ### 4.3d Scope-Declaration Parity Gate (mandatory, BLOCKING — governance PRs)
+### 4.3e Admin Ceremony Compliance Gate (mandatory, BLOCKING — ECAP-involved jobs)
 ### 4.4 Compliance Check & Escalation (if needed)
 ```
 
-> **Sequencing note**: §4.3c Pre-IAA Commit-State Gate MUST run immediately before IAA invocation (which each producing-agent contract places after §4.3c). §4.3d Scope-Declaration Parity Gate runs after §4.3c and before IAA invocation for all PRs that include `governance/scope-declaration.md`. §4.3b Token Update Ceremony runs after IAA has returned a verdict. The canonical ordering is: §4.3 → §4.3c → §4.3d (if governance PR) → IAA invocation → §4.3b → §4.4.
+> **Sequencing note**: §4.3c Pre-IAA Commit-State Gate MUST run immediately before IAA invocation (which each producing-agent contract places after §4.3c). §4.3d Scope-Declaration Parity Gate runs after §4.3c and before IAA invocation for all PRs that include `governance/scope-declaration.md`. **§4.3e Admin Ceremony Compliance Gate runs after §4.3d and before IAA invocation for all jobs where an `execution-ceremony-admin-agent` was appointed.** §4.3b Token Update Ceremony runs after IAA has returned a verdict. The canonical ordering is: §4.3 → §4.3c → §4.3d (if governance PR) → §4.3e (if ECAP job) → IAA invocation → §4.3b → §4.4.
 
 ## Section 4.1: Evidence Artifact Generation
 
@@ -862,7 +865,182 @@ Non-governance PRs (application code only, documentation only) are exempt from �
 
 
 
-## Section 4.3b: Token Update Ceremony (IAA Token — Append-Only, Dedicated File)
+## Section 4.3e: Admin Ceremony Compliance Gate (mandatory for ECAP-involved jobs, BLOCKING)
+
+**Purpose**: Verify that the `execution-ceremony-admin-agent` has completed the full admin-compliance normalization required by `EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` §3.5–§3.9 before IAA is invoked. This gate ensures that ceremony defects are caught at the ECAP/Foreman boundary rather than forwarded to IAA for detection.
+
+**Trigger**: This gate is **MANDATORY and BLOCKING** for every job where an `execution-ceremony-admin-agent` was appointed (i.e., any job that used ECAP ceremony administration). It is also the prescribed gate for Foreman Quality-of-Process (QP) admin-compliance verification per `FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md §14.6`.
+
+```bash
+#!/bin/bash
+# §4.3e Admin Ceremony Compliance Gate (BLOCKING — ECAP-involved jobs)
+# Priority: Producer_H (Foreman or execution-ceremony-admin-agent)
+# Authority: EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md v1.1.0 + AGENT_HANDOVER_AUTOMATION.md v1.4.0
+
+echo "🔍 §4.3e ADMIN CEREMONY COMPLIANCE GATE (BLOCKING)"
+
+ACC_FAILURES=()
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHECK A: Artifact Completeness
+# ─────────────────────────────────────────────────────────────────────────────
+echo "  [A] Artifact Completeness..."
+
+# A1: PREHANDOVER proof committed
+PREHANDOVER_COUNT=$(git ls-files --error-unmatch .agent-admin/prehandover/proof-*.md 2>/dev/null | wc -l || echo 0)
+[ "${PREHANDOVER_COUNT}" -eq 0 ] && \
+  ACC_FAILURES+=("A1: PREHANDOVER proof not found or not committed")
+
+# A2: Session memory committed
+SESSION_MEMORY_COUNT=$(git ls-files --error-unmatch .agent-workspace/*/memory/session-*.md 2>/dev/null | wc -l || echo 0)
+[ "${SESSION_MEMORY_COUNT}" -eq 0 ] && \
+  ACC_FAILURES+=("A2: Session memory not found or not committed")
+
+# A3: Gate results (JSON) committed
+GATE_RESULTS_COUNT=$(git ls-files --error-unmatch .agent-admin/gates/gate-results-*.json 2>/dev/null | wc -l || echo 0)
+[ "${GATE_RESULTS_COUNT}" -eq 0 ] && \
+  ACC_FAILURES+=("A3: Gate results JSON not found or not committed (ECAP-CCI-01)")
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHECK B: Scope Declaration Parity (ECAP-CCI-05 — no stale counts)
+# ─────────────────────────────────────────────────────────────────────────────
+echo "  [B] Scope Declaration Parity..."
+
+if [ -f "governance/scope-declaration.md" ]; then
+  DECLARED_COUNT=$(grep -E "^FILES_CHANGED:" governance/scope-declaration.md | awk '{print $2}')
+  ACTUAL_COUNT=$(git diff --name-only origin/main...HEAD | wc -l | tr -d ' ')
+  if [ -n "${DECLARED_COUNT}" ] && [ "${DECLARED_COUNT}" != "${ACTUAL_COUNT}" ]; then
+    ACC_FAILURES+=("B1: Scope declaration FILES_CHANGED=${DECLARED_COUNT} but actual changed files=${ACTUAL_COUNT} (ECAP-CCI-05)")
+  fi
+fi
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHECK C: Status Normalization (ECAP-CCI-03 / ECAP-CCI-04)
+# Scans only FINAL-STATE artifacts — superseded (pre-token) proofs that are
+# retained immutably under the append-only model are excluded from this scan.
+# A proof is superseded when any other committed proof declares it via a
+# "Supersedes: <filename>" line.  Session memories: only the latest per
+# agent workspace is evaluated.
+# ─────────────────────────────────────────────────────────────────────────────
+echo "  [C] Status Normalization — scanning final-state ceremony artifacts for prohibited provisional wording..."
+
+# Build superseded-file set: collect all basenames declared in "Supersedes:" lines
+SUPERSEDED_SET=()
+for f in $(git ls-files .agent-admin/prehandover/proof-*.md 2>/dev/null); do
+  while IFS= read -r SUPERSEDES_NAME; do
+    [ -n "${SUPERSEDES_NAME}" ] && SUPERSEDED_SET+=(".agent-admin/prehandover/${SUPERSEDES_NAME}")
+  done < <(grep -oP '(?i)(?<=Supersedes: )\S+' "${f}" 2>/dev/null || true)
+done
+
+STALE_WORDING_FILES=()
+
+# Scan PREHANDOVER proofs — skip superseded originals
+for f in $(git ls-files .agent-admin/prehandover/proof-*.md 2>/dev/null); do
+  IS_SUPERSEDED=false
+  for s in "${SUPERSEDED_SET[@]}"; do
+    [ "${f}" = "${s}" ] && IS_SUPERSEDED=true && break
+  done
+  ${IS_SUPERSEDED} && continue
+  if grep -qiE "\bTODO\b|\bTBD\b|\bin[ _-]?progress\b|\bPENDING\b" "${f}" 2>/dev/null; then
+    STALE_WORDING_FILES+=("${f}")
+  fi
+done
+
+# Scan session memories — only the latest file per agent workspace
+for WORKSPACE_DIR in $(git ls-files '.agent-workspace/*/memory/session-*.md' 2>/dev/null | \
+    sed 's|/memory/session-.*||' | sort -u); do
+  LATEST_SESSION=$(git ls-files "${WORKSPACE_DIR}/memory/session-*.md" 2>/dev/null | sort | tail -1)
+  if [ -n "${LATEST_SESSION}" ] && \
+     grep -qiE "\bTODO\b|\bTBD\b|\bin[ _-]?progress\b|\bPENDING\b" "${LATEST_SESSION}" 2>/dev/null; then
+    STALE_WORDING_FILES+=("${LATEST_SESSION}")
+  fi
+done
+
+[ ${#STALE_WORDING_FILES[@]} -gt 0 ] && \
+  ACC_FAILURES+=("C1: Provisional/stale wording found in final-state ceremony artifacts: ${STALE_WORDING_FILES[*]} (ECAP-CCI-03)")
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHECK D: Version Normalization (ECAP-CCI-04)
+# ─────────────────────────────────────────────────────────────────────────────
+echo "  [D] Version normalization check skipped (manual review required for mixed version labels)"
+# Mixed version labels are a manual review item — cannot be machine-checked generically.
+# The Foreman QP checkpoint (§14.6) is the human verification layer for version consistency.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHECK E: Token / Session / Path / Issue / PR / Wave Consistency (§3.7)
+# ─────────────────────────────────────────────────────────────────────────────
+echo "  [E] Token / session / path consistency (spot check)..."
+# Machine check: PREHANDOVER proof must declare iaa_audit_token field
+LATEST_PROOF=$(ls -t .agent-admin/prehandover/proof-*.md 2>/dev/null | head -1)
+if [ -n "${LATEST_PROOF}" ]; then
+  if ! grep -q "iaa_audit_token" "${LATEST_PROOF}"; then
+    ACC_FAILURES+=("E1: PREHANDOVER proof missing iaa_audit_token field (§3.7 token consistency)")
+  fi
+fi
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHECK F: Inventory / Hash / Amended-Date Correctness (ECAP-QC-003, ECAP-QC-004)
+# ─────────────────────────────────────────────────────────────────────────────
+echo "  [F] CANON_INVENTORY amended_date and hash correctness..."
+TODAY=$(date -u +"%Y-%m-%d")
+# Run existing validate-canon-hashes.sh if present
+if [ -f ".github/scripts/validate-canon-hashes.sh" ]; then
+  bash .github/scripts/validate-canon-hashes.sh > /tmp/canon-hash-check.txt 2>&1
+  HASH_FAILURES=$(grep -c "FAIL\|MISMATCH\|ERROR" /tmp/canon-hash-check.txt || true)
+  [ "${HASH_FAILURES}" -gt 0 ] && \
+    ACC_FAILURES+=("F1: validate-canon-hashes.sh reported ${HASH_FAILURES} failure(s) — see /tmp/canon-hash-check.txt")
+fi
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHECK G: Ripple / Registry Readiness (§3.9)
+# ─────────────────────────────────────────────────────────────────────────────
+echo "  [G] Ripple / registry readiness..."
+# Machine check: if governance/canon/ files changed, CANON_INVENTORY must also be changed
+CANON_CHANGES=$(git diff --name-only origin/main...HEAD | grep "^governance/canon/" | wc -l | tr -d ' ')
+INVENTORY_CHANGED=$(git diff --name-only origin/main...HEAD | grep -c "^governance/CANON_INVENTORY.json" || true)
+if [ "${CANON_CHANGES}" -gt 0 ] && [ "${INVENTORY_CHANGED}" -eq 0 ]; then
+  ACC_FAILURES+=("G1: Canon files changed but CANON_INVENTORY.json not updated — ripple/registry obligation unmet (§3.9)")
+fi
+
+# ─────────────────────────────────────────────────────────────────────────────
+# GATE RESULT
+# ─────────────────────────────────────────────────────────────────────────────
+if [ ${#ACC_FAILURES[@]} -gt 0 ]; then
+  echo ""
+  echo "❌ §4.3e ADMIN CEREMONY COMPLIANCE GATE FAILED — IAA MUST NOT BE INVOKED"
+  echo "Failures:"
+  for f in "${ACC_FAILURES[@]}"; do echo "  - ${f}"; done
+  echo ""
+  echo "ACTION: Return bundle to ECAP for normalization. Fix all failures, re-run §4.3c + §4.3d + §4.3e, then invoke IAA."
+  exit 1
+fi
+
+echo ""
+echo "✅ §4.3e ADMIN CEREMONY COMPLIANCE GATE PASSED"
+echo "✅ Admin-compliance readiness confirmed. Foreman may accept bundle and proceed to IAA invocation."
+```
+
+### Auto-Fail Rules for Known Admin Anti-Patterns (§4.3e)
+
+The following conditions are **auto-fail** for the §4.3e gate regardless of other checks. Any of these conditions present in the committed ceremony bundle at IAA invocation time constitutes a ceremony-integrity defect:
+
+| ID | Anti-Pattern | Auto-Fail Trigger |
+|----|-------------|-------------------|
+| AAP-01 | Issued token but pending/in-progress wording remains | Any of: `PENDING`, `in progress`, `in-progress` in the **final-state** PREHANDOVER proof or latest session memory where a PASS/COMPLETE is the required state. Pre-token proofs retained immutably under the append-only model (i.e., superseded by a post-token proof that declares `Supersedes: <filename>`) are **exempt** from this check. |
+| AAP-02 | Mixed internal version labels | Multiple different version strings for the same artifact within a single document (e.g., "v1.2.0" and "v1.3.0" both appear as the current version of the same file) |
+| AAP-03 | Stale artifact path references | A declared path in PREHANDOVER proof or session memory that does not exist as a committed file on the branch |
+| AAP-04 | Stale scope declaration after file changes | `FILES_CHANGED` in scope-declaration.md does not match actual `git diff --name-only origin/main...HEAD` count |
+| AAP-05 | Stale hash after file finalization | A declared SHA256 hash in PREHANDOVER proof or CANON_INVENTORY for a file that was modified after the hash was recorded |
+| AAP-06 | Requested vs completed assurance session mismatch | PREHANDOVER proof cites a specific IAA session ID that does not match the IAA session that issued the token in the token file |
+| AAP-07 | Declared file/artifact count mismatch | A declared count of files, artifacts, or changed items in any ceremony artifact does not match the actual count |
+| AAP-08 | PUBLIC_API ripple obligations omitted or silently skipped | Any changed file with `layer_down_status: PUBLIC_API` in CANON_INVENTORY that has no ripple assessment block in the ECAP reconciliation summary |
+| AAP-09 | Committed truth not matching proof/session memory claims | The branch's actual committed file state contradicts a declared artifact path, hash, or status in a ceremony document |
+
+### Admin Ceremony Compliance Gate in the Handover Validation Checklist
+
+The following item is added to the handover checklist when an ECAP job is involved:
+
+> - [ ] **Admin Ceremony Compliance Gate PASSED** (ECAP jobs): §4.3e gate run — 0 auto-fail conditions; ECAP reconciliation summary present; admin-compliance readiness accepted by Foreman QP checkpoint (BLOCKING — IAA must not be invoked until this is ✅) (IAA Token — Append-Only, Dedicated File)
 
 **Purpose**: Govern how the IAA writes its assurance verdict. The PREHANDOVER proof is
 **read-only** once committed. The IAA token is written to a new, dedicated artifact file —
@@ -1202,6 +1380,7 @@ Before session ends, verify:
 - [ ] **Pre-handover merge gate parity check PASSED**: All merge gate checks pass locally (BLOCKING — PR must not be opened until this is ✅)
 - [ ] **Pre-IAA commit-state gate PASSED**: Working tree clean, all deliverables committed at HEAD, PREHANDOVER proof and session memory committed (BLOCKING — IAA must not be invoked until this is ✅)
 - [ ] **Scope-declaration parity gate PASSED** (governance PRs only): `governance/scope-declaration.md` file count matches `git diff --name-only origin/main...HEAD` count; scope-declaration committed and not dirty (BLOCKING — IAA must not be invoked until this is ✅)  (ECAP-QC-002)
+- [ ] **Admin Ceremony Compliance Gate PASSED** (ECAP jobs only): §4.3e gate run — 0 auto-fail conditions (AAP-01 through AAP-09); ECAP reconciliation summary present; Foreman QP admin-compliance checkpoint explicitly accepted (BLOCKING — IAA must not be invoked until this is ✅)
 - [ ] **Drift evidence present** (governance/canon PRs): PREHANDOVER proof includes before/after SHA256 for every amended canon file (ECAP-QC-001)
 - [ ] **Metadata correctness**: `version == canonical_version` and `amended_date == today` for all amended CANON_INVENTORY entries (ECAP-QC-003, ECAP-QC-004)
 - [ ] **Compliance checked**: Agent-specific requirements verified; ALL issues fixed before proceeding
@@ -1318,7 +1497,7 @@ When the `execution-ceremony-admin-agent` returns the ceremony bundle to the For
 
 ---
 
-**Version**: 1.2.0  
-**Last Updated**: 2026-04-08  
+**Version**: 1.4.0  
+**Last Updated**: 2026-04-17  
 **Authority**: CS2 (Johan Ras)  
 **Living Agent System**: v6.2.0

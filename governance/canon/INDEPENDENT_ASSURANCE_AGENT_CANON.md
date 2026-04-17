@@ -1,12 +1,13 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.5.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.6.0 | **Authority**: CS2
 **Date**: 2026-03-03
 **Amended**: 2026-03-03 — v1.1.0: Added §Proactive Assurance — Pre-Brief Protocol
 **Amended**: 2026-03-04 — v1.2.1: Added §CS2 Direct Review Track
 **Amended**: 2026-03-04 — v1.3.0: Added §Risk-Tiered Ceremony Table + §Functional Fitness Assessment (FFA)
 **Amended**: 2026-04-08 — v1.4.0: Added §Execution Ceremony Admin Non-Substitution Rule — explicitly prohibits the execution-ceremony-admin-agent from performing IAA functions; reinforces IAA non-producing / non-cleanup-authoring posture relative to the new ceremony admin role; authority: CS2 — ECAP-001 canon establishment issue.
 **Amended**: 2026-04-08 — v1.5.0: Amended §Independence Requirements rule 3 — clarified that Foreman is the authorised IAA invoker at Phase 4 handover (not a self-assurance violation); added §IAA Re-Invocation After Rejection — Foreman Ownership defining Foreman-owned stop-and-fix loop, CS2-only exception classes, canonical re-invocation token/session format, prohibited misleading wording, and worked example; authority: CS2 — Foreman IAA re-invocation ownership canonisation issue.
+**Amended**: 2026-04-17 — v1.6.0: Added §Admin-Ceremony Rejection Triggers — explicit rejection conditions for ceremony-integrity defects (ACR-01 through ACR-08); reinforced non-cleanup-authoring posture relative to ECAP layer; cross-references §4.3e Admin Ceremony Compliance Gate; authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack for ECAP, Foreman QP, and IAA.
 
 ---
 
@@ -80,6 +81,7 @@ The IAA has **non-bypassable merge block authority** for qualifying PRs:
 - Agent cites improvement suggestions inline instead of parking them (inline suggestions are a process boundary violation)
 - Any FFA check fails for a Tier 2 (build) PR (see §Functional Fitness Assessment)
 - A Carry-Forward Mandate (CFM) is issued and not resolved before merge
+- **Any admin-ceremony rejection trigger in §Admin-Ceremony Rejection Triggers fires** (see below)
 
 ---
 
@@ -777,6 +779,43 @@ OUTCOME:
 
 ---
 
+## Admin-Ceremony Rejection Triggers (v1.6.0)
+
+When a job has involved the `execution-ceremony-admin-agent` (ECAP), the IAA MUST issue a `REJECTION-PACKAGE` if **any** of the following conditions are present in the branch at assurance time. These triggers are binary and non-discretionary.
+
+> **Non-Cleanup-Authoring Rule (reinforced)**: The IAA identifies ceremony-integrity defects and issues a `REJECTION-PACKAGE`. The IAA does NOT become the document cleaner. Correction of cited failures is performed by the Foreman (who may re-engage the `execution-ceremony-admin-agent`). The IAA re-assures after correction is complete.
+
+### Admin-Ceremony Rejection Trigger Table
+
+| ID | Trigger Condition | Canonical Basis |
+|----|-------------------|-----------------|
+| ACR-01 | **Missing required ceremony artifact** — any artifact class required by the job tier (PREHANDOVER proof, session memory, gate results, ECAP reconciliation summary, artifact completeness table, cross-artifact consistency table, ripple assessment block) is absent from the committed branch | ECAP-001 §3.6 CCI-01; AGENT_HANDOVER_AUTOMATION.md §4.3e |
+| ACR-02 | **Stale or contradictory final-state wording** — a ceremony artifact declares a final completed/PASS/ISSUED status while another ceremony artifact for the same job/artifact/gate declares PENDING, in progress, TODO, TBD, or any equivalent provisional state | ECAP-001 §3.5; AGENT_HANDOVER_AUTOMATION.md §4.3e AAP-01 |
+| ACR-03 | **Mismatched session/token/version/path references across artifacts** — the session ID, IAA token reference, file paths, PR/issue/wave numbers, or version labels declared in one ceremony artifact do not match the same references in another ceremony artifact for the same job | ECAP-001 §3.7; AGENT_HANDOVER_AUTOMATION.md §4.3e |
+| ACR-04 | **Stale scope declaration or declared file count mismatch** — the `FILES_CHANGED` count in `governance/scope-declaration.md` (or equivalent) does not match the actual number of files changed in the PR (`git diff --name-only origin/main...HEAD`), or the declared changed-file list does not match the actual diff | ECAP-001 §3.8; AGENT_HANDOVER_AUTOMATION.md §4.3d + §4.3e AAP-04 |
+| ACR-05 | **Stale proof/hash/version/amended-date after later edits** — a SHA256 hash, version number, `amended_date`, or `file_hash` declared in the PREHANDOVER proof, session memory, or CANON_INVENTORY for a specific file does not match the actual hash/version/date of that file in the committed branch state | ECAP-001 §3.8; AGENT_HANDOVER_AUTOMATION.md §4.3e AAP-05 |
+| ACR-06 | **PUBLIC_API ripple required but not assessed / recorded / completed** — one or more files with `layer_down_status: PUBLIC_API` in CANON_INVENTORY were changed in this PR, but the ECAP reconciliation summary contains no ripple assessment block, or the block is absent, or it omits one or more qualifying files | ECAP-001 §3.9; AGENT_HANDOVER_AUTOMATION.md §4.3e AAP-08 |
+| ACR-07 | **PREHANDOVER / token / session memory / tracker / wave record not coherent** — the bundle's collection of PREHANDOVER proof, IAA token file, session memory, tracker entries, and wave records do not all reference the same job/wave/session/token in a mutually consistent manner; or the declared assurance session in the PREHANDOVER proof does not match the session ID in the actual token file | ECAP-001 §3.7; AGENT_HANDOVER_AUTOMATION.md §4.3e |
+| ACR-08 | **Artifact references pointing to non-committed or wrong-path files** — a file path declared in the PREHANDOVER proof, session memory, or any ceremony artifact does not resolve to a committed file on the branch, or resolves to a different file than intended | ECAP-001 §3.8; AGENT_HANDOVER_AUTOMATION.md §4.3e AAP-03 + AAP-09 |
+
+### How the IAA Handles Admin-Ceremony Rejection Triggers
+
+1. **Detect** — The IAA checks each ACR trigger during the Phase 4 handover proof review.
+2. **Cite** — For each trigger that fires, the IAA includes the trigger ID, the specific file(s) exhibiting the defect, and a precise description of the mismatch or absence.
+3. **Issue REJECTION-PACKAGE** — If any trigger fires, the IAA issues a `REJECTION-PACKAGE` with all fired triggers listed.
+4. **Do NOT remediate** — The IAA does not author corrections, generate missing artifacts, or normalize wording. The `REJECTION-PACKAGE` is the output. Remediation is the Foreman's responsibility (Layer 2) delegated back to ECAP (Layer 1).
+5. **Re-assure after correction** — Once the Foreman re-invokes IAA after correction, the IAA re-evaluates all ACR triggers in the corrected branch state.
+
+### Relationship to §4.3e Admin Ceremony Compliance Gate
+
+The §4.3e gate (defined in `AGENT_HANDOVER_AUTOMATION.md`) is the **ECAP + Foreman QP layer** check run before IAA invocation. The ACR triggers above are the **IAA layer** check run during independent assurance. These are complementary:
+
+- If §4.3e passes but an ACR trigger fires, the §4.3e gate had a gap → this is a ceremony-integrity failure at the Foreman QP layer that IAA correctly detects.
+- If §4.3e fails and the bundle is still forwarded to IAA, the IAA will reject on the same underlying defect plus potentially additional ones.
+- Correct operation: §4.3e PASS → Foreman QP ACCEPTED → IAA invoked → 0 ACR triggers fire → ASSURANCE-TOKEN.
+
+---
+
 ## References
 
 - `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0 — Living Agent framework
@@ -790,4 +829,4 @@ OUTCOME:
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.5.0 | Effective: 2026-02-24 | Amended: 2026-04-08 (v1.5.0) | Previous: 2026-04-08 (v1.4.0)*
+*Authority: CS2 (Johan Ras) | Version: 1.6.0 | Effective: 2026-02-24 | Amended: 2026-04-17 (v1.6.0) | Previous: 2026-04-08 (v1.5.0)*

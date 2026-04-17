@@ -3,11 +3,12 @@
 ## Status
 **Type**: Canonical Governance Definition  
 **Authority**: Supreme - Canonical  
-**Version**: 1.3.0  
+**Version**: 1.4.0  
 **Effective Date**: 2025-12-24  
 **Amended**: 2026-04-08 — v1.1.0: Added §14.3 Review Layer Role Separation — CS2 is not the technical pre-handover auditor; producing agent assembles evidence, IAA audits independently, CI enforces mechanically, CS2 decides to merge. Authority: CS2 — OPOJD hardening issue.  
 **Amended**: 2026-04-08 — v1.2.0: Added §9.6 Relationship to execution-ceremony-admin-agent and §14.4 Updated Handover Sequence — formalises the three-role ceremony model (Foreman orchestrates; ceremony-admin prepares bundle; IAA audits independently). Authority: CS2 — ECAP-001 canon establishment issue.  
 **Amended**: 2026-04-08 — v1.3.0: Added §14.5 IAA Rejection — Foreman Stop-and-Fix Loop — makes Foreman re-invocation ownership explicit after a `REJECTION-PACKAGE`; bans misleading "CS2 must re-invoke IAA" wording for ordinary Foreman-led handovers; cross-references INDEPENDENT_ASSURANCE_AGENT_CANON.md §IAA Re-Invocation After Rejection for full rules. Authority: CS2 — Foreman IAA re-invocation ownership canonisation issue.  
+**Amended**: 2026-04-17 — v1.4.0: Added §14.6 Foreman QP Admin-Compliance Checkpoint — defines the Foreman's Quality-of-Process verification role for admin-ceremony compliance; establishes required checkpoint output (administrative_readiness: ACCEPTED | REJECTED); enforces non-substitution principle (Foreman verifies, does not reconstruct). Authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack for ECAP, Foreman QP, and IAA.  
 **Owner**: Maturion Engineering Leadership (Johan Ras)  
 **Precedence**: Subordinate only to GOVERNANCE_PURPOSE_AND_SCOPE.md  
 **Applies To**: All Foreman Instances, All Builder Agents, All Repositories
@@ -1302,6 +1303,74 @@ example showing rejection → correction → re-invocation → PASS without CS2 
 
 ---
 
+### 14.6 Foreman QP Admin-Compliance Checkpoint (v1.4.0)
+
+When a job has used the `execution-ceremony-admin-agent` for ceremony bundle preparation, the Foreman MUST complete an explicit **admin-compliance checkpoint** before invoking IAA. This checkpoint is the Foreman's Quality-of-Process (QP) verification that ECAP has completed the full admin-compliance gate.
+
+#### Role Boundary
+
+> **The Foreman QP checkpoint verifies that ECAP completed the full admin-compliance gate. The Foreman does NOT reconstruct the entire bundle manually except by exception.**
+
+| What the Foreman QP Checkpoint Does | What the Foreman QP Checkpoint Does NOT Do |
+|-------------------------------------|--------------------------------------------|
+| Reviews ECAP reconciliation summary for completeness | Re-performs ECAP's full bundle normalization from scratch |
+| Confirms §4.3e Admin Ceremony Compliance Gate was run and passed | Recomputes all hashes and artifact counts independently |
+| Checks for any declared exceptions and assesses whether they are acceptable | Produces the PREHANDOVER proof (ECAP's responsibility) |
+| Makes a binary readiness determination: `administrative_readiness: ACCEPTED \| REJECTED` | Delegates readiness judgment to another agent |
+| Returns bundle to ECAP for remediation if rejected | Invoke IAA on a rejected bundle |
+
+#### Required Checkpoint Output
+
+The Foreman MUST produce an explicit QP Admin-Compliance Checkpoint output (as a committed artifact, a PR comment, or an embedded section of the PREHANDOVER proof) containing the following fields:
+
+```markdown
+## Foreman QP Admin-Compliance Checkpoint
+
+**Wave / Job**: [wave/job identifier]
+**ECAP Session**: [execution-ceremony-admin-agent session reference]
+**Checkpoint Date**: YYYY-MM-DD
+**Foreman Session**: [Foreman session reference]
+
+### ECAP Reconciliation Artifacts Reviewed
+- [ ] ECAP reconciliation summary: [path or "embedded in PREHANDOVER"]
+- [ ] Artifact completeness table: [path or "embedded"]
+- [ ] Cross-artifact consistency table: [path or "embedded"]
+- [ ] Ripple assessment block: [path or "embedded" or "N/A — no PUBLIC_API changes"]
+
+### Declared Exceptions
+[List any exceptions declared by ECAP, or state "None"]
+
+### Exception Assessment
+[For each exception: ACCEPTABLE / UNACCEPTABLE with reason]
+
+### Checkpoint Verdict
+**substantive_readiness**: ACCEPTED | REJECTED
+**administrative_readiness**: ACCEPTED | REJECTED
+**QP admin-compliance check completed**: yes | no
+**IAA invocation authorized**: yes | no
+
+**Rejection reason** (if administrative_readiness = REJECTED):
+[State every reason for rejection precisely — these must be resolved before re-submission to this checkpoint]
+```
+
+#### Checkpoint Rules
+
+1. **The Foreman MUST NOT invoke IAA until `administrative_readiness: ACCEPTED` is explicitly declared** in the checkpoint output.
+2. **If `administrative_readiness: REJECTED`**, the Foreman returns the bundle to the `execution-ceremony-admin-agent` for remediation. The Foreman documents the specific rejection reasons.
+3. **Declared exceptions that are `UNACCEPTABLE`** render the bundle non-compliant. The Foreman must return the bundle for exception resolution before re-running the checkpoint.
+4. **The checkpoint is a verification role, not a production role.** If the Foreman discovers that ECAP omitted an entire class of required artifacts, the Foreman returns the bundle to ECAP for completion — the Foreman does not author the missing artifacts directly (except in the narrow case where the Foreman is acting as a combined Foreman+ECAP and no separate ECAP appointment was made).
+5. **This checkpoint is the Layer 2 enforcement point** of the closed 3-layer admin-control stack per `EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md §4.5`.
+
+#### Cross-Reference
+
+- **Layer 1 (ECAP obligation)**: `EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md §3.5–§3.9`
+- **Layer 1 gate script**: `AGENT_HANDOVER_AUTOMATION.md §4.3e`
+- **Layer 3 (IAA rejection)**: `INDEPENDENT_ASSURANCE_AGENT_CANON.md §Admin-Ceremony Rejection Triggers`
+- **Checklist**: `governance/checklists/execution-ceremony-admin-checklist.md`
+- **Reconciliation matrix**: `governance/checklists/execution-ceremony-admin-reconciliation-matrix.md`
+
+---
+
 ## 15. Precedence and Final Authority
 
 This document has canonical authority over Foreman behavior and builder supervision.
@@ -1320,4 +1389,4 @@ Foreman authority is superior to:
 
 ---
 
-**End of FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md v1.3.0**
+**End of FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md v1.4.0**
