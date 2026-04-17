@@ -2,8 +2,8 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-04-15  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15)
+**Last Updated**: 2026-04-17  
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — This is the designated primary operational monitor for MMM stage progress. CS2 should use this document as the main live progress dashboard.  
@@ -29,7 +29,7 @@ error from the original governance layer-down. The module is MMM (Maturity Model
 | Stage 1 | FRS | Stage 3 | FRS | COMPLETE |
 | Stage 1.5 | TRS | Stage 4 | TRS | COMPLETE |
 | Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS — artifacts produced, pending CS2 approval |
-| Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | NOT_STARTED |
+| Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | COMPLETE — artifacts produced (mmm-stage8-implementation-plan-20260417); 9 build waves defined; pending CS2 approval |
 | Stage 4 | Builder Appointment | Stage 11 | Builder Appointment | NOT_STARTED |
 | Stage 5 | Build | Stage 12 | Build | NOT_STARTED (partial AIMC artifact) |
 | — | (new stage) | Stage 2 | UX Workflow & Wiring Spec | COMPLETE |
@@ -261,21 +261,33 @@ BLOCKER-S7-001 RESOLVED: `ceremony_admin_appointed: true` ceremony complete — 
 ---
 
 ### Stage 8: Implementation Plan
-**Status**: [ ] NOT_STARTED  
+**Status**: [x] COMPLETE — artifacts produced; pending CS2 approval  
 **Location**: `modules/MMM/07-implementation-plan/`  
 **Key Artifacts**:
-- [ ] `implementation-plan.md` — Delivery wave breakdown with explicit scope per wave
-- [ ] Wave sequencing with dependency declarations
-- [ ] No placeholder waves or TBD scope entries
-- [ ] Implementation Plan approved by Foreman
+- [x] `implementation-plan.md` — 9 named build waves (B1–B9) with full scope per wave (v1.0.0)
+- [x] Wave sequencing with dependency declarations (§4 sequential chain, §5 dependency model)
+- [x] No placeholder waves or TBD scope entries (§9 wave hygiene declaration — SATISFIED)
+- [x] Stage 9, 10, 11 handoff conditions declared (§5.2–5.4)
+- [x] Stage 12 entry conditions declared (§5.5)
+- [x] Builder classes assigned per wave (§6)
+- [x] NBR-001 and NBR-002 carried forward per-wave (§8)
+- [ ] Implementation Plan approved by Foreman *(pending)*
 
-**Completion Date**: N/A  
+**Completion Date**: 2026-04-17  
 **Approval Required**: Yes
-- [ ] Approved by Foreman
+- [ ] Approved by Foreman *(pending CS2 PR merge and Foreman sign-off)*
 **Approval Date**: N/A
 **Approved By**: N/A
 **Approval Reference**: N/A
-**Notes**: Folder exists but not yet populated. Mapped from old Stage 3.
+**Wave**: mmm-stage8-implementation-plan-20260417
+**Producing Agent**: mat-specialist (delegated by foreman-v2-agent v6.2.0)
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-wave-record-mmm-stage8-implementation-plan-20260417.md` (SHA 12ba60a) — CLEARED
+**IAA Token (Expected)**: IAA-session-mmm-stage8-implementation-plan-20260417-PASS *(to be confirmed by IAA at Phase 4)*
+**Notes**: Stage 8 COMPLETE. Canonical Stage 8 artifact is `implementation-plan.md` v1.0.0.
+The earlier `concurrent-prebuild-and-legacy-plan.md` was a partial concurrent-programme plan
+(not a full build wave decomposition) and is superseded by `implementation-plan.md` for all
+downstream stage purposes (Stage 9: Builder Checklist; Stage 10: IAA Pre-Brief; Stage 11:
+Builder Appointment; Stage 12: Build Execution).
 
 ---
 
@@ -400,16 +412,18 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 7 (PBFAG) COMPLETE — PBFAG verdict PASS; IAA ASSURANCE-TOKEN issued (IAA-session-mmm-stage7-pbfag-20260415-PASS); pending CS2 approval only  
-**Overall Progress**: ~58% complete (Stages 1–6 formally closed and CS2-approved; Stage 7 PBFAG complete with IAA token issued, pending CS2 approval; Stages 8–12 not started)  
-**Blockers**: None. IAA ASSURANCE-TOKEN issued. Stage 8 authorized upon CS2 merge approval.  
+**Current Stage**: Stage 8 (Implementation Plan) COMPLETE — `implementation-plan.md` v1.0.0 produced (9 named build waves B1–B9); pending CS2 approval and Foreman sign-off  
+**Overall Progress**: ~67% complete (Stages 1–7 complete with IAA tokens or CS2-approved; Stage 8 Implementation Plan produced and committed; Stages 9–12 not started)  
+**Blockers**: None for Stage 8 artifact production. CS2 merge approval of Stages 5–8 PRs is required before Stage 11 builder appointment. CS2 credential provisioning (AIMC_SERVICE_TOKEN, PIT_SERVICE_TOKEN, SUPABASE_SERVICE_ROLE_KEY) required before Stage 12 Wave B7 can execute.  
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.  
 **Open Questions**: All RESOLVED through Stage 5. OQ-001 RESOLVED (Stage 4 TRS — CONNECTIVITY-REQUIRED, TR-039–TR-042). OQ-002 RESOLVED (Stage 5 Architecture — capabilities/index.md legacy sub-folder disposition). OQ-003 RESOLVED (Stage 5 Architecture — duplication audit, architecture.md §A12). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.  
 **Next Steps**:
-1. CS2 to review and formally approve Stage 7 PBFAG artifacts (`modules/MMM/06-pbfag/` artifacts) and merge PR
-2. Stage 8 (Implementation Plan) wave — AUTHORIZED (IAA token issued; pending CS2 merge)
-3. Stages 9–10 (Builder Checklist, IAA Pre-Brief) in sequence
-4. Stage 11 (Builder Appointment) after all pre-build gates complete
+1. CS2 to review and formally approve Stage 8 Implementation Plan artifacts and merge PR
+2. CS2 to formally approve Stages 5–7 PRs (pending merge — not a blocker for Stage 8 artifact production)
+3. Stage 9 (Builder Checklist) wave — next in sequence after Stage 8 CS2 approval
+4. Stage 10 (IAA Pre-Brief) in sequence after Stage 9
+5. Stage 11 (Builder Appointment) after all pre-build gates (Stages 1–10) complete
+6. CS2 to provision credentials (AIMC_SERVICE_TOKEN, PIT_SERVICE_TOKEN) before Stage 12 Wave B7
 
 ---
 
