@@ -119,13 +119,34 @@ Scope blockers: 3 declared (IAA self-review prohibition, ECAP self-hardening, PR
 
 ## REJECTION_HISTORY
 
-*(No entries — pre-brief only at this stage)*
+### REJECTION-001 — Session: iaa-session-ecap-cde-completion-20260417 — 2026-04-17
+
+**Wave**: ecap-cde-completion-20260417
+**PR Branch**: copilot/fix-253484265-1108482416-189ebaa2-6f84-4c6a-994f-80ce5f0ae1b8
+**Issue**: #1399
+**IAA Session**: iaa-session-ecap-cde-completion-20260417
+**Checks Run**: 66 substance checks (Contracts 1 & 2 + universal gates) — 65 PASS, 1 FAIL; Contract 3 deferred to CS2
+
+**Failures**:
+
+1. **OVERLAY-CONTRACT1-F01** — Classification: Substantive
+   - Contract: `execution-ceremony-admin-agent.md` (1.4.0)
+   - Finding: Duplicate `**Step 3.6 — Return bundle to Foreman:**` header at lines 341 and 343. Line 341 is an orphaned empty stub introduced by the step insertion diff.
+   - Fix required: Remove first orphaned occurrence (line 341 + trailing blank line). Retain line 343 (with content).
+
+2. **CONTRACT-3-IAA-HALT-001** — Classification: Constitutional Constraint
+   - Contract: `independent-assurance-agent.md` (2.8.0)
+   - Finding: IAA cannot review its own contract per HALT-001 / NO-SELF-REVIEW-001. Verdict deferred to CS2.
+   - Fix required: CS2 (@APGI-cmy) must personally review and authorize Contract 3 changes (ACR-01–08 additions). CS2 to also confirm Step 4.2 verdict condition change ("Steps 3.1–3.5 + 4.1" → "Steps 3.1–3.3a + 4.1").
+
+**Re-invocation required**: YES — after OVERLAY-CONTRACT1-F01 fix + CS2 authorization of Contract 3.
+**Prevention action**: QP S-gate addition recommended — "no duplicate step headers" check for step insertion/renumbering diffs.
 
 ---
 
 ## TOKEN
 
-*(No token yet — pre-brief only. Token to be written post-assurance invocation.)*
+*(No token yet — REJECTION-PACKAGE issued on first invocation. Token to be written after all failures resolved and IAA re-invoked.)*
 
 ---
 
