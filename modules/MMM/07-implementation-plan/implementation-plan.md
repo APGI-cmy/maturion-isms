@@ -1234,6 +1234,32 @@ No new open questions are introduced by this implementation plan. All scope is d
 
 ---
 
+## 11. Foreman Approval
+
+**QP Verdict**: PASS ✅  
+**Approved By**: foreman-v2-agent v6.2.0 (POLC Supervisor)  
+**Approval Date**: 2026-04-17  
+**Approval Basis**: Quality Professor evaluation in session session-mmm-stage8-implementation-plan-20260417  
+**Evidence checked**:
+- All 9 waves carry concrete scope with named FRs, TRs, test IDs, and Edge Functions ✅
+- All dependency declarations present per wave ✅
+- No placeholder waves; no TBD scope entries ✅
+- Stage 9, 10, 11 entry conditions explicit (§5.2–5.4) ✅
+- Stage 12 entry conditions explicit (§5.5) ✅
+- NBR-001 and NBR-002 referenced per build wave (§8) ✅
+- All OVL-PBG overlay checks satisfied (§9) ✅
+- Upstream Stage 1–7 artifacts correctly referenced; no post-Stage 7 drift ✅
+
+**Foreman Verdict**: This implementation plan is approved as the canonical Stage 8 artifact for MMM.
+All downstream stages (Stage 9: Builder Checklist; Stage 10: IAA Pre-Brief; Stage 11: Builder Appointment;
+Stage 12: Build Execution) MUST derive from this document.
+
+**Authority**: CS2 (Johan Ras / @APGI-cmy) is the approval authority for Stage 8 formal closure.
+This Foreman approval records the internal QP gate only. CS2 merge approval is required for formal Stage 8 closure.
+
+---
+
 *End of MMM Stage 8 Implementation Plan — Version 1.0.0*
 *Produced by: mat-specialist | Delegated by: foreman-v2-agent v6.2.0*
 *Wave: mmm-stage8-implementation-plan-20260417 | Issue: maturion-isms#1400*
+*QP PASS — Foreman approved 2026-04-17 | Pending CS2 merge approval*

@@ -3,7 +3,7 @@
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
 **Last Updated**: 2026-04-17  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17)
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — This is the designated primary operational monitor for MMM stage progress. CS2 should use this document as the main live progress dashboard.  
@@ -271,14 +271,14 @@ BLOCKER-S7-001 RESOLVED: `ceremony_admin_appointed: true` ceremony complete — 
 - [x] Stage 12 entry conditions declared (§5.5)
 - [x] Builder classes assigned per wave (§6)
 - [x] NBR-001 and NBR-002 carried forward per-wave (§8)
-- [ ] Implementation Plan approved by Foreman *(pending)*
+- [x] Implementation Plan approved by Foreman (foreman-v2-agent, 2026-04-17, session: session-mmm-stage8-implementation-plan-20260417)
 
 **Completion Date**: 2026-04-17  
 **Approval Required**: Yes
-- [ ] Approved by Foreman *(pending CS2 PR merge and Foreman sign-off)*
-**Approval Date**: N/A
-**Approved By**: N/A
-**Approval Reference**: N/A
+- [x] Approved by Foreman (foreman-v2-agent v6.2.0, 2026-04-17, QP PASS — session-mmm-stage8-implementation-plan-20260417)
+**Approval Date**: 2026-04-17
+**Approved By**: foreman-v2-agent v6.2.0 (QP evaluation — internal approval); CS2 (Johan Ras / @APGI-cmy) formal closure pending PR merge
+**Approval Reference**: session-mmm-stage8-implementation-plan-20260417 | maturion-isms#1400
 **Wave**: mmm-stage8-implementation-plan-20260417
 **Producing Agent**: mat-specialist (delegated by foreman-v2-agent v6.2.0)
 **IAA Pre-Brief**: `.agent-admin/assurance/iaa-wave-record-mmm-stage8-implementation-plan-20260417.md` (SHA 12ba60a) — CLEARED
