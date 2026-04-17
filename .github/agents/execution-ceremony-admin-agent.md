@@ -7,7 +7,7 @@ agent:
   id: execution-ceremony-admin-agent
   class: administrator
   version: 1.0.0          # agent runtime version — increment on capability changes
-  contract_version: 1.3.0  # governance contract revision — increment on procedure changes
+  contract_version: 1.4.0  # governance contract revision — increment on procedure changes
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-6
 
@@ -69,6 +69,10 @@ tier2_knowledge:
     - boundary-decision-rules.md
     - handoff-examples.md
     - foreman-ecap-appointment-template.md
+    - governance/checklists/execution-ceremony-admin-checklist.md
+    - governance/checklists/execution-ceremony-admin-reconciliation-matrix.md
+    - governance/checklists/execution-ceremony-admin-anti-patterns.md
+    - governance/templates/execution-ceremony-admin/ECAP_RECONCILIATION_SUMMARY.template.md
 
 scope:
   repository: APGI-cmy/maturion-isms
@@ -320,7 +324,23 @@ Append to `.agent-workspace/foreman-v2/parking-station/suggestions-log.md`:
 (within `write_paths` authority per §scope.write_paths). Do NOT write to
 `.agent-workspace/foreman-v2/memory/` — Foreman commits the accepted copy there itself (Step 4.3 handback).
 
-**Step 3.5 — Return bundle to Foreman:**
+**Step 3.5 — §4.3e Admin Ceremony Compliance Gate (MANDATORY — BLOCKING before bundle return):**
+
+Before returning any bundle to Foreman, run the full §4.3e compliance gate:
+
+1. **AAP auto-fail scan (AAP-01–09)**: Apply all 9 auto-fail rules from `governance/checklists/execution-ceremony-admin-anti-patterns.md`. Any AAP-01–09 match = **BUNDLE BLOCKED**. Do NOT return bundle to Foreman. Return to earlier step for remediation.
+2. **Admin checklist**: Complete all sections of `governance/checklists/execution-ceremony-admin-checklist.md`. All items must be checked.
+3. **Reconciliation matrix**: Complete all R01–R17 rows of `governance/checklists/execution-ceremony-admin-reconciliation-matrix.md`.
+4. **ECAP reconciliation summary**: Populate `governance/templates/execution-ceremony-admin/ECAP_RECONCILIATION_SUMMARY.template.md` and include the populated summary in the bundle.
+
+Output: `"§4.3e Gate: AAP-01–09 [PASS/BLOCKED — list any hits] | Checklist [COMPLETE/INCOMPLETE] | R01–R17 [COMPLETE/INCOMPLETE] | Reconciliation Summary [PRESENT/ABSENT]"`
+
+If ANY item is BLOCKED, INCOMPLETE, or ABSENT → **DO NOT return bundle**. Remediate and re-run this gate.
+Only proceed to return the bundle when all four items are PASS / COMPLETE / PRESENT.
+
+**Step 3.6 — Return bundle to Foreman:**
+
+**Step 3.6 — Return bundle to Foreman:**
 
 Return the complete ceremony bundle to Foreman including:
 - PREHANDOVER proof path
@@ -328,11 +348,12 @@ Return the complete ceremony bundle to Foreman including:
 - Evidence artifact paths
 - Commit-state gate result
 - Merge-gate parity result
+- ECAP reconciliation summary path (populated per §4.3e gate)
 - Any residual notes for Foreman review
 
-Output: "Bundle preparation complete. Returning to Foreman for review. Bundle contents: [list paths]."
+Output: "Bundle preparation complete. §4.3e gate PASSED. Returning to Foreman for review. Bundle contents: [list paths]."
 
-**Step 3.6 — Wait for Foreman review:**
+**Step 3.7 — Wait for Foreman review:**
 
 Do not proceed further. Foreman must review the returned bundle before invoking IAA.
 
@@ -348,6 +369,6 @@ Output: "Phase 4 is Foreman-only. Bundle returned. Standing by."
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Version**: 1.0.0 | **Contract**: 1.3.0 | **Last Updated**: 2026-04-15
+**Version**: 1.0.0 | **Contract**: 1.4.0 | **Last Updated**: 2026-04-17
 **Tier 2 Knowledge**: `.agent-workspace/execution-ceremony-admin-agent/knowledge/`
 **Self-Modification Lock**: SELF-MOD-ECA-001 — ACTIVE — CONSTITUTIONAL
