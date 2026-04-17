@@ -332,8 +332,14 @@ jobs:
             exit 0
           fi
 
-          # Collect changed governed files (canon, templates, checklists)
-          CHANGED=$(git diff --name-only HEAD | grep -E '^governance/(canon|templates|checklists)/' || true)
+          # Collect changed governed files (canon, templates, checklists).
+          # Include both tracked modifications AND untracked new files created
+          # during this workflow run so newly-created governed artifacts are
+          # registered in the inventory on the same ripple commit.
+          CHANGED=$(
+            { git diff --name-only HEAD; git ls-files --others --exclude-standard; } \
+              | grep -E '^governance/(canon|templates|checklists)/' || true
+          )
 
           if [ -z "$CHANGED" ]; then
             echo "No governed path changes detected — inventory unchanged"
@@ -378,7 +384,10 @@ jobs:
                 )')
               echo "  Updated: $filepath → $HASH"
             else
-              # Add skeleton entry for new file
+              # Add skeleton entry for new file.
+              # Use PENDING_REVIEW (not ALIGNED) because canonical_version,
+              # local_version, and canonical_hash_sha256 are still TBD —
+              # claiming ALIGNED while those fields are unresolved overstates truth.
               NEW_ENTRY=$(jq -n \
                 --arg fn "$FILENAME" --arg p "$filepath" \
                 --arg h "$HASH" --arg lds "$LDS" --arg ts "$NOW" '{
@@ -388,7 +397,7 @@ jobs:
                   local_version: "TBD",
                   canonical_hash_sha256: "TBD",
                   local_hash_sha256: $h,
-                  alignment_status: "ALIGNED",
+                  alignment_status: "PENDING_REVIEW",
                   layer_down_status: $lds,
                   last_verified: $ts,
                   change_note: "Auto-added by ripple-integration inventory update step"
