@@ -57,6 +57,68 @@ Stage 5 Architecture artifacts produced (wave mmm-stage5-architecture-20260414, 
 - [x] Token ceremony complete (Step 4.3c) — PHASE_B_BLOCKING_TOKEN issued
 - [x] Merge gate released — awaiting CS2 approval (maturion-isms#1384)
 
+---
+
+## Prior Wave Record (AIMC Specialist Hardening — COMPLETE)
+
+wave: aimc-specialist-hardening-20260415
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-aimc-specialist-hardening-20260415-20260415.md
+branch: copilot/fix-253484265-1108482416-55347de4-d047-4a30-a366-377beba1bdf1
+issue: maturion-isms#1382
+status: COMPLETE — IAA ASSURANCE-TOKEN issued, merge gate released, awaiting CS2 approval
+
+## Prior Wave: AIMC Specialist Hardening — Orchestrator/Specialist Strategy
+
+### Status
+COMPLETE — All deliverables produced. IAA ASSURANCE-TOKEN issued.
+Merge gate released. Awaiting CS2 approval.
+
+CS2 Authorization: maturion-isms#1382 — opened by @APGI-cmy (CS2 = Johan Ras), 2026-04-15.
+
+IAA Pre-Brief: COMMITTED (.agent-admin/assurance/iaa-wave-record-aimc-specialist-hardening-20260415-20260415.md)
+IAA ASSURANCE-TOKEN: IAA-session-aimc-specialist-hardening-20260415-PASS
+
+### Tasks
+- [x] Phase 1 — Identity & Preflight complete
+- [x] IAA Pre-Brief invoked and wave record committed
+- [x] Wave-current-tasks.md updated for active wave
+- [x] Scope declaration created
+- [x] D1 — Harden Maturion/strategy/Maturion_agent_usage_escalation_strategy.md (v2.0.0)
+- [x] D2 — Strategy delta summary (Appendix A of D1)
+- [x] D3 — MMM convergence mapping note (Appendix B of D1)
+- [x] D4 — Forward handoff note (Appendix C of D1)
+- [x] Phase 4 ceremony: PREHANDOVER + session memory + IAA final audit — PASS
+- [x] ECAP bundle artifacts committed (.agent-workspace/execution-ceremony-admin-agent/bundles/)
+
+### Deliverables
+
+| # | Task | Deliverable | Status |
+|---|------|-------------|--------|
+| D1 | Hardened strategy artifact | `Maturion/strategy/Maturion_agent_usage_escalation_strategy.md` v2.0.0 | ✅ COMPLETE |
+| D2 | Strategy delta summary | Appendix A in D1 | ✅ COMPLETE |
+| D3 | MMM convergence mapping note | Appendix B in D1 | ✅ COMPLETE |
+| D4 | Forward handoff note | Appendix C in D1 | ✅ COMPLETE |
+
+---
+
+## Prior Wave Record (MMM Stage 5 — COMPLETE)
+
+wave: mmm-stage5-architecture-20260414
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-stage5-architecture-20260414.md
+branch: copilot/mmm-stage-5-wave-start-authorization
+issue: maturion-isms#1378
+status: COMPLETE — Phase 4 ceremony complete, IAA ASSURANCE-TOKEN issued, awaiting CS2 review
+
+## Prior Wave: MMM Stage 5 — Architecture
+
+### Status
+COMPLETE — All deliverables produced. IAA ASSURANCE-TOKEN issued (Session 212). Awaiting CS2 review.
+
+CS2 Authorization: maturion-isms#1378 — opened by @APGI-cmy (CS2 = Johan Ras), 2026-04-14.
+Stage 4 TRS CS2 approval carried forward per issue #1378.
+
+IAA Pre-Brief: COMMITTED (SHA ad5369d)
+IAA ASSURANCE-TOKEN: IAA-session-212-mmm-stage5-architecture-20260414-PASS (issued Session 212)
 
 ### Tasks
 - [x] Phase 1 — Identity & Preflight complete
