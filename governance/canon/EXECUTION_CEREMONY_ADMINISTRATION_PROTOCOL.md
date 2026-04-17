@@ -3,8 +3,9 @@
 ## Status
 **Type**: Canonical Governance Definition  
 **Authority**: Supreme — Canonical  
-**Version**: 1.0.0  
+**Version**: 1.1.0  
 **Effective Date**: 2026-04-08  
+**Amended**: 2026-04-17 — v1.1.0: Added §3.5 Final-State Normalization Duty, §3.6 Ceremony Completeness Invariants, §3.7 Cross-Artifact Reconciliation Duty, §3.8 Commit-State Truth Rule, §3.9 Ripple / Registry Administration Duty, §4.5 Non-Substitution Rule. These sections canonize the closed 3-layer admin-control stack (ECAP self-normalization, Foreman QP admin-compliance verification, IAA binary rejection). Authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack for ECAP, Foreman QP, and IAA.  
 **Owner**: Maturion Engineering Lead  
 **Canon ID**: ECAP-001  
 **Strategy Reference**: `maturion/strategy/Execution_Ceremony_Administration_Strategy.md` (ECAS-001)
@@ -112,6 +113,74 @@ The execution-ceremony-admin-agent MUST NOT:
 - Substitute for the Foreman's pre-IAA review
 - Accept or reject a delivery on quality grounds
 
+### 3.5 Final-State Normalization Duty (v1.1.0)
+
+> **Constitutional Rule**: The `execution-ceremony-admin-agent` is responsible not only for ceremony bundle assembly, but also for **final-state normalization** across all ceremony artifacts before handback to the Foreman.
+
+Final-state normalization means:
+
+1. **Wording coherence** — All status markers in all ceremony artifacts must tell one coherent story (e.g., a delivered/PASS status in one artifact must not coexist with in-progress/PENDING wording in another).
+2. **Version/header/footer alignment** — All artifact headers and footers must reference the same version identifiers; no mixed or contradictory version labels within the same document.
+3. **Token and session reference alignment** — Every artifact referencing an IAA token or session ID must reference the same token and session consistently. No stale prior-session references may persist.
+4. **Path and identity alignment** — All paths, file references, issue numbers, PR numbers, wave identifiers, and branch names declared in artifacts must match the actual committed state of the branch.
+
+The execution-ceremony-admin-agent MUST complete final-state normalization as the **last step** before returning the bundle to the Foreman. A bundle returned without final-state normalization is non-compliant with this protocol regardless of whether individual artifacts are structurally present.
+
+### 3.6 Ceremony Completeness Invariants (v1.1.0)
+
+The following invariants MUST hold at bundle handback time. Violation of any invariant renders the bundle non-compliant:
+
+| # | Invariant | Condition |
+|---|-----------|-----------|
+| CCI-01 | Required artifacts must exist | Every artifact class required by the job tier (per `AGENT_HANDOVER_AUTOMATION.md §4.3e`) must be present as an actual committed file |
+| CCI-02 | Required artifacts must be committed | No required artifact may exist only as an uncommitted file at bundle handback time |
+| CCI-03 | No placeholder or stale provisional wording | No final-state bundle artifact may contain wording such as "TBD", "TODO", "PENDING", "in progress", or any equivalent deferral language where a definitive value or status is required |
+| CCI-04 | Coherent final-state story | All final-state status markers (PASS/COMPLETE/ISSUED/ACCEPTED) across all artifacts must be logically consistent — one coherent account of the job outcome |
+| CCI-05 | No stale provisional values | All numeric values (file counts, artifact counts, hash values) must reflect the actual committed state, not a prior draft state |
+
+### 3.7 Cross-Artifact Reconciliation Duty (v1.1.0)
+
+The execution-ceremony-admin-agent MUST reconcile the following cross-artifact truth dependencies before handback. Each dependency row represents a consistency requirement that must be verified and corrected if mismatched:
+
+| Dependency | Truth Anchor | All References Must Match |
+|-----------|-------------|--------------------------|
+| **Session ID** | PREHANDOVER proof `session_id` field | Session memory filename, tracker entries, wave records, token file references |
+| **Token reference** | IAA token file path and ID as issued | PREHANDOVER proof `iaa_audit_token`, session memory IAA section, wave record assurance section |
+| **Issue / PR / wave identity** | Actual GitHub issue number, PR number, wave identifier | Every artifact that names the issue, PR, or wave — all must agree |
+| **Path consistency** | Actual committed file paths on the branch | Session memory artifact paths, PREHANDOVER artifact inventory, evidence references |
+| **Version consistency** | Canonical version declared in each file header | CANON_INVENTORY entries, cross-references, footer version statements |
+| **Status consistency** | Definitive final status of each artifact or gate | All places where the status of a given gate/artifact is declared must agree |
+
+Reconciliation MUST be performed by the execution-ceremony-admin-agent before handback. Forwarding a bundle to the Foreman for review without completing reconciliation is an ECAP-001 violation.
+
+### 3.8 Commit-State Truth Rule (v1.1.0)
+
+> **Constitutional Rule**: The ceremony bundle's declared artifact truth MUST match the actual committed state of the branch at bundle handback time. A bundle that declares artifacts, hashes, counts, or paths that do not reflect the actual committed branch state is a non-compliant bundle regardless of whether those artifacts exist elsewhere.
+
+The execution-ceremony-admin-agent MUST verify:
+
+1. **PREHANDOVER proof commit accuracy** — Every file path, SHA256 hash, and artifact count declared in the PREHANDOVER proof reflects the actual file state at HEAD on the working branch at handback time.
+2. **No stale hashes** — If any file listed in the PREHANDOVER proof or session memory was modified after a prior hash was recorded, the hash MUST be recomputed and updated before handback.
+3. **No stale scope declarations** — The scope declaration file (`governance/scope-declaration.md` or equivalent) must reflect the actual set of changed files on the branch, regenerated after any file additions or modifications.
+4. **Session memory accuracy** — The session memory artifact paths cited in the session memory file must actually exist as committed files on the branch.
+5. **Artifact inventory parity** — If an artifact completeness table is produced (recommended), the present/committed/normalized flags must reflect the actual state of each artifact at HEAD, not a draft state.
+
+Failure to maintain commit-state truth makes the ceremony bundle an unreliable assurance input and constitutes a Tier 3 ceremony defect.
+
+### 3.9 Ripple / Registry Administration Duty (v1.1.0)
+
+Where the job's scope includes changes governed by `PUBLIC_API` or inventory-governed obligations, the execution-ceremony-admin-agent MUST:
+
+1. **Assess ripple obligations** — Determine whether any changed file has `layer_down_status: PUBLIC_API` in `CANON_INVENTORY.json`, requiring layer-down ripple to consumer repos.
+2. **Assess registry obligations** — Determine whether any changed file requires updates to `CANON_INVENTORY.json` (hash, version, amended_date fields) or `GOVERNANCE_ARTIFACT_INVENTORY.md`.
+3. **Complete or explicitly defer** — Either complete the required updates before handback, OR explicitly record them as deferred with:
+   - the specific obligation (what is deferred)
+   - the reason for deferral
+   - the deferred status in the ripple/registry block of the ECAP reconciliation summary (see §C1 of `governance/checklists/execution-ceremony-admin-checklist.md`)
+4. **Record ripple status** — The ECAP reconciliation summary MUST include a ripple assessment block with explicit status (COMPLETED / DEFERRED / NOT-APPLICABLE) for every PUBLIC_API-scoped file that was changed.
+
+Silent omission of ripple or registry obligations is an ECAP-001 violation.
+
 ---
 
 ## 4. Authority Boundary Model
@@ -166,6 +235,25 @@ IAA continues to issue only:
 | **IAA** | ❌ Non-producing | ❌ Non-cleanup-authoring | ✅ Issues ASSURANCE-TOKEN or REJECTION-PACKAGE |
 
 This three-part separation is the operational strengthening introduced by this protocol.
+
+### 4.5 Non-Substitution Rule — The Closed 3-Layer Stack (v1.1.0)
+
+> **Constitutional Rule**: Administrative ceremony correctness MUST be deterministically enforced through three layers: ECAP self-normalization, Foreman supervisory admin-compliance verification, and IAA binary rejection on any residual ceremony defect. No layer may substitute for another.
+
+The specific obligations of each layer are:
+
+| Layer | Role | Obligation | Prohibited |
+|-------|------|-----------|-----------|
+| **Layer 1 — ECAP** | `execution-ceremony-admin-agent` | Performs full administrative normalization and reconciliation before handback (§3.5–§3.9) | May NOT skip normalization and rely on Foreman or IAA to find defects |
+| **Layer 2 — Foreman / QP** | Foreman (Quality-of-Process role) | Verifies ECAP completed the full admin-compliance gate; does NOT re-absorb the admin workload; does NOT invoke IAA until admin-compliance readiness is explicitly accepted | May NOT substitute for ECAP normalization by redoing the entire bundle; may NOT invoke IAA before admin-compliance acceptance |
+| **Layer 3 — IAA** | Independent Assurance Agent | Remains binary and independent; issues `ASSURANCE-TOKEN` or `REJECTION-PACKAGE`; rejects on residual ceremony defects | May NOT become a cleanup actor; may NOT author administrative corrections; may NOT accept bundles with unresolved ceremony defects |
+
+This closed 3-layer stack makes administrative ceremony correctness **deterministic** rather than discretionary. When any layer fails to perform its role, the failure propagates forward in a detectable manner:
+- If ECAP fails to normalize → Foreman QP detects at admin-compliance checkpoint
+- If Foreman QP fails to verify → IAA rejects on ceremony defect
+- If IAA accepts a bundle with ceremony defects → this is a constitutional violation (IAA binary authority is non-bypassable)
+
+**The non-substitution principle is absolute**: Adding the ECAP role does not reduce Foreman accountability; adding the Foreman QP checkpoint does not reduce IAA's independent authority; and no amount of IAA rejection cycles substitutes for correct ECAP normalization.
 
 ---
 
@@ -441,6 +529,7 @@ This protocol governs:
 | Version | Date | Change |
 |---------|------|--------|
 | 1.0.0 | 2026-04-08 | Initial canon — formalises execution-ceremony-admin-agent role, authority boundaries, canonical handover sequence, and layer-down requirements; converts ECAS-001 strategy to binding governance |
+| 1.1.0 | 2026-04-17 | 3-layer admin-control stack hardening — added §3.5 Final-State Normalization Duty, §3.6 Ceremony Completeness Invariants (CCI-01 through CCI-05), §3.7 Cross-Artifact Reconciliation Duty, §3.8 Commit-State Truth Rule, §3.9 Ripple/Registry Administration Duty, §4.5 Non-Substitution Rule (closed 3-layer stack); authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack |
 
 ---
 
