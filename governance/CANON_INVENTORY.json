@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-04-13",
-  "total_canons": 200,
-  "generation_timestamp": "2026-04-13T07:08:00Z",
+  "last_updated": "2026-04-16",
+  "total_canons": 202,
+  "generation_timestamp": "2026-04-16T00:00:00Z",
   "canon_entry_schema": {
     "description": "Schema for canon entries in CANON_INVENTORY.json",
     "required_fields": [
@@ -1285,16 +1285,16 @@
     {
       "filename": "GOVERNANCE_CANON_MANIFEST.md",
       "version": "1.0.0",
-      "file_hash": "f3b91126d6aaf1bb86dbd8884d08c21eba3fc2ef644b113e3d773f8b5d2aa80b",
+      "file_hash": "4a56c52cf142f2860b27309252fc41764145065fb4df1c0ed6427026d09ac64a",
       "effective_date": "2026-01-05",
       "description": "This manifest is the **single authoritative index** of all canonical governance standards in the maturion-foreman-governance repository.",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "f3b91126d6aaf1bb86dbd8884d08c21eba3fc2ef644b113e3d773f8b5d2aa80b",
-      "last_updated": "2026-04-13",
-      "change_note": "Added PARKING_STATION_PATH_STANDARD.md entry to Governance & Layerdown Models section",
-      "amended_date": "2026-04-13"
+      "file_hash_sha256": "4a56c52cf142f2860b27309252fc41764145065fb4df1c0ed6427026d09ac64a",
+      "last_updated": "2026-04-15",
+      "change_note": "v1.0.0: Added \u00a73.15 AIMC Platform Models (2 new canon files); totals 93\u219295 (issue #1343)",
+      "amended_date": "2026-04-15"
     },
     {
       "filename": "GOVERNANCE_COMPLETENESS_MODEL.md",
@@ -2117,16 +2117,19 @@
     },
     {
       "filename": "SPECIALIST_KNOWLEDGE_MANAGEMENT.md",
-      "version": "1.0.0 | **Authority**: CS2",
-      "file_hash": "dc27a45885426d0b67306ff3ee432d6de0b5814e63b0154492572cd45399d10c",
+      "version": "1.1.0",
+      "canonical_version": "1.1.0",
+      "file_hash": "d0e22e5b701fac3406a9c0b03f02fbe9cfc4446b27f8edcc69e28d83138fe9bd",
       "effective_date": "2026-02-21",
+      "amended_date": "2026-04-15",
       "description": "Canonical governance document: SPECIALIST_KNOWLEDGE_MANAGEMENT",
       "type": "canon",
       "path": "governance/canon/SPECIALIST_KNOWLEDGE_MANAGEMENT.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "dc27a45885426d0b67306ff3ee432d6de0b5814e63b0154492572cd45399d10c",
+      "file_hash_sha256": "d0e22e5b701fac3406a9c0b03f02fbe9cfc4446b27f8edcc69e28d83138fe9bd",
       "layer_up_status": "INTEGRATED",
-      "layer_up_provenance": "First draft layered up from maturion-isms PR APGI-cmy/maturion-foreman-governance#366 (2026-02-21)"
+      "layer_up_provenance": "First draft layered up from maturion-isms PR APGI-cmy/maturion-foreman-governance#366 (2026-02-21)",
+      "change_note": "v1.1.0: Added Source Model Governance section and AIMC_SPECIALIST_OPERATING_MODEL.md cross-reference (issue #1343)"
     },
     {
       "filename": "STOP_AND_FIX_DOCTRINE.md",
@@ -2359,6 +2362,42 @@
       "path": "governance/canon/scope-declaration.template.md",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "06e4173ff8485b6a1af86a91d12484856c5c7f4d193f38ae88e79573e646c5ee"
+    },
+    {
+      "filename": "AIMC_SPECIALIST_OPERATING_MODEL.md",
+      "version": "1.0.0",
+      "canonical_version": "1.0.0",
+      "file_hash": "50d60061c6dbbfd93cd2a383951cdafac49761f86c964e8a4f2eca0b7a9a03c3",
+      "effective_date": "2026-04-15",
+      "description": "Defines the AIMC specialist operating model: knowledge source class taxonomy (Tier 1\u20134), source trust hierarchy, priority and conflict rules, freshness/currency rules, shared memory boundaries, delegation and module-consumer mode (advisory/operational/gated output classes), and human-in-the-loop boundaries. Governs all AIMC specialist agents.",
+      "type": "canon",
+      "path": "governance/canon/AIMC_SPECIALIST_OPERATING_MODEL.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "50d60061c6dbbfd93cd2a383951cdafac49761f86c964e8a4f2eca0b7a9a03c3",
+      "local_version": null,
+      "local_extension": false,
+      "layer_up_status": "NONE",
+      "provenance": "Created via issue #1343 (2026-04-15)",
+      "ripple_required": true,
+      "ripple_notice": "Layer-down to maturion-isms required: AIMC specialist agents must align to source model and output class rules"
+    },
+    {
+      "filename": "AIMC_MMM_CONVERGENCE_BOUNDARY_CANON.md",
+      "version": "1.0.0",
+      "canonical_version": "1.0.0",
+      "file_hash": "2818c33ebe8e50617592dd5fc830939bc8ee515be6a76f7b2fb27ce3ae5c9824",
+      "effective_date": "2026-04-15",
+      "description": "Canonical convergence boundary between the Maturion Maturity Management Module (MMM) and the AIMC. Defines ownership boundaries, harvest-map custody, MMM/AIMC/KUC/PIT separation principles, what MMM artefacts are authoritative, what is AIMC-side only, and what must wait for bridge artefacts and CL-12c.",
+      "type": "canon",
+      "path": "governance/canon/AIMC_MMM_CONVERGENCE_BOUNDARY_CANON.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "2818c33ebe8e50617592dd5fc830939bc8ee515be6a76f7b2fb27ce3ae5c9824",
+      "local_version": null,
+      "local_extension": false,
+      "layer_up_status": "NONE",
+      "provenance": "Created via issue #1343 (2026-04-15)",
+      "ripple_required": true,
+      "ripple_notice": "Layer-down to maturion-isms required: MMM build teams must align to convergence boundary constraints before MMM AI integration"
     }
   ]
 }
