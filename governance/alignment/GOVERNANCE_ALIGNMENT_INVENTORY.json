@@ -3,7 +3,7 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory \u2014 tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
-  "last_updated": "2026-04-14",
+  "last_updated": "2026-04-16",
   "last_ripple_commit": "c6c52a632b8a0d4ae1e0a40057b518bf8b9a9d13",
   "last_ripple_timestamp": "2026-04-14T08:20:28Z",
   "alignment_summary": {
