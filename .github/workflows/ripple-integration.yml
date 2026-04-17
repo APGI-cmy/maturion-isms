@@ -246,6 +246,13 @@ jobs:
           fi
 
       # ── Verify changed files for agent contracts (git diff check) ──
+      # GOVERNED PATH SCOPE (D1 — wave-ecap-cde-completion-20260417):
+      #   CS2-escalation paths  : .github/agents/*.md  (agent contracts — CS2 gate)
+      #   Governed (no CS2)     : governance/canon/**   (public API documents)
+      #                           governance/templates/** (tier2 templates — no CS2 required)
+      #                           governance/checklists/** (tier2 checklists — no CS2 required)
+      # All four path families are included in the ripple PR changeset via align-governance.sh.
+      # Only .github/agents/*.md changes trigger the CS2 draft-PR escalation path.
       - name: Check diff for agent contracts
         id: diff_check
         if: steps.align.outputs.drift_detected == 'true'
@@ -257,6 +264,14 @@ jobs:
           else
             echo "has_agent_files=false" >> $GITHUB_OUTPUT
           fi
+
+          # Log governed (non-CS2) paths for audit traceability
+          TEMPLATE_DIFF=$(git diff --name-only HEAD | grep -E '^governance/templates/' || true)
+          CHECKLIST_DIFF=$(git diff --name-only HEAD | grep -E '^governance/checklists/' || true)
+          CANON_DIFF=$(git diff --name-only HEAD | grep -E '^governance/canon/' || true)
+          [ -n "$TEMPLATE_DIFF" ]  && echo "Governed templates in diff: $TEMPLATE_DIFF"   || true
+          [ -n "$CHECKLIST_DIFF" ] && echo "Governed checklists in diff: $CHECKLIST_DIFF" || true
+          [ -n "$CANON_DIFF" ]     && echo "Governed canon files in diff: $CANON_DIFF"    || true
 
       # ── Determine final escalation decision ──
       - name: Determine escalation
@@ -299,6 +314,102 @@ jobs:
             echo "files_updated=$FILES_UPDATED" >> $GITHUB_OUTPUT
             echo "drift_report=$DRIFT_REPORT" >> $GITHUB_OUTPUT
           fi
+
+      # ── Auto-update GOVERNANCE_ALIGNMENT_INVENTORY.json (D2 — wave-ecap-cde-completion-20260417) ──
+      # For all changed governance/canon/**, governance/templates/**, governance/checklists/** files,
+      # recompute SHA256 hashes and update local_hash_sha256 + last_verified in the inventory.
+      # New files not yet tracked receive a skeleton entry.
+      - name: Update governance alignment inventory
+        id: inventory_update
+        if: steps.align.outputs.drift_detected == 'true'
+        run: |
+          INVENTORY="governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json"
+          NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          TODAY=$(date -u +"%Y-%m-%d")
+
+          if [ ! -f "$INVENTORY" ]; then
+            echo "Inventory file not found — skipping update"
+            exit 0
+          fi
+
+          # Collect changed governed files (canon, templates, checklists)
+          CHANGED=$(git diff --name-only HEAD | grep -E '^governance/(canon|templates|checklists)/' || true)
+
+          if [ -z "$CHANGED" ]; then
+            echo "No governed path changes detected — inventory unchanged"
+            exit 0
+          fi
+
+          echo "Updating inventory for changed governed files:"
+          echo "$CHANGED"
+
+          # Process each changed file
+          UPDATED_INVENTORY=$(cat "$INVENTORY")
+          while IFS= read -r filepath; do
+            [ -z "$filepath" ] && continue
+            [ ! -f "$filepath" ] && continue
+
+            HASH=$(sha256sum "$filepath" | cut -d' ' -f1)
+            FILENAME=$(basename "$filepath")
+
+            # Determine layer_down_status for new entries
+            if echo "$filepath" | grep -q '^governance/checklists/'; then
+              LDS="TIER2_CHECKLIST"
+            elif echo "$filepath" | grep -q '^governance/templates/'; then
+              LDS="TIER2_TEMPLATE"
+            else
+              LDS="PUBLIC_API"
+            fi
+
+            # Check if entry exists
+            EXISTS=$(echo "$UPDATED_INVENTORY" | jq --arg p "$filepath" '
+              .artifacts | map(select(.path == $p)) | length')
+
+            if [ "$EXISTS" -gt "0" ]; then
+              # Update existing entry
+              UPDATED_INVENTORY=$(echo "$UPDATED_INVENTORY" | jq \
+                --arg p "$filepath" --arg h "$HASH" --arg ts "$NOW" '
+                .artifacts |= map(
+                  if .path == $p then
+                    .local_hash_sha256 = $h |
+                    .alignment_status = "ALIGNED" |
+                    .last_verified = $ts
+                  else . end
+                )')
+              echo "  Updated: $filepath → $HASH"
+            else
+              # Add skeleton entry for new file
+              NEW_ENTRY=$(jq -n \
+                --arg fn "$FILENAME" --arg p "$filepath" \
+                --arg h "$HASH" --arg lds "$LDS" --arg ts "$NOW" '{
+                  filename: $fn,
+                  path: $p,
+                  canonical_version: "TBD",
+                  local_version: "TBD",
+                  canonical_hash_sha256: "TBD",
+                  local_hash_sha256: $h,
+                  alignment_status: "ALIGNED",
+                  layer_down_status: $lds,
+                  last_verified: $ts,
+                  change_note: "Auto-added by ripple-integration inventory update step"
+                }')
+              UPDATED_INVENTORY=$(echo "$UPDATED_INVENTORY" | jq \
+                --argjson entry "$NEW_ENTRY" '.artifacts += [$entry]')
+              echo "  Added:   $filepath → $HASH"
+            fi
+          done <<< "$CHANGED"
+
+          # Update metadata
+          TOTAL=$(echo "$UPDATED_INVENTORY" | jq '.artifacts | length')
+          ALIGNED=$(echo "$UPDATED_INVENTORY" | jq '[.artifacts[] | select(.alignment_status == "ALIGNED")] | length')
+          UPDATED_INVENTORY=$(echo "$UPDATED_INVENTORY" | jq \
+            --arg today "$TODAY" --arg total "$TOTAL" --arg aligned "$ALIGNED" \
+            '.last_updated = $today |
+             .alignment_summary.total_artifacts = ($total | tonumber) |
+             .alignment_summary.aligned = ($aligned | tonumber)')
+
+          echo "$UPDATED_INVENTORY" > "$INVENTORY"
+          echo "Governance alignment inventory updated: $TOTAL artifacts, $ALIGNED aligned"
 
       # ── Create escalation document when agent files touched ──
       # Defect 3 fix: write each line via echo so headings appear at column 0
