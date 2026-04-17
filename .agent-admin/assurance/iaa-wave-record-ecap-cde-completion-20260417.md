@@ -146,7 +146,20 @@ Scope blockers: 3 declared (IAA self-review prohibition, ECAP self-hardening, PR
 
 ## TOKEN
 
-*(No token yet — REJECTION-PACKAGE issued on first invocation. Token to be written after all failures resolved and IAA re-invoked.)*
+**IAA Session**: session-060-R1-20260417
+**Re-invocation**: After OVERLAY-CONTRACT1-F01 fix (SHA 4609bf0)
+**Timestamp**: 2026-04-17T13:42:13Z
+
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/fix-253484265-1108482416-189ebaa2-6f84-4c6a-994f-80ce5f0ae1b8 (issue #1399)
+Scope: Contract 1 (execution-ceremony-admin-agent.md v1.4.0) + Contract 2 (foreman-v2-agent.md v2.13.0)
+All 66 checks PASS. Merge gate parity: PASS.
+Merge permitted for Contracts 1 & 2 (subject to CS2 approval).
+Contract 3 (independent-assurance-agent.md v2.8.0): DEFERRED — CS2 (@APGI-cmy) personal review required per HALT-001/NO-SELF-REVIEW-001. IAA cannot issue verdict on its own contract. CS2 must separately authorize Contract 3 before final merge.
+PHASE_B_BLOCKING_TOKEN: IAA-session-060-R1-20260417-PASS
+Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
+═══════════════════════════════════════
 
 ---
 
