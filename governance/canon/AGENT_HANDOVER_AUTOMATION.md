@@ -879,7 +879,7 @@ Non-governance PRs (application code only, documentation only) are exempt from �
 #!/bin/bash
 # §4.3e Admin Ceremony Compliance Gate (BLOCKING — ECAP-involved jobs)
 # Priority: Producer_H (Foreman or execution-ceremony-admin-agent)
-# Authority: EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md v1.1.0 + AGENT_HANDOVER_AUTOMATION.md v1.5.0
+# Authority: EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md v1.1.0 + AGENT_HANDOVER_AUTOMATION.md v1.6.0
 
 echo "🔍 §4.3e ADMIN CEREMONY COMPLIANCE GATE (BLOCKING)"
 
@@ -1715,7 +1715,7 @@ When the `execution-ceremony-admin-agent` returns the ceremony bundle to the For
 
 ---
 
-**Version**: 1.4.0  
-**Last Updated**: 2026-04-17  
+**Version**: 1.6.0  
+**Last Updated**: 2026-04-19  
 **Authority**: CS2 (Johan Ras)  
 **Living Agent System**: v6.2.0

@@ -1,6 +1,6 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.7.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.8.0 | **Authority**: CS2
 **Date**: 2026-03-03
 **Amended**: 2026-03-03 — v1.1.0: Added §Proactive Assurance — Pre-Brief Protocol
 **Amended**: 2026-03-04 — v1.2.1: Added §CS2 Direct Review Track
@@ -8,7 +8,8 @@
 **Amended**: 2026-04-08 — v1.4.0: Added §Execution Ceremony Admin Non-Substitution Rule — explicitly prohibits the execution-ceremony-admin-agent from performing IAA functions; reinforces IAA non-producing / non-cleanup-authoring posture relative to the new ceremony admin role; authority: CS2 — ECAP-001 canon establishment issue.
 **Amended**: 2026-04-08 — v1.5.0: Amended §Independence Requirements rule 3 — clarified that Foreman is the authorised IAA invoker at Phase 4 handover (not a self-assurance violation); added §IAA Re-Invocation After Rejection — Foreman Ownership defining Foreman-owned stop-and-fix loop, CS2-only exception classes, canonical re-invocation token/session format, prohibited misleading wording, and worked example; authority: CS2 — Foreman IAA re-invocation ownership canonisation issue.
 **Amended**: 2026-04-17 — v1.6.0: Added §Admin-Ceremony Rejection Triggers — explicit rejection conditions for ceremony-integrity defects (ACR-01 through ACR-08); reinforced non-cleanup-authoring posture relative to ECAP layer; cross-references §4.3e Admin Ceremony Compliance Gate; authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack for ECAP, Foreman QP, and IAA.
-**Amended**: 2026-05-01 — v1.7.0: Added ACR-09 (pre-final instruction wording in final-state artifact), ACR-10 (cross-artifact final-state inconsistency), ACR-11 (canonical source parity violation) to §Admin-Ceremony Rejection Triggers; authority: CS2 — Post-Token Final-State Normalization Hardening issue.
+**Amended**: 2026-04-18 — v1.7.0: Added ACR-09 (pre-final instruction wording in final-state artifact), ACR-10 (cross-artifact final-state inconsistency), ACR-11 (canonical source parity violation) to §Admin-Ceremony Rejection Triggers; authority: CS2 — Post-Token Final-State Normalization Hardening issue.
+**Amended**: 2026-04-19 — v1.8.0: Added ACR-12 (PREHANDOVER proof missing `## Ripple/Cross-Agent Assessment` section), ACR-13 (ripple section present but blank), ACR-14 (`## Ripple/Cross-Agent Assessment` absent or blank in PREHANDOVER proof — HFMC-01 / FAIL-ONLY-ONCE A-023 / AAP-20) to §Admin-Ceremony Rejection Triggers; authority: CS2 — Harden PREHANDOVER templates so Ripple/Cross-Agent Assessment cannot be omitted.
 
 ---
 
@@ -836,4 +837,4 @@ The §4.3e gate (defined in `AGENT_HANDOVER_AUTOMATION.md`) is the **ECAP + Fore
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.8.0 | Effective: 2026-02-24 | Amended: 2026-04-19 (v1.8.0) — Added ACR-14: `## Ripple/Cross-Agent Assessment` absent or blank in PREHANDOVER proof (HFMC-01 / FAIL-ONLY-ONCE A-023 / AAP-20) | Previous: 2026-05-01 (v1.7.0)*
+*Authority: CS2 (Johan Ras) | Version: 1.8.0 | Effective: 2026-02-24 | Amended: 2026-04-19 (v1.8.0) — Added ACR-14: `## Ripple/Cross-Agent Assessment` absent or blank in PREHANDOVER proof (HFMC-01 / FAIL-ONLY-ONCE A-023 / AAP-20) | Previous: 2026-04-18 (v1.7.0)*

@@ -423,7 +423,7 @@ jobs:
         id: hfmc01_check
         run: |
           echo "=== HFMC-01: Ripple/Cross-Agent Assessment Presence Gate ==="
-          echo "Authority: iaa-high-frequency-checks.md v2.0.0 (HFMC-01)"
+          echo "Authority: iaa-high-frequency-checks.md v2.1.0 (HFMC-01)"
           echo "Anti-pattern: AAP-20 (execution-ceremony-admin-anti-patterns.md v1.3.0)"
           echo "IAA trigger: ACR-14 (INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.8.0)"
           echo ""
@@ -543,7 +543,7 @@ jobs:
             echo "  State: 'NO IMPACT — governance/ceremony artifacts only, no downstream effect'"
             echo ""
             echo "References:"
-            echo "  - iaa-high-frequency-checks.md v2.0.0 HFMC-01"
+            echo "  - iaa-high-frequency-checks.md v2.1.0 HFMC-01"
             echo "  - execution-ceremony-admin-anti-patterns.md v1.3.0 AAP-20"
             echo "  - INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.8.0 ACR-14"
             echo "  - PREHANDOVER_PROOF_TEMPLATE.md v3.1"
