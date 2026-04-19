@@ -3,7 +3,7 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory — tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
-  "last_updated": "2026-04-17",
+  "last_updated": "2026-04-19",
   "last_ripple_commit": "56d92004d867a8e4148133e007040ca1ff062318",
   "last_ripple_timestamp": "2026-04-17T11:50:11Z",
   "alignment_summary": {
@@ -25,7 +25,7 @@
       "local_hash_sha256": "55f7f0e4c7f3a3716b6d43fa81679da06350fdd51c943a3cdbb841a01989f113",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-04-17T11:52:02Z",
+      "last_verified": "2026-04-19T11:27:49Z",
       "change_note": "v1.4.1: §4.3e Admin Ceremony Compliance Gate — stale-wording scan scope finalized; auto-fail rules table (AAP-01 through AAP-09) added. Layered down via CI ripple PR #1395. Hash updated from d4860fab... to 55f7f0e4..."
     },
     {
@@ -161,7 +161,7 @@
       "local_hash_sha256": "1d0c37190de3d232495e58d3f1984a1feb042c178227ce46c0229e6fdecc3ae9",
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
-      "last_verified": "2026-04-17T11:52:02Z",
+      "last_verified": "2026-04-19T11:27:49Z",
       "change_note": "v1.6.0: Admin-Ceremony Rejection Triggers added (ACR-01 through ACR-08) — binary IAA rejection on ceremony defects. INTERNAL — behavior consequences affect repo handover. Layered down via CI ripple PR #1395. Hash updated from f79752f9... to 1d0c3719..."
     },
     {
