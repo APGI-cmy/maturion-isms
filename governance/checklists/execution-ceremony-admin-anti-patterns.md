@@ -3,7 +3,7 @@
 ## Status
 **Type**: Tier 2 Governance Reference  
 **Authority**: CS2 — EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md v1.1.0  
-**Version**: 1.1.0  
+**Version**: 1.2.0  
 **Effective Date**: 2026-04-17  
 **Owner**: execution-ceremony-admin-agent / Foreman QP / IAA  
 **Purpose**: Canonized list of admin-ceremony defects that are auto-fail at the §4.3e Admin Ceremony Compliance Gate and/or trigger an IAA REJECTION-PACKAGE. Every entry is a known recurring failure mode derived from operational evidence.
@@ -34,8 +34,11 @@ The `execution-ceremony-admin-agent` MUST scan for every anti-pattern before ret
 | **AAP-07** | **Declared file/artifact count mismatch** | A count of files, artifacts, or changed items declared in any ceremony document (e.g., "3 canon files amended", "5 artifacts committed", `FILES_CHANGED: 12`) does not match the actual count of those items in the committed branch state. | Count actual items and compare with declared count | §4.3e Check B1 | ACR-07 |
 | **AAP-08** | **PUBLIC_API ripple obligations omitted or silently skipped** | One or more files with `layer_down_status: PUBLIC_API` in CANON_INVENTORY were changed in this PR but have no ripple assessment entry in the ECAP reconciliation summary. No mention of the layer-down obligation — not even a "DEFERRED" status. The obligation simply does not appear anywhere. | `jq '.canons[] \| select(.layer_down_status == "PUBLIC_API") \| .filename' governance/CANON_INVENTORY.json` compared against changed files | §4.3e Check G1 | ACR-06 |
 | **AAP-09** | **Committed truth not matching proof/session memory claims** | The branch's actual committed file state contradicts a declared artifact path, hash, or status in a ceremony document. Examples: PREHANDOVER proof says `proof-001.md` exists but `proof-002.md` is what was actually committed; session memory says hash is `abc123` but actual hash is `def456`; PREHANDOVER says `final_state: COMPLETE` but the latest commit message says "WIP". | Cross-check declared artifacts and hashes against `git ls-files` and `sha256sum` | §4.3e Checks A1–A3, F1 | ACR-08, ACR-05 |
-| **AAP-15** | **Gate inventory absent from PREHANDOVER proof** | The PREHANDOVER proof or session memory does not name which specific merge/workflow gates were verified. The `gate_set_checked:` field is absent or empty. This means gate-parity is asserted without evidence of which gates were actually checked. | `grep -i "gate_set_checked" .agent-workspace/foreman-v2/memory/PREHANDOVER-*.md` | §4.3e Gate-evidence check | ACR-09 |
-| **AAP-16** | **Stale gate-pass wording in final-state proof** | A final-state proof artifact (PREHANDOVER, session memory, scope declaration) contains unchecked or provisional gate-pass language such as "verify gates pass", "gates TBD", "gates pending", or similar wording that was never resolved to a definitive state. This indicates a checklist item was carried forward without being executed. | `grep -niE "verify gates pass|gates TBD|gates pending" .agent-workspace/foreman-v2/memory/` | §4.3e Gate-evidence check | ACR-10 |
+| **AAP-15** | **Gate inventory absent from PREHANDOVER proof** | The PREHANDOVER proof or session memory does not name which specific merge/workflow gates were verified. The `gate_set_checked:` field is absent or empty. This means gate-parity is asserted without evidence of which gates were actually checked. | `grep -i "gate_set_checked" .agent-workspace/foreman-v2/memory/PREHANDOVER-*.md` | §4.3e Gate-evidence check | ACR-12 |
+| **AAP-16** | **Stale gate-pass wording in final-state proof** | A final-state proof artifact (PREHANDOVER, session memory, scope declaration) contains unchecked or provisional gate-pass language such as "verify gates pass", "gates TBD", "gates pending", or similar wording that was never resolved to a definitive state. This indicates a checklist item was carried forward without being executed. | `grep -niE "verify gates pass|gates TBD|gates pending" .agent-workspace/foreman-v2/memory/` | §4.3e Gate-evidence check | ACR-13 |
+| **AAP-17** | **Pre-final instruction wording in final-state artifact** | A committed final-state artifact (PREHANDOVER proof, session memory, wave record, stage-readiness table, or any final handback artifact) contains pre-final assembly-time instruction text that is only lawful before final assurance is issued. Examples: "to be completed by Foreman after receiving ASSURANCE-TOKEN", "FOREMAN ACTION REQUIRED", "paste verbatim raw IAA output here", "IAA assurance pending (Phase 4)", "pending Phase 4", "awaiting token", "before committing this proof". These are unconditionally blocked once the branch claims final assurance. | `grep -niE "to be completed by Foreman\|FOREMAN ACTION REQUIRED\|paste verbatim raw IAA\|IAA assurance pending\|pending Phase 4\|awaiting token\|before committing this proof" <final-state-artifact-paths>` | §4.3e Check C2 | ACR-09 |
+| **AAP-18** | **Cross-artifact final-state inconsistency** | The branch's collection of final-state artifacts tells two incompatible stories simultaneously. If any artifact in the final-state bundle claims final assurance (ASSURANCE-TOKEN issued, merge permitted, Stage 9 unblocked, final_state: COMPLETE, equivalent), then every other artifact in the final-state bundle must also be in post-token form. Blocking examples: wave record says PASS but PREHANDOVER says pending; stage-readiness table says IAA pending while token is already issued; session memory says final_state COMPLETE while another linked final artifact still contains assembly-time instructions. | Manual cross-artifact review; check that all key final-state fields across PREHANDOVER, wave record, session memory, and stage-readiness tables are mutually consistent. | §4.3e Check H | ACR-10 |
+| **AAP-19** | **Canonical source parity violation for "carried-forward" claims** | An artifact claims to carry forward, copy verbatim, or inherit a model/table/ownership assignment from a canonical source (e.g., "from harvest map", "verbatim from canon", "carried forward"), but the actual artifact content differs from the cited canonical source in ownership labels, gate authority, or approval requirements. A copied table that changes ownership or weakens a canonical approval requirement while presenting itself as inherited is a governance contradiction. | Compare every "carried forward" / "verbatim" claim against its cited canonical source file; flag any difference in ownership, authority, gate conditions, or approval requirements. | §4.3e Check D (supplement to existing manual check) | ACR-11 |
 
 ---
 
@@ -57,7 +60,7 @@ The following are not machine-detectable by §4.3e but must be caught by the For
 
 | Severity | Definition | Examples |
 |----------|-----------|---------|
-| **S1 — Auto-Fail** | Immediately fails §4.3e gate and triggers IAA rejection. No discretion. | AAP-01 through AAP-09, AAP-15, AAP-16 |
+| **S1 — Auto-Fail** | Immediately fails §4.3e gate and triggers IAA rejection. No discretion. | AAP-01 through AAP-09, AAP-15, AAP-16, AAP-17, AAP-18, AAP-19 |
 | **S2 — Foreman QP Blocker** | Must be resolved at Foreman QP checkpoint before IAA invocation. Discretion allowed only if explicitly documented. | AAP-10 through AAP-14 |
 
 ---
@@ -77,18 +80,22 @@ The following are not machine-detectable by §4.3e but must be caught by the For
 | AAP-09 | For each mismatch: correct the ceremony artifact to reflect actual committed state. Recommit. Do not edit committed PREHANDOVER proofs — create a new proof. |
 | AAP-15 | Return to Foreman's Step 3.6. Run all gates in `merge_gate_interface.required_checks` and record actual state (GREEN/FAIL/PENDING/MISSING) per gate. Populate `gate_set_checked: [list]` in PREHANDOVER proof. Recommit. |
 | AAP-16 | Search all bundle artifacts for "verify gates pass", "gates TBD", or equivalent unresolved wording. For each hit: either execute the gate and record the GREEN result, or remove the provisional line if the gate was already verified. Recommit with definitive gate states. |
+| AAP-17 | Identify every committed final-state artifact that contains pre-final instruction text. Replace each instance with the corresponding post-token wording per `POST_TOKEN_VOCABULARY_LAW.md`. Deletion alone is not sufficient — placeholder instruction text must be replaced with final truth. Recommit. |
+| AAP-18 | Perform cross-artifact review of all final-state artifacts. For each inconsistency found (one artifact claiming COMPLETE/PASS/token-issued while another still contains pre-token wording): normalize the lagging artifact to post-token form. Ensure all final-state artifacts tell one coherent post-token story before re-submitting to IAA. |
+| AAP-19 | For each "carried forward"/"verbatim" claim: locate the cited canonical source file and compare the claimed content against it. For any ownership/authority/gate-condition difference found: either (a) correct the artifact to match the canonical source, or (b) document the intentional deviation with explicit CS2 authorization. Recommit. |
 
 ---
 
 ## References
 
 - `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` v1.1.0 — §3.5–§3.9
-- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.4.0 — §4.3e + Auto-Fail Rules
-- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.6.0 — §Admin-Ceremony Rejection Triggers
+- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.5.0 — §4.3e + Auto-Fail Rules
+- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.7.0 — §Admin-Ceremony Rejection Triggers
+- `governance/canon/POST_TOKEN_VOCABULARY_LAW.md` v1.1.0 — Post-Token Vocabulary Denylist + Replacement Requirements
 - `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` v1.4.0 — §14.6
 - `governance/checklists/execution-ceremony-admin-checklist.md` — verification checklist
 - `governance/checklists/execution-ceremony-admin-reconciliation-matrix.md` — dependency matrix
 
 ---
 
-*Version: 1.1.0 | Effective: 2026-04-17 | Authority: CS2 (Johan Ras)*
+*Version: 1.2.0 | Effective: 2026-04-17 | Amended: 2026-05-01 (v1.2.0) — Added AAP-17/18/19: pre-final instruction wording, cross-artifact inconsistency, canonical source parity violation | Authority: CS2 (Johan Ras)*
