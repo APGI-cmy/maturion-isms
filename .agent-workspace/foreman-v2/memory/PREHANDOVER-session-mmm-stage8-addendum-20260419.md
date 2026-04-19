@@ -357,14 +357,47 @@ Issue maturion-isms#1404 — "[MMM Stage 8 Addendum] Produce convergence-governa
 
 > **A-030 note**: Token date uses the wave identifier date (2026-04-19) — confirmed as the correct wave execution date.
 
-[IAA verdict summary to be completed by Foreman after receiving ASSURANCE-TOKEN in Phase 4]
+ASSURANCE-TOKEN issued: `IAA-session-mmm-stage8-addendum-20260419-PASS` | SHA: a989616 | All 49 checks PASS | Merge permitted subject to CS2 approval | Stage 9 UNBLOCKED upon CS2 merge
 
 ## IAA Agent Response (verbatim)
 <!-- MANDATORY PER S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) -->
 <!-- Paste the COMPLETE raw output from task(agent_type: "independent-assurance-agent") here -->
 <!-- A PREHANDOVER proof with a blank or placeholder IAA response section is a HANDOVER BLOCKER -->
 
-[FOREMAN ACTION REQUIRED — Phase 4 only: Invoke IAA, receive ASSURANCE-TOKEN, paste verbatim raw IAA agent output here BEFORE committing this proof. ECAP does not invoke IAA. ECAP does not write tokens. This section is intentionally left for Foreman Phase 4 completion per three-role split protocol.]
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: Branch copilot/produce-convergence-governance-addendum | Issue maturion-isms#1404
+Wave: mmm-stage8-addendum-20260419
+
+All 49 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+
+Token reference: IAA-session-mmm-stage8-addendum-20260419-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage8-addendum-20260419-PASS
+Token committed: SHA a989616
+Adoption phase: PHASE_B_BLOCKING
+
+Deliverables certified:
+  D1: modules/MMM/07-implementation-plan/convergence-governance-addendum.md (SHA 3b233f4)
+      Sections 1–9 present; all 7 acceptance criteria met; B7/B9 closure laws
+      substantively correct; source-state/switchover/ownership models complete
+  D2: modules/MMM/BUILD_PROGRESS_TRACKER.md (SHA 3b233f4)
+      Stage 8 addendum note present; gate language explicit;
+      12-stage model intact; Stage 9 gate condition enforced
+  C1: PREHANDOVER proof — both copies committed and consistent
+  C2: Session memory — 6-field format complete; final_state: COMPLETE
+
+Stage-readiness confirmed:
+  Stages 1–8: COMPLETE (all IAA-certified or CS2-approved)
+  Stage 8 Addendum: COMPLETE — IAA governance review certified
+  Stage 9 (Builder Checklist): UNBLOCKED upon CS2 merge of this PR
+
+Merge authority: CS2 ONLY (@APGI-cmy)
+IAA Agent: independent-assurance-agent v6.2.0
+Self-Modification Lock: SELF-MOD-IAA-001 — ACTIVE
+═══════════════════════════════════════
+```
 
 ---
 
@@ -382,10 +415,10 @@ Issue maturion-isms#1404 — "[MMM Stage 8 Addendum] Produce convergence-governa
 
 ```
 iaa_token_self_cert_guard:
-  token_file_exists: [Foreman to verify: ls .agent-admin/assurance/iaa-wave-record-mmm-stage8-addendum-20260419.md — ## TOKEN section populated by IAA]
-  phase_b_blocking_token_present: [Foreman to verify: grep "PHASE_B_BLOCKING_TOKEN:" in ## TOKEN section]
-  phase_a_advisory_absent: [Foreman to verify: grep "PHASE_A_ADVISORY" returns NO MATCH]
-  guard_result: [Foreman to record: PASS / FAIL — IAA-SELF-CERT-001]
+  token_file_exists: PASS — .agent-admin/assurance/iaa-wave-record-mmm-stage8-addendum-20260419.md ## TOKEN section POPULATED (SHA a989616)
+  phase_b_blocking_token_present: PASS — PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage8-addendum-20260419-PASS
+  phase_a_advisory_absent: PASS — no PHASE_A_ADVISORY text present in wave record
+  guard_result: PASS — IAA-SELF-CERT-001
 ```
 
 ---
