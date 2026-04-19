@@ -221,7 +221,59 @@ Anti-regression obligations: NO — pure governance documentation wave.
 
 ## TOKEN
 
-*(To be appended by IAA at final assurance — PHASE_B_BLOCKING_TOKEN will be written here)*
+**PHASE_B_BLOCKING_TOKEN**: IAA-session-mmm-stage8-addendum-20260419-PASS
+
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: Branch copilot/produce-convergence-governance-addendum | Issue maturion-isms#1404
+Wave: mmm-stage8-addendum-20260419
+Date: 2026-04-19
+
+All 49 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+
+Token reference: IAA-session-mmm-stage8-addendum-20260419-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage8-addendum-20260419-PASS
+Adoption phase: PHASE_B_BLOCKING
+
+Deliverables certified:
+  D1: modules/MMM/07-implementation-plan/convergence-governance-addendum.md (SHA 3b233f4)
+      Sections 1–9 present; all 7 acceptance criteria met; B7/B9 closure laws
+      substantively correct; source-state/switchover/ownership models complete
+  D2: modules/MMM/BUILD_PROGRESS_TRACKER.md (SHA 3b233f4)
+      Stage 8 addendum note present; gate language explicit;
+      12-stage model intact; Stage 9 gate condition enforced
+  C1: PREHANDOVER proof — both copies (ECAP bundle + Foreman memory) committed and consistent
+  C2: Session memory — 6-field format complete; final_state: COMPLETE
+
+Checks executed:
+  FAIL-ONLY-ONCE (A-001, A-002, A-021, A-022, A-026, A-028, A-029, A-033): 8/8 PASS
+  CORE-020, CORE-021: 2/2 PASS
+  PRE_BUILD_GATES (OVL-PBG-001 through OVL-PBG-016 + ADM-001): 17/17 PASS
+  Substance — D1 acceptance criteria (§1.1, §2, §3, §4, §5, §6, §7): 7/7 PASS
+  Substance — D2 (tracker gate, 12-stage, QP): 3/3 PASS
+  ACR-01 through ACR-08 (ECAP appointed): 8/8 PASS
+  Merge gate parity: 4/4 PASS
+  Total: 49/49 PASS
+
+Advisory (non-blocking): OVL-PBG-009 — pre-existing directory numbering offset
+  (modules/MMM uses 00–11 prefixes vs. stage numbers 1–12). Not introduced by this wave.
+
+Stage-readiness confirmed:
+  Stages 1–8 COMPLETE (all IAA-certified or CS2-approved)
+  Stage 8 Addendum: COMPLETE — IAA governance review certified
+  Stage 9 (Builder Checklist): UNBLOCKED upon CS2 merge of this PR
+
+Merge authority: CS2 ONLY (@APGI-cmy)
+IAA Agent: independent-assurance-agent v6.2.0
+Self-Modification Lock: SELF-MOD-IAA-001 — ACTIVE
+═══════════════════════════════════════
+```
+
+**Token issued**: 2026-04-19
+**IAA agent version**: 6.2.0 (contract v2.8.0)
+**Issuing session**: mmm-stage8-addendum-20260419
 
 ---
 
