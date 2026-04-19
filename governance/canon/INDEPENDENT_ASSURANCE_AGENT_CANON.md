@@ -1,6 +1,6 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.8.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.9.0 | **Authority**: CS2
 **Date**: 2026-03-03
 **Amended**: 2026-03-03 — v1.1.0: Added §Proactive Assurance — Pre-Brief Protocol
 **Amended**: 2026-03-04 — v1.2.1: Added §CS2 Direct Review Track
@@ -10,6 +10,7 @@
 **Amended**: 2026-04-17 — v1.6.0: Added §Admin-Ceremony Rejection Triggers — explicit rejection conditions for ceremony-integrity defects (ACR-01 through ACR-08); reinforced non-cleanup-authoring posture relative to ECAP layer; cross-references §4.3e Admin Ceremony Compliance Gate; authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack for ECAP, Foreman QP, and IAA.
 **Amended**: 2026-04-18 — v1.7.0: Added ACR-09 (pre-final instruction wording in final-state artifact), ACR-10 (cross-artifact final-state inconsistency), ACR-11 (canonical source parity violation) to §Admin-Ceremony Rejection Triggers; authority: CS2 — Post-Token Final-State Normalization Hardening issue.
 **Amended**: 2026-04-19 — v1.8.0: Added ACR-12 (PREHANDOVER proof missing `## Ripple/Cross-Agent Assessment` section), ACR-13 (ripple section present but blank), ACR-14 (`## Ripple/Cross-Agent Assessment` absent or blank in PREHANDOVER proof — HFMC-01 / FAIL-ONLY-ONCE A-023 / AAP-20) to §Admin-Ceremony Rejection Triggers; authority: CS2 — Harden PREHANDOVER templates so Ripple/Cross-Agent Assessment cannot be omitted.
+**Amended**: 2026-04-19 — v1.9.0: Added ACR-15 (active wave/task tracker contradiction — final-state claims cannot coexist with stale pending state in active control artifacts for the same wave); authority: CS2 — Canonize active-wave tracker coherence (issue #1412).
 
 ---
 
@@ -781,7 +782,7 @@ OUTCOME:
 
 ---
 
-## Admin-Ceremony Rejection Triggers (v1.8.0)
+## Admin-Ceremony Rejection Triggers (v1.9.0)
 
 When a job has involved the `execution-ceremony-admin-agent` (ECAP), the IAA MUST issue a `REJECTION-PACKAGE` if **any** of the following conditions are present in the branch at assurance time. These triggers are binary and non-discretionary.
 
@@ -805,6 +806,7 @@ When a job has involved the `execution-ceremony-admin-agent` (ECAP), the IAA MUS
 | ACR-12 | **Gate inventory absent from PREHANDOVER proof** — the PREHANDOVER proof or session memory does not name the specific merge/workflow gates that were verified; the `gate_set_checked:` field is absent or empty, meaning gate-parity is asserted without evidence of which gates were actually checked. | AGENT_HANDOVER_AUTOMATION.md §4.3e; execution-ceremony-admin-anti-patterns.md AAP-15 |
 | ACR-13 | **Stale gate-pass wording in final-state proof** — a final-state proof artifact (PREHANDOVER, session memory, scope declaration) contains unchecked or provisional gate-pass language such as "verify gates pass", "gates TBD", "gates pending", or similar wording that was never resolved to a definitive state, indicating a checklist item was carried forward without being executed. | AGENT_HANDOVER_AUTOMATION.md §4.3e; execution-ceremony-admin-anti-patterns.md AAP-16 |
 | ACR-14 | **`## Ripple/Cross-Agent Assessment` section absent or blank in PREHANDOVER proof** — the PREHANDOVER proof does not contain a `## Ripple/Cross-Agent Assessment` (or equivalent `## Ripple`/`## Cross-Agent`) heading, or the section is present but contains no concrete downstream-impact conclusions (only placeholder text, a blank table, or a heading with no body). Every PREHANDOVER proof must explicitly assess downstream agent and system impact regardless of wave type. This is the HFMC-01 recurring failure pattern (FAIL-ONLY-ONCE A-023). | AGENT_HANDOVER_AUTOMATION.md §4.3e Check J; execution-ceremony-admin-anti-patterns.md AAP-20; PREHANDOVER_PROOF_TEMPLATE.md v3.1 |
+| ACR-15 | **Active wave/task tracker not normalized before final assurance** — a final-state ceremony artifact (wave record, PREHANDOVER proof, or session memory) claims ASSURANCE-TOKEN issued / merge permitted / `final_state: COMPLETE`, but one or more active control artifacts for the same wave (e.g., `wave-current-tasks.md`, `BUILD_PROGRESS_TRACKER.md` current-wave entries, current stage-readiness trackers, active wave summaries) still show pending, in-progress, or pre-final state. The final-state bundle tells two contradictory operational stories simultaneously. Active control artifacts are those whose primary purpose is to reflect current wave operational state; they are distinguished from immutable historical archives (committed PREHANDOVER proofs and session memories from prior waves, historical wave records), which are explicitly excluded. IAA MUST reject and issue REJECTION-PACKAGE when this contradiction is detected. | ECAP-001 §3.5; execution-ceremony-admin-anti-patterns.md AAP-21; AGENT_HANDOVER_AUTOMATION.md §4.3e Check C3 (active-tracker coherence) |
 
 ### How the IAA Handles Admin-Ceremony Rejection Triggers
 
@@ -837,4 +839,4 @@ The §4.3e gate (defined in `AGENT_HANDOVER_AUTOMATION.md`) is the **ECAP + Fore
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.8.0 | Effective: 2026-02-24 | Amended: 2026-04-19 (v1.8.0) — Added ACR-14: `## Ripple/Cross-Agent Assessment` absent or blank in PREHANDOVER proof (HFMC-01 / FAIL-ONLY-ONCE A-023 / AAP-20) | Previous: 2026-04-18 (v1.7.0)*
+*Authority: CS2 (Johan Ras) | Version: 1.9.0 | Effective: 2026-02-24 | Amended: 2026-04-19 (v1.9.0) — Added ACR-15: active wave/task tracker not normalized before final assurance — final-state claims cannot coexist with stale pending state in active control artifacts for the same wave (AAP-21 / §4.3e Check C3) | Previous: 2026-04-19 (v1.8.0)*

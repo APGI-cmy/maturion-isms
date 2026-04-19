@@ -3,9 +3,9 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 4.2.0  
+**Version**: 4.4.0  
 **Created**: 2026-02-24  
-**Updated**: 2026-04-07  
+**Updated**: 2026-04-19  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -34,7 +34,7 @@ This file is the **Tier 2 operational registry** for all ISMS-local institutiona
 
 These rules are **absolute** and may never be overridden, relaxed, or waived without explicit CS2 written authorisation.
 
-> **ID Namespace Note**: IDs in this file (A-001–A-038) are local to this Tier 2 ISMS operational registry. The canonical FAIL-ONLY-ONCE registry in `APGI-cmy/maturion-foreman-governance` uses a separate series (A-01, A-18, A-19, A-20, A-21, …). Rules from both registries are binding on the Foreman. IDs from the canonical registry must not be renumbered when referenced in this file — cite them as-is (e.g. "see canonical A-18"). **Dedup note (PS-B-01/02 — v4.2.0)**: The canonical registry had duplicate rule IDs — second canonical A-04 was renamed to canonical A-18 (see ISMS-local A-018 §4.3-EXECUTE-BEFORE-PR); second canonical A-016 was renamed to canonical A-19 (see ISMS-local A-019). This file reflects those canonical corrections. ISMS-local IDs A-019 through A-026 are reserved for future canonical layer-downs; ISMS-local-only rules use IDs A-027 onwards.
+> **ID Namespace Note**: IDs in this file (A-001–A-039) are local to this Tier 2 ISMS operational registry. The canonical FAIL-ONLY-ONCE registry in `APGI-cmy/maturion-foreman-governance` uses a separate series (A-01, A-18, A-19, A-20, A-21, …). Rules from both registries are binding on the Foreman. IDs from the canonical registry must not be renumbered when referenced in this file — cite them as-is (e.g. "see canonical A-18"). **Dedup note (PS-B-01/02 — v4.2.0)**: The canonical registry had duplicate rule IDs — second canonical A-04 was renamed to canonical A-18 (see ISMS-local A-018 §4.3-EXECUTE-BEFORE-PR); second canonical A-016 was renamed to canonical A-19 (see ISMS-local A-019). This file reflects those canonical corrections. ISMS-local IDs A-019 through A-026 are reserved for future canonical layer-downs; ISMS-local-only rules use IDs A-027 onwards.
 
 > **FAIL-ONLY-ONCE Entry Delegation Protocol**: New A-rule proposals and improvement suggestions may be approved by the IAA agent (independent-assurance-agent) without direct CS2 sign-off, subject to the following: (a) if the proposal is aligned with existing governance canon → IAA may approve and the Foreman locks it in as ISMS-local rule; (b) if the proposal requires changes to governance canon or is cross-repo → IAA escalates to CS2; (c) if outside current canonical scope but of governance value → IAA registers as "layer-up candidate" (added to S-xxx series and escalated to CS2 via Foreman parking station). This delegation reduces CS2 bottleneck for routine governance improvements while preserving CS2 authority over canonical changes.
 
@@ -74,6 +74,8 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-037 | CI-FIX-NO-EXEMPTION (CS2 — 2026-03-18): CI workflow changes (`.github/workflows/*.yml`), dependency lockfile changes (`pnpm-lock.yaml`, `package-lock.json`), and configuration changes are NOT supervision corrections; they are implementation-adjacent changes subject to the full A-031 Pre-Brief requirement. A workflow or lockfile change without an IAA Pre-Brief is a HALT-008 condition. The CI pre-brief gate (`polc-boundary-gate.yml` builder-involvement-check) was built to enforce A-031 for production code paths but does NOT cover `.github/workflows/` — this is a CI enforcement gap, not a governance exemption. Calling `agent_bootstrap` (Phase 1 Step 1.1) is NOT Phase 1 completion; Steps 1.2–1.8 (including IAA Pre-Brief invocation) must ALL be completed before any repository file is read or any change is committed. Running `code_review` + `codeql_checker` does NOT satisfy Phase 4 — these are technical quality tools, not IAA substitutes. Violation class: INC-CI-LIVENESS-FIX-001. Eleventh occurrence of A-031/A-014 violation class. | CS2 re-alignment directive — PR copilot/fix-ci-update-liveness-workflow (2026-03-18); INC-CI-LIVENESS-FIX-001 |
 
 | A-038 | COPILOT-BUILDER-ROLE-LABEL-BYPASS-PROHIBITION (CS2 — 2026-04-06): The `copilot-builder-role` PR label MUST NOT bypass `polc-boundary-gate.yml` foreman-implementation-check or session-memory-check when the PR is authored by foreman-v2-agent. The label is intended exclusively for pure builder sessions (api-builder, ui-builder, qa-builder, etc.) where Foreman is NOT the executing agent. When foreman-v2-agent is the session author (PR author login matches Copilot/copilot-swe-agent/github-copilot), the full POLC boundary gate including session-memory-check MUST run regardless of any PR label. `polc-boundary-gate.yml` has been amended to detect foreman authorship and enforce the full gate when `copilot-builder-role` label is present on a Foreman-authored PR. Additionally, builder-involvement-check now enforces IAA pre-brief existence for `.github/workflows/*.yml` path changes (S-035 second entry). Violation class: INC-BLANK-FRONTEND-PREBRIEF-001. | INC-BLANK-FRONTEND-PREBRIEF-001 (2026-03-18); S-035 COPILOT-BUILDER-ROLE-LABEL-BYPASS-PROHIBITION |
+
+| A-039 | ACTIVE-TRACKER-NORMALIZATION-MANDATORY (CS2 — 2026-04-19): Before releasing the merge gate (Step 4.4) and before invoking IAA at Step 4.3b, ALL active control artifacts for the wave MUST be normalized to post-token state. **"Active control artifact"** means any artifact whose primary purpose is to reflect the CURRENT operational state of an ongoing wave: `wave-current-tasks.md`, `BUILD_PROGRESS_TRACKER.md` entries for the current wave, current stage/readiness trackers, and active wave summaries that are part of active handback context. These are distinguished from **"immutable historical archives"** — committed PREHANDOVER proofs from prior waves, historical session memories, and historical wave records — which are governed by A-019 ARTIFACT-IMMUTABILITY and are read-only post-commit. A final-state claim (ASSURANCE-TOKEN, merge permitted, `final_state: COMPLETE`, or equivalent) in the wave record, PREHANDOVER proof, or session memory that coexists with stale pending/in-progress state in any active control artifact is a contradictory story that confuses operators and triggers AAP-21 (ECAP auto-fail) and ACR-15 (IAA REJECTION-PACKAGE). Foreman MUST execute Section D-2 of `wave-reconciliation-checklist.md` before invoking IAA. Violation class: INC-ACTIVE-TRACKER-STALE-001. | CS2 — maturion-isms#1412 (2026-04-19) |
 
 > **OVL-CI-006 CANDIDATE (PENDING CS2 APPROVAL — next available ID after A-031)**: Every GitHub Actions workflow job must declare an explicit `permissions:` block. This is pending formalisation as A-032. Until CS2 approves: treat as a STRONG RECOMMENDATION. Any PR that adds or modifies workflow files without explicit `permissions:` on every job should be flagged at QP evaluation. Builder task spec: add `permissions: contents: read` (or more specific) to jobs missing explicit permissions.
 
@@ -917,7 +919,7 @@ When completing PREFLIGHT §1.3, record the following block in the **session mem
 
 ```
 fail_only_once_attested: true
-fail_only_once_version: 4.3.0
+fail_only_once_version: 4.4.0
 unresolved_breaches: [list incident IDs with OPEN or IN_PROGRESS status, or 'none']
 open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012, S-013, S-014, S-015, S-016, S-017, S-018, S-019, S-020, S-021, S-022, S-023, S-024, S-026, S-027, S-028, S-032, S-033, S-034, S-035, S-039]
 ```
@@ -929,7 +931,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 ---
 
 *Authority: CS2 (Johan Ras) | Governance Ref: maturion-foreman-governance#1195, maturion-isms#496, maturion-isms#523, maturion-isms#855, maturion-isms#856, maturion-isms#1013, maturion-isms#999, maturion-isms#1003 | LIVING_AGENT_SYSTEM.md v6.2.0*  
-*Last Updated: 2026-04-08 | Version: 4.3.0 | Status: ACTIVE*
+*Last Updated: 2026-04-19 | Version: 4.4.0 | Status: ACTIVE*
 
 ---
 
@@ -937,6 +939,7 @@ open_improvements_reviewed: [S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.4.0 | 2026-04-19 | A-039 ACTIVE-TRACKER-NORMALIZATION-MANDATORY locked in as mandatory rule — before releasing merge gate and before IAA invocation, all active control artifacts for the wave must be normalized to post-token state; defines "active control artifact" (wave-current-tasks.md, BUILD_PROGRESS_TRACKER current-wave entries, active readiness trackers) vs "immutable historical archive" (prior-wave PREHANDOVER proofs, historical session memories); S-040 ACTIVE-TRACKER-GATE candidate added; Section D-2 added to wave-reconciliation-checklist.md; AAP-21/ACR-15 added to ECAP anti-patterns/IAA canon. Wave: wave-active-tracker-coherence-20260419 (issue #1412). |
 | 4.3.0 | 2026-04-08 | INC-OPOJD-PSF-001 registered: Foreman OPOJD violation — PS-F wave Phase 4 incomplete at session termination (PREHANDOVER proof, session memory, IAA token not committed before session ended); S-039 SCOPE_DECLARATION-FORMAT-VERIFICATION added; v4.3.0. Wave: ps-f-iaa-trigger-table-new-categories (issue #1270). |
 | 4.2.0 | 2026-04-07 | PS-B-01/02: ID Namespace Note updated to document canonical dedup fix (second canonical A-04 → canonical A-18 = ISMS-local A-018; second canonical A-016 → canonical A-19); A-019 ARTIFACT-IMMUTABILITY added as canonical A-19 layer-down (PS-B-02). PS-B-03/04/05: existing A-033→A-036, A-034→A-037, A-035→A-038 renumbered; new A-033 CEREMONY-FILES-IN-SCOPE-DECLARATION, A-034 CANON-INVENTORY-UPDATE-MANDATORY, A-035 DELEGATION-ISSUE-REQUIRED locked in; S-025 REMEDIATED (codified as A-035). PS-B-06: Corrective action completion marker convention [ ]/[x] added to Section 2 incident log header. All cross-references to A-033/034/035 updated to A-036/037/038. Wave: ps-b-fail-only-once-v420-20260407; IAA pre-brief: iaa-prebrief-ps-b-fail-only-once-v420-20260407.md. |
 | 4.1.0 | 2026-04-06 | A-038 COPILOT-BUILDER-ROLE-LABEL-BYPASS-PROHIBITION locked in as mandatory rule (formerly A-035 at time of commit, renumbered to A-038 in v4.2.0 PS-B); S-035 (both entries) marked REMEDIATED — polc-boundary-gate.yml amended to enforce full gate for Foreman-authored PRs regardless of copilot-builder-role label; PR copilot/disallow-copilot-builder-role-bypass |

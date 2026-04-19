@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-04-17",
+  "last_updated": "2026-04-19",
   "total_canons": 200,
   "generation_timestamp": "2026-04-13T07:08:00Z",
   "canon_entry_schema": {
@@ -1484,19 +1484,19 @@
     },
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-      "version": "1.6.0",
-      "file_hash": "1d0c37190de3d232495e58d3f1984a1feb042c178227ce46c0229e6fdecc3ae9",
-      "file_hash_sha256": "1d0c37190de3d232495e58d3f1984a1feb042c178227ce46c0229e6fdecc3ae9",
+      "version": "1.9.0",
+      "file_hash": "71abbb685059ec2da7547773246b5659cbbb925f4109e53e79c7139d0eb55500",
+      "file_hash_sha256": "71abbb685059ec2da7547773246b5659cbbb925f4109e53e79c7139d0eb55500",
       "effective_date": "2026-02-24",
-      "amended_date": "2026-04-17",
+      "amended_date": "2026-04-19",
       "description": "Defines the Independent Assurance Agent (IAA) class: role, hard-trigger authority, independence requirements, five-phase delivery proof protocol, binary output (ASSURANCE-TOKEN / REJECTION-PACKAGE), and trigger table. v1.1.0: Zero-Severity-Tolerance policy added.",
       "type": "canon",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "layer_down_status": "INTERNAL",
       "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA); v1.1.0 amendment: Enforce zero-severity-tolerance \u2014 any finding triggers rejection",
-      "last_updated": "2026-04-17",
-      "change_note": "v1.6.0: Added \u00a7Admin-Ceremony Rejection Triggers (ACR-01 through ACR-08); reinforced non-cleanup-authoring posture relative to ECAP layer",
-      "canonical_version": "1.6.0"
+      "last_updated": "2026-04-19",
+      "change_note": "v1.9.0: Added ACR-15 (active wave/task tracker not normalized before final assurance \u2014 final-state claims cannot coexist with stale pending state in active control artifacts for the same wave); authority: CS2 \u2014 issue #1412",
+      "canonical_version": "1.9.0"
     },
     {
       "filename": "INITIALIZATION_COMPLETENESS_GATE.md",
