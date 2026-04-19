@@ -235,6 +235,7 @@ prohibitions:
 tier2_knowledge:
   index: ".agent-workspace/CodexAdvisor-agent/knowledge/index.md"
   required_files:
+    - FAIL-ONLY-ONCE.md
     - checklist-registry.md
     - agent-creation-template.md
     - requirement-mapping.md
