@@ -37,6 +37,26 @@
 
 ---
 
+## Post-Token Normalization Checkpoint (AAP-17/ACR-09 — BLOCKING)
+
+> Required when the branch claims final assurance (ASSURANCE-TOKEN issued, merge permitted, final_state: COMPLETE, or equivalent).
+> Complete before the Checkpoint Verdict.
+
+| # | Check | Result |
+|---|-------|--------|
+| 1 | Accepted PREHANDOVER copy is in post-IAA form — no pre-final instruction text remains | CONFIRMED / FAILED |
+| 2 | No forward-looking completion instructions remain in any committed final-state artifact | CONFIRMED / FAILED |
+| 3 | No placeholder sections intended for assembly time remain in the committed final copy | CONFIRMED / FAILED |
+| 4 | Stage-readiness tables and final handback wording tell one coherent post-token story | CONFIRMED / FAILED |
+| 5 | "IAA Agent Response (verbatim)" sections contain actual IAA response text, not instruction prose | CONFIRMED / FAILED |
+| 6 | Any "carried forward" / "verbatim from canonical source" claims verified against cited source | CONFIRMED / N/A |
+
+**Post-Token Normalization Verdict**: `CONFIRMED` | `FAILED — [list each failed check]`
+
+> If any check FAILED: return to ECAP for normalization. Do NOT invoke IAA or release merge gate.
+
+---
+
 ## Checkpoint Verdict
 
 | Field | Value |
@@ -61,4 +81,4 @@
 
 ---
 
-*Template Version: 1.0.0 | Authority: FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md v1.4.0 §14.6 | Effective: 2026-04-17*
+*Template Version: 1.1.0 | Authority: FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md v1.4.0 §14.6 | Amended: 2026-05-01 (v1.1.0) — Added Post-Token Normalization Checkpoint (AAP-17/ACR-09) | Effective: 2026-04-17*
