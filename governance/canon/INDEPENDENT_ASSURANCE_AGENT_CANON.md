@@ -780,7 +780,7 @@ OUTCOME:
 
 ---
 
-## Admin-Ceremony Rejection Triggers (v1.7.0)
+## Admin-Ceremony Rejection Triggers (v1.8.0)
 
 When a job has involved the `execution-ceremony-admin-agent` (ECAP), the IAA MUST issue a `REJECTION-PACKAGE` if **any** of the following conditions are present in the branch at assurance time. These triggers are binary and non-discretionary.
 
@@ -803,6 +803,7 @@ When a job has involved the `execution-ceremony-admin-agent` (ECAP), the IAA MUS
 | ACR-11 | **Canonical source parity violation** — an artifact claims to carry forward or copy verbatim a model, table, or ownership assignment from a canonical source, but the committed content differs from the cited canonical source in a materially governance-relevant way (ownership, gate authority, approval requirements). | execution-ceremony-admin-anti-patterns.md AAP-19 |
 | ACR-12 | **Gate inventory absent from PREHANDOVER proof** — the PREHANDOVER proof or session memory does not name the specific merge/workflow gates that were verified; the `gate_set_checked:` field is absent or empty, meaning gate-parity is asserted without evidence of which gates were actually checked. | AGENT_HANDOVER_AUTOMATION.md §4.3e; execution-ceremony-admin-anti-patterns.md AAP-15 |
 | ACR-13 | **Stale gate-pass wording in final-state proof** — a final-state proof artifact (PREHANDOVER, session memory, scope declaration) contains unchecked or provisional gate-pass language such as "verify gates pass", "gates TBD", "gates pending", or similar wording that was never resolved to a definitive state, indicating a checklist item was carried forward without being executed. | AGENT_HANDOVER_AUTOMATION.md §4.3e; execution-ceremony-admin-anti-patterns.md AAP-16 |
+| ACR-14 | **`## Ripple/Cross-Agent Assessment` section absent or blank in PREHANDOVER proof** — the PREHANDOVER proof does not contain a `## Ripple/Cross-Agent Assessment` (or equivalent `## Ripple`/`## Cross-Agent`) heading, or the section is present but contains no concrete downstream-impact conclusions (only placeholder text, a blank table, or a heading with no body). Every PREHANDOVER proof must explicitly assess downstream agent and system impact regardless of wave type. This is the HFMC-01 recurring failure pattern (FAIL-ONLY-ONCE A-023). | AGENT_HANDOVER_AUTOMATION.md §4.3e Check J; execution-ceremony-admin-anti-patterns.md AAP-20; PREHANDOVER_PROOF_TEMPLATE.md v3.1 |
 
 ### How the IAA Handles Admin-Ceremony Rejection Triggers
 
@@ -835,4 +836,4 @@ The §4.3e gate (defined in `AGENT_HANDOVER_AUTOMATION.md`) is the **ECAP + Fore
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.7.0 | Effective: 2026-02-24 | Amended: 2026-05-01 (v1.7.0) | Previous: 2026-04-17 (v1.6.0)*
+*Authority: CS2 (Johan Ras) | Version: 1.8.0 | Effective: 2026-02-24 | Amended: 2026-04-19 (v1.8.0) — Added ACR-14: `## Ripple/Cross-Agent Assessment` absent or blank in PREHANDOVER proof (HFMC-01 / FAIL-ONLY-ONCE A-023 / AAP-20) | Previous: 2026-05-01 (v1.7.0)*

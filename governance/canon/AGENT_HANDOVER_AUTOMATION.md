@@ -1,8 +1,9 @@
 # AGENT_HANDOVER_AUTOMATION
 
-**Status**: CANONICAL | **Version**: 1.5.2 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.6.0 | **Authority**: CS2  
 **Date**: 2026-02-24  
-**Amended**: 2026-04-19 — v1.5.2: Scoped Check H and Check I to the active final-state bundle only (non-superseded proofs + latest session-*.md per workspace + latest wave record); previous all-history scan created false blockers from immutable historical session memories unrelated to the current handback; authority: CS2 — post-token normalization hardening feedback.  
+**Amended**: 2026-04-19 — v1.6.0: Added §4.3e Check J (HFMC-01 / AAP-20 / ACR-14): `## Ripple/Cross-Agent Assessment` section presence and non-emptiness check in PREHANDOVER proofs; added AAP-20 to Auto-Fail Rules table; authority: CS2 — Harden PREHANDOVER templates so Ripple/Cross-Agent Assessment cannot be omitted.  
+**Previous amendment**: 2026-04-19 — v1.5.2: Scoped Check H and Check I to the active final-state bundle only (non-superseded proofs + latest session-*.md per workspace + latest wave record); previous all-history scan created false blockers from immutable historical session memories unrelated to the current handback; authority: CS2 — post-token normalization hardening feedback.  
 **Previous amendment**: 2026-05-01 — v1.5.1: Extended §4.3e PRE_FINAL_REGEX (shared denylist) to cover D-01–D-12 and D-15 (regex-detectable POST_TOKEN_VOCABULARY_LAW §1 patterns) including ASSEMBLY_TIME_ONLY blocks; gated Check C2 behind final-assurance-claimed state (no false positives on pre-token branches); de-duplicated PRE_FINAL_REGEX into single shared constant; hardened Check H to skip superseded proofs in both claimant and survivor scans; proof-of-operation document added; clarified D-13/D-14 are structural and covered at Foreman QP / IAA layers; authority: CS2 — Post-Token Normalization Hardening gap-close (new requirement).  
 **Previous amendment**: 2026-05-01 — v1.5.0: Extended §4.3e Check C to also scan for pre-final instruction wording (AAP-17); added Check H (Cross-Artifact Final-State Consistency, AAP-18/ACR-10) and Check I (Canonical Source Parity, AAP-19/ACR-11) to §4.3e; added AAP-15 through AAP-19 to Auto-Fail Rules table; authority: CS2 — Post-Token Final-State Normalization Hardening issue.  
 **Previous amendment**: 2026-04-17 — v1.4.1: Tightened §4.3e Check C stale-wording scan to final-state artifact set only — superseded pre-token proofs retained immutably under the append-only model are now explicitly exempt; updated AAP-01 auto-fail rule to document final-state scope and superseded-proof exemption; authority: CS2 — PR review feedback on §4.3e canon collision with append-only proof retention.  
@@ -1168,6 +1169,46 @@ done
   ACC_FAILURES+=("I1: Artifacts with 'carried forward'/'verbatim' claims but no canonical source reference declared: ${CARRIED_FORWARD_WITHOUT_SOURCE[*]} — manual parity verification required (AAP-19/ACR-11)")
 
 # ─────────────────────────────────────────────────────────────────────────────
+# CHECK J: Ripple/Cross-Agent Assessment Section Presence in PREHANDOVER Proof
+#          (HFMC-01 / AAP-20 / ACR-14 — recurring failure in sessions 051–056)
+# Scoped to non-superseded PREHANDOVER proofs only (same scoping as Check C).
+# Checks: (1) at least one proof contains a ## Ripple or ## Cross-Agent heading,
+#         (2) the section is not blank (contains at least one non-header line with
+#             substantive content after the heading).
+# ─────────────────────────────────────────────────────────────────────────────
+echo "  [J] Ripple/Cross-Agent Assessment section presence in PREHANDOVER proof (HFMC-01)..."
+RIPPLE_SECTION_MISSING=()
+RIPPLE_SECTION_BLANK=()
+
+for f in $(git ls-files .agent-admin/prehandover/proof-*.md 2>/dev/null); do
+  IS_SUPERSEDED=false
+  for s in "${SUPERSEDED_SET[@]}"; do
+    [ "${f}" = "${s}" ] && IS_SUPERSEDED=true && break
+  done
+  ${IS_SUPERSEDED} && continue
+
+  # Check 1: Section heading present
+  if ! grep -qiE "^## Ripple|^## Cross-Agent" "${f}" 2>/dev/null; then
+    RIPPLE_SECTION_MISSING+=("${f}")
+    continue
+  fi
+
+  # Check 2: Section is not empty (has at least one non-header, non-blank line after heading)
+  # Extract content between the Ripple heading and the next ## heading or end of file
+  RIPPLE_BODY=$(awk '/^## (Ripple|Cross-Agent)/,/^## [^R]/' "${f}" 2>/dev/null | \
+    grep -v "^## " | grep -v "^[[:space:]]*$" | grep -v "^>" | head -5)
+  if [ -z "${RIPPLE_BODY}" ]; then
+    RIPPLE_SECTION_BLANK+=("${f}")
+  fi
+done
+
+[ ${#RIPPLE_SECTION_MISSING[@]} -gt 0 ] && \
+  ACC_FAILURES+=("J1: PREHANDOVER proof missing '## Ripple/Cross-Agent Assessment' section: ${RIPPLE_SECTION_MISSING[*]} — HFMC-01 / AAP-20 / ACR-14. Add this section with concrete downstream-impact conclusions.")
+
+[ ${#RIPPLE_SECTION_BLANK[@]} -gt 0 ] && \
+  ACC_FAILURES+=("J2: PREHANDOVER proof has empty '## Ripple/Cross-Agent Assessment' section (heading present but no content): ${RIPPLE_SECTION_BLANK[*]} — HFMC-01 / AAP-20 / ACR-14. Fill in at least one concrete impact conclusion row.")
+
+# ─────────────────────────────────────────────────────────────────────────────
 # GATE RESULT
 # ─────────────────────────────────────────────────────────────────────────────
 if [ ${#ACC_FAILURES[@]} -gt 0 ]; then
@@ -1205,6 +1246,7 @@ The following conditions are **auto-fail** for the §4.3e gate regardless of oth
 | AAP-17 | Pre-final instruction wording in final-state artifact | Any denylist phrase from `POST_TOKEN_VOCABULARY_LAW.md §1` present in any committed final-state artifact **when the branch has claimed final assurance**. Regex-detectable patterns (D-01 through D-12, D-15) include: "to be completed by Foreman", "FOREMAN ACTION REQUIRED", "paste verbatim raw IAA", "paste verbatim" (in IAA response sections), "IAA assurance pending", "pending Phase 4", "Phase 4 pending", "awaiting token", "awaiting ASSURANCE-TOKEN", "after receiving token", "before committing this proof", and any surviving `ASSEMBLY_TIME_ONLY` template block. Superseded (pre-token) proofs are exempt. D-13 (blank verbatim-response fields) and D-14 (mixed-status stage-readiness) require structural inspection; they are reviewed at the Foreman QP and IAA layers. |
 | AAP-18 | Cross-artifact final-state inconsistency | At least one artifact claims final assurance (ASSURANCE-TOKEN issued, merge permitted, final_state: COMPLETE) while another artifact in the final-state bundle still contains pre-token or pre-final wording |
 | AAP-19 | Canonical source parity violation for "carried-forward" claims | An artifact claims "carried forward" / "verbatim from" a canonical source but the committed content differs from the cited source in ownership, gate authority, or approval requirements |
+| AAP-20 | `## Ripple/Cross-Agent Assessment` absent or blank in PREHANDOVER proof | The PREHANDOVER proof does not contain a `## Ripple/Cross-Agent Assessment` (or equivalent `## Ripple`/`## Cross-Agent`) heading, OR the section exists but its assessment table contains only a placeholder row with no concrete impact conclusion. Every PREHANDOVER proof must explicitly assess downstream agent and system impact (HFMC-01 / FAIL-ONLY-ONCE A-023). |
 
 ### Admin Ceremony Compliance Gate in the Handover Validation Checklist
 

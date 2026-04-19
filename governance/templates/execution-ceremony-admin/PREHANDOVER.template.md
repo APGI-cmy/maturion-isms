@@ -62,10 +62,32 @@ suggestions:            NONE                 # NONE | see .agent-workspace/<agen
 
 ---
 
+## Ripple/Cross-Agent Assessment
+
+> **HFMC-01 MANDATORY — HANDOVER BLOCKER**: This section MUST be present and MUST contain
+> concrete downstream-impact conclusions. It is required in every PREHANDOVER proof regardless
+> of wave type. A blank or absent section triggers AAP-20 (auto-fail at the ECAP/Foreman QP
+> gate) and ACR-14 (IAA REJECTION-PACKAGE).
+>
+> - Explicitly name every agent, system, or consumer that was assessed for downstream impact.
+> - State the conclusion for each: NO IMPACT (with brief justification) or IMPACTED (with
+>   description of effect and action taken or deferred reference).
+> - If this wave contains only governance/ceremony artifacts with no code, schema, API
+>   contract, or agent-contract changes: state that conclusion explicitly — do NOT leave
+>   the table blank.
+
+| Agent / System | Change Scope Assessed | Impact Conclusion |
+|---------------|----------------------|-------------------|
+| [agent-name or system] | [what was assessed — files, contracts, schema, API surface] | **[NO IMPACT — reason / IMPACTED — describe downstream effect and action]** |
+
+**Downstream ripple conclusion**: [NO IMPACT — governance/ceremony artifacts only, no code or contract changes; no downstream effect / IMPACTED — list affected agents/systems and actions taken or deferred with reference]
+
+---
+
 ## Embedded ECAP Reconciliation Summary (if not separate file)
 
 > Copy the ECAP Reconciliation Summary template here if embedding rather than using a separate file.
 
 ---
 
-*Template Version: 1.0.0 | Authority: ECAP-001 v1.1.0 | Effective: 2026-04-17*
+*Template Version: 1.1.0 | Authority: ECAP-001 v1.1.0 | Effective: 2026-04-17 | Amended: 2026-04-19 (v1.1.0) — Added mandatory `## Ripple/Cross-Agent Assessment` section (HFMC-01 / AAP-20 / ACR-14) as structural non-optional section; YAML ripple-assessment-summary retained for machine-readable status*
