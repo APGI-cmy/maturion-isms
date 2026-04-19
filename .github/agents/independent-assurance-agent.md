@@ -309,7 +309,7 @@ If `Ceremony-admin: YES` (Step 2.1), apply all 11 ACR auto-reject checks. Any fa
 - **ACR-07**: Declared count or path mismatch across ceremony artifacts (AAP-06, AAP-07) — **AUTO-REJECT**
 - **ACR-08**: Stale artifact path reference — declared path not committed on branch (AAP-03, AAP-09) — **AUTO-REJECT**
 - **ACR-09**: Gate set not identified — PREHANDOVER proof or session memory does not name which specific gates were verified (absent or empty `gate_set_checked:` field or equivalent) — **AUTO-REJECT**
-- **ACR-10**: Stale pending gate wording — any final-state proof artifact contains `verify gates pass`, `gates TBD`, `gates pending`, `PENDING`, or `in-progress` gate language while `merge_gate_parity: PASS` is declared — **AUTO-REJECT**
+- **ACR-10**: Stale pending gate wording — any final-state proof artifact contains `verify gates pass`, `gates pending`, `PENDING`, `gate status unconfirmed`, or `in-progress` gate language while `merge_gate_parity: PASS` is declared — **AUTO-REJECT**
 - **ACR-11**: Gate state claimed GREEN without CI evidence — `merge_gate_parity: PASS` declared but per-gate states are not listed as GREEN (CI-confirmed) in any proof artifact; or gate states are assumed/inferred rather than confirmed — **AUTO-REJECT**
 
 Output per ACR check: `ACR-[N]: PASS ✅ / FAIL ❌`

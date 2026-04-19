@@ -270,7 +270,7 @@ Authority: `governance/canon/GOVERNANCE_ARTIFACT_TAXONOMY.md`.
 
 **Gate-evidence coherence check (mandatory before bundle assembly — blocks on any failure):**
 1. **Named gate set present**: Confirm `gate_set_checked:` field is populated in Foreman's declared PREHANDOVER template/parity result. If absent → **HALT. Return to Foreman. Gate inventory must be recorded before bundle assembly.**
-2. **No stale "verify gates pass" wording**: Scan all bundle artifacts for unchecked or provisional gate-pass language (e.g., "verify gates pass", "gates TBD", "gates pending"). Any such wording = **BUNDLE BLOCKED** (AAP-16). Return to Foreman.
+2. **No stale "verify gates pass" wording**: Scan all bundle artifacts for unchecked or provisional gate-pass language (e.g., "verify gates pass", "gates pending", "gates unconfirmed"). Any such wording = **BUNDLE BLOCKED** (AAP-16). Return to Foreman.
 3. **No contradictory gate assertions**: If `merge_gate_parity: PASS` is declared anywhere in the bundle, no `PENDING`, `in-progress`, or unconfirmed gate wording may exist in any other bundle artifact. Contradiction = **BUNDLE BLOCKED** (AAP-01 variant). Return to Foreman.
 4. **No stale workflow references**: Confirm all named gates/workflows in `gate_set_checked` correspond to the current branch — no references to superseded or renamed gates.
 
