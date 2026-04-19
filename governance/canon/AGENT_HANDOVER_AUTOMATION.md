@@ -1194,9 +1194,15 @@ for f in $(git ls-files .agent-admin/prehandover/proof-*.md 2>/dev/null); do
   fi
 
   # Check 2: Section is not empty (has at least one non-header, non-blank line after heading)
-  # Extract content between the Ripple heading and the next ## heading or end of file
-  RIPPLE_BODY=$(awk '/^## (Ripple|Cross-Agent)/,/^## [^R]/' "${f}" 2>/dev/null | \
-    grep -v "^## " | grep -v "^[[:space:]]*$" | grep -v "^>" | head -5)
+  # Use grep to find the heading line number, then extract content after it
+  HEADING_LINE_J=$(grep -niE "^## Ripple|^## Cross-Agent" "${f}" 2>/dev/null | head -1 | cut -d: -f1)
+  if [ -n "${HEADING_LINE_J}" ]; then
+    RIPPLE_BODY=$(tail -n "+$((HEADING_LINE_J + 1))" "${f}" 2>/dev/null | \
+      awk '/^## / { exit }
+           !/^[[:space:]]*$/ && !/^>/ && !/^<!/ { print }' | head -5)
+  else
+    RIPPLE_BODY=""
+  fi
   if [ -z "${RIPPLE_BODY}" ]; then
     RIPPLE_SECTION_BLANK+=("${f}")
   fi

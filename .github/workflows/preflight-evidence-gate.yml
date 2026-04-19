@@ -488,13 +488,16 @@ jobs:
             fi
 
             # Check 2: Section non-empty (at least one substantive line after heading)
-            # Extract lines between the Ripple heading and the next ## heading or EOF,
-            # excluding blank lines, blockquote lines (>), and HTML comments
-            RIPPLE_BODY=$(awk \
-              'found && /^## / { exit }
-               found && !/^[[:space:]]*$/ && !/^>/ && !/^<!/ { print }
-               /^## (Ripple|Cross-Agent)/ { found=1 }' \
-              "${proof}" 2>/dev/null | head -10)
+            # Since Check 1 confirmed the heading exists case-insensitively,
+            # find its line number then extract content until the next ## heading.
+            HEADING_LINE=$(grep -niE "^## Ripple|^## Cross-Agent" "${proof}" 2>/dev/null | head -1 | cut -d: -f1)
+            if [ -n "${HEADING_LINE}" ]; then
+              RIPPLE_BODY=$(tail -n "+$((HEADING_LINE + 1))" "${proof}" 2>/dev/null | \
+                awk '/^## / { exit }
+                     !/^[[:space:]]*$/ && !/^>/ && !/^<!/ { print }' | head -10)
+            else
+              RIPPLE_BODY=""
+            fi
 
             if [ -z "${RIPPLE_BODY}" ]; then
               echo "  ❌ EMPTY: '## Ripple/Cross-Agent Assessment' section exists but contains no concrete content"
