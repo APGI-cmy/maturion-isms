@@ -417,10 +417,11 @@ jobs:
         uses: actions/checkout@v5
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: HFMC-01 — Ripple/Cross-Agent Assessment presence check
         id: hfmc01_check
+        shell: bash
         run: |
           echo "=== HFMC-01: Ripple/Cross-Agent Assessment Presence Gate ==="
           echo "Authority: iaa-high-frequency-checks.md v2.1.0 (HFMC-01)"
@@ -430,29 +431,35 @@ jobs:
 
           PROOF_DIR=".agent-admin/prehandover"
           FAIL=false
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
 
           # ----------------------------------------------------------------
-          # Discover PREHANDOVER proof files added or changed in this PR.
-          # Scoped to newly added proofs (--diff-filter=A) or all proofs if
-          # the directory exists. HFMC-01 is enforced on any proof present on
-          # the branch, not just ones introduced by this PR.
+          # Discover PREHANDOVER proof files added or modified in this PR only.
+          # Historical proofs already on the base branch are excluded — they
+          # were valid under the pre-HFMC-01 rules and are immutable audit
+          # artifacts. Only the active/current proof set introduced by this PR
+          # is subject to the new mandatory Ripple/Cross-Agent Assessment check.
           # ----------------------------------------------------------------
-          PROOF_FILES=$(find "${PROOF_DIR}" -name "proof-*.md" 2>/dev/null | sort)
+          PROOF_FILES=$(git diff --name-only --diff-filter=AM \
+            origin/"${BASE_BRANCH}"...HEAD 2>/dev/null | \
+            grep "^${PROOF_DIR}/proof-.*\.md$" | sort)
 
           if [ -z "${PROOF_FILES}" ]; then
-            echo "ℹ️  No PREHANDOVER proof files found in ${PROOF_DIR}."
-            echo "   HFMC-01 check: skipped (no proof files present)."
+            echo "ℹ️  No PREHANDOVER proof files added or modified by this PR."
+            echo "   HFMC-01 check: skipped (no active proof files in diff)."
             exit 0
           fi
 
-          echo "Found proof files:"
+          echo "PR-introduced/modified proof files to check:"
           echo "${PROOF_FILES}" | while IFS= read -r f; do echo "  - ${f}"; done
           echo ""
 
           # ----------------------------------------------------------------
           # For each proof file, check that:
           #   1. A '## Ripple' or '## Cross-Agent' heading exists
-          #   2. The section is non-empty (has concrete content after heading)
+          #   2. The section contains at least one concrete impact conclusion
+          #      row — a table data row that is not a header, separator, or
+          #      a row made entirely of placeholder cells like [text].
           # Superseded proofs (those cited by a "Supersedes:" line in another
           # proof) are exempt from this check — they are immutable pre-token
           # artifacts retained for audit trail only.
@@ -487,24 +494,29 @@ jobs:
               continue
             fi
 
-            # Check 2: Section non-empty (at least one substantive line after heading)
-            # Since Check 1 confirmed the heading exists case-insensitively,
-            # find its line number then extract content until the next ## heading.
+            # Check 2: Section contains at least one concrete impact conclusion row.
+            # A concrete row is a table data row (starts with |) that:
+            #   - is NOT a separator row  (e.g. |---|---|---|)
+            #   - does NOT consist entirely of placeholder cells  (e.g. | [text] | [text] |)
+            # Table headers and all-placeholder rows do not satisfy the gate.
             HEADING_LINE=$(grep -niE "^## Ripple|^## Cross-Agent" "${proof}" 2>/dev/null | head -1 | cut -d: -f1)
+            CONCRETE_ROW=""
             if [ -n "${HEADING_LINE}" ]; then
-              RIPPLE_BODY=$(tail -n "+$((HEADING_LINE + 1))" "${proof}" 2>/dev/null | \
-                awk '/^## / { exit }
-                     !/^[[:space:]]*$/ && !/^>/ && !/^<!/ { print }' | head -10)
-            else
-              RIPPLE_BODY=""
+              CONCRETE_ROW=$(tail -n "+$((HEADING_LINE + 1))" "${proof}" 2>/dev/null | \
+                awk '/^## / { exit } { print }' | \
+                grep -E '^\|' | \
+                grep -vE '^\|[-: |]+\|[[:space:]]*$' | \
+                grep -vP '^\|(\s*\[[^\]]*\]\s*\|)+\s*$' | \
+                head -1)
             fi
 
-            if [ -z "${RIPPLE_BODY}" ]; then
-              echo "  ❌ EMPTY: '## Ripple/Cross-Agent Assessment' section exists but contains no concrete content"
+            if [ -z "${CONCRETE_ROW}" ]; then
+              echo "  ❌ INSUFFICIENT: '## Ripple/Cross-Agent Assessment' section has no concrete impact conclusion row"
+              echo "     (Table headers, separator rows, and placeholder-only rows do not count.)"
               BLANK_SECTION+=("${proof}")
               FAIL=true
             else
-              echo "  ✅ Section present and non-empty"
+              echo "  ✅ Section present with concrete impact conclusion row"
             fi
           done <<< "${PROOF_FILES}"
 
@@ -517,7 +529,7 @@ jobs:
             echo ""
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo ""
-            echo "🚨 HFMC-01 / AAP-20 / ACR-14 — RIPPLE SECTION MISSING OR BLANK"
+            echo "🚨 HFMC-01 / AAP-20 / ACR-14 — RIPPLE SECTION MISSING OR INSUFFICIENT"
             echo ""
             if [ ${#MISSING_SECTION[@]} -gt 0 ]; then
               echo "Proof files missing '## Ripple/Cross-Agent Assessment' section:"
@@ -525,19 +537,20 @@ jobs:
               echo ""
             fi
             if [ ${#BLANK_SECTION[@]} -gt 0 ]; then
-              echo "Proof files with empty '## Ripple/Cross-Agent Assessment' section:"
+              echo "Proof files with no concrete impact conclusion row in '## Ripple/Cross-Agent Assessment':"
               for f in "${BLANK_SECTION[@]}"; do echo "  - ${f}"; done
               echo ""
             fi
-            echo "Every PREHANDOVER proof MUST contain this section with concrete downstream-"
-            echo "impact conclusions. A heading with no body or only placeholder text is not sufficient."
+            echo "Every PREHANDOVER proof introduced by this PR MUST contain this section with at"
+            echo "least one concrete impact conclusion row. Table headers, separator rows, and rows"
+            echo "consisting entirely of placeholder cells (e.g. | [text] | [text] |) do not count."
             echo ""
-            echo "Required section format:"
+            echo "Required section format (at least one concrete data row required):"
             echo "  ## Ripple/Cross-Agent Assessment"
             echo "  | Agent / System | Change Scope Assessed | Impact Conclusion |"
-            echo "  |...|...|...|"
-            echo "  | [agent-name] | [what was assessed] | [NO IMPACT / IMPACTED — reason] |"
-            echo "  **Downstream ripple conclusion**: [NO IMPACT ... / IMPACTED — ...]"
+            echo "  |---|---|---|"
+            echo "  | foreman-v2-agent | governance canon files | NO IMPACT — ceremony-only wave |"
+            echo "  **Downstream ripple conclusion**: NO IMPACT — governance/ceremony artifacts only"
             echo ""
             echo "If this wave contains no code/schema/API/contract changes:"
             echo "  State: 'NO IMPACT — governance/ceremony artifacts only, no downstream effect'"
@@ -552,6 +565,6 @@ jobs:
             echo ""
             exit 1
           else
-            echo "✅ PASS — All PREHANDOVER proofs contain a non-empty ## Ripple/Cross-Agent Assessment section."
+            echo "✅ PASS — All PR-introduced PREHANDOVER proofs contain a concrete ## Ripple/Cross-Agent Assessment section."
             echo "   HFMC-01 compliance confirmed."
           fi
