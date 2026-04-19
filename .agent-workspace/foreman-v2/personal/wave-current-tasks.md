@@ -6,7 +6,7 @@
 **Branch**: copilot/canonize-active-wave-tracker-coherence
 **Date**: 2026-04-19
 **CS2 Authorization**: CONFIRMED — issue #1412 opened directly by CS2 (@APGI-cmy); assigns foreman-v2-agent
-**ceremony_admin_appointed**: true (appointed at Phase 4)
+**ceremony_admin_appointed**: false  # governance-only ripple wave handled directly by governance-liaison + Foreman; ECAP agent not invoked
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-wave-active-tracker-coherence-20260419.md
 iaa_prebrief_commit: 5461d87
 iaa_prebrief_status: COMPLETE — CLEAR TO PROCEED

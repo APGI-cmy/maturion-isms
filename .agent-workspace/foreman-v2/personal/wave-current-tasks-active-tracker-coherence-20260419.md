@@ -6,7 +6,7 @@
 **Branch**: copilot/canonize-active-wave-tracker-coherence
 **Date**: 2026-04-19
 **CS2 Authorization**: CONFIRMED — issue #1412 opened directly by CS2 (@APGI-cmy); assigns foreman-v2-agent
-**ceremony_admin_appointed**: true (to be appointed at Phase 4)
+**ceremony_admin_appointed**: false  # governance-only ripple wave handled directly by governance-liaison + Foreman; ECAP agent not invoked
 **iaa_wave_record_path**: .agent-admin/assurance/iaa-wave-record-wave-active-tracker-coherence-20260419.md
 **iaa_prebrief_commit**: 5461d87
 **iaa_prebrief_status**: COMPLETE — CLEAR TO PROCEED (5 blockers declared, all resolvable)
@@ -16,7 +16,7 @@
 | Blocker | Description | Resolution Status |
 |---------|-------------|------------------|
 | BLOCKER-001 | wave-current-tasks.md not updated for this wave | ✅ RESOLVED — this file |
-| BLOCKER-002 | ceremony_admin_appointed status unknown | ✅ RESOLVED — true (appointed at Phase 4) |
+| BLOCKER-002 | ceremony_admin_appointed status unknown | ✅ RESOLVED — false (governance-only wave; ECAP agent not invoked) |
 | BLOCKER-003 | CANON_INVENTORY stale for IAA canon (v1.6.0 vs v1.8.0) | Resolving — CANON_INVENTORY.json update included in governance-liaison delegation |
 | BLOCKER-004 | Numbering reservations — ACR-15, AAP-21, Foreman A-039 | ✅ RESOLVED — confirmed: ACR-15, AAP-21, A-039 (Foreman highest is A-038) |
 | BLOCKER-005 | CS2 pre-authorization for "active control artifact" boundary definition | ✅ RESOLVED — issue #1412 opened by CS2 with explicit examples constitutes pre-authorization |
