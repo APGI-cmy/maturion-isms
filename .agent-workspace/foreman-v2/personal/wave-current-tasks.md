@@ -1,24 +1,34 @@
-# Wave Current Tasks — mmm-stage8-implementation-plan-20260417
+# Wave Current Tasks — mmm-stage9-builder-checklist-20260419
 
 **Foreman**: foreman-v2-agent v6.2.0
-**Wave**: mmm-stage8-implementation-plan-20260417
-**Issue**: maturion-isms#1400 — [MMM Stage 8] Produce Implementation Plan
-**Branch**: copilot/mmm-stage-8-implementation-plan
-**Date**: 2026-04-17
-**CS2 Authorization**: CONFIRMED — issue opened and assigned by CS2 (@APGI-cmy); IAA-session-mmm-stage7-pbfag-20260415-PASS authorizes Stage 8 start
-**ceremony_admin_appointed**: true
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-stage8-implementation-plan-20260417.md
-iaa_prebrief_commit: 12ba60a
-iaa_prebrief_status: COMPLETE
+**Wave**: mmm-stage9-builder-checklist-20260419
+**Issue**: maturion-isms#1406 — [MMM Stage 9] Wave-start authorization — Builder Checklist
+**Branch**: copilot/mmm-stage-9-builder-checklist
+**Date**: 2026-04-19
+**CS2 Authorization**: CONFIRMED — issue #1406 opened by CS2 (@APGI-cmy); PR #1405 merged (hard start condition satisfied); BUILD_PROGRESS_TRACKER updated on main to reflect Stage 8 addendum (second hard start condition satisfied)
+**ceremony_admin_appointed**: true (appointed 2026-04-19 for Phase 4 ceremony bundle C1+C2)
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-stage9-builder-checklist-20260419.md
+iaa_prebrief_commit: c5517c2
+iaa_prebrief_status: COMPLETE — CLEAR TO PROCEED
+
+## Hard Start Conditions
+
+| Condition | Status |
+|-----------|--------|
+| PR #1405 merged | ✅ SATISFIED — merged 2026-04-19T10:27:17Z by @APGI-cmy |
+| BUILD_PROGRESS_TRACKER.md updated on main to reflect Stage 8 addendum | ✅ SATISFIED — updated in wave mmm-stage8-addendum-20260419 (PR #1405) |
 
 ## Tasks
 
-| Task | Owner | Status |
-|------|-------|--------|
-| T-001: Produce implementation-plan.md | mat-specialist | IN_PROGRESS |
-| T-002: Update BUILD_PROGRESS_TRACKER.md | mat-specialist | IN_PROGRESS |
-| T-003: Create wave governance files | foreman-v2-agent | COMPLETE |
-| T-004: IAA Pre-Brief | independent-assurance-agent | COMPLETE |
-| T-005: QP evaluation | foreman-v2-agent | PENDING |
-| T-006: ECAP ceremony | execution-ceremony-admin-agent | PENDING |
-| T-007: IAA Final Audit | independent-assurance-agent | PENDING |
+| Task ID | Task | Owner | Status |
+|---------|------|-------|--------|
+| IAA-PRE | IAA Pre-Brief — wave record | independent-assurance-agent | ✅ COMPLETE — SHA c5517c2 |
+| D0 | Update BUILD_PROGRESS_TRACKER.md — post-#1405 Stage 8 addendum explicit tracker alignment | mat-specialist | ✅ COMPLETE — SHA 957b7b8 |
+| D1 | Stage 9 Builder Checklist primary artifact under `modules/MMM/08-builder-checklist/` | mat-specialist | ✅ COMPLETE — SHA 957b7b8 |
+| D2 | Builder readiness checks — contract currency, scope, RED QA, architecture, protocol, role-fit | mat-specialist | ✅ COMPLETE — SHA 957b7b8 |
+| D3 | Addendum carry-forward section (source-state/switchover, PIT/AIMC/KUC boundary, B7/B9 closure law) | mat-specialist | ✅ COMPLETE — SHA 957b7b8 |
+| D4 | Foreman verdict — PASS/FAIL for each builder candidate | mat-specialist | ✅ COMPLETE — SHA 957b7b8 |
+| D5 | BUILD_PROGRESS_TRACKER.md Stage 9 completion update | mat-specialist | ✅ COMPLETE — SHA 957b7b8 |
+| C1 | PREHANDOVER proof (ECAP) | execution-ceremony-admin-agent | ✅ COMPLETE — SHA 3c3edac |
+| C2 | Session memory (ECAP) | execution-ceremony-admin-agent | ✅ COMPLETE — SHA 3c3edac |
+| IAA-FINAL | IAA Phase 4 Final Audit | independent-assurance-agent | ✅ COMPLETE — ASSURANCE-TOKEN: IAA-session-mmm-stage9-builder-checklist-20260419-PASS (SHA bfd94d1) |
