@@ -1,8 +1,8 @@
 # ECAP Bundle Checklist
 
 **Agent**: execution-ceremony-admin-agent
-**Knowledge Version**: 1.0.0
-**Last Updated**: 2026-04-15
+**Knowledge Version**: 1.1.0
+**Last Updated**: 2026-05-01
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Ref**: ECAP-001 §3.3, §5.2
 
@@ -24,6 +24,7 @@ readiness gate for the ceremony bundle before return to Foreman.
 | G-3 | IAA wave record exists with `## PRE-BRIEF` populated | Flag to Foreman before proceeding |
 | G-4 | Scope declaration lists both ECAP bundle paths | BLOCKING HALT → return to Foreman |
 | G-5 | CANON_INVENTORY hashes non-placeholder | HALT-002 → return to Foreman |
+| G-6 | Post-token normalization confirmed: no pre-final instruction wording in any artifact when branch claims final assurance | BLOCKING HALT — AAP-17/18 → return to Foreman |
 
 ---
 
@@ -94,6 +95,8 @@ All of the following must be present and committed before ECAP returns the bundl
 - [ ] Evidence artifact index complete
 - [ ] Commit-state gate documented
 - [ ] Parking station entry appended
+- [ ] Post-token normalization check passed: no pre-final instruction wording in final-state artifacts (AAP-17 check)
+- [ ] Cross-artifact consistency confirmed: all final-state artifacts tell one coherent post-token story (AAP-18 check)
 
 ---
 

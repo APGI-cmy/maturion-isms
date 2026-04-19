@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "last_updated": "2026-04-17",
-  "total_canons": 200,
+  "total_canons": 203,
   "generation_timestamp": "2026-04-13T07:08:00Z",
   "canon_entry_schema": {
     "description": "Schema for canon entries in CANON_INVENTORY.json",
@@ -261,22 +261,22 @@
     },
     {
       "filename": "AGENT_HANDOVER_AUTOMATION.md",
-      "version": "1.4.1",
-      "canonical_version": "1.4.1",
-      "file_hash": "55f7f0e4c7f3a3716b6d43fa81679da06350fdd51c943a3cdbb841a01989f113",
+      "version": "1.5.0",
+      "canonical_version": "1.5.0",
+      "file_hash": "ff5000988b9302e69e761c243e219eab7579a8782e321c40373c39208e3a4c7f",
       "effective_date": "2026-04-06",
-      "amended_date": "2026-04-17",
+      "amended_date": "2026-05-01",
       "description": "Canonical governance document: AGENT_HANDOVER_AUTOMATION",
       "type": "canon",
       "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "55f7f0e4c7f3a3716b6d43fa81679da06350fdd51c943a3cdbb841a01989f113",
+      "file_hash_sha256": "ff5000988b9302e69e761c243e219eab7579a8782e321c40373c39208e3a4c7f",
       "ripple_dispatched": "2026-02-24",
       "ripple_log": ".agent-admin/governance/ripple-logs/ripple-agent-handover-parity-20260224.md",
       "ripple_in_repo_status": "COMPLETE",
       "ripple_consumer_status": "PENDING \u2014 layer-down issues to be created in consumer repos",
-      "last_updated": "2026-04-17",
-      "change_note": "v1.4.1: Tightened \u00a74.3e Check C stale-wording scan to final-state artifact set only; superseded pre-token proofs exempt under append-only model; updated AAP-01 auto-fail rule to document final-state scope and superseded-proof exemption. v1.4.0: Added \u00a74.3e Admin Ceremony Compliance Gate (BLOCKING, ECAP jobs) + auto-fail rules table (AAP-01\u2013AAP-09) + checklist item"
+      "last_updated": "2026-05-01",
+      "change_note": "v1.5.0: Extended \u00a74.3e Check C to scan for pre-final instruction wording (AAP-17); added Check H (cross-artifact final-state consistency, AAP-18/ACR-10) and Check I (canonical source parity, AAP-19/ACR-11); added AAP-15 through AAP-19 to Auto-Fail Rules table."
     },
     {
       "filename": "AGENT_INDUCTION_PROTOCOL.md",
@@ -1484,19 +1484,19 @@
     },
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-      "version": "1.6.0",
-      "file_hash": "1d0c37190de3d232495e58d3f1984a1feb042c178227ce46c0229e6fdecc3ae9",
-      "file_hash_sha256": "1d0c37190de3d232495e58d3f1984a1feb042c178227ce46c0229e6fdecc3ae9",
+      "version": "1.7.0",
+      "file_hash": "d157df88caf77b642c0e73a0c40ae5d9abbbbaffbc2f6b3d8f4ef3899a5fc75a",
+      "file_hash_sha256": "d157df88caf77b642c0e73a0c40ae5d9abbbbaffbc2f6b3d8f4ef3899a5fc75a",
       "effective_date": "2026-02-24",
-      "amended_date": "2026-04-17",
+      "amended_date": "2026-05-01",
       "description": "Defines the Independent Assurance Agent (IAA) class: role, hard-trigger authority, independence requirements, five-phase delivery proof protocol, binary output (ASSURANCE-TOKEN / REJECTION-PACKAGE), and trigger table. v1.1.0: Zero-Severity-Tolerance policy added.",
       "type": "canon",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "layer_down_status": "INTERNAL",
       "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA); v1.1.0 amendment: Enforce zero-severity-tolerance \u2014 any finding triggers rejection",
-      "last_updated": "2026-04-17",
-      "change_note": "v1.6.0: Added \u00a7Admin-Ceremony Rejection Triggers (ACR-01 through ACR-08); reinforced non-cleanup-authoring posture relative to ECAP layer",
-      "canonical_version": "1.6.0"
+      "last_updated": "2026-05-01",
+      "change_note": "v1.7.0: Added ACR-09 (pre-final instruction wording), ACR-10 (cross-artifact inconsistency), ACR-11 (canonical source parity violation) to \u00a7Admin-Ceremony Rejection Triggers; bumped section to v1.7.0.",
+      "canonical_version": "1.7.0"
     },
     {
       "filename": "INITIALIZATION_COMPLETENESS_GATE.md",
@@ -1867,6 +1867,22 @@
       "local_version": null,
       "local_extension": false,
       "layer_up_status": "NONE"
+    },
+    {
+      "filename": "POST_TOKEN_VOCABULARY_LAW.md",
+      "version": "1.0.0",
+      "canonical_version": "1.0.0",
+      "file_hash": "3c8225463644b1a92008e5f7024806c9ac051bc627fbd6494ab2dbd76ef36d13",
+      "file_hash_sha256": "3c8225463644b1a92008e5f7024806c9ac051bc627fbd6494ab2dbd76ef36d13",
+      "effective_date": "2026-05-01",
+      "amended_date": "2026-05-01",
+      "last_updated": "2026-05-01",
+      "description": "Defines the canonical boundary between pre-final wording (DENYLIST) and required post-token wording (REPLACEMENT REQUIREMENTS). Enforcement document for AAP-17/18/19 and ACR-09/10/11.",
+      "type": "canon",
+      "path": "governance/canon/POST_TOKEN_VOCABULARY_LAW.md",
+      "layer_down_status": "INTERNAL",
+      "provenance": "CS2-authorised via Post-Token Final-State Normalization Hardening issue.",
+      "change_note": "v1.0.0: Initial creation. Defines DENYLIST of pre-final instruction phrases and mandatory post-token replacements. Establishes normalization requirement, template design rule, and enforcement points."
     },
     {
       "filename": "PRE_BUILD_REALITY_CHECK_CANON.md",

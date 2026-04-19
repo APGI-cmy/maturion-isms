@@ -93,6 +93,7 @@
 - PHASE_B_BLOCKING_TOKEN: {token_ref — reference to the blocking token written by IAA to `.agent-admin/assurance/iaa-token-*`. This field links the wave record to the standalone token file that IAA creates as its formal verdict artifact.}
 
 ### 3.2 IAA Agent Response (verbatim)
+<!-- ASSEMBLY_TIME_ONLY: Replace this instruction text with actual verbatim IAA response before final handback. Leaving this section with instruction prose is an AAP-17 violation. -->
 {Verbatim IAA response — pasted without modification. Do not summarise, interpret, or redact.}
 
 ### 3.3 Evidence Reviewed

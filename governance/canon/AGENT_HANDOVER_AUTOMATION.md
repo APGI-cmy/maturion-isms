@@ -1,8 +1,9 @@
 # AGENT_HANDOVER_AUTOMATION
 
-**Status**: CANONICAL | **Version**: 1.4.1 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.5.0 | **Authority**: CS2  
 **Date**: 2026-02-24  
-**Amended**: 2026-04-17 — v1.4.1: Tightened §4.3e Check C stale-wording scan to final-state artifact set only — superseded pre-token proofs retained immutably under the append-only model are now explicitly exempt; updated AAP-01 auto-fail rule to document final-state scope and superseded-proof exemption; authority: CS2 — PR review feedback on §4.3e canon collision with append-only proof retention.  
+**Amended**: 2026-05-01 — v1.5.0: Extended §4.3e Check C to also scan for pre-final instruction wording (AAP-17); added Check H (Cross-Artifact Final-State Consistency, AAP-18/ACR-10) and Check I (Canonical Source Parity, AAP-19/ACR-11) to §4.3e; added AAP-15 through AAP-19 to Auto-Fail Rules table; authority: CS2 — Post-Token Final-State Normalization Hardening issue.  
+**Previous amendment**: 2026-04-17 — v1.4.1: Tightened §4.3e Check C stale-wording scan to final-state artifact set only — superseded pre-token proofs retained immutably under the append-only model are now explicitly exempt; updated AAP-01 auto-fail rule to document final-state scope and superseded-proof exemption; authority: CS2 — PR review feedback on §4.3e canon collision with append-only proof retention.  
 **Previous amendment**: 2026-04-17 — v1.4.0: Added §4.3e Admin Ceremony Compliance Gate (BLOCKING, pre-IAA, ECAP-involved jobs); added auto-fail rules table for 9 known admin anti-patterns (AAP-01 through AAP-09); updated Phase 4 structure and sequencing note; updated Handover Validation Checklist with admin-compliance gate item; authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack for ECAP, Foreman QP, and IAA.  
 **Previous amendment**: 2026-04-09 — v1.3.0: Post-ECAP-001 governance quality closure (ECAP-QC-001 through ECAP-QC-004) — added §4.3d Scope-Declaration Parity Gate (blocking, pre-IAA); added mandatory drift evidence and metadata correctness requirements to Administrator evidence checklist; updated validate-canon-hashes.sh to catch version/canonical_version mismatches; codified amended_date and timestamp discipline; authority: CS2 — ECAP-001 follow-up quality closure issue.  
 **Previous amendment**: 2026-04-08 — v1.2.0: Added §4.3c Pre-IAA Commit-State Gate (canonical blocking step) — required immediately before every IAA invocation in all producing-agent contracts; defines mandatory git status / HEAD verification checks; adds guidance for recording commit-state evidence in PREHANDOVER proof; adds §PHASE_B_BLOCKING note for IAA deployment phase; authority: CS2 — pre-IAA handover discipline hardening issue.  
@@ -875,7 +876,7 @@ Non-governance PRs (application code only, documentation only) are exempt from �
 #!/bin/bash
 # §4.3e Admin Ceremony Compliance Gate (BLOCKING — ECAP-involved jobs)
 # Priority: Producer_H (Foreman or execution-ceremony-admin-agent)
-# Authority: EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md v1.1.0 + AGENT_HANDOVER_AUTOMATION.md v1.4.0
+# Authority: EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md v1.1.0 + AGENT_HANDOVER_AUTOMATION.md v1.5.0
 
 echo "🔍 §4.3e ADMIN CEREMONY COMPLIANCE GATE (BLOCKING)"
 
@@ -960,6 +961,46 @@ done
   ACC_FAILURES+=("C1: Provisional/stale wording found in final-state ceremony artifacts: ${STALE_WORDING_FILES[*]} (ECAP-CCI-03)")
 
 # ─────────────────────────────────────────────────────────────────────────────
+# CHECK C2: Pre-Final Instruction Wording Scan (AAP-17 / ACR-09)
+# Scans final-state artifacts for pre-final assembly-time instruction text that
+# is unconditionally blocked once the branch claims final assurance.
+# ─────────────────────────────────────────────────────────────────────────────
+PRE_FINAL_INSTRUCTION_FILES=()
+PRE_FINAL_REGEX="to be completed by Foreman|FOREMAN ACTION REQUIRED|paste verbatim raw IAA|IAA assurance pending|pending Phase 4|awaiting token|before committing this proof"
+
+# Scan PREHANDOVER proofs — skip superseded originals
+for f in $(git ls-files .agent-admin/prehandover/proof-*.md 2>/dev/null); do
+  IS_SUPERSEDED=false
+  for s in "${SUPERSEDED_SET[@]}"; do
+    [ "${f}" = "${s}" ] && IS_SUPERSEDED=true && break
+  done
+  ${IS_SUPERSEDED} && continue
+  if grep -qiE "${PRE_FINAL_REGEX}" "${f}" 2>/dev/null; then
+    PRE_FINAL_INSTRUCTION_FILES+=("${f}")
+  fi
+done
+
+# Scan latest session memories
+for WORKSPACE_DIR in $(git ls-files '.agent-workspace/*/memory/session-*.md' 2>/dev/null | \
+    sed 's|/memory/session-.*||' | sort -u); do
+  LATEST_SESSION=$(git ls-files "${WORKSPACE_DIR}/memory/session-*.md" 2>/dev/null | sort | tail -1)
+  if [ -n "${LATEST_SESSION}" ] && \
+     grep -qiE "${PRE_FINAL_REGEX}" "${LATEST_SESSION}" 2>/dev/null; then
+    PRE_FINAL_INSTRUCTION_FILES+=("${LATEST_SESSION}")
+  fi
+done
+
+# Scan wave records
+for f in $(git ls-files .agent-admin/assurance/iaa-wave-record-*.md 2>/dev/null); do
+  if grep -qiE "${PRE_FINAL_REGEX}" "${f}" 2>/dev/null; then
+    PRE_FINAL_INSTRUCTION_FILES+=("${f}")
+  fi
+done
+
+[ ${#PRE_FINAL_INSTRUCTION_FILES[@]} -gt 0 ] && \
+  ACC_FAILURES+=("C2: Pre-final instruction wording found in final-state artifacts: ${PRE_FINAL_INSTRUCTION_FILES[*]} — unconditionally blocked once final assurance is claimed (AAP-17/ACR-09)")
+
+# ─────────────────────────────────────────────────────────────────────────────
 # CHECK D: Version Normalization (ECAP-CCI-04)
 # ─────────────────────────────────────────────────────────────────────────────
 echo "  [D] Version normalization check skipped (manual review required for mixed version labels)"
@@ -1003,6 +1044,61 @@ if [ "${CANON_CHANGES}" -gt 0 ] && [ "${INVENTORY_CHANGED}" -eq 0 ]; then
 fi
 
 # ─────────────────────────────────────────────────────────────────────────────
+# CHECK H: Cross-Artifact Final-State Consistency (AAP-18 / ACR-10)
+# If any final-state artifact claims final assurance, all must be in post-token form.
+# ─────────────────────────────────────────────────────────────────────────────
+echo "  [H] Cross-artifact final-state consistency..."
+
+FINAL_ASSURANCE_CLAIMED=false
+FINAL_ASSURANCE_CLAIMANTS=()
+PRE_TOKEN_SURVIVORS=()
+FINAL_STATE_ARTIFACTS=()
+
+# Collect all final-state artifacts for cross-check
+for f in $(git ls-files .agent-admin/prehandover/proof-*.md .agent-workspace/*/memory/session-*.md .agent-admin/assurance/iaa-wave-record-*.md 2>/dev/null); do
+  FINAL_STATE_ARTIFACTS+=("${f}")
+done
+
+# Check for final-assurance claims
+for f in "${FINAL_STATE_ARTIFACTS[@]}"; do
+  if grep -qiE "ASSURANCE-TOKEN|merge permitted|Stage 9 unblocked|final_state: COMPLETE" "${f}" 2>/dev/null; then
+    FINAL_ASSURANCE_CLAIMED=true
+    FINAL_ASSURANCE_CLAIMANTS+=("${f}")
+  fi
+done
+
+if ${FINAL_ASSURANCE_CLAIMED}; then
+  # All final-state artifacts must be in post-token form
+  PRE_FINAL_REGEX="to be completed by Foreman|FOREMAN ACTION REQUIRED|paste verbatim raw IAA|IAA assurance pending|pending Phase 4|awaiting token|before committing this proof"
+  for f in "${FINAL_STATE_ARTIFACTS[@]}"; do
+    if grep -qiE "${PRE_FINAL_REGEX}" "${f}" 2>/dev/null; then
+      PRE_TOKEN_SURVIVORS+=("${f}")
+    fi
+  done
+  if [ ${#PRE_TOKEN_SURVIVORS[@]} -gt 0 ]; then
+    ACC_FAILURES+=("H1: Cross-artifact inconsistency — final assurance claimed by [${FINAL_ASSURANCE_CLAIMANTS[*]}] but pre-final wording found in: ${PRE_TOKEN_SURVIVORS[*]} (AAP-18/ACR-10)")
+  fi
+fi
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHECK I: Canonical Source Parity for "carried-forward" claims (AAP-19 / ACR-11)
+# Machine-detectable portion: flag artifacts that contain "carried forward" /
+# "verbatim" claims without a declared canonical source reference.
+# Full parity verification is a manual review item (Foreman QP).
+# ─────────────────────────────────────────────────────────────────────────────
+echo "  [I] Canonical source parity (carried-forward claims)..."
+CARRIED_FORWARD_WITHOUT_SOURCE=()
+for f in $(git ls-files .agent-admin/prehandover/ .agent-workspace/*/memory/ 2>/dev/null); do
+  if grep -qiE "carried forward|verbatim from|from harvest map" "${f}" 2>/dev/null; then
+    if ! grep -qiE "canonical source:|source file:|source ref:" "${f}" 2>/dev/null; then
+      CARRIED_FORWARD_WITHOUT_SOURCE+=("${f}")
+    fi
+  fi
+done
+[ ${#CARRIED_FORWARD_WITHOUT_SOURCE[@]} -gt 0 ] && \
+  ACC_FAILURES+=("I1: Artifacts with 'carried forward'/'verbatim' claims but no canonical source reference declared: ${CARRIED_FORWARD_WITHOUT_SOURCE[*]} — manual parity verification required (AAP-19/ACR-11)")
+
+# ─────────────────────────────────────────────────────────────────────────────
 # GATE RESULT
 # ─────────────────────────────────────────────────────────────────────────────
 if [ ${#ACC_FAILURES[@]} -gt 0 ]; then
@@ -1035,6 +1131,11 @@ The following conditions are **auto-fail** for the §4.3e gate regardless of oth
 | AAP-07 | Declared file/artifact count mismatch | A declared count of files, artifacts, or changed items in any ceremony artifact does not match the actual count |
 | AAP-08 | PUBLIC_API ripple obligations omitted or silently skipped | Any changed file with `layer_down_status: PUBLIC_API` in CANON_INVENTORY that has no ripple assessment block in the ECAP reconciliation summary |
 | AAP-09 | Committed truth not matching proof/session memory claims | The branch's actual committed file state contradicts a declared artifact path, hash, or status in a ceremony document |
+| AAP-15 | Gate inventory absent from PREHANDOVER proof | The `gate_set_checked:` field is absent or empty in the PREHANDOVER proof or session memory, so gate-parity is asserted without evidence |
+| AAP-16 | Stale gate-pass wording in final-state proof | A final-state proof artifact contains unchecked or provisional gate-pass language such as "verify gates pass", "gates TBD", or "gates pending" that was never resolved to a definitive state |
+| AAP-17 | Pre-final instruction wording in final-state artifact | Any of: "to be completed by Foreman after receiving ASSURANCE-TOKEN", "FOREMAN ACTION REQUIRED", "paste verbatim raw IAA output here", "IAA assurance pending (Phase 4)", "pending Phase 4", "awaiting token", "before committing this proof" present in any committed final-state artifact when the branch claims final assurance |
+| AAP-18 | Cross-artifact final-state inconsistency | At least one artifact claims final assurance (ASSURANCE-TOKEN issued, merge permitted, final_state: COMPLETE) while another artifact in the final-state bundle still contains pre-token or pre-final wording |
+| AAP-19 | Canonical source parity violation for "carried-forward" claims | An artifact claims "carried forward" / "verbatim from" a canonical source but the committed content differs from the cited source in ownership, gate authority, or approval requirements |
 
 ### Admin Ceremony Compliance Gate in the Handover Validation Checklist
 
