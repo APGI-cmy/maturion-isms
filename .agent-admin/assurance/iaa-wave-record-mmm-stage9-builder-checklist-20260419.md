@@ -311,7 +311,13 @@ Anti-regression obligations: NO — pure governance documentation wave.
 
 ## TOKEN
 
-*(To be appended by IAA at Phase 4 final invocation)*
+PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage9-builder-checklist-20260419-PASS
+
+**Issued**: 2026-04-19
+**IAA Session**: mmm-stage9-builder-checklist-20260419
+**Checks**: 29 PASS, 0 FAIL (6 N/A, 1 Advisory)
+**Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+**Merge Authority**: CS2 ONLY (@APGI-cmy)
 
 ---
 
