@@ -431,7 +431,7 @@ jobs:
 
           PROOF_DIR=".agent-admin/prehandover"
           FAIL=false
-          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
 
           # ----------------------------------------------------------------
           # Discover PREHANDOVER proof files added or modified in this PR only.
@@ -439,9 +439,12 @@ jobs:
           # were valid under the pre-HFMC-01 rules and are immutable audit
           # artifacts. Only the active/current proof set introduced by this PR
           # is subject to the new mandatory Ripple/Cross-Agent Assessment check.
+          #
+          # Use the base commit SHA (not a remote-tracking branch name) so the
+          # diff works reliably regardless of how actions/checkout fetches refs.
           # ----------------------------------------------------------------
           PROOF_FILES=$(git diff --name-only --diff-filter=AM \
-            origin/"${BASE_BRANCH}"...HEAD 2>/dev/null | \
+            "${BASE_SHA}...HEAD" 2>/dev/null | \
             grep "^${PROOF_DIR}/proof-.*\.md$" | sort)
 
           if [ -z "${PROOF_FILES}" ]; then
@@ -495,19 +498,27 @@ jobs:
             fi
 
             # Check 2: Section contains at least one concrete impact conclusion row.
-            # A concrete row is a table data row (starts with |) that:
-            #   - is NOT a separator row  (e.g. |---|---|---|)
-            #   - does NOT consist entirely of placeholder cells  (e.g. | [text] | [text] |)
-            # Table headers and all-placeholder rows do not satisfy the gate.
+            # A concrete DATA row must appear AFTER the table separator row
+            # (e.g. |---|---|---|). This correctly excludes:
+            #   - the header row (which precedes the separator)
+            #   - the separator row itself
+            #   - rows consisting entirely of placeholder cells (| [x] | [x] |)
+            # A section with only a heading, a header row, and a separator row
+            # (scaffold rows) will FAIL this gate.
             HEADING_LINE=$(grep -niE "^## Ripple|^## Cross-Agent" "${proof}" 2>/dev/null | head -1 | cut -d: -f1)
             CONCRETE_ROW=""
             if [ -n "${HEADING_LINE}" ]; then
-              CONCRETE_ROW=$(tail -n "+$((HEADING_LINE + 1))" "${proof}" 2>/dev/null | \
-                awk '/^## / { exit } { print }' | \
-                grep -E '^\|' | \
-                grep -vE '^\|[-: |]+\|[[:space:]]*$' | \
-                grep -vP '^\|(\s*\[[^\]]*\]\s*\|)+\s*$' | \
-                head -1)
+              SECTION=$(tail -n "+$((HEADING_LINE + 1))" "${proof}" 2>/dev/null | awk '/^## / { exit } { print }')
+              # Find the separator row (|---|---|---| or |:---|:---:|---| etc.)
+              SEP_LINE=$(echo "${SECTION}" | grep -nE '^\|[[:space:]-:][- :|]*\|' | head -1 | cut -d: -f1)
+              if [ -n "${SEP_LINE}" ]; then
+                # Data rows come after the separator; exclude all-placeholder rows
+                CONCRETE_ROW=$(echo "${SECTION}" | \
+                  tail -n "+$((SEP_LINE + 1))" | \
+                  grep -E '^\|' | \
+                  grep -vP '^\|(\s*\[[^\]]*\]\s*\|)+\s*$' | \
+                  head -1)
+              fi
             fi
 
             if [ -z "${CONCRETE_ROW}" ]; then
