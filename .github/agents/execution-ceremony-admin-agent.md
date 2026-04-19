@@ -337,7 +337,7 @@ Append to `.agent-workspace/foreman-v2/parking-station/suggestions-log.md`:
 
 Before returning any bundle to Foreman, run the full §4.3e compliance gate:
 
-1. **AAP auto-fail scan (AAP-01–09, AAP-15–16)**: Apply all auto-fail rules from `governance/checklists/execution-ceremony-admin-anti-patterns.md`. Any AAP match = **BUNDLE BLOCKED**. Do NOT return bundle to Foreman. Return to earlier step for remediation. AAP-15 checks for absent gate inventory; AAP-16 checks for stale gate-pass wording.
+1. **AAP auto-fail scan (AAP-01–09, AAP-15–16)**: Apply all auto-fail rules from `governance/checklists/execution-ceremony-admin-anti-patterns.md`. Any AAP match = **BUNDLE BLOCKED**. Do NOT return bundle to Foreman. Return to earlier step for remediation. AAP-15 checks for absent gate inventory; AAP-16 checks for stale provisional gate wording.
 2. **Admin checklist**: Complete all sections of `governance/checklists/execution-ceremony-admin-checklist.md`. All items must be checked.
 3. **Reconciliation matrix**: Complete all R01–R17 rows of `governance/checklists/execution-ceremony-admin-reconciliation-matrix.md`.
 4. **ECAP reconciliation summary**: Populate `governance/templates/execution-ceremony-admin/ECAP_RECONCILIATION_SUMMARY.template.md` and include the populated summary in the bundle.
