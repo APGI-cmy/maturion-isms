@@ -1,6 +1,6 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.7.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.6.0 | **Authority**: CS2
 **Date**: 2026-03-03
 **Amended**: 2026-03-03 — v1.1.0: Added §Proactive Assurance — Pre-Brief Protocol
 **Amended**: 2026-03-04 — v1.2.1: Added §CS2 Direct Review Track
@@ -8,7 +8,6 @@
 **Amended**: 2026-04-08 — v1.4.0: Added §Execution Ceremony Admin Non-Substitution Rule — explicitly prohibits the execution-ceremony-admin-agent from performing IAA functions; reinforces IAA non-producing / non-cleanup-authoring posture relative to the new ceremony admin role; authority: CS2 — ECAP-001 canon establishment issue.
 **Amended**: 2026-04-08 — v1.5.0: Amended §Independence Requirements rule 3 — clarified that Foreman is the authorised IAA invoker at Phase 4 handover (not a self-assurance violation); added §IAA Re-Invocation After Rejection — Foreman Ownership defining Foreman-owned stop-and-fix loop, CS2-only exception classes, canonical re-invocation token/session format, prohibited misleading wording, and worked example; authority: CS2 — Foreman IAA re-invocation ownership canonisation issue.
 **Amended**: 2026-04-17 — v1.6.0: Added §Admin-Ceremony Rejection Triggers — explicit rejection conditions for ceremony-integrity defects (ACR-01 through ACR-08); reinforced non-cleanup-authoring posture relative to ECAP layer; cross-references §4.3e Admin Ceremony Compliance Gate; authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack for ECAP, Foreman QP, and IAA.
-**Amended**: 2026-05-01 — v1.7.0: Added ACR-09 (pre-final instruction wording in final-state artifact), ACR-10 (cross-artifact final-state inconsistency), ACR-11 (canonical source parity violation) to §Admin-Ceremony Rejection Triggers; authority: CS2 — Post-Token Final-State Normalization Hardening issue.
 
 ---
 
@@ -780,7 +779,7 @@ OUTCOME:
 
 ---
 
-## Admin-Ceremony Rejection Triggers (v1.7.0)
+## Admin-Ceremony Rejection Triggers (v1.6.0)
 
 When a job has involved the `execution-ceremony-admin-agent` (ECAP), the IAA MUST issue a `REJECTION-PACKAGE` if **any** of the following conditions are present in the branch at assurance time. These triggers are binary and non-discretionary.
 
@@ -798,11 +797,6 @@ When a job has involved the `execution-ceremony-admin-agent` (ECAP), the IAA MUS
 | ACR-06 | **PUBLIC_API ripple required but not assessed / recorded / completed** — one or more files with `layer_down_status: PUBLIC_API` in CANON_INVENTORY were changed in this PR, but the ECAP reconciliation summary contains no ripple assessment block, or the block is absent, or it omits one or more qualifying files | ECAP-001 §3.9; AGENT_HANDOVER_AUTOMATION.md §4.3e AAP-08 |
 | ACR-07 | **PREHANDOVER / token / session memory / tracker / wave record not coherent** — the bundle's collection of PREHANDOVER proof, IAA token file, session memory, tracker entries, and wave records do not all reference the same job/wave/session/token in a mutually consistent manner; or the declared assurance session in the PREHANDOVER proof does not match the session ID in the actual token file | ECAP-001 §3.7; AGENT_HANDOVER_AUTOMATION.md §4.3e |
 | ACR-08 | **Artifact references pointing to non-committed or wrong-path files** — a file path declared in the PREHANDOVER proof, session memory, or any ceremony artifact does not resolve to a committed file on the branch, or resolves to a different file than intended | ECAP-001 §3.8; AGENT_HANDOVER_AUTOMATION.md §4.3e AAP-03 + AAP-09 |
-| ACR-09 | **Pre-final instruction wording in committed final-state artifact** — any committed final-state artifact (PREHANDOVER proof, session memory, wave record, stage-readiness table, accepted Foreman handback copy) contains pre-final assembly-time instruction text while the branch claims final assurance (ASSURANCE-TOKEN, merge permitted, final_state COMPLETE, or equivalent). Examples include (non-exhaustive — see `POST_TOKEN_VOCABULARY_LAW.md §1` for the full denylist): "to be completed by Foreman after receiving ASSURANCE-TOKEN", "FOREMAN ACTION REQUIRED", "paste verbatim raw IAA output here", "paste verbatim" (in any IAA response section), "IAA assurance pending (Phase 4)", "pending Phase 4", "Phase 4 pending", "awaiting token", "awaiting ASSURANCE-TOKEN", "after receiving token", "before committing this proof", and any surviving `ASSEMBLY_TIME_ONLY` template block. | ECAP-001 §3.5; execution-ceremony-admin-anti-patterns.md AAP-17 |
-| ACR-10 | **Cross-artifact final-state inconsistency** — the branch contains at least one artifact claiming final assurance while another artifact in the final-state bundle contains pre-token or pre-final wording; the final-state bundle does not tell one coherent post-token story. | ECAP-001 §3.5; execution-ceremony-admin-anti-patterns.md AAP-18 |
-| ACR-11 | **Canonical source parity violation** — an artifact claims to carry forward or copy verbatim a model, table, or ownership assignment from a canonical source, but the committed content differs from the cited canonical source in a materially governance-relevant way (ownership, gate authority, approval requirements). | execution-ceremony-admin-anti-patterns.md AAP-19 |
-| ACR-12 | **Gate inventory absent from PREHANDOVER proof** — the PREHANDOVER proof or session memory does not name the specific merge/workflow gates that were verified; the `gate_set_checked:` field is absent or empty, meaning gate-parity is asserted without evidence of which gates were actually checked. | AGENT_HANDOVER_AUTOMATION.md §4.3e; execution-ceremony-admin-anti-patterns.md AAP-15 |
-| ACR-13 | **Stale gate-pass wording in final-state proof** — a final-state proof artifact (PREHANDOVER, session memory, scope declaration) contains unchecked or provisional gate-pass language such as "verify gates pass", "gates TBD", "gates pending", or similar wording that was never resolved to a definitive state, indicating a checklist item was carried forward without being executed. | AGENT_HANDOVER_AUTOMATION.md §4.3e; execution-ceremony-admin-anti-patterns.md AAP-16 |
 
 ### How the IAA Handles Admin-Ceremony Rejection Triggers
 
@@ -835,4 +829,4 @@ The §4.3e gate (defined in `AGENT_HANDOVER_AUTOMATION.md`) is the **ECAP + Fore
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.7.0 | Effective: 2026-02-24 | Amended: 2026-05-01 (v1.7.0) | Previous: 2026-04-17 (v1.6.0)*
+*Authority: CS2 (Johan Ras) | Version: 1.6.0 | Effective: 2026-02-24 | Amended: 2026-04-17 (v1.6.0) | Previous: 2026-04-08 (v1.5.0)*
