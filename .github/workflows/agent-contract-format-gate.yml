@@ -354,9 +354,23 @@ jobs:
             #   *_placeholder_hashes (e.g. degraded_on_placeholder_hashes,
             #   canon_inventory_degraded_or_placeholder_hashes) — these are governance
             #   field names describing hash-validation semantics, not stub values
+            # - "placeholder hashes" as a concept (instructional text describing the act
+            #   of checking for or detecting placeholder hash values in CANON_INVENTORY)
+            # - "Tier 2 stubs are present" / "Tier 2 knowledge stub:" — governance
+            #   condition descriptions and bundle checklist labels, not stub values
+            # - "will create stub this session" — session memory output template string
+            # - absence-of-stub assertions: "No placeholder.*stub", "Zero placeholder.*stub",
+            #   "non-placeholder", "No stubs: [PASS/FAIL]" — QP gate table rows, OPOJD
+            #   checklist lines, and output templates that declare zero stubs present
+            # - "gates TBD" — appears only in ACR/STEP rule definitions as a documented
+            #   example of prohibited stale gate-pass language; not an actual stub value
             VIOLATIONS=$(grep -niE 'STUB|TODO:|FIXME:|placeholder|to be populated|TBD' "$file" \
               | grep -viE 'iaa_audit_token.*IAA-session-' \
-              | grep -viE '_placeholder_hashes' \
+              | grep -viE '_placeholder_hashes|placeholder hashes' \
+              | grep -viE 'tier 2 stubs are present|tier 2 knowledge stub:' \
+              | grep -viE 'will create stub this session' \
+              | grep -viE 'no placeholder.*stub|zero placeholder.*stub|non-placeholder|no stubs:.*\[' \
+              | grep -viE 'gates TBD' \
               || true)
 
             if [ -z "$VIOLATIONS" ]; then

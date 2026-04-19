@@ -3,7 +3,7 @@
 ## Status
 **Type**: Tier 2 Governance Reference  
 **Authority**: CS2 — EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md v1.1.0  
-**Version**: 1.0.0  
+**Version**: 1.1.0  
 **Effective Date**: 2026-04-17  
 **Owner**: execution-ceremony-admin-agent / Foreman QP / IAA  
 **Purpose**: Canonized list of admin-ceremony defects that are auto-fail at the §4.3e Admin Ceremony Compliance Gate and/or trigger an IAA REJECTION-PACKAGE. Every entry is a known recurring failure mode derived from operational evidence.
@@ -34,6 +34,8 @@ The `execution-ceremony-admin-agent` MUST scan for every anti-pattern before ret
 | **AAP-07** | **Declared file/artifact count mismatch** | A count of files, artifacts, or changed items declared in any ceremony document (e.g., "3 canon files amended", "5 artifacts committed", `FILES_CHANGED: 12`) does not match the actual count of those items in the committed branch state. | Count actual items and compare with declared count | §4.3e Check B1 | ACR-07 |
 | **AAP-08** | **PUBLIC_API ripple obligations omitted or silently skipped** | One or more files with `layer_down_status: PUBLIC_API` in CANON_INVENTORY were changed in this PR but have no ripple assessment entry in the ECAP reconciliation summary. No mention of the layer-down obligation — not even a "DEFERRED" status. The obligation simply does not appear anywhere. | `jq '.canons[] \| select(.layer_down_status == "PUBLIC_API") \| .filename' governance/CANON_INVENTORY.json` compared against changed files | §4.3e Check G1 | ACR-06 |
 | **AAP-09** | **Committed truth not matching proof/session memory claims** | The branch's actual committed file state contradicts a declared artifact path, hash, or status in a ceremony document. Examples: PREHANDOVER proof says `proof-001.md` exists but `proof-002.md` is what was actually committed; session memory says hash is `abc123` but actual hash is `def456`; PREHANDOVER says `final_state: COMPLETE` but the latest commit message says "WIP". | Cross-check declared artifacts and hashes against `git ls-files` and `sha256sum` | §4.3e Checks A1–A3, F1 | ACR-08, ACR-05 |
+| **AAP-15** | **Gate inventory absent from PREHANDOVER proof** | The PREHANDOVER proof or session memory does not name which specific merge/workflow gates were verified. The `gate_set_checked:` field is absent or empty. This means gate-parity is asserted without evidence of which gates were actually checked. | `grep -i "gate_set_checked" .agent-workspace/foreman-v2/memory/PREHANDOVER-*.md` | §4.3e Gate-evidence check | ACR-09 |
+| **AAP-16** | **Stale gate-pass wording in final-state proof** | A final-state proof artifact (PREHANDOVER, session memory, scope declaration) contains unchecked or provisional gate-pass language such as "verify gates pass", "gates TBD", "gates pending", or similar wording that was never resolved to a definitive state. This indicates a checklist item was carried forward without being executed. | `grep -niE "verify gates pass|gates TBD|gates pending" .agent-workspace/foreman-v2/memory/` | §4.3e Gate-evidence check | ACR-10 |
 
 ---
 
@@ -55,7 +57,7 @@ The following are not machine-detectable by §4.3e but must be caught by the For
 
 | Severity | Definition | Examples |
 |----------|-----------|---------|
-| **S1 — Auto-Fail** | Immediately fails §4.3e gate and triggers IAA rejection. No discretion. | AAP-01 through AAP-09 |
+| **S1 — Auto-Fail** | Immediately fails §4.3e gate and triggers IAA rejection. No discretion. | AAP-01 through AAP-09, AAP-15, AAP-16 |
 | **S2 — Foreman QP Blocker** | Must be resolved at Foreman QP checkpoint before IAA invocation. Discretion allowed only if explicitly documented. | AAP-10 through AAP-14 |
 
 ---
@@ -73,6 +75,8 @@ The following are not machine-detectable by §4.3e but must be caught by the For
 | AAP-07 | Recount the actual items; update all declared counts to match. Regenerate scope declaration if FILES_CHANGED was wrong. |
 | AAP-08 | Identify all PUBLIC_API-scoped changed files; add a ripple assessment block to the ECAP reconciliation summary with COMPLETED / DEFERRED / NOT-APPLICABLE status for each. |
 | AAP-09 | For each mismatch: correct the ceremony artifact to reflect actual committed state. Recommit. Do not edit committed PREHANDOVER proofs — create a new proof. |
+| AAP-15 | Return to Foreman's Step 3.6. Run all gates in `merge_gate_interface.required_checks` and record actual state (GREEN/FAIL/PENDING/MISSING) per gate. Populate `gate_set_checked: [list]` in PREHANDOVER proof. Recommit. |
+| AAP-16 | Search all bundle artifacts for "verify gates pass", "gates TBD", or equivalent unresolved wording. For each hit: either execute the gate and record the GREEN result, or remove the provisional line if the gate was already verified. Recommit with definitive gate states. |
 
 ---
 
@@ -87,4 +91,4 @@ The following are not machine-detectable by §4.3e but must be caught by the For
 
 ---
 
-*Version: 1.0.0 | Effective: 2026-04-17 | Authority: CS2 (Johan Ras)*
+*Version: 1.1.0 | Effective: 2026-04-17 | Authority: CS2 (Johan Ras)*
