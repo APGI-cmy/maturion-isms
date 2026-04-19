@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "last_updated": "2026-04-19",
-  "total_canons": 200,
+  "total_canons": 204,
   "generation_timestamp": "2026-04-13T07:08:00Z",
   "canon_entry_schema": {
     "description": "Schema for canon entries in CANON_INVENTORY.json",
@@ -2403,6 +2403,28 @@
       "provenance": "Created via issue #1343 (2026-04-15)",
       "ripple_required": true,
       "ripple_notice": "Layer-down to maturion-isms required: MMM build teams must align to convergence boundary constraints before MMM AI integration"
+    },
+    {
+      "filename": "execution-ceremony-admin-anti-patterns.md",
+      "version": "1.3.0",
+      "file_hash": "f91b953ab2c8f2fe0d620a216fc559532a87058f7e9c4d75792de5e3114aa7c0",
+      "effective_date": "2026-04-17",
+      "description": "Canonized list of admin-ceremony defects that are auto-fail at the \u00a74.3e Admin Ceremony Compliance Gate and/or trigger an IAA REJECTION-PACKAGE. Every entry is a known recurring failure mode derived from operational evidence. Includes AAP-01 through AAP-21.",
+      "type": "checklist",
+      "path": "governance/checklists/execution-ceremony-admin-anti-patterns.md",
+      "layer_down_status": "INTERNAL",
+      "file_hash_sha256": "f91b953ab2c8f2fe0d620a216fc559532a87058f7e9c4d75792de5e3114aa7c0"
+    },
+    {
+      "filename": "execution-ceremony-admin-checklist.md",
+      "version": "1.2.0",
+      "file_hash": "0267b73f3a902ab6a3e3ca637721d077b353e9370527d39d9f8e2ae96d074630",
+      "effective_date": "2026-04-17",
+      "description": "Authoritative checklist for ceremony completeness. Used by the execution-ceremony-admin-agent before bundle handback and by the Foreman QP checkpoint before IAA invocation. Includes Sections 1-9 and active tracker normalization check 3.9.",
+      "type": "checklist",
+      "path": "governance/checklists/execution-ceremony-admin-checklist.md",
+      "layer_down_status": "INTERNAL",
+      "file_hash_sha256": "0267b73f3a902ab6a3e3ca637721d077b353e9370527d39d9f8e2ae96d074630"
     }
   ]
 }

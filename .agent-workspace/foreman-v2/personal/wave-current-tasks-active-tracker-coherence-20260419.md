@@ -26,14 +26,14 @@
 | Task ID | Task | Owner | Status |
 |---------|------|-------|--------|
 | IAA-PRE | IAA Pre-Brief — wave record committed | independent-assurance-agent | ✅ COMPLETE — SHA 5461d87 |
-| T1 | Add AAP-21 (active-tracker contradiction anti-pattern) to execution-ceremony-admin-anti-patterns.md | governance-liaison-isms-agent | ✅ COMPLETE — session-067-20260419 |
-| T2 | Add ACR-15 (active-tracker IAA rejection trigger) to INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.9.0 | governance-liaison-isms-agent | ✅ COMPLETE — session-067-20260419 |
-| T3 | Add Section 3.9 row (active tracker normalization) to execution-ceremony-admin-checklist.md | governance-liaison-isms-agent | ✅ COMPLETE — session-067-20260419 |
-| T4 | Define "active control artifact" (canonize boundary in anti-patterns or canon) | governance-liaison-isms-agent | ✅ COMPLETE — defined in AAP-21 and ACR-15 |
-| T5 | Update PREHANDOVER.template.md with active tracker normalization field/guidance | governance-liaison-isms-agent | ✅ COMPLETE — session-067-20260419 |
-| T6 | Update CANON_INVENTORY.json for all modified canon files (including IAA canon version correction from v1.6.0 to v1.9.0) | governance-liaison-isms-agent | ✅ COMPLETE — IAA canon updated to v1.9.0, hash recomputed |
-| T7 | Add A-039 ACTIVE-TRACKER-NORMALIZATION-MANDATORY to Foreman FAIL-ONLY-ONCE.md | foreman-v2-agent | ✅ COMPLETE |
-| T8 | Add D-2 active tracker normalization check to wave-reconciliation-checklist.md | foreman-v2-agent | ✅ COMPLETE |
+| T1 | Add AAP-21 (active-tracker contradiction anti-pattern) | governance-liaison-isms-agent | ✅ COMPLETE — SHA fb5418c |
+| T2 | Add ACR-15 (active-tracker IAA rejection trigger) | governance-liaison-isms-agent | ✅ COMPLETE — SHA fb5418c |
+| T3 | Add ECAP checklist row 3.9 | governance-liaison-isms-agent | ✅ COMPLETE — SHA fb5418c |
+| T4 | Define "active control artifact" boundary | governance-liaison-isms-agent | ✅ COMPLETE — SHA fb5418c |
+| T5 | Update PREHANDOVER template | governance-liaison-isms-agent | ✅ COMPLETE — SHA fb5418c |
+| T6 | Update CANON_INVENTORY.json | governance-liaison-isms-agent + Foreman | ✅ COMPLETE |
+| T7 | Add A-039 to Foreman FAIL-ONLY-ONCE.md v4.4.0 | foreman-v2-agent | ✅ COMPLETE |
+| T8 | Add D-2 to wave-reconciliation-checklist.md v1.2.0 | foreman-v2-agent | ✅ COMPLETE |
 
 ## Wave Completion Gate
 
