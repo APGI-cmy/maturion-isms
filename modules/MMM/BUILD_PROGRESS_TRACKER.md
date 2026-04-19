@@ -2,8 +2,8 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-04-17  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17)
+**Last Updated**: 2026-04-19  
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — This is the designated primary operational monitor for MMM stage progress. CS2 should use this document as the main live progress dashboard.  
@@ -272,6 +272,7 @@ BLOCKER-S7-001 RESOLVED: `ceremony_admin_appointed: true` ceremony complete — 
 - [x] Builder classes assigned per wave (§6)
 - [x] NBR-001 and NBR-002 carried forward per-wave (§8)
 - [x] Implementation Plan approved by Foreman (foreman-v2-agent, 2026-04-17, session: session-mmm-stage8-implementation-plan-20260417)
+- [x] `convergence-governance-addendum.md` — Stage 8 convergence-governance overlay (v1.0.0, 2026-04-19) — REQUIRED STAGE 8 SUPPLEMENT
 
 **Completion Date**: 2026-04-17  
 **Approval Required**: Yes
@@ -288,6 +289,19 @@ The earlier `concurrent-prebuild-and-legacy-plan.md` was a partial concurrent-pr
 (not a full build wave decomposition) and is superseded by `implementation-plan.md` for all
 downstream stage purposes (Stage 9: Builder Checklist; Stage 10: IAA Pre-Brief; Stage 11:
 Builder Appointment; Stage 12: Build Execution).
+
+> **Stage 8 Addendum — Convergence-Governance Supplement** (wave: mmm-stage8-addendum-20260419, 2026-04-19):
+> `convergence-governance-addendum.md` v1.0.0 is a REQUIRED Stage 8 supplement. It is the
+> convergence-governance overlay for Stage 8, imposing governance constraints on how each Stage 12
+> build wave executes. It carries forward the source-state model and switchover gate conditions
+> from the harvest map, defines explicit B7 and B9 closure laws, declares ownership boundary
+> obligations, and specifies carry-forward requirements for Stage 9. This addendum does NOT
+> create a new numbered stage.
+>
+> **GATE: Stage 9 Builder Checklist MUST NOT begin until `convergence-governance-addendum.md`
+> is committed with IAA governance review.** (IAA Pre-Brief:
+> `.agent-admin/assurance/iaa-wave-record-mmm-stage8-addendum-20260419.md` — CLEARED;
+> Issue: maturion-isms#1404; Produced By: mat-specialist.)
 
 ---
 
