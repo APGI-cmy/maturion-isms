@@ -92,8 +92,8 @@
 - iaa_trigger_category: PRE_BUILD_STAGE_MODEL — MANDATORY IAA
 - iaa_overlay: PRE_BUILD_GATES (OVL-PBG-001 through OVL-PBG-016 + OVL-PBG-ADM-001)
 - iaa_adoption_phase: PHASE_B_BLOCKING
-- iaa_audit_token: IAA-session-mmm-stage8-addendum-20260419-PASS (expected reference — to be written by IAA to ## TOKEN section of wave record in Phase 4)
-- iaa_final_invocation: PHASE 4 — Foreman authority (ECAP bundle returned; Foreman invokes IAA)
+- iaa_audit_token: IAA-session-mmm-stage8-addendum-20260419-PASS
+- iaa_final_invocation: COMPLETE — IAA invoked at Phase 4; ASSURANCE-TOKEN IAA-session-mmm-stage8-addendum-20260419-PASS issued; merge permitted
 
 ## §4.3 Merge Gate Parity
 - merge_gate_parity: PASS
@@ -105,7 +105,7 @@
 ## Stage-Readiness Summary
 - stages_1_to_8_complete: true
 - stage_8_addendum_committed: true
-- stage_9_builder_checklist: NOT_STARTED — unblocked upon IAA ASSURANCE-TOKEN for this wave
+- stage_9_builder_checklist: NOT_STARTED — unblocked upon CS2 merge (IAA ASSURANCE-TOKEN already issued)
 - stage_10_iaa_prebriefing: NOT_STARTED — blocked until Stage 9 complete
 - stage_11_builder_appointment: NOT_STARTED — blocked until Stages 9 + 10 complete
 - stage_12_build_execution: NOT_STARTED — blocked until Stages 9–11 complete

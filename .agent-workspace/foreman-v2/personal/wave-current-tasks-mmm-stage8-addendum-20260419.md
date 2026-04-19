@@ -23,12 +23,12 @@ Primary artifact: `modules/MMM/07-implementation-plan/convergence-governance-add
 
 | ID | Task | Agent | Issue | Status |
 |----|------|-------|-------|--------|
-| IAA-PRE | IAA Pre-Brief — wave record | independent-assurance-agent | maturion-isms#1404 | ⏳ PENDING |
-| D1 | Draft convergence-governance-addendum.md | mat-specialist | maturion-isms#1404 | ⏳ PENDING |
-| D2 | Update BUILD_PROGRESS_TRACKER.md with addendum note | mat-specialist | maturion-isms#1404 | ⏳ PENDING |
-| C1 | PREHANDOVER proof | execution-ceremony-admin-agent | maturion-isms#1404 | ⏳ PENDING |
-| C2 | Session memory | execution-ceremony-admin-agent | maturion-isms#1404 | ⏳ PENDING |
-| IAA-FINAL | IAA Phase 4 Final Audit | independent-assurance-agent | maturion-isms#1404 | ⏳ PENDING |
+| IAA-PRE | IAA Pre-Brief — wave record | independent-assurance-agent | maturion-isms#1404 | ✅ COMPLETE |
+| D1 | Draft convergence-governance-addendum.md | mat-specialist | maturion-isms#1404 | ✅ COMPLETE |
+| D2 | Update BUILD_PROGRESS_TRACKER.md with addendum note | mat-specialist | maturion-isms#1404 | ✅ COMPLETE |
+| C1 | PREHANDOVER proof | execution-ceremony-admin-agent | maturion-isms#1404 | ✅ COMPLETE |
+| C2 | Session memory | execution-ceremony-admin-agent | maturion-isms#1404 | ✅ COMPLETE |
+| IAA-FINAL | IAA Phase 4 Final Audit | independent-assurance-agent | maturion-isms#1404 | ✅ COMPLETE — ASSURANCE-TOKEN IAA-session-mmm-stage8-addendum-20260419-PASS issued |
 
 ---
 
@@ -56,14 +56,15 @@ Primary artifact: `modules/MMM/07-implementation-plan/convergence-governance-add
 | Stage 6: QA-to-Red (176 RED tests) | ✅ PASS | IAA-session-mmm-stage6-qa-to-red-20260415-PASS |
 | Stage 7: PBFAG PASS | ✅ PASS | IAA-session-mmm-stage7-pbfag-20260415-PASS |
 | Stage 8: Implementation Plan COMPLETE | ✅ PASS | session-mmm-stage8-implementation-plan-20260417 |
-| IAA Pre-Brief (Stage 10 equivalent) | ⏳ PENDING — Step 1.8 |
+| IAA Pre-Brief (Stage 10 equivalent) | ✅ PASS — wave record committed at 42b5e15 |
 
 ---
 
 ## Ceremony Admin Appointment Status
 
-- ceremony_admin_appointed: false (pending after QP PASS)
-- appointment_timestamp: (pending)
+- ceremony_admin_appointed: true (ceremony bundle assembled and returned)
+- appointment_timestamp: 2026-04-19
+- wave_final_state: COMPLETE — ASSURANCE-TOKEN IAA-session-mmm-stage8-addendum-20260419-PASS issued; merge permitted upon CS2 approval
 
 *Authority: CS2 (Johan Ras / @APGI-cmy)*  
 *Foreman: foreman-v2-agent v6.2.0*
