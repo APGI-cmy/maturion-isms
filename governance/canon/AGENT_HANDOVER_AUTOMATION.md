@@ -1,8 +1,9 @@
 # AGENT_HANDOVER_AUTOMATION
 
-**Status**: CANONICAL | **Version**: 1.5.1 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.5.2 | **Authority**: CS2  
 **Date**: 2026-02-24  
-**Amended**: 2026-05-01 — v1.5.1: Extended §4.3e PRE_FINAL_REGEX (shared denylist) to cover D-01–D-12 and D-15 (regex-detectable POST_TOKEN_VOCABULARY_LAW §1 patterns) including ASSEMBLY_TIME_ONLY blocks; gated Check C2 behind final-assurance-claimed state (no false positives on pre-token branches); de-duplicated PRE_FINAL_REGEX into single shared constant; hardened Check H to skip superseded proofs in both claimant and survivor scans; proof-of-operation document added; clarified D-13/D-14 are structural and covered at Foreman QP / IAA layers; authority: CS2 — Post-Token Normalization Hardening gap-close (new requirement).  
+**Amended**: 2026-04-19 — v1.5.2: Scoped Check H and Check I to the active final-state bundle only (non-superseded proofs + latest session-*.md per workspace + latest wave record); previous all-history scan created false blockers from immutable historical session memories unrelated to the current handback; authority: CS2 — post-token normalization hardening feedback.  
+**Previous amendment**: 2026-05-01 — v1.5.1: Extended §4.3e PRE_FINAL_REGEX (shared denylist) to cover D-01–D-12 and D-15 (regex-detectable POST_TOKEN_VOCABULARY_LAW §1 patterns) including ASSEMBLY_TIME_ONLY blocks; gated Check C2 behind final-assurance-claimed state (no false positives on pre-token branches); de-duplicated PRE_FINAL_REGEX into single shared constant; hardened Check H to skip superseded proofs in both claimant and survivor scans; proof-of-operation document added; clarified D-13/D-14 are structural and covered at Foreman QP / IAA layers; authority: CS2 — Post-Token Normalization Hardening gap-close (new requirement).  
 **Previous amendment**: 2026-05-01 — v1.5.0: Extended §4.3e Check C to also scan for pre-final instruction wording (AAP-17); added Check H (Cross-Artifact Final-State Consistency, AAP-18/ACR-10) and Check I (Canonical Source Parity, AAP-19/ACR-11) to §4.3e; added AAP-15 through AAP-19 to Auto-Fail Rules table; authority: CS2 — Post-Token Final-State Normalization Hardening issue.  
 **Previous amendment**: 2026-04-17 — v1.4.1: Tightened §4.3e Check C stale-wording scan to final-state artifact set only — superseded pre-token proofs retained immutably under the append-only model are now explicitly exempt; updated AAP-01 auto-fail rule to document final-state scope and superseded-proof exemption; authority: CS2 — PR review feedback on §4.3e canon collision with append-only proof retention.  
 **Previous amendment**: 2026-04-17 — v1.4.0: Added §4.3e Admin Ceremony Compliance Gate (BLOCKING, pre-IAA, ECAP-involved jobs); added auto-fail rules table for 9 known admin anti-patterns (AAP-01 through AAP-09); updated Phase 4 structure and sequencing note; updated Handover Validation Checklist with admin-compliance gate item; authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack for ECAP, Foreman QP, and IAA.  
@@ -1064,33 +1065,45 @@ fi
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CHECK H: Cross-Artifact Final-State Consistency (AAP-18 / ACR-10)
-# If any final-state artifact claims final assurance, all must be in post-token
-# form. Superseded (pre-token) PREHANDOVER proofs are excluded from BOTH the
-# final-assurance-claimant scan AND the pre-final-wording survivor scan — they
-# were correctly written before finalization and are retained immutably.
+# If any active-bundle artifact claims final assurance, all must be in
+# post-token form.  Scoped to the ACTIVE FINAL-STATE BUNDLE only:
+#   • Non-superseded PREHANDOVER proofs
+#   • Latest session-*.md per agent workspace (append-only repo: historical
+#     memories unrelated to the current handback are excluded)
+#   • Latest iaa-wave-record-*.md
+# This mirrors Check C's scoping and avoids false H1 failures from immutable
+# historical memories that predate the active handback.
 # ─────────────────────────────────────────────────────────────────────────────
-echo "  [H] Cross-artifact final-state consistency..."
+echo "  [H] Cross-artifact final-state consistency (active bundle scope)..."
 
 FINAL_ASSURANCE_CLAIMED=false
 FINAL_ASSURANCE_CLAIMANTS=()
 PRE_TOKEN_SURVIVORS=()
-FINAL_STATE_ARTIFACTS_H=()     # full set (for survivor scan, superseded excluded below)
-FINAL_STATE_NONFINAL=()        # non-superseded artifacts only
+ACTIVE_BUNDLE_H=()   # active-bundle artifacts for this check
 
-# Collect final-state artifacts; mark superseded proofs for exclusion
-for f in $(git ls-files .agent-admin/prehandover/proof-*.md \
-                         .agent-workspace/*/memory/session-*.md \
-                         .agent-admin/assurance/iaa-wave-record-*.md 2>/dev/null); do
+# 1) Non-superseded PREHANDOVER proofs
+for f in $(git ls-files .agent-admin/prehandover/proof-*.md 2>/dev/null); do
   IS_SUPERSEDED=false
   for s in "${SUPERSEDED_SET[@]}"; do
     [ "${f}" = "${s}" ] && IS_SUPERSEDED=true && break
   done
-  FINAL_STATE_ARTIFACTS_H+=("${f}")
-  ${IS_SUPERSEDED} || FINAL_STATE_NONFINAL+=("${f}")
+  ${IS_SUPERSEDED} && continue
+  ACTIVE_BUNDLE_H+=("${f}")
 done
 
-# Check for final-assurance claims — only in non-superseded artifacts
-for f in "${FINAL_STATE_NONFINAL[@]}"; do
+# 2) Latest session-*.md per agent workspace (same as Check C scoping)
+for WORKSPACE_DIR in $(git ls-files '.agent-workspace/*/memory/session-*.md' 2>/dev/null | \
+    sed 's|/memory/session-.*||' | sort -u); do
+  LATEST_SESSION=$(git ls-files "${WORKSPACE_DIR}/memory/session-*.md" 2>/dev/null | sort | tail -1)
+  [ -n "${LATEST_SESSION}" ] && ACTIVE_BUNDLE_H+=("${LATEST_SESSION}")
+done
+
+# 3) Latest iaa-wave-record
+LATEST_WAVE_RECORD=$(git ls-files '.agent-admin/assurance/iaa-wave-record-*.md' 2>/dev/null | sort | tail -1)
+[ -n "${LATEST_WAVE_RECORD}" ] && ACTIVE_BUNDLE_H+=("${LATEST_WAVE_RECORD}")
+
+# Check for final-assurance claims — only in active bundle
+for f in "${ACTIVE_BUNDLE_H[@]}"; do
   if grep -qiE "ASSURANCE-TOKEN|merge permitted|Stage 9 unblocked|final_state: COMPLETE" "${f}" 2>/dev/null; then
     FINAL_ASSURANCE_CLAIMED=true
     FINAL_ASSURANCE_CLAIMANTS+=("${f}")
@@ -1098,9 +1111,9 @@ for f in "${FINAL_STATE_NONFINAL[@]}"; do
 done
 
 if ${FINAL_ASSURANCE_CLAIMED}; then
-  # All non-superseded final-state artifacts must be in post-token form.
+  # All active-bundle artifacts must be in post-token form.
   # PRE_FINAL_REGEX is defined in the SHARED DENYLIST block above.
-  for f in "${FINAL_STATE_NONFINAL[@]}"; do
+  for f in "${ACTIVE_BUNDLE_H[@]}"; do
     if grep -qiE "${PRE_FINAL_REGEX}" "${f}" 2>/dev/null; then
       PRE_TOKEN_SURVIVORS+=("${f}")
     fi
@@ -1114,11 +1127,37 @@ fi
 # CHECK I: Canonical Source Parity for "carried-forward" claims (AAP-19 / ACR-11)
 # Machine-detectable portion: flag artifacts that contain "carried forward" /
 # "verbatim" claims without a declared canonical source reference.
+# Scoped to the ACTIVE HANDBACK BUNDLE only (same scope as Check H):
+#   • Non-superseded PREHANDOVER proofs
+#   • Latest session-*.md per agent workspace
+#   • Latest iaa-wave-record-*.md
+# Scanning the full historical archive would create false blockers from old
+# immutable memory artifacts that predate the current handback.
 # Full parity verification is a manual review item (Foreman QP).
 # ─────────────────────────────────────────────────────────────────────────────
-echo "  [I] Canonical source parity (carried-forward claims)..."
+echo "  [I] Canonical source parity (carried-forward claims, active bundle scope)..."
 CARRIED_FORWARD_WITHOUT_SOURCE=()
-for f in $(git ls-files .agent-admin/prehandover/ .agent-workspace/*/memory/ 2>/dev/null); do
+
+# Build active bundle for Check I (same as ACTIVE_BUNDLE_H, but scoped here
+# independently so the check can run even if H is skipped or re-ordered)
+ACTIVE_BUNDLE_I=()
+for f in $(git ls-files .agent-admin/prehandover/proof-*.md 2>/dev/null); do
+  IS_SUPERSEDED=false
+  for s in "${SUPERSEDED_SET[@]}"; do
+    [ "${f}" = "${s}" ] && IS_SUPERSEDED=true && break
+  done
+  ${IS_SUPERSEDED} && continue
+  ACTIVE_BUNDLE_I+=("${f}")
+done
+for WORKSPACE_DIR in $(git ls-files '.agent-workspace/*/memory/session-*.md' 2>/dev/null | \
+    sed 's|/memory/session-.*||' | sort -u); do
+  LATEST_SESSION=$(git ls-files "${WORKSPACE_DIR}/memory/session-*.md" 2>/dev/null | sort | tail -1)
+  [ -n "${LATEST_SESSION}" ] && ACTIVE_BUNDLE_I+=("${LATEST_SESSION}")
+done
+LATEST_WAVE_RECORD_I=$(git ls-files '.agent-admin/assurance/iaa-wave-record-*.md' 2>/dev/null | sort | tail -1)
+[ -n "${LATEST_WAVE_RECORD_I}" ] && ACTIVE_BUNDLE_I+=("${LATEST_WAVE_RECORD_I}")
+
+for f in "${ACTIVE_BUNDLE_I[@]}"; do
   if grep -qiE "carried forward|verbatim from|from harvest map" "${f}" 2>/dev/null; then
     if ! grep -qiE "canonical source:|source file:|source ref:" "${f}" 2>/dev/null; then
       CARRIED_FORWARD_WITHOUT_SOURCE+=("${f}")

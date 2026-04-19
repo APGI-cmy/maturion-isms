@@ -213,8 +213,8 @@ exact SG-1/SG-2 drift class observed in #1405.
 | Post-token pre-final wording (D-01–D-12, D-15; regex-detectable) | §4.3e Check C2 (machine scan, PRE_FINAL_REGEX — gated behind final-assurance-claimed state) | ECAP gate + Foreman QP Row 1–5 + IAA ACR-09 | **BLOCKED at all 3 layers** |
 | D-13 blank verbatim-response fields / D-14 mixed-status stage-readiness | Foreman QP Row 2–3 (structural inspection) + IAA ACR-09 | Foreman QP + IAA ACR-09 | **BLOCKED at Foreman QP and IAA layers** |
 | Surviving ASSEMBLY_TIME_ONLY template blocks (D-15) | §4.3e Check C2 (`ASSEMBLY_TIME_ONLY` in PRE_FINAL_REGEX) | ECAP gate + ECAP G-6 + IAA ACR-09 | **BLOCKED at all 3 layers** |
-| Cross-artifact final-state contradiction | §4.3e Check H (cross-artifact scan, superseded-proof-safe) | ECAP gate + Foreman QP Row 4 + IAA ACR-10 | **BLOCKED at all 3 layers** |
-| "Carried forward" canonical drift | §4.3e Check I (source-reference flag) + Foreman QP Row 6 manual | ECAP gate + Foreman QP + IAA ACR-11 | **BLOCKED at all 3 layers** |
+| Cross-artifact final-state contradiction | §4.3e Check H (cross-artifact scan, active bundle scope — latest session per workspace, non-superseded proofs, latest wave record) | ECAP gate + Foreman QP Row 4 + IAA ACR-10 | **BLOCKED at all 3 layers** |
+| "Carried forward" canonical drift | §4.3e Check I (source-reference flag, active bundle scope) + Foreman QP Row 6 manual | ECAP gate + Foreman QP + IAA ACR-11 | **BLOCKED at all 3 layers** |
 
 ---
 
@@ -234,7 +234,7 @@ exact SG-1/SG-2 drift class observed in #1405.
 ## Related Artifacts
 
 - `governance/canon/POST_TOKEN_VOCABULARY_LAW.md` v1.1.0
-- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.5.1 — §4.3e Check C2, H, I
+- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.5.2 — §4.3e Check C2, H, I (H and I scoped to active bundle)
 - `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.7.0 — ACR-09, ACR-10, ACR-11, ACR-12, ACR-13
 - `governance/checklists/execution-ceremony-admin-anti-patterns.md` v1.2.0 — AAP-17, AAP-18, AAP-19
 - `governance/templates/execution-ceremony-admin/FOREMAN_ADMIN_READINESS_HANDBACK.template.md` v1.1.0
@@ -245,4 +245,4 @@ exact SG-1/SG-2 drift class observed in #1405.
 
 ---
 
-*Authority: CS2 (Johan Ras) | Produced: 2026-05-01 | Wave: harden-post-token-normalization*
+*Authority: CS2 (Johan Ras) | Produced: 2026-05-01 | Updated: 2026-04-19 | Wave: harden-post-token-normalization*
