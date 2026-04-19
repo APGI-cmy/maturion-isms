@@ -7,7 +7,7 @@
   "last_ripple_commit": "56d92004d867a8e4148133e007040ca1ff062318",
   "last_ripple_timestamp": "2026-04-17T11:50:11Z",
   "alignment_summary": {
-    "total_artifacts": 41,
+    "total_artifacts": 42,
     "aligned": 36,
     "drifted": 0,
     "missing": 0,
@@ -501,6 +501,18 @@
       "layer_down_status": "TIER2_CHECKLIST",
       "last_verified": "2026-04-17T11:52:02Z",
       "change_note": "New in canonical commit 56d92004. Canonized list of 14 admin-ceremony anti-patterns (AAP-01 through AAP-14). Layered down in this wave."
+    },
+    {
+      "filename": "AGENT_CONTRACT_PLACEHOLDER_CHECK_CANON.md",
+      "path": "governance/canon/AGENT_CONTRACT_PLACEHOLDER_CHECK_CANON.md",
+      "canonical_version": "TBD",
+      "local_version": "TBD",
+      "canonical_hash_sha256": "TBD",
+      "local_hash_sha256": "f5c9d72ebf2584e10ff09f29fdbc90c6f8251b2ebfbce58983c7db0e45dbac1d",
+      "alignment_status": "PENDING_REVIEW",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-04-19T12:03:10Z",
+      "change_note": "Auto-added by ripple-integration inventory update step"
     }
   ],
   "metadata": {
