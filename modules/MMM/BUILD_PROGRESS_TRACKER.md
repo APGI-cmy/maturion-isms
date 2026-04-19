@@ -3,7 +3,7 @@
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
 **Last Updated**: 2026-04-19  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum)
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — This is the designated primary operational monitor for MMM stage progress. CS2 should use this document as the main live progress dashboard.  
@@ -35,7 +35,7 @@ error from the original governance layer-down. The module is MMM (Maturity Model
 | — | (new stage) | Stage 2 | UX Workflow & Wiring Spec | COMPLETE |
 | — | (new stage) | Stage 6 | QA-to-Red | COMPLETE — artifacts produced, pending CS2 approval |
 | — | (new stage) | Stage 7 | PBFAG | COMPLETE — artifacts produced (mmm-stage7-pbfag-20260415); PBFAG PASS; IAA token issued (IAA-session-mmm-stage7-pbfag-20260415-PASS); pending CS2 approval |
-| — | (new stage) | Stage 9 | Builder Checklist | NOT_STARTED |
+| — | (new stage) | Stage 9 | Builder Checklist | COMPLETE ✅ — artifacts produced (mmm-stage9-builder-checklist-20260419); all 5 builders PASS; Stage 10 unblocked |
 | — | (new stage) | Stage 10 | IAA Pre-Brief | NOT_STARTED |
 
 ---
@@ -298,31 +298,56 @@ Builder Appointment; Stage 12: Build Execution).
 > obligations, and specifies carry-forward requirements for Stage 9. This addendum does NOT
 > create a new numbered stage.
 >
-> **GATE: Stage 9 Builder Checklist MUST NOT begin until `convergence-governance-addendum.md`
-> is committed with IAA governance review.** (IAA Pre-Brief:
-> `.agent-admin/assurance/iaa-wave-record-mmm-stage8-addendum-20260419.md` — CLEARED;
-> Issue: maturion-isms#1404; Produced By: mat-specialist.)
+> **Stage 9 Canonical Implementation Plan**: `implementation-plan.md` v1.0.0 — the build-wave
+> spine (B1–B9). All downstream stages (9–12) derive from this document.
+>
+> **Stage 9 MUST derive from BOTH Stage 8 artifacts**: (1) `implementation-plan.md` v1.0.0 AND
+> (2) `convergence-governance-addendum.md` v1.0.0. No downstream stage may treat the
+> implementation plan as its sole authority.
+>
+> **✅ GATE SATISFIED — Stage 9 MAY PROCEED**: The Stage 9 Builder Checklist gate condition
+> has been met. `convergence-governance-addendum.md` v1.0.0 was committed and merged via
+> PR #1405. IAA Pre-Brief `.agent-admin/assurance/iaa-wave-record-mmm-stage8-addendum-20260419.md`
+> has CLEARED status. This tracker Stage 8 section has been updated to reflect the addendum as a
+> REQUIRED Stage 8 supplement. All three gate conditions from addendum §9.2 are satisfied:
+> (1) addendum committed and accessible ✅; (2) IAA governance review complete (CLEARED) ✅;
+> (3) BUILD_PROGRESS_TRACKER Stage 8 section updated ✅.
+> (Previously: "Stage 9 Builder Checklist MUST NOT begin until `convergence-governance-addendum.md`
+> is committed with IAA governance review." — This condition is now MET. Issue: maturion-isms#1404;
+> Produced By: mat-specialist; Merged: PR #1405.)
 
 ---
 
 ### Stage 9: Builder Checklist
-**Status**: [ ] NOT_STARTED  
+**Status**: [x] COMPLETE ✅ — Foreman QP evaluation PASS (pending CS2 formal approval)  
 **Location**: `modules/MMM/08-builder-checklist/`  
 **Key Artifacts**:
-- [ ] Builder Checklist completed for each builder candidate
-- [ ] Builder agent contracts verified as current
-- [ ] Scope, RED QA, and architecture comprehension confirmed
-- [ ] Protocol compliance (STOP-AND-FIX, evidence, merge gate) confirmed
-- [ ] Foreman role-fit confirmation recorded
-- [ ] Builder Checklist PASS for all appointed builders
+- [x] `builder-checklist.md` v1.0.0 — Stage 9 Builder Checklist; all 5 builder candidates checked; overall verdict: PASS
+- [x] Builder agent contracts verified as current (all 5: schema-builder, api-builder, ui-builder, integration-builder, qa-builder — version 6.2.0, contract_version 4.0.0)
+- [x] Scope, RED QA, and architecture comprehension confirmed for all 5 builders
+- [x] Protocol compliance (STOP-AND-FIX, evidence, merge gate) confirmed for all 5 builders
+- [x] Foreman role-fit confirmation recorded for all 5 builders
+- [x] Builder Checklist PASS for all 5 builders — Stage 10 IAA Pre-Brief unblocked
+- [x] Stage 8 addendum carry-forward (§5): source-state law, ownership-boundary law, B7/B9 closure law, mandatory checklist imports — all present
 
-**Completion Date**: N/A  
+**Completion Date**: 2026-04-19  
 **Approval Required**: Yes
-- [ ] Approved by Foreman
-**Approval Date**: N/A
-**Approved By**: N/A
-**Approval Reference**: N/A
-**Notes**: Not started. New hard gate in 12-stage model.
+- [x] Approved by Foreman (foreman-v2-agent v6.2.0 — QP evaluation PASS; mat-specialist produced)
+**Approval Date**: 2026-04-19
+**Approved By**: foreman-v2-agent v6.2.0 (QP evaluation — PASS; CS2 formal approval pending)
+**Approval Reference**: maturion-isms#1406
+**Wave**: mmm-stage9-builder-checklist-20260419
+**Producing Agent**: mat-specialist (delegated by foreman-v2-agent v6.2.0)
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-wave-record-mmm-stage9-builder-checklist-20260419.md` — CLEARED
+**Notes**: Stage 9 COMPLETE. Builder Checklist produced 2026-04-19 (wave: mmm-stage9-builder-checklist-20260419).
+All five builder candidates assessed: schema-builder (B1), api-builder (B2–B6), ui-builder (B3–B6),
+integration-builder (B7), qa-builder (B8/B9 + parallel gate). All five verdicts: PASS. Conditions are
+Stage 11 briefing requirements, not Stage 9 blockers. Critical condition: api-builder must be briefed
+on Deno/Supabase Edge Function runtime at Stage 11 (contract mission references Next.js). Credential
+hard gate: CS2 must provision AIMC_SERVICE_TOKEN and PIT_SERVICE_TOKEN before B7 wave-start.
+Stage 8 addendum carry-forward (convergence-governance-addendum.md v1.0.0) fully imported into
+§5 (source-state law, ownership-boundary law, B7/B9 closure law, per-wave conformance items).
+Stage 10 (IAA Pre-Brief) is now unblocked.
 
 ---
 
@@ -426,18 +451,17 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 8 (Implementation Plan) COMPLETE — `implementation-plan.md` v1.0.0 produced (9 named build waves B1–B9); pending CS2 approval and Foreman sign-off  
-**Overall Progress**: ~67% complete (Stages 1–7 complete with IAA tokens or CS2-approved; Stage 8 Implementation Plan produced and committed; Stages 9–12 not started)  
-**Blockers**: None for Stage 8 artifact production. CS2 merge approval of Stages 5–8 PRs is required before Stage 11 builder appointment. CS2 credential provisioning (AIMC_SERVICE_TOKEN, PIT_SERVICE_TOKEN, SUPABASE_SERVICE_ROLE_KEY) required before Stage 12 Wave B7 can execute.  
+**Current Stage**: Stage 9 (Builder Checklist) COMPLETE ✅ — `builder-checklist.md` v1.0.0 produced 2026-04-19; all 5 builder candidates assessed; overall verdict: PASS; Stage 10 IAA Pre-Brief now unblocked  
+**Overall Progress**: ~75% complete (Stages 1–7 complete with IAA tokens or CS2-approved; Stage 8 Implementation Plan + Addendum complete; Stage 9 Builder Checklist complete; Stages 10–12 not started)  
+**Blockers**: None for Stage 9 or Stage 10. CS2 merge approval of Stages 5–8 PRs is required before Stage 11 builder appointment. CS2 credential provisioning (AIMC_SERVICE_TOKEN, PIT_SERVICE_TOKEN, SUPABASE_SERVICE_ROLE_KEY) required before Stage 12 Wave B7 can execute — these are HARD GATES confirmed in builder-checklist.md §4.4d and §6.  
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.  
 **Open Questions**: All RESOLVED through Stage 5. OQ-001 RESOLVED (Stage 4 TRS — CONNECTIVITY-REQUIRED, TR-039–TR-042). OQ-002 RESOLVED (Stage 5 Architecture — capabilities/index.md legacy sub-folder disposition). OQ-003 RESOLVED (Stage 5 Architecture — duplication audit, architecture.md §A12). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.  
 **Next Steps**:
-1. CS2 to review and formally approve Stage 8 Implementation Plan artifacts and merge PR
-2. CS2 to formally approve Stages 5–7 PRs (pending merge — not a blocker for Stage 8 artifact production)
-3. Stage 9 (Builder Checklist) wave — next in sequence after Stage 8 CS2 approval
-4. Stage 10 (IAA Pre-Brief) in sequence after Stage 9
-5. Stage 11 (Builder Appointment) after all pre-build gates (Stages 1–10) complete
-6. CS2 to provision credentials (AIMC_SERVICE_TOKEN, PIT_SERVICE_TOKEN) before Stage 12 Wave B7
+1. CS2 to formally approve Stage 9 Builder Checklist (maturion-isms#1406)
+2. Stage 10 (IAA Pre-Brief) wave — next in sequence; IAA Pre-Brief must carry forward builder-checklist.md as Stage 9 evidence
+3. CS2 to formally approve Stages 5–8 PRs (pending merge — required before Stage 11)
+4. Stage 11 (Builder Appointment) after all pre-build gates (Stages 1–10) complete; Stage 11 briefing must include Deno/Supabase runtime clarification for api-builder
+5. CS2 to provision credentials (AIMC_SERVICE_TOKEN, PIT_SERVICE_TOKEN) before Stage 12 Wave B7 — HARD GATE confirmed in Stage 9
 
 ---
 
