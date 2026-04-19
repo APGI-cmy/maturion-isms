@@ -121,8 +121,8 @@ The following switchover gate model is drawn from
 
 | Gate | Condition | Responsible Party |
 |------|-----------|------------------|
-| SG-1 | Destination capability implemented | Builder |
-| SG-2 | Destination capability verified | QA (qa-builder) |
+| SG-1 | Destination capability implemented | Builder agent + QA-builder |
+| SG-2 | Destination capability verified | IAA + Foreman (QP mode) |
 | SG-3 | Data/state migration completed where applicable | schema-builder |
 | SG-4 | Deprecation register updated | Foreman |
 | SG-5 | Source-state transition explicitly recorded | Foreman |

@@ -103,7 +103,7 @@ PUBLIC_API layer_down_status check: None of the 7 files changed in this wave car
 | ui-builder | Convergence-governance addendum references ui-builder roles. No UI components produced. | **NO IMMEDIATE IMPACT — reference input for future build waves only** |
 | qa-builder | Convergence-governance addendum references qa-builder roles. No test changes in this wave. | **NO IMMEDIATE IMPACT — Stage 6 QA-to-Red RED suite (176 tests) remains the implementation contract** |
 | governance-liaison-isms-agent | No governance canon changes in this wave. No layer-down ripple required. | **NO IMPACT — documentation-only wave** |
-| foreman-v2-agent | §4.3 merge gate to be released after IAA ASSURANCE-TOKEN; PREHANDOVER proof and session memory to be committed to `.agent-workspace/foreman-v2/memory/` at handback. | **AWAITING FOREMAN HANDBACK AFTER IAA PHASE 4** |
+| foreman-v2-agent | §4.3 merge gate released; PREHANDOVER proof and session memory committed to `.agent-workspace/foreman-v2/memory/` at handback. IAA ASSURANCE-TOKEN: IAA-session-mmm-stage8-addendum-20260419-PASS (SHA a989616). | **COMPLETE — IAA Phase 4 PASS; merge gate released; handback complete** |
 
 **Downstream ripple conclusion**: NO IMPACT — governance ceremony and planning documentation artifacts only. No code, schema, contract, or CI workflow changes. No downstream ripple obligations. No PUBLIC_API canon files changed.
 
@@ -195,13 +195,13 @@ All 7 files are within `approved_artifact_paths[]` in scope declaration. ECAP ce
 | Stage 6 — QA-to-Red | ✅ COMPLETE | 176 RED tests; IAA-session-mmm-stage6-qa-to-red-20260415-PASS |
 | Stage 7 — PBFAG | ✅ COMPLETE | IAA-session-mmm-stage7-pbfag-20260415-PASS |
 | Stage 8 — Implementation Plan | ✅ COMPLETE | session-mmm-stage8-implementation-plan-20260417; 9 build waves defined |
-| Stage 8 Addendum — Convergence-Governance | ✅ COMMITTED | D1 at 3b233f4; D2 at 3b233f4; IAA assurance pending (Phase 4 — Foreman) |
-| Stage 9 — Builder Checklist | 🔴 NOT_STARTED | Unblocked upon IAA ASSURANCE-TOKEN for this wave |
+| Stage 8 Addendum — Convergence-Governance | ✅ COMPLETE | D1 at 3b233f4; D2 at 3b233f4; IAA governance review certified: IAA-session-mmm-stage8-addendum-20260419-PASS (SHA a989616) |
+| Stage 9 — Builder Checklist | 🟡 PENDING CS2 MERGE | IAA-certified; UNBLOCKED upon CS2 merge |
 | Stage 10 — IAA Pre-Brief (for builder wave) | 🔴 NOT_STARTED | Blocked until Stage 9 complete |
 | Stage 11 — Builder Appointment | 🔴 NOT_STARTED | Blocked until Stages 9 + 10 complete |
 | Stage 12 — Build Execution | 🔴 NOT_STARTED | Blocked until Stages 9–11 complete |
 
-**Stage-readiness conclusion**: Stage 8 Addendum artifact `convergence-governance-addendum.md` is committed at 3b233f4. Upon IAA ASSURANCE-TOKEN, Stage 9 (Builder Checklist) is unblocked. Stages 1–8 (original) are all COMPLETE. No blockers on prior stages.
+**Stage-readiness conclusion**: Stage 8 Addendum artifact `convergence-governance-addendum.md` is committed at 3b233f4. IAA governance review PASS: IAA-session-mmm-stage8-addendum-20260419-PASS (SHA a989616). Stage 9 (Builder Checklist) is UNBLOCKED upon CS2 merge. Stages 1–8 (original) are all COMPLETE. No blockers on prior stages.
 
 ---
 
@@ -444,7 +444,7 @@ iaa_token_self_cert_guard:
 |-----------|--------|
 | Substantive readiness | ACCEPTED by Foreman (QP PASS — mat-specialist delivery; 9 sections; all acceptance criteria met) |
 | Administrative readiness | ACCEPTED — this ECAP bundle |
-| IAA assurance verdict | PHASE 4 — Foreman authority (bundle returned; IAA invocation by Foreman only) |
+| IAA assurance verdict | COMPLETE — IAA-session-mmm-stage8-addendum-20260419-PASS (SHA a989616) |
 | Ripple status | NOT-APPLICABLE — no PUBLIC_API canon changes |
 | Admin-compliance result | PASS — §4.3e gate PASSED (see below) |
 
