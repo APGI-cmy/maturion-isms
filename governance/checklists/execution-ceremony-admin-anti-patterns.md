@@ -91,7 +91,7 @@ The following are not machine-detectable by §4.3e but must be caught by the For
 - `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` v1.1.0 — §3.5–§3.9
 - `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.5.0 — §4.3e + Auto-Fail Rules
 - `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.7.0 — §Admin-Ceremony Rejection Triggers
-- `governance/canon/POST_TOKEN_VOCABULARY_LAW.md` v1.0.0 — Post-Token Vocabulary Denylist + Replacement Requirements
+- `governance/canon/POST_TOKEN_VOCABULARY_LAW.md` v1.1.0 — Post-Token Vocabulary Denylist + Replacement Requirements
 - `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` v1.4.0 — §14.6
 - `governance/checklists/execution-ceremony-admin-checklist.md` — verification checklist
 - `governance/checklists/execution-ceremony-admin-reconciliation-matrix.md` — dependency matrix

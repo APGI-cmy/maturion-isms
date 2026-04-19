@@ -2,7 +2,7 @@
 
 **Status**: CANONICAL | **Version**: 1.1.0 | **Authority**: CS2  
 **Date**: 2026-05-01  
-**Amended**: 2026-05-01 — v1.1.0: Added D-10a (awaiting ASSURANCE-TOKEN), D-15 (ASSEMBLY_TIME_ONLY block); expanded detection regex to full denylist; updated Section 4 with explicit ASSEMBLY_TIME_ONLY enforcement rule and ECAP G-6 gate reference; updated Section 5 enforcement table with failure actions for all 3 layers; authority: CS2 — Post-Token Normalization Hardening gap-close.  
+**Amended**: 2026-05-01 — v1.1.0: Added D-10a (awaiting ASSURANCE-TOKEN), D-15 (ASSEMBLY_TIME_ONLY block); expanded detection regex to cover D-01–D-12 and D-15 (regex-detectable patterns); clarified D-13/D-14 are structural and reviewed at Foreman QP / IAA layers; updated Section 4 with explicit ASSEMBLY_TIME_ONLY enforcement rule and ECAP G-6 gate reference; updated Section 5 enforcement table with failure actions for all 3 layers; authority: CS2 — Post-Token Normalization Hardening gap-close.  
 **Effective**: 2026-05-01  
 **Authority Reference**: CS2 (Johan Ras) — Post-Token Final-State Normalization Hardening
 
@@ -42,8 +42,10 @@ The following phrases are **DENYLIST** entries. They are legal in a draft or tem
 | D-14 | Stage-readiness rows with free-text mixed-status wording (e.g., `IAA pending — TBD`) | Mixed pre/post-final status in a stage-readiness table |
 | D-15 | `ASSEMBLY_TIME_ONLY` (surviving template instruction block) | Template block not removed before final committed artifact is produced; any `<!-- ASSEMBLY_TIME_ONLY: ... -->` block surviving in a committed final-state artifact is a hardened defect signal |
 
-> **Detection regex** (case-insensitive — shared constant `PRE_FINAL_REGEX` in `§4.3e` gate script):  
+> **Detection regex** (case-insensitive — shared constant `PRE_FINAL_REGEX` in `§4.3e` gate script; covers D-01 through D-12 and D-15):  
 > `to be completed by Foreman|FOREMAN ACTION REQUIRED|paste verbatim raw IAA|paste verbatim|IAA assurance pending|pending Phase 4|Phase 4 pending|awaiting token|awaiting ASSURANCE-TOKEN|after receiving token|before committing this proof|ASSEMBLY_TIME_ONLY`
+>
+> **Note:** D-13 (blank / empty "IAA Agent Response (verbatim)" field) and D-14 (mixed-status stage-readiness wording) require structural inspection and are enforced at the Foreman QP checkpoint and IAA review layers rather than by this regex.
 
 ---
 
@@ -100,7 +102,7 @@ Templates that contain pre-final instruction prose must enclose that prose in cl
 
 | Enforcement Layer | Location | Check | Failure Action |
 |------------------|----------|-------|---------------|
-| ECAP pre-return gate | `AGENT_HANDOVER_AUTOMATION.md` §4.3e Check C2 | Machine scan: grep `PRE_FINAL_REGEX` (full denylist incl. `ASSEMBLY_TIME_ONLY`) against all non-superseded final-state artifacts | BLOCKING — bundle returned to ECAP; IAA must not be invoked |
+| ECAP pre-return gate | `AGENT_HANDOVER_AUTOMATION.md` §4.3e Check C2 | Machine scan: grep `PRE_FINAL_REGEX` (D-01–D-12, D-15 — regex-detectable) against all non-superseded final-state artifacts; **gated behind final-assurance-claimed state** (no-op on pre-token branches); D-13/D-14 reviewed at Foreman QP | BLOCKING — bundle returned to ECAP; IAA must not be invoked |
 | ECAP pre-return gate | `AGENT_HANDOVER_AUTOMATION.md` §4.3e Check H | Machine scan: cross-artifact consistency — if any non-superseded artifact claims final assurance, all non-superseded artifacts must be post-token | BLOCKING — bundle returned to ECAP |
 | ECAP pre-return gate | `AGENT_HANDOVER_AUTOMATION.md` §4.3e Check I | Machine-assisted: flag "carried forward" claims without declared canonical source reference | BLOCKING — requires Foreman manual parity check before IAA |
 | ECAP bundle-checklist | `.agent-workspace/execution-ceremony-admin-agent/knowledge/bundle-checklist.md` G-6 | Pre-assembly gate: no pre-final instruction wording / ASSEMBLY_TIME_ONLY blocks in any bundle artifact | HALT — return to Foreman before bundle assembly continues |

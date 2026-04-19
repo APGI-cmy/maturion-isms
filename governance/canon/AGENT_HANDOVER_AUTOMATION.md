@@ -2,7 +2,7 @@
 
 **Status**: CANONICAL | **Version**: 1.5.1 | **Authority**: CS2  
 **Date**: 2026-02-24  
-**Amended**: 2026-05-01 — v1.5.1: Extended §4.3e PRE_FINAL_REGEX (shared denylist) to cover all POST_TOKEN_VOCABULARY_LAW §1 patterns including ASSEMBLY_TIME_ONLY blocks, Phase 4 pending, paste verbatim (general), after receiving token, awaiting ASSURANCE-TOKEN; de-duplicated PRE_FINAL_REGEX into single shared constant; hardened Check H to skip superseded proofs in both claimant and survivor scans; proof-of-operation document added; authority: CS2 — Post-Token Normalization Hardening gap-close (new requirement).  
+**Amended**: 2026-05-01 — v1.5.1: Extended §4.3e PRE_FINAL_REGEX (shared denylist) to cover D-01–D-12 and D-15 (regex-detectable POST_TOKEN_VOCABULARY_LAW §1 patterns) including ASSEMBLY_TIME_ONLY blocks; gated Check C2 behind final-assurance-claimed state (no false positives on pre-token branches); de-duplicated PRE_FINAL_REGEX into single shared constant; hardened Check H to skip superseded proofs in both claimant and survivor scans; proof-of-operation document added; clarified D-13/D-14 are structural and covered at Foreman QP / IAA layers; authority: CS2 — Post-Token Normalization Hardening gap-close (new requirement).  
 **Previous amendment**: 2026-05-01 — v1.5.0: Extended §4.3e Check C to also scan for pre-final instruction wording (AAP-17); added Check H (Cross-Artifact Final-State Consistency, AAP-18/ACR-10) and Check I (Canonical Source Parity, AAP-19/ACR-11) to §4.3e; added AAP-15 through AAP-19 to Auto-Fail Rules table; authority: CS2 — Post-Token Final-State Normalization Hardening issue.  
 **Previous amendment**: 2026-04-17 — v1.4.1: Tightened §4.3e Check C stale-wording scan to final-state artifact set only — superseded pre-token proofs retained immutably under the append-only model are now explicitly exempt; updated AAP-01 auto-fail rule to document final-state scope and superseded-proof exemption; authority: CS2 — PR review feedback on §4.3e canon collision with append-only proof retention.  
 **Previous amendment**: 2026-04-17 — v1.4.0: Added §4.3e Admin Ceremony Compliance Gate (BLOCKING, pre-IAA, ECAP-involved jobs); added auto-fail rules table for 9 known admin anti-patterns (AAP-01 through AAP-09); updated Phase 4 structure and sequencing note; updated Handover Validation Checklist with admin-compliance gate item; authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack for ECAP, Foreman QP, and IAA.  
@@ -964,8 +964,12 @@ done
 # ─────────────────────────────────────────────────────────────────────────────
 # SHARED DENYLIST: Pre-Final Instruction Wording (POST_TOKEN_VOCABULARY_LAW §1)
 # Used by both Check C2 (standalone scan) and Check H (cross-artifact scan).
-# Covers all D-01 through D-15 mechanically-detectable patterns, including
-# surviving ASSEMBLY_TIME_ONLY template blocks.
+# Covers the mechanically-detectable subset of POST_TOKEN_VOCABULARY_LAW §1
+# patterns (D-01 through D-12, D-15) via regex match — including surviving
+# ASSEMBLY_TIME_ONLY template blocks.
+# D-13 (blank/empty "IAA Agent Response (verbatim)" fields) and D-14
+# (mixed-status stage-readiness wording) require structural inspection and
+# are handled at the Foreman QP and IAA review layers, not by this regex.
 # Note: "paste verbatim raw IAA" (D-04) is included explicitly alongside the
 # broader "paste verbatim" (D-05) to catch both the specific IAA-context phrase
 # and the general template-instruction remnant in any IAA response section.
@@ -977,45 +981,43 @@ PRE_FINAL_REGEX="to be completed by Foreman|FOREMAN ACTION REQUIRED|paste verbat
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CHECK C2: Pre-Final Instruction Wording Scan (AAP-17 / ACR-09)
-# Scans final-state artifacts for pre-final assembly-time instruction text and
-# surviving ASSEMBLY_TIME_ONLY template blocks that are unconditionally blocked
-# once the branch claims final assurance.
+# Gated behind final-assurance-claimed state: denylist phrases are lawful in
+# pre-token branches and only become illegal once the branch claims final
+# assurance (ASSURANCE-TOKEN issued / merge permitted / Stage 9 unblocked /
+# final_state: COMPLETE). C2 fires only when that state is confirmed.
 # Superseded (pre-token) PREHANDOVER proofs retained immutably under the
 # append-only model are exempt — they were correctly written before finalization.
 # ─────────────────────────────────────────────────────────────────────────────
 PRE_FINAL_INSTRUCTION_FILES=()
 
-# Scan PREHANDOVER proofs — skip superseded originals
-for f in $(git ls-files .agent-admin/prehandover/proof-*.md 2>/dev/null); do
+# Gate: establish whether the branch has claimed final-assurance state.
+C2_FINAL_ASSURANCE_CLAIMED=false
+C2_FINAL_STATE_NONFINAL=()
+
+for f in $(git ls-files .agent-admin/prehandover/proof-*.md \
+                         .agent-workspace/*/memory/session-*.md \
+                         .agent-admin/assurance/iaa-wave-record-*.md 2>/dev/null); do
   IS_SUPERSEDED=false
   for s in "${SUPERSEDED_SET[@]}"; do
     [ "${f}" = "${s}" ] && IS_SUPERSEDED=true && break
   done
   ${IS_SUPERSEDED} && continue
-  if grep -qiE "${PRE_FINAL_REGEX}" "${f}" 2>/dev/null; then
-    PRE_FINAL_INSTRUCTION_FILES+=("${f}")
+  C2_FINAL_STATE_NONFINAL+=("${f}")
+  if grep -qiE "ASSURANCE-TOKEN|merge permitted|Stage 9 unblocked|final_state: COMPLETE" "${f}" 2>/dev/null; then
+    C2_FINAL_ASSURANCE_CLAIMED=true
   fi
 done
 
-# Scan latest session memories
-for WORKSPACE_DIR in $(git ls-files '.agent-workspace/*/memory/session-*.md' 2>/dev/null | \
-    sed 's|/memory/session-.*||' | sort -u); do
-  LATEST_SESSION=$(git ls-files "${WORKSPACE_DIR}/memory/session-*.md" 2>/dev/null | sort | tail -1)
-  if [ -n "${LATEST_SESSION}" ] && \
-     grep -qiE "${PRE_FINAL_REGEX}" "${LATEST_SESSION}" 2>/dev/null; then
-    PRE_FINAL_INSTRUCTION_FILES+=("${LATEST_SESSION}")
-  fi
-done
-
-# Scan wave records
-for f in $(git ls-files .agent-admin/assurance/iaa-wave-record-*.md 2>/dev/null); do
-  if grep -qiE "${PRE_FINAL_REGEX}" "${f}" 2>/dev/null; then
-    PRE_FINAL_INSTRUCTION_FILES+=("${f}")
-  fi
-done
+if ${C2_FINAL_ASSURANCE_CLAIMED}; then
+  for f in "${C2_FINAL_STATE_NONFINAL[@]}"; do
+    if grep -qiE "${PRE_FINAL_REGEX}" "${f}" 2>/dev/null; then
+      PRE_FINAL_INSTRUCTION_FILES+=("${f}")
+    fi
+  done
+fi
 
 [ ${#PRE_FINAL_INSTRUCTION_FILES[@]} -gt 0 ] && \
-  ACC_FAILURES+=("C2: Pre-final instruction wording (or surviving ASSEMBLY_TIME_ONLY block) found in final-state artifacts: ${PRE_FINAL_INSTRUCTION_FILES[*]} — unconditionally blocked once final assurance is claimed (AAP-17/ACR-09 — see POST_TOKEN_VOCABULARY_LAW.md §1 for full denylist)")
+  ACC_FAILURES+=("C2: Pre-final instruction wording (or surviving ASSEMBLY_TIME_ONLY block) found in final-state artifacts: ${PRE_FINAL_INSTRUCTION_FILES[*]} — blocked because this branch has claimed final assurance (AAP-17/ACR-09 — see POST_TOKEN_VOCABULARY_LAW.md §1 for full denylist; D-13/D-14 are reviewed at Foreman QP and IAA layers)")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CHECK D: Version Normalization (ECAP-CCI-04)
@@ -1161,7 +1163,7 @@ The following conditions are **auto-fail** for the §4.3e gate regardless of oth
 | AAP-09 | Committed truth not matching proof/session memory claims | The branch's actual committed file state contradicts a declared artifact path, hash, or status in a ceremony document |
 | AAP-15 | Gate inventory absent from PREHANDOVER proof | The `gate_set_checked:` field is absent or empty in the PREHANDOVER proof or session memory, so gate-parity is asserted without evidence |
 | AAP-16 | Stale gate-pass wording in final-state proof | A final-state proof artifact contains unchecked or provisional gate-pass language such as "verify gates pass", "gates TBD", or "gates pending" that was never resolved to a definitive state |
-| AAP-17 | Pre-final instruction wording in final-state artifact | Any denylist phrase from `POST_TOKEN_VOCABULARY_LAW.md §1` present in any committed final-state artifact when the branch claims final assurance. Includes: "to be completed by Foreman", "FOREMAN ACTION REQUIRED", "paste verbatim raw IAA", "paste verbatim" (in IAA response sections), "IAA assurance pending", "pending Phase 4", "Phase 4 pending", "awaiting token", "awaiting ASSURANCE-TOKEN", "after receiving token", "before committing this proof", and any surviving `ASSEMBLY_TIME_ONLY` template block. Superseded (pre-token) proofs are exempt. |
+| AAP-17 | Pre-final instruction wording in final-state artifact | Any denylist phrase from `POST_TOKEN_VOCABULARY_LAW.md §1` present in any committed final-state artifact **when the branch has claimed final assurance**. Regex-detectable patterns (D-01 through D-12, D-15) include: "to be completed by Foreman", "FOREMAN ACTION REQUIRED", "paste verbatim raw IAA", "paste verbatim" (in IAA response sections), "IAA assurance pending", "pending Phase 4", "Phase 4 pending", "awaiting token", "awaiting ASSURANCE-TOKEN", "after receiving token", "before committing this proof", and any surviving `ASSEMBLY_TIME_ONLY` template block. Superseded (pre-token) proofs are exempt. D-13 (blank verbatim-response fields) and D-14 (mixed-status stage-readiness) require structural inspection; they are reviewed at the Foreman QP and IAA layers. |
 | AAP-18 | Cross-artifact final-state inconsistency | At least one artifact claims final assurance (ASSURANCE-TOKEN issued, merge permitted, final_state: COMPLETE) while another artifact in the final-state bundle still contains pre-token or pre-final wording |
 | AAP-19 | Canonical source parity violation for "carried-forward" claims | An artifact claims "carried forward" / "verbatim from" a canonical source but the committed content differs from the cited source in ownership, gate authority, or approval requirements |
 

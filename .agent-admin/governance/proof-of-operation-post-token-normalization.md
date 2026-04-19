@@ -210,7 +210,8 @@ exact SG-1/SG-2 drift class observed in #1405.
 
 | Failure Class | Detection Mechanism | Enforcement Layer | Result |
 |--------------|--------------------|--------------------|--------|
-| Post-token pre-final wording (D-01 through D-15) | §4.3e Check C2 (machine scan, PRE_FINAL_REGEX) | ECAP gate + Foreman QP Row 1–5 + IAA ACR-09 | **BLOCKED at all 3 layers** |
+| Post-token pre-final wording (D-01–D-12, D-15; regex-detectable) | §4.3e Check C2 (machine scan, PRE_FINAL_REGEX — gated behind final-assurance-claimed state) | ECAP gate + Foreman QP Row 1–5 + IAA ACR-09 | **BLOCKED at all 3 layers** |
+| D-13 blank verbatim-response fields / D-14 mixed-status stage-readiness | Foreman QP Row 2–3 (structural inspection) + IAA ACR-09 | Foreman QP + IAA ACR-09 | **BLOCKED at Foreman QP and IAA layers** |
 | Surviving ASSEMBLY_TIME_ONLY template blocks (D-15) | §4.3e Check C2 (`ASSEMBLY_TIME_ONLY` in PRE_FINAL_REGEX) | ECAP gate + ECAP G-6 + IAA ACR-09 | **BLOCKED at all 3 layers** |
 | Cross-artifact final-state contradiction | §4.3e Check H (cross-artifact scan, superseded-proof-safe) | ECAP gate + Foreman QP Row 4 + IAA ACR-10 | **BLOCKED at all 3 layers** |
 | "Carried forward" canonical drift | §4.3e Check I (source-reference flag) + Foreman QP Row 6 manual | ECAP gate + Foreman QP + IAA ACR-11 | **BLOCKED at all 3 layers** |
