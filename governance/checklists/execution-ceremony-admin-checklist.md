@@ -61,8 +61,11 @@ Verify that no prohibited provisional wording exists in any final-state artifact
 | 3.5 | All gate checkboxes in PREHANDOVER are definitively marked PASS/FAIL (not "to be confirmed") | | |
 | 3.6 | All status markers across PREHANDOVER proof, session memory, and wave record are consistent | | |
 | 3.7 | Final-state declaration in PREHANDOVER (`final_state`) is `COMPLETE` or equivalent — not a provisional value | | |
+| 3.8 | PREHANDOVER proof contains a `## Ripple/Cross-Agent Assessment` section (or equivalent `## Ripple`/`## Cross-Agent` heading) that is **non-empty** — at minimum one concrete impact conclusion row (HFMC-01 / AAP-20) | | |
 
 **Scan command**: `grep -rniE "\bTODO\b|\bTBD\b|\bin[ _-]?progress\b|\bPENDING\b" .agent-admin/prehandover/ .agent-workspace/*/memory/session-*.md`
+
+**Ripple section check**: `grep -iE "^## Ripple|^## Cross-Agent" .agent-admin/prehandover/proof-*.md`
 
 ---
 
@@ -159,6 +162,9 @@ Section 6 — Scope Declaration:       [ ] COMPLETE  [ ] EXCEPTIONS NOTED
 Section 7 — Inventory/Hash/Date:     [ ] COMPLETE  [ ] N/A (no canon changes)
 Section 8 — Ripple/Registry:         [ ] COMPLETE  [ ] N/A (no PUBLIC_API changes)
 
+Ripple/Cross-Agent Assessment Section:
+  Section 3.8 confirmed — ## Ripple/Cross-Agent Assessment:  [ ] PRESENT AND POPULATED  [ ] ABSENT — BLOCKED (AAP-20)
+
 Declared Exceptions (if any):
 _______________________________________________
 
@@ -182,4 +188,4 @@ BUNDLE STATUS: [ ] READY FOR FOREMAN REVIEW  [ ] BLOCKED — REQUIRES: _______
 
 ---
 
-*Version: 1.0.0 | Effective: 2026-04-17 | Authority: CS2 (Johan Ras)*
+*Version: 1.1.0 | Effective: 2026-04-17 | Amended: 2026-04-19 (v1.1.0) — Added check 3.8: `## Ripple/Cross-Agent Assessment` section presence in PREHANDOVER proof (HFMC-01 / AAP-20); updated Section 9 final acceptance block to require explicit Ripple/Cross-Agent Assessment confirmation | Authority: CS2 (Johan Ras)*
