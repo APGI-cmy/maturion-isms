@@ -7,7 +7,7 @@ agent:
   id: independent-assurance-agent
   class: assurance
   version: 6.2.0
-  contract_version: 2.8.0
+  contract_version: 2.9.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-6
 
@@ -296,9 +296,9 @@ This is where IAA spends 90% of session time. Evaluate:
 
 All BD-000 to BD-024, OVL-AC/CG/CI/KG checks apply here.
 
-**Step 3.3a — Admin-Ceremony Rejection Triggers (ACR-01–08, ECAP-involved sessions only):**
+**Step 3.3a — Admin-Ceremony Rejection Triggers (ACR-01–11, ECAP-involved sessions only):**
 
-If `Ceremony-admin: YES` (Step 2.1), apply all 8 ACR auto-reject checks. Any failure = REJECTION-PACKAGE immediately — no partial pass permitted.
+If `Ceremony-admin: YES` (Step 2.1), apply all 11 ACR auto-reject checks. Any failure = REJECTION-PACKAGE immediately — no partial pass permitted.
 
 - **ACR-01**: ECAP reconciliation summary absent in Tier 3 proof bundle — **AUTO-REJECT**. For any wave where `execution-ceremony-admin-agent` was appointed, the bundle MUST include the populated ECAP reconciliation summary (per `ECAP_RECONCILIATION_SUMMARY.template.md`). Absence = auto-reject.
 - **ACR-02**: Conflicting status wording — PENDING or in-progress language present when ASSURANCE-TOKEN is being issued (AAP-01 variant) — **AUTO-REJECT**
@@ -308,6 +308,9 @@ If `Ceremony-admin: YES` (Step 2.1), apply all 8 ACR auto-reject checks. Any fai
 - **ACR-06**: PUBLIC_API ripple obligation silently omitted (AAP-08) — **AUTO-REJECT**
 - **ACR-07**: Declared count or path mismatch across ceremony artifacts (AAP-06, AAP-07) — **AUTO-REJECT**
 - **ACR-08**: Stale artifact path reference — declared path not committed on branch (AAP-03, AAP-09) — **AUTO-REJECT**
+- **ACR-09**: Gate set not identified — PREHANDOVER proof or session memory does not name which specific gates were verified (absent or empty `gate_set_checked:` field or equivalent) — **AUTO-REJECT**
+- **ACR-10**: Stale pending gate wording — any final-state proof artifact contains `verify gates pass`, `gates pending`, `PENDING`, `gate status unconfirmed`, or `in-progress` gate language while `merge_gate_parity: PASS` is declared — **AUTO-REJECT**
+- **ACR-11**: Gate state claimed GREEN without CI evidence — `merge_gate_parity: PASS` declared but per-gate states are not listed as GREEN (CI-confirmed) in any proof artifact; or gate states are assumed/inferred rather than confirmed — **AUTO-REJECT**
 
 Output per ACR check: `ACR-[N]: PASS ✅ / FAIL ❌`
 
@@ -404,7 +407,7 @@ Return verdict. ASSURANCE-TOKEN: invoking agent may open PR. REJECTION-PACKAGE: 
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Version**: 6.2.0 | **Contract**: 2.8.0 | **Last Updated**: 2026-04-17
+**Version**: 6.2.0 | **Contract**: 2.9.0 | **Last Updated**: 2026-04-17
 **Tier 2 Knowledge**: `.agent-workspace/independent-assurance-agent/knowledge/`
 **Canonical Source**: `APGI-cmy/maturion-foreman-governance`
 **IAA Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE

@@ -59,3 +59,5 @@
 | 2026-04-17 | CodexAdvisor-agent | session-060 | DRAFT-PHASE | ECAP step renumbering: §4.3e gate inserted as Step 3.5 caused old 3.5→3.6 and 3.6→3.7. Reserve buffer chars in ECAP for future insertions without renumbering. | session-060-20260417.md |
 | 2026-04-17 | CodexAdvisor-agent | session-060 | SESSION-END | foreman-v2-agent.md at 29879/30000 (121 char headroom). Future additions require equivalent trims. Flag for Tier 2 knowledge update. | session-060-20260417.md |
 | 2026-04-17 | CodexAdvisor-agent | session-060 | SESSION-END | IAA self-review constraint for own contract should be codified in a governance canon document to clarify CS2 substitution procedure. | session-060-20260417.md |
+
+| 2026-04-17 | CodexAdvisor-agent | session-061 | SESSION-END | Consider a dedicated AGENT_GATE_PARITY_CANON.md document to canonize per-gate state vocabulary (GREEN/FAIL/PENDING/MISSING/NOT_EVIDENCED) as a formal Tier 1 definition. | session-061-20260417.md |

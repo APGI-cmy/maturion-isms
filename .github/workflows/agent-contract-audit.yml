@@ -333,12 +333,18 @@ jobs:
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo ""
             echo "🚨 AGCFPP-001 — UNAUTHORIZED AGENT CONTRACT MODIFICATION"
+            echo "   Violation class: CodexAdvisor-only ownership rule (Outcome D)"
             echo ""
             echo "Violations:"
             echo -e "$VIOLATION_DETAILS"
             echo "Per AGENT_CONTRACT_FILE_PROTECTION_POLICY.md §1 (Absolute Prohibition):"
-            echo "  No agent — other than CodexAdvisor acting with explicit CS2 permission"
-            echo "  — may create, modify, or delete any file in .github/agents/."
+            echo "  .github/agents/*.md files are PROTECTED WRITE PATHS."
+            echo "  CodexAdvisor-agent is the ONLY agent authorized to create, modify,"
+            echo "  or delete any file in .github/agents/."
+            echo ""
+            echo "  ALL other agents — including Foreman, ECAP, IAA, and all builders —"
+            echo "  are PROHIBITED from modifying .github/agents/* files."
+            echo "  (CodexAdvisor contract §capabilities.agent_factory.sole_authority)"
             echo ""
             echo "Authorized actors:"
             echo "  - CS2 (Johan Ras / @APGI-cmy): unconditional write authority"
@@ -347,7 +353,7 @@ jobs:
             echo "Action Required:"
             echo "  1. Revert unauthorized agent file changes."
             echo "  2. Follow the mandatory pathway in AGCFPP §3."
-            echo "  3. Request CS2 authorization and have CodexAdvisor apply the changes."
+            echo "  3. Obtain CS2 authorization and have CodexAdvisor apply the changes."
             echo ""
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             exit 1
@@ -356,6 +362,7 @@ jobs:
             echo ""
             echo "Per AGENT_CONTRACT_FILE_PROTECTION_POLICY.md §2:"
             echo "  Actor authority verified. CS2 or CodexAdvisor runtime only."
+            echo "  CodexAdvisor-only ownership rule (Outcome D): satisfied."
           fi
 
   # ============================================================================
