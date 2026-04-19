@@ -170,7 +170,22 @@ IAA Final Audit:                 MANDATORY — Foreman invokes via task(agent_ty
 
 ## REJECTION_HISTORY
 
-*(To be written by IAA if REJECTION-PACKAGE is issued — read-only placeholder)*
+### Round 2 — 2026-04-19
+
+**Date**: 2026-04-19  
+**IAA Session**: session-062-wave-active-tracker-coherence-20260419-R2  
+**Commit reviewed**: fb5418c  
+**Re-invocation round**: 2 (Round 1 rejection resolved; new finding at Round 2)
+
+**Finding summary**: ACR-01 FAIL — `ceremony_admin_appointed: true` declared in wave-current-tasks.md but no ECAP reconciliation summary present in branch bundle. Pre-brief explicitly conditioned ACR-01 on appointment status. No equivalent-artifact exemption exists in ACR-01.
+
+**Fix required**: Option A — produce ECAP reconciliation summary at `.agent-admin/prehandover/ecap-reconciliation-wave-active-tracker-coherence-20260419.md`; OR Option B — correct `ceremony_admin_appointed` to `false` in both wave tracker files if execution-ceremony-admin-agent was never actually invoked.
+
+**Checks run**: 21 total — 20 PASS, 1 FAIL  
+**Substantive content verdict**: PASS (ACR-15, AAP-21, A-039, D-2, all canon and knowledge updates correct)  
+**Ceremony verdict**: FAIL (ACR-01 only)
+
+**Prevention action recommended**: Add D-3 to wave-reconciliation-checklist.md: "If ceremony_admin_appointed: true, verify ECAP reconciliation summary exists BEFORE marking Wave Completion Gate COMPLETE."
 
 ---
 
