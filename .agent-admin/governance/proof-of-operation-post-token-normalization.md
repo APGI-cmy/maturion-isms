@@ -245,4 +245,4 @@ exact SG-1/SG-2 drift class observed in #1405.
 
 ---
 
-*Authority: CS2 (Johan Ras) | Produced: 2026-05-01 | Updated: 2026-04-19 | Wave: harden-post-token-normalization*
+*Authority: CS2 (Johan Ras) | Produced: 2026-04-19 | Updated: 2026-04-19 | Wave: harden-post-token-normalization*

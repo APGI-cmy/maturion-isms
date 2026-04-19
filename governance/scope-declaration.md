@@ -47,7 +47,7 @@ APPROVED_ARTIFACT_PATHS:
 
 2. **governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md** (v1.6.0 → v1.7.0): Added ACR-09 through ACR-13 to Admin-Ceremony Rejection Triggers.
 
-3. **governance/canon/AGENT_HANDOVER_AUTOMATION.md** (v1.4.1 → v1.5.1): Added shared PRE_FINAL_REGEX denylist constant; extended Check C2 (full denylist incl. ASSEMBLY_TIME_ONLY); hardened Check H (superseded-proof-safe cross-artifact scan); added Check I; updated Auto-Fail Rules table.
+3. **governance/canon/AGENT_HANDOVER_AUTOMATION.md** (v1.4.1 → v1.5.2): Added shared PRE_FINAL_REGEX denylist constant; extended Check C2 (full denylist incl. ASSEMBLY_TIME_ONLY); hardened Check H (superseded-proof-safe cross-artifact scan); added Check I; scoped Check H and Check I to active final-state bundle only; updated Auto-Fail Rules table.
 
 4. **governance/canon/POST_TOKEN_VOCABULARY_LAW.md** (v1.0.0 → v1.1.0): Added D-10a, D-15 (ASSEMBLY_TIME_ONLY); expanded detection regex; updated Section 4 enforcement and Section 5 enforcement table with all 3 layers.
 
@@ -57,9 +57,9 @@ APPROVED_ARTIFACT_PATHS:
 
 7. **.agent-workspace/execution-ceremony-admin-agent/knowledge/bundle-checklist.md** (v1.0.0 → v1.1.0): Added G-6 gate; added AAP-17/18 checklist items.
 
-8. **governance/CANON_INVENTORY.json**: Updated hashes for AGENT_HANDOVER_AUTOMATION (v1.5.1), INDEPENDENT_ASSURANCE_AGENT_CANON (v1.7.0), POST_TOKEN_VOCABULARY_LAW (v1.1.0); added execution-ceremony-admin-anti-patterns.md entry.
+8. **governance/CANON_INVENTORY.json**: Updated hashes for AGENT_HANDOVER_AUTOMATION (v1.5.2), INDEPENDENT_ASSURANCE_AGENT_CANON (v1.7.0), POST_TOKEN_VOCABULARY_LAW (v1.1.0); added execution-ceremony-admin-anti-patterns.md entry.
 
-9. **.agent-admin/assurance/proof-of-operation-post-token-normalization.md** (NEW): Proof-of-operation document demonstrating all 4 failure scenarios correctly rejected at all 3 enforcement layers.
+9. **.agent-admin/governance/proof-of-operation-post-token-normalization.md** (NEW): Proof-of-operation document demonstrating all 4 failure scenarios correctly rejected at all 3 enforcement layers.
 
 ---
 
