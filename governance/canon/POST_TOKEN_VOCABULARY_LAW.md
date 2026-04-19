@@ -1,7 +1,8 @@
 # POST_TOKEN_VOCABULARY_LAW
 
-**Status**: CANONICAL | **Version**: 1.0.0 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.1.0 | **Authority**: CS2  
 **Date**: 2026-05-01  
+**Amended**: 2026-05-01 — v1.1.0: Added D-10a (awaiting ASSURANCE-TOKEN), D-15 (ASSEMBLY_TIME_ONLY block); expanded detection regex to full denylist; updated Section 4 with explicit ASSEMBLY_TIME_ONLY enforcement rule and ECAP G-6 gate reference; updated Section 5 enforcement table with failure actions for all 3 layers; authority: CS2 — Post-Token Normalization Hardening gap-close.  
 **Effective**: 2026-05-01  
 **Authority Reference**: CS2 (Johan Ras) — Post-Token Final-State Normalization Hardening
 
@@ -34,13 +35,15 @@ The following phrases are **DENYLIST** entries. They are legal in a draft or tem
 | D-08 | `pending Phase 4` | Pre-final phase marker |
 | D-09 | `Phase 4 pending` | Pre-final phase marker |
 | D-10 | `awaiting token` | Pre-final state marker |
+| D-10a | `awaiting ASSURANCE-TOKEN` | Pre-final state marker (explicit variant) |
 | D-11 | `after receiving token` | Pre-final contingency phrase |
 | D-12 | `before committing this proof` | Template assembly instruction |
 | D-13 | Blank / empty `IAA Agent Response (verbatim)` field | Field left blank or with only instruction prose — actual IAA response required |
 | D-14 | Stage-readiness rows with free-text mixed-status wording (e.g., `IAA pending — TBD`) | Mixed pre/post-final status in a stage-readiness table |
+| D-15 | `ASSEMBLY_TIME_ONLY` (surviving template instruction block) | Template block not removed before final committed artifact is produced; any `<!-- ASSEMBLY_TIME_ONLY: ... -->` block surviving in a committed final-state artifact is a hardened defect signal |
 
-> **Detection regex** (case-insensitive):  
-> `to be completed by Foreman|FOREMAN ACTION REQUIRED|paste verbatim raw IAA|IAA assurance pending|pending Phase 4|awaiting token|before committing this proof`
+> **Detection regex** (case-insensitive — shared constant `PRE_FINAL_REGEX` in `§4.3e` gate script):  
+> `to be completed by Foreman|FOREMAN ACTION REQUIRED|paste verbatim raw IAA|paste verbatim|IAA assurance pending|pending Phase 4|Phase 4 pending|awaiting token|awaiting ASSURANCE-TOKEN|after receiving token|before committing this proof|ASSEMBLY_TIME_ONLY`
 
 ---
 
@@ -82,28 +85,35 @@ Templates that contain pre-final instruction prose must enclose that prose in cl
 
 **Required format for template instruction blocks**:
 ```markdown
-<!-- ASSEMBLY_TIME_ONLY: [instruction text here]. This block must be removed and replaced with the actual content before the final artifact is committed. Leaving this block in place in a committed final-state artifact is an AAP-17 violation. -->
+<!-- ASSEMBLY_TIME_ONLY: [instruction text here]. This block must be removed and replaced with the actual content before the final artifact is committed. Leaving this block in place in a committed final-state artifact is an AAP-17 violation and will fail §4.3e Check C2. -->
 ```
 
+**Enforcement**: The `§4.3e` gate script (Check C2 and Check H) scans for the literal string `ASSEMBLY_TIME_ONLY` in all final-state artifacts. Any committed final-state artifact containing this string after final assurance is claimed **will fail the gate**. This makes template misuse conspicuous and machine-detectable.
+
 **Final-state templates** must use substitution fields (e.g., `{actual_iaa_response}`) rather than prose reminders. Prose reminder blocks signal that the document may never have been completed — they are structural tells for the AAP-17 defect pattern.
+
+**What ECAP must do before bundle return**: Search all draft bundle artifacts for `ASSEMBLY_TIME_ONLY` blocks. Any surviving block must be replaced with final content before the bundle is returned to Foreman. This is now enforced at G-6 in the ECAP bundle-checklist.
 
 ---
 
 ## Section 5: Enforcement Points
 
-| Enforcement Layer | Location | Check |
-|------------------|----------|-------|
-| ECAP pre-return gate | `AGENT_HANDOVER_AUTOMATION.md` §4.3e Check C2 | Machine scan: grep DENYLIST regex against all final-state artifact paths |
-| ECAP pre-return gate | `AGENT_HANDOVER_AUTOMATION.md` §4.3e Check H | Machine scan: cross-artifact consistency — if any artifact claims final assurance, all must be post-token |
-| Foreman QP checkpoint | `FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` §14.6 | Human review: Post-Token Normalization Checkpoint table in `FOREMAN_ADMIN_READINESS_HANDBACK.template.md` |
-| IAA assurance layer | `INDEPENDENT_ASSURANCE_AGENT_CANON.md` ACR-09 | Binary reject if any DENYLIST phrase present in final-state artifact while branch claims assurance |
-| IAA assurance layer | `INDEPENDENT_ASSURANCE_AGENT_CANON.md` ACR-10 | Binary reject if cross-artifact inconsistency detected |
+| Enforcement Layer | Location | Check | Failure Action |
+|------------------|----------|-------|---------------|
+| ECAP pre-return gate | `AGENT_HANDOVER_AUTOMATION.md` §4.3e Check C2 | Machine scan: grep `PRE_FINAL_REGEX` (full denylist incl. `ASSEMBLY_TIME_ONLY`) against all non-superseded final-state artifacts | BLOCKING — bundle returned to ECAP; IAA must not be invoked |
+| ECAP pre-return gate | `AGENT_HANDOVER_AUTOMATION.md` §4.3e Check H | Machine scan: cross-artifact consistency — if any non-superseded artifact claims final assurance, all non-superseded artifacts must be post-token | BLOCKING — bundle returned to ECAP |
+| ECAP pre-return gate | `AGENT_HANDOVER_AUTOMATION.md` §4.3e Check I | Machine-assisted: flag "carried forward" claims without declared canonical source reference | BLOCKING — requires Foreman manual parity check before IAA |
+| ECAP bundle-checklist | `.agent-workspace/execution-ceremony-admin-agent/knowledge/bundle-checklist.md` G-6 | Pre-assembly gate: no pre-final instruction wording / ASSEMBLY_TIME_ONLY blocks in any bundle artifact | HALT — return to Foreman before bundle assembly continues |
+| Foreman QP checkpoint | `FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` §14.6 | Human review: Post-Token Normalization Checkpoint (6 checks) in `FOREMAN_ADMIN_READINESS_HANDBACK.template.md` | REJECTED — return bundle to ECAP |
+| IAA assurance layer | `INDEPENDENT_ASSURANCE_AGENT_CANON.md` ACR-09 | Binary reject if any denylist phrase (incl. ASSEMBLY_TIME_ONLY) present in final-state artifact while branch claims assurance | REJECTION-PACKAGE — merge blocked |
+| IAA assurance layer | `INDEPENDENT_ASSURANCE_AGENT_CANON.md` ACR-10 | Binary reject if cross-artifact inconsistency detected (one artifact PASS, another pending/pre-final) | REJECTION-PACKAGE — merge blocked |
+| IAA assurance layer | `INDEPENDENT_ASSURANCE_AGENT_CANON.md` ACR-11 | Binary reject if "carried forward" claim diverges from cited canonical source in ownership/gate authority | REJECTION-PACKAGE — merge blocked |
 
 ---
 
 ## Section 6: References
 
-- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.5.0 — §4.3e Check C2, Check H, Check I
+- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.5.1 — §4.3e PRE_FINAL_REGEX (shared denylist), Check C2, Check H, Check I
 - `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.7.0 — ACR-09, ACR-10, ACR-11
 - `governance/checklists/execution-ceremony-admin-anti-patterns.md` v1.2.0 — AAP-17, AAP-18, AAP-19
 - `governance/templates/execution-ceremony-admin/FOREMAN_ADMIN_READINESS_HANDBACK.template.md` — Post-Token Normalization Checkpoint
@@ -112,4 +122,4 @@ Templates that contain pre-final instruction prose must enclose that prose in cl
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.0.0 | Effective: 2026-05-01*
+*Authority: CS2 (Johan Ras) | Version: 1.1.0 | Effective: 2026-05-01 | Amended: 2026-05-01 (v1.1.0)*
