@@ -14,7 +14,7 @@ FILES_CHANGED: 10
 
 ## FILES_CHANGED
 
-- .agent-admin/assurance/proof-of-operation-post-token-normalization.md
+- .agent-admin/governance/proof-of-operation-post-token-normalization.md
 - .agent-workspace/execution-ceremony-admin-agent/knowledge/bundle-checklist.md
 - governance/CANON_INVENTORY.json
 - governance/canon/AGENT_HANDOVER_AUTOMATION.md
@@ -28,7 +28,7 @@ FILES_CHANGED: 10
 ---
 
 APPROVED_ARTIFACT_PATHS:
-- .agent-admin/assurance/proof-of-operation-post-token-normalization.md
+- .agent-admin/governance/proof-of-operation-post-token-normalization.md
 - .agent-workspace/execution-ceremony-admin-agent/knowledge/bundle-checklist.md
 - governance/CANON_INVENTORY.json
 - governance/canon/AGENT_HANDOVER_AUTOMATION.md
