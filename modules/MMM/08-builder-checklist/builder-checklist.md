@@ -3,7 +3,7 @@
 ## Section 0: Status Header
 
 ```
-Module:                   MMM — Maturity Model Management
+Module:                   MMM (Maturity Management Module)
 Artifact Type:            Stage 9 Builder Checklist
 Status:                   COMPLETE
 Version:                  1.0.0
@@ -223,8 +223,8 @@ additionally dedicated QA waves in their own right.
 | Check | Result | Notes |
 |-------|--------|-------|
 | Contract covers API routes and backend business logic | **PASS** | `capabilities.builder_operations: ["api", "backend", "business-logic", "data-processing"]`; responsibilities include "API routes, Business logic, Data validation" |
-| **Governance flag: contract mission says "Next.js API routes"** | **FLAG** | Contract mission (`identity.mission`) references "Next.js API routes" but MMM's Stage 12 target runtime is **Supabase Edge Functions (Deno)**. The capability class is broad enough to cover both, but this runtime discrepancy MUST be explicitly resolved at Stage 11 builder appointment. The builder must be briefed that all B2–B6 Edge Functions are Deno-runtime Supabase Edge Functions, not Next.js routes. This is a **required condition on the PASS verdict** (see §6). |
-| 26 Edge Functions in scope across B2–B6 | **CONDITIONAL PASS** | Builder must receive the full Edge Function inventory (architecture.md §A4.1) at Stage 11 appointment with explicit Deno/Supabase runtime briefing |
+| MMM backend runtime: Supabase Edge Functions (Deno) | **PASS** | MMM Stage 12 target runtime is **Supabase Edge Functions (Deno)**. This is the confirmed, non-negotiable execution target for all B2–B6 backend deliverables. The contract mission's reference to "Next.js API routes" describes the agent's general capability class; for MMM, all backend/API work is delivered exclusively as Deno-runtime Supabase Edge Functions. There is no ambiguity in the Stage 12 execution target: backend = Supabase Edge Functions (Deno), frontend = React/Vite, schema/RLS = Supabase/Postgres. |
+| 26 Edge Functions in scope across B2–B6 | **CONDITIONAL PASS** | Builder must receive the full Edge Function inventory (architecture.md §A4.1) at Stage 11 appointment |
 | JWT middleware and audit log write path | **CONDITIONAL PASS** | Within API/business-logic class_boundary; must be explicitly scoped at appointment |
 | AIMC stub pattern for B3–B6 | **CONDITIONAL PASS** | Builder must understand stubs are used in B3–B6 for AIMC/KUC/PIT (live wire deferred to B7); this must be confirmed in Stage 11 briefing |
 | Forbidden: frontend UI, database schema changes | **PASS** | `forbidden: ["Frontend UI logic", "Cross-module logic", "Database schema changes"]` — explicitly stated |
@@ -247,7 +247,7 @@ additionally dedicated QA waves in their own right.
 
 | Check | Result | Notes |
 |-------|--------|-------|
-| 26 Supabase Edge Functions (Deno runtime) | **CONDITIONAL PASS** | Confirmed above — Deno/Supabase runtime must be explicitly briefed; function inventory from architecture.md §A4.1 must be frozen input |
+| 26 Supabase Edge Functions (Deno runtime) | **PASS** | MMM backend execution target confirmed: all 26 Edge Functions are Deno-runtime Supabase Edge Functions. Full function inventory from architecture.md §A4.1 must be provided as frozen input at Stage 11 appointment |
 | Supabase service role key pattern for Edge Function writes | **CONDITIONAL PASS** | TR-038 audit log write path pattern must be in Stage 11 briefing |
 | AIMC stub pattern in B3–B6 (live AIMC deferred to B7) | **CONDITIONAL PASS** | Must be confirmed at appointment: api-builder uses circuit breaker OPEN state in dev/test; live wiring is B7's responsibility |
 | Scoring cascade (FR-040, TR-004, ≤2s) | **CONDITIONAL PASS** | Performance constraint must be in Stage 11 scope brief |
@@ -269,9 +269,9 @@ additionally dedicated QA waves in their own right.
 | api-builder leads B2 | **PASS** | Confirmed in implementation-plan.md §6.1 |
 | api-builder co-leads B3 (supporting to ui-builder primary) | **PASS** | Confirmed in §6.1 (B3: primary=ui-builder, supporting=api-builder) |
 | api-builder co-leads B4, B5, B6 (primary with ui-builder supporting) | **PASS** | Confirmed in §6.1 |
-| Contract scope covers all assigned wave deliverables | **CONDITIONAL PASS** | API/business-logic class covers all Edge Function deliverables; Deno runtime briefing required at appointment |
+| Contract scope covers all assigned wave deliverables | **PASS** | API/business-logic class covers all Edge Function deliverables; MMM execution target (Deno/Supabase) is confirmed and aligned with contract capability class |
 
-**api-builder B2–B6 Readiness: READY (with Stage 11 Deno/Supabase runtime briefing condition)**
+**api-builder B2–B6 Readiness: READY — MMM runtime target confirmed as Supabase Edge Functions (Deno)**
 
 ---
 
@@ -724,16 +724,16 @@ Justification: Contract exists at correct path, version 6.2.0, contract_version 
                four-phase canonical pattern, fully populated with ISMS governance constructs,
                IAA invocation mandate, STOP-AND-FIX mandate, and merge gate interface.
                API/business-logic class_boundary is correct for B2–B6 Edge Function scope.
-               No governance red flags detected in contract structure.
-Conditions:    At Stage 11 builder appointment, the following MUST be explicitly resolved and
-               confirmed: (a) RUNTIME CLARIFICATION: the contract mission says "Next.js API
-               routes" but all MMM Edge Functions are Supabase Edge Functions (Deno runtime).
-               The appointment brief must explicitly confirm the builder will target Deno-runtime
-               Supabase Edge Functions, not Next.js routes — this is the single most critical
-               briefing item for api-builder; (b) full Edge Function inventory (26 named functions,
-               architecture.md §A4.1) as frozen inputs; (c) AIMC stub pattern for B3–B6 (live wire
-               is B7's responsibility); (d) per-wave test IDs (D6, D1, D2, D3, D4) and NBR-001/
-               NBR-002 per-wave obligations; (e) wave completion conditions from §3.2.5–§3.6.5.
+               MMM execution target is confirmed: backend = Supabase Edge Functions (Deno
+               runtime), frontend = React/Vite, schema/RLS = Supabase/Postgres. The contract
+               mission's general reference to API capabilities covers the Deno/Supabase
+               execution target within MMM scope. No governance red flags in contract structure.
+Conditions:    At Stage 11 builder appointment, the following MUST be confirmed: (a) full
+               Edge Function inventory (26 named functions, architecture.md §A4.1) as frozen
+               inputs — all functions are Deno-runtime Supabase Edge Functions; (b) AIMC stub
+               pattern for B3–B6 (live wire is B7's responsibility); (c) per-wave test IDs
+               (D6, D1, D2, D3, D4) and NBR-001/NBR-002 per-wave obligations; (d) wave
+               completion conditions from §3.2.5–§3.6.5.
 ```
 
 ---

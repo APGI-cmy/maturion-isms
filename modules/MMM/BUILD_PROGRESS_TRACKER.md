@@ -20,7 +20,7 @@ per wave `align-12stage-prebuild-20260406` (2026-04-06).
 
 **Anomaly Corrected**: The previous version of this tracker incorrectly referenced "Risk
 Management" as the module name and `risk-management` as the module slug. This was a copy-paste
-error from the original governance layer-down. The module is MMM (Maturity Model Management).
+error from the original governance layer-down. The module is MMM (Maturity Management Module).
 
 **Old → New Stage Mapping**:
 | Old Stage | Old Name | New Stage | New Name | Status |
