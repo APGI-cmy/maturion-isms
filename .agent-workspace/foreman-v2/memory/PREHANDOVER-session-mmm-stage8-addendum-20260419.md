@@ -97,7 +97,7 @@ PUBLIC_API layer_down_status check: None of the 7 files changed in this wave car
 | Agent / System | Impact Assessment | Conclusion |
 |---------------|-------------------|-----------|
 | mat-specialist | Produced D1 (convergence-governance-addendum.md) and D2 (BUILD_PROGRESS_TRACKER addendum note). All 9 sections present; QP PASS. Addendum supplements Stage 8 without modifying frozen implementation-plan.md. | **COMPLETE — no residual mat-specialist action in this wave** |
-| independent-assurance-agent | PRE-BRIEF committed at 42b5e15. IAA mandatory (PRE_BUILD_STAGE_MODEL trigger). Wave record present and fully populated with `## PRE-BRIEF` section. PHASE_B_BLOCKING adoption. Expected token: IAA-session-mmm-stage8-addendum-20260419-PASS. ECAP bundle returned; Foreman invokes IAA in Phase 4. | **BUNDLE RETURNED TO FOREMAN — Phase 4 IAA invocation by Foreman authority only** |
+| independent-assurance-agent | PRE-BRIEF committed at 42b5e15. IAA mandatory (PRE_BUILD_STAGE_MODEL trigger). Wave record present and fully populated with `## PRE-BRIEF` section. PHASE_B_BLOCKING adoption. ASSURANCE-TOKEN issued: IAA-session-mmm-stage8-addendum-20260419-PASS (SHA a989616). | **COMPLETE — IAA Phase 4 PASS; ASSURANCE-TOKEN issued; merge gate released** |
 | schema-builder | Convergence-governance addendum references schema-builder as a builder class for Stage 12 build waves. No schema changes produced in this addendum wave. | **NO IMMEDIATE IMPACT — upstream planning reference; no migration surface in this wave** |
 | api-builder | Convergence-governance addendum references api-builder roles. No API implementation produced. | **NO IMMEDIATE IMPACT — reference input for future Stage 12 build waves only** |
 | ui-builder | Convergence-governance addendum references ui-builder roles. No UI components produced. | **NO IMMEDIATE IMPACT — reference input for future build waves only** |
@@ -411,7 +411,7 @@ Self-Modification Lock: SELF-MOD-IAA-001 — ACTIVE
 
 ## IAA Token Self-Certification Guard (MANDATORY VERIFICATION)
 
-> To be completed by Foreman after IAA Phase 4 invocation and token issuance.
+> IAA Phase 4 complete. ASSURANCE-TOKEN issued: IAA-session-mmm-stage8-addendum-20260419-PASS (SHA a989616). Guard result: PASS — IAA-SELF-CERT-001.
 
 ```
 iaa_token_self_cert_guard:
@@ -432,7 +432,7 @@ iaa_token_self_cert_guard:
 **Branch**: copilot/produce-convergence-governance-addendum
 **ECAP Session**: session-mmm-stage8-addendum-20260419
 **Foreman Session**: session-mmm-stage8-addendum-20260419
-**Final IAA Session Reference**: IAA-session-mmm-stage8-addendum-20260419-PASS (expected reference — actual token written by IAA to ## TOKEN section of wave record)
+**Final IAA Session Reference**: IAA-session-mmm-stage8-addendum-20260419-PASS (SHA a989616 — PHASE_B_BLOCKING_TOKEN confirmed in wave record ## TOKEN section)
 **Final Token Reference**: `.agent-admin/assurance/iaa-wave-record-mmm-stage8-addendum-20260419.md` ## TOKEN section
 **Date**: 2026-04-19
 
@@ -457,7 +457,7 @@ iaa_token_self_cert_guard:
 | Gate results (JSON) | N/A | N/A | N/A | N/A | PRE_BUILD documentation wave — no gate results JSON |
 | ECAP reconciliation summary | Embedded in PREHANDOVER proof (this section) | ✓ | ✓ (ECAP commit) | ✓ | Per template: embedded option |
 | Scope declaration | `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-stage8-addendum-20260419.md` + `SCOPE_DECLARATION.md` | ✓ | ✓ | ✓ | SHA 6c1a1a6 / ba35dde |
-| IAA token file | `.agent-admin/assurance/iaa-wave-record-mmm-stage8-addendum-20260419.md` ## TOKEN | N/A at bundle time | N/A at bundle time | N/A | Written by IAA in Phase 4 — not ECAP responsibility |
+| IAA token file | `.agent-admin/assurance/iaa-wave-record-mmm-stage8-addendum-20260419.md` ## TOKEN | ✓ | ✓ (SHA a989616) | ✓ | PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage8-addendum-20260419-PASS |
 
 ### C3. Cross-Artifact Consistency Table
 
@@ -493,12 +493,12 @@ iaa_token_self_cert_guard:
 
 | AAP | Anti-Pattern | Result | Evidence |
 |-----|-------------|--------|---------|
-| AAP-01 | PENDING/in-progress wording in status fields | **PASS** | No PENDING/in-progress wording in status fields of PREHANDOVER or session memory; IAA invocation state uses "BUNDLE RETURNED TO FOREMAN — Phase 4 IAA invocation by Foreman authority only" (descriptive, not a status field) |
+| AAP-01 | PENDING/in-progress wording in status fields | **PASS** | No PENDING/in-progress wording in status fields of PREHANDOVER or session memory; all status fields reflect IAA PASS final state |
 | AAP-02 | Mixed internal version labels | **PASS** | Single contract version (2.13.0); single agent version (v6.2.0); no mixed version labels within any document |
 | AAP-03 | Stale artifact path references | **PASS** | All paths verified via `git ls-tree -r HEAD` — D1, D2, IAA wave record, scope declarations confirmed committed |
 | AAP-04 | Stale scope declaration | **PASS** | Pre-ECAP diff: 7 files; root SCOPE_DECLARATION.md declares all 12 expected paths (7 pre-ECAP + 2 ECAP + Foreman memory copies + parking station); Foreman certified this parity result in appointment brief |
 | AAP-05 | Stale hash after file finalization | **PASS** | No SHA256 hash declarations in this wave type ceremony; SHA commit references (not file hashes) used throughout — no hash mismatch possible |
-| AAP-06 | Session mismatch between iaa_audit_token and token file | **PASS** | Token reference `IAA-session-mmm-stage8-addendum-20260419-PASS` is consistent with wave identifier; IAA has not yet been invoked (Phase 4 — Foreman authority); no token file mismatch exists |
+| AAP-06 | Session mismatch between iaa_audit_token and token file | **PASS** | Token reference `IAA-session-mmm-stage8-addendum-20260419-PASS` confirmed in wave record ## TOKEN (SHA a989616); PHASE_B_BLOCKING_TOKEN present and matches; no token file mismatch |
 | AAP-07 | Declared artifact count mismatch | **PASS** | Artifact count: 9 (declared in bundle completeness table); pre-ECAP diff: 7 files; post-ECAP: 9 files; counts consistent |
 | AAP-08 | PUBLIC_API ripple obligations omitted | **PASS** | No PUBLIC_API files changed in this wave (verified: CANON_INVENTORY scan shows none of the 7 changed files have PUBLIC_API layer_down_status); ripple status: NOT-APPLICABLE |
 | AAP-09 | Committed truth not matching proof claims | **PASS** | All declared artifact paths verified against `git ls-tree -r HEAD`; SHAs match Foreman-certified commit evidence (3b233f4 for D1/D2, 42b5e15 for IAA record, 6c1a1a6 for governance files) |
@@ -519,13 +519,13 @@ iaa_token_self_cert_guard:
 | R06 | Branch name | copilot/produce-convergence-governance-addendum | PREHANDOVER branch field; scope declaration branch — consistent | ✓ |
 | R07 | Changed file paths | `git diff --name-only origin/main...HEAD` (7 pre-ECAP) | Scope declaration lists all 7 plus ECAP paths; all match | ✓ |
 | R08 | PREHANDOVER ↔ session memory | PREHANDOVER proof | Session memory references same job, wave, issue, branch, session — verified | ✓ |
-| R09 | PREHANDOVER ↔ token / IAA reference | PREHANDOVER iaa_audit_token field | Expected token consistent with wave ID; actual token to be written by IAA in Phase 4 | ✓ |
+| R09 | PREHANDOVER ↔ token / IAA reference | PREHANDOVER iaa_audit_token field | Token issued: IAA-session-mmm-stage8-addendum-20260419-PASS (SHA a989616); wave record ## TOKEN populated | ✓ |
 | R10 | Tracker ↔ wave record | wave-current-tasks-mmm-stage8-addendum-20260419.md | Wave record trigger classification consistent; qualifying tasks consistent | ✓ |
 | R11 | Scope declaration ↔ actual changed files | `git diff --name-only origin/main...HEAD` | Root SCOPE_DECLARATION lists all expected paths; 7 pre-ECAP consistent | ✓ |
 | R12 | Session memory ↔ committed artifact paths | Actual committed files (`git ls-files`) | All session memory artifact paths verified as committed | ✓ |
 | R13 | CANON_INVENTORY ↔ file hash / version | No canon files amended | N/A — no CANON_INVENTORY entries changed in this wave | ✓ N/A |
 | R14 | Ripple registry ↔ PUBLIC_API changes | No PUBLIC_API files changed | C4 ripple block: NOT-APPLICABLE; scan confirmed no qualifying files | ✓ N/A |
-| R15 | Final-state status coherence | COMPLETE | PREHANDOVER final_state: COMPLETE; session memory final status: COMPLETE; wave record: consistent with Phase 4 IAA pending | ✓ |
+| R15 | Final-state status coherence | COMPLETE | PREHANDOVER final_state: COMPLETE; session memory final status: COMPLETE; wave record: IAA PASS (SHA a989616) | ✓ |
 | R16 | Artifact count ↔ actual count | 9 artifacts in bundle completeness table | Pre-ECAP diff: 7; post-ECAP: 9; counts consistent with declarations | ✓ |
 | R17 | IAA session reference (assurance round) | Expected: IAA-session-mmm-stage8-addendum-20260419-PASS | No re-invocation round; first assurance; no `-rZ` suffix required | ✓ N/A |
 
