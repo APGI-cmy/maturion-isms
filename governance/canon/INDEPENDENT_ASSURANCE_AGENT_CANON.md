@@ -1,6 +1,6 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.8.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.7.0 | **Authority**: CS2
 **Date**: 2026-03-03
 **Amended**: 2026-03-03 — v1.1.0: Added §Proactive Assurance — Pre-Brief Protocol
 **Amended**: 2026-03-04 — v1.2.1: Added §CS2 Direct Review Track
@@ -8,8 +8,7 @@
 **Amended**: 2026-04-08 — v1.4.0: Added §Execution Ceremony Admin Non-Substitution Rule — explicitly prohibits the execution-ceremony-admin-agent from performing IAA functions; reinforces IAA non-producing / non-cleanup-authoring posture relative to the new ceremony admin role; authority: CS2 — ECAP-001 canon establishment issue.
 **Amended**: 2026-04-08 — v1.5.0: Amended §Independence Requirements rule 3 — clarified that Foreman is the authorised IAA invoker at Phase 4 handover (not a self-assurance violation); added §IAA Re-Invocation After Rejection — Foreman Ownership defining Foreman-owned stop-and-fix loop, CS2-only exception classes, canonical re-invocation token/session format, prohibited misleading wording, and worked example; authority: CS2 — Foreman IAA re-invocation ownership canonisation issue.
 **Amended**: 2026-04-17 — v1.6.0: Added §Admin-Ceremony Rejection Triggers — explicit rejection conditions for ceremony-integrity defects (ACR-01 through ACR-08); reinforced non-cleanup-authoring posture relative to ECAP layer; cross-references §4.3e Admin Ceremony Compliance Gate; authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack for ECAP, Foreman QP, and IAA.
-**Amended**: 2026-04-18 — v1.7.0: Added ACR-09 (pre-final instruction wording in final-state artifact), ACR-10 (cross-artifact final-state inconsistency), ACR-11 (canonical source parity violation) to §Admin-Ceremony Rejection Triggers; authority: CS2 — Post-Token Final-State Normalization Hardening issue.
-**Amended**: 2026-04-19 — v1.8.0: Added ACR-12 (PREHANDOVER proof missing `## Ripple/Cross-Agent Assessment` section), ACR-13 (ripple section present but blank), ACR-14 (`## Ripple/Cross-Agent Assessment` absent or blank in PREHANDOVER proof — HFMC-01 / FAIL-ONLY-ONCE A-023 / AAP-20) to §Admin-Ceremony Rejection Triggers; authority: CS2 — Harden PREHANDOVER templates so Ripple/Cross-Agent Assessment cannot be omitted.
+**Amended**: 2026-04-19 — v1.7.0: Added ACR-09 through ACR-14 (gate-inventory hardening, post-token normalization, cross-artifact contradiction, carried-forward canonical source parity); added active-bundle scope rule for ACR checks; aligned with governance-repo hardening wave outcomes; authority: CS2 — governance-repo hardening wave.
 
 ---
 
@@ -781,7 +780,7 @@ OUTCOME:
 
 ---
 
-## Admin-Ceremony Rejection Triggers (v1.8.0)
+## Admin-Ceremony Rejection Triggers (v1.6.0)
 
 When a job has involved the `execution-ceremony-admin-agent` (ECAP), the IAA MUST issue a `REJECTION-PACKAGE` if **any** of the following conditions are present in the branch at assurance time. These triggers are binary and non-discretionary.
 
@@ -799,12 +798,30 @@ When a job has involved the `execution-ceremony-admin-agent` (ECAP), the IAA MUS
 | ACR-06 | **PUBLIC_API ripple required but not assessed / recorded / completed** — one or more files with `layer_down_status: PUBLIC_API` in CANON_INVENTORY were changed in this PR, but the ECAP reconciliation summary contains no ripple assessment block, or the block is absent, or it omits one or more qualifying files | ECAP-001 §3.9; AGENT_HANDOVER_AUTOMATION.md §4.3e AAP-08 |
 | ACR-07 | **PREHANDOVER / token / session memory / tracker / wave record not coherent** — the bundle's collection of PREHANDOVER proof, IAA token file, session memory, tracker entries, and wave records do not all reference the same job/wave/session/token in a mutually consistent manner; or the declared assurance session in the PREHANDOVER proof does not match the session ID in the actual token file | ECAP-001 §3.7; AGENT_HANDOVER_AUTOMATION.md §4.3e |
 | ACR-08 | **Artifact references pointing to non-committed or wrong-path files** — a file path declared in the PREHANDOVER proof, session memory, or any ceremony artifact does not resolve to a committed file on the branch, or resolves to a different file than intended | ECAP-001 §3.8; AGENT_HANDOVER_AUTOMATION.md §4.3e AAP-03 + AAP-09 |
-| ACR-09 | **Pre-final instruction wording in committed final-state artifact** — any committed final-state artifact (PREHANDOVER proof, session memory, wave record, stage-readiness table, accepted Foreman handback copy) contains pre-final assembly-time instruction text while the branch claims final assurance (ASSURANCE-TOKEN, merge permitted, final_state COMPLETE, or equivalent). Examples include (non-exhaustive — see `POST_TOKEN_VOCABULARY_LAW.md §1` for the full denylist): "to be completed by Foreman after receiving ASSURANCE-TOKEN", "FOREMAN ACTION REQUIRED", "paste verbatim raw IAA output here", "paste verbatim" (in any IAA response section), "IAA assurance pending (Phase 4)", "pending Phase 4", "Phase 4 pending", "awaiting token", "awaiting ASSURANCE-TOKEN", "after receiving token", "before committing this proof", and any surviving `ASSEMBLY_TIME_ONLY` template block. | ECAP-001 §3.5; execution-ceremony-admin-anti-patterns.md AAP-17 |
-| ACR-10 | **Cross-artifact final-state inconsistency** — the branch contains at least one artifact claiming final assurance while another artifact in the final-state bundle contains pre-token or pre-final wording; the final-state bundle does not tell one coherent post-token story. | ECAP-001 §3.5; execution-ceremony-admin-anti-patterns.md AAP-18 |
-| ACR-11 | **Canonical source parity violation** — an artifact claims to carry forward or copy verbatim a model, table, or ownership assignment from a canonical source, but the committed content differs from the cited canonical source in a materially governance-relevant way (ownership, gate authority, approval requirements). | execution-ceremony-admin-anti-patterns.md AAP-19 |
-| ACR-12 | **Gate inventory absent from PREHANDOVER proof** — the PREHANDOVER proof or session memory does not name the specific merge/workflow gates that were verified; the `gate_set_checked:` field is absent or empty, meaning gate-parity is asserted without evidence of which gates were actually checked. | AGENT_HANDOVER_AUTOMATION.md §4.3e; execution-ceremony-admin-anti-patterns.md AAP-15 |
-| ACR-13 | **Stale gate-pass wording in final-state proof** — a final-state proof artifact (PREHANDOVER, session memory, scope declaration) contains unchecked or provisional gate-pass language such as "verify gates pass", "gates TBD", "gates pending", or similar wording that was never resolved to a definitive state, indicating a checklist item was carried forward without being executed. | AGENT_HANDOVER_AUTOMATION.md §4.3e; execution-ceremony-admin-anti-patterns.md AAP-16 |
-| ACR-14 | **`## Ripple/Cross-Agent Assessment` section absent or blank in PREHANDOVER proof** — the PREHANDOVER proof does not contain a `## Ripple/Cross-Agent Assessment` (or equivalent `## Ripple`/`## Cross-Agent`) heading, or the section is present but contains no concrete downstream-impact conclusions (only placeholder text, a blank table, or a heading with no body). Every PREHANDOVER proof must explicitly assess downstream agent and system impact regardless of wave type. This is the HFMC-01 recurring failure pattern (FAIL-ONLY-ONCE A-023). | AGENT_HANDOVER_AUTOMATION.md §4.3e Check J; execution-ceremony-admin-anti-patterns.md AAP-20; PREHANDOVER_PROOF_TEMPLATE.md v3.1 |
+| ACR-09 | **Gate parity claimed without explicit per-gate inventory** — the PREHANDOVER proof or ECAP reconciliation summary claims gate parity (e.g., "all gates PASS", "merge gate: PASS") but the gate results artifact contains no individual per-gate entries, only an aggregate verdict | AGENT_HANDOVER_AUTOMATION.md §4.3e Check H; AAP-15 |
+| ACR-10 | **Stale gate-pass provisional wording in final-state artifacts** — a committed final-state artifact contains provisional gate-pass language such as "gate expected to pass", "parity to be confirmed", "pending gate verification", "gate check deferred", or equivalent wording where a definitive PASS or FAIL is required | AGENT_HANDOVER_AUTOMATION.md §4.3e Check H; AAP-16 |
+| ACR-11 | **Pre-final instruction wording / template instruction leakage** — a committed final-state artifact contains template assembly-time instruction text that should have been removed before commit: `[fill in]`, `[instruction]`, `replace this with`, `EXAMPLE TEXT`, `[PLACEHOLDER]`, `[YOUR TEXT HERE]`, `ASSEMBLY_TIME_ONLY`, `REMOVE BEFORE COMMIT`, `TEMPLATE INSTRUCTION`, or equivalent placeholder/directive text | AGENT_HANDOVER_AUTOMATION.md §4.3e Check I; AAP-17, AAP-21 |
+| ACR-12 | **Cross-artifact final-state contradiction (active-bundle scoped)** — within the active final-state bundle (current PREHANDOVER proof, current session memory, current ECAP reconciliation summary, current wave record), one artifact declares `COMPLETE` / `PASS` / `ACCEPTED` while another artifact declares `PENDING`, `Phase 4`, `in progress`, `BLOCKED`, or any equivalent non-final status for the same dimension. Historical artifacts outside the active bundle (superseded proofs, prior session memories) are **exempt** from this check. | AGENT_HANDOVER_AUTOMATION.md §4.3e Check J; AAP-19 |
+| ACR-13 | **Verbatim IAA-response section blank or instruction-only** — the `iaa_audit_token` or `iaa_session_reference` field in the PREHANDOVER proof is still set to a template placeholder (`<token-file-path>`, `<IAA session ID>`, `[pending]`, `TBD`, `none`) while the proof declares `final_state: COMPLETE`. A COMPLETE final-state proof must reference an actual issued IAA token. | AGENT_HANDOVER_AUTOMATION.md §4.3e Check I; AAP-18 |
+| ACR-14 | **Carried-forward claim with no resolvable canonical source** — a final-state ceremony artifact states that a governance claim was "carried forward from" or is "verbatim from" a named source artifact, but: (a) the named source artifact does not exist as a committed file on the branch, or (b) the source exists but does not contain the stated claim, or (c) the carried-forward text has been modified to change gate authority, gate owner, or approval basis relative to the source | AGENT_HANDOVER_AUTOMATION.md §4.3e Check K; AAP-20 |
+
+### Active-Bundle Scope Rule for ACR Checks (v1.7.0)
+
+When applying ACR triggers ACR-02, ACR-07, ACR-12, and any other cross-artifact consistency check, the IAA MUST scope the scan to the **active final-state bundle** for the current job only. The active bundle is defined as:
+
+1. **PREHANDOVER proof**: The current (non-superseded) proof — the most recent proof, or the proof not declared as superseded by a later proof
+2. **Session memory**: The latest session memory per agent workspace directory (most recent by filename sort order)
+3. **ECAP reconciliation summary**: The most recent reconciliation artifact for this PR/job
+4. **Wave record**: The current wave record for this job (if used)
+5. **Token file**: The current IAA token file for this job
+
+**Explicitly excluded from active-bundle scans**:
+- Superseded PREHANDOVER proofs (i.e., proofs for which a later proof declares `Supersedes: <filename>`)
+- Prior session memories (all except the latest per workspace)
+- Historical/archived wave records from prior waves
+- Rejection-package artifacts from prior rounds (these are retained as immutable historical evidence and are expected to contain non-final wording from the round they document)
+
+**Rationale**: The append-only governance model deliberately retains historical artifacts. Scanning historical artifacts for provisional wording creates false positives and would incorrectly block legitimate final-state bundles. The hardened discipline applies only to artifacts that form the current final-state bundle.
 
 ### How the IAA Handles Admin-Ceremony Rejection Triggers
 
@@ -837,4 +854,4 @@ The §4.3e gate (defined in `AGENT_HANDOVER_AUTOMATION.md`) is the **ECAP + Fore
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.8.0 | Effective: 2026-02-24 | Amended: 2026-04-19 (v1.8.0) — Added ACR-14: `## Ripple/Cross-Agent Assessment` absent or blank in PREHANDOVER proof (HFMC-01 / FAIL-ONLY-ONCE A-023 / AAP-20) | Previous: 2026-04-18 (v1.7.0)*
+*Authority: CS2 (Johan Ras) | Version: 1.7.0 | Effective: 2026-02-24 | Amended: 2026-04-19 (v1.7.0) | Previous: 2026-04-17 (v1.6.0)*
