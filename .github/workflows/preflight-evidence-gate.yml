@@ -11,8 +11,9 @@ name: Preflight Evidence Gate
 # Assignee: Copilot (automation script / CI infra update)
 
 on:
-  # FIX: Changed from pull_request to pull_request_target to bypass Copilot agent approval gate
-  pull_request_target:
+  # Changed back to pull_request so the workflow runs from the PR head branch (not main),
+  # ensuring regex fixes and other in-PR workflow changes are exercised by CI.
+  pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
 
