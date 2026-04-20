@@ -465,11 +465,11 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.  
 **Open Questions**: All RESOLVED through Stage 5. OQ-001 RESOLVED (Stage 4 TRS — CONNECTIVITY-REQUIRED, TR-039–TR-042). OQ-002 RESOLVED (Stage 5 Architecture — capabilities/index.md legacy sub-folder disposition). OQ-003 RESOLVED (Stage 5 Architecture — duplication audit, architecture.md §A12). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.  
 **Next Steps**:
-1. CS2 to formally approve Stage 9 Builder Checklist (maturion-isms#1406)
-2. Stage 10 (IAA Pre-Brief) wave — next in sequence; IAA Pre-Brief must carry forward builder-checklist.md as Stage 9 evidence
-3. CS2 to formally approve Stages 5–8 PRs (pending merge — required before Stage 11)
-4. Stage 11 (Builder Appointment) after all pre-build gates (Stages 1–10) complete; Stage 11 briefing must include Deno/Supabase runtime clarification for api-builder
-5. CS2 to provision credentials (AIMC_SERVICE_TOKEN, PIT_SERVICE_TOKEN) before Stage 12 Wave B7 — HARD GATE confirmed in Stage 9
+1. CS2 to merge this PR to formally close Stage 10 on main branch (SB-004)
+2. CS2 to formally approve Stages 5–8 PRs (pending merge — required before Stage 11)
+3. Stage 11 (Builder Appointment) after CS2 approval; Stage 11 briefing MUST include explicit Deno/Supabase Edge Function runtime declaration for api-builder (SB-002)
+4. CS2 to provision credentials (AIMC_SERVICE_TOKEN, PIT_SERVICE_TOKEN) before Stage 12 Wave B7 — HARD GATE confirmed in Stage 9 (SB-003)
+5. Stage 12 (Build Execution / Evidence) after Stage 11 complete + SB-003 credentials provisioned
 
 ---
 
