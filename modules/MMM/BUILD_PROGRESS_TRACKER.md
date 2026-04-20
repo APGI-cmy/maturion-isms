@@ -36,7 +36,7 @@ error from the original governance layer-down. The module is MMM (Maturity Manag
 | — | (new stage) | Stage 6 | QA-to-Red | COMPLETE — artifacts produced, pending CS2 approval |
 | — | (new stage) | Stage 7 | PBFAG | COMPLETE — artifacts produced (mmm-stage7-pbfag-20260415); PBFAG PASS; IAA token issued (IAA-session-mmm-stage7-pbfag-20260415-PASS); pending CS2 approval |
 | — | (new stage) | Stage 9 | Builder Checklist | COMPLETE ✅ — artifacts produced (mmm-stage9-builder-checklist-20260419); all 5 builders PASS; Stage 10 unblocked |
-| — | (new stage) | Stage 10 | IAA Pre-Brief | NOT_STARTED |
+| — | (new stage) | Stage 10 | IAA Pre-Brief | COMPLETE ✅ — iaa-pre-brief.md v1.0.0 (mmm-stage10-iaa-prebrief-20260420); §12 Wave-Level Admin Ceremony Expectations present; ASSURANCE-TOKEN: IAA-session-mmm-stage10-iaa-prebrief-20260420-PASS |
 
 ---
 
@@ -352,21 +352,29 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 ---
 
 ### Stage 10: IAA Pre-Brief
-**Status**: [ ] NOT_STARTED  
+**Status**: [x] COMPLETE ✅ — Wave mmm-stage10-iaa-prebrief-20260420  
 **Location**: `modules/MMM/09-iaa-pre-brief/`  
 **Key Artifacts**:
-- [ ] IAA Pre-Brief invoked by Foreman with full context
-- [ ] IAA Pre-Brief artifact filed (acceptance criteria per task)
-- [ ] ASSURANCE-TOKEN or PHASE_A_ADVISORY status recorded
-- [ ] Pre-Brief acknowledged by Foreman and all designated builders
+- [x] IAA Pre-Brief invoked by Foreman with full context — wave-current-tasks.md updated; scope declaration with APPROVED_ARTIFACT_PATHS committed
+- [x] IAA Pre-Brief primary artifact filed — `iaa-pre-brief.md` v1.0.0 (§1–§13 incl. §12 Wave-Level Admin Ceremony Expectations)
+- [x] ASSURANCE-TOKEN recorded — PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage10-iaa-prebrief-20260420-PASS
+- [x] Pre-Brief acknowledged by Foreman (D3) and all 5 designated builders (D4)
+- [x] Stage-readiness view (12 stages) confirmed in §8
+- [x] CG-001–CG-005 convergence-governance carry-forwards declared
+- [x] NBR-001 + NBR-002 anti-regression obligations declared
+- [x] SB-001–SB-004 scope blockers declared; SB-001 RESOLVED; SB-002 + SB-003 carry forward
+- [x] §12 Wave-Level Admin Ceremony Expectations present (§12.1–§12.5, interim pending #1420)
+- [x] ECAP ceremony bundle committed (PREHANDOVER + session memory + Foreman accepted copies)
+- [x] IAA wave record committed with ## PRE-BRIEF + ## TOKEN sections
 
-**Completion Date**: N/A  
-**Approval Required**: Yes
-- [ ] Approved by Foreman
-**Approval Date**: N/A
-**Approved By**: N/A
-**Approval Reference**: N/A
-**Notes**: Not started. New stage in 12-stage model.
+**Completion Date**: 2026-04-20  
+**Approval Required**: Yes — pending CS2 PR merge
+- [x] Approved by Foreman (foreman-v2-agent v6.2.0 QP PASS)
+- [ ] CS2 merge pending
+**Approval Date**: N/A (pending CS2)
+**Approved By**: foreman-v2-agent v6.2.0 (QP); IAA ASSURANCE-TOKEN issued
+**Approval Reference**: IAA wave record `.agent-admin/assurance/iaa-wave-record-mmm-stage10-iaa-prebrief-20260420.md`
+**Notes**: Stage 10 COMPLETE. ASSURANCE-TOKEN: IAA-session-mmm-stage10-iaa-prebrief-20260420-PASS. Stage 11 (Builder Appointment) now unblocked pending CS2 approval. Carry-forwards: SB-002 (api-builder Deno clarification REQUIRED in Stage 11 brief), SB-003 (B7 credential gate), CG-001–CG-005, NBR-001/NBR-002.
 
 ---
 
@@ -451,17 +459,17 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 9 (Builder Checklist) COMPLETE ✅ — `builder-checklist.md` v1.0.0 produced 2026-04-19; all 5 builder candidates assessed; overall verdict: PASS; Stage 10 IAA Pre-Brief now unblocked  
-**Overall Progress**: ~75% complete (Stages 1–7 complete with IAA tokens or CS2-approved; Stage 8 Implementation Plan + Addendum complete; Stage 9 Builder Checklist complete; Stages 10–12 not started)  
-**Blockers**: None for Stage 9 or Stage 10. CS2 merge approval of Stages 5–8 PRs is required before Stage 11 builder appointment. CS2 credential provisioning (AIMC_SERVICE_TOKEN, PIT_SERVICE_TOKEN, SUPABASE_SERVICE_ROLE_KEY) required before Stage 12 Wave B7 can execute — these are HARD GATES confirmed in builder-checklist.md §4.4d and §6.  
+**Current Stage**: Stage 10 (IAA Pre-Brief) COMPLETE ✅ — `iaa-pre-brief.md` v1.0.0 produced 2026-04-20; §12 Wave-Level Admin Ceremony Expectations present; ASSURANCE-TOKEN: IAA-session-mmm-stage10-iaa-prebrief-20260420-PASS; Stage 11 (Builder Appointment) now unblocked pending CS2 approval  
+**Overall Progress**: ~83% complete (Stages 1–4, 6–10 gate-passed; Stage 5 artifacts complete — pending CS2 formal approval; Stages 11–12 not started)  
+**Blockers**: CS2 merge approval of this PR (Stage 10) required before Stage 11 can formally begin. SB-002: api-builder Deno/Supabase Edge Function runtime MUST be explicitly declared in Stage 11 appointment brief. SB-003: CS2 must provision AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN before Stage 12 B7 wave-start.  
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.  
 **Open Questions**: All RESOLVED through Stage 5. OQ-001 RESOLVED (Stage 4 TRS — CONNECTIVITY-REQUIRED, TR-039–TR-042). OQ-002 RESOLVED (Stage 5 Architecture — capabilities/index.md legacy sub-folder disposition). OQ-003 RESOLVED (Stage 5 Architecture — duplication audit, architecture.md §A12). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.  
 **Next Steps**:
-1. CS2 to formally approve Stage 9 Builder Checklist (maturion-isms#1406)
-2. Stage 10 (IAA Pre-Brief) wave — next in sequence; IAA Pre-Brief must carry forward builder-checklist.md as Stage 9 evidence
-3. CS2 to formally approve Stages 5–8 PRs (pending merge — required before Stage 11)
-4. Stage 11 (Builder Appointment) after all pre-build gates (Stages 1–10) complete; Stage 11 briefing must include Deno/Supabase runtime clarification for api-builder
-5. CS2 to provision credentials (AIMC_SERVICE_TOKEN, PIT_SERVICE_TOKEN) before Stage 12 Wave B7 — HARD GATE confirmed in Stage 9
+1. CS2 to merge this PR to formally close Stage 10 on main branch (SB-004)
+2. CS2 to formally approve Stages 5–8 PRs (pending merge — required before Stage 11)
+3. Stage 11 (Builder Appointment) after CS2 approval; Stage 11 briefing MUST include explicit Deno/Supabase Edge Function runtime declaration for api-builder (SB-002)
+4. CS2 to provision credentials (AIMC_SERVICE_TOKEN, PIT_SERVICE_TOKEN) before Stage 12 Wave B7 — HARD GATE confirmed in Stage 9 (SB-003)
+5. Stage 12 (Build Execution / Evidence) after Stage 11 complete + SB-003 credentials provisioned
 
 ---
 
