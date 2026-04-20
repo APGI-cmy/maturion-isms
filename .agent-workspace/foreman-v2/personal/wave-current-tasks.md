@@ -52,10 +52,11 @@ B9 (qa-builder) — golden path; requires B7 complete
 | B5-QP | QP evaluation of B5 delivery | foreman-v2-agent | ✅ PASS — 66 tests GREEN |
 | B6 | Wave B6 — Findings & Reporting (J-12–J-15), 3 Edge Functions | ui-builder | ✅ COMPLETE — 47/47 tests GREEN |
 | B6-QP | QP evaluation of B6 delivery | foreman-v2-agent | ✅ PASS — 47 tests GREEN |
-| B7 | Wave B7 — Boundary Integrations (AIMC, PIT, KUC) | integration-builder | 🟡 AUTHORIZED — SB-003 RESOLVED; wave-start brief issued 2026-04-20T16:20; integration-builder executing |
+| B7 | Wave B7 — Boundary Integrations (AIMC, PIT, KUC) | integration-builder | ✅ COMPLETE — 113/113 tests GREEN (D5:15 + D7:8 + CB:12); CG-003 declared; evidence: modules/MMM/11-build/B7-integrations/wave-b7-evidence.md |
+| B7-QP | QP evaluation of B7 delivery | foreman-v2-agent | ✅ PASS — 113 tests GREEN, 743/743 total GREEN, 0 regressions, CG-003 present |
 | B8 | Wave B8 — Cross-Cutting QA (D5/D7/D8/D9/D10/D11) | qa-builder | ✅ COMPLETE — 188/188 tests GREEN |
 | B8-QP | QP evaluation of B8 delivery | foreman-v2-agent | ✅ PASS — 188 tests GREEN |
-| B9 | Wave B9 — Golden Path Verification | qa-builder | ⏳ PENDING (after B7 complete) |
+| B9 | Wave B9 — Golden Path Verification | qa-builder | 🟡 AUTHORIZED — B7 QP PASS; wave-start brief issued 2026-04-20; qa-builder executing |
 | B9-QP | QP evaluation of B9 delivery | foreman-v2-agent | ⏳ PENDING |
 | D-TRACKER | BUILD_PROGRESS_TRACKER.md Stage 12 updates per wave | foreman-v2-agent (per wave) | ⏳ PENDING |
 | IAA-FINAL | IAA Final Audit | independent-assurance-agent | ⏳ PENDING (Phase 4) |

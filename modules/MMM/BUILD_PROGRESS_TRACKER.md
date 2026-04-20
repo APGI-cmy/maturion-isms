@@ -436,7 +436,8 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 - [x] `supabase/functions/_shared/mmm-auth.ts` — shared JWT middleware
 - [x] `apps/mmm/` — React/Vite frontend app (J-01–J-15 UI, 14 pages + shared components)
 - [x] `modules/MMM/tests/` — 7 test suites covering all wave deliverables
-- [ ] B7 live wire — IN PROGRESS (SB-003 resolved; integration-builder executing)
+- [ ] B7 live wire — COMPLETE ✅ (SB-003 resolved; 113 new tests GREEN; 743/743 total)  
+- [ ] B9 golden path — AUTHORIZED 🟡 (qa-builder executing)
 - [ ] B9 golden path (blocked on B7)
 
 #### 12.1 Critical Deliverable Validation (Waves 5-7 Lessons)
@@ -491,7 +492,7 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 12 (Build Execution) IN_PROGRESS — B1–B6 + B8 COMPLETE (630/630 tests GREEN); SB-003 RESOLVED (CS2 explicit confirmation 2026-04-20T16:20: all 4 env vars provisioned via Supabase project secrets, reachable from Edge Function runtime); B7 AUTHORIZED — integration-builder executing wave `mmm-build-wave-b7-boundary-integrations`; B9 pending B7 completion  
+**Current Stage**: Stage 12 (Build Execution) IN_PROGRESS — B1–B8 COMPLETE (743/743 tests GREEN); B7 COMPLETE (113/113 tests GREEN; CG-003 declared; QP PASS); B9 AUTHORIZED — qa-builder executing golden path wave  
 **Overall Progress**: ~95% complete (B1–B6 + B8 DONE; B7 IN_PROGRESS; B9 pending)  
 **Blockers**: None — SB-003 cleared. B7 in execution. B9 unblocked after B7 completes.  
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.  
