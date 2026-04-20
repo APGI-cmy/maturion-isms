@@ -220,4 +220,25 @@ The tracking records (D4–D6) describe forthcoming waves. IAA declares its anti
 
 ## REJECTION_HISTORY
 
-*No rejections recorded for this wave at pre-brief time.*
+### Rejection R1 — session-165-aimc-strategy-followup-20260420
+
+**Date**: 2026-04-20
+**IAA session**: session-165-aimc-strategy-followup-20260420
+**Verdict**: REJECTION-PACKAGE (R1)
+
+**Checks run**: 11 total — 10 PASS, 1 FAIL
+
+**Finding summary**:
+- **A-026 FAIL**: `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` committed to branch and present in `git diff --name-only origin/main...HEAD` but NOT declared in `scope-declaration-wave-aimc-strategy-followup-20260420.md` under `approved_artifact_paths`. A-031 carve-out does NOT apply (foreman-owned file, not IAA ceremony artifact; no prior rejection on branch; no A-031 carve-out note in scope declaration).
+
+**Fix required**:
+1. Add `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` to `approved_artifact_paths` in the scope declaration
+2. Also add the file to the PREHANDOVER deliverables list (requires a new commit — PREHANDOVER is read-only post-commit; a corrected PREHANDOVER commit resolves this)
+3. Commit and push all corrections
+4. Re-invoke IAA
+
+**Classification**: Ceremony
+
+**Prevention action**: Foreman should declare all routine parking-station updates in scope declarations, or escalate to CS2 to codify a foreman parking-station carve-out rule (analogous to A-031 for IAA artifacts) in FAIL-ONLY-ONCE.
+
+**All other checks PASS**: D3–D6 substance PASS; sequencing constraints all satisfied; PREHANDOVER committed; A-029 token reference pre-populated correctly; A-021 clean working tree confirmed; GAP-009 REMEDIATED; canon alignment complete; convergence bridge dependency gates correctly documented.
