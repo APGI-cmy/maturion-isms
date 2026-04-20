@@ -510,7 +510,7 @@ jobs:
             if [ -n "${HEADING_LINE}" ]; then
               SECTION=$(tail -n "+$((HEADING_LINE + 1))" "${proof}" 2>/dev/null | awk '/^## / { exit } { print }')
               # Find the separator row (|---|---|---| or |:---|:---:|---| etc.)
-              SEP_LINE=$(echo "${SECTION}" | grep -nE '^\|[-[:space:]:][- :|]*\|' | head -1 | cut -d: -f1)
+              SEP_LINE=$(echo "${SECTION}" | grep -nE '^\|[[:space:]:-][|: -]*\|' | head -1 | cut -d: -f1)
               if [ -n "${SEP_LINE}" ]; then
                 # Data rows come after the separator; exclude all-placeholder rows
                 CONCRETE_ROW=$(echo "${SECTION}" | \
