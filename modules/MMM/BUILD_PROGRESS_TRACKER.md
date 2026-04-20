@@ -460,7 +460,7 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 ## Current Stage Summary
 
 **Current Stage**: Stage 10 (IAA Pre-Brief) COMPLETE ✅ — `iaa-pre-brief.md` v1.0.0 produced 2026-04-20; §12 Wave-Level Admin Ceremony Expectations present; ASSURANCE-TOKEN: IAA-session-mmm-stage10-iaa-prebrief-20260420-PASS; Stage 11 (Builder Appointment) now unblocked pending CS2 approval  
-**Overall Progress**: ~83% complete (Stages 1–10 complete; Stages 11–12 not started)  
+**Overall Progress**: ~83% complete (Stages 1–4, 6–10 gate-passed; Stage 5 artifacts complete — pending CS2 formal approval; Stages 11–12 not started)  
 **Blockers**: CS2 merge approval of this PR (Stage 10) required before Stage 11 can formally begin. SB-002: api-builder Deno/Supabase Edge Function runtime MUST be explicitly declared in Stage 11 appointment brief. SB-003: CS2 must provision AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN before Stage 12 B7 wave-start.  
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.  
 **Open Questions**: All RESOLVED through Stage 5. OQ-001 RESOLVED (Stage 4 TRS — CONNECTIVITY-REQUIRED, TR-039–TR-042). OQ-002 RESOLVED (Stage 5 Architecture — capabilities/index.md legacy sub-folder disposition). OQ-003 RESOLVED (Stage 5 Architecture — duplication audit, architecture.md §A12). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.  

@@ -295,11 +295,9 @@ B7 MUST NOT begin until both credentials are confirmed provisioned by CS2.
 
 | Stage | Name | Status | IAA Token / Notes |
 |-------|------|--------|-------------------|
-| Stage 0 | App Description | ✅ COMPLETE | (initial CS2 approval) |
-| Stage 1 | FRS | ✅ COMPLETE | IAA-session-mmm-stage3-frs (CS2 approved) |
-| Stage 1.5 | TRS | ✅ COMPLETE | IAA-session-mmm-stage4-trs (CS2 approved) |
-| Stage 2 | UX Workflow & Wiring Spec | ✅ COMPLETE | CS2 approved; Foreman + client sign-off |
-| Stage 3 | Implementation Plan | ✅ COMPLETE | IAA-session-mmm-stage8-implementation-plan-20260417-PASS; CS2 approved |
+| Stage 1 | App Description | ✅ COMPLETE | CS2 approved (maturion-isms#1298) |
+| Stage 2 | UX Workflow & Wiring Spec | ✅ COMPLETE | CS2 approved; Foreman + client sign-off (maturion-isms#1352) |
+| Stage 3 | FRS | ✅ COMPLETE | IAA-session-mmm-stage3-frs; IAA-session-mmm-stage4-trs; CS2 approved |
 | Stage 4 | Architecture | ✅ COMPLETE | IAA-session-mmm-stage5-architecture-20260414-PASS; CS2 approved |
 | Stage 5 | QA-to-Red | ✅ COMPLETE | IAA-session-mmm-stage6-qa-to-red-20260415-PASS; CS2 approved |
 | Stage 6 | PBFAG | ✅ COMPLETE | IAA-session-mmm-stage7-pbfag-20260415-PASS; CS2 approved |

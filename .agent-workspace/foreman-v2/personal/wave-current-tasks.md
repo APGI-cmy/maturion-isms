@@ -20,21 +20,6 @@ iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-stage10-iaa-pre
 
 | Task ID | Task | Owner | Status |
 |---------|------|-------|--------|
-| IAA-PRE | IAA Pre-Brief — wave record | independent-assurance-agent | ✅ COMPLETE — SHA c5517c2 |
-| D0 | Update BUILD_PROGRESS_TRACKER.md — post-#1405 Stage 8 addendum explicit tracker alignment | mat-specialist | ✅ COMPLETE — SHA 957b7b8 |
-| D1 | Stage 9 Builder Checklist primary artifact under `modules/MMM/08-builder-checklist/` | mat-specialist | ✅ COMPLETE — SHA 957b7b8 |
-| D2 | Builder readiness checks — contract currency, scope, RED QA, architecture, protocol, role-fit | mat-specialist | ✅ COMPLETE — SHA 957b7b8 |
-| D3 | Addendum carry-forward section (source-state/switchover, PIT/AIMC/KUC boundary, B7/B9 closure law) | mat-specialist | ✅ COMPLETE — SHA 957b7b8 |
-| D4 | Foreman verdict — PASS/FAIL for each builder candidate | mat-specialist | ✅ COMPLETE — SHA 957b7b8 |
-| D5 | BUILD_PROGRESS_TRACKER.md Stage 9 completion update | mat-specialist | ✅ COMPLETE — SHA 957b7b8 |
-| C1 | PREHANDOVER proof (ECAP) | execution-ceremony-admin-agent | ✅ COMPLETE — SHA 3c3edac |
-| C2 | Session memory (ECAP) | execution-ceremony-admin-agent | ✅ COMPLETE — SHA 3c3edac |
-| IAA-FINAL | IAA Phase 4 Final Audit | independent-assurance-agent | ✅ COMPLETE — ASSURANCE-TOKEN: IAA-session-mmm-stage9-builder-checklist-20260419-PASS (SHA bfd94d1) |
-
-## Tasks
-
-| Task ID | Task | Owner | Status |
-|---------|------|-------|--------|
 | IAA-PRE | IAA Pre-Brief wave record | independent-assurance-agent | ✅ COMPLETE |
 | D1 | iaa-pre-brief.md v1.0.0 | mat-specialist | ✅ COMPLETE |
 | D2 | ASSURANCE-TOKEN recorded | independent-assurance-agent | ✅ COMPLETE |
