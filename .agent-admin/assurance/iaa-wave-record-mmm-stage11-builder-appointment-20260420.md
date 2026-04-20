@@ -182,7 +182,16 @@ Stage-readiness: Stages 1–10 ALL COMPLETE; Stage 11 THIS WAVE; Stage 12 BLOCKE
 
 ## TOKEN
 
-*(To be populated by IAA at Phase 4 Step 4.2 — IAA-FINAL invocation. This section is reserved.)*
+**Issued**: 2026-04-20
+**IAA Agent**: independent-assurance-agent v6.2.0
+**Adoption Phase**: PHASE_B_BLOCKING
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage11-builder-appointment-20260420-PASS
+ASSURANCE-TOKEN: IAA-session-mmm-stage11-builder-appointment-20260420-PASS
+
+**Checks**: 22 total — 22 PASS, 0 FAIL
+**Overlay**: PRE_BUILD_STAGE_MODEL → PRE_BUILD_GATES + ACR-01–11
+**Merge permitted subject to CS2 approval.**
 
 ---
 
