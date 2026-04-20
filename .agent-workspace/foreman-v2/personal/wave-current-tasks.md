@@ -44,17 +44,17 @@ B9 (qa-builder) — golden path; requires B7 complete
 | B1-QP | QP evaluation of B1 delivery | foreman-v2-agent | ✅ PASS — 164 tests GREEN, 0 skipped |
 | B2 | Wave B2 — Core API (Edge Functions: auth, health, org, invitations) | api-builder | ✅ COMPLETE — 28/28 tests GREEN |
 | B2-QP | QP evaluation of B2 delivery | foreman-v2-agent | ✅ PASS — 28 tests GREEN, 0 skipped |
-| B3 | Wave B3 — Core UI (Onboarding J-01–J-05) | ui-builder | ⏳ PENDING |
-| B3-QP | QP evaluation of B3 delivery | foreman-v2-agent | ⏳ PENDING |
-| B4 | Wave B4 — Framework Lifecycle (J-06–J-08) | ui-builder | ⏳ PENDING |
-| B4-QP | QP evaluation of B4 delivery | foreman-v2-agent | ⏳ PENDING |
-| B5 | Wave B5 — Assessment Execution (J-09–J-11) | ui-builder | ⏳ PENDING |
-| B5-QP | QP evaluation of B5 delivery | foreman-v2-agent | ⏳ PENDING |
-| B6 | Wave B6 — Findings and Reporting (J-12–J-15) | ui-builder | ⏳ PENDING |
-| B6-QP | QP evaluation of B6 delivery | foreman-v2-agent | ⏳ PENDING |
+| B3 | Wave B3 — Core UI (J-01–J-05), 4 Edge Functions, React app scaffold | ui-builder | ✅ COMPLETE — 59/59 tests GREEN |
+| B3-QP | QP evaluation of B3 delivery | foreman-v2-agent | ✅ PASS — 59 tests GREEN |
+| B4 | Wave B4 — Framework Lifecycle (J-06–J-08), 6 Edge Functions | ui-builder | ✅ COMPLETE — 78/78 tests GREEN |
+| B4-QP | QP evaluation of B4 delivery | foreman-v2-agent | ✅ PASS — 78 tests GREEN |
+| B5 | Wave B5 — Assessment Execution (J-09–J-11), 3 Edge Functions | ui-builder | ✅ COMPLETE — 66/66 tests GREEN |
+| B5-QP | QP evaluation of B5 delivery | foreman-v2-agent | ✅ PASS — 66 tests GREEN |
+| B6 | Wave B6 — Findings & Reporting (J-12–J-15), 3 Edge Functions | ui-builder | ✅ COMPLETE — 47/47 tests GREEN |
+| B6-QP | QP evaluation of B6 delivery | foreman-v2-agent | ✅ PASS — 47 tests GREEN |
 | B7 | Wave B7 — Boundary Integrations (AIMC, PIT, KUC) | integration-builder | ⛔ BLOCKED — SB-003 (credentials not provisioned) |
-| B8 | Wave B8 — Cross-Cutting (performance, security, governance) | qa-builder | ⏳ PENDING (after B2–B6) |
-| B8-QP | QP evaluation of B8 delivery | foreman-v2-agent | ⏳ PENDING |
+| B8 | Wave B8 — Cross-Cutting QA (D5/D7/D8/D9/D10/D11) | qa-builder | ✅ COMPLETE — 188/188 tests GREEN |
+| B8-QP | QP evaluation of B8 delivery | foreman-v2-agent | ✅ PASS — 188 tests GREEN |
 | B9 | Wave B9 — Golden Path Verification | qa-builder | ⏳ PENDING (after B7 complete) |
 | B9-QP | QP evaluation of B9 delivery | foreman-v2-agent | ⏳ PENDING |
 | D-TRACKER | BUILD_PROGRESS_TRACKER.md Stage 12 updates per wave | foreman-v2-agent (per wave) | ⏳ PENDING |

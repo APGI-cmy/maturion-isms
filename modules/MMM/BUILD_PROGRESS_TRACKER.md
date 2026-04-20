@@ -31,7 +31,7 @@ error from the original governance layer-down. The module is MMM (Maturity Manag
 | Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS — artifacts produced, pending CS2 approval |
 | Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | COMPLETE — artifacts produced (mmm-stage8-implementation-plan-20260417); 9 build waves defined; pending CS2 approval |
 | Stage 4 | Builder Appointment | Stage 11 | Builder Appointment | COMPLETE ✅ — builder-contract.md v1.0.0 (mmm-stage11-builder-appointment-20260420); all 5 builders appointed; SB-002 resolved; SB-003 credential gate active |
-| Stage 5 | Build | Stage 12 | Build | IN_PROGRESS — B1 COMPLETE (schema/RLS/26 tables, 164 tests GREEN), B2 COMPLETE (6 Edge Functions, 28 tests GREEN); B3–B6 pending; B7 BLOCKED (SB-003) |
+| Stage 5 | Build | Stage 12 | Build | IN_PROGRESS — B1–B6 + B8 COMPLETE (630/630 tests GREEN); B7 BLOCKED (SB-003); B9 BLOCKED (depends on B7) |
 | — | (new stage) | Stage 2 | UX Workflow & Wiring Spec | COMPLETE |
 | — | (new stage) | Stage 6 | QA-to-Red | COMPLETE — artifacts produced, pending CS2 approval |
 | — | (new stage) | Stage 7 | PBFAG | COMPLETE — artifacts produced (mmm-stage7-pbfag-20260415); PBFAG PASS; IAA token issued (IAA-session-mmm-stage7-pbfag-20260415-PASS); pending CS2 approval |
@@ -419,22 +419,25 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 **Wave Progress (B1–B9)**:
 - [x] **B1 (Schema)**: COMPLETE ✅ — 26 mmm_ tables, RLS, indexes, storage buckets; 164/164 tests GREEN; evidence: `modules/MMM/11-build/B1-schema/wave-b1-evidence.md`; QP PASS
 - [x] **B2 (Core API)**: COMPLETE ✅ — 6 Deno Edge Functions (mmm-health, mmm-qiw-status, mmm-org-update, mmm-invitation-create, mmm-invitation-accept, mmm-commissioning-check); 28/28 tests GREEN; evidence: `modules/MMM/11-build/B2-api/wave-b2-evidence.md`; QP PASS
-- [ ] **B3 (Core UI)**: NOT_STARTED — pending next session
-- [ ] **B4 (Framework Lifecycle)**: NOT_STARTED
-- [ ] **B5 (Assessment Execution)**: NOT_STARTED
-- [ ] **B6 (Findings/Reporting)**: NOT_STARTED
-- [ ] **B7 (Boundary Integrations)**: BLOCKED ⛔ — SB-003 credential gate (AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN not provisioned)
-- [ ] **B8 (Cross-Cutting)**: NOT_STARTED
-- [ ] **B9 (Golden Path)**: NOT_STARTED (depends on B7)
+- [x] **B3 (Core UI)**: COMPLETE ✅ — React/Vite app scaffold at `apps/mmm/`; 4 Edge Functions (mmm-org-create, mmm-framework-init, mmm-assessment-free-respond, mmm-assessment-free-result); J-01–J-05; 59/59 tests GREEN; evidence: `modules/MMM/11-build/B3-ui/wave-b3-evidence.md`; QP PASS
+- [x] **B4 (Framework Lifecycle)**: COMPLETE ✅ — 6 Edge Functions (mmm-framework-compile, mmm-framework-publish, mmm-upload-framework-source, mmm-ai-framework-parse/generate/alter); J-06–J-08; 78/78 tests GREEN; evidence: `modules/MMM/11-build/B4-framework/wave-b4-evidence.md`; QP PASS
+- [x] **B5 (Assessment Execution)**: COMPLETE ✅ — 3 Edge Functions (mmm-score-confirm, mmm-upload-evidence, mmm-ai-evidence-evaluate); J-09–J-11; HITL TR-033 enforced; 66/66 tests GREEN; evidence: `modules/MMM/11-build/B5-assessment/wave-b5-evidence.md`; QP PASS
+- [x] **B6 (Findings/Reporting)**: COMPLETE ✅ — 3 Edge Functions (mmm-pit-export-send, mmm-pit-evidence-return, mmm-ai-recommend); J-12–J-15; 7-step PIT handshake stubbed; 47/47 tests GREEN; evidence: `modules/MMM/11-build/B6-findings/wave-b6-evidence.md`; QP PASS
+- [ ] **B7 (Boundary Integrations)**: BLOCKED ⛔ — SB-003 credential gate (AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN not provisioned by CS2)
+- [x] **B8 (Cross-Cutting)**: COMPLETE ✅ — 71 tests across D5/D7/D8/D9/D10/D11 (188 assertions); B7 blocked noted; evidence: `modules/MMM/11-build/B8-cross-cutting/wave-b8-evidence.md`; QP PASS
+- [ ] **B9 (Golden Path)**: BLOCKED — depends on B7 (SB-003)
+
+**Total QA-to-Green Progress**: 630/630 tests GREEN (B1:164 + B2:28 + B3:59 + B4:78 + B5:66 + B6:47 + B8:188)
 
 **Key Artifacts**:
-- [x] `supabase/migrations/` — 4 migration files (B1 schema, indexes, RLS, storage)
+- [x] `supabase/migrations/` — 4 migration files (B1: 26 tables, RLS, indexes, storage)
 - [x] `supabase/seed-mmm.sql` — test seed data
-- [x] `supabase/functions/mmm-health/` + 5 other Edge Functions (B2)
+- [x] `supabase/functions/` — 22 Edge Functions total (B2: 6 + B3: 4 + B4: 6 + B5: 3 + B6: 3)
 - [x] `supabase/functions/_shared/mmm-auth.ts` — shared JWT middleware
-- [x] `modules/MMM/tests/B1-schema/` + `modules/MMM/tests/B2-api/` — 192 tests total (164+28), all GREEN
-- [ ] Frontend app (B3+)
-- [ ] Full test coverage (B3–B9 pending)
+- [x] `apps/mmm/` — React/Vite frontend app (J-01–J-15 UI, 14 pages + shared components)
+- [x] `modules/MMM/tests/` — 7 test suites covering all wave deliverables
+- [ ] B7 live wire (blocked on SB-003 credentials from CS2)
+- [ ] B9 golden path (blocked on B7)
 
 #### 12.1 Critical Deliverable Validation (Waves 5-7 Lessons)
 
