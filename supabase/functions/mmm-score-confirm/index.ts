@@ -105,14 +105,17 @@ Deno.serve(async (req: Request) => {
 
   const isOverride = proposal && proposal.proposed_score !== score;
 
-  // If override: write to mmm_override_log with rationale
+  // If override: write to mmm_override_log with rationale (T-MMM-S6-128)
   if (isOverride) {
     await supabase.from('mmm_override_log').insert({
       assessment_id,
       criterion_id,
+      previous_score: proposal.proposed_score,
+      new_score: score,
       proposed_score: proposal.proposed_score,
       confirmed_score: score,
       rationale: rationale ?? '',
+      overridden_by: claims.userId,
       confirmed_by: claims.userId,
       confirmed_at: new Date().toISOString(),
     });

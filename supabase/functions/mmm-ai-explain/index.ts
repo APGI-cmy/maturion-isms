@@ -1,28 +1,26 @@
 /**
- * Supabase Edge Function: mmm-ai-recommend
+ * Supabase Edge Function: mmm-ai-explain
  *
- * Wave B6 — Findings & Reporting (stub)
- * Wave B7 — Boundary Integrations (AIMC stub (B7 live wire complete — AIMC_STUB replaced with callAimc consumer boundary))
- * Route:   POST /api/ai/recommend
- * Tests:   T-MMM-S6-083, T-MMM-S6-097, T-MMM-S6-099, T-MMM-S6-106, T-MMM-S6-108
+ * Wave B7 — Boundary Integrations (live wire)
+ * Route:   POST /api/ai/explain
+ * Tests:   T-MMM-S6-099, T-MMM-S6-106, T-MMM-S6-107, T-MMM-S6-108
  * Issue:   maturion-isms#1428
- * Builder: integration-builder (B7 live wire)
+ * Builder: integration-builder (B7)
  * Date:    2026-04-25
  *
  * JWT required.
  *
- * AIMC stub (B7 live wire complete — AIMC_STUB replaced with callAimc consumer boundary).
  * OB-1 / CG-002: Consumer boundary only — no direct LLM calls.
  * AIMC_BASE_URL: Deno.env.get('AIMC_BASE_URL') — provisioned via SB-003
+ * AIMC_SERVICE_TOKEN: Deno.env.get('AIMC_SERVICE_TOKEN') — provisioned via SB-003
  *
- * Behaviour (B7 live):
- *   - Body: { assessment_id }
- *   - Calls AIMC /api/ai/recommend (TR-011–TR-015)
+ * Behaviour:
+ *   - Calls AIMC /api/ai/explain (TR-011–TR-015)
  *   - Authorization: Bearer AIMC_SERVICE_TOKEN (TR-011)
- *   - AbortController timeout 30s + 2 retries (TR-014)
+ *   - AbortController timeout 45s + 1 retry (TR-014)
  *   - Circuit breaker (TR-009)
- *   - Records ai_interaction (TR-034)
- *   - Return: { recommendations: [...], request_id }
+ *   - Records ai_interaction (TR-034, T-MMM-S6-124)
+ *   - Return: { explanation, request_id }
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
@@ -54,33 +52,35 @@ Deno.serve(async (req: Request) => {
     return response as Response;
   }
 
-  let body: { assessment_id?: string };
+  let body: {
+    subject?: string;
+    subject_type?: string;
+    criterion_id?: string;
+    context?: Record<string, unknown>;
+  };
+
   try {
     body = await req.json();
   } catch {
     return jsonResponse({ error: 'Invalid JSON body' }, 400);
   }
 
-  const { assessment_id } = body;
+  const { subject, subject_type, criterion_id, context } = body;
 
-  if (!assessment_id) {
-    return jsonResponse({ error: 'assessment_id is required' }, 400);
+  if (!subject) {
+    return jsonResponse({ error: 'subject is required' }, 400);
   }
-
-  // Fetch maturity scores to provide context to AIMC
-  const { data: scores } = await supabase
-    .from('mmm_maturity_scores')
-    .select('entity_type, entity_id, score')
-    .eq('assessment_id', assessment_id);
 
   // TR-009 + TR-011–TR-015: Call AIMC via consumer boundary (OB-1 / CG-002)
   const aimcResult = await callAimc(
-    'recommend',
+    'explain',
     claims.orgId,
     claims.userId,
     {
-      assessment_id,
-      maturity_scores: scores ?? [],
+      subject,
+      subject_type: subject_type ?? 'criterion',
+      criterion_id: criterion_id ?? null,
+      ...(context ?? {}),
     },
   );
 
@@ -93,26 +93,22 @@ Deno.serve(async (req: Request) => {
   }
 
   const aiData = (aimcResult.data as any) ?? {};
-  // Recommendations structure (B6 backward compat): domain, gap_to_next, recommendation_text fields
-  const recommendations = (aiData.recommendations ?? []).map((r: any) => ({
-    ...r,
-    domain: r.domain ?? null,
-    gap_to_next: r.gap_to_next ?? null,
-    recommendation_text: r.recommendation_text ?? r.text ?? '',
-  }));
 
-  // Record ai_interaction (TR-034, T-MMM-S6-124)
+  // Record ai_interaction (T-MMM-S6-124)
   await supabase.from('mmm_ai_interactions').insert({
     organisation_id: claims.orgId,
     actor_id: claims.userId,
-    interaction_type: 'RECOMMEND',
-    operation: 'recommend',
+    interaction_type: 'EXPLAIN',
+    operation: 'explain',
     aimc_request_id: aimcResult.request_id,
     model_id: aiData.model_id ?? 'aimc-routed',
     model_version: aiData.model_version ?? null,
     confidence: aiData.confidence ?? null,
     created_at: new Date().toISOString(),
-  }).catch((err: Error) => console.warn(`[mmm-ai-recommend] ai_interactions warn: ${err.message}`));
+  }).catch((err: Error) => console.warn(`[mmm-ai-explain] ai_interactions warn: ${err.message}`));
 
-  return jsonResponse({ recommendations, request_id: aimcResult.request_id });
+  return jsonResponse({
+    explanation: aiData.explanation ?? aiData.content ?? '',
+    request_id: aimcResult.request_id,
+  });
 });

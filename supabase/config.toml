@@ -72,3 +72,13 @@ verify_jwt = false
 
 [functions.mmm-ai-recommend]
 verify_jwt = true
+
+# Wave B7 — Boundary Integrations: new AIMC-interfacing Edge Functions
+[functions.mmm-ai-chat]
+verify_jwt = true
+
+[functions.mmm-ai-explain]
+verify_jwt = true
+
+[functions.mmm-ai-assessment-interpret]
+verify_jwt = true
