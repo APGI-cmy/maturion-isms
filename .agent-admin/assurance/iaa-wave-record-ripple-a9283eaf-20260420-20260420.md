@@ -17,7 +17,26 @@ _No IAA Pre-Brief was issued for this wave. This is a routine LIAISON_ADMIN ripp
 
 ## TOKEN
 
-_Not issued — see REJECTION_HISTORY below._
+**ASSURANCE-TOKEN — RE-INVOCATION (R1)**
+
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/layer-down-propagate-governance-changes-aad6494d-f2d5-4cdb-850b-4b7b2f1a7e43
+    (ripple-a9283eaf-20260420 | session-068 | governance-liaison-isms-agent)
+All 12 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-liaison-ripple-a9283eaf-20260420-R1-20260420-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-liaison-ripple-a9283eaf-20260420-R1-20260420-PASS
+Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
+═══════════════════════════════════════
+```
+
+**Issued**: 2026-04-20
+**IAA Session**: session-liaison-ripple-a9283eaf-20260420-R1
+**Producing Agent**: governance-liaison-isms-agent (session-068-20260420)
+**Re-invocation**: R1 (following REJECTION-PACKAGE from session liaison-ripple-a9283eaf-20260420)
+**Checks**: 12 evaluated: 12 PASS, 0 FAIL
 
 ---
 
