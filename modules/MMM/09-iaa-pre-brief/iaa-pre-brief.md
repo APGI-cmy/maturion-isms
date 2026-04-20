@@ -300,12 +300,12 @@ B7 MUST NOT begin until both credentials are confirmed provisioned by CS2.
 | Stage 1.5 | TRS | ✅ COMPLETE | IAA-session-mmm-stage4-trs (CS2 approved) |
 | Stage 2 | UX Workflow & Wiring Spec | ✅ COMPLETE | CS2 approved; Foreman + client sign-off |
 | Stage 3 | Implementation Plan | ✅ COMPLETE | IAA-session-mmm-stage8-implementation-plan-20260417-PASS; CS2 approved |
-| Stage 4 | Builder Appointment | ⛔ NOT_STARTED | Requires Stage 10 TOKEN + CS2 approval |
-| Stage 5 | Architecture | ✅ COMPLETE | IAA-session-mmm-stage5-architecture-20260414-PASS; CS2 approved |
-| Stage 6 | QA-to-Red | ✅ COMPLETE | IAA-session-mmm-stage6-qa-to-red-20260415-PASS; CS2 approved |
-| Stage 7 | PBFAG | ✅ COMPLETE | IAA-session-mmm-stage7-pbfag-20260415-PASS; CS2 approved |
-| Stage 8 | Implementation Plan (addendum) | ✅ COMPLETE | Stage 8 addendum mmm-stage8-addendum-20260419; CG-001–CG-005 added |
-| Stage 9 | Builder Checklist | ✅ COMPLETE | IAA-session-mmm-stage9-builder-checklist-20260419-PASS; all 5 builders PASS |
+| Stage 4 | Architecture | ✅ COMPLETE | IAA-session-mmm-stage5-architecture-20260414-PASS; CS2 approved |
+| Stage 5 | QA-to-Red | ✅ COMPLETE | IAA-session-mmm-stage6-qa-to-red-20260415-PASS; CS2 approved |
+| Stage 6 | PBFAG | ✅ COMPLETE | IAA-session-mmm-stage7-pbfag-20260415-PASS; CS2 approved |
+| Stage 7 | Implementation Plan (addendum) | ✅ COMPLETE | Stage 8 addendum mmm-stage8-addendum-20260419; CG-001–CG-005 added |
+| Stage 8 | Builder Checklist | ✅ COMPLETE | IAA-session-mmm-stage9-builder-checklist-20260419-PASS; all 5 builders PASS |
+| Stage 9 | Pre-Brief Readiness | ✅ COMPLETE | Stage 10 pre-brief prerequisites consolidated and carried into this artifact |
 | **Stage 10** | **IAA Pre-Brief** | **✅ COMPLETE — THIS WAVE** | **IAA-session-mmm-stage10-iaa-prebrief-20260420-PASS** |
 | Stage 11 | Builder Appointment | ⛔ BLOCKED | Requires Stage 10 TOKEN + CS2 approval; SB-002 (api-builder Deno) must be resolved in brief |
 | Stage 12 | Build | ⛔ BLOCKED | Requires Stages 10+11 COMPLETE; SB-003 (B7 credentials) hard gate active |
