@@ -106,13 +106,46 @@
 
 ## TOKEN
 
-_Reserved — IAA final audit token to be appended here upon handover assurance completion._
+**ASSURANCE-TOKEN — PASS**
+
+```
+PHASE_B_BLOCKING_TOKEN: IAA-session-layer-down-818bab2a-wave-layer-down-818bab2a-20260420-PASS
+```
+
+- **PR**: maturion-isms#1434
+- **Session**: session-layer-down-818bab2a-20260420 (re-invocation after REJECTION-001 remediation)
+- **All checks**: 14 total — 14 PASS, 0 FAIL
+- **Adoption phase**: PHASE_B_BLOCKING
+- **Merge gate parity**: PASS
+- **Merge permitted**: Subject to CS2 approval (Johan Ras / @APGI-cmy)
+- **Token file**: `.agent-admin/assurance/iaa-token-session-layer-down-818bab2a-wave-layer-down-818bab2a-20260420.md`
+- **Issued**: 2026-04-20
 
 ---
 
 ## REJECTION_HISTORY
 
-_No rejections recorded for this wave._
+### REJECTION-001 — 2026-04-20
+
+**Session**: session-layer-down-818bab2a-20260420 (IAA first invocation)
+**Date**: 2026-04-20
+**Checks**: 10 evaluated (4 N/A), 6 PASS, 4 FAIL
+**Adoption Phase**: PHASE_B_BLOCKING
+
+**Finding Summary**:
+
+| # | Finding | Fix Required | Classification |
+|---|---------|-------------|---------------|
+| FINDING-01 | PREHANDOVER proof file absent from PR bundle (OVL-KG-ADM-001/CERT-001, A-015) | governance-liaison must create and commit PREHANDOVER proof with `iaa_audit_token` pre-populated | Ceremony |
+| FINDING-02 | Governance-liaison session memory for this wave absent (OVL-KG-ADM-001/CERT-002, A-015) | governance-liaison must create and commit session-layer-down-818bab2a-20260420.md | Ceremony |
+| FINDING-03 | CERT-03 + CERT-04 cannot be verified (CORE-020 — dependent on FINDING-01/02) | Resolved when FINDING-01 and FINDING-02 remediated | Ceremony |
+| FINDING-04 | wave-current-tasks.md T-01–T-04 PENDING despite commit bc87ae60 completing all tasks (ACR-15 / CORE-021) | Update T-01 through T-04 status from PENDING → COMPLETE | Ceremony/Systemic |
+
+**Substantive Content Assessment**: All hashes, versions, metadata CORRECT — content change is sound. Ceremony-only rejection.
+
+**Systemic Prevention**: Recurring A-015 miss (also occurred in governance-liaison session-067 first invocation). Required: governance-liaison-isms-agent contract LIAISON_ADMIN ceremony checklist via CS2 + CodexAdvisor audit.
+
+**Next Step**: governance-liaison-isms-agent must remediate FINDING-01 through FINDING-04, then foreman re-invokes IAA for second invocation.
 
 ---
 
