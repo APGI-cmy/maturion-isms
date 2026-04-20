@@ -52,7 +52,7 @@ B9 (qa-builder) — golden path; requires B7 complete
 | B5-QP | QP evaluation of B5 delivery | foreman-v2-agent | ✅ PASS — 66 tests GREEN |
 | B6 | Wave B6 — Findings & Reporting (J-12–J-15), 3 Edge Functions | ui-builder | ✅ COMPLETE — 47/47 tests GREEN |
 | B6-QP | QP evaluation of B6 delivery | foreman-v2-agent | ✅ PASS — 47 tests GREEN |
-| B7 | Wave B7 — Boundary Integrations (AIMC, PIT, KUC) | integration-builder | ⛔ BLOCKED — SB-003 (credentials not provisioned) |
+| B7 | Wave B7 — Boundary Integrations (AIMC, PIT, KUC) | integration-builder | 🟡 AUTHORIZED — SB-003 RESOLVED; wave-start brief issued 2026-04-20T16:20; integration-builder executing |
 | B8 | Wave B8 — Cross-Cutting QA (D5/D7/D8/D9/D10/D11) | qa-builder | ✅ COMPLETE — 188/188 tests GREEN |
 | B8-QP | QP evaluation of B8 delivery | foreman-v2-agent | ✅ PASS — 188 tests GREEN |
 | B9 | Wave B9 — Golden Path Verification | qa-builder | ⏳ PENDING (after B7 complete) |
@@ -65,32 +65,69 @@ B9 (qa-builder) — golden path; requires B7 complete
 
 | Gate | Condition | Status |
 |------|-----------|--------|
-| SB-003 | CS2 provisions AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN before B7 | ⚠️ CS2_ACKNOWLEDGED — CS2 has confirmed posture (2026-04-20); credentials will be provisioned via env/secret config only (NOT source control); B7 formally blocked for live/staging until delivery confirmed |
+| SB-003 | CS2 provisions AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN before B7 | ✅ RESOLVED — CS2 explicit confirmation received 2026-04-20T16:20: all 4 env vars (AIMC_BASE_URL, AIMC_SERVICE_TOKEN, PIT_BASE_URL, PIT_SERVICE_TOKEN) provisioned in Supabase project secrets / CI secret store and reachable from Edge Function runtime; B7 wave-start AUTHORIZED |
 | SB-002 | api-builder Deno/Edge Functions runtime | ✅ RESOLVED in builder-contract.md §3.2 |
 
-## SB-003 Posture Record (CS2 Confirmation — 2026-04-20)
+## SB-003 Resolution Record (CS2 Explicit Confirmation — 2026-04-20T16:20)
 
-CS2 (@APGI-cmy) has confirmed the following dual-track posture for SB-003:
+**Status**: ✅ RESOLVED
 
-**Formal authorization commitment**:
-- `AIMC_BASE_URL` + `AIMC_SERVICE_TOKEN`: CS2 to supply via environment/secret configuration path (Supabase project secrets or CI environment); NOT to be committed to source control
-- `PIT_BASE_URL` + `PIT_SERVICE_TOKEN`: CS2 to supply via environment/secret configuration path; NOT to be committed to source control
+CS2 (@APGI-cmy) has explicitly confirmed:
 
-**Dual-track posture**:
-- **Track A — CI/local integration**: Stub/mock PIT endpoint is ACCEPTABLE for local development and CI integration tests (already implemented in B6 as 7-step stub); B7 stub tests may run against mock PIT
-- **Track B — Staging E2E / final acceptance**: Live PIT endpoint + `PIT_SERVICE_TOKEN` are REQUIRED for staging E2E and final Stage 12 integration acceptance (B9 golden path)
+> "AIMC_BASE_URL, AIMC_SERVICE_TOKEN, PIT_BASE_URL, and PIT_SERVICE_TOKEN are provisioned in the Supabase project secrets / CI secret store and are reachable from the Supabase Edge Function runtime."
 
-**B7 formal gate status**:
-- B7 wave-start for live/staging integration remains HARD BLOCKED until CS2 confirms both `AIMC_BASE_URL`/`AIMC_SERVICE_TOKEN` AND `PIT_BASE_URL`/`PIT_SERVICE_TOKEN` are provisioned and accessible from the Supabase Edge Function runtime
-- B7 stub-mode work (already complete as part of B3–B6 stubs) is unaffected
-- B9 golden path cannot close until B7 live integration is verified
+**Resolution timestamp**: 2026-04-20T16:20 UTC  
+**Confirmed by**: CS2 (@APGI-cmy)  
+**Effect**: SB-003 hard gate CLEARED. B7 wave-start AUTHORIZED.
 
-**Secret injection path (agreed)**:
-- Secrets go into Supabase project environment variables (Dashboard → Project Settings → Edge Functions → Secrets) or equivalent CI secret store
-- Edge Functions read via `Deno.env.get('AIMC_BASE_URL')`, `Deno.env.get('AIMC_SERVICE_TOKEN')`, `Deno.env.get('PIT_BASE_URL')`, `Deno.env.get('PIT_SERVICE_TOKEN')`
-- No credential values to be committed to repository files, `.env` files, or any source-tracked artifact
+**Secret inventory (provisioned, not source-tracked)**:
+- `AIMC_BASE_URL` — live/staging AIMC endpoint (Supabase project secrets)
+- `AIMC_SERVICE_TOKEN` — AIMC service authentication token (Supabase project secrets)
+- `PIT_BASE_URL` — live/staging PIT endpoint (Supabase project secrets)
+- `PIT_SERVICE_TOKEN` — PIT service authentication token (Supabase project secrets)
 
-**SB-003 clearance trigger**: CS2 must post explicit confirmation message (issue comment or separate session statement) that all 4 env vars are provisioned and reachable from the Edge Function runtime. Only then may foreman-v2-agent authorize integration-builder B7 wave-start.
+**Injection path confirmed**: Edge Functions read via `Deno.env.get(...)`. No credential values committed to source control.
+
+---
+
+## B7 Wave-Start Authorization Brief
+
+**Issued by**: foreman-v2-agent v6.2.0  
+**Issued to**: integration-builder  
+**Issued at**: 2026-04-20T16:20 UTC  
+**Authorization**: WAVE-START AUTHORIZED
+
+### Wave Identity
+
+**Wave ID**: `mmm-build-wave-b7-boundary-integrations`  
+**Builder**: integration-builder  
+**SB-003 Gate**: ✅ RESOLVED — all 4 credentials provisioned and confirmed reachable  
+
+### Scope (from builder-contract.md §3.4)
+
+1. **AIMC Boundary Wiring** — replace all 9 AIMC stubs (B3–B6) with live AIMC boundary calls. Consumer boundary ONLY per OB-1 (no direct LLM wiring). TRS TR-011–TR-015 binding.
+2. **PIT Data Feed Integration** — implement full 7-step export handshake per TR-017. Live endpoint replaces B6 stub. TRS TR-016–TR-018 binding.
+3. **KUC Upload Contract** — implement TR-019/TR-020 upload handshake and acknowledgement.
+4. **Circuit Breaker (TR-009)** — CLOSED/OPEN/HALF_OPEN state machine for all 3 boundaries. Observable state transitions (logged).
+
+### Test Domain
+
+- **D5**: T-MMM-S6-098–T-MMM-S6-112 (AIMC boundary integration tests)
+- **D7**: T-MMM-S6-121–T-MMM-S6-128 (boundary cross-cutting and circuit breaker)
+- Both subsets must be GREEN before B7 closure
+
+### Binding Obligations
+
+- **CG-001**: Circuit breaker must account for source-active AND source-retired states
+- **CG-002/OB-1–OB-3**: No direct LLM wiring; no PIT/KUC internal schema in MMM
+- **CG-003**: B7 closure statement MUST explicitly declare scope boundary
+- **NBR-002**: HTTP 403 from RLS during boundary calls must propagate — no silent swallowing
+- **STOP-AND-FIX**: Any test failure halts wave for fix
+
+### Deliverable
+
+Wave B7 evidence artifact: `modules/MMM/11-build/B7-integrations/wave-b7-evidence.md`  
+CG-003 boundary readiness declaration required in closure statement.
 
 ## Re-Anchor Pulse
 
