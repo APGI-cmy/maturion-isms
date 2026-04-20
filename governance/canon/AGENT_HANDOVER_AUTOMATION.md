@@ -2,7 +2,7 @@
 
 **Status**: CANONICAL | **Version**: 1.6.0 | **Authority**: CS2  
 **Date**: 2026-02-24  
-**Amended**: 2026-04-20 — v1.6.0: Added §4.3e Check L — active final-state bundle token/session coherence (AAP-22 / ACR-15); added AAP-22 to §4.3e auto-fail rules table; extends active-bundle scope to include `wave-current-tasks.md` for token/session coherence checks; authority: CS2 — maturion-isms#1422 (Canonize active final-state token/session coherence).  
+**Amended**: 2026-04-20 — v1.6.0: Added §4.3e Check L — active final-state bundle token/session coherence (AAP-22 / ACR-16); added AAP-22 to §4.3e auto-fail rules table; extends active-bundle scope to include `wave-current-tasks.md` for token/session coherence checks; authority: CS2 — maturion-isms#1422 (Canonize active final-state token/session coherence).  
 **Amended**: 2026-04-19 — v1.5.0: Hardened §4.3e Admin Ceremony Compliance Gate with gate-inventory checks (Check H), pre-final instruction wording denylist (Check I), cross-artifact final-state consistency with active-bundle scoping (Check J), and carried-forward claim verification (Check K); updated auto-fail rule table with AAP-15 through AAP-21; active-bundle scoping rule clarified to prevent false positives from historical archive; authority: CS2 — governance-repo hardening wave (gate-inventory + post-token normalization hardening).  
 **Amended**: 2026-04-17 — v1.4.1: Tightened §4.3e Check C stale-wording scan to final-state artifact set only — superseded pre-token proofs retained immutably under the append-only model are now explicitly exempt; updated AAP-01 auto-fail rule to document final-state scope and superseded-proof exemption; authority: CS2 — PR review feedback on §4.3e canon collision with append-only proof retention.  
 **Previous amendment**: 2026-04-17 — v1.4.0: Added §4.3e Admin Ceremony Compliance Gate (BLOCKING, pre-IAA, ECAP-involved jobs); added auto-fail rules table for 9 known admin anti-patterns (AAP-01 through AAP-09); updated Phase 4 structure and sequencing note; updated Handover Validation Checklist with admin-compliance gate item; authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack for ECAP, Foreman QP, and IAA.  
@@ -1169,7 +1169,7 @@ done
   ACC_FAILURES+=("K1: Carried-forward source file(s) not found on branch: ${UNRESOLVABLE_CF[*]} (AAP-20)")
 
 # ─────────────────────────────────────────────────────────────────────────────
-# CHECK L: Active Final-State Bundle Token/Session Coherence (AAP-22 / ACR-15)
+# CHECK L: Active Final-State Bundle Token/Session Coherence (AAP-22 / ACR-16)
 # All active final-state artifacts must reference the same IAA session ID as
 # the current authoritative token/session for this wave.
 # Scope: current (non-superseded) PREHANDOVER proof, latest session memory per
@@ -1224,7 +1224,7 @@ if [ ${#ACTIVE_SESSION_IDS[@]} -gt 0 ]; then
   UNIQUE_SESSION_IDS=($(printf '%s\n' "${ACTIVE_SESSION_IDS[@]}" | \
     grep -oP 'IAA-session-[A-Za-z0-9._-]+' | sort -u))
   if [ ${#UNIQUE_SESSION_IDS[@]} -gt 1 ]; then
-    ACC_FAILURES+=("L1: Active final-state bundle token/session INCOHERENCE — ${#UNIQUE_SESSION_IDS[@]} different IAA session IDs found across active final-state artifacts: [${UNIQUE_SESSION_IDS[*]}]. All active artifacts must reference the same current session ID (AAP-22 / ACR-15). Sources: ${ACTIVE_SESSION_IDS[*]}")
+    ACC_FAILURES+=("L1: Active final-state bundle token/session INCOHERENCE — ${#UNIQUE_SESSION_IDS[@]} different IAA session IDs found across active final-state artifacts: [${UNIQUE_SESSION_IDS[*]}]. All active artifacts must reference the same current session ID (AAP-22 / ACR-16). Sources: ${ACTIVE_SESSION_IDS[*]}")
   fi
 fi
 

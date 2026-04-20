@@ -3,7 +3,7 @@
 ## Status
 **Type**: Tier 2 Governance Checklist  
 **Authority**: CS2 — EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md v1.1.0  
-**Version**: 1.0.0  
+**Version**: 1.2.0  
 **Effective Date**: 2026-04-17  
 **Owner**: execution-ceremony-admin-agent (per-job completion) / Foreman QP (per-job review)  
 **Purpose**: Authoritative checklist for ceremony completeness. Used by the `execution-ceremony-admin-agent` before bundle handback and by the Foreman QP checkpoint before IAA invocation.
@@ -62,10 +62,13 @@ Verify that no prohibited provisional wording exists in any final-state artifact
 | 3.6 | All status markers across PREHANDOVER proof, session memory, and wave record are consistent | | |
 | 3.7 | Final-state declaration in PREHANDOVER (`final_state`) is `COMPLETE` or equivalent — not a provisional value | | |
 | 3.8 | PREHANDOVER proof contains a `## Ripple/Cross-Agent Assessment` section (or equivalent `## Ripple`/`## Cross-Agent` heading) that is **non-empty** — at minimum one concrete impact conclusion row (HFMC-01 / AAP-20) | | |
+| 3.9 | All active control artifacts for this wave (wave-current-tasks.md, BUILD_PROGRESS_TRACKER.md current-wave entries, active readiness trackers) are normalized to post-assurance state — no active control artifact for this wave shows `PENDING`, `in progress`, `Phase 4 pending`, `IAA Final Audit: PENDING`, or equivalent pre-final wording for tasks/stages that are now complete (AAP-21 / ACR-15) | | |
 
 **Scan command**: `grep -rniE "\bTODO\b|\bTBD\b|\bin[ _-]?progress\b|\bPENDING\b" .agent-admin/prehandover/ .agent-workspace/*/memory/session-*.md`
 
 **Ripple section check**: `grep -iE "^## Ripple|^## Cross-Agent" .agent-admin/prehandover/proof-*.md`
+
+**Active tracker coherence check (3.9)**: `grep -rniE "\bPENDING\b|\bin[ _-]?progress\b|\bPhase 4 pending\b|\bIAA Final Audit: PENDING\b" <active-control-artifact-paths>` — zero results required for normalized active control artifacts
 
 ---
 
@@ -96,8 +99,8 @@ Verify that no prohibited provisional wording exists in any final-state artifact
 | 5.7 | PREHANDOVER proof `branch` field matches the actual working branch name | | |
 | 5.8 | PREHANDOVER proof `issue` field matches the actual GitHub issue number | | |
 | 5.9 | PREHANDOVER proof `pr` field is consistent with the PR number (if PR already exists) | | |
-| **5.10** | **Active final-state bundle IAA token/session coherence (AAP-22 / ACR-15):** The IAA session ID declared in the PREHANDOVER proof `iaa_audit_token` field, the latest session memory `iaa_session_reference` field, the wave record `## TOKEN` section, and `wave-current-tasks.md` current-token field **all reference the same IAA session ID**. If any artifact in the active bundle references a different session ID as the authoritative current state, this is an immediate BLOCKED condition. | | |
-| **5.11** | **Historical archive separation (AAP-22 / ACR-15):** If multiple IAA session IDs appear anywhere in the bundle (e.g., due to prior rejection rounds), confirm that all but one are confined to: (a) immutable historical rejection-package artifacts, (b) superseded PREHANDOVER proofs declared via `Supersedes:` header, or (c) non-latest session memory files — and that only the current authoritative session ID appears in the active final-state fields. | | |
+| **5.10** | **Active final-state bundle IAA token/session coherence (AAP-22 / ACR-16):** The IAA session ID declared in the PREHANDOVER proof `iaa_audit_token` field, the latest session memory `iaa_session_reference` field, the wave record `## TOKEN` section, and `wave-current-tasks.md` current-token field **all reference the same IAA session ID**. If any artifact in the active bundle references a different session ID as the authoritative current state, this is an immediate BLOCKED condition. | | |
+| **5.11** | **Historical archive separation (AAP-22 / ACR-16):** If multiple IAA session IDs appear anywhere in the bundle (e.g., due to prior rejection rounds), confirm that all but one are confined to: (a) immutable historical rejection-package artifacts, (b) superseded PREHANDOVER proofs declared via `Supersedes:` header, or (c) non-latest session memory files — and that only the current authoritative session ID appears in the active final-state fields. | | |
 
 **Active-bundle coherence scan command**:
 ```bash
@@ -179,6 +182,9 @@ Section 8 — Ripple/Registry:         [ ] COMPLETE  [ ] N/A (no PUBLIC_API chan
 Ripple/Cross-Agent Assessment Section:
   Section 3.8 confirmed — ## Ripple/Cross-Agent Assessment:  [ ] PRESENT AND POPULATED  [ ] ABSENT — BLOCKED (AAP-20)
 
+Active Tracker Normalization (check 3.9):
+  Section 3.9 confirmed — all active control artifacts normalized:  [ ] PASS  [ ] BLOCKED — stale artifact: _______ (AAP-21)
+
 Declared Exceptions (if any):
 _______________________________________________
 
@@ -196,10 +202,10 @@ BUNDLE STATUS: [ ] READY FOR FOREMAN REVIEW  [ ] BLOCKED — REQUIRES: _______
 - `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` v1.1.0 — §3.5–§3.9 (duties)
 - `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.6.0 — §4.3e (compliance gate)
 - `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` v1.4.0 — §14.6 (QP checkpoint)
-- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.8.0 — §Admin-Ceremony Rejection Triggers
+- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.10.0 — §Admin-Ceremony Rejection Triggers
 - `governance/checklists/execution-ceremony-admin-reconciliation-matrix.md` — cross-artifact dependencies
 - `governance/checklists/execution-ceremony-admin-anti-patterns.md` — auto-fail conditions
 
 ---
 
-*Version: 1.2.0 | Effective: 2026-04-17 | Amended: 2026-04-20 (v1.2.0) — Added checks 5.10 and 5.11: active final-state bundle IAA token/session coherence + historical archive separation (AAP-22 / ACR-15 / §4.3e Check L; maturion-isms#1422); updated Section 9 final acceptance block to require explicit AAP-22 coherence confirmation | Amended: 2026-04-19 (v1.1.0) — Added check 3.8: `## Ripple/Cross-Agent Assessment` section presence in PREHANDOVER proof (HFMC-01 / AAP-20); updated Section 9 final acceptance block to require explicit Ripple/Cross-Agent Assessment confirmation | Authority: CS2 (Johan Ras)*
+*Version: 1.3.0 | Effective: 2026-04-17 | Amended: 2026-04-20 (v1.3.0) — Added checks 5.10 and 5.11: active final-state bundle IAA token/session coherence + historical archive separation (AAP-22 / ACR-16 / §4.3e Check L; maturion-isms#1422); updated Section 9 final acceptance block to require explicit AAP-22 coherence confirmation; updated IAA canon reference to v1.10.0 | Amended: 2026-04-19 (v1.2.0) — Added check 3.9: active control artifact normalization required before final handback (AAP-21 / ACR-15 / A-039); updated Section 9 final acceptance block to include active tracker normalization confirmation | Amended: 2026-04-19 (v1.1.0) — Added check 3.8: `## Ripple/Cross-Agent Assessment` section presence in PREHANDOVER proof (HFMC-01 / AAP-20) | Authority: CS2 (Johan Ras)*

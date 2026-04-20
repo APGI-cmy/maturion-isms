@@ -21,6 +21,7 @@ wave:                   <wave identifier>
 
 ## Delivery State
 final_state:            COMPLETE             # COMPLETE | BLOCKED (blocked must not be submitted)
+active_trackers_normalized: YES          # YES when all active control artifacts (wave-current-tasks.md, BUILD_PROGRESS_TRACKER current-wave entries, active readiness trackers) show post-assurance state — see AAP-21 / ACR-15 / A-039
 opojd_compliance:       CONFIRMED            # CONFIRMED | VIOLATED (violated must not be submitted)
 
 ## Gate Results
@@ -37,7 +38,7 @@ iaa_rejection_reference: none               # path to rejection-package file if 
 active_bundle_iaa_coherence: CONFIRMED      # CONFIRMED | INCOHERENT (INCOHERENT must not be submitted)
                                              # All active final-state artifacts (this proof, latest session memory,
                                              # wave record ## TOKEN, wave-current-tasks.md) must reference the same
-                                             # iaa_session_reference value above. AAP-22 / ACR-15 / §4.3e Check L.
+                                             # iaa_session_reference value above. AAP-22 / ACR-16 / §4.3e Check L.
 
 ## Artifacts Committed
 prehandover_proof:      .agent-admin/prehandover/proof-<PR#>.md
@@ -94,4 +95,4 @@ suggestions:            NONE                 # NONE | see .agent-workspace/<agen
 
 ---
 
-*Template Version: 1.2.0 | Authority: ECAP-001 v1.1.0 | Effective: 2026-04-17 | Amended: 2026-04-20 (v1.2.0) — Added `active_bundle_iaa_coherence` field to IAA Assurance section (AAP-22 / ACR-15 / §4.3e Check L; maturion-isms#1422); this field confirms single-session/single-token coherence across the entire active final-state bundle before handover | Amended: 2026-04-19 (v1.1.0) — Added mandatory `## Ripple/Cross-Agent Assessment` section (HFMC-01 / AAP-20 / ACR-14) as structural non-optional section; YAML ripple-assessment-summary retained for machine-readable status*
+*Template Version: 1.2.0 | Authority: ECAP-001 v1.1.0 | Effective: 2026-04-17 | Amended: 2026-04-20 (v1.2.0) — Added `active_bundle_iaa_coherence` field to IAA Assurance section (AAP-22 / ACR-16 / §4.3e Check L; maturion-isms#1422); this field confirms single-session/single-token coherence across the entire active final-state bundle before handover | Amended: 2026-04-19 (v1.1.0) — Added mandatory `## Ripple/Cross-Agent Assessment` section (HFMC-01 / AAP-20 / ACR-14) as structural non-optional section; YAML ripple-assessment-summary retained for machine-readable status*

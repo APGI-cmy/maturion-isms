@@ -1,7 +1,7 @@
 # Wave Reconciliation Checklist
 
-**Version**: 1.0.0
-**Date**: 2026-03-18
+**Version**: 1.2.0
+**Date**: 2026-04-19
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Owner**: foreman-v2-agent (primary) / CodexAdvisor-agent (NBR creation steps)
 **Status**: ACTIVE
@@ -134,6 +134,31 @@ If this wave triggered more than one IAA invocation round (R2, R3, etc.):
 - [ ] `wave-current-tasks.md` shows all tasks 🟢 DONE
 - [ ] Wave Completion Gate in `wave-current-tasks.md` confirmed
 
+**D-2. Active control artifact normalization (A-039 / AAP-21 / ACR-15)**
+
+> ⚠️ **MANDATORY** — HANDOVER BLOCKER. All active control artifacts for this wave must be normalized to post-assurance state before final handback, merge gate release, and IAA invocation.
+
+**What counts as an "active control artifact"** (must be normalized):
+- `wave-current-tasks.md` (the active/main file, not historical copies)
+- `BUILD_PROGRESS_TRACKER.md` entries for the current wave/stage
+- Any current stage-readiness tracker or active wave summary referenced in the final handback bundle
+
+**What does NOT count** (immutable historical archives — governed by A-019, read-only post-commit):
+- Committed PREHANDOVER proofs from prior waves
+- Historical session memories
+- Historical wave records (`.agent-admin/assurance/iaa-wave-record-*.md` from prior waves)
+
+**Normalization checks:**
+
+- [ ] `wave-current-tasks.md` — all wave tasks show ✅ COMPLETE or equivalent final state; no task shows 🔄 IN PROGRESS, ❌ BLOCKED, or ⏳ PENDING for work that is now done
+- [ ] `BUILD_PROGRESS_TRACKER.md` — if this wave includes a stage completion, the tracker entry for that stage is updated to COMPLETE/DONE
+- [ ] No active control artifact for this wave contains: `PENDING`, `in progress`, `in-progress`, `IAA Final Audit: PENDING`, `Phase 4 pending`, `awaiting token`, or equivalent pre-final state for work that is now complete
+- [ ] The final-state claims in wave record + PREHANDOVER proof + session memory are coherent with what the active control artifacts show (all tell the same post-token story)
+
+**Scan command**: `grep -rniE "\bPENDING\b|\bin[ _-]?progress\b" .agent-workspace/foreman-v2/personal/wave-current-tasks*.md`
+
+**Exception handling**: If an active control artifact cannot be updated (e.g. it was committed to a different branch that has since been merged), record the artifact path and reason explicitly in the PREHANDOVER proof and obtain Foreman sign-off. Silent omission is NOT an acceptable exception.
+
 ---
 
 ## Recording Completion
@@ -162,6 +187,7 @@ Add the following block to the PREHANDOVER proof under `## Wave Reconciliation C
 
 ### D — Evidence Completeness
 - D-1 Evidence bundle: [COMPLETE / INCOMPLETE — list missing items]
+- D-2 Active control artifact normalization (A-039): [PASS — all active trackers normalized / BLOCKED — list artifacts with stale state]
 
 **Checklist verdict: [PASS — proceed to PR open / BLOCKED — [reason]]**
 ```
@@ -172,8 +198,9 @@ Add the following block to the PREHANDOVER proof under `## Wave Reconciliation C
 
 | Version | Date | Change |
 |---------|------|--------|
-| 1.0.0 | 2026-03-18 | Initial checklist — CS2 mandate from issue #[wave-19-20-retro] closing post-wave registry and liveness automation gaps identified in PR #1142 review |
+| 1.2.0 | 2026-04-19 | D-2 ACTIVE-TRACKER-NORMALIZATION added — mandatory pre-handover check that all active control artifacts (wave-current-tasks.md, BUILD_PROGRESS_TRACKER entries, active readiness trackers) are normalized to post-assurance state before merge gate release; defines "active control artifact" vs "immutable historical archive"; cross-references A-039 / AAP-21 / ACR-15; updated recording template to include D-2 line. Wave: wave-active-tracker-coherence-20260419 (issue #1412). |
 | 1.1.0 | 2026-03-18 | WAVE-RECONCIL-001 + GOV-CONCERN-B follow-up: added B-3 (token file invalidation audit); added B-3 evidence field; cross-reference to INVALIDATED-PREFIX-CONVENTION.md |
+| 1.0.0 | 2026-03-18 | Initial checklist — CS2 mandate from issue #[wave-19-20-retro] closing post-wave registry and liveness automation gaps identified in PR #1142 review |
 
 ---
 

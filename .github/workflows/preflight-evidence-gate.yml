@@ -11,8 +11,9 @@ name: Preflight Evidence Gate
 # Assignee: Copilot (automation script / CI infra update)
 
 on:
-  # FIX: Changed from pull_request to pull_request_target to bypass Copilot agent approval gate
-  pull_request_target:
+  # Changed back to pull_request so the workflow runs from the PR head branch (not main),
+  # ensuring regex fixes and other in-PR workflow changes are exercised by CI.
+  pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
 
@@ -445,7 +446,7 @@ jobs:
           # ----------------------------------------------------------------
           PROOF_FILES=$(git diff --name-only --diff-filter=AM \
             "${BASE_SHA}...HEAD" 2>/dev/null | \
-            grep "^${PROOF_DIR}/proof-.*\.md$" | sort)
+            grep "^${PROOF_DIR}/proof-.*\.md$" | sort || true)
 
           if [ -z "${PROOF_FILES}" ]; then
             echo "ℹ️  No PREHANDOVER proof files added or modified by this PR."
@@ -510,7 +511,7 @@ jobs:
             if [ -n "${HEADING_LINE}" ]; then
               SECTION=$(tail -n "+$((HEADING_LINE + 1))" "${proof}" 2>/dev/null | awk '/^## / { exit } { print }')
               # Find the separator row (|---|---|---| or |:---|:---:|---| etc.)
-              SEP_LINE=$(echo "${SECTION}" | grep -nE '^\|[[:space:]-:][- :|]*\|' | head -1 | cut -d: -f1)
+              SEP_LINE=$(echo "${SECTION}" | grep -nE '^\|[[:space:]:-][|: -]*\|' | head -1 | cut -d: -f1)
               if [ -n "${SEP_LINE}" ]; then
                 # Data rows come after the separator; exclude all-placeholder rows
                 CONCRETE_ROW=$(echo "${SECTION}" | \
