@@ -58,11 +58,11 @@
 
 | Rule | Description | Obligation |
 |------|-------------|-----------|
-| ACR-12 | Cross-artifact final-state contradiction (active-bundle scoped) | New AAP-21 and ACR-15 must EXTEND, not weaken or contradict, ACR-12. Verify no semantic overlap or conflict between the new token/session coherence check and existing cross-artifact contradiction rule. |
+| ACR-12 | Cross-artifact final-state contradiction (active-bundle scoped) | New AAP-22 and ACR-16 must EXTEND, not weaken or contradict, ACR-12. Verify no semantic overlap or conflict between the new token/session coherence check and existing cross-artifact contradiction rule. |
 | FAIL-ONLY-ONCE A-029 | PREHANDOVER proof immutability / token field architecture | New PREHANDOVER template field for token/session coherence must be compatible with the read-only post-commit architecture. Field must not require post-commit editing. |
 | FAIL-ONLY-ONCE A-015 | Ceremony required for governance patches | PREHANDOVER proof + session memory required for this wave, regardless of T3 simplicity claim. |
 | FAIL-ONLY-ONCE A-023 / AAP-20 | Ripple/Cross-Agent Assessment required | PREHANDOVER proof must include explicit ripple assessment block. For a governance-only wave, this requires explicit "no code/schema/API/agent-contract downstream impact" declaration per AAP-20. |
-| Active-bundle scope rule (ACR §v1.7.0) | Active-bundle definition for ACR checks | New active-bundle scope rule must be consistent with the current §Active-Bundle Scope Rule (v1.7.0); ACR-15 must not redefine the active bundle in a way that conflicts with ACR-12's scope definition. |
+| Active-bundle scope rule (ACR §v1.7.0) | Active-bundle definition for ACR checks | New active-bundle scope rule must be consistent with the current §Active-Bundle Scope Rule (v1.7.0); ACR-16 must not redefine the active bundle in a way that conflicts with ACR-12's scope definition. |
 
 ### Ceremony Admin Expectations
 
