@@ -89,8 +89,9 @@ suggestions:            NONE
 ### Gate 2: YAML Syntax Validation
 
 **Status**: ✅ PASS
-**Applicability**: No YAML files modified in this wave
-**Command**: `python3 -c "import json; json.load(open('governance/CANON_INVENTORY.json')); print('JSON valid')"` → Exit code: 0
+**Applicability**: Applicable — YAML modified in this wave: `.github/workflows/preflight-evidence-gate.yml` (in scope for validation evidence)
+**Command**: `ruby -e "require 'yaml'; YAML.load_file('.github/workflows/preflight-evidence-gate.yml'); puts 'YAML valid'"` → Exit code: 0
+**Supplemental Evidence**: `python3 -c "import json; json.load(open('governance/CANON_INVENTORY.json')); print('JSON valid')"` → Exit code: 0
 
 ---
 
