@@ -1001,9 +1001,10 @@ builders. The following items remain blocked AFTER this appointment is complete:
    begins work.
 
 5. **Stage 11 IAA ASSURANCE-TOKEN** — Stage 11 does not reach formal COMPLETE status until
-   the IAA independent-assurance-agent issues an ASSURANCE-TOKEN for this wave. The token
-   is expected as Phase 4 of the Stage 11 wave ceremony. BUILD_PROGRESS_TRACKER.md will be
-   updated to reflect IAA ASSURANCE-TOKEN status when issued.
+   the IAA independent-assurance-agent issues an ASSURANCE-TOKEN for this wave. For wave
+   `mmm-stage11-builder-appointment-20260420`, the Stage 11 ASSURANCE-TOKEN has been
+   issued and recorded in the corresponding IAA wave record, and `BUILD_PROGRESS_TRACKER.md`
+   already reflects the issued Stage 11 IAA ASSURANCE-TOKEN status.
 
 ---
 
