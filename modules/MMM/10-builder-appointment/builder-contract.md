@@ -1059,7 +1059,7 @@ issue maturion-isms#1426)
 2. foreman-v2-agent v6.2.0 delegated Stage 11 production to mat-specialist
 3. mat-specialist produced this builder-contract.md v1.0.0
 4. Foreman QP evaluation required before CS2 merge
-5. IAA independent-assurance-agent to issue ASSURANCE-TOKEN at Phase 4
+5. IAA independent-assurance-agent issued the ASSURANCE-TOKEN at Phase 4 (`.agent-admin/assurance/iaa-wave-record-mmm-stage11-builder-appointment-20260420.md`)
 6. CS2 to merge PR — formal Stage 11 closure on main branch
 
 **Builder Appointment Authority Statement**:  
