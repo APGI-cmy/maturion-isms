@@ -2,8 +2,8 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-04-19  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE)
+**Last Updated**: 2026-04-20  
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — This is the designated primary operational monitor for MMM stage progress. CS2 should use this document as the main live progress dashboard.  
@@ -30,7 +30,7 @@ error from the original governance layer-down. The module is MMM (Maturity Manag
 | Stage 1.5 | TRS | Stage 4 | TRS | COMPLETE |
 | Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS — artifacts produced, pending CS2 approval |
 | Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | COMPLETE — artifacts produced (mmm-stage8-implementation-plan-20260417); 9 build waves defined; pending CS2 approval |
-| Stage 4 | Builder Appointment | Stage 11 | Builder Appointment | NOT_STARTED |
+| Stage 4 | Builder Appointment | Stage 11 | Builder Appointment | COMPLETE ✅ — builder-contract.md v1.0.0 (mmm-stage11-builder-appointment-20260420); all 5 builders appointed; SB-002 resolved; SB-003 credential gate active |
 | Stage 5 | Build | Stage 12 | Build | NOT_STARTED (partial AIMC artifact) |
 | — | (new stage) | Stage 2 | UX Workflow & Wiring Spec | COMPLETE |
 | — | (new stage) | Stage 6 | QA-to-Red | COMPLETE — artifacts produced, pending CS2 approval |
@@ -379,21 +379,33 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 ---
 
 ### Stage 11: Builder Appointment
-**Status**: [ ] NOT_STARTED  
+**Status**: [x] COMPLETE ✅ — Wave mmm-stage11-builder-appointment-20260420  
 **Location**: `modules/MMM/10-builder-appointment/`  
+**Wave**: mmm-stage11-builder-appointment-20260420  
 **Key Artifacts**:
-- [ ] `builder-contract.md` — Explicit builder agent contract
-- [ ] Formal appointment issued by Foreman after all Stages 1–10 gate-passed
-- [ ] Appointment recorded in module tracker
-- [ ] Builder appointed by FM
+- [x] `builder-contract.md` v1.0.0 — Stage 11 Builder Appointment primary artifact; all 5 builders formally appointed with scope, authority boundaries, and carry-forward obligations
+- [x] All 5 hard start conditions (HSC-1–HSC-5) verified SATISFIED
+- [x] Formal appointments issued: schema-builder (B1), api-builder (B2–B6), ui-builder (B3–B6), integration-builder (B7), qa-builder (B8/B9 + parallel gate)
+- [x] SB-002 resolved in appointment text — api-builder Deno/Supabase Edge Functions declared as EXCLUSIVE runtime (Next.js API routes prohibited)
+- [x] SB-003 preserved as credential hard gate — B7 blocked until CS2 provisions AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN
+- [x] CG-001–CG-005 convergence-governance laws stated per law (§6)
+- [x] NBR-001–NBR-005 anti-regression obligations declared for all Stage 12 waves (§7)
+- [x] Wave sequencing and dependency map produced (§8)
+- [x] All 8 mandatory questions from maturion-isms#1426 answered
+- [x] BUILD_PROGRESS_TRACKER Stage 11 updated COMPLETE (this update)
 
-**Completion Date**: N/A  
-**Approval Required**: Yes
-- [ ] Approved by Foreman
-**Approval Date**: N/A
-**Approved By**: N/A
-**Approval Reference**: N/A
-**Notes**: Folder exists but not yet populated. Mapped from old Stage 4.
+**Completion Date**: 2026-04-20  
+**Approval Required**: Yes — pending CS2 PR merge  
+**Approval Status**: Approved by Foreman (QP) + IAA ASSURANCE-TOKEN ISSUED ✅
+- [x] Approved by Foreman (foreman-v2-agent v6.2.0 — QP; mat-specialist produced)
+- [x] IAA ASSURANCE-TOKEN: IAA-session-mmm-stage11-builder-appointment-20260420-PASS (Phase 4, SHA 7ee770a, 22/22 checks PASS)
+- [ ] CS2 PR merge pending
+**Approval Date**: 2026-04-20 (Foreman QP)  
+**Approved By**: foreman-v2-agent v6.2.0 (QP); CS2 formal approval pending PR merge  
+**Approval Reference**: maturion-isms#1426  
+**Producing Agent**: mat-specialist (delegated by foreman-v2-agent v6.2.0)  
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-wave-record-mmm-stage11-builder-appointment-20260420.md` — CLEARED (SHA 0489924)  
+**Notes**: Stage 11 COMPLETE. All 5 builders formally appointed (builder-contract.md v1.0.0, wave: mmm-stage11-builder-appointment-20260420). SB-002 resolved in appointment text — Deno/Supabase Edge Functions declared as EXCLUSIVE backend runtime for api-builder in MMM Stage 12; Next.js API routes explicitly prohibited. SB-003 credential gate PRESERVED as B7 hard gate — integration-builder B7 wave-start blocked until CS2 provisions AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN. CG-001–CG-005 convergence-governance laws and NBR-001–NBR-005 anti-regression obligations carried forward and declared binding for all Stage 12 build waves. Stage 12 B7 remains blocked on SB-003. All other waves (B1–B6, B8–B9) unblocked pending Foreman wave-start authorisation per wave.
 
 ---
 
@@ -459,17 +471,19 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 10 (IAA Pre-Brief) COMPLETE ✅ — `iaa-pre-brief.md` v1.0.0 produced 2026-04-20; §12 Wave-Level Admin Ceremony Expectations present; ASSURANCE-TOKEN: IAA-session-mmm-stage10-iaa-prebrief-20260420-PASS; Stage 11 (Builder Appointment) now unblocked pending CS2 approval  
-**Overall Progress**: ~83% complete (Stages 1–4, 6–10 gate-passed; Stage 5 artifacts complete — pending CS2 formal approval; Stages 11–12 not started)  
-**Blockers**: CS2 merge approval of this PR (Stage 10) required before Stage 11 can formally begin. SB-002: api-builder Deno/Supabase Edge Function runtime MUST be explicitly declared in Stage 11 appointment brief. SB-003: CS2 must provision AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN before Stage 12 B7 wave-start.  
+**Current Stage**: Stage 11 (Builder Appointment) COMPLETE ✅ — `builder-contract.md` v1.0.0 produced 2026-04-20; all 5 builders formally appointed; SB-002 resolved (Deno/Supabase declared); SB-003 credential gate preserved (B7 hard gate active); CG-001–CG-005 + NBR-001–NBR-005 carried forward; Stage 12 unblocked (B7 blocked on SB-003)  
+**Overall Progress**: ~91% complete (Stages 1–4, 6–11 gate-passed; Stage 5 artifacts complete — pending CS2 formal approval; Stage 12 not started)  
+**Blockers**: CS2 merge approval of this PR (Stage 11) required before Stage 12 can formally begin per wave. SB-003: CS2 must provision AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN before Stage 12 B7 wave-start (all other B1–B6, B8–B9 unblocked). Each Stage 12 wave requires Foreman wave-start authorisation before builder may commence.  
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.  
 **Open Questions**: All RESOLVED through Stage 5. OQ-001 RESOLVED (Stage 4 TRS — CONNECTIVITY-REQUIRED, TR-039–TR-042). OQ-002 RESOLVED (Stage 5 Architecture — capabilities/index.md legacy sub-folder disposition). OQ-003 RESOLVED (Stage 5 Architecture — duplication audit, architecture.md §A12). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.  
 **Next Steps**:
-1. CS2 to merge this PR to formally close Stage 10 on main branch (SB-004)
-2. CS2 to formally approve Stages 5–8 PRs (pending merge — required before Stage 11)
-3. Stage 11 (Builder Appointment) after CS2 approval; Stage 11 briefing MUST include explicit Deno/Supabase Edge Function runtime declaration for api-builder (SB-002)
-4. CS2 to provision credentials (AIMC_SERVICE_TOKEN, PIT_SERVICE_TOKEN) before Stage 12 Wave B7 — HARD GATE confirmed in Stage 9 (SB-003)
-5. Stage 12 (Build Execution / Evidence) after Stage 11 complete + SB-003 credentials provisioned
+1. CS2 to merge this PR to formally close Stage 11 on main branch
+2. CS2 to formally approve Stages 5–10 PRs (pending merge — required before Stage 12)
+3. CS2 to provision credentials (AIMC_SERVICE_TOKEN, PIT_SERVICE_TOKEN) before Stage 12 Wave B7 — HARD GATE (SB-003)
+4. Stage 12 Wave B1 — Foreman wave-start authorisation → schema-builder begins
+5. Stage 12 waves B2–B6 sequentially per dependency map (implementation-plan.md §4 + builder-contract.md §8)
+6. Stage 12 Wave B7 — BLOCKED on SB-003 until CS2 provisions credentials
+7. Stage 12 Waves B8–B9 — qa-builder cross-cutting and golden path verification after B7 COMPLETE
 
 ---
 
