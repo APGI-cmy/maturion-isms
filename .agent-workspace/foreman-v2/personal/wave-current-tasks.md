@@ -65,8 +65,32 @@ B9 (qa-builder) — golden path; requires B7 complete
 
 | Gate | Condition | Status |
 |------|-----------|--------|
-| SB-003 | CS2 provisions AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN before B7 | ⛔ BLOCKED — not yet provisioned |
+| SB-003 | CS2 provisions AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN before B7 | ⚠️ CS2_ACKNOWLEDGED — CS2 has confirmed posture (2026-04-20); credentials will be provisioned via env/secret config only (NOT source control); B7 formally blocked for live/staging until delivery confirmed |
 | SB-002 | api-builder Deno/Edge Functions runtime | ✅ RESOLVED in builder-contract.md §3.2 |
+
+## SB-003 Posture Record (CS2 Confirmation — 2026-04-20)
+
+CS2 (@APGI-cmy) has confirmed the following dual-track posture for SB-003:
+
+**Formal authorization commitment**:
+- `AIMC_BASE_URL` + `AIMC_SERVICE_TOKEN`: CS2 to supply via environment/secret configuration path (Supabase project secrets or CI environment); NOT to be committed to source control
+- `PIT_BASE_URL` + `PIT_SERVICE_TOKEN`: CS2 to supply via environment/secret configuration path; NOT to be committed to source control
+
+**Dual-track posture**:
+- **Track A — CI/local integration**: Stub/mock PIT endpoint is ACCEPTABLE for local development and CI integration tests (already implemented in B6 as 7-step stub); B7 stub tests may run against mock PIT
+- **Track B — Staging E2E / final acceptance**: Live PIT endpoint + `PIT_SERVICE_TOKEN` are REQUIRED for staging E2E and final Stage 12 integration acceptance (B9 golden path)
+
+**B7 formal gate status**:
+- B7 wave-start for live/staging integration remains HARD BLOCKED until CS2 confirms both `AIMC_BASE_URL`/`AIMC_SERVICE_TOKEN` AND `PIT_BASE_URL`/`PIT_SERVICE_TOKEN` are provisioned and accessible from the Supabase Edge Function runtime
+- B7 stub-mode work (already complete as part of B3–B6 stubs) is unaffected
+- B9 golden path cannot close until B7 live integration is verified
+
+**Secret injection path (agreed)**:
+- Secrets go into Supabase project environment variables (Dashboard → Project Settings → Edge Functions → Secrets) or equivalent CI secret store
+- Edge Functions read via `Deno.env.get('AIMC_BASE_URL')`, `Deno.env.get('AIMC_SERVICE_TOKEN')`, `Deno.env.get('PIT_BASE_URL')`, `Deno.env.get('PIT_SERVICE_TOKEN')`
+- No credential values to be committed to repository files, `.env` files, or any source-tracked artifact
+
+**SB-003 clearance trigger**: CS2 must post explicit confirmation message (issue comment or separate session statement) that all 4 env vars are provisioned and reachable from the Edge Function runtime. Only then may foreman-v2-agent authorize integration-builder B7 wave-start.
 
 ## Re-Anchor Pulse
 

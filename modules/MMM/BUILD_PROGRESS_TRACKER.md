@@ -423,7 +423,7 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 - [x] **B4 (Framework Lifecycle)**: COMPLETE ✅ — 6 Edge Functions (mmm-framework-compile, mmm-framework-publish, mmm-upload-framework-source, mmm-ai-framework-parse/generate/alter); J-06–J-08; 78/78 tests GREEN; evidence: `modules/MMM/11-build/B4-framework/wave-b4-evidence.md`; QP PASS
 - [x] **B5 (Assessment Execution)**: COMPLETE ✅ — 3 Edge Functions (mmm-score-confirm, mmm-upload-evidence, mmm-ai-evidence-evaluate); J-09–J-11; HITL TR-033 enforced; 66/66 tests GREEN; evidence: `modules/MMM/11-build/B5-assessment/wave-b5-evidence.md`; QP PASS
 - [x] **B6 (Findings/Reporting)**: COMPLETE ✅ — 3 Edge Functions (mmm-pit-export-send, mmm-pit-evidence-return, mmm-ai-recommend); J-12–J-15; 7-step PIT handshake stubbed; 47/47 tests GREEN; evidence: `modules/MMM/11-build/B6-findings/wave-b6-evidence.md`; QP PASS
-- [ ] **B7 (Boundary Integrations)**: BLOCKED ⛔ — SB-003 credential gate (AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN not provisioned by CS2)
+- [ ] **B7 (Boundary Integrations)**: BLOCKED ⛔ — SB-003 credential gate; CS2 has confirmed posture (2026-04-20): credentials to be provisioned via env/secret config only (never source control); dual-track: stub acceptable for CI (already done), live required for staging E2E. Awaiting CS2 delivery confirmation before B7 live wave-start
 - [x] **B8 (Cross-Cutting)**: COMPLETE ✅ — 71 tests across D5/D7/D8/D9/D10/D11 (188 assertions); B7 blocked noted; evidence: `modules/MMM/11-build/B8-cross-cutting/wave-b8-evidence.md`; QP PASS
 - [ ] **B9 (Golden Path)**: BLOCKED — depends on B7 (SB-003)
 
@@ -491,19 +491,18 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 11 (Builder Appointment) COMPLETE ✅ — `builder-contract.md` v1.0.0 produced 2026-04-20; all 5 builders formally appointed; SB-002 resolved (Deno/Supabase declared); SB-003 credential gate preserved (B7 hard gate active); CG-001–CG-005 + NBR-001–NBR-005 carried forward; Stage 12 unblocked (B7 blocked on SB-003)  
-**Overall Progress**: ~91% complete (Stages 1–4, 6–11 gate-passed; Stage 5 artifacts complete — pending CS2 formal approval; Stage 12 not started)  
-**Blockers**: CS2 merge approval of this PR (Stage 11) required before Stage 12 can formally begin per wave. SB-003: CS2 must provision AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN before Stage 12 B7 wave-start (all other B1–B6, B8–B9 unblocked). Each Stage 12 wave requires Foreman wave-start authorisation before builder may commence.  
+**Current Stage**: Stage 12 (Build Execution) IN_PROGRESS — B1–B6 + B8 COMPLETE (630/630 tests GREEN); SB-003 posture confirmed by CS2 (2026-04-20): AIMC_BASE_URL/AIMC_SERVICE_TOKEN + PIT_BASE_URL/PIT_SERVICE_TOKEN to be provisioned via env/secret (not source control); dual-track posture: stub/mock acceptable for CI, live required for staging E2E; B7 formally blocked for live/staging until CS2 delivers all 4 env vars; B9 blocked on B7  
+**Overall Progress**: ~95% complete (B1–B6 + B8 DONE; B7/B9 pending SB-003 clearance)  
+**Blockers**: SB-003 — CS2 must provision and confirm `AIMC_BASE_URL`, `AIMC_SERVICE_TOKEN`, `PIT_BASE_URL`, `PIT_SERVICE_TOKEN` via Supabase project secrets or equivalent CI secret store before B7 live wave-start authorization. CS2 has acknowledged this gate (2026-04-20) and committed to provisioning via env/secret config path.  
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.  
 **Open Questions**: All RESOLVED through Stage 5. OQ-001 RESOLVED (Stage 4 TRS — CONNECTIVITY-REQUIRED, TR-039–TR-042). OQ-002 RESOLVED (Stage 5 Architecture — capabilities/index.md legacy sub-folder disposition). OQ-003 RESOLVED (Stage 5 Architecture — duplication audit, architecture.md §A12). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.  
 **Next Steps**:
-1. CS2 to merge this PR to formally close Stage 11 on main branch
-2. CS2 to formally approve Stages 5–10 PRs (pending merge — required before Stage 12)
-3. CS2 to provision credentials (AIMC_SERVICE_TOKEN, PIT_SERVICE_TOKEN) before Stage 12 Wave B7 — HARD GATE (SB-003)
-4. Stage 12 Wave B1 — Foreman wave-start authorisation → schema-builder begins
-5. Stage 12 waves B2–B6 sequentially per dependency map (implementation-plan.md §4 + builder-contract.md §8)
-6. Stage 12 Wave B7 — BLOCKED on SB-003 until CS2 provisions credentials
-7. Stage 12 Waves B8–B9 — qa-builder cross-cutting and golden path verification after B7 COMPLETE
+1. CS2 to provision and confirm delivery of all 4 env vars via Supabase project secrets: `AIMC_BASE_URL`, `AIMC_SERVICE_TOKEN`, `PIT_BASE_URL`, `PIT_SERVICE_TOKEN` — clears SB-003
+2. On SB-003 clearance: foreman-v2-agent authorizes integration-builder B7 wave-start
+3. Stage 12 Wave B7 — integration-builder: wire live AIMC + PIT + KUC endpoints
+4. Stage 12 Wave B9 — qa-builder: golden path verification (GP-001–GP-010) using live boundaries
+5. Phase 4 ECAP ceremony — execution-ceremony-admin-agent
+6. Phase 4 IAA Final Audit — independent-assurance-agent
 
 ---
 
