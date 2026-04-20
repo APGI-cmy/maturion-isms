@@ -56,5 +56,24 @@ explicitly recorded.
 
 ---
 
+## A-031 Carve-Out — IAA Ceremony Artifacts
+
+Per A-031, IAA ceremony artifacts written by `independent-assurance-agent` to its own workspace
+during prior rejection ceremonies on this branch are excluded from `approved_artifact_paths`
+and are NOT subject to A-026 scope declaration requirements.
+
+The following IAA-owned ceremony artifacts were committed on this branch during R1 and R2
+REJECTION-PACKAGE runs and are covered by this carve-out:
+
+- `.agent-workspace/independent-assurance-agent/memory/session-165-aimc-strategy-followup-20260420.md`
+  (R1 rejection ceremony session memory — IAA-authored)
+- `.agent-workspace/independent-assurance-agent/memory/session-165-aimc-strategy-followup-20260420-R2.md`
+  (R2 rejection ceremony session memory — IAA-authored)
+
+All IAA ceremony artifacts at path `.agent-workspace/independent-assurance-agent/` from any
+R-series rejection run on this branch are covered by this A-031 carve-out.
+
+---
+
 **Created**: 2026-04-20
 **Created by**: foreman-v2-agent v6.2.0
