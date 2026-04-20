@@ -69,10 +69,10 @@ REQUIRED Stage 8 supplement — not optional context.
 
 ### HSC-5 Detail
 BUILD_PROGRESS_TRACKER.md reviewed 2026-04-20. Stage 10 section shows COMPLETE ✅ with
-ASSURANCE-TOKEN recorded. Stage 11 section shows NOT_STARTED with no contradictory artifact
-state. No stale wave tokens, session drift, or active-artifact contradictions detected.
-CG-001–CG-005 and NBR-001/NBR-002 carry-forward state is consistent across tracker, builder
-checklist, and IAA pre-brief.
+ASSURANCE-TOKEN recorded. No contradictory artifact state detected. No stale wave tokens,
+session drift, or active-artifact contradictions detected. CG-001–CG-005 and
+NBR-001/NBR-002 carry-forward state is consistent across tracker, builder checklist, and
+IAA pre-brief.
 
 ---
 
