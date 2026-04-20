@@ -101,7 +101,25 @@
 
 ## TOKEN
 
-*(To be populated after IAA Phase 4 final audit)*
+**PHASE_B_BLOCKING_TOKEN**: IAA-session-token-session-coherence-hardening-20260420-PASS
+
+**Issued**: 2026-04-20
+**IAA Session**: session-token-session-coherence-hardening-20260420
+**PR**: copilot/canonize-active-final-state-token (issue #1422)
+**Produced by**: foreman-v2-agent (class: POLC-Orchestration)
+**Invoked by**: foreman-v2-agent
+**Adoption phase**: PHASE_B_BLOCKING — hard gate ACTIVE
+**Checks run**: 13 checks: 13 PASS, 0 FAIL
+**Category**: CANON_GOVERNANCE
+**Verdict**: ASSURANCE-TOKEN — Merge permitted subject to CS2 approval
+
+**⚠️ SELF-MOD-IAA-001 EXCLUSION — CS2 ACTION REQUIRED BEFORE MERGE**:
+`governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` was excluded from IAA assurance
+per SELF-MOD-IAA-001 / §Independence Requirements rule 1. IAA cannot review changes to its
+own governing canon. **CS2 must post a CS2-DIRECT-REVIEW comment on this PR scoped to
+this specific file before merge is permitted.** All other 6 governance files fully assured.
+
+**Token reference**: IAA-session-token-session-coherence-hardening-20260420-PASS
 
 ---
 
