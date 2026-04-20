@@ -8,8 +8,8 @@
 **CS2 Authorization**: CONFIRMED — issue #1426 opened directly by CS2 (@APGI-cmy); assigns foreman-v2-agent
 **ceremony_admin_appointed**: true — PRE_BUILD_STAGE_MODEL governance doc wave; ECAP appointment required per ECAP-001 §5.2
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-stage11-builder-appointment-20260420.md
-iaa_prebrief_commit: PENDING
-iaa_prebrief_status: PENDING
+iaa_prebrief_commit: 0489924
+iaa_prebrief_status: COMPLETE — IAA-session-mmm-stage11-builder-appointment-20260420-PREBRIEF
 
 ## Prior Wave Reference
 
@@ -21,7 +21,7 @@ Carry-forwards: SB-002 (api-builder Deno clarification), SB-003 (B7 credentials)
 
 | Task ID | Task | Owner | Status |
 |---------|------|-------|--------|
-| IAA-PRE | IAA Pre-Brief — wave record PRE-BRIEF section | independent-assurance-agent | ⏳ PENDING |
+| IAA-PRE | IAA Pre-Brief — wave record PRE-BRIEF section | independent-assurance-agent | ✅ COMPLETE — SHA 0489924 |
 | D1 | `builder-contract.md` v1.0.0 — Stage 11 Builder Appointment primary artifact | mat-specialist | ⏳ PENDING — awaiting IAA pre-brief |
 | D2 | Formal builder appointment: builder → wave/responsibility mapping | mat-specialist | ⏳ PENDING — within D1 |
 | D3 | Stage 10 carry-forward mapping (qualifying tasks, admin ceremony, canon overlays) | mat-specialist | ⏳ PENDING — within D1 |
