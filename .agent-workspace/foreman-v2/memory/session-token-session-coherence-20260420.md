@@ -91,8 +91,8 @@ agents_delegated_to:
 | Task | Artifact | Status |
 |------|----------|--------|
 | D1 — AAP-22 | `governance/checklists/execution-ceremony-admin-anti-patterns.md` v1.4.0 | ✅ COMPLETE |
-| D2 — ACR-15 + authoritative-source rule + proof-of-operation | `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.8.0 | ✅ COMPLETE (CS2 direct review required) |
-| D3 — ECAP checklist checks 5.10 + 5.11 | `governance/checklists/execution-ceremony-admin-checklist.md` v1.2.0 | ✅ COMPLETE |
+| D2 — ACR-16 + authoritative-source rule + proof-of-operation | `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.10.0 | ✅ COMPLETE (CS2 direct review required) |
+| D3 — ECAP checklist checks 5.10 + 5.11 | `governance/checklists/execution-ceremony-admin-checklist.md` v1.3.0 | ✅ COMPLETE |
 | D4 — §4.3e Check L + AAP-22 | `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.6.0 | ✅ COMPLETE |
 | D5 — Certification item 14 | `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md` v3.2 | ✅ COMPLETE |
 | D6 — `active_bundle_iaa_coherence` field | `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` v1.2.0 | ✅ COMPLETE |
