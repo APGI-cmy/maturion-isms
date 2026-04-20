@@ -114,8 +114,6 @@ canon_inventory_hash_sha256: 90f73f292d1b8433c3fbd372d016ce612bd3e236b6fc213b253
 
 **D-2 verdict**: PASS — active trackers normalized for all deliverable tasks.
 
-## Ripple / Cross-Agent Assessment
-
 ## Ripple/Cross-Agent Assessment
 
 | Agent / System | Impact | Action Required |
