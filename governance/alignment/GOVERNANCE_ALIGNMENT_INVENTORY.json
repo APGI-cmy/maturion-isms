@@ -4,7 +4,7 @@
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory — tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
   "last_updated": "2026-04-20",
-  "last_ripple_commit": "56d92004d867a8e4148133e007040ca1ff062318",
+  "last_ripple_commit": "818bab2a3771ff72d6a999e0aaa069304728cc3a",
   "last_ripple_timestamp": "2026-04-17T11:50:11Z",
   "alignment_summary": {
     "total_artifacts": 42,
@@ -19,14 +19,14 @@
     {
       "filename": "AGENT_HANDOVER_AUTOMATION.md",
       "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
-      "canonical_version": "1.4.1",
-      "local_version": "1.4.1",
-      "canonical_hash_sha256": "55f7f0e4c7f3a3716b6d43fa81679da06350fdd51c943a3cdbb841a01989f113",
-      "local_hash_sha256": "e3eb9e3388f89a559a954d1b096adf3f9b48eb822cba4edad616b0d86607e5cc",
+      "canonical_version": "1.6.0",
+      "local_version": "1.6.0",
+      "canonical_hash_sha256": "a4150c5711462c09b121390e09c74c4d2dd992bf968261e3089fadfbc9e678ae",
+      "local_hash_sha256": "55eb42325315f549f4b545d1346a328eab11db2d4a8242f6c241af90dc917e82",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-04-20T07:37:36Z",
-      "change_note": "v1.4.1: §4.3e Admin Ceremony Compliance Gate — stale-wording scan scope finalized; auto-fail rules table (AAP-01 through AAP-09) added. Layered down via CI ripple PR #1395. Hash updated from d4860fab... to 55f7f0e4..."
+      "last_verified": "2026-04-20T15:09:00Z",
+      "change_note": "v1.6.0: Added §4.3e Check L — active final-state bundle token/session coherence (AAP-22 / ACR-16); added AAP-22 to auto-fail rules table; wave-current-tasks.md included in active-bundle scope for token/session coherence checks (maturion-isms#1422). Layered down via ripple 818bab2a3771ff72d6a999e0aaa069304728cc3a."
     },
     {
       "filename": "ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
@@ -155,14 +155,14 @@
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-      "canonical_version": "1.6.0",
-      "local_version": "1.6.0",
-      "canonical_hash_sha256": "1d0c37190de3d232495e58d3f1984a1feb042c178227ce46c0229e6fdecc3ae9",
-      "local_hash_sha256": "76d5f54a6cbb4819b2cd03e490033d8a9fffd4e5f2943410e8724bdf8f1a9656",
+      "canonical_version": "1.10.0",
+      "local_version": "1.10.0",
+      "canonical_hash_sha256": "3426a2f6ae643d4902387cb8ca27cdf78869a6ac02cb9be5b0f9f501b2f5677a",
+      "local_hash_sha256": "5770a6ce87ac521fd250e9240eb2e69777422e064cbf9b01d7b1e6f26953acec",
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
-      "last_verified": "2026-04-20T07:37:36Z",
-      "change_note": "v1.6.0: Admin-Ceremony Rejection Triggers added (ACR-01 through ACR-08) — binary IAA rejection on ceremony defects. INTERNAL — behavior consequences affect repo handover. Layered down via CI ripple PR #1395. Hash updated from f79752f9... to 1d0c3719..."
+      "last_verified": "2026-04-20T15:09:00Z",
+      "change_note": "v1.10.0: Added ACR-16 (active final-state token/session incoherence rejection trigger); added §Authoritative-Source Rule for Current Token/Session; extended active-bundle scope rule to include wave-current-tasks.md for ACR-16 checks; added §Proof-of-Operation worked examples for AAP-22/ACR-16 (maturion-isms#1422). Layered down via ripple 818bab2a3771ff72d6a999e0aaa069304728cc3a."
     },
     {
       "filename": "IAA_PRE_BRIEF_PROTOCOL.md",
@@ -522,5 +522,5 @@
     "created_by": "governance-liaison-isms session-035",
     "last_updated_by": "governance-liaison-isms session-065-20260416"
   },
-  "last_updated_by": "governance-liaison-isms session-065-20260416"
+  "last_updated_by": "governance-liaison-isms session-layer-down-818bab2a-20260420"
 }
