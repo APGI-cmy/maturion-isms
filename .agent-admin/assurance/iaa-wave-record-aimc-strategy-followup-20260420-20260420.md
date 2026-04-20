@@ -242,3 +242,30 @@ The tracking records (D4–D6) describe forthcoming waves. IAA declares its anti
 **Prevention action**: Foreman should declare all routine parking-station updates in scope declarations, or escalate to CS2 to codify a foreman parking-station carve-out rule (analogous to A-031 for IAA artifacts) in FAIL-ONLY-ONCE.
 
 **All other checks PASS**: D3–D6 substance PASS; sequencing constraints all satisfied; PREHANDOVER committed; A-029 token reference pre-populated correctly; A-021 clean working tree confirmed; GAP-009 REMEDIATED; canon alignment complete; convergence bridge dependency gates correctly documented.
+
+---
+
+### Rejection R2 — session-165-aimc-strategy-followup-20260420
+
+**Date**: 2026-04-20
+**IAA session**: session-165-aimc-strategy-followup-20260420 (R2)
+**Verdict**: REJECTION-PACKAGE (R2)
+**R2 reference**: IAA-session-165-aimc-strategy-followup-20260420-R2-REJECTED
+
+**Checks run**: 11 total — 10 PASS, 1 FAIL
+
+**Finding summary**:
+- **A-026 FAIL**: `.agent-workspace/independent-assurance-agent/memory/session-165-aimc-strategy-followup-20260420.md` is present in `git diff origin/main...HEAD` (committed by IAA at a5c5549 during R1 rejection ceremony) but NOT declared in `approved_artifact_paths` in the scope declaration. A-031 carve-out IS applicable (file is in `.agent-workspace/independent-assurance-agent/` — IAA's own write path; written during prior REJECTION-PACKAGE ceremony on this branch), but the A-031 carve-out note is ABSENT from the scope declaration. Per A-031: "If YES but carve-out note is absent → A-026 FAIL."
+
+**Context**: This finding was not raisable at R1 time — the IAA session memory (a5c5549) was committed by IAA AFTER the R1 verdict was rendered. When the foreman committed the R1 fix (399ab1b), the IAA session memory had already appeared in the diff. The foreman's fix addressed only the R1-identified finding (suggestions-log.md) and did not apply the A-031 carve-out procedure.
+
+**Fix required** (choose one):
+- **Option A**: Add `.agent-workspace/independent-assurance-agent/memory/session-165-aimc-strategy-followup-20260420.md` to `approved_artifact_paths` in the scope declaration.
+- **Option B**: Add the following note to the scope declaration under a new "Governance Actions" section: *"IAA ceremony artifacts from session-165 R1 rejection committed on branch (IAA session memory) excluded from declaration per A-031 carve-out. These are IAA-owned files; producing agent deliverables are fully declared above."*
+- Then: commit, push, and re-invoke IAA as R3.
+
+**Classification**: Ceremony
+
+**Prevention action**: Harden scope declaration template — add a standard A-031 carve-out placeholder so it is always present whenever a prior IAA rejection has occurred on the branch. This eliminates the recurring pattern of IAA ceremony artifacts appearing in the diff without a carve-out note.
+
+**All other checks PASS**: R1 fix correctly applied (suggestions-log.md declared); D1–D9 all committed; A-029 token pre-populated correctly; A-021 clean working tree; D3–D6 substance all sound; sequencing constraints satisfied; ripple assessment present; PREHANDOVER ceremony complete.
