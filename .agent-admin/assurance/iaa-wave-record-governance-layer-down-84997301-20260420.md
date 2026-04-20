@@ -196,3 +196,54 @@ Adoption phase: PHASE_B_BLOCKING
 ---
 
 *Authority: CS2 | Agent: independent-assurance-agent | Session: session-governance-layer-down-84997301-20260420 | 2026-04-20*
+
+---
+
+## TOKEN
+
+### Second Invocation — 2026-04-20 — session-governance-layer-down-84997301-20260420-R2
+
+**PR**: Branch `copilot/layer-down-propagate-governance-changes-78484a54-fd01-4679-acf4-d8b3a7677083` | Issue #1423
+**HEAD commit at review**: `09c5558b293f6d571216208a45fa6a963ad6bd14`
+**Produced by**: governance-liaison-isms (session-068-20260420), class: liaison
+**Re-audit basis**: REJECTION-PACKAGE F-001/F-002/F-003 all remediated per second invocation request
+
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/layer-down-propagate-governance-changes-78484a54-fd01-4679-acf4-d8b3a7677083 | Issue #1423
+All 14 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-governance-layer-down-84997301-20260420-R2-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-session-governance-layer-down-84997301-20260420-R2-PASS
+Adoption phase: PHASE_B_BLOCKING
+═══════════════════════════════════════
+```
+
+**Checks Run: 14 total — 14 PASS, 0 FAIL**
+
+| Check | Result |
+|-------|--------|
+| PREFLIGHT-1 — YAML parseable + identity extractable | PASS ✅ |
+| PREFLIGHT-2 — Tier 2 files present | PASS ✅ |
+| PREFLIGHT-3 — CANON_INVENTORY hashes valid | PASS ✅ |
+| PREFLIGHT-4 — FAIL-ONLY-ONCE rules loaded | PASS ✅ |
+| CORE-020 — Zero partial pass | PASS ✅ |
+| CORE-021 — Zero severity tolerance | PASS ✅ |
+| CERT-001 — PREHANDOVER proof committed | PASS ✅ |
+| CERT-002 — Session memory committed | PASS ✅ |
+| CERT-003 — FAIL-ONLY-ONCE attested | PASS ✅ |
+| CERT-004 — iaa_audit_token field present and correct | PASS ✅ |
+| OVL-CG-001 — Strategy alignment | PASS ✅ |
+| OVL-CG-002 — No contradictions with existing canon | PASS ✅ |
+| OVL-CG-ADM-001 — CANON_INVENTORY.json updated (4 hashes corrected) | PASS ✅ |
+| OVL-CG-005 — Layer-down scope complete (all 8 affected files + CANON_INVENTORY) | PASS ✅ |
+
+**F-001 Resolution Verified**: `git status` clean; all 8 files in HEAD commit `09c5558` — CONFIRMED ✅
+**F-002 Resolution Verified**: PREHANDOVER `iaa_audit_token: IAA-session-governance-layer-down-84997301-20260420-PASS` — CONFIRMED ✅
+**F-003 Resolution Verified**: All 4 CANON_INVENTORY.json hashes independently SHA256-verified against files on disk — CONFIRMED ✅
+**All 8 GOVERNANCE_ALIGNMENT_INVENTORY.json entries**: Independently hash-verified (canonical = local inventory = actual file) — ALL MATCH ✅
+
+---
+
+*Authority: CS2 | Agent: independent-assurance-agent | Session: session-governance-layer-down-84997301-20260420-R2 | 2026-04-20*
