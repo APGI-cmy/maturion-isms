@@ -22,11 +22,11 @@ Carry-forwards: SB-002 (api-builder Deno clarification), SB-003 (B7 credentials)
 | Task ID | Task | Owner | Status |
 |---------|------|-------|--------|
 | IAA-PRE | IAA Pre-Brief — wave record PRE-BRIEF section | independent-assurance-agent | ✅ COMPLETE — SHA 0489924 |
-| D1 | `builder-contract.md` v1.0.0 — Stage 11 Builder Appointment primary artifact | mat-specialist | ⏳ PENDING — awaiting IAA pre-brief |
-| D2 | Formal builder appointment: builder → wave/responsibility mapping | mat-specialist | ⏳ PENDING — within D1 |
-| D3 | Stage 10 carry-forward mapping (qualifying tasks, admin ceremony, canon overlays) | mat-specialist | ⏳ PENDING — within D1 |
-| D4 | Blocker and gate declaration (SB-002, SB-003, CG-001–CG-005, NBR-001/NBR-002) | mat-specialist | ⏳ PENDING — within D1 |
-| D5 | BUILD_PROGRESS_TRACKER.md Stage 11 IN_PROGRESS → COMPLETE | mat-specialist | ⏳ PENDING |
+| D1 | `builder-contract.md` v1.0.0 — Stage 11 Builder Appointment primary artifact | mat-specialist | ✅ COMPLETE — SHA 8e8d674 |
+| D2 | Formal builder appointment: builder → wave/responsibility mapping | mat-specialist | ✅ COMPLETE — within D1 (SHA 8e8d674) |
+| D3 | Stage 10 carry-forward mapping (qualifying tasks, admin ceremony, canon overlays) | mat-specialist | ✅ COMPLETE — within D1 (SHA 8e8d674) |
+| D4 | Blocker and gate declaration (SB-002, SB-003, CG-001–CG-005, NBR-001/NBR-002) | mat-specialist | ✅ COMPLETE — within D1 (SHA 8e8d674) |
+| D5 | BUILD_PROGRESS_TRACKER.md Stage 11 IN_PROGRESS → COMPLETE | mat-specialist | ✅ COMPLETE — SHA 8e8d674 |
 | C1 | PREHANDOVER proof (ECAP bundle) | execution-ceremony-admin-agent | ⏳ PENDING |
 | C2 | Session memory (ECAP bundle) | execution-ceremony-admin-agent | ⏳ PENDING |
 | IAA-FINAL | Phase 4 Final Audit — ASSURANCE-TOKEN | independent-assurance-agent | ⏳ PENDING |
@@ -38,8 +38,8 @@ Carry-forwards: SB-002 (api-builder Deno clarification), SB-003 (B7 credentials)
 | Stage 10 TOKEN verified active | ✅ IAA-session-mmm-stage10-iaa-prebrief-20260420-PASS |
 | Stage 9 Builder Checklist frozen baseline confirmed | ✅ builder-checklist.md v1.0.0 |
 | Stage 8 Implementation Plan confirmed active | ✅ implementation-plan.md v1.0.0 + convergence-governance-addendum.md v1.0.0 |
-| SB-002 carry-forward explicit in D1 | ⏳ PENDING — mat-specialist task |
-| SB-003 credential gate explicit in D1 | ⏳ PENDING — mat-specialist task |
-| BUILD_PROGRESS_TRACKER Stage 11 COMPLETE | ⏳ PENDING — D5 |
-| QP PASS | ⏳ PENDING |
+| SB-002 carry-forward explicit in D1 | ✅ RESOLVED IN §3.2 (Deno/Supabase EXCLUSIVE) |
+| SB-003 credential gate explicit in D1 | ✅ PRESERVED AS HARD GATE §3.4, §5 |
+| BUILD_PROGRESS_TRACKER Stage 11 COMPLETE | ✅ COMPLETE — SHA 8e8d674 |
+| QP PASS | ✅ PASS — QP evaluation by foreman-v2-agent v6.2.0 |
 | IAA ASSURANCE-TOKEN obtained | ⏳ PENDING |
