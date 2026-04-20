@@ -3,7 +3,7 @@
 ## Status
 **Type**: Tier 2 Governance Reference  
 **Authority**: CS2 — EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md v1.1.0  
-**Version**: 1.2.0  
+**Version**: 1.3.0  
 **Effective Date**: 2026-04-17  
 **Owner**: execution-ceremony-admin-agent / Foreman QP / IAA  
 **Purpose**: Canonized list of admin-ceremony defects that are auto-fail at the §4.3e Admin Ceremony Compliance Gate and/or trigger an IAA REJECTION-PACKAGE. Every entry is a known recurring failure mode derived from operational evidence.
@@ -40,6 +40,7 @@ The `execution-ceremony-admin-agent` MUST scan for every anti-pattern before ret
 | **AAP-18** | **Cross-artifact final-state inconsistency** | The branch's collection of final-state artifacts tells two incompatible stories simultaneously. If any artifact in the final-state bundle claims final assurance (ASSURANCE-TOKEN issued, merge permitted, Stage 9 unblocked, final_state: COMPLETE, equivalent), then every other artifact in the final-state bundle must also be in post-token form. Blocking examples: wave record says PASS but PREHANDOVER says pending; stage-readiness table says IAA pending while token is already issued; session memory says final_state COMPLETE while another linked final artifact still contains assembly-time instructions. | Manual cross-artifact review; check that all key final-state fields across PREHANDOVER, wave record, session memory, and stage-readiness tables are mutually consistent. | §4.3e Check H | ACR-10 |
 | **AAP-19** | **Canonical source parity violation for "carried-forward" claims** | An artifact claims to carry forward, copy verbatim, or inherit a model/table/ownership assignment from a canonical source (e.g., "from harvest map", "verbatim from canon", "carried forward"), but the actual artifact content differs from the cited canonical source in ownership labels, gate authority, or approval requirements. A copied table that changes ownership or weakens a canonical approval requirement while presenting itself as inherited is a governance contradiction. | Compare every "carried forward" / "verbatim" claim against its cited canonical source file; flag any difference in ownership, authority, gate conditions, or approval requirements. | §4.3e Check D (supplement to existing manual check) | ACR-11 |
 | **AAP-20** | **`## Ripple/Cross-Agent Assessment` section absent or blank in PREHANDOVER proof** | The PREHANDOVER proof does not contain a `## Ripple/Cross-Agent Assessment` section (or equivalent `## Ripple` / `## Cross-Agent` heading), or the section is present but contains no concrete downstream-impact conclusions — only placeholder text, a blank table, or a heading with no body. Every PREHANDOVER proof must assess downstream agent and system impact regardless of wave type. This is the HFMC-01 recurring failure mode (sessions 051, 052, 055, 056 — FAIL-ONLY-ONCE A-023). | `grep -iE "^## Ripple\|^## Cross-Agent" .agent-admin/prehandover/proof-*.md` — section must be present and the table body must contain at least one non-header, non-placeholder row | §4.3e Check J (HFMC-01) | ACR-14 |
+| **AAP-21** | **Active wave/task tracker contradiction** | A final-state ceremony artifact (wave record, PREHANDOVER proof, session memory) claims PASS / `ASSURANCE-TOKEN` issued / merge permitted / `final_state: COMPLETE`, but one or more **active control artifacts** for the **same wave** still show pending, in-progress, or pre-final state for tasks that are now complete. "Active control artifact" means any artifact whose primary purpose is to reflect the current operational state of an ongoing wave: `wave-current-tasks.md`, `BUILD_PROGRESS_TRACKER.md` entries for the current wave, current stage/readiness trackers, and active wave summaries that are part of the active handback context. This is distinct from **immutable historical archives** (committed PREHANDOVER proofs from prior waves, historical session memories, historical wave records), which are read-only post-commit per A-019 and are explicitly excluded from this anti-pattern. Blocking examples: (a) wave record says `ASSURANCE-TOKEN` / merge permitted, but `wave-current-tasks.md` still says `IAA Final Audit: PENDING`; (b) PREHANDOVER says `final_state: COMPLETE`, but current stage tracker still says `Phase 4 pending`; (c) final handback says stage complete, but current active tracker still lists unresolved pre-final tasks for the same wave. **Proof-of-operation**: PASS + stale active tracker = BLOCKED by this anti-pattern; PASS + normalized active tracker (all active control artifacts showing post-token state) = ALLOWED. | `grep -rniE "\bPENDING\b|\bin[ _-]?progress\b|\bPhase 4 pending\b|\bIAA Final Audit: PENDING\b" <active-control-artifact-paths>` combined with cross-check: does any active control artifact for this wave contradict the final-state claims in the PREHANDOVER proof / wave record? | §4.3e Check C3 (active-tracker coherence) | ACR-15 |
 
 ---
 
@@ -61,7 +62,7 @@ The following are not machine-detectable by §4.3e but must be caught by the For
 
 | Severity | Definition | Examples |
 |----------|-----------|---------|
-| **S1 — Auto-Fail** | Immediately fails §4.3e gate and triggers IAA rejection. No discretion. | AAP-01 through AAP-09, AAP-15, AAP-16, AAP-17, AAP-18, AAP-19, AAP-20 |
+| **S1 — Auto-Fail** | Immediately fails §4.3e gate and triggers IAA rejection. No discretion. | AAP-01 through AAP-09, AAP-15, AAP-16, AAP-17, AAP-18, AAP-19, AAP-20, AAP-21 |
 | **S2 — Foreman QP Blocker** | Must be resolved at Foreman QP checkpoint before IAA invocation. Discretion allowed only if explicitly documented. | AAP-10 through AAP-14 |
 
 ---
@@ -85,14 +86,15 @@ The following are not machine-detectable by §4.3e but must be caught by the For
 | AAP-18 | Perform cross-artifact review of all final-state artifacts. For each inconsistency found (one artifact claiming COMPLETE/PASS/token-issued while another still contains pre-token wording): normalize the lagging artifact to post-token form. Ensure all final-state artifacts tell one coherent post-token story before re-submitting to IAA. |
 | AAP-19 | For each "carried forward"/"verbatim" claim: locate the cited canonical source file and compare the claimed content against it. For any ownership/authority/gate-condition difference found: either (a) correct the artifact to match the canonical source, or (b) document the intentional deviation with explicit CS2 authorization. Recommit. |
 | AAP-20 | Add a `## Ripple/Cross-Agent Assessment` section to the PREHANDOVER proof. For each agent or system that could be affected by wave changes (code, schema, API contract, agent contracts), add a row to the assessment table with a concrete impact conclusion. If no downstream agents are affected, explicitly state: "No code, schema, API, or agent-contract changes in this wave — no downstream ripple." Recommit. Do NOT create a new PREHANDOVER proof if the existing one was not yet committed to IAA review; add the section and recommit. |
+| AAP-21 | Identify all active control artifacts for the wave (wave-current-tasks.md, BUILD_PROGRESS_TRACKER.md current-wave entries, active readiness trackers). For each artifact showing pre-final state that contradicts the final-state claims: update the artifact to post-token state (mark all tasks DONE, update stage status to COMPLETE, remove PENDING/in-progress wording). Commit the normalized artifacts before re-submitting to IAA. Note: this requires updating active control artifacts — not editing immutable historical archives. If an active artifact is unexpectedly immutable, record the exception with explicit justification in the PREHANDOVER proof. |
 
 ---
 
 ## References
 
 - `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` v1.1.0 — §3.5–§3.9
-- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.5.0 — §4.3e + Auto-Fail Rules
-- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.7.0 — §Admin-Ceremony Rejection Triggers
+- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.5.0 — §4.3e + Auto-Fail Rules (§4.3e Check C3: active-tracker coherence)
+- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.9.0 — §Admin-Ceremony Rejection Triggers
 - `governance/canon/POST_TOKEN_VOCABULARY_LAW.md` v1.1.0 — Post-Token Vocabulary Denylist + Replacement Requirements
 - `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` v1.4.0 — §14.6
 - `governance/checklists/execution-ceremony-admin-checklist.md` — verification checklist
@@ -100,4 +102,4 @@ The following are not machine-detectable by §4.3e but must be caught by the For
 
 ---
 
-*Version: 1.3.0 | Effective: 2026-04-17 | Amended: 2026-04-19 (v1.3.0) — Added AAP-20: `## Ripple/Cross-Agent Assessment` absent or blank in PREHANDOVER proof (HFMC-01 / FAIL-ONLY-ONCE A-023 / ACR-14 trigger — recurring defect in sessions 051, 052, 055, 056) | Authority: CS2 (Johan Ras)*
+*Version: 1.3.0 | Effective: 2026-04-17 | Amended: 2026-04-19 (v1.3.0) — Added AAP-20: `## Ripple/Cross-Agent Assessment` absent or blank in PREHANDOVER proof (HFMC-01 / FAIL-ONLY-ONCE A-023 / ACR-14 trigger — recurring defect in sessions 051, 052, 055, 056); Added AAP-21: Active wave/task tracker contradiction — final-state claims cannot coexist with stale pending state in active control artifacts for the same wave (ACR-15 / §4.3e Check C3) | Authority: CS2 (Johan Ras)*

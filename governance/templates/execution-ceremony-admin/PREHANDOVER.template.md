@@ -21,6 +21,7 @@ wave:                   <wave identifier>
 
 ## Delivery State
 final_state:            COMPLETE             # COMPLETE | BLOCKED (blocked must not be submitted)
+active_trackers_normalized: YES          # YES when all active control artifacts (wave-current-tasks.md, BUILD_PROGRESS_TRACKER current-wave entries, active readiness trackers) show post-assurance state — see AAP-21 / ACR-15 / A-039
 opojd_compliance:       CONFIRMED            # CONFIRMED | VIOLATED (violated must not be submitted)
 
 ## Gate Results

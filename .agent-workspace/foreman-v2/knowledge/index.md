@@ -2,8 +2,8 @@
 
 **Agent**: foreman-v2  
 **Contract Version**: 2.10.0  
-**Knowledge Version**: 2.7.0  
-**Last Updated**: 2026-04-09  
+**Knowledge Version**: 2.8.0  
+**Last Updated**: 2026-04-19  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -18,13 +18,13 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 | File | Purpose | Version |
 |------|---------|---------|
 | `index.md` (this file) | Knowledge entry point and version reference | 2.1.0 |
-| `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 4.2.0 |
+| `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 4.4.0 |
 | `specialist-registry.md` | Registry of all delegable agents with capabilities and separation-of-duties boundary | 1.0.0 |
 | `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 |
 | `prehandover-template.md` | **PHASE 4 §S-009** — PREHANDOVER proof template with mandatory IAA Agent Response (verbatim) section per FAIL-ONLY-ONCE v1.8.0 S-009; `## Environment Parity` section per OVL-CI-006; `## Pre-IAA Commit Gate` MANDATORY STOP section per A-021; IAA Token Self-Certification Guard section per S-035 structural gate; `## Ripple/Cross-Agent Assessment` mandatory section per HFMC-01 | 1.8.0 |
 | `FM_QP_ENHANCED_QUICK_REFERENCE.md` | **Quality Professor Mode** — Quick reference for Builder Referral Protocol (QP-FAIL-001–007) and Progress Tracker Enforcement; Tier 3 canonical authority: `governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` v1.0.0 | 1.0.0 |
 | `WAVE-CURRENT-TASKS-PROTOCOL.md` | Codifies `wave-current-tasks.md` creation and maintenance mandate; Re-Anchor Pulse integration; wave close steps now include Wave Reconciliation Checklist | 1.1.0 |
-| `wave-reconciliation-checklist.md` | **PHASE 4 — wave close** — Mandatory checklist: post-wave incident → NBR entry, liveness verification, evidence completeness; HANDOVER BLOCKER | 1.0.0 |
+| `wave-reconciliation-checklist.md` | **PHASE 4 — wave close** — Mandatory checklist: post-wave incident → NBR entry, liveness verification, evidence completeness; HANDOVER BLOCKER | 1.2.0 |
 
 ---
 
