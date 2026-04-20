@@ -95,7 +95,7 @@ The PREHANDOVER proof for this wave **MUST** contain the following (IAA will ver
 
 | Field/Section | Required | Rule Reference |
 |---------------|----------|---------------|
-| `iaa_audit_token: IAA-session-[NNN]-wave-active-tracker-coherence-20260419-PASS` | YES — pre-populated (NOT PENDING) | A-029 / §4.3b |
+| `iaa_audit_token: IAA-session-063-wave-active-tracker-coherence-20260419-PASS` | YES — pre-populated (NOT PENDING) | A-029 / §4.3b |
 | `## Ripple/Cross-Agent Assessment` — non-blank, concrete downstream conclusions | YES | A-023 / ACR-14 / AAP-20 |
 | `## Wave Gap Register` | YES | A-020 |
 | `## Architecture Ripple/Impact Assessment` | YES | A-020 |
