@@ -31,8 +31,8 @@
 | D5 | Add `active_bundle_iaa_coherence` field to `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md` | foreman-v2-agent (governance artifact) | ✅ COMPLETE |
 | D6 | Add `active_bundle_iaa_coherence` field to `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` | foreman-v2-agent (governance artifact) | ✅ COMPLETE |
 | D7 | Update `governance/CANON_INVENTORY.json` hashes for all amended files | foreman-v2-agent (governance artifact) | ✅ COMPLETE |
-| C1 | Foreman PREHANDOVER proof | foreman-v2-agent | ⬜ PENDING |
-| C2 | Foreman session memory | foreman-v2-agent | ⬜ PENDING |
+| C1 | Foreman PREHANDOVER proof | foreman-v2-agent | ✅ COMPLETE — .agent-admin/prehandover/proof-token-session-coherence-20260420.md |
+| C2 | Foreman session memory | foreman-v2-agent | ✅ COMPLETE — .agent-workspace/foreman-v2/memory/session-token-session-coherence-20260420.md |
 
 ## Deliverable Requirements (per issue #1422)
 
