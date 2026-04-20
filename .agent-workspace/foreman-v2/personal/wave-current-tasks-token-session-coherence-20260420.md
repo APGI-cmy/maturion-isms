@@ -28,7 +28,7 @@
 | D2 | Add ACR-15 (IAA rejection trigger) + authoritative-source rule + proof-of-operation to `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` — **CS2 DIRECT REVIEW REQUIRED** | foreman-v2-agent (governance artifact) | ✅ COMPLETE — CS2 direct review required before merge |
 | D3 | Add Section 5 token/session coherence checks to `governance/checklists/execution-ceremony-admin-checklist.md` | foreman-v2-agent (governance artifact) | ✅ COMPLETE |
 | D4 | Add §4.3e Check L (active-bundle token/session coherence) to `governance/canon/AGENT_HANDOVER_AUTOMATION.md` | foreman-v2-agent (governance artifact) | ✅ COMPLETE |
-| D5 | Add `active_bundle_iaa_coherence` field to `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md` | foreman-v2-agent (governance artifact) | ✅ COMPLETE |
+| D5 | Add active-bundle IAA coherence certification checklist item to `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md` | foreman-v2-agent (governance artifact) | ✅ COMPLETE |
 | D6 | Add `active_bundle_iaa_coherence` field to `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` | foreman-v2-agent (governance artifact) | ✅ COMPLETE |
 | D7 | Update `governance/CANON_INVENTORY.json` hashes for all amended files | foreman-v2-agent (governance artifact) | ✅ COMPLETE |
 | C1 | Foreman PREHANDOVER proof | foreman-v2-agent | ✅ COMPLETE — .agent-admin/prehandover/proof-token-session-coherence-20260420.md |
