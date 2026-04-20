@@ -143,7 +143,20 @@ ripple_assessment:
 
 ## IAA Agent Response (verbatim)
 
-*(To be populated after IAA final invocation at Phase 4 Step 4.3b)*
+```
+═══════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: Wave aimc-strategy-followup-20260420
+    branch: copilot/execute-post-merge-follow-up
+All 11 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-165-aimc-strategy-followup-20260420-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-session-165-aimc-strategy-followup-20260420-PASS
+Token committed: SHA d0e8bab
+Wave record: .agent-admin/assurance/iaa-wave-record-aimc-strategy-followup-20260420-20260420.md
+Adoption phase: PHASE_B_BLOCKING
+═══════════════════════════════════════════════════════
+```
 
 ---
 

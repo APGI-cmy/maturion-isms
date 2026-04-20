@@ -35,7 +35,7 @@ work. No implementation is produced. All deliverables are governance tracking an
 | D6 | Convergence bridge wave tracking record | foreman-v2-agent | ✅ COMPLETE |
 | D7 | Session memory | foreman-v2-agent | ✅ COMPLETE |
 | D8 | PREHANDOVER proof | foreman-v2-agent | ✅ COMPLETE |
-| IAA-FINAL | Phase 4 Final Audit — ASSURANCE-TOKEN | independent-assurance-agent | PENDING |
+| IAA-FINAL | Phase 4 Final Audit — ASSURANCE-TOKEN | independent-assurance-agent | ✅ COMPLETE — IAA-session-165-aimc-strategy-followup-20260420-PASS (SHA d0e8bab) |
 
 ## Wave Completion Gate
 
@@ -50,4 +50,4 @@ work. No implementation is produced. All deliverables are governance tracking an
 | D6 convergence bridge tracking committed | ✅ |
 | D7 session memory committed | ✅ |
 | D8 PREHANDOVER proof committed | ✅ |
-| IAA ASSURANCE-TOKEN obtained | PENDING — Phase 4 |
+| IAA ASSURANCE-TOKEN obtained | ✅ IAA-session-165-aimc-strategy-followup-20260420-PASS (SHA d0e8bab) |

@@ -96,6 +96,7 @@ scope_declaration_committed: true
 | Agent | Task | Issue | Status |
 |-------|------|-------|--------|
 | independent-assurance-agent | IAA Pre-Brief | N/A (Phase 0 pre-brief, no separate issue) | COMPLETE |
+| independent-assurance-agent | IAA Final Audit (R3) | N/A | COMPLETE — IAA-session-165-aimc-strategy-followup-20260420-PASS |
 
 **Note**: No builder delegation in this wave. All deliverables produced directly by Foreman as POLC-Orchestration tracking artifacts (governance-only, no implementation).
 
