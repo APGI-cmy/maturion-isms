@@ -425,7 +425,7 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 - [x] **B6 (Findings/Reporting)**: COMPLETE ✅ — 3 Edge Functions (mmm-pit-export-send, mmm-pit-evidence-return, mmm-ai-recommend); J-12–J-15; 7-step PIT handshake stubbed; 47/47 tests GREEN; evidence: `modules/MMM/11-build/B6-findings/wave-b6-evidence.md`; QP PASS
 - [x] **B7 (Boundary Integrations)**: COMPLETE ✅ — 113 tests GREEN (D5: 15 + D7: 8 + Circuit Breaker: 12 + additional assertions); AIMC 9-function live wire, PIT 7-step handshake, KUC upload contract, circuit breaker (TR-009); evidence: `modules/MMM/11-build/B7-integrations/wave-b7-evidence.md`; Date: 2026-04-25
 - [x] **B8 (Cross-Cutting)**: COMPLETE ✅ — 71 tests across D5/D7/D8/D9/D10/D11 (188 assertions); B7 blocked noted; evidence: `modules/MMM/11-build/B8-cross-cutting/wave-b8-evidence.md`; QP PASS
-- [ ] **B9 (Golden Path)**: UNBLOCKED — B7 now COMPLETE (2026-04-25); ready for Foreman wave-start authorisation
+- [x] **B9 (Golden Path)**: COMPLETE ✅ — 216/216 tests GREEN; GP-001–GP-010 ALL GREEN; CG-003/CG-004 declared; NBR-001/002/003 verified; evidence: `modules/MMM/11-build/B9-golden-path/wave-b9-evidence.md`; QP PASS
 
 **Total QA-to-Green Progress**: 743/743 tests GREEN (B1:164 + B2:28 + B3:59 + B4:78 + B5:66 + B6:47 + B7:113 + B8:188)
 
@@ -491,15 +491,15 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 12 (Build Execution) COMPLETE ✅ — B1–B9 ALL COMPLETE (959/959 tests GREEN); B9 COMPLETE (216/216 tests GREEN; GP-001–GP-010 ALL GREEN; CG-003/CG-004 declared; QP PASS pending)
+**Current Stage**: Stage 12 (Build Execution) COMPLETE ✅ — B1–B9 ALL COMPLETE (959/959 tests GREEN); B9 QP PASS — all 10 golden paths GREEN; CG-003/CG-004 declared; NBR-001/002/003 verified. Proceeding to Phase 4 (ECAP ceremony + IAA Final Audit).
 **Overall Progress**: ~99% complete (B1–B9 ALL DONE; ECAP ceremony + IAA Final Audit pending)
 **Blockers**: None.
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.
 **Open Questions**: All RESOLVED through Stage 5. OQ-001 RESOLVED (Stage 4 TRS — CONNECTIVITY-REQUIRED, TR-039–TR-042). OQ-002 RESOLVED (Stage 5 Architecture — capabilities/index.md legacy sub-folder disposition). OQ-003 RESOLVED (Stage 5 Architecture — duplication audit, architecture.md §A12). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.
-**Last Updated**: 2026-04-26 (B9 COMPLETE — qa-builder)
+**Last Updated**: 2026-04-20 (B9 QP PASS — foreman-v2-agent)
 **Next Steps**:
-1. foreman-v2-agent QP evaluation of B9 delivery
-2. Phase 4 ECAP ceremony — execution-ceremony-admin-agent
+1. Phase 4 ECAP ceremony — execution-ceremony-admin-agent
+2. Phase 4 IAA Final Audit — independent-assurance-agent
 3. Phase 4 IAA Final Audit — independent-assurance-agent
 
 ---

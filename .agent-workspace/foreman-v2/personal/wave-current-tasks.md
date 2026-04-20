@@ -56,7 +56,8 @@ B9 (qa-builder) — golden path; requires B7 complete
 | B7-QP | QP evaluation of B7 delivery | foreman-v2-agent | ✅ PASS — 113 tests GREEN, 743/743 total GREEN, 0 regressions, CG-003 present |
 | B8 | Wave B8 — Cross-Cutting QA (D5/D7/D8/D9/D10/D11) | qa-builder | ✅ COMPLETE — 188/188 tests GREEN |
 | B8-QP | QP evaluation of B8 delivery | foreman-v2-agent | ✅ PASS — 188 tests GREEN |
-| B9 | Wave B9 — Golden Path Verification | qa-builder | 🟡 AUTHORIZED — B7 QP PASS; wave-start brief issued 2026-04-20; qa-builder executing |
+| B9 | Wave B9 — Golden Path Verification | qa-builder | ✅ COMPLETE — 216/216 tests GREEN (GP-001–GP-010 all GREEN); CG-003 declared; NBR-001/002/003 verified; evidence: modules/MMM/11-build/B9-golden-path/wave-b9-evidence.md |
+| B9-QP | QP evaluation of B9 delivery | foreman-v2-agent | ✅ PASS — 216 tests GREEN, 959/959 total GREEN, 0 regressions, CG-003 present, all 10 GPs GREEN |
 | B9-QP | QP evaluation of B9 delivery | foreman-v2-agent | ⏳ PENDING |
 | D-TRACKER | BUILD_PROGRESS_TRACKER.md Stage 12 updates per wave | foreman-v2-agent (per wave) | ⏳ PENDING |
 | IAA-FINAL | IAA Final Audit | independent-assurance-agent | ⏳ PENDING (Phase 4) |
