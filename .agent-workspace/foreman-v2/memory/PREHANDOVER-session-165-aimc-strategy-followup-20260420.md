@@ -53,6 +53,9 @@ deliverables:
   - path: .agent-workspace/foreman-v2/personal/convergence-bridge-wave-tracking-20260420.md
     status: COMMITTED
 
+  - path: .agent-workspace/foreman-v2/parking-station/suggestions-log.md
+    status: COMMITTED
+
   - path: .agent-workspace/foreman-v2/memory/session-165-aimc-strategy-followup-20260420.md
     status: COMMITTED
 
