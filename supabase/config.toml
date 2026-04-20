@@ -20,3 +20,55 @@ verify_jwt = false
 
 [functions.mmm-commissioning-check]
 verify_jwt = false
+
+# Wave B3 — Core UI: Onboarding
+[functions.mmm-assessment-free-respond]
+verify_jwt = false
+
+[functions.mmm-assessment-free-result]
+verify_jwt = false
+
+[functions.mmm-org-create]
+verify_jwt = true
+
+[functions.mmm-framework-init]
+verify_jwt = true
+
+# Wave B4 — Framework Lifecycle
+[functions.mmm-framework-compile]
+verify_jwt = true
+
+[functions.mmm-framework-publish]
+verify_jwt = true
+
+[functions.mmm-upload-framework-source]
+verify_jwt = true
+
+[functions.mmm-ai-framework-parse]
+verify_jwt = true
+
+[functions.mmm-ai-framework-generate]
+verify_jwt = true
+
+[functions.mmm-ai-framework-alter]
+verify_jwt = true
+
+# Wave B5 — Assessment Execution
+[functions.mmm-score-confirm]
+verify_jwt = true
+
+[functions.mmm-upload-evidence]
+verify_jwt = true
+
+[functions.mmm-ai-evidence-evaluate]
+verify_jwt = true
+
+# Wave B6 — Findings & Reporting
+[functions.mmm-pit-export-send]
+verify_jwt = true
+
+[functions.mmm-pit-evidence-return]
+verify_jwt = false
+
+[functions.mmm-ai-recommend]
+verify_jwt = true
