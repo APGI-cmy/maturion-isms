@@ -3,8 +3,9 @@
 ## Status
 **Type**: Canonical Governance Definition  
 **Authority**: Supreme — Canonical  
-**Version**: 1.1.0  
+**Version**: 1.2.0  
 **Effective Date**: 2026-04-08  
+**Amended**: 2026-04-19 — v1.2.0: Added §3.5a Template Non-Leakage Duty — ECAP must verify no ASSEMBLY_TIME_ONLY/pre-final instruction blocks remain in committed output artifacts; added §3.5b Active-Bundle Scope for Status Normalization; added §3.7a Carried-Forward Claim Resolution Duty — ECAP must verify any carried-forward claim resolves to its named source; added §3.8a Gate Evidence Inventory Duty; authority: CS2 — governance-repo hardening wave.  
 **Amended**: 2026-04-17 — v1.1.0: Added §3.5 Final-State Normalization Duty, §3.6 Ceremony Completeness Invariants, §3.7 Cross-Artifact Reconciliation Duty, §3.8 Commit-State Truth Rule, §3.9 Ripple / Registry Administration Duty, §4.5 Non-Substitution Rule. These sections canonize the closed 3-layer admin-control stack (ECAP self-normalization, Foreman QP admin-compliance verification, IAA binary rejection). Authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack for ECAP, Foreman QP, and IAA.  
 **Owner**: Maturion Engineering Lead  
 **Canon ID**: ECAP-001  
@@ -126,6 +127,33 @@ Final-state normalization means:
 
 The execution-ceremony-admin-agent MUST complete final-state normalization as the **last step** before returning the bundle to the Foreman. A bundle returned without final-state normalization is non-compliant with this protocol regardless of whether individual artifacts are structurally present.
 
+#### §3.5a Template Non-Leakage Duty (v1.2.0)
+
+The `execution-ceremony-admin-agent` MUST verify that no template assembly-time instructions remain in any committed final-state artifact. This includes:
+
+- `ASSEMBLY_TIME_ONLY` blocks (any block delimited by this marker)
+- `<!-- REMOVE BEFORE COMMIT -->` or `<!-- TEMPLATE INSTRUCTION -->` HTML comment directives
+- `[fill in]`, `[instruction]`, `[PLACEHOLDER]`, `[YOUR TEXT HERE]` inline placeholders
+- `replace this with`, `EXAMPLE TEXT`, or any literal instructional directive text clearly intended for template assembly rather than as a value
+
+**Detection** (active-bundle scope — latest non-superseded proof + latest session memory + current ECAP reconciliation):
+```bash
+ACTIVE_PROOF=$(ls -t .agent-admin/prehandover/proof-*.md 2>/dev/null | grep -v SUPERSEDED | head -1)
+ACTIVE_RECON=$(ls -t .agent-admin/prehandover/ecap-reconciliation-*.md 2>/dev/null | head -1)
+LATEST_SESSION=$(ls -t .agent-workspace/*/memory/session-*.md 2>/dev/null | head -1)
+grep -lniE "ASSEMBLY_TIME_ONLY|REMOVE BEFORE COMMIT|TEMPLATE INSTRUCTION|\[fill in\]|\[instruction\]|\[PLACEHOLDER\]|\[YOUR TEXT HERE\]|replace this with|EXAMPLE TEXT" \
+  ${ACTIVE_PROOF} ${ACTIVE_RECON} ${LATEST_SESSION} 2>/dev/null
+```
+Zero output = PASS. Any output = template instruction leakage exists → BLOCKED (AAP-17, AAP-21).
+
+**Active-bundle scope**: This scan applies only to the active final-state bundle (current PREHANDOVER proof, latest session memory, current ECAP reconciliation summary). Template source files in `governance/templates/` and superseded/historical artifacts are not scanned.
+
+#### §3.5b Active-Bundle Scope for Status Normalization (v1.2.0)
+
+The status normalization scan (§3.5 / ECAP-CCI-03) is scoped to the **active final-state bundle** only. Historical artifacts (superseded proofs, prior session memories) are intentionally excluded to prevent false positives from the append-only archive.
+
+Active bundle = latest non-superseded PREHANDOVER proof + latest session memory per workspace + current ECAP reconciliation summary. See `AGENT_HANDOVER_AUTOMATION.md §4.3e Check C` for the superseded-file detection logic.
+
 ### 3.6 Ceremony Completeness Invariants (v1.1.0)
 
 The following invariants MUST hold at bundle handback time. Violation of any invariant renders the bundle non-compliant:
@@ -153,6 +181,35 @@ The execution-ceremony-admin-agent MUST reconcile the following cross-artifact t
 
 Reconciliation MUST be performed by the execution-ceremony-admin-agent before handback. Forwarding a bundle to the Foreman for review without completing reconciliation is an ECAP-001 violation.
 
+#### §3.7a Carried-Forward Claim Resolution Duty (v1.2.0)
+
+When any ceremony artifact contains a "carried forward from [source]" or "verbatim from [source]" claim, the `execution-ceremony-admin-agent` MUST verify:
+
+1. The named source artifact exists as a committed file on the branch (`git ls-files --error-unmatch <path>`)
+2. The source artifact contains the stated claim — the carried-forward text appears in the source substantially unchanged
+3. The carried-forward text does not modify gate authority, gate owner, or approval basis relative to the source
+
+**If any of these verification steps fails**: Remove or restate the claim as explicit (not "carried forward from"). Document the correction in the reconciliation summary.
+
+**Detection (machine-aided)**:
+```bash
+# Scope to active bundle only — latest non-superseded proof + latest reconciliation
+ACTIVE_PROOF=$(ls -t .agent-admin/prehandover/proof-*.md 2>/dev/null | grep -v SUPERSEDED | head -1)
+ACTIVE_RECON=$(ls -t .agent-admin/prehandover/ecap-reconciliation-*.md 2>/dev/null | head -1)
+for f in ${ACTIVE_PROOF} ${ACTIVE_RECON}; do
+  [ -f "${f}" ] || continue
+  grep -iE "carried forward from |verbatim from " "${f}" 2>/dev/null | \
+    sed -E 's/.*(carried forward from|verbatim from)[[:space:]]+([^[:space:],;]+).*/\2/' | \
+    while read -r CF_SOURCE; do
+      echo "${CF_SOURCE}" | grep -q "/" && \
+        git ls-files --error-unmatch "${CF_SOURCE}" 2>/dev/null || \
+        echo "UNRESOLVABLE: ${CF_SOURCE}"
+    done
+done
+```
+
+Rows R19 in `execution-ceremony-admin-reconciliation-matrix.md` tracks this dependency formally.
+
 ### 3.8 Commit-State Truth Rule (v1.1.0)
 
 > **Constitutional Rule**: The ceremony bundle's declared artifact truth MUST match the actual committed state of the branch at bundle handback time. A bundle that declares artifacts, hashes, counts, or paths that do not reflect the actual committed branch state is a non-compliant bundle regardless of whether those artifacts exist elsewhere.
@@ -166,6 +223,28 @@ The execution-ceremony-admin-agent MUST verify:
 5. **Artifact inventory parity** — If an artifact completeness table is produced (recommended), the present/committed/normalized flags must reflect the actual state of each artifact at HEAD, not a draft state.
 
 Failure to maintain commit-state truth makes the ceremony bundle an unreliable assurance input and constitutes a Tier 3 ceremony defect.
+
+#### §3.8a Gate Evidence Inventory Duty (v1.2.0)
+
+When a ceremony artifact claims gate parity (any form of "all gates PASS", "merge gate: PASS", or equivalent), the `execution-ceremony-admin-agent` MUST verify that individual per-gate evidence exists:
+
+1. The gate results JSON (`.agent-admin/gates/gate-results-*.json`) contains individual gate entries under a `gates` object, not only an aggregate `verdict`
+2. The PREHANDOVER proof gate summary is consistent with the individual gate entries
+3. No provisional gate-pass wording is present (see §3.5 ECAP-CCI-03 and AAP-16)
+
+**Detection**:
+```bash
+LATEST_GATE=$(ls -t .agent-admin/gates/gate-results-*.json 2>/dev/null | head -1)
+[ -n "${LATEST_GATE}" ] && python3 -c "
+import json
+d = json.load(open('${LATEST_GATE}'))
+gates = d.get('gates', {})
+print('Individual gates found:', list(gates.keys()))
+print('Count:', len(gates))
+" || echo "No gate results JSON found"
+```
+
+Row R18 in `execution-ceremony-admin-reconciliation-matrix.md` tracks this dependency formally.
 
 ### 3.9 Ripple / Registry Administration Duty (v1.1.0)
 
@@ -530,10 +609,12 @@ This protocol governs:
 |---------|------|--------|
 | 1.0.0 | 2026-04-08 | Initial canon — formalises execution-ceremony-admin-agent role, authority boundaries, canonical handover sequence, and layer-down requirements; converts ECAS-001 strategy to binding governance |
 | 1.1.0 | 2026-04-17 | 3-layer admin-control stack hardening — added §3.5 Final-State Normalization Duty, §3.6 Ceremony Completeness Invariants (CCI-01 through CCI-05), §3.7 Cross-Artifact Reconciliation Duty, §3.8 Commit-State Truth Rule, §3.9 Ripple/Registry Administration Duty, §4.5 Non-Substitution Rule (closed 3-layer stack); authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack |
+| 1.2.0 | 2026-04-19 | Governance-repo hardening wave — added §3.5a Template Non-Leakage Duty, §3.5b Active-Bundle Scope for Status Normalization, §3.7a Carried-Forward Claim Resolution Duty, §3.8a Gate Evidence Inventory Duty; authority: CS2 — governance-repo hardening wave |
 
 ---
 
 **End of EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md**  
 **Authority**: CS2 (Johan Ras)  
+**Version**: 1.2.0  
 **Canon ID**: ECAP-001  
 **Strategy Reference**: ECAS-001

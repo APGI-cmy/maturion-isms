@@ -3,11 +3,11 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory — tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
-  "last_updated": "2026-04-19",
+  "last_updated": "2026-04-20",
   "last_ripple_commit": "56d92004d867a8e4148133e007040ca1ff062318",
   "last_ripple_timestamp": "2026-04-17T11:50:11Z",
   "alignment_summary": {
-    "total_artifacts": 41,
+    "total_artifacts": 42,
     "aligned": 36,
     "drifted": 0,
     "missing": 0,
@@ -22,10 +22,10 @@
       "canonical_version": "1.4.1",
       "local_version": "1.4.1",
       "canonical_hash_sha256": "55f7f0e4c7f3a3716b6d43fa81679da06350fdd51c943a3cdbb841a01989f113",
-      "local_hash_sha256": "55f7f0e4c7f3a3716b6d43fa81679da06350fdd51c943a3cdbb841a01989f113",
+      "local_hash_sha256": "e3eb9e3388f89a559a954d1b096adf3f9b48eb822cba4edad616b0d86607e5cc",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-04-19T11:27:49Z",
+      "last_verified": "2026-04-20T07:37:36Z",
       "change_note": "v1.4.1: §4.3e Admin Ceremony Compliance Gate — stale-wording scan scope finalized; auto-fail rules table (AAP-01 through AAP-09) added. Layered down via CI ripple PR #1395. Hash updated from d4860fab... to 55f7f0e4..."
     },
     {
@@ -158,10 +158,10 @@
       "canonical_version": "1.6.0",
       "local_version": "1.6.0",
       "canonical_hash_sha256": "1d0c37190de3d232495e58d3f1984a1feb042c178227ce46c0229e6fdecc3ae9",
-      "local_hash_sha256": "1d0c37190de3d232495e58d3f1984a1feb042c178227ce46c0229e6fdecc3ae9",
+      "local_hash_sha256": "76d5f54a6cbb4819b2cd03e490033d8a9fffd4e5f2943410e8724bdf8f1a9656",
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
-      "last_verified": "2026-04-19T11:27:49Z",
+      "last_verified": "2026-04-20T07:37:36Z",
       "change_note": "v1.6.0: Admin-Ceremony Rejection Triggers added (ACR-01 through ACR-08) — binary IAA rejection on ceremony defects. INTERNAL — behavior consequences affect repo handover. Layered down via CI ripple PR #1395. Hash updated from f79752f9... to 1d0c3719..."
     },
     {
@@ -316,10 +316,10 @@
       "canonical_version": "1.1.0",
       "local_version": "1.1.0",
       "canonical_hash_sha256": "cfb97290bf952b4fc6ffac39c967d87345f3760a6368b692c22144755a05362c",
-      "local_hash_sha256": "cfb97290bf952b4fc6ffac39c967d87345f3760a6368b692c22144755a05362c",
+      "local_hash_sha256": "252ac6e167e0913e56e08c1555b8dce87e47cf0176ec6dbbe9d3d0328e813f7a",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-04-17T11:52:02Z",
+      "last_verified": "2026-04-20T07:37:36Z",
       "change_note": "v1.1.0: Added §3.5 Final-State Normalization Duty, §3.6 Ceremony Completeness Invariants, §3.7 Cross-Artifact Reconciliation Duty, §3.8 Commit-State Truth Rule, §3.9 Ripple/Registry Administration Duty, §4.5 Non-Substitution Rule. Layered down via CI ripple PR #1395. Hash updated from 8a65c7c5... to cfb97290..."
     },
     {
@@ -328,10 +328,10 @@
       "canonical_version": "1.4.0",
       "local_version": "1.4.0",
       "canonical_hash_sha256": "3e1c27d6e843d000c46e18b962b548e51b6b5da9b982a1851bfa34a10ee0848e",
-      "local_hash_sha256": "3e1c27d6e843d000c46e18b962b548e51b6b5da9b982a1851bfa34a10ee0848e",
+      "local_hash_sha256": "4c8e2f1818cc29fb1a564832a9eedb39724057a3ad0f75b8500a64f3a6c9b5e5",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-04-17T11:52:02Z",
+      "last_verified": "2026-04-20T07:37:36Z",
       "change_note": "v1.4.0: Added §14.6 Foreman QP Admin-Compliance Checkpoint — defines Foreman verification role for admin-ceremony compliance before IAA invocation. Layered down via CI ripple PR #1395. Hash updated from b268ad06... to 3e1c27d6..."
     },
     {
@@ -501,6 +501,18 @@
       "layer_down_status": "TIER2_CHECKLIST",
       "last_verified": "2026-04-17T11:52:02Z",
       "change_note": "New in canonical commit 56d92004. Canonized list of 14 admin-ceremony anti-patterns (AAP-01 through AAP-14). Layered down in this wave."
+    },
+    {
+      "filename": "AGENT_CONTRACT_PLACEHOLDER_CHECK_CANON.md",
+      "path": "governance/canon/AGENT_CONTRACT_PLACEHOLDER_CHECK_CANON.md",
+      "canonical_version": "TBD",
+      "local_version": "TBD",
+      "canonical_hash_sha256": "TBD",
+      "local_hash_sha256": "f5c9d72ebf2584e10ff09f29fdbc90c6f8251b2ebfbce58983c7db0e45dbac1d",
+      "alignment_status": "PENDING_REVIEW",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-04-20T07:37:36Z",
+      "change_note": "Auto-added by ripple-integration inventory update step"
     }
   ],
   "metadata": {

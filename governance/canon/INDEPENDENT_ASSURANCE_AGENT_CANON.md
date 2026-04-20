@@ -808,6 +808,24 @@ When a job has involved the `execution-ceremony-admin-agent` (ECAP), the IAA MUS
 | ACR-14 | **`## Ripple/Cross-Agent Assessment` section absent or blank in PREHANDOVER proof** — the PREHANDOVER proof does not contain a `## Ripple/Cross-Agent Assessment` (or equivalent `## Ripple`/`## Cross-Agent`) heading, or the section is present but contains no concrete downstream-impact conclusions (only placeholder text, a blank table, or a heading with no body). Every PREHANDOVER proof must explicitly assess downstream agent and system impact regardless of wave type. This is the HFMC-01 recurring failure pattern (FAIL-ONLY-ONCE A-023). | AGENT_HANDOVER_AUTOMATION.md §4.3e Check J; execution-ceremony-admin-anti-patterns.md AAP-20; PREHANDOVER_PROOF_TEMPLATE.md v3.1 |
 | ACR-15 | **Active wave/task tracker not normalized before final assurance** — a final-state ceremony artifact (wave record, PREHANDOVER proof, or session memory) claims ASSURANCE-TOKEN issued / merge permitted / `final_state: COMPLETE`, but one or more active control artifacts for the same wave (e.g., `wave-current-tasks.md`, `BUILD_PROGRESS_TRACKER.md` current-wave entries, current stage-readiness trackers, active wave summaries) still show pending, in-progress, or pre-final state. The final-state bundle tells two contradictory operational stories simultaneously. Active control artifacts are those whose primary purpose is to reflect current wave operational state; they are distinguished from immutable historical archives (committed PREHANDOVER proofs and session memories from prior waves, historical wave records), which are explicitly excluded. IAA MUST reject and issue REJECTION-PACKAGE when this contradiction is detected. | ECAP-001 §3.5; execution-ceremony-admin-anti-patterns.md AAP-21; AGENT_HANDOVER_AUTOMATION.md §4.3e Check C3 (active-tracker coherence) |
 
+### Active-Bundle Scope Rule for ACR Checks (v1.7.0)
+
+When applying ACR triggers ACR-02, ACR-07, ACR-12, and any other cross-artifact consistency check, the IAA MUST scope the scan to the **active final-state bundle** for the current job only. The active bundle is defined as:
+
+1. **PREHANDOVER proof**: The current (non-superseded) proof — the most recent proof, or the proof not declared as superseded by a later proof
+2. **Session memory**: The latest session memory per agent workspace directory (most recent by filename sort order)
+3. **ECAP reconciliation summary**: The most recent reconciliation artifact for this PR/job
+4. **Wave record**: The current wave record for this job (if used)
+5. **Token file**: The current IAA token file for this job
+
+**Explicitly excluded from active-bundle scans**:
+- Superseded PREHANDOVER proofs (i.e., proofs for which a later proof declares `Supersedes: <filename>`)
+- Prior session memories (all except the latest per workspace)
+- Historical/archived wave records from prior waves
+- Rejection-package artifacts from prior rounds (these are retained as immutable historical evidence and are expected to contain non-final wording from the round they document)
+
+**Rationale**: The append-only governance model deliberately retains historical artifacts. Scanning historical artifacts for provisional wording creates false positives and would incorrectly block legitimate final-state bundles. The hardened discipline applies only to artifacts that form the current final-state bundle.
+
 ### How the IAA Handles Admin-Ceremony Rejection Triggers
 
 1. **Detect** — The IAA checks each ACR trigger during the Phase 4 handover proof review.
