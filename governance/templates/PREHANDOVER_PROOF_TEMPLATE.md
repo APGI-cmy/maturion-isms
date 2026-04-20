@@ -1,6 +1,6 @@
 # PREHANDOVER_PROOF Template
 
-**Version**: 3.0  
+**Version**: 3.1  
 **Authority**: MERGE_GATE_PHILOSOPHY.md v2.0, OPOJD v2.0  
 **Purpose**: Evidence-based validation for complete job handover  
 **Agent**: [Agent Name]  
@@ -227,6 +227,25 @@ No deployment-triggering files changed. Deployment gate: NOT TRIGGERED — N/A."
 
 ---
 
+## Ripple/Cross-Agent Assessment
+
+> **HFMC-01 MANDATORY — HANDOVER BLOCKER**: Every PREHANDOVER proof MUST contain this
+> section, filled with concrete downstream-impact conclusions. A blank or absent section
+> is a **producer-side defect** caught by AAP-20 at the ECAP/Foreman QP gate and by
+> ACR-14 at the IAA assurance layer. Do NOT leave placeholder rows — name each agent or
+> system actually assessed and state the impact conclusion.
+>
+> If this wave contains no code, schema, API contract, or agent-contract changes that
+> could affect downstream consumers, state that explicitly: do NOT leave the table blank.
+
+| Agent / System | Change Scope Assessed | Impact Conclusion |
+|---------------|----------------------|-------------------|
+| [agent-name or system] | [what was assessed — files, contracts, schema, API] | **[NO IMPACT — reason / IMPACTED — describe downstream effect]** |
+
+**Downstream ripple conclusion**: [NO IMPACT — governance/ceremony artifacts only, no downstream effect / IMPACTED — list affected agents/systems and actions taken or deferred with reference]
+
+---
+
 ## Coordination & Escalation
 
 **Coordination Required**: [YES | NO]
@@ -303,6 +322,7 @@ Per OPOJD v2.0, all jobs MUST generate improvement suggestions.
 10. ✅ Work is production-ready and merge-ready
 11. ✅ No ignorance excuses - all requirements understood and satisfied
 12. ✅ Deployment gate confirmed (PASS or N/A with documented justification) — Issue #622 mandatory check
+13. ✅ `## Ripple/Cross-Agent Assessment` section present and populated with concrete downstream-impact conclusions — HFMC-01 mandatory check
 
 **Handover Status**: ✅ COMPLETE - Ready for merge
 
@@ -314,4 +334,5 @@ Per OPOJD v2.0, all jobs MUST generate improvement suggestions.
 
 **Authority**: MERGE_GATE_PHILOSOPHY.md v2.0, OPOJD v2.0, AGENT_CLASS_SPECIFIC_GATE_PROTOCOLS.md  
 **Evidence Type**: Pre-Handover Gate Validation  
-**Compliance**: Living Agent System v6.x.0
+**Compliance**: Living Agent System v6.x.0  
+**Amendment**: v3.1 (2026-04-19) — Added mandatory `## Ripple/Cross-Agent Assessment` section (HFMC-01 / AAP-20 / ACR-14) — no PREHANDOVER proof is complete without this section; absence is a producer-side defect blocked at ECAP/Foreman QP gate and IAA layer.

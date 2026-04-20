@@ -1,9 +1,9 @@
 # IAA High-Frequency Checks — CI Enforcement Specification
 
 **Agent**: independent-assurance-agent
-**Version**: 2.0.0
+**Version**: 2.1.0
 **Status**: CI-ENFORCED
-**Last Updated**: 2026-04-13
+**Last Updated**: 2026-04-19
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -18,13 +18,15 @@ These 6 checks are now enforced by CI workflows. This document specifies what CI
 
 ### HFMC-01 — Ripple Assessment Presence
 
-**CI must check**: Does the PREHANDOVER proof include a `## Ripple/Cross-Agent Assessment` section (or equivalent) that evaluates impact on downstream agents?
+**CI must check**: Does the PREHANDOVER proof include a `## Ripple/Cross-Agent Assessment` section (or equivalent `## Ripple` / `## Cross-Agent` heading) that evaluates impact on downstream agents?
 
-**How to verify**: Scan PREHANDOVER proof file for `## Ripple` or `## Cross-Agent` heading. Section must be non-empty.
+**How to verify**: Scan PREHANDOVER proof file for `## Ripple` or `## Cross-Agent` heading. Section must be non-empty (contain at least one concrete impact conclusion line — not only blank lines, blockquote guidance, or placeholder text).
 
 **FAIL if**: Section absent or empty.
 
-**Background**: Recurring failure in sessions 051, 052. FAIL-ONLY-ONCE A-023.
+**CI job name**: `preflight/hfmc-ripple-presence` (in `preflight-evidence-gate.yml`)
+
+**Background**: Recurring failure in sessions 051, 052, 055, 056. FAIL-ONLY-ONCE A-023. Template hardened in `PREHANDOVER_PROOF_TEMPLATE.md` v3.1 and `PREHANDOVER.template.md` (ECAP) v1.1.0. Producer-side enforcement added as AAP-20 (anti-patterns) and ACR-14 (IAA rejections). §4.3e Check J added to AGENT_HANDOVER_AUTOMATION.md v1.6.0.
 
 ---
 
@@ -102,7 +104,7 @@ These checks are implemented in the following CI workflows:
 
 | Workflow | Checks Enforced |
 |----------|----------------|
-| `preflight-evidence-gate.yml` | HFMC-01, HFMC-02, HFMC-03, HFMC-04, HFMC-05, HFMC-06 |
+| `preflight-evidence-gate.yml` | HFMC-01 (`preflight/hfmc-ripple-presence`), HFMC-02, HFMC-03, HFMC-04, HFMC-05, HFMC-06 |
 | `agent-contract-format-gate.yml` | Supplementary format checks (CORE-001 through CORE-012) |
 
 **Enforcement level**: BLOCKING — PR cannot merge if any HFMC check fails in CI.
@@ -115,6 +117,7 @@ These checks are implemented in the following CI workflows:
 |---------|------|--------|
 | 1.0.0 | 2026-04-07 | Initial version — IAA-executed checks (Issue #1282) |
 | 2.0.0 | 2026-04-13 | Converted to CI enforcement specification; IAA no longer executes these checks at session time; CI Workflow Reference added; Output Format removed; authority: CS2 — maturion-isms#1354 |
+| 2.1.0 | 2026-04-19 | HFMC-01 definition updated: CI job name added (`preflight/hfmc-ripple-presence`), non-empty section requirement clarified; CI Workflow Reference table updated; authority: CS2 — Harden PREHANDOVER templates for Ripple/Cross-Agent Assessment |
 
 ---
 

@@ -1,7 +1,8 @@
 # AGENT_HANDOVER_AUTOMATION
 
-**Status**: CANONICAL | **Version**: 1.4.1 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.5.0 | **Authority**: CS2  
 **Date**: 2026-02-24  
+**Amended**: 2026-04-19 — v1.5.0: Hardened §4.3e Admin Ceremony Compliance Gate with gate-inventory checks (Check H), pre-final instruction wording denylist (Check I), cross-artifact final-state consistency with active-bundle scoping (Check J), and carried-forward claim verification (Check K); updated auto-fail rule table with AAP-15 through AAP-21; active-bundle scoping rule clarified to prevent false positives from historical archive; authority: CS2 — governance-repo hardening wave (gate-inventory + post-token normalization hardening).  
 **Amended**: 2026-04-17 — v1.4.1: Tightened §4.3e Check C stale-wording scan to final-state artifact set only — superseded pre-token proofs retained immutably under the append-only model are now explicitly exempt; updated AAP-01 auto-fail rule to document final-state scope and superseded-proof exemption; authority: CS2 — PR review feedback on §4.3e canon collision with append-only proof retention.  
 **Previous amendment**: 2026-04-17 — v1.4.0: Added §4.3e Admin Ceremony Compliance Gate (BLOCKING, pre-IAA, ECAP-involved jobs); added auto-fail rules table for 9 known admin anti-patterns (AAP-01 through AAP-09); updated Phase 4 structure and sequencing note; updated Handover Validation Checklist with admin-compliance gate item; authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack for ECAP, Foreman QP, and IAA.  
 **Previous amendment**: 2026-04-09 — v1.3.0: Post-ECAP-001 governance quality closure (ECAP-QC-001 through ECAP-QC-004) — added §4.3d Scope-Declaration Parity Gate (blocking, pre-IAA); added mandatory drift evidence and metadata correctness requirements to Administrator evidence checklist; updated validate-canon-hashes.sh to catch version/canonical_version mismatches; codified amended_date and timestamp discipline; authority: CS2 — ECAP-001 follow-up quality closure issue.  
@@ -1003,6 +1004,170 @@ if [ "${CANON_CHANGES}" -gt 0 ] && [ "${INVENTORY_CHANGED}" -eq 0 ]; then
 fi
 
 # ─────────────────────────────────────────────────────────────────────────────
+# CHECK H: Gate Evidence Inventory (AAP-15, AAP-16)
+# When gate parity is claimed, an explicit per-gate inventory must exist.
+# ─────────────────────────────────────────────────────────────────────────────
+echo "  [H] Gate evidence inventory and provisional gate-pass wording check..."
+
+# H1: Per-gate inventory enforcement — only when gate parity is claimed in the active bundle
+GATE_PARITY_CLAIMED=false
+for f in $(git ls-files .agent-admin/prehandover/proof-*.md 2>/dev/null); do
+  IS_SUPERSEDED=false
+  for s in "${SUPERSEDED_SET[@]}"; do
+    [ "${f}" = "${s}" ] && IS_SUPERSEDED=true && break
+  done
+  ${IS_SUPERSEDED} && continue
+  if grep -qiE "gate.parity|merge_gate_verdict|all.*gates.*pass" "${f}" 2>/dev/null; then
+    GATE_PARITY_CLAIMED=true
+    break
+  fi
+done
+LATEST_GATE=$(ls -t .agent-admin/gates/gate-results-*.json 2>/dev/null | head -1)
+if ${GATE_PARITY_CLAIMED}; then
+  if [ -z "${LATEST_GATE}" ]; then
+    ACC_FAILURES+=("H1: Gate parity claimed in active bundle but no gate-results JSON found (AAP-15)")
+  else
+    GATE_COUNT=$(python3 -c "import json,sys; d=json.load(open('${LATEST_GATE}')); print(len(d.get('gates',{})))" 2>/dev/null || echo 0)
+    if [ "${GATE_COUNT}" -eq 0 ]; then
+      ACC_FAILURES+=("H1: Gate parity claimed but gate results JSON has no individual gate entries — per-gate inventory required (AAP-15)")
+    fi
+  fi
+fi
+
+# H2: No provisional gate-pass wording in active-bundle final-state artifacts
+# Scope: latest non-superseded proof + current ECAP reconciliation + latest session memories
+PROVISIONAL_GATE_FILES=()
+H2_ACTIVE_BUNDLE=()
+# Add latest non-superseded proof
+for f in $(git ls-files .agent-admin/prehandover/proof-*.md 2>/dev/null); do
+  IS_SUPERSEDED=false
+  for s in "${SUPERSEDED_SET[@]}"; do
+    [ "${f}" = "${s}" ] && IS_SUPERSEDED=true && break
+  done
+  ${IS_SUPERSEDED} && continue
+  H2_ACTIVE_BUNDLE+=("${f}")
+done
+# Add current ECAP reconciliation
+LATEST_H2_RECON=$(git ls-files '.agent-admin/prehandover/ecap-reconciliation-*.md' 2>/dev/null | sort | tail -1)
+[ -n "${LATEST_H2_RECON}" ] && H2_ACTIVE_BUNDLE+=("${LATEST_H2_RECON}")
+# Add latest session memory per workspace
+for WDIR in $(git ls-files '.agent-workspace/*/memory/session-*.md' 2>/dev/null | \
+    sed 's|/memory/session-.*||' | sort -u); do
+  LATEST_H2_SM=$(git ls-files "${WDIR}/memory/session-*.md" 2>/dev/null | sort | tail -1)
+  [ -n "${LATEST_H2_SM}" ] && H2_ACTIVE_BUNDLE+=("${LATEST_H2_SM}")
+done
+for f in "${H2_ACTIVE_BUNDLE[@]}"; do
+  [ -f "${f}" ] || continue
+  if grep -qiE "expected to pass|parity to be confirmed|pending.*verification|gate.*deferred|to be confirmed" "${f}" 2>/dev/null; then
+    PROVISIONAL_GATE_FILES+=("${f}")
+  fi
+done
+[ ${#PROVISIONAL_GATE_FILES[@]} -gt 0 ] && \
+  ACC_FAILURES+=("H2: Provisional gate-pass wording found in active-bundle artifacts: ${PROVISIONAL_GATE_FILES[*]} (AAP-16)")
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHECK I: Pre-Final Instruction Wording / Template Instruction Leakage (AAP-17, AAP-18, AAP-21)
+# Denylist of template-instruction patterns that must not appear in committed
+# final-state artifacts.
+# ─────────────────────────────────────────────────────────────────────────────
+echo "  [I] Pre-final instruction wording / template instruction leakage check..."
+
+INSTRUCTION_LEAK_FILES=()
+
+# Build the active final-state bundle (same superseded logic as Check C)
+for f in $(git ls-files .agent-admin/prehandover/proof-*.md 2>/dev/null); do
+  IS_SUPERSEDED=false
+  for s in "${SUPERSEDED_SET[@]}"; do
+    [ "${f}" = "${s}" ] && IS_SUPERSEDED=true && break
+  done
+  ${IS_SUPERSEDED} && continue
+  if grep -qiE "\[fill in\]|\[instruction\]|replace this with|EXAMPLE TEXT|\[PLACEHOLDER\]|\[YOUR TEXT HERE\]|ASSEMBLY_TIME_ONLY|REMOVE BEFORE COMMIT|TEMPLATE INSTRUCTION" "${f}" 2>/dev/null; then
+    INSTRUCTION_LEAK_FILES+=("${f}")
+  fi
+  # I2: Check for blank/placeholder iaa_audit_token or iaa_session_reference while final_state is COMPLETE (AAP-18)
+  if grep -qE "^final_state:[[:space:]]*COMPLETE[[:space:]]*$" "${f}" 2>/dev/null; then
+    if grep -qE "iaa_audit_token:[[:space:]]*(none|<[^>]+>|\[.*\]|TBD|PENDING)" "${f}" 2>/dev/null; then
+      INSTRUCTION_LEAK_FILES+=("${f} [iaa_audit_token placeholder while final_state=COMPLETE]")
+    fi
+    if grep -qE "iaa_session_reference:[[:space:]]*(none|<[^>]+>|\[.*\]|TBD|PENDING)" "${f}" 2>/dev/null; then
+      INSTRUCTION_LEAK_FILES+=("${f} [iaa_session_reference placeholder while final_state=COMPLETE]")
+    fi
+  fi
+done
+
+# Scan latest session memories
+for WORKSPACE_DIR in $(git ls-files '.agent-workspace/*/memory/session-*.md' 2>/dev/null | \
+    sed 's|/memory/session-.*||' | sort -u); do
+  LATEST_SESSION=$(git ls-files "${WORKSPACE_DIR}/memory/session-*.md" 2>/dev/null | sort | tail -1)
+  if [ -n "${LATEST_SESSION}" ] && \
+     grep -qiE "\[fill in\]|\[instruction\]|replace this with|EXAMPLE TEXT|\[PLACEHOLDER\]|ASSEMBLY_TIME_ONLY|REMOVE BEFORE COMMIT" "${LATEST_SESSION}" 2>/dev/null; then
+    INSTRUCTION_LEAK_FILES+=("${LATEST_SESSION}")
+  fi
+done
+
+[ ${#INSTRUCTION_LEAK_FILES[@]} -gt 0 ] && \
+  ACC_FAILURES+=("I1: Template instruction leakage / pre-final instruction wording in final-state artifacts: ${INSTRUCTION_LEAK_FILES[*]} (AAP-17, AAP-18, AAP-21)")
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHECK J: Cross-Artifact Final-State Consistency — Active-Bundle Scoped (AAP-19, AAP-22)
+# Compares final_state across PREHANDOVER proof and ECAP reconciliation summary.
+# Scoped to ACTIVE final-state bundle only — historical archive is NOT scanned.
+# ─────────────────────────────────────────────────────────────────────────────
+echo "  [J] Cross-artifact final-state consistency (active-bundle scoped)..."
+
+LATEST_PROOF=$(git ls-files .agent-admin/prehandover/proof-*.md 2>/dev/null | sort | tail -1)
+LATEST_RECONCILIATION=$(git ls-files .agent-admin/prehandover/ecap-reconciliation-*.md 2>/dev/null | sort | tail -1)
+
+if [ -n "${LATEST_PROOF}" ] && [ -n "${LATEST_RECONCILIATION}" ]; then
+  PROOF_FINAL=$(grep -E "^final_state:" "${LATEST_PROOF}" | awk '{print $2}' | head -1)
+  RECON_FINAL=$(grep -iE "^\*\*Final State\*\*:|^Final State:" "${LATEST_RECONCILIATION}" | grep -v "^#" | head -1 | sed 's/.*://' | tr -d ' `*')
+  # Only fail if both values exist and they differ (symmetric comparison)
+  if [ -n "${PROOF_FINAL}" ] && [ -n "${RECON_FINAL}" ]; then
+    PROOF_NORM=$(echo "${PROOF_FINAL}" | tr '[:lower:]' '[:upper:]' | tr -d ' ')
+    RECON_NORM=$(echo "${RECON_FINAL}" | tr '[:lower:]' '[:upper:]' | tr -d ' ')
+    if [ "${PROOF_NORM}" != "${RECON_NORM}" ]; then
+      ACC_FAILURES+=("J1: Cross-artifact contradiction — PREHANDOVER final_state=${PROOF_FINAL} but ECAP reconciliation says: ${RECON_FINAL} (AAP-19)")
+    fi
+  fi
+fi
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHECK K: Carried-Forward Claim Resolvability (AAP-20) — spot-check only
+# Full carried-forward verification is a manual Foreman QP check (AAP-20).
+# Machine check: verify that any "carried forward from" reference names a file
+# that actually exists on the branch.
+# ─────────────────────────────────────────────────────────────────────────────
+echo "  [K] Carried-forward claim file-existence spot-check..."
+
+UNRESOLVABLE_CF=()
+# Active bundle: non-superseded proofs + latest reconciliation (avoids false positives from historical archive)
+CF_SCAN_FILES=()
+for f in $(git ls-files .agent-admin/prehandover/proof-*.md 2>/dev/null); do
+  IS_SUPERSEDED=false
+  for s in "${SUPERSEDED_SET[@]}"; do
+    [ "${f}" = "${s}" ] && IS_SUPERSEDED=true && break
+  done
+  ${IS_SUPERSEDED} || CF_SCAN_FILES+=("${f}")
+done
+[ -n "${LATEST_RECONCILIATION}" ] && CF_SCAN_FILES+=("${LATEST_RECONCILIATION}")
+
+for f in "${CF_SCAN_FILES[@]}"; do
+  while IFS= read -r CF_SOURCE; do
+    CF_SOURCE_CLEAN=$(echo "${CF_SOURCE}" | tr -d '"' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+    [ -z "${CF_SOURCE_CLEAN}" ] && continue
+    # Only check if it looks like a file path (contains /)
+    echo "${CF_SOURCE_CLEAN}" | grep -q "/" || continue
+    if ! git ls-files --error-unmatch "${CF_SOURCE_CLEAN}" > /dev/null 2>&1; then
+      UNRESOLVABLE_CF+=("${f}: carried forward from '${CF_SOURCE_CLEAN}' — file not found on branch")
+    fi
+  done < <(grep -iE "carried forward from |verbatim from " "${f}" 2>/dev/null | \
+    sed -E 's/.*(carried forward from|verbatim from)[[:space:]]+([^[:space:],;]+).*/\2/' || true)
+done
+
+[ ${#UNRESOLVABLE_CF[@]} -gt 0 ] && \
+  ACC_FAILURES+=("K1: Carried-forward source file(s) not found on branch: ${UNRESOLVABLE_CF[*]} (AAP-20)")
+
+# ─────────────────────────────────────────────────────────────────────────────
 # GATE RESULT
 # ─────────────────────────────────────────────────────────────────────────────
 if [ ${#ACC_FAILURES[@]} -gt 0 ]; then
@@ -1035,12 +1200,19 @@ The following conditions are **auto-fail** for the §4.3e gate regardless of oth
 | AAP-07 | Declared file/artifact count mismatch | A declared count of files, artifacts, or changed items in any ceremony artifact does not match the actual count |
 | AAP-08 | PUBLIC_API ripple obligations omitted or silently skipped | Any changed file with `layer_down_status: PUBLIC_API` in CANON_INVENTORY that has no ripple assessment block in the ECAP reconciliation summary |
 | AAP-09 | Committed truth not matching proof/session memory claims | The branch's actual committed file state contradicts a declared artifact path, hash, or status in a ceremony document |
+| AAP-15 | Gate parity claimed without explicit gate inventory | Gate results JSON has no individual per-gate entries when gate parity is claimed in PREHANDOVER proof |
+| AAP-16 | Stale gate-pass provisional wording | Any of: `expected to pass`, `parity to be confirmed`, `pending verification`, `gate deferred`, `to be confirmed` in active-bundle final-state artifacts (proof, reconciliation, or latest session memory) where a definitive gate status is required |
+| AAP-17 | Pre-final instruction wording / template instruction leakage | Any of: `[fill in]`, `[instruction]`, `replace this with`, `EXAMPLE TEXT`, `[PLACEHOLDER]`, `[YOUR TEXT HERE]` in committed final-state artifacts |
+| AAP-18 | Verbatim IAA-response section blank or instruction-only | `iaa_audit_token` or `iaa_session_reference` field still contains a template placeholder value (e.g., `<token-file-path>`, `[pending]`) while `final_state: COMPLETE` is declared |
+| AAP-19 | Cross-artifact final-state contradiction | PREHANDOVER `final_state: COMPLETE` but ECAP reconciliation summary or session memory declares a non-final status for the same dimension |
+| AAP-20 | Carried-forward claim silently changes ownership or gate authority | A "carried forward from" claim in a final-state artifact references a source that does not contain the stated claim, or the carried-forward text modifies gate authority/ownership |
+| AAP-21 | ASSEMBLY_TIME_ONLY block not removed | A block explicitly marked `ASSEMBLY_TIME_ONLY`, `REMOVE BEFORE COMMIT`, or `TEMPLATE INSTRUCTION` remains in a committed output artifact |
 
 ### Admin Ceremony Compliance Gate in the Handover Validation Checklist
 
 The following item is added to the handover checklist when an ECAP job is involved:
 
-> - [ ] **Admin Ceremony Compliance Gate PASSED** (ECAP jobs): §4.3e gate run — 0 auto-fail conditions; ECAP reconciliation summary present; admin-compliance readiness accepted by Foreman QP checkpoint (BLOCKING — IAA must not be invoked until this is ✅) (IAA Token — Append-Only, Dedicated File)
+> - [ ] **Admin Ceremony Compliance Gate PASSED** (ECAP jobs): §4.3e gate run — 0 auto-fail conditions (AAP-15 through AAP-21 auto-fail conditions included); ECAP reconciliation summary present; admin-compliance readiness accepted by Foreman QP checkpoint (BLOCKING — IAA must not be invoked until this is ✅) (IAA Token — Append-Only, Dedicated File)
 
 **Purpose**: Govern how the IAA writes its assurance verdict. The PREHANDOVER proof is
 **read-only** once committed. The IAA token is written to a new, dedicated artifact file —
