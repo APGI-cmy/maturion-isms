@@ -42,8 +42,8 @@ B9 (qa-builder) — golden path; requires B7 complete
 | SCOPE | Scope declaration for Stage 12 | foreman-v2-agent | ⏳ PENDING |
 | B1 | Wave B1 — Schema / RLS / Migrations (25 tables, RLS, seeds) | schema-builder | ✅ COMPLETE — 164/164 tests GREEN |
 | B1-QP | QP evaluation of B1 delivery | foreman-v2-agent | ✅ PASS — 164 tests GREEN, 0 skipped |
-| B2 | Wave B2 — Core API (Edge Functions: auth, health, org, invitations) | api-builder | ⏳ PENDING |
-| B2-QP | QP evaluation of B2 delivery | foreman-v2-agent | ⏳ PENDING |
+| B2 | Wave B2 — Core API (Edge Functions: auth, health, org, invitations) | api-builder | ✅ COMPLETE — 28/28 tests GREEN |
+| B2-QP | QP evaluation of B2 delivery | foreman-v2-agent | ✅ PASS — 28 tests GREEN, 0 skipped |
 | B3 | Wave B3 — Core UI (Onboarding J-01–J-05) | ui-builder | ⏳ PENDING |
 | B3-QP | QP evaluation of B3 delivery | foreman-v2-agent | ⏳ PENDING |
 | B4 | Wave B4 — Framework Lifecycle (J-06–J-08) | ui-builder | ⏳ PENDING |

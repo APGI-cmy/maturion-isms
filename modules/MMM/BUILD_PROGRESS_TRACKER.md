@@ -31,7 +31,7 @@ error from the original governance layer-down. The module is MMM (Maturity Manag
 | Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS — artifacts produced, pending CS2 approval |
 | Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | COMPLETE — artifacts produced (mmm-stage8-implementation-plan-20260417); 9 build waves defined; pending CS2 approval |
 | Stage 4 | Builder Appointment | Stage 11 | Builder Appointment | COMPLETE ✅ — builder-contract.md v1.0.0 (mmm-stage11-builder-appointment-20260420); all 5 builders appointed; SB-002 resolved; SB-003 credential gate active |
-| Stage 5 | Build | Stage 12 | Build | NOT_STARTED (partial AIMC artifact) |
+| Stage 5 | Build | Stage 12 | Build | IN_PROGRESS — B1 COMPLETE (schema/RLS/26 tables, 164 tests GREEN), B2 COMPLETE (6 Edge Functions, 28 tests GREEN); B3–B6 pending; B7 BLOCKED (SB-003) |
 | — | (new stage) | Stage 2 | UX Workflow & Wiring Spec | COMPLETE |
 | — | (new stage) | Stage 6 | QA-to-Red | COMPLETE — artifacts produced, pending CS2 approval |
 | — | (new stage) | Stage 7 | PBFAG | COMPLETE — artifacts produced (mmm-stage7-pbfag-20260415); PBFAG PASS; IAA token issued (IAA-session-mmm-stage7-pbfag-20260415-PASS); pending CS2 approval |
@@ -410,14 +410,31 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 ---
 
 ### Stage 12: Build Execution & Evidence
-**Status**: [ ] NOT_STARTED  
+**Status**: [ ] IN_PROGRESS — Wave mmm-stage12-build-execution-20260420  
 **Location**: `modules/MMM/11-build/`  
+**Wave**: mmm-stage12-build-execution-20260420  
+**Issue**: maturion-isms#1428  
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-wave-record-mmm-stage12-build-execution-20260420.md` — CLEARED (SHA 37964df)
+
+**Wave Progress (B1–B9)**:
+- [x] **B1 (Schema)**: COMPLETE ✅ — 26 mmm_ tables, RLS, indexes, storage buckets; 164/164 tests GREEN; evidence: `modules/MMM/11-build/B1-schema/wave-b1-evidence.md`; QP PASS
+- [x] **B2 (Core API)**: COMPLETE ✅ — 6 Deno Edge Functions (mmm-health, mmm-qiw-status, mmm-org-update, mmm-invitation-create, mmm-invitation-accept, mmm-commissioning-check); 28/28 tests GREEN; evidence: `modules/MMM/11-build/B2-api/wave-b2-evidence.md`; QP PASS
+- [ ] **B3 (Core UI)**: NOT_STARTED — pending next session
+- [ ] **B4 (Framework Lifecycle)**: NOT_STARTED
+- [ ] **B5 (Assessment Execution)**: NOT_STARTED
+- [ ] **B6 (Findings/Reporting)**: NOT_STARTED
+- [ ] **B7 (Boundary Integrations)**: BLOCKED ⛔ — SB-003 credential gate (AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN not provisioned)
+- [ ] **B8 (Cross-Cutting)**: NOT_STARTED
+- [ ] **B9 (Golden Path)**: NOT_STARTED (depends on B7)
+
 **Key Artifacts**:
-- [ ] Implementation code in `apps/` or `packages/`
-- [ ] Test evidence (QA-to-Green per wave)
-- [ ] QA validation results
-- [ ] Build completion evidence
-- [ ] Handover documentation
+- [x] `supabase/migrations/` — 4 migration files (B1 schema, indexes, RLS, storage)
+- [x] `supabase/seed-mmm.sql` — test seed data
+- [x] `supabase/functions/mmm-health/` + 5 other Edge Functions (B2)
+- [x] `supabase/functions/_shared/mmm-auth.ts` — shared JWT middleware
+- [x] `modules/MMM/tests/B1-schema/` + `modules/MMM/tests/B2-api/` — 192 tests total (164+28), all GREEN
+- [ ] Frontend app (B3+)
+- [ ] Full test coverage (B3–B9 pending)
 
 #### 12.1 Critical Deliverable Validation (Waves 5-7 Lessons)
 

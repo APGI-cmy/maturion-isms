@@ -2,3 +2,21 @@ project_id = "ujucvyyspfxlxlfdamda"
 
 [functions.invoke-ai-parse-criteria]
 verify_jwt = false
+
+[functions.mmm-health]
+verify_jwt = false
+
+[functions.mmm-qiw-status]
+verify_jwt = true
+
+[functions.mmm-org-update]
+verify_jwt = true
+
+[functions.mmm-invitation-create]
+verify_jwt = true
+
+[functions.mmm-invitation-accept]
+verify_jwt = false
+
+[functions.mmm-commissioning-check]
+verify_jwt = false
