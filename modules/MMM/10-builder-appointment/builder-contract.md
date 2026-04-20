@@ -1023,9 +1023,9 @@ Stage 11 (Builder Appointment) is complete when ALL of the following conditions 
 | SC11-7 | Wave sequencing and dependency map present in §8 | ✅ COMPLETE |
 | SC11-8 | Blocker and gate declaration table present in §5 | ✅ COMPLETE |
 | SC11-9 | BUILD_PROGRESS_TRACKER.md Stage 11 updated to COMPLETE | ✅ COMPLETE (D5) |
-| SC11-10 | IAA ASSURANCE-TOKEN obtained at Phase 4 | ⏳ PENDING — IAA to issue at Phase 4 |
+| SC11-10 | IAA ASSURANCE-TOKEN obtained at Phase 4 | ✅ COMPLETE — ASSURANCE-TOKEN: IAA-session-mmm-stage11-builder-appointment-20260420-PASS |
 
-**Stage 11 enters COMPLETE upon IAA ASSURANCE-TOKEN issuance (SC11-10).**
+**Stage 11 is COMPLETE; IAA ASSURANCE-TOKEN issued under SC11-10.**
 
 ### Mandatory Questions — maturion-isms#1426 Answers
 
