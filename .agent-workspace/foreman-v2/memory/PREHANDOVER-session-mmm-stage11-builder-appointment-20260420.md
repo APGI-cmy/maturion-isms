@@ -22,7 +22,7 @@ This is a PRE_BUILD_STAGE_MODEL governance-doc wave. Zero code changes. Primary 
 **Builders involved**:
 - mat-specialist: D1 (builder-contract.md v1.0.0), D2 (builder mapping), D3 (Stage 10 carry-forward), D4 (blocker declarations), D5 (BUILD_PROGRESS_TRACKER Stage 11 COMPLETE)
 - execution-ceremony-admin-agent: C1 (PREHANDOVER proof), C2 (session memory)
-- independent-assurance-agent: IAA-PRE (PRE-BRIEF at SHA 0489924), IAA-FINAL (pending — Phase 4)
+- independent-assurance-agent: IAA-PRE (PRE-BRIEF at SHA 0489924), IAA-FINAL (✅ COMPLETE — SHA 7ee770a, 22/22 checks PASS)
 
 ---
 
@@ -178,7 +178,7 @@ Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
 **Wave**: mmm-stage11-builder-appointment-20260420
 **Branch**: copilot/mmm-stage-11-builder-appointment
 **ECAP Session**: ecap-session-mmm-stage11-builder-appointment-20260420
-**Final IAA Session Reference**: IAA-session-mmm-stage11-builder-appointment-20260420-PASS (expected — not yet issued)
+**Final IAA Session Reference**: IAA-session-mmm-stage11-builder-appointment-20260420-PASS (ISSUED — SHA 7ee770a, 22/22 checks PASS)
 **Date**: 2026-04-20
 
 `ecap_bundle_completeness: PASS`
@@ -192,14 +192,13 @@ Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
 
 ### C1. Final-State Declaration
 
-**Final State**: `PREHANDOVER BUNDLE ASSEMBLED — awaiting IAA-FINAL`
-*(Pre-IAA-FINAL bundle; final state of COMPLETE requires IAA ASSURANCE-TOKEN)*
+**Final State**: `COMPLETE — IAA-session-mmm-stage11-builder-appointment-20260420-PASS (SHA 7ee770a, 22/22 checks PASS)`
 
 | Dimension | Status |
 |-----------|--------|
 | Substantive readiness | ACCEPTED by Foreman (QP PASS) |
 | Administrative readiness | ACCEPTED (this ECAP bundle) |
-| IAA assurance verdict | PENDING — IAA-FINAL not yet invoked |
+| IAA assurance verdict | ✅ PASS — IAA-session-mmm-stage11-builder-appointment-20260420-PASS (22/22 checks, SHA 7ee770a) |
 | Ripple status | NOT-APPLICABLE — no PUBLIC_API changes; no code/schema changes |
 | Admin-compliance result | PASS |
 
@@ -212,14 +211,14 @@ Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
 | Gate results (JSON) | N/A | N/A | N/A | [N/A — PRE_BUILD_STAGE_MODEL governance-doc wave; no CI test run gate results JSON produced; gate checks embedded in PREHANDOVER `## Gate Set Checked` section] |
 | ECAP reconciliation summary | Embedded in PREHANDOVER proof (this document) | ✓ | ✓ (ECAP commit) | |
 | Scope declaration | `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-stage11-builder-appointment-20260420.md` | ✓ | ✓ (SHA a15b4e2) | |
-| IAA token file | N/A — IAA-FINAL not yet invoked | N/A | N/A | [Pre-IAA bundle; token to be issued at Phase 4] |
+| IAA token file | `.agent-admin/assurance/iaa-wave-record-mmm-stage11-builder-appointment-20260420.md` `## TOKEN` section | ✅ | ✅ (SHA 7ee770a) | `PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage11-builder-appointment-20260420-PASS` |
 
 ### C3. Cross-Artifact Consistency Table
 
 | Row | Consistency Dimension | Source Value | Verified Against | Match |
 |-----|-----------------------|-------------|-----------------|-------|
 | Session reference | Session ID | `mmm-stage11-builder-appointment-20260420` (PREHANDOVER) | Session memory filename, wave record | ✓ |
-| Token reference | Expected token reference | `IAA-session-mmm-stage11-builder-appointment-20260420-PASS` | Expected reference (A-028/A-029 format; actual token pending IAA-FINAL) | ✓ |
+| Token reference | Expected token reference | `IAA-session-mmm-stage11-builder-appointment-20260420-PASS` | Actual token: IAA-session-mmm-stage11-builder-appointment-20260420-PASS (SHA 7ee770a, ISSUED) | ✓ |
 | Issue/PR/wave | Issue #1426, wave mmm-stage11-builder-appointment-20260420 | PREHANDOVER fields | Session memory, scope declaration, wave-current-tasks | ✓ |
 | Branch | `copilot/mmm-stage-11-builder-appointment` | PREHANDOVER `branch` | `git branch --show-current` output | ✓ |
 | Path consistency | Artifact paths | PREHANDOVER artifact list | `git ls-files` (post-ECAP commit) | ✓ |
@@ -246,7 +245,7 @@ Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
 | substantive_readiness | ACCEPTED — Foreman QP PASS |
 | administrative_readiness | ACCEPTED — this ECAP bundle |
 | QP admin-compliance check completed | yes |
-| IAA invocation authorized | pending Foreman review of this bundle |
+| IAA invocation authorized | ✅ COMPLETE — IAA-FINAL issued ASSURANCE-TOKEN SHA 7ee770a |
 | Rejection reason (if REJECTED) | N/A |
 | Foreman Session | foreman-v2-agent v6.2.0 |
 | Checkpoint Date | 2026-04-20 |
@@ -271,7 +270,7 @@ Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
 | AAP-15 | Gate inventory absent | PASS | `gate_set_checked` field populated with 11 named gates and results |
 | AAP-16 | Stale gate-pass wording | PASS | No "verify gates pass", "gates TBD", or "gates pending" wording; all gates named with definitive PASS/N/A/ACKNOWLEDGED results |
 | AAP-17 | Pre-final instruction wording in final-state artifact | PASS | No "FOREMAN ACTION REQUIRED", "paste verbatim", or equivalent pre-assembly instruction text |
-| AAP-18 | Cross-artifact final-state inconsistency | PASS | All artifacts consistently declare pre-IAA-FINAL bundle state; no contradictory final/non-final claims |
+| AAP-18 | Cross-artifact final-state inconsistency | PASS | All artifacts consistently declare COMPLETE state — IAA-session-mmm-stage11-builder-appointment-20260420-PASS (SHA 7ee770a); no final/non-final contradictions |
 | AAP-19 | Canonical source parity violation | PASS | No "carried forward verbatim" claims; SB-002/SB-003 carry-forward explicitly attributed to prior waves |
 | AAP-20 | `## Ripple/Cross-Agent Assessment` absent or blank | PASS | Section present with 9 concrete impact rows above |
 | AAP-21 | Active tracker contradiction | PASS | wave-current-tasks.md shows C1/C2 as PENDING (correctly pre-assembly); PREHANDOVER does NOT claim COMPLETE/ASSURANCE-TOKEN state; no contradiction between active tracker and bundle claims |
@@ -285,22 +284,22 @@ Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
 | # | Dependency | Truth Anchor | Match | Notes |
 |---|-----------|-------------|-------|-------|
 | R01 | Session ID | PREHANDOVER `mmm-stage11-builder-appointment-20260420` | ✓ | Matches session memory filename and wave record |
-| R02 | IAA token reference | Expected: `IAA-session-mmm-stage11-builder-appointment-20260420-PASS` | ✓ | A-028/A-029 expected reference; actual token pending IAA-FINAL |
+| R02 | IAA token reference | Expected: `IAA-session-mmm-stage11-builder-appointment-20260420-PASS` | ✓ | Actual token ISSUED: IAA-session-mmm-stage11-builder-appointment-20260420-PASS (SHA 7ee770a) |
 | R03 | Issue number | maturion-isms#1426 | ✓ | Consistent across PREHANDOVER, session memory, scope declaration, wave record |
 | R04 | PR number | copilot/mmm-stage-11-builder-appointment (PR for #1426) | ✓ | Branch identified; PR number confirmed consistent |
 | R05 | Wave identifier | `mmm-stage11-builder-appointment-20260420` | ✓ | Consistent across all artifacts |
 | R06 | Branch name | `copilot/mmm-stage-11-builder-appointment` | ✓ | Verified via `git branch --show-current` |
 | R07 | Changed file paths | 9 files post-ECAP commit | ✓ | All 9 in APPROVED_ARTIFACT_PATHS; scope-to-diff ACKNOWLEDGED |
 | R08 | PREHANDOVER ↔ session memory | Same job/wave/issue/session/status | ✓ | Cross-verified |
-| R09 | PREHANDOVER ↔ token/IAA reference | Expected reference format per A-028/A-029 | ✓ | Actual token pending; expected reference consistent |
-| R10 | Tracker ↔ wave record | wave-current-tasks.md ↔ iaa-wave-record | ✓ | Both show PRE-BRIEF COMPLETE; IAA-FINAL pending |
+| R09 | PREHANDOVER ↔ token/IAA reference | Expected reference format per A-028/A-029 | ✓ | Actual token ISSUED: IAA-session-mmm-stage11-builder-appointment-20260420-PASS (SHA 7ee770a) |
+| R10 | Tracker ↔ wave record | wave-current-tasks.md ↔ iaa-wave-record | ✓ | PRE-BRIEF COMPLETE; IAA-FINAL COMPLETE (IAA-session-mmm-stage11-builder-appointment-20260420-PASS, SHA 7ee770a) |
 | R11 | Scope declaration ↔ actual changed files | APPROVED_ARTIFACT_PATHS covers all changed files | ✓ | 9 post-commit files all listed in scope declaration |
 | R12 | Session memory ↔ committed artifact paths | All cited paths confirmed via git ls-files | ✓ | |
 | R13 | CANON_INVENTORY ↔ file hash/version/date | No CANON_INVENTORY amendments required | ✓ | N/A — no canon files changed |
 | R14 | Ripple registry ↔ PUBLIC_API changes | No PUBLIC_API files changed | ✓ | NOT-APPLICABLE confirmed |
-| R15 | Final-state status coherence | Pre-IAA-FINAL bundle state | ✓ | PREHANDOVER, session memory both say awaiting IAA-FINAL |
+| R15 | Final-state status coherence | COMPLETE state | ✓ | PREHANDOVER, session memory, wave record all show COMPLETE — IAA-session-mmm-stage11-builder-appointment-20260420-PASS |
 | R16 | Artifact declared count ↔ actual count | 9 files, D1+D5 deliverables | ✓ | Counts consistent |
-| R17 | IAA session reference | `IAA-session-mmm-stage11-builder-appointment-20260420-PASS` expected | ✓ | Expected reference; no `-rZ` reinvocation round |
+| R17 | IAA session reference | `IAA-session-mmm-stage11-builder-appointment-20260420-PASS` expected | ✓ | IAA-FINAL ISSUED: IAA-session-mmm-stage11-builder-appointment-20260420-PASS (SHA 7ee770a, 22/22 checks PASS) |
 
 **Cross-Artifact Reconciliation Declaration**
 Wave / Job: mmm-stage11-builder-appointment-20260420
@@ -334,13 +333,13 @@ Ripple/Cross-Agent Assessment Section:
   Section 3.8 confirmed — ## Ripple/Cross-Agent Assessment:  [x] PRESENT AND POPULATED (9 rows, concrete conclusions)
 
 Active Tracker Normalization (check 3.9):
-  Section 3.9 confirmed — wave-current-tasks.md C1/C2 PENDING is correct pre-assembly state;
-  PREHANDOVER claims "PREHANDOVER BUNDLE ASSEMBLED — awaiting IAA-FINAL" (NOT COMPLETE);
-  NO AAP-21 violation (no final-state contradiction with active tracker):  [x] PASS
+  Section 3.9 confirmed — wave-current-tasks.md C1/C2 were PENDING at assembly time (correct pre-IAA state);
+  PREHANDOVER Final State now updated to COMPLETE — IAA-session-mmm-stage11-builder-appointment-20260420-PASS (SHA 7ee770a);
+  NO AAP-21 violation (final-state consistency confirmed across all active artifacts):  [x] PASS
 
 Declared Exceptions:
   1.3 Gate results JSON: N/A — PRE_BUILD_STAGE_MODEL governance-doc wave; gates embedded in PREHANDOVER ## Gate Set Checked section
-  1.9 IAA assurance token: N/A — pre-IAA-FINAL bundle; Phase 4 not yet invoked
+  1.9 IAA assurance token: ISSUED — IAA-session-mmm-stage11-builder-appointment-20260420-PASS (SHA 7ee770a, 22/22 checks PASS)
 
 Final-State Normalization Completed:  [x] YES
 Cross-Artifact Reconciliation Done:   [x] YES (R01–R17 all PASS/N/A)
@@ -384,7 +383,11 @@ a15b4e2 QP PASS: wave-current-tasks updated with D1/D5 completion; proceeding to
 
 ## IAA Agent Response (verbatim)
 
-*(To be pasted by Foreman after IAA-FINAL response — Section required per A-029; placeholder at C1 commit time per template v1.1.0)*
+All **22 checks PASS**. Merge gate parity: PASS. Merge permitted (subject to CS2 approval).
+
+**Token reference: IAA-session-mmm-stage11-builder-appointment-20260420-PASS**
+**PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage11-builder-appointment-20260420-PASS**
+Adoption phase: PHASE_B_BLOCKING | SHA: 7ee770a
 
 ---
 

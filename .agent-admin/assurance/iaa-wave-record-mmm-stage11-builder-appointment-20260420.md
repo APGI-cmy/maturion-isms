@@ -82,12 +82,12 @@ All 16 PRE_BUILD_GATES checks (OVL-PBG-001–016) will be applied at IAA-FINAL. 
 | Stage 8 | Implementation Plan | ✅ COMPLETE | implementation-plan.md v1.0.0 + convergence-governance-addendum.md v1.0.0; iaa-wave-record-mmm-stage8-implementation-plan-20260417.md + iaa-wave-record-mmm-stage8-addendum-20260419.md |
 | Stage 9 | Builder Checklist | ✅ COMPLETE | IAA-session-mmm-stage9-builder-checklist-20260419-PASS — All 5 builders PASS (schema-builder B1, api-builder B2–B6, ui-builder B3–B6, integration-builder B7, qa-builder B8/B9) |
 | Stage 10 | IAA Pre-Brief | ✅ COMPLETE | PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage10-iaa-prebrief-20260420-PASS; wave record: iaa-wave-record-mmm-stage10-iaa-prebrief-20260420.md |
-| Stage 11 | Builder Appointment | ⏳ THIS WAVE | `builder-contract.md` v1.0.0 — awaiting D1–D5 delivery |
+| Stage 11 | Builder Appointment | ✅ COMPLETE | PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage11-builder-appointment-20260420-PASS (22/22 checks, SHA 7ee770a); `builder-contract.md` v1.0.0 committed; all 5 builders appointed; SB-002 resolved; SB-003 preserved |
 | Stage 12 | Build Execution & Evidence | 🔴 BLOCKED | Hard gate SB-003 (B7 credential provisioning by CS2) |
 
 **Blockers preventing Stage 12 commencement** (not Stage 11 — Stage 11 is unblocked):
 - **SB-003 HARD GATE**: `AIMC_SERVICE_TOKEN` + `PIT_SERVICE_TOKEN` must be provisioned by CS2 before Stage 12 B7 wave-start. Stage 12 B7 wave CANNOT begin until CS2 confirms credential provisioning.
-- **SB-002**: api-builder scope in `builder-contract.md` must explicitly declare Deno/Supabase Edge Function runtime as the EXCLUSIVE target for api-builder Stage 12 work. Any Next.js API route reference must be removed or explicitly scoped out.
+- **SB-002**: ✅ RESOLVED IN STAGE 11 — `builder-contract.md` §3.2 explicitly declares Deno/Supabase Edge Function runtime as the EXCLUSIVE target for api-builder Stage 12 work; Next.js API routes are explicitly prohibited.
 
 **Stage 11 hard start conditions — ALL SATISFIED**:
 - ✅ Stage 10 IAA Pre-Brief TOKEN confirmed: IAA-session-mmm-stage10-iaa-prebrief-20260420-PASS

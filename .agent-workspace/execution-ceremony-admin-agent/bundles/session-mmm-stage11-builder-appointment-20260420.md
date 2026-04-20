@@ -3,7 +3,7 @@
 - `session_id: mmm-stage11-builder-appointment-20260420`
 - `pr_reviewed: copilot/mmm-stage-11-builder-appointment (PR for maturion-isms#1426)`
 - `overlay_applied: PRE_BUILD_STAGE_MODEL → PRE_BUILD_GATES (OVL-PBG-001–016) + ACR-01–11`
-- `verdict: PREHANDOVER BUNDLE ASSEMBLED — awaiting IAA-FINAL`
+- `verdict: COMPLETE — IAA-session-mmm-stage11-builder-appointment-20260420-PASS (22/22 checks, SHA 7ee770a)`
 - `checks_run: C1 PREHANDOVER proof assembled; C2 session memory assembled; scope paths verified against APPROVED_ARTIFACT_PATHS; active_trackers_normalized verified; ECAP reconciliation summary included; Ripple/Cross-Agent Assessment included per HFMC-01; gate_set_checked populated with 11 named gates (AAP-15 compliance); merge_gate_parity PASS; §4.3e AAP-01–21 auto-fail scan PASS; R01–R17 reconciliation matrix PASS; checklist sections 1–9 COMPLETE`
 - `learning_note: Stage 11 is a governance-doc wave with zero code changes. Builder-contract.md v1.0.0 is the primary deliverable. SB-002 resolved (Deno/Supabase declared exclusive for api-builder). SB-003 preserved as B7 hard gate. CG-001–CG-005 and NBR-001–NBR-005 binding on all Stage 12 builders. Foreman delegation brief listed gate_set_checked as "[to be confirmed post IAA-FINAL]" — ECAP overrode per AAP-15 compliance and Stage 9/10 precedent: named gates must be populated and merge_gate_parity set to PASS before bundle return; provisional gate wording is AAP-16 auto-fail.`
 - `agents_delegated_to: mat-specialist (D1/D5), independent-assurance-agent (IAA-PRE/IAA-FINAL)`
