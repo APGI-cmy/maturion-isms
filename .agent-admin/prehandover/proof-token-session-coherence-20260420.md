@@ -63,7 +63,7 @@ scope_declaration_path: .agent-workspace/foreman-v2/personal/scope-declaration-w
 # requires CS2 direct review per SELF-MOD-IAA-001 before merge.
 # CS2 must post CS2-DIRECT-REVIEW comment on this PR for that specific file.
 
-## Ripple Assessment Summary
+## Pre-Handover Ripple Summary
 public_api_files_changed: 1    # AGENT_HANDOVER_AUTOMATION.md has layer_down_status: PUBLIC_API
 ripple_status:          DEFERRED  # No immediate downstream consumer impact; layer-down ripple already tracked
 ripple_notes:           AGENT_HANDOVER_AUTOMATION.md change adds new Check L and AAP-22 — additive governance hardening only; no existing check modified; consumer repos will receive update in next governance-liaison ripple wave
