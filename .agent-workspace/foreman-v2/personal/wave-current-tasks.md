@@ -27,9 +27,9 @@ Carry-forwards: SB-002 (api-builder Deno clarification), SB-003 (B7 credentials)
 | D3 | Stage 10 carry-forward mapping (qualifying tasks, admin ceremony, canon overlays) | mat-specialist | ✅ COMPLETE — within D1 (SHA 8e8d674) |
 | D4 | Blocker and gate declaration (SB-002, SB-003, CG-001–CG-005, NBR-001/NBR-002) | mat-specialist | ✅ COMPLETE — within D1 (SHA 8e8d674) |
 | D5 | BUILD_PROGRESS_TRACKER.md Stage 11 IN_PROGRESS → COMPLETE | mat-specialist | ✅ COMPLETE — SHA 8e8d674 |
-| C1 | PREHANDOVER proof (ECAP bundle) | execution-ceremony-admin-agent | ⏳ PENDING |
-| C2 | Session memory (ECAP bundle) | execution-ceremony-admin-agent | ⏳ PENDING |
-| IAA-FINAL | Phase 4 Final Audit — ASSURANCE-TOKEN | independent-assurance-agent | ⏳ PENDING |
+| C1 | PREHANDOVER proof (ECAP bundle) | execution-ceremony-admin-agent | ✅ COMPLETE — SHA 8c80f37 |
+| C2 | Session memory (ECAP bundle) | execution-ceremony-admin-agent | ✅ COMPLETE — SHA 8c80f37 |
+| IAA-FINAL | Phase 4 Final Audit — ASSURANCE-TOKEN | independent-assurance-agent | ✅ COMPLETE — IAA-session-mmm-stage11-builder-appointment-20260420-PASS (SHA 7ee770a) |
 
 ## Wave Completion Gate
 
@@ -42,4 +42,4 @@ Carry-forwards: SB-002 (api-builder Deno clarification), SB-003 (B7 credentials)
 | SB-003 credential gate explicit in D1 | ✅ PRESERVED AS HARD GATE §3.4, §5 |
 | BUILD_PROGRESS_TRACKER Stage 11 COMPLETE | ✅ COMPLETE — SHA 8e8d674 |
 | QP PASS | ✅ PASS — QP evaluation by foreman-v2-agent v6.2.0 |
-| IAA ASSURANCE-TOKEN obtained | ⏳ PENDING |
+| IAA ASSURANCE-TOKEN obtained | ✅ COMPLETE — IAA-session-mmm-stage11-builder-appointment-20260420-PASS |

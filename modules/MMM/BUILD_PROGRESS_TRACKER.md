@@ -396,9 +396,9 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 
 **Completion Date**: 2026-04-20  
 **Approval Required**: Yes — pending CS2 PR merge  
-**Approval Status**: Approved by Foreman (QP); IAA ASSURANCE-TOKEN pending  
+**Approval Status**: Approved by Foreman (QP) + IAA ASSURANCE-TOKEN ISSUED ✅
 - [x] Approved by Foreman (foreman-v2-agent v6.2.0 — QP; mat-specialist produced)
-- [ ] IAA ASSURANCE-TOKEN pending (Phase 4)
+- [x] IAA ASSURANCE-TOKEN: IAA-session-mmm-stage11-builder-appointment-20260420-PASS (Phase 4, SHA 7ee770a, 22/22 checks PASS)
 - [ ] CS2 PR merge pending
 **Approval Date**: 2026-04-20 (Foreman QP)  
 **Approved By**: foreman-v2-agent v6.2.0 (QP); CS2 formal approval pending PR merge  
