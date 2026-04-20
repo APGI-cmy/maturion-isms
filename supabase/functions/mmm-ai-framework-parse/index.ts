@@ -26,6 +26,7 @@ import { corsHeaders, jsonResponse, validateJWT, requireRole } from '../_shared/
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 // AIMC_BASE_URL: will be wired to Deno.env.get('AIMC_BASE_URL') in B7
+// TR-009: circuit breaker pattern — stub returns fallback on AIMC timeout; B7 wire adds Deno AbortController with 10s timeout
 
 const STUB_DOMAINS = [
   { name: 'Governance', description: 'Organisational governance practices' },

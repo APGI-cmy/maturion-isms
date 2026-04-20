@@ -1,3 +1,4 @@
+// TR-040: queue-and-sync pattern — offline evidence queued in localStorage, synced on reconnect (B7 live wire)
 import { useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';

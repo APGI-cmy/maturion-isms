@@ -30,6 +30,7 @@ import { corsHeaders, jsonResponse, validateJWT, requireRole } from '../_shared/
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+// PIT_BASE_URL: will be wired to Deno.env.get('PIT_BASE_URL') in B7 (SB-003 credential gate)
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {

@@ -86,3 +86,5 @@
 Wave B6 (Findings & Reporting) is COMPLETE.
 
 All 3 Edge Functions created, 4 React pages implemented with full NBR compliance. TR-016 7-step PIT handshake implemented as stub. TR-005 dashboard caching implemented. All 47 tests (T-MMM-S6-081–097) GREEN with 0 failures.
+
+**CONTROL_MAPPING**: All B6 deliverables mapped to `modules/MMM/04-architecture/CONTROL_MAPPING.md`. PIT export (TR-016), audit logging, AIMC recommend stubs, and dashboard QIW status all traced to architectural control requirements.

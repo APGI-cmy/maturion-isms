@@ -139,7 +139,7 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: 'Failed to write confirmed score' }, 500);
   }
 
-  // Cascade: update MPS score, domain score, org score (internal cascade)
+  // TR-004: 6-step cascade — criterion confirmed → MPS avg → domain avg → org avg → UI cache invalidation → dashboard refresh
   // NBR-001: UI must invalidate ['scores', assessment_id], ['dashboard']
   await triggerScoreCascade(supabase, assessment_id, criterion_id, claims.orgId);
 

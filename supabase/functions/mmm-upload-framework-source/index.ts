@@ -10,6 +10,8 @@
  *
  * JWT required + ADMIN role.
  *
+ * TR-006: file upload SLA ≤ 30s — enforced at CDN/storage layer; Edge Function returns 408 on timeout.
+ *
  * Behaviour:
  *   - Receives multipart file or JSON with file metadata
  *   - Creates mmm_parse_jobs record (status='PENDING')
