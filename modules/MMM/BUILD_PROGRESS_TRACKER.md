@@ -436,9 +436,8 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 - [x] `supabase/functions/_shared/mmm-auth.ts` — shared JWT middleware
 - [x] `apps/mmm/` — React/Vite frontend app (J-01–J-15 UI, 14 pages + shared components)
 - [x] `modules/MMM/tests/` — 7 test suites covering all wave deliverables
-- [ ] B7 live wire — COMPLETE ✅ (SB-003 resolved; 113 new tests GREEN; 743/743 total)  
-- [ ] B9 golden path — AUTHORIZED 🟡 (qa-builder executing)
-- [ ] B9 golden path (blocked on B7)
+- [x] B7 live wire — COMPLETE ✅ (SB-003 resolved; 113 new tests GREEN; 743/743 total)
+- [x] B9 golden path — COMPLETE ✅ (2026-04-26; 216 new tests GREEN; 959/959 total; GP-001–GP-010 ALL GREEN; CG-003/CG-004 declared)
 
 #### 12.1 Critical Deliverable Validation (Waves 5-7 Lessons)
 
@@ -492,19 +491,16 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 12 (Build Execution) IN_PROGRESS — B1–B8 COMPLETE (743/743 tests GREEN); B7 COMPLETE (113/113 tests GREEN; CG-003 declared; QP PASS); B9 AUTHORIZED — qa-builder executing golden path wave  
-**Overall Progress**: ~95% complete (B1–B6 + B8 DONE; B7 IN_PROGRESS; B9 pending)  
-**Blockers**: None — SB-003 cleared. B7 in execution. B9 unblocked after B7 completes.  
-**LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.  
-**Open Questions**: All RESOLVED through Stage 5. OQ-001 RESOLVED (Stage 4 TRS — CONNECTIVITY-REQUIRED, TR-039–TR-042). OQ-002 RESOLVED (Stage 5 Architecture — capabilities/index.md legacy sub-folder disposition). OQ-003 RESOLVED (Stage 5 Architecture — duplication audit, architecture.md §A12). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.  
+**Current Stage**: Stage 12 (Build Execution) COMPLETE ✅ — B1–B9 ALL COMPLETE (959/959 tests GREEN); B9 COMPLETE (216/216 tests GREEN; GP-001–GP-010 ALL GREEN; CG-003/CG-004 declared; QP PASS pending)
+**Overall Progress**: ~99% complete (B1–B9 ALL DONE; ECAP ceremony + IAA Final Audit pending)
+**Blockers**: None.
+**LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.
+**Open Questions**: All RESOLVED through Stage 5. OQ-001 RESOLVED (Stage 4 TRS — CONNECTIVITY-REQUIRED, TR-039–TR-042). OQ-002 RESOLVED (Stage 5 Architecture — capabilities/index.md legacy sub-folder disposition). OQ-003 RESOLVED (Stage 5 Architecture — duplication audit, architecture.md §A12). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.
+**Last Updated**: 2026-04-26 (B9 COMPLETE — qa-builder)
 **Next Steps**:
-1. integration-builder to complete B7 (`mmm-build-wave-b7-boundary-integrations`) — AIMC live wire + PIT handshake + KUC + circuit breaker; D5+D7 GREEN required
-2. foreman-v2-agent QP evaluation of B7 delivery
-3. On B7 QP PASS: foreman-v2-agent authorizes qa-builder B9 wave-start
-4. qa-builder B9 — golden path verification (GP-001–GP-010) using live integration boundaries
-5. foreman-v2-agent QP evaluation of B9 delivery
-6. Phase 4 ECAP ceremony — execution-ceremony-admin-agent
-7. Phase 4 IAA Final Audit — independent-assurance-agent
+1. foreman-v2-agent QP evaluation of B9 delivery
+2. Phase 4 ECAP ceremony — execution-ceremony-admin-agent
+3. Phase 4 IAA Final Audit — independent-assurance-agent
 
 ---
 
