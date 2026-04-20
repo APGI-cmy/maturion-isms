@@ -45,9 +45,8 @@ ceremony_admin_appointed:   false
 # wave tracker artifacts. The substantive governance content was confirmed CORRECT at IAA R2.
 
 ## IAA Assurance
-iaa_audit_token:            IAA-session-062-wave-active-tracker-coherence-20260419-PASS
-# Token to be written by IAA to iaa-wave-record-wave-active-tracker-coherence-20260419.md ## TOKEN section
-# iaa_audit_token pre-populated with expected reference per A-028 (PREHANDOVER-PROOF-IMMUTABILITY)
+iaa_audit_token:            IAA-session-063-wave-active-tracker-coherence-20260419-PASS
+# Issued IAA token reference aligned with iaa-wave-record-wave-active-tracker-coherence-20260419.md
 
 ## §4.3 Merge Gate Parity
 merge_gate_parity:          PASS
@@ -110,7 +109,7 @@ canon_inventory_hash_sha256: 90f73f292d1b8433c3fbd372d016ce612bd3e236b6fc213b253
 - BUILD_PROGRESS_TRACKER.md: not applicable to this governance wave
 - No active control artifact for this wave contains PENDING, in progress, Phase 4 pending, IAA Final Audit: PENDING, or equivalent for tasks that are now complete
 
-**Scan result**: `grep -rniE "\bPENDING\b|\bin[ _-]?progress\b" .agent-workspace/foreman-v2/personal/wave-current-tasks*.md` — Wave Completion Gate row "IAA Final Audit ASSURANCE-TOKEN obtained: ⏳ PENDING" is a pre-assurance marker; this line will be updated to COMPLETE once IAA PASS is received. All T1-T8 task rows show ✅ COMPLETE (no PENDING in task rows).
+**Scan result**: `grep -rniE "\bPENDING\b|\bin[ _-]?progress\b" .agent-workspace/foreman-v2/personal/wave-current-tasks*.md` — current committed wave trackers show the Wave Completion Gate row "IAA Final Audit ASSURANCE-TOKEN obtained" as ✅ COMPLETE, and the wave record includes an ASSURANCE-TOKEN. All T1-T8 task rows show ✅ COMPLETE, so there is no stale PENDING state in the active control artifacts for this wave.
 
 **D-2 verdict**: PASS — active trackers normalized for all deliverable tasks.
 

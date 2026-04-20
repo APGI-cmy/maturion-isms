@@ -17,7 +17,7 @@
 |---------|-------------|------------------|
 | BLOCKER-001 | wave-current-tasks.md not updated for this wave | ✅ RESOLVED — this file |
 | BLOCKER-002 | ceremony_admin_appointed status unknown | ✅ RESOLVED — false (governance-only wave; ECAP agent not invoked) |
-| BLOCKER-003 | CANON_INVENTORY stale for IAA canon (v1.6.0 vs v1.8.0) | Resolving — CANON_INVENTORY.json update included in governance-liaison delegation |
+| BLOCKER-003 | CANON_INVENTORY stale for IAA canon (v1.6.0 vs v1.8.0) | ✅ RESOLVED — CANON_INVENTORY.json updated; T6 complete |
 | BLOCKER-004 | Numbering reservations — ACR-15, AAP-21, Foreman A-039 | ✅ RESOLVED — confirmed: ACR-15, AAP-21, A-039 (Foreman highest is A-038) |
 | BLOCKER-005 | CS2 pre-authorization for "active control artifact" boundary definition | ✅ RESOLVED — issue #1412 opened by CS2 with explicit examples constitutes pre-authorization |
 
@@ -43,4 +43,4 @@
 | Governance-liaison delivery QP PASS | ✅ COMPLETE — session-067-20260419 |
 | Foreman Tier 2 knowledge updated | ✅ COMPLETE — A-039, D-2 added |
 | Phase 4 ECAP ceremony complete | ✅ COMPLETE — governance-liaison PREHANDOVER committed |
-| IAA Final Audit ASSURANCE-TOKEN obtained | ✅ COMPLETE — IAA-session-067-wave-active-tracker-coherence-20260419-PASS |
+| IAA Final Audit ASSURANCE-TOKEN obtained | ✅ COMPLETE — IAA-session-063-wave-active-tracker-coherence-20260419-PASS |

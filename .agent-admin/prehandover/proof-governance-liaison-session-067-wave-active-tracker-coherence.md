@@ -33,8 +33,8 @@ scope_declaration_parity: N/A     # governance-liaison session; scope declaratio
 admin_ceremony_compliance: PASS   # governance-only changes; verified locally
 
 ## IAA Assurance
-iaa_audit_token:        IAA-session-067-wave-active-tracker-coherence-20260419-PASS
-iaa_session_reference:  IAA-session-067-wave-active-tracker-coherence-20260419
+iaa_audit_token:        IAA-session-063-wave-active-tracker-coherence-20260419-PASS
+iaa_session_reference:  IAA-session-063-wave-active-tracker-coherence-20260419
 iaa_reinvocation_round: 1         # Round 1 — first invocation returned REJECTION-PACKAGE (ceremony artifacts absent); corrected and re-invoked
 iaa_rejection_reference: REJECTION-PACKAGE (first invocation) — wave trackers stale, no session memory/proof committed; corrected before second invocation
 

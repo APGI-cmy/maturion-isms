@@ -186,7 +186,7 @@ BUNDLE STATUS: [ ] READY FOR FOREMAN REVIEW  [ ] BLOCKED — REQUIRES: _______
 ## References
 
 - `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` v1.1.0 — §3.5–§3.9 (duties)
-- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.4.0 — §4.3e (compliance gate)
+- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.5.0 — §4.3e (compliance gate)
 - `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` v1.4.0 — §14.6 (QP checkpoint)
 - `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.9.0 — §Admin-Ceremony Rejection Triggers
 - `governance/checklists/execution-ceremony-admin-reconciliation-matrix.md` — cross-artifact dependencies
