@@ -214,7 +214,19 @@ The tracking records (D4–D6) describe forthcoming waves. IAA declares its anti
 
 ## TOKEN
 
-*Pending Phase 4 formal invocation — no token issued at pre-brief time.*
+**ASSURANCE-TOKEN ISSUED — R3 — 2026-04-20**
+
+```
+PHASE_B_BLOCKING_TOKEN: IAA-session-165-aimc-strategy-followup-20260420-PASS
+Token reference: IAA-session-165-aimc-strategy-followup-20260420-PASS
+PR/Wave: aimc-strategy-followup-20260420 | branch: copilot/execute-post-merge-follow-up
+Checks: 11 total — 11 PASS, 0 FAIL
+Merge gate parity: PASS
+Adoption phase: PHASE_B_BLOCKING
+Issued by: independent-assurance-agent v6.2.0
+Date: 2026-04-20
+R-series: R3 (R1 REJECTED — A-026 suggestions-log.md; R2 REJECTED — A-026 IAA ceremony files missing A-031 carve-out; R3 PASS)
+```
 
 ---
 
