@@ -3,12 +3,13 @@
 ## Status
 **Type**: Canonical Governance Definition  
 **Authority**: Supreme - Canonical  
-**Version**: 1.4.0  
+**Version**: 1.5.0  
 **Effective Date**: 2025-12-24  
 **Amended**: 2026-04-08 — v1.1.0: Added §14.3 Review Layer Role Separation — CS2 is not the technical pre-handover auditor; producing agent assembles evidence, IAA audits independently, CI enforces mechanically, CS2 decides to merge. Authority: CS2 — OPOJD hardening issue.  
 **Amended**: 2026-04-08 — v1.2.0: Added §9.6 Relationship to execution-ceremony-admin-agent and §14.4 Updated Handover Sequence — formalises the three-role ceremony model (Foreman orchestrates; ceremony-admin prepares bundle; IAA audits independently). Authority: CS2 — ECAP-001 canon establishment issue.  
 **Amended**: 2026-04-08 — v1.3.0: Added §14.5 IAA Rejection — Foreman Stop-and-Fix Loop — makes Foreman re-invocation ownership explicit after a `REJECTION-PACKAGE`; bans misleading "CS2 must re-invoke IAA" wording for ordinary Foreman-led handovers; cross-references INDEPENDENT_ASSURANCE_AGENT_CANON.md §IAA Re-Invocation After Rejection for full rules. Authority: CS2 — Foreman IAA re-invocation ownership canonisation issue.  
 **Amended**: 2026-04-17 — v1.4.0: Added §14.6 Foreman QP Admin-Compliance Checkpoint — defines the Foreman's Quality-of-Process verification role for admin-ceremony compliance; establishes required checkpoint output (administrative_readiness: ACCEPTED | REJECTED); enforces non-substitution principle (Foreman verifies, does not reconstruct). Authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack for ECAP, Foreman QP, and IAA.  
+**Amended**: 2026-04-19 — v1.5.0: Updated §14.6 Foreman QP Admin-Compliance Checkpoint — added gate inventory verification step (Step 4), pre-final instruction wording check step (Step 5), cross-artifact consistency step active-bundle scoped (Step 6), and carried-forward claim spot-check step (Step 7) to the checkpoint procedure; updated Foreman handback summary required fields; authority: CS2 — governance-repo hardening wave.  
 **Owner**: Maturion Engineering Leadership (Johan Ras)  
 **Precedence**: Subordinate only to GOVERNANCE_PURPOSE_AND_SCOPE.md  
 **Applies To**: All Foreman Instances, All Builder Agents, All Repositories
@@ -1361,6 +1362,68 @@ The Foreman MUST produce an explicit QP Admin-Compliance Checkpoint output (as a
 4. **The checkpoint is a verification role, not a production role.** If the Foreman discovers that ECAP omitted an entire class of required artifacts, the Foreman returns the bundle to ECAP for completion — the Foreman does not author the missing artifacts directly (except in the narrow case where the Foreman is acting as a combined Foreman+ECAP and no separate ECAP appointment was made).
 5. **This checkpoint is the Layer 2 enforcement point** of the closed 3-layer admin-control stack per `EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md §4.5`.
 
+#### Checkpoint Verification Steps (v1.5.0)
+
+The Foreman MUST complete the following verification steps in sequence at the QP checkpoint:
+
+**Step 1: ECAP Reconciliation Artifacts Review**
+
+Review the ECAP reconciliation summary, artifact completeness table, cross-artifact consistency table, and ripple assessment block (if applicable). Confirm each is present and structurally complete.
+
+**Step 2: §4.3e Gate Confirmation**
+
+Confirm that the §4.3e Admin Ceremony Compliance Gate was run and returned PASS. If ECAP has not confirmed this, return bundle to ECAP.
+
+**Step 3: Declared Exceptions Assessment**
+
+For each declared exception: assess ACCEPTABLE or UNACCEPTABLE. Any UNACCEPTABLE exception renders the bundle non-compliant. Return to ECAP for resolution.
+
+**Step 4: Gate Evidence Inventory Check (v1.5.0)**
+
+Verify that gate parity claims are backed by explicit per-gate evidence:
+- Gate results JSON contains individual gate entries (not only an aggregate verdict)
+- No provisional gate-pass wording in active-bundle artifacts (proof + ECAP reconciliation + latest session memory):
+  ```bash
+  ACTIVE_PROOF=$(ls -t .agent-admin/prehandover/proof-*.md 2>/dev/null | grep -v SUPERSEDED | head -1)
+  ACTIVE_RECON=$(ls -t .agent-admin/prehandover/ecap-reconciliation-*.md 2>/dev/null | head -1)
+  LATEST_SESSION=$(ls -t .agent-workspace/*/memory/session-*.md 2>/dev/null | head -1)
+  grep -lniE "expected to pass|parity to be confirmed|pending.*verification|gate.*deferred|to be confirmed" \
+    ${ACTIVE_PROOF} ${ACTIVE_RECON} ${LATEST_SESSION} 2>/dev/null
+  ```
+- If gate inventory is absent but gate parity is claimed: return bundle to ECAP (AAP-15, AAP-16)
+
+**Step 5: Pre-Final Instruction Wording Check (v1.5.0)**
+
+Verify no template instruction leakage in active-bundle final-state artifacts:
+```bash
+ACTIVE_PROOF=$(ls -t .agent-admin/prehandover/proof-*.md 2>/dev/null | grep -v SUPERSEDED | head -1)
+ACTIVE_RECON=$(ls -t .agent-admin/prehandover/ecap-reconciliation-*.md 2>/dev/null | head -1)
+LATEST_SESSION=$(ls -t .agent-workspace/*/memory/session-*.md 2>/dev/null | head -1)
+grep -lniE "\[fill in\]|\[instruction\]|\[PLACEHOLDER\]|\[YOUR TEXT HERE\]|ASSEMBLY_TIME_ONLY|REMOVE BEFORE COMMIT|TEMPLATE INSTRUCTION|replace this with|EXAMPLE TEXT" \
+  ${ACTIVE_PROOF} ${ACTIVE_RECON} ${LATEST_SESSION} 2>/dev/null
+```
+Zero output = PASS. Any output = BLOCKED — return bundle to ECAP (AAP-17, AAP-21).
+
+**Scope**: Active bundle only — latest non-superseded proof + current ECAP reconciliation + latest session memory. Do NOT scan the full `.agent-admin/prehandover/` directory (includes superseded artifacts).
+
+**Step 6: Cross-Artifact Final-State Consistency Check (v1.5.0) — Active-Bundle Scoped**
+
+Verify that the active final-state bundle tells one coherent story:
+- PREHANDOVER proof `final_state` matches ECAP reconciliation `Final State`
+- Session memory final-status fields do not contradict PREHANDOVER proof
+- Gate results JSON `verdict` matches PREHANDOVER `merge_gate_verdict`
+
+**Scope**: Latest (non-superseded) PREHANDOVER proof + latest session memory + current ECAP reconciliation only. Do NOT scan historical archive or superseded proofs.
+
+If any contradiction exists: return bundle to ECAP for normalization (AAP-19).
+
+**Step 7: Carried-Forward Claim Spot-Check (v1.5.0)**
+
+For any "carried forward from" or "verbatim from" claim visible in the active bundle:
+- Verify the named source file exists on the branch
+- Verify the claim has not changed gate authority or gate owner relative to the source
+- If source file is missing or claim is modified: return bundle to ECAP (AAP-20)
+
 #### Cross-Reference
 
 - **Layer 1 (ECAP obligation)**: `EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md §3.5–§3.9`
@@ -1389,4 +1452,4 @@ Foreman authority is superior to:
 
 ---
 
-**End of FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md v1.4.0**
+**End of FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md v1.5.0**
