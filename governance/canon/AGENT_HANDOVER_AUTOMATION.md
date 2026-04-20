@@ -1,7 +1,8 @@
 # AGENT_HANDOVER_AUTOMATION
 
-**Status**: CANONICAL | **Version**: 1.5.0 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.6.0 | **Authority**: CS2  
 **Date**: 2026-02-24  
+**Amended**: 2026-04-20 — v1.6.0: Added §4.3e Check L — active final-state bundle token/session coherence (AAP-22 / ACR-15); added AAP-22 to §4.3e auto-fail rules table; extends active-bundle scope to include `wave-current-tasks.md` for token/session coherence checks; authority: CS2 — maturion-isms#1422 (Canonize active final-state token/session coherence).  
 **Amended**: 2026-04-19 — v1.5.0: Hardened §4.3e Admin Ceremony Compliance Gate with gate-inventory checks (Check H), pre-final instruction wording denylist (Check I), cross-artifact final-state consistency with active-bundle scoping (Check J), and carried-forward claim verification (Check K); updated auto-fail rule table with AAP-15 through AAP-21; active-bundle scoping rule clarified to prevent false positives from historical archive; authority: CS2 — governance-repo hardening wave (gate-inventory + post-token normalization hardening).  
 **Amended**: 2026-04-17 — v1.4.1: Tightened §4.3e Check C stale-wording scan to final-state artifact set only — superseded pre-token proofs retained immutably under the append-only model are now explicitly exempt; updated AAP-01 auto-fail rule to document final-state scope and superseded-proof exemption; authority: CS2 — PR review feedback on §4.3e canon collision with append-only proof retention.  
 **Previous amendment**: 2026-04-17 — v1.4.0: Added §4.3e Admin Ceremony Compliance Gate (BLOCKING, pre-IAA, ECAP-involved jobs); added auto-fail rules table for 9 known admin anti-patterns (AAP-01 through AAP-09); updated Phase 4 structure and sequencing note; updated Handover Validation Checklist with admin-compliance gate item; authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack for ECAP, Foreman QP, and IAA.  
@@ -1168,6 +1169,66 @@ done
   ACC_FAILURES+=("K1: Carried-forward source file(s) not found on branch: ${UNRESOLVABLE_CF[*]} (AAP-20)")
 
 # ─────────────────────────────────────────────────────────────────────────────
+# CHECK L: Active Final-State Bundle Token/Session Coherence (AAP-22 / ACR-15)
+# All active final-state artifacts must reference the same IAA session ID as
+# the current authoritative token/session for this wave.
+# Scope: current (non-superseded) PREHANDOVER proof, latest session memory per
+# workspace, current wave record, current wave-current-tasks.md.
+# Historical rejection-package artifacts and superseded proofs are excluded.
+# ─────────────────────────────────────────────────────────────────────────────
+echo "  [L] Active final-state bundle token/session coherence (AAP-22)..."
+
+# Collect IAA session ID references from each active final-state artifact
+ACTIVE_SESSION_IDS=()
+
+# L1: PREHANDOVER proof iaa_audit_token field (non-superseded proof only)
+for f in $(git ls-files .agent-admin/prehandover/proof-*.md 2>/dev/null); do
+  IS_SUPERSEDED=false
+  for s in "${SUPERSEDED_SET[@]}"; do
+    [ "${f}" = "${s}" ] && IS_SUPERSEDED=true && break
+  done
+  ${IS_SUPERSEDED} && continue
+  # Extract session ID pattern from iaa_audit_token field
+  SESSION_FROM_PROOF=$(grep -oP '(?i)(?<=iaa_audit_token:[[:space:]])[^\s#]+' "${f}" 2>/dev/null | \
+    grep -oP 'IAA-session-[A-Za-z0-9._-]+' | head -1 || true)
+  [ -n "${SESSION_FROM_PROOF}" ] && ACTIVE_SESSION_IDS+=("proof:${SESSION_FROM_PROOF}")
+done
+
+# L2: Latest session memory per workspace
+for WORKSPACE_DIR in $(git ls-files '.agent-workspace/*/memory/session-*.md' 2>/dev/null | \
+    sed 's|/memory/session-.*||' | sort -u); do
+  LATEST_SESSION=$(git ls-files "${WORKSPACE_DIR}/memory/session-*.md" 2>/dev/null | sort | tail -1)
+  if [ -n "${LATEST_SESSION}" ]; then
+    SESSION_FROM_MEMORY=$(grep -oP '(?i)(?<=iaa_session_reference:[[:space:]])[^\s#]+' "${LATEST_SESSION}" 2>/dev/null | \
+      grep -oP 'IAA-session-[A-Za-z0-9._-]+' | head -1 || true)
+    [ -n "${SESSION_FROM_MEMORY}" ] && ACTIVE_SESSION_IDS+=("session-memory:${SESSION_FROM_MEMORY}")
+  fi
+done
+
+# L3: Current wave record ## TOKEN section
+for WAVE_RECORD in $(git ls-files '.agent-admin/assurance/iaa-wave-record-*.md' 2>/dev/null | sort | tail -1); do
+  SESSION_FROM_WAVE_RECORD=$(awk '/^## TOKEN/,/^## [^T]/' "${WAVE_RECORD}" 2>/dev/null | \
+    grep -oP 'IAA-session-[A-Za-z0-9._-]+' | head -1 || true)
+  [ -n "${SESSION_FROM_WAVE_RECORD}" ] && ACTIVE_SESSION_IDS+=("wave-record:${SESSION_FROM_WAVE_RECORD}")
+done
+
+# L4: Current wave-current-tasks.md (foreman-v2 personal workspace)
+WAVE_TASKS_FILE=$(git ls-files '.agent-workspace/foreman-v2/personal/wave-current-tasks*.md' 2>/dev/null | sort | tail -1)
+if [ -n "${WAVE_TASKS_FILE}" ]; then
+  SESSION_FROM_TASKS=$(grep -oP 'IAA-session-[A-Za-z0-9._-]+-PASS' "${WAVE_TASKS_FILE}" 2>/dev/null | sort -u | head -1 || true)
+  [ -n "${SESSION_FROM_TASKS}" ] && ACTIVE_SESSION_IDS+=("wave-tasks:${SESSION_FROM_TASKS}")
+fi
+
+# Compare: extract unique session IDs from collected references
+if [ ${#ACTIVE_SESSION_IDS[@]} -gt 0 ]; then
+  UNIQUE_SESSION_IDS=($(printf '%s\n' "${ACTIVE_SESSION_IDS[@]}" | \
+    grep -oP 'IAA-session-[A-Za-z0-9._-]+' | sort -u))
+  if [ ${#UNIQUE_SESSION_IDS[@]} -gt 1 ]; then
+    ACC_FAILURES+=("L1: Active final-state bundle token/session INCOHERENCE — ${#UNIQUE_SESSION_IDS[@]} different IAA session IDs found across active final-state artifacts: [${UNIQUE_SESSION_IDS[*]}]. All active artifacts must reference the same current session ID (AAP-22 / ACR-15). Sources: ${ACTIVE_SESSION_IDS[*]}")
+  fi
+fi
+
+# ─────────────────────────────────────────────────────────────────────────────
 # GATE RESULT
 # ─────────────────────────────────────────────────────────────────────────────
 if [ ${#ACC_FAILURES[@]} -gt 0 ]; then
@@ -1207,6 +1268,7 @@ The following conditions are **auto-fail** for the §4.3e gate regardless of oth
 | AAP-19 | Cross-artifact final-state contradiction | PREHANDOVER `final_state: COMPLETE` but ECAP reconciliation summary or session memory declares a non-final status for the same dimension |
 | AAP-20 | Carried-forward claim silently changes ownership or gate authority | A "carried forward from" claim in a final-state artifact references a source that does not contain the stated claim, or the carried-forward text modifies gate authority/ownership |
 | AAP-21 | ASSEMBLY_TIME_ONLY block not removed | A block explicitly marked `ASSEMBLY_TIME_ONLY`, `REMOVE BEFORE COMMIT`, or `TEMPLATE INSTRUCTION` remains in a committed output artifact |
+| AAP-22 | Active final-state token/session incoherence | The active final-state bundle contains two or more artifacts that each declare a different IAA session ID as the authoritative current final state for the same wave — e.g., PREHANDOVER proof `iaa_audit_token` names one session, while latest session memory `iaa_session_reference` names a different session, or wave record `## TOKEN` section names yet another. Check L of §4.3e will detect this automatically. See `INDEPENDENT_ASSURANCE_AGENT_CANON.md` §Authoritative-Source Rule for Current Token/Session for the resolution procedure. |
 
 ### Admin Ceremony Compliance Gate in the Handover Validation Checklist
 
