@@ -1,6 +1,6 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.9.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.10.0 | **Authority**: CS2
 **Date**: 2026-03-03
 **Amended**: 2026-03-03 — v1.1.0: Added §Proactive Assurance — Pre-Brief Protocol
 **Amended**: 2026-03-04 — v1.2.1: Added §CS2 Direct Review Track
@@ -11,6 +11,7 @@
 **Amended**: 2026-04-18 — v1.7.0: Added ACR-09 (pre-final instruction wording in final-state artifact), ACR-10 (cross-artifact final-state inconsistency), ACR-11 (canonical source parity violation) to §Admin-Ceremony Rejection Triggers; authority: CS2 — Post-Token Final-State Normalization Hardening issue.
 **Amended**: 2026-04-19 — v1.8.0: Added ACR-12 (PREHANDOVER proof missing `## Ripple/Cross-Agent Assessment` section), ACR-13 (ripple section present but blank), ACR-14 (`## Ripple/Cross-Agent Assessment` absent or blank in PREHANDOVER proof — HFMC-01 / FAIL-ONLY-ONCE A-023 / AAP-20) to §Admin-Ceremony Rejection Triggers; authority: CS2 — Harden PREHANDOVER templates so Ripple/Cross-Agent Assessment cannot be omitted.
 **Amended**: 2026-04-19 — v1.9.0: Added ACR-15 (active wave/task tracker contradiction — final-state claims cannot coexist with stale pending state in active control artifacts for the same wave); authority: CS2 — Canonize active-wave tracker coherence (issue #1412).
+**Amended**: 2026-04-20 — v1.10.0: Added ACR-16 (active final-state token/session incoherence — new rejection trigger); added §Authoritative-Source Rule for Current Token/Session; extended active-bundle scope rule to explicitly cover `wave-current-tasks.md`; added §Proof-of-Operation — Worked Examples for AAP-22/ACR-16; authority: CS2 — maturion-isms#1422 (Canonize active final-state token/session coherence). **Note**: This amendment requires CS2 direct review per §Independence Requirements rule 1 (SELF-MOD-IAA-001).
 
 ---
 
@@ -807,24 +808,104 @@ When a job has involved the `execution-ceremony-admin-agent` (ECAP), the IAA MUS
 | ACR-13 | **Stale gate-pass wording in final-state proof** — a final-state proof artifact (PREHANDOVER, session memory, scope declaration) contains unchecked or provisional gate-pass language such as "verify gates pass", "gates TBD", "gates pending", or similar wording that was never resolved to a definitive state, indicating a checklist item was carried forward without being executed. | AGENT_HANDOVER_AUTOMATION.md §4.3e; execution-ceremony-admin-anti-patterns.md AAP-16 |
 | ACR-14 | **`## Ripple/Cross-Agent Assessment` section absent or blank in PREHANDOVER proof** — the PREHANDOVER proof does not contain a `## Ripple/Cross-Agent Assessment` (or equivalent `## Ripple`/`## Cross-Agent`) heading, or the section is present but contains no concrete downstream-impact conclusions (only placeholder text, a blank table, or a heading with no body). Every PREHANDOVER proof must explicitly assess downstream agent and system impact regardless of wave type. This is the HFMC-01 recurring failure pattern (FAIL-ONLY-ONCE A-023). | AGENT_HANDOVER_AUTOMATION.md §4.3e Check J; execution-ceremony-admin-anti-patterns.md AAP-20; PREHANDOVER_PROOF_TEMPLATE.md v3.1 |
 | ACR-15 | **Active wave/task tracker not normalized before final assurance** — a final-state ceremony artifact (wave record, PREHANDOVER proof, or session memory) claims ASSURANCE-TOKEN issued / merge permitted / `final_state: COMPLETE`, but one or more active control artifacts for the same wave (e.g., `wave-current-tasks.md`, `BUILD_PROGRESS_TRACKER.md` current-wave entries, current stage-readiness trackers, active wave summaries) still show pending, in-progress, or pre-final state. The final-state bundle tells two contradictory operational stories simultaneously. Active control artifacts are those whose primary purpose is to reflect current wave operational state; they are distinguished from immutable historical archives (committed PREHANDOVER proofs and session memories from prior waves, historical wave records), which are explicitly excluded. IAA MUST reject and issue REJECTION-PACKAGE when this contradiction is detected. | ECAP-001 §3.5; execution-ceremony-admin-anti-patterns.md AAP-21; AGENT_HANDOVER_AUTOMATION.md §4.3e Check C3 (active-tracker coherence) |
+| ACR-16 | **Active final-state token/session incoherence** — the active final-state bundle for a wave contains two or more artifacts that each declare a **different** IAA session ID or token reference as the authoritative current final state for the same wave. The IAA must issue a `REJECTION-PACKAGE` if any of the following cross-artifact mismatches are present: (a) the `iaa_audit_token` field in the PREHANDOVER proof names one IAA session, while the latest session memory `iaa_session_reference` field names a different session; (b) the wave record `## TOKEN` section records one session/token, while any other active final-state artifact (PREHANDOVER proof, session memory, or `wave-current-tasks.md`) names a different session as current; (c) `wave-current-tasks.md` declares an IAA token/session for the current wave that differs from the token/session in the PREHANDOVER proof `iaa_audit_token` field. **Scope**: Active final-state bundle only — see §Active-Bundle Scope Rule for ACR Checks. **Authoritative source**: See §Authoritative-Source Rule for Current Token/Session below. **Canonical basis**: AAP-22; §4.3e Check L. | AGENT_HANDOVER_AUTOMATION.md §4.3e Check L; AAP-22; execution-ceremony-admin-checklist.md §5.10–§5.11 |
 
 ### Active-Bundle Scope Rule for ACR Checks (v1.7.0)
 
-When applying ACR triggers ACR-02, ACR-07, ACR-12, and any other cross-artifact consistency check, the IAA MUST scope the scan to the **active final-state bundle** for the current job only. The active bundle is defined as:
+When applying ACR triggers ACR-02, ACR-07, ACR-12, ACR-15, ACR-16, and any other cross-artifact consistency check, the IAA MUST scope the scan to the **active final-state bundle** for the current job only. The active bundle is defined as:
 
 1. **PREHANDOVER proof**: The current (non-superseded) proof — the most recent proof, or the proof not declared as superseded by a later proof
 2. **Session memory**: The latest session memory per agent workspace directory (most recent by filename sort order)
 3. **ECAP reconciliation summary**: The most recent reconciliation artifact for this PR/job
 4. **Wave record**: The current wave record for this job (if used)
 5. **Token file**: The current IAA token file for this job
+6. **`wave-current-tasks.md`**: The current wave tasks file at `.agent-workspace/foreman-v2/personal/wave-current-tasks*.md` — included in the active bundle for the purpose of ACR-16 (token/session coherence) checks only
 
 **Explicitly excluded from active-bundle scans**:
 - Superseded PREHANDOVER proofs (i.e., proofs for which a later proof declares `Supersedes: <filename>`)
 - Prior session memories (all except the latest per workspace)
 - Historical/archived wave records from prior waves
 - Rejection-package artifacts from prior rounds (these are retained as immutable historical evidence and are expected to contain non-final wording from the round they document)
+- Prior `wave-current-tasks.md` versions referencing completed or superseded waves
 
 **Rationale**: The append-only governance model deliberately retains historical artifacts. Scanning historical artifacts for provisional wording creates false positives and would incorrectly block legitimate final-state bundles. The hardened discipline applies only to artifacts that form the current final-state bundle.
+
+---
+
+### Authoritative-Source Rule for Current Token/Session (v1.10.0)
+
+**Rule**: For any wave, there is exactly one authoritative IAA session/token reference for the current final state. This reference is determined by the following priority order:
+
+1. **IAA wave record `## TOKEN` section** (path: `.agent-admin/assurance/iaa-wave-record-{wave}-{date}.md`) — When this section is populated with a non-PENDING, non-empty token, it is the **primary authoritative source** for the current final token/session reference.
+2. **PREHANDOVER proof `iaa_audit_token` field** — When the wave record `## TOKEN` section has not yet been populated (pre-final-assurance state), the PREHANDOVER proof's `iaa_audit_token` field is the **provisional reference**. All other active final-state artifacts must match this value.
+
+**Propagation obligation**: Once the authoritative token/session is established (at wave record TOKEN section population or PREHANDOVER proof commit), every active final-state artifact that references the IAA session for this wave MUST be updated to reference the same session ID before the bundle is submitted to IAA.
+
+**Rejection round handling**: When a REJECTION-PACKAGE is issued for round N and the Foreman initiates a stop-and-fix for round N+1:
+- The prior round N session ID must be removed from all active final-state fields in the fresh PREHANDOVER proof and updated session memory for round N+1.
+- The prior round N session ID is preserved in: (a) the rejection-package artifact from round N, and (b) the superseded PREHANDOVER proof from round N (which is declared superseded via the `Supersedes:` header in the new proof).
+- The round N+1 PREHANDOVER proof `iaa_audit_token` field records the expected new token reference (format: `IAA-session-NNN-YYYYMMDD-r1-PASS`).
+
+---
+
+### Proof-of-Operation — Worked Examples for AAP-22 / ACR-16 (v1.10.0)
+
+The following examples illustrate the **blocked** (non-compliant) and **allowed** (compliant) states for active final-state token/session coherence.
+
+#### BLOCKED Example — Multiple conflicting current IAA session references
+
+```
+Wave: governance-hardening-wave-20260420
+
+Active final-state bundle:
+  PREHANDOVER proof (.agent-admin/prehandover/proof-1422.md):
+    iaa_audit_token: IAA-session-063-wave14-20260420-PASS   ← declares session 063
+  Session memory (.agent-workspace/foreman-v2/memory/session-063-20260420.md):
+    iaa_session_reference: IAA-session-062-wave14-20260418  ← declares session 062 (prior)
+  Wave record (.agent-admin/assurance/iaa-wave-record-governance-hardening-wave-20260420.md):
+    ## TOKEN
+    ASSURANCE-TOKEN: IAA-session-067-wave14-20260421-PASS   ← declares session 067 (different)
+  wave-current-tasks.md:
+    iaa_prebrief_status: IAA-session-062-PASS               ← stale reference to session 062
+
+OUTCOME: ACR-16 fires.
+  → REJECTION-PACKAGE issued.
+  → Three different session IDs (062, 063, 067) are each claimed as the current authoritative
+    final state by a different active final-state artifact. The bundle does not tell one
+    coherent final truth. Operators cannot determine which IAA pass is authoritative.
+```
+
+#### ALLOWED Example — One coherent current IAA session/token across all active artifacts
+
+```
+Wave: governance-hardening-wave-20260420
+
+Active final-state bundle:
+  PREHANDOVER proof (.agent-admin/prehandover/proof-1422.md):
+    iaa_audit_token: IAA-session-063-wave14-20260420-PASS   ← session 063
+  Session memory (.agent-workspace/foreman-v2/memory/session-063-20260420.md):
+    iaa_session_reference: IAA-session-063-wave14-20260420  ← session 063 ✅
+  Wave record (.agent-admin/assurance/iaa-wave-record-governance-hardening-wave-20260420.md):
+    ## TOKEN
+    ASSURANCE-TOKEN: IAA-session-063-wave14-20260420-PASS   ← session 063 ✅
+  wave-current-tasks.md:
+    iaa_prebrief_status: COMPLETE — IAA-session-063-wave14-20260420-PASS  ← session 063 ✅
+
+Historical evidence (excluded from active-bundle scan):
+  rejection-package-1422.md — references IAA-session-062 (prior round — REJECTED)
+  superseded PREHANDOVER proof-1422-r0.md — references IAA-session-062 (prior round — Supersedes declared)
+
+OUTCOME: ACR-16 does NOT fire.
+  → One session ID (063) across all active final-state artifacts. ✅
+  → Prior rejected session (062) retained in immutable historical artifacts only. ✅
+  → ASSURANCE-TOKEN can be issued.
+```
+
+#### Why the distinction matters
+
+The append-only governance model retains all historical artifacts (rejection packages, prior session memories, superseded proofs). A compliant final-state bundle will therefore always contain references to multiple IAA sessions across its full history. The ACR-16 check does NOT fail because historical artifacts reference old sessions — it only fails when two or more **active final-state** artifacts simultaneously claim different sessions as the **current** authoritative final state.
+
+---
 
 ### How the IAA Handles Admin-Ceremony Rejection Triggers
 
@@ -857,4 +938,4 @@ The §4.3e gate (defined in `AGENT_HANDOVER_AUTOMATION.md`) is the **ECAP + Fore
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.9.0 | Effective: 2026-02-24 | Amended: 2026-04-19 (v1.9.0) — Added ACR-15: active wave/task tracker not normalized before final assurance — final-state claims cannot coexist with stale pending state in active control artifacts for the same wave (AAP-21 / §4.3e Check C3) | Previous: 2026-04-19 (v1.8.0)*
+*Authority: CS2 (Johan Ras) | Version: 1.10.0 | Effective: 2026-02-24 | Amended: 2026-04-20 (v1.10.0) — Added ACR-16: active final-state token/session incoherence (AAP-22 / §4.3e Check L) | Previous: 2026-04-19 (v1.9.0) — Added ACR-15: active wave/task tracker not normalized before final assurance (AAP-21 / §4.3e Check C3)*

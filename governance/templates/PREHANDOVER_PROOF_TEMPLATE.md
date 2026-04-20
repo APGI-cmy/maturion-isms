@@ -1,6 +1,6 @@
 # PREHANDOVER_PROOF Template
 
-**Version**: 3.1  
+**Version**: 3.2  
 **Authority**: MERGE_GATE_PHILOSOPHY.md v2.0, OPOJD v2.0  
 **Purpose**: Evidence-based validation for complete job handover  
 **Agent**: [Agent Name]  
@@ -323,6 +323,7 @@ Per OPOJD v2.0, all jobs MUST generate improvement suggestions.
 11. ✅ No ignorance excuses - all requirements understood and satisfied
 12. ✅ Deployment gate confirmed (PASS or N/A with documented justification) — Issue #622 mandatory check
 13. ✅ `## Ripple/Cross-Agent Assessment` section present and populated with concrete downstream-impact conclusions — HFMC-01 mandatory check
+14. ✅ Active final-state bundle token/session coherence confirmed — all active artifacts (`iaa_audit_token` in this proof, `iaa_session_reference` in session memory, wave record `## TOKEN` section, `wave-current-tasks.md`) reference the same IAA session/token — AAP-22 / ACR-16 / §4.3e Check L mandatory check
 
 **Handover Status**: ✅ COMPLETE - Ready for merge
 
@@ -335,4 +336,5 @@ Per OPOJD v2.0, all jobs MUST generate improvement suggestions.
 **Authority**: MERGE_GATE_PHILOSOPHY.md v2.0, OPOJD v2.0, AGENT_CLASS_SPECIFIC_GATE_PROTOCOLS.md  
 **Evidence Type**: Pre-Handover Gate Validation  
 **Compliance**: Living Agent System v6.x.0  
+**Amendment**: v3.2 (2026-04-20) — Added certification item 14: Active final-state bundle token/session coherence confirmation (AAP-22 / ACR-16 / §4.3e Check L — maturion-isms#1422); confirms all active artifacts reference same IAA session/token before handover.  
 **Amendment**: v3.1 (2026-04-19) — Added mandatory `## Ripple/Cross-Agent Assessment` section (HFMC-01 / AAP-20 / ACR-14) — no PREHANDOVER proof is complete without this section; absence is a producer-side defect blocked at ECAP/Foreman QP gate and IAA layer.
