@@ -59,7 +59,7 @@ files_changed_workspace:  3    # .agent-workspace/foreman-v2/personal/ × 2, .ag
 scope_declaration_path: .agent-workspace/foreman-v2/personal/scope-declaration-wave-token-session-coherence-20260420.md
 
 ## BLOCKER-B Notice
-# governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md amendment (ACR-15 addition)
+# governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md amendment (ACR-16 addition)
 # requires CS2 direct review per SELF-MOD-IAA-001 before merge.
 # CS2 must post CS2-DIRECT-REVIEW comment on this PR for that specific file.
 
