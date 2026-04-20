@@ -370,7 +370,7 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 **Completion Date**: 2026-04-20  
 **Approval Required**: Yes — pending CS2 PR merge
 - [x] Approved by Foreman (foreman-v2-agent v6.2.0 QP PASS)
-- [ ] CS2 merge pending
+- [x] CS2 merge pending
 **Approval Date**: N/A (pending CS2)
 **Approved By**: foreman-v2-agent v6.2.0 (QP); IAA ASSURANCE-TOKEN issued
 **Approval Reference**: IAA wave record `.agent-admin/assurance/iaa-wave-record-mmm-stage10-iaa-prebrief-20260420.md`
