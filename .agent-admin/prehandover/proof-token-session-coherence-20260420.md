@@ -126,7 +126,7 @@ suggestions:            NONE
 ### Gate 6: Deployment Gate Confirmation
 
 **Status**: N/A — governance-documentation wave
-**Justification**: This PR modifies only `governance/` and `.agent-workspace/` paths. No `modules/mat/frontend/**`, `vercel.json`, or `.github/workflows/deploy-mat-vercel.yml` changes. Deployment gate: NOT TRIGGERED — N/A.
+**Justification**: This PR modifies governance/documentation and handover artifacts, including `.agent-admin/prehandover/...`, and also updates `.github/workflows/preflight-evidence-gate.yml`. There are still no changes to `modules/mat/frontend/**`, `vercel.json`, or `.github/workflows/deploy-mat-vercel.yml`. Deployment gate: NOT TRIGGERED — N/A.
 
 ---
 
