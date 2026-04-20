@@ -446,7 +446,7 @@ jobs:
           # ----------------------------------------------------------------
           PROOF_FILES=$(git diff --name-only --diff-filter=AM \
             "${BASE_SHA}...HEAD" 2>/dev/null | \
-            grep "^${PROOF_DIR}/proof-.*\.md$" | sort)
+            grep "^${PROOF_DIR}/proof-.*\.md$" | sort || true)
 
           if [ -z "${PROOF_FILES}" ]; then
             echo "ℹ️  No PREHANDOVER proof files added or modified by this PR."
