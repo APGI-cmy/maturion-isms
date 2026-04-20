@@ -55,17 +55,13 @@ Stage 10 IAA Pre-Brief package — `iaa-pre-brief.md` v1.0.0 (§1–§13, 830+ l
 
 ## Ripple/Cross-Agent Assessment
 
-**HFMC-01 / AAP-20 / ACR-14 assessment**
+| Agent / System | Change Scope Assessed | Impact Conclusion |
+|---|---|---|
+| foreman-v2-agent | governance / ceremony artifacts | NO IMPACT — documentation-only wave |
+| independent-assurance-agent | Stage 10 evidence package | NO IMPACT — assurance artifacts already consistent |
+| schema-builder / api-builder / ui-builder / integration-builder / qa-builder | no code, schema, API, or UI changes | NO IMPACT — pure governance/ceremony wave |
 
-This is a governance-documentation-only wave. No code, schema, or runtime changes are introduced. Assessment:
-
-- **Code ripple**: NONE — no source files modified; no packages changed
-- **Schema ripple**: NONE — no migration files; no database changes
-- **API ripple**: NONE — no Edge Function or API route changes
-- **UI ripple**: NONE — no component or layout changes
-- **Cross-agent impact**: LOW — Stage 11 (Builder Appointment) is now unblocked; remaining blocked on CS2 approval of this PR. SB-002 and SB-003 carry-forward noted.
-- **Downstream gates affected**: Stage 11 formally requires this TOKEN; no other downstream gates affected immediately
-- **Recommendation**: No cross-agent action required. Stage 11 Foreman may proceed with Builder Appointment wave preparation once CS2 approves this PR.
+**Downstream ripple conclusion**: NO IMPACT — governance/ceremony artifacts only, no downstream runtime effect. Stage 11 (Builder Appointment) is now unblocked pending CS2 approval. SB-002 (api-builder Deno clarification) and SB-003 (B7 credentials) carry forward.
 
 ## IAA Agent Response (verbatim)
 
