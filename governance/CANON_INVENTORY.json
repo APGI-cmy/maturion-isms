@@ -277,22 +277,22 @@
     },
     {
       "filename": "AGENT_HANDOVER_AUTOMATION.md",
-      "version": "1.5.0",
-      "canonical_version": "1.5.0",
-      "file_hash": "1f41d01580e7acf9c71a700743bebb916652a016779f1cba598e22381d32dcb5",
+      "version": "1.6.0",
+      "canonical_version": "1.6.0",
+      "file_hash": "a4150c5711462c09b121390e09c74c4d2dd992bf968261e3089fadfbc9e678ae",
       "effective_date": "2026-04-06",
-      "amended_date": "2026-04-19",
+      "amended_date": "2026-04-20",
       "description": "Canonical governance document: AGENT_HANDOVER_AUTOMATION",
       "type": "canon",
       "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "1f41d01580e7acf9c71a700743bebb916652a016779f1cba598e22381d32dcb5",
+      "file_hash_sha256": "a4150c5711462c09b121390e09c74c4d2dd992bf968261e3089fadfbc9e678ae",
       "ripple_dispatched": "2026-02-24",
       "ripple_log": ".agent-admin/governance/ripple-logs/ripple-agent-handover-parity-20260224.md",
       "ripple_in_repo_status": "COMPLETE",
       "ripple_consumer_status": "PENDING \u2014 layer-down issues to be created in consumer repos",
-      "last_updated": "2026-04-19",
-      "change_note": "v1.5.0: Hardened \u00a74.3e gate with Check H (gate-inventory, conditional on parity claim), Check I (template-instruction denylist + iaa_audit_token/iaa_session_reference placeholder enforcement on COMPLETE proofs), Check J (symmetric cross-artifact final_state consistency), Check K (portable carried-forward extraction, active-bundle scope); updated AAP-15\u2013AAP-21; active-bundle scoping clarified. v1.4.1: Tightened \u00a74.3e Check C stale-wording scan to final-state artifact set only; superseded pre-token proofs exempt under append-only model; updated AAP-01 auto-fail rule to document final-state scope and superseded-proof exemption. v1.4.0: Added \u00a74.3e Admin Ceremony Compliance Gate (BLOCKING, ECAP jobs) + auto-fail rules table (AAP-01\u2013AAP-09) + checklist item"
+      "last_updated": "2026-04-20",
+      "change_note": "v1.6.0: Added \u00a74.3e Check L \u2014 active final-state bundle token/session coherence (AAP-22 / ACR-16); added AAP-22 to auto-fail rules table; wave-current-tasks.md included in active-bundle scope for token/session coherence checks (maturion-isms#1422). v1.5.0: Hardened \u00a74.3e gate with Check H (gate-inventory, conditional on parity claim), Check I (template-instruction denylist + iaa_audit_token/iaa_session_reference placeholder enforcement on COMPLETE proofs), Check J (symmetric cross-artifact final_state consistency), Check K (portable carried-forward extraction, active-bundle scope); updated AAP-15\u2013AAP-21; active-bundle scoping clarified. v1.4.1: Tightened \u00a74.3e Check C stale-wording scan to final-state artifact set only; superseded pre-token proofs exempt under append-only model; updated AAP-01 auto-fail rule to document final-state scope and superseded-proof exemption. v1.4.0: Added \u00a74.3e Admin Ceremony Compliance Gate (BLOCKING, ECAP jobs) + auto-fail rules table (AAP-01\u2013AAP-09) + checklist item"
     },
     {
       "filename": "AGENT_INDUCTION_PROTOCOL.md",
@@ -1500,19 +1500,19 @@
     },
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-      "version": "1.9.0",
-      "file_hash": "71abbb685059ec2da7547773246b5659cbbb925f4109e53e79c7139d0eb55500",
-      "file_hash_sha256": "71abbb685059ec2da7547773246b5659cbbb925f4109e53e79c7139d0eb55500",
+      "version": "1.10.0",
+      "file_hash": "3426a2f6ae643d4902387cb8ca27cdf78869a6ac02cb9be5b0f9f501b2f5677a",
+      "file_hash_sha256": "3426a2f6ae643d4902387cb8ca27cdf78869a6ac02cb9be5b0f9f501b2f5677a",
       "effective_date": "2026-02-24",
-      "amended_date": "2026-04-19",
+      "amended_date": "2026-04-20",
       "description": "Defines the Independent Assurance Agent (IAA) class: role, hard-trigger authority, independence requirements, five-phase delivery proof protocol, binary output (ASSURANCE-TOKEN / REJECTION-PACKAGE), and trigger table. v1.1.0: Zero-Severity-Tolerance policy added.",
       "type": "canon",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "layer_down_status": "INTERNAL",
       "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA); v1.1.0 amendment: Enforce zero-severity-tolerance \u2014 any finding triggers rejection",
-      "last_updated": "2026-04-19",
-      "change_note": "v1.9.0: Added ACR-15 (active wave/task tracker not normalized before final assurance \u2014 final-state claims cannot coexist with stale pending state in active control artifacts for the same wave); authority: CS2 \u2014 issue #1412",
-      "canonical_version": "1.9.0"
+      "last_updated": "2026-04-20",
+      "change_note": "v1.10.0: Added ACR-16 (active final-state token/session incoherence rejection trigger); added \u00a7Authoritative-Source Rule for Current Token/Session; extended active-bundle scope rule to include wave-current-tasks.md for ACR-16 checks; added \u00a7Proof-of-Operation worked examples for AAP-22/ACR-16 (maturion-isms#1422). NOTE: SELF-MOD-IAA-001 applies \u2014 CS2 direct review required. v1.9.0: Added ACR-15 (active wave/task tracker not normalized before final assurance); authority: CS2 \u2014 issue #1412",
+      "canonical_version": "1.10.0"
     },
     {
       "filename": "INITIALIZATION_COMPLETENESS_GATE.md",
@@ -2422,25 +2422,25 @@
     },
     {
       "filename": "execution-ceremony-admin-anti-patterns.md",
-      "version": "1.3.0",
-      "file_hash": "f91b953ab2c8f2fe0d620a216fc559532a87058f7e9c4d75792de5e3114aa7c0",
+      "version": "1.4.0",
+      "file_hash": "d49614041f18dcd93a5b7decbdd60cc0dfc374bdd4d6391ba84534d3325d1e4d",
       "effective_date": "2026-04-17",
-      "description": "Canonized list of admin-ceremony defects that are auto-fail at the \u00a74.3e Admin Ceremony Compliance Gate and/or trigger an IAA REJECTION-PACKAGE. Every entry is a known recurring failure mode derived from operational evidence. Includes AAP-01 through AAP-21.",
+      "description": "Canonized list of admin-ceremony defects that are auto-fail at the \u00a74.3e Admin Ceremony Compliance Gate and/or trigger an IAA REJECTION-PACKAGE. Every entry is a known recurring failure mode derived from operational evidence. Includes AAP-01 through AAP-22.",
       "type": "checklist",
       "path": "governance/checklists/execution-ceremony-admin-anti-patterns.md",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "f91b953ab2c8f2fe0d620a216fc559532a87058f7e9c4d75792de5e3114aa7c0"
+      "file_hash_sha256": "d49614041f18dcd93a5b7decbdd60cc0dfc374bdd4d6391ba84534d3325d1e4d"
     },
     {
       "filename": "execution-ceremony-admin-checklist.md",
-      "version": "1.2.0",
-      "file_hash": "0267b73f3a902ab6a3e3ca637721d077b353e9370527d39d9f8e2ae96d074630",
+      "version": "1.3.0",
+      "file_hash": "4df560483ae128cd3dbc509a18f3f00c96bb56724a1312055104ceac672f7d0b",
       "effective_date": "2026-04-17",
-      "description": "Authoritative checklist for ceremony completeness. Used by the execution-ceremony-admin-agent before bundle handback and by the Foreman QP checkpoint before IAA invocation. Includes Sections 1-9 and active tracker normalization check 3.9.",
+      "description": "Authoritative checklist for ceremony completeness. Used by the execution-ceremony-admin-agent before bundle handback and by the Foreman QP checkpoint before IAA invocation. Includes Sections 1-9, active tracker normalization check 3.9, and active-bundle IAA coherence checks 5.10-5.11.",
       "type": "checklist",
       "path": "governance/checklists/execution-ceremony-admin-checklist.md",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "0267b73f3a902ab6a3e3ca637721d077b353e9370527d39d9f8e2ae96d074630"
+      "file_hash_sha256": "4df560483ae128cd3dbc509a18f3f00c96bb56724a1312055104ceac672f7d0b"
     }
   ]
 }
