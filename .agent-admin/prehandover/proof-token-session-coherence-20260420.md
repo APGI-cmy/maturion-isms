@@ -26,7 +26,7 @@ foreman_session:        session-token-session-coherence-20260420
 date:                   2026-04-20
 branch:                 copilot/canonize-active-final-state-token
 issue:                  1422
-pr:                     not yet created
+pr:                     1425
 wave:                   token-session-coherence-hardening-20260420
 
 ## Delivery State
@@ -36,7 +36,7 @@ opojd_compliance:       CONFIRMED
 ## Gate Results
 merge_gate_verdict:     PASS
 pre_iaa_commit_state:   PASS
-scope_declaration_parity: N/A  # scope-declaration.md not regenerated — no code changes; only .agent-workspace/ and governance/ paths
+scope_declaration_parity: N/A  # scope-declaration.md not regenerated — no code changes; changed paths include .agent-workspace/, governance/, and .github/workflows/preflight-evidence-gate.yml
 admin_ceremony_compliance: N/A  # ceremony_admin_appointed: false for this wave
 
 ## IAA Assurance
@@ -55,7 +55,8 @@ iaa_wave_record:        .agent-admin/assurance/iaa-wave-record-token-session-coh
 
 ## Scope
 files_changed_governance: 7    # governance/checklists × 2, governance/canon × 2, governance/templates × 2, governance/CANON_INVENTORY.json
-files_changed_workspace:  3    # .agent-workspace/foreman-v2/personal/ × 2, .agent-admin/assurance/ × 1
+files_changed_workspace:  7    # .agent-workspace/foreman-v2/ × 5, .agent-workspace/independent-assurance-agent/memory/ × 1, .agent-admin/ × 2 (assurance + prehandover)
+files_changed_ci:         1    # .github/workflows/preflight-evidence-gate.yml (HFMC-01 parser hardening)
 scope_declaration_path: .agent-workspace/foreman-v2/personal/scope-declaration-wave-token-session-coherence-20260420.md
 
 ## BLOCKER-B Notice
@@ -144,12 +145,12 @@ suggestions:            NONE
 **Acceptance Criteria from Issue #1422**:
 
 - [x] A new named anti-pattern added for active final-state token/session contradiction → **AAP-22** in `execution-ceremony-admin-anti-patterns.md` v1.4.0
-- [x] A corresponding IAA rejection trigger added → **ACR-15** in `INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.8.0
-- [x] ECAP and/or Foreman checklists explicitly require single-token/single-session coherence → **Checks 5.10 + 5.11** in `execution-ceremony-admin-checklist.md` v1.2.0; **AAP-22 in Section 9** final acceptance block
+- [x] A corresponding IAA rejection trigger added → **ACR-16** in `INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.10.0
+- [x] ECAP and/or Foreman checklists explicitly require single-token/single-session coherence → **Checks 5.10 + 5.11** in `execution-ceremony-admin-checklist.md` v1.3.0; **AAP-22 in Section 9** final acceptance block
 - [x] Rule clearly distinguishes active final-state bundle from immutable historical archives → **Active-Bundle Scope Rule extended** (item 6: `wave-current-tasks.md`; exclusions extended)
-- [x] Rule defines how the authoritative current token/session is determined → **Authoritative-Source Rule** in `INDEPENDENT_ASSURANCE_AGENT_CANON.md` §v1.8.0 (IAA wave record `## TOKEN` section is primary; PREHANDOVER proof `iaa_audit_token` is provisional)
+- [x] Rule defines how the authoritative current token/session is determined → **Authoritative-Source Rule** in `INDEPENDENT_ASSURANCE_AGENT_CANON.md` §v1.10.0 (IAA wave record `## TOKEN` section is primary; PREHANDOVER proof `iaa_audit_token` is provisional)
 - [x] At least one template updated so expected final token/session reference is explicit → **`active_bundle_iaa_coherence` field** in both PREHANDOVER templates; **certification item 14** in `PREHANDOVER_PROOF_TEMPLATE.md` v3.2
-- [x] Proof-of-operation worked examples showing blocked and allowed states → **§Proof-of-Operation — Worked Examples for AAP-22 / ACR-15** in `INDEPENDENT_ASSURANCE_AGENT_CANON.md`
+- [x] Proof-of-operation worked examples showing blocked and allowed states → **§Proof-of-Operation — Worked Examples for AAP-22 / ACR-16** in `INDEPENDENT_ASSURANCE_AGENT_CANON.md`
 - [x] Wording aligned across canon, checklist, and template layers → all cross-references updated
 
 **Completeness Status**: ✅ 100% COMPLETE
@@ -163,7 +164,7 @@ suggestions:            NONE
 | Agent / System | Change Scope Assessed | Impact Conclusion |
 |---------------|----------------------|-------------------|
 | execution-ceremony-admin-agent | `execution-ceremony-admin-anti-patterns.md` (AAP-22 added), `execution-ceremony-admin-checklist.md` (checks 5.10/5.11 added), `PREHANDOVER.template.md` (`active_bundle_iaa_coherence` field added) | **IMPACTED — additive hardening only**. The ceremony admin agent must now verify checks 5.10 and 5.11 in its checklist and populate `active_bundle_iaa_coherence: CONFIRMED` in the PREHANDOVER proof YAML. No existing behavior removed. |
-| independent-assurance-agent | `INDEPENDENT_ASSURANCE_AGENT_CANON.md` (ACR-15 added, authoritative-source rule added, active-bundle scope rule extended) | **IMPACTED — new rejection trigger ACR-15**. IAA must now check for active-bundle token/session incoherence during Phase 3 Step 3.3a. This is additive — no existing ACR trigger modified. **BLOCKER-B: SELF-MOD-IAA-001 — CS2 direct review required before merge for this specific file.** |
+| independent-assurance-agent | `INDEPENDENT_ASSURANCE_AGENT_CANON.md` (ACR-16 added, authoritative-source rule added, active-bundle scope rule extended) | **IMPACTED — new rejection trigger ACR-16**. IAA must now check for active-bundle token/session incoherence during Phase 3 Step 3.3a. This is additive — no existing ACR trigger modified. **BLOCKER-B: SELF-MOD-IAA-001 — CS2 direct review required before merge for this specific file.** |
 | foreman-v2-agent | `AGENT_HANDOVER_AUTOMATION.md` (Check L added, AAP-22 added to auto-fail table), `PREHANDOVER_PROOF_TEMPLATE.md` (certification item 14) | **IMPACTED — new §4.3e Check L**. Foreman must run Check L before IAA invocation for ECAP-involved jobs. The §4.3e gate script is extended with the new check. |
 | governance-liaison-isms-agent | `AGENT_HANDOVER_AUTOMATION.md` has `layer_down_status: PUBLIC_API` | **DEFERRED** — governance-liaison ripple dispatch deferred to next ripple wave; change is additive governance hardening (new check L and AAP-22 only); no existing gate logic modified; risk of downstream breakage is low. |
 | all other agents | All other files (checklists, templates) are governance ceremony artifacts | **NO IMPACT** — changes are additive documentation hardening; no agent contract changes; no code, schema, or API surface changes. |
@@ -210,7 +211,7 @@ suggestions:            NONE
 11. ✅ No ignorance excuses - all requirements understood and satisfied
 12. ✅ Deployment gate: N/A — governance documentation wave only
 13. ✅ `## Ripple/Cross-Agent Assessment` section present and populated with concrete downstream-impact conclusions — HFMC-01
-14. ✅ Active final-state bundle token/session coherence confirmed — this proof, session memory, wave record, and wave-current-tasks.md all reference `IAA-session-token-session-coherence-hardening-20260420` — AAP-22 / ACR-15 / §4.3e Check L
+14. ✅ Active final-state bundle token/session coherence confirmed — this proof, session memory, wave record, and wave-current-tasks.md all reference `IAA-session-token-session-coherence-hardening-20260420` — AAP-22 / ACR-16 / §4.3e Check L
 
 **Handover Status**: ✅ COMPLETE — Ready for IAA assurance (pending CS2 direct review for INDEPENDENT_ASSURANCE_AGENT_CANON.md per BLOCKER-B)
 

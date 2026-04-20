@@ -832,7 +832,7 @@ When applying ACR triggers ACR-02, ACR-07, ACR-12, ACR-15, ACR-16, and any other
 
 ---
 
-### Authoritative-Source Rule for Current Token/Session (v1.8.0)
+### Authoritative-Source Rule for Current Token/Session (v1.10.0)
 
 **Rule**: For any wave, there is exactly one authoritative IAA session/token reference for the current final state. This reference is determined by the following priority order:
 

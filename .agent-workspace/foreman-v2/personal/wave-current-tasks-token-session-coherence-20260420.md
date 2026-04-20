@@ -25,7 +25,7 @@
 |---------|------|-------|--------|
 | IAA-PRE | IAA Pre-Brief — wave record | independent-assurance-agent | ✅ COMPLETE — SHA 56f08b8 |
 | D1 | Add AAP-22 (active final-state token/session incoherence) to `governance/checklists/execution-ceremony-admin-anti-patterns.md` | foreman-v2-agent (governance artifact) | ✅ COMPLETE |
-| D2 | Add ACR-15 (IAA rejection trigger) + authoritative-source rule + proof-of-operation to `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` — **CS2 DIRECT REVIEW REQUIRED** | foreman-v2-agent (governance artifact) | ✅ COMPLETE — CS2 direct review required before merge |
+| D2 | Add ACR-16 (IAA rejection trigger) + authoritative-source rule + proof-of-operation to `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` — **CS2 DIRECT REVIEW REQUIRED** | foreman-v2-agent (governance artifact) | ✅ COMPLETE — CS2 direct review required before merge |
 | D3 | Add Section 5 token/session coherence checks to `governance/checklists/execution-ceremony-admin-checklist.md` | foreman-v2-agent (governance artifact) | ✅ COMPLETE |
 | D4 | Add §4.3e Check L (active-bundle token/session coherence) to `governance/canon/AGENT_HANDOVER_AUTOMATION.md` | foreman-v2-agent (governance artifact) | ✅ COMPLETE |
 | D5 | Add active-bundle IAA coherence certification checklist item to `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md` | foreman-v2-agent (governance artifact) | ✅ COMPLETE |
@@ -37,7 +37,7 @@
 ## Deliverable Requirements (per issue #1422)
 
 1. Named anti-pattern (AAP-22) for active final-state token/session contradiction
-2. IAA rejection trigger (ACR-15) for this defect class
+2. IAA rejection trigger (ACR-16) for this defect class
 3. ECAP and/or Foreman checklist rows checking single-token/single-session coherence across active bundle
 4. Authoritative-source rule for current token/session reference
 5. Clarification of active-bundle vs immutable historical-archive boundaries
@@ -48,9 +48,9 @@
 
 **Files to be amended**:
 - `governance/checklists/execution-ceremony-admin-anti-patterns.md` (v1.3.0 → v1.4.0)
-- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` (v1.7.0 → v1.8.0) — **CS2 DIRECT REVIEW**
-- `governance/checklists/execution-ceremony-admin-checklist.md` (v1.1.0 → v1.2.0)
-- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` (v1.5.0 → v1.6.0)
+- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` (v1.9.0 → v1.10.0) — **CS2 DIRECT REVIEW**
+- `governance/checklists/execution-ceremony-admin-checklist.md` (v1.2.0 → v1.3.0)
+- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` (v1.6.0 → v1.7.0)
 - `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md` (v3.1 → v3.2)
 - `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` (v1.1.0 → v1.2.0)
 - `governance/CANON_INVENTORY.json` (hash updates)

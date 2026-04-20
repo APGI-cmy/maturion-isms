@@ -19,8 +19,8 @@
 
 | Task | File(s) | Trigger Category | IAA Applicable |
 |------|---------|-----------------|----------------|
-| Add AAP-21 (token/session contradiction anti-pattern) | `governance/checklists/execution-ceremony-admin-anti-patterns.md` | CANON_GOVERNANCE (checklist under governance/) | YES — full assurance |
-| Add ACR-15 to IAA canon | `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` | CANON_GOVERNANCE + **SELF-MOD-IAA-001** | **⛔ BLOCKER — CS2 DIRECT REVIEW ONLY for this specific file** |
+| Add AAP-22 (token/session contradiction anti-pattern) | `governance/checklists/execution-ceremony-admin-anti-patterns.md` | CANON_GOVERNANCE (checklist under governance/) | YES — full assurance |
+| Add ACR-16 to IAA canon | `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` | CANON_GOVERNANCE + **SELF-MOD-IAA-001** | **⛔ BLOCKER — CS2 DIRECT REVIEW ONLY for this specific file** |
 | Add §5 to ECAP checklist | `governance/checklists/execution-ceremony-admin-checklist.md` | CANON_GOVERNANCE (checklist under governance/) | YES — full assurance |
 | Add token/session coherence field to PREHANDOVER template | `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md` | CANON_GOVERNANCE (template under governance/) | YES — full assurance |
 | Update ECAP PREHANDOVER template | `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` | CANON_GOVERNANCE (template under governance/) | YES — full assurance |
@@ -46,7 +46,7 @@
 > IAA review is treated as MANDATORY.
 
 **Self-modification constraint**: ACTIVE — SELF-MOD-IAA-001
-- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` modification (ACR-15 addition) falls
+- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` modification (ACR-16 addition) falls
   under the structural self-assurance / independence prohibition (Independence Requirements rule 1)
   and SELF-MOD-IAA-001. IAA cannot review changes to its own governing canon.
 - This specific file MUST be reviewed by CS2 directly, regardless of wave classification.
@@ -86,10 +86,10 @@
 
 ### BLOCKER-B — SELF-MOD-IAA-001 on INDEPENDENT_ASSURANCE_AGENT_CANON.md
 **Severity**: Hard structural blocker for that specific file
-**Detail**: The wave adds ACR-15 to `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md`. IAA is prohibited from assuring changes to its own governing canon (SELF-MOD-IAA-001; Independence Requirements rule 1; CS2 Direct Review Track §structural self-assurance). This file MUST receive CS2 direct review.
+**Detail**: The wave adds ACR-16 to `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md`. IAA is prohibited from assuring changes to its own governing canon (SELF-MOD-IAA-001; Independence Requirements rule 1; CS2 Direct Review Track §structural self-assurance). This file MUST receive CS2 direct review.
 **Options**:
   - Option A (preferred): CS2 posts CS2-DIRECT-REVIEW comment scoped to this file before merge
-  - Option B: Split ACR-15 into a separate CS2-authored PR that bypasses IAA entirely
+  - Option B: Split ACR-16 into a separate CS2-authored PR that bypasses IAA entirely
   - Option C: CS2 classifies the entire wave as T3/CS2-Direct (then IAA review is not required for any file)
 
 ### BLOCKER-C — Branch name discrepancy

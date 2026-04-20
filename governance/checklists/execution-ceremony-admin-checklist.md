@@ -105,7 +105,7 @@ Verify that no prohibited provisional wording exists in any final-state artifact
 **Active-bundle coherence scan command**:
 ```bash
 grep -hE "iaa_audit_token|iaa_session_reference|ASSURANCE-TOKEN|IAA-session-" \
-  .agent-admin/prehandover/proof-$(ls -t .agent-admin/prehandover/proof-*.md 2>/dev/null | head -1 | xargs basename 2>/dev/null) \
+  $(ls -t .agent-admin/prehandover/proof-*.md 2>/dev/null | head -1) \
   $(ls -t .agent-workspace/*/memory/session-*.md 2>/dev/null | head -1) \
   .agent-workspace/foreman-v2/personal/wave-current-tasks*.md \
   .agent-admin/assurance/iaa-wave-record-*.md 2>/dev/null \

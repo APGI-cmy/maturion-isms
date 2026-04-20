@@ -1250,6 +1250,8 @@ echo "✅ Admin-compliance readiness confirmed. Foreman may accept bundle and pr
 
 The following conditions are **auto-fail** for the §4.3e gate regardless of other checks. Any of these conditions present in the committed ceremony bundle at IAA invocation time constitutes a ceremony-integrity defect:
 
+> **Note**: The AAP IDs in this table are canonical and match `governance/checklists/execution-ceremony-admin-anti-patterns.md`. The descriptions in this table are operational summaries; the canonical definitions and full worked-example text are in the anti-patterns checklist. Due to independent evolution across governance waves, some descriptions may use slightly different wording — a future alignment wave will reconcile any divergence. AAP-22 (added v1.7.0) is fully aligned with the canonical definition.
+
 | ID | Anti-Pattern | Auto-Fail Trigger |
 |----|-------------|-------------------|
 | AAP-01 | Issued token but pending/in-progress wording remains | Any of: `PENDING`, `in progress`, `in-progress` in the **final-state** PREHANDOVER proof or latest session memory where a PASS/COMPLETE is the required state. Pre-token proofs retained immutably under the append-only model (i.e., superseded by a post-token proof that declares `Supersedes: <filename>`) are **exempt** from this check. |
