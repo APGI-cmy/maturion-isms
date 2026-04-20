@@ -2422,25 +2422,25 @@
     },
     {
       "filename": "execution-ceremony-admin-anti-patterns.md",
-      "version": "1.3.0",
-      "file_hash": "f91b953ab2c8f2fe0d620a216fc559532a87058f7e9c4d75792de5e3114aa7c0",
+      "version": "1.4.0",
+      "file_hash": "d49614041f18dcd93a5b7decbdd60cc0dfc374bdd4d6391ba84534d3325d1e4d",
       "effective_date": "2026-04-17",
-      "description": "Canonized list of admin-ceremony defects that are auto-fail at the \u00a74.3e Admin Ceremony Compliance Gate and/or trigger an IAA REJECTION-PACKAGE. Every entry is a known recurring failure mode derived from operational evidence. Includes AAP-01 through AAP-21.",
+      "description": "Canonized list of admin-ceremony defects that are auto-fail at the \u00a74.3e Admin Ceremony Compliance Gate and/or trigger an IAA REJECTION-PACKAGE. Every entry is a known recurring failure mode derived from operational evidence. Includes AAP-01 through AAP-22.",
       "type": "checklist",
       "path": "governance/checklists/execution-ceremony-admin-anti-patterns.md",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "f91b953ab2c8f2fe0d620a216fc559532a87058f7e9c4d75792de5e3114aa7c0"
+      "file_hash_sha256": "d49614041f18dcd93a5b7decbdd60cc0dfc374bdd4d6391ba84534d3325d1e4d"
     },
     {
       "filename": "execution-ceremony-admin-checklist.md",
-      "version": "1.2.0",
-      "file_hash": "0267b73f3a902ab6a3e3ca637721d077b353e9370527d39d9f8e2ae96d074630",
+      "version": "1.3.0",
+      "file_hash": "4df560483ae128cd3dbc509a18f3f00c96bb56724a1312055104ceac672f7d0b",
       "effective_date": "2026-04-17",
-      "description": "Authoritative checklist for ceremony completeness. Used by the execution-ceremony-admin-agent before bundle handback and by the Foreman QP checkpoint before IAA invocation. Includes Sections 1-9 and active tracker normalization check 3.9.",
+      "description": "Authoritative checklist for ceremony completeness. Used by the execution-ceremony-admin-agent before bundle handback and by the Foreman QP checkpoint before IAA invocation. Includes Sections 1-9, active tracker normalization check 3.9, and active-bundle IAA coherence checks 5.10-5.11.",
       "type": "checklist",
       "path": "governance/checklists/execution-ceremony-admin-checklist.md",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "0267b73f3a902ab6a3e3ca637721d077b353e9370527d39d9f8e2ae96d074630"
+      "file_hash_sha256": "4df560483ae128cd3dbc509a18f3f00c96bb56724a1312055104ceac672f7d0b"
     }
   ]
 }
