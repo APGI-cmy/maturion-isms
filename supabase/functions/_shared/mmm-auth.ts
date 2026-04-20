@@ -52,7 +52,7 @@ export async function validateJWT(
   const { data: userData, error: authError } = await supabase.auth.getUser(token);
   if (authError || !userData?.user) {
     throw new Response(
-      JSON.stringify({ error: 'Invalid or expired JWT', detail: authError?.message }),
+      JSON.stringify({ error: 'Invalid or expired JWT' }),
       { status: 401, headers: { 'Content-Type': 'application/json' } },
     );
   }
