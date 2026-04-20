@@ -164,7 +164,27 @@ IAA Final Audit:                 MANDATORY — Foreman invokes via task(agent_ty
 
 ## TOKEN
 
-*(To be written by IAA after Final Audit — read-only placeholder)*
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/canonize-active-wave-tracker-coherence
+    wave-active-tracker-coherence-20260419 | issue #1412
+All 21 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-063-wave-active-tracker-coherence-20260419-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-session-063-wave-active-tracker-coherence-20260419-PASS
+Adoption phase: PHASE_B_BLOCKING
+Issued by: independent-assurance-agent v6.2.0
+Session: session-063-wave-active-tracker-coherence-20260419-R3
+Date: 2026-04-19
+Invocation round: 3 (R3 Final Audit — resolving R2 ceremony_admin correction at commit 2693b90)
+Checks run: 21 total — 21 PASS, 0 FAIL
+Overlay: CANON_GOVERNANCE (primary) + KNOWLEDGE_GOVERNANCE (secondary)
+Substantive content: PASS (AAP-21, ACR-15, check 3.9, A-039, D-2 — all correct, all hashes verified)
+Ceremony: PASS (ceremony_admin_appointed: false confirmed; ACR-01 inapplicable; governance-only carve-out valid)
+Hash parity: ALL 7 declared key artifact hashes confirmed against actual files
+═══════════════════════════════════════
+```
 
 ---
 
