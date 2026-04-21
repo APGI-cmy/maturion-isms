@@ -20,8 +20,8 @@ approved_artifact_paths:
   - .agent-workspace/foreman-v2/personal/scope-declaration-wave-admin-ceremony-hardening-20260421.md
   - .agent-workspace/foreman-v2/memory/session-166-admin-ceremony-hardening-20260421.md
   - .agent-admin/assurance/iaa-wave-record-admin-ceremony-hardening-20260421.md
-  - .agent-admin/prehandover/proof-<PR#>.md
-  - .agent-admin/prehandover/ecap-reconciliation-<PR#>.md
+  - .agent-admin/prehandover/proof-admin-ceremony-hardening-20260421.md
+  - N/A — `.agent-admin/prehandover/ecap-reconciliation-<PR#>.md` not produced for this wave
   - .agent-admin/gates/gate-results-admin-ceremony-hardening-20260421.json
 
   # D1 — Gap analysis and target-state design
