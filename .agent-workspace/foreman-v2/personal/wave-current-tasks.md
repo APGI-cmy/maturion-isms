@@ -35,10 +35,8 @@ B9 (qa-builder) — golden path; requires B7 complete
 **SB-003 Impact**: B7 is hard-blocked. B9 depends on B7 via GP-008/GP-009/GP-010 (integration boundary golden paths). B8 cross-cutting tests can run independently of B7.
 # Wave Current Tasks — aimc-strategy-followup-20260420
 
+**Wave**: layer-down-818bab2a-governance-propagation-20260420
 **Foreman**: foreman-v2-agent v6.2.0
-**Wave**: aimc-strategy-followup-20260420
-**Issue**: [AIMC / Maturion] Execute post-merge follow-up work from PR #1386 strategy v2.0.1
-**Branch**: copilot/execute-post-merge-follow-up
 **Date**: 2026-04-20
 **CS2 Authorization**: CONFIRMED — issue opened directly by CS2 (@APGI-cmy); assigns foreman-v2-agent
 **ceremony_admin_appointed**: NOT REQUIRED — pure POLC-Orchestration tracking wave; no ECAP mandate per IAA Pre-Brief
