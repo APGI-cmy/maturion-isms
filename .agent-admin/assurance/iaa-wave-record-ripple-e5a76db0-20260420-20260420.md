@@ -13,7 +13,7 @@
 *Note: No formal Pre-Brief was requested for this wave (governance liaison ripple session — single qualifying task, standard LIAISON_ADMIN category, no builder delegation).*
 
 ```
-Qualifying tasks: governance-liaison-isms session-068 — GOVERNANCE_ALIGNMENT_INVENTORY.json alignment for canonical commit e5a76db0
+Qualifying tasks: governance-liaison-isms session-069 — GOVERNANCE_ALIGNMENT_INVENTORY.json alignment for canonical commit e5a76db0
 Applicable overlay: LIAISON_ADMIN → KNOWLEDGE_GOVERNANCE
 Anti-regression obligations: no — FUNCTIONAL-BEHAVIOUR-REGISTRY niggle patterns (NBR-001, NBR-002) are BUILD PR patterns only; not applicable to this governance alignment PR
 ```
@@ -23,7 +23,7 @@ Anti-regression obligations: no — FUNCTIONAL-BEHAVIOUR-REGISTRY niggle pattern
 ## TOKEN
 
 **PR**: #1432 — "Update governance artifacts for distribution"
-**Produced by**: governance-liaison-isms (liaison class), session-068-20260420
+**Produced by**: governance-liaison-isms (liaison class), session-069-20260421
 **Invoked by**: governance-liaison-isms (Phase 4.4 — self-invocation per contract)
 **Category**: LIAISON_ADMIN (KNOWLEDGE_GOVERNANCE overlay applied)
 **Ceremony-admin**: NO
@@ -43,14 +43,14 @@ Anti-regression obligations: no — FUNCTIONAL-BEHAVIOUR-REGISTRY niggle pattern
 | Count arithmetic & ripple metadata accuracy | PASS ✅ |
 
 **Merge gate parity**: PASS
-**PHASE_B_BLOCKING_TOKEN**: IAA-session-068-wave-ripple-e5a76db0-20260420-PASS
+**PHASE_B_BLOCKING_TOKEN**: IAA-session-069-wave-ripple-e5a76db0-20260421-PASS
 
 ```
 ═══════════════════════════════════════
 ASSURANCE-TOKEN
 PR: #1432 — Update governance artifacts for distribution
 Wave: wave-ripple-e5a76db0-20260420
-Token reference: IAA-session-068-wave-ripple-e5a76db0-20260420-PASS
+Token reference: IAA-session-069-wave-ripple-e5a76db0-20260421-PASS
 All 9 checks PASS. Merge gate parity: PASS.
 Merge permitted (subject to CS2 approval).
 Adoption phase: PHASE_B_BLOCKING

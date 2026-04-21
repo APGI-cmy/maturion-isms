@@ -4,11 +4,11 @@
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory \u2014 tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
   "last_updated": "2026-04-20",
-  "last_ripple_commit": "e5a76db099663c15dcda3fe878b48c1331b36aca",
-  "last_ripple_timestamp": "2026-04-19T12:02:45Z",
+  "last_ripple_commit": "a9283eaf4fb216f28cdf4acd2557e98134c9b8c0",
+  "last_ripple_timestamp": "2026-04-17T08:32:08Z",
   "alignment_summary": {
-    "total_artifacts": 42,
-    "aligned": 37,
+    "total_artifacts": 45,
+    "aligned": 40,
     "drifted": 0,
     "missing": 0,
     "escalated": 4,
@@ -181,12 +181,12 @@
       "path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
       "canonical_version": "1.0.0",
       "local_version": "1.0.0",
-      "canonical_hash_sha256": "f3b91126d6aaf1bb86dbd8884d08c21eba3fc2ef644b113e3d773f8b5d2aa80b",
-      "local_hash_sha256": "f3b91126d6aaf1bb86dbd8884d08c21eba3fc2ef644b113e3d773f8b5d2aa80b",
+      "canonical_hash_sha256": "4a56c52cf142f2860b27309252fc41764145065fb4df1c0ed6427026d09ac64a",
+      "local_hash_sha256": "4a56c52cf142f2860b27309252fc41764145065fb4df1c0ed6427026d09ac64a",
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
-      "last_verified": "2026-04-14T08:22:33Z",
-      "change_note": "v1.0.0 (content update): Re-verified in canonical commit c6c52a63 via ripple PR #1369 (standardize-per-agent-parking-paths). Hash unchanged \u2014 ALIGNED."
+      "last_verified": "2026-04-17T08:32:08Z",
+      "change_note": "v1.0.0 (content update): Added \u00a73.15 AIMC Platform Models (2 new canon files); totals 93\u219295 (issue #1343). Hash updated via ripple PR #1393 (canonical commit a9283eaf)."
     },
     {
       "filename": "GOVERNANCE_WATCHDOG_CANON.md",
@@ -511,8 +511,44 @@
       "local_hash_sha256": "f5c9d72ebf2584e10ff09f29fdbc90c6f8251b2ebfbce58983c7db0e45dbac1d",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-04-20T14:57:29Z",
-      "change_note": "v1.0.0: Canonical exception-class model for agent-contract placeholder-check validation (EXC-001 to EXC-005). Layered down via CI ripple PR #1417, canonical commit e5a76db099663c15dcda3fe878b48c1331b36aca. Inventory alignment completed session-068-20260420."
+      "last_verified": "2026-04-21T07:07:05Z",
+      "change_note": "v1.0.0: Canonical exception-class model for agent-contract placeholder-check validation (EXC-001 to EXC-005). Layered down via CI ripple PR #1417, canonical commit e5a76db099663c15dcda3fe878b48c1331b36aca. Inventory alignment completed session-068-20260421."
+    },
+    {
+      "filename": "AIMC_MMM_CONVERGENCE_BOUNDARY_CANON.md",
+      "path": "governance/canon/AIMC_MMM_CONVERGENCE_BOUNDARY_CANON.md",
+      "canonical_version": "1.0.0",
+      "local_version": "1.0.0",
+      "canonical_hash_sha256": "2818c33ebe8e50617592dd5fc830939bc8ee515be6a76f7b2fb27ce3ae5c9824",
+      "local_hash_sha256": "2818c33ebe8e50617592dd5fc830939bc8ee515be6a76f7b2fb27ce3ae5c9824",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-04-17T08:32:08Z",
+      "change_note": "v1.0.0: New canon. Defines canonical convergence boundary between MMM and AIMC \u2014 ownership boundaries, interface constraints, artefact custody rules. Layered down via ripple PR #1393 (canonical commit a9283eaf, issue #1343)."
+    },
+    {
+      "filename": "AIMC_SPECIALIST_OPERATING_MODEL.md",
+      "path": "governance/canon/AIMC_SPECIALIST_OPERATING_MODEL.md",
+      "canonical_version": "1.0.0",
+      "local_version": "1.0.0",
+      "canonical_hash_sha256": "50d60061c6dbbfd93cd2a383951cdafac49761f86c964e8a4f2eca0b7a9a03c3",
+      "local_hash_sha256": "50d60061c6dbbfd93cd2a383951cdafac49761f86c964e8a4f2eca0b7a9a03c3",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-04-17T08:32:08Z",
+      "change_note": "v1.0.0: New canon. Defines specialist operating model for AIMC agents \u2014 knowledge source taxonomy (Tier 1\u20134), source trust hierarchy, priority/conflict rules, freshness rules, delegation and module-consumer mode, human-in-the-loop boundaries. Layered down via ripple PR #1393 (canonical commit a9283eaf, issue #1343)."
+    },
+    {
+      "filename": "SPECIALIST_KNOWLEDGE_MANAGEMENT.md",
+      "path": "governance/canon/SPECIALIST_KNOWLEDGE_MANAGEMENT.md",
+      "canonical_version": "1.1.0",
+      "local_version": "1.1.0",
+      "canonical_hash_sha256": "d0e22e5b701fac3406a9c0b03f02fbe9cfc4446b27f8edcc69e28d83138fe9bd",
+      "local_hash_sha256": "d0e22e5b701fac3406a9c0b03f02fbe9cfc4446b27f8edcc69e28d83138fe9bd",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-04-17T08:32:08Z",
+      "change_note": "v1.1.0: Added Source Model Governance section and AIMC_SPECIALIST_OPERATING_MODEL.md cross-reference (issue #1343). Layered down via ripple PR #1393 (canonical commit a9283eaf)."
     }
   ],
   "metadata": {
@@ -520,7 +556,7 @@
     "governing_protocol": "GOVERNANCE_RIPPLE_MODEL.md v1.1.0",
     "canonical_checklist": "GOVERNANCE_RIPPLE_CHECKLIST_PROTOCOL.md",
     "created_by": "governance-liaison-isms session-035",
-    "last_updated_by": "governance-liaison-isms session-065-20260416"
+    "last_updated_by": "governance-liaison-isms session-068-20260420"
   },
-  "last_updated_by": "governance-liaison-isms session-065-20260416"
+  "last_updated_by": "governance-liaison-isms session-068-20260420"
 }
