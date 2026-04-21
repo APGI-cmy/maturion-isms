@@ -7,7 +7,7 @@
 **Branch**: copilot/complete-mmm-pre-build-closure
 **wave_id**: mmm-tracker-reconciliation-20260421
 **pr_number**: TBD (branch committed; PR open on this branch)
-**files_changed**: 1 — `modules/MMM/BUILD_PROGRESS_TRACKER.md`
+**files_changed**: 9 — `modules/MMM/BUILD_PROGRESS_TRACKER.md` + governance wave artifacts (scope declaration, wave-current-tasks, PREHANDOVER, session memory, IAA wave record, IAA session memories R1/R2, suggestions-log)
 **git_sha**: 26eb5fe
 **scope_declaration**: `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-tracker-reconciliation-20260421.md`
 **iaa_prebrief_path**: `.agent-admin/assurance/iaa-wave-record-mmm-tracker-reconciliation-20260421-20260421.md`
@@ -20,7 +20,7 @@
 
 This is a **governance documentation reconciliation wave** — no code written, no schema changed, no CI workflows modified.
 
-**Primary artifact changed**: `modules/MMM/BUILD_PROGRESS_TRACKER.md` (1 file only)
+**Primary artifact changed**: `modules/MMM/BUILD_PROGRESS_TRACKER.md` (primary) + 8 governance wave artifacts (scope declaration, wave-current-tasks, PREHANDOVER proof, session memory, IAA wave record, IAA session memories R1/R2, suggestions-log — total 9 files)
 
 **Changes made**:
 1. Stages 5–11: Removed stale "pending CS2 approval / PR merge" language; replaced with "pre-build closure confirmed via Stage 6–12 authorization chain (PR #1429 merged 2026-04-21)"
@@ -101,7 +101,7 @@ All CI gates listed in merge_gate_interface.required_checks:
 
 ## Ripple/Cross-Agent Assessment
 
-> HFMC-01 MANDATORY: This wave changes only `modules/MMM/BUILD_PROGRESS_TRACKER.md` — a governance tracking document.
+> HFMC-01 MANDATORY: This wave's primary change is `modules/MMM/BUILD_PROGRESS_TRACKER.md` — a governance tracking document. Supporting governance wave artifacts (scope declaration, PREHANDOVER, session memory, IAA wave record, IAA session memories, wave-current-tasks, suggestions-log) are also committed as required ceremony artifacts.
 
 | Agent / System | Impact Assessment | Conclusion |
 |---------------|-------------------|-----------|
