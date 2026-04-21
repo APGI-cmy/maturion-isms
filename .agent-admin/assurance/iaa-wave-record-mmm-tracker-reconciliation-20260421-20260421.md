@@ -102,10 +102,10 @@ The PREHANDOVER proof (to be produced by foreman-v2-agent before IAA Final Audit
 | `session_id` | foreman session identifier |
 | `wave_id` | `mmm-tracker-reconciliation-20260421` |
 | `issue` | maturion-isms#1430 |
-| `branch` | `copilot/fix-issue-1430-mmm-tracker-reconciliation` |
+| `branch` | Actual PR branch name used for this wave |
 | `pr_number` | PR number once opened |
-| `files_changed` | `1` (modules/MMM/BUILD_PROGRESS_TRACKER.md only) |
-| `scope_declaration` | Explicit statement: "Scope is modules/MMM/BUILD_PROGRESS_TRACKER.md only" |
+| `files_changed` | Actual number of files changed in the PR for this wave |
+| `scope_declaration` | Explicit statement describing the actual PR scope, including all files changed for this wave |
 | `git_sha` | Commit SHA of the tracker update |
 | `iaa_audit_token` | Pre-populated reference: `IAA-session-mmm-tracker-reconciliation-20260421-PASS` |
 | `prior_token` | `IAA-session-mmm-stage12-build-execution-20260420-PASS` |
