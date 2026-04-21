@@ -13,7 +13,7 @@ ecap_session:           N/A — ECAP not appointed (governance-only wave; no ECA
 date:                   2026-04-21
 branch:                 copilot/harden-admin-ceremony-handover
 issue:                  Harden admin-ceremony handovers after PR #1432
-pr:                     copilot/harden-admin-ceremony-handover (PR TBD)
+pr:                     #1432
 wave:                   admin-ceremony-hardening-20260421
 
 ## Delivery State
