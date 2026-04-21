@@ -5,7 +5,7 @@
 **Date**: 2026-04-20
 **Issue**: maturion-isms#1414
 **Branch**: copilot/layer-down-propagate-governance-changes-03e624f7-7cfc-4a86-9175-960d27f3c778
-**PR**: maturion-isms#1433
+**PR**: maturion-isms#1434
 **Wave Status**: ✅ COMPLETE
 
 ## Task Table
