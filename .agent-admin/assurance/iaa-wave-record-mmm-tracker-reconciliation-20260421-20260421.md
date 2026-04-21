@@ -7,17 +7,18 @@
 **Date**: 2026-04-21
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Adoption Phase**: PHASE_B_BLOCKING — hard gate ACTIVE
-**Wave Record Version**: 1.0.0 (PRE-BRIEF complete; TOKEN pending)
+**Wave Record Version**: 1.0.1 (includes PRE-BRIEF snapshot; see later sections for final audit/TOKEN status)
 
 ---
 
 ## PRE-BRIEF
 
 **Invoked by**: [PRE-BRIEF REQUEST from invoking agent — issue #1430]
-**Pre-Brief mode**: Phase 0 only. Phases 1–4 NOT executed at this stage.
+**Pre-Brief mode**: Historical Phase 0 snapshot only. At pre-brief time, Phases 1–4 had not yet been executed; later sections in this same record may capture subsequent execution and final audit completion.
 
 ### Qualifying Tasks
 
+**Status note**: The table below reflects qualifying-task status at pre-brief time only. Later sections are authoritative for post-audit/final outcomes.
 | Task | File(s) | Owner | Status |
 |------|---------|-------|--------|
 | TRACKER-RECONCILE | `modules/MMM/BUILD_PROGRESS_TRACKER.md` | foreman-v2-agent | PENDING |
