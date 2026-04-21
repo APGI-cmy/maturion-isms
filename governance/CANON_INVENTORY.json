@@ -2,7 +2,7 @@
   "version": "1.0.0",
   "last_updated": "2026-04-20",
   "total_canons": 204,
-  "generation_timestamp": "2026-04-19T07:08:00Z",
+  "generation_timestamp": "2026-04-20T07:08:00Z",
   "canon_entry_schema": {
     "description": "Schema for canon entries in CANON_INVENTORY.json",
     "required_fields": [
