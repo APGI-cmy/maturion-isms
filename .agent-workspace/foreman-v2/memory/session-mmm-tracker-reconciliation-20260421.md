@@ -87,8 +87,11 @@ opojd_verdict: PASS
 ecap_appointed: NOT REQUIRED (IAA confirmed; single-file documentation wave)
 prehandover_path: .agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-tracker-reconciliation-20260421.md
 session_memory_path: .agent-workspace/foreman-v2/memory/session-mmm-tracker-reconciliation-20260421.md
-iaa_final_audit_status: PENDING (invoked below)
+iaa_final_audit_status: COMPLETE ✅ — IAA-session-mmm-tracker-reconciliation-20260421-PASS (21/21 checks PASS)
 iaa_audit_token: IAA-session-mmm-tracker-reconciliation-20260421-PASS
+wave_record_token_sha: cb3e8e2
+rejection_history: R1 (CERT-001/002/003/004 — PREHANDOVER/session memory not committed; RESOLVED in bd60b72)
+merge_gate_parity: PASS
 ```
 
 ---

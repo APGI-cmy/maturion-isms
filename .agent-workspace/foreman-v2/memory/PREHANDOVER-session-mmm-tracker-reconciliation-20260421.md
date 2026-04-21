@@ -139,7 +139,38 @@ git show --name-only HEAD: VISIBLE ✅ (SHA 26eb5fe)
 
 > **S-009 MANDATORY**: IAA Final Audit response pasted verbatim below.
 
-[IAA response to be pasted here after invocation]
+```
+═══════════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/complete-mmm-pre-build-closure (Issue maturion-isms#1430)
+Wave: mmm-tracker-reconciliation-20260421
+
+All 21 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+
+Token reference: IAA-session-mmm-tracker-reconciliation-20260421-PASS
+Token commit SHA: cb3e8e2
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-tracker-reconciliation-20260421-PASS
+
+R1 REJECTION findings CERT-001/002/003/004: ALL RESOLVED ✅
+- CERT-001: PREHANDOVER committed at HEAD bd60b72 ✅ (git show verified)
+- CERT-002: Session memory committed at HEAD bd60b72 ✅ (git show verified)
+- CERT-003: Pre-IAA gate declarations now accurate (files ARE at HEAD) ✅
+- CERT-004: Resolved with CERT-001 ✅
+
+Checks summary:
+  CORE-020: PASS ✅ | CORE-021: PASS ✅
+  A-001 (IAA invocation evidence): PRESENT ✅
+  OVL-PBG-001–016: ALL PASS ✅ (16/16)
+  OVL-PBG-ADM-001: PASS ✅
+
+Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+Merge authority: CS2 ONLY (@APGI-cmy)
+═══════════════════════════════════════════════════════════════
+```
+
+**Wave record TOKEN section**: `.agent-admin/assurance/iaa-wave-record-mmm-tracker-reconciliation-20260421-20260421.md` — PHASE_B_BLOCKING_TOKEN populated (commit cb3e8e2)
 
 ---
 
@@ -147,10 +178,10 @@ git show --name-only HEAD: VISIBLE ✅ (SHA 26eb5fe)
 
 ```yaml
 iaa_token_self_cert_guard:
-  token_file_exists: PENDING (IAA Final Audit)
-  phase_b_blocking_token_present: PENDING
-  phase_a_advisory_absent: PENDING
-  guard_result: PENDING
+  token_file_exists: YES (in wave record .agent-admin/assurance/iaa-wave-record-mmm-tracker-reconciliation-20260421-20260421.md ## TOKEN section, commit cb3e8e2)
+  phase_b_blocking_token_present: YES — PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-tracker-reconciliation-20260421-PASS
+  phase_a_advisory_absent: YES — token is PHASE_B_BLOCKING, not PHASE_A_ADVISORY
+  guard_result: PASS
 ```
 
 ---

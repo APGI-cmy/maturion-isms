@@ -15,8 +15,8 @@ iaa_prebrief_status: COMPLETE — PRE-BRIEF committed SHA 3b3439b
 | Task | Agent | Status | Notes |
 |------|-------|--------|-------|
 | Update BUILD_PROGRESS_TRACKER.md | foreman-v2-agent | COMPLETE ✅ | Stages 5–11 closed; Stage 12 COMPLETE + PR #1429; CDV note; next-step note |
-| PREHANDOVER proof | foreman-v2-agent | IN_PROGRESS | Phase 4 |
-| IAA Final Audit | independent-assurance-agent | PENDING | After PREHANDOVER committed |
+| PREHANDOVER proof | foreman-v2-agent | COMPLETE ✅ | bd60b72; IAA response pasted verbatim |
+| IAA Final Audit | independent-assurance-agent | COMPLETE ✅ | IAA-session-mmm-tracker-reconciliation-20260421-PASS (21/21); wave record SHA cb3e8e2 |
 
 ---
 
