@@ -632,35 +632,44 @@ jobs:
           echo "same copilot-swe-agent[bot] identity regardless of whether"
           echo "Foreman or a builder is the executing agent."
           echo "Builder delegation is now proven via governance evidence:"
-          echo "  1. agents_delegated_to: field in PR-introduced session memory"
-          echo "  2. Delegated agents listed in PR-introduced PREHANDOVER proof"
+          echo "  1. agents_delegated_to: field in PR-changed session memory"
+          echo "  2. Delegated agents listed in PR-changed PREHANDOVER proof"
           echo ""
 
           BUILDER_FOUND=false
           BUILDER_EVIDENCE_SOURCE=""
 
-          # Primary evidence: agents_delegated_to: field in session memory
-          # Scope to session memory files introduced by this PR only
-          # (--diff-filter=A) to avoid false positives from historical files.
-          NEW_SESSION_FILES=$(git diff --name-only --diff-filter=A \
+          # Primary evidence: agents_delegated_to: field in session memory.
+          # Use --diff-filter=AM (Added or Modified) to match the governed-role
+          # classifier scope: a PR that modifies an existing session memory to
+          # add/update agents_delegated_to: must also satisfy this evidence check.
+          # Historical session files unchanged by this PR are excluded.
+          CHANGED_SESSION_FILES=$(git diff --name-only --diff-filter=AM \
             origin/$BASE_BRANCH...HEAD 2>/dev/null | \
             grep -E '^\.agent-workspace/foreman.*/memory/session-.*\.md$' \
             || true)
 
-          if [ -n "$NEW_SESSION_FILES" ]; then
+          if [ -n "$CHANGED_SESSION_FILES" ]; then
             while IFS= read -r session_file; do
               if [ -f "$session_file" ]; then
                 # Check for agents_delegated_to: with at least one entry.
-                # The field is a YAML list; entries are lines with "- agent:"
-                # or "  - <agentname>". Match any non-empty list item after
-                # the agents_delegated_to: key.
+                # Supports both YAML forms:
+                #   Block list:  agents_delegated_to:\n  - builder-name
+                #   Inline list: agents_delegated_to: [builder-name, ...]
+                #   Scalar:      agents_delegated_to: builder-name
                 # AWK pattern:
-                #   line 1: enter block when agents_delegated_to: key is found
-                #   line 2: exit block when a non-indented, non-list line follows
-                #   line 3: collect list items (lines starting with optional
-                #           whitespace then "- ") and set found flag
-                #   END:    exit 0 (success) if any list item was found
+                #   line 1: inline/scalar form — non-empty value on same line
+                #   line 2: enter block-list mode when only whitespace follows key
+                #   line 3: exit block when a non-indented, non-list line follows
+                #   line 4: collect block list items (lines with "- ") and set flag
+                #   END:    exit 0 (success) if any delegation found
                 DELEGATED=$(awk '
+                  /^agents_delegated_to:[ \t]*[^ \t\n]/ {
+                    val = $0; sub(/^agents_delegated_to:[ \t]*/, "", val)
+                    gsub(/^[ \t]+|[ \t]+$/, "", val)
+                    if (val != "none" && val != "[]" && val != "") { print val; found=1 }
+                    next
+                  }
                   /^agents_delegated_to:/ { in_block=1; next }
                   in_block && /^[^ \t-]/ && !/^[ \t]*-/ { in_block=0 }
                   in_block && /^[ \t]*-[ \t]/ { print; found=1 }
@@ -677,17 +686,17 @@ jobs:
                   break
                 fi
               fi
-            done <<< "$NEW_SESSION_FILES"
+            done <<< "$CHANGED_SESSION_FILES"
           fi
 
           # Secondary evidence: PREHANDOVER proof lists delegated agents.
-          # Scope to PREHANDOVER files introduced by this PR only.
+          # Use --diff-filter=AM to match the governed-role classifier scope.
           if [ "$BUILDER_FOUND" = false ]; then
-            NEW_PREHANDOVER_FILES=$(git diff --name-only --diff-filter=A \
+            CHANGED_PREHANDOVER_FILES=$(git diff --name-only --diff-filter=AM \
               origin/$BASE_BRANCH...HEAD 2>/dev/null | \
               grep -E '^\.agent-workspace/foreman.*/memory/PREHANDOVER-.*\.md$' \
               || true)
-            if [ -n "$NEW_PREHANDOVER_FILES" ]; then
+            if [ -n "$CHANGED_PREHANDOVER_FILES" ]; then
               while IFS= read -r ph_file; do
                 if [ -f "$ph_file" ]; then
                   # Look for any builder agent reference in PREHANDOVER
@@ -701,7 +710,7 @@ jobs:
                     break
                   fi
                 fi
-              done <<< "$NEW_PREHANDOVER_FILES"
+              done <<< "$CHANGED_PREHANDOVER_FILES"
             fi
           fi
 
@@ -718,9 +727,9 @@ jobs:
             echo "of builder delegation was found."
             echo ""
             echo "Checked:"
-            echo "  1. agents_delegated_to: field in PR-new session memory"
+            echo "  1. agents_delegated_to: field in PR-changed session memory"
             echo "     (.agent-workspace/foreman*/memory/session-*.md)"
-            echo "  2. Builder agent references in PR-new PREHANDOVER proof"
+            echo "  2. Builder agent references in PR-changed PREHANDOVER proof"
             echo "     (.agent-workspace/foreman*/memory/PREHANDOVER-*.md)"
             echo ""
             echo "Per LIVING_AGENT_SYSTEM.md v6.2.0 and Foreman contract"
