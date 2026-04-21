@@ -80,10 +80,10 @@ ripple_notes:           none
 | Session date | 2026-04-21 | ✅ confirmed system date |
 | IAA session reference | IAA-session-214-admin-ceremony-hardening-20260421-PASS | ✅ from token file (IAA pre-brief specifies session-214 for final audit) |
 | Wave identifier | admin-ceremony-hardening-20260421 | ✅ from wave-current-tasks.md `Wave:` field |
-| PR number | copilot/harden-admin-ceremony-handover | ✅ from GitHub PR |
+| PR number | #1436 | ✅ confirmed via pull request URL |
 | Branch name | copilot/harden-admin-ceremony-handover | ✅ from `git branch --show-current` |
 | PREHANDOVER file path | .agent-admin/prehandover/proof-admin-ceremony-hardening-20260421.md | ✅ `git ls-files` confirmed |
-| Session memory path | .agent-workspace/foreman-v2/memory/session-166-admin-ceremony-hardening-20260421.md | ✅ `git ls-files` confirmed (pending IAA final commit) |
+| Session memory path | N/A — no session memory committed for this wave | ✅ consistent with `session_memory: none` in proof YAML |
 
 **ART status**: COMPLETE — all slots populated from system-of-record sources
 
@@ -128,8 +128,11 @@ No existing check weakened (D8 §4 No-Weakening Verification).
 ---
 
 ## IAA Agent Response (verbatim)
-> Per S-009 — to be populated after IAA final audit response is received.
-> Placeholder present per A-016 — IAA invoked immediately after this proof is committed.
+
+> IAA Final Audit: PASS — IAA-session-214-admin-ceremony-hardening-20260421-PASS
+> Token file: `.agent-admin/assurance/iaa-token-session-214-admin-ceremony-hardening-20260421.md`
+> All D1–D8 deliverables verified. No rejection history. PHASE_B_BLOCKING_TOKEN issued.
+> Merge permitted subject to CS2 final approval.
 
 ---
 

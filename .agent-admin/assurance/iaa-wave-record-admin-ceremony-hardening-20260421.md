@@ -189,9 +189,14 @@ If ECAP is appointed: **ACR-01 (ECAP reconciliation summary absence = AUTO-REJEC
 
 ## TOKEN
 
-*Populated by IAA at Phase 4 Step 4.2 — ASSURANCE-TOKEN or REJECTION-PACKAGE will appear here after final IAA invocation (IAA-FINAL task).*
+PHASE_B_BLOCKING_TOKEN: IAA-session-214-admin-ceremony-hardening-20260421-PASS
 
-PHASE_B_BLOCKING_TOKEN: PENDING — awaiting IAA-FINAL invocation after all D1–D8 deliverables committed.
+**Token**: IAA-session-214-admin-ceremony-hardening-20260421-PASS
+**Token file**: `.agent-admin/assurance/iaa-token-session-214-admin-ceremony-hardening-20260421.md`
+**Verdict**: ASSURANCE-TOKEN (PASS)
+**IAA Session**: session-214-admin-ceremony-hardening-20260421
+**Checks**: 26 PASS, 0 FAIL
+**Date**: 2026-04-21
 
 ---
 

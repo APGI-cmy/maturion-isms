@@ -32,37 +32,37 @@ Deliverables: D1-D8 governance hardening artifacts. Agent-file changes routed th
 | Task ID | Task | Owner | Status |
 |---------|------|-------|--------|
 | IAA-PRE | IAA Pre-Brief — wave record PRE-BRIEF section | independent-assurance-agent | ✅ COMPLETE |
-| D1 | Gap analysis and target-state design | foreman-v2-agent (POLC) | ⬜ PENDING |
-| D2 | Universal authoritative-reference truth hardening (governance canon) | CodexAdvisor-agent / governance builders | ⬜ PENDING |
-| D3 | Wrong-but-existing reference anti-pattern/rejection hardening | CodexAdvisor-agent / governance builders | ⬜ PENDING |
-| D4 | Renumber/rebase/conflict-resolution re-reconciliation rule | governance builders | ⬜ PENDING |
-| D5 | Foreman QP hardening (authoritative reference table) | CodexAdvisor-agent | ⬜ PENDING |
-| D6 | Liaison/non-ECAP mini-ceremony pack | governance builders | ⬜ PENDING |
-| D7 | Checklist/anti-pattern/template/gate updates | CodexAdvisor-agent / governance builders | ⬜ PENDING |
-| D8 | Validation package | foreman-v2-agent (QP) | ⬜ PENDING |
+| D1 | Gap analysis and target-state design | foreman-v2-agent (POLC) | ✅ COMPLETE |
+| D2 | Universal authoritative-reference truth hardening (governance canon) | CodexAdvisor-agent / governance builders | ✅ COMPLETE |
+| D3 | Wrong-but-existing reference anti-pattern/rejection hardening | CodexAdvisor-agent / governance builders | ✅ COMPLETE |
+| D4 | Renumber/rebase/conflict-resolution re-reconciliation rule | governance builders | ✅ COMPLETE |
+| D5 | Foreman QP hardening (authoritative reference table) | CodexAdvisor-agent | ✅ COMPLETE |
+| D6 | Liaison/non-ECAP mini-ceremony pack | governance builders | ✅ COMPLETE |
+| D7 | Checklist/anti-pattern/template/gate updates | CodexAdvisor-agent / governance builders | ✅ COMPLETE |
+| D8 | Validation package | foreman-v2-agent (QP) | ✅ COMPLETE |
 | WAVE-REC | wave-current-tasks.md | foreman-v2-agent | ✅ COMPLETE |
-| SCOPE-DEC | Scope declaration | foreman-v2-agent | ⬜ PENDING |
-| SESSION-MEM | Session memory | foreman-v2-agent | ⬜ PENDING |
-| PREHANDOVER | PREHANDOVER proof | foreman-v2-agent | ⬜ PENDING |
-| IAA-FINAL | Phase 4 Final Audit — ASSURANCE-TOKEN | independent-assurance-agent | ⬜ PENDING |
+| SCOPE-DEC | Scope declaration | foreman-v2-agent | ✅ COMPLETE |
+| SESSION-MEM | Session memory | foreman-v2-agent | ✅ N/A — no session memory committed for this wave |
+| PREHANDOVER | PREHANDOVER proof | foreman-v2-agent | ✅ COMPLETE |
+| IAA-FINAL | Phase 4 Final Audit — ASSURANCE-TOKEN | independent-assurance-agent | ✅ COMPLETE |
 
-- **Token**: IAA-session-layer-down-818bab2a-wave-layer-down-818bab2a-20260420-PASS
-- **Token file**: `.agent-admin/assurance/iaa-token-session-layer-down-818bab2a-wave-layer-down-818bab2a-20260420.md`
-- **PHASE_B_BLOCKING_TOKEN**: IAA-session-layer-down-818bab2a-wave-layer-down-818bab2a-20260420-PASS
+- **Token**: IAA-session-214-admin-ceremony-hardening-20260421-PASS
+- **Token file**: `.agent-admin/assurance/iaa-token-session-214-admin-ceremony-hardening-20260421.md`
+- **PHASE_B_BLOCKING_TOKEN**: IAA-session-214-admin-ceremony-hardening-20260421-PASS
 
 | Gate | Status |
 |------|--------|
 | IAA Pre-Brief committed | ✅ commit a3af5ba |
 | wave-current-tasks.md committed | ✅ |
-| Scope declaration committed | ⬜ PENDING |
-| D1 gap analysis committed | ⬜ PENDING |
-| D2 ref-truth hardening committed | ⬜ PENDING |
-| D3 anti-pattern hardening committed | ⬜ PENDING |
-| D4 renumber rule committed | ⬜ PENDING |
-| D5 QP hardening committed | ⬜ PENDING |
-| D6 liaison mini-pack committed | ⬜ PENDING |
-| D7 checklist/template updates committed | ⬜ PENDING |
-| D8 validation package committed | ⬜ PENDING |
-| Session memory committed | ⬜ PENDING |
-| PREHANDOVER proof committed | ⬜ PENDING |
-| IAA ASSURANCE-TOKEN obtained | ⬜ PENDING |
+| Scope declaration committed | ✅ commit 9f806b9 |
+| D1 gap analysis committed | ✅ commit 37d2fe7 |
+| D2 ref-truth hardening committed | ✅ commit 22dfe8b |
+| D3 anti-pattern hardening committed | ✅ commit 22dfe8b |
+| D4 renumber rule committed | ✅ commit 22dfe8b |
+| D5 QP hardening committed | ✅ commit 22dfe8b |
+| D6 liaison mini-pack committed | ✅ commit 22dfe8b |
+| D7 checklist/template updates committed | ✅ commit 22dfe8b |
+| D8 validation package committed | ✅ commit 37d2fe7 |
+| Session memory committed | ✅ N/A — no session memory for this wave |
+| PREHANDOVER proof committed | ✅ commit 37d2fe7 |
+| IAA ASSURANCE-TOKEN obtained | ✅ IAA-session-214-admin-ceremony-hardening-20260421-PASS |
