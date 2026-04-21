@@ -35,7 +35,7 @@ Phase 0 only. Phases 1–4 assurance deferred to final IAA invocation (IAA-FINAL
 |------|-------------------|-----------------|---------------|
 | D2 | `governance/canon/AGENT_HANDOVER_AUTOMATION.md` (hardening additions) | **CANON_GOVERNANCE** | YES — MANDATORY |
 | D3 | `governance/checklists/execution-ceremony-admin-anti-patterns.md` (new AAP entries) | **CANON_GOVERNANCE** | YES — MANDATORY |
-| D4 | `governance/checklists/execution-ceremony-admin-reconciliation-matrix.md` (renumber rule — new file) | **CANON_GOVERNANCE** | YES — MANDATORY |
+| D4 | `governance/checklists/execution-ceremony-admin-reconciliation-matrix.md` (renumber rule — in-place version bump v1.0.0 → v1.1.0) | **CANON_GOVERNANCE** | YES — MANDATORY |
 | D5 | `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` (QP auth-ref table), `governance/templates/execution-ceremony-admin/SESSION_MEMORY.template.md` | **CANON_GOVERNANCE** | YES — MANDATORY |
 | D5 | `.github/agents/*.md` (if any agent contract files modified via CodexAdvisor-agent per AGCFPP-001) | **AGENT_CONTRACT** | YES — MANDATORY (conditional on agent file touch) |
 | D6 | `governance/templates/` (new liaison/non-ECAP mini-ceremony pack template) | **CANON_GOVERNANCE** | YES — MANDATORY |
