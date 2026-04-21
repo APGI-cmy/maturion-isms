@@ -222,7 +222,7 @@ PUBLIC_API layer_down_status check: No changed files carry `layer_down_status: P
 | Stage 9 (Builder Checklist) | ✅ COMPLETE | IAA-session-mmm-stage9-builder-checklist-20260419-PASS |
 | Stage 10 (IAA Pre-Brief) | ✅ COMPLETE | IAA-session-mmm-stage10-iaa-prebrief-20260420-PASS |
 | Stage 11 (Builder Appointment) | ✅ COMPLETE | IAA-session-mmm-stage11-builder-appointment-20260420-PASS |
-| Stage 12 (Build Execution) | ✅ COMPLETE | IAA-session-mmm-stage12-build-execution-20260420-PASS (expected — pending IAA) |
+| Stage 12 (Build Execution) | ✅ COMPLETE | IAA-session-mmm-stage12-build-execution-20260420-PASS ✅ ISSUED (commit 447012b) |
 
 **Upstream PHASE_B_BLOCKING_TOKEN**: IAA-session-mmm-stage10-iaa-prebrief-20260420-PASS (authorizes Stage 12 execution)
 
@@ -254,7 +254,7 @@ PUBLIC_API layer_down_status check: No changed files carry `layer_down_status: P
 | PIT (Threat Intelligence Platform) | `supabase/functions/mmm-pit-export-send/index.ts`, `mmm-pit-evidence-return/index.ts` — MMM implements 7-step PIT export handshake per TR-017; PIT evidence return per TR-018 | **NO IMPACT to PIT internal code** — MMM is a data consumer (OB-2). No PIT internal schema embedded in MMM. `PIT_BASE_URL` PENDING live endpoint — staging E2E gate open; CI tests pass via stub. |
 | KUC (Knowledge/Upload Contract) | `supabase/functions/mmm-upload-framework-source/index.ts`, `mmm-upload-evidence/index.ts` — implements KUC upload contract per TR-019/TR-020 | **NO IMPACT to KUC internal code** — MMM is an upload initiator (OB-3). No KUC parallel ingestion logic in MMM. Upload classification returned and stored per contract. |
 | foreman-v2-agent | Wave orchestration artifacts: `wave-current-tasks.md`, scope declaration, BUILD_PROGRESS_TRACKER | **NO IMPACT** — governance ceremony artifacts only. Foreman workspace files are Foreman-owned; ECAP wrote to ECAP bundle paths only. |
-| independent-assurance-agent | IAA wave record at `.agent-admin/assurance/iaa-wave-record-mmm-stage12-build-execution-20260420.md` | **NO IMPACT** — ECAP did NOT write or modify the ## TOKEN section. IAA invocation pending; IAA writes the token when invoked by Foreman. |
+| independent-assurance-agent | IAA wave record at `.agent-admin/assurance/iaa-wave-record-mmm-stage12-build-execution-20260420.md` | **NO IMPACT** — ECAP did NOT write or modify the ## TOKEN section. IAA Final Audit COMPLETE (commit 447012b); PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS issued (22/22 checks). |
 | schema-builder / api-builder / ui-builder / integration-builder / qa-builder | B1–B9 implementation artifacts in `apps/mmm/`, `supabase/functions/`, `supabase/migrations/`, `modules/MMM/tests/` | **NO IMPACT** — ECAP did NOT modify any builder implementation artifacts. All builder artifacts are committed as submitted; ECAP admin artifacts only. |
 | AIMC audit pipeline (maturion-isms#1420) | CG-003 / CG-004 declarations in B7/B9 — explicitly state boundary readiness does NOT imply AIMC internal completion | **NO IMPACT** — CG-003/CG-004 declarations are correctly scoped; no implication of AIMC audit pipeline advancement. |
 | Other Maturion ISMS modules (MAT, PIT, XDETECT, Builder, Command) | No changes to shared libraries, canon files, or cross-module integration contracts | **NO IMPACT** — All changes are MMM-module-specific. No shared schema, no public API contracts, no canon files changed. |
