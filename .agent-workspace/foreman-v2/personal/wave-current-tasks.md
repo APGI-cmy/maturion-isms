@@ -19,6 +19,8 @@
 
 ## IAA Pre-Brief
 
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-layer-down-818bab2a-governance-propagation-20260420-20260420.md
+
 - **Wave record**: `.agent-admin/assurance/iaa-wave-record-layer-down-818bab2a-governance-propagation-20260420-20260420.md`
 - **Commit**: f9bfc4e5
 - **Categories**: LIAISON_ADMIN + KNOWLEDGE_GOVERNANCE overlay
