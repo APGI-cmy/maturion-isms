@@ -786,7 +786,7 @@ OUTCOME:
 
 ## Admin-Ceremony Rejection Triggers (v1.11.0)
 
-When a job has involved the `execution-ceremony-admin-agent` (ECAP), the IAA MUST issue a `REJECTION-PACKAGE` if **any** of the following conditions are present in the branch at assurance time. These triggers are binary and non-discretionary.
+The IAA MUST issue a `REJECTION-PACKAGE` if **any** of the following conditions are present in the branch at assurance time. These triggers are binary and non-discretionary. Triggers that expressly depend on `execution-ceremony-admin-agent` (ECAP)-specific artifacts or ECAP-only ceremony steps apply when a job has involved ECAP; triggers grounded in universal handover gates apply across **all** handover pathways, including non-ECAP and liaison flows. This includes §4.3f-backed failures such as ACR-17.
 
 > **Non-Cleanup-Authoring Rule (reinforced)**: The IAA identifies ceremony-integrity defects and issues a `REJECTION-PACKAGE`. The IAA does NOT become the document cleaner. Correction of cited failures is performed by the Foreman (who may re-engage the `execution-ceremony-admin-agent`). The IAA re-assures after correction is complete.
 
