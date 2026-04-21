@@ -18,7 +18,7 @@ approved_artifact_paths:
 ## Excluded Paths (HARD BLOCK)
 
 - `.github/agents/**` — AGCFPP-001 / SELF-MOD-FM-001 (SB-001)
-- Any file not listed in approved_artifact_paths
+- Files not listed in approved_artifact_paths are outside the planned manual edit scope, except for governance-required wave artifacts generated or updated during execution (for example assurance tokens, session memories, and PREHANDOVER/HANDOVER records).
 
 ## Authority
 
