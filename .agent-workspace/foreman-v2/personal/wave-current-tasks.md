@@ -67,12 +67,12 @@ B9 (qa-builder) — golden path; requires B7 complete
 
 | Gate | Condition | Status |
 |------|-----------|--------|
-| SB-003 | CS2 provisions AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN before B7 | ✅ RESOLVED — CS2 explicit confirmation received 2026-04-20T16:20: all 4 env vars (AIMC_BASE_URL, AIMC_SERVICE_TOKEN, PIT_BASE_URL, PIT_SERVICE_TOKEN) provisioned in Supabase project secrets / CI secret store and reachable from Edge Function runtime; B7 wave-start AUTHORIZED |
+| SB-003 | CS2 provisions AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN before B7 | ⚠️ PARTIAL — original provisioning confirmed 2026-04-20T16:20; AIMC_SERVICE_TOKEN also stored in AIMC Render env 2026-04-21; runtime wiring chain (SB-003-W1/W2/W3) NOT YET PROVEN end-to-end; B7 wave-start was AUTHORIZED; staging E2E gate remains open |
 | SB-002 | api-builder Deno/Edge Functions runtime | ✅ RESOLVED in builder-contract.md §3.2 |
 
 ## SB-003 Resolution Record (CS2 Explicit Confirmation — 2026-04-20T16:20)
 
-**Status**: ✅ RESOLVED
+**Status**: ⚠️ PARTIAL — token stored, runtime wiring chain NOT YET PROVEN (see CS2 addendum below)
 
 CS2 (@APGI-cmy) has explicitly confirmed:
 
@@ -80,7 +80,34 @@ CS2 (@APGI-cmy) has explicitly confirmed:
 
 **Resolution timestamp**: 2026-04-20T16:20 UTC  
 **Confirmed by**: CS2 (@APGI-cmy)  
-**Effect**: SB-003 hard gate CLEARED. B7 wave-start AUTHORIZED.
+**Effect**: SB-003 original hard gate (credential provisioning) CLEARED. B7 wave-start was AUTHORIZED based on this.
+
+---
+
+### CS2 Addendum — AIMC Token-Auth Wiring (2026-04-21)
+
+**Status**: ⚠️ PARTIAL — `AIMC_SERVICE_TOKEN` stored in AIMC Render service environment. Full token-auth loop NOT YET PROVEN.
+
+CS2 (@APGI-cmy) operational update (2026-04-21):
+
+> "`AIMC_SERVICE_TOKEN` has been created/stored in the AIMC Render service environment.
+> However, this should not yet be treated as full token-auth completion.
+> Remaining required wiring:
+> 1. AIMC gateway must read `AIMC_SERVICE_TOKEN` from its environment
+> 2. AIMC gateway must enforce inbound token authentication on MMM-origin requests
+> 3. MMM / Supabase Edge Function must send that token on outbound AIMC calls
+> Until those wiring steps are confirmed, the token is stored but not yet proven active in the runtime path."
+
+**Outstanding wiring steps** (SB-003-W1/W2/W3):
+- **SB-003-W1** — AIMC gateway reads `AIMC_SERVICE_TOKEN` from Render environment (Render → AIMC service code)
+- **SB-003-W2** — AIMC gateway enforces inbound token auth on MMM-origin requests (AIMC service auth middleware)
+- **SB-003-W3** — MMM Supabase Edge Function sends `AIMC_SERVICE_TOKEN` on outbound AIMC calls (already coded in B7; confirmation of live path needed)
+
+**Gate implication**: B7 CI stubs pass with token injected. Staging E2E (live AIMC path) depends on SB-003-W1/W2/W3 completion. This is a post-merge staging gate, not a PR CI blocker.
+
+**CS2 action required**: Confirm wiring steps SB-003-W1/W2/W3 are complete before signing off on staging E2E validation.
+
+---
 
 **Secret inventory (provisioned, not source-tracked)**:
 - `AIMC_BASE_URL` — live/staging AIMC endpoint (Supabase project secrets)
@@ -103,7 +130,7 @@ CS2 (@APGI-cmy) has explicitly confirmed:
 
 **Wave ID**: `mmm-build-wave-b7-boundary-integrations`  
 **Builder**: integration-builder  
-**SB-003 Gate**: ✅ RESOLVED — all 4 credentials provisioned and confirmed reachable  
+**SB-003 Gate**: ⚠️ PARTIAL — credentials provisioned for CI/stub path (B7 wave-start authorized); runtime wiring chain SB-003-W1/W2/W3 pending CS2 confirmation before staging E2E  
 
 ### Scope (from builder-contract.md §3.4)
 
