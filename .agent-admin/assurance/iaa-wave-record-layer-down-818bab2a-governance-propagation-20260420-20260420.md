@@ -4,7 +4,7 @@
 **Wave**: layer-down-818bab2a-governance-propagation-20260420
 **Issue**: maturion-isms#1414 — [Layer-Down] Propagate Governance Changes - 2026-04-19 (818bab2a)
 **Branch**: copilot/layer-down-propagate-governance-changes-03e624f7-7cfc-4a86-9175-960d27f3c778
-**PR**: maturion-isms#1434 (WIP)
+**PR**: maturion-isms#1433
 **Date**: 2026-04-20
 **Adoption Phase**: PHASE_B_BLOCKING
 
@@ -112,7 +112,7 @@
 PHASE_B_BLOCKING_TOKEN: IAA-session-layer-down-818bab2a-wave-layer-down-818bab2a-20260420-PASS
 ```
 
-- **PR**: maturion-isms#1434
+- **PR**: maturion-isms#1433
 - **Session**: session-layer-down-818bab2a-20260420 (re-invocation after REJECTION-001 remediation)
 - **All checks**: 14 total — 14 PASS, 0 FAIL
 - **Adoption phase**: PHASE_B_BLOCKING

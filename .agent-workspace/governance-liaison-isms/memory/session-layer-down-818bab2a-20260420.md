@@ -26,7 +26,7 @@ Update `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` for ripple 818
 Wave: layer-down-818bab2a-governance-propagation-20260420
 Issue: maturion-isms#1414
 Branch: copilot/layer-down-propagate-governance-changes-03e624f7-7cfc-4a86-9175-960d27f3c778
-PR: maturion-isms#1434
+PR: maturion-isms#1433
 
 ## What I Did
 

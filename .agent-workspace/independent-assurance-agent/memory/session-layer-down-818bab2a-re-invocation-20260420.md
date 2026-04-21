@@ -2,7 +2,7 @@
 
 ```
 - session_id: session-layer-down-818bab2a-re-invocation-20260420
-- pr_reviewed: maturion-isms#1434 — [Layer-Down] Propagate Governance Changes 818bab2a (re-invocation)
+- pr_reviewed: maturion-isms#1433 — [Layer-Down] Propagate Governance Changes 818bab2a (re-invocation)
 - overlay_applied: LIAISON_ADMIN + KNOWLEDGE_GOVERNANCE (secondary)
 - verdict: ASSURANCE-TOKEN (PASS)
 - checks_run: 14 substance checks: 14 PASS, 0 FAIL
@@ -24,7 +24,7 @@ All 4 silent checks: PASS
 
 ## Phase 2 Alignment
 
-**Invocation**: PR maturion-isms#1434 | Invoked by: foreman-v2-agent | Produced by: governance-liaison-isms-agent, class: liaison | Ceremony-admin: NO | STOP-AND-FIX: ACTIVE
+**Invocation**: PR maturion-isms#1433 | Invoked by: foreman-v2-agent | Produced by: governance-liaison-isms-agent, class: liaison | Ceremony-admin: NO | STOP-AND-FIX: ACTIVE
 
 **Independence**: CONFIRMED — IAA did not produce, draft, or contribute to any artifact in this PR
 

@@ -5,7 +5,7 @@
 **Wave**: layer-down-818bab2a-governance-propagation-20260420  
 **Issue**: maturion-isms#1414  
 **Branch**: copilot/layer-down-propagate-governance-changes-03e624f7-7cfc-4a86-9175-960d27f3c778  
-**PR**: maturion-isms#1434  
+**PR**: maturion-isms#1433  
 **Date**: 2026-04-20  
 **Contract Version**: 3.4.0  
 **IAA Pre-Brief**: `.agent-admin/assurance/iaa-wave-record-layer-down-818bab2a-governance-propagation-20260420-20260420.md`

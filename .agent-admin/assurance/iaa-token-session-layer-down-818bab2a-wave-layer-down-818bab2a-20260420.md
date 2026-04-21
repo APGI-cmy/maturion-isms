@@ -10,7 +10,7 @@ PHASE_B_BLOCKING_TOKEN: IAA-session-layer-down-818bab2a-wave-layer-down-818bab2a
 
 ## Token Metadata
 
-- **PR**: maturion-isms#1434
+- **PR**: maturion-isms#1433
 - **Wave**: layer-down-818bab2a-governance-propagation-20260420
 - **Issue**: maturion-isms#1414
 - **IAA Session**: session-layer-down-818bab2a-20260420 (re-invocation)

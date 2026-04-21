@@ -173,7 +173,7 @@ None.
 
 ## Suggestions for Improvement
 
-**S-056-CANDIDATE — WAVE-CURRENT-TASKS PR REFERENCE ACCURACY**: The initial wave-current-tasks.md was written before the PR was created, so the PR number field (`maturion-isms#1434`) referenced the wrong PR (#1433 was actually created). Consider deferring the PR reference field in wave-current-tasks.md until after the PR is created, or using a placeholder that gets updated post-creation. This avoids PR number mismatches in ceremony artifacts.
+**S-056-CANDIDATE — WAVE-CURRENT-TASKS PR REFERENCE ACCURACY**: The initial wave-current-tasks.md was written before the PR was created, so the PR number field (`maturion-isms#1433`) referenced the wrong PR (#1433 was actually created). Consider deferring the PR reference field in wave-current-tasks.md until after the PR is created, or using a placeholder that gets updated post-creation. This avoids PR number mismatches in ceremony artifacts.
 
 ---
 

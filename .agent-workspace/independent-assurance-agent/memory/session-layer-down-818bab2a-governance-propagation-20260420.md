@@ -2,7 +2,7 @@
 
 ```yaml
 session_id: session-layer-down-818bab2a-governance-propagation-20260420
-pr_reviewed: "maturion-isms#1434 — layer-down-818bab2a-governance-propagation-20260420 (GOVERNANCE_ALIGNMENT_INVENTORY.json update for ripple 818bab2a)"
+pr_reviewed: "maturion-isms#1433 — layer-down-818bab2a-governance-propagation-20260420 (GOVERNANCE_ALIGNMENT_INVENTORY.json update for ripple 818bab2a)"
 overlay_applied: LIAISON_ADMIN (KNOWLEDGE_GOVERNANCE overlay)
 verdict: REJECTION-PACKAGE
 checks_run: "10 substance checks: 6 PASS, 4 FAIL (4 N/A)"
