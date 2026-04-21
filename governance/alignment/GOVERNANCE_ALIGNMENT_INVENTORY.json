@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
-  "description": "Consumer-side governance alignment inventory — tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
+  "description": "Consumer-side governance alignment inventory \u2014 tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
   "last_updated": "2026-04-20",
   "last_ripple_commit": "818bab2a3771ff72d6a999e0aaa069304728cc3a",
   "last_ripple_timestamp": "2026-04-17T11:50:11Z",
   "alignment_summary": {
-    "total_artifacts": 42,
-    "aligned": 36,
+    "total_artifacts": 45,
+    "aligned": 40,
     "drifted": 0,
     "missing": 0,
     "escalated": 4,
     "not_tracked": 1,
-    "overall_status": "PARTIAL — AGENT CONTRACT FILES ESCALATED TO CS2"
+    "overall_status": "PARTIAL \u2014 AGENT CONTRACT FILES ESCALATED TO CS2"
   },
   "artifacts": [
     {
@@ -102,7 +102,7 @@
       "canonical_hash_sha256": "a6aee49152e6fe9f01b992df73790b12406cf5604d54f5af26d1a31e1bd2996c",
       "local_hash_sha256": "fce4ee6df995faaae1660d190d9ef62da64d81a434218a4d1a024c60b15f01ea",
       "alignment_status": "ESCALATED_TO_CS2",
-      "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
+      "layer_down_status": "AGENT_CONTRACT \u2014 requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
       "last_verified": "2026-04-09T13:22:00Z",
       "escalation_ref": "ESC-AGENTFILE-29E76ECF-20260304",
       "prior_escalations": [
@@ -111,7 +111,7 @@
         "ESC-AGENTFILE-4981C34F-20260304",
         "ESC-AGENTFILE-4E2E193C-20260304"
       ],
-      "note": "Local v3.4.0 is OLDER than canonical v4.0.1 — layer-up situation. Canonical ripple f5b61144 (trigger: Update CodexAdvisor-agent.md) updated this file to v4.0.1. Per A-015: escalated directly to CS2 only. CI ripple-integration.yml confirmed NO_DRIFT_DETECTED for ripple/governance-canon drift detection only; it did not assert agent contract version or hash parity with the canonical artifact. This inventory entry therefore remains ESCALATED_TO_CS2 with canonical/local version and hash mismatch recorded above. Prior ripple 3166bec3 (trigger: Update print statement from -Hello- to -Goodbye-) also changed this file but did not advance version to current state."
+      "note": "Local v3.4.0 is OLDER than canonical v4.0.1 \u2014 layer-up situation. Canonical ripple f5b61144 (trigger: Update CodexAdvisor-agent.md) updated this file to v4.0.1. Per A-015: escalated directly to CS2 only. CI ripple-integration.yml confirmed NO_DRIFT_DETECTED for ripple/governance-canon drift detection only; it did not assert agent contract version or hash parity with the canonical artifact. This inventory entry therefore remains ESCALATED_TO_CS2 with canonical/local version and hash mismatch recorded above. Prior ripple 3166bec3 (trigger: Update print statement from -Hello- to -Goodbye-) also changed this file but did not advance version to current state."
     },
     {
       "filename": "foreman-v2-agent.md",
@@ -121,7 +121,7 @@
       "canonical_hash_sha256": "d17ea8c41f5f588528d076a37e292849b80f332c7fa432bfa58dba9ed3b8125b",
       "local_hash_sha256": "d17ea8c41f5f588528d076a37e292849b80f332c7fa432bfa58dba9ed3b8125b",
       "alignment_status": "ESCALATED_TO_CS2",
-      "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
+      "layer_down_status": "AGENT_CONTRACT \u2014 requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
       "last_verified": "2026-03-03T13:03:45Z",
       "escalation_ref": "ESC-AGENTFILE-6523FE8D-20260304",
       "note": "Agent contract changed in ripple 6523fe8d (2026-03-04). Escalated to CS2. Also see prior escalation ESC-AGENTFILE-E77B00C7-20260303 from ripple e77b00c7. CS2 to apply via CodexAdvisor-agent + IAA. canonical_hash_sha256 corrected from erroneous 40-char SHA1 to local file SHA256 (canonical source unavailable for comparison; ESCALATED_TO_CS2 status unchanged)."
@@ -134,7 +134,7 @@
       "canonical_hash_sha256": null,
       "local_hash_sha256": null,
       "alignment_status": "ESCALATED_TO_CS2",
-      "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
+      "layer_down_status": "AGENT_CONTRACT \u2014 requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
       "last_verified": "2026-03-03T13:03:45Z",
       "escalation_ref": "ESC-AGENTFILE-E77B00C7-20260303",
       "note": "Not present locally. CS2 to decide whether this agent should be introduced to maturion-isms. Canonical SHA-256 is unavailable; previous value was a 40-character non-SHA256 digest and has been cleared to avoid mis-validation."
@@ -147,10 +147,10 @@
       "canonical_hash_sha256": null,
       "local_hash_sha256": "4bbf5f60d276d79c62428284fee9e5010a509799c53fdd6ab1a64583b98035e0",
       "alignment_status": "ESCALATED_TO_CS2",
-      "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
+      "layer_down_status": "AGENT_CONTRACT \u2014 requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
       "last_verified": "2026-03-03T13:03:45Z",
       "escalation_ref": "ESC-AGENTFILE-6523FE8D-20260304",
-      "note": "Agent contract changed in ripple 6523fe8d (2026-03-04) — likely reflects IAA Pre-Brief Protocol integration. Escalated to CS2. Also see prior escalation ESC-AGENTFILE-E77B00C7-20260303. CS2 to apply via CodexAdvisor-agent + IAA. Canonical SHA-256 is unavailable; previous value was a 40-character non-SHA256 digest and has been cleared to avoid mis-validation."
+      "note": "Agent contract changed in ripple 6523fe8d (2026-03-04) \u2014 likely reflects IAA Pre-Brief Protocol integration. Escalated to CS2. Also see prior escalation ESC-AGENTFILE-E77B00C7-20260303. CS2 to apply via CodexAdvisor-agent + IAA. Canonical SHA-256 is unavailable; previous value was a 40-character non-SHA256 digest and has been cleared to avoid mis-validation."
     },
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
@@ -181,12 +181,12 @@
       "path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
       "canonical_version": "1.0.0",
       "local_version": "1.0.0",
-      "canonical_hash_sha256": "f3b91126d6aaf1bb86dbd8884d08c21eba3fc2ef644b113e3d773f8b5d2aa80b",
-      "local_hash_sha256": "f3b91126d6aaf1bb86dbd8884d08c21eba3fc2ef644b113e3d773f8b5d2aa80b",
+      "canonical_hash_sha256": "4a56c52cf142f2860b27309252fc41764145065fb4df1c0ed6427026d09ac64a",
+      "local_hash_sha256": "4a56c52cf142f2860b27309252fc41764145065fb4df1c0ed6427026d09ac64a",
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
-      "last_verified": "2026-04-14T08:22:33Z",
-      "change_note": "v1.0.0 (content update): Re-verified in canonical commit c6c52a63 via ripple PR #1369 (standardize-per-agent-parking-paths). Hash unchanged — ALIGNED."
+      "last_verified": "2026-04-17T08:32:08Z",
+      "change_note": "v1.0.0 (content update): Added \u00a73.15 AIMC Platform Models (2 new canon files); totals 93\u219295 (issue #1343). Hash updated via ripple PR #1393 (canonical commit a9283eaf)."
     },
     {
       "filename": "GOVERNANCE_WATCHDOG_CANON.md",
@@ -306,7 +306,7 @@
       "canonical_hash_sha256": "3b342b6fa746ad418a767f46c38dca5ff19a5e5f4ee72d766645337e5211b29c",
       "local_hash_sha256": null,
       "alignment_status": "NOT_TRACKED",
-      "layer_down_status": "PUBLIC_API — file exists canonically (commit bfe47f6d) but not yet listed in canonical CANON_INVENTORY.json; automated layer-down not triggered",
+      "layer_down_status": "PUBLIC_API \u2014 file exists canonically (commit bfe47f6d) but not yet listed in canonical CANON_INVENTORY.json; automated layer-down not triggered",
       "last_verified": "2026-04-08T09:11:22Z",
       "change_note": "New file introduced in canonical commit bfe47f6d (trigger: canonise-oopjd-session-mode). File declares Layer-Down Status: PUBLIC_API. Not yet present in canonical CANON_INVENTORY.json (198 entries). CI ripple-integration.yml confirmed NO_DRIFT_DETECTED because CANON_INVENTORY.json does not include this file. Status: NOT_TRACKED until CANON_INVENTORY.json is updated by canonical source to include this file. No local copy exists. No layer-down action required at this time."
     },
@@ -320,7 +320,7 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
       "last_verified": "2026-04-20T07:37:36Z",
-      "change_note": "v1.1.0: Added §3.5 Final-State Normalization Duty, §3.6 Ceremony Completeness Invariants, §3.7 Cross-Artifact Reconciliation Duty, §3.8 Commit-State Truth Rule, §3.9 Ripple/Registry Administration Duty, §4.5 Non-Substitution Rule. Layered down via CI ripple PR #1395. Hash updated from 8a65c7c5... to cfb97290..."
+      "change_note": "v1.1.0: Added \u00a73.5 Final-State Normalization Duty, \u00a73.6 Ceremony Completeness Invariants, \u00a73.7 Cross-Artifact Reconciliation Duty, \u00a73.8 Commit-State Truth Rule, \u00a73.9 Ripple/Registry Administration Duty, \u00a74.5 Non-Substitution Rule. Layered down via CI ripple PR #1395. Hash updated from 8a65c7c5... to cfb97290..."
     },
     {
       "filename": "FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
@@ -332,7 +332,7 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
       "last_verified": "2026-04-20T07:37:36Z",
-      "change_note": "v1.4.0: Added §14.6 Foreman QP Admin-Compliance Checkpoint — defines Foreman verification role for admin-ceremony compliance before IAA invocation. Layered down via CI ripple PR #1395. Hash updated from b268ad06... to 3e1c27d6..."
+      "change_note": "v1.4.0: Added \u00a714.6 Foreman QP Admin-Compliance Checkpoint \u2014 defines Foreman verification role for admin-ceremony compliance before IAA invocation. Layered down via CI ripple PR #1395. Hash updated from b268ad06... to 3e1c27d6..."
     },
     {
       "filename": "AGENT_CONTRACT_ARCHITECTURE.md",
@@ -428,7 +428,7 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "TIER2_TEMPLATE",
       "last_verified": "2026-04-17T11:52:02Z",
-      "change_note": "New in canonical commit 56d92004. Foreman QP admin-compliance checkpoint output template (§14.6). Layered down in this wave."
+      "change_note": "New in canonical commit 56d92004. Foreman QP admin-compliance checkpoint output template (\u00a714.6). Layered down in this wave."
     },
     {
       "filename": "PREHANDOVER.template.md",
@@ -452,7 +452,7 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "TIER2_TEMPLATE",
       "last_verified": "2026-04-17T11:52:02Z",
-      "change_note": "New in canonical commit 56d92004. Scope declaration generation template (ECAP-QC-002 / §4.3d). Layered down in this wave."
+      "change_note": "New in canonical commit 56d92004. Scope declaration generation template (ECAP-QC-002 / \u00a74.3d). Layered down in this wave."
     },
     {
       "filename": "SESSION_MEMORY.template.md",
@@ -505,14 +505,50 @@
     {
       "filename": "AGENT_CONTRACT_PLACEHOLDER_CHECK_CANON.md",
       "path": "governance/canon/AGENT_CONTRACT_PLACEHOLDER_CHECK_CANON.md",
-      "canonical_version": "TBD",
-      "local_version": "TBD",
-      "canonical_hash_sha256": "TBD",
+      "canonical_version": "1.0.0",
+      "local_version": "1.0.0",
+      "canonical_hash_sha256": "f5c9d72ebf2584e10ff09f29fdbc90c6f8251b2ebfbce58983c7db0e45dbac1d",
       "local_hash_sha256": "f5c9d72ebf2584e10ff09f29fdbc90c6f8251b2ebfbce58983c7db0e45dbac1d",
-      "alignment_status": "PENDING_REVIEW",
+      "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-04-20T07:37:36Z",
-      "change_note": "Auto-added by ripple-integration inventory update step"
+      "last_verified": "2026-04-21T07:07:05Z",
+      "change_note": "v1.0.0: Canonical exception-class model for agent-contract placeholder-check validation (EXC-001 to EXC-005). Layered down via CI ripple PR #1417, canonical commit e5a76db099663c15dcda3fe878b48c1331b36aca. Inventory alignment completed session-069-20260421."
+    },
+    {
+      "filename": "AIMC_MMM_CONVERGENCE_BOUNDARY_CANON.md",
+      "path": "governance/canon/AIMC_MMM_CONVERGENCE_BOUNDARY_CANON.md",
+      "canonical_version": "1.0.0",
+      "local_version": "1.0.0",
+      "canonical_hash_sha256": "2818c33ebe8e50617592dd5fc830939bc8ee515be6a76f7b2fb27ce3ae5c9824",
+      "local_hash_sha256": "2818c33ebe8e50617592dd5fc830939bc8ee515be6a76f7b2fb27ce3ae5c9824",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-04-17T08:32:08Z",
+      "change_note": "v1.0.0: New canon. Defines canonical convergence boundary between MMM and AIMC \u2014 ownership boundaries, interface constraints, artefact custody rules. Layered down via ripple PR #1393 (canonical commit a9283eaf, issue #1343)."
+    },
+    {
+      "filename": "AIMC_SPECIALIST_OPERATING_MODEL.md",
+      "path": "governance/canon/AIMC_SPECIALIST_OPERATING_MODEL.md",
+      "canonical_version": "1.0.0",
+      "local_version": "1.0.0",
+      "canonical_hash_sha256": "50d60061c6dbbfd93cd2a383951cdafac49761f86c964e8a4f2eca0b7a9a03c3",
+      "local_hash_sha256": "50d60061c6dbbfd93cd2a383951cdafac49761f86c964e8a4f2eca0b7a9a03c3",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-04-17T08:32:08Z",
+      "change_note": "v1.0.0: New canon. Defines specialist operating model for AIMC agents \u2014 knowledge source taxonomy (Tier 1\u20134), source trust hierarchy, priority/conflict rules, freshness rules, delegation and module-consumer mode, human-in-the-loop boundaries. Layered down via ripple PR #1393 (canonical commit a9283eaf, issue #1343)."
+    },
+    {
+      "filename": "SPECIALIST_KNOWLEDGE_MANAGEMENT.md",
+      "path": "governance/canon/SPECIALIST_KNOWLEDGE_MANAGEMENT.md",
+      "canonical_version": "1.1.0",
+      "local_version": "1.1.0",
+      "canonical_hash_sha256": "d0e22e5b701fac3406a9c0b03f02fbe9cfc4446b27f8edcc69e28d83138fe9bd",
+      "local_hash_sha256": "d0e22e5b701fac3406a9c0b03f02fbe9cfc4446b27f8edcc69e28d83138fe9bd",
+      "alignment_status": "ALIGNED",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-04-17T08:32:08Z",
+      "change_note": "v1.1.0: Added Source Model Governance section and AIMC_SPECIALIST_OPERATING_MODEL.md cross-reference (issue #1343). Layered down via ripple PR #1393 (canonical commit a9283eaf)."
     }
   ],
   "metadata": {
@@ -520,7 +556,7 @@
     "governing_protocol": "GOVERNANCE_RIPPLE_MODEL.md v1.1.0",
     "canonical_checklist": "GOVERNANCE_RIPPLE_CHECKLIST_PROTOCOL.md",
     "created_by": "governance-liaison-isms session-035",
-    "last_updated_by": "governance-liaison-isms session-065-20260416"
+    "last_updated_by": "governance-liaison-isms session-068-20260420"
   },
   "last_updated_by": "governance-liaison-isms session-layer-down-818bab2a-20260420"
 }
