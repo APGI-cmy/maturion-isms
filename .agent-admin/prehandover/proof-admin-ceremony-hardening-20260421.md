@@ -62,7 +62,7 @@ scope_declaration:      .agent-workspace/foreman-v2/personal/scope-declaration-w
 # | governance/validation/admin-ceremony-hardening-validation-20260421.md | (new) | v1.0.0 |
 # | governance/CANON_INVENTORY.json | updated |
 
-## Ripple Assessment Summary
+# Ripple Assessment Summary
 public_api_files_changed: 0
 ripple_status:          NOT-APPLICABLE
 ripple_notes:           none
