@@ -45,9 +45,9 @@ This table demonstrates which new controls (D2–D7) would have caught the PR #1
 
 **Under new controls**:
 1. §4.3f Check M (ART Verification):
-   - ART in PREHANDOVER declares: `IAA session reference: IAA-session-056-...-PASS`
+   - ART in PREHANDOVER declares: `IAA session reference: IAA-session-056-waveName-20260421-PASS`
    - Cross-check all active bundle references against ART
-   - Wave record `## TOKEN` section cites `IAA-session-055-...-PASS` → MISMATCH
+   - Wave record `## TOKEN` section cites `IAA-session-055-waveName-20260421-PASS` → MISMATCH
    - **→ AAP-23 (wrong-but-existing reference) FIRES → ACR-17 → REJECTION-PACKAGE**
 2. §4.3f Check N (if session number changed):
    - `art_refresh_required: YES` expected → check for `art_refresh_completed: YES`
