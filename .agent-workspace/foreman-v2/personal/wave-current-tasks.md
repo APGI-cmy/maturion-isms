@@ -1,45 +1,53 @@
-# Wave Current Tasks — mmm-stage11-builder-appointment-20260420
+# Wave Current Tasks — aimc-strategy-followup-20260420
 
 **Foreman**: foreman-v2-agent v6.2.0
-**Wave**: mmm-stage11-builder-appointment-20260420
-**Issue**: maturion-isms#1426 — [MMM Stage 11] Wave-start authorization — Builder Appointment
-**Branch**: copilot/mmm-stage-11-builder-appointment
+**Wave**: aimc-strategy-followup-20260420
+**Issue**: [AIMC / Maturion] Execute post-merge follow-up work from PR #1386 strategy v2.0.1
+**Branch**: copilot/execute-post-merge-follow-up
 **Date**: 2026-04-20
-**CS2 Authorization**: CONFIRMED — issue #1426 opened directly by CS2 (@APGI-cmy); assigns foreman-v2-agent
-**ceremony_admin_appointed**: true — PRE_BUILD_STAGE_MODEL governance doc wave; ECAP appointment required per ECAP-001 §5.2
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-stage11-builder-appointment-20260420.md
-iaa_prebrief_commit: 0489924
-iaa_prebrief_status: COMPLETE — IAA-session-mmm-stage11-builder-appointment-20260420-PREBRIEF
+**CS2 Authorization**: CONFIRMED — issue opened directly by CS2 (@APGI-cmy); assigns foreman-v2-agent
+**ceremony_admin_appointed**: NOT REQUIRED — pure POLC-Orchestration tracking wave; no ECAP mandate per IAA Pre-Brief
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-aimc-strategy-followup-20260420-20260420.md
+iaa_prebrief_commit: aa37d23
+iaa_prebrief_status: COMPLETE — PHASE_B_BLOCKING pre-brief issued 2026-04-20
 
 ## Prior Wave Reference
 
-Prior wave: mmm-stage10-iaa-prebrief-20260420 (Stage 10 IAA Pre-Brief COMPLETE).
-ASSURANCE-TOKEN: IAA-session-mmm-stage10-iaa-prebrief-20260420-PASS.
-Carry-forwards: SB-002 (api-builder Deno clarification), SB-003 (B7 credentials).
+Prior active wave: mmm-stage11-builder-appointment-20260420 (COMPLETE).
+ASSURANCE-TOKEN: IAA-session-mmm-stage11-builder-appointment-20260420-PASS.
+Carry-forwards: SB-003 (B7 credentials — MMM Stage 12 only; not applicable to this wave).
+
+## Wave Summary
+
+This wave converts the newly-merged strategy v2.0.1 (PR #1386) into governed downstream follow-up 
+work. No implementation is produced. All deliverables are governance tracking and orchestration artifacts.
 
 ## Tasks
 
 | Task ID | Task | Owner | Status |
 |---------|------|-------|--------|
-| IAA-PRE | IAA Pre-Brief — wave record PRE-BRIEF section | independent-assurance-agent | ✅ COMPLETE — SHA 0489924 |
-| D1 | `builder-contract.md` v1.0.0 — Stage 11 Builder Appointment primary artifact | mat-specialist | ✅ COMPLETE — SHA 8e8d674 |
-| D2 | Formal builder appointment: builder → wave/responsibility mapping | mat-specialist | ✅ COMPLETE — within D1 (SHA 8e8d674) |
-| D3 | Stage 10 carry-forward mapping (qualifying tasks, admin ceremony, canon overlays) | mat-specialist | ✅ COMPLETE — within D1 (SHA 8e8d674) |
-| D4 | Blocker and gate declaration (SB-002, SB-003, CG-001–CG-005, NBR-001/NBR-002) | mat-specialist | ✅ COMPLETE — within D1 (SHA 8e8d674) |
-| D5 | BUILD_PROGRESS_TRACKER.md Stage 11 IN_PROGRESS → COMPLETE | mat-specialist | ✅ COMPLETE — SHA 8e8d674 |
-| C1 | PREHANDOVER proof (ECAP bundle) | execution-ceremony-admin-agent | ✅ COMPLETE — SHA 8c80f37 |
-| C2 | Session memory (ECAP bundle) | execution-ceremony-admin-agent | ✅ COMPLETE — SHA 8c80f37 |
-| IAA-FINAL | Phase 4 Final Audit — ASSURANCE-TOKEN | independent-assurance-agent | ✅ COMPLETE — IAA-session-mmm-stage11-builder-appointment-20260420-PASS (SHA 7ee770a) |
+| IAA-PRE | IAA Pre-Brief — wave record PRE-BRIEF section | independent-assurance-agent | ✅ COMPLETE — SHA aa37d23 |
+| D1 | wave-current-tasks.md update | foreman-v2-agent | ✅ COMPLETE |
+| D2 | Scope declaration | foreman-v2-agent | ✅ COMPLETE |
+| D3 | GAP-009 dependency status record | foreman-v2-agent | ✅ COMPLETE |
+| D4 | Canon alignment wave tracking record | foreman-v2-agent | ✅ COMPLETE |
+| D5 | Module-consumer spec wave tracking record | foreman-v2-agent | ✅ COMPLETE |
+| D6 | Convergence bridge wave tracking record | foreman-v2-agent | ✅ COMPLETE |
+| D7 | Session memory | foreman-v2-agent | ✅ COMPLETE |
+| D8 | PREHANDOVER proof | foreman-v2-agent | ✅ COMPLETE |
+| IAA-FINAL | Phase 4 Final Audit — ASSURANCE-TOKEN | independent-assurance-agent | ✅ COMPLETE — IAA-session-165-aimc-strategy-followup-20260420-PASS (SHA d0e8bab) |
 
 ## Wave Completion Gate
 
 | Gate | Status |
 |------|--------|
-| Stage 10 TOKEN verified active | ✅ IAA-session-mmm-stage10-iaa-prebrief-20260420-PASS |
-| Stage 9 Builder Checklist frozen baseline confirmed | ✅ builder-checklist.md v1.0.0 |
-| Stage 8 Implementation Plan confirmed active | ✅ implementation-plan.md v1.0.0 + convergence-governance-addendum.md v1.0.0 |
-| SB-002 carry-forward explicit in D1 | ✅ RESOLVED IN §3.2 (Deno/Supabase EXCLUSIVE) |
-| SB-003 credential gate explicit in D1 | ✅ PRESERVED AS HARD GATE §3.4, §5 |
-| BUILD_PROGRESS_TRACKER Stage 11 COMPLETE | ✅ COMPLETE — SHA 8e8d674 |
-| QP PASS | ✅ PASS — QP evaluation by foreman-v2-agent v6.2.0 |
-| IAA ASSURANCE-TOKEN obtained | ✅ COMPLETE — IAA-session-mmm-stage11-builder-appointment-20260420-PASS |
+| IAA Pre-Brief committed | ✅ SHA aa37d23 |
+| D1 wave-current-tasks.md committed | ✅ |
+| D2 scope declaration committed | ✅ |
+| D3 GAP-009 status record committed | ✅ |
+| D4 canon alignment tracking committed | ✅ |
+| D5 module-consumer spec tracking committed | ✅ |
+| D6 convergence bridge tracking committed | ✅ |
+| D7 session memory committed | ✅ |
+| D8 PREHANDOVER proof committed | ✅ |
+| IAA ASSURANCE-TOKEN obtained | ✅ IAA-session-165-aimc-strategy-followup-20260420-PASS (SHA d0e8bab) |
