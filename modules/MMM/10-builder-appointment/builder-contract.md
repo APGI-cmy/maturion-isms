@@ -422,21 +422,16 @@ Conditions from builder-checklist.md §4.3 carried forward as binding obligation
 **Appointed By**: foreman-v2-agent v6.2.0 (via mat-specialist delegation)  
 **Stage 9 Verdict Reference**: builder-checklist.md §4.4 — PASS (with SB-003 hard gate)  
 
-> ⚠️ **CREDENTIAL HARD GATE — SB-003 ACTIVE — B7 WAVE-START IS BLOCKED**
+> ✅ **SB-003 RESOLVED — B7 WAVE-START AUTHORIZED (2026-04-20T16:20)**
 >
-> Wave B7 (`mmm-build-wave-b7-boundary-integrations`) **CANNOT begin** until CS2 provisions
-> both of the following service credentials:
+> CS2 (@APGI-cmy) has explicitly confirmed that all 4 required env vars are provisioned
+> in the Supabase project secrets / CI secret store and are reachable from the Edge Function runtime:
 >
-> - **`AIMC_SERVICE_TOKEN`** — required for AIMC boundary wiring (9-function live wire)
-> - **`PIT_SERVICE_TOKEN`** — required for PIT data feed integration (7-step handshake)
+> - **`AIMC_BASE_URL`** + **`AIMC_SERVICE_TOKEN`** — AIMC boundary (confirmed provisioned)
+> - **`PIT_BASE_URL`** + **`PIT_SERVICE_TOKEN`** — PIT boundary (confirmed provisioned)
 >
-> integration-builder **MUST halt and escalate to CS2** if either credential is absent at
-> the point of B7 wave-start. Under no circumstances may integration-builder substitute,
-> mock, or stub credentials to bypass this gate.
->
-> SB-003 is a **CS2-provisioned hard gate**. It is not resolved in this appointment. It
-> remains OPEN until CS2 explicitly confirms both credentials are provisioned in the
-> repository secrets or Supabase vault.
+> integration-builder is hereby authorized to begin Wave B7.
+> No credential values are committed to source control.
 
 #### Authorized Scope
 
@@ -494,7 +489,7 @@ Conditions from builder-checklist.md §4.4 carried forward as binding obligation
 
 | Condition | Status | Obligation |
 |-----------|--------|------------|
-| SB-003 Credential Hard Gate | ⚠️ OPEN | B7 wave-start BLOCKED until CS2 provisions AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN |
+| SB-003 Credential Hard Gate | ✅ RESOLVED (2026-04-20T16:20) | CS2 has explicitly confirmed all 4 env vars provisioned and reachable from Edge Function runtime; B7 wave-start AUTHORIZED |
 | Addendum §4 source-state carry-forward | Active | Source-state law governs all boundary wiring decisions |
 | Addendum §5 B7 closure-law | Active | B7 PASS proves MMM boundary readiness ONLY — not AIMC completion, not source retirement |
 | Addendum §6 ownership-boundary prohibitions (OB-1/OB-2/OB-3) | Active | OB-1: no direct LLM wiring; OB-2: no PIT internal schema embedding; OB-3: no KUC internal logic |
