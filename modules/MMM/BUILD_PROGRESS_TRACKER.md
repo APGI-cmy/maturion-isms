@@ -509,16 +509,24 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 12 (Build Execution) COMPLETE ✅ — B1–B9 ALL COMPLETE (959/959 tests GREEN); B9 QP PASS — all 10 golden paths GREEN; CG-003/CG-004 declared; NBR-001/002/003 verified. Proceeding to Phase 4 (ECAP ceremony + IAA Final Audit).
-**Overall Progress**: ~99% complete (B1–B9 ALL DONE; ECAP ceremony + IAA Final Audit pending)
+**Current Stage**: Stage 12 (Build Execution) COMPLETE ✅ — B1–B9 ALL COMPLETE (959/959 tests GREEN); B9 QP PASS — all 10 golden paths GREEN; CG-003/CG-004 declared; NBR-001/002/003 verified. Phase 4 ECAP ceremony COMPLETE (2026-04-26). IAA Final Audit pending.
+**Overall Progress**: ~99.5% complete (B1–B9 ALL DONE; ECAP ceremony COMPLETE; IAA Final Audit pending)
 **Blockers**: None (build execution complete). **SB-003 staging E2E gate**: PARTIALLY OPEN — token provisioning satisfied by CS2 (2026-04-21); AIMC wiring W1/W2/W3 NOT YET PROVEN end-to-end; `PIT_BASE_URL` pending live PIT endpoint. B7 CI passes via stub path. Staging E2E blocked pending CS2 wiring confirmation + PIT endpoint readiness. This is a post-merge staging gate, not a PR CI blocker.
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.
 **Open Questions**: All RESOLVED through Stage 5. OQ-001 RESOLVED (Stage 4 TRS — CONNECTIVITY-REQUIRED, TR-039–TR-042). OQ-002 RESOLVED (Stage 5 Architecture — capabilities/index.md legacy sub-folder disposition). OQ-003 RESOLVED (Stage 5 Architecture — duplication audit, architecture.md §A12). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.
-**Last Updated**: 2026-04-20 (B9 QP PASS — foreman-v2-agent)
+**Last Updated**: 2026-04-26 (Phase 4 ECAP ceremony COMPLETE — execution-ceremony-admin-agent; ecap-session-mmm-stage12-build-execution-20260420)
+**Phase 4 ECAP Ceremony**:
+- [x] ECAP ceremony bundle COMPLETE — execution-ceremony-admin-agent (2026-04-26)
+- [x] PREHANDOVER proof: `modules/MMM/12-phase4-ecap/PREHANDOVER.md`
+- [x] ECAP reconciliation summary: `modules/MMM/12-phase4-ecap/ECAP_RECONCILIATION_SUMMARY.md`
+- [x] FOREMAN admin readiness handback: `modules/MMM/12-phase4-ecap/FOREMAN_ADMIN_READINESS_HANDBACK.md`
+- [x] Session memory: `.agent-workspace/execution-ceremony-admin-agent/bundles/session-mmm-stage12-build-execution-20260420.md`
+- [x] §4.3e gate: AAP-01–09/15–16/20–22 PASS; R01–R17 COMPLETE
+- [x] SB-003 status: PARTIAL (not RESOLVED) — token provisioning satisfied; staging E2E pending
 **Next Steps**:
-1. Phase 4 ECAP ceremony — execution-ceremony-admin-agent
-2. Phase 4 IAA Final Audit — independent-assurance-agent
-3. Phase 4 IAA Final Audit — independent-assurance-agent
+1. ~~Phase 4 ECAP ceremony — execution-ceremony-admin-agent~~ ✅ COMPLETE (2026-04-26)
+2. Phase 4 IAA Final Audit — independent-assurance-agent (PENDING — Foreman to invoke)
+3. Phase 4 merge gate release — Foreman (PENDING IAA ASSURANCE-TOKEN)
 
 ---
 
