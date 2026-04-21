@@ -67,55 +67,71 @@ B9 (qa-builder) — golden path; requires B7 complete
 
 | Gate | Condition | Status |
 |------|-----------|--------|
-| SB-003 | CS2 provisions AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN before B7 | ⚠️ PARTIAL — original provisioning confirmed 2026-04-20T16:20; AIMC_SERVICE_TOKEN also stored in AIMC Render env 2026-04-21; runtime wiring chain (SB-003-W1/W2/W3) NOT YET PROVEN end-to-end; B7 wave-start was AUTHORIZED; staging E2E gate remains open |
+| SB-003 | CS2 provisions AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN before B7 | ⚠️ PARTIAL — token provisioning COMPLETE (CS2 2026-04-21): AIMC_SERVICE_TOKEN in AIMC Render gateway + Supabase secrets; PIT_SERVICE_TOKEN in Render + Supabase secrets (pre-provisioned); AIMC_BASE_URL confirmed; PIT_BASE_URL PENDING live PIT endpoint. Gate remains partially open pending: AIMC outbound wiring E2E, PIT live endpoint confirmation, PIT runtime handshake path. B7 wave-start was AUTHORIZED. |
 | SB-002 | api-builder Deno/Edge Functions runtime | ✅ RESOLVED in builder-contract.md §3.2 |
 
-## SB-003 Resolution Record (CS2 Explicit Confirmation — 2026-04-20T16:20)
+## SB-003 Resolution Record
 
-**Status**: ⚠️ PARTIAL — token stored, runtime wiring chain NOT YET PROVEN (see CS2 addendum below)
+### Original Provisioning (CS2 — 2026-04-20T16:20)
 
-CS2 (@APGI-cmy) has explicitly confirmed:
+**Status at time**: Provisioning confirmed for CI/stub path; B7 wave-start AUTHORIZED.
+
+CS2 (@APGI-cmy) confirmed:
 
 > "AIMC_BASE_URL, AIMC_SERVICE_TOKEN, PIT_BASE_URL, and PIT_SERVICE_TOKEN are provisioned in the Supabase project secrets / CI secret store and are reachable from the Supabase Edge Function runtime."
 
-**Resolution timestamp**: 2026-04-20T16:20 UTC  
-**Confirmed by**: CS2 (@APGI-cmy)  
-**Effect**: SB-003 original hard gate (credential provisioning) CLEARED. B7 wave-start was AUTHORIZED based on this.
+**Effect**: SB-003 original hard gate (credential provisioning for CI) CLEARED. B7 wave-start AUTHORIZED.
 
 ---
 
-### CS2 Addendum — AIMC Token-Auth Wiring (2026-04-21)
+### CS2 Addendum 1 — AIMC Token-Auth Wiring (2026-04-21T06:29)
 
-**Status**: ⚠️ PARTIAL — `AIMC_SERVICE_TOKEN` stored in AIMC Render service environment. Full token-auth loop NOT YET PROVEN.
+CS2 (@APGI-cmy) clarified:
 
-CS2 (@APGI-cmy) operational update (2026-04-21):
-
-> "`AIMC_SERVICE_TOKEN` has been created/stored in the AIMC Render service environment.
-> However, this should not yet be treated as full token-auth completion.
-> Remaining required wiring:
-> 1. AIMC gateway must read `AIMC_SERVICE_TOKEN` from its environment
-> 2. AIMC gateway must enforce inbound token authentication on MMM-origin requests
-> 3. MMM / Supabase Edge Function must send that token on outbound AIMC calls
-> Until those wiring steps are confirmed, the token is stored but not yet proven active in the runtime path."
+> "`AIMC_SERVICE_TOKEN` has been created/stored in the AIMC Render service environment. However, this should not yet be treated as full token-auth completion. Remaining required wiring: (1) AIMC gateway must read the token from its environment, (2) AIMC gateway must enforce inbound token authentication on MMM-origin requests, (3) MMM / Supabase Edge Function must send that token on outbound AIMC calls."
 
 **Outstanding wiring steps** (SB-003-W1/W2/W3):
-- **SB-003-W1** — AIMC gateway reads `AIMC_SERVICE_TOKEN` from Render environment (Render → AIMC service code)
-- **SB-003-W2** — AIMC gateway enforces inbound token auth on MMM-origin requests (AIMC service auth middleware)
-- **SB-003-W3** — MMM Supabase Edge Function sends `AIMC_SERVICE_TOKEN` on outbound AIMC calls (already coded in B7; confirmation of live path needed)
-
-**Gate implication**: B7 CI stubs pass with token injected. Staging E2E (live AIMC path) depends on SB-003-W1/W2/W3 completion. This is a post-merge staging gate, not a PR CI blocker.
-
-**CS2 action required**: Confirm wiring steps SB-003-W1/W2/W3 are complete before signing off on staging E2E validation.
+- **SB-003-W1** — AIMC gateway reads `AIMC_SERVICE_TOKEN` from Render environment
+- **SB-003-W2** — AIMC gateway enforces inbound token auth on MMM-origin requests
+- **SB-003-W3** — MMM Supabase Edge Function sends `AIMC_SERVICE_TOKEN` on outbound AIMC calls (coded in B7; live path confirmation pending)
 
 ---
 
-**Secret inventory (provisioned, not source-tracked)**:
-- `AIMC_BASE_URL` — live/staging AIMC endpoint (Supabase project secrets)
-- `AIMC_SERVICE_TOKEN` — AIMC service authentication token (Supabase project secrets)
-- `PIT_BASE_URL` — live/staging PIT endpoint (Supabase project secrets)
-- `PIT_SERVICE_TOKEN` — PIT service authentication token (Supabase project secrets)
+### CS2 Addendum 2 — Comprehensive Credential Provisioning (2026-04-21T06:35)
 
-**Injection path confirmed**: Edge Functions read via `Deno.env.get(...)`. No credential values committed to source control.
+**Current status**: ⚠️ PARTIAL OPEN — token-provisioning portion SATISFIED; gate remains open pending wiring + PIT endpoint readiness.
+
+CS2 (@APGI-cmy) confirmed:
+
+> `AIMC_SERVICE_TOKEN` — created and stored in:
+> - AIMC gateway service environment (`maturion-mat-ai-gateway-staging` on Render)
+> - Supabase project secrets (for Edge Function runtime access)
+>
+> `PIT_SERVICE_TOKEN` — created and stored in:
+> - Render secret storage
+> - Supabase project secrets (pre-provisioned ahead of PIT live readiness)
+>
+> `AIMC_BASE_URL` — staging gateway endpoint confirmed
+>
+> `PIT_BASE_URL` — **PENDING** live PIT endpoint / service readiness
+
+**Secret inventory (current state)**:
+
+| Secret | Status | Location |
+|--------|--------|----------|
+| `AIMC_SERVICE_TOKEN` | ✅ CS2 provisioned | AIMC Render gateway env + Supabase project secrets |
+| `PIT_SERVICE_TOKEN` | ✅ CS2 provisioned (pre-provisioned) | Render secret storage + Supabase project secrets |
+| `AIMC_BASE_URL` | ✅ Confirmed | Staging gateway endpoint |
+| `PIT_BASE_URL` | ⚠️ PENDING | Live PIT endpoint not yet confirmed |
+
+**Injection path**: Edge Functions read via `Deno.env.get(...)`. No credential values committed to source control.
+
+**Remaining open gates before staging E2E**:
+1. **AIMC outbound token wiring** — SB-003-W1/W2/W3 end-to-end confirmation (see Addendum 1)
+2. **PIT_BASE_URL** — live PIT endpoint confirmation
+3. **PIT runtime handshake path** — ready for B7 integration testing
+
+**Gate implication**: B7 CI tests (113/113 GREEN) use stubs — not affected. Staging E2E validation requires all three remaining gates confirmed by CS2.
 
 ---
 
