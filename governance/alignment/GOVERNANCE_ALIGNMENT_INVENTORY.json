@@ -8,7 +8,7 @@
   "last_ripple_timestamp": "2026-04-17T08:32:08Z",
   "alignment_summary": {
     "total_artifacts": 45,
-    "aligned": 39,
+    "aligned": 40,
     "drifted": 0,
     "missing": 0,
     "escalated": 4,
@@ -505,14 +505,14 @@
     {
       "filename": "AGENT_CONTRACT_PLACEHOLDER_CHECK_CANON.md",
       "path": "governance/canon/AGENT_CONTRACT_PLACEHOLDER_CHECK_CANON.md",
-      "canonical_version": "TBD",
-      "local_version": "TBD",
-      "canonical_hash_sha256": "TBD",
+      "canonical_version": "1.0.0",
+      "local_version": "1.0.0",
+      "canonical_hash_sha256": "f5c9d72ebf2584e10ff09f29fdbc90c6f8251b2ebfbce58983c7db0e45dbac1d",
       "local_hash_sha256": "f5c9d72ebf2584e10ff09f29fdbc90c6f8251b2ebfbce58983c7db0e45dbac1d",
-      "alignment_status": "PENDING_REVIEW",
+      "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-04-20T07:37:36Z",
-      "change_note": "Auto-added by ripple-integration inventory update step"
+      "last_verified": "2026-04-21T07:07:05Z",
+      "change_note": "v1.0.0: Canonical exception-class model for agent-contract placeholder-check validation (EXC-001 to EXC-005). Layered down via CI ripple PR #1417, canonical commit e5a76db099663c15dcda3fe878b48c1331b36aca. Inventory alignment completed session-069-20260421."
     },
     {
       "filename": "AIMC_MMM_CONVERGENCE_BOUNDARY_CANON.md",
