@@ -111,7 +111,7 @@ The PREHANDOVER proof for this wave **must include**:
 
 | Required Field | Source Rule | Notes |
 |---------------|-------------|-------|
-| `iaa_audit_token: IAA-session-166-admin-ceremony-hardening-20260421-PASS` | A-029 (§4.3b) | Pre-populated at commit time — NOT `PENDING`. Format: expected reference. |
+| `iaa_audit_token: IAA-session-214-admin-ceremony-hardening-20260421-PASS` | A-029 (§4.3b) | Pre-populated at commit time — NOT `PENDING`. Session-214 = IAA final audit session (separate track from foreman session numbering). |
 | Authoritative Reference Table | D5 deliverable intent | The very mechanism this wave is delivering. The wave's own PREHANDOVER must demonstrate it (eat your own cooking). Must include: session ID, PR number, branch name, all canon file paths + versions, CANON_INVENTORY hash confirmation. |
 | Ripple impact assessment | OVL-CG-004/005, SB-ACWH-002 | Explicit list of affected consumers with update/no-update determination |
 | CANON_INVENTORY verification | OVL-CG-ADM-001 | Confirm CANON_INVENTORY.json updated for all new/modified canon files |
@@ -179,7 +179,10 @@ If ECAP is appointed: **ACR-01 (ECAP reconciliation summary absence = AUTO-REJEC
 | FBR obligations | NO — governance wave, not BUILD/AAWP_MAT |
 | Scope blockers | SB-ACWH-001 (CANON_INVENTORY), SB-ACWH-002 (ripple), SB-ACWH-003 (AGCFPP-001), SB-ACWH-004 (SCOPE_DECLARATION), SB-ACWH-005 (PREHANDOVER structure) |
 | Ceremony admin status | PENDING — ACR checks activate if ECAP appointed at Phase 4 |
-| Session ID for token reference | session-166 (per wave-current-tasks.md — `IAA-session-166-admin-ceremony-hardening-20260421-PASS`) |
+| IAA session for this pre-brief | session-213 (next available after session-212) |
+| IAA session for final audit (IAA-FINAL) | session-214 (next available after pre-brief session-213) |
+| Expected PREHANDOVER iaa_audit_token | `IAA-session-214-admin-ceremony-hardening-20260421-PASS` |
+| ⚠️ Session-166 clarification | "session-166" in wave-current-tasks.md = **foreman-v2-agent session numbering**, NOT IAA session number. IAA and Foreman maintain independent session sequences. |
 | Pre-Brief status | COMPLETE |
 
 ---
