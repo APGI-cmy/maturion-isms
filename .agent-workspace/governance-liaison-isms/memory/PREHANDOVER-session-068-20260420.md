@@ -113,8 +113,9 @@ Local verification:
 
 - First invocation result: REJECTION-PACKAGE (F-001: uncommitted artifacts, F-002: PHASE_A_ADVISORY token, F-003: CANON_INVENTORY stale hashes)
 - Corrective actions taken: (1) All artifacts committed to branch; (2) iaa_audit_token updated to expected reference; (3) CANON_INVENTORY.json updated with correct hashes
-- Second invocation: pending (this PREHANDOVER proof is the basis for re-invocation)
-- iaa_audit_token: IAA-session-governance-layer-down-84997301-20260420-PASS
+- Second invocation result: ASSURANCE-TOKEN — PASS (14/14 checks PASS, 0 FAIL)
+- iaa_audit_token: IAA-session-governance-layer-down-84997301-20260420-R2-PASS
+- PHASE_B_BLOCKING_TOKEN: IAA-session-governance-layer-down-84997301-20260420-R2-PASS
 - Wave record path: `.agent-admin/assurance/iaa-wave-record-governance-layer-down-84997301-20260420.md`
 
 ---
