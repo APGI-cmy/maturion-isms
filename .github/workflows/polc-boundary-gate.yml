@@ -104,6 +104,7 @@ jobs:
           done
 
           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+          WORKFLOW_ACTOR="${{ github.actor }}"
           BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
 
           HAS_BUILDER_LABEL=false
@@ -116,23 +117,28 @@ jobs:
           done
 
           # ─── Dimension 1: Runtime Executor Identity (informational) ──────────────
-          # Detect shared Copilot runtime. This dimension is INFORMATIONAL ONLY.
-          # copilot-swe-agent[bot] is shared across ALL Copilot agents (Foreman,
-          # api-builder, ui-builder, qa-builder, etc.). Runtime identity therefore
-          # cannot be used to determine the governed role — it is the execution
-          # substrate, not the role classification source of truth.
-          RUNTIME_IS_COPILOT=false
+          # Captures two values: the PR author (who opened the PR) and the workflow
+          # runtime actor (github.actor — who triggered this workflow run).
+          # Both are reported for diagnostics. Neither drives gate decisions.
+          # copilot-swe-agent[bot] can appear in EITHER field and is shared across
+          # ALL Copilot agents (Foreman, api-builder, ui-builder, etc.), so it
+          # cannot be used as a governed role proxy.
+          ACTOR_IS_COPILOT=false
+          if [[ "$WORKFLOW_ACTOR" =~ copilot-swe-agent|Copilot|github-copilot ]]; then
+            ACTOR_IS_COPILOT=true
+          fi
+          AUTHOR_IS_COPILOT=false
           if [[ "$PR_AUTHOR" =~ copilot-swe-agent|Copilot|github-copilot ]]; then
-            RUNTIME_IS_COPILOT=true
+            AUTHOR_IS_COPILOT=true
           fi
 
           echo "--- Dimension 1: Runtime Executor Identity ---"
-          echo "PR author:              $PR_AUTHOR"
-          echo "Shared Copilot runtime: $RUNTIME_IS_COPILOT"
-          echo "copilot-builder-role:   $HAS_BUILDER_LABEL"
+          echo "PR author:                $PR_AUTHOR (Copilot identity: $AUTHOR_IS_COPILOT)"
+          echo "Workflow runtime actor:   $WORKFLOW_ACTOR (Copilot identity: $ACTOR_IS_COPILOT)"
+          echo "copilot-builder-role:     $HAS_BUILDER_LABEL"
           echo ""
           echo "NOTE: Runtime identity alone is NOT the governed role classifier."
-          echo "      All Copilot agents share copilot-swe-agent[bot] identity."
+          echo "      copilot-swe-agent[bot] is shared across all Copilot agents."
           echo "      Governed role is determined from governance artifacts (Dimension 2)."
           echo ""
 
@@ -232,12 +238,24 @@ jobs:
           if [ -n "$NEW_FOREMAN_SESSION" ]; then
             while IFS= read -r session_file; do
               if [ -f "$session_file" ]; then
-                # AWK extracts list items under agents_delegated_to: key.
-                # Enters block on key line; exits on next non-indented non-list line;
-                # collects list items (lines beginning with optional whitespace + "- ").
+                # Detect agents_delegated_to: in two forms:
+                #   Multi-line YAML list:  "- agent-name" entries after the key
+                #   Inline YAML list/value: agents_delegated_to: [a, b] or a scalar
+                # The AWK block handles both forms in a single pass:
+                #   - On the key line, check for a non-empty inline value (inline form)
+                #   - Otherwise enter block mode and collect "- " list items (block form)
+                #   - Blank lines and comments are tolerated inside the block
                 DELEGATED=$(awk '
-                  /^agents_delegated_to:/ { in_block=1; next }
-                  in_block && /^[^ \t-]/ && !/^[ \t]*-/ { in_block=0 }
+                  /^agents_delegated_to:/ {
+                    # Inline form: value follows the colon on the same line
+                    val = $0; sub(/^agents_delegated_to:[[:space:]]*/, "", val)
+                    # Non-empty and not the literal "none" or empty brackets "[]"
+                    if (val != "" && val != "none" && val != "[]") {
+                      print val; found=1; next
+                    }
+                    in_block=1; next
+                  }
+                  in_block && /^[^# \t]/ && !/^[ \t]*-/ { in_block=0 }
                   in_block && /^[ \t]*-[ \t]/ { print; found=1 }
                   END { exit (found ? 0 : 1) }
                 ' "$session_file" 2>/dev/null || true)
@@ -280,7 +298,7 @@ jobs:
           if [[ "$DELEGATION_FOUND" == "true" ]]; then
             echo "✅ Check 1 PASSED — Delegation evidence confirmed."
             echo ""
-            echo "   Dimension 1 (Runtime identity):   $PR_AUTHOR (Copilot: $RUNTIME_IS_COPILOT)"
+            echo "   Dimension 1 (PR author / actor):   $PR_AUTHOR / $WORKFLOW_ACTOR (Copilot: $AUTHOR_IS_COPILOT / $ACTOR_IS_COPILOT)"
             echo "   Dimension 2 (Governed role):       $GOVERNED_ROLE [$ROLE_EVIDENCE_SOURCE]"
             echo "   Dimension 3 (Delegation evidence): PRESENT [$DELEGATION_SOURCE]"
             echo ""
@@ -333,10 +351,12 @@ jobs:
               continue
             fi
 
-            # Production source files (implementation)
+            # Production source files (implementation), including Supabase Edge Functions
             if [[ "$file" =~ ^modules/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
                [[ "$file" =~ ^apps/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
-               [[ "$file" =~ ^packages/.*/src/.*\.(ts|tsx|js|jsx)$ ]]; then
+               [[ "$file" =~ ^packages/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
+               [[ "$file" =~ ^supabase/functions/.*/.*\.(ts|tsx|js|jsx)$ ]] || \
+               [[ "$file" =~ ^packages/.*/supabase/functions/.*/.*\.(ts|tsx|js|jsx)$ ]]; then
               IMPL_FILES_FOUND=true
               IMPL_FILE_LIST="${IMPL_FILE_LIST}\n  - ${file}"
             fi
@@ -353,7 +373,7 @@ jobs:
           if [[ "$IMPL_FILES_FOUND" == "false" ]]; then
             echo "✅ Check 1 PASSED — No implementation files detected."
             echo ""
-            echo "   Dimension 1 (Runtime identity):   $PR_AUTHOR"
+            echo "   Dimension 1 (PR author / actor):   $PR_AUTHOR / $WORKFLOW_ACTOR"
             echo "   Dimension 2 (Governed role):       $GOVERNED_ROLE [$ROLE_EVIDENCE_SOURCE]"
             echo "   Dimension 3 (Delegation evidence): N/A (no implementation files)"
             exit 0
@@ -372,7 +392,7 @@ jobs:
             echo "🚨 CONFIRMED FOREMAN IMPLEMENTATION BREACH"
             echo ""
             echo "DIMENSION FAILURE REPORT:"
-            echo "  Dimension 1 (Runtime identity):   $PR_AUTHOR (Copilot: $RUNTIME_IS_COPILOT)"
+            echo "  Dimension 1 (PR author / actor):   $PR_AUTHOR / $WORKFLOW_ACTOR (Copilot: $AUTHOR_IS_COPILOT / $ACTOR_IS_COPILOT)"
             echo "  Dimension 2 (Governed role):       FOREMAN [$ROLE_EVIDENCE_SOURCE]"
             echo "  Dimension 3 (Delegation evidence): MISSING"
             echo "  Implementation files:              PRESENT"
@@ -408,7 +428,7 @@ jobs:
           echo "📋 AMBIGUITY STATE: UNRESOLVED GOVERNED ROLE"
           echo ""
           echo "DIMENSION FAILURE REPORT:"
-          echo "  Dimension 1 (Runtime identity):   $PR_AUTHOR (Copilot: $RUNTIME_IS_COPILOT)"
+          echo "  Dimension 1 (PR author / actor):   $PR_AUTHOR / $WORKFLOW_ACTOR (Copilot: $AUTHOR_IS_COPILOT / $ACTOR_IS_COPILOT)"
           echo "  Dimension 2 (Governed role):       UNRESOLVED (no governance artifacts found)"
           echo "  Dimension 3 (Delegation evidence): MISSING"
           echo "  Implementation files:              PRESENT"
@@ -423,7 +443,7 @@ jobs:
           echo "TO RESOLVE (choose one):"
           echo "  Option A — Foreman-orchestrated wave:"
           echo "    Commit Foreman session memory with agents_delegated_to: populated"
-          echo "    Path: .agent-workspace/foreman*/memory/session-YYYYMMDD.md"
+          echo "    Path: .agent-workspace/foreman*/memory/session-*.md"
           echo "    This establishes Dimension 2 (FOREMAN) and Dimension 3 (delegation)."
           echo "  Option B — Builder-governed wave:"
           echo "    Add 'copilot-builder-role' label to this PR"
@@ -733,6 +753,19 @@ jobs:
         run: |
           echo "=== Session Memory Presence and Compliance ==="
           echo ""
+
+          # CS2 sign-off bypass: a scoped 'CS sign-off: approved' label waives this
+          # check consistently with foreman-implementation-check and other jobs.
+          PR_LABELS_SMC="${{ join(github.event.pull_request.labels.*.name, ',') }}"
+          IFS=',' read -ra SMC_LABEL_ARRAY <<< "$PR_LABELS_SMC"
+          for label in "${SMC_LABEL_ARRAY[@]}"; do
+            if [[ "$label" == "CS sign-off: approved" ]]; then
+              echo "✅ PASS — PR carries 'CS sign-off: approved' label."
+              echo "   CS2 explicit sign-off detected. session-memory-check waived"
+              echo "   per CS2 supreme authority (AGCFPP §2). Override is scoped to this PR."
+              exit 0
+            fi
+          done
 
           # ─── Governed Role Classification (mirrors foreman-implementation-check) ─
           # session-memory-check applies only to Foreman-governed PRs.
