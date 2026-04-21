@@ -1,7 +1,8 @@
 # AGENT_HANDOVER_AUTOMATION
 
-**Status**: CANONICAL | **Version**: 1.6.0 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.7.0 | **Authority**: CS2  
 **Date**: 2026-02-24  
+**Amended**: 2026-04-21 — v1.7.0: Added §4.3f ART Verification Gate (universal — applies to ALL handover pathways, ECAP and non-ECAP); Check M: Authoritative Reference Table (ART) presence and cross-check; Check N: renumber/rebase/conflict-resolution refresh compliance; added AAP-23 (wrong-but-existing reference) and AAP-24 (renumber/rebase drift) to auto-fail rules table; updated sequencing note; authority: CS2 — wave admin-ceremony-hardening-20260421.  
 **Amended**: 2026-04-20 — v1.6.0: Added §4.3e Check L — active final-state bundle token/session coherence (AAP-22 / ACR-16); added AAP-22 to §4.3e auto-fail rules table; extends active-bundle scope to include `wave-current-tasks.md` for token/session coherence checks; authority: CS2 — maturion-isms#1422 (Canonize active final-state token/session coherence).  
 **Amended**: 2026-04-19 — v1.5.0: Hardened §4.3e Admin Ceremony Compliance Gate with gate-inventory checks (Check H), pre-final instruction wording denylist (Check I), cross-artifact final-state consistency with active-bundle scoping (Check J), and carried-forward claim verification (Check K); updated auto-fail rule table with AAP-15 through AAP-21; active-bundle scoping rule clarified to prevent false positives from historical archive; authority: CS2 — governance-repo hardening wave (gate-inventory + post-token normalization hardening).  
 **Amended**: 2026-04-17 — v1.4.1: Tightened §4.3e Check C stale-wording scan to final-state artifact set only — superseded pre-token proofs retained immutably under the append-only model are now explicitly exempt; updated AAP-01 auto-fail rule to document final-state scope and superseded-proof exemption; authority: CS2 — PR review feedback on §4.3e canon collision with append-only proof retention.  
@@ -62,10 +63,11 @@ Phase 4 consists of five mandatory sections:
 ### 4.3c Pre-IAA Commit-State Gate (mandatory, BLOCKING)
 ### 4.3d Scope-Declaration Parity Gate (mandatory, BLOCKING — governance PRs)
 ### 4.3e Admin Ceremony Compliance Gate (mandatory, BLOCKING — ECAP-involved jobs)
+### 4.3f ART Verification Gate (mandatory, BLOCKING — ALL handover pathways)
 ### 4.4 Compliance Check & Escalation (if needed)
 ```
 
-> **Sequencing note**: §4.3c Pre-IAA Commit-State Gate MUST run immediately before IAA invocation (which each producing-agent contract places after §4.3c). §4.3d Scope-Declaration Parity Gate runs after §4.3c and before IAA invocation for all PRs that include `governance/scope-declaration.md`. **§4.3e Admin Ceremony Compliance Gate runs after §4.3d and before IAA invocation for all jobs where an `execution-ceremony-admin-agent` was appointed.** §4.3b Token Update Ceremony runs after IAA has returned a verdict. The canonical ordering is: §4.3 → §4.3c → §4.3d (if governance PR) → §4.3e (if ECAP job) → IAA invocation → §4.3b → §4.4.
+> **Sequencing note**: §4.3c Pre-IAA Commit-State Gate MUST run immediately before IAA invocation (which each producing-agent contract places after §4.3c). §4.3d Scope-Declaration Parity Gate runs after §4.3c and before IAA invocation for all PRs that include `governance/scope-declaration.md`. **§4.3e Admin Ceremony Compliance Gate runs after §4.3d and before IAA invocation for all jobs where an `execution-ceremony-admin-agent` was appointed.** **§4.3f ART Verification Gate runs after §4.3e (or after §4.3d if no ECAP) and before IAA invocation for ALL handover pathways — including liaison and non-ECAP flows.** §4.3b Token Update Ceremony runs after IAA has returned a verdict. The canonical ordering is: §4.3 → §4.3c → §4.3d (if governance PR) → §4.3e (if ECAP job) → §4.3f (ALL pathways) → IAA invocation → §4.3b → §4.4.
 
 ## Section 4.1: Evidence Artifact Generation
 
@@ -1271,12 +1273,139 @@ The following conditions are **auto-fail** for the §4.3e gate regardless of oth
 | AAP-20 | `## Ripple/Cross-Agent Assessment` section absent or blank in PREHANDOVER proof | The PREHANDOVER proof does not contain a `## Ripple/Cross-Agent Assessment` section (or equivalent heading), or the section is present but contains no concrete downstream-impact conclusions — only placeholder text, a blank table, or a heading with no body |
 | AAP-21 | Active wave/task tracker contradiction | A final-state ceremony artifact (wave record, PREHANDOVER proof, session memory) claims PASS / merge permitted / `final_state: COMPLETE`, but one or more active control artifacts for the same wave still show pending, in-progress, or pre-final state for tasks that are now complete. Active control artifacts: `wave-current-tasks.md`, `BUILD_PROGRESS_TRACKER.md` current-wave entries, current stage/readiness trackers. Immutable historical archives from prior waves are excluded |
 | AAP-22 | Active final-state token/session incoherence | The active final-state bundle contains two or more artifacts that each declare a different IAA session ID as the authoritative current final state for the same wave — e.g., PREHANDOVER proof `iaa_audit_token` names one session, while latest session memory `iaa_session_reference` names a different session, or wave record `## TOKEN` section names yet another. Check L of §4.3e will detect this automatically. See `INDEPENDENT_ASSURANCE_AGENT_CANON.md` §Authoritative-Source Rule for Current Token/Session for the resolution procedure. |
+| AAP-23 | Wrong-but-existing reference (non-authoritative artifact target) | A reference in an active ceremony artifact resolves to a file that EXISTS on disk but is NOT the authoritative artifact for the active bundle — a superseded session-memory path from before a renumber, an inventory note citing the prior session number, or a wave record referencing a pre-renumber proof. Detection: ART cross-check. Check M of §4.3f detects this. See ACR-17. |
+| AAP-24 | Renumber/rebase drift failure | After a session renumber, date change, wave identifier change, PR number change, branch identity change, or conflict-resolution merge that changes active truth anchors, at least one active final-state artifact still references the superseded (pre-change) identifier. Check N of §4.3f detects this via `art_refresh_required`/`art_refresh_completed` fields. See ACR-17. |
 
 ### Admin Ceremony Compliance Gate in the Handover Validation Checklist
 
-The following item is added to the handover checklist when an ECAP job is involved:
+The following items are added to the handover checklist:
 
-> - [ ] **Admin Ceremony Compliance Gate PASSED** (ECAP jobs): §4.3e gate run — 0 auto-fail conditions (AAP-15 through AAP-21 auto-fail conditions included); ECAP reconciliation summary present; admin-compliance readiness accepted by Foreman QP checkpoint (BLOCKING — IAA must not be invoked until this is ✅) (IAA Token — Append-Only, Dedicated File)
+> - [ ] **Admin Ceremony Compliance Gate PASSED** (ECAP jobs): §4.3e gate run — 0 auto-fail conditions (AAP-15 through AAP-22 auto-fail conditions included); ECAP reconciliation summary present; admin-compliance readiness accepted by Foreman QP checkpoint (BLOCKING — IAA must not be invoked until this is ✅) (IAA Token — Append-Only, Dedicated File)
+> - [ ] **ART Verification Gate PASSED** (ALL pathways): §4.3f gate run — `## Authoritative Reference Table` present and fully populated in PREHANDOVER proof; no placeholder values in ART slots; ART status explicitly confirmed COMPLETE; 0 AAP-23/AAP-24 conditions detected; `art_refresh_required` and `art_refresh_completed` fields populated correctly (BLOCKING — IAA must not be invoked until this is ✅). **Note**: §4.3f automates presence, population, and status checks; cross-artifact reference comparison (confirming all active bundle values match ART declarations) is a **manual IAA verification step** performed during final audit.
+
+---
+
+## §4.3f ART Verification Gate (UNIVERSAL — ALL handover pathways)
+
+> **Scope**: This gate applies to EVERY handover that produces final-state artifacts — ECAP-involved jobs, Foreman sessions, governance-liaison sessions, and any other non-ECAP governance ceremony producer. It is NOT limited to ECAP-involved jobs. The §4.3e gate is ECAP-specific; this §4.3f gate is universal.
+
+**Problem This Solves**: Existence-only checks (AAP-03 / `git ls-files`) detect missing files but are structurally blind to wrong-but-existing references — files that exist on disk but are not the authoritative artifact for the active bundle. Session renumber/conflict-resolution drift (AAP-24) is the most common source of this defect class.
+
+**The Authoritative Reference Table (ART)**: The PREHANDOVER proof (or liaison mini-ceremony pack for non-ECAP flows) MUST contain a `## Authoritative Reference Table` section. This table declares the single authoritative value for each reference slot. The §4.3f automated gate verifies ART presence, slot population (no placeholders), and status confirmation. Cross-artifact reference comparison — confirming that all other active bundle artifacts (wave records, scope declarations, IAA wave records, etc.) reference values that match the ART declarations exactly — is a **manual IAA verification step** performed during final audit and is NOT automated by this gate.
+
+```bash
+#!/bin/bash
+# §4.3f ART Verification Gate (UNIVERSAL — ALL handover pathways)
+# Priority: Producer_H (any producing agent)
+# Authority: AGENT_HANDOVER_AUTOMATION.md v1.7.0
+
+echo "🔍 §4.3f ART VERIFICATION GATE (UNIVERSAL — ALL HANDOVER PATHWAYS)"
+
+ART_FAILURES=()
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHECK M: Authoritative Reference Table (ART) Presence and Population Check
+# ─────────────────────────────────────────────────────────────────────────────
+echo "  [M] ART Presence and Population Check..."
+
+PROOF_FILE=$(git ls-files .agent-admin/prehandover/proof-*.md 2>/dev/null | head -1)
+if [ -z "${PROOF_FILE}" ]; then
+  # No PREHANDOVER proof — check for liaison mini-ceremony pack
+  PROOF_FILE=$(git ls-files ".agent-workspace/*/memory/liaison-ceremony-*.md" 2>/dev/null | head -1)
+fi
+
+if [ -z "${PROOF_FILE}" ]; then
+  ART_FAILURES+=("M1: No PREHANDOVER proof or liaison mini-ceremony pack found. ART check cannot proceed.")
+else
+  # M1: ART section present
+  ART_SECTION=$(grep -c "## Authoritative Reference Table" "${PROOF_FILE}" 2>/dev/null || echo 0)
+  if [ "${ART_SECTION}" -eq 0 ]; then
+    ART_FAILURES+=("M1: ## Authoritative Reference Table section ABSENT from ${PROOF_FILE} — AAP-23 auto-fail (ACR-17)")
+  else
+    echo "    ✅ M1: ## Authoritative Reference Table section present in ${PROOF_FILE}"
+
+    # M2: Check for placeholder values in the full ART block (session-NNN, YYYY-MM-DD, <wave-slug>, etc.)
+    ART_BLOCK=$(awk '
+      /^## Authoritative Reference Table$/ { in_art=1 }
+      in_art && /^## / && $0 != "## Authoritative Reference Table" { exit }
+      in_art { print }
+    ' "${PROOF_FILE}" 2>/dev/null)
+    PLACEHOLDERS=$(printf '%s\n' "${ART_BLOCK}" | grep -cE "session-NNN|YYYY-MM-DD|<wave-slug>|\\\\<wave-slug\\\\>|<branch-name>|\\\\<branch-name\\\\>|#NNN|proof-NNN|<agent>|\\\\<agent\\\\>" 2>/dev/null || echo 0)
+    if [ "${PLACEHOLDERS}" -gt 0 ]; then
+      ART_FAILURES+=("M2: ## Authoritative Reference Table contains ${PLACEHOLDERS} placeholder value(s) — all slots must be populated from system-of-record sources before handover (AAP-23 / ACR-17)")
+    else
+      echo "    ✅ M2: No placeholder values detected in ART slots"
+    fi
+
+    # M3: ART status field confirms COMPLETE via explicit machine-detectable marker
+    ART_STATUS=$(grep -A 15 "## Authoritative Reference Table" "${PROOF_FILE}" | grep -cE '^[[:space:]]*(\*\*)?ART status(\*\*)?:[[:space:]]*COMPLETE[[:space:]]*$' 2>/dev/null || echo 0)
+    if [ "${ART_STATUS}" -eq 0 ]; then
+      ART_FAILURES+=("M3: ART status field not explicitly confirmed as 'ART status: COMPLETE' in ${PROOF_FILE} — unchecked/template checkbox wording does not satisfy this gate; populate all slots and mark COMPLETE before handover")
+    else
+      echo "    ✅ M3: ART status explicitly confirmed COMPLETE"
+    fi
+  fi
+fi
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHECK N: Renumber/Rebase/Conflict-Resolution Refresh Compliance
+# ─────────────────────────────────────────────────────────────────────────────
+echo "  [N] Renumber/Rebase Refresh Compliance Check..."
+
+if [ -n "${PROOF_FILE}" ]; then
+  ART_REFRESH_REQUIRED=$(grep "art_refresh_required:" "${PROOF_FILE}" | awk '{print $2}' | head -1 | tr -d '"' | tr '[:upper:]' '[:lower:]')
+  ART_REFRESH_COMPLETED=$(grep "art_refresh_completed:" "${PROOF_FILE}" | awk '{print $2}' | head -1 | tr -d '"' | tr '[:upper:]' '[:lower:]')
+
+  if [ -z "${ART_REFRESH_REQUIRED}" ]; then
+    ART_FAILURES+=("N1: art_refresh_required field ABSENT from ${PROOF_FILE} — field is mandatory (AAP-24 / ACR-17)")
+  elif [ "${ART_REFRESH_REQUIRED}" = "yes" ]; then
+    echo "    ℹ️  N1: art_refresh_required: YES — checking art_refresh_completed..."
+    if [ "${ART_REFRESH_COMPLETED}" != "yes" ]; then
+      ART_FAILURES+=("N2: art_refresh_required is YES but art_refresh_completed is NOT YES (value: '${ART_REFRESH_COMPLETED}') — re-populate ART from system-of-record sources and set art_refresh_completed: YES before handover (AAP-24 / ACR-17)")
+    else
+      echo "    ✅ N2: art_refresh_completed: YES confirmed"
+    fi
+  elif [ "${ART_REFRESH_REQUIRED}" = "no" ]; then
+    echo "    ✅ N1: art_refresh_required: NO — no renumber/rebase refresh required"
+    # N/A value check
+    if [ "${ART_REFRESH_COMPLETED}" != "n/a" ] && [ "${ART_REFRESH_COMPLETED}" != "yes" ]; then
+      ART_FAILURES+=("N3: art_refresh_required is NO but art_refresh_completed is '${ART_REFRESH_COMPLETED}' (expected: N/A) — correct the field value")
+    else
+      echo "    ✅ N3: art_refresh_completed: ${ART_REFRESH_COMPLETED} (consistent with art_refresh_required: NO)"
+    fi
+  else
+    ART_FAILURES+=("N1: art_refresh_required has unrecognised value '${ART_REFRESH_REQUIRED}' — must be YES or NO")
+  fi
+fi
+
+# ─────────────────────────────────────────────────────────────────────────────
+# GATE RESULT
+# ─────────────────────────────────────────────────────────────────────────────
+if [ ${#ART_FAILURES[@]} -gt 0 ]; then
+  echo ""
+  echo "❌ §4.3f ART VERIFICATION GATE FAILED — IAA MUST NOT BE INVOKED"
+  echo "Failures:"
+  for f in "${ART_FAILURES[@]}"; do echo "  - ${f}"; done
+  echo ""
+  echo "ACTION: Populate the ## Authoritative Reference Table in the PREHANDOVER proof from system-of-record sources."
+  echo "        Set art_refresh_required: YES/NO and art_refresh_completed: YES/N/A."
+  echo "        Re-run §4.3c + §4.3d + §4.3e (if ECAP) + §4.3f, then invoke IAA."
+  exit 1
+fi
+
+echo ""
+echo "✅ §4.3f ART VERIFICATION GATE PASSED"
+echo "✅ Authoritative Reference Table present, populated, and refresh compliance confirmed."
+echo "✅ All handover pathway producing agents may proceed to IAA invocation."
+```
+
+### ART Verification Gate in the Handover Validation Checklist
+
+The following item is added to the handover checklist for ALL handover pathways:
+
+> - [ ] **ART Verification Gate PASSED** (ALL pathways — universal): §4.3f gate run — `## Authoritative Reference Table` present and fully populated from system-of-record sources; no placeholder values; ART status COMPLETE; `art_refresh_required` field populated; if YES, `art_refresh_completed: YES` confirmed; 0 AAP-23/AAP-24 conditions (BLOCKING — IAA must not be invoked until this is ✅)
+
+---
 
 **Purpose**: Govern how the IAA writes its assurance verdict. The PREHANDOVER proof is
 **read-only** once committed. The IAA token is written to a new, dedicated artifact file —
@@ -1733,7 +1862,7 @@ When the `execution-ceremony-admin-agent` returns the ceremony bundle to the For
 
 ---
 
-**Version**: 1.4.0  
-**Last Updated**: 2026-04-17  
+**Version**: 1.7.0  
+**Last Updated**: 2026-04-21  
 **Authority**: CS2 (Johan Ras)  
 **Living Agent System**: v6.2.0

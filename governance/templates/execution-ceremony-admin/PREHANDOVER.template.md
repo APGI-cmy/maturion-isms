@@ -40,6 +40,10 @@ active_bundle_iaa_coherence: CONFIRMED      # CONFIRMED | INCOHERENT (INCOHERENT
                                              # wave record ## TOKEN, wave-current-tasks.md) must reference the same
                                              # iaa_session_reference value above. AAP-22 / ACR-16 / §4.3e Check L.
 
+## ART Refresh
+art_refresh_required:   NO     # YES if session number, date, wave ID, PR, or branch changed after initial draft
+art_refresh_completed:  N/A    # YES when art_refresh_required is YES and all references updated; N/A when not required
+
 ## Artifacts Committed
 prehandover_proof:      .agent-admin/prehandover/proof-<PR#>.md
 session_memory:         .agent-workspace/<agent>/memory/session-NNN-YYYYMMDD.md
@@ -64,6 +68,38 @@ ripple_notes:           none                 # detail if DEFERRED
 ## Improvement Suggestions
 suggestions:            NONE                 # NONE | see .agent-workspace/<agent>/parking-station/suggestions-log-<agent>.md
 ```
+
+---
+
+## Authoritative Reference Table
+
+> **MANDATORY — HANDOVER BLOCKER** (§4.3f Check M / AAP-23 / ACR-17): This table MUST be present
+> and fully populated before final handover. Every reference to session ID, date, IAA session,
+> wave, PR, branch, PREHANDOVER path, or session-memory path in ANY active bundle artifact MUST
+> exactly match the values declared here. Absence or partial population triggers AAP-23 (auto-fail)
+> and ACR-17 (IAA REJECTION-PACKAGE).
+>
+> Populate from system-of-record sources ONLY: session memory filename for session ID,
+> `git branch --show-current` for branch, IAA token file for IAA session reference,
+> `wave-current-tasks.md` `Wave:` field for wave identifier.
+> Do NOT copy from memory or prior artifacts — verify each value.
+>
+> If any truth anchor changed after initial draft (session renumber, PR creation, date change,
+> wave slug correction): set `art_refresh_required: YES` in YAML, re-populate this table from
+> system-of-record sources, and set `art_refresh_completed: YES`. See AAP-24 / R18.
+
+| Reference Slot | Authoritative Value | Source Verified? |
+|---------------|--------------------|--------------------|
+| Foreman session ID | session-NNN | [ ] from session memory filename |
+| Session date | YYYY-MM-DD | [ ] confirmed system date at proof creation |
+| IAA session reference | IAA-session-NNN-waveName-YYYYMMDD-PASS | [ ] from token file (not self-declared) |
+| Wave identifier | \<wave-slug\> | [ ] from wave-current-tasks.md `Wave:` field |
+| PR number | #NNN | [ ] from GitHub PR |
+| Branch name | \<branch-name\> | [ ] from `git branch --show-current` |
+| PREHANDOVER file path | .agent-admin/prehandover/proof-NNN.md | [ ] from `git ls-files` confirmation |
+| Session memory path | .agent-workspace/\<agent\>/memory/session-NNN-YYYYMMDD.md | [ ] from `git ls-files` confirmation |
+
+**ART status**: [ ] COMPLETE — all slots populated from system-of-record sources
 
 ---
 
@@ -95,4 +131,4 @@ suggestions:            NONE                 # NONE | see .agent-workspace/<agen
 
 ---
 
-*Template Version: 1.2.0 | Authority: ECAP-001 v1.1.0 | Effective: 2026-04-17 | Amended: 2026-04-20 (v1.2.0) — Added `active_bundle_iaa_coherence` field to IAA Assurance section (AAP-22 / ACR-16 / §4.3e Check L; maturion-isms#1422); this field confirms single-session/single-token coherence across the entire active final-state bundle before handover | Amended: 2026-04-19 (v1.1.0) — Added mandatory `## Ripple/Cross-Agent Assessment` section (HFMC-01 / AAP-20 / ACR-14) as structural non-optional section; YAML ripple-assessment-summary retained for machine-readable status*
+*Template Version: 1.3.0 | Authority: ECAP-001 v1.1.0 | Effective: 2026-04-17 | Amended: 2026-04-21 (v1.3.0) — Added `## Authoritative Reference Table` section (mandatory, §4.3f Check M / AAP-23 / ACR-17); added `art_refresh_required` and `art_refresh_completed` fields to YAML ART Refresh section (AAP-24 / §4.3f Check N / R18); wave admin-ceremony-hardening-20260421 | Amended: 2026-04-20 (v1.2.0) — Added `active_bundle_iaa_coherence` field to IAA Assurance section (AAP-22 / ACR-16 / §4.3e Check L; maturion-isms#1422); this field confirms single-session/single-token coherence across the entire active final-state bundle before handover | Amended: 2026-04-19 (v1.1.0) — Added mandatory `## Ripple/Cross-Agent Assessment` section (HFMC-01 / AAP-20 / ACR-14) as structural non-optional section; YAML ripple-assessment-summary retained for machine-readable status*
