@@ -7,8 +7,8 @@
 **Date**: 2026-04-20
 **CS2 Authorization**: CONFIRMED — issue #1428 opened directly by CS2 (@APGI-cmy); assigns Copilot + CS2
 **ceremony_admin_appointed**: true — Stage 12 build execution wave; ECAP appointment required per ECAP-001 §5.2
-**iaa_wave_record_path**: .agent-admin/assurance/iaa-wave-record-mmm-stage12-build-execution-20260420.md
-**iaa_prebrief_status**: PENDING — to be invoked at Phase 1 Step 1.8
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-stage12-build-execution-20260420.md
+iaa_prebrief_status: COMPLETE — PRE-BRIEF issued; see wave record §PRE-BRIEF
 
 ## Prior Wave Reference
 
