@@ -45,7 +45,7 @@ Phase 0 only. Phases 1–4 assurance deferred to final IAA invocation (IAA-FINAL
 
 | Task | Deliverable Path(s) | Trigger Category | Rationale |
 |------|-------------------|-----------------|-----------|
-| D1 | Gap analysis / target-state design document (admin workspace path) | EXEMPT (doc-only) | Design document stored in admin workspace — not a governance canon change. AMBIGUITY NOTE: if stored under `governance/canon/` → reclassify to CANON_GOVERNANCE at final audit. |
+| D1 | `governance/design/...` (gap analysis / target-state design document) | EXEMPT (doc-only) | Design document is stored in the repo governance design tree, not an admin workspace path. It remains EXEMPT here because design-only material does not itself modify governed canon/checklist/template content. AMBIGUITY NOTE: if the work also changes governed artifacts such as `governance/canon/`, `governance/checklists/`, or `governance/templates/` → reclassify at final audit based on the changed artifact class. |
 | D8 | Validation package / PREHANDOVER proof | GOVERNANCE_AUDIT (EXEMPT solo) | Retrospective ceremony bundle. Exempt only when isolated. If D8 contains triggering artifacts (e.g., canon verification evidence referencing new files), MIXED rule applies. |
 | WAVE-REC | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | EXEMPT | Session planning artifact |
 | SCOPE-DEC | `.agent-workspace/foreman-v2/personal/scope-declaration-wave-admin-ceremony-hardening-20260421.md` | EXEMPT | Admin scope artifact |
