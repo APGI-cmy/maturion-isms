@@ -40,7 +40,7 @@ art_refresh_completed:  N/A
 
 ## Artifacts Committed
 prehandover_proof:      .agent-admin/prehandover/proof-admin-ceremony-hardening-20260421.md
-session_memory:         .agent-workspace/foreman-v2/memory/session-166-admin-ceremony-hardening-20260421.md
+session_memory:         none — no committed session-166 memory file present on this branch
 gate_results:           embedded below
 
 ## Scope
