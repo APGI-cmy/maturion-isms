@@ -529,10 +529,13 @@ jobs:
               continue
             fi
 
-            # Check for implementation files (production source code only)
+            # Check for implementation files (production source code only),
+            # including Supabase Edge Functions — aligned with foreman-implementation-check
             if [[ "$file" =~ ^modules/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
                [[ "$file" =~ ^apps/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
-               [[ "$file" =~ ^packages/.*/src/.*\.(ts|tsx|js|jsx)$ ]]; then
+               [[ "$file" =~ ^packages/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
+               [[ "$file" =~ ^supabase/functions/.*/.*\.(ts|tsx|js|jsx)$ ]] || \
+               [[ "$file" =~ ^packages/.*/supabase/functions/.*/.*\.(ts|tsx|js|jsx)$ ]]; then
               IMPLEMENTATION_CHANGED=true
               SUPERVISION_ONLY=false
               break
@@ -879,22 +882,27 @@ jobs:
           echo "✅ Session memory present"
           echo ""
           echo "Checking session memory for POLC violations..."
-          echo "(Scoped to new session memory files introduced in this PR only)"
+          echo "(Scoped to session memory files added or modified in this PR)"
           echo ""
 
-          # Scope POLC compliance scan to NEW session memory files introduced
-          # in this PR only. Scanning all historical files causes false
-          # positives from prior legitimately-supervised builder waves.
+          # Scope POLC compliance scan to session memory files added or modified
+          # (--diff-filter=AM) in this PR. This matches the governed-role detection
+          # scope: if a modified session file triggered FOREMAN classification, the
+          # same file must be inspected by the compliance scan.
+          # Using A-only here would leave a gap where a modified session file is
+          # used to classify the PR as Foreman-governed but is never scanned.
+          # Historical session files unchanged by this PR are excluded to avoid
+          # false positives from prior legitimately-supervised builder waves.
           BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
-          NEW_SESSION_FILES=$(git diff --name-only --diff-filter=A \
+          CHANGED_SESSION_FILES=$(git diff --name-only --diff-filter=AM \
             origin/$BASE_BRANCH...HEAD 2>/dev/null | \
             grep -E '^\.agent-workspace/foreman.*/memory/session-.*\.md$' \
             || true)
 
           POLC_VIOLATION_IN_MEMORY=false
-          if [ -z "$NEW_SESSION_FILES" ]; then
-            echo "ℹ️  No new Foreman session memory files introduced in this PR."
-            echo "   POLC compliance scan skipped (scoped to PR-introduced files only)."
+          if [ -z "$CHANGED_SESSION_FILES" ]; then
+            echo "ℹ️  No Foreman session memory files added or modified in this PR."
+            echo "   POLC compliance scan skipped (scoped to PR-changed files only)."
           else
             while IFS= read -r session_file; do
               if [ -f "$session_file" ]; then
@@ -906,7 +914,7 @@ jobs:
                   POLC_VIOLATION_IN_MEMORY=true
                 fi
               fi
-            done <<< "$NEW_SESSION_FILES"
+            done <<< "$CHANGED_SESSION_FILES"
           fi
 
           if [ "$POLC_VIOLATION_IN_MEMORY" = true ]; then
