@@ -83,8 +83,8 @@ work. No implementation is produced. All deliverables are governance tracking an
 | B9-QP | QP evaluation of B9 delivery | foreman-v2-agent | ✅ PASS — 216 tests GREEN, 959/959 total GREEN, 0 regressions, CG-003 present, all 10 GPs GREEN |
 | B9-QP | QP evaluation of B9 delivery | foreman-v2-agent | ⏳ PENDING |
 | D-TRACKER | BUILD_PROGRESS_TRACKER.md Stage 12 updates per wave | foreman-v2-agent (per wave) | ⏳ PENDING |
-| IAA-FINAL | IAA Final Audit | independent-assurance-agent | ⏳ PENDING (Phase 4) |
-| ECAP | ECAP ceremony bundle | execution-ceremony-admin-agent | ⏳ PENDING (Phase 4) |
+| IAA-FINAL | IAA Final Audit | independent-assurance-agent | ✅ COMPLETE — ASSURANCE-TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS (2026-04-26; 22/22 checks PASS) |
+| ECAP | ECAP ceremony bundle | execution-ceremony-admin-agent | ✅ COMPLETE — ecap-session-mmm-stage12-build-execution-20260420 (2026-04-26) |
 
 ## Hard Gate Status
 

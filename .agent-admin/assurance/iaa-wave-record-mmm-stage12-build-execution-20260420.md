@@ -400,15 +400,28 @@ Status: PENDING — to be written by IAA at Phase 4 verdict
 
 ## TOKEN
 
-*This section is reserved for IAA Phase 4 Final Audit verdict.*
-*Pre-populated expected reference per FAIL-ONLY-ONCE A-029 architecture:*
-
-```
 PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS
-```
 
-**Status**: PENDING — to be written by independent-assurance-agent at Phase 4 Final Audit upon all-B9-complete evidence review.
-**Not yet issued. Producing agents (Foreman, ECAP) MUST NOT write this token. ECAP-001/ECAP-02 applies.**
+**Issued by**: independent-assurance-agent v6.2.0
+**Session ID**: IAA-session-mmm-stage12-build-execution-20260420
+**Date**: 2026-04-26
+**Adoption Phase**: PHASE_B_BLOCKING — hard gate ACTIVE
+**Verdict**: ASSURANCE-TOKEN (PASS)
+**Checks run**: 22 substance checks — 22 PASS, 0 FAIL
+**Merge gate parity**: PASS
+**PR**: #1429 — [MMM Stage 12] Build Execution & Evidence — B1–B9 wave delivery
+**Merge permitted**: subject to CS2 approval
+
+**Evidence basis**:
+- B1–B9 ALL COMPLETE: 959/959 tests GREEN (B1:164, B2:28, B3:59, B4:78, B5:66, B6:47, B7:113, B8:188, B9:216)
+- CG-003 declared in wave-b7-evidence.md (boundary readiness only — not AIMC internal completion)
+- CG-004 declared in wave-b9-evidence.md (destination readiness only — not source retirement)
+- NBR-001/002/003 verified in wave-b9-evidence.md
+- SB-003 PARTIAL: token provisioning satisfied by CS2 (2026-04-21); staging E2E (W1/W2/W3 + PIT_BASE_URL) post-merge gate — NOT a CI/PR blocker; CS2-accepted
+- ECAP bundle complete: ACR-01–11 all PASS; R01–R17 all PASS/N/A; 107 files from builder agents (POLC COMPLIANT)
+- Ripple: NOT-APPLICABLE (no PUBLIC_API files changed)
+- Incoming authorization: IAA-session-mmm-stage10-iaa-prebrief-20260420-PASS (Stage 10)
+- Stage chain Stages 1–11 all COMPLETE with full IAA token chain
 
 ---
 
@@ -423,4 +436,4 @@ PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **IAA Agent**: independent-assurance-agent v6.2.0
 **Adoption Phase**: PHASE_B_BLOCKING — hard gate ACTIVE
-**Wave Record Version**: 1.0.0 (PRE-BRIEF complete; TOKEN + REJECTION_HISTORY awaiting Phase 4)
+**Wave Record Version**: 1.1.0 (PRE-BRIEF complete; TOKEN issued 2026-04-26; REJECTION_HISTORY empty)
