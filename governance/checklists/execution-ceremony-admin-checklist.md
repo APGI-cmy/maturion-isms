@@ -216,8 +216,8 @@ These checks apply to ALL handover pathways — ECAP and non-ECAP. They guard ag
 | 10.4 | Wave identifier in ART matches `wave-current-tasks.md` `Wave:` field | `grep "^Wave:" .agent-workspace/foreman-v2/personal/wave-current-tasks*.md 2>/dev/null` vs ART `Wave identifier` slot | | |
 | 10.5 | PR number in ART matches GitHub PR number | `gh pr view --json number 2>/dev/null` vs ART `PR number` slot | | |
 | 10.6 | Branch name in ART matches `git branch --show-current` output | `git branch --show-current` vs ART `Branch name` slot | | |
-| 10.7 | PREHANDOVER path in ART matches `git ls-files` confirmation | `git ls-files --error-unmatch "$(grep 'PREHANDOVER file path' <proof> \| awk '{print $NF}')"` | | |
-| 10.8 | Session memory path in ART matches `git ls-files` confirmation | `git ls-files --error-unmatch "$(grep 'Session memory path' <proof> \| awk '{print $NF}')"` | | |
+| 10.7 | PREHANDOVER path in ART matches `git ls-files` confirmation | `git ls-files --error-unmatch "$(grep 'PREHANDOVER file path' "$(git ls-files .agent-admin/prehandover/proof-*.md 2>/dev/null \| head -1)" \| awk '{print $NF}')"` | | |
+| 10.8 | Session memory path in ART matches `git ls-files` confirmation | `git ls-files --error-unmatch "$(grep 'Session memory path' "$(git ls-files .agent-admin/prehandover/proof-*.md 2>/dev/null \| head -1)" \| awk '{print $NF}')"` | | |
 | 10.9 | `art_refresh_required` field present in PREHANDOVER proof YAML; if `YES`, `art_refresh_completed: YES` confirmed | `grep -E "art_refresh_required\|art_refresh_completed" .agent-admin/prehandover/proof-*.md` | | |
 | 10.10 | All session/wave/IAA references across active bundle cross-checked against ART values — no wrong-but-existing reference found (AAP-23 / AAP-24) | Manual ART cross-check: compare every reference to session ID, wave, IAA session, PR, branch, PREHANDOVER path, session memory path in PREHANDOVER proof + session memory + wave record against ART slot values | | |
 
