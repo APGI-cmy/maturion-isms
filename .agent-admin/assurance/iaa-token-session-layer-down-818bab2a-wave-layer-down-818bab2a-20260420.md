@@ -1,5 +1,7 @@
 # IAA Assurance Token
 
+PHASE_B_BLOCKING_TOKEN: IAA-session-layer-down-818bab2a-wave-layer-down-818bab2a-20260420-PASS
+
 **Token**: IAA-session-layer-down-818bab2a-wave-layer-down-818bab2a-20260420-PASS
 **Type**: PHASE_B_BLOCKING_TOKEN
 **Verdict**: ASSURANCE-TOKEN (PASS)
