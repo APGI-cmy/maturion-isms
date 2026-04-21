@@ -3,7 +3,7 @@
 ## Status
 **Type**: Tier 2 Governance Reference  
 **Authority**: CS2 — EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md v1.1.0  
-**Version**: 1.0.0  
+**Version**: 1.1.0  
 **Effective Date**: 2026-04-17  
 **Owner**: execution-ceremony-admin-agent (responsible for reconciliation) / Foreman QP (verification)  
 **Purpose**: Define every cross-artifact truth dependency that ECAP must reconcile before bundle handback. Each row is a binding reconciliation obligation.
@@ -44,6 +44,33 @@ Rows marked with `IAA ACR-*` reference the corresponding admin-ceremony rejectio
 | **R15** | **Final-state status coherence** | The actual outcome of the job (COMPLETE / BLOCKED / PASS) | ALL of: PREHANDOVER `final_state`, session memory final status, gate results JSON `verdict`, wave record completion status — must tell one coherent story | ECAP-RCON-015 | ACR-02, ACR-07 |
 | **R16** | **Artifact declared count ↔ actual count** | Actual committed file counts (e.g., number of evidence files, number of changed canon files) | Any declared count in PREHANDOVER proof, session memory, or scope declaration (e.g., "3 canon files amended", "5 artifacts committed") | ECAP-RCON-016 | ACR-07 |
 | **R17** | **IAA session reference (assurance round)** | IAA session ID as issued in the token file (`IAA-YYYYMMDD-NNN-RZ` format) | PREHANDOVER `iaa_session_reference` field; if re-invocation round, `iaa_reinvocation_round` must match the `-rZ` suffix on the token filename | ECAP-RCON-017 | ACR-07 |
+| **R18** | **Renumber/rebase/conflict-resolution refresh** | ART declarations (populated at proof creation from system-of-record sources: session memory filename for session ID, `git branch --show-current` for branch, IAA token file for IAA session reference, GitHub PR for PR number, `wave-current-tasks.md` `Wave:` field for wave identifier) | All active artifact references after any truth-anchor change (session number, session date, wave identifier, PR number, branch identity) — every reference in PREHANDOVER proof, session memory, wave record, and inventory notes must match current ART authoritative values | ECAP-RCON-018 | ACR-17 |
+
+---
+
+## § Renumber/Rebase Trigger Rule
+
+**Triggering events** — any of the following requires mandatory ART refresh and full re-reconciliation:
+
+1. Session number change (e.g., conflict resolution causes session-N → session-N+1)
+2. Session date change (commit date or ceremony date changes after initial draft)
+3. Wave identifier change (wave slug renamed or corrected after initial artifact creation)
+4. PR number change (PR created or renumbered after initial draft referenced a different number)
+5. Branch identity change (branch renamed or conflicting branch merged)
+6. Any conflict-resolution merge that modifies active truth anchors
+
+**Mandatory action upon any triggering event**:
+
+1. Re-populate the `## Authoritative Reference Table` in the PREHANDOVER proof using system-of-record sources ONLY (never from memory or prior artifacts).
+2. Set `art_refresh_required: YES` in the PREHANDOVER proof YAML front-matter.
+3. Re-check every active artifact reference (PREHANDOVER proof, session memory, wave record, inventory notes, CANON_INVENTORY notes, tracker entries) against the updated ART values.
+4. Correct all stale references to match the ART authoritative values.
+5. Set `art_refresh_completed: YES` in the PREHANDOVER proof YAML front-matter.
+6. Recommit all updated artifacts.
+
+**NOT optional**: This is a mandatory final-state refresh trigger, not cleanup. Skipping it when a triggering event occurred is a direct AAP-24 / ACR-17 auto-fail condition.
+
+**Timeline**: MUST be completed before bundle handback to Foreman. MUST be re-confirmed by Foreman QP at §14.6 checkpoint. The R18 row in the reconciliation declaration MUST be checked (or explicitly marked N/A with documented reason if no triggering event occurred).
 
 ---
 
@@ -98,6 +125,10 @@ Rows verified:
 [ ] R15 — Final-state status coherence
 [ ] R16 — Artifact declared count ↔ actual count
 [ ] R17 — IAA session reference (assurance round)
+[ ] R18 — Renumber/rebase/conflict-resolution refresh (if applicable)
+
+art_refresh_required: [ ] YES  [ ] NO
+art_refresh_completed: [ ] YES  [ ] N/A (not required)
 
 Mismatches found and corrected: _____________________ (or "None")
 Rows marked N/A: _____________________ (reason: _______)
@@ -110,10 +141,10 @@ RECONCILIATION STATUS: [ ] COMPLETE  [ ] BLOCKED — REASON: _______
 ## References
 
 - `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` v1.1.0 — §3.7 (reconciliation duty)
-- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.6.0 — §Admin-Ceremony Rejection Triggers
+- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.11.0 — §Admin-Ceremony Rejection Triggers
 - `governance/checklists/execution-ceremony-admin-checklist.md` — Section 5 (token/session/path checks)
 - `governance/checklists/execution-ceremony-admin-anti-patterns.md` — auto-fail conditions
 
 ---
 
-*Version: 1.0.0 | Effective: 2026-04-17 | Authority: CS2 (Johan Ras)*
+*Version: 1.1.0 | Effective: 2026-04-17 | Amended: 2026-04-21 (v1.1.0) — Added R18: Renumber/rebase/conflict-resolution refresh row; added § Renumber/Rebase Trigger Rule section; added R18 and ART refresh fields to Reconciliation Declaration block; wave admin-ceremony-hardening-20260421 | Authority: CS2 (Johan Ras)*
