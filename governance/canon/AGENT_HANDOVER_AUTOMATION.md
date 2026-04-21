@@ -1324,8 +1324,13 @@ else
   else
     echo "    ✅ M1: ## Authoritative Reference Table section present in ${PROOF_FILE}"
 
-    # M2: Check for placeholder values in ART (session-NNN, YYYY-MM-DD, <wave-slug>, etc.)
-    PLACEHOLDERS=$(grep -A 15 "## Authoritative Reference Table" "${PROOF_FILE}" | grep -cE "session-NNN|YYYY-MM-DD|<wave-slug>|<branch-name>|#NNN|proof-NNN|<agent>" 2>/dev/null || echo 0)
+    # M2: Check for placeholder values in the full ART block (session-NNN, YYYY-MM-DD, <wave-slug>, etc.)
+    ART_BLOCK=$(awk '
+      /^## Authoritative Reference Table$/ { in_art=1 }
+      in_art && /^## / && $0 != "## Authoritative Reference Table" { exit }
+      in_art { print }
+    ' "${PROOF_FILE}" 2>/dev/null)
+    PLACEHOLDERS=$(printf '%s\n' "${ART_BLOCK}" | grep -cE "session-NNN|YYYY-MM-DD|<wave-slug>|\\\\<wave-slug\\\\>|<branch-name>|\\\\<branch-name\\\\>|#NNN|proof-NNN|<agent>|\\\\<agent\\\\>" 2>/dev/null || echo 0)
     if [ "${PLACEHOLDERS}" -gt 0 ]; then
       ART_FAILURES+=("M2: ## Authoritative Reference Table contains ${PLACEHOLDERS} placeholder value(s) — all slots must be populated from system-of-record sources before handover (AAP-23 / ACR-17)")
     else
