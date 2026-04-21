@@ -178,6 +178,11 @@ Section 5.10 — Active-bundle IAA coherence (AAP-22): [ ] ONE SESSION ID CONFIR
 Section 6 — Scope Declaration:       [ ] COMPLETE  [ ] EXCEPTIONS NOTED
 Section 7 — Inventory/Hash/Date:     [ ] COMPLETE  [ ] N/A (no canon changes)
 Section 8 — Ripple/Registry:         [ ] COMPLETE  [ ] N/A (no PUBLIC_API changes)
+Section 9 — Final Acceptance:        [ ] COMPLETE  [ ] EXCEPTIONS NOTED
+Section 10 — ART Verification:       [ ] COMPLETE  [ ] EXCEPTIONS NOTED  [ ] N/A (non-ECAP flow)
+
+ART Present and Populated:
+  Section 10.1 confirmed — ## Authoritative Reference Table:  [ ] PRESENT AND FULLY POPULATED  [ ] ABSENT — BLOCKED (AAP-23)
 
 Ripple/Cross-Agent Assessment Section:
   Section 3.8 confirmed — ## Ripple/Cross-Agent Assessment:  [ ] PRESENT AND POPULATED  [ ] ABSENT — BLOCKED (AAP-20)
@@ -197,15 +202,55 @@ BUNDLE STATUS: [ ] READY FOR FOREMAN REVIEW  [ ] BLOCKED — REQUIRES: _______
 
 ---
 
-## References
+## Section 10: Authoritative Reference Table (ART) Verification
 
-- `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` v1.1.0 — §3.5–§3.9 (duties)
-- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.6.0 — §4.3e (compliance gate)
-- `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` v1.4.0 — §14.6 (QP checkpoint)
-- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.10.0 — §Admin-Ceremony Rejection Triggers
-- `governance/checklists/execution-ceremony-admin-reconciliation-matrix.md` — cross-artifact dependencies
-- `governance/checklists/execution-ceremony-admin-anti-patterns.md` — auto-fail conditions
+(Implements §4.3f Check M and §4.3f Check N per `AGENT_HANDOVER_AUTOMATION.md` v1.7.0)
+
+These checks apply to ALL handover pathways — ECAP and non-ECAP. They guard against wrong-but-existing references (AAP-23) and renumber/rebase drift (AAP-24) that are structurally invisible to existence-only checks (AAP-03).
+
+| # | Check | Verification Command | Verified (✓/✗) | Notes |
+|---|-------|---------------------|----------------|-------|
+| 10.1 | `## Authoritative Reference Table` section present and fully populated in PREHANDOVER proof (all 8 reference slots populated, no placeholder values) | `grep -n "## Authoritative Reference Table" .agent-admin/prehandover/proof-*.md` | | |
+| 10.2 | Session ID in ART matches session memory filename suffix | `ls .agent-workspace/*/memory/session-*.md \| tail -1 \| xargs basename \| grep -oE "session-[0-9]+"` vs ART `Foreman session ID` slot | | |
+| 10.3 | IAA session reference in ART matches token file session ID | `grep "IAA-session-" .agent-admin/assurance/iaa-token-*.md 2>/dev/null \| head -1` vs ART `IAA session reference` slot | | |
+| 10.4 | Wave identifier in ART matches `wave-current-tasks.md` `Wave:` field | `grep "^Wave:" .agent-workspace/foreman-v2/personal/wave-current-tasks*.md 2>/dev/null` vs ART `Wave identifier` slot | | |
+| 10.5 | PR number in ART matches GitHub PR number | `gh pr view --json number 2>/dev/null` vs ART `PR number` slot | | |
+| 10.6 | Branch name in ART matches `git branch --show-current` output | `git branch --show-current` vs ART `Branch name` slot | | |
+| 10.7 | PREHANDOVER path in ART matches `git ls-files` confirmation | `git ls-files --error-unmatch "$(grep 'PREHANDOVER file path' <proof> \| awk '{print $NF}')"` | | |
+| 10.8 | Session memory path in ART matches `git ls-files` confirmation | `git ls-files --error-unmatch "$(grep 'Session memory path' <proof> \| awk '{print $NF}')"` | | |
+| 10.9 | `art_refresh_required` field present in PREHANDOVER proof YAML; if `YES`, `art_refresh_completed: YES` confirmed | `grep -E "art_refresh_required\|art_refresh_completed" .agent-admin/prehandover/proof-*.md` | | |
+| 10.10 | All session/wave/IAA references across active bundle cross-checked against ART values — no wrong-but-existing reference found (AAP-23 / AAP-24) | Manual ART cross-check: compare every reference to session ID, wave, IAA session, PR, branch, PREHANDOVER path, session memory path in PREHANDOVER proof + session memory + wave record against ART slot values | | |
+
+**ART cross-check command**:
+```bash
+# Extract all session/wave/IAA references from active bundle
+grep -hE "session-[0-9]+|IAA-session-|iaa_audit_token|iaa_session_reference|^wave:|^pr:|^branch:" \
+  $(git ls-files .agent-admin/prehandover/proof-*.md 2>/dev/null | head -1) \
+  $(git ls-files .agent-workspace/*/memory/session-*.md 2>/dev/null | tail -1) \
+  2>/dev/null
+# All values must match ART authoritative values declared in ## Authoritative Reference Table
+```
+
+**Renumber/refresh trigger scan**:
+```bash
+grep -E "art_refresh_required|art_refresh_completed" .agent-admin/prehandover/proof-*.md 2>/dev/null
+# art_refresh_required: YES with art_refresh_completed: NO or absent = auto-fail (AAP-24)
+```
 
 ---
 
-*Version: 1.3.0 | Effective: 2026-04-17 | Amended: 2026-04-20 (v1.3.0) — Added checks 5.10 and 5.11: active final-state bundle IAA token/session coherence + historical archive separation (AAP-22 / ACR-16 / §4.3e Check L; maturion-isms#1422); updated Section 9 final acceptance block to require explicit AAP-22 coherence confirmation; updated IAA canon reference to v1.10.0 | Amended: 2026-04-19 (v1.2.0) — Added check 3.9: active control artifact normalization required before final handback (AAP-21 / ACR-15 / A-039); updated Section 9 final acceptance block to include active tracker normalization confirmation | Amended: 2026-04-19 (v1.1.0) — Added check 3.8: `## Ripple/Cross-Agent Assessment` section presence in PREHANDOVER proof (HFMC-01 / AAP-20) | Authority: CS2 (Johan Ras)*
+## References
+
+- `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` v1.1.0 — §3.5–§3.9 (duties)
+- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.7.0 — §4.3e (compliance gate) + §4.3f (ART verification gate)
+- `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` v1.4.0 — §14.6 (QP checkpoint)
+- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.11.0 — §Admin-Ceremony Rejection Triggers
+- `governance/checklists/execution-ceremony-admin-reconciliation-matrix.md` — cross-artifact dependencies (R18: renumber refresh)
+- `governance/checklists/execution-ceremony-admin-anti-patterns.md` — auto-fail conditions (AAP-23, AAP-24)
+- `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` v1.3.0 — PREHANDOVER proof template (ART section)
+- `governance/templates/liaison-mini-ceremony-pack.md` v1.0.0 — liaison / non-ECAP mini-ceremony pack
+- `governance/checklists/liaison-mini-ceremony-checklist.md` v1.0.0 — liaison mini-ceremony execution guide
+
+---
+
+*Version: 1.4.0 | Effective: 2026-04-17 | Amended: 2026-04-21 (v1.4.0) — Added Section 10: Authoritative Reference Table (ART) Verification (§4.3f Check M / Check N — AAP-23/AAP-24/ACR-17); updated Section 9 Final Acceptance Block to include Section 10 and ART presence confirmation; updated References to include v1.7.0 canon and new liaison mini-ceremony files; wave admin-ceremony-hardening-20260421 | Amended: 2026-04-20 (v1.3.0) — Added checks 5.10 and 5.11: active final-state bundle IAA token/session coherence + historical archive separation (AAP-22 / ACR-16 / §4.3e Check L; maturion-isms#1422); updated Section 9 final acceptance block to require explicit AAP-22 coherence confirmation; updated IAA canon reference to v1.10.0 | Amended: 2026-04-19 (v1.2.0) — Added check 3.9: active control artifact normalization required before final handback (AAP-21 / ACR-15 / A-039); updated Section 9 final acceptance block to include active tracker normalization confirmation | Amended: 2026-04-19 (v1.1.0) — Added check 3.8: `## Ripple/Cross-Agent Assessment` section presence in PREHANDOVER proof (HFMC-01 / AAP-20) | Authority: CS2 (Johan Ras)*
