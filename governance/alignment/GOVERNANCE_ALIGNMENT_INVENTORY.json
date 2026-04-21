@@ -157,12 +157,12 @@
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "canonical_version": "1.10.0",
       "local_version": "1.10.0",
-      "canonical_hash_sha256": "5770a6ce87ac521fd250e9240eb2e69777422e064cbf9b01d7b1e6f26953acec",
+      "canonical_hash_sha256": "3426a2f6ae643d4902387cb8ca27cdf78869a6ac02cb9be5b0f9f501b2f5677a",
       "local_hash_sha256": "5770a6ce87ac521fd250e9240eb2e69777422e064cbf9b01d7b1e6f26953acec",
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
-      "last_verified": "2026-04-20T07:37:10Z",
-      "change_note": "v1.10.0 (canonical commit 849973019a): Added ACR-16 — active final-state token/session incoherence (AAP-22 / §4.3e Check L). Layered down via CI ripple PR #1423. Hash updated from 1d0c3719... to 5770a6ce..."
+      "last_verified": "2026-04-20T15:09:00Z",
+      "change_note": "v1.10.0: Added ACR-16 (active final-state token/session incoherence rejection trigger); added §Authoritative-Source Rule for Current Token/Session; extended active-bundle scope rule to include wave-current-tasks.md for ACR-16 checks; added §Proof-of-Operation worked examples for AAP-22/ACR-16 (maturion-isms#1422). Layered down via ripple 818bab2a3771ff72d6a999e0aaa069304728cc3a."
     },
     {
       "filename": "IAA_PRE_BRIEF_PROTOCOL.md",
@@ -556,7 +556,7 @@
     "governing_protocol": "GOVERNANCE_RIPPLE_MODEL.md v1.1.0",
     "canonical_checklist": "GOVERNANCE_RIPPLE_CHECKLIST_PROTOCOL.md",
     "created_by": "governance-liaison-isms session-035",
-    "last_updated_by": "governance-liaison-isms session-068-20260420"
+    "last_updated_by": "governance-liaison-isms session-layer-down-818bab2a-20260420"
   },
-  "last_updated_by": "governance-liaison-isms session-068-20260420"
+  "last_updated_by": "governance-liaison-isms session-layer-down-818bab2a-20260420"
 }

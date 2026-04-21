@@ -1,53 +1,42 @@
-# Wave Current Tasks — aimc-strategy-followup-20260420
+# Wave Current Tasks — layer-down-818bab2a-governance-propagation-20260420
 
+**Wave**: layer-down-818bab2a-governance-propagation-20260420
 **Foreman**: foreman-v2-agent v6.2.0
-**Wave**: aimc-strategy-followup-20260420
-**Issue**: [AIMC / Maturion] Execute post-merge follow-up work from PR #1386 strategy v2.0.1
-**Branch**: copilot/execute-post-merge-follow-up
 **Date**: 2026-04-20
-**CS2 Authorization**: CONFIRMED — issue opened directly by CS2 (@APGI-cmy); assigns foreman-v2-agent
-**ceremony_admin_appointed**: NOT REQUIRED — pure POLC-Orchestration tracking wave; no ECAP mandate per IAA Pre-Brief
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-aimc-strategy-followup-20260420-20260420.md
-iaa_prebrief_commit: aa37d23
-iaa_prebrief_status: COMPLETE — PHASE_B_BLOCKING pre-brief issued 2026-04-20
+**Issue**: maturion-isms#1414
+**Branch**: copilot/layer-down-propagate-governance-changes-03e624f7-7cfc-4a86-9175-960d27f3c778
+**PR**: maturion-isms#1434
+**Wave Status**: ✅ COMPLETE
 
-## Prior Wave Reference
+## Task Table
 
-Prior active wave: mmm-stage11-builder-appointment-20260420 (COMPLETE).
-ASSURANCE-TOKEN: IAA-session-mmm-stage11-builder-appointment-20260420-PASS.
-Carry-forwards: SB-003 (B7 credentials — MMM Stage 12 only; not applicable to this wave).
+| ID | Task | Agent | Status | Notes |
+|----|------|-------|--------|-------|
+| T-01 | Update GOVERNANCE_ALIGNMENT_INVENTORY.json: AGENT_HANDOVER_AUTOMATION.md entry v1.4.1 → v1.6.0 | governance-liaison-isms-agent | ✅ COMPLETE | Local hash: 55eb4232..., canonical: a4150c57... commit bc87ae60 |
+| T-02 | Update GOVERNANCE_ALIGNMENT_INVENTORY.json: INDEPENDENT_ASSURANCE_AGENT_CANON.md entry v1.6.0 → v1.10.0 | governance-liaison-isms-agent | ✅ COMPLETE | Local hash: 5770a6ce..., canonical: 3426a2f6... commit bc87ae60 |
+| T-03 | Add metadata.last_ripple_commit: 818bab2a | governance-liaison-isms-agent | ✅ COMPLETE | 818bab2a3771ff72d6a999e0aaa069304728cc3a set, commit bc87ae60 |
+| T-04 | Update last_updated_by and last_updated fields | governance-liaison-isms-agent | ✅ COMPLETE | last_updated_by: governance-liaison-isms session-layer-down-818bab2a-20260420, commit bc87ae60 |
 
-## Wave Summary
+## IAA Pre-Brief
 
-This wave converts the newly-merged strategy v2.0.1 (PR #1386) into governed downstream follow-up 
-work. No implementation is produced. All deliverables are governance tracking and orchestration artifacts.
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-layer-down-818bab2a-governance-propagation-20260420-20260420.md
 
-## Tasks
+- **Wave record**: `.agent-admin/assurance/iaa-wave-record-layer-down-818bab2a-governance-propagation-20260420-20260420.md`
+- **Commit**: f9bfc4e5
+- **Categories**: LIAISON_ADMIN + KNOWLEDGE_GOVERNANCE overlay
+- **ECAP**: NOT REQUIRED
 
-| Task ID | Task | Owner | Status |
-|---------|------|-------|--------|
-| IAA-PRE | IAA Pre-Brief — wave record PRE-BRIEF section | independent-assurance-agent | ✅ COMPLETE — SHA aa37d23 |
-| D1 | wave-current-tasks.md update | foreman-v2-agent | ✅ COMPLETE |
-| D2 | Scope declaration | foreman-v2-agent | ✅ COMPLETE |
-| D3 | GAP-009 dependency status record | foreman-v2-agent | ✅ COMPLETE |
-| D4 | Canon alignment wave tracking record | foreman-v2-agent | ✅ COMPLETE |
-| D5 | Module-consumer spec wave tracking record | foreman-v2-agent | ✅ COMPLETE |
-| D6 | Convergence bridge wave tracking record | foreman-v2-agent | ✅ COMPLETE |
-| D7 | Session memory | foreman-v2-agent | ✅ COMPLETE |
-| D8 | PREHANDOVER proof | foreman-v2-agent | ✅ COMPLETE |
-| IAA-FINAL | Phase 4 Final Audit — ASSURANCE-TOKEN | independent-assurance-agent | ✅ COMPLETE — IAA-session-165-aimc-strategy-followup-20260420-PASS (SHA d0e8bab) |
+## IAA ASSURANCE-TOKEN
 
-## Wave Completion Gate
+- **Token**: IAA-session-layer-down-818bab2a-wave-layer-down-818bab2a-20260420-PASS
+- **Token file**: `.agent-admin/assurance/iaa-token-session-layer-down-818bab2a-wave-layer-down-818bab2a-20260420.md`
+- **PHASE_B_BLOCKING_TOKEN**: IAA-session-layer-down-818bab2a-wave-layer-down-818bab2a-20260420-PASS
 
-| Gate | Status |
-|------|--------|
-| IAA Pre-Brief committed | ✅ SHA aa37d23 |
-| D1 wave-current-tasks.md committed | ✅ |
-| D2 scope declaration committed | ✅ |
-| D3 GAP-009 status record committed | ✅ |
-| D4 canon alignment tracking committed | ✅ |
-| D5 module-consumer spec tracking committed | ✅ |
-| D6 convergence bridge tracking committed | ✅ |
-| D7 session memory committed | ✅ |
-| D8 PREHANDOVER proof committed | ✅ |
-| IAA ASSURANCE-TOKEN obtained | ✅ IAA-session-165-aimc-strategy-followup-20260420-PASS (SHA d0e8bab) |
+## CI Gate Status
+
+All required checks: ✅ GREEN (merge-gate/verdict, governance/alignment, stop-and-fix/enforcement, POLC boundary checks, evidence bundle checks)
+
+## Wave Close
+
+- Foreman session memory: `.agent-workspace/foreman-v2/memory/session-layer-down-818bab2a-20260420.md`
+- Merge gate: RELEASED — awaiting CS2 merge
