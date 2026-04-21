@@ -63,10 +63,13 @@
 | Check | Status |
 |-------|--------|
 | §4.3e Admin Ceremony Compliance Gate | PASS |
+| §4.3f ART Verification Gate (Check M / Check N) | PASS |
 | Artifact completeness (Section 1 checklist) | COMPLETE |
 | Commit-state truth verified | CONFIRMED |
 | Cross-artifact reconciliation | COMPLETE |
 | Final-state normalization | COMPLETE |
+| ART fully populated and all bundle references verified | CONFIRMED |
+| art_coherence_confirmed | YES   # YES = ART in corresponding PREHANDOVER proof verified; session ID/date/wave/PR/branch in this session memory all match ART authoritative values |
 | Ripple/registry obligations | COMPLETED / DEFERRED / N/A |
 
 ---
@@ -94,4 +97,4 @@
 
 ---
 
-*Template Version: 1.0.0 | Authority: ECAP-001 v1.1.0 | Effective: 2026-04-17*
+*Template Version: 1.1.0 | Authority: ECAP-001 v1.1.0 | Effective: 2026-04-17 | Amended: 2026-04-21 (v1.1.0) — Added `art_coherence_confirmed` field and §4.3f ART Verification Gate row to Ceremony Compliance section (AAP-23 / AAP-24 / §4.3f Check M / Check N); wave admin-ceremony-hardening-20260421*
