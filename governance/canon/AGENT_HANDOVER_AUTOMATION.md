@@ -1281,7 +1281,7 @@ The following conditions are **auto-fail** for the §4.3e gate regardless of oth
 The following items are added to the handover checklist:
 
 > - [ ] **Admin Ceremony Compliance Gate PASSED** (ECAP jobs): §4.3e gate run — 0 auto-fail conditions (AAP-15 through AAP-22 auto-fail conditions included); ECAP reconciliation summary present; admin-compliance readiness accepted by Foreman QP checkpoint (BLOCKING — IAA must not be invoked until this is ✅) (IAA Token — Append-Only, Dedicated File)
-> - [ ] **ART Verification Gate PASSED** (ALL pathways): §4.3f gate run — `## Authoritative Reference Table` present and fully populated in PREHANDOVER proof; all active bundle references cross-checked against ART values; 0 AAP-23/AAP-24 conditions detected; `art_refresh_required` and `art_refresh_completed` fields populated correctly (BLOCKING — IAA must not be invoked until this is ✅)
+> - [ ] **ART Verification Gate PASSED** (ALL pathways): §4.3f gate run — `## Authoritative Reference Table` present and fully populated in PREHANDOVER proof; no placeholder values in ART slots; ART status explicitly confirmed COMPLETE; 0 AAP-23/AAP-24 conditions detected; `art_refresh_required` and `art_refresh_completed` fields populated correctly (BLOCKING — IAA must not be invoked until this is ✅). **Note**: §4.3f automates presence, population, and status checks; cross-artifact reference comparison (confirming all active bundle values match ART declarations) is a **manual IAA verification step** performed during final audit.
 
 ---
 
@@ -1291,7 +1291,7 @@ The following items are added to the handover checklist:
 
 **Problem This Solves**: Existence-only checks (AAP-03 / `git ls-files`) detect missing files but are structurally blind to wrong-but-existing references — files that exist on disk but are not the authoritative artifact for the active bundle. Session renumber/conflict-resolution drift (AAP-24) is the most common source of this defect class.
 
-**The Authoritative Reference Table (ART)**: The PREHANDOVER proof (or liaison mini-ceremony pack for non-ECAP flows) MUST contain a `## Authoritative Reference Table` section. This table declares the single authoritative value for each reference slot. All other references to these values in the active bundle must match the ART declarations exactly.
+**The Authoritative Reference Table (ART)**: The PREHANDOVER proof (or liaison mini-ceremony pack for non-ECAP flows) MUST contain a `## Authoritative Reference Table` section. This table declares the single authoritative value for each reference slot. The §4.3f automated gate verifies ART presence, slot population (no placeholders), and status confirmation. Cross-artifact reference comparison — confirming that all other active bundle artifacts (wave records, scope declarations, IAA wave records, etc.) reference values that match the ART declarations exactly — is a **manual IAA verification step** performed during final audit and is NOT automated by this gate.
 
 ```bash
 #!/bin/bash
@@ -1304,7 +1304,7 @@ echo "🔍 §4.3f ART VERIFICATION GATE (UNIVERSAL — ALL HANDOVER PATHWAYS)"
 ART_FAILURES=()
 
 # ─────────────────────────────────────────────────────────────────────────────
-# CHECK M: Authoritative Reference Table (ART) Presence and Cross-Check
+# CHECK M: Authoritative Reference Table (ART) Presence and Population Check
 # ─────────────────────────────────────────────────────────────────────────────
 echo "  [M] ART Presence and Population Check..."
 
