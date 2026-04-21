@@ -436,8 +436,26 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 - [x] `supabase/functions/_shared/mmm-auth.ts` — shared JWT middleware
 - [x] `apps/mmm/` — React/Vite frontend app (J-01–J-15 UI, 14 pages + shared components)
 - [x] `modules/MMM/tests/` — 7 test suites covering all wave deliverables
-- [x] B7 live wire — COMPLETE ✅ (SB-003 resolved; 113 new tests GREEN; 743/743 total)
+- [x] B7 live wire — COMPLETE ✅ (SB-003 PARTIAL — token provisioning satisfied; AIMC wiring/PIT endpoint gates pending; 113 new tests GREEN; 743/743 total)
 - [x] B9 golden path — COMPLETE ✅ (2026-04-26; 216 new tests GREEN; 959/959 total; GP-001–GP-010 ALL GREEN; CG-003/CG-004 declared)
+
+#### SB-003 Credential Provisioning & Wiring Status (CS2 — 2026-04-21)
+
+| Credential / Component | Status | Notes |
+|---|---|---|
+| `AIMC_SERVICE_TOKEN` | ✅ CS2 provisioned | AIMC Render gateway (`maturion-mat-ai-gateway-staging`) + Supabase project secrets |
+| `PIT_SERVICE_TOKEN` | ✅ CS2 provisioned (pre-provisioned) | Render secret storage + Supabase project secrets |
+| `AIMC_BASE_URL` | ✅ Confirmed | Staging gateway endpoint confirmed |
+| `PIT_BASE_URL` | ⚠️ PENDING | Live PIT endpoint not yet confirmed |
+
+**Token-provisioning portion**: SATISFIED by CS2 (2026-04-21).
+
+**AIMC wiring gate** (staging E2E — not a CI blocker):
+- **SB-003-W1** — AIMC gateway reads `AIMC_SERVICE_TOKEN` from Render env: ⚠️ NOT YET PROVEN
+- **SB-003-W2** — AIMC gateway enforces inbound token auth on MMM-origin requests: ⚠️ NOT YET PROVEN
+- **SB-003-W3** — MMM Edge Function sends `AIMC_SERVICE_TOKEN` on outbound AIMC calls (coded in B7): ⚠️ LIVE PATH NOT YET CONFIRMED
+
+**SB-003 gate**: PARTIALLY OPEN — token provisioning completed by CS2; gate remains open pending AIMC outbound wiring E2E (W1/W2/W3), `PIT_BASE_URL` live confirmation, and PIT runtime handshake path readiness. B7 CI (113/113 GREEN) runs via stub path and is unaffected.
 
 #### 12.1 Critical Deliverable Validation (Waves 5-7 Lessons)
 
@@ -493,7 +511,7 @@ This is an integration artifact, not a core module build deliverable. Mapped fro
 
 **Current Stage**: Stage 12 (Build Execution) COMPLETE ✅ — B1–B9 ALL COMPLETE (959/959 tests GREEN); B9 QP PASS — all 10 golden paths GREEN; CG-003/CG-004 declared; NBR-001/002/003 verified. Proceeding to Phase 4 (ECAP ceremony + IAA Final Audit).
 **Overall Progress**: ~99% complete (B1–B9 ALL DONE; ECAP ceremony + IAA Final Audit pending)
-**Blockers**: None.
+**Blockers**: None (build execution complete). **SB-003 staging E2E gate**: PARTIALLY OPEN — token provisioning satisfied by CS2 (2026-04-21); AIMC wiring W1/W2/W3 NOT YET PROVEN end-to-end; `PIT_BASE_URL` pending live PIT endpoint. B7 CI passes via stub path. Staging E2E blocked pending CS2 wiring confirmation + PIT endpoint readiness. This is a post-merge staging gate, not a PR CI blocker.
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.
 **Open Questions**: All RESOLVED through Stage 5. OQ-001 RESOLVED (Stage 4 TRS — CONNECTIVITY-REQUIRED, TR-039–TR-042). OQ-002 RESOLVED (Stage 5 Architecture — capabilities/index.md legacy sub-folder disposition). OQ-003 RESOLVED (Stage 5 Architecture — duplication audit, architecture.md §A12). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.
 **Last Updated**: 2026-04-20 (B9 QP PASS — foreman-v2-agent)

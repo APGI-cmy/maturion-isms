@@ -5,7 +5,7 @@
 **Builder**: integration-builder  
 **Date**: 2026-04-25  
 **Status**: ✅ COMPLETE — 113/113 tests GREEN, 743/743 total GREEN  
-**Authorization**: Foreman v6.2.0, 2026-04-20T16:20 UTC, SB-003 RESOLVED
+**Authorization**: Foreman v6.2.0, 2026-04-20T16:20 UTC, SB-003 PARTIAL — token provisioning satisfied (CS2 2026-04-21); staging E2E wiring/endpoint gates pending
 
 ---
 
@@ -212,6 +212,35 @@ Circuit breaker implemented at `supabase/functions/_shared/mmm-circuit-breaker.t
 - Zero commented-out tests
 - Zero incomplete stubs introduced
 - All B7 functions have complete implementations
+
+---
+
+## SB-003 Credential Provisioning & Wiring Status (CS2 — 2026-04-21)
+
+### Token Provisioning (SATISFIED)
+
+| Credential | Status | Location |
+|---|---|---|
+| `AIMC_SERVICE_TOKEN` | ✅ CS2 provisioned | AIMC Render gateway (`maturion-mat-ai-gateway-staging`) + Supabase project secrets |
+| `PIT_SERVICE_TOKEN` | ✅ CS2 provisioned (pre-provisioned) | Render secret storage + Supabase project secrets |
+| `AIMC_BASE_URL` | ✅ Confirmed | Staging gateway endpoint |
+| `PIT_BASE_URL` | ⚠️ PENDING | Live PIT endpoint not yet confirmed by CS2 |
+
+All tokens created and stored by CS2. Edge Functions read via `Deno.env.get(...)`. No credential values in source control.
+
+### AIMC Runtime Wiring (Staging E2E Gate — NOT a CI blocker)
+
+| Wiring Step | Description | Status |
+|---|---|---|
+| **SB-003-W1** | AIMC gateway reads `AIMC_SERVICE_TOKEN` from Render env | ⚠️ NOT YET PROVEN |
+| **SB-003-W2** | AIMC gateway enforces inbound token auth on MMM-origin requests | ⚠️ NOT YET PROVEN |
+| **SB-003-W3** | MMM Edge Function sends `AIMC_SERVICE_TOKEN` on outbound AIMC calls | ⚠️ CODED (B7); live path NOT YET CONFIRMED |
+
+**B7 CI gate**: PASS — 113/113 tests GREEN via stub path. `AIMC_SERVICE_TOKEN` injected in CI environment.
+
+**Staging E2E gate**: PARTIALLY OPEN — SB-003-W1/W2/W3 must be confirmed by CS2 before staging E2E validation. `PIT_BASE_URL` must also be confirmed. These are post-merge staging gates only.
+
+**SB-003 gate**: Token provisioning completed by CS2. Gate remains partially open pending endpoint/wiring readiness.
 
 ---
 
