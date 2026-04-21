@@ -9,7 +9,7 @@
 **CS2 Authorization**: CONFIRMED — issue assigned directly to foreman-v2-agent by CS2 (@APGI-cmy); CS2 authority granted in issue body
 **ceremony_admin_appointed**: PENDING — ECAP appointment required at Phase 4
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-admin-ceremony-hardening-20260421.md
-iaa_prebrief_status: PENDING — invoking IAA
+iaa_prebrief_status: COMPLETE — commit a3af5ba (wave record PRE-BRIEF section; Pre-Brief status: COMPLETE, IAA session-213)
 
 ## Task Table
 
@@ -31,7 +31,7 @@ Deliverables: D1-D8 governance hardening artifacts. Agent-file changes routed th
 
 | Task ID | Task | Owner | Status |
 |---------|------|-------|--------|
-| IAA-PRE | IAA Pre-Brief — wave record PRE-BRIEF section | independent-assurance-agent | 🔄 IN PROGRESS |
+| IAA-PRE | IAA Pre-Brief — wave record PRE-BRIEF section | independent-assurance-agent | ✅ COMPLETE |
 | D1 | Gap analysis and target-state design | foreman-v2-agent (POLC) | ⬜ PENDING |
 | D2 | Universal authoritative-reference truth hardening (governance canon) | CodexAdvisor-agent / governance builders | ⬜ PENDING |
 | D3 | Wrong-but-existing reference anti-pattern/rejection hardening | CodexAdvisor-agent / governance builders | ⬜ PENDING |
@@ -52,7 +52,7 @@ Deliverables: D1-D8 governance hardening artifacts. Agent-file changes routed th
 
 | Gate | Status |
 |------|--------|
-| IAA Pre-Brief committed | ⬜ PENDING |
+| IAA Pre-Brief committed | ✅ commit a3af5ba |
 | wave-current-tasks.md committed | ✅ |
 | Scope declaration committed | ⬜ PENDING |
 | D1 gap analysis committed | ⬜ PENDING |
