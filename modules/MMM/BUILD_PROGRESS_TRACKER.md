@@ -31,7 +31,7 @@ error from the original governance layer-down. The module is MMM (Maturity Manag
 | Stage 2 | Architecture | Stage 5 | Architecture | COMPLETE ✅ — formally closed; pre-build closure confirmed via Stage 6–12 authorization chain (PR #1429 merged 2026-04-21) |
 | Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | COMPLETE ✅ — artifacts produced (mmm-stage8-implementation-plan-20260417); 9 build waves defined; pre-build closure confirmed (PR #1429 merged 2026-04-21) |
 | Stage 4 | Builder Appointment | Stage 11 | Builder Appointment | COMPLETE ✅ — builder-contract.md v1.0.0 (mmm-stage11-builder-appointment-20260420); all 5 builders appointed; SB-002 resolved; PR #1429 merged 2026-04-21 |
-| Stage 5 | Build | Stage 12 | Build | COMPLETE ✅ — B1–B9 ALL COMPLETE (959/959 tests GREEN); IAA Final Audit COMPLETE; PR #1429 MERGED 2026-04-21 |
+| Stage 5 | Build | Stage 12 | Build | ACTIVE — B1–B9 ALL COMPLETE (959/959 tests GREEN); Phase 4 ECAP + IAA audit complete; CDV/staging follow-up pending; PR #1429 MERGED 2026-04-21 |
 | — | (new stage) | Stage 2 | UX Workflow & Wiring Spec | COMPLETE |
 | — | (new stage) | Stage 6 | QA-to-Red | COMPLETE ✅ — artifacts produced (mmm-stage6-qa-to-red-20260415); Foreman QP PASS; pre-build closure confirmed (PR #1429 merged 2026-04-21) |
 | — | (new stage) | Stage 7 | PBFAG | COMPLETE ✅ — artifacts produced (mmm-stage7-pbfag-20260415); PBFAG PASS; IAA token issued (IAA-session-mmm-stage7-pbfag-20260415-PASS); pre-build closure confirmed (PR #1429 merged 2026-04-21) |
@@ -414,7 +414,7 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 ---
 
 ### Stage 12: Build Execution & Evidence
-**Status**: [x] COMPLETE ✅ — Wave mmm-stage12-build-execution-20260420; B1–B9 ALL COMPLETE; IAA Final Audit COMPLETE; PR #1429 MERGED 2026-04-21
+**Status**: [x] ACTIVE — Build execution COMPLETE (B1–B9; 959/959 tests GREEN); Phase 4 ECAP + IAA audit complete; CDV deployment validation = post-Stage-12 operational follow-up (see §12.1 below)
 **Location**: `modules/MMM/11-build/`  
 **Wave**: mmm-stage12-build-execution-20260420  
 **Issue**: maturion-isms#1428  
@@ -428,7 +428,7 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 - [x] **B4 (Framework Lifecycle)**: COMPLETE ✅ — 6 Edge Functions (mmm-framework-compile, mmm-framework-publish, mmm-upload-framework-source, mmm-ai-framework-parse/generate/alter); J-06–J-08; 78/78 tests GREEN; evidence: `modules/MMM/11-build/B4-framework/wave-b4-evidence.md`; QP PASS
 - [x] **B5 (Assessment Execution)**: COMPLETE ✅ — 3 Edge Functions (mmm-score-confirm, mmm-upload-evidence, mmm-ai-evidence-evaluate); J-09–J-11; HITL TR-033 enforced; 66/66 tests GREEN; evidence: `modules/MMM/11-build/B5-assessment/wave-b5-evidence.md`; QP PASS
 - [x] **B6 (Findings/Reporting)**: COMPLETE ✅ — 3 Edge Functions (mmm-pit-export-send, mmm-pit-evidence-return, mmm-ai-recommend); J-12–J-15; 7-step PIT handshake stubbed; 47/47 tests GREEN; evidence: `modules/MMM/11-build/B6-findings/wave-b6-evidence.md`; QP PASS
-- [x] **B7 (Boundary Integrations)**: COMPLETE ✅ — 113 tests GREEN (D5: 15 + D7: 8 + Circuit Breaker: 12 + additional assertions); AIMC 9-function live wire, PIT 7-step handshake, KUC upload contract, circuit breaker (TR-009); evidence: `modules/MMM/11-build/B7-integrations/wave-b7-evidence.md`; Date: 2026-04-25
+- [x] **B7 (Boundary Integrations)**: COMPLETE ✅ — 113 tests GREEN (D5: 15 + D7: 8 + Circuit Breaker: 12 + additional assertions); AIMC 9-function live wire, PIT 7-step handshake, KUC upload contract, circuit breaker (TR-009); evidence: `modules/MMM/11-build/B7-integrations/wave-b7-evidence.md`; QP PASS
 - [x] **B8 (Cross-Cutting)**: COMPLETE ✅ — 71 tests across D5/D7/D8/D9/D10/D11 (188 assertions); B7 blocked noted; evidence: `modules/MMM/11-build/B8-cross-cutting/wave-b8-evidence.md`; QP PASS
 - [x] **B9 (Golden Path)**: COMPLETE ✅ — 216/216 tests GREEN; GP-001–GP-010 ALL GREEN; CG-003/CG-004 declared; NBR-001/002/003 verified; evidence: `modules/MMM/11-build/B9-golden-path/wave-b9-evidence.md`; QP PASS
 
@@ -442,7 +442,7 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 - [x] `apps/mmm/` — React/Vite frontend app (J-01–J-15 UI, 14 pages + shared components)
 - [x] `modules/MMM/tests/` — 7 test suites covering all wave deliverables
 - [x] B7 live wire — COMPLETE ✅ (SB-003 PARTIAL — token provisioning satisfied; AIMC wiring/PIT endpoint gates pending; 113 new tests GREEN; 743/743 total)
-- [x] B9 golden path — COMPLETE ✅ (2026-04-26; 216 new tests GREEN; 959/959 total; GP-001–GP-010 ALL GREEN; CG-003/CG-004 declared)
+- [x] B9 golden path — COMPLETE ✅ (216 new tests GREEN; 959/959 total; GP-001–GP-010 ALL GREEN; CG-003/CG-004 declared; all evidenced in PR #1429)
 
 #### SB-003 Credential Provisioning & Wiring Status (CS2 — 2026-04-21)
 
@@ -470,9 +470,11 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 >
 > Stage 12 uses this checklist as closure evidence for build waves that include UI, backend, deployment, and wiring deliverables. It is applied per-wave at build-execution time to confirm that deliverables are deployed and verified — not as a pre-build gate.
 >
-> MMM Stage 12 B1–B9 are ALL COMPLETE (959/959 tests GREEN). The CDV checklist items below are evaluated against the Stage 12 build execution deliverables from PR #1429 (merged 2026-04-21).
->
-> **Post-merge staging E2E items** (SB-003 W1/W2/W3 + `PIT_BASE_URL`): These are post-merge staging validation gates, not PR CI blockers. See SB-003 status above.
+> **Scope boundary for this tracker**: The checklist items below are **post-Stage-12 operational follow-up activities (deployment and staging validation)**. They require the built artefacts to be deployed to a running environment and verified end-to-end. MMM Stage 12 build execution (B1–B9, code and tests) is COMPLETE per PR #1429 (merged 2026-04-21). The deployment and staging E2E validation steps below are the next operational follow-up. They are recorded here for completeness but do **not** retroactively make Stage 12 build execution incomplete.
+
+**POST-STAGE-12 OPERATIONAL FOLLOW-UP — Deployment & Staging Validation**:
+
+The items below require the PR #1429 artefacts to be deployed to the staging environment and verified. They are **not** PR CI blockers. Status as of 2026-04-21: PENDING (SB-003 W1/W2/W3 and `PIT_BASE_URL` outstanding — see SB-003 table above).
 
 **Frontend Application Deliverables** (if UI required):
 - [ ] React app (or framework) exists at documented path
@@ -515,31 +517,27 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 - ❌ Working E2E workflow demonstration
 - ❌ UI wiring tests (if both UI and backend exist)
 
-**Completion Date**: 2026-04-26 (B9 QP PASS + IAA Final Audit COMPLETE)  
-**Notes**: Stage 12 Build Execution COMPLETE. All 9 build waves (B1–B9) executed and QP-verified.
-959/959 tests GREEN. Phase 4 ECAP ceremony COMPLETE (2026-04-26). IAA Final Audit COMPLETE
-(2026-04-26) — ASSURANCE-TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS (22/22 PASS).
-PR #1429 merged 2026-04-21 by CS2 (APGI-cmy). Pre-build closure (Stages 1–11) formally confirmed
-by Stage 12 execution chain completion.
+**Completion Date**: See PR #1429 (merged 2026-04-21 by CS2) — B1–B9 build execution evidenced by 959/959 tests GREEN; ECAP ceremony artifacts committed; IAA ASSURANCE-TOKEN issued (all in PR #1429)  
+**Notes**: Stage 12 build execution artefacts (B1–B9 code, tests, evidence files) are ALL COMPLETE and merged via PR #1429 (2026-04-21). 959/959 tests GREEN. Phase 4 ECAP ceremony bundle committed (see `modules/MMM/12-phase4-ecap/`). IAA ASSURANCE-TOKEN issued: IAA-session-mmm-stage12-build-execution-20260420-PASS (wave record: `.agent-admin/assurance/iaa-wave-record-mmm-stage12-build-execution-20260420.md`). PR #1429 merged 2026-04-21 by CS2 (APGI-cmy). Pre-build closure (Stages 1–11) formally confirmed by Stage 12 execution chain completion.
 
-> **Next lawful operational focus**: Stage 12 execution is COMPLETE per the Stage 8 implementation
+> **Next lawful operational focus**: Stage 12 build execution is COMPLETE per the Stage 8 implementation
 > plan (`modules/MMM/07-implementation-plan/implementation-plan.md`) and Stage 8 convergence-governance
 > addendum (`modules/MMM/07-implementation-plan/convergence-governance-addendum.md`). All 9 build waves
-> (B1–B9) have been executed and merged. Post-merge focus: staging E2E verification (SB-003 W1/W2/W3
-> AIMC wiring + `PIT_BASE_URL` live confirmation), per the SB-003 status table above.
+> (B1–B9) have been executed and merged. Next: staging deployment and CDV validation (§12.1 post-Stage-12
+> follow-up above) — SB-003 W1/W2/W3 AIMC wiring + `PIT_BASE_URL` live confirmation (CS2 operational action).
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 12 (Build Execution) COMPLETE ✅ — B1–B9 ALL COMPLETE (959/959 tests GREEN); B9 QP PASS — all 10 golden paths GREEN; CG-003/CG-004 declared; NBR-001/002/003 verified. Phase 4 ECAP ceremony COMPLETE (2026-04-26). IAA Final Audit COMPLETE (2026-04-26) — ASSURANCE-TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS. PR #1429 MERGED 2026-04-21 by CS2 (APGI-cmy).
-**Overall Progress**: 100% complete — B1–B9 ALL DONE; ECAP ceremony COMPLETE; IAA Final Audit COMPLETE — ASSURANCE-TOKEN issued; PR #1429 MERGED 2026-04-21.
+**Current Stage**: Stage 12 (Build Execution) ACTIVE — B1–B9 ALL COMPLETE (959/959 tests GREEN); B9 QP PASS — all 10 golden paths GREEN; CG-003/CG-004 declared; NBR-001/002/003 verified. Phase 4 ECAP ceremony bundle committed; IAA Final Audit COMPLETE — ASSURANCE-TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS. PR #1429 MERGED 2026-04-21 by CS2 (APGI-cmy). CDV deployment/staging validation = post-Stage-12 operational follow-up (see Stage 12 §12.1 scope boundary note).
+**Overall Progress**: Build execution 100% complete (B1–B9 DONE; ECAP bundle committed; IAA ASSURANCE-TOKEN issued; PR #1429 MERGED 2026-04-21). CDV/staging deployment follow-up: PENDING (SB-003 W1/W2/W3 + PIT_BASE_URL outstanding).
 **Blockers**: None (build execution complete). **SB-003 staging E2E gate**: PARTIALLY OPEN — token provisioning satisfied by CS2 (2026-04-21); AIMC wiring W1/W2/W3 NOT YET PROVEN end-to-end; `PIT_BASE_URL` pending live PIT endpoint. B7 CI passes via stub path. Staging E2E blocked pending CS2 wiring confirmation + PIT endpoint readiness. This is a post-merge staging gate, not a PR CI blocker.
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.
 **Open Questions**: All RESOLVED through Stage 5. OQ-001 RESOLVED (Stage 4 TRS — CONNECTIVITY-REQUIRED, TR-039–TR-042). OQ-002 RESOLVED (Stage 5 Architecture — capabilities/index.md legacy sub-folder disposition). OQ-003 RESOLVED (Stage 5 Architecture — duplication audit, architecture.md §A12). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.
 **Last Updated**: 2026-04-21 (pre-build closure reconciliation + Stage 12 PR #1429 merged — foreman-v2-agent; wave: mmm-tracker-reconciliation-20260421)
 **Phase 4 ECAP Ceremony**:
-- [x] ECAP ceremony bundle COMPLETE — execution-ceremony-admin-agent (2026-04-26)
+- [x] ECAP ceremony bundle committed — execution-ceremony-admin-agent (artifacts in PR #1429, merged 2026-04-21)
 - [x] PREHANDOVER proof: `modules/MMM/12-phase4-ecap/PREHANDOVER.md`
 - [x] ECAP reconciliation summary: `modules/MMM/12-phase4-ecap/ECAP_RECONCILIATION_SUMMARY.md`
 - [x] FOREMAN admin readiness handback: `modules/MMM/12-phase4-ecap/FOREMAN_ADMIN_READINESS_HANDBACK.md`
@@ -547,16 +545,16 @@ by Stage 12 execution chain completion.
 - [x] §4.3e gate: AAP-01–09/15–16/20–22 PASS; R01–R17 COMPLETE
 - [x] SB-003 status: PARTIAL (not RESOLVED) — token provisioning satisfied; staging E2E pending
 **Phase 4 IAA Final Audit**:
-- [x] IAA Final Audit COMPLETE — independent-assurance-agent v6.2.0 (2026-04-26)
+- [x] IAA Final Audit COMPLETE — independent-assurance-agent v6.2.0 (evidenced by wave record in PR #1429, merged 2026-04-21)
 - [x] ASSURANCE-TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS
 - [x] 22/22 checks PASS (OVL-01–10 + CORE-020/021 + ACR-01–11)
 - [x] Wave record TOKEN section populated: `.agent-admin/assurance/iaa-wave-record-mmm-stage12-build-execution-20260420.md`
 - [x] Session memory: `.agent-workspace/independent-assurance-agent/memory/session-mmm-stage12-build-execution-20260420.md`
 **Next Steps**:
-1. ~~Phase 4 ECAP ceremony — execution-ceremony-admin-agent~~ ✅ COMPLETE (2026-04-26)
-2. ~~Phase 4 IAA Final Audit — independent-assurance-agent~~ ✅ COMPLETE (2026-04-26) — ASSURANCE-TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS
+1. ~~Phase 4 ECAP ceremony — execution-ceremony-admin-agent~~ ✅ COMPLETE (PR #1429 merged 2026-04-21)
+2. ~~Phase 4 IAA Final Audit — independent-assurance-agent~~ ✅ COMPLETE (PR #1429 merged 2026-04-21) — ASSURANCE-TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS
 3. ~~Phase 4 merge gate release — Foreman~~ ✅ COMPLETE — PR #1429 MERGED 2026-04-21 by CS2 (APGI-cmy)
-4. **Post-merge**: Staging E2E verification — SB-003 W1/W2/W3 (AIMC token wiring end-to-end) + `PIT_BASE_URL` live confirmation + PIT runtime handshake (CS2 operational action)
+4. **Post-Stage-12 operational follow-up**: Staging deployment and CDV validation — SB-003 W1/W2/W3 (AIMC token wiring end-to-end) + `PIT_BASE_URL` live confirmation + PIT runtime handshake (CS2 operational action)
 
 ---
 
@@ -582,7 +580,7 @@ by Stage 12 execution chain completion.
 - [x] Evidence artifacts created for each completed stage
 - [x] Module manifest up to date
 - [x] Document control baseline established (see `modules/MMM/_readiness/mmm-document-control-baseline.md`)
-- [x] Stage 12 Build Execution COMPLETE (2026-04-26; B1–B9 ALL COMPLETE; 959/959 tests GREEN; IAA ASSURANCE-TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS; PR #1429 merged 2026-04-21 by CS2)
+- [x] Stage 12 Build Execution ACTIVE (B1–B9 ALL COMPLETE; 959/959 tests GREEN; IAA ASSURANCE-TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS; PR #1429 merged 2026-04-21 by CS2; CDV/staging follow-up pending)
 - [x] Pre-build stages 1–11 FORMALLY CLOSED — completion evidenced by Stage 12 execution chain (PR #1429 merged 2026-04-21)
 
 ---
