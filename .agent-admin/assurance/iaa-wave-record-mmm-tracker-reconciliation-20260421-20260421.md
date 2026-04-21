@@ -168,7 +168,14 @@ Stage-readiness:         All 12 stages COMPLETE — post-Stage-12 reconciliation
 
 ## TOKEN
 
-*(PENDING — REJECTION-PACKAGE issued at R1. Token will be issued upon successful re-invocation after all fixes applied.)*
+PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-tracker-reconciliation-20260421-PASS
+
+**Token issued**: 2026-04-21
+**Session**: session-mmm-tracker-reconciliation-20260421-R2
+**PR**: copilot/complete-mmm-pre-build-closure (Issue maturion-isms#1430)
+**Checks**: 21/21 PASS (CORE-020, CORE-021 + A-001 + OVL-PBG-001–016 + OVL-PBG-ADM-001)
+**Adoption phase**: PHASE_B_BLOCKING
+**Merge authority**: CS2 ONLY (@APGI-cmy)
 
 ---
 
