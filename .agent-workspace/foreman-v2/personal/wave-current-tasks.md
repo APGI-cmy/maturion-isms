@@ -1,5 +1,6 @@
 # Wave Current Tasks — admin-ceremony-hardening-20260421
 
+**Wave**: layer-down-818bab2a-governance-propagation-20260420
 **Foreman**: foreman-v2-agent v6.2.0
 **Wave**: admin-ceremony-hardening-20260421
 **Issue**: Harden admin-ceremony handovers after PR #1432: universal reference-truth checks, liaison mini-pack, and QP/IAA improvements
@@ -10,20 +11,23 @@
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-admin-ceremony-hardening-20260421.md
 iaa_prebrief_status: PENDING — invoking IAA
 
-## Prior Wave Reference
+## Task Table
 
 Prior completed wave: aimc-strategy-followup-20260420 (COMPLETE).
 ASSURANCE-TOKEN: IAA-session-165-aimc-strategy-followup-20260420-PASS.
 Carry-forwards: SB-003 (MMM Stage 12 B7 credentials — not applicable to this wave).
 
-## Wave Summary
+## IAA Pre-Brief
 
 This wave hardens the admin-ceremony handover system to prevent PR #1432-class defects:
 wrong-but-plausible ceremony references, stale session identifiers after renumber/conflict resolution,
 and inconsistent final-state references across PREHANDOVER/session memory/wave record/inventory notes.
 Deliverables: D1-D8 governance hardening artifacts. Agent-file changes routed through CodexAdvisor-agent.
 
-## Tasks
+- **Wave record**: `.agent-admin/assurance/iaa-wave-record-layer-down-818bab2a-governance-propagation-20260420-20260420.md`
+- **Commit**: f9bfc4e5
+- **Categories**: LIAISON_ADMIN + KNOWLEDGE_GOVERNANCE overlay
+- **ECAP**: NOT REQUIRED
 
 | Task ID | Task | Owner | Status |
 |---------|------|-------|--------|
@@ -42,7 +46,9 @@ Deliverables: D1-D8 governance hardening artifacts. Agent-file changes routed th
 | PREHANDOVER | PREHANDOVER proof | foreman-v2-agent | ⬜ PENDING |
 | IAA-FINAL | Phase 4 Final Audit — ASSURANCE-TOKEN | independent-assurance-agent | ⬜ PENDING |
 
-## Wave Completion Gate
+- **Token**: IAA-session-layer-down-818bab2a-wave-layer-down-818bab2a-20260420-PASS
+- **Token file**: `.agent-admin/assurance/iaa-token-session-layer-down-818bab2a-wave-layer-down-818bab2a-20260420.md`
+- **PHASE_B_BLOCKING_TOKEN**: IAA-session-layer-down-818bab2a-wave-layer-down-818bab2a-20260420-PASS
 
 | Gate | Status |
 |------|--------|
