@@ -1332,12 +1332,12 @@ else
       echo "    ✅ M2: No placeholder values detected in ART slots"
     fi
 
-    # M3: ART status field confirms COMPLETE
-    ART_STATUS=$(grep "ART status" "${PROOF_FILE}" | grep -c "COMPLETE" 2>/dev/null || echo 0)
+    # M3: ART status field confirms COMPLETE via explicit machine-detectable marker
+    ART_STATUS=$(grep -A 15 "## Authoritative Reference Table" "${PROOF_FILE}" | grep -cE '^[[:space:]]*(\*\*)?ART status(\*\*)?:[[:space:]]*COMPLETE[[:space:]]*$' 2>/dev/null || echo 0)
     if [ "${ART_STATUS}" -eq 0 ]; then
-      ART_FAILURES+=("M3: ART status field not confirmed COMPLETE in ${PROOF_FILE} — populate all slots and mark COMPLETE before handover")
+      ART_FAILURES+=("M3: ART status field not explicitly confirmed as 'ART status: COMPLETE' in ${PROOF_FILE} — unchecked/template checkbox wording does not satisfy this gate; populate all slots and mark COMPLETE before handover")
     else
-      echo "    ✅ M3: ART status confirmed COMPLETE"
+      echo "    ✅ M3: ART status explicitly confirmed COMPLETE"
     fi
   fi
 fi
