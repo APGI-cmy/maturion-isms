@@ -70,11 +70,11 @@ liaison_mini_ceremony_status:     COMPLETE  # COMPLETE | BLOCKED
 > Populate from system-of-record sources ONLY — do NOT copy from memory or prior artifacts.
 > Verify each value from the authoritative source listed in the `Source Verified?` column.
 
-| Reference Slot | Authoritative Value | Source Verified? |
+| Reference Slot | Authoritative Value | Source Verification |
 |---------------|--------------------|--------------------|
 | Session ID | session-NNN | [ ] from session memory filename |
 | Session date | YYYY-MM-DD | [ ] confirmed system date at proof creation |
-| IAA session reference | IAA-session-NNN-waveName-YYYYMMDD-PASS | [ ] from token file (not self-declared); N/A if no IAA invocation this session |
+| IAA session reference | IAA-session-NNN-<wave-name>-YYYYMMDD-PASS | [ ] from token file (not self-declared); N/A if no IAA invocation this session |
 | Wave identifier | \<wave-slug\> | [ ] from wave-current-tasks.md `Wave:` field |
 | PR number | #NNN | [ ] from GitHub PR |
 | Branch name | \<branch-name\> | [ ] from `git branch --show-current` |
