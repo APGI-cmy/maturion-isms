@@ -7,7 +7,8 @@ name: POLC Boundary Validation
 #          allow supervision corrections. Three separate jobs provide
 #          independent status checks matching merge_gate_interface required_checks.
 # Issue: #193 (original gate), S-007/S-023 (machine enforcement improvements),
-#        #1429 (POLC classification post-override follow-up)
+#        #1429 (exposed false-positive: shared Copilot identity treated as Foreman
+#               authorship — follow-up refinement in this workflow)
 # Contract: Foreman-ISMS Agent Contract v2.6.0,
 #           merge_gate_interface.required_checks
 # S-007: Each gate runs as its own named job so CI reports
