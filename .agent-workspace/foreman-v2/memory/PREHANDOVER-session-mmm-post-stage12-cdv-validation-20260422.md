@@ -7,7 +7,7 @@
 **Branch**: copilot/post-stage-12-deployment-validation
 **wave_id**: mmm-post-stage12-cdv-validation-20260422
 **pr_number**: TBD (branch committed; PR open on this branch)
-**files_changed**: 4 — `modules/MMM/12-phase4-ecap/cdv-staging-validation.md` (new) + `modules/MMM/BUILD_PROGRESS_TRACKER.md` (updated) + governance wave artifacts (PREHANDOVER, session memory, scope declaration, wave-current-tasks, IAA wave record)
+**files_changed**: 9 — `modules/MMM/12-phase4-ecap/cdv-staging-validation.md` (new) + `modules/MMM/BUILD_PROGRESS_TRACKER.md` (updated) + `.agent-admin/assurance/iaa-wave-record-mmm-post-stage12-cdv-validation-20260422.md` + `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-post-stage12-cdv-validation-20260422.md` + `.agent-workspace/foreman-v2/memory/session-mmm-post-stage12-cdv-validation-20260422.md` + `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` + `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-post-stage12-cdv-validation-20260422.md` + `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` + `.agent-workspace/independent-assurance-agent/memory/session-mmm-post-stage12-cdv-validation-20260422.md`
 **scope_declaration**: `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-post-stage12-cdv-validation-20260422.md`
 **iaa_prebrief_path**: `.agent-admin/assurance/iaa-wave-record-mmm-post-stage12-cdv-validation-20260422.md`
 **iaa_prebrief_sha**: b00557a

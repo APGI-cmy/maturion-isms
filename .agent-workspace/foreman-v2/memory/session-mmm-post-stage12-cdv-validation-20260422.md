@@ -94,8 +94,8 @@ opojd_gate: PASS (pending CI merge gate confirmation)
 ceremony_admin_appointed: NOT APPLICABLE (documentation-only wave per IAA pre-brief)
 prehandover_committed: YES — .agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-post-stage12-cdv-validation-20260422.md
 session_memory_committed: YES — this file
-iaa_final_audit: PENDING — invoking at Step 4.3b
-iaa_expected_token: IAA-session-mmm-post-stage12-cdv-validation-20260422-PASS
+iaa_final_audit: COMPLETE — ASSURANCE-TOKEN: IAA-session-mmm-post-stage12-cdv-validation-20260422-PASS (26/26 PASS)
+iaa_final_audit_token: IAA-session-mmm-post-stage12-cdv-validation-20260422-PASS
 merge_gate_parity: PENDING CI
 ```
 
