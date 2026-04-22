@@ -1,0 +1,121 @@
+# IAA Wave Record — mmm-storage-model-codification-20260422
+
+**Agent**: independent-assurance-agent v6.2.0 (contract v2.9.0)
+**Wave**: mmm-storage-model-codification-20260422
+**Issue**: maturion-isms#1458 — Resolve and codify MMM storage bucket model from legacy MAT requirements vs legacy MAT implementation drift
+**Branch**: copilot/resolve-mmm-storage-model-drift
+**Date created**: 2026-04-22
+**CS2 Authorization**: CONFIRMED — issue #1458 opened by CS2 (@APGI-cmy)
+**Adoption phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+
+---
+
+## PRE-BRIEF
+
+**Invocation type**: PRE-BRIEF (Phase 0)
+**Date**: 2026-04-22
+**Triggered by**: Foreman wave-current-tasks.md + scope declaration committed on branch `copilot/resolve-mmm-storage-model-drift`
+**ceremony_admin_appointed**: PENDING (not yet appointed — ACR-01–11 checks deferred to final audit session when appointment is confirmed)
+
+---
+
+### Qualifying Tasks
+
+All 5 wave tasks qualify for IAA oversight. Classification applied per `iaa-trigger-table.md` §Decision Flow:
+
+| # | Task | Artifact Path | Trigger Condition | Category |
+|---|------|---------------|-------------------|----------|
+| T1 | Architecture Decision Record (ADR) | `modules/MMM/storage-model-decision.md` | Modifies module-level architecture/stage artifact (Stage 5 evidence) → PRE_BUILD_STAGE_MODEL | **PRE_BUILD_STAGE_MODEL** |
+| T2 | Migration: audio MIME fix | `supabase/migrations/20260422000001_mmm_evidence_audio_mime_fix.sql` | MMM build-phase schema deliverable; advances Stage 12 | **PRE_BUILD_STAGE_MODEL** |
+| T3 | Migration: RLS hardening | `supabase/migrations/20260422000002_mmm_evidence_rls_hardening.sql` | MMM build-phase schema deliverable; advances Stage 12; NBR-002 active | **PRE_BUILD_STAGE_MODEL** |
+| T4 | Red QA tests: audio MIME coverage | `modules/MMM/tests/B1-schema/b1-schema.test.ts` | Stage 6 (QA-to-Red) deliverable; modifies module test suite | **PRE_BUILD_STAGE_MODEL** |
+| T5 | BUILD_PROGRESS_TRACKER.md update | `modules/MMM/BUILD_PROGRESS_TRACKER.md` | Explicit PRE_BUILD_STAGE_MODEL trigger (iaa-trigger-table.md Step 8) | **PRE_BUILD_STAGE_MODEL** |
+
+**Primary trigger**: Step 8 (`modules/MMM/BUILD_PROGRESS_TRACKER.md`) — PRE_BUILD_STAGE_MODEL. IAA = MANDATORY.
+
+---
+
+### Applicable Overlay
+
+**Primary**: `PRE_BUILD_GATES` — OVL-PBG-001 through OVL-PBG-016
+
+Stage-readiness view (pre-brief obligation per trigger table §PRE_BUILD_STAGE_MODEL):
+
+| MMM Pre-Build Stage | Stage Name | Status at Wave Start |
+|---------------------|------------|----------------------|
+| Stage 1 | App Description | COMPLETE (prior waves) |
+| Stage 2 | UX Workflow & Wiring Spec | COMPLETE (prior waves) |
+| Stage 3 | FRS | COMPLETE (prior waves) |
+| Stage 4 | TRS | COMPLETE (prior waves) |
+| Stage 5 | Architecture | ADVANCING — ADR being added as codification artifact this wave |
+| Stage 6 | QA-to-Red | ADVANCING — Red QA tests being added for audio MIME coverage |
+| Stage 7 | PBFAG | — |
+| Stage 8 | Implementation Plan | — |
+| Stage 9 | Builder Checklist | — |
+| Stage 10 | IAA Pre-Brief | ACTIVE (this document) |
+| Stage 11 | Builder Appointment | — |
+| Stage 12 | Build | ADVANCING — schema migrations being added this wave |
+
+**Note**: Stage 5 ADR and Stage 12 migrations are advancing concurrently within this wave. IAA final audit must verify all advancing stages have complete gate evidence before issuing ASSURANCE-TOKEN.
+
+---
+
+### Anti-Regression Obligations
+
+**YES — FUNCTIONAL-BEHAVIOUR-REGISTRY obligations apply.**
+
+| Registry Entry | Relevance | Mandatory Check at Final Audit |
+|---------------|-----------|-------------------------------|
+| **NBR-002** — Supabase RLS Silently Blocks Write for Non-Owner | ACTIVE — T3 (`20260422000002_mmm_evidence_rls_hardening.sql`) adds org-level path isolation RLS policies to `mmm-evidence` bucket. Must verify that all roles expected to write to `mmm-evidence` are covered by the RLS write policies, and that app code checks for write errors. | **MANDATORY** — IAA must inspect RLS policy definitions and confirm write role coverage |
+| **NBR-001** — TanStack Query Mutation Cache Invalidation | NOT APPLICABLE — no frontend mutation code in scope | N/A |
+| **NBR-003** — Zustand Store State Reset | NOT APPLICABLE — no Zustand store changes in scope | N/A |
+
+**FAIL-ONLY-ONCE obligations at final audit:**
+
+| Rule | Obligation |
+|------|-----------|
+| **A-036** (Temporal Integrity) | All factual claims in ADR and PREHANDOVER proof must be present-tense accurate. No future-dated completions. IAA must challenge any claim that an event "was completed" if evidence does not support it at audit time. |
+| **A-037** (Evidence-Type Discipline) | Stage completion claims must be supported by evidence matching the claim type. Code-merge evidence alone cannot satisfy deployment or live-system verification items. |
+| **A-033** (CORE-018 git verification) | PREHANDOVER proof must be verified with `git ls-files --error-unmatch`, not just disk presence. |
+| **A-034** / **A-035** (FUNCTIONAL-BEHAVIOUR-REGISTRY + niggle-pattern-library) | NBR-002 must be applied against all RLS migration changes. Niggle pattern library must be checked for Supabase storage bucket patterns. |
+| **A-021** (Commit and Push Before IAA Invocation) | All artifacts must be committed and pushed on the branch before final IAA invocation. |
+| **A-022** (Re-Evaluate Trigger Categories) | IAA must re-evaluate trigger table at final audit against actual PR diff, not just declared scope. |
+
+---
+
+### Scope Blockers
+
+**No blockers declared at pre-brief stage.**
+
+Observations:
+- Scope is well-bounded: ADR + 2 migrations + 1 test file + BUILD_PROGRESS_TRACKER update. No canon/governance file changes, no CI workflow changes, no agent contract changes.
+- RLS hardening migration (T3) requires NBR-002 anti-regression check at final audit — this is a known obligation, not a blocker.
+- `ceremony_admin_appointed: PENDING` — when appointed, ACR-01 through ACR-11 checks will apply at final audit. The final IAA session must confirm appointment status and execute ACR checks if ECAP is involved.
+- No mixed AGENT_CONTRACT or CANON_GOVERNANCE triggers detected — PREHANDOVER proof and session memory are GOVERNANCE_AUDIT artifacts (exempt when isolated) but will be included in the final PR with build artifacts, meaning the PRE_BUILD_STAGE_MODEL overlay governs.
+
+---
+
+### PREHANDOVER Structure Obligations
+
+At final audit, the PREHANDOVER proof bundle MUST contain (at minimum):
+
+1. **Stage progression evidence**: For each advancing stage (5, 6, 12) — committed artifact path + git SHA confirming the deliverable is present on the branch.
+2. **ADR substantiveness** (OVL-PBG — Stage 5): The ADR must document the storage model decision rationale, the two canonical buckets, and why legacy MAT buckets are superseded.
+3. **Migration evidence** (OVL-PBG — Stage 12): Both migrations committed and parseable SQL; audio MIME types listed explicitly; RLS policy covers all expected write roles.
+4. **QA test RED state** (OVL-PBG — Stage 6): Tests must be committed in RED state (failing before implementation). Evidence: test run output or CI log showing tests fail against current DB state.
+5. **NBR-002 compliance**: PREHANDOVER must confirm which roles are permitted to write to `mmm-evidence`, with explicit RLS policy text cited.
+6. **No future-dated claims** (A-036): All "COMPLETE" status marks must reference past/present evidence, not anticipated outcomes.
+7. **IAA audit token reference**: Pre-populated expected reference in format `IAA-session-[NNN]-mmm-storage-model-codification-20260422-PASS` per A-029/§4.3b architecture.
+8. **Files changed count**: Must match actual `git diff --name-only origin/main...HEAD` count at time of PREHANDOVER commit (A-026, A-028).
+
+---
+
+## TOKEN
+
+*(Reserved — populated by IAA after final audit ASSURANCE-TOKEN is issued.)*
+
+---
+
+## REJECTION_HISTORY
+
+*(Reserved — populated by IAA if REJECTION-PACKAGE is issued.)*
