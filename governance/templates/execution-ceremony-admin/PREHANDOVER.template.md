@@ -71,6 +71,25 @@ suggestions:            NONE                 # NONE | see .agent-workspace/<agen
 
 ---
 
+## Evidence Exactness Gate
+
+> **Authority**: LIVING_AGENT_SYSTEM.md v6.2.0 — evidence exactness hardening (wave gov-evidence-exactness-hardening-20260422)
+> **Script**: `.github/scripts/validate-governance-evidence-exactness.sh`
+> **When**: Run before invoking IAA. Paste first 20 lines of output below or "All checks PASS".
+
+**Exit code**: [0 = PASS / 1 = FAIL]
+**Output summary**: [paste script output summary OR "All checks PASS — N/A (no SCOPE_DECLARATION / no PREHANDOVER proofs in PR)"]
+
+| Defect Class | Check Result |
+|---|---|
+| PATH-MISMATCH (Check 1) | ✅ PASS / ❌ FAIL — [detail] |
+| COUNT-MISMATCH (Check 2) | ✅ PASS / ℹ️ N/A — [detail] |
+| HASH-INCOMPLETE (Check 3) | ✅ PASS / ❌ FAIL — [detail] |
+| VERSION-MISMATCH cross-artifact (Check 4) | ✅ PASS / ℹ️ N/A — [detail] |
+| VERSION-MISMATCH internal (Check 5 — warning) | ✅ PASS / ⚠️ WARN — [detail] |
+
+---
+
 ## Authoritative Reference Table
 
 > **MANDATORY — HANDOVER BLOCKER** (§4.3f Check M / AAP-23 / ACR-17): This table MUST be present
@@ -139,6 +158,8 @@ evidence_type_items:
 
 ---
 
+## Ripple/Cross-Agent Assessment
+
 > **HFMC-01 MANDATORY — HANDOVER BLOCKER**: This section MUST be present and MUST contain
 > concrete downstream-impact conclusions. It is required in every PREHANDOVER proof regardless
 > of wave type. A blank or absent section triggers AAP-20 (auto-fail at the ECAP/Foreman QP
@@ -165,4 +186,4 @@ evidence_type_items:
 
 ---
 
-*Template Version: 1.4.0 | Authority: ECAP-001 v1.1.0 | Effective: 2026-04-22 | Amended: 2026-04-22 (v1.4.0) — Added `## Evidence-Type Mapping` section (mandatory for waves with CDV/deployment/operational items; Rules E-001/E-002/E-003; A-041; canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md; temporal integrity check T-001/A-040; governance hardening maturion-isms#1445) | Amended: 2026-04-21 (v1.3.0) — Added `## Authoritative Reference Table` section (mandatory, §4.3f Check M / AAP-23 / ACR-17); added `art_refresh_required` and `art_refresh_completed` fields to YAML ART Refresh section (AAP-24 / §4.3f Check N / R18); wave admin-ceremony-hardening-20260421 | Amended: 2026-04-20 (v1.2.0) — Added `active_bundle_iaa_coherence` field to IAA Assurance section (AAP-22 / ACR-16 / §4.3e Check L; maturion-isms#1422); this field confirms single-session/single-token coherence across the entire active final-state bundle before handover | Amended: 2026-04-19 (v1.1.0) — Added mandatory `## Ripple/Cross-Agent Assessment` section (HFMC-01 / AAP-20 / ACR-14) as structural non-optional section; YAML ripple-assessment-summary retained for machine-readable status*
+*Template Version: 1.4.0 | Authority: ECAP-001 v1.1.0 | Effective: 2026-04-22 | Amended: 2026-04-22 (v1.4.0) — Added `## Evidence-Type Mapping` section (mandatory for waves with CDV/deployment/operational items; Rules E-001/E-002/E-003; A-041; canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md; temporal integrity check T-001/A-040; governance hardening maturion-isms#1445); added `## Evidence Exactness Gate` section (mandatory pre-IAA check: PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE, VERSION-MISMATCH via `.github/scripts/validate-governance-evidence-exactness.sh`; AAP-25/26/27; wave gov-evidence-exactness-hardening-20260422) | Amended: 2026-04-21 (v1.3.0) — Added `## Authoritative Reference Table` section (mandatory, §4.3f Check M / AAP-23 / ACR-17); added `art_refresh_required` and `art_refresh_completed` fields to YAML ART Refresh section (AAP-24 / §4.3f Check N / R18); wave admin-ceremony-hardening-20260421 | Amended: 2026-04-20 (v1.2.0) — Added `active_bundle_iaa_coherence` field to IAA Assurance section (AAP-22 / ACR-16 / §4.3e Check L; maturion-isms#1422); this field confirms single-session/single-token coherence across the entire active final-state bundle before handover | Amended: 2026-04-19 (v1.1.0) — Added mandatory `## Ripple/Cross-Agent Assessment` section (HFMC-01 / AAP-20 / ACR-14) as structural non-optional section; YAML ripple-assessment-summary retained for machine-readable status*
