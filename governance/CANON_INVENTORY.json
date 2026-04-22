@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "last_updated": "2026-04-22",
-  "total_canons": 205,
+  "total_canons": 214,
   "generation_timestamp": "2026-04-22T08:19:00Z",
   "canon_entry_schema": {
     "description": "Schema for canon entries in CANON_INVENTORY.json",
@@ -1483,36 +1483,36 @@
     },
     {
       "filename": "IAA_PRE_BRIEF_PROTOCOL.md",
-      "version": "1.2.2",
-      "file_hash": "3e04013ecd21f7fbf3353c893427e74d4187bec174c60614a2c8a4edfa705cef",
+      "version": "1.3.0",
+      "file_hash": "35162d9c5379b357542b3ff14571d78a110c49999790489a96e4635aed471f51",
       "effective_date": "2026-04-05",
       "description": "IAA Pre-Brief Protocol \u2014 proactive assurance mechanism that shifts quality assurance left by declaring acceptance criteria at wave start. Defines Wave Checklist Invocation Gate (applies to Foreman-governed wave execution; does not automatically apply to direct-CS2 standalone governance-repo-administrator-v2 canon actions).",
       "type": "canon",
       "path": "governance/canon/IAA_PRE_BRIEF_PROTOCOL.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "3e04013ecd21f7fbf3353c893427e74d4187bec174c60614a2c8a4edfa705cef",
-      "canonical_version": "1.2.2",
+      "file_hash_sha256": "35162d9c5379b357542b3ff14571d78a110c49999790489a96e4635aed471f51",
+      "canonical_version": "1.3.0",
       "local_version": null,
       "local_extension": false,
       "layer_up_status": "NONE",
-      "last_updated": "2026-04-08",
-      "change_note": "v1.2.2: Added \u00a7Re-Invocation After Rejection \u2014 Ownership Reference cross-reference; updated References to v1.5.0/v1.3.0 canon versions; Foreman IAA re-invocation ownership canonisation issue"
+      "last_updated": "2026-04-22",
+      "change_note": "v1.3.0: Added \u00a7Expected Wave-Level Admin Ceremony Contract to Pre-Brief Content Requirements; updated Merge Gate Enforcement table; wave-level ceremony contract now mandatory Pre-Brief field; authority: CS2 \u2014 maturion-isms#1447"
     },
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-      "version": "1.11.0",
-      "file_hash": "bee67a30e38006a6222b7dd02f1e9b728af96719dcf4ca5afb05f3b75c59307a",
-      "file_hash_sha256": "bee67a30e38006a6222b7dd02f1e9b728af96719dcf4ca5afb05f3b75c59307a",
+      "version": "1.12.0",
+      "file_hash": "70c3f2022d15469696ca3e6e920072b15f69dce31d60b1cf43b9edbe9f110922",
+      "file_hash_sha256": "70c3f2022d15469696ca3e6e920072b15f69dce31d60b1cf43b9edbe9f110922",
       "effective_date": "2026-02-24",
-      "amended_date": "2026-04-21",
+      "amended_date": "2026-04-22",
       "description": "Defines the Independent Assurance Agent (IAA) class: role, hard-trigger authority, independence requirements, five-phase delivery proof protocol, binary output (ASSURANCE-TOKEN / REJECTION-PACKAGE), and trigger table. v1.1.0: Zero-Severity-Tolerance policy added.",
       "type": "canon",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "layer_down_status": "INTERNAL",
       "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA); v1.1.0 amendment: Enforce zero-severity-tolerance \u2014 any finding triggers rejection",
-      "last_updated": "2026-04-21",
-      "change_note": "v1.11.0: Added ACR-17 (wrong-but-existing reference + renumber/rebase drift); updated \u00a7Admin-Ceremony Rejection Triggers header; wave admin-ceremony-hardening-20260421. SELF-MOD-IAA-001 applies \u2014 CS2 direct review required.",
-      "canonical_version": "1.11.0"
+      "last_updated": "2026-04-22",
+      "change_note": "v1.12.0: Added ACR-18 (missing declared ceremony artifact), ACR-19 (unmet declared final-state condition), ACR-20 (unmet declared cross-artifact consistency condition), ACR-21 (missing declared acknowledgement/ownership); makes unmet wave-level Admin Ceremony Contract items explicit rejection triggers; maturion-isms#1447. SELF-MOD-IAA-001: CS2 direct review/sign-off required.",
+      "canonical_version": "1.12.0"
     },
     {
       "filename": "INITIALIZATION_COMPLETENESS_GATE.md",
@@ -1901,18 +1901,20 @@
     },
     {
       "filename": "PRE_BUILD_STAGE_MODEL_CANON.md",
-      "version": "1.0.0",
-      "file_hash": "91764b68657c0e910abf7d01cf9a28b840292a5df99fadc12bd86b0e63349d9b",
+      "version": "1.1.0",
+      "file_hash": "fe589edd3f83f634daf996d9f1dc44e4c2fdfa8bb7febd41c1b9fcb393b1338d",
       "effective_date": "2026-04-05",
       "description": "Canonical End-to-End Pre-Build Stage Model. Formalises the mandatory 12-stage governed pre-build lifecycle (App Description \u2192 UX Workflow & Wiring Spec \u2192 FRS \u2192 TRS \u2192 Architecture \u2192 QA-to-Red \u2192 PBFAG \u2192 Implementation Plan \u2192 Builder Checklist \u2192 IAA Pre-Brief \u2192 Builder Appointment \u2192 Build). Establishes Change-Propagation Audit, Runtime/Deployment Contract, and Golden Path Verification Pack as required supporting controls.",
       "type": "canon",
       "path": "governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "91764b68657c0e910abf7d01cf9a28b840292a5df99fadc12bd86b0e63349d9b",
-      "canonical_version": "1.0.0",
+      "file_hash_sha256": "fe589edd3f83f634daf996d9f1dc44e4c2fdfa8bb7febd41c1b9fcb393b1338d",
+      "canonical_version": "1.1.0",
       "local_version": null,
       "local_extension": false,
-      "layer_up_status": "NONE"
+      "layer_up_status": "NONE",
+      "last_updated": "2026-04-22",
+      "change_note": "v1.1.0: Added wave-level admin ceremony contract requirement to Stage 10 Mandatory Actions and Gate Condition; added Canonization Mandate #9 and Prohibition; updated Authority Reference to IAA_PRE_BRIEF_PROTOCOL.md v1.3.0; authority: CS2 \u2014 maturion-isms#1447"
     },
     {
       "filename": "PRE_IMPLEMENTATION_BEHAVIOR_REVIEW_PROTOCOL.md",
@@ -2457,7 +2459,7 @@
       "file_hash_sha256": "aaaf916421f0088806c1b628b14218528999899807d95ebe4bae711b99a9f8c4",
       "amended_date": "2026-04-22",
       "last_updated": "2026-04-22",
-      "change_note": "v1.5.0: Added Section 11 (Evidence Exactness Checks — EVIDENCE-EXACT-001 through 005: VERSION-MISMATCH cross-artifact, VERSION-MISMATCH internal, PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE); updated References to include AAP-25/26/27 and PREHANDOVER template v1.4.0; wave gov-evidence-exactness-hardening-20260422"
+      "change_note": "v1.5.0: Added Section 11 (Evidence Exactness Checks \u2014 EVIDENCE-EXACT-001 through 005: VERSION-MISMATCH cross-artifact, VERSION-MISMATCH internal, PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE); updated References to include AAP-25/26/27 and PREHANDOVER template v1.4.0; wave gov-evidence-exactness-hardening-20260422"
     },
     {
       "filename": "execution-ceremony-admin-reconciliation-matrix.md",
@@ -2533,7 +2535,46 @@
       "path": "governance/checklists/liaison-mini-ceremony-checklist.md",
       "layer_down_status": "INTERNAL",
       "change_note": "v1.0.0: Created as D6 deliverable in wave admin-ceremony-hardening-20260421"
+    },
+    {
+      "filename": "iaa-wave-record.template.md",
+      "version": "1.1.0",
+      "file_hash": "3eac6d6afc61cb85843db296f392bc36db701eb7cb8504ae5f3c17af6418e961",
+      "effective_date": "2026-04-22",
+      "description": "IAA Wave Record template \u2014 defines the standard structure for wave-level assurance records including Pre-Brief, PREHANDOVER Proof, IAA Assurance Verdict, Rejection History, and Record Metadata. v1.1.0: Added \u00a71.6 Wave-Level Admin Ceremony Contract.",
+      "type": "template",
+      "path": "governance/templates/iaa-wave-record.template.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "3eac6d6afc61cb85843db296f392bc36db701eb7cb8504ae5f3c17af6418e961",
+      "canonical_version": "1.1.0",
+      "last_updated": "2026-04-22",
+      "change_note": "v1.1.0: Added \u00a71.6 Wave-Level Admin Ceremony Contract section; updated Record Schema Version to 1.1.0; authority: CS2 \u2014 maturion-isms#1447"
+    },
+    {
+      "filename": "stage10-prebrief-ceremony-contract-examples.md",
+      "version": "1.0.0",
+      "file_hash": "836e1335dcb09986d7e3e6cfa3ef89c5d377a00d609dbb50af3287d2a6892087",
+      "effective_date": "2026-04-22",
+      "description": "Proof-of-operation examples for the Wave-Level Admin Ceremony Contract in Stage 10 IAA Pre-Brief. Demonstrates three scenarios: clean pass, task-level pass but ceremony failure, and cross-artifact contradiction rejection (ACR-18 through ACR-21).",
+      "type": "example",
+      "path": "governance/examples/stage10-prebrief-ceremony-contract-examples.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "836e1335dcb09986d7e3e6cfa3ef89c5d377a00d609dbb50af3287d2a6892087",
+      "canonical_version": "1.0.0",
+      "last_updated": "2026-04-22",
+      "change_note": "v1.0.0: Initial creation \u2014 proof-of-operation examples for Wave-Level Admin Ceremony Contract; authority: CS2 \u2014 maturion-isms#1447"
+    },
+    {
+      "filename": "TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md",
+      "version": "1.0.0",
+      "file_hash": "8c047329381b3714235f88c880a31c17210efa220f4a294b6b42fe5ddfdd35eb",
+      "effective_date": "2026-04-22",
+      "description": "Establishes two mandatory integrity rules: (1) no future-dated factual claim may appear in governance evidence artifacts (Rule T-001/T-002); (2) evidence-type discipline \u2014 deployment/CDV items require LIVE_RUNTIME or LIVE_E2E evidence; static code evidence does not satisfy live-deployment checklist items (Rules E-001/E-002/E-003). Tier mapping of the PR #1444 review gap.",
+      "type": "canon",
+      "path": "governance/canon/TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "8c047329381b3714235f88c880a31c17210efa220f4a294b6b42fe5ddfdd35eb"
     }
   ],
-  "total_entries": 211
+  "total_entries": 214
 }

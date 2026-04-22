@@ -2,9 +2,9 @@
 
 **Wave**: stage10-prebrief-hardening-20260422
 **Foreman Session**: session-167-stage10-prebrief-hardening-20260422
-**Branch**: copilot/fix-253484265-1108482416-d97140c1-67b5-4859-8372-838dd1a899c8
+**Branch**: copilot/implement-wave-level-admin-ceremony-contract
 **Date**: 2026-04-22
-**Issue**: maturion-isms#1442 — Harden Stage 10 IAA Pre-Brief: add wave-level admin ceremony contract and enforce it at handover
+**Issue**: maturion-isms#1447 — Implement Stage 10 pre-brief hardening delivery: wave-level admin ceremony contract, schema, canon, and examples
 **CS2 Authorization**: CONFIRMED — issue opened directly by CS2 (@APGI-cmy); assigns Copilot
 
 ---

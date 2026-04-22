@@ -1,7 +1,7 @@
 # WAVE-CURRENT-TASKS-PROTOCOL
 
-**Version**: 1.1.0
-**Date**: 2026-03-18
+**Version**: 1.2.0
+**Date**: 2026-04-22
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Status**: ACTIVE
 
@@ -40,6 +40,29 @@ Codifies the `wave-current-tasks.md` creation and maintenance requirement for fo
 
 ---
 
+## Stage 10 Ceremony Contract Integration
+
+Stage 10 (IAA Pre-Brief) in the Pre-Build Stage Model now defines TWO sets of expectations that Foreman must acknowledge before proceeding:
+
+### Task-Level Assurance Expectations
+The Pre-Brief declares per-task assurance requirements (trigger category, required phases, evidence artifacts, overlays). These are the criteria the IAA will verify for each qualifying task individually.
+
+### Wave-Level Ceremony Contract
+The Pre-Brief also declares the wave-level Admin Ceremony Contract — a set of governance expectations that apply to the wave as a whole, not to individual tasks:
+
+| Contract Field | What Foreman Must Ensure |
+|---------------|--------------------------|
+| `required_admin_ceremony_artifacts` | All listed artifacts are committed on the branch before handover |
+| `required_final_state_conditions` | All listed conditions are true in the final state at handover |
+| `required_cross_artifact_consistency_checks` | All listed consistency checks pass across the artifact bundle |
+| `required_acknowledgements` | All listed acknowledgements are documented with correct owner |
+| `required_role_boundaries` | All listed role boundaries are respected (no wrong-agent artifact authorship) |
+| `required_handover_references` | All listed references are present and correctly populated in the handover package |
+
+**Enforcement**: Unmet declared ceremony-contract items are explicit IAA rejection triggers (ACR-18 through ACR-21 in `INDEPENDENT_ASSURANCE_AGENT_CANON.md`). Foreman must self-verify all ceremony-contract items before invoking IAA at handover.
+
+---
+
 ## Why This Matters
 
 The Re-Anchor Pulse workflow (`.github/workflows/foreman-reanchor.yml`) reads the first 500 characters of `wave-current-tasks.md` and injects it into every automated re-anchor comment. This means:
@@ -62,6 +85,7 @@ The Re-Anchor Pulse workflow (`.github/workflows/foreman-reanchor.yml`) reads th
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2.0 | 2026-04-22 | Added §Stage 10 Ceremony Contract Integration — documents the wave-level Admin Ceremony Contract alongside task-level assurance expectations; ACR-18 through ACR-21 enforcement references; CS2 mandate from maturion-isms#1447 |
 | 1.1.0 | 2026-03-18 | Added mandatory Step 11 — Wave Reconciliation Checklist (`wave-reconciliation-checklist.md`) at wave close before PR open; CS2 mandate from wave 19/20 retrospective |
 | 1.0.0 | 2026-03-03 | Initial protocol — wave-current-tasks.md creation mandate, Re-Anchor Pulse integration, absence behaviour |
 
