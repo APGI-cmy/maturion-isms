@@ -2,7 +2,7 @@
 
 ## Status
 **Type**: Canonical Governance Definition  
-**Version**: 1.0.0  
+**Version**: 1.1.0  
 **Authority**: CS2 (Johan Ras / Maturion)  
 **Effective Date**: 2026-04-05  
 **Owner**: Maturion Engineering Leadership  
@@ -290,12 +290,14 @@ The following 12 stages form the mandatory governed pre-build lifecycle. No stag
 - Foreman and builders receive and acknowledge the Pre-Brief
 - IAA Pre-Brief artifact filed in designated location
 - ASSURANCE-TOKEN or PHASE_A_ADVISORY recorded before proceeding
+- Foreman and IAA jointly declare the **Wave-Level Admin Ceremony Contract** in the Pre-Brief artifact — specifying required ceremony artifacts, final-state conditions, cross-artifact consistency checks, acknowledgements, role boundaries, and handover references
+- All wave-level ceremony expectations are declared **in advance** in the Pre-Brief, making them machine-enforceable at IAA handover review
 
-**Gate Condition**: IAA Pre-Brief artifact exists and is acknowledged by Foreman and all designated builders. ASSURANCE-TOKEN or PHASE_A_ADVISORY status recorded.
+**Gate Condition**: IAA Pre-Brief artifact exists and is acknowledged by Foreman and all designated builders. ASSURANCE-TOKEN or PHASE_A_ADVISORY status recorded. Wave-Level Admin Ceremony Contract declared in Pre-Brief.
 
 **Enforcement Note**: Skipping IAA Pre-Brief invocation is a constitutional violation (INC-IAA-SKIP-001) per FAIL-ONLY-ONCE Rule A-09.
 
-**Authority Reference**: `IAA_PRE_BRIEF_PROTOCOL.md` v1.2.0
+**Authority Reference**: `IAA_PRE_BRIEF_PROTOCOL.md` v1.3.0
 
 ---
 
@@ -429,6 +431,7 @@ This canon establishes the following as **binding governance mandates**:
 6. **Runtime/Deployment Contract** must be filed before the first build wave begins
 7. **Golden Path Verification Pack** must be defined before the first build wave begins
 8. **No build may start** if real user-verifiable functional delivery has not already been defined in advance
+9. **Wave-Level Admin Ceremony Contract** is a mandatory component of IAA Pre-Brief; all declared ceremony-contract items are enforceable at handover
 
 ---
 
@@ -443,6 +446,7 @@ This canon establishes the following as **binding governance mandates**:
 - **❌ NEVER** begin build without a filed Runtime/Deployment Contract
 - **❌ NEVER** begin build without a Golden Path Verification Pack
 - **❌ NEVER** treat CI-green or passing tests as proof of functional delivery without Golden Path Verification
+- **❌ NEVER** generate a Pre-Brief without a Wave-Level Admin Ceremony Contract section
 
 ---
 
@@ -487,6 +491,8 @@ This canon is complete and accepted when:
 ---
 
 ## 13. Version History
+
+**v1.1.0** (2026-04-22): Added wave-level admin ceremony contract requirement to Stage 10; updated Stage 10 Mandatory Actions and Gate Condition; added Canonization Mandate #9 and Prohibition against generating a Pre-Brief without a Wave-Level Admin Ceremony Contract section; updated Authority Reference to IAA_PRE_BRIEF_PROTOCOL.md v1.3.0. Authority: CS2. Issue: maturion-isms#1446.
 
 **v1.0.0** (2026-04-05): Initial canon creation. Formalises the 12-stage End-to-End Pre-Build Stage Model as mandatory governance for all governed builds under the 100% one-time build philosophy. Establishes UX Workflow & Wiring Spec, PBFAG, Builder Checklist, and IAA Pre-Brief as explicit mandatory stages. Establishes Change-Propagation Audit, Runtime/Deployment Contract, and Golden Path Verification Pack as required supporting controls. Authority: CS2. Issue: APGI-cmy/maturion-foreman-governance#1319.
 

@@ -1,6 +1,6 @@
 # IAA Wave Record — {wave} — {date}
 
-**Record Version**: 1.0.0
+**Record Version**: 1.1.0
 **Wave**: {wave}
 **Branch**: {branch}
 **Issue**: {issue_ref}
@@ -28,6 +28,42 @@
 ### 1.5 Pre-Brief Status
 - Pre-Brief Date: {YYYY-MM-DD}
 - Status: ACTIVE
+
+### 1.6 Wave-Level Admin Ceremony Contract
+
+**Contract Version**: {version — e.g. 1.0.0}
+**Declared By**: {agent_id — Pre-Brief issuer}
+**Declared At**: {YYYY-MM-DD}
+
+#### Required Admin Ceremony Artifacts
+| Artifact | Path | Required By |
+|----------|------|-------------|
+| {artifact_name} | {path} | {rule_or_rationale} |
+
+#### Required Final-State Conditions
+| Condition | Required State | Rule |
+|-----------|---------------|------|
+| {condition_description} | {YES/CONFIRMED/etc.} | {rule_id} |
+
+#### Required Cross-Artifact Consistency Checks
+| Check | Artifacts Involved | Rule |
+|-------|-------------------|------|
+| {check_description} | {artifact_1, artifact_2} | {rule_id} |
+
+#### Required Acknowledgements
+| Acknowledgement | Owner | Rule |
+|----------------|-------|------|
+| {acknowledgement} | {agent_id or role} | {rule_id} |
+
+#### Required Role Boundaries
+| Artifact/Task | Responsible Role | Rule |
+|--------------|-----------------|------|
+| {artifact_or_task} | {agent_id or role} | {rule_id} |
+
+#### Required Handover References
+| Reference | Where Expected | Rule |
+|-----------|---------------|------|
+| {reference_description} | {artifact_path or section} | {rule_id} |
 
 ---
 
@@ -120,7 +156,7 @@
 ---
 
 ## 5. Record Metadata
-- Record Schema Version: 1.0.0
+- Record Schema Version: 1.1.0
 - Created By: {agent_id}
 - Last Modified By: {agent_id}
 - Last Modified Date: {YYYY-MM-DD}

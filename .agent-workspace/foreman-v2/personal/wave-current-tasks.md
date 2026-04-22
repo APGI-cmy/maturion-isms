@@ -1,3 +1,29 @@
+# Wave Current Tasks — stage10-prebrief-hardening-20260422
+
+**Foreman**: foreman-v2-agent v6.2.0
+**Wave**: stage10-prebrief-hardening-20260422
+**Issue**: maturion-isms#1446 — Implement Stage 10 pre-brief hardening delivery: wave-level admin ceremony contract, schema, canon, and examples
+**Branch**: copilot/implement-wave-level-admin-ceremony-contract
+**Date**: 2026-04-22
+**CS2 Authorization**: CONFIRMED — issue #1446 in CS2-governed repository
+**ceremony_admin_appointed**: PENDING — governance documentation wave; ECAP determination pending
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-stage10-prebrief-hardening-20260422.md
+iaa_prebrief_status: COMPLETE — PRE-BRIEF committed SHA 0850c60
+
+## Current Wave Tasks
+
+| Task | Agent | Status | Notes |
+|------|-------|--------|-------|
+| D1: Update IAA_PRE_BRIEF_PROTOCOL.md | governance-liaison-isms-agent | 🟢 DONE | v1.2.2 → v1.3.0; §Expected Wave-Level Admin Ceremony Contract added; Merge Gate row added |
+| D2: Update iaa-wave-record.template.md | governance-liaison-isms-agent | 🟢 DONE | v1.0.0 → v1.1.0; §1.6 Wave-Level Admin Ceremony Contract tables added |
+| D3: Update INDEPENDENT_ASSURANCE_AGENT_CANON.md | governance-liaison-isms-agent | 🟢 DONE | v1.11.0 → v1.12.0; ACR-18–21 added; SELF-MOD-IAA-001 flag documented — CS2 review required |
+| D4: Update PRE_BUILD_STAGE_MODEL_CANON.md | governance-liaison-isms-agent | 🟢 DONE | v1.0.0 → v1.1.0; Stage 10 ceremony contract mandate; Canonization Mandate #9; Prohibition added |
+| D5: Update Foreman Tier 2 knowledge | governance-liaison-isms-agent | 🟢 DONE | WAVE-CURRENT-TASKS-PROTOCOL.md v1.2.0; prehandover-template.md v1.9.0; index.md v2.9.0 |
+| D6: Add proof-of-operation examples | governance-liaison-isms-agent | 🟢 DONE | governance/examples/stage10-prebrief-ceremony-contract-examples.md v1.0.0 — 3 scenarios |
+| D7: Update CANON_INVENTORY.json | governance-liaison-isms-agent | 🟢 DONE | All D1–D4, D6 updated; zero null hashes; total_canons incremented |
+
+---
+
 # Wave Current Tasks — mmm-tracker-reconciliation-20260421
 
 **Foreman**: foreman-v2-agent v6.2.0
@@ -251,49 +277,3 @@ CG-003 boundary readiness declaration required in closure statement.
 
 ---
 
-# Wave Current Tasks — stage10-prebrief-hardening-20260422
-
-**Foreman**: foreman-v2-agent v6.2.0
-**Wave**: stage10-prebrief-hardening-20260422
-**Session**: session-167-stage10-prebrief-hardening-20260422
-**Issue**: maturion-isms#1442 — Harden Stage 10 IAA Pre-Brief: add wave-level admin ceremony contract and enforce it at handover
-**Branch**: copilot/fix-253484265-1108482416-d97140c1-67b5-4859-8372-838dd1a899c8
-**Date**: 2026-04-22
-**CS2 Authorization**: CONFIRMED — issue opened directly by CS2 (@APGI-cmy); assigns Copilot
-**ceremony_admin_appointed**: PENDING — pending Phase 4 completion
-iaa_wave_record_path: NOT YET CREATED — pending IAA Pre-Brief completion and commit
-iaa_prebrief_status: PENDING — IAA Pre-Brief invocation in progress
-
-## Prior Wave Reference
-
-Prior wave: aimc-strategy-followup-20260420 (COMPLETE).
-ASSURANCE-TOKEN: IAA-session-165-aimc-strategy-followup-20260420-PASS.
-Also: mmm-stage12-build-execution-20260420 (COMPLETE) — IAA-session-mmm-stage12-build-execution-20260420-PASS.
-Also: admin-ceremony-hardening-20260421 (COMPLETE) — IAA-session-214-admin-ceremony-hardening-20260421-PASS.
-
-## Wave Summary
-
-Governance canon hardening wave. Adds explicit wave-level admin ceremony contract section to the Stage 10 IAA Pre-Brief model. Updates IAA_PRE_BRIEF_PROTOCOL.md, INDEPENDENT_ASSURANCE_AGENT_CANON.md, PRE_BUILD_STAGE_MODEL_CANON.md, pre-brief template, and Foreman Tier 2 guidance. Adds proof-of-operation examples. No code changes.
-
-## Tasks
-
-| Task | Owner | Status |
-|------|-------|--------|
-| IAA-PRE | IAA Pre-Brief invocation | independent-assurance-agent | ⏳ IN PROGRESS |
-| SCOPE | Scope declaration | foreman-v2-agent | ✅ COMMITTED |
-| D1 | Harden IAA_PRE_BRIEF_PROTOCOL.md (v1.2.2 → v1.3.0) | governance-liaison-isms-agent | ⏳ PENDING |
-| D2 | Update Pre-Brief schema / iaa-wave-record.template.md | governance-liaison-isms-agent | ⏳ PENDING |
-| D3 | Add ACR to INDEPENDENT_ASSURANCE_AGENT_CANON.md (CS2 direct review per SELF-MOD-IAA-001) | governance-liaison-isms-agent | ⏳ PENDING |
-| D4 | Update PRE_BUILD_STAGE_MODEL_CANON.md Stage 10 | governance-liaison-isms-agent | ⏳ PENDING |
-| D5 | Update Foreman Tier 2 knowledge for Stage 10 ceremony contract | governance-liaison-isms-agent | ⏳ PENDING |
-| D6 | Proof-of-operation examples | governance-liaison-isms-agent | ⏳ PENDING |
-| D7 | Update CANON_INVENTORY.json | governance-liaison-isms-agent | ⏳ PENDING |
-| ECAP | ECAP ceremony bundle | execution-ceremony-admin-agent | ⏳ PENDING (Phase 4) |
-| IAA-FINAL | IAA Final Audit | independent-assurance-agent | ⏳ PENDING (Phase 4) |
-
-## Re-Anchor Pulse
-
-**Wave**: stage10-prebrief-hardening-20260422 | **Type**: Governance Canon Hardening
-**Focus**: Stage 10 IAA Pre-Brief hardening — wave-level admin ceremony contract addition
-**Foreman role**: Orchestrate, delegate, QP evaluate — NEVER implement or write canon content
-**Current action**: IAA Pre-Brief invocation (Step 1.8 / Phase 1 exit gate)
