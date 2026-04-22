@@ -261,7 +261,7 @@ CG-003 boundary readiness declaration required in closure statement.
 **Date**: 2026-04-22
 **CS2 Authorization**: CONFIRMED — issue opened directly by CS2 (@APGI-cmy); assigns Copilot
 **ceremony_admin_appointed**: NOT YET — pending Phase 4 completion
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-stage10-prebrief-hardening-20260422.md
+iaa_wave_record_path: NOT YET CREATED — pending IAA Pre-Brief completion and commit
 iaa_prebrief_status: PENDING — IAA Pre-Brief invocation in progress
 
 ## Prior Wave Reference
