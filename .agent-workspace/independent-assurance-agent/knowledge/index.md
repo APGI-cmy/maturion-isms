@@ -2,8 +2,8 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 3.5.0
-**Last Updated**: 2026-04-07
+**Knowledge Version**: 3.6.0
+**Last Updated**: 2026-04-22
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -13,10 +13,10 @@
 | File | Purpose | Version | Status |
 |------|---------|---------|--------|
 | `index.md` (this file) | Knowledge entry point and version reference | 3.0.0 | PRESENT |
-| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 2.5.0 | PRESENT — Rules A-001 through A-032 active (A-032: Schema Column Compliance Check — IAA must read migration DDL directly for all PRs containing INSERT/SELECT operations; INC-ALCF-001 self-governance closure) |
+| `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 2.8.0 | PRESENT — Rules A-001 through A-037 active (A-036: Future-Dated Factual Claims Are Blockers; A-037: Evidence-Type Discipline — LIVE_RUNTIME/LIVE_E2E items cannot be satisfied by static/CI/config evidence; canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md) |
 | `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 3.0.0 | CORE-025 Pre-Brief Stage-Readiness Declaration added for PRE_BUILD_STAGE_MODEL PRs (v3.0.0) |
 | `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.4.0 | LIAISON_ADMIN and GOVERNANCE_AUDIT trigger categories added; classification decision flow steps 7 (LIAISON_ADMIN) and 10 (GOVERNANCE_AUDIT EXEMPT) added; steps renumbered accordingly (v2.4.0) |
-| `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE, PRE_BRIEF_ASSURANCE, PRE_BUILD_GATES) | 4.0.0 | PRE_BUILD_GATES overlay complete (OVL-PBG-001 through OVL-PBG-016); PRE_BRIEF_ASSURANCE stage-readiness view (OVL-INJ-ADM-003) added (v4.0.0) |
+| `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE, PRE_BRIEF_ASSURANCE, PRE_BUILD_GATES, GOVERNANCE_EVIDENCE) | 4.1.0 | GOVERNANCE_EVIDENCE overlay added (OVL-GE-001 through OVL-GE-003, OVL-GE-ADM-001) — temporal integrity and evidence-type discipline checks; canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md (v4.1.0) |
 | `session-memory-template.md` | Standard session memory template for IAA invocations | 1.0.0 | PRESENT |
 | `IAA_ZERO_SEVERITY_TOLERANCE.md` | Tier 2 operational note for Zero-Severity-Tolerance Rule — prohibited language table, machine-readable logic, exception procedure | 1.0.0 | ACTIVE |
 | `IAA_AGENT_CONTRACT_AUDIT_STANDARD.md` | **AGENT_CONTRACT Audit Standard** — mandatory audit steps, pre-approval doctrine, protected components checklist, tier placement discipline, decision matrix for all agent contract PRs reviewed by IAA | 1.0.0 | ACTIVE — Load at Step 2.4 when PR category is AGENT_CONTRACT |
@@ -85,6 +85,8 @@
 | A-033 | CORE-018 Verification Must Use Git, Not Disk — disk existence check (`-f`) is insufficient; must use `git ls-tree HEAD` or `git ls-files --error-unmatch` (INC-CI-GATEWAY-FIX-001-IAA) | ACTIVE |
 | A-034 | FUNCTIONAL-BEHAVIOUR-REGISTRY Reading Mandatory — for BUILD/AAWP_MAT PRs: read FUNCTIONAL-BEHAVIOUR-REGISTRY.md at Step 3.1 and apply all relevant niggle patterns as blocking checks | ACTIVE |
 | A-035 | Niggle Pattern Library Application — for BUILD/AAWP_MAT PRs: read niggle-pattern-library.md at Step 3.1 and apply all relevant stack-specific patterns as blocking checks | ACTIVE |
+| A-036 | Future-Dated Factual Claims Are Blockers — for GOVERNANCE_EVIDENCE/GOVERNANCE_AUDIT PRs: any completion claim with a future-dated timestamp is REJECTION-PACKAGE. Canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md T-001/T-002 | ACTIVE |
+| A-037 | Evidence-Type Discipline — LIVE_RUNTIME/LIVE_E2E items cannot be satisfied by STATIC_CODE/CI_TEST/CONFIG evidence. Code-merge evidence does not prove live deployment. Canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md E-001/E-002/E-003 | ACTIVE |
 
 ---
 

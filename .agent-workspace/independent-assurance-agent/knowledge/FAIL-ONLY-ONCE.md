@@ -1,8 +1,8 @@
 # IAA FAIL-ONLY-ONCE Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 2.5.0
-**Last Updated**: 2026-03-08
+**Version**: 2.8.0
+**Last Updated**: 2026-04-22
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -592,6 +592,105 @@ For any PR that contains Supabase INSERT or SELECT operations on a named table:
 
 ---
 
+### A-036 — Future-Dated Factual Claims Are Blockers (Temporal Integrity)
+
+**Triggered by**: Governance review of PR APGI-cmy/maturion-isms#1444 (CDV staging validation wave,
+2026-04-22) — a CDV governance evidence document contained a future-dated event presented as already
+completed. Foreman QP, admin ceremony, and IAA final audit did not flag the temporal inconsistency.
+
+**Incident summary**: The wave evidence artifact stated that CDV validation "was completed" with a
+date that was later than the PR creation date. The governance layer accepted the claim at face value.
+The correct status was PENDING — the validation had not yet occurred. This created a false audit trail
+suggesting the validation was already complete when it was not.
+
+**Permanent Rule (canon ref: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md Rule T-001 / T-002)**:
+Any governance, evidence, or PREHANDOVER artifact that presents an event as already completed MUST
+have a timestamp that is on or before the current date at the time of authoring.
+
+When IAA reviews governance evidence documents (GOVERNANCE_EVIDENCE or GOVERNANCE_AUDIT category PRs),
+IAA MUST:
+1. Check every timestamp in the artifact against the PR creation date and the current review date.
+2. Flag any completion-wording statement whose associated date is in the future relative to the
+   PR review date.
+3. Flag any "COMPLETE" or past-tense claim where the described event is scheduled, anticipated, or
+   planned rather than already executed.
+4. Issue REJECTION-PACKAGE for any future-dated factual claim (Rule T-001 violation).
+
+**Check in Phase 3 (GOVERNANCE_EVIDENCE / GOVERNANCE_AUDIT PRs)**:
+> A-036 Temporal Integrity:
+> For each completed/validated claim in the artifact:
+> 1. Identify the timestamp or date field associated with the claim.
+> 2. Compare to PR creation date and current review date.
+> 3. If timestamp is AFTER the review date → FAIL. Finding: "Future-dated factual claim: [field/section]
+>    states [event] as completed on [date] but PR review date is [earlier date]. Temporal integrity
+>    violation per TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md Rule T-001."
+> 4. Fix required: "Update claim to forward-looking language; mark item PENDING; re-assess once
+>    real evidence exists."
+
+**Status**: ACTIVE — enforced on all GOVERNANCE_EVIDENCE and GOVERNANCE_AUDIT PRs
+
+---
+
+### A-037 — Evidence-Type Discipline: Static Code Evidence Cannot Satisfy Live-Deployment Items
+
+**Triggered by**: Governance review of PR APGI-cmy/maturion-isms#1444 (CDV staging validation wave,
+2026-04-22) — deployment-oriented and CDV checklist items were marked COMPLETE using only code-merge
+(static code) evidence. The governance review layer did not distinguish between evidence types and
+accepted the completions without challenge.
+
+**Incident summary**: CDV/deployment validation checklist items in the wave evidence document were
+marked COMPLETE. The only available evidence was: (a) the PR was merged, and (b) the code was present
+in the repository. No live-environment health check, no CDV scenario walkthrough, and no staging
+deployment confirmation was provided. The review gates did not detect the evidence-type mismatch.
+
+**Permanent Rule (canon ref: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md Rules E-001 / E-002 / E-003)**:
+Evidence types form a hierarchy: `STATIC_CODE < CI_TEST < CONFIG < LIVE_RUNTIME < LIVE_E2E`.
+A checklist item requiring live deployment or operational validation evidence MUST NOT be satisfied
+by static code, CI test, or configuration evidence alone.
+
+When IAA reviews governance evidence documents (GOVERNANCE_EVIDENCE, GOVERNANCE_AUDIT, BUILD/AAWP_MAT
+categories), IAA MUST:
+1. Identify every checklist item that relates to deployment, runtime validation, CDV scenario
+   execution, staging validation, or live-environment operation.
+2. For each such item marked COMPLETE: examine the evidence cited.
+3. Classify the cited evidence using the evidence-type hierarchy (STATIC_CODE / CI_TEST / CONFIG /
+   LIVE_RUNTIME / LIVE_E2E).
+4. If the item's semantic requirement is LIVE_RUNTIME or LIVE_E2E and the cited evidence is only
+   STATIC_CODE, CI_TEST, or CONFIG → issue REJECTION-PACKAGE.
+5. Flag any checklist item that does not declare its `evidence_type` label when the item has
+   deployment/operational semantics (Rule E-001 violation).
+
+**Evidence-type recognition patterns**:
+
+| Checklist item language | Required evidence type |
+|------------------------|----------------------|
+| "deployed to staging/production" | LIVE_RUNTIME |
+| "CDV scenario executed / CDV validation complete" | LIVE_E2E |
+| "service is live / endpoint responds" | LIVE_RUNTIME |
+| "end-to-end flow validated" | LIVE_E2E |
+| "health check passes" | LIVE_RUNTIME |
+| "staging validation complete" | LIVE_E2E |
+| "tests pass" | CI_TEST |
+| "code merged / PR merged" | STATIC_CODE |
+| "environment variable configured" | CONFIG |
+
+**Check in Phase 3 (GOVERNANCE_EVIDENCE / GOVERNANCE_AUDIT / BUILD PRs)**:
+> A-037 Evidence-Type Discipline:
+> For each deployment/CDV/operational checklist item marked COMPLETE:
+> 1. Identify what evidence is cited.
+> 2. Classify evidence: STATIC_CODE / CI_TEST / CONFIG / LIVE_RUNTIME / LIVE_E2E.
+> 3. Identify the required evidence type based on item semantics.
+> 4. If required type is LIVE_RUNTIME or LIVE_E2E and cited evidence is lower-fidelity →
+>    FAIL. Finding: "Evidence-type mismatch: item '[item name]' requires [required type]
+>    evidence but only [cited type] evidence is present. Rule E-002 violation per
+>    TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md."
+> 5. If evidence_type label is absent for a deployment/operational item → FAIL.
+>    Finding: "Missing evidence_type label on deployment/operational checklist item. Rule E-001."
+
+**Status**: ACTIVE — enforced on all GOVERNANCE_EVIDENCE, GOVERNANCE_AUDIT, and BUILD/AAWP_MAT PRs
+
+---
+
 ## Version History
 
 | Version | Date | Change |
@@ -614,6 +713,7 @@ For any PR that contains Supabase INSERT or SELECT operations on a named table:
 | 2.5.0 | 2026-03-08 | A-032 (Schema Column Compliance Check) added — INC-ALCF-001: schema column mismatch escaped IAA gate in wave-upload-doclist-fix; audit_logs INSERT/SELECT used non-existent columns (user_id, resource_type, resource_id); organisation_id NOT NULL omitted; silent try/catch made failure invisible. IAA self-governance action per Pre-Brief §7 shared responsibility clause. Next sequential ID: A-033. |
 | 2.6.0 | 2026-03-12 | A-033 (Git-Committed vs Disk Existence — CORE-018 Verification Standard) added — INC-CI-GATEWAY-FIX-001-IAA: IAA evaluated PREHANDOVER as PASS based on disk file existence (`-f` check) when the PREHANDOVER was untracked (never committed to git). Phase 4 `git ls-tree HEAD` revealed file not in any commit. CORE-018(a) must use git verification, not disk existence. Next sequential ID: A-034. |
 | 2.7.0 | 2026-03-17 | A-034 (FUNCTIONAL-BEHAVIOUR-REGISTRY reading — mandatory for BUILD/AAWP_MAT PRs; niggle patterns as blocking checks), A-035 (niggle pattern library application — stack-specific patterns in niggle-pattern-library.md must be applied to relevant code areas) added — CS2 IAA functional behaviour strengthening issue. Next sequential ID: A-036. |
+| 2.8.0 | 2026-04-22 | A-036 (Temporal Integrity — future-dated factual claims are REJECTION-PACKAGE blockers; canon ref T-001/T-002), A-037 (Evidence-Type Discipline — LIVE_RUNTIME/LIVE_E2E items cannot be satisfied by STATIC_CODE/CI_TEST/CONFIG evidence; canon ref E-001/E-002/E-003) added — governance hardening following PR #1444 review miss. Canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md. Next sequential ID: A-038. |
 
 ---
 
