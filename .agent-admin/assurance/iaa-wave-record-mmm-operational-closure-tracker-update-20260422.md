@@ -193,7 +193,18 @@ Confirming:
 > PREHANDOVER proof is read-only after initial commit (A-029). Token is written here, not in PREHANDOVER.
 
 ```
-PHASE_B_BLOCKING_TOKEN: [PENDING — IAA Final Audit not yet executed]
+PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-operational-closure-tracker-update-20260422-PASS
+
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/update-mmm-progress-tracker (Issue #1457 — Update MMM progress tracker with operational closure omissions and harden final-build closure criteria)
+All 13 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-mmm-operational-closure-tracker-update-20260422-PASS
+Adoption phase: PHASE_B_BLOCKING
+Date: 2026-04-22
+Audited by: independent-assurance-agent
+═══════════════════════════════════════
 ```
 
 ---
@@ -204,6 +215,4 @@ PHASE_B_BLOCKING_TOKEN: [PENDING — IAA Final Audit not yet executed]
 
 ---
 
-**Wave record version**: PRE-BRIEF (Phase 0 complete)
-**Next action**: Foreman delivers `modules/MMM/BUILD_PROGRESS_TRACKER.md` update, then commits PREHANDOVER proof and invokes IAA Final Audit.
-**IAA Final Audit**: Will execute Phases 1–4 against the committed PREHANDOVER proof and deliverable.
+**Wave record version**: FINAL AUDIT COMPLETE — ASSURANCE-TOKEN issued 2026-04-22
