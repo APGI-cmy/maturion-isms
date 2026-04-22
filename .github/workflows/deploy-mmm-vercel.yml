@@ -41,6 +41,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
       - name: Validate deployment target paths are aligned to MMM
         run: |
           echo "Running anti-stale-path guard — verifying all deployment config points to apps/mmm..."
