@@ -11,7 +11,7 @@ and does not automatically apply to direct-CS2 standalone governance-repo-admini
 canon actions (CS2 guidance — issue #1319)  
 **Amended**: 2026-04-08 — v1.2.1: Reference update — added `EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` to references; clarified that Phase 4 handover proof may be prepared by `execution-ceremony-admin-agent` under Foreman oversight without affecting IAA independence or Pre-Brief validity; authority: CS2 — ECAP-001 canon establishment issue.
 **Amended**: 2026-04-08 — v1.2.2: Re-invocation ownership cross-reference — added §Re-Invocation After Rejection — Ownership Reference, clarifying that after a `REJECTION-PACKAGE` the Foreman (not CS2) owns the stop-and-fix loop and re-invocation; cross-references INDEPENDENT_ASSURANCE_AGENT_CANON.md §IAA Re-Invocation After Rejection for full rules. Authority: CS2 — Foreman IAA re-invocation ownership canonisation issue.
-**Amended**: 2026-04-22 — v1.3.0: Added §Expected Wave-Level Admin Ceremony Contract to Pre-Brief Content Requirements; updated Merge Gate Enforcement table; makes wave-level ceremony contract a mandatory Pre-Brief field rather than advisory; authority: CS2 — maturion-isms#1446
+**Amended**: 2026-04-22 — v1.3.0: Added §Expected Wave-Level Admin Ceremony Contract to Pre-Brief Content Requirements; updated Merge Gate Enforcement table; makes wave-level ceremony contract a mandatory Pre-Brief field rather than advisory; authority: CS2 — maturion-isms#1447
 
 ---
 

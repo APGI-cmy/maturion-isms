@@ -123,7 +123,7 @@ All verb classification and mode-switching decisions MUST reference `ECOSYSTEM_V
 
 | Version | Date | Change |
 |---------|------|--------|
-| 2.9.0 | 2026-04-22 | WAVE-CURRENT-TASKS-PROTOCOL.md bumped to v1.2.0 — Stage 10 ceremony contract integration (ACR-18–21); prehandover-template.md bumped to v1.9.0 — `## Wave-Level Ceremony Contract Verification` mandatory section added (IAA_PRE_BRIEF_PROTOCOL.md v1.3.0 §Expected Wave-Level Admin Ceremony Contract). Wave: stage10-prebrief-hardening-20260422 (issue #1446). |
+| 2.9.0 | 2026-04-22 | WAVE-CURRENT-TASKS-PROTOCOL.md bumped to v1.2.0 — Stage 10 ceremony contract integration (ACR-18–21); prehandover-template.md bumped to v1.9.0 — `## Wave-Level Ceremony Contract Verification` mandatory section added (IAA_PRE_BRIEF_PROTOCOL.md v1.3.0 §Expected Wave-Level Admin Ceremony Contract). Wave: stage10-prebrief-hardening-20260422 (issue #1447). |
 | 2.8.0 | 2026-04-19 | Knowledge version header updated to 2.8.0 (Last Updated date aligned to 2026-04-19); prehandover-template.md Wave: cl6-wave3-knowledge-reingestion |
 | 2.7.0 | 2026-04-09 | prehandover-template.md bumped to v1.8.0 — `## Ripple/Cross-Agent Assessment` mandatory section added (HFMC-01 / NO-REPEAT-PREVENTABLE-001 systemic fix); Wave: cl6-wave3-knowledge-reingestion |
 | 2.9.0 | 2026-04-22 | FAIL-ONLY-ONCE.md bumped to v4.5.0 — A-040 TEMPORAL-AUDIT-AT-QP and A-041 EVIDENCE-TYPE-CLASSIFICATION-AT-QP locked in (governance hardening maturion-isms#1445); wave-reconciliation-checklist.md bumped to v1.3.0 — Section E (Temporal and Evidence-Type Audit) added with E-1 through E-4 checks; canon: governance/canon/TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md created. |

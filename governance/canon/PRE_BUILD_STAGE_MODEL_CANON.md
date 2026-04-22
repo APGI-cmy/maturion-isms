@@ -492,7 +492,7 @@ This canon is complete and accepted when:
 
 ## 13. Version History
 
-**v1.1.0** (2026-04-22): Added wave-level admin ceremony contract requirement to Stage 10; updated Stage 10 Mandatory Actions and Gate Condition; added Canonization Mandate #9 and Prohibition against generating a Pre-Brief without a Wave-Level Admin Ceremony Contract section; updated Authority Reference to IAA_PRE_BRIEF_PROTOCOL.md v1.3.0. Authority: CS2. Issue: maturion-isms#1446.
+**v1.1.0** (2026-04-22): Added wave-level admin ceremony contract requirement to Stage 10; updated Stage 10 Mandatory Actions and Gate Condition; added Canonization Mandate #9 and Prohibition against generating a Pre-Brief without a Wave-Level Admin Ceremony Contract section; updated Authority Reference to IAA_PRE_BRIEF_PROTOCOL.md v1.3.0. Authority: CS2. Issue: maturion-isms#1447.
 
 **v1.0.0** (2026-04-05): Initial canon creation. Formalises the 12-stage End-to-End Pre-Build Stage Model as mandatory governance for all governed builds under the 100% one-time build philosophy. Establishes UX Workflow & Wiring Spec, PBFAG, Builder Checklist, and IAA Pre-Brief as explicit mandatory stages. Establishes Change-Propagation Audit, Runtime/Deployment Contract, and Golden Path Verification Pack as required supporting controls. Authority: CS2. Issue: APGI-cmy/maturion-foreman-governance#1319.
 

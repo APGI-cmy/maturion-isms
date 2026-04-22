@@ -4,7 +4,7 @@
 **Foreman Session**: session-167-stage10-prebrief-hardening-20260422
 **Branch**: copilot/implement-wave-level-admin-ceremony-contract
 **Date**: 2026-04-22
-**Issue**: maturion-isms#1446 — Implement Stage 10 pre-brief hardening delivery: wave-level admin ceremony contract, schema, canon, and examples
+**Issue**: maturion-isms#1447 — Implement Stage 10 pre-brief hardening delivery: wave-level admin ceremony contract, schema, canon, and examples
 **CS2 Authorization**: CONFIRMED — issue opened directly by CS2 (@APGI-cmy); assigns Copilot
 
 ---

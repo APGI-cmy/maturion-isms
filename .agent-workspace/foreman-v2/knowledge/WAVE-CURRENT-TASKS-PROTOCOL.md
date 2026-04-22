@@ -85,7 +85,7 @@ The Re-Anchor Pulse workflow (`.github/workflows/foreman-reanchor.yml`) reads th
 
 | Version | Date | Change |
 |---------|------|--------|
-| 1.2.0 | 2026-04-22 | Added §Stage 10 Ceremony Contract Integration — documents the wave-level Admin Ceremony Contract alongside task-level assurance expectations; ACR-18 through ACR-21 enforcement references; CS2 mandate from maturion-isms#1446 |
+| 1.2.0 | 2026-04-22 | Added §Stage 10 Ceremony Contract Integration — documents the wave-level Admin Ceremony Contract alongside task-level assurance expectations; ACR-18 through ACR-21 enforcement references; CS2 mandate from maturion-isms#1447 |
 | 1.1.0 | 2026-03-18 | Added mandatory Step 11 — Wave Reconciliation Checklist (`wave-reconciliation-checklist.md`) at wave close before PR open; CS2 mandate from wave 19/20 retrospective |
 | 1.0.0 | 2026-03-03 | Initial protocol — wave-current-tasks.md creation mandate, Re-Anchor Pulse integration, absence behaviour |
 

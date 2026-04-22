@@ -130,4 +130,4 @@ The ceremony contract shifts IAA review from **reactive gap discovery** to **dec
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.0.0 | Date: 2026-04-22 | Issue: maturion-isms#1446*
+*Authority: CS2 (Johan Ras) | Version: 1.0.0 | Date: 2026-04-22 | Issue: maturion-isms#1447*

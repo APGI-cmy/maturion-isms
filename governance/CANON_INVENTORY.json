@@ -1496,7 +1496,7 @@
       "local_extension": false,
       "layer_up_status": "NONE",
       "last_updated": "2026-04-22",
-      "change_note": "v1.3.0: Added \u00a7Expected Wave-Level Admin Ceremony Contract to Pre-Brief Content Requirements; updated Merge Gate Enforcement table; wave-level ceremony contract now mandatory Pre-Brief field; authority: CS2 \u2014 maturion-isms#1446"
+      "change_note": "v1.3.0: Added \u00a7Expected Wave-Level Admin Ceremony Contract to Pre-Brief Content Requirements; updated Merge Gate Enforcement table; wave-level ceremony contract now mandatory Pre-Brief field; authority: CS2 \u2014 maturion-isms#1447"
     },
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
@@ -1511,7 +1511,7 @@
       "layer_down_status": "INTERNAL",
       "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA); v1.1.0 amendment: Enforce zero-severity-tolerance \u2014 any finding triggers rejection",
       "last_updated": "2026-04-22",
-      "change_note": "v1.12.0: Added ACR-18 (missing declared ceremony artifact), ACR-19 (unmet declared final-state condition), ACR-20 (unmet declared cross-artifact consistency condition), ACR-21 (missing declared acknowledgement/ownership); makes unmet wave-level Admin Ceremony Contract items explicit rejection triggers; maturion-isms#1446. SELF-MOD-IAA-001: CS2 direct review/sign-off required.",
+      "change_note": "v1.12.0: Added ACR-18 (missing declared ceremony artifact), ACR-19 (unmet declared final-state condition), ACR-20 (unmet declared cross-artifact consistency condition), ACR-21 (missing declared acknowledgement/ownership); makes unmet wave-level Admin Ceremony Contract items explicit rejection triggers; maturion-isms#1447. SELF-MOD-IAA-001: CS2 direct review/sign-off required.",
       "canonical_version": "1.12.0"
     },
     {
@@ -1914,7 +1914,7 @@
       "local_extension": false,
       "layer_up_status": "NONE",
       "last_updated": "2026-04-22",
-      "change_note": "v1.1.0: Added wave-level admin ceremony contract requirement to Stage 10 Mandatory Actions and Gate Condition; added Canonization Mandate #9 and Prohibition; updated Authority Reference to IAA_PRE_BRIEF_PROTOCOL.md v1.3.0; authority: CS2 \u2014 maturion-isms#1446"
+      "change_note": "v1.1.0: Added wave-level admin ceremony contract requirement to Stage 10 Mandatory Actions and Gate Condition; added Canonization Mandate #9 and Prohibition; updated Authority Reference to IAA_PRE_BRIEF_PROTOCOL.md v1.3.0; authority: CS2 \u2014 maturion-isms#1447"
     },
     {
       "filename": "PRE_IMPLEMENTATION_BEHAVIOR_REVIEW_PROTOCOL.md",
@@ -2548,7 +2548,7 @@
       "file_hash_sha256": "3eac6d6afc61cb85843db296f392bc36db701eb7cb8504ae5f3c17af6418e961",
       "canonical_version": "1.1.0",
       "last_updated": "2026-04-22",
-      "change_note": "v1.1.0: Added \u00a71.6 Wave-Level Admin Ceremony Contract section; updated Record Schema Version to 1.1.0; authority: CS2 \u2014 maturion-isms#1446"
+      "change_note": "v1.1.0: Added \u00a71.6 Wave-Level Admin Ceremony Contract section; updated Record Schema Version to 1.1.0; authority: CS2 \u2014 maturion-isms#1447"
     },
     {
       "filename": "stage10-prebrief-ceremony-contract-examples.md",
@@ -2562,7 +2562,7 @@
       "file_hash_sha256": "836e1335dcb09986d7e3e6cfa3ef89c5d377a00d609dbb50af3287d2a6892087",
       "canonical_version": "1.0.0",
       "last_updated": "2026-04-22",
-      "change_note": "v1.0.0: Initial creation \u2014 proof-of-operation examples for Wave-Level Admin Ceremony Contract; authority: CS2 \u2014 maturion-isms#1446"
+      "change_note": "v1.0.0: Initial creation \u2014 proof-of-operation examples for Wave-Level Admin Ceremony Contract; authority: CS2 \u2014 maturion-isms#1447"
     },
     {
       "filename": "TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md",

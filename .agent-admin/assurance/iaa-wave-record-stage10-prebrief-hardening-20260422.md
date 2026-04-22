@@ -2,7 +2,7 @@
 
 **Wave**: stage10-prebrief-hardening-20260422
 **Branch**: copilot/implement-wave-level-admin-ceremony-contract
-**Issue**: maturion-isms#1446 — Harden Stage 10 IAA Pre-Brief: add wave-level admin ceremony contract and enforce it at handover
+**Issue**: maturion-isms#1447 — Harden Stage 10 IAA Pre-Brief: add wave-level admin ceremony contract and enforce it at handover
 **Issue Reference Note**: Aligned with the current authoritative `wave-current-tasks.md` entry for this wave.
 **Agent**: independent-assurance-agent v6.2.0
 **Wave Record Created**: 2026-04-22
@@ -96,7 +96,7 @@ The following blockers must be satisfied BEFORE IAA-FINAL invocation:
 **Rule**: INDEPENDENT_ASSURANCE_AGENT_CANON.md §Independence Requirements rule 1 — "The IAA cannot validly assure its own governing contract — CS2 must directly review." SELF-MOD-IAA-001 is ACTIVE and CONSTITUTIONAL.
 
 **Obligation**: governance-liaison-isms-agent MUST NOT commit D3 without explicit CS2 (@APGI-cmy) sign-off documented in:
-1. The issue (#1446) — CS2 must explicitly approve the new ACR conditions in writing
+1. The issue (#1447) — CS2 must explicitly approve the new ACR conditions in writing
 2. The PREHANDOVER proof — `cs2_direct_review_confirmed: YES` field required
 3. The commit message — must reference CS2 approval (e.g., "CS2 approved — issue #XXXX")
 
@@ -144,7 +144,7 @@ A-031 carve-out: IAA-generated ceremony artifacts (this wave record, IAA session
 
 #### SB-006 — Issue Number ✅ RECONCILED
 
-**Finding**: The PRE-BRIEF invocation request originally referenced issue **#1446**, while the initial `wave-current-tasks.md` recorded issue **#1442**. This discrepancy has been reconciled: all ceremony artifacts (wave record, wave-current-tasks.md, scope declaration, PREHANDOVER proof) now consistently reference **maturion-isms#1446** as the authoritative issue for this wave.
+**Finding**: The PRE-BRIEF invocation request originally referenced issue **#1447**, while the initial `wave-current-tasks.md` recorded issue **#1442**. This discrepancy has been reconciled: all ceremony artifacts (wave record, wave-current-tasks.md, scope declaration, PREHANDOVER proof) now consistently reference **maturion-isms#1447** as the authoritative issue for this wave.
 
 **Status**: RESOLVED — no further action required.
 
@@ -246,7 +246,7 @@ If ECAP is appointed: **ACR-01 (ECAP reconciliation summary absence = AUTO-REJEC
 | Hard gate | SELF-MOD-IAA-001 active on D3 (IAA canon) — CS2 direct review REQUIRED |
 | Anti-regression obligations | YES — A-020 (template modification D2) |
 | FBR obligations | NO — governance wave, not BUILD/AAWP_MAT |
-| Scope blockers | SB-001 (SELF-MOD-IAA-001/D3), SB-002 (CANON_INVENTORY), SB-003 (version bumps), SB-004 (ripple), SB-005 (SCOPE_DECLARATION parity), SB-006 (RESOLVED — issue# reconciled to #1446), SB-007 (PREHANDOVER structure), SB-008 (wave record path discrepancy) |
+| Scope blockers | SB-001 (SELF-MOD-IAA-001/D3), SB-002 (CANON_INVENTORY), SB-003 (version bumps), SB-004 (ripple), SB-005 (SCOPE_DECLARATION parity), SB-006 (RESOLVED — issue# reconciled to #1447), SB-007 (PREHANDOVER structure), SB-008 (wave record path discrepancy) |
 | Ceremony admin status | PENDING — ACR-01 through ACR-17 activate if ECAP appointed at Phase 4 |
 | IAA session for this pre-brief | session-215 |
 | IAA session for final audit (IAA-FINAL) | session-216 |
