@@ -2188,6 +2188,17 @@
       "file_hash_sha256": "66ebc152177664126ce596a449232c1eb35e3c7a803920f6c08b7bcf1dc31917"
     },
     {
+      "filename": "TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md",
+      "version": "1.0.0",
+      "file_hash": "8c047329381b3714235f88c880a31c17210efa220f4a294b6b42fe5ddfdd35eb",
+      "effective_date": "2026-04-22",
+      "description": "Establishes two mandatory integrity rules: (1) no future-dated factual claim may appear in governance evidence artifacts (Rule T-001/T-002); (2) evidence-type discipline \u2014 deployment/CDV items require LIVE_RUNTIME or LIVE_E2E evidence; static code evidence does not satisfy live-deployment checklist items (Rules E-001/E-002/E-003). Tier mapping of the PR #1444 review gap.",
+      "type": "canon",
+      "path": "governance/canon/TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "8c047329381b3714235f88c880a31c17210efa220f4a294b6b42fe5ddfdd35eb"
+    },
+    {
       "filename": "TEST_REMOVAL_GOVERNANCE_GATE.md",
       "version": "1.0",
       "file_hash": "1bd997b07837e1c3375f5b4b40c9086a8fd39d598341f749ed7c8e23f0ad3c84",
@@ -2565,5 +2576,5 @@
       "file_hash_sha256": "8c047329381b3714235f88c880a31c17210efa220f4a294b6b42fe5ddfdd35eb"
     }
   ],
-  "total_entries": 210
+  "total_entries": 211
 }
