@@ -21,11 +21,14 @@ Workflow-name rename only. apps/mat-ai-gateway/ application path retained unchan
 - `modules/MMM/12-phase4-ecap/deployment-alignment.md` - Deployment alignment record for Vercel AI gateway and edge functions
 - `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-post-stage12-backend-alignment-20260422.md` - Foreman personal scope declaration artifact
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks-mmm-post-stage12-backend-alignment-20260422.md` - Wave task registry file for this wave
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-post-stage12-backend-alignment-20260422.md` - PREHANDOVER proof for this wave
+- `.agent-workspace/foreman-v2/memory/session-mmm-post-stage12-backend-alignment-20260422.md` - Session memory for this wave
 
 ### Modified
 
 - `modules/MMM/BUILD_PROGRESS_TRACKER.md` - Updated with deployment alignment state and wave references
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated from previous wave to this wave mmm-post-stage12-backend-alignment-20260422
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Appended S-041 improvement suggestion entry for this wave
 - `SCOPE_DECLARATION.md` - This scope declaration for wave mmm-post-stage12-backend-alignment-20260422
 
 ## Out of Scope
