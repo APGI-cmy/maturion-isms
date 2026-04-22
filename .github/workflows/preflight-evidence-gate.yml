@@ -594,8 +594,8 @@ jobs:
       - name: Run governance evidence exactness checks
         run: |
           echo "=== Governance Evidence Exactness Gate ==="
-          echo "Authority: LIVING_AGENT_SYSTEM.md v6.2.0, MERGE_GATE_PHILOSOPHY.md"
-          echo "Checks: PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE, VERSION-MISMATCH"
+          echo "Authority: LIVING_AGENT_SYSTEM.md v6.2.0"
+          echo "Checks: PATH COUNT HASH VERSION-MISMATCH"
           echo ""
           chmod +x .github/scripts/validate-governance-evidence-exactness.sh
           .github/scripts/validate-governance-evidence-exactness.sh
