@@ -229,7 +229,7 @@ else
     echo "   ℹ️  N/A — No added/modified governance/canon/ files in this diff."
   else
     while IFS= read -r f; do
-      if [ -z "$f" ] || [ ! -f "$f" ]; then
+      if [ ! -f "$f" ]; then
         continue
       fi
       # Extract all version strings, deduplicate — handles **Version**: x.y.z, *Version: x.y.z, Version: x.y.z
