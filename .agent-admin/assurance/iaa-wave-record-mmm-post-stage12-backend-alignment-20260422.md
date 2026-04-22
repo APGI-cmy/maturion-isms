@@ -3,7 +3,7 @@
 **Agent**: independent-assurance-agent v6.2.0
 **Wave ID**: mmm-post-stage12-backend-alignment-20260422
 **Issue**: maturion-isms#1455 — Align post-Stage-12 MMM backend deployments: MAT AI Gateway → MMM AI Gateway and MAT Edge Functions → MMM Edge Functions
-**Branch**: copilot/align-post-stage12-mmm-backend-deployments
+**Branch**: copilot/align-mat-ai-gateway-deployments
 **Date**: 2026-04-22
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Adoption Phase**: PHASE_B_BLOCKING — hard gate ACTIVE

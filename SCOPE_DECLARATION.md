@@ -36,3 +36,8 @@ Workflow-name rename only. apps/mat-ai-gateway/ application path retained unchan
 - Renaming apps/mat-ai-gateway/ application directory
 - Provisioning or modifying Render service configuration
 - Any files not listed above
+
+## Deleted
+
+- `.github/workflows/deploy-mat-ai-gateway.yml` - Replaced by deploy-mmm-ai-gateway.yml (git rename R097)
+- `.github/workflows/deploy-mat-edge-functions.yml` - Replaced by deploy-mmm-edge-functions.yml (git rename R094)
