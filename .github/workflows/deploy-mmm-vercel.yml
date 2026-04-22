@@ -6,6 +6,9 @@ on:
       - main
     paths:
       - 'apps/mmm/**'
+      - 'api/**'
+      - 'packages/ai-centre/src/**'
+      - 'apps/maturion-maturity-legacy/supabase/migrations/**'
       - 'vercel.json'
       - '.github/workflows/deploy-mmm-vercel.yml'
       - 'pnpm-lock.yaml'
@@ -14,6 +17,9 @@ on:
       - main
     paths:
       - 'apps/mmm/**'
+      - 'api/**'
+      - 'packages/ai-centre/src/**'
+      - 'apps/maturion-maturity-legacy/supabase/migrations/**'
       - 'vercel.json'
       - '.github/workflows/deploy-mmm-vercel.yml'
       - 'pnpm-lock.yaml'
