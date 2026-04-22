@@ -1,7 +1,7 @@
 # Scope Declaration — fix-vercel-deployment-configuration
 
 **Wave**: fix-vercel-deployment-configuration
-**PR**: (current)
+**PR**: 1452
 **Date**: 2026-04-22
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
