@@ -3,7 +3,7 @@
 ## Status
 **Type**: Tier 2 Governance Checklist  
 **Authority**: CS2 — EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md v1.1.0  
-**Version**: 1.2.0  
+**Version**: 1.5.0  
 **Effective Date**: 2026-04-17  
 **Owner**: execution-ceremony-admin-agent (per-job completion) / Foreman QP (per-job review)  
 **Purpose**: Authoritative checklist for ceremony completeness. Used by the `execution-ceremony-admin-agent` before bundle handback and by the Foreman QP checkpoint before IAA invocation.
@@ -239,6 +239,24 @@ grep -E "art_refresh_required|art_refresh_completed" .agent-admin/prehandover/pr
 
 ---
 
+## Section 11: Evidence Exactness Checks (EVIDENCE-EXACT-001 through EVIDENCE-EXACT-005)
+
+> **When**: Run before calling `.github/scripts/validate-governance-evidence-exactness.sh` AND as a manual
+> pre-IAA check. These five checks address the five recurring defect classes that cause avoidable
+> review-churn and IAA REJECTION-PACKAGEs.
+>
+> **Script**: `.github/scripts/validate-governance-evidence-exactness.sh` (also enforced as CI gate `preflight/evidence-exactness`)
+
+| # | Defect Class | Check | Command | Verified (✓/✗) | Notes |
+|---|---|---|---|---|---|
+| 11.1 | VERSION-MISMATCH (cross-artifact) | Version in modified governance file header matches CANON_INVENTORY entry version for that path | `grep -oE "Version: [0-9]+\.[0-9]+\.[0-9]+" <file> \| head -1` vs `jq '.canons[] \| select(.path=="<file>") \| .version' governance/CANON_INVENTORY.json` | | |
+| 11.2 | VERSION-MISMATCH (internal) | All version strings within a single modified canon file are consistent — amendment history monotonically increasing | `grep -oE "[Vv]ersion:? [0-9]+\.[0-9]+\.[0-9]+" governance/canon/<file>.md \| sort -uV` → should return one unique version (Warning, not hard block) | | |
+| 11.3 | PATH-MISMATCH | Every path cited in SCOPE_DECLARATION.md exists in `git diff --name-only origin/main...HEAD` (for PR files) OR `git ls-tree -r HEAD --name-only` (for pre-existing files) | `.github/scripts/validate-governance-evidence-exactness.sh` Check 1 output | | |
+| 11.4 | COUNT-MISMATCH | Declared `files_changed` in PREHANDOVER proof YAML matches `git diff --name-only origin/main...HEAD \| wc -l` | `git diff --name-only origin/main...HEAD \| wc -l` vs `grep "files_changed:" .agent-admin/prehandover/proof-*.md` | | |
+| 11.5 | HASH-INCOMPLETE | No "hash verification complete" claim exists in any PREHANDOVER proof unless CANON_INVENTORY.json has zero null/empty file_hash_sha256 values | `.github/scripts/validate-governance-evidence-exactness.sh` Check 3 output | | |
+
+---
+
 ## References
 
 - `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` v1.1.0 — §3.5–§3.9 (duties)
@@ -246,11 +264,11 @@ grep -E "art_refresh_required|art_refresh_completed" .agent-admin/prehandover/pr
 - `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` v1.4.0 — §14.6 (QP checkpoint)
 - `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.11.0 — §Admin-Ceremony Rejection Triggers
 - `governance/checklists/execution-ceremony-admin-reconciliation-matrix.md` — cross-artifact dependencies (R18: renumber refresh)
-- `governance/checklists/execution-ceremony-admin-anti-patterns.md` — auto-fail conditions (AAP-23, AAP-24)
-- `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` v1.3.0 — PREHANDOVER proof template (ART section)
+- `governance/checklists/execution-ceremony-admin-anti-patterns.md` — auto-fail conditions (AAP-23, AAP-24, AAP-25, AAP-26, AAP-27)
+- `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` v1.4.0 — PREHANDOVER proof template (ART section + Evidence Exactness Gate)
 - `governance/templates/liaison-mini-ceremony-pack.md` v1.0.0 — liaison / non-ECAP mini-ceremony pack
 - `governance/checklists/liaison-mini-ceremony-checklist.md` v1.0.0 — liaison mini-ceremony execution guide
 
 ---
 
-*Version: 1.4.0 | Effective: 2026-04-17 | Amended: 2026-04-21 (v1.4.0) — Added Section 10: Authoritative Reference Table (ART) Verification (§4.3f Check M / Check N — AAP-23/AAP-24/ACR-17); updated Section 9 Final Acceptance Block to include Section 10 and ART presence confirmation; updated References to include v1.7.0 canon and new liaison mini-ceremony files; wave admin-ceremony-hardening-20260421 | Amended: 2026-04-20 (v1.3.0) — Added checks 5.10 and 5.11: active final-state bundle IAA token/session coherence + historical archive separation (AAP-22 / ACR-16 / §4.3e Check L; maturion-isms#1422); updated Section 9 final acceptance block to require explicit AAP-22 coherence confirmation; updated IAA canon reference to v1.10.0 | Amended: 2026-04-19 (v1.2.0) — Added check 3.9: active control artifact normalization required before final handback (AAP-21 / ACR-15 / A-039); updated Section 9 final acceptance block to include active tracker normalization confirmation | Amended: 2026-04-19 (v1.1.0) — Added check 3.8: `## Ripple/Cross-Agent Assessment` section presence in PREHANDOVER proof (HFMC-01 / AAP-20) | Authority: CS2 (Johan Ras)*
+*Version: 1.5.0 | Effective: 2026-04-17 | Amended: 2026-04-22 (v1.5.0) — Added Section 11: Evidence Exactness Checks (EVIDENCE-EXACT-001 through EVIDENCE-EXACT-005) covering VERSION-MISMATCH cross-artifact, VERSION-MISMATCH internal, PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE; updated References to include AAP-25/26/27 and PREHANDOVER template v1.4.0; wave gov-evidence-exactness-hardening-20260422 | Amended: 2026-04-21 (v1.4.0) — Added Section 10: Authoritative Reference Table (ART) Verification (§4.3f Check M / Check N — AAP-23/AAP-24/ACR-17); updated Section 9 Final Acceptance Block to include Section 10 and ART presence confirmation; updated References to include v1.7.0 canon and new liaison mini-ceremony files; wave admin-ceremony-hardening-20260421 | Amended: 2026-04-20 (v1.3.0) — Added checks 5.10 and 5.11: active final-state bundle IAA token/session coherence + historical archive separation (AAP-22 / ACR-16 / §4.3e Check L; maturion-isms#1422); updated Section 9 final acceptance block to require explicit AAP-22 coherence confirmation; updated IAA canon reference to v1.10.0 | Amended: 2026-04-19 (v1.2.0) — Added check 3.9: active control artifact normalization required before final handback (AAP-21 / ACR-15 / A-039); updated Section 9 final acceptance block to include active tracker normalization confirmation | Amended: 2026-04-19 (v1.1.0) — Added check 3.8: `## Ripple/Cross-Agent Assessment` section presence in PREHANDOVER proof (HFMC-01 / AAP-20) | Authority: CS2 (Johan Ras)*
