@@ -25,9 +25,9 @@ This wave hardens the Stage 10 IAA Pre-Brief by adding an explicit **wave-level 
       qp_verdict: PENDING
       notes: Must complete before any delegation below. Wave record path: .agent-admin/assurance/iaa-wave-record-stage10-prebrief-hardening-20260422.md
 
-- [ ] TASK-S10H-SCOPE — Scope declaration committed
+- [x] TASK-S10H-SCOPE — Scope declaration committed
       builder: foreman-v2-agent
-      qp_verdict: PENDING
+      qp_verdict: COMMITTED
       notes: .agent-workspace/foreman-v2/personal/scope-declaration-wave-stage10-prebrief-hardening-20260422.md
 
 - [ ] TASK-S10H-001 — D1: Harden IAA_PRE_BRIEF_PROTOCOL.md — add mandatory §Expected Wave-Level Admin Ceremony Contract section to Pre-Brief Content Requirements (version bump v1.2.2 → v1.3.0)
