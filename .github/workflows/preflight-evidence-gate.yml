@@ -580,3 +580,22 @@ jobs:
             echo "✅ PASS — All PR-introduced PREHANDOVER proofs contain a concrete ## Ripple/Cross-Agent Assessment section."
             echo "   HFMC-01 compliance confirmed."
           fi
+
+  evidence-exactness-check:
+    name: "preflight/evidence-exactness"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Run governance evidence exactness checks
+        run: |
+          echo "=== Governance Evidence Exactness Gate ==="
+          echo "Authority: LIVING_AGENT_SYSTEM.md v6.2.0, MERGE_GATE_PHILOSOPHY.md"
+          echo "Checks: PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE, VERSION-MISMATCH"
+          echo ""
+          chmod +x .github/scripts/validate-governance-evidence-exactness.sh
+          .github/scripts/validate-governance-evidence-exactness.sh
