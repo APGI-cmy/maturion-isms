@@ -157,3 +157,28 @@ _No rejections recorded at pre-brief stage._
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **IAA Adoption Phase**: PHASE_B_BLOCKING — hard gate ACTIVE
 **Self-Modification Lock**: SELF-MOD-IAA-001 ACTIVE
+
+---
+
+## REJECTION_HISTORY
+
+### Entry 1 — 2026-04-22
+
+**Date**: 2026-04-22
+**Session**: IAA-session-mmm-post-stage12-backend-alignment-20260422
+**Verdict**: REJECTION-PACKAGE
+**Checks run**: 11 total — 9 PASS, 2 FAIL
+
+**Finding 1 — SCOPE_DECLARATION missing deleted/renamed-from files**
+- Classification: Ceremony
+- Finding: `deploy-mat-ai-gateway.yml` and `deploy-mat-edge-functions.yml` deleted in diff (R097, R094) but not listed in SCOPE_DECLARATION.md. No "Deleted" section present.
+- Fix required: Add Deleted/Renamed-From section listing both source workflow files.
+- Prevention: Add Deleted section to SCOPE_DECLARATION template (S-041 candidate).
+
+**Finding 2 — Wave record branch field incorrect**
+- Classification: Ceremony
+- Finding: Wave record `Branch: copilot/align-post-stage12-mmm-backend-deployments` ≠ actual branch `copilot/align-mat-ai-gateway-deployments`
+- Fix required: Correct wave record Branch field; re-commit.
+- Prevention: FAIL-ONLY-ONCE promotion — branch field must be verified against `git branch --show-current` at pre-brief commit time.
+
+---
