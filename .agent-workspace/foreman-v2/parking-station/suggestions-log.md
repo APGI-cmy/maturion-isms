@@ -106,3 +106,5 @@
 | 2026-04-20 | foreman-v2-agent | session-165-aimc-strategy-followup-20260420 | IMPROVEMENT | Multiple follow-up tracking files (D3-D6) per issue: consider a consolidated follow-up-wave-registry template for orchestration tracking waves that bundle multiple downstream follow-up records into a single indexed artifact, reducing file count while preserving per-workstream traceability. | convergence-bridge-wave-tracking-20260420.md |
 
 | 2026-04-21 | foreman-v2-agent | session-mmm-tracker-reconciliation-20260421 | improvement | Tracker update deferred-merge pattern — update BUILD_PROGRESS_TRACKER.md immediately upon CS2 merge confirmation; do not require separate reconciliation wave | session-mmm-tracker-reconciliation-20260421.md |
+
+| 2026-04-22 | foreman-v2-agent | session-mmm-post-stage12-cdv-validation-20260422 | IMPROVEMENT | CDV document as reusable template — consider adding cdv-staging-validation.md to governance layer-down pattern for all future modules reaching Stage 12; would standardize post-build operational follow-up tracking across all ISMS modules | session-mmm-post-stage12-cdv-validation-20260422.md |
