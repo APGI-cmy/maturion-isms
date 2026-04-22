@@ -1,7 +1,7 @@
-# Scope Declaration — gov-evidence-exactness-hardening-20260422
+# Scope Declaration — governance-hardening-temporal-evidence-integrity-20260422
 
-**Wave**: gov-evidence-exactness-hardening-20260422
-**PR**: 1441
+**Wave**: governance-hardening-temporal-evidence-integrity-20260422
+**PR**: 1446
 **Date**: 2026-04-22
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
@@ -9,19 +9,19 @@
 
 ### Added
 
-- `.agent-admin/assurance/iaa-wave-record-gov-evidence-exactness-hardening-20260422.md` - IAA wave record with pre-brief for this wave
-- `.github/scripts/validate-governance-evidence-exactness.sh` - New governance evidence exactness validation script (T1)
-- `.agent-workspace/foreman-v2/memory/session-gov-evidence-exactness-20260422.md` - Foreman session memory
-- `governance/design/evidence-exactness-proof-of-operation-20260422.md` - Proof-of-operation with actual script output (T5)
+- `governance/canon/TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md` - New Tier 1 canon: temporal integrity rules T-001/T-002 and evidence-type discipline rules E-001/E-002/E-003
 
 ### Modified
 
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Active wave tasks tracker updated for this wave
-- `.github/workflows/preflight-evidence-gate.yml` - Added evidence-exactness-check CI job (T2)
-- `governance/CANON_INVENTORY.json` - Updated T3/T4/T6 entries with new versions and hashes (T7)
-- `governance/checklists/execution-ceremony-admin-anti-patterns.md` - Added AAP-25/26/27 (T4)
-- `governance/checklists/execution-ceremony-admin-checklist.md` - Added Section 11 evidence exactness checks (T3)
-- `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` - Added Evidence Exactness Gate section (T6)
+- `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` - Added A-040 (temporal audit) and A-041 (evidence-type discipline)
+- `.agent-workspace/foreman-v2/knowledge/FM_QP_ENHANCED_QUICK_REFERENCE.md` - Added QP-FAIL-008/009 and Enhancement 3; restored Enhancement 2 header
+- `.agent-workspace/foreman-v2/knowledge/index.md` - Version bump v2.9.0 with new canon reference
+- `.agent-workspace/foreman-v2/knowledge/wave-reconciliation-checklist.md` - Added Section E (Temporal and Evidence-Type Audit); fixed grep portability
+- `.agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md` - Added A-036 (temporal audit) and A-037 (evidence-type discipline)
+- `.agent-workspace/independent-assurance-agent/knowledge/iaa-category-overlays.md` - Added GOVERNANCE_EVIDENCE overlay OVL-GE-001/002/003
+- `.agent-workspace/independent-assurance-agent/knowledge/index.md` - Version bump v3.6.0 with new canon reference
+- `governance/CANON_INVENTORY.json` - Added TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md entry; total_canons 205; total_entries corrected to 211
+- `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` - Added Evidence-Type Mapping section; restored Ripple/Cross-Agent Assessment heading; merged Evidence Exactness Gate section from main
 - `SCOPE_DECLARATION.md` - Scope declaration for this wave
 
 ### Deleted
