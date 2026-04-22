@@ -13,7 +13,6 @@
 
 ### Modified
 
-- `vercel.json` - Replace legacy MAT frontend path references with MMM frontend path (`apps/mmm`), use pnpm consistently
 - `.github/workflows/deploy-mmm-vercel.yml` - Rename from `deploy-mat-vercel.yml`; update workflow name, trigger paths, working-directory, artifact names, production URL; add `stale-path-guard` job; restore `api/**`, `packages/ai-centre/src/**`, `apps/maturion-maturity-legacy/supabase/migrations/**` trigger paths for `typecheck-api` and `supabase-migrate` jobs
 - `SCOPE_DECLARATION.md` - Scope declaration for this wave
 
