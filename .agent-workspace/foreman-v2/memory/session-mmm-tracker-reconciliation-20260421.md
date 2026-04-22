@@ -66,13 +66,13 @@ implementation_guard_check: N/A — documentation only; no code written
 5. Stage 9: COMPLETE ✅ FORMALLY CLOSED — pre-build closure confirmed
 6. Stage 10: CS2 merge confirmed (PR #1429 merged 2026-04-21)
 7. Stage 11: CS2 merge confirmed (PR #1429 merged 2026-04-21)
-8. Stage 12: COMPLETE ✅ — PR #1429 MERGED 2026-04-21; Execution Evidence line added
+8. Stage 12: ACTIVE — B1–B9 ALL COMPLETE (959/959 tests GREEN); Phase 4 ECAP + IAA audit complete; CDV/staging follow-up pending; PR #1429 MERGED 2026-04-21; Execution Evidence line added
 9. Stage 12: Total tests corrected to 959/959
-10. Stage 12 Notes: Stale "Core build not yet started" replaced with COMPLETE status
-11. Stage 12: 12.1 CDV governance note added
+10. Stage 12 Notes: Stale "Core build not yet started" replaced with ACTIVE/complete build-execution status; CDV/staging items explicitly scoped as post-Stage-12 operational follow-up
+11. Stage 12: 12.1 CDV governance note added (POST-STAGE-12 OPERATIONAL FOLLOW-UP scope)
 12. Stage 12: Next lawful operational focus note added
-13. Stage Migration table: All rows updated to COMPLETE ✅
-14. Governance Compliance: Stale "pending" language removed; Stage 12 COMPLETE added
+13. Stage Migration table: Stage 12 row updated to ACTIVE (build execution complete, CDV/staging follow-up pending)
+14. Governance Compliance: Stale "pending" language removed; Stage 12 ACTIVE status with complete build execution noted
 15. Current Stage Summary: PR #1429 MERGED; Next Steps updated
 
 **QP VERDICT**: PASS — Documentation reconciliation accurate per PR #1429 GitHub API confirmation (merged_at: 2026-04-21T13:04:09Z, merged_by: APGI-cmy)
