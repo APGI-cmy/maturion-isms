@@ -1,9 +1,9 @@
 # IAA Wave Record — stage10-prebrief-hardening-20260422
 
 **Wave**: stage10-prebrief-hardening-20260422
-**Branch**: copilot/fix-253484265-1108482416-d97140c1-67b5-4859-8372-838dd1a899c8
-**Issue**: maturion-isms#1442 — Harden Stage 10 IAA Pre-Brief: add wave-level admin ceremony contract and enforce it at handover
-**Issue Reference Note**: ⚠️ DISCREPANCY — invoking comment referenced issue #1446; wave-current-tasks.md records #1442. Wave-current-tasks.md is the authoritative source. **SB-006** declared — Foreman must reconcile before IAA-FINAL invocation.
+**Branch**: copilot/implement-wave-level-admin-ceremony-contract
+**Issue**: maturion-isms#1446 — Harden Stage 10 IAA Pre-Brief: add wave-level admin ceremony contract and enforce it at handover
+**Issue Reference Note**: Aligned with the current authoritative `wave-current-tasks.md` entry for this wave.
 **Agent**: independent-assurance-agent v6.2.0
 **Wave Record Created**: 2026-04-22
 **Governed by**: `capabilities.wave_record_path_pattern` (contract §capabilities.assurance)
@@ -96,7 +96,7 @@ The following blockers must be satisfied BEFORE IAA-FINAL invocation:
 **Rule**: INDEPENDENT_ASSURANCE_AGENT_CANON.md §Independence Requirements rule 1 — "The IAA cannot validly assure its own governing contract — CS2 must directly review." SELF-MOD-IAA-001 is ACTIVE and CONSTITUTIONAL.
 
 **Obligation**: governance-liaison-isms-agent MUST NOT commit D3 without explicit CS2 (@APGI-cmy) sign-off documented in:
-1. The issue (#1442 or the correct issue — see SB-006) — CS2 must explicitly approve the new ACR conditions in writing
+1. The issue (#1446) — CS2 must explicitly approve the new ACR conditions in writing
 2. The PREHANDOVER proof — `cs2_direct_review_confirmed: YES` field required
 3. The commit message — must reference CS2 approval (e.g., "CS2 approved — issue #XXXX")
 
@@ -142,13 +142,11 @@ Failure to declare = OVL-CG-004 FAIL → REJECTION-PACKAGE.
 
 A-031 carve-out: IAA-generated ceremony artifacts (this wave record, IAA session memory, IAA token file) are excluded from scope declaration per A-031. Foreman must include A-031 carve-out note in scope/PREHANDOVER proof for any IAA-only artifacts generated during Phase 4.
 
-#### SB-006 — Issue Number Discrepancy ⚠️ REQUIRED RECONCILIATION
+#### SB-006 — Issue Number ✅ RECONCILED
 
-**Finding**: The PRE-BRIEF invocation request referenced issue **#1446**. The authoritative `wave-current-tasks.md` records issue **#1442**. This is a discrepancy that will trigger ACR-03 (session/PR/issue number inconsistency across ceremony artifacts) at IAA-FINAL if not resolved.
+**Finding**: The PRE-BRIEF invocation request originally referenced issue **#1446**, while the initial `wave-current-tasks.md` recorded issue **#1442**. This discrepancy has been reconciled: all ceremony artifacts (wave record, wave-current-tasks.md, scope declaration, PREHANDOVER proof) now consistently reference **maturion-isms#1446** as the authoritative issue for this wave.
 
-**Required action BEFORE IAA-FINAL**: Foreman must confirm whether the correct issue is #1442 or #1446 and update wave-current-tasks.md (if #1446 is correct) or clarify the invocation (if #1442 is correct). All ceremony artifacts (PREHANDOVER proof, session memory, wave-current-tasks.md, scope declaration) must reference the same issue number consistently.
-
-Note: Scope declaration currently records #1442. IAA will check consistency at final audit against `wave-current-tasks.md` as authoritative.
+**Status**: RESOLVED — no further action required.
 
 #### SB-007 — PREHANDOVER Proof Structure Requirements
 
@@ -248,7 +246,7 @@ If ECAP is appointed: **ACR-01 (ECAP reconciliation summary absence = AUTO-REJEC
 | Hard gate | SELF-MOD-IAA-001 active on D3 (IAA canon) — CS2 direct review REQUIRED |
 | Anti-regression obligations | YES — A-020 (template modification D2) |
 | FBR obligations | NO — governance wave, not BUILD/AAWP_MAT |
-| Scope blockers | SB-001 (SELF-MOD-IAA-001/D3), SB-002 (CANON_INVENTORY), SB-003 (version bumps), SB-004 (ripple), SB-005 (SCOPE_DECLARATION parity), SB-006 (issue# discrepancy — RECONCILIATION REQUIRED), SB-007 (PREHANDOVER structure), SB-008 (wave record path discrepancy) |
+| Scope blockers | SB-001 (SELF-MOD-IAA-001/D3), SB-002 (CANON_INVENTORY), SB-003 (version bumps), SB-004 (ripple), SB-005 (SCOPE_DECLARATION parity), SB-006 (RESOLVED — issue# reconciled to #1446), SB-007 (PREHANDOVER structure), SB-008 (wave record path discrepancy) |
 | Ceremony admin status | PENDING — ACR-01 through ACR-17 activate if ECAP appointed at Phase 4 |
 | IAA session for this pre-brief | session-215 |
 | IAA session for final audit (IAA-FINAL) | session-216 |

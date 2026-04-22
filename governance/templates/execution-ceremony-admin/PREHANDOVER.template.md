@@ -122,6 +122,42 @@ suggestions:            NONE                 # NONE | see .agent-workspace/<agen
 
 ---
 
+## Evidence-Type Mapping (Temporal and Evidence-Type Audit)
+
+> **MANDATORY when this wave includes CDV, deployment, operational, or staging validation claims —
+> HANDOVER BLOCKER** (Rules E-001/E-002/E-003; A-041; TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md).
+>
+> For every checklist item in this wave that involves deployment, CDV scenario execution, staging
+> validation, runtime health, or live-environment operation:
+> 1. Label the item with its evidence type (STATIC_CODE / CI_TEST / CONFIG / LIVE_RUNTIME / LIVE_E2E).
+> 2. Confirm the cited evidence meets or exceeds the required fidelity.
+> 3. Confirm no completion claim has a future-dated timestamp (Rule T-001).
+>
+> If this wave has NO deployment/CDV/operational evidence items: state "N/A — no deployment or
+> operational validation items in this wave" and the section is satisfied.
+
+```yaml
+## Evidence-Type Mapping
+evidence_type_mapping_required: YES   # YES if wave includes deployment/CDV/operational items; NO if not applicable
+
+temporal_integrity_check:             # Rule T-001/T-002 — A-040
+  future_dated_claims_found: NO       # YES | NO
+  corrections_made: none              # describe any corrections, or 'none'
+
+evidence_type_items:
+  # One entry per deployment/CDV/operational checklist item
+  # - item:          <checklist item name or ID>
+  #   evidence_type: <STATIC_CODE|CI_TEST|CONFIG|LIVE_RUNTIME|LIVE_E2E>
+  #   status:        <COMPLETE|PENDING>
+  #   evidence_ref:  <URL, log path, or description of evidence>
+  #   compliant:     <YES — evidence meets fidelity requirement | NO — demoted to PENDING>
+  []  # replace with actual items, or keep [] if evidence_type_mapping_required is NO
+```
+
+**Evidence-Type Mapping status**: [ ] PASS — all items labeled and fidelity-confirmed | [ ] N/A — no deployment/operational items
+
+---
+
 ## Ripple/Cross-Agent Assessment
 
 > **HFMC-01 MANDATORY — HANDOVER BLOCKER**: This section MUST be present and MUST contain
@@ -150,4 +186,4 @@ suggestions:            NONE                 # NONE | see .agent-workspace/<agen
 
 ---
 
-*Template Version: 1.4.0 | Authority: ECAP-001 v1.1.0 | Effective: 2026-04-17 | Amended: 2026-04-22 (v1.4.0) — Added `## Evidence Exactness Gate` section (mandatory pre-IAA check: PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE, VERSION-MISMATCH via `.github/scripts/validate-governance-evidence-exactness.sh`; AAP-25/26/27; wave gov-evidence-exactness-hardening-20260422) | Amended: 2026-04-21 (v1.3.0) — Added `## Authoritative Reference Table` section (mandatory, §4.3f Check M / AAP-23 / ACR-17); added `art_refresh_required` and `art_refresh_completed` fields to YAML ART Refresh section (AAP-24 / §4.3f Check N / R18); wave admin-ceremony-hardening-20260421 | Amended: 2026-04-20 (v1.2.0) — Added `active_bundle_iaa_coherence` field to IAA Assurance section (AAP-22 / ACR-16 / §4.3e Check L; maturion-isms#1422); this field confirms single-session/single-token coherence across the entire active final-state bundle before handover | Amended: 2026-04-19 (v1.1.0) — Added mandatory `## Ripple/Cross-Agent Assessment` section (HFMC-01 / AAP-20 / ACR-14) as structural non-optional section; YAML ripple-assessment-summary retained for machine-readable status*
+*Template Version: 1.4.0 | Authority: ECAP-001 v1.1.0 | Effective: 2026-04-22 | Amended: 2026-04-22 (v1.4.0) — Added `## Evidence-Type Mapping` section (mandatory for waves with CDV/deployment/operational items; Rules E-001/E-002/E-003; A-041; canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md; temporal integrity check T-001/A-040; governance hardening maturion-isms#1445); added `## Evidence Exactness Gate` section (mandatory pre-IAA check: PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE, VERSION-MISMATCH via `.github/scripts/validate-governance-evidence-exactness.sh`; AAP-25/26/27; wave gov-evidence-exactness-hardening-20260422) | Amended: 2026-04-21 (v1.3.0) — Added `## Authoritative Reference Table` section (mandatory, §4.3f Check M / AAP-23 / ACR-17); added `art_refresh_required` and `art_refresh_completed` fields to YAML ART Refresh section (AAP-24 / §4.3f Check N / R18); wave admin-ceremony-hardening-20260421 | Amended: 2026-04-20 (v1.2.0) — Added `active_bundle_iaa_coherence` field to IAA Assurance section (AAP-22 / ACR-16 / §4.3e Check L; maturion-isms#1422); this field confirms single-session/single-token coherence across the entire active final-state bundle before handover | Amended: 2026-04-19 (v1.1.0) — Added mandatory `## Ripple/Cross-Agent Assessment` section (HFMC-01 / AAP-20 / ACR-14) as structural non-optional section; YAML ripple-assessment-summary retained for machine-readable status*

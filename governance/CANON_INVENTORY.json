@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "last_updated": "2026-04-22",
-  "total_canons": 205,
-  "generation_timestamp": "2026-04-20T07:08:00Z",
+  "total_canons": 213,
+  "generation_timestamp": "2026-04-22T08:19:00Z",
   "canon_entry_schema": {
     "description": "Schema for canon entries in CANON_INVENTORY.json",
     "required_fields": [
@@ -1504,7 +1504,7 @@
       "file_hash": "70c3f2022d15469696ca3e6e920072b15f69dce31d60b1cf43b9edbe9f110922",
       "file_hash_sha256": "70c3f2022d15469696ca3e6e920072b15f69dce31d60b1cf43b9edbe9f110922",
       "effective_date": "2026-02-24",
-      "amended_date": "2026-04-21",
+      "amended_date": "2026-04-22",
       "description": "Defines the Independent Assurance Agent (IAA) class: role, hard-trigger authority, independence requirements, five-phase delivery proof protocol, binary output (ASSURANCE-TOKEN / REJECTION-PACKAGE), and trigger table. v1.1.0: Zero-Severity-Tolerance policy added.",
       "type": "canon",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
@@ -2448,7 +2448,7 @@
       "file_hash_sha256": "aaaf916421f0088806c1b628b14218528999899807d95ebe4bae711b99a9f8c4",
       "amended_date": "2026-04-22",
       "last_updated": "2026-04-22",
-      "change_note": "v1.5.0: Added Section 11 (Evidence Exactness Checks — EVIDENCE-EXACT-001 through 005: VERSION-MISMATCH cross-artifact, VERSION-MISMATCH internal, PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE); updated References to include AAP-25/26/27 and PREHANDOVER template v1.4.0; wave gov-evidence-exactness-hardening-20260422"
+      "change_note": "v1.5.0: Added Section 11 (Evidence Exactness Checks \u2014 EVIDENCE-EXACT-001 through 005: VERSION-MISMATCH cross-artifact, VERSION-MISMATCH internal, PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE); updated References to include AAP-25/26/27 and PREHANDOVER template v1.4.0; wave gov-evidence-exactness-hardening-20260422"
     },
     {
       "filename": "execution-ceremony-admin-reconciliation-matrix.md",
@@ -2552,6 +2552,17 @@
       "canonical_version": "1.0.0",
       "last_updated": "2026-04-22",
       "change_note": "v1.0.0: Initial creation \u2014 proof-of-operation examples for Wave-Level Admin Ceremony Contract; authority: CS2 \u2014 maturion-isms#1446"
+    },
+    {
+      "filename": "TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md",
+      "version": "1.0.0",
+      "file_hash": "8c047329381b3714235f88c880a31c17210efa220f4a294b6b42fe5ddfdd35eb",
+      "effective_date": "2026-04-22",
+      "description": "Establishes two mandatory integrity rules: (1) no future-dated factual claim may appear in governance evidence artifacts (Rule T-001/T-002); (2) evidence-type discipline \u2014 deployment/CDV items require LIVE_RUNTIME or LIVE_E2E evidence; static code evidence does not satisfy live-deployment checklist items (Rules E-001/E-002/E-003). Tier mapping of the PR #1444 review gap.",
+      "type": "canon",
+      "path": "governance/canon/TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "8c047329381b3714235f88c880a31c17210efa220f4a294b6b42fe5ddfdd35eb"
     }
   ],
   "total_entries": 210
