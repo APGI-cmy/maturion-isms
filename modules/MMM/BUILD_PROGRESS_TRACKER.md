@@ -498,10 +498,10 @@ The items below require the PR #1429 artefacts to be deployed to the staging env
 - [ ] Routing works (if multi-page app)
 
 **Backend Application Deliverables** (if backend required):
-- [x] API server code exists at documented path (`supabase/functions/` — 22 Edge Functions) — PR #1429
-- [x] Database schema deployed (4 migration files, 26 mmm_ tables, RLS, indexes) — PR #1429
-- [x] Database seeded with test data (`supabase/seed-mmm.sql`) — PR #1429
-- [x] API endpoints respond correctly (959 tests GREEN covering all Edge Functions)
+- [x] API server code exists at documented path (`supabase/functions/` — 22 Edge Functions) — PR #1429 (code-confirmed)
+- [ ] Database schema deployed to staging (migration files merged in PR #1429; staging deploy confirmation needed)
+- [ ] Database seeded with test data (`supabase/seed-mmm.sql` merged; staging seed confirmation needed)
+- [ ] API endpoints respond correctly in staging (959 tests GREEN in CI; live staging health check pending)
 - [ ] API deployed to staging/production
 - [ ] API URL accessible and functional
 

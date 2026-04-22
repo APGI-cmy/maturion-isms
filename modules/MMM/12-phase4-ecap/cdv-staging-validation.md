@@ -32,7 +32,7 @@ SB-003 was the credential provisioning / wiring hard gate in Stage 12. Token pro
 
 **Status**: ✅ CODE EVIDENCE PRESENT (static code review — 2026-04-22)
 
-**Evidence source**: `supabase/functions/_shared/mmm-aimc-client.ts` — B7 live wire (integration-builder, 2026-04-25, merged PR #1429)
+**Evidence source**: `supabase/functions/_shared/mmm-aimc-client.ts` — B7 live wire (integration-builder, merged PR #1429, 2026-04-21)
 
 | Evidence Point | Code Reference | Description |
 |----------------|---------------|-------------|
