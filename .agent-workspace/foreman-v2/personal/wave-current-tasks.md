@@ -7,7 +7,7 @@
 **Date**: 2026-04-22
 **CS2 Authorization**: CONFIRMED — issue #1443 opened by CS2 (@APGI-cmy) in CS2-governed repository
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-post-stage12-cdv-validation-20260422.md
-iaa_prebrief_status: PENDING — invoking IAA at Phase 1 Step 1.8
+iaa_prebrief_status: COMPLETE — PRE-BRIEF committed SHA b00557a
 
 ## Wave Purpose
 
@@ -24,13 +24,13 @@ Key deliverables:
 |------|-------|--------|-------|
 | Phase 1 Preflight | foreman-v2-agent | COMPLETE ✅ | Identity, Tier 2, CANON_INVENTORY, session memory, FAIL-ONLY-ONCE, merge gates, readiness |
 | wave-current-tasks.md | foreman-v2-agent | COMPLETE ✅ | This file |
-| scope-declaration | foreman-v2-agent | IN_PROGRESS | Creating at Phase 1 Step 1.8 |
-| IAA Pre-Brief | independent-assurance-agent | PENDING | Invoking at Phase 1 Step 1.8 |
-| CDV staging validation document | foreman-v2-agent | PENDING | Post-IAA |
-| BUILD_PROGRESS_TRACKER.md update | foreman-v2-agent | PENDING | Post-IAA |
-| PREHANDOVER proof | foreman-v2-agent | PENDING | Phase 4 |
-| Session memory | foreman-v2-agent | PENDING | Phase 4 |
-| IAA Final Audit | independent-assurance-agent | PENDING | Phase 4 |
+| scope-declaration | foreman-v2-agent | COMPLETE ✅ | committed in this wave |
+| IAA Pre-Brief | independent-assurance-agent | COMPLETE ✅ | PRE-BRIEF committed SHA b00557a |
+| CDV staging validation document | foreman-v2-agent | COMPLETE ✅ | modules/MMM/12-phase4-ecap/cdv-staging-validation.md |
+| BUILD_PROGRESS_TRACKER.md update | foreman-v2-agent | COMPLETE ✅ | modules/MMM/BUILD_PROGRESS_TRACKER.md |
+| PREHANDOVER proof | foreman-v2-agent | COMPLETE ✅ | .agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-post-stage12-cdv-validation-20260422.md |
+| Session memory | foreman-v2-agent | COMPLETE ✅ | .agent-workspace/foreman-v2/memory/session-mmm-post-stage12-cdv-validation-20260422.md |
+| IAA Final Audit | independent-assurance-agent | COMPLETE ✅ | ASSURANCE-TOKEN: IAA-session-mmm-post-stage12-cdv-validation-20260422-PASS (26/26) |
 
 ## SB-003 Sub-Gate Assessment (Static Code Review)
 
