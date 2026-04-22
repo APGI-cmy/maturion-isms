@@ -396,6 +396,63 @@ Applied when PR category is `AGENT_INTEGRITY`.
 
 ---
 
+## GOVERNANCE_EVIDENCE Overlay
+
+Applied when PR category is `GOVERNANCE_EVIDENCE` or `GOVERNANCE_AUDIT` — i.e. any PR that delivers,
+updates, or submits governance evidence artifacts (CDV validation documents, deployment validation
+checklists, staging evidence bundles, wave completion trackers, or any document asserting operational
+facts about the live system state).
+
+Also applied as **supplemental checks** on CANON_GOVERNANCE, CI_WORKFLOW, and BUILD/AAWP_MAT PRs
+whenever those PRs include evidence sections, checklists, or deployment/CDV validation claims.
+
+> **Mindset**: IAA verifies two properties for every evidence claim: (1) temporal consistency — is
+> the claim's timestamp plausible given the PR timeline? (2) evidence-type sufficiency — does the
+> cited evidence actually prove what the claim asserts, or is a higher-fidelity evidence type required?
+>
+> **Canon reference**: `governance/canon/TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md` — Rules T-001,
+> T-002, E-001, E-002, E-003. Load this file when applying OVL-GE-001 through OVL-GE-003.
+>
+> **FAIL-ONLY-ONCE**: A-036 (temporal integrity) and A-037 (evidence-type discipline).
+
+### Substance Checks (Primary)
+
+| Check ID | Check Name | What IAA Does |
+|----------|-----------|---------------|
+| OVL-GE-001 | Temporal integrity — no future-dated factual claims | For every claim in the artifact that asserts an event as already completed: verify the associated timestamp is on or before the PR creation date and current review date. A completion claim with a future date = REJECTION-PACKAGE citing the specific field, the claimed date, and the PR/review date. Correct form is forward-looking language with status PENDING. See A-036 for check procedure. |
+| OVL-GE-002 | Evidence-type labeling — all deployment/operational items labeled | For every checklist item that involves deployment, CDV execution, live-environment validation, or operational health: verify an explicit `evidence_type` label (STATIC_CODE / CI_TEST / CONFIG / LIVE_RUNTIME / LIVE_E2E) is present. Missing label on any deployment/operational item = REJECTION-PACKAGE citing Rule E-001. |
+| OVL-GE-003 | Evidence-type sufficiency — LIVE_RUNTIME/LIVE_E2E items satisfy fidelity requirement | For every checklist item classified as LIVE_RUNTIME or LIVE_E2E (by label or by semantic content): verify the cited evidence is of equal or higher fidelity. A merged-PR reference, code presence, or CI test result does NOT satisfy LIVE_RUNTIME or LIVE_E2E requirements. REJECTION-PACKAGE if lower-fidelity evidence is cited for a deployment/CDV/operational item. See A-037 for check procedure and evidence-type recognition patterns. |
+
+### Admin Check (Secondary)
+
+| Check ID | Check Name | Pass Condition |
+|----------|-----------|----------------|
+| OVL-GE-ADM-001 | Canon reference cited | PREHANDOVER proof or wave record references `TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md` for any wave that includes CDV, deployment, or operational validation claims. Binary existence check only. |
+
+**Output format IAA must use:**
+
+```
+OVL-GE-001 Temporal Integrity:
+  Claims reviewed: [N]
+  Future-dated claims found: [count]
+  [If found]: Field: [field name] | Claimed date: [date] | PR review date: [date] | FAIL ❌
+  Verdict: PASS ✅ / FAIL ❌ — [cite specific violation]
+
+OVL-GE-002 Evidence-Type Labeling:
+  Deployment/CDV/operational items reviewed: [N]
+  Items missing evidence_type label: [count]
+  [If found]: Item: [item name] | FAIL ❌
+  Verdict: PASS ✅ / FAIL ❌
+
+OVL-GE-003 Evidence-Type Sufficiency:
+  LIVE_RUNTIME/LIVE_E2E items reviewed: [N]
+  Items with insufficient evidence: [count]
+  [If found]: Item: [item name] | Required: [type] | Cited: [type] | FAIL ❌
+  Verdict: PASS ✅ / FAIL ❌
+```
+
+---
+
 ## Version History
 
 | Version | Date | Change |
@@ -411,6 +468,7 @@ Applied when PR category is `AGENT_INTEGRITY`.
 | 3.7.0 | 2026-04-06 | PRE_BUILD_GATES overlay added (OVL-PBG-001 through OVL-PBG-005, OVL-PBG-ADM-001) — MMM FRS pre-build gate enforcement: manifest slug/directory match, BUILD_PROGRESS_TRACKER identity consistency, architecture doc module name, IAA Pre-Brief existence before builder delegation, AGENT_HANDOVER_AUTOMATION canonical version check; wave: pre-mmm-build-readiness |
 | 3.8.0 | 2026-04-06 | PRE_BUILD_GATES overlay strengthened (OVL-PBG-006 through OVL-PBG-009) — full 12-stage model enforcement: BUILD_PROGRESS_TRACKER 12-stage completeness (OVL-PBG-006), architecture doc full lifecycle sequence (OVL-PBG-007), stage gating no-skip enforcement (OVL-PBG-008), legacy directory numbering advisory flag (OVL-PBG-009); OVL-PBG-ADM-001 updated to reference OVL-PBG-001 through OVL-PBG-009; wave: pre-mmm-build-readiness (CS2 review blockers) |
 | 4.0.0 | 2026-04-07 | PRE_BUILD_GATES overlay: OVL-PBG-010 through OVL-PBG-016 added — Stage 2 UX Wiring Spec, Stage 6 QA-to-Red, Stage 7 PBFAG, Stage 9 Builder Checklist, §7.1 Change-Propagation Audit, §7.2 Runtime/Deployment Contract, §7.3 Golden Path Verification Pack enforcement; PRE_BRIEF_ASSURANCE overlay: stage-readiness view requirement and OVL-INJ-ADM-003 added; wave: iaa-12stage-upgrade (issue #1258) |
+| 4.1.0 | 2026-04-22 | GOVERNANCE_EVIDENCE overlay added (OVL-GE-001 through OVL-GE-003, OVL-GE-ADM-001) — temporal integrity check (no future-dated claims) and evidence-type discipline (LIVE_RUNTIME/LIVE_E2E items cannot be satisfied by lower-fidelity evidence); canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md; regression from PR #1444; governance hardening issue maturion-isms#1445. |
 
 ---
 
