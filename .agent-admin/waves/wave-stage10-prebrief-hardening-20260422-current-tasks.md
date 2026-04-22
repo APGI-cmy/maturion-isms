@@ -3,7 +3,7 @@
 **Wave**: stage10-prebrief-hardening-20260422
 **Foreman**: foreman-v2-agent v6.2.0
 **Session**: session-167-stage10-prebrief-hardening-20260422
-**IAA Pre-Brief**: .agent-admin/assurance/iaa-wave-record-stage10-prebrief-hardening-20260422.md
+**IAA Pre-Brief**: NOT YET CREATED — pending TASK-S10H-000 (target: .agent-admin/assurance/iaa-wave-record-stage10-prebrief-hardening-20260422.md)
 **Status**: IN PROGRESS
 **Issue**: maturion-isms#1442 — Harden Stage 10 IAA Pre-Brief: add wave-level admin ceremony contract and enforce it at handover
 **Branch**: copilot/fix-253484265-1108482416-d97140c1-67b5-4859-8372-838dd1a899c8
@@ -82,7 +82,7 @@ This wave hardens the Stage 10 IAA Pre-Brief by adding an explicit **wave-level 
 | Gate | Status |
 |------|--------|
 | IAA Pre-Brief committed | ⏳ PENDING |
-| Scope declaration committed | ⏳ PENDING |
+| Scope declaration committed | ✅ COMMITTED |
 | D1 IAA_PRE_BRIEF_PROTOCOL.md hardened | ⏳ PENDING |
 | D2 Pre-Brief schema updated | ⏳ PENDING |
 | D3 ACR added to IAA canon | ⏳ PENDING |
