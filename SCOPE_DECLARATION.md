@@ -14,7 +14,6 @@ None
 ### Modified
 
 - `vercel.json` - Replace legacy MAT frontend path references with MMM frontend path (apps/mmm), use pnpm
-- `.github/workflows/deploy-mat-vercel.yml` - Align deployment workflow from legacy MAT frontend to MMM frontend
 - `SCOPE_DECLARATION.md` - Scope declaration for this wave
 
 ### Deleted
