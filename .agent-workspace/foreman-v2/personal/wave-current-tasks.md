@@ -1,3 +1,47 @@
+# Wave Current Tasks — mmm-post-stage12-cdv-validation-20260422
+
+**Foreman**: foreman-v2-agent v6.2.0
+**Wave**: mmm-post-stage12-cdv-validation-20260422
+**Issue**: maturion-isms#1443 — Complete MMM post-Stage-12 staging deployment and CDV validation
+**Branch**: copilot/post-stage-12-deployment-validation
+**Date**: 2026-04-22
+**CS2 Authorization**: CONFIRMED — issue #1443 opened by CS2 (@APGI-cmy) in CS2-governed repository
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-post-stage12-cdv-validation-20260422.md
+iaa_prebrief_status: COMPLETE — PRE-BRIEF committed SHA b00557a
+
+## Wave Purpose
+
+Post-Stage-12 operational follow-up for MMM CDV (Critical Deliverable Validation) and staging deployment evidence.
+Key deliverables:
+- Static code evidence for SB-003-W3 (MMM sends AIMC_SERVICE_TOKEN — provable from code)
+- CDV staging validation tracking document (with checklist for CS2-executed live validation)
+- BUILD_PROGRESS_TRACKER.md update reflecting this wave and CDV state
+- Scope covers Scope E (governance doc updates) and static evidence for Scope A where derivable from code
+
+## Current Wave Tasks
+
+| Task | Agent | Status | Notes |
+|------|-------|--------|-------|
+| Phase 1 Preflight | foreman-v2-agent | COMPLETE ✅ | Identity, Tier 2, CANON_INVENTORY, session memory, FAIL-ONLY-ONCE, merge gates, readiness |
+| wave-current-tasks.md | foreman-v2-agent | COMPLETE ✅ | This file |
+| scope-declaration | foreman-v2-agent | COMPLETE ✅ | committed in this wave |
+| IAA Pre-Brief | independent-assurance-agent | COMPLETE ✅ | PRE-BRIEF committed SHA b00557a |
+| CDV staging validation document | foreman-v2-agent | COMPLETE ✅ | modules/MMM/12-phase4-ecap/cdv-staging-validation.md |
+| BUILD_PROGRESS_TRACKER.md update | foreman-v2-agent | COMPLETE ✅ | modules/MMM/BUILD_PROGRESS_TRACKER.md |
+| PREHANDOVER proof | foreman-v2-agent | COMPLETE ✅ | .agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-post-stage12-cdv-validation-20260422.md |
+| Session memory | foreman-v2-agent | COMPLETE ✅ | .agent-workspace/foreman-v2/memory/session-mmm-post-stage12-cdv-validation-20260422.md |
+| IAA Final Audit | independent-assurance-agent | COMPLETE ✅ | ASSURANCE-TOKEN: IAA-session-mmm-post-stage12-cdv-validation-20260422-PASS (26/26) |
+
+## SB-003 Sub-Gate Assessment (Static Code Review)
+
+| Gate | Status | Evidence Source |
+|------|--------|----------------|
+| W1: AIMC gateway reads AIMC_SERVICE_TOKEN from Render env | PROVISIONED-NOT-LIVE-TESTED | CS2 provisioned (2026-04-21); AIMC gateway is external service (maturion-mat-ai-gateway-staging); not in this repo |
+| W2: AIMC gateway enforces inbound token auth | NOT-YET-PROVEN | Requires live staging test against AIMC gateway endpoint |
+| W3: MMM Edge Functions send AIMC_SERVICE_TOKEN on outbound calls | CODE EVIDENCE PRESENT | `supabase/functions/_shared/mmm-aimc-client.ts` line 44 (Deno.env.get), line 114 (`Authorization: Bearer ${AIMC_SERVICE_TOKEN}`) |
+
+---
+
 # Wave Current Tasks — mmm-tracker-reconciliation-20260421
 
 **Foreman**: foreman-v2-agent v6.2.0
