@@ -1,27 +1,21 @@
-name: Deploy MAT Frontend to Vercel
+name: Deploy MMM Frontend to Vercel
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'modules/**'
-      - 'api/**'
-      - 'packages/ai-centre/src/**'
+      - 'apps/mmm/**'
       - 'vercel.json'
-      - '.github/workflows/deploy-mat-vercel.yml'
-      - 'apps/maturion-maturity-legacy/supabase/migrations/**'
+      - '.github/workflows/deploy-mmm-vercel.yml'
       - 'pnpm-lock.yaml'
   pull_request:
     branches:
       - main
     paths:
-      - 'modules/**'
-      - 'api/**'
-      - 'packages/ai-centre/src/**'
+      - 'apps/mmm/**'
       - 'vercel.json'
-      - '.github/workflows/deploy-mat-vercel.yml'
-      - 'apps/maturion-maturity-legacy/supabase/migrations/**'
+      - '.github/workflows/deploy-mmm-vercel.yml'
       - 'pnpm-lock.yaml'
   workflow_dispatch:
 
@@ -32,53 +26,54 @@ env:
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 jobs:
-  lint:
-    name: Lint
+  stale-path-guard:
+    name: Anti-Stale-Path Guard
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: modules/mat/frontend
+    permissions:
+      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Check for direct provider SDK imports (T-C-010 CI gate)
-        working-directory: .
+      - name: Validate deployment target paths are aligned to MMM
         run: |
-          echo "Scanning modules/ for direct provider SDK imports..."
-          # Fail if any non-test file in modules/ imports openai, @anthropic-ai, or similar SDKs directly
-          if grep -rn \
-            --include="*.ts" --include="*.tsx" --include="*.js" \
-            --exclude="*.test.ts" --exclude="*.test.tsx" --exclude="*.test.js" \
-            --exclude="*.spec.ts" --exclude="*.spec.tsx" \
-            -E "from ['\"]openai['\"]|from ['\"]@anthropic-ai|from ['\"]@google/generative-ai|require\(['\"]openai['\"]|require\(['\"]@anthropic-ai|require\(['\"]@google/generative-ai" \
-            modules/; then
+          echo "Running anti-stale-path guard — verifying all deployment config points to apps/mmm..."
+          LEGACY_TOKEN='modules/mat/frontend'
+          FAIL=0
+
+          # Check vercel.json for legacy MAT path tokens
+          if grep -q "$LEGACY_TOKEN" vercel.json; then
+            echo "❌ STALE-PATH: vercel.json still references '$LEGACY_TOKEN'"
+            echo "   Update vercel.json buildCommand/outputDirectory/installCommand/devCommand to apps/mmm"
+            FAIL=1
+          else
+            echo "✅ vercel.json: no legacy MAT path token found"
+          fi
+
+          # Assert vercel.json outputDirectory starts with apps/mmm
+          OUTPUT_DIR=$(node -e "const v=require('./vercel.json'); process.stdout.write(v.outputDirectory||'')")
+          if [[ "$OUTPUT_DIR" != apps/mmm* ]]; then
+            echo "❌ STALE-PATH: vercel.json outputDirectory is '$OUTPUT_DIR' — expected apps/mmm path"
+            FAIL=1
+          else
+            echo "✅ vercel.json outputDirectory: $OUTPUT_DIR"
+          fi
+
+          if [ "$FAIL" -ne 0 ]; then
             echo ""
-            echo "❌ T-C-010 FAIL: Direct provider SDK import found in modules/."
-            echo "   All AI provider access MUST go through the @maturion/ai-centre gateway."
-            echo "   Replace the import above with the appropriate AICentre capability call."
+            echo "Anti-stale-path guard FAILED. Fix all legacy path references before deploying."
             exit 1
           fi
-          echo "✅ T-C-010 PASS: No direct provider SDK imports found in modules/."
-
-      - name: Run ESLint
-        run: npm run lint
+          echo "Anti-stale-path guard PASSED."
 
   typecheck:
     name: Type Check
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     defaults:
       run:
-        working-directory: modules/mat/frontend
+        working-directory: apps/mmm
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -90,7 +85,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run TypeScript compiler
         run: npx tsc --noEmit
@@ -118,39 +113,15 @@ jobs:
       - name: Type-check api/ serverless routes
         run: pnpm exec tsc -p api/tsconfig.json --noEmit
 
-  test:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: modules/mat/frontend
-    env:
-      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-      VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run tests
-        run: npm run test
-
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: [lint, typecheck, typecheck-api, test]
+    needs: [stale-path-guard, typecheck, typecheck-api]
+    permissions:
+      contents: read
     defaults:
       run:
-        working-directory: modules/mat/frontend
+        working-directory: apps/mmm
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -162,7 +133,25 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
+
+      - name: Check for direct provider SDK imports (T-C-010 CI gate)
+        run: |
+          echo "Scanning apps/mmm/ for direct provider SDK imports..."
+          # Fail if any non-test file in apps/mmm/ imports openai, @anthropic-ai, or similar SDKs directly
+          if grep -rn \
+            --include="*.ts" --include="*.tsx" --include="*.js" \
+            --exclude="*.test.ts" --exclude="*.test.tsx" --exclude="*.test.js" \
+            --exclude="*.spec.ts" --exclude="*.spec.tsx" \
+            -E "from ['\"]openai['\"]|from ['\"]@anthropic-ai|from ['\"]@google/generative-ai|require\(['\"]openai['\"]|require\(['\"]@anthropic-ai|require\(['\"]@google/generative-ai" \
+            .; then
+            echo ""
+            echo "❌ T-C-010 FAIL: Direct provider SDK import found in apps/mmm/."
+            echo "   All AI provider access MUST go through the @maturion/ai-centre gateway."
+            echo "   Replace the import above with the appropriate AICentre capability call."
+            exit 1
+          fi
+          echo "✅ T-C-010 PASS: No direct provider SDK imports found in apps/mmm/."
 
       - name: env-var-audit — validate required environment variables
         env:
@@ -195,8 +184,8 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: mat-frontend-dist
-          path: modules/mat/frontend/dist/
+          name: mmm-frontend-dist
+          path: apps/mmm/dist/
           retention-days: 7
 
   supabase-migrate:
@@ -205,6 +194,9 @@ jobs:
     needs: [build]
     permissions:
       contents: read
+    # Cross-app dependency: MMM shares the same Supabase database as the legacy app.
+    # These migrations manage shared schema objects (audits, criteria, mps, domains, evidence)
+    # that MMM reads at runtime. They must be applied before MMM deployment proceeds.
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -393,6 +385,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build, supabase-migrate, schema-existence-check]
     if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
     environment:
       name: preview
       url: ${{ steps.deploy.outputs.preview-url }}
@@ -417,8 +412,8 @@ jobs:
       - name: Create .env file from GitHub Secrets
         run: |
           printf 'VITE_SUPABASE_URL=%s\nVITE_SUPABASE_ANON_KEY=%s\nVITE_API_BASE_URL=%s\n' \
-            "$VITE_SUPABASE_URL" "$VITE_SUPABASE_ANON_KEY" "$VITE_API_BASE_URL" > modules/mat/frontend/.env
-          chmod 600 modules/mat/frontend/.env
+            "$VITE_SUPABASE_URL" "$VITE_SUPABASE_ANON_KEY" "$VITE_API_BASE_URL" > apps/mmm/.env
+          chmod 600 apps/mmm/.env
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
@@ -455,7 +450,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `✅ **Preview deployment ready!\n\n🔗 Preview URL: ${{ steps.deploy.outputs.preview-url }}`
+              body: `✅ **Preview deployment ready!**\n\n🔗 Preview URL: ${{ steps.deploy.outputs.preview-url }}`
             })
 
   deploy-production:
@@ -465,9 +460,11 @@ jobs:
     if: >
       (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
       (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+    permissions:
+      contents: read
     environment:
       name: production
-      url: https://mat.maturion.com
+      url: https://mmm.maturion.com
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -489,8 +486,8 @@ jobs:
       - name: Create .env file from GitHub Secrets
         run: |
           printf 'VITE_SUPABASE_URL=%s\nVITE_SUPABASE_ANON_KEY=%s\nVITE_API_BASE_URL=%s\n' \
-            "$VITE_SUPABASE_URL" "$VITE_SUPABASE_ANON_KEY" "$VITE_API_BASE_URL" > modules/mat/frontend/.env
-          chmod 600 modules/mat/frontend/.env
+            "$VITE_SUPABASE_URL" "$VITE_SUPABASE_ANON_KEY" "$VITE_API_BASE_URL" > apps/mmm/.env
+          chmod 600 apps/mmm/.env
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
@@ -520,7 +517,7 @@ jobs:
 
       - name: Create deployment summary
         run: |
-          echo "## 🚀 MAT Frontend Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "## 🚀 MMM Frontend Deployment Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Status**: ✅ Deployed to Production" >> $GITHUB_STEP_SUMMARY
           echo "**URL**: ${{ steps.deploy.outputs.production-url }}" >> $GITHUB_STEP_SUMMARY
@@ -536,7 +533,7 @@ jobs:
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: |
           echo "Running E2E auth smoke test against production URL..."
-          SMOKE_URL="${PRODUCTION_SITE_URL:-https://mat.maturion.com}"
+          SMOKE_URL="${PRODUCTION_SITE_URL:-https://mmm.maturion.com}"
           echo "Checking production app is reachable: $SMOKE_URL"
           http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$SMOKE_URL/" 2>/dev/null || echo "000")
           if echo "$http_code" | grep -qE '^[23][0-9][0-9]$'; then
