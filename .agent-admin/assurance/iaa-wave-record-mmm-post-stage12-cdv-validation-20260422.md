@@ -227,12 +227,55 @@ Scope blockers: NONE — all deliverables achievable via static code review and 
 
 ## TOKEN
 
-*(Reserved for Phase 4 Final Audit — populated by IAA after full assurance execution)*
+**STATUS**: ISSUED — Final Audit complete 2026-04-22
 
-**STATUS**: PENDING — Final Audit not yet executed
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/post-stage-12-deployment-validation | Issue: maturion-isms#1443
+Wave: mmm-post-stage12-cdv-validation-20260422
+All 26 checks PASS. Merge gate parity: PASS (local verification; CI confirmation pending).
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-mmm-post-stage12-cdv-validation-20260422-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-post-stage12-cdv-validation-20260422-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+═══════════════════════════════════════
+```
 
-Expected token reference (for PREHANDOVER proof pre-population per A-029):
-`IAA-session-mmm-post-stage12-cdv-validation-20260422-PASS`
+**Checks summary (26 total, 26 PASS, 0 FAIL):**
+
+| Check | Result |
+|-------|--------|
+| CERT-001: PREHANDOVER proof exists | PASS ✅ |
+| CERT-002: Session memory exists | PASS ✅ |
+| CERT-003: fail_only_once_attested declared | PASS ✅ |
+| CERT-004: iaa_audit_token field present (A-029 pre-populated) | PASS ✅ |
+| OVL-PBG-001: module.manifest.json slug `MMM` matches directory | PASS ✅ |
+| OVL-PBG-002: BUILD_PROGRESS_TRACKER module identity matches manifest | PASS ✅ |
+| OVL-PBG-003: Architecture doc references MMM module (carry-forward; prior 22/22 audit verified; arch.md not modified) | PASS ✅ |
+| OVL-PBG-004: IAA Pre-Brief exists (wave record SHA b00557a) | PASS ✅ |
+| OVL-PBG-005: AGENT_HANDOVER_AUTOMATION not referenced in changed files | PASS ✅ (N/A) |
+| OVL-PBG-006: BUILD_PROGRESS_TRACKER uses full 12-stage model | PASS ✅ |
+| OVL-PBG-007: Architecture doc full lifecycle sequence (carry-forward; not modified) | PASS ✅ |
+| OVL-PBG-008: Stage gating respected — Stage 12 COMPLETE, post-Stage-12 follow-up | PASS ✅ |
+| OVL-PBG-009: Legacy directory numbering | ADVISORY ⚠️ (`04-architecture/`, `12-phase4-ecap/` — legacy numbering; CS2 migration plan required; NOT REJECTION-PACKAGE) |
+| OVL-PBG-010: Stage 2 UX Wiring Spec COMPLETE | PASS ✅ |
+| OVL-PBG-011: Stage 6 QA-to-Red COMPLETE | PASS ✅ |
+| OVL-PBG-012: Stage 7 PBFAG COMPLETE | PASS ✅ |
+| OVL-PBG-013: Stage 9 Builder Checklist COMPLETE | PASS ✅ |
+| OVL-PBG-014: Change-Propagation Audit | PASS ✅ (N/A — no upstream pre-build artifacts modified) |
+| OVL-PBG-015: Runtime/Deployment Contract (carry-forward; Stage 12 complete) | PASS ✅ |
+| OVL-PBG-016: Golden Path Verification Pack (carry-forward; Stage 12 complete) | PASS ✅ |
+| OVL-PBG-ADM-001: PRE_BUILD_GATES overlay applied (OVL-PBG-001–016 stated) | PASS ✅ |
+| CORE-020: Zero partial pass | PASS ✅ |
+| CORE-021: Zero severity tolerance | PASS ✅ |
+| SUBSTANCE S-001: SB-003-W3 code evidence verified (`mmm-aimc-client.ts` lines 44, 114 confirmed) | PASS ✅ |
+| SUBSTANCE S-002: PIT TR-017/TR-018 code evidence verified (`mmm-pit-export-send/index.ts` lines 43,45,179,183,214–215 confirmed) | PASS ✅ |
+| SUBSTANCE S-003: BUILD_PROGRESS_TRACKER update accurate (SB-003-W3 status, CDV tracking, Current Stage Summary) | PASS ✅ |
+
+**Independence**: CONFIRMED — IAA did not produce or contribute to any artifact in this PR.
+**ACR checks**: NOT APPLICABLE — `ceremony_admin_appointed: NOT APPLICABLE` (confirmed in wave record pre-brief and PREHANDOVER).
+**IAA Session Memory**: `.agent-workspace/independent-assurance-agent/memory/session-mmm-post-stage12-cdv-validation-20260422.md`
 
 ---
 
