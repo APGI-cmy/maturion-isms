@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "last_updated": "2026-04-22",
-  "total_canons": 213,
+  "total_canons": 214,
   "generation_timestamp": "2026-04-22T08:19:00Z",
   "canon_entry_schema": {
     "description": "Schema for canon entries in CANON_INVENTORY.json",
@@ -2576,5 +2576,5 @@
       "file_hash_sha256": "8c047329381b3714235f88c880a31c17210efa220f4a294b6b42fe5ddfdd35eb"
     }
   ],
-  "total_entries": 211
+  "total_entries": 214
 }
