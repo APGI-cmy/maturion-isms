@@ -28,9 +28,9 @@ This is a DOCUMENTATION_ONLY wave. No build wave gates apply. No code changes.
 | scope-declaration | foreman-v2-agent | COMPLETE ✅ | scope-declaration-wave-mmm-operational-closure-tracker-update-20260422.md |
 | IAA Pre-Brief | independent-assurance-agent | COMPLETE ✅ | PRE-BRIEF committed SHA 0a1bf5b |
 | BUILD_PROGRESS_TRACKER.md update | foreman-v2-agent | COMPLETE ✅ | Section A (§12.2 OC-001–OC-009), B (build-complete≠operational-closed), C (§12.3 future-build gate), D (Vercel functioning) |
-| PREHANDOVER proof | foreman-v2-agent | PENDING | .agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-operational-closure-tracker-update-20260422.md |
-| Session memory | foreman-v2-agent | PENDING | .agent-workspace/foreman-v2/memory/session-mmm-operational-closure-tracker-update-20260422.md |
-| IAA Final Audit | independent-assurance-agent | PENDING | |
+| PREHANDOVER proof | foreman-v2-agent | COMPLETE ✅ | .agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-operational-closure-tracker-update-20260422.md |
+| Session memory | foreman-v2-agent | COMPLETE ✅ | .agent-workspace/foreman-v2/memory/session-mmm-operational-closure-tracker-update-20260422.md |
+| IAA Final Audit | independent-assurance-agent | COMPLETE ✅ | ASSURANCE-TOKEN: IAA-session-mmm-operational-closure-tracker-update-20260422-PASS (13/13, SHA b659a42) |
 
 ## Scope Summary
 

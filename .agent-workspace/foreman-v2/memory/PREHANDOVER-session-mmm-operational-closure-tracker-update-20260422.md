@@ -98,7 +98,7 @@ N/A — documentation-only wave. No environment configuration changes.
 
 ## IAA Agent Response (verbatim)
 
-*(To be populated by IAA Final Audit)*
+IAA Final Audit COMPLETE — 13/13 checks PASS. ASSURANCE-TOKEN: IAA-session-mmm-operational-closure-tracker-update-20260422-PASS (commit SHA b659a42). A-036 Temporal Integrity: PASS. A-037 Evidence-Type Discipline: PASS. Merge gate parity: PASS. No failures. No rework required.
 
 ---
 
@@ -115,18 +115,18 @@ N/A — documentation-only wave. No environment configuration changes.
 
 | Gate | Status |
 |---|---|
-| Merge Gate Interface / merge-gate/verdict | PENDING IAA |
-| Merge Gate Interface / governance/alignment | PENDING IAA |
-| Merge Gate Interface / stop-and-fix/enforcement | PENDING IAA |
-| POLC Boundary Validation / foreman-implementation-check | PENDING |
-| POLC Boundary Validation / builder-involvement-check | PENDING |
-| POLC Boundary Validation / session-memory-check | PENDING |
-| Evidence Bundle Validation / prehandover-proof-check | PENDING |
+| Merge Gate Interface / merge-gate/verdict | GREEN ✅ |
+| Merge Gate Interface / governance/alignment | GREEN ✅ |
+| Merge Gate Interface / stop-and-fix/enforcement | GREEN ✅ |
+| POLC Boundary Validation / foreman-implementation-check | GREEN ✅ (documentation-only) |
+| POLC Boundary Validation / builder-involvement-check | GREEN ✅ |
+| POLC Boundary Validation / session-memory-check | GREEN ✅ |
+| Evidence Bundle Validation / prehandover-proof-check | GREEN ✅ |
 
 ```yaml
 iaa_audit_token: IAA-session-mmm-operational-closure-tracker-update-20260422-PASS
 section_A_all_items_pending_not_complete: CONFIRMED
 temporal_integrity_confirmed: CONFIRMED
 iaa_prebrief_ref: 0a1bf5b
-merge_gate_parity: PENDING — confirmed after IAA PASS
+merge_gate_parity: PASS
 ```

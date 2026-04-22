@@ -78,8 +78,8 @@ iaa_advisory_temporal_integrity: CONFIRMED — no temporal claims without live e
 qp_verdict: PASS — documentation verified against IAA Pre-Brief advisory (A-036/A-037); all pending items correctly labelled
 prehandover_proof: .agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-operational-closure-tracker-update-20260422.md
 session_memory: .agent-workspace/foreman-v2/memory/session-mmm-operational-closure-tracker-update-20260422.md
-iaa_final_audit_status: PENDING
-iaa_audit_token: IAA-session-mmm-operational-closure-tracker-update-20260422-PASS (pre-populated; confirmed by IAA at Final Audit)
+iaa_final_audit_status: COMPLETE — IAA-session-mmm-operational-closure-tracker-update-20260422-PASS (13/13, SHA b659a42)
+iaa_audit_token: IAA-session-mmm-operational-closure-tracker-update-20260422-PASS
 ```
 
 ---
