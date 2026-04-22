@@ -82,6 +82,8 @@ artifacts" in QP report and continue.
 
 ---
 
+## Enhancement 2 — Progress Tracker Enforcement
+
 **Trigger**: Build delivered that corresponds to an existing implementation plan or progress tracker.
 
 **FM MUST**:
@@ -114,7 +116,7 @@ Per SOP §8 (Layer-Down Propagation), this repository MUST maintain:
 
 | Version | Date | Change |
 |---------|------|--------|
-| 1.1.0 | 2026-04-22 | QP-FAIL-008 (future-dated claim / A-040 / T-001) and QP-FAIL-009 (evidence-type mismatch / A-041 / E-002) added; Enhancement 3 (Temporal and Evidence-Type Audit at QP) added; canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md; governance hardening maturion-isms#1449. |
+| 1.1.0 | 2026-04-22 | QP-FAIL-008 (future-dated claim / A-040 / T-001) and QP-FAIL-009 (evidence-type mismatch / A-041 / E-002) added; Enhancement 3 (Temporal and Evidence-Type Audit at QP) added; canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md; governance hardening maturion-isms#1445. |
 | 1.0.0 | 2026-03-02 | Initial creation — Layer-Down propagation of `FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` v1.0.0 (canonical commit 7792913259b0); Builder Referral Protocol (QP-FAIL-001–007) and Progress Tracker Enforcement Tier 2 stub |
 
 ---

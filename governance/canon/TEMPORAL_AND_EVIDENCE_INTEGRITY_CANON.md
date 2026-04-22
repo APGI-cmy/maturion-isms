@@ -202,7 +202,7 @@ merge reference as evidence should be immediately flagged as Rule E-002 violatio
 
 | Version | Date | Change |
 |---------|------|--------|
-| 1.0.0 | 2026-04-22 | Initial creation — temporal integrity rules T-001/T-002 and evidence-type discipline rules E-001/E-002/E-003; tier mapping; regression examples from PR #1444; per governance hardening issue maturion-isms#1449 |
+| 1.0.0 | 2026-04-22 | Initial creation — temporal integrity rules T-001/T-002 and evidence-type discipline rules E-001/E-002/E-003; tier mapping; regression examples from PR #1444; per governance hardening issue maturion-isms#1445 |
 
 ---
 

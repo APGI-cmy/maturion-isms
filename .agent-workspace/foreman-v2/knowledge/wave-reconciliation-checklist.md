@@ -187,7 +187,7 @@ For every completion claim in the wave's evidence artifacts:
 
 **Scan command** (run in repo root):
 ```bash
-grep -rn "completed\|validated\|deployed\|live\|COMPLETE" <evidence-file-path> | head -40
+grep -rnE "completed|validated|deployed|live|COMPLETE" <evidence-file-path> | head -40
 ```
 Review each match and verify the associated date (if any) is not in the future.
 
@@ -282,7 +282,7 @@ Add the following block to the PREHANDOVER proof under `## Wave Reconciliation C
 
 | Version | Date | Change |
 |---------|------|--------|
-| 1.3.0 | 2026-04-22 | Section E (Temporal and Evidence-Type Audit) added — mandatory temporal integrity check (E-2: no future-dated factual claims; A-040 / Rule T-001/T-002) and evidence-type sufficiency check (E-3/E-4: deployment/CDV items require LIVE_RUNTIME/LIVE_E2E evidence; A-041 / Rules E-001–E-003); recording template updated with E-1 through E-4 fields; canon ref: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md; governance hardening issue maturion-isms#1449 (PR #1444 review miss). |
+| 1.3.0 | 2026-04-22 | Section E (Temporal and Evidence-Type Audit) added — mandatory temporal integrity check (E-2: no future-dated factual claims; A-040 / Rule T-001/T-002) and evidence-type sufficiency check (E-3/E-4: deployment/CDV items require LIVE_RUNTIME/LIVE_E2E evidence; A-041 / Rules E-001–E-003); recording template updated with E-1 through E-4 fields; canon ref: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md; governance hardening issue maturion-isms#1445 (PR #1444 review miss). |
 | 1.2.0 | 2026-04-19 | D-2 ACTIVE-TRACKER-NORMALIZATION added — mandatory pre-handover check that all active control artifacts (wave-current-tasks.md, BUILD_PROGRESS_TRACKER entries, active readiness trackers) are normalized to post-assurance state before merge gate release; defines "active control artifact" vs "immutable historical archive"; cross-references A-039 / AAP-21 / ACR-15; updated recording template to include D-2 line. Wave: wave-active-tracker-coherence-20260419 (issue #1412). |
 | 1.1.0 | 2026-03-18 | WAVE-RECONCIL-001 + GOV-CONCERN-B follow-up: added B-3 (token file invalidation audit); added B-3 evidence field; cross-reference to INVALIDATED-PREFIX-CONVENTION.md |
 | 1.0.0 | 2026-03-18 | Initial checklist — CS2 mandate from issue #[wave-19-20-retro] closing post-wave registry and liveness automation gaps identified in PR #1142 review |
