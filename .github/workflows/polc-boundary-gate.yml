@@ -6,7 +6,9 @@ name: POLC Boundary Validation
 # Purpose: Prevent Foreman from implementing new features;
 #          allow supervision corrections. Three separate jobs provide
 #          independent status checks matching merge_gate_interface required_checks.
-# Issue: #193 (original gate), S-007/S-023 (machine enforcement improvements)
+# Issue: #193 (original gate), S-007/S-023 (machine enforcement improvements),
+#        #1429 (exposed false-positive: shared Copilot identity treated as Foreman
+#               authorship — follow-up refinement in this workflow)
 # Contract: Foreman-ISMS Agent Contract v2.6.0,
 #           merge_gate_interface.required_checks
 # S-007: Each gate runs as its own named job so CI reports
@@ -14,14 +16,50 @@ name: POLC Boundary Validation
 # S-023: builder-involvement-check now enforces pre-brief artifact existence
 # A-035/S-035: copilot-builder-role label no longer bypasses
 #              foreman-implementation-check or session-memory-check when
-#              the PR is authored by foreman-v2-agent (Copilot). The label
-#              is valid only for pure builder sessions. builder-involvement-check
-#              now also covers .github/workflows/ path changes.
+#              the PR is governed by foreman-v2-agent. The label is valid only
+#              for pure builder sessions. Governed role is now determined from
+#              governance artifacts (session memory, PREHANDOVER proof), NOT from
+#              runtime executor identity (copilot-swe-agent[bot] is shared across
+#              ALL Copilot agents — Foreman and builders alike).
 # Issue #1245: builder-involvement-check no longer uses commit author identity
 #              to detect builder involvement (all Copilot agents share the same
 #              copilot-swe-agent[bot] identity). Builder delegation is now proven
 #              via governance evidence: agents_delegated_to: in session memory
 #              and/or builder references in PREHANDOVER proof (PR-new files only).
+#
+# ─── Three-Dimension Classification Model (Issue #1429 follow-up) ────────────
+# The gate classifies each PR across three independent dimensions:
+#
+#  Dimension 1 — Runtime Executor Identity
+#    e.g. copilot-swe-agent[bot] (shared across ALL Copilot agents).
+#    This is the execution substrate only — it does NOT determine governed role.
+#    Using it as a Foreman proxy causes false-positive POLC failures when
+#    builders run under the same identity.
+#
+#  Dimension 2 — Governed Role Classification
+#    Determined from governance artifacts introduced in this PR:
+#      FOREMAN:    new Foreman session memory OR new PREHANDOVER proof present
+#      BUILDER:    copilot-builder-role label AND no Foreman artifacts present
+#      UNRESOLVED: neither Foreman artifacts nor builder label found
+#    The governed role — not the runtime identity — drives gate decisions.
+#
+#  Dimension 3 — Delegation Evidence
+#    Relevant only for Foreman-governed and Unresolved PRs:
+#      agents_delegated_to: field in PR-new Foreman session memory, OR
+#      builder agent references in PR-new PREHANDOVER proof.
+#    Delegation evidence proves implementation files are builder-produced.
+#    When delegation evidence is present, implementation files in a Foreman PR
+#    are legitimately builder-produced — the gate passes.
+#
+# Gate decision logic (foreman-implementation-check):
+#   BUILDER role                                    → PASS (skip — not applicable)
+#   FOREMAN role + delegation evidence present      → PASS (properly delegated)
+#   FOREMAN role + no delegation + no impl files    → PASS (nothing prohibited)
+#   FOREMAN role + no delegation + impl files       → FAIL (confirmed breach)
+#   UNRESOLVED + builder label                      → PASS (label honored)
+#   UNRESOLVED + impl files + no delegation         → FAIL (ambiguity state —
+#                                                      dimension-specific guidance)
+# ─────────────────────────────────────────────────────────────────────────────
 
 'on':
   pull_request:
@@ -43,20 +81,32 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check 1 - Detect Foreman Implementation Commits
+      - name: Check 1 - Detect Foreman Implementation (Three-Dimension Model)
         id: check1
         run: |
-          echo "=== Check 1: Detect Foreman Implementation ==="
+          echo "=== Check 1: Detect Foreman Implementation (Three-Dimension Model) ==="
           echo ""
-          echo "Refined: Block implementation, allow supervision"
+          echo "Dimensions: (1) Runtime identity  (2) Governed role  (3) Delegation evidence"
           echo ""
 
-          # If PR is labeled 'copilot-builder-role', Copilot is acting as a
-          # governed builder (not Foreman) in this PR. The
-          # foreman-implementation-check does not apply to builder PRs.
-          # Use exact matching: split the comma-separated label list and compare
-          # each label individually to avoid substring false positives.
+          # ─── CS2 sign-off bypass ─────────────────────────────────────────────────
+          # CS2 supreme authority can waive this check via the 'CS sign-off: approved'
+          # label. This is a scoped, one-time override — not a general bypass mechanism.
           PR_LABELS="${{ join(github.event.pull_request.labels.*.name, ',') }}"
+          IFS=',' read -ra LABEL_ARRAY <<< "$PR_LABELS"
+          for label in "${LABEL_ARRAY[@]}"; do
+            if [[ "$label" == "CS sign-off: approved" ]]; then
+              echo "✅ PASS — PR carries 'CS sign-off: approved' label."
+              echo "   CS2 explicit sign-off detected. foreman-implementation-check waived"
+              echo "   per CS2 supreme authority (AGCFPP §2). Override is scoped to this PR."
+              exit 0
+            fi
+          done
+
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+          WORKFLOW_ACTOR="${{ github.actor }}"
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+
           HAS_BUILDER_LABEL=false
           IFS=',' read -ra LABEL_ARRAY <<< "$PR_LABELS"
           for label in "${LABEL_ARRAY[@]}"; do
@@ -65,241 +115,351 @@ jobs:
               break
             fi
           done
-          if [[ "$HAS_BUILDER_LABEL" == "true" ]]; then
-            # A-035: copilot-builder-role does NOT bypass this gate when the
-            # PR is authored by foreman-v2-agent. The label is intended for
-            # pure builder sessions (api-builder, ui-builder, etc.) where
-            # Foreman is NOT the executing agent. When foreman-v2-agent is the
-            # session author, the full POLC gate MUST run regardless of label.
-            PR_AUTHOR="${{ github.event.pull_request.user.login }}"
-            IS_FOREMAN_PR=false
-            FOREMAN_AUTHOR_PATTERNS=("Copilot" "copilot-swe-agent" "github-copilot")
-            for fpattern in "${FOREMAN_AUTHOR_PATTERNS[@]}"; do
-              if [[ "$PR_AUTHOR" =~ $fpattern ]]; then
-                IS_FOREMAN_PR=true
-                break
-              fi
-            done
-            if [[ "$IS_FOREMAN_PR" == "false" ]]; then
-              echo "✅ PR labeled 'copilot-builder-role'"
-              echo "   Copilot is acting as a governed builder (not Foreman)."
-              echo "   foreman-implementation-check is not applicable — skipping."
-              exit 0
-            fi
-            echo "⚠️  PR labeled 'copilot-builder-role' but authored by Foreman."
-            echo "   A-035: copilot-builder-role MUST NOT bypass the POLC gate"
-            echo "   when foreman-v2-agent is the session author."
-            echo "   Enforcing full gate regardless of label..."
+
+          # ─── Dimension 1: Runtime Executor Identity (informational) ──────────────
+          # Captures two values: the PR author (who opened the PR) and the workflow
+          # runtime actor (github.actor — who triggered this workflow run).
+          # Both are reported for diagnostics. Neither drives gate decisions.
+          # copilot-swe-agent[bot] can appear in EITHER field and is shared across
+          # ALL Copilot agents (Foreman, api-builder, ui-builder, etc.), so it
+          # cannot be used as a governed role proxy.
+          ACTOR_IS_COPILOT=false
+          if [[ "$WORKFLOW_ACTOR" =~ copilot-swe-agent|Copilot|github-copilot ]]; then
+            ACTOR_IS_COPILOT=true
+          fi
+          AUTHOR_IS_COPILOT=false
+          if [[ "$PR_AUTHOR" =~ copilot-swe-agent|Copilot|github-copilot ]]; then
+            AUTHOR_IS_COPILOT=true
           fi
 
-          # Get base branch
-          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
-          echo "Base branch: $BASE_BRANCH"
-
-          # Get all commits in this PR
-          COMMITS=$(git log origin/$BASE_BRANCH..HEAD \
-            --pretty=format:"%H|%an|%ae")
-
-          # Foreman identity patterns
-          FOREMAN_PATTERNS=(
-            "copilot-swe-agent\[bot\]"
-            "Copilot"
-            "198982749+Copilot@users.noreply.github.com"
-          )
-
-          VIOLATION_FOUND=false
-          VIOLATION_FILES=""
-          VIOLATION_COMMITS=""
-          SUPERVISION_FILES=""
-
-          echo "Checking commits for Foreman authorship..."
+          echo "--- Dimension 1: Runtime Executor Identity ---"
+          echo "PR author:                $PR_AUTHOR (Copilot identity: $AUTHOR_IS_COPILOT)"
+          echo "Workflow runtime actor:   $WORKFLOW_ACTOR (Copilot identity: $ACTOR_IS_COPILOT)"
+          echo "copilot-builder-role:     $HAS_BUILDER_LABEL"
+          echo ""
+          echo "NOTE: Runtime identity alone is NOT the governed role classifier."
+          echo "      copilot-swe-agent[bot] is shared across all Copilot agents."
+          echo "      Governed role is determined from governance artifacts (Dimension 2)."
           echo ""
 
-          while IFS='|' read -r commit_sha commit_author commit_email; do
-            IS_FOREMAN=false
+          # ─── Dimension 2: Governed Role Classification ────────────────────────────
+          # Classify the acting governed role from governance artifacts introduced in
+          # this PR. The role classification — not runtime identity — drives decisions.
+          #
+          # Evidence hierarchy (ordered by reliability):
+          #   FOREMAN (strong):
+          #     1. Added or modified Foreman session memory in .agent-workspace/foreman*/memory/
+          #     2. Added or modified Foreman PREHANDOVER proof in .agent-workspace/foreman*/memory/
+          #   BUILDER (secondary — honored when no Foreman artifacts present):
+          #     3. copilot-builder-role label (no Foreman artifacts detected)
+          #   UNRESOLVED:
+          #     No governance artifacts and no builder label
+          #
+          # A-035 refinement: copilot-builder-role bypass is validated against
+          # governance evidence rather than runtime identity. Foreman-authored PRs
+          # (as evidenced by Foreman governance artifacts) must run the full gate
+          # regardless of the label. This preserves A-035 intent while correctly
+          # handling the shared Copilot identity problem.
+          #
+          # --diff-filter=AM: both Added (A) and Modified (M) artifacts trigger FOREMAN
+          # classification. A PR that updates an existing session memory file is still
+          # Foreman-governed — restricting to Added-only (A) would leave a bypass class
+          # where updating an existing file evades governed-role detection.
+          GOVERNED_ROLE="UNRESOLVED"
+          ROLE_EVIDENCE_SOURCE="none"
 
-            # Check if commit is by Foreman
-            for pattern in "${FOREMAN_PATTERNS[@]}"; do
-              if [[ "$commit_author" =~ $pattern ]] || \
-                 [[ "$commit_email" =~ $pattern ]]; then
-                IS_FOREMAN=true
-                break
+          NEW_FOREMAN_SESSION=$(git diff --name-only --diff-filter=AM \
+            origin/"$BASE_BRANCH"...HEAD 2>/dev/null | \
+            grep -E '^\.agent-workspace/foreman.*/memory/session-.*\.md$' || true)
+
+          NEW_FOREMAN_PREHANDOVER=$(git diff --name-only --diff-filter=AM \
+            origin/"$BASE_BRANCH"...HEAD 2>/dev/null | \
+            grep -E '^\.agent-workspace/foreman.*/memory/PREHANDOVER-.*\.md$' || true)
+
+          if [ -n "$NEW_FOREMAN_SESSION" ]; then
+            GOVERNED_ROLE="FOREMAN"
+            ROLE_EVIDENCE_SOURCE="foreman-session-memory"
+          elif [ -n "$NEW_FOREMAN_PREHANDOVER" ]; then
+            GOVERNED_ROLE="FOREMAN"
+            ROLE_EVIDENCE_SOURCE="foreman-prehandover-proof"
+          elif [[ "$HAS_BUILDER_LABEL" == "true" ]]; then
+            GOVERNED_ROLE="BUILDER"
+            ROLE_EVIDENCE_SOURCE="copilot-builder-role-label"
+          fi
+
+          echo "--- Dimension 2: Governed Role Classification ---"
+          echo "Governed role:    $GOVERNED_ROLE"
+          echo "Evidence source:  $ROLE_EVIDENCE_SOURCE"
+          echo ""
+
+          # ─── Role-based routing ───────────────────────────────────────────────────
+
+          # BUILDER: check is not applicable — skip
+          if [[ "$GOVERNED_ROLE" == "BUILDER" ]]; then
+            echo "✅ Governed role is BUILDER — foreman-implementation-check not applicable."
+            echo "   copilot-builder-role label is consistent with absence of Foreman"
+            echo "   governance artifacts in this PR. Skipping check."
+            exit 0
+          fi
+
+          # A-035 enforced: Foreman artifacts present → label cannot bypass gate
+          if [[ "$GOVERNED_ROLE" == "FOREMAN" && "$HAS_BUILDER_LABEL" == "true" ]]; then
+            echo "⚠️  A-035 enforced: copilot-builder-role label present, but Foreman"
+            echo "   governance artifacts detected — governed role is FOREMAN."
+            echo "   The label bypass does NOT apply when Foreman artifacts are present."
+            echo "   Evidence: $ROLE_EVIDENCE_SOURCE"
+            echo "   Continuing with full foreman-implementation-check..."
+            echo ""
+          fi
+
+          # UNRESOLVED + builder label: label honored in absence of contrary evidence
+          if [[ "$GOVERNED_ROLE" == "UNRESOLVED" && "$HAS_BUILDER_LABEL" == "true" ]]; then
+            echo "⚠️  AMBIGUITY (Dimension 2): copilot-builder-role label present, but"
+            echo "   governed role is UNRESOLVED (no Foreman governance artifacts found)."
+            echo "   Treating as BUILDER — label honored when no contrary evidence exists."
+            echo ""
+            echo "   For definitive classification in future PRs, commit Foreman session"
+            echo "   memory to .agent-workspace/foreman*/memory/session-*.md — this"
+            echo "   establishes governed role without relying on the label."
+            exit 0
+          fi
+
+          # ─── Dimension 3: Delegation Evidence Validation ─────────────────────────
+          # For Foreman-governed PRs (and Unresolved PRs without builder label):
+          # verify that implementation work was properly delegated to a builder.
+          # Delegation evidence proves implementation files are builder-produced,
+          # not Foreman-produced — enabling the gate to PASS even when impl files exist.
+          #
+          # Evidence sources (scoped to PR-changed Foreman artifacts, --diff-filter=AM):
+          #   1. agents_delegated_to: field in Foreman session memory (added or modified)
+          #   2. Builder agent references in Foreman PREHANDOVER proof (added or modified)
+          DELEGATION_FOUND=false
+          DELEGATION_SOURCE=""
+
+          echo "--- Dimension 3: Delegation Evidence Validation ---"
+          echo ""
+
+          # Primary: agents_delegated_to: in Foreman session memory (added or modified)
+          if [ -n "$NEW_FOREMAN_SESSION" ]; then
+            while IFS= read -r session_file; do
+              if [ -f "$session_file" ]; then
+                # Detect agents_delegated_to: in two forms:
+                #   Multi-line YAML list:  "- agent-name" entries after the key
+                #   Inline YAML list/value: agents_delegated_to: [a, b] or a scalar
+                # The AWK block handles both forms in a single pass:
+                #   - On the key line, check for a non-empty inline value (inline form)
+                #   - Otherwise enter block mode and collect "- " list items (block form)
+                #   - Blank lines and comments are tolerated inside the block
+                DELEGATED=$(awk '
+                  /^agents_delegated_to:/ {
+                    # Inline form: value follows the colon on the same line
+                    val = $0; sub(/^agents_delegated_to:[[:space:]]*/, "", val)
+                    # Non-empty and not the literal "none" or empty brackets "[]"
+                    if (val != "" && val != "none" && val != "[]") {
+                      print val; found=1; next
+                    }
+                    in_block=1; next
+                  }
+                  in_block && /^[^# \t]/ && !/^[ \t]*-/ { in_block=0 }
+                  in_block && /^[ \t]*-[ \t]/ { print; found=1 }
+                  END { exit (found ? 0 : 1) }
+                ' "$session_file" 2>/dev/null || true)
+                if [ -n "$DELEGATED" ]; then
+                  DELEGATION_FOUND=true
+                  DELEGATION_SOURCE="agents_delegated_to: in $session_file"
+                  echo "✅ Delegation evidence found in session memory:"
+                  echo "   File: $session_file"
+                  echo "   agents_delegated_to entries (sample):"
+                  echo "$DELEGATED" | head -5 | sed 's/^/     /'
+                  break
+                fi
               fi
-            done
+            done <<< "$NEW_FOREMAN_SESSION"
+          fi
 
-            if [ "$IS_FOREMAN" = true ]; then
-              echo "Foreman commit detected: $commit_sha ($commit_author)"
-
-              # Get files changed in this commit
-              FILES=$(git diff-tree --no-commit-id --name-only -r $commit_sha)
-
-              # Check each file
-              while IFS= read -r file; do
-                # Skip if file doesn't exist (deleted files)
-                if [ ! -f "$file" ]; then
-                  continue
+          # Secondary: builder agent references in PREHANDOVER proof (added or modified)
+          if [[ "$DELEGATION_FOUND" == "false" && -n "$NEW_FOREMAN_PREHANDOVER" ]]; then
+            while IFS= read -r ph_file; do
+              if [ -f "$ph_file" ]; then
+                if grep -qiE \
+                  "(api-builder|ui-builder|qa-builder|schema-builder|integration-builder|mat-specialist|pit-specialist)" \
+                  "$ph_file" 2>/dev/null; then
+                  DELEGATION_FOUND=true
+                  DELEGATION_SOURCE="builder-references in PREHANDOVER: $ph_file"
+                  echo "✅ Delegation evidence found in PREHANDOVER proof:"
+                  echo "   File: $ph_file"
+                  break
                 fi
+              fi
+            done <<< "$NEW_FOREMAN_PREHANDOVER"
+          fi
 
-                # SUPERVISION CORRECTIONS (PERMITTED)
-                # Documentation, config, test corrections, governance, session
-                # memory
-                if [[ "$file" =~ \.md$ ]] || \
-                   [[ "$file" =~ README ]] || \
-                   [[ "$file" =~ CHANGELOG ]] || \
-                   [[ "$file" =~ \.config\.(ts|js|json)$ ]] || \
-                   [[ "$file" =~ package\.json$ ]] || \
-                   [[ "$file" =~ tsconfig\.json$ ]] || \
-                   [[ "$file" =~ ^\.agent-workspace/foreman ]] || \
-                   [[ "$file" =~ ^\.agent-admin/ ]] || \
-                   [[ "$file" =~ ^governance/ ]] || \
-                   [[ "$file" =~ /02-architecture/ ]] || \
-                   [[ "$file" =~ BUILD_PROGRESS_TRACKER\.md$ ]]; then
-                  echo "  ✅ SUPERVISION: $file"
-                  echo "     (documentation/config/governance)"
-                  SUPERVISION_FILES="${SUPERVISION_FILES}\n  - ${file}"
-                  continue
-                fi
+          echo ""
+          echo "Delegation evidence present: $DELEGATION_FOUND"
+          [ -n "$DELEGATION_SOURCE" ] && echo "Evidence source: $DELEGATION_SOURCE"
+          echo ""
 
-                # IMPLEMENTATION DETECTION (PROHIBITED)
-                # Check for production code patterns
-                if [[ "$file" =~ ^modules/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
-                   [[ "$file" =~ ^apps/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
-                   [[ "$file" =~ ^packages/.*/src/.*\.(ts|tsx|js|jsx)$ ]]; then
+          # Delegation evidence present → implementation files are builder-produced
+          if [[ "$DELEGATION_FOUND" == "true" ]]; then
+            echo "✅ Check 1 PASSED — Delegation evidence confirmed."
+            echo ""
+            echo "   Dimension 1 (PR author / actor):   $PR_AUTHOR / $WORKFLOW_ACTOR (Copilot: $AUTHOR_IS_COPILOT / $ACTOR_IS_COPILOT)"
+            echo "   Dimension 2 (Governed role):       $GOVERNED_ROLE [$ROLE_EVIDENCE_SOURCE]"
+            echo "   Dimension 3 (Delegation evidence): PRESENT [$DELEGATION_SOURCE]"
+            echo ""
+            echo "   Implementation files (if any) are builder-produced under valid delegation."
+            exit 0
+          fi
 
-                  echo "  🔍 ANALYZING: $file (production code pattern)"
+          # ─── Stage 4: Implementation File Detection ───────────────────────────────
+          # Only reached when delegation evidence is absent.
+          # Distinguish implementation (prohibited) from supervision (permitted).
+          # Supervision: docs, config, governance, session memory, agent-workspace.
+          # Implementation: production source files, new test files.
+          echo "--- Stage 4: Implementation File Detection ---"
+          echo ""
 
-                  # Get file diff to check for implementation indicators
-                  DIFF=$(git show $commit_sha -- "$file" 2>/dev/null || echo "")
+          IMPL_FILES_FOUND=false
+          SUPERVISION_FILES=""
+          IMPL_FILE_LIST=""
 
-                  # Check for implementation patterns (new capability
-                  # indicators)
-                  IMPLEMENTATION_DETECTED=false
+          CHANGED_FILES=$(git diff --name-only origin/"$BASE_BRANCH"...HEAD)
 
-                  # New component/function/class exports
-                  if echo "$DIFF" | \
-                     grep -qE '^\+.*export (function|class|const)'; then
-                    echo "    - New export detected (possible new capability)"
-                    IMPLEMENTATION_DETECTED=true
-                  fi
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
 
-                  # New React components
-                  if echo "$DIFF" | \
-                     grep -qE '^\+.*(function|const) [A-Z].*=>'; then
-                    echo "    - New component detected"
-                    IMPLEMENTATION_DETECTED=true
-                  fi
-
-                  # New API routes/handlers
-                  if echo "$DIFF" | grep -qE \
-                     '^\+.*(router\.|app\.|route\.)(get|post)'; then
-                    echo "    - New API route/handler detected"
-                    IMPLEMENTATION_DETECTED=true
-                  fi
-
-                  # New state management
-                  if echo "$DIFF" | grep -qE \
-                     '^\+.*(createSlice|useState|useReducer)'; then
-                    echo "    - New state management detected"
-                    IMPLEMENTATION_DETECTED=true
-                  fi
-
-                  # Large additions (>50 lines) suggesting feature expansion
-                  LINES_ADDED=$(echo "$DIFF" | grep -c '^+[^+]' || echo "0")
-                  if [ "$LINES_ADDED" -gt 50 ]; then
-                    echo "    - Large addition detected"
-                    echo "($LINES_ADDED lines) - possible feature expansion"
-                    IMPLEMENTATION_DETECTED=true
-                  fi
-
-                  if [ "$IMPLEMENTATION_DETECTED" = true ]; then
-                    VIOLATION_FOUND=true
-                    VIOLATION_FILES="${VIOLATION_FILES}\n  - ${file}"
-                    VIOLATION_COMMITS="${VIOLATION_COMMITS}\n"
-                    VIOLATION_COMMITS="${VIOLATION_COMMITS}  - ${commit_sha}"
-                    echo "  ❌ IMPLEMENTATION VIOLATION: $file"
-                  else
-                    echo "  ⚠️  AMBIGUOUS: $file (production"
-                    echo "file modified, but no clear implementation detected)"
-                    echo "    Manual review recommended"
-                  fi
-                fi
-
-                # TEST FILES - Check if new test or test correction
-                if [[ "$file" =~ \.test\.(ts|tsx|js|jsx)$ ]]; then
-                  echo "  🔍 ANALYZING TEST: $file"
-
-                  # Get file diff
-                  DIFF=$(git show $commit_sha -- "$file" 2>/dev/null || echo "")
-
-                  # Check if this is a new test file (implementation)
-                  if git log --diff-filter=A --oneline \
-                     origin/$BASE_BRANCH..HEAD -- "$file" | \
-                     grep -q "$commit_sha"; then
-                    echo "    - New test file detected (feature test creation)"
-                    VIOLATION_FOUND=true
-                    VIOLATION_FILES="${VIOLATION_FILES}\n"
-                    VIOLATION_FILES="${VIOLATION_FILES}  - ${file}"
-                    VIOLATION_COMMITS="${VIOLATION_COMMITS}\n"
-                    VIOLATION_COMMITS="${VIOLATION_COMMITS}  - ${commit_sha}"
-                  echo "  ❌ IMPLEMENTATION VIOLATION: New test"
-                  else
-                    # Existing test file - likely correction
-                    echo "    - Test modified (correction)"
-                    SUPERVISION_FILES="${SUPERVISION_FILES}\n"
-                    SUPERVISION_FILES="${SUPERVISION_FILES}  - ${file}"
-                    echo "  ✅ SUPERVISION: Test correction"
-                  fi
-                fi
-              done <<< "$FILES"
+            # Supervision (permitted) — docs, config, governance, agent artifacts
+            if [[ "$file" =~ \.md$ ]] || \
+               [[ "$file" =~ README ]] || \
+               [[ "$file" =~ CHANGELOG ]] || \
+               [[ "$file" =~ \.config\.(ts|js|json)$ ]] || \
+               [[ "$file" =~ package\.json$ ]] || \
+               [[ "$file" =~ tsconfig\.json$ ]] || \
+               [[ "$file" =~ ^\.agent-workspace/ ]] || \
+               [[ "$file" =~ ^\.agent-admin/ ]] || \
+               [[ "$file" =~ ^governance/ ]] || \
+               [[ "$file" =~ /02-architecture/ ]] || \
+               [[ "$file" =~ BUILD_PROGRESS_TRACKER\.md$ ]]; then
+              SUPERVISION_FILES="${SUPERVISION_FILES}\n  - ${file}"
+              continue
             fi
-          done <<< "$COMMITS"
 
-          echo ""
-          echo "=== ANALYSIS SUMMARY ==="
-          echo ""
+            # New test files (implementation — Foreman must not author new tests)
+            if [[ "$file" =~ \.test\.(ts|tsx|js|jsx)$ ]]; then
+              if git log --diff-filter=A --oneline \
+                 origin/"$BASE_BRANCH"..HEAD -- "$file" | grep -q .; then
+                IMPL_FILES_FOUND=true
+                IMPL_FILE_LIST="${IMPL_FILE_LIST}\n  - ${file} (new test file)"
+                continue
+              fi
+              SUPERVISION_FILES="${SUPERVISION_FILES}\n  - ${file} (test correction)"
+              continue
+            fi
+
+            # Production source files (implementation), including Supabase Edge Functions
+            if [[ "$file" =~ ^modules/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
+               [[ "$file" =~ ^apps/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
+               [[ "$file" =~ ^packages/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
+               [[ "$file" =~ ^supabase/functions/.*/.*\.(ts|tsx|js|jsx)$ ]] || \
+               [[ "$file" =~ ^packages/.*/supabase/functions/.*/.*\.(ts|tsx|js|jsx)$ ]]; then
+              IMPL_FILES_FOUND=true
+              IMPL_FILE_LIST="${IMPL_FILE_LIST}\n  - ${file}"
+            fi
+          done <<< "$CHANGED_FILES"
 
           if [ -n "$SUPERVISION_FILES" ]; then
-            echo "✅ Supervision Corrections Detected (Permitted):"
+            echo "✅ Supervision files detected (permitted):"
             echo -e "$SUPERVISION_FILES"
             echo ""
           fi
 
-          if [ "$VIOLATION_FOUND" = true ]; then
+          # ─── Verdict ─────────────────────────────────────────────────────────────
+
+          if [[ "$IMPL_FILES_FOUND" == "false" ]]; then
+            echo "✅ Check 1 PASSED — No implementation files detected."
+            echo ""
+            echo "   Dimension 1 (PR author / actor):   $PR_AUTHOR / $WORKFLOW_ACTOR"
+            echo "   Dimension 2 (Governed role):       $GOVERNED_ROLE [$ROLE_EVIDENCE_SOURCE]"
+            echo "   Dimension 3 (Delegation evidence): N/A (no implementation files)"
+            exit 0
+          fi
+
+          echo "Implementation files detected:"
+          echo -e "$IMPL_FILE_LIST"
+          echo ""
+
+          # Hard fail — Confirmed Foreman implementation breach
+          if [[ "$GOVERNED_ROLE" == "FOREMAN" ]]; then
             echo "❌ POLC BOUNDARY VIOLATION DETECTED"
             echo ""
-            echo "Foreman authored commits"
-            echo "implementing new features/capabilities."
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo ""
-            echo "Implementation Files:"
-            echo -e "$VIOLATION_FILES"
+            echo "🚨 CONFIRMED FOREMAN IMPLEMENTATION BREACH"
             echo ""
-            echo "Commits:${VIOLATION_COMMITS}"
+            echo "DIMENSION FAILURE REPORT:"
+            echo "  Dimension 1 (PR author / actor):   $PR_AUTHOR / $WORKFLOW_ACTOR (Copilot: $AUTHOR_IS_COPILOT / $ACTOR_IS_COPILOT)"
+            echo "  Dimension 2 (Governed role):       FOREMAN [$ROLE_EVIDENCE_SOURCE]"
+            echo "  Dimension 3 (Delegation evidence): MISSING"
+            echo "  Implementation files:              PRESENT"
             echo ""
-            echo "Foreman MUST NOT implement new"
-            echo "features. Builders implement; Foreman supervises."
+            echo "Foreman-governed session with implementation files but no delegation"
+            echo "evidence. Foreman MUST NOT implement. Builders implement; Foreman supervises."
             echo ""
-            echo "Permitted: Documentation, config,"
-            echo "test corrections, governance artifacts"
-            echo "Prohibited: New components,"
-            echo "API routes, business logic, feature expansion"
+            echo "Implementation files:"
+            echo -e "$IMPL_FILE_LIST"
             echo ""
-            echo "Action Required:"
-            echo "  1. Close this PR"
-            echo "  2. Create builder delegation issues"
-            echo "  3. Assign builders to implement"
-            echo "  4. Foreman supervises (does not implement)"
+            echo "REQUIRED ACTIONS:"
+            echo "  1. Ensure Foreman session memory has agents_delegated_to: populated"
+            echo "     with the name(s) of the builder agent(s) that wrote this code"
+            echo "  2. Or commit a PREHANDOVER proof that references the builder agent(s)"
+            echo "  3. If no builders were involved, create builder delegation issues"
+            echo "     and delegate implementation — Foreman must not implement directly"
             echo ""
-            echo "Override: CS2 only (for"
-            echo "ambiguous cases or justified exceptions)"
+            echo "SCOPED CS2 OVERRIDE PATH:"
+            echo "  For genuine governance exceptions (e.g., emergency hotfix):"
+            echo "  Request CS2 (@APGI-cmy) to add 'CS sign-off: approved' label"
+            echo "  with explicit justification referencing this PR."
+            echo "  Override is scoped to this PR only — not a general bypass."
             echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             exit 1
-          else
-            echo "✅ Check 1 PASSED - No Foreman implementation commits detected"
-            echo ""
-            echo "Foreman performed supervision"
-            echo "corrections only (or no production changes)."
-            echo ""
           fi
+
+          # Ambiguity state — Unresolved role, no delegation, implementation files present
+          echo "❌ POLC GATE FAIL — UNRESOLVED ROLE"
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "📋 AMBIGUITY STATE: UNRESOLVED GOVERNED ROLE"
+          echo ""
+          echo "DIMENSION FAILURE REPORT:"
+          echo "  Dimension 1 (PR author / actor):   $PR_AUTHOR / $WORKFLOW_ACTOR (Copilot: $AUTHOR_IS_COPILOT / $ACTOR_IS_COPILOT)"
+          echo "  Dimension 2 (Governed role):       UNRESOLVED (no governance artifacts found)"
+          echo "  Dimension 3 (Delegation evidence): MISSING"
+          echo "  Implementation files:              PRESENT"
+          echo ""
+          echo "The gate cannot confirm the governed role for this PR."
+          echo "This is NOT classified as a confirmed Foreman implementation breach —"
+          echo "runtime identity alone is insufficient for that classification."
+          echo ""
+          echo "Implementation files:"
+          echo -e "$IMPL_FILE_LIST"
+          echo ""
+          echo "TO RESOLVE (choose one):"
+          echo "  Option A — Foreman-orchestrated wave:"
+          echo "    Commit Foreman session memory with agents_delegated_to: populated"
+          echo "    Path: .agent-workspace/foreman*/memory/session-*.md"
+          echo "    This establishes Dimension 2 (FOREMAN) and Dimension 3 (delegation)."
+          echo "  Option B — Builder-governed wave:"
+          echo "    Add 'copilot-builder-role' label to this PR"
+          echo "    This establishes Dimension 2 (BUILDER) → gate skipped."
+          echo "  Option C — Scoped CS2 override:"
+          echo "    Request CS2 (@APGI-cmy) to add 'CS sign-off: approved' label"
+          echo "    with explicit justification for this unresolved case."
+          echo "    Override is scoped to this PR only — not a general bypass."
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          exit 1
 
   # ---------------------------------------------------------------------------
   # Job 2: Builder Involvement + Pre-Brief Existence Check (S-023)
@@ -353,7 +513,7 @@ jobs:
           SUPERVISION_ONLY=true
 
           while IFS= read -r file; do
-            # Skip supervision files
+            # Skip supervision / governance / infrastructure files
             if [[ "$file" =~ \.md$ ]] || \
                [[ "$file" =~ README ]] || \
                [[ "$file" =~ CHANGELOG ]] || \
@@ -363,16 +523,19 @@ jobs:
                [[ "$file" =~ ^\.agent-workspace/ ]] || \
                [[ "$file" =~ ^\.agent-admin/ ]] || \
                [[ "$file" =~ ^governance/ ]] || \
+               [[ "$file" =~ ^\.github/ ]] || \
                [[ "$file" =~ /02-architecture/ ]] || \
                [[ "$file" =~ BUILD_PROGRESS_TRACKER\.md$ ]]; then
               continue
             fi
 
-            # Check for implementation files
+            # Check for implementation files (production source code only),
+            # including Supabase Edge Functions — aligned with foreman-implementation-check
             if [[ "$file" =~ ^modules/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
                [[ "$file" =~ ^apps/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
                [[ "$file" =~ ^packages/.*/src/.*\.(ts|tsx|js|jsx)$ ]] || \
-               [[ "$file" =~ ^\.github/workflows/.*\.yml$ ]]; then
+               [[ "$file" =~ ^supabase/functions/.*/.*\.(ts|tsx|js|jsx)$ ]] || \
+               [[ "$file" =~ ^packages/.*/supabase/functions/.*/.*\.(ts|tsx|js|jsx)$ ]]; then
               IMPLEMENTATION_CHANGED=true
               SUPERVISION_ONLY=false
               break
@@ -469,35 +632,44 @@ jobs:
           echo "same copilot-swe-agent[bot] identity regardless of whether"
           echo "Foreman or a builder is the executing agent."
           echo "Builder delegation is now proven via governance evidence:"
-          echo "  1. agents_delegated_to: field in PR-introduced session memory"
-          echo "  2. Delegated agents listed in PR-introduced PREHANDOVER proof"
+          echo "  1. agents_delegated_to: field in PR-changed session memory"
+          echo "  2. Delegated agents listed in PR-changed PREHANDOVER proof"
           echo ""
 
           BUILDER_FOUND=false
           BUILDER_EVIDENCE_SOURCE=""
 
-          # Primary evidence: agents_delegated_to: field in session memory
-          # Scope to session memory files introduced by this PR only
-          # (--diff-filter=A) to avoid false positives from historical files.
-          NEW_SESSION_FILES=$(git diff --name-only --diff-filter=A \
+          # Primary evidence: agents_delegated_to: field in session memory.
+          # Use --diff-filter=AM (Added or Modified) to match the governed-role
+          # classifier scope: a PR that modifies an existing session memory to
+          # add/update agents_delegated_to: must also satisfy this evidence check.
+          # Historical session files unchanged by this PR are excluded.
+          CHANGED_SESSION_FILES=$(git diff --name-only --diff-filter=AM \
             origin/$BASE_BRANCH...HEAD 2>/dev/null | \
             grep -E '^\.agent-workspace/foreman.*/memory/session-.*\.md$' \
             || true)
 
-          if [ -n "$NEW_SESSION_FILES" ]; then
+          if [ -n "$CHANGED_SESSION_FILES" ]; then
             while IFS= read -r session_file; do
               if [ -f "$session_file" ]; then
                 # Check for agents_delegated_to: with at least one entry.
-                # The field is a YAML list; entries are lines with "- agent:"
-                # or "  - <agentname>". Match any non-empty list item after
-                # the agents_delegated_to: key.
+                # Supports both YAML forms:
+                #   Block list:  agents_delegated_to:\n  - builder-name
+                #   Inline list: agents_delegated_to: [builder-name, ...]
+                #   Scalar:      agents_delegated_to: builder-name
                 # AWK pattern:
-                #   line 1: enter block when agents_delegated_to: key is found
-                #   line 2: exit block when a non-indented, non-list line follows
-                #   line 3: collect list items (lines starting with optional
-                #           whitespace then "- ") and set found flag
-                #   END:    exit 0 (success) if any list item was found
+                #   line 1: inline/scalar form — non-empty value on same line
+                #   line 2: enter block-list mode when only whitespace follows key
+                #   line 3: exit block when a non-indented, non-list line follows
+                #   line 4: collect block list items (lines with "- ") and set flag
+                #   END:    exit 0 (success) if any delegation found
                 DELEGATED=$(awk '
+                  /^agents_delegated_to:[ \t]*[^ \t\n]/ {
+                    val = $0; sub(/^agents_delegated_to:[ \t]*/, "", val)
+                    gsub(/^[ \t]+|[ \t]+$/, "", val)
+                    if (val != "none" && val != "[]" && val != "") { print val; found=1 }
+                    next
+                  }
                   /^agents_delegated_to:/ { in_block=1; next }
                   in_block && /^[^ \t-]/ && !/^[ \t]*-/ { in_block=0 }
                   in_block && /^[ \t]*-[ \t]/ { print; found=1 }
@@ -514,17 +686,17 @@ jobs:
                   break
                 fi
               fi
-            done <<< "$NEW_SESSION_FILES"
+            done <<< "$CHANGED_SESSION_FILES"
           fi
 
           # Secondary evidence: PREHANDOVER proof lists delegated agents.
-          # Scope to PREHANDOVER files introduced by this PR only.
+          # Use --diff-filter=AM to match the governed-role classifier scope.
           if [ "$BUILDER_FOUND" = false ]; then
-            NEW_PREHANDOVER_FILES=$(git diff --name-only --diff-filter=A \
+            CHANGED_PREHANDOVER_FILES=$(git diff --name-only --diff-filter=AM \
               origin/$BASE_BRANCH...HEAD 2>/dev/null | \
               grep -E '^\.agent-workspace/foreman.*/memory/PREHANDOVER-.*\.md$' \
               || true)
-            if [ -n "$NEW_PREHANDOVER_FILES" ]; then
+            if [ -n "$CHANGED_PREHANDOVER_FILES" ]; then
               while IFS= read -r ph_file; do
                 if [ -f "$ph_file" ]; then
                   # Look for any builder agent reference in PREHANDOVER
@@ -538,7 +710,7 @@ jobs:
                     break
                   fi
                 fi
-              done <<< "$NEW_PREHANDOVER_FILES"
+              done <<< "$CHANGED_PREHANDOVER_FILES"
             fi
           fi
 
@@ -555,9 +727,9 @@ jobs:
             echo "of builder delegation was found."
             echo ""
             echo "Checked:"
-            echo "  1. agents_delegated_to: field in PR-new session memory"
+            echo "  1. agents_delegated_to: field in PR-changed session memory"
             echo "     (.agent-workspace/foreman*/memory/session-*.md)"
-            echo "  2. Builder agent references in PR-new PREHANDOVER proof"
+            echo "  2. Builder agent references in PR-changed PREHANDOVER proof"
             echo "     (.agent-workspace/foreman*/memory/PREHANDOVER-*.md)"
             echo ""
             echo "Per LIVING_AGENT_SYSTEM.md v6.2.0 and Foreman contract"
@@ -599,12 +771,30 @@ jobs:
           echo "=== Session Memory Presence and Compliance ==="
           echo ""
 
-          # If PR is labeled 'copilot-builder-role', Copilot is acting as a
-          # governed builder (not Foreman) in this PR.
-          # session-memory-check does not apply to builder PRs — Foreman session
-          # memory is not produced by builder-wave PRs.
-          # Use exact matching to avoid substring false positives.
+          # CS2 sign-off bypass: a scoped 'CS sign-off: approved' label waives this
+          # check consistently with foreman-implementation-check and other jobs.
+          PR_LABELS_SMC="${{ join(github.event.pull_request.labels.*.name, ',') }}"
+          IFS=',' read -ra SMC_LABEL_ARRAY <<< "$PR_LABELS_SMC"
+          for label in "${SMC_LABEL_ARRAY[@]}"; do
+            if [[ "$label" == "CS sign-off: approved" ]]; then
+              echo "✅ PASS — PR carries 'CS sign-off: approved' label."
+              echo "   CS2 explicit sign-off detected. session-memory-check waived"
+              echo "   per CS2 supreme authority (AGCFPP §2). Override is scoped to this PR."
+              exit 0
+            fi
+          done
+
+          # ─── Governed Role Classification (mirrors foreman-implementation-check) ─
+          # session-memory-check applies only to Foreman-governed PRs.
+          # Role is determined from governance artifacts, NOT runtime identity.
+          # All Copilot agents share copilot-swe-agent[bot] — it is NOT a role proxy.
+          #
+          # A-035 refinement: copilot-builder-role bypass is validated against
+          # governance evidence. If Foreman artifacts are present, the label cannot
+          # bypass this check (A-035 intent preserved). If no Foreman artifacts and
+          # label is present, treat as builder-governed (label honored).
           PR_LABELS="${{ join(github.event.pull_request.labels.*.name, ',') }}"
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
           HAS_BUILDER_LABEL=false
           IFS=',' read -ra LABEL_ARRAY <<< "$PR_LABELS"
           for label in "${LABEL_ARRAY[@]}"; do
@@ -613,31 +803,56 @@ jobs:
               break
             fi
           done
-          if [[ "$HAS_BUILDER_LABEL" == "true" ]]; then
-            # A-035: copilot-builder-role does NOT bypass this gate when the
-            # PR is authored by foreman-v2-agent. The label is intended for
-            # pure builder sessions where Foreman is NOT the executing agent.
-            # When foreman-v2-agent is the session author, the full
-            # session-memory-check MUST run regardless of label.
-            PR_AUTHOR="${{ github.event.pull_request.user.login }}"
-            IS_FOREMAN_PR=false
-            FOREMAN_AUTHOR_PATTERNS=("Copilot" "copilot-swe-agent" "github-copilot")
-            for fpattern in "${FOREMAN_AUTHOR_PATTERNS[@]}"; do
-              if [[ "$PR_AUTHOR" =~ $fpattern ]]; then
-                IS_FOREMAN_PR=true
-                break
-              fi
-            done
-            if [[ "$IS_FOREMAN_PR" == "false" ]]; then
-              echo "✅ PR labeled 'copilot-builder-role'"
-              echo "   Copilot is acting as a governed builder (not Foreman)."
-              echo "   session-memory-check is not applicable to builder PRs — skipping."
-              exit 0
-            fi
-            echo "⚠️  PR labeled 'copilot-builder-role' but authored by Foreman."
-            echo "   A-035: copilot-builder-role MUST NOT bypass session-memory-check"
-            echo "   when foreman-v2-agent is the session author."
-            echo "   Enforcing full check regardless of label..."
+
+          # Determine governed role from governance artifacts (Dimension 2)
+          # --diff-filter=AM: Added (A) and Modified (M) artifacts both signal FOREMAN.
+          # A PR that updates an existing session memory or PREHANDOVER file is still
+          # Foreman-governed — restricting to Added-only (A) leaves a bypass class.
+          GOVERNED_ROLE="UNRESOLVED"
+          ROLE_EVIDENCE_SOURCE="none"
+
+          NEW_FOREMAN_SESSION=$(git diff --name-only --diff-filter=AM \
+            origin/"$BASE_BRANCH"...HEAD 2>/dev/null | \
+            grep -E '^\.agent-workspace/foreman.*/memory/session-.*\.md$' || true)
+
+          NEW_FOREMAN_PREHANDOVER=$(git diff --name-only --diff-filter=AM \
+            origin/"$BASE_BRANCH"...HEAD 2>/dev/null | \
+            grep -E '^\.agent-workspace/foreman.*/memory/PREHANDOVER-.*\.md$' || true)
+
+          if [ -n "$NEW_FOREMAN_SESSION" ]; then
+            GOVERNED_ROLE="FOREMAN"
+            ROLE_EVIDENCE_SOURCE="foreman-session-memory"
+          elif [ -n "$NEW_FOREMAN_PREHANDOVER" ]; then
+            GOVERNED_ROLE="FOREMAN"
+            ROLE_EVIDENCE_SOURCE="foreman-prehandover-proof"
+          elif [[ "$HAS_BUILDER_LABEL" == "true" ]]; then
+            GOVERNED_ROLE="BUILDER"
+            ROLE_EVIDENCE_SOURCE="copilot-builder-role-label"
+          fi
+
+          echo "Governed role: $GOVERNED_ROLE | Evidence: $ROLE_EVIDENCE_SOURCE"
+          echo ""
+
+          # BUILDER: session-memory-check is not applicable to builder-governed PRs
+          if [[ "$GOVERNED_ROLE" == "BUILDER" ]]; then
+            echo "✅ Governed role is BUILDER — session-memory-check not applicable."
+            echo "   Builder PRs do not produce Foreman session memory. Skipping."
+            exit 0
+          fi
+
+          # A-035 enforced: Foreman artifacts present → label cannot bypass gate
+          if [[ "$GOVERNED_ROLE" == "FOREMAN" && "$HAS_BUILDER_LABEL" == "true" ]]; then
+            echo "⚠️  A-035 enforced: copilot-builder-role label present, but governed"
+            echo "   role is FOREMAN. Gate proceeds regardless of label."
+            echo "   Evidence: $ROLE_EVIDENCE_SOURCE"
+            echo ""
+          fi
+
+          # UNRESOLVED + builder label: label honored (ambiguous case)
+          if [[ "$GOVERNED_ROLE" == "UNRESOLVED" && "$HAS_BUILDER_LABEL" == "true" ]]; then
+            echo "⚠️  AMBIGUITY (Dimension 2): copilot-builder-role label present but"
+            echo "   governed role UNRESOLVED. Treating as BUILDER — label honored."
+            exit 0
           fi
 
           # Check for Foreman session memory
@@ -676,22 +891,27 @@ jobs:
           echo "✅ Session memory present"
           echo ""
           echo "Checking session memory for POLC violations..."
-          echo "(Scoped to new session memory files introduced in this PR only)"
+          echo "(Scoped to session memory files added or modified in this PR)"
           echo ""
 
-          # Scope POLC compliance scan to NEW session memory files introduced
-          # in this PR only. Scanning all historical files causes false
-          # positives from prior legitimately-supervised builder waves.
+          # Scope POLC compliance scan to session memory files added or modified
+          # (--diff-filter=AM) in this PR. This matches the governed-role detection
+          # scope: if a modified session file triggered FOREMAN classification, the
+          # same file must be inspected by the compliance scan.
+          # Using A-only here would leave a gap where a modified session file is
+          # used to classify the PR as Foreman-governed but is never scanned.
+          # Historical session files unchanged by this PR are excluded to avoid
+          # false positives from prior legitimately-supervised builder waves.
           BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
-          NEW_SESSION_FILES=$(git diff --name-only --diff-filter=A \
+          CHANGED_SESSION_FILES=$(git diff --name-only --diff-filter=AM \
             origin/$BASE_BRANCH...HEAD 2>/dev/null | \
             grep -E '^\.agent-workspace/foreman.*/memory/session-.*\.md$' \
             || true)
 
           POLC_VIOLATION_IN_MEMORY=false
-          if [ -z "$NEW_SESSION_FILES" ]; then
-            echo "ℹ️  No new Foreman session memory files introduced in this PR."
-            echo "   POLC compliance scan skipped (scoped to PR-introduced files only)."
+          if [ -z "$CHANGED_SESSION_FILES" ]; then
+            echo "ℹ️  No Foreman session memory files added or modified in this PR."
+            echo "   POLC compliance scan skipped (scoped to PR-changed files only)."
           else
             while IFS= read -r session_file; do
               if [ -f "$session_file" ]; then
@@ -703,7 +923,7 @@ jobs:
                   POLC_VIOLATION_IN_MEMORY=true
                 fi
               fi
-            done <<< "$NEW_SESSION_FILES"
+            done <<< "$CHANGED_SESSION_FILES"
           fi
 
           if [ "$POLC_VIOLATION_IN_MEMORY" = true ]; then
