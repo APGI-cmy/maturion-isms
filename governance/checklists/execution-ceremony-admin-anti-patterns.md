@@ -3,7 +3,7 @@
 ## Status
 **Type**: Tier 2 Governance Reference  
 **Authority**: CS2 — EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md v1.1.0  
-**Version**: 1.5.0  
+**Version**: 1.6.0  
 **Effective Date**: 2026-04-17  
 **Owner**: execution-ceremony-admin-agent / Foreman QP / IAA  
 **Purpose**: Canonized list of admin-ceremony defects that are auto-fail at the §4.3e Admin Ceremony Compliance Gate and/or trigger an IAA REJECTION-PACKAGE. Every entry is a known recurring failure mode derived from operational evidence.

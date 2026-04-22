@@ -20,7 +20,7 @@ iaa_prebrief_status: COMPLETE — PRE-BRIEF committed SHA 3b3439b
 
 ---
 
-# Wave Current Tasks — mmm-stage12-build-execution-20260420
+# Wave Current Tasks — gov-evidence-exactness-hardening-20260422
 
 Wave: gov-evidence-exactness-hardening-20260422
 Issue: maturion-isms#1413
@@ -51,7 +51,7 @@ ceremony_admin_appointed: NOT REQUIRED
 | D6 convergence bridge tracking committed | ✅ |
 | D7 session memory committed | ✅ |
 | D8 PREHANDOVER proof committed | ✅ |
-| IAA ASSURANCE-TOKEN obtained | ✅ IAA-session-165-aimc-strategy-followup-20260420-PASS (SHA d0e8bab) |
+| IAA ASSURANCE-TOKEN obtained | ✅ IAA-session-gov-evidence-exactness-hardening-20260422-PASS |
 
 ---
 

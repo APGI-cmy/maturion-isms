@@ -3,7 +3,7 @@
 ## Status
 **Type**: Tier 2 Governance Checklist  
 **Authority**: CS2 — EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md v1.1.0  
-**Version**: 1.2.0  
+**Version**: 1.5.0  
 **Effective Date**: 2026-04-17  
 **Owner**: execution-ceremony-admin-agent (per-job completion) / Foreman QP (per-job review)  
 **Purpose**: Authoritative checklist for ceremony completeness. Used by the `execution-ceremony-admin-agent` before bundle handback and by the Foreman QP checkpoint before IAA invocation.

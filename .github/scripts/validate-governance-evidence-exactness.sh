@@ -42,6 +42,13 @@ echo ""
 
 # ============================================================
 # CHECK 1: PATH-MISMATCH (SCOPE_DECLARATION path correctness)
+# Each path cited in the scope declaration MUST appear in the
+# PR diff.  A path that merely exists somewhere in the repo tree
+# is NOT sufficient — that would allow stale or extra files to
+# silently pass the exactness gate.
+# Degraded-mode exception: when no diff base is available (e.g.
+# shallow clone without origin/main) the check falls back to
+# existence-only with a warning.
 # ============================================================
 echo "── CHECK 1: PATH-MISMATCH ──"
 
@@ -54,16 +61,27 @@ if [ -z "$SCOPE_FILE" ]; then
 else
   echo "   Source: $SCOPE_FILE"
   PATH_ERRORS=0
-  while IFS= read -r cited_path; do
-    [ -z "$cited_path" ] && continue
-    echo "$CHANGED_FILES" | grep -qxF "$cited_path" 2>/dev/null && continue
-    git ls-tree -r HEAD --name-only 2>/dev/null | grep -qxF "$cited_path" && continue
-    [ -e "$cited_path" ] && continue
-    echo "   ❌ PATH-MISMATCH: '$cited_path' cited in $SCOPE_FILE but not found in repo tree, diff, or working directory"
-    PATH_ERRORS=$((PATH_ERRORS + 1))
-    ERRORS=$((ERRORS + 1))
-  done < <(grep -oE '^\s*-\s+`[^`]+`' "$SCOPE_FILE" 2>/dev/null | sed 's/.*`\([^`]*\)`.*/\1/' | sort -u)
-  [ "$PATH_ERRORS" -eq 0 ] && echo "   ✅ PASS — All cited paths verified"
+  if [ -z "$DIFF_BASE" ]; then
+    echo "   ⚠️  DEGRADED MODE — No git diff base available; falling back to repo-existence check only."
+    while IFS= read -r cited_path; do
+      [ -z "$cited_path" ] && continue
+      if ! git ls-tree -r HEAD --name-only 2>/dev/null | grep -qxF "$cited_path" && ! [ -e "$cited_path" ]; then
+        echo "   ❌ PATH-MISMATCH: '$cited_path' cited in $SCOPE_FILE but not found in repo tree or working directory"
+        PATH_ERRORS=$((PATH_ERRORS + 1))
+        ERRORS=$((ERRORS + 1))
+      fi
+    done < <(grep -oE '^\s*-\s+`[^`]+`' "$SCOPE_FILE" 2>/dev/null | sed 's/.*`\([^`]*\)`.*/\1/' | sort -u)
+  else
+    while IFS= read -r cited_path; do
+      [ -z "$cited_path" ] && continue
+      if ! echo "$CHANGED_FILES" | grep -qxF "$cited_path" 2>/dev/null; then
+        echo "   ❌ PATH-MISMATCH: '$cited_path' cited in $SCOPE_FILE but not present in the PR diff (citing stale or out-of-scope path)"
+        PATH_ERRORS=$((PATH_ERRORS + 1))
+        ERRORS=$((ERRORS + 1))
+      fi
+    done < <(grep -oE '^\s*-\s+`[^`]+`' "$SCOPE_FILE" 2>/dev/null | sed 's/.*`\([^`]*\)`.*/\1/' | sort -u)
+  fi
+  [ "$PATH_ERRORS" -eq 0 ] && echo "   ✅ PASS — All cited paths verified in PR diff"
 fi
 echo ""
 
@@ -110,7 +128,16 @@ echo ""
 echo "── CHECK 3: HASH-INCOMPLETE ──"
 
 HASH_CLAIM_FOUND=false
-for f in $(ls .agent-admin/prehandover/proof-*.md 2>/dev/null | head -5); do
+# Prefer proof files added/modified in this PR diff; fall back to all proof files.
+PROOF_SCAN_LIST=""
+if [ -n "$DIFF_BASE" ]; then
+  PROOF_SCAN_LIST=$(git diff --name-only --diff-filter=AM "$DIFF_BASE" 2>/dev/null | \
+    grep '^\.agent-admin/prehandover/proof-.*\.md$' || true)
+fi
+if [ -z "$PROOF_SCAN_LIST" ]; then
+  PROOF_SCAN_LIST=$(find .agent-admin/prehandover -maxdepth 1 -type f -name 'proof-*.md' 2>/dev/null | sort || true)
+fi
+for f in $PROOF_SCAN_LIST; do
   [ -f "$f" ] || continue
   if grep -qiE 'hash verification complete|hash_verified.*true|all hashes non.?null|canon_inventory hash verified' "$f" 2>/dev/null; then
     HASH_CLAIM_FOUND=true
@@ -162,16 +189,19 @@ else
     while IFS= read -r canon_file; do
       [ -z "$canon_file" ] && continue
       [ -f "$canon_file" ] || continue
-      # Get version from file header
-      file_ver=$(grep -oE 'Version: [0-9]+\.[0-9]+\.[0-9]+' "$canon_file" 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || true)
+      # Get version from file header — handles: **Version**: x.y.z  *Version: x.y.z  Version: x.y.z
+      file_ver=$(grep -oE '(\*{1,2}Version\*{0,2}:?|Version:)\s*[0-9]+\.[0-9]+\.[0-9]+' "$canon_file" 2>/dev/null | \
+        head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || true)
       [ -z "$file_ver" ] && continue
-      # Get version from CANON_INVENTORY
+      # Get version from CANON_INVENTORY — strip any suffix text (e.g. "1.4.0 — ACTIVE GOVERNANCE")
       inv_ver=$(python3 -c "
-import json
+import json, re
 try:
     d = json.load(open('governance/CANON_INVENTORY.json'))
     entry = next((c for c in d.get('canons',[]) if c.get('path') == '$canon_file'), None)
-    print(entry.get('version','') if entry else '')
+    raw = entry.get('version','') if entry else ''
+    m = re.match(r'([0-9]+\.[0-9]+\.[0-9]+)', raw)
+    print(m.group(1) if m else raw)
 except: print('')
 " 2>/dev/null || echo "")
       [ -z "$inv_ver" ] && continue
@@ -199,9 +229,12 @@ else
     echo "   ℹ️  N/A — No added/modified governance/canon/ files in this diff."
   else
     while IFS= read -r f; do
-      [ -z "$f" ] || [ ! -f "$f" ] && continue
-      # Extract all version strings, deduplicate
-      versions=$(grep -oE '[Vv]ersion:? [0-9]+\.[0-9]+\.[0-9]+' "$f" 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | sort -uV || true)
+      if [ -z "$f" ] || [ ! -f "$f" ]; then
+        continue
+      fi
+      # Extract all version strings, deduplicate — handles **Version**: x.y.z, *Version: x.y.z, Version: x.y.z
+      versions=$(grep -oE '(\*{1,2}Version\*{0,2}:?|Version:)\s*[0-9]+\.[0-9]+\.[0-9]+' "$f" 2>/dev/null | \
+        grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | sort -uV || true)
       count=$(echo "$versions" | grep -c . 2>/dev/null || echo "0")
       if [ "$count" -gt 1 ]; then
         echo "   ⚠️  VERSION-MISMATCH (internal, warning): $f declares multiple version strings: $(echo $versions | tr '\n' ' ')"
