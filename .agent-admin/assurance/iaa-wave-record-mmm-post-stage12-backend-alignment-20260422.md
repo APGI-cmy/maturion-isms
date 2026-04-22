@@ -142,9 +142,15 @@ The PREHANDOVER proof for this wave MUST include the following sections:
 
 ## TOKEN
 
-_Reserved — to be populated by IAA at Phase 4 Final Audit._
+**PHASE_B_BLOCKING_TOKEN**: IAA-session-mmm-post-stage12-backend-alignment-20260422-PASS
 
-**Expected token reference**: `IAA-session-mmm-post-stage12-backend-alignment-20260422-PASS`
+**PR**: copilot/align-mat-ai-gateway-deployments | Issue: maturion-isms#1455
+**Wave**: mmm-post-stage12-backend-alignment-20260422
+**All checks PASS** (13 checks — 13 PASS, 0 FAIL). Merge gate parity: PASS.
+**Merge permitted** (subject to CS2 approval — @APGI-cmy).
+**Token issued**: 2026-04-22
+**Adoption phase**: PHASE_B_BLOCKING — hard gate ACTIVE
+**IAA session**: IAA-session-mmm-post-stage12-backend-alignment-20260422-PASS
 
 ---
 
