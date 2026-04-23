@@ -42,7 +42,7 @@ steps:
       fetch-depth: '1'     # optional, default: '1'
 ```
 
-**Update procedure**: To upgrade the pinned versions in this composite action, open a PR that modifies `.github/actions/setup/action.yml` only. The deprecation gate will scan the new file and verify it uses approved versions before merge.
+**Update procedure**: To upgrade the pinned versions in this composite action, open a PR whose implementation change is limited to `.github/actions/setup/action.yml`, together with any governance evidence required by repository gates (for example, `SCOPE_DECLARATION.md`). The deprecation gate will scan the updated action file and verify it uses approved versions before merge.
 
 ### 2.2 Approved Versions List
 
