@@ -118,6 +118,30 @@ At final audit, the PREHANDOVER proof bundle MUST contain (at minimum):
 
 ## REJECTION_HISTORY
 
+### R-002 — 2026-04-23
+
+**Verdict**: REJECTION-PACKAGE
+**Token reference**: IAA-session-mmm-storage-model-codification-20260422-REJECT-R2
+**Session ID**: session-mmm-storage-model-codification-20260422
+**PR**: #1460 | **Wave**: mmm-storage-model-codification-20260422 | **Branch**: copilot/resolve-mmm-storage-model-drift
+**Invoked by**: Foreman (CS2 authority) — R2 re-invocation after R1 resolution
+**Checks run**: 25 checks — 24 PASS, 1 FAIL
+**SUBSTANTIVE STATUS**: All substantive deliverables PASS. Failure is CEREMONY only.
+
+#### F-001 (R2) — ACR-04: FILES_CHANGED count mismatch in governance/scope-declaration.md
+
+**Finding**: `governance/scope-declaration.md` declares `FILES_CHANGED: 15` and lists 15 files. Actual `git diff --name-only origin/main...HEAD` = 16 files. The 16th file is `governance/scope-declaration.md` itself (modified in commit 59154fcd as F-003 resolution), which is present in the diff but NOT listed in `## FILES_CHANGED` and NOT counted.
+
+**Fix required**:
+1. Edit `governance/scope-declaration.md`: change `FILES_CHANGED: 15` → `FILES_CHANGED: 16` and add `- governance/scope-declaration.md` to the `## FILES_CHANGED` list
+2. Commit, push to `origin/copilot/resolve-mmm-storage-model-drift`
+3. Re-invoke IAA (R3)
+
+**Classification**: Ceremony — Systemic
+**Prevention action**: Pre-IAA scope declaration gate must run `git diff --name-only origin/main...HEAD | wc -l` AFTER `governance/scope-declaration.md` is edited and staged to capture the final accurate count.
+
+---
+
 ### R-001 — 2026-04-23
 
 **Verdict**: REJECTION-PACKAGE
