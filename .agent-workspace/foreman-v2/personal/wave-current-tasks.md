@@ -27,7 +27,7 @@ three coordinated controls:
 | 2 | wave-current-tasks.md | foreman-v2-agent | 🟢 DONE | This file |
 | 3 | scope-declaration | foreman-v2-agent | 🟡 IN PROGRESS | .agent-workspace/foreman-v2/personal/scope-declaration-wave-actions-deprecation-gate-20260423.md |
 | 4 | IAA Pre-Brief | independent-assurance-agent | 🟢 DONE | PRE-BRIEF committed SHA 2180d34; 5 qualifying tasks declared |
-| 5 | CI gate + Dependabot + Composite action + Policy doc | qa-builder | 🔴 PENDING | maturion-isms#1458 — implements all 4 issue deliverables |
+| 5 | CI gate + Dependabot + Composite action + Policy doc | qa-builder | 🟢 DONE | maturion-isms#1458 — all 4 deliverables QP PASS |
 | 6 | PREHANDOVER proof | execution-ceremony-admin-agent | 🔴 PENDING | After qa-builder QP PASS |
 | 7 | Session memory | execution-ceremony-admin-agent | 🔴 PENDING | After qa-builder QP PASS |
 | 8 | IAA Final Audit | independent-assurance-agent | 🔴 PENDING | After ECAP bundle |
