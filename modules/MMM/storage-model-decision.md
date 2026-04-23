@@ -230,15 +230,23 @@ admins/framework owners (write). Framework snapshots are immutable post-publish.
 
 ## 7. Implementation Gaps Resolved by This Wave
 
-The B1 migration `supabase/migrations/20260420000004_mmm_storage_buckets.sql` created
-the `mmm-evidence` and `mmm-framework-sources` buckets but had two gaps:
+The B1 migration `supabase/migrations/20260420000004_mmm_storage_buckets.sql` originally
+created the `mmm-evidence` and `mmm-framework-sources` buckets with two gaps. In this
+wave, the initial migration is amended so fresh installs from `main` receive the corrected
+configuration directly, and follow-up migrations remain in place to repair environments
+that had already applied the earlier B1 version.
 
 ### Gap 1 — Missing audio MIME types in `mmm-evidence`
 **Problem**: The architecture requires `evidence_type: "voice"` support (§A5.6), but the
-B1 migration did not include `audio/mpeg`, `audio/wav`, `audio/mp4`, `audio/webm`.
+originally merged B1 migration omitted `audio/mpeg`, `audio/wav`, `audio/mp4`,
+`audio/webm`.
 
-**Resolution**: Migration `supabase/migrations/20260422000001_mmm_evidence_audio_mime_fix.sql`
-updates the `mmm-evidence` bucket to add the missing audio (and video) MIME types.
+**Resolution**: This wave amends
+`supabase/migrations/20260420000004_mmm_storage_buckets.sql` so fresh installs include
+the required audio MIME types from the outset, and migration
+`supabase/migrations/20260422000001_mmm_evidence_audio_mime_fix.sql` remains the repair
+step for environments that had already applied the earlier B1 migration (also adding the
+corresponding video MIME types).
 
 ### Gap 2 — RLS policies lacked org-level path isolation
 **Problem**: The B1 migration's `mmm_evidence_bucket_select/insert/update/delete` policies
