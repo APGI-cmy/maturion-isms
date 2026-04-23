@@ -27,6 +27,9 @@ runs:
 
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
+      with:
+        version: '8.15.7'
+        run_install: false
       # Version is pinned here; update this composite action (via PR) when
       # upgrading the pnpm action — not in individual workflow files.
 
