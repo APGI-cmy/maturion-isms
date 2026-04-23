@@ -7,7 +7,7 @@
 **Date**: 2026-04-22
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Adoption Phase**: PHASE_B_BLOCKING — hard gate ACTIVE
-**Wave Record Version**: 1.0.0 (PRE-BRIEF section populated; TOKEN section reserved for Phase 4 Final Audit)
+**Wave Record Version**: 1.0.0 (PRE-BRIEF section populated; TOKEN section populated/issued for Phase 4 Final Audit)
 
 ---
 
