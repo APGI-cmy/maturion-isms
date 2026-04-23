@@ -23,7 +23,7 @@
 
 | Task | Scope | Triggering Artifacts | Owner |
 |------|-------|---------------------|-------|
-| A — AI Gateway alignment | Rename/refactor `deploy-mat-ai-gateway.yml`; rename `apps/mat-ai-gateway/` → MMM; update env vars | `.github/workflows/deploy-mat-ai-gateway.yml` (and any NEW deploy-mmm-ai-gateway.yml) | integration-builder / api-builder |
+| A — AI Gateway alignment | Rename/refactor `deploy-mat-ai-gateway.yml`; keep `apps/mat-ai-gateway/` unchanged in this PR; update env vars | `.github/workflows/deploy-mat-ai-gateway.yml` (and any NEW deploy-mmm-ai-gateway.yml) | integration-builder / api-builder |
 | B — Edge/runtime deployment alignment | Rename/refactor `deploy-mat-edge-functions.yml`; establish MMM backend runtime target | `.github/workflows/deploy-mat-edge-functions.yml` (and any NEW equivalent) | integration-builder |
 | C — Environment and secret alignment | Env var audit and documentation by platform surface | Config / documentation artifacts | integration-builder |
 | D — Workflow alignment | GitHub Actions workflow renames for A+B surfaces | `.github/workflows/` changes | integration-builder |
