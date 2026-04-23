@@ -34,6 +34,7 @@ approved_artifact_paths:
   - .agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-storage-model-codification-20260422.md
   - .agent-admin/assurance/iaa-wave-record-mmm-storage-model-codification-20260422.md
   # Schema-builder: migration artifacts
+  - supabase/migrations/20260420000004_mmm_storage_buckets.sql
   - supabase/migrations/20260422000001_mmm_evidence_audio_mime_fix.sql
   - supabase/migrations/20260422000002_mmm_evidence_rls_hardening.sql
   # QA-builder: test artifacts
