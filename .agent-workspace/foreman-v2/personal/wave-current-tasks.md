@@ -33,66 +33,6 @@ Resolve and codify the MMM storage bucket model. The MMM architecture (Stage 5, 
 | Migration: audio MIME fix | schema-builder | COMPLETE ✅ | supabase/migrations/20260422000001_mmm_evidence_audio_mime_fix.sql |
 | Migration: RLS hardening | schema-builder | COMPLETE ✅ | supabase/migrations/20260422000002_mmm_evidence_rls_hardening.sql |
 | BUILD_PROGRESS_TRACKER.md update | foreman-v2-agent | COMPLETE ✅ | Updated 2026-04-23 — storage model wave recorded |
-| PREHANDOVER proof | execution-ceremony-admin-agent | PENDING | |
-| Session memory | execution-ceremony-admin-agent | PENDING | |
-| IAA Final Audit | independent-assurance-agent | PENDING | |
-
----
-
-# Wave Current Tasks — mmm-tracker-reconciliation-20260421
-
-**Foreman**: foreman-v2-agent v6.2.0
-**Wave**: mmm-tracker-reconciliation-20260421
-**Issue**: maturion-isms#1430 — Complete MMM pre-build closure, reconcile tracker state, and activate Stage 12 build execution
-**Branch**: copilot/complete-mmm-pre-build-closure
-**Date**: 2026-04-21
-**CS2 Authorization**: CONFIRMED — issue #1430 in CS2-governed repository
-**ceremony_admin_appointed**: NOT REQUIRED — single-file documentation wave (IAA confirmed)
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-tracker-reconciliation-20260421-20260421.md
-iaa_prebrief_status: COMPLETE — PRE-BRIEF committed SHA 3b3439b
-
-## Current Wave Tasks
-
-| Task | Agent | Status | Notes |
-|------|-------|--------|-------|
-| Update BUILD_PROGRESS_TRACKER.md | foreman-v2-agent | COMPLETE ✅ | Stages 5–11 closed; Stage 12 COMPLETE + PR #1429; CDV note; next-step note |
-| PREHANDOVER proof | foreman-v2-agent | COMPLETE ✅ | bd60b72; IAA response pasted verbatim |
-| IAA Final Audit | independent-assurance-agent | COMPLETE ✅ | IAA-session-mmm-tracker-reconciliation-20260421-PASS (21/21); wave record SHA cb3e8e2 |
-
----
-
-# Wave Current Tasks — gov-evidence-exactness-hardening-20260422
-
-Wave: gov-evidence-exactness-hardening-20260422
-Issue: maturion-isms#1413
-PR: 1441
-Branch: copilot/fix-253484265-1108482416-462c8484-4b9b-4f62-be55-ad07e0ee4136
-Date: 2026-04-22
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-gov-evidence-exactness-hardening-20260422.md
-ceremony_admin_appointed: NOT REQUIRED
-
-## Tasks
-
-- [x] T1: Create `.github/scripts/validate-governance-evidence-exactness.sh`
-- [x] T2: Add `evidence-exactness-check` job to `preflight-evidence-gate.yml`
-- [x] T3: Update `execution-ceremony-admin-checklist.md` v1.4.0→v1.5.0 — Section 11
-- [x] T4: Update `execution-ceremony-admin-anti-patterns.md` v1.5.0→v1.6.0 — AAP-25/26/27
-- [x] T5: Create proof-of-operation doc
-- [x] T6: Update `PREHANDOVER.template.md` v1.3.0→v1.4.0
-- [x] T7: Update `CANON_INVENTORY.json` for T3/T4/T6
-
-| Gate | Status |
-|------|--------|
-| IAA Pre-Brief committed | ✅ SHA aa37d23 |
-| D1 wave-current-tasks.md committed | ✅ |
-| D2 scope declaration committed | ✅ |
-| D3 GAP-009 status record committed | ✅ |
-| D4 canon alignment tracking committed | ✅ |
-| D5 module-consumer spec tracking committed | ✅ |
-| D6 convergence bridge tracking committed | ✅ |
-| D7 session memory committed | ✅ |
-| D8 PREHANDOVER proof committed | ✅ |
-| IAA ASSURANCE-TOKEN obtained | ✅ IAA-session-gov-evidence-exactness-hardening-20260422-PASS |
-
----
-
+| PREHANDOVER proof | execution-ceremony-admin-agent | COMPLETE ✅ | PREHANDOVER-session-mmm-storage-model-codification-20260422.md |
+| Session memory | execution-ceremony-admin-agent | COMPLETE ✅ | session-mmm-storage-model-codification-20260422.md |
+| IAA Final Audit | independent-assurance-agent | COMPLETE ✅ | IAA-session-mmm-storage-model-codification-20260422-PASS (30/30) |

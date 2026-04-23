@@ -3,7 +3,7 @@
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
 **Last Updated**: 2026-04-22  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off; wave: mmm-tracker-reconciliation-20260421, 2026-04-21 — pre-build closure reconciliation; PR #1429 merged; wave: mmm-post-stage12-cdv-validation-20260422, 2026-04-22 — CDV staging validation document + SB-003-W3 static code evidence + tracker update, issue #1443; wave: mmm-storage-model-codification-20260422, 2026-04-23 — storage bucket model ADR + audio MIME fix + RLS hardening + Red QA tests, issue #1458); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE)
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off; wave: mmm-tracker-reconciliation-20260421, 2026-04-21 — pre-build closure reconciliation; PR #1429 merged; wave: mmm-post-stage12-cdv-validation-20260422, 2026-04-22 — CDV staging validation document + SB-003-W3 static code evidence + tracker update, issue #1443; wave: mmm-post-stage12-backend-alignment-20260422, 2026-04-22 — backend deployment alignment: workflows renamed to MMM-era, deployment-alignment.md added, tracker updated, issue #1455; wave: mmm-operational-closure-tracker-update-20260422, 2026-04-22 — operational closure omissions recorded + future-build hard gate added, issue #1457; wave: mmm-storage-model-codification-20260422, 2026-04-23 — storage bucket model ADR + audio MIME fix + RLS hardening + Red QA tests, issue #1458); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — This is the designated primary operational monitor for MMM stage progress. CS2 should use this document as the main live progress dashboard.  
@@ -414,7 +414,7 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 ---
 
 ### Stage 12: Build Execution & Evidence
-**Status**: [x] ACTIVE — Build execution COMPLETE (B1–B9; 959/959 tests GREEN); Phase 4 ECAP + IAA audit complete; CDV deployment validation = post-Stage-12 operational follow-up (see §12.1 below); CDV tracking wave mmm-post-stage12-cdv-validation-20260422 (issue #1443, 2026-04-22) created — SB-003-W3 static code evidence confirmed
+**Status**: [x] ACTIVE — Build execution COMPLETE (B1–B9; 959/959 tests GREEN); Phase 4 ECAP + IAA audit complete; CDV deployment validation = post-Stage-12 operational follow-up (see §12.1 below); CDV tracking wave mmm-post-stage12-cdv-validation-20260422 (issue #1443, 2026-04-22) created — SB-003-W3 static code evidence confirmed; **NOTE: Build-Complete (L1) ≠ Operationally-Closed (L3) — see §12.2 Operational Closure Pending Items and §12.3 Future-Build Hard Gate**
 **Location**: `modules/MMM/11-build/`  
 **Wave**: mmm-stage12-build-execution-20260420  
 **Issue**: maturion-isms#1428  
@@ -482,11 +482,73 @@ The items below require the PR #1429 artefacts to be deployed to the staging env
 | SB-003-W1/W2 live proof | ⚠️ PENDING CS2 staging sign-off |
 | PIT_BASE_URL live confirmation | ⚠️ PENDING CS2 |
 | PIT handshake code (7 steps per TR-017) | ✅ CODE CONFIRMED, tests GREEN (T-MMM-S6-109/110) |
-| Frontend deployment (staging URL) | ⚠️ PENDING CS2 staging deploy + sign-off |
+| Frontend deployment (Vercel) | ✅ VERCEL FRONTEND FUNCTIONING — Vercel deployment path validated (wave: align-vercel-deployment-workflow-20260422, PR #1454); live production URL confirmation pending CS2 sign-off |
 | Backend deployment (Edge Functions) | ⚠️ PENDING CS2 staging deploy + sign-off |
 | CDV E2E workflow demonstration | ⚠️ PENDING CS2 staging execution |
 
 **CDV tracking**: See `modules/MMM/12-phase4-ecap/cdv-staging-validation.md` for full checklist with evidence slots.
+
+---
+
+#### 12.2 Operational Closure Pending Items (Issue #1457 — Post-Build Review Finding)
+
+> **⚠️ Build-Complete ≠ Operationally-Closed**
+>
+> Stage 12 build execution is COMPLETE (code, tests, evidence, PR #1429 merged 2026-04-21). This is **NOT** the same as operationally closed. Operational closure requires:
+> (1) deployment platforms commissioned, (2) live platform configuration confirmed, and (3) at least one live end-to-end workflow demonstrated with CS2 sign-off.
+>
+> The items below were identified during the MMM post-build review (issue #1457) and remain **PENDING CONFIRMATION** until CS2 executes live platform validation. No item in this list may be marked CONFIRMED without CS2 live execution evidence — static code review, CI test results, and provisioning confirmations are insufficient to close these items.
+
+The following live operational confirmation items are still required before MMM can be declared **operationally closed (L3)**:
+
+| # | Operational Closure Item | Status | Notes |
+|---|---|---|---|
+| OC-001 | Supabase project configured correctly | ⚠️ PENDING CONFIRMATION | Project settings, auth configuration, and connection strings must be verified in the live deployment environment |
+| OC-002 | Supabase secrets set | ⚠️ PENDING CONFIRMATION | All required secrets (service role key, JWT secret, anon key) must be confirmed present and correct in the deployment environment |
+| OC-003 | Storage buckets created | ⚠️ PENDING CONFIRMATION | MMM storage buckets defined in B1 schema migrations must exist and be accessible in the live Supabase project |
+| OC-004 | SMTP / auth setup confirmed | ⚠️ PENDING CONFIRMATION | Email-based auth flows (invitation acceptance, user onboarding) require SMTP provider to be configured in Supabase auth settings |
+| OC-005 | Vercel environment variables confirmed | ⚠️ PENDING CONFIRMATION | All variables from `apps/mmm/.env.example` must be set in Vercel project settings; `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` required at minimum; Vercel deployment path is now functioning (wave: align-vercel-deployment-workflow-20260422, PR #1454) — env var confirmation is the remaining step |
+| OC-006 | GitHub secrets aligned | ⚠️ PENDING CONFIRMATION | Secrets consumed by `.github/workflows/deploy-mmm-vercel.yml` and Supabase migration workflows must be present and correct in repository secrets |
+| OC-007 | AIMC / PIT live endpoint values confirmed | ⚠️ PENDING CONFIRMATION | `AIMC_BASE_URL` confirmed (staging gateway); `PIT_BASE_URL` PENDING live PIT endpoint — both must be confirmed and reachable before B7 live wire is exercisable end-to-end |
+| OC-008 | External service envs on Render confirmed | ⚠️ PENDING CONFIRMATION | AIMC gateway (`maturion-mat-ai-gateway-staging`) and other Render-deployed services must have all MMM-relevant environment variables (including `AIMC_SERVICE_TOKEN`, `PIT_SERVICE_TOKEN`) confirmed active and readable at runtime |
+| OC-009 | Live E2E validation run at least once | ⚠️ PENDING CONFIRMATION | At least one complete end-to-end workflow (e.g. GP-001 organisation onboarding through framework assessment) must be demonstrated on the live platform with CS2 sign-off |
+
+**Operational closure criterion**: MMM is operationally closed (L3) when all 9 items above are evidenced as CONFIRMED by CS2 live platform sign-off and this table is updated with confirmation timestamps and evidence references.
+
+> **Relationship to §12.1 CDV**: §12.1 CDV checklist documents the staged deployment validation items and evidence slots. §12.2 provides the explicit named closure checklist (OC-001 through OC-009) of operational items identified in post-build review, with their current PENDING status. These sections are complementary — §12.1 tracks deployment execution evidence; §12.2 declares the complete closure criterion set.
+
+---
+
+#### 12.3 Future-Build Operational Closure Hard Gate
+
+> **Governance lesson from MMM post-build review (issue #1457)**:
+> A module must not be declared fully complete (`operationally closed`) when live deployment commissioning and end-to-end proof are still outstanding. MMM Stage 12 build execution was correctly completed and merged — but several live operational acceptance items remained outside build closure. This gap must not recur for future modules.
+
+**Three-level completion model** — mandatory for all future module builds:
+
+| Level | Label | Meaning | Evidence Required |
+|---|---|---|---|
+| L1 | **Code/Build Complete** | All code written, all tests GREEN, all build waves merged, IAA ASSURANCE-TOKEN issued | PR merged with 100% tests GREEN; IAA ASSURANCE-TOKEN issued |
+| L2 | **Deployment Commissioned** | Platforms created, connected, and configured; secrets set; health endpoints verified | Vercel/hosting project live; Supabase project configured; secrets confirmed in all runtime locations; health endpoint responds |
+| L3 | **Operationally Closed** | L1 + L2 + at least one live E2E workflow demonstrated with CS2 sign-off | All L2 evidence + E2E workflow execution record signed off by CS2 |
+
+**`final build delivered` = L1 only. It does NOT imply L2 or L3.**
+
+**Future-Build Mandatory Operational Closure Checklist** — Future modules MUST NOT be declared fully complete (L3) unless all of the following are evidenced:
+
+- [ ] Deployment platforms created and connected (e.g. Vercel project, Supabase project, Render services — as applicable)
+- [ ] Vercel / Supabase / external services configured (project settings, auth, storage, SMTP — as applicable)
+- [ ] Required secrets present in all runtime locations (Vercel environment variables, Supabase project secrets, GitHub repository secrets, Render service environment variables)
+- [ ] Storage buckets created (where schema migrations define bucket requirements)
+- [ ] GitHub secrets configured where workflows depend on them (CI deployment workflows, migration workflows)
+- [ ] Health endpoints verified (at least one HTTP health probe returns expected response from live deployment)
+- [ ] At least one live end-to-end workflow demonstrated on the live platform (a complete user journey from UI through API to database and back — not a CI test run)
+- [ ] Tracker updated to reflect operational state (BUILD_PROGRESS_TRACKER.md operational closure section completed with all evidence CONFIRMED and timestamps recorded)
+
+**Enforcement note for Foreman**: The Foreman MUST NOT describe a module as "module complete" or "ready for production" in governance documentation based solely on L1 (Build-Complete) evidence. Build-Complete (L1) is a legitimate and precise milestone. It must be labelled precisely to avoid creating the impression that deployment commissioning (L2) or operational readiness (L3) has been confirmed. The PREHANDOVER proof for future Stage 12 waves must declare which completion level has been reached.
+
+---
+
 
 **Frontend Application Deliverables** (if UI required):
 - [x] React app (or framework) exists at documented path (`apps/mmm/`) — PR #1429
@@ -541,12 +603,12 @@ The items below require the PR #1429 artefacts to be deployed to the staging env
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 12 (Build Execution) ACTIVE — B1–B9 ALL COMPLETE (959/959 tests GREEN); B9 QP PASS — all 10 golden paths GREEN; CG-003/CG-004 declared; NBR-001/002/003 verified. Phase 4 ECAP ceremony bundle committed; IAA Final Audit COMPLETE — ASSURANCE-TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS. PR #1429 MERGED 2026-04-21 by CS2 (APGI-cmy). CDV deployment/staging validation = post-Stage-12 operational follow-up. CDV wave mmm-post-stage12-cdv-validation-20260422 (issue #1443, 2026-04-22) — SB-003-W3 static code evidence CONFIRMED; W1/W2 + PIT_BASE_URL + staging deployment PENDING CS2 live sign-off.
-**Overall Progress**: Build execution 100% complete (B1–B9 DONE; ECAP bundle committed; IAA ASSURANCE-TOKEN issued; PR #1429 MERGED 2026-04-21). CDV/staging deployment follow-up: IN PROGRESS — SB-003-W3 static evidence confirmed; W1/W2, PIT_BASE_URL, and staging deployment PENDING CS2 operational action. CDV tracking document: `modules/MMM/12-phase4-ecap/cdv-staging-validation.md`.
-**Blockers**: None (build execution complete). **SB-003 staging E2E gate**: PARTIALLY RESOLVED — token provisioning satisfied by CS2 (2026-04-21); SB-003-W3 static code evidence confirmed (2026-04-22); W1/W2 NOT YET LIVE-TESTED; `PIT_BASE_URL` pending live PIT endpoint. B7 CI passes via stub path. Staging E2E blocked pending CS2 wiring confirmation + PIT endpoint readiness. CDV tracking document created (wave mmm-post-stage12-cdv-validation-20260422, issue #1443).
+**Current Stage**: Stage 12 (Build Execution) ACTIVE — B1–B9 ALL COMPLETE (959/959 tests GREEN); B9 QP PASS — all 10 golden paths GREEN; CG-003/CG-004 declared; NBR-001/002/003 verified. Phase 4 ECAP ceremony bundle committed; IAA Final Audit COMPLETE — ASSURANCE-TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS. PR #1429 MERGED 2026-04-21 by CS2 (APGI-cmy). **MMM is at L1 (Build-Complete). Operational closure (L3) requires §12.2 OC-001 through OC-009 confirmed (see §12.2 and §12.3 below).** Vercel frontend deployment path now functioning (wave: align-vercel-deployment-workflow-20260422, PR #1454). **Backend deployment alignment COMPLETE** (wave mmm-post-stage12-backend-alignment-20260422, issue #1455, 2026-04-22) — MAT-era deployment workflows renamed to MMM-era; deployment alignment doc added.
+**Overall Progress**: Build execution 100% complete (B1–B9 DONE; ECAP bundle committed; IAA ASSURANCE-TOKEN issued; PR #1429 MERGED 2026-04-21) = **L1 Build-Complete**. Vercel frontend deployment path now functioning (PR #1454). CDV/staging deployment follow-up: IN PROGRESS — SB-003-W3 static evidence confirmed; W1/W2, PIT_BASE_URL, and staging deployment PENDING CS2 operational action. **Operational closure (L3)**: 0/9 OC items confirmed (§12.2 OC-001 through OC-009 all PENDING). CDV tracking document: `modules/MMM/12-phase4-ecap/cdv-staging-validation.md`. **Deployment alignment**: COMPLETE — all 3 deployment workflows now MMM-aligned (Vercel: `deploy-mmm-vercel.yml`, AI Gateway: `deploy-mmm-ai-gateway.yml`, Edge Functions: `deploy-mmm-edge-functions.yml`); deployment documentation: `modules/MMM/12-phase4-ecap/deployment-alignment.md`.
+**Blockers**: None (build execution complete). **Operational closure items pending**: §12.2 OC-001–OC-009 all PENDING CS2 live platform validation. **SB-003 staging E2E gate**: PARTIALLY RESOLVED — token provisioning satisfied by CS2 (2026-04-21); SB-003-W3 static code evidence confirmed (2026-04-22); W1/W2 NOT YET LIVE-TESTED; `PIT_BASE_URL` pending live PIT endpoint. B7 CI passes via stub path. Staging E2E blocked pending CS2 wiring confirmation + PIT endpoint readiness.
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.
 **Open Questions**: All RESOLVED through Stage 5. OQ-001 RESOLVED (Stage 4 TRS — CONNECTIVITY-REQUIRED, TR-039–TR-042). OQ-002 RESOLVED (Stage 5 Architecture — capabilities/index.md legacy sub-folder disposition). OQ-003 RESOLVED (Stage 5 Architecture — duplication audit, architecture.md §A12). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.
-**Last Updated**: 2026-04-23 (MMM storage bucket model codified — ADR created, audio MIME fix migration, RLS hardening migration, 8 Red QA tests (172/172 GREEN), issue #1458, wave: mmm-storage-model-codification-20260422; previously: 2026-04-22 CDV staging validation document created; SB-003-W3 static code evidence confirmed; tracker updated — foreman-v2-agent; wave: mmm-post-stage12-cdv-validation-20260422; issue #1443)
+**Last Updated**: 2026-04-23 (MMM storage bucket model codified — ADR created, audio MIME fix migration, RLS hardening migration, 8 Red QA tests (172/172 GREEN), issue #1458, wave: mmm-storage-model-codification-20260422; previously: 2026-04-22 backend deployment alignment complete: `deploy-mat-ai-gateway.yml` → `deploy-mmm-ai-gateway.yml`, `deploy-mat-edge-functions.yml` → `deploy-mmm-edge-functions.yml`, wave mmm-post-stage12-backend-alignment-20260422, issue #1455; operational closure omissions recorded §12.2 OC-001–OC-009, future-build hard gate added §12.3, wave mmm-operational-closure-tracker-update-20260422, issue #1457)
 **Phase 4 ECAP Ceremony**:
 - [x] ECAP ceremony bundle committed — execution-ceremony-admin-agent (artifacts in PR #1429, merged 2026-04-21)
 - [x] PREHANDOVER proof: `modules/MMM/12-phase4-ecap/PREHANDOVER.md`
@@ -566,7 +628,9 @@ The items below require the PR #1429 artefacts to be deployed to the staging env
 2. ~~Phase 4 IAA Final Audit — independent-assurance-agent~~ ✅ COMPLETE (PR #1429 merged 2026-04-21) — ASSURANCE-TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS
 3. ~~Phase 4 merge gate release — Foreman~~ ✅ COMPLETE — PR #1429 MERGED 2026-04-21 by CS2 (APGI-cmy)
 4. ~~Post-Stage-12 CDV governance tracking wave — create CDV document, confirm SB-003-W3 static evidence, update tracker~~ ✅ COMPLETE (wave mmm-post-stage12-cdv-validation-20260422, issue #1443, 2026-04-22; CDV document: `modules/MMM/12-phase4-ecap/cdv-staging-validation.md`)
-5. **Post-Stage-12 live staging validation** (CS2 operational action): Complete evidence slots in `modules/MMM/12-phase4-ecap/cdv-staging-validation.md` — staging deployment, SB-003-W1/W2 live proof, PIT_BASE_URL confirmation, PIT runtime handshake, CDV E2E workflow demonstration
+5. ~~Post-Stage-12 backend deployment alignment — rename MAT-era workflows to MMM-era, add deployment documentation~~ ✅ COMPLETE (wave mmm-post-stage12-backend-alignment-20260422, issue #1455, 2026-04-22; workflows renamed; `modules/MMM/12-phase4-ecap/deployment-alignment.md` added)
+6. ~~Post-Stage-12 operational closure omissions recording and future-build governance hardening~~ ✅ COMPLETE (wave mmm-operational-closure-tracker-update-20260422, issue #1457, 2026-04-22 — §12.2 OC-001–OC-009 + §12.3 future-build hard gate added)
+7. **Post-Stage-12 live operational closure** (CS2 operational action): Work through §12.2 OC-001–OC-009 checklist — confirm Supabase config, secrets, storage buckets, SMTP/auth, Vercel env vars, GitHub secrets, AIMC/PIT live endpoints, Render envs; then execute live E2E validation (OC-009). Update §12.2 table with CONFIRMED status and timestamps as each item is completed.
 
 ---
 
@@ -596,6 +660,10 @@ The items below require the PR #1429 artefacts to be deployed to the staging env
 - [x] Pre-build stages 1–11 FORMALLY CLOSED — completion evidenced by Stage 12 execution chain (PR #1429 merged 2026-04-21)
 - [x] CDV staging validation document created — `modules/MMM/12-phase4-ecap/cdv-staging-validation.md` (wave mmm-post-stage12-cdv-validation-20260422, 2026-04-22)
 - [x] SB-003-W3 static code evidence confirmed (2026-04-22) — `supabase/functions/_shared/mmm-aimc-client.ts`
+- [x] Operational closure omissions recorded — §12.2 OC-001 through OC-009 (wave mmm-operational-closure-tracker-update-20260422, 2026-04-22, issue #1457)
+- [x] Build-Complete vs Operationally-Closed distinction codified — three-level model (L1/L2/L3) documented in §12.3
+- [x] Future-build operational closure hard gate added — §12.3 reusable closure checklist (8 items) for all future module builds
+- [x] Vercel frontend deployment path reflected (wave: align-vercel-deployment-workflow-20260422, PR #1454 — functioning; env var confirmation pending)
 - [x] MMM storage bucket model codified (wave mmm-storage-model-codification-20260422, 2026-04-23, issue #1458) — chosen model: `mmm-evidence` + `mmm-framework-sources` (Option C: MMM-native consolidated); ADR: `modules/MMM/storage-model-decision.md`; audio MIME fix: `supabase/migrations/20260422000001_mmm_evidence_audio_mime_fix.sql`; RLS hardening: `supabase/migrations/20260422000002_mmm_evidence_rls_hardening.sql`; 172/172 tests GREEN (8 new T-MMM-S6-ADR001/ADR002 tests pass)
 
 ---
