@@ -118,4 +118,75 @@ At final audit, the PREHANDOVER proof bundle MUST contain (at minimum):
 
 ## REJECTION_HISTORY
 
-*(Reserved — populated by IAA if REJECTION-PACKAGE is issued.)*
+### R-001 — 2026-04-23
+
+**Verdict**: REJECTION-PACKAGE
+**Token reference**: IAA-session-mmm-storage-model-codification-20260422-REJECT-R1
+**Session ID**: session-mmm-storage-model-codification-20260422
+**PR**: #1460 | **Wave**: mmm-storage-model-codification-20260422 | **Branch**: copilot/resolve-mmm-storage-model-drift
+**Invoked by**: Foreman (CS2 authority)
+**Checks run**: 23 substance + ceremony checks — 3 FAIL, 20 PASS
+**SUBSTANTIVE STATUS**: All substantive deliverables PASS (ADR, migrations, tests, tracker — locally reviewed). Failures are CEREMONY only.
+
+---
+
+#### F-001 — A-021 (FAIL-ONLY-ONCE) / CORE-020: PREHANDOVER proof not pushed to GitHub
+
+**Finding**: 2 ceremony commits were committed locally but NOT pushed to `origin/copilot/resolve-mmm-storage-model-drift` before IAA invocation. Branch at GitHub (f05c5670) is 2 commits behind local HEAD (88781e79). GitHub API returns HTTP 404 for all 3 ceremony file paths:
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-storage-model-codification-20260422.md` → 404
+- `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-mmm-storage-model-codification-20260422.md` → 404
+- `.agent-workspace/foreman-v2/memory/session-mmm-storage-model-codification-20260422.md` → 404
+
+Per A-021: GitHub API is the authoritative evidence check. Local commits do not constitute pushed evidence.
+
+**Fix required**: `git push origin copilot/resolve-mmm-storage-model-drift` to push commits ef8176f6 and 88781e79.
+
+**Classification**: Ceremony — Systemic (recurring A-021 pattern; prevention action: Foreman pre-IAA gate must include `git log --oneline origin/copilot/resolve-mmm-storage-model-drift..HEAD` to confirm zero unpushed commits before invoking IAA)
+
+---
+
+#### F-002 — ACR-01 (Auto-Reject): ECAP reconciliation summary absent from GitHub PR bundle
+
+**Finding**: The ECAP reconciliation summary (C1–C5 complete, per §4.3e of PREHANDOVER) is embedded in the PREHANDOVER proof. Since the PREHANDOVER is not pushed to GitHub (F-001 root cause), the ECAP reconciliation summary is entirely absent from the GitHub-accessible Tier 3 proof bundle. `ceremony_admin_appointed: true` → ACR-01 through ACR-11 apply without exception.
+
+**Fix required**: Same as F-001 (git push). The reconciliation summary will become GitHub-accessible once PREHANDOVER is pushed.
+
+**Classification**: Ceremony (shares root cause with F-001)
+
+---
+
+#### F-003 — A-026 (FAIL-ONLY-ONCE): governance/scope-declaration.md not updated for current wave
+
+**Finding**: `governance/scope-declaration.md` on branch `copilot/resolve-mmm-storage-model-drift` still contains content from wave `mmm-stage12-build-execution-20260420` (PR #1429, `FILES_CHANGED: 107`, branch `copilot/mmm-stage-12-build-execution-evidence`). The current wave `mmm-storage-model-codification-20260422` is entirely absent. ECAP session memory flagged this as a Foreman responsibility; it was not completed before IAA invocation.
+
+**Fix required**: Update `governance/scope-declaration.md` with current wave content. The PR diff at push-time will contain 13 files:
+```
+.agent-admin/assurance/iaa-wave-record-mmm-storage-model-codification-20260422.md
+.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-mmm-storage-model-codification-20260422.md
+.agent-workspace/execution-ceremony-admin-agent/bundles/session-mmm-storage-model-codification-20260422.md
+.agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-storage-model-codification-20260422.md
+.agent-workspace/foreman-v2/memory/session-mmm-storage-model-codification-20260422.md
+.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-storage-model-codification-20260422.md
+.agent-workspace/foreman-v2/personal/wave-current-tasks.md
+modules/MMM/BUILD_PROGRESS_TRACKER.md
+modules/MMM/storage-model-decision.md
+modules/MMM/tests/B1-schema/b1-schema.test.ts
+supabase/migrations/20260420000004_mmm_storage_buckets.sql
+supabase/migrations/20260422000001_mmm_evidence_audio_mime_fix.sql
+supabase/migrations/20260422000002_mmm_evidence_rls_hardening.sql
+```
+Note: `supabase/migrations/20260420000004_mmm_storage_buckets.sql` appears in the GitHub PR diff but is absent from `approved_artifact_paths` in the wave-scoped scope declaration. Add it to both the global scope declaration and the wave-scoped scope declaration.
+
+**Classification**: Ceremony — Systemic (recurring across waves; prevention action: add `governance/scope-declaration.md` update as a mandatory, explicit Foreman pre-IAA gate checklist step)
+
+---
+
+**Resolution path** (all 3 failures share a simple resolution sequence):
+1. `git push origin copilot/resolve-mmm-storage-model-drift` — resolves F-001 + F-002
+2. Update `governance/scope-declaration.md` for current wave (13 files listed above), commit, push — resolves F-003
+3. Add `supabase/migrations/20260420000004_mmm_storage_buckets.sql` to wave-scoped scope declaration (`approved_artifact_paths`), commit, push
+4. Re-invoke IAA
+
+**Systemic prevention actions registered (no-repeat mandate)**:
+- Pre-IAA gate must verify pushed state: `git log --oneline origin/copilot/resolve-mmm-storage-model-drift..HEAD` must return empty
+- `governance/scope-declaration.md` update added as mandatory named Foreman pre-IAA gate step
