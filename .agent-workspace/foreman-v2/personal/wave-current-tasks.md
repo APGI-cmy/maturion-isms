@@ -35,10 +35,10 @@ This is a post-Stage-12 operational documentation wave. The deliverables establi
 | wave-current-tasks.md | foreman-v2-agent | COMPLETE ✅ | This file |
 | scope-declaration | foreman-v2-agent | COMPLETE ✅ | .agent-workspace/foreman-v2/personal/scope-declaration-wave-supabase-reconciliation-20260423.md |
 | IAA Pre-Brief | independent-assurance-agent | COMPLETE ✅ | PRE-BRIEF committed SHA b90efe0; 5 qualifying tasks declared |
-| MMM Supabase Audit document | mat-specialist | 🔴 PENDING | docs/supabase/MMM_SUPABASE_AUDIT.md |
-| MMM Supabase Boundary document | mat-specialist | 🔴 PENDING | docs/supabase/MMM_SUPABASE_BOUNDARY.md |
-| MMM Supabase Operating Procedure | mat-specialist | 🔴 PENDING | docs/supabase/MMM_SUPABASE_OPERATING_PROCEDURE.md |
-| config.toml audit/supplement | mat-specialist | 🔴 PENDING | supabase/config.toml — audit-only |
-| BUILD_PROGRESS_TRACKER.md anti-drift update | mat-specialist | 🔴 PENDING | Additive only |
+| MMM Supabase Audit document | mat-specialist | 🟢 DONE | docs/supabase/MMM_SUPABASE_AUDIT.md — QP PASS |
+| MMM Supabase Boundary document | mat-specialist | 🟢 DONE | docs/supabase/MMM_SUPABASE_BOUNDARY.md — QP PASS |
+| MMM Supabase Operating Procedure | mat-specialist | 🟢 DONE | docs/supabase/MMM_SUPABASE_OPERATING_PROCEDURE.md — QP PASS |
+| config.toml audit/supplement | mat-specialist | 🟢 DONE | supabase/config.toml — audited, all 26 functions confirmed, no changes needed |
+| BUILD_PROGRESS_TRACKER.md anti-drift update | mat-specialist | 🟢 DONE | Additive bullet + notes section added; no pre-build stage status changes |
 
 **Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED
