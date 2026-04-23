@@ -1,6 +1,6 @@
 # GitHub Actions Upgrade Policy
 
-**Authority**: Issue #1458 — Actions deprecation detection gate
+**Authority**: Issue #1463 — Actions deprecation detection gate
 **Applies to**: All `.github/workflows/` and `.github/actions/` files in the `maturion-isms` repository
 **Owner**: Foreman / CS2 (APGI-cmy)
 **Last Updated**: 2026-04-23

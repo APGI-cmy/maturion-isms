@@ -1,5 +1,5 @@
 # Dependabot configuration for Maturion ISMS
-# Authority: Issue #1458 — Actions deprecation detection gate
+# Authority: Issue #1463 — Actions deprecation detection gate
 # Monitors GitHub Actions ecosystem for version updates on a weekly schedule.
 
 version: 2

@@ -1,7 +1,7 @@
 # Scope Declaration — actions-deprecation-gate-20260423
 
 **Wave**: actions-deprecation-gate-20260423
-**Issue**: maturion-isms#1458
+**Issue**: maturion-isms#1463
 **Branch**: copilot/add-github-actions-deprecation-detection
 **Date**: 2026-04-23
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)

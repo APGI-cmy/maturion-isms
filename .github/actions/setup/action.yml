@@ -1,4 +1,4 @@
-# Authority: Issue #1458 — Reusable workflow standardization
+# Authority: Issue #1463 — Reusable workflow standardization
 # Purpose: Composite action that centralises common checkout / Node.js / pnpm
 #          setup primitives so individual workflows stay DRY.
 

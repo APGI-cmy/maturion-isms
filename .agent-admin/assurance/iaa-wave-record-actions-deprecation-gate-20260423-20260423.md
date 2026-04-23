@@ -2,8 +2,8 @@
 
 **Agent**: independent-assurance-agent v6.2.0
 **Wave**: actions-deprecation-gate-20260423
-**Issue**: #1458 — Add GitHub Actions deprecation detection gate, Dependabot updates, and reusable workflow standardization
-**Branch**: copilot/add-github-actions-deprecation-detection (canonical) / copilot/fix-1458 (stated in request — see RECONCILIATION NOTICE 1)
+**Issue**: #1463 — Add GitHub Actions deprecation detection gate, Dependabot updates, and reusable workflow standardization
+**Branch**: copilot/add-github-actions-deprecation-detection (canonical) / copilot/fix-1463 (stated in request — see RECONCILIATION NOTICE 1)
 **Date**: 2026-04-23
 **Builder**: qa-builder (delegated by Foreman)
 **Adoption Phase**: PHASE_B_BLOCKING
@@ -19,7 +19,7 @@
 ### Reconciliation Notices
 
 **RECONCILIATION NOTICE 1 — Branch name mismatch**
-Pre-brief request specifies branch `copilot/fix-1458`. Confirmed actual working branch: `copilot/add-github-actions-deprecation-detection`. Branch `copilot/fix-1458` does not exist. Foreman must confirm canonical branch name before builder delegation.
+Pre-brief request specifies branch `copilot/fix-1463`. Confirmed actual working branch: `copilot/add-github-actions-deprecation-detection`. Branch `copilot/fix-1463` does not exist. Foreman must confirm canonical branch name before builder delegation.
 
 **RECONCILIATION NOTICE 2 — wave-current-tasks.md identity**
 Live `wave-current-tasks.md` records wave `mmm-storage-model-codification-20260422` under issue #1458 (all tasks COMPLETE, closed as PR #1460). New wave identity must be established in updated `wave-current-tasks.md` before builder appointment.
@@ -58,7 +58,7 @@ Live `wave-current-tasks.md` records wave `mmm-storage-model-codification-202604
 
 | ID | Blocker | Severity | Owner |
 |----|---------|----------|-------|
-| SB-001 | Branch name mismatch (`copilot/fix-1458` vs `copilot/add-github-actions-deprecation-detection`) | HARD | Foreman |
+| SB-001 | Branch name mismatch (`copilot/fix-1463` vs `copilot/add-github-actions-deprecation-detection`) | HARD | Foreman |
 | SB-002 | wave-current-tasks.md stale identity — must be updated for new wave | HARD | Foreman |
 | SB-003 | Ceremony admin not yet confirmed for this wave | SOFT | Foreman |
 | SB-004 | `dependabot.yml` absent (expected — creation task) | INFO | qa-builder |

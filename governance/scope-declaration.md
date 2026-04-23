@@ -1,7 +1,7 @@
 # Scope Declaration
 
 **Branch**: copilot/resolve-mmm-storage-model-drift
-**Issue**: #1458
+**Issue**: #1463
 **PR**: (pending — branch copilot/resolve-mmm-storage-model-drift)
 **Wave**: mmm-storage-model-codification-20260422
 **Session**: mmm-storage-model-codification-20260422

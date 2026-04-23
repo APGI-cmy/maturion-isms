@@ -1,4 +1,4 @@
-# Authority: Issue #1458 — Actions deprecation detection gate
+# Authority: Issue #1463 — Actions deprecation detection gate
 # Purpose: Scan all workflow files for banned/deprecated GitHub Actions versions
 #          and fail with actionable remediation instructions when found.
 #
