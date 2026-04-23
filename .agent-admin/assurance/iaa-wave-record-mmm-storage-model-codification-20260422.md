@@ -112,7 +112,20 @@ At final audit, the PREHANDOVER proof bundle MUST contain (at minimum):
 
 ## TOKEN
 
-*(Reserved — populated by IAA after final audit ASSURANCE-TOKEN is issued.)*
+**ASSURANCE-TOKEN ISSUED — FINAL AUDIT (R3)**
+
+```
+PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-storage-model-codification-20260422-PASS
+Token reference:        IAA-session-mmm-storage-model-codification-20260422-PASS
+PR:                     #1460 | Wave: mmm-storage-model-codification-20260422
+Branch:                 copilot/resolve-mmm-storage-model-drift | Issue: #1458
+Date:                   2026-04-23
+Checks run:             30 checks — 30 PASS, 0 FAIL
+Merge gate parity:      PASS
+Adoption phase:         PHASE_B_BLOCKING — Hard gate ACTIVE
+Verdict:                ASSURANCE-TOKEN (PASS) — Merge permitted subject to CS2 approval
+R-history:              R1 REJECTED (ceremony — 3 findings), R2 REJECTED (ceremony — ACR-04), R3 PASS
+```
 
 ---
 
