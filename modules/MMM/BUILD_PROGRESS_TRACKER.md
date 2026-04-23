@@ -665,10 +665,13 @@ The following live operational confirmation items are still required before MMM 
 - [x] Future-build operational closure hard gate added — §12.3 reusable closure checklist (8 items) for all future module builds
 - [x] Vercel frontend deployment path reflected (wave: align-vercel-deployment-workflow-20260422, PR #1454 — functioning; env var confirmation pending)
 - [x] MMM storage bucket model codified (wave mmm-storage-model-codification-20260422, 2026-04-23, issue #1458) — chosen model: `mmm-evidence` + `mmm-framework-sources` (Option C: MMM-native consolidated); ADR: `modules/MMM/storage-model-decision.md`; audio MIME fix: `supabase/migrations/20260422000001_mmm_evidence_audio_mime_fix.sql`; RLS hardening: `supabase/migrations/20260422000002_mmm_evidence_rls_hardening.sql`; 172/172 tests GREEN (8 new T-MMM-S6-ADR001/ADR002 tests pass)
+- [x] Supabase project reconciliation complete (wave supabase-reconciliation-20260423, 2026-04-23, issue #1461) — repo-backed state fully audited and documented; anti-drift model established; 3 governance documents created (`docs/supabase/MMM_SUPABASE_AUDIT.md`, `docs/supabase/MMM_SUPABASE_BOUNDARY.md`, `docs/supabase/MMM_SUPABASE_OPERATING_PROCEDURE.md`); config.toml verified complete (all 26 functions, project_id confirmed); no new migrations created; drift assessment pending CS2 `supabase db diff --linked` verification
 
 ---
 
 ## Notes and Observations
+
+**Supabase Reconciliation Wave (2026-04-23, maturion-isms#1461)**: Wave `supabase-reconciliation-20260423` completed a full audit and documentation of the repo-backed Supabase project state. Three governance documents were created under `docs/supabase/`: `MMM_SUPABASE_AUDIT.md` (full inventory of 6 migrations, 26 Edge Functions, 2 storage buckets, RLS model, auth boundary, secrets boundary), `MMM_SUPABASE_BOUNDARY.md` (explicit boundary between repo-controlled and dashboard-managed items), and `MMM_SUPABASE_OPERATING_PROCEDURE.md` (agent-driven change procedure covering migrations, storage, functions, deployment workflow, anti-drift rules, and emergency override). `supabase/config.toml` verified complete — all 26 functions registered, `project_id = ujucvyyspfxlxlfdamda` confirmed. No migrations created. Anti-drift model active: repo is single source of truth for schema, storage, and Edge Functions from this wave onwards. CS2 to complete OC-001 drift verification (`supabase db diff --linked`).
 
 **Document Normalization (2026-04-13, maturion-isms#1358)**: All MMM pre-build documents have been
 reviewed and normalized to reflect current state. This tracker is now the **designated primary live
