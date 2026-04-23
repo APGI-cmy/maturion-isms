@@ -78,4 +78,4 @@ The following items require CS2 operational action on live infrastructure:
 - PR #1454 — MMM frontend Vercel deployment aligned
 - `modules/MMM/BUILD_PROGRESS_TRACKER.md` — primary operational tracker
 - `modules/MMM/12-phase4-ecap/cdv-staging-validation.md` — CDV staging validation checklist
-- `.agent-admin/assurance/iaa-wave-record-mmm-post-stage12-backend-alignment-20260422.md` — IAA Pre-Brief
+- `.agent-admin/assurance/iaa-wave-record-mmm-post-stage12-backend-alignment-20260422.md` — IAA Wave Record
