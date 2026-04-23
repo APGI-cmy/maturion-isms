@@ -18,8 +18,8 @@ on:
 
 # ── BANNED_VERSIONS LIST ─────────────────────────────────────────────────────
 # To add a newly-deprecated action, append the full "owner/action@vN" string
-# to the BANNED_VERSIONS environment variable in the scan step below.
-# Convention: one entry per line, comma-separated in a single env var value.
+# as a new entry in the BANNED_VERSIONS Bash array in the scan step below.
+# Convention: one quoted "owner/action@vN" entry per line in that array.
 # Minimum standard references:
 #   actions/checkout       → v4+ required
 #   actions/setup-node     → v4+ required
