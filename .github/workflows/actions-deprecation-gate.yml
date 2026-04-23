@@ -78,9 +78,9 @@ jobs:
           echo "════════════════════════════════════════════════════════"
 
           for pattern in "${BANNED_VERSIONS[@]}"; do
-            # Search only 'uses:' lines to avoid false matches in comments
+            # Search only real YAML 'uses:' lines; ignore commented examples
             set +e
-            matches=$(grep -rn "uses:.*${pattern}" "${SCAN_DIRS[@]}" 2>/dev/null)
+            matches=$(grep -Ern "^[[:space:]-]*uses:[[:space:]]*${pattern}([[:space:]]|$)" "${SCAN_DIRS[@]}" 2>/dev/null)
             set -e
             if [ -n "$matches" ]; then
               echo ""
