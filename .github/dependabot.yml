@@ -1,0 +1,44 @@
+# Dependabot configuration for Maturion ISMS
+# Authority: Issue #1458 — Actions deprecation detection gate
+# Monitors GitHub Actions ecosystem for version updates on a weekly schedule.
+
+version: 2
+
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Africa/Johannesburg"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "APGI-cmy"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore(actions)"
+    groups:
+      # Group all actions/* updates together for batch review
+      actions-core:
+        patterns:
+          - "actions/*"
+        update-types:
+          - "minor"
+          - "patch"
+      # Group pnpm action updates
+      pnpm-actions:
+        patterns:
+          - "pnpm/*"
+        update-types:
+          - "minor"
+          - "patch"
+      # Group peter-evans actions
+      peter-evans-actions:
+        patterns:
+          - "peter-evans/*"
+        update-types:
+          - "minor"
+          - "patch"
