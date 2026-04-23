@@ -692,3 +692,53 @@ describe('T-MMM-S6-164 — Wave B1 evidence artifact exists', () => {
     expect(evidence).toMatch(/NBR-005/);
   });
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Wave mmm-storage-model-codification-20260422 — RED QA Tests
+// Issue: maturion-isms#1458
+// Architecture Reference: §A5.6 (voice evidence MIME types)
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('T-MMM-S6-ADR001: mmm-evidence bucket supports voice/audio evidence MIME types', () => {
+  const audioMimeFixMigration = fs
+    .readdirSync(MIGRATIONS_DIR)
+    .find((file) => file.includes('mmm_evidence_audio_mime_fix'));
+
+  const audioMimeFixSQL = audioMimeFixMigration
+    ? fs.readFileSync(path.join(MIGRATIONS_DIR, audioMimeFixMigration), 'utf8')
+    : '';
+
+  it('mmm_evidence_audio_mime_fix migration exists', () => {
+    expect(audioMimeFixMigration).toBeDefined();
+  });
+
+  it('mmm-evidence bucket allows audio/mpeg (MP3)', () => {
+    expect(audioMimeFixSQL).toContain("'audio/mpeg'");
+  });
+  it('mmm-evidence bucket allows audio/wav (WAV)', () => {
+    expect(audioMimeFixSQL).toContain("'audio/wav'");
+  });
+  it('mmm-evidence bucket allows audio/mp4 (M4A/AAC)', () => {
+    expect(audioMimeFixSQL).toContain("'audio/mp4'");
+  });
+  it('mmm-evidence bucket allows audio/webm (browser-native audio)', () => {
+    expect(audioMimeFixSQL).toContain("'audio/webm'");
+  });
+  it('mmm-evidence bucket allows video/mp4 (video evidence)', () => {
+    expect(audioMimeFixSQL).toContain("'video/mp4'");
+  });
+  it('mmm-evidence bucket allows video/webm (browser-native video)', () => {
+    expect(audioMimeFixSQL).toContain("'video/webm'");
+  });
+});
+
+describe('T-MMM-S6-ADR002: mmm-evidence RLS enforces org-level path isolation', () => {
+  it('storage migration defines org-path RLS for mmm-evidence (split_part)', () => {
+    const allMigrationSQL = readMigrationSQL();
+    expect(allMigrationSQL).toMatch(/split_part.*mmm-evidence|mmm-evidence.*split_part/i);
+  });
+  it('storage migration defines mmm_evidence_org_read_v2 or equivalent RLS policy', () => {
+    const allMigrationSQL = readMigrationSQL();
+    expect(allMigrationSQL).toMatch(/mmm_evidence_org_read_v2|mmm_evidence_org_insert_v2/);
+  });
+});

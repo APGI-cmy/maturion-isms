@@ -32,7 +32,16 @@ VALUES (
         'text/plain',
         'text/csv',
         'application/zip',
-        'application/json'
+        'application/json',
+        -- Audio evidence (voice recordings) — architecture §A5.6 evidence_type: "voice"
+        'audio/mpeg',
+        'audio/wav',
+        'audio/mp4',
+        'audio/webm',
+        'audio/ogg',
+        -- Video evidence
+        'video/mp4',
+        'video/webm'
     ]
 )
 ON CONFLICT (id) DO NOTHING;
