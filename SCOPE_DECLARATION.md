@@ -1,29 +1,45 @@
-# Scope Declaration — mmm-operational-closure-tracker-update-20260422
+# Scope Declaration — mmm-post-stage12-backend-alignment-20260422
 
-**Wave**: mmm-operational-closure-tracker-update-20260422
-**Issue**: maturion-isms#1457
-**Branch**: copilot/update-mmm-progress-tracker
+**Wave**: mmm-post-stage12-backend-alignment-20260422
+**Issue**: maturion-isms#1455
+**Branch**: copilot/align-mat-ai-gateway-deployments
 **Date**: 2026-04-22
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
+**IAA Pre-Brief**: .agent-admin/assurance/iaa-wave-record-mmm-post-stage12-backend-alignment-20260422.md (SHA 706be01)
+
+## Scope Decision (SB-03 Resolution)
+
+Workflow-name rename only. apps/mat-ai-gateway/ application path retained unchanged. All MAT-named deployment workflows renamed to MMM-aligned equivalents. Deployment documentation added to governance path. BUILD_PROGRESS_TRACKER updated.
 
 ## Changed Files
 
 ### Added
 
-- `.agent-admin/assurance/iaa-wave-record-mmm-operational-closure-tracker-update-20260422.md` - IAA Pre-Brief + Final Audit wave record
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-operational-closure-tracker-update-20260422.md` - Phase 4 PREHANDOVER proof
-- `.agent-workspace/foreman-v2/memory/session-mmm-operational-closure-tracker-update-20260422.md` - Phase 4 session memory
-- `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-operational-closure-tracker-update-20260422.md` - Wave scope declaration
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks-mmm-operational-closure-tracker-update-20260422.md` - Dedicated wave current tasks file
-- `.agent-workspace/independent-assurance-agent/memory/session-mmm-operational-closure-tracker-update-20260422.md` - IAA session memory
+- `.agent-admin/assurance/iaa-wave-record-mmm-post-stage12-backend-alignment-20260422.md` - IAA Pre-Brief wave record artifact committed by IAA agent SHA 706be01
+- `.github/workflows/deploy-mmm-ai-gateway.yml` - Renamed from deploy-mat-ai-gateway.yml with workflow name updated to Deploy MMM AI Gateway
+- `.github/workflows/deploy-mmm-edge-functions.yml` - Renamed from deploy-mat-edge-functions.yml with workflow name updated to Deploy MMM Edge Functions
+- `modules/MMM/12-phase4-ecap/deployment-alignment.md` - Deployment alignment record for Vercel AI gateway and edge functions
+- `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-post-stage12-backend-alignment-20260422.md` - Foreman personal scope declaration artifact
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks-mmm-post-stage12-backend-alignment-20260422.md` - Wave task registry file for this wave
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-post-stage12-backend-alignment-20260422.md` - PREHANDOVER proof for this wave
+- `.agent-workspace/foreman-v2/memory/session-mmm-post-stage12-backend-alignment-20260422.md` - Session memory for this wave
 
 ### Modified
 
-- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Parking station entry appended for this wave
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave tasks updated for this wave
-- `modules/MMM/BUILD_PROGRESS_TRACKER.md` - §12.2 Operational Closure Pending Items (OC-001–OC-009) + §12.3 Future-Build Hard Gate + Vercel deployment reality + Current Stage Summary update
+- `modules/MMM/BUILD_PROGRESS_TRACKER.md` - Updated with deployment alignment state and wave references
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated from previous wave to this wave mmm-post-stage12-backend-alignment-20260422
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Appended S-041 improvement suggestion entry for this wave
+- `SCOPE_DECLARATION.md` - This scope declaration for wave mmm-post-stage12-backend-alignment-20260422
 
-### Deleted
+## Out of Scope
 
-None
+- Renaming apps/mat-ai-gateway/ application directory
+- Provisioning or modifying Render service configuration
+- Any files not listed above
 
+## Deleted
+
+Renamed from (git renames — paths below are NOT in the PR diff as standalone entries):
+
+- deploy-mat-ai-gateway.yml → deploy-mmm-ai-gateway.yml (R097)
+- deploy-mat-edge-functions.yml → deploy-mmm-edge-functions.yml (R094)

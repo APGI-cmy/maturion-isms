@@ -1,4 +1,4 @@
-name: Deploy MAT AI Gateway
+name: Deploy MMM AI Gateway
 
 on:
   push:
@@ -6,13 +6,13 @@ on:
       - main
     paths:
       - 'apps/mat-ai-gateway/**'
-      - '.github/workflows/deploy-mat-ai-gateway.yml'
+      - '.github/workflows/deploy-mmm-ai-gateway.yml'
   pull_request:
     branches:
       - main
     paths:
       - 'apps/mat-ai-gateway/**'
-      - '.github/workflows/deploy-mat-ai-gateway.yml'
+      - '.github/workflows/deploy-mmm-ai-gateway.yml'
   workflow_dispatch:
 
 jobs:
@@ -242,7 +242,7 @@ jobs:
           exit 1
 
   cwt:
-    name: Combined Wave Test (MAT-T-0001–0098)
+    name: Combined Wave Test (MMM-T-0001–0959)
     runs-on: ubuntu-latest
     needs: [deploy-production]
     permissions:
@@ -257,7 +257,7 @@ jobs:
         uses: pnpm/action-setup@v4
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Run Combined Wave Tests (MAT-T-0001–0098)
+      - name: Run Combined Wave Tests (MMM-T-0001–0959)
         shell: bash
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}

@@ -1,4 +1,4 @@
-name: Deploy MAT Edge Functions
+name: Deploy MMM Edge Functions
 
 on:
   push:
@@ -8,16 +8,16 @@ on:
       - 'supabase/functions/**'
       - 'supabase/functions/invoke-ai-parse-criteria/**'
       - 'packages/ai-centre/supabase/functions/invoke-ai-parse-criteria/**'
-      - '.github/workflows/deploy-mat-edge-functions.yml'
+      - '.github/workflows/deploy-mmm-edge-functions.yml'
   workflow_dispatch:
 
 # ── CS2 Manual Deployment (PowerShell) ──────────────────────────────────────
 # Trigger this workflow manually from PowerShell:
 #
-#   gh workflow run deploy-mat-edge-functions.yml --repo APGI-cmy/maturion-isms
+#   gh workflow run deploy-mmm-edge-functions.yml --repo APGI-cmy/maturion-isms
 #
 # Check status:
-#   gh run list --workflow=deploy-mat-edge-functions.yml --repo APGI-cmy/maturion-isms --limit 3
+#   gh run list --workflow=deploy-mmm-edge-functions.yml --repo APGI-cmy/maturion-isms --limit 3
 #
 # Verify Edge Function health directly:
 #   Invoke-RestMethod -Uri "https://ujucvyyspfxlxlfdamda.supabase.co/functions/v1/invoke-ai-parse-criteria/health"
@@ -107,5 +107,5 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "**Manual trigger (PowerShell)**:" >> "$GITHUB_STEP_SUMMARY"
           echo '```powershell' >> "$GITHUB_STEP_SUMMARY"
-          echo "gh workflow run deploy-mat-edge-functions.yml --repo APGI-cmy/maturion-isms" >> "$GITHUB_STEP_SUMMARY"
+          echo "gh workflow run deploy-mmm-edge-functions.yml --repo APGI-cmy/maturion-isms" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
