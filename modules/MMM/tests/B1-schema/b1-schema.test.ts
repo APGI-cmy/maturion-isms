@@ -700,23 +700,35 @@ describe('T-MMM-S6-164 — Wave B1 evidence artifact exists', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('T-MMM-S6-ADR001: mmm-evidence bucket supports voice/audio evidence MIME types', () => {
+  const audioMimeFixMigration = fs
+    .readdirSync(MIGRATIONS_DIR)
+    .find((file) => file.includes('mmm_evidence_audio_mime_fix'));
+
+  const audioMimeFixSQL = audioMimeFixMigration
+    ? fs.readFileSync(path.join(MIGRATIONS_DIR, audioMimeFixMigration), 'utf8')
+    : '';
+
+  it('mmm_evidence_audio_mime_fix migration exists', () => {
+    expect(audioMimeFixMigration).toBeDefined();
+  });
+
   it('mmm-evidence bucket allows audio/mpeg (MP3)', () => {
-    expect(storageSQL).toContain("'audio/mpeg'");
+    expect(audioMimeFixSQL).toContain("'audio/mpeg'");
   });
   it('mmm-evidence bucket allows audio/wav (WAV)', () => {
-    expect(storageSQL).toContain("'audio/wav'");
+    expect(audioMimeFixSQL).toContain("'audio/wav'");
   });
   it('mmm-evidence bucket allows audio/mp4 (M4A/AAC)', () => {
-    expect(storageSQL).toContain("'audio/mp4'");
+    expect(audioMimeFixSQL).toContain("'audio/mp4'");
   });
   it('mmm-evidence bucket allows audio/webm (browser-native audio)', () => {
-    expect(storageSQL).toContain("'audio/webm'");
+    expect(audioMimeFixSQL).toContain("'audio/webm'");
   });
   it('mmm-evidence bucket allows video/mp4 (video evidence)', () => {
-    expect(storageSQL).toContain("'video/mp4'");
+    expect(audioMimeFixSQL).toContain("'video/mp4'");
   });
   it('mmm-evidence bucket allows video/webm (browser-native video)', () => {
-    expect(storageSQL).toContain("'video/webm'");
+    expect(audioMimeFixSQL).toContain("'video/webm'");
   });
 });
 
