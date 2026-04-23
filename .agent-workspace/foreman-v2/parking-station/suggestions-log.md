@@ -108,3 +108,5 @@
 | 2026-04-21 | foreman-v2-agent | session-mmm-tracker-reconciliation-20260421 | improvement | Tracker update deferred-merge pattern — update BUILD_PROGRESS_TRACKER.md immediately upon CS2 merge confirmation; do not require separate reconciliation wave | session-mmm-tracker-reconciliation-20260421.md |
 
 | 2026-04-22 | foreman-v2-agent | session-mmm-post-stage12-cdv-validation-20260422 | IMPROVEMENT | CDV document as reusable template — consider adding cdv-staging-validation.md to governance layer-down pattern for all future modules reaching Stage 12; would standardize post-build operational follow-up tracking across all ISMS modules | session-mmm-post-stage12-cdv-validation-20260422.md |
+
+| 2026-04-22 | foreman-v2-agent | session-mmm-operational-closure-tracker-update-20260422 | IMPROVEMENT | A-037 evidence-type advisory should be standard Pre-Brief checklist item for documentation waves asserting operational status — reduces risk of incorrectly asserting CONFIRMED based on static evidence | session-mmm-operational-closure-tracker-update-20260422.md |
