@@ -21,10 +21,10 @@ Post-Stage-12 MMM deployment alignment wave. Aligns MAT-era deployment infrastru
 
 | ID | Task | Agent | Status | Issue |
 |----|------|-------|--------|-------|
-| T-001 | Rename deploy-mat-ai-gateway.yml → deploy-mmm-ai-gateway.yml (update all MAT→MMM references, keep app path) | integration-builder | PENDING | maturion-isms#1455 |
-| T-002 | Rename deploy-mat-edge-functions.yml → deploy-mmm-edge-functions.yml (update all MAT→MMM references) | integration-builder | PENDING | maturion-isms#1455 |
-| T-003 | Create deployment alignment doc: modules/MMM/12-phase4-ecap/deployment-alignment.md | integration-builder | PENDING | maturion-isms#1455 |
-| T-004 | Update modules/MMM/BUILD_PROGRESS_TRACKER.md (deployment alignment state) | foreman-v2-agent | PENDING | maturion-isms#1455 |
+| T-001 | Rename deploy-mat-ai-gateway.yml → deploy-mmm-ai-gateway.yml (update all MAT→MMM references, keep app path) | integration-builder | COMPLETE | maturion-isms#1455 |
+| T-002 | Rename deploy-mat-edge-functions.yml → deploy-mmm-edge-functions.yml (update all MAT→MMM references) | integration-builder | COMPLETE | maturion-isms#1455 |
+| T-003 | Create deployment alignment doc: modules/MMM/12-phase4-ecap/deployment-alignment.md | integration-builder | COMPLETE | maturion-isms#1455 |
+| T-004 | Update modules/MMM/BUILD_PROGRESS_TRACKER.md (deployment alignment state) | foreman-v2-agent | COMPLETE | maturion-isms#1455 |
 | T-005 | Phase 4 PREHANDOVER + session memory + IAA Final Audit | foreman-v2-agent | PENDING | — |
 
 ## Pre-Build Gates (all N/A — post-Stage-12 deployment alignment wave)
