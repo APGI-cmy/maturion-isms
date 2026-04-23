@@ -1,38 +1,47 @@
-# Wave Current Tasks — mmm-storage-model-codification-20260422
+# Wave Current Tasks — actions-deprecation-gate-20260423
 
 **Foreman**: foreman-v2-agent v6.2.0
-**Wave**: mmm-storage-model-codification-20260422
-**Issue**: maturion-isms#1458 — Resolve and codify MMM storage bucket model from legacy MAT requirements vs legacy MAT implementation drift
-**Branch**: copilot/resolve-mmm-storage-model-drift
-**Date**: 2026-04-22
-**CS2 Authorization**: CONFIRMED — issue #1458 opened by CS2 (@APGI-cmy) in CS2-governed repository
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-storage-model-codification-20260422.md
-iaa_prebrief_status: COMPLETE — PRE-BRIEF committed SHA a75cd50
-ceremony_admin_appointed: true
+**Wave**: actions-deprecation-gate-20260423
+**Issue**: maturion-isms#1458 — Add GitHub Actions deprecation detection gate, Dependabot updates, and reusable workflow standardization
+**Branch**: copilot/add-github-actions-deprecation-detection
+**Date**: 2026-04-23
+**CS2 Authorization**: CONFIRMED — issue #1458 opened by CS2 (@APGI-cmy) in CS2-governed repository, foreman-v2-agent assigned
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-actions-deprecation-gate-20260423-20260423.md
+iaa_prebrief_status: COMPLETE — PRE-BRIEF committed SHA 2180d34
+ceremony_admin_appointed: PENDING
 
 ## Wave Purpose
 
-Resolve and codify the MMM storage bucket model. The MMM architecture (Stage 5, frozen) defines
-`mmm-evidence` and `mmm-framework-sources` as the canonical MMM storage buckets. This wave:
-1. Creates an explicit Architecture Decision Record (ADR) documenting the MMM storage model choice
-2. Adds a migration to fix the missing audio MIME types in `mmm-evidence` (voice evidence support)
-3. Adds a migration with hardened org-level RLS for `mmm-evidence`
-4. Adds Red QA tests for audio MIME coverage
-5. Updates BUILD_PROGRESS_TRACKER.md to record the storage model codification
+Harden the repository against GitHub Actions runtime and action-version deprecations by introducing
+three coordinated controls:
+1. A GitHub Actions Deprecation Detection Gate (CI gate scanning .github/workflows/*.yml)
+2. Dependabot updates for GitHub Actions (.github/dependabot.yml)
+3. Reusable workflow / shared workflow primitive standardization
+4. Repository policy documentation for Actions upgrades
 
 ## Current Wave Tasks
 
-| Task | Agent | Status | Notes |
-|------|-------|--------|-------|
-| Phase 1 Preflight | foreman-v2-agent | COMPLETE ✅ | Identity, Tier 2, CANON_INVENTORY, session memory, FAIL-ONLY-ONCE, merge gates |
-| wave-current-tasks.md | foreman-v2-agent | COMPLETE ✅ | This file |
-| scope-declaration | foreman-v2-agent | COMPLETE ✅ | .agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-storage-model-codification-20260422.md |
-| IAA Pre-Brief | independent-assurance-agent | COMPLETE ✅ | PRE-BRIEF committed SHA a75cd50; 5 qualifying tasks declared |
-| Architecture Decision Record (ADR) | foreman-v2-agent | COMPLETE ✅ | modules/MMM/storage-model-decision.md — Option C (MMM-native consolidated model) |
-| Red QA tests: audio MIME support | qa-builder | COMPLETE ✅ | T-MMM-S6-ADR001/ADR002 — 8 tests; confirmed RED pre-migration, GREEN post-migration (172/172) |
-| Migration: audio MIME fix | schema-builder | COMPLETE ✅ | supabase/migrations/20260422000001_mmm_evidence_audio_mime_fix.sql |
-| Migration: RLS hardening | schema-builder | COMPLETE ✅ | supabase/migrations/20260422000002_mmm_evidence_rls_hardening.sql |
-| BUILD_PROGRESS_TRACKER.md update | foreman-v2-agent | COMPLETE ✅ | Updated 2026-04-23 — storage model wave recorded |
-| PREHANDOVER proof | execution-ceremony-admin-agent | COMPLETE ✅ | PREHANDOVER-session-mmm-storage-model-codification-20260422.md |
-| Session memory | execution-ceremony-admin-agent | COMPLETE ✅ | session-mmm-storage-model-codification-20260422.md |
-| IAA Final Audit | independent-assurance-agent | COMPLETE ✅ | IAA-session-mmm-storage-model-codification-20260422-PASS (30/30) |
+| # | Task | Agent | Status | Notes |
+|---|------|-------|--------|-------|
+| 1 | Phase 1 Preflight | foreman-v2-agent | 🟢 DONE | Identity, Tier 2, CANON_INVENTORY, session memory, FAIL-ONLY-ONCE, merge gates |
+| 2 | wave-current-tasks.md | foreman-v2-agent | 🟢 DONE | This file |
+| 3 | scope-declaration | foreman-v2-agent | 🟡 IN PROGRESS | .agent-workspace/foreman-v2/personal/scope-declaration-wave-actions-deprecation-gate-20260423.md |
+| 4 | IAA Pre-Brief | independent-assurance-agent | 🟢 DONE | PRE-BRIEF committed SHA 2180d34; 5 qualifying tasks declared |
+| 5 | CI gate + Dependabot + Composite action + Policy doc | qa-builder | 🔴 PENDING | maturion-isms#1458 — implements all 4 issue deliverables |
+| 6 | PREHANDOVER proof | execution-ceremony-admin-agent | 🔴 PENDING | After qa-builder QP PASS |
+| 7 | Session memory | execution-ceremony-admin-agent | 🔴 PENDING | After qa-builder QP PASS |
+| 8 | IAA Final Audit | independent-assurance-agent | 🔴 PENDING | After ECAP bundle |
+
+## IAA Tokens Received This Wave
+
+| PR # | Token | Date |
+|------|-------|------|
+| — | PENDING | — |
+
+## Wave Completion Gate
+
+- [ ] All tasks above show 🟢 DONE
+- [ ] All PRs have ASSURANCE-TOKEN
+- [ ] Session memory written
+- [ ] PREHANDOVER proof committed
+- [ ] CS2 notified for merge approval
