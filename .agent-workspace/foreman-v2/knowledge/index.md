@@ -21,9 +21,9 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 | `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 4.5.0 |
 | `specialist-registry.md` | Registry of all delegable agents with capabilities and separation-of-duties boundary | 1.0.0 |
 | `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 |
-| `prehandover-template.md` | **PHASE 4 §S-009** — PREHANDOVER proof template with mandatory IAA Agent Response (verbatim) section per FAIL-ONLY-ONCE v1.8.0 S-009; `## Environment Parity` section per OVL-CI-006; `## Pre-IAA Commit Gate` MANDATORY STOP section per A-021; IAA Token Self-Certification Guard section per S-035 structural gate; `## Ripple/Cross-Agent Assessment` mandatory section per HFMC-01 | 1.8.0 |
+| `prehandover-template.md` | **PHASE 4 §S-009** — PREHANDOVER proof template with mandatory IAA Agent Response (verbatim) section per FAIL-ONLY-ONCE v1.8.0 S-009; `## Environment Parity` section per OVL-CI-006; `## Pre-IAA Commit Gate` MANDATORY STOP section per A-021; IAA Token Self-Certification Guard section per S-035 structural gate; `## Ripple/Cross-Agent Assessment` mandatory section per HFMC-01; `## Wave-Level Ceremony Contract Verification` mandatory section per ACR-18–21 | 1.9.0 |
 | `FM_QP_ENHANCED_QUICK_REFERENCE.md` | **Quality Professor Mode** — Quick reference for Builder Referral Protocol (QP-FAIL-001–009) and Progress Tracker Enforcement; Enhancement 3: Temporal and Evidence-Type Audit (A-040/A-041); Tier 3 canonical authority: `governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` v1.0.0 | 1.1.0 |
-| `WAVE-CURRENT-TASKS-PROTOCOL.md` | Codifies `wave-current-tasks.md` creation and maintenance mandate; Re-Anchor Pulse integration; wave close steps now include Wave Reconciliation Checklist | 1.1.0 |
+| `WAVE-CURRENT-TASKS-PROTOCOL.md` | Codifies `wave-current-tasks.md` creation and maintenance mandate; Re-Anchor Pulse integration; wave close steps now include Wave Reconciliation Checklist; Stage 10 ceremony contract integration (ACR-18–21) | 1.2.0 |
 | `wave-reconciliation-checklist.md` | **PHASE 4 — wave close** — Mandatory checklist: post-wave incident → NBR entry, liveness verification, evidence completeness, temporal and evidence-type audit; HANDOVER BLOCKER | 1.3.0 |
 
 ---
@@ -123,6 +123,8 @@ All verb classification and mode-switching decisions MUST reference `ECOSYSTEM_V
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.9.0 | 2026-04-22 | WAVE-CURRENT-TASKS-PROTOCOL.md bumped to v1.2.0 — Stage 10 ceremony contract integration (ACR-18–21); prehandover-template.md bumped to v1.9.0 — `## Wave-Level Ceremony Contract Verification` mandatory section added (IAA_PRE_BRIEF_PROTOCOL.md v1.3.0 §Expected Wave-Level Admin Ceremony Contract). Wave: stage10-prebrief-hardening-20260422 (issue #1447). |
+| 2.8.0 | 2026-04-19 | Knowledge version header updated to 2.8.0 (Last Updated date aligned to 2026-04-19); prehandover-template.md Wave: cl6-wave3-knowledge-reingestion |
 | 2.7.0 | 2026-04-09 | prehandover-template.md bumped to v1.8.0 — `## Ripple/Cross-Agent Assessment` mandatory section added (HFMC-01 / NO-REPEAT-PREVENTABLE-001 systemic fix); Wave: cl6-wave3-knowledge-reingestion |
 | 2.9.0 | 2026-04-22 | FAIL-ONLY-ONCE.md bumped to v4.5.0 — A-040 TEMPORAL-AUDIT-AT-QP and A-041 EVIDENCE-TYPE-CLASSIFICATION-AT-QP locked in (governance hardening maturion-isms#1445); wave-reconciliation-checklist.md bumped to v1.3.0 — Section E (Temporal and Evidence-Type Audit) added with E-1 through E-4 checks; canon: governance/canon/TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md created. |
 | 2.6.0 | 2026-04-08 | FAIL-ONLY-ONCE.md bumped to v4.3.0 — INC-OPOJD-PSF-001 registered (Foreman OPOJD violation: PS-F Phase 4 incomplete at session termination); S-039 SCOPE_DECLARATION-FORMAT-VERIFICATION added; version history entry v4.3.0 appended. Wave: ps-f-iaa-trigger-table-new-categories (issue #1270). |
