@@ -30,8 +30,8 @@ Workflow-name rename only — `apps/mat-ai-gateway/` application path retained u
 | wave-current-tasks.md | foreman-v2-agent | COMPLETE ✅ | This file |
 | scope-declaration | foreman-v2-agent | COMPLETE ✅ | SCOPE_DECLARATION.md + personal scope declaration file |
 | IAA Pre-Brief | independent-assurance-agent | COMPLETE ✅ | SHA 706be01 |
-| T-001: rename deploy-mat-ai-gateway.yml | integration-builder | PENDING | maturion-isms#1455 |
-| T-002: rename deploy-mat-edge-functions.yml | integration-builder | PENDING | maturion-isms#1455 |
-| T-003: deployment alignment doc | integration-builder | PENDING | maturion-isms#1455 |
-| T-004: BUILD_PROGRESS_TRACKER.md update | foreman-v2-agent | PENDING | After builder delivers |
+| T-001: rename deploy-mat-ai-gateway.yml | integration-builder | COMPLETE ✅ | Present in this PR — maturion-isms#1455 |
+| T-002: rename deploy-mat-edge-functions.yml | integration-builder | COMPLETE ✅ | Present in this PR — maturion-isms#1455 |
+| T-003: deployment alignment doc | integration-builder | COMPLETE ✅ | Present in this PR — maturion-isms#1455 |
+| T-004: BUILD_PROGRESS_TRACKER.md update | foreman-v2-agent | COMPLETE ✅ | Updated in this PR — maturion-isms#1455 |
 | T-005: Phase 4 handover | foreman-v2-agent | PENDING | PREHANDOVER + session memory + IAA Final Audit |
