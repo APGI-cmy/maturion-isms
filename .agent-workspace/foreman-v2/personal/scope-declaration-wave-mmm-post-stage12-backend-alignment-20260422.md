@@ -4,7 +4,7 @@
 **Issue**: maturion-isms#1455
 **Date**: 2026-04-22
 
-## approved_artifact_paths
+## Approved Artifact Paths
 
 - `.github/workflows/deploy-mmm-ai-gateway.yml`
 - `.github/workflows/deploy-mmm-edge-functions.yml`

@@ -39,5 +39,7 @@ Workflow-name rename only. apps/mat-ai-gateway/ application path retained unchan
 
 ## Deleted
 
-- `.github/workflows/deploy-mat-ai-gateway.yml` - Replaced by deploy-mmm-ai-gateway.yml (git rename R097)
-- `.github/workflows/deploy-mat-edge-functions.yml` - Replaced by deploy-mmm-edge-functions.yml (git rename R094)
+Renamed from (git renames — paths below are NOT in the PR diff as standalone entries):
+
+- deploy-mat-ai-gateway.yml → deploy-mmm-ai-gateway.yml (R097)
+- deploy-mat-edge-functions.yml → deploy-mmm-edge-functions.yml (R094)
