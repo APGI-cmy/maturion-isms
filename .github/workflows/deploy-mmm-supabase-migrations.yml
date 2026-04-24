@@ -19,7 +19,7 @@ on:
     inputs:
       confirm:
         description: >
-          Type CONFIRM to acknowledge this workflow mutates the live Supabase database.
+          Type exactly: CONFIRM — to acknowledge this workflow mutates the live Supabase database.
           Unconfirmed runs will be rejected before any DB step executes.
         required: true
         default: ''
@@ -45,7 +45,7 @@ jobs:
       - name: Verify confirmation input
         run: |
           if [ "${{ github.event.inputs.confirm }}" != "CONFIRM" ]; then
-            echo "::error::Run rejected — confirmation input must be exactly CONFIRM. Got: '${{ github.event.inputs.confirm }}'"
+            echo "::error::Run rejected — confirmation input must be exactly: CONFIRM"
             echo "Re-trigger this workflow and type CONFIRM in the confirmation field to proceed."
             exit 1
           fi
@@ -191,7 +191,7 @@ jobs:
             result=$(psql "$SUPABASE_DB_URL" -t -A -c \
               "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='evidence_submissions';" 2>/dev/null || echo "0")
             if [ "$result" != "1" ]; then
-              echo "WARN: public.evidence_submissions not found — migration 20260310000001_wave16_6_schema_audit_completeness.sql may not have been applied or was applied out-of-band. This is non-blocking; evidence_submissions was applied to the live DB directly."
+              echo "WARN: public.evidence_submissions not found in schema cache (non-blocking)."
             else
               echo "PASS: public.evidence_submissions verified"
             fi
