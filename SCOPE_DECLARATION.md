@@ -1,33 +1,33 @@
-# Scope Declaration — supabase-reconciliation-20260423
+# Scope Declaration — actions-deprecation-gate-20260423
 
-**Wave**: supabase-reconciliation-20260423
-**Issue**: maturion-isms#1461
-**Branch**: copilot/reconcile-supabase-project-state
+**Wave**: actions-deprecation-gate-20260423
+**Issue**: maturion-isms#1463
+**Branch**: copilot/add-github-actions-deprecation-detection
 **Date**: 2026-04-23
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
-**IAA Pre-Brief**: .agent-admin/assurance/iaa-wave-record-supabase-reconciliation-20260423.md
+**IAA Pre-Brief**: .agent-admin/assurance/iaa-wave-record-actions-deprecation-gate-20260423-20260423.md
 
 ## Scope Decision
 
-Post-Stage-12 operational documentation wave. Reconcile live Supabase project state with repo-backed MMM storage model. Establish repo as authoritative control surface. Create audit, boundary, and operating procedure documents.
+GitHub Actions deprecation hardening: Dependabot configuration, deprecation detection CI gate,
+composite action standardization, policy documentation, governance artifacts.
 
 ## Changed Files
 
 ### Added
 
-- `.agent-admin/assurance/iaa-wave-record-supabase-reconciliation-20260423.md` - IAA Pre-Brief wave record
-- `.agent-workspace/foreman-v2/personal/scope-declaration-wave-supabase-reconciliation-20260423.md` - Foreman personal scope declaration
-- `docs/supabase/MMM_SUPABASE_AUDIT.md` - Structured audit of repo-backed Supabase state
-- `docs/supabase/MMM_SUPABASE_BOUNDARY.md` - Repo-managed vs dashboard-managed boundary document
-- `docs/supabase/MMM_SUPABASE_OPERATING_PROCEDURE.md` - Agent-driven Supabase change operating procedure
+- `.agent-admin/assurance/iaa-wave-record-actions-deprecation-gate-20260423-20260423.md` - IAA Pre-Brief wave record
+- `.agent-workspace/foreman-v2/personal/scope-declaration-wave-actions-deprecation-gate-20260423.md` - Foreman personal scope declaration
+- `.github/dependabot.yml` - Dependabot configuration for GitHub Actions monitoring
+- `.github/workflows/actions-deprecation-gate.yml` - CI gate for deprecated/banned action versions
+- `.github/actions/setup/action.yml` - Composite action for common workflow primitives
+- `docs/ACTIONS_UPGRADE_POLICY.md` - Repository policy for GitHub Actions dependency management
 
 ### Modified
 
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated to supabase-reconciliation-20260423 wave
-- `SCOPE_DECLARATION.md` - Updated for this wave (supabase-reconciliation-20260423)
-- `modules/MMM/BUILD_PROGRESS_TRACKER.md` - Anti-drift section added (additive only)
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated to current wave identity
+- `SCOPE_DECLARATION.md` - This file
 
 ## Out of Scope
 
 - Any files not listed above
-

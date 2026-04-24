@@ -1,0 +1,118 @@
+# Authority: Issue #1463 — Actions deprecation detection gate
+# Purpose: Scan all workflow files for banned/deprecated GitHub Actions versions
+#          and fail with actionable remediation instructions when found.
+#
+# Triggered on: PRs that touch workflow files, and manual dispatch.
+# Self-referential note: This gate scans itself. Because this workflow only
+#   uses approved versions (checkout@v4, setup-node@v4), it will not trigger
+#   any false positives.
+
+name: Actions Deprecation Gate
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - '.github/actions/**'
+  workflow_dispatch:
+
+# ── BANNED_VERSIONS LIST ─────────────────────────────────────────────────────
+# To add a newly-deprecated action, append the full "owner/action@vN" string
+# as a new entry in the BANNED_VERSIONS Bash array in the scan step below.
+# Convention: one quoted "owner/action@vN" entry per line in that array.
+# Minimum standard references:
+#   actions/checkout       → v4+ required
+#   actions/setup-node     → v4+ required
+#   actions/upload-artifact → v4+ required
+#   actions/download-artifact → v4+ required
+#   actions/cache          → v4+ required
+#   pnpm/action-setup      → v3+ required (v1, v2 are banned)
+# ─────────────────────────────────────────────────────────────────────────────
+
+jobs:
+  deprecation-scan:
+    name: Scan for deprecated Actions versions
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Scan for banned Action versions
+        shell: bash
+        run: |
+          # ── BANNED_VERSIONS ─────────────────────────────────────────────
+          # Update this list to declare newly-deprecated versions.
+          # Format: one "owner/action@vN" pattern per entry.
+          BANNED_VERSIONS=(
+            "actions/checkout@v1"
+            "actions/checkout@v2"
+            "actions/checkout@v3"
+            "actions/setup-node@v1"
+            "actions/setup-node@v2"
+            "actions/setup-node@v3"
+            "actions/upload-artifact@v1"
+            "actions/upload-artifact@v2"
+            "actions/upload-artifact@v3"
+            "actions/download-artifact@v1"
+            "actions/download-artifact@v2"
+            "actions/download-artifact@v3"
+            "actions/cache@v1"
+            "actions/cache@v2"
+            "actions/cache@v3"
+            "pnpm/action-setup@v1"
+            "pnpm/action-setup@v2"
+          )
+
+          SCAN_DIRS=(".github/workflows" ".github/actions")
+          FOUND_ANY=0
+
+          echo "════════════════════════════════════════════════════════"
+          echo "  GitHub Actions Deprecation Gate"
+          echo "  Scanning: ${SCAN_DIRS[*]}"
+          echo "════════════════════════════════════════════════════════"
+
+          for pattern in "${BANNED_VERSIONS[@]}"; do
+            # Search only real YAML 'uses:' lines; ignore commented examples
+            set +e
+            matches=$(grep -Ern "^[[:space:]-]*uses:[[:space:]]*${pattern}([[:space:]]|$)" "${SCAN_DIRS[@]}" 2>/dev/null)
+            set -e
+            if [ -n "$matches" ]; then
+              echo ""
+              echo "::error::BANNED version detected: ${pattern}"
+              echo "──────────────────────────────────────────────────────"
+              echo "$matches"
+              FOUND_ANY=1
+            fi
+          done
+
+          echo ""
+          if [ "$FOUND_ANY" -ne 0 ]; then
+            echo "════════════════════════════════════════════════════════"
+            echo "  GATE FAILED — deprecated Actions versions detected."
+            echo "════════════════════════════════════════════════════════"
+            echo ""
+            echo "  REMEDIATION:"
+            echo "  ┌─────────────────────────────────────────────────────"
+            echo "  │ actions/checkout       → upgrade to @v4 or later"
+            echo "  │ actions/setup-node     → upgrade to @v4 or later"
+            echo "  │ actions/upload-artifact → upgrade to @v4 or later"
+            echo "  │ actions/download-artifact → upgrade to @v4 or later"
+            echo "  │ actions/cache          → upgrade to @v4 or later"
+            echo "  │ pnpm/action-setup      → upgrade to @v3 or later"
+            echo "  └─────────────────────────────────────────────────────"
+            echo ""
+            echo "  See docs/ACTIONS_UPGRADE_POLICY.md for the full"
+            echo "  approved-versions list and upgrade procedure."
+            echo ""
+            exit 1
+          fi
+
+          echo "════════════════════════════════════════════════════════"
+          echo "  GATE PASSED — no deprecated Actions versions found."
+          echo "════════════════════════════════════════════════════════"

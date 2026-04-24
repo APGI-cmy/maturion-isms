@@ -1,0 +1,40 @@
+# Authority: Issue #1463 — Reusable workflow standardization
+# Purpose: Composite action that centralises common checkout / Node.js / pnpm
+#          setup primitives so individual workflows stay DRY.
+
+name: Setup Maturion workspace
+description: >-
+  Common checkout, Node.js setup, and pnpm cache setup for Maturion ISMS
+  workflows. Centralises approved action versions in one place.
+
+inputs:
+  node-version:
+    description: 'Node.js version to install'
+    required: false
+    default: '20'
+  fetch-depth:
+    description: 'Number of commits to fetch (0 = full history)'
+    required: false
+    default: '1'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: ${{ inputs.fetch-depth }}
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: '8.15.7'
+        run_install: false
+      # Version is pinned here; update this composite action (via PR) when
+      # upgrading the pnpm action — not in individual workflow files.
+
+    - name: Setup Node.js with pnpm cache
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'pnpm'
