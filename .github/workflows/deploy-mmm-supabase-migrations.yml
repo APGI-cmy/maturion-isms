@@ -24,9 +24,6 @@ on:
         required: true
         default: ''
 
-env:
-  NODE_VERSION: '22'
-
 jobs:
   preflight-guard:
     name: Pre-Flight Guard
