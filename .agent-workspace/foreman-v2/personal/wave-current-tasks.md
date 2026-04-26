@@ -22,7 +22,7 @@ Implement the MMM deployment execution strategy defined by §7.4 Deployment Exec
 | 2 | wave-current-tasks.md | foreman-v2-agent | 🟢 DONE | This file |
 | 3 | scope-declaration | foreman-v2-agent | 🟡 IN PROGRESS | .agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-deploy-execution-strategy-20260426.md |
 | 4 | IAA Pre-Brief | independent-assurance-agent | 🟢 DONE | PRE-BRIEF committed SHA 374a701; 7 qualifying tasks declared; CI_WORKFLOW + PRE_BUILD_GATES overlays active |
-| 5 | Implementation — workflow + documentation deliverables | integration-builder | 🔴 PENDING | maturion-isms#1470 — Q-A through Q-F2 (7 qualifying tasks) |
+| 5 | Implementation — workflow + documentation deliverables | integration-builder | 🟢 DONE | maturion-isms#1470 — all 7 qualifying tasks delivered; commits bfdf8c4 + ee738c8 |
 | 6 | PREHANDOVER proof | execution-ceremony-admin-agent | 🔴 PENDING | — |
 | 7 | Session memory | execution-ceremony-admin-agent | 🔴 PENDING | — |
 | 8 | IAA Final Audit | independent-assurance-agent | 🔴 PENDING | — |

@@ -266,7 +266,7 @@ BL-029 compliance: BUILD_PROGRESS_TRACKER.md updated when IBWR evidence present 
 
 | Commit | SHA | Description |
 |--------|-----|-------------|
-| Implementation | bfdf8c4 | feat(mmm-deploy): implement MMM deployment execution strategy (#1470) |
+| Implementation | bfdf8c4 | feat(mmm-deploy): Implement MMM deployment execution strategy (#1470) |
 
 Note: Single commit covers all 7 qualifying deliverables per one-time build discipline.
 
