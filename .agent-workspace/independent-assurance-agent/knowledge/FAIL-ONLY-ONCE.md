@@ -691,6 +691,30 @@ categories), IAA MUST:
 
 ---
 
+### A-038 — §7.x Addition to PRE_BUILD_STAGE_MODEL_CANON.md Requires Simultaneous OVL-PBG Update
+
+**Triggered by**: maturion-isms#1468 — governance-liaison-isms-agent added §7.4 Deployment Execution Contract to PRE_BUILD_STAGE_MODEL_CANON.md without simultaneously adding OVL-PBG-017 to iaa-category-overlays.md or updating iaa-trigger-table.md PRE_BUILD_STAGE_MODEL supporting controls. IAA issued REJECTION-001 (session-071-20260426). Pattern identified as REPEAT-PREVENTABLE (§7.1, §7.2, §7.3 precedent: OVL-PBG-014/015/016 were added in the same wave, wave iaa-12stage-upgrade #1258).
+
+**Permanent Rule**:
+Any addition of a §7.x supporting control section to `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` MUST include, in the same wave and same PR:
+1. A corresponding `OVL-PBG-NNN` check added to `.agent-workspace/independent-assurance-agent/knowledge/iaa-category-overlays.md` PRE_BUILD_GATES overlay.
+2. The §7.x reference added to the PRE_BUILD_STAGE_MODEL trigger row's supporting controls list in `.agent-workspace/independent-assurance-agent/knowledge/iaa-trigger-table.md`.
+3. `OVL-PBG-ADM-001` updated to reference the new maximum OVL-PBG-NNN number.
+4. `index.md` knowledge version bumped.
+
+A CS2 written waiver with a named scheduled follow-up PR is the only permitted exception. Absence of the waiver = REJECTION-PACKAGE.
+
+**How this is checked in Phase 3 (Step 3.1)**:
+> A-038 §7.x-OVL-PBG coupling:
+> Does this PR add a §7.x section to PRE_BUILD_STAGE_MODEL_CANON.md?
+> If YES: confirm OVL-PBG-NNN present in iaa-category-overlays.md for that §7.x.
+> If YES: confirm §7.x listed in iaa-trigger-table.md PRE_BUILD_STAGE_MODEL supporting controls.
+> Evidence: [what was found]. Verdict: PASS ✅ / FAIL ❌ (if absent without CS2 waiver).
+
+**Status**: ACTIVE — enforced on all CANON_GOVERNANCE PRs touching PRE_BUILD_STAGE_MODEL_CANON.md
+
+---
+
 ## Version History
 
 | Version | Date | Change |
@@ -714,6 +738,7 @@ categories), IAA MUST:
 | 2.6.0 | 2026-03-12 | A-033 (Git-Committed vs Disk Existence — CORE-018 Verification Standard) added — INC-CI-GATEWAY-FIX-001-IAA: IAA evaluated PREHANDOVER as PASS based on disk file existence (`-f` check) when the PREHANDOVER was untracked (never committed to git). Phase 4 `git ls-tree HEAD` revealed file not in any commit. CORE-018(a) must use git verification, not disk existence. Next sequential ID: A-034. |
 | 2.7.0 | 2026-03-17 | A-034 (FUNCTIONAL-BEHAVIOUR-REGISTRY reading — mandatory for BUILD/AAWP_MAT PRs; niggle patterns as blocking checks), A-035 (niggle pattern library application — stack-specific patterns in niggle-pattern-library.md must be applied to relevant code areas) added — CS2 IAA functional behaviour strengthening issue. Next sequential ID: A-036. |
 | 2.8.0 | 2026-04-22 | A-036 (Temporal Integrity — future-dated factual claims are REJECTION-PACKAGE blockers; canon ref T-001/T-002), A-037 (Evidence-Type Discipline — LIVE_RUNTIME/LIVE_E2E items cannot be satisfied by STATIC_CODE/CI_TEST/CONFIG evidence; canon ref E-001/E-002/E-003) added — governance hardening following PR #1444 review miss. Canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md. Next sequential ID: A-038. |
+| 2.9.0 | 2026-04-26 | A-038 (§7.x-OVL-PBG coupling — any §7.x addition to PRE_BUILD_STAGE_MODEL_CANON.md requires simultaneous OVL-PBG-NNN addition to iaa-category-overlays.md and §7.x reference update to iaa-trigger-table.md PRE_BUILD_STAGE_MODEL supporting controls — same wave, same PR or explicit CS2 waiver) added — REJECTION-001 systemic prevention, session-072-20260426, wave mmm-deploy-strategy-oversight-20260426, issue maturion-isms#1468. Next sequential ID: A-039. |
 
 ---
 

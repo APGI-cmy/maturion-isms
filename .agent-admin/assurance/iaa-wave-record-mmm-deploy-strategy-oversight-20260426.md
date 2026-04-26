@@ -205,7 +205,57 @@ Assessment:
 
 ## TOKEN
 
-*(ASSURANCE-TOKEN not yet issued — REJECTION-PACKAGE issued at IAA-FINAL invocation. See REJECTION_HISTORY below.)*
+### ASSURANCE-TOKEN — IAA-FINAL R1 Session 072 — 2026-04-26
+
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: maturion-isms#1469 (DRAFT) — Wave mmm-deploy-strategy-oversight-20260426 (R1)
+Branch: copilot/capture-deployment-strategy-oversight
+All 21 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-072-wave-mmm-deploy-strategy-oversight-20260426-PASS
+Adoption phase: PHASE_B_BLOCKING
+═══════════════════════════════════════
+```
+
+**PHASE_B_BLOCKING_TOKEN**: IAA-session-072-wave-mmm-deploy-strategy-oversight-20260426-PASS
+
+**Session**: session-072-20260426
+**Date**: 2026-04-26
+**Checks run**: 21 — 21 PASS, 0 FAIL
+**Overlay applied**: MIXED (CANON_GOVERNANCE primary + PRE_BUILD_STAGE_MODEL secondary + KNOWLEDGE_GOVERNANCE tertiary)
+**REJECTION-001 resolution**: OVL-CG-004 ✅ RESOLVED — OVL-CG-005 ✅ RESOLVED
+
+**Check Summary (R1)**:
+
+| Check | Result |
+|-------|--------|
+| CORE-020 | PASS ✅ |
+| CORE-021 | PASS ✅ |
+| CERT-001 (PREHANDOVER proof present) | PASS ✅ |
+| CERT-002 (session memory present) | PASS ✅ |
+| CERT-003 (FAIL-ONLY-ONCE attested) | PASS ✅ |
+| CERT-004 (iaa_audit_token present) | PASS ✅ |
+| FAIL-ONLY-ONCE A-001 | PASS ✅ |
+| FAIL-ONLY-ONCE A-029 | PASS ✅ |
+| FAIL-ONLY-ONCE A-036 | PASS ✅ |
+| OVL-CG-001 (strategy alignment) | PASS ✅ |
+| OVL-CG-002 (no contradictions) | PASS ✅ |
+| OVL-CG-003 (enforcement gap) | PASS ✅ |
+| OVL-CG-004 (ripple impact — R1 resolution) | PASS ✅ |
+| OVL-CG-005 (layer-down complete — R1 resolution) | PASS ✅ |
+| OVL-CG-ADM-001 (CANON_INVENTORY updated) | PASS ✅ |
+| OVL-CG-ADM-002 (version bump present) | PASS ✅ |
+| OVL-KG-001 (rule clarity) | PASS ✅ |
+| OVL-KG-002 (triggered by real incident) | PASS ✅ |
+| OVL-KG-003 (no duplication) | PASS ✅ |
+| OVL-KG-004 (cross-reference consistency) | PASS ✅ |
+| OVL-KG-ADM-002 (version bumped + consistent) | PASS ✅ |
+| OVL-INJ-001 (pre-brief artifact) | PASS ✅ |
+| ACR-01 through ACR-11 | N/A — ceremony_admin_appointed: PENDING |
+
+**Administrative note**: A-038 added to FAIL-ONLY-ONCE.md as part of this session closure per REJECTION-001 systemic prevention requirement and NO-REPEAT-PREVENTABLE-001.
 
 ---
 
