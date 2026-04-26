@@ -2,8 +2,8 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-04-23  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off; wave: mmm-tracker-reconciliation-20260421, 2026-04-21 — pre-build closure reconciliation; PR #1429 merged; wave: mmm-post-stage12-cdv-validation-20260422, 2026-04-22 — CDV staging validation document + SB-003-W3 static code evidence + tracker update, issue #1443; wave: mmm-post-stage12-backend-alignment-20260422, 2026-04-22 — backend deployment alignment: workflows renamed to MMM-era, deployment-alignment.md added, tracker updated, issue #1455; wave: mmm-operational-closure-tracker-update-20260422, 2026-04-22 — operational closure omissions recorded + future-build hard gate added, issue #1457; wave: mmm-storage-model-codification-20260422, 2026-04-23 — storage bucket model ADR + audio MIME fix + RLS hardening + Red QA tests, issue #1458); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE)
+**Last Updated**: 2026-04-26  
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off; wave: mmm-tracker-reconciliation-20260421, 2026-04-21 — pre-build closure reconciliation; PR #1429 merged; wave: mmm-post-stage12-cdv-validation-20260422, 2026-04-22 — CDV staging validation document + SB-003-W3 static code evidence + tracker update, issue #1443; wave: mmm-post-stage12-backend-alignment-20260422, 2026-04-22 — backend deployment alignment: workflows renamed to MMM-era, deployment-alignment.md added, tracker updated, issue #1455; wave: mmm-operational-closure-tracker-update-20260422, 2026-04-22 — operational closure omissions recorded + future-build hard gate added, issue #1457; wave: mmm-storage-model-codification-20260422, 2026-04-23 — storage bucket model ADR + audio MIME fix + RLS hardening + Red QA tests, issue #1458; wave: mmm-deploy-strategy-oversight-20260426, 2026-04-26 — deployment strategy oversight recorded + §7.4 Deployment Execution Contract added to PRE_BUILD_STAGE_MODEL_CANON.md, issue #1468); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — This is the designated primary operational monitor for MMM stage progress. CS2 should use this document as the main live progress dashboard.  
@@ -666,6 +666,36 @@ The following live operational confirmation items are still required before MMM 
 - [x] Vercel frontend deployment path reflected (wave: align-vercel-deployment-workflow-20260422, PR #1454 — functioning; env var confirmation pending)
 - [x] MMM storage bucket model codified (wave mmm-storage-model-codification-20260422, 2026-04-23, issue #1458) — chosen model: `mmm-evidence` + `mmm-framework-sources` (Option C: MMM-native consolidated); ADR: `modules/MMM/storage-model-decision.md`; audio MIME fix: `supabase/migrations/20260422000001_mmm_evidence_audio_mime_fix.sql`; RLS hardening: `supabase/migrations/20260422000002_mmm_evidence_rls_hardening.sql`; 172/172 tests GREEN (8 new T-MMM-S6-ADR001/ADR002 tests pass)
 - [x] Supabase project reconciliation complete (wave supabase-reconciliation-20260423, 2026-04-23, issue #1461) — repo-backed state fully audited and documented; anti-drift model established; 3 governance documents created (`docs/supabase/MMM_SUPABASE_AUDIT.md`, `docs/supabase/MMM_SUPABASE_BOUNDARY.md`, `docs/supabase/MMM_SUPABASE_OPERATING_PROCEDURE.md`); config.toml verified complete (all 26 functions, project_id confirmed); no new migrations created; drift assessment pending CS2 `supabase db diff --linked` verification
+
+---
+
+## Post-Stage-12 Governance Oversight: Deployment Strategy
+
+**Status**: RECORDED AND CORRECTED  
+**Wave**: mmm-deploy-strategy-oversight-20260426  
+**Issue**: maturion-isms#1468  
+**Date**: 2026-04-26  
+
+### Oversight Identified
+
+The MMM pre-build stage chain (Stages 1–12) defined the target architecture and platform topology
+but did not define the deployment execution model with operational precision.
+
+This gap caused downstream workflow ambiguity and real CI/workflow failures during and after
+Stage 12, requiring post-hoc operational interpretation.
+
+**What was captured**: Platform topology (Vercel / Supabase / Render / AIMC ownership).  
+**What was missing**: Deployment execution model (workflow ownership, runner access rules,
+migration execution path, CI/preview/production boundaries, protected/manual approval requirements).
+
+### Corrective Governance Action
+
+- `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` updated: §7.4 Deployment Execution Contract
+  added as a mandatory supporting control, effective for all future governed builds.
+- Oversight formally recorded in `modules/MMM/_readiness/deployment-strategy-oversight.md`.
+- All future MMM builds must produce a Deployment Execution Contract before the first build wave begins.
+
+**Single reference for this oversight**: `modules/MMM/_readiness/deployment-strategy-oversight.md`
 
 ---
 

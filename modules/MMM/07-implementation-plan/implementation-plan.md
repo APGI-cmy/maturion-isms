@@ -1133,6 +1133,30 @@ Stage 12 must satisfy all deployment constraints declared in these documents.
 
 ---
 
+### 7.4 Deployment Execution Contract Requirement (§7.4 — MANDATORY)
+
+> **GOVERNANCE MANDATE (PRE_BUILD_STAGE_MODEL_CANON.md §7.4 — effective 2026-04-26)**: All
+> future MMM build waves (including any rebuild, extension, or enhancement wave) MUST have a
+> filed and Foreman-approved Deployment Execution Contract in `modules/MMM/_readiness/` before
+> the first build wave begins.
+>
+> The Deployment Execution Contract must explicitly answer:
+> - Which workflow owns each deployment surface (frontend, backend, DB migration, schema verification, live validation)
+> - Whether GitHub-hosted runners may access live infrastructure
+> - Which migration execution mechanism is approved
+> - What is CI-safe, preview-safe, and live-only
+> - What requires CS2/manual approval
+>
+> **Anti-Drift Clause**: Workflow implementation that deviates from the approved Deployment
+> Execution Contract requires a Change-Propagation Audit and formal governance update before merging.
+> Operational speculation is NOT a substitute for a frozen Deployment Execution Contract.
+>
+> **Lesson from MMM Stage 12**: Absence of a Deployment Execution Contract caused real deployment
+> workflow failures and post-implementation ambiguity. The corrective governance action is §7.4 of
+> PRE_BUILD_STAGE_MODEL_CANON.md. Reference: maturion-isms#1468.
+
+---
+
 ## 8. Anti-Regression Registry Forward Reference
 
 The following anti-regression obligations, identified in Stage 7 PBFAG, are mandatory
