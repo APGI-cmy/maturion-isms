@@ -2,8 +2,8 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-04-26  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off; wave: mmm-tracker-reconciliation-20260421, 2026-04-21 — pre-build closure reconciliation; PR #1429 merged; wave: mmm-post-stage12-cdv-validation-20260422, 2026-04-22 — CDV staging validation document + SB-003-W3 static code evidence + tracker update, issue #1443; wave: mmm-post-stage12-backend-alignment-20260422, 2026-04-22 — backend deployment alignment: workflows renamed to MMM-era, deployment-alignment.md added, tracker updated, issue #1455; wave: mmm-operational-closure-tracker-update-20260422, 2026-04-22 — operational closure omissions recorded + future-build hard gate added, issue #1457; wave: mmm-storage-model-codification-20260422, 2026-04-23 — storage bucket model ADR + audio MIME fix + RLS hardening + Red QA tests, issue #1458; wave: mmm-deploy-strategy-oversight-20260426, 2026-04-26 — deployment strategy oversight recorded + §7.4 Deployment Execution Contract added to PRE_BUILD_STAGE_MODEL_CANON.md, issue #1468); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE)
+**Last Updated**: 2026-04-26
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off; wave: mmm-tracker-reconciliation-20260421, 2026-04-21 — pre-build closure reconciliation; PR #1429 merged; wave: mmm-post-stage12-cdv-validation-20260422, 2026-04-22 — CDV staging validation document + SB-003-W3 static code evidence + tracker update, issue #1443; wave: mmm-post-stage12-backend-alignment-20260422, 2026-04-22 — backend deployment alignment: workflows renamed to MMM-era, deployment-alignment.md added, tracker updated, issue #1455; wave: mmm-operational-closure-tracker-update-20260422, 2026-04-22 — operational closure omissions recorded + future-build hard gate added, issue #1457; wave: mmm-storage-model-codification-20260422, 2026-04-23 — storage bucket model ADR + audio MIME fix + RLS hardening + Red QA tests, issue #1458; wave: mmm-deploy-strategy-oversight-20260426, 2026-04-26 — deployment strategy oversight recorded + §7.4 Deployment Execution Contract added to PRE_BUILD_STAGE_MODEL_CANON.md, issue #1468; wave: mmm-deploy-execution-strategy-20260426, 2026-04-26 — workflows realigned per §7.4: legacy migration trigger removed from vercel workflow, supabase db push adopted for MMM-native migrations, schema verification consolidated, deployment-execution-contract.md filed, live-validation-sequence.md filed, issue #1470); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — This is the designated primary operational monitor for MMM stage progress. CS2 should use this document as the main live progress dashboard.  
@@ -666,6 +666,7 @@ The following live operational confirmation items are still required before MMM 
 - [x] Vercel frontend deployment path reflected (wave: align-vercel-deployment-workflow-20260422, PR #1454 — functioning; env var confirmation pending)
 - [x] MMM storage bucket model codified (wave mmm-storage-model-codification-20260422, 2026-04-23, issue #1458) — chosen model: `mmm-evidence` + `mmm-framework-sources` (Option C: MMM-native consolidated); ADR: `modules/MMM/storage-model-decision.md`; audio MIME fix: `supabase/migrations/20260422000001_mmm_evidence_audio_mime_fix.sql`; RLS hardening: `supabase/migrations/20260422000002_mmm_evidence_rls_hardening.sql`; 172/172 tests GREEN (8 new T-MMM-S6-ADR001/ADR002 tests pass)
 - [x] Supabase project reconciliation complete (wave supabase-reconciliation-20260423, 2026-04-23, issue #1461) — repo-backed state fully audited and documented; anti-drift model established; 3 governance documents created (`docs/supabase/MMM_SUPABASE_AUDIT.md`, `docs/supabase/MMM_SUPABASE_BOUNDARY.md`, `docs/supabase/MMM_SUPABASE_OPERATING_PROCEDURE.md`); config.toml verified complete (all 26 functions, project_id confirmed); no new migrations created; drift assessment pending CS2 `supabase db diff --linked` verification
+- [x] Deployment execution strategy implemented (wave mmm-deploy-execution-strategy-20260426, 2026-04-26, issue #1470) — workflows realigned per §7.4; deployment-execution-contract.md + live-validation-sequence.md filed in `_readiness/`
 
 ---
 
@@ -699,7 +700,46 @@ migration execution path, CI/preview/production boundaries, protected/manual app
 
 ---
 
-## Notes and Observations
+## Post-Stage-12 Operational: Deployment Execution Strategy
+
+**Status**: COMPLETE — workflows realigned; contracts filed  
+**Wave**: mmm-deploy-execution-strategy-20260426  
+**Issue**: maturion-isms#1470  
+**Date**: 2026-04-26  
+
+### Deliverables
+
+| # | Deliverable | Status | Artifact |
+|---|---|---|---|
+| Q-A | Frontend deploy workflow trigger paths corrected — legacy migration path removed | ✅ COMPLETE | `.github/workflows/deploy-mmm-vercel.yml` |
+| Q-B | Supabase migrations workflow updated to use `supabase db push` for MMM-native migrations | ✅ COMPLETE | `.github/workflows/deploy-mmm-supabase-migrations.yml` |
+| Q-C | Schema verification consolidated — `schema-existence-check` job merged into `schema-verification` job | ✅ COMPLETE | `.github/workflows/deploy-mmm-supabase-migrations.yml` |
+| Q-D | `deployment-execution-contract.md` created — all §7.4 mandatory items answered; Section 2 cross-app migration exception documented | ✅ COMPLETE | `modules/MMM/_readiness/deployment-execution-contract.md` |
+| Q-E | `live-validation-sequence.md` created — 8-step ordered validation sequence with evidence_type labels per A-037 | ✅ COMPLETE | `modules/MMM/_readiness/live-validation-sequence.md` |
+| Q-F1 | `deployment-alignment.md` updated — status updated; references to new contracts added | ✅ COMPLETE | `modules/MMM/12-phase4-ecap/deployment-alignment.md` |
+| Q-F2 | `BUILD_PROGRESS_TRACKER.md` updated — this entry | ✅ COMPLETE | `modules/MMM/BUILD_PROGRESS_TRACKER.md` |
+
+### Summary of Changes
+
+**Workflow ownership separation (per §7.4)**:
+- `deploy-mmm-vercel.yml`: Removed `apps/maturion-maturity-legacy/supabase/migrations/**` from
+  both `push` and `pull_request` trigger path filters. Added ownership comment block at top of
+  `on:` section documenting scope boundaries and out-of-scope paths.
+- `deploy-mmm-supabase-migrations.yml`: Replaced psql-based MMM migration execution with
+  `supabase link + supabase db push`. Legacy and AIMC psql steps retained as explicit cross-app
+  exceptions with documentation. Schema verification consolidated from two jobs into one.
+- Operating model comment at top of migrations workflow updated to reflect accurate §7.4 contract.
+
+**New governance artifacts**:
+- `modules/MMM/_readiness/deployment-execution-contract.md` — §7.4 contract; answers all 7
+  mandatory items (surface ownership, runner access, self-hosted runners, approved mechanism,
+  execution boundaries, CS2/manual approval, env var validation); includes Section 2 cross-app
+  migration exception.
+- `modules/MMM/_readiness/live-validation-sequence.md` — 8-step post-deploy validation sequence;
+  evidence_type labels on all steps per A-037; Step 4 (frontend) marked OPERATIONAL with
+  WORKFLOW_LOG reference to PR #1454; all other steps PENDING.
+
+---
 
 **Supabase Reconciliation Wave (2026-04-23, maturion-isms#1461)**: Wave `supabase-reconciliation-20260423` completed a full audit and documentation of the repo-backed Supabase project state. Three governance documents were created under `docs/supabase/`: `MMM_SUPABASE_AUDIT.md` (full inventory of 6 migrations, 26 Edge Functions, 2 storage buckets, RLS model, auth boundary, secrets boundary), `MMM_SUPABASE_BOUNDARY.md` (explicit boundary between repo-controlled and dashboard-managed items), and `MMM_SUPABASE_OPERATING_PROCEDURE.md` (agent-driven change procedure covering migrations, storage, functions, deployment workflow, anti-drift rules, and emergency override). `supabase/config.toml` verified complete — all 26 functions registered, `project_id = ujucvyyspfxlxlfdamda` confirmed. No migrations created. Anti-drift model active: repo is single source of truth for schema, storage, and Edge Functions from this wave onwards. CS2 to complete OC-001 drift verification (`supabase db diff --linked`).
 

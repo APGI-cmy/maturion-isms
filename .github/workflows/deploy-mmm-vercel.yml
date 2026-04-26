@@ -1,5 +1,21 @@
 name: Deploy MMM Frontend to Vercel
 
+# WORKFLOW OWNERSHIP BOUNDARY
+# This workflow owns the MMM FRONTEND deployment surface only.
+# Authorised trigger paths:
+#   apps/mmm/**                  — MMM React/Vite frontend source
+#   api/**                       — Vercel serverless API routes
+#   packages/ai-centre/src/**    — AIMC package consumed by frontend
+#   vercel.json                  — Vercel project configuration
+#   .github/workflows/deploy-mmm-vercel.yml — this workflow file
+#   pnpm-lock.yaml               — lockfile changes that affect the build
+#
+# OUT-OF-SCOPE paths (do NOT add these — workflow ownership separation is mandatory per §7.4):
+#   supabase/migrations/**       — owned by deploy-mmm-supabase-migrations.yml
+#   apps/maturion-maturity-legacy/supabase/migrations/** — legacy migrations, NOT a frontend concern
+#   supabase/functions/**        — owned by deploy-mmm-edge-functions.yml
+#   apps/mat-ai-gateway/**       — owned by deploy-mmm-ai-gateway.yml
+
 on:
   push:
     branches:
@@ -8,7 +24,6 @@ on:
       - 'apps/mmm/**'
       - 'api/**'
       - 'packages/ai-centre/src/**'
-      - 'apps/maturion-maturity-legacy/supabase/migrations/**'
       - 'vercel.json'
       - '.github/workflows/deploy-mmm-vercel.yml'
       - 'pnpm-lock.yaml'
@@ -19,7 +34,6 @@ on:
       - 'apps/mmm/**'
       - 'api/**'
       - 'packages/ai-centre/src/**'
-      - 'apps/maturion-maturity-legacy/supabase/migrations/**'
       - 'vercel.json'
       - '.github/workflows/deploy-mmm-vercel.yml'
       - 'pnpm-lock.yaml'
