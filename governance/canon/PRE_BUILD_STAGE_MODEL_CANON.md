@@ -2,7 +2,7 @@
 
 ## Status
 **Type**: Canonical Governance Definition  
-**Version**: 1.1.0  
+**Version**: 1.2.0  
 **Authority**: CS2 (Johan Ras / Maturion)  
 **Effective Date**: 2026-04-05  
 **Owner**: Maturion Engineering Leadership  
@@ -419,6 +419,44 @@ The following three supporting controls are **required** and must be completed a
 
 ---
 
+### 7.4 Deployment Execution Contract
+
+**Trigger**: Before any build wave begins.
+
+**Requirement**: The module must explicitly define the deployment EXECUTION MODEL — the operational "how" layer that bridges architecture topology to runnable workflows. The following items must each be explicitly answered before build execution begins. "TBD" or blank entries are a PBFAG FAIL condition.
+
+**Mandatory Items** (each must be explicitly answered — not assumed, not deferred):
+- [ ] Which workflow (by name/path) owns frontend deployment
+- [ ] Which workflow (by name/path) owns backend/API service deployment
+- [ ] Which workflow (by name/path) owns DB migration execution
+- [ ] Which workflow (by name/path) owns schema verification
+- [ ] Which workflow (by name/path) owns live operational validation (smoke tests, health checks)
+- [ ] Whether GitHub-hosted runners may access live infrastructure (YES/NO — with explicit justification if YES)
+- [ ] Whether any surface requires self-hosted runners (YES/NO — identify which surfaces and why)
+- [ ] Which migration execution mechanism is approved (Supabase CLI `supabase db push`, direct `psql`, Prisma migrate, other — explicit choice with rationale)
+- [ ] What operations are CI-safe (permitted on all PR builds)
+- [ ] What operations are preview-safe (permitted on preview/staging only)
+- [ ] What operations are live-only (production only, not permitted in CI or preview)
+- [ ] What triggers require CS2/manual approval (protected environments, production deployments, schema destructive operations)
+- [ ] How environment variable and network assumptions are validated before each deployment surface goes live
+
+**Important Distinction from §7.2**: §7.2 (Runtime/Deployment Contract) defines WHAT infrastructure exists and WHAT must pre-exist. §7.4 (Deployment Execution Contract) defines HOW deployment actions are executed, WHO (which workflow/agent) executes them, and WHAT boundaries exist between CI, preview, and production execution. Both are required and complementary.
+
+**Evidence Required**: Deployment Execution Contract document filed in the module's build-readiness or _readiness folder before first build wave begins. The document must contain a completed answer for every mandatory item above. "TBD" or blank entries are a PBFAG FAIL condition.
+
+**Enforcement**:
+- Absence of a filed Deployment Execution Contract is a PBFAG FAIL condition.
+- A Deployment Execution Contract with any mandatory item blank or "TBD" is a PBFAG FAIL condition.
+- Any workflow implementation that deviates from the approved Deployment Execution Contract requires an architecture/governance update (reviewed by Foreman and approved by CS2) before the deviation may be merged. Ad hoc operational interpretation is prohibited.
+
+**Anti-Drift Rule**: Later workflow implementation, CI pipeline changes, and operational procedure changes MUST conform to the approved Deployment Execution Contract. Deviations found during build or post-build review require a Change-Propagation Audit per §7.1 and a formal governance update before merging. Operational speculation is NOT a substitute for a frozen Deployment Execution Contract.
+
+**Gate Condition**: Deployment Execution Contract document filed in module's _readiness folder; all mandatory items answered explicitly; reviewed and approved by Foreman; PBFAG checklist updated to include Deployment Execution Contract PASS.
+
+**Authority Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` §7.4 (this section), `PRE_BUILD_REALITY_CHECK_CANON.md`
+
+---
+
 ## 8. Canonization Mandates
 
 This canon establishes the following as **binding governance mandates**:
@@ -432,6 +470,7 @@ This canon establishes the following as **binding governance mandates**:
 7. **Golden Path Verification Pack** must be defined before the first build wave begins
 8. **No build may start** if real user-verifiable functional delivery has not already been defined in advance
 9. **Wave-Level Admin Ceremony Contract** is a mandatory component of IAA Pre-Brief; all declared ceremony-contract items are enforceable at handover
+10. **Deployment Execution Contract** must be filed before the first build wave begins; all mandatory execution model items must be explicitly answered; "TBD" or blank entries are a PBFAG FAIL condition
 
 ---
 
@@ -447,6 +486,9 @@ This canon establishes the following as **binding governance mandates**:
 - **❌ NEVER** begin build without a Golden Path Verification Pack
 - **❌ NEVER** treat CI-green or passing tests as proof of functional delivery without Golden Path Verification
 - **❌ NEVER** generate a Pre-Brief without a Wave-Level Admin Ceremony Contract section
+- **❌ NEVER** begin build without a filed Deployment Execution Contract with all mandatory items explicitly answered
+- **❌ NEVER** allow workflow implementation to deviate from the approved Deployment Execution Contract without a Change-Propagation Audit and formal governance update
+- **❌ NEVER** treat operational speculation as a substitute for a frozen Deployment Execution Contract
 
 ---
 
@@ -491,6 +533,8 @@ This canon is complete and accepted when:
 ---
 
 ## 13. Version History
+
+**v1.2.0** (2026-04-26): Added §7.4 Deployment Execution Contract as a mandatory supporting control; added Canonization Mandate #10 (Deployment Execution Contract must be filed before first build wave with all items explicitly answered); added three Prohibitions covering absence of Deployment Execution Contract, workflow deviations, and operational speculation. Version bump from 1.1.0. Authority: CS2. Issue: maturion-isms#1468.
 
 **v1.1.0** (2026-04-22): Added wave-level admin ceremony contract requirement to Stage 10; updated Stage 10 Mandatory Actions and Gate Condition; added Canonization Mandate #9 and Prohibition against generating a Pre-Brief without a Wave-Level Admin Ceremony Contract section; updated Authority Reference to IAA_PRE_BRIEF_PROTOCOL.md v1.3.0. Authority: CS2. Issue: maturion-isms#1447.
 
