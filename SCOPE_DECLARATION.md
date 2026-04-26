@@ -37,3 +37,12 @@ path finalisation, legacy assumption removal, documentation alignment, and live 
 - Any Supabase migrations (supabase/migrations/)
 - Any agent contract files (.github/agents/*.md)
 - Any files not listed above
+
+### Ceremony Artifacts
+
+- `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-073-20260426.md` - ECAP PREHANDOVER bundle
+- `.agent-workspace/execution-ceremony-admin-agent/bundles/session-073-20260426.md` - ECAP session memory bundle
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-073-20260426.md` - Foreman-accepted PREHANDOVER proof
+- `.agent-workspace/foreman-v2/memory/session-073-20260426.md` - Foreman-accepted session memory
+- `.agent-workspace/integration-builder/memory/PREHANDOVER-session-mmm-deploy-execution-strategy-20260426.md` - Integration-builder PREHANDOVER
+- `.agent-workspace/integration-builder/memory/session-mmm-deploy-execution-strategy-20260426.md` - Integration-builder session memory

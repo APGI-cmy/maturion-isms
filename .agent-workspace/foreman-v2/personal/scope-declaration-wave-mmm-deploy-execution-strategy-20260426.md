@@ -23,6 +23,10 @@ approved_artifact_paths:
   - modules/MMM/12-phase4-ecap/deployment-alignment.md
   - modules/MMM/BUILD_PROGRESS_TRACKER.md
   - SCOPE_DECLARATION.md
+  - .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-073-20260426.md
+  - .agent-workspace/execution-ceremony-admin-agent/bundles/session-073-20260426.md
+  - .agent-workspace/foreman-v2/memory/PREHANDOVER-session-073-20260426.md
+  - .agent-workspace/foreman-v2/memory/session-073-20260426.md
 ```
 
 ## Builder Appointment
