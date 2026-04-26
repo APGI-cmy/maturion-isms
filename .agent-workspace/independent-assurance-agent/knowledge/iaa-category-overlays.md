@@ -1,9 +1,9 @@
 # IAA Category Overlays
 
 **Agent**: independent-assurance-agent
-**Version**: 4.0.0
+**Version**: 4.2.0
 **Status**: ACTIVE
-**Last Updated**: 2026-04-07
+**Last Updated**: 2026-04-26
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -376,12 +376,13 @@ Applied when PR category is `PRE_BUILD_STAGE_MODEL` or `MANDATORY_CROSS_APP_COMP
 | OVL-PBG-014 | §7.1 — Change-Propagation Audit complete when upstream artifacts changed | For any PR that modifies App Description, UX Workflow, FRS, TRS, or Architecture artifacts: verify a Change-Propagation Audit log entry exists confirming downstream artifacts (QA suite, PBFAG, Implementation Plan, Builder scope) have been updated. | REJECTION-PACKAGE: "Change-Propagation Audit (§7.1) is required when upstream pre-build artifacts change per PRE_BUILD_STAGE_MODEL_CANON.md §7.1." |
 | OVL-PBG-015 | §7.2 — Runtime/Deployment Contract filed before first build wave | For any PR that begins the first build wave of a module: verify a Runtime/Deployment Contract artifact is present (deployment target, env vars, auth assumptions, schema prerequisites, health checks). | REJECTION-PACKAGE: "Runtime/Deployment Contract (§7.2) must be filed before the first build wave per PRE_BUILD_STAGE_MODEL_CANON.md §7.2." |
 | OVL-PBG-016 | §7.3 — Golden Path Verification Pack defined before first build wave | For any PR that begins the first build wave of a module: verify a Golden Path Verification Pack is present (named golden paths, step-by-step descriptions, expected outcomes, pass/fail criteria, QA mapping). | REJECTION-PACKAGE: "Golden Path Verification Pack (§7.3) must be defined before the first build wave per PRE_BUILD_STAGE_MODEL_CANON.md §7.3." |
+| OVL-PBG-017 | §7.4 — Deployment Execution Contract filed before first build wave | For any PR that begins the first build wave of a module: verify a Deployment Execution Contract artifact is present in the module's `_readiness/` folder (or equivalent documented location). The artifact must cover all mandatory items: workflow ownership per deployment surface (frontend, AI gateway, Edge Functions, DB migration, schema verification, live validation), runner access rules, approved migration execution mechanism, CI-safe/preview-safe/live-only execution boundaries, CS2/manual approval requirements, env variable validation. All mandatory items must be explicitly answered — blank or 'TBD' entries fail this check. | REJECTION-PACKAGE: "Deployment Execution Contract (§7.4) must be filed before the first build wave per PRE_BUILD_STAGE_MODEL_CANON.md §7.4. All mandatory items must be explicitly answered." |
 
 **Admin Check:**
 
 | Check ID | Check Name | Pass Condition |
 |----------|-----------|---------------|
-| OVL-PBG-ADM-001 | PRE_BUILD_GATES overlay loaded | IAA must state that OVL-PBG-001 through OVL-PBG-016 have been applied when PR category includes PRE_BUILD_STAGE_MODEL or MANDATORY_CROSS_APP_COMPONENTS. |
+| OVL-PBG-ADM-001 | PRE_BUILD_GATES overlay loaded | IAA must state that OVL-PBG-001 through OVL-PBG-017 have been applied when PR category includes PRE_BUILD_STAGE_MODEL or MANDATORY_CROSS_APP_COMPONENTS. |
 
 ---
 
@@ -469,6 +470,7 @@ OVL-GE-003 Evidence-Type Sufficiency:
 | 3.8.0 | 2026-04-06 | PRE_BUILD_GATES overlay strengthened (OVL-PBG-006 through OVL-PBG-009) — full 12-stage model enforcement: BUILD_PROGRESS_TRACKER 12-stage completeness (OVL-PBG-006), architecture doc full lifecycle sequence (OVL-PBG-007), stage gating no-skip enforcement (OVL-PBG-008), legacy directory numbering advisory flag (OVL-PBG-009); OVL-PBG-ADM-001 updated to reference OVL-PBG-001 through OVL-PBG-009; wave: pre-mmm-build-readiness (CS2 review blockers) |
 | 4.0.0 | 2026-04-07 | PRE_BUILD_GATES overlay: OVL-PBG-010 through OVL-PBG-016 added — Stage 2 UX Wiring Spec, Stage 6 QA-to-Red, Stage 7 PBFAG, Stage 9 Builder Checklist, §7.1 Change-Propagation Audit, §7.2 Runtime/Deployment Contract, §7.3 Golden Path Verification Pack enforcement; PRE_BRIEF_ASSURANCE overlay: stage-readiness view requirement and OVL-INJ-ADM-003 added; wave: iaa-12stage-upgrade (issue #1258) |
 | 4.1.0 | 2026-04-22 | GOVERNANCE_EVIDENCE overlay added (OVL-GE-001 through OVL-GE-003, OVL-GE-ADM-001) — temporal integrity check (no future-dated claims) and evidence-type discipline (LIVE_RUNTIME/LIVE_E2E items cannot be satisfied by lower-fidelity evidence); canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md; regression from PR #1444; governance hardening issue maturion-isms#1445. |
+| 4.2.0 | 2026-04-26 | PRE_BUILD_GATES overlay: OVL-PBG-017 added — §7.4 Deployment Execution Contract filed before first build wave (mandatory items: workflow ownership per surface, runner access rules, migration mechanism, CI/preview/production execution boundaries, CS2 approval requirements, env validation); OVL-PBG-ADM-001 updated to reference through OVL-PBG-017; wave: mmm-deploy-strategy-oversight-20260426 (issue maturion-isms#1468). |
 
 ---
 
