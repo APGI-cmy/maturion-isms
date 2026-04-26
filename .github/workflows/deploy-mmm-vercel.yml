@@ -219,7 +219,8 @@ jobs:
     environment: production
     # Cross-app dependency: MMM shares the same Supabase database as the legacy app.
     # These migrations manage shared schema objects (audits, criteria, mps, domains, evidence)
-    # that MMM reads at runtime. They must be applied before MMM deployment proceeds.
+    # that MMM reads at runtime. Migration application is handled by a dedicated protected
+    # workflow; MMM deployment in this workflow does not depend on this job.
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
