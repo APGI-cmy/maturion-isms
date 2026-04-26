@@ -21,8 +21,8 @@ BUILD_PROGRESS_TRACKER and implementation plan with anti-drift reference.
 - `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-deploy-strategy-oversight-20260426.md` - Foreman personal scope declaration
 - `modules/MMM/_readiness/deployment-strategy-oversight.md` - Formal deployment strategy oversight record and Deployment Execution Contract definition
 - `.agent-workspace/governance-liaison-isms/memory/session-070-20260426.md` - governance-liaison-isms session memory
-- `CORRECTION_ADDENDUM_SESSION_070_R1.md` - governance-liaison-isms correction addendum (IAA rejection R1 remediation)
-- `PREHANDOVER_PROOF_SESSION_070_WAVE_MMM_DEPLOY_STRATEGY.md` - governance-liaison-isms PREHANDOVER proof
+- `.agent-workspace/governance-liaison-isms/memory/CORRECTION_ADDENDUM_SESSION_070_R1.md` - governance-liaison-isms correction addendum (IAA rejection R1 remediation)
+- `.agent-workspace/governance-liaison-isms/memory/PREHANDOVER_PROOF_SESSION_070_WAVE_MMM_DEPLOY_STRATEGY.md` - governance-liaison-isms PREHANDOVER proof
 - `.agent-workspace/independent-assurance-agent/memory/session-071-20260426.md` - IAA session memory (rejection)
 - `.agent-workspace/independent-assurance-agent/memory/session-072-20260426.md` - IAA session memory (PASS)
 
