@@ -1,31 +1,27 @@
-# Scope Declaration — actions-deprecation-gate-20260423
+# Scope Declaration — decouple-supabase-db-ops-20260424
 
-**Wave**: actions-deprecation-gate-20260423
-**Issue**: maturion-isms#1463
-**Branch**: copilot/add-github-actions-deprecation-detection
-**Date**: 2026-04-23
+**Wave**: decouple-supabase-db-ops-20260424
+**Issue**: maturion-isms#1466
+**Branch**: copilot/decouple-supabase-db-operations
+**Date**: 2026-04-24
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
-**IAA Pre-Brief**: .agent-admin/assurance/iaa-wave-record-actions-deprecation-gate-20260423-20260423.md
 
 ## Scope Decision
 
-GitHub Actions deprecation hardening: Dependabot configuration, deprecation detection CI gate,
-composite action standardization, policy documentation, governance artifacts.
+Decouple live Supabase DB operations from the MMM Vercel deploy workflow.
+Patch `deploy-mmm-vercel.yml` to gate DB jobs behind `workflow_dispatch + main` only
+and remove them from frontend deploy dependencies. Fix FAILED_MIGRATION tracking bug.
+Introduce `deploy-mmm-supabase-migrations.yml` as the dedicated protected migration path.
 
 ## Changed Files
 
 ### Added
 
-- `.agent-admin/assurance/iaa-wave-record-actions-deprecation-gate-20260423-20260423.md` - IAA Pre-Brief wave record
-- `.agent-workspace/foreman-v2/personal/scope-declaration-wave-actions-deprecation-gate-20260423.md` - Foreman personal scope declaration
-- `.github/dependabot.yml` - Dependabot configuration for GitHub Actions monitoring
-- `.github/workflows/actions-deprecation-gate.yml` - CI gate for deprecated/banned action versions
-- `.github/actions/setup/action.yml` - Composite action for common workflow primitives
-- `docs/ACTIONS_UPGRADE_POLICY.md` - Repository policy for GitHub Actions dependency management
+- `.github/workflows/deploy-mmm-supabase-migrations.yml` - Dedicated protected workflow for live Supabase DB migrations
 
 ### Modified
 
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated to current wave identity
+- `.github/workflows/deploy-mmm-vercel.yml` - Gate DB jobs behind workflow_dispatch+main; decouple deploy-preview/deploy-production from DB jobs; fix FAILED_MIGRATION bug
 - `SCOPE_DECLARATION.md` - This file
 
 ## Out of Scope
