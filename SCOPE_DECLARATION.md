@@ -1,33 +1,39 @@
-# Scope Declaration — actions-deprecation-gate-20260423
+# Scope Declaration — mmm-deploy-strategy-oversight-20260426
 
-**Wave**: actions-deprecation-gate-20260423
-**Issue**: maturion-isms#1463
-**Branch**: copilot/add-github-actions-deprecation-detection
-**Date**: 2026-04-23
+**Wave**: mmm-deploy-strategy-oversight-20260426
+**Issue**: maturion-isms#1468
+**Branch**: copilot/capture-deployment-strategy-oversight
+**Date**: 2026-04-26
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
-**IAA Pre-Brief**: .agent-admin/assurance/iaa-wave-record-actions-deprecation-gate-20260423-20260423.md
+**IAA Pre-Brief**: .agent-admin/assurance/iaa-wave-record-mmm-deploy-strategy-oversight-20260426.md
 
 ## Scope Decision
 
-GitHub Actions deprecation hardening: Dependabot configuration, deprecation detection CI gate,
-composite action standardization, policy documentation, governance artifacts.
+Governance documentation wave: record MMM deployment-strategy oversight; add Deployment Execution
+Contract (§7.4) to PRE_BUILD_STAGE_MODEL_CANON.md; create oversight record document; update MMM
+BUILD_PROGRESS_TRACKER and implementation plan with anti-drift reference.
 
 ## Changed Files
 
 ### Added
 
-- `.agent-admin/assurance/iaa-wave-record-actions-deprecation-gate-20260423-20260423.md` - IAA Pre-Brief wave record
-- `.agent-workspace/foreman-v2/personal/scope-declaration-wave-actions-deprecation-gate-20260423.md` - Foreman personal scope declaration
-- `.github/dependabot.yml` - Dependabot configuration for GitHub Actions monitoring
-- `.github/workflows/actions-deprecation-gate.yml` - CI gate for deprecated/banned action versions
-- `.github/actions/setup/action.yml` - Composite action for common workflow primitives
-- `docs/ACTIONS_UPGRADE_POLICY.md` - Repository policy for GitHub Actions dependency management
+- `.agent-admin/assurance/iaa-wave-record-mmm-deploy-strategy-oversight-20260426.md` - IAA Pre-Brief and Final Audit wave record
+- `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-deploy-strategy-oversight-20260426.md` - Foreman personal scope declaration
+- `modules/MMM/_readiness/deployment-strategy-oversight.md` - Formal deployment strategy oversight record and Deployment Execution Contract definition
 
 ### Modified
 
+- `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` - Added §7.4 Deployment Execution Contract mandatory sub-stage
+- `governance/CANON_INVENTORY.json` - Updated hash for PRE_BUILD_STAGE_MODEL_CANON.md
+- `modules/MMM/BUILD_PROGRESS_TRACKER.md` - Added deployment strategy oversight record section
+- `modules/MMM/07-implementation-plan/implementation-plan.md` - Added deployment execution strategy reference and anti-drift clause
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated to current wave identity
 - `SCOPE_DECLARATION.md` - This file
 
 ## Out of Scope
 
+- Any application source code files
+- Any CI workflow files
+- Any Supabase migrations
+- Any agent contract files (.github/agents/*.md)
 - Any files not listed above
