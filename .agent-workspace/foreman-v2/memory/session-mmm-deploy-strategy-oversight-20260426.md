@@ -63,7 +63,7 @@
 
 ## Suggestions for Improvement
 
-No degradation observed. Continuous improvement note: governance-liaison-isms-agent placed PREHANDOVER_PROOF and CORRECTION_ADDENDUM files at repo root instead of .agent-workspace/governance-liaison-isms/memory/. A future improvement would be to enforce correct placement of agent PREHANDOVER artifacts in the agent workspace, not repo root.
+No degradation observed. Continuous improvement note: governance-liaison-isms-agent correctly placed PREHANDOVER_PROOF and CORRECTION_ADDENDUM files under .agent-workspace/governance-liaison-isms/memory/ (not repo root). Artifact placement is workspace-scoped as required.
 
 ---
 
@@ -71,4 +71,4 @@ No degradation observed. Continuous improvement note: governance-liaison-isms-ag
 
 | Date | Agent | Session | Type | Summary | File |
 |------|-------|---------|------|---------|------|
-| 2026-04-26 | foreman-v2-agent | session-mmm-deploy-strategy-oversight-20260426 | observation | governance-liaison PREHANDOVER placement at repo root should be workspace-scoped | session-mmm-deploy-strategy-oversight-20260426.md |
+| 2026-04-26 | foreman-v2-agent | session-mmm-deploy-strategy-oversight-20260426 | observation | governance-liaison PREHANDOVER artifacts confirmed at .agent-workspace/governance-liaison-isms/memory/ (workspace-scoped, correct) | session-mmm-deploy-strategy-oversight-20260426.md |
