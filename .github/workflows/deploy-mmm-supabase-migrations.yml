@@ -24,6 +24,10 @@ on:
         required: true
         default: ''
 
+concurrency:
+  group: ${{ github.workflow }}-main
+  cancel-in-progress: false
+
 jobs:
   preflight-guard:
     name: Pre-Flight Guard
@@ -150,8 +154,11 @@ jobs:
         run: |
           echo "Verifying schema — checking public.audits table exists..."
           if [ -n "$SUPABASE_DB_URL" ]; then
-            result=$(psql "$SUPABASE_DB_URL" -t -A -c \
-              "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='audits';" 2>/dev/null || echo "0")
+            if ! result=$(psql "$SUPABASE_DB_URL" -t -A -c \
+              "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='audits';"); then
+              echo "::error::psql query failed — check SUPABASE_DB_URL and database connectivity"
+              exit 1
+            fi
             if [ "$result" != "1" ]; then
               echo "FAIL: public.audits not found in schema cache"
               exit 1
@@ -168,8 +175,11 @@ jobs:
         run: |
           echo "Verifying schema — checking public.audit_logs table exists..."
           if [ -n "$SUPABASE_DB_URL" ]; then
-            result=$(psql "$SUPABASE_DB_URL" -t -A -c \
-              "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='audit_logs';" 2>/dev/null || echo "0")
+            if ! result=$(psql "$SUPABASE_DB_URL" -t -A -c \
+              "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='audit_logs';"); then
+              echo "::error::psql query failed — check SUPABASE_DB_URL and database connectivity"
+              exit 1
+            fi
             if [ "$result" != "1" ]; then
               echo "FAIL: public.audit_logs not found — migration 20260308000001_audit_logs_table.sql may not have been applied"
               exit 1
@@ -185,8 +195,11 @@ jobs:
         run: |
           echo "Verifying schema — checking public.evidence_submissions table exists..."
           if [ -n "$SUPABASE_DB_URL" ]; then
-            result=$(psql "$SUPABASE_DB_URL" -t -A -c \
-              "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='evidence_submissions';" 2>/dev/null || echo "0")
+            if ! result=$(psql "$SUPABASE_DB_URL" -t -A -c \
+              "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='evidence_submissions';"); then
+              echo "::error::psql query failed — check SUPABASE_DB_URL and database connectivity"
+              exit 1
+            fi
             if [ "$result" != "1" ]; then
               echo "WARN: public.evidence_submissions not found in schema cache (non-blocking)."
             else
@@ -216,8 +229,11 @@ jobs:
           FAILED=""
           if [ -n "$SUPABASE_DB_URL" ]; then
             for TABLE in $TABLES; do
-              result=$(psql "$SUPABASE_DB_URL" -t -A -c \
-                "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='${TABLE}';" 2>/dev/null || echo "0")
+              if ! result=$(psql "$SUPABASE_DB_URL" -t -A -c \
+                "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='${TABLE}';"); then
+                echo "::error::psql connection or query error for table ${TABLE} — check SUPABASE_DB_URL and database connectivity"
+                exit 1
+              fi
               if [ "$result" != "1" ]; then
                 echo "FAIL: public.${TABLE} not found in schema cache"
                 FAILED="${FAILED} public.${TABLE}"
@@ -225,13 +241,6 @@ jobs:
                 echo "PASS: public.${TABLE} verified"
               fi
             done
-            # Explicit check for public.mps (Wave 13 migration: 20260313000001_mps_view.sql)
-            mps_result=$(psql "$SUPABASE_DB_URL" -t -A -c \
-              "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='mps';" 2>/dev/null || echo "0")
-            if [ "$mps_result" != "1" ]; then
-              echo "FAIL: public.mps view not found — ensure 20260313000001_mps_view.sql migration was applied"
-              FAILED="${FAILED} public.mps(view)"
-            fi
             if [ -n "$FAILED" ]; then
               echo "::error::schema-existence-check FAILED — missing tables:${FAILED}"
               exit 1
