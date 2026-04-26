@@ -47,3 +47,12 @@ BUILD_PROGRESS_TRACKER and implementation plan with anti-drift reference.
 - Any Supabase migrations
 - Any agent contract files (.github/agents/*.md)
 - Any files not listed above
+- `SCOPE_DECLARATION.md` - This file
+
+## Out of Scope
+
+- Any application source code files
+- Any CI workflow files
+- Any Supabase migrations
+- Any agent contract files (.github/agents/*.md)
+- Any files not listed above
