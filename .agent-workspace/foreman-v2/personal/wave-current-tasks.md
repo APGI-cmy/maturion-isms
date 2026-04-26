@@ -24,10 +24,10 @@ proceed with only high-level topology and vague deployment assumptions.
 | 2 | wave-current-tasks.md | foreman-v2-agent | 🟢 DONE | This file |
 | 3 | scope-declaration | foreman-v2-agent | 🟡 IN PROGRESS | .agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-deploy-strategy-oversight-20260426.md |
 | 4 | IAA Pre-Brief | independent-assurance-agent | 🟢 DONE | PRE-BRIEF committed SHA ba76b7b; 5 qualifying tasks declared; CANON_GOVERNANCE + PRE_BUILD_STAGE_MODEL overlays |
-| 5 | Governance documentation deliverables | governance-liaison-isms-agent | 🔴 PENDING | maturion-isms#1468 — PRE_BUILD_STAGE_MODEL_CANON, CANON_INVENTORY, BUILD_PROGRESS_TRACKER, oversight doc, impl plan update |
-| 6 | PREHANDOVER proof | execution-ceremony-admin-agent | 🔴 PENDING | After governance-liaison-isms-agent QP PASS |
-| 7 | Session memory | execution-ceremony-admin-agent | 🔴 PENDING | After governance-liaison-isms-agent QP PASS |
-| 8 | IAA Final Audit | independent-assurance-agent | 🔴 PENDING | After ECAP bundle |
+| 5 | Governance documentation deliverables | governance-liaison-isms-agent | 🟢 DONE | maturion-isms#1468 — all 5 deliverables delivered; IAA ASSURANCE-TOKEN: IAA-session-072-wave-mmm-deploy-strategy-oversight-20260426-PASS |
+| 6 | PREHANDOVER proof | foreman-v2-agent | 🟢 DONE | .agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-deploy-strategy-oversight-20260426.md |
+| 7 | Session memory | foreman-v2-agent | 🟢 DONE | .agent-workspace/foreman-v2/memory/session-mmm-deploy-strategy-oversight-20260426.md |
+| 8 | IAA Final Audit | independent-assurance-agent | 🟢 DONE | ASSURANCE-TOKEN: IAA-session-072-wave-mmm-deploy-strategy-oversight-20260426-PASS |
 
 ## IAA Tokens Received This Wave
 
