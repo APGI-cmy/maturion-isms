@@ -177,4 +177,10 @@ _(To be populated by IAA at final audit — ASSURANCE-TOKEN or REJECTION-PACKAGE
 
 ## REJECTION_HISTORY
 
-_(No rejections recorded at PRE-BRIEF stage.)_
+### Entry 1 — 2026-04-26
+- iaa_reinvocation_round: 1
+- finding_summary: ACR-04/A-026/A-028 — SCOPE_DECLARATION bidirectional diff mismatch. 2 parking-station files in diff not listed (.agent-workspace/foreman-v2/parking-station/suggestions-log.md, .agent-workspace/integration-builder/parking-station/suggestions-log.md). 2 foreman-v2/memory files listed but absent from actual diff (.agent-workspace/foreman-v2/memory/PREHANDOVER-session-073-20260426.md, .agent-workspace/foreman-v2/memory/session-073-20260426.md).
+- fix_required: Foreman runs git diff --name-only origin/main...HEAD; regenerates SCOPE_DECLARATION.md to exact diff output (add 2 parking-station files, remove 2 phantom foreman-v2/memory entries); commits; re-invokes IAA.
+- classification: Ceremony
+- verdict: REJECTION-PACKAGE
+- token_reference: IAA-session-073-20260426-REJECT-R1

@@ -15,21 +15,23 @@ path finalisation, legacy assumption removal, documentation alignment, and live 
 
 ## Changed Files
 
-### Added
-
-- `.agent-admin/assurance/iaa-wave-record-mmm-deploy-execution-strategy-20260426.md` - IAA Pre-Brief and Final Audit wave record
-- `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-deploy-execution-strategy-20260426.md` - Foreman personal scope declaration
-- `modules/MMM/_readiness/deployment-execution-contract.md` - Standalone Deployment Execution Contract (all §7.4 mandatory items answered)
-- `modules/MMM/_readiness/live-validation-sequence.md` - Post-deploy live validation sequence document
-
-### Modified
-
-- `.github/workflows/deploy-mmm-vercel.yml` - Removed legacy migration trigger path (apps/maturion-maturity-legacy/supabase/migrations/**)
-- `.github/workflows/deploy-mmm-supabase-migrations.yml` - Updated to use supabase db push for MMM-native migrations; reconciled schema-verification/schema-existence-check duplication; updated operating model comment
-- `modules/MMM/12-phase4-ecap/deployment-alignment.md` - Updated to reflect finalized deployment model
-- `modules/MMM/BUILD_PROGRESS_TRACKER.md` - Added wave record for this wave
-- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Updated to current wave identity
-- `SCOPE_DECLARATION.md` - This file
+- `.agent-admin/assurance/iaa-wave-record-mmm-deploy-execution-strategy-20260426.md`
+- `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-073-20260426.md`
+- `.agent-workspace/execution-ceremony-admin-agent/bundles/session-073-20260426.md`
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md`
+- `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-deploy-execution-strategy-20260426.md`
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
+- `.agent-workspace/independent-assurance-agent/memory/session-073-20260426.md`
+- `.agent-workspace/integration-builder/memory/PREHANDOVER-session-mmm-deploy-execution-strategy-20260426.md`
+- `.agent-workspace/integration-builder/memory/session-mmm-deploy-execution-strategy-20260426.md`
+- `.agent-workspace/integration-builder/parking-station/suggestions-log.md`
+- `.github/workflows/deploy-mmm-supabase-migrations.yml`
+- `.github/workflows/deploy-mmm-vercel.yml`
+- `SCOPE_DECLARATION.md`
+- `modules/MMM/12-phase4-ecap/deployment-alignment.md`
+- `modules/MMM/BUILD_PROGRESS_TRACKER.md`
+- `modules/MMM/_readiness/deployment-execution-contract.md`
+- `modules/MMM/_readiness/live-validation-sequence.md`
 
 ## Out of Scope
 
@@ -37,12 +39,3 @@ path finalisation, legacy assumption removal, documentation alignment, and live 
 - Any Supabase migrations (supabase/migrations/)
 - Any agent contract files (.github/agents/*.md)
 - Any files not listed above
-
-### Ceremony Artifacts
-
-- `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-073-20260426.md` - ECAP PREHANDOVER bundle
-- `.agent-workspace/execution-ceremony-admin-agent/bundles/session-073-20260426.md` - ECAP session memory bundle
-- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-073-20260426.md` - Foreman-accepted PREHANDOVER proof
-- `.agent-workspace/foreman-v2/memory/session-073-20260426.md` - Foreman-accepted session memory
-- `.agent-workspace/integration-builder/memory/PREHANDOVER-session-mmm-deploy-execution-strategy-20260426.md` - Integration-builder PREHANDOVER
-- `.agent-workspace/integration-builder/memory/session-mmm-deploy-execution-strategy-20260426.md` - Integration-builder session memory
