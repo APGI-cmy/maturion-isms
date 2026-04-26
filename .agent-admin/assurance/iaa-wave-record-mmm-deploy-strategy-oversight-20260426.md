@@ -205,16 +205,38 @@ Assessment:
 
 ## TOKEN
 
-*(To be populated at final IAA invocation — Phase 4 Step 4.2b)*
+*(ASSURANCE-TOKEN not yet issued — REJECTION-PACKAGE issued at IAA-FINAL invocation. See REJECTION_HISTORY below.)*
 
 ---
 
 ## REJECTION_HISTORY
 
-*(To be populated if any REJECTION-PACKAGE is issued during this wave)*
+### REJECTION-001 — IAA-FINAL Session 071 — 2026-04-26
+
+**Date**: 2026-04-26
+**Session**: session-071-20260426
+**PR**: maturion-isms#1469 (DRAFT) — branch: copilot/capture-deployment-strategy-oversight
+**Verdict**: REJECTION-PACKAGE
+**Checks run**: 14 applicable checks — 12 PASS, 2 FAIL
+
+**Failure 1 — OVL-CG-004**
+- **Check**: Ripple impact identified and flagged
+- **Finding**: PREHANDOVER proof claims OVL-CG-004 PASS based solely on MMM-specific ripple (deployment-strategy-oversight.md §6 and implementation-plan.md §7.4). The pre-brief advisory explicitly flagged that `iaa-category-overlays.md` (needs OVL-PBG-017 for §7.4 enforcement) and `iaa-trigger-table.md` (PRE_BUILD_STAGE_MODEL supporting controls list does not include §7.4) are ripple-affected knowledge files. Neither is identified, flagged, or scheduled for follow-up in any deliverable. The PREHANDOVER proof does not address the pre-brief advisory.
+- **Established precedent**: OVL-PBG-014, OVL-PBG-015, OVL-PBG-016 were added to iaa-category-overlays.md v4.0.0 in the same wave that added §7.1, §7.2, §7.3 to the canon (wave: iaa-12stage-upgrade, issue #1258). §7.4 follows the same pattern. The trigger table PRE_BUILD_STAGE_MODEL row currently reads "Supporting controls: §7.1 Change-Propagation Audit, §7.2 Runtime/Deployment Contract, §7.3 Golden Path Verification Pack" — §7.4 is absent.
+- **Classification**: Substantive (governance enforcement gap)
+- **Fix required**: deployment-strategy-oversight.md §6 and/or the PREHANDOVER proof must explicitly identify the iaa-category-overlays.md OVL-PBG-017 gap and iaa-trigger-table.md §7.4 omission as required follow-up actions. A scheduled KNOWLEDGE_GOVERNANCE wave must be documented. Alternatively, expand PR scope to include the knowledge file updates in the same wave (preferred — consistent with the §7.1/§7.2/§7.3 precedent).
+
+**Failure 2 — OVL-CG-005**
+- **Check**: ISMS layer-down scope — all ripple-affected agent contracts and knowledge files touched
+- **Finding**: Two IAA knowledge files in maturion-isms are ripple-affected by adding §7.4 to PRE_BUILD_STAGE_MODEL_CANON.md and were NOT touched in this PR: (1) `.agent-workspace/independent-assurance-agent/knowledge/iaa-category-overlays.md` — missing OVL-PBG-017 (§7.4 Deployment Execution Contract filed before first build wave); (2) `.agent-workspace/independent-assurance-agent/knowledge/iaa-trigger-table.md` — PRE_BUILD_STAGE_MODEL row omits §7.4 from the "Supporting controls" list. Per OVL-CG-005: "A governance layer-down that skips any affected file = REJECTION-PACKAGE."
+- **Classification**: Substantive (incomplete layer-down — enforcement of §7.4 will be absent from IAA audit checks until knowledge files are updated)
+- **Fix required**: Either (a) expand PR scope to include updates to iaa-category-overlays.md (add OVL-PBG-017 check: "§7.4 — Deployment Execution Contract filed before first build wave") and iaa-trigger-table.md (add §7.4 to PRE_BUILD_STAGE_MODEL supporting controls list) — requires KNOWLEDGE_GOVERNANCE category extension; OR (b) obtain explicit CS2 written waiver for same-PR completion with documented follow-up PR scheduled. Option (a) is required to satisfy OVL-CG-005 strictly. Option (b) satisfies OVL-CG-004 (flagged) but does not satisfy OVL-CG-005 (touched) without the waiver.
+
+**Systemic prevention action required** (NO-REPEAT-PREVENTABLE-001):
+Pattern: Canon §7.x addition without simultaneous OVL-PBG overlay update — this is a repeat-preventable gap. Prevention: the iaa-trigger-table.md PRE_BUILD_STAGE_MODEL trigger description should be updated to explicitly require that any §7.x addition to PRE_BUILD_STAGE_MODEL_CANON.md triggers a KNOWLEDGE_GOVERNANCE scope addition for the corresponding OVL-PBG-NNN check. This should be added to FAIL-ONLY-ONCE.md as A-038.
 
 ---
 
-**Wave Record Status**: PRE-BRIEF COMPLETE
-**Next IAA Action**: IAA-FINAL — invoked after governance-liaison-isms-agent deliverables and ECAP bundle are committed to branch
-**Adoption phase**: PHASE_B_BLOCKING — all verdicts are hard-blocking
+**Wave Record Status**: IAA-FINAL REJECTION-PACKAGE ISSUED — STOP-AND-FIX REQUIRED
+**Next IAA Action**: IAA-FINAL REVISION (invoked after producing agent resolves OVL-CG-004 and OVL-CG-005 failures and commits fixes to branch)
+**Adoption phase**: PHASE_B_BLOCKING — REJECTION-PACKAGE is hard-blocking. PR must not be merged.
