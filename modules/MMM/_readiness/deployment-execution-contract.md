@@ -64,7 +64,7 @@ environment gates, not via runner type.
 | Mechanism | Status | Rationale |
 |---|---|---|
 | **`supabase db push`** via `SUPABASE_ACCESS_TOKEN` + `SUPABASE_PROJECT_REF` | **APPROVED** — MMM-native migrations | Official Supabase CLI migration mechanism. Integrates with Supabase's internal migration tracking (`supabase_migrations` table). Uses access token auth (not direct DB URL). Provides audit trail. Applied to files in `supabase/migrations/` only. |
-| Direct `psql` via `SUPABASE_DB_URL` | **NOT APPROVED for new MMM migrations** | Bypasses Supabase migration tracking. No `supabase_migrations` table entry. No built-in idempotency. Approved ONLY as an explicit cross-app exception for legacy and AIMC migrations (see Section 2). |
+| Direct `psql` via `SUPABASE_DB_URL` | **NOT APPROVED** — not viable from GitHub-hosted runners | GitHub-hosted runners cannot reach `db.<ref>.supabase.co:5432` directly (Network is unreachable). Direct psql is not used anywhere in the migration workflow. Cross-app migrations use the Supabase Management API (see Section 2). |
 | Prisma migrate | NOT APPLICABLE | MMM uses Supabase-native schema management, not Prisma. |
 
 **Credentials required for approved mechanism**:
@@ -97,9 +97,8 @@ following mechanisms:
 | Validation | Mechanism | Workflow / Step |
 |---|---|---|
 | Required Vercel env vars present (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_LIVE_DEPLOYMENT_URL) | `env-var-audit` step fails build if any required var is absent or placeholder | `deploy-mmm-vercel.yml` (build job, env-var-audit step) |
-| SUPABASE_ACCESS_TOKEN present for migration | Explicit `[ -z "$SUPABASE_ACCESS_TOKEN" ]` check; exits 1 if absent | `deploy-mmm-supabase-migrations.yml` (link-project step) |
-| SUPABASE_PROJECT_REF present for migration | Explicit check; exits 1 if absent | `deploy-mmm-supabase-migrations.yml` (link-project step) |
-| SUPABASE_DB_URL present for legacy/AIMC psql steps | Explicit `[ -z "$SUPABASE_DB_URL" ]` check in each psql step | `deploy-mmm-supabase-migrations.yml` (legacy and AIMC migration steps) |
+| SUPABASE_ACCESS_TOKEN present for migration and cross-app exception steps | Explicit `[ -z "$SUPABASE_ACCESS_TOKEN" ]` check; exits 1 if absent | `deploy-mmm-supabase-migrations.yml` (legacy, AIMC, link-project, and db push steps) |
+| SUPABASE_PROJECT_REF present for migration and cross-app exception steps | Explicit check; exits 1 if absent | `deploy-mmm-supabase-migrations.yml` (legacy, AIMC, link-project, and db push steps) |
 | Vercel project configuration (PROJECT_ID, ORG_ID) | `vercel pull` fails if project is not linked | `deploy-mmm-vercel.yml` (deploy steps) |
 | Post-deploy health check (Vercel URL reachable) | `e2e-auth-smoke` step + `post-deploy-smoke-test` job | `deploy-mmm-vercel.yml` (post-deploy smoke test) |
 | Post-deploy health check (Supabase auth endpoint) | curl to `VITE_SUPABASE_URL/auth/v1/settings` | `deploy-mmm-vercel.yml` (e2e-auth-smoke and post-deploy-smoke-test steps) |
@@ -113,15 +112,23 @@ following mechanisms:
 ### 2.1 Exception Statement
 
 The approved migration mechanism for MMM-native migrations is `supabase db push` (see §1.4).
-However, two sets of cross-app migrations are applied via `psql` as an explicit, documented
-exception. This section records the exception, its justification, and its boundary.
+However, two sets of cross-app migrations are applied via the Supabase Management API as an
+explicit, documented exception. This section records the exception, its justification, and
+its boundary.
+
+> **Infrastructure note (2026-04-27)**: The original exception mechanism was direct `psql`
+> via `SUPABASE_DB_URL`. This was replaced with the Supabase Management API because direct
+> Postgres connectivity to `db.<ref>.supabase.co:5432` is not available from GitHub-hosted
+> runners (Network is unreachable). The Management API uses HTTPS to `api.supabase.com`
+> and is accessible from all runner environments. No change to idempotency behavior, tracking
+> tables, or execution order. Tracked in maturion-isms#1471.
 
 ### 2.2 Scope of Exception
 
 | Migration Set | Directory | Exception Mechanism |
 |---|---|---|
-| Legacy app schema (organisations, audits, criteria, mps, domains, evidence, audit_logs) | `apps/maturion-maturity-legacy/supabase/migrations/` | `psql` via `SUPABASE_DB_URL`; tracked in `legacy_migrations` table |
-| AIMC package schema (ai_feedback_pipeline, ai_model_capabilities) | `packages/ai-centre/supabase/migrations/` | `psql` via `SUPABASE_DB_URL`; tracked in `aimc_migrations` table |
+| Legacy app schema (organisations, audits, criteria, mps, domains, evidence, audit_logs) | `apps/maturion-maturity-legacy/supabase/migrations/` | Supabase Management API (`POST /v1/projects/{ref}/database/query`) via `SUPABASE_ACCESS_TOKEN`; tracked in `legacy_migrations` table |
+| AIMC package schema (ai_feedback_pipeline, ai_model_capabilities) | `packages/ai-centre/supabase/migrations/` | Supabase Management API (`POST /v1/projects/{ref}/database/query`) via `SUPABASE_ACCESS_TOKEN`; tracked in `aimc_migrations` table |
 
 ### 2.3 Justification
 
@@ -139,18 +146,18 @@ exception. This section records the exception, its justification, and its bounda
    the `organisations` table defined in the legacy app migrations. Execution order must be
    strictly preserved: legacy → AIMC → MMM-native.
 
-4. **Idempotency managed manually**: Each psql step maintains its own tracking table
-   (`legacy_migrations`, `aimc_migrations`) to ensure idempotent execution. This mirrors
-   the behaviour of `supabase_migrations` for the cross-app migration sets.
+4. **Idempotency managed manually**: Each Management API execution step maintains its own
+   tracking table (`legacy_migrations`, `aimc_migrations`) to ensure idempotent execution.
+   This mirrors the behaviour of `supabase_migrations` for the cross-app migration sets.
 
 ### 2.4 Boundary — This Exception Does NOT Extend To
 
 - **New MMM migrations**: Any new schema object for MMM MUST be added to `supabase/migrations/`
-  and applied via `supabase db push`. The psql path is not available for new MMM work.
+  and applied via `supabase db push`. The Management API exception path is not available for new MMM work.
 - **New cross-app schema objects**: New shared schema objects require a governed cross-app
   architecture decision before being added to either cross-app migration set.
 - **Schema destructive operations**: No DROP TABLE, DROP COLUMN, or constraint removal may
-  be performed via either psql or `supabase db push` without CS2 approval before merge.
+  be performed via either the Management API or `supabase db push` without CS2 approval before merge.
 
 ---
 
