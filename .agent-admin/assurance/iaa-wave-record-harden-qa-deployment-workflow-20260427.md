@@ -109,9 +109,9 @@ Anti-regression obligations: YES
     in the template post-wave = REJECTION-PACKAGE at final audit (anti-regression for D3's
     stated purpose).
   — D4 (FAIL-ONLY-ONCE.md): new rule A-042 must not contradict, duplicate, or orphan any
-    of A-001 through A-038. Dangling cross-references = FAIL (OVL-KG-004). The next
-    sequential rule ID as of v2.9.0 is A-039; if other rules have been added between
-    v2.9.0 and the time of this wave, the producing agent must confirm the actual next ID.
+    of A-001 through A-041. Dangling cross-references = FAIL (OVL-KG-004). The next
+    sequential rule ID as of v4.5.0 is A-042; if other rules have been added between
+    v4.5.0 and the time of this wave, the producing agent must confirm the actual next ID.
   — D1 (new canon): must not contradict existing enforcement canon. Any overlap with
     existing deployment/CI canon (e.g., OVL-CI-* checks, A-037 Evidence-Type Discipline)
     must be explicitly cross-referenced, not duplicated (OVL-CG-002, OVL-CG-003).
