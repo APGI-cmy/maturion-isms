@@ -21,7 +21,7 @@
 #       The producing agent is responsible for refreshing the declaration
 #       from the live diff output shown below, committing it, and then
 #       re-running this script to confirm all checks pass (§4.3g rule).
-set -uo pipefail
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo '.')"
@@ -145,35 +145,21 @@ if [ "${EXACTNESS_EXIT}" -eq 0 ]; then
   echo ""
   echo "| Defect Class | Check Result |"
   echo "|---|---|"
-  # Parse check results from output
-  if echo "${EXACTNESS_OUTPUT}" | grep -q "PATH-MISMATCH"; then
-    if echo "${EXACTNESS_OUTPUT}" | grep -q "❌ PATH-MISMATCH"; then
-      echo "| PATH-MISMATCH (Check 1) | ❌ FAIL — see output above |"
-    else
-      echo "| PATH-MISMATCH (Check 1) | ✅ PASS |"
+  # Helper: emit one table row; $1=keyword $2=label $3=pass-text
+  _check_row() {
+    local keyword="$1" label="$2" pass_text="$3"
+    if echo "${EXACTNESS_OUTPUT}" | grep -q "${keyword}"; then
+      if echo "${EXACTNESS_OUTPUT}" | grep -q "❌ ${keyword}"; then
+        echo "| ${label} | ❌ FAIL — see output above |"
+      else
+        echo "| ${label} | ${pass_text} |"
+      fi
     fi
-  fi
-  if echo "${EXACTNESS_OUTPUT}" | grep -q "COUNT-MISMATCH"; then
-    if echo "${EXACTNESS_OUTPUT}" | grep -q "❌ COUNT-MISMATCH"; then
-      echo "| COUNT-MISMATCH (Check 2) | ❌ FAIL — see output above |"
-    else
-      echo "| COUNT-MISMATCH (Check 2) | ✅ PASS / ℹ️ N/A |"
-    fi
-  fi
-  if echo "${EXACTNESS_OUTPUT}" | grep -q "HASH-INCOMPLETE"; then
-    if echo "${EXACTNESS_OUTPUT}" | grep -q "❌ HASH-INCOMPLETE"; then
-      echo "| HASH-INCOMPLETE (Check 3) | ❌ FAIL — see output above |"
-    else
-      echo "| HASH-INCOMPLETE (Check 3) | ✅ PASS / ℹ️ N/A |"
-    fi
-  fi
-  if echo "${EXACTNESS_OUTPUT}" | grep -q "VERSION-MISMATCH"; then
-    if echo "${EXACTNESS_OUTPUT}" | grep -q "❌ VERSION-MISMATCH"; then
-      echo "| VERSION-MISMATCH cross-artifact (Check 4) | ❌ FAIL — see output above |"
-    else
-      echo "| VERSION-MISMATCH cross-artifact (Check 4) | ✅ PASS / ℹ️ N/A |"
-    fi
-  fi
+  }
+  _check_row "PATH-MISMATCH"    "PATH-MISMATCH (Check 1)"                   "✅ PASS"
+  _check_row "COUNT-MISMATCH"   "COUNT-MISMATCH (Check 2)"                  "✅ PASS / ℹ️ N/A"
+  _check_row "HASH-INCOMPLETE"  "HASH-INCOMPLETE (Check 3)"                 "✅ PASS / ℹ️ N/A"
+  _check_row "VERSION-MISMATCH" "VERSION-MISMATCH cross-artifact (Check 4)" "✅ PASS / ℹ️ N/A"
 else
   echo "**Exit code**: ${EXACTNESS_EXIT} (FAIL)"
   echo "**Scope refreshed after final edit**: [YES / NO — confirm after fixing failures]"

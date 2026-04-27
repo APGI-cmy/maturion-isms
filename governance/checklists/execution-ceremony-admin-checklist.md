@@ -273,7 +273,7 @@ grep -E "art_refresh_required|art_refresh_completed" .agent-admin/prehandover/pr
 | # | Check | Verification Command | Verified (✓/✗) | Notes |
 |---|-------|---------------------|----------------|-------|
 | 12.1 | `SCOPE_DECLARATION.md` refreshed from final live diff after all implementation edits complete — no stale entries, no entries from a prior wave | `git diff --name-only origin/main...HEAD` vs declared paths in `SCOPE_DECLARATION.md` | | |
-| 12.2 | `SCOPE_DECLARATION.md` refresh commit is the **last committed action** before the PREHANDOVER proof submission | `git log --oneline -5` — scope refresh commit must be the most recent substantive commit on the branch | | |
+| 12.2 | `SCOPE_DECLARATION.md` refresh commit is the **last committed action** before the PREHANDOVER proof submission | `git log --oneline -5` — scope refresh commit must be the most recent substantive commit on the branch before the PREHANDOVER proof (manual comparison; or use `.github/scripts/refresh-scope-and-validate.sh` Step 1 output) | | |
 | 12.3 | `.github/scripts/validate-governance-evidence-exactness.sh` was run **locally** (not deferred to CI) after scope refresh and exited 0 | Confirm exit code from local run recorded in PREHANDOVER `## Evidence Exactness Gate` section | | |
 | 12.4 | PREHANDOVER proof `## Evidence Exactness Gate` section is present and populated — NOT template placeholder text | `grep -n "Timestamp (check run)" .agent-admin/prehandover/proof-*.md` — must return a real date/time, not `[YYYY-MM-DD HH:MM:SS UTC]` | | |
 | 12.5 | PREHANDOVER proof `## Evidence Exactness Gate` section includes timestamp, exit code, `Scope refreshed after final edit: YES`, and per-check results | Manual review of `## Evidence Exactness Gate` section | | |
