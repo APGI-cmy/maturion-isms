@@ -20,8 +20,14 @@ non-interactive and eliminate the SASL auth/password failure.
 - `.agent-workspace/foreman-v2/personal/scope-declaration-wave-harden-deploy-mmm-supabase-migrations-20260427.md`
 - `.agent-admin/assurance/iaa-wave-record-harden-deploy-mmm-supabase-migrations-20260427.md`
 - `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-075-harden-deploy-mmm-supabase-migrations-20260427.md`
-- `.agent-workspace/foreman-v2/memory/session-075-20260427.md`
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-075-harden-deploy-mmm-supabase-migrations-20260427-R1.md`
 - `.agent-admin/prehandover/proof-session-075-harden-deploy-mmm-supabase-migrations-20260427.md`
+- `.agent-admin/prehandover/proof-session-075-harden-deploy-mmm-supabase-migrations-20260427-R1.md`
+- `.agent-workspace/foreman-v2/memory/session-075-20260427.md`
+- `.agent-admin/prehandover/OVL-CI-005-S033-evidence-session-075-harden-deploy-mmm-supabase-migrations-20260427.md`
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md`
+- `.agent-workspace/independent-assurance-agent/memory/session-075-20260427.md`
+- `.agent-workspace/independent-assurance-agent/memory/session-076-20260427.md`
 
 ## Out of Scope
 
