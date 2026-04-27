@@ -48,7 +48,7 @@ def supabase_query(api_url: str, access_token: str, sql: str, step: str = "SQL")
     http_code = lines[-1].strip() if len(lines) > 1 else "000"
     response_body = lines[0].strip() if lines else ""
 
-    if http_code != "200":
+    if http_code not in {"200", "201", "204"}:
         print(
             f"::error::Management API connection or query error for {step} — "
             f"check SUPABASE_ACCESS_TOKEN and SUPABASE_PROJECT_REF "
@@ -56,6 +56,10 @@ def supabase_query(api_url: str, access_token: str, sql: str, step: str = "SQL")
             file=sys.stderr,
         )
         sys.exit(1)
+
+    # HTTP 204 No Content — success with no body; return empty result list.
+    if http_code == "204":
+        return []
 
     try:
         parsed = json.loads(response_body)
