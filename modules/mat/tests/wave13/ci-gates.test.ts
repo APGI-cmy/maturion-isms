@@ -104,6 +104,10 @@ describe('T-W13-CI: CI Deploy Pipeline Gates', () => {
     //   3. Fails the pipeline if auth is broken after deploy
     //
     // Post-deploy smoke test belongs in the frontend workflow per §7.4.
+    expect(
+      fs.existsSync(MMM_FRONTEND_WORKFLOW),
+      `MMM frontend workflow not found at ${MMM_FRONTEND_WORKFLOW}`,
+    ).toBe(true);
     const workflow = fs.readFileSync(MMM_FRONTEND_WORKFLOW, 'utf-8');
 
     expect(
