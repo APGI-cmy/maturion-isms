@@ -9,7 +9,7 @@
 ## Scope Decision
 
 Harden QA and handover process for deployment/workflow PRs (maturion-isms#1479).
-This wave creates governance documentation: new canon, checklist, template updates, FAIL-ONLY-ONCE rule, and wave infrastructure.
+This wave records the scope, assurance evidence, and task-tracking infrastructure for the QA/handover hardening work reflected in the files listed below.
 
 ## Changed Files
 
