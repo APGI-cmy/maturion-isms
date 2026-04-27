@@ -11,7 +11,7 @@ name: Deploy MMM Supabase Migrations
 #   deploy-mmm-ai-gateway.yml               = Render AI gateway deployment
 #
 # Migration mechanism (§4.3 approved):
-#   MMM-NATIVE migrations (supabase/migrations/): supabase link + supabase db push (linked project context)
+#   MMM-NATIVE migrations (supabase/migrations/): Supabase Management API (apply-migrations-via-api.py, non-interactive)
 #   Legacy/AIMC migrations: Supabase Management API via SUPABASE_ACCESS_TOKEN + SUPABASE_PROJECT_REF (cross-app exception — see comment in supabase-migrate job)
 #
 # This workflow:
@@ -91,7 +91,7 @@ jobs:
       #   2. These migrations define shared schema objects (organisations, audits,
       #      criteria, mps, domains, evidence, ai_feedback) that MMM reads at runtime.
       #      They MUST execute BEFORE MMM-native migrations and in dependency order:
-      #        legacy mgmt-api → AIMC mgmt-api → MMM-native supabase db push
+      #        legacy mgmt-api → AIMC mgmt-api → MMM-native mgmt-api
       #
       #   3. Direct psql access to db.<ref>.supabase.co:5432 is NOT available from
       #      GitHub-hosted runners (Network is unreachable). The Management API uses
