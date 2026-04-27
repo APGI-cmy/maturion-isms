@@ -136,13 +136,36 @@ Per CI_WORKFLOW overlay + DEPLOYMENT_WORKFLOW_QA_HARDENING D-002 and D-005, the 
 
 ## TOKEN
 
-*To be populated after IAA final audit.*
+*To be populated after IAA final audit — PENDING resolution of REJECTION-001 below.*
 
 ---
 
 ## REJECTION_HISTORY
 
-*No rejections recorded yet.*
+### REJECTION-001 — IAA Final Audit — 2026-04-27
+
+**IAA Session**: session-076-20260427 (final audit; pre-brief was session-075-20260427)
+**Date**: 2026-04-27
+**Auditor**: independent-assurance-agent v6.2.0
+
+**Verdict**: REJECTION-PACKAGE — 1 check FAILED
+
+**Finding**:
+
+| ID | Finding | Fix Required | Classification |
+|----|---------|-------------|----------------|
+| OVL-CI-005 | PREHANDOVER proof does not explicitly invoke the OVL-CI-005 S-033 Inherent Limitation Exception. The `## CI Check Run Evidence (OVL-CI-005)` section (declared mandatory in pre-brief PREHANDOVER structure) is absent. Three required S-033 substitutes — (1) YAML syntax validation evidence, (2) pattern parity evidence citing proven equivalent run URLs, (3) `workflow_dispatch` retention confirmation — are present implicitly across other PREHANDOVER sections but NOT assembled as a labeled exception invocation as required by OVL-CI-005: "The PREHANDOVER proof MUST explicitly invoke this exception clause with justification." | Add to the PR branch a supplementary committed document (wave record addendum or new CI-evidence file) explicitly invoking the OVL-CI-005 S-033 exception with ALL THREE labeled substitutes. PREHANDOVER is read-only post-commit (A-029); evidence goes in a new file. Update SCOPE_DECLARATION.md to include the new file AND the two undeclared files already in the diff (suggestions-log.md, IAA session-075 pre-brief memory). Then re-invoke IAA for final audit. | CEREMONY |
+
+**OBSERVATION (not blocking — HFMC-02 CI enforcement will catch)**:
+SCOPE_DECLARATION.md lists 8 files; PR diff contains 10 files. Missing:
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md`
+- `.agent-workspace/independent-assurance-agent/memory/session-075-20260427.md`
+HFMC-02 CI gate will block merge until parity is restored. Foreman must update SCOPE_DECLARATION alongside the OVL-CI-005 evidence fix.
+
+**Checks run**: 13 | PASS: 12 | FAIL: 1
+**Pre-populated ASSURANCE-TOKEN invalidated**: `IAA-session-075-harden-deploy-mmm-supabase-migrations-20260427-PASS` is INVALIDATED. New token to be issued after re-invocation.
+
+**Prevention action**: For CI_WORKFLOW waves where the modified workflow is `workflow_dispatch`-only, pre-brief MUST flag OVL-CI-005 S-033 invocation as a mandatory PREHANDOVER section. Add dedicated `## CI Check Run Evidence (OVL-CI-005 S-033 Exception)` template to CI_WORKFLOW PREHANDOVER guidance. Promote to FAIL-ONLY-ONCE upon second occurrence.
 
 ---
 
