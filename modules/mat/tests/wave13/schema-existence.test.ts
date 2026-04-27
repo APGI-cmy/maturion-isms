@@ -169,21 +169,17 @@ describe('T-W13-SCH: Schema Existence and Env Var Audit', () => {
     // appears in at least one migration. This catches INC-W13-PROFILE-TABLE-001 class of bug.
     //
     // RECONCILIATION NOTE (issue #1476 — MMM deployment validation):
-    //   ai_knowledge is an AIMC/MMM-managed table (Pipeline 2 — Knowledge Ingestion).
-    //   It is managed by the MMM supabase migrations (supabase/migrations/), not by the
-    //   MAT legacy migrations (apps/maturion-maturity-legacy/supabase/migrations/). Checking
-    //   it against MAT legacy migrations produces a false positive in the MMM CWT. It is
-    //   exempt from this MAT-scoped drift guard; MMM schema coverage validates it separately.
+    //   ai_knowledge is an AIMC/ai-centre-managed table (Pipeline 2 — Knowledge Ingestion).
+    //   It is defined in packages/ai-centre/supabase/migrations/ (003_ai_knowledge.sql,
+    //   006_ai_knowledge_metadata.sql), not in the MAT legacy migrations directory. This
+    //   scan therefore reads both migration directories so the drift guard still enforces
+    //   that ai_knowledge exists in some migration source rather than silently exempting it.
     const HOOKS_DIR = path.resolve(process.cwd(), 'modules/mat/frontend/src/lib/hooks');
-    const MIGRATION_DIR = path.resolve(process.cwd(), 'apps/maturion-maturity-legacy/supabase/migrations');
+    const MAT_MIGRATION_DIR = path.resolve(process.cwd(), 'apps/maturion-maturity-legacy/supabase/migrations');
+    const AI_CENTRE_MIGRATION_DIR = path.resolve(process.cwd(), 'packages/ai-centre/supabase/migrations');
 
     // Tables that are Supabase Storage buckets (not DB tables) — exempt from this check
     const STORAGE_BUCKETS = new Set(['audit-documents', 'organisation-assets']);
-
-    // Tables managed outside MAT legacy migrations — exempt from this MAT-scoped drift guard.
-    //   ai_knowledge: AIMC/MMM Pipeline 2 table; covered by MMM supabase migrations, not MAT.
-    //   audit_scores: migration 20260303000006_audit_scores_table.sql now covers this table.
-    const OPTIONAL_TABLES = new Set<string>(['ai_knowledge']);
 
     const hookFiles = fs.readdirSync(HOOKS_DIR).filter(f => f.endsWith('.ts') || f.endsWith('.tsx'));
     const allHookSource = hookFiles.map(f => fs.readFileSync(path.join(HOOKS_DIR, f), 'utf-8')).join('\n');
@@ -194,13 +190,19 @@ describe('T-W13-SCH: Schema Existence and Env Var Audit', () => {
     let match;
     while ((match = tablePattern.exec(allHookSource)) !== null) {
       const tableName = match[1];
-      if (!STORAGE_BUCKETS.has(tableName) && !OPTIONAL_TABLES.has(tableName)) {
+      if (!STORAGE_BUCKETS.has(tableName)) {
         tableRefs.add(tableName);
       }
     }
 
-    const migrationFiles = fs.readdirSync(MIGRATION_DIR).filter(f => f.endsWith('.sql'));
-    const allMigrationSql = migrationFiles.map(f => fs.readFileSync(path.join(MIGRATION_DIR, f), 'utf-8')).join('\n');
+    // Combine MAT legacy migrations with ai-centre migrations so cross-package tables
+    // (e.g. ai_knowledge) are still validated rather than silently exempted.
+    const matMigrationFiles = fs.readdirSync(MAT_MIGRATION_DIR).filter(f => f.endsWith('.sql'));
+    const aiCentreMigrationFiles = fs.readdirSync(AI_CENTRE_MIGRATION_DIR).filter(f => f.endsWith('.sql'));
+    const allMigrationSql = [
+      ...matMigrationFiles.map(f => fs.readFileSync(path.join(MAT_MIGRATION_DIR, f), 'utf-8')),
+      ...aiCentreMigrationFiles.map(f => fs.readFileSync(path.join(AI_CENTRE_MIGRATION_DIR, f), 'utf-8')),
+    ].join('\n');
 
     // Every table referenced in hooks must appear in at least one CREATE TABLE statement in migrations.
     // Uses CREATE TABLE ... tableName pattern to avoid false positives from column names or comments.
