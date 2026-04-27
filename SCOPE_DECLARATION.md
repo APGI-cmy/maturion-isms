@@ -16,6 +16,7 @@ API helper scripts, so the MMM migration workflow no longer fails on valid creat
 - `.github/scripts/apply-migrations-via-api.py`
 - `.github/scripts/verify-schema-via-api.py`
 - `SCOPE_DECLARATION.md`
+- `modules/MMM/_readiness/deployment-execution-contract.md`
 
 ## Out of Scope
 

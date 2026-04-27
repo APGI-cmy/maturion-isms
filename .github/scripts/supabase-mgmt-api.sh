@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# supabase-mgmt-api.sh — Helper functions for the Supabase Management API
+#
+# Source this script after setting the following environment variables:
+#   SBAPI              — full URL: https://api.supabase.com/v1/projects/{ref}/database/query
+#   SUPABASE_ACCESS_TOKEN — Supabase personal access token
+#
+# Requires: curl, jq (both available on ubuntu-latest GitHub-hosted runners)
+
+# Execute an inline SQL string via the Supabase Management API.
+# Prints the JSON response body on success; prints ::error:: to stderr on failure.
+# Returns 0 on HTTP 200/201/204, non-zero otherwise.
+sb_sql() {
+  local sql="$1"
+  if [ -z "${SBAPI:-}" ]; then
+    echo "::error::SBAPI is not set. Cannot call Supabase Management API." >&2
+    return 1
+  fi
+  if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ]; then
+    echo "::error::SUPABASE_ACCESS_TOKEN is not set. Cannot call Supabase Management API." >&2
+    return 1
+  fi
+  local tmpfile
+  tmpfile=$(mktemp)
+  # shellcheck disable=SC2064
+  trap "rm -f '$tmpfile'" RETURN
+  local http_code
+  http_code=$(curl -sS --connect-timeout 10 --max-time 60 -o "$tmpfile" -w '%{http_code}' \
+    -X POST "$SBAPI" \
+    -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
+    -H "Content-Type: application/json" \
+    --data-binary "$(jq -n --arg q "$sql" '{"query": $q}')")
+  local body
+  body=$(cat "$tmpfile")
+  case "$http_code" in
+    200|201) ;;
+    204) body="[]" ;;
+    *) echo "::error::Supabase Management API error (HTTP $http_code): $body" >&2; return 1 ;;
+  esac
+  printf '%s' "$body"
+}
+
+# Execute a SQL file via the Supabase Management API.
+# Prints the JSON response body on success; prints ::error:: to stderr on failure.
+# Returns 0 on HTTP 200/201/204, non-zero otherwise.
+sb_sql_file() {
+  local file="$1"
+  if [ -z "${SBAPI:-}" ]; then
+    echo "::error::SBAPI is not set. Cannot call Supabase Management API." >&2
+    return 1
+  fi
+  if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ]; then
+    echo "::error::SUPABASE_ACCESS_TOKEN is not set. Cannot call Supabase Management API." >&2
+    return 1
+  fi
+  local tmpfile
+  tmpfile=$(mktemp)
+  # shellcheck disable=SC2064
+  trap "rm -f '$tmpfile'" RETURN
+  local http_code
+  http_code=$(curl -sS --connect-timeout 10 --max-time 60 -o "$tmpfile" -w '%{http_code}' \
+    -X POST "$SBAPI" \
+    -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
+    -H "Content-Type: application/json" \
+    --data-binary "$(jq -n --rawfile q "$file" '{"query": $q}')")
+  local body
+  body=$(cat "$tmpfile")
+  case "$http_code" in
+    200|201) ;;
+    204) body="[]" ;;
+    *) echo "::error::Supabase Management API error (HTTP $http_code): $body" >&2; return 1 ;;
+  esac
+  printf '%s' "$body"
+}
+
+# Escape a value for safe embedding in a PostgreSQL SQL string literal.
+# Replaces each single quote (') with two single quotes ('') per SQL standard.
+sql_escape() {
+  printf '%s' "$1" | sed "s/'/''/g"
+}
