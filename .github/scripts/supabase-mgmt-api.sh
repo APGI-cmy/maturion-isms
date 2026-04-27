@@ -12,17 +12,26 @@
 # Returns 0 on HTTP 200, non-zero otherwise.
 sb_sql() {
   local sql="$1"
+  if [ -z "${SBAPI:-}" ]; then
+    echo "::error::SBAPI is not set. Cannot call Supabase Management API." >&2
+    return 1
+  fi
+  if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ]; then
+    echo "::error::SUPABASE_ACCESS_TOKEN is not set. Cannot call Supabase Management API." >&2
+    return 1
+  fi
   local tmpfile
   tmpfile=$(mktemp)
+  # shellcheck disable=SC2064
+  trap "rm -f '$tmpfile'" RETURN
   local http_code
-  http_code=$(curl -sS -o "$tmpfile" -w '%{http_code}' \
+  http_code=$(curl -sS --connect-timeout 10 --max-time 60 -o "$tmpfile" -w '%{http_code}' \
     -X POST "$SBAPI" \
     -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
     -H "Content-Type: application/json" \
     --data-binary "$(jq -n --arg q "$sql" '{"query": $q}')")
   local body
   body=$(cat "$tmpfile")
-  rm -f "$tmpfile"
   if [ "$http_code" != "200" ]; then
     echo "::error::Supabase Management API error (HTTP $http_code): $body" >&2
     return 1
@@ -35,17 +44,26 @@ sb_sql() {
 # Returns 0 on HTTP 200, non-zero otherwise.
 sb_sql_file() {
   local file="$1"
+  if [ -z "${SBAPI:-}" ]; then
+    echo "::error::SBAPI is not set. Cannot call Supabase Management API." >&2
+    return 1
+  fi
+  if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ]; then
+    echo "::error::SUPABASE_ACCESS_TOKEN is not set. Cannot call Supabase Management API." >&2
+    return 1
+  fi
   local tmpfile
   tmpfile=$(mktemp)
+  # shellcheck disable=SC2064
+  trap "rm -f '$tmpfile'" RETURN
   local http_code
-  http_code=$(curl -sS -o "$tmpfile" -w '%{http_code}' \
+  http_code=$(curl -sS --connect-timeout 10 --max-time 60 -o "$tmpfile" -w '%{http_code}' \
     -X POST "$SBAPI" \
     -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
     -H "Content-Type: application/json" \
     --data-binary "$(jq -n --rawfile q "$file" '{"query": $q}')")
   local body
   body=$(cat "$tmpfile")
-  rm -f "$tmpfile"
   if [ "$http_code" != "200" ]; then
     echo "::error::Supabase Management API error (HTTP $http_code): $body" >&2
     return 1
