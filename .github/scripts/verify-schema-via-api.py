@@ -35,7 +35,7 @@ def supabase_query(api_url: str, access_token: str, sql: str, step: str = "SQL")
     body = json.dumps({"query": sql})
     result = subprocess.run(
         [
-            "curl", "-s", "-w", "\n%{http_code}",
+            "curl", "-sS", "-w", "\n%{http_code}",
             "-X", "POST", api_url,
             "-H", f"Authorization: Bearer {access_token}",
             "-H", "Content-Type: application/json",
@@ -44,6 +44,15 @@ def supabase_query(api_url: str, access_token: str, sql: str, step: str = "SQL")
         capture_output=True,
         text=True,
     )
+    if result.returncode != 0:
+        stderr_msg = result.stderr.strip()
+        print(
+            f"::error::curl exited with code {result.returncode} for {step}"
+            + (f": {stderr_msg}" if stderr_msg else ""),
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
     lines = result.stdout.rsplit("\n", 1)
     http_code = lines[-1].strip() if len(lines) > 1 else "000"
     response_body = lines[0].strip() if lines else ""
