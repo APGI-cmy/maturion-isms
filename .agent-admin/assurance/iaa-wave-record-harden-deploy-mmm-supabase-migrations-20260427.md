@@ -136,7 +136,45 @@ Per CI_WORKFLOW overlay + DEPLOYMENT_WORKFLOW_QA_HARDENING D-002 and D-005, the 
 
 ## TOKEN
 
-*To be populated after IAA final audit — PENDING resolution of REJECTION-001 below.*
+**IAA Final Audit — Second Invocation — session-075-20260427 (re-audit)**
+**Date**: 2026-04-27
+**Auditor**: independent-assurance-agent v6.2.0
+**Adoption Phase**: PHASE_B_BLOCKING
+
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: copilot/harden-deploy-mmm-supabase-migrations — Harden Deploy MMM Supabase Migrations workflow
+All 15 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-075-harden-deploy-mmm-supabase-migrations-20260427-PASS
+Adoption phase: PHASE_B_BLOCKING
+═══════════════════════════════════════
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-075-harden-deploy-mmm-supabase-migrations-20260427-PASS
+
+**Checks summary**:
+- PREFLIGHT: 4/4 silent checks PASS
+- FAIL-ONLY-ONCE A-001: PRESENT ✅ | A-002: N/A (not AGENT_CONTRACT)
+- CORE-020: PASS ✅
+- CORE-021: PASS ✅
+- OVL-CI-001 (workflow policy correctness): PASS ✅
+- OVL-CI-002 (secret/env validation): PASS ✅
+- OVL-CI-003 (no interactive prompts): PASS ✅
+- OVL-CI-004 (job dependency chain): PASS ✅
+- OVL-CI-005 (CI check run evidence — S-033 exception invocation): PASS ✅ — 3 labeled substitutes in `.agent-admin/prehandover/OVL-CI-005-S033-evidence-session-075-harden-deploy-mmm-supabase-migrations-20260427.md`
+- OVL-CI-006 (no unauthorized continue-on-error): PASS ✅
+- D-001 (deployment gate status): PASS ✅ — gate_triggered: false, justified
+- D-002 (deployment surface enumeration): PASS ✅ — present in PREHANDOVER R1
+- D-003 (migration execution path): PASS ✅ — STATIC_CODE + S-033 pattern parity
+- D-004 (helper script compliance): PASS ✅ — N/A (no .github/scripts/ changes)
+- D-005 (evidence fidelity + checklist): PASS ✅
+- SCOPE_DECLARATION parity: PASS ✅ — 14 declared = 14 in PR diff
+- Merge gate parity: PASS ✅
+
+**REJECTION-001 resolution confirmed**:
+1. OVL-CI-005 S-033 exception invocation file: ✅ committed — all 3 substitutes explicitly labeled
+2. PREHANDOVER R1 with `## CI Check Run Evidence` section: ✅ present and complete
+3. SCOPE_DECLARATION.md 14-file parity: ✅ confirmed
 
 ---
 
