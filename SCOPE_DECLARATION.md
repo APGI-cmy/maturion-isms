@@ -1,29 +1,23 @@
-# Scope Declaration — track-migration-connectivity-failure-20260427
+# Scope Declaration — fix-supabase-migration-workflow-failure
 
-**Wave**: track-migration-connectivity-failure-20260427
-**Issue**: maturion-isms#1473
-**Branch**: copilot/track-migration-connectivity-failure
+**Wave**: fix-supabase-migration-workflow-failure
+**Issue**: maturion-isms#1474
+**Branch**: copilot/fix-supabase-migration-workflow-failure
 **Date**: 2026-04-27
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ## Scope Decision
 
-Two MMM deployment-validation blockers (umbrella issue #1473):
-
-- **Child A (#1474)** — Replace psql-based migration steps in `deploy-mmm-supabase-migrations.yml`
-  with Supabase Management API calls (HTTPS/443). Adds reusable Python helper scripts.
-- **Child B (#1476)** — Reconcile stale MAT-era CI gate tests that hardcode the non-existent
-  `deploy-mat-vercel.yml` workflow; update to reference MMM deployment workflows per §7.4.
+Infrastructure fix: replace direct `psql` (unreachable from GitHub-hosted runners) with the
+Supabase Management API in the protected MMM migration workflow. Covers the legacy/AIMC
+cross-app exception path and the schema-verification step. No application source changes.
 
 ## Changed Files
 
-- `.github/scripts/apply-migrations-via-api.py`
-- `.github/scripts/verify-schema-via-api.py`
+- `.github/scripts/supabase-mgmt-api.sh`
 - `.github/workflows/deploy-mmm-supabase-migrations.yml`
-- `modules/mat/tests/wave13/ci-gates.test.ts`
-- `modules/mat/tests/wave13/wave13-gate.test.ts`
-- `modules/mat/tests/wave19/wave19-criteria-parsing.test.ts`
 - `SCOPE_DECLARATION.md`
+- `modules/MMM/_readiness/deployment-execution-contract.md`
 
 ## Out of Scope
 
