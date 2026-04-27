@@ -292,7 +292,7 @@
       "ripple_in_repo_status": "COMPLETE",
       "ripple_consumer_status": "PENDING \u2014 layer-down issues to be created in consumer repos",
       "last_updated": "2026-04-27",
-      "change_note": "v1.7.0: Added \u00a74.3f ART Verification Gate (universal \u2014 ALL handover pathways); Check M (ART presence/population/cross-check); Check N (renumber/rebase refresh compliance); added AAP-23 (wrong-but-existing reference) and AAP-24 (renumber/rebase drift) to auto-fail rules table; updated sequencing note; wave admin-ceremony-hardening-20260421"
+      "change_note": "v1.8.0: Added \u00a74.3g handover amendment controls; introduced AAP-28 and AAP-29 to the auto-fail rules table; documented helper script support for handover validation/admin flow; updated sequencing guidance to reflect the new amendment order; wave admin-ceremony-hardening-20260427"
     },
     {
       "filename": "AGENT_INDUCTION_PROTOCOL.md",
