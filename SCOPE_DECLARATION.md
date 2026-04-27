@@ -1,7 +1,7 @@
 # Scope Declaration — fix-mmm-migration-workflow-20260427
 
 **Wave**: fix-mmm-migration-workflow-20260427
-**Issue**: maturion-isms#1479
+**Issue**: maturion-isms#1482
 **Branch**: copilot/fix-mmm-migration-workflow
 **Date**: 2026-04-27
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
