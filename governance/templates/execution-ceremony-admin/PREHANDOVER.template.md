@@ -53,7 +53,7 @@ ecap_reconciliation:    .agent-admin/prehandover/ecap-reconciliation-<PR#>.md  #
 
 ## Scope
 files_changed:          <number>             # must match git diff --name-only origin/main...HEAD | wc -l
-scope_declaration:      governance/scope-declaration.md
+scope_declaration:      SCOPE_DECLARATION.md
 
 ## Drift Evidence (for canon/governance PRs — ECAP-QC-001)
 # Add one row per amended canon file:

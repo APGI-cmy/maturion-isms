@@ -141,22 +141,38 @@ echo ""
 
 SCOPE_ORDER_OK=0
 LAST_COMMIT_FILES=$(git diff-tree --no-commit-id -r --name-only HEAD 2>/dev/null || true)
-if echo "${LAST_COMMIT_FILES}" | grep -qx "SCOPE_DECLARATION.md"; then
+LAST_COMMIT_COUNT=$(echo "${LAST_COMMIT_FILES}" | grep -c . 2>/dev/null || echo 0)
+SCOPE_IN_HEAD=0
+echo "${LAST_COMMIT_FILES}" | grep -qx "SCOPE_DECLARATION.md" && SCOPE_IN_HEAD=1 || true
+
+if [ "${SCOPE_IN_HEAD}" -eq 1 ] && [ "${LAST_COMMIT_COUNT}" -eq 1 ]; then
   SCOPE_ORDER_OK=1
-  echo "   ✅ COMMIT-ORDER: PASS — SCOPE_DECLARATION.md is present in the most"
-  echo "   recent commit, satisfying the §4.3g / AAP-28 final-step requirement."
+  echo "   ✅ COMMIT-ORDER: PASS — HEAD commit contains only SCOPE_DECLARATION.md"
+  echo "   (single-file scope-refresh commit), satisfying §4.3g / AAP-28 final-step"
+  echo "   discipline."
+elif [ "${SCOPE_IN_HEAD}" -eq 1 ]; then
+  OVERALL_EXIT=1
+  echo "   ❌ COMMIT-ORDER: FAIL — SCOPE_DECLARATION.md is in the HEAD commit but"
+  echo "   ${LAST_COMMIT_COUNT} file(s) are bundled in the same commit. §4.3g / AAP-28"
+  echo "   requires a single-file scope-refresh commit as the final action."
+  echo "   Files in most recent commit:"
+  if [ -n "${LAST_COMMIT_FILES}" ]; then
+    echo "${LAST_COMMIT_FILES}" | while IFS= read -r f; do echo "     - \`${f}\`"; done
+  fi
+  echo "   ACTION: Create a new commit touching ONLY SCOPE_DECLARATION.md, then re-run."
 else
   OVERALL_EXIT=1
-  echo "   ❌ COMMIT-ORDER: FAIL — SCOPE_DECLARATION.md was NOT the last committed"
-  echo "   action. Files in most recent commit:"
+  echo "   ❌ COMMIT-ORDER: FAIL — SCOPE_DECLARATION.md was NOT in the most recent"
+  echo "   commit (AAP-28). Files in most recent commit:"
   if [ -n "${LAST_COMMIT_FILES}" ]; then
     echo "${LAST_COMMIT_FILES}" | while IFS= read -r f; do echo "     - \`${f}\`"; done
   else
     echo "     (no files found in last commit)"
   fi
   echo "   ACTION (AAP-28): Refresh SCOPE_DECLARATION.md from the diff shown in"
-  echo "   Step 1, commit it as the final change, and re-run this script."
-  echo "   VERIFY: git log --oneline -5 must show SCOPE_DECLARATION.md in the top entry."
+  echo "   Step 1, commit it as the ONLY file in the final commit, and re-run."
+  echo "   VERIFY: git log --oneline -5 must show SCOPE_DECLARATION.md as the sole"
+  echo "   file in the top entry."
 fi
 echo ""
 
