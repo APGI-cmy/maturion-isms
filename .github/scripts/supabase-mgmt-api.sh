@@ -9,7 +9,7 @@
 
 # Execute an inline SQL string via the Supabase Management API.
 # Prints the JSON response body on success; prints ::error:: to stderr on failure.
-# Returns 0 on HTTP 200, non-zero otherwise.
+# Returns 0 on HTTP 200/201/204, non-zero otherwise.
 sb_sql() {
   local sql="$1"
   if [ -z "${SBAPI:-}" ]; then
@@ -32,16 +32,17 @@ sb_sql() {
     --data-binary "$(jq -n --arg q "$sql" '{"query": $q}')")
   local body
   body=$(cat "$tmpfile")
-  if [ "$http_code" != "200" ]; then
-    echo "::error::Supabase Management API error (HTTP $http_code): $body" >&2
-    return 1
-  fi
+  case "$http_code" in
+    200|201) ;;
+    204) body="[]" ;;
+    *) echo "::error::Supabase Management API error (HTTP $http_code): $body" >&2; return 1 ;;
+  esac
   printf '%s' "$body"
 }
 
 # Execute a SQL file via the Supabase Management API.
 # Prints the JSON response body on success; prints ::error:: to stderr on failure.
-# Returns 0 on HTTP 200, non-zero otherwise.
+# Returns 0 on HTTP 200/201/204, non-zero otherwise.
 sb_sql_file() {
   local file="$1"
   if [ -z "${SBAPI:-}" ]; then
@@ -64,10 +65,11 @@ sb_sql_file() {
     --data-binary "$(jq -n --rawfile q "$file" '{"query": $q}')")
   local body
   body=$(cat "$tmpfile")
-  if [ "$http_code" != "200" ]; then
-    echo "::error::Supabase Management API error (HTTP $http_code): $body" >&2
-    return 1
-  fi
+  case "$http_code" in
+    200|201) ;;
+    204) body="[]" ;;
+    *) echo "::error::Supabase Management API error (HTTP $http_code): $body" >&2; return 1 ;;
+  esac
   printf '%s' "$body"
 }
 
