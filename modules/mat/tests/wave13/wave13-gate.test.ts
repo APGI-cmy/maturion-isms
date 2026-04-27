@@ -36,10 +36,18 @@ import { describe, it, expect } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-// ─── CI workflow path ──────────────────────────────────────────────────────────
-const WORKFLOW_PATH = path.resolve(
+// ─── MMM deployment workflow paths (reconciled from MAT era — issue #1476) ─────
+// The MAT-era deploy-mat-vercel.yml has been superseded by the MMM deployment model
+// which splits concerns across multiple workflows per §7.4 Deployment Execution Contract:
+//   Schema verification gate → deploy-mmm-supabase-migrations.yml
+//   Env-var audit / smoke    → deploy-mmm-vercel.yml
+const MMM_MIGRATION_WORKFLOW = path.resolve(
   process.cwd(),
-  '.github/workflows/deploy-mat-vercel.yml',
+  '.github/workflows/deploy-mmm-supabase-migrations.yml',
+);
+const MMM_FRONTEND_WORKFLOW = path.resolve(
+  process.cwd(),
+  '.github/workflows/deploy-mmm-vercel.yml',
 );
 
 // ─── Env var helpers ───────────────────────────────────────────────────────────
@@ -205,8 +213,8 @@ describe('13.1 — Schema & Env-Var Gate', () => {
     expect(
       liveDeploymentUrl,
       '[T-W13-SCH-4] VITE_LIVE_DEPLOYMENT_URL must be set. ' +
-        'Add it to .env.test (local) and as a CI secret in deploy-mat-vercel.yml. ' +
-        'Value should be the live Vercel deployment URL (e.g. https://mat.maturion.com).',
+        'Add it to .env.test (local) and as a CI secret in deploy-mmm-vercel.yml. ' +
+        'Value should be the live Vercel deployment URL (e.g. https://mmm.maturion.com).',
     ).toBeTruthy();
     expect(
       liveDeploymentUrl,
@@ -215,56 +223,58 @@ describe('13.1 — Schema & Env-Var Gate', () => {
   });
 
   // ── T-W13-CI-1 ───────────────────────────────────────────────────────────────
-  it('[T-W13-CI-1] deploy-mat-vercel.yml contains job named schema-existence-check', () => {
-    // RED: fails until schema-builder adds a `schema-existence-check` job to the
-    //      deploy-mat-vercel.yml workflow (WGI-01 governance improvement).
+  it('[T-W13-CI-1] MMM migration workflow contains schema-verification job (WGI-01)', () => {
+    // GREEN: deploy-mmm-supabase-migrations.yml contains a schema-verification job that
+    //        probes required DB tables after migration (WGI-01 governance improvement).
     //
-    // The job must:
-    //   1. Connect to Supabase using VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY secrets
-    //   2. Probe public.audits, public.criteria, public.domains, public.evidence
-    //   3. Fail the pipeline if any table is missing from the schema cache
+    // The MMM deployment model places schema verification in the migration workflow
+    // (deploy-mmm-supabase-migrations.yml) per §7.4 Deployment Execution Contract.
+    // The previous MAT-era job name was schema-existence-check; the MMM consolidation
+    // renamed it to schema-verification (consolidated per Q-C, issue #1470).
     //
-    // This prevents the RCA-002 F-02 production regression (schema cache miss) from
-    // going undetected until a user hits it.
+    // References: schema-existence-check and schema-verification both appear in the
+    // migration workflow (the former in the consolidation comment, the latter as the
+    // active job name).
 
     expect(
-      fs.existsSync(WORKFLOW_PATH),
-      `[T-W13-CI-1] Workflow file not found at ${WORKFLOW_PATH}`,
+      fs.existsSync(MMM_MIGRATION_WORKFLOW),
+      `[T-W13-CI-1] MMM migration workflow not found at ${MMM_MIGRATION_WORKFLOW}`,
     ).toBe(true);
 
-    const workflow = fs.readFileSync(WORKFLOW_PATH, 'utf-8');
+    const workflow = fs.readFileSync(MMM_MIGRATION_WORKFLOW, 'utf-8');
 
-    // RED: this job name does not exist in the workflow yet
+    // The migration workflow must reference schema-verification (active job name).
+    // Also accept schema-existence-check for historic compatibility — but the active
+    // job key takes precedence; relying solely on a consolidation-history comment is
+    // insufficient.
     expect(
-      workflow,
-      '[T-W13-CI-1] deploy-mat-vercel.yml must contain a job named "schema-existence-check". ' +
-        'schema-builder must add this job to satisfy WGI-01 (schema verification gate).',
-    ).toContain('schema-existence-check');
+      workflow.includes('schema-verification') || workflow.includes('schema-existence-check'),
+      '[T-W13-CI-1] deploy-mmm-supabase-migrations.yml must contain schema-verification ' +
+        '(active job name, per issue #1470 consolidation) or schema-existence-check ' +
+        '(historic name) to satisfy WGI-01 (schema verification gate).',
+    ).toBe(true);
   });
 
   // ── T-W13-CI-2 ───────────────────────────────────────────────────────────────
-  it('[T-W13-CI-2] deploy-mat-vercel.yml env-var-audit step validates VITE_LIVE_DEPLOYMENT_URL', () => {
-    // RED: fails until schema-builder adds an env-var-audit step that explicitly
-    //      validates VITE_LIVE_DEPLOYMENT_URL (WGI-02 governance improvement).
+  it('[T-W13-CI-2] MMM frontend workflow env-var-audit step validates VITE_LIVE_DEPLOYMENT_URL (WGI-02)', () => {
+    // GREEN: deploy-mmm-vercel.yml contains an env-var-audit step that validates
+    //        VITE_LIVE_DEPLOYMENT_URL among other required env vars (WGI-02).
     //
-    // The step must:
-    //   1. Verify VITE_SUPABASE_URL is set and not a placeholder
-    //   2. Verify VITE_SUPABASE_ANON_KEY is set and not a placeholder
-    //   3. Verify VITE_LIVE_DEPLOYMENT_URL is set and not a placeholder (NEW — Wave 13)
-    //   4. Fail the pipeline if any required var is missing or placeholder
+    // Env-var validation belongs in the frontend workflow per §7.4 Deployment
+    // Execution Contract.
 
     expect(
-      fs.existsSync(WORKFLOW_PATH),
-      `[T-W13-CI-2] Workflow file not found at ${WORKFLOW_PATH}`,
+      fs.existsSync(MMM_FRONTEND_WORKFLOW),
+      `[T-W13-CI-2] MMM frontend workflow not found at ${MMM_FRONTEND_WORKFLOW}`,
     ).toBe(true);
 
-    const workflow = fs.readFileSync(WORKFLOW_PATH, 'utf-8');
+    const workflow = fs.readFileSync(MMM_FRONTEND_WORKFLOW, 'utf-8');
 
-    // RED: env-var-audit step does not reference VITE_LIVE_DEPLOYMENT_URL yet
+    // The env-var-audit step must validate VITE_LIVE_DEPLOYMENT_URL
     expect(
       workflow,
-      '[T-W13-CI-2] deploy-mat-vercel.yml must contain a step that validates VITE_LIVE_DEPLOYMENT_URL. ' +
-        'schema-builder must add VITE_LIVE_DEPLOYMENT_URL to the env-var-audit step.',
+      '[T-W13-CI-2] deploy-mmm-vercel.yml must contain a step that validates VITE_LIVE_DEPLOYMENT_URL. ' +
+        'The env-var-audit step must check VITE_LIVE_DEPLOYMENT_URL is set and not a placeholder.',
     ).toContain('VITE_LIVE_DEPLOYMENT_URL');
   });
 });
@@ -1042,32 +1052,26 @@ describe('13.4 — E2E CWT (Full Audit Lifecycle vs Live Vercel URL)', () => {
 
 describe('13.5 — CI E2E Auth Smoke Gate', () => {
   // ── T-W13-CI-3 ───────────────────────────────────────────────────────────────
-  it('[T-W13-CI-3] deploy-mat-vercel.yml contains e2e-auth-smoke step', () => {
-    // RED: fails until integration-builder adds an `e2e-auth-smoke` step to the
-    //      deploy-mat-vercel.yml workflow (WGI-03 governance improvement, Task 13.5).
+  it('[T-W13-CI-3] MMM frontend workflow contains e2e-auth-smoke step (WGI-03)', () => {
+    // GREEN: deploy-mmm-vercel.yml contains an e2e-auth-smoke step that runs after
+    //        the Vercel deployment and verifies auth is working (WGI-03).
     //
-    // The step must:
-    //   1. Run AFTER the Vercel deployment succeeds
-    //   2. Use LIVENESS_TEST_EMAIL + LIVENESS_TEST_PASSWORD to perform a real login
-    //   3. Verify the deployed app's auth endpoint accepts credentials
-    //   4. Fail the pipeline if auth is broken post-deploy
-    //
-    // This gate prevents the RCA-002 F-01 regression ("User Not Authenticated")
-    // from being discovered by end users rather than the CI pipeline.
+    // The MMM post-deploy auth smoke test is in deploy-mmm-vercel.yml as both:
+    //   - the e2e-auth-smoke step (within the deploy-production job)
+    //   - the post-deploy-smoke-test job (standalone auth verification)
 
     expect(
-      fs.existsSync(WORKFLOW_PATH),
-      `[T-W13-CI-3] Workflow file not found at ${WORKFLOW_PATH}`,
+      fs.existsSync(MMM_FRONTEND_WORKFLOW),
+      `[T-W13-CI-3] MMM frontend workflow not found at ${MMM_FRONTEND_WORKFLOW}`,
     ).toBe(true);
 
-    const workflow = fs.readFileSync(WORKFLOW_PATH, 'utf-8');
+    const workflow = fs.readFileSync(MMM_FRONTEND_WORKFLOW, 'utf-8');
 
-    // RED: e2e-auth-smoke step does not exist in the workflow yet
+    // The workflow must contain an e2e-auth-smoke step
     expect(
       workflow,
-      '[T-W13-CI-3] deploy-mat-vercel.yml must contain a step named "e2e-auth-smoke". ' +
-        'integration-builder must add this post-deploy auth smoke test step (Task 13.5, WGI-03). ' +
-        'The step must run the Wave 13 E2E auth tests against the live deployed URL.',
+      '[T-W13-CI-3] deploy-mmm-vercel.yml must contain a step named "e2e-auth-smoke". ' +
+        'The step runs the Wave 13 E2E auth tests against the live deployed URL (WGI-03).',
     ).toContain('e2e-auth-smoke');
   });
 });

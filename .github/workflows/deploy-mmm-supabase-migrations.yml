@@ -100,73 +100,32 @@ jobs:
       # (Cross-App Migration Exception). It is not a template for future migrations.
       # ─────────────────────────────────────────────────────────────────────
 
-      - name: Apply pending legacy migrations (cross-app exception — psql)
+      - name: Apply pending legacy migrations (cross-app exception — Supabase Management API)
         env:
-          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
         run: |
-          if [ -z "$SUPABASE_DB_URL" ]; then
-            echo "ERROR: SUPABASE_DB_URL secret is not set. Cannot apply legacy migrations."
-            exit 1
-          fi
-          psql "$SUPABASE_DB_URL" -c "CREATE TABLE IF NOT EXISTS legacy_migrations (name TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now());"
-          psql "$SUPABASE_DB_URL" -c "INSERT INTO legacy_migrations (name) VALUES ('20260310000001_wave16_6_schema_audit_completeness.sql') ON CONFLICT DO NOTHING;"
-          FAILED_MIGRATION=""
-          for f in $(ls apps/maturion-maturity-legacy/supabase/migrations/*.sql | sort); do
-            name=$(basename "$f")
-            count=$(psql "$SUPABASE_DB_URL" -t -A -c "SELECT COUNT(*) FROM legacy_migrations WHERE name = '$name';")
-            if [ "$count" = "0" ]; then
-              echo "Applying $f..."
-              if ! psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "$f"; then
-                echo "::error file=$f::Legacy migration FAILED: $f — see psql output above"
-                FAILED_MIGRATION="$f"
-                break
-              fi
-              psql "$SUPABASE_DB_URL" -c "INSERT INTO legacy_migrations (name) VALUES ('$name') ON CONFLICT DO NOTHING;"
-            else
-              echo "Skipping $f (already applied)"
-            fi
-          done
-          if [ -n "$FAILED_MIGRATION" ]; then
-            echo "::error::Apply legacy migrations failed at: $FAILED_MIGRATION"
-            exit 1
-          fi
-          echo "All legacy migrations applied successfully"
+          # Apply legacy migrations via Supabase Management API (replaces direct psql).
+          # The Management API uses HTTPS and is reachable from GitHub-hosted runners,
+          # removing the direct Postgres TCP connectivity requirement (issue #1474).
+          python3 .github/scripts/apply-migrations-via-api.py \
+            --migrations-dir apps/maturion-maturity-legacy/supabase/migrations \
+            --tracking-table legacy_migrations \
+            --seed-entry 20260310000001_wave16_6_schema_audit_completeness.sql
 
       # T-A-012: AIMC package migrations (packages/ai-centre/supabase/migrations/)
       # DEPENDENCY: AIMC migration 005_ai_feedback_pipeline.sql references the `organisations` table
       # defined in the legacy app migrations. This step MUST run AFTER "Apply pending legacy migrations"
-      # and MUST target the same $SUPABASE_DB_URL.
-      - name: Apply AIMC package migrations (cross-app exception — psql)
+      # and uses the same Supabase Management API execution path.
+      - name: Apply AIMC package migrations (cross-app exception — Supabase Management API)
         env:
-          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
         run: |
-          if [ -z "$SUPABASE_DB_URL" ]; then
-            echo "ERROR: SUPABASE_DB_URL secret is not set. Cannot apply AIMC migrations."
-            exit 1
-          fi
-          psql "$SUPABASE_DB_URL" -c "CREATE TABLE IF NOT EXISTS aimc_migrations (name TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now());"
-          FAILED_MIGRATION=""
-          for f in $(ls packages/ai-centre/supabase/migrations/*.sql | sort); do
-            name=$(basename "$f")
-            count=$(psql "$SUPABASE_DB_URL" -t -A -c "SELECT COUNT(*) FROM aimc_migrations WHERE name = '$name';")
-            if [ "$count" = "0" ]; then
-              echo "Applying $f..."
-              if ! psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "$f"; then
-                echo "::error file=$f::AIMC Migration FAILED: $f — see psql output above for the specific SQL error"
-                FAILED_MIGRATION="$f"
-                break
-              fi
-              psql "$SUPABASE_DB_URL" -c "INSERT INTO aimc_migrations (name) VALUES ('$name');"
-              echo "Applied $f successfully"
-            else
-              echo "Skipping $f (already applied)"
-            fi
-          done
-          if [ -n "$FAILED_MIGRATION" ]; then
-            echo "::error::Apply AIMC migrations failed at: $FAILED_MIGRATION"
-            exit 1
-          fi
-          echo "All AIMC migrations applied successfully"
+          # Apply AIMC migrations via Supabase Management API (replaces direct psql — issue #1474).
+          python3 .github/scripts/apply-migrations-via-api.py \
+            --migrations-dir packages/ai-centre/supabase/migrations \
+            --tracking-table aimc_migrations
 
       - name: Link Supabase project
         env:
@@ -203,8 +162,8 @@ jobs:
       contents: read
     environment: production
     # Consolidated schema verification — checks all tables from both MMM-native and cross-app migrations.
-    # REQUIRED tables (FAIL on absence): audits, audit_logs, criteria, mps, domains, evidence
-    # WARN tables (non-blocking): evidence_submissions
+    # REQUIRED tables (FAIL on absence): public.audits, public.audit_logs, public.criteria, public.mps, public.domains, public.evidence
+    # WARN tables (non-blocking): public.evidence_submissions
     # (Previously split across schema-verification and schema-existence-check jobs — consolidated
     #  per Q-C of wave mmm-deploy-execution-strategy-20260426, issue #1470.)
     steps:
@@ -213,53 +172,17 @@ jobs:
 
       - name: schema-verification — verify all required tables exist
         env:
-          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
         run: |
           echo "Running consolidated schema-verification..."
-          if [ -z "$SUPABASE_DB_URL" ]; then
-            echo "ERROR: SUPABASE_DB_URL not set — cannot run schema-verification. Configure the secret."
-            exit 1
-          fi
-
-          # Tables with FAIL semantics (required; absence is a hard failure)
-          REQUIRED_TABLES="audits audit_logs criteria mps domains evidence"
-          # Tables with WARN semantics (expected; absence is a warning, not a hard failure)
-          WARN_TABLES="evidence_submissions"
-
-          FAILED=""
-
-          echo "--- Checking REQUIRED tables (FAIL on absence) ---"
-          for TABLE in $REQUIRED_TABLES; do
-            if ! result=$(psql "$SUPABASE_DB_URL" -t -A -c \
-              "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='${TABLE}';"); then
-              echo "::error::psql connection or query error for table ${TABLE} — check SUPABASE_DB_URL and database connectivity"
-              exit 1
-            fi
-            if [ "$result" != "1" ]; then
-              echo "FAIL: public.${TABLE} not found in schema"
-              FAILED="${FAILED} public.${TABLE}"
-            else
-              echo "PASS: public.${TABLE} verified"
-            fi
-          done
-
-          echo "--- Checking WARN tables (WARN on absence, non-blocking) ---"
-          for TABLE in $WARN_TABLES; do
-            if ! result=$(psql "$SUPABASE_DB_URL" -t -A -c \
-              "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='${TABLE}';"); then
-              echo "::warning::psql query failed for table ${TABLE} — check SUPABASE_DB_URL"
-            elif [ "$result" != "1" ]; then
-              echo "WARN: public.${TABLE} not found in schema (non-blocking)"
-            else
-              echo "PASS: public.${TABLE} verified"
-            fi
-          done
-
-          if [ -n "$FAILED" ]; then
-            echo "::error::schema-verification FAILED — missing required tables:${FAILED}"
-            exit 1
-          fi
-          echo "PASS: All required schema objects verified"
+          # Verify required tables via Supabase Management API (replaces direct psql — issue #1474).
+          # REQUIRED tables (FAIL on absence): public.audits, public.audit_logs, public.criteria,
+          #   public.mps, public.domains, public.evidence
+          # WARN tables (non-blocking): public.evidence_submissions
+          python3 .github/scripts/verify-schema-via-api.py \
+            --required-tables audits audit_logs criteria mps domains evidence \
+            --warn-tables evidence_submissions
 
   migration-summary:
     name: Migration Summary
