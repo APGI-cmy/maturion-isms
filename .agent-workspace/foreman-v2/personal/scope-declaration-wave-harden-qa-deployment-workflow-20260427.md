@@ -12,7 +12,7 @@
 
 The following paths are approved for this wave. All agent-created files must match an entry in this list.
 
-```
+```yaml
 approved_artifact_paths:
   # Wave infrastructure
   - .agent-workspace/foreman-v2/personal/wave-current-tasks.md
