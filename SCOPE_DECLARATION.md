@@ -1,14 +1,14 @@
 # Scope Declaration — track-migration-connectivity-failure-20260427
 
 **Wave**: track-migration-connectivity-failure-20260427
-**Issue**: maturion-isms#1472
+**Issue**: maturion-isms#1473
 **Branch**: copilot/track-migration-connectivity-failure
 **Date**: 2026-04-27
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ## Scope Decision
 
-Two MMM deployment-validation blockers (umbrella issue #1472):
+Two MMM deployment-validation blockers (umbrella issue #1473):
 
 - **Child A (#1474)** — Replace psql-based migration steps in `deploy-mmm-supabase-migrations.yml`
   with Supabase Management API calls (HTTPS/443). Adds reusable Python helper scripts.
