@@ -243,7 +243,7 @@ A-034: NOT APPLICABLE.
 
 > A-029: SCOPE_DECLARATION.md cleared with `cat /dev/null > SCOPE_DECLARATION.md` before writing.
 
-Files changed in this wave (all 15 paths in PR diff + new R1 files):
+Files changed in this wave (all 14 paths in PR diff):
 - `.github/workflows/deploy-mmm-supabase-migrations.yml`
 - `SCOPE_DECLARATION.md`
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`

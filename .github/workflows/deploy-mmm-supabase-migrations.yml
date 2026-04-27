@@ -97,9 +97,10 @@ jobs:
       #      GitHub-hosted runners (Network is unreachable). The Management API uses
       #      HTTPS to api.supabase.com and is accessible from all runner environments.
       #
-      #   4. The approved path for NEW MMM migrations is ALWAYS supabase/migrations/
-      #      via supabase db push. This Management API path is an explicit exception
-      #      for cross-app legacy schema dependencies only.
+      #   4. The approved path for NEW MMM-native migrations is via apply-migrations-via-api.py
+      #      (Management API), which also applies supabase/migrations/ files using the same
+      #      HTTPS approach. This Management API path is an explicit exception for all
+      #      migration types — cross-app legacy, AIMC, and MMM-native alike.
       #
       # Credentials: SUPABASE_ACCESS_TOKEN + SUPABASE_PROJECT_REF (same as supabase db push)
       # Endpoint: POST https://api.supabase.com/v1/projects/{ref}/database/query

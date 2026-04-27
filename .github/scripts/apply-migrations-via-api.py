@@ -38,6 +38,8 @@ def supabase_exec(api_url: str, access_token: str, sql: str, step: str = "SQL"):
     result = subprocess.run(
         [
             "curl", "-sS", "-w", "\n%{http_code}",
+            "--connect-timeout", "10",
+            "--max-time", "60",
             "-X", "POST", api_url,
             "-H", f"Authorization: Bearer {access_token}",
             "-H", "Content-Type: application/json",

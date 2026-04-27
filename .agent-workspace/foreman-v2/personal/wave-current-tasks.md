@@ -26,13 +26,13 @@ Harden the Deploy MMM Supabase Migrations workflow end-to-end. Replace the faili
 | 6 | Implement workflow fix | api-builder | 🟢 DONE | SHAs 5db2734 (main fix) + b68e094 (comment fix); QP PASS |
 | 7 | PREHANDOVER proof | foreman-v2-agent (no ECAP) | 🟢 DONE | .agent-workspace/foreman-v2/memory/PREHANDOVER-session-075-harden-deploy-mmm-supabase-migrations-20260427.md |
 | 8 | Session memory | foreman-v2-agent (no ECAP) | 🟢 DONE | .agent-workspace/foreman-v2/memory/session-075-20260427.md |
-| 9 | IAA Final Audit | independent-assurance-agent | 🔴 PENDING | Invoked after this commit |
+| 9 | IAA Final Audit | independent-assurance-agent | 🟢 DONE | IAA-session-075-harden-deploy-mmm-supabase-migrations-20260427-PASS |
 
 ## IAA Tokens Received This Wave
 
 | PR # | Token | Date |
 |------|-------|------|
-| — | PENDING | — |
+| #1487 | IAA-session-075-harden-deploy-mmm-supabase-migrations-20260427-PASS | 2026-04-27 |
 
 ## Wave Completion Gate
 
@@ -44,7 +44,7 @@ Harden the Deploy MMM Supabase Migrations workflow end-to-end. Replace the faili
 - [x] QP PASS
 - [x] PREHANDOVER proof committed
 - [x] Session memory committed
-- [ ] IAA Final Audit ASSURANCE-TOKEN received
+- [x] IAA Final Audit ASSURANCE-TOKEN received — IAA-session-075-harden-deploy-mmm-supabase-migrations-20260427-PASS
 - [ ] CS2 notified for merge approval
 
 **Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED

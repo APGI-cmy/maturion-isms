@@ -1,5 +1,11 @@
 # PREHANDOVER Proof — Session 075 | Wave harden-deploy-mmm-supabase-migrations | 2026-04-27
 
+> ⚠️ **INVALIDATED — SUPERSEDED BY R1** ⚠️
+> This is the original (R0) PREHANDOVER proof. It was invalidated after the IAA issued
+> REJECTION-001 and a revised R1 PREHANDOVER was produced. The scope count in Section 6.6
+> below was written before the final 14-file diff was known. See R1 for the authoritative record.
+> R1 path: `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-075-harden-deploy-mmm-supabase-migrations-20260427-R1.md`
+
 **Session ID**: session-075-20260427
 **Date**: 2026-04-27
 **Agent Version**: foreman-v2-agent v6.2.0 (contract v2.14.0)
@@ -140,7 +146,7 @@ Evidence fidelity: `[x]` PASS
 | 6.3 | Gate 6 (Deployment Gate Confirmation) completed | `[x]` | Section 1 above |
 | 6.4 | `## Ripple/Cross-Agent Assessment` section present and populated | `[x]` | See below |
 | 6.5 | CANON_INVENTORY.json updated if new canon files introduced | `[N/A]` | No new canon files — only workflow YAML and governance ceremony artifacts |
-| 6.6 | SCOPE_DECLARATION.md lists all files changed | `[x]` | SCOPE_DECLARATION.md updated and lists all 8 paths |
+| 6.6 | SCOPE_DECLARATION.md lists all files changed | `[x]` | SCOPE_DECLARATION.md updated and lists all 8 paths (R0 count — superseded by R1 which lists 14 paths) |
 | 6.7 | `preflight/evidence-exactness` gate passes locally | `[x]` | All paths in SCOPE_DECLARATION.md match PR diff |
 
 PREHANDOVER completeness: `[x]` PASS
