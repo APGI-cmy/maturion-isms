@@ -71,7 +71,7 @@ mark a step COMPLETE.
 | **Status** | PENDING |
 | **Executor** | CS2 / authorised operator via `workflow_dispatch` |
 | **Workflow** | `.github/workflows/deploy-mmm-edge-functions.yml` |
-| **Prerequisites** | SUPABASE_ACCESS_TOKEN and SUPABASE_PROJECT_REF secrets configured; Step 1 (schema verified — Edge Functions depend on schema objects existing before first invocation) |
+| **Prerequisites** | SUPABASE_ACCESS_TOKEN and SUPABASE_PROJECT_REF secrets configured; Step 2 (`schema-verification` job) completed successfully (schema verified — Edge Functions depend on schema objects existing before first invocation) |
 | **Evidence produced** | GitHub Actions workflow run log showing Edge Function deployment output; list of deployed function names |
 | **evidence_type** | WORKFLOW_LOG |
 | **PASS** | All 22 MMM Edge Functions deployed without error; workflow exits 0 |
