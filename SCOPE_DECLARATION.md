@@ -4,6 +4,7 @@
 **Issue**: maturion-isms#1484
 **Branch**: copilot/harden-agent-pre-handover-exactness
 **Date**: 2026-04-27
+**Last refreshed**: 2026-04-27 (final scope-refresh commit — §4.3g / AAP-28 single-file final action)
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ## Scope Decision
