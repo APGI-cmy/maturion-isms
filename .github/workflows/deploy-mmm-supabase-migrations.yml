@@ -12,7 +12,7 @@ name: Deploy MMM Supabase Migrations
 #
 # Migration mechanism (§4.3 approved):
 #   MMM-NATIVE migrations (supabase/migrations/): supabase db push via SUPABASE_ACCESS_TOKEN + SUPABASE_PROJECT_REF
-#   Legacy/AIMC migrations: psql via SUPABASE_DB_URL (cross-app exception — see comment in supabase-migrate job)
+#   Legacy/AIMC migrations: Supabase Management API via SUPABASE_ACCESS_TOKEN + SUPABASE_PROJECT_REF (cross-app exception — see comment in supabase-migrate job)
 #
 # This workflow:
 #   - is triggered manually (workflow_dispatch) only
@@ -65,6 +65,9 @@ jobs:
     permissions:
       contents: read
     environment: production
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -73,14 +76,15 @@ jobs:
         uses: supabase/setup-cli@v1
 
       # ─────────────────────────────────────────────────────────────────────
-      # CROSS-APP MIGRATION EXCEPTION — psql-based legacy and AIMC migrations
+      # CROSS-APP MIGRATION EXCEPTION — Supabase Management API
       # ─────────────────────────────────────────────────────────────────────
       # The following two steps apply migrations from:
       #   apps/maturion-maturity-legacy/supabase/migrations/
       #   packages/ai-centre/supabase/migrations/
       #
       # These are cross-app shared schema dependencies managed separately from the
-      # canonical MMM migration path. They use psql (not supabase db push) because:
+      # canonical MMM migration path. They use the Supabase Management API
+      # (not supabase db push or direct psql) because:
       #
       #   1. They are NOT in the canonical supabase/migrations/ directory.
       #      supabase db push only manages migrations tracked in supabase/migrations/.
@@ -90,68 +94,152 @@ jobs:
       #   2. These migrations define shared schema objects (organisations, audits,
       #      criteria, mps, domains, evidence, ai_feedback) that MMM reads at runtime.
       #      They MUST execute BEFORE MMM-native migrations and in dependency order:
-      #        legacy psql → AIMC psql → MMM-native supabase db push
+      #        legacy mgmt-api → AIMC mgmt-api → MMM-native supabase db push
       #
-      #   3. The approved path for NEW MMM migrations is ALWAYS supabase/migrations/
-      #      via supabase db push. This psql path is an explicit exception for
-      #      cross-app legacy schema dependencies only.
+      #   3. Direct psql access to db.<ref>.supabase.co:5432 is NOT available from
+      #      GitHub-hosted runners (Network is unreachable). The Management API uses
+      #      HTTPS to api.supabase.com and is accessible from all runner environments.
+      #
+      #   4. The approved path for NEW MMM migrations is ALWAYS supabase/migrations/
+      #      via supabase db push. This Management API path is an explicit exception
+      #      for cross-app legacy schema dependencies only.
+      #
+      # Credentials: SUPABASE_ACCESS_TOKEN + SUPABASE_PROJECT_REF (same as supabase db push)
+      # Endpoint: POST https://api.supabase.com/v1/projects/{ref}/database/query
       #
       # This exception is documented in §2 of deployment-execution-contract.md
       # (Cross-App Migration Exception). It is not a template for future migrations.
       # ─────────────────────────────────────────────────────────────────────
 
-      - name: Apply pending legacy migrations (cross-app exception — Supabase Management API)
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      - name: Apply pending legacy migrations (cross-app exception — supabase management api)
         run: |
-          # Apply legacy migrations via Supabase Management API (replaces direct psql).
-          # The Management API uses HTTPS and is reachable from GitHub-hosted runners,
-          # removing the direct Postgres TCP connectivity requirement (issue #1474).
-          python3 .github/scripts/apply-migrations-via-api.py \
-            --migrations-dir apps/maturion-maturity-legacy/supabase/migrations \
-            --tracking-table legacy_migrations \
-            --seed-entry 20260310000001_wave16_6_schema_audit_completeness.sql
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "ERROR: SUPABASE_ACCESS_TOKEN secret is not set. Cannot apply legacy migrations."
+            exit 1
+          fi
+          if [ -z "$SUPABASE_PROJECT_REF" ]; then
+            echo "ERROR: SUPABASE_PROJECT_REF secret is not set. Cannot apply legacy migrations."
+            exit 1
+          fi
+
+          SBAPI="https://api.supabase.com/v1/projects/$SUPABASE_PROJECT_REF/database/query"
+          # shellcheck source=.github/scripts/supabase-mgmt-api.sh
+          source .github/scripts/supabase-mgmt-api.sh
+
+          sb_sql "CREATE TABLE IF NOT EXISTS legacy_migrations (name TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now());" || exit 1
+          sb_sql "INSERT INTO legacy_migrations (name) VALUES ('20260310000001_wave16_6_schema_audit_completeness.sql') ON CONFLICT DO NOTHING;" || exit 1
+
+          FAILED_MIGRATION=""
+          shopt -s nullglob
+          mapfile -t sql_files < <(printf '%s\n' apps/maturion-maturity-legacy/supabase/migrations/*.sql | sort)
+          shopt -u nullglob
+          for f in "${sql_files[@]}"; do
+            name=$(basename "$f")
+            safe_name=$(sql_escape "$name")
+            count_json=$(sb_sql "SELECT COUNT(*) AS cnt FROM legacy_migrations WHERE name = '${safe_name}';") || exit 1
+            count=$(printf '%s' "$count_json" | jq -r '.[0].cnt // empty')
+            if [ -z "$count" ] || ! printf '%s' "$count" | grep -qE '^[0-9]+$'; then
+              echo "::error::Unexpected idempotency check response for '$name': $count_json"
+              exit 1
+            fi
+            if [ "$count" = "0" ]; then
+              echo "Applying $f..."
+              if ! sb_sql_file "$f" > /dev/null; then
+                echo "::error file=$f::Legacy migration FAILED: $f — see Supabase Management API output above"
+                FAILED_MIGRATION="$f"
+                break
+              fi
+              sb_sql "INSERT INTO legacy_migrations (name) VALUES ('${safe_name}') ON CONFLICT DO NOTHING;" > /dev/null || {
+                FAILED_MIGRATION="$f"
+                break
+              }
+              echo "Applied $f successfully"
+            else
+              echo "Skipping $f (already applied)"
+            fi
+          done
+          if [ -n "$FAILED_MIGRATION" ]; then
+            echo "::error::Apply legacy migrations failed at: $FAILED_MIGRATION"
+            exit 1
+          fi
+          echo "All legacy migrations applied successfully"
 
       # T-A-012: AIMC package migrations (packages/ai-centre/supabase/migrations/)
       # DEPENDENCY: AIMC migration 005_ai_feedback_pipeline.sql references the `organisations` table
       # defined in the legacy app migrations. This step MUST run AFTER "Apply pending legacy migrations"
-      # and uses the same Supabase Management API execution path.
-      - name: Apply AIMC package migrations (cross-app exception — Supabase Management API)
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      # and MUST target the same Supabase project via SUPABASE_PROJECT_REF.
+      - name: Apply AIMC package migrations (cross-app exception — supabase management api)
         run: |
-          # Apply AIMC migrations via Supabase Management API (replaces direct psql — issue #1474).
-          python3 .github/scripts/apply-migrations-via-api.py \
-            --migrations-dir packages/ai-centre/supabase/migrations \
-            --tracking-table aimc_migrations
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "ERROR: SUPABASE_ACCESS_TOKEN secret is not set. Cannot apply AIMC migrations."
+            exit 1
+          fi
+          if [ -z "$SUPABASE_PROJECT_REF" ]; then
+            echo "ERROR: SUPABASE_PROJECT_REF secret is not set. Cannot apply AIMC migrations."
+            exit 1
+          fi
+
+          SBAPI="https://api.supabase.com/v1/projects/$SUPABASE_PROJECT_REF/database/query"
+          # shellcheck source=.github/scripts/supabase-mgmt-api.sh
+          source .github/scripts/supabase-mgmt-api.sh
+
+          sb_sql "CREATE TABLE IF NOT EXISTS aimc_migrations (name TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now());" || exit 1
+
+          FAILED_MIGRATION=""
+          shopt -s nullglob
+          mapfile -t sql_files < <(printf '%s\n' packages/ai-centre/supabase/migrations/*.sql | sort)
+          shopt -u nullglob
+          for f in "${sql_files[@]}"; do
+            name=$(basename "$f")
+            safe_name=$(sql_escape "$name")
+            count_json=$(sb_sql "SELECT COUNT(*) AS cnt FROM aimc_migrations WHERE name = '${safe_name}';") || exit 1
+            count=$(printf '%s' "$count_json" | jq -r '.[0].cnt // empty')
+            if [ -z "$count" ] || ! printf '%s' "$count" | grep -qE '^[0-9]+$'; then
+              echo "::error::Unexpected idempotency check response for '$name': $count_json"
+              exit 1
+            fi
+            if [ "$count" = "0" ]; then
+              echo "Applying $f..."
+              if ! sb_sql_file "$f" > /dev/null; then
+                echo "::error file=$f::AIMC Migration FAILED: $f — see Supabase Management API output above"
+                FAILED_MIGRATION="$f"
+                break
+              fi
+              sb_sql "INSERT INTO aimc_migrations (name) VALUES ('${safe_name}') ON CONFLICT DO NOTHING;" > /dev/null || {
+                FAILED_MIGRATION="$f"
+                break
+              }
+              echo "Applied $f successfully"
+            else
+              echo "Skipping $f (already applied)"
+            fi
+          done
+          if [ -n "$FAILED_MIGRATION" ]; then
+            echo "::error::Apply AIMC migrations failed at: $FAILED_MIGRATION"
+            exit 1
+          fi
+          echo "All AIMC migrations applied successfully"
 
       - name: Link Supabase project
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
           if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
             echo "ERROR: SUPABASE_ACCESS_TOKEN secret is not set. Cannot link Supabase project."
             exit 1
           fi
-          if [ -z "${{ secrets.SUPABASE_PROJECT_REF }}" ]; then
+          if [ -z "$SUPABASE_PROJECT_REF" ]; then
             echo "ERROR: SUPABASE_PROJECT_REF secret is not set. Cannot link Supabase project."
             exit 1
           fi
-          echo "Linking Supabase project ${{ secrets.SUPABASE_PROJECT_REF }}..."
-          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+          echo "Linking Supabase project..."
+          supabase link --project-ref "$SUPABASE_PROJECT_REF"
           echo "Project linked successfully."
 
       - name: Apply MMM-native migrations (supabase db push)
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
           echo "Applying MMM-native migrations from supabase/migrations/ via supabase db push..."
           echo "Mechanism: supabase db push (approved per §4.3 of deployment-execution-contract.md)"
-          echo "Project ref: ${{ secrets.SUPABASE_PROJECT_REF }}"
-          echo "Execution order: legacy psql → AIMC psql → MMM-native supabase db push"
-          supabase db push --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+          echo "Execution order: legacy mgmt-api → AIMC mgmt-api → MMM-native supabase db push"
+          supabase db push --project-ref "$SUPABASE_PROJECT_REF"
           echo "MMM-native migrations applied successfully via supabase db push."
 
   schema-verification:
@@ -161,6 +249,9 @@ jobs:
     permissions:
       contents: read
     environment: production
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
     # Consolidated schema verification — checks all tables from both MMM-native and cross-app migrations.
     # REQUIRED tables (FAIL on absence): public.audits, public.audit_logs, public.criteria, public.mps, public.domains, public.evidence
     # WARN tables (non-blocking): public.evidence_submissions
@@ -171,18 +262,68 @@ jobs:
         uses: actions/checkout@v5
 
       - name: schema-verification — verify all required tables exist
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
         run: |
           echo "Running consolidated schema-verification..."
-          # Verify required tables via Supabase Management API (replaces direct psql — issue #1474).
-          # REQUIRED tables (FAIL on absence): public.audits, public.audit_logs, public.criteria,
-          #   public.mps, public.domains, public.evidence
-          # WARN tables (non-blocking): public.evidence_submissions
-          python3 .github/scripts/verify-schema-via-api.py \
-            --required-tables audits audit_logs criteria mps domains evidence \
-            --warn-tables evidence_submissions
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "ERROR: SUPABASE_ACCESS_TOKEN not set — cannot run schema-verification. Configure the secret."
+            exit 1
+          fi
+          if [ -z "$SUPABASE_PROJECT_REF" ]; then
+            echo "ERROR: SUPABASE_PROJECT_REF not set — cannot run schema-verification. Configure the secret."
+            exit 1
+          fi
+
+          SBAPI="https://api.supabase.com/v1/projects/$SUPABASE_PROJECT_REF/database/query"
+          # shellcheck source=.github/scripts/supabase-mgmt-api.sh
+          source .github/scripts/supabase-mgmt-api.sh
+
+          # Tables with FAIL semantics (required; absence is a hard failure)
+          REQUIRED_TABLES="audits audit_logs criteria mps domains evidence"
+          # Tables with WARN semantics (expected; absence is a warning, not a hard failure)
+          WARN_TABLES="evidence_submissions"
+
+          FAILED=""
+
+          echo "--- Checking REQUIRED tables (FAIL on absence) ---"
+          for TABLE in $REQUIRED_TABLES; do
+            safe_table=$(sql_escape "$TABLE")
+            if ! count_json=$(sb_sql "SELECT COUNT(*) AS cnt FROM information_schema.tables WHERE table_schema='public' AND table_name='${safe_table}';"); then
+              echo "::error::Supabase Management API connection or query error for table ${TABLE} — check SUPABASE_ACCESS_TOKEN and database connectivity"
+              exit 1
+            fi
+            result=$(printf '%s' "$count_json" | jq -r '.[0].cnt // empty')
+            if [ -z "$result" ] || ! printf '%s' "$result" | grep -qE '^[0-9]+$'; then
+              echo "::error::Unexpected schema-verification response for table '${TABLE}': $count_json"
+              exit 1
+            fi
+            if [ "$result" != "1" ]; then
+              echo "FAIL: public.${TABLE} not found in schema"
+              FAILED="${FAILED} public.${TABLE}"
+            else
+              echo "PASS: public.${TABLE} verified"
+            fi
+          done
+
+          echo "--- Checking WARN tables (WARN on absence, non-blocking) ---"
+          for TABLE in $WARN_TABLES; do
+            safe_table=$(sql_escape "$TABLE")
+            if ! count_json=$(sb_sql "SELECT COUNT(*) AS cnt FROM information_schema.tables WHERE table_schema='public' AND table_name='${safe_table}';"); then
+              echo "::warning::Supabase Management API query failed for table ${TABLE} — check SUPABASE_ACCESS_TOKEN"
+            else
+              result=$(printf '%s' "$count_json" | jq -r '.[0].cnt // empty')
+              if [ "$result" != "1" ]; then
+                echo "WARN: public.${TABLE} not found in schema (non-blocking)"
+              else
+                echo "PASS: public.${TABLE} verified"
+              fi
+            fi
+          done
+
+          if [ -n "$FAILED" ]; then
+            echo "::error::schema-verification FAILED — missing required tables:${FAILED}"
+            exit 1
+          fi
+          echo "PASS: All required schema objects verified"
 
   migration-summary:
     name: Migration Summary
