@@ -1,8 +1,8 @@
 # PREHANDOVER Proof Template — Foreman v2
 
 **Agent**: foreman-v2
-**Version**: 1.9.0
-**Last Updated**: 2026-04-22
+**Version**: 2.0.0
+**Last Updated**: 2026-04-27
 **Purpose**: Template for generating Phase 4 PREHANDOVER proof artifacts per S-009 (FAIL-ONLY-ONCE v4.2.0)
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -20,6 +20,7 @@
 | 1.5.0 | 2026-03-05 | SCOPE_DECLARATION Ceremony section added (A-029 / INC-SCOPE-STALE-001); IAA token date accuracy note added (A-030) |
 | 1.6.0 | 2026-03-08 | Pre-IAA Commit Gate section added (A-021 / INC-BOOTSTRAP-IMPL-001 / R1 fix) — mandatory STOP checkpoint requiring actual `git status` + `git log --oneline -5` output before IAA invocation |
 | 1.7.0 | 2026-03-18 | IAA Token Self-Certification Guard section added (governance directive STRUCTURAL-GATE) — `PHASE_B_BLOCKING_TOKEN` field check; Pre-Brief path check added to bundle completeness |
+| 2.0.0 | 2026-04-27 | Add `## Deployment Surface Enumeration` mandatory section (Rule D-002 / `governance/canon/DEPLOYMENT_WORKFLOW_QA_HARDENING.md` v1.0.0 / maturion-isms#1479). Required for all deployment-workflow PRs; N/A with justification for governance-only PRs. |
 | 1.9.0 | 2026-04-22 | Add `## Wave-Level Ceremony Contract Verification` mandatory section (ACR-18 through ACR-21 / IAA_PRE_BRIEF_PROTOCOL.md v1.3.0 §Expected Wave-Level Admin Ceremony Contract). ALL PREHANDOVER proofs must cross-reference the active Pre-Brief ceremony contract and verify each declared field. |
 | 1.8.0 | 2026-04-09 | Add `## Ripple/Cross-Agent Assessment` mandatory section (HFMC-01 / NO-REPEAT-PREVENTABLE-001 — recurring IAA rejection pattern). ALL PREHANDOVER proofs must explicitly assess downstream agent/system impact. |
 
@@ -78,6 +79,23 @@ Replace all `[placeholder]` values — no field may be left blank.
 - §4.3 Merge gate parity: [PASS/FAIL] [✅/❌]
 
 **OPOJD: [PASS / FAIL]**
+
+---
+
+## Deployment Surface Enumeration (MANDATORY for deployment-workflow PRs — Rule D-002)
+
+> **Authority**: `governance/canon/DEPLOYMENT_WORKFLOW_QA_HARDENING.md` v1.0.0, Rule D-002.
+> **Applicability**: MANDATORY for all PRs modifying `.github/workflows/deploy-*.yml` or
+> `.github/scripts/` files invoked from a deployment workflow.
+> For governance-only waves with no deployment-workflow changes, state: N/A with justification.
+
+| Surface | Surface Type | Evidence Type | Gate Status | CI Run / Notes |
+|---------|-------------|--------------|------------|----------------|
+| [surface name, e.g. "Supabase project (SUPABASE_PROJECT_REF)"] | `Supabase / Vercel / Secret / Other` | `STATIC_CODE / CI_TEST / CONFIG / LIVE_RUNTIME / LIVE_E2E` | `PASS / SKIP-JUSTIFIED / TRIGGERED-FAIL` | [CI run URL or "N/A — gate not triggered"] |
+
+**Deployment gate triggered**: YES / NO  
+**Deployment gate status**: PASS / FAIL / N/A — [justification if N/A]  
+**`governance/checklists/deployment-workflow-qa-checklist.md` completed**: YES / N/A — [justification]
 
 ---
 

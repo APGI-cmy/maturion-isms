@@ -1,6 +1,6 @@
 # PREHANDOVER_PROOF Template
 
-**Version**: 3.2  
+**Version**: 3.3  
 **Authority**: MERGE_GATE_PHILOSOPHY.md v2.0, OPOJD v2.0  
 **Purpose**: Evidence-based validation for complete job handover  
 **Agent**: [Agent Name]  
@@ -174,6 +174,27 @@ No deployment-triggering files changed. Deployment gate: NOT TRIGGERED — N/A."
 
 ---
 
+## Deployment Surface Enumeration (MANDATORY for deployment-workflow PRs — Rule D-002)
+
+> **Authority**: `governance/canon/DEPLOYMENT_WORKFLOW_QA_HARDENING.md` v1.0.0, Rule D-002.
+> **Applicability**: Required for all PRs modifying `.github/workflows/deploy-*.yml` or
+> `.github/scripts/` files invoked from a deployment workflow. For governance-only PRs that
+> do not touch deployment workflows or scripts, mark each row N/A with justification.
+
+| Surface | Surface Type | Evidence Type | Gate Status | CI Run / Notes |
+|---------|-------------|--------------|------------|----------------|
+| [surface name, e.g. "Supabase project (SUPABASE_PROJECT_REF)"] | `Supabase / Vercel / Secret / Other` | `STATIC_CODE / CI_TEST / CONFIG / LIVE_RUNTIME / LIVE_E2E` | `PASS / SKIP-JUSTIFIED / TRIGGERED-FAIL` | [CI run URL or "N/A — gate not triggered"] |
+
+**Deployment gate triggered**: YES / NO  
+**Deployment gate status**: PASS / FAIL / N/A — [justification if N/A]  
+**`governance/checklists/deployment-workflow-qa-checklist.md` completed**: YES / N/A — [justification if N/A]
+
+> If this PR does NOT touch any deployment workflow or deployment helper script, state:
+> `No deployment surfaces touched — N/A. This PR modifies only [list paths]. No deploy-*.yml or
+> .github/scripts/ changes. Deployment Surface Enumeration: NOT APPLICABLE.`
+
+---
+
 ## Stop-and-Fix Compliance
 
 **Preexisting Issues Encountered**: [YES | NO]
@@ -336,5 +357,6 @@ Per OPOJD v2.0, all jobs MUST generate improvement suggestions.
 **Authority**: MERGE_GATE_PHILOSOPHY.md v2.0, OPOJD v2.0, AGENT_CLASS_SPECIFIC_GATE_PROTOCOLS.md  
 **Evidence Type**: Pre-Handover Gate Validation  
 **Compliance**: Living Agent System v6.x.0  
+**Amendment**: v3.3 (2026-04-27) — Added mandatory `## Deployment Surface Enumeration` section (Rule D-002 / `governance/canon/DEPLOYMENT_WORKFLOW_QA_HARDENING.md` v1.0.0 / maturion-isms#1479). Required for all deployment-workflow PRs; N/A with justification for governance-only PRs. Absence of this section in a deployment-workflow PREHANDOVER proof is a producer-side defect blocked at Foreman QP and IAA final audit.  
 **Amendment**: v3.2 (2026-04-20) — Added certification item 14: Active final-state bundle token/session coherence confirmation (AAP-22 / ACR-16 / §4.3e Check L — maturion-isms#1422); confirms all active artifacts reference same IAA session/token before handover.  
 **Amendment**: v3.1 (2026-04-19) — Added mandatory `## Ripple/Cross-Agent Assessment` section (HFMC-01 / AAP-20 / ACR-14) — no PREHANDOVER proof is complete without this section; absence is a producer-side defect blocked at ECAP/Foreman QP gate and IAA layer.

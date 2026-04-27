@@ -11,8 +11,8 @@
 Reconcile stale MAT-era Combined Wave test expectations in `schema-existence.test.ts`:
 1. Fix T-W13-SCH-1–4 to use `process.env` instead of `import.meta.env` (env vars are not
    mapped into import.meta.env in Vitest unless explicitly declared in vitest.config.ts test.env).
-2. Exempt `ai_knowledge` from the MAT migration drift guard in T-W13-SCH-11 (it is an
-   AIMC/MMM-managed table covered by MMM supabase migrations, not MAT legacy migrations).
+2. Extend migration scan in T-W13-SCH-11 to include `packages/ai-centre/supabase/migrations/`
+   so the drift guard enforces that `ai_knowledge` is present in some migration source.
 
 ## Changed Files
 
@@ -21,6 +21,6 @@ Reconcile stale MAT-era Combined Wave test expectations in `schema-existence.tes
 
 ## Out of Scope
 
-- Any governance workspace artifacts (.agent-workspace/, .agent-admin/)
 - Any agent contract files (.github/agents/*.md)
+- Any application code or schema migrations
 - Any files not listed above
