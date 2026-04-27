@@ -190,7 +190,13 @@ If no ECAP agent is appointed (wave closes without it):
 
 ## TOKEN
 
-*Reserved — populated by IAA at final audit (IAA-FINAL, Task 8). Per §4.3b: IAA writes ASSURANCE-TOKEN here after all checks PASS.*
+**ASSURANCE-TOKEN**: `IAA-session-074-harden-qa-deployment-workflow-20260427-PASS`
+**Issued**: 2026-04-27
+**IAA Agent**: independent-assurance-agent v6.2.0
+**Wave**: harden-qa-deployment-workflow-20260427
+**PHASE_B_BLOCKING_TOKEN**: IAA-session-074-harden-qa-deployment-workflow-20260427-PASS
+
+**Audit result**: PASS — 5/5 qualifying deliverables verified (D1–D5). All FAIL-ONLY-ONCE applicable rules confirmed. PREHANDOVER proof structure complete. CANON_INVENTORY 0 null/empty hashes. Scope declaration matches PR diff exactly.
 
 ---
 
