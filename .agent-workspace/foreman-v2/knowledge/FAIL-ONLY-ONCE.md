@@ -3,9 +3,9 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 4.5.0  
+**Version**: 4.6.0  
 **Created**: 2026-02-24  
-**Updated**: 2026-04-22  
+**Updated**: 2026-04-27  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -80,6 +80,8 @@ These rules are **absolute** and may never be overridden, relaxed, or waived wit
 | A-040 | TEMPORAL-AUDIT-AT-QP (CS2 — 2026-04-22): At every Quality Professor evaluation (Phase 3 Step 3.5), Foreman MUST check that no governance evidence artifact delivered by the builder contains a future-dated factual claim. A future-dated claim is any completion-wording statement whose associated timestamp is later than the PR creation date or QP review date. Any future-dated claim is an immediate QP-FAIL-008 finding and must be cited in the Builder Referral artifact. The builder must correct the artifact to use forward-looking language and mark the relevant checklist item PENDING until real evidence exists. Violation class: INC-TEMPORAL-CLAIM-001. Canon ref: `governance/canon/TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md` Rules T-001/T-002. | CS2 — maturion-isms#1445 (2026-04-22); governance hardening follow-up to PR #1444 review miss |
 
 | A-041 | EVIDENCE-TYPE-CLASSIFICATION-AT-QP (CS2 — 2026-04-22): At every Quality Professor evaluation, Foreman MUST verify that every deployment/CDV/operational-validation checklist item in the builder's deliverable: (1) declares an explicit `evidence_type` label (STATIC_CODE / CI_TEST / CONFIG / LIVE_RUNTIME / LIVE_E2E), and (2) the cited evidence meets or exceeds the fidelity required by the item's semantic content. A merged-PR reference or code presence alone does NOT satisfy a LIVE_RUNTIME or LIVE_E2E item. Any mismatch is QP-FAIL-009 and requires a Builder Referral. The builder must provide live evidence or demote the checklist item to PENDING until live evidence is available. Violation class: INC-EVIDENCE-TYPE-MISMATCH-001. Canon ref: `governance/canon/TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md` Rules E-001/E-002/E-003. | CS2 — maturion-isms#1445 (2026-04-22); governance hardening follow-up to PR #1444 review miss |
+
+| A-042 | DEPLOYMENT-WORKFLOW-QA-MANDATORY (CS2 — 2026-04-27): Any PR that modifies `.github/workflows/deploy-*.yml` or `.github/scripts/` files invoked from a deployment workflow MUST satisfy all five rules of `governance/canon/DEPLOYMENT_WORKFLOW_QA_HARDENING.md` v1.0.0 (D-001 through D-005) before handover. Specifically: (1) the Deployment Gate result must be confirmed (D-001); (2) the PREHANDOVER proof MUST include a `## Deployment Surface Enumeration` section listing every affected surface with evidence_type and gate status (D-002); (3) any changed migration execution path must be verified in CI, not just by static code review (D-003); (4) helper scripts must comply with the HTTP/curl/tmpfile contract (D-004); and (5) `governance/checklists/deployment-workflow-qa-checklist.md` must be completed (D-005). Foreman QP MUST check all five rules at QP evaluation. IAA MUST verify at final audit. Triggered by recurring deployment-wave QA misses in waves leading to PRs #1473 and #1475. Violation class: INC-DEPLOYMENT-WORKFLOW-QA-SKIP-001. Canon ref: `governance/canon/DEPLOYMENT_WORKFLOW_QA_HARDENING.md` v1.0.0. | CS2 — maturion-isms#1479 (2026-04-27); recurring deployment-workflow QA miss pattern |
 
 > **OVL-CI-006 CANDIDATE (PENDING CS2 APPROVAL — next available ID after A-031)**: Every GitHub Actions workflow job must declare an explicit `permissions:` block. This is pending formalisation as A-032. Until CS2 approves: treat as a STRONG RECOMMENDATION. Any PR that adds or modifies workflow files without explicit `permissions:` on every job should be flagged at QP evaluation. Builder task spec: add `permissions: contents: read` (or more specific) to jobs missing explicit permissions.
 

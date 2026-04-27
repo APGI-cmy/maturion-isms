@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-04-22",
-  "total_canons": 214,
+  "last_updated": "2026-04-27",
+  "total_canons": 216,
   "generation_timestamp": "2026-04-22T08:19:00Z",
   "canon_entry_schema": {
     "description": "Schema for canon entries in CANON_INVENTORY.json",
@@ -159,17 +159,6 @@
       "file_hash_sha256": "d3f2e17da23733e5f5e27a71bb0c5d0071da1d1c10fab73a23fbd902d60fe2d9"
     },
     {
-      "filename": "AGENT_CONTRACT_PROTECTION_PROTOCOL.md",
-      "version": "1.1.0",
-      "file_hash": "de6777e1cbffbf10c7bdce2f5b0b13dd2b1df053f46bd6e1428d4357480449d7",
-      "effective_date": "2026-01-15",
-      "description": "This protocol establishes **protection mechanisms for critical agent contract requirements** through locked sections that prevent unauthorized modification, removal, or weakening of governance-crit...",
-      "type": "canon",
-      "path": "governance/canon/AGENT_CONTRACT_PROTECTION_PROTOCOL.md",
-      "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "de6777e1cbffbf10c7bdce2f5b0b13dd2b1df053f46bd6e1428d4357480449d7"
-    },
-    {
       "filename": "AGENT_CONTRACT_PLACEHOLDER_CHECK_CANON.md",
       "version": "1.0.0",
       "canonical_version": "1.0.0",
@@ -184,6 +173,17 @@
       "ripple_required": true,
       "amendment_authority": "CS2-only",
       "layer_down_target": "APGI-cmy/maturion-isms"
+    },
+    {
+      "filename": "AGENT_CONTRACT_PROTECTION_PROTOCOL.md",
+      "version": "1.1.0",
+      "file_hash": "de6777e1cbffbf10c7bdce2f5b0b13dd2b1df053f46bd6e1428d4357480449d7",
+      "effective_date": "2026-01-15",
+      "description": "This protocol establishes **protection mechanisms for critical agent contract requirements** through locked sections that prevent unauthorized modification, removal, or weakening of governance-crit...",
+      "type": "canon",
+      "path": "governance/canon/AGENT_CONTRACT_PROTECTION_PROTOCOL.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "de6777e1cbffbf10c7bdce2f5b0b13dd2b1df053f46bd6e1428d4357480449d7"
     },
     {
       "filename": "AGENT_CREATION_BUNDLE_REQUIREMENTS.md",
@@ -416,6 +416,42 @@
       "path": "governance/canon/AGENT_TIER_ARCHITECTURE.md",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "facdee9e0ac11ced482c0a985c8064f5d30cee20616edc61e6e236dc545e389f"
+    },
+    {
+      "filename": "AIMC_MMM_CONVERGENCE_BOUNDARY_CANON.md",
+      "version": "1.0.0",
+      "canonical_version": "1.0.0",
+      "file_hash": "2818c33ebe8e50617592dd5fc830939bc8ee515be6a76f7b2fb27ce3ae5c9824",
+      "effective_date": "2026-04-15",
+      "description": "Canonical convergence boundary between the Maturion Maturity Management Module (MMM) and the AIMC. Defines ownership boundaries, harvest-map custody, MMM/AIMC/KUC/PIT separation principles, what MMM artefacts are authoritative, what is AIMC-side only, and what must wait for bridge artefacts and CL-12c.",
+      "type": "canon",
+      "path": "governance/canon/AIMC_MMM_CONVERGENCE_BOUNDARY_CANON.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "2818c33ebe8e50617592dd5fc830939bc8ee515be6a76f7b2fb27ce3ae5c9824",
+      "local_version": null,
+      "local_extension": false,
+      "layer_up_status": "NONE",
+      "provenance": "Created via issue #1343 (2026-04-15)",
+      "ripple_required": true,
+      "ripple_notice": "Layer-down to maturion-isms required: MMM build teams must align to convergence boundary constraints before MMM AI integration"
+    },
+    {
+      "filename": "AIMC_SPECIALIST_OPERATING_MODEL.md",
+      "version": "1.0.0",
+      "canonical_version": "1.0.0",
+      "file_hash": "50d60061c6dbbfd93cd2a383951cdafac49761f86c964e8a4f2eca0b7a9a03c3",
+      "effective_date": "2026-04-15",
+      "description": "Defines the AIMC specialist operating model: knowledge source class taxonomy (Tier 1\u20134), source trust hierarchy, priority and conflict rules, freshness/currency rules, shared memory boundaries, delegation and module-consumer mode (advisory/operational/gated output classes), and human-in-the-loop boundaries. Governs all AIMC specialist agents.",
+      "type": "canon",
+      "path": "governance/canon/AIMC_SPECIALIST_OPERATING_MODEL.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "50d60061c6dbbfd93cd2a383951cdafac49761f86c964e8a4f2eca0b7a9a03c3",
+      "local_version": null,
+      "local_extension": false,
+      "layer_up_status": "NONE",
+      "provenance": "Created via issue #1343 (2026-04-15)",
+      "ripple_required": true,
+      "ripple_notice": "Layer-down to maturion-isms required: AIMC specialist agents must align to source model and output class rules"
     },
     {
       "filename": "AIMC_STRATEGY.md",
@@ -924,6 +960,17 @@
       "path": "governance/canon/DELEGATION_INSTRUCTION_AND_AUDIT_MODEL.md",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "ff6adb194e1ffd213d489a0b388c3543de8cdd22d8c2cee5f798d3af511c2bd3"
+    },
+    {
+      "filename": "DEPLOYMENT_WORKFLOW_QA_HARDENING.md",
+      "version": "1.0.0",
+      "file_hash": "50269b50e6e7edc2cbeb7baafa8bead095bdeed8ff49c38b711138571c2a17f2",
+      "effective_date": "2026-04-27",
+      "description": "Establishes mandatory QA and handover requirements for deployment-workflow PRs, including deployment gate confirmation, deployment surface enumeration, migration execution path verification, helper script contract compliance, and checklist requirements (Rules D-001 through D-005).",
+      "type": "canon",
+      "path": "governance/canon/DEPLOYMENT_WORKFLOW_QA_HARDENING.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "50269b50e6e7edc2cbeb7baafa8bead095bdeed8ff49c38b711138571c2a17f2"
     },
     {
       "filename": "DOMAIN_EVOLUTION_RULES.md",
@@ -1885,6 +1932,21 @@
       "layer_up_status": "NONE"
     },
     {
+      "filename": "PREHANDOVER.template.md",
+      "version": "1.5.0",
+      "canonical_version": "1.5.0",
+      "file_hash": "4b3f07328ab0895b7f47237ae8372e5f3fb68c47b8404f08f1d399373b65c80d",
+      "file_hash_sha256": "4b3f07328ab0895b7f47237ae8372e5f3fb68c47b8404f08f1d399373b65c80d",
+      "effective_date": "2026-04-22",
+      "amended_date": "2026-04-27",
+      "last_updated": "2026-04-27",
+      "description": "ECAP PREHANDOVER proof template. Includes ## Authoritative Reference Table section (\u00a74.3f Check M), art_refresh_required/art_refresh_completed YAML fields (\u00a74.3f Check N), active_bundle_iaa_coherence field, ## Ripple/Cross-Agent Assessment section, and ## Evidence Exactness Gate section.",
+      "type": "template",
+      "path": "governance/templates/execution-ceremony-admin/PREHANDOVER.template.md",
+      "layer_down_status": "INTERNAL",
+      "change_note": "v1.4.0: Added ## Evidence Exactness Gate section (5-check summary: PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE, VERSION-MISMATCH cross-artifact, VERSION-MISMATCH internal); wave gov-evidence-exactness-hardening-20260422"
+    },
+    {
       "filename": "PRE_BUILD_REALITY_CHECK_CANON.md",
       "version": "1.1.0",
       "file_hash": "eca3d16f5ca0ac6345115f79fbaa4306df29b815caa2eb175d3d31fece2d0bc9",
@@ -2139,6 +2201,21 @@
       "file_hash_sha256": "7bef68ef7cbf538b97e116d1b1fa0a3eb1ebd8af68a4a14cca72c8753c8a08eb"
     },
     {
+      "filename": "SESSION_MEMORY.template.md",
+      "version": "1.1.0",
+      "canonical_version": "1.1.0",
+      "file_hash": "64b41e028454bd0919c8972675c46eb21f522779e9a4704cf2271e2fdddc053d",
+      "file_hash_sha256": "64b41e028454bd0919c8972675c46eb21f522779e9a4704cf2271e2fdddc053d",
+      "effective_date": "2026-04-17",
+      "amended_date": "2026-04-21",
+      "last_updated": "2026-04-21",
+      "description": "Session memory template for execution-ceremony-admin-agent. Includes art_coherence_confirmed field and \u00a74.3f ART Verification Gate row in Ceremony Compliance section.",
+      "type": "template",
+      "path": "governance/templates/execution-ceremony-admin/SESSION_MEMORY.template.md",
+      "layer_down_status": "INTERNAL",
+      "change_note": "v1.1.0: Added art_coherence_confirmed field and \u00a74.3f ART Verification Gate row to Ceremony Compliance section (AAP-23/AAP-24/\u00a74.3f Check M/Check N); wave admin-ceremony-hardening-20260421"
+    },
+    {
       "filename": "SPECIALIST_KNOWLEDGE_MANAGEMENT.md",
       "version": "1.1.0",
       "canonical_version": "1.1.0",
@@ -2186,6 +2263,17 @@
       "path": "governance/canon/TARP_PROTOCOL.md",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "66ebc152177664126ce596a449232c1eb35e3c7a803920f6c08b7bcf1dc31917"
+    },
+    {
+      "filename": "TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md",
+      "version": "1.0.0",
+      "file_hash": "8c047329381b3714235f88c880a31c17210efa220f4a294b6b42fe5ddfdd35eb",
+      "effective_date": "2026-04-22",
+      "description": "Establishes two mandatory integrity rules: (1) no future-dated factual claim may appear in governance evidence artifacts (Rule T-001/T-002); (2) evidence-type discipline \u2014 deployment/CDV items require LIVE_RUNTIME or LIVE_E2E evidence; static code evidence does not satisfy live-deployment checklist items (Rules E-001/E-002/E-003). Tier mapping of the PR #1444 review gap.",
+      "type": "canon",
+      "path": "governance/canon/TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "8c047329381b3714235f88c880a31c17210efa220f4a294b6b42fe5ddfdd35eb"
     },
     {
       "filename": "TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md",
@@ -2365,6 +2453,17 @@
       "layer_up_status": "NONE"
     },
     {
+      "filename": "deployment-workflow-qa-checklist.md",
+      "version": "1.0.0",
+      "file_hash": "50b14784f0969fa60509170c189351d2842bcfd6711b8698a975fc35c1076db8",
+      "effective_date": "2026-04-27",
+      "description": "Reusable QA checklist for deployment-workflow PRs enforcing governance/canon/DEPLOYMENT_WORKFLOW_QA_HARDENING.md v1.0.0 Rules D-001 through D-005. Covers deployment gate status, deployment surface enumeration, migration path verification, helper script compliance, evidence fidelity, and PREHANDOVER proof completeness.",
+      "type": "checklist",
+      "path": "governance/checklists/deployment-workflow-qa-checklist.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "50b14784f0969fa60509170c189351d2842bcfd6711b8698a975fc35c1076db8"
+    },
+    {
       "filename": "effectiveness.template.md",
       "version": "1",
       "file_hash": "ff1b2f86f2c7ff80a987789fed75718c7ee8c699f4fd238609714c92ba8f8381",
@@ -2374,64 +2473,6 @@
       "path": "governance/canon/effectiveness.template.md",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "ff1b2f86f2c7ff80a987789fed75718c7ee8c699f4fd238609714c92ba8f8381"
-    },
-    {
-      "filename": "failure.template.md",
-      "version": "1",
-      "file_hash": "21ef14966907a7b21bc90dc092f549f9554a379288be542e0bc8aa07bf51951a",
-      "effective_date": "unknown",
-      "description": "Canonical governance document: failure.template",
-      "type": "canon",
-      "path": "governance/canon/failure.template.md",
-      "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "21ef14966907a7b21bc90dc092f549f9554a379288be542e0bc8aa07bf51951a"
-    },
-    {
-      "filename": "scope-declaration.template.md",
-      "version": "1",
-      "file_hash": "06e4173ff8485b6a1af86a91d12484856c5c7f4d193f38ae88e79573e646c5ee",
-      "effective_date": "unknown",
-      "description": "Canonical governance document: scope-declaration.template",
-      "type": "canon",
-      "path": "governance/canon/scope-declaration.template.md",
-      "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "06e4173ff8485b6a1af86a91d12484856c5c7f4d193f38ae88e79573e646c5ee"
-    },
-    {
-      "filename": "AIMC_SPECIALIST_OPERATING_MODEL.md",
-      "version": "1.0.0",
-      "canonical_version": "1.0.0",
-      "file_hash": "50d60061c6dbbfd93cd2a383951cdafac49761f86c964e8a4f2eca0b7a9a03c3",
-      "effective_date": "2026-04-15",
-      "description": "Defines the AIMC specialist operating model: knowledge source class taxonomy (Tier 1\u20134), source trust hierarchy, priority and conflict rules, freshness/currency rules, shared memory boundaries, delegation and module-consumer mode (advisory/operational/gated output classes), and human-in-the-loop boundaries. Governs all AIMC specialist agents.",
-      "type": "canon",
-      "path": "governance/canon/AIMC_SPECIALIST_OPERATING_MODEL.md",
-      "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "50d60061c6dbbfd93cd2a383951cdafac49761f86c964e8a4f2eca0b7a9a03c3",
-      "local_version": null,
-      "local_extension": false,
-      "layer_up_status": "NONE",
-      "provenance": "Created via issue #1343 (2026-04-15)",
-      "ripple_required": true,
-      "ripple_notice": "Layer-down to maturion-isms required: AIMC specialist agents must align to source model and output class rules"
-    },
-    {
-      "filename": "AIMC_MMM_CONVERGENCE_BOUNDARY_CANON.md",
-      "version": "1.0.0",
-      "canonical_version": "1.0.0",
-      "file_hash": "2818c33ebe8e50617592dd5fc830939bc8ee515be6a76f7b2fb27ce3ae5c9824",
-      "effective_date": "2026-04-15",
-      "description": "Canonical convergence boundary between the Maturion Maturity Management Module (MMM) and the AIMC. Defines ownership boundaries, harvest-map custody, MMM/AIMC/KUC/PIT separation principles, what MMM artefacts are authoritative, what is AIMC-side only, and what must wait for bridge artefacts and CL-12c.",
-      "type": "canon",
-      "path": "governance/canon/AIMC_MMM_CONVERGENCE_BOUNDARY_CANON.md",
-      "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "2818c33ebe8e50617592dd5fc830939bc8ee515be6a76f7b2fb27ce3ae5c9824",
-      "local_version": null,
-      "local_extension": false,
-      "layer_up_status": "NONE",
-      "provenance": "Created via issue #1343 (2026-04-15)",
-      "ripple_required": true,
-      "ripple_notice": "Layer-down to maturion-isms required: MMM build teams must align to convergence boundary constraints before MMM AI integration"
     },
     {
       "filename": "execution-ceremony-admin-anti-patterns.md",
@@ -2479,49 +2520,29 @@
       "change_note": "v1.1.0: Added R18 (renumber/rebase/conflict-resolution refresh); added \u00a7 Renumber/Rebase Trigger Rule section; added R18 and ART refresh fields to Reconciliation Declaration block; wave admin-ceremony-hardening-20260421"
     },
     {
-      "filename": "PREHANDOVER.template.md",
-      "version": "1.5.0",
-      "canonical_version": "1.5.0",
-      "file_hash": "4b3f07328ab0895b7f47237ae8372e5f3fb68c47b8404f08f1d399373b65c80d",
-      "file_hash_sha256": "4b3f07328ab0895b7f47237ae8372e5f3fb68c47b8404f08f1d399373b65c80d",
-      "effective_date": "2026-04-22",
-      "amended_date": "2026-04-27",
-      "last_updated": "2026-04-27",
-      "description": "ECAP PREHANDOVER proof template. Includes ## Authoritative Reference Table section (\u00a74.3f Check M), art_refresh_required/art_refresh_completed YAML fields (\u00a74.3f Check N), active_bundle_iaa_coherence field, ## Ripple/Cross-Agent Assessment section, and ## Evidence Exactness Gate section.",
-      "type": "template",
-      "path": "governance/templates/execution-ceremony-admin/PREHANDOVER.template.md",
+      "filename": "failure.template.md",
+      "version": "1",
+      "file_hash": "21ef14966907a7b21bc90dc092f549f9554a379288be542e0bc8aa07bf51951a",
+      "effective_date": "unknown",
+      "description": "Canonical governance document: failure.template",
+      "type": "canon",
+      "path": "governance/canon/failure.template.md",
       "layer_down_status": "INTERNAL",
-      "change_note": "v1.4.0: Added ## Evidence Exactness Gate section (5-check summary: PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE, VERSION-MISMATCH cross-artifact, VERSION-MISMATCH internal); wave gov-evidence-exactness-hardening-20260422"
+      "file_hash_sha256": "21ef14966907a7b21bc90dc092f549f9554a379288be542e0bc8aa07bf51951a"
     },
     {
-      "filename": "SESSION_MEMORY.template.md",
+      "filename": "iaa-wave-record.template.md",
       "version": "1.1.0",
+      "file_hash": "3eac6d6afc61cb85843db296f392bc36db701eb7cb8504ae5f3c17af6418e961",
+      "effective_date": "2026-04-22",
+      "description": "IAA Wave Record template \u2014 defines the standard structure for wave-level assurance records including Pre-Brief, PREHANDOVER Proof, IAA Assurance Verdict, Rejection History, and Record Metadata. v1.1.0: Added \u00a71.6 Wave-Level Admin Ceremony Contract.",
+      "type": "template",
+      "path": "governance/templates/iaa-wave-record.template.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "3eac6d6afc61cb85843db296f392bc36db701eb7cb8504ae5f3c17af6418e961",
       "canonical_version": "1.1.0",
-      "file_hash": "64b41e028454bd0919c8972675c46eb21f522779e9a4704cf2271e2fdddc053d",
-      "file_hash_sha256": "64b41e028454bd0919c8972675c46eb21f522779e9a4704cf2271e2fdddc053d",
-      "effective_date": "2026-04-17",
-      "amended_date": "2026-04-21",
-      "last_updated": "2026-04-21",
-      "description": "Session memory template for execution-ceremony-admin-agent. Includes art_coherence_confirmed field and \u00a74.3f ART Verification Gate row in Ceremony Compliance section.",
-      "type": "template",
-      "path": "governance/templates/execution-ceremony-admin/SESSION_MEMORY.template.md",
-      "layer_down_status": "INTERNAL",
-      "change_note": "v1.1.0: Added art_coherence_confirmed field and \u00a74.3f ART Verification Gate row to Ceremony Compliance section (AAP-23/AAP-24/\u00a74.3f Check M/Check N); wave admin-ceremony-hardening-20260421"
-    },
-    {
-      "filename": "liaison-mini-ceremony-pack.md",
-      "version": "1.0.0",
-      "canonical_version": "1.0.0",
-      "file_hash": "98a277718fb2acc6f1cc6f0c255b52f6e903454d25c26f9cccb6520f4951f88b",
-      "file_hash_sha256": "98a277718fb2acc6f1cc6f0c255b52f6e903454d25c26f9cccb6520f4951f88b",
-      "effective_date": "2026-04-21",
-      "amended_date": "2026-04-21",
-      "last_updated": "2026-04-21",
-      "description": "Liaison / Non-ECAP Mini-Ceremony Pack template. Provides ART-level reference coherence protections for governance-liaison and non-ECAP flows. Includes ## Authoritative Reference Table, 5-point spot-check declaration, renumber_refresh_confirmed field.",
-      "type": "template",
-      "path": "governance/templates/liaison-mini-ceremony-pack.md",
-      "layer_down_status": "INTERNAL",
-      "change_note": "v1.0.0: Created as D6 deliverable in wave admin-ceremony-hardening-20260421 \u2014 extends ART verification to liaison/non-ECAP ceremony paths"
+      "last_updated": "2026-04-22",
+      "change_note": "v1.1.0: Added \u00a71.6 Wave-Level Admin Ceremony Contract section; updated Record Schema Version to 1.1.0; authority: CS2 \u2014 maturion-isms#1447"
     },
     {
       "filename": "liaison-mini-ceremony-checklist.md",
@@ -2539,18 +2560,30 @@
       "change_note": "v1.0.0: Created as D6 deliverable in wave admin-ceremony-hardening-20260421"
     },
     {
-      "filename": "iaa-wave-record.template.md",
-      "version": "1.1.0",
-      "file_hash": "3eac6d6afc61cb85843db296f392bc36db701eb7cb8504ae5f3c17af6418e961",
-      "effective_date": "2026-04-22",
-      "description": "IAA Wave Record template \u2014 defines the standard structure for wave-level assurance records including Pre-Brief, PREHANDOVER Proof, IAA Assurance Verdict, Rejection History, and Record Metadata. v1.1.0: Added \u00a71.6 Wave-Level Admin Ceremony Contract.",
+      "filename": "liaison-mini-ceremony-pack.md",
+      "version": "1.0.0",
+      "canonical_version": "1.0.0",
+      "file_hash": "98a277718fb2acc6f1cc6f0c255b52f6e903454d25c26f9cccb6520f4951f88b",
+      "file_hash_sha256": "98a277718fb2acc6f1cc6f0c255b52f6e903454d25c26f9cccb6520f4951f88b",
+      "effective_date": "2026-04-21",
+      "amended_date": "2026-04-21",
+      "last_updated": "2026-04-21",
+      "description": "Liaison / Non-ECAP Mini-Ceremony Pack template. Provides ART-level reference coherence protections for governance-liaison and non-ECAP flows. Includes ## Authoritative Reference Table, 5-point spot-check declaration, renumber_refresh_confirmed field.",
       "type": "template",
-      "path": "governance/templates/iaa-wave-record.template.md",
-      "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "3eac6d6afc61cb85843db296f392bc36db701eb7cb8504ae5f3c17af6418e961",
-      "canonical_version": "1.1.0",
-      "last_updated": "2026-04-22",
-      "change_note": "v1.1.0: Added \u00a71.6 Wave-Level Admin Ceremony Contract section; updated Record Schema Version to 1.1.0; authority: CS2 \u2014 maturion-isms#1447"
+      "path": "governance/templates/liaison-mini-ceremony-pack.md",
+      "layer_down_status": "INTERNAL",
+      "change_note": "v1.0.0: Created as D6 deliverable in wave admin-ceremony-hardening-20260421 \u2014 extends ART verification to liaison/non-ECAP ceremony paths"
+    },
+    {
+      "filename": "scope-declaration.template.md",
+      "version": "1",
+      "file_hash": "06e4173ff8485b6a1af86a91d12484856c5c7f4d193f38ae88e79573e646c5ee",
+      "effective_date": "unknown",
+      "description": "Canonical governance document: scope-declaration.template",
+      "type": "canon",
+      "path": "governance/canon/scope-declaration.template.md",
+      "layer_down_status": "INTERNAL",
+      "file_hash_sha256": "06e4173ff8485b6a1af86a91d12484856c5c7f4d193f38ae88e79573e646c5ee"
     },
     {
       "filename": "stage10-prebrief-ceremony-contract-examples.md",
@@ -2565,18 +2598,7 @@
       "canonical_version": "1.0.0",
       "last_updated": "2026-04-22",
       "change_note": "v1.0.0: Initial creation \u2014 proof-of-operation examples for Wave-Level Admin Ceremony Contract; authority: CS2 \u2014 maturion-isms#1447"
-    },
-    {
-      "filename": "TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md",
-      "version": "1.0.0",
-      "file_hash": "8c047329381b3714235f88c880a31c17210efa220f4a294b6b42fe5ddfdd35eb",
-      "effective_date": "2026-04-22",
-      "description": "Establishes two mandatory integrity rules: (1) no future-dated factual claim may appear in governance evidence artifacts (Rule T-001/T-002); (2) evidence-type discipline \u2014 deployment/CDV items require LIVE_RUNTIME or LIVE_E2E evidence; static code evidence does not satisfy live-deployment checklist items (Rules E-001/E-002/E-003). Tier mapping of the PR #1444 review gap.",
-      "type": "canon",
-      "path": "governance/canon/TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md",
-      "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "8c047329381b3714235f88c880a31c17210efa220f4a294b6b42fe5ddfdd35eb"
     }
   ],
-  "total_entries": 214
+  "total_entries": 216
 }
