@@ -28,6 +28,7 @@ opojd_compliance:       CONFIRMED            # CONFIRMED | VIOLATED (violated mu
 merge_gate_verdict:     PASS                 # PASS | FAIL
 pre_iaa_commit_state:   PASS                 # PASS | FAIL
 scope_declaration_parity: PASS              # PASS | FAIL | N/A
+scope_refreshed_post_final_edit: YES        # YES | NO — §4.3g: SCOPE_DECLARATION.md refreshed from final diff after all edits; BLOCKING if NO
 admin_ceremony_compliance: PASS             # PASS | FAIL | N/A (ECAP jobs only)
 
 ## IAA Assurance
@@ -74,10 +75,20 @@ suggestions:            NONE                 # NONE | see .agent-workspace/<agen
 ## Evidence Exactness Gate
 
 > **Authority**: LIVING_AGENT_SYSTEM.md v6.2.0 — evidence exactness hardening (wave gov-evidence-exactness-hardening-20260422)
+> **Mandatory since**: v1.8.0 — §4.3g Scope-Refresh and Evidence-Exactness Gate
 > **Script**: `.github/scripts/validate-governance-evidence-exactness.sh`
-> **When**: Run before invoking IAA. Paste first 20 lines of output below or "All checks PASS".
+> **When**: Run **locally** after all implementation edits are committed and SCOPE_DECLARATION.md
+> has been refreshed from the final live diff. MUST be run before PREHANDOVER proof submission
+> and IAA invocation — NOT deferred to CI. Use `.github/scripts/refresh-scope-and-validate.sh`
+> for a combined scope-refresh + exactness check + copy-paste snippet in one step.
+> **Foreman rejection**: If this section is absent, contains only template placeholder text,
+> or lacks a timestamp confirming a local run against the final branch state, the Foreman MUST
+> bounce the handover back to the producing agent (AAP-29). A stale SCOPE_DECLARATION.md is
+> a separate blocker (AAP-28).
 
+**Timestamp (check run)**: [YYYY-MM-DD HH:MM:SS UTC — record exact time; must postdate the last SCOPE_DECLARATION.md commit]
 **Exit code**: [0 = PASS / 1 = FAIL]
+**Scope refreshed after final edit**: [YES — SCOPE_DECLARATION.md refreshed from final diff and committed as last action / NO — BLOCKED]
 **Output summary**: [paste script output summary OR "All checks PASS — N/A (no SCOPE_DECLARATION / no PREHANDOVER proofs in PR)"]
 
 | Defect Class | Check Result |
@@ -186,4 +197,4 @@ evidence_type_items:
 
 ---
 
-*Template Version: 1.4.0 | Authority: ECAP-001 v1.1.0 | Effective: 2026-04-22 | Amended: 2026-04-22 (v1.4.0) — Added `## Evidence-Type Mapping` section (mandatory for waves with CDV/deployment/operational items; Rules E-001/E-002/E-003; A-041; canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md; temporal integrity check T-001/A-040; governance hardening maturion-isms#1445); added `## Evidence Exactness Gate` section (mandatory pre-IAA check: PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE, VERSION-MISMATCH via `.github/scripts/validate-governance-evidence-exactness.sh`; AAP-25/26/27; wave gov-evidence-exactness-hardening-20260422) | Amended: 2026-04-21 (v1.3.0) — Added `## Authoritative Reference Table` section (mandatory, §4.3f Check M / AAP-23 / ACR-17); added `art_refresh_required` and `art_refresh_completed` fields to YAML ART Refresh section (AAP-24 / §4.3f Check N / R18); wave admin-ceremony-hardening-20260421 | Amended: 2026-04-20 (v1.2.0) — Added `active_bundle_iaa_coherence` field to IAA Assurance section (AAP-22 / ACR-16 / §4.3e Check L; maturion-isms#1422); this field confirms single-session/single-token coherence across the entire active final-state bundle before handover | Amended: 2026-04-19 (v1.1.0) — Added mandatory `## Ripple/Cross-Agent Assessment` section (HFMC-01 / AAP-20 / ACR-14) as structural non-optional section; YAML ripple-assessment-summary retained for machine-readable status*
+*Template Version: 1.5.0 | Authority: ECAP-001 v1.1.0 | Effective: 2026-04-27 | Amended: 2026-04-27 (v1.5.0) — Added `scope_refreshed_post_final_edit` field to Gate Results YAML (§4.3g mandatory; BLOCKING if NO; AAP-28); strengthened `## Evidence Exactness Gate` section with `Timestamp (check run)` and `Scope refreshed after final edit` fields (§4.3g; AAP-29); added Foreman rejection criteria note (absent/placeholder/undated section is a handover BLOCKER); updated `When` instruction to require local run after final diff, not deferred to CI; added reference to `.github/scripts/refresh-scope-and-validate.sh` helper; wave gov-prehandover-exactness-hardening-20260427 | Amended: 2026-04-22 (v1.4.0) — Added `## Evidence-Type Mapping` section (mandatory for waves with CDV/deployment/operational items; Rules E-001/E-002/E-003; A-041; canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md; temporal integrity check T-001/A-040; governance hardening maturion-isms#1445); added `## Evidence Exactness Gate` section (mandatory pre-IAA check: PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE, VERSION-MISMATCH via `.github/scripts/validate-governance-evidence-exactness.sh`; AAP-25/26/27; wave gov-evidence-exactness-hardening-20260422) | Amended: 2026-04-21 (v1.3.0) — Added `## Authoritative Reference Table` section (mandatory, §4.3f Check M / AAP-23 / ACR-17); added `art_refresh_required` and `art_refresh_completed` fields to YAML ART Refresh section (AAP-24 / §4.3f Check N / R18); wave admin-ceremony-hardening-20260421 | Amended: 2026-04-20 (v1.2.0) — Added `active_bundle_iaa_coherence` field to IAA Assurance section (AAP-22 / ACR-16 / §4.3e Check L; maturion-isms#1422); this field confirms single-session/single-token coherence across the entire active final-state bundle before handover | Amended: 2026-04-19 (v1.1.0) — Added mandatory `## Ripple/Cross-Agent Assessment` section (HFMC-01 / AAP-20 / ACR-14) as structural non-optional section; YAML ripple-assessment-summary retained for machine-readable status*
