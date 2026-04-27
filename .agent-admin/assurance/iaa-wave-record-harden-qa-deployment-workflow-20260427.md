@@ -58,22 +58,19 @@ Phase 0 only. Phases 1–4 assurance deferred to final IAA invocation (Task 8: I
 
 ---
 
-### ⚠️ SCOPE BLOCKER SB-001 — PREHANDOVER Template Path Discrepancy
+### ✅ SB-001 RESOLVED — PREHANDOVER Template Path Discrepancy
 
-**Severity**: BLOCKING — must be resolved before governance-liaison-isms-agent begins D3 implementation.
+**Status**: Resolved after the initial pre-brief; no longer blocking for D3 implementation.
 
-**Conflict**:
+**Initial pre-brief discrepancy**:
 - Issue #1479 §B states: update `.agent-workspace/foreman-v2/knowledge/prehandover-template.md`
-- Scope declaration `approved_artifact_paths` declares: `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md`
+- Scope declaration originally highlighted: `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md`
 
-**These are two distinct files.** The foreman-v2 knowledge path (`.agent-workspace/foreman-v2/knowledge/prehandover-template.md`) is an agent-private template and triggers **KNOWLEDGE_GOVERNANCE**. The governance templates path (`governance/templates/PREHANDOVER_PROOF_TEMPLATE.md`) is a shared governance canonical template and triggers **CANON_GOVERNANCE**.
+**Resolution recorded**: Both template paths are now explicitly declared in the wave scope under `approved_artifact_paths`, matching the stated scope resolution for SB-001. These remain two distinct files: the foreman-v2 knowledge path (`.agent-workspace/foreman-v2/knowledge/prehandover-template.md`) is an agent-private template and triggers **KNOWLEDGE_GOVERNANCE**, while the governance templates path (`governance/templates/PREHANDOVER_PROOF_TEMPLATE.md`) is a shared governance canonical template and triggers **CANON_GOVERNANCE**.
 
-**Required resolution** (foreman-v2-agent must clarify before governance-liaison-isms-agent proceeds):
-1. Are BOTH files being updated? (If yes, both must appear in scope declaration; D3 becomes KNOWLEDGE_GOVERNANCE + CANON_GOVERNANCE dual-trigger.)
-2. Is only the governance template being updated? (If yes, remove the `.agent-workspace/foreman-v2/knowledge/prehandover-template.md` reference from issue description and proceed with CANON_GOVERNANCE only for D3.)
-3. Is only the foreman knowledge file being updated? (If yes, update scope declaration to reflect the correct path and classify D3 as KNOWLEDGE_GOVERNANCE only.)
+**Current guidance for D3**: Proceed under the resolved dual-path scope. D3 is treated as **KNOWLEDGE_GOVERNANCE + CANON_GOVERNANCE** when changes affect both declared template paths.
 
-**IAA will check both paths at final audit** and will REJECT if either is modified without corresponding scope declaration entry.
+**IAA final audit check**: IAA will verify that any modifications remain confined to the declared paths and will REJECT if either template is modified without corresponding scope declaration coverage.
 
 ---
 
