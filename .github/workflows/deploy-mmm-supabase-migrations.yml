@@ -72,9 +72,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Setup Supabase CLI
-        uses: supabase/setup-cli@v1
-
       # ─────────────────────────────────────────────────────────────────────
       # CROSS-APP MIGRATION EXCEPTION — Supabase Management API
       # ─────────────────────────────────────────────────────────────────────
@@ -220,27 +217,26 @@ jobs:
           fi
           echo "All AIMC migrations applied successfully"
 
-      - name: Link Supabase project
+      - name: Apply MMM-native migrations (supabase management api)
         run: |
+          echo "Applying MMM-native migrations from supabase/migrations/ via Supabase Management API..."
+          echo "Mechanism: apply-migrations-via-api.py (non-interactive, approved per §4.3 of deployment-execution-contract.md)"
+          echo "Reason for Management API: direct postgres connectivity (supabase db push) is unreliable"
+          echo "from GitHub-hosted runners (SASL auth failure, network unreachable to pooler)."
+          echo "The Management API uses HTTPS to api.supabase.com and is accessible from all runner environments."
+          echo "Execution order: legacy mgmt-api → AIMC mgmt-api → MMM-native mgmt-api"
           if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
-            echo "ERROR: SUPABASE_ACCESS_TOKEN secret is not set. Cannot link Supabase project."
+            echo "ERROR: SUPABASE_ACCESS_TOKEN secret is not set. Cannot apply MMM-native migrations."
             exit 1
           fi
           if [ -z "$SUPABASE_PROJECT_REF" ]; then
-            echo "ERROR: SUPABASE_PROJECT_REF secret is not set. Cannot link Supabase project."
+            echo "ERROR: SUPABASE_PROJECT_REF secret is not set. Cannot apply MMM-native migrations."
             exit 1
           fi
-          echo "Linking Supabase project..."
-          supabase link --project-ref "$SUPABASE_PROJECT_REF"
-          echo "Project linked successfully."
-
-      - name: Apply MMM-native migrations (supabase db push)
-        run: |
-          echo "Applying MMM-native migrations from supabase/migrations/ via supabase db push..."
-          echo "Mechanism: supabase db push (approved per §4.3 of deployment-execution-contract.md)"
-          echo "Execution order: legacy mgmt-api → AIMC mgmt-api → MMM-native supabase db push"
-          supabase db push
-          echo "MMM-native migrations applied successfully via supabase db push."
+          python3 .github/scripts/apply-migrations-via-api.py \
+            --migrations-dir supabase/migrations/ \
+            --tracking-table mmm_native_migrations
+          echo "MMM-native migrations applied successfully via Supabase Management API."
 
   schema-verification:
     name: Schema Verification
