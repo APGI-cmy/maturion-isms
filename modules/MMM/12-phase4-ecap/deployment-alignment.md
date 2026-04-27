@@ -3,12 +3,21 @@
 **Wave**: mmm-post-stage12-backend-alignment-20260422
 **Issue**: maturion-isms#1455
 **Date**: 2026-04-22
-**Status**: DEPLOYMENT WORKFLOWS ALIGNED — live operational confirmation pending CS2 staging sign-off
+**Status**: DEPLOYMENT WORKFLOWS ALIGNED — workflow ownership separation complete (wave mmm-deploy-execution-strategy-20260426, 2026-04-26); live operational confirmation pending CS2 staging sign-off
 
 ## Summary
 
 Post-Stage-12 MMM deployment alignment. This document records the alignment of MAT-era
 deployment infrastructure to MMM-era naming and documentation.
+
+**Update — wave mmm-deploy-execution-strategy-20260426 (2026-04-26, issue #1470)**:
+Workflow ownership separation is now complete per §7.4 Deployment Execution Contract. The
+`deploy-mmm-vercel.yml` workflow no longer triggers on migration file changes. The
+`deploy-mmm-supabase-migrations.yml` workflow now uses `supabase db push` for MMM-native
+migrations. Schema verification has been consolidated into one job. Full operational
+model is filed in:
+- `modules/MMM/_readiness/deployment-execution-contract.md` — authoritative §7.4 contract
+- `modules/MMM/_readiness/live-validation-sequence.md` — post-deploy live validation sequence
 
 ## Vercel Frontend Deployment
 
@@ -61,6 +70,13 @@ deployment infrastructure to MMM-era naming and documentation.
 
 ## Remaining Operational Items (CS2 Action Required)
 
+**Workflow alignment status (wave mmm-deploy-execution-strategy-20260426, 2026-04-26)**: COMPLETE
+- `deploy-mmm-vercel.yml` trigger paths corrected (legacy migration paths removed)
+- `deploy-mmm-supabase-migrations.yml` updated to use `supabase db push` for MMM-native migrations
+- Schema verification consolidated (one `schema-verification` job)
+- `deployment-execution-contract.md` filed in `_readiness/`
+- `live-validation-sequence.md` filed in `_readiness/`
+
 The following items require CS2 operational action on live infrastructure:
 
 | Item | Status | Action Required |
@@ -76,6 +92,8 @@ The following items require CS2 operational action on live infrastructure:
 
 - PR #1429 — Stage 12 build execution (B1–B9 complete, merged 2026-04-21)
 - PR #1454 — MMM frontend Vercel deployment aligned
+- `modules/MMM/_readiness/deployment-execution-contract.md` — §7.4 Deployment Execution Contract (filed wave mmm-deploy-execution-strategy-20260426)
+- `modules/MMM/_readiness/live-validation-sequence.md` — Post-deploy live validation sequence (filed wave mmm-deploy-execution-strategy-20260426)
 - `modules/MMM/BUILD_PROGRESS_TRACKER.md` — primary operational tracker
 - `modules/MMM/12-phase4-ecap/cdv-staging-validation.md` — CDV staging validation checklist
 - `.agent-admin/assurance/iaa-wave-record-mmm-post-stage12-backend-alignment-20260422.md` — IAA Wave Record

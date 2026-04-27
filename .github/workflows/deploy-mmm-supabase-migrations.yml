@@ -1,12 +1,18 @@
 name: Deploy MMM Supabase Migrations
 
-# Dedicated protected workflow for live Supabase DB migrations.
-# This workflow is the ONLY authorised path for applying MMM schema changes
-# to the live Supabase database.
+# WORKFLOW OWNERSHIP BOUNDARY
+# This workflow owns ALL database migration and schema verification operations for MMM.
+# It is the ONLY authorised path for applying schema changes to the live Supabase database.
 #
-# Operating model:
-#   deploy-mmm-vercel.yml      = frontend CI / build / deploy (no live DB access)
-#   deploy-mmm-supabase-migrations.yml = live schema mutation / schema verification
+# Operating model (per §7.4 Deployment Execution Contract — deployment-execution-contract.md):
+#   deploy-mmm-vercel.yml                   = frontend CI / build / deploy (no live DB access)
+#   deploy-mmm-supabase-migrations.yml      = live schema mutation + schema verification (THIS FILE)
+#   deploy-mmm-edge-functions.yml           = Supabase Edge Function deployment
+#   deploy-mmm-ai-gateway.yml               = Render AI gateway deployment
+#
+# Migration mechanism (§4.3 approved):
+#   MMM-NATIVE migrations (supabase/migrations/): supabase db push via SUPABASE_ACCESS_TOKEN + SUPABASE_PROJECT_REF
+#   Legacy/AIMC migrations: psql via SUPABASE_DB_URL (cross-app exception — see comment in supabase-migrate job)
 #
 # This workflow:
 #   - is triggered manually (workflow_dispatch) only
@@ -59,9 +65,6 @@ jobs:
     permissions:
       contents: read
     environment: production
-    # Cross-app dependency: MMM shares the same Supabase database as the legacy app.
-    # These migrations manage shared schema objects (audits, criteria, mps, domains, evidence)
-    # that MMM reads at runtime.
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -69,12 +72,40 @@ jobs:
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
 
-      - name: Apply pending legacy migrations
+      # ─────────────────────────────────────────────────────────────────────
+      # CROSS-APP MIGRATION EXCEPTION — psql-based legacy and AIMC migrations
+      # ─────────────────────────────────────────────────────────────────────
+      # The following two steps apply migrations from:
+      #   apps/maturion-maturity-legacy/supabase/migrations/
+      #   packages/ai-centre/supabase/migrations/
+      #
+      # These are cross-app shared schema dependencies managed separately from the
+      # canonical MMM migration path. They use psql (not supabase db push) because:
+      #
+      #   1. They are NOT in the canonical supabase/migrations/ directory.
+      #      supabase db push only manages migrations tracked in supabase/migrations/.
+      #      Applying these with supabase db push would require migrating them into
+      #      the canonical directory, which is a separate governed cross-app concern.
+      #
+      #   2. These migrations define shared schema objects (organisations, audits,
+      #      criteria, mps, domains, evidence, ai_feedback) that MMM reads at runtime.
+      #      They MUST execute BEFORE MMM-native migrations and in dependency order:
+      #        legacy psql → AIMC psql → MMM-native supabase db push
+      #
+      #   3. The approved path for NEW MMM migrations is ALWAYS supabase/migrations/
+      #      via supabase db push. This psql path is an explicit exception for
+      #      cross-app legacy schema dependencies only.
+      #
+      # This exception is documented in §2 of deployment-execution-contract.md
+      # (Cross-App Migration Exception). It is not a template for future migrations.
+      # ─────────────────────────────────────────────────────────────────────
+
+      - name: Apply pending legacy migrations (cross-app exception — psql)
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
           if [ -z "$SUPABASE_DB_URL" ]; then
-            echo "ERROR: SUPABASE_DB_URL secret is not set. Cannot apply migrations."
+            echo "ERROR: SUPABASE_DB_URL secret is not set. Cannot apply legacy migrations."
             exit 1
           fi
           psql "$SUPABASE_DB_URL" -c "CREATE TABLE IF NOT EXISTS legacy_migrations (name TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now());"
@@ -105,7 +136,7 @@ jobs:
       # DEPENDENCY: AIMC migration 005_ai_feedback_pipeline.sql references the `organisations` table
       # defined in the legacy app migrations. This step MUST run AFTER "Apply pending legacy migrations"
       # and MUST target the same $SUPABASE_DB_URL.
-      - name: Apply AIMC package migrations
+      - name: Apply AIMC package migrations (cross-app exception — psql)
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
@@ -137,6 +168,33 @@ jobs:
           fi
           echo "All AIMC migrations applied successfully"
 
+      - name: Link Supabase project
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "ERROR: SUPABASE_ACCESS_TOKEN secret is not set. Cannot link Supabase project."
+            exit 1
+          fi
+          if [ -z "${{ secrets.SUPABASE_PROJECT_REF }}" ]; then
+            echo "ERROR: SUPABASE_PROJECT_REF secret is not set. Cannot link Supabase project."
+            exit 1
+          fi
+          echo "Linking Supabase project ${{ secrets.SUPABASE_PROJECT_REF }}..."
+          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+          echo "Project linked successfully."
+
+      - name: Apply MMM-native migrations (supabase db push)
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          echo "Applying MMM-native migrations from supabase/migrations/ via supabase db push..."
+          echo "Mechanism: supabase db push (approved per §4.3 of deployment-execution-contract.md)"
+          echo "Project ref: ${{ secrets.SUPABASE_PROJECT_REF }}"
+          echo "Execution order: legacy psql → AIMC psql → MMM-native supabase db push"
+          supabase db push --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+          echo "MMM-native migrations applied successfully via supabase db push."
+
   schema-verification:
     name: Schema Verification
     runs-on: ubuntu-latest
@@ -144,117 +202,69 @@ jobs:
     permissions:
       contents: read
     environment: production
+    # Consolidated schema verification — checks all tables from both MMM-native and cross-app migrations.
+    # REQUIRED tables (FAIL on absence): audits, audit_logs, criteria, mps, domains, evidence
+    # WARN tables (non-blocking): evidence_submissions
+    # (Previously split across schema-verification and schema-existence-check jobs — consolidated
+    #  per Q-C of wave mmm-deploy-execution-strategy-20260426, issue #1470.)
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: schema-verification — verify public.audits exists in schema cache
+      - name: schema-verification — verify all required tables exist
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
-          echo "Verifying schema — checking public.audits table exists..."
-          if [ -n "$SUPABASE_DB_URL" ]; then
-            if ! result=$(psql "$SUPABASE_DB_URL" -t -A -c \
-              "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='audits';"); then
-              echo "::error::psql query failed — check SUPABASE_DB_URL and database connectivity"
-              exit 1
-            fi
-            if [ "$result" != "1" ]; then
-              echo "FAIL: public.audits not found in schema cache"
-              exit 1
-            fi
-            echo "PASS: public.audits verified"
-          else
+          echo "Running consolidated schema-verification..."
+          if [ -z "$SUPABASE_DB_URL" ]; then
             echo "ERROR: SUPABASE_DB_URL not set — cannot run schema-verification. Configure the secret."
             exit 1
           fi
 
-      - name: schema-verification — verify public.audit_logs exists
-        env:
-          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-        run: |
-          echo "Verifying schema — checking public.audit_logs table exists..."
-          if [ -n "$SUPABASE_DB_URL" ]; then
-            if ! result=$(psql "$SUPABASE_DB_URL" -t -A -c \
-              "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='audit_logs';"); then
-              echo "::error::psql query failed — check SUPABASE_DB_URL and database connectivity"
-              exit 1
-            fi
-            if [ "$result" != "1" ]; then
-              echo "FAIL: public.audit_logs not found — migration 20260308000001_audit_logs_table.sql may not have been applied"
-              exit 1
-            fi
-            echo "PASS: public.audit_logs verified"
-          else
-            echo "SUPABASE_DB_URL not set — skipping live schema check (CI secret required)"
-          fi
+          # Tables with FAIL semantics (required; absence is a hard failure)
+          REQUIRED_TABLES="audits audit_logs criteria mps domains evidence"
+          # Tables with WARN semantics (expected; absence is a warning, not a hard failure)
+          WARN_TABLES="evidence_submissions"
 
-      - name: schema-verification — verify public.evidence_submissions exists
-        env:
-          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-        run: |
-          echo "Verifying schema — checking public.evidence_submissions table exists..."
-          if [ -n "$SUPABASE_DB_URL" ]; then
-            if ! result=$(psql "$SUPABASE_DB_URL" -t -A -c \
-              "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='evidence_submissions';"); then
-              echo "::error::psql query failed — check SUPABASE_DB_URL and database connectivity"
-              exit 1
-            fi
-            if [ "$result" != "1" ]; then
-              echo "WARN: public.evidence_submissions not found in schema cache (non-blocking)."
-            else
-              echo "PASS: public.evidence_submissions verified"
-            fi
-          else
-            echo "SUPABASE_DB_URL not set — skipping live schema check (CI secret required)"
-          fi
-
-  schema-existence-check:
-    name: Schema Existence Check
-    runs-on: ubuntu-latest
-    needs: [supabase-migrate]
-    permissions:
-      contents: read
-    environment: production
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: schema-existence-check — verify core tables exist in schema cache
-        env:
-          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-        run: |
-          echo "Running schema-existence-check..."
-          TABLES="audits criteria mps domains evidence"
           FAILED=""
-          if [ -n "$SUPABASE_DB_URL" ]; then
-            for TABLE in $TABLES; do
-              if ! result=$(psql "$SUPABASE_DB_URL" -t -A -c \
-                "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='${TABLE}';"); then
-                echo "::error::psql connection or query error for table ${TABLE} — check SUPABASE_DB_URL and database connectivity"
-                exit 1
-              fi
-              if [ "$result" != "1" ]; then
-                echo "FAIL: public.${TABLE} not found in schema cache"
-                FAILED="${FAILED} public.${TABLE}"
-              else
-                echo "PASS: public.${TABLE} verified"
-              fi
-            done
-            if [ -n "$FAILED" ]; then
-              echo "::error::schema-existence-check FAILED — missing tables:${FAILED}"
+
+          echo "--- Checking REQUIRED tables (FAIL on absence) ---"
+          for TABLE in $REQUIRED_TABLES; do
+            if ! result=$(psql "$SUPABASE_DB_URL" -t -A -c \
+              "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='${TABLE}';"); then
+              echo "::error::psql connection or query error for table ${TABLE} — check SUPABASE_DB_URL and database connectivity"
               exit 1
             fi
-            echo "PASS: All required schema objects verified"
-          else
-            echo "ERROR: SUPABASE_DB_URL not set — cannot run schema-existence-check."
+            if [ "$result" != "1" ]; then
+              echo "FAIL: public.${TABLE} not found in schema"
+              FAILED="${FAILED} public.${TABLE}"
+            else
+              echo "PASS: public.${TABLE} verified"
+            fi
+          done
+
+          echo "--- Checking WARN tables (WARN on absence, non-blocking) ---"
+          for TABLE in $WARN_TABLES; do
+            if ! result=$(psql "$SUPABASE_DB_URL" -t -A -c \
+              "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='${TABLE}';"); then
+              echo "::warning::psql query failed for table ${TABLE} — check SUPABASE_DB_URL"
+            elif [ "$result" != "1" ]; then
+              echo "WARN: public.${TABLE} not found in schema (non-blocking)"
+            else
+              echo "PASS: public.${TABLE} verified"
+            fi
+          done
+
+          if [ -n "$FAILED" ]; then
+            echo "::error::schema-verification FAILED — missing required tables:${FAILED}"
             exit 1
           fi
+          echo "PASS: All required schema objects verified"
 
   migration-summary:
     name: Migration Summary
     runs-on: ubuntu-latest
-    needs: [schema-verification, schema-existence-check]
+    needs: [schema-verification]
     permissions:
       contents: read
     steps:
