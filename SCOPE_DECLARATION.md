@@ -1,22 +1,24 @@
-# Scope Declaration — reconcile-combined-wave-tests-20260427
+# Scope Declaration — fix-cwt-w9-11-fu-t-005-20260427
 
-**Wave**: reconcile-combined-wave-tests-20260427
+**Wave**: fix-cwt-w9-11-fu-t-005-20260427
 **Issue**: maturion-isms#1476
-**Branch**: copilot/reconcile-combined-wave-tests
+**Branch**: copilot/fix-supabase-client-wiring
 **Date**: 2026-04-27
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ## Scope Decision
 
-Reconcile stale MAT-era Combined Wave test expectations in `schema-existence.test.ts`:
-1. Fix T-W13-SCH-1–4 to use `process.env` instead of `import.meta.env` (env vars are not
-   mapped into import.meta.env in Vitest unless explicitly declared in vitest.config.ts test.env).
-2. Extend migration scan in T-W13-SCH-11 to include `packages/ai-centre/supabase/migrations/`
-   so the drift guard enforces that `ai_knowledge` is present in some migration source.
+Reconcile stale CWT assertion W9.11-FU-T-005 in `feedback.supabase-wiring.test.ts`:
+1. Flip W9.11-FU-T-005 from a blanket ban on SUPABASE_SERVICE_ROLE_KEY to confirming its
+   presence — service-role is approved for the pending endpoint (auth enforced before
+   listPending(); key is server-side only, never exposed to client/Vite/browser).
+2. Retitle W9.11-FU-T-006 to clarify SUPABASE_ANON_KEY scope (bearer token verification).
+3. Add W9.11-FU-T-007: source-inspection gate verifying Forbidden guard, x-arc-token check,
+   and ARC_APPROVAL_TOKEN are all present before any privileged data access.
 
 ## Changed Files
 
-- `modules/mat/tests/wave13/schema-existence.test.ts`
+- `api/ai/feedback.supabase-wiring.test.ts`
 - `SCOPE_DECLARATION.md`
 
 ## Out of Scope
