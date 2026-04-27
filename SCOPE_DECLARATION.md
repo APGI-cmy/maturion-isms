@@ -19,6 +19,7 @@ should rely on the linked project context rather than passing the unsupported fl
 
 ## Out of Scope
 
-- Any governance workspace artifacts (.agent-workspace/, .agent-admin/)
 - Any agent contract files (.github/agents/*.md)
+- Any application code or schema migrations
 - Any files not listed above
+
