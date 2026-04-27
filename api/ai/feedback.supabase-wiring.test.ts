@@ -40,11 +40,26 @@ describe('Wave 9.11-FU — Supabase Client Wiring', () => {
   });
   it('W9.11-FU-T-007: pending.ts enforces auth guard before privileged access (Forbidden path present)', () => {
     // Security boundary: unauthenticated requests must fail with a Forbidden response
-    // before any privileged list operation is performed. Source must contain both the
-    // x-arc-token check and the Forbidden guard so the auth gate cannot be removed silently.
+    // before any privileged list operation is performed. Assert not only presence of
+    // the guard markers, but also that the privileged listPending() call appears after them.
     const pendingSource = readFileSync(resolve(__dirname, 'feedback', 'pending.ts'), 'utf-8');
     expect(pendingSource).toContain('Forbidden');
     expect(pendingSource).toContain('x-arc-token');
     expect(pendingSource).toContain('ARC_APPROVAL_TOKEN');
+    expect(pendingSource).toContain('listPending(');
+
+    const forbiddenIndex = pendingSource.indexOf('Forbidden');
+    const arcHeaderIndex = pendingSource.indexOf('x-arc-token');
+    const arcTokenIndex = pendingSource.indexOf('ARC_APPROVAL_TOKEN');
+    const listPendingIndex = pendingSource.indexOf('listPending(');
+
+    expect(forbiddenIndex).toBeGreaterThanOrEqual(0);
+    expect(arcHeaderIndex).toBeGreaterThanOrEqual(0);
+    expect(arcTokenIndex).toBeGreaterThanOrEqual(0);
+    expect(listPendingIndex).toBeGreaterThanOrEqual(0);
+
+    expect(forbiddenIndex).toBeLessThan(listPendingIndex);
+    expect(arcHeaderIndex).toBeLessThan(listPendingIndex);
+    expect(arcTokenIndex).toBeLessThan(listPendingIndex);
   });
 });
