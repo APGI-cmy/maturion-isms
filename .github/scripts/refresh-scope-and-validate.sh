@@ -82,7 +82,10 @@ SCOPE_EXIT=0
 if [ -f "${SCRIPT_DIR}/validate-scope-to-diff.sh" ]; then
   bash "${SCRIPT_DIR}/validate-scope-to-diff.sh" 2>&1 || SCOPE_EXIT=$?
 else
-  echo "   ⚠️  validate-scope-to-diff.sh not found at ${SCRIPT_DIR}. Skipping."
+  SCOPE_EXIT=127
+  echo "   ❌ validate-scope-to-diff.sh not found at ${SCRIPT_DIR}/validate-scope-to-diff.sh."
+  echo "   REMEDIATION: Step 2 is a mandatory gate. Restore or add"
+  echo "   validate-scope-to-diff.sh in ${SCRIPT_DIR}, then re-run this script."
 fi
 
 if [ "${SCOPE_EXIT}" -ne 0 ]; then
