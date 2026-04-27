@@ -75,8 +75,24 @@ def supabase_exec(api_url: str, access_token: str, sql: str, step: str = "SQL"):
     return parsed
 
 
-def get_count(result) -> str:
-    """Extract scalar COUNT value from a Management API query result."""
+def _escape_sql_string(value: str) -> str:
+    """Escape a string value for safe use in a SQL single-quoted literal."""
+    return value.replace("'", "''")
+
+
+def _validate_identifier(value: str, label: str) -> None:
+    """Validate that a value contains only safe identifier/filename characters."""
+    import re
+    if not re.match(r"^[A-Za-z0-9_\-\.]+$", value):
+        print(
+            f"::error::Invalid {label} value '{value}' — "
+            f"must contain only alphanumeric characters, hyphens, underscores, or dots.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+
+
     if isinstance(result, list) and result:
         row = result[0]
         val = list(row.values())[0] if isinstance(row, dict) else row[0]
@@ -114,6 +130,16 @@ def main() -> None:
     api_url = f"https://api.supabase.com/v1/projects/{project_ref}/database/query"
     tracking_table = args.tracking_table
 
+    # Validate tracking table name (used as identifier, not a value)
+    import re
+    if not re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", tracking_table):
+        print(
+            f"::error::Invalid tracking_table name '{tracking_table}' — "
+            "must be a valid SQL identifier (alphanumeric and underscores only).",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
     # Create idempotency tracking table
     supabase_exec(
         api_url,
@@ -125,10 +151,12 @@ def main() -> None:
 
     # Optionally seed a required entry (for pre-applied baseline migrations)
     if args.seed_entry:
+        _validate_identifier(args.seed_entry, "seed_entry")
+        safe_seed = _escape_sql_string(args.seed_entry)
         supabase_exec(
             api_url,
             access_token,
-            f"INSERT INTO {tracking_table} (name) VALUES ('{args.seed_entry}') "
+            f"INSERT INTO {tracking_table} (name) VALUES ('{safe_seed}') "
             f"ON CONFLICT DO NOTHING;",
             f"seed {tracking_table}",
         )
@@ -145,13 +173,15 @@ def main() -> None:
 
     for filepath in migration_files:
         name = filepath.name
+        _validate_identifier(name, "migration filename")
+        safe_name = _escape_sql_string(name)
 
         # Check if already applied
         result = supabase_exec(
             api_url,
             access_token,
             f"SELECT COUNT(*)::text AS count FROM {tracking_table} "
-            f"WHERE name = $quote${name}$quote$;",
+            f"WHERE name = '{safe_name}';",
             f"check {name}",
         )
         count = get_count(result)
@@ -177,7 +207,7 @@ def main() -> None:
         supabase_exec(
             api_url,
             access_token,
-            f"INSERT INTO {tracking_table} (name) VALUES ($quote${name}$quote$) "
+            f"INSERT INTO {tracking_table} (name) VALUES ('{safe_name}') "
             f"ON CONFLICT DO NOTHING;",
             f"record {name}",
         )

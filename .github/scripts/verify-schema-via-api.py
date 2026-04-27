@@ -83,8 +83,21 @@ def get_count(result) -> str:
     return "0"
 
 
+def _validate_table_name(table_name: str) -> None:
+    """Validate that table_name contains only safe SQL identifier characters."""
+    import re
+    if not re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", table_name):
+        print(
+            f"::error::Invalid table name '{table_name}' — "
+            "must be a valid SQL identifier (alphanumeric and underscores only).",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+
 def check_table_exists(api_url: str, access_token: str, table_name: str) -> bool:
     """Return True if public.<table_name> exists in the Supabase schema."""
+    _validate_table_name(table_name)
     result = supabase_query(
         api_url,
         access_token,
