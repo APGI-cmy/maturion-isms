@@ -1,23 +1,21 @@
-# Scope Declaration — fix-supabase-migration-workflow-failure
+# Scope Declaration — fix-http-201-response-handling-20260427
 
-**Wave**: fix-supabase-migration-workflow-failure
-**Issue**: maturion-isms#1474
-**Branch**: copilot/fix-supabase-migration-workflow-failure
+**Wave**: fix-http-201-response-handling-20260427
+**Issue**: maturion-isms#1477
+**Branch**: copilot/fix-http-201-response-handling
 **Date**: 2026-04-27
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ## Scope Decision
 
-Infrastructure fix: replace direct `psql` (unreachable from GitHub-hosted runners) with the
-Supabase Management API in the protected MMM migration workflow. Covers the legacy/AIMC
-cross-app exception path and the schema-verification step. No application source changes.
+Accept HTTP 201 Created (and 204 No Content) as success responses in the Supabase Management
+API helper scripts, so the MMM migration workflow no longer fails on valid create/write responses.
 
 ## Changed Files
 
-- `.github/scripts/supabase-mgmt-api.sh`
-- `.github/workflows/deploy-mmm-supabase-migrations.yml`
+- `.github/scripts/apply-migrations-via-api.py`
+- `.github/scripts/verify-schema-via-api.py`
 - `SCOPE_DECLARATION.md`
-- `modules/MMM/_readiness/deployment-execution-contract.md`
 
 ## Out of Scope
 
