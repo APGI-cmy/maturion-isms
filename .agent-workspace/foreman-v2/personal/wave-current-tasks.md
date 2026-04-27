@@ -23,10 +23,10 @@ Harden the Deploy MMM Supabase Migrations workflow end-to-end. Replace the faili
 | 3 | scope-declaration | foreman-v2-agent | 🟢 DONE | scope-declaration-wave-harden-deploy-mmm-supabase-migrations-20260427.md |
 | 4 | IAA Pre-Brief | independent-assurance-agent | 🟢 DONE | PRE-BRIEF committed SHA a548b39; CI_WORKFLOW + D-001–D-005 active |
 | 5 | SCOPE_DECLARATION.md update | foreman-v2-agent | 🟢 DONE | Cleared per A-029; wave-scoped |
-| 6 | Implement workflow fix | api-builder | 🔴 PENDING | Replace setup-cli + supabase link + db push with Management API (apply-migrations-via-api.py) |
-| 7 | PREHANDOVER proof | foreman-v2-agent (no ECAP) | 🔴 PENDING | After QP PASS |
-| 8 | Session memory | foreman-v2-agent (no ECAP) | 🔴 PENDING | After QP PASS |
-| 9 | IAA Final Audit | independent-assurance-agent | 🔴 PENDING | After PREHANDOVER committed |
+| 6 | Implement workflow fix | api-builder | 🟢 DONE | SHAs 5db2734 (main fix) + b68e094 (comment fix); QP PASS |
+| 7 | PREHANDOVER proof | foreman-v2-agent (no ECAP) | 🟢 DONE | .agent-workspace/foreman-v2/memory/PREHANDOVER-session-075-harden-deploy-mmm-supabase-migrations-20260427.md |
+| 8 | Session memory | foreman-v2-agent (no ECAP) | 🟢 DONE | .agent-workspace/foreman-v2/memory/session-075-20260427.md |
+| 9 | IAA Final Audit | independent-assurance-agent | 🔴 PENDING | Invoked after this commit |
 
 ## IAA Tokens Received This Wave
 
@@ -40,10 +40,10 @@ Harden the Deploy MMM Supabase Migrations workflow end-to-end. Replace the faili
 - [x] IAA Pre-Brief complete — SHA a548b39
 - [x] scope-declaration committed
 - [x] SCOPE_DECLARATION.md updated
-- [ ] Workflow fix implemented (api-builder)
-- [ ] QP PASS
-- [ ] PREHANDOVER proof committed
-- [ ] Session memory committed
+- [x] Workflow fix implemented (api-builder) — QP PASS
+- [x] QP PASS
+- [x] PREHANDOVER proof committed
+- [x] Session memory committed
 - [ ] IAA Final Audit ASSURANCE-TOKEN received
 - [ ] CS2 notified for merge approval
 
