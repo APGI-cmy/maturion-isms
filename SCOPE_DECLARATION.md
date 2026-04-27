@@ -16,13 +16,13 @@ and update CANON_INVENTORY.json hashes for all changed files.
 
 ## Changed Files
 
-- `.github/scripts/refresh-scope-and-validate.sh`
-- `SCOPE_DECLARATION.md`
-- `governance/CANON_INVENTORY.json`
-- `governance/canon/AGENT_HANDOVER_AUTOMATION.md`
-- `governance/checklists/execution-ceremony-admin-anti-patterns.md`
-- `governance/checklists/execution-ceremony-admin-checklist.md`
-- `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md`
+- `.github/scripts/refresh-scope-and-validate.sh` - New §4.3g helper script: scope-refresh + exactness validation + PREHANDOVER snippet
+- `SCOPE_DECLARATION.md` - Updated for this wave
+- `governance/CANON_INVENTORY.json` - Updated hashes for all changed canon files
+- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` - Added §4.3g gate (v1.8.0); added AAP-28/29 to auto-fail table; updated sequencing note
+- `governance/checklists/execution-ceremony-admin-anti-patterns.md` - Added AAP-28 and AAP-29 (v1.7.0)
+- `governance/checklists/execution-ceremony-admin-checklist.md` - Added Section 12 (v1.6.0)
+- `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` - Added §4.3g fields (v1.5.0)
 
 ## Out of Scope
 
