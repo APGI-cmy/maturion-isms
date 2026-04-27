@@ -28,6 +28,14 @@
  *
  * POLC Note: T-W13-SCH-1–4 committed as FAILING (RED) per Wave 13 QA gate mandate.
  *            Do NOT modify those tests to pass — implement the fix instead.
+ *
+ * RECONCILIATION NOTE (issue #1476 — MMM deployment validation):
+ *   T-W13-SCH-1–4 previously used import.meta.env to read VITE_SUPABASE_URL and
+ *   VITE_SUPABASE_ANON_KEY. Vitest does not map process.env into import.meta.env
+ *   unless the variable is explicitly declared in vitest.config.ts test.env. Using
+ *   import.meta.env caused these tests to always fail in CI even when the CI secrets
+ *   were correctly configured, producing false failures in the MMM CWT. Corrected to
+ *   use process.env directly (matching the pattern used by wave13-gate.test.ts).
  */
 import { describe, it, expect } from 'vitest';
 import * as fs from 'node:fs';
@@ -40,10 +48,8 @@ describe('T-W13-SCH: Schema Existence and Env Var Audit', () => {
     // Without the env vars pointing to a real Supabase project with the migration
     // applied, this will fail with "VITE_SUPABASE_URL must be set".
     const { createClient } = await import('@supabase/supabase-js');
-    // @ts-expect-error — import.meta.env is Vite-specific; vitest exposes it
-    const supabaseUrl: string | undefined = (import.meta as Record<string, unknown> & { env: Record<string, string> }).env?.VITE_SUPABASE_URL;
-    // @ts-expect-error — import.meta.env is Vite-specific; vitest exposes it
-    const supabaseAnonKey: string | undefined = (import.meta as Record<string, unknown> & { env: Record<string, string> }).env?.VITE_SUPABASE_ANON_KEY;
+    const supabaseUrl: string | undefined = process.env['VITE_SUPABASE_URL'];
+    const supabaseAnonKey: string | undefined = process.env['VITE_SUPABASE_ANON_KEY'];
 
     // RED: env vars not configured in test environment
     expect(supabaseUrl, 'VITE_SUPABASE_URL must be set').toBeTruthy();
@@ -59,10 +65,8 @@ describe('T-W13-SCH: Schema Existence and Env Var Audit', () => {
   it('T-W13-SCH-2: public.criteria table exists in production schema', async () => {
     // RED: fails until schema-builder applies production migration
     const { createClient } = await import('@supabase/supabase-js');
-    // @ts-expect-error — import.meta.env
-    const supabaseUrl: string | undefined = (import.meta as Record<string, unknown> & { env: Record<string, string> }).env?.VITE_SUPABASE_URL;
-    // @ts-expect-error — import.meta.env
-    const supabaseAnonKey: string | undefined = (import.meta as Record<string, unknown> & { env: Record<string, string> }).env?.VITE_SUPABASE_ANON_KEY;
+    const supabaseUrl: string | undefined = process.env['VITE_SUPABASE_URL'];
+    const supabaseAnonKey: string | undefined = process.env['VITE_SUPABASE_ANON_KEY'];
 
     expect(supabaseUrl, 'VITE_SUPABASE_URL must be set').toBeTruthy();
     expect(supabaseAnonKey, 'VITE_SUPABASE_ANON_KEY must be set').toBeTruthy();
@@ -76,10 +80,8 @@ describe('T-W13-SCH: Schema Existence and Env Var Audit', () => {
   it('T-W13-SCH-3: public.domains table exists in production schema', async () => {
     // RED: fails until schema-builder applies production migration
     const { createClient } = await import('@supabase/supabase-js');
-    // @ts-expect-error — import.meta.env
-    const supabaseUrl: string | undefined = (import.meta as Record<string, unknown> & { env: Record<string, string> }).env?.VITE_SUPABASE_URL;
-    // @ts-expect-error — import.meta.env
-    const supabaseAnonKey: string | undefined = (import.meta as Record<string, unknown> & { env: Record<string, string> }).env?.VITE_SUPABASE_ANON_KEY;
+    const supabaseUrl: string | undefined = process.env['VITE_SUPABASE_URL'];
+    const supabaseAnonKey: string | undefined = process.env['VITE_SUPABASE_ANON_KEY'];
 
     expect(supabaseUrl, 'VITE_SUPABASE_URL must be set').toBeTruthy();
     expect(supabaseAnonKey, 'VITE_SUPABASE_ANON_KEY must be set').toBeTruthy();
@@ -93,10 +95,8 @@ describe('T-W13-SCH: Schema Existence and Env Var Audit', () => {
   it('T-W13-SCH-4: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY env vars are set', () => {
     // RED: fails in environments where env vars are not configured (CI / dev without .env)
     // This is the foundational env var audit — must pass before any Supabase call.
-    // @ts-expect-error — import.meta.env
-    const supabaseUrl: string | undefined = (import.meta as Record<string, unknown> & { env: Record<string, string> }).env?.VITE_SUPABASE_URL;
-    // @ts-expect-error — import.meta.env
-    const supabaseAnonKey: string | undefined = (import.meta as Record<string, unknown> & { env: Record<string, string> }).env?.VITE_SUPABASE_ANON_KEY;
+    const supabaseUrl: string | undefined = process.env['VITE_SUPABASE_URL'];
+    const supabaseAnonKey: string | undefined = process.env['VITE_SUPABASE_ANON_KEY'];
 
     expect(supabaseUrl, 'VITE_SUPABASE_URL must be set and non-empty').toBeTruthy();
     expect(supabaseAnonKey, 'VITE_SUPABASE_ANON_KEY must be set and non-empty').toBeTruthy();
@@ -167,15 +167,23 @@ describe('T-W13-SCH: Schema Existence and Env Var Audit', () => {
   it('T-W13-SCH-11: no frontend hook references a table absent from all migrations (table name drift guard)', () => {
     // This test enumerates all .from('table') calls in hooks and verifies each table name
     // appears in at least one migration. This catches INC-W13-PROFILE-TABLE-001 class of bug.
+    //
+    // RECONCILIATION NOTE (issue #1476 — MMM deployment validation):
+    //   ai_knowledge is an AIMC/MMM-managed table (Pipeline 2 — Knowledge Ingestion).
+    //   It is managed by the MMM supabase migrations (supabase/migrations/), not by the
+    //   MAT legacy migrations (apps/maturion-maturity-legacy/supabase/migrations/). Checking
+    //   it against MAT legacy migrations produces a false positive in the MMM CWT. It is
+    //   exempt from this MAT-scoped drift guard; MMM schema coverage validates it separately.
     const HOOKS_DIR = path.resolve(process.cwd(), 'modules/mat/frontend/src/lib/hooks');
     const MIGRATION_DIR = path.resolve(process.cwd(), 'apps/maturion-maturity-legacy/supabase/migrations');
 
     // Tables that are Supabase Storage buckets (not DB tables) — exempt from this check
     const STORAGE_BUCKETS = new Set(['audit-documents', 'organisation-assets']);
 
-    // Tables explicitly documented as optional / not-yet-migrated in hook source — exempt.
-    // audit_scores: migration 20260303000006_audit_scores_table.sql now covers this table.
-    const OPTIONAL_TABLES = new Set<string>();
+    // Tables managed outside MAT legacy migrations — exempt from this MAT-scoped drift guard.
+    //   ai_knowledge: AIMC/MMM Pipeline 2 table; covered by MMM supabase migrations, not MAT.
+    //   audit_scores: migration 20260303000006_audit_scores_table.sql now covers this table.
+    const OPTIONAL_TABLES = new Set<string>(['ai_knowledge']);
 
     const hookFiles = fs.readdirSync(HOOKS_DIR).filter(f => f.endsWith('.ts') || f.endsWith('.tsx'));
     const allHookSource = hookFiles.map(f => fs.readFileSync(path.join(HOOKS_DIR, f), 'utf-8')).join('\n');
