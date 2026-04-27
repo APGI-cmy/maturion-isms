@@ -1,7 +1,7 @@
 # Scope Declaration — fix-http-201-response-handling-20260427
 
 **Wave**: fix-http-201-response-handling-20260427
-**Issue**: maturion-isms#1479
+**Issue**: maturion-isms#1477
 **Branch**: copilot/fix-http-201-response-handling
 **Date**: 2026-04-27
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
