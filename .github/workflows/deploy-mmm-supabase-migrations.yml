@@ -11,7 +11,7 @@ name: Deploy MMM Supabase Migrations
 #   deploy-mmm-ai-gateway.yml               = Render AI gateway deployment
 #
 # Migration mechanism (§4.3 approved):
-#   MMM-NATIVE migrations (supabase/migrations/): supabase db push via SUPABASE_ACCESS_TOKEN + SUPABASE_PROJECT_REF
+#   MMM-NATIVE migrations (supabase/migrations/): supabase link + supabase db push (linked project context)
 #   Legacy/AIMC migrations: Supabase Management API via SUPABASE_ACCESS_TOKEN + SUPABASE_PROJECT_REF (cross-app exception — see comment in supabase-migrate job)
 #
 # This workflow:
@@ -239,7 +239,7 @@ jobs:
           echo "Applying MMM-native migrations from supabase/migrations/ via supabase db push..."
           echo "Mechanism: supabase db push (approved per §4.3 of deployment-execution-contract.md)"
           echo "Execution order: legacy mgmt-api → AIMC mgmt-api → MMM-native supabase db push"
-          supabase db push --project-ref "$SUPABASE_PROJECT_REF"
+          supabase db push
           echo "MMM-native migrations applied successfully via supabase db push."
 
   schema-verification:
