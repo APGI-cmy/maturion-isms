@@ -72,32 +72,6 @@ jobs:
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
 
-      - name: Link Supabase project
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: |
-          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
-            echo "ERROR: SUPABASE_ACCESS_TOKEN secret is not set. Cannot link Supabase project."
-            exit 1
-          fi
-          if [ -z "${{ secrets.SUPABASE_PROJECT_REF }}" ]; then
-            echo "ERROR: SUPABASE_PROJECT_REF secret is not set. Cannot link Supabase project."
-            exit 1
-          fi
-          echo "Linking Supabase project ${{ secrets.SUPABASE_PROJECT_REF }}..."
-          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
-          echo "Project linked successfully."
-
-      - name: Apply MMM-native migrations (supabase db push)
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: |
-          echo "Applying MMM-native migrations from supabase/migrations/ via supabase db push..."
-          echo "Mechanism: supabase db push (approved per §4.3 of deployment-execution-contract.md)"
-          echo "Project ref: ${{ secrets.SUPABASE_PROJECT_REF }}"
-          supabase db push --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
-          echo "MMM-native migrations applied successfully via supabase db push."
-
       # ─────────────────────────────────────────────────────────────────────
       # CROSS-APP MIGRATION EXCEPTION — psql-based legacy and AIMC migrations
       # ─────────────────────────────────────────────────────────────────────
@@ -115,7 +89,8 @@ jobs:
       #
       #   2. These migrations define shared schema objects (organisations, audits,
       #      criteria, mps, domains, evidence, ai_feedback) that MMM reads at runtime.
-      #      They must execute before MMM-native migrations and in dependency order.
+      #      They MUST execute BEFORE MMM-native migrations and in dependency order:
+      #        legacy psql → AIMC psql → MMM-native supabase db push
       #
       #   3. The approved path for NEW MMM migrations is ALWAYS supabase/migrations/
       #      via supabase db push. This psql path is an explicit exception for
@@ -193,6 +168,33 @@ jobs:
           fi
           echo "All AIMC migrations applied successfully"
 
+      - name: Link Supabase project
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "ERROR: SUPABASE_ACCESS_TOKEN secret is not set. Cannot link Supabase project."
+            exit 1
+          fi
+          if [ -z "${{ secrets.SUPABASE_PROJECT_REF }}" ]; then
+            echo "ERROR: SUPABASE_PROJECT_REF secret is not set. Cannot link Supabase project."
+            exit 1
+          fi
+          echo "Linking Supabase project ${{ secrets.SUPABASE_PROJECT_REF }}..."
+          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+          echo "Project linked successfully."
+
+      - name: Apply MMM-native migrations (supabase db push)
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          echo "Applying MMM-native migrations from supabase/migrations/ via supabase db push..."
+          echo "Mechanism: supabase db push (approved per §4.3 of deployment-execution-contract.md)"
+          echo "Project ref: ${{ secrets.SUPABASE_PROJECT_REF }}"
+          echo "Execution order: legacy psql → AIMC psql → MMM-native supabase db push"
+          supabase db push --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+          echo "MMM-native migrations applied successfully via supabase db push."
+
   schema-verification:
     name: Schema Verification
     runs-on: ubuntu-latest
@@ -200,9 +202,9 @@ jobs:
     permissions:
       contents: read
     environment: production
-    # Consolidated schema verification — checks ALL required tables from both
-    # the MMM-native migrations (supabase/migrations/) and the cross-app legacy/AIMC migrations.
-    # Tables checked: audits, audit_logs, evidence_submissions, criteria, mps, domains, evidence
+    # Consolidated schema verification — checks all tables from both MMM-native and cross-app migrations.
+    # REQUIRED tables (FAIL on absence): audits, audit_logs, criteria, mps, domains, evidence
+    # WARN tables (non-blocking): evidence_submissions
     # (Previously split across schema-verification and schema-existence-check jobs — consolidated
     #  per Q-C of wave mmm-deploy-execution-strategy-20260426, issue #1470.)
     steps:
