@@ -87,9 +87,10 @@ suggestions:            NONE                 # NONE | see .agent-workspace/<agen
 > a separate blocker (AAP-28).
 
 **Timestamp (check run)**: [YYYY-MM-DD HH:MM:SS UTC — record exact time; must postdate the last SCOPE_DECLARATION.md commit]
+**Command**: [`<exact command executed>` — record the full local command exactly as run, e.g. `.github/scripts/validate-governance-evidence-exactness.sh` or `.github/scripts/refresh-scope-and-validate.sh`]
 **Exit code**: [0 = PASS / 1 = FAIL]
 **Scope refreshed after final edit**: [YES — SCOPE_DECLARATION.md refreshed from final diff and committed as last action / NO — BLOCKED]
-**Output summary**: [paste script output summary OR "All checks PASS — N/A (no SCOPE_DECLARATION / no PREHANDOVER proofs in PR)"]
+**Output summary**: [paste script output summary only OR "All checks PASS — N/A (no SCOPE_DECLARATION / no PREHANDOVER proofs in PR)"]
 
 | Defect Class | Check Result |
 |---|---|
