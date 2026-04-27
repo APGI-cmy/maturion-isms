@@ -136,7 +136,11 @@ echo "**Timestamp (check run)**: ${TIMESTAMP}"
 echo "**Command**: \`.github/scripts/validate-governance-evidence-exactness.sh\`"
 if [ "${EXACTNESS_EXIT}" -eq 0 ]; then
   echo "**Exit code**: 0 (PASS)"
-  echo "**Scope refreshed after final edit**: YES"
+  if [ "${OVERALL_EXIT}" -eq 0 ]; then
+    echo "**Scope refreshed after final edit**: YES"
+  else
+    echo "**Scope refreshed after final edit**: NO — confirm"
+  fi
   echo ""
   # Print last 20 lines of exactness output as summary
   SUMMARY=$(echo "${EXACTNESS_OUTPUT}" | tail -20 2>/dev/null || echo "See above output")
