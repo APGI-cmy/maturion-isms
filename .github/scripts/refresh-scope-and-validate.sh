@@ -107,7 +107,9 @@ if [ -f "${SCRIPT_DIR}/validate-governance-evidence-exactness.sh" ]; then
   EXACTNESS_OUTPUT=$(bash "${SCRIPT_DIR}/validate-governance-evidence-exactness.sh" 2>&1) || EXACTNESS_EXIT=$?
   echo "${EXACTNESS_OUTPUT}"
 else
-  echo "   ⚠️  validate-governance-evidence-exactness.sh not found at ${SCRIPT_DIR}. Skipping."
+  EXACTNESS_EXIT=1
+  echo "   ❌ validate-governance-evidence-exactness.sh not found at ${SCRIPT_DIR}."
+  echo "   ACTION: Restore the required validator and re-run this script before invoking IAA."
 fi
 
 if [ "${EXACTNESS_EXIT}" -ne 0 ]; then
