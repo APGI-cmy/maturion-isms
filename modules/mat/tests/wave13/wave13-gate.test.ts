@@ -243,14 +243,16 @@ describe('13.1 — Schema & Env-Var Gate', () => {
 
     const workflow = fs.readFileSync(MMM_MIGRATION_WORKFLOW, 'utf-8');
 
-    // The migration workflow must reference schema-existence-check (consolidation history)
-    // or schema-verification (active job name)
+    // The migration workflow must reference schema-verification (active job name).
+    // Also accept schema-existence-check for historic compatibility — but the active
+    // job key takes precedence; relying solely on a consolidation-history comment is
+    // insufficient.
     expect(
-      workflow,
-      '[T-W13-CI-1] deploy-mmm-supabase-migrations.yml must contain schema-existence-check ' +
-        'or schema-verification to satisfy WGI-01 (schema verification gate). ' +
-        'The active job is schema-verification (consolidated from schema-existence-check per issue #1470).',
-    ).toContain('schema-existence-check');
+      workflow.includes('schema-verification') || workflow.includes('schema-existence-check'),
+      '[T-W13-CI-1] deploy-mmm-supabase-migrations.yml must contain schema-verification ' +
+        '(active job name, per issue #1470 consolidation) or schema-existence-check ' +
+        '(historic name) to satisfy WGI-01 (schema verification gate).',
+    ).toBe(true);
   });
 
   // ── T-W13-CI-2 ───────────────────────────────────────────────────────────────

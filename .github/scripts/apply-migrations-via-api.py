@@ -92,7 +92,8 @@ def _validate_identifier(value: str, label: str) -> None:
         sys.exit(1)
 
 
-
+def get_count(result) -> str:
+    """Extract the count value from a Management API query result."""
     if isinstance(result, list) and result:
         row = result[0]
         val = list(row.values())[0] if isinstance(row, dict) else row[0]
@@ -140,6 +141,15 @@ def main() -> None:
         )
         sys.exit(1)
 
+    # Validate migrations directory exists before making any API calls
+    migrations_dir = pathlib.Path(args.migrations_dir)
+    if not migrations_dir.exists() or not migrations_dir.is_dir():
+        print(
+            f"::error::Migrations directory does not exist or is not a directory: {migrations_dir}",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
     # Create idempotency tracking table
     supabase_exec(
         api_url,
@@ -162,7 +172,6 @@ def main() -> None:
         )
 
     # Collect and sort migration files
-    migrations_dir = pathlib.Path(args.migrations_dir)
     migration_files = sorted(migrations_dir.glob("*.sql"))
 
     if not migration_files:
