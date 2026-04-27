@@ -21,7 +21,6 @@ cross-app exception path and the schema-verification step. No application source
 
 ## Out of Scope
 
-- Any application source code files (TypeScript, Python, SQL)
-- Any Supabase migrations (supabase/migrations/)
+- Any governance workspace artifacts (.agent-workspace/, .agent-admin/)
 - Any agent contract files (.github/agents/*.md)
 - Any files not listed above

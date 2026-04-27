@@ -800,7 +800,7 @@ describe('Wave 19 — GAP-PARSE-007: CI schema validation for module hooks vs mi
      *
      * GREEN: integration-builder (T-W19E-004) adds a CI step or script:
      *        .github/scripts/validate-mat-schema-alignment.sh  or
-     *        A job in .github/workflows/deploy-mat-vercel.yml (or a new workflow)
+     *        A job in .github/workflows/deploy-mmm-supabase-migrations.yml (or a new workflow)
      *        that checks module hooks vs migration files for schema alignment.
      *
      * Authority: GAP-PARSE-007, WAVE-19-PLAN-PROPOSAL.md T-W19E-004

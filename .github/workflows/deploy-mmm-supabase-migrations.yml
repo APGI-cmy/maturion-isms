@@ -253,8 +253,8 @@ jobs:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
     # Consolidated schema verification — checks all tables from both MMM-native and cross-app migrations.
-    # REQUIRED tables (FAIL on absence): audits, audit_logs, criteria, mps, domains, evidence
-    # WARN tables (non-blocking): evidence_submissions
+    # REQUIRED tables (FAIL on absence): public.audits, public.audit_logs, public.criteria, public.mps, public.domains, public.evidence
+    # WARN tables (non-blocking): public.evidence_submissions
     # (Previously split across schema-verification and schema-existence-check jobs — consolidated
     #  per Q-C of wave mmm-deploy-execution-strategy-20260426, issue #1470.)
     steps:
