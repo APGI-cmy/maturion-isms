@@ -28,7 +28,7 @@ opojd_compliance:       CONFIRMED            # CONFIRMED | VIOLATED (violated mu
 merge_gate_verdict:     PASS                 # PASS | FAIL
 pre_iaa_commit_state:   PASS                 # PASS | FAIL
 scope_declaration_parity: PASS              # PASS | FAIL | N/A
-scope_refreshed_post_final_edit: YES        # YES | NO — §4.3g: SCOPE_DECLARATION.md refreshed from final diff after all edits; BLOCKING if NO
+scope_refreshed_post_final_edit: YES        # YES | NO — §4.3g: SCOPE_DECLARATION.md refreshed from final diff after all edits; AAP-28 auto-fail if NO or absent; BLOCKING — Foreman must reject handover if NO
 admin_ceremony_compliance: PASS             # PASS | FAIL | N/A (ECAP jobs only)
 
 ## IAA Assurance

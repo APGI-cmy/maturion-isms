@@ -148,8 +148,12 @@ if [ "${EXACTNESS_EXIT}" -eq 0 ]; then
   # Helper: emit one table row; $1=keyword $2=label $3=pass-text
   _check_row() {
     local keyword="$1" label="$2" pass_text="$3"
-    if echo "${EXACTNESS_OUTPUT}" | grep -q "${keyword}"; then
-      if echo "${EXACTNESS_OUTPUT}" | grep -q "❌ ${keyword}"; then
+    # Check presence in output once; reuse result for the FAIL sub-check
+    local present=0 failed=0
+    echo "${EXACTNESS_OUTPUT}" | grep -q "${keyword}" && present=1 || true
+    [ "${present}" -eq 1 ] && echo "${EXACTNESS_OUTPUT}" | grep -q "❌ ${keyword}" && failed=1 || true
+    if [ "${present}" -eq 1 ]; then
+      if [ "${failed}" -eq 1 ]; then
         echo "| ${label} | ❌ FAIL — see output above |"
       else
         echo "| ${label} | ${pass_text} |"
