@@ -1,32 +1,25 @@
-# Scope Declaration — track-migration-connectivity-failure-20260427
+# Scope Declaration — harden-qa-deployment-workflow-20260427
 
-**Wave**: track-migration-connectivity-failure-20260427
-**Issue**: maturion-isms#1473
-**Branch**: copilot/track-migration-connectivity-failure
+**Wave**: harden-qa-deployment-workflow-20260427
+**Issue**: maturion-isms#1479
+**Branch**: copilot/harden-qa-handover-requirements
 **Date**: 2026-04-27
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ## Scope Decision
 
-Two MMM deployment-validation blockers (umbrella issue #1473):
-
-- **Child A (#1474)** — Replace psql-based migration steps in `deploy-mmm-supabase-migrations.yml`
-  with Supabase Management API calls (HTTPS/443). Adds reusable Python helper scripts.
-- **Child B (#1476)** — Reconcile stale MAT-era CI gate tests that hardcode the non-existent
-  `deploy-mat-vercel.yml` workflow; update to reference MMM deployment workflows per §7.4.
+Harden QA and handover process for deployment/workflow PRs (maturion-isms#1479).
+This wave creates governance documentation: new canon, checklist, template updates, FAIL-ONLY-ONCE rule, and wave infrastructure.
 
 ## Changed Files
 
-- `.github/scripts/apply-migrations-via-api.py`
-- `.github/scripts/verify-schema-via-api.py`
-- `.github/workflows/deploy-mmm-supabase-migrations.yml`
-- `modules/mat/tests/wave13/ci-gates.test.ts`
-- `modules/mat/tests/wave13/wave13-gate.test.ts`
-- `modules/mat/tests/wave19/wave19-criteria-parsing.test.ts`
+- `.agent-admin/assurance/iaa-wave-record-harden-qa-deployment-workflow-20260427.md`
+- `.agent-workspace/foreman-v2/personal/scope-declaration-wave-harden-qa-deployment-workflow-20260427.md`
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
 - `SCOPE_DECLARATION.md`
 
 ## Out of Scope
 
-- Any governance workspace artifacts (.agent-workspace/, .agent-admin/)
 - Any agent contract files (.github/agents/*.md)
+- Any application code or schema migrations
 - Any files not listed above
