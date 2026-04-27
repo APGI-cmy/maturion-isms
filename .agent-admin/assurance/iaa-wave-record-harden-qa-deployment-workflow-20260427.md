@@ -77,13 +77,13 @@ Phase 0 only. Phases 1–4 assurance deferred to final IAA invocation (Task 8: I
 
 ---
 
-### ⚠️ SCOPE BLOCKER SB-002 — `ceremony_admin_appointed: PENDING`
+### ⚠️ SCOPE BLOCKER SB-002 — ceremony-admin status changed after pre-brief
 
 **Severity**: LOW — not blocking for governance-liaison work, but must be resolved before PREHANDOVER proof is committed.
 
-**Observation**: `wave-current-tasks.md` declares `ceremony_admin_appointed: PENDING`. If an execution-ceremony-admin-agent is appointed during this wave, ACR-01 through ACR-11 will apply at IAA-FINAL (Step 3.3a). The ECAP reconciliation summary (ACR-01) will be mandatory in the Tier 3 proof bundle.
+**Observation**: At pre-brief time, SB-002 was recorded against `wave-current-tasks.md` with `ceremony_admin_appointed: PENDING`. The current `wave-current-tasks.md` in this PR now declares `ceremony_admin_appointed: NO`. Accordingly, ACR-01 through ACR-11 are **not currently in scope** on the tracker state as of this wave record revision; they become applicable only if an execution-ceremony-admin-agent is later appointed during this wave, at which point the ECAP reconciliation summary (ACR-01) will be mandatory in the Tier 3 proof bundle.
 
-**No action required from producing agent now.** IAA records this for tracking.
+**No action required from producing agent now.** IAA records this status change for tracking.
 
 ---
 
