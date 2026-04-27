@@ -1,7 +1,7 @@
 # Scope Declaration — fix-supabase-migration-workflow-failure
 
 **Wave**: fix-supabase-migration-workflow-failure
-**Issue**: maturion-isms#1471
+**Issue**: maturion-isms#1474
 **Branch**: copilot/fix-supabase-migration-workflow-failure
 **Date**: 2026-04-27
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)

@@ -121,7 +121,7 @@ its boundary.
 > Postgres connectivity to `db.<ref>.supabase.co:5432` is not available from GitHub-hosted
 > runners (Network is unreachable). The Management API uses HTTPS to `api.supabase.com`
 > and is accessible from all runner environments. No change to idempotency behavior, tracking
-> tables, or execution order. Tracked in maturion-isms#1471.
+> tables, or execution order. Tracked in maturion-isms#1474 (HTTP 201 follow-up: maturion-isms#1477).
 
 ### 2.2 Scope of Exception
 
