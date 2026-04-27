@@ -7,7 +7,9 @@
 #   Step 2 — Runs validate-scope-to-diff.sh (BL-027 exact-set match).
 #   Step 3 — Runs validate-governance-evidence-exactness.sh (PATH-MISMATCH,
 #             COUNT-MISMATCH, HASH-INCOMPLETE, VERSION-MISMATCH checks).
-#   Step 4 — Prints a PREHANDOVER Evidence Exactness Gate snippet ready for
+#   Step 4 — Verifies commit order: SCOPE_DECLARATION.md must be the most
+#             recent commit (AAP-28 final-step discipline, git log check).
+#   Step 5 — Prints a PREHANDOVER Evidence Exactness Gate snippet ready for
 #             copy-paste into the proof.
 #
 # Usage (run from repository root after all implementation edits are committed):
@@ -126,9 +128,42 @@ fi
 echo ""
 
 # ─────────────────────────────────────────────────────────────────────────────
-# STEP 4 — PREHANDOVER snippet
+# STEP 4 — Commit-order verification (AAP-28)
+# Verifies that SCOPE_DECLARATION.md was refreshed as the FINAL committed
+# action before PREHANDOVER/IAA invocation (§4.3g Rule, AAP-28 discipline).
 # ─────────────────────────────────────────────────────────────────────────────
-echo "── STEP 4: PREHANDOVER Evidence Exactness Gate Snippet ──"
+echo "── STEP 4: COMMIT-ORDER VERIFICATION (AAP-28) ──"
+echo ""
+echo "   Recent commit history (git log --oneline -5):"
+RECENT_LOG=$(git log --oneline -5 2>/dev/null || echo "(unable to read git log)")
+echo "${RECENT_LOG}" | while IFS= read -r line; do echo "     ${line}"; done
+echo ""
+
+SCOPE_ORDER_OK=0
+LAST_COMMIT_FILES=$(git diff-tree --no-commit-id -r --name-only HEAD 2>/dev/null || true)
+if echo "${LAST_COMMIT_FILES}" | grep -qx "SCOPE_DECLARATION.md"; then
+  SCOPE_ORDER_OK=1
+  echo "   ✅ COMMIT-ORDER: PASS — SCOPE_DECLARATION.md is present in the most"
+  echo "   recent commit, satisfying the §4.3g / AAP-28 final-step requirement."
+else
+  OVERALL_EXIT=1
+  echo "   ❌ COMMIT-ORDER: FAIL — SCOPE_DECLARATION.md was NOT the last committed"
+  echo "   action. Files in most recent commit:"
+  if [ -n "${LAST_COMMIT_FILES}" ]; then
+    echo "${LAST_COMMIT_FILES}" | while IFS= read -r f; do echo "     - \`${f}\`"; done
+  else
+    echo "     (no files found in last commit)"
+  fi
+  echo "   ACTION (AAP-28): Refresh SCOPE_DECLARATION.md from the diff shown in"
+  echo "   Step 1, commit it as the final change, and re-run this script."
+  echo "   VERIFY: git log --oneline -5 must show SCOPE_DECLARATION.md in the top entry."
+fi
+echo ""
+
+# ─────────────────────────────────────────────────────────────────────────────
+# STEP 5 — PREHANDOVER snippet
+# ─────────────────────────────────────────────────────────────────────────────
+echo "── STEP 5: PREHANDOVER Evidence Exactness Gate Snippet ──"
 echo ""
 echo "   Copy the block below and paste it into the '## Evidence Exactness Gate'"
 echo "   section of your PREHANDOVER proof (replaces the placeholder text)."
@@ -139,10 +174,10 @@ echo "**Timestamp (check run)**: ${TIMESTAMP}"
 echo "**Command**: \`.github/scripts/validate-governance-evidence-exactness.sh\`"
 if [ "${EXACTNESS_EXIT}" -eq 0 ]; then
   echo "**Exit code**: 0 (PASS)"
-  if [ "${OVERALL_EXIT}" -eq 0 ]; then
+  if [ "${OVERALL_EXIT}" -eq 0 ] && [ "${SCOPE_ORDER_OK}" -eq 1 ]; then
     echo "**Scope refreshed after final edit**: YES"
   else
-    echo "**Scope refreshed after final edit**: NO — confirm"
+    echo "**Scope refreshed after final edit**: NO — BLOCKED (commit-order check failed; see Step 4)"
   fi
   echo ""
   # Print last 20 lines of exactness output as summary
@@ -175,7 +210,7 @@ if [ "${EXACTNESS_EXIT}" -eq 0 ]; then
   _check_row "VERSION-MISMATCH" "VERSION-MISMATCH cross-artifact (Check 4)" "✅ PASS / ℹ️ N/A"
 else
   echo "**Exit code**: ${EXACTNESS_EXIT} (FAIL)"
-  echo "**Scope refreshed after final edit**: [YES / NO — confirm after fixing failures]"
+  echo "**Scope refreshed after final edit**: [YES / NO — confirm after fixing failures above (Step 4 commit-order check required)]"
   echo ""
   echo "**Output summary**: ❌ EVIDENCE EXACTNESS GATE FAILED — fix errors above and re-run."
   echo ""
