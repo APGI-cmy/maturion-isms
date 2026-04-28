@@ -295,7 +295,7 @@ Per AAWP_MAT overlay (applies to Track B if implementation proceeds):
 
 ---
 
-*Pre-Brief committed: 2026-04-28 | Wave: wave-mps-source-verification | Session: session-076-20260428*
+*Pre-Brief committed: 2026-04-28 | Wave: wave-mps-source-verification | Session: session-077-20260428*
 *Anti-regression obligations: YES (Track B conditional) | Ceremony admin: NO*
 
 ---

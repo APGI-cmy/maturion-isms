@@ -42,7 +42,7 @@ ceremony_admin_appointed: NO
 **CS2 Authorization**: CONFIRMED — CS2 opened issue, foreman-v2-agent assigned
 **Verb Classification**: verify, investigate, record, orchestrate → **POLC-Orchestration mode**
 **Track A Status**: COMPLETE
-**Track B Status**: BLOCKED pending CS2 DB verification gate
+**Track B Status**: BLOCKED pending CS2 re-upload of 25 generic MPS Word documents (DB verification COMPLETE — LIKELY_ABSENT confirmed 2026-04-28)
 
 ### Wave Purpose
 CS2 clarification directive: Before accepting static question bank in PR #1500, verify whether
@@ -112,7 +112,7 @@ separation_violations_detected: none
 - This is a static hand-authored implementation approved by CS2 as a **known interim measure** under maturion-isms#1499
 - Must NOT close maturion-isms#1501 — canonical source verification remains open
 - Tests pass (81/81 B3-ui tests GREEN); source traceability from KUC to follow in Track B
-- Foreman gate hold lifted per CS2 approval; Track B remains blocked for separate reason (DB verification)
+- Foreman gate hold lifted per CS2 approval; Track B remains blocked pending CS2 re-upload of 25 MPS Word docs (DB verification confirmed LIKELY_ABSENT 2026-04-28)
 
 ---
 
@@ -132,8 +132,8 @@ separation_violations_detected: none
 | ID | Type | Status |
 |----|------|--------|
 | PR #1500 gate hold | LIFTED — CS2 approved PR #1500 as interim static implementation (maturion-isms#1499); must NOT close #1501 | RESOLVED |
-| maturion-isms#1501 | Canonical KUC/AIMC source verification — remains open, not blocked by PR #1500 | OPEN — awaiting CS2 DB verification |
-| Track B gate | CS2 must confirm MPS documents in DB before delegation; separate from PR #1500 approval | OPEN — awaiting CS2 |
+| maturion-isms#1501 | Canonical KUC/AIMC source verification — remains open; DB verification COMPLETE (LIKELY_ABSENT); re-upload required | OPEN — pending CS2 re-upload |
+| Track B gate | DB verification COMPLETE (LIKELY_ABSENT 2026-04-28); blocked pending CS2 re-upload of 25 generic MPS Word documents | OPEN — pending re-upload |
 
 ---
 
@@ -171,6 +171,6 @@ to raise a clarification issue about PR #1500) would be prevented by a structura
 ## Session Parking Station Entry
 
 ```
-| 2026-04-28 | foreman-v2-agent | session-mps-source-verification-20260428 | GAP-ANALYSIS | PR #1500 approved interim (CS2 caveat: must NOT close #1501); Track B delegation pending CS2 DB verification | mps-migration-gap-analysis-20260428.md |
+| 2026-04-28 | foreman-v2-agent | session-mps-source-verification-20260428 | GAP-CONFIRMED | PR #1500 approved interim (CS2 caveat: must NOT close #1501); DB verification COMPLETE — LIKELY_ABSENT; Track B blocked pending CS2 re-upload of 25 MPS Word docs | mps-migration-gap-analysis-20260428.md |
 ```
 

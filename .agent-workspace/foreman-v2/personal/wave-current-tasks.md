@@ -41,7 +41,7 @@ TRACK A (mandatory first) → CS2 DB Verification Gate → TRACK B (conditional)
 | 6 | Track A: Scope declaration | foreman-v2-agent | 🟢 DONE | scope-declaration-wave-mps-source-verification-20260428.md |
 | 7 | Track A: SCOPE_DECLARATION.md update | foreman-v2-agent | 🟢 DONE | Cleared per A-029; wave-scoped |
 | 8 | Track A: Session memory (Track A) | foreman-v2-agent | 🟢 DONE | session-mps-source-verification-20260428.md |
-| B-1 | (BLOCKED) Structured Domain→MPS→Criteria JSON model | mat-specialist + api-builder | ❌ BLOCKED | Pending CS2 DB verification + MPS re-upload |
+| B-1 | (BLOCKED) Structured Domain→MPS→Criteria JSON model | mat-specialist + api-builder | ❌ BLOCKED | Pending CS2 re-upload of 25 MPS Word docs (gap confirmed LIKELY_ABSENT) |
 | B-2 | (BLOCKED) Free-assessment question bank derivation | ui-builder | ❌ BLOCKED | Pending B-1 |
 | B-3 | (BLOCKED) QA tests proving all 25 MPSs covered | qa-builder | ❌ BLOCKED | Pending B-1/B-2 |
 
@@ -51,14 +51,14 @@ TRACK A (mandatory first) → CS2 DB Verification Gate → TRACK B (conditional)
 
 CS2 must perform before Track B delegation:
 
-1. Query live Supabase `ai_knowledge` table — SQL provided in migration gap analysis.
-2. Confirm whether MPS 1–25 generic Word documents were migrated from legacy KUC.
-3. If PRESENT: confirm generic content (not diamond-specific LDCS); approve Track B.
-4. If ABSENT: initiate re-upload of 25 Word documents via AIMC upload pipeline; then approve Track B.
+1. ~~Query live Supabase `ai_knowledge` table — SQL provided in migration gap analysis.~~ ✅ DONE
+2. ~~Confirm whether MPS 1–25 generic Word documents were migrated from legacy KUC.~~ ✅ DONE — **LIKELY_ABSENT** (all counts = 0)
+3. ABSENT confirmed — initiate re-upload of 25 Word documents via MMM framework upload pipeline (mmm-framework-sources bucket).
+4. After re-upload and parse pipeline completes, approve Track B delegation.
 
 **PR #1500 (static question bank)**: Approved interim implementation under maturion-isms#1499
 (CS2 caveat: must NOT close maturion-isms#1501). #1501 remains open. Track B remains blocked
-pending CS2 DB verification / re-upload decision.
+pending CS2 re-upload of 25 generic MPS Word documents (DB verification confirmed LIKELY_ABSENT).
 
 ## IAA Tokens Received This Wave
 
@@ -74,8 +74,9 @@ pending CS2 DB verification / re-upload decision.
 - [x] Track A: KUC investigation complete
 - [x] Track A: Migration gap analysis committed
 - [x] Track A: Session memory written
-- [ ] CS2: DB verification of ai_knowledge table
-- [ ] CS2: Track B approval (or confirmation of interim static approach)
+- [x] CS2: DB verification of ai_knowledge table — **COMPLETE** (LIKELY_ABSENT; migration gap confirmed 2026-04-28)
+- [ ] CS2: Re-upload of 25 generic MPS Word documents via MMM framework upload pipeline
+- [ ] CS2: Track B approval (after re-upload and parse pipeline complete)
 - [ ] Track B: Delegation to builders (BLOCKED pending CS2 gate)
 - [ ] Track B: PREHANDOVER + IAA Final Audit (AAWP_MAT — mandatory)
 - [ ] CS2 notified for merge approval

@@ -11,15 +11,35 @@
 
 ## 1. Executive Summary
 
-**Track A Result**: **MIGRATION GAP LIKELY** — code/schema investigation finds no evidence that
+**Track A Result**: **MIGRATION GAP CONFIRMED** — code/schema investigation finds no evidence that
 the 25 generic MPS Word source documents were migrated into the current MMM storage system.
-**CS2 Action Required**: Query the live Supabase database using the SQL provided below (§6) to
-confirm presence or absence. Based on that finding, decide Track B path.
+**CS2 DB Verification**: COMPLETE (2026-04-28) — Result: **LIKELY_ABSENT**.
+
+CS2 ran live Supabase queries against `mmm-framework-sources` bucket and MMM model tables:
+
+| Query | Result |
+|-------|--------|
+| `storage.objects` for bucket `mmm-framework-sources` | 0 rows |
+| MPS-specific document search in `mmm-framework-sources` | 0 rows |
+| `public.mmm_maturity_process_steps` count | 0 |
+| `public.mmm_criteria` count | 0 |
+| `mps_source_documents_found` (summary query) | 0 |
+| `total_domains` | 0 |
+| `total_mps` | 0 |
+| `total_criteria` | 0 |
+| `verification_status` | **LIKELY_ABSENT** |
+
+**Conclusion**: The generic MPS 1–25 Word source pack was **not migrated** into the current
+MMM/KUC/AIMC live data path. Migration gap confirmed.
+
+**Next Action Required (CS2)**: Re-upload the 25 generic MPS Word documents via the MMM
+framework upload pipeline (`mmm-framework-sources` bucket). Track B delegation proceeds once
+the upload and parse pipeline completes successfully.
 
 **PR #1500 Status**: **APPROVED INTERIM** (CS2 caveat) — merged as static interim implementation
 under maturion-isms#1499. Must NOT close maturion-isms#1501. Canonical KUC/AIMC source
-verification (#1501) remains open and unresolved. Track B is still required once CS2 confirms
-DB verification results.
+verification (#1501) remains open and unresolved. Track B replaces the static interim once
+the KUC-derived model is confirmed and complete.
 
 ---
 
@@ -102,14 +122,16 @@ CS2 uploads Word document → mmm-framework-sources bucket → mmm_parse_jobs cr
 
 ### 4.3 Migration Gap Conclusion
 
-The 25 generic MPS Word source documents appear **NOT to have been migrated** into the new MMM system
+The 25 generic MPS Word source documents were **NOT migrated** into the new MMM system
 (`mmm-framework-sources` bucket → `mmm_maturity_process_steps` / `mmm_criteria`). The storage
 infrastructure EXISTS (bucket, tables, parse jobs pipeline), but the data has NOT been seeded or
 uploaded via migration scripts.
 
-**This is a MIGRATION GAP** that requires CS2 to:
-1. **Verify** by querying the live database (SQL provided in §6 below).
-2. **Act** by re-uploading the 25 Word documents via the MMM framework upload pipeline if absent.
+**This is a CONFIRMED MIGRATION GAP** (CS2 DB verification completed 2026-04-28 — LIKELY_ABSENT).
+CS2 action required:
+1. ~~Verify by querying the live database~~ ✅ DONE — `verification_status = LIKELY_ABSENT`
+2. **Re-upload** the 25 Word documents via the MMM framework upload pipeline (mmm-framework-sources
+   bucket). Track B delegation blocked until re-upload and parse pipeline completes.
 
 ---
 
@@ -233,20 +255,23 @@ static implementation** under maturion-isms#1499, with the following explicit ca
 
 - **PR #1500 must NOT close maturion-isms#1501.**
 - maturion-isms#1501 (canonical KUC/AIMC source verification) remains **open and unresolved**.
-- Track B (KUC-derived question bank) remains blocked pending CS2 DB verification and re-upload
-  decision — it is not blocked by PR #1500 itself.
-- A follow-up action is required to search KUC/document-upload tables for the generic MPS Word
-  source pack and determine whether a KUC migration or re-upload is needed.
+- Track B (KUC-derived question bank) remains blocked pending CS2 re-upload of the 25 generic MPS
+  Word documents (DB verification COMPLETE — migration gap confirmed; re-upload required before
+  Track B delegation).
+- A follow-up action is required: CS2 must re-upload the 25 generic MPS Word documents via the
+  MMM framework upload pipeline (mmm-framework-sources bucket). DB verification confirms gap.
 
 The static approach in PR #1500 is technically correct (tests pass, scoring works) and has been
-accepted as a known interim measure. Track B will replace it once the canonical KUC source is
-confirmed and the structured Domain → MPS → Criteria model is derived.
+accepted as a known interim measure. Track B will replace it once the 25 Word documents are
+re-uploaded, parsed, and the structured Domain → MPS → Criteria model is derived.
 
 ---
 
-## 9. Track B Prerequisites (if CS2 confirms documents present)
+## 9. Track B Prerequisites (BLOCKED — pending CS2 re-upload of 25 MPS Word documents)
 
-When CS2 confirms MPS source documents are present in the MMM system, Track B delegation proceeds:
+CS2 DB verification (2026-04-28) confirms documents are ABSENT. Track B delegation proceeds
+**after CS2 re-uploads the 25 generic MPS Word documents** via the MMM framework upload pipeline
+and the parse pipeline populates `mmm_maturity_process_steps` and `mmm_criteria`:
 
 | Builder | Task | Evidence Required |
 |---------|------|-------------------|
@@ -259,4 +284,4 @@ IAA pre-brief Track B categories: AAWP_MAT × 3 + MPS Coverage Proof (mandatory 
 
 ---
 
-*Document committed as Track A deliverable. CS2 action required before Track B delegation.*
+*Document committed as Track A deliverable. CS2 DB verification completed 2026-04-28 — result: LIKELY_ABSENT. Migration gap confirmed. Re-upload of 25 generic MPS Word documents required before Track B delegation.*
