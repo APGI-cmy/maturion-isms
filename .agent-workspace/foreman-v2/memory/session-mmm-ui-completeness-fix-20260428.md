@@ -4,7 +4,7 @@
 **Date**: 2026-04-28
 **Agent Version**: foreman-v2-agent v6.2.0 (contract 2.14.0)
 **Branch**: copilot/fix-mmm-frontend-ui-issues
-**Issue**: maturion-isms#1491
+**Issue**: maturion-isms#1496
 
 ---
 
@@ -33,7 +33,7 @@ prebrief_tasks_count: 1
 ## Wave Summary
 
 **Wave**: mmm-ui-completeness-fix-20260428 — MMM UI Completeness Fix
-**Trigger**: CS2 issue maturion-isms#1491 — deployed MMM frontend rendered as bare, unstyled HTML despite green deployment workflows. Root cause: B3 UI wave omitted global CSS stylesheet and CSS import in entry point. All page components lacked CSS classes.
+**Trigger**: CS2 issue maturion-isms#1496 — deployed MMM frontend rendered as bare, unstyled HTML despite green deployment workflows. Root cause: B3 UI wave omitted global CSS stylesheet and CSS import in entry point. All page components lacked CSS classes.
 **Deliverable**: Global CSS design system (`apps/mmm/src/index.css`), CSS wired into `main.tsx`, all B3 pages restyled, anti-regression test T-MMM-S6-021 added.
 **Test result**: 65/65 B3-ui tests GREEN (T-MMM-S6-001 through T-MMM-S6-021); `tsc && vite build` 0 errors/warnings.
 

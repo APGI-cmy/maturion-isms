@@ -339,7 +339,7 @@ describe('T-MMM-S6-020: mmm_free_assessments table used in mmm-assessment-free-r
 // ─── T-MMM-S6-021: Global CSS stylesheet is present and imported (anti-regression) ─
 // Anti-regression gate: deployment workflows passing does NOT prove the UI is styled.
 // This test ensures the global CSS file exists and is imported in the app entry point.
-// Rationale: Issue maturion-isms#1491 — deployed MMM UI was bare/unstyled despite green
+// Rationale: Issue maturion-isms#1496 — deployed MMM UI was bare/unstyled despite green
 // deployment workflows. Root cause: missing index.css + missing CSS import in main.tsx.
 describe('T-MMM-S6-021: Global CSS stylesheet exists and is imported (anti-regression)', () => {
   it('apps/mmm/src/index.css exists', () => {

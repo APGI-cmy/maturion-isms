@@ -1,7 +1,7 @@
 # Scope Declaration — mmm-ui-completeness-fix-20260428
 
 **Wave**: mmm-ui-completeness-fix-20260428
-**Issue**: maturion-isms#1491
+**Issue**: maturion-isms#1496
 **Branch**: copilot/fix-mmm-frontend-ui-issues
 **Date**: 2026-04-28
 **Last refreshed**: 2026-04-28 (post-final-edit scope refresh per §4.3g / AAP-28)
@@ -9,7 +9,7 @@
 
 ## Scope Decision
 
-Fix MMM deployed UI being bare/unstyled despite green deployment workflows (maturion-isms#1491).
+Fix MMM deployed UI being bare/unstyled despite green deployment workflows (maturion-isms#1496).
 Root cause: B3 UI wave omitted global CSS stylesheet and CSS import in entry point. Fix adds
 `apps/mmm/src/index.css`, imports it in `main.tsx`, restyles all B3 page components with CSS
 classes, adds anti-regression test T-MMM-S6-021, and updates governance tracking documents.

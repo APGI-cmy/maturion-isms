@@ -12,9 +12,9 @@
 
 ---
 
-## UI Build-Correctness Fix (maturion-isms#1491 — 2026-04-28)
+## UI Build-Correctness Fix (maturion-isms#1496 — 2026-04-28)
 
-**Issue**: [maturion-isms#1491](https://github.com/APGI-cmy/maturion-isms/issues/1491)  
+**Issue**: [maturion-isms#1496](https://github.com/APGI-cmy/maturion-isms/issues/1496)  
 **Root cause confirmed**: B3 UI wave delivered functional page components but omitted the global CSS stylesheet (`apps/mmm/src/index.css`) and its import in `apps/mmm/src/main.tsx`. All deployment workflows passed (transport working), but the deployed product UI was bare/unstyled raw HTML.
 
 **Fix applied**:
@@ -45,9 +45,10 @@
 
 | Item | Previous Status | Updated Status |
 |------|----------------|----------------|
-| Production build succeeds without errors | ⚠️ PENDING live validation | ✅ BUILD CONFIRMED — `vite build` produces CSS + JS bundle |
-| CSS/design system loaded in production | ❌ NOT PRESENT (root cause confirmed) | ✅ FIXED — `index.css` imported; Vite bundles CSS to `dist/assets/index-*.css` |
-| UI components render correctly | ⚠️ PENDING | ✅ CODE FIXED — styled pages deployed; live screenshot evidence pending CS2 validation |
+| CSS bundle produced by build | ⚠️ PENDING | ✅ PASS — `vite build` produces `dist/assets/index-*.css` (16.17 kB gzip 3.33 kB) |
+| Preview deployment available | ⚠️ PENDING | ✅ PASS — Vercel preview build succeeded; CSS bundle present in preview |
+| Production UI validation | ❌ NOT PRESENT (root cause confirmed) | ⚠️ PENDING POST-MERGE / CS2 validation — production deploy and post-deploy auth smoke test were skipped for this PR |
+| Live screenshot evidence | ❌ ABSENT | ⚠️ PENDING — awaiting CS2 post-merge validation of production URL |
 | Anti-regression gate | ❌ ABSENT | ✅ T-MMM-S6-021 added — future builds cannot omit CSS and pass CI |
 
 ---
