@@ -30,7 +30,7 @@ correctly; (5) independent risk beyond checklist compliance.
 
 ## Out of Scope
 
-- Any agent contract files (.github/agents/*.md)
-- Any application code or schema migrations
+- Runtime changes to `api/ai/feedback/pending.ts`
+- Any Supabase schema or migration changes
+- Any deployment workflow changes
 - Any files not listed above
-
