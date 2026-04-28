@@ -335,3 +335,35 @@ describe('T-MMM-S6-020: mmm_free_assessments table used in mmm-assessment-free-r
     expect(src).toContain('crypto.randomUUID()');
   });
 });
+
+// ─── T-MMM-S6-021: Global CSS stylesheet is present and imported (anti-regression) ─
+// Anti-regression gate: deployment workflows passing does NOT prove the UI is styled.
+// This test ensures the global CSS file exists and is imported in the app entry point.
+// Rationale: Issue maturion-isms#1491 — deployed MMM UI was bare/unstyled despite green
+// deployment workflows. Root cause: missing index.css + missing CSS import in main.tsx.
+describe('T-MMM-S6-021: Global CSS stylesheet exists and is imported (anti-regression)', () => {
+  it('apps/mmm/src/index.css exists', () => {
+    expect(fileExists('apps/mmm/src/index.css')).toBe(true);
+  });
+  it('index.css is non-trivial (contains at least one CSS rule)', () => {
+    const src = readFile('apps/mmm/src/index.css');
+    // Must contain at least one CSS property declaration
+    expect(src).toMatch(/[a-z-]+\s*:\s*[^;]+;/);
+  });
+  it('main.tsx imports index.css', () => {
+    const src = readFile('apps/mmm/src/main.tsx');
+    expect(src).toContain("import './index.css'");
+  });
+  it('LandingPage.tsx uses at least one CSS className (not bare HTML)', () => {
+    const src = readFile('apps/mmm/src/pages/LandingPage.tsx');
+    expect(src).toContain('className=');
+  });
+  it('SignUpPage.tsx uses at least one CSS className (not bare HTML)', () => {
+    const src = readFile('apps/mmm/src/pages/SignUpPage.tsx');
+    expect(src).toContain('className=');
+  });
+  it('FreeAssessmentPage.tsx uses at least one CSS className (not bare HTML)', () => {
+    const src = readFile('apps/mmm/src/pages/FreeAssessmentPage.tsx');
+    expect(src).toContain('className=');
+  });
+});

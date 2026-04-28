@@ -21,17 +21,36 @@ export default function FreeAssessmentPage() {
     },
   });
   return (
-    <main>
-      <h1>Free Maturity Assessment</h1>
-      {DOMAINS.map(d => (
-        <div key={d}>
-          <label>{d}</label>
-          {(['YES','PARTIAL','NO'] as Response[]).map(r => (
-            <label key={r}><input type="radio" name={d} value={r} onChange={() => setResponses(prev => ({...prev,[d]:r}))} />{r}</label>
+    <main className="assessment-page">
+      <div className="container">
+        <div className="page-header">
+          <h1 className="page-header__title">Free Maturity Assessment</h1>
+          <p className="page-header__subtitle">
+            Answer YES, PARTIAL, or NO for each domain to receive your baseline maturity score.
+          </p>
+        </div>
+
+        <div className="domain-list">
+          {DOMAINS.map(d => (
+            <div key={d} className="domain-card">
+              <p className="domain-card__title">{d}</p>
+              <div className="radio-group">
+                {(['YES','PARTIAL','NO'] as Response[]).map(r => (
+                  <label key={r} className="radio-option">
+                    <input type="radio" name={d} value={r} onChange={() => setResponses(prev => ({...prev,[d]:r}))} />
+                    {r}
+                  </label>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
-      ))}
-      <button onClick={() => mutation.mutate()} disabled={mutation.isPending}>Submit</button>
+
+        <button className="btn btn-primary" onClick={() => mutation.mutate()} disabled={mutation.isPending}>
+          {mutation.isPending ? 'Submitting…' : 'Submit Assessment'}
+        </button>
+      </div>
     </main>
   );
 }
+
