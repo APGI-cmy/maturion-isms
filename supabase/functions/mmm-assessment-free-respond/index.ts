@@ -144,7 +144,7 @@ Deno.serve(async (req: Request) => {
       const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
       const { error } = await supabase.from('mmm_free_assessments').insert({
         session_token,
-        domain_responses: { assessment_version, responses },
+        responses: { assessment_version, responses },
         baseline_result,
       });
       if (error) {
