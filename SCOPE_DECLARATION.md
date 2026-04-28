@@ -1,7 +1,7 @@
 # Scope Declaration — add-issue-mismatch-validation-20260428
 
 **Wave**: add-issue-mismatch-validation-20260428
-**Issue**: maturion-isms#1486
+**Issue**: maturion-isms#1490
 **Branch**: copilot/add-issue-mismatch-validation
 **Date**: 2026-04-28
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)

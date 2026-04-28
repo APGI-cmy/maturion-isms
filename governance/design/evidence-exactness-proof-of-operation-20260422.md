@@ -60,7 +60,7 @@
 | COUNT-MISMATCH | Check 2 | `❌ COUNT-MISMATCH: declared files_changed=15 in SCOPE_DECLARATION.md but actual git diff shows 12 files` |
 | HASH-INCOMPLETE | Check 3 | `❌ HASH-INCOMPLETE: hash verification claimed in .agent-admin/prehandover/proof-1441.md but 3 CANON_INVENTORY entries have null/empty hashes` |
 | AUTHORITY-STALE | Check 4 | Covered — every canon artifact version is tracked in CANON_INVENTORY; stale version citations in governance files are caught when the file is in the PR diff |
-| ISSUE-MISMATCH | Check 6 | `❌ ISSUE-MISMATCH: declared issue 'maturion-isms#1400' in SCOPE_DECLARATION.md does not match expected 'maturion-isms#1486'` |
+| ISSUE-MISMATCH | Check 6 | `❌ ISSUE-MISMATCH: SCOPE_DECLARATION.md declares issue #1400 but expected #1486 (PR_BODY (parsed closing/issue ref))` |
 
 ---
 
@@ -113,12 +113,12 @@
 **Exit code**: 0 (warning only — does not block; allows amendment history sections to reference prior versions)
 
 ### ISSUE-MISMATCH (Check 6)
-**Trigger (stale reference)**: `SCOPE_DECLARATION.md` has `**Issue**: maturion-isms#1400` but `EXPECTED_ISSUE=1486` (or `maturion-isms#1486`) is supplied.
+**Trigger (stale reference)**: `SCOPE_DECLARATION.md` has `**Issue**: maturion-isms#1400` but `EXPECTED_ISSUE_NUMBER=1486` is set (or PR body contains `closes maturion-isms#1486`).
 **Expected output**:
 ```
 ── CHECK 6: ISSUE-MISMATCH ──
-   ❌ ISSUE-MISMATCH: declared issue 'maturion-isms#1400' in SCOPE_DECLARATION.md does not match expected 'maturion-isms#1486'
-      Remediation: Update the **Issue**: line in SCOPE_DECLARATION.md to '**Issue**: maturion-isms#1486'.
+   Declared: maturion-isms#1400 (issue #1400)
+   ❌ ISSUE-MISMATCH: SCOPE_DECLARATION.md declares issue #1400 but expected #1486 (PR_BODY (parsed closing/issue ref))
 ```
 **Exit code**: 1
 
@@ -126,32 +126,29 @@
 **Expected output**:
 ```
 ── CHECK 6: ISSUE-MISMATCH ──
-   ❌ ISSUE-MISMATCH: No **Issue**: line found in SCOPE_DECLARATION.md
-      Remediation: Add '**Issue**: maturion-isms#NNNN' to SCOPE_DECLARATION.md pointing to the current governing issue.
+   ⚠️  WARNING — No **Issue**: field found in SCOPE_DECLARATION.md
 ```
-**Exit code**: 1
+**Exit code**: 0 (warning only — does not block merge)
 
-**Trigger (malformed)**: `SCOPE_DECLARATION.md` has `**Issue**: issue-1486` (no repo prefix, no hash).
+**Trigger (unparseable number — authority available)**: `SCOPE_DECLARATION.md` has `**Issue**: badformat` (no trailing digits) and `EXPECTED_ISSUE_NUMBER=1490` is set.
 **Expected output**:
 ```
 ── CHECK 6: ISSUE-MISMATCH ──
-   ❌ ISSUE-MISMATCH: Malformed issue reference 'issue-1486' in SCOPE_DECLARATION.md
-      Expected format: maturion-isms#NNNN
-      Remediation: Fix the **Issue**: line to use the format 'maturion-isms#NNNN'.
+   Declared: badformat (issue #?)
+   ❌ ISSUE-MISMATCH: could not parse issue number from declared value 'badformat'; expected #1490 (EXPECTED_ISSUE_NUMBER env var)
 ```
 **Exit code**: 1
 
-**Trigger (no EXPECTED_ISSUE set — format-only pass)**: `SCOPE_DECLARATION.md` has `**Issue**: maturion-isms#1486` and no `EXPECTED_ISSUE` env var is set.
+**Trigger (no authority source available — informational only)**: `SCOPE_DECLARATION.md` has `**Issue**: maturion-isms#1490` and neither `EXPECTED_ISSUE_NUMBER` nor a parseable closing reference in `PR_BODY` is available.
 **Expected output**:
 ```
 ── CHECK 6: ISSUE-MISMATCH ──
-   ✅ PASS (format-only) — Issue reference 'maturion-isms#1486' is well-formed.
-      ℹ️  No EXPECTED_ISSUE supplied; authority comparison skipped.
-      To enable full authority check: export EXPECTED_ISSUE=<issue-number-or-repo#NNN>
+   Declared: maturion-isms#1490 (issue #1490)
+   ℹ️  No expected issue authority available (set EXPECTED_ISSUE_NUMBER or PR_BODY) — recorded as-declared, not validated against PR authority
 ```
 **Exit code**: 0
 
-**Authority-source model**: `EXPECTED_ISSUE` env var (bare number or `repo#NNN`) takes priority. In CI, it is derived from a `Governing-Issue:` control field in the PR body. When absent, the check is format-only (warns but does not hard-fail).
+**Authority-source model**: `EXPECTED_ISSUE_NUMBER` env var (bare number or `repo#NNN`) takes priority. In CI, `PR_BODY` env var is passed by `preflight-evidence-gate.yml` and parsed for `closes/fixes/resolves/addresses` keywords and `maturion-isms#N` references. When no authority source is available, the check is informational only (no failure).
 
 ---
 
