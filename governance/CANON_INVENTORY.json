@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-04-27",
+  "last_updated": "2026-04-28",
   "total_canons": 216,
-  "generation_timestamp": "2026-04-22T08:19:00Z",
+  "generation_timestamp": "2026-04-28T05:42:00Z",
   "canon_entry_schema": {
     "description": "Schema for canon entries in CANON_INVENTORY.json",
     "required_fields": [
@@ -1547,19 +1547,19 @@
     },
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-      "version": "1.12.0",
-      "file_hash": "70c3f2022d15469696ca3e6e920072b15f69dce31d60b1cf43b9edbe9f110922",
-      "file_hash_sha256": "70c3f2022d15469696ca3e6e920072b15f69dce31d60b1cf43b9edbe9f110922",
+      "version": "1.13.0",
+      "file_hash": "f015abcfa85d9bcb40e5849be1c79b8880b7b6bf97fb8066a330daa947f52372",
+      "file_hash_sha256": "f015abcfa85d9bcb40e5849be1c79b8880b7b6bf97fb8066a330daa947f52372",
       "effective_date": "2026-02-24",
-      "amended_date": "2026-04-22",
-      "description": "Defines the Independent Assurance Agent (IAA) class: role, hard-trigger authority, independence requirements, five-phase delivery proof protocol, binary output (ASSURANCE-TOKEN / REJECTION-PACKAGE), and trigger table. v1.1.0: Zero-Severity-Tolerance policy added.",
+      "amended_date": "2026-04-28",
+      "description": "Defines the Independent Assurance Agent (IAA) class: role, hard-trigger authority, independence requirements, evidence-first assurance mandate (7 rules: Acceptance-Criteria Evidence Matrix, Build-Correctness Gate, Evidence-Type Downgrade Prohibition, Diff-First Audit Rule, Agent Claim Non-Evidence Rule, Independent Risk Challenge, Expanded Verdict Taxonomy), five-phase delivery proof protocol, expanded output specification (PASS/REJECTED/BLOCKED_PENDING_RUNTIME_EVIDENCE/BLOCKED_PENDING_BUILD_CORRECTNESS/PASS_WITH_CS2_WAIVER/INVALID_PRIOR_TOKEN), ACR trigger table (ACR-01 through ACR-26), and zero-severity-tolerance policy.",
       "type": "canon",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "layer_down_status": "INTERNAL",
-      "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA); v1.1.0 amendment: Enforce zero-severity-tolerance \u2014 any finding triggers rejection",
-      "last_updated": "2026-04-22",
-      "change_note": "v1.12.0: Added ACR-18 (missing declared ceremony artifact), ACR-19 (unmet declared final-state condition), ACR-20 (unmet declared cross-artifact consistency condition), ACR-21 (missing declared acknowledgement/ownership); makes unmet wave-level Admin Ceremony Contract items explicit rejection triggers; maturion-isms#1447. SELF-MOD-IAA-001: CS2 direct review/sign-off required.",
-      "canonical_version": "1.12.0"
+      "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA); v1.13.0 amendment: Restore evidence-first IAA assurance with build-correctness and independent risk challenge — maturion-isms#1491",
+      "last_updated": "2026-04-28",
+      "change_note": "v1.13.0: Added §Evidence-First Assurance Mandate (Rules 1–7); expanded §Output Specification with BLOCKED_PENDING_RUNTIME_EVIDENCE, BLOCKED_PENDING_BUILD_CORRECTNESS, PASS_WITH_CS2_WAIVER, INVALID_PRIOR_TOKEN verdicts; added ACR-22 through ACR-26; authority: CS2 — maturion-isms#1491. SELF-MOD-IAA-001: CS2 direct review/sign-off required.",
+      "canonical_version": "1.13.0"
     },
     {
       "filename": "INITIALIZATION_COMPLETENESS_GATE.md",
@@ -1933,18 +1933,18 @@
     },
     {
       "filename": "PREHANDOVER.template.md",
-      "version": "1.5.0",
-      "canonical_version": "1.5.0",
-      "file_hash": "4b3f07328ab0895b7f47237ae8372e5f3fb68c47b8404f08f1d399373b65c80d",
-      "file_hash_sha256": "4b3f07328ab0895b7f47237ae8372e5f3fb68c47b8404f08f1d399373b65c80d",
+      "version": "1.6.0",
+      "canonical_version": "1.6.0",
+      "file_hash": "974ed7bbb3b55cf5ee379bc1e1a9e8414f329ba5c2333d69cf6492e7bd0cd338",
+      "file_hash_sha256": "974ed7bbb3b55cf5ee379bc1e1a9e8414f329ba5c2333d69cf6492e7bd0cd338",
       "effective_date": "2026-04-22",
-      "amended_date": "2026-04-27",
-      "last_updated": "2026-04-27",
-      "description": "ECAP PREHANDOVER proof template. Includes ## Authoritative Reference Table section (\u00a74.3f Check M), art_refresh_required/art_refresh_completed YAML fields (\u00a74.3f Check N), active_bundle_iaa_coherence field, ## Ripple/Cross-Agent Assessment section, and ## Evidence Exactness Gate section.",
+      "amended_date": "2026-04-28",
+      "last_updated": "2026-04-28",
+      "description": "ECAP PREHANDOVER proof template. Includes ## Authoritative Reference Table section (\u00a74.3f Check M), art_refresh_required/art_refresh_completed YAML fields (\u00a74.3f Check N), active_bundle_iaa_coherence field, ## Ripple/Cross-Agent Assessment section, ## Evidence Exactness Gate section, and ## Acceptance-Criteria Matrix (Producer-Side) section (ACR-22 / \u00a7Evidence-First Assurance Mandate Rule 1).",
       "type": "template",
       "path": "governance/templates/execution-ceremony-admin/PREHANDOVER.template.md",
       "layer_down_status": "INTERNAL",
-      "change_note": "v1.4.0: Added ## Evidence Exactness Gate section (5-check summary: PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE, VERSION-MISMATCH cross-artifact, VERSION-MISMATCH internal); wave gov-evidence-exactness-hardening-20260422"
+      "change_note": "v1.6.0: Added mandatory ## Acceptance-Criteria Matrix (Producer-Side) section (ACR-22 / \u00a7Evidence-First Assurance Mandate Rule 1 / INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0 / maturion-isms#1491); maps governing-issue acceptance criteria to hard evidence; agent claims are not evidence (ACR-24); evidence-type downgrade is ACR-23 trigger"
     },
     {
       "filename": "PRE_BUILD_REALITY_CHECK_CANON.md",
@@ -2532,17 +2532,17 @@
     },
     {
       "filename": "iaa-wave-record.template.md",
-      "version": "1.1.0",
-      "file_hash": "3eac6d6afc61cb85843db296f392bc36db701eb7cb8504ae5f3c17af6418e961",
+      "version": "1.2.0",
+      "file_hash": "45b08b57ff0e2ca87ff0e79417726cb65be2a15ef7a533fd1479d52129077faf",
       "effective_date": "2026-04-22",
-      "description": "IAA Wave Record template \u2014 defines the standard structure for wave-level assurance records including Pre-Brief, PREHANDOVER Proof, IAA Assurance Verdict, Rejection History, and Record Metadata. v1.1.0: Added \u00a71.6 Wave-Level Admin Ceremony Contract.",
+      "description": "IAA Wave Record template \u2014 defines the standard structure for wave-level assurance records including Pre-Brief, PREHANDOVER Proof, IAA Assurance Verdict, Rejection History, and Record Metadata. v1.2.0: Expanded IAA Assurance Verdict section with \u00a73.2 Acceptance-Criteria Evidence Matrix, \u00a73.3 Build-Correctness Assessment, \u00a73.4 Independent Risk Challenge; renumbered former \u00a73.2/3.3 to \u00a73.5/3.6; updated verdict field to include all expanded taxonomy values; updated Record Schema Version to 1.2.0.",
       "type": "template",
       "path": "governance/templates/iaa-wave-record.template.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "3eac6d6afc61cb85843db296f392bc36db701eb7cb8504ae5f3c17af6418e961",
-      "canonical_version": "1.1.0",
-      "last_updated": "2026-04-22",
-      "change_note": "v1.1.0: Added \u00a71.6 Wave-Level Admin Ceremony Contract section; updated Record Schema Version to 1.1.0; authority: CS2 \u2014 maturion-isms#1447"
+      "file_hash_sha256": "45b08b57ff0e2ca87ff0e79417726cb65be2a15ef7a533fd1479d52129077faf",
+      "canonical_version": "1.2.0",
+      "last_updated": "2026-04-28",
+      "change_note": "v1.2.0: Added \u00a73.2 Acceptance-Criteria Evidence Matrix (MANDATORY before PASS \u2014 Rule 1), \u00a73.3 Build-Correctness Assessment (Rule 2), \u00a73.4 Independent Risk Challenge (Rule 6); expanded verdict taxonomy to include BLOCKED_PENDING_RUNTIME_EVIDENCE/BLOCKED_PENDING_BUILD_CORRECTNESS/PASS_WITH_CS2_WAIVER/INVALID_PRIOR_TOKEN; updated Record Schema Version to 1.2.0; authority: CS2 \u2014 maturion-isms#1491"
     },
     {
       "filename": "liaison-mini-ceremony-checklist.md",

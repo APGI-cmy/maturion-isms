@@ -1,8 +1,8 @@
 # IAA FAIL-ONLY-ONCE Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 2.8.0
-**Last Updated**: 2026-04-22
+**Version**: 3.0.0
+**Last Updated**: 2026-04-28
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -739,6 +739,7 @@ A CS2 written waiver with a named scheduled follow-up PR is the only permitted e
 | 2.7.0 | 2026-03-17 | A-034 (FUNCTIONAL-BEHAVIOUR-REGISTRY reading — mandatory for BUILD/AAWP_MAT PRs; niggle patterns as blocking checks), A-035 (niggle pattern library application — stack-specific patterns in niggle-pattern-library.md must be applied to relevant code areas) added — CS2 IAA functional behaviour strengthening issue. Next sequential ID: A-036. |
 | 2.8.0 | 2026-04-22 | A-036 (Temporal Integrity — future-dated factual claims are REJECTION-PACKAGE blockers; canon ref T-001/T-002), A-037 (Evidence-Type Discipline — LIVE_RUNTIME/LIVE_E2E items cannot be satisfied by STATIC_CODE/CI_TEST/CONFIG evidence; canon ref E-001/E-002/E-003) added — governance hardening following PR #1444 review miss. Canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md. Next sequential ID: A-038. |
 | 2.9.0 | 2026-04-26 | A-038 (§7.x-OVL-PBG coupling — any §7.x addition to PRE_BUILD_STAGE_MODEL_CANON.md requires simultaneous OVL-PBG-NNN addition to iaa-category-overlays.md and §7.x reference update to iaa-trigger-table.md PRE_BUILD_STAGE_MODEL supporting controls — same wave, same PR or explicit CS2 waiver) added — REJECTION-001 systemic prevention, session-072-20260426, wave mmm-deploy-strategy-oversight-20260426, issue maturion-isms#1468. Next sequential ID: A-039. |
+| 3.0.0 | 2026-04-28 | A-039 (Agent Claims Are Not Evidence — Acceptance-Criteria Matrix required before PASS; ACR-22), A-040 (Evidence-Type Downgrade Prohibition — runtime evidence cannot be substituted without CS2 waiver; ACR-23), A-041 (Diff-First Classification — IAA must independently compute changed files; ACR-25), A-042 (Independent Risk Challenge mandatory before PASS token; ACR-26) added — evidence-first IAA assurance restoration; authority: CS2 — maturion-isms#1491. Next sequential ID: A-043. |
 
 ---
 
@@ -818,3 +819,113 @@ For any PR classified as BUILD or AAWP_MAT, IAA MUST at Step 3.1:
 > If FAIL: REJECTION-PACKAGE citing pattern ID and specific violation.
 
 **Status**: ACTIVE — enforced on all BUILD/AAWP_MAT PRs
+
+---
+
+### A-039 — Agent Claims Are Not Evidence: Acceptance-Criteria Matrix Required Before PASS
+
+**Triggered by**: maturion-isms#1491 — IAA issued PASS token on a deployment workflow PR where the governing issue required an end-to-end successful protected workflow run, but the evidence relied on static/pattern-parity evidence and `gate_triggered: false`. Agent statements were treated as evidence.
+
+**Incident pattern**: IAA accepted PREHANDOVER claims, QP attestations, and builder handover notes ("tests pass", "workflow reviewed", "gate green", "build complete", "deployment works") as sufficient evidence for PASS, without independently verifying each governing-issue acceptance criterion against a hard artifact. This allows a PR to be treated as merge-permitted even when the actual build, workflow, deployment, or runtime evidence does not satisfy the governing issue.
+
+**Permanent Rule**:
+Before issuing ANY PASS token, IAA MUST:
+1. Extract every acceptance criterion from the governing issue (not from the PREHANDOVER proof, not from the builder's scope declaration — from the **governing issue itself**).
+2. For each criterion: identify the required evidence type (STATIC_CODE, CONFIG, ARTIFACT, CI_TEST, LIVE_RUNTIME, or LIVE_E2E).
+3. Locate the submitted evidence reference — this must be a **hard artifact**: CI run URL, command output log, diff, hash, schema query result, runtime response, health check, or screenshot with context. Agent claims are NOT evidence. PREHANDOVER attestations are NOT evidence. QP claims are NOT evidence. They may point to evidence but are not evidence themselves.
+4. Independently verify the evidence: confirm the artifact exists, confirm it is plausible, confirm it relates to the criterion.
+5. Record the complete matrix in the IAA verdict output (iaa-wave-record `## IAA Assurance Verdict` section).
+6. If any non-waived criterion has no hard evidence reference → REJECTED (ACR-22).
+
+**Exception**: A CS2-committed waiver artifact explicitly naming the specific missing evidence and waiver rationale permits PASS_WITH_CS2_WAIVER. No other exception is valid.
+
+**How this is checked in Phase 4 (Acceptance-Criteria Matrix)**:
+> A-039 Acceptance-Criteria Matrix:
+> Governing issue: [issue number and title]. Acceptance criteria extracted: [list criteria].
+> For each criterion: evidence type required: [type]. Evidence reference: [hard artifact or MISSING].
+> IAA independent verification: [result].
+> If any criterion has MISSING hard evidence and no CS2 waiver → REJECTED (ACR-22).
+> Matrix status: COMPLETE [N criteria verified] / INCOMPLETE [list unmet criteria].
+
+**Status**: ACTIVE — enforced on all qualifying IAA invocations (A-039)
+
+---
+
+### A-040 — Evidence-Type Downgrade Prohibition: Runtime Evidence Cannot Be Substituted Without CS2 Waiver
+
+**Triggered by**: maturion-isms#1491 — same incident as A-039. `gate_triggered: false` accepted as evidence of no trigger requirement when the diff contained deployment-workflow paths. Pattern-parity evidence accepted as equivalent to a CI_TEST pass. LIVE_E2E evidence required by the governing issue was satisfied by STATIC_CODE review.
+
+**Incident pattern**: IAA accepted lower-fidelity evidence than the governing issue or acceptance criteria required:
+- A deployment workflow PR required "end-to-end successful protected workflow run" (LIVE_E2E) but was approved on pattern parity + `gate_triggered: false` (STATIC_CODE).
+- "Tested locally" substituted for CI_TEST run evidence.
+- "Schema reviewed" substituted for migration execution evidence (LIVE_RUNTIME).
+
+**Permanent Rule**:
+When the governing issue, acceptance criteria, architecture contract, or pre-brief declaration requires `CI_TEST`, `LIVE_RUNTIME`, or `LIVE_E2E` evidence:
+1. IAA MUST NOT accept `STATIC_CODE`, pattern parity, agent attestation, or any lower-fidelity type as equivalent.
+2. If the higher-fidelity evidence is not present in the submitted bundle → issue `BLOCKED_PENDING_RUNTIME_EVIDENCE`, not PASS.
+3. Exception: an explicit CS2-committed waiver artifact naming the specific missing evidence and rationale → `PASS_WITH_CS2_WAIVER`. No other exception applies.
+4. `gate_triggered: false` is only a valid STATIC_CODE evidence item if IAA independently confirms from the **actual diff** that no gate-triggering paths were changed. Agent attestation of `gate_triggered: false` is a claim, not evidence.
+
+**How this is checked in Phase 4 (Evidence-Type Compliance)**:
+> A-040 Evidence-Type Downgrade Prohibition:
+> For each acceptance criterion: required evidence type: [type]. Submitted evidence type: [type].
+> If required ≥ CI_TEST and submitted < CI_TEST with no CS2 waiver → BLOCKED_PENDING_RUNTIME_EVIDENCE (ACR-23).
+> gate_triggered: false claim: independently verified from actual diff? YES [diff confirms] / NO [claim only — REJECTED].
+
+**Status**: ACTIVE — enforced on all qualifying IAA invocations (A-040)
+
+---
+
+### A-041 — Diff-First Classification: IAA Must Independently Compute Changed Files
+
+**Triggered by**: maturion-isms#1491 — same incident chain. IAA classified a PR from the agent's declared scope ("governance-only") rather than independently computing the actual changed-file set. The actual diff contained deployment-workflow files that triggered different category requirements.
+
+**Permanent Rule**:
+IAA MUST independently compute the actual changed-file set from the PR diff — NOT from the PREHANDOVER proof, NOT from the SCOPE_DECLARATION, NOT from the agent's classification.
+
+1. IAA derives: changed files, protected path categories, workflow/deployment/schema/script/governance impact.
+2. IAA checks whether `SCOPE_DECLARATION.md` matches the actual diff.
+3. If the actual diff contradicts the declared scope/category → the actual diff wins. IAA re-evaluates under the correct category.
+4. If the correct category requires evidence not present in the bundle → REJECTED or BLOCKED.
+5. ACR-25 fires on any diff-first classification mismatch.
+
+**How this is checked in Phase 2 (Diff-First Classification)**:
+> A-041 Diff-First Classification:
+> Actual changed files (from diff): [list].
+> Declared scope/category: [declared].
+> Diff-derived category: [computed].
+> Match: [YES / NO — if NO: re-evaluate under diff-derived category].
+> SCOPE_DECLARATION parity: [MATCH / MISMATCH — detail].
+
+**Status**: ACTIVE — enforced on all qualifying IAA invocations (A-041)
+
+---
+
+### A-042 — Independent Risk Challenge Mandatory Before PASS Token
+
+**Triggered by**: maturion-isms#1491 — IAA issued PASS tokens by executing the checklist without independently challenging whether the build could fail post-merge. Material risks (such as `gate_triggered: false` when the diff included deployment workflow changes) were not identified because no affirmative risk challenge was performed.
+
+**Permanent Rule**:
+Before issuing ANY PASS token, IAA MUST complete and record the five-question Independent Risk Challenge:
+
+1. What could still fail after merge?
+2. What evidence would prove it does not fail?
+3. Is that evidence present?
+4. Is there any contradiction between issue intent, architecture requirements, and PR evidence?
+5. Would a reasonable production owner accept this as merge-ready?
+
+All five answers must be substantive — not template placeholders, not "N/A" without rationale, not single-word responses. If questions 3 or 5 answer NO → issue REJECTED or BLOCKED_PENDING_RUNTIME_EVIDENCE regardless of checklist completion.
+
+IAA is not limited to existing checklist items. IAA has an affirmative duty to identify material risk even when no checklist item names it. ACR-26 fires if the challenge is absent or incomplete.
+
+**How this is checked in Phase 4 (Independent Risk Challenge)**:
+> A-042 Independent Risk Challenge:
+> 1. What could still fail after merge? [answer — not a placeholder]
+> 2. Evidence that it does not fail? [evidence reference or "NOT PRESENT — blocks PASS"]
+> 3. Evidence present? [YES — ref / NO — BLOCKED_PENDING_RUNTIME_EVIDENCE or REJECTED]
+> 4. Contradiction between issue intent, architecture, and PR evidence? [YES — detail / NO]
+> 5. Reasonable production owner accepts as merge-ready? [YES — rationale / NO — REJECTED]
+> Challenge status: COMPLETE / INCOMPLETE [list unanswered questions].
+
+**Status**: ACTIVE — enforced on all qualifying IAA invocations (A-042)

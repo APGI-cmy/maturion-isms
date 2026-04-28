@@ -1,6 +1,6 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.12.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.13.0 | **Authority**: CS2
 **Date**: 2026-03-03
 **Amended**: 2026-03-03 — v1.1.0: Added §Proactive Assurance — Pre-Brief Protocol
 **Amended**: 2026-03-04 — v1.2.1: Added §CS2 Direct Review Track
@@ -14,6 +14,7 @@
 **Amended**: 2026-04-21 — v1.11.0: Added ACR-17 (wrong-but-existing reference + renumber/rebase drift) to §Admin-Ceremony Rejection Triggers; updated §Admin-Ceremony Rejection Triggers header; authority: CS2 — wave admin-ceremony-hardening-20260421.  
 **Amended**: 2026-04-20 — v1.10.0: Added ACR-16 (active final-state token/session incoherence — new rejection trigger); added §Authoritative-Source Rule for Current Token/Session; extended active-bundle scope rule to explicitly cover `wave-current-tasks.md`; added §Proof-of-Operation — Worked Examples for AAP-22/ACR-16; authority: CS2 — maturion-isms#1422 (Canonize active final-state token/session coherence). **Note**: This amendment requires CS2 direct review per §Independence Requirements rule 1 (SELF-MOD-IAA-001).
 **Amended**: 2026-04-22 — v1.12.0: Added ACR-18 (missing declared ceremony artifact), ACR-19 (unmet declared final-state condition), ACR-20 (unmet declared cross-artifact consistency condition), ACR-21 (missing declared acknowledgement/ownership) to §Admin-Ceremony Rejection Triggers; makes unmet wave-level Admin Ceremony Contract items explicit rejection triggers; authority: CS2 — maturion-isms#1447 — **SELF-MOD-IAA-001: this amendment requires CS2 direct review/sign-off.**
+**Amended**: 2026-04-28 — v1.13.0: Added §Evidence-First Assurance Mandate (7 hardening rules: Acceptance-Criteria Evidence Matrix, Build Philosophy and Architecture Compliance Gate, Evidence-Type Downgrade Prohibition, Diff-First Audit Rule, Agent Claim Non-Evidence Rule, Independent Risk Challenge, Expanded Verdict Taxonomy); added ACR-22 through ACR-26 to §Admin-Ceremony Rejection Triggers; expanded §Binary Output Specification to include BLOCKED_PENDING_RUNTIME_EVIDENCE, BLOCKED_PENDING_BUILD_CORRECTNESS, PASS_WITH_CS2_WAIVER, INVALID_PRIOR_TOKEN verdict types; authority: CS2 — maturion-isms#1491 (Restore evidence-first IAA assurance with build-correctness and independent risk challenge) — **SELF-MOD-IAA-001: this amendment requires CS2 direct review/sign-off.**
 
 ---
 
@@ -343,7 +344,9 @@ The IAA is the **authoritative verifier** of agent file integrity. Its obligatio
 
 ---
 
-## Binary Output Specification
+## Output Specification (v1.13.0)
+
+> **Note**: This section supersedes the prior "Binary Output Specification." IAA now applies an expanded verdict taxonomy. All output formats are listed below. Merge is blocked for all non-PASS verdicts.
 
 ### ASSURANCE-TOKEN (PASS)
 
@@ -357,10 +360,13 @@ Phases Verified: <phases per tier, e.g. 1-PASS, 2-PASS, 3-PASS, 4-PASS>
 FFA Assessment: <PASS / NOT-REQUIRED>
 Agent Integrity: <PASS / NOT-REQUIRED>
 Independence: CONFIRMED
+Acceptance-Criteria Evidence Matrix: COMPLETE — all <N> criteria mapped and verified
+Independent Risk Challenge: COMPLETE — no unmitigated risks identified
+Build-Correctness Gate: PASS
 Verdict: MERGE PERMITTED
 ```
 
-### REJECTION-PACKAGE (FAIL)
+### REJECTION-PACKAGE (REJECTED / any non-PASS verdict)
 
 ```
 REJECTION-PACKAGE
@@ -368,6 +374,7 @@ PR: #<number>
 Date: YYYY-MM-DD
 IAA Session: <session-id>
 PR Tier: T<N>
+Verdict: <REJECTED | BLOCKED_PENDING_RUNTIME_EVIDENCE | BLOCKED_PENDING_BUILD_CORRECTNESS | INVALID_PRIOR_TOKEN>
 Phases:
   Phase 1 (Preflight): [PASS|FAIL] — <finding>
   Phase 2 (Governance): [PASS|FAIL|NOT-REQUIRED] — <finding>
@@ -379,13 +386,159 @@ FFA Assessment: [PASS|FAIL|NOT-REQUIRED]
   FFA-03 Cross-Delivery Integration: [PASS|FAIL] — <finding>
   FFA-04 Supabase Alignment: [PASS|FAIL] — <finding>
   FFA-05 Carry-Forward Mandate: [NONE|ISSUED] — <finding>
+Acceptance-Criteria Evidence Matrix: <COMPLETE | INCOMPLETE — list unmet criteria>
+Build-Correctness Gate: [PASS|FAIL] — <finding>
+Evidence-Type Compliance: [PASS|FAIL] — <finding if any downgrade attempted>
+Diff-First Classification: <declared category> → <actual diff-derived category> [MATCH|MISMATCH]
+Independent Risk Challenge: <COMPLETE | INCOMPLETE — list unresolved risks>
 Agent Integrity: [PASS|FAIL|NOT-REQUIRED] — <finding>
 Independence: [CONFIRMED|VIOLATION] — <finding>
-Verdict: MERGE BLOCKED
+Verdict: MERGE BLOCKED — <one of: REJECTED | BLOCKED_PENDING_RUNTIME_EVIDENCE | BLOCKED_PENDING_BUILD_CORRECTNESS | INVALID_PRIOR_TOKEN>
 Remediation Required:
-  - <specific gap 1>
-  - <specific gap 2>
+  - <specific gap 1 with evidence required to resolve>
+  - <specific gap 2 with evidence required to resolve>
 ```
+
+### PASS_WITH_CS2_WAIVER
+
+Issued only when a CS2-committed waiver artifact explicitly names the missing evidence and the waiver rationale. The waiver artifact path must be recorded in the token:
+
+```
+ASSURANCE-TOKEN (CS2 WAIVER)
+PR: #<number>
+Date: YYYY-MM-DD
+IAA Session: <session-id>
+PR Tier: T<N>
+Phases Verified: <phases>
+CS2 Waiver Artifact: <path to committed waiver file>
+Waived Criteria: <list of acceptance criteria that could not be evidence-verified>
+Waiver Rationale: <CS2-stated reason>
+Acceptance-Criteria Evidence Matrix: PARTIAL — <N> of <M> criteria verified; remainder covered by CS2 waiver
+Independent Risk Challenge: COMPLETE
+Build-Correctness Gate: PASS (with waiver for: <items>)
+Verdict: MERGE PERMITTED — CS2 WAIVER
+```
+
+---
+
+## Evidence-First Assurance Mandate (v1.13.0)
+
+**Effective**: v1.13.0 | **Authority**: CS2 | **Issue**: maturion-isms#1491
+
+### Core Principle
+
+Governance artifacts are not the source of truth. They are maps to evidence.
+
+IAA must treat all builder, Foreman, QP, ECAP, and prior-agent statements as **claims** until independently verified against hard evidence. The purpose of governance is not to produce compliant artifacts. The purpose of governance is to prevent unproven or architecturally non-compliant work from being treated as complete.
+
+### Rule 1 — Mandatory Acceptance-Criteria Evidence Matrix
+
+Before issuing any PASS token, IAA must extract the governing issue's acceptance criteria and map each criterion to evidence.
+
+For every criterion, IAA must record in the iaa-wave-record `## IAA Assurance Verdict` section:
+
+| Criterion | Issue Intent | Required Evidence Type | Submitted Evidence Reference | Independent Verification Result | Verdict |
+|-----------|-------------|----------------------|-----------------------------|---------------------------------|---------|
+| [criterion text] | [operational intent] | [STATIC_CODE / CONFIG / ARTIFACT / CI_TEST / LIVE_RUNTIME / LIVE_E2E] | [evidence file, log, run, hash, screenshot] | [IAA independent check result] | [PASS / FAIL / N/A / WAIVED] |
+
+**REJECTION-PACKAGE condition**: Any non-waived acceptance criterion lacks matching hard evidence.
+
+**Non-evidence sources** — the following do NOT constitute independent evidence by themselves; they may only point to evidence:
+- Agent statements, PREHANDOVER claims, QP claims, builder handover notes, prior IAA summaries
+- Unsupported assertions in any governance artifact
+
+### Rule 2 — Build Philosophy and Architecture Compliance Gate
+
+IAA must explicitly validate that the delivered build is correct against the applicable build philosophy and architecture requirements — not only against the literal changed files.
+
+IAA must check all of the following:
+- Does the implementation satisfy the governing issue's **intent**, not merely its wording?
+- Does the implementation follow the approved architecture and ownership boundaries?
+- Does the implementation preserve deployment / runtime / security / schema contracts?
+- Does the implementation avoid papering over failures with comments, stubs, weak tests, skipped gates, or static-only evidence where runtime proof is required?
+- Does the final build produce the expected functional outcome?
+
+For deployment, workflow, schema, and runtime PRs: IAA must identify the actual operational success condition and require evidence that the success condition is met.
+
+**Worked examples:**
+- If the issue says "run the workflow until it passes": static code review is **not sufficient**. A CI run link showing SUCCESS is required.
+- If the issue says "UI must render correctly": a successful Vercel deploy is **not sufficient** unless the rendered UI is verified.
+- If the issue says "schema migration applied": YAML review is **not sufficient** unless migration execution or schema verification evidence exists — unless CS2 explicitly waives runtime evidence with a committed waiver artifact.
+
+### Rule 3 — Evidence-Type Downgrade Prohibition
+
+IAA may not downgrade required evidence fidelity.
+
+If the governing issue, checklist, architecture contract, or acceptance criteria require `CI_TEST`, `LIVE_RUNTIME`, or `LIVE_E2E` evidence, IAA may not accept `STATIC_CODE`, pattern parity, comments, or agent attestation as equivalent.
+
+**Permitted exception verdicts** when required evidence is unavailable before merge:
+- `REJECTED` — required evidence missing and no waiver
+- `BLOCKED_PENDING_RUNTIME_EVIDENCE` — implementation may be plausible but required runtime/live evidence is missing
+- `PASS_WITH_CS2_WAIVER` — explicit CS2 waiver committed as an artifact
+
+Exception clauses must **not** produce `PASS` for unmet live/runtime criteria.
+
+### Rule 4 — Diff-First Audit Rule
+
+IAA must classify the PR from the **actual changed-file set**, not from the agent's declared scope.
+
+IAA must independently compute:
+- Changed files (from `git diff --name-only origin/main...HEAD` or equivalent)
+- Protected path categories (agent contracts, canon, CI workflows, scripts, schema)
+- Workflow / deployment / schema / helper-script / governance impact
+- Whether `SCOPE_DECLARATION.md` matches the actual diff
+- Whether helper-script / workflow / schema / architecture gates apply
+
+If PREHANDOVER, SCOPE_DECLARATION, or ceremony evidence contradicts the actual diff, the **actual diff wins** and IAA must reject.
+
+### Rule 5 — Agent Claim Non-Evidence Rule
+
+IAA must treat the following statements as **claims**, not evidence. Each claim must point to a hard artifact, command output, workflow run URL, diff, log, hash, runtime response, schema query, health check, or explicit CS2 waiver:
+
+| Claim | What constitutes actual evidence |
+|-------|----------------------------------|
+| "tests pass" | CI run URL + passing test count |
+| "workflow reviewed" | Diff review notes + CI run link |
+| "gate green" | CI check URL with status GREEN |
+| "no blockers" | Gate check table with all states GREEN |
+| "pattern proven" | Prior CI run link demonstrating the pattern |
+| "scope exactness confirmed" | `validate-governance-evidence-exactness.sh` output |
+| "helper compliance N/A" | Explicit justification with diff confirmation |
+| "architecture followed" | Architecture document reference + diff trace |
+| "build complete" | Build log URL or pasted exit-code-0 output |
+| "deployment works" | Deployment run URL + health check response |
+| `gate_triggered: false` | Only valid when the PR diff independently confirms no gate-triggering paths were changed; agent attestation alone is insufficient |
+
+Unsupported claims must not contribute to a PASS verdict.
+
+### Rule 6 — Independent Risk Challenge
+
+IAA is not limited to checklist execution. IAA has an **affirmative duty** to identify material risk even when no existing checklist item names it.
+
+Before issuing a PASS token, IAA must complete and record an Independent Risk Challenge with the following five questions:
+
+1. **What could still fail after merge?** — List at least one plausible failure mode, or explicitly state "no plausible failure mode identified — rationale: [reason]."
+2. **What evidence would prove it does not fail?** — For each failure mode: state the specific evidence that would confirm the risk is mitigated.
+3. **Is that evidence present?** — State YES (with evidence reference) or NO (blocks PASS).
+4. **Is there any contradiction between issue intent, architecture requirements, and PR evidence?** — Explicitly compare issue intent against delivered implementation and architecture.
+5. **Would a reasonable production owner accept this as merge-ready?** — Apply a production-readiness judgment beyond checklist compliance.
+
+If the answer to questions 3 or 5 is NO, IAA must issue `REJECTED` or `BLOCKED_PENDING_RUNTIME_EVIDENCE` — even if all checklist items appear satisfied.
+
+### Rule 7 — Expanded Verdict Taxonomy
+
+IAA must apply the appropriate verdict from the following taxonomy. Binary PASS/FAIL is no longer sufficient when evidence is incomplete:
+
+| Verdict | Meaning | When to Issue |
+|---------|---------|---------------|
+| `PASS` | Merge-ready; all required evidence present and verified | All acceptance criteria met with hard evidence; Independent Risk Challenge resolved; no architecture violations |
+| `REJECTED` | Defect in PR, build, evidence, or ceremony | Any hard evidence gap, ACR trigger, or build-correctness failure |
+| `BLOCKED_PENDING_RUNTIME_EVIDENCE` | Implementation is plausible but required runtime/live evidence is missing | Rule 3 evidence-type downgrade; CI_TEST/LIVE_RUNTIME/LIVE_E2E evidence required but not yet present |
+| `BLOCKED_PENDING_BUILD_CORRECTNESS` | Build architecture or functionality compliance not yet proven | Rule 2 gate fails; functional success condition not evidenced; architecture mismatch |
+| `PASS_WITH_CS2_WAIVER` | Missing evidence explicitly waived by CS2 in a committed artifact | CS2 has committed a waiver artifact naming the specific missing evidence and the waiver rationale |
+| `INVALID_PRIOR_TOKEN` | Prior token invalidated by new evidence, contradiction, or changed diff | New commits after a PASS token change the scope; evidence contradiction discovered; diff diverges from prior assessment basis |
+
+**BLOCKED and INVALID_PRIOR_TOKEN verdicts** are mandatory entries in the iaa-wave-record `## IAA Assurance Verdict` section and must be treated identically to `REJECTED` for merge-gate purposes — merge is blocked until resolved.
 
 ---
 
@@ -816,6 +969,11 @@ The IAA MUST issue a `REJECTION-PACKAGE` if **any** of the following conditions 
 | ACR-19 | **Unmet declared final-state condition** — A wave-level Admin Ceremony Contract was declared in the Pre-Brief, but one or more `required_final_state_conditions` are not in the required state at handover. Severity: **REJECTION-PACKAGE**. Resolution: Resolve all declared final-state conditions before resubmission. | IAA_PRE_BRIEF_PROTOCOL.md §Expected Wave-Level Admin Ceremony Contract; maturion-isms#1447 |
 | ACR-20 | **Unmet declared cross-artifact consistency condition** — A wave-level Admin Ceremony Contract was declared in the Pre-Brief, but one or more `required_cross_artifact_consistency_checks` reveal contradictions between artifacts at handover. Severity: **REJECTION-PACKAGE**. Resolution: Resolve all cross-artifact contradictions before resubmission. | IAA_PRE_BRIEF_PROTOCOL.md §Expected Wave-Level Admin Ceremony Contract; maturion-isms#1447 |
 | ACR-21 | **Missing declared acknowledgement or ownership requirement** — A wave-level Admin Ceremony Contract was declared in the Pre-Brief, but one or more `required_acknowledgements` are undocumented or `required_role_boundaries` are violated at handover. Severity: **REJECTION-PACKAGE**. Resolution: Document all acknowledgements and restore correct role boundaries before resubmission. | IAA_PRE_BRIEF_PROTOCOL.md §Expected Wave-Level Admin Ceremony Contract; maturion-isms#1447 |
+| ACR-22 | **Acceptance-Criteria Evidence Matrix absent or incomplete** — IAA assurance proceeds without a complete Acceptance-Criteria Evidence Matrix mapping every non-waived governing-issue acceptance criterion to independently verified hard evidence. This trigger fires when: (a) no matrix is present in the IAA verdict output; (b) any non-waived criterion has no evidence reference; (c) any evidence reference is an agent claim or attestation without a hard artifact (log, CI run URL, diff, hash, schema query, runtime response, screenshot with context); or (d) the matrix was not checked against the actual governing issue's acceptance criteria. | §Evidence-First Assurance Mandate Rule 1; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0; maturion-isms#1491 |
+| ACR-23 | **Evidence-type downgrade without CS2 waiver** — a governing issue, architecture requirement, acceptance criterion, or pre-brief declaration requires `CI_TEST`, `LIVE_RUNTIME`, or `LIVE_E2E` evidence, but the submitted or accepted evidence is `STATIC_CODE`, pattern parity, agent attestation, or any other lower-fidelity type, and no committed CS2 waiver artifact exists naming the specific missing evidence and waiver rationale. Pattern: `gate_triggered: false` accepted as evidence of no trigger requirement when the diff independently includes triggering paths. | §Evidence-First Assurance Mandate Rule 3; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0; maturion-isms#1491 |
+| ACR-24 | **Agent claim used as evidence without independent verification** — a PASS verdict (or contribution toward PASS) relies on an agent statement ("tests pass", "workflow reviewed", "gate green", "no blockers", "pattern proven", "build complete", "deployment works", "architecture followed", or equivalent) that is not independently verified by IAA from a hard artifact. Each such claim must resolve to a CI run URL, command output log, diff review, hash, schema query result, runtime response, health check, or screenshot with context — or a committed CS2 waiver artifact. | §Evidence-First Assurance Mandate Rule 5; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0; maturion-isms#1491 |
+| ACR-25 | **Diff-first classification mismatch** — the PR category declared in the PREHANDOVER proof, SCOPE_DECLARATION, or ceremony artifacts does not match the category derived by IAA from independently computing the actual changed-file set. The actual diff-derived classification governs. When a mismatch is detected, the higher-risk classification applies and IAA re-evaluates the PR under the correct category before issuing any verdict. If the correct category requires evidence not present in the submitted bundle, IAA must issue REJECTED or BLOCKED_PENDING_RUNTIME_EVIDENCE. | §Evidence-First Assurance Mandate Rule 4; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0; maturion-isms#1491 |
+| ACR-26 | **Independent Risk Challenge not performed or incomplete** — IAA issues a PASS token without having completed and recorded the five-question Independent Risk Challenge required by §Evidence-First Assurance Mandate Rule 6. The challenge must be present in the IAA verdict output with substantive answers — not template placeholders, not "N/A" without rationale, not single-word responses. Any of the five questions unanswered or answered with a placeholder constitutes an incomplete challenge. | §Evidence-First Assurance Mandate Rule 6; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0; maturion-isms#1491 |
 
 ### Active-Bundle Scope Rule for ACR Checks (v1.7.0)
 
@@ -945,4 +1103,4 @@ The §4.3e gate (defined in `AGENT_HANDOVER_AUTOMATION.md`) is the **ECAP + Fore
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.12.0 | Effective: 2026-02-24 | Amended: 2026-04-22 (v1.12.0) — Added ACR-18 (missing declared ceremony artifact), ACR-19 (unmet declared final-state condition), ACR-20 (unmet declared cross-artifact consistency condition), ACR-21 (missing declared acknowledgement/ownership); makes unmet wave-level Admin Ceremony Contract items explicit rejection triggers; maturion-isms#1447; SELF-MOD-IAA-001: CS2 direct review/sign-off required | Previous: 2026-04-21 (v1.11.0) — Added ACR-17: wrong-but-existing reference (non-authoritative artifact target) + renumber/rebase drift failure; cross-references AAP-23, AAP-24, §4.3f Check M/N, R18; wave admin-ceremony-hardening-20260421 | Previous: 2026-04-20 (v1.10.0) — Added ACR-16: active final-state token/session incoherence (AAP-22 / §4.3e Check L) | Previous: 2026-04-19 (v1.9.0) — Added ACR-15: active wave/task tracker not normalized before final assurance (AAP-21 / §4.3e Check C3)*
+*Authority: CS2 (Johan Ras) | Version: 1.13.0 | Effective: 2026-02-24 | Amended: 2026-04-28 (v1.13.0) — Added §Evidence-First Assurance Mandate (Rules 1–7: Acceptance-Criteria Evidence Matrix, Build Philosophy and Architecture Compliance Gate, Evidence-Type Downgrade Prohibition, Diff-First Audit Rule, Agent Claim Non-Evidence Rule, Independent Risk Challenge, Expanded Verdict Taxonomy); added ACR-22 through ACR-26 to §Admin-Ceremony Rejection Triggers; expanded §Output Specification with BLOCKED_PENDING_RUNTIME_EVIDENCE, BLOCKED_PENDING_BUILD_CORRECTNESS, PASS_WITH_CS2_WAIVER, INVALID_PRIOR_TOKEN verdicts; maturion-isms#1491; SELF-MOD-IAA-001: CS2 direct review/sign-off required | Previous: 2026-04-22 (v1.12.0) — Added ACR-18 (missing declared ceremony artifact), ACR-19 (unmet declared final-state condition), ACR-20 (unmet declared cross-artifact consistency condition), ACR-21 (missing declared acknowledgement/ownership); makes unmet wave-level Admin Ceremony Contract items explicit rejection triggers; maturion-isms#1447; SELF-MOD-IAA-001: CS2 direct review/sign-off required | Previous: 2026-04-21 (v1.11.0) — Added ACR-17: wrong-but-existing reference (non-authoritative artifact target) + renumber/rebase drift failure; cross-references AAP-23, AAP-24, §4.3f Check M/N, R18; wave admin-ceremony-hardening-20260421 | Previous: 2026-04-20 (v1.10.0) — Added ACR-16: active final-state token/session incoherence (AAP-22 / §4.3e Check L) | Previous: 2026-04-19 (v1.9.0) — Added ACR-15: active wave/task tracker not normalized before final assurance (AAP-21 / §4.3e Check C3)*
