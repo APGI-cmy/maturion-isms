@@ -99,6 +99,8 @@ suggestions:            NONE                 # NONE | see .agent-workspace/<agen
 
 If `ecap_required: YES` and `ecap_invoked: NO` and `ecap_waiver_ref: none` → **BLOCKED. Do not submit to IAA. AAP-30 / ACR-27.**
 
+> **N/A semantics**: `ecap_invoked: N/A` is only valid when `ecap_required: NO`. When `ecap_required: NO`, the blocking condition cannot trigger regardless of the `ecap_waiver_ref` value — ECAP is not required and no waiver check is needed. A value of `N/A` for `ecap_invoked` when `ecap_required: YES` is treated as equivalent to `NO` for blocking-condition evaluation purposes.
+
 ---
 
 ## Evidence Exactness Gate
