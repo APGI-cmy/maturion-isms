@@ -1,7 +1,7 @@
 # Scope Declaration — wave-mps-source-verification
 
 **Wave**: wave-mps-source-verification
-**Issue**: CS2 clarification — verify canonical generic MPS source pack in AIMC/KUC before static question bank (related: PR #1500)
+**Issue**: maturion-isms#1501
 **Branch**: copilot/verify-generic-mps-source-documents
 **Date**: 2026-04-28
 **Last refreshed**: 2026-04-28 (Track A scope — pure research/workspace artifacts)
