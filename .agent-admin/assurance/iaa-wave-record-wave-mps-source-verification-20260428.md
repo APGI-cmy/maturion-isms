@@ -6,14 +6,14 @@
   *(Pre-brief request stated `copilot/verify-mps-canonical-source` — actual git branch differs; Foreman must reconcile branch naming before wave record finalises)*
 **Issue**: maturion-isms — CS2 clarification: verify canonical generic MPS source pack in AIMC/KUC before static question bank
 **Ceremony Admin Appointed**: NO
-**IAA Session**: session-076-20260428
+**IAA Session**: session-077-20260428
 
 ---
 
 ## PRE-BRIEF
 
 **Generated**: 2026-04-28
-**IAA Session**: session-076-20260428
+**IAA Session**: session-077-20260428
 **Trigger**: `action: "PRE-BRIEF"` — Phase 0 invocation (Phases 1–4 assurance NOT executed)
 **Invoked by**: foreman-v2-agent (wave-start request)
 **Wave context**: CS2 clarification directive — verify canonical generic MPS source pack in AIMC/KUC before committing to static question bank. Related to PR #1500 (free-assessment replacement work).
