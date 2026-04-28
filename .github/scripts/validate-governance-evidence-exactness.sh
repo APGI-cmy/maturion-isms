@@ -2,13 +2,18 @@
 # validate-governance-evidence-exactness.sh
 # Authority: MERGE_GATE_PHILOSOPHY.md, LIVING_AGENT_SYSTEM.md v6.2.0
 # Purpose: Checks governance evidence artifacts for exactness defects
-#   Check 1: PATH-MISMATCH   — paths cited in SCOPE_DECLARATION not in diff or repo
-#   Check 2: COUNT-MISMATCH  — declared files_changed vs actual git diff count
-#   Check 3: HASH-INCOMPLETE — hash verification claims with null/empty CANON_INVENTORY hashes
+#   Check 1: PATH-MISMATCH    — paths cited in SCOPE_DECLARATION not in diff or repo
+#   Check 2: COUNT-MISMATCH   — declared files_changed vs actual git diff count
+#   Check 3: HASH-INCOMPLETE  — hash verification claims with null/empty CANON_INVENTORY hashes
 #   Check 4: VERSION-MISMATCH (cross-artifact) — canon file header vs CANON_INVENTORY entry
 #            NOTE: Also covers AUTHORITY-STALE — stale canon version citations are caught
 #            because every canon artifact version is tracked in CANON_INVENTORY.json.
 #   Check 5: VERSION-MISMATCH (internal) — multiple conflicting version strings in one canon file
+#   Check 6: ISSUE-MISMATCH   — **Issue** field in SCOPE_DECLARATION points to wrong issue/wave.
+#            Authority source (in priority order):
+#              (a) EXPECTED_ISSUE_NUMBER env var (explicit CI injection), or
+#              (b) PR_BODY env var parsed for closing/fixing keywords + maturion-isms# refs.
+#            If no authority source is available the check is informational only.
 # Exit codes: 0=PASS (errors=0), 1=FAIL (any error)
 set -uo pipefail
 
@@ -242,6 +247,70 @@ else
       fi
     done <<< "$INTERNAL_FILES"
     [ "$WARNINGS" -eq 0 ] && echo "   ✅ PASS — No internal version conflicts detected"
+  fi
+fi
+echo ""
+
+# ============================================================
+# CHECK 6: ISSUE-MISMATCH (SCOPE_DECLARATION issue authority)
+# The **Issue** field in SCOPE_DECLARATION.md must match the
+# PR's authoritative issue.  Authority is determined from
+# (priority order):
+#   (a) EXPECTED_ISSUE_NUMBER env var — explicitly set by CI,
+#   (b) PR_BODY env var — parsed for closing/fixing keywords
+#       (closes/fixes/resolves/addresses) and maturion-isms#N refs.
+# If no expected issue can be determined the check is
+# informational only (records declared value, no failure).
+# ============================================================
+echo "── CHECK 6: ISSUE-MISMATCH ──"
+
+if [ -z "$SCOPE_FILE" ]; then
+  echo "   ℹ️  N/A — No SCOPE_DECLARATION.md found. Skipping."
+else
+  # Extract declared issue from SCOPE_DECLARATION.md
+  # Matches: **Issue**: maturion-isms#1234  or  **Issue**: #1234
+  DECLARED_ISSUE_RAW=$(grep -oE '^\*\*Issue\*\*:[[:space:]]*.+' "$SCOPE_FILE" 2>/dev/null | \
+    head -1 | sed 's/\*\*Issue\*\*:[[:space:]]*//' | tr -d '[:space:]' || true)
+
+  if [ -z "$DECLARED_ISSUE_RAW" ]; then
+    echo "   ⚠️  WARNING — No **Issue**: field found in $SCOPE_FILE"
+    WARNINGS=$((WARNINGS + 1))
+  else
+    # Normalise to numeric issue number (trailing digits after last #)
+    DECLARED_ISSUE_NUM=$(echo "$DECLARED_ISSUE_RAW" | grep -oE '[0-9]+$' || true)
+    echo "   Declared: $DECLARED_ISSUE_RAW (issue #${DECLARED_ISSUE_NUM:-?})"
+
+    # Determine expected issue number (priority: explicit env var > PR_BODY parsing)
+    EXPECTED_ISSUE_NUM=""
+    EXPECTED_SOURCE=""
+
+    if [ -n "${EXPECTED_ISSUE_NUMBER:-}" ]; then
+      EXPECTED_ISSUE_NUM=$(echo "$EXPECTED_ISSUE_NUMBER" | grep -oE '[0-9]+' | tail -1)
+      EXPECTED_SOURCE="EXPECTED_ISSUE_NUMBER env var"
+    elif [ -n "${PR_BODY:-}" ]; then
+      # Parse PR body for closing/fixing keywords followed by optional repo prefix + number
+      EXPECTED_ISSUE_NUM=$(printf '%s' "$PR_BODY" | \
+        grep -ioE '(closes|fixes|resolves|addresses)[[:space:]]+([a-zA-Z0-9_-]+#)?([0-9]+)' | \
+        grep -oE '[0-9]+$' | head -1 || true)
+      if [ -z "$EXPECTED_ISSUE_NUM" ]; then
+        # Fallback: first explicit maturion-isms#N reference in PR body
+        EXPECTED_ISSUE_NUM=$(printf '%s' "$PR_BODY" | \
+          grep -oE 'maturion-isms#[0-9]+' | head -1 | grep -oE '[0-9]+' || true)
+      fi
+      [ -n "$EXPECTED_ISSUE_NUM" ] && EXPECTED_SOURCE="PR_BODY (parsed closing/issue ref)"
+    fi
+
+    if [ -z "$EXPECTED_ISSUE_NUM" ]; then
+      echo "   ℹ️  No expected issue authority available (set EXPECTED_ISSUE_NUMBER or PR_BODY) — recorded as-declared, not validated against PR authority"
+    elif [ -z "$DECLARED_ISSUE_NUM" ]; then
+      echo "   ❌ ISSUE-MISMATCH: could not parse issue number from declared value '$DECLARED_ISSUE_RAW'; expected #${EXPECTED_ISSUE_NUM} (${EXPECTED_SOURCE})"
+      ERRORS=$((ERRORS + 1))
+    elif [ "$DECLARED_ISSUE_NUM" != "$EXPECTED_ISSUE_NUM" ]; then
+      echo "   ❌ ISSUE-MISMATCH: $SCOPE_FILE declares issue #${DECLARED_ISSUE_NUM} but expected #${EXPECTED_ISSUE_NUM} (${EXPECTED_SOURCE})"
+      ERRORS=$((ERRORS + 1))
+    else
+      echo "   ✅ PASS — Declared issue (#${DECLARED_ISSUE_NUM}) matches expected (#${EXPECTED_ISSUE_NUM}, ${EXPECTED_SOURCE})"
+    fi
   fi
 fi
 echo ""
