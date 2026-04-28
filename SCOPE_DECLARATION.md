@@ -1,7 +1,7 @@
 # Scope Declaration — restore-evidence-first-iaa-assurance-20260428
 
 **Wave**: restore-evidence-first-iaa-assurance-20260428
-**Issue**: maturion-isms#1491
+**Issue**: maturion-isms#1492
 **Branch**: copilot/restore-evidence-first-iaa-assurance
 **Date**: 2026-04-28
 **Last refreshed**: 2026-04-28 (post-final-edit scope refresh per §4.3g / AAP-28)
@@ -10,7 +10,7 @@
 ## Scope Decision
 
 Restore evidence-first IAA assurance with build-correctness and independent risk challenge
-(maturion-isms#1491). Hardens IAA canon/contract and Tier 2 assurance guidance so IAA
+(maturion-isms#1492). Hardens IAA canon/contract and Tier 2 assurance guidance so IAA
 independently verifies: (1) governing issue intent; (2) actual PR diff; (3) build philosophy
 and architectural requirements; (4) hard evidence that the build/workflow/runtime behaves
 correctly; (5) independent risk beyond checklist compliance.

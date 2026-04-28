@@ -1556,9 +1556,9 @@
       "type": "canon",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "layer_down_status": "INTERNAL",
-      "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA); v1.13.0 amendment: Restore evidence-first IAA assurance with build-correctness and independent risk challenge — maturion-isms#1491",
+      "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA); v1.13.0 amendment: Restore evidence-first IAA assurance with build-correctness and independent risk challenge — maturion-isms#1492",
       "last_updated": "2026-04-28",
-      "change_note": "v1.13.0: Added §Evidence-First Assurance Mandate (Rules 1–7); expanded §Output Specification with BLOCKED_PENDING_RUNTIME_EVIDENCE, BLOCKED_PENDING_BUILD_CORRECTNESS, PASS_WITH_CS2_WAIVER, INVALID_PRIOR_TOKEN verdicts; added ACR-22 through ACR-26; authority: CS2 — maturion-isms#1491. SELF-MOD-IAA-001: CS2 direct review/sign-off required.",
+      "change_note": "v1.13.0: Added §Evidence-First Assurance Mandate (Rules 1–7); expanded §Output Specification with BLOCKED_PENDING_RUNTIME_EVIDENCE, BLOCKED_PENDING_BUILD_CORRECTNESS, PASS_WITH_CS2_WAIVER, INVALID_PRIOR_TOKEN verdicts; added ACR-22 through ACR-26; authority: CS2 — maturion-isms#1492. SELF-MOD-IAA-001: CS2 direct review/sign-off required.",
       "canonical_version": "1.13.0"
     },
     {
@@ -1944,7 +1944,7 @@
       "type": "template",
       "path": "governance/templates/execution-ceremony-admin/PREHANDOVER.template.md",
       "layer_down_status": "INTERNAL",
-      "change_note": "v1.6.0: Added mandatory ## Acceptance-Criteria Matrix (Producer-Side) section (ACR-22 / \u00a7Evidence-First Assurance Mandate Rule 1 / INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0 / maturion-isms#1491); maps governing-issue acceptance criteria to hard evidence; agent claims are not evidence (ACR-24); evidence-type downgrade is ACR-23 trigger"
+      "change_note": "v1.6.0: Added mandatory ## Acceptance-Criteria Matrix (Producer-Side) section (ACR-22 / \u00a7Evidence-First Assurance Mandate Rule 1 / INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0 / maturion-isms#1492); maps governing-issue acceptance criteria to hard evidence; agent claims are not evidence (ACR-24); evidence-type downgrade is ACR-23 trigger"
     },
     {
       "filename": "PRE_BUILD_REALITY_CHECK_CANON.md",
@@ -2542,7 +2542,7 @@
       "file_hash_sha256": "45b08b57ff0e2ca87ff0e79417726cb65be2a15ef7a533fd1479d52129077faf",
       "canonical_version": "1.2.0",
       "last_updated": "2026-04-28",
-      "change_note": "v1.2.0: Added \u00a73.2 Acceptance-Criteria Evidence Matrix (MANDATORY before PASS \u2014 Rule 1), \u00a73.3 Build-Correctness Assessment (Rule 2), \u00a73.4 Independent Risk Challenge (Rule 6); expanded verdict taxonomy to include BLOCKED_PENDING_RUNTIME_EVIDENCE/BLOCKED_PENDING_BUILD_CORRECTNESS/PASS_WITH_CS2_WAIVER/INVALID_PRIOR_TOKEN; updated Record Schema Version to 1.2.0; authority: CS2 \u2014 maturion-isms#1491"
+      "change_note": "v1.2.0: Added \u00a73.2 Acceptance-Criteria Evidence Matrix (MANDATORY before PASS \u2014 Rule 1), \u00a73.3 Build-Correctness Assessment (Rule 2), \u00a73.4 Independent Risk Challenge (Rule 6); expanded verdict taxonomy to include BLOCKED_PENDING_RUNTIME_EVIDENCE/BLOCKED_PENDING_BUILD_CORRECTNESS/PASS_WITH_CS2_WAIVER/INVALID_PRIOR_TOKEN; updated Record Schema Version to 1.2.0; authority: CS2 \u2014 maturion-isms#1492"
     },
     {
       "filename": "liaison-mini-ceremony-checklist.md",

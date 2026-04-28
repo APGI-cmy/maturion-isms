@@ -128,7 +128,7 @@ For CORE-020, CORE-021, CORE-026, and CORE-027:
 | 2.9.0 | 2026-03-13 | CORE-023 workflow integrity ripple |
 | 3.0.0 | 2026-04-07 | CORE-024/025 added |
 | 4.0.0 | 2026-04-13 | 90/10 restructuring: retained CORE-020/021 only; all other checks moved to CI; Orientation Mandate and A-029 Architecture Alignment Note removed (now structural); authority: CS2 — maturion-isms#1354 |
-| 4.1.0 | 2026-04-28 | Added CORE-026 (Acceptance-Criteria Evidence Matrix complete — §Evidence-First Assurance Mandate Rule 1 / ACR-22) and CORE-027 (Independent Risk Challenge — §Evidence-First Assurance Mandate Rule 6 / ACR-26); updated IAA-retained invariants count from 2 to 4; authority: CS2 — maturion-isms#1491 |
+| 4.1.0 | 2026-04-28 | Added CORE-026 (Acceptance-Criteria Evidence Matrix complete — §Evidence-First Assurance Mandate Rule 1 / ACR-22) and CORE-027 (Independent Risk Challenge — §Evidence-First Assurance Mandate Rule 6 / ACR-26); updated IAA-retained invariants count from 2 to 4; authority: CS2 — maturion-isms#1492 |
 
 ---
 
