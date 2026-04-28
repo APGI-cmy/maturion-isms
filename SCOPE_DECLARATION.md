@@ -12,7 +12,8 @@ Add ISSUE-MISMATCH validation (Check 6) to the governance evidence exactness gat
 stale issue-authority references in SCOPE_DECLARATION.md are caught automatically before
 review or merge. The new check:
 - Parses the `**Issue**:` line from root `SCOPE_DECLARATION.md`
-- Validates the format is `repo#NNN`
+- Accepts either bare `NNN` or `maturion-isms#NNN`, normalizing bare numbers to
+  `maturion-isms#NNN`
 - Compares against `EXPECTED_ISSUE` env var when supplied (CI derives it from a
   `Governing-Issue:` control field in the PR body)
 - Fails with a clear `ISSUE-MISMATCH` message when stale, missing, or malformed
