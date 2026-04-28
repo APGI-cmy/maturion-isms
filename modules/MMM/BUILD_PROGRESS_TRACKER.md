@@ -391,7 +391,7 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 - [x] All 5 hard start conditions (HSC-1–HSC-5) verified SATISFIED
 - [x] Formal appointments issued: schema-builder (B1), api-builder (B2–B6), ui-builder (B3–B6), integration-builder (B7), qa-builder (B8/B9 + parallel gate)
 - [x] SB-002 resolved in appointment text — api-builder Deno/Supabase Edge Functions declared as EXCLUSIVE runtime (Next.js API routes prohibited)
-- [x] SB-003 preserved as credential hard gate — B7 blocked until CS2 provisions AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN
+- [x] SB-003 preserved as credential hard gate — B7 BLOCKED (SB-003 credential gate active) until CS2 provisions AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN; B7 BLOCKED status documented per T-MMM-S6-112
 - [x] CG-001–CG-005 convergence-governance laws stated per law (§6)
 - [x] NBR-001–NBR-005 anti-regression obligations declared for all Stage 12 waves (§7)
 - [x] Wave sequencing and dependency map produced (§8)
@@ -414,7 +414,7 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 ---
 
 ### Stage 12: Build Execution & Evidence
-**Status**: [x] ACTIVE — Build execution COMPLETE (B1–B9; 959/959 tests GREEN); Phase 4 ECAP + IAA audit complete; CDV deployment validation = post-Stage-12 operational follow-up (see §12.1 below); CDV tracking wave mmm-post-stage12-cdv-validation-20260422 (issue #1443, 2026-04-22) created — SB-003-W3 static code evidence confirmed; **NOTE: Build-Complete (L1) ≠ Operationally-Closed (L3) — see §12.2 Operational Closure Pending Items and §12.3 Future-Build Hard Gate**
+**Status**: [x] ACTIVE — Build execution COMPLETE (B1–B9; 959/959 tests GREEN); Phase 4 ECAP + IAA audit complete; CDV deployment validation = post-Stage-12 operational follow-up (see §12.1 below); CDV tracking wave mmm-post-stage12-cdv-validation-20260422 (issue #1443, 2026-04-22) created — SB-003-W3 static code evidence confirmed; Stage 12 IN_PROGRESS (operational closure items OC-001–OC-009 PENDING CS2 live platform validation); **NOTE: Build-Complete (L1) ≠ Operationally-Closed (L3) — see §12.2 Operational Closure Pending Items and §12.3 Future-Build Hard Gate**
 **Location**: `modules/MMM/11-build/`  
 **Wave**: mmm-stage12-build-execution-20260420  
 **Issue**: maturion-isms#1428  
@@ -430,9 +430,9 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 - [x] **B6 (Findings/Reporting)**: COMPLETE ✅ — 3 Edge Functions (mmm-pit-export-send, mmm-pit-evidence-return, mmm-ai-recommend); J-12–J-15; 7-step PIT handshake stubbed; 47/47 tests GREEN; evidence: `modules/MMM/11-build/B6-findings/wave-b6-evidence.md`; QP PASS
 - [x] **B7 (Boundary Integrations)**: COMPLETE ✅ — 113 tests GREEN (D5: 15 + D7: 8 + Circuit Breaker: 12 + additional assertions); AIMC 9-function live wire, PIT 7-step handshake, KUC upload contract, circuit breaker (TR-009); evidence: `modules/MMM/11-build/B7-integrations/wave-b7-evidence.md`; QP PASS
 - [x] **B8 (Cross-Cutting)**: COMPLETE ✅ — 71 tests across D5/D7/D8/D9/D10/D11 (188 assertions); B7 blocked noted; evidence: `modules/MMM/11-build/B8-cross-cutting/wave-b8-evidence.md`; QP PASS
-- [x] **B9 (Golden Path)**: COMPLETE ✅ — 216/216 tests GREEN; GP-001–GP-010 ALL GREEN; CG-003/CG-004 declared; NBR-001/002/003 verified; evidence: `modules/MMM/11-build/B9-golden-path/wave-b9-evidence.md`; QP PASS
+- [x] **B9 (Golden Path)**: COMPLETE ✅ — 223/223 tests GREEN (216 original + 7 anti-regression tests added by issue #1507); GP-001–GP-010 ALL GREEN; CG-003/CG-004 declared; NBR-001/002/003 verified; evidence: `modules/MMM/11-build/B9-golden-path/wave-b9-evidence.md`; QP PASS
 
-**Total QA-to-Green Progress**: 965/965 tests GREEN (B1:164 + B2:28 + B3:65 + B4:78 + B5:66 + B6:47 + B7:113 + B8:188 + B9:216) — B3 increased from 59 to 65 by T-MMM-S6-021 anti-regression gate (issue #1496, 2026-04-28)
+**Total QA-to-Green Progress**: 972/972 tests GREEN (B1:164 + B2:28 + B3:65 + B4:78 + B5:66 + B6:47 + B7:113 + B8:188 + B9:223) — B3 increased from 59 to 65 by T-MMM-S6-021 anti-regression gate (issue #1496, 2026-04-28); B9 increased from 216 to 223 by ISSUE-1507 anti-regression tests (LoginPage + /login route + KUC upload access fix, issue #1507, 2026-04-28)
 
 **Key Artifacts**:
 - [x] `supabase/migrations/` — 4 migration files (B1: 26 tables, RLS, indexes, storage)

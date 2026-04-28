@@ -32,7 +32,7 @@
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { corsHeaders, jsonResponse, validateJWT, requireRole } from '../_shared/mmm-auth.ts';
+import { corsHeaders, jsonResponse, validateJWT } from '../_shared/mmm-auth.ts';
 import { uploadToKuc } from '../_shared/mmm-kuc-client.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
@@ -60,11 +60,9 @@ Deno.serve(async (req: Request) => {
     return response as Response;
   }
 
-  try {
-    requireRole(claims.role, ['ADMIN']);
-  } catch (response) {
-    return response as Response;
-  }
+  // JWT required (per architecture §A4.2: mmm-upload-framework-source requires JWT only, not ADMIN)
+  // NBR-002: Any authenticated user may upload a framework source document.
+  // ADMIN-only gate is NOT applied here — see mmm-framework-publish for publish-gate enforcement.
 
   // TR-019: Accept multipart or JSON
   let fileBlob: Blob | null = null;

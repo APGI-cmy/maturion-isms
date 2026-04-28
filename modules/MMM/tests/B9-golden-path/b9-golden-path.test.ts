@@ -919,7 +919,8 @@ describe('NBR-002: HTTP 403 Propagation — all protected functions gate with re
   const adminOnlyFunctions = [
     'supabase/functions/mmm-framework-init/index.ts',
     'supabase/functions/mmm-framework-publish/index.ts',
-    'supabase/functions/mmm-upload-framework-source/index.ts',
+    // mmm-upload-framework-source is JWT-only (not ADMIN) per architecture §A4.2 —
+    // see issue maturion-isms#1507: authenticated KUC upload access fix.
   ];
 
   for (const fn of adminOnlyFunctions) {
@@ -945,6 +946,14 @@ describe('NBR-002: HTTP 403 Propagation — all protected functions gate with re
   it('mmm-score-confirm propagates HTTP 403 on org_id mismatch (NBR-002)', () => {
     const src = readFile('supabase/functions/mmm-score-confirm/index.ts');
     expect(src).toMatch(/403|NBR-002/);
+  });
+
+  it('mmm-upload-framework-source is JWT-only (not ADMIN-gated) per architecture §A4.2 (issue #1507)', () => {
+    // Architecture: mmm-upload-framework-source requires JWT only — any authenticated user may upload.
+    // ADMIN gate is NOT applied here; publish-gate enforcement is in mmm-framework-publish.
+    const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
+    expect(src).toContain('validateJWT');
+    expect(src).not.toContain("requireRole(claims.role, ['ADMIN'])");
   });
 });
 
@@ -1144,5 +1153,47 @@ describe('ALL-176-GREEN: B9 config.toml includes all functions', () => {
     expect(config).toContain('[functions.mmm-framework-publish]');
     expect(config).toContain('[functions.mmm-score-confirm]');
     expect(config).toContain('[functions.mmm-pit-export-send]');
+  });
+});
+
+// =============================================================================
+// ISSUE #1507: Signup/Onboarding Route Handling & Authenticated KUC Upload
+// Anti-regression gates added 2026-04-28.
+// =============================================================================
+
+describe('ISSUE-1507: LoginPage exists and /login route is registered in App.tsx', () => {
+  it('apps/mmm/src/pages/LoginPage.tsx exists', () => {
+    expect(fileExists('apps/mmm/src/pages/LoginPage.tsx')).toBe(true);
+  });
+  it('LoginPage.tsx calls supabase.auth.signInWithPassword', () => {
+    const src = readFile('apps/mmm/src/pages/LoginPage.tsx');
+    expect(src).toContain('supabase.auth.signInWithPassword');
+  });
+  it('LoginPage.tsx has email and password inputs', () => {
+    const src = readFile('apps/mmm/src/pages/LoginPage.tsx');
+    expect(src).toContain('type="email"');
+    expect(src).toContain('type="password"');
+  });
+  it('App.tsx includes /login route', () => {
+    const src = readFile('apps/mmm/src/App.tsx');
+    expect(src).toContain('"/login"');
+    expect(src).toContain('LoginPage');
+  });
+  it('ProtectedRoute redirects to /login and /login route is now resolvable', () => {
+    const protectedRoute = readFile('apps/mmm/src/components/ProtectedRoute.tsx');
+    expect(protectedRoute).toContain('/login');
+    const appSrc = readFile('apps/mmm/src/App.tsx');
+    expect(appSrc).toContain('"/login"');
+  });
+});
+
+describe('ISSUE-1507: mmm-upload-framework-source is JWT-only (authenticated KUC upload access)', () => {
+  it('mmm-upload-framework-source validates JWT (requires authentication)', () => {
+    const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
+    expect(src).toContain('validateJWT');
+  });
+  it('mmm-upload-framework-source does NOT require ADMIN role (JWT-only per architecture §A4.2)', () => {
+    const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
+    expect(src).not.toContain("requireRole(claims.role, ['ADMIN'])");
   });
 });
