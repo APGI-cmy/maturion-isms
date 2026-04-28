@@ -346,7 +346,7 @@ The IAA is the **authoritative verifier** of agent file integrity. Its obligatio
 
 ## Output Specification (v1.13.0)
 
-> **Note**: This section supersedes the prior "Binary Output Specification." IAA now applies an expanded verdict taxonomy. All output formats are listed below. Merge is blocked for all non-PASS verdicts.
+> **Note**: This section supersedes the prior "Binary Output Specification." IAA now applies an expanded verdict taxonomy. All output formats are listed below. Merge is permitted for `PASS` and `PASS_WITH_CS2_WAIVER`, and blocked for all remaining verdicts.
 
 ### ASSURANCE-TOKEN (PASS)
 
