@@ -270,6 +270,16 @@ setup_ac8() {
 }
 run_test "AC-8: Documentation-only PR — IAA not required" 0 "$IAA_GATE_SCRIPT" "setup_ac8"
 
+# AC-8-CI: CI script/workflow only PR — IAA not required (governance tooling)
+setup_ac8_ci() {
+  add_ci_workflow_file
+  mkdir -p .github/scripts
+  echo "#!/bin/bash" > .github/scripts/new-gate.sh
+  git add .
+  git commit -q -m "Add CI gate scripts"
+}
+run_test "AC-8-CI: CI script/workflow only PR — IAA not required" 0 "$IAA_GATE_SCRIPT" "setup_ac8_ci"
+
 # AC-9: Valid IAA token with correct PR and issue reference
 setup_ac9() {
   add_impl_file
@@ -306,12 +316,21 @@ setup_ac6() {
 }
 run_test "AC-6: Protected-path PR without ECAP evidence" 1 "$ECAP_GATE_SCRIPT" "setup_ac6"
 
-# AC-6b: Protected-path PR (CI workflow) without ECAP evidence
+# AC-6b: Protected-path PR (agent contract) without ECAP evidence
 setup_ac6b() {
-  add_ci_workflow_file
+  echo "# Modified agent contract" > .github/agents/test-agent.md
+  git add .
+  git commit -q -m "Change agent contract"
   # No PREHANDOVER proof with ECAP fields
 }
-run_test "AC-6b: CI workflow change without ECAP evidence" 1 "$ECAP_GATE_SCRIPT" "setup_ac6b"
+run_test "AC-6b: Agent contract change without ECAP evidence" 1 "$ECAP_GATE_SCRIPT" "setup_ac6b"
+
+# AC-6c: CI workflow change — NOT a protected path, ECAP not required
+setup_ac6c() {
+  add_ci_workflow_file
+  # No PREHANDOVER proof — and none needed since CI workflows are not protected paths
+}
+run_test "AC-6c: CI workflow change — ECAP not required (CI tooling)" 0 "$ECAP_GATE_SCRIPT" "setup_ac6c"
 
 # AC-7: Protected-path PR with CS2 waiver (ecap_waiver_ref populated)
 setup_ac7() {

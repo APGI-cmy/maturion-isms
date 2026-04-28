@@ -61,13 +61,24 @@ echo ""
 echo "--- Step 1: Protected Path Classification ---"
 echo ""
 
-# Protected-path patterns that require ECAP/admin ceremony
+# Protected-path categories that require ECAP/admin ceremony.
+# These are governance artifacts that the admin ceremony is designed to protect:
+#   - Agent contract files (.github/agents/*.md): require CodexAdvisor + ECAP oversight
+#   - Canonical governance documents (governance/canon/**): require ECAP QC-001
+#   - Governance checklists (governance/checklists/**): require ECAP review
+#   - Governance templates (governance/templates/**): require ECAP review
+#   - Canon inventory (governance/CANON_INVENTORY.json): requires ECAP review
+#
+# NOT protected paths (governance tooling, not ceremony artifacts):
+#   - .github/workflows/*.yml: CI workflow additions/changes are governance tooling PRs;
+#     they follow normal CS2 review rather than agent wave ceremony.
+#   - .github/scripts/*.sh: governance helper scripts — same rationale as workflows.
+
 AGENT_CONTRACT_CHANGED=false   # .github/agents/*.md
-CI_WORKFLOW_CHANGED=false       # .github/workflows/*.yml
-CANON_DOC_CHANGED=false         # governance/canon/**
-CHECKLIST_CHANGED=false         # governance/checklists/**
-TEMPLATE_CHANGED=false          # governance/templates/**
-CANON_INVENTORY_CHANGED=false   # governance/CANON_INVENTORY.json
+CANON_DOC_CHANGED=false        # governance/canon/**
+CHECKLIST_CHANGED=false        # governance/checklists/**
+TEMPLATE_CHANGED=false         # governance/templates/**
+CANON_INVENTORY_CHANGED=false  # governance/CANON_INVENTORY.json
 
 PROTECTED_FILES_LIST=""
 UNPROTECTED_FILES_LIST=""
@@ -90,10 +101,6 @@ while IFS= read -r file; do
     AGENT_CONTRACT_CHANGED=true
     IS_PROTECTED=true
     PROTECTED_FILES_LIST="${PROTECTED_FILES_LIST}\n  [AGENT-CONTRACT] ${file}"
-  elif [[ "$file" =~ ^\.github/workflows/.*\.yml$ ]]; then
-    CI_WORKFLOW_CHANGED=true
-    IS_PROTECTED=true
-    PROTECTED_FILES_LIST="${PROTECTED_FILES_LIST}\n  [CI-WORKFLOW] ${file}"
   elif [[ "$file" =~ ^governance/canon/ ]]; then
     CANON_DOC_CHANGED=true
     IS_PROTECTED=true
@@ -140,7 +147,6 @@ echo "⚠️  Protected paths touched — ECAP/admin ceremony evidence REQUIRED.
 echo ""
 echo "Protected path categories:"
 [ "$AGENT_CONTRACT_CHANGED" = true ]   && echo "  [AGENT-CONTRACT]   .github/agents/*.md — agent contract changes"
-[ "$CI_WORKFLOW_CHANGED" = true ]      && echo "  [CI-WORKFLOW]      .github/workflows/*.yml — CI workflow changes"
 [ "$CANON_DOC_CHANGED" = true ]        && echo "  [CANON-DOC]        governance/canon/** — canonical governance documents"
 [ "$CHECKLIST_CHANGED" = true ]        && echo "  [CHECKLIST]        governance/checklists/** — governance checklists"
 [ "$TEMPLATE_CHANGED" = true ]         && echo "  [TEMPLATE]         governance/templates/** — governance templates"
@@ -371,7 +377,6 @@ if [ "$FAIL" = true ] && [ "$ECAP_EVIDENCE_FOUND" = false ] && [ "$ECAP_WAIVER_F
   echo "  git diff --name-only \$(git merge-base origin/main HEAD)...HEAD"
   echo "  Identify which of these protected categories are affected:"
   echo "    [AGENT-CONTRACT] .github/agents/*.md"
-  echo "    [CI-WORKFLOW]    .github/workflows/*.yml"
   echo "    [CANON-DOC]      governance/canon/**"
   echo "    [CHECKLIST]      governance/checklists/**"
   echo "    [TEMPLATE]       governance/templates/**"

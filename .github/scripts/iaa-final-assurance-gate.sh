@@ -80,29 +80,60 @@ ALL_DOCS_ONLY=true
 while IFS= read -r file; do
   [ -z "$file" ] && continue
 
-  # ── Pure documentation (supervision) paths — do not trigger IAA gate ──────
-  # Plain markdown outside governance/agent/assurance directories
-  if [[ "$file" =~ \.md$ ]] && \
-     ! [[ "$file" =~ ^\.github/agents/ ]] && \
-     ! [[ "$file" =~ ^governance/ ]] && \
-     ! [[ "$file" =~ ^\.agent-admin/ ]]; then
-    DOCS_ONLY_FILES="${DOCS_ONLY_FILES}\n  - ${file}"
-    continue
-  fi
-  if [[ "$file" =~ ^README(\.|$) ]] || [[ "$file" =~ ^CHANGELOG(\.|$) ]]; then
-    DOCS_ONLY_FILES="${DOCS_ONLY_FILES}\n  - ${file}"
-    continue
-  fi
-  # Agent workspace artifacts — supervision, not implementation
-  if [[ "$file" =~ ^\.agent-workspace/ ]]; then
+  # ── Supervision / governance / CI-tooling paths — do NOT trigger IAA gate ──
+  #
+  # IAA final assurance is required for production source code changes only.
+  # The following are governance/supervision artifacts, not implementation:
+  #   - Agent workspace files (.agent-workspace/, .agent-admin/)
+  #   - All markdown files (documentation, governance, PREHANDOVER proofs, etc.)
+  #   - Governance canon, checklists, templates, SCOPE_DECLARATION.md
+  #   - CI scripts and workflows (.github/)
+  #   - Config files at repo root (package.json, tsconfig, .eslint, etc.)
+  #
+  # Aligns with polc-boundary-gate.yml implementation detection:
+  #   modules/.*/src, apps/.*/src, packages/.*/src, supabase/functions, test files
+
+  # Agent workspace / admin artifacts
+  if [[ "$file" =~ ^\.agent-workspace/ ]] || [[ "$file" =~ ^\.agent-admin/ ]]; then
     DOCS_ONLY_FILES="${DOCS_ONLY_FILES}\n  - ${file}"
     continue
   fi
 
-  # ── Everything else counts as substantive/implementation ──────────────────
-  ALL_DOCS_ONLY=false
-  IMPLEMENTATION_CHANGED=true
-  IMPL_FILE_LIST="${IMPL_FILE_LIST}\n  - ${file}"
+  # All markdown files (docs, governance, PREHANDOVER proofs, session memory)
+  if [[ "$file" =~ \.md$ ]]; then
+    DOCS_ONLY_FILES="${DOCS_ONLY_FILES}\n  - ${file}"
+    continue
+  fi
+
+  # CI/governance tooling — scripts, workflows, agent contracts
+  if [[ "$file" =~ ^\.github/ ]]; then
+    DOCS_ONLY_FILES="${DOCS_ONLY_FILES}\n  - ${file}"
+    continue
+  fi
+
+  # Governance directory — canon, checklists, templates, SCOPE_DECLARATION
+  if [[ "$file" =~ ^governance/ ]] || [[ "$file" =~ ^SCOPE_DECLARATION ]] || \
+     [[ "$file" =~ ^README ]] || [[ "$file" =~ ^CHANGELOG ]]; then
+    DOCS_ONLY_FILES="${DOCS_ONLY_FILES}\n  - ${file}"
+    continue
+  fi
+
+  # ── Production source code — triggers IAA gate ───────────────────────────
+  # Only trigger for application source code (same scope as POLC gate):
+  #   modules/.*/src/**  |  apps/.*/src/**  |  packages/.*/src/**
+  #   supabase/functions/**  |  test/spec files in those directories
+  if [[ "$file" =~ ^(modules|apps|packages)/[^/]+/src/ ]] || \
+     [[ "$file" =~ ^(modules|apps|packages)/[^/]+/tests?/ ]] || \
+     [[ "$file" =~ ^supabase/functions/ ]] || \
+     [[ "$file" =~ ^supabase/migrations/ ]] || \
+     [[ "$file" =~ \.(ts|tsx|js|jsx|py|sql)$ ]]; then
+    ALL_DOCS_ONLY=false
+    IMPLEMENTATION_CHANGED=true
+    IMPL_FILE_LIST="${IMPL_FILE_LIST}\n  - ${file}"
+  else
+    # Everything else (config files, other non-source assets) — supervision
+    DOCS_ONLY_FILES="${DOCS_ONLY_FILES}\n  - ${file}"
+  fi
 
 done <<< "$CHANGED_FILES"
 

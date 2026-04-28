@@ -142,7 +142,6 @@ jobs:
               '```',
               'Identify whether any of these **protected-path categories** are touched:',
               '- `[AGENT-CONTRACT]` `.github/agents/*.md`',
-              '- `[CI-WORKFLOW]` `.github/workflows/*.yml`',
               '- `[CANON-DOC]` `governance/canon/**`',
               '- `[CHECKLIST]` `governance/checklists/**`',
               '- `[TEMPLATE]` `governance/templates/**`',
