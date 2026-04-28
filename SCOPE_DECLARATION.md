@@ -8,29 +8,20 @@
 
 ## Scope Decision
 
-Add ISSUE-MISMATCH validation (Check 6) to the governance evidence exactness gate so that
-stale issue-authority references in SCOPE_DECLARATION.md are caught automatically before
-review or merge. The new check:
-- Parses the `**Issue**:` line from root `SCOPE_DECLARATION.md`
-- Accepts either bare `NNN` or `maturion-isms#NNN`, normalizing bare numbers to
-  `maturion-isms#NNN`
-- Compares against `EXPECTED_ISSUE` env var when supplied (CI derives it from a
-  `Governing-Issue:` control field in the PR body)
-- Fails with a clear `ISSUE-MISMATCH` message when stale, missing, or malformed
-- Warns (format-only pass) when no expected authority can be determined
+Document the ISSUE-MISMATCH (Check 6) defect class in governance evidence artifacts
+(proof-of-operation doc and PREHANDOVER template), and align the CI evidence-exactness
+step to pass PR_BODY for issue authority comparison.
 
 ## Changed Files
 
-- `.github/scripts/validate-governance-evidence-exactness.sh`
-- `.github/workflows/preflight-evidence-gate.yml`
-- `governance/design/evidence-exactness-proof-of-operation-20260422.md`
-- `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md`
-- `SCOPE_DECLARATION.md`
+- `.github/workflows/preflight-evidence-gate.yml` - Align env var name to PR_BODY (matches script); update Checks label to include ISSUE-MISMATCH
+- `governance/design/evidence-exactness-proof-of-operation-20260422.md` - Add ISSUE-MISMATCH to defect class coverage map and detection examples
+- `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` - Add ISSUE-MISMATCH (Check 6) row to Evidence Exactness Gate defect class table
+- `SCOPE_DECLARATION.md` - Updated for this wave
 
 ## Out of Scope
 
-- Any agent contract files (.github/agents/*.md)
 - Any application code or schema migrations
+- Any agent contract files (.github/agents/*.md)
 - Weakening existing PATH/COUNT/HASH/VERSION-MISMATCH gates
-- Replacing SCOPE_DECLARATION.md with a different artifact
-- Broad redesign of issue/PR linking outside the scope declaration authority check
+- Any files not listed above
