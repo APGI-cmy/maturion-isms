@@ -1558,7 +1558,7 @@
       "layer_down_status": "INTERNAL",
       "provenance": "CS2-authorised via issue: Create Governance Canon: Independent Assurance Agent (IAA); v1.13.0 amendment: Restore evidence-first IAA assurance with build-correctness and independent risk challenge \u2014 maturion-isms#1492",
       "last_updated": "2026-04-28",
-      "change_note": "v1.14.0: Added \u00a7Mandatory ECAP Presence Gate (P-1 through P-4 check at audit start; protected-path PRs require ECAP or committed CS2 waiver), \u00a7Protected-Path Classifier (diff-first path table), \u00a7CS2 Waiver Model for Protected-Path PRs, \u00a7ECAP Requirements for Protected-Path PRs, ACR-27 (ECAP-MISSING-FOR-PROTECTED-PATH); authority: CS2 \u2014 maturion-isms#1499. SELF-MOD-IAA-001: CS2 direct review/sign-off required.",
+      "change_note": "v1.14.0: Added \u00a7Mandatory ECAP Presence Gate (P-1 through P-4 check at audit start; protected-path PRs require ECAP or committed CS2 waiver), \u00a7Protected-Path Classifier (diff-first path table), \u00a7CS2 Waiver Model for Protected-Path PRs, \u00a7ECAP Requirements for Protected-Path PRs, ACR-27 (ECAP-MISSING-FOR-PROTECTED-PATH); authority: CS2 \u2014 maturion-isms#1493. SELF-MOD-IAA-001: CS2 direct review/sign-off required.",
       "canonical_version": "1.14.0"
     },
     {
@@ -1944,7 +1944,7 @@
       "type": "template",
       "path": "governance/templates/execution-ceremony-admin/PREHANDOVER.template.md",
       "layer_down_status": "INTERNAL",
-      "change_note": "v1.7.0: Added ecap_required, ecap_invoked, ecap_waiver_ref fields to Gate Results YAML (AAP-30 / ACR-27 / \u00a7Mandatory ECAP Presence Gate); added ## Protected-Path Classification section (diff-first protected path table + ECAP decision + waiver ref; blocked if ecap_required YES + ecap_invoked NO + no waiver); maturion-isms#1499."
+      "change_note": "v1.7.0: Added ecap_required, ecap_invoked, ecap_waiver_ref fields to Gate Results YAML (AAP-30 / ACR-27 / \u00a7Mandatory ECAP Presence Gate); added ## Protected-Path Classification section (diff-first protected path table + ECAP decision + waiver ref; blocked if ecap_required YES + ecap_invoked NO + no waiver); maturion-isms#1493."
     },
     {
       "filename": "PRE_BUILD_REALITY_CHECK_CANON.md",
@@ -2486,7 +2486,7 @@
       "file_hash_sha256": "96a44176bf101067bde71750bae6fa95f1ad7406d447c91504c5a1c3d20c2e97",
       "amended_date": "2026-04-28",
       "last_updated": "2026-04-28",
-      "change_note": "v1.8.0: Added AAP-30 (ECAP-MISSING-FOR-PROTECTED-PATH \u2014 auto-fail, \u00a7Mandatory ECAP Presence Gate, ACR-27); updated S1 severity list; added AAP-30 remediation pattern; maturion-isms#1499.",
+      "change_note": "v1.8.0: Added AAP-30 (ECAP-MISSING-FOR-PROTECTED-PATH \u2014 auto-fail, \u00a7Mandatory ECAP Presence Gate, ACR-27); updated S1 severity list; added AAP-30 remediation pattern; maturion-isms#1493.",
       "canonical_version": "1.8.0"
     },
     {
@@ -2501,7 +2501,7 @@
       "file_hash_sha256": "c9b3825711c0cb3fd00aa7928c0a24387df638ef1843f66d96285bd0068542f8",
       "amended_date": "2026-04-28",
       "last_updated": "2026-04-28",
-      "change_note": "v1.7.0: Added Section 13: Protected-Path ECAP Presence Gate (7 checks; diff-first classification; ecap_required/ecap_invoked/ecap_waiver_ref; BLOCKED condition detection; AAP-30 / ACR-27 / \u00a7Mandatory ECAP Presence Gate); updated References; maturion-isms#1499.",
+      "change_note": "v1.7.0: Added Section 13: Protected-Path ECAP Presence Gate (7 checks; diff-first classification; ecap_required/ecap_invoked/ecap_waiver_ref; BLOCKED condition detection; AAP-30 / ACR-27 / \u00a7Mandatory ECAP Presence Gate); updated References; maturion-isms#1493.",
       "canonical_version": "1.7.0"
     },
     {
