@@ -9,12 +9,10 @@
 ## Scope Decision
 
 Document the ISSUE-MISMATCH (Check 6) defect class in governance evidence artifacts
-(proof-of-operation doc and PREHANDOVER template), and align the CI evidence-exactness
-step to pass PR_BODY for issue authority comparison.
+(proof-of-operation doc and PREHANDOVER template).
 
 ## Changed Files
 
-- `.github/workflows/preflight-evidence-gate.yml` - Align env var name to PR_BODY (matches script); update Checks label to include ISSUE-MISMATCH
 - `governance/design/evidence-exactness-proof-of-operation-20260422.md` - Add ISSUE-MISMATCH to defect class coverage map and detection examples
 - `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` - Add ISSUE-MISMATCH (Check 6) row to Evidence Exactness Gate defect class table
 - `SCOPE_DECLARATION.md` - Updated for this wave
