@@ -6,9 +6,9 @@
 **Date**: 2026-04-28
 **Branch**: copilot/verify-generic-mps-source-documents
 **CS2 Authorization**: CONFIRMED — issue opened by CS2 (@APGI-cmy) and assigned to foreman-v2-agent; branch initialized as copilot/verify-generic-mps-source-documents
-**iaa_wave_record_path**: .agent-admin/assurance/iaa-wave-record-wave-mps-source-verification-20260428.md
-**iaa_prebrief_status**: COMPLETE — PRE-BRIEF committed SHA caa8bc9; Track A = EXEMPT; Track B = AAWP_MAT (conditional on Track A gate)
-**ceremony_admin_appointed**: NO (Track A only — EXEMPT)
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-wave-mps-source-verification-20260428.md
+iaa_prebrief_status: COMPLETE — PRE-BRIEF committed SHA caa8bc9; Track A = EXEMPT; Track B = AAWP_MAT (conditional on Track A gate)
+ceremony_admin_appointed: NO (Track A only — EXEMPT)
 
 ## Wave Purpose
 
