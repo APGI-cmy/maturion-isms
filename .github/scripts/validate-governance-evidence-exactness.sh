@@ -256,8 +256,7 @@ echo ""
 #
 # Authority source priority:
 #   1. EXPECTED_ISSUE env var (set by CI or local helper)
-#   2. PR_NUMBER env var combined with repo name (GitHub Actions)
-#   3. No expected value available → warn but do not hard-fail
+#   2. No expected value available → warn but do not hard-fail
 #      (conservative fallback per issue spec)
 # ============================================================
 echo "── CHECK 6: ISSUE-MISMATCH ──"
