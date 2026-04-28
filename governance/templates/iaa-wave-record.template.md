@@ -124,9 +124,9 @@
 
 ### 3.1 IAA Verdict
 - Verdict: {PASS / REJECTED / BLOCKED_PENDING_RUNTIME_EVIDENCE / BLOCKED_PENDING_BUILD_CORRECTNESS / PASS_WITH_CS2_WAIVER / INVALID_PRIOR_TOKEN}
-- Token: IAA-session-{NNN}-wave-{wave}-{YYYYMMDD}-{PASS/FAIL}
+- Token: IAA-session-{NNN}-wave-{wave}-{YYYYMMDD}-{PASS / REJECTED / BLOCKED_PENDING_RUNTIME_EVIDENCE / BLOCKED_PENDING_BUILD_CORRECTNESS / PASS_WITH_CS2_WAIVER / INVALID_PRIOR_TOKEN}
 - Date: {YYYY-MM-DD}
-- PHASE_B_BLOCKING_TOKEN: {token_ref — reference to the blocking token written by IAA to `.agent-admin/assurance/iaa-token-*`. This field links the wave record to the standalone token file that IAA creates as its formal verdict artifact.}
+- PHASE_B_BLOCKING_TOKEN: {token_ref — reference to the blocking token written by IAA to `.agent-admin/assurance/iaa-token-*`. This field links the wave record to the standalone token file that IAA creates as its formal verdict artifact, and the token reference must use the same final verdict suffix as the `Verdict:` value above.}
 
 ### 3.2 Acceptance-Criteria Evidence Matrix
 
