@@ -583,13 +583,12 @@ IAA must classify the PR as **protected-path = YES** if the actual changed-file 
 | Agent contracts | `.github/agents/**` | Any agent contract file |
 | Governance canon | `governance/canon/**` | All canon documents |
 | Governance checklists | `governance/checklists/**` | All checklist documents |
-| Governance templates | `governance/templates/**` | All template documents |
+| Governance templates | `governance/templates/**` | All template documents, including templates used by Foreman, ECAP, QP, or IAA |
 | Tier 2 governance | `.agent-workspace/**/knowledge/**` | Foreman and agent Tier 2 knowledge files |
 | IAA assurance artifacts | `.agent-admin/assurance/**` | Wave records, tokens, pre-briefs |
 | Schema / migration paths | `supabase/**` | Database schema and migrations |
 | App-level schema/migration | `apps/**/supabase/**` | App-level Supabase paths |
 | Package-level schema | `packages/**/supabase/**` | Package-level Supabase paths |
-| Evidence templates | `governance/templates/**` | Templates used by Foreman, ECAP, QP, or IAA |
 | Production runtime / auth / security | `apps/**/src/**/auth/**`, `apps/**/src/**/security/**`, `apps/**/src/**/middleware/**` | Environment-sensitive runtime paths |
 | Deployment runbooks | `**/DEPLOYMENT_RUNBOOK*.md`, `infrastructure/**` | Infrastructure and deployment runbook files |
 

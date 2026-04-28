@@ -16,6 +16,7 @@ ECAP template / checklist updates so protected-path PRs are consistently gated.
 
 ## Changed Files
 
+- `SCOPE_DECLARATION.md` - This scope declaration (updated to reflect all changed files per scope-to-diff rule)
 - `governance/CANON_INVENTORY.json` - Updated hashes for INDEPENDENT_ASSURANCE_AGENT_CANON.md (v1.14.0), execution-ceremony-admin-anti-patterns.md (v1.8.0), execution-ceremony-admin-checklist.md (v1.7.0), PREHANDOVER.template.md (v1.7.0), iaa-wave-record.template.md (v1.3.0)
 - `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` - Added §Mandatory ECAP Presence Gate (4-question check P-1 through P-4), §Protected-Path Classifier, §CS2 Waiver Model for Protected-Path PRs, §ECAP Requirements for Protected-Path PRs; added ACR-27 (ECAP-MISSING-FOR-PROTECTED-PATH); updated §Admin-Ceremony Rejection Triggers header to v1.14.0; version 1.14.0
 - `governance/checklists/execution-ceremony-admin-anti-patterns.md` - Added AAP-30 (ECAP-MISSING-FOR-PROTECTED-PATH, S1 auto-fail, ACR-27); updated S1 severity list; added AAP-30 remediation pattern; updated References; version 1.8.0
