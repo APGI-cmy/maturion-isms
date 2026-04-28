@@ -342,6 +342,11 @@ export const QUESTION_BANK: DomainSection[] = [
   },
 ];
 
+// Pre-computed once from the static QUESTION_BANK; avoids re-computation on every submission.
+const DOMAIN_NAME_MAP: Record<string, string> = Object.fromEntries(
+  QUESTION_BANK.map((d) => [d.domain_id, d.domain_name]),
+);
+
 export default function FreeAssessmentPage() {
   const navigate = useNavigate();
   const setResult = useFreeAssessmentStore((s) => s.setResult);
@@ -387,15 +392,18 @@ export default function FreeAssessmentPage() {
       return res.json();
     },
     onSuccess: (data) => {
-      const domainNameMap = Object.fromEntries(
-        QUESTION_BANK.map((d) => [d.domain_id, d.domain_name]),
-      );
       const domainScores = (data.baseline_result.domain_scores ?? []).map(
-        (ds: { domain_id: string; score: number }) => ({
-          domain_id: ds.domain_id,
-          domain_name: domainNameMap[ds.domain_id] ?? ds.domain_id,
-          score: ds.score,
-        }),
+        (ds: { domain_id: string; score: number }) => {
+          const domain_name = DOMAIN_NAME_MAP[ds.domain_id];
+          if (!domain_name) {
+            console.warn(`[FreeAssessmentPage] Unknown domain_id in result: ${ds.domain_id}`);
+          }
+          return {
+            domain_id: ds.domain_id,
+            domain_name: domain_name ?? ds.domain_id,
+            score: ds.score,
+          };
+        },
       );
       setResult(
         data.session_token,
