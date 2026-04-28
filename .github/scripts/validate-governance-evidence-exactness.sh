@@ -267,8 +267,8 @@ if [ -z "$SCOPE_FILE" ]; then
 else
   # Extract the **Issue**: line from SCOPE_DECLARATION.md
   # Accepts: **Issue**: maturion-isms#NNNN (with optional whitespace variations)
-  DECLARED_ISSUE_LINE=$(grep -iE '^\*\*Issue\*\*\s*:\s*' "$SCOPE_FILE" 2>/dev/null | head -1 || true)
-  DECLARED_ISSUE=$(echo "$DECLARED_ISSUE_LINE" | sed 's/.*\*\*[Ii]ssue\*\*\s*:\s*//' | tr -d '[:space:]' || true)
+  DECLARED_ISSUE_LINE=$(grep -iE '^[[:space:]]*\*\*[Ii]ssue\*\*[[:space:]]*:[[:space:]]*' "$SCOPE_FILE" 2>/dev/null | head -1 || true)
+  DECLARED_ISSUE=$(echo "$DECLARED_ISSUE_LINE" | sed 's/^[[:space:]]*\*\*[Ii]ssue\*\*[[:space:]]*:[[:space:]]*//' | tr -d '[:space:]' || true)
 
   if [ -z "$DECLARED_ISSUE_LINE" ]; then
     echo "   ❌ ISSUE-MISMATCH: No **Issue**: line found in $SCOPE_FILE"
