@@ -361,12 +361,18 @@ export default function FreeAssessmentPage() {
 
   const mutation = useMutation({
     mutationFn: async () => {
+      const unanswered = QUESTION_BANK.flatMap((d) => d.mpss).filter(
+        (m) => !responses[m.question_id],
+      );
+      if (unanswered.length > 0) {
+        throw new Error('Please answer all questions before submitting.');
+      }
       const assessmentResponses = QUESTION_BANK.flatMap((domain) =>
         domain.mpss.map((mps) => ({
           domain_id: domain.domain_id,
           mps_id: mps.mps_id,
           question_id: mps.question_id,
-          response: responses[mps.question_id] ?? 'A',
+          response: responses[mps.question_id] as ChoiceValue,
         })),
       );
       const res = await fetch('/api/assessment/free/respond', {
@@ -381,10 +387,20 @@ export default function FreeAssessmentPage() {
       return res.json();
     },
     onSuccess: (data) => {
+      const domainNameMap = Object.fromEntries(
+        QUESTION_BANK.map((d) => [d.domain_id, d.domain_name]),
+      );
+      const domainScores = (data.baseline_result.domain_scores ?? []).map(
+        (ds: { domain_id: string; score: number }) => ({
+          domain_id: ds.domain_id,
+          domain_name: domainNameMap[ds.domain_id] ?? ds.domain_id,
+          score: ds.score,
+        }),
+      );
       setResult(
         data.session_token,
         data.baseline_result.baseline_maturity,
-        data.baseline_result.domain_scores,
+        domainScores,
       );
       navigate('/free-assessment/result');
     },

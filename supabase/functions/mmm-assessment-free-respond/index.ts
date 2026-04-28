@@ -13,7 +13,7 @@
  * Behaviour (v2 — MPS-level):
  *   - Receives { assessment_version, responses: { domain_id, mps_id, question_id, response: 'A'|'B'|'C' }[] }
  *   - Scores: A=0.0 (reactive), B=0.5 (developing), C=1.0 (systematic)
- *   - Computes per-question, per-MPS, per-domain, and overall baseline scores (0–5 scale)
+ *   - Computes per-question scores, then aggregates to per-MPS (0–5), per-domain (0–5), and overall baseline (0–5)
  *   - Saves to mmm_free_assessments with session_token = crypto.randomUUID()
  *   - Returns { session_token, baseline_result: { baseline_maturity, domain_scores, mps_scores } }
  *   - HTTP 400 for missing/invalid input
@@ -109,15 +109,16 @@ Deno.serve(async (req: Request) => {
       }
       mpsByKey[key].scores.push(s.score);
     }
+    // Scale each MPS average to 0–5 for consistent output across all levels
     const mps_scores = Object.values(mpsByKey).map((m) => ({
       domain_id: m.domain_id,
       mps_id: m.mps_id,
       score: parseFloat(
-        (m.scores.reduce((a, b) => a + b, 0) / m.scores.length).toFixed(2),
+        ((m.scores.reduce((a, b) => a + b, 0) / m.scores.length) * 5).toFixed(2),
       ),
     }));
 
-    // Aggregate per domain: average MPS scores × 5 for 0–5 scale
+    // Aggregate per domain: average of MPS scores (already on 0–5 scale)
     const domainMap: Record<string, number[]> = {};
     for (const m of mps_scores) {
       if (!domainMap[m.domain_id]) domainMap[m.domain_id] = [];
@@ -126,7 +127,7 @@ Deno.serve(async (req: Request) => {
     const domain_scores = Object.entries(domainMap).map(([domain_id, scores]) => ({
       domain_id,
       score: parseFloat(
-        ((scores.reduce((a, b) => a + b, 0) / scores.length) * 5).toFixed(2),
+        (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2),
       ),
     }));
 
@@ -142,9 +143,10 @@ Deno.serve(async (req: Request) => {
 
     if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
       const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+      const responsePayload = { assessment_version, responses };
       const { error } = await supabase.from('mmm_free_assessments').insert({
         session_token,
-        domain_responses: { assessment_version, responses },
+        responses: responsePayload,
         baseline_result,
       });
       if (error) {
@@ -200,7 +202,7 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
     const { error } = await supabase.from('mmm_free_assessments').insert({
       session_token,
-      domain_responses,
+      responses: domain_responses,
       baseline_result,
     });
     if (error) {

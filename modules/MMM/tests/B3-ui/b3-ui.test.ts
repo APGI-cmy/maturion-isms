@@ -398,7 +398,7 @@ describe('T-MMM-S6-021: Global CSS stylesheet exists and is imported (anti-regre
 
 // ─── T-MMM-S6-022: MPS-level questionnaire structure anti-regression ─────────
 // Anti-regression gates ensuring the MPS-level questionnaire is never regressed
-// back to five flat domain self-ratings. Issue: maturion-isms#1503.
+// back to five flat domain self-ratings. Issue: maturion-isms#1499.
 describe('T-MMM-S6-022: MPS-level questionnaire has 5 domains × 5 MPSs × 1+ questions (anti-regression)', () => {
   it('QUESTION_BANK is exported from FreeAssessmentPage', () => {
     const src = readFile('apps/mmm/src/pages/FreeAssessmentPage.tsx');
@@ -407,13 +407,10 @@ describe('T-MMM-S6-022: MPS-level questionnaire has 5 domains × 5 MPSs × 1+ qu
 
   it('QUESTION_BANK contains exactly 5 domain entries', () => {
     const src = readFile('apps/mmm/src/pages/FreeAssessmentPage.tsx');
-    // Count domain_id occurrences in QUESTION_BANK
-    const domainIdMatches = src.match(/domain_id:\s*['"][^'"]+['"]/g) ?? [];
-    // Each domain entry has one domain_id; each MPS question also has domain_id in the response
-    // payload. Count top-level domain entries via domain_name occurrences in the bank.
-    const domainNameMatches = src.match(/domain_name:\s*['"][^'"]+['"]/g) ?? [];
-    expect(domainNameMatches.length).toBeGreaterThanOrEqual(5);
-    expect(domainIdMatches.length).toBeGreaterThanOrEqual(5);
+    // Count top-level domain objects by counting `mpss:` which appears exactly once
+    // per domain in QUESTION_BANK and nowhere else in the file.
+    const domainEntries = src.match(/\bmpss:\s*\[/g) ?? [];
+    expect(domainEntries.length).toBe(5);
   });
 
   it('QUESTION_BANK contains at least 25 question_id entries (5 domains × 5 MPSs)', () => {
