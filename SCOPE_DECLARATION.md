@@ -4,7 +4,7 @@
 **Issue**: maturion-isms#1484
 **Branch**: copilot/harden-agent-pre-handover-exactness
 **Date**: 2026-04-27
-**Last refreshed**: 2026-04-27 (post-merge scope-refresh commit — §4.3g / AAP-28 single-file final action)
+**Last refreshed**: 2026-04-28 (post-ISSUE-MISMATCH check addition — §4.3g / AAP-28 single-file final action)
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ## Scope Decision
@@ -13,11 +13,14 @@ Harden agent pre-handover exactness discipline: add §4.3g Scope-Refresh and
 Evidence-Exactness Gate to canonical governance, add AAP-28/AAP-29 anti-patterns,
 update PREHANDOVER template with mandatory §4.3g fields, add Section 12 to ECAP
 checklist, create `.github/scripts/refresh-scope-and-validate.sh` helper script,
+add ISSUE-MISMATCH check (CHECK 6) to `validate-governance-evidence-exactness.sh`,
 and update CANON_INVENTORY.json hashes for all changed files.
 
 ## Changed Files
 
 - `.github/scripts/refresh-scope-and-validate.sh` - New §4.3g helper script: scope-refresh + exactness validation + PREHANDOVER snippet
+- `.github/scripts/validate-governance-evidence-exactness.sh` - Added CHECK 6: ISSUE-MISMATCH (validates **Issue** field against PR authority via EXPECTED_ISSUE_NUMBER env var or PR_BODY parsing)
+- `.github/workflows/preflight-evidence-gate.yml` - Pass PR_BODY to evidence-exactness step to enable ISSUE-MISMATCH check; update Checks label
 - `SCOPE_DECLARATION.md` - Updated for this wave
 - `governance/CANON_INVENTORY.json` - Updated hashes for all changed canon files
 - `governance/canon/AGENT_HANDOVER_AUTOMATION.md` - Added §4.3g gate (v1.8.0); added AAP-28/29 to auto-fail table; updated sequencing note
