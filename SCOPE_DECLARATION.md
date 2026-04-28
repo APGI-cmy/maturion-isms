@@ -33,4 +33,3 @@ Track B (implementation) is BLOCKED pending CS2 DB verification gate — separat
 - Any deployment workflow changes
 - Any governance canon files (.github/agents/, governance/)
 - Track B implementation (separate PR after CS2 gate)
-
