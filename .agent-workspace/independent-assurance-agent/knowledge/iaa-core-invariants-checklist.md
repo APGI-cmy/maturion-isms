@@ -1,9 +1,9 @@
 # IAA Core Invariants Checklist
 
 **Agent**: independent-assurance-agent
-**Version**: 4.0.0
+**Version**: 4.1.0
 **Status**: ACTIVE
-**Last Updated**: 2026-04-13
+**Last Updated**: 2026-04-28
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -16,7 +16,7 @@ This checklist defines the core invariants that IAA evaluates at session time. P
 
 ## IAA-Retained Core Invariants
 
-These 2 checks are applied on every qualifying PR invocation. They are substance gates that require human-grade judgment and cannot be reduced to mechanical CI checks.
+These 4 checks are applied on every qualifying PR invocation. They are substance gates that require human-grade judgment and cannot be reduced to mechanical CI checks.
 
 ### CORE-020 — Zero Partial Pass Rule
 
@@ -41,6 +41,30 @@ These 2 checks are applied on every qualifying PR invocation. They are substance
 | **Failure Action** | REJECTION-PACKAGE |
 
 **Why this stays with IAA**: Severity classification requires judgment. CI cannot determine whether a finding is being minimised through language. This is an IAA behavioral invariant, not a file-existence check.
+
+### CORE-026 — Acceptance-Criteria Evidence Matrix
+
+| Field | Value |
+|-------|-------|
+| **Check ID** | CORE-026 |
+| **Check Name** | Acceptance-Criteria Evidence Matrix complete |
+| **Description** | Before issuing any PASS token, IAA must extract every acceptance criterion from the governing issue and map each to independently verified hard evidence. The matrix must be present in the IAA verdict output (iaa-wave-record `## IAA Assurance Verdict` section). Any non-waived criterion without a hard evidence reference (CI run URL, log, diff, hash, schema query, runtime response, or health check) = REJECTED. Agent statements, PREHANDOVER claims, QP claims, builder notes, and prior IAA summaries are claims, not evidence — they may point to evidence but are not evidence themselves. ACR-22 fires if matrix is absent or incomplete. Authority: §Evidence-First Assurance Mandate Rule 1 / INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0. |
+| **Applies To** | ALL T1 and T2 PRs |
+| **Failure Action** | REJECTION-PACKAGE (ACR-22) |
+
+**Why this stays with IAA**: Mapping issue acceptance criteria to evidence requires reading the governing issue, understanding operational intent, and independently verifying the evidence chain. This cannot be mechanically automated.
+
+### CORE-027 — Independent Risk Challenge
+
+| Field | Value |
+|-------|-------|
+| **Check ID** | CORE-027 |
+| **Check Name** | Independent Risk Challenge completed |
+| **Description** | Before issuing any PASS token, IAA must complete the five-question Independent Risk Challenge defined in §Evidence-First Assurance Mandate Rule 6: (1) What could still fail after merge? (2) What evidence would prove it does not fail? (3) Is that evidence present? (4) Is there any contradiction between issue intent, architecture requirements, and PR evidence? (5) Would a reasonable production owner accept this as merge-ready? All five questions must have substantive answers — not template placeholders or single-word responses. If questions 3 or 5 answer NO, IAA must issue REJECTED or BLOCKED_PENDING_RUNTIME_EVIDENCE regardless of checklist completion. ACR-26 fires if challenge is absent or incomplete. Authority: §Evidence-First Assurance Mandate Rule 6 / INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0. |
+| **Applies To** | ALL T1 and T2 PRs |
+| **Failure Action** | REJECTION-PACKAGE (ACR-26) or appropriate BLOCKED verdict |
+
+**Why this stays with IAA**: The Independent Risk Challenge requires out-of-the-box judgment — identifying risks not named by any existing checklist item. This is the core of independent assurance and cannot be delegated to CI.
 
 ---
 
@@ -78,7 +102,7 @@ The following checks are now enforced by CI workflows `agent-contract-format-gat
 
 ## Applying the Checklist
 
-For CORE-020 and CORE-021:
+For CORE-020, CORE-021, CORE-026, and CORE-027:
 1. Evaluate the PR artifacts against each check description
 2. Record PASS or FAIL with specific evidence
 3. Any FAIL → REJECTION-PACKAGE (no partial passes per CORE-020 itself)
@@ -104,6 +128,7 @@ For CORE-020 and CORE-021:
 | 2.9.0 | 2026-03-13 | CORE-023 workflow integrity ripple |
 | 3.0.0 | 2026-04-07 | CORE-024/025 added |
 | 4.0.0 | 2026-04-13 | 90/10 restructuring: retained CORE-020/021 only; all other checks moved to CI; Orientation Mandate and A-029 Architecture Alignment Note removed (now structural); authority: CS2 — maturion-isms#1354 |
+| 4.1.0 | 2026-04-28 | Added CORE-026 (Acceptance-Criteria Evidence Matrix complete — §Evidence-First Assurance Mandate Rule 1 / ACR-22) and CORE-027 (Independent Risk Challenge — §Evidence-First Assurance Mandate Rule 6 / ACR-26); updated IAA-retained invariants count from 2 to 4; authority: CS2 — maturion-isms#1492 |
 
 ---
 

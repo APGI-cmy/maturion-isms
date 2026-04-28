@@ -1,9 +1,9 @@
 # IAA Category Overlays
 
 **Agent**: independent-assurance-agent
-**Version**: 4.2.0
+**Version**: 4.3.0
 **Status**: ACTIVE
-**Last Updated**: 2026-04-26
+**Last Updated**: 2026-04-28
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -410,11 +410,14 @@ whenever those PRs include evidence sections, checklists, or deployment/CDV vali
 > **Mindset**: IAA verifies two properties for every evidence claim: (1) temporal consistency — is
 > the claim's timestamp plausible given the PR timeline? (2) evidence-type sufficiency — does the
 > cited evidence actually prove what the claim asserts, or is a higher-fidelity evidence type required?
+> Additionally (v4.3.0+): (3) acceptance-criteria coverage — does every governing-issue acceptance
+> criterion map to a hard evidence artifact?
 >
 > **Canon reference**: `governance/canon/TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md` — Rules T-001,
-> T-002, E-001, E-002, E-003. Load this file when applying OVL-GE-001 through OVL-GE-003.
+> T-002, E-001, E-002, E-003. Load this file when applying OVL-GE-001 through OVL-GE-004.
+> `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` §Evidence-First Assurance Mandate.
 >
-> **FAIL-ONLY-ONCE**: A-036 (temporal integrity) and A-037 (evidence-type discipline).
+> **FAIL-ONLY-ONCE**: A-036 (temporal integrity), A-037 (evidence-type discipline), A-039 (agent claims are not evidence — acceptance-criteria matrix), A-040 (evidence-type downgrade prohibition).
 
 ### Substance Checks (Primary)
 
@@ -423,6 +426,7 @@ whenever those PRs include evidence sections, checklists, or deployment/CDV vali
 | OVL-GE-001 | Temporal integrity — no future-dated factual claims | For every claim in the artifact that asserts an event as already completed: verify the associated timestamp is on or before the PR creation date and current review date. A completion claim with a future date = REJECTION-PACKAGE citing the specific field, the claimed date, and the PR/review date. Correct form is forward-looking language with status PENDING. See A-036 for check procedure. |
 | OVL-GE-002 | Evidence-type labeling — all deployment/operational items labeled | For every checklist item that involves deployment, CDV execution, live-environment validation, or operational health: verify an explicit `evidence_type` label (STATIC_CODE / CI_TEST / CONFIG / LIVE_RUNTIME / LIVE_E2E) is present. Missing label on any deployment/operational item = REJECTION-PACKAGE citing Rule E-001. |
 | OVL-GE-003 | Evidence-type sufficiency — LIVE_RUNTIME/LIVE_E2E items satisfy fidelity requirement | For every checklist item classified as LIVE_RUNTIME or LIVE_E2E (by label or by semantic content): verify the cited evidence is of equal or higher fidelity. A merged-PR reference, code presence, or CI test result does NOT satisfy LIVE_RUNTIME or LIVE_E2E requirements. REJECTION-PACKAGE if lower-fidelity evidence is cited for a deployment/CDV/operational item. See A-037 for check procedure and evidence-type recognition patterns. |
+| OVL-GE-004 | Acceptance-criteria coverage — every governing-issue criterion maps to hard evidence | IAA extracts the governing issue's acceptance criteria from the issue itself (not from the PREHANDOVER, not from the scope declaration) and verifies each criterion maps to a hard evidence artifact. Evidence must be a CI run URL, log, diff, hash, schema query result, runtime response, health check, or screenshot with context. Agent claims ("tests pass", "workflow reviewed", "gate green", "build complete", "deployment works") are NOT evidence — they may point to evidence but are not evidence themselves. Any non-waived criterion without a hard artifact = REJECTED (ACR-22). `gate_triggered: false` accepted only when IAA independently confirms no gate-triggering paths in actual diff. See A-039 for check procedure and A-040 for downgrade prohibition. |
 
 ### Admin Check (Secondary)
 
@@ -450,6 +454,15 @@ OVL-GE-003 Evidence-Type Sufficiency:
   Items with insufficient evidence: [count]
   [If found]: Item: [item name] | Required: [type] | Cited: [type] | FAIL ❌
   Verdict: PASS ✅ / FAIL ❌
+
+OVL-GE-004 Acceptance-Criteria Coverage:
+  Governing issue: [issue number and title]
+  Acceptance criteria extracted: [N]
+  Criteria with hard evidence: [N]
+  Criteria without hard evidence (non-waived): [N]
+  [If found]: Criterion: [criterion text] | Evidence required: [type] | Submitted: [reference or MISSING] | FAIL ❌
+  gate_triggered: false claims independently verified from diff: [YES / NO — detail]
+  Verdict: PASS ✅ / FAIL ❌ — [cite specific violations for ACR-22/ACR-23/ACR-24 if applicable]
 ```
 
 ---
@@ -471,6 +484,7 @@ OVL-GE-003 Evidence-Type Sufficiency:
 | 4.0.0 | 2026-04-07 | PRE_BUILD_GATES overlay: OVL-PBG-010 through OVL-PBG-016 added — Stage 2 UX Wiring Spec, Stage 6 QA-to-Red, Stage 7 PBFAG, Stage 9 Builder Checklist, §7.1 Change-Propagation Audit, §7.2 Runtime/Deployment Contract, §7.3 Golden Path Verification Pack enforcement; PRE_BRIEF_ASSURANCE overlay: stage-readiness view requirement and OVL-INJ-ADM-003 added; wave: iaa-12stage-upgrade (issue #1258) |
 | 4.1.0 | 2026-04-22 | GOVERNANCE_EVIDENCE overlay added (OVL-GE-001 through OVL-GE-003, OVL-GE-ADM-001) — temporal integrity check (no future-dated claims) and evidence-type discipline (LIVE_RUNTIME/LIVE_E2E items cannot be satisfied by lower-fidelity evidence); canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md; regression from PR #1444; governance hardening issue maturion-isms#1445. |
 | 4.2.0 | 2026-04-26 | PRE_BUILD_GATES overlay: OVL-PBG-017 added — §7.4 Deployment Execution Contract filed before first build wave (mandatory items: workflow ownership per surface, runner access rules, migration mechanism, CI/preview/production execution boundaries, CS2 approval requirements, env validation); OVL-PBG-ADM-001 updated to reference through OVL-PBG-017; wave: mmm-deploy-strategy-oversight-20260426 (issue maturion-isms#1468). |
+| 4.3.0 | 2026-04-28 | GOVERNANCE_EVIDENCE overlay: OVL-GE-004 added — Acceptance-Criteria Coverage: IAA extracts governing-issue acceptance criteria from the issue itself and verifies each maps to a hard evidence artifact; agent claims are not evidence (A-039/ACR-22/ACR-24); evidence-type downgrade prohibited without CS2 waiver (A-040/ACR-23); gate_triggered: false must be independently verified from diff; output format updated to include OVL-GE-004 section; authority: CS2 — maturion-isms#1492. |
 
 ---
 
