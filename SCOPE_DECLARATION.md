@@ -31,6 +31,7 @@ classes, adds anti-regression test T-MMM-S6-021, and updates governance tracking
 - `modules/MMM/12-phase4-ecap/cdv-staging-validation.md` - Recorded fix with evidence table and updated CDV status
 - `modules/MMM/BUILD_PROGRESS_TRACKER.md` - Updated B3 to 65/65 tests, total 965/965, wave entry added
 - `modules/MMM/tests/B3-ui/b3-ui.test.ts` - Added T-MMM-S6-021 anti-regression test (6 assertions: CSS file exists, non-trivial, imported, pages use className)
+- `vitest.config.ts` - Added `modules/MMM/tests/B3-ui/**/*.test.ts` to root include list so T-MMM-S6-021 runs with `pnpm test`
 
 ## Out of Scope
 
