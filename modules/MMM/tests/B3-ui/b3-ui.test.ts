@@ -341,12 +341,18 @@ describe('T-MMM-S6-018: mmm-assessment-free-respond handles MPS-level structured
   it('contains GENERIC_MPS_V1_MANIFEST for server-side completeness validation', () => {
     const src = readFile('supabase/functions/mmm-assessment-free-respond/index.ts');
     expect(src).toContain('GENERIC_MPS_V1_MANIFEST');
-    // Manifest must contain all 25 canonical question_ids
+    // Check the first and last question_id in each of the 5 canonical domains to verify
+    // the manifest is complete (not just seeded with domain-opener entries).
     expect(src).toContain('LG-01-Q1');
+    expect(src).toContain('LG-05-Q1');
     expect(src).toContain('PI-01-Q1');
+    expect(src).toContain('PI-05-Q1');
     expect(src).toContain('PC-01-Q1');
+    expect(src).toContain('PC-05-Q1');
     expect(src).toContain('PR-01-Q1');
+    expect(src).toContain('PR-05-Q1');
     expect(src).toContain('PW-01-Q1');
+    expect(src).toContain('PW-05-Q1');
   });
   it('validates completeness: rejects fewer than 25 responses for v1', () => {
     const src = readFile('supabase/functions/mmm-assessment-free-respond/index.ts');

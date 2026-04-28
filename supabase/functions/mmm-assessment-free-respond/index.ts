@@ -49,7 +49,9 @@ const LEGACY_SCORE_MAP: Record<string, number> = {
 /**
  * Canonical manifest for generic-mps-baseline-v1 (5 domains × 5 MPSs × 1 question = 25).
  * Used for server-side completeness and integrity validation.
- * Must stay in sync with QUESTION_BANK in FreeAssessmentPage.tsx.
+ * Must stay in sync with QUESTION_BANK in apps/mmm/src/pages/FreeAssessmentPage.tsx.
+ * Drift detection: run the B3-ui anti-regression test suite (T-MMM-S6-018/T-MMM-S6-022)
+ * which asserts all canonical question_ids are present in both files.
  */
 const GENERIC_MPS_V1_MANIFEST: Record<string, { domain_id: string; mps_id: string }> = {
   'LG-01-Q1': { domain_id: 'leadership-governance', mps_id: 'leadership-accountability' },
