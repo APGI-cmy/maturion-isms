@@ -30,8 +30,7 @@ correctly; (5) independent risk beyond checklist compliance.
 
 ## Out of Scope
 
-- Any application code files
-- Any other governance workspace artifacts not listed above
 - Any agent contract files (.github/agents/*.md)
+- Any application code or schema migrations
 - Any files not listed above
 
