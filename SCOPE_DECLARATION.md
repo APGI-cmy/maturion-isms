@@ -1,36 +1,37 @@
-# Scope Declaration — harden-agent-pre-handover-exactness-20260427
+# Scope Declaration — harden-deploy-mmm-supabase-migrations-20260427
 
-**Wave**: harden-agent-pre-handover-exactness-20260427
-**Issue**: maturion-isms#1484
-**Branch**: copilot/harden-agent-pre-handover-exactness
+**Wave**: harden-deploy-mmm-supabase-migrations-20260427
+**Issue**: maturion-isms#1486
+**Branch**: copilot/harden-deploy-mmm-supabase-migrations
 **Date**: 2026-04-27
-**Last refreshed**: 2026-04-28 (post-ISSUE-MISMATCH check addition — §4.3g / AAP-28 single-file final action)
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ## Scope Decision
 
-Harden agent pre-handover exactness discipline: add §4.3g Scope-Refresh and
-Evidence-Exactness Gate to canonical governance, add AAP-28/AAP-29 anti-patterns,
-update PREHANDOVER template with mandatory §4.3g fields, add Section 12 to ECAP
-checklist, create `.github/scripts/refresh-scope-and-validate.sh` helper script,
-add ISSUE-MISMATCH check (CHECK 6) to `validate-governance-evidence-exactness.sh`,
-and update CANON_INVENTORY.json hashes for all changed files.
+Replace the interactive `supabase link + supabase db push` mechanism with the proven
+Management API approach (apply-migrations-via-api.py) to make MMM-native migrations
+non-interactive and eliminate the SASL auth/password failure.
 
 ## Changed Files
 
-- `.github/scripts/refresh-scope-and-validate.sh` - New §4.3g helper script: scope-refresh + exactness validation + PREHANDOVER snippet
-- `.github/scripts/validate-governance-evidence-exactness.sh` - Added CHECK 6: ISSUE-MISMATCH (validates **Issue** field against PR authority via EXPECTED_ISSUE_NUMBER env var or PR_BODY parsing)
-- `.github/workflows/preflight-evidence-gate.yml` - Pass PR_BODY to evidence-exactness step to enable ISSUE-MISMATCH check; update Checks label
-- `SCOPE_DECLARATION.md` - Updated for this wave
-- `governance/CANON_INVENTORY.json` - Updated hashes for all changed canon files
-- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` - Added §4.3g gate (v1.8.0); added AAP-28/29 to auto-fail table; updated sequencing note
-- `governance/checklists/execution-ceremony-admin-anti-patterns.md` - Added AAP-28 and AAP-29 (v1.7.0)
-- `governance/checklists/execution-ceremony-admin-checklist.md` - Added Section 12 (v1.6.0)
-- `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` - Added §4.3g fields (v1.5.0)
+- `.github/scripts/apply-migrations-via-api.py`
+- `.github/workflows/deploy-mmm-supabase-migrations.yml`
+- `SCOPE_DECLARATION.md`
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
+- `.agent-workspace/foreman-v2/personal/scope-declaration-wave-harden-deploy-mmm-supabase-migrations-20260427.md`
+- `.agent-admin/assurance/iaa-wave-record-harden-deploy-mmm-supabase-migrations-20260427.md`
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-075-harden-deploy-mmm-supabase-migrations-20260427.md`
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-075-harden-deploy-mmm-supabase-migrations-20260427-R1.md`
+- `.agent-admin/prehandover/proof-session-075-harden-deploy-mmm-supabase-migrations-20260427.md`
+- `.agent-admin/prehandover/proof-session-075-harden-deploy-mmm-supabase-migrations-20260427-R1.md`
+- `.agent-workspace/foreman-v2/memory/session-075-20260427.md`
+- `.agent-admin/prehandover/OVL-CI-005-S033-evidence-session-075-harden-deploy-mmm-supabase-migrations-20260427.md`
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md`
+- `.agent-workspace/independent-assurance-agent/memory/session-075-20260427.md`
+- `.agent-workspace/independent-assurance-agent/memory/session-076-20260427.md`
 
 ## Out of Scope
 
-- Any application code files
-- Any other governance workspace artifacts not listed above
 - Any agent contract files (.github/agents/*.md)
+- Any application code or schema migrations
 - Any files not listed above
