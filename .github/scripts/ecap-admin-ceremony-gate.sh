@@ -266,16 +266,17 @@ else
       # The gate already confirmed protected paths were touched, so explicit false/NO
       # must be supported by a CS2 waiver or IAA pre-brief justification.
       # Without a waiver, we treat "ecap_required: false" as a self-certified claim
-      # and require the waiver reference.
+      # and require an explicit waiver reference.
       echo "  ⚠️  ecap_required/ceremony_admin_appointed set to false/NO"
-      echo "      Protected paths were touched — this claim requires a cs2 waiver or IAA exemption"
-      # Check for any waiver evidence inline
-      if grep -qiE "waiver|exemption|cs2.*waive|waive.*cs2|iaa.*exempt" "$proof_file" 2>/dev/null; then
-        echo "  ✅ Waiver/exemption evidence found in proof file"
+      echo "      Protected paths were touched — this claim requires a populated ecap_waiver_ref"
+
+      ECAP_WAIVER_REF="$(grep -iE '^[[:space:]]*ecap_waiver_ref[[:space:]]*:' "$proof_file" 2>/dev/null | head -n1 | sed -E 's/^[[:space:]]*ecap_waiver_ref[[:space:]]*:[[:space:]]*//; s/[[:space:]]+$//; s/^"(.*)"$/\1/; s/^'\''(.*)'\''$/\1/')"
+      if [ -n "$ECAP_WAIVER_REF" ] && ! echo "$ECAP_WAIVER_REF" | grep -qiE '^N/A$'; then
+        echo "  ✅ Explicit waiver reference found: $ECAP_WAIVER_REF"
         ECAP_EVIDENCE_FOUND=true
       else
-        echo "  ❌ No waiver/exemption evidence found for ecap_required: false on protected-path PR [ECAP-GATE-003]"
-        FAIL_REASONS="${FAIL_REASONS}\n  - ${proof_file}: ecap_required=false/NO but no CS2 waiver or IAA exemption evidence"
+        echo "  ❌ Missing populated ecap_waiver_ref for ecap_required: false on protected-path PR [ECAP-GATE-003]"
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${proof_file}: ecap_required=false/NO but ecap_waiver_ref is missing or empty"
         FAIL=true
       fi
       continue
