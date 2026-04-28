@@ -3,8 +3,8 @@
 ## Status
 **Type**: Tier 2 Governance Checklist  
 **Authority**: CS2 — EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md v1.1.0  
-**Version**: 1.6.0  
-**Effective Date**: 2026-04-27  
+**Version**: 1.7.0  
+**Effective Date**: 2026-04-22  
 **Owner**: execution-ceremony-admin-agent (per-job completion) / Foreman QP (per-job review)  
 **Purpose**: Authoritative checklist for ceremony completeness. Used by the `execution-ceremony-admin-agent` before bundle handback and by the Foreman QP checkpoint before IAA invocation.
 
@@ -287,18 +287,42 @@ grep -E "art_refresh_required|art_refresh_completed" .agent-admin/prehandover/pr
 
 ---
 
+## Section 13: Protected-Path ECAP Presence Gate (AAP-30 / ACR-27 / §Mandatory ECAP Presence Gate)
+
+> **Auto-fail section** — any BLOCKED state stops the bundle. Do not submit to IAA until resolved.
+> All checks must be PASS or N/A before returning the bundle for IAA invocation.
+> Authority: `INDEPENDENT_ASSURANCE_AGENT_CANON.md §Mandatory ECAP Presence Gate` (v1.14.0)
+
+| # | Check | Command / Method | Result | Defect Class |
+|---|-------|-----------------|--------|-------------|
+| 13.1 | Compute the actual changed-file set from the live diff (`git diff --name-only origin/main...HEAD`) — not from SCOPE_DECLARATION or PREHANDOVER claims | `git diff --name-only origin/main...HEAD` — record the count and list | | |
+| 13.2 | Classify each changed file against the protected-path categories: `.github/workflows/**`, `.github/scripts/**`, `.github/agents/**`, `governance/canon/**`, `governance/checklists/**`, `governance/templates/**`, `supabase/**`, `apps/**/supabase/**`, `packages/**/supabase/**`, `.agent-admin/assurance/**`, `.agent-workspace/**/knowledge/**`, `infrastructure/**`, production runtime/auth/security paths | Cross-check diff against protected-path pattern list; record YES/NO per category | | |
+| 13.3 | Verify `ecap_required` field in PREHANDOVER YAML is correctly set based on check 13.2: `YES` if any protected-path file was found in the diff, `NO` otherwise | Confirm PREHANDOVER YAML field `ecap_required` — must be `YES` if any protected-path file appears in diff (13.2 result), `NO` if none; this is a verification of the already-set YAML field | | |
+| 13.4 | Verify `ecap_invoked` field in PREHANDOVER YAML is correctly set: `YES` if ECAP/admin ceremony was appointed and bundle artifacts are committed, `NO` if not appointed, `N/A` if `ecap_required` is `NO` | Confirm PREHANDOVER YAML field `ecap_invoked` against actual evidence: check `wave-current-tasks.md` `ceremony_admin_appointed` field AND verify ECAP reconciliation summary exists and is committed; `ecap_invoked: N/A` is only valid when `ecap_required: NO` | | |
+| 13.5 | If ECAP was NOT appointed: verify an explicit CS2 waiver artifact exists as a committed file at `.agent-admin/assurance/cs2-ecap-waiver-<PR#>-<YYYYMMDD>.md` with all required waiver fields populated | `git ls-files .agent-admin/assurance/cs2-ecap-waiver-*.md` — file must exist and be committed; record path in `ecap_waiver_ref` in PREHANDOVER YAML | | |
+| 13.6 | Confirm the `## Protected-Path Classification` section in the PREHANDOVER proof is populated with the actual diff-derived protected files and ECAP decision | Review PREHANDOVER proof `## Protected-Path Classification` section — must not be a template placeholder; must list actual files and ECAP decision | | |
+| 13.7 | Confirm BLOCKED condition is NOT triggered: if `ecap_required: YES` AND `ecap_invoked: NO` AND `ecap_waiver_ref: none` → BLOCKED (must not submit to IAA) | Logic check — if all three conditions hold simultaneously → **BLOCKED. Stop. Do not proceed to IAA.** | | |
+
+**ECAP Presence Gate decision**:
+- [ ] **PASS** — ecap_required: NO (no protected-path files in diff)
+- [ ] **PASS** — ecap_required: YES AND ecap_invoked: YES (ECAP appointed and completed)
+- [ ] **PASS WITH WAIVER** — ecap_required: YES AND ecap_invoked: NO AND ecap_waiver_ref: `<path>` (CS2 waiver committed)
+- [ ] **BLOCKED** — ecap_required: YES AND ecap_invoked: NO AND ecap_waiver_ref: none → **do not submit to IAA**
+
+---
+
 ## References
 
 - `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` v1.1.0 — §3.5–§3.9 (duties)
 - `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.8.0 — §4.3e (compliance gate) + §4.3f (ART verification gate) + §4.3g (scope-refresh and evidence-exactness gate)
 - `governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md` v1.4.0 — §14.6 (QP checkpoint)
-- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.11.0 — §Admin-Ceremony Rejection Triggers
+- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` v1.14.0 — §Admin-Ceremony Rejection Triggers; §Mandatory ECAP Presence Gate; §Protected-Path Classifier; ACR-27
 - `governance/checklists/execution-ceremony-admin-reconciliation-matrix.md` — cross-artifact dependencies (R18: renumber refresh)
-- `governance/checklists/execution-ceremony-admin-anti-patterns.md` — auto-fail conditions (AAP-23, AAP-24, AAP-25, AAP-26, AAP-27, AAP-28, AAP-29)
-- `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` v1.5.0 — PREHANDOVER proof template (ART section + Evidence Exactness Gate with §4.3g fields)
+- `governance/checklists/execution-ceremony-admin-anti-patterns.md` — auto-fail conditions (AAP-23, AAP-24, AAP-25, AAP-26, AAP-27, AAP-28, AAP-29, AAP-30)
+- `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` v1.7.0 — PREHANDOVER proof template (ART section + Evidence Exactness Gate + Protected-Path Classification section)
 - `governance/templates/liaison-mini-ceremony-pack.md` v1.0.0 — liaison / non-ECAP mini-ceremony pack
 - `governance/checklists/liaison-mini-ceremony-checklist.md` v1.0.0 — liaison mini-ceremony execution guide
 
 ---
 
-*Version: 1.6.0 | Effective: 2026-04-27 | Amended: 2026-04-27 (v1.6.0) — Added Section 12: Pre-Handover Scope-Refresh and Evidence-Exactness Gate (§4.3g, 7 checks covering scope refresh as final committed action, local exactness check, PREHANDOVER proof evidence with timestamp, and stale-evidence detection); updated References to include AAP-28/29 and PREHANDOVER template v1.5.0 and AGENT_HANDOVER_AUTOMATION.md v1.8.0; updated Section 9 Final Acceptance Block to include Section 12; wave gov-prehandover-exactness-hardening-20260427 | Amended: 2026-04-22 (v1.5.0) — Added Section 11: Evidence Exactness Checks (EVIDENCE-EXACT-001 through EVIDENCE-EXACT-005) covering VERSION-MISMATCH cross-artifact, VERSION-MISMATCH internal, PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE; updated References to include AAP-25/26/27 and PREHANDOVER template v1.4.0; wave gov-evidence-exactness-hardening-20260422 | Amended: 2026-04-21 (v1.4.0) — Added Section 10: Authoritative Reference Table (ART) Verification (§4.3f Check M / Check N — AAP-23/AAP-24/ACR-17); updated Section 9 Final Acceptance Block to include Section 10 and ART presence confirmation; updated References to include v1.7.0 canon and new liaison mini-ceremony files; wave admin-ceremony-hardening-20260421 | Amended: 2026-04-20 (v1.3.0) — Added checks 5.10 and 5.11: active final-state bundle IAA token/session coherence + historical archive separation (AAP-22 / ACR-16 / §4.3e Check L; maturion-isms#1422); updated Section 9 final acceptance block to require explicit AAP-22 coherence confirmation; updated IAA canon reference to v1.10.0 | Amended: 2026-04-19 (v1.2.0) — Added check 3.9: active control artifact normalization required before final handback (AAP-21 / ACR-15 / A-039); updated Section 9 final acceptance block to include active tracker normalization confirmation | Amended: 2026-04-19 (v1.1.0) — Added check 3.8: `## Ripple/Cross-Agent Assessment` section presence in PREHANDOVER proof (HFMC-01 / AAP-20) | Authority: CS2 (Johan Ras)*
+*Version: 1.7.0 | Effective: 2026-04-22 | Amended: 2026-04-28 (v1.7.0) — Added Section 13: Protected-Path ECAP Presence Gate (AAP-30 / ACR-27 / §Mandatory ECAP Presence Gate — INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.14.0 / maturion-isms#1493; 7 checks covering diff-first protected-path classification, ecap_required/ecap_invoked/ecap_waiver_ref fields, BLOCKED condition detection, and Protected-Path Classification section verification); updated References to INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.14.0, AAP-30, and PREHANDOVER template v1.7.0; maturion-isms#1493 | Amended: 2026-04-27 (v1.6.0) — Added Section 12: Pre-Handover Scope-Refresh and Evidence-Exactness Gate (§4.3g, 7 checks covering scope refresh as final committed action, local exactness check, PREHANDOVER proof evidence with timestamp, and stale-evidence detection); updated References to include AAP-28/29 and PREHANDOVER template v1.5.0 and AGENT_HANDOVER_AUTOMATION.md v1.8.0; updated Section 9 Final Acceptance Block to include Section 12; wave gov-prehandover-exactness-hardening-20260427 | Amended: 2026-04-22 (v1.5.0) — Added Section 11: Evidence Exactness Checks (EVIDENCE-EXACT-001 through EVIDENCE-EXACT-005) covering VERSION-MISMATCH cross-artifact, VERSION-MISMATCH internal, PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE; updated References to include AAP-25/26/27 and PREHANDOVER template v1.4.0; wave gov-evidence-exactness-hardening-20260422 | Amended: 2026-04-21 (v1.4.0) — Added Section 10: Authoritative Reference Table (ART) Verification (§4.3f Check M / Check N — AAP-23/AAP-24/ACR-17); updated Section 9 Final Acceptance Block to include Section 10 and ART presence confirmation; updated References to include v1.7.0 canon and new liaison mini-ceremony files; wave admin-ceremony-hardening-20260421 | Amended: 2026-04-20 (v1.3.0) — Added checks 5.10 and 5.11: active final-state bundle IAA token/session coherence + historical archive separation (AAP-22 / ACR-16 / §4.3e Check L; maturion-isms#1422); updated Section 9 final acceptance block to require explicit AAP-22 coherence confirmation; updated IAA canon reference to v1.10.0 | Amended: 2026-04-19 (v1.2.0) — Added check 3.9: active control artifact normalization required before final handback (AAP-21 / ACR-15 / A-039); updated Section 9 final acceptance block to include active tracker normalization confirmation | Amended: 2026-04-19 (v1.1.0) — Added check 3.8: `## Ripple/Cross-Agent Assessment` section presence in PREHANDOVER proof (HFMC-01 / AAP-20) | Authority: CS2 (Johan Ras)*

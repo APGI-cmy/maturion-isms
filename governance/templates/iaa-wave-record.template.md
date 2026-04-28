@@ -1,6 +1,6 @@
 # IAA Wave Record — {wave} — {date}
 
-**Record Version**: 1.2.0
+**Record Version**: 1.3.0
 **Wave**: {wave}
 **Branch**: {branch}
 **Issue**: {issue_ref}
@@ -128,6 +128,29 @@
 - Date: {YYYY-MM-DD}
 - PHASE_B_BLOCKING_TOKEN: {token_ref — reference to the blocking token written by IAA to `.agent-admin/assurance/iaa-token-*`. This field links the wave record to the standalone token file that IAA creates as its formal verdict artifact, and the token reference must use the same final verdict suffix as the `Verdict:` value above.}
 
+### 3.1a Mandatory ECAP Presence Gate
+
+> **EXECUTE FIRST — before any ACR check or checklist evaluation (§Mandatory ECAP Presence Gate, INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.14.0).**
+> IAA must independently compute the changed-file set from the actual diff — NOT from SCOPE_DECLARATION, PREHANDOVER claims, or agent attestation.
+> If P-1 = YES and P-2 = YES and P-3 = NO and P-4 = NO → stop immediately and issue REJECTION-PACKAGE (ACR-27). Do not proceed to §3.2 or any further check.
+
+| Check | Question | Answer | Notes |
+|-------|----------|--------|-------|
+| **P-1** | Does this PR touch a protected path? (diff-first: `git diff --name-only origin/main...HEAD` against protected-path classifier) | {YES / NO} | {list matching protected files, or "none"} |
+| **P-2** | Is ECAP/admin ceremony required? (YES if P-1 = YES; NO if P-1 = NO) | {YES / NO} | |
+| **P-3** | Was ECAP/admin ceremony appointed and completed? (check `ceremony_admin_appointed` in wave-current-tasks.md and ECAP bundle artifacts committed) | {YES / NO / N/A} | N/A only when P-2 = NO |
+| **P-4** | If ECAP not appointed (P-3 = NO): is there an explicit CS2 waiver artifact committed at `.agent-admin/assurance/cs2-ecap-waiver-<PR#>-<YYYYMMDD>.md`? | {YES / NO / N/A} | N/A when P-3 = YES or P-2 = NO; if YES: record waiver path below |
+
+**CS2 waiver artifact** (complete only when P-4 = YES): `{.agent-admin/assurance/cs2-ecap-waiver-<PR#>-<YYYYMMDD>.md — or N/A}`
+
+**ECAP Presence Gate verdict**:
+- {PASS — P-1 = NO (no protected-path files in diff)}
+- {PASS — P-1 = YES and P-3 = YES (ECAP appointed and completed)}
+- {PASS_WITH_WAIVER — P-1 = YES, P-3 = NO, P-4 = YES (explicit committed CS2 waiver; IAA performs expanded evidence-first review per waiver terms)}
+- {REJECTED — ACR-27 — P-1 = YES, P-2 = YES, P-3 = NO, P-4 = NO (no ECAP and no committed CS2 waiver)}
+
+> If verdict is REJECTED — ACR-27: **STOP. Do not complete §3.2 through §3.6. Issue REJECTION-PACKAGE now.**
+
 ### 3.2 Acceptance-Criteria Evidence Matrix
 
 > **MANDATORY before any PASS token (§Evidence-First Assurance Mandate Rule 1).**
@@ -204,10 +227,12 @@
 ---
 
 ## 5. Record Metadata
-- Record Schema Version: 1.2.0
+- Record Schema Version: 1.3.0
 - Created By: {agent_id}
 - Last Modified By: {agent_id}
 - Last Modified Date: {YYYY-MM-DD}
 - Immutability Lock: Section 2 locked after initial commit
 - File Naming Convention: `iaa-wave-record-{wave}-{date}.md`
 - Storage Location: `.agent-admin/assurance/`
+- Amendment: v1.3.0 (2026-04-28) — Added §3.1a Mandatory ECAP Presence Gate (P-1 through P-4 four-question check, executed before any ACR/checklist evaluation; REJECTED-ACR-27 if ecap_required YES, ECAP not invoked, and no committed CS2 waiver); authority: CS2 — maturion-isms#1493; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.14.0
+- Amendment: v1.2.0 (2026-04-28) — Added §3.2 Acceptance-Criteria Evidence Matrix, §3.3 Build-Correctness Assessment, §3.4 Independent Risk Challenge; renumbered prior §3.2/3.3 to §3.5/3.6; updated Record Schema Version; authority: CS2 — maturion-isms#1492
