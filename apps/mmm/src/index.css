@@ -859,11 +859,17 @@ small { font-size: 0.875rem; color: var(--color-text-muted); }
   transition: border-color var(--transition-fast), background-color var(--transition-fast);
 }
 
-.origin-option:has(input:checked) {
+.origin-option:focus-within {
   border-color: var(--color-accent);
   background-color: var(--color-accent-light);
 }
 
+@supports selector(.origin-option:has(input:checked)) {
+  .origin-option:has(input:checked) {
+    border-color: var(--color-accent);
+    background-color: var(--color-accent-light);
+  }
+}
 .origin-option:hover {
   border-color: var(--color-accent);
 }
