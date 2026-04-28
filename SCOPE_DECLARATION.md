@@ -1,7 +1,7 @@
 # Scope Declaration — harden-deploy-mmm-supabase-migrations-20260427
 
 **Wave**: harden-deploy-mmm-supabase-migrations-20260427
-**Issue**: maturion-isms — "Foreman: harden Deploy MMM Supabase Migrations workflow end-to-end until it passes"
+**Issue**: maturion-isms#1486
 **Branch**: copilot/harden-deploy-mmm-supabase-migrations
 **Date**: 2026-04-27
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
@@ -14,6 +14,7 @@ non-interactive and eliminate the SASL auth/password failure.
 
 ## Changed Files
 
+- `.github/scripts/apply-migrations-via-api.py`
 - `.github/workflows/deploy-mmm-supabase-migrations.yml`
 - `SCOPE_DECLARATION.md`
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`

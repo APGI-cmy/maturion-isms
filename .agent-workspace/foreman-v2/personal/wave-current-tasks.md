@@ -2,7 +2,7 @@
 
 **Foreman**: foreman-v2-agent v6.2.0
 **Wave**: harden-deploy-mmm-supabase-migrations-20260427
-**Issue**: maturion-isms — "Foreman: harden Deploy MMM Supabase Migrations workflow end-to-end until it passes"
+**Issue**: maturion-isms#1486
 **Branch**: copilot/harden-deploy-mmm-supabase-migrations
 **Date**: 2026-04-27
 **CS2 Authorization**: CONFIRMED — issue opened by CS2 (@APGI-cmy) in CS2-governed repository, foreman-v2-agent assigned
@@ -46,5 +46,6 @@ Harden the Deploy MMM Supabase Migrations workflow end-to-end. Replace the faili
 - [x] Session memory committed
 - [x] IAA Final Audit ASSURANCE-TOKEN received — IAA-session-075-harden-deploy-mmm-supabase-migrations-20260427-PASS
 - [ ] CS2 notified for merge approval
+- [ ] **BLOCKED — Operational run pending**: #1486 requires evidence of a successful protected workflow run through schema verification and migration summary. Merge-readiness is BLOCKED until CS2 performs or confirms an operational run on `main` with `CONFIRM` input, or explicitly approves static-evidence substitution.
 
 **Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED

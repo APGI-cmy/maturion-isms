@@ -113,9 +113,14 @@ Migration path verification: `[x]` PASS (STATIC_CODE with S-033 pattern equivale
 
 | # | Check | Status | Notes |
 |---|-------|--------|-------|
-| 4.1–4.6 | Helper script contract compliance | `[N/A]` | No `.github/scripts/` files modified in this PR |
+| 4.1 | HTTP 200/201/204 accepted as success; other codes are hard failures | `[x]` | `supabase_exec()` checks `http_code not in {"200", "201", "204"}` → sys.exit(1) + `::error::` |
+| 4.2 | `--connect-timeout 10 --max-time 60` on all curl invocations | `[x]` | Added in commit `af54cae`; verified in `apply-migrations-via-api.py` line 41-42 |
+| 4.3 | Temporary file hygiene (trap/cleanup) | `[x]` | Script uses Python `subprocess` with `capture_output=True` — no tmpfiles created; N/A for Python scripts |
+| 4.4 | Input validation — SUPABASE_ACCESS_TOKEN | `[x]` | `apply-migrations-via-api.py` lines 130-137: validates env var, exits with `::error::` if missing |
+| 4.5 | Input validation — SUPABASE_PROJECT_REF | `[x]` | `apply-migrations-via-api.py` lines 139-143: validates env var, exits with `::error::` if missing |
+| 4.6 | SQL injection / identifier validation | `[x]` | `_validate_identifier()` and `_escape_sql_string()` guard all user-supplied values |
 
-Helper script compliance: `[N/A]` NOT APPLICABLE
+Helper script compliance: `[x]` PASS — `apply-migrations-via-api.py` satisfies all D-004 requirements
 
 **Section 5: Evidence Fidelity (D-005, A-041)**
 
