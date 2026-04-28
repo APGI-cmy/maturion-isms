@@ -1,36 +1,32 @@
-# Scope Declaration — restore-evidence-first-iaa-assurance-20260428
+# Scope Declaration — require-admin-ceremony-for-protected-paths-20260428
 
-**Wave**: restore-evidence-first-iaa-assurance-20260428
-**Issue**: maturion-isms#1492
-**Branch**: copilot/restore-evidence-first-iaa-assurance
+**Wave**: require-admin-ceremony-for-protected-paths-20260428
+**Issue**: maturion-isms#1499
+**Branch**: copilot/require-admin-ceremony-for-protected-paths
 **Date**: 2026-04-28
 **Last refreshed**: 2026-04-28 (post-final-edit scope refresh per §4.3g / AAP-28)
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ## Scope Decision
 
-Restore evidence-first IAA assurance with build-correctness and independent risk challenge
-(maturion-isms#1492). Hardens IAA canon/contract and Tier 2 assurance guidance so IAA
-independently verifies: (1) governing issue intent; (2) actual PR diff; (3) build philosophy
-and architectural requirements; (4) hard evidence that the build/workflow/runtime behaves
-correctly; (5) independent risk beyond checklist compliance.
+Require mandatory ECAP/admin ceremony for protected-path PRs before IAA may issue a PASS token
+(maturion-isms#1499). Adds §Mandatory ECAP Presence Gate to IAA canon, §Protected-Path
+Classifier, CS2 waiver model, ACR-27 (ECAP-MISSING-FOR-PROTECTED-PATH), AAP-30, and
+ECAP template / checklist updates so protected-path PRs are consistently gated.
 
 ## Changed Files
 
-- `.agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md` - Added A-039 (agent claims non-evidence — acceptance-criteria matrix), A-040 (evidence-type downgrade prohibition), A-041 (diff-first classification), A-042 (independent risk challenge mandatory); version 3.0.0
-- `.agent-workspace/independent-assurance-agent/knowledge/iaa-category-overlays.md` - Added OVL-GE-004 (acceptance-criteria coverage check) to GOVERNANCE_EVIDENCE overlay; version 4.3.0
-- `.agent-workspace/independent-assurance-agent/knowledge/iaa-core-invariants-checklist.md` - Added CORE-026 (Acceptance-Criteria Evidence Matrix) and CORE-027 (Independent Risk Challenge); version 4.1.0
-- `.agent-workspace/independent-assurance-agent/knowledge/index.md` - Updated knowledge table versions; added FAIL-ONLY-ONCE summary rows A-038 through A-042; updated operating model summary; version 3.8.0
-- `SCOPE_DECLARATION.md` - Updated for this wave
-- `governance/CANON_INVENTORY.json` - Updated hashes for INDEPENDENT_ASSURANCE_AGENT_CANON.md (v1.13.0), PREHANDOVER.template.md (v1.6.0), iaa-wave-record.template.md (v1.2.0)
-- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` - Added §Evidence-First Assurance Mandate (Rules 1–7: Acceptance-Criteria Evidence Matrix, Build Philosophy and Architecture Compliance Gate, Evidence-Type Downgrade Prohibition, Diff-First Audit Rule, Agent Claim Non-Evidence Rule, Independent Risk Challenge, Expanded Verdict Taxonomy); expanded Output Specification with new verdict types; added ACR-22 through ACR-26; version 1.13.0
-- `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md` - Added mandatory §Acceptance-Criteria Matrix (Producer-Side) section; added certification item 15; version 3.4
-- `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` - Added mandatory §Acceptance-Criteria Matrix (Producer-Side) section; version 1.6.0
-- `governance/templates/iaa-wave-record.template.md` - Added §3.2 Acceptance-Criteria Evidence Matrix, §3.3 Build-Correctness Assessment, §3.4 Independent Risk Challenge; renumbered §3.5/3.6; version 1.2.0
+- `governance/CANON_INVENTORY.json` - Updated hashes for INDEPENDENT_ASSURANCE_AGENT_CANON.md (v1.14.0), execution-ceremony-admin-anti-patterns.md (v1.8.0), execution-ceremony-admin-checklist.md (v1.7.0), PREHANDOVER.template.md (v1.7.0)
+- `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` - Added §Mandatory ECAP Presence Gate (4-question check P-1 through P-4), §Protected-Path Classifier, §CS2 Waiver Model for Protected-Path PRs, §ECAP Requirements for Protected-Path PRs; added ACR-27 (ECAP-MISSING-FOR-PROTECTED-PATH); updated §Admin-Ceremony Rejection Triggers header to v1.14.0; version 1.14.0
+- `governance/checklists/execution-ceremony-admin-anti-patterns.md` - Added AAP-30 (ECAP-MISSING-FOR-PROTECTED-PATH, S1 auto-fail, ACR-27); updated S1 severity list; added AAP-30 remediation pattern; updated References; version 1.8.0
+- `governance/checklists/execution-ceremony-admin-checklist.md` - Added Section 13 (Protected-Path ECAP Presence Gate, 7 checks covering diff-first classification, ecap_required/ecap_invoked/ecap_waiver_ref, and BLOCKED condition); updated References; version 1.7.0
+- `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md` - Added certification item 16 (protected-path ECAP presence confirmation, AAP-30 / ACR-27); updated version to 3.5
+- `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` - Added ecap_required, ecap_invoked, ecap_waiver_ref fields to Gate Results YAML; added ## Protected-Path Classification section; version 1.7.0
 
 ## Out of Scope
 
-- Runtime changes to `api/ai/feedback/pending.ts`
 - Any Supabase schema or migration changes
 - Any deployment workflow changes
+- Any application code changes
+- Any agent Tier 2 knowledge file changes
 - Any files not listed above
