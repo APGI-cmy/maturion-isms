@@ -1,0 +1,416 @@
+#!/bin/bash
+# Test suite for iaa-final-assurance-gate.sh and ecap-admin-ceremony-gate.sh
+# Authority: LIVING_AGENT_SYSTEM.md v6.2.0
+# Purpose: Validate IAA final assurance and ECAP/admin ceremony CI gates
+#          against the acceptance criteria in maturion-isms#1518.
+#
+# Coverage (acceptance criteria):
+#   AC-1  Missing IAA token (implementation PR, no token file)                  → exit 1
+#   AC-2  Stale IAA token from another PR (token references wrong PR number)    → exit 1
+#   AC-3  Empty PHASE_B_BLOCKING_TOKEN                                           → exit 1
+#   AC-4  IAA token referencing the wrong governing issue                       → exit 1
+#   AC-5  REJECTION-PACKAGE token                                               → exit 1
+#   AC-6  Protected-path PR without ECAP evidence                               → exit 1
+#   AC-7  Protected-path PR with CS2 waiver (ecap_waiver_ref populated)         → exit 0
+#   AC-8  Non-implementation documentation-only PR                              → exit 0
+#   AC-9  Valid IAA token with correct PR and issue reference                   → exit 0
+#   AC-10 IAA claims PASS on protected-path PR with ECAP evidence               → exit 0
+#   AC-11 PENDING PHASE_B_BLOCKING_TOKEN                                        → exit 1
+#
+# Usage:
+#   .github/scripts/iaa-final-assurance-gate.test.sh
+#
+# Exit codes:
+#   0 = All tests passed
+#   1 = One or more tests failed
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+IAA_GATE_SCRIPT="${SCRIPT_DIR}/iaa-final-assurance-gate.sh"
+ECAP_GATE_SCRIPT="${SCRIPT_DIR}/ecap-admin-ceremony-gate.sh"
+
+TEST_DIR=$(mktemp -d)
+TEST_PASSED=0
+TEST_FAILED=0
+
+echo "=== IAA Final Assurance Gate + ECAP Gate Test Suite ==="
+echo "Test directory: $TEST_DIR"
+echo ""
+
+# ----------------------------------------------------------------
+# Helper: run_test <name> <expected_exit> <script> <setup_func>
+# ----------------------------------------------------------------
+run_test() {
+  local test_name="$1"
+  local expected_exit="$2"
+  local gate_script="$3"
+  local setup_func="$4"
+
+  echo "Test: $test_name"
+
+  local test_workspace
+  test_workspace=$(mktemp -d -p "$TEST_DIR")
+  cd "$test_workspace"
+
+  # Minimal git repo setup
+  git init -q
+  git config user.email "test@example.com"
+  git config user.name "Test User"
+
+  # Create initial commit on main (simulates base branch)
+  mkdir -p .agent-admin/assurance .agent-admin/prehandover \
+           .agent-workspace/foreman-v2/memory \
+           .github/agents .github/workflows governance/canon
+  echo "initial" > README.md
+  git add .
+  git commit -q -m "Initial commit"
+  git branch -M main
+
+  # Create feature branch
+  git checkout -q -b test-branch
+
+  # Run test-specific setup (populates files / changes)
+  $setup_func
+
+  # Export required env vars for the gate
+  BASE_SHA=$(git rev-parse main 2>/dev/null)
+  HEAD_SHA=$(git rev-parse HEAD 2>/dev/null || echo "HEAD")
+
+  set +e
+  local output
+  output=$(BASE_SHA="$BASE_SHA" \
+           HEAD_SHA="$HEAD_SHA" \
+           PR_NUMBER="9999" \
+           PR_LABELS="" \
+           PR_BODY="Closes maturion-isms#1518" \
+           EXPECTED_ISSUE_NUMBER="1518" \
+           bash "$gate_script" 2>&1)
+  local actual_exit=$?
+  set -e
+
+  if [ "$actual_exit" -eq "$expected_exit" ]; then
+    echo "  ✅ PASS (exit code: $actual_exit)"
+    TEST_PASSED=$((TEST_PASSED + 1))
+  else
+    echo "  ❌ FAIL (expected: $expected_exit, got: $actual_exit)"
+    echo "  Output:"
+    echo "$output" | sed 's/^/    /'
+    TEST_FAILED=$((TEST_FAILED + 1))
+  fi
+
+  cd "$TEST_DIR"
+  rm -rf "$test_workspace"
+  echo ""
+}
+
+# ----------------------------------------------------------------
+# Helper: commit a change to make the git diff non-empty
+# ----------------------------------------------------------------
+add_impl_file() {
+  mkdir -p modules/mat/src
+  echo "export const x = 1;" > modules/mat/src/test.ts
+  git add .
+  git commit -q -m "Add implementation file"
+}
+
+add_governance_file() {
+  echo "# Changed canon doc" > governance/canon/SOME_DOC.md
+  git add .
+  git commit -q -m "Change governance canon"
+}
+
+add_ci_workflow_file() {
+  cat > .github/workflows/new-gate.yml << 'EOF'
+name: New Gate
+on: [pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "ok"
+EOF
+  git add .
+  git commit -q -m "Add CI workflow"
+}
+
+add_valid_iaa_token() {
+  local pr_num="${1:-9999}"
+  local issue_num="${2:-1518}"
+  local blocking_token="${3:-IAA-session-test-wave-test-20260428-PASS}"
+  cat > .agent-admin/assurance/iaa-token-session-test-wave-test-20260428.md << EOF
+# IAA Assurance Token
+
+PHASE_B_BLOCKING_TOKEN: ${blocking_token}
+
+**Token**: ${blocking_token}
+**Type**: PHASE_B_BLOCKING_TOKEN
+**Verdict**: ASSURANCE-TOKEN (PASS)
+**PR**: #${pr_num}
+**Issue**: maturion-isms#${issue_num}
+**Reviewed SHA**: abc123def456
+EOF
+  git add .
+  git commit -q -m "Add IAA token"
+}
+
+add_prehandover_proof_with_ecap() {
+  local ecap_invoked="${1:-true}"
+  local ecap_verdict="${2:-PASS}"
+  local waiver_ref="${3:-}"
+  cat > .agent-admin/prehandover/proof-test-wave-20260428.md << EOF
+# PREHANDOVER PROOF — test-wave-20260428
+
+protected_path_touched: true
+ecap_required: true
+ecap_invoked: ${ecap_invoked}
+ceremony_admin_appointed: ${ecap_invoked}
+ecap_verdict: ${ecap_verdict}
+${waiver_ref:+ecap_waiver_ref: ${waiver_ref}}
+
+## Ripple/Cross-Agent Assessment
+| Agent | Impact | Conclusion |
+|---|---|---|
+| foreman-v2-agent | governance files | NO IMPACT — governance ceremony only |
+EOF
+  git add .
+  git commit -q -m "Add prehandover proof"
+}
+
+# ================================================================
+# TEST SUITE — IAA Final Assurance Gate
+# ================================================================
+
+# AC-1: Missing IAA token — implementation files changed, no token
+setup_ac1() {
+  add_impl_file
+}
+run_test "AC-1: Missing IAA token (implementation PR, no token)" 1 "$IAA_GATE_SCRIPT" "setup_ac1"
+
+# AC-2: Stale IAA token referencing a DIFFERENT PR number
+setup_ac2() {
+  add_impl_file
+  # Token references PR #1234 but current PR is #9999
+  cat > .agent-admin/assurance/iaa-token-session-stale-wave-20260101.md << 'EOF'
+# IAA Assurance Token
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-stale-wave-20260101-PASS
+
+**Token**: IAA-session-stale-wave-20260101-PASS
+**Verdict**: ASSURANCE-TOKEN (PASS)
+**PR**: #1234
+**Branch**: copilot/old-wave
+**Issue**: maturion-isms#1518
+EOF
+  git add .
+  git commit -q -m "Add stale token from another PR"
+}
+run_test "AC-2: Stale IAA token referencing wrong PR" 1 "$IAA_GATE_SCRIPT" "setup_ac2"
+
+# AC-3: Empty PHASE_B_BLOCKING_TOKEN
+setup_ac3() {
+  add_impl_file
+  cat > .agent-admin/assurance/iaa-token-session-empty-wave-20260428.md << 'EOF'
+# IAA Assurance Token
+
+PHASE_B_BLOCKING_TOKEN:
+
+**Token**: (empty)
+**Verdict**: ASSURANCE-TOKEN (PASS)
+**PR**: #9999
+**Issue**: maturion-isms#1518
+EOF
+  git add .
+  git commit -q -m "Add token with empty PHASE_B_BLOCKING_TOKEN"
+}
+run_test "AC-3: Empty PHASE_B_BLOCKING_TOKEN" 1 "$IAA_GATE_SCRIPT" "setup_ac3"
+
+# AC-4: IAA token referencing a DIFFERENT governing issue
+setup_ac4() {
+  add_impl_file
+  cat > .agent-admin/assurance/iaa-token-session-wrongissue-wave-20260428.md << 'EOF'
+# IAA Assurance Token
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-wrongissue-wave-20260428-PASS
+
+**Token**: IAA-session-wrongissue-wave-20260428-PASS
+**Verdict**: ASSURANCE-TOKEN (PASS)
+**PR**: #9999
+**Issue**: maturion-isms#42
+EOF
+  git add .
+  git commit -q -m "Add token referencing wrong issue"
+}
+run_test "AC-4: IAA token referencing wrong issue (#42 vs #1518)" 1 "$IAA_GATE_SCRIPT" "setup_ac4"
+
+# AC-5: REJECTION-PACKAGE token
+setup_ac5() {
+  add_impl_file
+  cat > .agent-admin/assurance/iaa-token-session-reject-wave-20260428.md << 'EOF'
+# IAA Token File — REJECTION-PACKAGE
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-reject-wave-20260428-REJECTION
+
+**Token**: IAA-session-reject-wave-20260428-REJECTION
+**Verdict**: REJECTION-PACKAGE
+**PR**: #9999
+**Issue**: maturion-isms#1518
+EOF
+  git add .
+  git commit -q -m "Add REJECTION-PACKAGE token"
+}
+run_test "AC-5: REJECTION-PACKAGE token" 1 "$IAA_GATE_SCRIPT" "setup_ac5"
+
+# AC-8: Documentation-only PR — IAA not required
+setup_ac8() {
+  mkdir -p docs
+  echo "# Updated documentation" > docs/guide.md
+  git add .
+  git commit -q -m "Update documentation"
+}
+run_test "AC-8: Documentation-only PR — IAA not required" 0 "$IAA_GATE_SCRIPT" "setup_ac8"
+
+# AC-8-CI: CI script/workflow only PR — IAA not required (governance tooling)
+setup_ac8_ci() {
+  add_ci_workflow_file
+  mkdir -p .github/scripts
+  echo "#!/bin/bash" > .github/scripts/new-gate.sh
+  git add .
+  git commit -q -m "Add CI gate scripts"
+}
+run_test "AC-8-CI: CI script/workflow only PR — IAA not required" 0 "$IAA_GATE_SCRIPT" "setup_ac8_ci"
+
+# AC-9: Valid IAA token with correct PR and issue reference
+setup_ac9() {
+  add_impl_file
+  add_valid_iaa_token "9999" "1518"
+}
+run_test "AC-9: Valid IAA token with correct PR and issue" 0 "$IAA_GATE_SCRIPT" "setup_ac9"
+
+# AC-11: PENDING PHASE_B_BLOCKING_TOKEN
+setup_ac11() {
+  add_impl_file
+  cat > .agent-admin/assurance/iaa-token-session-pending-wave-20260428.md << 'EOF'
+# IAA Assurance Token
+
+PHASE_B_BLOCKING_TOKEN: PENDING
+
+**Token**: PENDING
+**Verdict**: ASSURANCE-TOKEN (PASS)
+**PR**: #9999
+**Issue**: maturion-isms#1518
+EOF
+  git add .
+  git commit -q -m "Add token with PENDING PHASE_B_BLOCKING_TOKEN"
+}
+run_test "AC-11: PENDING PHASE_B_BLOCKING_TOKEN" 1 "$IAA_GATE_SCRIPT" "setup_ac11"
+
+# ================================================================
+# TEST SUITE — ECAP / Admin Ceremony Gate
+# ================================================================
+
+# AC-6: Protected-path PR without ECAP evidence
+setup_ac6() {
+  add_governance_file
+  # No PREHANDOVER proof with ECAP fields
+}
+run_test "AC-6: Protected-path PR without ECAP evidence" 1 "$ECAP_GATE_SCRIPT" "setup_ac6"
+
+# AC-6b: Protected-path PR (agent contract) without ECAP evidence
+setup_ac6b() {
+  echo "# Modified agent contract" > .github/agents/test-agent.md
+  git add .
+  git commit -q -m "Change agent contract"
+  # No PREHANDOVER proof with ECAP fields
+}
+run_test "AC-6b: Agent contract change without ECAP evidence" 1 "$ECAP_GATE_SCRIPT" "setup_ac6b"
+
+# AC-6c: CI workflow change — NOT a protected path, ECAP not required
+setup_ac6c() {
+  add_ci_workflow_file
+  # No PREHANDOVER proof — and none needed since CI workflows are not protected paths
+}
+run_test "AC-6c: CI workflow change — ECAP not required (CI tooling)" 0 "$ECAP_GATE_SCRIPT" "setup_ac6c"
+
+# AC-7: Protected-path PR with CS2 waiver (ecap_waiver_ref populated)
+setup_ac7() {
+  add_governance_file
+  cat > .agent-admin/prehandover/proof-test-waiver-20260428.md << 'EOF'
+# PREHANDOVER PROOF — test-waiver-20260428
+
+protected_path_touched: true
+ecap_required: false
+ecap_waiver_ref: CS2-waiver-comment-PR9999-@APGI-cmy-2026-04-28
+
+## Ripple/Cross-Agent Assessment
+| Agent | Impact | Conclusion |
+|---|---|---|
+| foreman-v2-agent | governance canon | NO IMPACT — ceremony-only wave |
+EOF
+  git add .
+  git commit -q -m "Add prehandover proof with CS2 waiver"
+}
+run_test "AC-7: Protected-path PR with CS2 waiver" 0 "$ECAP_GATE_SCRIPT" "setup_ac7"
+
+# AC-8b: Non-protected documentation-only PR — ECAP not required
+setup_ac8b() {
+  mkdir -p docs
+  echo "# Updated docs" > docs/guide.md
+  git add .
+  git commit -q -m "Update documentation"
+}
+run_test "AC-8b: Documentation-only PR — ECAP not required" 0 "$ECAP_GATE_SCRIPT" "setup_ac8b"
+
+# AC-10: Protected-path PR with valid ECAP evidence
+setup_ac10() {
+  add_governance_file
+  add_prehandover_proof_with_ecap "true" "PASS"
+}
+run_test "AC-10: Protected-path PR with valid ECAP evidence" 0 "$ECAP_GATE_SCRIPT" "setup_ac10"
+
+# AC-10b: Protected-path PR with ECAP evidence — IAA PASS also present
+setup_ac10b() {
+  add_governance_file
+  add_prehandover_proof_with_ecap "true" "PASS"
+  add_valid_iaa_token "9999" "1518"
+}
+run_test "AC-10b: Protected-path PR with ECAP + valid IAA token" 0 "$ECAP_GATE_SCRIPT" "setup_ac10b"
+
+# AC-ECAP-NVAL: ecap_required: N/A is rejected (anti-self-certification)
+setup_ac_nval() {
+  add_governance_file
+  cat > .agent-admin/prehandover/proof-test-nval-20260428.md << 'EOF'
+# PREHANDOVER PROOF — test-nval-20260428
+
+protected_path_touched: true
+ecap_required: N/A
+ecap_invoked: N/A
+ecap_verdict: N/A
+
+## Ripple/Cross-Agent Assessment
+| Agent | Impact | Conclusion |
+|---|---|---|
+| foreman-v2-agent | governance | NO IMPACT |
+EOF
+  git add .
+  git commit -q -m "Add prehandover proof with N/A ECAP fields"
+}
+run_test "AC-ECAP-NVAL: ecap_required=N/A rejected on protected-path PR" 1 "$ECAP_GATE_SCRIPT" "setup_ac_nval"
+
+# ================================================================
+# Cleanup
+# ================================================================
+rm -rf "$TEST_DIR"
+
+echo "=== Test Summary ==="
+echo "Passed: $TEST_PASSED"
+echo "Failed: $TEST_FAILED"
+echo ""
+
+if [ "$TEST_FAILED" -gt 0 ]; then
+  echo "❌ ${TEST_FAILED} test(s) FAILED"
+  exit 1
+fi
+
+echo "✅ All ${TEST_PASSED} tests PASSED"
+exit 0
