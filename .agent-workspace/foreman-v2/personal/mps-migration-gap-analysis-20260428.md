@@ -4,7 +4,7 @@
 **Wave**: wave-mps-source-verification
 **Date**: 2026-04-28
 **Issue**: CS2 clarification — verify canonical generic MPS source pack in AIMC/KUC before static question bank
-**Related PR**: maturion-isms#1500 (static question bank — BLOCKED pending this analysis)
+**Related PR**: maturion-isms#1500 (static question bank — approved interim implementation under maturion-isms#1499; must NOT close maturion-isms#1501)
 **Branch**: copilot/verify-generic-mps-source-documents
 
 ---
@@ -16,8 +16,10 @@ the 25 generic MPS Word source documents were migrated into the current MMM stor
 **CS2 Action Required**: Query the live Supabase database using the SQL provided below (§6) to
 confirm presence or absence. Based on that finding, decide Track B path.
 
-**PR #1500 Status**: **FOREMAN GATE HOLD** — do not merge the static replacement question bank
-until CS2 confirms the canonical source status per this analysis.
+**PR #1500 Status**: **APPROVED INTERIM** (CS2 caveat) — merged as static interim implementation
+under maturion-isms#1499. Must NOT close maturion-isms#1501. Canonical KUC/AIMC source
+verification (#1501) remains open and unresolved. Track B is still required once CS2 confirms
+DB verification results.
 
 ---
 
@@ -201,7 +203,8 @@ CS2 runs Q1+Q2+Q3 queries above
          │                                Delegate to mat-specialist + api-builder for
          │                                JSON derivation; ui-builder for question bank;
          │                                qa-builder for 25-MPS coverage tests.
-         │                                MERGE BLOCK on PR #1500 lifted.
+         │                                Track B replaces PR #1500 static interim once
+         │                                KUC-derived model is confirmed and complete.
          │
          ├── mmm_maturity_process_steps is EMPTY or has < 25 rows
          │                           │
@@ -213,7 +216,7 @@ CS2 runs Q1+Q2+Q3 queries above
          │                                3. Verify mmm_maturity_process_steps + mmm_criteria
          │                                   are populated with all 25 MPSs
          │                                4. Then approve Track B delegation
-         │                                PR #1500 BLOCKED until re-upload complete.
+         │                                Track B replaces PR #1500 static interim once re-upload complete and KUC source verified.
          │
          └── Content present but diamond-specific (LDCS)
                                      │
@@ -223,23 +226,21 @@ CS2 runs Q1+Q2+Q3 queries above
 
 ---
 
-## 8. Foreman Recommendation on PR #1500
+## 8. CS2 Decision on PR #1500 (Updated)
 
-The static question bank in PR #1500 (`QUESTION_BANK` in `FreeAssessmentPage.tsx`) was implemented
-**before** verifying whether the canonical KUC source exists. Per the CS2 clarification issue:
+PR #1500 (`QUESTION_BANK` in `FreeAssessmentPage.tsx`) has been **approved by CS2 as an interim
+static implementation** under maturion-isms#1499, with the following explicit caveat:
 
-> "Do not manually convert all Word files to markdown as the primary solution."
-> "Preferred: keep Word/KUC documents as canonical source input; extract/normalize to structured
->  Domain → MPS → Criteria JSON; derive the free-assessment diagnostic question bank from that."
+- **PR #1500 must NOT close maturion-isms#1501.**
+- maturion-isms#1501 (canonical KUC/AIMC source verification) remains **open and unresolved**.
+- Track B (KUC-derived question bank) remains blocked pending CS2 DB verification and re-upload
+  decision — it is not blocked by PR #1500 itself.
+- A follow-up action is required to search KUC/document-upload tables for the generic MPS Word
+  source pack and determine whether a KUC migration or re-upload is needed.
 
-**Foreman gate**: PR #1500 must NOT be merged until:
-1. CS2 confirms the canonical source status via DB queries above, AND
-2. Either: (a) Track B is completed (question bank derived from KUC), OR
-           (b) CS2 explicitly approves the static approach as a KNOWN INTERIM MEASURE with a
-               registered migration task for Track B replacement.
-
-The static approach in PR #1500 is technically correct (tests pass, scoring works), but it violates
-the architectural principle of deriving diagnostic questions from the canonical MPS source pack.
+The static approach in PR #1500 is technically correct (tests pass, scoring works) and has been
+accepted as a known interim measure. Track B will replace it once the canonical KUC source is
+confirmed and the structured Domain → MPS → Criteria model is derived.
 
 ---
 

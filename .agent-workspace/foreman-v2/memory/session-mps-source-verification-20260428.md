@@ -109,9 +109,10 @@ separation_violations_detected: none
 
 **PR #1500 Analysis**:
 - PR #1500 adds static `QUESTION_BANK` (25-question MPS-level questionnaire) to `FreeAssessmentPage.tsx`
-- This is a static hand-authored replacement — violates the CS2 preference for KUC-derived questions
-- Tests pass (81/81 B3-ui tests GREEN) but source traceability is not from KUC
-- Foreman gate: HOLD on PR #1500 pending CS2 DB verification
+- This is a static hand-authored implementation approved by CS2 as a **known interim measure** under maturion-isms#1499
+- Must NOT close maturion-isms#1501 — canonical source verification remains open
+- Tests pass (81/81 B3-ui tests GREEN); source traceability from KUC to follow in Track B
+- Foreman gate hold lifted per CS2 approval; Track B remains blocked for separate reason (DB verification)
 
 ---
 
@@ -130,8 +131,9 @@ separation_violations_detected: none
 
 | ID | Type | Status |
 |----|------|--------|
-| PR #1500 gate hold | Foreman gate on static question bank pending CS2 KB verification | OPEN — awaiting CS2 |
-| Track B gate | CS2 must confirm MPS documents in DB before delegation | OPEN — awaiting CS2 |
+| PR #1500 gate hold | LIFTED — CS2 approved PR #1500 as interim static implementation (maturion-isms#1499); must NOT close #1501 | RESOLVED |
+| maturion-isms#1501 | Canonical KUC/AIMC source verification — remains open, not blocked by PR #1500 | OPEN — awaiting CS2 DB verification |
+| Track B gate | CS2 must confirm MPS documents in DB before delegation; separate from PR #1500 approval | OPEN — awaiting CS2 |
 
 ---
 
@@ -169,6 +171,6 @@ to raise a clarification issue about PR #1500) would be prevented by a structura
 ## Session Parking Station Entry
 
 ```
-| 2026-04-28 | foreman-v2-agent | session-mps-source-verification-20260428 | GATE-HOLD | PR #1500 static question bank blocked pending CS2 KUC verification; Track B delegation pending | mps-migration-gap-analysis-20260428.md |
+| 2026-04-28 | foreman-v2-agent | session-mps-source-verification-20260428 | GAP-ANALYSIS | PR #1500 approved interim (CS2 caveat: must NOT close #1501); Track B delegation pending CS2 DB verification | mps-migration-gap-analysis-20260428.md |
 ```
 

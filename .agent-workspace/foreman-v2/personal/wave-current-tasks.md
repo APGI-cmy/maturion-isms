@@ -56,8 +56,9 @@ CS2 must perform before Track B delegation:
 3. If PRESENT: confirm generic content (not diamond-specific LDCS); approve Track B.
 4. If ABSENT: initiate re-upload of 25 Word documents via AIMC upload pipeline; then approve Track B.
 
-**PR #1500 (static question bank)**: Foreman gate HOLD — do not merge until CS2 resolves the
-Track A gate. Issue clarification required per the CS2 directive issue.
+**PR #1500 (static question bank)**: Approved interim implementation under maturion-isms#1499
+(CS2 caveat: must NOT close maturion-isms#1501). #1501 remains open. Track B remains blocked
+pending CS2 DB verification / re-upload decision.
 
 ## IAA Tokens Received This Wave
 
