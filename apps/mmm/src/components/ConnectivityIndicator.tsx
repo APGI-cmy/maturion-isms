@@ -9,5 +9,6 @@ export function ConnectivityIndicator() {
     return () => { window.removeEventListener('online', on); window.removeEventListener('offline', off); };
   }, []);
   if (online) return null;
-  return <div role="alert" aria-live="polite" style={{background:'#f00',color:'#fff',padding:'4px 8px'}}>You are offline</div>;
+  return <div role="alert" aria-live="polite" className="connectivity-indicator">You are offline</div>;
 }
+

@@ -12,6 +12,47 @@
 
 ---
 
+## UI Build-Correctness Fix (maturion-isms#1496 — 2026-04-28)
+
+**Issue**: [maturion-isms#1496](https://github.com/APGI-cmy/maturion-isms/issues/1496)  
+**Root cause confirmed**: B3 UI wave delivered functional page components but omitted the global CSS stylesheet (`apps/mmm/src/index.css`) and its import in `apps/mmm/src/main.tsx`. All deployment workflows passed (transport working), but the deployed product UI was bare/unstyled raw HTML.
+
+**Fix applied**:
+
+| File | Change |
+|------|--------|
+| `apps/mmm/src/index.css` | **CREATED** — 995-line self-contained CSS design system (CSS reset, custom property tokens, typography, layout, all component classes) |
+| `apps/mmm/src/main.tsx` | **UPDATED** — added `import './index.css'` as first import |
+| `apps/mmm/src/pages/LandingPage.tsx` | **UPDATED** — full hero section, feature-card grid, CTA strip with CSS classes |
+| `apps/mmm/src/pages/TutorialPage.tsx` | **UPDATED** — maturity level cards (Level 1–5) with styled layout |
+| `apps/mmm/src/pages/FreeAssessmentPage.tsx` | **UPDATED** — domain cards and radio options with CSS classes (logic intact) |
+| `apps/mmm/src/pages/FreeAssessmentResultPage.tsx` | **UPDATED** — styled result card (data-testid="baseline-maturity" preserved) |
+| `apps/mmm/src/pages/SignUpPage.tsx` | **UPDATED** — auth card layout with labelled form groups (supabase.auth.signUp intact) |
+| `apps/mmm/src/pages/OnboardingPage.tsx` | **UPDATED** — setup card with form groups (/api/organisations, NBR-001 intact) |
+| `apps/mmm/src/pages/FrameworkOriginPage.tsx` | **UPDATED** — origin option cards (VERBATIM/GENERATED/HYBRID radio intact) |
+| `apps/mmm/src/components/ConnectivityIndicator.tsx` | **UPDATED** — inline style replaced with `.connectivity-indicator` CSS class |
+| `modules/MMM/tests/B3-ui/b3-ui.test.ts` | **UPDATED** — added T-MMM-S6-021 anti-regression test (6 assertions) |
+
+**Anti-regression test added**: T-MMM-S6-021 — "Global CSS stylesheet exists and is imported" — asserts:
+- `apps/mmm/src/index.css` exists and is non-trivial
+- `main.tsx` imports `./index.css`
+- `LandingPage.tsx`, `SignUpPage.tsx`, `FreeAssessmentPage.tsx` each use `className=` (not bare HTML)
+
+**Test results after fix**: 65/65 GREEN (59 original T-MMM-S6-001–020 + 6 new T-MMM-S6-021)  
+**Build result**: `tsc && vite build` — 0 errors, 0 warnings; `dist/assets/index-*.css` 16.17 kB (gzip 3.33 kB)
+
+**CDV Validation status update**:
+
+| Item | Previous Status | Updated Status |
+|------|----------------|----------------|
+| CSS bundle produced by build | ⚠️ PENDING | ✅ PASS — `vite build` produces `dist/assets/index-*.css` (16.17 kB gzip 3.33 kB) |
+| Preview deployment available | ⚠️ PENDING | ✅ PASS — Vercel preview build succeeded; CSS bundle present in preview |
+| Production UI validation | ❌ NOT PRESENT (root cause confirmed) | ⚠️ PENDING POST-MERGE / CS2 validation — production deploy and post-deploy auth smoke test were skipped for this PR |
+| Live screenshot evidence | ❌ ABSENT | ⚠️ PENDING — awaiting CS2 post-merge validation of production URL |
+| Anti-regression gate | ❌ ABSENT | ✅ T-MMM-S6-021 added — future builds cannot omit CSS and pass CI |
+
+---
+
 ## Purpose
 
 This document records the post-Stage-12 CDV (Critical Deliverable Validation) and staging deployment evidence for MMM. It captures:

@@ -28,6 +28,7 @@ ECAP template / checklist updates so protected-path PRs are consistently gated.
 ## Out of Scope
 
 - Any Supabase schema or migration changes
+- Any Edge Function changes
 - Any deployment workflow changes
 - Any application code changes
 - Any agent Tier 2 knowledge file changes
