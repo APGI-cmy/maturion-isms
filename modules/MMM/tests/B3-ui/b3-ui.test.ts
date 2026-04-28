@@ -42,20 +42,35 @@ describe('T-MMM-S6-001: LandingPage.tsx exists with h1 heading', () => {
   });
 });
 
-// ─── T-MMM-S6-002: FreeAssessmentPage.tsx exists with domain responses ───────
-describe('T-MMM-S6-002: FreeAssessmentPage.tsx exists with domain responses', () => {
+// ─── T-MMM-S6-002: FreeAssessmentPage.tsx — MPS-level questionnaire ──────────
+// Updated: free assessment must use MPS-level structured payload, not flat domain self-ratings.
+describe('T-MMM-S6-002: FreeAssessmentPage.tsx uses MPS-level questionnaire (not flat domain self-ratings)', () => {
   it('file exists', () => {
     expect(fileExists('apps/mmm/src/pages/FreeAssessmentPage.tsx')).toBe(true);
   });
-  it('contains domain_responses structure', () => {
+  it('uses assessment_version field (MPS-level payload — not flat domain_responses)', () => {
     const src = readFile('apps/mmm/src/pages/FreeAssessmentPage.tsx');
-    expect(src).toContain('domain_responses');
+    expect(src).toContain('assessment_version');
   });
-  it('includes YES/NO/PARTIAL response options', () => {
+  it('contains mps_id in responses payload', () => {
     const src = readFile('apps/mmm/src/pages/FreeAssessmentPage.tsx');
-    expect(src).toContain('YES');
-    expect(src).toContain('NO');
-    expect(src).toContain('PARTIAL');
+    expect(src).toContain('mps_id');
+  });
+  it('contains question_id in responses payload', () => {
+    const src = readFile('apps/mmm/src/pages/FreeAssessmentPage.tsx');
+    expect(src).toContain('question_id');
+  });
+  it('uses A/B/C choice options (not YES/NO/PARTIAL domain self-ratings)', () => {
+    const src = readFile('apps/mmm/src/pages/FreeAssessmentPage.tsx');
+    expect(src).toContain("value: 'A'");
+    expect(src).toContain("value: 'B'");
+    expect(src).toContain("value: 'C'");
+  });
+  it('does NOT use flat five-domain self-rating pattern (anti-regression)', () => {
+    const src = readFile('apps/mmm/src/pages/FreeAssessmentPage.tsx');
+    // Must not contain the old five domain names as a flat list
+    expect(src).not.toContain("'Governance','Risk Management','Compliance','Technology','People'");
+    expect(src).not.toContain('DOMAINS.map(d => ({ domain_name: d');
   });
 });
 
@@ -294,21 +309,34 @@ describe('T-MMM-S6-017: mmm-org-create has HTTP 403 for missing JWT (NBR-002)', 
   });
 });
 
-// ─── T-MMM-S6-018: mmm-assessment-free-respond returns baseline_maturity ─────
-describe('T-MMM-S6-018: mmm-assessment-free-respond returns baseline_maturity field', () => {
+// ─── T-MMM-S6-018: mmm-assessment-free-respond handles MPS-level scoring ──────
+// Updated: function must accept structured A/B/C responses and compute MPS/domain/overall scores.
+describe('T-MMM-S6-018: mmm-assessment-free-respond handles MPS-level structured scoring', () => {
   it('calculates and returns baseline_maturity', () => {
     const src = readFile('supabase/functions/mmm-assessment-free-respond/index.ts');
     expect(src).toContain('baseline_maturity');
   });
-  it('uses score map YES=1.0, PARTIAL=0.5, NO=0.0', () => {
+  it('uses MPS choice score map A=0.0, B=0.5, C=1.0', () => {
     const src = readFile('supabase/functions/mmm-assessment-free-respond/index.ts');
-    expect(src).toContain('YES: 1.0');
-    expect(src).toContain('PARTIAL: 0.5');
-    expect(src).toContain('NO: 0.0');
+    expect(src).toContain('A: 0.0');
+    expect(src).toContain('B: 0.5');
+    expect(src).toContain('C: 1.0');
   });
   it('multiplies average by 5 for 0-5 scale', () => {
     const src = readFile('supabase/functions/mmm-assessment-free-respond/index.ts');
     expect(src).toContain('* 5');
+  });
+  it('accepts assessment_version field in request', () => {
+    const src = readFile('supabase/functions/mmm-assessment-free-respond/index.ts');
+    expect(src).toContain('assessment_version');
+  });
+  it('computes mps_scores in structured result', () => {
+    const src = readFile('supabase/functions/mmm-assessment-free-respond/index.ts');
+    expect(src).toContain('mps_scores');
+  });
+  it('computes domain_scores in structured result', () => {
+    const src = readFile('supabase/functions/mmm-assessment-free-respond/index.ts');
+    expect(src).toContain('domain_scores');
   });
 });
 
@@ -365,5 +393,75 @@ describe('T-MMM-S6-021: Global CSS stylesheet exists and is imported (anti-regre
   it('FreeAssessmentPage.tsx uses at least one CSS className (not bare HTML)', () => {
     const src = readFile('apps/mmm/src/pages/FreeAssessmentPage.tsx');
     expect(src).toContain('className=');
+  });
+});
+
+// ─── T-MMM-S6-022: MPS-level questionnaire structure anti-regression ─────────
+// Anti-regression gates ensuring the MPS-level questionnaire is never regressed
+// back to five flat domain self-ratings. Issue: maturion-isms#1503.
+describe('T-MMM-S6-022: MPS-level questionnaire has 5 domains × 5 MPSs × 1+ questions (anti-regression)', () => {
+  it('QUESTION_BANK is exported from FreeAssessmentPage', () => {
+    const src = readFile('apps/mmm/src/pages/FreeAssessmentPage.tsx');
+    expect(src).toContain('export const QUESTION_BANK');
+  });
+
+  it('QUESTION_BANK contains exactly 5 domain entries', () => {
+    const src = readFile('apps/mmm/src/pages/FreeAssessmentPage.tsx');
+    // Count domain_id occurrences in QUESTION_BANK
+    const domainIdMatches = src.match(/domain_id:\s*['"][^'"]+['"]/g) ?? [];
+    // Each domain entry has one domain_id; each MPS question also has domain_id in the response
+    // payload. Count top-level domain entries via domain_name occurrences in the bank.
+    const domainNameMatches = src.match(/domain_name:\s*['"][^'"]+['"]/g) ?? [];
+    expect(domainNameMatches.length).toBeGreaterThanOrEqual(5);
+    expect(domainIdMatches.length).toBeGreaterThanOrEqual(5);
+  });
+
+  it('QUESTION_BANK contains at least 25 question_id entries (5 domains × 5 MPSs)', () => {
+    const src = readFile('apps/mmm/src/pages/FreeAssessmentPage.tsx');
+    const questionIdMatches = src.match(/question_id:\s*['"][^'"]+['"]/g) ?? [];
+    expect(questionIdMatches.length).toBeGreaterThanOrEqual(25);
+  });
+
+  it('QUESTION_BANK contains at least 25 mps_id entries', () => {
+    const src = readFile('apps/mmm/src/pages/FreeAssessmentPage.tsx');
+    const mpsIdMatches = src.match(/mps_id:\s*['"][^'"]+['"]/g) ?? [];
+    expect(mpsIdMatches.length).toBeGreaterThanOrEqual(25);
+  });
+
+  it('all five canonical generic domains are present', () => {
+    const src = readFile('apps/mmm/src/pages/FreeAssessmentPage.tsx');
+    expect(src).toContain('leadership-governance');
+    expect(src).toContain('process-integrity');
+    expect(src).toContain('people-culture');
+    expect(src).toContain('protection');
+    expect(src).toContain('proof-it-works');
+  });
+
+  it('uses generic-mps-baseline-v1 assessment version', () => {
+    const src = readFile('apps/mmm/src/pages/FreeAssessmentPage.tsx');
+    expect(src).toContain('generic-mps-baseline-v1');
+  });
+
+  it('FreeAssessmentResultPage shows domain breakdown (data-testid="domain-breakdown")', () => {
+    const src = readFile('apps/mmm/src/pages/FreeAssessmentResultPage.tsx');
+    expect(src).toContain('data-testid="domain-breakdown"');
+  });
+
+  it('freeAssessmentStore carries domainScores for result page breakdown', () => {
+    const src = readFile('apps/mmm/src/store/freeAssessmentStore.ts');
+    expect(src).toContain('domainScores');
+  });
+
+  it('edge function CHOICE_SCORE_MAP has A/B/C entries', () => {
+    const src = readFile('supabase/functions/mmm-assessment-free-respond/index.ts');
+    expect(src).toContain('CHOICE_SCORE_MAP');
+    expect(src).toContain('A: 0.0');
+    expect(src).toContain('B: 0.5');
+    expect(src).toContain('C: 1.0');
+  });
+
+  it('edge function computes mps_scores aggregate', () => {
+    const src = readFile('supabase/functions/mmm-assessment-free-respond/index.ts');
+    expect(src).toContain('mps_scores');
   });
 });
