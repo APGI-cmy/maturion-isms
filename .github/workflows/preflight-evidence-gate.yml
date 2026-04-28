@@ -592,10 +592,21 @@ jobs:
           fetch-depth: 0
 
       - name: Run governance evidence exactness checks
+        env:
+          EXPECTED_ISSUE: ${{ github.event.pull_request.body }}
         run: |
           echo "=== Governance Evidence Exactness Gate ==="
           echo "Authority: LIVING_AGENT_SYSTEM.md v6.2.0"
-          echo "Checks: PATH COUNT HASH VERSION-MISMATCH"
+          echo "Checks: PATH COUNT HASH VERSION-MISMATCH ISSUE-MISMATCH"
           echo ""
+          # Extract governing issue number from PR body control field if present.
+          # Accepts lines of the form: Governing-Issue: maturion-isms#NNN  or  Governing-Issue: NNN
+          RAW_EXPECTED=$(echo "$EXPECTED_ISSUE" | grep -iE '^\s*Governing-Issue\s*:\s*' | head -1 | sed 's/.*:\s*//' | tr -d '[:space:]' || true)
+          if [ -n "$RAW_EXPECTED" ]; then
+            export EXPECTED_ISSUE="$RAW_EXPECTED"
+            echo "Governing issue extracted from PR body: $EXPECTED_ISSUE"
+          else
+            unset EXPECTED_ISSUE
+          fi
           chmod +x .github/scripts/validate-governance-evidence-exactness.sh
           .github/scripts/validate-governance-evidence-exactness.sh

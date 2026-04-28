@@ -60,6 +60,7 @@
 | COUNT-MISMATCH | Check 2 | `❌ COUNT-MISMATCH: declared files_changed=15 in SCOPE_DECLARATION.md but actual git diff shows 12 files` |
 | HASH-INCOMPLETE | Check 3 | `❌ HASH-INCOMPLETE: hash verification claimed in .agent-admin/prehandover/proof-1441.md but 3 CANON_INVENTORY entries have null/empty hashes` |
 | AUTHORITY-STALE | Check 4 | Covered — every canon artifact version is tracked in CANON_INVENTORY; stale version citations in governance files are caught when the file is in the PR diff |
+| ISSUE-MISMATCH | Check 6 | `❌ ISSUE-MISMATCH: declared issue 'maturion-isms#1400' in SCOPE_DECLARATION.md does not match expected 'maturion-isms#1486'` |
 
 ---
 
@@ -110,6 +111,47 @@
    ⚠️  VERSION-MISMATCH (internal, warning): governance/canon/BAR.md declares multiple version strings: 1.0.0 1.1.0
 ```
 **Exit code**: 0 (warning only — does not block; allows amendment history sections to reference prior versions)
+
+### ISSUE-MISMATCH (Check 6)
+**Trigger (stale reference)**: `SCOPE_DECLARATION.md` has `**Issue**: maturion-isms#1400` but `EXPECTED_ISSUE=1486` (or `maturion-isms#1486`) is supplied.
+**Expected output**:
+```
+── CHECK 6: ISSUE-MISMATCH ──
+   ❌ ISSUE-MISMATCH: declared issue 'maturion-isms#1400' in SCOPE_DECLARATION.md does not match expected 'maturion-isms#1486'
+      Remediation: Update the **Issue**: line in SCOPE_DECLARATION.md to '**Issue**: maturion-isms#1486'.
+```
+**Exit code**: 1
+
+**Trigger (missing issue line)**: `SCOPE_DECLARATION.md` has no `**Issue**:` line.
+**Expected output**:
+```
+── CHECK 6: ISSUE-MISMATCH ──
+   ❌ ISSUE-MISMATCH: No **Issue**: line found in SCOPE_DECLARATION.md
+      Remediation: Add '**Issue**: maturion-isms#NNNN' to SCOPE_DECLARATION.md pointing to the current governing issue.
+```
+**Exit code**: 1
+
+**Trigger (malformed)**: `SCOPE_DECLARATION.md` has `**Issue**: issue-1486` (no repo prefix, no hash).
+**Expected output**:
+```
+── CHECK 6: ISSUE-MISMATCH ──
+   ❌ ISSUE-MISMATCH: Malformed issue reference 'issue-1486' in SCOPE_DECLARATION.md
+      Expected format: maturion-isms#NNNN
+      Remediation: Fix the **Issue**: line to use the format 'maturion-isms#NNNN'.
+```
+**Exit code**: 1
+
+**Trigger (no EXPECTED_ISSUE set — format-only pass)**: `SCOPE_DECLARATION.md` has `**Issue**: maturion-isms#1486` and no `EXPECTED_ISSUE` env var is set.
+**Expected output**:
+```
+── CHECK 6: ISSUE-MISMATCH ──
+   ✅ PASS (format-only) — Issue reference 'maturion-isms#1486' is well-formed.
+      ℹ️  No EXPECTED_ISSUE supplied; authority comparison skipped.
+      To enable full authority check: export EXPECTED_ISSUE=<issue-number-or-repo#NNN>
+```
+**Exit code**: 0
+
+**Authority-source model**: `EXPECTED_ISSUE` env var (bare number or `repo#NNN`) takes priority. In CI, it is derived from a `Governing-Issue:` control field in the PR body. When absent, the check is format-only (warns but does not hard-fail).
 
 ---
 

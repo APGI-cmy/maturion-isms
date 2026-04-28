@@ -9,6 +9,8 @@
 #            NOTE: Also covers AUTHORITY-STALE — stale canon version citations are caught
 #            because every canon artifact version is tracked in CANON_INVENTORY.json.
 #   Check 5: VERSION-MISMATCH (internal) — multiple conflicting version strings in one canon file
+#   Check 6: ISSUE-MISMATCH  — SCOPE_DECLARATION.md issue authority line is stale, missing,
+#            or malformed; compared against EXPECTED_ISSUE env var or PR metadata when available
 # Exit codes: 0=PASS (errors=0), 1=FAIL (any error)
 set -uo pipefail
 
@@ -242,6 +244,67 @@ else
       fi
     done <<< "$INTERNAL_FILES"
     [ "$WARNINGS" -eq 0 ] && echo "   ✅ PASS — No internal version conflicts detected"
+  fi
+fi
+echo ""
+
+# ============================================================
+# CHECK 6: ISSUE-MISMATCH (SCOPE_DECLARATION issue authority)
+# The **Issue**: line in SCOPE_DECLARATION.md must be present,
+# well-formed (maturion-isms#NNNN), and — when EXPECTED_ISSUE
+# is supplied — must match exactly.
+#
+# Authority source priority:
+#   1. EXPECTED_ISSUE env var (set by CI or local helper)
+#   2. PR_NUMBER env var combined with repo name (GitHub Actions)
+#   3. No expected value available → warn but do not hard-fail
+#      (conservative fallback per issue spec)
+# ============================================================
+echo "── CHECK 6: ISSUE-MISMATCH ──"
+
+if [ -z "$SCOPE_FILE" ]; then
+  echo "   ℹ️  N/A — No SCOPE_DECLARATION.md found. Skipping."
+else
+  # Extract the **Issue**: line from SCOPE_DECLARATION.md
+  # Accepts: **Issue**: maturion-isms#NNNN (with optional whitespace variations)
+  DECLARED_ISSUE_LINE=$(grep -iE '^\*\*Issue\*\*\s*:\s*' "$SCOPE_FILE" 2>/dev/null | head -1 || true)
+  DECLARED_ISSUE=$(echo "$DECLARED_ISSUE_LINE" | sed 's/.*\*\*[Ii]ssue\*\*\s*:\s*//' | tr -d '[:space:]' || true)
+
+  if [ -z "$DECLARED_ISSUE_LINE" ]; then
+    echo "   ❌ ISSUE-MISMATCH: No **Issue**: line found in $SCOPE_FILE"
+    echo "      Remediation: Add '**Issue**: maturion-isms#NNNN' to $SCOPE_FILE pointing to the current governing issue."
+    ERRORS=$((ERRORS + 1))
+  elif ! echo "$DECLARED_ISSUE" | grep -qE '^[A-Za-z0-9_-]+#[0-9]+$'; then
+    echo "   ❌ ISSUE-MISMATCH: Malformed issue reference '$DECLARED_ISSUE' in $SCOPE_FILE"
+    echo "      Expected format: maturion-isms#NNNN"
+    echo "      Remediation: Fix the **Issue**: line to use the format 'maturion-isms#NNNN'."
+    ERRORS=$((ERRORS + 1))
+  else
+    # Determine expected issue from environment
+    EXPECTED_ISSUE_REF=""
+    if [ -n "${EXPECTED_ISSUE:-}" ]; then
+      # Normalise: allow bare numbers or full repo#NNN form
+      if echo "$EXPECTED_ISSUE" | grep -qE '^[0-9]+$'; then
+        EXPECTED_ISSUE_REF="maturion-isms#${EXPECTED_ISSUE}"
+      else
+        EXPECTED_ISSUE_REF="$EXPECTED_ISSUE"
+      fi
+    fi
+
+    if [ -n "$EXPECTED_ISSUE_REF" ]; then
+      if [ "$DECLARED_ISSUE" = "$EXPECTED_ISSUE_REF" ]; then
+        echo "   ✅ PASS — Declared issue '$DECLARED_ISSUE' matches expected '$EXPECTED_ISSUE_REF'"
+      else
+        echo "   ❌ ISSUE-MISMATCH: declared issue '$DECLARED_ISSUE' in $SCOPE_FILE does not match expected '$EXPECTED_ISSUE_REF'"
+        echo "      Remediation: Update the **Issue**: line in $SCOPE_FILE to '**Issue**: $EXPECTED_ISSUE_REF'."
+        ERRORS=$((ERRORS + 1))
+      fi
+    else
+      # No expected value available — validate format only and warn
+      echo "   ✅ PASS (format-only) — Issue reference '$DECLARED_ISSUE' is well-formed."
+      echo "      ℹ️  No EXPECTED_ISSUE supplied; authority comparison skipped."
+      echo "      To enable full authority check: export EXPECTED_ISSUE=<issue-number-or-repo#NNN>"
+    fi
   fi
 fi
 echo ""

@@ -87,6 +87,7 @@ suggestions:            NONE                 # NONE | see .agent-workspace/<agen
 | HASH-INCOMPLETE (Check 3) | ✅ PASS / ❌ FAIL — [detail] |
 | VERSION-MISMATCH cross-artifact (Check 4) | ✅ PASS / ℹ️ N/A — [detail] |
 | VERSION-MISMATCH internal (Check 5 — warning) | ✅ PASS / ⚠️ WARN — [detail] |
+| ISSUE-MISMATCH (Check 6) | ✅ PASS / ❌ FAIL — [detail] |
 
 ---
 
