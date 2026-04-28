@@ -160,7 +160,7 @@ while IFS= read -r token_file; do
   FILE_VALID=true
 
   # Check A: Not a REJECTION-PACKAGE
-  if head -15 "$token_file" 2>/dev/null | grep -qi "REJECTION.PACKAGE\|REJECTION-PACKAGE"; then
+  if head -15 "$token_file" 2>/dev/null | grep -qi "REJECTION[-.]PACKAGE\|REJECTION-PACKAGE"; then
     echo "  ❌ REJECTION-PACKAGE — this is not a valid final assurance token [IAA-FINAL-GATE-003]"
     FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: REJECTION-PACKAGE (fix all findings and re-invoke IAA)"
     FILE_VALID=false

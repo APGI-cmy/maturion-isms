@@ -324,7 +324,7 @@ if [ -n "$IAA_TOKENS_IN_PR" ] && \
     [ -z "$token_file" ] && continue
     [ ! -f "$token_file" ] && continue
 
-    if ! head -10 "$token_file" 2>/dev/null | grep -qi "REJECTION.PACKAGE"; then
+    if ! head -10 "$token_file" 2>/dev/null | grep -qi "REJECTION[-.]PACKAGE"; then
       TOKEN_VALUE=$(grep "PHASE_B_BLOCKING_TOKEN:" "$token_file" 2>/dev/null | head -1 | \
         sed 's/.*PHASE_B_BLOCKING_TOKEN://;s/^[[:space:]]*//;s/[[:space:]]*$//' || true)
       if [ -n "$TOKEN_VALUE" ] && [ "$TOKEN_VALUE" != "PENDING" ]; then
