@@ -338,6 +338,33 @@ describe('T-MMM-S6-018: mmm-assessment-free-respond handles MPS-level structured
     const src = readFile('supabase/functions/mmm-assessment-free-respond/index.ts');
     expect(src).toContain('domain_scores');
   });
+  it('contains GENERIC_MPS_V1_MANIFEST for server-side completeness validation', () => {
+    const src = readFile('supabase/functions/mmm-assessment-free-respond/index.ts');
+    expect(src).toContain('GENERIC_MPS_V1_MANIFEST');
+    // Manifest must contain all 25 canonical question_ids
+    expect(src).toContain('LG-01-Q1');
+    expect(src).toContain('PI-01-Q1');
+    expect(src).toContain('PC-01-Q1');
+    expect(src).toContain('PR-01-Q1');
+    expect(src).toContain('PW-01-Q1');
+  });
+  it('validates completeness: rejects fewer than 25 responses for v1', () => {
+    const src = readFile('supabase/functions/mmm-assessment-free-respond/index.ts');
+    expect(src).toContain('generic-mps-baseline-v1 requires exactly');
+  });
+  it('rejects duplicate question_ids', () => {
+    const src = readFile('supabase/functions/mmm-assessment-free-respond/index.ts');
+    expect(src).toContain('Duplicate question_id');
+  });
+  it('rejects unknown question_ids for v1', () => {
+    const src = readFile('supabase/functions/mmm-assessment-free-respond/index.ts');
+    expect(src).toContain('Unknown question_id');
+  });
+  it('validates all 5 canonical domains are present', () => {
+    const src = readFile('supabase/functions/mmm-assessment-free-respond/index.ts');
+    expect(src).toContain('Missing responses for canonical domain');
+    expect(src).toContain('GENERIC_MPS_V1_CANONICAL_DOMAINS');
+  });
 });
 
 // ─── T-MMM-S6-019: OnboardingPage invalidates ['organisations'] query cache ──

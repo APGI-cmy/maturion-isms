@@ -21,6 +21,14 @@ mmm-assessment-free-respond edge function (A/B/C structured scoring), and test u
 
 ---
 
+## Open Items / Unresolved
+
+| Item | Status | Notes |
+|------|--------|-------|
+| maturion-isms#1501 (KUC verification) | **UNRESOLVED** | KUC/document-upload storage and metadata tables were not searchable in this build environment. Required follow-up: search KUC/document-upload tables for the generic MPS Word source pack; if present use as canonical source; if absent record migration gap and request re-upload of the 25 Word documents. This PR explicitly does NOT close #1501. |
+
+---
+
 ## OPOJD Gate
 
 | Check | Status |
@@ -28,9 +36,10 @@ mmm-assessment-free-respond edge function (A/B/C structured scoring), and test u
 | Zero test failures | ✅ All B3-ui tests GREEN (T-MMM-S6-001 through T-MMM-S6-022) |
 | Zero skipped/incomplete tests | ✅ 0 skipped |
 | Zero warnings | ✅ No TypeScript errors; no build warnings |
-| Evidence artifacts present | ✅ QUESTION_BANK, T-MMM-S6-022, session memory, PREHANDOVER |
+| Evidence artifacts present | ✅ QUESTION_BANK, T-MMM-S6-022, server-side manifest, session memory, PREHANDOVER |
 | Architecture followed as frozen | ✅ No new deps; backward-compat legacy path retained |
 | §4.3 Merge gate parity | ✅ PASS — see Gate Evidence below |
+| #1501 KUC verification | ⚠️ UNRESOLVED — explicitly noted as interim; does not close #1501 |
 
 **OPOJD: PASS**
 
@@ -72,8 +81,12 @@ deliverables:
     builder: ui-builder
     description: >
       Primary path accepts structured { assessment_version, responses[] } with
-      CHOICE_SCORE_MAP A=0.0/B=0.5/C=1.0; computes mps_scores, domain_scores,
-      baseline_maturity; legacy domain_responses path retained for backward compat
+      CHOICE_SCORE_MAP A=0.0/B=0.5/C=1.0; server-side completeness and integrity
+      validation via GENERIC_MPS_V1_MANIFEST (25-entry manifest: duplicate detection,
+      unknown question_id rejection, domain/mps_id cross-check, canonical domain
+      coverage); computes mps_scores, domain_scores, baseline_maturity; legacy
+      domain_responses path retained for backward compat; issue ref corrected to #1499;
+      #1501 marked UNRESOLVED (KUC not searchable in build environment)
 
   - path: modules/MMM/tests/B3-ui/b3-ui.test.ts
     status: COMMITTED
@@ -157,12 +170,13 @@ changed_files_match_scope_declaration: true
 6. ✅ All governance quality standards met
 7. ✅ No coordination/escalation outstanding
 8. ✅ All evidence collected and documented
-9. ✅ Anti-regression gate T-MMM-S6-022 in place
+9. ✅ Anti-regression gate T-MMM-S6-022 in place; T-MMM-S6-018 extended for server-side validation
 10. ✅ Work is merge-ready
 11. ✅ All requirements understood and satisfied
 12. ✅ Deployment gate confirmed N/A — no deploy-*.yml changes
 13. ✅ Ripple/Cross-Agent Assessment present — HFMC-01
 14. ✅ agents_delegated_to: ui-builder documented in session memory
+15. ⚠️ maturion-isms#1501 (KUC verification) — UNRESOLVED, explicitly recorded as interim; this PR does NOT close #1501
 
 **Handover Status**: ✅ COMPLETE — Ready for merge
 

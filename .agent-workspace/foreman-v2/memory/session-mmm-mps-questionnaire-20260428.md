@@ -108,11 +108,20 @@ warnings: 0
 
 ---
 
-## Suggestions for Improvement
+## Suggestions for Improvement / Open Items
 
-1. The free assessment question bank (generic-mps-baseline-v1) is shipped as a static
+1. **maturion-isms#1501 (KUC verification) — UNRESOLVED**: KUC/document-upload storage and
+   metadata tables were not searchable in this build environment (no live DB access).
+   Required follow-up: search KUC/document-upload tables for the generic MPS Word source pack;
+   confirm whether documents are approved/active and retrievable by the MMM/AIMC path;
+   confirm source is generic MPS content (not diamond-specific LDCS markdown); if present use
+   KUC as canonical source; if absent record migration gap and request re-upload of the 25
+   Word documents. This wave ships a static question bank as an interim implementation only.
+   **This PR does not close #1501.**
+
+2. The free assessment question bank (generic-mps-baseline-v1) is shipped as a static
    interim implementation. A follow-up issue is required to ingest the generic MPS content
-   through the governed AIMC/KUC path.
+   through the governed AIMC/KUC path once #1501 is resolved.
 
 ---
 

@@ -4,7 +4,7 @@
  * Wave B3 — Core UI: Onboarding (updated for MPS-level questionnaire)
  * Route:   POST /api/assessment/free/respond
  * Tests:   T-MMM-S6-011, T-MMM-S6-018, T-MMM-S6-020
- * Issue:   maturion-isms#1428, maturion-isms#1503
+ * Issue:   maturion-isms#1428, maturion-isms#1499
  * Builder: ui-builder
  * Date:    2026-04-28
  *
@@ -19,7 +19,11 @@
  *   - HTTP 400 for missing/invalid input
  *
  * AIMC/KUC note: generic-mps-baseline-v1 question bank is shipped as a static interim
- * implementation. Follow-up required to ingest through the governed KUC path.
+ * implementation. maturion-isms#1501 (KUC verification) is UNRESOLVED — KUC/document-upload
+ * storage and metadata tables were not searchable in this build environment. A follow-up
+ * action is required: search KUC/document-upload tables for the generic MPS Word source pack;
+ * if present use as canonical source; if absent record migration gap and request re-upload.
+ * This PR does not close #1501.
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
@@ -41,6 +45,47 @@ const LEGACY_SCORE_MAP: Record<string, number> = {
   PARTIAL: 0.5,
   NO: 0.0,
 };
+
+/**
+ * Canonical manifest for generic-mps-baseline-v1 (5 domains × 5 MPSs × 1 question = 25).
+ * Used for server-side completeness and integrity validation.
+ * Must stay in sync with QUESTION_BANK in FreeAssessmentPage.tsx.
+ */
+const GENERIC_MPS_V1_MANIFEST: Record<string, { domain_id: string; mps_id: string }> = {
+  'LG-01-Q1': { domain_id: 'leadership-governance', mps_id: 'leadership-accountability' },
+  'LG-02-Q1': { domain_id: 'leadership-governance', mps_id: 'ownership-custody' },
+  'LG-03-Q1': { domain_id: 'leadership-governance', mps_id: 'separation-of-duties' },
+  'LG-04-Q1': { domain_id: 'leadership-governance', mps_id: 'risk-governance' },
+  'LG-05-Q1': { domain_id: 'leadership-governance', mps_id: 'legal-regulatory' },
+  'PI-01-Q1': { domain_id: 'process-integrity', mps_id: 'process-definition' },
+  'PI-02-Q1': { domain_id: 'process-integrity', mps_id: 'process-control' },
+  'PI-03-Q1': { domain_id: 'process-integrity', mps_id: 'quality-assurance' },
+  'PI-04-Q1': { domain_id: 'process-integrity', mps_id: 'management-of-change' },
+  'PI-05-Q1': { domain_id: 'process-integrity', mps_id: 'maintenance-resilience' },
+  'PC-01-Q1': { domain_id: 'people-culture', mps_id: 'competence-readiness' },
+  'PC-02-Q1': { domain_id: 'people-culture', mps_id: 'screening-onboarding' },
+  'PC-03-Q1': { domain_id: 'people-culture', mps_id: 'training-awareness' },
+  'PC-04-Q1': { domain_id: 'people-culture', mps_id: 'engagement-reporting' },
+  'PC-05-Q1': { domain_id: 'people-culture', mps_id: 'ethics-consequence' },
+  'PR-01-Q1': { domain_id: 'protection', mps_id: 'physical-environmental' },
+  'PR-02-Q1': { domain_id: 'protection', mps_id: 'access-control' },
+  'PR-03-Q1': { domain_id: 'protection', mps_id: 'technical-monitoring' },
+  'PR-04-Q1': { domain_id: 'protection', mps_id: 'security-operations' },
+  'PR-05-Q1': { domain_id: 'protection', mps_id: 'transport-handover' },
+  'PW-01-Q1': { domain_id: 'proof-it-works', mps_id: 'documentation-records' },
+  'PW-02-Q1': { domain_id: 'proof-it-works', mps_id: 'metrics-reporting' },
+  'PW-03-Q1': { domain_id: 'proof-it-works', mps_id: 'auditability' },
+  'PW-04-Q1': { domain_id: 'proof-it-works', mps_id: 'incident-learning' },
+  'PW-05-Q1': { domain_id: 'proof-it-works', mps_id: 'resilience-recovery' },
+};
+
+const GENERIC_MPS_V1_CANONICAL_DOMAINS = new Set([
+  'leadership-governance',
+  'process-integrity',
+  'people-culture',
+  'protection',
+  'proof-it-works',
+]);
 
 interface AssessmentResponse {
   domain_id: string;
@@ -91,6 +136,65 @@ Deno.serve(async (req: Request) => {
           { error: `Invalid response value: ${r.response}. Must be A, B, or C` },
           400,
         );
+      }
+    }
+
+    // ── v1 completeness and integrity validation ────────────────────────────
+    if (assessment_version === 'generic-mps-baseline-v1') {
+      const expectedCount = Object.keys(GENERIC_MPS_V1_MANIFEST).length;
+
+      // Require exactly 25 responses (one per MPS)
+      if (responses.length !== expectedCount) {
+        return jsonResponse(
+          {
+            error: `generic-mps-baseline-v1 requires exactly ${expectedCount} responses (one per MPS); received ${responses.length}`,
+          },
+          400,
+        );
+      }
+
+      // Check for duplicate question_ids and validate each against the manifest
+      const seenQIds = new Set<string>();
+      for (const r of responses) {
+        if (seenQIds.has(r.question_id)) {
+          return jsonResponse({ error: `Duplicate question_id: ${r.question_id}` }, 400);
+        }
+        seenQIds.add(r.question_id);
+
+        const expected = GENERIC_MPS_V1_MANIFEST[r.question_id];
+        if (!expected) {
+          return jsonResponse(
+            { error: `Unknown question_id '${r.question_id}' for generic-mps-baseline-v1` },
+            400,
+          );
+        }
+        if (r.domain_id !== expected.domain_id) {
+          return jsonResponse(
+            {
+              error: `question_id '${r.question_id}': expected domain_id '${expected.domain_id}', got '${r.domain_id}'`,
+            },
+            400,
+          );
+        }
+        if (r.mps_id !== expected.mps_id) {
+          return jsonResponse(
+            {
+              error: `question_id '${r.question_id}': expected mps_id '${expected.mps_id}', got '${r.mps_id}'`,
+            },
+            400,
+          );
+        }
+      }
+
+      // Require all 5 canonical domains
+      const submittedDomains = new Set(responses.map((r) => r.domain_id));
+      for (const d of GENERIC_MPS_V1_CANONICAL_DOMAINS) {
+        if (!submittedDomains.has(d)) {
+          return jsonResponse(
+            { error: `Missing responses for canonical domain: ${d}` },
+            400,
+          );
+        }
       }
     }
 
