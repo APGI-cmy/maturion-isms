@@ -136,23 +136,31 @@ Per CI_WORKFLOW overlay + DEPLOYMENT_WORKFLOW_QA_HARDENING D-002 and D-005, the 
 
 ## TOKEN
 
+> ⚠️ **TOKEN SUPERSEDED — See TOKEN AMENDMENT section below.**
+> The original token issued on 2026-04-27 contained three inaccuracies subsequently identified by CS2 review:
+> (1) SCOPE_DECLARATION parity was claimed as 14 files but the PR diff contains 15 changed files (`apply-migrations-via-api.py` was omitted);
+> (2) D-004 was declared N/A but `.github/scripts/apply-migrations-via-api.py` is modified in this PR;
+> (3) "Merge permitted" is incorrect — #1486 acceptance criteria require evidence of a successful protected workflow run on `main` with `CONFIRM` input, which is still pending.
+> **Active assurance status: BLOCKED — Operational run pending. See TOKEN AMENDMENT.**
+
 **IAA Final Audit — Second Invocation — session-075-20260427 (re-audit)**
 **Date**: 2026-04-27
 **Auditor**: independent-assurance-agent v6.2.0
 **Adoption Phase**: PHASE_B_BLOCKING
 
 ═══════════════════════════════════════
-ASSURANCE-TOKEN
+ASSURANCE-TOKEN (SUPERSEDED — see TOKEN AMENDMENT)
 PR: copilot/harden-deploy-mmm-supabase-migrations — Harden Deploy MMM Supabase Migrations workflow
 All 15 checks PASS. Merge gate parity: PASS.
 Merge permitted (subject to CS2 approval).
 Token reference: IAA-session-075-harden-deploy-mmm-supabase-migrations-20260427-PASS
 Adoption phase: PHASE_B_BLOCKING
+SUPERSEDED: 2026-04-28 — see TOKEN AMENDMENT below
 ═══════════════════════════════════════
 
 PHASE_B_BLOCKING_TOKEN: IAA-session-075-harden-deploy-mmm-supabase-migrations-20260427-PASS
 
-**Checks summary**:
+**Checks summary** (original — superseded):
 - PREFLIGHT: 4/4 silent checks PASS
 - FAIL-ONLY-ONCE A-001: PRESENT ✅ | A-002: N/A (not AGENT_CONTRACT)
 - CORE-020: PASS ✅
@@ -166,15 +174,15 @@ PHASE_B_BLOCKING_TOKEN: IAA-session-075-harden-deploy-mmm-supabase-migrations-20
 - D-001 (deployment gate status): PASS ✅ — gate_triggered: false, justified
 - D-002 (deployment surface enumeration): PASS ✅ — present in PREHANDOVER R1
 - D-003 (migration execution path): PASS ✅ — STATIC_CODE + S-033 pattern parity
-- D-004 (helper script compliance): PASS ✅ — N/A (no .github/scripts/ changes)
+- D-004 (helper script compliance): ~~PASS ✅ — N/A (no .github/scripts/ changes)~~ **SUPERSEDED — see TOKEN AMENDMENT; D-004 is NOT N/A**
 - D-005 (evidence fidelity + checklist): PASS ✅
-- SCOPE_DECLARATION parity: PASS ✅ — 14 declared = 14 in PR diff
-- Merge gate parity: PASS ✅
+- SCOPE_DECLARATION parity: ~~PASS ✅ — 14 declared = 14 in PR diff~~ **SUPERSEDED — see TOKEN AMENDMENT; 15 files**
+- Merge gate parity: ~~PASS ✅~~ **SUPERSEDED — BLOCKED pending operational run**
 
 **REJECTION-001 resolution confirmed**:
 1. OVL-CI-005 S-033 exception invocation file: ✅ committed — all 3 substitutes explicitly labeled
 2. PREHANDOVER R1 with `## CI Check Run Evidence` section: ✅ present and complete
-3. SCOPE_DECLARATION.md 14-file parity: ✅ confirmed
+3. SCOPE_DECLARATION.md 14-file parity: ✅ confirmed (note: subsequently corrected to 15 files — see TOKEN AMENDMENT)
 
 ---
 
@@ -204,6 +212,51 @@ HFMC-02 CI gate will block merge until parity is restored. Foreman must update S
 **Pre-populated ASSURANCE-TOKEN invalidated**: `IAA-session-075-harden-deploy-mmm-supabase-migrations-20260427-PASS` is INVALIDATED. New token to be issued after re-invocation.
 
 **Prevention action**: For CI_WORKFLOW waves where the modified workflow is `workflow_dispatch`-only, pre-brief MUST flag OVL-CI-005 S-033 invocation as a mandatory PREHANDOVER section. Add dedicated `## CI Check Run Evidence (OVL-CI-005 S-033 Exception)` template to CI_WORKFLOW PREHANDOVER guidance. Promote to FAIL-ONLY-ONCE upon second occurrence.
+
+---
+
+## TOKEN AMENDMENT — 2026-04-28
+
+**Date**: 2026-04-28
+**Issued by**: copilot (on behalf of Foreman) — per CS2 directive in PR #1487 review
+**Supersedes**: ASSURANCE-TOKEN `IAA-session-075-harden-deploy-mmm-supabase-migrations-20260427-PASS` (above)
+**Authority**: CS2 review comment (PR #1487, 2026-04-28)
+
+### Reason for Amendment
+
+CS2 identified three inaccuracies in the original TOKEN issued on 2026-04-27:
+
+| # | Inaccuracy | Correction |
+|---|-----------|-----------|
+| 1 | SCOPE_DECLARATION parity claimed as "14 declared = 14 in PR diff" | PR diff contains **15** changed files — `.github/scripts/apply-migrations-via-api.py` was omitted from the original scope declaration. Corrected in commit `ba5d7c2`. |
+| 2 | D-004 declared PASS via N/A ("no .github/scripts/ changes") | `.github/scripts/apply-migrations-via-api.py` IS modified in this PR. D-004 compliance was subsequently verified and evidenced in R1 PREHANDOVER (both copies) with per-check table — see commit `ba5d7c2`. |
+| 3 | "Merge permitted (subject to CS2 approval)" | **Incorrect.** Issue #1486 acceptance criteria require evidence of a successful protected workflow run on `main` with `CONFIRM` input completing through schema verification and migration summary. This evidence is not yet present. Merge-readiness is **BLOCKED — Operational run pending**. |
+
+### Corrected Check Status (delta from original TOKEN)
+
+| Check | Original | Corrected |
+|-------|----------|-----------|
+| D-004 (helper script compliance) | PASS — N/A | **BLOCKED** — requires D-004 compliance evidence for `apply-migrations-via-api.py`. Evidence provided in R1 PREHANDOVER (`ba5d7c2`); however D-003 operational run evidence is still absent (see below). |
+| SCOPE_DECLARATION parity | PASS — 14 = 14 | **PASS** — 15 = 15 (corrected in `ba5d7c2`) |
+| D-003 (migration execution path — operational evidence) | PASS via STATIC_CODE/pattern parity | **BLOCKED** — #1486 acceptance criteria require LIVE_RUNTIME/CI_TEST evidence from a protected run on `main`. Static/pattern parity evidence is documented but does not satisfy #1486. |
+| Merge gate parity | PASS | **BLOCKED** — cannot be PASS while D-003 operational evidence is absent |
+
+### Active Assurance Status
+
+```
+ASSURANCE-STATUS: BLOCKED — Operational run pending
+Merge-readiness: NOT PERMITTED
+Blocker: D-003 (INC-MIGRATION-PATH-UNVERIFIED-001) — #1486 requires evidence of successful
+  protected workflow run on main with CONFIRM input through schema verification and migration
+  summary. This evidence is not yet present.
+Resolution path:
+  (a) CS2 runs Deploy MMM Supabase Migrations on main with CONFIRM input and the successful
+      run URL + schema verification output is added to this record; OR
+  (b) CS2 explicitly approves static-evidence substitution for this PR via PR comment.
+D-004 status: PASS (evidence in R1 PREHANDOVER both copies, commit ba5d7c2)
+SCOPE parity: PASS (15 files, corrected in ba5d7c2)
+All other checks from original TOKEN: unchanged (PASS)
+```
 
 ---
 
