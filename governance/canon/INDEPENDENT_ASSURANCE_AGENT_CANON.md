@@ -1,6 +1,6 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.13.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.14.0 | **Authority**: CS2
 **Date**: 2026-03-03
 **Amended**: 2026-03-03 — v1.1.0: Added §Proactive Assurance — Pre-Brief Protocol
 **Amended**: 2026-03-04 — v1.2.1: Added §CS2 Direct Review Track
@@ -15,6 +15,7 @@
 **Amended**: 2026-04-20 — v1.10.0: Added ACR-16 (active final-state token/session incoherence — new rejection trigger); added §Authoritative-Source Rule for Current Token/Session; extended active-bundle scope rule to explicitly cover `wave-current-tasks.md`; added §Proof-of-Operation — Worked Examples for AAP-22/ACR-16; authority: CS2 — maturion-isms#1422 (Canonize active final-state token/session coherence). **Note**: This amendment requires CS2 direct review per §Independence Requirements rule 1 (SELF-MOD-IAA-001).
 **Amended**: 2026-04-22 — v1.12.0: Added ACR-18 (missing declared ceremony artifact), ACR-19 (unmet declared final-state condition), ACR-20 (unmet declared cross-artifact consistency condition), ACR-21 (missing declared acknowledgement/ownership) to §Admin-Ceremony Rejection Triggers; makes unmet wave-level Admin Ceremony Contract items explicit rejection triggers; authority: CS2 — maturion-isms#1447 — **SELF-MOD-IAA-001: this amendment requires CS2 direct review/sign-off.**
 **Amended**: 2026-04-28 — v1.13.0: Added §Evidence-First Assurance Mandate (7 hardening rules: Acceptance-Criteria Evidence Matrix, Build Philosophy and Architecture Compliance Gate, Evidence-Type Downgrade Prohibition, Diff-First Audit Rule, Agent Claim Non-Evidence Rule, Independent Risk Challenge, Expanded Verdict Taxonomy); added ACR-22 through ACR-26 to §Admin-Ceremony Rejection Triggers; expanded §Binary Output Specification to include BLOCKED_PENDING_RUNTIME_EVIDENCE, BLOCKED_PENDING_BUILD_CORRECTNESS, PASS_WITH_CS2_WAIVER, INVALID_PRIOR_TOKEN verdict types; authority: CS2 — maturion-isms#1492 (Restore evidence-first IAA assurance with build-correctness and independent risk challenge) — **SELF-MOD-IAA-001: this amendment requires CS2 direct review/sign-off.**
+**Amended**: 2026-04-28 — v1.14.0: Added §Mandatory ECAP Presence Gate — IAA must determine protected-path status from actual diff at audit start; ECAP/admin ceremony is mandatory for protected-path PRs unless CS2 waiver is committed; added §Protected-Path Classifier defining protected path categories; added §CS2 Waiver Model for Protected-Path PRs; added ACR-27 (ECAP-MISSING-FOR-PROTECTED-PATH) to §Admin-Ceremony Rejection Triggers; authority: CS2 — maturion-isms#1499 — **SELF-MOD-IAA-001: this amendment requires CS2 direct review/sign-off.**
 
 ---
 
@@ -542,6 +543,98 @@ IAA must apply the appropriate verdict from the following taxonomy. Binary PASS/
 
 ---
 
+## Mandatory ECAP Presence Gate (v1.14.0)
+
+**Effective**: v1.14.0 | **Authority**: CS2 | **Issue**: maturion-isms#1499
+
+### Purpose
+
+This section closes a known failure mode where high-risk protected-path PRs bypass the ECAP/admin ceremony layer and receive a PASS token without the build-correctness and evidence-preparation pass that protected PRs require.
+
+IAA must perform the ECAP presence check at the **start of every audit**, before any checklist evaluation, as a precondition to proceeding.
+
+### Mandatory ECAP Presence Check
+
+At the start of every audit, IAA must complete the following four-question check and record the results in the `## IAA Assurance Verdict` section of the iaa-wave-record:
+
+| Check | Question | Answer |
+|-------|----------|--------|
+| P-1 | Does this PR touch a protected path? | YES / NO |
+| P-2 | Is ECAP/admin ceremony required? | YES / NO |
+| P-3 | Was ECAP/admin ceremony appointed and completed? | YES / NO / N/A |
+| P-4 | If ECAP not appointed: is there an explicit CS2 waiver committed? | YES / NO / N/A |
+
+**Decision rule**:
+- If P-1 = YES and P-2 = YES and P-3 = NO and P-4 = NO → **IAA MUST STOP and issue REJECTION-PACKAGE** (ACR-27).
+- If P-1 = YES and P-2 = YES and P-3 = NO and P-4 = YES → ECAP waived by CS2; IAA performs expanded evidence-first review as required by the waiver artifact.
+- If P-1 = NO or P-2 = NO → ECAP presence gate passes; standard ACR review proceeds.
+- If P-1 = YES and P-3 = YES → ECAP appointed and completed; proceed to standard ACR review.
+
+**IAA may not proceed to a PASS token** based on Foreman or builder self-attestation that ECAP was "not required" for a PR whose actual diff includes protected paths. The actual diff governs (Rule 4 — Diff-First Audit Rule).
+
+### Protected-Path Classifier
+
+IAA must classify the PR as **protected-path = YES** if the actual changed-file set (from `git diff --name-only origin/main...HEAD` or equivalent) includes **any** file matching the following patterns:
+
+| Category | Path Pattern | Notes |
+|----------|-------------|-------|
+| CI/deployment workflows | `.github/workflows/**` | Especially `deploy-*.yml` or operational workflows |
+| CI/deployment helper scripts | `.github/scripts/**` | Scripts used by CI, deployment, or runtime operations |
+| Agent contracts | `.github/agents/**` | Any agent contract file |
+| Governance canon | `governance/canon/**` | All canon documents |
+| Governance checklists | `governance/checklists/**` | All checklist documents |
+| Governance templates | `governance/templates/**` | All template documents |
+| Tier 2 governance | `.agent-workspace/**/knowledge/**` | Foreman and agent Tier 2 knowledge files |
+| IAA assurance artifacts | `.agent-admin/assurance/**` | Wave records, tokens, pre-briefs |
+| Schema / migration paths | `supabase/**` | Database schema and migrations |
+| App-level schema/migration | `apps/**/supabase/**` | App-level Supabase paths |
+| Package-level schema | `packages/**/supabase/**` | Package-level Supabase paths |
+| Evidence templates | `governance/templates/**` | Templates used by Foreman, ECAP, QP, or IAA |
+| Production runtime / auth / security | `apps/**/src/**/auth/**`, `apps/**/src/**/security/**`, `apps/**/src/**/middleware/**` | Environment-sensitive runtime paths |
+| Deployment runbooks | `**/DEPLOYMENT_RUNBOOK*.md`, `infrastructure/**` | Infrastructure and deployment runbook files |
+
+**Classification rule**: This is a **diff-first classifier**. IAA must compute the actual changed-file set independently and apply this table. A Foreman or builder claim that no protected paths were changed does not override a diff that independently shows protected-path files.
+
+**Scope note**: A PR is classified as protected-path if **any single file** in the diff matches a protected-path pattern. Mixed PRs (protected-path files plus non-protected files) are fully protected-path.
+
+### ECAP Requirements for Protected-Path PRs
+
+For protected-path PRs where ECAP is required, ECAP must prepare and verify all of the following before bundle handover to IAA:
+
+1. **Governing issue acceptance-criteria matrix** — every governing-issue acceptance criterion mapped to required evidence type and actual evidence reference.
+2. **Build philosophy / architecture compliance notes** — explicit confirmation that the implementation follows approved architecture and ownership boundaries.
+3. **Protected-path impact classification** — table of changed protected-path files with impact category for each.
+4. **Diff-to-scope exactness** — SCOPE_DECLARATION.md matches actual diff.
+5. **Runtime/build evidence status** — whether required CI_TEST, LIVE_RUNTIME, or LIVE_E2E evidence is present or whether the PR should be classified as BLOCKED_PENDING_RUNTIME_EVIDENCE.
+
+ECAP must reject/bounce handover to IAA when build correctness is not proven, even if ceremony artifacts are present and complete.
+
+### CS2 Waiver Model for Protected-Path PRs
+
+If CS2 intentionally allows IAA to proceed without ECAP for a protected-path PR, the waiver must be:
+- Explicitly committed as a durable artifact in the PR evidence bundle, OR
+- Committed to `.agent-admin/assurance/cs2-ecap-waiver-<PR#>-<YYYYMMDD>.md`
+
+**Required waiver artifact fields**:
+
+```yaml
+pr:              <GitHub PR number or branch name>
+branch:          <branch name>
+issue:           <governing issue number>
+ecap_waiver:     YES
+waiver_reason:   <explicit reason ECAP is waived for this PR>
+risk_accepted:   <description of risk accepted by CS2>
+iaa_expanded_review_required: YES | NO   # Whether IAA must perform expanded evidence-first review
+cs2_identity:    Johan Ras / @APGI-cmy
+timestamp:       YYYY-MM-DDTHH:MM:SSZ
+```
+
+**No implied waiver**: If the waiver artifact does not exist as a committed file, the waiver is not valid. IAA must reject. A comment, a PR label, or a Foreman attestation does not constitute a CS2 waiver.
+
+**Waiver does not remove evidence obligations**: Even with a CS2 waiver, IAA must apply the Evidence-First Assurance Mandate (§Evidence-First Assurance Mandate Rules 1–7). The waiver only exempts the PR from the ECAP ceremony pre-condition, not from hard evidence requirements.
+
+---
+
 ## Zero-Severity-Tolerance Policy
 
 **Effective**: v1.1.0 | **Authority**: CS2
@@ -938,7 +1031,7 @@ OUTCOME:
 
 ---
 
-## Admin-Ceremony Rejection Triggers (v1.12.0)
+## Admin-Ceremony Rejection Triggers (v1.14.0)
 
 The IAA MUST issue a `REJECTION-PACKAGE` if **any** of the following conditions are present in the branch at assurance time. These triggers are binary and non-discretionary. Triggers that expressly depend on `execution-ceremony-admin-agent` (ECAP)-specific artifacts or ECAP-only ceremony steps apply when a job has involved ECAP; triggers grounded in universal handover gates apply across **all** handover pathways, including non-ECAP and liaison flows. This includes §4.3f-backed failures such as ACR-17.
 
@@ -974,6 +1067,7 @@ The IAA MUST issue a `REJECTION-PACKAGE` if **any** of the following conditions 
 | ACR-24 | **Agent claim used as evidence without independent verification** — a PASS verdict (or contribution toward PASS) relies on an agent statement ("tests pass", "workflow reviewed", "gate green", "no blockers", "pattern proven", "build complete", "deployment works", "architecture followed", or equivalent) that is not independently verified by IAA from a hard artifact. Each such claim must resolve to a CI run URL, command output log, diff review, hash, schema query result, runtime response, health check, or screenshot with context — or a committed CS2 waiver artifact. | §Evidence-First Assurance Mandate Rule 5; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0; maturion-isms#1492 |
 | ACR-25 | **Diff-first classification mismatch** — the PR category declared in the PREHANDOVER proof, SCOPE_DECLARATION, or ceremony artifacts does not match the category derived by IAA from independently computing the actual changed-file set. The actual diff-derived classification governs. When a mismatch is detected, the higher-risk classification applies and IAA re-evaluates the PR under the correct category before issuing any verdict. If the correct category requires evidence not present in the submitted bundle, IAA must issue REJECTED or BLOCKED_PENDING_RUNTIME_EVIDENCE. | §Evidence-First Assurance Mandate Rule 4; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0; maturion-isms#1492 |
 | ACR-26 | **Independent Risk Challenge not performed or incomplete** — IAA issues a PASS token without having completed and recorded the five-question Independent Risk Challenge required by §Evidence-First Assurance Mandate Rule 6. The challenge must be present in the IAA verdict output with substantive answers — not template placeholders, not "N/A" without rationale, not single-word responses. Any of the five questions unanswered or answered with a placeholder constitutes an incomplete challenge. | §Evidence-First Assurance Mandate Rule 6; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0; maturion-isms#1492 |
+| ACR-27 | **ECAP/admin ceremony missing for protected-path PR (ECAP-MISSING-FOR-PROTECTED-PATH)** — the PR's actual changed-file set (as independently computed by IAA from `git diff --name-only origin/main...HEAD`) includes one or more protected-path files (per §Mandatory ECAP Presence Gate §Protected-Path Classifier), ECAP/admin ceremony was required but was not appointed or completed, and no explicit CS2 waiver artifact exists as a committed file in the PR evidence bundle. IAA MUST stop at the §Mandatory ECAP Presence Gate check (P-1 through P-4) and issue a `REJECTION-PACKAGE` before performing any further checklist evaluation. Foreman self-attestation or wave-current-tasks.md `ceremony_admin_appointed: NO` declarations do not substitute for either ECAP completion or a committed CS2 waiver artifact. This trigger fires regardless of whether all other ACR checks would pass. | §Mandatory ECAP Presence Gate; maturion-isms#1499; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.14.0 |
 
 ### Active-Bundle Scope Rule for ACR Checks (v1.7.0)
 
@@ -1103,4 +1197,4 @@ The §4.3e gate (defined in `AGENT_HANDOVER_AUTOMATION.md`) is the **ECAP + Fore
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.13.0 | Effective: 2026-02-24 | Amended: 2026-04-28 (v1.13.0) — Added §Evidence-First Assurance Mandate (Rules 1–7: Acceptance-Criteria Evidence Matrix, Build Philosophy and Architecture Compliance Gate, Evidence-Type Downgrade Prohibition, Diff-First Audit Rule, Agent Claim Non-Evidence Rule, Independent Risk Challenge, Expanded Verdict Taxonomy); added ACR-22 through ACR-26 to §Admin-Ceremony Rejection Triggers; expanded §Output Specification with BLOCKED_PENDING_RUNTIME_EVIDENCE, BLOCKED_PENDING_BUILD_CORRECTNESS, PASS_WITH_CS2_WAIVER, INVALID_PRIOR_TOKEN verdicts; maturion-isms#1492; SELF-MOD-IAA-001: CS2 direct review/sign-off required | Previous: 2026-04-22 (v1.12.0) — Added ACR-18 (missing declared ceremony artifact), ACR-19 (unmet declared final-state condition), ACR-20 (unmet declared cross-artifact consistency condition), ACR-21 (missing declared acknowledgement/ownership); makes unmet wave-level Admin Ceremony Contract items explicit rejection triggers; maturion-isms#1447; SELF-MOD-IAA-001: CS2 direct review/sign-off required | Previous: 2026-04-21 (v1.11.0) — Added ACR-17: wrong-but-existing reference (non-authoritative artifact target) + renumber/rebase drift failure; cross-references AAP-23, AAP-24, §4.3f Check M/N, R18; wave admin-ceremony-hardening-20260421 | Previous: 2026-04-20 (v1.10.0) — Added ACR-16: active final-state token/session incoherence (AAP-22 / §4.3e Check L) | Previous: 2026-04-19 (v1.9.0) — Added ACR-15: active wave/task tracker not normalized before final assurance (AAP-21 / §4.3e Check C3)*
+*Authority: CS2 (Johan Ras) | Version: 1.14.0 | Effective: 2026-02-24 | Amended: 2026-04-28 (v1.14.0) — Added §Mandatory ECAP Presence Gate (four-question ECAP presence check P-1 through P-4 executed at audit start before any checklist evaluation); added §Protected-Path Classifier (diff-first path table covering .github/workflows, .github/scripts, .github/agents, governance/canon, governance/checklists, governance/templates, supabase, .agent-admin/assurance, and production runtime/auth/security paths); added §CS2 Waiver Model for Protected-Path PRs (committed waiver artifact required; no implied waiver); added §ECAP Requirements for Protected-Path PRs (build-correctness evidence obligations); added ACR-27 (ECAP-MISSING-FOR-PROTECTED-PATH — protected-path PR with no ECAP and no CS2 waiver = REJECTION-PACKAGE); maturion-isms#1499; SELF-MOD-IAA-001: CS2 direct review/sign-off required | Previous: 2026-04-28 (v1.13.0) — Added §Evidence-First Assurance Mandate (Rules 1–7: Acceptance-Criteria Evidence Matrix, Build Philosophy and Architecture Compliance Gate, Evidence-Type Downgrade Prohibition, Diff-First Audit Rule, Agent Claim Non-Evidence Rule, Independent Risk Challenge, Expanded Verdict Taxonomy); added ACR-22 through ACR-26 to §Admin-Ceremony Rejection Triggers; expanded §Output Specification with BLOCKED_PENDING_RUNTIME_EVIDENCE, BLOCKED_PENDING_BUILD_CORRECTNESS, PASS_WITH_CS2_WAIVER, INVALID_PRIOR_TOKEN verdicts; maturion-isms#1492; SELF-MOD-IAA-001: CS2 direct review/sign-off required | Previous: 2026-04-22 (v1.12.0) — Added ACR-18 (missing declared ceremony artifact), ACR-19 (unmet declared final-state condition), ACR-20 (unmet declared cross-artifact consistency condition), ACR-21 (missing declared acknowledgement/ownership); makes unmet wave-level Admin Ceremony Contract items explicit rejection triggers; maturion-isms#1447; SELF-MOD-IAA-001: CS2 direct review/sign-off required | Previous: 2026-04-21 (v1.11.0) — Added ACR-17: wrong-but-existing reference (non-authoritative artifact target) + renumber/rebase drift failure; cross-references AAP-23, AAP-24, §4.3f Check M/N, R18; wave admin-ceremony-hardening-20260421 | Previous: 2026-04-20 (v1.10.0) — Added ACR-16: active final-state token/session incoherence (AAP-22 / §4.3e Check L) | Previous: 2026-04-19 (v1.9.0) — Added ACR-15: active wave/task tracker not normalized before final assurance (AAP-21 / §4.3e Check C3)*

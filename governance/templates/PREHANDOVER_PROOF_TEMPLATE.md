@@ -1,6 +1,6 @@
 # PREHANDOVER_PROOF Template
 
-**Version**: 3.4  
+**Version**: 3.5  
 **Authority**: MERGE_GATE_PHILOSOPHY.md v2.0, OPOJD v2.0  
 **Purpose**: Evidence-based validation for complete job handover  
 **Agent**: [Agent Name]  
@@ -362,6 +362,7 @@ Per OPOJD v2.0, all jobs MUST generate improvement suggestions.
 13. ✅ `## Ripple/Cross-Agent Assessment` section present and populated with concrete downstream-impact conclusions — HFMC-01 mandatory check
 14. ✅ Active final-state bundle token/session coherence confirmed — all active artifacts (`iaa_audit_token` in this proof, `iaa_session_reference` in session memory, wave record `## TOKEN` section, `wave-current-tasks.md`) reference the same IAA session/token — AAP-22 / ACR-16 / §4.3e Check L mandatory check
 15. ✅ `## Acceptance-Criteria Matrix (Producer-Side)` section present and all governing-issue acceptance criteria mapped to hard evidence references — ACR-22 / §Evidence-First Assurance Mandate Rule 1 mandatory check
+16. ✅ Protected-path ECAP presence confirmed — either: (a) PR diff contains no protected-path files (`ecap_required: NO`); or (b) ECAP/admin ceremony was appointed and completed (`ecap_invoked: YES`); or (c) explicit CS2 waiver artifact is committed (`ecap_waiver_ref: <path>`) — AAP-30 / ACR-27 / §Mandatory ECAP Presence Gate mandatory check
 
 **Handover Status**: ✅ COMPLETE - Ready for merge
 
@@ -374,6 +375,7 @@ Per OPOJD v2.0, all jobs MUST generate improvement suggestions.
 **Authority**: MERGE_GATE_PHILOSOPHY.md v2.0, OPOJD v2.0, AGENT_CLASS_SPECIFIC_GATE_PROTOCOLS.md  
 **Evidence Type**: Pre-Handover Gate Validation  
 **Compliance**: Living Agent System v6.x.0  
+**Amendment**: v3.5 (2026-04-28) — Added certification item 16: Protected-path ECAP presence confirmation (AAP-30 / ACR-27 / §Mandatory ECAP Presence Gate — INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.14.0 / maturion-isms#1499); certifies that any PR touching protected paths either has ECAP completed or an explicit committed CS2 waiver.  
 **Amendment**: v3.4 (2026-04-28) — Added mandatory `## Acceptance-Criteria Matrix (Producer-Side)` section (ACR-22 / §Evidence-First Assurance Mandate Rule 1 / INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0 / maturion-isms#1492). Required for all T1 and T2 PRs; maps every governing-issue acceptance criterion to hard evidence. Absence of this section is a producer-side defect blocked at Foreman QP and IAA final audit. Added certification item 15.  
 **Amendment**: v3.3 (2026-04-27) — Added mandatory `## Deployment Surface Enumeration` section (Rule D-002 / `governance/canon/DEPLOYMENT_WORKFLOW_QA_HARDENING.md` v1.0.0 / maturion-isms#1479). Required for all deployment-workflow PRs; N/A with justification for governance-only PRs. Absence of this section in a deployment-workflow PREHANDOVER proof is a producer-side defect blocked at Foreman QP and IAA final audit.  
 **Amendment**: v3.2 (2026-04-20) — Added certification item 14: Active final-state bundle token/session coherence confirmation (AAP-22 / ACR-16 / §4.3e Check L — maturion-isms#1422); confirms all active artifacts reference same IAA session/token before handover.  
