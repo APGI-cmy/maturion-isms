@@ -18,7 +18,7 @@ export const useFreeAssessmentStore = create<FreeAssessmentState>((set) => ({
   sessionToken: null,
   baselineMaturity: null,
   domainScores: null,
-  setResult: (sessionToken, baselineMaturity, domainScores = null) =>
-    set({ sessionToken, baselineMaturity, domainScores }),
+  setResult: (sessionToken, baselineMaturity, domainScores) =>
+    set({ sessionToken, baselineMaturity, domainScores: domainScores ?? null }),
   reset: () => set({ sessionToken: null, baselineMaturity: null, domainScores: null }),
 }));
