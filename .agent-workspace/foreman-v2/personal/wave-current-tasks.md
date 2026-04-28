@@ -63,7 +63,7 @@ Track A gate. Issue clarification required per the CS2 directive issue.
 
 | PR # | Token | Date |
 |------|-------|------|
-| Track A | EXEMPT (no implementation, no governance file changes) | 2026-04-28 |
+| Track A | EXEMPT (no implementation/application changes) | 2026-04-28 |
 
 ## Wave Completion Gate
 
