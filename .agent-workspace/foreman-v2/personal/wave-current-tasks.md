@@ -1,51 +1,81 @@
-# Wave Current Tasks — harden-deploy-mmm-supabase-migrations-20260427
+# Wave Current Tasks — wave-mps-source-verification
 
 **Foreman**: foreman-v2-agent v6.2.0
-**Wave**: harden-deploy-mmm-supabase-migrations-20260427
-**Issue**: maturion-isms#1486
-**Branch**: copilot/harden-deploy-mmm-supabase-migrations
-**Date**: 2026-04-27
-**CS2 Authorization**: CONFIRMED — issue opened by CS2 (@APGI-cmy) in CS2-governed repository, foreman-v2-agent assigned
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-harden-deploy-mmm-supabase-migrations-20260427.md
-iaa_prebrief_status: COMPLETE — PRE-BRIEF committed SHA a548b39; CI_WORKFLOW category; D-001–D-005 active; SB-002 OPEN (evidence strategy declared)
-ceremony_admin_appointed: NO
+**Wave**: wave-mps-source-verification
+**Session ID**: session-mps-source-verification-20260428
+**Date**: 2026-04-28
+**Branch**: copilot/verify-generic-mps-source-documents
+**CS2 Authorization**: CONFIRMED — issue opened by CS2 (@APGI-cmy) and assigned to foreman-v2-agent; branch initialized as copilot/verify-generic-mps-source-documents
+**iaa_wave_record_path**: .agent-admin/assurance/iaa-wave-record-wave-mps-source-verification-20260428.md
+**iaa_prebrief_status**: COMPLETE — PRE-BRIEF committed SHA caa8bc9; Track A = EXEMPT; Track B = AAWP_MAT (conditional on Track A gate)
+**ceremony_admin_appointed**: NO (Track A only — EXEMPT)
 
 ## Wave Purpose
 
-Harden the Deploy MMM Supabase Migrations workflow end-to-end. Replace the failing `supabase link + supabase db push` mechanism (which prompts for DB password interactively) with the proven Management API approach already in use for cross-app migrations. Ensure the workflow runs fully non-interactively on GitHub-hosted runners.
+CS2 clarification directive: Before accepting a static replacement question bank in PR #1500,
+verify whether the 25 generic MPS Word source documents are already present and approved in
+the current AIMC/KUC/ai_knowledge store. If absent, record as migration gap and request
+re-upload. Only proceed to Track B (structured JSON model + question bank derivation) once
+CS2 confirms source document status.
+
+## Wave Design — Conditional Track Structure
+
+```
+TRACK A (mandatory first) → CS2 DB Verification Gate → TRACK B (conditional)
+```
+
+- **Track A**: Research/verify KUC schema and code evidence; record findings; provide
+  DB queries for CS2; block PR #1500 static question bank pending CS2 decision.
+- **Track B**: Only if CS2 confirms documents PRESENT. Implement Domain→MPS→Criteria JSON
+  model; derive question bank; add tests proving all 25 MPSs covered.
 
 ## Current Wave Tasks
 
 | # | Task | Agent | Status | Notes |
 |---|------|-------|--------|-------|
-| 1 | Phase 1 Preflight | foreman-v2-agent | 🟢 DONE | Identity, Tier 2, CANON_INVENTORY, sessions, FAIL-ONLY-ONCE v4.6.0, merge gates |
-| 2 | wave-current-tasks.md | foreman-v2-agent | 🟢 DONE | This file |
-| 3 | scope-declaration | foreman-v2-agent | 🟢 DONE | scope-declaration-wave-harden-deploy-mmm-supabase-migrations-20260427.md |
-| 4 | IAA Pre-Brief | independent-assurance-agent | 🟢 DONE | PRE-BRIEF committed SHA a548b39; CI_WORKFLOW + D-001–D-005 active |
-| 5 | SCOPE_DECLARATION.md update | foreman-v2-agent | 🟢 DONE | Cleared per A-029; wave-scoped |
-| 6 | Implement workflow fix | api-builder | 🟢 DONE | SHAs 5db2734 (main fix) + b68e094 (comment fix); QP PASS |
-| 7 | PREHANDOVER proof | foreman-v2-agent (no ECAP) | 🟢 DONE | .agent-workspace/foreman-v2/memory/PREHANDOVER-session-075-harden-deploy-mmm-supabase-migrations-20260427.md |
-| 8 | Session memory | foreman-v2-agent (no ECAP) | 🟢 DONE | .agent-workspace/foreman-v2/memory/session-075-20260427.md |
-| 9 | IAA Final Audit | independent-assurance-agent | 🟢 DONE | IAA-session-075-harden-deploy-mmm-supabase-migrations-20260427-PASS |
+| 1 | Phase 1 Preflight | foreman-v2-agent | 🟢 DONE | Identity, Tier 2, CANON_INVENTORY PASS, sessions, FAIL-ONLY-ONCE v4.6.0 |
+| 2 | IAA Pre-Brief (Phase 1 Step 1.8) | independent-assurance-agent | 🟢 DONE | SHA caa8bc9; Track A=EXEMPT; Track B=AAWP_MAT |
+| 3 | wave-current-tasks.md | foreman-v2-agent | 🟢 DONE | This file |
+| 4 | Track A: KUC schema/code investigation | foreman-v2-agent (research) | 🟢 DONE | AIMC/ai_knowledge schema: MPS columns present; NO seed migration found |
+| 5 | Track A: Migration gap analysis committed | foreman-v2-agent | 🟢 DONE | .agent-workspace/foreman-v2/personal/mps-migration-gap-analysis-20260428.md |
+| 6 | Track A: Scope declaration | foreman-v2-agent | 🟢 DONE | scope-declaration-wave-mps-source-verification-20260428.md |
+| 7 | Track A: SCOPE_DECLARATION.md update | foreman-v2-agent | 🟢 DONE | Cleared per A-029; wave-scoped |
+| 8 | Track A: Session memory (Track A) | foreman-v2-agent | 🟢 DONE | session-mps-source-verification-20260428.md |
+| B-1 | (BLOCKED) Structured Domain→MPS→Criteria JSON model | mat-specialist + api-builder | ❌ BLOCKED | Pending CS2 DB verification + MPS re-upload |
+| B-2 | (BLOCKED) Free-assessment question bank derivation | ui-builder | ❌ BLOCKED | Pending B-1 |
+| B-3 | (BLOCKED) QA tests proving all 25 MPSs covered | qa-builder | ❌ BLOCKED | Pending B-1/B-2 |
+
+**Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED
+
+## CS2 Decision Gate (Track A → Track B)
+
+CS2 must perform before Track B delegation:
+
+1. Query live Supabase `ai_knowledge` table — SQL provided in migration gap analysis.
+2. Confirm whether MPS 1–25 generic Word documents were migrated from legacy KUC.
+3. If PRESENT: confirm generic content (not diamond-specific LDCS); approve Track B.
+4. If ABSENT: initiate re-upload of 25 Word documents via AIMC upload pipeline; then approve Track B.
+
+**PR #1500 (static question bank)**: Foreman gate HOLD — do not merge until CS2 resolves the
+Track A gate. Issue clarification required per the CS2 directive issue.
 
 ## IAA Tokens Received This Wave
 
 | PR # | Token | Date |
 |------|-------|------|
-| #1487 | IAA-session-075-harden-deploy-mmm-supabase-migrations-20260427-PASS | 2026-04-27 |
+| Track A | EXEMPT (no implementation, no governance file changes) | 2026-04-28 |
 
 ## Wave Completion Gate
 
 - [x] Phase 1 Preflight complete
-- [x] IAA Pre-Brief complete — SHA a548b39
-- [x] scope-declaration committed
-- [x] SCOPE_DECLARATION.md updated
-- [x] Workflow fix implemented (api-builder) — QP PASS
-- [x] QP PASS
-- [x] PREHANDOVER proof committed
-- [x] Session memory committed
-- [x] IAA Final Audit ASSURANCE-TOKEN received — IAA-session-075-harden-deploy-mmm-supabase-migrations-20260427-PASS
+- [x] IAA Pre-Brief complete — SHA caa8bc9
+- [x] wave-current-tasks.md committed
+- [x] Track A: KUC investigation complete
+- [x] Track A: Migration gap analysis committed
+- [x] Track A: Session memory written
+- [ ] CS2: DB verification of ai_knowledge table
+- [ ] CS2: Track B approval (or confirmation of interim static approach)
+- [ ] Track B: Delegation to builders (BLOCKED pending CS2 gate)
+- [ ] Track B: PREHANDOVER + IAA Final Audit (AAWP_MAT — mandatory)
 - [ ] CS2 notified for merge approval
-- [ ] **BLOCKED — Operational run pending**: #1486 requires evidence of a successful protected workflow run through schema verification and migration summary. Merge-readiness is BLOCKED until CS2 performs or confirms an operational run on `main` with `CONFIRM` input, or explicitly approves static-evidence substitution.
 
-**Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED

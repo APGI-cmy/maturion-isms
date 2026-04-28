@@ -1,42 +1,36 @@
-# Scope Declaration — mmm-ui-completeness-fix-20260428
+# Scope Declaration — wave-mps-source-verification
 
-**Wave**: mmm-ui-completeness-fix-20260428
-**Issue**: maturion-isms#1496
-**Branch**: copilot/fix-mmm-frontend-ui-issues
+**Wave**: wave-mps-source-verification
+**Issue**: CS2 clarification — verify canonical generic MPS source pack in AIMC/KUC before static question bank (related: PR #1500)
+**Branch**: copilot/verify-generic-mps-source-documents
 **Date**: 2026-04-28
-**Last refreshed**: 2026-04-28 (post-final-edit scope refresh per §4.3g / AAP-28)
+**Last refreshed**: 2026-04-28 (Track A scope — pure research/workspace artifacts)
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ## Scope Decision
 
-Fix MMM deployed UI being bare/unstyled despite green deployment workflows (maturion-isms#1496).
-Root cause: B3 UI wave omitted global CSS stylesheet and CSS import in entry point. Fix adds
-`apps/mmm/src/index.css`, imports it in `main.tsx`, restyles all B3 page components with CSS
-classes, adds anti-regression test T-MMM-S6-021, and updates governance tracking documents.
+Track A research wave: verify whether the 25 generic MPS Word source documents exist in the
+current AIMC/KUC/MMM storage system before accepting the static question bank in PR #1500.
+This commit contains: wave-current-tasks.md, migration gap analysis, scope declaration, session memory,
+and updated root SCOPE_DECLARATION.md. No application code is changed. No schema is changed.
+No governance canon files are modified.
+
+Track B (implementation) is BLOCKED pending CS2 DB verification gate — separate PR/scope when approved.
 
 ## Changed Files
 
-- `.agent-workspace/foreman-v2/memory/session-mmm-ui-completeness-fix-20260428.md` - Foreman session memory for this wave; agents_delegated_to: ui-builder (CSS design system + page styling)
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave task tracker (recreated for wave-mps-source-verification)
+- `.agent-workspace/foreman-v2/personal/mps-migration-gap-analysis-20260428.md` - Migration gap analysis document (Track A deliverable); contains schema investigation findings, DB verification SQL for CS2, and decision tree
+- `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mps-source-verification-20260428.md` - Wave scope declaration
+- `.agent-workspace/foreman-v2/memory/session-mps-source-verification-20260428.md` - Foreman session memory; agents_delegated_to: IAA (pre-brief only)
 - `SCOPE_DECLARATION.md` - Updated for this wave (per §4.3g scope refresh)
-- `apps/mmm/src/components/ConnectivityIndicator.tsx` - Replaced inline style with .connectivity-indicator CSS class
-- `apps/mmm/src/index.css` - Created: self-contained CSS design system (CSS reset, custom property tokens, typography, layout utilities, component classes); prefers-reduced-motion and @supports selector(:has()) compatibility added
-- `apps/mmm/src/main.tsx` - Added `import './index.css'` as first import
-- `apps/mmm/src/pages/FrameworkOriginPage.tsx` - Origin option cards; VERBATIM/GENERATED/HYBRID radio options preserved
-- `apps/mmm/src/pages/FreeAssessmentPage.tsx` - Added CSS classes to domain cards and radio options; all logic intact
-- `apps/mmm/src/pages/FreeAssessmentResultPage.tsx` - Styled result card; data-testid="baseline-maturity" preserved
-- `apps/mmm/src/pages/LandingPage.tsx` - Restyled with hero section, feature-card grid, CTA strip; all link routes preserved
-- `apps/mmm/src/pages/OnboardingPage.tsx` - Form card layout; /api/organisations, queryKey: ['organisations'], NBR-001 preserved
-- `apps/mmm/src/pages/SignUpPage.tsx` - Auth card layout; supabase.auth.signUp and email/password inputs preserved
-- `apps/mmm/src/pages/TutorialPage.tsx` - Restyled with maturity level cards (Level 1–5); heading/content preserved
-- `modules/MMM/12-phase4-ecap/cdv-staging-validation.md` - Recorded fix with evidence table and updated CDV status
-- `modules/MMM/BUILD_PROGRESS_TRACKER.md` - Updated B3 to 65/65 tests, total 965/965, wave entry added
-- `modules/MMM/tests/B3-ui/b3-ui.test.ts` - Added T-MMM-S6-021 anti-regression test (6 assertions: CSS file exists, non-trivial, imported, pages use className)
-- `vitest.config.ts` - Added `modules/MMM/tests/B3-ui/**/*.test.ts` to root include list so T-MMM-S6-021 runs with `pnpm test`
 
 ## Out of Scope
 
-- Any Supabase schema or migration changes
+- Any application code (apps/, modules/, supabase/, packages/)
+- Any schema/migration changes
 - Any Edge Function changes
 - Any deployment workflow changes
-- Any other app directories outside `apps/mmm/`
-- Any governance canon files
+- Any governance canon files (.github/agents/, governance/)
+- Track B implementation (separate PR after CS2 gate)
+
