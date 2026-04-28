@@ -1,6 +1,6 @@
 # IAA Wave Record — {wave} — {date}
 
-**Record Version**: 1.1.0
+**Record Version**: 1.2.0
 **Wave**: {wave}
 **Branch**: {branch}
 **Issue**: {issue_ref}
@@ -123,16 +123,64 @@
 > The IAA appends its verdict here in a SUBSEQUENT commit. The PREHANDOVER section above MUST NOT change.
 
 ### 3.1 IAA Verdict
-- Verdict: {ASSURANCE-TOKEN (PASS) / REJECTION-PACKAGE (FAIL)}
-- Token: IAA-session-{NNN}-wave-{wave}-{YYYYMMDD}-{PASS/FAIL}
+- Verdict: {PASS / REJECTED / BLOCKED_PENDING_RUNTIME_EVIDENCE / BLOCKED_PENDING_BUILD_CORRECTNESS / PASS_WITH_CS2_WAIVER / INVALID_PRIOR_TOKEN}
+- Token: IAA-session-{NNN}-wave-{wave}-{YYYYMMDD}-{PASS / REJECTED / BLOCKED_PENDING_RUNTIME_EVIDENCE / BLOCKED_PENDING_BUILD_CORRECTNESS / PASS_WITH_CS2_WAIVER / INVALID_PRIOR_TOKEN}
 - Date: {YYYY-MM-DD}
-- PHASE_B_BLOCKING_TOKEN: {token_ref — reference to the blocking token written by IAA to `.agent-admin/assurance/iaa-token-*`. This field links the wave record to the standalone token file that IAA creates as its formal verdict artifact.}
+- PHASE_B_BLOCKING_TOKEN: {token_ref — reference to the blocking token written by IAA to `.agent-admin/assurance/iaa-token-*`. This field links the wave record to the standalone token file that IAA creates as its formal verdict artifact, and the token reference must use the same final verdict suffix as the `Verdict:` value above.}
 
-### 3.2 IAA Agent Response (verbatim)
+### 3.2 Acceptance-Criteria Evidence Matrix
+
+> **MANDATORY before any PASS token (§Evidence-First Assurance Mandate Rule 1).**
+> IAA must extract every acceptance criterion from the governing issue and map each to hard evidence.
+> Agent claims, PREHANDOVER attestations, and QP claims are NOT evidence — they may only point to evidence.
+> Any non-waived criterion without hard evidence = REJECTED.
+
+| # | Criterion (from governing issue) | Issue Intent / Operational Intent | Required Evidence Type | Submitted Evidence Reference | IAA Independent Verification | Verdict |
+|---|---|----|---|---|---|---|
+| 1 | {criterion text} | {what this criterion is trying to ensure in operation} | {STATIC_CODE / CONFIG / ARTIFACT / CI_TEST / LIVE_RUNTIME / LIVE_E2E} | {file path, CI run URL, log, hash, screenshot — NOT an agent claim} | {IAA check: what was verified and how} | {PASS / FAIL / N/A / WAIVED — waiver ref if applicable} |
+
+**Matrix status**: {COMPLETE — all {N} criteria mapped and verified / INCOMPLETE — {list unmet criteria}}
+
+### 3.3 Build-Correctness Assessment
+
+> **Mandatory for T1 and T2 PRs (§Evidence-First Assurance Mandate Rule 2).**
+
+- **Issue intent satisfied** (not just literal wording): {YES / NO — detail}
+- **Architecture requirements followed**: {YES / NO — detail}
+- **Deployment / runtime / security / schema contracts preserved**: {YES / NO — detail}
+- **No papering over failures** (stubs, skips, static-only evidence for runtime requirements): {YES / NO — detail}
+- **Functional outcome demonstrated**: {YES / NO — evidence reference}
+- **Operational success condition identified and evidenced**: {YES / NO — success condition: [description] | evidence: [reference]}
+
+**Build-Correctness Gate**: {PASS / FAIL — detail}
+
+### 3.4 Independent Risk Challenge
+
+> **Mandatory before every PASS token (§Evidence-First Assurance Mandate Rule 6).**
+> Answers must be substantive — not template placeholders or single-word responses.
+
+1. **What could still fail after merge?**
+   {List at least one plausible failure mode, or: "No plausible failure mode identified — rationale: [reason]"}
+
+2. **What evidence would prove it does not fail?**
+   {For each failure mode: the specific evidence that would confirm the risk is mitigated}
+
+3. **Is that evidence present?**
+   {YES — evidence reference / NO — blocks PASS; issue BLOCKED_PENDING_RUNTIME_EVIDENCE or REJECTED}
+
+4. **Is there any contradiction between issue intent, architecture requirements, and PR evidence?**
+   {Explicit comparison of issue intent vs delivered implementation vs architecture — YES [detail] / NO}
+
+5. **Would a reasonable production owner accept this as merge-ready?**
+   {YES — rationale / NO — blocks PASS; issue REJECTED or BLOCKED_PENDING_BUILD_CORRECTNESS}
+
+**Independent Risk Challenge**: {COMPLETE — no unmitigated risks / INCOMPLETE — {unresolved items}}
+
+### 3.5 IAA Agent Response (verbatim)
 <!-- ASSEMBLY_TIME_ONLY: Replace this instruction text with actual verbatim IAA response before final handback. Leaving this block in place in a committed final-state artifact will fail §4.3e Check C2 and trigger AAP-17/ACR-09 rejection. -->
 {Verbatim IAA response — pasted without modification. Do not summarise, interpret, or redact.}
 
-### 3.3 Evidence Reviewed
+### 3.6 Evidence Reviewed
 {Itemised list of evidence artifacts reviewed by IAA, with file paths and SHA256 checksums where applicable}
 
 ---
@@ -156,7 +204,7 @@
 ---
 
 ## 5. Record Metadata
-- Record Schema Version: 1.1.0
+- Record Schema Version: 1.2.0
 - Created By: {agent_id}
 - Last Modified By: {agent_id}
 - Last Modified Date: {YYYY-MM-DD}
