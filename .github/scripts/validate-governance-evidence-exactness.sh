@@ -265,18 +265,18 @@ if [ -z "$SCOPE_FILE" ]; then
   echo "   ℹ️  N/A — No SCOPE_DECLARATION.md found. Skipping."
 else
   # Extract the **Issue**: line from SCOPE_DECLARATION.md
-  # Accepts: **Issue**: maturion-isms#NNNN (with optional whitespace variations)
-  DECLARED_ISSUE_LINE=$(grep -iE '^[[:space:]]*\*\*[Ii]ssue\*\*[[:space:]]*:[[:space:]]*' "$SCOPE_FILE" 2>/dev/null | head -1 || true)
-  DECLARED_ISSUE=$(echo "$DECLARED_ISSUE_LINE" | sed 's/^[[:space:]]*\*\*[Ii]ssue\*\*[[:space:]]*:[[:space:]]*//' | tr -d '[:space:]' || true)
+  # Accepts: **Issue**: repo#NNN (with optional whitespace variations)
+  DECLARED_ISSUE_LINE=$(grep -iE '^\*\*Issue\*\*\s*:\s*' "$SCOPE_FILE" 2>/dev/null | head -1 || true)
+  DECLARED_ISSUE=$(echo "$DECLARED_ISSUE_LINE" | sed 's/.*\*\*[Ii]ssue\*\*\s*:\s*//' | tr -d '[:space:]' || true)
 
   if [ -z "$DECLARED_ISSUE_LINE" ]; then
     echo "   ❌ ISSUE-MISMATCH: No **Issue**: line found in $SCOPE_FILE"
-    echo "      Remediation: Add '**Issue**: maturion-isms#NNNN' to $SCOPE_FILE pointing to the current governing issue."
+    echo "      Remediation: Add '**Issue**: repo#NNN' to $SCOPE_FILE pointing to the current governing issue."
     ERRORS=$((ERRORS + 1))
   elif ! echo "$DECLARED_ISSUE" | grep -qE '^[A-Za-z0-9_-]+#[0-9]+$'; then
     echo "   ❌ ISSUE-MISMATCH: Malformed issue reference '$DECLARED_ISSUE' in $SCOPE_FILE"
-    echo "      Expected format: maturion-isms#NNNN"
-    echo "      Remediation: Fix the **Issue**: line to use the format 'maturion-isms#NNNN'."
+    echo "      Expected format: repo#NNN"
+    echo "      Remediation: Fix the **Issue**: line to use the format 'repo#NNN'."
     ERRORS=$((ERRORS + 1))
   else
     # Determine expected issue from environment
