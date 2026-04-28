@@ -1,7 +1,8 @@
 # AGENT_HANDOVER_AUTOMATION
 
-**Status**: CANONICAL | **Version**: 1.7.0 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.8.0 | **Authority**: CS2  
 **Date**: 2026-02-24  
+**Amended**: 2026-04-27 — v1.8.0: Added §4.3g Scope-Refresh and Evidence-Exactness Gate (mandatory, BLOCKING — ALL producing agents); codifies agent-side discipline requirement that SCOPE_DECLARATION.md is refreshed from the final live diff as the last committed action before IAA, and that `.github/scripts/validate-governance-evidence-exactness.sh` is run locally (not deferred to CI) before PREHANDOVER proof is submitted; added AAP-28 (scope declaration not refreshed as final step) and AAP-29 (evidence exactness not evidenced in PREHANDOVER); added helper script `.github/scripts/refresh-scope-and-validate.sh`; updated sequencing note; authority: CS2 — maturion-isms#1484 (Harden agent pre-handover exactness discipline for SCOPE_DECLARATION.md).  
 **Amended**: 2026-04-21 — v1.7.0: Added §4.3f ART Verification Gate (universal — applies to ALL handover pathways, ECAP and non-ECAP); Check M: Authoritative Reference Table (ART) presence and cross-check; Check N: renumber/rebase/conflict-resolution refresh compliance; added AAP-23 (wrong-but-existing reference) and AAP-24 (renumber/rebase drift) to auto-fail rules table; updated sequencing note; authority: CS2 — wave admin-ceremony-hardening-20260421.  
 **Amended**: 2026-04-20 — v1.6.0: Added §4.3e Check L — active final-state bundle token/session coherence (AAP-22 / ACR-16); added AAP-22 to §4.3e auto-fail rules table; extends active-bundle scope to include `wave-current-tasks.md` for token/session coherence checks; authority: CS2 — maturion-isms#1422 (Canonize active final-state token/session coherence).  
 **Amended**: 2026-04-19 — v1.5.0: Hardened §4.3e Admin Ceremony Compliance Gate with gate-inventory checks (Check H), pre-final instruction wording denylist (Check I), cross-artifact final-state consistency with active-bundle scoping (Check J), and carried-forward claim verification (Check K); updated auto-fail rule table with AAP-15 through AAP-21; active-bundle scoping rule clarified to prevent false positives from historical archive; authority: CS2 — governance-repo hardening wave (gate-inventory + post-token normalization hardening).  
@@ -64,10 +65,11 @@ Phase 4 consists of five mandatory sections:
 ### 4.3d Scope-Declaration Parity Gate (mandatory, BLOCKING — governance PRs)
 ### 4.3e Admin Ceremony Compliance Gate (mandatory, BLOCKING — ECAP-involved jobs)
 ### 4.3f ART Verification Gate (mandatory, BLOCKING — ALL handover pathways)
+### 4.3g Scope-Refresh and Evidence-Exactness Gate (mandatory, BLOCKING — ALL producing agents)
 ### 4.4 Compliance Check & Escalation (if needed)
 ```
 
-> **Sequencing note**: §4.3c Pre-IAA Commit-State Gate MUST run immediately before IAA invocation (which each producing-agent contract places after §4.3c). §4.3d Scope-Declaration Parity Gate runs after §4.3c and before IAA invocation for all PRs that include `governance/scope-declaration.md`. **§4.3e Admin Ceremony Compliance Gate runs after §4.3d and before IAA invocation for all jobs where an `execution-ceremony-admin-agent` was appointed.** **§4.3f ART Verification Gate runs after §4.3e (or after §4.3d if no ECAP) and before IAA invocation for ALL handover pathways — including liaison and non-ECAP flows.** §4.3b Token Update Ceremony runs after IAA has returned a verdict. The canonical ordering is: §4.3 → §4.3c → §4.3d (if governance PR) → §4.3e (if ECAP job) → §4.3f (ALL pathways) → IAA invocation → §4.3b → §4.4.
+> **Sequencing note**: §4.3c Pre-IAA Commit-State Gate MUST run immediately before IAA invocation (which each producing-agent contract places after §4.3c). §4.3d Scope-Declaration Parity Gate runs after §4.3c and before IAA invocation for all PRs that include `governance/scope-declaration.md`. **§4.3e Admin Ceremony Compliance Gate runs after §4.3d and before IAA invocation for all jobs where an `execution-ceremony-admin-agent` was appointed.** **§4.3f ART Verification Gate runs after §4.3e (or after §4.3d if no ECAP) and before IAA invocation for ALL handover pathways — including liaison and non-ECAP flows.** **§4.3g Scope-Refresh and Evidence-Exactness Gate is the producing-agent-side discipline gate — it MUST be run after all implementation edits are complete and before the producing agent submits the PREHANDOVER proof.** §4.3b Token Update Ceremony runs after IAA has returned a verdict. The canonical ordering is: §4.3 → §4.3g (producing agent) → §4.3c → §4.3d (if governance PR) → §4.3e (if ECAP job) → §4.3f (ALL pathways) → IAA invocation → §4.3b → §4.4.
 
 ## Section 4.1: Evidence Artifact Generation
 
@@ -1275,6 +1277,8 @@ The following conditions are **auto-fail** for the §4.3e gate regardless of oth
 | AAP-22 | Active final-state token/session incoherence | The active final-state bundle contains two or more artifacts that each declare a different IAA session ID as the authoritative current final state for the same wave — e.g., PREHANDOVER proof `iaa_audit_token` names one session, while latest session memory `iaa_session_reference` names a different session, or wave record `## TOKEN` section names yet another. Check L of §4.3e will detect this automatically. See `INDEPENDENT_ASSURANCE_AGENT_CANON.md` §Authoritative-Source Rule for Current Token/Session for the resolution procedure. |
 | AAP-23 | Wrong-but-existing reference (non-authoritative artifact target) | A reference in an active ceremony artifact resolves to a file that EXISTS on disk but is NOT the authoritative artifact for the active bundle — a superseded session-memory path from before a renumber, an inventory note citing the prior session number, or a wave record referencing a pre-renumber proof. Detection: ART cross-check. Check M of §4.3f detects this. See ACR-17. |
 | AAP-24 | Renumber/rebase drift failure | After a session renumber, date change, wave identifier change, PR number change, branch identity change, or conflict-resolution merge that changes active truth anchors, at least one active final-state artifact still references the superseded (pre-change) identifier. Check N of §4.3f detects this via `art_refresh_required`/`art_refresh_completed` fields. See ACR-17. |
+| AAP-28 | Scope declaration not refreshed as final pre-handover step | `SCOPE_DECLARATION.md` was not refreshed from the final live diff after all implementation edits, OR the refresh commit is not the last committed action before the PREHANDOVER proof, OR the file still contains stale entries from a prior wave. Detection: compare `git diff --name-only origin/main...HEAD` against declared paths. See §4.3g. |
+| AAP-29 | Evidence exactness check not evidenced in PREHANDOVER proof | The PREHANDOVER proof `## Evidence Exactness Gate` section is absent, blank, contains only template placeholder text, or lacks a timestamp and exit code confirming a local run of `.github/scripts/validate-governance-evidence-exactness.sh`. A section with `[paste script output here]` or equivalent instruction text is not sufficient. See §4.3g. |
 
 ### Admin Ceremony Compliance Gate in the Handover Validation Checklist
 
@@ -1850,6 +1854,112 @@ When the `execution-ceremony-admin-agent` returns the ceremony bundle to the For
 
 ---
 
+## §4.3g Scope-Refresh and Evidence-Exactness Gate (MANDATORY — ALL producing agents)
+
+> **Scope**: This gate is the **producing-agent-side discipline gate**. It targets the
+> recurring failure mode where an agent reaches handover with a stale `SCOPE_DECLARATION.md`
+> (entries not matching the final PR diff) and no local evidence that the exactness check
+> was run. Unlike §4.3d (which checks count parity) and the CI `preflight/evidence-exactness`
+> gate (which catches the mismatch post-submission), §4.3g is an agent-side pre-handover
+> action requirement that MUST be satisfied before the PREHANDOVER proof is submitted.
+
+**Problem This Solves**: The CI `preflight/evidence-exactness` gate is behaving correctly
+and catching PATH-MISMATCH errors. The failure pattern is that the producing agent / Foreman
+handover sequence does not consistently treat scope-refresh and evidence-exactness as mandatory
+final pre-handover steps. This leads to a repeatable late CI failure that should be caught
+locally first. This gate codifies the mandatory agent-side steps.
+
+**Effective**: 2026-04-27 | **Authority**: CS2 | **Added**: v1.8.0
+
+**Applicability**: MANDATORY for ALL producing agents (builders, governance liaisons,
+ceremony admins, Foreman sessions) on every PR. Foreman MUST reject the handover if the
+§4.3g evidence is absent or predates later diff changes.
+
+### Rule
+
+> **MANDATORY AGENT-SIDE RULE (§4.3g)**: After all implementation edits are complete, and
+> before submitting the PREHANDOVER proof or invoking IAA, the producing agent MUST:
+>
+> 1. **Inspect the final live diff** (`git diff --name-only origin/main...HEAD` or equivalent)
+>    to confirm the exact set of changed files.
+> 2. **Refresh `SCOPE_DECLARATION.md`** (root) so every cited path exactly matches the
+>    final diff — no stale entries, no extra entries, no inherited paths from a prior wave.
+>    Commit the refreshed file as the **last committed action** before the PREHANDOVER proof.
+> 3. **Run `.github/scripts/validate-governance-evidence-exactness.sh` locally** (exit 0
+>    required). This check MUST NOT be deferred to CI — it must be confirmed locally.
+> 4. **Record evidence in the PREHANDOVER proof** `## Evidence Exactness Gate` section:
+>    command executed, timestamp, exit code, and pass/fail per check class.
+>
+> The Foreman MUST verify this evidence is present and current before accepting the
+> PREHANDOVER proof. Missing, blank, or undated evidence is a handover BLOCKER (AAP-29).
+> A scope declaration that was not refreshed after the final diff change is a handover
+> BLOCKER (AAP-28).
+
+### Required Producing-Agent Actions
+
+| Step | Action | PASS Condition |
+|------|--------|----------------|
+| 1 | Inspect final live diff | `git diff --name-only origin/main...HEAD` run; file list reviewed |
+| 2 | Refresh `SCOPE_DECLARATION.md` from final diff | Every listed path exists in diff; no stale or extra entries |
+| 3 | Commit refreshed scope declaration | Committed as the last file before PREHANDOVER proof submission |
+| 4 | Run `validate-governance-evidence-exactness.sh` locally | Exit code 0; all applicable checks PASS |
+| 5 | Record evidence in PREHANDOVER `## Evidence Exactness Gate` | Command, timestamp, exit code, per-check result present |
+
+### Helper Script
+
+The helper script `.github/scripts/refresh-scope-and-validate.sh` automates Steps 1–4 and
+generates a copy-paste snippet for Step 5. Run it after all edits are committed:
+
+```bash
+.github/scripts/refresh-scope-and-validate.sh
+```
+
+This script:
+1. Prints the live final diff (for scope verification)
+2. Runs `validate-scope-to-diff.sh` (BL-027 exact-set match)
+3. Runs `validate-governance-evidence-exactness.sh`
+4. Prints a PREHANDOVER `## Evidence Exactness Gate` snippet ready for copy-paste
+
+**NOTE**: This script does NOT auto-rewrite `SCOPE_DECLARATION.md`. The producing agent is
+responsible for refreshing the declaration from the diff, committing it, and re-running the
+script to confirm all checks pass.
+
+### Foreman Rejection Criteria
+
+The Foreman MUST reject or bounce the handover if any of the following conditions are present:
+
+| Condition | Anti-Pattern | Action |
+|-----------|-------------|--------|
+| `SCOPE_DECLARATION.md` not refreshed after final diff change | AAP-28 | Bounce to producing agent |
+| `## Evidence Exactness Gate` section absent from PREHANDOVER proof | AAP-29 | Bounce to producing agent |
+| `## Evidence Exactness Gate` section present but lacks timestamp or exit code | AAP-29 | Bounce to producing agent |
+| `## Evidence Exactness Gate` records FAIL or unresolved errors | AAP-29 | Bounce to producing agent |
+| Evidence predates later diff changes (timestamp before final commit) | AAP-28, AAP-29 | Bounce to producing agent |
+
+### §4.3g Gate in the Handover Validation Checklist
+
+The following items are added to the handover checklist:
+
+> - [ ] **§4.3g Scope-Refresh Gate PASSED** (ALL producing agents): `SCOPE_DECLARATION.md`
+>   refreshed from final live diff (`git diff --name-only origin/main...HEAD`) after all
+>   implementation edits complete; refresh commit is the last committed action before
+>   PREHANDOVER proof; no stale or extra entries (BLOCKING — Foreman must not accept
+>   PREHANDOVER proof until this is ✅) — AAP-28
+> - [ ] **§4.3g Evidence-Exactness Gate PASSED** (ALL producing agents): local run of
+>   `.github/scripts/validate-governance-evidence-exactness.sh` exits 0; output recorded in
+>   PREHANDOVER proof `## Evidence Exactness Gate` section with command, timestamp, and
+>   per-check result; evidence is NOT predated by later diff changes (BLOCKING — Foreman must
+>   not accept PREHANDOVER proof until this is ✅) — AAP-29
+
+### Auto-Fail Rules for §4.3g (AAP-28, AAP-29)
+
+| ID | Anti-Pattern | Auto-Fail Trigger |
+|----|-------------|-------------------|
+| AAP-28 | Scope declaration not refreshed as final pre-handover step | `SCOPE_DECLARATION.md` was not refreshed from the final live diff after all implementation edits, OR the refresh commit is not the last committed action before the PREHANDOVER proof, OR the file still contains stale entries from a prior wave or an intermediate state. Detection: compare `git diff --name-only origin/main...HEAD` against declared paths; check commit order using `git log --oneline -5`. |
+| AAP-29 | Evidence exactness check not evidenced in PREHANDOVER proof | The PREHANDOVER proof `## Evidence Exactness Gate` section is absent, blank, contains only template placeholder text, OR lacks a timestamp and exit code confirming a local run of `.github/scripts/validate-governance-evidence-exactness.sh` against the final branch state. A section populated with `[paste script output here]` or equivalent template instruction text is not sufficient. |
+
+---
+
 ## Related Canon
 
 - `governance/canon/AGENT_CONTRACT_ARCHITECTURE.md` - Four-phase overview
@@ -1862,7 +1972,7 @@ When the `execution-ceremony-admin-agent` returns the ceremony bundle to the For
 
 ---
 
-**Version**: 1.7.0  
-**Last Updated**: 2026-04-21  
+**Version**: 1.8.0  
+**Last Updated**: 2026-04-27  
 **Authority**: CS2 (Johan Ras)  
 **Living Agent System**: v6.2.0

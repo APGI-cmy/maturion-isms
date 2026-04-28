@@ -1,28 +1,36 @@
-# Scope Declaration — fix-cwt-w9-11-fu-t-005-20260427
+# Scope Declaration — harden-agent-pre-handover-exactness-20260427
 
-**Wave**: fix-cwt-w9-11-fu-t-005-20260427
-**Issue**: maturion-isms#1476
-**Branch**: copilot/fix-supabase-client-wiring
+**Wave**: harden-agent-pre-handover-exactness-20260427
+**Issue**: maturion-isms#1484
+**Branch**: copilot/harden-agent-pre-handover-exactness
 **Date**: 2026-04-27
+**Last refreshed**: 2026-04-28 (post-ISSUE-MISMATCH check addition — §4.3g / AAP-28 single-file final action)
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ## Scope Decision
 
-Reconcile stale CWT assertion W9.11-FU-T-005 in `feedback.supabase-wiring.test.ts`:
-1. Flip W9.11-FU-T-005 from a blanket ban on SUPABASE_SERVICE_ROLE_KEY to confirming its
-   presence — service-role is approved for the pending endpoint (auth enforced before
-   listPending(); key is server-side only, never exposed to client/Vite/browser).
-2. Retitle W9.11-FU-T-006 to clarify SUPABASE_ANON_KEY scope (bearer token verification).
-3. Add W9.11-FU-T-007: source-inspection gate verifying Forbidden guard, x-arc-token check,
-   and ARC_APPROVAL_TOKEN are all present before any privileged data access.
+Harden agent pre-handover exactness discipline: add §4.3g Scope-Refresh and
+Evidence-Exactness Gate to canonical governance, add AAP-28/AAP-29 anti-patterns,
+update PREHANDOVER template with mandatory §4.3g fields, add Section 12 to ECAP
+checklist, create `.github/scripts/refresh-scope-and-validate.sh` helper script,
+add ISSUE-MISMATCH check (CHECK 6) to `validate-governance-evidence-exactness.sh`,
+and update CANON_INVENTORY.json hashes for all changed files.
 
 ## Changed Files
 
-- `api/ai/feedback.supabase-wiring.test.ts`
-- `SCOPE_DECLARATION.md`
+- `.github/scripts/refresh-scope-and-validate.sh` - New §4.3g helper script: scope-refresh + exactness validation + PREHANDOVER snippet
+- `.github/scripts/validate-governance-evidence-exactness.sh` - Added CHECK 6: ISSUE-MISMATCH (validates **Issue** field against PR authority via EXPECTED_ISSUE_NUMBER env var or PR_BODY parsing)
+- `.github/workflows/preflight-evidence-gate.yml` - Pass PR_BODY to evidence-exactness step to enable ISSUE-MISMATCH check; update Checks label
+- `SCOPE_DECLARATION.md` - Updated for this wave
+- `governance/CANON_INVENTORY.json` - Updated hashes for all changed canon files
+- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` - Added §4.3g gate (v1.8.0); added AAP-28/29 to auto-fail table; updated sequencing note
+- `governance/checklists/execution-ceremony-admin-anti-patterns.md` - Added AAP-28 and AAP-29 (v1.7.0)
+- `governance/checklists/execution-ceremony-admin-checklist.md` - Added Section 12 (v1.6.0)
+- `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md` - Added §4.3g fields (v1.5.0)
 
 ## Out of Scope
 
+- Any application code files
+- Any other governance workspace artifacts not listed above
 - Any agent contract files (.github/agents/*.md)
-- Any application code or schema migrations
 - Any files not listed above
