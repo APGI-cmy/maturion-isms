@@ -259,7 +259,10 @@ GRANT EXECUTE ON FUNCTION governance_readonly.search_ai_knowledge_mps_sources(te
 ```
 
 No direct SELECT grants are made on base tables through this schema.
-Base tables are protected by their existing RLS policies.
+For these governed RPCs, the effective safety boundary is the allowlisted
+`SECURITY DEFINER` function surface and the sanitised, purpose-limited data
+those functions return; this path must not be treated as relying on base-table
+RLS for read restriction when executed by `service_role`.
 
 ---
 
