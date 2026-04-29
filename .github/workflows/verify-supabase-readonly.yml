@@ -149,7 +149,7 @@ jobs:
 
           # ── Sanitize caller_id ───────────────────────────────────────────────
           # Restrict caller_id to alphanumeric characters, hyphens, underscores,
-          # and dots only.  Any other character is replaced with '_'.
+          # and dots only.  Any other character is removed.
           # This eliminates SQL injection risk without relying on quote-escaping.
           SAFE_CALLER=$(printf '%s' "$CALLER_ID" | tr -cd 'A-Za-z0-9._-' | cut -c1-64)
           if [ -z "$SAFE_CALLER" ]; then
@@ -206,10 +206,11 @@ jobs:
 
           # ── Validate that we received a non-empty result ─────────────────────
           if [ -z "$RESULT" ] || [ "$RESULT" = "[]" ] || [ "$RESULT" = "null" ]; then
-            echo "::warning::RPC returned empty or null result for target '$TARGET'."
-            echo "::warning::This may indicate the migration has not been applied or data is absent."
-            echo "RESULT_JSON=" >> "$GITHUB_OUTPUT"
-            echo "RESULT_STATUS=empty" >> "$GITHUB_OUTPUT"
+            echo "::error::RPC returned empty or null result for target '$TARGET'."
+            echo "::error::This indicates the migration has not been applied or data is absent."
+            echo "::error::Remediation: apply supabase/migrations/20260428000001_mmm_governance_readonly.sql"
+            echo "::error::and verify that the target data exists before re-running this workflow."
+            exit 1
           else
             echo "RPC call succeeded. Result received."
             # Write result to output (escaped for GitHub Actions multi-line)
@@ -225,9 +226,10 @@ jobs:
 
       - name: Publish verification summary
         if: always()
+        env:
+          RESULT_JSON: ${{ steps.run-rpc.outputs.RESULT_JSON }}
         run: |
           STATUS="${{ steps.run-rpc.outputs.RESULT_STATUS }}"
-          RESULT_JSON='${{ steps.run-rpc.outputs.RESULT_JSON }}'
           TARGET="${{ env.TARGET }}"
           CALLER="${{ env.CALLER_ID }}"
 

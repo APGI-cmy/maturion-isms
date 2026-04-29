@@ -17,8 +17,11 @@
 -- SECURITY MODEL
 -- --------------
 -- All functions are SECURITY DEFINER, owned by the migration role (postgres /
--- supabase_admin).  They perform SELECT-only operations.  No INSERT, UPDATE,
--- DELETE, DDL, or storage-mutation statements are present.
+-- supabase_admin).  They perform SELECT-only operations on business tables.
+-- The only write statement present is an INSERT into
+-- governance_readonly.verification_log inside the SECURITY DEFINER helper
+-- log_verification_call — this is the intentional audit-log exception.
+-- No INSERT/UPDATE/DELETE/DDL on business tables, no storage-mutation statements.
 --
 -- The functions are granted EXECUTE to the `service_role` so they can be
 -- invoked from the approved verify-supabase-readonly.yml workflow.  No
@@ -37,10 +40,13 @@
 --
 -- AUDIT LOGGING
 -- -------------
--- Every RPC call optionally records its invocation in
--- governance_readonly.verification_log (INSERT-only via the SECURITY DEFINER
--- helper log_verification_call).  This satisfies the "query/RPC execution is
--- logged/auditable" security requirement.
+-- verify_mps_source_pack_status() logs every invocation to
+-- governance_readonly.verification_log via the SECURITY DEFINER helper
+-- log_verification_call.  This satisfies the "query/RPC execution is
+-- logged/auditable" security requirement for the primary consolidated
+-- verification RPC.  The four simpler count/list/search RPCs do not
+-- currently log individually; if per-call auditing is required for those,
+-- add a PERFORM log_verification_call(...) call inside each one.
 -- =============================================================================
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -50,8 +56,9 @@ CREATE SCHEMA IF NOT EXISTS governance_readonly;
 
 COMMENT ON SCHEMA governance_readonly IS
   'Governed read-only verification layer for agents. '
-  'All objects in this schema are SELECT-only. '
-  'No write, DDL, or storage-mutation operations are permitted. '
+  'Functions SELECT from business tables only. '
+  'The only write is an audit INSERT to governance_readonly.verification_log '
+  'via the SECURITY DEFINER helper log_verification_call. '
   'Issue: maturion-isms#1505.';
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -317,7 +324,7 @@ BEGIN
     -- to generic MPS content).  This term is hardcoded because it is a known
     -- vendor-specific marker for the LDCS standard — it is not a configurable value.
     SELECT COUNT(*) > 0
-      INTO v_generic_content_flag
+      INTO v_diamond_specific_ldcs_detected
       FROM public.ai_knowledge
      WHERE content ILIKE '%diamond%'
        AND (
@@ -335,10 +342,10 @@ BEGIN
         'all_25_mps_represented',       v_mps_record_count >= 25,
         'ai_knowledge_mps_records',     v_ai_knowledge_count,
         'ai_knowledge_approved_count',  v_ai_knowledge_approved,
-        'diamond_specific_ldcs_detected', v_generic_content_flag,
+        'diamond_specific_ldcs_detected', v_diamond_specific_ldcs_detected,
         'content_classification',       CASE
                                             -- Diamond-specific indicator found: flag contamination
-                                            WHEN v_generic_content_flag
+                                            WHEN v_diamond_specific_ldcs_detected
                                                 THEN 'mixed_or_diamond_specific'
                                             -- No source documents AND no MPS/AI knowledge records:
                                             -- content is absent, not confirmed generic
@@ -375,6 +382,27 @@ COMMENT ON FUNCTION governance_readonly.verify_mps_source_pack_status(text) IS
 --    SUPABASE_ACCESS_TOKEN (service role) but calls ONLY these allowlisted
 --    read-only RPCs.  No other grants are made.
 -- ─────────────────────────────────────────────────────────────────────────────
+
+-- First, explicitly revoke PUBLIC access to the schema and all functions.
+-- PostgreSQL grants EXECUTE to PUBLIC by default on new functions, which would
+-- make these RPCs callable by any role with USAGE on the schema.  Revoking
+-- here ensures that only service_role (granted below) can execute them, even
+-- if future schema USAGE grants are added.
+REVOKE ALL ON SCHEMA governance_readonly FROM PUBLIC;
+
+REVOKE EXECUTE ON FUNCTION governance_readonly.log_verification_call(text, text)
+    FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION governance_readonly.verify_mps_source_pack_status(text)
+    FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION governance_readonly.list_mmm_framework_source_documents(text)
+    FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION governance_readonly.count_mmm_mps_records(uuid)
+    FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION governance_readonly.count_mmm_criteria_records(uuid)
+    FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION governance_readonly.search_ai_knowledge_mps_sources(text)
+    FROM PUBLIC;
+
 GRANT USAGE ON SCHEMA governance_readonly TO service_role;
 
 GRANT EXECUTE ON FUNCTION governance_readonly.verify_mps_source_pack_status(text)
@@ -399,10 +427,11 @@ GRANT EXECUTE ON FUNCTION governance_readonly.search_ai_knowledge_mps_sources(te
 -- 10. End of migration
 -- ─────────────────────────────────────────────────────────────────────────────
 -- SECURITY SUMMARY:
---   ✅ No INSERT/UPDATE/DELETE/DDL on public tables from these functions
+--   ✅ No INSERT/UPDATE/DELETE/DDL on business tables from these functions
+--   ✅ Audit INSERT to governance_readonly.verification_log via SECURITY DEFINER helper only
 --   ✅ No storage object contents returned (metadata only)
 --   ✅ No embeddings returned (content snippets ≤ 200 chars)
---   ✅ Audit log written by SECURITY DEFINER helper (not directly by callers)
+--   ✅ EXECUTE explicitly REVOKED FROM PUBLIC for all functions and schema
 --   ✅ EXECUTE granted to service_role only (not anon or authenticated)
 --   ✅ All functions SET search_path explicitly (SQL injection hardening)
 -- =============================================================================

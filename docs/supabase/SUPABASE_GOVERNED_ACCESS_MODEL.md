@@ -130,17 +130,22 @@ result and a citation reference for governance records.
 
 ### 3.5 Security constraints for the verification path
 
-- **No writes**: Verification RPCs contain no INSERT/UPDATE/DELETE.
+- **No writes to business tables**: Verification RPCs perform SELECT-only
+  operations on all business tables. The only write present is an INSERT
+  into `governance_readonly.verification_log` via the `SECURITY DEFINER`
+  audit helper `log_verification_call` — this is the intentional audit exception.
 - **No DDL**: No CREATE/ALTER/DROP in any verification RPC.
 - **No storage mutation**: No INSERT into `storage.objects` or `storage.buckets`.
 - **No service-role bypass**: RPCs use `SET search_path` to prevent
-  schema injection. `EXECUTE` is granted to `service_role` only.
+  schema injection. `EXECUTE` is explicitly REVOKED from PUBLIC and
+  granted to `service_role` only.
 - **No full content**: `search_ai_knowledge_mps_sources` returns at
   most 200-character content snippets.
 - **No embeddings**: No vector data is returned by any RPC.
-- **Audit logged**: Every RPC call is recorded in
-  `governance_readonly.verification_log` via the `SECURITY DEFINER`
-  helper `log_verification_call`.
+- **Audit logged**: `verify_mps_source_pack_status` records every
+  invocation in `governance_readonly.verification_log` via the
+  `SECURITY DEFINER` helper `log_verification_call`. The four simpler
+  count/list/search RPCs do not currently log individually.
 - **Allowlist enforced by workflow**: `verify-supabase-readonly.yml`
   contains an explicit `case` allowlist — no arbitrary SQL can be
   executed through this workflow.
