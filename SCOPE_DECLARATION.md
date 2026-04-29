@@ -1,30 +1,29 @@
-# Scope Declaration — hard-gate-iaa-ecap-20260428
+# Scope Declaration — layer-down-propagate-governance-changes-0205b9c8
 
-**Wave**: hard-gate-iaa-ecap-20260428
-**Issue**: maturion-isms#1503
-**Branch**: copilot/hard-gate-pr-merge-iaa-token
-**Date**: 2026-04-28
-**Last refreshed**: 2026-04-29T07:10 (scope refreshed — stale #1502 wave entries removed; PR body corrected to place Closes maturion-isms#1503 first)
-**Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
+**Wave**: layer-down-propagate-governance-changes-0205b9c8
+**Issue**: maturion-isms#1509
+**Branch**: copilot/layer-down-propagate-governance-changes-0205b9c8-6512-4272-baa9-f4c269c186a0
+**Date**: 2026-04-29
+**Authority**: SCOPE_TO_DIFF_RULE.md
 
 ## Scope Decision
 
-Add hard CI gates for IAA final assurance and ECAP/admin ceremony evidence
-(maturion-isms#1503). Adds two gate scripts, a test suite, two new CI jobs in
-preflight-evidence-gate.yml, and specific step-by-step injection instructions in
-foreman-reanchor.yml.
+Post-ripple correction of `GOVERNANCE_ALIGNMENT_INVENTORY.json` discrepancies
+following canonical commit `2ba1d6a3cf9c97dd67fff483ca04a90549cba293` and ripple PR #1510.
+Corrects stale `last_ripple_commit`, wrong version/hash for `INDEPENDENT_ASSURANCE_AGENT_CANON.md`,
+mismatched canonical hash for `AGENT_HANDOVER_AUTOMATION.md`, TBD placeholders for
+`PRE_BUILD_STAGE_MODEL_CANON.md`, and stale hash for `PREHANDOVER.template.md`.
 
 ## Changed Files
 
-- `SCOPE_DECLARATION.md` - Updated for this wave (per §4.3g scope refresh)
-- `.github/scripts/iaa-final-assurance-gate.sh` - Hard CI gate: fails implementation PRs without a current PR-specific IAA final assurance token in .agent-admin/assurance/
-- `.github/scripts/ecap-admin-ceremony-gate.sh` - Hard CI gate: fails protected-path PRs without ECAP/admin ceremony evidence
-- `.github/scripts/iaa-final-assurance-gate.test.sh` - 23-case test suite covering all acceptance criteria from maturion-isms#1503
-- `.github/workflows/preflight-evidence-gate.yml` - Added preflight/iaa-final-assurance and preflight/ecap-admin-ceremony CI jobs
-- `.github/workflows/foreman-reanchor.yml` - Updated injection comment with specific ECAP (E-1–E-4) and IAA final assurance (I-1–I-4) step-by-step instructions
+### Modified Files
+
+- `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` - corrected post-ripple discrepancies (last_ripple_commit, last_ripple_timestamp, last_ripple_pr, INDEPENDENT_ASSURANCE_AGENT_CANON.md version/hash, AGENT_HANDOVER_AUTOMATION.md canonical hash, PRE_BUILD_STAGE_MODEL_CANON.md TBD placeholders resolved, PREHANDOVER.template.md hash corrected)
+- `SCOPE_DECLARATION.md` - updated for this wave
 
 ## Out of Scope
 
-- Any application source code changes
-- Any Supabase schema migrations or functions
-- Any governance canon files
+- Application source code changes
+- Supabase schema migrations or functions
+- Agent contract files under .github/agents/
+- Governance canon files (receive-only consumer mode)

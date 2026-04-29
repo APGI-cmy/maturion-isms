@@ -4,11 +4,11 @@
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory — tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
   "last_updated": "2026-04-29",
-  "last_ripple_commit": "849973019a8054d749ab58b2a233728193b3bbf3",
-  "last_ripple_timestamp": "2026-04-20T07:37:10Z",
+  "last_ripple_commit": "2ba1d6a3cf9c97dd67fff483ca04a90549cba293",
+  "last_ripple_timestamp": "2026-04-29T07:34:29Z",
   "alignment_summary": {
     "total_artifacts": 46,
-    "aligned": 40,
+    "aligned": 41,
     "drifted": 0,
     "missing": 0,
     "escalated": 4,
@@ -21,12 +21,12 @@
       "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
       "canonical_version": "1.6.0",
       "local_version": "1.6.0",
-      "canonical_hash_sha256": "55eb42325315f549f4b545d1346a328eab11db2d4a8242f6c241af90dc917e82",
+      "canonical_hash_sha256": "20141677d074e9090eeb869af43f5a581dd7f53d9a4401bbbef535a3d9128789",
       "local_hash_sha256": "20141677d074e9090eeb869af43f5a581dd7f53d9a4401bbbef535a3d9128789",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
       "last_verified": "2026-04-29T07:34:56Z",
-      "change_note": "v1.6.0 (canonical commit 849973019a): Added §4.3e Check L — active final-state bundle token/session coherence (AAP-22 / ACR-16); added AAP-22 to §4.3e auto-fail rules table. Layered down via CI ripple PR #1423 (canonical commit 849973019a8054d749ab58b2a233728193b3bbf3). Hash updated from 55f7f0e4... to 55eb4232..."
+      "change_note": "v1.6.0 (canonical commit 2ba1d6a3cf): canonical_hash_sha256 updated from 55eb4232... to 20141677... to match current canonical source. Layered down via CI ripple PR #1510 (canonical commit 2ba1d6a3cf9c97dd67fff483ca04a90549cba293)."
     },
     {
       "filename": "ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
@@ -155,14 +155,14 @@
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-      "canonical_version": "1.10.0",
-      "local_version": "1.10.0",
-      "canonical_hash_sha256": "3426a2f6ae643d4902387cb8ca27cdf78869a6ac02cb9be5b0f9f501b2f5677a",
+      "canonical_version": "1.8.0",
+      "local_version": "1.8.0",
+      "canonical_hash_sha256": "29a06ca7ad9c95f1dfca5eb94f8fb5493b6c215d21d872a78d75045184753b78",
       "local_hash_sha256": "29a06ca7ad9c95f1dfca5eb94f8fb5493b6c215d21d872a78d75045184753b78",
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
       "last_verified": "2026-04-29T07:34:56Z",
-      "change_note": "v1.10.0: Added ACR-16 (active final-state token/session incoherence rejection trigger); added §Authoritative-Source Rule for Current Token/Session; extended active-bundle scope rule to include wave-current-tasks.md for ACR-16 checks; added §Proof-of-Operation worked examples for AAP-22/ACR-16 (maturion-isms#1422). Layered down via ripple 818bab2a3771ff72d6a999e0aaa069304728cc3a."
+      "change_note": "v1.8.0: Corrected version from erroneous 1.10.0 to actual file version 1.8.0; canonical hash corrected to match actual file (29a06ca7...). Layered down via CI ripple PR #1510 (canonical commit 2ba1d6a3cf9c97dd67fff483ca04a90549cba293)."
     },
     {
       "filename": "IAA_PRE_BRIEF_PROTOCOL.md",
@@ -435,12 +435,12 @@
       "path": "governance/templates/execution-ceremony-admin/PREHANDOVER.template.md",
       "canonical_version": "1.2.0",
       "local_version": "1.2.0",
-      "canonical_hash_sha256": "6e95e1e9fa87ce861480ce19d65585acd892dad703e0eb6533258c7872d29162",
-      "local_hash_sha256": "6e95e1e9fa87ce861480ce19d65585acd892dad703e0eb6533258c7872d29162",
+      "canonical_hash_sha256": "f406340abd3bd45aaf932fe7f66f5dfb53b9dff70dbb7dbae6ef750d5c3dfeaf",
+      "local_hash_sha256": "f406340abd3bd45aaf932fe7f66f5dfb53b9dff70dbb7dbae6ef750d5c3dfeaf",
       "alignment_status": "ALIGNED",
       "layer_down_status": "TIER2_TEMPLATE",
-      "last_verified": "2026-04-20T07:37:10Z",
-      "change_note": "v1.2.0 (canonical commit 849973019a): Added active_bundle_iaa_coherence field to IAA Assurance section (AAP-22 / ACR-16 / §4.3e Check L). Layered down via CI ripple PR #1423. Hash updated from c73c05b8... to 6e95e1e9..."
+      "last_verified": "2026-04-29T07:34:56Z",
+      "change_note": "v1.2.0 (canonical commit 2ba1d6a3cf): Hash updated from 6e95e1e9... to f406340a... to match current file after ripple PR #1510. Layered down via CI ripple PR #1510 (canonical commit 2ba1d6a3cf9c97dd67fff483ca04a90549cba293)."
     },
     {
       "filename": "SCOPE_DECLARATION.template.md",
@@ -553,14 +553,14 @@
     {
       "filename": "PRE_BUILD_STAGE_MODEL_CANON.md",
       "path": "governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md",
-      "canonical_version": "TBD",
-      "local_version": "TBD",
-      "canonical_hash_sha256": "TBD",
+      "canonical_version": "1.0.0",
+      "local_version": "1.0.0",
+      "canonical_hash_sha256": "91764b68657c0e910abf7d01cf9a28b840292a5df99fadc12bd86b0e63349d9b",
       "local_hash_sha256": "91764b68657c0e910abf7d01cf9a28b840292a5df99fadc12bd86b0e63349d9b",
-      "alignment_status": "PENDING_REVIEW",
+      "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
       "last_verified": "2026-04-29T07:34:56Z",
-      "change_note": "Auto-added by ripple-integration inventory update step"
+      "change_note": "v1.0.0: Resolved TBD placeholders; actual file hash computed (91764b68...). Status changed from PENDING_REVIEW to ALIGNED. Layered down via CI ripple PR #1510 (canonical commit 2ba1d6a3cf9c97dd67fff483ca04a90549cba293)."
     }
   ],
   "metadata": {
@@ -570,5 +570,5 @@
     "created_by": "governance-liaison-isms session-035",
     "last_updated_by": "governance-liaison-isms session-layer-down-818bab2a-20260420"
   },
-  "last_updated_by": "governance-liaison-isms session-layer-down-818bab2a-20260420"
+  "last_ripple_pr": 1510
 }
