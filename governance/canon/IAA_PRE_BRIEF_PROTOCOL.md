@@ -1,6 +1,6 @@
 # IAA PRE-BRIEF PROTOCOL
 
-**Status**: CANONICAL | **Version**: 1.3.0 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.2.2 | **Authority**: CS2  
 **Date**: 2026-03-03  
 **Amended**: 2026-03-03 — v1.1.0: Added §Wave Checklist Management, §Foreman Handover Gate,
 §IAA Invocation Gate, §Mid-Wave Task Addition, wave_checklist PREHANDOVER field, and commit
@@ -11,7 +11,6 @@ and does not automatically apply to direct-CS2 standalone governance-repo-admini
 canon actions (CS2 guidance — issue #1319)  
 **Amended**: 2026-04-08 — v1.2.1: Reference update — added `EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` to references; clarified that Phase 4 handover proof may be prepared by `execution-ceremony-admin-agent` under Foreman oversight without affecting IAA independence or Pre-Brief validity; authority: CS2 — ECAP-001 canon establishment issue.
 **Amended**: 2026-04-08 — v1.2.2: Re-invocation ownership cross-reference — added §Re-Invocation After Rejection — Ownership Reference, clarifying that after a `REJECTION-PACKAGE` the Foreman (not CS2) owns the stop-and-fix loop and re-invocation; cross-references INDEPENDENT_ASSURANCE_AGENT_CANON.md §IAA Re-Invocation After Rejection for full rules. Authority: CS2 — Foreman IAA re-invocation ownership canonisation issue.
-**Amended**: 2026-04-22 — v1.3.0: Added §Expected Wave-Level Admin Ceremony Contract to Pre-Brief Content Requirements; updated Merge Gate Enforcement table; makes wave-level ceremony contract a mandatory Pre-Brief field rather than advisory; authority: CS2 — maturion-isms#1447
 
 ---
 
@@ -126,25 +125,6 @@ For each qualifying task, the Pre-Brief lists:
 | `specific_rules` | NO | Named compliance rules (e.g., CORE-018, INV-409) the IAA will check |
 | `notes` | NO | Additional context or caveats specific to this task |
 
-### Expected Wave-Level Admin Ceremony Contract
-
-Every Pre-Brief artifact MUST also contain a **Wave-Level Admin Ceremony Contract** block declaring wave-level governance expectations that apply to the wave as a whole (not to individual tasks). These declared items become enforceable at IAA handover review per ACR-18 through ACR-21 (`INDEPENDENT_ASSURANCE_AGENT_CANON.md` §Admin-Ceremony Rejection Triggers).
-
-The Wave-Level Admin Ceremony Contract MUST include the following mandatory fields:
-
-| Field | Required | Description |
-|-------|----------|-------------|
-| `required_admin_ceremony_artifacts` | YES | List of governance artifact paths the wave is expected to produce (e.g., scope declaration, PREHANDOVER proof, session memory, wave record) |
-| `required_final_state_conditions` | YES | List of boolean conditions that must hold in the final state before merge (e.g., "all tasks DONE", "IAA token non-PENDING", "wave-current-tasks.md committed") |
-| `required_cross_artifact_consistency_checks` | YES | List of consistency checks that span multiple artifacts (e.g., "issue number consistent across PREHANDOVER, session memory, wave record", "token in PREHANDOVER matches token in wave record TOKEN section") |
-| `required_acknowledgements` | YES | List of ownership/acknowledgement requirements (e.g., "Foreman acknowledges Pre-Brief before delegating", "CS2 authorization documented") |
-| `required_role_boundaries` | YES | Declarations of which roles are responsible for which ceremony artifacts (e.g., "execution-ceremony-admin-agent owns PREHANDOVER assembly", "IAA owns TOKEN section") |
-| `required_handover_references` | YES | References that must appear in the handover package (e.g., "wave record path", "iaa_audit_token field", "PREHANDOVER ART table populated") |
-
-The IAA MUST cross-reference the Wave-Level Admin Ceremony Contract at handover and verify each declared item. Any unmet declared item triggers the corresponding ACR rejection (ACR-18 through ACR-21).
-
----
-
 ### Pre-Brief Footer
 
 ```markdown
@@ -198,7 +178,6 @@ The following conditions are merge-blockers for any PR from a wave that has qual
 | At handover, a declared Pre-Brief requirement is not met | YES | Submitting agent resolves gap; IAA re-assesses |
 | Pre-Brief was generated but marked `SUPERSEDED` without a replacement | YES | Generate replacement Pre-Brief Amendment |
 | Mid-wave qualifying task added without Pre-Brief Amendment | YES | Foreman requests Pre-Brief Amendment from IAA |
-| Wave-Level Admin Ceremony Contract declared in Pre-Brief but one or more declared items unmet at handover | YES | Submitting agent resolves gap; IAA re-assesses |
 
 The IAA **must** cross-reference the active Pre-Brief at handover and report:
 - Which declared requirements were met (✅)
@@ -659,4 +638,4 @@ token/session format, prohibited wording, worked example):
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.3.0 | Effective: 2026-04-05 (v1.2.0) | Amended: 2026-04-22 (v1.3.0) | Previous: 2026-04-08 (v1.2.2) | Original: 2026-03-03 (v1.1.0)*
+*Authority: CS2 (Johan Ras) | Version: 1.2.2 | Effective: 2026-04-05 (v1.2.0) | Amended: 2026-04-08 (v1.2.2) | Previous: 2026-04-08 (v1.2.1) | Original: 2026-03-03 (v1.1.0)*
