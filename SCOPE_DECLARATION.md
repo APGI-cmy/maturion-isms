@@ -4,18 +4,17 @@
 **Issue**: maturion-isms#1501
 **Branch**: copilot/verify-generic-mps-source-documents
 **Date**: 2026-04-28
-**Last refreshed**: 2026-04-28 (Track A scope — pure research/workspace artifacts)
+**Last refreshed**: 2026-04-29 (refreshed post CS2 DB verification — commit 46942fd; addresses maturion-isms#1501)
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ## Scope Decision
 
-Track A research wave: verify whether the 25 generic MPS Word source documents exist in the
-current AIMC/KUC/MMM storage system before accepting the static question bank in PR #1500.
-This commit contains: wave-current-tasks.md, migration gap analysis, scope declaration, session memory,
-and updated root SCOPE_DECLARATION.md. No application code is changed. No schema is changed.
-No governance canon files are modified.
-
-Track B (implementation) is BLOCKED pending CS2 DB verification gate — separate PR/scope when approved.
+Track A research wave (addresses maturion-isms#1501): verify whether the 25 generic MPS Word source
+documents exist in the current AIMC/KUC/MMM storage system. CS2 DB verification COMPLETE —
+result: LIKELY_ABSENT. Migration gap confirmed. Track B (implementation) is BLOCKED pending CS2
+re-upload of 25 generic MPS Word documents into mmm-framework-sources bucket — separate PR/scope
+when approved. No application code is changed. No schema is changed. No governance canon files
+are modified.
 
 ## Changed Files
 
