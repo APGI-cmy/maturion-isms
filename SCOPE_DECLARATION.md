@@ -22,6 +22,13 @@ that misclassified `mmm-upload-framework-source` as an admin-only function.
 
 ## Changed Files
 
+- `.agent-admin/assurance/iaa-wave-record-wave-mps-source-verification-20260428.md` - IAA wave record (PRE-BRIEF; Track A = EXEMPT; Track B = AAWP_MAT conditional)
+- `.agent-workspace/foreman-v2/memory/session-mps-source-verification-20260428.md` - Foreman session memory; agents_delegated_to: IAA (pre-brief only)
+- `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` - Parking station log (appended entry for this session)
+- `.agent-workspace/foreman-v2/personal/mps-migration-gap-analysis-20260428.md` - Migration gap analysis document (Track A deliverable); contains schema investigation findings, DB verification SQL for CS2, and decision tree
+- `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mps-source-verification-20260428.md` - Wave scope declaration
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` - Wave task tracker (recreated for wave-mps-source-verification)
+- `.agent-workspace/independent-assurance-agent/memory/session-077-20260428.md` - IAA session memory (PRE-BRIEF session 077)
 - `SCOPE_DECLARATION.md` - Updated for this wave (per §4.3g scope refresh)
 - `apps/mmm/src/App.tsx` - Added LoginPage import and /login route
 - `apps/mmm/src/pages/LoginPage.tsx` - New login page with supabase.auth.signInWithPassword
@@ -33,7 +40,9 @@ that misclassified `mmm-upload-framework-source` as an admin-only function.
 
 ## Out of Scope
 
-- Any Supabase schema migrations
+- Any application code (apps/, modules/, supabase/, packages/)
+- Any schema/migration changes
+- Any Edge Function changes
 - Any deployment workflow changes
 - Any other app directories outside `apps/mmm/src/` and `supabase/functions/mmm-upload-framework-source/`
 - Any governance canon files
