@@ -231,25 +231,23 @@ while IFS= read -r token_file; do
     fi
   fi
 
-  # Check D: PR reference — token must not reference a DIFFERENT PR
+  # Check D: PR reference — compare only the dedicated PR field in the token
   if [ -n "$PR_NUMBER" ]; then
-    # Look for any #NNNN reference that is NOT the current PR
-    OTHER_PR=$(grep -oE '#[0-9]+' "$token_file" 2>/dev/null | \
-      grep -v "^#${PR_NUMBER}$" | head -1 || true)
-    if [ -n "$OTHER_PR" ]; then
-      # Only fail if the token explicitly references a different PR as the subject
-      # (Some tokens mention prior rejection rounds with different PR #s in notes)
-      if grep -qE "(PR|pull.request|branch).*${OTHER_PR}|${OTHER_PR}.*(PR|pull.request)" \
-         "$token_file" 2>/dev/null; then
-        echo "  ❌ Token references a different PR (${OTHER_PR}) — stale or wrong PR token [IAA-FINAL-GATE-005]"
-        FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: references PR ${OTHER_PR}, not current PR #${PR_NUMBER}"
+    TOKEN_PR_LINE=$(grep -iE '^[[:space:]]*(-[[:space:]]*)?\*\*PR\*\*:[[:space:]]*#?[0-9]+' \
+      "$token_file" 2>/dev/null | head -1 || true)
+    TOKEN_PR_NUMBER=$(echo "$TOKEN_PR_LINE" | grep -oE '#?[0-9]+' | head -1 | tr -d '#' || true)
+
+    if [ -n "$TOKEN_PR_NUMBER" ]; then
+      if [ "$TOKEN_PR_NUMBER" != "$PR_NUMBER" ]; then
+        echo "  ❌ Token references a different PR (#${TOKEN_PR_NUMBER}) — stale or wrong PR token [IAA-FINAL-GATE-005]"
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: references PR #${TOKEN_PR_NUMBER}, not current PR #${PR_NUMBER}"
         FILE_VALID=false
         FAIL=true
       else
-        echo "  ✅ No conflicting PR reference found (current PR: #${PR_NUMBER})"
+        echo "  ✅ PR reference correct (current PR: #${PR_NUMBER})"
       fi
     else
-      echo "  ✅ No conflicting PR references"
+      echo "  ✅ No dedicated PR field found to conflict with current PR #${PR_NUMBER}"
     fi
   fi
 
