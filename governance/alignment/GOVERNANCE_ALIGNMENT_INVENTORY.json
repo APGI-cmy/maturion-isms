@@ -7,7 +7,7 @@
   "last_ripple_commit": "2ba1d6a3cf9c97dd67fff483ca04a90549cba293",
   "last_ripple_timestamp": "2026-04-29T07:34:29Z",
   "alignment_summary": {
-    "total_artifacts": 46,
+    "total_artifacts": 48,
     "aligned": 41,
     "drifted": 0,
     "missing": 0,
@@ -22,10 +22,10 @@
       "canonical_version": "1.6.0",
       "local_version": "1.6.0",
       "canonical_hash_sha256": "20141677d074e9090eeb869af43f5a581dd7f53d9a4401bbbef535a3d9128789",
-      "local_hash_sha256": "20141677d074e9090eeb869af43f5a581dd7f53d9a4401bbbef535a3d9128789",
+      "local_hash_sha256": "4b1fc80de6258b782995a1b31eb5d7f321dbf0ff641ca564c4109fa4fc605ba1",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-04-29T07:34:56Z",
+      "last_verified": "2026-04-29T13:22:36Z",
       "change_note": "v1.6.0 (canonical commit 2ba1d6a3cf): canonical_hash_sha256 updated from 55eb4232... to 20141677... to match current canonical source. Layered down via CI ripple PR #1510 (canonical commit 2ba1d6a3cf9c97dd67fff483ca04a90549cba293)."
     },
     {
@@ -561,6 +561,30 @@
       "layer_down_status": "PUBLIC_API",
       "last_verified": "2026-04-29T07:34:56Z",
       "change_note": "v1.0.0: Resolved TBD placeholders; actual file hash computed (91764b68...). Status changed from PENDING_REVIEW to ALIGNED. Layered down via CI ripple PR #1510 (canonical commit 2ba1d6a3cf9c97dd67fff483ca04a90549cba293)."
+    },
+    {
+      "filename": "SCOPE_DECLARATION_SCHEMA.md",
+      "path": "governance/canon/SCOPE_DECLARATION_SCHEMA.md",
+      "canonical_version": "TBD",
+      "local_version": "TBD",
+      "canonical_hash_sha256": "TBD",
+      "local_hash_sha256": "9aca071be20525159e8ee5f9b1450f53b144aeceeddd156146906be5a9e0f02f",
+      "alignment_status": "PENDING_REVIEW",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-04-29T13:22:36Z",
+      "change_note": "Auto-added by ripple-integration inventory update step"
+    },
+    {
+      "filename": "scope-declaration.template.md",
+      "path": "governance/canon/scope-declaration.template.md",
+      "canonical_version": "TBD",
+      "local_version": "TBD",
+      "canonical_hash_sha256": "TBD",
+      "local_hash_sha256": "f233e0bd21d745f5e2df0d0c9625913168a2ff94baa77e790084485c78afdf53",
+      "alignment_status": "PENDING_REVIEW",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-04-29T13:22:36Z",
+      "change_note": "Auto-added by ripple-integration inventory update step"
     }
   ],
   "metadata": {
