@@ -1,8 +1,10 @@
 #!/bin/bash
-# Test suite for iaa-final-assurance-gate.sh and ecap-admin-ceremony-gate.sh
+# Test suite for iaa-final-assurance-gate.sh, ecap-admin-ceremony-gate.sh,
+#              pr-assurance-lifecycle.sh, and merge-ready-claim-gate.sh
 # Authority: LIVING_AGENT_SYSTEM.md v6.2.0
-# Purpose: Validate IAA final assurance and ECAP/admin ceremony CI gates
-#          against the acceptance criteria in maturion-isms#1503.
+# Purpose: Validate IAA final assurance, ECAP/admin ceremony, lifecycle state
+#          determination, and merge-ready claim CI gates against the acceptance
+#          criteria in maturion-isms#1503 and maturion-isms#1519.
 #
 # Coverage (acceptance criteria):
 #   AC-1          Missing IAA token (implementation PR, no token file)              → exit 1
@@ -28,6 +30,13 @@
 #   AC-WR-NOPR    Wave record ## TOKEN missing PR/issue fields                      → exit 1
 #   AC-ECAP-NOBUNDLE PREHANDOVER ecap_invoked=true but no ECAP bundle committed     → exit 1
 #   AC-ECAP-NVAL  ecap_required=N/A rejected on protected-path PR                  → exit 1
+#   AC-MR-1       PR body contains merge-ready claim while IAA blocked              → exit 1
+#   AC-MR-2       PREHANDOVER contains merge-ready claim while IAA blocked          → exit 1
+#   AC-MR-3       No merge-ready claim, lifecycle clear (valid IAA token)           → exit 0
+#   AC-MR-4       merge-ready claim in PR body when lifecycle is NOT blocked        → exit 0
+#   AC-LC-1       Lifecycle script produces assurance-ready for valid token PR      → exit 0
+#   AC-LC-2       Lifecycle script reports blocked for implementation PR no token   → exit 0
+#   AC-LC-3       Lifecycle artifact JSON is written to .agent-admin/lifecycle/     → exit 0
 #
 # Usage:
 #   .github/scripts/iaa-final-assurance-gate.test.sh
@@ -41,6 +50,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 IAA_GATE_SCRIPT="${SCRIPT_DIR}/iaa-final-assurance-gate.sh"
 ECAP_GATE_SCRIPT="${SCRIPT_DIR}/ecap-admin-ceremony-gate.sh"
+LIFECYCLE_SCRIPT="${SCRIPT_DIR}/pr-assurance-lifecycle.sh"
+MERGE_READY_GATE_SCRIPT="${SCRIPT_DIR}/merge-ready-claim-gate.sh"
 
 TEST_DIR=$(mktemp -d)
 TEST_PASSED=0
@@ -539,6 +550,282 @@ EOF
   git commit -q -m "Add prehandover proof with N/A ECAP fields"
 }
 run_test "AC-ECAP-NVAL: ecap_required=N/A rejected on protected-path PR" 1 "$ECAP_GATE_SCRIPT" "setup_ac_nval"
+
+
+# ================================================================
+# Helper: run_test_with_pr_body <name> <expected_exit> <script> <setup_func> <pr_body>
+# Like run_test but allows a custom PR_BODY value.
+# ================================================================
+run_test_with_pr_body() {
+  local test_name="$1"
+  local expected_exit="$2"
+  local gate_script="$3"
+  local setup_func="$4"
+  local pr_body="$5"
+
+  echo "Test: $test_name"
+
+  local test_workspace
+  test_workspace=$(mktemp -d -p "$TEST_DIR")
+  cd "$test_workspace"
+
+  git init -q
+  git config user.email "test@example.com"
+  git config user.name "Test User"
+
+  mkdir -p .agent-admin/assurance .agent-admin/prehandover \
+           .agent-workspace/foreman-v2/memory \
+           .github/agents .github/workflows governance/canon
+  echo "initial" > README.md
+  git add .
+  git commit -q -m "Initial commit"
+  git branch -M main
+
+  git checkout -q -b test-branch
+
+  $setup_func
+
+  BASE_SHA=$(git rev-parse main 2>/dev/null)
+  HEAD_SHA=$(git rev-parse HEAD 2>/dev/null || echo "HEAD")
+
+  set +e
+  local output
+  output=$(BASE_SHA="$BASE_SHA" \
+           HEAD_SHA="$HEAD_SHA" \
+           PR_NUMBER="9999" \
+           PR_LABELS="" \
+           PR_BODY="$pr_body" \
+           EXPECTED_ISSUE_NUMBER="1503" \
+           bash "$gate_script" 2>&1)
+  local actual_exit=$?
+  set -e
+
+  if [ "$actual_exit" -eq "$expected_exit" ]; then
+    echo "  ✅ PASS (exit code: $actual_exit)"
+    TEST_PASSED=$((TEST_PASSED + 1))
+  else
+    echo "  ❌ FAIL (expected: $expected_exit, got: $actual_exit)"
+    echo "  Output:"
+    echo "$output" | sed 's/^/    /'
+    TEST_FAILED=$((TEST_FAILED + 1))
+  fi
+
+  cd "$TEST_DIR"
+  rm -rf "$test_workspace"
+  echo ""
+}
+
+# ================================================================
+# Helper: run_lifecycle_test <name> <expected_exit> <setup_func> <expected_status> [<pr_body>]
+# Runs the pr-assurance-lifecycle.sh script and checks both exit code
+# and that expected_status string appears in the output.
+# ================================================================
+run_lifecycle_test() {
+  local test_name="$1"
+  local expected_exit="$2"
+  local setup_func="$3"
+  local expected_status="$4"
+  local pr_body="${5:-Closes maturion-isms#1503}"
+
+  echo "Test: $test_name"
+
+  local test_workspace
+  test_workspace=$(mktemp -d -p "$TEST_DIR")
+  cd "$test_workspace"
+
+  git init -q
+  git config user.email "test@example.com"
+  git config user.name "Test User"
+
+  mkdir -p .agent-admin/assurance .agent-admin/prehandover \
+           .agent-admin/lifecycle \
+           .agent-workspace/foreman-v2/memory \
+           .github/agents .github/workflows governance/canon
+  echo "initial" > README.md
+  git add .
+  git commit -q -m "Initial commit"
+  git branch -M main
+
+  git checkout -q -b test-branch
+
+  $setup_func
+
+  BASE_SHA=$(git rev-parse main 2>/dev/null)
+  HEAD_SHA=$(git rev-parse HEAD 2>/dev/null || echo "HEAD")
+
+  set +e
+  local output
+  output=$(BASE_SHA="$BASE_SHA" \
+           HEAD_SHA="$HEAD_SHA" \
+           PR_NUMBER="9999" \
+           PR_LABELS="" \
+           PR_BODY="$pr_body" \
+           EXPECTED_ISSUE_NUMBER="1503" \
+           bash "$LIFECYCLE_SCRIPT" 2>&1)
+  local actual_exit=$?
+  set -e
+
+  local status_ok=true
+  if [ -n "$expected_status" ]; then
+    if ! echo "$output" | grep -qi "$expected_status"; then
+      status_ok=false
+    fi
+  fi
+
+  if [ "$actual_exit" -eq "$expected_exit" ] && [ "$status_ok" = true ]; then
+    echo "  ✅ PASS (exit: $actual_exit, status: ${expected_status:-any})"
+    TEST_PASSED=$((TEST_PASSED + 1))
+  else
+    echo "  ❌ FAIL (expected exit: $expected_exit, got: $actual_exit; status expected: '${expected_status:-any}')"
+    [ "$status_ok" = false ] && echo "  Status '${expected_status}' not found in output"
+    echo "  Output:"
+    echo "$output" | sed 's/^/    /'
+    TEST_FAILED=$((TEST_FAILED + 1))
+  fi
+
+  cd "$TEST_DIR"
+  rm -rf "$test_workspace"
+  echo ""
+}
+
+# ================================================================
+# TEST SUITE — Merge-Ready Claim Gate (maturion-isms#1519)
+# ================================================================
+
+# AC-MR-1: PR body contains merge-ready claim while IAA is blocked (no token)
+setup_ac_mr1() {
+  add_impl_file
+  # No IAA token committed — lifecycle is blocked
+}
+run_test_with_pr_body \
+  "AC-MR-1: PR body merge-ready claim while IAA blocked" \
+  1 \
+  "$MERGE_READY_GATE_SCRIPT" \
+  "setup_ac_mr1" \
+  "Closes maturion-isms#1503
+
+Merge gate released. Wave N complete. Awaiting CS2 review. Merge authority: CS2 ONLY."
+
+# AC-MR-2: PREHANDOVER proof contains merge-ready claim while IAA is blocked
+setup_ac_mr2() {
+  add_impl_file
+  # PREHANDOVER with merge-ready language, but no IAA token
+  cat > .agent-admin/prehandover/proof-test-mr2-20260428.md << 'EOPF'
+# PREHANDOVER PROOF — test-mr2-20260428
+
+## Summary
+Merge gate released. All gates GREEN.
+
+## Ripple/Cross-Agent Assessment
+| Agent | Impact | Conclusion |
+|---|---|---|
+| foreman-v2-agent | implementation | NO DOWNSTREAM IMPACT |
+EOPF
+  git add .
+  git commit -q -m "Add prehandover with merge-ready claim"
+}
+run_test_with_pr_body \
+  "AC-MR-2: PREHANDOVER merge-ready claim while IAA blocked" \
+  1 \
+  "$MERGE_READY_GATE_SCRIPT" \
+  "setup_ac_mr2" \
+  "Closes maturion-isms#1503"
+
+# AC-MR-3: No merge-ready claim, valid IAA token present — lifecycle NOT blocked
+setup_ac_mr3() {
+  add_impl_file
+  add_valid_iaa_token "9999" "1503"
+}
+run_test_with_pr_body \
+  "AC-MR-3: No merge-ready claim, valid IAA token — lifecycle clear" \
+  0 \
+  "$MERGE_READY_GATE_SCRIPT" \
+  "setup_ac_mr3" \
+  "Closes maturion-isms#1503
+
+This PR implements the new feature. CI is green."
+
+# AC-MR-4: merge-ready language in PR body but lifecycle NOT blocked (valid token)
+setup_ac_mr4() {
+  add_impl_file
+  add_valid_iaa_token "9999" "1503"
+}
+run_test_with_pr_body \
+  "AC-MR-4: merge-ready claim present but lifecycle is NOT blocked — allowed" \
+  0 \
+  "$MERGE_READY_GATE_SCRIPT" \
+  "setup_ac_mr4" \
+  "Closes maturion-isms#1503
+
+Merge gate released. Wave N complete. Awaiting CS2 review."
+
+# ================================================================
+# TEST SUITE — PR Assurance Lifecycle Script (maturion-isms#1519)
+# ================================================================
+
+# AC-LC-1: Implementation PR with valid IAA token → lifecycle reports assurance-ready
+setup_ac_lc1() {
+  add_impl_file
+  add_valid_iaa_token "9999" "1503"
+}
+run_lifecycle_test \
+  "AC-LC-1: Implementation PR with valid token — lifecycle assurance-ready" \
+  0 "setup_ac_lc1" "assurance-ready"
+
+# AC-LC-2: Implementation PR with no token → lifecycle reports blocked
+setup_ac_lc2() {
+  add_impl_file
+}
+run_lifecycle_test \
+  "AC-LC-2: Implementation PR with no token — lifecycle BLOCKED (IAA)" \
+  0 "setup_ac_lc2" "BLOCKED"
+
+# AC-LC-3: Lifecycle script writes JSON artifact to .agent-admin/lifecycle/
+echo "Test: AC-LC-3: Lifecycle script writes JSON artifact to .agent-admin/lifecycle/"
+lc3_workspace=$(mktemp -d -p "$TEST_DIR")
+cd "$lc3_workspace"
+git init -q
+git config user.email "test@example.com"
+git config user.name "Test User"
+mkdir -p .agent-admin/assurance .agent-admin/prehandover \
+         .agent-admin/lifecycle \
+         .agent-workspace/foreman-v2/memory \
+         .github/agents .github/workflows governance/canon
+echo "initial" > README.md
+git add .
+git commit -q -m "Initial commit"
+git branch -M main
+git checkout -q -b test-branch
+add_impl_file
+add_valid_iaa_token "9999" "1503"
+lc3_base=$(git rev-parse main 2>/dev/null)
+lc3_head=$(git rev-parse HEAD 2>/dev/null || echo "HEAD")
+set +e
+BASE_SHA="$lc3_base" HEAD_SHA="$lc3_head" PR_NUMBER="9999" PR_LABELS="" \
+  PR_BODY="Closes maturion-isms#1503" EXPECTED_ISSUE_NUMBER="1503" \
+  bash "$LIFECYCLE_SCRIPT" > /dev/null 2>&1
+lc3_exit=$?
+set -e
+lc3_json=".agent-admin/lifecycle/pr-9999-assurance-state.json"
+if [ "$lc3_exit" -eq 0 ] && [ -f "$lc3_json" ]; then
+  if grep -q '"pr"' "$lc3_json" && \
+     grep -q '"iaa_required"' "$lc3_json" && \
+     grep -q '"handover_allowed"' "$lc3_json" && \
+     grep -q '"merge_ready_allowed"' "$lc3_json"; then
+    echo "  ✅ PASS (lifecycle JSON written with required fields)"
+    TEST_PASSED=$((TEST_PASSED + 1))
+  else
+    echo "  ❌ FAIL — lifecycle JSON missing required fields"
+    cat "$lc3_json"
+    TEST_FAILED=$((TEST_FAILED + 1))
+  fi
+else
+  echo "  ❌ FAIL (exit: $lc3_exit, file present: $([ -f "$lc3_json" ] && echo yes || echo no))"
+  TEST_FAILED=$((TEST_FAILED + 1))
+fi
+cd "$TEST_DIR"
+rm -rf "$lc3_workspace"
+echo ""
 
 # ================================================================
 # Cleanup

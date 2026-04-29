@@ -19,7 +19,7 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read
+  pull-requests: write
 
 jobs:
   preflight-evidence-check:
@@ -668,3 +668,272 @@ jobs:
         run: |
           chmod +x .github/scripts/ecap-admin-ceremony-gate.sh
           .github/scripts/ecap-admin-ceremony-gate.sh
+
+  # ============================================================================
+  # Lifecycle state determination (maturion-isms#1519)
+  # Machine logic determines IAA/ECAP required states, writes a per-PR lifecycle
+  # artifact, and outputs structured state for downstream label/comment automation.
+  # This job is informational — actual blocking is handled by the individual gates.
+  # ============================================================================
+  pr-assurance-lifecycle:
+    name: "preflight/pr-assurance-lifecycle"
+    runs-on: ubuntu-latest
+
+    # Only enforce for Copilot/foreman PRs
+    if: >-
+      startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot'
+
+    outputs:
+      iaa_required:        ${{ steps.lifecycle.outputs.iaa_required }}
+      iaa_blocked:         ${{ steps.lifecycle.outputs.iaa_blocked }}
+      ecap_required:       ${{ steps.lifecycle.outputs.ecap_required }}
+      ecap_blocked:        ${{ steps.lifecycle.outputs.ecap_blocked }}
+      handover_allowed:    ${{ steps.lifecycle.outputs.handover_allowed }}
+      merge_ready_allowed: ${{ steps.lifecycle.outputs.merge_ready_allowed }}
+      lifecycle_status:    ${{ steps.lifecycle.outputs.lifecycle_status }}
+
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: PR Assurance Lifecycle Determination
+        id: lifecycle
+        env:
+          BASE_SHA:              ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA:              ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER:             ${{ github.event.pull_request.number }}
+          PR_LABELS:             ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          PR_BODY:               ${{ github.event.pull_request.body }}
+          EXPECTED_ISSUE_NUMBER: ${{ vars.EXPECTED_ISSUE_NUMBER }}
+        run: |
+          chmod +x .github/scripts/pr-assurance-lifecycle.sh
+          .github/scripts/pr-assurance-lifecycle.sh
+
+      - name: Upload lifecycle artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-assurance-lifecycle-${{ github.event.pull_request.number }}
+          path: .agent-admin/lifecycle/pr-${{ github.event.pull_request.number }}-assurance-state.json
+          if-no-files-found: ignore
+          retention-days: 30
+
+  # ============================================================================
+  # Merge-ready claim gate (maturion-isms#1519)
+  # Blocks PRs that contain merge-ready / handover-ready language in the PR body
+  # or PREHANDOVER proofs while the lifecycle assurance state is blocked.
+  # Agents must not claim merge-ready until all IAA/ECAP gates are GREEN.
+  # ============================================================================
+  merge-ready-claim-gate:
+    name: "preflight/merge-ready-claim"
+    runs-on: ubuntu-latest
+
+    # Only enforce for Copilot/foreman PRs
+    if: >-
+      startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot'
+
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Merge-Ready Claim Gate
+        id: merge_ready_gate
+        env:
+          BASE_SHA:              ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA:              ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER:             ${{ github.event.pull_request.number }}
+          PR_LABELS:             ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          PR_BODY:               ${{ github.event.pull_request.body }}
+          EXPECTED_ISSUE_NUMBER: ${{ vars.EXPECTED_ISSUE_NUMBER }}
+        run: |
+          chmod +x .github/scripts/merge-ready-claim-gate.sh
+          .github/scripts/merge-ready-claim-gate.sh
+
+  # ============================================================================
+  # Lifecycle label and comment management (maturion-isms#1519)
+  # Reads the lifecycle state outputs from pr-assurance-lifecycle and manages
+  # PR labels (iaa-required, iaa-blocked, ecap-required, ecap-blocked,
+  # assurance-ready) and posts a machine-derived bot comment with lifecycle state.
+  # ============================================================================
+  manage-lifecycle-labels:
+    name: "preflight/manage-lifecycle-labels"
+    runs-on: ubuntu-latest
+    needs: pr-assurance-lifecycle
+
+    # Only run for Copilot/foreman PRs (same scope as lifecycle job)
+    if: >-
+      always() &&
+      (startsWith(github.head_ref, 'copilot/') ||
+       github.event.pull_request.user.login == 'Copilot')
+
+    steps:
+      - name: Manage lifecycle labels and post state comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber   = context.payload.pull_request.number;
+            const owner      = context.repo.owner;
+            const repo       = context.repo.repo;
+
+            // Read lifecycle outputs from the needs context
+            const outputs = ${{ toJSON(needs.pr-assurance-lifecycle.outputs) }};
+            const iaaRequired      = outputs.iaa_required      === 'true';
+            const iaaBlocked       = outputs.iaa_blocked        === 'true';
+            const ecapRequired     = outputs.ecap_required      === 'true';
+            const ecapBlocked      = outputs.ecap_blocked       === 'true';
+            const handoverAllowed  = outputs.handover_allowed   === 'true';
+            const lifecycleStatus  = outputs.lifecycle_status   || 'unknown';
+
+            // Labels to add/remove based on state
+            const LABEL_IAA_REQUIRED    = 'iaa-required';
+            const LABEL_IAA_BLOCKED     = 'iaa-blocked';
+            const LABEL_ECAP_REQUIRED   = 'ecap-required';
+            const LABEL_ECAP_BLOCKED    = 'ecap-blocked';
+            const LABEL_ASSURANCE_READY = 'assurance-ready';
+
+            // Fetch current labels on the PR
+            let currentLabels = [];
+            try {
+              const { data: labelData } = await github.rest.issues.listLabelsOnIssue({
+                owner, repo, issue_number: prNumber
+              });
+              currentLabels = labelData.map(l => l.name);
+            } catch (e) {
+              console.log('Could not fetch current labels:', e.message);
+            }
+
+            const hasLabel = (name) => currentLabels.includes(name);
+
+            // Helper: ensure label exists in repo (create if missing)
+            const ensureLabelExists = async (name, color, description) => {
+              try {
+                await github.rest.issues.getLabel({ owner, repo, name });
+              } catch (e) {
+                if (e.status === 404) {
+                  try {
+                    await github.rest.issues.createLabel({ owner, repo, name, color, description });
+                    console.log(`Created label: ${name}`);
+                  } catch (ce) {
+                    console.log(`Could not create label ${name}:`, ce.message);
+                  }
+                }
+              }
+            };
+
+            // Ensure all lifecycle labels exist
+            await ensureLabelExists(LABEL_IAA_REQUIRED,    'e4e669', 'IAA final assurance is required for this PR');
+            await ensureLabelExists(LABEL_IAA_BLOCKED,     'd73a4a', 'IAA final assurance is required but not yet completed');
+            await ensureLabelExists(LABEL_ECAP_REQUIRED,   'fbca04', 'ECAP admin ceremony is required for this PR');
+            await ensureLabelExists(LABEL_ECAP_BLOCKED,    'd73a4a', 'ECAP admin ceremony is required but not yet completed');
+            await ensureLabelExists(LABEL_ASSURANCE_READY, '0e8a16', 'All required assurance evidence is present and current');
+
+            // Determine desired label set
+            const toAdd    = [];
+            const toRemove = [];
+
+            if (lifecycleStatus === 'assurance-ready') {
+              // All assurance complete — add assurance-ready, remove blocked labels
+              if (!hasLabel(LABEL_ASSURANCE_READY)) toAdd.push(LABEL_ASSURANCE_READY);
+              [LABEL_IAA_BLOCKED, LABEL_ECAP_BLOCKED].forEach(l => {
+                if (hasLabel(l)) toRemove.push(l);
+              });
+              // Keep iaa-required / ecap-required labels for informational purposes
+            } else {
+              // Lifecycle blocked — remove assurance-ready, add appropriate blocked labels
+              if (hasLabel(LABEL_ASSURANCE_READY)) toRemove.push(LABEL_ASSURANCE_READY);
+              if (iaaRequired  && !hasLabel(LABEL_IAA_REQUIRED))  toAdd.push(LABEL_IAA_REQUIRED);
+              if (ecapRequired && !hasLabel(LABEL_ECAP_REQUIRED)) toAdd.push(LABEL_ECAP_REQUIRED);
+              if (iaaBlocked   && !hasLabel(LABEL_IAA_BLOCKED))   toAdd.push(LABEL_IAA_BLOCKED);
+              if (ecapBlocked  && !hasLabel(LABEL_ECAP_BLOCKED))  toAdd.push(LABEL_ECAP_BLOCKED);
+              // Remove blocked labels that are no longer applicable
+              if (!iaaBlocked  && hasLabel(LABEL_IAA_BLOCKED))    toRemove.push(LABEL_IAA_BLOCKED);
+              if (!ecapBlocked && hasLabel(LABEL_ECAP_BLOCKED))   toRemove.push(LABEL_ECAP_BLOCKED);
+            }
+
+            // Apply label changes
+            for (const label of toAdd) {
+              try {
+                await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: [label] });
+                console.log(`Added label: ${label}`);
+              } catch (e) {
+                console.log(`Could not add label ${label}:`, e.message);
+              }
+            }
+            for (const label of toRemove) {
+              try {
+                await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: label });
+                console.log(`Removed label: ${label}`);
+              } catch (e) {
+                console.log(`Could not remove label ${label}:`, e.message);
+              }
+            }
+
+            // Build machine-derived lifecycle state comment
+            const headSha  = context.payload.pull_request.head.sha.substring(0, 12);
+            const prNum    = prNumber;
+            const statusIcon = lifecycleStatus === 'assurance-ready' ? '✅' : '❌';
+
+            let commentBody = `<!-- assurance-lifecycle-bot -->\n`;
+            commentBody += `## ${statusIcon} Assurance Lifecycle State — PR #${prNum}\n\n`;
+            commentBody += `> **Machine-derived lifecycle status** (maturion-isms#1519)\n`;
+            commentBody += `> HEAD: \`${headSha}...\`\n\n`;
+            commentBody += `| Field | Value |\n`;
+            commentBody += `|---|---|\n`;
+            commentBody += `| IAA required | ${iaaRequired ? '**YES**' : 'no'} |\n`;
+            commentBody += `| IAA invoked | ${outputs.iaa_invoked === 'true' ? '✅ yes' : '❌ no'} |\n`;
+            commentBody += `| IAA blocked | ${iaaBlocked ? '🚫 **YES**' : '✅ no'} |\n`;
+            commentBody += `| ECAP required | ${ecapRequired ? '**YES**' : 'no'} |\n`;
+            commentBody += `| ECAP invoked | ${outputs.ecap_invoked === 'true' ? '✅ yes' : '❌ no'} |\n`;
+            commentBody += `| ECAP blocked | ${ecapBlocked ? '🚫 **YES**' : '✅ no'} |\n`;
+            commentBody += `| Handover allowed | ${handoverAllowed ? '✅ YES' : '🚫 **NO**'} |\n`;
+            commentBody += `| **Lifecycle status** | **${lifecycleStatus.toUpperCase()}** |\n\n`;
+
+            if (lifecycleStatus !== 'assurance-ready') {
+              commentBody += `### Required next actions\n\n`;
+              if (ecapBlocked) {
+                commentBody += `1. **Complete ECAP ceremony first**\n`;
+                commentBody += `   \`task(agent_type: 'execution-ceremony-admin-agent')\`\n\n`;
+              }
+              if (iaaBlocked) {
+                const step = ecapBlocked ? '2' : '1';
+                commentBody += `${step}. **Obtain IAA final assurance**\n`;
+                commentBody += `   \`task(agent_type: 'independent-assurance-agent')\`\n`;
+                commentBody += `   Provide: PR #${prNum}, HEAD \`${headSha}...\`\n\n`;
+              }
+              commentBody += `> ⛔ Do NOT mark this PR as merge-ready until \`preflight/iaa-final-assurance\``;
+              commentBody += ` and \`preflight/ecap-admin-ceremony\` are both GREEN.\n`;
+            } else {
+              commentBody += `### All assurance evidence present\n\n`;
+              commentBody += `All required IAA/ECAP evidence is current to this PR.\n`;
+              commentBody += `Handover and merge are permitted subject to CS2 (@APGI-cmy) approval.\n`;
+            }
+
+            // Find and update existing bot comment, or create a new one
+            const { data: comments } = await github.rest.issues.listComments({
+              owner, repo, issue_number: prNumber, per_page: 100
+            });
+
+            const existingComment = comments.find(c =>
+              c.body && c.body.includes('<!-- assurance-lifecycle-bot -->')
+            );
+
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner, repo, comment_id: existingComment.id, body: commentBody
+              });
+              console.log('Updated existing lifecycle state comment.');
+            } else {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: prNumber, body: commentBody
+              });
+              console.log('Created new lifecycle state comment.');
+            }
