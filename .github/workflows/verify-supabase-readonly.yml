@@ -43,7 +43,7 @@ name: Verify Supabase Read-Only State
 #   ai_knowledge    — searches ai_knowledge for MPS-related records
 #
 # WHEN CS2 ACTION IS STILL REQUIRED vs. AGENT SELF-SERVICE:
-#   See docs/supabase/SUPABASE_GOVERNED_ACCESS_MODEL.md §5
+#   See docs/supabase/SUPABASE_GOVERNED_ACCESS_MODEL.md §4.2
 # ─────────────────────────────────────────────────────────────────────────────
 
 on:
