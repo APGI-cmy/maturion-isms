@@ -54,3 +54,7 @@ None. Pure build-defect corrections with no new feature scope.
 ## TOKEN
 
 PHASE_B_BLOCKING_TOKEN: IAA-session-fix-signup-onboarding-20260428-PASS
+- **Verdict**: ASSURANCE-TOKEN (PASS)
+- **PR**: maturion-isms#1508
+- **Issue**: maturion-isms#1507
+- **Reviewed SHA**: de4e8a04348bc1bba06352a6a4fe804f128c2894
