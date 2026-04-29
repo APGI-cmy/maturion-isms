@@ -277,6 +277,41 @@ jobs:
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
 
+      - name: Patch .vercel/output routing — replace error-fallback /404.html with /index.html rewrite
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const path = '.vercel/output/config.json';
+          if (!fs.existsSync(path)) {
+            console.log('No .vercel/output/config.json found — skipping patch');
+            process.exit(0);
+          }
+          const cfg = JSON.parse(fs.readFileSync(path, 'utf8'));
+          const routes = cfg.routes || [];
+          // Remove Vite framework adapter error-based /404.html fallback routes.
+          // These have { "handle": "error" } or { "dest": "/404.html", "status": 404 }
+          // and cause HTTP 404 responses for SPA direct routes.
+          const filtered = routes.filter(r =>
+            r.handle !== 'error' &&
+            r.dest !== '/404.html'
+          );
+          // Ensure filesystem handle is present (try static files before SPA catch-all)
+          if (!filtered.find(r => r.handle === 'filesystem')) {
+            filtered.push({ handle: 'filesystem' });
+          }
+          // Add SPA catch-all rewrite to /index.html (HTTP 200, not 404)
+          if (!filtered.find(r => r.dest === '/index.html')) {
+            filtered.push({
+              src: '/((?!api/|assets/|manifest\\.json$|sw\\.js$).*)',
+              dest: '/index.html'
+            });
+          }
+          cfg.routes = filtered;
+          fs.writeFileSync(path, JSON.stringify(cfg, null, 2));
+          console.log('Patched .vercel/output/config.json routes:');
+          console.log(JSON.stringify(cfg.routes, null, 2));
+          NODE
+
       - name: Verify .vercel/output routing — SPA catch-all present
         run: |
           OUTPUT_CONFIG=".vercel/output/config.json"
@@ -284,21 +319,21 @@ jobs:
             echo "❌ FAIL: $OUTPUT_CONFIG not found after vercel build — cannot verify SPA routing"
             exit 1
           fi
-          echo "Inspecting $OUTPUT_CONFIG for SPA catch-all fallback route..."
+          echo "Inspecting $OUTPUT_CONFIG for SPA catch-all route to /index.html..."
           CATCH_ALL=$(node -e "
             const fs = require('fs');
             const cfg = JSON.parse(fs.readFileSync('$OUTPUT_CONFIG', 'utf8'));
             const routes = cfg.routes || [];
-            // Accept /index.html rewrite-style fallback OR /404.html SPA fallback (Vercel static output pattern)
-            const found = routes.find(r => r.dest === '/index.html')
-                       || routes.find(r => r.dest === '/404.html' && typeof r.src === 'string' && r.src.includes('(?!/api'));
+            // Require dest '/index.html' — /404.html with status 404 is NOT acceptable
+            // (it returns HTTP 404 to the client, breaking SPA direct-route navigation)
+            const found = routes.find(r => r.dest === '/index.html');
             if (found) {
               process.stdout.write(JSON.stringify(found));
             }
           ")
           if [ -z "$CATCH_ALL" ]; then
-            echo "❌ FAIL: No SPA catch-all fallback route found in $OUTPUT_CONFIG"
-            echo "   Expected dest '/index.html' or '/404.html' (Vercel static output pattern)"
+            echo "❌ FAIL: No SPA catch-all route with dest '/index.html' found in $OUTPUT_CONFIG"
+            echo "   A /404.html fallback with status:404 is NOT acceptable — it returns HTTP 404 to clients."
             echo "   Build output routes:"
             node -e "
               const fs = require('fs');
@@ -307,7 +342,7 @@ jobs:
             "
             exit 1
           fi
-          echo "✅ PASS: SPA catch-all route confirmed in .vercel/output/config.json:"
+          echo "✅ PASS: SPA catch-all route to /index.html confirmed in .vercel/output/config.json:"
           echo "  $CATCH_ALL"
 
       - name: Deploy Preview to Vercel
