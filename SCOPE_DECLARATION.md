@@ -1,7 +1,7 @@
 # Scope Declaration — layer-down-propagate-governance-changes-0205b9c8
 
 **Wave**: layer-down-propagate-governance-changes-0205b9c8
-**Issue**: maturion-isms#1510
+**Issue**: maturion-isms#1509
 **Branch**: copilot/layer-down-propagate-governance-changes-0205b9c8-6512-4272-baa9-f4c269c186a0
 **Date**: 2026-04-29
 **Authority**: SCOPE_TO_DIFF_RULE.md
