@@ -266,14 +266,14 @@ SECURITY DEFINER
 SET search_path = governance_readonly, public, storage
 AS $$
 DECLARE
-    v_source_doc_count          bigint;
-    v_mps_record_count          bigint;
-    v_distinct_domain_ids       bigint;
-    v_criteria_record_count     bigint;
-    v_ai_knowledge_count        bigint;
-    v_ai_knowledge_approved     bigint;
-    v_generic_content_flag      boolean;
-    v_result                    jsonb;
+    v_source_doc_count                  bigint;
+    v_mps_record_count                  bigint;
+    v_distinct_domain_ids               bigint;
+    v_criteria_record_count             bigint;
+    v_ai_knowledge_count                bigint;
+    v_ai_knowledge_approved             bigint;
+    v_diamond_specific_ldcs_detected    boolean;
+    v_result                            jsonb;
 BEGIN
     -- Log the verification call for audit trail
     PERFORM governance_readonly.log_verification_call(p_caller, 'mps_source_pack');
