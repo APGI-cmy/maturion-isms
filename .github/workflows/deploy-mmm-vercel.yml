@@ -284,20 +284,24 @@ jobs:
             echo "❌ FAIL: $OUTPUT_CONFIG not found after vercel build — cannot verify SPA routing"
             exit 1
           fi
-          echo "Inspecting $OUTPUT_CONFIG for SPA catch-all route..."
+          echo "Inspecting $OUTPUT_CONFIG for SPA catch-all route to /index.html..."
           CATCH_ALL=$(node -e "
-            const cfg = require('./$OUTPUT_CONFIG');
+            const fs = require('fs');
+            const cfg = JSON.parse(fs.readFileSync('$OUTPUT_CONFIG', 'utf8'));
             const routes = cfg.routes || [];
-            const found = routes.find(r =>
-              r.dest === '/index.html' ||
-              (r.handle === 'filesystem' ? false : (r.src || '').includes('(?!'))
-            );
-            process.stdout.write(found ? JSON.stringify(found) : '');
-          " 2>/dev/null || true)
+            const found = routes.find(r => r.dest === '/index.html');
+            if (found) {
+              process.stdout.write(JSON.stringify(found));
+            }
+          ")
           if [ -z "$CATCH_ALL" ]; then
-            echo "❌ FAIL: No SPA catch-all route to /index.html found in $OUTPUT_CONFIG"
-            echo "   Build output routing:"
-            node -e "const c=require('./$OUTPUT_CONFIG'); console.log(JSON.stringify(c.routes,null,2))" || true
+            echo "❌ FAIL: No route with dest '/index.html' found in $OUTPUT_CONFIG"
+            echo "   Build output routes:"
+            node -e "
+              const fs = require('fs');
+              const c = JSON.parse(fs.readFileSync('$OUTPUT_CONFIG', 'utf8'));
+              console.log(JSON.stringify(c.routes, null, 2));
+            "
             exit 1
           fi
           echo "✅ PASS: SPA catch-all route confirmed in .vercel/output/config.json:"

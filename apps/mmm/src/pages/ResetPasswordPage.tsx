@@ -14,35 +14,45 @@ export default function ResetPasswordPage() {
 
   useEffect(() => {
     let isMounted = true;
+    let expiredTimer: ReturnType<typeof setTimeout> | null = null;
+
     const isRecoveryFlow = () => {
       const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
       const searchParams = new URLSearchParams(window.location.search);
       return hashParams.get('type') === 'recovery' || searchParams.get('type') === 'recovery';
     };
 
+    const markReady = () => {
+      if (isMounted) {
+        setSessionReady(true);
+        if (expiredTimer !== null) {
+          clearTimeout(expiredTimer);
+          expiredTimer = null;
+        }
+      }
+    };
+
     const syncSessionReady = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (isMounted && session && isRecoveryFlow()) {
-        setSessionReady(true);
-      }
+      if (session && isRecoveryFlow()) markReady();
     };
 
     void syncSessionReady();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY' || (session && isRecoveryFlow())) {
-        if (isMounted) setSessionReady(true);
+        markReady();
       }
     });
 
-    const timer = setTimeout(() => {
+    expiredTimer = setTimeout(() => {
       if (isMounted) setLinkExpired(true);
     }, RECOVERY_TIMEOUT_MS);
 
     return () => {
       isMounted = false;
       subscription.unsubscribe();
-      clearTimeout(timer);
+      if (expiredTimer !== null) clearTimeout(expiredTimer);
     };
   }, []);
 
