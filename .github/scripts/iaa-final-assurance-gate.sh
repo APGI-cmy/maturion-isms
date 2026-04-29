@@ -218,7 +218,9 @@ while IFS= read -r token_file; do
   fi
 
   # Check C: Verdict must not be a blocking/rejection verdict
-  VERDICT_LINE=$(grep -iE "^[[:space:]]*(Verdict|VERDICT|verdict):[[:space:]]" \
+  # Parse both plain `Verdict:` and Markdown `**Verdict**:` / `- **Verdict**:` formats.
+  VERDICT_LINE=$(grep -iE \
+    "^[[:space:]]*(-[[:space:]]*)?\*\*[Vv]erdict\*\*[[:space:]]*:[[:space:]]|^[[:space:]]*(Verdict|VERDICT):[[:space:]]" \
     "$token_file" 2>/dev/null | head -1 || true)
   if echo "$VERDICT_LINE" | grep -qi "REJECTION\|BLOCKED\|FAIL\|REJECT"; then
     echo "  ❌ IAA verdict is rejection/blocking: $VERDICT_LINE [IAA-FINAL-GATE-004]"
@@ -226,8 +228,20 @@ while IFS= read -r token_file; do
     FILE_VALID=false
     FAIL=true
   else
-    if [ -n "$VERDICT_LINE" ]; then
-      echo "  ✅ Verdict line: $VERDICT_LINE"
+    # Fallback: scan entire file for any verdict line containing blocking keywords,
+    # catching format variations (e.g. **Verdict**: ASSURANCE-TOKEN (FAIL)) that the
+    # primary grep may have missed.
+    FALLBACK_BLOCK=$(grep -iE "[Vv]erdict[[:space:]]*:[[:space:]]*.*\b(REJECTION|BLOCKED|REJECT|FAIL)\b" \
+      "$token_file" 2>/dev/null | head -1 || true)
+    if [ -n "$FALLBACK_BLOCK" ]; then
+      echo "  ❌ IAA verdict is rejection/blocking: $FALLBACK_BLOCK [IAA-FINAL-GATE-004]"
+      FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: verdict is blocking/rejection"
+      FILE_VALID=false
+      FAIL=true
+    else
+      if [ -n "$VERDICT_LINE" ]; then
+        echo "  ✅ Verdict line: $VERDICT_LINE"
+      fi
     fi
   fi
 
