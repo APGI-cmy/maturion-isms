@@ -1,0 +1,291 @@
+name: Verify Supabase Read-Only State
+
+# ─────────────────────────────────────────────────────────────────────────────
+# WORKFLOW OWNERSHIP BOUNDARY
+# This workflow provides governed READ-ONLY verification of live Supabase state.
+# It is the ONLY authorised path for agents to verify live database state.
+#
+# Operating model (per docs/supabase/SUPABASE_GOVERNED_ACCESS_MODEL.md §3):
+#   deploy-mmm-supabase-migrations.yml   = privileged schema mutation (separate)
+#   verify-supabase-readonly.yml         = read-only verification (THIS FILE)
+#
+# SECURITY CONSTRAINTS (per maturion-isms#1505 security requirements):
+#   - ONLY allowlisted governance_readonly.* RPCs are called; no arbitrary SQL
+#   - No INSERT, UPDATE, DELETE, DDL, or storage-mutation operations
+#   - SUPABASE_ACCESS_TOKEN is the approved Management API credential; it is
+#     scoped to allowlisted RPCs by workflow design, not by credential type
+#   - Output is sanitized: no file contents, no full embeddings, no PII
+#   - Verification output is published as a durable GitHub Step Summary for
+#     Foreman/IAA evidence citation
+#   - verify-readonly job runs under the `production` GitHub environment;
+#     SUPABASE_ACCESS_TOKEN is ONLY exposed after the environment protection
+#     rules (CS2-approval gate) are satisfied.
+#
+# INTERIM CREDENTIAL MODEL NOTICE
+# --------------------------------
+# This workflow uses SUPABASE_ACCESS_TOKEN (Supabase Management API) with an
+# allowlist of read-only governance_readonly.* RPCs enforced at the workflow
+# level.  This is WORKFLOW-RESTRICTED access, not CREDENTIAL-LEVEL read-only
+# access.  The underlying credential is capable of broader database operations
+# if called outside this workflow.
+#
+# The production environment gate (CS2 approval) is the primary guard against
+# unauthorised use of the credential.  A genuinely credential-level read-only
+# path (dedicated read-only Postgres role or PostgREST JWT with read-only
+# grants) is a future improvement tracked in maturion-isms#1505.
+#
+# PERMITTED verification_target values:
+#   mps_source_pack — verifies generic MPS 1–25 source-pack status
+#                     (maturion-isms#1501 prerequisite check)
+#   mps_count       — counts mmm_maturity_process_steps records
+#   criteria_count  — counts mmm_criteria records
+#   framework_docs  — lists mmm-framework-sources storage metadata
+#   ai_knowledge    — searches ai_knowledge for MPS-related records
+#
+# WHEN CS2 ACTION IS STILL REQUIRED vs. AGENT SELF-SERVICE:
+#   See docs/supabase/SUPABASE_GOVERNED_ACCESS_MODEL.md §4.2
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  workflow_dispatch:
+    inputs:
+      verification_target:
+        description: >
+          Verification target to run. Must be one of:
+          mps_source_pack | mps_count | criteria_count | framework_docs | ai_knowledge
+        required: true
+        default: 'mps_source_pack'
+        type: choice
+        options:
+          - mps_source_pack
+          - mps_count
+          - criteria_count
+          - framework_docs
+          - ai_knowledge
+      caller_id:
+        description: >
+          Identifier of the agent or operator triggering this verification
+          (recorded in governance_readonly.verification_log for audit trail).
+        required: false
+        default: 'workflow_dispatch'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.inputs.verification_target }}
+  cancel-in-progress: false
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────
+  # Pre-flight: validate inputs before touching any secrets
+  # ─────────────────────────────────────────────────────────────────────────
+  preflight:
+    name: Pre-Flight Validation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      target: ${{ steps.validate.outputs.target }}
+    steps:
+      - name: Validate verification_target
+        id: validate
+        run: |
+          TARGET="${{ github.event.inputs.verification_target }}"
+          ALLOWED="mps_source_pack mps_count criteria_count framework_docs ai_knowledge"
+          VALID=false
+          for t in $ALLOWED; do
+            if [ "$TARGET" = "$t" ]; then
+              VALID=true
+              break
+            fi
+          done
+          if [ "$VALID" != "true" ]; then
+            echo "::error::Invalid verification_target: '$TARGET'."
+            echo "::error::Permitted values: $ALLOWED"
+            exit 1
+          fi
+          echo "target=$TARGET" >> "$GITHUB_OUTPUT"
+          echo "Validation PASSED. Target: $TARGET"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Verification: runs allowlisted read-only RPCs via Supabase Management API
+  # Runs under the `production` environment so SUPABASE_ACCESS_TOKEN is only
+  # exposed after the environment protection rules (CS2-approval gate) pass.
+  # ─────────────────────────────────────────────────────────────────────────
+  verify-readonly:
+    name: Read-Only Verification — ${{ github.event.inputs.verification_target }}
+    runs-on: ubuntu-latest
+    needs: [preflight]
+    permissions:
+      contents: read
+    environment: production
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      TARGET: ${{ needs.preflight.outputs.target }}
+      CALLER_ID: ${{ github.event.inputs.caller_id }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Validate required secrets
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "::error::SUPABASE_ACCESS_TOKEN is not configured."
+            echo "::error::This secret must be set in the repository to run read-only verification."
+            exit 1
+          fi
+          if [ -z "$SUPABASE_PROJECT_REF" ]; then
+            echo "::error::SUPABASE_PROJECT_REF is not configured."
+            echo "::error::This secret must be set in the repository to run read-only verification."
+            exit 1
+          fi
+          echo "Secrets present. Proceeding to verification."
+
+      - name: Run allowlisted read-only RPC
+        id: run-rpc
+        run: |
+          SBAPI="https://api.supabase.com/v1/projects/$SUPABASE_PROJECT_REF/database/query"
+          # shellcheck source=.github/scripts/supabase-mgmt-api.sh
+          source .github/scripts/supabase-mgmt-api.sh
+
+          # ── Sanitize caller_id ───────────────────────────────────────────────
+          # Restrict caller_id to alphanumeric characters, hyphens, underscores,
+          # and dots only.  Any other character is removed.
+          # This eliminates SQL injection risk without relying on quote-escaping.
+          SAFE_CALLER=$(printf '%s' "$CALLER_ID" | tr -cd 'A-Za-z0-9._-' | cut -c1-64)
+          if [ -z "$SAFE_CALLER" ]; then
+            SAFE_CALLER="workflow_dispatch"
+          fi
+
+          # ── Allowlist enforcement ────────────────────────────────────────────
+          # Only the following SQL calls are permitted.
+          # Each call invokes a governance_readonly.* SECURITY DEFINER RPC only.
+          # No arbitrary SQL is permitted outside this allowlist.
+          # ────────────────────────────────────────────────────────────────────
+          case "$TARGET" in
+
+            mps_source_pack)
+              echo "Calling governance_readonly.verify_mps_source_pack_status()..."
+              # SAFE_CALLER contains only [A-Za-z0-9._-] (validated above) —
+              # safe to embed directly in the SQL literal without further escaping.
+              SQL="SELECT governance_readonly.verify_mps_source_pack_status('${SAFE_CALLER}') AS result;"
+              ;;
+
+            mps_count)
+              echo "Calling governance_readonly.count_mmm_mps_records()..."
+              SQL="SELECT * FROM governance_readonly.count_mmm_mps_records(NULL, '${SAFE_CALLER}');"
+              ;;
+
+            criteria_count)
+              echo "Calling governance_readonly.count_mmm_criteria_records()..."
+              SQL="SELECT * FROM governance_readonly.count_mmm_criteria_records(NULL, '${SAFE_CALLER}');"
+              ;;
+
+            framework_docs)
+              echo "Calling governance_readonly.list_mmm_framework_source_documents()..."
+              SQL="SELECT * FROM governance_readonly.list_mmm_framework_source_documents(NULL, '${SAFE_CALLER}');"
+              ;;
+
+            ai_knowledge)
+              echo "Calling governance_readonly.search_ai_knowledge_mps_sources()..."
+              SQL="SELECT * FROM governance_readonly.search_ai_knowledge_mps_sources('maturity process step', '${SAFE_CALLER}');"
+              ;;
+
+            *)
+              echo "::error::Unrecognised target '$TARGET' reached execution stage — this should have been caught by preflight."
+              exit 1
+              ;;
+          esac
+
+          # ── Execute the allowlisted RPC ──────────────────────────────────────
+          if ! RESULT=$(sb_sql "$SQL"); then
+            echo "::error::Read-only RPC failed for target '$TARGET'."
+            echo "::error::Check that the governance_readonly schema migration has been applied."
+            echo "::error::Migration: supabase/migrations/20260428000001_mmm_governance_readonly.sql"
+            exit 1
+          fi
+
+          # ── Validate that we received a non-empty result ─────────────────────
+          if [ -z "$RESULT" ] || [ "$RESULT" = "[]" ] || [ "$RESULT" = "null" ]; then
+            echo "::error::RPC returned empty or null result for target '$TARGET'."
+            echo "::error::This indicates the migration has not been applied or data is absent."
+            echo "::error::Remediation: apply supabase/migrations/20260428000001_mmm_governance_readonly.sql"
+            echo "::error::and verify that the target data exists before re-running this workflow."
+            exit 1
+          else
+            echo "RPC call succeeded. Result received."
+            # Write result to output (escaped for GitHub Actions multi-line)
+            ENCODED=$(printf '%s' "$RESULT" | jq -c '.')
+            {
+              echo "RESULT_JSON<<GOVREADONLY_EOF"
+              printf '%s' "$ENCODED"
+              echo ""
+              echo "GOVREADONLY_EOF"
+            } >> "$GITHUB_OUTPUT"
+            echo "RESULT_STATUS=ok" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish verification summary
+        if: always()
+        env:
+          RESULT_JSON: ${{ steps.run-rpc.outputs.RESULT_JSON }}
+        run: |
+          STATUS="${{ steps.run-rpc.outputs.RESULT_STATUS }}"
+          TARGET="${{ env.TARGET }}"
+          CALLER="${{ env.CALLER_ID }}"
+
+          {
+            echo "## 🔍 Supabase Read-Only Verification Summary"
+            echo ""
+            echo "| Field | Value |"
+            echo "|-------|-------|"
+            echo "| **Target** | \`${TARGET}\` |"
+            echo "| **Caller** | \`${CALLER}\` |"
+            echo "| **Commit** | \`${{ github.sha }}\` |"
+            echo "| **Branch** | \`${{ github.ref_name }}\` |"
+            echo "| **Triggered by** | \`${{ github.actor }}\` |"
+            echo "| **Timestamp** | $(date -u +'%Y-%m-%d %H:%M:%S UTC') |"
+            echo ""
+
+            if [ "$STATUS" = "ok" ] && [ -n "$RESULT_JSON" ]; then
+              echo "### ✅ Verification Result"
+              echo ""
+              echo "\`\`\`json"
+              printf '%s' "$RESULT_JSON" | jq '.' 2>/dev/null || printf '%s\n' "$RESULT_JSON"
+              echo "\`\`\`"
+              echo ""
+              echo "> This output is produced by a governed SECURITY DEFINER RPC."
+              echo "> It may be cited as evidence in PREHANDOVER proofs and IAA records."
+              echo "> Reference: \`supabase/migrations/20260428000001_mmm_governance_readonly.sql\`"
+            elif [ "$STATUS" = "empty" ]; then
+              echo "### ⚠️ Empty Result"
+              echo ""
+              echo "The RPC returned no data for target \`${TARGET}\`."
+              echo ""
+              echo "**Possible causes:**"
+              echo "- The \`governance_readonly\` migration has not been applied to the live database."
+              echo "- The target data (e.g. MPS records, storage objects) does not yet exist."
+              echo ""
+              echo "> CS2 action required: apply \`supabase/migrations/20260428000001_mmm_governance_readonly.sql\`"
+              echo "> via the \`Deploy MMM Supabase Migrations\` workflow before re-running this check."
+            else
+              echo "### ❌ Verification Failed"
+              echo ""
+              echo "The RPC call failed for target \`${TARGET}\`. See job logs for details."
+              echo ""
+              echo "> Check that the \`governance_readonly\` migration has been applied"
+              echo "> and that \`SUPABASE_ACCESS_TOKEN\` / \`SUPABASE_PROJECT_REF\` are configured."
+            fi
+
+            echo ""
+            echo "---"
+            echo ""
+            echo "**Access model**: No writes to business tables; audit INSERT to governance_readonly.verification_log only; no DDL."
+            echo "**Governed by**: \`docs/supabase/SUPABASE_GOVERNED_ACCESS_MODEL.md\`"
+            echo "**Issue**: maturion-isms#1505"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail job if RPC failed
+        if: steps.run-rpc.outcome == 'failure'
+        run: |
+          echo "::error::Verification RPC failed. See previous step for details."
+          exit 1
