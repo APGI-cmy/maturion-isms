@@ -16,12 +16,14 @@ mismatched canonical hash for `AGENT_HANDOVER_AUTOMATION.md`, TBD placeholders f
 
 ## Changed Files
 
-- `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` — corrected post-ripple discrepancies (last_ripple_commit, last_ripple_timestamp, last_ripple_pr, INDEPENDENT_ASSURANCE_AGENT_CANON.md version/hash, AGENT_HANDOVER_AUTOMATION.md canonical hash, PRE_BUILD_STAGE_MODEL_CANON.md TBD placeholders resolved, PREHANDOVER.template.md hash corrected)
-- `SCOPE_DECLARATION.md` — updated for this wave
+### Modified Files
+
+- `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` - corrected post-ripple discrepancies (last_ripple_commit, last_ripple_timestamp, last_ripple_pr, INDEPENDENT_ASSURANCE_AGENT_CANON.md version/hash, AGENT_HANDOVER_AUTOMATION.md canonical hash, PRE_BUILD_STAGE_MODEL_CANON.md TBD placeholders resolved, PREHANDOVER.template.md hash corrected)
+- `SCOPE_DECLARATION.md` - updated for this wave
 
 ## Out of Scope
 
-- Any application source code changes
-- Any Supabase schema migrations or functions
-- Any `.github/agents/*.md` contract files
-- Any governance canon files (receive-only consumer mode)
+- Application source code changes
+- Supabase schema migrations or functions
+- Agent contract files under .github/agents/
+- Governance canon files (receive-only consumer mode)
