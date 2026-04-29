@@ -1267,3 +1267,164 @@ describe('ISSUE-1507: mmm-upload-framework-source parse-job insert matches mmm_p
   });
 });
 
+// =============================================================================
+// ISSUE #1512: MMM login discoverability, SPA direct-route fallback,
+// and password reset callback flow.
+// Anti-regression gates added 2026-04-29.
+// =============================================================================
+
+describe('ISSUE-1512: LandingPage exposes /login for returning users', () => {
+  it('LandingPage.tsx includes a Sign In link to /login in the nav header', () => {
+    const src = readFile('apps/mmm/src/pages/LandingPage.tsx');
+    expect(src).toContain('to="/login"');
+    expect(src).toMatch(/Sign In|Log In/);
+  });
+  it('LandingPage.tsx includes a Sign In link in the hero/CTA area', () => {
+    const src = readFile('apps/mmm/src/pages/LandingPage.tsx');
+    // At least two occurrences: header nav + hero actions
+    const matches = src.match(/to="\/login"/g);
+    expect(matches).not.toBeNull();
+    expect((matches as RegExpMatchArray).length).toBeGreaterThanOrEqual(2);
+  });
+});
+
+describe('ISSUE-1512: SignUpPage exposes /login for existing users', () => {
+  it('SignUpPage.tsx has "Already have an account? Sign in" footer link to /login', () => {
+    const src = readFile('apps/mmm/src/pages/SignUpPage.tsx');
+    expect(src).toContain('to="/login"');
+    expect(src).toMatch(/Already have an account|already.*account/i);
+  });
+  it('SignUpPage.tsx email-confirmation message includes a /login link', () => {
+    const src = readFile('apps/mmm/src/pages/SignUpPage.tsx');
+    // Both the confirmation message and the footer link must reference /login
+    const matches = src.match(/to="\/login"/g);
+    expect(matches).not.toBeNull();
+    expect((matches as RegExpMatchArray).length).toBeGreaterThanOrEqual(2);
+  });
+});
+
+describe('ISSUE-1512: LoginPage exposes forgot-password link', () => {
+  it('LoginPage.tsx includes a link to /forgot-password', () => {
+    const src = readFile('apps/mmm/src/pages/LoginPage.tsx');
+    expect(src).toContain('to="/forgot-password"');
+    expect(src).toMatch(/Forgot|forgot/);
+  });
+});
+
+describe('ISSUE-1512: ForgotPasswordPage exists and is wired correctly', () => {
+  it('apps/mmm/src/pages/ForgotPasswordPage.tsx exists', () => {
+    expect(fileExists('apps/mmm/src/pages/ForgotPasswordPage.tsx')).toBe(true);
+  });
+  it('ForgotPasswordPage.tsx calls supabase.auth.resetPasswordForEmail', () => {
+    const src = readFile('apps/mmm/src/pages/ForgotPasswordPage.tsx');
+    expect(src).toContain('supabase.auth.resetPasswordForEmail');
+  });
+  it('ForgotPasswordPage.tsx passes a redirectTo pointing to /reset-password', () => {
+    const src = readFile('apps/mmm/src/pages/ForgotPasswordPage.tsx');
+    expect(src).toContain('/reset-password');
+    expect(src).toContain('redirectTo');
+  });
+  it('ForgotPasswordPage.tsx has an email input', () => {
+    const src = readFile('apps/mmm/src/pages/ForgotPasswordPage.tsx');
+    expect(src).toContain('type="email"');
+  });
+  it('App.tsx includes /forgot-password route', () => {
+    const src = readFile('apps/mmm/src/App.tsx');
+    expect(src).toContain('"/forgot-password"');
+    expect(src).toContain('ForgotPasswordPage');
+  });
+});
+
+describe('ISSUE-1512: ResetPasswordPage exists and is wired correctly', () => {
+  it('apps/mmm/src/pages/ResetPasswordPage.tsx exists', () => {
+    expect(fileExists('apps/mmm/src/pages/ResetPasswordPage.tsx')).toBe(true);
+  });
+  it('ResetPasswordPage.tsx calls supabase.auth.updateUser', () => {
+    const src = readFile('apps/mmm/src/pages/ResetPasswordPage.tsx');
+    expect(src).toContain('supabase.auth.updateUser');
+  });
+  it('ResetPasswordPage.tsx listens for PASSWORD_RECOVERY auth event', () => {
+    const src = readFile('apps/mmm/src/pages/ResetPasswordPage.tsx');
+    expect(src).toContain('PASSWORD_RECOVERY');
+  });
+  it('ResetPasswordPage.tsx has a password input', () => {
+    const src = readFile('apps/mmm/src/pages/ResetPasswordPage.tsx');
+    expect(src).toContain('type="password"');
+  });
+  it('App.tsx includes /reset-password route', () => {
+    const src = readFile('apps/mmm/src/App.tsx');
+    expect(src).toContain('"/reset-password"');
+    expect(src).toContain('ResetPasswordPage');
+  });
+});
+
+describe('ISSUE-1512: Vercel SPA fallback — /login, /forgot-password, /reset-password are not excluded', () => {
+  it('vercel.json catch-all rewrite covers /forgot-password (SPA direct-route)', () => {
+    const config = readFile('vercel.json');
+    expect(config).toContain('index.html');
+    // Source pattern must be a wildcard/catch-all (not a fixed path list)
+    expect(config).toMatch(/source.*\.\*\)|source.*\(\.\+\)/);
+  });
+  it('vercel.json does not explicitly exclude /login, /forgot-password, or /reset-password', () => {
+    const config = readFile('vercel.json');
+    expect(config).not.toMatch(/\/login.*404/);
+    expect(config).not.toMatch(/\/forgot-password.*404/);
+    expect(config).not.toMatch(/\/reset-password.*404/);
+  });
+  it('vercel.json outputDirectory points to apps/mmm/dist (SPA build output)', () => {
+    const config = readFile('vercel.json');
+    expect(config).toContain('apps/mmm/dist');
+  });
+});
+
+
+describe('ISSUE-1512: deploy-mmm-vercel.yml has .vercel/output routing assertion', () => {
+  it('deploy-mmm-vercel.yml exists', () => {
+    expect(fileExists('.github/workflows/deploy-mmm-vercel.yml')).toBe(true);
+  });
+  it('deploy-mmm-vercel.yml contains .vercel/output/config.json routing assertion after vercel build', () => {
+    const wf = readFile('.github/workflows/deploy-mmm-vercel.yml');
+    expect(wf).toContain('.vercel/output/config.json');
+    expect(wf).toContain('SPA catch-all');
+  });
+  it('deploy-mmm-vercel.yml contains SPA direct-route smoke test step', () => {
+    const wf = readFile('.github/workflows/deploy-mmm-vercel.yml');
+    expect(wf).toContain('SPA direct-route smoke test');
+    expect(wf).toContain('/login');
+    expect(wf).toContain('/forgot-password');
+    expect(wf).toContain('/reset-password');
+    expect(wf).toContain('/onboarding');
+    expect(wf).toContain('/frameworks');
+  });
+  it('deploy-mmm-vercel.yml smoke test step runs after preview deploy (references preview-url output)', () => {
+    const wf = readFile('.github/workflows/deploy-mmm-vercel.yml');
+    expect(wf).toContain('steps.deploy.outputs.preview-url');
+  });
+  it('deploy-mmm-vercel.yml smoke test fails on Vercel 404', () => {
+    const wf = readFile('.github/workflows/deploy-mmm-vercel.yml');
+    expect(wf).toContain('404');
+    expect(wf).toContain('exit 1');
+  });
+});
+
+describe('ISSUE-1512: ResetPasswordPage handles expired/invalid reset links', () => {
+  it('ResetPasswordPage.tsx has a timeout constant for expired-link detection', () => {
+    const src = readFile('apps/mmm/src/pages/ResetPasswordPage.tsx');
+    expect(src).toMatch(/RECOVERY_TIMEOUT_MS|setTimeout/);
+    expect(src).toContain('linkExpired');
+  });
+  it('ResetPasswordPage.tsx renders an error state when link is expired', () => {
+    const src = readFile('apps/mmm/src/pages/ResetPasswordPage.tsx');
+    expect(src).toContain('reset-link-expired');
+    expect(src).toMatch(/expired|invalid/i);
+  });
+  it('ResetPasswordPage.tsx expired error state includes link back to /forgot-password', () => {
+    const src = readFile('apps/mmm/src/pages/ResetPasswordPage.tsx');
+    expect(src).toContain('/forgot-password');
+    expect(src).toMatch(/new reset link|request.*link/i);
+  });
+  it('ResetPasswordPage.tsx clears the timeout on unmount to avoid memory leaks', () => {
+    const src = readFile('apps/mmm/src/pages/ResetPasswordPage.tsx');
+    expect(src).toContain('clearTimeout');
+  });
+});

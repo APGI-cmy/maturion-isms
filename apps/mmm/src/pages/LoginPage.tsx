@@ -45,6 +45,7 @@ export default function LoginPage() {
           </div>
           {error && <p role="alert" className="alert alert-error">{error}</p>}
           <button className="btn btn-primary w-full" type="submit">Sign In</button>
+          <p className="auth-card__footer"><Link to="/forgot-password">Forgot your password?</Link></p>
         </form>
         <p className="auth-card__footer">Don&rsquo;t have an account? <Link to="/signup">Sign up</Link></p>
       </div>
