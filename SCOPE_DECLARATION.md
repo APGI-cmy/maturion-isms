@@ -22,13 +22,14 @@ Fix MMM login discoverability and password reset flow (issue #1512):
 ## Changed Files
 
 - `SCOPE_DECLARATION.md` - Updated for this wave (per §4.3g scope refresh)
+- `.github/workflows/deploy-mmm-vercel.yml` - Added .vercel/output routing assertion step and SPA direct-route smoke test step after preview deploy
 - `apps/mmm/src/App.tsx` - Added ForgotPasswordPage and ResetPasswordPage imports and /forgot-password, /reset-password routes
 - `apps/mmm/src/pages/ForgotPasswordPage.tsx` - New: forgot-password form calling supabase.auth.resetPasswordForEmail with VITE_APP_URL redirect
 - `apps/mmm/src/pages/LandingPage.tsx` - Added Sign In links to header nav and hero/CTA action group
 - `apps/mmm/src/pages/LoginPage.tsx` - Added "Forgot your password?" link to /forgot-password
-- `apps/mmm/src/pages/ResetPasswordPage.tsx` - New: reset-password callback using PASSWORD_RECOVERY event and supabase.auth.updateUser
+- `apps/mmm/src/pages/ResetPasswordPage.tsx` - New: reset-password callback using PASSWORD_RECOVERY event and supabase.auth.updateUser; added timeout/error state for expired/invalid reset links
 - `apps/mmm/src/pages/SignUpPage.tsx` - Added "Already have an account? Sign in" footer link and login link in email-confirmation message
-- `modules/MMM/tests/B9-golden-path/b9-golden-path.test.ts` - Added 18 anti-regression tests for issue #1512 fixes
+- `modules/MMM/tests/B9-golden-path/b9-golden-path.test.ts` - Added 27 anti-regression tests for issue #1512 fixes (was 18; +9 new for workflow routing assertion, smoke test, and ResetPasswordPage timeout)
 - `.agent-admin/assurance/iaa-wave-record-fix-mmm-login-discoverability-20260429.md` - IAA wave record with PRE-BRIEF and TOKEN for this wave
 - `.agent-admin/assurance/iaa-token-session-fix-mmm-login-discoverability-20260429.md` - IAA final assurance token (PASS) for PR #1513
 - `.agent-workspace/foreman-v2/memory/session-fix-mmm-login-discoverability-20260429.md` - Foreman session memory with agents_delegated_to: ui-builder, qa-builder

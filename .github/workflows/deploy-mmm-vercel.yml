@@ -277,12 +277,69 @@ jobs:
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
 
+      - name: Verify .vercel/output routing — SPA catch-all present
+        run: |
+          OUTPUT_CONFIG=".vercel/output/config.json"
+          if [ ! -f "$OUTPUT_CONFIG" ]; then
+            echo "❌ FAIL: $OUTPUT_CONFIG not found after vercel build — cannot verify SPA routing"
+            exit 1
+          fi
+          echo "Inspecting $OUTPUT_CONFIG for SPA catch-all route..."
+          CATCH_ALL=$(node -e "
+            const cfg = require('./$OUTPUT_CONFIG');
+            const routes = cfg.routes || [];
+            const found = routes.find(r =>
+              r.dest === '/index.html' ||
+              (r.handle === 'filesystem' ? false : (r.src || '').includes('(?!'))
+            );
+            process.stdout.write(found ? JSON.stringify(found) : '');
+          " 2>/dev/null || true)
+          if [ -z "$CATCH_ALL" ]; then
+            echo "❌ FAIL: No SPA catch-all route to /index.html found in $OUTPUT_CONFIG"
+            echo "   Build output routing:"
+            node -e "const c=require('./$OUTPUT_CONFIG'); console.log(JSON.stringify(c.routes,null,2))" || true
+            exit 1
+          fi
+          echo "✅ PASS: SPA catch-all route confirmed in .vercel/output/config.json:"
+          echo "  $CATCH_ALL"
+
       - name: Deploy Preview to Vercel
         id: deploy
         run: |
           url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
           echo "preview-url=$url" >> $GITHUB_OUTPUT
           echo "Preview URL: $url"
+
+      - name: SPA direct-route smoke test — verify auth/app routes return 2xx/3xx
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.preview-url }}
+        run: |
+          echo "Running SPA direct-route smoke test against: $PREVIEW_URL"
+          ROUTES=("/login" "/forgot-password" "/reset-password" "/onboarding" "/frameworks" "/frameworks/upload")
+          FAIL=0
+          for route in "${ROUTES[@]}"; do
+            http_code=$(curl -s -o /dev/null -w "%{http_code}" \
+              --max-time 20 \
+              --location \
+              "$PREVIEW_URL$route" 2>/dev/null || echo "000")
+            if [ "$http_code" = "404" ]; then
+              echo "❌ FAIL: $route → HTTP $http_code (Vercel 404: NOT_FOUND — SPA fallback not working)"
+              FAIL=1
+            elif echo "$http_code" | grep -qE '^[23][0-9][0-9]$'; then
+              echo "✅ PASS: $route → HTTP $http_code"
+            else
+              echo "❌ FAIL: $route → HTTP $http_code (unexpected response)"
+              FAIL=1
+            fi
+          done
+          if [ "$FAIL" -ne 0 ]; then
+            echo ""
+            echo "SPA direct-route smoke test FAILED — one or more routes returned an error."
+            echo "This proves the deployed preview does not serve SPA fallback correctly."
+            exit 1
+          fi
+          echo ""
+          echo "✅ All SPA routes returned 2xx/3xx — SPA fallback confirmed in deployed preview."
 
       - name: Comment Preview URL on PR
         if: github.event_name == 'pull_request'

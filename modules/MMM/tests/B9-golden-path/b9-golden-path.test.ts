@@ -1377,3 +1377,54 @@ describe('ISSUE-1512: Vercel SPA fallback — /login, /forgot-password, /reset-p
   });
 });
 
+
+describe('ISSUE-1512: deploy-mmm-vercel.yml has .vercel/output routing assertion', () => {
+  it('deploy-mmm-vercel.yml exists', () => {
+    expect(fileExists('.github/workflows/deploy-mmm-vercel.yml')).toBe(true);
+  });
+  it('deploy-mmm-vercel.yml contains .vercel/output/config.json routing assertion after vercel build', () => {
+    const wf = readFile('.github/workflows/deploy-mmm-vercel.yml');
+    expect(wf).toContain('.vercel/output/config.json');
+    expect(wf).toContain('SPA catch-all');
+  });
+  it('deploy-mmm-vercel.yml contains SPA direct-route smoke test step', () => {
+    const wf = readFile('.github/workflows/deploy-mmm-vercel.yml');
+    expect(wf).toContain('SPA direct-route smoke test');
+    expect(wf).toContain('/login');
+    expect(wf).toContain('/forgot-password');
+    expect(wf).toContain('/reset-password');
+    expect(wf).toContain('/onboarding');
+    expect(wf).toContain('/frameworks');
+  });
+  it('deploy-mmm-vercel.yml smoke test step runs after preview deploy (references preview-url output)', () => {
+    const wf = readFile('.github/workflows/deploy-mmm-vercel.yml');
+    expect(wf).toContain('steps.deploy.outputs.preview-url');
+  });
+  it('deploy-mmm-vercel.yml smoke test fails on Vercel 404', () => {
+    const wf = readFile('.github/workflows/deploy-mmm-vercel.yml');
+    expect(wf).toContain('404');
+    expect(wf).toContain('exit 1');
+  });
+});
+
+describe('ISSUE-1512: ResetPasswordPage handles expired/invalid reset links', () => {
+  it('ResetPasswordPage.tsx has a timeout constant for expired-link detection', () => {
+    const src = readFile('apps/mmm/src/pages/ResetPasswordPage.tsx');
+    expect(src).toMatch(/RECOVERY_TIMEOUT_MS|setTimeout/);
+    expect(src).toContain('linkExpired');
+  });
+  it('ResetPasswordPage.tsx renders an error state when link is expired', () => {
+    const src = readFile('apps/mmm/src/pages/ResetPasswordPage.tsx');
+    expect(src).toContain('reset-link-expired');
+    expect(src).toMatch(/expired|invalid/i);
+  });
+  it('ResetPasswordPage.tsx expired error state includes link back to /forgot-password', () => {
+    const src = readFile('apps/mmm/src/pages/ResetPasswordPage.tsx');
+    expect(src).toContain('/forgot-password');
+    expect(src).toMatch(/new reset link|request.*link/i);
+  });
+  it('ResetPasswordPage.tsx clears the timeout on unmount to avoid memory leaks', () => {
+    const src = readFile('apps/mmm/src/pages/ResetPasswordPage.tsx');
+    expect(src).toContain('clearTimeout');
+  });
+});

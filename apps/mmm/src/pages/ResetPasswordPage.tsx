@@ -2,11 +2,14 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 
+const RECOVERY_TIMEOUT_MS = 10_000;
+
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [sessionReady, setSessionReady] = useState(false);
+  const [linkExpired, setLinkExpired] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,13 +31,18 @@ export default function ResetPasswordPage() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY' || (session && isRecoveryFlow())) {
-        setSessionReady(true);
+        if (isMounted) setSessionReady(true);
       }
     });
+
+    const timer = setTimeout(() => {
+      if (isMounted) setLinkExpired(true);
+    }, RECOVERY_TIMEOUT_MS);
 
     return () => {
       isMounted = false;
       subscription.unsubscribe();
+      clearTimeout(timer);
     };
   }, []);
 
@@ -46,6 +54,24 @@ export default function ResetPasswordPage() {
     setSuccess(true);
     setTimeout(() => navigate('/login'), 2000);
   };
+
+  if (linkExpired && !sessionReady) {
+    return (
+      <div className="auth-page">
+        <div className="auth-card">
+          <div className="auth-card__logo">
+            <span className="auth-card__logo-text">Maturion <span>MMM</span></span>
+          </div>
+          <div data-testid="reset-link-expired" role="alert" className="alert alert-error">
+            <strong>Reset link invalid or expired.</strong> Password reset links expire after a short time.
+          </div>
+          <p className="auth-card__footer">
+            <Link to="/forgot-password">Request a new reset link</Link>
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (success) {
     return (
@@ -71,7 +97,7 @@ export default function ResetPasswordPage() {
         </div>
         <h1 className="auth-card__title">Set a new password</h1>
         <p className="auth-card__subtitle">Enter your new password below.</p>
-        {!sessionReady && (
+        {!sessionReady && !linkExpired && (
           <p className="auth-card__subtitle">Verifying your reset link&hellip;</p>
         )}
         <form onSubmit={handleSubmit}>
