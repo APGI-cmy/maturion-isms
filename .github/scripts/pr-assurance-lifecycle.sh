@@ -256,6 +256,16 @@ check_token_valid() {
   vl=$(grep -iE "Verdict" "$tf" 2>/dev/null | head -1 || true)
   echo "$vl" | grep -qi "PASS" || return 1
 
+  # Reviewed SHA must be present, resolve to a commit, and be reachable from HEAD_SHA
+  local reviewed_sha
+  reviewed_sha=$(grep -iE 'Reviewed[[:space:]]+SHA' "$tf" 2>/dev/null | head -1 | \
+    grep -oE '[0-9a-fA-F]{7,40}' | head -1 || true)
+  [ -z "$reviewed_sha" ] && return 1
+  git rev-parse --verify "${reviewed_sha}^{commit}" >/dev/null 2>&1 || return 1
+  if [ -n "$HEAD_SHA" ]; then
+    git rev-parse --verify "${HEAD_SHA}^{commit}" >/dev/null 2>&1 || return 1
+    git merge-base --is-ancestor "$reviewed_sha" "$HEAD_SHA" >/dev/null 2>&1 || return 1
+  fi
   # PR reference must match (if PR_NUMBER set)
   local pr_num
   pr_num=$(grep -iE '^[[:space:]]*(-[[:space:]]*)?\*\*PR\*\*:[[:space:]]*' "$tf" 2>/dev/null | \
