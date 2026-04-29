@@ -18,13 +18,16 @@ lifecycle (issue #1514). Move from "agent was told to invoke IAA/ECAP" to
 4. Extended test coverage for both new scripts.
 5. Lifecycle state reporting in the IAA pre-brief injection comment.
 6. Mandatory governing-issue validation when IAA/ECAP is required.
+7. Assurance-control .github/scripts and key workflow changes classified as IAA-triggering.
+8. Wave-record ## TOKEN validated with same reviewed-SHA ancestry check as standalone tokens.
+9. ECAP bundle validated for PASS verdict and current PR reference (not just path detection).
 
 ## Changed Files
 
 - `SCOPE_DECLARATION.md` - Updated for this wave (per §4.3g scope refresh)
-- `.github/scripts/pr-assurance-lifecycle.sh` - New: machine logic determines IAA/ECAP required states; mandatory EXPECTED_ISSUE_NUMBER validation; writes .agent-admin/lifecycle/pr-<N>-assurance-state.json; sets step outputs
+- `.github/scripts/pr-assurance-lifecycle.sh` - New/extended: assurance-control file classifier; mandatory EXPECTED_ISSUE_NUMBER; wave-record SHA ancestry check; ECAP bundle PASS verdict validation; writes lifecycle JSON artifact; sets step outputs
 - `.github/scripts/merge-ready-claim-gate.sh` - New: hard gate blocking merge-ready/handover-ready claims while lifecycle is blocked (MERGE-READY-001)
-- `.github/scripts/iaa-final-assurance-gate.test.sh` - Extended: 7 new tests for lifecycle and merge-ready-claim gates (30 total)
+- `.github/scripts/iaa-final-assurance-gate.test.sh` - Extended: 11 new tests for lifecycle, merge-ready-claim, assurance-control, wave-record SHA, and ECAP verdict gates (34 total)
 - `.github/workflows/preflight-evidence-gate.yml` - Extended: three new jobs (pr-assurance-lifecycle, merge-ready-claim, manage-lifecycle-labels); per-job write permissions for label/comment management
 - `.github/workflows/iaa-prebrief-inject.yml` - Extended: injection comment now includes lifecycle state reporting section (IAA/ECAP required, artifacts, handover allowed, required next actions)
 

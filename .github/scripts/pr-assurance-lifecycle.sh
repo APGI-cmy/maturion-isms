@@ -162,7 +162,21 @@ while IFS= read -r file; do
     continue
   fi
 
-  # Skip .github/ tooling (CI scripts and workflows are not implementation)
+  # Assurance-control files — .github/scripts and key workflows that change the
+  # enforcement logic of IAA/ECAP gates are substantive assurance changes that
+  # require IAA just as much as application code changes do.
+  if [[ "$file" =~ ^\.github/scripts/.*assurance.*\.sh$ ]] || \
+     [[ "$file" =~ ^\.github/scripts/.*iaa.*\.sh$ ]] || \
+     [[ "$file" =~ ^\.github/scripts/.*ecap.*\.sh$ ]] || \
+     [[ "$file" =~ ^\.github/scripts/.*merge-ready.*\.sh$ ]] || \
+     [[ "$file" == ".github/workflows/preflight-evidence-gate.yml" ]] || \
+     [[ "$file" == ".github/workflows/iaa-prebrief-inject.yml" ]]; then
+    IMPLEMENTATION_CHANGED=true
+    IMPL_FILE_LIST="${IMPL_FILE_LIST}\n  - ${file} [assurance-control]"
+    continue
+  fi
+
+  # Skip all other .github/ tooling (non-assurance-control CI scripts and workflows)
   if [[ "$file" =~ ^\.github/ ]]; then
     continue
   fi
@@ -374,9 +388,21 @@ if [ "$IAA_INVOKED" = false ]; then
     [ -z "$WR_ISS" ] && continue
     [ -n "$EXPECTED_ISSUE_NUMBER" ] && [ "$WR_ISS" != "$EXPECTED_ISSUE_NUMBER" ] && continue
 
+    # Reviewed SHA must be present, resolve to a commit, and be reachable from HEAD_SHA
+    # (same enforcement as check_token_valid for standalone iaa-token files)
+    WR_REVIEWED_SHA=$(awk '/^## TOKEN/{f=1} f && /Reviewed[[:space:]]+SHA|HEAD SHA reviewed/{print; exit}' \
+      "$wave_file" 2>/dev/null | grep -oE '[0-9a-fA-F]{7,40}' | head -1 || true)
+    [ -z "$WR_REVIEWED_SHA" ] && continue
+    git rev-parse --verify "${WR_REVIEWED_SHA}^{commit}" >/dev/null 2>&1 || continue
+    if [ -n "$HEAD_SHA" ]; then
+      git rev-parse --verify "${HEAD_SHA}^{commit}" >/dev/null 2>&1 || continue
+      git merge-base --is-ancestor "$WR_REVIEWED_SHA" "$HEAD_SHA" >/dev/null 2>&1 || continue
+    fi
+
     IAA_INVOKED=true
     IAA_ARTIFACT_PATH="$wave_file"
     IAA_VERDICT="PASS"
+    IAA_REVIEWED_SHA="$WR_REVIEWED_SHA"
     echo "✅ Valid IAA token in wave record ## TOKEN: $wave_file"
     break
   done <<< "$WAVE_RECORD_FILES_IN_PR"
@@ -409,10 +435,43 @@ PREHANDOVER_IN_PR=$(git diff "${BASE_SHA}...HEAD" --name-only --diff-filter=AM 2
   || true)
 
 if [ -n "$ECAP_BUNDLES_IN_PR" ]; then
-  ECAP_INVOKED=true
-  ECAP_ARTIFACT_PATH=$(echo "$ECAP_BUNDLES_IN_PR" | head -1)
-  ECAP_VERDICT="PASS"
-  echo "✅ ECAP bundle artifact found: $ECAP_ARTIFACT_PATH"
+  while IFS= read -r ecap_bundle; do
+    [ -z "$ecap_bundle" ] && continue
+    [ ! -f "$ecap_bundle" ] && continue
+
+    # Require a PASS-like verdict in the bundle
+    # Check merge_gate_verdict / admin_ceremony_compliance / QP VERDICT fields
+    ECAP_BUNDLE_VERDICT=$(grep -iE \
+      "^[[:space:]]*(merge_gate_verdict|admin_ceremony_compliance|ecap_verdict)[[:space:]]*:" \
+      "$ecap_bundle" 2>/dev/null | head -1 | \
+      sed 's/.*:[[:space:]]*//' || true)
+    if ! echo "$ECAP_BUNDLE_VERDICT" | grep -qiE "PASS|CS2_WAIVER"; then
+      # Fallback: look for bold QP VERDICT / OPOJD PASS line
+      if ! grep -qiE "\*\*QP VERDICT.*PASS\*\*|\*\*OPOJD.*PASS\*\*|ecap_verdict.*PASS" \
+           "$ecap_bundle" 2>/dev/null; then
+        echo "❌ ECAP bundle found but no PASS verdict detected: $ecap_bundle"
+        continue
+      fi
+    fi
+
+    # Require the bundle to reference the current PR or issue (if known)
+    if [ -n "$PR_NUMBER" ]; then
+      BUNDLE_PR=$(grep -iE "^[[:space:]]*pr:[[:space:]]*" "$ecap_bundle" 2>/dev/null | \
+        head -1 | grep -oE '[0-9]+' | head -1 || true)
+      # "TBD" pr field is allowed (bundle assembled before PR was opened)
+      if [ -n "$BUNDLE_PR" ] && [ "$BUNDLE_PR" != "$PR_NUMBER" ] && \
+         ! grep -qiE "^[[:space:]]*pr:[[:space:]]*(TBD|N/A)" "$ecap_bundle" 2>/dev/null; then
+        echo "❌ ECAP bundle PR reference ($BUNDLE_PR) does not match current PR ($PR_NUMBER): $ecap_bundle"
+        continue
+      fi
+    fi
+
+    ECAP_INVOKED=true
+    ECAP_ARTIFACT_PATH="$ecap_bundle"
+    ECAP_VERDICT="PASS"
+    echo "✅ ECAP bundle artifact with PASS verdict found: $ECAP_ARTIFACT_PATH"
+    break
+  done <<< "$ECAP_BUNDLES_IN_PR"
 fi
 
 # Check for CS2 waiver in PREHANDOVER proofs

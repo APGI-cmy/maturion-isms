@@ -37,6 +37,10 @@
 #   AC-LC-1       Lifecycle script produces assurance-ready for valid token PR      → exit 0
 #   AC-LC-2       Lifecycle script reports blocked for implementation PR no token   → exit 0
 #   AC-LC-3       Lifecycle artifact JSON is written to .agent-admin/lifecycle/     → exit 0
+#   AC-LC-4       Impl PR with missing EXPECTED_ISSUE_NUMBER → lifecycle exits 1    → exit 1
+#   AC-LC-5       Assurance-control .github/scripts change → IAA required           lifecycle BLOCKED
+#   AC-LC-6       Wave record with stale/non-existent reviewed SHA → lifecycle BLOCKED
+#   AC-LC-7       ECAP bundle committed but no PASS verdict → lifecycle BLOCKED
 #
 # Usage:
 #   .github/scripts/iaa-final-assurance-gate.test.sh
@@ -861,6 +865,175 @@ else
 fi
 cd "$TEST_DIR"
 rm -rf "$lc4_workspace"
+echo ""
+
+# AC-LC-5: Assurance-control script change (.github/scripts/*iaa*.sh) → IAA required
+echo "Test: AC-LC-5: Assurance-control script change — lifecycle must require IAA"
+lc5_workspace=$(mktemp -d -p "$TEST_DIR")
+cd "$lc5_workspace"
+git init -q
+git config user.email "test@example.com"
+git config user.name "Test User"
+mkdir -p .agent-admin/assurance .agent-admin/prehandover \
+         .agent-admin/lifecycle \
+         .agent-workspace/foreman-v2/memory \
+         .github/agents .github/workflows .github/scripts governance/canon
+echo "initial" > README.md
+git add .
+git commit -q -m "Initial commit"
+git branch -M main
+git checkout -q -b test-branch
+# Add an assurance-control script (matches *iaa*.sh pattern)
+cat > .github/scripts/iaa-final-assurance-gate.sh << 'SH'
+#!/bin/bash
+echo "changed gate"
+SH
+git add .
+git commit -q -m "Modify assurance-control script"
+lc5_base=$(git rev-parse main 2>/dev/null)
+lc5_head=$(git rev-parse HEAD 2>/dev/null || echo "HEAD")
+set +e
+lc5_output=$(BASE_SHA="$lc5_base" HEAD_SHA="$lc5_head" PR_NUMBER="9999" PR_LABELS="" \
+  PR_BODY="Closes maturion-isms#1514" EXPECTED_ISSUE_NUMBER="1514" \
+  bash "$LIFECYCLE_SCRIPT" 2>&1)
+lc5_exit=$?
+set -e
+# Should exit 0 (lifecycle script itself does not block, just reports)
+# but IAA_REQUIRED must be true and lifecycle must be BLOCKED (no token)
+if echo "$lc5_output" | grep -q "assurance-control" && \
+   echo "$lc5_output" | grep -q "BLOCKED"; then
+  echo "  ✅ PASS (assurance-control change detected; lifecycle BLOCKED)"
+  TEST_PASSED=$((TEST_PASSED + 1))
+else
+  echo "  ❌ FAIL — expected assurance-control detection and BLOCKED status"
+  echo "  Output excerpt:"
+  echo "$lc5_output" | grep -E "assurance-control|IAA required|BLOCKED|LIFECYCLE" | head -5
+  TEST_FAILED=$((TEST_FAILED + 1))
+fi
+cd "$TEST_DIR"
+rm -rf "$lc5_workspace"
+echo ""
+
+# AC-LC-6: Wave-record with stale reviewed SHA → lifecycle must remain BLOCKED
+echo "Test: AC-LC-6: Wave record with stale reviewed SHA — lifecycle must remain BLOCKED"
+lc6_workspace=$(mktemp -d -p "$TEST_DIR")
+cd "$lc6_workspace"
+git init -q
+git config user.email "test@example.com"
+git config user.name "Test User"
+mkdir -p .agent-admin/assurance .agent-admin/prehandover \
+         .agent-admin/lifecycle \
+         .agent-workspace/foreman-v2/memory \
+         .github/agents .github/workflows governance/canon
+echo "initial" > README.md
+git add .
+git commit -q -m "Initial commit"
+git branch -M main
+git checkout -q -b test-branch
+# Add implementation file (so IAA is required)
+mkdir -p modules/mat/src
+echo "export const x = 1;" > modules/mat/src/impl.ts
+git add .
+git commit -q -m "Add impl"
+# Record the SHA before adding more commits (stale SHA)
+STALE_SHA=$(git rev-parse HEAD 2>/dev/null)
+# Add another commit to move HEAD forward (so stale SHA is no longer HEAD)
+echo "more work" > modules/mat/src/impl2.ts
+git add .
+git commit -q -m "More impl"
+# Now add a wave-record with the STALE SHA (not an ancestor that equals HEAD but still valid ancestor)
+# For this test we need a SHA that is an ancestor but the reviewer used it BEFORE final changes
+# Actually, we need to test the other direction: a SHA from BEFORE base (not reachable from test-branch)
+# Create a sha that doesn't exist in this repo at all — simplest approach
+FAKE_SHA="deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+cat > .agent-admin/assurance/iaa-wave-record-test-wave.md << EOF
+# IAA Wave Record — test-wave
+
+## TOKEN
+
+PHASE_B_BLOCKING_TOKEN: IAA-test-PASS
+
+**Token**: IAA-test-PASS
+**Verdict**: ASSURANCE-TOKEN (PASS)
+**PR**: #9999
+**Issue**: maturion-isms#1503
+**Reviewed SHA**: ${FAKE_SHA}
+EOF
+git add .
+git commit -q -m "Add wave record with stale SHA"
+lc6_base=$(git rev-parse main 2>/dev/null)
+lc6_head=$(git rev-parse HEAD 2>/dev/null || echo "HEAD")
+set +e
+lc6_output=$(BASE_SHA="$lc6_base" HEAD_SHA="$lc6_head" PR_NUMBER="9999" PR_LABELS="" \
+  PR_BODY="Closes maturion-isms#1503" EXPECTED_ISSUE_NUMBER="1503" \
+  bash "$LIFECYCLE_SCRIPT" 2>&1)
+lc6_exit=$?
+set -e
+if echo "$lc6_output" | grep -q "BLOCKED"; then
+  echo "  ✅ PASS (wave record with stale SHA → lifecycle BLOCKED)"
+  TEST_PASSED=$((TEST_PASSED + 1))
+else
+  echo "  ❌ FAIL — expected lifecycle BLOCKED for wave record with non-existent reviewed SHA"
+  echo "  Output excerpt:"
+  echo "$lc6_output" | grep -E "BLOCKED|LIFECYCLE|assurance-ready|wave.record" | head -8
+  TEST_FAILED=$((TEST_FAILED + 1))
+fi
+cd "$TEST_DIR"
+rm -rf "$lc6_workspace"
+echo ""
+
+# AC-LC-7: ECAP bundle with no PASS verdict → lifecycle must remain BLOCKED
+echo "Test: AC-LC-7: ECAP bundle with no PASS verdict — lifecycle must remain BLOCKED"
+lc7_workspace=$(mktemp -d -p "$TEST_DIR")
+cd "$lc7_workspace"
+git init -q
+git config user.email "test@example.com"
+git config user.name "Test User"
+mkdir -p .agent-admin/assurance .agent-admin/prehandover \
+         .agent-admin/lifecycle \
+         .agent-workspace/foreman-v2/memory \
+         .agent-workspace/execution-ceremony-admin-agent/bundles \
+         .github/agents governance/canon governance/checklists
+echo "initial" > README.md
+git add .
+git commit -q -m "Initial commit"
+git branch -M main
+git checkout -q -b test-branch
+# Add a governance canon change (triggers ECAP required)
+echo "# Changed canon" > governance/canon/SOME_DOC.md
+git add .
+git commit -q -m "Change governance canon"
+# Add an ECAP bundle with NO PASS verdict (verdict says PENDING)
+cat > .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-test-wave-no-pass.md << 'EOF'
+# ECAP Bundle — test-wave-no-pass
+
+ecap_session: ecap-session-test
+admin_ceremony_compliance: PENDING
+ecap_verdict: PENDING
+pr: TBD
+EOF
+git add .
+git commit -q -m "Add ECAP bundle without PASS verdict"
+lc7_base=$(git rev-parse main 2>/dev/null)
+lc7_head=$(git rev-parse HEAD 2>/dev/null || echo "HEAD")
+set +e
+lc7_output=$(BASE_SHA="$lc7_base" HEAD_SHA="$lc7_head" PR_NUMBER="9999" PR_LABELS="" \
+  PR_BODY="Closes maturion-isms#1503" EXPECTED_ISSUE_NUMBER="1503" \
+  bash "$LIFECYCLE_SCRIPT" 2>&1)
+lc7_exit=$?
+set -e
+if echo "$lc7_output" | grep -q "BLOCKED" || \
+   echo "$lc7_output" | grep -qi "no PASS verdict\|No valid current ECAP"; then
+  echo "  ✅ PASS (ECAP bundle without PASS verdict → lifecycle BLOCKED)"
+  TEST_PASSED=$((TEST_PASSED + 1))
+else
+  echo "  ❌ FAIL — expected lifecycle BLOCKED for ECAP bundle with no PASS verdict"
+  echo "  Output excerpt:"
+  echo "$lc7_output" | grep -E "BLOCKED|LIFECYCLE|ecap|ECAP|PASS|verdict" | head -8
+  TEST_FAILED=$((TEST_FAILED + 1))
+fi
+cd "$TEST_DIR"
+rm -rf "$lc7_workspace"
 echo ""
 
 # ================================================================
