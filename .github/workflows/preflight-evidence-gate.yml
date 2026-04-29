@@ -19,7 +19,7 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
+  pull-requests: read
 
 jobs:
   preflight-evidence-check:
@@ -673,7 +673,9 @@ jobs:
   # Lifecycle state determination (maturion-isms#1519)
   # Machine logic determines IAA/ECAP required states, writes a per-PR lifecycle
   # artifact, and outputs structured state for downstream label/comment automation.
-  # This job is informational — actual blocking is handled by the individual gates.
+  # A non-zero exit from pr-assurance-lifecycle.sh will fail this job and block
+  # the PR; downstream gates (iaa-final-assurance-gate, ecap-admin-ceremony-gate)
+  # consume its outputs for definitive enforcement.
   # ============================================================================
   pr-assurance-lifecycle:
     name: "preflight/pr-assurance-lifecycle"
@@ -769,6 +771,9 @@ jobs:
     name: "preflight/manage-lifecycle-labels"
     runs-on: ubuntu-latest
     needs: pr-assurance-lifecycle
+    permissions:
+      pull-requests: write
+      issues: write
 
     # Only run for Copilot/foreman PRs (same scope as lifecycle job)
     if: >-

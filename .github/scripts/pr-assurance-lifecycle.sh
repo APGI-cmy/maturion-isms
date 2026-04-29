@@ -61,17 +61,44 @@ set_output() {
 }
 
 # ----------------------------------------------------------------
-# CS2 sign-off bypass
+# CS2 sign-off bypass — write waived artifact before exiting
 # ----------------------------------------------------------------
+write_waived_artifact() {
+  local reason="$1"
+  mkdir -p "${LIFECYCLE_DIR}"
+  local _pr_num="${PR_NUMBER:-0}"
+  local _lf="${LIFECYCLE_DIR}/pr-${_pr_num}-assurance-state.json"
+  jq -n \
+    --argjson pr "${_pr_num}" \
+    --arg head_sha "${HEAD_SHA:-}" \
+    --arg reason "$reason" \
+    '{
+      pr: $pr,
+      head_sha: (if $head_sha == "" then null else $head_sha end),
+      waived: true,
+      waiver_reason: $reason,
+      iaa_required: false,
+      iaa_invoked: false,
+      ecap_required: false,
+      ecap_invoked: false,
+      handover_allowed: true,
+      merge_ready_allowed: true
+    }' > "$_lf"
+  echo "Lifecycle artifact written (waived): ${_lf}"
+}
+
 if [[ "$PR_LABELS" == *"CS sign-off: approved"* ]]; then
   echo "✅ PR carries 'CS sign-off: approved' — lifecycle determination: waived."
-  set_output "iaa_required"    "false"
-  set_output "iaa_blocked"     "false"
-  set_output "ecap_required"   "false"
-  set_output "ecap_blocked"    "false"
-  set_output "handover_allowed" "true"
+  write_waived_artifact "CS sign-off: approved"
+  set_output "iaa_required"        "false"
+  set_output "iaa_invoked"         "false"
+  set_output "iaa_blocked"         "false"
+  set_output "ecap_required"       "false"
+  set_output "ecap_invoked"        "false"
+  set_output "ecap_blocked"        "false"
+  set_output "handover_allowed"    "true"
   set_output "merge_ready_allowed" "true"
-  set_output "lifecycle_status" "assurance-ready"
+  set_output "lifecycle_status"    "assurance-ready"
   exit 0
 fi
 
@@ -82,13 +109,16 @@ if [[ "$PR_LABELS" == *"governance"* ]] && \
    [[ "$PR_LABELS" == *"automated"* ]] && \
    [[ "$PR_LABELS" == *"agent:liaison"* ]]; then
   echo "✅ Automated governance alignment PR — lifecycle determination: waived."
-  set_output "iaa_required"    "false"
-  set_output "iaa_blocked"     "false"
-  set_output "ecap_required"   "false"
-  set_output "ecap_blocked"    "false"
-  set_output "handover_allowed" "true"
+  write_waived_artifact "automated governance alignment PR"
+  set_output "iaa_required"        "false"
+  set_output "iaa_invoked"         "false"
+  set_output "iaa_blocked"         "false"
+  set_output "ecap_required"       "false"
+  set_output "ecap_invoked"        "false"
+  set_output "ecap_blocked"        "false"
+  set_output "handover_allowed"    "true"
   set_output "merge_ready_allowed" "true"
-  set_output "lifecycle_status" "assurance-ready"
+  set_output "lifecycle_status"    "assurance-ready"
   exit 0
 fi
 
