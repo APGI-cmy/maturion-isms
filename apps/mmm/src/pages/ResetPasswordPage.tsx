@@ -10,14 +10,32 @@ export default function ResetPasswordPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Supabase appends #access_token=...&type=recovery to the redirect URL.
-    // getSession picks it up automatically via the auth state change event.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') {
+    let isMounted = true;
+    const isRecoveryFlow = () => {
+      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+      const searchParams = new URLSearchParams(window.location.search);
+      return hashParams.get('type') === 'recovery' || searchParams.get('type') === 'recovery';
+    };
+
+    const syncSessionReady = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (isMounted && session && isRecoveryFlow()) {
+        setSessionReady(true);
+      }
+    };
+
+    void syncSessionReady();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY' || (session && isRecoveryFlow())) {
         setSessionReady(true);
       }
     });
-    return () => subscription.unsubscribe();
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
