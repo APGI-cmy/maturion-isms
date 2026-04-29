@@ -70,7 +70,7 @@ export default function ResetPasswordPage() {
           <span className="auth-card__logo-text">Maturion <span>MMM</span></span>
         </div>
         <h1 className="auth-card__title">Set a new password</h1>
-        <p className="auth-card__subtitle">Enter and confirm your new password below.</p>
+        <p className="auth-card__subtitle">Enter your new password below.</p>
         {!sessionReady && (
           <p className="auth-card__subtitle">Verifying your reset link&hellip;</p>
         )}
