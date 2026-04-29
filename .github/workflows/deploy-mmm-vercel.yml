@@ -320,34 +320,31 @@ jobs:
       - name: SPA direct-route smoke test — verify auth/app routes return 2xx/3xx
         env:
           PREVIEW_URL: ${{ steps.deploy.outputs.preview-url }}
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
           echo "Running SPA direct-route smoke test against: $PREVIEW_URL"
-          echo "(using vercel curl to bypass Vercel deployment protection)"
           ROUTES=("/login" "/forgot-password" "/reset-password" "/onboarding" "/frameworks" "/frameworks/upload")
           FAIL=0
           for route in "${ROUTES[@]}"; do
-            http_code=$(vercel curl --token="$VERCEL_TOKEN" \
-              -s -o /dev/null -w "%{http_code}" \
-              --max-time 20 \
+            http_code=$(curl -L -s -o /dev/null -w "%{http_code}" \
+              --connect-timeout 10 \
+              --max-time 30 \
               "$PREVIEW_URL$route" 2>/dev/null || echo "000")
             if [ "$http_code" = "404" ]; then
-              echo "❌ FAIL: $route → HTTP $http_code (404 NOT_FOUND — SPA fallback likely broken; the route is not served by index.html)"
+              echo "❌ FAIL: $route → HTTP $http_code (404 NOT_FOUND — SPA fallback likely broken)"
               FAIL=1
             elif [ "$http_code" = "401" ] || [ "$http_code" = "403" ]; then
-              echo "❌ FAIL: $route → HTTP $http_code (deployment protection / auth bypass missing — app route was not reached)"
+              echo "❌ FAIL: $route → HTTP $http_code (auth/protection blocking route — app not reached)"
               FAIL=1
             elif echo "$http_code" | grep -qE '^[23][0-9][0-9]$'; then
               echo "✅ PASS: $route → HTTP $http_code"
             else
-              echo "❌ FAIL: $route → HTTP $http_code (unexpected smoke failure — check deployment logs)"
+              echo "❌ FAIL: $route → HTTP $http_code (network/timeout/unexpected — check deployment logs)"
               FAIL=1
             fi
           done
           if [ "$FAIL" -ne 0 ]; then
             echo ""
             echo "SPA direct-route smoke test FAILED — one or more routes returned an error."
-            echo "See per-route output above for the specific failure class (404/401/403/other)."
             exit 1
           fi
           echo ""
