@@ -24,7 +24,8 @@ Fix MMM login discoverability and password reset flow (issue #1512):
 - `SCOPE_DECLARATION.md` - Updated for this wave (per §4.3g scope refresh)
 - `.github/workflows/deploy-mmm-vercel.yml` - Added .vercel/output routing assertion step and SPA direct-route smoke test step after preview deploy
 - `apps/mmm/src/App.tsx` - Added ForgotPasswordPage and ResetPasswordPage imports and /forgot-password, /reset-password routes
-- `apps/mmm/src/pages/ForgotPasswordPage.tsx` - New: forgot-password form calling supabase.auth.resetPasswordForEmail with VITE_APP_URL redirect
+- `apps/mmm/src/pages/ForgotPasswordPage.tsx` - New: forgot-password form calling supabase.auth.resetPasswordForEmail with window.location.origin redirect
+- `vercel.json` - Set framework: null so Vercel does not regenerate Vite adapter /404.html error-fallback routes; SPA fallback controlled by explicit rewrites / generated-output patch
 - `apps/mmm/src/pages/LandingPage.tsx` - Added Sign In links to header nav and hero/CTA action group
 - `apps/mmm/src/pages/LoginPage.tsx` - Added "Forgot your password?" link to /forgot-password
 - `apps/mmm/src/pages/ResetPasswordPage.tsx` - New: reset-password callback using PASSWORD_RECOVERY event and supabase.auth.updateUser; added timeout/error state for expired/invalid reset links
@@ -37,7 +38,8 @@ Fix MMM login discoverability and password reset flow (issue #1512):
 ## Out of Scope
 
 - Any other Supabase schema migrations
-- Any deployment workflow changes
+- Any deployment workflow changes outside `.github/workflows/deploy-mmm-vercel.yml`
+- Any deployment ownership changes unrelated to MMM frontend SPA fallback verification
 - Any other app directories outside `apps/mmm/src/`
 - Any governance canon files
 - Any other test suites (B1–B8 base tests unchanged)
