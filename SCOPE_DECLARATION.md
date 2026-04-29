@@ -1,47 +1,28 @@
-# Scope Declaration — fix-signup-onboarding-route-20260428
+# Scope Declaration — layer-down-propagate-governance-changes-d99e68e8
 
-**Wave**: fix-signup-onboarding-route-20260428
-**Issue**: maturion-isms#1507
-**Branch**: copilot/fix-signup-onboarding-route
-**Date**: 2026-04-28
+**Wave**: layer-down-propagate-governance-changes-d99e68e8
+**Issue**: maturion-isms#1516
+**Branch**: copilot/layer-down-propagate-governance-changes-9f9d4f0b-cdcd-46bb-a181-5e9d7c8ca71a
+**Date**: 2026-04-29
 **Last refreshed**: 2026-04-29 (post-final-edit scope refresh per §4.3g / AAP-28)
-**Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
+**Authority**: SCOPE_TO_DIFF_RULE.md, LAYERING_AND_RIPPLING_AUTOMATION_STRATEGY.md v1.0.0
 
 ## Scope Decision
 
-Fix build defects and post-review blocking items (issue #1507):
-1. `ProtectedRoute` redirected unauthenticated users to `/login` but no `LoginPage.tsx`
-   or `/login` route existed — users were stuck in an unresolvable redirect loop.
-2. `SignUpPage.tsx` blindly navigated to `/onboarding` regardless of whether Supabase
-   returned a session; if email confirmation is required the user was sent to a protected
-   route without explanation. Fix: inspect `data.session` and show email-confirmation
-   message when no session is present.
-3. `mmm-upload-framework-source` incorrectly required ADMIN role (architecture §A4.2
-   specifies JWT-only). Also: the function's INSERT into `mmm_parse_jobs` referenced
-   `organisation_id`, `created_by`, `source_type`, and `metadata` but the base schema
-   only had `id`, `upload_id`, `document_id`, `status`, `result_json`, `created_at`,
-   `updated_at`. Migration added for the missing columns; `metadata` key renamed to
-   `result_json` to match the actual JSONB column.
-4. Vercel SPA fallback already configured in `vercel.json`; anti-regression test added
-   to prove coverage for direct-route navigation to protected routes.
+Propagate governance layer-down from canonical source APGI-cmy/maturion-foreman-governance commit d99e68e8759af5f619851116e583d768c4f4c1e1. Three governance artifacts changed: AGENT_HANDOVER_AUTOMATION.md (v1.7.0), SCOPE_DECLARATION_SCHEMA.md (v2.0.0), scope-declaration.template.md (v2.0.0). Ripple PR #1517 already merged canonical files. This wave updates GOVERNANCE_ALIGNMENT_INVENTORY.json and creates governance evidence artifacts.
 
 ## Changed Files
 
 - `SCOPE_DECLARATION.md` - Updated for this wave (per §4.3g scope refresh)
-- `apps/mmm/src/App.tsx` - Added LoginPage import and /login route
-- `apps/mmm/src/pages/LoginPage.tsx` - New login page with supabase.auth.signInWithPassword
-- `apps/mmm/src/pages/SignUpPage.tsx` - Inspect data.session after signUp; show email-confirmation message when no session returned; navigate to /onboarding only when session present
-- `modules/MMM/BUILD_PROGRESS_TRACKER.md` - Added B7 BLOCKED and Stage 12 IN_PROGRESS text for T-MMM-S6-112/T-MMM-S6-175 test compliance
-- `modules/MMM/tests/B9-golden-path/b9-golden-path.test.ts` - Removed mmm-upload-framework-source from adminOnlyFunctions; added anti-regression tests for signup/session, Vercel SPA fallback, and parse-job schema contract
-- `supabase/functions/mmm-upload-framework-source/index.ts` - Removed requireRole(['ADMIN']); changed insert to use result_json (not metadata); added schema comment referencing migration
-- `supabase/migrations/20260429000001_mmm_parse_jobs_org_columns.sql` - ALTER TABLE to add organisation_id, created_by, source_type columns to mmm_parse_jobs plus RLS policies
-- `.agent-admin/assurance/iaa-wave-record-fix-signup-onboarding-20260428.md` - IAA wave record with PRE-BRIEF for this wave
-- `.agent-workspace/foreman-v2/memory/session-fix-signup-onboarding-20260428.md` - Foreman session memory with agents_delegated_to: ui-builder, api-builder, qa-builder
+- `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` - Updated with canonical versions from ripple d99e68e8: AGENT_HANDOVER_AUTOMATION.md v1.7.0, SCOPE_DECLARATION_SCHEMA.md v2.0.0, scope-declaration.template.md v2.0.0; alignment_summary aligned 41→43
+- `.agent-workspace/governance-liaison-isms/memory/session-071-20260429.md` - Session memory for this governance liaison session
+- `.agent-workspace/governance-liaison-isms/memory/PREHANDOVER_PROOF_SESSION_071_RIPPLE_D99E68E8.md` - PREHANDOVER proof for this session
+- `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md` - Parking station suggestion appended for session-071
 
 ## Out of Scope
 
-- Any other Supabase schema migrations
-- Any deployment workflow changes
-- Any other app directories outside `apps/mmm/src/` and `supabase/functions/mmm-upload-framework-source/`
-- Any governance canon files
-- Any other test suites (B1–B8 base tests unchanged)
+- Any production code changes
+- Any `.github/agents/*.md` agent contract files
+- Any `.github/workflows/` workflow files
+- Any Supabase schema migrations
+- Any app source code
