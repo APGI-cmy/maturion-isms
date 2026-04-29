@@ -919,7 +919,8 @@ describe('NBR-002: HTTP 403 Propagation — all protected functions gate with re
   const adminOnlyFunctions = [
     'supabase/functions/mmm-framework-init/index.ts',
     'supabase/functions/mmm-framework-publish/index.ts',
-    'supabase/functions/mmm-upload-framework-source/index.ts',
+    // mmm-upload-framework-source is JWT-only (not ADMIN) per architecture §A4.2 —
+    // see issue maturion-isms#1507: authenticated KUC upload access fix.
   ];
 
   for (const fn of adminOnlyFunctions) {
@@ -945,6 +946,14 @@ describe('NBR-002: HTTP 403 Propagation — all protected functions gate with re
   it('mmm-score-confirm propagates HTTP 403 on org_id mismatch (NBR-002)', () => {
     const src = readFile('supabase/functions/mmm-score-confirm/index.ts');
     expect(src).toMatch(/403|NBR-002/);
+  });
+
+  it('mmm-upload-framework-source is JWT-only (not ADMIN-gated) per architecture §A4.2 (issue #1507)', () => {
+    // Architecture: mmm-upload-framework-source requires JWT only — any authenticated user may upload.
+    // ADMIN gate is NOT applied here; publish-gate enforcement is in mmm-framework-publish.
+    const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
+    expect(src).toContain('validateJWT');
+    expect(src).not.toContain("requireRole(claims.role, ['ADMIN'])");
   });
 });
 
@@ -1146,3 +1155,115 @@ describe('ALL-176-GREEN: B9 config.toml includes all functions', () => {
     expect(config).toContain('[functions.mmm-pit-export-send]');
   });
 });
+
+// =============================================================================
+// ISSUE #1507: Signup/Onboarding Route Handling & Authenticated KUC Upload
+// Anti-regression gates added 2026-04-28.
+// =============================================================================
+
+describe('ISSUE-1507: LoginPage exists and /login route is registered in App.tsx', () => {
+  it('apps/mmm/src/pages/LoginPage.tsx exists', () => {
+    expect(fileExists('apps/mmm/src/pages/LoginPage.tsx')).toBe(true);
+  });
+  it('LoginPage.tsx calls supabase.auth.signInWithPassword', () => {
+    const src = readFile('apps/mmm/src/pages/LoginPage.tsx');
+    expect(src).toContain('supabase.auth.signInWithPassword');
+  });
+  it('LoginPage.tsx has email and password inputs', () => {
+    const src = readFile('apps/mmm/src/pages/LoginPage.tsx');
+    expect(src).toContain('type="email"');
+    expect(src).toContain('type="password"');
+  });
+  it('App.tsx includes /login route', () => {
+    const src = readFile('apps/mmm/src/App.tsx');
+    expect(src).toContain('"/login"');
+    expect(src).toContain('LoginPage');
+  });
+  it('ProtectedRoute redirects to /login and /login route is now resolvable', () => {
+    const protectedRoute = readFile('apps/mmm/src/components/ProtectedRoute.tsx');
+    expect(protectedRoute).toContain('/login');
+    const appSrc = readFile('apps/mmm/src/App.tsx');
+    expect(appSrc).toContain('"/login"');
+  });
+});
+
+// =============================================================================
+// ISSUE-1507 FOLLOW-UP: Review feedback anti-regression tests
+// =============================================================================
+
+describe('ISSUE-1507: SignUpPage handles email-confirmation / no-session correctly', () => {
+  it('SignUpPage.tsx checks data.session before navigating to /onboarding', () => {
+    const src = readFile('apps/mmm/src/pages/SignUpPage.tsx');
+    // Must inspect returned session — not blindly navigate
+    expect(src).toContain('data.session');
+  });
+  it('SignUpPage.tsx shows confirmation message when no session is returned', () => {
+    const src = readFile('apps/mmm/src/pages/SignUpPage.tsx');
+    // Must handle the no-session case (email confirmation required)
+    expect(src).toMatch(/email.confirmation|confirmation.*message|check.*email|confirmed/i);
+    expect(src).toContain('email-confirmation-message');
+  });
+  it('SignUpPage.tsx does NOT blindly navigate to /onboarding without session check', () => {
+    const src = readFile('apps/mmm/src/pages/SignUpPage.tsx');
+    // The old pattern was: signUp → navigate('/onboarding') with no session check
+    // New pattern: navigate only if data.session is truthy
+    expect(src).not.toMatch(/signUp[\s\S]{0,200}navigate\(['"]\/onboarding['"]\)[\s\S]{0,50}setConfirmed/);
+  });
+});
+
+describe('ISSUE-1507: Vercel SPA fallback — direct-route navigation does not produce 404', () => {
+  it('vercel.json exists with catch-all rewrite to index.html', () => {
+    expect(fileExists('vercel.json')).toBe(true);
+    const config = readFile('vercel.json');
+    expect(config).toContain('index.html');
+    expect(config).toContain('rewrites');
+  });
+  it('vercel.json catch-all rewrite covers /onboarding (SPA direct-route)', () => {
+    const config = readFile('vercel.json');
+    // Must have a wildcard/catch-all source that rewrites to index.html
+    // Pattern: source covers all non-asset paths
+    expect(config).toMatch(/source.*\.\*\)|source.*\(\.\+\)/);
+    expect(config).toMatch(/destination.*index\.html/);
+  });
+  it('vercel.json does not exclude /onboarding, /framework-origin, /frameworks, /frameworks/upload', () => {
+    const config = readFile('vercel.json');
+    // The rewrite must NOT explicitly exclude these app paths
+    expect(config).not.toMatch(/\/onboarding.*404/);
+    expect(config).not.toMatch(/\/framework-origin.*404/);
+  });
+});
+
+describe('ISSUE-1507: mmm-upload-framework-source parse-job insert matches mmm_parse_jobs schema', () => {
+  it('mmm-upload-framework-source insert uses result_json (not metadata column — not in schema)', () => {
+    const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
+    // Must NOT insert into a bare "metadata:" key at column level — that column does not exist in mmm_parse_jobs
+    // (upload_metadata inside result_json is fine; we check for a standalone column key)
+    expect(src).not.toMatch(/^\s+metadata:\s/m);
+    // Must use result_json (the actual JSONB column)
+    expect(src).toContain('result_json');
+  });
+  it('migration 20260429000001 adds organisation_id, created_by, source_type to mmm_parse_jobs', () => {
+    const migration = readFile('supabase/migrations/20260429000001_mmm_parse_jobs_org_columns.sql');
+    expect(migration).toContain('organisation_id');
+    expect(migration).toContain('created_by');
+    expect(migration).toContain('source_type');
+    expect(migration).toContain('mmm_parse_jobs');
+    expect(migration).toContain('ALTER TABLE');
+  });
+  it('mmm-upload-framework-source insert only references columns that exist in mmm_parse_jobs', () => {
+    const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
+    // Schema columns (base + migration): id, upload_id, document_id, status, result_json,
+    // created_at, updated_at, organisation_id, created_by, source_type
+    // The insert must use only these columns — not non-existent "metadata"
+    expect(src).toContain('organisation_id');
+    expect(src).toContain('created_by');
+    expect(src).toContain('source_type');
+    expect(src).toContain("status: 'PENDING'");
+  });
+  it('mmm_parse_jobs schema has result_json column (JSONB for parse metadata storage)', () => {
+    const migration = readFile('supabase/migrations/20260420000001_mmm_core_tables.sql');
+    // Verify the base schema has result_json
+    expect(migration).toMatch(/result_json\s+jsonb/);
+  });
+});
+
