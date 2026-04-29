@@ -2,8 +2,9 @@
 
 ## Status
 Canonical Governance Specification  
-Version: v1  
+Version: v2.0.0  
 Authority: Governance  
+Amended: 2026-04-29 — v2.0.0: Updated §3 artifact location to per-PR path (.agent-admin/scope-declarations/pr-<PR_NUMBER>.md); §4 required sections updated to include Files Changed (section 7); §5.1 header fields updated from v1 to v2 (PR_NUMBER, ISSUE, BRANCH); §5.7 Files Changed subsection added with three-way consistency rule; §6 Validity Rules extended with numeric field checks; authority: CS2 — issue #1359 (per-PR immutable scope declaration model).  
 Applies To: All PRs, All Builders, All Repositories
 
 ---
@@ -29,6 +30,7 @@ A PR may not exist without a valid Scope Declaration.
 3. Anything not explicitly in scope is OUT of scope.
 4. Scope may not expand after PR creation.
 5. If scope must expand, the PR MUST be closed and restarted.
+6. Each PR MUST own its own immutable scope declaration file — the global shared model is abolished.
 
 ---
 
@@ -36,12 +38,24 @@ A PR may not exist without a valid Scope Declaration.
 
 A valid Scope Declaration MUST be located at:
 
-governance/scope-declaration.md
+```
+.agent-admin/scope-declarations/pr-<PR_NUMBER>.md
+```
 
-yaml
-Copy code
+Examples:
 
-No other filename or location is permitted.
+```
+.agent-admin/scope-declarations/pr-1360.md
+.agent-admin/scope-declarations/pr-1361.md
+```
+
+No other filename or location is permitted as the authoritative per-PR scope artifact.
+
+> **Deprecated path**: `governance/scope-declaration.md` (global shared file) — no longer permitted
+> as the per-PR scope evidence source. See `governance/scope-declaration.md` for the migration notice.
+
+Each PR must introduce or update **exactly one** scope declaration file matching its own PR number.
+The file is immutable once committed — it is not overwritten by subsequent PRs.
 
 ---
 
@@ -55,14 +69,17 @@ A valid Scope Declaration MUST contain the following sections **in order**:
 4. Explicitly Out of Scope
 5. Expected Verification Signal
 6. Scope Freeze Declaration
+7. Files Changed
 
 ---
 
 ## 5. Required Fields (Exact Markers)
 
 ### 5.1 Header
-- `SCOPE_SCHEMA_VERSION: v1`
-- `PR_ID:` (PR number or placeholder)
+- `SCOPE_SCHEMA_VERSION: v2`
+- `PR_NUMBER:` (PR number)
+- `ISSUE:` (issue number — issue title)
+- `BRANCH:` (branch name)
 - `OWNER:` (Builder or Agent)
 - `DATE_UTC:`
 
@@ -115,6 +132,15 @@ If scope changes, the PR must be closed.
 
 ---
 
+### 5.7 Files Changed
+- `## FILES_CHANGED` section header
+- `FILES_CHANGED: N` (numeric count of changed files — must equal the count of bullet entries and `git diff --name-only origin/main...HEAD | wc -l`)
+- One `- <path>` bullet entry per changed file
+
+All three values MUST be consistent: the numeric `FILES_CHANGED: N` field, the count of bullet entries, and the actual git diff count.
+
+---
+
 ## 6. Validity Rules
 
 A Scope Declaration is INVALID if:
@@ -122,6 +148,8 @@ A Scope Declaration is INVALID if:
 - More than one responsibility domain is declared
 - OUT_OF_SCOPE does not include required exclusions
 - SCOPE_FROZEN is not YES
+- `FILES_CHANGED: N` does not match the count of bullet entries under `## FILES_CHANGED`
+- `FILES_CHANGED: N` does not match `git diff --name-only origin/main...HEAD | wc -l`
 
 ---
 
