@@ -40,13 +40,12 @@
 --
 -- AUDIT LOGGING
 -- -------------
--- verify_mps_source_pack_status() logs every invocation to
+-- Every externally callable verification RPC logs its invocation to
 -- governance_readonly.verification_log via the SECURITY DEFINER helper
--- log_verification_call.  This satisfies the "query/RPC execution is
--- logged/auditable" security requirement for the primary consolidated
--- verification RPC.  The four simpler count/list/search RPCs do not
--- currently log individually; if per-call auditing is required for those,
--- add a PERFORM log_verification_call(...) call inside each one.
+-- log_verification_call.  This satisfies the Issue #1505 requirement that
+-- "all query/RPC usage must be logged."  Each function accepts an optional
+-- p_caller text parameter (DEFAULT 'unknown') so the workflow can pass the
+-- caller_id from the dispatch input.
 -- =============================================================================
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -108,7 +107,8 @@ COMMENT ON FUNCTION governance_readonly.log_verification_call(text, text) IS
 --    Returns the number of records in public.mmm_maturity_process_steps
 -- ─────────────────────────────────────────────────────────────────────────────
 CREATE OR REPLACE FUNCTION governance_readonly.count_mmm_mps_records(
-    p_framework_org_id uuid DEFAULT NULL
+    p_framework_org_id uuid DEFAULT NULL,
+    p_caller           text DEFAULT 'unknown'
 )
 RETURNS TABLE (
     mps_total           bigint,
@@ -120,6 +120,9 @@ SECURITY DEFINER
 SET search_path = governance_readonly, public
 AS $$
 BEGIN
+    -- Log the verification call for audit trail
+    PERFORM governance_readonly.log_verification_call(p_caller, 'mps_count');
+
     RETURN QUERY
     SELECT
         COUNT(mps.id)                    AS mps_total,
@@ -132,16 +135,17 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION governance_readonly.count_mmm_mps_records(uuid) IS
+COMMENT ON FUNCTION governance_readonly.count_mmm_mps_records(uuid, text) IS
   'Read-only: counts mmm_maturity_process_steps records. '
-  'SELECT-only. No writes. maturion-isms#1505.';
+  'Logs invocation via log_verification_call. SELECT-only. maturion-isms#1505.';
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 5. count_mmm_criteria_records()
 --    Returns the number of records in public.mmm_criteria
 -- ─────────────────────────────────────────────────────────────────────────────
 CREATE OR REPLACE FUNCTION governance_readonly.count_mmm_criteria_records(
-    p_framework_org_id uuid DEFAULT NULL
+    p_framework_org_id uuid DEFAULT NULL,
+    p_caller           text DEFAULT 'unknown'
 )
 RETURNS TABLE (
     criteria_total      bigint,
@@ -153,6 +157,9 @@ SECURITY DEFINER
 SET search_path = governance_readonly, public
 AS $$
 BEGIN
+    -- Log the verification call for audit trail
+    PERFORM governance_readonly.log_verification_call(p_caller, 'criteria_count');
+
     RETURN QUERY
     SELECT
         COUNT(c.id)                      AS criteria_total,
@@ -166,9 +173,9 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION governance_readonly.count_mmm_criteria_records(uuid) IS
+COMMENT ON FUNCTION governance_readonly.count_mmm_criteria_records(uuid, text) IS
   'Read-only: counts mmm_criteria records. '
-  'SELECT-only. No writes. maturion-isms#1505.';
+  'Logs invocation via log_verification_call. SELECT-only. maturion-isms#1505.';
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 6. list_mmm_framework_source_documents()
@@ -176,7 +183,8 @@ COMMENT ON FUNCTION governance_readonly.count_mmm_criteria_records(uuid) IS
 --    No file contents are returned — only metadata.
 -- ─────────────────────────────────────────────────────────────────────────────
 CREATE OR REPLACE FUNCTION governance_readonly.list_mmm_framework_source_documents(
-    p_name_filter text DEFAULT NULL
+    p_name_filter text DEFAULT NULL,
+    p_caller      text DEFAULT 'unknown'
 )
 RETURNS TABLE (
     object_name         text,
@@ -191,6 +199,9 @@ SECURITY DEFINER
 SET search_path = governance_readonly, public, storage
 AS $$
 BEGIN
+    -- Log the verification call for audit trail
+    PERFORM governance_readonly.log_verification_call(p_caller, 'framework_docs');
+
     RETURN QUERY
     SELECT
         obj.name                            AS object_name,
@@ -207,9 +218,10 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION governance_readonly.list_mmm_framework_source_documents(text) IS
+COMMENT ON FUNCTION governance_readonly.list_mmm_framework_source_documents(text, text) IS
   'Read-only: lists storage.objects metadata for mmm-framework-sources bucket. '
-  'Returns metadata only — no file contents. SELECT-only. maturion-isms#1505.';
+  'Returns metadata only — no file contents. '
+  'Logs invocation via log_verification_call. SELECT-only. maturion-isms#1505.';
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 7. search_ai_knowledge_mps_sources()
@@ -217,7 +229,8 @@ COMMENT ON FUNCTION governance_readonly.list_mmm_framework_source_documents(text
 --    Returns metadata snippets only — no full embeddings, no PII.
 -- ─────────────────────────────────────────────────────────────────────────────
 CREATE OR REPLACE FUNCTION governance_readonly.search_ai_knowledge_mps_sources(
-    p_search_term text DEFAULT 'maturity process step'
+    p_search_term text DEFAULT 'maturity process step',
+    p_caller      text DEFAULT 'unknown'
 )
 RETURNS TABLE (
     record_id           text,
@@ -234,6 +247,9 @@ SECURITY DEFINER
 SET search_path = governance_readonly, public
 AS $$
 BEGIN
+    -- Log the verification call for audit trail
+    PERFORM governance_readonly.log_verification_call(p_caller, 'ai_knowledge');
+
     RETURN QUERY
     SELECT
         ak.id::text                                          AS record_id,
@@ -254,10 +270,10 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION governance_readonly.search_ai_knowledge_mps_sources(text) IS
+COMMENT ON FUNCTION governance_readonly.search_ai_knowledge_mps_sources(text, text) IS
   'Read-only: searches ai_knowledge for MPS-related source content. '
   'Returns 200-char snippets only — no full embeddings, no PII. '
-  'SELECT-only. maturion-isms#1505.';
+  'Logs invocation via log_verification_call. SELECT-only. maturion-isms#1505.';
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 8. verify_mps_source_pack_status()
@@ -394,26 +410,26 @@ REVOKE EXECUTE ON FUNCTION governance_readonly.log_verification_call(text, text)
     FROM PUBLIC;
 REVOKE EXECUTE ON FUNCTION governance_readonly.verify_mps_source_pack_status(text)
     FROM PUBLIC;
-REVOKE EXECUTE ON FUNCTION governance_readonly.list_mmm_framework_source_documents(text)
+REVOKE EXECUTE ON FUNCTION governance_readonly.list_mmm_framework_source_documents(text, text)
     FROM PUBLIC;
-REVOKE EXECUTE ON FUNCTION governance_readonly.count_mmm_mps_records(uuid)
+REVOKE EXECUTE ON FUNCTION governance_readonly.count_mmm_mps_records(uuid, text)
     FROM PUBLIC;
-REVOKE EXECUTE ON FUNCTION governance_readonly.count_mmm_criteria_records(uuid)
+REVOKE EXECUTE ON FUNCTION governance_readonly.count_mmm_criteria_records(uuid, text)
     FROM PUBLIC;
-REVOKE EXECUTE ON FUNCTION governance_readonly.search_ai_knowledge_mps_sources(text)
+REVOKE EXECUTE ON FUNCTION governance_readonly.search_ai_knowledge_mps_sources(text, text)
     FROM PUBLIC;
 
 GRANT USAGE ON SCHEMA governance_readonly TO service_role;
 
 GRANT EXECUTE ON FUNCTION governance_readonly.verify_mps_source_pack_status(text)
     TO service_role;
-GRANT EXECUTE ON FUNCTION governance_readonly.list_mmm_framework_source_documents(text)
+GRANT EXECUTE ON FUNCTION governance_readonly.list_mmm_framework_source_documents(text, text)
     TO service_role;
-GRANT EXECUTE ON FUNCTION governance_readonly.count_mmm_mps_records(uuid)
+GRANT EXECUTE ON FUNCTION governance_readonly.count_mmm_mps_records(uuid, text)
     TO service_role;
-GRANT EXECUTE ON FUNCTION governance_readonly.count_mmm_criteria_records(uuid)
+GRANT EXECUTE ON FUNCTION governance_readonly.count_mmm_criteria_records(uuid, text)
     TO service_role;
-GRANT EXECUTE ON FUNCTION governance_readonly.search_ai_knowledge_mps_sources(text)
+GRANT EXECUTE ON FUNCTION governance_readonly.search_ai_knowledge_mps_sources(text, text)
     TO service_role;
 
 -- Explicitly deny direct table access through this schema to service_role

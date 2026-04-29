@@ -142,10 +142,10 @@ result and a citation reference for governance records.
 - **No full content**: `search_ai_knowledge_mps_sources` returns at
   most 200-character content snippets.
 - **No embeddings**: No vector data is returned by any RPC.
-- **Audit logged**: `verify_mps_source_pack_status` records every
-  invocation in `governance_readonly.verification_log` via the
-  `SECURITY DEFINER` helper `log_verification_call`. The four simpler
-  count/list/search RPCs do not currently log individually.
+- **Audit logged**: Every verification RPC logs its invocation to
+  `governance_readonly.verification_log` via the `SECURITY DEFINER` helper
+  `log_verification_call`. Each RPC accepts a `p_caller text DEFAULT 'unknown'`
+  parameter so the workflow can record the caller identity.
 - **Allowlist enforced by workflow**: `verify-supabase-readonly.yml`
   contains an explicit `case` allowlist — no arbitrary SQL can be
   executed through this workflow.
@@ -247,20 +247,20 @@ The `governance_readonly` schema is created by migration
 | `governance_readonly.verification_log` | Table | Append-only audit log for verification calls |
 | `governance_readonly.log_verification_call(text, text)` | Function (SECURITY DEFINER) | Internal audit logger — called by verification RPCs |
 | `governance_readonly.verify_mps_source_pack_status(text)` | Function (SECURITY DEFINER) | Consolidated MPS source-pack check |
-| `governance_readonly.list_mmm_framework_source_documents(text)` | Function (SECURITY DEFINER) | Lists storage object metadata |
-| `governance_readonly.count_mmm_mps_records(uuid)` | Function (SECURITY DEFINER) | Counts MPS records |
-| `governance_readonly.count_mmm_criteria_records(uuid)` | Function (SECURITY DEFINER) | Counts criteria records |
-| `governance_readonly.search_ai_knowledge_mps_sources(text)` | Function (SECURITY DEFINER) | Searches `ai_knowledge` with content snippet only |
+| `governance_readonly.list_mmm_framework_source_documents(text, text)` | Function (SECURITY DEFINER) | Lists storage object metadata |
+| `governance_readonly.count_mmm_mps_records(uuid, text)` | Function (SECURITY DEFINER) | Counts MPS records |
+| `governance_readonly.count_mmm_criteria_records(uuid, text)` | Function (SECURITY DEFINER) | Counts criteria records |
+| `governance_readonly.search_ai_knowledge_mps_sources(text, text)` | Function (SECURITY DEFINER) | Searches `ai_knowledge` with content snippet only |
 
 ### 5.2 Grants
 
 ```sql
 GRANT USAGE ON SCHEMA governance_readonly TO service_role;
-GRANT EXECUTE ON FUNCTION governance_readonly.verify_mps_source_pack_status(text)        TO service_role;
-GRANT EXECUTE ON FUNCTION governance_readonly.list_mmm_framework_source_documents(text)   TO service_role;
-GRANT EXECUTE ON FUNCTION governance_readonly.count_mmm_mps_records(uuid)                 TO service_role;
-GRANT EXECUTE ON FUNCTION governance_readonly.count_mmm_criteria_records(uuid)            TO service_role;
-GRANT EXECUTE ON FUNCTION governance_readonly.search_ai_knowledge_mps_sources(text)       TO service_role;
+GRANT EXECUTE ON FUNCTION governance_readonly.verify_mps_source_pack_status(text)          TO service_role;
+GRANT EXECUTE ON FUNCTION governance_readonly.list_mmm_framework_source_documents(text, text) TO service_role;
+GRANT EXECUTE ON FUNCTION governance_readonly.count_mmm_mps_records(uuid, text)            TO service_role;
+GRANT EXECUTE ON FUNCTION governance_readonly.count_mmm_criteria_records(uuid, text)       TO service_role;
+GRANT EXECUTE ON FUNCTION governance_readonly.search_ai_knowledge_mps_sources(text, text)  TO service_role;
 ```
 
 No direct SELECT grants are made on base tables through this schema.

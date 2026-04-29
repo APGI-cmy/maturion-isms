@@ -172,22 +172,22 @@ jobs:
 
             mps_count)
               echo "Calling governance_readonly.count_mmm_mps_records()..."
-              SQL="SELECT * FROM governance_readonly.count_mmm_mps_records();"
+              SQL="SELECT * FROM governance_readonly.count_mmm_mps_records(NULL, '${SAFE_CALLER}');"
               ;;
 
             criteria_count)
               echo "Calling governance_readonly.count_mmm_criteria_records()..."
-              SQL="SELECT * FROM governance_readonly.count_mmm_criteria_records();"
+              SQL="SELECT * FROM governance_readonly.count_mmm_criteria_records(NULL, '${SAFE_CALLER}');"
               ;;
 
             framework_docs)
               echo "Calling governance_readonly.list_mmm_framework_source_documents()..."
-              SQL="SELECT * FROM governance_readonly.list_mmm_framework_source_documents();"
+              SQL="SELECT * FROM governance_readonly.list_mmm_framework_source_documents(NULL, '${SAFE_CALLER}');"
               ;;
 
             ai_knowledge)
               echo "Calling governance_readonly.search_ai_knowledge_mps_sources()..."
-              SQL="SELECT * FROM governance_readonly.search_ai_knowledge_mps_sources('maturity process step');"
+              SQL="SELECT * FROM governance_readonly.search_ai_knowledge_mps_sources('maturity process step', '${SAFE_CALLER}');"
               ;;
 
             *)
