@@ -279,7 +279,7 @@ jobs:
             echo ""
             echo "---"
             echo ""
-            echo "**Access model**: Read-only verification path (no writes, no DDL)"
+            echo "**Access model**: No writes to business tables; audit INSERT to governance_readonly.verification_log only; no DDL."
             echo "**Governed by**: \`docs/supabase/SUPABASE_GOVERNED_ACCESS_MODEL.md\`"
             echo "**Issue**: maturion-isms#1505"
           } >> "$GITHUB_STEP_SUMMARY"
