@@ -686,8 +686,10 @@ jobs:
 
     outputs:
       iaa_required:        ${{ steps.lifecycle.outputs.iaa_required }}
+      iaa_invoked:         ${{ steps.lifecycle.outputs.iaa_invoked }}
       iaa_blocked:         ${{ steps.lifecycle.outputs.iaa_blocked }}
       ecap_required:       ${{ steps.lifecycle.outputs.ecap_required }}
+      ecap_invoked:        ${{ steps.lifecycle.outputs.ecap_invoked }}
       ecap_blocked:        ${{ steps.lifecycle.outputs.ecap_blocked }}
       handover_allowed:    ${{ steps.lifecycle.outputs.handover_allowed }}
       merge_ready_allowed: ${{ steps.lifecycle.outputs.merge_ready_allowed }}

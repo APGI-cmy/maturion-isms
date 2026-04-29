@@ -194,8 +194,8 @@ if [ "$ECAP_REQUIRED" = true ] && [ "$ECAP_INVOKED" = false ]; then
   ECAP_BLOCKED_STATE="ecap-blocked"
 fi
 
-echo "IAA required:  ${IAA_REQUIRED} | invoked: ${IAA_INVOKED} | blocked: ${IAA_REQUIRED}"
-echo "ECAP required: ${ECAP_REQUIRED} | invoked: ${ECAP_INVOKED} | blocked: ${ECAP_REQUIRED}"
+echo "IAA required:  ${IAA_REQUIRED} | invoked: ${IAA_INVOKED} | blocked: ${IAA_BLOCKED_STATE:-false}"
+echo "ECAP required: ${ECAP_REQUIRED} | invoked: ${ECAP_INVOKED} | blocked: ${ECAP_BLOCKED_STATE:-false}"
 echo "Lifecycle blocked: ${LIFECYCLE_BLOCKED}"
 echo ""
 
