@@ -670,7 +670,7 @@ jobs:
           .github/scripts/ecap-admin-ceremony-gate.sh
 
   # ============================================================================
-  # Lifecycle state determination (maturion-isms#1519)
+  # Lifecycle state determination (maturion-isms#1514)
   # Machine logic determines IAA/ECAP required states, writes a per-PR lifecycle
   # artifact, and outputs structured state for downstream label/comment automation.
   # A non-zero exit from pr-assurance-lifecycle.sh will fail this job and block
@@ -727,7 +727,7 @@ jobs:
           retention-days: 30
 
   # ============================================================================
-  # Merge-ready claim gate (maturion-isms#1519)
+  # Merge-ready claim gate (maturion-isms#1514)
   # Blocks PRs that contain merge-ready / handover-ready language in the PR body
   # or PREHANDOVER proofs while the lifecycle assurance state is blocked.
   # Agents must not claim merge-ready until all IAA/ECAP gates are GREEN.
@@ -762,7 +762,7 @@ jobs:
           .github/scripts/merge-ready-claim-gate.sh
 
   # ============================================================================
-  # Lifecycle label and comment management (maturion-isms#1519)
+  # Lifecycle label and comment management (maturion-isms#1514)
   # Reads the lifecycle state outputs from pr-assurance-lifecycle and manages
   # PR labels (iaa-required, iaa-blocked, ecap-required, ecap-blocked,
   # assurance-ready) and posts a machine-derived bot comment with lifecycle state.
@@ -891,7 +891,7 @@ jobs:
 
             let commentBody = `<!-- assurance-lifecycle-bot -->\n`;
             commentBody += `## ${statusIcon} Assurance Lifecycle State — PR #${prNum}\n\n`;
-            commentBody += `> **Machine-derived lifecycle status** (maturion-isms#1519)\n`;
+            commentBody += `> **Machine-derived lifecycle status** (maturion-isms#1514)\n`;
             commentBody += `> HEAD: \`${headSha}...\`\n\n`;
             commentBody += `| Field | Value |\n`;
             commentBody += `|---|---|\n`;

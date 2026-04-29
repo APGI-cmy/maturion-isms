@@ -25,13 +25,13 @@
 #   EXPECTED_ISSUE_NUMBER  governing issue number
 #
 # Violation class: IAA-LIFECYCLE-001
-# Issue: maturion-isms#1519
+# Issue: maturion-isms#1514
 
 set -euo pipefail
 
 echo "=== PR Assurance Lifecycle Determination ==="
 echo "Authority: LIVING_AGENT_SYSTEM.md v6.2.0"
-echo "Issue: maturion-isms#1519"
+echo "Issue: maturion-isms#1514"
 echo ""
 
 # ----------------------------------------------------------------
@@ -243,9 +243,9 @@ fi
 echo ""
 
 # ----------------------------------------------------------------
-# Step 3: Check current IAA token evidence
+# Step 3a: Find IAA token candidates
 # ----------------------------------------------------------------
-echo "--- Step 3: IAA Token Evidence Check ---"
+echo "--- Step 3a: IAA Token Candidate Search ---"
 echo ""
 
 IAA_INVOKED=false
@@ -260,12 +260,33 @@ TOKEN_FILES_IN_PR=$(git diff "${BASE_SHA}...HEAD" --name-only --diff-filter=AM 2
 WAVE_RECORD_FILES_IN_PR=$(git diff "${BASE_SHA}...HEAD" --name-only --diff-filter=AM 2>/dev/null \
   | grep "^${ASSURANCE_DIR}/iaa-wave-record-.*\.md$" || true)
 
-# Parse expected issue number from PR body if not directly supplied
+# ----------------------------------------------------------------
+# Step 3b: Validate governing issue number — mandatory when IAA/ECAP is required
+# ----------------------------------------------------------------
+echo "--- Step 3b: Governing Issue Validation ---"
+echo ""
+
+# Attempt to derive EXPECTED_ISSUE_NUMBER from PR body if not already set
 if [ -z "$EXPECTED_ISSUE_NUMBER" ] && [ -n "$PR_BODY" ]; then
   EXPECTED_ISSUE_NUMBER=$(echo "$PR_BODY" | \
     grep -ioE '(closes|fixes|resolves|addresses)[[:space:]]+(maturion-isms)?#([0-9]+)' | \
     grep -oE '[0-9]+$' | head -1 || true)
 fi
+
+if [ -n "$EXPECTED_ISSUE_NUMBER" ]; then
+  echo "Governing issue: maturion-isms#${EXPECTED_ISSUE_NUMBER}"
+else
+  if [ "$IAA_REQUIRED" = true ] || [ "$ECAP_REQUIRED" = true ]; then
+    echo "❌ EXPECTED_ISSUE_NUMBER is empty and IAA/ECAP is required."
+    echo "   Set the EXPECTED_ISSUE_NUMBER env var in CI (repo variable) or"
+    echo "   link the governing issue in the PR body with 'closes/fixes/resolves/addresses maturion-isms#N'."
+    echo "   Issue validation cannot be skipped for PRs requiring IAA/ECAP."
+    exit 1
+  else
+    echo "ℹ️  EXPECTED_ISSUE_NUMBER not provided — informational only for this doc-only PR."
+  fi
+fi
+echo ""
 
 check_token_valid() {
   local tf="$1"

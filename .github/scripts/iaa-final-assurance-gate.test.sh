@@ -4,7 +4,7 @@
 # Authority: LIVING_AGENT_SYSTEM.md v6.2.0
 # Purpose: Validate IAA final assurance, ECAP/admin ceremony, lifecycle state
 #          determination, and merge-ready claim CI gates against the acceptance
-#          criteria in maturion-isms#1503 and maturion-isms#1519.
+#          criteria in maturion-isms#1503 and maturion-isms#1514.
 #
 # Coverage (acceptance criteria):
 #   AC-1          Missing IAA token (implementation PR, no token file)              → exit 1
@@ -689,7 +689,7 @@ run_lifecycle_test() {
 }
 
 # ================================================================
-# TEST SUITE — Merge-Ready Claim Gate (maturion-isms#1519)
+# TEST SUITE — Merge-Ready Claim Gate (maturion-isms#1514)
 # ================================================================
 
 # AC-MR-1: PR body contains merge-ready claim while IAA is blocked (no token)
@@ -760,7 +760,7 @@ run_test_with_pr_body \
 Merge gate released. Wave N complete. Awaiting CS2 review."
 
 # ================================================================
-# TEST SUITE — PR Assurance Lifecycle Script (maturion-isms#1519)
+# TEST SUITE — PR Assurance Lifecycle Script (maturion-isms#1514)
 # ================================================================
 
 # AC-LC-1: Implementation PR with valid IAA token → lifecycle reports assurance-ready
@@ -825,6 +825,42 @@ else
 fi
 cd "$TEST_DIR"
 rm -rf "$lc3_workspace"
+echo ""
+
+# AC-LC-4: Implementation PR with no EXPECTED_ISSUE_NUMBER → lifecycle fails hard
+echo "Test: AC-LC-4: Implementation PR with missing EXPECTED_ISSUE_NUMBER — lifecycle must fail"
+lc4_workspace=$(mktemp -d -p "$TEST_DIR")
+cd "$lc4_workspace"
+git init -q
+git config user.email "test@example.com"
+git config user.name "Test User"
+mkdir -p .agent-admin/assurance .agent-admin/prehandover \
+         .agent-admin/lifecycle \
+         .agent-workspace/foreman-v2/memory \
+         .github/agents .github/workflows governance/canon
+echo "initial" > README.md
+git add .
+git commit -q -m "Initial commit"
+git branch -M main
+git checkout -q -b test-branch
+add_impl_file
+lc4_base=$(git rev-parse main 2>/dev/null)
+lc4_head=$(git rev-parse HEAD 2>/dev/null || echo "HEAD")
+set +e
+BASE_SHA="$lc4_base" HEAD_SHA="$lc4_head" PR_NUMBER="9999" PR_LABELS="" \
+  PR_BODY="No issue reference here" EXPECTED_ISSUE_NUMBER="" \
+  bash "$LIFECYCLE_SCRIPT" > /dev/null 2>&1
+lc4_exit=$?
+set -e
+if [ "$lc4_exit" -eq 1 ]; then
+  echo "  ✅ PASS (exit: 1 — hard fail when issue number missing and IAA required)"
+  TEST_PASSED=$((TEST_PASSED + 1))
+else
+  echo "  ❌ FAIL (exit: $lc4_exit — expected 1)"
+  TEST_FAILED=$((TEST_FAILED + 1))
+fi
+cd "$TEST_DIR"
+rm -rf "$lc4_workspace"
 echo ""
 
 # ================================================================

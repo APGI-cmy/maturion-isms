@@ -23,7 +23,7 @@
 #   EXPECTED_ISSUE_NUMBER  governing issue number
 #
 # Violation class: MERGE-READY-001
-# Issue: maturion-isms#1519
+# Issue: maturion-isms#1514
 
 set -euo pipefail
 
