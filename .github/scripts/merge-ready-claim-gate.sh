@@ -123,13 +123,11 @@ ECAP_REQUIRED=false
 [ "$IMPLEMENTATION_CHANGED" = true ] && IAA_REQUIRED=true
 [ "$PROTECTED_PATH_TOUCHED" = true ] && ECAP_REQUIRED=true
 
-# Check if valid IAA token is present (simplified check — full validation in iaa-final-assurance-gate.sh)
+# Check if valid IAA token is present.
+# Do not infer EXPECTED_ISSUE_NUMBER from PR body text here; authoritative
+# issue linkage must come from upstream lifecycle/IAA validation inputs so
+# this gate cannot diverge from iaa-final-assurance-gate.sh.
 IAA_INVOKED=false
-if [ -z "$EXPECTED_ISSUE_NUMBER" ] && [ -n "$PR_BODY" ]; then
-  EXPECTED_ISSUE_NUMBER=$(echo "$PR_BODY" | \
-    grep -ioE '(closes|fixes|resolves|addresses)[[:space:]]+(maturion-isms)?#([0-9]+)' | \
-    grep -oE '[0-9]+$' | head -1 || true)
-fi
 
 TOKEN_FILES_IN_PR=$(git diff "${BASE_SHA}...HEAD" --name-only --diff-filter=AM 2>/dev/null \
   | grep "^${ASSURANCE_DIR}/iaa-token-.*\.md$" || true)
