@@ -31,7 +31,7 @@ error from the original governance layer-down. The module is MMM (Maturity Manag
 | Stage 2 | Architecture | Stage 5 | Architecture | COMPLETE ✅ — formally closed; pre-build closure confirmed via Stage 6–12 authorization chain (PR #1429 merged 2026-04-21) |
 | Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | COMPLETE ✅ — artifacts produced (mmm-stage8-implementation-plan-20260417); 9 build waves defined; pre-build closure confirmed (PR #1429 merged 2026-04-21) |
 | Stage 4 | Builder Appointment | Stage 11 | Builder Appointment | COMPLETE ✅ — builder-contract.md v1.0.0 (mmm-stage11-builder-appointment-20260420); all 5 builders appointed; SB-002 resolved; PR #1429 merged 2026-04-21 |
-| Stage 5 | Build | Stage 12 | Build | ACTIVE — B1–B9 ALL COMPLETE (959/959 tests GREEN); Phase 4 ECAP + IAA audit complete; CDV/staging follow-up pending; PR #1429 MERGED 2026-04-21 |
+| Stage 5 | Build | Stage 12 | Build | ACTIVE — B1–B9 ALL COMPLETE (982/982 tests GREEN); Phase 4 ECAP + IAA audit complete; CDV/staging follow-up pending; PR #1429 MERGED 2026-04-21 |
 | — | (new stage) | Stage 2 | UX Workflow & Wiring Spec | COMPLETE |
 | — | (new stage) | Stage 6 | QA-to-Red | COMPLETE ✅ — artifacts produced (mmm-stage6-qa-to-red-20260415); Foreman QP PASS; pre-build closure confirmed (PR #1429 merged 2026-04-21) |
 | — | (new stage) | Stage 7 | PBFAG | COMPLETE ✅ — artifacts produced (mmm-stage7-pbfag-20260415); PBFAG PASS; IAA token issued (IAA-session-mmm-stage7-pbfag-20260415-PASS); pre-build closure confirmed (PR #1429 merged 2026-04-21) |
@@ -391,7 +391,7 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 - [x] All 5 hard start conditions (HSC-1–HSC-5) verified SATISFIED
 - [x] Formal appointments issued: schema-builder (B1), api-builder (B2–B6), ui-builder (B3–B6), integration-builder (B7), qa-builder (B8/B9 + parallel gate)
 - [x] SB-002 resolved in appointment text — api-builder Deno/Supabase Edge Functions declared as EXCLUSIVE runtime (Next.js API routes prohibited)
-- [x] SB-003 preserved as credential hard gate — B7 blocked until CS2 provisions AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN
+- [x] SB-003 preserved as credential hard gate — B7 BLOCKED (SB-003 credential gate active) until CS2 provisions AIMC_SERVICE_TOKEN + PIT_SERVICE_TOKEN; B7 BLOCKED status documented per T-MMM-S6-112
 - [x] CG-001–CG-005 convergence-governance laws stated per law (§6)
 - [x] NBR-001–NBR-005 anti-regression obligations declared for all Stage 12 waves (§7)
 - [x] Wave sequencing and dependency map produced (§8)
@@ -409,12 +409,12 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 **Approval Reference**: maturion-isms#1426  
 **Producing Agent**: mat-specialist (delegated by foreman-v2-agent v6.2.0)  
 **IAA Pre-Brief**: `.agent-admin/assurance/iaa-wave-record-mmm-stage11-builder-appointment-20260420.md` — CLEARED (SHA 0489924)  
-**Notes**: Stage 11 COMPLETE. All 5 builders formally appointed (builder-contract.md v1.0.0, wave: mmm-stage11-builder-appointment-20260420). SB-002 resolved in appointment text — Deno/Supabase Edge Functions declared as EXCLUSIVE backend runtime for api-builder in MMM Stage 12; Next.js API routes explicitly prohibited. SB-003 credential gate satisfied (PARTIAL — token provisioning completed by CS2 2026-04-21; staging E2E pending). CG-001–CG-005 convergence-governance laws and NBR-001–NBR-005 anti-regression obligations carried forward and declared binding for all Stage 12 build waves. Stage 12 execution proceeded and completed (B1–B9 ALL COMPLETE, 959/959 tests GREEN). PR #1429 merged 2026-04-21 by CS2.
+**Notes**: Stage 11 COMPLETE. All 5 builders formally appointed (builder-contract.md v1.0.0, wave: mmm-stage11-builder-appointment-20260420). SB-002 resolved in appointment text — Deno/Supabase Edge Functions declared as EXCLUSIVE backend runtime for api-builder in MMM Stage 12; Next.js API routes explicitly prohibited. SB-003 credential gate satisfied (PARTIAL — token provisioning completed by CS2 2026-04-21; staging E2E pending). CG-001–CG-005 convergence-governance laws and NBR-001–NBR-005 anti-regression obligations carried forward and declared binding for all Stage 12 build waves. Stage 12 execution proceeded and completed (B1–B9 ALL COMPLETE, 982/982 tests GREEN). PR #1429 merged 2026-04-21 by CS2.
 
 ---
 
 ### Stage 12: Build Execution & Evidence
-**Status**: [x] ACTIVE — Build execution COMPLETE (B1–B9; 959/959 tests GREEN); Phase 4 ECAP + IAA audit complete; CDV deployment validation = post-Stage-12 operational follow-up (see §12.1 below); CDV tracking wave mmm-post-stage12-cdv-validation-20260422 (issue #1443, 2026-04-22) created — SB-003-W3 static code evidence confirmed; **NOTE: Build-Complete (L1) ≠ Operationally-Closed (L3) — see §12.2 Operational Closure Pending Items and §12.3 Future-Build Hard Gate**
+**Status**: [x] ACTIVE — Build execution COMPLETE (B1–B9; 982/982 tests GREEN); Phase 4 ECAP + IAA audit complete; CDV deployment validation = post-Stage-12 operational follow-up (see §12.1 below); CDV tracking wave mmm-post-stage12-cdv-validation-20260422 (issue #1443, 2026-04-22) created — SB-003-W3 static code evidence confirmed; Stage 12 IN_PROGRESS (operational closure items OC-001–OC-009 PENDING CS2 live platform validation); **NOTE: Build-Complete (L1) ≠ Operationally-Closed (L3) — see §12.2 Operational Closure Pending Items and §12.3 Future-Build Hard Gate**
 **Location**: `modules/MMM/11-build/`  
 **Wave**: mmm-stage12-build-execution-20260420  
 **Issue**: maturion-isms#1428  
@@ -430,9 +430,9 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 - [x] **B6 (Findings/Reporting)**: COMPLETE ✅ — 3 Edge Functions (mmm-pit-export-send, mmm-pit-evidence-return, mmm-ai-recommend); J-12–J-15; 7-step PIT handshake stubbed; 47/47 tests GREEN; evidence: `modules/MMM/11-build/B6-findings/wave-b6-evidence.md`; QP PASS
 - [x] **B7 (Boundary Integrations)**: COMPLETE ✅ — 113 tests GREEN (D5: 15 + D7: 8 + Circuit Breaker: 12 + additional assertions); AIMC 9-function live wire, PIT 7-step handshake, KUC upload contract, circuit breaker (TR-009); evidence: `modules/MMM/11-build/B7-integrations/wave-b7-evidence.md`; QP PASS
 - [x] **B8 (Cross-Cutting)**: COMPLETE ✅ — 71 tests across D5/D7/D8/D9/D10/D11 (188 assertions); B7 blocked noted; evidence: `modules/MMM/11-build/B8-cross-cutting/wave-b8-evidence.md`; QP PASS
-- [x] **B9 (Golden Path)**: COMPLETE ✅ — 216/216 tests GREEN; GP-001–GP-010 ALL GREEN; CG-003/CG-004 declared; NBR-001/002/003 verified; evidence: `modules/MMM/11-build/B9-golden-path/wave-b9-evidence.md`; QP PASS
+- [x] **B9 (Golden Path)**: COMPLETE ✅ — 233/233 tests GREEN (216 original + 7 anti-regression tests added by issue #1507 wave-1 + 10 anti-regression tests added by issue #1507 wave-2: signup email-confirmation, Vercel SPA fallback, parse-job schema contract); GP-001–GP-010 ALL GREEN; CG-003/CG-004 declared; NBR-001/002/003 verified; evidence: `modules/MMM/11-build/B9-golden-path/wave-b9-evidence.md`; QP PASS
 
-**Total QA-to-Green Progress**: 965/965 tests GREEN (B1:164 + B2:28 + B3:65 + B4:78 + B5:66 + B6:47 + B7:113 + B8:188 + B9:216) — B3 increased from 59 to 65 by T-MMM-S6-021 anti-regression gate (issue #1496, 2026-04-28)
+**Total QA-to-Green Progress**: 982/982 tests GREEN (B1:164 + B2:28 + B3:65 + B4:78 + B5:66 + B6:47 + B7:113 + B8:188 + B9:233) — B3 increased from 59 to 65 by T-MMM-S6-021 anti-regression gate (issue #1496, 2026-04-28); B9 increased from 216 to 223 (wave-1) and 223 to 233 (wave-2) by ISSUE-1507 anti-regression tests (LoginPage + /login route + KUC upload access fix + signup email-confirmation + Vercel SPA fallback + parse-job schema, issue #1507)
 
 **Key Artifacts**:
 - [x] `supabase/migrations/` — 4 migration files (B1: 26 tables, RLS, indexes, storage)
@@ -442,7 +442,7 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 - [x] `apps/mmm/` — React/Vite frontend app (J-01–J-15 UI, 14 pages + shared components)
 - [x] `modules/MMM/tests/` — 7 test suites covering all wave deliverables
 - [x] B7 live wire — COMPLETE ✅ (SB-003 PARTIAL — token provisioning satisfied; AIMC wiring/PIT endpoint gates pending; 113 new tests GREEN; 743/743 total)
-- [x] B9 golden path — COMPLETE ✅ (216 new tests GREEN; 959/959 total; GP-001–GP-010 ALL GREEN; CG-003/CG-004 declared; all evidenced in PR #1429)
+- [x] B9 golden path — COMPLETE ✅ (216 new tests GREEN; 982/982 total; GP-001–GP-010 ALL GREEN; CG-003/CG-004 declared; all evidenced in PR #1429)
 
 #### SB-003 Credential Provisioning & Wiring Status (CS2 — 2026-04-21)
 
@@ -563,7 +563,7 @@ The following live operational confirmation items are still required before MMM 
 - [x] API server code exists at documented path (`supabase/functions/` — 22 Edge Functions) — PR #1429 (code-confirmed)
 - [ ] Database schema deployed to staging (migration files merged in PR #1429; staging deploy confirmation needed)
 - [ ] Database seeded with test data (`supabase/seed-mmm.sql` merged; staging seed confirmation needed)
-- [ ] API endpoints respond correctly in staging (959 tests GREEN in CI; live staging health check pending)
+- [ ] API endpoints respond correctly in staging (982 tests GREEN in CI; live staging health check pending)
 - [ ] API deployed to staging/production
 - [ ] API URL accessible and functional
 
@@ -590,8 +590,8 @@ The following live operational confirmation items are still required before MMM 
 - ❌ Working E2E workflow demonstration
 - ❌ UI wiring tests (if both UI and backend exist)
 
-**Completion Date**: See PR #1429 (merged 2026-04-21 by CS2) — B1–B9 build execution evidenced by 959/959 tests GREEN; ECAP ceremony artifacts committed; IAA ASSURANCE-TOKEN issued (all in PR #1429)  
-**Notes**: Stage 12 build execution artefacts (B1–B9 code, tests, evidence files) are ALL COMPLETE and merged via PR #1429 (2026-04-21). 959/959 tests GREEN. Phase 4 ECAP ceremony bundle committed (see `modules/MMM/12-phase4-ecap/`). IAA ASSURANCE-TOKEN issued: IAA-session-mmm-stage12-build-execution-20260420-PASS (wave record: `.agent-admin/assurance/iaa-wave-record-mmm-stage12-build-execution-20260420.md`). PR #1429 merged 2026-04-21 by CS2 (APGI-cmy). Pre-build closure (Stages 1–11) formally confirmed by Stage 12 execution chain completion.
+**Completion Date**: See PR #1429 (merged 2026-04-21 by CS2) — B1–B9 build execution evidenced by 982/982 tests GREEN; ECAP ceremony artifacts committed; IAA ASSURANCE-TOKEN issued (all in PR #1429)  
+**Notes**: Stage 12 build execution artefacts (B1–B9 code, tests, evidence files) are ALL COMPLETE and merged via PR #1429 (2026-04-21). 982/982 tests GREEN. Phase 4 ECAP ceremony bundle committed (see `modules/MMM/12-phase4-ecap/`). IAA ASSURANCE-TOKEN issued: IAA-session-mmm-stage12-build-execution-20260420-PASS (wave record: `.agent-admin/assurance/iaa-wave-record-mmm-stage12-build-execution-20260420.md`). PR #1429 merged 2026-04-21 by CS2 (APGI-cmy). Pre-build closure (Stages 1–11) formally confirmed by Stage 12 execution chain completion.
 
 > **Next lawful operational focus**: Stage 12 build execution is COMPLETE per the Stage 8 implementation
 > plan (`modules/MMM/07-implementation-plan/implementation-plan.md`) and Stage 8 convergence-governance
@@ -603,7 +603,7 @@ The following live operational confirmation items are still required before MMM 
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 12 (Build Execution) ACTIVE — B1–B9 ALL COMPLETE (959/959 tests GREEN); B9 QP PASS — all 10 golden paths GREEN; CG-003/CG-004 declared; NBR-001/002/003 verified. Phase 4 ECAP ceremony bundle committed; IAA Final Audit COMPLETE — ASSURANCE-TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS. PR #1429 MERGED 2026-04-21 by CS2 (APGI-cmy). **MMM is at L1 (Build-Complete). Operational closure (L3) requires §12.2 OC-001 through OC-009 confirmed (see §12.2 and §12.3 below).** Vercel frontend deployment path now functioning (wave: align-vercel-deployment-workflow-20260422, PR #1454). **Backend deployment alignment COMPLETE** (wave mmm-post-stage12-backend-alignment-20260422, issue #1455, 2026-04-22) — MAT-era deployment workflows renamed to MMM-era; deployment alignment doc added.
+**Current Stage**: Stage 12 (Build Execution) ACTIVE — B1–B9 ALL COMPLETE (982/982 tests GREEN); B9 QP PASS — all 10 golden paths GREEN; CG-003/CG-004 declared; NBR-001/002/003 verified. Phase 4 ECAP ceremony bundle committed; IAA Final Audit COMPLETE — ASSURANCE-TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS. PR #1429 MERGED 2026-04-21 by CS2 (APGI-cmy). **MMM is at L1 (Build-Complete). Operational closure (L3) requires §12.2 OC-001 through OC-009 confirmed (see §12.2 and §12.3 below).** Vercel frontend deployment path now functioning (wave: align-vercel-deployment-workflow-20260422, PR #1454). **Backend deployment alignment COMPLETE** (wave mmm-post-stage12-backend-alignment-20260422, issue #1455, 2026-04-22) — MAT-era deployment workflows renamed to MMM-era; deployment alignment doc added.
 **Overall Progress**: Build execution 100% complete (B1–B9 DONE; ECAP bundle committed; IAA ASSURANCE-TOKEN issued; PR #1429 MERGED 2026-04-21) = **L1 Build-Complete**. Vercel frontend deployment path now functioning (PR #1454). CDV/staging deployment follow-up: IN PROGRESS — SB-003-W3 static evidence confirmed; W1/W2, PIT_BASE_URL, and staging deployment PENDING CS2 operational action. **Operational closure (L3)**: 0/9 OC items confirmed (§12.2 OC-001 through OC-009 all PENDING). CDV tracking document: `modules/MMM/12-phase4-ecap/cdv-staging-validation.md`. **Deployment alignment**: COMPLETE — all 3 deployment workflows now MMM-aligned (Vercel: `deploy-mmm-vercel.yml`, AI Gateway: `deploy-mmm-ai-gateway.yml`, Edge Functions: `deploy-mmm-edge-functions.yml`); deployment documentation: `modules/MMM/12-phase4-ecap/deployment-alignment.md`.
 **Blockers**: None (build execution complete). **Operational closure items pending**: §12.2 OC-001–OC-009 all PENDING CS2 live platform validation. **SB-003 staging E2E gate**: PARTIALLY RESOLVED — token provisioning satisfied by CS2 (2026-04-21); SB-003-W3 static code evidence confirmed (2026-04-22); W1/W2 NOT YET LIVE-TESTED; `PIT_BASE_URL` pending live PIT endpoint. B7 CI passes via stub path. Staging E2E blocked pending CS2 wiring confirmation + PIT endpoint readiness.
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.
@@ -656,7 +656,7 @@ The following live operational confirmation items are still required before MMM 
 - [x] Evidence artifacts created for each completed stage
 - [x] Module manifest up to date
 - [x] Document control baseline established (see `modules/MMM/_readiness/mmm-document-control-baseline.md`)
-- [x] Stage 12 Build Execution ACTIVE (B1–B9 ALL COMPLETE; 959/959 tests GREEN; IAA ASSURANCE-TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS; PR #1429 merged 2026-04-21 by CS2; CDV/staging follow-up in progress)
+- [x] Stage 12 Build Execution ACTIVE (B1–B9 ALL COMPLETE; 982/982 tests GREEN; IAA ASSURANCE-TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS; PR #1429 merged 2026-04-21 by CS2; CDV/staging follow-up in progress)
 - [x] Pre-build stages 1–11 FORMALLY CLOSED — completion evidenced by Stage 12 execution chain (PR #1429 merged 2026-04-21)
 - [x] CDV staging validation document created — `modules/MMM/12-phase4-ecap/cdv-staging-validation.md` (wave mmm-post-stage12-cdv-validation-20260422, 2026-04-22)
 - [x] SB-003-W3 static code evidence confirmed (2026-04-22) — `supabase/functions/_shared/mmm-aimc-client.ts`
