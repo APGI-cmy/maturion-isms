@@ -27,7 +27,16 @@ Not applicable — governance ripple layer-down. Not a T1 (agent contract) or T2
 
 ## TOKEN
 
-*(Not yet issued — first invocation resulted in REJECTION-PACKAGE. Token to be written after re-invocation with all failures resolved.)*
+**PHASE_B_BLOCKING_TOKEN**: IAA-session-215-ripple-d99e68e8-20260429-PASS
+
+- **IAA Session**: session-215-20260429 (second invocation)
+- **Date**: 2026-04-29
+- **Verdict**: ASSURANCE-TOKEN (PASS)
+- **Checks**: 16 checks — 16 PASS, 0 FAIL
+- **A-026 fix verified**: parking station file confirmed in SCOPE_DECLARATION.md ✅
+- **SHA256 independently verified**: all three layered-down artifacts match ✅
+- **Merge permitted**: subject to CS2 approval
+- **Token file**: `.agent-admin/assurance/iaa-token-session-071-ripple-d99e68e8-20260429.md`
 
 ---
 
