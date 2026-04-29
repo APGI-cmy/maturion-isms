@@ -92,6 +92,12 @@ AS $$
 BEGIN
     INSERT INTO governance_readonly.verification_log (caller, target)
     VALUES (p_caller, p_target);
+EXCEPTION
+    WHEN OTHERS THEN
+        -- Re-raise with context so callers know the verification RPC failed
+        -- due to an audit logging error (fail-closed — never silently continue).
+        RAISE EXCEPTION 'governance_readonly audit logging failed (caller: %, target: %): %',
+            p_caller, p_target, SQLERRM;
 END;
 $$;
 
