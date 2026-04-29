@@ -603,7 +603,7 @@ jobs:
           .github/scripts/validate-governance-evidence-exactness.sh
 
   # ============================================================================
-  # Hard gate: IAA Final Assurance (maturion-isms#1518)
+  # Hard gate: IAA Final Assurance (maturion-isms#1503)
   # Fails when implementation/substantive files are changed but no current,
   # PR-specific IAA final assurance token exists in .agent-admin/assurance/.
   # Advisory re-anchor comments remain, but this is the binding enforcement.
@@ -637,7 +637,7 @@ jobs:
           .github/scripts/iaa-final-assurance-gate.sh
 
   # ============================================================================
-  # Hard gate: ECAP / Admin Ceremony (maturion-isms#1518)
+  # Hard gate: ECAP / Admin Ceremony (maturion-isms#1503)
   # Fails when protected paths are changed but ECAP/admin ceremony evidence is
   # absent or unevidenced. Also rejects an IAA PASS on a protected-path PR
   # where ECAP was required but not evidenced.

@@ -2,20 +2,32 @@
 # Test suite for iaa-final-assurance-gate.sh and ecap-admin-ceremony-gate.sh
 # Authority: LIVING_AGENT_SYSTEM.md v6.2.0
 # Purpose: Validate IAA final assurance and ECAP/admin ceremony CI gates
-#          against the acceptance criteria in maturion-isms#1518.
+#          against the acceptance criteria in maturion-isms#1503.
 #
 # Coverage (acceptance criteria):
-#   AC-1  Missing IAA token (implementation PR, no token file)                  → exit 1
-#   AC-2  Stale IAA token from another PR (token references wrong PR number)    → exit 1
-#   AC-3  Empty PHASE_B_BLOCKING_TOKEN                                           → exit 1
-#   AC-4  IAA token referencing the wrong governing issue                       → exit 1
-#   AC-5  REJECTION-PACKAGE token                                               → exit 1
-#   AC-6  Protected-path PR without ECAP evidence                               → exit 1
-#   AC-7  Protected-path PR with CS2 waiver (ecap_waiver_ref populated)         → exit 0
-#   AC-8  Non-implementation documentation-only PR                              → exit 0
-#   AC-9  Valid IAA token with correct PR and issue reference                   → exit 0
-#   AC-10 IAA claims PASS on protected-path PR with ECAP evidence               → exit 0
-#   AC-11 PENDING PHASE_B_BLOCKING_TOKEN                                        → exit 1
+#   AC-1          Missing IAA token (implementation PR, no token file)              → exit 1
+#   AC-2          Stale IAA token from another PR (token references wrong PR)       → exit 1
+#   AC-3          Empty PHASE_B_BLOCKING_TOKEN                                      → exit 1
+#   AC-4          IAA token referencing the wrong governing issue                   → exit 1
+#   AC-5          REJECTION-PACKAGE token                                           → exit 1
+#   AC-6          Protected-path PR without ECAP evidence                           → exit 1
+#   AC-6b         Agent contract change without ECAP evidence                       → exit 1
+#   AC-6c         CI workflow change — ECAP not required                            → exit 0
+#   AC-7          Protected-path PR with CS2 waiver (ecap_waiver_ref populated)     → exit 0
+#   AC-8          Non-implementation documentation-only PR                          → exit 0
+#   AC-8-CI       CI script/workflow only PR — IAA not required                     → exit 0
+#   AC-8b         Non-protected documentation-only PR — ECAP not required           → exit 0
+#   AC-9          Valid IAA token with correct PR, issue, SHA                       → exit 0
+#   AC-10         Protected-path PR with valid ECAP bundle + PREHANDOVER            → exit 0
+#   AC-10b        Protected-path PR with ECAP bundle + valid IAA token              → exit 0
+#   AC-11         PENDING PHASE_B_BLOCKING_TOKEN                                    → exit 1
+#   AC-D-NOPR     Token missing **PR**: field                                       → exit 1
+#   AC-D-NOISSUE  Token missing **Issue**: field                                    → exit 1
+#   AC-D-NOSHA    Token missing **Reviewed SHA**: field                             → exit 1
+#   AC-D-WRONGSHA Token reviewed SHA not in PR head ancestry                        → exit 1
+#   AC-WR-NOPR    Wave record ## TOKEN missing PR/issue fields                      → exit 1
+#   AC-ECAP-NOBUNDLE PREHANDOVER ecap_invoked=true but no ECAP bundle committed     → exit 1
+#   AC-ECAP-NVAL  ecap_required=N/A rejected on protected-path PR                  → exit 1
 #
 # Usage:
 #   .github/scripts/iaa-final-assurance-gate.test.sh
@@ -83,8 +95,8 @@ run_test() {
            HEAD_SHA="$HEAD_SHA" \
            PR_NUMBER="9999" \
            PR_LABELS="" \
-           PR_BODY="Closes maturion-isms#1518" \
-           EXPECTED_ISSUE_NUMBER="1518" \
+           PR_BODY="Closes maturion-isms#1503" \
+           EXPECTED_ISSUE_NUMBER="1503" \
            bash "$gate_script" 2>&1)
   local actual_exit=$?
   set -e
@@ -136,8 +148,11 @@ EOF
 
 add_valid_iaa_token() {
   local pr_num="${1:-9999}"
-  local issue_num="${2:-1518}"
+  local issue_num="${2:-1503}"
   local blocking_token="${3:-IAA-session-test-wave-test-20260428-PASS}"
+  # Capture current HEAD as the "reviewed" SHA (parent of the token commit)
+  local REVIEWED_SHA
+  REVIEWED_SHA=$(git rev-parse HEAD 2>/dev/null || echo "HEAD")
   cat > .agent-admin/assurance/iaa-token-session-test-wave-test-20260428.md << EOF
 # IAA Assurance Token
 
@@ -148,10 +163,25 @@ PHASE_B_BLOCKING_TOKEN: ${blocking_token}
 **Verdict**: ASSURANCE-TOKEN (PASS)
 **PR**: #${pr_num}
 **Issue**: maturion-isms#${issue_num}
-**Reviewed SHA**: abc123def456
+**Reviewed SHA**: ${REVIEWED_SHA}
 EOF
   git add .
   git commit -q -m "Add IAA token"
+}
+
+add_ecap_bundle() {
+  local pr_num="${1:-9999}"
+  mkdir -p .agent-workspace/execution-ceremony-admin-agent/bundles
+  cat > ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-test-wave-20260428.md" << EOF
+# ECAP Bundle — test-wave-20260428
+
+ecap_session: ecap-session-test-wave-20260428
+ecap_verdict: PASS
+admin_ceremony_compliance: PASS
+pr_ref: #${pr_num}
+EOF
+  git add .
+  git commit -q -m "Add ECAP bundle"
 }
 
 add_prehandover_proof_with_ecap() {
@@ -200,7 +230,8 @@ PHASE_B_BLOCKING_TOKEN: IAA-session-stale-wave-20260101-PASS
 **Verdict**: ASSURANCE-TOKEN (PASS)
 **PR**: #1234
 **Branch**: copilot/old-wave
-**Issue**: maturion-isms#1518
+**Issue**: maturion-isms#1503
+**Reviewed SHA**: CURRENT_HEAD
 EOF
   git add .
   git commit -q -m "Add stale token from another PR"
@@ -218,7 +249,8 @@ PHASE_B_BLOCKING_TOKEN:
 **Token**: (empty)
 **Verdict**: ASSURANCE-TOKEN (PASS)
 **PR**: #9999
-**Issue**: maturion-isms#1518
+**Issue**: maturion-isms#1503
+**Reviewed SHA**: CURRENT_HEAD
 EOF
   git add .
   git commit -q -m "Add token with empty PHASE_B_BLOCKING_TOKEN"
@@ -237,11 +269,12 @@ PHASE_B_BLOCKING_TOKEN: IAA-session-wrongissue-wave-20260428-PASS
 **Verdict**: ASSURANCE-TOKEN (PASS)
 **PR**: #9999
 **Issue**: maturion-isms#42
+**Reviewed SHA**: CURRENT_HEAD
 EOF
   git add .
   git commit -q -m "Add token referencing wrong issue"
 }
-run_test "AC-4: IAA token referencing wrong issue (#42 vs #1518)" 1 "$IAA_GATE_SCRIPT" "setup_ac4"
+run_test "AC-4: IAA token referencing wrong issue (#42 vs #1503)" 1 "$IAA_GATE_SCRIPT" "setup_ac4"
 
 # AC-5: REJECTION-PACKAGE token
 setup_ac5() {
@@ -254,7 +287,8 @@ PHASE_B_BLOCKING_TOKEN: IAA-session-reject-wave-20260428-REJECTION
 **Token**: IAA-session-reject-wave-20260428-REJECTION
 **Verdict**: REJECTION-PACKAGE
 **PR**: #9999
-**Issue**: maturion-isms#1518
+**Issue**: maturion-isms#1503
+**Reviewed SHA**: CURRENT_HEAD
 EOF
   git add .
   git commit -q -m "Add REJECTION-PACKAGE token"
@@ -283,7 +317,7 @@ run_test "AC-8-CI: CI script/workflow only PR — IAA not required" 0 "$IAA_GATE
 # AC-9: Valid IAA token with correct PR and issue reference
 setup_ac9() {
   add_impl_file
-  add_valid_iaa_token "9999" "1518"
+  add_valid_iaa_token "9999" "1503"
 }
 run_test "AC-9: Valid IAA token with correct PR and issue" 0 "$IAA_GATE_SCRIPT" "setup_ac9"
 
@@ -298,12 +332,110 @@ PHASE_B_BLOCKING_TOKEN: PENDING
 **Token**: PENDING
 **Verdict**: ASSURANCE-TOKEN (PASS)
 **PR**: #9999
-**Issue**: maturion-isms#1518
+**Issue**: maturion-isms#1503
+**Reviewed SHA**: CURRENT_HEAD
 EOF
   git add .
   git commit -q -m "Add token with PENDING PHASE_B_BLOCKING_TOKEN"
 }
 run_test "AC-11: PENDING PHASE_B_BLOCKING_TOKEN" 1 "$IAA_GATE_SCRIPT" "setup_ac11"
+
+# AC-D-NOPR: Token missing **PR**: field — positive PR linkage required
+setup_ac_nopr() {
+  add_impl_file
+  cat > .agent-admin/assurance/iaa-token-session-nopr-wave-20260428.md << 'EOF'
+# IAA Assurance Token
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-nopr-wave-20260428-PASS
+
+**Token**: IAA-session-nopr-wave-20260428-PASS
+**Verdict**: ASSURANCE-TOKEN (PASS)
+**Issue**: maturion-isms#1503
+**Reviewed SHA**: CURRENT_HEAD
+EOF
+  git add .
+  git commit -q -m "Add token without PR field"
+}
+run_test "AC-D-NOPR: Token missing **PR**: field" 1 "$IAA_GATE_SCRIPT" "setup_ac_nopr"
+
+# AC-D-NOISSUE: Token missing **Issue**: field — governing issue linkage required
+setup_ac_noissue() {
+  add_impl_file
+  cat > .agent-admin/assurance/iaa-token-session-noissue-wave-20260428.md << 'EOF'
+# IAA Assurance Token
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-noissue-wave-20260428-PASS
+
+**Token**: IAA-session-noissue-wave-20260428-PASS
+**Verdict**: ASSURANCE-TOKEN (PASS)
+**PR**: #9999
+**Reviewed SHA**: CURRENT_HEAD
+EOF
+  git add .
+  git commit -q -m "Add token without issue field"
+}
+run_test "AC-D-NOISSUE: Token missing **Issue**: field" 1 "$IAA_GATE_SCRIPT" "setup_ac_noissue"
+
+# AC-D-NOSHA: Token missing **Reviewed SHA**: field
+setup_ac_nosha() {
+  add_impl_file
+  cat > .agent-admin/assurance/iaa-token-session-nosha-wave-20260428.md << 'EOF'
+# IAA Assurance Token
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-nosha-wave-20260428-PASS
+
+**Token**: IAA-session-nosha-wave-20260428-PASS
+**Verdict**: ASSURANCE-TOKEN (PASS)
+**PR**: #9999
+**Issue**: maturion-isms#1503
+EOF
+  git add .
+  git commit -q -m "Add token without reviewed SHA"
+}
+run_test "AC-D-NOSHA: Token missing **Reviewed SHA**: field" 1 "$IAA_GATE_SCRIPT" "setup_ac_nosha"
+
+# AC-D-WRONGSHA: Token reviewed SHA not in ancestry of HEAD
+setup_ac_wrongsha() {
+  add_impl_file
+  # Use a fabricated SHA that is not a real commit in this repo
+  cat > .agent-admin/assurance/iaa-token-session-wrongsha-wave-20260428.md << 'EOF'
+# IAA Assurance Token
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-wrongsha-wave-20260428-PASS
+
+**Token**: IAA-session-wrongsha-wave-20260428-PASS
+**Verdict**: ASSURANCE-TOKEN (PASS)
+**PR**: #9999
+**Issue**: maturion-isms#1503
+**Reviewed SHA**: deadbeef00000000000000000000000000000001
+EOF
+  git add .
+  git commit -q -m "Add token with wrong reviewed SHA"
+}
+run_test "AC-D-WRONGSHA: Token reviewed SHA not in PR ancestry" 1 "$IAA_GATE_SCRIPT" "setup_ac_wrongsha"
+
+# AC-WR-NOPR: Wave record ## TOKEN section missing PR/issue/SHA fields
+setup_ac_wr_nopr() {
+  add_impl_file
+  # Wave record with ## TOKEN but missing required linkage fields
+  mkdir -p .agent-admin/assurance
+  cat > .agent-admin/assurance/iaa-wave-record-nopr-20260428.md << 'EOF'
+# IAA Wave Record
+
+## STATUS
+Wave in progress.
+
+## TOKEN
+
+PHASE_B_BLOCKING_TOKEN: IAA-wave-nopr-20260428-PASS
+
+**Verdict**: ASSURANCE-TOKEN (PASS)
+**Reviewed SHA**: CURRENT_HEAD
+EOF
+  git add .
+  git commit -q -m "Add wave record with missing PR and issue fields"
+}
+run_test "AC-WR-NOPR: Wave record ## TOKEN missing PR/issue fields" 1 "$IAA_GATE_SCRIPT" "setup_ac_wr_nopr"
 
 # ================================================================
 # TEST SUITE — ECAP / Admin Ceremony Gate
@@ -361,20 +493,31 @@ setup_ac8b() {
 }
 run_test "AC-8b: Documentation-only PR — ECAP not required" 0 "$ECAP_GATE_SCRIPT" "setup_ac8b"
 
-# AC-10: Protected-path PR with valid ECAP evidence
+# AC-ECAP-NOBUNDLE: Protected-path PR with PREHANDOVER ecap_invoked=true
+#                   but no ECAP bundle artifact committed → FAIL (self-certification rejected)
+setup_ac_ecap_nobundle() {
+  add_governance_file
+  add_prehandover_proof_with_ecap "true" "PASS"
+  # No ECAP bundle committed to .agent-workspace/execution-ceremony-admin-agent/bundles/
+}
+run_test "AC-ECAP-NOBUNDLE: PREHANDOVER ecap_invoked=true but no ECAP bundle" 1 "$ECAP_GATE_SCRIPT" "setup_ac_ecap_nobundle"
+
+# AC-10: Protected-path PR with valid ECAP evidence (PREHANDOVER + ECAP bundle)
 setup_ac10() {
   add_governance_file
   add_prehandover_proof_with_ecap "true" "PASS"
+  add_ecap_bundle "9999"
 }
-run_test "AC-10: Protected-path PR with valid ECAP evidence" 0 "$ECAP_GATE_SCRIPT" "setup_ac10"
+run_test "AC-10: Protected-path PR with valid ECAP evidence + bundle" 0 "$ECAP_GATE_SCRIPT" "setup_ac10"
 
 # AC-10b: Protected-path PR with ECAP evidence — IAA PASS also present
 setup_ac10b() {
   add_governance_file
   add_prehandover_proof_with_ecap "true" "PASS"
-  add_valid_iaa_token "9999" "1518"
+  add_ecap_bundle "9999"
+  add_valid_iaa_token "9999" "1503"
 }
-run_test "AC-10b: Protected-path PR with ECAP + valid IAA token" 0 "$ECAP_GATE_SCRIPT" "setup_ac10b"
+run_test "AC-10b: Protected-path PR with ECAP bundle + valid IAA token" 0 "$ECAP_GATE_SCRIPT" "setup_ac10b"
 
 # AC-ECAP-NVAL: ecap_required: N/A is rejected (anti-self-certification)
 setup_ac_nval() {

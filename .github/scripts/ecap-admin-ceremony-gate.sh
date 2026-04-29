@@ -5,7 +5,7 @@
 #          when ECAP/admin ceremony is required but absent or unevidenced.
 #          IAA PASS on a protected-path PR without ECAP evidence is also rejected.
 # Violation class: ECAP-GATE-001
-# Issue: maturion-isms#1518
+# Issue: maturion-isms#1503
 
 set -euo pipefail
 
@@ -296,12 +296,22 @@ else
       continue
     fi
 
-    # ── Case B: ecap_invoked true + ecap_verdict PASS ───────────────────────
+    # ── Case B: ecap_invoked true + ecap_verdict PASS — ALSO requires ECAP bundle ─
     if echo "$ECAP_INV_VALUE" | grep -qiE "^true$|^yes$|^YES$" || \
        echo "$CEREMONY_VALUE" | grep -qiE "^true$|^yes$|^execution-ceremony"; then
       if echo "$ECAP_VERD_VALUE" | grep -qiE "^PASS$|^pass$|^PASS_WITH_CS2_WAIVER$"; then
-        echo "  ✅ ECAP invoked and verdict PASS"
-        ECAP_EVIDENCE_FOUND=true
+        # PREHANDOVER claims ECAP invoked and passed, but a real ECAP bundle artifact
+        # must also be committed — PREHANDOVER fields alone are not ceremony evidence.
+        if [ -n "$ECAP_BUNDLE_FILES" ]; then
+          echo "  ✅ ECAP invoked (verdict PASS) and ECAP bundle artifact committed"
+          ECAP_EVIDENCE_FOUND=true
+        else
+          echo "  ❌ PREHANDOVER claims ecap_invoked=true + ecap_verdict=PASS but no ECAP bundle"
+          echo "      artifact committed under .agent-workspace/execution-ceremony-admin-agent/bundles/"
+          echo "      PREHANDOVER self-certification fields alone are not accepted evidence. [ECAP-GATE-005]"
+          FAIL_REASONS="${FAIL_REASONS}\n  - ${proof_file}: ecap_invoked=true/ecap_verdict=PASS but no committed ECAP bundle"
+          FAIL=true
+        fi
         continue
       elif [ -z "$ECAP_VERD_VALUE" ]; then
         # ecap_invoked but no verdict yet — FAIL

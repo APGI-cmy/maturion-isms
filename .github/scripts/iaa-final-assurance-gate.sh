@@ -6,7 +6,7 @@
 #          Governance paperwork (PREHANDOVER proof alone) is NOT sufficient —
 #          a committed IAA-produced token artifact is required.
 # Violation class: IAA-FINAL-GATE-001
-# Issue: maturion-isms#1518
+# Issue: maturion-isms#1503
 
 set -euo pipefail
 
@@ -217,7 +217,7 @@ while IFS= read -r token_file; do
     echo "  ✅ PHASE_B_BLOCKING_TOKEN: $TOKEN_VALUE"
   fi
 
-  # Check C: Verdict must not be a blocking/rejection verdict
+  # Check C: Verdict must not be a blocking/rejection verdict, and must explicitly be PASS.
   # Parse both plain `Verdict:` and Markdown `**Verdict**:` / `- **Verdict**:` formats.
   VERDICT_LINE=$(grep -iE \
     "^[[:space:]]*(-[[:space:]]*)?\*\*[Vv]erdict\*\*[[:space:]]*:[[:space:]]|^[[:space:]]*(Verdict|VERDICT):[[:space:]]" \
@@ -238,47 +238,91 @@ while IFS= read -r token_file; do
       FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: verdict is blocking/rejection"
       FILE_VALID=false
       FAIL=true
-    else
-      if [ -n "$VERDICT_LINE" ]; then
-        echo "  ✅ Verdict line: $VERDICT_LINE"
-      fi
-    fi
-  fi
-
-  # Check D: PR reference — compare only the dedicated PR field in the token
-  if [ -n "$PR_NUMBER" ]; then
-    TOKEN_PR_LINE=$(grep -iE '^[[:space:]]*(-[[:space:]]*)?\*\*PR\*\*:[[:space:]]*#?[0-9]+' \
-      "$token_file" 2>/dev/null | head -1 || true)
-    TOKEN_PR_NUMBER=$(echo "$TOKEN_PR_LINE" | grep -oE '#?[0-9]+' | head -1 | tr -d '#' || true)
-
-    if [ -n "$TOKEN_PR_NUMBER" ]; then
-      if [ "$TOKEN_PR_NUMBER" != "$PR_NUMBER" ]; then
-        echo "  ❌ Token references a different PR (#${TOKEN_PR_NUMBER}) — stale or wrong PR token [IAA-FINAL-GATE-005]"
-        FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: references PR #${TOKEN_PR_NUMBER}, not current PR #${PR_NUMBER}"
+    elif [ -n "$VERDICT_LINE" ]; then
+      # Require an explicit PASS or PASS_WITH_CS2_WAIVER verdict
+      if echo "$VERDICT_LINE" | grep -qi "PASS"; then
+        echo "  ✅ Verdict confirmed PASS: $VERDICT_LINE"
+      else
+        echo "  ❌ IAA verdict does not explicitly confirm PASS: $VERDICT_LINE [IAA-FINAL-GATE-010]"
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: verdict present but does not contain PASS"
         FILE_VALID=false
         FAIL=true
-      else
-        echo "  ✅ PR reference correct (current PR: #${PR_NUMBER})"
       fi
     else
-      echo "  ✅ No dedicated PR field found to conflict with current PR #${PR_NUMBER}"
+      echo "  ❌ No verdict line found in token — cannot confirm PASS [IAA-FINAL-GATE-010]"
+      FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: no verdict line found"
+      FILE_VALID=false
+      FAIL=true
     fi
   fi
 
-  # Check E: Issue reference — token must not reference a DIFFERENT governing issue
-  if [ -n "$EXPECTED_ISSUE_NUMBER" ]; then
-    # Look for any maturion-isms#NNNN or Issue: NNNN that is NOT the expected issue
-    OTHER_ISSUE=$(grep -oiE '(maturion-isms#|Issue:[[:space:]]*)([0-9]+)' \
-      "$token_file" 2>/dev/null | grep -oE '[0-9]+$' | \
-      grep -v "^${EXPECTED_ISSUE_NUMBER}$" | head -1 || true)
-    if [ -n "$OTHER_ISSUE" ]; then
-      echo "  ❌ Token references issue #${OTHER_ISSUE}, not governing issue #${EXPECTED_ISSUE_NUMBER} [IAA-FINAL-GATE-006]"
-      FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: references issue #${OTHER_ISSUE} (expected #${EXPECTED_ISSUE_NUMBER})"
+  # Check D: PR reference — token MUST contain a dedicated **PR**: field that matches.
+  # Missing PR field is a hard failure; the gate requires positive linkage.
+  TOKEN_PR_LINE=$(grep -iE '^[[:space:]]*(-[[:space:]]*)?\*\*PR\*\*:[[:space:]]*' \
+    "$token_file" 2>/dev/null | head -1 || true)
+  TOKEN_PR_NUMBER=$(echo "$TOKEN_PR_LINE" | grep -oE '#?[0-9]+' | head -1 | tr -d '#' || true)
+
+  if [ -z "$TOKEN_PR_NUMBER" ]; then
+    echo "  ❌ Token is missing a **PR**: field — positive PR linkage required [IAA-FINAL-GATE-007]"
+    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: missing **PR**: field (positive linkage required)"
+    FILE_VALID=false
+    FAIL=true
+  elif [ -n "$PR_NUMBER" ] && [ "$TOKEN_PR_NUMBER" != "$PR_NUMBER" ]; then
+    echo "  ❌ Token references a different PR (#${TOKEN_PR_NUMBER}) — stale or wrong PR token [IAA-FINAL-GATE-005]"
+    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: references PR #${TOKEN_PR_NUMBER}, not current PR #${PR_NUMBER}"
+    FILE_VALID=false
+    FAIL=true
+  else
+    echo "  ✅ PR reference: #${TOKEN_PR_NUMBER}"
+  fi
+
+  # Check E: Issue reference — token MUST contain a governing issue field.
+  # Missing issue field is a hard failure regardless of whether EXPECTED_ISSUE_NUMBER is set.
+  TOKEN_ISSUE_LINE=$(grep -iE '^[[:space:]]*(-[[:space:]]*)?\*\*Issue\*\*:[[:space:]]*' \
+    "$token_file" 2>/dev/null | head -1 || true)
+  TOKEN_ISSUE_NUMBER=$(echo "$TOKEN_ISSUE_LINE" | grep -oE '[0-9]+' | tail -1 || true)
+
+  if [ -z "$TOKEN_ISSUE_NUMBER" ]; then
+    echo "  ❌ Token is missing an **Issue**: field — governing issue linkage required [IAA-FINAL-GATE-006]"
+    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: missing **Issue**: field (positive linkage required)"
+    FILE_VALID=false
+    FAIL=true
+  elif [ -n "$EXPECTED_ISSUE_NUMBER" ] && [ "$TOKEN_ISSUE_NUMBER" != "$EXPECTED_ISSUE_NUMBER" ]; then
+    echo "  ❌ Token references issue #${TOKEN_ISSUE_NUMBER}, not governing issue #${EXPECTED_ISSUE_NUMBER} [IAA-FINAL-GATE-006]"
+    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: references issue #${TOKEN_ISSUE_NUMBER} (expected #${EXPECTED_ISSUE_NUMBER})"
+    FILE_VALID=false
+    FAIL=true
+  else
+    echo "  ✅ Issue reference: #${TOKEN_ISSUE_NUMBER}"
+  fi
+
+  # Check F: Reviewed SHA — token MUST contain a **Reviewed SHA**: field, and it must be
+  # reachable from the current HEAD (ancestor of HEAD).
+  TOKEN_SHA_LINE=$(grep -iE \
+    '^[[:space:]]*(-[[:space:]]*)?\*\*(Reviewed SHA|Review SHA|HEAD SHA|Commit SHA)\*\*:[[:space:]]*' \
+    "$token_file" 2>/dev/null | head -1 || true)
+  TOKEN_REVIEWED_SHA=$(echo "$TOKEN_SHA_LINE" | \
+    sed 's/.*\*\*[^*]*\*\*://;s/^[[:space:]]*//;s/[[:space:]]*$//' || true)
+
+  if [ -z "$TOKEN_REVIEWED_SHA" ]; then
+    echo "  ❌ Token is missing a **Reviewed SHA**: field — reviewed commit linkage required [IAA-FINAL-GATE-008]"
+    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: missing **Reviewed SHA**: field"
+    FILE_VALID=false
+    FAIL=true
+  elif echo "$TOKEN_REVIEWED_SHA" | grep -qiE "^CURRENT_HEAD$|^CURRENT$|^HEAD$"; then
+    echo "  ✅ Reviewed SHA: explicit current-head marker ($TOKEN_REVIEWED_SHA)"
+  elif [ -n "$HEAD_SHA" ]; then
+    # Token SHA must be an ancestor of HEAD (reachable from current HEAD in this repo)
+    if git merge-base --is-ancestor "$TOKEN_REVIEWED_SHA" HEAD 2>/dev/null; then
+      echo "  ✅ Reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} is in ancestry of HEAD"
+    else
+      echo "  ❌ Token reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} is not in ancestry of HEAD [IAA-FINAL-GATE-009]"
+      FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} not reachable from HEAD"
       FILE_VALID=false
       FAIL=true
-    else
-      echo "  ✅ Issue reference correct (governing issue: #${EXPECTED_ISSUE_NUMBER})"
     fi
+  else
+    echo "  ✅ Reviewed SHA present: ${TOKEN_REVIEWED_SHA:0:12} (HEAD_SHA not set — skipping ancestry check)"
   fi
 
   if [ "$FILE_VALID" = true ]; then
@@ -296,17 +340,95 @@ while IFS= read -r wave_file; do
 
   if grep -q "^## TOKEN" "$wave_file" 2>/dev/null; then
     echo "Checking wave record (## TOKEN section): $wave_file"
+    WR_FILE_VALID=true
+
     WR_TOKEN_VALUE=$(awk '/^## TOKEN/{found=1} found && /PHASE_B_BLOCKING_TOKEN:/{print; exit}' \
       "$wave_file" 2>/dev/null | \
       sed 's/.*PHASE_B_BLOCKING_TOKEN://;s/^[[:space:]]*//;s/[[:space:]]*$//' || true)
 
-    if [ -n "$WR_TOKEN_VALUE" ] && \
-       [ "$WR_TOKEN_VALUE" != "PENDING" ] && \
-       ! echo "$WR_TOKEN_VALUE" | grep -qi "REJECTION"; then
-      echo "  ✅ PHASE_B_BLOCKING_TOKEN in wave record: $WR_TOKEN_VALUE"
-      VALID_TOKEN_FOUND=true
+    if [ -z "$WR_TOKEN_VALUE" ]; then
+      echo "  ❌ PHASE_B_BLOCKING_TOKEN missing in wave record ## TOKEN [IAA-FINAL-GATE-001]"
+      WR_FILE_VALID=false
+      FAIL=true
+      FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: PHASE_B_BLOCKING_TOKEN missing in ## TOKEN section"
+    elif [ "$WR_TOKEN_VALUE" = "PENDING" ]; then
+      echo "  ❌ PHASE_B_BLOCKING_TOKEN is PENDING in wave record [IAA-FINAL-GATE-002]"
+      WR_FILE_VALID=false
+      FAIL=true
+      FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: PHASE_B_BLOCKING_TOKEN = PENDING"
+    elif echo "$WR_TOKEN_VALUE" | grep -qi "REJECTION"; then
+      echo "  ❌ PHASE_B_BLOCKING_TOKEN is a REJECTION value in wave record [IAA-FINAL-GATE-003]"
+      WR_FILE_VALID=false
+      FAIL=true
+      FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: PHASE_B_BLOCKING_TOKEN is a REJECTION"
     else
-      echo "  ⚠️  ## TOKEN section found but PHASE_B_BLOCKING_TOKEN is missing/PENDING/REJECTION"
+      echo "  ✅ PHASE_B_BLOCKING_TOKEN in wave record: $WR_TOKEN_VALUE"
+    fi
+
+    # Wave record: PR reference must be present in ## TOKEN section
+    WR_PR_LINE=$(awk '/^## TOKEN/{found=1} found && /\*\*PR\*\*:/{print; exit}' \
+      "$wave_file" 2>/dev/null || true)
+    WR_PR_NUMBER=$(echo "$WR_PR_LINE" | grep -oE '#?[0-9]+' | head -1 | tr -d '#' || true)
+    if [ -z "$WR_PR_NUMBER" ]; then
+      echo "  ❌ Wave record ## TOKEN is missing **PR**: field [IAA-FINAL-GATE-007]"
+      WR_FILE_VALID=false
+      FAIL=true
+      FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: missing **PR**: field in ## TOKEN section"
+    elif [ -n "$PR_NUMBER" ] && [ "$WR_PR_NUMBER" != "$PR_NUMBER" ]; then
+      echo "  ❌ Wave record ## TOKEN references PR #${WR_PR_NUMBER} (current: #${PR_NUMBER}) [IAA-FINAL-GATE-005]"
+      WR_FILE_VALID=false
+      FAIL=true
+      FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: ## TOKEN PR #${WR_PR_NUMBER} != current PR #${PR_NUMBER}"
+    else
+      echo "  ✅ Wave record PR reference: #${WR_PR_NUMBER}"
+    fi
+
+    # Wave record: Issue reference must be present in ## TOKEN section
+    WR_ISSUE_LINE=$(awk '/^## TOKEN/{found=1} found && /\*\*Issue\*\*:/{print; exit}' \
+      "$wave_file" 2>/dev/null || true)
+    WR_ISSUE_NUMBER=$(echo "$WR_ISSUE_LINE" | grep -oE '[0-9]+' | tail -1 || true)
+    if [ -z "$WR_ISSUE_NUMBER" ]; then
+      echo "  ❌ Wave record ## TOKEN is missing **Issue**: field [IAA-FINAL-GATE-006]"
+      WR_FILE_VALID=false
+      FAIL=true
+      FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: missing **Issue**: field in ## TOKEN section"
+    elif [ -n "$EXPECTED_ISSUE_NUMBER" ] && [ "$WR_ISSUE_NUMBER" != "$EXPECTED_ISSUE_NUMBER" ]; then
+      echo "  ❌ Wave record ## TOKEN references issue #${WR_ISSUE_NUMBER} (expected: #${EXPECTED_ISSUE_NUMBER}) [IAA-FINAL-GATE-006]"
+      WR_FILE_VALID=false
+      FAIL=true
+      FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: ## TOKEN issue #${WR_ISSUE_NUMBER} != expected #${EXPECTED_ISSUE_NUMBER}"
+    else
+      echo "  ✅ Wave record issue reference: #${WR_ISSUE_NUMBER}"
+    fi
+
+    # Wave record: Reviewed SHA must be present in ## TOKEN section
+    WR_SHA_LINE=$(awk '/^## TOKEN/{found=1} found && /\*\*(Reviewed SHA|Review SHA|HEAD SHA|Commit SHA)\*\*:/{print; exit}' \
+      "$wave_file" 2>/dev/null || true)
+    WR_REVIEWED_SHA=$(echo "$WR_SHA_LINE" | \
+      sed 's/.*\*\*[^*]*\*\*://;s/^[[:space:]]*//;s/[[:space:]]*$//' || true)
+    if [ -z "$WR_REVIEWED_SHA" ]; then
+      echo "  ❌ Wave record ## TOKEN is missing **Reviewed SHA**: field [IAA-FINAL-GATE-008]"
+      WR_FILE_VALID=false
+      FAIL=true
+      FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: missing **Reviewed SHA**: field in ## TOKEN section"
+    elif echo "$WR_REVIEWED_SHA" | grep -qiE "^CURRENT_HEAD$|^CURRENT$|^HEAD$"; then
+      echo "  ✅ Wave record reviewed SHA: explicit current-head marker"
+    elif [ -n "$HEAD_SHA" ]; then
+      if git merge-base --is-ancestor "$WR_REVIEWED_SHA" HEAD 2>/dev/null; then
+        echo "  ✅ Wave record reviewed SHA ${WR_REVIEWED_SHA:0:12} is in ancestry of HEAD"
+      else
+        echo "  ❌ Wave record reviewed SHA ${WR_REVIEWED_SHA:0:12} not in ancestry of HEAD [IAA-FINAL-GATE-009]"
+        WR_FILE_VALID=false
+        FAIL=true
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: reviewed SHA not reachable from HEAD"
+      fi
+    else
+      echo "  ✅ Wave record reviewed SHA: ${WR_REVIEWED_SHA:0:12} (ancestry check skipped — HEAD_SHA not set)"
+    fi
+
+    if [ "$WR_FILE_VALID" = true ]; then
+      VALID_TOKEN_FOUND=true
+      echo "  ✅ Wave record ## TOKEN VALID: $wave_file"
     fi
     echo ""
   fi
