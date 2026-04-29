@@ -171,17 +171,31 @@ FOREMAN_PREHANDOVER_IN_PR=$(git diff "${BASE_SHA}...HEAD" --name-only --diff-fil
 ECAP_BUNDLES_IN_PR=$(git diff "${BASE_SHA}...HEAD" --name-only --diff-filter=AM 2>/dev/null \
   | grep "^\.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-.*\.md$" || true)
 
-ALL_PROOF_FILES="${PREHANDOVER_IN_PR}"$'\n'"${FOREMAN_PREHANDOVER_IN_PR}"$'\n'"${ECAP_BUNDLES_IN_PR}"
+# Only PREHANDOVER proof files should be validated for PREHANDOVER ECAP YAML fields.
+ALL_PROOF_FILES="${PREHANDOVER_IN_PR}"$'\n'"${FOREMAN_PREHANDOVER_IN_PR}"
 # Deduplicate and remove empty lines
 ALL_PROOF_FILES=$(echo "$ALL_PROOF_FILES" | sort -u | grep -v '^[[:space:]]*$' || true)
+
+# Track ECAP bundles separately because they are additional evidence artifacts
+# and may not contain the same YAML fields as PREHANDOVER proof files.
+ECAP_BUNDLE_FILES=$(echo "$ECAP_BUNDLES_IN_PR" | sort -u | grep -v '^[[:space:]]*$' || true)
 
 PROOF_COUNT=0
 if [ -n "$ALL_PROOF_FILES" ]; then
   PROOF_COUNT=$(echo "$ALL_PROOF_FILES" | wc -l | tr -d ' ')
 fi
-echo "PREHANDOVER/ECAP proof files in this PR: ${PROOF_COUNT}"
+echo "PREHANDOVER proof files in this PR: ${PROOF_COUNT}"
 if [ "${PROOF_COUNT}" -gt 0 ] && [ -n "$ALL_PROOF_FILES" ]; then
   echo "$ALL_PROOF_FILES" | while IFS= read -r f; do [ -n "$f" ] && echo "  - $f"; done
+fi
+
+ECAP_BUNDLE_COUNT=0
+if [ -n "$ECAP_BUNDLE_FILES" ]; then
+  ECAP_BUNDLE_COUNT=$(echo "$ECAP_BUNDLE_FILES" | wc -l | tr -d ' ')
+fi
+echo "ECAP bundle files in this PR: ${ECAP_BUNDLE_COUNT}"
+if [ "${ECAP_BUNDLE_COUNT}" -gt 0 ] && [ -n "$ECAP_BUNDLE_FILES" ]; then
+  echo "$ECAP_BUNDLE_FILES" | while IFS= read -r f; do [ -n "$f" ] && echo "  - $f"; done
 fi
 echo ""
 
