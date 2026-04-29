@@ -427,30 +427,39 @@ mkdir -p "${LIFECYCLE_DIR}"
 PR_NUM="${PR_NUMBER:-0}"
 LIFECYCLE_FILE="${LIFECYCLE_DIR}/pr-${PR_NUM}-assurance-state.json"
 
-IAA_ARTIFACT_JSON="${IAA_ARTIFACT_PATH}"
-ECAP_ARTIFACT_JSON="${ECAP_ARTIFACT_PATH}"
-IAA_REVIEWED_SHA_JSON="${IAA_REVIEWED_SHA:-null}"
-
-cat > "$LIFECYCLE_FILE" << EOJSON
-{
-  "pr": ${PR_NUM},
-  "issue": "${EXPECTED_ISSUE_NUMBER:-null}",
-  "head_sha": "${HEAD_SHA:-null}",
-  "implementation_changed": ${IMPLEMENTATION_CHANGED},
-  "iaa_required": ${IAA_REQUIRED},
-  "iaa_invoked": ${IAA_INVOKED},
-  "iaa_artifact_path": "${IAA_ARTIFACT_JSON}",
-  "iaa_reviewed_sha": "${IAA_REVIEWED_SHA_JSON}",
-  "iaa_verdict": "${IAA_VERDICT}",
-  "ecap_required": ${ECAP_REQUIRED},
-  "ecap_invoked": ${ECAP_INVOKED},
-  "ecap_artifact_path": "${ECAP_ARTIFACT_JSON}",
-  "ecap_verdict": "${ECAP_VERDICT}",
-  "handover_allowed": ${HANDOVER_ALLOWED},
-  "merge_ready_allowed": ${MERGE_READY_ALLOWED}
-}
-EOJSON
-
+jq -n \
+  --argjson pr "${PR_NUM}" \
+  --arg issue "${EXPECTED_ISSUE_NUMBER:-}" \
+  --arg head_sha "${HEAD_SHA:-}" \
+  --argjson implementation_changed "${IMPLEMENTATION_CHANGED}" \
+  --argjson iaa_required "${IAA_REQUIRED}" \
+  --argjson iaa_invoked "${IAA_INVOKED}" \
+  --arg iaa_artifact_path "${IAA_ARTIFACT_PATH:-}" \
+  --arg iaa_reviewed_sha "${IAA_REVIEWED_SHA:-}" \
+  --arg iaa_verdict "${IAA_VERDICT:-}" \
+  --argjson ecap_required "${ECAP_REQUIRED}" \
+  --argjson ecap_invoked "${ECAP_INVOKED}" \
+  --arg ecap_artifact_path "${ECAP_ARTIFACT_PATH:-}" \
+  --arg ecap_verdict "${ECAP_VERDICT:-}" \
+  --argjson handover_allowed "${HANDOVER_ALLOWED}" \
+  --argjson merge_ready_allowed "${MERGE_READY_ALLOWED}" \
+  '{
+    pr: $pr,
+    issue: (if $issue == "" then null else $issue end),
+    head_sha: (if $head_sha == "" then null else $head_sha end),
+    implementation_changed: $implementation_changed,
+    iaa_required: $iaa_required,
+    iaa_invoked: $iaa_invoked,
+    iaa_artifact_path: (if $iaa_artifact_path == "" then null else $iaa_artifact_path end),
+    iaa_reviewed_sha: (if $iaa_reviewed_sha == "" then null else $iaa_reviewed_sha end),
+    iaa_verdict: $iaa_verdict,
+    ecap_required: $ecap_required,
+    ecap_invoked: $ecap_invoked,
+    ecap_artifact_path: (if $ecap_artifact_path == "" then null else $ecap_artifact_path end),
+    ecap_verdict: $ecap_verdict,
+    handover_allowed: $handover_allowed,
+    merge_ready_allowed: $merge_ready_allowed
+  }' > "$LIFECYCLE_FILE"
 echo "Lifecycle artifact written: ${LIFECYCLE_FILE}"
 echo ""
 cat "${LIFECYCLE_FILE}"
