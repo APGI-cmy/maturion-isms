@@ -4,7 +4,7 @@
 **Issue**: maturion-isms#1505
 **Branch**: copilot/add-supabase-migration-verification-model
 **Date**: 2026-04-28
-**Last refreshed**: 2026-04-28 (post-final-edit scope refresh per §4.3g / AAP-28)
+**Last refreshed**: 2026-04-29 (post-review-fix scope refresh — addresses PR review comments)
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ## Scope Decision
@@ -19,8 +19,8 @@ required vs agent self-service.
 ## Changed Files
 
 - `SCOPE_DECLARATION.md` - Updated for this wave (per §4.3g scope refresh)
-- `supabase/migrations/20260428000001_mmm_governance_readonly.sql` - Migration: creates `governance_readonly` schema, `verification_log` table, `log_verification_call` audit helper, and five SECURITY DEFINER read-only RPCs for MPS source-pack verification; GRANTs EXECUTE to `service_role` only
-- `.github/workflows/verify-supabase-readonly.yml` - New workflow: governed read-only verification via `workflow_dispatch`; allowlisted RPC calls only; publishes sanitized job summary as durable evidence; fails on empty/error result
+- `supabase/migrations/20260428000001_mmm_governance_readonly.sql` - Migration: creates `governance_readonly` schema, `verification_log` table, `log_verification_call` audit helper, and five SECURITY DEFINER read-only RPCs for MPS source-pack verification; GRANTs EXECUTE to `service_role` only; REVOKE FROM PUBLIC for all functions
+- `.github/workflows/verify-supabase-readonly.yml` - New workflow: governed read-only verification via `workflow_dispatch`; allowlisted RPC calls only; publishes sanitized job summary as durable evidence; fails hard on empty/error result
 - `docs/supabase/SUPABASE_GOVERNED_ACCESS_MODEL.md` - New documentation: two-path access model, mutation path vs verification path, MPS source-pack verification guide, schema reference, when CS2 action is required vs agent self-service
 
 ## Out of Scope
