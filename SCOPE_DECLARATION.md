@@ -4,7 +4,7 @@
 **Issue**: maturion-isms#1503
 **Branch**: copilot/hard-gate-pr-merge-iaa-token
 **Date**: 2026-04-28
-**Last refreshed**: 2026-04-29 (scope refreshed — stale #1502 wave entries removed per comment #4341576665)
+**Last refreshed**: 2026-04-29T07:10 (scope refreshed — stale #1502 wave entries removed; PR body corrected to place Closes maturion-isms#1503 first)
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ## Scope Decision
