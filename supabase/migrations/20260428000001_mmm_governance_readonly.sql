@@ -92,15 +92,13 @@ AS $$
 BEGIN
     INSERT INTO governance_readonly.verification_log (caller, target)
     VALUES (p_caller, p_target);
-EXCEPTION
-    -- Never fail the caller due to a logging error
-    WHEN OTHERS THEN NULL;
 END;
 $$;
 
 COMMENT ON FUNCTION governance_readonly.log_verification_call(text, text) IS
   'Internal audit logger for governance verification calls. '
-  'SECURITY DEFINER — inserts to verification_log on behalf of read-only callers.';
+  'SECURITY DEFINER — inserts to verification_log on behalf of read-only callers. '
+  'Fail-closed: a logging failure propagates to the caller.';
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 4. count_mmm_mps_records()
