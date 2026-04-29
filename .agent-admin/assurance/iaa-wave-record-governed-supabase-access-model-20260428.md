@@ -8,7 +8,7 @@
 **Ceremony Admin Appointed**: NO
 **IAA Session**: session-078-20260429
 **CS2 Authority**: Substantive approval comment #4341711647 (Johan Ras / @APGI-cmy) — "Substantively approved, but not mergeable yet."
-**HEAD SHA reviewed**: 5c657f6
+**HEAD SHA reviewed**: f6c31cf18c3eca5648ff0bd52d4acf1f5476f7d6
 
 ---
 
@@ -218,7 +218,23 @@ FFA Result:
 
 ---
 
-## TOKEN
+## POST-ORIGINAL-SHA COVERAGE (commits after 5c657f6)
+
+The following commits were applied after the originally reviewed SHA (`5c657f6`) and before the current reviewed SHA (`f6c31cf`). Each is assessed for IAA coverage:
+
+| Commit | Description | IAA Assessment |
+|--------|-------------|----------------|
+| `10acdd4` | IAA ASSURANCE-TOKEN (PASS) committed to branch | Governance artifact only — no code change. ✅ PASS |
+| `1771d92` | SCOPE_DECLARATION.md refreshed to include IAA wave record | Governance artifact only — no code change. ✅ PASS |
+| `3b8228c` | Merge: resolve SCOPE_DECLARATION.md conflict | Merge commit — no substantive code change. ✅ PASS |
+| `2fc5ba1` | feat: add `p_caller` audit logging to all four unaudited verification RPCs | **Substantive change** — adds `p_caller text DEFAULT 'unknown'` parameter to `count_mmm_mps_records`, `count_mmm_criteria_records`, `list_mmm_framework_source_documents`, `search_ai_knowledge_mps_sources`; calls `PERFORM governance_readonly.log_verification_call(p_caller, '<target>')` at the start of each body; updates REVOKE/GRANT for new arities; updates workflow SQL calls. This change satisfies Issue #1505 requirement "All query/RPC usage must be logged." CORE-026 acceptance criterion verified: all 5 externally callable RPCs now log to `verification_log`. BD-006 (writers and readers) and BD-018 (no injection vectors) remain PASS — `p_caller` is sanitized via `SAFE_CALLER` in the workflow. ✅ PASS |
+| `f6c31cf` | fix: make `log_verification_call` fail-closed — remove `EXCEPTION WHEN OTHERS THEN NULL` | **Substantive security fix** — the `log_verification_call` helper previously caught all exceptions and returned silently, making it fail-open. This commit removes the `EXCEPTION WHEN OTHERS THEN NULL` block so that a logging failure propagates to the calling verification RPC. This satisfies Issue #1505's audit-integrity requirement. BD-021 (coding best practice) remains PASS — fail-closed audit logging is the correct pattern for governance-critical infrastructure. ✅ PASS |
+
+> No new acceptance criteria failures introduced by any post-`5c657f6` commit. All CORE/OVL/BD checks remain PASS with evidence updated above.
+
+---
+
+
 
 PHASE_B_BLOCKING_TOKEN: IAA-session-078-governed-supabase-access-model-20260429-PASS
 
@@ -228,11 +244,11 @@ PHASE_B_BLOCKING_TOKEN: IAA-session-078-governed-supabase-access-model-20260429-
 ASSURANCE-TOKEN
 - **PR**: maturion-isms#1506
 - **Issue**: maturion-isms#1505
-- **Reviewed SHA**: 5c657f6
+- **Reviewed SHA**: f6c31cf18c3eca5648ff0bd52d4acf1f5476f7d6
 - **Verdict**: ASSURANCE-TOKEN (PASS)
 - **Wave**: governed-supabase-access-model-20260428
 - **Token reference**: IAA-session-078-governed-supabase-access-model-20260429-PASS
-All 36 checks PASS. Merge gate parity: PASS.
+All 36 checks PASS (plus post-`5c657f6` coverage addendum: 5 additional commits reviewed and verified). Merge gate parity: PASS.
 Merge permitted (subject to CS2 approval).
 Adoption phase: PHASE_B_BLOCKING
 ═══════════════════════════════════════
