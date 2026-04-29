@@ -390,7 +390,10 @@ GRANT EXECUTE ON FUNCTION governance_readonly.search_ai_knowledge_mps_sources(te
 
 -- Explicitly deny direct table access through this schema to service_role
 -- (functions are the only entry point — no direct SELECT on base tables from
--- this schema grant).  Base tables remain protected by their own RLS policies.
+-- this schema grant). For these SECURITY DEFINER RPCs executed by
+-- service_role, RLS is not the protection mechanism; protection comes from
+-- the limited, reviewed read-only RPC surface and the controlled outputs they
+-- return.
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 10. End of migration
