@@ -62,9 +62,9 @@ Deno.serve(async (req: Request) => {
     return response as Response;
   }
 
-  // JWT required (per architecture §A4.2: mmm-upload-framework-source requires JWT only, not ADMIN)
+  // Auth policy: JWT required only (per architecture §A4.2).
   // NBR-002: Any authenticated user may upload a framework source document.
-  // ADMIN-only gate is NOT applied here — see mmm-framework-publish for publish-gate enforcement.
+  // Do not add an ADMIN-only gate here; ADMIN enforcement belongs in mmm-framework-publish at publish time.
 
   // TR-019: Accept multipart or JSON
   let fileBlob: Blob | null = null;
