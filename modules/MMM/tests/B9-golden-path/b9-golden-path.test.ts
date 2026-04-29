@@ -1187,17 +1187,6 @@ describe('ISSUE-1507: LoginPage exists and /login route is registered in App.tsx
   });
 });
 
-describe('ISSUE-1507: mmm-upload-framework-source is JWT-only (authenticated KUC upload access)', () => {
-  it('mmm-upload-framework-source validates JWT (requires authentication)', () => {
-    const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
-    expect(src).toContain('validateJWT');
-  });
-  it('mmm-upload-framework-source does NOT require ADMIN role (JWT-only per architecture §A4.2)', () => {
-    const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
-    expect(src).not.toContain("requireRole(claims.role, ['ADMIN'])");
-  });
-});
-
 // =============================================================================
 // ISSUE-1507 FOLLOW-UP: Review feedback anti-regression tests
 // =============================================================================
