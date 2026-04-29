@@ -231,7 +231,7 @@ jobs:
               '3. \u2705 **IAA Final Assurance** (Phase 4 Step 4.3b): Has this PR received an `ASSURANCE-TOKEN` with `PHASE_B_BLOCKING_TOKEN` non-empty?',
               '   - If NO \u2192 invoke IAA now — see detailed IAA instructions below.',
               '   - If you received a `REJECTION-PACKAGE` \u2192 fix all cited findings, regenerate PREHANDOVER proof (new commit), re-invoke IAA directly (you own this loop).',
-              '4. \u2705 **Token Artifact Committed** (Phase 4 Step 4.3c): Is the IAA token at `.agent-admin/assurance/iaa-token-*.md` committed with `PHASE_B_BLOCKING_TOKEN:` non-empty?',
+              '4. \u2705 **Token Artifact Committed** (Phase 4 Step 4.3c): Is the IAA token committed either at `.agent-admin/assurance/iaa-token-*.md` with `PHASE_B_BLOCKING_TOKEN:` non-empty, or in a populated `## TOKEN` section within `.agent-admin/assurance/iaa-wave-record-*.md`?',
               '5. \u2705 **Pre-IAA Commit Gate** (Phase 4 Step 4.3a): `git status --porcelain` must be empty before IAA invocation.',
               '6. \u2705 **§4.3 Parity**: All merge gate checks must be GREEN locally before Phase 4.',
               '7. \u2705 **QP**: Has any builder returned a delivery requiring Quality-Professor review? If yes \u2192 execute QP gate now (Phase 3 Step 3.5).',
