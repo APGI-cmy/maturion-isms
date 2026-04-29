@@ -1,6 +1,6 @@
 # Supabase Governed Access Model
 
-**Issue**: maturion-isms#1504
+**Issue**: maturion-isms#1505
 **Wave**: governed-supabase-access-model
 **Branch**: copilot/add-supabase-migration-verification-model
 **Date**: 2026-04-28
@@ -144,6 +144,26 @@ result and a citation reference for governance records.
 - **Allowlist enforced by workflow**: `verify-supabase-readonly.yml`
   contains an explicit `case` allowlist — no arbitrary SQL can be
   executed through this workflow.
+- **Environment gate**: The `verify-readonly` job runs under the
+  `production` GitHub environment. `SUPABASE_ACCESS_TOKEN` is only
+  exposed after the environment protection rules (CS2-approval gate)
+  are satisfied — it is never available to arbitrary `workflow_dispatch`
+  runs without prior approval.
+
+### 3.6 Interim credential model notice
+
+> ⚠️ **This is an interim workflow-restricted access model, not true
+> credential-level read-only access.**
+
+The `verify-supabase-readonly.yml` workflow uses `SUPABASE_ACCESS_TOKEN`
+(Supabase Management API). The workflow enforces an allowlist of
+`governance_readonly.*` RPCs, but the underlying credential is capable
+of broader database operations if used outside this workflow.
+
+The `production` environment gate (CS2 approval) is the primary guard
+against unauthorised credential use. A genuinely credential-level
+read-only path (dedicated read-only Postgres role or PostgREST JWT with
+read-only grants) is a future improvement tracked in maturion-isms#1505.
 
 ---
 
@@ -170,6 +190,14 @@ fields, suitable for direct citation in Foreman/IAA evidence:
 }
 ```
 
+`content_classification` values:
+
+| Value | Meaning |
+|-------|---------|
+| `generic` | Generic MPS evidence exists and no diamond-specific LDCS indicator detected |
+| `not_found` | No storage documents, no MPS records, and no `ai_knowledge` MPS records — content is absent |
+| `mixed_or_diamond_specific` | Diamond-specific LDCS indicator detected in `ai_knowledge` content |
+
 ### 4.1 Interpreting the result
 
 | Field | Expected for generic MPS pack | Action if unexpected |
@@ -181,7 +209,7 @@ fields, suitable for direct citation in Foreman/IAA evidence:
 | `canonical_domains_found` | 5 | Verify domain seeding migration |
 | `all_25_mps_represented` | `true` | Seed missing MPS records |
 | `diamond_specific_ldcs_detected` | `false` | Review and reclassify LDCS-specific content |
-| `content_classification` | `"generic"` | Remove diamond-specific content from `ai_knowledge` |
+| `content_classification` | `"generic"` | `"not_found"`: no source content exists — upload source docs and seed MPS data; `"mixed_or_diamond_specific"`: remove LDCS-specific content from `ai_knowledge` |
 | `approval_status` | `"approved"` | Approve pending `ai_knowledge` records via MAT workflow |
 | `retrievable_by_mmm_aimc` | `true` | Upload content to `ai_knowledge` via AIMC pipeline |
 
@@ -262,6 +290,6 @@ New verification targets must not:
 - `.github/workflows/verify-supabase-readonly.yml` — verification workflow
 - `.github/workflows/deploy-mmm-supabase-migrations.yml` — mutation workflow
 - `docs/supabase/MMM_SUPABASE_OPERATING_PROCEDURE.md` — general Supabase operating procedure
-- `maturion-isms#1504` — this issue
+- `maturion-isms#1505` — this issue
 - `maturion-isms#1501` — MPS source-pack verification (primary use case)
 - `maturion-isms#1502` — Track A migration-gap analysis (context)

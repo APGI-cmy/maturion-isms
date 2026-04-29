@@ -1,7 +1,7 @@
 # Scope Declaration — governed-supabase-access-model-20260428
 
 **Wave**: governed-supabase-access-model-20260428
-**Issue**: maturion-isms#1504
+**Issue**: maturion-isms#1505
 **Branch**: copilot/add-supabase-migration-verification-model
 **Date**: 2026-04-28
 **Last refreshed**: 2026-04-28 (post-final-edit scope refresh per §4.3g / AAP-28)

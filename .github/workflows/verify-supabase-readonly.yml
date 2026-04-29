@@ -9,7 +9,7 @@ name: Verify Supabase Read-Only State
 #   deploy-mmm-supabase-migrations.yml   = privileged schema mutation (separate)
 #   verify-supabase-readonly.yml         = read-only verification (THIS FILE)
 #
-# SECURITY CONSTRAINTS (per maturion-isms#1504 security requirements):
+# SECURITY CONSTRAINTS (per maturion-isms#1505 security requirements):
 #   - ONLY allowlisted governance_readonly.* RPCs are called; no arbitrary SQL
 #   - No INSERT, UPDATE, DELETE, DDL, or storage-mutation operations
 #   - SUPABASE_ACCESS_TOKEN is the approved Management API credential; it is
@@ -17,6 +17,22 @@ name: Verify Supabase Read-Only State
 #   - Output is sanitized: no file contents, no full embeddings, no PII
 #   - Verification output is published as a durable GitHub Step Summary for
 #     Foreman/IAA evidence citation
+#   - verify-readonly job runs under the `production` GitHub environment;
+#     SUPABASE_ACCESS_TOKEN is ONLY exposed after the environment protection
+#     rules (CS2-approval gate) are satisfied.
+#
+# INTERIM CREDENTIAL MODEL NOTICE
+# --------------------------------
+# This workflow uses SUPABASE_ACCESS_TOKEN (Supabase Management API) with an
+# allowlist of read-only governance_readonly.* RPCs enforced at the workflow
+# level.  This is WORKFLOW-RESTRICTED access, not CREDENTIAL-LEVEL read-only
+# access.  The underlying credential is capable of broader database operations
+# if called outside this workflow.
+#
+# The production environment gate (CS2 approval) is the primary guard against
+# unauthorised use of the credential.  A genuinely credential-level read-only
+# path (dedicated read-only Postgres role or PostgREST JWT with read-only
+# grants) is a future improvement tracked in maturion-isms#1505.
 #
 # PERMITTED verification_target values:
 #   mps_source_pack — verifies generic MPS 1–25 source-pack status
@@ -91,6 +107,8 @@ jobs:
 
   # ─────────────────────────────────────────────────────────────────────────
   # Verification: runs allowlisted read-only RPCs via Supabase Management API
+  # Runs under the `production` environment so SUPABASE_ACCESS_TOKEN is only
+  # exposed after the environment protection rules (CS2-approval gate) pass.
   # ─────────────────────────────────────────────────────────────────────────
   verify-readonly:
     name: Read-Only Verification — ${{ github.event.inputs.verification_target }}
@@ -98,6 +116,7 @@ jobs:
     needs: [preflight]
     permissions:
       contents: read
+    environment: production
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
@@ -260,7 +279,7 @@ jobs:
             echo ""
             echo "**Access model**: Read-only verification path (no writes, no DDL)"
             echo "**Governed by**: \`docs/supabase/SUPABASE_GOVERNED_ACCESS_MODEL.md\`"
-            echo "**Issue**: maturion-isms#1504"
+            echo "**Issue**: maturion-isms#1505"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Fail job if RPC failed

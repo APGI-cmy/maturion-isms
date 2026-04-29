@@ -2,7 +2,7 @@
 -- MMM Governance Read-Only Schema — Governed Agent Verification Path
 -- Migration: 20260428000001_mmm_governance_readonly.sql
 -- Wave: governed-supabase-access-model
--- Issue: maturion-isms#1504
+-- Issue: maturion-isms#1505
 -- Architecture Reference: docs/supabase/SUPABASE_GOVERNED_ACCESS_MODEL.md
 -- Builder: schema-builder (delegated by foreman-v2-agent)
 -- Date: 2026-04-28
@@ -52,7 +52,7 @@ COMMENT ON SCHEMA governance_readonly IS
   'Governed read-only verification layer for agents. '
   'All objects in this schema are SELECT-only. '
   'No write, DDL, or storage-mutation operations are permitted. '
-  'Issue: maturion-isms#1504.';
+  'Issue: maturion-isms#1505.';
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 2. Audit log table — INSERT-only from SECURITY DEFINER functions
@@ -127,7 +127,7 @@ $$;
 
 COMMENT ON FUNCTION governance_readonly.count_mmm_mps_records(uuid) IS
   'Read-only: counts mmm_maturity_process_steps records. '
-  'SELECT-only. No writes. maturion-isms#1504.';
+  'SELECT-only. No writes. maturion-isms#1505.';
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 5. count_mmm_criteria_records()
@@ -161,7 +161,7 @@ $$;
 
 COMMENT ON FUNCTION governance_readonly.count_mmm_criteria_records(uuid) IS
   'Read-only: counts mmm_criteria records. '
-  'SELECT-only. No writes. maturion-isms#1504.';
+  'SELECT-only. No writes. maturion-isms#1505.';
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 6. list_mmm_framework_source_documents()
@@ -202,7 +202,7 @@ $$;
 
 COMMENT ON FUNCTION governance_readonly.list_mmm_framework_source_documents(text) IS
   'Read-only: lists storage.objects metadata for mmm-framework-sources bucket. '
-  'Returns metadata only — no file contents. SELECT-only. maturion-isms#1504.';
+  'Returns metadata only — no file contents. SELECT-only. maturion-isms#1505.';
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 7. search_ai_knowledge_mps_sources()
@@ -250,7 +250,7 @@ $$;
 COMMENT ON FUNCTION governance_readonly.search_ai_knowledge_mps_sources(text) IS
   'Read-only: searches ai_knowledge for MPS-related source content. '
   'Returns 200-char snippets only — no full embeddings, no PII. '
-  'SELECT-only. maturion-isms#1504.';
+  'SELECT-only. maturion-isms#1505.';
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 8. verify_mps_source_pack_status()
@@ -337,7 +337,17 @@ BEGIN
         'ai_knowledge_approved_count',  v_ai_knowledge_approved,
         'diamond_specific_ldcs_detected', v_generic_content_flag,
         'content_classification',       CASE
-                                            WHEN v_generic_content_flag THEN 'mixed_or_diamond_specific'
+                                            -- Diamond-specific indicator found: flag contamination
+                                            WHEN v_generic_content_flag
+                                                THEN 'mixed_or_diamond_specific'
+                                            -- No source documents AND no MPS/AI knowledge records:
+                                            -- content is absent, not confirmed generic
+                                            WHEN v_source_doc_count = 0
+                                             AND v_mps_record_count = 0
+                                             AND v_ai_knowledge_count = 0
+                                                THEN 'not_found'
+                                            -- Generic MPS evidence exists and no diamond indicator:
+                                            -- content can be classified as generic
                                             ELSE 'generic'
                                         END,
         'retrievable_by_mmm_aimc',      v_ai_knowledge_count > 0,
@@ -357,7 +367,7 @@ COMMENT ON FUNCTION governance_readonly.verify_mps_source_pack_status(text) IS
   'Consolidated read-only verification for MPS source-pack state. '
   'Returns JSON evidence suitable for Foreman/IAA citation. '
   'Logs call to governance_readonly.verification_log. '
-  'SELECT-only. No writes except audit log. maturion-isms#1504.';
+  'SELECT-only. No writes except audit log. maturion-isms#1505.';
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 9. GRANT execution rights to service_role
