@@ -1,6 +1,6 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.14.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.8.0 | **Authority**: CS2
 **Date**: 2026-03-03
 **Amended**: 2026-03-03 — v1.1.0: Added §Proactive Assurance — Pre-Brief Protocol
 **Amended**: 2026-03-04 — v1.2.1: Added §CS2 Direct Review Track
@@ -8,14 +8,8 @@
 **Amended**: 2026-04-08 — v1.4.0: Added §Execution Ceremony Admin Non-Substitution Rule — explicitly prohibits the execution-ceremony-admin-agent from performing IAA functions; reinforces IAA non-producing / non-cleanup-authoring posture relative to the new ceremony admin role; authority: CS2 — ECAP-001 canon establishment issue.
 **Amended**: 2026-04-08 — v1.5.0: Amended §Independence Requirements rule 3 — clarified that Foreman is the authorised IAA invoker at Phase 4 handover (not a self-assurance violation); added §IAA Re-Invocation After Rejection — Foreman Ownership defining Foreman-owned stop-and-fix loop, CS2-only exception classes, canonical re-invocation token/session format, prohibited misleading wording, and worked example; authority: CS2 — Foreman IAA re-invocation ownership canonisation issue.
 **Amended**: 2026-04-17 — v1.6.0: Added §Admin-Ceremony Rejection Triggers — explicit rejection conditions for ceremony-integrity defects (ACR-01 through ACR-08); reinforced non-cleanup-authoring posture relative to ECAP layer; cross-references §4.3e Admin Ceremony Compliance Gate; authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack for ECAP, Foreman QP, and IAA.
-**Amended**: 2026-04-18 — v1.7.0: Added ACR-09 (pre-final instruction wording in final-state artifact), ACR-10 (cross-artifact final-state inconsistency), ACR-11 (canonical source parity violation) to §Admin-Ceremony Rejection Triggers; authority: CS2 — Post-Token Final-State Normalization Hardening issue.
-**Amended**: 2026-04-19 — v1.8.0: Added ACR-12 (PREHANDOVER proof missing `## Ripple/Cross-Agent Assessment` section), ACR-13 (ripple section present but blank), ACR-14 (`## Ripple/Cross-Agent Assessment` absent or blank in PREHANDOVER proof — HFMC-01 / FAIL-ONLY-ONCE A-023 / AAP-20) to §Admin-Ceremony Rejection Triggers; authority: CS2 — Harden PREHANDOVER templates so Ripple/Cross-Agent Assessment cannot be omitted.
-**Amended**: 2026-04-19 — v1.9.0: Added ACR-15 (active wave/task tracker contradiction — final-state claims cannot coexist with stale pending state in active control artifacts for the same wave); authority: CS2 — Canonize active-wave tracker coherence (issue #1412).
-**Amended**: 2026-04-21 — v1.11.0: Added ACR-17 (wrong-but-existing reference + renumber/rebase drift) to §Admin-Ceremony Rejection Triggers; updated §Admin-Ceremony Rejection Triggers header; authority: CS2 — wave admin-ceremony-hardening-20260421.  
-**Amended**: 2026-04-20 — v1.10.0: Added ACR-16 (active final-state token/session incoherence — new rejection trigger); added §Authoritative-Source Rule for Current Token/Session; extended active-bundle scope rule to explicitly cover `wave-current-tasks.md`; added §Proof-of-Operation — Worked Examples for AAP-22/ACR-16; authority: CS2 — maturion-isms#1422 (Canonize active final-state token/session coherence). **Note**: This amendment requires CS2 direct review per §Independence Requirements rule 1 (SELF-MOD-IAA-001).
-**Amended**: 2026-04-22 — v1.12.0: Added ACR-18 (missing declared ceremony artifact), ACR-19 (unmet declared final-state condition), ACR-20 (unmet declared cross-artifact consistency condition), ACR-21 (missing declared acknowledgement/ownership) to §Admin-Ceremony Rejection Triggers; makes unmet wave-level Admin Ceremony Contract items explicit rejection triggers; authority: CS2 — maturion-isms#1447 — **SELF-MOD-IAA-001: this amendment requires CS2 direct review/sign-off.**
-**Amended**: 2026-04-28 — v1.13.0: Added §Evidence-First Assurance Mandate (7 hardening rules: Acceptance-Criteria Evidence Matrix, Build Philosophy and Architecture Compliance Gate, Evidence-Type Downgrade Prohibition, Diff-First Audit Rule, Agent Claim Non-Evidence Rule, Independent Risk Challenge, Expanded Verdict Taxonomy); added ACR-22 through ACR-26 to §Admin-Ceremony Rejection Triggers; expanded §Binary Output Specification to include BLOCKED_PENDING_RUNTIME_EVIDENCE, BLOCKED_PENDING_BUILD_CORRECTNESS, PASS_WITH_CS2_WAIVER, INVALID_PRIOR_TOKEN verdict types; authority: CS2 — maturion-isms#1492 (Restore evidence-first IAA assurance with build-correctness and independent risk challenge) — **SELF-MOD-IAA-001: this amendment requires CS2 direct review/sign-off.**
-**Amended**: 2026-04-28 — v1.14.0: Added §Mandatory ECAP Presence Gate — IAA must determine protected-path status from actual diff at audit start; ECAP/admin ceremony is mandatory for protected-path PRs unless CS2 waiver is committed; added §Protected-Path Classifier defining protected path categories; added §CS2 Waiver Model for Protected-Path PRs; added ACR-27 (ECAP-MISSING-FOR-PROTECTED-PATH) to §Admin-Ceremony Rejection Triggers; authority: CS2 — maturion-isms#1493 — **SELF-MOD-IAA-001: this amendment requires CS2 direct review/sign-off.**
+**Amended**: 2026-04-19 — v1.7.0: Added ACR-09 through ACR-14 (gate-inventory hardening, post-token normalization, cross-artifact contradiction, carried-forward canonical source parity); added active-bundle scope rule for ACR checks; aligned with governance-repo hardening wave outcomes; authority: CS2 — governance-repo hardening wave.
+**Amended**: 2026-04-21 — v1.8.0: Added ACR-15 (active-wave/task-tracker contradiction) and ACR-16 (active final-state token/session incoherence); extended active-bundle scope rule to include wave task-tracker in bundle definition; aligned with ISMS merged hardening baseline (parity catch-up wave); authority: CS2 — governance-repo ECAP/IAA parity catch-up issue.
 
 ---
 
@@ -345,9 +339,7 @@ The IAA is the **authoritative verifier** of agent file integrity. Its obligatio
 
 ---
 
-## Output Specification (v1.13.0)
-
-> **Note**: This section supersedes the prior "Binary Output Specification." IAA now applies an expanded verdict taxonomy. All output formats are listed below. Merge is permitted for `PASS` and `PASS_WITH_CS2_WAIVER`, and blocked for all remaining verdicts.
+## Binary Output Specification
 
 ### ASSURANCE-TOKEN (PASS)
 
@@ -361,13 +353,10 @@ Phases Verified: <phases per tier, e.g. 1-PASS, 2-PASS, 3-PASS, 4-PASS>
 FFA Assessment: <PASS / NOT-REQUIRED>
 Agent Integrity: <PASS / NOT-REQUIRED>
 Independence: CONFIRMED
-Acceptance-Criteria Evidence Matrix: COMPLETE — all <N> criteria mapped and verified
-Independent Risk Challenge: COMPLETE — no unmitigated risks identified
-Build-Correctness Gate: PASS
 Verdict: MERGE PERMITTED
 ```
 
-### REJECTION-PACKAGE (REJECTED / any non-PASS verdict)
+### REJECTION-PACKAGE (FAIL)
 
 ```
 REJECTION-PACKAGE
@@ -375,7 +364,6 @@ PR: #<number>
 Date: YYYY-MM-DD
 IAA Session: <session-id>
 PR Tier: T<N>
-Verdict: <REJECTED | BLOCKED_PENDING_RUNTIME_EVIDENCE | BLOCKED_PENDING_BUILD_CORRECTNESS | INVALID_PRIOR_TOKEN>
 Phases:
   Phase 1 (Preflight): [PASS|FAIL] — <finding>
   Phase 2 (Governance): [PASS|FAIL|NOT-REQUIRED] — <finding>
@@ -387,250 +375,13 @@ FFA Assessment: [PASS|FAIL|NOT-REQUIRED]
   FFA-03 Cross-Delivery Integration: [PASS|FAIL] — <finding>
   FFA-04 Supabase Alignment: [PASS|FAIL] — <finding>
   FFA-05 Carry-Forward Mandate: [NONE|ISSUED] — <finding>
-Acceptance-Criteria Evidence Matrix: <COMPLETE | INCOMPLETE — list unmet criteria>
-Build-Correctness Gate: [PASS|FAIL] — <finding>
-Evidence-Type Compliance: [PASS|FAIL] — <finding if any downgrade attempted>
-Diff-First Classification: <declared category> → <actual diff-derived category> [MATCH|MISMATCH]
-Independent Risk Challenge: <COMPLETE | INCOMPLETE — list unresolved risks>
 Agent Integrity: [PASS|FAIL|NOT-REQUIRED] — <finding>
 Independence: [CONFIRMED|VIOLATION] — <finding>
-Verdict: MERGE BLOCKED — <one of: REJECTED | BLOCKED_PENDING_RUNTIME_EVIDENCE | BLOCKED_PENDING_BUILD_CORRECTNESS | INVALID_PRIOR_TOKEN>
+Verdict: MERGE BLOCKED
 Remediation Required:
-  - <specific gap 1 with evidence required to resolve>
-  - <specific gap 2 with evidence required to resolve>
+  - <specific gap 1>
+  - <specific gap 2>
 ```
-
-### PASS_WITH_CS2_WAIVER
-
-Issued only when a CS2-committed waiver artifact explicitly names the missing evidence and the waiver rationale. The waiver artifact path must be recorded in the token:
-
-```
-ASSURANCE-TOKEN (CS2 WAIVER)
-PR: #<number>
-Date: YYYY-MM-DD
-IAA Session: <session-id>
-PR Tier: T<N>
-Phases Verified: <phases>
-CS2 Waiver Artifact: <path to committed waiver file>
-Waived Criteria: <list of acceptance criteria that could not be evidence-verified>
-Waiver Rationale: <CS2-stated reason>
-Acceptance-Criteria Evidence Matrix: PARTIAL — <N> of <M> criteria verified; remainder covered by CS2 waiver
-Independent Risk Challenge: COMPLETE
-Build-Correctness Gate: PASS (with waiver for: <items>)
-Verdict: MERGE PERMITTED — CS2 WAIVER
-```
-
----
-
-## Evidence-First Assurance Mandate (v1.13.0)
-
-**Effective**: v1.13.0 | **Authority**: CS2 | **Issue**: maturion-isms#1492
-
-### Core Principle
-
-Governance artifacts are not the source of truth. They are maps to evidence.
-
-IAA must treat all builder, Foreman, QP, ECAP, and prior-agent statements as **claims** until independently verified against hard evidence. The purpose of governance is not to produce compliant artifacts. The purpose of governance is to prevent unproven or architecturally non-compliant work from being treated as complete.
-
-### Rule 1 — Mandatory Acceptance-Criteria Evidence Matrix
-
-Before issuing any PASS token, IAA must extract the governing issue's acceptance criteria and map each criterion to evidence.
-
-For every criterion, IAA must record in the iaa-wave-record `## IAA Assurance Verdict` section:
-
-| Criterion | Issue Intent | Required Evidence Type | Submitted Evidence Reference | Independent Verification Result | Verdict |
-|-----------|-------------|----------------------|-----------------------------|---------------------------------|---------|
-| [criterion text] | [operational intent] | [STATIC_CODE / CONFIG / ARTIFACT / CI_TEST / LIVE_RUNTIME / LIVE_E2E] | [evidence file, log, run, hash, screenshot] | [IAA independent check result] | [PASS / FAIL / N/A / WAIVED] |
-
-**REJECTION-PACKAGE condition**: Any non-waived acceptance criterion lacks matching hard evidence.
-
-**Non-evidence sources** — the following do NOT constitute independent evidence by themselves; they may only point to evidence:
-- Agent statements, PREHANDOVER claims, QP claims, builder handover notes, prior IAA summaries
-- Unsupported assertions in any governance artifact
-
-### Rule 2 — Build Philosophy and Architecture Compliance Gate
-
-IAA must explicitly validate that the delivered build is correct against the applicable build philosophy and architecture requirements — not only against the literal changed files.
-
-IAA must check all of the following:
-- Does the implementation satisfy the governing issue's **intent**, not merely its wording?
-- Does the implementation follow the approved architecture and ownership boundaries?
-- Does the implementation preserve deployment / runtime / security / schema contracts?
-- Does the implementation avoid papering over failures with comments, stubs, weak tests, skipped gates, or static-only evidence where runtime proof is required?
-- Does the final build produce the expected functional outcome?
-
-For deployment, workflow, schema, and runtime PRs: IAA must identify the actual operational success condition and require evidence that the success condition is met.
-
-**Worked examples:**
-- If the issue says "run the workflow until it passes": static code review is **not sufficient**. A CI run link showing SUCCESS is required.
-- If the issue says "UI must render correctly": a successful Vercel deploy is **not sufficient** unless the rendered UI is verified.
-- If the issue says "schema migration applied": YAML review is **not sufficient** unless migration execution or schema verification evidence exists — unless CS2 explicitly waives runtime evidence with a committed waiver artifact.
-
-### Rule 3 — Evidence-Type Downgrade Prohibition
-
-IAA may not downgrade required evidence fidelity.
-
-If the governing issue, checklist, architecture contract, or acceptance criteria require `CI_TEST`, `LIVE_RUNTIME`, or `LIVE_E2E` evidence, IAA may not accept `STATIC_CODE`, pattern parity, comments, or agent attestation as equivalent.
-
-**Permitted exception verdicts** when required evidence is unavailable before merge:
-- `REJECTED` — required evidence missing and no waiver
-- `BLOCKED_PENDING_RUNTIME_EVIDENCE` — implementation may be plausible but required runtime/live evidence is missing
-- `PASS_WITH_CS2_WAIVER` — explicit CS2 waiver committed as an artifact
-
-Exception clauses must **not** produce `PASS` for unmet live/runtime criteria.
-
-### Rule 4 — Diff-First Audit Rule
-
-IAA must classify the PR from the **actual changed-file set**, not from the agent's declared scope.
-
-IAA must independently compute:
-- Changed files (from `git diff --name-only origin/main...HEAD` or equivalent)
-- Protected path categories (agent contracts, canon, CI workflows, scripts, schema)
-- Workflow / deployment / schema / helper-script / governance impact
-- Whether `SCOPE_DECLARATION.md` matches the actual diff
-- Whether helper-script / workflow / schema / architecture gates apply
-
-If PREHANDOVER, SCOPE_DECLARATION, or ceremony evidence contradicts the actual diff, the **actual diff wins** and IAA must reject.
-
-### Rule 5 — Agent Claim Non-Evidence Rule
-
-IAA must treat the following statements as **claims**, not evidence. Each claim must point to a hard artifact, command output, workflow run URL, diff, log, hash, runtime response, schema query, health check, or explicit CS2 waiver:
-
-| Claim | What constitutes actual evidence |
-|-------|----------------------------------|
-| "tests pass" | CI run URL + passing test count |
-| "workflow reviewed" | Diff review notes + CI run link |
-| "gate green" | CI check URL with status GREEN |
-| "no blockers" | Gate check table with all states GREEN |
-| "pattern proven" | Prior CI run link demonstrating the pattern |
-| "scope exactness confirmed" | `validate-governance-evidence-exactness.sh` output |
-| "helper compliance N/A" | Explicit justification with diff confirmation |
-| "architecture followed" | Architecture document reference + diff trace |
-| "build complete" | Build log URL or pasted exit-code-0 output |
-| "deployment works" | Deployment run URL + health check response |
-| `gate_triggered: false` | Only valid when the PR diff independently confirms no gate-triggering paths were changed; agent attestation alone is insufficient |
-
-Unsupported claims must not contribute to a PASS verdict.
-
-### Rule 6 — Independent Risk Challenge
-
-IAA is not limited to checklist execution. IAA has an **affirmative duty** to identify material risk even when no existing checklist item names it.
-
-Before issuing a PASS token, IAA must complete and record an Independent Risk Challenge with the following five questions:
-
-1. **What could still fail after merge?** — List at least one plausible failure mode, or explicitly state "no plausible failure mode identified — rationale: [reason]."
-2. **What evidence would prove it does not fail?** — For each failure mode: state the specific evidence that would confirm the risk is mitigated.
-3. **Is that evidence present?** — State YES (with evidence reference) or NO (blocks PASS).
-4. **Is there any contradiction between issue intent, architecture requirements, and PR evidence?** — Explicitly compare issue intent against delivered implementation and architecture.
-5. **Would a reasonable production owner accept this as merge-ready?** — Apply a production-readiness judgment beyond checklist compliance.
-
-If the answer to questions 3 or 5 is NO, IAA must issue `REJECTED` or `BLOCKED_PENDING_RUNTIME_EVIDENCE` — even if all checklist items appear satisfied.
-
-### Rule 7 — Expanded Verdict Taxonomy
-
-IAA must apply the appropriate verdict from the following taxonomy. Binary PASS/FAIL is no longer sufficient when evidence is incomplete:
-
-| Verdict | Meaning | When to Issue |
-|---------|---------|---------------|
-| `PASS` | Merge-ready; all required evidence present and verified | All acceptance criteria met with hard evidence; Independent Risk Challenge resolved; no architecture violations |
-| `REJECTED` | Defect in PR, build, evidence, or ceremony | Any hard evidence gap, ACR trigger, or build-correctness failure |
-| `BLOCKED_PENDING_RUNTIME_EVIDENCE` | Implementation is plausible but required runtime/live evidence is missing | Rule 3 evidence-type downgrade; CI_TEST/LIVE_RUNTIME/LIVE_E2E evidence required but not yet present |
-| `BLOCKED_PENDING_BUILD_CORRECTNESS` | Build architecture or functionality compliance not yet proven | Rule 2 gate fails; functional success condition not evidenced; architecture mismatch |
-| `PASS_WITH_CS2_WAIVER` | Missing evidence explicitly waived by CS2 in a committed artifact | CS2 has committed a waiver artifact naming the specific missing evidence and the waiver rationale |
-| `INVALID_PRIOR_TOKEN` | Prior token invalidated by new evidence, contradiction, or changed diff | New commits after a PASS token change the scope; evidence contradiction discovered; diff diverges from prior assessment basis |
-
-**BLOCKED and INVALID_PRIOR_TOKEN verdicts** are mandatory entries in the iaa-wave-record `## IAA Assurance Verdict` section and must be treated identically to `REJECTED` for merge-gate purposes — merge is blocked until resolved.
-
----
-
-## Mandatory ECAP Presence Gate (v1.14.0)
-
-**Effective**: v1.14.0 | **Authority**: CS2 | **Issue**: maturion-isms#1493
-
-### Purpose
-
-This section closes a known failure mode where high-risk protected-path PRs bypass the ECAP/admin ceremony layer and receive a PASS token without the build-correctness and evidence-preparation pass that protected PRs require.
-
-IAA must perform the ECAP presence check at the **start of every audit**, before any checklist evaluation, as a precondition to proceeding.
-
-### Mandatory ECAP Presence Check
-
-At the start of every audit, IAA must complete the following four-question check and record the results in the `## IAA Assurance Verdict` section of the iaa-wave-record:
-
-| Check | Question | Answer |
-|-------|----------|--------|
-| P-1 | Does this PR touch a protected path? | YES / NO |
-| P-2 | Is ECAP/admin ceremony required? | YES / NO |
-| P-3 | Was ECAP/admin ceremony appointed and completed? | YES / NO / N/A |
-| P-4 | If ECAP not appointed: is there an explicit CS2 waiver committed? | YES / NO / N/A |
-
-**Decision rule**:
-- If P-1 = YES and P-2 = YES and P-3 = NO and P-4 = NO → **IAA MUST STOP and issue REJECTION-PACKAGE** (ACR-27).
-- If P-1 = YES and P-2 = YES and P-3 = NO and P-4 = YES → ECAP waived by CS2; IAA performs expanded evidence-first review as required by the waiver artifact.
-- If P-1 = NO or P-2 = NO → ECAP presence gate passes; standard ACR review proceeds.
-- If P-1 = YES and P-3 = YES → ECAP appointed and completed; proceed to standard ACR review.
-
-**IAA may not proceed to a PASS token** based on Foreman or builder self-attestation that ECAP was "not required" for a PR whose actual diff includes protected paths. The actual diff governs (Rule 4 — Diff-First Audit Rule).
-
-### Protected-Path Classifier
-
-IAA must classify the PR as **protected-path = YES** if the actual changed-file set (from `git diff --name-only origin/main...HEAD` or equivalent) includes **any** file matching the following patterns:
-
-| Category | Path Pattern | Notes |
-|----------|-------------|-------|
-| CI/deployment workflows | `.github/workflows/**` | Especially `deploy-*.yml` or operational workflows |
-| CI/deployment helper scripts | `.github/scripts/**` | Scripts used by CI, deployment, or runtime operations |
-| Agent contracts | `.github/agents/**` | Any agent contract file |
-| Governance canon | `governance/canon/**` | All canon documents |
-| Governance checklists | `governance/checklists/**` | All checklist documents |
-| Governance templates | `governance/templates/**` | All template documents, including templates used by Foreman, ECAP, QP, or IAA |
-| Tier 2 governance | `.agent-workspace/**/knowledge/**` | Foreman and agent Tier 2 knowledge files |
-| IAA assurance artifacts | `.agent-admin/assurance/**` | Wave records, tokens, pre-briefs |
-| Schema / migration paths | `supabase/**` | Database schema and migrations |
-| App-level schema/migration | `apps/**/supabase/**` | App-level Supabase paths |
-| Package-level schema | `packages/**/supabase/**` | Package-level Supabase paths |
-| Production runtime / auth / security | `apps/**/src/**/auth/**`, `apps/**/src/**/security/**`, `apps/**/src/**/middleware/**` | Environment-sensitive runtime paths |
-| Deployment runbooks | `**/DEPLOYMENT_RUNBOOK*.md`, `infrastructure/**` | Infrastructure and deployment runbook files |
-
-**Classification rule**: This is a **diff-first classifier**. IAA must compute the actual changed-file set independently and apply this table. A Foreman or builder claim that no protected paths were changed does not override a diff that independently shows protected-path files.
-
-**Scope note**: A PR is classified as protected-path if **any single file** in the diff matches a protected-path pattern. Mixed PRs (protected-path files plus non-protected files) are fully protected-path.
-
-### ECAP Requirements for Protected-Path PRs
-
-For protected-path PRs where ECAP is required, ECAP must prepare and verify all of the following before bundle handover to IAA:
-
-1. **Governing issue acceptance-criteria matrix** — every governing-issue acceptance criterion mapped to required evidence type and actual evidence reference.
-2. **Build philosophy / architecture compliance notes** — explicit confirmation that the implementation follows approved architecture and ownership boundaries.
-3. **Protected-path impact classification** — table of changed protected-path files with impact category for each.
-4. **Diff-to-scope exactness** — SCOPE_DECLARATION.md matches actual diff.
-5. **Runtime/build evidence status** — whether required CI_TEST, LIVE_RUNTIME, or LIVE_E2E evidence is present or whether the PR should be classified as BLOCKED_PENDING_RUNTIME_EVIDENCE.
-
-ECAP must reject/bounce handover to IAA when build correctness is not proven, even if ceremony artifacts are present and complete.
-
-### CS2 Waiver Model for Protected-Path PRs
-
-If CS2 intentionally allows IAA to proceed without ECAP for a protected-path PR, the waiver must be:
-- Explicitly committed as a durable artifact in the PR evidence bundle, OR
-- Committed to `.agent-admin/assurance/cs2-ecap-waiver-<PR#>-<YYYYMMDD>.md`
-
-**Required waiver artifact fields**:
-
-```yaml
-pr:              <GitHub PR number or branch name>
-branch:          <branch name>
-issue:           <governing issue number>
-ecap_waiver:     YES
-waiver_reason:   <explicit reason ECAP is waived for this PR>
-risk_accepted:   <description of risk accepted by CS2>
-iaa_expanded_review_required: YES | NO   # Whether IAA must perform expanded evidence-first review
-cs2_identity:    Johan Ras / @APGI-cmy
-timestamp:       YYYY-MM-DDTHH:MM:SSZ
-```
-
-**No implied waiver**: If the waiver artifact does not exist as a committed file, the waiver is not valid. IAA must reject. A comment, a PR label, or a Foreman attestation does not constitute a CS2 waiver.
-
-**Waiver does not remove evidence obligations**: Even with a CS2 waiver, IAA must apply the Evidence-First Assurance Mandate (§Evidence-First Assurance Mandate Rules 1–7). The waiver only exempts the PR from the ECAP ceremony pre-condition, not from hard evidence requirements.
 
 ---
 
@@ -1030,9 +781,9 @@ OUTCOME:
 
 ---
 
-## Admin-Ceremony Rejection Triggers (v1.14.0)
+## Admin-Ceremony Rejection Triggers (v1.6.0)
 
-The IAA MUST issue a `REJECTION-PACKAGE` if **any** of the following conditions are present in the branch at assurance time. These triggers are binary and non-discretionary. Triggers that expressly depend on `execution-ceremony-admin-agent` (ECAP)-specific artifacts or ECAP-only ceremony steps apply when a job has involved ECAP; triggers grounded in universal handover gates apply across **all** handover pathways, including non-ECAP and liaison flows. This includes §4.3f-backed failures such as ACR-17.
+When a job has involved the `execution-ceremony-admin-agent` (ECAP), the IAA MUST issue a `REJECTION-PACKAGE` if **any** of the following conditions are present in the branch at assurance time. These triggers are binary and non-discretionary.
 
 > **Non-Cleanup-Authoring Rule (reinforced)**: The IAA identifies ceremony-integrity defects and issues a `REJECTION-PACKAGE`. The IAA does NOT become the document cleaner. Correction of cited failures is performed by the Foreman (who may re-engage the `execution-ceremony-admin-agent`). The IAA re-assures after correction is complete.
 
@@ -1048,122 +799,32 @@ The IAA MUST issue a `REJECTION-PACKAGE` if **any** of the following conditions 
 | ACR-06 | **PUBLIC_API ripple required but not assessed / recorded / completed** — one or more files with `layer_down_status: PUBLIC_API` in CANON_INVENTORY were changed in this PR, but the ECAP reconciliation summary contains no ripple assessment block, or the block is absent, or it omits one or more qualifying files | ECAP-001 §3.9; AGENT_HANDOVER_AUTOMATION.md §4.3e AAP-08 |
 | ACR-07 | **PREHANDOVER / token / session memory / tracker / wave record not coherent** — the bundle's collection of PREHANDOVER proof, IAA token file, session memory, tracker entries, and wave records do not all reference the same job/wave/session/token in a mutually consistent manner; or the declared assurance session in the PREHANDOVER proof does not match the session ID in the actual token file | ECAP-001 §3.7; AGENT_HANDOVER_AUTOMATION.md §4.3e |
 | ACR-08 | **Artifact references pointing to non-committed or wrong-path files** — a file path declared in the PREHANDOVER proof, session memory, or any ceremony artifact does not resolve to a committed file on the branch, or resolves to a different file than intended | ECAP-001 §3.8; AGENT_HANDOVER_AUTOMATION.md §4.3e AAP-03 + AAP-09 |
-| ACR-09 | **Pre-final instruction wording in committed final-state artifact** — any committed final-state artifact (PREHANDOVER proof, session memory, wave record, stage-readiness table, accepted Foreman handback copy) contains pre-final assembly-time instruction text while the branch claims final assurance (ASSURANCE-TOKEN, merge permitted, final_state COMPLETE, or equivalent). Examples include (non-exhaustive — see `POST_TOKEN_VOCABULARY_LAW.md §1` for the full denylist): "to be completed by Foreman after receiving ASSURANCE-TOKEN", "FOREMAN ACTION REQUIRED", "paste verbatim raw IAA output here", "paste verbatim" (in any IAA response section), "IAA assurance pending (Phase 4)", "pending Phase 4", "Phase 4 pending", "awaiting token", "awaiting ASSURANCE-TOKEN", "after receiving token", "before committing this proof", and any surviving `ASSEMBLY_TIME_ONLY` template block. | ECAP-001 §3.5; execution-ceremony-admin-anti-patterns.md AAP-17 |
-| ACR-10 | **Cross-artifact final-state inconsistency** — the branch contains at least one artifact claiming final assurance while another artifact in the final-state bundle contains pre-token or pre-final wording; the final-state bundle does not tell one coherent post-token story. | ECAP-001 §3.5; execution-ceremony-admin-anti-patterns.md AAP-18 |
-| ACR-11 | **Canonical source parity violation** — an artifact claims to carry forward or copy verbatim a model, table, or ownership assignment from a canonical source, but the committed content differs from the cited canonical source in a materially governance-relevant way (ownership, gate authority, approval requirements). | execution-ceremony-admin-anti-patterns.md AAP-19 |
-| ACR-12 | **Gate inventory absent from PREHANDOVER proof** — the PREHANDOVER proof or session memory does not name the specific merge/workflow gates that were verified; the `gate_set_checked:` field is absent or empty, meaning gate-parity is asserted without evidence of which gates were actually checked. | AGENT_HANDOVER_AUTOMATION.md §4.3e; execution-ceremony-admin-anti-patterns.md AAP-15 |
-| ACR-13 | **Stale gate-pass wording in final-state proof** — a final-state proof artifact (PREHANDOVER, session memory, scope declaration) contains unchecked or provisional gate-pass language such as "verify gates pass", "gates TBD", "gates pending", or similar wording that was never resolved to a definitive state, indicating a checklist item was carried forward without being executed. | AGENT_HANDOVER_AUTOMATION.md §4.3e; execution-ceremony-admin-anti-patterns.md AAP-16 |
-| ACR-14 | **`## Ripple/Cross-Agent Assessment` section absent or blank in PREHANDOVER proof** — the PREHANDOVER proof does not contain a `## Ripple/Cross-Agent Assessment` (or equivalent `## Ripple`/`## Cross-Agent`) heading, or the section is present but contains no concrete downstream-impact conclusions (only placeholder text, a blank table, or a heading with no body). Every PREHANDOVER proof must explicitly assess downstream agent and system impact regardless of wave type. This is the HFMC-01 recurring failure pattern (FAIL-ONLY-ONCE A-023). | AGENT_HANDOVER_AUTOMATION.md §4.3e Check J; execution-ceremony-admin-anti-patterns.md AAP-20; PREHANDOVER_PROOF_TEMPLATE.md v3.1 |
-| ACR-15 | **Active wave/task tracker not normalized before final assurance** — a final-state ceremony artifact (wave record, PREHANDOVER proof, or session memory) claims ASSURANCE-TOKEN issued / merge permitted / `final_state: COMPLETE`, but one or more active control artifacts for the same wave (e.g., `wave-current-tasks.md`, `BUILD_PROGRESS_TRACKER.md` current-wave entries, current stage-readiness trackers, active wave summaries) still show pending, in-progress, or pre-final state. The final-state bundle tells two contradictory operational stories simultaneously. Active control artifacts are those whose primary purpose is to reflect current wave operational state; they are distinguished from immutable historical archives (committed PREHANDOVER proofs and session memories from prior waves, historical wave records), which are explicitly excluded. IAA MUST reject and issue REJECTION-PACKAGE when this contradiction is detected. | ECAP-001 §3.5; execution-ceremony-admin-anti-patterns.md AAP-21; AGENT_HANDOVER_AUTOMATION.md §4.3e Check C3 (active-tracker coherence) |
-| ACR-16 | **Active final-state token/session incoherence** — the active final-state bundle for a wave contains two or more artifacts that each declare a **different** IAA session ID or token reference as the authoritative current final state for the same wave. The IAA must issue a `REJECTION-PACKAGE` if any of the following cross-artifact mismatches are present: (a) the `iaa_audit_token` field in the PREHANDOVER proof names one IAA session, while the latest session memory `iaa_session_reference` field names a different session; (b) the wave record `## TOKEN` section records one session/token, while any other active final-state artifact (PREHANDOVER proof, session memory, or `wave-current-tasks.md`) names a different session as current; (c) `wave-current-tasks.md` declares an IAA token/session for the current wave that differs from the token/session in the PREHANDOVER proof `iaa_audit_token` field. **Scope**: Active final-state bundle only — see §Active-Bundle Scope Rule for ACR Checks. **Authoritative source**: See §Authoritative-Source Rule for Current Token/Session below. **Canonical basis**: AAP-22; §4.3e Check L. | AGENT_HANDOVER_AUTOMATION.md §4.3e Check L; AAP-22; execution-ceremony-admin-checklist.md §5.10–§5.11 |
-| ACR-17 | **Wrong-but-existing reference (non-authoritative artifact target) or renumber/rebase drift failure** — covers two structurally related defect sub-types that are both invisible to existence-only checks: **(a) Wrong-but-existing reference**: a reference in an active ceremony artifact resolves to a file that EXISTS on disk but is NOT the authoritative artifact for the active bundle — e.g., a superseded session-memory path from before a renumber, an inventory note citing the prior session number after conflict resolution, or a wave record referencing a pre-renumber PREHANDOVER proof file. Detection: ART cross-check — compare each session/wave/token/path reference in the active bundle against the ART (Authoritative Reference Table) values; any reference where the target exists but differs from the ART value is a non-authoritative reference. **(b) Renumber/rebase drift**: after a session renumber, session date change, wave identifier change, PR number change, branch identity change, or conflict-resolution merge that modifies active truth anchors, at least one active final-state artifact still references the superseded (pre-change) identifier. The proof/bundle declares final-state COMPLETE but references stale pre-renumber values. Detection: `art_refresh_required: YES` with `art_refresh_completed: NO` or absent in PREHANDOVER proof YAML, OR ART cross-check finds active bundle references that do not match ART authoritative values. **The IAA MUST issue a REJECTION-PACKAGE if**: the PREHANDOVER proof has no `## Authoritative Reference Table` section; or any ART slot is unpopulated with a placeholder value; or any active bundle reference (including inventory notes, wave record, session memory) does not match the corresponding ART authoritative value; or `art_refresh_required: YES` with `art_refresh_completed` not YES. | AGENT_HANDOVER_AUTOMATION.md §4.3f Check M + Check N; execution-ceremony-admin-anti-patterns.md AAP-23 + AAP-24; execution-ceremony-admin-reconciliation-matrix.md R18 |
-| ACR-18 | **Missing declared ceremony artifact** — A wave-level Admin Ceremony Contract was declared in the Pre-Brief, but one or more `required_admin_ceremony_artifacts` are missing from the committed branch at handover. Severity: **REJECTION-PACKAGE**. Resolution: Commit all declared artifacts before resubmission. | IAA_PRE_BRIEF_PROTOCOL.md §Expected Wave-Level Admin Ceremony Contract; maturion-isms#1447 |
-| ACR-19 | **Unmet declared final-state condition** — A wave-level Admin Ceremony Contract was declared in the Pre-Brief, but one or more `required_final_state_conditions` are not in the required state at handover. Severity: **REJECTION-PACKAGE**. Resolution: Resolve all declared final-state conditions before resubmission. | IAA_PRE_BRIEF_PROTOCOL.md §Expected Wave-Level Admin Ceremony Contract; maturion-isms#1447 |
-| ACR-20 | **Unmet declared cross-artifact consistency condition** — A wave-level Admin Ceremony Contract was declared in the Pre-Brief, but one or more `required_cross_artifact_consistency_checks` reveal contradictions between artifacts at handover. Severity: **REJECTION-PACKAGE**. Resolution: Resolve all cross-artifact contradictions before resubmission. | IAA_PRE_BRIEF_PROTOCOL.md §Expected Wave-Level Admin Ceremony Contract; maturion-isms#1447 |
-| ACR-21 | **Missing declared acknowledgement or ownership requirement** — A wave-level Admin Ceremony Contract was declared in the Pre-Brief, but one or more `required_acknowledgements` are undocumented or `required_role_boundaries` are violated at handover. Severity: **REJECTION-PACKAGE**. Resolution: Document all acknowledgements and restore correct role boundaries before resubmission. | IAA_PRE_BRIEF_PROTOCOL.md §Expected Wave-Level Admin Ceremony Contract; maturion-isms#1447 |
-| ACR-22 | **Acceptance-Criteria Evidence Matrix absent or incomplete** — IAA assurance proceeds without a complete Acceptance-Criteria Evidence Matrix mapping every non-waived governing-issue acceptance criterion to independently verified hard evidence. This trigger fires when: (a) no matrix is present in the IAA verdict output; (b) any non-waived criterion has no evidence reference; (c) any evidence reference is an agent claim or attestation without a hard artifact (log, CI run URL, diff, hash, schema query, runtime response, screenshot with context); or (d) the matrix was not checked against the actual governing issue's acceptance criteria. | §Evidence-First Assurance Mandate Rule 1; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0; maturion-isms#1492 |
-| ACR-23 | **Evidence-type downgrade without CS2 waiver** — a governing issue, architecture requirement, acceptance criterion, or pre-brief declaration requires `CI_TEST`, `LIVE_RUNTIME`, or `LIVE_E2E` evidence, but the submitted or accepted evidence is `STATIC_CODE`, pattern parity, agent attestation, or any other lower-fidelity type, and no committed CS2 waiver artifact exists naming the specific missing evidence and waiver rationale. Pattern: `gate_triggered: false` accepted as evidence of no trigger requirement when the diff independently includes triggering paths. | §Evidence-First Assurance Mandate Rule 3; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0; maturion-isms#1492 |
-| ACR-24 | **Agent claim used as evidence without independent verification** — a PASS verdict (or contribution toward PASS) relies on an agent statement ("tests pass", "workflow reviewed", "gate green", "no blockers", "pattern proven", "build complete", "deployment works", "architecture followed", or equivalent) that is not independently verified by IAA from a hard artifact. Each such claim must resolve to a CI run URL, command output log, diff review, hash, schema query result, runtime response, health check, or screenshot with context — or a committed CS2 waiver artifact. | §Evidence-First Assurance Mandate Rule 5; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0; maturion-isms#1492 |
-| ACR-25 | **Diff-first classification mismatch** — the PR category declared in the PREHANDOVER proof, SCOPE_DECLARATION, or ceremony artifacts does not match the category derived by IAA from independently computing the actual changed-file set. The actual diff-derived classification governs. When a mismatch is detected, the higher-risk classification applies and IAA re-evaluates the PR under the correct category before issuing any verdict. If the correct category requires evidence not present in the submitted bundle, IAA must issue REJECTED or BLOCKED_PENDING_RUNTIME_EVIDENCE. | §Evidence-First Assurance Mandate Rule 4; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0; maturion-isms#1492 |
-| ACR-26 | **Independent Risk Challenge not performed or incomplete** — IAA issues a PASS token without having completed and recorded the five-question Independent Risk Challenge required by §Evidence-First Assurance Mandate Rule 6. The challenge must be present in the IAA verdict output with substantive answers — not template placeholders, not "N/A" without rationale, not single-word responses. Any of the five questions unanswered or answered with a placeholder constitutes an incomplete challenge. | §Evidence-First Assurance Mandate Rule 6; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0; maturion-isms#1492 |
-| ACR-27 | **ECAP/admin ceremony missing for protected-path PR (ECAP-MISSING-FOR-PROTECTED-PATH)** — the PR's actual changed-file set (as independently computed by IAA from `git diff --name-only origin/main...HEAD`) includes one or more protected-path files (per §Mandatory ECAP Presence Gate §Protected-Path Classifier), ECAP/admin ceremony was required but was not appointed or completed, and no explicit CS2 waiver artifact exists as a committed file in the PR evidence bundle. IAA MUST stop at the §Mandatory ECAP Presence Gate check (P-1 through P-4) and issue a `REJECTION-PACKAGE` before performing any further checklist evaluation. Foreman self-attestation or wave-current-tasks.md `ceremony_admin_appointed: NO` declarations do not substitute for either ECAP completion or a committed CS2 waiver artifact. This trigger fires regardless of whether all other ACR checks would pass. | §Mandatory ECAP Presence Gate; maturion-isms#1493; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.14.0 |
+| ACR-09 | **Gate parity claimed without explicit per-gate inventory** — the PREHANDOVER proof or ECAP reconciliation summary claims gate parity (e.g., "all gates PASS", "merge gate: PASS") but the gate results artifact contains no individual per-gate entries, only an aggregate verdict | AGENT_HANDOVER_AUTOMATION.md §4.3e Check H; AAP-15 |
+| ACR-10 | **Stale gate-pass provisional wording in final-state artifacts** — a committed final-state artifact contains provisional gate-pass language such as "gate expected to pass", "parity to be confirmed", "pending gate verification", "gate check deferred", or equivalent wording where a definitive PASS or FAIL is required | AGENT_HANDOVER_AUTOMATION.md §4.3e Check H; AAP-16 |
+| ACR-11 | **Pre-final instruction wording / template instruction leakage** — a committed final-state artifact contains template assembly-time instruction text that should have been removed before commit: `[fill in]`, `[instruction]`, `replace this with`, `EXAMPLE TEXT`, `[PLACEHOLDER]`, `[YOUR TEXT HERE]`, `ASSEMBLY_TIME_ONLY`, `REMOVE BEFORE COMMIT`, `TEMPLATE INSTRUCTION`, or equivalent placeholder/directive text | AGENT_HANDOVER_AUTOMATION.md §4.3e Check I; AAP-17, AAP-21 |
+| ACR-12 | **Cross-artifact final-state contradiction (active-bundle scoped)** — within the active final-state bundle (current PREHANDOVER proof, current session memory, current ECAP reconciliation summary, current wave record), one artifact declares `COMPLETE` / `PASS` / `ACCEPTED` while another artifact declares `PENDING`, `Phase 4`, `in progress`, `BLOCKED`, or any equivalent non-final status for the same dimension. Historical artifacts outside the active bundle (superseded proofs, prior session memories) are **exempt** from this check. | AGENT_HANDOVER_AUTOMATION.md §4.3e Check J; AAP-19 |
+| ACR-13 | **Verbatim IAA-response section blank or instruction-only** — the `iaa_audit_token` or `iaa_session_reference` field in the PREHANDOVER proof is still set to a template placeholder (`<token-file-path>`, `<IAA session ID>`, `[pending]`, `TBD`, `none`) while the proof declares `final_state: COMPLETE`. A COMPLETE final-state proof must reference an actual issued IAA token. | AGENT_HANDOVER_AUTOMATION.md §4.3e Check I; AAP-18 |
+| ACR-14 | **Carried-forward claim with no resolvable canonical source** — a final-state ceremony artifact states that a governance claim was "carried forward from" or is "verbatim from" a named source artifact, but: (a) the named source artifact does not exist as a committed file on the branch, or (b) the source exists but does not contain the stated claim, or (c) the carried-forward text has been modified to change gate authority, gate owner, or approval basis relative to the source | AGENT_HANDOVER_AUTOMATION.md §4.3e Check K; AAP-20 |
+| ACR-15 | **Active-wave/task-tracker contradiction** — the wave task-tracker artifact (`.agent-admin/waves/wave-N-current-tasks.md`) for the wave that includes this job contains one or more `[ ]` (open, un-ticked) task entries for tasks that the PREHANDOVER proof or session memory declares as complete; or the wave record status field for this specific task contradicts the declared final state of the job (e.g., wave record shows `qp_verdict: PENDING` while PREHANDOVER declares `final_state: COMPLETE`) | AGENT_HANDOVER_AUTOMATION.md §4.3e Check L; AAP-23 |
+| ACR-16 | **Active final-state token/session incoherence** — within the active final-state bundle, the IAA token reference declared in the PREHANDOVER proof's `iaa_audit_token` field does not correspond to an actual token file on the branch; or the token file exists but its declared session ID, PR number, or wave number does not match the corresponding fields in the PREHANDOVER proof; or the `active_bundle_iaa_coherence` field in the PREHANDOVER proof is absent, blank, or set to a non-VERIFIED value while `final_state: COMPLETE` is declared | AGENT_HANDOVER_AUTOMATION.md §4.3e Check L; AAP-24 |
 
-### Active-Bundle Scope Rule for ACR Checks (v1.7.0)
+### Active-Bundle Scope Rule for ACR Checks (v1.8.0)
 
 When applying ACR triggers ACR-02, ACR-07, ACR-12, ACR-15, ACR-16, and any other cross-artifact consistency check, the IAA MUST scope the scan to the **active final-state bundle** for the current job only. The active bundle is defined as:
 
 1. **PREHANDOVER proof**: The current (non-superseded) proof — the most recent proof, or the proof not declared as superseded by a later proof
 2. **Session memory**: The latest session memory per agent workspace directory (most recent by filename sort order)
 3. **ECAP reconciliation summary**: The most recent reconciliation artifact for this PR/job
-4. **Wave record**: The current wave record for this job (if used)
+4. **Wave record**: The current wave task-tracker (`.agent-admin/waves/wave-N-current-tasks.md`) for the wave that includes this job — specifically the task entry for this job
 5. **Token file**: The current IAA token file for this job
-6. **`wave-current-tasks.md`**: The current wave tasks file at `.agent-workspace/foreman-v2/personal/wave-current-tasks*.md` — included in the active bundle for the purpose of ACR-16 (token/session coherence) checks only
 
 **Explicitly excluded from active-bundle scans**:
 - Superseded PREHANDOVER proofs (i.e., proofs for which a later proof declares `Supersedes: <filename>`)
 - Prior session memories (all except the latest per workspace)
-- Historical/archived wave records from prior waves
+- Historical/archived wave records from prior waves (only the current wave's task entry for this job is in scope)
 - Rejection-package artifacts from prior rounds (these are retained as immutable historical evidence and are expected to contain non-final wording from the round they document)
-- Prior `wave-current-tasks.md` versions referencing completed or superseded waves
 
 **Rationale**: The append-only governance model deliberately retains historical artifacts. Scanning historical artifacts for provisional wording creates false positives and would incorrectly block legitimate final-state bundles. The hardened discipline applies only to artifacts that form the current final-state bundle.
-
----
-
-### Authoritative-Source Rule for Current Token/Session (v1.10.0)
-
-**Rule**: For any wave, there is exactly one authoritative IAA session/token reference for the current final state. This reference is determined by the following priority order:
-
-1. **IAA wave record `## TOKEN` section** (path: `.agent-admin/assurance/iaa-wave-record-{wave}-{date}.md`) — When this section is populated with a non-PENDING, non-empty token, it is the **primary authoritative source** for the current final token/session reference.
-2. **PREHANDOVER proof `iaa_audit_token` field** — When the wave record `## TOKEN` section has not yet been populated (pre-final-assurance state), the PREHANDOVER proof's `iaa_audit_token` field is the **provisional reference**. All other active final-state artifacts must match this value.
-
-**Propagation obligation**: Once the authoritative token/session is established (at wave record TOKEN section population or PREHANDOVER proof commit), every active final-state artifact that references the IAA session for this wave MUST be updated to reference the same session ID before the bundle is submitted to IAA.
-
-**Rejection round handling**: When a REJECTION-PACKAGE is issued for round N and the Foreman initiates a stop-and-fix for round N+1:
-- The prior round N session ID must be removed from all active final-state fields in the fresh PREHANDOVER proof and updated session memory for round N+1.
-- The prior round N session ID is preserved in: (a) the rejection-package artifact from round N, and (b) the superseded PREHANDOVER proof from round N (which is declared superseded via the `Supersedes:` header in the new proof).
-- The round N+1 PREHANDOVER proof `iaa_audit_token` field records the expected new token reference (format: `IAA-session-NNN-YYYYMMDD-r1-PASS`).
-
----
-
-### Proof-of-Operation — Worked Examples for AAP-22 / ACR-16 (v1.10.0)
-
-The following examples illustrate the **blocked** (non-compliant) and **allowed** (compliant) states for active final-state token/session coherence.
-
-#### BLOCKED Example — Multiple conflicting current IAA session references
-
-```
-Wave: governance-hardening-wave-20260420
-
-Active final-state bundle:
-  PREHANDOVER proof (.agent-admin/prehandover/proof-1422.md):
-    iaa_audit_token: IAA-session-063-wave14-20260420-PASS   ← declares session 063
-  Session memory (.agent-workspace/foreman-v2/memory/session-063-20260420.md):
-    iaa_session_reference: IAA-session-062-wave14-20260418  ← declares session 062 (prior)
-  Wave record (.agent-admin/assurance/iaa-wave-record-governance-hardening-wave-20260420.md):
-    ## TOKEN
-    ASSURANCE-TOKEN: IAA-session-067-wave14-20260421-PASS   ← declares session 067 (different)
-  wave-current-tasks.md:
-    iaa_prebrief_status: IAA-session-062-PASS               ← stale reference to session 062
-
-OUTCOME: ACR-16 fires.
-  → REJECTION-PACKAGE issued.
-  → Three different session IDs (062, 063, 067) are each claimed as the current authoritative
-    final state by a different active final-state artifact. The bundle does not tell one
-    coherent final truth. Operators cannot determine which IAA pass is authoritative.
-```
-
-#### ALLOWED Example — One coherent current IAA session/token across all active artifacts
-
-```
-Wave: governance-hardening-wave-20260420
-
-Active final-state bundle:
-  PREHANDOVER proof (.agent-admin/prehandover/proof-1422.md):
-    iaa_audit_token: IAA-session-063-wave14-20260420-PASS   ← session 063
-  Session memory (.agent-workspace/foreman-v2/memory/session-063-20260420.md):
-    iaa_session_reference: IAA-session-063-wave14-20260420  ← session 063 ✅
-  Wave record (.agent-admin/assurance/iaa-wave-record-governance-hardening-wave-20260420.md):
-    ## TOKEN
-    ASSURANCE-TOKEN: IAA-session-063-wave14-20260420-PASS   ← session 063 ✅
-  wave-current-tasks.md:
-    iaa_prebrief_status: COMPLETE — IAA-session-063-wave14-20260420-PASS  ← session 063 ✅
-
-Historical evidence (excluded from active-bundle scan):
-  rejection-package-1422.md — references IAA-session-062 (prior round — REJECTED)
-  superseded PREHANDOVER proof-1422-r0.md — references IAA-session-062 (prior round — Supersedes declared)
-
-OUTCOME: ACR-16 does NOT fire.
-  → One session ID (063) across all active final-state artifacts. ✅
-  → Prior rejected session (062) retained in immutable historical artifacts only. ✅
-  → ASSURANCE-TOKEN can be issued.
-```
-
-#### Why the distinction matters
-
-The append-only governance model retains all historical artifacts (rejection packages, prior session memories, superseded proofs). A compliant final-state bundle will therefore always contain references to multiple IAA sessions across its full history. The ACR-16 check does NOT fail because historical artifacts reference old sessions — it only fails when two or more **active final-state** artifacts simultaneously claim different sessions as the **current** authoritative final state.
-
----
 
 ### How the IAA Handles Admin-Ceremony Rejection Triggers
 
@@ -1196,4 +857,4 @@ The §4.3e gate (defined in `AGENT_HANDOVER_AUTOMATION.md`) is the **ECAP + Fore
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.14.0 | Effective: 2026-02-24 | Amended: 2026-04-28 (v1.14.0) — Added §Mandatory ECAP Presence Gate (four-question ECAP presence check P-1 through P-4 executed at audit start before any checklist evaluation); added §Protected-Path Classifier (diff-first path table covering .github/workflows, .github/scripts, .github/agents, governance/canon, governance/checklists, governance/templates, supabase, .agent-admin/assurance, and production runtime/auth/security paths); added §CS2 Waiver Model for Protected-Path PRs (committed waiver artifact required; no implied waiver); added §ECAP Requirements for Protected-Path PRs (build-correctness evidence obligations); added ACR-27 (ECAP-MISSING-FOR-PROTECTED-PATH — protected-path PR with no ECAP and no CS2 waiver = REJECTION-PACKAGE); maturion-isms#1493; SELF-MOD-IAA-001: CS2 direct review/sign-off required | Previous: 2026-04-28 (v1.13.0) — Added §Evidence-First Assurance Mandate (Rules 1–7: Acceptance-Criteria Evidence Matrix, Build Philosophy and Architecture Compliance Gate, Evidence-Type Downgrade Prohibition, Diff-First Audit Rule, Agent Claim Non-Evidence Rule, Independent Risk Challenge, Expanded Verdict Taxonomy); added ACR-22 through ACR-26 to §Admin-Ceremony Rejection Triggers; expanded §Output Specification with BLOCKED_PENDING_RUNTIME_EVIDENCE, BLOCKED_PENDING_BUILD_CORRECTNESS, PASS_WITH_CS2_WAIVER, INVALID_PRIOR_TOKEN verdicts; maturion-isms#1492; SELF-MOD-IAA-001: CS2 direct review/sign-off required | Previous: 2026-04-22 (v1.12.0) — Added ACR-18 (missing declared ceremony artifact), ACR-19 (unmet declared final-state condition), ACR-20 (unmet declared cross-artifact consistency condition), ACR-21 (missing declared acknowledgement/ownership); makes unmet wave-level Admin Ceremony Contract items explicit rejection triggers; maturion-isms#1447; SELF-MOD-IAA-001: CS2 direct review/sign-off required | Previous: 2026-04-21 (v1.11.0) — Added ACR-17: wrong-but-existing reference (non-authoritative artifact target) + renumber/rebase drift failure; cross-references AAP-23, AAP-24, §4.3f Check M/N, R18; wave admin-ceremony-hardening-20260421 | Previous: 2026-04-20 (v1.10.0) — Added ACR-16: active final-state token/session incoherence (AAP-22 / §4.3e Check L) | Previous: 2026-04-19 (v1.9.0) — Added ACR-15: active wave/task tracker not normalized before final assurance (AAP-21 / §4.3e Check C3)*
+*Authority: CS2 (Johan Ras) | Version: 1.8.0 | Effective: 2026-02-24 | Amended: 2026-04-21 (v1.8.0) | Previous: 2026-04-19 (v1.7.0)*

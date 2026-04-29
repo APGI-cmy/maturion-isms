@@ -601,3 +601,70 @@ jobs:
           echo ""
           chmod +x .github/scripts/validate-governance-evidence-exactness.sh
           .github/scripts/validate-governance-evidence-exactness.sh
+
+  # ============================================================================
+  # Hard gate: IAA Final Assurance (maturion-isms#1503)
+  # Fails when implementation/substantive files are changed but no current,
+  # PR-specific IAA final assurance token exists in .agent-admin/assurance/.
+  # Advisory re-anchor comments remain, but this is the binding enforcement.
+  # ============================================================================
+  iaa-final-assurance-gate:
+    name: "preflight/iaa-final-assurance"
+    runs-on: ubuntu-latest
+
+    # Only enforce for Copilot/foreman PRs
+    if: >-
+      startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot'
+
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: IAA Final Assurance Gate
+        id: iaa_final_gate
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          chmod +x .github/scripts/iaa-final-assurance-gate.sh
+          .github/scripts/iaa-final-assurance-gate.sh
+
+  # ============================================================================
+  # Hard gate: ECAP / Admin Ceremony (maturion-isms#1503)
+  # Fails when protected paths are changed but ECAP/admin ceremony evidence is
+  # absent or unevidenced. Also rejects an IAA PASS on a protected-path PR
+  # where ECAP was required but not evidenced.
+  # ============================================================================
+  ecap-admin-ceremony-gate:
+    name: "preflight/ecap-admin-ceremony"
+    runs-on: ubuntu-latest
+
+    # Only enforce for Copilot/foreman PRs
+    if: >-
+      startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot'
+
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: ECAP / Admin Ceremony Gate
+        id: ecap_gate
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+        run: |
+          chmod +x .github/scripts/ecap-admin-ceremony-gate.sh
+          .github/scripts/ecap-admin-ceremony-gate.sh
