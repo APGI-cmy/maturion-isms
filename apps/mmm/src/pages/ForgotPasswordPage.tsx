@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Link } from 'react-router-dom';
 
-const RESET_REDIRECT_URL = 'https://maturity-model-management.vercel.app/reset-password';
+const RESET_REDIRECT_URL =
+  (import.meta.env.VITE_APP_URL ?? 'https://maturity-model-management.vercel.app') +
+  '/reset-password';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
