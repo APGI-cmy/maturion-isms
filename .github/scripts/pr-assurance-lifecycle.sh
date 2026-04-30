@@ -181,9 +181,10 @@ check_delta_assurance_valid() {
   local prior_sha="$1"
   local current_sha="$2"
   while IFS= read -r df; do
-    [ -z "$df" ] || [ ! -f "$df" ] && continue
-    grep -qi "prior_reviewed_sha:[[:space:]]*${prior_sha}" "$df" 2>/dev/null || continue
-    grep -qi "delta_classification:[[:space:]]*non-substantive" "$df" 2>/dev/null || continue
+    [ -z "$df" ] && continue
+    [ ! -f "$df" ] && continue
+    grep -qi "prior_reviewed_sha:[[:space:]]\+${prior_sha}" "$df" 2>/dev/null || continue
+    grep -qi "delta_classification:[[:space:]]\+non-substantive" "$df" 2>/dev/null || continue
 
     # Extract the current_head_sha the delta-assurance block was written against
     local da_current_sha
@@ -197,12 +198,13 @@ check_delta_assurance_valid() {
     # After da_current_sha up to current HEAD_SHA, only non-implementation files may change
     # (e.g. the delta-assurance artifact itself — which is in .agent-admin/ and is excluded)
     if [ "$da_current_sha" != "$current_sha" ]; then
-      local _da_post_impl=false _da_pf
-      while IFS= read -r _da_pf; do
-        [ -z "$_da_pf" ] && continue
-        is_impl_file "$_da_pf" && { _da_post_impl=true; break; }
+      local da_post_impl=false
+      local da_pf
+      while IFS= read -r da_pf; do
+        [ -z "$da_pf" ] && continue
+        is_impl_file "$da_pf" && { da_post_impl=true; break; }
       done <<< "$(git diff "$da_current_sha" "$current_sha" --name-only 2>/dev/null || true)"
-      [ "$_da_post_impl" = true ] && continue
+      [ "$da_post_impl" = true ] && continue
     fi
 
     echo "  ✅ Delta-assurance block covers gap ${prior_sha:0:12}→${current_sha:0:12}: $df"
@@ -380,8 +382,8 @@ check_token_valid() {
     # delta-assurance block (iaa-delta-assurance-*.md) must explicitly bind the prior
     # reviewed SHA to the current HEAD and classify the delta as non-substantive.
     if [ "$reviewed_sha" != "$HEAD_SHA" ]; then
-      local post_review_file has_post_review_impl
-      has_post_review_impl=false
+      local post_review_file
+      local has_post_review_impl=false
       while IFS= read -r post_review_file; do
         [ -z "$post_review_file" ] && continue
         is_impl_file "$post_review_file" && { has_post_review_impl=true; break; }
@@ -463,13 +465,13 @@ if [ "$IAA_INVOKED" = false ]; then
 
       # Post-review implementation change check (same as check_token_valid)
       if [ "$WR_REVIEWED_SHA" != "$HEAD_SHA" ]; then
-        _wr_has_post_impl=false
-        _wr_post_file=""
-        while IFS= read -r _wr_post_file; do
-          [ -z "$_wr_post_file" ] && continue
-          is_impl_file "$_wr_post_file" && { _wr_has_post_impl=true; break; }
+        local wr_has_post_impl=false
+        local wr_post_file
+        while IFS= read -r wr_post_file; do
+          [ -z "$wr_post_file" ] && continue
+          is_impl_file "$wr_post_file" && { wr_has_post_impl=true; break; }
         done <<< "$(git diff "$WR_REVIEWED_SHA" "$HEAD_SHA" --name-only 2>/dev/null || true)"
-        if [ "$_wr_has_post_impl" = true ]; then
+        if [ "$wr_has_post_impl" = true ]; then
           if ! check_delta_assurance_valid "$WR_REVIEWED_SHA" "$HEAD_SHA"; then
             echo "  ❌ Wave record: implementation files changed after reviewed SHA ${WR_REVIEWED_SHA:0:12}; no delta-assurance block"
             continue

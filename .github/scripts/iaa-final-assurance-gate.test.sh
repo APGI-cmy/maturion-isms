@@ -1081,12 +1081,12 @@ lc8_output=$(BASE_SHA="$lc8_base" HEAD_SHA="$lc8_head" PR_NUMBER="9999" PR_LABEL
   bash "$LIFECYCLE_SCRIPT" 2>&1)
 lc8_exit=$?
 set -e
-if echo "$lc8_output" | grep -q "BLOCKED" || \
-   echo "$lc8_output" | grep -qi "implementation files changed after reviewed SHA\|no delta-assurance"; then
+if echo "$lc8_output" | grep -q "BLOCKED" && \
+   echo "$lc8_output" | grep -qi "implementation files changed after reviewed SHA"; then
   echo "  ✅ PASS (post-IAA impl commit without delta-assurance → lifecycle BLOCKED)"
   TEST_PASSED=$((TEST_PASSED + 1))
 else
-  echo "  ❌ FAIL — expected lifecycle BLOCKED for post-IAA impl commit with no delta-assurance"
+  echo "  ❌ FAIL — expected lifecycle BLOCKED with 'implementation files changed after reviewed SHA' message"
   echo "  Output excerpt:"
   echo "$lc8_output" | grep -E "BLOCKED|LIFECYCLE|IAA|impl|delta|SHA" | head -10
   TEST_FAILED=$((TEST_FAILED + 1))
