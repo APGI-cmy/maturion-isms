@@ -37,7 +37,7 @@ SCOPE_FILE=""
 PR_NUMBER="${PR_NUMBER:-}"
 
 # Pattern for per-PR scope files
-PER_PR_SCOPE_PATTERN="^\.agent-admin/scope-declarations/pr-[0-9]*\.md$"
+PER_PR_SCOPE_PATTERN="^\.agent-admin/scope-declarations/pr-[0-9]+\.md$"
 
 if [ -n "$PR_NUMBER" ] && \
    [ -f ".agent-admin/scope-declarations/pr-${PR_NUMBER}.md" ]; then
