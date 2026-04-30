@@ -763,6 +763,44 @@ run_test_with_pr_body \
 
 Merge gate released. Wave N complete. Awaiting CS2 review."
 
+# AC-MR-5: PR body references script filename merge-ready-claim-gate.sh
+#           but makes no semantic claim — gate must PASS (exit 0) even when
+#           lifecycle is blocked; the script name alone is not a claim.
+setup_ac_mr5() {
+  add_impl_file
+  # No IAA token — lifecycle IS blocked
+}
+run_test_with_pr_body \
+  "AC-MR-5: Script filename reference in PR body — must NOT trigger false positive" \
+  0 \
+  "$MERGE_READY_GATE_SCRIPT" \
+  "setup_ac_mr5" \
+  "Closes maturion-isms#1503
+
+Adds \`merge-ready-claim-gate.sh\` to block merge-ready/handover-ready claims.
+The merge-ready-claim-gate.sh script consumes MERGE_READY_ALLOWED from lifecycle."
+
+# AC-MR-5b: Directly verify the pattern list does not match script/variable identifiers
+echo ""
+echo "Test: AC-MR-5b: Verify no false-positive pattern match on script/variable identifiers"
+mr5_body='merge-ready-claim-gate.sh MERGE_READY_ALLOWED merge_ready_allowed handover-ready-gate'
+matched=false
+for pat in \
+  "(PR|this|branch|wave)[[:space:]]+is[[:space:]]+(now[[:space:]]+)?merge[-_]ready" \
+  "merge[-_]ready[[:space:]]*[=:][[:space:]]*(yes|true|pass|confirmed|approved)" \
+  "ready.for.merge" "ready.to.merge" "approved.for.merge" \
+  "release.merge.gate" "merge.permitted" "merge.gate.released" "Merge gate released"; do
+  if echo "$mr5_body" | grep -qiE "$pat"; then
+    echo "  ❌ FAIL: Pattern '$pat' false-matched identifier string"
+    TEST_FAILED=$((TEST_FAILED + 1))
+    matched=true
+  fi
+done
+if [ "$matched" = false ]; then
+  echo "  ✅ PASS: No false-positive pattern match on script/variable identifiers"
+  TEST_PASSED=$((TEST_PASSED + 1))
+fi
+
 # ================================================================
 # TEST SUITE — PR Assurance Lifecycle Script (maturion-isms#1514)
 # ================================================================

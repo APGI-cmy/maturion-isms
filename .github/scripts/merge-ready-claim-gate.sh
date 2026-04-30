@@ -261,9 +261,16 @@ echo ""
 # ----------------------------------------------------------------
 # These patterns match common language agents use to claim merge-readiness.
 # The patterns are case-insensitive and cover common variants.
+#
+# NOTE: Bare "merge.ready" and "merge_ready" are intentionally excluded.
+# They produce false positives on legitimate script/variable/job name
+# references (e.g. "merge-ready-claim-gate.sh", "MERGE_READY_ALLOWED").
+# Use context-anchored patterns that require semantic framing instead.
 MERGE_READY_PATTERNS=(
-  "merge.ready"
-  "merge_ready"
+  # Context-anchored: "is merge-ready", "PR is now merge-ready"
+  "(PR|this|branch|wave)[[:space:]]+is[[:space:]]+(now[[:space:]]+)?merge[-_]ready"
+  # Explicit status/assignment forms
+  "merge[-_]ready[[:space:]]*[=:][[:space:]]*(yes|true|pass|confirmed|approved)"
   "ready.for.merge"
   "ready.to.merge"
   "approved.for.merge"
@@ -272,8 +279,10 @@ MERGE_READY_PATTERNS=(
   "merge.gate.released"
   "merge.authority.*CS2"
   "Awaiting CS2 review.*[Mm]erge"
-  "handover.ready"
-  "handover_ready"
+  # Context-anchored: "is handover-ready"
+  "(PR|this|branch|wave)[[:space:]]+is[[:space:]]+(now[[:space:]]+)?handover[-_]ready"
+  # Explicit status/assignment forms
+  "handover[-_]ready[[:space:]]*[=:][[:space:]]*(yes|true|pass|confirmed|approved)"
   "ready.for.handover"
   "HANDOVER.*COMPLETE"
   "HANDOVER.*PASS"
