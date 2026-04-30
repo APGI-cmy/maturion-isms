@@ -65,9 +65,22 @@ if [ -z "$SCOPE_FILE" ]; then
   # Legacy fallback: root SCOPE_DECLARATION.md (skip if archival)
   if [ -f "SCOPE_DECLARATION.md" ]; then
     if grep -q "ARCHIVAL" "SCOPE_DECLARATION.md" 2>/dev/null; then
-      echo "ℹ️  Root SCOPE_DECLARATION.md is archival — no per-PR scope file found."
-      echo "    Scope-to-diff validation skipped (no active scope declaration)."
-      exit 0
+      echo "❌ Root SCOPE_DECLARATION.md is archival — no active per-PR scope file found."
+      echo ""
+      echo "BL-027 requires an active per-PR scope declaration for scope-to-diff validation."
+      echo ""
+      echo "Remediation:"
+      if [ -n "$PR_NUMBER" ]; then
+        echo "  1. Create .agent-admin/scope-declarations/pr-${PR_NUMBER}.md"
+      else
+        echo "  1. Create .agent-admin/scope-declarations/pr-<PR_NUMBER>.md"
+      fi
+      echo "     using template: governance/canon/scope-declaration.template.md"
+      echo "  2. Add the per-PR scope file to this PR's diff if it is not already included"
+      echo "  3. List ALL changed files in the FILES_CHANGED section"
+      echo "  4. Run this script again to validate"
+      echo ""
+      exit 1
     fi
     SCOPE_FILE="SCOPE_DECLARATION.md"
     echo "ℹ️  Falling back to root SCOPE_DECLARATION.md (legacy)"
