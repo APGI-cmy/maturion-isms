@@ -24,6 +24,7 @@ Fix post-login dashboard UI completeness for the MMM app (issue #1535):
 ## Changed Files
 
 - `SCOPE_DECLARATION.md` — Updated for this wave (per §4.3g scope refresh)
+- `.gitignore` — Added `apps/mmm/package-lock.json` to prevent accidental commit of MMM npm lock file
 - `apps/mmm/src/pages/DashboardPage.tsx` — Syntax fixed (function AppNav() wrapper added); rebuilt
   with app shell header, nav links to /dashboard /frameworks /frameworks/upload /onboarding; HTTP
   response status checks before res.json(); loading/permission-error/server-error/empty/data states;

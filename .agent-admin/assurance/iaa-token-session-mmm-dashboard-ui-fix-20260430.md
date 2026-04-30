@@ -22,6 +22,8 @@ tests T-MMM-S6-177 through T-MMM-S6-180, build process improvement register (iss
 
 ### Changed Files Reviewed
 
+- `.gitignore` — Added `apps/mmm/package-lock.json` to prevent accidental commit of MMM npm lock file.
+  No functional change; no security impact.
 - `apps/mmm/src/pages/DashboardPage.tsx` — `function AppNav()` wrapper added (syntax fixed); `AppNav`
   renders sticky app shell header with nav links to `/dashboard`, `/frameworks`, `/frameworks/upload`,
   `/onboarding`; `res.ok`/`res.status` checked before `res.json()`; 403 throws typed error with
