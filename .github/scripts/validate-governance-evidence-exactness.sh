@@ -313,8 +313,14 @@ else
     echo "   ⚠️  WARNING — No **Issue**: field found in $SCOPE_FILE"
     WARNINGS=$((WARNINGS + 1))
   else
-    # Normalise to numeric issue number (trailing digits after last #)
-    DECLARED_ISSUE_NUM=$(echo "$DECLARED_ISSUE_RAW" | grep -oE '[0-9]+$' || true)
+    # Normalise to numeric issue number:
+    #   1. First try to extract the first #<digits> reference (v2 per-PR format:
+    #      "ISSUE: #1521 — long title" or legacy "maturion-isms#1234").
+    #   2. Fall back to trailing digits for any remaining legacy format.
+    DECLARED_ISSUE_NUM=$(echo "$DECLARED_ISSUE_RAW" | grep -oE '#[0-9]+' | head -1 | grep -oE '[0-9]+' || true)
+    if [ -z "$DECLARED_ISSUE_NUM" ]; then
+      DECLARED_ISSUE_NUM=$(echo "$DECLARED_ISSUE_RAW" | grep -oE '[0-9]+' | head -1 || true)
+    fi
     echo "   Declared: $DECLARED_ISSUE_RAW (issue #${DECLARED_ISSUE_NUM:-?})"
 
     # Determine expected issue number (priority: explicit env var > PR_BODY parsing)
@@ -325,14 +331,17 @@ else
       EXPECTED_ISSUE_NUM=$(echo "$EXPECTED_ISSUE_NUMBER" | grep -oE '[0-9]+' | tail -1)
       EXPECTED_SOURCE="EXPECTED_ISSUE_NUMBER env var"
     elif [ -n "${PR_BODY:-}" ]; then
-      # Parse PR body for closing/fixing keywords followed by optional repo prefix + number
+      # Parse PR body for closing/fixing keywords followed by optional repo prefix + number.
+      # Pattern uses [a-zA-Z0-9_-]* (zero or more) so it handles:
+      #   "Closes #1521"          (bare bare #N)
+      #   "Fixes maturion-isms#1521"  (repo-prefixed)
       EXPECTED_ISSUE_NUM=$(printf '%s' "$PR_BODY" | \
-        grep -ioE '(closes|fixes|resolves|addresses)[[:space:]]+([a-zA-Z0-9_-]+#)?([0-9]+)' | \
+        grep -ioE '(closes|fixes|resolves|addresses)[[:space:]]+([a-zA-Z0-9_-]*#)([0-9]+)' | \
         grep -oE '[0-9]+$' | head -1 || true)
       if [ -z "$EXPECTED_ISSUE_NUM" ]; then
-        # Fallback: first explicit maturion-isms#N reference in PR body
+        # Fallback: first explicit #N reference in PR body (bare or with any prefix)
         EXPECTED_ISSUE_NUM=$(printf '%s' "$PR_BODY" | \
-          grep -oE 'maturion-isms#[0-9]+' | head -1 | grep -oE '[0-9]+' || true)
+          grep -oE '#[0-9]+' | head -1 | grep -oE '[0-9]+' || true)
       fi
       [ -n "$EXPECTED_ISSUE_NUM" ] && EXPECTED_SOURCE="PR_BODY (parsed closing/issue ref)"
     fi

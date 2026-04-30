@@ -22,4 +22,6 @@ This file previously served as the per-wave scope declaration, rewritten by each
 That model caused merge conflicts when multiple PRs were active simultaneously.
 It has been superseded by the per-PR model at `.agent-admin/scope-declarations/pr-<N>.md`.
 
-Last valid wave entry: layer-down-propagate-governance-changes-d99e68e8 (PR #1516/1517 area, 2026-04-29).
+Last valid wave entries before archival:
+- layer-down-propagate-governance-changes-d99e68e8 (PR #1516/1517 area, 2026-04-29)
+- mmm-dashboard-ui-fix-20260430 (PR #1520, 2026-04-30) — last PR to use the legacy root model
