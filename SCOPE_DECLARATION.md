@@ -9,9 +9,11 @@
 > Normal PRs must not modify this file. A CI gate (`preflight/scope-declaration-parity`)
 > will fail any PR that modifies this file without an explicit migration exemption.
 >
-> **Migration exemptions** (administered by CS2 only):
+> **Modification exemptions / bypasses** (administered by CS2 only):
 > - PR label: `scope-declaration-migration`
 > - PR body contains: `CS2-SCOPE-MIGRATION-WAIVER`
+> - PR label: `CS sign-off: approved`
+> - Any other explicit CS2-administered bypass accepted by the `preflight/scope-declaration-parity` enforcement logic
 >
 > **Authority**: CS2 (@APGI-cmy) | Issue: maturion-isms#1521
 > **Effective**: 2026-04-30 | Schema: SCOPE_DECLARATION_SCHEMA.md v2.0.0
