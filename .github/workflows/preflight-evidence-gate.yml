@@ -594,6 +594,7 @@ jobs:
       - name: Run governance evidence exactness checks
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           echo "=== Governance Evidence Exactness Gate ==="
           echo "Authority: LIVING_AGENT_SYSTEM.md v6.2.0"
@@ -668,6 +669,37 @@ jobs:
         run: |
           chmod +x .github/scripts/ecap-admin-ceremony-gate.sh
           .github/scripts/ecap-admin-ceremony-gate.sh
+
+  # ============================================================================
+  # Hard gate: Scope Declaration Policy (maturion-isms#1521)
+  # Fails when:
+  #   Gate A — root SCOPE_DECLARATION.md is modified without a migration exemption
+  #   Gate B — agent/Copilot PR is missing a per-PR scope declaration file
+  # ============================================================================
+  scope-declaration-parity:
+    name: "preflight/scope-declaration-parity"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Scope Declaration Policy Gate
+        id: scope_policy_gate
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          # Gate B only enforces for agent/Copilot PRs
+          ENFORCE_SCOPE: ${{ (startsWith(github.head_ref, 'copilot/') || github.event.pull_request.user.login == 'Copilot') && 'true' || 'false' }}
+        run: |
+          chmod +x .github/scripts/enforce-scope-declaration-policy.sh
+          .github/scripts/enforce-scope-declaration-policy.sh
 
   # ============================================================================
   # Lifecycle state determination (maturion-isms#1514)
