@@ -14,6 +14,8 @@ const STATUS_BADGE_CLASSES: Record<string, string> = {
 function pipelineStatusClass(status: string): string {
   return STATUS_BADGE_CLASSES[status.toLowerCase()] ?? '';
 }
+
+function AppNav() {
   return (
     <header className="app-shell__header">
       <div className="container">
