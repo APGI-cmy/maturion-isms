@@ -2,7 +2,18 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
-function AppNav() {
+const STATUS_BADGE_CLASSES: Record<string, string> = {
+  complete: 'dashboard-pipeline__badge--complete',
+  done: 'dashboard-pipeline__badge--done',
+  pending: 'dashboard-pipeline__badge--pending',
+  in_progress: 'dashboard-pipeline__badge--in_progress',
+  failed: 'dashboard-pipeline__badge--failed',
+  error: 'dashboard-pipeline__badge--error',
+};
+
+function pipelineStatusClass(status: string): string {
+  return STATUS_BADGE_CLASSES[status.toLowerCase()] ?? '';
+}
   return (
     <header className="app-shell__header">
       <div className="container">
@@ -112,7 +123,7 @@ export default function DashboardPage() {
                   {pipelineStages.map((s) => (
                     <div key={s.id} className="dashboard-pipeline__stage">
                       <span className="dashboard-pipeline__label">{s.id}</span>
-                      <span className={`dashboard-pipeline__badge dashboard-pipeline__badge--${(s.status ?? '').toLowerCase()}`}>
+                      <span className={`dashboard-pipeline__badge ${pipelineStatusClass(s.status ?? '')}`}>
                         {s.status}
                       </span>
                       <span className="dashboard-pipeline__count">{s.count}</span>

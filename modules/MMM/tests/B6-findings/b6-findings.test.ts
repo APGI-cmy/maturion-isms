@@ -328,9 +328,15 @@ describe('T-MMM-S6-178: DashboardPage renders useful empty state when dashboard 
   });
   it('empty state includes CTA link to /frameworks/upload', () => {
     const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
-    // CTA must be inside the empty state block
-    const emptyStateBlock = src.slice(src.indexOf('dashboard-empty-state'), src.indexOf('dashboard-actions'));
-    expect(emptyStateBlock).toContain('to="/frameworks/upload"');
+    // CTA must be inside the empty state block; locate the block boundaries defensively
+    const emptyStateStart = src.indexOf('dashboard-empty-state');
+    const emptyStateEnd = src.indexOf('dashboard-empty-state__body');
+    expect(emptyStateStart).toBeGreaterThan(-1);
+    // The upload CTA (data-testid="dashboard-upload-cta") must follow the empty state heading/body
+    const afterEmptyState = src.slice(emptyStateStart);
+    expect(afterEmptyState).toContain('dashboard-upload-cta');
+    expect(afterEmptyState).toContain('to="/frameworks/upload"');
+    expect(emptyStateEnd).toBeGreaterThan(emptyStateStart);
   });
   it('checks for empty pipeline before rendering content', () => {
     const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
