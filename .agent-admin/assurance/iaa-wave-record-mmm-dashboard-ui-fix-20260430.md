@@ -60,4 +60,4 @@ PHASE_B_BLOCKING_TOKEN: IAA-session-mmm-dashboard-ui-fix-20260430-PASS
 - **Verdict**: ASSURANCE-TOKEN (PASS)
 - **PR**: maturion-isms#1520
 - **Issue**: maturion-isms#1535
-- **Reviewed SHA**: 6e18f4061a13d2fc2e81a593cbd01f30ea615feb
+- **Reviewed SHA**: f267f8062bf2baf807d692b93c7b434d50630de1
