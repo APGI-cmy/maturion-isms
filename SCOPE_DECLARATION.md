@@ -1,28 +1,25 @@
-# Scope Declaration — layer-down-propagate-governance-changes-d99e68e8
+# SCOPE_DECLARATION.md — ARCHIVAL
 
-**Wave**: layer-down-propagate-governance-changes-d99e68e8
-**Issue**: maturion-isms#1516
-**Branch**: copilot/layer-down-propagate-governance-changes-9f9d4f0b-cdcd-46bb-a181-5e9d7c8ca71a
-**Date**: 2026-04-29
-**Last refreshed**: 2026-04-29 (post-final-edit scope refresh per §4.3g / AAP-28)
-**Authority**: SCOPE_TO_DIFF_RULE.md, LAYERING_AND_RIPPLING_AUTOMATION_STRATEGY.md v1.0.0
+> ⚠️ **This root scope declaration file is archival and must not be rewritten for normal PRs.**
+>
+> Active PR scope declarations must be written to:
+>
+> `.agent-admin/scope-declarations/pr-<PR_NUMBER>.md`
+>
+> Normal PRs must not modify this file. A CI gate (`preflight/scope-declaration-parity`)
+> will fail any PR that modifies this file without an explicit migration exemption.
+>
+> **Migration exemptions** (administered by CS2 only):
+> - PR label: `scope-declaration-migration`
+> - PR body contains: `CS2-SCOPE-MIGRATION-WAIVER`
+>
+> **Authority**: CS2 (@APGI-cmy) | Issue: maturion-isms#1521
+> **Effective**: 2026-04-30 | Schema: SCOPE_DECLARATION_SCHEMA.md v2.0.0
 
-## Scope Decision
+## Previous Content (Historical Reference)
 
-Propagate governance layer-down from canonical source APGI-cmy/maturion-foreman-governance commit d99e68e8759af5f619851116e583d768c4f4c1e1. Three governance artifacts changed: AGENT_HANDOVER_AUTOMATION.md (v1.7.0), SCOPE_DECLARATION_SCHEMA.md (v2.0.0), scope-declaration.template.md (v2.0.0). Ripple PR #1517 already merged canonical files. This wave updates GOVERNANCE_ALIGNMENT_INVENTORY.json and creates governance evidence artifacts.
+This file previously served as the per-wave scope declaration, rewritten by each PR.
+That model caused merge conflicts when multiple PRs were active simultaneously.
+It has been superseded by the per-PR model at `.agent-admin/scope-declarations/pr-<N>.md`.
 
-## Changed Files
-
-- `SCOPE_DECLARATION.md` - Updated for this wave (per §4.3g scope refresh)
-- `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json` - Updated with canonical versions from ripple d99e68e8: AGENT_HANDOVER_AUTOMATION.md v1.7.0, SCOPE_DECLARATION_SCHEMA.md v2.0.0, scope-declaration.template.md v2.0.0; alignment_summary aligned 41→43
-- `.agent-workspace/governance-liaison-isms/memory/session-071-20260429.md` - Session memory for this governance liaison session
-- `.agent-workspace/governance-liaison-isms/memory/PREHANDOVER_PROOF_SESSION_071_RIPPLE_D99E68E8.md` - PREHANDOVER proof for this session
-- `.agent-workspace/governance-liaison-isms/parking-station/suggestions-log.md` - Parking station suggestion appended for session-071
-
-## Out of Scope
-
-- Any production code changes
-- Any `.github/agents/*.md` agent contract files
-- Any `.github/workflows/` workflow files
-- Any Supabase schema migrations
-- Any app source code
+Last valid wave entry: layer-down-propagate-governance-changes-d99e68e8 (PR #1516/1517 area, 2026-04-29).
