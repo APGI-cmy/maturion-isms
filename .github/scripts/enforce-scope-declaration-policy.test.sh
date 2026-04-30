@@ -8,7 +8,6 @@
 #   - PR with .agent-admin/scope-declarations/pr-1234.md passes (Gate B)
 #   - PR missing per-PR scope declaration fails when scope evidence is required (Gate B)
 #   - Migration-labeled PR modifying root file passes (Gate A exemption)
-#   - Evidence-exactness reads the per-PR file (integration test)
 #
 # Usage:
 #   .github/scripts/enforce-scope-declaration-policy.test.sh
