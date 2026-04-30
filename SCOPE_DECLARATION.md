@@ -4,7 +4,7 @@
 **Issue**: maturion-isms#1514
 **Branch**: copilot/harden-iaa-ecap-invocation
 **Date**: 2026-04-29
-**Last refreshed**: 2026-04-29 (post-final-edit scope refresh per §4.3g / AAP-28)
+**Last refreshed**: 2026-04-30 (re-trigger CI: PR body issue ref now present per §4.3g)
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ## Scope Decision
