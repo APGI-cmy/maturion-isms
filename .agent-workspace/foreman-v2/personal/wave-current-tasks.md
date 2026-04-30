@@ -1,83 +1,101 @@
-# Wave Current Tasks — wave-mps-source-verification
+# Wave Current Tasks — mmm-ui-evidence-pack-hardening-20260430
 
 **Foreman**: foreman-v2-agent v6.2.0
-**Wave**: wave-mps-source-verification
-**Session ID**: session-mps-source-verification-20260428
-**Date**: 2026-04-28
-**Branch**: copilot/verify-generic-mps-source-documents
-**CS2 Authorization**: CONFIRMED — issue opened by CS2 (@APGI-cmy) and assigned to foreman-v2-agent; branch initialized as copilot/verify-generic-mps-source-documents
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-wave-mps-source-verification-20260428.md
-iaa_prebrief_status: COMPLETE — PRE-BRIEF committed SHA caa8bc9; Track A = EXEMPT; Track B = AAWP_MAT (conditional on Track A gate)
-ceremony_admin_appointed: NO (Track A only — EXEMPT)
+**Wave**: mmm-ui-evidence-pack-hardening-20260430
+**Session ID**: session-mmm-ui-evidence-pack-hardening-20260430
+**Date**: 2026-04-30
+**Branch**: copilot/require-live-ui-evidence-pack
+**Issue**: maturion-isms#1523
+**CS2 Authorization**: CONFIRMED — issue opened by CS2 (@APGI-cmy) directly and assigned to Copilot
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-ui-evidence-pack-hardening-20260430.md
+iaa_prebrief_status: COMPLETE — SHA b30d90f — 8 qualifying tasks, MIXED classification (CANON_GOVERNANCE primary + CI_WORKFLOW + AAWP_MAT + PRE_BUILD_STAGE_MODEL + KNOWLEDGE_GOVERNANCE); 6 scope blockers declared
+ceremony_admin_appointed: YES — ECAP required per ACR-01 (CANON_GOVERNANCE wave)
+
+---
 
 ## Wave Purpose
 
-CS2 clarification directive: Before accepting a static replacement question bank in PR #1500,
-verify whether the 25 generic MPS Word source documents are already present and approved in
-the current AIMC/KUC/ai_knowledge store. If absent, record as migration gap and request
-re-upload. Only proceed to Track B (structured JSON model + question bank derivation) once
-CS2 confirms source document status.
+Governance hardening: define and enforce a Live UI Evidence Pack (LUIEP) gate that must be
+present before any PREHANDOVER proof may claim L2 (Deployment Commissioned) or L3
+(Operationally Closed) completion for MMM, or before any agent may describe MMM as
+"handover ready" to an operational audience.
 
-## Wave Design — Conditional Track Structure
+The gate codifies §12.2 OC-001–OC-009 requirements as a hard machine-enforced gate —
+converting the "pending CS2 live platform validation" items into verifiable evidence slots
+that must be populated before operational-complete claims are accepted.
 
-```
-TRACK A (mandatory first) → CS2 DB Verification Gate → TRACK B (conditional)
-```
+---
 
-- **Track A**: Research/verify KUC schema and code evidence; record findings; provide
-  DB queries for CS2; block PR #1500 static question bank pending CS2 decision.
-- **Track B**: Only if CS2 confirms documents PRESENT. Implement Domain→MPS→Criteria JSON
-  model; derive question bank; add tests proving all 25 MPSs covered.
+## Task Breakdown
 
-## Current Wave Tasks
-
-| # | Task | Agent | Status | Notes |
+| # | Task | Owner | Status | Notes |
 |---|------|-------|--------|-------|
-| 1 | Phase 1 Preflight | foreman-v2-agent | 🟢 DONE | Identity, Tier 2, CANON_INVENTORY PASS, sessions, FAIL-ONLY-ONCE v4.6.0 |
-| 2 | IAA Pre-Brief (Phase 1 Step 1.8) | independent-assurance-agent | 🟢 DONE | SHA caa8bc9; Track A=EXEMPT; Track B=AAWP_MAT |
-| 3 | wave-current-tasks.md | foreman-v2-agent | 🟢 DONE | This file |
-| 4 | Track A: KUC schema/code investigation | foreman-v2-agent (research) | 🟢 DONE | AIMC/ai_knowledge schema: MPS columns present; NO seed migration found |
-| 5 | Track A: Migration gap analysis committed | foreman-v2-agent | 🟢 DONE | .agent-workspace/foreman-v2/personal/mps-migration-gap-analysis-20260428.md |
-| 6 | Track A: Scope declaration | foreman-v2-agent | 🟢 DONE | scope-declaration-wave-mps-source-verification-20260428.md |
-| 7 | Track A: SCOPE_DECLARATION.md update | foreman-v2-agent | 🟢 DONE | Cleared per A-029; wave-scoped |
-| 8 | Track A: Session memory (Track A) | foreman-v2-agent | 🟢 DONE | session-mps-source-verification-20260428.md |
-| B-1 | (BLOCKED) Structured Domain→MPS→Criteria JSON model | mat-specialist + api-builder | ❌ BLOCKED | Pending CS2 re-upload of 25 MPS Word docs (gap confirmed LIKELY_ABSENT) |
-| B-2 | (BLOCKED) Free-assessment question bank derivation | ui-builder | ❌ BLOCKED | Pending B-1 |
-| B-3 | (BLOCKED) QA tests proving all 25 MPSs covered | qa-builder | ❌ BLOCKED | Pending B-1/B-2 |
+| 1 | Phase 1 PREFLIGHT | foreman-v2-agent | ✅ COMPLETE | Identity, Tier 2, Tier 1, FAIL-ONLY-ONCE, session memory |
+| 2 | wave-current-tasks.md created | foreman-v2-agent | ✅ COMPLETE | This file — regenerated from template |
+| 3 | scope-declaration committed | foreman-v2-agent | ✅ COMPLETE | scope-declaration-wave-mmm-ui-evidence-pack-hardening-20260430.md |
+| 4 | IAA Pre-Brief — wave record artifact committed | foreman-v2-agent | ✅ COMPLETE | SHA b30d90f — 8 qualifying tasks, 6 scope blockers |
+| 5 | Phase 2 Alignment checks | foreman-v2-agent | ✅ COMPLETE | Governance wave — all checks confirmed (see Phase 2 below) |
+| 6 | Delegate D1–D5 to governance-liaison-isms-agent | foreman-v2-agent | 🔄 IN PROGRESS | D1 (canon), D4 (checklist), D5 (template), D6 (tracker), D7 (FAIL-ONLY-ONCE) |
+| 7 | Delegate D2–D3 to qa-builder | foreman-v2-agent | 🔄 IN PROGRESS | D2 (CI script), D3 (CI workflow job) |
+| 8 | D8: CANON_INVENTORY update | governance-liaison-isms-agent | ⏳ PENDING | After D1 hash available |
+| 9 | QP evaluation | foreman-v2-agent | ⏳ PENDING | After all builder deliverables |
+| 10 | §4.3 Merge Gate Parity Check | foreman-v2-agent | ⏳ PENDING | CI-confirmed GREEN |
+| 11 | ECAP ceremony | execution-ceremony-admin-agent | ⏳ PENDING | PREHANDOVER + session memory bundle |
+| 12 | IAA Final Audit | independent-assurance-agent | ⏳ PENDING | ASSURANCE-TOKEN |
+| 13 | Merge gate release | foreman-v2-agent | ⏳ PENDING | CS2 review |
 
-**Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED
+---
 
-## CS2 Decision Gate (Track A → Track B)
+## Deliverable Index
 
-CS2 must perform before Track B delegation:
+| ID | Path | Owner | Status |
+|----|------|-------|--------|
+| D1 | `governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md` | governance-liaison-isms-agent | ⏳ PENDING |
+| D2 | `.github/scripts/validate-mmm-ui-evidence-pack.sh` | qa-builder | ⏳ PENDING |
+| D3 | `.github/workflows/preflight-evidence-gate.yml` (new job) | qa-builder | ⏳ PENDING |
+| D4 | `governance/checklists/mmm-ui-evidence-pack-checklist.md` | governance-liaison-isms-agent | ⏳ PENDING |
+| D5 | `modules/MMM/12-phase4-ecap/mmm-ui-evidence-pack-template.md` | governance-liaison-isms-agent | ⏳ PENDING |
+| D6 | `modules/MMM/BUILD_PROGRESS_TRACKER.md` (§12.3 ref) | governance-liaison-isms-agent | ⏳ PENDING |
+| D7 | `.agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md` (A-043) | governance-liaison-isms-agent | ⏳ PENDING |
+| D8 | `governance/CANON_INVENTORY.json` | governance-liaison-isms-agent | ⏳ PENDING |
 
-1. ~~Query live Supabase `ai_knowledge` table — SQL provided in migration gap analysis.~~ ✅ DONE
-2. ~~Confirm whether MPS 1–25 generic Word documents were migrated from legacy KUC.~~ ✅ DONE — **LIKELY_ABSENT** (all counts = 0)
-3. ABSENT confirmed — initiate re-upload of 25 Word documents via MMM framework upload pipeline (mmm-framework-sources bucket).
-4. After re-upload and parse pipeline completes, approve Track B delegation.
+---
 
-**PR #1500 (static question bank)**: Approved interim implementation under maturion-isms#1499
-(CS2 caveat: must NOT close maturion-isms#1501). #1501 remains open. Track B remains blocked
-pending CS2 re-upload of 25 generic MPS Word documents (DB verification confirmed LIKELY_ABSENT).
+## IAA Scope Blockers (from Pre-Brief — MUST observe)
 
-## IAA Tokens Received This Wave
+| # | Blocker | Affects | Consequence |
+|---|---------|---------|-------------|
+| SB-001 | D7 depends on D1 | A-043 must reference D1's exact path | D7 cannot finalize before D1 committed |
+| SB-002 | D8 depends on D1 | CANON_INVENTORY SHA must be computed from committed D1 | No placeholder hashes |
+| SB-003 | D2 depends on D1 | Script must check ALL D1 fields | D2 cannot complete before D1 finalized |
+| SB-004 | D6 depends on D1+D3 | Tracker update cannot claim gate ACTIVE until D1+D3 merged | Forward-looking language only |
+| SB-005 | D1, D4 | Canon/checklist must use normative language (MUST/REQUIRED) | Advisory-only = OVL-CG-003 rejection |
+| SB-006 | D3 | Existing preflight jobs must not be weakened | OVL-CI-002 applies |
 
-| PR # | Token | Date |
-|------|-------|------|
-| Track A | EXEMPT (no implementation/application changes) | 2026-04-28 |
+---
 
-## Wave Completion Gate
+## Phase 2 Alignment Notes
 
-- [x] Phase 1 Preflight complete
-- [x] IAA Pre-Brief complete — SHA caa8bc9
-- [x] wave-current-tasks.md committed
-- [x] Track A: KUC investigation complete
-- [x] Track A: Migration gap analysis committed
-- [x] Track A: Session memory written
-- [x] CS2: DB verification of ai_knowledge table — **COMPLETE** (LIKELY_ABSENT; migration gap confirmed 2026-04-28)
-- [ ] CS2: Re-upload of 25 generic MPS Word documents via MMM framework upload pipeline
-- [ ] CS2: Track B approval (after re-upload and parse pipeline complete)
-- [ ] Track B: Delegation to builders (BLOCKED pending CS2 gate)
-- [ ] Track B: PREHANDOVER + IAA Final Audit (AAWP_MAT — mandatory)
-- [ ] CS2 notified for merge approval
+- CS2 authorization: CONFIRMED (issue opened by @APGI-cmy, assigned to Copilot)
+- Governance still clean: CANON_INVENTORY PASS (203 entries, all hashes valid)
+- Verb classification: "Require / Hardening" → POLC-Orchestration mode
+- Pre-build stages (1–11): N/A — this is a governance hardening wave, not a module build
+- Red QA suite: N/A — governance document wave; no application tests
+- PBFAG, Impl Plan, Builder Checklist: N/A — governance wave
+- IAA Pre-Brief artifact: committed SHA b30d90f — CLEAR TO PROCEED TO PHASE 3
 
+---
+
+## Wave Close Steps (post-QP)
+
+- [ ] Section D-2 of wave-reconciliation-checklist.md executed (A-039)
+- [ ] All active trackers updated to post-token state before IAA invocation
+- [ ] ECAP bundle accepted (handback accepted — Step 4.1a)
+- [ ] §4.3 merge gate parity: ALL GREEN (CI-confirmed)
+- [ ] IAA ASSURANCE-TOKEN received and token ceremony complete (Step 4.3c)
+- [ ] Merge gate released to CS2
+
+---
+
+**Protocol**: WAVE-CURRENT-TASKS-PROTOCOL.md v1.2.0
+**Regenerated**: 2026-04-30 — complete overwrite per protocol §3 (single active wave)
