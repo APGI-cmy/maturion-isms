@@ -20,6 +20,9 @@ set -uo pipefail
 ERRORS=0
 WARNINGS=0
 
+# PR_NUMBER is passed from CI to locate per-PR scope declarations
+PR_NUMBER="${PR_NUMBER:-}"
+
 # Determine git diff base
 DIFF_BASE=""
 if git rev-parse --verify origin/main >/dev/null 2>&1; then
@@ -57,12 +60,39 @@ echo ""
 # ============================================================
 echo "── CHECK 1: PATH-MISMATCH ──"
 
+# Prefer per-PR scope file (.agent-admin/scope-declarations/pr-<N>.md) over root
 SCOPE_FILE=""
-[ -f "SCOPE_DECLARATION.md" ] && SCOPE_FILE="SCOPE_DECLARATION.md"
-[ -z "$SCOPE_FILE" ] && [ -f "governance/scope-declaration.md" ] && SCOPE_FILE="governance/scope-declaration.md"
+PR_NUMBER_FOR_SCOPE="${PR_NUMBER:-}"
+if [ -n "$PR_NUMBER_FOR_SCOPE" ] && \
+   [ -f ".agent-admin/scope-declarations/pr-${PR_NUMBER_FOR_SCOPE}.md" ]; then
+  SCOPE_FILE=".agent-admin/scope-declarations/pr-${PR_NUMBER_FOR_SCOPE}.md"
+  echo "   ℹ️  Using per-PR scope file: $SCOPE_FILE"
+fi
+if [ -z "$SCOPE_FILE" ]; then
+  # Fallback: look for any per-PR scope file added/modified by this PR
+  if [ -n "$DIFF_BASE" ]; then
+    CANDIDATE=$(git diff --name-only --diff-filter=AM "$DIFF_BASE" 2>/dev/null | \
+      grep "^\.agent-admin/scope-declarations/pr-[0-9][0-9]*\.md$" | head -1 || true)
+    [ -n "$CANDIDATE" ] && [ -f "$CANDIDATE" ] && SCOPE_FILE="$CANDIDATE"
+    [ -n "$SCOPE_FILE" ] && echo "   ℹ️  Using per-PR scope file from diff: $SCOPE_FILE"
+  fi
+fi
+# Legacy fallback to root file (archival — warns that it is legacy)
+if [ -z "$SCOPE_FILE" ]; then
+  if [ -f "SCOPE_DECLARATION.md" ]; then
+    # Only use root file if it is NOT the archival stub
+    if ! grep -q "ARCHIVAL" "SCOPE_DECLARATION.md" 2>/dev/null; then
+      SCOPE_FILE="SCOPE_DECLARATION.md"
+    else
+      echo "   ℹ️  Root SCOPE_DECLARATION.md is archival — skipping root file check."
+    fi
+  fi
+  [ -z "$SCOPE_FILE" ] && [ -f "governance/scope-declaration.md" ] && \
+    SCOPE_FILE="governance/scope-declaration.md"
+fi
 
 if [ -z "$SCOPE_FILE" ]; then
-  echo "   ℹ️  N/A — No SCOPE_DECLARATION.md found. Skipping."
+  echo "   ℹ️  N/A — No per-PR or root SCOPE_DECLARATION file found. Skipping."
 else
   echo "   Source: $SCOPE_FILE"
   PATH_ERRORS=0
@@ -96,11 +126,12 @@ echo ""
 echo "── CHECK 2: COUNT-MISMATCH ──"
 
 DECLARED_COUNT=""
-# Only check SCOPE_DECLARATION.md or PREHANDOVER proof files that are NEW in this PR diff
+# Check per-PR scope files, SCOPE_DECLARATION.md, or PREHANDOVER proof files that are NEW in this PR diff
 # (avoids false positives from pre-existing governance files with stale counts)
 PR_PROOF_FILES=""
 if [ -n "$DIFF_BASE" ]; then
-  PR_PROOF_FILES=$(git diff --name-only --diff-filter=A "$DIFF_BASE" 2>/dev/null | grep -E '^(SCOPE_DECLARATION\.md|\.agent-admin/prehandover/proof-)' || true)
+  PR_PROOF_FILES=$(git diff --name-only --diff-filter=A "$DIFF_BASE" 2>/dev/null | \
+    grep -E '^(SCOPE_DECLARATION\.md|\.agent-admin/scope-declarations/pr-[0-9]+\.md|\.agent-admin/prehandover/proof-)' || true)
 fi
 # Fall back to SCOPE_DECLARATION.md in working tree if it's new
 for f in $PR_PROOF_FILES; do
@@ -265,19 +296,31 @@ echo ""
 echo "── CHECK 6: ISSUE-MISMATCH ──"
 
 if [ -z "$SCOPE_FILE" ]; then
-  echo "   ℹ️  N/A — No SCOPE_DECLARATION.md found. Skipping."
+  echo "   ℹ️  N/A — No scope declaration file found. Skipping."
 else
-  # Extract declared issue from SCOPE_DECLARATION.md
-  # Matches: **Issue**: maturion-isms#1234  or  **Issue**: #1234
-  DECLARED_ISSUE_RAW=$(grep -oE '^\*\*Issue\*\*:[[:space:]]*.+' "$SCOPE_FILE" 2>/dev/null | \
-    head -1 | sed 's/\*\*Issue\*\*:[[:space:]]*//' | tr -d '[:space:]' || true)
+  # Extract declared issue from scope file.
+  # Per-PR format: ISSUE: #1234 — title (SCOPE_SCHEMA_VERSION v2 field)
+  # Legacy format: **Issue**: maturion-isms#1234
+  DECLARED_ISSUE_RAW=$(grep -oE '^ISSUE:[[:space:]]*.+' "$SCOPE_FILE" 2>/dev/null | \
+    head -1 | sed 's/^ISSUE:[[:space:]]*//' | tr -d '[:space:]' || true)
+  if [ -z "$DECLARED_ISSUE_RAW" ]; then
+    # Legacy Markdown format
+    DECLARED_ISSUE_RAW=$(grep -oE '^\*\*Issue\*\*:[[:space:]]*.+' "$SCOPE_FILE" 2>/dev/null | \
+      head -1 | sed 's/\*\*Issue\*\*:[[:space:]]*//' | tr -d '[:space:]' || true)
+  fi
 
   if [ -z "$DECLARED_ISSUE_RAW" ]; then
     echo "   ⚠️  WARNING — No **Issue**: field found in $SCOPE_FILE"
     WARNINGS=$((WARNINGS + 1))
   else
-    # Normalise to numeric issue number (trailing digits after last #)
-    DECLARED_ISSUE_NUM=$(echo "$DECLARED_ISSUE_RAW" | grep -oE '[0-9]+$' || true)
+    # Normalise to numeric issue number:
+    #   1. First try to extract the first #<digits> reference (v2 per-PR format:
+    #      "ISSUE: #1521 — long title" or legacy "maturion-isms#1234").
+    #   2. Fall back to trailing digits for any remaining legacy format.
+    DECLARED_ISSUE_NUM=$(echo "$DECLARED_ISSUE_RAW" | grep -oE '#[0-9]+' | head -1 | grep -oE '[0-9]+' || true)
+    if [ -z "$DECLARED_ISSUE_NUM" ]; then
+      DECLARED_ISSUE_NUM=$(echo "$DECLARED_ISSUE_RAW" | grep -oE '[0-9]+' | head -1 || true)
+    fi
     echo "   Declared: $DECLARED_ISSUE_RAW (issue #${DECLARED_ISSUE_NUM:-?})"
 
     # Determine expected issue number (priority: explicit env var > PR_BODY parsing)
@@ -288,14 +331,17 @@ else
       EXPECTED_ISSUE_NUM=$(echo "$EXPECTED_ISSUE_NUMBER" | grep -oE '[0-9]+' | tail -1)
       EXPECTED_SOURCE="EXPECTED_ISSUE_NUMBER env var"
     elif [ -n "${PR_BODY:-}" ]; then
-      # Parse PR body for closing/fixing keywords followed by optional repo prefix + number
+      # Parse PR body for closing/fixing keywords followed by optional repo prefix + number.
+      # Pattern uses [a-zA-Z0-9_-]* (zero or more) so it handles:
+      #   "Closes #1521"          (bare bare #N)
+      #   "Fixes maturion-isms#1521"  (repo-prefixed)
       EXPECTED_ISSUE_NUM=$(printf '%s' "$PR_BODY" | \
-        grep -ioE '(closes|fixes|resolves|addresses)[[:space:]]+([a-zA-Z0-9_-]+#)?([0-9]+)' | \
+        grep -ioE '(closes|fixes|resolves|addresses)[[:space:]]+([a-zA-Z0-9_-]*#)([0-9]+)' | \
         grep -oE '[0-9]+$' | head -1 || true)
       if [ -z "$EXPECTED_ISSUE_NUM" ]; then
-        # Fallback: first explicit maturion-isms#N reference in PR body
+        # Fallback: first explicit #N reference in PR body (bare or with any prefix)
         EXPECTED_ISSUE_NUM=$(printf '%s' "$PR_BODY" | \
-          grep -oE 'maturion-isms#[0-9]+' | head -1 | grep -oE '[0-9]+' || true)
+          grep -oE '#[0-9]+' | head -1 | grep -oE '[0-9]+' || true)
       fi
       [ -n "$EXPECTED_ISSUE_NUM" ] && EXPECTED_SOURCE="PR_BODY (parsed closing/issue ref)"
     fi
