@@ -135,8 +135,12 @@ if [ "$ENFORCE_SCOPE" = "false" ]; then
   echo ""
 else
   if [ -z "$PR_NUMBER" ]; then
-    echo "   ⚠️  PR_NUMBER not set — cannot locate per-PR scope file. Gate B skipped."
+    echo "   ❌ PER-PR-SCOPE-REQUIRED: PR_NUMBER is required when ENFORCE_SCOPE is enabled."
+    echo "      Cannot locate or validate the per-PR scope declaration without PR_NUMBER."
+    echo "      Expected workflow input: PR_NUMBER"
+    echo "      Authority: SCOPE_DECLARATION_SCHEMA.md v2.0.0, maturion-isms#1521"
     echo ""
+    ERRORS=$((ERRORS + 1))
   else
     PER_PR_SCOPE_FILE=".agent-admin/scope-declarations/pr-${PR_NUMBER}.md"
 
