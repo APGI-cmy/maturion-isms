@@ -44,5 +44,5 @@ Use `governance/canon/scope-declaration.template.md` as the starting point.
 
 ## Enforcement
 
-- **Gate A** (`ROOT-REWRITE-BLOCKED`): CI fails if `SCOPE_DECLARATION.md` is modified without a migration exemption label or CS2 waiver.
+- **Gate A** (`ROOT-REWRITE-BLOCKED`): CI fails if `SCOPE_DECLARATION.md` is modified unless one of the implemented bypasses applies: a migration exemption label, CS2 waiver / `CS sign-off: approved`, or the automated-governance bypass.
 - **Gate B** (`PER-PR-SCOPE-REQUIRED`): CI fails if no `pr-<PR_NUMBER>.md` file exists for agent/Copilot PRs.
