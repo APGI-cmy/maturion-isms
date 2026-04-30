@@ -72,7 +72,7 @@ if [ -z "$SCOPE_FILE" ]; then
   # Fallback: look for any per-PR scope file added/modified by this PR
   if [ -n "$DIFF_BASE" ]; then
     CANDIDATE=$(git diff --name-only --diff-filter=AM "$DIFF_BASE" 2>/dev/null | \
-      grep "^\.agent-admin/scope-declarations/pr-[0-9]*\.md$" | head -1 || true)
+      grep "^\.agent-admin/scope-declarations/pr-[0-9][0-9]*\.md$" | head -1 || true)
     [ -n "$CANDIDATE" ] && [ -f "$CANDIDATE" ] && SCOPE_FILE="$CANDIDATE"
     [ -n "$SCOPE_FILE" ] && echo "   ℹ️  Using per-PR scope file from diff: $SCOPE_FILE"
   fi
