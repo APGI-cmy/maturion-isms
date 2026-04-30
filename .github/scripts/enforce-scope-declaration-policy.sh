@@ -150,8 +150,8 @@ else
       echo ""
       echo "      Create the file using the template at:"
       echo "        governance/canon/scope-declaration.template.md"
-      echo "      Required fields: PR_NUMBER, ISSUE, BRANCH, OWNER, DATE_UTC,"
-      echo "        RESPONSIBILITY_DOMAIN, IN_SCOPE, OUT_OF_SCOPE, FILES_CHANGED"
+      echo "      Required fields for Gate B: PR_NUMBER, ISSUE, BRANCH, OWNER,"
+      echo "        DATE_UTC, OUT_OF_SCOPE, FILES_CHANGED"
       echo "      Authority: SCOPE_DECLARATION_SCHEMA.md v2.0.0, maturion-isms#1521"
       ERRORS=$((ERRORS + 1))
     else
