@@ -4,7 +4,7 @@
 **Issue**: maturion-isms#1514
 **Branch**: copilot/harden-iaa-ecap-invocation
 **Date**: 2026-04-29
-**Last refreshed**: 2026-04-30 (narrow merge-ready patterns to avoid false positives on script/variable names; 38 tests)
+**Last refreshed**: 2026-04-30T12:21 (re-trigger CI with updated PR body containing Addresses maturion-isms#1514; 38 tests)
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ## Scope Decision
