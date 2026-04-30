@@ -2,8 +2,8 @@
 
 **Agent**: foreman-v2  
 **Contract Version**: 2.10.0  
-**Knowledge Version**: 2.9.0  
-**Last Updated**: 2026-04-22  
+**Knowledge Version**: 3.0.0  
+**Last Updated**: 2026-04-30  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -17,8 +17,8 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 
 | File | Purpose | Version |
 |------|---------|---------|
-| `index.md` (this file) | Knowledge entry point and version reference | 2.1.0 |
-| `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 4.5.0 |
+| `index.md` (this file) | Knowledge entry point and version reference | 3.0.0 |
+| `FAIL-ONLY-ONCE.md` | **PREFLIGHT §1.3** — Breach registry, Universal A-rules (ISMS-local namespace A-001+), incident log, open improvements; must be self-attested every session before any work begins | 4.7.0 |
 | `specialist-registry.md` | Registry of all delegable agents with capabilities and separation-of-duties boundary | 1.0.0 |
 | `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 |
 | `prehandover-template.md` | **PHASE 4 §S-009** — PREHANDOVER proof template with mandatory IAA Agent Response (verbatim) section per FAIL-ONLY-ONCE v1.8.0 S-009; `## Environment Parity` section per OVL-CI-006; `## Pre-IAA Commit Gate` MANDATORY STOP section per A-021; IAA Token Self-Certification Guard section per S-035 structural gate; `## Ripple/Cross-Agent Assessment` mandatory section per HFMC-01; `## Wave-Level Ceremony Contract Verification` mandatory section per ACR-18–21 | 1.9.0 |
@@ -123,6 +123,7 @@ All verb classification and mode-switching decisions MUST reference `ECOSYSTEM_V
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.0.0 | 2026-04-30 | FAIL-ONLY-ONCE.md bumped to v4.7.0 — A-043 MMM-LUIEP-GATE-MANDATORY locked in; no MMM PREHANDOVER proof may claim L2/L3 completion without a committed LUIEP per `governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md` v1.0.0. Wave: mmm-ui-evidence-pack-hardening-20260430 (issue #1523). CANON_INVENTORY.json updated with MMM_UI_EVIDENCE_PACK_GATE.md entry. |
 | 2.9.0 | 2026-04-22 | WAVE-CURRENT-TASKS-PROTOCOL.md bumped to v1.2.0 — Stage 10 ceremony contract integration (ACR-18–21); prehandover-template.md bumped to v1.9.0 — `## Wave-Level Ceremony Contract Verification` mandatory section added (IAA_PRE_BRIEF_PROTOCOL.md v1.3.0 §Expected Wave-Level Admin Ceremony Contract). Wave: stage10-prebrief-hardening-20260422 (issue #1447). |
 | 2.8.0 | 2026-04-19 | Knowledge version header updated to 2.8.0 (Last Updated date aligned to 2026-04-19); prehandover-template.md Wave: cl6-wave3-knowledge-reingestion |
 | 2.7.0 | 2026-04-09 | prehandover-template.md bumped to v1.8.0 — `## Ripple/Cross-Agent Assessment` mandatory section added (HFMC-01 / NO-REPEAT-PREVENTABLE-001 systemic fix); Wave: cl6-wave3-knowledge-reingestion |

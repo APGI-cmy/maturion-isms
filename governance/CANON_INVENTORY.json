@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-04-29",
-  "total_canons": 201,
+  "last_updated": "2026-04-30",
+  "total_canons": 204,
   "generation_timestamp": "2026-04-21T00:00:00Z",
   "canon_entry_schema": {
     "description": "Schema for canon entries in CANON_INVENTORY.json",
@@ -2427,6 +2427,23 @@
       "provenance": "Created via issue #1343 (2026-04-15)",
       "ripple_required": true,
       "ripple_notice": "Layer-down to maturion-isms required: MMM build teams must align to convergence boundary constraints before MMM AI integration"
+    },
+    {
+      "filename": "MMM_UI_EVIDENCE_PACK_GATE.md",
+      "version": "1.0.0",
+      "canonical_version": "1.0.0",
+      "file_hash": "16b01bc797e9a6d202166feae0e1eafe0e5bf4bb89e5c1068e954a8c9f88b316",
+      "file_hash_sha256": "16b01bc797e9a6d202166feae0e1eafe0e5bf4bb89e5c1068e954a8c9f88b316",
+      "effective_date": "2026-04-30",
+      "description": "Mandatory gate canon for MMM Live UI Evidence Pack (LUIEP). Defines Rules U-001 through U-005 requiring a committed, CS2-validated Live UI Evidence Pack before any MMM PREHANDOVER proof may claim L2 (Deployment Commissioned) or L3 (Operationally Closed) completion. Enforcement via CI gate preflight/mmm-ui-evidence-pack-gate. Violation class: INC-MMM-LUIEP-MISSING-001.",
+      "type": "canon",
+      "path": "governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md",
+      "layer_down_status": "PUBLIC_API",
+      "local_version": "1.0.0",
+      "local_extension": false,
+      "layer_up_status": "NONE",
+      "provenance": "Created via issue #1523 (2026-04-30) \u2014 wave mmm-ui-evidence-pack-hardening-20260430",
+      "ripple_required": false
     }
   ]
 }

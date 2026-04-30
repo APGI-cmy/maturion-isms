@@ -668,3 +668,30 @@ jobs:
         run: |
           chmod +x .github/scripts/ecap-admin-ceremony-gate.sh
           .github/scripts/ecap-admin-ceremony-gate.sh
+
+  mmm-ui-evidence-pack-gate:
+    name: "preflight/mmm-ui-evidence-pack-gate"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    # Only enforce for Copilot/foreman PRs
+    if: >-
+      startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot'
+
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: MMM Live UI Evidence Pack Gate
+        id: mmm_luiep_gate
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          chmod +x .github/scripts/validate-mmm-ui-evidence-pack.sh
+          .github/scripts/validate-mmm-ui-evidence-pack.sh
