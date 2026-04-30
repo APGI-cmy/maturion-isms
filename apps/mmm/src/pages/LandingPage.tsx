@@ -9,6 +9,7 @@ export default function LandingPage() {
             <span className="nav__logo">Maturion <span>MMM</span></span>
             <Link className="nav__link" to="/tutorial">Learn More</Link>
             <Link className="btn btn-outline" to="/free-assessment">Try Free</Link>
+            <Link className="btn btn-outline" to="/login">Sign In</Link>
             <Link className="btn btn-primary" to="/signup">Sign Up</Link>
           </nav>
         </div>
@@ -29,6 +30,7 @@ export default function LandingPage() {
           <div className="hero__actions">
             <Link className="btn btn-primary" to="/free-assessment">Try Free Assessment</Link>
             <Link className="btn btn-outline-light" to="/signup">Sign Up</Link>
+            <Link className="btn btn-ghost-light" to="/login">Sign In</Link>
             <Link className="btn btn-ghost-light" to="/tutorial">Learn More</Link>
           </div>
         </div>
@@ -81,6 +83,7 @@ export default function LandingPage() {
           <div className="hero__actions">
             <Link className="btn btn-primary" to="/free-assessment">Try Free Assessment</Link>
             <Link className="btn btn-outline-light" to="/signup">Create Account</Link>
+            <Link className="btn btn-ghost-light" to="/login">Sign In</Link>
           </div>
         </div>
       </section>

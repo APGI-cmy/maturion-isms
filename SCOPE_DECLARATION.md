@@ -36,4 +36,3 @@ lifecycle (issue #1514). Move from "agent was told to invoke IAA/ECAP" to
 - Any application source files (apps/, modules/, supabase/)
 - Any governance canon files
 - Any other CI workflows or scripts beyond preflight-evidence-gate.yml and iaa-prebrief-inject.yml
-

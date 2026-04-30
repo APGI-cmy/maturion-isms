@@ -277,12 +277,115 @@ jobs:
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
 
+      - name: Patch .vercel/output routing — replace error-fallback /404.html with /index.html rewrite
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const path = '.vercel/output/config.json';
+          if (!fs.existsSync(path)) {
+            console.log('No .vercel/output/config.json found — skipping patch');
+            process.exit(0);
+          }
+          const cfg = JSON.parse(fs.readFileSync(path, 'utf8'));
+          const routes = cfg.routes || [];
+          // Remove Vite framework adapter error-based /404.html fallback routes.
+          // These have { "handle": "error" } or { "dest": "/404.html", "status": 404 }
+          // and cause HTTP 404 responses for SPA direct routes.
+          const filtered = routes.filter(r =>
+            r.handle !== 'error' &&
+            r.dest !== '/404.html'
+          );
+          // Ensure filesystem handle is present (try static files before SPA catch-all)
+          if (!filtered.find(r => r.handle === 'filesystem')) {
+            filtered.push({ handle: 'filesystem' });
+          }
+          // Add SPA catch-all rewrite to /index.html (HTTP 200, not 404)
+          if (!filtered.find(r => r.dest === '/index.html')) {
+            filtered.push({
+              src: '/((?!api/|assets/|manifest\\.json$|sw\\.js$).*)',
+              dest: '/index.html'
+            });
+          }
+          cfg.routes = filtered;
+          fs.writeFileSync(path, JSON.stringify(cfg, null, 2));
+          console.log('Patched .vercel/output/config.json routes:');
+          console.log(JSON.stringify(cfg.routes, null, 2));
+          NODE
+
+      - name: Verify .vercel/output routing — SPA catch-all present
+        run: |
+          OUTPUT_CONFIG=".vercel/output/config.json"
+          if [ ! -f "$OUTPUT_CONFIG" ]; then
+            echo "❌ FAIL: $OUTPUT_CONFIG not found after vercel build — cannot verify SPA routing"
+            exit 1
+          fi
+          echo "Inspecting $OUTPUT_CONFIG for SPA catch-all route to /index.html..."
+          CATCH_ALL=$(node -e "
+            const fs = require('fs');
+            const cfg = JSON.parse(fs.readFileSync('$OUTPUT_CONFIG', 'utf8'));
+            const routes = cfg.routes || [];
+            // Require dest '/index.html' — /404.html with status 404 is NOT acceptable
+            // (it returns HTTP 404 to the client, breaking SPA direct-route navigation)
+            const found = routes.find(r => r.dest === '/index.html');
+            if (found) {
+              process.stdout.write(JSON.stringify(found));
+            }
+          ")
+          if [ -z "$CATCH_ALL" ]; then
+            echo "❌ FAIL: No SPA catch-all route with dest '/index.html' found in $OUTPUT_CONFIG"
+            echo "   A /404.html fallback with status:404 is NOT acceptable — it returns HTTP 404 to clients."
+            echo "   Build output routes:"
+            node -e "
+              const fs = require('fs');
+              const c = JSON.parse(fs.readFileSync('$OUTPUT_CONFIG', 'utf8'));
+              console.log(JSON.stringify(c.routes, null, 2));
+            "
+            exit 1
+          fi
+          echo "✅ PASS: SPA catch-all route to /index.html confirmed in .vercel/output/config.json:"
+          echo "  $CATCH_ALL"
+
       - name: Deploy Preview to Vercel
         id: deploy
         run: |
           url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
           echo "preview-url=$url" >> $GITHUB_OUTPUT
           echo "Preview URL: $url"
+
+      - name: SPA direct-route smoke test — verify auth/app routes return 2xx/3xx
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.preview-url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: |
+          echo "Running SPA direct-route smoke test against: $PREVIEW_URL"
+          ROUTES=("/login" "/forgot-password" "/reset-password" "/onboarding" "/frameworks" "/frameworks/upload")
+          FAIL=0
+          for route in "${ROUTES[@]}"; do
+            http_code=$(curl -L -s -o /dev/null -w "%{http_code}" \
+              --connect-timeout 10 \
+              --max-time 30 \
+              -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET" \
+              "$PREVIEW_URL$route" 2>/dev/null || echo "000")
+            if [ "$http_code" = "404" ]; then
+              echo "❌ FAIL: $route → HTTP $http_code (404 NOT_FOUND — SPA fallback likely broken)"
+              FAIL=1
+            elif [ "$http_code" = "401" ] || [ "$http_code" = "403" ]; then
+              echo "❌ FAIL: $route → HTTP $http_code (auth/protection blocking route — app not reached)"
+              FAIL=1
+            elif echo "$http_code" | grep -qE '^[23][0-9][0-9]$'; then
+              echo "✅ PASS: $route → HTTP $http_code"
+            else
+              echo "❌ FAIL: $route → HTTP $http_code (network/timeout/unexpected — check deployment logs)"
+              FAIL=1
+            fi
+          done
+          if [ "$FAIL" -ne 0 ]; then
+            echo ""
+            echo "SPA direct-route smoke test FAILED — one or more routes returned an error."
+            exit 1
+          fi
+          echo ""
+          echo "✅ All SPA routes returned 2xx/3xx — SPA fallback confirmed in deployed preview."
 
       - name: Comment Preview URL on PR
         if: github.event_name == 'pull_request'
