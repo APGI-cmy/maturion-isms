@@ -10,6 +10,8 @@ import FreeAssessmentPage from '@/pages/FreeAssessmentPage';
 import FreeAssessmentResultPage from '@/pages/FreeAssessmentResultPage';
 import SignUpPage from '@/pages/SignUpPage';
 import LoginPage from '@/pages/LoginPage';
+import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
+import ResetPasswordPage from '@/pages/ResetPasswordPage';
 import OnboardingPage from '@/pages/OnboardingPage';
 import FrameworkOriginPage from '@/pages/FrameworkOriginPage';
 // B4 pages
@@ -37,6 +39,8 @@ export default function App() {
             <Route path="/free-assessment/result" element={<FreeAssessmentResultPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
             <Route path="/framework-origin" element={<ProtectedRoute><FrameworkOriginPage /></ProtectedRoute>} />
             <Route path="/frameworks" element={<ProtectedRoute><FrameworkListPage /></ProtectedRoute>} />

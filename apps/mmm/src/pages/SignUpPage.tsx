@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 export default function SignUpPage() {
   const [email, setEmail] = useState(''); const [password, setPassword] = useState(''); const [error, setError] = useState(''); const [confirmed, setConfirmed] = useState(false);
   const navigate = useNavigate();
@@ -27,6 +27,7 @@ export default function SignUpPage() {
         {confirmed ? (
           <div data-testid="email-confirmation-message" role="status" className="alert alert-info">
             <strong>Check your email.</strong> We&apos;ve sent a confirmation link to <strong>{email}</strong>. Click the link to activate your account and sign in.
+            <p className="auth-card__footer">Already confirmed or already have an account? <Link to="/login">Sign in</Link></p>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
@@ -58,6 +59,7 @@ export default function SignUpPage() {
             <button className="btn btn-primary w-full" type="submit">Create Account</button>
           </form>
         )}
+        <p className="auth-card__footer">Already have an account? <Link to="/login">Sign in</Link></p>
       </div>
     </div>
   );
