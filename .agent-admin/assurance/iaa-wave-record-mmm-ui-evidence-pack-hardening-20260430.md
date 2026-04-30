@@ -301,7 +301,19 @@ In particular:
 
 ## REJECTION_HISTORY
 
-*Populated by IAA on REJECTION-PACKAGE issuance. IAA-only.*
+### R1 — 2026-04-30 (session-079)
+
+| Field | Value |
+|-------|-------|
+| **Date** | 2026-04-30 |
+| **Session** | session-079-20260430 |
+| **Checks run** | 8 (7 PASS, 1 FAIL) |
+| **Finding ID** | OVERLAY-08 |
+| **Finding summary** | `governance/CANON_INVENTORY.json` not updated to register new Tier 1 PUBLIC_API canon `governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md` v1.0.0 |
+| **Classification** | Substantive / Systemic |
+| **Fix required** | Add canon entry to CANON_INVENTORY.json: filename `MMM_UI_EVIDENCE_PACK_GATE.md`, version `1.0.0`, effective_date `2026-04-30`, type `canon`, path `governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md`, layer_down_status `PUBLIC_API`, file_hash_sha256 `16b01bc797e9a6d202166feae0e1eafe0e5bf4bb89e5c1068e954a8c9f88b316`. Increment `total_canons` 201→202. Update `last_updated` to `2026-04-30`. |
+| **Systemic prevention** | Add `[ ] CANON_INVENTORY.json updated` as mandatory PRE-COMMIT gate item in governance-liaison-isms prehandover checklist template for all canon creation/modification waves |
+| **Re-invoke IAA** | YES — after fix committed |
 
 ---
 
