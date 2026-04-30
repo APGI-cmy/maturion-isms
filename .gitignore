@@ -53,6 +53,7 @@ Thumbs.db
 .agent-workspace/*/working-contract.md
 .agent-workspace/*/environment-health.json
 packages/ai-centre/package-lock.json
+apps/mmm/package-lock.json
 
 # Python cache
 __pycache__/
