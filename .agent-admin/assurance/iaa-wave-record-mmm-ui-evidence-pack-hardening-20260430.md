@@ -320,3 +320,15 @@ In particular:
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **IAA Contract**: v2.9.0 | **Living Agent System**: v6.2.0
 **STOP-AND-FIX Mandate**: ACTIVE | **Adoption Phase**: PHASE_B_BLOCKING
+
+### R2 — 2026-04-30 (session-080)
+
+| Field | Value |
+|-------|-------|
+| **Session** | session-080-20260430 |
+| **Verdict** | REJECTION-PACKAGE |
+| **Checks** | 18 run — 15 PASS, 3 FAIL |
+| **F1** | CANON_INVENTORY.json fix not committed — working tree only (unstaged). Stage + commit required. |
+| **F2** | total_canons: 202 declared, 204 actual entries. R1 fix instruction was itself incorrect (specified 201→202; correct value is 204 accounting for 2 AIMC entries from #1343). Set total_canons: 204 before committing. Systemic: A-044 candidate — IAA fix instructions must specify independently counted array length. |
+| **F3** | Foreman knowledge index.md declares FAIL-ONLY-ONCE.md at v4.5.0; committed D7 file is v4.7.0. Update index.md to v4.7.0 and bump index version. |
+| **Fix required** | (1) Set total_canons: 204 in CANON_INVENTORY.json; (2) Stage and commit CANON_INVENTORY.json; (3) Update foreman knowledge index.md FAIL-ONLY-ONCE row to v4.7.0 and bump index version. Re-invoke IAA after all 3 fixes committed. |
