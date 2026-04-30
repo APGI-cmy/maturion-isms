@@ -1036,6 +1036,139 @@ cd "$TEST_DIR"
 rm -rf "$lc7_workspace"
 echo ""
 
+# AC-LC-8: Post-IAA implementation commit with no delta-assurance block → lifecycle BLOCKED
+echo "Test: AC-LC-8: Post-IAA implementation commit without delta-assurance — lifecycle must remain BLOCKED"
+lc8_workspace=$(mktemp -d -p "$TEST_DIR")
+cd "$lc8_workspace"
+git init -q
+git config user.email "test@example.com"
+git config user.name "Test User"
+mkdir -p .agent-admin/assurance .agent-admin/lifecycle modules/mat/src
+echo "initial" > README.md
+git add .
+git commit -q -m "Initial commit"
+git branch -M main
+git checkout -q -b test-branch
+# Add implementation file
+mkdir -p modules/mat/src
+echo "export const x = 1;" > modules/mat/src/feature.ts
+git add .
+git commit -q -m "Add impl file"
+# Add valid IAA token (REVIEWED_SHA = impl commit, before post-IAA change)
+IMPL_SHA=$(git rev-parse HEAD)
+cat > .agent-admin/assurance/iaa-token-test-lc8.md << EOF
+# IAA Assurance Token
+
+PHASE_B_BLOCKING_TOKEN: IAA-test-lc8-PASS
+
+**Token**: IAA-test-lc8-PASS
+**Verdict**: ASSURANCE-TOKEN (PASS)
+**PR**: #9999
+**Issue**: maturion-isms#1503
+**Reviewed SHA**: ${IMPL_SHA}
+EOF
+git add .
+git commit -q -m "Add IAA token"
+# BAD: add a new implementation file AFTER the IAA token (post-review impl change)
+echo "export const y = 2;" > modules/mat/src/post-iaa.ts
+git add .
+git commit -q -m "Post-IAA implementation change (bad)"
+lc8_base=$(git rev-parse main 2>/dev/null)
+lc8_head=$(git rev-parse HEAD 2>/dev/null || echo "HEAD")
+set +e
+lc8_output=$(BASE_SHA="$lc8_base" HEAD_SHA="$lc8_head" PR_NUMBER="9999" PR_LABELS="" \
+  PR_BODY="Closes maturion-isms#1503" EXPECTED_ISSUE_NUMBER="1503" \
+  bash "$LIFECYCLE_SCRIPT" 2>&1)
+lc8_exit=$?
+set -e
+if echo "$lc8_output" | grep -q "BLOCKED" || \
+   echo "$lc8_output" | grep -qi "implementation files changed after reviewed SHA\|no delta-assurance"; then
+  echo "  ✅ PASS (post-IAA impl commit without delta-assurance → lifecycle BLOCKED)"
+  TEST_PASSED=$((TEST_PASSED + 1))
+else
+  echo "  ❌ FAIL — expected lifecycle BLOCKED for post-IAA impl commit with no delta-assurance"
+  echo "  Output excerpt:"
+  echo "$lc8_output" | grep -E "BLOCKED|LIFECYCLE|IAA|impl|delta|SHA" | head -10
+  TEST_FAILED=$((TEST_FAILED + 1))
+fi
+cd "$TEST_DIR"
+rm -rf "$lc8_workspace"
+echo ""
+
+# AC-LC-9: Post-IAA implementation commit WITH valid delta-assurance block → lifecycle assurance-ready
+echo "Test: AC-LC-9: Post-IAA implementation commit with valid delta-assurance block — lifecycle assurance-ready"
+lc9_workspace=$(mktemp -d -p "$TEST_DIR")
+cd "$lc9_workspace"
+git init -q
+git config user.email "test@example.com"
+git config user.name "Test User"
+mkdir -p .agent-admin/assurance .agent-admin/lifecycle modules/mat/src
+echo "initial" > README.md
+git add .
+git commit -q -m "Initial commit"
+git branch -M main
+git checkout -q -b test-branch
+# Add implementation file
+echo "export const x = 1;" > modules/mat/src/feature.ts
+git add .
+git commit -q -m "Add impl file"
+# Add valid IAA token (REVIEWED_SHA = impl commit)
+IMPL_SHA2=$(git rev-parse HEAD)
+cat > .agent-admin/assurance/iaa-token-test-lc9.md << EOF
+# IAA Assurance Token
+
+PHASE_B_BLOCKING_TOKEN: IAA-test-lc9-PASS
+
+**Token**: IAA-test-lc9-PASS
+**Verdict**: ASSURANCE-TOKEN (PASS)
+**PR**: #9999
+**Issue**: maturion-isms#1503
+**Reviewed SHA**: ${IMPL_SHA2}
+EOF
+git add .
+git commit -q -m "Add IAA token"
+# Add a post-review implementation file
+echo "export const y = 2;" > modules/mat/src/post-iaa.ts
+git add .
+git commit -q -m "Post-IAA implementation change"
+FINAL_SHA=$(git rev-parse HEAD)
+# Add a delta-assurance block.
+# current_head_sha = FINAL_SHA (the post-IAA impl commit, not the upcoming delta-assurance commit).
+# The delta-assurance commit itself only adds a .agent-admin/ file, so no impl change
+# occurs after FINAL_SHA, and the block is valid.
+cat > .agent-admin/assurance/iaa-delta-assurance-test-lc9.md << EOF
+# Delta-Assurance Block
+
+prior_reviewed_sha: ${IMPL_SHA2}
+current_head_sha: ${FINAL_SHA}
+delta_classification: non-substantive
+pr: #9999
+issue: maturion-isms#1503
+justification: Post-IAA change adds test scaffolding only — no logic change.
+EOF
+git add .
+git commit -q -m "Add delta-assurance block"
+lc9_base=$(git rev-parse main 2>/dev/null)
+lc9_head=$(git rev-parse HEAD 2>/dev/null || echo "HEAD")
+set +e
+lc9_output=$(BASE_SHA="$lc9_base" HEAD_SHA="$lc9_head" PR_NUMBER="9999" PR_LABELS="" \
+  PR_BODY="Closes maturion-isms#1503" EXPECTED_ISSUE_NUMBER="1503" \
+  bash "$LIFECYCLE_SCRIPT" 2>&1)
+lc9_exit=$?
+set -e
+if echo "$lc9_output" | grep -q "assurance-ready"; then
+  echo "  ✅ PASS (post-IAA impl commit with valid delta-assurance block → lifecycle assurance-ready)"
+  TEST_PASSED=$((TEST_PASSED + 1))
+else
+  echo "  ❌ FAIL — expected lifecycle assurance-ready when valid delta-assurance block present"
+  echo "  Output excerpt:"
+  echo "$lc9_output" | grep -E "assurance-ready|BLOCKED|LIFECYCLE|delta|SHA" | head -10
+  TEST_FAILED=$((TEST_FAILED + 1))
+fi
+cd "$TEST_DIR"
+rm -rf "$lc9_workspace"
+echo ""
+
 # ================================================================
 # Cleanup
 # ================================================================

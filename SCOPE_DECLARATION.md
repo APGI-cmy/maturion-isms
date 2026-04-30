@@ -4,7 +4,7 @@
 **Issue**: maturion-isms#1514
 **Branch**: copilot/harden-iaa-ecap-invocation
 **Date**: 2026-04-29
-**Last refreshed**: 2026-04-30 (re-trigger CI: PR body issue ref now present per §4.3g)
+**Last refreshed**: 2026-04-30 (harden post-IAA impl change detection with delta-assurance blocks; 36 tests)
 **Authority**: SCOPE_TO_DIFF_RULE.md, MERGE_GATE_PHILOSOPHY.md (BL-027)
 
 ## Scope Decision
@@ -20,14 +20,14 @@ lifecycle (issue #1514). Move from "agent was told to invoke IAA/ECAP" to
 6. Mandatory governing-issue validation when IAA/ECAP is required.
 7. Assurance-control .github/scripts and key workflow changes classified as IAA-triggering.
 8. Wave-record ## TOKEN validated with same reviewed-SHA ancestry check as standalone tokens.
-9. ECAP bundle validated for PASS verdict and current PR reference (not just path detection).
+10. Post-IAA implementation change detection: token is rejected if impl files were changed after reviewed SHA, unless a committed delta-assurance block (`iaa-delta-assurance-*.md`) bridges the gap as non-substantive.
 
 ## Changed Files
 
 - `SCOPE_DECLARATION.md` - Updated for this wave (per §4.3g scope refresh)
 - `.github/scripts/pr-assurance-lifecycle.sh` - New/extended: assurance-control file classifier; mandatory EXPECTED_ISSUE_NUMBER; wave-record SHA ancestry check; ECAP bundle PASS verdict validation; writes lifecycle JSON artifact; sets step outputs
 - `.github/scripts/merge-ready-claim-gate.sh` - New: hard gate blocking merge-ready/handover-ready claims while lifecycle is blocked (MERGE-READY-001)
-- `.github/scripts/iaa-final-assurance-gate.test.sh` - Extended: 11 new tests for lifecycle, merge-ready-claim, assurance-control, wave-record SHA, and ECAP verdict gates (34 total)
+- `.github/scripts/iaa-final-assurance-gate.test.sh` - Extended: 13 new tests for lifecycle, merge-ready-claim, assurance-control, wave-record SHA, ECAP verdict, and post-IAA impl change gates (36 total)
 - `.github/workflows/preflight-evidence-gate.yml` - Extended: three new jobs (pr-assurance-lifecycle, merge-ready-claim, manage-lifecycle-labels); per-job write permissions for label/comment management
 - `.github/workflows/iaa-prebrief-inject.yml` - Extended: injection comment now includes lifecycle state reporting section (IAA/ECAP required, artifacts, handover allowed, required next actions)
 

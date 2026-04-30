@@ -136,6 +136,82 @@ echo "Issue Number : ${EXPECTED_ISSUE_NUMBER:-<not provided>}"
 echo ""
 
 # ----------------------------------------------------------------
+# Helper: is_impl_file <file>
+# Returns 0 if the file is an implementation/assurance-control file
+# that requires IAA; returns 1 otherwise.
+# Used both in the Step 1 classifier and in post-review delta checking.
+# ----------------------------------------------------------------
+is_impl_file() {
+  local f="$1"
+  # Exclude agent workspace / admin evidence artifacts
+  [[ "$f" =~ ^\.agent-workspace/ ]] && return 1
+  [[ "$f" =~ ^\.agent-admin/ ]] && return 1
+  # Exclude markdown docs, governance prose, PREHANDOVER proofs
+  [[ "$f" =~ \.md$ ]] && return 1
+  # Assurance-control files: include
+  [[ "$f" =~ ^\.github/scripts/.*assurance.*\.sh$ ]] && return 0
+  [[ "$f" =~ ^\.github/scripts/.*iaa.*\.sh$ ]] && return 0
+  [[ "$f" =~ ^\.github/scripts/.*ecap.*\.sh$ ]] && return 0
+  [[ "$f" =~ ^\.github/scripts/.*merge-ready.*\.sh$ ]] && return 0
+  [[ "$f" == ".github/workflows/preflight-evidence-gate.yml" ]] && return 0
+  [[ "$f" == ".github/workflows/iaa-prebrief-inject.yml" ]] && return 0
+  # Exclude all other .github/ tooling
+  [[ "$f" =~ ^\.github/ ]] && return 1
+  # Exclude governance / SCOPE_DECLARATION
+  [[ "$f" =~ ^governance/ ]] && return 1
+  [[ "$f" =~ ^SCOPE_DECLARATION ]] && return 1
+  # Implementation patterns
+  [[ "$f" =~ ^(modules|apps|packages)/[^/]+/src/ ]] && return 0
+  [[ "$f" =~ ^(modules|apps|packages)/[^/]+/tests?/ ]] && return 0
+  [[ "$f" =~ ^supabase/functions/ ]] && return 0
+  [[ "$f" =~ ^supabase/migrations/ ]] && return 0
+  [[ "$f" =~ \.(ts|tsx|js|jsx|py|sql)$ ]] && return 0
+  return 1
+}
+
+# ----------------------------------------------------------------
+# Helper: check_delta_assurance_valid <prior_sha> <current_sha>
+# Returns 0 if a committed delta-assurance block binds prior_sha →
+# <da_current_sha> as non-substantive, where <da_current_sha> is an
+# ancestor of current_sha and no implementation files were changed
+# between <da_current_sha> and current_sha (i.e. only evidence/doc
+# commits occurred after the delta-assurance was written).
+# ----------------------------------------------------------------
+check_delta_assurance_valid() {
+  local prior_sha="$1"
+  local current_sha="$2"
+  while IFS= read -r df; do
+    [ -z "$df" ] || [ ! -f "$df" ] && continue
+    grep -qi "prior_reviewed_sha:[[:space:]]*${prior_sha}" "$df" 2>/dev/null || continue
+    grep -qi "delta_classification:[[:space:]]*non-substantive" "$df" 2>/dev/null || continue
+
+    # Extract the current_head_sha the delta-assurance block was written against
+    local da_current_sha
+    da_current_sha=$(grep -i "current_head_sha:" "$df" 2>/dev/null | head -1 | \
+      grep -oE '[0-9a-fA-F]{7,40}' | head -1 || true)
+    [ -z "$da_current_sha" ] && continue
+    # da_current_sha must be reachable from (ancestor of or equal to) current HEAD_SHA
+    git rev-parse --verify "${da_current_sha}^{commit}" >/dev/null 2>&1 || continue
+    git merge-base --is-ancestor "$da_current_sha" "$current_sha" >/dev/null 2>&1 || continue
+
+    # After da_current_sha up to current HEAD_SHA, only non-implementation files may change
+    # (e.g. the delta-assurance artifact itself — which is in .agent-admin/ and is excluded)
+    if [ "$da_current_sha" != "$current_sha" ]; then
+      local _da_post_impl=false _da_pf
+      while IFS= read -r _da_pf; do
+        [ -z "$_da_pf" ] && continue
+        is_impl_file "$_da_pf" && { _da_post_impl=true; break; }
+      done <<< "$(git diff "$da_current_sha" "$current_sha" --name-only 2>/dev/null || true)"
+      [ "$_da_post_impl" = true ] && continue
+    fi
+
+    echo "  ✅ Delta-assurance block covers gap ${prior_sha:0:12}→${current_sha:0:12}: $df"
+    return 0
+  done <<< "${DELTA_ASSURANCE_FILES_IN_PR:-}"
+  return 1
+}
+
+# ----------------------------------------------------------------
 # Step 1: Classify changed files
 # ----------------------------------------------------------------
 echo "--- Step 1: File Classification ---"
@@ -152,56 +228,18 @@ PROTECTED_FILE_LIST=""
 while IFS= read -r file; do
   [ -z "$file" ] && continue
 
-  # Skip agent workspace / admin artifacts
-  if [[ "$file" =~ ^\.agent-workspace/ ]] || [[ "$file" =~ ^\.agent-admin/ ]]; then
-    continue
-  fi
-
-  # Skip markdown files (docs, governance prose, PREHANDOVER proofs, session memory)
-  if [[ "$file" =~ \.md$ ]]; then
-    continue
-  fi
-
-  # Assurance-control files — .github/scripts and key workflows that change the
-  # enforcement logic of IAA/ECAP gates are substantive assurance changes that
-  # require IAA just as much as application code changes do.
-  if [[ "$file" =~ ^\.github/scripts/.*assurance.*\.sh$ ]] || \
-     [[ "$file" =~ ^\.github/scripts/.*iaa.*\.sh$ ]] || \
-     [[ "$file" =~ ^\.github/scripts/.*ecap.*\.sh$ ]] || \
-     [[ "$file" =~ ^\.github/scripts/.*merge-ready.*\.sh$ ]] || \
-     [[ "$file" == ".github/workflows/preflight-evidence-gate.yml" ]] || \
-     [[ "$file" == ".github/workflows/iaa-prebrief-inject.yml" ]]; then
+  if is_impl_file "$file"; then
+    # Distinguish assurance-control files for display
+    if [[ "$file" =~ ^\.github/ ]]; then
+      IMPL_FILE_LIST="${IMPL_FILE_LIST}\n  - ${file} [assurance-control]"
+    else
+      IMPL_FILE_LIST="${IMPL_FILE_LIST}\n  - ${file}"
+    fi
     IMPLEMENTATION_CHANGED=true
-    IMPL_FILE_LIST="${IMPL_FILE_LIST}\n  - ${file} [assurance-control]"
     continue
   fi
 
-  # Skip all other .github/ tooling (non-assurance-control CI scripts and workflows)
-  if [[ "$file" =~ ^\.github/ ]]; then
-    continue
-  fi
-
-  # Skip governance directory (canon, checklists, templates, SCOPE_DECLARATION)
-  if [[ "$file" =~ ^governance/ ]] || [[ "$file" =~ ^SCOPE_DECLARATION ]]; then
-    continue
-  fi
-
-  # Implementation files (same detection as iaa-final-assurance-gate.sh)
-  if [[ "$file" =~ ^(modules|apps|packages)/[^/]+/src/ ]] || \
-     [[ "$file" =~ ^(modules|apps|packages)/[^/]+/tests?/ ]] || \
-     [[ "$file" =~ ^supabase/functions/ ]] || \
-     [[ "$file" =~ ^supabase/migrations/ ]] || \
-     [[ "$file" =~ \.(ts|tsx|js|jsx|py|sql)$ ]]; then
-    IMPLEMENTATION_CHANGED=true
-    IMPL_FILE_LIST="${IMPL_FILE_LIST}\n  - ${file}"
-  fi
-
-done <<< "$CHANGED_FILES"
-
-# Protected path classification (same as ecap-admin-ceremony-gate.sh)
-while IFS= read -r file; do
-  [ -z "$file" ] && continue
-
+  # Protected path classification (kept inline for protected-path detection)
   if [[ "$file" =~ ^\.github/agents/.*\.md$ ]]; then
     PROTECTED_PATH_TOUCHED=true
     PROTECTED_FILE_LIST="${PROTECTED_FILE_LIST}\n  [AGENT-CONTRACT] ${file}"
@@ -274,6 +312,10 @@ TOKEN_FILES_IN_PR=$(git diff "${BASE_SHA}...HEAD" --name-only --diff-filter=AM 2
 WAVE_RECORD_FILES_IN_PR=$(git diff "${BASE_SHA}...HEAD" --name-only --diff-filter=AM 2>/dev/null \
   | grep "^${ASSURANCE_DIR}/iaa-wave-record-.*\.md$" || true)
 
+# Delta-assurance blocks committed by this PR (used to bridge post-review impl commits)
+DELTA_ASSURANCE_FILES_IN_PR=$(git diff "${BASE_SHA}...HEAD" --name-only --diff-filter=AM 2>/dev/null \
+  | grep "^${ASSURANCE_DIR}/iaa-delta-assurance-.*\.md$" || true)
+
 # ----------------------------------------------------------------
 # Step 3b: Validate governing issue number — mandatory when IAA/ECAP is required
 # ----------------------------------------------------------------
@@ -330,6 +372,27 @@ check_token_valid() {
   if [ -n "$HEAD_SHA" ]; then
     git rev-parse --verify "${HEAD_SHA}^{commit}" >/dev/null 2>&1 || return 1
     git merge-base --is-ancestor "$reviewed_sha" "$HEAD_SHA" >/dev/null 2>&1 || return 1
+
+    # Post-review implementation change check: if reviewed_sha != HEAD_SHA, verify that
+    # no implementation files were changed after the review.  Evidence-only commits
+    # (assurance artifacts, docs, governance) between reviewed_sha and HEAD are fine.
+    # If implementation files were changed after the review, a committed
+    # delta-assurance block (iaa-delta-assurance-*.md) must explicitly bind the prior
+    # reviewed SHA to the current HEAD and classify the delta as non-substantive.
+    if [ "$reviewed_sha" != "$HEAD_SHA" ]; then
+      local post_review_file has_post_review_impl
+      has_post_review_impl=false
+      while IFS= read -r post_review_file; do
+        [ -z "$post_review_file" ] && continue
+        is_impl_file "$post_review_file" && { has_post_review_impl=true; break; }
+      done <<< "$(git diff "$reviewed_sha" "$HEAD_SHA" --name-only 2>/dev/null || true)"
+      if [ "$has_post_review_impl" = true ]; then
+        if ! check_delta_assurance_valid "$reviewed_sha" "$HEAD_SHA"; then
+          echo "  ❌ Implementation files changed after reviewed SHA ${reviewed_sha:0:12}; no delta-assurance block found"
+          return 1
+        fi
+      fi
+    fi
   fi
   # PR reference must match (if PR_NUMBER set)
   local pr_num
@@ -397,6 +460,22 @@ if [ "$IAA_INVOKED" = false ]; then
     if [ -n "$HEAD_SHA" ]; then
       git rev-parse --verify "${HEAD_SHA}^{commit}" >/dev/null 2>&1 || continue
       git merge-base --is-ancestor "$WR_REVIEWED_SHA" "$HEAD_SHA" >/dev/null 2>&1 || continue
+
+      # Post-review implementation change check (same as check_token_valid)
+      if [ "$WR_REVIEWED_SHA" != "$HEAD_SHA" ]; then
+        _wr_has_post_impl=false
+        _wr_post_file=""
+        while IFS= read -r _wr_post_file; do
+          [ -z "$_wr_post_file" ] && continue
+          is_impl_file "$_wr_post_file" && { _wr_has_post_impl=true; break; }
+        done <<< "$(git diff "$WR_REVIEWED_SHA" "$HEAD_SHA" --name-only 2>/dev/null || true)"
+        if [ "$_wr_has_post_impl" = true ]; then
+          if ! check_delta_assurance_valid "$WR_REVIEWED_SHA" "$HEAD_SHA"; then
+            echo "  ❌ Wave record: implementation files changed after reviewed SHA ${WR_REVIEWED_SHA:0:12}; no delta-assurance block"
+            continue
+          fi
+        fi
+      fi
     fi
 
     IAA_INVOKED=true
