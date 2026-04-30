@@ -279,3 +279,112 @@ describe('T-MMM-S6-097: mmm-ai-recommend is a stub (returns mock recommendations
     expect(src).toContain('stub');
   });
 });
+
+// ─── T-MMM-S6-177: DashboardPage renders app shell/nav links (post-login navigation) ────────────
+// Issue: maturion-isms#1535 — post-login dashboard UI completeness fix
+// Oversight recorded: login discoverability + post-login dashboard completeness
+describe('T-MMM-S6-177: DashboardPage renders app shell/nav with post-login workflow links', () => {
+  it('renders app shell header element', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    expect(src).toContain('app-shell__header');
+  });
+  it('has app nav element', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    expect(src).toContain('app-nav');
+  });
+  it('has link to /dashboard', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    expect(src).toContain('to="/dashboard"');
+  });
+  it('has link to /frameworks', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    expect(src).toContain('to="/frameworks"');
+  });
+  it('has link to /frameworks/upload', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    expect(src).toContain('to="/frameworks/upload"');
+  });
+  it('has link to /onboarding', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    expect(src).toContain('to="/onboarding"');
+  });
+  it('imports Link from react-router-dom', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    expect(src).toContain("from 'react-router-dom'");
+    expect(src).toContain('Link');
+  });
+});
+
+// ─── T-MMM-S6-178: DashboardPage renders useful empty state when data is absent ─────────────────
+// Oversight: empty production state must not show blank labels (post-login dashboard completeness)
+describe('T-MMM-S6-178: DashboardPage renders useful empty state when dashboard data is absent', () => {
+  it('has dashboard-empty-state element', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    expect(src).toContain('dashboard-empty-state');
+  });
+  it('empty state communicates that no source-pack data has been uploaded', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    expect(src).toContain('No framework source-pack data has been uploaded yet');
+  });
+  it('empty state includes CTA link to /frameworks/upload', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    // CTA must be inside the empty state block; locate the block boundaries defensively
+    const emptyStateStart = src.indexOf('dashboard-empty-state');
+    const emptyStateEnd = src.indexOf('dashboard-empty-state__body');
+    expect(emptyStateStart).toBeGreaterThan(-1);
+    // The upload CTA (data-testid="dashboard-upload-cta") must follow the empty state heading/body
+    const afterEmptyState = src.slice(emptyStateStart);
+    expect(afterEmptyState).toContain('dashboard-upload-cta');
+    expect(afterEmptyState).toContain('to="/frameworks/upload"');
+    expect(emptyStateEnd).toBeGreaterThan(emptyStateStart);
+  });
+  it('checks for empty pipeline before rendering content', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    expect(src).toContain('hasData');
+  });
+});
+
+// ─── T-MMM-S6-179: DashboardPage renders explicit error/permission error state ───────────────────
+// Oversight: dashboard did not distinguish permission failure, API failure, or malformed response
+describe('T-MMM-S6-179: DashboardPage renders explicit error state on /api/qiw/status failure', () => {
+  it('checks HTTP response status before calling res.json()', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    expect(src).toContain('res.status');
+    expect(src).toContain('res.ok');
+  });
+  it('handles 403 permission error distinctly', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    expect(src).toContain('403');
+    expect(src).toContain('dashboard-permission-error');
+  });
+  it('renders error alert for non-success responses', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    expect(src).toContain('dashboard-error');
+    expect(src).toContain('alert-error');
+  });
+  it('uses isError state from useQuery', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    expect(src).toContain('isError');
+  });
+  it('renders permission message guiding user to contact admin', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    expect(src).toContain('ADMIN or LEAD_AUDITOR');
+  });
+});
+
+// ─── T-MMM-S6-180: DashboardPage includes CTA to /frameworks/upload ──────────────────────────────
+// Oversight: post-login UI must guide user to the next operational workflow step
+describe('T-MMM-S6-180: DashboardPage includes CTA to /frameworks/upload (next-step workflow guidance)', () => {
+  it('has Upload Framework Source-Pack CTA text', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    expect(src).toContain('Upload Framework Source-Pack');
+  });
+  it('dashboard-actions section has links to /frameworks/upload and /frameworks', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    expect(src).toContain('dashboard-actions');
+  });
+  it('dashboard-upload-cta data-testid present', () => {
+    const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
+    expect(src).toContain('dashboard-upload-cta');
+  });
+});
