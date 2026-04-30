@@ -735,11 +735,14 @@ jobs:
   merge-ready-claim-gate:
     name: "preflight/merge-ready-claim"
     runs-on: ubuntu-latest
+    needs: pr-assurance-lifecycle
 
-    # Only enforce for Copilot/foreman PRs
+    # Only enforce for Copilot/foreman PRs; run even if lifecycle job failed so
+    # that a blocked lifecycle is still enforced here.
     if: >-
-      startsWith(github.head_ref, 'copilot/') ||
-      github.event.pull_request.user.login == 'Copilot'
+      always() &&
+      (startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot')
 
     steps:
       - name: Checkout PR head branch
@@ -757,6 +760,16 @@ jobs:
           PR_LABELS:             ${{ join(github.event.pull_request.labels.*.name, ',') }}
           PR_BODY:               ${{ github.event.pull_request.body }}
           EXPECTED_ISSUE_NUMBER: ${{ vars.EXPECTED_ISSUE_NUMBER }}
+          # Authoritative lifecycle outputs from pr-assurance-lifecycle job.
+          # Non-empty when the lifecycle job ran (success or failure); empty when skipped.
+          IAA_REQUIRED:          ${{ needs.pr-assurance-lifecycle.outputs.iaa_required }}
+          IAA_INVOKED:           ${{ needs.pr-assurance-lifecycle.outputs.iaa_invoked }}
+          IAA_BLOCKED:           ${{ needs.pr-assurance-lifecycle.outputs.iaa_blocked }}
+          ECAP_REQUIRED:         ${{ needs.pr-assurance-lifecycle.outputs.ecap_required }}
+          ECAP_INVOKED:          ${{ needs.pr-assurance-lifecycle.outputs.ecap_invoked }}
+          ECAP_BLOCKED:          ${{ needs.pr-assurance-lifecycle.outputs.ecap_blocked }}
+          HANDOVER_ALLOWED:      ${{ needs.pr-assurance-lifecycle.outputs.handover_allowed }}
+          MERGE_READY_ALLOWED:   ${{ needs.pr-assurance-lifecycle.outputs.merge_ready_allowed }}
         run: |
           chmod +x .github/scripts/merge-ready-claim-gate.sh
           .github/scripts/merge-ready-claim-gate.sh

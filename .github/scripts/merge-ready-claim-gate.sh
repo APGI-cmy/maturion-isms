@@ -22,6 +22,18 @@
 #   PR_BODY                PR body text
 #   EXPECTED_ISSUE_NUMBER  governing issue number
 #
+# Optional env vars (lifecycle outputs from pr-assurance-lifecycle job):
+#   IAA_BLOCKED            "true"/"false" — authoritative IAA blocked state
+#   ECAP_BLOCKED           "true"/"false" — authoritative ECAP blocked state
+#   HANDOVER_ALLOWED       "true"/"false" — from lifecycle determination
+#   MERGE_READY_ALLOWED    "true"/"false" — from lifecycle determination
+#   IAA_REQUIRED           "true"/"false" — from lifecycle determination
+#   ECAP_REQUIRED          "true"/"false" — from lifecycle determination
+#
+# When IAA_BLOCKED / ECAP_BLOCKED are present (set by upstream lifecycle job),
+# they are consumed directly.  When absent (standalone / test run), a local
+# classification fallback is used.
+#
 # Violation class: MERGE-READY-001
 # Issue: maturion-isms#1514
 
@@ -76,126 +88,164 @@ echo ""
 
 # ----------------------------------------------------------------
 # Step 1: Determine if lifecycle is blocked
-#         (re-run same detection as iaa-final-assurance-gate.sh
-#          and ecap-admin-ceremony-gate.sh, without failing here —
-#          we only need to know if the lifecycle is blocked)
+#
+# Consume authoritative outputs from pr-assurance-lifecycle when available
+# (IAA_BLOCKED and ECAP_BLOCKED are non-empty strings "true"/"false").
+# Fall back to local classification only when those env vars are absent
+# (standalone execution / test runs without upstream lifecycle job).
 # ----------------------------------------------------------------
 echo "--- Step 1: Lifecycle Blocked State Detection ---"
 echo ""
 
-CHANGED_FILES=$(git diff --name-only "${BASE_SHA}...HEAD" 2>/dev/null || \
-                git diff --name-only "${BASE_SHA}" HEAD 2>/dev/null || true)
+# Read upstream lifecycle outputs (set by pr-assurance-lifecycle job in CI)
+_IAA_BLOCKED_UPSTREAM="${IAA_BLOCKED:-}"
+_ECAP_BLOCKED_UPSTREAM="${ECAP_BLOCKED:-}"
 
-IMPLEMENTATION_CHANGED=false
-PROTECTED_PATH_TOUCHED=false
-
-while IFS= read -r file; do
-  [ -z "$file" ] && continue
-
-  if [[ "$file" =~ ^\.agent-workspace/ ]] || [[ "$file" =~ ^\.agent-admin/ ]]; then continue; fi
-  if [[ "$file" =~ \.md$ ]]; then continue; fi
-  if [[ "$file" =~ ^\.github/ ]]; then continue; fi
-  if [[ "$file" =~ ^governance/ ]] || [[ "$file" =~ ^SCOPE_DECLARATION ]]; then continue; fi
-
-  if [[ "$file" =~ ^(modules|apps|packages)/[^/]+/src/ ]] || \
-     [[ "$file" =~ ^(modules|apps|packages)/[^/]+/tests?/ ]] || \
-     [[ "$file" =~ ^supabase/functions/ ]] || \
-     [[ "$file" =~ ^supabase/migrations/ ]] || \
-     [[ "$file" =~ \.(ts|tsx|js|jsx|py|sql)$ ]]; then
-    IMPLEMENTATION_CHANGED=true
-  fi
-
-done <<< "$CHANGED_FILES"
-
-while IFS= read -r file; do
-  [ -z "$file" ] && continue
-  if [[ "$file" =~ ^\.github/agents/.*\.md$ ]] || \
-     [[ "$file" =~ ^governance/canon/ ]] || \
-     [[ "$file" =~ ^governance/checklists/ ]] || \
-     [[ "$file" =~ ^governance/templates/ ]] || \
-     [[ "$file" == "governance/CANON_INVENTORY.json" ]]; then
-    PROTECTED_PATH_TOUCHED=true
-  fi
-done <<< "$CHANGED_FILES"
-
-IAA_REQUIRED=false
-ECAP_REQUIRED=false
-[ "$IMPLEMENTATION_CHANGED" = true ] && IAA_REQUIRED=true
-[ "$PROTECTED_PATH_TOUCHED" = true ] && ECAP_REQUIRED=true
-
-# Check if valid IAA token is present.
-# Do not infer EXPECTED_ISSUE_NUMBER from PR body text here; authoritative
-# issue linkage must come from upstream lifecycle/IAA validation inputs so
-# this gate cannot diverge from iaa-final-assurance-gate.sh.
-IAA_INVOKED=false
-
-TOKEN_FILES_IN_PR=$(git diff "${BASE_SHA}...HEAD" --name-only --diff-filter=AM 2>/dev/null \
-  | grep "^${ASSURANCE_DIR}/iaa-token-.*\.md$" || true)
-WAVE_RECORD_FILES_IN_PR=$(git diff "${BASE_SHA}...HEAD" --name-only --diff-filter=AM 2>/dev/null \
-  | grep "^${ASSURANCE_DIR}/iaa-wave-record-.*\.md$" || true)
-
-for token_file in $TOKEN_FILES_IN_PR $WAVE_RECORD_FILES_IN_PR; do
-  [ -z "$token_file" ] && continue
-  [ ! -f "$token_file" ] && continue
-
-  head -15 "$token_file" 2>/dev/null | grep -qi "REJECTION[-.]PACKAGE" && continue
-
-  TV=$(grep "PHASE_B_BLOCKING_TOKEN:" "$token_file" 2>/dev/null | head -1 | \
-    sed 's/.*PHASE_B_BLOCKING_TOKEN://;s/^[[:space:]]*//;s/[[:space:]]*$//' || true)
-  [ -z "$TV" ] || [ "$TV" = "PENDING" ] && continue
-
-  VL=$(grep -iE "Verdict" "$token_file" 2>/dev/null | head -1 || true)
-  echo "$VL" | grep -qi "PASS" || continue
-
-  PR_NUM_IN_TOKEN=$(grep -iE '^[[:space:]]*(-[[:space:]]*)?\*\*PR\*\*:[[:space:]]*' "$token_file" 2>/dev/null | \
-    head -1 | grep -oE '#?[0-9]+' | head -1 | tr -d '#' || true)
-  [ -n "$PR_NUMBER" ] && [ -n "$PR_NUM_IN_TOKEN" ] && [ "$PR_NUM_IN_TOKEN" != "$PR_NUMBER" ] && continue
-
-  IAA_INVOKED=true
-  break
-done
-
-# Check if valid ECAP evidence is present
-ECAP_INVOKED=false
-ECAP_BUNDLE_DIR=".agent-workspace/execution-ceremony-admin-agent/bundles"
-ECAP_BUNDLES_IN_PR=$(git diff "${BASE_SHA}...HEAD" --name-only --diff-filter=AM 2>/dev/null \
-  | grep "^${ECAP_BUNDLE_DIR}/PREHANDOVER-.*\.md$" || true)
-[ -n "$ECAP_BUNDLES_IN_PR" ] && ECAP_INVOKED=true
-
-if [ "$ECAP_INVOKED" = false ]; then
-  PREHANDOVER_IN_PR=$(git diff "${BASE_SHA}...HEAD" --name-only --diff-filter=AM 2>/dev/null \
-    | grep -E "^${PREHANDOVER_DIR}/proof-.*\.md$|^\.agent-workspace/foreman-v2/memory/PREHANDOVER-.*\.md$" \
-    || true)
-  while IFS= read -r pf; do
-    [ -z "$pf" ] && continue
-    [ ! -f "$pf" ] && continue
-    WAIVER=$(grep -iE "^[[:space:]]*ecap_waiver_ref:" "$pf" 2>/dev/null | head -1 | \
-      sed 's/.*ecap_waiver_ref://I;s/^[[:space:]]*//;s/[[:space:]]*$//' || true)
-    if [ -n "$WAIVER" ] && ! echo "$WAIVER" | grep -qiE "^N/A$|^none$|^-$|^\[\]$|^null$"; then
-      ECAP_INVOKED=true
-      break
-    fi
-  done <<< "$PREHANDOVER_IN_PR"
-fi
-
-# Determine blocked state
 LIFECYCLE_BLOCKED=false
 IAA_BLOCKED_STATE=""
 ECAP_BLOCKED_STATE=""
 
-if [ "$IAA_REQUIRED" = true ] && [ "$IAA_INVOKED" = false ]; then
-  LIFECYCLE_BLOCKED=true
-  IAA_BLOCKED_STATE="iaa-blocked"
-fi
-if [ "$ECAP_REQUIRED" = true ] && [ "$ECAP_INVOKED" = false ]; then
-  LIFECYCLE_BLOCKED=true
-  ECAP_BLOCKED_STATE="ecap-blocked"
-fi
+if [ -n "$_IAA_BLOCKED_UPSTREAM" ] || [ -n "$_ECAP_BLOCKED_UPSTREAM" ]; then
+  # ── Authoritative path: consume upstream lifecycle outputs ──────────────
+  echo "ℹ️  Consuming authoritative lifecycle outputs from pr-assurance-lifecycle."
 
-echo "IAA required:  ${IAA_REQUIRED} | invoked: ${IAA_INVOKED} | blocked: ${IAA_BLOCKED_STATE:-false}"
-echo "ECAP required: ${ECAP_REQUIRED} | invoked: ${ECAP_INVOKED} | blocked: ${ECAP_BLOCKED_STATE:-false}"
-echo "Lifecycle blocked: ${LIFECYCLE_BLOCKED}"
-echo ""
+  IAA_REQUIRED="${IAA_REQUIRED:-false}"
+  IAA_INVOKED="${IAA_INVOKED:-false}"
+  ECAP_REQUIRED="${ECAP_REQUIRED:-false}"
+  ECAP_INVOKED="${ECAP_INVOKED:-false}"
+
+  if [ "${_IAA_BLOCKED_UPSTREAM}" = "true" ]; then
+    LIFECYCLE_BLOCKED=true
+    IAA_BLOCKED_STATE="iaa-blocked"
+  fi
+  if [ "${_ECAP_BLOCKED_UPSTREAM}" = "true" ]; then
+    LIFECYCLE_BLOCKED=true
+    ECAP_BLOCKED_STATE="ecap-blocked"
+  fi
+
+  echo "IAA required:  ${IAA_REQUIRED} | invoked: ${IAA_INVOKED} | blocked: ${IAA_BLOCKED_STATE:-false}"
+  echo "ECAP required: ${ECAP_REQUIRED} | invoked: ${ECAP_INVOKED} | blocked: ${ECAP_BLOCKED_STATE:-false}"
+  echo "Lifecycle blocked: ${LIFECYCLE_BLOCKED}"
+  echo ""
+
+else
+  # ── Fallback path: local classification (tests / standalone execution) ───
+  echo "ℹ️  Upstream lifecycle outputs not available; running local classification fallback."
+  echo ""
+
+  CHANGED_FILES=$(git diff --name-only "${BASE_SHA}...HEAD" 2>/dev/null || \
+                  git diff --name-only "${BASE_SHA}" HEAD 2>/dev/null || true)
+
+  # is_impl_file: mirrors is_impl_file() in pr-assurance-lifecycle.sh
+  is_impl_file() {
+    local f="$1"
+    [[ "$f" =~ ^\.agent-workspace/ ]] && return 1
+    [[ "$f" =~ ^\.agent-admin/ ]] && return 1
+    [[ "$f" =~ \.md$ ]] && return 1
+    [[ "$f" =~ ^governance/ ]] && return 1
+    [[ "$f" =~ ^SCOPE_DECLARATION ]] && return 1
+    # Assurance-control files are implementation changes (same rule as lifecycle script)
+    [[ "$f" =~ ^\.github/scripts/.*assurance.*\.sh$ ]] && return 0
+    [[ "$f" =~ ^\.github/scripts/.*iaa.*\.sh$ ]] && return 0
+    [[ "$f" =~ ^\.github/scripts/.*ecap.*\.sh$ ]] && return 0
+    [[ "$f" =~ ^\.github/scripts/.*merge-ready.*\.sh$ ]] && return 0
+    [[ "$f" == ".github/workflows/preflight-evidence-gate.yml" ]] && return 0
+    [[ "$f" == ".github/workflows/iaa-prebrief-inject.yml" ]] && return 0
+    [[ "$f" =~ ^\.github/ ]] && return 1
+    [[ "$f" =~ ^(modules|apps|packages)/[^/]+/src/ ]] && return 0
+    [[ "$f" =~ ^(modules|apps|packages)/[^/]+/tests?/ ]] && return 0
+    [[ "$f" =~ ^supabase/functions/ ]] && return 0
+    [[ "$f" =~ ^supabase/migrations/ ]] && return 0
+    [[ "$f" =~ \.(ts|tsx|js|jsx|py|sql)$ ]] && return 0
+    return 1
+  }
+
+  IAA_REQUIRED=false
+  ECAP_REQUIRED=false
+  PROTECTED_PATH_TOUCHED=false
+
+  while IFS= read -r file; do
+    [ -z "$file" ] && continue
+    is_impl_file "$file" && IAA_REQUIRED=true
+    if [[ "$file" =~ ^\.github/agents/.*\.md$ ]] || \
+       [[ "$file" =~ ^governance/canon/ ]] || \
+       [[ "$file" =~ ^governance/checklists/ ]] || \
+       [[ "$file" =~ ^governance/templates/ ]] || \
+       [[ "$file" == "governance/CANON_INVENTORY.json" ]]; then
+      ECAP_REQUIRED=true
+      PROTECTED_PATH_TOUCHED=true
+    fi
+  done <<< "$CHANGED_FILES"
+
+  # Check if valid IAA token is present.
+  # Do not infer EXPECTED_ISSUE_NUMBER from PR body text here; authoritative
+  # issue linkage must come from upstream lifecycle/IAA validation inputs so
+  # this gate cannot diverge from iaa-final-assurance-gate.sh.
+  IAA_INVOKED=false
+
+  TOKEN_FILES_IN_PR=$(git diff "${BASE_SHA}...HEAD" --name-only --diff-filter=AM 2>/dev/null \
+    | grep "^${ASSURANCE_DIR}/iaa-token-.*\.md$" || true)
+  WAVE_RECORD_FILES_IN_PR=$(git diff "${BASE_SHA}...HEAD" --name-only --diff-filter=AM 2>/dev/null \
+    | grep "^${ASSURANCE_DIR}/iaa-wave-record-.*\.md$" || true)
+
+  for token_file in $TOKEN_FILES_IN_PR $WAVE_RECORD_FILES_IN_PR; do
+    [ -z "$token_file" ] && continue
+    [ ! -f "$token_file" ] && continue
+
+    head -15 "$token_file" 2>/dev/null | grep -qi "REJECTION[-.]PACKAGE" && continue
+
+    TV=$(grep "PHASE_B_BLOCKING_TOKEN:" "$token_file" 2>/dev/null | head -1 | \
+      sed 's/.*PHASE_B_BLOCKING_TOKEN://;s/^[[:space:]]*//;s/[[:space:]]*$//' || true)
+    [ -z "$TV" ] || [ "$TV" = "PENDING" ] && continue
+
+    VL=$(grep -iE "Verdict" "$token_file" 2>/dev/null | head -1 || true)
+    echo "$VL" | grep -qi "PASS" || continue
+
+    PR_NUM_IN_TOKEN=$(grep -iE '^[[:space:]]*(-[[:space:]]*)?\*\*PR\*\*:[[:space:]]*' "$token_file" 2>/dev/null | \
+      head -1 | grep -oE '#?[0-9]+' | head -1 | tr -d '#' || true)
+    [ -n "$PR_NUMBER" ] && [ -n "$PR_NUM_IN_TOKEN" ] && [ "$PR_NUM_IN_TOKEN" != "$PR_NUMBER" ] && continue
+
+    IAA_INVOKED=true
+    break
+  done
+
+  # Check if valid ECAP evidence is present
+  ECAP_INVOKED=false
+  ECAP_BUNDLE_DIR=".agent-workspace/execution-ceremony-admin-agent/bundles"
+  ECAP_BUNDLES_IN_PR=$(git diff "${BASE_SHA}...HEAD" --name-only --diff-filter=AM 2>/dev/null \
+    | grep "^${ECAP_BUNDLE_DIR}/PREHANDOVER-.*\.md$" || true)
+  [ -n "$ECAP_BUNDLES_IN_PR" ] && ECAP_INVOKED=true
+
+  if [ "$ECAP_INVOKED" = false ]; then
+    PREHANDOVER_IN_PR=$(git diff "${BASE_SHA}...HEAD" --name-only --diff-filter=AM 2>/dev/null \
+      | grep -E "^${PREHANDOVER_DIR}/proof-.*\.md$|^\.agent-workspace/foreman-v2/memory/PREHANDOVER-.*\.md$" \
+      || true)
+    while IFS= read -r pf; do
+      [ -z "$pf" ] && continue
+      [ ! -f "$pf" ] && continue
+      WAIVER=$(grep -iE "^[[:space:]]*ecap_waiver_ref:" "$pf" 2>/dev/null | head -1 | \
+        sed 's/.*ecap_waiver_ref://I;s/^[[:space:]]*//;s/[[:space:]]*$//' || true)
+      if [ -n "$WAIVER" ] && ! echo "$WAIVER" | grep -qiE "^N/A$|^none$|^-$|^\[\]$|^null$"; then
+        ECAP_INVOKED=true
+        break
+      fi
+    done <<< "$PREHANDOVER_IN_PR"
+  fi
+
+  if [ "$IAA_REQUIRED" = true ] && [ "$IAA_INVOKED" = false ]; then
+    LIFECYCLE_BLOCKED=true
+    IAA_BLOCKED_STATE="iaa-blocked"
+  fi
+  if [ "$ECAP_REQUIRED" = true ] && [ "$ECAP_INVOKED" = false ]; then
+    LIFECYCLE_BLOCKED=true
+    ECAP_BLOCKED_STATE="ecap-blocked"
+  fi
+
+  echo "IAA required:  ${IAA_REQUIRED} | invoked: ${IAA_INVOKED} | blocked: ${IAA_BLOCKED_STATE:-false}"
+  echo "ECAP required: ${ECAP_REQUIRED} | invoked: ${ECAP_INVOKED} | blocked: ${ECAP_BLOCKED_STATE:-false}"
+  echo "Lifecycle blocked: ${LIFECYCLE_BLOCKED}"
+  echo ""
+fi
 
 if [ "${LIFECYCLE_BLOCKED}" = false ]; then
   echo "✅ Lifecycle is NOT blocked — merge-ready claim gate: not required."
