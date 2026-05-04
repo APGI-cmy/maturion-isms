@@ -12,8 +12,10 @@
 #   5. type is one of the accepted values
 #   6. risk is one of: low, medium, high
 #   7. merge_authority is "CS2"
-#   8. If governance-control files changed and type requires_iaa/requires_ecap,
-#      those booleans must be true
+#   8. requires_iaa and requires_ecap are JSON booleans; governance-control
+#      types (governance-change, agent-contract-change) must have both set true
+#   9. All files changed in git diff are within the declared scope array
+#      (.admin/pr.json itself is always implicitly permitted)
 #
 # Usage:
 #   .github/scripts/validate-simple-pr-admin.sh
@@ -185,25 +187,35 @@ else
 fi
 echo ""
 
-# ── CHECK 8: governance-control types require requires_iaa/requires_ecap ──────
+# ── CHECK 8: requires_iaa/requires_ecap are JSON booleans; governance-control ──
+# ── types must have both set to true ─────────────────────────────────────────
 echo "── CHECK 8: GOVERNANCE-CONTROL-FLAGS ──"
 GOV_CHECK=$(python3 - <<'PYEOF'
 import json
 manifest = json.load(open(".admin/pr.json"))
 pr_type = manifest.get("type", "")
-requires_iaa = manifest.get("requires_iaa", False)
-requires_ecap = manifest.get("requires_ecap", False)
+requires_iaa = manifest.get("requires_iaa", None)
+requires_ecap = manifest.get("requires_ecap", None)
 governance_types = ["governance-change", "agent-contract-change"]
-if pr_type in governance_types:
-    failures = []
+failures = []
+
+# Type validation — both fields must be JSON booleans, not strings or null
+if not isinstance(requires_iaa, bool):
+    failures.append("requires_iaa must be a boolean (true/false), got: " + repr(requires_iaa))
+if not isinstance(requires_ecap, bool):
+    failures.append("requires_ecap must be a boolean (true/false), got: " + repr(requires_ecap))
+
+# Value validation for governance-control types (only when types are correct)
+if not failures and pr_type in governance_types:
     if not requires_iaa:
         failures.append("requires_iaa must be true for type=" + pr_type)
     if not requires_ecap:
         failures.append("requires_ecap must be true for type=" + pr_type)
-    if failures:
-        print("FAIL: " + "; ".join(failures))
-    else:
-        print("PASS: governance-control flags set correctly")
+
+if failures:
+    print("FAIL: " + "; ".join(failures))
+elif pr_type in governance_types:
+    print("PASS: governance-control flags set correctly")
 else:
     print("PASS: type=" + pr_type + " (no governance-control flag requirement)")
 PYEOF
@@ -213,6 +225,47 @@ if [[ "$GOV_CHECK" != PASS* ]]; then
   ERRORS=$((ERRORS + 1))
 else
   echo "✅ $GOV_CHECK"
+fi
+echo ""
+
+# ── CHECK 9: Changed files are within the declared scope ─────────────────────
+echo "── CHECK 9: SCOPE-TO-DIFF ──"
+# Determine changed files via git diff (excluding .admin/pr.json itself, which
+# is always implicitly allowed as it is the governing manifest).
+GIT_CHANGED=""
+if git rev-parse origin/main >/dev/null 2>&1; then
+  GIT_CHANGED=$(git diff --name-only origin/main...HEAD 2>/dev/null || true)
+elif git rev-parse main >/dev/null 2>&1; then
+  GIT_CHANGED=$(git diff --name-only main...HEAD 2>/dev/null || true)
+fi
+
+if [ -z "$GIT_CHANGED" ]; then
+  echo "ℹ️  No git diff available (no main/origin-main ref found) — scope-to-diff check skipped."
+else
+  SCOPE_DIFF_CHECK=$(CHANGED_FILES_STR="$GIT_CHANGED" python3 - <<'PYEOF'
+import json, os
+manifest = json.load(open(".admin/pr.json"))
+scope_set = set(manifest.get("scope", []))
+# The manifest itself is always implicitly permitted
+excluded = {".admin/pr.json"}
+raw = os.environ.get("CHANGED_FILES_STR", "").strip()
+changed_files = [f for f in raw.split('\n') if f and f not in excluded]
+out_of_scope = [f for f in changed_files if f not in scope_set]
+if out_of_scope:
+    count = len(out_of_scope)
+    print("FAIL: " + str(count) + " file(s) changed outside declared scope: " + ", ".join(out_of_scope))
+else:
+    print("PASS: all " + str(len(changed_files)) + " changed file(s) are within declared scope")
+PYEOF
+  )
+  if [[ "$SCOPE_DIFF_CHECK" != PASS* ]]; then
+    echo "❌ ERROR: $SCOPE_DIFF_CHECK"
+    echo "   Declared scope: $(python3 -c "import json; m=json.load(open('$MANIFEST')); print(', '.join(m.get('scope', [])))")"
+    echo "   See governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md §Manifest"
+    ERRORS=$((ERRORS + 1))
+  else
+    echo "✅ $SCOPE_DIFF_CHECK"
+  fi
 fi
 echo ""
 

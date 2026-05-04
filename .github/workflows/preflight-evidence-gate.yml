@@ -700,3 +700,28 @@ jobs:
         run: |
           chmod +x .github/scripts/enforce-scope-declaration-policy.sh
           .github/scripts/enforce-scope-declaration-policy.sh
+
+  # ============================================================================
+  # MMM PR Admin Model validator (maturion-isms#1529)
+  # Enforces .admin/pr.json correctness whenever the manifest is present.
+  # Skipped silently when .admin/pr.json is absent (non-MMM PRs).
+  # ============================================================================
+  mmm-pr-admin-check:
+    name: "preflight/mmm-pr-admin"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: MMM PR Admin Manifest Validator
+        run: |
+          if [ ! -f ".admin/pr.json" ]; then
+            echo "ℹ️  No .admin/pr.json present — MMM PR Admin Model check skipped."
+            echo "   This check only enforces on PRs that include .admin/pr.json."
+            exit 0
+          fi
+          chmod +x .github/scripts/validate-simple-pr-admin.sh
+          .github/scripts/validate-simple-pr-admin.sh
