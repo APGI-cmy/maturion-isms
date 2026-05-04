@@ -7,7 +7,7 @@ agent:
   id: execution-ceremony-admin-agent
   class: administrator
   version: 1.0.0          # agent runtime version — increment on capability changes
-  contract_version: 1.5.0  # governance contract revision — increment on procedure changes
+  contract_version: 1.6.0  # governance contract revision — increment on procedure changes
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-6
 
@@ -258,14 +258,14 @@ Collect:
 
 Before assembling the bundle, verify the following:
 - Confirm `.agent-admin/assurance/iaa-wave-record-{wave}-{date}.md` exists with `## PRE-BRIEF` section populated
-- Confirm `.agent-workspace/foreman-v2/personal/scope-declaration-wave-{N}.md` exists and lists `approved_artifact_paths[]`
+- Confirm per-PR scope declaration at `.agent-admin/scope-declarations/pr-<N>.md` exists and lists all changed file paths (per-PR immutable model — `AGENT_HANDOVER_AUTOMATION.md` §4.3d). **Do NOT use root `SCOPE_DECLARATION.md` as per-PR scope evidence.**
 - Verify no standalone prebrief/token/rejection files exist outside the wave record
 Authority: `governance/canon/GOVERNANCE_ARTIFACT_TAXONOMY.md`.
-- Verify that the following ECAP output paths are listed in Foreman's scope declaration
-  (`approved_artifact_paths[]`) at `.agent-workspace/foreman-v2/personal/scope-declaration-wave-{N}.md`:
+- Verify that the following ECAP output paths are listed in the per-PR scope declaration
+  at `.agent-admin/scope-declarations/pr-<N>.md`:
   - `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-NNN-YYYYMMDD.md`
   - `.agent-workspace/execution-ceremony-admin-agent/bundles/session-NNN-YYYYMMDD.md`
-  If either path is absent from `approved_artifact_paths[]` → **BLOCKING HALT.** Return to Foreman.
+  If either path is absent → **BLOCKING HALT.** Return to Foreman.
   Foreman MUST add these paths before re-delegating. Do NOT write any bundle file until both paths are confirmed in scope declaration.
 
 **Gate-evidence coherence check (mandatory before bundle assembly — blocks on any failure):**
@@ -376,6 +376,6 @@ Output: "Phase 4 is Foreman-only. Bundle returned. Standing by."
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Version**: 1.0.0 | **Contract**: 1.5.0 | **Last Updated**: 2026-04-17
+**Version**: 1.0.0 | **Contract**: 1.6.0 | **Last Updated**: 2026-05-04
 **Tier 2 Knowledge**: `.agent-workspace/execution-ceremony-admin-agent/knowledge/`
 **Self-Modification Lock**: SELF-MOD-ECA-001 — ACTIVE — CONSTITUTIONAL

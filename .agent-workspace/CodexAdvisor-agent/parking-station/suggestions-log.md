@@ -61,3 +61,7 @@
 | 2026-04-17 | CodexAdvisor-agent | session-060 | SESSION-END | IAA self-review constraint for own contract should be codified in a governance canon document to clarify CS2 substitution procedure. | session-060-20260417.md |
 
 | 2026-04-17 | CodexAdvisor-agent | session-061 | SESSION-END | Consider a dedicated AGENT_GATE_PARITY_CANON.md document to canonize per-gate state vocabulary (GREEN/FAIL/PENDING/MISSING/NOT_EVIDENCED) as a formal Tier 1 definition. | session-061-20260417.md |
+
+| 2026-05-04 | CodexAdvisor-agent | session-062 | SESSION-END | FOREMAN-HEADROOM-001: foreman-v2-agent.md at 29,988/30,000 (12 char headroom). Any future Foreman update requires trimming first. Recommend moving verbose output format strings to Tier 2. | session-062-20260504.md |
+| 2026-05-04 | CodexAdvisor-agent | session-062 | SESSION-END | ACR-TEST-001: ACR-12 through ACR-16 triggers have no integration test coverage in iaa-final-assurance-gate.sh. Future QA builder wave should add test cases. | session-062-20260504.md |
+| 2026-05-04 | CodexAdvisor-agent | session-062 | SESSION-END | ECAP-SCOPE-NORM-001: ECAP Step 3.1 still uses mixed `approved_artifact_paths[]` and per-PR model language. Future session should normalize to per-PR terminology throughout ECAP. | session-062-20260504.md |
