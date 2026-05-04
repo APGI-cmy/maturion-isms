@@ -201,11 +201,37 @@ else
   ERRORS=$((ERRORS + 1))
 fi
 
-# --- Field 3: ui_renders_correctly ---
-check_field_present "ui_renders_correctly" "$LUIEP_FILE"
+# --- Field 3: ui_renders_correctly (MUST be YES for L2/L3 claims) ---
+if grep -q "ui_renders_correctly:" "$LUIEP_FILE" 2>/dev/null; then
+  val=$(grep "ui_renders_correctly:" "$LUIEP_FILE" | head -1 | sed 's/.*ui_renders_correctly:\s*//' | tr -d '[:space:]"'"'" | sed 's/PENDING.*/PENDING/')
+  if [ "$val" = "YES" ]; then
+    echo "   ✅ ui_renders_correctly: YES"
+  else
+    echo "   ❌ ui_renders_correctly: '$val' (MUST be YES, not PENDING or NO)"
+    echo "::error::LUIEP Gate FAIL: 'ui_renders_correctly' must be YES, got '$val' in $LUIEP_FILE. See governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md §4."
+    ERRORS=$((ERRORS + 1))
+  fi
+else
+  echo "   ❌ Field MISSING: ui_renders_correctly"
+  echo "::error::LUIEP Gate FAIL: Required field 'ui_renders_correctly' not found in $LUIEP_FILE. See governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md §4."
+  ERRORS=$((ERRORS + 1))
+fi
 
-# --- Field 4: auth_flow_confirmed ---
-check_field_present "auth_flow_confirmed" "$LUIEP_FILE"
+# --- Field 4: auth_flow_confirmed (MUST be YES for L2/L3 claims) ---
+if grep -q "auth_flow_confirmed:" "$LUIEP_FILE" 2>/dev/null; then
+  val=$(grep "auth_flow_confirmed:" "$LUIEP_FILE" | head -1 | sed 's/.*auth_flow_confirmed:\s*//' | tr -d '[:space:]"'"'" | sed 's/PENDING.*/PENDING/')
+  if [ "$val" = "YES" ]; then
+    echo "   ✅ auth_flow_confirmed: YES"
+  else
+    echo "   ❌ auth_flow_confirmed: '$val' (MUST be YES, not PENDING or NO)"
+    echo "::error::LUIEP Gate FAIL: 'auth_flow_confirmed' must be YES, got '$val' in $LUIEP_FILE. See governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md §4."
+    ERRORS=$((ERRORS + 1))
+  fi
+else
+  echo "   ❌ Field MISSING: auth_flow_confirmed"
+  echo "::error::LUIEP Gate FAIL: Required field 'auth_flow_confirmed' not found in $LUIEP_FILE. See governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md §4."
+  ERRORS=$((ERRORS + 1))
+fi
 
 # --- Field 5: e2e_workflow_confirmed (conditionally MUST be YES) ---
 if grep -q "e2e_workflow_confirmed:" "$LUIEP_FILE" 2>/dev/null; then
@@ -242,12 +268,19 @@ else
   ERRORS=$((ERRORS + 1))
 fi
 
-# --- Field 8: cs2_sign_off (MUST NOT be PENDING or empty) ---
+# --- Field 8: cs2_sign_off (MUST be a YYYY-MM-DD date; any PENDING variant is rejected) ---
 if grep -q "cs2_sign_off:" "$LUIEP_FILE" 2>/dev/null; then
-  val=$(grep "cs2_sign_off:" "$LUIEP_FILE" | head -1 | sed 's/.*cs2_sign_off:\s*//' | tr -d '[:space:]')
-  if [ -z "$val" ] || [ "$val" = "PENDING" ]; then
-    echo "   ❌ cs2_sign_off: '$val' (MUST NOT be PENDING or empty)"
-    echo "::error::LUIEP Gate FAIL: 'cs2_sign_off' must not be PENDING or empty. Got '$val' in $LUIEP_FILE."
+  # Strip surrounding quotes/spaces, then truncate at first whitespace so
+  # "PENDING — to be filled…" becomes "PENDING" for the pattern check.
+  raw_val=$(grep "^cs2_sign_off:" "$LUIEP_FILE" | head -1 | sed 's/^cs2_sign_off:\s*//' | tr -d '"'"'" | sed "s/[[:space:]].*//" )
+  val=$(printf '%s' "$raw_val" | tr -d '[:space:]')
+  if [ -z "$val" ] || printf '%s' "$val" | grep -qiE "^PENDING"; then
+    echo "   ❌ cs2_sign_off: '$raw_val' (MUST NOT be PENDING or empty — requires YYYY-MM-DD date)"
+    echo "::error::LUIEP Gate FAIL: 'cs2_sign_off' must be a YYYY-MM-DD date, not PENDING or empty. Got '$raw_val' in $LUIEP_FILE."
+    ERRORS=$((ERRORS + 1))
+  elif ! printf '%s' "$val" | grep -qE "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"; then
+    echo "   ❌ cs2_sign_off: '$val' (MUST be a YYYY-MM-DD date)"
+    echo "::error::LUIEP Gate FAIL: 'cs2_sign_off' must be in YYYY-MM-DD format, got '$val' in $LUIEP_FILE."
     ERRORS=$((ERRORS + 1))
   else
     echo "   ✅ cs2_sign_off: $val"
