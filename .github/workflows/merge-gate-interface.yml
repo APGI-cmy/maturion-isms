@@ -509,6 +509,7 @@ jobs:
             # 5. PREHANDOVER-*.md (legacy PREHANDOVER — transition period)
             # 6. assurance-token-*.md (legacy token format — transition period)
             # 7. iaa-rejection-*.md / rejection-package-*.md (legacy — transition period)
+            # 8. iaa-delta-assurance-*.md (delta-assurance block — added v1.2.0)
 
             if echo "$basename" | grep -qE '^iaa-wave-record-.*\.md$'; then
               echo "  ✅ $basename — matches: IAA Wave Record (consolidated)"
@@ -524,6 +525,8 @@ jobs:
               echo "  ✅ $basename — matches: Assurance Token (legacy/transition)"
             elif echo "$basename" | grep -qE '^(iaa-rejection-|rejection-package-).*\.md$'; then
               echo "  ✅ $basename — matches: Rejection Package (legacy/transition)"
+            elif echo "$basename" | grep -qE '^iaa-delta-assurance-.*\.md$'; then
+              echo "  ✅ $basename — matches: IAA Delta-Assurance Block"
             else
               echo "  ❌ $basename — VIOLATION: does not match any approved pattern"
               VIOLATIONS=$((VIOLATIONS + 1))
