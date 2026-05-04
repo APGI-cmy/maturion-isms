@@ -81,7 +81,7 @@ ecap_bundle:                  .agent-workspace/execution-ceremony-admin-agent/bu
 iaa_wave_record:              .agent-admin/assurance/iaa-wave-record-mmm-ui-evidence-pack-hardening-20260430.md
 
 ## Scope
-files_changed:                19
+files_changed:                20
 scope_declaration_pr:         .agent-admin/scope-declarations/pr-1524.md
 scope_declaration_wave:       .agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-ui-evidence-pack-hardening-20260430.md
 
@@ -102,6 +102,10 @@ files_changed_detail:
     path: .github/scripts/validate-mmm-ui-evidence-pack.sh
     status: COMMITTED
     blob: ff8e49e385f493409e0674c1ce3fb6d35a3fd4ae
+    category: CI_WORKFLOW
+  - path: .github/scripts/validate-mmm-ui-evidence-pack.test.sh
+    status: COMMITTED
+    blob: 50a62e7f0c2c6505a65b7203d005ad1357ab986f
     category: CI_WORKFLOW
   - id: D3
     path: .github/workflows/preflight-evidence-gate.yml
