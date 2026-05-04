@@ -465,8 +465,8 @@ if [ "$IAA_INVOKED" = false ]; then
 
       # Post-review implementation change check (same as check_token_valid)
       if [ "$WR_REVIEWED_SHA" != "$HEAD_SHA" ]; then
-        local wr_has_post_impl=false
-        local wr_post_file
+        wr_has_post_impl=false
+        wr_post_file=""
         while IFS= read -r wr_post_file; do
           [ -z "$wr_post_file" ] && continue
           is_impl_file "$wr_post_file" && { wr_has_post_impl=true; break; }
