@@ -295,7 +295,57 @@ In particular:
 
 ## TOKEN
 
-*To be written by IAA at final audit. IAA-only. execution-ceremony-admin-agent MUST NOT write here.*
+```
+═══════════════════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #1524 — Hardening — Require live UI evidence pack before MMM handover or operational-complete claims
+Wave: mmm-ui-evidence-pack-hardening-20260430
+Session: session-081
+Date: 2026-04-30
+Reviewed SHA: 03c59ab8ae3ff6c3acb6ca8a084df551b686e17e
+
+All 26 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-081-mmm-ui-evidence-pack-hardening-20260430-PASS
+Token reference: IAA-session-081-mmm-ui-evidence-pack-hardening-20260430-PASS
+Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
+═══════════════════════════════════════════════════════════════════════
+```
+
+**Checks summary**:
+- CORE-020 (zero partial pass): PASS ✅
+- CORE-021 (zero severity tolerance): PASS ✅
+- CORE-026 (Acceptance-Criteria Evidence Matrix): PASS ✅ — AC1–AC6 all mapped to hard evidence
+- CORE-027 (Independent Risk Challenge): PASS ✅ — all 5 questions answered substantively
+- FAIL-ONLY-ONCE A-039 (agent claims not evidence — D2 has observable CI output): PASS ✅
+- FAIL-ONLY-ONCE A-040 (evidence-type downgrade prohibition): PASS ✅
+- FAIL-ONLY-ONCE A-041 (diff-first classification): PASS ✅ — 18 files independently computed, matches PREHANDOVER
+- OVL-CG-001 (strategy alignment): PASS ✅
+- OVL-CG-002 (no contradictions): PASS ✅
+- OVL-CG-003 (enforcement gap): PASS ✅ — CI gate + IAA §6.3 + Foreman §6.2 all binding
+- OVL-CG-004 (ripple impact assessed): PASS ✅ — NOT-APPLICABLE, new canon, no downstream consumers
+- OVL-CG-005 (ISMS layer-down scope): PASS ✅
+- OVL-CG-ADM-001 (CANON_INVENTORY updated): PASS ✅ — total_canons=204, hash 16b01bc... independently verified
+- OVL-CG-ADM-002 (version bump): PASS ✅ — D1 v1.0.0
+- OVL-CI-001 (workflow policy correctness): PASS ✅ — permissions: contents: read present; logic correct
+- OVL-CI-002 (merge gate integrity): PASS ✅ — no existing gates removed or weakened
+- ACR-01 (ECAP reconciliation summary): PASS ✅ — Section C present in ECAP bundle
+- ACR-02 (no contradictory status): PASS ✅
+- ACR-03 (session ID consistency): PASS ✅
+- ACR-04 (FILES_CHANGED=18 vs git diff=18): PASS ✅
+- ACR-05 (hash: 16b01bc... matches sha256sum of D1): PASS ✅
+- ACR-06 (PUBLIC_API ripple assessed): PASS ✅
+- ACR-07 (count/path consistency): PASS ✅
+- ACR-08 (all declared paths committed): PASS ✅
+- ACR-09 (gate_set_checked — 8 gates named): PASS ✅
+- ACR-10 (no stale pending gate language): PASS ✅
+- ACR-11 (CI run URLs present for all gates): PASS ✅
+
+**Note on token placement**: Per contract prohibition NO-STANDALONE-TOKEN-001 and NO-ASSURANCE-PATH-ESCAPE-001 (BLOCKING), this token is written to the wave record only. A standalone iaa-token-session-081-*.md file was NOT created. Foreman and CS2 should reference this wave record for the PHASE_B_BLOCKING_TOKEN.
+
+**IAA session memory**: `.agent-workspace/independent-assurance-agent/memory/session-081-20260430.md`
+**Authority**: CS2 (Johan Ras / @APGI-cmy) | IAA Contract v2.9.0 | PHASE_B_BLOCKING
 
 ---
 
