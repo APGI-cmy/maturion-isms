@@ -155,8 +155,9 @@ No builder agent, Foreman, or IAA agent MAY claim to have confirmed LIVE_RUNTIME
 
 ### 6.1 CI Gate
 
-The CI gate `preflight/mmm-ui-evidence-pack-gate` in `preflight-evidence-gate.yml` MUST run on all PRs that include a PREHANDOVER proof for an MMM wave.
+The CI gate `preflight/mmm-ui-evidence-pack-gate` in `preflight-evidence-gate.yml` MUST run for PRs that include a PREHANDOVER proof for an MMM wave **and** match the workflow's configured execution conditions (for example, the current Copilot branch-name or user-login scope).
 
+This canon does not claim that the current workflow job is universal across all PRs; where a PR falls outside that configured execution scope, the validation requirement remains subject to the other governance and review controls defined in this canon.
 The gate runs `.github/scripts/validate-mmm-ui-evidence-pack.sh`, which:
 1. Detects whether the PREHANDOVER proof contains any prohibited completion phrase.
 2. If a prohibited phrase is found: locates the referenced LUIEP artifact.
