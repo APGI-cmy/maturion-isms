@@ -160,9 +160,9 @@ screenshot_references:
 screenshot_notes: "Screenshots taken in Chrome on macOS. URL bar shows https://mmm.maturion.app in all screenshots. Timestamp visible in system clock."
 ```
 
-**Permitted values for `screenshots_provided`**: `YES` | `NO`
+**Permitted values for `screenshots_provided`**: `YES` | `NO` | `PENDING`
 
-> ⚠️ `screenshots_provided: NO` is a violation of Rule U-004 when the PREHANDOVER proof claims L2 or L3 completion. At minimum one screenshot MUST be provided.
+> ⚠️ `screenshots_provided: PENDING` is permitted only as a pre-signoff placeholder in this template and must be replaced during CS2 completion. `screenshots_provided: NO` is a violation of Rule U-004 when the PREHANDOVER proof claims L2 or L3 completion. At minimum one screenshot MUST be provided.
 
 ---
 
