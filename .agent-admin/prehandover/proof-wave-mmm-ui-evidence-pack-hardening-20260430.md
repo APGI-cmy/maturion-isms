@@ -57,11 +57,11 @@ art_refresh_completed:        N/A
 
 ## Artifacts Committed (D1–D8)
 d1_canon_path:                governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md
-d1_blob_sha:                  591935b0341a9678c845d0750f1d7f40280bb7fa
+d1_blob_sha:                  bc41a6becc49fb6e492e844939b8527e79a05699
 d2_script_path:               .github/scripts/validate-mmm-ui-evidence-pack.sh
-d2_blob_sha:                  ff8e49e385f493409e0674c1ce3fb6d35a3fd4ae
+d2_blob_sha:                  f7bde64b8e97cb49dd174c8e050818032a6502b2
 d3_workflow_path:             .github/workflows/preflight-evidence-gate.yml
-d3_blob_sha:                  c4e3d614a7fe84dba602388cc8c59e409f6612c9
+d3_blob_sha:                  93ca3db3e85725e621fbe833cdb44cfe6ce5b551
 d4_checklist_path:            governance/checklists/mmm-ui-evidence-pack-checklist.md
 d4_blob_sha:                  6099716780307f2d8bbe9c767d943e34d98eb13d
 d5_template_path:             modules/MMM/12-phase4-ecap/mmm-ui-evidence-pack-template.md
@@ -71,8 +71,8 @@ d6_blob_sha:                  c3e577e37eaad76b8c3d80e0ed9a1cfaa126a941
 d7_fail_only_once_path:       .agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md
 d7_blob_sha:                  9810052575d524f0b409fb29eb46c5599415db3b
 d8_inventory_path:            governance/CANON_INVENTORY.json
-d8_blob_sha:                  2e2e4d743330a916638d71e410cc8abcdb0bbce0
-canon_inventory_d1_sha256:    16b01bc797e9a6d202166feae0e1eafe0e5bf4bb89e5c1068e954a8c9f88b316
+d8_blob_sha:                  958e4fadf858eb5f91086562ebee3c5212037a84
+canon_inventory_d1_sha256:    203f2d8d96eb305f427be2804ff3ce4219ed2001a5deadd7aa40ca288b24c516
 canon_inventory_total_canons: 204
 
 ## Ceremony Artifacts
@@ -96,21 +96,21 @@ files_changed_detail:
   - id: D1
     path: governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md
     status: COMMITTED
-    blob: 591935b0341a9678c845d0750f1d7f40280bb7fa
+    blob: bc41a6becc49fb6e492e844939b8527e79a05699
     category: CANON_GOVERNANCE
   - id: D2
     path: .github/scripts/validate-mmm-ui-evidence-pack.sh
     status: COMMITTED
-    blob: ff8e49e385f493409e0674c1ce3fb6d35a3fd4ae
+    blob: f7bde64b8e97cb49dd174c8e050818032a6502b2
     category: CI_WORKFLOW
   - path: .github/scripts/validate-mmm-ui-evidence-pack.test.sh
     status: COMMITTED
-    blob: 50a62e7f0c2c6505a65b7203d005ad1357ab986f
+    blob: 78a31301e5292d24f6613026bd2d7219b8ce1fb2
     category: CI_WORKFLOW
   - id: D3
     path: .github/workflows/preflight-evidence-gate.yml
     status: COMMITTED
-    blob: c4e3d614a7fe84dba602388cc8c59e409f6612c9
+    blob: 93ca3db3e85725e621fbe833cdb44cfe6ce5b551
     category: CI_WORKFLOW
   - id: D4
     path: governance/checklists/mmm-ui-evidence-pack-checklist.md
@@ -135,7 +135,7 @@ files_changed_detail:
   - id: D8
     path: governance/CANON_INVENTORY.json
     status: COMMITTED
-    blob: 2e2e4d743330a916638d71e410cc8abcdb0bbce0
+    blob: 958e4fadf858eb5f91086562ebee3c5212037a84
     category: CANON_GOVERNANCE
   - path: .agent-admin/assurance/iaa-wave-record-mmm-ui-evidence-pack-hardening-20260430.md
     status: COMMITTED

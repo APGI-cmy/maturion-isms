@@ -19,7 +19,7 @@ ERRORS=0
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  MMM Live UI Evidence Pack Gate (LUIEP)"
 echo "  Authority: governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md"
-echo "  Version: 1.0.0"
+echo "  Version: 1.1.0"
 echo "  Branch: ${BRANCH:-$(git branch --show-current 2>/dev/null || echo 'unknown')}"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
@@ -401,12 +401,83 @@ echo ""
 # ============================================================
 echo "── STEP 8: Operational status matrix (Rule U-008) ──"
 
-if grep -q "operational_status_matrix:" "$LUIEP_FILE" 2>/dev/null; then
-  echo "   ✅ operational_status_matrix section present"
-else
+if ! grep -q "operational_status_matrix:" "$LUIEP_FILE" 2>/dev/null; then
   echo "   ❌ operational_status_matrix section MISSING"
   echo "::error::LUIEP Gate FAIL: 'operational_status_matrix' section not found in $LUIEP_FILE. Rule U-008 requires an operational status matrix covering all required routes."
   ERRORS=$((ERRORS + 1))
+else
+  echo "   ✅ operational_status_matrix section present"
+
+  # Extract the operational_status_matrix section to a temp file for isolated validation
+  MATRIX_TMPFILE=$(mktemp)
+  python3 -c "
+import re, sys
+try:
+    content = open(sys.argv[1]).read()
+    m = re.search(r'^operational_status_matrix:.*?(?=^[a-zA-Z_]|\Z)', content, re.MULTILINE | re.DOTALL)
+    print(m.group(0) if m else '')
+except Exception:
+    pass
+" "$LUIEP_FILE" > "$MATRIX_TMPFILE" 2>/dev/null
+
+  # Check all 9 required routes are present in the matrix
+  for route in "${REQUIRED_ROUTES[@]}"; do
+    route_path=$(printf '%s' "$route" | tr -d '"'"'")
+    if grep -qE "route:[[:space:]]*['\"]?${route_path//\//\\/}['\"]?" "$MATRIX_TMPFILE" 2>/dev/null; then
+      echo "   ✅ Matrix row for route: $route_path"
+    else
+      echo "   ❌ Matrix row MISSING for route: $route_path"
+      echo "::error::LUIEP Gate FAIL: Required route '$route_path' not found in operational_status_matrix in $LUIEP_FILE. Rule U-008."
+      ERRORS=$((ERRORS + 1))
+    fi
+  done
+
+  # Check expected_behavior: present in matrix (one per route)
+  EB_COUNT=$(grep -c "expected_behavior:" "$MATRIX_TMPFILE" 2>/dev/null | tr -d '[:space:]' || echo "0")
+  [[ "$EB_COUNT" =~ ^[0-9]+$ ]] || EB_COUNT=0
+  if [ "$EB_COUNT" -ge "$REQUIRED_ROUTE_COUNT" ]; then
+    echo "   ✅ expected_behavior: $EB_COUNT entries (≥ $REQUIRED_ROUTE_COUNT required)"
+  else
+    echo "   ❌ expected_behavior: $EB_COUNT entries, $REQUIRED_ROUTE_COUNT required (one per route)"
+    echo "::error::LUIEP Gate FAIL: 'expected_behavior' entries insufficient in operational_status_matrix ($EB_COUNT found, $REQUIRED_ROUTE_COUNT required). Rule U-008."
+    ERRORS=$((ERRORS + 1))
+  fi
+
+  # Check observed_behavior: present in matrix (one per route)
+  OB_COUNT=$(grep -c "observed_behavior:" "$MATRIX_TMPFILE" 2>/dev/null | tr -d '[:space:]' || echo "0")
+  [[ "$OB_COUNT" =~ ^[0-9]+$ ]] || OB_COUNT=0
+  if [ "$OB_COUNT" -ge "$REQUIRED_ROUTE_COUNT" ]; then
+    echo "   ✅ observed_behavior: $OB_COUNT entries (≥ $REQUIRED_ROUTE_COUNT required)"
+  else
+    echo "   ❌ observed_behavior: $OB_COUNT entries, $REQUIRED_ROUTE_COUNT required (one per route)"
+    echo "::error::LUIEP Gate FAIL: 'observed_behavior' entries insufficient in operational_status_matrix ($OB_COUNT found, $REQUIRED_ROUTE_COUNT required). Rule U-008."
+    ERRORS=$((ERRORS + 1))
+  fi
+
+  # Check pass_fail: entries with valid PASS or FAIL values (one per route)
+  PF_COUNT=$(grep "pass_fail:" "$MATRIX_TMPFILE" 2>/dev/null | grep -cE "[\"']?(PASS|FAIL)[\"']?" | tr -d '[:space:]' || echo "0")
+  [[ "$PF_COUNT" =~ ^[0-9]+$ ]] || PF_COUNT=0
+  if [ "$PF_COUNT" -ge "$REQUIRED_ROUTE_COUNT" ]; then
+    echo "   ✅ pass_fail (PASS/FAIL): $PF_COUNT entries (≥ $REQUIRED_ROUTE_COUNT required)"
+  else
+    echo "   ❌ pass_fail: $PF_COUNT valid PASS/FAIL entries, $REQUIRED_ROUTE_COUNT required (one per route)"
+    echo "::error::LUIEP Gate FAIL: 'pass_fail' entries with PASS or FAIL values insufficient in operational_status_matrix ($PF_COUNT found, $REQUIRED_ROUTE_COUNT required). Rule U-008."
+    ERRORS=$((ERRORS + 1))
+  fi
+
+  # Check screenshot_ref: present and non-PENDING in matrix (one per route)
+  MATRIX_SS_COUNT=$(grep "screenshot_ref:" "$MATRIX_TMPFILE" 2>/dev/null \
+    | grep -v -i "pending" | wc -l | tr -d '[:space:]' || echo "0")
+  [[ "$MATRIX_SS_COUNT" =~ ^[0-9]+$ ]] || MATRIX_SS_COUNT=0
+  if [ "$MATRIX_SS_COUNT" -ge "$REQUIRED_ROUTE_COUNT" ]; then
+    echo "   ✅ screenshot_ref (matrix): $MATRIX_SS_COUNT confirmed (≥ $REQUIRED_ROUTE_COUNT required)"
+  else
+    echo "   ❌ screenshot_ref (matrix): $MATRIX_SS_COUNT confirmed, $REQUIRED_ROUTE_COUNT required (one per route)"
+    echo "::error::LUIEP Gate FAIL: 'screenshot_ref' entries insufficient or PENDING in operational_status_matrix ($MATRIX_SS_COUNT found, $REQUIRED_ROUTE_COUNT required). Rule U-008."
+    ERRORS=$((ERRORS + 1))
+  fi
+
+  rm -f "$MATRIX_TMPFILE"
 fi
 
 echo ""

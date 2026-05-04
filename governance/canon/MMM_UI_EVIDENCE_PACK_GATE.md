@@ -1,9 +1,10 @@
 # MMM Live UI Evidence Pack Gate Canon
 
-**Version**: 1.1.0
+**Version**: 1.2.0
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Type**: Canon — Tier 1 Governance Rule (NORMATIVE / MANDATORY)
 **Effective Date**: 2026-04-30
+**Amended**: 2026-05-04
 **Layer-Down Status**: PUBLIC_API
 **Applies To**: All agents producing MMM PREHANDOVER proofs; Foreman QP; IAA final audit
 **Issue**: maturion-isms#1523
@@ -215,7 +216,26 @@ The `network_api_evidence` section MUST contain at least one confirmed entry wit
 
 ### 4.4 Operational Status Matrix (Required Section — Rule U-008)
 
-The `operational_status_matrix` section MUST be present and cover all required routes.
+The `operational_status_matrix` section MUST be present and cover all required routes with per-row evidence fields.
+
+The `operational_status_matrix` section MUST contain one entry per required route with these per-entry fields:
+
+| Field | Type | Required Values | Evidence Type | Rule |
+|-------|------|----------------|---------------|------|
+| `route` | String | Route path (e.g. `"/"`, `"/dashboard"`) | LIVE_RUNTIME | U-008 |
+| `expected_behavior` | String | Description of what the route should do | LIVE_RUNTIME | U-008 |
+| `observed_behavior` | String | Description of what was actually observed | LIVE_RUNTIME | U-008 |
+| `pass_fail` | Enum | `"PASS"` \| `"FAIL"` | LIVE_RUNTIME | U-008 |
+| `screenshot_ref` | String | Path to screenshot file (MUST NOT be `PENDING`) | LIVE_RUNTIME | U-008 |
+
+All 9 required routes MUST have a corresponding row in the matrix. Each row MUST include all five fields above.
+
+The CI gate validates:
+- All 9 required routes are present in the matrix.
+- `expected_behavior` entries are present for every required route (≥9).
+- `observed_behavior` entries are present for every required route (≥9).
+- `pass_fail` entries with value `PASS` or `FAIL` are present for every required route (≥9).
+- `screenshot_ref` entries are non-PENDING for every required route (≥9).
 
 **Evidence Type Key**:
 - `LIVE_RUNTIME` — requires direct interaction with the live deployed application (browser or HTTP)

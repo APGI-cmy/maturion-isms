@@ -2430,20 +2430,20 @@
     },
     {
       "filename": "MMM_UI_EVIDENCE_PACK_GATE.md",
-      "version": "1.1.0",
-      "canonical_version": "1.1.0",
-      "file_hash": "9fd40a54647e8c36ffd38b4008c05c5c6472872b7a04d7e31a2bb4e7630ab3b5",
-      "file_hash_sha256": "9fd40a54647e8c36ffd38b4008c05c5c6472872b7a04d7e31a2bb4e7630ab3b5",
+      "version": "1.2.0",
+      "canonical_version": "1.2.0",
+      "file_hash": "203f2d8d96eb305f427be2804ff3ce4219ed2001a5deadd7aa40ca288b24c516",
+      "file_hash_sha256": "203f2d8d96eb305f427be2804ff3ce4219ed2001a5deadd7aa40ca288b24c516",
       "effective_date": "2026-04-30",
       "amended_date": "2026-05-04",
       "description": "Mandatory gate canon for MMM Live UI Evidence Pack (LUIEP). Defines Rules U-001 through U-008 requiring a committed, CS2-validated Live UI Evidence Pack with route inventory (9 required routes), per-route screenshot references, network/API evidence, and operational status matrix before any MMM PREHANDOVER proof may claim completion. Enforcement via CI gate preflight/mmm-ui-evidence-pack-gate. Violation class: INC-MMM-LUIEP-MISSING-001.",
       "type": "canon",
       "path": "governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md",
       "layer_down_status": "PUBLIC_API",
-      "local_version": "1.1.0",
+      "local_version": "1.2.0",
       "local_extension": false,
       "layer_up_status": "NONE",
-      "provenance": "Created via issue #1523 (2026-04-30) — wave mmm-ui-evidence-pack-hardening-20260430; amended 2026-05-04 (v1.1.0 — added U-006/U-007/U-008)",
+      "provenance": "Created via issue #1523 (2026-04-30) — wave mmm-ui-evidence-pack-hardening-20260430; amended 2026-05-04 (v1.1.0 — added U-006/U-007/U-008); amended 2026-05-04 (v1.2.0 — strengthened U-008 matrix validation, removed workflow condition restriction)",
       "ripple_required": false
     }
   ]

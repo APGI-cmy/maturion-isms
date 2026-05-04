@@ -707,11 +707,6 @@ jobs:
     permissions:
       contents: read
 
-    # Only enforce for Copilot/foreman PRs
-    if: >-
-      startsWith(github.head_ref, 'copilot/') ||
-      github.event.pull_request.user.login == 'Copilot'
-
     steps:
       - name: Checkout PR head branch
         uses: actions/checkout@v5

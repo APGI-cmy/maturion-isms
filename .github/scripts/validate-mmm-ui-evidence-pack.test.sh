@@ -28,6 +28,11 @@
 #   T-22  New phrase "final_state: COMPLETE" triggers gate (no artifact) → FAIL
 #   T-23  "deployment commissioned" triggers gate (no artifact) → FAIL
 #   T-24  No proof file in PR diff — no phrase → PASS (gate not triggered)
+#   T-25  Prohibited phrase + LUIEP operational_status_matrix present but empty → FAIL
+#   T-26  Prohibited phrase + LUIEP matrix missing /dashboard row → FAIL
+#   T-27  Prohibited phrase + LUIEP matrix row missing observed_behavior → FAIL
+#   T-28  Prohibited phrase + LUIEP matrix row missing pass_fail → FAIL
+#   T-29  Prohibited phrase + LUIEP matrix row screenshot_ref: PENDING → FAIL
 #
 # Usage:
 #   .github/scripts/validate-mmm-ui-evidence-pack.test.sh
@@ -170,6 +175,60 @@ YAML
 }
 
 # ----------------------------------------------------------------
+# Helper: write a complete valid operational_status_matrix
+# ----------------------------------------------------------------
+write_valid_matrix() {
+  cat << 'YAML'
+operational_status_matrix:
+  - route: "/"
+    expected_behavior: "Home page renders with navigation."
+    observed_behavior: "Home page loaded. Navigation present."
+    pass_fail: "PASS"
+    screenshot_ref: "./screenshots/matrix-home.png"
+  - route: "/login"
+    expected_behavior: "Login form renders with email and password fields."
+    observed_behavior: "Login form rendered. Auth flow confirmed."
+    pass_fail: "PASS"
+    screenshot_ref: "./screenshots/matrix-login.png"
+  - route: "/signup"
+    expected_behavior: "Signup form renders with registration fields."
+    observed_behavior: "Signup form rendered correctly."
+    pass_fail: "PASS"
+    screenshot_ref: "./screenshots/matrix-signup.png"
+  - route: "/forgot-password"
+    expected_behavior: "Forgot password form renders."
+    observed_behavior: "Forgot password page loaded successfully."
+    pass_fail: "PASS"
+    screenshot_ref: "./screenshots/matrix-forgot-password.png"
+  - route: "/reset-password"
+    expected_behavior: "Password reset form renders."
+    observed_behavior: "Reset password page loaded successfully."
+    pass_fail: "PASS"
+    screenshot_ref: "./screenshots/matrix-reset-password.png"
+  - route: "/onboarding"
+    expected_behavior: "Onboarding wizard renders for new users."
+    observed_behavior: "Onboarding steps displayed correctly."
+    pass_fail: "PASS"
+    screenshot_ref: "./screenshots/matrix-onboarding.png"
+  - route: "/dashboard"
+    expected_behavior: "Dashboard renders with user data and navigation."
+    observed_behavior: "Dashboard loaded with all widgets."
+    pass_fail: "PASS"
+    screenshot_ref: "./screenshots/matrix-dashboard.png"
+  - route: "/frameworks"
+    expected_behavior: "Frameworks list renders with upload option."
+    observed_behavior: "Frameworks page loaded. List displayed."
+    pass_fail: "PASS"
+    screenshot_ref: "./screenshots/matrix-frameworks.png"
+  - route: "/frameworks/upload"
+    expected_behavior: "Upload form renders with file picker."
+    observed_behavior: "Upload form displayed. File picker functional."
+    pass_fail: "PASS"
+    screenshot_ref: "./screenshots/matrix-frameworks-upload.png"
+YAML
+}
+
+# ----------------------------------------------------------------
 # Helper: write a complete valid L2 LUIEP
 # ----------------------------------------------------------------
 write_valid_l2_luiep() {
@@ -211,13 +270,7 @@ network_api_evidence:
     backend_url: "https://xxxx.supabase.co/auth/v1/token"
     description: "Auth token exchange during login"
 
-operational_status_matrix:
-  - route: "/"
-    status: "OPERATIONAL"
-    notes: "Home page loads correctly."
-  - route: "/login"
-    status: "OPERATIONAL"
-    notes: "Login form renders and auth works."
+$(write_valid_matrix)
 
 completion_level_supported: "L2"
 completion_level_rationale: "All L2 fields confirmed."
@@ -270,13 +323,7 @@ network_api_evidence:
     backend_url: "https://xxxx.supabase.co/rest/v1/frameworks"
     description: "Frameworks list fetch"
 
-operational_status_matrix:
-  - route: "/"
-    status: "OPERATIONAL"
-    notes: "Home page loads correctly."
-  - route: "/dashboard"
-    status: "OPERATIONAL"
-    notes: "Dashboard loads with user data."
+$(write_valid_matrix)
 
 completion_level_supported: "L3"
 completion_level_rationale: "All L3 fields confirmed including E2E."
@@ -609,6 +656,116 @@ setup_t24() {
   git commit -q -m "Add non-proof governance file"
 }
 run_test "T-24: No proof file in PR diff → PASS (gate not triggered)" 0 setup_t24
+
+# ================================================================
+# T-25: Prohibited phrase + operational_status_matrix present but empty → FAIL
+# ================================================================
+setup_t25() {
+  write_proof_with_phrase "L2 complete"
+  write_valid_l2_luiep
+  # Replace the matrix content with an empty section
+  python3 -c "
+import re
+content = open('modules/MMM/12-phase4-ecap/mmm-ui-evidence-pack-test.md').read()
+content = re.sub(
+    r'operational_status_matrix:.*?(?=\ncompletion_level_supported:)',
+    'operational_status_matrix: []',
+    content, flags=re.DOTALL)
+open('modules/MMM/12-phase4-ecap/mmm-ui-evidence-pack-test.md', 'w').write(content)
+"
+  echo 'luiep_artifact_path: modules/MMM/12-phase4-ecap/mmm-ui-evidence-pack-test.md' \
+    >> .agent-admin/prehandover/proof-test-wave.md
+  git add .
+  git commit -q -m "Add proof + LUIEP with empty operational_status_matrix"
+}
+run_test "T-25: LUIEP operational_status_matrix present but empty → FAIL" 1 setup_t25
+
+# ================================================================
+# T-26: Prohibited phrase + LUIEP matrix missing /dashboard row → FAIL
+# ================================================================
+setup_t26() {
+  write_proof_with_phrase "L2 complete"
+  write_valid_l2_luiep
+  # Remove the /dashboard row from the matrix
+  python3 -c "
+import re
+content = open('modules/MMM/12-phase4-ecap/mmm-ui-evidence-pack-test.md').read()
+content = re.sub(
+    r'  - route: \"/dashboard\".*?(?=  - route:|\ncompletion_level_supported:)',
+    '', content, flags=re.DOTALL)
+open('modules/MMM/12-phase4-ecap/mmm-ui-evidence-pack-test.md', 'w').write(content)
+"
+  echo 'luiep_artifact_path: modules/MMM/12-phase4-ecap/mmm-ui-evidence-pack-test.md' \
+    >> .agent-admin/prehandover/proof-test-wave.md
+  git add .
+  git commit -q -m "Add proof + LUIEP matrix missing /dashboard"
+}
+run_test "T-26: LUIEP matrix missing /dashboard row → FAIL" 1 setup_t26
+
+# ================================================================
+# T-27: Prohibited phrase + LUIEP matrix row missing observed_behavior → FAIL
+# ================================================================
+setup_t27() {
+  write_proof_with_phrase "L2 complete"
+  write_valid_l2_luiep
+  # Remove all observed_behavior fields from the matrix section
+  python3 -c "
+import re
+content = open('modules/MMM/12-phase4-ecap/mmm-ui-evidence-pack-test.md').read()
+content = re.sub(r'\n    observed_behavior:[^\n]+', '', content)
+open('modules/MMM/12-phase4-ecap/mmm-ui-evidence-pack-test.md', 'w').write(content)
+"
+  echo 'luiep_artifact_path: modules/MMM/12-phase4-ecap/mmm-ui-evidence-pack-test.md' \
+    >> .agent-admin/prehandover/proof-test-wave.md
+  git add .
+  git commit -q -m "Add proof + LUIEP matrix missing observed_behavior"
+}
+run_test "T-27: LUIEP matrix row missing observed_behavior → FAIL" 1 setup_t27
+
+# ================================================================
+# T-28: Prohibited phrase + LUIEP matrix row missing pass_fail → FAIL
+# ================================================================
+setup_t28() {
+  write_proof_with_phrase "L2 complete"
+  write_valid_l2_luiep
+  # Remove all pass_fail fields from the matrix section
+  python3 -c "
+import re
+content = open('modules/MMM/12-phase4-ecap/mmm-ui-evidence-pack-test.md').read()
+content = re.sub(r'\n    pass_fail:[^\n]+', '', content)
+open('modules/MMM/12-phase4-ecap/mmm-ui-evidence-pack-test.md', 'w').write(content)
+"
+  echo 'luiep_artifact_path: modules/MMM/12-phase4-ecap/mmm-ui-evidence-pack-test.md' \
+    >> .agent-admin/prehandover/proof-test-wave.md
+  git add .
+  git commit -q -m "Add proof + LUIEP matrix missing pass_fail"
+}
+run_test "T-28: LUIEP matrix row missing pass_fail → FAIL" 1 setup_t28
+
+# ================================================================
+# T-29: Prohibited phrase + LUIEP matrix screenshot_ref: PENDING → FAIL
+# ================================================================
+setup_t29() {
+  write_proof_with_phrase "L2 complete"
+  write_valid_l2_luiep
+  # Replace all matrix screenshot_ref values with PENDING
+  python3 -c "
+import re
+content = open('modules/MMM/12-phase4-ecap/mmm-ui-evidence-pack-test.md').read()
+# Only replace screenshot_ref lines within the operational_status_matrix section
+m = re.search(r'^(operational_status_matrix:.*?)(?=^[a-zA-Z_]|\Z)', content, re.MULTILINE | re.DOTALL)
+if m:
+    section = m.group(0)
+    new_section = re.sub(r'(screenshot_ref:)[^\n]+', r'\1 \"PENDING\"', section)
+    content = content[:m.start()] + new_section + content[m.end():]
+open('modules/MMM/12-phase4-ecap/mmm-ui-evidence-pack-test.md', 'w').write(content)
+"
+  echo 'luiep_artifact_path: modules/MMM/12-phase4-ecap/mmm-ui-evidence-pack-test.md' \
+    >> .agent-admin/prehandover/proof-test-wave.md
+  git add .
+  git commit -q -m "Add proof + LUIEP matrix screenshot_ref PENDING"
+}
+run_test "T-29: LUIEP matrix screenshot_ref PENDING → FAIL" 1 setup_t29
 
 # ================================================================
 # Summary
