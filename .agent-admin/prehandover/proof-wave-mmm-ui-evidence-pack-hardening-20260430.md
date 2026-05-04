@@ -59,7 +59,7 @@ art_refresh_completed:        N/A
 d1_canon_path:                governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md
 d1_blob_sha:                  bc41a6becc49fb6e492e844939b8527e79a05699
 d2_script_path:               .github/scripts/validate-mmm-ui-evidence-pack.sh
-d2_blob_sha:                  f7bde64b8e97cb49dd174c8e050818032a6502b2
+d2_blob_sha:                  fcd35854f347bdb4ff84a194f831623b437d4070
 d3_workflow_path:             .github/workflows/preflight-evidence-gate.yml
 d3_blob_sha:                  93ca3db3e85725e621fbe833cdb44cfe6ce5b551
 d4_checklist_path:            governance/checklists/mmm-ui-evidence-pack-checklist.md
@@ -101,7 +101,7 @@ files_changed_detail:
   - id: D2
     path: .github/scripts/validate-mmm-ui-evidence-pack.sh
     status: COMMITTED
-    blob: f7bde64b8e97cb49dd174c8e050818032a6502b2
+    blob: fcd35854f347bdb4ff84a194f831623b437d4070
     category: CI_WORKFLOW
   - path: .github/scripts/validate-mmm-ui-evidence-pack.test.sh
     status: COMMITTED

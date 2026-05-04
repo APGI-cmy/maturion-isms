@@ -19,7 +19,7 @@ ERRORS=0
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  MMM Live UI Evidence Pack Gate (LUIEP)"
 echo "  Authority: governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md"
-echo "  Version: 1.1.0"
+echo "  Version: 1.2.0"
 echo "  Branch: ${BRANCH:-$(git branch --show-current 2>/dev/null || echo 'unknown')}"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
