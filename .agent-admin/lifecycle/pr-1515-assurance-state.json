@@ -1,0 +1,17 @@
+{
+  "pr": 1515,
+  "issue": "1514",
+  "head_sha": "09d3a108a2c35efb8fc7ccf48b6a20c1c1ff13be",
+  "implementation_changed": true,
+  "iaa_required": true,
+  "iaa_invoked": true,
+  "iaa_artifact_path": ".agent-admin/assurance/iaa-wave-record-harden-iaa-ecap-invocation-20260504.md",
+  "iaa_reviewed_sha": "2e4c24aff6d04868f79422a0fcb1ca21e3789143",
+  "iaa_verdict": "PASS",
+  "ecap_required": false,
+  "ecap_invoked": false,
+  "ecap_artifact_path": "null",
+  "ecap_verdict": "null",
+  "handover_allowed": true,
+  "merge_ready_allowed": true
+}
