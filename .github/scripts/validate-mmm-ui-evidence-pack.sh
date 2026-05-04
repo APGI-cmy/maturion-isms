@@ -176,9 +176,9 @@ check_field_present() {
   fi
 }
 
-# Determine if we need strict e2e check (triggered by L3 or operationally closed)
+# Determine if we need strict e2e check (triggered by L3-equivalent completion phrases)
 STRICT_E2E=false
-if printf '%s' "$FOUND_PHRASE" | grep -qiE "L3 complete|operationally closed"; then
+if printf '%s' "$FOUND_PHRASE" | grep -qiE "L3 complete|operationally closed|operational-complete"; then
   STRICT_E2E=true
 fi
 
