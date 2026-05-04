@@ -1,13 +1,16 @@
 #!/bin/bash
 # validate-mmm-ui-evidence-pack.sh
 # Authority: governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md
-# Purpose: CI gate — validates Live UI Evidence Pack (LUIEP) per Rule U-001
-#   Step 1: Scan for prohibited completion phrases in agent workspace/admin/ecap dirs
+# Purpose: CI gate — validates Live UI Evidence Pack (LUIEP) per Rules U-001 through U-008
+#   Step 1: Scan for prohibited completion phrases in PREHANDOVER proof / wave-current-tasks
 #   Step 2: If no phrase found → PASS (gate not triggered)
 #   Step 3: If phrase found → locate LUIEP artifact
 #   Step 4: If no artifact → FAIL INC-MMM-LUIEP-MISSING-001
-#   Step 5: Validate all 10 required LUIEP fields
-#   Step 6: All checks pass → PASS
+#   Step 5: Validate all 10 required LUIEP top-level fields
+#   Step 6: Validate route inventory coverage (all required app routes)
+#   Step 7: Validate network/API evidence (endpoint list, status codes)
+#   Step 8: Validate operational status matrix
+#   Step 9: All checks pass → PASS
 # Exit codes: 0=PASS, 1=FAIL
 set -uo pipefail
 
@@ -33,6 +36,13 @@ PROHIBITED_PHRASES=(
   "L3 complete"
   "deployment commissioned"
   "operational-complete"
+  "merge ready"
+  "merge-ready"
+  "build complete"
+  "build completed"
+  "user journey complete"
+  "final_state: COMPLETE"
+  "final_state:COMPLETE"
 )
 
 BASE_SHA="${BASE_SHA:-}"
@@ -182,7 +192,7 @@ check_field_present "deployment_url" "$LUIEP_FILE"
 
 # --- Field 2: deployment_url_confirmed (MUST be YES) ---
 if grep -q "deployment_url_confirmed:" "$LUIEP_FILE" 2>/dev/null; then
-  val=$(grep "deployment_url_confirmed:" "$LUIEP_FILE" | head -1 | sed 's/.*deployment_url_confirmed:\s*//' | tr -d '[:space:]')
+  val=$(grep "deployment_url_confirmed:" "$LUIEP_FILE" | head -1 | sed 's/.*deployment_url_confirmed:\s*//' | tr -d '[:space:]"'"'")
   if [ "$val" = "YES" ]; then
     echo "   ✅ deployment_url_confirmed: YES"
   else
@@ -230,7 +240,7 @@ fi
 
 # --- Field 5: e2e_workflow_confirmed (conditionally MUST be YES) ---
 if grep -q "e2e_workflow_confirmed:" "$LUIEP_FILE" 2>/dev/null; then
-  val=$(grep "e2e_workflow_confirmed:" "$LUIEP_FILE" | head -1 | sed 's/.*e2e_workflow_confirmed:\s*//' | tr -d '[:space:]')
+  val=$(grep "e2e_workflow_confirmed:" "$LUIEP_FILE" | head -1 | sed 's/.*e2e_workflow_confirmed:\s*//' | tr -d '[:space:]"'"'")
   if [ "$STRICT_E2E" = true ] && [ "$val" != "YES" ]; then
     echo "   ❌ e2e_workflow_confirmed: '$val' (MUST be YES when L3 complete or operationally closed)"
     echo "::error::LUIEP Gate FAIL: 'e2e_workflow_confirmed' must be YES when PREHANDOVER uses 'L3 complete' or 'operationally closed'. Got '$val' in $LUIEP_FILE."
@@ -249,7 +259,7 @@ check_field_present "e2e_workflow_description" "$LUIEP_FILE"
 
 # --- Field 7: screenshots_provided (MUST be YES) ---
 if grep -q "screenshots_provided:" "$LUIEP_FILE" 2>/dev/null; then
-  val=$(grep "screenshots_provided:" "$LUIEP_FILE" | head -1 | sed 's/.*screenshots_provided:\s*//' | tr -d '[:space:]')
+  val=$(grep "screenshots_provided:" "$LUIEP_FILE" | head -1 | sed 's/.*screenshots_provided:\s*//' | tr -d '[:space:]"'"'")
   if [ "$val" = "YES" ]; then
     echo "   ✅ screenshots_provided: YES"
   else
@@ -295,7 +305,114 @@ check_field_present "evidence_pack_date" "$LUIEP_FILE"
 echo ""
 
 # ============================================================
-# STEP 6: Summary
+# STEP 6: Route inventory and per-route screenshot validation
+# (Rule U-006)
+# ============================================================
+echo "── STEP 6: Route inventory coverage (Rule U-006) ──"
+
+REQUIRED_ROUTES=(
+  '"/"'
+  '"/login"'
+  '"/signup"'
+  '"/forgot-password"'
+  '"/reset-password"'
+  '"/onboarding"'
+  '"/dashboard"'
+  '"/frameworks"'
+  '"/frameworks/upload"'
+)
+
+# Check route_inventory section is present
+if grep -q "route_inventory:" "$LUIEP_FILE" 2>/dev/null; then
+  echo "   ✅ route_inventory section present"
+else
+  echo "   ❌ route_inventory section MISSING"
+  echo "::error::LUIEP Gate FAIL: 'route_inventory' section not found in $LUIEP_FILE. Rule U-006 requires all app routes to be inventoried with per-route screenshot references."
+  ERRORS=$((ERRORS + 1))
+fi
+
+# Check each required route is listed in the file
+for route in "${REQUIRED_ROUTES[@]}"; do
+  # Match route as YAML value — allows both single- and double-quote delimiters
+  # Route value is already quoted in REQUIRED_ROUTES, e.g. '"/"', so strip quotes for pattern
+  route_path=$(printf '%s' "$route" | tr -d '"'"'")
+  if grep -qE "route:[[:space:]]*['\"]?${route_path//\//\\/}['\"]?" "$LUIEP_FILE" 2>/dev/null; then
+    echo "   ✅ Route in inventory: $route_path"
+  else
+    echo "   ❌ Required route MISSING from inventory: $route_path"
+    echo "::error::LUIEP Gate FAIL: Required route '$route_path' not found in route_inventory in $LUIEP_FILE. Rule U-006."
+    ERRORS=$((ERRORS + 1))
+  fi
+done
+
+# Check per-route screenshot coverage — count non-PENDING screenshot_ref entries
+REQUIRED_ROUTE_COUNT=${#REQUIRED_ROUTES[@]}
+SCREENSHOT_COUNT=$(grep "screenshot_ref:" "$LUIEP_FILE" 2>/dev/null \
+  | grep -v -i "pending" | wc -l | tr -d '[:space:]' || echo "0")
+if ! [[ "$SCREENSHOT_COUNT" =~ ^[0-9]+$ ]]; then SCREENSHOT_COUNT=0; fi
+if [ "$SCREENSHOT_COUNT" -ge "$REQUIRED_ROUTE_COUNT" ]; then
+  echo "   ✅ Per-route screenshots: $SCREENSHOT_COUNT confirmed (≥ $REQUIRED_ROUTE_COUNT required)"
+else
+  echo "   ❌ Per-route screenshots: $SCREENSHOT_COUNT confirmed, $REQUIRED_ROUTE_COUNT required (one per route)"
+  echo "::error::LUIEP Gate FAIL: Per-route screenshot coverage insufficient — $SCREENSHOT_COUNT non-PENDING 'screenshot_ref' entries found, $REQUIRED_ROUTE_COUNT required (one per required route). Rule U-006."
+  ERRORS=$((ERRORS + 1))
+fi
+
+echo ""
+
+# ============================================================
+# STEP 7: Network/API evidence validation (Rule U-007)
+# ============================================================
+echo "── STEP 7: Network/API evidence (Rule U-007) ──"
+
+if grep -q "network_api_evidence:" "$LUIEP_FILE" 2>/dev/null; then
+  # Check at least one non-PENDING endpoint entry exists
+  API_ENTRY_COUNT=$(grep "endpoint:" "$LUIEP_FILE" 2>/dev/null \
+    | grep -v -i "pending" | wc -l | tr -d '[:space:]' || echo "0")
+  if ! [[ "$API_ENTRY_COUNT" =~ ^[0-9]+$ ]]; then API_ENTRY_COUNT=0; fi
+  if [ "$API_ENTRY_COUNT" -gt 0 ]; then
+    echo "   ✅ network_api_evidence: $API_ENTRY_COUNT confirmed endpoint(s)"
+  else
+    echo "   ❌ network_api_evidence: all endpoints are PENDING (no confirmed API evidence)"
+    echo "::error::LUIEP Gate FAIL: 'network_api_evidence' section has no confirmed (non-PENDING) endpoint entries in $LUIEP_FILE. Rule U-007 requires network/API evidence with status codes and backend URLs."
+    ERRORS=$((ERRORS + 1))
+  fi
+  # Check at least one non-PENDING status_code entry
+  STATUS_COUNT=$(grep "status_code:" "$LUIEP_FILE" 2>/dev/null \
+    | grep -v -i "pending" | wc -l | tr -d '[:space:]' || echo "0")
+  if ! [[ "$STATUS_COUNT" =~ ^[0-9]+$ ]]; then STATUS_COUNT=0; fi
+  if [ "$STATUS_COUNT" -gt 0 ]; then
+    echo "   ✅ network_api_evidence: $STATUS_COUNT confirmed status_code(s)"
+  else
+    echo "   ❌ network_api_evidence: no confirmed status_code entries (all PENDING)"
+    echo "::error::LUIEP Gate FAIL: 'status_code' fields in network_api_evidence are all PENDING in $LUIEP_FILE. Rule U-007 requires confirmed HTTP status codes for each API endpoint."
+    ERRORS=$((ERRORS + 1))
+  fi
+else
+  echo "   ❌ network_api_evidence section MISSING"
+  echo "::error::LUIEP Gate FAIL: 'network_api_evidence' section not found in $LUIEP_FILE. Rule U-007 requires network/API evidence with status codes and backend URLs."
+  ERRORS=$((ERRORS + 1))
+fi
+
+echo ""
+
+# ============================================================
+# STEP 8: Operational status matrix validation (Rule U-008)
+# ============================================================
+echo "── STEP 8: Operational status matrix (Rule U-008) ──"
+
+if grep -q "operational_status_matrix:" "$LUIEP_FILE" 2>/dev/null; then
+  echo "   ✅ operational_status_matrix section present"
+else
+  echo "   ❌ operational_status_matrix section MISSING"
+  echo "::error::LUIEP Gate FAIL: 'operational_status_matrix' section not found in $LUIEP_FILE. Rule U-008 requires an operational status matrix covering all required routes."
+  ERRORS=$((ERRORS + 1))
+fi
+
+echo ""
+
+# ============================================================
+# STEP 9: Summary
 # ============================================================
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 if [ "$ERRORS" -gt 0 ]; then
@@ -304,7 +421,7 @@ if [ "$ERRORS" -gt 0 ]; then
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   exit 1
 else
-  echo "  ✅ LUIEP gate PASS — all required fields confirmed."
+  echo "  ✅ LUIEP gate PASS — all required fields and coverage checks confirmed."
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   exit 0
 fi

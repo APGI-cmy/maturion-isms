@@ -1,8 +1,8 @@
 # MMM Live UI Evidence Pack — Fillable Template
 
-**Template Version**: 1.0.0
+**Template Version**: 1.1.0
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Canon ref**: `governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md` v1.0.0
+**Canon ref**: `governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md` v1.1.0
 **Checklist ref**: `governance/checklists/mmm-ui-evidence-pack-checklist.md`
 **Violation class**: `INC-MMM-LUIEP-MISSING-001`
 **Issue**: maturion-isms#1523
@@ -189,7 +189,147 @@ cs2_sign_off_notes: "Verified live on macOS Chrome. Confirmed deployment URL, UI
 
 ---
 
-## Section 7: Completion Level Declaration
+## Section 7: Route Inventory (Rule U-006)
+
+**Evidence type**: LIVE_RUNTIME — each route MUST be verified directly in a browser connected to the live deployment URL.
+
+Provide one entry per required application route. Set `accessible: YES` and `screenshot_ref` to a real path only after verifying each route on the live platform.
+
+```yaml
+route_inventory:
+  - route: "/"
+    accessible: "PENDING"
+    http_status: "PENDING"
+    screenshot_ref: "PENDING — path/to/screenshot (e.g. ./screenshots/mmm-home-live-20260515.png)"
+  - route: "/login"
+    accessible: "PENDING"
+    http_status: "PENDING"
+    screenshot_ref: "PENDING"
+  - route: "/signup"
+    accessible: "PENDING"
+    http_status: "PENDING"
+    screenshot_ref: "PENDING"
+  - route: "/forgot-password"
+    accessible: "PENDING"
+    http_status: "PENDING"
+    screenshot_ref: "PENDING"
+  - route: "/reset-password"
+    accessible: "PENDING"
+    http_status: "PENDING"
+    screenshot_ref: "PENDING"
+  - route: "/onboarding"
+    accessible: "PENDING"
+    http_status: "PENDING"
+    screenshot_ref: "PENDING"
+  - route: "/dashboard"
+    accessible: "PENDING"
+    http_status: "PENDING"
+    screenshot_ref: "PENDING"
+  - route: "/frameworks"
+    accessible: "PENDING"
+    http_status: "PENDING"
+    screenshot_ref: "PENDING"
+  - route: "/frameworks/upload"
+    accessible: "PENDING"
+    http_status: "PENDING"
+    screenshot_ref: "PENDING"
+```
+
+**Instructions**: Replace each `PENDING` with the confirmed value. `screenshot_ref` MUST point to a committed screenshot file showing the live application at that route.
+
+**Example entry**:
+```yaml
+  - route: "/login"
+    accessible: "YES"
+    http_status: "200"
+    screenshot_ref: "./screenshots/mmm-login-live-20260515.png"
+```
+
+**Permitted values for `accessible`**: `YES` | `PENDING`
+**Required**: every listed route's `screenshot_ref` MUST be non-PENDING for L2/L3 claims.
+
+---
+
+## Section 8: Network/API Evidence (Rule U-007)
+
+**Evidence type**: LIVE_RUNTIME — API calls MUST be observed on the live deployed platform, not reconstructed from code review.
+
+```yaml
+network_api_evidence:
+  - endpoint: "PENDING — e.g. /api/auth/signin"
+    status_code: "PENDING — e.g. 200"
+    backend_url: "PENDING — e.g. https://api.mmm.maturion.app"
+    description: "PENDING — describe what the endpoint does and what was tested"
+  - endpoint: "PENDING"
+    status_code: "PENDING"
+    backend_url: "PENDING"
+    description: "PENDING"
+```
+
+**Instructions**: Record at least one API call observed during live testing. Include the full endpoint path, HTTP status code returned, backend URL, and what the call does. Add additional entries for each major endpoint exercised.
+
+**Example**:
+```yaml
+network_api_evidence:
+  - endpoint: "/auth/v1/token"
+    status_code: "200"
+    backend_url: "https://xxxx.supabase.co/auth/v1/token"
+    description: "Supabase Auth token exchange during login — returns JWT"
+  - endpoint: "/rest/v1/frameworks"
+    status_code: "200"
+    backend_url: "https://xxxx.supabase.co/rest/v1/frameworks"
+    description: "Frameworks list fetch on /frameworks route — returns JSON array"
+```
+
+---
+
+## Section 9: Operational Status Matrix (Rule U-008)
+
+**Evidence type**: LIVE_RUNTIME — consolidated operational status summary per route.
+
+```yaml
+operational_status_matrix:
+  - route: "/"
+    status: "PENDING"
+    notes: "PENDING"
+  - route: "/login"
+    status: "PENDING"
+    notes: "PENDING"
+  - route: "/signup"
+    status: "PENDING"
+    notes: "PENDING"
+  - route: "/forgot-password"
+    status: "PENDING"
+    notes: "PENDING"
+  - route: "/reset-password"
+    status: "PENDING"
+    notes: "PENDING"
+  - route: "/onboarding"
+    status: "PENDING"
+    notes: "PENDING"
+  - route: "/dashboard"
+    status: "PENDING"
+    notes: "PENDING"
+  - route: "/frameworks"
+    status: "PENDING"
+    notes: "PENDING"
+  - route: "/frameworks/upload"
+    status: "PENDING"
+    notes: "PENDING"
+```
+
+**Permitted values for `status`**: `OPERATIONAL` | `DEGRADED` | `UNAVAILABLE` | `PENDING`
+
+**Example entry**:
+```yaml
+  - route: "/dashboard"
+    status: "OPERATIONAL"
+    notes: "Loads correctly with user data. Media list populated. No console errors."
+```
+
+---
+
+## Section 10: Completion Level Declaration
 
 Declare which completion level this LUIEP supports. See `modules/MMM/BUILD_PROGRESS_TRACKER.md` §12.3 for the L1/L2/L3 completion model.
 
@@ -201,7 +341,7 @@ completion_level_rationale: "PENDING — explain which fields confirm this level
 **Example**:
 ```yaml
 completion_level_supported: "L3"
-completion_level_rationale: "All LUIEP fields confirmed: deployment_url_confirmed YES, ui_renders_correctly YES, auth_flow_confirmed YES, e2e_workflow_confirmed YES, screenshots_provided YES, cs2_sign_off 2026-05-15. L3 (Operationally Closed) requirements fully met."
+completion_level_rationale: "All LUIEP fields confirmed: deployment_url_confirmed YES, ui_renders_correctly YES, auth_flow_confirmed YES, e2e_workflow_confirmed YES, screenshots_provided YES, cs2_sign_off 2026-05-15. Route inventory: all 9 required routes verified with screenshots. Network/API evidence: 2 endpoints confirmed. L3 (Operationally Closed) requirements fully met."
 ```
 
 **Permitted values for `completion_level_supported`**: `L2` | `L3`
@@ -220,13 +360,17 @@ Before committing this LUIEP artifact, verify:
 - [ ] `e2e_workflow_confirmed: YES` (for L3 claims)
 - [ ] `screenshots_provided: YES` (for L2 or L3 claims)
 - [ ] `evidence_pack_date` is the date this pack was prepared (today's date)
+- [ ] `route_inventory` covers all 9 required routes (`/`, `/login`, `/signup`, `/forgot-password`, `/reset-password`, `/onboarding`, `/dashboard`, `/frameworks`, `/frameworks/upload`)
+- [ ] Each route's `screenshot_ref` is a real committed screenshot path (not `PENDING`)
+- [ ] `network_api_evidence` has at least one confirmed (non-PENDING) `endpoint` with a `status_code`
+- [ ] `operational_status_matrix` is present and covers all required routes
 - [ ] No fields claim completion of items that have not been personally verified on the live platform
 - [ ] LUIEP path is referenced in the PREHANDOVER proof
 
 ---
 
-**Template Version**: 1.0.0
-**Canon ref**: `governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md` v1.0.0
+**Template Version**: 1.1.0
+**Canon ref**: `governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md` v1.1.0
 **Checklist ref**: `governance/checklists/mmm-ui-evidence-pack-checklist.md`
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Living Agent System**: v6.2.0

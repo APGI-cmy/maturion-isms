@@ -1,6 +1,6 @@
 # MMM Live UI Evidence Pack Gate Canon
 
-**Version**: 1.0.0
+**Version**: 1.1.0
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Type**: Canon — Tier 1 Governance Rule (NORMATIVE / MANDATORY)
 **Effective Date**: 2026-04-30
@@ -22,6 +22,10 @@ This canon establishes a **mandatory gate** for all MMM PREHANDOVER proofs that 
 - `L3 complete` (Operationally Closed)
 - `deployment commissioned`
 - `operational-complete`
+- `merge ready` / `merge-ready`
+- `build complete` / `build completed`
+- `user journey complete`
+- `final_state: COMPLETE` / `final_state:COMPLETE` (YAML field forms)
 
 **No PREHANDOVER proof MAY use any of the above phrases without a committed, validated Live UI Evidence Pack (LUIEP) artifact.** A PREHANDOVER proof that uses such language without an attached LUIEP artifact is a **HANDOVER BLOCKER** and MUST be rejected by Foreman QP and IAA final audit.
 
@@ -38,7 +42,11 @@ This gate was introduced because static code presence and CI test GREEN status a
 | **LIVE_E2E evidence** | Evidence of a complete user journey executed on the live platform — from UI interaction through API call to database persistence and visible UI response — not a CI test run. |
 | **L2 (Deployment Commissioned)** | The completion level at which platforms are live, connected, configured, and health endpoints verified. See `modules/MMM/BUILD_PROGRESS_TRACKER.md` §12.3. |
 | **L3 (Operationally Closed)** | The completion level at which L1 + L2 are confirmed AND at least one live E2E workflow has been demonstrated with CS2 sign-off. See `modules/MMM/BUILD_PROGRESS_TRACKER.md` §12.3. |
-| **Prohibited completion phrases** | Any of: "handover ready", "operationally closed", "L2 complete", "L3 complete", "deployment commissioned", "operational-complete". |
+| **Prohibited completion phrases** | Any of: "handover ready", "operationally closed", "L2 complete", "L3 complete", "deployment commissioned", "operational-complete", "merge ready", "merge-ready", "build complete", "build completed", "user journey complete", "final_state: COMPLETE", "final_state:COMPLETE". |
+| **Required routes** | The set of application routes that MUST be covered in the Route Inventory: `/`, `/login`, `/signup`, `/forgot-password`, `/reset-password`, `/onboarding`, `/dashboard`, `/frameworks`, `/frameworks/upload`, and any additional routed page. |
+| **Route Inventory** | A structured list in the LUIEP artifact enumerating every required application route, its accessibility status, HTTP status code, and screenshot reference. |
+| **Network/API evidence** | A structured list in the LUIEP artifact of API endpoints exercised during E2E validation, including endpoint URL, HTTP status code, and backend URL. |
+| **Operational Status Matrix** | A per-route summary in the LUIEP artifact confirming accessibility, screenshot evidence, and HTTP status for each required route. |
 
 ---
 
@@ -102,11 +110,69 @@ This gate was introduced because static code presence and CI test GREEN status a
 - Enforcement: `.github/scripts/validate-mmm-ui-evidence-pack.sh`
 - Violation class: `INC-MMM-LUIEP-MISSING-001`
 
+### 3.6 — LUIEP-ROUTE-COVERAGE-REQUIRED (Rule U-006)
+
+**The LUIEP artifact MUST include a complete route inventory covering all required application routes with per-route screenshot evidence.**
+
+Required routes that MUST appear in the `route_inventory` section:
+- `/` (home / index)
+- `/login`
+- `/signup`
+- `/forgot-password`
+- `/reset-password`
+- `/onboarding`
+- `/dashboard`
+- `/frameworks`
+- `/frameworks/upload`
+- Any additional routed page present in the MMM application
+
+For each route in the route inventory:
+- `route`: the path (e.g. `"/login"`)
+- `accessible`: MUST be `YES` for L2/L3 claims
+- `http_status`: MUST be a confirmed HTTP status code (e.g. `"200"`) — not `PENDING`
+- `screenshot_ref`: MUST reference an actual screenshot file — not `PENDING`
+
+The `screenshot_ref` for each required route MUST NOT be `PENDING` for L2 or L3 claims.
+
+A count of non-PENDING `screenshot_ref` entries MUST be ≥ the number of required routes.
+
+- `evidence_type` for route inventory entries: **LIVE_RUNTIME**
+- Enforcement: `.github/scripts/validate-mmm-ui-evidence-pack.sh`
+- Violation class: `INC-MMM-LUIEP-MISSING-001`
+
+### 3.7 — LUIEP-NETWORK-API-EVIDENCE-REQUIRED (Rule U-007)
+
+**The LUIEP artifact MUST include network/API evidence confirming the backend is reachable and responding from the live UI.**
+
+- `network_api_evidence` MUST contain at least one confirmed (non-PENDING) `endpoint` entry.
+- Each entry MUST include:
+  - `endpoint`: the API endpoint URL
+  - `status_code`: the HTTP status code observed (e.g. `"200"`, `"201"`)
+  - `backend_url`: the backend URL that served the response
+  - `description`: what the endpoint does / what was tested
+- At least one non-PENDING `status_code` value MUST be present.
+- `evidence_type` for network/API entries: **LIVE_RUNTIME**
+- Enforcement: `.github/scripts/validate-mmm-ui-evidence-pack.sh`
+- Violation class: `INC-MMM-LUIEP-MISSING-001`
+
+### 3.8 — LUIEP-OPERATIONAL-STATUS-MATRIX-REQUIRED (Rule U-008)
+
+**The LUIEP artifact MUST include an operational status matrix summarising per-route status for all required routes.**
+
+- `operational_status_matrix` MUST be present in the LUIEP artifact.
+- The matrix MUST cover all required routes (see Rule U-006).
+- It provides a consolidated summary of: route path, accessibility, HTTP status, and screenshot reference.
+- `evidence_type`: **LIVE_RUNTIME**
+- Enforcement: `.github/scripts/validate-mmm-ui-evidence-pack.sh`
+- Violation class: `INC-MMM-LUIEP-MISSING-001`
+
 ---
 
 ## 4. Live UI Evidence Pack (LUIEP) Field Specification
 
-The LUIEP artifact MUST contain all of the following fields. Each field is classified by its required evidence type.
+The LUIEP artifact MUST contain all of the following fields and sections. Each field is classified by its required evidence type.
+
+### 4.1 Top-Level Fields
 
 | Field | Type | Required Values | Evidence Type | Rule |
 |-------|------|----------------|---------------|------|
@@ -116,17 +182,47 @@ The LUIEP artifact MUST contain all of the following fields. Each field is class
 | `auth_flow_confirmed` | Enum | `YES` \| `PENDING` | LIVE_RUNTIME | U-005 |
 | `e2e_workflow_confirmed` | Enum | `YES` \| `PENDING` | LIVE_E2E | U-005 |
 | `e2e_workflow_description` | String | Description of workflow demonstrated | LIVE_E2E | U-005 |
-| `screenshots_provided` | Enum | `YES` \| `NO` | LIVE_RUNTIME | U-004 |
+| `screenshots_provided` | Enum | `YES` \| `NO` \| `PENDING` | LIVE_RUNTIME | U-004 |
 | `cs2_sign_off` | String | `YYYY-MM-DD` date or `PENDING` | LIVE_RUNTIME | U-002 |
 | `evidence_pack_version` | String | Semver (e.g. `1.0.0`) | CONFIG | U-001 (LUIEP completeness) |
 | `evidence_pack_date` | String | `YYYY-MM-DD` date | CONFIG | U-001 (LUIEP completeness) |
+
+### 4.2 Route Inventory (Required Section — Rule U-006)
+
+The `route_inventory` section MUST contain one entry per required route with these per-entry fields:
+
+| Field | Type | Required Values | Evidence Type | Rule |
+|-------|------|----------------|---------------|------|
+| `route` | String | Route path (e.g. `"/"`, `"/login"`) | LIVE_RUNTIME | U-006 |
+| `accessible` | Enum | `YES` \| `PENDING` | LIVE_RUNTIME | U-006 |
+| `http_status` | String | HTTP status code (e.g. `"200"`) | LIVE_RUNTIME | U-006 |
+| `screenshot_ref` | String | Path to screenshot file | LIVE_RUNTIME | U-006 |
+
+For L2/L3 claims: `accessible` MUST be `YES` and `screenshot_ref` MUST NOT be `PENDING` for every required route.
+
+**Required routes**: `/`, `/login`, `/signup`, `/forgot-password`, `/reset-password`, `/onboarding`, `/dashboard`, `/frameworks`, `/frameworks/upload`, and any additional routed page.
+
+### 4.3 Network/API Evidence (Required Section — Rule U-007)
+
+The `network_api_evidence` section MUST contain at least one confirmed entry with these fields:
+
+| Field | Type | Required Values | Evidence Type | Rule |
+|-------|------|----------------|---------------|------|
+| `endpoint` | String | API endpoint path | LIVE_RUNTIME | U-007 |
+| `status_code` | String | HTTP status code (e.g. `"200"`, `"201"`) | LIVE_RUNTIME | U-007 |
+| `backend_url` | String | Backend server URL | LIVE_RUNTIME | U-007 |
+| `description` | String | Description of what was tested | LIVE_RUNTIME | U-007 |
+
+### 4.4 Operational Status Matrix (Required Section — Rule U-008)
+
+The `operational_status_matrix` section MUST be present and cover all required routes.
 
 **Evidence Type Key**:
 - `LIVE_RUNTIME` — requires direct interaction with the live deployed application (browser or HTTP)
 - `LIVE_E2E` — requires a complete user workflow executed on the live platform from UI to database and back
 - `CONFIG` — administrative metadata; does not require live evidence
 
-**REQUIRED vs PERMITTED values for L2/L3 claims**:
+**REQUIRED vs PERMITTED values for L2/L3 claims** (top-level fields):
 
 | Field | L2 (Deployment Commissioned) | L3 (Operationally Closed) |
 |-------|------------------------------|--------------------------|
@@ -136,6 +232,8 @@ The LUIEP artifact MUST contain all of the following fields. Each field is class
 | `e2e_workflow_confirmed` | MAY be `PENDING` | MUST be `YES` |
 | `screenshots_provided` | MUST be `YES` | MUST be `YES` |
 | `cs2_sign_off` | MUST be a date (not `PENDING`) | MUST be a date (not `PENDING`) |
+| `route_inventory` per-route `screenshot_ref` | MUST NOT be `PENDING` | MUST NOT be `PENDING` |
+| `network_api_evidence` endpoints | ≥1 confirmed entry | ≥1 confirmed entry |
 
 ---
 
@@ -159,20 +257,25 @@ The CI gate `preflight/mmm-ui-evidence-pack-gate` in `preflight-evidence-gate.ym
 
 This canon does not claim that the current workflow job is universal across all PRs; where a PR falls outside that configured execution scope, the validation requirement remains subject to the other governance and review controls defined in this canon.
 The gate runs `.github/scripts/validate-mmm-ui-evidence-pack.sh`, which:
-1. Detects whether the PREHANDOVER proof contains any prohibited completion phrase.
+1. Detects whether the PREHANDOVER proof contains any prohibited completion phrase (13 phrases including merge ready, build complete, final_state: COMPLETE, etc.).
 2. If a prohibited phrase is found: locates the referenced LUIEP artifact.
-3. Validates that all required LUIEP fields are present and populated with non-PENDING values.
+3. Validates that all required LUIEP top-level fields are present and populated with non-PENDING values.
 4. Validates that `cs2_sign_off` is a date (not `PENDING`).
 5. Validates that `deployment_url_confirmed: YES`, `screenshots_provided: YES`.
-6. If any required field is missing or PENDING: the gate FAILS with violation class `INC-MMM-LUIEP-MISSING-001`.
+6. Validates the `route_inventory` section contains all 9 required routes and each has a non-PENDING `screenshot_ref` (Rule U-006).
+7. Validates `network_api_evidence` contains at least one confirmed endpoint with a non-PENDING `status_code` (Rule U-007).
+8. Validates `operational_status_matrix` section is present (Rule U-008).
+9. If any required field, section, or coverage check is missing or PENDING: the gate FAILS with violation class `INC-MMM-LUIEP-MISSING-001`.
 
 ### 6.2 Foreman QP
 
 At every QP evaluation for an MMM PREHANDOVER proof, Foreman MUST:
-1. Search the PREHANDOVER proof for any prohibited completion phrase.
+1. Search the PREHANDOVER proof for any prohibited completion phrase (13 phrases — see §1 and §2).
 2. If found: verify that a committed LUIEP artifact exists at the referenced path.
-3. Verify that all five rules (U-001 through U-005) are satisfied by the LUIEP artifact.
-4. If any rule fails: issue a QP-FAIL-010 finding with a Builder Referral citing rule IDs and violation class.
+3. Verify that all eight rules (U-001 through U-008) are satisfied by the LUIEP artifact.
+4. Verify that the `route_inventory` covers all 9 required routes with non-PENDING `screenshot_ref` entries.
+5. Verify that `network_api_evidence` contains at least one confirmed endpoint.
+6. If any rule fails: issue a QP-FAIL-010 finding with a Builder Referral citing rule IDs and violation class.
 
 ### 6.3 IAA Final Audit
 
@@ -181,7 +284,10 @@ At final audit, IAA MUST independently verify:
 2. That `cs2_sign_off` is a valid date.
 3. That `deployment_url_confirmed: YES` and `screenshots_provided: YES`.
 4. That `e2e_workflow_confirmed: YES` if the PREHANDOVER proof claims L3 completion.
-5. Issue a REJECTION-PACKAGE if any of the above checks fail.
+5. That the `route_inventory` covers all 9 required routes with confirmed screenshots (Rule U-006).
+6. That `network_api_evidence` contains confirmed API endpoints (Rule U-007).
+7. That `operational_status_matrix` is present (Rule U-008).
+8. Issue a REJECTION-PACKAGE if any of the above checks fail.
 
 ---
 
@@ -194,7 +300,11 @@ This violation class is triggered when:
 - A committed LUIEP artifact has `cs2_sign_off: PENDING` when the PREHANDOVER proof claims L2 or L3 completion, OR
 - A committed LUIEP artifact has `deployment_url_confirmed: PENDING` or `deployment_url_confirmed: NOT_APPLICABLE` when the PREHANDOVER proof claims L2 or L3 completion, OR
 - A committed LUIEP artifact has `e2e_workflow_confirmed: PENDING` when the PREHANDOVER proof claims L3 completion, OR
-- A committed LUIEP artifact has `screenshots_provided: NO` when the PREHANDOVER proof claims L2 or L3 completion.
+- A committed LUIEP artifact has `screenshots_provided: NO` when the PREHANDOVER proof claims L2 or L3 completion, OR
+- The `route_inventory` section is missing or any required route (`/`, `/login`, `/signup`, `/forgot-password`, `/reset-password`, `/onboarding`, `/dashboard`, `/frameworks`, `/frameworks/upload`) is absent from it (Rule U-006), OR
+- The number of non-PENDING `screenshot_ref` entries is less than the number of required routes (Rule U-006), OR
+- The `network_api_evidence` section is missing or has no confirmed (non-PENDING) `endpoint` or `status_code` entries (Rule U-007), OR
+- The `operational_status_matrix` section is missing (Rule U-008).
 
 A violation of class `INC-MMM-LUIEP-MISSING-001` is a **HANDOVER BLOCKER**. The PR MUST NOT be merged until the violation is resolved.
 
