@@ -22,7 +22,7 @@
 #   0 = PASS
 #   1 = FAIL
 
-set -uo pipefail
+set -euo pipefail
 
 MANIFEST=".admin/pr.json"
 ERRORS=0
@@ -44,9 +44,15 @@ fi
 echo "✅ $MANIFEST found."
 echo ""
 
+# Verify python3 is available (required for JSON parsing)
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "❌ ERROR: python3 is required but not found."
+  echo "   Install python3 to use this validator."
+  exit 1
+fi
+
 # Parse manifest with python (jq may not be available in all environments)
-PARSE_ERROR=$(python3 -c "import json,sys; json.load(open('$MANIFEST'))" 2>&1 || true)
-if [ -n "$PARSE_ERROR" ]; then
+if ! PARSE_ERROR=$(python3 -c "import json,sys; json.load(open('${MANIFEST}'))" 2>&1); then
   echo "❌ ERROR: $MANIFEST is not valid JSON."
   echo "   Parse error: $PARSE_ERROR"
   exit 1
@@ -116,6 +122,8 @@ fi
 echo ""
 
 # ── CHECK 5: type is an accepted value ───────────────────────────────────────
+# Accepted types defined in:
+#   governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md §"Accepted PR types"
 echo "── CHECK 5: TYPE-VALID ──"
 ACCEPTED_TYPES="product-fix test-only deployment-change database-migration governance-change agent-contract-change"
 TYPE_CHECK=$(python3 - <<PYEOF
