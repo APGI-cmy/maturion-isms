@@ -8,7 +8,7 @@
 **Owner**: Maturion Engineering Leadership (Johan Ras)  
 **Precedence**: Subordinate to GOVERNANCE_PURPOSE_AND_SCOPE.md  
 **Applies To**: All Foreman Instances, All Cognitive Capability Invocations, All Repositories  
-**Integration**: `governance/canon/ESCALATION_POLICY.md` (active escalation semantics), FM_ROLE_CANON.md (FM responsibilities)
+**Integration**: `governance/canon/ESCALATION_POLICY.md` (active escalation semantics), FM_ROLE_CANON.md (FM responsibilities), `AIMC_STRATEGY.md` (runtime application AI platform for ISMS modules — separate namespace from build-time orchestration)
 
 ---
 

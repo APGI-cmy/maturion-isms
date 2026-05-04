@@ -869,7 +869,7 @@ Hard stops MUST NOT:
    - Synchronization delays (cross-repo)
 
 3. **Build Integrity Concerns**
-   - Architecture completeness gaps (non-blocking)
+   - Architecture completeness gaps (ESCALATE for visibility — does not block merge)
    - Test coverage below recommended thresholds
    - Documentation incomplete but not required
 

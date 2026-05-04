@@ -3,12 +3,12 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory — tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
-  "last_updated": "2026-04-29",
+  "last_updated": "2026-05-04",
   "last_ripple_commit": "d99e68e8759af5f619851116e583d768c4f4c1e1",
   "last_ripple_timestamp": "2026-04-29T13:22:36Z",
   "alignment_summary": {
-    "total_artifacts": 48,
-    "aligned": 43,
+    "total_artifacts": 54,
+    "aligned": 44,
     "drifted": 0,
     "missing": 0,
     "escalated": 4,
@@ -34,10 +34,10 @@
       "canonical_version": "1.0.0",
       "local_version": "1.0.0",
       "canonical_hash_sha256": "1c72a45294640ce51966be64fb2bcf37a47c1366a9488f53a0321ecccca3d9f7",
-      "local_hash_sha256": "1c72a45294640ce51966be64fb2bcf37a47c1366a9488f53a0321ecccca3d9f7",
+      "local_hash_sha256": "e1ab12b9912bccb16db4ff68038aab5407ea40b812f4c84cef4a208299a6bcbe",
       "alignment_status": "ALIGNED",
       "layer_down_status": "OPTIONAL",
-      "last_verified": "2026-03-02T11:23:28Z"
+      "last_verified": "2026-05-04T15:14:34Z"
     },
     {
       "filename": "AUTOMATED_QUALITY_TOOLING_CANON.md",
@@ -45,10 +45,10 @@
       "canonical_version": "1.0.0",
       "local_version": "1.0.0",
       "canonical_hash_sha256": "c1f052a7dffaf1cf182c9d4aa6cc434ebd5e7a2a7cd1aa243fb6ed132f5fe9a5",
-      "local_hash_sha256": "c1f052a7dffaf1cf182c9d4aa6cc434ebd5e7a2a7cd1aa243fb6ed132f5fe9a5",
+      "local_hash_sha256": "ee6abd405d7b535dbb1e74283c72c6f84efe05078be7602c3901da42d48a206f",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-03-02T11:23:28Z"
+      "last_verified": "2026-05-04T15:14:34Z"
     },
     {
       "filename": "BUILD_INTERVENTION_AND_ALERT_MODEL.md",
@@ -56,10 +56,10 @@
       "canonical_version": "1.0",
       "local_version": "1.0",
       "canonical_hash_sha256": "b74ffd7421f314df6efb882c383b0a24de872eb8a005dd2596632471160491db",
-      "local_hash_sha256": "b74ffd7421f314df6efb882c383b0a24de872eb8a005dd2596632471160491db",
+      "local_hash_sha256": "ae68a65c28d9003532deb9dcab9769de03e8a43ab11e3305fe906721ffb57b80",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-03-02T11:23:28Z"
+      "last_verified": "2026-05-04T15:14:34Z"
     },
     {
       "filename": "GOVERNANCE_RIPPLE_MODEL.md",
@@ -67,10 +67,10 @@
       "canonical_version": "1.1.0",
       "local_version": "1.1.0",
       "canonical_hash_sha256": "00cc56b025a30956d26420ba86328abb2ad2e6894399c7c661721e6c2e42f387",
-      "local_hash_sha256": "00cc56b025a30956d26420ba86328abb2ad2e6894399c7c661721e6c2e42f387",
+      "local_hash_sha256": "fa52c59c06adf03636a0de9f2116ce6e498cf48248fbc4df7d3bc7f1d43aba76",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-03-02T11:23:28Z"
+      "last_verified": "2026-05-04T15:14:34Z"
     },
     {
       "filename": "WATCHDOG_AUTHORITY_AND_SCOPE.md",
@@ -78,10 +78,10 @@
       "canonical_version": "1.0.0",
       "local_version": "1.0.0",
       "canonical_hash_sha256": "36b66652da76236ab1bcc891cd32666ce95879f8bf224c64289d8732881d0063",
-      "local_hash_sha256": "36b66652da76236ab1bcc891cd32666ce95879f8bf224c64289d8732881d0063",
+      "local_hash_sha256": "4f06306fbc1a1016cbbf04e7085473dd2cb37ea2cda9f45bbeb86cc03213392d",
       "alignment_status": "ALIGNED",
       "layer_down_status": "OPTIONAL",
-      "last_verified": "2026-03-02T11:23:28Z"
+      "last_verified": "2026-05-04T15:14:34Z"
     },
     {
       "filename": "POLICY-NO-ONLY-LANGUAGE.md",
@@ -194,10 +194,10 @@
       "canonical_version": "1.0.2",
       "local_version": "1.0.2",
       "canonical_hash_sha256": "f578c6443858d588c6953d6935b977d9f735d50f3a04f36d8f6b64342f4240b0",
-      "local_hash_sha256": "f578c6443858d588c6953d6935b977d9f735d50f3a04f36d8f6b64342f4240b0",
+      "local_hash_sha256": "0ae44a6fd760740a183a1db0bfb07dc57878b50ac686abb81d6fed0f214ba899",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-03-30T06:08:50Z"
+      "last_verified": "2026-05-04T15:14:34Z"
     },
     {
       "filename": "FRS_TEMPLATE.md",
@@ -304,10 +304,10 @@
       "canonical_version": "1.0.0",
       "local_version": null,
       "canonical_hash_sha256": "3b342b6fa746ad418a767f46c38dca5ff19a5e5f4ee72d766645337e5211b29c",
-      "local_hash_sha256": null,
-      "alignment_status": "NOT_TRACKED",
+      "local_hash_sha256": "3b342b6fa746ad418a767f46c38dca5ff19a5e5f4ee72d766645337e5211b29c",
+      "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API — file exists canonically (commit bfe47f6d) but not yet listed in canonical CANON_INVENTORY.json; automated layer-down not triggered",
-      "last_verified": "2026-04-08T09:11:22Z",
+      "last_verified": "2026-05-04T15:14:34Z",
       "change_note": "New file introduced in canonical commit bfe47f6d (trigger: canonise-oopjd-session-mode). File declares Layer-Down Status: PUBLIC_API. Not yet present in canonical CANON_INVENTORY.json (198 entries). CI ripple-integration.yml confirmed NO_DRIFT_DETECTED because CANON_INVENTORY.json does not include this file. Status: NOT_TRACKED until CANON_INVENTORY.json is updated by canonical source to include this file. No local copy exists. No layer-down action required at this time."
     },
     {
@@ -585,6 +585,78 @@
       "layer_down_status": "INTERNAL",
       "last_verified": "2026-04-29T13:31:54Z",
       "change_note": "v2.0.0 (canonical commit d99e68e8): per-PR immutable scope declaration format with v2 header and FILES_CHANGED section. Layered down via CI ripple PR #1517."
+    },
+    {
+      "filename": "COGNITIVE_CAPABILITY_ORCHESTRATION_MODEL.md",
+      "path": "governance/canon/COGNITIVE_CAPABILITY_ORCHESTRATION_MODEL.md",
+      "canonical_version": "TBD",
+      "local_version": "TBD",
+      "canonical_hash_sha256": "TBD",
+      "local_hash_sha256": "2a25d4c67b1efcbc5a2bfa7fd635597aafecdbb7350868f124ea7694c324e0c7",
+      "alignment_status": "PENDING_REVIEW",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-05-04T15:14:34Z",
+      "change_note": "Auto-added by ripple-integration inventory update step"
+    },
+    {
+      "filename": "THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md",
+      "path": "governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md",
+      "canonical_version": "TBD",
+      "local_version": "TBD",
+      "canonical_hash_sha256": "TBD",
+      "local_hash_sha256": "3aaf14f2500eeeed93eecdd210d1a7b4defec7e004ad557f7f69c3f4742cd9d3",
+      "alignment_status": "PENDING_REVIEW",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-05-04T15:14:34Z",
+      "change_note": "Auto-added by ripple-integration inventory update step"
+    },
+    {
+      "filename": "AGENT_ONBOARDING_QUICKSTART.md",
+      "path": "governance/canon/agent-contracts-guidance/AGENT_ONBOARDING_QUICKSTART.md",
+      "canonical_version": "TBD",
+      "local_version": "TBD",
+      "canonical_hash_sha256": "TBD",
+      "local_hash_sha256": "e6ec7372cb554c02d7d304fe538318e6a7ad48de2db4fa7d2b969340a2606d6d",
+      "alignment_status": "PENDING_REVIEW",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-05-04T15:14:34Z",
+      "change_note": "Auto-added by ripple-integration inventory update step"
+    },
+    {
+      "filename": "AGENT_CONTRACT.template.md",
+      "path": "governance/canon/agent-contracts-guidance/templates/AGENT_CONTRACT.template.md",
+      "canonical_version": "TBD",
+      "local_version": "TBD",
+      "canonical_hash_sha256": "TBD",
+      "local_hash_sha256": "0a8f1a975a964e33bfc2a8fe97a21dea6e2015ce89692b160d494dc04c92a105",
+      "alignment_status": "PENDING_REVIEW",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-05-04T15:14:34Z",
+      "change_note": "Auto-added by ripple-integration inventory update step"
+    },
+    {
+      "filename": "FAIL-ONLY-ONCE.md",
+      "path": "governance/canon/FAIL-ONLY-ONCE.md",
+      "canonical_version": "TBD",
+      "local_version": "TBD",
+      "canonical_hash_sha256": "TBD",
+      "local_hash_sha256": "e45b3588b5e36d3b9d4acf37837c907d7feda45723b0a49a7f9ad49ac073ae69",
+      "alignment_status": "PENDING_REVIEW",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-05-04T15:14:34Z",
+      "change_note": "Auto-added by ripple-integration inventory update step"
+    },
+    {
+      "filename": "MMM_SIMPLE_PR_ADMIN_MODEL.md",
+      "path": "governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md",
+      "canonical_version": "TBD",
+      "local_version": "TBD",
+      "canonical_hash_sha256": "TBD",
+      "local_hash_sha256": "39d1ee7b51f8d797e163fafe45d29f1a17eb59d2b3655f0c28020225af9cf976",
+      "alignment_status": "PENDING_REVIEW",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-05-04T15:14:34Z",
+      "change_note": "Auto-added by ripple-integration inventory update step"
     }
   ],
   "metadata": {

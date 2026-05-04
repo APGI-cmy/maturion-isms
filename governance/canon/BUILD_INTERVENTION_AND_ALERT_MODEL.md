@@ -14,7 +14,7 @@ This document defines the **canonical model for build interventions, alerts, and
 
 Build intervention enables immediate response to critical conditions while preserving:
 - **Clear authority boundaries** for who can intervene and when
-- **Graduated response levels** from non-blocking alerts to emergency stops
+- **Graduated response levels** from execution-continues notifications to emergency stops
 - **Predictable notification routing** to ensure attention reaches the correct authority
 - **Complete audit trail** for accountability and learning
 - **No automated resumption** to prevent silent recovery from critical conditions
@@ -50,8 +50,8 @@ This model derives authority from and implements:
 - Reversible only with explicit authorization (no automatic resumption)
 
 **Intervention Types**:
-1. **Alert** (non-blocking, informational)
-2. **Warning** (non-blocking, advisory)
+1. **Alert** (execution-continues notification, informational)
+2. **Warning** (execution-continues notification, advisory)
 3. **Pause** (blocking, temporary suspension)
 4. **Emergency Stop** (blocking, immediate halt)
 
@@ -59,7 +59,7 @@ This model derives authority from and implements:
 
 ### 3.2 Alert
 
-**Alert** is a **non-blocking notification** that surfaces information requiring attention but does not halt execution.
+**Alert** is an **execution-continues notification** that surfaces information requiring attention but does not halt execution.
 
 **Characteristics**:
 - Execution continues normally
@@ -85,7 +85,7 @@ This model derives authority from and implements:
 
 ### 3.3 Warning
 
-**Warning** is a **non-blocking notification** that indicates a significant concern requiring prompt attention, with potential escalation to blocking intervention if unresolved.
+**Warning** is an **execution-continues notification** that indicates a significant concern requiring prompt attention, with potential escalation to blocking intervention if unresolved.
 
 **Characteristics**:
 - Execution continues for now
@@ -243,7 +243,7 @@ Application (Root)
 ### 5.1 Alert Characteristics
 
 **Alert** is the lowest-severity intervention:
-- **Non-Blocking**: Execution continues normally
+- **Execution-Continues**: Execution continues normally
 - **Informational**: Provides awareness, not enforcement
 - **Routable**: Directed to appropriate authority
 - **Auditable**: Recorded for pattern analysis
@@ -485,8 +485,8 @@ Emergency stops are triggered by:
 
 | Intervention Type | Scope Level | Resume Authority | Prerequisites |
 |-------------------|-------------|------------------|---------------|
-| Alert | N/A (non-blocking) | N/A | N/A |
-| Warning | N/A (non-blocking) | N/A | N/A |
+| Alert | N/A (does not halt execution) | N/A | N/A |
+| Warning | N/A (does not halt execution) | N/A | N/A |
 | Pause | Application | Human Authority (Johan) | Review of pause reason, decision to proceed |
 | Pause | Wave | Foreman or Johan | Resolution of blocking condition |
 | Pause | Sub-Wave | Foreman | Resolution of blocking condition |
@@ -867,7 +867,7 @@ lessons_learned: <link_to_lessons_learned_record> | null
 
 **WATCHDOG_AUTHORITY_AND_SCOPE.md Alignment**:
 - Watchdog has hard stop authority ONLY for conditions in WATCHDOG_AUTHORITY_AND_SCOPE §4.3 (security, governance canon violations, role violations, catastrophic failures)
-- Watchdog issues Alerts and Warnings for observational findings (non-blocking)
+- Watchdog issues Alerts and Warnings for observational findings (does not halt execution)
 - Watchdog MUST NOT issue Pause (read-only authority)
 - Watchdog receives all intervention notifications for observational awareness
 
@@ -1008,7 +1008,7 @@ This intervention and alert model supports:
 
 **Intervention Authority**:
 - Issue Emergency Stop (hard stop) ONLY for conditions in WATCHDOG_AUTHORITY_AND_SCOPE §4.3 (security, governance violations, role violations, catastrophic failures)
-- Issue Alerts and Warnings for observational findings (non-blocking)
+- Issue Alerts and Warnings for observational findings (does not halt execution)
 
 **Notification Receipt**:
 - Receive all intervention notifications for observational awareness
@@ -1067,7 +1067,7 @@ This build intervention and alert model succeeds when:
 
 **Key Requirements Established**:
 - Four intervention types with graduated severity and blocking semantics
-- Alert vs Emergency Stop semantic distinction (non-blocking vs immediately binding)
+- Alert vs Emergency Stop semantic distinction (execution-continues vs immediately binding)
 - Intervention scope selection (smallest-scope-necessary principle)
 - Authority matrix for who may issue interventions at each scope level
 - Notification routing table directing interventions to appropriate authority
