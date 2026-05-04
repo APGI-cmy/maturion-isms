@@ -721,3 +721,8 @@ else
     echo "  Provide: PR #${PR_NUMBER:-NNN}, issue #${EXPECTED_ISSUE_NUMBER:-NNN}, HEAD SHA ${HEAD_SHA:-<sha>}"
   fi
 fi
+
+# Hard-fail when lifecycle is BLOCKED so the CI job fails and prevents merge
+if [ "${LIFECYCLE_STATUS}" != "assurance-ready" ]; then
+  exit 1
+fi

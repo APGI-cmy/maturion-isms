@@ -35,7 +35,7 @@
 #   AC-MR-3       No merge-ready claim, lifecycle clear (valid IAA token)           → exit 0
 #   AC-MR-4       merge-ready claim in PR body when lifecycle is NOT blocked        → exit 0
 #   AC-LC-1       Lifecycle script produces assurance-ready for valid token PR      → exit 0
-#   AC-LC-2       Lifecycle script reports blocked for implementation PR no token   → exit 0
+#   AC-LC-2       Lifecycle script reports blocked for implementation PR no token   → exit 1
 #   AC-LC-3       Lifecycle artifact JSON is written to .agent-admin/lifecycle/     → exit 0
 #   AC-LC-4       Impl PR with missing EXPECTED_ISSUE_NUMBER → lifecycle exits 1    → exit 1
 #   AC-LC-5       Assurance-control .github/scripts change → IAA required           lifecycle BLOCKED
@@ -820,7 +820,7 @@ setup_ac_lc2() {
 }
 run_lifecycle_test \
   "AC-LC-2: Implementation PR with no token — lifecycle BLOCKED (IAA)" \
-  0 "setup_ac_lc2" "BLOCKED"
+  1 "setup_ac_lc2" "BLOCKED"
 
 # AC-LC-3: Lifecycle script writes JSON artifact to .agent-admin/lifecycle/
 echo "Test: AC-LC-3: Lifecycle script writes JSON artifact to .agent-admin/lifecycle/"
@@ -936,7 +936,7 @@ lc5_output=$(BASE_SHA="$lc5_base" HEAD_SHA="$lc5_head" PR_NUMBER="9999" PR_LABEL
   bash "$LIFECYCLE_SCRIPT" 2>&1)
 lc5_exit=$?
 set -e
-# Should exit 0 (lifecycle script itself does not block, just reports)
+# Should exit 1 (lifecycle script hard-fails when BLOCKED)
 # but IAA_REQUIRED must be true and lifecycle must be BLOCKED (no token)
 if echo "$lc5_output" | grep -q "assurance-control" && \
    echo "$lc5_output" | grep -q "BLOCKED"; then
