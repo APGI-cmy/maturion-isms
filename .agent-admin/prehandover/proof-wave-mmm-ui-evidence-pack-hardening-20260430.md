@@ -85,7 +85,7 @@ files_changed:                19
 scope_declaration_pr:         .agent-admin/scope-declarations/pr-1524.md
 scope_declaration_wave:       .agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-ui-evidence-pack-hardening-20260430.md
 
-## Ripple Assessment
+## Wave Ripple Metadata
 public_api_files_changed:     1  # governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md (layer_down_status: PUBLIC_API)
 ripple_required:              false  # CANON_INVENTORY.json ripple_required: false for this entry
 ripple_status:                NOT-APPLICABLE  # New canon — no existing downstream consumers requiring layer-down
@@ -288,18 +288,22 @@ merge_gate_parity: GREEN  # All gates GREEN once ECAP bundle commit triggers CI 
 
 ---
 
-## Ripple / Cross-Agent Assessment
+## Ripple/Cross-Agent Assessment
 
 > **HFMC-01 / ACR-08** — mandatory for all PREHANDOVER proofs.
 
-| File | CANON_INVENTORY layer_down_status | Ripple Action |
-|------|----------------------------------|--------------|
-| `governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md` | `PUBLIC_API` | NOT-APPLICABLE — new canon; no existing downstream consumers. `ripple_required: false` per CANON_INVENTORY entry. No layer-down triggered. |
+| Agent / System | Change Scope Assessed | Impact Conclusion |
+|---|---|---|
+| foreman-v2-agent | governance canon files (D1–D8), CI gate (D2–D3), knowledge (D7), CANON_INVENTORY (D8) | NO IMPACT — governance/ceremony artifacts only, no downstream effect |
+| governance-liaison-isms-agent | New PUBLIC_API canon MMM_UI_EVIDENCE_PACK_GATE.md v1.0.0 | IMPACTED — future MMM PREHANDOVER proofs must comply with LUIEP gate (U-001–U-005) |
+| execution-ceremony-admin-agent | ECAP ceremony files (PREHANDOVER proof, bundle) | NO IMPACT — ceremony-only artifacts, no downstream code or schema changes |
+| independent-assurance-agent | IAA final audit session-081 (wave record ## TOKEN) | NO IMPACT — audit artifacts only |
+| Application code / schema | Not touched | NO IMPACT |
 
 **PUBLIC_API files changed**: 1 (`governance/canon/MMM_UI_EVIDENCE_PACK_GATE.md`)
 **Layer-down required**: NO (`ripple_required: false` in CANON_INVENTORY)
 **Ripple status**: NOT-APPLICABLE
-**Downstream impact**: None — this canon gate is newly introduced and no existing agents or modules declare a dependency on it. The CI gate in D3 enforces it going forward.
+**Downstream ripple conclusion**: NO IMPACT — governance/ceremony artifacts only, no downstream code, schema, or API changes. The new CI gate enforces LUIEP compliance going forward for future MMM handover PRs.
 
 ---
 
