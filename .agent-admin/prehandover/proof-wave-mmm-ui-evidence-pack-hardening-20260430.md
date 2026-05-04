@@ -81,7 +81,7 @@ ecap_bundle:                  .agent-workspace/execution-ceremony-admin-agent/bu
 iaa_wave_record:              .agent-admin/assurance/iaa-wave-record-mmm-ui-evidence-pack-hardening-20260430.md
 
 ## Scope
-files_changed:                15
+files_changed:                18
 scope_declaration_pr:         .agent-admin/scope-declarations/pr-1524.md
 scope_declaration_wave:       .agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-ui-evidence-pack-hardening-20260430.md
 
