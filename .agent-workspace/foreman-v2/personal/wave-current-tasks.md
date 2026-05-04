@@ -16,13 +16,13 @@ ceremony_admin_appointed: YES — ECAP required per ACR-01 (CANON_GOVERNANCE wav
 ## Wave Purpose
 
 Governance hardening: define and enforce a Live UI Evidence Pack (LUIEP) gate that must be
-present before any PREHANDOVER proof may claim L2 (Deployment Commissioned) or L3
-(Operationally Closed) completion for MMM, or before any agent may describe MMM as
-"handover ready" to an operational audience.
+present before any PREHANDOVER proof may claim L2-complete or L3-complete
+for MMM, or before any agent may describe MMM as
+handover-ready to an operational audience.
 
 The gate codifies §12.2 OC-001–OC-009 requirements as a hard machine-enforced gate —
 converting the "pending CS2 live platform validation" items into verifiable evidence slots
-that must be populated before operational-complete claims are accepted.
+that must be populated before L2/L3 completion claims are accepted.
 
 ---
 

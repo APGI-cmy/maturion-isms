@@ -724,6 +724,7 @@ jobs:
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
           BRANCH: ${{ github.event.pull_request.head.ref }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           chmod +x .github/scripts/validate-mmm-ui-evidence-pack.sh
           .github/scripts/validate-mmm-ui-evidence-pack.sh

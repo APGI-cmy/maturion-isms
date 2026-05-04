@@ -35,20 +35,26 @@ PROHIBITED_PHRASES=(
   "operational-complete"
 )
 
-SCAN_DIRS=(
-  ".agent-workspace"
-  ".agent-admin"
-  "modules/MMM/12-phase4-ecap"
-)
+BASE_SHA="${BASE_SHA:-}"
 
 FOUND_PHRASE=""
 FOUND_FILE=""
 
-for dir in "${SCAN_DIRS[@]}"; do
-  if [ ! -d "$dir" ]; then
-    continue
-  fi
-  while IFS= read -r -d '' md_file; do
+# 1a. Scan markdown files new/modified in this PR (diff-based when BASE_SHA
+#     available) or fall back to the current active-wave task file only.
+#     This avoids false positives from historical governance reference docs.
+if [ -n "$BASE_SHA" ]; then
+  # Scan only operational state files (PREHANDOVER proofs, wave-current-tasks)
+  # that are new/modified in this PR. All governance docs, canon files, trackers,
+  # templates, scope declarations and assurance artifacts are excluded because they
+  # legitimately contain the prohibited phrases as definitional vocabulary.
+  CHANGED_MD_FILES=$(git diff --name-only "${BASE_SHA}...HEAD" 2>/dev/null \
+    | grep -E '\.md$' \
+    | grep -E '(^\.agent-admin/prehandover/proof-|/wave-current-tasks\.md$|^\.agent-admin/prehandover/PREHANDOVER)' \
+    || true)
+  while IFS= read -r md_file; do
+    [ -z "$md_file" ] && continue
+    [ ! -f "$md_file" ] && continue
     for phrase in "${PROHIBITED_PHRASES[@]}"; do
       if grep -qiF "$phrase" "$md_file" 2>/dev/null; then
         FOUND_PHRASE="$phrase"
@@ -56,11 +62,31 @@ for dir in "${SCAN_DIRS[@]}"; do
         break 2
       fi
     done
-  done < <(find "$dir" -maxdepth 10 -type f -name "*.md" -print0 2>/dev/null)
-  [ -n "$FOUND_PHRASE" ] && break
-done
+  done <<< "$CHANGED_MD_FILES"
+else
+  # Fallback: scan only current active-wave task file and any PREHANDOVER proofs.
+  FALLBACK_TARGETS=()
+  [ -f ".agent-workspace/foreman-v2/personal/wave-current-tasks.md" ] && \
+    FALLBACK_TARGETS+=(".agent-workspace/foreman-v2/personal/wave-current-tasks.md")
+  if [ -d ".agent-admin/prehandover" ]; then
+    while IFS= read -r -d '' f; do
+      FALLBACK_TARGETS+=("$f")
+    done < <(find ".agent-admin/prehandover" -maxdepth 1 -type f -name "proof-*.md" -print0 2>/dev/null)
+  fi
+  for md_file in "${FALLBACK_TARGETS[@]:-}"; do
+    [ -z "$md_file" ] && continue
+    [ ! -f "$md_file" ] && continue
+    for phrase in "${PROHIBITED_PHRASES[@]}"; do
+      if grep -qiF "$phrase" "$md_file" 2>/dev/null; then
+        FOUND_PHRASE="$phrase"
+        FOUND_FILE="$md_file"
+        break 2
+      fi
+    done
+  done
+fi
 
-# Also check PR_BODY env var if set
+# 1b. Check PR_BODY env var if set
 if [ -z "$FOUND_PHRASE" ] && [ -n "${PR_BODY:-}" ]; then
   for phrase in "${PROHIBITED_PHRASES[@]}"; do
     if printf '%s' "$PR_BODY" | grep -qiF "$phrase" 2>/dev/null; then
