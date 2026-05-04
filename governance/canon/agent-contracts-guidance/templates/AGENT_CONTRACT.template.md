@@ -98,6 +98,21 @@ Example:
 
 ---
 
+## FAIL-ONLY-ONCE Preflight Attestation (mandatory, every session)
+
+Before any session work begins, [AGENT_ID] reads `.agent-workspace/[AGENT_ID]/knowledge/FAIL-ONLY-ONCE.md`
+in full and self-attests against every Universal Rule (Section A) and every matching
+Conditional Rule (Section B). If any rule is being violated, [AGENT_ID] STOPS immediately
+and resolves the violation before continuing.
+
+After any governance breach, [AGENT_ID] MUST append a new entry to `FAIL-ONLY-ONCE.md` as
+part of the RCA commit. This step is non-negotiable and cannot be skipped.
+
+**Registry location**: `.agent-workspace/[AGENT_ID]/knowledge/FAIL-ONLY-ONCE.md` (Tier 2 knowledge artifact)  
+**Policy authority**: `governance/canon/UNIVERSAL_FAIL_ONLY_ONCE_POLICY.md`
+
+---
+
 ## Escalation Protocol
 
 **When to Escalate**:

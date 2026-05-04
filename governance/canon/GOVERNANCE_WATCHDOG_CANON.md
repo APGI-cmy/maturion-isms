@@ -1,6 +1,6 @@
 ---
 title: "Governance Watchdog Canon"
-version: 1.0.2
+version: 1.0.1
 status: Canonical
 created: 2026-03-04
 authority: CS2 (Johan Ras)
@@ -280,10 +280,6 @@ permissions:
   issues: write
   contents: read
 ```
-These permissions apply to the default `GITHUB_TOKEN` at the workflow level. Per REQ-GWC-801,
-all write operations that mutate GitHub state (including posting commit statuses per REQ-GWC-102
-or check runs) MUST use `secrets.MATURION_BOT_TOKEN`, not `GITHUB_TOKEN`. As a result, no
-`statuses: write` or `checks: write` permission is required for the workflow token.
 
 ---
 
@@ -422,7 +418,6 @@ This canon was promoted following completion of Phase 1 validation in `APGI-cmy/
 |---|---|---|
 | 1.0.0 | 2026-03-04 | Initial canon created from validated strategy GWDS-001 v1.1.0. Phase 1 production validation complete. |
 | 1.0.1 | 2026-03-21 | PR review: Fixed REQ-GWC-102 (use commit status/check run instead of commit comment to avoid `contents: write`); aligned REQ-GWC-801/802 with GOVERNANCE_TOKEN_USAGE_REQUIREMENTS.md (MATURION_BOT_TOKEN for writes); added traceable production event references and "Re-invocation cycles" metric row in §12. |
-| 1.0.2 | 2026-03-30 | PR review: Clarified REQ-GWC-404 (§7.4) to align with REQ-GWC-102 and REQ-GWC-801: `statuses: write`/`checks: write` not required for workflow token because all write mutations use `secrets.MATURION_BOT_TOKEN`; fixed `GOVERNANCE_CANON_MANIFEST.md` Last Updated date for this entry. |
 
 ---
 

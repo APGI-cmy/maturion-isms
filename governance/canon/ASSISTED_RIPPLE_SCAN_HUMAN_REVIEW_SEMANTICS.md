@@ -18,7 +18,7 @@ This document defines the **canonical semantics for human-in-the-loop review** o
 Assisted ripple scanning provides **visibility** through informational reports. This document establishes:
 - Who reviews ripple scan reports
 - What review means in this context
-- That reports are informational only (non-blocking)
+- That reports are informational only (does not block merge)
 - That reports do not mandate remediation
 - That conscious acceptance of ripples is valid
 
@@ -195,7 +195,7 @@ Ripple reports DO NOT:
 
 ---
 
-## 5. Review Process (Non-Blocking)
+## 5. Review Process (Merge-Transparent)
 
 ### 5.1 Review Workflow
 
@@ -350,7 +350,7 @@ See ripple scan report for detailed impact analysis.
 
 ---
 
-## 7. Non-Blocking Semantics (Explicit)
+## 7. Merge-Transparent Semantics (Explicit)
 
 ### 7.1 Ripple Reports Do Not Block Merges
 
@@ -587,7 +587,7 @@ Assisted ripple scan review semantics are successful when:
 
 ### 12.1 Informational, Not Enforcement
 
-**Invariant**: Ripple reports remain informational and non-blocking.
+**Invariant**: Ripple reports remain informational and do not block merge.
 
 **Violation**: Treating ripple reports as enforcement mechanisms is governance regression.
 
