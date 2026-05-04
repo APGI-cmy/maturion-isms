@@ -120,27 +120,25 @@ echo "── STEP 3: Locate LUIEP artifact ──"
 
 LUIEP_FILE=""
 
-# Search for evidence pack files in modules/MMM/12-phase4-ecap/
-if [ -d "modules/MMM/12-phase4-ecap" ]; then
-  LUIEP_FILE=$(find "modules/MMM/12-phase4-ecap" -maxdepth 5 -type f \
-    \( -name "mmm-ui-evidence-pack-template.md" -o -name "*evidence-pack*.md" \) \
-    2>/dev/null | head -1 || true)
-fi
-
-# If not found, check PREHANDOVER proof files for luiep_artifact_path or evidence_pack_version
-if [ -z "$LUIEP_FILE" ]; then
-  PROOF_REF=$(find .agent-admin/prehandover -maxdepth 2 -type f -name "proof-*.md" 2>/dev/null \
-    -exec grep -lE "evidence_pack_version:|luiep_artifact_path:" {} \; 2>/dev/null | head -1 || true)
-  if [ -n "$PROOF_REF" ]; then
-    # Try to extract path from luiep_artifact_path field
+# First prefer an explicit wave-specific artifact path cited in PREHANDOVER proof.
+if [ -d ".agent-admin/prehandover" ]; then
+  while IFS= read -r -d '' PROOF_REF; do
     LUIEP_PATH_CITED=$(grep -oE "luiep_artifact_path:\s*.+" "$PROOF_REF" 2>/dev/null | \
       sed 's/luiep_artifact_path:\s*//' | tr -d '[:space:]' | head -1 || true)
-    if [ -n "$LUIEP_PATH_CITED" ] && [ -f "$LUIEP_PATH_CITED" ]; then
+    if [ -n "$LUIEP_PATH_CITED" ] && [ -f "$LUIEP_PATH_CITED" ] && \
+       [ "$(basename "$LUIEP_PATH_CITED")" != "mmm-ui-evidence-pack-template.md" ]; then
       LUIEP_FILE="$LUIEP_PATH_CITED"
+      break
     fi
-  fi
+  done < <(find .agent-admin/prehandover -maxdepth 2 -type f -name "proof-*.md" -print0 2>/dev/null)
 fi
 
+# If no explicit path is available, search for a non-template evidence pack file.
+if [ -z "$LUIEP_FILE" ] && [ -d "modules/MMM/12-phase4-ecap" ]; then
+  LUIEP_FILE=$(find "modules/MMM/12-phase4-ecap" -maxdepth 5 -type f \
+    -name "*evidence-pack*.md" ! -name "mmm-ui-evidence-pack-template.md" \
+    2>/dev/null | head -1 || true)
+fi
 # ============================================================
 # STEP 4: If no LUIEP artifact found → FAIL
 # ============================================================
