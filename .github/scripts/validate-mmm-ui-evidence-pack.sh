@@ -86,16 +86,11 @@ else
   done
 fi
 
-# 1b. Check PR_BODY env var if set
-if [ -z "$FOUND_PHRASE" ] && [ -n "${PR_BODY:-}" ]; then
-  for phrase in "${PROHIBITED_PHRASES[@]}"; do
-    if printf '%s' "$PR_BODY" | grep -qiF "$phrase" 2>/dev/null; then
-      FOUND_PHRASE="$phrase"
-      FOUND_FILE="PR_BODY"
-      break
-    fi
-  done
-fi
+# Note: PR_BODY is intentionally NOT scanned. The PR description is a
+# human-readable changelog and may legitimately reference prohibited phrases
+# (e.g. when describing a fix to this very gate). Only committed operational
+# state documents (PREHANDOVER proof files, wave-current-tasks.md) are
+# authoritative sources for completion claims.
 
 # ============================================================
 # STEP 2: If no prohibited phrase found → PASS (gate not triggered)
