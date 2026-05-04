@@ -37,7 +37,7 @@ ecap_class:           administrator
 | AAP-05 | No absent deliverable evidence | ✅ PASS — D1–D8 all committed with blob SHAs |
 | AAP-06 | No stale session cross-references | ✅ PASS — all references use wave identifier consistently |
 | AAP-07 | No absent ripple assessment | ✅ PASS — ripple assessment present with NOT-APPLICABLE conclusion |
-| AAP-08 | No contradictory scope declarations | ✅ PASS — scope matches git diff (15 files) |
+| AAP-08 | No contradictory scope declarations | ✅ PASS — scope matches git diff (19 files including ceremony artifacts) |
 | AAP-09 | No ECAP writing to IAA-owned sections | ✅ PASS — ## TOKEN section in wave record not touched by ECAP |
 | AAP-15 | No absent gate inventory | ✅ PASS — gate_set_checked: populated with 8 named gates |
 | AAP-16 | No stale provisional gate wording | ✅ PASS — "verify gates pass", "gates pending", "gates unconfirmed" not present in any final-state artifact |
@@ -107,11 +107,11 @@ ecap_class:           administrator
 | R04 | PR number | #1524 | ✅ pr-1524.md, PREHANDOVER proof consistent |
 | R05 | Wave identifier | `mmm-ui-evidence-pack-hardening-20260430` | ✅ All artifacts, filenames, wave record consistent |
 | R06 | Branch name | `copilot/require-live-ui-evidence-pack` | ✅ `git branch --show-current` confirmed; all artifacts match |
-| R07 | Changed file paths | 15 files per `git diff --name-only origin/main...HEAD` | ✅ pr-1524.md FILES_CHANGED: 15; deliverables match diff |
+| R07 | Changed file paths | 19 files per `git diff --name-only origin/main...HEAD` (15 deliverables + 4 ceremony/IAA artifacts) | ✅ pr-1524.md FILES_CHANGED: 19; deliverables match diff |
 | R08 | PREHANDOVER ↔ session memory | PREHANDOVER is primary; session memory N/A per delegation | ✅ N/A |
 | R09 | PREHANDOVER ↔ token / IAA reference | Token pending IAA invocation; expected reference pre-populated | ✅ Consistent forward reference |
 | R10 | Tracker ↔ wave record | wave-current-tasks.md task 11 = ECAP (now complete) | ✅ No contradiction |
-| R11 | Scope declaration ↔ actual changed files | pr-1524.md FILES_CHANGED: 15; diff = 15 pre-ceremony | ✅ Match |
+| R11 | Scope declaration ↔ actual changed files | pr-1524.md FILES_CHANGED: 19; diff = 19 (15 deliverables + 4 ceremony/IAA artifacts) | ✅ Match |
 | R12 | Session memory ↔ committed artifact paths | N/A (no session memory in scope) | ✅ N/A |
 | R13 | CANON_INVENTORY ↔ file hash/version/amended_date | SHA256=16b01bc…, v1.0.0, 2026-04-30 | ✅ Verified by sha256sum + CANON_INVENTORY cross-check |
 | R14 | Ripple registry ↔ PUBLIC_API changes | D1 has PUBLIC_API status; ripple_required=false | ✅ NOT-APPLICABLE declared correctly |
@@ -170,7 +170,7 @@ ecap_class:           administrator
 | Issue/PR/wave | #1523 / #1524 / mmm-ui-evidence-pack-hardening-20260430 | PREHANDOVER fields | pr-1524.md, wave record, scope declaration | ✓ |
 | Version consistency | D1 v1.0.0 | File header + CANON_INVENTORY | CANON_INVENTORY v=1.0.0, canonical_version=1.0.0 | ✓ |
 | Hash consistency | D1 SHA256=16b01bc... | sha256sum result | CANON_INVENTORY file_hash_sha256 | ✓ MATCH |
-| Path consistency | All 15 diff paths | git diff --name-only | pr-1524.md FILES_CHANGED: 15 | ✓ |
+| Path consistency | All 19 diff paths | git diff --name-only | pr-1524.md FILES_CHANGED: 19 | ✓ |
 | Status consistency | final_state: COMPLETE | PREHANDOVER | This ECAP bundle C1 | ✓ |
 | total_canons | 204 | CANON_INVENTORY.json | IAA R2 fix requirement | ✓ VERIFIED |
 
