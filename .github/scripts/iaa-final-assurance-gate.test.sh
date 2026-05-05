@@ -28,6 +28,11 @@
 #   AC-WR-NOPR    Wave record ## TOKEN missing PR/issue fields                      → exit 1
 #   AC-ECAP-NOBUNDLE PREHANDOVER ecap_invoked=true but no ECAP bundle committed     → exit 1
 #   AC-ECAP-NVAL  ecap_required=N/A rejected on protected-path PR                  → exit 1
+#   MMM-IAA-1     product-fix manifest requires_iaa=false — IAA gate waived        → exit 0
+#   MMM-IAA-2     manifest requires_iaa=true — IAA gate still enforces             → exit 1
+#   MMM-IAA-3     manifest requires_iaa=false — bypass fires regardless of paths   → exit 0
+#   MMM-ECAP-1    product-fix manifest requires_ecap=false — ECAP gate waived      → exit 0
+#   MMM-ECAP-2    governance-change manifest requires_ecap=true — gate enforces    → exit 1
 #
 # Usage:
 #   .github/scripts/iaa-final-assurance-gate.test.sh
@@ -539,6 +544,132 @@ EOF
   git commit -q -m "Add prehandover proof with N/A ECAP fields"
 }
 run_test "AC-ECAP-NVAL: ecap_required=N/A rejected on protected-path PR" 1 "$ECAP_GATE_SCRIPT" "setup_ac_nval"
+
+# ================================================================
+# TEST SUITE — MMM Simple PR Admin Model bypass
+# ================================================================
+
+# MMM-IAA-1: .admin/pr.json with requires_iaa: false — IAA gate waived
+# Product-fix PR with no IAA token — should PASS due to manifest bypass
+setup_mmm_iaa_1() {
+  add_impl_file
+  mkdir -p .admin
+  cat > .admin/pr.json << 'EOF'
+{
+  "pr": 9999,
+  "issue": 1530,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": ["modules/mat/src/test.ts"],
+  "risk": "medium",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2"
+}
+EOF
+  git add .admin/pr.json
+  git commit -q -m "Add product-fix manifest with requires_iaa: false"
+}
+run_test "MMM-IAA-1: product-fix manifest requires_iaa=false — IAA gate waived" 0 "$IAA_GATE_SCRIPT" "setup_mmm_iaa_1"
+
+# MMM-IAA-2: .admin/pr.json with requires_iaa: true — IAA gate still enforces
+# Product-fix PR with requires_iaa: true but no token — should FAIL
+setup_mmm_iaa_2() {
+  add_impl_file
+  mkdir -p .admin
+  cat > .admin/pr.json << 'EOF'
+{
+  "pr": 9999,
+  "issue": 1530,
+  "type": "database-migration",
+  "owner": "Copilot",
+  "scope": ["modules/mat/src/test.ts"],
+  "risk": "high",
+  "requires_iaa": true,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2"
+}
+EOF
+  git add .admin/pr.json
+  git commit -q -m "Add database-migration manifest with requires_iaa: true"
+}
+run_test "MMM-IAA-2: manifest requires_iaa=true — IAA gate still enforces" 1 "$IAA_GATE_SCRIPT" "setup_mmm_iaa_2"
+
+# MMM-IAA-3: .admin/pr.json with requires_iaa: false — governance-protected path
+# When requires_iaa: false is declared and a governance path changed, the bypass
+# still fires (validate-simple-pr-admin.sh prevents this case at manifest-level,
+# but the IAA gate itself respects the manifest declaration).
+setup_mmm_iaa_3() {
+  add_governance_file
+  mkdir -p .admin
+  cat > .admin/pr.json << 'EOF'
+{
+  "pr": 9999,
+  "issue": 1530,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": ["governance/canon/SOME_DOC.md"],
+  "risk": "medium",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2"
+}
+EOF
+  git add .admin/pr.json
+  git commit -q -m "Add manifest with requires_iaa: false"
+}
+run_test "MMM-IAA-3: manifest requires_iaa=false — bypass fires regardless of changed paths" 0 "$IAA_GATE_SCRIPT" "setup_mmm_iaa_3"
+
+# MMM-ECAP-1: .admin/pr.json with requires_ecap: false — ECAP gate waived
+# Protected-path PR (governance canon changed) but manifest says requires_ecap: false
+setup_mmm_ecap_1() {
+  add_governance_file
+  mkdir -p .admin
+  cat > .admin/pr.json << 'EOF'
+{
+  "pr": 9999,
+  "issue": 1530,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": ["governance/canon/SOME_DOC.md"],
+  "risk": "medium",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2"
+}
+EOF
+  git add .admin/pr.json
+  git commit -q -m "Add product-fix manifest with requires_ecap: false"
+}
+run_test "MMM-ECAP-1: product-fix manifest requires_ecap=false — ECAP gate waived" 0 "$ECAP_GATE_SCRIPT" "setup_mmm_ecap_1"
+
+# MMM-ECAP-2: .admin/pr.json with requires_ecap: true — ECAP gate still enforces
+# Protected-path PR with requires_ecap: true and no ECAP evidence — should FAIL
+setup_mmm_ecap_2() {
+  add_governance_file
+  mkdir -p .admin
+  cat > .admin/pr.json << 'EOF'
+{
+  "pr": 9999,
+  "issue": 1530,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": ["governance/canon/SOME_DOC.md"],
+  "risk": "high",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2"
+}
+EOF
+  git add .admin/pr.json
+  git commit -q -m "Add governance-change manifest with requires_ecap: true"
+}
+run_test "MMM-ECAP-2: governance-change manifest requires_ecap=true — ECAP gate still enforces" 1 "$ECAP_GATE_SCRIPT" "setup_mmm_ecap_2"
 
 # ================================================================
 # Cleanup

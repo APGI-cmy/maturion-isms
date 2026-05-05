@@ -218,6 +218,28 @@ jobs:
           echo "Violation class: HALT-008 (prebrief_or_wavetasks_absent)"
           echo ""
 
+          # ----------------------------------------------------------------
+          # MMM Simple PR Admin Model bypass — requires_iaa: false
+          # Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.1.0
+          # ----------------------------------------------------------------
+          if [ -f ".admin/pr.json" ] && command -v python3 >/dev/null 2>&1; then
+            ADMIN_REQUIRES_IAA=$(python3 -c "
+import json, sys
+try:
+    m = json.load(open('.admin/pr.json'))
+    v = m.get('requires_iaa')
+    print('false' if v is False else 'true')
+except Exception:
+    print('invalid')
+" 2>/dev/null || echo "invalid")
+            if [ "$ADMIN_REQUIRES_IAA" = "false" ]; then
+              echo "✅ PASS — .admin/pr.json declares requires_iaa: false."
+              echo "   IAA pre-brief gate waived per MMM Simple PR Admin Model."
+              echo "   Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md §CI gate integration"
+              exit 0
+            fi
+          fi
+
           FAIL=false
 
           # ----------------------------------------------------------------
@@ -339,6 +361,28 @@ jobs:
           echo "Authority: IAA_PRE_BRIEF_PROTOCOL.md v1.2.0 §IAA Token Self-Certification Guard"
           echo ""
 
+          # ----------------------------------------------------------------
+          # MMM Simple PR Admin Model bypass — requires_iaa: false
+          # Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.1.0
+          # ----------------------------------------------------------------
+          if [ -f ".admin/pr.json" ] && command -v python3 >/dev/null 2>&1; then
+            ADMIN_REQUIRES_IAA=$(python3 -c "
+import json, sys
+try:
+    m = json.load(open('.admin/pr.json'))
+    v = m.get('requires_iaa')
+    print('false' if v is False else 'true')
+except Exception:
+    print('invalid')
+" 2>/dev/null || echo "invalid")
+            if [ "$ADMIN_REQUIRES_IAA" = "false" ]; then
+              echo "✅ PASS — .admin/pr.json declares requires_iaa: false."
+              echo "   IAA token self-certification gate waived per MMM Simple PR Admin Model."
+              echo "   Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md §CI gate integration"
+              exit 0
+            fi
+          fi
+
           ASSURANCE_DIR=".agent-admin/assurance"
           BASE_SHA="${{ github.event.pull_request.base.sha }}"
 
@@ -429,6 +473,30 @@ jobs:
           echo "Anti-pattern: AAP-20 (execution-ceremony-admin-anti-patterns.md v1.3.0)"
           echo "IAA trigger: ACR-14 (INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.8.0)"
           echo ""
+
+          # ----------------------------------------------------------------
+          # MMM Simple PR Admin Model bypass — requires_iaa: false
+          # Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.1.0
+          # PREHANDOVER proofs are part of the IAA ceremony. When requires_iaa
+          # is false, the HFMC-01 ripple presence gate is waived.
+          # ----------------------------------------------------------------
+          if [ -f ".admin/pr.json" ] && command -v python3 >/dev/null 2>&1; then
+            ADMIN_REQUIRES_IAA=$(python3 -c "
+import json, sys
+try:
+    m = json.load(open('.admin/pr.json'))
+    v = m.get('requires_iaa')
+    print('false' if v is False else 'true')
+except Exception:
+    print('invalid')
+" 2>/dev/null || echo "invalid")
+            if [ "$ADMIN_REQUIRES_IAA" = "false" ]; then
+              echo "✅ PASS — .admin/pr.json declares requires_iaa: false."
+              echo "   HFMC-01 ripple presence gate waived per MMM Simple PR Admin Model."
+              echo "   Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md §CI gate integration"
+              exit 0
+            fi
+          fi
 
           PROOF_DIR=".agent-admin/prehandover"
           FAIL=false
