@@ -223,15 +223,7 @@ jobs:
           # Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.1.0
           # ----------------------------------------------------------------
           if [ -f ".admin/pr.json" ] && command -v python3 >/dev/null 2>&1; then
-            ADMIN_REQUIRES_IAA=$(python3 -c "
-import json, sys
-try:
-    m = json.load(open('.admin/pr.json'))
-    v = m.get('requires_iaa')
-    print('false' if v is False else 'true')
-except Exception:
-    print('invalid')
-" 2>/dev/null || echo "invalid")
+            ADMIN_REQUIRES_IAA=$(python3 -c "import json; m=json.load(open('.admin/pr.json')); v=m.get('requires_iaa'); print('false' if v is False else 'true')" 2>/dev/null || echo "invalid")
             if [ "$ADMIN_REQUIRES_IAA" = "false" ]; then
               echo "✅ PASS — .admin/pr.json declares requires_iaa: false."
               echo "   IAA pre-brief gate waived per MMM Simple PR Admin Model."
@@ -366,15 +358,7 @@ except Exception:
           # Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.1.0
           # ----------------------------------------------------------------
           if [ -f ".admin/pr.json" ] && command -v python3 >/dev/null 2>&1; then
-            ADMIN_REQUIRES_IAA=$(python3 -c "
-import json, sys
-try:
-    m = json.load(open('.admin/pr.json'))
-    v = m.get('requires_iaa')
-    print('false' if v is False else 'true')
-except Exception:
-    print('invalid')
-" 2>/dev/null || echo "invalid")
+            ADMIN_REQUIRES_IAA=$(python3 -c "import json; m=json.load(open('.admin/pr.json')); v=m.get('requires_iaa'); print('false' if v is False else 'true')" 2>/dev/null || echo "invalid")
             if [ "$ADMIN_REQUIRES_IAA" = "false" ]; then
               echo "✅ PASS — .admin/pr.json declares requires_iaa: false."
               echo "   IAA token self-certification gate waived per MMM Simple PR Admin Model."
@@ -481,15 +465,7 @@ except Exception:
           # is false, the HFMC-01 ripple presence gate is waived.
           # ----------------------------------------------------------------
           if [ -f ".admin/pr.json" ] && command -v python3 >/dev/null 2>&1; then
-            ADMIN_REQUIRES_IAA=$(python3 -c "
-import json, sys
-try:
-    m = json.load(open('.admin/pr.json'))
-    v = m.get('requires_iaa')
-    print('false' if v is False else 'true')
-except Exception:
-    print('invalid')
-" 2>/dev/null || echo "invalid")
+            ADMIN_REQUIRES_IAA=$(python3 -c "import json; m=json.load(open('.admin/pr.json')); v=m.get('requires_iaa'); print('false' if v is False else 'true')" 2>/dev/null || echo "invalid")
             if [ "$ADMIN_REQUIRES_IAA" = "false" ]; then
               echo "✅ PASS — .admin/pr.json declares requires_iaa: false."
               echo "   HFMC-01 ripple presence gate waived per MMM Simple PR Admin Model."
