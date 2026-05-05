@@ -17,6 +17,10 @@
 #   T11  Changed file outside declared scope                   → exit 1
 #   T12  Valid product-fix manifest with in-scope file         → exit 0
 #   T13  Valid governance-change with both flags true          → exit 0
+#   T14  governance-control file changed + product-fix + flags false → exit 1
+#   T15  governance-control file changed + flags true          → exit 0
+#   T16  non-governance product file changed + flags false     → exit 0
+#   T17  evidence_required is empty list                       → exit 1
 #
 # Usage:
 #   .github/scripts/validate-simple-pr-admin.test.sh
@@ -377,6 +381,129 @@ EOF
     git commit -q -m "Add valid governance-change manifest"
 }
 run_test "T13 — Valid governance-change with requires_iaa=true and requires_ecap=true" 0 "setup_t13"
+
+# ================================================================
+# T14: governance-control file changed + type=product-fix + flags false → exit 1
+# Regression: the path-based check must fire even when declared type
+# is product-fix (not governance-change/agent-contract-change).
+# ================================================================
+setup_t14() {
+    # Commit a file under .github/workflows/ (governance-control path)
+    mkdir -p .github/workflows
+    echo "name: gate" > .github/workflows/some-gate.yml
+    git add .github/workflows/some-gate.yml
+    git commit -q -m "Change governance-control workflow"
+
+    # Manifest declares type=product-fix and flags=false — should fail CHECK 8
+    mkdir -p .admin
+    cat > .admin/pr.json << 'EOF'
+{
+  "pr": 1531,
+  "issue": 1519,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": [".github/workflows/some-gate.yml"],
+  "risk": "medium",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2"
+}
+EOF
+    git add .admin/pr.json
+    git commit -q -m "Add manifest with governance file but flags false"
+}
+run_test "T14 — governance-control file changed + product-fix + flags false" 1 "setup_t14"
+
+# ================================================================
+# T15: governance-control file changed + flags true → exit 0
+# Regression: when flags are correctly set to true the path-based
+# check must pass, regardless of declared type.
+# ================================================================
+setup_t15() {
+    # Commit a file under .github/scripts/ (governance-control path)
+    mkdir -p .github/scripts
+    echo "# script" > .github/scripts/some-validator.sh
+    git add .github/scripts/some-validator.sh
+    git commit -q -m "Change governance-control script"
+
+    # Manifest declares type=product-fix but flags=true — should pass CHECK 8
+    mkdir -p .admin
+    cat > .admin/pr.json << 'EOF'
+{
+  "pr": 1531,
+  "issue": 1519,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": [".github/scripts/some-validator.sh"],
+  "risk": "high",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2"
+}
+EOF
+    git add .admin/pr.json
+    git commit -q -m "Add manifest with governance file and flags true"
+}
+run_test "T15 — governance-control file changed + flags true" 0 "setup_t15"
+
+# ================================================================
+# T16: non-governance product file changed + product-fix + flags false → exit 0
+# Regression: governance-control flag check must NOT fire when only
+# product/app files are changed.
+# ================================================================
+setup_t16() {
+    # Commit a file under apps/mmm/ (not a governance-control path)
+    mkdir -p apps/mmm/src
+    echo "const y = 2;" > apps/mmm/src/SomePage.tsx
+    git add apps/mmm/src/SomePage.tsx
+    git commit -q -m "Change non-governance product file"
+
+    # Manifest declares type=product-fix and flags=false — should pass CHECK 8
+    mkdir -p .admin
+    cat > .admin/pr.json << 'EOF'
+{
+  "pr": 1531,
+  "issue": 1519,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": ["apps/mmm/src/SomePage.tsx"],
+  "risk": "low",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2"
+}
+EOF
+    git add .admin/pr.json
+    git commit -q -m "Add manifest for non-governance product change"
+}
+run_test "T16 — non-governance product file changed + product-fix + flags false" 0 "setup_t16"
+
+# ================================================================
+# T17: evidence_required is empty list → exit 1
+# ================================================================
+setup_t17() {
+    mkdir -p .admin
+    cat > .admin/pr.json << 'EOF'
+{
+  "pr": 1531,
+  "issue": 1519,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": ["apps/mmm/src/DashboardPage.tsx"],
+  "risk": "medium",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": [],
+  "merge_authority": "CS2"
+}
+EOF
+    git add .admin/pr.json
+    git commit -q -m "Add manifest with empty evidence_required"
+}
+run_test "T17 — evidence_required is empty list" 1 "setup_t17"
 
 # ----------------------------------------------------------------
 # Cleanup
