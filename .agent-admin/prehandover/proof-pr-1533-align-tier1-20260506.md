@@ -258,7 +258,7 @@ All ceremony artifacts staged and committed before IAA invocation: ✅
 
 ## Environment Parity
 
-Governance-only PR — no runtime environment dependencies. No Node version, env vars, schema/migration state, or environment-specific flags are relevant to these 7 changed files (Tier 1 agent contracts + governance artifacts).
+Governance-only PR — no runtime environment dependencies. No Node version, env vars, schema/migration state, or environment-specific flags are relevant to these 14 changed files (Tier 1 agent contracts + governance artifacts).
 
 **Environment Parity Verdict: PASS (N/A — governance-only)**
 
