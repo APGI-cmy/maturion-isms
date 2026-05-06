@@ -1,17 +1,18 @@
 # MMM Simple PR Admin Model
 
-**Version**: 1.1.0  
+**Version**: 1.2.0  
 **Authority**: APGI-cmy/maturion-foreman-governance#1361 — Simplify MMM governance: replace legacy ceremony with single PR admin manifest  
 **Status**: ACTIVE  
 **Effective Date**: 2026-05-04  
 **Amended**: 2026-05-05 — v1.1.0: CI gate integration section added (maturion-isms#1531)  
+**Amended**: 2026-05-06 — v1.2.0: migrate to per-PR manifests to eliminate concurrent-PR conflicts (maturion-isms#1544)  
 **Reference Failure Case**: `maturion-isms` PR #1515 — closed unmerged after a fix/fail governance loop
 
 ---
 
 ## Purpose
 
-Replace repeated markdown ceremony and brittle PR-body parsing with a **single machine-readable PR admin manifest** (`**.admin/pr.json**`) and one simple validator.
+Replace repeated markdown ceremony and brittle PR-body parsing with a **single machine-readable per-PR admin manifest** (`**.admin/prs/pr-<N>.json**`) and one simple validator.
 
 The current MMM governance/admin model became too complex, self-referential, and fragile. Agents repeatedly failed simple admin jobs because the system had too many duplicated sources of truth. This model resets that.
 
@@ -53,9 +54,15 @@ The following sources duplicated the same facts across multiple files, creating 
 
 ---
 
-## Manifest: `.admin/pr.json`
+## Manifest: `.admin/prs/pr-<N>.json`
 
-Every governed PR in the MMM context MUST have exactly one admin manifest at `.admin/pr.json`.
+Every governed PR in the MMM context MUST have exactly one admin manifest at `.admin/prs/pr-<N>.json`, where `<N>` is the PR number.
+
+**Why per-PR manifests?** Placing all manifests under a single root file (`.admin/pr.json`) caused concurrent PRs to conflict on that file — the same class of failure previously fixed for scope declarations. Per-PR manifests eliminate this: each PR owns its own file and concurrent PRs never conflict.
+
+**Legacy fallback**: During migration only, `.admin/pr.json` is accepted as a fallback when no per-PR manifest exists. New and refreshed PRs MUST use `.admin/prs/pr-<N>.json`. The legacy path will be retired after migration is complete.
+
+**Conflict rule**: A PR MUST NOT have both `.admin/prs/pr-<N>.json` and `.admin/pr.json` referencing the same PR number. The validator will reject this as a MANIFEST-CONFLICT.
 
 ### Schema
 
@@ -106,6 +113,8 @@ Every governed PR in the MMM context MUST have exactly one admin manifest at `.a
 
 ### Product fix
 
+File: `.admin/prs/pr-1525.json`
+
 ```json
 {
   "pr": 1525,
@@ -129,6 +138,8 @@ Every governed PR in the MMM context MUST have exactly one admin manifest at `.a
 ```
 
 ### Governance-control change
+
+File: `.admin/prs/pr-1526.json`
 
 ```json
 {
@@ -155,9 +166,9 @@ Every governed PR in the MMM context MUST have exactly one admin manifest at `.a
 
 ## Policy decisions
 
-### 1. Single source of truth
+### 1. Single source of truth (per-PR)
 
-`.admin/pr.json` is authoritative for:
+`.admin/prs/pr-<N>.json` is authoritative for:
 
 - PR number
 - Governing issue
@@ -170,9 +181,11 @@ Every governed PR in the MMM context MUST have exactly one admin manifest at `.a
 
 **No required gate may derive these facts from the PR body prose.**
 
+Each PR is its own source of truth. Concurrent PRs each carry their own manifest — no shared file, no conflicts.
+
 ### 2. Legacy ceremony freeze for MMM product-fix PRs
 
-For MMM `product-fix` PRs, the following legacy ceremony artifacts are **frozen** — they are not required as merge evidence unless explicitly listed in `.admin/pr.json`:
+For MMM `product-fix` PRs, the following legacy ceremony artifacts are **frozen** — they are not required as merge evidence unless explicitly listed in the PR manifest:
 
 - IAA wave records
 - ECAP bundles
@@ -185,7 +198,7 @@ These may remain as historical artifacts but new MMM product-fix PRs do not need
 
 ### 3. IAA/ECAP only for high-risk classes
 
-The `requires_iaa` and `requires_ecap` fields in `.admin/pr.json` are the only authoritative signals. The default values (from the type table above) are a starting point — the manifest overrides them.
+The `requires_iaa` and `requires_ecap` fields in the PR manifest are the only authoritative signals. The default values (from the type table above) are a starting point — the manifest overrides them.
 
 ### 4. Stop-loss rule
 
@@ -197,11 +210,13 @@ If a governance PR fails more than 3 fix cycles after first review, close it and
 
 The validator script `.github/scripts/validate-simple-pr-admin.sh`:
 
-- Fails if `.admin/pr.json` is missing
+- Resolves the active manifest: `.admin/prs/pr-${PR_NUMBER}.json` first; falls back to `.admin/pr.json` (legacy, migration period only)
+- Fails if no manifest is found
+- Fails if both per-PR and legacy manifests exist for the same PR (MANIFEST-CONFLICT)
 - Validates all required JSON fields exist
 - Validates `issue` is a number
 - Validates `scope` is a non-empty list
-- Validates changed files are within the declared scope
+- Validates changed files are within the declared scope (the active manifest path itself is always implicitly permitted)
 - Validates `type` is one of the accepted values
 - Validates `risk` is one of `low`, `medium`, `high`
 - Fails if governance-control files are changed and `requires_iaa`/`requires_ecap` are not `true`
@@ -217,13 +232,25 @@ The validator does **not**:
 
 ## Scope of this model
 
-This model applies to PRs in the MMM governance/product recovery context. It does not replace the broader governance system. After this model is stable, MMM product-fix PRs will migrate to `.admin/pr.json` and resume MMM app recovery work.
+This model applies to PRs in the MMM governance/product recovery context. It does not replace the broader governance system.
+
+---
+
+## Migration rule (v1.1.0 → v1.2.0)
+
+For existing open PRs that still use `.admin/pr.json`:
+
+- The legacy path is accepted as a fallback during migration
+- New or refreshed PRs MUST use `.admin/prs/pr-<N>.json`
+- After all active PRs have migrated, remove `.admin/pr.json` from the repository
+
+This mirrors the fix previously applied to scope declarations (single `SCOPE_DECLARATION.md` → per-PR files).
 
 ---
 
 ## CI gate integration
 
-The following CI gates read `.admin/pr.json` and skip or downgrade their checks when the manifest declares the relevant ceremony as not required. This is the authoritative bypass mechanism — no other bypass (e.g. label-based) is needed for MMM product-fix PRs.
+The following CI gates resolve the active manifest (`PR_NUMBER`-specific first, legacy fallback) and skip or downgrade their checks when the manifest declares the relevant ceremony as not required. This is the authoritative bypass mechanism — no other bypass (e.g. label-based) is needed for MMM product-fix PRs.
 
 | CI gate | Bypass condition | Notes on preserved enforcement |
 |---|---|---|
@@ -232,6 +259,7 @@ The following CI gates read `.admin/pr.json` and skip or downgrade their checks 
 | `preflight/iaa-prebrief-existence` (workflow inline) | `requires_iaa: false` | wave-current-tasks.md and iaa-wave-record pre-brief checks still run when `requires_iaa: true` |
 | `preflight/iaa-token-self-certification` (workflow inline) | `requires_iaa: false` | PHASE_B_BLOCKING_TOKEN and PHASE_A_ADVISORY checks still run when `requires_iaa: true` |
 | `preflight/hfmc-ripple-presence` (workflow inline) | `requires_iaa: false` | Ripple/Cross-Agent Assessment section presence check still runs when `requires_iaa: true` |
+| `preflight/mmm-pr-admin` (workflow inline) | manifest absent | Passes PR_NUMBER to validator; checks per-PR path first, then legacy |
 
 **Stronger controls preserved**: `validate-simple-pr-admin.sh` (CHECK 8) requires `requires_iaa: true` and `requires_ecap: true` for `governance-change`, `agent-contract-change`, and any PR that changes governance-control paths (`.github/workflows/`, `.github/scripts/`, `.github/agents/`, `governance/`, `.agent-admin/`). This means the bypass cannot be self-certified for high-risk PR types.
 

@@ -1,10 +1,14 @@
 #!/bin/bash
 # validate-simple-pr-admin.sh
-# Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.0.0
-# Purpose: Validates .admin/pr.json against the MMM Simple PR Admin Model
+# Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.2.0
+# Purpose: Validates the MMM PR admin manifest against the MMM Simple PR Admin Model
+#
+# Manifest resolution order (v1.2.0):
+#   1. .admin/prs/pr-${PR_NUMBER}.json  (preferred — per-PR manifest)
+#   2. .admin/pr.json                   (legacy fallback — migration period only)
 #
 # Checks performed:
-#   1. .admin/pr.json exists
+#   1. Manifest found (per-PR or legacy); fail if both exist for same PR (MANIFEST-CONFLICT)
 #   2. All required fields are present (pr, issue, type, owner, scope, risk,
 #      requires_iaa, requires_ecap, evidence_required, merge_authority)
 #   3. issue is a number
@@ -17,11 +21,15 @@
 #      file matching .github/workflows/**, .github/scripts/**, .github/agents/**,
 #      governance/**, or .agent-admin/** requires both flags to be true
 #   9. All files changed in git diff are within the declared scope array
-#      (.admin/pr.json itself is always implicitly permitted)
+#      (the active manifest path itself is always implicitly permitted)
 #  10. evidence_required is a non-empty list
 #
 # Usage:
-#   .github/scripts/validate-simple-pr-admin.sh
+#   PR_NUMBER=1545 .github/scripts/validate-simple-pr-admin.sh
+#   .github/scripts/validate-simple-pr-admin.sh   # PR_NUMBER optional; legacy fallback used
+#
+# Environment variables:
+#   PR_NUMBER   PR number — used to locate .admin/prs/pr-${PR_NUMBER}.json
 #
 # Exit codes:
 #   0 = PASS
@@ -29,20 +37,69 @@
 
 set -euo pipefail
 
-MANIFEST=".admin/pr.json"
 ERRORS=0
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  MMM Simple PR Admin Model Validator"
-echo "  Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.0.0"
+echo "  Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.2.0"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# ── CHECK 1: Manifest existence ───────────────────────────────────────────────
+# ── MANIFEST RESOLUTION ───────────────────────────────────────────────────────
+# Preferred: .admin/prs/pr-${PR_NUMBER}.json
+# Legacy fallback: .admin/pr.json (migration period only)
+PER_PR_MANIFEST=""
+LEGACY_MANIFEST=".admin/pr.json"
+
+if [ -n "${PR_NUMBER:-}" ]; then
+  PER_PR_MANIFEST=".admin/prs/pr-${PR_NUMBER}.json"
+fi
+
+MANIFEST=""
+MANIFEST_CONFLICT=false
+
+if [ -n "$PER_PR_MANIFEST" ] && [ -f "$PER_PR_MANIFEST" ]; then
+  # Per-PR manifest found — check for conflict with legacy
+  if [ -f "$LEGACY_MANIFEST" ]; then
+    # Conflict if legacy manifest is also for the same PR number
+    LEGACY_PR_NUM=$(python3 -c "
+import json, sys
+try:
+    m = json.load(open('${LEGACY_MANIFEST}'))
+    print(str(m.get('pr', '')))
+except Exception:
+    print('')
+" 2>/dev/null || echo "")
+    if [ "$LEGACY_PR_NUM" = "$PR_NUMBER" ]; then
+      MANIFEST_CONFLICT=true
+    fi
+  fi
+  MANIFEST="$PER_PR_MANIFEST"
+elif [ -f "$LEGACY_MANIFEST" ]; then
+  MANIFEST="$LEGACY_MANIFEST"
+  echo "ℹ️  Using legacy manifest: $LEGACY_MANIFEST"
+  if [ -n "${PR_NUMBER:-}" ]; then
+    echo "   Migrate to: .admin/prs/pr-${PR_NUMBER}.json"
+    echo "   See governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md §Migration"
+  fi
+  echo ""
+fi
+
+# ── CHECK 1: Manifest existence and conflict ──────────────────────────────────
 echo "── CHECK 1: MANIFEST-EXISTS ──"
-if [ ! -f "$MANIFEST" ]; then
-  echo "❌ ERROR: $MANIFEST not found."
-  echo "   Every governed MMM PR must include .admin/pr.json."
+if [ "$MANIFEST_CONFLICT" = "true" ]; then
+  echo "❌ ERROR: MANIFEST-CONFLICT — both $PER_PR_MANIFEST and $LEGACY_MANIFEST exist for PR ${PR_NUMBER}."
+  echo "   Remove .admin/pr.json when using a per-PR manifest."
+  echo "   See governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md §Migration"
+  exit 1
+fi
+if [ -z "$MANIFEST" ]; then
+  echo "❌ ERROR: No manifest found."
+  if [ -n "${PR_NUMBER:-}" ]; then
+    echo "   Expected at: .admin/prs/pr-${PR_NUMBER}.json"
+  fi
+  echo "   Legacy path: $LEGACY_MANIFEST"
+  echo "   Every governed MMM PR must include a manifest."
   echo "   See governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md §Manifest"
   exit 1
 fi
@@ -65,10 +122,9 @@ fi
 
 # ── CHECK 2: Required fields ──────────────────────────────────────────────────
 echo "── CHECK 2: REQUIRED-FIELDS ──"
-REQUIRED_FIELDS='["pr","issue","type","owner","scope","risk","requires_iaa","requires_ecap","evidence_required","merge_authority"]'
-MISSING=$(python3 - <<'PYEOF'
-import json, sys
-manifest = json.load(open(".admin/pr.json"))
+MISSING=$(MANIFEST_PATH="$MANIFEST" python3 - <<'PYEOF'
+import json, sys, os
+manifest = json.load(open(os.environ['MANIFEST_PATH']))
 required = ["pr","issue","type","owner","scope","risk","requires_iaa","requires_ecap","evidence_required","merge_authority"]
 missing = [f for f in required if f not in manifest]
 print(",".join(missing))
@@ -84,9 +140,9 @@ echo ""
 
 # ── CHECK 3: issue is a number ────────────────────────────────────────────────
 echo "── CHECK 3: ISSUE-IS-NUMBER ──"
-ISSUE_CHECK=$(python3 - <<'PYEOF'
-import json
-manifest = json.load(open(".admin/pr.json"))
+ISSUE_CHECK=$(MANIFEST_PATH="$MANIFEST" python3 - <<'PYEOF'
+import json, os
+manifest = json.load(open(os.environ['MANIFEST_PATH']))
 issue = manifest.get("issue", "MISSING")
 if not isinstance(issue, int):
     print("FAIL: issue must be a number, got: " + repr(issue))
@@ -104,9 +160,9 @@ echo ""
 
 # ── CHECK 4: scope is a non-empty list ───────────────────────────────────────
 echo "── CHECK 4: SCOPE-NON-EMPTY ──"
-SCOPE_CHECK=$(python3 - <<'PYEOF'
-import json
-manifest = json.load(open(".admin/pr.json"))
+SCOPE_CHECK=$(MANIFEST_PATH="$MANIFEST" python3 - <<'PYEOF'
+import json, os
+manifest = json.load(open(os.environ['MANIFEST_PATH']))
 scope = manifest.get("scope", None)
 if scope is None:
     print("FAIL: scope field missing")
@@ -131,9 +187,9 @@ echo ""
 #   governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md §"Accepted PR types"
 echo "── CHECK 5: TYPE-VALID ──"
 ACCEPTED_TYPES="product-fix test-only deployment-change database-migration governance-change agent-contract-change"
-TYPE_CHECK=$(python3 - <<PYEOF
-import json
-manifest = json.load(open(".admin/pr.json"))
+TYPE_CHECK=$(MANIFEST_PATH="$MANIFEST" python3 - <<PYEOF
+import json, os
+manifest = json.load(open(os.environ['MANIFEST_PATH']))
 pr_type = manifest.get("type", "MISSING")
 accepted = "$ACCEPTED_TYPES".split()
 if pr_type not in accepted:
@@ -152,9 +208,9 @@ echo ""
 
 # ── CHECK 6: risk is one of low/medium/high ───────────────────────────────────
 echo "── CHECK 6: RISK-VALID ──"
-RISK_CHECK=$(python3 - <<'PYEOF'
-import json
-manifest = json.load(open(".admin/pr.json"))
+RISK_CHECK=$(MANIFEST_PATH="$MANIFEST" python3 - <<'PYEOF'
+import json, os
+manifest = json.load(open(os.environ['MANIFEST_PATH']))
 risk = manifest.get("risk", "MISSING")
 if risk not in ["low", "medium", "high"]:
     print("FAIL: risk '" + str(risk) + "' must be one of: low, medium, high")
@@ -172,9 +228,9 @@ echo ""
 
 # ── CHECK 7: merge_authority is CS2 ──────────────────────────────────────────
 echo "── CHECK 7: MERGE-AUTHORITY ──"
-MA_CHECK=$(python3 - <<'PYEOF'
-import json
-manifest = json.load(open(".admin/pr.json"))
+MA_CHECK=$(MANIFEST_PATH="$MANIFEST" python3 - <<'PYEOF'
+import json, os
+manifest = json.load(open(os.environ['MANIFEST_PATH']))
 ma = manifest.get("merge_authority", "MISSING")
 if ma != "CS2":
     print("FAIL: merge_authority must be 'CS2', got: " + repr(ma))
@@ -205,9 +261,9 @@ fi
 #   .github/workflows/   .github/scripts/   .github/agents/
 #   governance/          .agent-admin/
 echo "── CHECK 8: GOVERNANCE-CONTROL-FLAGS ──"
-GOV_CHECK=$(CHANGED_FILES_STR="$GIT_CHANGED" python3 - <<'PYEOF'
+GOV_CHECK=$(MANIFEST_PATH="$MANIFEST" CHANGED_FILES_STR="$GIT_CHANGED" python3 - <<'PYEOF'
 import json, os
-manifest = json.load(open(".admin/pr.json"))
+manifest = json.load(open(os.environ['MANIFEST_PATH']))
 pr_type = manifest.get("type", "")
 requires_iaa = manifest.get("requires_iaa", None)
 requires_ecap = manifest.get("requires_ecap", None)
@@ -267,17 +323,17 @@ echo ""
 # ── CHECK 9: Changed files are within the declared scope ─────────────────────
 echo "── CHECK 9: SCOPE-TO-DIFF ──"
 # GIT_CHANGED already computed above (shared with CHECK 8).
-# Exclude .admin/pr.json itself — it is always implicitly permitted.
+# The active manifest path itself is always implicitly permitted.
 
 if [ -z "$GIT_CHANGED" ]; then
   echo "ℹ️  No git diff available (no main/origin-main ref found) — scope-to-diff check skipped."
 else
-  SCOPE_DIFF_CHECK=$(CHANGED_FILES_STR="$GIT_CHANGED" python3 - <<'PYEOF'
+  SCOPE_DIFF_CHECK=$(MANIFEST_PATH="$MANIFEST" CHANGED_FILES_STR="$GIT_CHANGED" python3 - <<'PYEOF'
 import json, os
-manifest = json.load(open(".admin/pr.json"))
+manifest = json.load(open(os.environ['MANIFEST_PATH']))
 scope_set = set(manifest.get("scope", []))
-# The manifest itself is always implicitly permitted
-excluded = {".admin/pr.json"}
+# The active manifest itself is always implicitly permitted
+excluded = {os.environ['MANIFEST_PATH']}
 raw = os.environ.get("CHANGED_FILES_STR", "").strip()
 changed_files = [f.strip() for f in raw.splitlines() if f.strip() and f.strip() not in excluded]
 out_of_scope = [f for f in changed_files if f not in scope_set]
@@ -290,7 +346,7 @@ PYEOF
   )
   if [[ "$SCOPE_DIFF_CHECK" != PASS* ]]; then
     echo "❌ ERROR: $SCOPE_DIFF_CHECK"
-    echo "   Declared scope: $(python3 -c "import json; m=json.load(open('$MANIFEST')); print(', '.join(m.get('scope', [])))")"
+    echo "   Declared scope: $(MANIFEST_PATH="$MANIFEST" python3 -c "import json,os; m=json.load(open(os.environ['MANIFEST_PATH'])); print(', '.join(m.get('scope', [])))")"
     echo "   See governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md §Manifest"
     ERRORS=$((ERRORS + 1))
   else
@@ -301,9 +357,9 @@ echo ""
 
 # ── CHECK 10: evidence_required is a non-empty list ──────────────────────────
 echo "── CHECK 10: EVIDENCE-REQUIRED-NON-EMPTY ──"
-EVID_CHECK=$(python3 - <<'PYEOF'
-import json
-manifest = json.load(open(".admin/pr.json"))
+EVID_CHECK=$(MANIFEST_PATH="$MANIFEST" python3 - <<'PYEOF'
+import json, os
+manifest = json.load(open(os.environ['MANIFEST_PATH']))
 evidence = manifest.get("evidence_required", None)
 if evidence is None:
     print("FAIL: evidence_required field missing")
@@ -326,12 +382,12 @@ echo ""
 # ── SUMMARY ──────────────────────────────────────────────────────────────────
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 if [ "$ERRORS" -eq 0 ]; then
-  echo "✅ PASS — .admin/pr.json is valid."
-  echo "   Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.0.0"
+  echo "✅ PASS — $MANIFEST is valid."
+  echo "   Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.2.0"
   exit 0
 else
-  echo "❌ FAIL — $ERRORS error(s) found in .admin/pr.json."
+  echo "❌ FAIL — $ERRORS error(s) found in $MANIFEST."
   echo "   Fix all errors above before merging."
-  echo "   Reference: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.0.0"
+  echo "   Reference: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.2.0"
   exit 1
 fi

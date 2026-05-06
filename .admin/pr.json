@@ -1,24 +1,36 @@
 {
-  "pr": 1547,
-  "issue": 1546,
-  "type": "deployment-change",
+  "pr": 1541,
+  "issue": 1540,
+  "type": "governance-change",
   "owner": "Copilot",
   "scope": [
     ".admin/pr.json",
-    ".agent-admin/scope-declarations/pr-1547.md",
-    "apps/mmm/vercel.json",
-    ".github/workflows/deploy-mmm-vercel.yml"
+    ".agent-admin/assurance/iaa-wave-record-pit-stage1-cs2-approval-stage2-initiation-20260506.md",
+    ".agent-admin/evidence/app-description-checklist/pit-20260506.md",
+    ".agent-admin/scope-declarations/pr-1541.md",
+    ".agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md",
+    ".agent-workspace/foreman-v2/memory/PREHANDOVER-pit-stage1-cs2-approval-stage2-initiation-20260506.md",
+    ".agent-workspace/foreman-v2/memory/session-pit-stage1-cs2-approval-stage2-initiation-20260506.md",
+    ".agent-workspace/foreman-v2/parking-station/suggestions-log.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    "docs/governance/PIT_APP_DESCRIPTION.md",
+    "modules/pit/00-app-description/app-description.md",
+    "modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md"
   ],
   "risk": "medium",
   "requires_iaa": true,
   "requires_ecap": true,
   "evidence_required": [
-    "Vercel project root confirmed as apps/mmm",
-    "apps/mmm/vercel.json exists with SPA catch-all rewrite to /index.html",
-    "Production .vercel/output/config.json contains /index.html SPA fallback before deploy",
-    "Direct /dashboard route no longer returns Vercel 404",
-    "Direct /frameworks route no longer returns Vercel 404",
-    "Direct /frameworks/upload route no longer returns Vercel 404"
+    "docs/governance/PIT_APP_DESCRIPTION.md Status is Authoritative, Approval Status is Approved by CS2/Johan Ras 2026-05-06",
+    "modules/pit/00-app-description/app-description.md Status is Authoritative (synchronised with canonical)",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md Stage 1 status is CS2_APPROVED_AUTHORITATIVE",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md Stage 2 status is ACTIVE — INITIATED",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md Build Authorization is NOT CLEARED",
+    "modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md exists with minimum scope per maturion-isms#1540",
+    ".agent-admin/evidence/app-description-checklist/pit-20260506.md result is PASS Authoritative",
+    "IAA ASSURANCE-TOKEN received and committed to wave record",
+    "FAIL-ONLY-ONCE.md v4.6.0 breach INC-GATE-HANDOVER-FAIL-001 recorded per CS2 directive (PR #1541 comment 4387593448)"
   ],
   "merge_authority": "CS2"
 }
