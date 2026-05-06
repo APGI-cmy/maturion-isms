@@ -238,7 +238,7 @@ Per ACR-18–21 / IAA_PRE_BRIEF_PROTOCOL.md §Expected Wave-Level Admin Ceremony
 
 **`git log --oneline -5` after committing ECAP artifacts:**
 ```
-[to be populated by Foreman at Step 4.2 handback confirmation — commit SHA of ECAP artifact commit]
+743172ac ceremony(ecap): PREHANDOVER proof + ECAP bundle — PR #1533 align-tier1-contracts-20260506
 866755e6 chore: update pr.json evidence text + freeze scope declaration
 a24ade56 align(tier1-contracts): T-WAT-001 — AC1–AC6 alignment for foreman, IAA, ECAP
 f31a107f Update admin/pr.json scope + scope declaration SB fixes + wave-current-tasks update post-IAA pre-brief
