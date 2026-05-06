@@ -3,7 +3,7 @@
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
 **Last Updated**: 2026-05-06  
-**Updated By**: pit-specialist (wave: pit-stage1-app-description — maturion-isms#1537)
+**Updated By**: pit-specialist (wave: pit-stage1-app-description-hardening — maturion-isms#1537)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
