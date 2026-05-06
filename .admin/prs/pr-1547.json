@@ -1,0 +1,24 @@
+{
+  "pr": 1547,
+  "issue": 1546,
+  "type": "deployment-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1547.json",
+    ".agent-admin/scope-declarations/pr-1547.md",
+    "apps/mmm/vercel.json",
+    ".github/workflows/deploy-mmm-vercel.yml"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": [
+    "Vercel project root confirmed as apps/mmm",
+    "apps/mmm/vercel.json exists with SPA catch-all rewrite to /index.html",
+    "Production .vercel/output/config.json contains /index.html SPA fallback before deploy",
+    "Direct /dashboard route no longer returns Vercel 404",
+    "Direct /frameworks route no longer returns Vercel 404",
+    "Direct /frameworks/upload route no longer returns Vercel 404"
+  ],
+  "merge_authority": "CS2"
+}
