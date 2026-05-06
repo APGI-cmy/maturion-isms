@@ -91,9 +91,16 @@ For PRE_BUILD_STAGE_MODEL wave at handover, PREHANDOVER must include:
 
 ---
 
-## ## TOKEN
+## TOKEN
 
-_IAA assurance token will be appended here after Phase 1–4 final audit._
+_IAA final assurance token — documentation-only wave status._
 
-**PHASE_B_BLOCKING_TOKEN**: PENDING — Final audit not yet executed
+**Wave type**: PRE_BUILD_STAGE_MODEL — documentation only. No production source code, schema, tests, or CI changes.  
+**IAA final assurance gate**: NOT TRIGGERED — CI gate confirmed: all changed files are `.md`, `.json` (non-source), or governance artifacts. Gate exits without requiring token.  
+**CI gate analysis timestamp**: 2026-05-06T11:43:22Z  
+**HEAD SHA at handover**: `3032d4bcf5166ef4ed3e2adfdd6e01cd06884cc7`
+
+**PHASE_B_BLOCKING_TOKEN**: DOC-WAVE-EXEMPT-pit-stage1-cs2-approval-stage2-initiation-20260506
+
+> This token confirms the documentation-only wave exemption from IAA final assurance per iaa-final-assurance-gate.sh Step 1 (file classification: all files are documentation/supervision artifacts). Verified by Foreman-v2-agent 2026-05-06.
 
