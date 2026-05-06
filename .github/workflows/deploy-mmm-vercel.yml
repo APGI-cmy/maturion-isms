@@ -4,9 +4,10 @@ name: Deploy MMM Frontend to Vercel
 # This workflow owns the MMM FRONTEND deployment surface only.
 # Authorised trigger paths:
 #   apps/mmm/**                  — MMM React/Vite frontend source
+#   apps/mmm/vercel.json         — app-root Vercel config (explicit; also covered by apps/mmm/**)
 #   api/**                       — Vercel serverless API routes
 #   packages/ai-centre/src/**    — AIMC package consumed by frontend
-#   vercel.json                  — Vercel project configuration
+#   vercel.json                  — Vercel project configuration (repo root)
 #   .github/workflows/deploy-mmm-vercel.yml — this workflow file
 #   pnpm-lock.yaml               — lockfile changes that affect the build
 #
@@ -22,6 +23,7 @@ on:
       - main
     paths:
       - 'apps/mmm/**'
+      - 'apps/mmm/vercel.json'
       - 'api/**'
       - 'packages/ai-centre/src/**'
       - 'vercel.json'
@@ -32,6 +34,7 @@ on:
       - main
     paths:
       - 'apps/mmm/**'
+      - 'apps/mmm/vercel.json'
       - 'api/**'
       - 'packages/ai-centre/src/**'
       - 'vercel.json'
@@ -454,6 +457,74 @@ jobs:
       - name: Build Project Artifacts
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
+      - name: Patch .vercel/output routing — replace error-fallback /404.html with /index.html rewrite (production)
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const path = '.vercel/output/config.json';
+          if (!fs.existsSync(path)) {
+            console.log('No .vercel/output/config.json found — skipping patch');
+            process.exit(0);
+          }
+          const cfg = JSON.parse(fs.readFileSync(path, 'utf8'));
+          const routes = cfg.routes || [];
+          // Remove Vite framework adapter error-based /404.html fallback routes.
+          // These have { "handle": "error" } or { "dest": "/404.html", "status": 404 }
+          // and cause HTTP 404 responses for SPA direct routes.
+          const filtered = routes.filter(r =>
+            r.handle !== 'error' &&
+            r.dest !== '/404.html'
+          );
+          // Ensure filesystem handle is present (try static files before SPA catch-all)
+          if (!filtered.find(r => r.handle === 'filesystem')) {
+            filtered.push({ handle: 'filesystem' });
+          }
+          // Add SPA catch-all rewrite to /index.html (HTTP 200, not 404)
+          if (!filtered.find(r => r.dest === '/index.html')) {
+            filtered.push({
+              src: '/((?!api/|assets/|manifest\\.json$|sw\\.js$).*)',
+              dest: '/index.html'
+            });
+          }
+          cfg.routes = filtered;
+          fs.writeFileSync(path, JSON.stringify(cfg, null, 2));
+          console.log('Patched .vercel/output/config.json routes:');
+          console.log(JSON.stringify(cfg.routes, null, 2));
+          NODE
+
+      - name: Verify .vercel/output routing — SPA catch-all present (production)
+        run: |
+          OUTPUT_CONFIG=".vercel/output/config.json"
+          if [ ! -f "$OUTPUT_CONFIG" ]; then
+            echo "❌ FAIL: $OUTPUT_CONFIG not found after vercel build --prod — cannot verify SPA routing"
+            exit 1
+          fi
+          echo "Inspecting $OUTPUT_CONFIG for SPA catch-all route to /index.html..."
+          CATCH_ALL=$(node -e "
+            const fs = require('fs');
+            const cfg = JSON.parse(fs.readFileSync('$OUTPUT_CONFIG', 'utf8'));
+            const routes = cfg.routes || [];
+            // Require dest '/index.html' — /404.html with status 404 is NOT acceptable
+            // (it returns HTTP 404 to the client, breaking SPA direct-route navigation)
+            const found = routes.find(r => r.dest === '/index.html');
+            if (found) {
+              process.stdout.write(JSON.stringify(found));
+            }
+          ")
+          if [ -z "$CATCH_ALL" ]; then
+            echo "❌ FAIL: No SPA catch-all route with dest '/index.html' found in $OUTPUT_CONFIG"
+            echo "   A /404.html fallback with status:404 is NOT acceptable — it returns HTTP 404 to clients."
+            echo "   Build output routes:"
+            node -e "
+              const fs = require('fs');
+              const c = JSON.parse(fs.readFileSync('$OUTPUT_CONFIG', 'utf8'));
+              console.log(JSON.stringify(c.routes, null, 2));
+            "
+            exit 1
+          fi
+          echo "✅ PASS: SPA catch-all route to /index.html confirmed in .vercel/output/config.json (production):"
+          echo "  $CATCH_ALL"
+
       - name: Deploy Production to Vercel
         id: deploy
         run: |
@@ -470,6 +541,41 @@ jobs:
           echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "**Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
           echo "**Timestamp**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+
+      - name: SPA direct-route smoke test — production routes must not return 404
+        env:
+          PRODUCTION_URL: ${{ steps.deploy.outputs.production-url }}
+          VITE_LIVE_DEPLOYMENT_URL: ${{ secrets.VITE_LIVE_DEPLOYMENT_URL }}
+        run: |
+          SMOKE_URL="${PRODUCTION_URL:-${VITE_LIVE_DEPLOYMENT_URL:-https://mmm.maturion.com}}"
+          echo "Running SPA direct-route smoke test (production) against: $SMOKE_URL"
+          ROUTES=("/dashboard" "/frameworks" "/frameworks/upload")
+          FAIL=0
+          for route in "${ROUTES[@]}"; do
+            http_code=$(curl -L -s -o /dev/null -w "%{http_code}" \
+              --connect-timeout 10 \
+              --max-time 30 \
+              "$SMOKE_URL$route" 2>/dev/null || echo "000")
+            if [ "$http_code" = "404" ]; then
+              echo "❌ FAIL: $route → HTTP $http_code (404 NOT_FOUND — SPA fallback likely broken)"
+              FAIL=1
+            elif [ "$http_code" = "401" ] || [ "$http_code" = "403" ]; then
+              echo "⚠️  PROTECTED: $route → HTTP $http_code (auth/route-protection — not a SPA routing failure)"
+            elif echo "$http_code" | grep -qE '^[23][0-9][0-9]$'; then
+              echo "✅ PASS: $route → HTTP $http_code"
+            else
+              echo "❌ FAIL: $route → HTTP $http_code (network/timeout/unexpected — check deployment logs)"
+              FAIL=1
+            fi
+          done
+          if [ "$FAIL" -ne 0 ]; then
+            echo ""
+            echo "SPA direct-route smoke test FAILED — one or more routes returned HTTP 404."
+            echo "Direct sub-path navigation is broken. Check apps/mmm/vercel.json SPA catch-all."
+            exit 1
+          fi
+          echo ""
+          echo "✅ All production SPA routes returned non-404 — SPA fallback confirmed."
 
       - name: e2e-auth-smoke
         continue-on-error: true

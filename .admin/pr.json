@@ -1,34 +1,24 @@
 {
-  "pr": 1533,
-  "issue": 1532,
-  "type": "agent-contract-change",
+  "pr": 1547,
+  "issue": 1546,
+  "type": "deployment-change",
   "owner": "Copilot",
   "scope": [
     ".admin/pr.json",
-    ".agent-admin/assurance/iaa-wave-record-align-tier1-contracts-20260506.md",
-    ".agent-admin/prehandover/proof-pr-1533-align-tier1-20260506.md",
-    ".agent-admin/scope-declarations/pr-1533.md",
-    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1533-align-tier1-20260506.md",
-    ".agent-workspace/foreman-v2/parking-station/suggestions-log.md",
-    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
-    ".agent-workspace/independent-assurance-agent/memory/session-062-align-tier1-20260506.md",
-    ".agent-workspace/independent-assurance-agent/memory/session-063-20260506.md",
-    ".agent-workspace/independent-assurance-agent/memory/session-064-20260506.md",
-    ".agent-workspace/independent-assurance-agent/memory/session-065-20260506.md",
-    ".github/agents/execution-ceremony-admin-agent.md",
-    ".github/agents/foreman-v2-agent.md",
-    ".github/agents/independent-assurance-agent.md"
+    ".agent-admin/scope-declarations/pr-1547.md",
+    "apps/mmm/vercel.json",
+    ".github/workflows/deploy-mmm-vercel.yml"
   ],
-  "risk": "high",
+  "risk": "medium",
   "requires_iaa": true,
   "requires_ecap": true,
   "evidence_required": [
-    "foreman-v2-agent.md merge_gate_interface.required_checks updated to 20 gates including all preflight/* gates",
-    "independent-assurance-agent.md aligned with IAA canon ACR-12 through ACR-16 triggers",
-    "execution-ceremony-admin-agent.md references per-PR scope model (.agent-admin/scope-declarations/pr-<N>.md)",
-    "agent contracts explicitly bind Tier 2 knowledge files with halt behavior on missing/stale",
-    "per-PR scope declaration model referenced in all three contracts (AC4)",
-    "IAA pre-brief artifact committed before builder delegation (A-031)"
+    "Vercel project root confirmed as apps/mmm",
+    "apps/mmm/vercel.json exists with SPA catch-all rewrite to /index.html",
+    "Production .vercel/output/config.json contains /index.html SPA fallback before deploy",
+    "Direct /dashboard route no longer returns Vercel 404",
+    "Direct /frameworks route no longer returns Vercel 404",
+    "Direct /frameworks/upload route no longer returns Vercel 404"
   ],
   "merge_authority": "CS2"
 }
