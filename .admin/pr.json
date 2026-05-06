@@ -5,6 +5,7 @@
   "owner": "Copilot",
   "scope": [
     ".admin/pr.json",
+    ".agent-admin/assurance/iaa-wave-record-align-tier1-contracts-20260506.md",
     ".agent-admin/scope-declarations/pr-1533.md",
     ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
     ".github/agents/foreman-v2-agent.md",

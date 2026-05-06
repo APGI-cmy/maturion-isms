@@ -37,17 +37,26 @@ Audit and align Tier 1 agent contracts with Tier 2 lifecycle, evidence, scope, a
 **Scope**: `.github/agents/foreman-v2-agent.md`, `.github/agents/independent-assurance-agent.md`, `.github/agents/execution-ceremony-admin-agent.md`
 **Addresses**: AC1, AC2, AC3, AC4, AC5, AC6
 **Note**: AGENT FILE GUARD TRIGGERED — delegated to CodexAdvisor per NO-AGENT-FILES-001
-**Status**: PENDING — awaiting IAA Pre-Brief and CodexAdvisor delegation
+**Status**: PENDING — IAA Pre-Brief confirmed, delegating now
 
-### T-WAT-002 — Governance Canon Updates (governance-liaison-isms-agent)
+### T-WAT-002 — Governance Canon Updates
 **Scope**: `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md`, `governance/canon/AGENT_HANDOVER_AUTOMATION.md`, `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md`, `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`, `governance/canon/TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md`
 **Addresses**: AC2, AC3, AC6
-**Status**: PENDING
+**Status**: OUT OF SCOPE for PR #1533 — per CS2 instruction, governance canon updates are a follow-on task. Only agent contract Tier 1 changes are in scope for this PR.
 
 ### T-WAT-003 — Tests and Fixtures (qa-builder)
 **Scope**: Test files proving AC1-AC6 constraints
 **Addresses**: AC7
-**Status**: PENDING
+**Status**: DEFERRED — test/fixture additions require agent contract changes to land first. May be follow-on PR or included in this PR if CodexAdvisor identifies test-only changes needed.
+
+---
+
+## ECAP Admin Appointment (SB-001)
+
+**Status**: REQUIRED before PREHANDOVER
+**ceremony_admin_appointed**: execution-ceremony-admin-agent
+**appointment_timestamp**: To be set when ECAP is formally appointed
+**Note**: `requires_ecap: true` is set in `.admin/pr.json`. ECAP admin must be appointed before Phase 4. Foreman will appoint ECAP at Step 4.1a after QP PASS.
 
 ---
 
