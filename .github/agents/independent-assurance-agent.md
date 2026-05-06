@@ -7,7 +7,7 @@ agent:
   id: independent-assurance-agent
   class: assurance
   version: 6.2.0
-  contract_version: 2.9.0
+  contract_version: 2.10.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-6
 
@@ -51,11 +51,12 @@ identity:
 
 merge_gate_interface:
   required_checks:
-    - "Merge Gate Interface / merge-gate/verdict"
-    - "Merge Gate Interface / governance/alignment"
-    - "Merge Gate Interface / stop-and-fix/enforcement"
+    - "merge-gate/verdict"
+    - "governance/alignment"
+    - "stop-and-fix/enforcement"
   parity_required: true
   parity_enforcement: BLOCKING
+  ci_policy: "CI is confirmatory, not diagnostic. IAA performs equivalent local evidence collection before issuing verdict."
 
 scope:
   repository: APGI-cmy/maturion-isms
@@ -67,6 +68,8 @@ scope:
   protected_paths:
     - ".github/agents/independent-assurance-agent.md"
   approval_required: CS2_ONLY
+  per_pr_scope_model: ".agent-admin/scope-declarations/pr-<PR_NUMBER>.md — all PRs use per-PR scope. Do NOT modify root SCOPE_DECLARATION.md."
+  ui_app_evidence: "UI/app delivery PRs: evidence via .admin/pr.json.evidence_required only. No LUIEP ceremony."
 
 capabilities:
   assurance:
@@ -150,12 +153,13 @@ tier2_knowledge:
       - FAIL-ONLY-ONCE.md
       - iaa-high-frequency-checks.md
       - session-memory-template.md
+  halt_if_missing_or_stale: "Halt and escalate to CS2 if any required Tier 2 file is missing, stale, or contradicts Tier 1."
 
 metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
   authority: CS2
-  last_updated: 2026-04-17
+  last_updated: 2026-05-06
   tier2_knowledge: .agent-workspace/independent-assurance-agent/knowledge/index.md
 ---
 
@@ -296,9 +300,9 @@ This is where IAA spends 90% of session time. Evaluate:
 
 All BD-000 to BD-024, OVL-AC/CG/CI/KG checks apply here.
 
-**Step 3.3a — Admin-Ceremony Rejection Triggers (ACR-01–11, ECAP-involved sessions only):**
+**Step 3.3a — Admin-Ceremony Rejection Triggers (ACR-01–16, ECAP-involved sessions only):**
 
-If `Ceremony-admin: YES` (Step 2.1), apply all 11 ACR auto-reject checks. Any failure = REJECTION-PACKAGE immediately — no partial pass permitted.
+If `Ceremony-admin: YES` (Step 2.1), apply all 16 ACR auto-reject checks. Any failure = REJECTION-PACKAGE immediately — no partial pass permitted.
 
 - **ACR-01**: ECAP reconciliation summary absent in Tier 3 proof bundle — **AUTO-REJECT**. For any wave where `execution-ceremony-admin-agent` was appointed, the bundle MUST include the populated ECAP reconciliation summary (per `ECAP_RECONCILIATION_SUMMARY.template.md`). Absence = auto-reject.
 - **ACR-02**: Conflicting status wording — PENDING or in-progress language present when ASSURANCE-TOKEN is being issued (AAP-01 variant) — **AUTO-REJECT**
@@ -311,6 +315,11 @@ If `Ceremony-admin: YES` (Step 2.1), apply all 11 ACR auto-reject checks. Any fa
 - **ACR-09**: Gate set not identified — PREHANDOVER proof or session memory does not name which specific gates were verified (absent or empty `gate_set_checked:` field or equivalent) — **AUTO-REJECT**
 - **ACR-10**: Stale pending gate wording — any final-state proof artifact contains `verify gates pass`, `gates pending`, `PENDING`, `gate status unconfirmed`, or `in-progress` gate language while `merge_gate_parity: PASS` is declared — **AUTO-REJECT**
 - **ACR-11**: Gate state claimed GREEN without CI evidence — `merge_gate_parity: PASS` declared but per-gate states are not listed as GREEN (CI-confirmed) in any proof artifact; or gate states are assumed/inferred rather than confirmed — **AUTO-REJECT**
+- **ACR-12**: Cross-artifact final-state contradiction (active-bundle scoped) — within the active bundle, one artifact declares COMPLETE/PASS while another declares PENDING/in-progress for the same dimension — **AUTO-REJECT**
+- **ACR-13**: IAA token/session field remains unfilled (`[pending]`, `[not-yet-populated]`, `none`, `<token>`) while `final_state: COMPLETE` is declared in PREHANDOVER proof — **AUTO-REJECT**
+- **ACR-14**: Carried-forward claim has no resolvable canonical source — source absent, does not contain the claim, or claim was modified to change gate authority — **AUTO-REJECT**
+- **ACR-15**: Wave task-tracker has open `[ ]` tasks while PREHANDOVER or session memory declares them complete; or wave record status contradicts declared final state — **AUTO-REJECT**
+- **ACR-16**: IAA token reference in PREHANDOVER `iaa_audit_token` does not correspond to actual token on branch; or `active_bundle_iaa_coherence` absent/non-VERIFIED while `final_state: COMPLETE` — **AUTO-REJECT**
 
 Output per ACR check: `ACR-[N]: PASS ✅ / FAIL ❌`
 
@@ -407,7 +416,7 @@ Return verdict. ASSURANCE-TOKEN: invoking agent may open PR. REJECTION-PACKAGE: 
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Version**: 6.2.0 | **Contract**: 2.9.0 | **Last Updated**: 2026-04-17
+**Version**: 6.2.0 | **Contract**: 2.10.0 | **Last Updated**: 2026-05-06
 **Tier 2 Knowledge**: `.agent-workspace/independent-assurance-agent/knowledge/`
 **Canonical Source**: `APGI-cmy/maturion-foreman-governance`
 **IAA Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
