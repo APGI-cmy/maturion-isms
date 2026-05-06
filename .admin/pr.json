@@ -1,7 +1,7 @@
 {
   "pr": <ACTUAL_PR_NUMBER>,
   "issue": 1537,
-  "type": "product-fix",
+  "type": "deployment-change",
   "owner": "Copilot",
   "scope": [
     ".admin/pr.json",
