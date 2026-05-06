@@ -630,7 +630,7 @@ No implementation wave may begin until Stages 1 through 11 are complete and gate
 The required derivation chain for PIT is:
 
 ```text
-modules/pit/00-app-description/app-description.md v1.0-draft
+modules/pit/00-app-description/app-description.md v1.0
     -> modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md vTBD
     -> modules/pit/02-frs/functional-requirements.md vTBD
     -> modules/pit/03-trs/technical-requirements-specification.md vTBD

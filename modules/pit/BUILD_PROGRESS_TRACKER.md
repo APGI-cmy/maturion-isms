@@ -16,16 +16,12 @@
 This tracker was migrated from the legacy 6-stage format to the canonical 12-stage format
 per wave `align-12stage-prebuild-20260406` (2026-04-06).
 
-**Anomaly Flagged**: The `00-app-description/` folder is empty (no `app-description.md` found),
-yet Architecture contains extensive work (one of the most complete architectures outside MAT):
-`architecture.md`, `data-contracts/`, `exports/`, `integrations/`, `qa/`, `ui-ux/`, `watchdog/`,
-`_legacy/`. App Description must be created before this module can proceed through the canonical
-stage sequence. The existing Architecture work is valuable and will be preserved.
+**Anomaly Flagged (RESOLVED)**: At migration time (2026-04-06), the `00-app-description/` folder was empty (no `app-description.md` found). This has since been resolved: App Description v1.0 was created per maturion-isms#1534 and approved by CS2/Johan Ras on 2026-05-06 per maturion-isms#1540. The Architecture work (`architecture.md`, `data-contracts/`, `exports/`, `integrations/`, `qa/`, `ui-ux/`, `watchdog/`, `_legacy/`) is preserved and will be gate-passed after the canonical upstream stages are completed.
 
 **Old → New Stage Mapping**:
 | Old Stage | Old Name | New Stage | New Name | Status |
 |-----------|----------|-----------|----------|--------|
-| Stage 0 | App Description | Stage 1 | App Description | DRAFT_PENDING_CS2_APPROVAL |
+| Stage 0 | App Description | Stage 1 | App Description | CS2_APPROVED_AUTHORITATIVE |
 | Stage 1 | FRS | Stage 3 | FRS | NOT_STARTED (folder empty) |
 | Stage 1.5 | TRS | Stage 4 | TRS | NOT_STARTED |
 | Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS |
@@ -48,7 +44,7 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 **Status**: [x] CS2_APPROVED_AUTHORITATIVE  
 **Location**: `modules/pit/00-app-description/`  
 **Key Artifacts**:
-- [x] `app-description.md` — Full App Description v1.0-draft (1750 lines; §AD-01–§AD-24 complete + MMM Lessons Promoted section)
+- [x] `app-description.md` — Full App Description v1.0 (Authoritative; 1750 lines; §AD-01–§AD-24 complete + MMM Lessons Promoted section)
 - [x] All §AD-01–§AD-24 sections per `APP_DESCRIPTION_REQUIREMENT_POLICY.md` v2.0 complete
 - [x] App Description approved by CS2/Johan Ras — **APPROVED 2026-05-06** (ref: maturion-isms#1540)
 

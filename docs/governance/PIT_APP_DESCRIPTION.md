@@ -1,4 +1,4 @@
-# PIT — App Description (Governance Mirror)
+# PIT — App Description (Authoritative)
 
 **Module**: PIT (Project Implementation Tracker)  
 **Status**: Authoritative — approved by CS2/Johan Ras 2026-05-06  
@@ -10,29 +10,35 @@
 
 ## Filing Strategy
 
-Per `APP_DESCRIPTION_REQUIREMENT_POLICY.md` v2.0 §4.1, the authoritative App Description must be accessible at `docs/governance/{APP}_APP_DESCRIPTION.md`. For 12-stage module builds, the full stage artifact is filed at:
+Per `APP_DESCRIPTION_REQUIREMENT_POLICY.md` v2.0 §4.1, the **authoritative canonical location** for the PIT App Description is:
+
+```
+docs/governance/PIT_APP_DESCRIPTION.md
+```
+
+The module-stage copy is also filed at:
 
 ```
 modules/pit/00-app-description/app-description.md
 ```
 
-This file is a **governance mirror** that points to the module-stage artifact. It contains the same content as the authoritative artifact.
+This file is the **authoritative canonical location** per policy §4.1. The module-stage copy must be kept in sync with this file at all times.
 
 ---
 
-## Mirror Status
+## Governance Location Status
 
 | Field | Value |
 |---|---|
-| Authoritative Source | `modules/pit/00-app-description/app-description.md` |
-| Mirror Created | 2026-05-06 |
-| Mirror Synchronized | 2026-05-06 (v1.0) |
-| Synchronization Rule | This mirror must be updated whenever the module-stage artifact is updated |
+| Authoritative Canonical Location | `docs/governance/PIT_APP_DESCRIPTION.md` (this file) |
+| Module-Stage Copy | `modules/pit/00-app-description/app-description.md` |
+| Last Synchronized | 2026-05-06 (v1.0) |
+| Synchronization Rule | The module-stage copy must be updated whenever this authoritative file is updated |
 | Policy Authority | `governance/policy/APP_DESCRIPTION_REQUIREMENT_POLICY.md` v2.0 §4.1, §4.3 |
 
 ---
 
-> **Note to readers**: The full App Description content is contained below and mirrors the module-stage artifact at `modules/pit/00-app-description/app-description.md`. Any discrepancy between this file and the module-stage artifact must be resolved immediately by updating both files.
+> **Note to readers**: The full App Description content is contained below. This file is the authoritative canonical source per policy §4.1. The module-stage copy at `modules/pit/00-app-description/app-description.md` is kept in sync. Any discrepancy between this file and the module-stage copy must be resolved immediately by updating both files to match this authoritative version.
 
 ---
 
@@ -668,7 +674,7 @@ No implementation wave may begin until Stages 1 through 11 are complete and gate
 The required derivation chain for PIT is:
 
 ```text
-modules/pit/00-app-description/app-description.md v1.0-draft
+modules/pit/00-app-description/app-description.md v1.0
     -> modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md vTBD
     -> modules/pit/02-frs/functional-requirements.md vTBD
     -> modules/pit/03-trs/technical-requirements-specification.md vTBD
