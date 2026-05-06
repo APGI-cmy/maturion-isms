@@ -5,11 +5,12 @@
   "owner": "Copilot",
   "scope": [
     ".admin/pr.json",
+    ".agent-admin/scope-declarations/pr-1539.md",
     ".github/workflows/deploy-mmm-edge-functions.yml"
   ],
   "risk": "medium",
-  "requires_iaa": false,
-  "requires_ecap": false,
+  "requires_iaa": true,
+  "requires_ecap": true,
   "evidence_required": [
     "Workflow deploys all directories under supabase/functions or every config-listed function with a directory",
     "Workflow summary lists deployed function names",
