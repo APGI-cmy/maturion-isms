@@ -108,6 +108,7 @@ by `validate-simple-pr-admin.sh` CHECK 8, preserving full ceremony requirements.
 
 **Downstream ripple conclusion**: NO IMPACT — governance/ceremony artifacts and CI tooling only, no downstream effect on any app, schema, API, or agent contract.
 
+
 ## ECAP Checklist
 
 - [x] Protected paths identified (`governance/canon/`, `governance/CANON_INVENTORY.json`)
