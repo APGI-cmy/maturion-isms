@@ -5,6 +5,7 @@
   "owner": "Copilot",
   "scope": [
     ".admin/pr.json",
+    ".agent-admin/scope-declarations/pr-1537.md",
     "modules/MMM/BUILD_PROGRESS_TRACKER.md",
     "modules/MMM/evidence/oc-001-008-agent-verification-20260506.md",
     "modules/MMM/evidence/screenshot-landing-page-20260506.png",
