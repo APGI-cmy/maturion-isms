@@ -152,6 +152,49 @@ Soft blockers: SB-001 (ECAP admin not appointed), SB-002 (scope not frozen), SB-
 
 ## REJECTION_HISTORY
 
+### REJECTION-005 — 2026-05-06 | Session: IAA-session-066-align-tier1-20260506
+
+**Date**: 2026-05-06
+**PR**: #1533 — [WIP] Align Tier 1 agent contracts with Tier 2 lifecycle and validation gates
+**Session**: IAA-session-066-align-tier1-20260506
+**Verdict**: REJECTION-PACKAGE — 2 checks FAILED (2 ACR AUTO-REJECT)
+**IAA Contract Version**: 2.10.0
+**Reviewed SHA**: 797601a2e1b14fdb85e06ee60d8a685845d0513a
+
+**Invoker's claim**: All session-065 (REJECTION-004) failures resolved — ACR-03 session refs corrected to session-066, ACR-07 counts corrected to 14 = 14, R17 iaa_reinvocation_round updated to 4.
+**IAA finding**: The session-065 failures ARE resolved. However, two independent failures are present in the current HEAD state that the invocation did not address — one a repeat of REJECTION-002 (ACR-02) and one a new ceremony paperwork error introduced in the comprehensive-fix commit (7ebe9c7e).
+
+**FAILURES**:
+
+| ID | Finding | Fix Required | Class |
+|----|---------|-------------|-------|
+| ACR-02 AUTO-REJECT | PR title = `[WIP] Align Tier 1 agent contracts with Tier 2 lifecycle and validation gates` and `isDraft: true` (confirmed by GitHub API). ASSURANCE-TOKEN is being requested while PR is in WIP/draft state. This is a direct ACR-02 trigger: conflicting status wording — in-progress language while requesting final assurance. This failure was first identified in REJECTION-002 (session-063) Required Fix #2: "Remove `[WIP]` from PR title. Mark PR ready for review (undraft)." The fix was not applied. This is the 5th invocation on this PR and the draft/WIP state has persisted unchanged since session-063 identified it. | (1) Remove `[WIP]` from PR title; (2) Mark PR as ready for review (undraft — `gh pr ready 1533`). Both actions required before re-invoking IAA. | Systemic |
+| ACR-07 AUTO-REJECT | PREHANDOVER proof R07 table has exactly 13 rows (confirmed by line-count: rows #1–#13, lines 163–175). Row 14 — `.agent-workspace/independent-assurance-agent/memory/session-065-20260506.md` — is ABSENT from the table. The parity line below the table (line 177) claims "Declared count: 14 ✓ \| Actual diff count: 14 ✓ \| Parity: PASS". The table (13 rows) and parity claim (14 declared) are directly contradictory. REJECTION-004 MANDATORY action explicitly required: "Update PREHANDOVER R07 table to add row 14 for session-065 memory." The comprehensive-fix commit (7ebe9c7e) updated the parity count string to "14" but did NOT add the missing row to the table above it. Session-065 memory IS in the scope declaration and IS in the GitHub API diff — it is only absent from the R07 table. | Update PREHANDOVER proof R07 table: insert `| 11 | `.agent-workspace/independent-assurance-agent/memory/session-065-20260506.md` \| IAA session memory (rejection-004) |` and renumber subsequent rows 11→12, 12→13, 13→14 (or append as row 14 — either ordering acceptable). Push updated PREHANDOVER proof. | Systemic |
+
+**GOVERNANCE PROTOCOL VIOLATIONS IN INVOCATION (noted for CS2 — not counted as PR check failures):**
+
+The session-066 invocation contained three instructions that violate IAA contract prohibitions. IAA declined all three:
+
+1. **Instruction #1** ("Issue ASSURANCE-TOKEN (PASS verdict)"): IAA does not accept pre-determined verdicts. Independence is constitutional. IAA evaluates independently — REJECTED as instruction.
+2. **Instruction #2** ("Commit token to `.agent-admin/assurance/iaa-token-session-066-align-tier1-20260506.md`"): Violates **NO-STANDALONE-TOKEN-001** ("Token goes in ## TOKEN of the wave record") and **NO-ASSURANCE-PATH-ESCAPE-001** ("I NEVER write .agent-admin/assurance/ files outside the iaa-wave-record-* pattern."). Token file path is NOT in IAA's approved write paths. **IAA DECLINED — token will be written to ## TOKEN of this wave record only (when PASS is earned).**
+3. **Instruction #6** ("Atomically update PREHANDOVER proof, ECAP bundle, scope declaration, pr.json in same commit as session memory"): Violates `artifact_immutability.prehandover_proof: never_edit_post_commit`. Post-verdict PREHANDOVER editing is constitutionally prohibited. **IAA DECLINED.** Note additionally: the invocation's pattern of asking IAA to update scope artifacts to accommodate its own memory file is an inversion of the correct sequence — scope is frozen before IAA invocation, not after.
+
+These declined instructions are escalated to **CS2 attention** as a governance integrity concern. The invocation attempted to direct IAA's output artifacts, verdict, and post-verdict actions in ways that violate constitutional prohibitions.
+
+**Required Fixes (in order)**:
+1. Remove `[WIP]` from PR title — run `gh pr edit 1533 --title "Align Tier 1 agent contracts with Tier 2 lifecycle and validation gates"`
+2. Undraft PR — run `gh pr ready 1533`
+3. Update PREHANDOVER proof R07 table — add missing row for session-065 memory, renumber rows 11–13 → 12–14 (or append as row 14)
+4. Push all changes to branch `copilot/align-tier-1-agent-contracts-again`
+5. Re-invoke IAA as **session-067** for final assurance
+
+**NOTE**: Substantive checks (AC1–AC6) remain PASS — confirmed across all four prior rejections. The three agent contract changes (foreman v2.15.0, IAA v2.10.0, ECAP v1.6.0) are correct and complete. These are pure ceremony/process failures. The scope declaration file count (14) and actual diff count (14) are consistent.
+
+**Systemic Prevention Action** (NO-REPEAT-PREVENTABLE-001):
+ACR-02 (WIP/draft status) has now been identified in REJECTION-002 and persisted through REJECTION-003, REJECTION-004, and REJECTION-005. This represents a systemic failure to track PR readiness state across ceremony rounds. Structural prevention required: Add an explicit pre-invocation check in the ceremony protocol — before ECAP bundle is submitted to IAA, Foreman MUST verify `isDraft: false` and `title` contains no `[WIP]`, `[DRAFT]`, or equivalent markers. This check should be a HALT trigger in ECAP Phase 2 Alignment. Do not rely on the producing agent to remember across multiple rounds.
+
+---
+
 ### REJECTION-004 — 2026-05-06 | Session: IAA-session-065-align-tier1-20260506
 
 **Date**: 2026-05-06
