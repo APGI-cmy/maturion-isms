@@ -56,7 +56,7 @@
 |---------|-------------|----------|-------|
 | A-001 | IAA invocation evidence must be present in PR artifacts before builder delegation | **YES — BLOCKING** | This pre-brief IS the A-001 evidence. Must be committed before CodexAdvisor delegation proceeds. |
 | A-002 | All agent classes covered — no class exemptions | **YES — BLOCKING** | All 3 agent contracts in scope (Foreman class, Assurance class, Admin class). IAA self-contract update → escalate to CS2 (IAA cannot self-review per HALT-001; but this is ALIGNMENT not IAA self-authoring — CodexAdvisor produces, IAA audits). |
-| A-031 | IAA ceremony artifacts (pre-brief, wave record, future token) must be excluded from scope via A-031 carve-out OR explicitly declared | **YES — FLAG** | Scope declaration `pr-1533.md` lists "IAA pre-brief artifact" as IN_SCOPE but does NOT include an explicit A-031 carve-out note. Builder must add the carve-out note before PREHANDOVER, or confirm the pre-brief listing satisfies the declaration requirement. |
+| A-031 | IAA ceremony artifacts (pre-brief, wave record, future token) must be excluded from scope via A-031 carve-out OR explicitly declared | **YES — SATISFIED** | Scope declaration `pr-1533.md` includes an explicit A-031 carve-out note, resolving the earlier declaration gap for IAA ceremony artifacts in PR #1533. |
 | A-015 | KNOWLEDGE_GOVERNANCE: evidence bundle + PREHANDOVER ceremony required | **N/A for #1533** | Only applies if `.agent-workspace/*/knowledge/` files change. Not in current scope. |
 | A-003 | Ambiguity rule — ambiguity resolves to mandatory invocation | **APPLIED** | T-WAT-003 (tests) classified MIXED → mandatory. |
 
