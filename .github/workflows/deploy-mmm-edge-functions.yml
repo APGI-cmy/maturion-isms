@@ -6,8 +6,7 @@ on:
       - main
     paths:
       - 'supabase/functions/**'
-      - 'supabase/functions/invoke-ai-parse-criteria/**'
-      - 'packages/ai-centre/supabase/functions/invoke-ai-parse-criteria/**'
+      - 'supabase/config.toml'
       - '.github/workflows/deploy-mmm-edge-functions.yml'
   workflow_dispatch:
 
@@ -21,6 +20,7 @@ on:
 #
 # Verify Edge Function health directly:
 #   Invoke-RestMethod -Uri "https://ujucvyyspfxlxlfdamda.supabase.co/functions/v1/invoke-ai-parse-criteria/health"
+#   Invoke-RestMethod -Uri "https://ujucvyyspfxlxlfdamda.supabase.co/functions/v1/mmm-health"
 #
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -57,29 +57,56 @@ jobs:
         run: |
           supabase link --project-ref "$SUPABASE_PROJECT_REF"
 
-      - name: Deploy invoke-ai-parse-criteria
+      - name: Deploy all Edge Functions
+        id: deploy
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
         run: |
-          echo "Deploying invoke-ai-parse-criteria to project $SUPABASE_PROJECT_REF ..."
-          supabase functions deploy invoke-ai-parse-criteria --project-ref "$SUPABASE_PROJECT_REF"
-          echo "Deploy complete."
+          [ -d "supabase/functions" ] || { echo "::error::supabase/functions directory not found"; exit 1; }
+          deployed_functions=""
+          for fn_dir in supabase/functions/*; do
+            [ -d "$fn_dir" ] || continue
+            fn_name="$(basename "$fn_dir")"
+            # Skip shared utility directories (prefixed with _)
+            case "$fn_name" in _*) continue ;; esac
+            echo "Deploying $fn_name ..."
+            supabase functions deploy "$fn_name" --project-ref "$SUPABASE_PROJECT_REF"
+            deployed_functions="${deployed_functions}${fn_name},"
+          done
+          echo "All deployments complete."
+          # Strip trailing comma
+          deployed_functions="${deployed_functions%,}"
+          echo "deployed_functions=${deployed_functions}" >> "$GITHUB_OUTPUT"
 
       - name: Verify Edge Function health
         id: health-check
         env:
           SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
         run: |
-          HEALTH_URL="https://${SUPABASE_PROJECT_REF}.supabase.co/functions/v1/invoke-ai-parse-criteria/health"
-          echo "Running health check: $HEALTH_URL"
-          RESPONSE=$(curl -fsS --max-time 15 "$HEALTH_URL")
-          echo "Health check response: $RESPONSE"
+          BASE_URL="https://${SUPABASE_PROJECT_REF}.supabase.co/functions/v1"
+
+          # Check 1: invoke-ai-parse-criteria (has /health sub-path)
+          CRITERIA_URL="${BASE_URL}/invoke-ai-parse-criteria/health"
+          echo "Running health check: $CRITERIA_URL"
+          CRITERIA_RESPONSE=$(curl -fsS --max-time 15 "$CRITERIA_URL")
+          echo "invoke-ai-parse-criteria health response: $CRITERIA_RESPONSE"
           {
-            echo "health_response<<EOF"
-            echo "$RESPONSE"
+            echo "criteria_health_response<<EOF"
+            echo "$CRITERIA_RESPONSE"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
+
+          # Check 2: mmm-health (verify_jwt=false — unauthenticated smoke check)
+          MMM_HEALTH_URL="${BASE_URL}/mmm-health"
+          echo "Running MMM health check: $MMM_HEALTH_URL"
+          MMM_HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}" --max-time 15 "$MMM_HEALTH_URL")
+          echo "mmm-health HTTP status: $MMM_HTTP_STATUS"
+          echo "mmm_health_status=${MMM_HTTP_STATUS}" >> "$GITHUB_OUTPUT"
+          if [ "$MMM_HTTP_STATUS" -lt 200 ] || [ "$MMM_HTTP_STATUS" -ge 300 ]; then
+            echo "::error::mmm-health returned HTTP ${MMM_HTTP_STATUS} — function may not have deployed successfully."
+            exit 1
+          fi
 
       - name: Write step summary
         if: always()
@@ -90,20 +117,28 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "| Field | Value |" >> "$GITHUB_STEP_SUMMARY"
           echo "|-------|-------|" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Function | \`invoke-ai-parse-criteria\` |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Project ref | \`${SUPABASE_PROJECT_REF}\` |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Triggered by | \`${{ github.event_name }}\` |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Commit | \`${{ github.sha }}\` |" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          if [ -n "${{ steps.health-check.outputs.health_response }}" ]; then
-            echo "### Health Check Result" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Deployed Functions" >> "$GITHUB_STEP_SUMMARY"
+          IFS=',' read -ra fns <<< "${{ steps.deploy.outputs.deployed_functions }}"
+          for fn in "${fns[@]}"; do
+            [ -n "$fn" ] && echo "- \`${fn}\`" >> "$GITHUB_STEP_SUMMARY"
+          done
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Health Check Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**invoke-ai-parse-criteria/health**" >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "${{ steps.health-check.outputs.criteria_health_response }}" ]; then
             echo '```json' >> "$GITHUB_STEP_SUMMARY"
-            echo "${{ steps.health-check.outputs.health_response }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "${{ steps.health-check.outputs.criteria_health_response }}" >> "$GITHUB_STEP_SUMMARY"
             echo '```' >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "### Health Check Result" >> "$GITHUB_STEP_SUMMARY"
             echo "> Health check did not return a response (deploy may have failed)." >> "$GITHUB_STEP_SUMMARY"
           fi
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**mmm-health HTTP status**: \`${{ steps.health-check.outputs.mmm_health_status }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "**Manual trigger (PowerShell)**:" >> "$GITHUB_STEP_SUMMARY"
           echo '```powershell' >> "$GITHUB_STEP_SUMMARY"
