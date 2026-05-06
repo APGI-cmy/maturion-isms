@@ -1,4 +1,54 @@
-# Wave Current Tasks — wave-mps-source-verification
+# Wave Current Tasks — pit-stage1-app-description-hardening
+
+**Wave**: pit-stage1-app-description-hardening  
+**Issue**: maturion-isms#1537 — Harden PIT Stage 1 App Description using MMM delivery lessons  
+**Branch**: copilot/fix-issue-1537  
+**Date**: 2026-05-06  
+**Agent**: foreman-v2-agent  
+**IAA Pre-Brief**: `.agent-admin/assurance/iaa-wave-record-pit-stage1-app-description-hardening-20260506.md`  
+**Category**: PRE_BUILD_STAGE_MODEL  
+
+---
+
+## Wave Purpose
+
+Replace the wrong-identity PIT "Penetration Intelligence Tool" retrofit stub with the corrected Stage 1 App Description for "Project Implementation Tracker". Harvest MMM delivery lessons and promote them as pre-build hardening controls in PIT. Update the BUILD_PROGRESS_TRACKER.md and file all required governance artifacts.
+
+## Active Tasks
+
+| # | Task | Status | Artifact Path |
+|---|------|--------|---------------|
+| T-1 | Replace app-description.md with corrected Stage 1 (Project Implementation Tracker + MMM lessons) | IN_PROGRESS | `modules/pit/00-app-description/app-description.md` |
+| T-2 | Create governance mirror/pointer | PENDING | `docs/governance/PIT_APP_DESCRIPTION.md` |
+| T-3 | File App Description creation checklist | PENDING | `.agent-admin/evidence/app-description-checklist/pit-20260506.md` |
+| T-4 | Update BUILD_PROGRESS_TRACKER.md | PENDING | `modules/pit/BUILD_PROGRESS_TRACKER.md` |
+| T-5 | Create MMM lessons improvement register | PENDING | `modules/pit/_readiness/pit-build-process-improvement-register.md` |
+| T-6 | Update module.manifest.json (BLOCKER-1 resolution) | PENDING | `modules/pit/module.manifest.json` |
+| T-7 | Delete undeclared draft files (BLOCKER-2 resolution) | PENDING | `modules/pit/00-app-description/pit_app_description_stage1.md`, `pit_app_description_stage1_rewritten_v1.md` |
+
+---
+
+## IAA Blockers Being Resolved
+
+| Blocker | Resolution |
+|---------|-----------|
+| BLOCKER-1: module.manifest.json identity gap | Option (a): update manifest to include full name |
+| BLOCKER-2: undeclared files in 00-app-description/ | Option (a): delete both draft files after content extracted to app-description.md |
+
+---
+
+## Phase Status
+
+- Phase 1 (Preflight): COMPLETE  
+- Phase 2 (Alignment): COMPLETE  
+- Phase 3 (Work): IN_PROGRESS  
+- Phase 4 (Handover): PENDING  
+
+---
+
+# Archive: Previous Wave — wave-mps-source-verification
+
+**Wave**: wave-mps-source-verification
 
 **Foreman**: foreman-v2-agent v6.2.0
 **Wave**: wave-mps-source-verification
