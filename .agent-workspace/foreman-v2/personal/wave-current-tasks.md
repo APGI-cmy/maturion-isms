@@ -12,7 +12,7 @@ iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-stage1-cs2-appr
 
 ---
 
-## Wave Purpose
+## Task Breakdown
 
 Record CS2/Johan Ras formal approval of the PIT Stage 1 App Description (issued as Draft per PR #1535, maturion-isms#1534). Update both App Description copies from Draft to Authoritative/Approved. Align BUILD_PROGRESS_TRACKER.md. Initiate Stage 2 UX Workflow & Wiring Spec if Stage 1 approval and tracker alignment gates are clean.
 
@@ -42,7 +42,7 @@ Record CS2/Johan Ras formal approval of the PIT Stage 1 App Description (issued 
 
 ---
 
-## Phase Status
+## Pre-Build Gate Status
 
 **Phase 1**: COMPLETE
 **Phase 2**: COMPLETE
