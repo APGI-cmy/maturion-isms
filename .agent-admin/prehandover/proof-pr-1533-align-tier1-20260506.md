@@ -34,7 +34,7 @@ opojd_compliance:       CONFIRMED
 ## Gate Results
 merge_gate_verdict:     PASS
 pre_iaa_commit_state:   CLEAN
-scope_declaration_parity: PASS (.agent-admin/scope-declarations/pr-1533.md — SCOPE_FROZEN: YES, FILES_CHANGED: 7)
+scope_declaration_parity: PASS (.agent-admin/scope-declarations/pr-1533.md — SCOPE_FROZEN: YES, FILES_CHANGED: 13)
 admin_ceremony_compliance: PASS (ECAP bundle committed — see below)
 
 ## ECAP / Admin Ceremony Evidence
@@ -50,14 +50,14 @@ ecap_verdict:           PASS
 ecap_bundle:            .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1533-align-tier1-20260506.md
 
 ## IAA Assurance
-iaa_audit_token:        IAA-session-062-align-tier1-20260506-PASS
-iaa_session_reference:  session-062-align-tier1-20260506
-iaa_reinvocation_round: 0
+iaa_audit_token:        IAA-session-065-align-tier1-20260506-PASS
+iaa_session_reference:  session-065-align-tier1-20260506
+iaa_reinvocation_round: 3
 iaa_wave_record_path:   .agent-admin/assurance/iaa-wave-record-align-tier1-contracts-20260506.md
-iaa_rejection_reference: none
+iaa_rejection_reference: REJECTION-001, REJECTION-002, REJECTION-003 — see wave record
 
 ## Scope
-files_changed:          12
+files_changed:          13
 scope_declaration:      .agent-admin/scope-declarations/pr-1533.md
 scope_refreshed_post_final_edit: YES
 art_refresh_required:   NO
@@ -120,7 +120,7 @@ This wave aligns Tier 1 agent contracts with the Tier 2 lifecycle, evidence, sco
 - All three agent contracts updated to address each acceptance criterion: ✅
 - Zero deprecation warnings (governance-only PR — no runtime artifacts): ✅ N/A
 - Zero compiler/linter warnings (governance-only PR — no runtime artifacts): ✅ N/A
-- Scope declaration frozen (SCOPE_FROZEN: YES, FILES_CHANGED: 7): ✅
+- Scope declaration frozen (SCOPE_FROZEN: YES, FILES_CHANGED: 13): ✅
 
 **QP VERDICT: PASS**
 
@@ -168,12 +168,13 @@ Per `git diff --name-only origin/main...HEAD` (confirmed at bundle assembly):
 | 6 | `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` | Parking station |
 | 7 | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Wave tracking |
 | 8 | `.agent-workspace/independent-assurance-agent/memory/session-062-align-tier1-20260506.md` | IAA session memory |
-| 9 | `.agent-workspace/independent-assurance-agent/memory/session-063-20260506.md` | IAA session memory (rejection) |
-| 10 | `.github/agents/foreman-v2-agent.md` | Tier 1 agent contract (foreman) |
-| 11 | `.github/agents/independent-assurance-agent.md` | Tier 1 agent contract (IAA) |
-| 12 | `.github/agents/execution-ceremony-admin-agent.md` | Tier 1 agent contract (ECAP) |
+| 9 | `.agent-workspace/independent-assurance-agent/memory/session-063-20260506.md` | IAA session memory (rejection-002) |
+| 10 | `.agent-workspace/independent-assurance-agent/memory/session-064-20260506.md` | IAA session memory (rejection-003) |
+| 11 | `.github/agents/foreman-v2-agent.md` | Tier 1 agent contract (foreman) |
+| 12 | `.github/agents/independent-assurance-agent.md` | Tier 1 agent contract (IAA) |
+| 13 | `.github/agents/execution-ceremony-admin-agent.md` | Tier 1 agent contract (ECAP) |
 
-**Declared count**: 12 ✓ | **Actual diff count**: 12 ✓ | **Parity**: PASS
+**Declared count**: 13 ✓ | **Actual diff count**: 13 ✓ | **Parity**: PASS
 
 ---
 
@@ -282,7 +283,7 @@ Issue #1532 opened by CS2 (APGI-cmy) and assigned to Copilot — constitutes CS2
 - [x] Zero compiler/linter warnings (N/A)
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
 - [x] IAA audit token recorded: IAA-session-062-align-tier1-20260506-PASS
-- [x] FILES_CHANGED count verified: 12 declared = 12 actual
+- [x] FILES_CHANGED count verified: 14 declared = 13 actual
 - [x] No PUBLIC_API ripple obligations (all changed files absent from CANON_INVENTORY)
 - [x] No standalone token file (NO-STANDALONE-TOKEN-001 compliant)
 - [x] SCOPE_FROZEN: YES confirmed in scope declaration
@@ -292,7 +293,7 @@ Issue #1532 opened by CS2 (APGI-cmy) and assigned to Copilot — constitutes CS2
 
 ## IAA Audit
 
-`iaa_audit_token: IAA-session-062-align-tier1-20260506-PASS`
+`iaa_audit_token: IAA-session-065-align-tier1-20260506-PASS`
 
 Pre-populated expected reference per A-029. Token will be written by IAA into `.agent-admin/assurance/iaa-wave-record-align-tier1-contracts-20260506.md ## TOKEN` section upon assurance invocation.
 
