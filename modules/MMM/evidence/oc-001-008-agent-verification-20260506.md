@@ -117,7 +117,11 @@ From Vercel deploy workflow Run #90 (2026-05-06T08:13:22Z):
 
 **⚠️ FINDING — `NEXT_PUBLIC_SITE_URL` / `VITE_LIVE_DEPLOYMENT_URL` NOT SET:**
 
-CI log line: `PRODUCTION_SITE_URL: ` (empty) — this means `NEXT_PUBLIC_SITE_URL` secret maps to an empty value. The smoke test defaults to `https://mmm.maturion.com` which does NOT resolve (HTTP 000). The live app is deployed at `https://maturity-model-management.vercel.app/`, not `https://mmm.maturion.com`. **CS2 should set `NEXT_PUBLIC_SITE_URL` (and/or `VITE_LIVE_DEPLOYMENT_URL`) to `https://maturity-model-management.vercel.app` in GitHub secrets, and optionally configure `mmm.maturion.com` as a Vercel custom domain alias.**
+**Current state**: CI log shows `PRODUCTION_SITE_URL: ` (empty) — the `NEXT_PUBLIC_SITE_URL` GitHub secret maps to an empty value.
+
+**Root cause**: The smoke test defaults to `https://mmm.maturion.com` when `PRODUCTION_SITE_URL` is not set. That domain does NOT resolve (HTTP 000 = connection refused).
+
+**Recommended CS2 action**: Set `NEXT_PUBLIC_SITE_URL` (and/or `VITE_LIVE_DEPLOYMENT_URL`) to `https://maturity-model-management.vercel.app` in GitHub secrets. Optionally configure `mmm.maturion.com` as a Vercel custom domain alias if that URL is intended to be canonical.
 
 ---
 
@@ -261,7 +265,7 @@ The dashboard page calls MMM Edge Functions to load org data, QIW status, and as
 
 ### Secondary issue — Vercel SPA routing
 
-The `vercel.json` contains a rewrite rule:
+The `vercel.json` at the repository root contains a catch-all rewrite rule (excerpt from the `rewrites` array):
 ```json
 {
   "source": "/((?!api/|assets/|manifest\\.json$|sw\\.js$).*)",
