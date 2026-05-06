@@ -524,6 +524,7 @@ The following settings/secrets are NOT agent-verifiable due to masking or permis
 | OC item | System | Setting/Secret name | Why agent cannot verify | CS2 action needed |
 |---|---|---|---|---|
 | OC-001 | Supabase dashboard | Auth settings (email provider, redirect URLs, site URL) | Requires dashboard access | Verify Auth → SMTP and URL Configuration; set site URL to `https://maturity-model-management.vercel.app` |
+| OC-001 | Supabase dashboard | JWT secret configuration | Requires dashboard access | Confirm JWT secret configuration in Supabase Auth settings matches the evidence record and intended deployment configuration |
 | OC-003 | Supabase Storage | Bucket list (framework-sources, evidence-files) | Requires `service_role_key` | Run `supabase storage ls` or check Storage in dashboard |
 | OC-003 | Supabase dashboard | Bucket RLS policies | Requires dashboard access | Verify RLS policies match migration definitions |
 | OC-004 | Supabase dashboard | SMTP provider configuration | Auth → SMTP Settings | Confirm or configure SMTP provider |
