@@ -27,8 +27,8 @@
 | iaa_audit_token | `IAA-session-pit-stage1-app-desc-hardening-20260506-PASS` | Expected reference per Foreman appointment brief §10 |
 | scope_declaration | `.agent-admin/scope-declarations/pr-1535.md` | Committed on branch |
 | ecap_prehandover | `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pit-stage1-app-desc-hardening-20260506.md` | This file |
-| ecap_session_memory | `.agent-workspace/execution-ceremony-admin-agent/bundles/session-pit-stage1-app-desc-hardening-20260506.md` | ECAP bundle (being prepared) |
-| ecap_reconciliation | `.agent-workspace/execution-ceremony-admin-agent/bundles/ECAP_RECONCILIATION_SUMMARY-pit-stage1-app-desc-hardening-20260506.md` | ECAP bundle (being prepared) |
+| ecap_session_memory | `.agent-workspace/execution-ceremony-admin-agent/bundles/session-pit-stage1-app-desc-hardening-20260506.md` | ECAP bundle (committed on branch) |
+| ecap_reconciliation | `.agent-workspace/execution-ceremony-admin-agent/bundles/ECAP_RECONCILIATION_SUMMARY-pit-stage1-app-desc-hardening-20260506.md` | ECAP bundle (committed on branch) |
 
 **art_refresh_required**: NO — No renumber, rebase, date change, PR number change, or wave identifier change occurred.
 **art_refresh_completed**: N/A
@@ -439,13 +439,13 @@ All primary deliverables committed at HEAD (dac9343):
 | 10 | `.agent-admin/assurance/iaa-wave-record-pit-stage1-app-description-hardening-20260506.md` | IAA wave record (pre-brief) | COMMITTED |
 | 11 | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Wave task tracker | COMMITTED |
 
-ECAP ceremony artifacts (to be committed by Foreman post-handback):
+ECAP ceremony artifacts (committed by Foreman post-handback):
 
 | # | Artifact Path | Type | Status |
 |---|--------------|------|--------|
-| E1 | `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pit-stage1-app-desc-hardening-20260506.md` | ECAP PREHANDOVER proof | THIS FILE — uncommitted |
-| E2 | `.agent-workspace/execution-ceremony-admin-agent/bundles/session-pit-stage1-app-desc-hardening-20260506.md` | ECAP session memory | Uncommitted |
-| E3 | `.agent-workspace/execution-ceremony-admin-agent/bundles/ECAP_RECONCILIATION_SUMMARY-pit-stage1-app-desc-hardening-20260506.md` | ECAP reconciliation summary | Uncommitted |
+| E1 | `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pit-stage1-app-desc-hardening-20260506.md` | ECAP PREHANDOVER proof | COMMITTED |
+| E2 | `.agent-workspace/execution-ceremony-admin-agent/bundles/session-pit-stage1-app-desc-hardening-20260506.md` | ECAP session memory | COMMITTED |
+| E3 | `.agent-workspace/execution-ceremony-admin-agent/bundles/ECAP_RECONCILIATION_SUMMARY-pit-stage1-app-desc-hardening-20260506.md` | ECAP reconciliation summary | COMMITTED |
 
 ---
 
