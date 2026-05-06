@@ -14,8 +14,8 @@
     "modules/MMM/evidence/screenshot-upload-404-20260506.png"
   ],
   "risk": "medium",
-  "requires_iaa": false,
-  "requires_ecap": false,
+  "requires_iaa": true,
+  "requires_ecap": true,
   "evidence_required": [
     "Supabase project/settings confirmation for OC-001 through OC-004 where agent-accessible",
     "Vercel environment variable confirmation for OC-005 where agent-accessible",
