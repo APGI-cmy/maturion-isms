@@ -59,16 +59,16 @@
 | R04 | PR number | `maturion-isms#1535` (PREHANDOVER `pr`) | Session memory, scope declaration (pr-1535.md filename) | ✓ |
 | R05 | Wave identifier | `pit-stage1-app-description-hardening` (PREHANDOVER `wave`) | Session memory, wave-current-tasks.md Wave field, wave record filename | ✓ |
 | R06 | Branch name | `copilot/update-app-description-with-mmm-lessons` (PREHANDOVER `branch`) | `git branch --show-current` output (verified) | ✓ |
-| R07 | Changed file paths | 11 files (PREHANDOVER artifact inventory) | Scope declaration (all 11 declared), `git diff --name-only origin/main...HEAD` | ✓ |
+| R07 | Changed file paths | 19 files (PREHANDOVER artifact inventory) | Scope declaration (all 19 declared), `git diff --name-only origin/main...HEAD` | ✓ |
 | R08 | PREHANDOVER ↔ session memory | Session ID, wave, issue, PR consistent | Session memory confirms same wave/issue/PR/session | ✓ |
 | R09 | PREHANDOVER ↔ token / IAA reference | Expected token `IAA-session-pit-stage1-app-desc-hardening-20260506-PASS` | Wave record `## TOKEN` section (awaiting IAA issuance — pre-IAA state correct) | ✓ |
 | R10 | Tracker ↔ wave record | Stage 1 = DRAFT_PENDING_CS2_APPROVAL | Wave record wave type = PRE_BUILD_STAGE_MODEL; consistent | ✓ |
-| R11 | Scope declaration ↔ actual changed files | All 11 diff files declared in scope declaration | `git diff --name-only origin/main...HEAD` = 11 files, all in scope declaration | ✓ |
-| R12 | Session memory ↔ committed artifact paths | All 11 committed paths listed in session memory | `git ls-files` (verified via git show HEAD) | ✓ |
+| R11 | Scope declaration ↔ actual changed files | All 19 diff files declared in scope declaration | `git diff --name-only origin/main...HEAD` = 19 files, all in scope declaration | ✓ |
+| R12 | Session memory ↔ committed artifact paths | All 19 committed paths listed in session memory | `git ls-files` (verified via git show HEAD) | ✓ |
 | R13 | CANON_INVENTORY ↔ file hash / version | No CANON_INVENTORY files changed in this PR | N/A — R13 not triggered (no amended CANON_INVENTORY entries) | ✓ N/A |
 | R14 | Ripple registry ↔ PUBLIC_API changes | No PUBLIC_API files changed | CANON_INVENTORY checked — no layer_down_status: PUBLIC_API files in diff | ✓ N/A |
 | R15 | Final-state status coherence | `final_state: COMPLETE` (PREHANDOVER) | Session memory: COMPLETE; gate results: PASS; wave record: pre-brief complete, Phase 4 pending IAA | ✓ |
-| R16 | Artifact declared count ↔ actual count | 11 committed files declared throughout | All count references consistent (11 diff files, 11 scope items, 11 artifact inventory rows) | ✓ |
+| R16 | Artifact declared count ↔ actual count | 19 committed files declared throughout | All count references consistent (19 diff files, 19 scope items, 19 artifact inventory rows) | ✓ |
 | R17 | IAA session reference (assurance round) | `pit-stage1-app-desc-hardening-20260506` | PREHANDOVER `iaa_session_reference`; no re-invocation round | ✓ |
 | R18 | Renumber/rebase refresh | ART populated from system-of-record sources | No triggering events (no renumber, rebase, date change, PR change, wave change, branch rename) — R18 N/A | ✓ N/A |
 
