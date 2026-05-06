@@ -235,7 +235,38 @@ Critical scope blocker: OVL-PBG-008 — Stage 3 FRS INITIATION ONLY in this wave
 
 ## TOKEN
 
-*REJECTION-PACKAGE issued — token withheld pending resolution of F-1 and F-2. Re-invoke IAA after fixes.*
+**ASSURANCE-TOKEN — R-2 (Re-invocation)**
+
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: maturion-isms#1549 — Finalise PIT Stage 2 tracker state and implement Stage 3 FRS
+Branch: copilot/finalise-pit-stage-2-tracker
+Reviewed SHA: 2fe96aa (HEAD at R-2 invocation)
+All 15 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-pit-stage2-stage3-frs-20260506-R2-PASS
+Adoption phase: PHASE_B_BLOCKING
+═══════════════════════════════════════
+```
+
+**PHASE_B_BLOCKING_TOKEN**: IAA-session-pit-stage2-stage3-frs-20260506-R2-PASS
+
+**Checks Summary**:
+- FAIL-ONLY-ONCE A-001: PRESENT ✅
+- OVL-PBG-001 through OVL-PBG-014 (applicable checks): 7/7 PASS ✅
+- F-1 Fix Verified: BUILD_PROGRESS_TRACKER FR count = PIT-FR-001 through PIT-FR-105 in both locations ✅
+- F-2 Re-analysis: `requires_ecap: true` CONFIRMED CORRECT — CHECK 8 mechanically requires true for governance-change type PRs; ECAP gate exits 0 gracefully when no protected paths modified ✅
+- Scope declaration = pr-1549.json = actual diff = 11 files ✅
+- Stage gating: Stage 2 COMPLETE before Stage 3 DRAFT_CREATED ✅
+- Build Authorization NOT CLEARED throughout ✅
+- Total: 15 checks, 15 PASS, 0 FAIL
+
+**Observation (non-blocking, immutable-artifact)**: PREHANDOVER §4.3 gate table states "requires_ecap: false in pr-1549.json" — factually incorrect (JSON always had `true`, which is correct). PREHANDOVER is read-only post-commit per A-029; no corrective action possible. Underlying gate behaviour is correct. IAA R-1 F-2 analysis was itself incorrect in demanding JSON be changed to `false`.
+
+**R-2 Session reference**: IAA-session-067-pit-stage2-stage3-frs-20260506
+**Date**: 2026-05-06
+**Authority**: CS2 (Johan Ras / @APGI-cmy) holds merge authority
 
 ---
 

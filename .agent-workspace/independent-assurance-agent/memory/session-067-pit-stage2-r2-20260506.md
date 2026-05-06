@@ -1,0 +1,8 @@
+# IAA Session Memory — session-067 — 2026-05-06
+
+- session_id: session-067
+- pr_reviewed: maturion-isms#1549 — Finalise PIT Stage 2 tracker state and implement Stage 3 FRS (branch: copilot/finalise-pit-stage-2-tracker, reviewed SHA: 2fe96aa, R-2 re-invocation)
+- overlay_applied: PRE_BUILD_STAGE_MODEL (PRE_BUILD_GATES OVL-PBG-001–OVL-PBG-017 + GOVERNANCE_EVIDENCE OVL-GE-001–OVL-GE-004 supplemental)
+- verdict: ASSURANCE-TOKEN (IAA-session-pit-stage2-stage3-frs-20260506-R2-PASS)
+- checks_run: 15 substance checks: 15 PASS, 0 FAIL
+- learning_note: IAA R-1 F-2 ANALYSIS CORRECTION — IAA session-066 incorrectly concluded that `requires_ecap: true` in pr-1549.json was wrong and demanded it be changed to `false`. This was incorrect. `validate-simple-pr-admin.sh` CHECK 8 mechanically requires `requires_ecap: true` for any PR with `type=governance-change` (in `governance_types = ["governance-change", "agent-contract-change"]`) OR when `.agent-admin/` files are in the diff. Setting `requires_ecap: false` would FAIL CHECK 8. The ECAP ceremony gate (`ecap-admin-ceremony-gate.sh`) then handles the downstream decision — it exits 0 gracefully when no protected paths (`.github/agents/*.md`, `governance/canon/**`, etc.) are in the diff. These two gates work in tandem: CHECK 8 validates the JSON field value (must be true for governance-change type), ECAP gate decides if ceremony is actually needed. PERMANENT RULE: For PRs with `type=governance-change` or `.agent-admin/` changes, `requires_ecap: true` is CORRECT and REQUIRED by CHECK 8. Do not flag this as an error. Verify ECAP gate exit status separately. This rule supersedes any prior learning that `requires_ecap: false` is appropriate for governance-only waves — it is NOT, because CHECK 8 will fail.
