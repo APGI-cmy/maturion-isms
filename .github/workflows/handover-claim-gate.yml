@@ -40,6 +40,11 @@ jobs:
     # Only fire when:
     # (a) A comment on a PR (not issue) contains handover keywords, OR
     # (b) A copilot/ branch PR is marked ready_for_review
+    #
+    # Keyword groups:
+    # - User-facing: handover, merge-ready, ready to merge, all gates pass, merge gate released
+    # - Foreman governance signals: Phase 4 (handover phase), OPOJD (complete handover doctrine)
+    #   These are intentional — Foreman agents use these precise governance terms in comments.
     if: |
       (
         github.event_name == 'issue_comment' &&
@@ -165,6 +170,10 @@ jobs:
 
             for (const [name, run] of latestByName) {
               if (run.status === 'completed') {
+                // 'skipped' is acceptable: many jobs conditionally skip for non-applicable
+                // PR types (e.g., non-Copilot PRs, docs-only PRs). A skipped job is not
+                // a failing gate — it means the gate determined it does not apply.
+                // 'neutral' is also acceptable: used by some checks to indicate "not applicable".
                 if (run.conclusion === 'success' || run.conclusion === 'skipped' || run.conclusion === 'neutral') {
                   passing.push(name);
                 } else {

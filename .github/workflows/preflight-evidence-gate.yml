@@ -855,6 +855,9 @@ jobs:
           fi
 
           # Check .admin/pr.json evidence_required for gate test evidence
+          # NOTE: The test_keywords list below and the EVIDENCE_PATTERNS shell list further
+          # down both implement the same semantic matching — keep them aligned if updating.
+          # Both use space-normalized keywords (hyphens → spaces) before matching.
           EVIDENCE_OK=false
           if [ -f ".admin/pr.json" ] && command -v python3 >/dev/null 2>&1; then
             EVIDENCE=$(python3 -c "
