@@ -83,10 +83,6 @@ gate_set_checked:
   - preflight/ecap-admin-ceremony
   - preflight/scope-declaration-parity
   - preflight/mmm-pr-admin
-  - governance-ceremony/draft-check
-  - governance-ceremony/prehandover-and-iaa-token
-  - governance-ceremony/pr-body-governance-block
-  - governance-ceremony/verdict
 
 ## Cross-Wave Impact Summary
 public_api_files_changed: 0
