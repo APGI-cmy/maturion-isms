@@ -51,9 +51,9 @@ identity:
 
 merge_gate_interface:
   required_checks:
-    - "Merge Gate Interface / merge-gate/verdict"
-    - "Merge Gate Interface / governance/alignment"
-    - "Merge Gate Interface / stop-and-fix/enforcement"
+    - "merge-gate/verdict"
+    - "governance/alignment"
+    - "stop-and-fix/enforcement"
   parity_required: true
   parity_enforcement: BLOCKING
   ci_policy: "CI is confirmatory, not diagnostic. IAA performs equivalent local evidence collection before issuing verdict."
