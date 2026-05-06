@@ -6,7 +6,7 @@
 **Issue**: maturion-isms#1532 (Hardening — Align Tier 1 agent contracts with Tier 2 lifecycle, evidence, scope, and live-validation gates)  
 **Session**: session-align-tier1-20260506  
 **Date**: 2026-05-06  
-**Status**: COMPLETE — T-WAT-001 delivered by CodexAdvisor (commit a24ade56), all ACs satisfied, CI GREEN (run 25422906972), ECAP ceremony done.
+**Status**: BLOCKED — T-WAT-001 delivered by CodexAdvisor (commit a24ade56) and CI GREEN (run 25422906972), but wave completion is pending CS2 undraft/untitle and final IAA assurance/token recording; ECAP ceremony done.
 
 ## Acceptance Criteria (From Issue)
 
