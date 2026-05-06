@@ -27,7 +27,7 @@ pr:                     1533
 wave:                   align-tier1-contracts-20260506
 
 ## Delivery State
-final_state:            COMPLETE
+final_state:            PENDING_IAA
 active_trackers_normalized: YES
 opojd_compliance:       CONFIRMED
 
