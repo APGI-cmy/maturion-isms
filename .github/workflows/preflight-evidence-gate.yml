@@ -220,19 +220,24 @@ jobs:
 
           # ----------------------------------------------------------------
           # MMM Simple PR Admin Model bypass — requires_iaa: false
-          # Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.1.0
+          # Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.2.0
           # ----------------------------------------------------------------
-          if [ -f ".admin/pr.json" ] && command -v python3 >/dev/null 2>&1; then
-            ADMIN_REQUIRES_IAA=$(python3 -c "import json; m=json.load(open('.admin/pr.json')); v=m.get('requires_iaa'); print('false' if v is False else 'true')" 2>/dev/null || echo "invalid")
+          ADMIN_MANIFEST=""
+          _PR_NUM="${{ github.event.pull_request.number }}"
+          if [ -n "$_PR_NUM" ] && [ -f ".admin/prs/pr-${_PR_NUM}.json" ]; then
+            ADMIN_MANIFEST=".admin/prs/pr-${_PR_NUM}.json"
+          elif [ -f ".admin/pr.json" ]; then
+            ADMIN_MANIFEST=".admin/pr.json"
+          fi
+          if [ -n "$ADMIN_MANIFEST" ] && command -v python3 >/dev/null 2>&1; then
+            ADMIN_REQUIRES_IAA=$(python3 -c "import json; m=json.load(open('${ADMIN_MANIFEST}')); v=m.get('requires_iaa'); print('false' if v is False else 'true')" 2>/dev/null || echo "invalid")
             if [ "$ADMIN_REQUIRES_IAA" = "false" ]; then
-              echo "✅ PASS — .admin/pr.json declares requires_iaa: false."
+              echo "✅ PASS — ${ADMIN_MANIFEST} declares requires_iaa: false."
               echo "   IAA pre-brief gate waived per MMM Simple PR Admin Model."
               echo "   Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md §CI gate integration"
               exit 0
             fi
           fi
-
-          FAIL=false
 
           # ----------------------------------------------------------------
           # Check 1: wave-current-tasks.md must exist on this branch
@@ -355,19 +360,25 @@ jobs:
 
           # ----------------------------------------------------------------
           # MMM Simple PR Admin Model bypass — requires_iaa: false
-          # Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.1.0
+          # Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.2.0
           # ----------------------------------------------------------------
-          if [ -f ".admin/pr.json" ] && command -v python3 >/dev/null 2>&1; then
-            ADMIN_REQUIRES_IAA=$(python3 -c "import json; m=json.load(open('.admin/pr.json')); v=m.get('requires_iaa'); print('false' if v is False else 'true')" 2>/dev/null || echo "invalid")
+          ADMIN_MANIFEST=""
+          _PR_NUM="${{ github.event.pull_request.number }}"
+          if [ -n "$_PR_NUM" ] && [ -f ".admin/prs/pr-${_PR_NUM}.json" ]; then
+            ADMIN_MANIFEST=".admin/prs/pr-${_PR_NUM}.json"
+          elif [ -f ".admin/pr.json" ]; then
+            ADMIN_MANIFEST=".admin/pr.json"
+          fi
+          if [ -n "$ADMIN_MANIFEST" ] && command -v python3 >/dev/null 2>&1; then
+            ADMIN_REQUIRES_IAA=$(python3 -c "import json; m=json.load(open('${ADMIN_MANIFEST}')); v=m.get('requires_iaa'); print('false' if v is False else 'true')" 2>/dev/null || echo "invalid")
             if [ "$ADMIN_REQUIRES_IAA" = "false" ]; then
-              echo "✅ PASS — .admin/pr.json declares requires_iaa: false."
+              echo "✅ PASS — ${ADMIN_MANIFEST} declares requires_iaa: false."
               echo "   IAA token self-certification gate waived per MMM Simple PR Admin Model."
               echo "   Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md §CI gate integration"
               exit 0
             fi
           fi
 
-          ASSURANCE_DIR=".agent-admin/assurance"
           BASE_SHA="${{ github.event.pull_request.base.sha }}"
 
           # Scope check to token files that are NEW in this PR (not pre-existing in base)
@@ -460,14 +471,21 @@ jobs:
 
           # ----------------------------------------------------------------
           # MMM Simple PR Admin Model bypass — requires_iaa: false
-          # Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.1.0
+          # Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.2.0
           # PREHANDOVER proofs are part of the IAA ceremony. When requires_iaa
           # is false, the HFMC-01 ripple presence gate is waived.
           # ----------------------------------------------------------------
-          if [ -f ".admin/pr.json" ] && command -v python3 >/dev/null 2>&1; then
-            ADMIN_REQUIRES_IAA=$(python3 -c "import json; m=json.load(open('.admin/pr.json')); v=m.get('requires_iaa'); print('false' if v is False else 'true')" 2>/dev/null || echo "invalid")
+          ADMIN_MANIFEST=""
+          _PR_NUM="${{ github.event.pull_request.number }}"
+          if [ -n "$_PR_NUM" ] && [ -f ".admin/prs/pr-${_PR_NUM}.json" ]; then
+            ADMIN_MANIFEST=".admin/prs/pr-${_PR_NUM}.json"
+          elif [ -f ".admin/pr.json" ]; then
+            ADMIN_MANIFEST=".admin/pr.json"
+          fi
+          if [ -n "$ADMIN_MANIFEST" ] && command -v python3 >/dev/null 2>&1; then
+            ADMIN_REQUIRES_IAA=$(python3 -c "import json; m=json.load(open('${ADMIN_MANIFEST}')); v=m.get('requires_iaa'); print('false' if v is False else 'true')" 2>/dev/null || echo "invalid")
             if [ "$ADMIN_REQUIRES_IAA" = "false" ]; then
-              echo "✅ PASS — .admin/pr.json declares requires_iaa: false."
+              echo "✅ PASS — ${ADMIN_MANIFEST} declares requires_iaa: false."
               echo "   HFMC-01 ripple presence gate waived per MMM Simple PR Admin Model."
               echo "   Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md §CI gate integration"
               exit 0
@@ -761,10 +779,14 @@ jobs:
           fetch-depth: 0
 
       - name: MMM PR Admin Manifest Validator
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          if [ ! -f ".admin/pr.json" ]; then
-            echo "ℹ️  No .admin/pr.json present — MMM PR Admin Model check skipped."
-            echo "   This check only enforces on PRs that include .admin/pr.json."
+          PER_PR_MANIFEST=".admin/prs/pr-${PR_NUMBER}.json"
+          if [ ! -f "$PER_PR_MANIFEST" ] && [ ! -f ".admin/pr.json" ]; then
+            echo "ℹ️  No manifest present — MMM PR Admin Model check skipped."
+            echo "   Checked: $PER_PR_MANIFEST and .admin/pr.json"
+            echo "   This check only enforces on PRs that include a manifest."
             exit 0
           fi
           chmod +x .github/scripts/validate-simple-pr-admin.sh

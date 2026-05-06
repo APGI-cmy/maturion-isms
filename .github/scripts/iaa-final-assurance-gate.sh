@@ -47,24 +47,32 @@ fi
 
 # ----------------------------------------------------------------
 # MMM Simple PR Admin Model bypass — requires_iaa: false
-# Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.1.0
-# When .admin/pr.json is present and declares requires_iaa: false,
+# Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.2.0
+# When the active manifest declares requires_iaa: false,
 # the IAA final assurance gate is waived. Stronger controls are
 # preserved: governance-change and agent-contract-change types are
 # forced to requires_iaa: true by validate-simple-pr-admin.sh.
+# Manifest resolution: per-PR (.admin/prs/pr-N.json) preferred,
+# legacy (.admin/pr.json) used as fallback during migration.
 # ----------------------------------------------------------------
-if [ -f ".admin/pr.json" ] && command -v python3 >/dev/null 2>&1; then
+ADMIN_MANIFEST=""
+if [ -n "${PR_NUMBER:-}" ] && [ -f ".admin/prs/pr-${PR_NUMBER}.json" ]; then
+  ADMIN_MANIFEST=".admin/prs/pr-${PR_NUMBER}.json"
+elif [ -f ".admin/pr.json" ]; then
+  ADMIN_MANIFEST=".admin/pr.json"
+fi
+if [ -n "$ADMIN_MANIFEST" ] && command -v python3 >/dev/null 2>&1; then
   ADMIN_REQUIRES_IAA=$(python3 -c "
 import json, sys
 try:
-    m = json.load(open('.admin/pr.json'))
+    m = json.load(open('${ADMIN_MANIFEST}'))
     v = m.get('requires_iaa')
     print('false' if v is False else 'true')
 except Exception:
     print('invalid')
 " 2>/dev/null || echo "invalid")
   if [ "$ADMIN_REQUIRES_IAA" = "false" ]; then
-    echo "✅ PASS — .admin/pr.json declares requires_iaa: false."
+    echo "✅ PASS — ${ADMIN_MANIFEST} declares requires_iaa: false."
     echo "   IAA final assurance gate waived per MMM Simple PR Admin Model."
     echo "   Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md §CI gate integration"
     exit 0
