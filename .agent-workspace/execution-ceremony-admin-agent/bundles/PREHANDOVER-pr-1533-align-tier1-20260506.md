@@ -83,11 +83,11 @@ files_reviewed:
 governance_artifacts_reviewed:
   - .admin/pr.json — agent-contract-change, requires_iaa/ecap: true, evidence_required array correct
   - .agent-admin/assurance/iaa-wave-record-align-tier1-contracts-20260506.md — PRE-BRIEF populated, SB-001/002/004 resolved
-  - .agent-admin/scope-declarations/pr-1533.md — SCOPE_FROZEN: YES, FILES_CHANGED: 13, A-031 carve-out present
+  - .agent-admin/scope-declarations/pr-1533.md — SCOPE_FROZEN: YES, FILES_CHANGED: 14, A-031 carve-out present
   - .agent-workspace/foreman-v2/personal/wave-current-tasks.md — ECAP Admin Appointment section populated
 
 ## IAA Assurance Reference
-iaa_audit_token:        IAA-session-066-align-tier1-20260506-PASS
+iaa_audit_token:        IAA-session-067-align-tier1-20260506-PASS
 iaa_wave_record_path:   .agent-admin/assurance/iaa-wave-record-align-tier1-contracts-20260506.md
 iaa_token_location:     ## TOKEN section of iaa-wave-record (NO-STANDALONE-TOKEN-001 compliant)
 
@@ -129,7 +129,7 @@ ecap_reconciliation_summary: EMBEDDED (see §4.3e Compliance Gate section below)
 |---|---------------|--------|
 | 1 | PREHANDOVER proof written to approved write path | ✅ `.agent-admin/prehandover/proof-pr-1533-align-tier1-20260506.md` |
 | 2 | ECAP bundle written to approved write path | ✅ `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1533-align-tier1-20260506.md` |
-| 3 | IAA audit token pre-populated (not PENDING) | ✅ `IAA-session-066-align-tier1-20260506-PASS` |
+| 3 | IAA audit token pre-populated (not PENDING) | ✅ `IAA-session-067-align-tier1-20260506-PASS` |
 | 4 | iaa_wave_record_path declared | ✅ `.agent-admin/assurance/iaa-wave-record-align-tier1-contracts-20260506.md` |
 | 5 | ECAP did NOT write to ## TOKEN in wave record | ✅ TOKEN section left as PLACEHOLDER per contract |
 | 6 | ECAP did NOT write to foreman-v2 memory paths | ✅ No writes to `.agent-workspace/foreman-v2/memory/` |
@@ -157,12 +157,12 @@ ecap_reconciliation_summary: EMBEDDED (see §4.3e Compliance Gate section below)
 | Row | Dependency | Result |
 |-----|-----------|--------|
 | R01 | Session ID consistency | ✅ `ecap-pr-1533-align-tier1-20260506` — consistent across PREHANDOVER, bundle, and wave record references |
-| R02 | IAA token reference | ✅ `IAA-session-066-align-tier1-20260506-PASS` — consistent in PREHANDOVER iaa_audit_token and wave record path |
+| R02 | IAA token reference | ✅ `IAA-session-067-align-tier1-20260506-PASS` — consistent in PREHANDOVER iaa_audit_token and wave record path |
 | R03 | Issue number | ✅ `1532` — consistent in PREHANDOVER, bundle, scope declaration, wave record |
 | R04 | PR number | ✅ `1533` — consistent in PREHANDOVER, bundle, scope declaration, wave record |
 | R05 | Wave identifier | ✅ `align-tier1-contracts-20260506` — consistent in PREHANDOVER, bundle, wave record filename, wave-current-tasks |
 | R06 | Branch name | ✅ `copilot/align-tier-1-agent-contracts-again` — confirmed by git branch; consistent across all artifacts |
-| R07 | Changed file paths | ✅ 13 files listed in PREHANDOVER match `git diff --name-only origin/main...HEAD` |
+| R07 | Changed file paths | ✅ 14 files listed in PREHANDOVER match `git diff --name-only origin/main...HEAD` |
 | R08 | PREHANDOVER ↔ session memory | ✅ Same job, wave, issue, PR, session, and final_state: COMPLETE in both artifacts |
 | R09 | PREHANDOVER ↔ token reference | ✅ iaa_audit_token and iaa_wave_record_path consistent; token awaiting IAA invocation |
 | R10 | Tracker ↔ wave record | ✅ wave-current-tasks.md wave slug matches wave record filename slug |
@@ -172,7 +172,7 @@ ecap_reconciliation_summary: EMBEDDED (see §4.3e Compliance Gate section below)
 | R14 | Ripple registry ↔ PUBLIC_API changes | ✅ Zero PUBLIC_API files changed; ripple_status: NOT-APPLICABLE |
 | R15 | Final-state status coherence | ✅ `final_state: COMPLETE` in PREHANDOVER; `final_state: COMPLETE` in bundle; ECAP verdict: PASS |
 | R16 | Artifact declared count ↔ actual count | ✅ files_changed: 14 declared and actual; 2 ECAP artifacts declared and created |
-| R17 | IAA session reference | ✅ `session-066-align-tier1-20260506` — consistent; iaa_reinvocation_round: 4 |
+| R17 | IAA session reference | ✅ `session-067-align-tier1-20260506` — consistent; iaa_reinvocation_round: 5 |
 | R18 | Renumber/rebase/conflict-resolution refresh | ✅ NO triggering events occurred; art_refresh_required: NO |
 
 **Reconciliation Matrix Result: ALL ROWS R01–R18 COMPLETE — no mismatches detected**
@@ -212,7 +212,7 @@ ecap_reconciliation_summary: EMBEDDED (see §4.3e Compliance Gate section below)
 | Row | Consistency Dimension | Match |
 |-----|-----------------------|-------|
 | Session reference | `ecap-pr-1533-align-tier1-20260506` | ✅ |
-| Token reference | `IAA-session-066-align-tier1-20260506-PASS` | ✅ |
+| Token reference | `IAA-session-067-align-tier1-20260506-PASS` | ✅ |
 | Issue/PR/wave | #1532 / #1533 / align-tier1-contracts-20260506 | ✅ |
 | Scope declaration parity | FILES_CHANGED: 14 = actual diff 14 | ✅ |
 | Status consistency | final_state: COMPLETE across all artifacts | ✅ |

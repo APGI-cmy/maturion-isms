@@ -50,11 +50,11 @@ ecap_verdict:           PASS
 ecap_bundle:            .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1533-align-tier1-20260506.md
 
 ## IAA Assurance
-iaa_audit_token:        IAA-session-066-align-tier1-20260506-PASS
-iaa_session_reference:  session-066-align-tier1-20260506
-iaa_reinvocation_round: 4
+iaa_audit_token:        IAA-session-067-align-tier1-20260506-PASS
+iaa_session_reference:  session-067-align-tier1-20260506
+iaa_reinvocation_round: 5
 iaa_wave_record_path:   .agent-admin/assurance/iaa-wave-record-align-tier1-contracts-20260506.md
-iaa_rejection_reference: REJECTION-001, REJECTION-002, REJECTION-003, REJECTION-004 — see wave record
+iaa_rejection_reference: REJECTION-001, REJECTION-002, REJECTION-003, REJECTION-004, REJECTION-005 — see wave record
 
 ## Scope
 files_changed:          14
@@ -147,7 +147,7 @@ This wave aligns Tier 1 agent contracts with the Tier 2 lifecycle, evidence, sco
 | Issue number | GitHub issue (appointment brief) | 1532 |
 | Branch | `git branch --show-current` | copilot/align-tier-1-agent-contracts-again |
 | Wave identifier | wave-current-tasks.md `Wave Slug` field | align-tier1-contracts-20260506 |
-| IAA token reference | Appointment brief (expected reference) | IAA-session-066-align-tier1-20260506-PASS |
+| IAA token reference | Appointment brief (expected reference) | IAA-session-067-align-tier1-20260506-PASS |
 | IAA wave record path | .agent-admin/assurance/ directory | .agent-admin/assurance/iaa-wave-record-align-tier1-contracts-20260506.md |
 | PREHANDOVER proof path | Appointment brief expected_return_artifact_paths | .agent-admin/prehandover/proof-pr-1533-align-tier1-20260506.md |
 | ECAP bundle path | Appointment brief expected_return_artifact_paths | .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1533-align-tier1-20260506.md |
@@ -170,9 +170,10 @@ Per `git diff --name-only origin/main...HEAD` (confirmed at bundle assembly):
 | 8 | `.agent-workspace/independent-assurance-agent/memory/session-062-align-tier1-20260506.md` | IAA session memory |
 | 9 | `.agent-workspace/independent-assurance-agent/memory/session-063-20260506.md` | IAA session memory (rejection-002) |
 | 10 | `.agent-workspace/independent-assurance-agent/memory/session-064-20260506.md` | IAA session memory (rejection-003) |
-| 11 | `.github/agents/foreman-v2-agent.md` | Tier 1 agent contract (foreman) |
-| 12 | `.github/agents/independent-assurance-agent.md` | Tier 1 agent contract (IAA) |
-| 13 | `.github/agents/execution-ceremony-admin-agent.md` | Tier 1 agent contract (ECAP) |
+| 11 | `.agent-workspace/independent-assurance-agent/memory/session-065-20260506.md` | IAA session memory (rejection-004) |
+| 12 | `.github/agents/foreman-v2-agent.md` | Tier 1 agent contract (foreman) |
+| 13 | `.github/agents/independent-assurance-agent.md` | Tier 1 agent contract (IAA) |
+| 14 | `.github/agents/execution-ceremony-admin-agent.md` | Tier 1 agent contract (ECAP) |
 
 **Declared count**: 14 ✓ | **Actual diff count**: 14 ✓ | **Parity**: PASS
 
@@ -282,7 +283,7 @@ Issue #1532 opened by CS2 (APGI-cmy) and assigned to Copilot — constitutes CS2
 - [x] Zero deprecation warnings (N/A)
 - [x] Zero compiler/linter warnings (N/A)
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
-- [x] IAA audit token recorded: IAA-session-066-align-tier1-20260506-PASS
+- [x] IAA audit token recorded: IAA-session-067-align-tier1-20260506-PASS
 - [x] FILES_CHANGED count verified: 14 declared = 14 actual
 - [x] No PUBLIC_API ripple obligations (all changed files absent from CANON_INVENTORY)
 - [x] No standalone token file (NO-STANDALONE-TOKEN-001 compliant)
@@ -293,7 +294,7 @@ Issue #1532 opened by CS2 (APGI-cmy) and assigned to Copilot — constitutes CS2
 
 ## IAA Audit
 
-`iaa_audit_token: IAA-session-066-align-tier1-20260506-PASS`
+`iaa_audit_token: IAA-session-067-align-tier1-20260506-PASS`
 
 Pre-populated expected reference per A-029. Token will be written by IAA into `.agent-admin/assurance/iaa-wave-record-align-tier1-contracts-20260506.md ## TOKEN` section upon assurance invocation.
 
