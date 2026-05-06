@@ -16,8 +16,8 @@
   "requires_iaa": true,
   "requires_ecap": true,
   "evidence_required": [
-    "foreman-v2-agent.md merge_gate_interface.required_checks updated to include all current preflight gates",
-    "independent-assurance-agent.md aligned with IAA canon ACR-21 through ACR-24 triggers",
+    "foreman-v2-agent.md merge_gate_interface.required_checks updated to 20 gates including all preflight/* gates",
+    "independent-assurance-agent.md aligned with IAA canon ACR-12 through ACR-16 triggers",
     "execution-ceremony-admin-agent.md references per-PR scope model (.agent-admin/scope-declarations/pr-<N>.md)",
     "agent contracts explicitly bind Tier 2 knowledge files with halt behavior on missing/stale",
     "per-PR scope declaration model referenced in all three contracts (AC4)",
