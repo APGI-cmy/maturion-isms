@@ -116,7 +116,7 @@ ecap_reconciliation_summary: EMBEDDED (see §4.3e Compliance Gate section below)
 | AAP-07 | Declared file/artifact count mismatch | ✅ CLEAR — files_changed: 14 declared and confirmed by actual diff |
 | AAP-08 | PUBLIC_API ripple obligations omitted or silently skipped | ✅ CLEAR — zero PUBLIC_API files in diff (confirmed by CANON_INVENTORY cross-check); ripple_status: NOT-APPLICABLE explicitly stated |
 | AAP-09 | Committed truth not matching proof/session memory claims | ✅ CLEAR — all declared paths consistent with actual HEAD; no contradiction between artifacts |
-| AAP-15 | Gate inventory absent from PREHANDOVER proof | ✅ CLEAR — gate_set_checked populated with 13 named gates from foreman required_checks |
+| AAP-15 | Gate inventory absent from PREHANDOVER proof | ✅ CLEAR — gate_set_checked populated with 20 named gates from foreman required_checks, aligned with the current contract gate inventory |
 | AAP-16 | Stale gate-pass wording in final-state proof | ✅ CLEAR — no "verify gates pass", "gates TBD", or "gates pending" wording in any bundle artifact |
 
 **AAP Scan Result: ALL CLEAR — no auto-fail patterns detected.**
