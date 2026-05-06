@@ -1,9 +1,10 @@
 # MMM Simple PR Admin Model
 
-**Version**: 1.0.0  
+**Version**: 1.1.0  
 **Authority**: APGI-cmy/maturion-foreman-governance#1361 — Simplify MMM governance: replace legacy ceremony with single PR admin manifest  
 **Status**: ACTIVE  
 **Effective Date**: 2026-05-04  
+**Amended**: 2026-05-05 — v1.1.0: CI gate integration section added (maturion-isms#1531)  
 **Reference Failure Case**: `maturion-isms` PR #1515 — closed unmerged after a fix/fail governance loop
 
 ---
@@ -217,6 +218,22 @@ The validator does **not**:
 ## Scope of this model
 
 This model applies to PRs in the MMM governance/product recovery context. It does not replace the broader governance system. After this model is stable, MMM product-fix PRs will migrate to `.admin/pr.json` and resume MMM app recovery work.
+
+---
+
+## CI gate integration
+
+The following CI gates read `.admin/pr.json` and skip or downgrade their checks when the manifest declares the relevant ceremony as not required. This is the authoritative bypass mechanism — no other bypass (e.g. label-based) is needed for MMM product-fix PRs.
+
+| CI gate | Bypass condition | Notes on preserved enforcement |
+|---|---|---|
+| `preflight/iaa-final-assurance` (`iaa-final-assurance-gate.sh`) | `requires_iaa: false` | Token, PR, issue, and reviewed-SHA linkage checks still run when `requires_iaa: true` |
+| `preflight/ecap-admin-ceremony` (`ecap-admin-ceremony-gate.sh`) | `requires_ecap: false` | Protected-path classification and ECAP bundle checks still run when `requires_ecap: true` |
+| `preflight/iaa-prebrief-existence` (workflow inline) | `requires_iaa: false` | wave-current-tasks.md and iaa-wave-record pre-brief checks still run when `requires_iaa: true` |
+| `preflight/iaa-token-self-certification` (workflow inline) | `requires_iaa: false` | PHASE_B_BLOCKING_TOKEN and PHASE_A_ADVISORY checks still run when `requires_iaa: true` |
+| `preflight/hfmc-ripple-presence` (workflow inline) | `requires_iaa: false` | Ripple/Cross-Agent Assessment section presence check still runs when `requires_iaa: true` |
+
+**Stronger controls preserved**: `validate-simple-pr-admin.sh` (CHECK 8) requires `requires_iaa: true` and `requires_ecap: true` for `governance-change`, `agent-contract-change`, and any PR that changes governance-control paths (`.github/workflows/`, `.github/scripts/`, `.github/agents/`, `governance/`, `.agent-admin/`). This means the bypass cannot be self-certified for high-risk PR types.
 
 ---
 

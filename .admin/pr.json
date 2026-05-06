@@ -1,0 +1,29 @@
+{
+  "pr": 1531,
+  "issue": 1530,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/pr.json",
+    ".agent-admin/prehandover/proof-pr-1531-mmm-ci-gate-bypass-20260505.md",
+    ".agent-admin/scope-declarations/pr-1531.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1531-mmm-ci-gate-bypass-20260505.md",
+    ".github/scripts/ecap-admin-ceremony-gate.sh",
+    ".github/scripts/iaa-final-assurance-gate.sh",
+    ".github/scripts/iaa-final-assurance-gate.test.sh",
+    ".github/workflows/preflight-evidence-gate.yml",
+    "governance/CANON_INVENTORY.json",
+    "governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md"
+  ],
+  "risk": "high",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": [
+    "iaa-final-assurance-gate.test.sh passes",
+    "product-fix manifests with requires_iaa false bypass IAA ceremony gates",
+    "product-fix manifests with requires_ecap false bypass ECAP ceremony gates",
+    "governance-change manifests with requires_iaa/requires_ecap true still enforce legacy ceremony gates",
+    "preflight gates remain green"
+  ],
+  "merge_authority": "CS2"
+}

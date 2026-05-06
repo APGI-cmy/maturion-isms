@@ -44,6 +44,32 @@ if [[ "$PR_LABELS" == *"governance"* ]] && \
 fi
 
 # ----------------------------------------------------------------
+# MMM Simple PR Admin Model bypass — requires_ecap: false
+# Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.1.0
+# When .admin/pr.json is present and declares requires_ecap: false,
+# the ECAP/admin ceremony gate is waived. Stronger controls are
+# preserved: governance-change and agent-contract-change types are
+# forced to requires_ecap: true by validate-simple-pr-admin.sh.
+# ----------------------------------------------------------------
+if [ -f ".admin/pr.json" ] && command -v python3 >/dev/null 2>&1; then
+  ADMIN_REQUIRES_ECAP=$(python3 -c "
+import json, sys
+try:
+    m = json.load(open('.admin/pr.json'))
+    v = m.get('requires_ecap')
+    print('false' if v is False else 'true')
+except Exception:
+    print('invalid')
+" 2>/dev/null || echo "invalid")
+  if [ "$ADMIN_REQUIRES_ECAP" = "false" ]; then
+    echo "✅ PASS — .admin/pr.json declares requires_ecap: false."
+    echo "   ECAP/admin ceremony gate waived per MMM Simple PR Admin Model."
+    echo "   Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md §CI gate integration"
+    exit 0
+  fi
+fi
+
+# ----------------------------------------------------------------
 # Require BASE_SHA
 # ----------------------------------------------------------------
 if [ -z "$BASE_SHA" ]; then
