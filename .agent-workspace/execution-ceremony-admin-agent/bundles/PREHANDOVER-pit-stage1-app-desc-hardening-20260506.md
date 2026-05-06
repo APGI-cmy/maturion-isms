@@ -275,9 +275,8 @@ All 24 mandatory App Description governance sections are present in `modules/pit
 ## Scope Declaration Parity
 
 **Scope Declaration**: `.agent-admin/scope-declarations/pr-1535.md`
-**Actual diff file count**: 11 files (`git diff --name-only origin/main...HEAD | wc -l`)
-**Scope declaration file list**: Verified — all 11 committed files are declared in the scope declaration artifact list
-**Additional paths in scope declaration (ECAP bundles, foreman memory copies)**: These are future ECAP ceremony artifacts not yet committed; they are pre-declared per appointment brief and are in `approved_artifact_paths[]`
+**Actual diff file count**: 19 files (`git diff --name-only origin/main...HEAD | wc -l`)
+**Scope declaration file list**: Verified — all 19 committed files are declared in the scope declaration artifact list
 
 | Diff File | In Scope Declaration | Notes |
 |-----------|---------------------|-------|
@@ -285,7 +284,15 @@ All 24 mandatory App Description governance sections are present in `modules/pit
 | `.agent-admin/assurance/iaa-wave-record-pit-stage1-app-description-hardening-20260506.md` | ✅ CREATE | A-031 carve-out; present |
 | `.agent-admin/evidence/app-description-checklist/pit-20260506.md` | ✅ CREATE | Present |
 | `.agent-admin/scope-declarations/pr-1535.md` | ✅ CREATE | Present (self-referential, expected) |
+| `.agent-workspace/execution-ceremony-admin-agent/bundles/ECAP_RECONCILIATION_SUMMARY-pit-stage1-app-desc-hardening-20260506.md` | ✅ CREATE | ECAP ceremony artifact |
+| `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pit-stage1-app-desc-hardening-20260506.md` | ✅ CREATE | ECAP ceremony artifact |
+| `.agent-workspace/execution-ceremony-admin-agent/bundles/session-pit-stage1-app-desc-hardening-20260506.md` | ✅ CREATE | ECAP ceremony artifact |
+| `.agent-workspace/foreman-v2/memory/FOREMAN_ADMIN_READINESS_HANDBACK-pit-stage1-app-desc-hardening-20260506.md` | ✅ CREATE | Foreman memory artifact |
+| `.agent-workspace/foreman-v2/memory/PREHANDOVER-pit-stage1-app-desc-hardening-20260506.md` | ✅ CREATE | Foreman memory artifact |
+| `.agent-workspace/foreman-v2/memory/session-pit-stage1-app-desc-hardening-20260506.md` | ✅ CREATE | Foreman memory artifact |
+| `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` | ✅ MODIFY | Foreman parking station |
 | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | ✅ MODIFY | Present |
+| `.agent-workspace/independent-assurance-agent/memory/session-pit-stage1-app-desc-hardening-20260506.md` | ✅ CREATE | IAA session memory |
 | `docs/governance/PIT_APP_DESCRIPTION.md` | ✅ CREATE | Present |
 | `modules/pit/00-app-description/app-description.md` | ✅ MODIFY | Present |
 | `modules/pit/00-app-description/pit_app_description_stage1.md` | ✅ DELETE | Present (BLOCKER-2 resolution) |
@@ -293,7 +300,7 @@ All 24 mandatory App Description governance sections are present in `modules/pit
 | `modules/pit/_readiness/pit-build-process-improvement-register.md` | ✅ CREATE | Present |
 | `modules/pit/module.manifest.json` | ✅ MODIFY | Present (BLOCKER-1 resolution) |
 
-**Scope parity**: PASS — all 11 diff files declared in scope declaration
+**Scope parity**: PASS — all 19 diff files declared in scope declaration
 
 ---
 
@@ -451,10 +458,10 @@ ECAP ceremony artifacts (to be committed by Foreman post-handback):
 | AAP-01 | PENDING/in-progress wording in final-state artifact | ✅ PASS — no PENDING or in-progress in status fields |
 | AAP-02 | Mixed version labels in same document | ✅ PASS — no mixed version labels |
 | AAP-03 | Stale artifact path references | ✅ PASS — all paths verified against committed state |
-| AAP-04 | Stale scope declaration | ✅ PASS — scope declaration matches actual diff (all 11 files declared) |
+| AAP-04 | Stale scope declaration | ✅ PASS — scope declaration matches actual diff (all 19 files declared) |
 | AAP-05 | Stale hash after file finalization | ✅ PASS — no SHA hashes declared in this documentation wave |
 | AAP-06 | Requested vs completed assurance session mismatch | ✅ PASS — IAA session ID consistently pit-stage1-app-desc-hardening-20260506 throughout |
-| AAP-07 | Declared file/artifact count mismatch | ✅ PASS — 11 files in diff, consistent across all references |
+| AAP-07 | Declared file/artifact count mismatch | ✅ PASS — 19 files in diff, consistent across all references |
 | AAP-08 | PUBLIC_API ripple obligations omitted | ✅ PASS — no CANON_INVENTORY files changed in this PR; no PUBLIC_API ripple obligations |
 | AAP-09 | Committed truth contradicting proof claims | ✅ PASS — all claims verified against actual committed state |
 | AAP-15 | Gate inventory absent | ✅ PASS — gate_set_checked populated: [OVL-PBG-001–009, OVL-PBG-014] |

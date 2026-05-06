@@ -149,11 +149,11 @@ No PUBLIC_API files changed in this PR. Ripple obligation: NOT-APPLICABLE.
 |-----|-------------|------------|
 | AAP-01 | PENDING/in-progress wording in token/status fields | ✅ PASS — no PENDING in status fields; iaa_audit_token has expected reference (not "PENDING") |
 | AAP-02 | Mixed version labels in same document | ✅ PASS — no mixed version labels detected |
-| AAP-03 | Stale artifact path references | ✅ PASS — all declared paths verified: 11 committed paths cross-checked against `git show HEAD` |
-| AAP-04 | Stale scope declaration (file count mismatch) | ✅ PASS — 11 diff files, all declared in `.agent-admin/scope-declarations/pr-1535.md` |
+| AAP-03 | Stale artifact path references | ✅ PASS — all declared paths verified: 19 committed paths cross-checked against `git show HEAD` |
+| AAP-04 | Stale scope declaration (file count mismatch) | ✅ PASS — 19 diff files, all declared in `.agent-admin/scope-declarations/pr-1535.md` |
 | AAP-05 | Stale hash after finalization | ✅ PASS — no SHA hashes declared for individual files in this documentation wave |
 | AAP-06 | Session ID mismatch | ✅ PASS — `pit-stage1-app-desc-hardening-20260506` consistent across PREHANDOVER, session memory, wave record, and token reference |
-| AAP-07 | Declared file count mismatch | ✅ PASS — 11 files consistently declared in all count references |
+| AAP-07 | Declared file count mismatch | ✅ PASS — 19 files consistently declared in all count references |
 | AAP-08 | PUBLIC_API ripple obligations omitted | ✅ PASS — no PUBLIC_API files in diff; ripple obligation confirmed NOT-APPLICABLE |
 | AAP-09 | Committed truth contradicting proof claims | ✅ PASS — all claims cross-verified against `git show HEAD` (commit dac9343) |
 | AAP-15 | Gate inventory absent | ✅ PASS — `gate_set_checked: [OVL-PBG-001, OVL-PBG-002, OVL-PBG-003, OVL-PBG-004, OVL-PBG-005, OVL-PBG-006, OVL-PBG-007, OVL-PBG-008, OVL-PBG-009, OVL-PBG-014]` in PREHANDOVER proof |
@@ -165,12 +165,12 @@ No PUBLIC_API files changed in this PR. Ripple obligation: NOT-APPLICABLE.
 
 | Section | Verification | Status |
 |---------|-------------|--------|
-| Section 1: Required Artifact Presence | All 11 primary deliverables + 3 ECAP bundles present | ✅ COMPLETE |
-| Section 2: Commit-State Table | All 11 primary artifacts committed at HEAD (dac9343/e886e3a); ECAP bundles uncommitted (correct pre-handback state) | ✅ COMPLETE |
+| Section 1: Required Artifact Presence | All 19 primary deliverables + 3 ECAP bundles present | ✅ COMPLETE |
+| Section 2: Commit-State Table | All 19 primary artifacts committed at HEAD; ECAP bundles committed | ✅ COMPLETE |
 | Section 3: Status Normalization | No TODO/TBD/PENDING in final-state fields; active tracker (wave-current-tasks.md) reflects pre-Phase-4 state correctly | ✅ COMPLETE |
 | Section 4: Version Normalization | No CANON_INVENTORY amendments; no mixed version labels | ✅ COMPLETE (N/A for CANON_INVENTORY) |
 | Section 5: Token/Session/Path Consistency | All session IDs, PR numbers, wave identifiers, branch names consistent across all artifacts | ✅ COMPLETE |
-| Section 6: Scope Declaration Parity | 11 diff files = 11 declared files | ✅ COMPLETE |
+| Section 6: Scope Declaration Parity | 19 diff files = 19 declared files | ✅ COMPLETE |
 | Section 7: Inventory/Hash/Amended-Date | N/A — no CANON_INVENTORY changes | ✅ COMPLETE (N/A) |
 | Section 8: Ripple/Registry | No PUBLIC_API changes; ripple NOT-APPLICABLE | ✅ COMPLETE |
 | Section 9: Final Acceptance Block | All evidence reviewed; ECAP confirms bundle ready for Foreman review | ✅ COMPLETE |

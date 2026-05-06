@@ -53,8 +53,8 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 - [ ] App Description approved by CS2/Johan Ras — **PENDING**
 
 **Artifact Paths**:
-- Authoritative: `modules/pit/00-app-description/app-description.md`
-- Governance Mirror: `docs/governance/PIT_APP_DESCRIPTION.md`
+- Authoritative (canonical per policy §4.1): `docs/governance/PIT_APP_DESCRIPTION.md`
+- Module-stage copy: `modules/pit/00-app-description/app-description.md`
 - Checklist Evidence: `.agent-admin/evidence/app-description-checklist/pit-20260506.md`
 
 **Checklist Result**: PASS as Draft — pending CS2 approval  

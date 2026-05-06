@@ -38,25 +38,24 @@ Downstream PIT artifacts must treat this document as their upstream source once 
 
 ## 0.1 Canonical Filing Strategy
 
-The current module-stage filing location for this artifact is:
-
-```text
-modules/pit/00-app-description/app-description.md
-```
-
-The App Description policy also requires a governance-discoverable App Description at:
+Per `APP_DESCRIPTION_REQUIREMENT_POLICY.md` v2.0 §4.1, the **authoritative canonical location** for the PIT App Description is:
 
 ```text
 docs/governance/PIT_APP_DESCRIPTION.md
 ```
 
-Therefore, PIT must use the following filing strategy unless CS2 approves a different repository-wide convention:
+The module-stage artifact is also filed at:
 
-1. The full Stage 1 module artifact is filed at `modules/pit/00-app-description/app-description.md`.
-2. A governance mirror or pointer must be filed at `docs/governance/PIT_APP_DESCRIPTION.md`.
-3. The mirror/pointer must either contain the same content or clearly point to the module-stage artifact.
-4. If both files contain full content, they must be kept in sync.
-5. If the repository canon is later updated to recognise `modules/{module}/00-app-description/app-description.md` as the canonical location for 12-stage module builds, this section may be superseded.
+```text
+modules/pit/00-app-description/app-description.md
+```
+
+Therefore, PIT uses the following filing strategy:
+
+1. The **authoritative App Description** is at `docs/governance/PIT_APP_DESCRIPTION.md` (canonical governance location per policy §4.1).
+2. The module-stage copy is filed at `modules/pit/00-app-description/app-description.md` and must be kept in sync with the authoritative source.
+3. All governance references (FRS, TRS, Architecture, IAA Pre-Brief, Builder Appointment, Build artifacts) MUST cite `docs/governance/PIT_APP_DESCRIPTION.md` as the authoritative source.
+4. If either file is updated, both must be updated together to maintain sync.
 
 No downstream artifact may cite an ambiguous or stale App Description path. Every FRS, TRS, Architecture, QA-to-Red, PBFAG, Implementation Plan, Builder Checklist, IAA Pre-Brief, Builder Appointment, and Build artifact must identify which App Description version and path it derives from.
 

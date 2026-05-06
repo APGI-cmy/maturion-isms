@@ -18,7 +18,7 @@
 | `session-073-20260426.md` | ECAP bundle for wave-073 (prior wave) | Reviewed for parking station patterns and scope declaration handling conventions |
 | `PREHANDOVER-pr-1531-mmm-ci-gate-bypass-20260505.md` | Prior ECAP bundle from 2026-05-05 | Reviewed for AAP gate patterns and reconciliation matrix format |
 | `.agent-admin/assurance/iaa-wave-record-pit-stage1-app-description-hardening-20260506.md` | IAA wave record (pre-brief) for this wave | Primary evidence source — reviewed in full; confirms blockers, overlay scope, and required PREHANDOVER sections |
-| `.agent-admin/scope-declarations/pr-1535.md` | Scope declaration for this PR | Reviewed in full — confirmed all 11 diff files declared, ECAP paths in approved_artifact_paths[] |
+| `.agent-admin/scope-declarations/pr-1535.md` | Scope declaration for this PR | Reviewed in full — confirmed all 19 diff files declared |
 
 **prior_sessions_reviewed**: session-073-20260426, PREHANDOVER-pr-1531-mmm-ci-gate-bypass-20260505, iaa-wave-record-pit-stage1-app-description-hardening-20260506, pr-1535 scope declaration
 
