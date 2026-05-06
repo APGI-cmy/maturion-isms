@@ -140,7 +140,7 @@ ECAP attests that no known recurring failure pattern (as catalogued in the FAIL-
 | Appointment brief completeness (HALT-004 gate) | ✅ PASS |
 | IAA wave record ## PRE-BRIEF present | ✅ PASS |
 | ECAP paths in scope declaration approved_artifact_paths[] | ✅ PASS |
-| Scope parity (all 11 diff files declared) | ✅ PASS |
+| Scope parity (all 19 diff files declared) | ✅ PASS |
 | OVL-PBG-001–009, OVL-PBG-014 | ✅ PASS |
 | BLOCKER-1 (module identity) | ✅ RESOLVED |
 | BLOCKER-2 (undeclared draft files) | ✅ RESOLVED |
