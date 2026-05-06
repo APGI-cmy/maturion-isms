@@ -100,7 +100,7 @@ All secrets listed below were confirmed present by successful CI workflow execut
 
 ## OC-005 — Vercel environment variables confirmed
 
-**Status: CONFIRMED (critical env vars present); FINDING: `VITE_LIVE_DEPLOYMENT_URL` / `NEXT_PUBLIC_SITE_URL` appear unset**
+**Status: PARTIALLY CONFIRMED (critical env vars present); FINDING: `VITE_LIVE_DEPLOYMENT_URL` / `NEXT_PUBLIC_SITE_URL` appear unset**
 
 ### Agent-accessible evidence
 
