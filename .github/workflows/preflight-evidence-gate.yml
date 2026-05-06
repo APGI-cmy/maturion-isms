@@ -823,17 +823,37 @@ jobs:
             exit 0
           fi
 
-          # Compute changed files
+          # Compute changed files — fail CLOSED if diff cannot be determined.
+          # An unresolvable base ref must never silently bypass the gate.
           CHANGED_FILES=""
+          DIFF_OK=false
           if [ -n "$BASE_SHA" ]; then
-            CHANGED_FILES=$(git diff --name-only "${BASE_SHA}...HEAD" 2>/dev/null || \
-                            git diff --name-only "${BASE_SHA}" HEAD 2>/dev/null || true)
+            if CHANGED_FILES=$(git diff --name-only "${BASE_SHA}...HEAD" 2>/dev/null); then
+              DIFF_OK=true
+            elif CHANGED_FILES=$(git diff --name-only "${BASE_SHA}" HEAD 2>/dev/null); then
+              DIFF_OK=true
+            else
+              echo "❌ FAIL: Cannot compute changed files — BASE_SHA '${BASE_SHA}' is not reachable in this checkout."
+              echo "  Failing closed to prevent silent gate bypass when workflow/script files may have changed."
+              echo "  Ensure the checkout step uses fetch-depth: 0 and that the base ref is fetched."
+              exit 1
+            fi
           elif git rev-parse origin/main >/dev/null 2>&1; then
-            CHANGED_FILES=$(git diff --name-only "origin/main...HEAD" 2>/dev/null || true)
+            if CHANGED_FILES=$(git diff --name-only "origin/main...HEAD" 2>/dev/null); then
+              DIFF_OK=true
+            else
+              echo "❌ FAIL: Cannot compute changed files against origin/main."
+              echo "  Failing closed to prevent silent gate bypass."
+              exit 1
+            fi
+          else
+            echo "❌ FAIL: Cannot compute changed files — BASE_SHA is unset and origin/main is not available."
+            echo "  Failing closed to prevent silent gate bypass."
+            exit 1
           fi
 
           if [ -z "$CHANGED_FILES" ]; then
-            echo "ℹ️  No changed files detected — gate-changing PR rule: not applicable."
+            echo "✅ PASS — No files changed (empty diff against base)."
             exit 0
           fi
 
@@ -889,11 +909,28 @@ except Exception:
 
           # Check PR body for gate test evidence (run IDs, local command output).
           # Normalize hyphens to spaces before matching to handle both 'dry-run' and 'dry run'.
+          # IMPORTANT: Use a bash array so multi-word phrases are matched as single units.
+          # Each element is a strong evidence phrase; generic single-word tokens ('run',
+          # 'workflow', 'validate') are intentionally omitted to prevent false positives.
           PR_BODY_NORMALIZED=$(echo "$PR_BODY" | tr '[:upper:]' '[:lower:]' | tr '-' ' ')
-          EVIDENCE_PATTERNS="run id workflow run actions/runs validate simple pr admin enforce scope declaration locally local command smoke test dry run tested against"
+          EVIDENCE_PHRASES=(
+            "actions/runs/"
+            "run id:"
+            "run id "
+            "validate simple pr admin"
+            "enforce scope declaration"
+            "all gates pass"
+            "all checks pass"
+            "local command output"
+            "locally confirmed"
+            "smoke test pass"
+            "smoke test:"
+            "dry run pass"
+            "tested against"
+          )
           BODY_EVIDENCE_FOUND=false
-          for pattern in $EVIDENCE_PATTERNS; do
-            if echo "$PR_BODY_NORMALIZED" | grep -qF "$pattern"; then
+          for phrase in "${EVIDENCE_PHRASES[@]}"; do
+            if echo "$PR_BODY_NORMALIZED" | grep -qF "$phrase"; then
               BODY_EVIDENCE_FOUND=true
               break
             fi

@@ -167,6 +167,7 @@ jobs:
             const failing = [];
             const pending = [];
             const passing = [];
+            const missing = [];
 
             for (const [name, run] of latestByName) {
               if (run.status === 'completed') {
@@ -200,9 +201,39 @@ jobs:
               }
             }
 
+            // ── Detect missing required checks ───────────────────────────────────
+            // Required preflight check names for copilot/ branch PRs.
+            // Absent contexts (never ran) are treated as missing/blocked, because
+            // a check that never ran cannot confirm the PR is safe to merge.
+            // 'skipped' counts as present (the gate decided it does not apply).
+            const REQUIRED_CHECKS = [
+              'preflight/phase-1-evidence',
+              'preflight/iaa-prebrief-existence',
+              'preflight/iaa-token-self-certification',
+              'preflight/evidence-exactness',
+              'preflight/iaa-final-assurance',
+              'preflight/ecap-admin-ceremony',
+              'preflight/scope-declaration-parity',
+              'preflight/mmm-pr-admin',
+              'preflight/gate-changing-pr-rule',
+            ];
+            const observedNames = new Set([
+              ...Array.from(latestByName.keys()),
+              ...statusData.statuses.map(s => s.context),
+            ]);
+            for (const req of REQUIRED_CHECKS) {
+              if (!observedNames.has(req)) {
+                missing.push({ name: req });
+              }
+            }
+
+            // Also block if no checks were returned at all (workflow has never run).
+            const totalObserved = latestByName.size + statusData.statuses.length;
+            const noChecksAtAll = totalObserved === 0;
+
             const BLOCKED_MARKER = '<!-- handover-claim-gate-blocked -->';
             const OK_MARKER = '<!-- handover-claim-gate-ok -->';
-            const isBlocked = failing.length > 0 || pending.length > 0;
+            const isBlocked = failing.length > 0 || pending.length > 0 || missing.length > 0 || noChecksAtAll;
 
             // ── Build comment body ────────────────────────────────────────────────
             let body;
@@ -213,10 +244,14 @@ jobs:
               const pendingLines = pending.map(p =>
                 `- ⏳ **${p.name}** — \`${p.status}\`${p.url ? ` ([details](${p.url}))` : ''}`
               ).join('\n');
+              const missingLines = noChecksAtAll
+                ? '- ⚠️ No checks found for this SHA — CI workflow may not have run yet.'
+                : missing.map(m => `- ⚠️ **${m.name}** — \`missing\` (never ran for this SHA)`).join('\n');
 
               const statusSummary = [
                 failing.length > 0 ? `**Failing checks (${failing.length}):**\n${failLines}` : null,
                 pending.length > 0 ? `**Pending checks (${pending.length}):**\n${pendingLines}` : null,
+                (missing.length > 0 || noChecksAtAll) ? `**Missing checks (${noChecksAtAll ? 'all' : missing.length}):**\n${missingLines}` : null,
               ].filter(Boolean).join('\n\n');
 
               body = [
@@ -228,7 +263,7 @@ jobs:
                 statusSummary,
                 '',
                 '> **A PR cannot claim handover or merge-ready while any required check is red, pending, or missing.**',
-                '> Fix all failing checks and wait for pending checks to complete before re-claiming handover.',
+                '> Fix all failing checks, wait for pending checks to complete, and ensure all required checks have run before re-claiming handover.',
                 '',
                 isProductFix
                   ? `> ℹ️  This is a **product-fix PR** (\`type: ${prType}\`, \`requires_iaa: false\`, \`requires_ecap: false\`). No PREHANDOVER/IAA/ECAP ceremony is required — only CI must be green.`
@@ -254,17 +289,41 @@ jobs:
               ].join('\n');
             }
 
-            await github.rest.issues.createComment({
+            // ── Idempotency guard: edit existing gate comment if present ─────────
+            // Avoids comment spam when the same PR triggers the gate multiple times.
+            const GATE_MARKERS = [BLOCKED_MARKER, OK_MARKER];
+            const { data: existingComments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: prNumber,
-              body,
+              per_page: 100,
             });
+            const existingGateComment = existingComments
+              .filter(c => GATE_MARKERS.some(m => c.body && c.body.includes(m)))
+              .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
+
+            if (existingGateComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingGateComment.id,
+                body,
+              });
+              console.log(`Updated existing gate comment ${existingGateComment.id}`);
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body,
+              });
+              console.log('Created new gate comment');
+            }
 
             if (isBlocked) {
-              // Post the HANDOVER BLOCKED comment first so the reason is visible,
+              // Update/create gate comment first so the reason is visible,
               // then fail the workflow job to enforce the gate as a hard CI check.
               core.setFailed(
-                `HANDOVER BLOCKED: ${failing.length} failing check(s), ${pending.length} pending check(s) on HEAD ${headSha.slice(0, 12)}.`
+                `HANDOVER BLOCKED: ${failing.length} failing, ${pending.length} pending, ${missing.length} missing check(s) on HEAD ${headSha.slice(0, 12)}.`
               );
             }
