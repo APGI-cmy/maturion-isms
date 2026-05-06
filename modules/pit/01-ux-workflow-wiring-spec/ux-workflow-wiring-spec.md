@@ -1022,7 +1022,7 @@ Every primary page MUST implement all five required UI states. Below is the spec
 
 ### Auth/Public Screen State Matrix
 
-Auth and public screens (pre-login flows) use the following equivalent five-state model in place of the data-page five-state model:
+Auth and public screens (pre-login flows) use the following equivalent six-state model in place of the data-page five-state model. The six states are:
 
 | State | Description |
 |---|---|
@@ -1214,8 +1214,8 @@ Each breadcrumb segment is a clickable link.
 | Signup form submit | `supabase.auth.signUp` | `auth.users` | None | `auth.sign_up` (Supabase managed) | Email verification sent; confirmation state shown |
 | Invitation token validate | `validate_invitation` Edge Function | `invitations` | Service-role (token-scoped) | None | Invalid/expired token shows error; valid token shows acceptance form |
 | Invitation accept | `accept_invitation` Edge Function | `invitations`, `organisation_members`, `auth.users` | Service-role | `invitation_accepted` | User added to org; redirected to onboarding |
-| Forgot password submit | `supabase.auth.resetPasswordForEmail` | `auth.users` | None | None | "Check email" confirmation shown regardless of result (no email enumeration); system error shown only for network/5xx failures |
-| Reset password submit | `supabase.auth.updateUser` | `auth.users` | Recovery token | None | Redirect to login with success toast; expired token → "Link expired. Request a new reset link." shown with link back to Forgot Password |
+| Forgot password submit | `supabase.auth.resetPasswordForEmail` | `auth.users` | None | None | "Check your email" confirmation shown regardless of result (no email enumeration — never reveal whether email exists); system error shown only for network/5xx failures |
+| Reset password submit / token expired | `supabase.auth.updateUser` | `auth.users` | Recovery token | None | Success: redirect to login with success toast; expired token: "Link expired. Request a new reset link." shown with link back to Forgot Password |
 | Profile update (onboarding) | `update_user_profile` Edge Function or direct Supabase RPC | `users` | JWT (own user only) | `user_profile_updated` | Profile saved; user proceeds to next onboarding step |
 | Onboarding completion | `complete_onboarding` Edge Function or Supabase update | `users`, `onboarding_status` | JWT (own user) | `onboarding_completed` | Onboarding marked complete; user redirected to Portfolio Dashboard |
 | Portfolio Dashboard load | `list_projects` Edge Function or Supabase query | `projects`, `project_members`, `milestones`, `tasks` | JWT + RLS (user's org + role) | None | Project cards render with correct data; all 5 states handled |
@@ -1255,8 +1255,6 @@ Each breadcrumb segment is a clickable link.
 | Task Cluster Template create | Supabase insert or `create_task_cluster_template` | `task_cluster_templates` | JWT + `pit_admin` or `org_admin` | `template_created` | Template created; list refreshed |
 | Task Cluster Template edit/delete | Supabase update/delete | `task_cluster_templates` | JWT + `pit_admin` or `org_admin` | `template_updated` / `template_deleted` | Template updated/deleted; list refreshed |
 | QA Dashboard load | `get_qa_metrics` Edge Function or Supabase query | `qa_test_runs`, `qa_metrics` (or external CI data source) | JWT + `cs2_admin` | None | QA metrics rendered; test history visible |
-| Forgot password error state | `supabase.auth.resetPasswordForEmail` | `auth.users` | None | None | Even if Supabase returns an error, show "Check your email" for security; only show error for system-level failures (network error, 5xx) — no email enumeration |
-| Reset password error state (token expired) | `supabase.auth.updateUser` failure on expired token | `auth.users` | Recovery token (expired) | None | "Link expired. Request a new reset link." shown with link back to Forgot Password |
 | SPA fallback verification | No API — deployment infrastructure concern | None | None | None | All non-asset routes serve index.html; React Router handles 404; verified via deployment wave evidence |
 | Route-level permission-denied handling | ProtectedRoute component check | None | JWT claim / RLS | None | User redirected to Access-Denied screen (Journey 9) on permission failure; no API call needed |
 | Invitation Acceptance — token validate | `validate_invitation` Edge Function | `invitations` | Service-role (token-scoped) | None | Loading state while validating; valid shows form; invalid/expired shows error |

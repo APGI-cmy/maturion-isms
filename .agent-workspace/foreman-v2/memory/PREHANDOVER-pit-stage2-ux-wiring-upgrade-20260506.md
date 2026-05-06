@@ -25,7 +25,7 @@
 | iaa_wave_record | `.agent-admin/assurance/iaa-wave-record-pit-stage2-ux-wiring-upgrade-20260506.md` | File committed on branch (IAA pre-brief: 8b2b786) |
 | iaa_audit_token | N/A — documentation-only wave; IAA final assurance gate not triggered | CI gate analysis confirmed (docs-only detection) |
 | scope_declaration | `.agent-admin/scope-declarations/pr-1551.md` | Committed on branch |
-| head_sha | `[to be updated at final commit]` | `git rev-parse HEAD` at handover |
+| head_sha | `b736ddd398f14423f30393cfd5a5e82a356656ab` | `git rev-parse HEAD` at handover |
 
 **art_refresh_required**: NO
 
