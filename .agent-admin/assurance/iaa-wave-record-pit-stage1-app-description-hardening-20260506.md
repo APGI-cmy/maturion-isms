@@ -2,7 +2,7 @@
 
 **Record Version**: 1.3.0
 **Wave**: pit-stage1-app-description-hardening
-**Branch**: copilot/fix-issue-1537
+**Branch**: copilot/update-app-description-with-mmm-lessons
 **Issue**: maturion-isms#1537
 **Date Created**: 2026-05-06
 **Authority**: GOVERNANCE_ARTIFACT_TAXONOMY.md v2.0.0
