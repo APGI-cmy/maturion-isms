@@ -208,7 +208,7 @@ Per `git diff --name-only origin/main...HEAD` (confirmed at bundle assembly):
 ## Deployment Surface Enumeration
 
 > **Rule D-002**: Governance-only PR. No deployment artifacts, migrations, schemas, or runtime code changed. D-002 is NOT APPLICABLE to this PR.
-> **Justification**: The 7 changed files are: (1) .admin/pr.json — admin manifest, (2) IAA wave record — governance ceremony, (3) scope declaration — governance ceremony, (4) wave-current-tasks — governance tracking, (5–7) .github/agents/*.md — Tier 1 agent contracts (governance documents). No deployment surface is affected.
+> **Justification**: As enumerated in the scope declaration / R07 changed-files table, the changed files are limited to governance and ceremony artifacts: `.admin/pr.json`, IAA governance records, scope/tracking documents, and `.github/agents/*.md` Tier 1 agent contract files. No deployment surface is affected.
 
 ---
 
