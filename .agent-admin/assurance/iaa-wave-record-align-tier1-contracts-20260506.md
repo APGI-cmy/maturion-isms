@@ -152,6 +152,32 @@ Soft blockers: SB-001 (ECAP admin not appointed), SB-002 (scope not frozen), SB-
 
 ## REJECTION_HISTORY
 
+### REJECTION-004 — 2026-05-06 | Session: IAA-session-065-align-tier1-20260506
+
+**Date**: 2026-05-06
+**PR**: #1533 — [WIP] Align Tier 1 agent contracts with Tier 2 lifecycle and validation gates
+**Session**: IAA-session-065-align-tier1-20260506
+**Verdict**: REJECTION-PACKAGE — 5 checks FAILED
+**Reviewed SHA**: 2ceeaa966e0fd3c560c05d3c1f494a3644789f39
+
+**ROOT CAUSE**: Partial PREHANDOVER field update (4th instance of this systemic pattern). Fix commit 2ceeaa96 updated the YAML block iaa_audit_token/iaa_session_reference fields to session-065 but left the ART table, checklist IAA token line, and ECAP bundle AAP-04/C3 sections with stale session-062 and wrong file counts. The fix also introduced a new error: changed checklist count from "12=12" to "14=13" instead of "13=13".
+
+**FAILURES**:
+
+| ID | Finding | Fix Required | Class |
+|----|---------|-------------|-------|
+| ACR-03 AUTO-REJECT | PREHANDOVER proof ART table "IAA token reference" = IAA-session-062-align-tier1-20260506-PASS; ECAP bundle YAML = session-065. Session-062 ≠ session-065 across two ceremony artifacts. | Update ART table, checklist line, and all YAML token fields from session-062 → session-066 (next expected). | Systemic |
+| ACR-07 AUTO-REJECT (F1) | PREHANDOVER checklist: "FILES_CHANGED count verified: 14 declared = 13 actual". Scope declaration: FILES_CHANGED: 13. Fix commit introduced wrong number 14 instead of 13. | Fix checklist line: "14 declared = 14 actual" after adding session-065 memory to scope (scope: 13→14). | Systemic |
+| ACR-07 AUTO-REJECT (F2) | ECAP bundle AAP-04: "FILES_CHANGED: 11 = actual diff count 11". Scope declaration: 13. Stale text from prior round. | Update ECAP bundle AAP-04 to "FILES_CHANGED: 14 = actual diff count 14". | Systemic |
+| ACR-07 AUTO-REJECT (F3) | ECAP bundle C3: "FILES_CHANGED: 13 = actual diff 14". Actual diff: 13 files. Self-contradictory. | Update ECAP bundle C3 to "FILES_CHANGED: 14 = actual diff 14". | Systemic |
+| CORE-021 | PREHANDOVER checklist: "IAA audit token recorded: IAA-session-062-align-tier1-20260506-PASS" while YAML iaa_audit_token = session-065. | Update checklist line to session-066 (covered by ACR-03 fix). | Ceremony |
+
+**MANDATORY additional action**: Add `.agent-workspace/independent-assurance-agent/memory/session-065-20260506.md` to scope declaration. Update FILES_CHANGED: 13 → 14 across all ceremony artifacts. Update PREHANDOVER R07 table to add row 14 for session-065 memory.
+
+**Next session**: session-066. Pre-submission grep required (see session-065 memory).
+
+---
+
 ### REJECTION-001 — 2026-05-06 | Session: IAA-session-062-align-tier1-20260506
 
 **Date**: 2026-05-06
