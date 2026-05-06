@@ -1,5 +1,5 @@
 {
-  "pr": null,
+  "pr": <ACTUAL_PR_NUMBER>,
   "issue": 1537,
   "type": "product-fix",
   "owner": "Copilot",
