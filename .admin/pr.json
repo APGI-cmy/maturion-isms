@@ -16,7 +16,7 @@
   "evidence_required": [
     "foreman-reanchor.yml reads .admin/pr.json and posts lightweight instructions when requires_iaa=false and requires_ecap=false",
     "foreman-reanchor.yml posts full governance instructions only when manifest requires IAA/ECAP",
-    "handover-claim-gate.yml detects handover/merge-ready keywords in PR body and comments",
+    "handover-claim-gate.yml detects handover/merge-ready keywords in PR comments and on ready_for_review",
     "handover-claim-gate.yml posts HANDOVER BLOCKED comment when required checks are not all green",
     "preflight-evidence-gate.yml enforces gate-changing PR rule: PRs touching .github/workflows/ or .github/scripts/ must include test evidence",
     "validate-simple-pr-admin.sh PASS — all 10 checks green",
