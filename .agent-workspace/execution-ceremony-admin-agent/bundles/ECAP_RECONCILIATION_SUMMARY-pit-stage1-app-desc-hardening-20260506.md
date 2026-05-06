@@ -1,6 +1,6 @@
 # ECAP Reconciliation Summary — pit-stage1-app-description-hardening
 
-**Issue**: maturion-isms#1537
+**Issue**: maturion-isms#1534
 **PR**: maturion-isms#1535
 **Wave**: pit-stage1-app-description-hardening
 **Branch**: copilot/update-app-description-with-mmm-lessons
@@ -55,7 +55,7 @@
 |-----|-----------------------|-------------|-----------------|-------|
 | R01 | Session ID | `pit-stage1-app-desc-hardening-20260506` (PREHANDOVER) | Session memory filename `session-pit-stage1-app-desc-hardening-20260506.md` | ✓ |
 | R02 | IAA token reference | `IAA-session-pit-stage1-app-desc-hardening-20260506-PASS` (PREHANDOVER `iaa_audit_token`) | Wave record `## TOKEN` section — expected reference (token to be issued by IAA) | ✓ |
-| R03 | Issue number | `maturion-isms#1537` (PREHANDOVER `issue`) | Session memory, scope declaration, wave record | ✓ |
+| R03 | Issue number | `maturion-isms#1534` (PREHANDOVER `issue`) | Session memory, scope declaration, wave record | ✓ |
 | R04 | PR number | `maturion-isms#1535` (PREHANDOVER `pr`) | Session memory, scope declaration (pr-1535.md filename) | ✓ |
 | R05 | Wave identifier | `pit-stage1-app-description-hardening` (PREHANDOVER `wave`) | Session memory, wave-current-tasks.md Wave field, wave record filename | ✓ |
 | R06 | Branch name | `copilot/update-app-description-with-mmm-lessons` (PREHANDOVER `branch`) | `git branch --show-current` output (verified) | ✓ |

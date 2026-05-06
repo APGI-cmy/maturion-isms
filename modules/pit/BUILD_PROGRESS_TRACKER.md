@@ -3,7 +3,7 @@
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
 **Last Updated**: 2026-05-06  
-**Updated By**: pit-specialist (wave: pit-stage1-app-description-hardening — maturion-isms#1537)
+**Updated By**: pit-specialist (wave: pit-stage1-app-description-hardening — maturion-isms#1534)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
@@ -60,7 +60,7 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 **Checklist Result**: PASS as Draft — pending CS2 approval  
 **Build Authorization**: NOT CLEARED — pending CS2 approval  
 **Completion Date**: N/A — Draft filed 2026-05-06  
-**Notes**: App Description v1.0-draft filed per maturion-isms#1537. Module name corrected from
+**Notes**: App Description v1.0-draft filed per maturion-isms#1534. Module name corrected from
 "Penetration Intelligence Tool" to "Project Implementation Tracker". Source document was
 `pit_app_description_stage1_rewritten_v1.md` (prepared by CS2/Johan + ChatGPT). MMM Lessons
 Promoted Into PIT section added per Foreman governance directive (L-001 through L-008 + Stage 2
@@ -281,7 +281,7 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 ## Notes and Observations
 
 **Stage 1 App Description Filed (2026-05-06)**: App Description v1.0-draft created per
-maturion-isms#1537 delegation from Foreman to pit-specialist. Module name corrected from
+maturion-isms#1534 delegation from Foreman to pit-specialist. Module name corrected from
 "Penetration Intelligence Tool" to "Project Implementation Tracker". Source:
 `pit_app_description_stage1_rewritten_v1.md` (prepared by CS2/Johan + ChatGPT). MMM Lessons
 Promoted Into PIT section added (L-001–L-008 + Stage 2 carry-forward requirements).

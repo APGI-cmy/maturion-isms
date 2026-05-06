@@ -5,7 +5,7 @@
 **ECAP Session**: ecap-session-pit-stage1-app-desc-hardening-20260506  
 **Date**: 2026-05-06  
 **PR**: maturion-isms#1535  
-**Issue**: maturion-isms#1537  
+**Issue**: maturion-isms#1534  
 
 ---
 

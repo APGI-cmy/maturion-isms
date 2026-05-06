@@ -5,7 +5,7 @@
 **Date**: 2026-05-06
 **Agent**: execution-ceremony-admin-agent v1.0.0 (contract v1.5.0)
 **Wave**: pit-stage1-app-description-hardening
-**Issue**: maturion-isms#1537
+**Issue**: maturion-isms#1534
 **PR**: maturion-isms#1535
 **Branch**: copilot/update-app-description-with-mmm-lessons
 
@@ -32,7 +32,7 @@
 
 ## Session Summary
 
-This ECAP session prepared the Phase 4 ceremony bundle for the PIT Stage 1 App Description hardening wave (pit-stage1-app-description-hardening, PR #1535, maturion-isms#1537). The wave is a PRE_BUILD_STAGE_MODEL governance documentation wave. All primary deliverables were committed by pit-specialist prior to ECAP appointment.
+This ECAP session prepared the Phase 4 ceremony bundle for the PIT Stage 1 App Description hardening wave (pit-stage1-app-description-hardening, PR #1535, maturion-isms#1534). The wave is a PRE_BUILD_STAGE_MODEL governance documentation wave. All primary deliverables were committed by pit-specialist prior to ECAP appointment.
 
 **Bundle assembled**:
 - PREHANDOVER proof: 24 mandatory sections (§AD-01–24), OVL-PBG attestation, change-propagation audit, BLOCKER-1/2 resolution statements, FFA N/A declaration, IAA pre-brief cross-reference, ART table

@@ -3,7 +3,7 @@
 **Record Version**: 1.3.0
 **Wave**: pit-stage1-app-description-hardening
 **Branch**: copilot/update-app-description-with-mmm-lessons
-**Issue**: maturion-isms#1537
+**Issue**: maturion-isms#1534
 **Date Created**: 2026-05-06
 **Authority**: GOVERNANCE_ARTIFACT_TAXONOMY.md v2.0.0
 **Ceremony Admin Appointed**: YES — execution-ceremony-admin-agent appointed by Foreman (appointment_timestamp: 2026-05-06T07:00:00Z)
@@ -22,7 +22,7 @@ Mode: **PHASE 0 — PRE-BRIEF ONLY**. Phases 1–4 are NOT executed at this stag
 ### Step 0.2 — Wave Analysis
 
 **Wave**: pit-stage1-app-description-hardening  
-**Source Request**: Issue #1537 — Foreman: Harden PIT Stage 1 App Description using MMM delivery lessons  
+**Source Request**: Issue #1534 — Foreman: Harden PIT Stage 1 App Description using MMM delivery lessons  
 **Invoking Agent**: foreman-v2-agent  
 **Wave Type**: Governance/documentation hardening — no code, schema, test, or CI changes declared
 
@@ -281,7 +281,7 @@ PR: maturion-isms#1535 — PIT Stage 1 App Description Hardening
 Wave: pit-stage1-app-description-hardening
 Reviewed SHA: b5f7073185b7c5c4c54a50bdb8b8a8565e4e3d44 (confirmed HEAD)
 Branch: copilot/update-app-description-with-mmm-lessons
-Issue: maturion-isms#1537
+Issue: maturion-isms#1534
 Date: 2026-05-06
 
 Checks run: 14 total — 14 PASS, 0 FAIL
@@ -316,7 +316,7 @@ CEREMONY-ADMIN: Appointed = NO → ACR-01–11 NOT applicable ✅
 
 MERGE GATE PARITY: PASS
   SHA b5f7073 confirmed as HEAD on copilot/update-app-description-with-mmm-lessons ✅
-  PR #1535 → Issue #1537 linkage confirmed ✅
+  PR #1535 → Issue #1534 linkage confirmed ✅
   git status --porcelain: EMPTY ✅
   Scope parity: 11 committed files — all declared ✅
 

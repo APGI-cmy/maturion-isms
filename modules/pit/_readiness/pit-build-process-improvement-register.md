@@ -4,9 +4,9 @@
 |---|---|
 | Module | PIT (Project Implementation Tracker) |
 | Created | 2026-05-06 |
-| Created By | pit-specialist (delegated by Foreman — maturion-isms#1537) |
-| Related Issue | [maturion-isms#1537](https://github.com/APGI-cmy/maturion-isms/issues/1537) |
-| Authority | Foreman v2 governance directive — maturion-isms#1537 |
+| Created By | pit-specialist (delegated by Foreman — maturion-isms#1534) |
+| Related Issue | [maturion-isms#1534](https://github.com/APGI-cmy/maturion-isms/issues/1534) |
+| Authority | Foreman v2 governance directive — maturion-isms#1534 |
 | Source Register | `modules/MMM/_readiness/build-process-improvement-register.md` |
 
 ---
@@ -198,7 +198,7 @@ Each state must be covered by a QA-to-Red test. HTTP response status must be che
 The following section was added to `modules/pit/00-app-description/app-description.md` (v1.0-draft) as a result of these promoted lessons:
 
 **Section**: `## MMM Lessons Promoted Into PIT`  
-**Authority**: Foreman v2 governance directive — maturion-isms#1537  
+**Authority**: Foreman v2 governance directive — maturion-isms#1534  
 **Controls**: L-001 through L-008  
 **Stage 2 Carry-Forward**: Auth routes, UI state definitions, Implementation page indicators, app shell/navigation, deployment surface map
 
@@ -218,7 +218,7 @@ All 8 controls (OVS-001 through OVS-008) map 1:1 to lessons L-001 through L-008 
 
 ---
 
-**Register Authority**: Foreman v2 governance directive — maturion-isms#1537  
+**Register Authority**: Foreman v2 governance directive — maturion-isms#1534  
 **Source**: MMM Build Process Improvement Register (`modules/MMM/_readiness/build-process-improvement-register.md`)  
 **Created**: 2026-05-06  
 **Version**: 1.0

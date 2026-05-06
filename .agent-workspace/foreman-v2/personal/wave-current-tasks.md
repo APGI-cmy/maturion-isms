@@ -1,7 +1,7 @@
 # Wave Current Tasks — pit-stage1-app-description-hardening
 
 **Wave**: pit-stage1-app-description-hardening  
-**Issue**: maturion-isms#1537 — Harden PIT Stage 1 App Description using MMM delivery lessons  
+**Issue**: maturion-isms#1534 — Harden PIT Stage 1 App Description using MMM delivery lessons  
 **Branch**: copilot/update-app-description-with-mmm-lessons  
 **Date**: 2026-05-06  
 **Agent**: foreman-v2-agent  

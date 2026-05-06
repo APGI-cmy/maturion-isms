@@ -3,7 +3,7 @@
 **Session ID**: pit-stage1-app-desc-hardening-20260506
 **Date**: 2026-05-06
 **Agent Version**: execution-ceremony-admin-agent v1.0.0 (contract v1.5.0) — acting on behalf of foreman-v2-agent v6.2.0
-**Triggering Issue**: maturion-isms#1537 — Harden PIT Stage 1 App Description using MMM delivery lessons
+**Triggering Issue**: maturion-isms#1534 — Harden PIT Stage 1 App Description using MMM delivery lessons
 **Branch**: copilot/update-app-description-with-mmm-lessons
 **PR**: maturion-isms#1535
 **Wave**: pit-stage1-app-description-hardening
@@ -21,7 +21,7 @@
 | session_id | `pit-stage1-app-desc-hardening-20260506` | Foreman appointment brief session identifier |
 | wave_identifier | `pit-stage1-app-description-hardening` | `wave-current-tasks.md` Wave field; Foreman appointment |
 | branch | `copilot/update-app-description-with-mmm-lessons` | `git branch --show-current` (verified) |
-| issue | `maturion-isms#1537` | GitHub issue (Foreman appointment) |
+| issue | `maturion-isms#1534` | GitHub issue (Foreman appointment) |
 | pr | `maturion-isms#1535` | GitHub PR (Foreman appointment) |
 | iaa_wave_record | `.agent-admin/assurance/iaa-wave-record-pit-stage1-app-description-hardening-20260506.md` | File confirmed on branch |
 | iaa_audit_token | `IAA-session-pit-stage1-app-desc-hardening-20260506-PASS` | Expected reference per Foreman appointment brief §10 |
@@ -51,7 +51,7 @@ This is a PRE_BUILD_STAGE_MODEL governance documentation wave for the PIT (Proje
 |-------|-------|
 | session_id | `pit-stage1-app-desc-hardening-20260506` |
 | date | 2026-05-06 |
-| issue | maturion-isms#1537 |
+| issue | maturion-isms#1534 |
 | branch | `copilot/update-app-description-with-mmm-lessons` |
 | pr | maturion-isms#1535 |
 | wave | `pit-stage1-app-description-hardening` |
@@ -109,30 +109,30 @@ All 24 mandatory App Description governance sections are present in `modules/pit
 
 | Section | Title | Status | Cross-Reference |
 |---------|-------|--------|----------------|
-| §AD-01 | Build Lifecycle Stages | ✅ PRESENT | app-description.md §1.1 — all 12 canonical stages listed, explicit no-skip prohibition |
-| §AD-02 | Requirements Derivation Chain | ✅ PRESENT | app-description.md §1.2 — derivation chain diagram with cross-linking artifact names |
-| §AD-03 | Technology Stack | ✅ PRESENT | app-description.md §1.3 — all layers identified, AIMC Gateway noted, TRS-as-authoritative stated |
-| §AD-04 | Deliverable Artifacts | ✅ PRESENT | app-description.md §1.4 — full deliverable checklist, deployable app confirmed as non-negotiable |
-| §AD-05 | Component Definition of Done | ✅ PRESENT | app-description.md §1.5 — "exists and works" policy, all major components with DoD entries |
-| §AD-06 | Implementation Indicators | ✅ PRESENT | app-description.md §1.6 — Stage 2 carry-forward, Implementation page top indicators |
-| §AD-07 | AIMC Integration Layer | ✅ PRESENT | app-description.md §1.7 — AIMC Gateway integration described |
-| §AD-08 | Persona Definitions | ✅ PRESENT | app-description.md §1.8 — primary users and personas defined |
-| §AD-09 | Data Classification | ✅ PRESENT | app-description.md §1.9 — data types and classification levels |
-| §AD-10 | Integration Boundaries | ✅ PRESENT | app-description.md §1.10 — cross-module integration boundaries declared |
-| §AD-11 | Audit Trail Requirements | ✅ PRESENT | app-description.md §1.11 — audit trail obligations stated |
-| §AD-12 | Access Control Model | ✅ PRESENT | app-description.md §1.12 — RBAC model with role definitions |
-| §AD-13 | Compliance Obligations | ✅ PRESENT | app-description.md §1.13 — regulatory and governance obligations listed |
-| §AD-14 | Operational Constraints | ✅ PRESENT | app-description.md §1.14 — SLAs, uptime, performance constraints |
-| §AD-15 | Versioning Strategy | ✅ PRESENT | app-description.md §1.15 — versioning approach defined |
-| §AD-16 | Rollback and Recovery | ✅ PRESENT | app-description.md §1.16 — rollback and recovery requirements |
-| §AD-17 | Observability Requirements | ✅ PRESENT | app-description.md §1.17 — monitoring, logging, alerting requirements |
-| §AD-18 | Dependency Inventory | ✅ PRESENT | app-description.md §1.18 — external and internal dependencies listed |
-| §AD-19 | Risk and Mitigations | ✅ PRESENT | app-description.md §1.19 — key risks with mitigation strategies |
-| §AD-20 | Acceptance Criteria (Project Level) | ✅ PRESENT | app-description.md §1.20 — project-level acceptance criteria |
-| §AD-21 | Pre-Build Readiness Indicators | ✅ PRESENT | app-description.md §1.21 — readiness indicators for each build stage |
-| §AD-22 | MMM Lessons Promoted | ✅ PRESENT | app-description.md §MMM Lessons — L-001 through L-008 promoted |
-| §AD-23 | Governance Mirror Reference | ✅ PRESENT | app-description.md §1.23 — references `docs/governance/PIT_APP_DESCRIPTION.md` |
-| §AD-24 | CS2 Approval and Status | ✅ PRESENT | app-description.md §1.24 — status: Draft, pending CS2 approval |
+| §AD-01 | Build Lifecycle Stages | ✅ PRESENT | app-description.md §5 — all 12 canonical stages listed, explicit no-skip prohibition |
+| §AD-02 | Requirements Derivation Chain | ✅ PRESENT | app-description.md §6 — derivation chain diagram with cross-linking artifact names |
+| §AD-03 | Technology Stack | ✅ PRESENT | app-description.md §7 — all layers identified, AIMC Gateway noted, TRS-as-authoritative stated |
+| §AD-04 | Deliverable Artifacts | ✅ PRESENT | app-description.md §8 — full deliverable checklist, deployable app confirmed as non-negotiable |
+| §AD-05 | Component Definition of Done | ✅ PRESENT | app-description.md §9 — "exists and works" policy, all major components with DoD entries |
+| §AD-06 | Test-First Guarantee | ✅ PRESENT | app-description.md §10 — QA-to-Red mandate, minimum threshold, remediation wave rule |
+| §AD-07 | Physical Verification Gate | ✅ PRESENT | app-description.md §11 — browser verification mandate, evidence filing, wave closure gate |
+| §AD-08 | PBFAG Checklist Requirements | ✅ PRESENT | app-description.md §12 — PBFAG mandate, minimum 8 checks, gate condition |
+| §AD-09 | Agent Authority Chain | ✅ PRESENT | app-description.md §13 — authority chain table, CodexAdvisor/Foreman rules, gate points |
+| §AD-10 | Schema-to-Hook Validation | ✅ PRESENT | app-description.md §14 — column-by-column validation, artifact location, no-merge rule |
+| §AD-11 | Table Pathway Audit | ✅ PRESENT | app-description.md §15 — audit mandate, artifact location, wave closure gate |
+| §AD-12 | RLS Audit Gate | ✅ PRESENT | app-description.md §16 — table-by-table RLS review, production deployment gate |
+| §AD-13 | Auth Wiring Checklist | ✅ PRESENT | app-description.md §17 — AuthProvider wrapping, ProtectedRoute, no-mock-auth-in-production |
+| §AD-14 | AI Integration Requirements | ✅ PRESENT | app-description.md §18 — AIMC Gateway mandate, direct-provider prohibition, testability |
+| §AD-15 | Edge Function Registry | ✅ PRESENT | app-description.md §19 — registry mandate, location, unregistered-invocations-blocking rule |
+| §AD-16 | Deployment Wave | ✅ PRESENT | app-description.md §20 — deployment wave mandate, CWT requirement, module completion gate |
+| §AD-17 | Secret Naming Convention | ✅ PRESENT | app-description.md §21 — UPPERCASE convention, .env.example, deployment gate |
+| §AD-18 | Deployment Runbook | ✅ PRESENT | app-description.md §22 — runbook mandate, filing location, minimum contents, closure gate |
+| §AD-19 | Notification / UX Patterns | ✅ PRESENT | app-description.md §23 — alert() prohibition, toast library named, root-level integration |
+| §AD-20 | Shared State Architecture | ✅ PRESENT | app-description.md §24 — state management approach, global state inventory, pre-arch gate |
+| §AD-21 | API Authentication | ✅ PRESENT | app-description.md §25 — JWT mandate, unauthenticated endpoints listed, PREHANDOVER audit |
+| §AD-22 | Audit Log Design | ✅ PRESENT | app-description.md §26 — action types, query method, deduplication, retention, pre-arch gate |
+| §AD-23 | Tracker Update Requirement | ✅ PRESENT | app-description.md §27 — BUILD_PROGRESS_TRACKER.md mandate, location, wave closure gate |
+| §AD-24 | State Persistence Specification | ✅ PRESENT | app-description.md §28 — persistence table with storage location, retention, ownership |
 
 **§AD-01–§AD-24 Attestation**: ALL 24 sections PRESENT — PASS
 
@@ -142,7 +142,7 @@ All 24 mandatory App Description governance sections are present in `modules/pit
 
 **Checklist File**: `.agent-admin/evidence/app-description-checklist/pit-20260506.md`
 **Overall Status**: PASS as Draft
-**Completed By**: pit-specialist (delegated — maturion-isms#1537)
+**Completed By**: pit-specialist (delegated — maturion-isms#1534)
 **Date**: 2026-05-06
 **App Description Version**: v1.0-draft
 
@@ -374,7 +374,7 @@ HEAD commit: dac93439665b9decf28f57e6feb0fa2ef36f7324
 Author: copilot-swe-agent[bot]
 Date:   Wed May 6 06:43:06 2026
 
-    feat(pit): Stage 1 App Description hardening — Project Implementation Tracker + MMM lessons (maturion-isms#1537)
+    feat(pit): Stage 1 App Description hardening — Project Implementation Tracker + MMM lessons (maturion-isms#1534)
 ```
 
 **Step 4 — `git show --name-only HEAD`** (committed files):

@@ -1466,7 +1466,7 @@ Wave closure is prohibited unless the tracker is current.
 ## MMM Lessons Promoted Into PIT
 
 **Source**: MMM Build Process — Improvement Register (`modules/MMM/_readiness/build-process-improvement-register.md`)
-**Authority**: Foreman v2 governance directive — maturion-isms#1537
+**Authority**: Foreman v2 governance directive — maturion-isms#1534
 **Purpose**: These lessons were observed during the MMM build (Waves B1–B9 and post-build corrections) and are promoted into PIT pre-build controls to prevent the same escape classes in PIT.
 
 ---
