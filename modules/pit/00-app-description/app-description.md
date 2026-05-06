@@ -495,7 +495,7 @@ The following are not part of the first governed build unless later approved thr
 ### 2.3 Boundaries and Constraints
 
 - `modules/pit/` is the canonical module location for the governed PIT module-stage artifacts.
-- `docs/governance/PIT_APP_DESCRIPTION.md` must exist as a governance mirror or pointer unless canon is updated to recognise only the module-stage path.
+- `docs/governance/PIT_APP_DESCRIPTION.md` is the authoritative governance filing location and must stay synchronized with the module-stage copy at `modules/pit/00-app-description/app-description.md`.
 - `Maturion/PIT/` is legacy/reference material unless explicitly promoted.
 - `apps/pit/Legacy/` is reference material only and must be mined for requirements, not blindly ported.
 - Existing PIT architecture is valuable but was created before the current 12-stage governance model. It must be reconciled after this App Description through UX, FRS, TRS, Architecture, QA-to-Red, and PBFAG.
@@ -1711,7 +1711,7 @@ Future PIT versions may include:
 
 ## Source Reconciliation Notes
 
-1. The current `modules/pit/00-app-description/app-description.md` is a retrofit stub and uses the incorrect identity "Penetration Intelligence Tool".
+1. The prior `modules/pit/00-app-description/app-description.md` retrofit stub used the incorrect identity "Penetration Intelligence Tool" and is superseded by this App Description.
 2. The architecture in `modules/pit/04-architecture/architecture.md` correctly identifies PIT as "Project Implementation Tracker".
 3. `Maturion/PIT/CANONICAL_MODULE_POINTER.md` confirms that canonical PIT artifacts belong under `modules/pit/`.
 4. The App Description policy also expects a `docs/governance/{APP}_APP_DESCRIPTION.md` location; PIT resolves this by requiring a `docs/governance/PIT_APP_DESCRIPTION.md` mirror or pointer unless canon is updated.
@@ -1740,7 +1740,7 @@ Future PIT versions may include:
 | Status Header | Draft-ready | Uses exact `Draft` status and `Pending` approval date |
 | Core App Description Sections | Draft-ready | Identity, scope, success criteria, strategic context present |
 | AD-01 to AD-24 | Draft-ready for CS2 review | All sections present with governance gate language and evidence locations |
-| Canonical Filing | Draft-ready with open follow-through | Requires `docs/governance/PIT_APP_DESCRIPTION.md` mirror or pointer |
+| Canonical Filing | Draft-ready | `docs/governance/PIT_APP_DESCRIPTION.md` is the authoritative canonical location; module-stage copy must stay synchronized. |
 | Build Authorization | Not cleared | Requires CS2 approval, Stage 2 onward, and all downstream gates |
 | Next Stage | Stage 2 after approval | UX Workflow & Wiring Spec |
 
