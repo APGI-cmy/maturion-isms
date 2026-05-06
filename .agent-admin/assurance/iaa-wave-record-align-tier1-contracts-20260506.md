@@ -193,5 +193,47 @@ Add pre-push verification step to ceremony protocol: Before ECAP invocation and 
 
 ---
 
-*Wave record created by IAA at Phase 0 (PRE-BRIEF). Phases 1–4 assurance completed 2026-05-06.*
-*Authority: CS2 (Johan Ras / @APGI-cmy) | IAA Contract v2.9.0*
+### REJECTION-002 — 2026-05-06 | Session: IAA-session-063-align-tier1-20260506
+
+**Date**: 2026-05-06
+**PR**: #1533 — [WIP] Align Tier 1 agent contracts with Tier 2 lifecycle and validation gates
+**Session**: IAA-session-063-align-tier1-20260506
+**Verdict**: REJECTION-PACKAGE — 5 checks FAILED (4 ACR AUTO-REJECT + CORE-021)
+**IAA Contract Version at Review**: 2.10.0
+**Reviewed SHA**: 41120418e790b95a61a1224ea3bcfda714cdc05d
+**CI Run**: 25422906972 — conclusion: success (CI GREEN; ceremony failures are not detected by CI)
+
+**Invoker's claim**: "Previous rejection (session-062 REJECT) was due to unpushed commits — that is now resolved."
+**IAA finding**: The unpushed commits ARE resolved (CI is GREEN on the complete 11-file diff). However, session-062 listed 14 failures — not only the unpushed-commits failures. Four Required Fixes from session-062 were not completed:
+- Required Fix #3 (Remove [WIP] from PR title) → NOT DONE
+- ECAP bundle was assembled at 7-file scope and never re-assembled after scope grew to 11 files → NEW FAILURE
+- wave-current-tasks.md was never updated from PENDING to COMPLETE state → NOT DONE
+
+**FAILURES**:
+
+| ID | Finding | Fix Required | Class |
+|----|---------|-------------|-------|
+| ACR-02 AUTO-REJECT | PR title `[WIP] Align Tier 1 agent contracts...` and `draft: true` while ASSURANCE-TOKEN requested. PR body shows `[ ] IAA final assurance token — IN PROGRESS` and `[ ] PR title [WIP] removal` as unchecked tasks. Required Fix #3 from session-062 not implemented. | Remove [WIP] from PR title. Mark PR ready for review (undraft). Check off completed tasks in PR body. | Ceremony |
+| ACR-07 AUTO-REJECT | ECAP bundle R07/R16/AAP-07/Checklist#8 claim `files_changed: 7 = 7 PASS`. PREHANDOVER YAML: `files_changed: 11`. Scope declaration: `FILES_CHANGED: 11`. GitHub API: `changed_files: 11`. ECAP bundle was assembled at 7-file scope and NOT re-assembled after 4 more files were added. | Re-assemble ECAP bundle against the 11-file actual diff. Update all R-rows, AAP checks, and checklist items to reflect count 11. | Ceremony / Systemic |
+| ACR-12 AUTO-REJECT | PREHANDOVER internal self-contradiction: YAML line 60 `files_changed: 11` vs R07 table line 171 `Declared count: 7 ✓ | Actual diff count: 7 ✓`. ECAP bundle `R01–R18 COMPLETE` claim is false (R07/R16 are stale). PREHANDOVER was modified in commit 41120418 without updating its own R07 table. | Update PREHANDOVER proof R07 table to list all 11 files. Re-assemble ECAP bundle with consistent reconciliation. | Ceremony |
+| ACR-15 AUTO-REJECT | wave-current-tasks.md: ALL ACs (AC1–AC6) show `PENDING`, T-WAT-001 shows `PENDING — delegating now`, wave Status: `IN PROGRESS`, Pre-Build Gate: `INVOKED — awaiting response`. PREHANDOVER declares `final_state: COMPLETE`. Direct ACR-15 trigger: open tasks vs COMPLETE declaration. | Update wave-current-tasks.md: mark T-WAT-001 COMPLETE, AC1–AC6 DELIVERED, Wave Status CLOSED, Pre-Build Gates reflect actual state. | Ceremony / Systemic |
+| CORE-021 | Zero-severity-tolerance applies to all 4 failures. No CS2 waiver quoted. | Resolve all 4 ACR failures and re-invoke IAA. | Ceremony |
+
+**Substantive checks (AC1–AC6): ALL PASS** — The agent contract changes themselves are correct and complete. All three contracts correctly implement AC1–AC6. This is a pure ceremony/process failure, not a substantive contract failure.
+
+**Required Fixes (in order)**:
+1. Update `wave-current-tasks.md` — mark T-WAT-001 COMPLETE, AC1–AC6 DELIVERED, Wave Status CLOSED
+2. Remove `[WIP]` from PR title; mark PR as ready for review (undraft)
+3. Update `wave-current-tasks.md` Pre-Build Gate Status table to reflect current state
+4. Re-assemble ECAP bundle against 11-file diff — update R07, R16, AAP-07, Checklist #8 to reflect count 11
+5. Fix PREHANDOVER proof R07 table to list all 11 files (consistent with YAML `files_changed: 11`)
+6. Verify all ceremony artifacts are internally consistent
+7. Re-invoke IAA for final assurance
+
+**Systemic Prevention Action** (NO-REPEAT-PREVENTABLE-001):
+Add mandatory ECAP re-assembly gate: Any commit that changes the `scope` array in `.admin/pr.json` OR modifies `files_changed` in PREHANDOVER YAML MUST trigger ECAP bundle re-assembly before IAA invocation. Wave task tracker MUST be updated to reflect completed state before ECAP ceremony is run.
+
+---
+
+*Wave record created by IAA at Phase 0 (PRE-BRIEF). REJECTION-001 appended 2026-05-06 (session-062). REJECTION-002 appended 2026-05-06 (session-063).*
+*Authority: CS2 (Johan Ras / @APGI-cmy) | IAA Contract v2.10.0*
