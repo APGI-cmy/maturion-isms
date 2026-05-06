@@ -1,5 +1,5 @@
 {
-  "pr": <ACTUAL_PR_NUMBER>,
+  "pr": 1539,
   "issue": 1537,
   "type": "deployment-change",
   "owner": "Copilot",
