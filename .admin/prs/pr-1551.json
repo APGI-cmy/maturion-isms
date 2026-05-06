@@ -1,0 +1,40 @@
+{
+  "pr": 1551,
+  "issue": 1550,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1551.json",
+    ".agent-admin/scope-declarations/pr-1551.md",
+    ".agent-admin/assurance/iaa-wave-record-pit-stage2-ux-wiring-upgrade-20260506.md",
+    ".agent-admin/evidence/stage2-upgrade-checklist/pit-stage2-20260506.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    ".agent-workspace/foreman-v2/memory/session-pit-stage2-ux-wiring-upgrade-20260506.md",
+    ".agent-workspace/foreman-v2/memory/PREHANDOVER-pit-stage2-ux-wiring-upgrade-20260506.md",
+    ".agent-workspace/foreman-v2/parking-station/suggestions-log.md",
+    "modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": [
+    "modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md version is v0.2-draft",
+    "My Work journey (Journey 23) is defined in Section 1",
+    "My Work screen (Screen 20) is defined in Section 2",
+    "Invitation Acceptance screen is defined in Section 2",
+    "Five-state matrix includes all primary routes including auth/public screens",
+    "Assignment/Invitation Management screen included in five-state matrix",
+    "Screen-to-data wiring covers every route in the deployment surface map",
+    "Route-to-wiring traceability table is present",
+    "FRS/RLS wording corrected in Open Item 3",
+    "Vercel-specific wording softened in Journey 8 and Section 9",
+    "API/table/edge-function names marked as candidates in Section 7",
+    "AIMC endpoint prerequisite rebalanced in Open Item 4",
+    "Stage 3 prerequisites formally deferred with explicit status in Section 10",
+    "Stage 2 Completion / Gate Status section added",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md Stage 2 status reflects upgrade state",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md Build Authorization is NOT CLEARED"
+  ],
+  "merge_authority": "CS2"
+}
