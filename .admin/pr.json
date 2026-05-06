@@ -8,6 +8,10 @@
     ".agent-admin/assurance/iaa-wave-record-pit-stage1-cs2-approval-stage2-initiation-20260506.md",
     ".agent-admin/evidence/app-description-checklist/pit-20260506.md",
     ".agent-admin/scope-declarations/pr-1541.md",
+    ".agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md",
+    ".agent-workspace/foreman-v2/memory/PREHANDOVER-pit-stage1-cs2-approval-stage2-initiation-20260506.md",
+    ".agent-workspace/foreman-v2/memory/session-pit-stage1-cs2-approval-stage2-initiation-20260506.md",
+    ".agent-workspace/foreman-v2/parking-station/suggestions-log.md",
     ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
     "docs/governance/PIT_APP_DESCRIPTION.md",
     "modules/pit/00-app-description/app-description.md",
@@ -25,7 +29,8 @@
     "modules/pit/BUILD_PROGRESS_TRACKER.md Build Authorization is NOT CLEARED",
     "modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md exists with minimum scope per maturion-isms#1540",
     ".agent-admin/evidence/app-description-checklist/pit-20260506.md result is PASS Authoritative",
-    "IAA ASSURANCE-TOKEN received and committed to wave record"
+    "IAA ASSURANCE-TOKEN received and committed to wave record",
+    "FAIL-ONLY-ONCE.md v4.6.0 breach INC-GATE-HANDOVER-FAIL-001 recorded per CS2 directive (PR #1541 comment 4387593448)"
   ],
   "merge_authority": "CS2"
 }

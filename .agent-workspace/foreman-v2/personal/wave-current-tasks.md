@@ -7,6 +7,7 @@
 **Date**: 2026-05-06
 **Agent**: foreman-v2-agent
 **IAA Wave Record**: `.agent-admin/assurance/iaa-wave-record-pit-stage1-cs2-approval-stage2-initiation-20260506.md`
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-stage1-cs2-approval-stage2-initiation-20260506.md
 **Category**: PRE_BUILD_STAGE_MODEL
 **Final State**: COMPLETE
 
