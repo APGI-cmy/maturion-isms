@@ -4,7 +4,7 @@
 **Branch**: copilot/align-tier-1-agent-contracts-again
 **PR**: #1533
 **Issue**: #1532 — Hardening — Align Tier 1 agent contracts with Tier 2 lifecycle, evidence, scope, and live-validation gates
-**IAA Contract Version**: 2.9.0
+**IAA Contract Version**: 2.10.0
 **Created**: 2026-05-06
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
