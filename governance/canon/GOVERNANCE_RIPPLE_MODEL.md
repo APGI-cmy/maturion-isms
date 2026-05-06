@@ -33,7 +33,7 @@ The model ensures:
 - Lessons learned **layer up** from repositories to governance (cross-repo feedback)
 - Layered artifacts **ripple** within each repository (intra-repo integration)
 - Governance evolves without weakening enforcement
-- Governance remains non-blocking while maintaining rigor
+- Governance remains merge-transparent while maintaining rigor
 - All evolution is tracked, versioned, and auditable
 
 This model prevents governance stagnation while preserving constitutional authority.
@@ -113,7 +113,7 @@ Governance evolution must NOT:
 
 **Governance evolves to become stronger, never weaker.**
 
-### 3.4 Non-Blocking Evolution
+### 3.4 Merge-Transparent Evolution
 
 Governance evolution must:
 - ✅ Be versioned and explicit
@@ -397,7 +397,7 @@ Upward layering must use structured schema:
 
 ---
 
-## 7. Non-Blocking Evolution Rules
+## 7. Merge-Transparent Evolution Rules
 
 ### 7.1 Version Compatibility
 
@@ -614,7 +614,7 @@ Upward learning must be archived:
 **Rippling Coordination** (in consumer repos):
 - Coordinate builder rippling work
 - Manage transition periods
-- Ensure non-blocking integration
+- Ensure merge-transparent integration
 
 ### 10.3 Builder Agents
 
@@ -717,7 +717,7 @@ Ripple Model supports:
 4. **Evolution must remain auditable**
 5. **Breaking changes require approval**
 6. **Historical compliance must be preserved**
-7. **Evolution must be non-blocking**
+7. **Evolution must be merge-transparent**
 8. **All evolution must be versioned**
 
 ### 12.2 Prohibited Actions
@@ -738,7 +738,7 @@ Governance Ripple Model is successful when:
 - ✅ Governance changes propagate reliably
 - ✅ Lessons learned promote systematically
 - ✅ Governance evolves continuously
-- ✅ Evolution remains non-blocking
+- ✅ Evolution remains merge-transparent
 - ✅ Historical compliance preserved
 - ✅ All evolution auditable
 - ✅ Metrics show high agility + high stability
@@ -750,7 +750,7 @@ Governance Ripple Model is successful when:
 The Governance Ripple Model enables:
 - Continuous governance improvement
 - Bidirectional learning flow
-- Non-blocking evolution
+- Merge-transparent evolution
 - Maintained constitutional authority
 - Adaptive enforcement
 - Auditable governance lifecycle

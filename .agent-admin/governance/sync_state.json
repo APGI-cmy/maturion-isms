@@ -2,13 +2,13 @@
   "version": "1.0.0",
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
-  "last_updated": "2026-03-30T06:30:00Z",
-  "canonical_commit": "57efff77166d2475695eb95245a074d8d496ef5f",
+  "last_updated": "2026-05-04T15:28:28Z",
+  "canonical_commit": "44218bcd28d5e02f800362c6f052402146301e3d",
   "canonical_inventory_version": "1.0.0",
   "sync_pending": false,
   "drift_detected": false,
-  "last_ripple_received": "2026-03-21T07:55:01Z",
-  "last_ripple_dispatch_id": "57efff77",
-  "last_liaison_session": "session-053-20260330",
-  "notes": "Ripple 57efff77 processed by session-053-20260330. Changed artifacts: GOVERNANCE_CANON_MANIFEST.md (INTERNAL), APP_DESCRIPTION_REQUIREMENT_POLICY.md v1.0\u2192v2.0 (PUBLIC_API), APP_DESCRIPTION_TEMPLATE.md v1.0 new (PUBLIC_API). No agent contract files changed. GOVERNANCE_CANON_MANIFEST.md has pre-existing CANON_INVENTORY hash inconsistency (noted in GOVERNANCE_ALIGNMENT_INVENTORY.json). Prior sync_pending=true (ESC-AGENTFILE-6B4F735C) resolved \u2014 prior CodexAdvisor escalation is separate from this ripple."
+  "last_ripple_received": "2026-05-04T15:13:59Z",
+  "last_ripple_dispatch_id": "44218bcd",
+  "last_liaison_session": "session-072-20260504",
+  "notes": "Ripple 44218bcd processed by session-072-20260504. Changed artifacts: MMM_SIMPLE_PR_ADMIN_MODEL.md v1.0.0 new (INTERNAL). Layered down via ripple PR #1528 (auto-merged). ISMS-side support added: .github/scripts/validate-simple-pr-admin.sh. MMM product-fix PRs now use .admin/pr.json as single source of truth per MMM_SIMPLE_PR_ADMIN_MODEL.md v1.0.0."
 }

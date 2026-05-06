@@ -77,6 +77,11 @@ Regardless of your class, you MUST read and understand these documents:
 - **AGENT_RIPPLE_AWARENESS_OBLIGATION.md** - Your obligation to surface governance ripples
 - **BOOTSTRAP_EXECUTION_LEARNINGS.md** - System-wide learnings from execution
 
+### Failure Prevention (ALL Agents — Mandatory)
+- **UNIVERSAL_FAIL_ONLY_ONCE_POLICY.md** — Every agent maintains a per-agent FAIL-ONLY-ONCE breach registry (`governance/canon/UNIVERSAL_FAIL_ONLY_ONCE_POLICY.md`). This is not optional.
+- **Your FAIL-ONLY-ONCE Registry** — located at `.agent-workspace/<your-agent-id>/knowledge/FAIL-ONLY-ONCE.md`. Read and self-attest against it at every session start before any work begins.
+- **WE_ONLY_FAIL_ONCE_DOCTRINE.md** — Constitutional zero-repeat-failure doctrine that your registry operationalises.
+
 ---
 
 ## Step 4: Understand Key Protocols

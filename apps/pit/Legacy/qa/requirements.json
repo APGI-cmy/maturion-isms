@@ -1,0 +1,1464 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "version": "1.0.0",
+  "description": "Machine-verifiable QA requirements for PIT Project Implementation Tracker",
+  "lastUpdated": "2025-11-07",
+  "requirements": {
+    "architecture": {
+      "description": "Architecture and requirements compliance checks",
+      "checks": [
+        {
+          "id": "ARCH-001",
+          "name": "rules.md exists and is valid",
+          "type": "file_exists",
+          "target": "rules.md",
+          "severity": "critical"
+        },
+        {
+          "id": "ARCH-002",
+          "name": "Architecture documents present",
+          "type": "directory_not_empty",
+          "target": "docs/architecture",
+          "severity": "critical"
+        },
+        {
+          "id": "ARCH-003",
+          "name": "QA specifications present",
+          "type": "directory_not_empty",
+          "target": "docs/qa",
+          "severity": "critical"
+        },
+        {
+          "id": "ARCH-004",
+          "name": "qa/requirements.json is valid JSON",
+          "type": "json_valid",
+          "target": "qa/requirements.json",
+          "severity": "critical"
+        }
+      ]
+    },
+    "environment": {
+      "description": "Environment variable and configuration checks",
+      "strictModeVar": "QA_STRICT",
+      "checks": [
+        {
+          "id": "ENV-001",
+          "name": "Required environment variables documented",
+          "type": "documentation_check",
+          "target": "README.md",
+          "searchPattern": "environment|configuration|setup",
+          "severity": "medium"
+        }
+      ]
+    },
+    "typeSafety": {
+      "description": "Type safety and coding correctness (JS validation for this project)",
+      "checks": [
+        {
+          "id": "TYPE-001",
+          "name": "JavaScript files are syntactically valid",
+          "type": "js_syntax_check",
+          "target": "src/frontend/**/*.js",
+          "severity": "critical"
+        },
+        {
+          "id": "TYPE-002",
+          "name": "No console errors in static analysis",
+          "type": "static_analysis",
+          "target": "src/frontend",
+          "severity": "medium"
+        }
+      ]
+    },
+    "buildIntegrity": {
+      "description": "Build process integrity",
+      "checks": [
+        {
+          "id": "BUILD-001",
+          "name": "Frontend files are accessible",
+          "type": "file_exists",
+          "target": "src/frontend/index.html",
+          "severity": "critical"
+        },
+        {
+          "id": "BUILD-002",
+          "name": "Required assets present",
+          "type": "directory_exists",
+          "target": "src/frontend/assets",
+          "severity": "high"
+        },
+        {
+          "id": "BUILD-003",
+          "name": "CSS stylesheet exists",
+          "type": "file_exists",
+          "target": "src/frontend/styles.css",
+          "severity": "critical"
+        }
+      ]
+    },
+    "unitTests": {
+      "description": "Unit test coverage and execution",
+      "checks": [
+        {
+          "id": "UNIT-001",
+          "name": "pytest tests exist",
+          "type": "directory_not_empty",
+          "target": "tests",
+          "severity": "critical"
+        },
+        {
+          "id": "UNIT-002",
+          "name": "All pytest tests pass",
+          "type": "pytest_run",
+          "target": "tests/",
+          "severity": "critical"
+        }
+      ]
+    },
+    "e2eTests": {
+      "description": "End-to-end and wiring tests with Playwright",
+      "checks": [
+        {
+          "id": "E2E-001",
+          "name": "Navigation tests pass",
+          "type": "playwright_test",
+          "target": "tests/e2e/navigation.spec.js",
+          "severity": "critical"
+        },
+        {
+          "id": "E2E-002",
+          "name": "Wiring tests pass",
+          "type": "playwright_test",
+          "target": "tests/e2e/wiring.spec.js",
+          "severity": "critical"
+        },
+        {
+          "id": "E2E-003",
+          "name": "Admin functionality tests pass",
+          "type": "playwright_test",
+          "target": "tests/e2e/admin.spec.js",
+          "severity": "high"
+        }
+      ]
+    },
+    "routeSmokeTests": {
+      "description": "Route accessibility and smoke tests",
+      "checks": [
+        {
+          "id": "ROUTE-001",
+          "name": "All primary routes are accessible",
+          "type": "route_smoke",
+          "routes": [
+            "#/",
+            "#/projects",
+            "#/reports",
+            "#/permissions",
+            "#/evidence",
+            "#/gantt",
+            "#/timelines",
+            "#/audit",
+            "#/notify",
+            "#/import",
+            "#/templates",
+            "#/qa"
+          ],
+          "severity": "critical",
+          "note": "Removed obsolete routes: workitem, search, exports, settings per ARC-SIDEBAR-002"
+        }
+      ]
+    },
+    "sidebarNavigation": {
+      "description": "Sidebar navigation updates per ARC-SIDEBAR-002",
+      "checks": [
+        {
+          "id": "NAV-001",
+          "name": "Projects renamed to Implementation",
+          "type": "element_text_check",
+          "target": "a[href='#/projects']",
+          "expectedText": "Implementation",
+          "severity": "critical"
+        },
+        {
+          "id": "NAV-002",
+          "name": "Obsolete navigation items removed",
+          "type": "element_not_exists",
+          "targets": [
+            "a[href='#/workitem']",
+            "a[href='#/search']",
+            "a[href='#/exports']",
+            "a[href='#/settings']"
+          ],
+          "severity": "critical",
+          "note": "Work Item, Search, Exports, and Settings removed per architecture"
+        },
+        {
+          "id": "NAV-003",
+          "name": "Timelines route consolidated",
+          "type": "route_check",
+          "target": "#/timelines",
+          "expectedPage": "TID-TL-TEST-PAGE",
+          "severity": "critical",
+          "note": "Timelines route now points to test timeline page (TID-TL-TEST-PAGE)"
+        },
+        {
+          "id": "NAV-004",
+          "name": "Quality Assurance navigation exists",
+          "type": "element_exists",
+          "target": "a[href='#/qa']",
+          "severity": "high"
+        }
+      ]
+    },
+    "projectsPageIndicators": {
+      "description": "Project indicators row per ARC-PROJECTS-002",
+      "checks": [
+        {
+          "id": "PROJ-IND-001",
+          "name": "Project indicators container exists",
+          "type": "element_exists",
+          "target": "TID-PROJ-INDICATORS",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-IND-002",
+          "name": "Duration indicator with progress bar",
+          "type": "element_exists",
+          "target": "TID-IND-DURATION",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-IND-003",
+          "name": "Milestones count indicator",
+          "type": "element_exists",
+          "target": "TID-IND-MS-COUNT",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-IND-004",
+          "name": "Deliverables count indicator",
+          "type": "element_exists",
+          "target": "TID-IND-DL-COUNT",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-IND-005",
+          "name": "Tasks count indicator",
+          "type": "element_exists",
+          "target": "TID-IND-TASK-COUNT",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-IND-006",
+          "name": "Team size indicator",
+          "type": "element_exists",
+          "target": "TID-IND-TEAM-SIZE",
+          "severity": "high"
+        },
+        {
+          "id": "PROJ-IND-007",
+          "name": "Progress vs Plan indicator",
+          "type": "element_exists",
+          "target": "TID-IND-PROGRESS-VS-PLAN",
+          "severity": "high"
+        },
+        {
+          "id": "PROJ-IND-008",
+          "name": "Overall progress indicator with bar",
+          "type": "element_exists",
+          "target": "TID-IND-OVERALL-PROGRESS",
+          "severity": "critical"
+        }
+      ]
+    },
+    "projectsPageFilters": {
+      "description": "Enhanced filter system per ARC-PROJECTS-002",
+      "checks": [
+        {
+          "id": "PROJ-FILT-001",
+          "name": "Filter bar exists",
+          "type": "element_exists",
+          "target": "TID-FILTER-BAR",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-FILT-002",
+          "name": "Project status dropdown",
+          "type": "element_exists",
+          "target": "TID-FILTER-STATUS",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-FILT-003",
+          "name": "Start date filter",
+          "type": "element_exists",
+          "target": "TID-FILTER-START",
+          "severity": "high"
+        },
+        {
+          "id": "PROJ-FILT-004",
+          "name": "End date filter",
+          "type": "element_exists",
+          "target": "TID-FILTER-END",
+          "severity": "high"
+        },
+        {
+          "id": "PROJ-FILT-005",
+          "name": "Duration filter button",
+          "type": "element_exists",
+          "target": "TID-FILTER-DURATION-BTN",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-FILT-006",
+          "name": "Responsible person filter",
+          "type": "element_exists",
+          "target": "TID-FILTER-RESP",
+          "severity": "high"
+        },
+        {
+          "id": "PROJ-FILT-007",
+          "name": "Progress filter button",
+          "type": "element_exists",
+          "target": "TID-FILTER-PROGRESS-BTN",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-FILT-008",
+          "name": "Duration filter modal",
+          "type": "element_exists",
+          "target": "TID-DUR-MODAL",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-FILT-009",
+          "name": "Progress filter modal",
+          "type": "element_exists",
+          "target": "TID-PROGRESS-MODAL",
+          "severity": "critical"
+        }
+      ]
+    },
+    "projectsPageModals": {
+      "description": "Complete modal system per ARC-PROJECTS-002",
+      "checks": [
+        {
+          "id": "PROJ-MOD-001",
+          "name": "Project setup modal exists",
+          "type": "element_exists",
+          "target": "TID-PSETUP-MODAL",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-MOD-002",
+          "name": "Project leader dropdown in project modal",
+          "type": "element_exists",
+          "target": "TID-PSETUP-LEADER",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-MOD-003",
+          "name": "Invite member section in project modal",
+          "type": "element_exists",
+          "target": "TID-PSETUP-INVITE-SECTION",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-MOD-004",
+          "name": "Milestone setup modal exists",
+          "type": "element_exists",
+          "target": "TID-MS-MODAL",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-MOD-005",
+          "name": "Edit in Timelines button in milestone modal",
+          "type": "element_exists",
+          "target": "TID-MS-OPEN-TIMELINE",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-MOD-006",
+          "name": "Milestone new text input",
+          "type": "element_exists",
+          "target": "TID-MS-NEW-TEXT",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-MOD-007",
+          "name": "Deliverable setup modal exists",
+          "type": "element_exists",
+          "target": "TID-DL-MODAL",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-MOD-008",
+          "name": "Task setup modal exists",
+          "type": "element_exists",
+          "target": "TID-TASK-MODAL",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-MOD-009",
+          "name": "Task cluster toggle",
+          "type": "element_exists",
+          "target": "TID-TASK-CLUSTER-TOGGLE",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-MOD-010",
+          "name": "Task linking dropdown",
+          "type": "element_exists",
+          "target": "TID-TASK-LINK-DROPDOWN",
+          "severity": "high"
+        },
+        {
+          "id": "PROJ-MOD-011",
+          "name": "Task offset calculation fields",
+          "type": "element_exists",
+          "target": "TID-TASK-OFFSET-DAYS",
+          "severity": "high"
+        },
+        {
+          "id": "PROJ-MOD-012",
+          "name": "Task duration calculation fields",
+          "type": "element_exists",
+          "target": "TID-TASK-DUR-DAYS",
+          "severity": "high"
+        },
+        {
+          "id": "PROJ-MOD-013",
+          "name": "Invite member sub-modal exists",
+          "type": "element_exists",
+          "target": "TID-INVITE-MODAL",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-MOD-014",
+          "name": "Invite name input",
+          "type": "element_exists",
+          "target": "TID-INVITE-NAME",
+          "severity": "critical"
+        },
+        {
+          "id": "PROJ-MOD-015",
+          "name": "Invite email input",
+          "type": "element_exists",
+          "target": "TID-INVITE-EMAIL",
+          "severity": "critical"
+        }
+      ]
+    },
+    "projectsPageHierarchy": {
+      "description": "Hierarchical table rendering per ARC-PROJECTS-002",
+      "checks": [
+        {
+          "id": "PROJ-HIER-001",
+          "name": "Project row with color coding exists",
+          "type": "css_class_check",
+          "target": ".row-project",
+          "expectedStyles": {
+            "background-color": "#0D2850"
+          },
+          "severity": "critical",
+          "note": "Project level: #0D2850 (dark blue)"
+        },
+        {
+          "id": "PROJ-HIER-002",
+          "name": "Milestone row with color coding exists",
+          "type": "css_class_check",
+          "target": ".row-milestone",
+          "expectedStyles": {
+            "background-color": "#006B92"
+          },
+          "severity": "critical",
+          "note": "Milestone level: #006B92 (medium blue)"
+        },
+        {
+          "id": "PROJ-HIER-003",
+          "name": "Deliverable row with color coding exists",
+          "type": "css_class_check",
+          "target": ".row-deliverable",
+          "expectedStyles": {
+            "background-color": "#4C95B0"
+          },
+          "severity": "critical",
+          "note": "Deliverable level: #4C95B0 (light blue)"
+        },
+        {
+          "id": "PROJ-HIER-004",
+          "name": "Task row exists",
+          "type": "css_class_check",
+          "target": ".row-task",
+          "severity": "high",
+          "note": "Task level: white background with border"
+        },
+        {
+          "id": "PROJ-HIER-005",
+          "name": "Hierarchical table has 6 columns",
+          "type": "table_structure_check",
+          "target": "#TID-PROJ-HIERARCHY-TABLE",
+          "expectedColumns": 6,
+          "columnNames": [
+            "Descriptor",
+            "Start",
+            "End",
+            "Duration",
+            "Responsible",
+            "Progress"
+          ],
+          "severity": "critical"
+        }
+      ]
+    },
+    "timelineMatrix": {
+      "description": "Timeline matrix interactive features per ARC-TIMELINES-002",
+      "checks": [
+        {
+          "id": "TL-001",
+          "name": "Timeline test page exists",
+          "type": "element_exists",
+          "target": "TID-TL-TEST-PAGE",
+          "severity": "critical"
+        },
+        {
+          "id": "TL-002",
+          "name": "Timeline calendar axes render",
+          "type": "element_exists",
+          "target": ".tl-axes-row",
+          "severity": "critical"
+        },
+        {
+          "id": "TL-003",
+          "name": "Timeline axis filter toggles exist",
+          "type": "element_exists",
+          "target": ".tl-axis-filter",
+          "severity": "critical",
+          "note": "Year/Quarter/Month/Week/Day toggles for zoom control"
+        },
+        {
+          "id": "TL-004",
+          "name": "Timeline slider bars are draggable",
+          "type": "element_attribute_check",
+          "target": ".tl-bar",
+          "expectedAttribute": "draggable",
+          "severity": "critical"
+        },
+        {
+          "id": "TL-005",
+          "name": "Timeline bar has drag handles",
+          "type": "element_exists",
+          "target": ".tl-bar-handle",
+          "severity": "critical",
+          "note": "Left and right handles for resizing"
+        },
+        {
+          "id": "TL-006",
+          "name": "Timeline date tooltip exists",
+          "type": "element_exists",
+          "target": "#tl-date-tooltip",
+          "severity": "critical",
+          "note": "Real-time date display during drag"
+        },
+        {
+          "id": "TL-007",
+          "name": "Timeline loads project data",
+          "type": "javascript_check",
+          "target": "window.projectState",
+          "expectedType": "object",
+          "severity": "critical"
+        },
+        {
+          "id": "TL-008",
+          "name": "Timeline save function exists",
+          "type": "javascript_check",
+          "target": "window.saveTimelineChanges",
+          "expectedType": "function",
+          "severity": "critical"
+        }
+      ]
+    },
+    "dataPersistence": {
+      "description": "Data persistence and synchronization checks",
+      "checks": [
+        {
+          "id": "DATA-001",
+          "name": "Project data persists to localStorage",
+          "type": "localstorage_check",
+          "target": "projectState",
+          "severity": "critical"
+        },
+        {
+          "id": "DATA-002",
+          "name": "projectsUpsert function exists",
+          "type": "javascript_check",
+          "target": "window.projectsUpsert",
+          "expectedType": "function",
+          "severity": "critical"
+        },
+        {
+          "id": "DATA-003",
+          "name": "renderProjectHierarchy function exists",
+          "type": "javascript_check",
+          "target": "window.renderProjectHierarchy",
+          "expectedType": "function",
+          "severity": "critical"
+        },
+        {
+          "id": "DATA-004",
+          "name": "saveMilestone function exists",
+          "type": "javascript_check",
+          "target": "window.saveMilestone",
+          "expectedType": "function",
+          "severity": "critical"
+        },
+        {
+          "id": "DATA-005",
+          "name": "saveDeliverable function exists",
+          "type": "javascript_check",
+          "target": "window.saveDeliverable",
+          "expectedType": "function",
+          "severity": "critical"
+        },
+        {
+          "id": "DATA-006",
+          "name": "saveTask function exists",
+          "type": "javascript_check",
+          "target": "window.saveTask",
+          "expectedType": "function",
+          "severity": "critical"
+        }
+      ]
+    },
+    "wiringChecks": {
+      "description": "Strict runtime wiring checks",
+      "checks": [
+        {
+          "id": "WIRE-001",
+          "name": "Header Preview toggle (Desktop/Mobile) is functional",
+          "type": "wiring_runtime",
+          "target": "TID-PREVIEW-TOGGLE",
+          "interactions": [
+            {
+              "action": "click",
+              "selector": "[data-testid='TID-PREVIEW-MOBILE']",
+              "expected": "mobile-preview class applied"
+            },
+            {
+              "action": "click",
+              "selector": "[data-testid='TID-PREVIEW-DESKTOP']",
+              "expected": "mobile-preview class removed"
+            }
+          ],
+          "severity": "critical"
+        },
+        {
+          "id": "WIRE-002",
+          "name": "Admin tab visibility when role is Admin",
+          "type": "wiring_runtime",
+          "target": "Admin tabs in sidebar",
+          "interactions": [
+            {
+              "action": "set_role",
+              "value": "Admin",
+              "expected": "Admin tabs visible"
+            }
+          ],
+          "expectedElements": [
+            "TID-NAV-INVITE-MEMBERS",
+            "TID-NAV-REPORTS",
+            "TID-NAV-SETTINGS",
+            "TID-NAV-SECURITY-DASHBOARD",
+            "TID-NAV-HEALTH-CHECKER"
+          ],
+          "severity": "critical"
+        },
+        {
+          "id": "WIRE-003",
+          "name": "Admin functionality responds",
+          "type": "wiring_runtime",
+          "target": "Admin pages",
+          "routes": [
+            "#/invite-members",
+            "#/settings",
+            "#/security-dashboard",
+            "#/health-checker"
+          ],
+          "severity": "high"
+        }
+      ]
+    },
+    "stateAndPersistence": {
+      "description": "State management and persistence checks",
+      "checks": [
+        {
+          "id": "STATE-001",
+          "name": "RoleContext persists to localStorage",
+          "type": "state_persistence",
+          "target": "roleContext",
+          "storage": "localStorage",
+          "severity": "critical"
+        },
+        {
+          "id": "STATE-002",
+          "name": "AuthContext persists to localStorage",
+          "type": "state_persistence",
+          "target": "authContext",
+          "storage": "localStorage",
+          "severity": "critical"
+        },
+        {
+          "id": "STATE-003",
+          "name": "Reset session control available",
+          "type": "element_exists",
+          "target": "TID-RESET-SESSION-BTN",
+          "severity": "high"
+        },
+        {
+          "id": "STATE-004",
+          "name": "Admin gating logic works correctly",
+          "type": "admin_gating",
+          "conditions": [
+            "role selector says Admin",
+            "user.role === 'Admin'",
+            "email in admin list"
+          ],
+          "severity": "critical"
+        }
+      ]
+    },
+    "uiConsistency": {
+      "description": "UI/UX consistency and responsive behavior",
+      "checks": [
+        {
+          "id": "UI-001",
+          "name": "Responsive layout works (Desktop)",
+          "type": "responsive_check",
+          "viewport": {
+            "width": 1920,
+            "height": 1080
+          },
+          "severity": "high"
+        },
+        {
+          "id": "UI-002",
+          "name": "Responsive layout works (Mobile)",
+          "type": "responsive_check",
+          "viewport": {
+            "width": 375,
+            "height": 667
+          },
+          "severity": "high"
+        },
+        {
+          "id": "UI-003",
+          "name": "Required test IDs present in UI",
+          "type": "testid_check",
+          "testIds": [
+            "TID-SHELL-ROOT",
+            "TID-TOPBAR",
+            "TID-SIDEBAR",
+            "TID-BREADCRUMBS",
+            "TID-CONTENT-AREA",
+            "TID-HEALTH-CHECKER-ROOT"
+          ],
+          "severity": "critical"
+        }
+      ]
+    },
+    "security": {
+      "description": "Security baseline checks",
+      "checks": [
+        {
+          "id": "SEC-001",
+          "name": "No sensitive keys in source code",
+          "type": "secret_scan",
+          "target": "src/",
+          "patterns": [
+            "api[_-]?key",
+            "secret",
+            "password",
+            "token"
+          ],
+          "severity": "critical"
+        },
+        {
+          "id": "SEC-002",
+          "name": "Admin routes hidden from non-admin users",
+          "type": "access_control",
+          "target": "admin routes",
+          "severity": "high"
+        }
+      ]
+    },
+    "healthChecker": {
+      "description": "Health Checker component requirements",
+      "checks": [
+        {
+          "id": "HEALTH-001",
+          "name": "Health Checker tab exists in admin sidebar",
+          "type": "element_exists",
+          "target": "TID-NAV-HEALTH-CHECKER",
+          "severity": "critical"
+        },
+        {
+          "id": "HEALTH-002",
+          "name": "Health Checker page renders",
+          "type": "route_check",
+          "target": "#/health-checker",
+          "severity": "critical"
+        },
+        {
+          "id": "HEALTH-003",
+          "name": "Run QA button exists",
+          "type": "element_exists",
+          "target": "TID-HEALTH-RUN-QA-BTN",
+          "severity": "critical"
+        },
+        {
+          "id": "HEALTH-004",
+          "name": "Health report display area exists",
+          "type": "element_exists",
+          "target": "TID-HEALTH-REPORT-DISPLAY",
+          "severity": "critical"
+        },
+        {
+          "id": "HEALTH-005",
+          "name": "Strict mode toggle exists",
+          "type": "element_exists",
+          "target": "TID-HEALTH-STRICT-MODE-TOGGLE",
+          "severity": "high"
+        }
+      ]
+    },
+    "deployment": {
+      "description": "GitHub Pages deployment verification and runtime checks",
+      "checks": [
+        {
+          "id": "DEPLOY-001",
+          "name": "GitHub Pages workflow exists",
+          "type": "file_exists",
+          "target": ".github/workflows/deploy-pages.yml",
+          "severity": "critical"
+        },
+        {
+          "id": "DEPLOY-002",
+          "name": "Frontend index.html exists",
+          "type": "file_exists",
+          "target": "src/frontend/index.html",
+          "severity": "critical"
+        },
+        {
+          "id": "DEPLOY-003",
+          "name": "Frontend assets directory exists",
+          "type": "directory_exists",
+          "target": "src/frontend/assets",
+          "severity": "critical"
+        },
+        {
+          "id": "DEPLOY-004",
+          "name": ".nojekyll file exists (bypass Jekyll)",
+          "type": "file_exists",
+          "target": "src/frontend/.nojekyll",
+          "severity": "critical"
+        },
+        {
+          "id": "DEPLOY-005",
+          "name": "Deploy workflow configured for main branch",
+          "type": "workflow_branch_check",
+          "target": ".github/workflows/deploy-pages.yml",
+          "expectedBranch": "main",
+          "severity": "critical"
+        },
+        {
+          "id": "DEPLOY-006",
+          "name": "Deploy workflow has environment configuration",
+          "type": "workflow_environment_check",
+          "target": ".github/workflows/deploy-pages.yml",
+          "expectedEnvironment": "github-pages",
+          "severity": "critical"
+        },
+        {
+          "id": "DEPLOY-007",
+          "name": "GitHub Pages environment allows main branch deployment",
+          "type": "github_environment_check",
+          "target": "github-pages",
+          "repository": "Lovable-LDCS/PIT-Project-Implementation-Tracker",
+          "allowedBranch": "main",
+          "description": "Validates that the github-pages environment protection rules allow main branch to deploy",
+          "severity": "critical",
+          "remediationSteps": [
+            "Go to repository Settings \u2192 Environments \u2192 github-pages",
+            "Under 'Deployment branches', select 'Selected branches'",
+            "Add 'main' to the allowed branches list",
+            "Remove any required reviewers that block automated deployments",
+            "Remove any wait timers that delay deployments"
+          ]
+        },
+        {
+          "id": "DEPLOY-008",
+          "name": "Latest deployment workflow run succeeded",
+          "type": "github_workflow_run_check",
+          "target": ".github/workflows/deploy-pages.yml",
+          "expectedStatus": "success",
+          "description": "Verifies the most recent GitHub Pages deployment workflow completed successfully",
+          "severity": "critical",
+          "remediationSteps": [
+            "Check GitHub Actions tab for deployment failures",
+            "Review workflow logs for specific error messages",
+            "Verify environment protection rules are not blocking deployment",
+            "Ensure all workflow permissions are correctly configured"
+          ]
+        },
+        {
+          "id": "DEPLOY-009",
+          "name": "Live deployment URL is accessible",
+          "type": "url_accessibility_check",
+          "target": "https://lovable-ldcs.github.io/PIT-Project-Implementation-Tracker/",
+          "expectedStatus": 200,
+          "description": "Validates that the deployed application is accessible at the live URL",
+          "severity": "critical",
+          "remediationSteps": [
+            "Verify GitHub Pages is enabled in repository settings",
+            "Check that deployment workflow completed successfully",
+            "Wait 2-5 minutes for GitHub Pages CDN to propagate",
+            "Verify DNS and CDN configuration if using custom domain"
+          ]
+        },
+        {
+          "id": "DEPLOY-010",
+          "name": "Deployed application contains expected content",
+          "type": "url_content_check",
+          "target": "https://lovable-ldcs.github.io/PIT-Project-Implementation-Tracker/",
+          "expectedContent": [
+            "TID-SHELL-ROOT",
+            "PIT - Project Implementation Tracker"
+          ],
+          "description": "Validates that the deployed application contains critical UI elements and test IDs",
+          "severity": "critical",
+          "remediationSteps": [
+            "Verify artifact upload path is correct (./src/frontend)",
+            "Ensure .nojekyll file is present to bypass Jekyll",
+            "Check that all assets are being uploaded correctly",
+            "Review deployment logs for upload errors"
+          ]
+        },
+        {
+          "id": "DEPLOY-011",
+          "name": "GitHub deployment status is Active",
+          "type": "github_deployment_status_check",
+          "repository": "Lovable-LDCS/PIT-Project-Implementation-Tracker",
+          "environment": "github-pages",
+          "expectedStatus": "active",
+          "description": "Verifies that GitHub shows an active deployment for the github-pages environment",
+          "severity": "critical"
+        }
+      ]
+    },
+    "scriptIntegrity": {
+      "description": "Script loading and execution integrity (CRITICAL)",
+      "checks": [
+        {
+          "id": "SCRIPT-001",
+          "name": "HTML files are complete with closing tags",
+          "type": "html_completeness",
+          "target": "src/frontend/**/*.html",
+          "mustContain": [
+            "</script>",
+            "</body>",
+            "</html>"
+          ],
+          "severity": "critical"
+        },
+        {
+          "id": "SCRIPT-002",
+          "name": "No disabled script blocks with executable code",
+          "type": "disabled_script_check",
+          "target": "src/frontend/**/*.html",
+          "mustNotContain": [
+            "type=\"text/plain\"",
+            "data-disabled=\"true\""
+          ],
+          "severity": "critical",
+          "note": "Script blocks must never use type='text/plain' or data-disabled='true' for executable code"
+        },
+        {
+          "id": "SCRIPT-003",
+          "name": "Core JavaScript files load without errors",
+          "type": "js_load_check",
+          "target": [
+            "src/frontend/app-boot.js",
+            "src/frontend/app-main.js",
+            "src/frontend/timelines.js"
+          ],
+          "severity": "critical"
+        },
+        {
+          "id": "SCRIPT-004",
+          "name": "Critical functions are defined in window scope",
+          "type": "window_function_check",
+          "target": "src/frontend/",
+          "requiredFunctions": [
+            "navigateTo",
+            "appNavTo",
+            "tlRender",
+            "tlInitFromStore",
+            "tlSetZoom",
+            "openProjectSetup"
+          ],
+          "severity": "critical"
+        }
+      ]
+    },
+    "timelinesCompliance": {
+      "description": "Timelines page architecture compliance (ARC-TIMELINES-002) - Consolidated Test Version",
+      "architectureRef": "docs/architecture/ARC-TIMELINES-002-MATRIX-REDESIGN.md",
+      "checks": [
+        {
+          "id": "TL-001",
+          "name": "Timelines page route exists",
+          "type": "route_exists",
+          "target": "#/timelines",
+          "severity": "critical"
+        },
+        {
+          "id": "TL-002",
+          "name": "Timeline toolbar with zoom controls present",
+          "type": "element_exists",
+          "testIds": [
+            "TID-TLT-Z-YEAR",
+            "TID-TLT-Z-QUARTER",
+            "TID-TLT-Z-MONTH",
+            "TID-TLT-Z-WEEK",
+            "TID-TLT-Z-DAY"
+          ],
+          "severity": "critical"
+        },
+        {
+          "id": "TL-003",
+          "name": "Timeline controls present",
+          "type": "element_exists",
+          "testIds": [
+            "TID-TLT-VIEW-START",
+            "TID-TLT-PROJECT-SELECT",
+            "TID-TLT-CREATE-PROJECT"
+          ],
+          "severity": "critical"
+        },
+        {
+          "id": "TL-004",
+          "name": "Timeline canvas and grid render",
+          "type": "element_exists",
+          "testIds": [
+            "TID-TLT-CANVAS",
+            "TID-TLT-GRID",
+            "TID-TLT-LABELS",
+            "TID-TLT-PROGRESS"
+          ],
+          "severity": "critical"
+        },
+        {
+          "id": "TL-005",
+          "name": "Timeline filter controls present",
+          "type": "element_exists",
+          "testIds": [
+            "TID-TLT-FSHOW-PROJ",
+            "TID-TLT-FSHOW-MS",
+            "TID-TLT-FSHOW-DL",
+            "TID-TLT-FSHOW-TASK",
+            "TID-TLT-FRESP"
+          ],
+          "severity": "critical"
+        },
+        {
+          "id": "TL-006",
+          "name": "Timeline axes render correctly",
+          "type": "element_exists",
+          "testIds": [
+            "TID-TLT-AXIS-YEARS",
+            "TID-TLT-AXIS-QUARTERS",
+            "TID-TLT-AXIS-MONTHS",
+            "TID-TLT-AXIS-WEEKS",
+            "TID-TLT-AXIS-DAYS"
+          ],
+          "severity": "critical"
+        },
+        {
+          "id": "TL-007",
+          "name": "Timeline resizers exist for column adjustment",
+          "type": "element_exists",
+          "testIds": [
+            "TID-TLT-RESIZER",
+            "TID-TLT-RESIZER-2"
+          ],
+          "severity": "high",
+          "description": "Users must be able to resize label and progress columns"
+        },
+        {
+          "id": "TL-008",
+          "name": "Timeline navigation from modals works",
+          "type": "integration_check",
+          "description": "Set timeline button in project modal must navigate to timelines page",
+          "testIds": [
+            "TID-PSETUP-OPEN-TIMELINE"
+          ],
+          "severity": "critical"
+        },
+        {
+          "id": "TL-009",
+          "name": "Timeline project progress overlay visible",
+          "type": "visual_check",
+          "description": "Timeline bars must show progress overlay (lighter cover proportionate to progress)",
+          "severity": "critical",
+          "note": "Progress percentage displayed in separate column with visual overlay on timeline bar. CRITICAL feature that must be preserved."
+        },
+        {
+          "id": "TL-010",
+          "name": "Date axis buttons toggle independently",
+          "type": "element_exists",
+          "description": "Each zoom button (Year/Quarter/Month/Week/Day) should independently toggle its axis visibility",
+          "testIds": [
+            "TID-TLT-Z-YEAR",
+            "TID-TLT-Z-QUARTER",
+            "TID-TLT-Z-MONTH",
+            "TID-TLT-Z-WEEK",
+            "TID-TLT-Z-DAY"
+          ],
+          "severity": "critical",
+          "note": "Per ARC-TIMELINES-004: Axes should appear/disappear as buttons are clicked, not cumulatively"
+        },
+        {
+          "id": "TL-011",
+          "name": "Timeline extends at least 10 years",
+          "type": "visual_check",
+          "description": "Timeline canvas must extend at least 10 years to allow dragging beyond viewport",
+          "severity": "critical",
+          "note": "Timeline bars should be draggable off-page without hitting blocks. Auto-scroll should activate near edges."
+        },
+        {
+          "id": "TL-012",
+          "name": "Timeline start date picker functional",
+          "type": "element_exists",
+          "description": "Date picker at top controls timeline view start position",
+          "testIds": [
+            "TID-TLT-VIEW-START"
+          ],
+          "severity": "critical"
+        },
+        {
+          "id": "TL-013",
+          "name": "Advanced filter dropdowns (future enhancement)",
+          "type": "element_exists",
+          "description": "Searchable/selectable dropdowns for Projects, Milestones, Deliverables, Tasks",
+          "testIds": [
+            "TID-TLT-FILTER-PROJECTS",
+            "TID-TLT-FILTER-MILESTONES",
+            "TID-TLT-FILTER-DELIVERABLES",
+            "TID-TLT-FILTER-TASKS"
+          ],
+          "severity": "high",
+          "note": "Enhancement per ARC-TIMELINES-004. Current implementation uses simple checkboxes which is acceptable for Phase 1."
+        },
+        {
+          "id": "TL-014",
+          "name": "Proportional date column sizing (future enhancement)",
+          "type": "visual_check",
+          "description": "Resizing any date axis should proportionally resize all other date axes",
+          "severity": "high",
+          "note": "Enhancement per ARC-TIMELINES-004. Allows Excel-like column manipulation. Not blocking current release."
+        },
+        {
+          "id": "TL-015",
+          "name": "Zoom-to-fit controls (future enhancement)",
+          "type": "element_exists",
+          "description": "Zoom controls to fit entire timeline on-page for export/snapshot",
+          "testIds": [
+            "TID-TLT-ZOOM-FIT",
+            "TID-TLT-ZOOM-IN",
+            "TID-TLT-ZOOM-OUT",
+            "TID-TLT-ZOOM-RESET"
+          ],
+          "severity": "medium",
+          "note": "Enhancement per ARC-TIMELINES-004. Enables export-ready views. Planned for Phase 2."
+        },
+        {
+          "id": "TL-016",
+          "name": "Row collapse/expand (future enhancement)",
+          "type": "visual_check",
+          "description": "Excel-like collapse/expand for timeline rows without affecting underlying structure",
+          "severity": "medium",
+          "note": "Enhancement per ARC-TIMELINES-004. Collapse project hides milestones, etc. Planned for Phase 2."
+        },
+        {
+          "id": "TL-017",
+          "name": "Apply button exists during project setup workflow",
+          "type": "element_exists",
+          "description": "Apply button must be visible on Timeline page when returnToModal is set",
+          "testIds": [
+            "TID-TLT-APPLY-BTN"
+          ],
+          "severity": "critical",
+          "note": "User navigates from Project Setup -> Set Timeline -> Timeline page. After configuring timeline, Apply button returns to Project Setup modal."
+        },
+        {
+          "id": "TL-018",
+          "name": "Axes visibility matches filter selection",
+          "type": "integration_check",
+          "description": "Only selected axis buttons should have visible axes. If only Year is selected, Quarters/Months/Weeks/Days must be hidden",
+          "severity": "critical",
+          "note": "Fixes QA-TLT: Quarters axis visible at Year zoom. Each axis visibility must match its button selection state."
+        },
+        {
+          "id": "TL-019",
+          "name": "Axes alignment with Progress column",
+          "type": "visual_check",
+          "description": "Left border of date rows must align exactly with right border of Progress column",
+          "severity": "critical",
+          "note": "Fixes alignment issue. Axes must not overlap or misalign with grid columns."
+        }
+      ]
+    },
+    "timelineEnhancements": {
+      "description": "Enhanced timeline requirements per ARC-TIMELINES-004 - Phase 1A Critical Fixes",
+      "architectureRef": "docs/architecture/ARC-TIMELINES-004-ENHANCED-REQUIREMENTS.md",
+      "implementationPhase": "Phase 1A - Critical bug fixes required",
+      "checks": [
+        {
+          "id": "TL-ENH-001",
+          "name": "Even date distribution across viewport",
+          "type": "visual_check",
+          "description": "Dates should be evenly distributed and visible across page width",
+          "severity": "high",
+          "note": "Ensures readable timeline at all zoom levels"
+        },
+        {
+          "id": "TL-ENH-002",
+          "name": "Timeline visual overview purpose",
+          "type": "functional_check",
+          "description": "Page provides clear at-a-glance project status visualization",
+          "severity": "high",
+          "note": "Primary purpose: visual project overview with progress indication"
+        },
+        {
+          "id": "TL-ENH-003",
+          "name": "Auto-scroll during timeline bar dragging",
+          "type": "interaction_check",
+          "description": "Timeline bars draggable beyond viewport without blocking - auto-scroll activates within 50px of edges",
+          "severity": "critical",
+          "note": "CRITICAL: User should never hit a block when dragging to extend timeline dates. Auto-scroll must engage near viewport edges."
+        },
+        {
+          "id": "TL-ENH-004",
+          "name": "Date column resize handle exists and is functional",
+          "type": "element_exists",
+          "description": "Resize handle must be present to adjust timeline density (pixelsPerDay)",
+          "testIds": [
+            "TID-TLT-DATE-RESIZER"
+          ],
+          "severity": "critical",
+          "note": "CRITICAL: Users must be able to adjust date column width to control timeline density. Handle should allow dragging to scale timeline."
+        },
+        {
+          "id": "TL-ENH-005",
+          "name": "Date axes aligned with Progress column",
+          "type": "visual_check",
+          "description": "Left border of date axes must align with right border of Progress column (within 2px)",
+          "severity": "critical",
+          "note": "CRITICAL: Date axes currently misaligned - extend to left side of page. Must align with Progress right edge."
+        }
+      ]
+    },
+    "runtimeRenderingValidation": {
+      "description": "Runtime rendering validation - verifies JavaScript actually renders content (per True North principle 8)",
+      "architectureRef": "rules.md - Script Integrity (A.10)",
+      "checks": [
+        {
+          "id": "RUNTIME-001",
+          "name": "Timeline canvas renders actual content",
+          "type": "runtime_dom_check",
+          "target": "#/timelines",
+          "verify": [
+            "Timeline bars are visible in DOM",
+            "Progress percentages are displayed",
+            "Grid lines are rendered",
+            "At least one project row exists"
+          ],
+          "testIds": [
+            "TID-TLT-CANVAS",
+            "TID-TLT-GRID",
+            "TID-TLT-PROGRESS"
+          ],
+          "severity": "critical",
+          "note": "CRITICAL: Verifies that JavaScript rendering functions actually produce visible DOM changes, not just that functions exist"
+        },
+        {
+          "id": "RUNTIME-002",
+          "name": "Timeline functions execute successfully without errors",
+          "type": "function_execution_check",
+          "functions": [
+            "tlRender",
+            "tlInitFromStore"
+          ],
+          "verify": "DOM mutations occur after function calls",
+          "severity": "critical",
+          "note": "CRITICAL: Ensures timeline render functions complete successfully and produce expected DOM changes"
+        },
+        {
+          "id": "RUNTIME-003",
+          "name": "Navigation triggers proper page rendering",
+          "type": "navigation_rendering_check",
+          "routes": [
+            {
+              "route": "#/timelines",
+              "expectedContent": "Timeline grid",
+              "testId": "TID-TL-TEST-PAGE"
+            },
+            {
+              "route": "#/projects",
+              "expectedContent": "Projects page",
+              "testId": "TID-PAGE-PROJECTS"
+            },
+            {
+              "route": "#/reports",
+              "expectedContent": "Reports page",
+              "testId": "TID-PAGE-REPORTS"
+            }
+          ],
+          "severity": "critical",
+          "note": "CRITICAL: Verifies navigation actually renders page content, not just shows container"
+        },
+        {
+          "id": "RUNTIME-004",
+          "name": "No JavaScript runtime errors in console",
+          "type": "console_error_check",
+          "target": "src/frontend",
+          "excludeWarnings": false,
+          "severity": "critical",
+          "note": "CRITICAL: JavaScript must execute without errors. Identifier redeclaration and other syntax errors must be fixed."
+        }
+      ]
+    },
+    "timingAndSequencing": {
+      "description": "Timing and sequencing validation - ensures proper execution order (per True North workflow requirements)",
+      "architectureRef": "rules.md - Build Methodology",
+      "checks": [
+        {
+          "id": "TIMING-001",
+          "name": "Navigation waits for DOM ready",
+          "type": "timing_check",
+          "verify": "navigateTo() is not called before DOMContentLoaded event",
+          "severity": "critical",
+          "note": "CRITICAL: DOM manipulation functions must wait for DOM to be ready. Premature execution causes silent failures."
+        },
+        {
+          "id": "TIMING-002",
+          "name": "Script execution order is correct",
+          "type": "sequence_check",
+          "expectedOrder": [
+            "app-boot.js loads",
+            "app-main.js loads",
+            "timelines-test.js loads",
+            "inline scripts execute",
+            "DOMContentLoaded fires",
+            "navigation initialization runs"
+          ],
+          "severity": "critical",
+          "note": "CRITICAL: Script loading and execution must follow proper sequence to avoid race conditions"
+        },
+        {
+          "id": "TIMING-003",
+          "name": "Timeline functions available before navigation",
+          "type": "dependency_check",
+          "verify": "window.tlRender and window.tlInitFromStore defined before navigateTo() calls them",
+          "severity": "critical",
+          "note": "CRITICAL: Functions must be exported before being called to avoid undefined reference errors"
+        },
+        {
+          "id": "TIMING-004",
+          "name": "querySelector calls only after DOM ready",
+          "type": "static_analysis",
+          "verify": "No querySelector/getElementById calls in immediate script execution (must be in DOMContentLoaded or later)",
+          "severity": "critical",
+          "note": "CRITICAL: DOM queries before DOM ready return null, causing silent rendering failures"
+        }
+      ]
+    },
+    "completeWiringValidation": {
+      "description": "Complete wiring validation - ensures ALL Architecture-defined functionality is wired and functional (per True North principle 8)",
+      "architectureRef": "rules.md - QA validates FULL functionality",
+      "checks": [
+        {
+          "id": "WIRE-001",
+          "name": "All routes map to functional pages",
+          "type": "route_functional_check",
+          "routes": [
+            "#/",
+            "#/projects",
+            "#/timelines",
+            "#/reports",
+            "#/permissions",
+            "#/evidence",
+            "#/gantt",
+            "#/audit",
+            "#/notify",
+            "#/import",
+            "#/templates",
+            "#/qa"
+          ],
+          "verify": "Each route renders its target page with actual content",
+          "severity": "critical",
+          "note": "CRITICAL: Routes must render functional pages, not just show empty containers"
+        },
+        {
+          "id": "WIRE-002",
+          "name": "Timeline toolbar controls are wired",
+          "type": "interaction_check",
+          "testIds": [
+            "TID-TLT-Z-YEAR",
+            "TID-TLT-Z-QUARTER",
+            "TID-TLT-Z-MONTH",
+            "TID-TLT-Z-WEEK",
+            "TID-TLT-Z-DAY"
+          ],
+          "verify": "Clicking zoom buttons triggers timeline re-render",
+          "severity": "critical",
+          "note": "CRITICAL: Controls must be wired to their handler functions and produce visible changes"
+        },
+        {
+          "id": "WIRE-003",
+          "name": "Timeline filter checkboxes are functional",
+          "type": "interaction_check",
+          "testIds": [
+            "TID-TLT-FSHOW-PROJ",
+            "TID-TLT-FSHOW-MS",
+            "TID-TLT-FSHOW-DL",
+            "TID-TLT-FSHOW-TASK"
+          ],
+          "verify": "Toggling checkboxes filters timeline content",
+          "severity": "critical",
+          "note": "CRITICAL: Filter controls must be wired and produce expected filtering behavior"
+        },
+        {
+          "id": "WIRE-004",
+          "name": "Sidebar navigation links are wired",
+          "type": "interaction_check",
+          "verify": "All sidebar links navigate to their target pages and render content",
+          "severity": "critical",
+          "note": "CRITICAL: Navigation must complete full flow: click \u2192 route change \u2192 page render \u2192 content visible"
+        }
+      ]
+    }
+  },
+  "redGreenCriteria": {
+    "green": "All critical and high severity checks pass",
+    "amber": "All critical checks pass, some high severity checks fail",
+    "red": "Any critical check fails",
+    "failureReport": "Must include component name, check ID, failure reason, and remediation steps"
+  },
+  "legacyCodePolicy": {
+    "rule": "If code exists but isn't wired (not visible/functional in UI), QA must fail RED",
+    "resolution": [
+      "If required: wire it now; keep QA RED until it works at runtime",
+      "If legacy/de-wired: delete it after failing wiring-checks twice consecutively"
+    ]
+  }
+}
