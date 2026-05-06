@@ -896,32 +896,26 @@ jobs:
             exit 0
           fi
 
-          # Check .admin/pr.json evidence_required for gate test evidence
-          # NOTE: The test_keywords list below and the EVIDENCE_PATTERNS shell list further
+          # Resolve active PR manifest for evidence check
+          # Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.2.0
+          GATE_MANIFEST=""
+          if [ -n "${PR_NUMBER:-}" ] && [ -f ".admin/prs/pr-${PR_NUMBER}.json" ]; then
+            GATE_MANIFEST=".admin/prs/pr-${PR_NUMBER}.json"
+          elif [ -f ".admin/pr.json" ]; then
+            GATE_MANIFEST=".admin/pr.json"
+          fi
+
+          # Check manifest evidence_required for gate test evidence.
+          # Uses a single-line Python command to avoid YAML block-scalar indentation issues.
+          # NOTE: The test_keywords list below and the EVIDENCE_PHRASES shell list further
           # down both implement the same semantic matching — keep them aligned if updating.
           # Both use space-normalized keywords (hyphens → spaces) before matching.
           EVIDENCE_OK=false
-          if [ -f ".admin/pr.json" ] && command -v python3 >/dev/null 2>&1; then
-            EVIDENCE=$(python3 -c "
-import json, sys
-try:
-    m = json.load(open('.admin/pr.json'))
-    ev = m.get('evidence_required', [])
-    # Evidence must mention the changed gate file(s) OR contain gate test keywords.
-    # Normalize hyphens to spaces in both items and keywords before matching.
-    test_keywords = ['test', 'run id', 'local command', 'validate simple pr admin', 'tested', 'smoke test', 'dry run']
-    for item in ev:
-        item_normalized = item.lower().replace('-', ' ')
-        if any(kw in item_normalized for kw in test_keywords):
-            print('FOUND')
-            sys.exit(0)
-    print('NONE')
-except Exception:
-    print('NONE')
-" 2>/dev/null || echo "NONE")
+          if [ -n "$GATE_MANIFEST" ] && command -v python3 >/dev/null 2>&1; then
+            EVIDENCE=$(python3 -c "import json,sys;m=json.load(open('${GATE_MANIFEST}'));ev=m.get('evidence_required',[]);kws=['test','run id','local command','validate simple pr admin','tested','smoke test','dry run'];print('FOUND' if any(any(kw in i.lower().replace('-',' ') for kw in kws) for i in ev) else 'NONE')" 2>/dev/null || echo "NONE")
             if [ "$EVIDENCE" = "FOUND" ]; then
               EVIDENCE_OK=true
-              echo "✅ PASS — Gate test evidence found in .admin/pr.json evidence_required."
+              echo "✅ PASS — Gate test evidence found in ${GATE_MANIFEST} evidence_required."
             fi
           fi
 
