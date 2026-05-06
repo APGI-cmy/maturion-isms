@@ -1,3 +1,41 @@
+# PIT — App Description (Governance Mirror)
+
+**Module**: PIT (Project Implementation Tracker)  
+**Status**: Draft — pending CS2/Johan Ras approval  
+**Version**: v1.0-draft  
+**Policy Authority**: `governance/policy/APP_DESCRIPTION_REQUIREMENT_POLICY.md` v2.0  
+**Last Updated**: 2026-05-06  
+
+---
+
+## Filing Strategy
+
+Per `APP_DESCRIPTION_REQUIREMENT_POLICY.md` v2.0 §4.1, the authoritative App Description must be accessible at `docs/governance/{APP}_APP_DESCRIPTION.md`. For 12-stage module builds, the full stage artifact is filed at:
+
+```
+modules/pit/00-app-description/app-description.md
+```
+
+This file is a **governance mirror** that points to the module-stage artifact. It contains the same content as the authoritative artifact.
+
+---
+
+## Mirror Status
+
+| Field | Value |
+|---|---|
+| Authoritative Source | `modules/pit/00-app-description/app-description.md` |
+| Mirror Created | 2026-05-06 |
+| Mirror Synchronized | 2026-05-06 (v1.0-draft) |
+| Synchronization Rule | This mirror must be updated whenever the module-stage artifact is updated |
+| Policy Authority | `governance/policy/APP_DESCRIPTION_REQUIREMENT_POLICY.md` v2.0 §4.1, §4.3 |
+
+---
+
+> **Note to readers**: The full App Description content is contained below and mirrors the module-stage artifact at `modules/pit/00-app-description/app-description.md`. Any discrepancy between this file and the module-stage artifact must be resolved immediately by updating both files.
+
+---
+
 # PIT - Project Implementation Tracker - App Description
 
 ## Status Header
@@ -1462,6 +1500,155 @@ Wave closure is prohibited unless the tracker is current.
 | RLS Audit evidence | `.agent-admin/evidence/rls-audit/pit/` | Permanent build evidence unless retention policy supersedes | Foreman with CS2 deployment approval |
 
 ---
+
+
+## MMM Lessons Promoted Into PIT
+
+**Source**: MMM Build Process — Improvement Register (`modules/MMM/_readiness/build-process-improvement-register.md`)
+**Authority**: Foreman v2 governance directive — maturion-isms#1537
+**Purpose**: These lessons were observed during the MMM build (Waves B1–B9 and post-build corrections) and are promoted into PIT pre-build controls to prevent the same escape classes in PIT.
+
+---
+
+### L-001 — Build-Complete Is Not Operationally Closed
+
+**MMM Observation**: MMM tracker distinguishes L1 build-complete (code passing tests) from L2 deployment commissioned (live on target environment) from L3 operationally closed (end-to-end verified in production by CS2).
+
+**PIT Control**: PIT's Implementation Plan, PBFAG, PREHANDOVER proofs, and final handover gate must explicitly carry the L1/L2/L3 closure model. A wave is not closed until L2 (deployed and commissioned) is confirmed. PIT is not done until L3 (CS2 verified live E2E workflow) is confirmed.
+
+**Evidence required**: Each relevant wave PREHANDOVER must distinguish L1/L2/L3 status. L3 closure requires CS2 sign-off with live evidence.
+
+---
+
+### L-002 — UI Can Pass Code/File Tests and Still Render Incorrectly
+
+**MMM Observation** (OVS-001 / OVS-004): The MMM B3 UI passed all automated tests but was delivered without global CSS, causing bare/unstyled HTML in production. Tests verified file existence, headings, and query calls, but not visual rendering completeness.
+
+**PIT Control**:
+- Every UI wave must require: global stylesheet present and imported at app root; app shell present and styled; primary pages visually rendered (no bare HTML).
+- QA-to-Red for every UI wave must include visual/rendering tests or equivalent assertions — not only string-existence or file-existence tests.
+- Physical verification screenshots must confirm all pages are visually styled before wave closure.
+
+**Gate condition**: UI wave closure blocked unless visual rendering confirmed.
+
+---
+
+### L-003 — Dashboard and Landing Pages Require Real Empty/Error/Permission States
+
+**MMM Observation** (OVS-002 / OVS-003): After login, the MMM dashboard showed sparse headings and blank metric labels. There was no app shell, no navigation, no empty-state explanation, no CTA, and no error distinction between permission failure and network failure.
+
+**PIT Control**:
+- All PIT primary pages (Dashboard, Implementation, Timeline, Evidence, Watchdog, Audit Log, QA Dashboard) must define and implement all of the following states before wave closure:
+  - Loading state
+  - Empty data state (with useful message and CTA to next action)
+  - Permission-denied state (distinct from network/server failure)
+  - Network/server error state (with user guidance)
+  - Data state (with real data rendering)
+- Each state must be covered by a QA-to-Red test.
+- HTTP response status (`res.ok` / `res.status`) must be checked before `res.json()` in every component that fetches data.
+
+**Gate condition**: No page is complete unless all 5 states are implemented and tested.
+
+---
+
+### L-004 — Signup/Onboarding and Auth Route Discoverability Must Be Designed Up Front
+
+**MMM Observation**: MMM required post-build fixes for missing `/login` registration, login route discoverability, forgot-password, reset callback, direct SPA route fallback, and signup/onboarding handling.
+
+**PIT Control**: PIT Stage 2 (UX Workflow & Wiring Spec) and Stage 3 (FRS) must explicitly specify:
+- Public entry route and visible Sign In / Sign Up navigation links from the landing page
+- `/login` route registration and page implementation
+- Signup/onboarding flow including invitation acceptance
+- Forgot-password and password-reset routes and pages
+- Protected route redirect to login when unauthenticated
+- Direct SPA route fallback (deep-link support)
+- Access-denied state for authenticated users without required roles
+
+All of the above must be in QA-to-Red before implementation begins.
+
+**Gate condition**: Stage 2 carry-forward — all auth/onboarding routes must be specified in UX Wiring Spec before Stage 3 FRS approval.
+
+---
+
+### L-005 — Tests Must Prove Runtime and UI Behaviour, Not Only File Existence
+
+**MMM Observation** (OVS-004): File-existence and string-presence tests passed for pages that were not operationally useful. Tests verified file exists, heading present, fetch called — not that the user could actually use the page.
+
+**PIT Control**:
+- QA-to-Red for every PIT wave must require executable/runtime checks, not only file-existence or string-presence checks.
+- Required per-wave QA evidence types:
+  - TypeScript compile check (`tsc --noEmit` or equivalent)
+  - Route coverage (all registered routes reachable)
+  - CSS/rendering checks (global stylesheet imported, app shell present)
+  - Structural completeness per-page (nav, empty state, error state, CTA present)
+  - E2E/golden-path test for primary user journey
+  - Live browser physical verification (screenshot/recording evidence)
+- Any wave with only string/file-existence tests as QA evidence is insufficient and must be remediated.
+
+**Gate condition**: Builder Checklist must confirm QA includes runtime/UI behaviour tests, not only static checks.
+
+---
+
+### L-006 — Deployment Execution Must Be a First-Class Contract
+
+**MMM Observation**: MMM deployment required later hardening around Vercel deployment, Supabase migration execution, schema verification, environment/secrets validation, live end-to-end validation, and CWT sign-off.
+
+**PIT Control**:
+- A Runtime/Deployment Contract must be filed before PBFAG passes (see AD-08, item 9).
+- The Deployment Wave (AD-16) must include as a hard gate: schema migration execution, Edge Function deployment, storage bucket verification, AIMC connectivity check, QA-to-Green full run, production smoke test, rollback verification, and CWT closure report.
+- Deployment evidence must be LIVE_RUNTIME or LIVE_E2E typed — merged-PR references or static code review alone are insufficient.
+
+**Gate condition**: PBFAG blocked until Runtime/Deployment Contract is filed. Deployment wave blocked until all live evidence is filed.
+
+---
+
+### L-007 — Operational Closure Requires Live Evidence
+
+**MMM Observation**: Static code review, CI GREEN, and provisioning confirmations are insufficient to close live operational items. Real end-to-end workflows in the deployed environment are required.
+
+**PIT Control**:
+- L3 operational closure requires at minimum:
+  - One live end-to-end workflow demonstrated on the deployed PIT environment
+  - CS2 sign-off on the live product
+  - Physical evidence (screenshot or recording) filed at `.agent-admin/evidence/physical-verification/pit/`
+  - All primary user journeys working (see AD-07 §11.3)
+- Declaring PIT "done" without L3 closure is a governance violation.
+
+**Gate condition**: L3 closure is blocked until CS2 verifies the live deployed PIT environment.
+
+---
+
+### L-008 — Continuous Improvement Must Be Recorded and Promoted
+
+**MMM Observation**: Build-process oversights discovered after initial delivery were captured reactively. Pre-build design could prevent entire escape classes if identified and locked in before build starts.
+
+**PIT Control**:
+- Any PIT design/build oversight discovered during Stages 2–7 must be:
+  1. Recorded in `modules/pit/_readiness/pit-build-process-improvement-register.md`
+  2. Propagated back to the appropriate upstream artifact (App Description, UX Wiring Spec, FRS, TRS, Architecture, QA-to-Red) before the affected wave proceeds
+  3. Confirmed by Foreman before builder allocation for the affected wave
+
+**Register location**: `modules/pit/_readiness/pit-build-process-improvement-register.md`
+
+---
+
+### Stage 2 Carry-Forward Requirements (From MMM Lessons)
+
+The following must be explicitly present in the PIT Stage 2 UX Workflow & Wiring Spec before Stage 3 FRS is approved:
+
+1. **Authentication and onboarding routes**: All routes listed in L-004 must be wired.
+2. **UI state definitions**: All 5 states (loading, empty, error/permission, network-error, data) must be specified for every primary page.
+3. **Implementation page top indicators**: The Implementation page (primary project hierarchy view) must display at the top:
+   - Project duration with progress indicator
+   - Number of milestones
+   - Number of deliverables
+   - Number of tasks
+   - Number of team members
+   - Progress against plan percentage
+   - Overall progress percentage
+4. **App shell/navigation**: Navigation must be visible on all authenticated pages across all UI states.
+5. **Deployment surface map**: A deployment surface map must be included in Stage 2 wiring to confirm all pages and routes are covered by the Deployment Wave plan.
+
 
 ## Optional Section A - High-Level Feature List
 
