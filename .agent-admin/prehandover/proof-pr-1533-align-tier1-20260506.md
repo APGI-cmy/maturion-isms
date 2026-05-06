@@ -57,7 +57,7 @@ iaa_wave_record_path:   .agent-admin/assurance/iaa-wave-record-align-tier1-contr
 iaa_rejection_reference: none
 
 ## Scope
-files_changed:          10
+files_changed:          11
 scope_declaration:      .agent-admin/scope-declarations/pr-1533.md
 scope_refreshed_post_final_edit: YES
 art_refresh_required:   NO
@@ -88,7 +88,7 @@ gate_set_checked:
   - governance-ceremony/pr-body-governance-block
   - governance-ceremony/verdict
 
-## Ripple Assessment Summary
+## Cross-Wave Impact Summary
 public_api_files_changed: 0
 ripple_status:          NOT-APPLICABLE
 ripple_notes:           >
