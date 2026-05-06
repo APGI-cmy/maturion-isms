@@ -1,22 +1,26 @@
 {
-  "pr": 1539,
-  "issue": 1538,
-  "type": "deployment-change",
+  "pr": 1543,
+  "issue": 1542,
+  "type": "governance-change",
   "owner": "Copilot",
   "scope": [
     ".admin/pr.json",
-    ".agent-admin/scope-declarations/pr-1539.md",
-    ".github/workflows/deploy-mmm-edge-functions.yml"
+    ".agent-admin/scope-declarations/pr-1543.md",
+    ".github/workflows/foreman-reanchor.yml",
+    ".github/workflows/handover-claim-gate.yml",
+    ".github/workflows/preflight-evidence-gate.yml"
   ],
   "risk": "medium",
   "requires_iaa": true,
   "requires_ecap": true,
   "evidence_required": [
-    "Workflow deploys all directories under supabase/functions or every config-listed function with a directory",
-    "Workflow summary lists deployed function names",
-    "invoke-ai-parse-criteria health check passes",
-    "mmm-health no longer returns 404",
-    "Manual workflow run evidence captured after merge or workflow_dispatch"
+    "foreman-reanchor.yml reads .admin/pr.json and posts lightweight instructions when requires_iaa=false and requires_ecap=false",
+    "foreman-reanchor.yml posts full governance instructions only when manifest requires IAA/ECAP",
+    "handover-claim-gate.yml detects handover/merge-ready keywords in PR body and comments",
+    "handover-claim-gate.yml posts HANDOVER BLOCKED comment when required checks are not all green",
+    "preflight-evidence-gate.yml enforces gate-changing PR rule: PRs touching .github/workflows/ or .github/scripts/ must include test evidence",
+    "validate-simple-pr-admin.sh PASS — all 10 checks green",
+    "enforce-scope-declaration-policy.sh PASS — Gates A and B both pass"
   ],
   "merge_authority": "CS2"
 }

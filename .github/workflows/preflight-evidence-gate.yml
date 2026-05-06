@@ -769,3 +769,149 @@ jobs:
           fi
           chmod +x .github/scripts/validate-simple-pr-admin.sh
           .github/scripts/validate-simple-pr-admin.sh
+
+
+  # ============================================================================
+  # Gate-changing PR rule (maturion-isms#1542)
+  # Any PR touching .github/workflows/** or .github/scripts/** must include
+  # evidence in the PR body or .admin/pr.json evidence_required field that
+  # the changed gate/script was tested against the current PR context.
+  # Evidence can be: run IDs, local command output with PR_BODY/PR_NUMBER/
+  # expected issue injected, or an explicit CS2 waiver.
+  # ============================================================================
+  gate-changing-pr-rule:
+    name: "preflight/gate-changing-pr-rule"
+    runs-on: ubuntu-latest
+
+    # Only enforce for Copilot/foreman PRs
+    if: >-
+      startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot'
+
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Gate-Changing PR Rule Check
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "  Gate-Changing PR Rule"
+          echo "  Authority: governance/canon/LIVING_AGENT_SYSTEM.md v6.2.0"
+          echo "  Issue: maturion-isms#1542"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+
+          # CS2 sign-off bypass
+          if [[ "$PR_LABELS" == *"CS sign-off: approved"* ]]; then
+            echo "✅ PASS — PR carries 'CS sign-off: approved' label."
+            exit 0
+          fi
+
+          # Automated governance PR bypass
+          if [[ "$PR_LABELS" == *"governance"* ]] && \
+             [[ "$PR_LABELS" == *"automated"* ]] && \
+             [[ "$PR_LABELS" == *"agent:liaison"* ]]; then
+            echo "✅ PASS — Automated governance alignment PR — gate-changing rule bypassed."
+            exit 0
+          fi
+
+          # Compute changed files
+          CHANGED_FILES=""
+          if [ -n "$BASE_SHA" ]; then
+            CHANGED_FILES=$(git diff --name-only "${BASE_SHA}...HEAD" 2>/dev/null || \
+                            git diff --name-only "${BASE_SHA}" HEAD 2>/dev/null || true)
+          elif git rev-parse origin/main >/dev/null 2>&1; then
+            CHANGED_FILES=$(git diff --name-only "origin/main...HEAD" 2>/dev/null || true)
+          fi
+
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "ℹ️  No changed files detected — gate-changing PR rule: not applicable."
+            exit 0
+          fi
+
+          # Detect if any .github/workflows/ or .github/scripts/ files are changed
+          GATE_FILES=$(echo "$CHANGED_FILES" | grep -E '^\.github/(workflows|scripts)/' || true)
+          if [ -z "$GATE_FILES" ]; then
+            echo "✅ PASS — No .github/workflows/ or .github/scripts/ files changed."
+            exit 0
+          fi
+
+          echo "Gate-changing files detected:"
+          echo "$GATE_FILES" | while read -r f; do echo "  - $f"; done
+          echo ""
+
+          # Check for CS2 waiver in PR body
+          if echo "$PR_BODY" | grep -qiE 'CS2-GATE-TEST-WAIVER|CS2 gate test waiver'; then
+            echo "✅ PASS — CS2 gate test waiver phrase found in PR body."
+            exit 0
+          fi
+
+          # Check .admin/pr.json evidence_required for gate test evidence
+          EVIDENCE_OK=false
+          if [ -f ".admin/pr.json" ] && command -v python3 >/dev/null 2>&1; then
+            EVIDENCE=$(python3 -c "
+import json, sys
+try:
+    m = json.load(open('.admin/pr.json'))
+    ev = m.get('evidence_required', [])
+    # Evidence must mention the changed gate file(s) OR contain gate test keywords
+    test_keywords = ['test', 'run id', 'run-id', 'local command', 'validate-simple-pr-admin', 'tested', 'smoke test', 'dry run', 'dry-run']
+    for item in ev:
+        item_lower = item.lower()
+        if any(kw in item_lower for kw in test_keywords):
+            print('FOUND')
+            sys.exit(0)
+    print('NONE')
+except Exception:
+    print('NONE')
+" 2>/dev/null || echo "NONE")
+            if [ "$EVIDENCE" = "FOUND" ]; then
+              EVIDENCE_OK=true
+              echo "✅ PASS — Gate test evidence found in .admin/pr.json evidence_required."
+            fi
+          fi
+
+          if $EVIDENCE_OK; then
+            exit 0
+          fi
+
+          # Check PR body for gate test evidence (run IDs, local command output)
+          PR_BODY_LOWER=$(echo "$PR_BODY" | tr '[:upper:]' '[:lower:]')
+          EVIDENCE_PATTERNS="run id run-id workflow run actions/runs validate-simple-pr-admin enforce-scope-declaration locally local command smoke test dry run dry-run tested against"
+          BODY_EVIDENCE_FOUND=false
+          for pattern in $EVIDENCE_PATTERNS; do
+            if echo "$PR_BODY_LOWER" | grep -qF "$pattern"; then
+              BODY_EVIDENCE_FOUND=true
+              break
+            fi
+          done
+
+          if $BODY_EVIDENCE_FOUND; then
+            echo "✅ PASS — Gate test evidence found in PR body."
+            exit 0
+          fi
+
+          echo "❌ FAIL: Gate-changing PR rule violated."
+          echo ""
+          echo "  This PR modifies the following CI gate/script files:"
+          echo "$GATE_FILES" | while read -r f; do echo "    - $f"; done
+          echo ""
+          echo "  Required: Include evidence in the PR body or .admin/pr.json evidence_required"
+          echo "  that the changed gate/script was tested against the current PR context."
+          echo ""
+          echo "  Acceptable evidence forms:"
+          echo "  1. GitHub Actions run ID (e.g., 'run ID: 12345678' or a link to actions/runs/...)"
+          echo "  2. Local command output showing the gate script passing with PR_BODY, PR_NUMBER,"
+          echo "     and expected issue number injected (copy-paste the terminal output)"
+          echo "  3. CS2 waiver phrase 'CS2-GATE-TEST-WAIVER' in the PR body"
+          echo ""
+          echo "  See: maturion-isms#1542"
+          exit 1

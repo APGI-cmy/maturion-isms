@@ -6,6 +6,11 @@ name: Foreman Handover Re-Anchor
 # Narrowed to handover-phase reminder (not a broad mid-wave pulse):
 # For synchronize events, a handover keyword check prevents comment spam on routine pushes.
 # For opened/ready_for_review events, always post to catch early handover attempts.
+#
+# PR type awareness (issue #1542):
+# - Reads .admin/pr.json when present to determine requires_iaa and requires_ecap.
+# - Product-fix PRs (requires_iaa=false, requires_ecap=false) receive lightweight re-anchor.
+# - Governance-control PRs receive full heavy re-anchor only when manifest requires IAA/ECAP.
 on:
   pull_request_target:
     types: [opened, synchronize, ready_for_review]
@@ -57,7 +62,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Read wave-current-tasks.md and check handover keywords
+      - name: Read .admin/pr.json manifest and wave-current-tasks.md
         id: wave_tasks
         env:
           EVENT_ACTION: ${{ github.event.action }}
@@ -72,6 +77,43 @@ jobs:
           else
             echo "tasks_found=false" >> "$GITHUB_OUTPUT"
           fi
+
+          # Read .admin/pr.json to determine governance mode
+          # Default to heavy (requires_iaa=true) when manifest is absent or unreadable
+          REQUIRES_IAA="true"
+          REQUIRES_ECAP="true"
+          PR_TYPE="unknown"
+          if [ -f ".admin/pr.json" ] && command -v python3 >/dev/null 2>&1; then
+            REQUIRES_IAA=$(python3 -c "
+import json, sys
+try:
+    m = json.load(open('.admin/pr.json'))
+    v = m.get('requires_iaa')
+    print('false' if v is False else 'true')
+except Exception:
+    print('true')
+" 2>/dev/null || echo "true")
+            REQUIRES_ECAP=$(python3 -c "
+import json, sys
+try:
+    m = json.load(open('.admin/pr.json'))
+    v = m.get('requires_ecap')
+    print('false' if v is False else 'true')
+except Exception:
+    print('true')
+" 2>/dev/null || echo "true")
+            PR_TYPE=$(python3 -c "
+import json, sys
+try:
+    m = json.load(open('.admin/pr.json'))
+    print(m.get('type', 'unknown'))
+except Exception:
+    print('unknown')
+" 2>/dev/null || echo "unknown")
+          fi
+          echo "requires_iaa=$REQUIRES_IAA" >> "$GITHUB_OUTPUT"
+          echo "requires_ecap=$REQUIRES_ECAP" >> "$GITHUB_OUTPUT"
+          echo "pr_type=$PR_TYPE" >> "$GITHUB_OUTPUT"
 
           # For synchronize events, only post if handover keywords are present in the
           # HEAD commit message. This avoids spam on routine mid-wave pushes.
@@ -97,10 +139,17 @@ jobs:
         env:
           TASKS_FOUND: ${{ steps.wave_tasks.outputs.tasks_found }}
           TASKS_SNIPPET: ${{ steps.wave_tasks.outputs.tasks_snippet }}
+          REQUIRES_IAA: ${{ steps.wave_tasks.outputs.requires_iaa }}
+          REQUIRES_ECAP: ${{ steps.wave_tasks.outputs.requires_ecap }}
+          PR_TYPE: ${{ steps.wave_tasks.outputs.pr_type }}
         with:
           script: |
             const tasksFound = process.env.TASKS_FOUND === 'true';
             const tasksSnippet = process.env.TASKS_SNIPPET || '';
+            const requiresIaa = process.env.REQUIRES_IAA !== 'false';
+            const requiresEcap = process.env.REQUIRES_ECAP !== 'false';
+            const prType = process.env.PR_TYPE || 'unknown';
+            const isProductFix = !requiresIaa && !requiresEcap;
 
             const prNumber = context.payload.pull_request?.number
               || context.payload.issue?.number;
@@ -130,6 +179,46 @@ jobs:
               ? `\n\n**Outstanding wave tasks** (from \`.agent-workspace/foreman-v2/personal/wave-current-tasks.md\`):\n\`\`\`\n${tasksSnippet}\n...\n\`\`\``
               : '\n\n> \u2139\ufe0f No `wave-current-tasks.md` found \u2014 read `.agent-workspace/foreman-v2/memory/` latest session for wave state.';
 
+            // ── Lightweight re-anchor for product-fix PRs (requires_iaa=false, requires_ecap=false) ──
+            if (isProductFix) {
+              const lightweightChecklist = [
+                '1. \u2705 **CI gates green**: All required checks must be GREEN before marking merge-ready.',
+                '   Run locally: `.github/scripts/validate-simple-pr-admin.sh` → PASS',
+                '2. \u2705 **Scope declaration**: `.agent-admin/scope-declarations/pr-<N>.md` created and accurate.',
+                '3. \u2705 **Evidence declared**: `evidence_required` in `.admin/pr.json` matches what you have produced.',
+                '4. \u2705 **No IAA / ECAP ceremony required** for this PR type (`' + prType + '` with `requires_iaa: false`, `requires_ecap: false`).',
+                '   \u26a0\ufe0f Do NOT invoke IAA or ECAP agents — this is a lightweight product-fix PR.',
+                '5. \u2705 **Handover check**: Verify ALL current-head required CI checks are GREEN before claiming merge-ready.',
+                '   A PR cannot claim handover/merge-ready while any required check is red, pending, or missing.',
+                `6. \u2705 **OPOJD**: If this wave is complete \u2192 update \`wave-current-tasks.md\` to DONE.${tasksSection}`,
+              ].join('\n');
+
+              const lightBody = [
+                `${MARKER}`,
+                '## \ud83d\udd04 FOREMAN HANDOVER RE-ANCHOR (Lightweight — Product-Fix PR)',
+                '',
+                '@copilot \u2014 You are **foreman-v2-agent** (class: foreman). You do **NOT** build. You **orchestrate**.',
+                '',
+                `> \u2139\ufe0f **This is a product-fix PR** (\`.admin/pr.json\` type: \`${prType}\`, \`requires_iaa: false\`, \`requires_ecap: false\`).`,
+                '> No PREHANDOVER proof, IAA final assurance, or ECAP ceremony is required.',
+                '> Follow the lightweight checklist below.',
+                '',
+                '### Lightweight Handover Checklist:',
+                lightweightChecklist,
+                '',
+                '**Authority**: CS2 (Johan Ras / @APGI-cmy) | Contract: foreman-v2-agent (class: foreman)',
+              ].join('\n');
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: lightBody,
+              });
+              return;
+            }
+
+            // ── Full governance re-anchor for PRs requiring IAA/ECAP ──
             const ecapInstructions = [
               '---',
               '### \ud83d\udee1\ufe0f ECAP / Admin Ceremony — Classification & Invocation (REQUIRED before IAA final assurance)',
@@ -174,7 +263,7 @@ jobs:
               '---',
               '### \ud83d\udd0d IAA Final Assurance — Invocation (REQUIRED after ECAP, before merge)',
               '',
-              '> \u26d4 **This PR cannot pass final governance unless the following artifact is committed.  **',
+              '> \u26d4 **This PR cannot pass final governance unless the following artifact is committed.**',
               '> Foreman PREHANDOVER proof alone is NOT evidence of IAA invocation.',
               '> `Quality Professor PASS` or `merge-ready` claims without a committed IAA token are rejected.',
               '',
@@ -243,7 +332,7 @@ jobs:
               `${MARKER}`,
               '## \ud83d\udd04 FOREMAN HANDOVER RE-ANCHOR',
               '',
-              '@copilot \u2014 You are **foreman-v2-agent** (contract v6.2.0 / 2.14.0, class: foreman). You do **NOT** build. You **orchestrate**.',
+              '@copilot \u2014 You are **foreman-v2-agent** (class: foreman). You do **NOT** build. You **orchestrate**.',
               '',
               '> \u26a0\ufe0f **Hard CI gates are now enforced.** Advisory reminders alone no longer protect the merge. Both `preflight/iaa-final-assurance` and `preflight/ecap-admin-ceremony` will **fail CI** if required artifacts are absent. You must produce committed artifacts — not governance text claims.',
               '',
@@ -254,7 +343,7 @@ jobs:
               '',
               iaaInstructions,
               '',
-              '**Authority**: CS2 (Johan Ras / @APGI-cmy) | Contract: foreman-v2-agent v6.2.0 / 2.14.0',
+              '**Authority**: CS2 (Johan Ras / @APGI-cmy) | Contract: foreman-v2-agent (class: foreman)',
             ].join('\n');
 
             await github.rest.issues.createComment({

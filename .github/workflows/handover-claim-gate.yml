@@ -1,0 +1,265 @@
+name: Handover Claim Gate
+
+# Authority: governance/canon/LIVING_AGENT_SYSTEM.md v6.2.0
+# Purpose: Prevent failed-gate handovers by detecting "handover" / "merge-ready"
+#          claims in PR comments and verifying that all required CI checks on the
+#          current HEAD SHA are complete and green before the claim is accepted.
+#
+# Triggers:
+# - issue_comment: created — catches "handover", "merge-ready", "all gates pass",
+#   "ready to merge" keywords posted in PR comments.
+# - pull_request_target: ready_for_review — fires when a draft is marked ready,
+#   which is the canonical "I am handing over" signal.
+#
+# Behaviour:
+# - If the latest-head checks are all green: posts an acknowledgement.
+# - If any required check is red, pending, or missing: posts HANDOVER BLOCKED
+#   listing the failing / pending / missing checks.
+# - Product-fix PRs (.admin/pr.json with requires_iaa=false, requires_ecap=false)
+#   are NOT required to have PREHANDOVER/LUIEP ceremony artifacts — the gate only
+#   verifies that CI checks themselves are green.
+#
+# Issue: maturion-isms#1542
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_target:
+    types: [ready_for_review]
+
+permissions:
+  pull-requests: write
+  issues: write
+  checks: read
+
+jobs:
+  handover-claim-gate:
+    name: "handover-claim/check-current-head"
+    runs-on: ubuntu-latest
+
+    # Only fire when:
+    # (a) A comment on a PR (not issue) contains handover keywords, OR
+    # (b) A copilot/ branch PR is marked ready_for_review
+    if: |
+      (
+        github.event_name == 'issue_comment' &&
+        github.event.issue.pull_request != null &&
+        (
+          contains(github.event.comment.body, 'handover') ||
+          contains(github.event.comment.body, 'Handover') ||
+          contains(github.event.comment.body, 'HANDOVER') ||
+          contains(github.event.comment.body, 'merge-ready') ||
+          contains(github.event.comment.body, 'Merge-ready') ||
+          contains(github.event.comment.body, 'merge ready') ||
+          contains(github.event.comment.body, 'Merge ready') ||
+          contains(github.event.comment.body, 'ready to merge') ||
+          contains(github.event.comment.body, 'Ready to merge') ||
+          contains(github.event.comment.body, 'all gates pass') ||
+          contains(github.event.comment.body, 'All gates pass') ||
+          contains(github.event.comment.body, 'ALL GATES PASS') ||
+          contains(github.event.comment.body, 'Phase 4') ||
+          contains(github.event.comment.body, 'OPOJD') ||
+          contains(github.event.comment.body, 'merge gate released') ||
+          contains(github.event.comment.body, 'Merge gate released')
+        )
+      ) ||
+      (
+        github.event_name == 'pull_request_target' &&
+        (
+          startsWith(github.head_ref, 'copilot/') ||
+          github.event.pull_request.user.login == 'Copilot'
+        )
+      )
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.event.issue.pull_request && github.sha || github.sha }}
+          fetch-depth: 1
+
+      - name: Determine PR number and HEAD SHA
+        id: pr_info
+        uses: actions/github-script@v7
+        with:
+          script: |
+            let prNumber, headSha;
+
+            if (context.eventName === 'issue_comment') {
+              prNumber = context.payload.issue.number;
+              // Fetch PR details to get the current head SHA
+              const { data: pr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+              });
+              headSha = pr.head.sha;
+            } else {
+              // pull_request_target
+              prNumber = context.payload.pull_request.number;
+              headSha = context.payload.pull_request.head.sha;
+            }
+
+            core.setOutput('pr_number', String(prNumber));
+            core.setOutput('head_sha', headSha);
+            console.log(`PR: ${prNumber}, HEAD SHA: ${headSha}`);
+
+      - name: Check current-head CI status and post gate result
+        uses: actions/github-script@v7
+        env:
+          PR_NUMBER: ${{ steps.pr_info.outputs.pr_number }}
+          HEAD_SHA: ${{ steps.pr_info.outputs.head_sha }}
+        with:
+          script: |
+            const prNumber = parseInt(process.env.PR_NUMBER, 10);
+            const headSha = process.env.HEAD_SHA;
+
+            if (!prNumber || !headSha) {
+              core.warning('Could not determine PR number or HEAD SHA — skipping handover claim gate.');
+              return;
+            }
+
+            // ── Read .admin/pr.json to determine governance mode ──────────────────
+            let requiresIaa = true;
+            let requiresEcap = true;
+            let prType = 'unknown';
+            try {
+              const { data: content } = await github.rest.repos.getContent({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                path: '.admin/pr.json',
+                ref: headSha,
+              });
+              const manifest = JSON.parse(Buffer.from(content.content, 'base64').toString('utf8'));
+              requiresIaa = manifest.requires_iaa !== false;
+              requiresEcap = manifest.requires_ecap !== false;
+              prType = manifest.type || 'unknown';
+            } catch {
+              // .admin/pr.json absent or unreadable — default to heavy mode
+            }
+            const isProductFix = !requiresIaa && !requiresEcap;
+
+            // ── Fetch all check runs for the HEAD SHA ─────────────────────────────
+            const { data: checkRunsData } = await github.rest.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: headSha,
+              per_page: 100,
+            });
+
+            // Also fetch commit statuses (older CI systems use status API)
+            const { data: statusData } = await github.rest.repos.getCombinedStatusForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: headSha,
+            });
+
+            const checkRuns = checkRunsData.check_runs || [];
+
+            // Deduplicate: keep only the latest run per check name
+            const latestByName = new Map();
+            for (const run of checkRuns) {
+              const existing = latestByName.get(run.name);
+              if (!existing || new Date(run.started_at) > new Date(existing.started_at)) {
+                latestByName.set(run.name, run);
+              }
+            }
+
+            const failing = [];
+            const pending = [];
+            const passing = [];
+
+            for (const [name, run] of latestByName) {
+              if (run.status === 'completed') {
+                if (run.conclusion === 'success' || run.conclusion === 'skipped' || run.conclusion === 'neutral') {
+                  passing.push(name);
+                } else {
+                  failing.push({ name, conclusion: run.conclusion, url: run.html_url });
+                }
+              } else {
+                // in_progress, queued, waiting
+                pending.push({ name, status: run.status, url: run.html_url });
+              }
+            }
+
+            // Check combined commit status
+            if (statusData.state === 'failure' || statusData.state === 'error') {
+              for (const s of statusData.statuses) {
+                if (s.state === 'failure' || s.state === 'error') {
+                  failing.push({ name: s.context, conclusion: s.state, url: s.target_url });
+                }
+              }
+            } else if (statusData.state === 'pending') {
+              for (const s of statusData.statuses) {
+                if (s.state === 'pending') {
+                  pending.push({ name: s.context, status: 'pending', url: s.target_url });
+                }
+              }
+            }
+
+            const BLOCKED_MARKER = '<!-- handover-claim-gate-blocked -->';
+            const OK_MARKER = '<!-- handover-claim-gate-ok -->';
+            const isBlocked = failing.length > 0 || pending.length > 0;
+
+            // ── Build comment body ────────────────────────────────────────────────
+            let body;
+            if (isBlocked) {
+              const failLines = failing.map(f =>
+                `- ❌ **${f.name}** — \`${f.conclusion}\`${f.url ? ` ([details](${f.url}))` : ''}`
+              ).join('\n');
+              const pendingLines = pending.map(p =>
+                `- ⏳ **${p.name}** — \`${p.status}\`${p.url ? ` ([details](${p.url}))` : ''}`
+              ).join('\n');
+
+              const statusSummary = [
+                failing.length > 0 ? `**Failing checks (${failing.length}):**\n${failLines}` : null,
+                pending.length > 0 ? `**Pending checks (${pending.length}):**\n${pendingLines}` : null,
+              ].filter(Boolean).join('\n\n');
+
+              body = [
+                `${BLOCKED_MARKER}`,
+                '## 🚫 HANDOVER BLOCKED',
+                '',
+                `@copilot — A handover/merge-ready claim was detected on PR #${prNumber}, but the following required checks on HEAD \`${headSha.slice(0, 12)}...\` are **not green**:`,
+                '',
+                statusSummary,
+                '',
+                '> **A PR cannot claim handover or merge-ready while any required check is red, pending, or missing.**',
+                '> Fix all failing checks and wait for pending checks to complete before re-claiming handover.',
+                '',
+                isProductFix
+                  ? `> ℹ️  This is a **product-fix PR** (\`type: ${prType}\`, \`requires_iaa: false\`, \`requires_ecap: false\`). No PREHANDOVER/IAA/ECAP ceremony is required — only CI must be green.`
+                  : '> ⚠️  This PR requires IAA/ECAP ceremony artifacts in addition to green CI.',
+                '',
+                `**HEAD SHA verified**: \`${headSha}\``,
+                `**Passing checks**: ${passing.length}`,
+                '**Authority**: CS2 (Johan Ras / @APGI-cmy) | Issue: maturion-isms#1542',
+              ].join('\n');
+            } else {
+              body = [
+                `${OK_MARKER}`,
+                '## ✅ HANDOVER CLAIM ACKNOWLEDGED',
+                '',
+                `@copilot — All current-head checks on HEAD \`${headSha.slice(0, 12)}...\` are green (${passing.length} passing).`,
+                '',
+                isProductFix
+                  ? `> ℹ️  This is a **product-fix PR** (\`type: ${prType}\`, \`requires_iaa: false\`, \`requires_ecap: false\`). CI is green — handover is unblocked.`
+                  : '> ✅ CI checks are green. Ensure PREHANDOVER proof and IAA token artifacts are committed before merge.',
+                '',
+                `**HEAD SHA verified**: \`${headSha}\``,
+                '**Authority**: CS2 (Johan Ras / @APGI-cmy) | Issue: maturion-isms#1542',
+              ].join('\n');
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body,
+            });
+
+            if (isBlocked) {
+              core.setFailed(
+                `HANDOVER BLOCKED: ${failing.length} failing check(s), ${pending.length} pending check(s) on HEAD ${headSha.slice(0, 12)}.`
+              );
+            }
