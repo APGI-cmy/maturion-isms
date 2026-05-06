@@ -89,3 +89,11 @@ This wave is a governance-class hardening. The issue was opened directly by CS2 
 
 Agent file changes require CodexAdvisor delegation per AGCFPP-001. IAA Pre-Brief is mandatory before any delegation.
 
+
+---
+
+## IAA Wave Record Reference
+
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-align-tier1-contracts-20260506.md
+iaa_prebrief_sha: 3a1d538f
+iaa_prebrief_confirmed: true
