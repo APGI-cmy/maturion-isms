@@ -16,6 +16,7 @@
     ".agent-workspace/foreman-v2/memory/session-pit-stage1-app-desc-hardening-20260506.md",
     ".agent-workspace/foreman-v2/parking-station/suggestions-log.md",
     ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    ".agent-workspace/independent-assurance-agent/memory/session-pit-stage1-app-desc-hardening-20260506.md",
     "docs/governance/PIT_APP_DESCRIPTION.md",
     "modules/pit/00-app-description/app-description.md",
     "modules/pit/00-app-description/pit_app_description_stage1.md",
@@ -37,7 +38,7 @@
     "modules/pit/_readiness/pit-build-process-improvement-register.md contains OVS-001 through OVS-008",
     "modules/pit/module.manifest.json module_name is PIT (Project Implementation Tracker)",
     "Draft PIT files pit_app_description_stage1.md and pit_app_description_stage1_rewritten_v1.md are removed from 00-app-description/",
-    "IAA ASSURANCE-TOKEN received before merge gate release"
+    "IAA ASSURANCE-TOKEN IAA-session-pit-stage1-app-desc-hardening-20260506-PASS received and committed to wave record"
   ],
   "merge_authority": "CS2"
 }
