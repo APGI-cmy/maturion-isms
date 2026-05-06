@@ -911,28 +911,28 @@ The system shall allow admins to configure watchdog sensitivity thresholds (e.g.
 
 ### PIT-FR-106 — Role Management Screen
 
-The system shall provide a Role Management screen at `/admin/roles` accessible to `pit_admin` or `org_admin` (and `cs2_admin`) that lists all roles defined for the organisation and allows assigning or revoking roles from users.
+The system shall provide a Role Management screen at `/admin/roles` accessible to `pit_admin`, `org_admin`, or `cs2_admin` that lists all roles defined for the organisation and allows assigning or revoking roles from users.
 
 **Acceptance**: Navigating to `/admin/roles` as an `org_admin` shows the full role list; assigning a new role to a user updates their effective permissions on their next authenticated action.
 **Derived from**: §UX-S-18; §AD-08
 
 ### PIT-FR-107 — Notification Templates Screen
 
-The system shall provide a Notification Templates screen at `/admin/notifications` accessible to `pit_admin` or `org_admin` (and `cs2_admin`) that allows configuration of which system events trigger email or in-app notifications, and allows editing the message template for each event type.
+The system shall provide a Notification Templates screen at `/admin/notifications` accessible to `pit_admin`, `org_admin`, or `cs2_admin` that allows configuration of which system events trigger email or in-app notifications, and allows editing the message template for each event type.
 
 **Acceptance**: Disabling a notification template for "task overdue" stops the system from sending that notification for subsequent overdue events.
 **Derived from**: §UX-S-18; §AD-08
 
 ### PIT-FR-108 — Task Cluster Templates Screen
 
-The system shall provide a Task Cluster Templates screen at `/admin/task-clusters` accessible to `pit_admin` or `org_admin` (and `cs2_admin`) that allows creation, editing, and deletion of reusable task cluster templates for use during project setup.
+The system shall provide a Task Cluster Templates screen at `/admin/task-clusters` accessible to `pit_admin`, `org_admin`, or `cs2_admin` that allows creation, editing, and deletion of reusable task cluster templates for use during project setup.
 
 **Acceptance**: Creating a task cluster template with three tasks makes those tasks available for selection when adding a cluster to a new project.
 **Derived from**: §UX-S-18; §AD-08
 
 ### PIT-FR-109 — Invitation Settings Screen
 
-The system shall provide an Invitation Settings section within Admin/Settings that allows `pit_admin` or `org_admin` to configure: default invitation expiry period, whether open signup is enabled for the organisation, and the invitation email template.
+The system shall provide an Invitation Settings section within Admin/Settings that allows `pit_admin`, `org_admin`, or `cs2_admin` to configure: default invitation expiry period, whether open signup is enabled for the organisation, and the invitation email template.
 
 **Acceptance**: Setting invitation expiry to 48 hours causes invitation links older than 48 hours to be rejected at the acceptance step.
 **Derived from**: §UX-S-18; §AD-08; §UX-J-09
