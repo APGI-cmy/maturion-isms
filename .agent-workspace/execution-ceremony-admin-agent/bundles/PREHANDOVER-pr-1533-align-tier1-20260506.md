@@ -172,7 +172,7 @@ ecap_reconciliation_summary: EMBEDDED (see §4.3e Compliance Gate section below)
 | R14 | Ripple registry ↔ PUBLIC_API changes | ✅ Zero PUBLIC_API files changed; ripple_status: NOT-APPLICABLE |
 | R15 | Final-state status coherence | ✅ `final_state: COMPLETE` in PREHANDOVER; `final_state: COMPLETE` in bundle; ECAP verdict: PASS |
 | R16 | Artifact declared count ↔ actual count | ✅ files_changed: 14 declared and actual; 2 ECAP artifacts declared and created |
-| R17 | IAA session reference | ✅ `session-066-align-tier1-20260506` — consistent; iaa_reinvocation_round: 3 |
+| R17 | IAA session reference | ✅ `session-066-align-tier1-20260506` — consistent; iaa_reinvocation_round: 4 |
 | R18 | Renumber/rebase/conflict-resolution refresh | ✅ NO triggering events occurred; art_refresh_required: NO |
 
 **Reconciliation Matrix Result: ALL ROWS R01–R18 COMPLETE — no mismatches detected**
