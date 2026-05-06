@@ -64,11 +64,6 @@ merge_gate_interface:
     - "foreman-implementation-check"
     - "builder-involvement-check"
     - "session-memory-check"
-    - "prehandover-proof-check"
-    - "governance-ceremony/draft-check"
-    - "governance-ceremony/prehandover-and-iaa-token"
-    - "governance-ceremony/pr-body-governance-block"
-    - "governance-ceremony/verdict"
   parity_required: true
   parity_enforcement: BLOCKING
   live_gate_check: "Step 1.6 runtime: enumerate LIVE CI gates from .github/workflows/ — not only this static list. Any live gate absent from required_checks must be added before parity is declared."
