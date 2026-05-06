@@ -162,13 +162,17 @@ Per `git diff --name-only origin/main...HEAD` (confirmed at bundle assembly):
 |---|------|------|
 | 1 | `.admin/pr.json` | Admin manifest |
 | 2 | `.agent-admin/assurance/iaa-wave-record-align-tier1-contracts-20260506.md` | IAA wave record |
-| 3 | `.agent-admin/scope-declarations/pr-1533.md` | Scope declaration |
-| 4 | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Wave tracking |
-| 5 | `.github/agents/foreman-v2-agent.md` | Tier 1 agent contract (foreman) |
-| 6 | `.github/agents/independent-assurance-agent.md` | Tier 1 agent contract (IAA) |
-| 7 | `.github/agents/execution-ceremony-admin-agent.md` | Tier 1 agent contract (ECAP) |
+| 3 | `.agent-admin/prehandover/proof-pr-1533-align-tier1-20260506.md` | PREHANDOVER proof |
+| 4 | `.agent-admin/scope-declarations/pr-1533.md` | Scope declaration |
+| 5 | `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1533-align-tier1-20260506.md` | ECAP bundle |
+| 6 | `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` | Parking station |
+| 7 | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Wave tracking |
+| 8 | `.agent-workspace/independent-assurance-agent/memory/session-062-align-tier1-20260506.md` | IAA session memory |
+| 9 | `.github/agents/foreman-v2-agent.md` | Tier 1 agent contract (foreman) |
+| 10 | `.github/agents/independent-assurance-agent.md` | Tier 1 agent contract (IAA) |
+| 11 | `.github/agents/execution-ceremony-admin-agent.md` | Tier 1 agent contract (ECAP) |
 
-**Declared count**: 7 ✓ | **Actual diff count**: 7 ✓ | **Parity**: PASS
+**Declared count**: 11 ✓ | **Actual diff count**: 11 ✓ | **Parity**: PASS
 
 ---
 
@@ -277,7 +281,7 @@ Issue #1532 opened by CS2 (APGI-cmy) and assigned to Copilot — constitutes CS2
 - [x] Zero compiler/linter warnings (N/A)
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
 - [x] IAA audit token recorded: IAA-session-062-align-tier1-20260506-PASS
-- [x] FILES_CHANGED count verified: 7 declared = 7 actual
+- [x] FILES_CHANGED count verified: 11 declared = 11 actual
 - [x] No PUBLIC_API ripple obligations (all changed files absent from CANON_INVENTORY)
 - [x] No standalone token file (NO-STANDALONE-TOKEN-001 compliant)
 - [x] SCOPE_FROZEN: YES confirmed in scope declaration

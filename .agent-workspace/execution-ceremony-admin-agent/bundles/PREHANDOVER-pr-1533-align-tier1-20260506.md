@@ -83,7 +83,7 @@ files_reviewed:
 governance_artifacts_reviewed:
   - .admin/pr.json — agent-contract-change, requires_iaa/ecap: true, evidence_required array correct
   - .agent-admin/assurance/iaa-wave-record-align-tier1-contracts-20260506.md — PRE-BRIEF populated, SB-001/002/004 resolved
-  - .agent-admin/scope-declarations/pr-1533.md — SCOPE_FROZEN: YES, FILES_CHANGED: 7, A-031 carve-out present
+  - .agent-admin/scope-declarations/pr-1533.md — SCOPE_FROZEN: YES, FILES_CHANGED: 11, A-031 carve-out present
   - .agent-workspace/foreman-v2/personal/wave-current-tasks.md — ECAP Admin Appointment section populated
 
 ## IAA Assurance Reference
@@ -110,10 +110,10 @@ ecap_reconciliation_summary: EMBEDDED (see §4.3e Compliance Gate section below)
 | AAP-01 | Issued token but PENDING/in-progress wording remains | ✅ CLEAR — no PENDING/in-progress in final-state fields; provisional language only in IAA response section (appropriate — awaiting invocation) |
 | AAP-02 | Mixed internal version labels in same document | ✅ CLEAR — single version per artifact |
 | AAP-03 | Stale artifact path references | ✅ CLEAR — all declared paths exist or will exist upon this commit |
-| AAP-04 | Stale scope declaration after file changes | ✅ CLEAR — scope frozen, FILES_CHANGED: 7 = actual diff count 7 |
+| AAP-04 | Stale scope declaration after file changes | ✅ CLEAR — scope frozen, FILES_CHANGED: 11 = actual diff count 11 |
 | AAP-05 | Stale hash after file finalization | ✅ CLEAR — no SHA256 hashes declared for changed files (not required for non-CANON_INVENTORY artifacts) |
 | AAP-06 | Requested vs completed assurance session mismatch | ✅ CLEAR — iaa_audit_token pre-populated as expected reference per A-029; IAA invocation pending; no contradiction |
-| AAP-07 | Declared file/artifact count mismatch | ✅ CLEAR — files_changed: 7 declared and confirmed by actual diff |
+| AAP-07 | Declared file/artifact count mismatch | ✅ CLEAR — files_changed: 11 declared and confirmed by actual diff |
 | AAP-08 | PUBLIC_API ripple obligations omitted or silently skipped | ✅ CLEAR — zero PUBLIC_API files in diff (confirmed by CANON_INVENTORY cross-check); ripple_status: NOT-APPLICABLE explicitly stated |
 | AAP-09 | Committed truth not matching proof/session memory claims | ✅ CLEAR — all declared paths consistent with actual HEAD; no contradiction between artifacts |
 | AAP-15 | Gate inventory absent from PREHANDOVER proof | ✅ CLEAR — gate_set_checked populated with 13 named gates from foreman required_checks |
@@ -134,7 +134,7 @@ ecap_reconciliation_summary: EMBEDDED (see §4.3e Compliance Gate section below)
 | 5 | ECAP did NOT write to ## TOKEN in wave record | ✅ TOKEN section left as PLACEHOLDER per contract |
 | 6 | ECAP did NOT write to foreman-v2 memory paths | ✅ No writes to `.agent-workspace/foreman-v2/memory/` |
 | 7 | gate_set_checked populated with named gates | ✅ 13 gates enumerated |
-| 8 | files_changed count matches actual diff | ✅ 7 = 7 |
+| 8 | files_changed count matches actual diff | ✅ 11 = 11 |
 | 9 | No PUBLIC_API ripple obligations silently skipped | ✅ NOT-APPLICABLE with justification |
 | 10 | Ripple/Cross-Agent Assessment section present | ✅ Present in PREHANDOVER proof |
 | 11 | Deployment Surface Enumeration present (D-002) | ✅ Present with governance-only N/A justification |
@@ -162,16 +162,16 @@ ecap_reconciliation_summary: EMBEDDED (see §4.3e Compliance Gate section below)
 | R04 | PR number | ✅ `1533` — consistent in PREHANDOVER, bundle, scope declaration, wave record |
 | R05 | Wave identifier | ✅ `align-tier1-contracts-20260506` — consistent in PREHANDOVER, bundle, wave record filename, wave-current-tasks |
 | R06 | Branch name | ✅ `copilot/align-tier-1-agent-contracts-again` — confirmed by git branch; consistent across all artifacts |
-| R07 | Changed file paths | ✅ 7 files listed in PREHANDOVER match `git diff --name-only origin/main...HEAD` |
+| R07 | Changed file paths | ✅ 11 files listed in PREHANDOVER match `git diff --name-only origin/main...HEAD` |
 | R08 | PREHANDOVER ↔ session memory | ✅ Same job, wave, issue, PR, session, and final_state: COMPLETE in both artifacts |
 | R09 | PREHANDOVER ↔ token reference | ✅ iaa_audit_token and iaa_wave_record_path consistent; token awaiting IAA invocation |
 | R10 | Tracker ↔ wave record | ✅ wave-current-tasks.md wave slug matches wave record filename slug |
-| R11 | Scope declaration ↔ actual changed files | ✅ FILES_CHANGED: 7 in pr-1533.md = 7 actual files in diff |
+| R11 | Scope declaration ↔ actual changed files | ✅ FILES_CHANGED: 11 in pr-1533.md = 11 actual files in diff |
 | R12 | Session memory ↔ committed artifact paths | ✅ Both ECAP artifact paths will be committed with this bundle |
 | R13 | CANON_INVENTORY ↔ file hash/version/amended_date | ✅ N/A — no CANON_INVENTORY entries modified; changed files not in CANON_INVENTORY |
 | R14 | Ripple registry ↔ PUBLIC_API changes | ✅ Zero PUBLIC_API files changed; ripple_status: NOT-APPLICABLE |
 | R15 | Final-state status coherence | ✅ `final_state: COMPLETE` in PREHANDOVER; `final_state: COMPLETE` in bundle; ECAP verdict: PASS |
-| R16 | Artifact declared count ↔ actual count | ✅ files_changed: 7 declared and actual; 2 ECAP artifacts declared and created |
+| R16 | Artifact declared count ↔ actual count | ✅ files_changed: 11 declared and actual; 2 ECAP artifacts declared and created |
 | R17 | IAA session reference | ✅ `session-062-align-tier1-20260506` — consistent; iaa_reinvocation_round: 0 |
 | R18 | Renumber/rebase/conflict-resolution refresh | ✅ NO triggering events occurred; art_refresh_required: NO |
 
@@ -214,7 +214,7 @@ ecap_reconciliation_summary: EMBEDDED (see §4.3e Compliance Gate section below)
 | Session reference | `ecap-pr-1533-align-tier1-20260506` | ✅ |
 | Token reference | `IAA-session-062-align-tier1-20260506-PASS` | ✅ |
 | Issue/PR/wave | #1532 / #1533 / align-tier1-contracts-20260506 | ✅ |
-| Scope declaration parity | FILES_CHANGED: 7 = actual diff 7 | ✅ |
+| Scope declaration parity | FILES_CHANGED: 11 = actual diff 11 | ✅ |
 | Status consistency | final_state: COMPLETE across all artifacts | ✅ |
 
 ### C4. Ripple Assessment Block
