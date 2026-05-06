@@ -88,7 +88,7 @@ gate_set_checked:
 public_api_files_changed: 0
 ripple_status:          NOT-APPLICABLE
 ripple_notes:           >
-  None of the 7 changed files appear in CANON_INVENTORY as PUBLIC_API artifacts.
+  None of the 14 changed files appear in CANON_INVENTORY as PUBLIC_API artifacts.
   Changed files are Tier 1 agent contracts (.github/agents/*.md), IAA wave record,
   scope declaration, wave-current-tasks, and .admin/pr.json. No governance/canon/
   files were touched in this PR (T-WAT-002 deferred to follow-on PR).
