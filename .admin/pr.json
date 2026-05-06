@@ -1,22 +1,30 @@
 {
-  "pr": 1539,
-  "issue": 1538,
-  "type": "deployment-change",
+  "pr": 1537,
+  "issue": 1536,
+  "type": "product-fix",
   "owner": "Copilot",
   "scope": [
     ".admin/pr.json",
-    ".agent-admin/scope-declarations/pr-1539.md",
-    ".github/workflows/deploy-mmm-edge-functions.yml"
+    ".agent-admin/scope-declarations/pr-1537.md",
+    "modules/MMM/BUILD_PROGRESS_TRACKER.md",
+    "modules/MMM/evidence/oc-001-008-agent-verification-20260506.md",
+    "modules/MMM/evidence/screenshot-landing-page-20260506.png",
+    "modules/MMM/evidence/screenshot-dashboard-404-20260506.png",
+    "modules/MMM/evidence/screenshot-frameworks-404-20260506.png",
+    "modules/MMM/evidence/screenshot-upload-404-20260506.png"
   ],
   "risk": "medium",
   "requires_iaa": true,
   "requires_ecap": true,
   "evidence_required": [
-    "Workflow deploys all directories under supabase/functions or every config-listed function with a directory",
-    "Workflow summary lists deployed function names",
-    "invoke-ai-parse-criteria health check passes",
-    "mmm-health no longer returns 404",
-    "Manual workflow run evidence captured after merge or workflow_dispatch"
+    "Supabase project/settings confirmation for OC-001 through OC-004 where agent-accessible",
+    "Vercel environment variable confirmation for OC-005 where agent-accessible",
+    "GitHub secrets alignment check for OC-006 where agent-accessible",
+    "AIMC/PIT/Render endpoint and environment confirmation for OC-007 and OC-008 where agent-accessible",
+    "Explicit list of secrets/settings that agents cannot verify and require CS2 confirmation",
+    "Screenshots of the live deployed UI for dashboard, frameworks, and framework source upload",
+    "Network/API evidence for the dashboard data-load failure or success",
+    "Updated BUILD_PROGRESS_TRACKER.md reflecting confirmed OC status and remaining blockers"
   ],
   "merge_authority": "CS2"
 }

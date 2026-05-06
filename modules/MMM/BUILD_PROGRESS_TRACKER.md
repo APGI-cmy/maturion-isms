@@ -414,7 +414,7 @@ Stage 10 (IAA Pre-Brief) is now unblocked.
 ---
 
 ### Stage 12: Build Execution & Evidence
-**Status**: [x] ACTIVE — Build execution COMPLETE (B1–B9; 982/982 tests GREEN); Phase 4 ECAP + IAA audit complete; CDV deployment validation = post-Stage-12 operational follow-up (see §12.1 below); CDV tracking wave mmm-post-stage12-cdv-validation-20260422 (issue #1443, 2026-04-22) created — SB-003-W3 static code evidence confirmed; Stage 12 IN_PROGRESS (operational closure items OC-001–OC-009 PENDING CS2 live platform validation); **NOTE: Build-Complete (L1) ≠ Operationally-Closed (L3) — see §12.2 Operational Closure Pending Items and §12.3 Future-Build Hard Gate**
+**Status**: [x] ACTIVE — Build execution COMPLETE (B1–B9; 982/982 tests GREEN); Phase 4 ECAP + IAA audit complete; CDV deployment validation = post-Stage-12 operational follow-up (see §12.1 below); CDV tracking wave mmm-post-stage12-cdv-validation-20260422 (issue #1443, 2026-04-22) created — SB-003-W3 static code evidence confirmed; Stage 12 IN_PROGRESS (OC agent-verification complete 2026-05-06 — OC-001–OC-008 PARTIALLY CONFIRMED — CS2 verification needed; OC-009 BLOCKED by product defects); **NOTE: Build-Complete (L1) ≠ Operationally-Closed (L3) — see §12.2 Operational Closure Pending Items and §12.3 Future-Build Hard Gate**
 **Location**: `modules/MMM/11-build/`  
 **Wave**: mmm-stage12-build-execution-20260420  
 **Issue**: maturion-isms#1428  
@@ -503,19 +503,73 @@ The following live operational confirmation items are still required before MMM 
 
 | # | Operational Closure Item | Status | Notes |
 |---|---|---|---|
-| OC-001 | Supabase project configured correctly | ⚠️ PENDING CONFIRMATION | Project settings, auth configuration, and connection strings must be verified in the live deployment environment |
-| OC-002 | Supabase secrets set | ⚠️ PENDING CONFIRMATION | All required secrets (service role key, JWT secret, anon key) must be confirmed present and correct in the deployment environment |
-| OC-003 | Storage buckets created | ⚠️ PENDING CONFIRMATION | MMM storage buckets defined in B1 schema migrations must exist and be accessible in the live Supabase project |
-| OC-004 | SMTP / auth setup confirmed | ⚠️ PENDING CONFIRMATION | Email-based auth flows (invitation acceptance, user onboarding) require SMTP provider to be configured in Supabase auth settings |
-| OC-005 | Vercel environment variables confirmed | ⚠️ PENDING CONFIRMATION | All variables from `apps/mmm/.env.example` must be set in Vercel project settings; `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` required at minimum; Vercel deployment path is now functioning (wave: align-vercel-deployment-workflow-20260422, PR #1454) — env var confirmation is the remaining step |
-| OC-006 | GitHub secrets aligned | ⚠️ PENDING CONFIRMATION | Secrets consumed by `.github/workflows/deploy-mmm-vercel.yml` and Supabase migration workflows must be present and correct in repository secrets |
-| OC-007 | AIMC / PIT live endpoint values confirmed | ⚠️ PENDING CONFIRMATION | `AIMC_BASE_URL` confirmed (staging gateway); `PIT_BASE_URL` PENDING live PIT endpoint — both must be confirmed and reachable before B7 live wire is exercisable end-to-end |
-| OC-008 | External service envs on Render confirmed | ⚠️ PENDING CONFIRMATION | AIMC gateway (`maturion-mat-ai-gateway-staging`) and other Render-deployed services must have all MMM-relevant environment variables (including `AIMC_SERVICE_TOKEN`, `PIT_SERVICE_TOKEN`) confirmed active and readable at runtime |
-| OC-009 | Live E2E validation run at least once | ⚠️ PENDING CONFIRMATION | At least one complete end-to-end workflow (e.g. GP-001 organisation onboarding through framework assessment) must be demonstrated on the live platform with CS2 sign-off |
+| OC-001 | Supabase project configured correctly | ⚠️ PARTIALLY CONFIRMED — CS2 VERIFICATION NEEDED | Project `ujucvyyspfxlxlfdamda` is reachable (REST/Auth/Storage APIs return expected HTTP responses). Schema verified by migrations CI Run #11 (2026-05-06). Auth API live (HTTP 200). Auth settings (email provider, redirect URLs, JWT secret) require CS2 confirmation via Supabase dashboard. Evidence: `modules/MMM/evidence/oc-001-008-agent-verification-20260506.md` |
+| OC-002 | Supabase secrets set | ⚠️ PARTIALLY CONFIRMED — CS2 VERIFICATION NEEDED | `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_BASE_URL`, `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, `MATURION_BOT_TOKEN`, `RENDER_API_KEY`, `RENDER_SERVICE_ID`, `RENDER_SERVICE_URL`, `SUPABASE_SERVICE_ROLE_KEY` all present and functional — confirmed via successful CI Runs #90, #11, #9, #22 (2026-05-06). Agent confirms presence (masked); CS2 must confirm values are correct and current. Evidence: `modules/MMM/evidence/oc-001-008-agent-verification-20260506.md` |
+| OC-003 | Storage buckets created | ⚠️ PARTIALLY CONFIRMED — CS2 VERIFICATION NEEDED | Storage API reachable (HTTP 400 — requires auth). MMM-native migrations (including storage model from issue #1458) applied successfully in CI Run #11 (2026-05-06). Bucket list and RLS policies require `service_role_key` — cannot list buckets without it. CS2 should verify bucket existence via `supabase storage ls` or dashboard. Evidence: `modules/MMM/evidence/oc-001-008-agent-verification-20260506.md` |
+| OC-004 | SMTP / auth setup confirmed | ⚠️ PARTIALLY CONFIRMED — CS2 VERIFICATION NEEDED | Supabase auth endpoint returns HTTP 200 with valid anon key (CI Run #90, 2026-05-06). SMTP provider, email redirect URLs, and site URL are not agent-inspectable — require Supabase dashboard. CS2 must set site URL to `https://maturity-model-management.vercel.app` and confirm SMTP provider. Evidence: `modules/MMM/evidence/oc-001-008-agent-verification-20260506.md` |
+| OC-005 | Vercel environment variables confirmed | ⚠️ PARTIALLY CONFIRMED — CS2 ACTION NEEDED | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_BASE_URL` present and working (CI Run #90). **FINDING: `NEXT_PUBLIC_SITE_URL` / `VITE_LIVE_DEPLOYMENT_URL` appears NOT SET** — CI log shows `PRODUCTION_SITE_URL:` is empty; smoke test defaults to `https://mmm.maturion.com` which does not resolve (HTTP 000). Live app is at `https://maturity-model-management.vercel.app`. CS2 must set `NEXT_PUBLIC_SITE_URL` to `https://maturity-model-management.vercel.app` in GitHub secrets. Evidence: `modules/MMM/evidence/oc-001-008-agent-verification-20260506.md` |
+| OC-006 | GitHub secrets aligned | ⚠️ PARTIALLY CONFIRMED — CS2 SIGN-OFF NEEDED | Agent-verifiable evidence shows secrets required by `deploy-mmm-vercel.yml`, `deploy-mmm-supabase-migrations.yml`, `deploy-mmm-edge-functions.yml`, and `deploy-mmm-ai-gateway.yml` are present because those workflows executed successfully (Runs #90, #11, #9, #22, 2026-05-06). However, this remains pending CS2 live platform sign-off, and `RENDER_SERVICE_ID_STAGING`, `RENDER_SERVICE_URL_STAGING`, `LIVENESS_TEST_EMAIL`, and `LIVENESS_TEST_PASSWORD` were not verified in recent runs. Evidence: `modules/MMM/evidence/oc-001-008-agent-verification-20260506.md` |
+| OC-007 | AIMC / PIT live endpoint values confirmed | ⚠️ PARTIALLY CONFIRMED — CS2 VERIFICATION NEEDED | AIMC Render gateway health check HTTP 200 (CI Run #22, 2026-05-06) — `RENDER_SERVICE_URL` is live. `PIT_BASE_URL` still PENDING — not present in any agent-accessible CI log. CS2 must confirm PIT endpoint deployment and set `PIT_BASE_URL` secret. Evidence: `modules/MMM/evidence/oc-001-008-agent-verification-20260506.md` |
+| OC-008 | External service envs on Render confirmed | ⚠️ PARTIALLY CONFIRMED — CS2 VERIFICATION NEEDED | Render service health check HTTP 200 (CI Run #22, 2026-05-06). `RENDER_API_KEY`, `RENDER_SERVICE_ID`, `RENDER_SERVICE_URL`, `SUPABASE_SERVICE_ROLE_KEY` all present. `AIMC_SERVICE_TOKEN`, `PIT_SERVICE_TOKEN` are masked — cannot verify values. CS2 must confirm these are set correctly in Render service env vars. Evidence: `modules/MMM/evidence/oc-001-008-agent-verification-20260506.md` |
+| OC-009 | Live E2E validation run at least once | ⚠️ PENDING — BLOCKED BY PRODUCT DEFECTS | Blocked: (1) MMM Edge Functions not deployed (only `invoke-ai-parse-criteria` deployed; all `mmm-*` functions return 404); (2) Vercel SPA routing broken for direct sub-path navigation. E2E not demonstrable until product-fix queue below is addressed. |
 
 **Operational closure criterion**: MMM is operationally closed (L3) when all 9 items above are evidenced as CONFIRMED by CS2 live platform sign-off and this table is updated with confirmation timestamps and evidence references.
 
 > **Relationship to §12.1 CDV**: §12.1 CDV checklist documents the staged deployment validation items and evidence slots. §12.2 provides the explicit named closure checklist (OC-001 through OC-009) of operational items identified in post-build review, with their current PENDING status. These sections are complementary — §12.1 tracks deployment execution evidence; §12.2 declares the complete closure criterion set.
+
+#### 12.2a CS2-Verification Required Items (OC-001–OC-008)
+
+The following settings/secrets are NOT agent-verifiable due to masking or permission requirements. CS2 must confirm each:
+
+| OC item | System | Setting/Secret name | Why agent cannot verify | CS2 action needed |
+|---|---|---|---|---|
+| OC-001 | Supabase dashboard | Auth settings (email provider, redirect URLs, site URL) | Requires dashboard access | Verify Auth → SMTP and URL Configuration; set site URL to `https://maturity-model-management.vercel.app` |
+| OC-001 | Supabase dashboard | JWT secret configuration | Requires dashboard access | Confirm JWT secret configuration in Supabase Auth settings matches the evidence record and intended deployment configuration |
+| OC-003 | Supabase Storage | Bucket list (framework-sources, evidence-files) | Requires `service_role_key` | Run `supabase storage ls` or check Storage in dashboard |
+| OC-003 | Supabase dashboard | Bucket RLS policies | Requires dashboard access | Verify RLS policies match migration definitions |
+| OC-004 | Supabase dashboard | SMTP provider configuration | Auth → SMTP Settings | Confirm or configure SMTP provider |
+| OC-004 | Supabase dashboard | Auth email redirect URL / site URL | Auth → URL Configuration | Set site URL to `https://maturity-model-management.vercel.app` |
+| OC-005 | GitHub Secrets | `NEXT_PUBLIC_SITE_URL` (currently empty/unset) | CI log shows blank value | Set to `https://maturity-model-management.vercel.app` in GitHub secrets |
+| OC-005 | Vercel | Custom domain `mmm.maturion.com` | Does not resolve (HTTP 000) | Configure as Vercel custom domain alias or remove from smoke test |
+| OC-007 | Render / PIT | `PIT_BASE_URL` | Not visible in any CI log | Confirm live PIT endpoint is deployed, reachable, and URL is set as GitHub secret |
+| OC-007 | Render / AIMC | `AIMC_BASE_URL` exact URL | Masked in CI | Confirm endpoint value matches running Render service |
+| OC-008 | Render env vars | `AIMC_SERVICE_TOKEN` | Masked | Confirm token is set and correct in Render service env vars |
+| OC-008 | Render env vars | `PIT_SERVICE_TOKEN` | Not visible in any CI log | Confirm token is set in Render service env vars |
+| OC-008 | Render env vars | `SUPABASE_SERVICE_ROLE_KEY` | Masked | Confirm correct service role key for project `ujucvyyspfxlxlfdamda` |
+
+#### 12.2b Current Live Deployment Status (2026-05-06)
+
+**Live deployment URL**: `https://maturity-model-management.vercel.app/`  
+**Latest deployment**: CI Run #90, SHA `514f7a2b8fea24e04b329611459a8289011f4bdf`, 2026-05-06T08:15:10Z  
+**Evidence**: `modules/MMM/evidence/oc-001-008-agent-verification-20260506.md`  
+**Screenshots**: `modules/MMM/evidence/screenshot-*.png`
+
+| Route | Status | Evidence |
+|---|---|---|
+| `/` (Landing page) | ✅ HTTP 200 — renders correctly | `screenshot-landing-page-20260506.png` |
+| `/dashboard` (direct navigation) | ❌ HTTP 404 — Vercel SPA routing broken | `screenshot-dashboard-404-20260506.png` |
+| `/frameworks` (direct navigation) | ❌ HTTP 404 — Vercel SPA routing broken | `screenshot-frameworks-404-20260506.png` |
+| `/frameworks/upload` (direct navigation) | ❌ HTTP 404 — Vercel SPA routing broken | `screenshot-upload-404-20260506.png` |
+
+**CS2-observed UI issues (client-side navigation after login)**:
+- Dashboard: renders app shell but displays `Unable to load dashboard data. Please check your connection and try again.`
+- Frameworks: skeletal — heading only plus `Upload Framework Source` link
+- Framework Source upload: raw/unstyled — radio buttons for Mode A / Mode B / Mode C and plain `Start` button
+
+**Root cause of dashboard data-load failure**: MMM-specific Edge Functions are NOT deployed. The `deploy-mmm-edge-functions.yml` workflow deploys only `invoke-ai-parse-criteria`. All 27 `mmm-*` functions (`mmm-health`, `mmm-qiw-status`, `mmm-org-create`, etc.) return HTTP 404. The dashboard calls these functions to load org data, QIW status, and assessment summaries.
+
+**Root cause of Vercel SPA routing failure**: The deployment log warns `"The vercel.json file should be inside of the provided root directory."` — suggesting the rewrites in `vercel.json` (at repo root) are not being applied by the Vercel project configuration. Direct navigation to any sub-path returns Vercel 404. Client-side React Router navigation from `/` works correctly.
+
+#### 12.2c Product-Fix Queue (Next Actions)
+
+| Priority | Fix | Blocker addressed |
+|---|---|---|
+| P1 | **Deploy all MMM Edge Functions** — update `deploy-mmm-edge-functions.yml` to deploy all 27 `mmm-*` functions, not just `invoke-ai-parse-criteria` | OC-009; dashboard data load; all backend functionality |
+| P2 | **Fix Vercel SPA routing** — investigate `vercel.json` location warning; move rewrites to `apps/mmm/vercel.json` or configure Vercel project root correctly | Direct URL navigation; hard refresh on any route |
+| P3 | **Set `NEXT_PUBLIC_SITE_URL`** — set GitHub secret to `https://maturity-model-management.vercel.app` | OC-005; smoke test; auth redirects |
+| P4 | **Build Frameworks page** — replace skeleton with real data loading + framework list components | CS2-observed skeletal Frameworks page |
+| P5 | **Style Framework Source upload flow** — apply design system CSS to upload page | CS2-observed unstyled upload flow |
+| P6 | **Demonstrate live E2E workflow** — complete one full onboarding → framework → assessment → dashboard journey | OC-009 |
 
 ---
 
@@ -604,11 +658,11 @@ The following live operational confirmation items are still required before MMM 
 ## Current Stage Summary
 
 **Current Stage**: Stage 12 (Build Execution) ACTIVE — B1–B9 ALL COMPLETE (982/982 tests GREEN); B9 QP PASS — all 10 golden paths GREEN; CG-003/CG-004 declared; NBR-001/002/003 verified. Phase 4 ECAP ceremony bundle committed; IAA Final Audit COMPLETE — ASSURANCE-TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS. PR #1429 MERGED 2026-04-21 by CS2 (APGI-cmy). **MMM is at L1 (Build-Complete). Operational closure (L3) requires §12.2 OC-001 through OC-009 confirmed (see §12.2 and §12.3 below).** Vercel frontend deployment path now functioning (wave: align-vercel-deployment-workflow-20260422, PR #1454). **Backend deployment alignment COMPLETE** (wave mmm-post-stage12-backend-alignment-20260422, issue #1455, 2026-04-22) — MAT-era deployment workflows renamed to MMM-era; deployment alignment doc added.
-**Overall Progress**: Build execution 100% complete (B1–B9 DONE; ECAP bundle committed; IAA ASSURANCE-TOKEN issued; PR #1429 MERGED 2026-04-21) = **L1 Build-Complete**. Vercel frontend deployment path now functioning (PR #1454). CDV/staging deployment follow-up: IN PROGRESS — SB-003-W3 static evidence confirmed; W1/W2, PIT_BASE_URL, and staging deployment PENDING CS2 operational action. **Operational closure (L3)**: 0/9 OC items confirmed (§12.2 OC-001 through OC-009 all PENDING). CDV tracking document: `modules/MMM/12-phase4-ecap/cdv-staging-validation.md`. **Deployment alignment**: COMPLETE — all 3 deployment workflows now MMM-aligned (Vercel: `deploy-mmm-vercel.yml`, AI Gateway: `deploy-mmm-ai-gateway.yml`, Edge Functions: `deploy-mmm-edge-functions.yml`); deployment documentation: `modules/MMM/12-phase4-ecap/deployment-alignment.md`.
-**Blockers**: None (build execution complete). **Operational closure items pending**: §12.2 OC-001–OC-009 all PENDING CS2 live platform validation. **SB-003 staging E2E gate**: PARTIALLY RESOLVED — token provisioning satisfied by CS2 (2026-04-21); SB-003-W3 static code evidence confirmed (2026-04-22); W1/W2 NOT YET LIVE-TESTED; `PIT_BASE_URL` pending live PIT endpoint. B7 CI passes via stub path. Staging E2E blocked pending CS2 wiring confirmation + PIT endpoint readiness.
+**Overall Progress**: Build execution 100% complete (B1–B9 DONE; ECAP bundle committed; IAA ASSURANCE-TOKEN issued; PR #1429 MERGED 2026-04-21) = **L1 Build-Complete**. Vercel frontend deployment path functioning (PR #1454). **OC agent-verification complete (issue #1536, PR #1537, 2026-05-06)**: OC-001–OC-008 all PARTIALLY CONFIRMED — CS2 verification required (agent confirms presence, not correctness; see §12.2a). OC-009 BLOCKED by product defects (Edge Functions not deployed; SPA routing broken). **Operational closure (L3)**: 0/9 OC items confirmed by CS2; 8/9 partially confirmed; 1/9 blocked. CDV tracking document: `modules/MMM/12-phase4-ecap/cdv-staging-validation.md`. **Deployment alignment**: COMPLETE — all 3 deployment workflows now MMM-aligned.
+**Blockers**: **[ACTIVE] P1 — MMM Edge Functions not deployed**: `deploy-mmm-edge-functions.yml` only deploys `invoke-ai-parse-criteria`; 27 `mmm-*` functions return 404 — this is the root cause of dashboard data-load failure. **[ACTIVE] P2 — Vercel SPA routing broken**: direct navigation to `/dashboard`, `/frameworks`, `/frameworks/upload` returns HTTP 404 (Vercel routing warning: "vercel.json file should be inside provided root directory"). **[ACTIVE] P3 — `NEXT_PUBLIC_SITE_URL` not set**: smoke test defaults to `https://mmm.maturion.com` which does not resolve; live URL is `https://maturity-model-management.vercel.app`. SB-003 E2E: BLOCKED pending Edge Functions deployment + PIT endpoint.
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.
 **Open Questions**: All RESOLVED through Stage 5. OQ-001 RESOLVED (Stage 4 TRS — CONNECTIVITY-REQUIRED, TR-039–TR-042). OQ-002 RESOLVED (Stage 5 Architecture — capabilities/index.md legacy sub-folder disposition). OQ-003 RESOLVED (Stage 5 Architecture — duplication audit, architecture.md §A12). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.
-**Last Updated**: 2026-04-23 (MMM storage bucket model codified — ADR created, audio MIME fix migration, RLS hardening migration, 8 Red QA tests (172/172 GREEN), issue #1458, wave: mmm-storage-model-codification-20260422; previously: 2026-04-22 backend deployment alignment complete: `deploy-mat-ai-gateway.yml` → `deploy-mmm-ai-gateway.yml`, `deploy-mat-edge-functions.yml` → `deploy-mmm-edge-functions.yml`, wave mmm-post-stage12-backend-alignment-20260422, issue #1455; operational closure omissions recorded §12.2 OC-001–OC-009, future-build hard gate added §12.3, wave mmm-operational-closure-tracker-update-20260422, issue #1457)
+**Last Updated**: 2026-05-06 (OC agent verification complete — OC-001–OC-008 inspected via CI logs/GitHub MCP; OC-001–OC-008 all PARTIALLY CONFIRMED — agent confirms presence/reachability, not correctness; CS2 verification needed for all items (see §12.2a); OC-009 BLOCKED by Edge Functions gap; live UI screenshots captured; Vercel SPA routing failure and missing Edge Functions root-cause identified; product-fix queue documented — issue #1536, PR #1537; previously: 2026-04-23 storage bucket model codified — issue #1458)
 **Phase 4 ECAP Ceremony**:
 - [x] ECAP ceremony bundle committed — execution-ceremony-admin-agent (artifacts in PR #1429, merged 2026-04-21)
 - [x] PREHANDOVER proof: `modules/MMM/12-phase4-ecap/PREHANDOVER.md`
