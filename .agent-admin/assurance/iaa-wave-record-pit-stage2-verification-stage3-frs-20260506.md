@@ -235,10 +235,28 @@ Critical scope blocker: OVL-PBG-008 — Stage 3 FRS INITIATION ONLY in this wave
 
 ## TOKEN
 
-*To be populated by IAA at full assurance handover after all wave artifacts committed.*
+*REJECTION-PACKAGE issued — token withheld pending resolution of F-1 and F-2. Re-invoke IAA after fixes.*
 
 ---
 
 ## REJECTION_HISTORY
 
-*None — no prior rejections on this wave.*
+### R-1 — 2026-05-06 | Session: IAA-session-pit-stage2-stage3-frs-20260506-R1
+
+**Verdict**: REJECTION-PACKAGE
+**Checks Failed**: 3 (OVL-GE-004, CORE-026, CORE-027)
+**Adoption Phase**: PHASE_B_BLOCKING
+
+**Finding F-1 (Substantive) — BUILD_PROGRESS_TRACKER FR Count Error**:
+`modules/pit/BUILD_PROGRESS_TRACKER.md` Stage 3 section declares "PIT-FR-001 through PIT-FR-118" (118 requirements) in two locations (key artifacts checkbox line 96 and Notes line 294). Independently verified: FRS ends at PIT-FR-105 (105 requirements). Issue body #1549 confirms 105. PREHANDOVER confirms 105. Tracker is factually wrong in both locations.
+Fix required: Update both locations in BUILD_PROGRESS_TRACKER.md Stage 3 section to read "PIT-FR-001 through PIT-FR-105" and "105 functional requirements".
+
+**Finding F-2 (Ceremony) — pr-1549.json requires_ecap Field Error + PREHANDOVER Misrepresentation**:
+`.admin/prs/pr-1549.json` declares `"requires_ecap": true` — incorrect for governance-only wave. PREHANDOVER claims `"requires_ecap: false in pr-1549.json"` — factual misrepresentation (JSON says true, not false). PREHANDOVER is read-only post-commit (A-029); only JSON correction is required.
+Fix required: Update `.admin/prs/pr-1549.json` to set `"requires_ecap": false`.
+
+**Finding F-3 (Systemic) — Independent Risk Challenge (CORE-027) Failed**:
+Two material contradictions (F-1, F-2) found between issue intent, primary artifacts, and supporting governance documents. CORE-027 cannot pass while contradictions are present. Systemic prevention action: add FRS-tracker consistency validation to FRS creation ceremony or implement `validate-frs-tracker-consistency.sh` CI script.
+
+**Resolution required**: Fix F-1 and F-2. Commit fixes on branch. Re-invoke IAA.
+**Re-invocation required**: YES — all 3 failures must be resolved before ASSURANCE-TOKEN can be issued.
