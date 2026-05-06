@@ -1,3 +1,41 @@
+# PIT — App Description (Governance Mirror)
+
+**Module**: PIT (Project Implementation Tracker)  
+**Status**: Draft — pending CS2/Johan Ras approval  
+**Version**: v1.0-draft  
+**Policy Authority**: `governance/policy/APP_DESCRIPTION_REQUIREMENT_POLICY.md` v2.0  
+**Last Updated**: 2026-05-06  
+
+---
+
+## Filing Strategy
+
+Per `APP_DESCRIPTION_REQUIREMENT_POLICY.md` v2.0 §4.1, the authoritative App Description must be accessible at `docs/governance/{APP}_APP_DESCRIPTION.md`. For 12-stage module builds, the full stage artifact is filed at:
+
+```
+modules/pit/00-app-description/app-description.md
+```
+
+This file is a **governance mirror** that points to the module-stage artifact. It contains the same content as the authoritative artifact.
+
+---
+
+## Mirror Status
+
+| Field | Value |
+|---|---|
+| Authoritative Source | `modules/pit/00-app-description/app-description.md` |
+| Mirror Created | 2026-05-06 |
+| Mirror Synchronized | 2026-05-06 (v1.0-draft) |
+| Synchronization Rule | This mirror must be updated whenever the module-stage artifact is updated |
+| Policy Authority | `governance/policy/APP_DESCRIPTION_REQUIREMENT_POLICY.md` v2.0 §4.1, §4.3 |
+
+---
+
+> **Note to readers**: The full App Description content is contained below and mirrors the module-stage artifact at `modules/pit/00-app-description/app-description.md`. Any discrepancy between this file and the module-stage artifact must be resolved immediately by updating both files.
+
+---
+
 # PIT - Project Implementation Tracker - App Description
 
 ## Status Header
@@ -9,12 +47,14 @@
 | Module Slug | `pit` |
 | Artifact Type | App Description - Stage 1 upstream authority |
 | Version | v1.0-draft |
-| Status | Draft - pending CS2/Johan approval |
+| Status | Draft |
+| Approval Status | Pending CS2 / Johan Ras approval |
 | Owner | Johan Ras - Product Owner / Human Authority |
 | Authority | CS2 / Johan Ras |
-| Approval Date | N/A - Draft |
+| Approval Date | Pending |
 | Last Updated | 2026-05-05 |
 | Module Filing Location | `modules/pit/00-app-description/app-description.md` |
+| Governance Mirror / Pointer Location | `docs/governance/PIT_APP_DESCRIPTION.md` |
 | Policy Authority | `governance/policy/APP_DESCRIPTION_REQUIREMENT_POLICY.md` v2.0 |
 | Pre-Build Authority | `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 |
 | Supersedes | Existing PIT retrofit stub that incorrectly described PIT as "Penetration Intelligence Tool" |
@@ -26,9 +66,37 @@
 
 This document defines PIT - the Project Implementation Tracker - as the governed Stage 1 App Description for the PIT build project.
 
-It establishes the authoritative product intent, scope, success criteria, build governance obligations, technology baseline, security expectations, audit obligations, QA obligations, and future evolution path from which the PIT UX Workflow & Wiring Spec, FRS, TRS, Architecture, QA-to-Red, PBFAG, Implementation Plan, Builder Checklist, IAA Pre-Brief, Builder Appointment, and Build must derive.
+It establishes the authoritative product intent, scope, success criteria, business logic, build governance obligations, technology baseline, security expectations, audit obligations, QA obligations, physical verification requirements, evidence requirements, state-management expectations, deployment readiness rules, and future evolution path from which all downstream PIT artifacts must derive.
 
 This document replaces the current retrofit stub and corrects the module identity from "Penetration Intelligence Tool" to "Project Implementation Tracker".
+
+Downstream PIT artifacts must treat this document as their upstream source once CS2 / Johan Ras grants Authoritative status. Until then, it remains a Draft and cannot by itself authorize Stage 2, Stage 3, architecture, builder appointment, or implementation.
+
+---
+
+## 0.1 Canonical Filing Strategy
+
+The current module-stage filing location for this artifact is:
+
+```text
+modules/pit/00-app-description/app-description.md
+```
+
+The App Description policy also requires a governance-discoverable App Description at:
+
+```text
+docs/governance/PIT_APP_DESCRIPTION.md
+```
+
+Therefore, PIT must use the following filing strategy unless CS2 approves a different repository-wide convention:
+
+1. The full Stage 1 module artifact is filed at `modules/pit/00-app-description/app-description.md`.
+2. A governance mirror or pointer must be filed at `docs/governance/PIT_APP_DESCRIPTION.md`.
+3. The mirror/pointer must either contain the same content or clearly point to the module-stage artifact.
+4. If both files contain full content, they must be kept in sync.
+5. If the repository canon is later updated to recognise `modules/{module}/00-app-description/app-description.md` as the canonical location for 12-stage module builds, this section may be superseded.
+
+No downstream artifact may cite an ambiguous or stale App Description path. Every FRS, TRS, Architecture, QA-to-Red, PBFAG, Implementation Plan, Builder Checklist, IAA Pre-Brief, Builder Appointment, and Build artifact must identify which App Description version and path it derives from.
 
 ---
 
@@ -42,13 +110,17 @@ PIT - Project Implementation Tracker.
 
 PIT is the Maturion ISMS execution engine that turns risks, controls, audit findings, incidents, roadmap outputs, operational streams, and manually created initiatives into governed, scheduled, assigned, evidence-backed, auditable work.
 
-### 1.3 Product Vision
+### 1.3 Business Logic Summary
+
+PIT converts upstream implementation drivers into hierarchical governed work, calculates and monitors timelines, assigns accountable owners, requires evidence-backed completion, escalates exceptions, and rolls progress back up to projects, departments, companies, source modules, portfolios, and executive dashboards.
+
+### 1.4 Product Vision
 
 PIT is not merely a task list. It is the execution nerve-centre of the Maturion ecosystem.
 
 Where other modules identify, assess, quantify, recommend, or govern, PIT makes the work real by converting intentions into projects, milestones, deliverables, action items, tasks, responsibilities, evidence, progress, approvals, escalation, and measurable outcomes.
 
-### 1.4 Target Users
+### 1.5 Target Users
 
 PIT must serve the following user groups:
 
@@ -64,7 +136,7 @@ PIT must serve the following user groups:
 10. Auditors and assurance users who need evidence and audit-trail review.
 11. AI Assistant / Maturion / PIT Advisor acting within governed AIMC boundaries.
 
-### 1.5 Core Value Proposition
+### 1.6 Core Value Proposition
 
 PIT replaces fragmented spreadsheet trackers, disconnected project plans, manual follow-ups, and invisible task ownership with a governed, AI-assisted, multi-user implementation platform that gives organisations full situational awareness across:
 
@@ -84,7 +156,7 @@ PIT replaces fragmented spreadsheet trackers, disconnected project plans, manual
 - workload, and
 - risk/control mitigation outcomes.
 
-### 1.6 Product Terminology and Technical Mapping
+### 1.7 Product Terminology and Technical Mapping
 
 PIT must preserve the user's preferred business terminology while allowing architecture and database design to use normalized technical names.
 
@@ -93,7 +165,7 @@ PIT must preserve the user's preferred business terminology while allowing archi
 | Project | Formal initiative, programme, implementation plan, or operational stream | `project` |
 | Milestone | High-level checkpoint or phase within a project | `phase` |
 | Deliverable | Concrete output or work package feeding a milestone | `work_package` |
-| Action Item | Action statement or task-heading requiring one measurable outcome and evidence requirement | `task` or `task_cluster` depending on whether it has child tasks |
+| Action Item | Action statement or task-heading requiring one measurable outcome and evidence requirement | `task` or `task_cluster`, depending on whether it has child tasks |
 | Task | Atomic executable unit of work with duration, owner, progress, due state, and evidence | `task` or `subtask` |
 | Task Cluster | Reusable group of repeatable tasks, for example "Implement employee onboarding procedure" | `task_cluster_template` and generated `task_cluster` |
 | Evidence Item | File, image, video, document, log, feedback, or record proving work completion | `evidence` and `evidence_review` |
@@ -461,7 +533,8 @@ The following are not part of the first governed build unless later approved thr
 
 ### 2.3 Boundaries and Constraints
 
-- `modules/pit/` is the canonical module location.
+- `modules/pit/` is the canonical module location for the governed PIT module-stage artifacts.
+- `docs/governance/PIT_APP_DESCRIPTION.md` must exist as a governance mirror or pointer unless canon is updated to recognise only the module-stage path.
 - `Maturion/PIT/` is legacy/reference material unless explicitly promoted.
 - `apps/pit/Legacy/` is reference material only and must be mined for requirements, not blindly ported.
 - Existing PIT architecture is valuable but was created before the current 12-stage governance model. It must be reconciled after this App Description through UX, FRS, TRS, Architecture, QA-to-Red, and PBFAG.
@@ -493,15 +566,16 @@ PIT succeeds when all of the following are true.
 ### 3.2 Governance Success Criteria
 
 1. This App Description is approved by CS2 and marked Authoritative.
-2. Stage 2 UX Workflow & Wiring Spec derives from this document.
-3. Stage 3 FRS derives from this document and the UX Workflow & Wiring Spec.
-4. Stage 4 TRS derives from the FRS and resolves all technical constraints.
-5. Stage 5 Architecture is updated to align with the approved upstream artifacts.
-6. Stage 6 QA-to-Red is written before implementation.
-7. Stage 7 PBFAG passes before builder allocation.
-8. All build waves remain test-first and evidence-backed.
-9. `modules/pit/BUILD_PROGRESS_TRACKER.md` is updated at every wave closure.
-10. The incorrect "Penetration Intelligence Tool" label is removed from all PIT governance artifacts.
+2. The governance mirror or pointer at `docs/governance/PIT_APP_DESCRIPTION.md` exists and is synchronized with this module artifact.
+3. Stage 2 UX Workflow & Wiring Spec derives from this document.
+4. Stage 3 FRS derives from this document and the UX Workflow & Wiring Spec.
+5. Stage 4 TRS derives from the FRS and resolves all technical constraints.
+6. Stage 5 Architecture is updated to align with the approved upstream artifacts.
+7. Stage 6 QA-to-Red is written before implementation.
+8. Stage 7 PBFAG passes before builder allocation.
+9. All build waves remain test-first and evidence-backed.
+10. `modules/pit/BUILD_PROGRESS_TRACKER.md` is updated at every wave closure.
+11. The incorrect "Penetration Intelligence Tool" label is removed from all PIT governance artifacts.
 
 ### 3.3 Definition of Done for the Application
 
@@ -594,23 +668,31 @@ No implementation wave may begin until Stages 1 through 11 are complete and gate
 The required derivation chain for PIT is:
 
 ```text
-modules/pit/00-app-description/app-description.md
-    -> modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md
-    -> modules/pit/02-frs/functional-requirements.md
-    -> modules/pit/03-trs/technical-requirements-specification.md
-    -> modules/pit/04-architecture/architecture.md and sub-artifacts
-    -> modules/pit/05-qa-to-red/qa-to-red-catalog.md
-    -> modules/pit/06-pbfag/pbfag-checklist.md
-    -> modules/pit/07-implementation-plan/implementation-plan.md
-    -> modules/pit/08-builder-checklist/
-    -> modules/pit/09-iaa-pre-brief/
-    -> modules/pit/10-builder-appointment/
-    -> modules/pit/11-build/
+modules/pit/00-app-description/app-description.md v1.0-draft
+    -> modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md vTBD
+    -> modules/pit/02-frs/functional-requirements.md vTBD
+    -> modules/pit/03-trs/technical-requirements-specification.md vTBD
+    -> modules/pit/04-architecture/architecture.md and sub-artifacts vTBD
+    -> modules/pit/05-qa-to-red/qa-to-red-catalog.md vTBD
+    -> modules/pit/06-pbfag/pbfag-checklist.md vTBD
+    -> modules/pit/07-implementation-plan/implementation-plan.md vTBD
+    -> modules/pit/08-builder-checklist/ vTBD
+    -> modules/pit/09-iaa-pre-brief/ vTBD
+    -> modules/pit/10-builder-appointment/ vTBD
+    -> modules/pit/11-build/ vTBD
+```
+
+Governance mirror / pointer:
+
+```text
+docs/governance/PIT_APP_DESCRIPTION.md
 ```
 
 Each downstream artifact must contain a "Derived from" statement referencing the immediately upstream artifact and this App Description.
 
 Existing architecture files in `modules/pit/04-architecture/` must be treated as valuable legacy/upstream evidence until back-traced and reconciled through the required chain.
+
+Gaps in the derivation chain are blocking defects. No FRS, TRS, Architecture, QA-to-Red, PBFAG, Implementation Plan, Builder Checklist, IAA Pre-Brief, Builder Appointment, or Build artifact may proceed as if authoritative if its upstream derivation statement is missing or stale.
 
 ---
 
@@ -622,7 +704,7 @@ The TRS is responsible for final version and deployment constraints. The App Des
 |---|---|---|
 | Frontend | React + TypeScript, aligned to current Maturion ISMS frontend standards | Exact framework/build tooling confirmed in TRS |
 | Styling / UI | Maturion UI kit, Tailwind-style utility system where aligned, accessible component patterns | Must match broader Maturion visual language |
-| State Management | Server state via query/cache layer; UI state via approved lightweight store/context | Exact library confirmed in TRS |
+| State Management | React Context or approved Maturion auth provider for auth/session; approved query/cache layer for server state; Zustand or approved lightweight store for complex cross-page UI state | Final library/version confirmed in TRS |
 | Database | Supabase PostgreSQL or approved PostgreSQL equivalent | Must support RLS and JSONB |
 | Auth | Supabase Auth / JWT or approved Maturion auth standard | No mock auth in production |
 | Edge/API | Supabase Edge Functions or approved ISMS serverless API layer | Registry required before PREHANDOVER |
@@ -630,10 +712,10 @@ The TRS is responsible for final version and deployment constraints. The App Des
 | Evidence Storage | Supabase Storage or approved secure object storage | Signed access, metadata, hashes, RLS-aware records |
 | Testing | Vitest/unit where appropriate, Playwright/E2E, schema/security/integration tests, GitHub Actions | QA-to-Red before implementation |
 | QA Dashboard | In-app QA dashboard connected to real QA execution/report artifacts | Simulation-only QA is not acceptable for final handover |
-| Notifications | Maturion toast/notification layer; email/internal/push/webhook as specified | `alert()` prohibited |
+| Notifications | Maturion Toast Notification Service / approved notification provider | `alert()` prohibited |
 | Deployment | ISMS standard deployment target, confirmed in TRS and deployment wave | Runbook and smoke test required |
 
-Any discrepancy between this baseline and TRS is a blocking defect until resolved.
+Any discrepancy between this baseline and TRS is a blocking defect until resolved. TRS may refine versions, deployment details, and technical constraints, but it may not contradict the App Description without updating the App Description through approved governance.
 
 ---
 
@@ -645,6 +727,7 @@ Required deliverables:
 
 - [ ] Deployable PIT application.
 - [ ] App Description - this document.
+- [ ] Governance mirror or pointer at `docs/governance/PIT_APP_DESCRIPTION.md`.
 - [ ] UX Workflow & Wiring Spec.
 - [ ] FRS.
 - [ ] TRS.
@@ -705,6 +788,34 @@ Code-first development is prohibited.
 
 Every PIT build wave, including remediation waves, must have QA-to-Red tests before implementation begins.
 
+### 10.1 QA Role
+
+QA Agent / Role: designated QA builder under Foreman supervision.
+
+Foreman is responsible for validating that QA-to-Red exists before builder allocation. The QA role is responsible for authoring, maintaining, and reporting the QA-to-Red suite. Builders may not write implementation first and then backfill QA.
+
+### 10.2 Expected Pre-Build Threshold
+
+Minimum threshold before builder allocation:
+
+1. 100% of required QA-to-Red tests for the wave must be authored.
+2. 100% of required QA-to-Red tests for the wave must be reviewed and accepted by Foreman or the delegated QA authority.
+3. The expected pre-build result is RED where implementation does not yet exist or does not yet meet the approved specification.
+4. QA-to-Red coverage must map to the App Description, UX Workflow & Wiring Spec, FRS, TRS, Architecture, and implementation wave scope.
+5. PBFAG cannot pass until QA-to-Red coverage is complete.
+
+### 10.3 Remediation Wave Rule
+
+Every remediation wave requires a new or updated QA-to-Red test that reproduces the defect before remediation begins. Reusing prior passing tests alone is insufficient. If a UI defect, wiring defect, timeline defect, schema defect, auth defect, AI-routing defect, evidence defect, audit defect, or deployment defect is found after handover, the correct response is:
+
+1. update the upstream artifact if the requirement was missing or ambiguous,
+2. update the QA-to-Red suite so the defect fails,
+3. build/remediate to GREEN,
+4. physically verify the fix,
+5. update PREHANDOVER evidence and tracker state.
+
+### 10.4 Required PIT QA-to-Red Coverage
+
 Required PIT QA-to-Red coverage includes at least:
 
 - hierarchy creation,
@@ -724,8 +835,6 @@ Required PIT QA-to-Red coverage includes at least:
 - QA dashboard,
 - deployment smoke.
 
-QA Agent / Role: designated QA builder under Foreman supervision.
-
 Expected pre-build state: RED tests exist and fail because implementation is not yet present or not yet aligned. Builders then build to GREEN.
 
 ---
@@ -733,6 +842,24 @@ Expected pre-build state: RED tests exist and fail because implementation is not
 ## 11. Physical Verification Gate - AD-07
 
 Every UI wave requires browser-based physical verification.
+
+### 11.1 Responsible Role
+
+Role responsible: Foreman or Foreman-designated physical verification agent.
+
+CS2 / Johan Ras remains the final product verification authority for the user-visible experience.
+
+### 11.2 Evidence Filing Location
+
+Physical verification evidence must be filed at:
+
+```text
+.agent-admin/evidence/physical-verification/pit/wave-{N}-{YYYYMMDD}/
+```
+
+Where repository policy requires module-local evidence, the wave must also link or mirror the evidence from the relevant PIT wave folder.
+
+### 11.3 Minimum Physical Verification Journeys
 
 Minimum physical verification journeys:
 
@@ -752,7 +879,9 @@ Minimum physical verification journeys:
 14. Run QA dashboard.
 15. View audit log entry for actions.
 
-Screenshots or screen recordings must be filed before wave closure.
+### 11.4 Gate Condition
+
+No UI wave may close unless browser-based verification evidence is filed and linked from PREHANDOVER proof. Screenshots or screen recordings must show the actual running PIT app, not static mockups.
 
 ---
 
@@ -763,25 +892,30 @@ PIT PBFAG must pass before builder allocation.
 Minimum required checks:
 
 1. App Description approved and complete.
-2. UX Workflow & Wiring Spec approved, with all user journeys wired.
-3. FRS approved with no TBDs.
-4. TRS approved with technical constraints resolved.
-5. Architecture updated and back-traced to upstream artifacts.
-6. QA-to-Red complete and signed off.
-7. Legacy build audit complete: useful requirements harvested; dead code not ported blindly.
-8. Runtime/Deployment Contract filed.
-9. Golden Path Verification Pack filed.
-10. Auth wiring readiness confirmed.
-11. Schema alignment confirmed.
-12. RLS coverage confirmed.
-13. Edge Function Registry drafted and aligned.
-14. AIMC routing confirmed.
-15. Timeline math/alignment design verified.
-16. QA dashboard real-execution plan confirmed.
-17. Build tracker current.
-18. No build-blocking unknowns remain.
+2. Governance mirror or pointer at `docs/governance/PIT_APP_DESCRIPTION.md` exists.
+3. UX Workflow & Wiring Spec approved, with all user journeys wired.
+4. FRS approved with no TBDs.
+5. TRS approved with technical constraints resolved.
+6. Architecture updated and back-traced to upstream artifacts.
+7. QA-to-Red complete and signed off.
+8. Legacy build audit complete: useful requirements harvested; dead code not ported blindly.
+9. Runtime/Deployment Contract filed.
+10. Golden Path Verification Pack filed.
+11. Change-Propagation Audit complete for all upstream changes.
+12. Prior-wave defects are closed or formally deferred with CS2/Foreman approval.
+13. PREHANDOVER proof from the prior wave is filed and linked.
+14. Auth wiring readiness confirmed.
+15. Schema alignment confirmed.
+16. RLS coverage confirmed.
+17. Edge Function Registry drafted and aligned.
+18. AIMC routing confirmed.
+19. Timeline math/alignment design verified.
+20. QA dashboard real-execution plan confirmed.
+21. External dependencies are confirmed available.
+22. Build tracker current.
+23. No build-blocking unknowns remain.
 
-Any FAIL blocks build.
+Any FAIL blocks build. PBFAG is a hard gate, not a discussion checklist. No builder allocation may occur until PBFAG is formally PASS.
 
 ---
 
@@ -790,6 +924,7 @@ Any FAIL blocks build.
 | Role | Authority | PIT Gate Point |
 |---|---|---|
 | CS2 / Johan Ras | Final product, governance, and override authority | App Description approval, major scope changes, final handover |
+| CodexAdvisor | Sole authority to create or modify PIT agent contract files, subject to approved issue/scope | Before any agent contract is created or modified |
 | Foreman | Governs pre-build flow, allocates builders, validates gate readiness | Stages 2-11 |
 | IAA | Independent assurance, pre-brief and assurance token controls | Stage 10 and applicable wave assurance |
 | QA Agent | Writes/maintains QA-to-Red and reports failures | Stage 6 and every wave |
@@ -797,13 +932,39 @@ Any FAIL blocks build.
 | AIMC / PIT Advisor | Provides governed AI assistance through gateway | During planning, execution, analysis, evidence, watchdog |
 | Product Owner / UI Reviewer | Verifies running product and user experience | Physical verification and final acceptance |
 
-Builders may not modify governance artifacts unless explicitly authorised by the approved issue/scope.
+### 13.1 Agent Contract Rule
+
+CodexAdvisor is the sole role authorised to create or modify PIT agent contract files. No Foreman, Builder, QA agent, automation, or human may edit PIT agent contracts unless explicitly authorised through the applicable CS2-approved issue and governance protocol.
+
+### 13.2 Builder Governance Boundary
+
+Builders may not modify governance artifacts unless explicitly authorised by the approved issue/scope. Builders implement approved wave scope only. If implementation reveals a governance or architecture issue, the builder must stop, escalate, and wait for Foreman/CS2 disposition.
+
+### 13.3 Authority Transition Gate Points
+
+- App Description Draft -> Authoritative: CS2 / Johan Ras.
+- Stage 2-7 pre-build progression: Foreman validates gates.
+- Builder allocation: Foreman only, after PBFAG PASS, Builder Checklist PASS, and IAA Pre-Brief.
+- Assurance acceptance: IAA controls assurance token / pre-brief expectations.
+- Final product handover: CS2 / Johan Ras verifies running UI and product behaviour.
 
 ---
 
 ## 14. Schema-to-Hook Validation - AD-10
 
 Every PIT schema change must be validated column-by-column against consuming hooks, API calls, edge functions, UI components, tests, and reports.
+
+### 14.1 Evidence Filing Location
+
+Schema-to-hook validation artifacts must be filed at:
+
+```text
+.agent-admin/evidence/schema-to-hook/pit/wave-{N}-{YYYYMMDD}.md
+```
+
+Where a module-local evidence structure is required, the wave must also link or mirror the artifact from the applicable PIT wave folder.
+
+### 14.2 Required High-Risk Schema Areas
 
 Required high-risk schema areas:
 
@@ -825,13 +986,27 @@ Required high-risk schema areas:
 - notification,
 - audit_log.
 
-No migration may merge without schema-to-hook validation.
+### 14.3 No-Merge Rule
+
+No migration may merge without schema-to-hook validation. The validation must confirm that every added/changed column is consumed or intentionally reserved, and that no consuming hook/query references missing columns.
 
 ---
 
 ## 15. Table Pathway Audit - AD-11
 
 Any wave touching the database must file a Table Pathway Audit listing every table used by the wave and every `.from()` or equivalent query path.
+
+### 15.1 Evidence Filing Location
+
+Table Pathway Audit artifacts must be filed at:
+
+```text
+.agent-admin/evidence/table-pathway/pit/wave-{N}-{YYYYMMDD}.md
+```
+
+Where a module-local evidence structure is required, the wave must also link or mirror the artifact from the applicable PIT wave folder.
+
+### 15.2 Audit Requirements
 
 The audit must confirm:
 
@@ -842,11 +1017,31 @@ The audit must confirm:
 - UI route or service usage exists where applicable,
 - no orphan tables or unused columns are introduced.
 
+### 15.3 Gate Condition
+
+Any database-touching wave is blocked from closure until the Table Pathway Audit is filed and approved.
+
 ---
 
 ## 16. RLS Audit Gate - AD-12
 
 PIT must enforce organisation and assignment-based isolation.
+
+### 16.1 Evidence Filing Location
+
+RLS Audit artifacts must be filed at:
+
+```text
+.agent-admin/evidence/rls-audit/pit/wave-{N}-{YYYYMMDD}.md
+```
+
+Where a module-local evidence structure is required, the wave must also link or mirror the artifact from the applicable PIT wave folder.
+
+### 16.2 Sign-Off Authority
+
+Foreman validates RLS audit completion. CS2 approval is required before production deployment.
+
+### 16.3 Minimum RLS Rules
 
 Minimum RLS rules:
 
@@ -861,7 +1056,9 @@ Minimum RLS rules:
 9. AI context must not include cross-tenant data.
 10. Integration callbacks must respect org boundaries.
 
-Production deployment is blocked until RLS audit passes.
+### 16.4 Deployment Gate Condition
+
+Production deployment is blocked until RLS audit passes and sign-off is recorded.
 
 ---
 
@@ -895,6 +1092,21 @@ Authoritative AI routing baseline:
 
 Direct provider SDK calls or direct API keys in PIT are prohibited.
 
+### 18.1 Testability Requirement
+
+QA must include a static or runtime check confirming that PIT contains:
+
+- no direct OpenAI SDK/API calls,
+- no direct Anthropic SDK/API calls,
+- no direct provider SDK/API calls to any non-AIMC model provider,
+- no direct provider API keys outside approved gateway code,
+- no client-side model provider credentials,
+- no AI call path that bypasses `/api/ai/request`.
+
+Any direct provider call or direct provider key in PIT is a blocking defect.
+
+### 18.2 AI Audit Requirement
+
 AI must be auditable. For AI-assisted actions, PIT must record:
 
 - triggering user/action,
@@ -913,6 +1125,24 @@ AI may suggest, draft, prioritise, schedule, decompose, analyse, and warn. AI mu
 ## 19. Edge Function Registry - AD-15
 
 An Edge Function Registry must be filed before PREHANDOVER.
+
+### 19.1 Registry Location
+
+The PIT Edge Function Registry must be filed at:
+
+```text
+modules/pit/03-trs/edge-function-registry.md
+```
+
+and/or, if architecture keeps the function implementation map:
+
+```text
+modules/pit/04-architecture/integrations/edge-function-registry.md
+```
+
+TRS must nominate the binding registry location before architecture approval.
+
+### 19.2 Expected PIT Function Domains
 
 Expected PIT function domains include:
 
@@ -945,7 +1175,15 @@ Expected PIT function domains include:
 - `/pit/ai/review_evidence`
 - `/pit/ai/weekly_summary`
 
+### 19.3 Blocking Rule
+
 Every invocation must be authenticated, registered, tested, and audit-logged where mutating.
+
+Any unregistered, undeployed, unauthenticated, or untested PIT edge-function invocation is a blocking defect.
+
+### 19.4 PREHANDOVER Rule
+
+Every PREHANDOVER proof must confirm that all invoked functions appear in the Edge Function Registry and that the function name/path used by the implementation exactly matches the registered function.
 
 ---
 
@@ -970,7 +1208,7 @@ Required deployment wave contents:
 - CWT closure report,
 - CS2 final UI verification.
 
-No module completion may be declared without deployment wave closure.
+No module completion may be declared without deployment wave closure and CWT closure report.
 
 ---
 
@@ -994,11 +1232,31 @@ Expected variables may include, subject to TRS confirmation:
 
 No undocumented production environment variables are allowed.
 
+Deployment wave must validate `.env.example` against all runtime code paths and deployment configuration.
+
 ---
 
 ## 22. Deployment Runbook - AD-18
 
 Deployment runbooks must be filed before the deployment wave closes.
+
+### 22.1 Runbook Filing Location
+
+PIT runbooks must be filed at:
+
+```text
+modules/pit/11-build/deployment/runbooks/
+```
+
+If repository-level runbooks are required, a mirror or pointer must also be filed at:
+
+```text
+docs/runbooks/pit/
+```
+
+TRS must nominate the binding runbook location before architecture approval.
+
+### 22.2 Required Runbooks
 
 Required runbooks:
 
@@ -1012,13 +1270,23 @@ Required runbooks:
 
 Each runbook must include deployment, rollback, redeploy, health check, and environment-specific notes.
 
+### 22.3 Deployment Gate
+
+Deployment wave closure is blocked until all required runbooks are filed and linked from PREHANDOVER evidence.
+
 ---
 
 ## 23. Notification / UX Patterns - AD-19
 
 `alert()` is prohibited for user-facing notifications.
 
-PIT must use the approved Maturion notification/toast pattern.
+PIT must use the Maturion Toast Notification Service or the approved Maturion notification provider nominated in TRS.
+
+### 23.1 Root-Level Integration
+
+The notification provider must be mounted once at the PIT app root. Notifications must not be implemented ad hoc inside individual components without using the approved notification service.
+
+### 23.2 Notification Types
 
 Notification types include:
 
@@ -1040,13 +1308,38 @@ Notification types include:
 
 Notifications must be understandable, actionable, and linked to the relevant project/task/evidence/approval record.
 
+### 23.3 Physical Verification
+
+Physical verification must confirm visible working notifications for at least:
+
+- assignment,
+- evidence,
+- overdue,
+- approval,
+- QA failure.
+
+No production `alert()` calls are allowed.
+
 ---
 
 ## 24. Shared State Architecture - AD-20
 
 PIT must explicitly define state ownership.
 
-Minimum state inventory:
+### 24.1 State Management Approach
+
+Baseline state-management approach:
+
+- Auth/session state: React Context or approved Maturion auth provider.
+- Server state: approved query/cache layer.
+- Complex cross-page UI state: Zustand or approved lightweight store.
+- Form draft state: component/form state unless TRS approves persisted drafts.
+- Timeline viewport state: persisted through `gantt_state` or approved user settings.
+- QA run state: QA service and `qa_result` records/artifacts.
+
+TRS must confirm exact implementation libraries and patterns before Architecture approval.
+
+### 24.2 Minimum State Inventory
 
 | State Area | Authoritative Owner | Persistence |
 |---|---|---|
@@ -1061,7 +1354,22 @@ Minimum state inventory:
 | QA run results | QA service / `qa_result` | Database/artifact |
 | Notification read state | Notification table | Database |
 
-Ambiguous global state is a blocking architecture defect.
+### 24.3 Cross-Page State Flows
+
+The following state flows must survive page navigation according to AD-24 persistence rules:
+
+- active project,
+- selected filters,
+- selected timeline denominator,
+- visible timeline date range,
+- notification read state,
+- QA run status,
+- evidence upload status where upload is in progress,
+- unsaved modal drafts only where explicitly approved.
+
+### 24.4 Pre-Architecture Gate
+
+Architecture may not commence until TRS confirms the state-management approach and no ambiguous global state remains. Ambiguous global state is a blocking architecture defect.
 
 ---
 
@@ -1080,6 +1388,8 @@ PREHANDOVER proof must include API authentication audit.
 ## 26. Audit Log Design - AD-22
 
 PIT audit logging is mandatory.
+
+### 26.1 Actions to Log
 
 Actions to log include:
 
@@ -1105,6 +1415,8 @@ Actions to log include:
 - import/export actions,
 - deployment/health checks where applicable.
 
+### 26.2 Minimum Audit Fields
+
 Audit logs must include at minimum:
 
 - event ID,
@@ -1118,7 +1430,21 @@ Audit logs must include at minimum:
 - source (manual, AI-assisted, import, integration, watchdog),
 - idempotency key where applicable.
 
-Logs must be append-only or tamper-evident according to TRS.
+### 26.3 Surfacing and Export
+
+Audit logs must be surfaced through an authorised PIT Audit Log page and exportable by authorised admin/audit users. Audit export must respect organisation, project, role, and RLS boundaries.
+
+### 26.4 Deduplication Strategy
+
+Each audit event must carry a unique `event_id`. Mutating API calls should use `idempotency_key` where duplicate submissions are possible, including timeline drag/resize, assignment, evidence review, approval, import, and integration callbacks.
+
+### 26.5 Retention
+
+Audit logs must be retained for the applicable compliance retention period defined in TRS. Deletion, anonymisation, archival, or retention expiry must follow approved retention governance. Audit logs must be append-only or tamper-evident according to TRS.
+
+### 26.6 Pre-Architecture Gate
+
+Architecture may not commence until audit log action types, schema, surfacing, retention, and deduplication design are approved.
 
 ---
 
@@ -1126,13 +1452,22 @@ Logs must be append-only or tamper-evident according to TRS.
 
 `modules/pit/BUILD_PROGRESS_TRACKER.md` must be updated at every wave closure.
 
+### 27.1 Known Tracker Corrections Required
+
 Known tracker corrections required after this App Description is approved:
 
 1. Correct module name from "Penetration Intelligence Tool" to "Project Implementation Tracker".
 2. Mark Stage 1 according to CS2 approval status.
 3. Record this document as the Stage 1 artifact.
-4. Record the existing architecture as pre-stage evidence requiring reconciliation.
-5. Add next action: Stage 2 UX Workflow & Wiring Spec.
+4. Record the governance mirror/pointer at `docs/governance/PIT_APP_DESCRIPTION.md`.
+5. Record the existing architecture as pre-stage evidence requiring reconciliation.
+6. Add next action: Stage 2 UX Workflow & Wiring Spec.
+
+### 27.2 Foreman Validation Step
+
+Foreman must validate tracker currency before wave closure sign-off. Tracker update is not optional and must be linked from PREHANDOVER proof for each wave.
+
+### 27.3 Gate Condition
 
 Wave closure is prohibited unless the tracker is current.
 
@@ -1159,8 +1494,161 @@ Wave closure is prohibited unless the tracker is current.
 | Audit logs | Database/log store | Minimum retention per compliance requirements | Audit service |
 | QA run results | `qa_result` table and CI artifacts | Per QA retention policy | QA service |
 | AI request metadata | AIMC log / PIT AI log reference | Per AIMC retention policy | AIMC/PIT advisor service |
+| Physical verification evidence | `.agent-admin/evidence/physical-verification/pit/` and/or linked module evidence folder | Permanent build evidence unless retention policy supersedes | Foreman / physical verification agent |
+| Schema-to-hook validation evidence | `.agent-admin/evidence/schema-to-hook/pit/` | Permanent build evidence unless retention policy supersedes | Foreman / QA / data architecture role |
+| Table Pathway Audit evidence | `.agent-admin/evidence/table-pathway/pit/` | Permanent build evidence unless retention policy supersedes | Foreman / QA / data architecture role |
+| RLS Audit evidence | `.agent-admin/evidence/rls-audit/pit/` | Permanent build evidence unless retention policy supersedes | Foreman with CS2 deployment approval |
 
 ---
+
+
+## MMM Lessons Promoted Into PIT
+
+**Source**: MMM Build Process — Improvement Register (`modules/MMM/_readiness/build-process-improvement-register.md`)
+**Authority**: Foreman v2 governance directive — maturion-isms#1534
+**Purpose**: These lessons were observed during the MMM build (Waves B1–B9 and post-build corrections) and are promoted into PIT pre-build controls to prevent the same escape classes in PIT.
+
+---
+
+### L-001 — Build-Complete Is Not Operationally Closed
+
+**MMM Observation**: MMM tracker distinguishes L1 build-complete (code passing tests) from L2 deployment commissioned (live on target environment) from L3 operationally closed (end-to-end verified in production by CS2).
+
+**PIT Control**: PIT's Implementation Plan, PBFAG, PREHANDOVER proofs, and final handover gate must explicitly carry the L1/L2/L3 closure model. A wave is not closed until L2 (deployed and commissioned) is confirmed. PIT is not done until L3 (CS2 verified live E2E workflow) is confirmed.
+
+**Evidence required**: Each relevant wave PREHANDOVER must distinguish L1/L2/L3 status. L3 closure requires CS2 sign-off with live evidence.
+
+---
+
+### L-002 — UI Can Pass Code/File Tests and Still Render Incorrectly
+
+**MMM Observation** (OVS-001 / OVS-004): The MMM B3 UI passed all automated tests but was delivered without global CSS, causing bare/unstyled HTML in production. Tests verified file existence, headings, and query calls, but not visual rendering completeness.
+
+**PIT Control**:
+- Every UI wave must require: global stylesheet present and imported at app root; app shell present and styled; primary pages visually rendered (no bare HTML).
+- QA-to-Red for every UI wave must include visual/rendering tests or equivalent assertions — not only string-existence or file-existence tests.
+- Physical verification screenshots must confirm all pages are visually styled before wave closure.
+
+**Gate condition**: UI wave closure blocked unless visual rendering confirmed.
+
+---
+
+### L-003 — Dashboard and Landing Pages Require Real Empty/Error/Permission States
+
+**MMM Observation** (OVS-002 / OVS-003): After login, the MMM dashboard showed sparse headings and blank metric labels. There was no app shell, no navigation, no empty-state explanation, no CTA, and no error distinction between permission failure and network failure.
+
+**PIT Control**:
+- All PIT primary pages (Dashboard, Implementation, Timeline, Evidence, Watchdog, Audit Log, QA Dashboard) must define and implement all of the following states before wave closure:
+  - Loading state
+  - Empty data state (with useful message and CTA to next action)
+  - Permission-denied state (distinct from network/server failure)
+  - Network/server error state (with user guidance)
+  - Data state (with real data rendering)
+- Each state must be covered by a QA-to-Red test.
+- HTTP response status (`res.ok` / `res.status`) must be checked before `res.json()` in every component that fetches data.
+
+**Gate condition**: No page is complete unless all 5 states are implemented and tested.
+
+---
+
+### L-004 — Signup/Onboarding and Auth Route Discoverability Must Be Designed Up Front
+
+**MMM Observation**: MMM required post-build fixes for missing `/login` registration, login route discoverability, forgot-password, reset callback, direct SPA route fallback, and signup/onboarding handling.
+
+**PIT Control**: PIT Stage 2 (UX Workflow & Wiring Spec) and Stage 3 (FRS) must explicitly specify:
+- Public entry route and visible Sign In / Sign Up navigation links from the landing page
+- `/login` route registration and page implementation
+- Signup/onboarding flow including invitation acceptance
+- Forgot-password and password-reset routes and pages
+- Protected route redirect to login when unauthenticated
+- Direct SPA route fallback (deep-link support)
+- Access-denied state for authenticated users without required roles
+
+All of the above must be in QA-to-Red before implementation begins.
+
+**Gate condition**: Stage 2 carry-forward — all auth/onboarding routes must be specified in UX Wiring Spec before Stage 3 FRS approval.
+
+---
+
+### L-005 — Tests Must Prove Runtime and UI Behaviour, Not Only File Existence
+
+**MMM Observation** (OVS-004): File-existence and string-presence tests passed for pages that were not operationally useful. Tests verified file exists, heading present, fetch called — not that the user could actually use the page.
+
+**PIT Control**:
+- QA-to-Red for every PIT wave must require executable/runtime checks, not only file-existence or string-presence checks.
+- Required per-wave QA evidence types:
+  - TypeScript compile check (`tsc --noEmit` or equivalent)
+  - Route coverage (all registered routes reachable)
+  - CSS/rendering checks (global stylesheet imported, app shell present)
+  - Structural completeness per-page (nav, empty state, error state, CTA present)
+  - E2E/golden-path test for primary user journey
+  - Live browser physical verification (screenshot/recording evidence)
+- Any wave with only string/file-existence tests as QA evidence is insufficient and must be remediated.
+
+**Gate condition**: Builder Checklist must confirm QA includes runtime/UI behaviour tests, not only static checks.
+
+---
+
+### L-006 — Deployment Execution Must Be a First-Class Contract
+
+**MMM Observation**: MMM deployment required later hardening around Vercel deployment, Supabase migration execution, schema verification, environment/secrets validation, live end-to-end validation, and CWT sign-off.
+
+**PIT Control**:
+- A Runtime/Deployment Contract must be filed before PBFAG passes (see AD-08, item 9).
+- The Deployment Wave (AD-16) must include as a hard gate: schema migration execution, Edge Function deployment, storage bucket verification, AIMC connectivity check, QA-to-Green full run, production smoke test, rollback verification, and CWT closure report.
+- Deployment evidence must be LIVE_RUNTIME or LIVE_E2E typed — merged-PR references or static code review alone are insufficient.
+
+**Gate condition**: PBFAG blocked until Runtime/Deployment Contract is filed. Deployment wave blocked until all live evidence is filed.
+
+---
+
+### L-007 — Operational Closure Requires Live Evidence
+
+**MMM Observation**: Static code review, CI GREEN, and provisioning confirmations are insufficient to close live operational items. Real end-to-end workflows in the deployed environment are required.
+
+**PIT Control**:
+- L3 operational closure requires at minimum:
+  - One live end-to-end workflow demonstrated on the deployed PIT environment
+  - CS2 sign-off on the live product
+  - Physical evidence (screenshot or recording) filed at `.agent-admin/evidence/physical-verification/pit/`
+  - All primary user journeys working (see AD-07 §11.3)
+- Declaring PIT "done" without L3 closure is a governance violation.
+
+**Gate condition**: L3 closure is blocked until CS2 verifies the live deployed PIT environment.
+
+---
+
+### L-008 — Continuous Improvement Must Be Recorded and Promoted
+
+**MMM Observation**: Build-process oversights discovered after initial delivery were captured reactively. Pre-build design could prevent entire escape classes if identified and locked in before build starts.
+
+**PIT Control**:
+- Any PIT design/build oversight discovered during Stages 2–7 must be:
+  1. Recorded in `modules/pit/_readiness/pit-build-process-improvement-register.md`
+  2. Propagated back to the appropriate upstream artifact (App Description, UX Wiring Spec, FRS, TRS, Architecture, QA-to-Red) before the affected wave proceeds
+  3. Confirmed by Foreman before builder allocation for the affected wave
+
+**Register location**: `modules/pit/_readiness/pit-build-process-improvement-register.md`
+
+---
+
+### Stage 2 Carry-Forward Requirements (From MMM Lessons)
+
+The following must be explicitly present in the PIT Stage 2 UX Workflow & Wiring Spec before Stage 3 FRS is approved:
+
+1. **Authentication and onboarding routes**: All routes listed in L-004 must be wired.
+2. **UI state definitions**: All 5 states (loading, empty, error/permission, network-error, data) must be specified for every primary page.
+3. **Implementation page top indicators**: The Implementation page (primary project hierarchy view) must display at the top:
+   - Project duration with progress indicator
+   - Number of milestones
+   - Number of deliverables
+   - Number of tasks
+   - Number of team members
+   - Progress against plan percentage
+   - Overall progress percentage
+4. **App shell/navigation**: Navigation must be visible on all authenticated pages across all UI states.
+5. **Deployment surface map**: A deployment surface map must be included in Stage 2 wiring to confirm all pages and routes are covered by the Deployment Wave plan.
+
 
 ## Optional Section A - High-Level Feature List
 
@@ -1218,7 +1706,7 @@ Wave closure is prohibited unless the tracker is current.
 8. Review evidence and close tasks.
 9. Monitor project progress and overdue work.
 10. Escalate timeline or scope changes for approval.
-11. View a person’s workload across projects.
+11. View a person's workload across projects.
 12. View all overdue tasks across a department.
 13. Generate a report for executives.
 14. Run QA dashboard and inspect failures.
@@ -1265,10 +1753,11 @@ Future PIT versions may include:
 1. The current `modules/pit/00-app-description/app-description.md` is a retrofit stub and uses the incorrect identity "Penetration Intelligence Tool".
 2. The architecture in `modules/pit/04-architecture/architecture.md` correctly identifies PIT as "Project Implementation Tracker".
 3. `Maturion/PIT/CANONICAL_MODULE_POINTER.md` confirms that canonical PIT artifacts belong under `modules/pit/`.
-4. Existing PIT architecture uses both legacy user-facing terms and newer technical terms. Stage 2 and Stage 3 must reconcile these terms explicitly.
-5. The legacy build in `apps/pit/Legacy/` contains valuable requirements and QA philosophy, but it is not the governed production baseline.
-6. Legacy QA dashboard notes show a useful UI direction, but final PIT QA must execute real tests and cannot remain simulated.
-7. The user-provided requirement document is authoritative product-intent evidence for Stage 1 drafting and must be harvested into downstream UX/FRS artifacts.
+4. The App Description policy also expects a `docs/governance/{APP}_APP_DESCRIPTION.md` location; PIT resolves this by requiring a `docs/governance/PIT_APP_DESCRIPTION.md` mirror or pointer unless canon is updated.
+5. Existing PIT architecture uses both legacy user-facing terms and newer technical terms. Stage 2 and Stage 3 must reconcile these terms explicitly.
+6. The legacy build in `apps/pit/Legacy/` contains valuable requirements and QA philosophy, but it is not the governed production baseline.
+7. Legacy QA dashboard notes show a useful UI direction, but final PIT QA must execute real tests and cannot remain simulated.
+8. The user-provided requirement document is authoritative product-intent evidence for Stage 1 drafting and must be harvested into downstream UX/FRS artifacts.
 
 ---
 
@@ -1277,8 +1766,22 @@ Future PIT versions may include:
 | Action | By | Date | Notes |
 |---|---|---|---|
 | Draft created | GPT-5.5 Pro / assistant | 2026-05-05 | Drafted from user-provided requirements, PIT architecture, Maturion/PIT True North, legacy build, and governance canon |
-| Review completed | Pending | N/A | Pending CS2 review |
-| Authoritative status granted | Pending Johan Ras | N/A | Required before Stage 2 proceeds |
+| Governance hardening pass | GPT-5.5 Pro / assistant | 2026-05-05 | Added 16 canon-readiness improvements identified during checklist review |
+| Review completed | Pending | Pending | Pending CS2 review |
+| Authoritative status granted | Pending Johan Ras | Pending | Required before Stage 2 proceeds |
+
+---
+
+## Pre-Approval Checklist Result
+
+| Area | Draft Status | Notes |
+|---|---|---|
+| Status Header | Draft-ready | Uses exact `Draft` status and `Pending` approval date |
+| Core App Description Sections | Draft-ready | Identity, scope, success criteria, strategic context present |
+| AD-01 to AD-24 | Draft-ready for CS2 review | All sections present with governance gate language and evidence locations |
+| Canonical Filing | Draft-ready with open follow-through | Requires `docs/governance/PIT_APP_DESCRIPTION.md` mirror or pointer |
+| Build Authorization | Not cleared | Requires CS2 approval, Stage 2 onward, and all downstream gates |
+| Next Stage | Stage 2 after approval | UX Workflow & Wiring Spec |
 
 ---
 
