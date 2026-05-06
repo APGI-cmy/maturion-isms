@@ -4,13 +4,16 @@
   "type": "governance-change",
   "owner": "Copilot",
   "scope": [
+    ".admin/prs/pr-1545.json",
+    ".agent-admin/scope-declarations/pr-1545.md",
+    ".agent-admin/prehandover/proof-pr-1545-mmm-per-pr-manifests-20260506.md",
     ".github/scripts/validate-simple-pr-admin.sh",
     ".github/scripts/validate-simple-pr-admin.test.sh",
     ".github/workflows/preflight-evidence-gate.yml",
     ".github/scripts/iaa-final-assurance-gate.sh",
     ".github/scripts/ecap-admin-ceremony-gate.sh",
     "governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md",
-    ".admin/prs/pr-1545.json"
+    "governance/CANON_INVENTORY.json"
   ],
   "risk": "medium",
   "requires_iaa": true,
@@ -18,7 +21,9 @@
   "evidence_required": [
     "validate-simple-pr-admin.test.sh passes all 19 tests (T1-T19)",
     "preflight/mmm-pr-admin CI gate passes with per-PR manifest",
-    "two concurrent MMM PRs can carry their own manifest without conflict"
+    "two concurrent MMM PRs can carry their own manifest without conflict",
+    "CANON_INVENTORY.json updated to v1.2.0 with matching hash",
+    "scope declaration and PREHANDOVER proof committed"
   ],
   "merge_authority": "CS2"
 }
