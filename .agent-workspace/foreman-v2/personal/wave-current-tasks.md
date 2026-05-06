@@ -1,83 +1,82 @@
-# Wave Current Tasks — wave-mps-source-verification
+# Wave Current Tasks — align-tier1-contracts-20260506
 
-**Foreman**: foreman-v2-agent v6.2.0
-**Wave**: wave-mps-source-verification
-**Session ID**: session-mps-source-verification-20260428
-**Date**: 2026-04-28
-**Branch**: copilot/verify-generic-mps-source-documents
-**CS2 Authorization**: CONFIRMED — issue opened by CS2 (@APGI-cmy) and assigned to foreman-v2-agent; branch initialized as copilot/verify-generic-mps-source-documents
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-wave-mps-source-verification-20260428.md
-iaa_prebrief_status: COMPLETE — PRE-BRIEF committed SHA caa8bc9; Track A = EXEMPT; Track B = AAWP_MAT (conditional on Track A gate)
-ceremony_admin_appointed: NO (Track A only — EXEMPT)
+**Wave Slug**: align-tier1-contracts-20260506  
+**Branch**: copilot/align-tier-1-agent-contracts-again  
+**PR**: #1533  
+**Issue**: maturion-isms (Hardening — Align Tier 1 agent contracts with Tier 2 lifecycle, evidence, scope, and live-validation gates)  
+**Session**: session-align-tier1-20260506  
+**Date**: 2026-05-06  
+**Status**: IN PROGRESS  
+**CS2 Authorization**: CONFIRMED (CS2 opened issue and assigned Copilot)
 
-## Wave Purpose
+---
 
-CS2 clarification directive: Before accepting a static replacement question bank in PR #1500,
-verify whether the 25 generic MPS Word source documents are already present and approved in
-the current AIMC/KUC/ai_knowledge store. If absent, record as migration gap and request
-re-upload. Only proceed to Track B (structured JSON model + question bank derivation) once
-CS2 confirms source document status.
+## Wave Objective
 
-## Wave Design — Conditional Track Structure
+Audit and align Tier 1 agent contracts with Tier 2 lifecycle, evidence, scope, and live-validation gates. This wave addresses drift between recently hardened Tier 2 operational knowledge / CI gates and the executable Tier 1 agent contracts.
 
-```
-TRACK A (mandatory first) → CS2 DB Verification Gate → TRACK B (conditional)
-```
+---
 
-- **Track A**: Research/verify KUC schema and code evidence; record findings; provide
-  DB queries for CS2; block PR #1500 static question bank pending CS2 decision.
-- **Track B**: Only if CS2 confirms documents PRESENT. Implement Domain→MPS→Criteria JSON
-  model; derive question bank; add tests proving all 25 MPSs covered.
+## Acceptance Criteria (From Issue)
 
-## Current Wave Tasks
+| ID | Requirement | Status |
+|----|-------------|--------|
+| AC1 | Foreman Tier 1 gate inventory updated — enumerate live CI gate set | PENDING |
+| AC2 | IAA Tier 1 contract aligned with current IAA canon (ACR triggers, evidence-first) | PENDING |
+| AC3 | Tier 2 references bound, not advisory — halting behavior if missing/stale | PENDING |
+| AC4 | Per-PR scope declaration model in Tier 1 contracts | PENDING |
+| AC5 | Live operational validation requirement in Tier 1 for UI/app delivery | PENDING |
+| AC6 | CI is confirmatory, not diagnostic — contracts declare pre-handover evidence collection | PENDING |
+| AC7 | Tests/fixtures proving the above constraints | PENDING |
 
-| # | Task | Agent | Status | Notes |
-|---|------|-------|--------|-------|
-| 1 | Phase 1 Preflight | foreman-v2-agent | 🟢 DONE | Identity, Tier 2, CANON_INVENTORY PASS, sessions, FAIL-ONLY-ONCE v4.6.0 |
-| 2 | IAA Pre-Brief (Phase 1 Step 1.8) | independent-assurance-agent | 🟢 DONE | SHA caa8bc9; Track A=EXEMPT; Track B=AAWP_MAT |
-| 3 | wave-current-tasks.md | foreman-v2-agent | 🟢 DONE | This file |
-| 4 | Track A: KUC schema/code investigation | foreman-v2-agent (research) | 🟢 DONE | AIMC/ai_knowledge schema: MPS columns present; NO seed migration found |
-| 5 | Track A: Migration gap analysis committed | foreman-v2-agent | 🟢 DONE | .agent-workspace/foreman-v2/personal/mps-migration-gap-analysis-20260428.md |
-| 6 | Track A: Scope declaration | foreman-v2-agent | 🟢 DONE | scope-declaration-wave-mps-source-verification-20260428.md |
-| 7 | Track A: SCOPE_DECLARATION.md update | foreman-v2-agent | 🟢 DONE | Cleared per A-029; wave-scoped |
-| 8 | Track A: Session memory (Track A) | foreman-v2-agent | 🟢 DONE | session-mps-source-verification-20260428.md |
-| B-1 | (BLOCKED) Structured Domain→MPS→Criteria JSON model | mat-specialist + api-builder | ❌ BLOCKED | Pending CS2 re-upload of 25 MPS Word docs (gap confirmed LIKELY_ABSENT) |
-| B-2 | (BLOCKED) Free-assessment question bank derivation | ui-builder | ❌ BLOCKED | Pending B-1 |
-| B-3 | (BLOCKED) QA tests proving all 25 MPSs covered | qa-builder | ❌ BLOCKED | Pending B-1/B-2 |
+---
 
-**Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED
+## Task Breakdown
 
-## CS2 Decision Gate (Track A → Track B)
+### T-WAT-001 — Agent File Audit and Contract Alignment (CodexAdvisor)
+**Scope**: `.github/agents/foreman-v2-agent.md`, `.github/agents/independent-assurance-agent.md`, `.github/agents/execution-ceremony-admin-agent.md`
+**Addresses**: AC1, AC2, AC3, AC4, AC5, AC6
+**Note**: AGENT FILE GUARD TRIGGERED — delegated to CodexAdvisor per NO-AGENT-FILES-001
+**Status**: PENDING — awaiting IAA Pre-Brief and CodexAdvisor delegation
 
-CS2 must perform before Track B delegation:
+### T-WAT-002 — Governance Canon Updates (governance-liaison-isms-agent)
+**Scope**: `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md`, `governance/canon/AGENT_HANDOVER_AUTOMATION.md`, `governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md`, `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`, `governance/canon/TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md`
+**Addresses**: AC2, AC3, AC6
+**Status**: PENDING
 
-1. ~~Query live Supabase `ai_knowledge` table — SQL provided in migration gap analysis.~~ ✅ DONE
-2. ~~Confirm whether MPS 1–25 generic Word documents were migrated from legacy KUC.~~ ✅ DONE — **LIKELY_ABSENT** (all counts = 0)
-3. ABSENT confirmed — initiate re-upload of 25 Word documents via MMM framework upload pipeline (mmm-framework-sources bucket).
-4. After re-upload and parse pipeline completes, approve Track B delegation.
+### T-WAT-003 — Tests and Fixtures (qa-builder)
+**Scope**: Test files proving AC1-AC6 constraints
+**Addresses**: AC7
+**Status**: PENDING
 
-**PR #1500 (static question bank)**: Approved interim implementation under maturion-isms#1499
-(CS2 caveat: must NOT close maturion-isms#1501). #1501 remains open. Track B remains blocked
-pending CS2 re-upload of 25 generic MPS Word documents (DB verification confirmed LIKELY_ABSENT).
+---
 
-## IAA Tokens Received This Wave
+## Pre-Build Gate Status
 
-| PR # | Token | Date |
-|------|-------|------|
-| Track A | EXEMPT (no implementation/application changes) | 2026-04-28 |
+| Gate | Stage | Status |
+|------|-------|--------|
+| Architecture frozen | Stage 5 | Issue description acts as architecture specification |
+| Red QA suite | Stage 6 | AC7 defines test requirements — PENDING |
+| PBFAG | Stage 7 | CS2 implicit confirmation via issue ownership |
+| Implementation Plan | Stage 8 | This document acts as implementation plan |
+| Builder Checklist | Stage 9 | PENDING — to be created |
+| IAA Pre-Brief | Stage 10 | INVOKED — awaiting response |
 
-## Wave Completion Gate
+---
 
-- [x] Phase 1 Preflight complete
-- [x] IAA Pre-Brief complete — SHA caa8bc9
-- [x] wave-current-tasks.md committed
-- [x] Track A: KUC investigation complete
-- [x] Track A: Migration gap analysis committed
-- [x] Track A: Session memory written
-- [x] CS2: DB verification of ai_knowledge table — **COMPLETE** (LIKELY_ABSENT; migration gap confirmed 2026-04-28)
-- [ ] CS2: Re-upload of 25 generic MPS Word documents via MMM framework upload pipeline
-- [ ] CS2: Track B approval (after re-upload and parse pipeline complete)
-- [ ] Track B: Delegation to builders (BLOCKED pending CS2 gate)
-- [ ] Track B: PREHANDOVER + IAA Final Audit (AAWP_MAT — mandatory)
-- [ ] CS2 notified for merge approval
+## Agent File Guard
+
+**TRIGGERED** — This wave touches `.github/agents/*.md` files.
+Per Phase 2 Step 2.6 and NO-AGENT-FILES-001:
+- Foreman CANNOT write agent files
+- Delegating to CodexAdvisor-agent
+- CS2 authorization: CONFIRMED (issue opened by CS2 / APGI-cmy)
+
+---
+
+## Foreman Notes
+
+This wave is a governance-class hardening. The issue was opened directly by CS2 (APGI-cmy) and assigned to Copilot, satisfying Phase 2 Step 2.1 CS2 wave-start authorization.
+
+Agent file changes require CodexAdvisor delegation per AGCFPP-001. IAA Pre-Brief is mandatory before any delegation.
 
