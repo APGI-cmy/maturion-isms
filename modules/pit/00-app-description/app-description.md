@@ -14,7 +14,7 @@
 | Owner | Johan Ras - Product Owner / Human Authority |
 | Authority | CS2 / Johan Ras |
 | Approval Date | Pending |
-| Last Updated | 2026-05-05 |
+| Last Updated | 2026-05-06 |
 | Module Filing Location | `modules/pit/00-app-description/app-description.md` |
 | Governance Mirror / Pointer Location | `docs/governance/PIT_APP_DESCRIPTION.md` |
 | Policy Authority | `governance/policy/APP_DESCRIPTION_REQUIREMENT_POLICY.md` v2.0 |
