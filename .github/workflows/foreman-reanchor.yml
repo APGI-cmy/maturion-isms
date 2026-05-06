@@ -8,7 +8,7 @@ name: Foreman Handover Re-Anchor
 # For opened/ready_for_review events, always post to catch early handover attempts.
 #
 # PR type awareness (issue #1542):
-# - Reads .admin/pr.json when present to determine requires_iaa and requires_ecap.
+# - Reads the active PR manifest (.admin/prs/pr-N.json preferred, .admin/pr.json legacy fallback) to determine requires_iaa and requires_ecap.
 # - Product-fix PRs (requires_iaa=false, requires_ecap=false) receive lightweight re-anchor.
 # - Governance-control PRs receive full heavy re-anchor only when manifest requires IAA/ECAP.
 on:
@@ -62,10 +62,11 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Read .admin/pr.json manifest and wave-current-tasks.md
+      - name: Read active PR manifest and wave-current-tasks.md
         id: wave_tasks
         env:
           EVENT_ACTION: ${{ github.event.action }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           TASKS_FILE=".agent-workspace/foreman-v2/personal/wave-current-tasks.md"
           if [ -f "$TASKS_FILE" ]; then
@@ -78,16 +79,23 @@ jobs:
             echo "tasks_found=false" >> "$GITHUB_OUTPUT"
           fi
 
-          # Read .admin/pr.json to determine governance mode
+          # Resolve active manifest: per-PR preferred, legacy fallback
+          # Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.2.0
           # Default to heavy (requires_iaa=true) when manifest is absent or unreadable
           REQUIRES_IAA="true"
           REQUIRES_ECAP="true"
           PR_TYPE="unknown"
-          if [ -f ".admin/pr.json" ] && command -v python3 >/dev/null 2>&1; then
+          ADMIN_MANIFEST=""
+          if [ -n "${PR_NUMBER:-}" ] && [ -f ".admin/prs/pr-${PR_NUMBER}.json" ]; then
+            ADMIN_MANIFEST=".admin/prs/pr-${PR_NUMBER}.json"
+          elif [ -f ".admin/pr.json" ]; then
+            ADMIN_MANIFEST=".admin/pr.json"
+          fi
+          if [ -n "$ADMIN_MANIFEST" ] && command -v python3 >/dev/null 2>&1; then
             REQUIRES_IAA=$(python3 -c "
 import json, sys
 try:
-    m = json.load(open('.admin/pr.json'))
+    m = json.load(open('${ADMIN_MANIFEST}'))
     v = m.get('requires_iaa')
     print('false' if v is False else 'true')
 except Exception:
@@ -96,7 +104,7 @@ except Exception:
             REQUIRES_ECAP=$(python3 -c "
 import json, sys
 try:
-    m = json.load(open('.admin/pr.json'))
+    m = json.load(open('${ADMIN_MANIFEST}'))
     v = m.get('requires_ecap')
     print('false' if v is False else 'true')
 except Exception:
@@ -105,7 +113,7 @@ except Exception:
             PR_TYPE=$(python3 -c "
 import json, sys
 try:
-    m = json.load(open('.admin/pr.json'))
+    m = json.load(open('${ADMIN_MANIFEST}'))
     print(m.get('type', 'unknown'))
 except Exception:
     print('unknown')
@@ -185,7 +193,7 @@ except Exception:
                 '1. \u2705 **CI gates green**: All required checks must be GREEN before marking merge-ready.',
                 '   Run locally: `.github/scripts/validate-simple-pr-admin.sh` → PASS',
                 '2. \u2705 **Scope declaration**: `.agent-admin/scope-declarations/pr-<N>.md` created and accurate.',
-                '3. \u2705 **Evidence declared**: `evidence_required` in `.admin/pr.json` matches what you have produced.',
+                '3. \u2705 **Evidence declared**: `evidence_required` in the active PR manifest (`.admin/prs/pr-<N>.json`) matches what you have produced.',
                 '4. \u2705 **No IAA / ECAP ceremony required** for this PR type (`' + prType + '` with `requires_iaa: false`, `requires_ecap: false`).',
                 '   \u26a0\ufe0f Do NOT invoke IAA or ECAP agents — this is a lightweight product-fix PR.',
                 '5. \u2705 **Handover check**: Verify ALL current-head required CI checks are GREEN before claiming merge-ready.',
@@ -199,7 +207,7 @@ except Exception:
                 '',
                 '@copilot \u2014 You are **foreman-v2-agent** (class: foreman). You do **NOT** build. You **orchestrate**.',
                 '',
-                `> \u2139\ufe0f **This is a product-fix PR** (\`.admin/pr.json\` type: \`${prType}\`, \`requires_iaa: false\`, \`requires_ecap: false\`).`,
+                `> \u2139\ufe0f **This is a product-fix PR** (manifest type: \`${prType}\`, \`requires_iaa: false\`, \`requires_ecap: false\`).`,
                 '> No PREHANDOVER proof, IAA final assurance, or ECAP ceremony is required.',
                 '> Follow the lightweight checklist below.',
                 '',

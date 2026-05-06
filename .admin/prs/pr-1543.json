@@ -5,6 +5,7 @@
   "owner": "Copilot",
   "scope": [
     ".admin/pr.json",
+    ".admin/prs/pr-1543.json",
     ".agent-admin/scope-declarations/pr-1543.md",
     ".github/workflows/foreman-reanchor.yml",
     ".github/workflows/handover-claim-gate.yml",
@@ -14,8 +15,9 @@
   "requires_iaa": true,
   "requires_ecap": true,
   "evidence_required": [
-    "foreman-reanchor.yml reads .admin/pr.json and posts lightweight instructions when requires_iaa=false and requires_ecap=false",
+    "foreman-reanchor.yml resolves active manifest via .admin/prs/pr-${PR_NUMBER}.json with .admin/pr.json legacy fallback",
     "foreman-reanchor.yml posts full governance instructions only when manifest requires IAA/ECAP",
+    "handover-claim-gate.yml resolves active manifest via .admin/prs/pr-${PR_NUMBER}.json with .admin/pr.json legacy fallback",
     "handover-claim-gate.yml detects handover/merge-ready keywords in PR comments and on ready_for_review events",
     "handover-claim-gate.yml posts HANDOVER BLOCKED comment when required checks are failing, pending, or missing (never ran); edits existing gate comment instead of creating a new one (idempotency guard)",
     "preflight-evidence-gate.yml enforces gate-changing PR rule: PRs touching .github/workflows/ or .github/scripts/ must include test evidence",

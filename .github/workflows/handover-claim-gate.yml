@@ -15,7 +15,7 @@ name: Handover Claim Gate
 # - If the latest-head checks are all green: posts an acknowledgement.
 # - If any required check is red, pending, or missing: posts HANDOVER BLOCKED
 #   listing the failing / pending / missing checks.
-# - Product-fix PRs (.admin/pr.json with requires_iaa=false, requires_ecap=false)
+# - Product-fix PRs (manifest requires_iaa=false, requires_ecap=false)
 #   are NOT required to have PREHANDOVER/LUIEP ceremony artifacts — the gate only
 #   verifies that CI checks themselves are green.
 #
@@ -118,23 +118,32 @@ jobs:
               return;
             }
 
-            // ── Read .admin/pr.json to determine governance mode ──────────────────
+            // ── Resolve active PR manifest (per-PR preferred, legacy fallback) ──
+            // Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.2.0
             let requiresIaa = true;
             let requiresEcap = true;
             let prType = 'unknown';
-            try {
-              const { data: content } = await github.rest.repos.getContent({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                path: '.admin/pr.json',
-                ref: headSha,
-              });
-              const manifest = JSON.parse(Buffer.from(content.content, 'base64').toString('utf8'));
-              requiresIaa = manifest.requires_iaa !== false;
-              requiresEcap = manifest.requires_ecap !== false;
-              prType = manifest.type || 'unknown';
-            } catch {
-              // .admin/pr.json absent or unreadable — default to heavy mode
+            const manifestPaths = [
+              `.admin/prs/pr-${prNumber}.json`,
+              '.admin/pr.json',
+            ];
+            for (const manifestPath of manifestPaths) {
+              try {
+                const { data: content } = await github.rest.repos.getContent({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  path: manifestPath,
+                  ref: headSha,
+                });
+                const manifest = JSON.parse(Buffer.from(content.content, 'base64').toString('utf8'));
+                requiresIaa = manifest.requires_iaa !== false;
+                requiresEcap = manifest.requires_ecap !== false;
+                prType = manifest.type || 'unknown';
+                console.log(`Resolved manifest: ${manifestPath}`);
+                break;
+              } catch {
+                // manifest path not found — try next
+              }
             }
             const isProductFix = !requiresIaa && !requiresEcap;
 
