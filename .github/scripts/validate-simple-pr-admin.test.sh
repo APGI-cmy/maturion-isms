@@ -1,10 +1,10 @@
 #!/bin/bash
 # validate-simple-pr-admin.test.sh
-# Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.0.0
+# Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.2.0
 # Purpose: Test suite for validate-simple-pr-admin.sh
 #
 # Coverage:
-#   T1   Missing .admin/pr.json                                → exit 1
+#   T1   Missing .admin/pr.json (no PR_NUMBER)                 → exit 1
 #   T2   Invalid JSON in manifest                              → exit 1
 #   T3   Missing required fields                               → exit 1
 #   T4   issue is a string, not number                         → exit 1
@@ -21,6 +21,8 @@
 #   T15  governance-control file changed + flags true          → exit 0
 #   T16  non-governance product file changed + flags false     → exit 0
 #   T17  evidence_required is empty list                       → exit 1
+#   T18  Per-PR manifest at .admin/prs/pr-N.json (no legacy)   → exit 0
+#   T19  Both per-PR and legacy manifest for same PR number    → exit 1 (MANIFEST-CONFLICT)
 #
 # Usage:
 #   .github/scripts/validate-simple-pr-admin.test.sh
@@ -38,7 +40,7 @@ TEST_PASSED=0
 TEST_FAILED=0
 
 echo "=== MMM Simple PR Admin Validator Test Suite ==="
-echo "Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.0.0"
+echo "Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.2.0"
 echo "Test directory: $TEST_DIR"
 echo ""
 
@@ -504,6 +506,82 @@ EOF
     git commit -q -m "Add manifest with empty evidence_required"
 }
 run_test "T17 — evidence_required is empty list" 1 "setup_t17"
+
+# ================================================================
+# T18: Per-PR manifest at .admin/prs/pr-9999.json (no legacy) → exit 0
+# Validates that the validator resolves per-PR manifest when PR_NUMBER
+# is set and no legacy .admin/pr.json exists.
+# ================================================================
+setup_t18() {
+    # Commit a file that IS listed in the scope
+    mkdir -p apps/mmm/src
+    echo "const x = 1;" > apps/mmm/src/DashboardPage.tsx
+    git add apps/mmm/src/DashboardPage.tsx
+    git commit -q -m "Change DashboardPage"
+
+    mkdir -p .admin/prs
+    cat > .admin/prs/pr-9999.json << 'EOF'
+{
+  "pr": 9999,
+  "issue": 1519,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": ["apps/mmm/src/DashboardPage.tsx"],
+  "risk": "low",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass", "screenshot of dashboard"],
+  "merge_authority": "CS2"
+}
+EOF
+    git add .admin/prs/pr-9999.json
+    git commit -q -m "Add per-PR manifest"
+    export PR_NUMBER="9999"
+}
+run_test "T18 — per-PR manifest at .admin/prs/pr-9999.json (no legacy)" 0 "setup_t18"
+unset PR_NUMBER
+
+# ================================================================
+# T19: Both per-PR manifest and legacy .admin/pr.json exist for
+#      the SAME PR number → exit 1 (MANIFEST-CONFLICT)
+# ================================================================
+setup_t19() {
+    mkdir -p .admin/prs
+    cat > .admin/prs/pr-8888.json << 'EOF'
+{
+  "pr": 8888,
+  "issue": 1519,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": ["apps/mmm/src/DashboardPage.tsx"],
+  "risk": "low",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2"
+}
+EOF
+    # Legacy manifest with the SAME PR number — conflict
+    cat > .admin/pr.json << 'EOF'
+{
+  "pr": 8888,
+  "issue": 1519,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": ["apps/mmm/src/DashboardPage.tsx"],
+  "risk": "low",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2"
+}
+EOF
+    git add .admin/prs/pr-8888.json .admin/pr.json
+    git commit -q -m "Add both per-PR and legacy manifests for same PR"
+    export PR_NUMBER="8888"
+}
+run_test "T19 — per-PR and legacy manifest for same PR number (MANIFEST-CONFLICT)" 1 "setup_t19"
+unset PR_NUMBER
 
 # ----------------------------------------------------------------
 # Cleanup
