@@ -378,6 +378,7 @@ jobs:
               exit 0
             fi
           fi
+
           BASE_SHA="${{ github.event.pull_request.base.sha }}"
 
           # Scope check to token files that are NEW in this PR (not pre-existing in base)
