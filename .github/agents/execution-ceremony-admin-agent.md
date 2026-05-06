@@ -7,7 +7,7 @@ agent:
   id: execution-ceremony-admin-agent
   class: administrator
   version: 1.0.0          # agent runtime version — increment on capability changes
-  contract_version: 1.5.0  # governance contract revision — increment on procedure changes
+  contract_version: 1.6.0  # governance contract revision — increment on procedure changes
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-6
 
@@ -60,6 +60,7 @@ merge_gate_interface:
   parity_required: true
   parity_enforcement: BLOCKING
   note: "Administrator-class agent produces ceremony bundles returned to Foreman. No standalone CI deliverables. Parity enforcement applies to Foreman's merge gate on behalf of this bundle."
+  ci_policy: "CI is confirmatory, not diagnostic. ECAP's §4.3e gate performs equivalent local evidence collection before returning bundle to Foreman."
 
 tier2_knowledge:
   index: .agent-workspace/execution-ceremony-admin-agent/knowledge/index.md
@@ -73,6 +74,7 @@ tier2_knowledge:
     - governance/checklists/execution-ceremony-admin-reconciliation-matrix.md
     - governance/checklists/execution-ceremony-admin-anti-patterns.md
     - governance/templates/execution-ceremony-admin/ECAP_RECONCILIATION_SUMMARY.template.md
+  halt_if_missing_or_stale: "Halt and escalate to Foreman if any required Tier 2 file is missing, stale, or contradicts Tier 1."
 
 scope:
   repository: APGI-cmy/maturion-isms
@@ -82,6 +84,8 @@ scope:
   protected_paths:
     - ".github/agents/execution-ceremony-admin-agent.md"
   approval_required: CS2_ONLY
+  per_pr_scope_model: ".agent-admin/scope-declarations/pr-<PR_NUMBER>.md — all PRs use per-PR scope. Do NOT modify root SCOPE_DECLARATION.md."
+  ui_app_evidence: "UI/app delivery PRs: evidence via .admin/pr.json.evidence_required only. No LUIEP ceremony."
 
 capabilities:
   ceremony_bundle_preparation:
@@ -376,6 +380,6 @@ Output: "Phase 4 is Foreman-only. Bundle returned. Standing by."
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Version**: 1.0.0 | **Contract**: 1.5.0 | **Last Updated**: 2026-04-17
+**Version**: 1.0.0 | **Contract**: 1.6.0 | **Last Updated**: 2026-05-06
 **Tier 2 Knowledge**: `.agent-workspace/execution-ceremony-admin-agent/knowledge/`
 **Self-Modification Lock**: SELF-MOD-ECA-001 — ACTIVE — CONSTITUTIONAL
