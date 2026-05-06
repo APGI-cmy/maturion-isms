@@ -3,7 +3,7 @@
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
 **Last Updated**: 2026-05-06  
-**Updated By**: pit-specialist (wave: pit-stage1-app-description-hardening — maturion-isms#1534)
+**Updated By**: foreman-v2-agent (wave: pit-stage1-cs2-approval-stage2-initiation — maturion-isms#1540)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
@@ -45,32 +45,33 @@ stage sequence. The existing Architecture work is valuable and will be preserved
 Track the progression through the canonical module lifecycle stages per `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0.
 
 ### Stage 1: App Description
-**Status**: [x] DRAFT_PENDING_CS2_APPROVAL  
+**Status**: [x] CS2_APPROVED_AUTHORITATIVE  
 **Location**: `modules/pit/00-app-description/`  
 **Key Artifacts**:
 - [x] `app-description.md` — Full App Description v1.0-draft (1750 lines; §AD-01–§AD-24 complete + MMM Lessons Promoted section)
 - [x] All §AD-01–§AD-24 sections per `APP_DESCRIPTION_REQUIREMENT_POLICY.md` v2.0 complete
-- [ ] App Description approved by CS2/Johan Ras — **PENDING**
+- [x] App Description approved by CS2/Johan Ras — **APPROVED 2026-05-06** (ref: maturion-isms#1540)
 
 **Artifact Paths**:
 - Authoritative (canonical per policy §4.1): `docs/governance/PIT_APP_DESCRIPTION.md`
 - Module-stage copy: `modules/pit/00-app-description/app-description.md`
 - Checklist Evidence: `.agent-admin/evidence/app-description-checklist/pit-20260506.md`
 
-**Checklist Result**: PASS as Draft — pending CS2 approval  
-**Build Authorization**: NOT CLEARED — pending CS2 approval  
-**Completion Date**: N/A — Draft filed 2026-05-06  
-**Notes**: App Description v1.0-draft filed per maturion-isms#1534. Module name corrected from
-"Penetration Intelligence Tool" to "Project Implementation Tracker". Source document was
-`pit_app_description_stage1_rewritten_v1.md` (prepared by CS2/Johan + ChatGPT). MMM Lessons
-Promoted Into PIT section added per Foreman governance directive (L-001 through L-008 + Stage 2
-carry-forward requirements). Draft files deleted. Governance mirror created at
-`docs/governance/PIT_APP_DESCRIPTION.md`.
+**Checklist Result**: PASS — Authoritative / CS2 Approved  
+**Build Authorization**: NOT CLEARED — implementation blocked until Stages 2–11 completed and gate-passed  
+**Completion Date**: 2026-05-06 (CS2 approval)  
+**Notes**: App Description v1.0 filed per maturion-isms#1534 (Draft), approved per maturion-isms#1540.
+Module name corrected from "Penetration Intelligence Tool" to "Project Implementation Tracker".
+Source document was prepared by CS2/Johan + assistant-assisted drafting under Johan Ras direction.
+MMM Lessons Promoted Into PIT section added per Foreman governance directive (L-001 through L-008 +
+Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonical location:
+`docs/governance/PIT_APP_DESCRIPTION.md`. Synchronised module-stage copy:
+`modules/pit/00-app-description/app-description.md`.
 
 ---
 
 ### Stage 2: UX Workflow & Wiring Spec
-**Status**: [ ] NOT_STARTED — **BLOCKED: awaiting CS2 approval of Stage 1**  
+**Status**: [x] ACTIVE — INITIATED (maturion-isms#1540)  
 **Location**: `modules/pit/01-ux-workflow-wiring-spec/`  
 **Key Artifacts**:
 - [ ] `ux-workflow-wiring-spec.md` — Complete user journey maps, screen interactions, data flows, wiring
@@ -78,11 +79,13 @@ carry-forward requirements). Draft files deleted. Governance mirror created at
 - [ ] Explicit wiring between UI elements, API endpoints, schema tables, and reporting outputs
 - [ ] Approved by Foreman and client/user representative
 
-**Completion Date**: N/A  
-**Notes**: Not started. BLOCKED until CS2 approves Stage 1 App Description. Stage 2 must
-incorporate all Stage 2 carry-forward requirements from MMM Lessons (see app-description.md
-§ MMM Lessons Promoted Into PIT): auth/onboarding routes (L-004), UI state definitions (L-003),
-Implementation page top indicators, app shell/navigation, and deployment surface map.
+**Completion Date**: N/A — In progress  
+**Notes**: Stage 2 initiated per maturion-isms#1540 following CS2 approval of Stage 1.
+Stage 2 artifact: `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md`.
+Stage 2 inherits all MMM carry-forward requirements from app-description.md § MMM Lessons
+Promoted Into PIT: auth/onboarding routes (L-004), UI state definitions (L-003),
+Implementation page top indicators, app shell/navigation, and deployment surface map (L-006).
+All 5 UI states required per L-003 for every primary page.
 
 ---
 
@@ -243,15 +246,15 @@ artifacts, not core PIT module build deliverables. Mapped from old Stage 5.
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 1 DRAFT_PENDING_CS2_APPROVAL — App Description filed 2026-05-06, awaiting CS2/Johan Ras approval  
-**Overall Progress**: ~15% complete (App Description draft filed; Architecture substantially IN_PROGRESS)  
-**Blockers**: CS2/Johan Ras approval of Stage 1 App Description required before Stage 2 can begin  
+**Current Stage**: Stage 2 ACTIVE — UX Workflow & Wiring Spec initiated (maturion-isms#1540)  
+**Overall Progress**: ~20% complete (Stage 1 App Description approved; Stage 2 initiated; Architecture substantially IN_PROGRESS)  
+**Blockers**: None for Stage 2. Build Authorization NOT CLEARED — implementation blocked until Stages 2–11 completed and gate-passed.  
 **Next Steps**:
-1. CS2/Johan Ras approves Stage 1 App Description (`modules/pit/00-app-description/app-description.md`)
-2. Begin Stage 2 (UX Workflow & Wiring Spec) — must incorporate all MMM carry-forward requirements
-3. Complete Stage 3 (FRS) building on App Description + UX Workflow
-4. Complete Stage 4 (TRS)
-5. Formally gate-pass Stage 5 (Architecture — rich content already exists, needs approval)
+1. Complete Stage 2 (UX Workflow & Wiring Spec) — `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md`
+2. Complete Stage 3 (FRS) building on App Description + UX Workflow
+3. Complete Stage 4 (TRS)
+4. Formally gate-pass Stage 5 (Architecture — rich content already exists, needs approval)
+5. Complete Stages 6–11 before Build Authorization can be requested
 
 **MMM-Derived Learning Controls (Carry-Forward)**:
 PIT carries forward 8 build-process improvement controls from the MMM module build. These are
@@ -270,9 +273,11 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 
 ## Governance Compliance
 
-- [ ] All stages proceeding in order — App Description draft filed; Stage 2 blocked until CS2 approval
-- [ ] Traceability maintained (App Description → UX Workflow → FRS → TRS → Architecture)
-- [ ] All required approvals obtained — **Stage 1 pending CS2 approval**
+- [x] Stage 1 App Description: CS2_APPROVED_AUTHORITATIVE (2026-05-06)
+- [x] Stage 2 UX Workflow & Wiring Spec: INITIATED (maturion-isms#1540)
+- [ ] Traceability chain: App Description ✅ → UX Workflow (in progress) → FRS → TRS → Architecture (gate-pass pending)
+- [x] Stage 1 approval obtained — Johan Ras / CS2 approved 2026-05-06 (ref: maturion-isms#1540)
+- [x] Build Authorization: NOT CLEARED — implementation blocked until Stages 2–11 complete
 - [x] Evidence artifacts created for Stage 1 (checklist at `.agent-admin/evidence/app-description-checklist/pit-20260506.md`)
 - [x] Module manifest updated (module_name corrected to "PIT (Project Implementation Tracker)")
 
@@ -282,10 +287,15 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 
 **Stage 1 App Description Filed (2026-05-06)**: App Description v1.0-draft created per
 maturion-isms#1534 delegation from Foreman to pit-specialist. Module name corrected from
-"Penetration Intelligence Tool" to "Project Implementation Tracker". Source:
-`pit_app_description_stage1_rewritten_v1.md` (prepared by CS2/Johan + ChatGPT). MMM Lessons
-Promoted Into PIT section added (L-001–L-008 + Stage 2 carry-forward requirements).
+"Penetration Intelligence Tool" to "Project Implementation Tracker". Source prepared by
+CS2/Johan + assistant-assisted drafting under Johan Ras direction. MMM Lessons Promoted Into PIT
+section added (L-001–L-008 + Stage 2 carry-forward requirements).
 Improvement register created at `modules/pit/_readiness/pit-build-process-improvement-register.md`.
+
+**Stage 1 App Description CS2 Approved (2026-05-06)**: CS2/Johan Ras reviewed and approved Stage 1
+App Description per maturion-isms#1540. Status changed from Draft to Authoritative (v1.0). Stage 2
+(UX Workflow & Wiring Spec) authorised. Build Authorization remains NOT CLEARED — implementation
+blocked until Stages 2–11 completed and gate-passed.
 
 **Governance Upgrade (2026-04-06)**: Stage model migrated from legacy 6-stage (Stage 0–5) to
 canonical 12-stage per `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0. See Stage Migration Note above.

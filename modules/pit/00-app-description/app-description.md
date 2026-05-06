@@ -8,12 +8,13 @@
 | Application Name | Project Implementation Tracker |
 | Module Slug | `pit` |
 | Artifact Type | App Description - Stage 1 upstream authority |
-| Version | v1.0-draft |
-| Status | Draft |
-| Approval Status | Pending CS2 / Johan Ras approval |
+| Version | v1.0 |
+| Status | Authoritative |
+| Approval Status | Approved by CS2 / Johan Ras — 2026-05-06 |
 | Owner | Johan Ras - Product Owner / Human Authority |
 | Authority | CS2 / Johan Ras |
-| Approval Date | Pending |
+| Approval Date | 2026-05-06 |
+| Authorisation Scope | Stage 2 only — NOT build authorisation. Implementation prohibited until Stages 2–11 complete and gate-passed. |
 | Last Updated | 2026-05-06 |
 | Module Filing Location | `modules/pit/00-app-description/app-description.md` |
 | Governance Mirror / Pointer Location | `docs/governance/PIT_APP_DESCRIPTION.md` |
@@ -32,7 +33,7 @@ It establishes the authoritative product intent, scope, success criteria, busine
 
 This document replaces the current retrofit stub and corrects the module identity from "Penetration Intelligence Tool" to "Project Implementation Tracker".
 
-Downstream PIT artifacts must treat this document as their upstream source once CS2 / Johan Ras grants Authoritative status. Until then, it remains a Draft and cannot by itself authorize Stage 2, Stage 3, architecture, builder appointment, or implementation.
+Downstream PIT artifacts must treat this document as their upstream source. CS2 / Johan Ras has granted Authoritative status on 2026-05-06. This document authorises Stage 2 (UX Workflow & Wiring Spec) only. It is NOT build authorisation — implementation, architecture gate-pass, builder appointment, and all downstream build stages remain blocked until Stages 2–11 are completed and gate-passed.
 
 ---
 
@@ -1711,10 +1712,10 @@ Future PIT versions may include:
 
 ## Source Reconciliation Notes
 
-1. The prior `modules/pit/00-app-description/app-description.md` retrofit stub used the incorrect identity "Penetration Intelligence Tool" and is superseded by this App Description.
+1. The prior `modules/pit/00-app-description/` retrofit stub used the incorrect identity "Penetration Intelligence Tool" and was superseded by this App Description (filed via PR #1535, maturion-isms#1534). This file (`modules/pit/00-app-description/app-description.md`) IS the corrected Stage 1 App Description; it is not a retrofit stub.
 2. The architecture in `modules/pit/04-architecture/architecture.md` correctly identifies PIT as "Project Implementation Tracker".
 3. `Maturion/PIT/CANONICAL_MODULE_POINTER.md` confirms that canonical PIT artifacts belong under `modules/pit/`.
-4. The App Description policy also expects a `docs/governance/{APP}_APP_DESCRIPTION.md` location; PIT resolves this by requiring a `docs/governance/PIT_APP_DESCRIPTION.md` mirror or pointer unless canon is updated.
+4. `docs/governance/PIT_APP_DESCRIPTION.md` is confirmed as the authoritative canonical location. `modules/pit/00-app-description/app-description.md` is the synchronised module-stage copy. Canonical filing is complete — no further follow-through required.
 5. Existing PIT architecture uses both legacy user-facing terms and newer technical terms. Stage 2 and Stage 3 must reconcile these terms explicitly.
 6. The legacy build in `apps/pit/Legacy/` contains valuable requirements and QA philosophy, but it is not the governed production baseline.
 7. Legacy QA dashboard notes show a useful UI direction, but final PIT QA must execute real tests and cannot remain simulated.
@@ -1726,23 +1727,23 @@ Future PIT versions may include:
 
 | Action | By | Date | Notes |
 |---|---|---|---|
-| Draft created | GPT-5.5 Pro / assistant | 2026-05-05 | Drafted from user-provided requirements, PIT architecture, Maturion/PIT True North, legacy build, and governance canon |
-| Governance hardening pass | GPT-5.5 Pro / assistant | 2026-05-05 | Added 16 canon-readiness improvements identified during checklist review |
-| Review completed | Pending | Pending | Pending CS2 review |
-| Authoritative status granted | Pending Johan Ras | Pending | Required before Stage 2 proceeds |
+| Draft created | assistant-assisted drafting under Johan Ras direction | 2026-05-05 | Drafted from user-provided requirements, PIT architecture, Maturion/PIT True North, legacy build, and governance canon |
+| Governance hardening pass | assistant-assisted drafting under Johan Ras direction | 2026-05-05 | Added 16 canon-readiness improvements identified during checklist review |
+| Review completed | Johan Ras / CS2 | 2026-05-06 | CS2 reviewed and confirmed requirements are substantively included |
+| Authoritative status granted | Johan Ras / CS2 | 2026-05-06 | Stage 2 authorised. Build authorisation NOT granted — implementation blocked until Stages 2–11 complete and gate-passed. Ref: maturion-isms#1540 |
 
 ---
 
 ## Pre-Approval Checklist Result
 
-| Area | Draft Status | Notes |
+| Area | Status | Notes |
 |---|---|---|
-| Status Header | Draft-ready | Uses exact `Draft` status and `Pending` approval date |
-| Core App Description Sections | Draft-ready | Identity, scope, success criteria, strategic context present |
-| AD-01 to AD-24 | Draft-ready for CS2 review | All sections present with governance gate language and evidence locations |
-| Canonical Filing | Draft-ready | `docs/governance/PIT_APP_DESCRIPTION.md` is the authoritative canonical location; module-stage copy must stay synchronized. |
-| Build Authorization | Not cleared | Requires CS2 approval, Stage 2 onward, and all downstream gates |
-| Next Stage | Stage 2 after approval | UX Workflow & Wiring Spec |
+| Status Header | Authoritative | Status: Authoritative, Approval Date: 2026-05-06, Version: v1.0 |
+| Core App Description Sections | Complete | Identity, scope, success criteria, strategic context present and approved |
+| AD-01 to AD-24 | Complete — CS2 Approved | All sections present, reviewed and approved by CS2 / Johan Ras 2026-05-06 |
+| Canonical Filing | Complete | `docs/governance/PIT_APP_DESCRIPTION.md` confirmed as authoritative canonical location; module-stage copy synchronized |
+| Build Authorization | NOT CLEARED | Implementation blocked until Stages 2–11 completed and gate-passed |
+| Current Stage | Stage 2 — ACTIVE | UX Workflow & Wiring Spec initiated per maturion-isms#1540 |
 
 ---
 
