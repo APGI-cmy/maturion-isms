@@ -84,7 +84,8 @@ scope:
   protected_paths:
     - ".github/agents/execution-ceremony-admin-agent.md"
   approval_required: CS2_ONLY
-  per_pr_scope_model: ".agent-admin/scope-declarations/pr-<PR_NUMBER>.md — all PRs use per-PR scope. Do NOT modify root SCOPE_DECLARATION.md."
+  per_pr_scope_model: ".agent-admin/scope-declarations/pr-<PR_NUMBER>.md — authoritative scope declaration path for all PRs. Do NOT modify root SCOPE_DECLARATION.md."
+  legacy_scope_reference_compatibility: "If any later procedure in this contract refers to .agent-workspace/foreman-v2/personal/scope-declaration-wave-{N}.md, interpret that reference as .agent-admin/scope-declarations/pr-<PR_NUMBER>.md. The per-PR scope model is canonical and takes precedence."
   ui_app_evidence: "UI/app delivery PRs: evidence via .admin/pr.json.evidence_required only. No LUIEP ceremony."
 
 capabilities:
