@@ -228,8 +228,8 @@ jobs:
             }
 
             // Also block if no checks were returned at all (workflow has never run).
-            const totalObserved = latestByName.size + statusData.statuses.length;
-            const noChecksAtAll = totalObserved === 0;
+            // Use observedNames.size to avoid double-counting checks that appear in both APIs.
+            const noChecksAtAll = observedNames.size === 0;
 
             const BLOCKED_MARKER = '<!-- handover-claim-gate-blocked -->';
             const OK_MARKER = '<!-- handover-claim-gate-ok -->';
@@ -324,6 +324,12 @@ jobs:
               // Update/create gate comment first so the reason is visible,
               // then fail the workflow job to enforce the gate as a hard CI check.
               core.setFailed(
-                `HANDOVER BLOCKED: ${failing.length} failing, ${pending.length} pending, ${missing.length} missing check(s) on HEAD ${headSha.slice(0, 12)}.`
+                [
+                  'HANDOVER BLOCKED:',
+                  failing.length > 0 ? `${failing.length} failing` : null,
+                  pending.length > 0 ? `${pending.length} pending` : null,
+                  (missing.length > 0 || noChecksAtAll) ? `${noChecksAtAll ? 'all' : missing.length} missing` : null,
+                  `check(s) on HEAD ${headSha.slice(0, 12)}.`,
+                ].filter(Boolean).join(' ')
               );
             }
