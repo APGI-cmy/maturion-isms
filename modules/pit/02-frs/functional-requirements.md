@@ -870,7 +870,7 @@ The system shall maintain a tamper-evident audit log in the `audit_log` table ca
 
 ### PIT-FR-088 — Audit Log CSV Export
 
-The system shall allow users with `auditor` or `org_admin` role to export the filtered audit log as a CSV file.
+The system shall allow users with `auditor`, `org_admin`, or `cs2_admin` role to export the filtered audit log as a CSV file.
 
 **Acceptance**: Clicking "Export CSV" on a filtered audit log downloads a `.csv` file containing the filtered entries.
 **Derived from**: §UX-J-21; §UX-S-16
@@ -908,6 +908,34 @@ The system shall allow admins to configure watchdog sensitivity thresholds (e.g.
 
 **Acceptance**: Setting "days before overdue flag" to 2 flags tasks 2 days after their due date.
 **Derived from**: §UX-S-18; §UX-J-19
+
+### PIT-FR-106 — Role Management Screen
+
+The system shall provide a Role Management screen at `/admin/roles` accessible to `pit_admin` or `org_admin` (and `cs2_admin`) that lists all roles defined for the organisation and allows assigning or revoking roles from users.
+
+**Acceptance**: Navigating to `/admin/roles` as an `org_admin` shows the full role list; assigning a new role to a user updates their effective permissions on their next authenticated action.
+**Derived from**: §UX-S-18; §AD-08
+
+### PIT-FR-107 — Notification Templates Screen
+
+The system shall provide a Notification Templates screen at `/admin/notifications` accessible to `pit_admin` or `org_admin` (and `cs2_admin`) that allows configuration of which system events trigger email or in-app notifications, and allows editing the message template for each event type.
+
+**Acceptance**: Disabling a notification template for "task overdue" stops the system from sending that notification for subsequent overdue events.
+**Derived from**: §UX-S-18; §AD-08
+
+### PIT-FR-108 — Task Cluster Templates Screen
+
+The system shall provide a Task Cluster Templates screen at `/admin/task-clusters` accessible to `pit_admin` or `org_admin` (and `cs2_admin`) that allows creation, editing, and deletion of reusable task cluster templates for use during project setup.
+
+**Acceptance**: Creating a task cluster template with three tasks makes those tasks available for selection when adding a cluster to a new project.
+**Derived from**: §UX-S-18; §AD-08
+
+### PIT-FR-109 — Invitation Settings Screen
+
+The system shall provide an Invitation Settings section within Admin/Settings that allows `pit_admin` or `org_admin` to configure: default invitation expiry period, whether open signup is enabled for the organisation, and the invitation email template.
+
+**Acceptance**: Setting invitation expiry to 48 hours causes invitation links older than 48 hours to be rejected at the acceptance step.
+**Derived from**: §UX-S-18; §AD-08; §UX-J-09
 
 ---
 
@@ -989,11 +1017,11 @@ The initial integration mechanism shall be: a user selects the source module and
 
 ### PIT-FR-101 — Cross-Organisation Data Scoping
 
-The system shall enforce Supabase RLS to scope all project, milestone, deliverable, task, and evidence data to the current user's organisation membership. An `org_super_admin` role shall have cross-organisation visibility for audit and reporting purposes only.
+The system shall scope all project, milestone, deliverable, task, and evidence data to the current user's organisation membership. The `cs2_admin` role shall have cross-organisation visibility for audit and reporting purposes only.
 
-RLS policies for cross-org scenarios shall be defined in TRS per IAA Acceptance Condition 6 (OVL-PBG-014).
+Data access policies for cross-org scenarios (including any database-level row-security rules) shall be defined in TRS per IAA Acceptance Condition 6 (OVL-PBG-014).
 
-**Acceptance**: A user who is a member of Org A cannot see Org B's projects, even when querying the same table. An `org_super_admin` can see data from all organisations in their report.
+**Acceptance**: A user who is a member of Org A cannot see Org B's projects, even when querying the same table. A `cs2_admin` can see data from all organisations in their report.
 **Derived from**: §UX-SEC-10 Open Item 3 (resolved here); §AD-08
 
 ### PIT-FR-102 — Integration Settings Management
@@ -1080,7 +1108,7 @@ Stage 6 QA-to-Red shall derive test cases directly from these acceptance criteri
 | §AD-13 (Reports) | §UX-J-20, §UX-S-15 | PIT-FR-080 through PIT-FR-084 | TRS §reports; QA-to-Red reports suite |
 | §AD-07 (Filters) | §UX-S-06, §UX-S-16 | PIT-FR-085, PIT-FR-086 | QA-to-Red filter suite |
 | §AD-14 (Audit) | §UX-J-21, §UX-S-16 | PIT-FR-087 through PIT-FR-089 | TRS §audit; QA-to-Red audit suite |
-| §AD-08 (Admin) | §UX-J-22, §UX-S-18 | PIT-FR-090 through PIT-FR-092 | QA-to-Red admin suite |
+| §AD-08 (Admin) | §UX-J-22, §UX-S-18 | PIT-FR-090 through PIT-FR-092, PIT-FR-106 through PIT-FR-109 | QA-to-Red admin suite |
 | §AD-20 (QA Dashboard) | §UX-S-17 | PIT-FR-093, PIT-FR-094 | QA-to-Red QA dashboard suite |
 | §AD-14 (AIMC) | §UX-SEC-8 | PIT-FR-095 through PIT-FR-099 | TRS §aimc; QA-to-Red AIMC suite |
 | §AD-15 (Integrations) | §UX-SEC-10 OI-8; §UX-J-11 | PIT-FR-100 through PIT-FR-102 | Architecture §integrations; QA-to-Red integration suite |
@@ -1088,8 +1116,8 @@ Stage 6 QA-to-Red shall derive test cases directly from these acceptance criteri
 | §AD-01–§AD-05 (Identity) | — | PIT-FR-001, PIT-FR-002 | Architecture §roles |
 
 **FRS Coverage Totals**:
-- Functional Requirements: PIT-FR-001 through PIT-FR-105 (105 requirements)
-- Acceptance Criteria: 1 per requirement (105 inline acceptance criteria)
+- Functional Requirements: PIT-FR-001 through PIT-FR-105, PIT-FR-106 through PIT-FR-109 (109 requirements)
+- Acceptance Criteria: 1 per requirement (109 inline acceptance criteria)
 - Non-Functional Placeholders: NF-001 through NF-010 (10 deferred to TRS/Architecture)
 - App Description Sections Traced: §AD-01 through §AD-24 — COMPLETE
 - UX Journeys Traced: §UX-J-01 through §UX-J-22 — COMPLETE
@@ -1105,7 +1133,7 @@ The following assumptions are made in this FRS. Items marked [CS2] require CS2 d
 |----|---------------------------|-----------------|
 | A-001 | Default signup mode is **open** (invite-only is opt-in per org). Resolved in PIT-FR-007. | [RESOLVED] |
 | A-002 | Task dependency UI (blocked task indicator) is a first-class feature. Resolved in PIT-FR-056, PIT-FR-057. | [RESOLVED] |
-| A-003 | Cross-org data scoping: `org_super_admin` role for cross-org audit/reporting. Resolved in PIT-FR-101. | [RESOLVED] |
+| A-003 | Cross-org data scoping: `cs2_admin` role (already in role hierarchy, PIT-FR-001) handles cross-org audit/reporting. Resolved in PIT-FR-101. | [RESOLVED] |
 | A-004 | AIMC endpoint paths (`/api/aimc/pit/...`) are subject to confirmation with AIMC module owner. Final paths must be confirmed before Stage 6 QA-to-Red. | [CS2] Before Stage 6 |
 | A-005 | Email provider selection is deferred to TRS (NF-004). | [ARCH/TRS] |
 | A-006 | Task Cluster Template schema versioning and override model defined in PIT-FR-047. Full schema detail is TRS. | [TRS] |

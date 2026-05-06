@@ -93,7 +93,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 **Key Artifacts**:
 - [x] `functional-requirements.md` — Stage 3 FRS v0.1-draft, derived from App Description v1.0 + UX Workflow & Wiring Spec v0.1-draft
 - [x] Derivation statements from both upstream artifacts included
-- [x] Numbered functional requirements (PIT-FR-001 through PIT-FR-105) — testable, phrased as "The system shall..."
+- [x] Numbered functional requirements (PIT-FR-001 through PIT-FR-109) — testable, phrased as "The system shall..."
 - [x] Auth/onboarding, all primary screens, 5 UI states, project hierarchy, timeline, evidence, assignment, watchdog, reporting, audit, QA dashboard, AIMC, cross-module integrations covered
 - [x] Acceptance criteria for every requirement or requirement group
 - [x] Traceability matrix (App Description → Stage 2 → FRS requirement ID → future stage placeholder)
@@ -291,7 +291,7 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 
 **Stage 2 Foreman-Reviewed (2026-05-06)**: All 13 Stage 2 completion criteria verified per maturion-isms#1549. UX Workflow & Wiring Spec v0.1-draft satisfies all requirements: derivation statement, L-001–L-008 carry-forward, 22 user journeys including all auth flows, 19 primary screens, 5-state UI matrix, 7 top indicators, app shell, timeline wiring, screen-to-data wiring table, AIMC touchpoints, deployment surface map. Status: STAGE_2_COMPLETE_FOREMAN_REVIEWED pending CS2 approval.
 
-**Stage 3 FRS Draft Created (2026-05-06)**: Stage 3 FRS v0.1-draft created per maturion-isms#1549. Derived from App Description v1.0 and UX Workflow & Wiring Spec v0.1-draft. 105 functional requirements (PIT-FR-001 through PIT-FR-105) with acceptance criteria and traceability matrix. Status: DRAFT_CREATED pending CS2 approval. Stage 4 TRS remains blocked until Stage 3 FRS is approved.
+**Stage 3 FRS Draft Created (2026-05-06)**: Stage 3 FRS v0.1-draft created per maturion-isms#1549. Derived from App Description v1.0 and UX Workflow & Wiring Spec v0.1-draft. 109 functional requirements (PIT-FR-001 through PIT-FR-105, PIT-FR-106 through PIT-FR-109) with acceptance criteria and traceability matrix. PIT-FR-106–109 add admin sub-screen coverage (Role Management, Notification Templates, Task Cluster Templates, Invitation Settings). PIT-FR-088 updated to include `cs2_admin` in audit export permission. PIT-FR-101 updated to use `cs2_admin` for cross-org visibility (aligned with role hierarchy). Status: DRAFT_CREATED pending CS2 approval. Stage 4 TRS remains blocked until Stage 3 FRS is approved.
 
 **Stage 1 App Description Filed (2026-05-06)**: App Description v1.0-draft created per
 maturion-isms#1534 delegation from Foreman to pit-specialist. Module name corrected from
