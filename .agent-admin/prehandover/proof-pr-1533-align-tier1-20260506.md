@@ -57,7 +57,7 @@ iaa_wave_record_path:   .agent-admin/assurance/iaa-wave-record-align-tier1-contr
 iaa_rejection_reference: none
 
 ## Scope
-files_changed:          11
+files_changed:          12
 scope_declaration:      .agent-admin/scope-declarations/pr-1533.md
 scope_refreshed_post_final_edit: YES
 art_refresh_required:   NO
@@ -168,11 +168,12 @@ Per `git diff --name-only origin/main...HEAD` (confirmed at bundle assembly):
 | 6 | `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` | Parking station |
 | 7 | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Wave tracking |
 | 8 | `.agent-workspace/independent-assurance-agent/memory/session-062-align-tier1-20260506.md` | IAA session memory |
-| 9 | `.github/agents/foreman-v2-agent.md` | Tier 1 agent contract (foreman) |
-| 10 | `.github/agents/independent-assurance-agent.md` | Tier 1 agent contract (IAA) |
-| 11 | `.github/agents/execution-ceremony-admin-agent.md` | Tier 1 agent contract (ECAP) |
+| 9 | `.agent-workspace/independent-assurance-agent/memory/session-063-20260506.md` | IAA session memory (rejection) |
+| 10 | `.github/agents/foreman-v2-agent.md` | Tier 1 agent contract (foreman) |
+| 11 | `.github/agents/independent-assurance-agent.md` | Tier 1 agent contract (IAA) |
+| 12 | `.github/agents/execution-ceremony-admin-agent.md` | Tier 1 agent contract (ECAP) |
 
-**Declared count**: 11 ✓ | **Actual diff count**: 11 ✓ | **Parity**: PASS
+**Declared count**: 12 ✓ | **Actual diff count**: 12 ✓ | **Parity**: PASS
 
 ---
 
@@ -281,7 +282,7 @@ Issue #1532 opened by CS2 (APGI-cmy) and assigned to Copilot — constitutes CS2
 - [x] Zero compiler/linter warnings (N/A)
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
 - [x] IAA audit token recorded: IAA-session-062-align-tier1-20260506-PASS
-- [x] FILES_CHANGED count verified: 11 declared = 11 actual
+- [x] FILES_CHANGED count verified: 12 declared = 12 actual
 - [x] No PUBLIC_API ripple obligations (all changed files absent from CANON_INVENTORY)
 - [x] No standalone token file (NO-STANDALONE-TOKEN-001 compliant)
 - [x] SCOPE_FROZEN: YES confirmed in scope declaration

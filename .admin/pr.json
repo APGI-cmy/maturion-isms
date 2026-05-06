@@ -12,9 +12,10 @@
     ".agent-workspace/foreman-v2/parking-station/suggestions-log.md",
     ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
     ".agent-workspace/independent-assurance-agent/memory/session-062-align-tier1-20260506.md",
+    ".agent-workspace/independent-assurance-agent/memory/session-063-20260506.md",
+    ".github/agents/execution-ceremony-admin-agent.md",
     ".github/agents/foreman-v2-agent.md",
-    ".github/agents/independent-assurance-agent.md",
-    ".github/agents/execution-ceremony-admin-agent.md"
+    ".github/agents/independent-assurance-agent.md"
   ],
   "risk": "high",
   "requires_iaa": true,
