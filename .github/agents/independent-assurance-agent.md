@@ -316,7 +316,7 @@ If `Ceremony-admin: YES` (Step 2.1), apply all 16 ACR auto-reject checks. Any fa
 - **ACR-10**: Stale pending gate wording — any final-state proof artifact contains `verify gates pass`, `gates pending`, `PENDING`, `gate status unconfirmed`, or `in-progress` gate language while `merge_gate_parity: PASS` is declared — **AUTO-REJECT**
 - **ACR-11**: Gate state claimed GREEN without CI evidence — `merge_gate_parity: PASS` declared but per-gate states are not listed as GREEN (CI-confirmed) in any proof artifact; or gate states are assumed/inferred rather than confirmed — **AUTO-REJECT**
 - **ACR-12**: Cross-artifact final-state contradiction (active-bundle scoped) — within the active bundle, one artifact declares COMPLETE/PASS while another declares PENDING/in-progress for the same dimension — **AUTO-REJECT**
-- **ACR-13**: IAA token/session field is a placeholder (`[pending]`, `TBD`, `none`, `<token>`) while `final_state: COMPLETE` is declared in PREHANDOVER proof — **AUTO-REJECT**
+- **ACR-13**: IAA token/session field remains unfilled (`[pending]`, `[not-yet-populated]`, `none`, `<token>`) while `final_state: COMPLETE` is declared in PREHANDOVER proof — **AUTO-REJECT**
 - **ACR-14**: Carried-forward claim has no resolvable canonical source — source absent, does not contain the claim, or claim was modified to change gate authority — **AUTO-REJECT**
 - **ACR-15**: Wave task-tracker has open `[ ]` tasks while PREHANDOVER or session memory declares them complete; or wave record status contradicts declared final state — **AUTO-REJECT**
 - **ACR-16**: IAA token reference in PREHANDOVER `iaa_audit_token` does not correspond to actual token on branch; or `active_bundle_iaa_coherence` absent/non-VERIFIED while `final_state: COMPLETE` — **AUTO-REJECT**

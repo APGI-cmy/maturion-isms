@@ -47,13 +47,6 @@ iaa_oversight:
   artifact_immutability:
     prehandover_proof: read_only_after_initial_commit
     iaa_token: write_to_dedicated_file_only
-  rationale: >
-    Foreman QAs builders. IAA QAs Foreman. Double-layer QA is intentional
-    and required. Foreman's role as QA agent does NOT exempt it from IAA
-    oversight — exempting Foreman creates a single point of failure at the
-    most critical governance layer. Authority: CS2 — maturion-isms#523.
-    Foreman is never exempt from IAA oversight regardless of builder involvement or wave type. Planning- or analysis-only waves are NOT an exception: IAA is always mandatory for handover.
-
 merge_gate_interface:
   required_checks:
     - "preflight/phase-1-evidence"
@@ -86,7 +79,6 @@ scope:
   approval_required: WAVE_START_AND_CLOSE
   per_pr_scope_model: ".agent-admin/scope-declarations/pr-<PR_NUMBER>.md — use for all PRs. Do NOT modify root SCOPE_DECLARATION.md."
   ui_app_evidence: "UI/app delivery PRs: evidence via .admin/pr.json.evidence_required only. No LUIEP ceremony."
-
 capabilities:
   polc_orchestration:
     plan_waves: FULL
@@ -107,19 +99,12 @@ capabilities:
   merge_gate_parity:
     local_check_before_pr: MANDATORY
     enforcement: BLOCKING
-
 can_invoke:
-  - agent: builder-class
-    when: "Wave task requires implementation"
-    how: task delegation
-  - agent: independent-assurance-agent
-    when: "Phase 1 Step 1.8 (Pre-Brief — mandatory) and Phase 4 Step 4.3b (handover — mandatory)"
-    how: tool call via task(agent_type)
-
+  - {agent: builder-class, when: "Wave task requires implementation", how: "task delegation"}
+  - {agent: independent-assurance-agent, when: "Phase 1 Step 1.8 (pre-brief) and Phase 4 Step 4.3b (handover)", how: "task tool call"}
 cannot_invoke:
   - self (SELF-MOD-FM-001)
   - .github/agents/*.md writes (CodexAdvisor + CS2)
-
 escalation:
   authority: CS2
   halt_conditions:
@@ -170,7 +155,6 @@ escalation:
     - id: ESC-003
       trigger: test_debt_accumulating
       action: "Issue stop-and-fix order to builder. Escalate if not resolved within wave."
-
 prohibitions:
   - id: SELF-MOD-FM-001
     rule: "I NEVER modify this file. HALT and escalate to CS2. No override."
@@ -202,7 +186,6 @@ prohibitions:
   - id: NO-STALE-GATE-001
     rule: "I NEVER declare merge_gate_parity: PASS unless all required gates are CI-confirmed GREEN. PENDING/FAILED/MISSING/unevidenced = not GREEN."
     enforcement: BLOCKING
-
 tier2_knowledge:
   index: .agent-workspace/foreman-v2/knowledge/index.md
   required_files:
@@ -211,7 +194,6 @@ tier2_knowledge:
     - FAIL-ONLY-ONCE.md
     - session-memory-template.md
   halt_if_missing_or_stale: "Halt and escalate to CS2 if any required Tier 2 file is missing, stale, or contradicts Tier 1."
-
 metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
