@@ -235,5 +235,51 @@ Add mandatory ECAP re-assembly gate: Any commit that changes the `scope` array i
 
 ---
 
-*Wave record created by IAA at Phase 0 (PRE-BRIEF). REJECTION-001 appended 2026-05-06 (session-062). REJECTION-002 appended 2026-05-06 (session-063).*
+### REJECTION-003 — 2026-05-06 | Session: IAA-session-064-align-tier1-20260506
+
+**Date**: 2026-05-06
+**PR**: #1533 — [WIP] Align Tier 1 agent contracts with Tier 2 lifecycle and validation gates
+**Session**: IAA-session-064-align-tier1-20260506
+**Verdict**: REJECTION-PACKAGE — 4 checks FAILED (2 ACR AUTO-REJECT + CORE-021 + CORE-027)
+**IAA Contract Version**: 2.10.0
+**Reviewed SHA**: ea297653fdaebd36dd13b7ad82176cae69f586b2
+**CI Run**: 25423939074 — conclusion: success (CI GREEN — ceremony failures are not detected by CI)
+
+**Context**: session-062 ROOT CAUSE (unpushed commits) and session-063 ROOT CAUSE (ECAP staleness, wave tracker not updated, scope count inconsistencies) ARE resolved. CI is GREEN. The three agent contract changes (AC1–AC6) remain correct. These are new, distinct ceremony paperwork failures — stale session reference and stale count annotation in PREHANDOVER — that were not corrected in the fix commits (`8b252b58`, `ea297653`) that addressed prior rejections.
+
+**FAILURES**:
+
+| ID | Finding | Fix Required | Class |
+|----|---------|-------------|-------|
+| ACR-07 AUTO-REJECT | PREHANDOVER YAML `scope_declaration_parity` annotation states `FILES_CHANGED: 7`. Actual scope declaration at `.agent-admin/scope-declarations/pr-1533.md` states `FILES_CHANGED: 12`. Additionally, PREHANDOVER QP Verdict section states "Scope declaration frozen (SCOPE_FROZEN: YES, FILES_CHANGED: 7): ✅" — also stale (should be 12). PREHANDOVER was modified in commits `8b252b58` and `ea297653` to fix other fields, but both instances of the stale count `7` in the PREHANDOVER body were not updated. | Fix both stale instances: (1) YAML `scope_declaration_parity` annotation → FILES_CHANGED: 12; (2) QP Verdict section → FILES_CHANGED: 12. | Ceremony / Systemic |
+| ACR-16 AUTO-REJECT | PREHANDOVER `iaa_audit_token: IAA-session-062-align-tier1-20260506-PASS` and `iaa_session_reference: session-062-align-tier1-20260506`. Current IAA session is session-064. If IAA issues the PASS token as `IAA-session-064-align-tier1-20260506-PASS`, the PREHANDOVER references will NOT correspond to the actual token on branch (session-062 ≠ session-064). ECAP bundle is similarly affected (`iaa_audit_token: IAA-session-062-...-PASS`; R17 row: "session-062..."). PREHANDOVER `iaa_reinvocation_round: 0` is also stale (actual reinvocation count: 2). PREHANDOVER `iaa_rejection_reference: none` is also stale (two rejections exist). All these fields were not updated when the PREHANDOVER was modified in fix commits. | (1) Update PREHANDOVER `iaa_audit_token` → `IAA-session-065-align-tier1-20260506-PASS`; (2) Update PREHANDOVER `iaa_session_reference` → `session-065-align-tier1-20260506`; (3) Update PREHANDOVER `iaa_reinvocation_round: 0` → `2`; (4) Update PREHANDOVER `iaa_rejection_reference: none` → `REJECTION-001, REJECTION-002, REJECTION-003 (session-062, 063, 064) — see wave record`; (5) Update ECAP bundle `iaa_audit_token` and R17 row to reference session-065; push changes; re-invoke IAA as session-065. | Ceremony / Systemic |
+| CORE-021 | Zero-severity-tolerance applies to both ACR-07 and ACR-16 findings. No CS2 waiver quoted for either. | Resolve both ACR failures and re-invoke IAA. | Ceremony |
+| CORE-027 | Independent Risk Challenge Q3 = NO (stale fields are verified incorrect in committed artifacts) and Q5 = NO (reasonable production owner would not accept ceremony records with stale session references and stale file count annotations). | Resolve ACR-07 and ACR-16 failures — this check will pass automatically once ceremony artifacts are accurate. | Ceremony |
+
+**Substantive checks: ALL PASS** — AC1–AC6 agent contract changes (foreman v2.15.0, IAA v2.10.0, ECAP v1.6.0) are correct and complete. CI GREEN on all gates (run 25423939074, SHA ea297653). These are pure ceremony paperwork failures.
+
+**Required Fixes (in order)**:
+1. In PREHANDOVER proof (`.agent-admin/prehandover/proof-pr-1533-align-tier1-20260506.md`):
+   - YAML block: `scope_declaration_parity` annotation → change `FILES_CHANGED: 7` to `FILES_CHANGED: 12`
+   - QP Verdict section: "Scope declaration frozen (SCOPE_FROZEN: YES, FILES_CHANGED: 7)" → change `7` to `12`
+   - YAML block: `iaa_audit_token` → change to `IAA-session-065-align-tier1-20260506-PASS`
+   - YAML block: `iaa_session_reference` → change to `session-065-align-tier1-20260506`
+   - YAML block: `iaa_reinvocation_round: 0` → change to `2`
+   - YAML block: `iaa_rejection_reference: none` → change to `REJECTION-001, REJECTION-002, REJECTION-003 — see wave record`
+2. In ECAP bundle (`.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1533-align-tier1-20260506.md`):
+   - YAML block: `iaa_audit_token` → change to `IAA-session-065-align-tier1-20260506-PASS`
+   - Admin Checklist item #3: update token reference to `IAA-session-065-align-tier1-20260506-PASS`
+   - R02 row: update to reference `IAA-session-065-align-tier1-20260506-PASS`
+   - R17 row: update to reference `session-065-align-tier1-20260506`; note `iaa_reinvocation_round: 2`
+3. Commit all changes and push to branch `copilot/align-tier-1-agent-contracts-again`
+4. Re-invoke IAA as **session-065** for final assurance
+
+**NOTE**: All other ceremony artifacts (scope declaration: 12 ✅, wave-current-tasks: COMPLETE ✅, ECAP reconciliation R01–R18: ✅, CI gates: GREEN ✅) are correct and do not require changes. Only the specific stale-session-reference and stale-count-annotation fields listed above need correction.
+
+**Systemic Prevention Action** (NO-REPEAT-PREVENTABLE-001):
+When modifying a PREHANDOVER to resolve ACR findings, ALL fields in the document that reference the changed value (or the changed scope) must be updated in the same commit — not only the primary field. A PREHANDOVER field-complete checklist should be added to the ceremony process: before re-invoking IAA, cross-check ALL fields in the PREHANDOVER YAML block against actual current values (session number, file count, rejection reference, reinvocation round).
+
+---
+
+*Wave record created by IAA at Phase 0 (PRE-BRIEF). REJECTION-001 appended 2026-05-06 (session-062). REJECTION-002 appended 2026-05-06 (session-063). REJECTION-003 appended 2026-05-06 (session-064).*
 *Authority: CS2 (Johan Ras / @APGI-cmy) | IAA Contract v2.10.0*
