@@ -2,7 +2,7 @@
 
 **Wave**: pit-stage1-app-description-hardening  
 **Issue**: maturion-isms#1537 — Harden PIT Stage 1 App Description using MMM delivery lessons  
-**Branch**: copilot/fix-issue-1537  
+**Branch**: copilot/update-app-description-with-mmm-lessons  
 **Date**: 2026-05-06  
 **Agent**: foreman-v2-agent  
 **IAA Pre-Brief**: `.agent-admin/assurance/iaa-wave-record-pit-stage1-app-description-hardening-20260506.md`  
