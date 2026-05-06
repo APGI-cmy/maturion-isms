@@ -225,7 +225,7 @@ ecap_reconciliation_summary: EMBEDDED (see §4.3e Compliance Gate section below)
 | Layer-down required? | NO |
 | Inventory/registry update required? | NO |
 | Status | NOT-APPLICABLE |
-| Notes | None of the 7 changed files appear in CANON_INVENTORY. Changed files are .github/agents/*.md (Tier 1 contracts), .agent-admin/ files, .admin/pr.json, and .agent-workspace/ files — none classified as PUBLIC_API. T-WAT-002 (canon updates) explicitly deferred to follow-on PR. |
+| Notes | None of the changed files appear in CANON_INVENTORY. Changed files are .github/agents/*.md (Tier 1 contracts), .agent-admin/ files, .admin/pr.json, and .agent-workspace/ files — none classified as PUBLIC_API. T-WAT-002 (canon updates) explicitly deferred to follow-on PR. |
 
 ### C5. Foreman Administrative Readiness Block (to be completed by Foreman at QP §14.6)
 
