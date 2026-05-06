@@ -1,14 +1,52 @@
-# Wave Current Tasks — pit-stage1-cs2-approval-stage2-initiation
+# Wave Current Tasks — pit-stage2-verification-stage3-frs
 
-**Wave**: pit-stage1-cs2-approval-stage2-initiation
-**Issue**: maturion-isms#1540 — Foreman: Approve PIT Stage 1 App Description, align tracker, and initiate Stage 2
-**Branch**: copilot/approve-pit-stage-1-app-description
-**PR**: maturion-isms#1541
+**Wave**: pit-stage2-verification-stage3-frs
+**Issue**: maturion-isms#1549 — Foreman: Finalise PIT Stage 2 tracker state and implement Stage 3 FRS
+**Branch**: copilot/finalise-pit-stage-2-tracker
+**PR**: maturion-isms#1549
 **Date**: 2026-05-06
 **Agent**: foreman-v2-agent
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-stage1-cs2-approval-stage2-initiation-20260506.md
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-stage2-verification-stage3-frs-20260506.md
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-pit-stage2-verification-stage3-frs-20260506.md
 **Category**: PRE_BUILD_STAGE_MODEL
-**Final State**: COMPLETE
+**Final State**: IN_PROGRESS
+
+---
+
+## Task Breakdown
+
+Verify Stage 2 UX Workflow & Wiring Spec completeness against 13 criteria from maturion-isms#1549. Update BUILD_PROGRESS_TRACKER.md to reflect Stage 2 status accurately. If Stage 2 is complete enough, create Stage 3 FRS at `modules/pit/02-frs/functional-requirements.md`.
+
+## Active Tasks
+
+| # | Task | Status | Artifact Path |
+|---|------|--------|---------------|
+| T-1 | Verify Stage 2 UX Workflow & Wiring Spec completeness (13 criteria) | 🟢 DONE | `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` |
+| T-2 | Update BUILD_PROGRESS_TRACKER.md (Stage 2 → STAGE_2_COMPLETE_FOREMAN_REVIEWED, Stage 3 → DRAFT_CREATED) | 🟢 DONE | `modules/pit/BUILD_PROGRESS_TRACKER.md` |
+| T-3 | Create Stage 3 FRS | 🟢 DONE | `modules/pit/02-frs/functional-requirements.md` |
+| T-4 | Governance ceremony artifacts | 🟢 DONE | `.admin/prs/pr-1549.json`, `.agent-admin/scope-declarations/pr-1549.md` |
+| T-5 | PREHANDOVER proof | 🟢 DONE | `.agent-workspace/foreman-v2/memory/PREHANDOVER-pit-stage2-verification-stage3-frs-20260506.md` |
+| T-6 | Session memory | 🟢 DONE | `.agent-workspace/foreman-v2/memory/session-pit-stage2-verification-stage3-frs-20260506.md` |
+
+---
+
+## Pre-Build Stage Gates (Stage 2 → Stage 3 transition)
+
+| Gate | Status |
+|------|--------|
+| Stage 2 UX Workflow & Wiring Spec: all 13 criteria verified | ✅ COMPLETE |
+| Stage 2 tracker status updated to STAGE_2_COMPLETE_FOREMAN_REVIEWED | ✅ COMPLETE |
+| Stage 3 FRS created with derivation from Stage 1 + Stage 2 | ✅ COMPLETE |
+| BUILD_PROGRESS_TRACKER aligned | ✅ COMPLETE |
+
+---
+
+## Pre-Build Gate Status
+
+**Phase 1**: COMPLETE
+**Phase 2**: COMPLETE
+**Phase 3**: IN_PROGRESS
+**Phase 4**: PENDING IAA
 
 ---
 

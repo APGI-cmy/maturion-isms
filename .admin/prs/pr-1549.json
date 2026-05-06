@@ -1,0 +1,32 @@
+{
+  "pr": 1549,
+  "issue": 1549,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1549.json",
+    ".agent-admin/assurance/iaa-wave-record-pit-stage2-verification-stage3-frs-20260506.md",
+    ".agent-admin/evidence/stage2-completion-checklist/pit-stage2-20260506.md",
+    ".agent-admin/scope-declarations/pr-1549.md",
+    ".agent-workspace/foreman-v2/memory/PREHANDOVER-pit-stage2-verification-stage3-frs-20260506.md",
+    ".agent-workspace/foreman-v2/memory/session-pit-stage2-verification-stage3-frs-20260506.md",
+    ".agent-workspace/foreman-v2/parking-station/suggestions-log.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    "modules/pit/02-frs/functional-requirements.md",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": [
+    "modules/pit/BUILD_PROGRESS_TRACKER.md Stage 2 status is STAGE_2_COMPLETE_FOREMAN_REVIEWED",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md Stage 3 status is DRAFT_CREATED",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md Build Authorization is NOT CLEARED",
+    "modules/pit/02-frs/functional-requirements.md exists with derivation statements from App Description v1.0 and UX Workflow & Wiring Spec",
+    "modules/pit/02-frs/functional-requirements.md contains numbered functional requirements (PIT-FR-001 through PIT-FR-105)",
+    ".agent-admin/evidence/stage2-completion-checklist/pit-stage2-20260506.md result is PASS (all 13 criteria satisfied)",
+    "IAA ASSURANCE-TOKEN received and committed to wave record",
+    "Scope declaration matches actual diff"
+  ],
+  "merge_authority": "CS2"
+}
