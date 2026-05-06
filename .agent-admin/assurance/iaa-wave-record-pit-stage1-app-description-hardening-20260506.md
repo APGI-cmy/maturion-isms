@@ -274,7 +274,60 @@ Anti-regression obligations: NO
 
 ## TOKEN
 
-*[IAA ASSURANCE-TOKEN — to be appended after final handover assurance]*
+```
+═══════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: maturion-isms#1535 — PIT Stage 1 App Description Hardening
+Wave: pit-stage1-app-description-hardening
+Reviewed SHA: b5f7073185b7c5c4c54a50bdb8b8a8565e4e3d44 (confirmed HEAD)
+Branch: copilot/update-app-description-with-mmm-lessons
+Issue: maturion-isms#1537
+Date: 2026-05-06
+
+Checks run: 14 total — 14 PASS, 0 FAIL
+
+PREFLIGHT (4/4): PASS
+  P-1: YAML + identity extractable ✅
+  P-2: Tier 2 files present ✅
+  P-3: CANON_INVENTORY hashes valid ✅
+  P-4: FAIL-ONLY-ONCE loaded ✅
+
+FAIL-ONLY-ONCE:
+  A-001: IAA invocation evidence present (iaa_audit_token in PREHANDOVER ART) ✅
+  A-002: N/A — PRE_BUILD_STAGE_MODEL category, not AGENT_CONTRACT ✅
+
+CORE INVARIANTS:
+  CORE-020: All checks verifiable — no blank/absent evidence ✅
+  CORE-021: Zero-severity tolerance — no prohibited soft-pass language ✅
+
+CATEGORY OVERLAY: PRE_BUILD_STAGE_MODEL (OVL-PBG)
+  OVL-PBG-001: app-description.md exists at canonical path ✅
+  OVL-PBG-002: All 24 AD sections (AD-01–AD-24) present — verified line-by-line ✅
+  OVL-PBG-003: Status = Draft / DRAFT_PENDING_CS2_APPROVAL — not AUTHORITATIVE ✅
+  OVL-PBG-004: Stages 2–12 = NOT_STARTED; Stage 1 = DRAFT only ✅
+  OVL-PBG-005: module.manifest.json identity = "PIT (Project Implementation Tracker)" ✅
+  OVL-PBG-006: "Penetration Intelligence Tool" superseded with explicit correction statement ✅
+  OVL-PBG-007: Governance mirror at docs/governance/PIT_APP_DESCRIPTION.md ✅
+  OVL-PBG-008: Checklist artifact at .agent-admin/evidence/app-description-checklist/pit-20260506.md ✅
+  OVL-PBG-009: PREHANDOVER at HEAD (b5f7073) — both foreman + ECAP copies confirmed ✅
+  OVL-PBG-014: No undeclared draft files in 00-app-description/ ✅
+
+CEREMONY-ADMIN: Appointed = NO → ACR-01–11 NOT applicable ✅
+
+MERGE GATE PARITY: PASS
+  SHA b5f7073 confirmed as HEAD on copilot/update-app-description-with-mmm-lessons ✅
+  PR #1535 → Issue #1537 linkage confirmed ✅
+  git status --porcelain: EMPTY ✅
+  Scope parity: 11 committed files — all declared ✅
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-pit-stage1-app-desc-hardening-20260506-PASS
+
+All 14 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval — Johan Ras / @APGI-cmy).
+Token reference: IAA-session-pit-stage1-app-desc-hardening-20260506-PASS
+Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
+═══════════════════════════════════════════════════════════
+```
 
 ---
 
