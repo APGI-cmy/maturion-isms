@@ -4,6 +4,10 @@
   "type": "governance-change",
   "owner": "Copilot",
   "scope": [
+    ".admin/pr.json",
+    ".agent-admin/prehandover/proof-pr-1531-mmm-ci-gate-bypass-20260505.md",
+    ".agent-admin/scope-declarations/pr-1531.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1531-mmm-ci-gate-bypass-20260505.md",
     ".github/scripts/ecap-admin-ceremony-gate.sh",
     ".github/scripts/iaa-final-assurance-gate.sh",
     ".github/scripts/iaa-final-assurance-gate.test.sh",
