@@ -1,0 +1,22 @@
+{
+  "pr": 1553,
+  "issue": 1552,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": [
+    "apps/mmm/**"
+  ],
+  "risk": "medium",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": [
+    "Frameworks page screenshot from deployed preview or live URL",
+    "Framework Source upload page screenshot from deployed preview or live URL",
+    "Direct /frameworks route loads the app shell and shows usable content",
+    "Direct /frameworks/upload route loads the app shell and shows usable content",
+    "Mode selector is styled and accessible",
+    "Start action leads to an explicit next state or clear not-yet-implemented state",
+    "No Vercel 404 on direct route refresh"
+  ],
+  "merge_authority": "CS2"
+}
