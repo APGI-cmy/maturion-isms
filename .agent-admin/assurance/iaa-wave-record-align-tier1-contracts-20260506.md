@@ -152,9 +152,46 @@ Soft blockers: SB-001 (ECAP admin not appointed), SB-002 (scope not frozen), SB-
 
 ## REJECTION_HISTORY
 
-*No rejections recorded at pre-brief stage.*
+### REJECTION-001 — 2026-05-06 | Session: IAA-session-062-align-tier1-20260506
+
+**Date**: 2026-05-06
+**PR**: #1533 — [WIP] Align Tier 1 agent contracts with Tier 2 lifecycle and validation gates
+**Session**: IAA-session-062-align-tier1-20260506
+**Verdict**: REJECTION-PACKAGE — 14 checks FAILED
+
+**ROOT CAUSE**: Local commits not pushed before CI verification and IAA invocation.
+At time of IAA assurance, the remote branch (`origin/copilot/align-tier-1-agent-contracts-again`) was at commit `f31a107f` (4 files vs main). Five local commits (including all substantive agent contract changes and all ceremony artifacts) had NOT been pushed to the remote branch. CI ran against the 4-file remote state and correctly failed two gates.
+
+**FAILURES**:
+
+| ID | Finding | Fix Required | Class |
+|----|---------|-------------|-------|
+| ACR-04 AUTO-REJECT | FILES_CHANGED: 7 in remote scope declaration vs 4 actual files in remote diff. CI confirmed COUNT-MISMATCH on run 25419355700. | Push all local commits to remote PR branch. | Systemic |
+| ACR-07 AUTO-REJECT | 3 agent contract paths cited in scope declaration NOT present in remote PR diff. CI confirmed PATH-MISMATCH for all 3: `.github/agents/execution-ceremony-admin-agent.md`, `.github/agents/foreman-v2-agent.md`, `.github/agents/independent-assurance-agent.md`. | Push all local commits to remote PR branch. | Systemic |
+| ACR-08 AUTO-REJECT | PREHANDOVER proof (`.agent-admin/prehandover/proof-pr-1533-align-tier1-20260506.md`) and ECAP bundle (`.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1533-align-tier1-20260506.md`) are LOCAL ONLY — not committed on the remote PR branch. CS2 cannot review them. | Push all local commits to remote PR branch. | Systemic |
+| ACR-11 AUTO-REJECT | `merge_gate_parity: PASS` declared in LOCAL PREHANDOVER proof. Actual CI shows FAIL for `preflight/evidence-exactness` and `preflight/iaa-prebrief-existence` (run 25419355700, commit f31a107f). No CI run has ever executed against the agent contract changes. | Push all local commits, re-trigger CI, confirm all gates GREEN, then re-invoke IAA. | Substantive |
+| CORE-026 | AC Evidence Matrix (AC1–AC6) verified locally in agent contract files. However these files do not exist in the remote PR — the AC matrix cannot be confirmed against the actual reviewable artifact per CORE-020 zero-partial-pass rule. | Push all local commits so agent contracts are visible in the PR. | Substantive |
+| CORE-027 | Independent Risk Challenge Q3 fails — substantive changes (agent contracts) are local-only, have never been CI-validated. Merge risk cannot be assessed against remote PR state. | Push all local commits, CI must validate agent contract changes. | Substantive |
+| ACR-02 | PR title contains `[WIP]` while assurance invocation requests PASS verdict — conflicting status wording. | Remove `[WIP]` from PR title before re-invoking IAA. | Ceremony |
+| OVL-AC-ADM-004/CERT-002 | `iaa_prebrief_path` / `iaa_wave_record_path` absent from `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`. CI confirmed HALT-008 on `preflight/iaa-prebrief-existence`. Field is absent even in the current local HEAD. | Add `iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-align-tier1-contracts-20260506.md` to wave-current-tasks.md and push. | Ceremony |
+| ACR-03 | Multi-artifact inconsistency: scope declares 10 files (local HEAD), remote PR has 4 files, CI ran on 4 — scope, CI evidence, and actual remote state are all inconsistent with each other. | Push all local commits. Verify scope declaration matches final remote diff count. | Ceremony |
+| ACR-01 | ECAP Reconciliation Summary present in local ECAP bundle but bundle is LOCAL ONLY. Per CORE-020, absent from remote PR = unverifiable. | Push ECAP bundle to remote PR branch. | Ceremony |
+| ACR-06 | PUBLIC_API ripple assessment present in LOCAL PREHANDOVER only. Not visible in remote PR. | Push PREHANDOVER proof to remote PR branch. | Ceremony |
+| ACR-09 | Gate set (13 gates) declared in LOCAL PREHANDOVER only. Not visible in remote PR. | Push PREHANDOVER proof to remote PR branch. | Ceremony |
+| CORE-020 | Multiple checks cannot be confirmed because substantive artifacts are absent from the remote PR. Absence of evidence = failing check — zero partial pass rule applies across all ceremony and substance checks. | Push all local commits to remote PR branch. | Ceremony |
+| CORE-021 | Multiple ACR AUTO-REJECT-class failures present. No CS2 waiver quoted. Zero severity tolerance. | Resolve all failures and re-invoke IAA. | Ceremony |
+
+**Required Fixes (in order)**:
+1. Push all 5 local commits to remote PR branch: `a24ade56`, `866755e6`, `743172ac`, `6909f310`, `bc48f15b`
+2. Add `iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-align-tier1-contracts-20260506.md` to `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` and push
+3. Remove `[WIP]` from PR title
+4. Verify CI passes on complete PR state after all commits are pushed — BOTH `preflight/evidence-exactness` AND `preflight/iaa-prebrief-existence` must be GREEN
+5. Re-invoke IAA for final assurance
+
+**Systemic Prevention Action** (NO-REPEAT-PREVENTABLE-001):
+Add pre-push verification step to ceremony protocol: Before ECAP invocation and before IAA invocation, verify that `git diff origin/HEAD...HEAD` is empty (no unpushed local commits). This prevents all ceremony artifacts from being produced against a local state that CI cannot validate.
 
 ---
 
-*Wave record created by IAA at Phase 0 (PRE-BRIEF). Phases 1–4 assurance pending builder delivery.*
+*Wave record created by IAA at Phase 0 (PRE-BRIEF). Phases 1–4 assurance completed 2026-05-06.*
 *Authority: CS2 (Johan Ras / @APGI-cmy) | IAA Contract v2.9.0*
