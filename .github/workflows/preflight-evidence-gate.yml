@@ -862,11 +862,12 @@ import json, sys
 try:
     m = json.load(open('.admin/pr.json'))
     ev = m.get('evidence_required', [])
-    # Evidence must mention the changed gate file(s) OR contain gate test keywords
-    test_keywords = ['test', 'run id', 'run-id', 'local command', 'validate-simple-pr-admin', 'tested', 'smoke test', 'dry run', 'dry-run']
+    # Evidence must mention the changed gate file(s) OR contain gate test keywords.
+    # Normalize hyphens to spaces in both items and keywords before matching.
+    test_keywords = ['test', 'run id', 'local command', 'validate simple pr admin', 'tested', 'smoke test', 'dry run']
     for item in ev:
-        item_lower = item.lower()
-        if any(kw in item_lower for kw in test_keywords):
+        item_normalized = item.lower().replace('-', ' ')
+        if any(kw in item_normalized for kw in test_keywords):
             print('FOUND')
             sys.exit(0)
     print('NONE')
@@ -883,12 +884,13 @@ except Exception:
             exit 0
           fi
 
-          # Check PR body for gate test evidence (run IDs, local command output)
-          PR_BODY_LOWER=$(echo "$PR_BODY" | tr '[:upper:]' '[:lower:]')
-          EVIDENCE_PATTERNS="run id run-id workflow run actions/runs validate-simple-pr-admin enforce-scope-declaration locally local command smoke test dry run dry-run tested against"
+          # Check PR body for gate test evidence (run IDs, local command output).
+          # Normalize hyphens to spaces before matching to handle both 'dry-run' and 'dry run'.
+          PR_BODY_NORMALIZED=$(echo "$PR_BODY" | tr '[:upper:]' '[:lower:]' | tr '-' ' ')
+          EVIDENCE_PATTERNS="run id workflow run actions/runs validate simple pr admin enforce scope declaration locally local command smoke test dry run tested against"
           BODY_EVIDENCE_FOUND=false
           for pattern in $EVIDENCE_PATTERNS; do
-            if echo "$PR_BODY_LOWER" | grep -qF "$pattern"; then
+            if echo "$PR_BODY_NORMALIZED" | grep -qF "$pattern"; then
               BODY_EVIDENCE_FOUND=true
               break
             fi

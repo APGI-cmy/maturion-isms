@@ -72,12 +72,6 @@ jobs:
       )
 
     steps:
-      - name: Checkout PR branch
-        uses: actions/checkout@v5
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.event.issue.pull_request && github.sha || github.sha }}
-          fetch-depth: 1
-
       - name: Determine PR number and HEAD SHA
         id: pr_info
         uses: actions/github-script@v7
@@ -259,6 +253,8 @@ jobs:
             });
 
             if (isBlocked) {
+              // Post the HANDOVER BLOCKED comment first so the reason is visible,
+              // then fail the workflow job to enforce the gate as a hard CI check.
               core.setFailed(
                 `HANDOVER BLOCKED: ${failing.length} failing check(s), ${pending.length} pending check(s) on HEAD ${headSha.slice(0, 12)}.`
               );
