@@ -24,11 +24,13 @@
 |---------|-------------|-----------------|---------------|
 | T-WAT-001 | Agent contract alignment: foreman-v2-agent.md, independent-assurance-agent.md, execution-ceremony-admin-agent.md | **AGENT_CONTRACT** | YES — MANDATORY |
 | T-WAT-002 | Governance canon updates: 5 × governance/canon/ files | **CANON_GOVERNANCE** | YES — MANDATORY (separate PR/invocation required) |
-| T-WAT-003 | Tests and fixtures proving AC1–AC6 constraints | **MIXED** (test files + agent/governance constraint refs) | YES — MANDATORY (AMBIGUITY RULE applies; included in scope) |
+| T-WAT-003 | Tests and fixtures proving AC1–AC6 constraints | **MIXED** (test files + agent/governance constraint refs) | YES — MANDATORY (deferred to follow-on PR for AC7; NOT in PR #1533 scope) |
 
-**Qualifying task count**: 3 tasks (T-WAT-001, T-WAT-002, T-WAT-003)
+**Qualifying task count**: 3 wave tasks identified (T-WAT-001, T-WAT-002, T-WAT-003); current PR #1533 scope includes T-WAT-001 only.
 
 **Scope note for T-WAT-002**: Governance canon updates are NOT in the current PR #1533 scope declaration. If T-WAT-002 lands in a separate PR, a separate IAA invocation is required for that PR. If T-WAT-002 is merged into PR #1533, the CANON_GOVERNANCE overlay also applies at assurance time.
+
+**Scope note for T-WAT-003**: Tests/fixtures work is deferred from PR #1533 to a follow-on PR for AC7. IAA must not expect in-scope test artifacts for PR #1533; a separate IAA invocation is required when the follow-on PR lands.
 
 ---
 
