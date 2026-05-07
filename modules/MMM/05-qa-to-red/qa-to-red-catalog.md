@@ -26,7 +26,8 @@
 | D9 | Cross-Cutting — Security & Compliance | T-MMM-S6-139–152 | 14 |
 | D10 | Cross-Cutting — Infrastructure & Quality Gates | T-MMM-S6-153–164 | 12 |
 | D11 | Product Identity & Governance | T-MMM-S6-165–176 | 12 |
-| **TOTAL** | | **T-MMM-S6-001–176** | **176** |
+| D12 | Full Functional Delivery Gate (CTA/API Verification) | T-MMM-S6-FD-001–006 | 6 |
+| **TOTAL** | | **T-MMM-S6-001–176 + FD-001–006** | **182** |
 
 **FR Coverage**: 80/80 (100%)
 **TR Coverage**: 66/66 (all security/integration/quality TRs fully covered; all others by domain)

@@ -9,8 +9,8 @@
 - **Module**: MMM — Maturity Model Management
 - **Artifact Type**: Technical Requirements Specification (TRS — Stage 4)
 - **Status**: DRAFT — For CS2 review and approval
-- **Version**: 0.1.0
-- **Date**: 2026-04-14
+- **Version**: 0.2.0
+- **Date**: 2026-05-07
 - **Owner**: CS2 (Johan Ras / @APGI-cmy)
 - **Produced By**: foreman-v2-agent (POLC-Orchestration mode)
 - **Issue**: maturion-isms#1372 (MMM Stage 4 wave-start authorization)

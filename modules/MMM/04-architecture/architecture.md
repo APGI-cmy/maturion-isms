@@ -133,6 +133,8 @@ before build is authorized.
 
 | Journey / Route Area | Backend Capability | Edge Function / Route | DB Tables |
 |---|---|---|---|
+| Free Assessment (unauthenticated) | `mmm-free-assessment` | `/api/free-assessment/start` | `free_assessments` |
+| Subscribe / Sign-up | `mmm-subscription-create` | `/api/subscriptions/create` | `subscriptions` |
 | Onboarding | `mmm-org-create` | `/api/organisations/create` | `organisations`, `organisation_members` |
 | Framework init | `mmm-framework-init` | `/api/frameworks/init` | `frameworks`, `domains`, `mps`, `criteria`, `level_descriptors` |
 | Mode A upload | `mmm-upload-framework-source` + parse/chunk | `/api/upload/framework-source`, `/api/frameworks/parse` | `document_uploads`, `framework_source_chunks` |
