@@ -1,18 +1,17 @@
 # MMM Simple PR Admin Model
 
-**Version**: 1.2.0  
+**Version**: 1.1.0  
 **Authority**: APGI-cmy/maturion-foreman-governance#1361 — Simplify MMM governance: replace legacy ceremony with single PR admin manifest  
 **Status**: ACTIVE  
 **Effective Date**: 2026-05-04  
-**Amended**: 2026-05-05 — v1.1.0: CI gate integration section added (maturion-isms#1531)  
-**Amended**: 2026-05-06 — v1.2.0: migrate to per-PR manifests to eliminate concurrent-PR conflicts (maturion-isms#1544)  
+**Amended**: 2026-05-06—v1.1.0: Added `execution_model` field to schema and Check 13 enforcement per POLC_EXECUTION_MODEL_CANON.md; authority: CS2 — Canon alignment: require explicit execution_model for implementation PRs.  
 **Reference Failure Case**: `maturion-isms` PR #1515 — closed unmerged after a fix/fail governance loop
 
 ---
 
 ## Purpose
 
-Replace repeated markdown ceremony and brittle PR-body parsing with a **single machine-readable per-PR admin manifest** (`**.admin/prs/pr-<N>.json**`) and one simple validator.
+Replace repeated markdown ceremony and brittle PR-body parsing with a **single machine-readable PR admin manifest** (`**.admin/pr.json**`) and one simple validator.
 
 The current MMM governance/admin model became too complex, self-referential, and fragile. Agents repeatedly failed simple admin jobs because the system had too many duplicated sources of truth. This model resets that.
 
@@ -54,15 +53,9 @@ The following sources duplicated the same facts across multiple files, creating 
 
 ---
 
-## Manifest: `.admin/prs/pr-<N>.json`
+## Manifest: `.admin/pr.json`
 
-Every governed PR in the MMM context MUST have exactly one admin manifest at `.admin/prs/pr-<N>.json`, where `<N>` is the PR number.
-
-**Why per-PR manifests?** Placing all manifests under a single root file (`.admin/pr.json`) caused concurrent PRs to conflict on that file — the same class of failure previously fixed for scope declarations. Per-PR manifests eliminate this: each PR owns its own file and concurrent PRs never conflict.
-
-**Legacy fallback**: During migration only, `.admin/pr.json` is accepted as a fallback when no per-PR manifest exists. New and refreshed PRs MUST use `.admin/prs/pr-<N>.json`. The legacy path will be retired after migration is complete.
-
-**Conflict rule**: A PR MUST NOT have both `.admin/prs/pr-<N>.json` and `.admin/pr.json` referencing the same PR number. The validator will reject this as a MANIFEST-CONFLICT.
+Every governed PR in the MMM context MUST have exactly one admin manifest at `.admin/pr.json`.
 
 ### Schema
 
@@ -77,9 +70,13 @@ Every governed PR in the MMM context MUST have exactly one admin manifest at `.a
   "requires_iaa": <boolean>,
   "requires_ecap": <boolean>,
   "evidence_required": ["<evidence-item>", ...],
-  "merge_authority": "CS2"
+  "merge_authority": "CS2",
+  "execution_model": "<execution-model>",
+  "implementing_agent": "<agent-id>"
 }
 ```
+
+> **Note**: `execution_model` (and its required companion fields) are **mandatory** whenever the PR changes implementation files. See §Execution Model below and `governance/canon/POLC_EXECUTION_MODEL_CANON.md` for the full specification.
 
 ### Field definitions
 
@@ -95,6 +92,10 @@ Every governed PR in the MMM context MUST have exactly one admin manifest at `.a
 | `requires_ecap` | boolean | yes | Whether ECAP bundle is required |
 | `evidence_required` | string[] | yes | Non-empty list of evidence items proving the PR works |
 | `merge_authority` | string | yes | Must be `CS2` for all MMM governance/product recovery work |
+| `execution_model` | string | conditional | Required when implementation files are in scope. One of `builder-governed`, `foreman-orchestrated`, `cs2-hotfix-override`. |
+| `implementing_agent` | string | conditional | Required when `execution_model` is `builder-governed` or `foreman-orchestrated`. The agent ID of the builder executing the implementation. |
+| `orchestrating_agent` | string | conditional | Required when `execution_model` is `foreman-orchestrated`. The Foreman agent ID (e.g. `foreman-v2`). |
+| `cs2_justification` | string | conditional | Required when `execution_model` is `cs2-hotfix-override`. Non-empty justification text or issue/PR reference. |
 
 ### Accepted PR types
 
@@ -112,8 +113,6 @@ Every governed PR in the MMM context MUST have exactly one admin manifest at `.a
 ## Example manifests
 
 ### Product fix
-
-File: `.admin/prs/pr-1525.json`
 
 ```json
 {
@@ -133,13 +132,13 @@ File: `.admin/prs/pr-1525.json`
     "screenshot or DOM proof of dashboard empty state",
     "route works after login"
   ],
-  "merge_authority": "CS2"
+  "merge_authority": "CS2",
+  "execution_model": "builder-governed",
+  "implementing_agent": "ui-builder"
 }
 ```
 
 ### Governance-control change
-
-File: `.admin/prs/pr-1526.json`
 
 ```json
 {
@@ -164,11 +163,39 @@ File: `.admin/prs/pr-1526.json`
 
 ---
 
+## Execution Model
+
+**Authority**: `governance/canon/POLC_EXECUTION_MODEL_CANON.md`
+
+Any PR whose `scope` contains implementation files MUST include an `execution_model` field. The validator enforces this as Check 13.
+
+| Model | When to use | Required companion fields |
+|---|---|---|
+| `builder-governed` | PR is directly owned by an authorised builder agent | `implementing_agent` |
+| `foreman-orchestrated` | Foreman scopes work and delegates to a builder | `orchestrating_agent`, `implementing_agent` |
+| `cs2-hotfix-override` | Scoped CS2-approved emergency exception | `cs2_justification` |
+
+**Implementation file patterns** (triggers execution_model enforcement):
+
+```
+apps/
+src/
+modules/
+lib/
+packages/
+```
+
+PRs that only change governance-control paths (`.github/`, `governance/`, `*.agent.md`) do not require `execution_model`.
+
+See `governance/canon/POLC_EXECUTION_MODEL_CANON.md` for full semantics.
+
+---
+
 ## Policy decisions
 
-### 1. Single source of truth (per-PR)
+### 1. Single source of truth
 
-`.admin/prs/pr-<N>.json` is authoritative for:
+`.admin/pr.json` is authoritative for:
 
 - PR number
 - Governing issue
@@ -178,14 +205,13 @@ File: `.admin/prs/pr-1526.json`
 - IAA/ECAP requirement
 - Evidence required
 - Merge authority
+- Execution model (when implementation files are in scope)
 
 **No required gate may derive these facts from the PR body prose.**
 
-Each PR is its own source of truth. Concurrent PRs each carry their own manifest — no shared file, no conflicts.
-
 ### 2. Legacy ceremony freeze for MMM product-fix PRs
 
-For MMM `product-fix` PRs, the following legacy ceremony artifacts are **frozen** — they are not required as merge evidence unless explicitly listed in the PR manifest:
+For MMM `product-fix` PRs, the following legacy ceremony artifacts are **frozen** — they are not required as merge evidence unless explicitly listed in `.admin/pr.json`:
 
 - IAA wave records
 - ECAP bundles
@@ -198,7 +224,7 @@ These may remain as historical artifacts but new MMM product-fix PRs do not need
 
 ### 3. IAA/ECAP only for high-risk classes
 
-The `requires_iaa` and `requires_ecap` fields in the PR manifest are the only authoritative signals. The default values (from the type table above) are a starting point — the manifest overrides them.
+The `requires_iaa` and `requires_ecap` fields in `.admin/pr.json` are the only authoritative signals. The default values (from the type table above) are a starting point — the manifest overrides them.
 
 ### 4. Stop-loss rule
 
@@ -210,17 +236,20 @@ If a governance PR fails more than 3 fix cycles after first review, close it and
 
 The validator script `.github/scripts/validate-simple-pr-admin.sh`:
 
-- Resolves the active manifest: `.admin/prs/pr-${PR_NUMBER}.json` first; falls back to `.admin/pr.json` (legacy, migration period only)
-- Fails if no manifest is found
-- Fails if both per-PR and legacy manifests exist for the same PR (MANIFEST-CONFLICT)
+- Fails if `.admin/pr.json` is missing
 - Validates all required JSON fields exist
 - Validates `issue` is a number
 - Validates `scope` is a non-empty list
-- Validates changed files are within the declared scope (the active manifest path itself is always implicitly permitted)
+- Validates changed files are within the declared scope
 - Validates `type` is one of the accepted values
 - Validates `risk` is one of `low`, `medium`, `high`
 - Fails if governance-control files are changed and `requires_iaa`/`requires_ecap` are not `true`
 - Fails if `merge_authority` is missing or not `CS2`
+- **Fails if implementation files are in scope and `execution_model` is missing** (Check 13)
+- Fails if `execution_model` is present but is not one of the accepted values
+- Fails if `execution_model = builder-governed` and `implementing_agent` is missing or empty
+- Fails if `execution_model = foreman-orchestrated` and `orchestrating_agent` or `implementing_agent` is missing or empty
+- Fails if `execution_model = cs2-hotfix-override` and `cs2_justification` is missing or empty
 
 The validator does **not**:
 - Parse PR body prose
@@ -232,36 +261,7 @@ The validator does **not**:
 
 ## Scope of this model
 
-This model applies to PRs in the MMM governance/product recovery context. It does not replace the broader governance system.
-
----
-
-## Migration rule (v1.1.0 → v1.2.0)
-
-For existing open PRs that still use `.admin/pr.json`:
-
-- The legacy path is accepted as a fallback during migration
-- New or refreshed PRs MUST use `.admin/prs/pr-<N>.json`
-- After all active PRs have migrated, remove `.admin/pr.json` from the repository
-
-This mirrors the fix previously applied to scope declarations (single `SCOPE_DECLARATION.md` → per-PR files).
-
----
-
-## CI gate integration
-
-The following CI gates resolve the active manifest (`PR_NUMBER`-specific first, legacy fallback) and skip or downgrade their checks when the manifest declares the relevant ceremony as not required. This is the authoritative bypass mechanism — no other bypass (e.g. label-based) is needed for MMM product-fix PRs.
-
-| CI gate | Bypass condition | Notes on preserved enforcement |
-|---|---|---|
-| `preflight/iaa-final-assurance` (`iaa-final-assurance-gate.sh`) | `requires_iaa: false` | Token, PR, issue, and reviewed-SHA linkage checks still run when `requires_iaa: true` |
-| `preflight/ecap-admin-ceremony` (`ecap-admin-ceremony-gate.sh`) | `requires_ecap: false` | Protected-path classification and ECAP bundle checks still run when `requires_ecap: true` |
-| `preflight/iaa-prebrief-existence` (workflow inline) | `requires_iaa: false` | wave-current-tasks.md and iaa-wave-record pre-brief checks still run when `requires_iaa: true` |
-| `preflight/iaa-token-self-certification` (workflow inline) | `requires_iaa: false` | PHASE_B_BLOCKING_TOKEN and PHASE_A_ADVISORY checks still run when `requires_iaa: true` |
-| `preflight/hfmc-ripple-presence` (workflow inline) | `requires_iaa: false` | Ripple/Cross-Agent Assessment section presence check still runs when `requires_iaa: true` |
-| `preflight/mmm-pr-admin` (workflow inline) | manifest absent | Passes PR_NUMBER to validator; checks per-PR path first, then legacy |
-
-**Stronger controls preserved**: `validate-simple-pr-admin.sh` (CHECK 8) requires `requires_iaa: true` and `requires_ecap: true` for `governance-change`, `agent-contract-change`, and any PR that changes governance-control paths (`.github/workflows/`, `.github/scripts/`, `.github/agents/`, `governance/`, `.agent-admin/`). This means the bypass cannot be self-certified for high-risk PR types.
+This model applies to PRs in the MMM governance/product recovery context. It does not replace the broader governance system. After this model is stable, MMM product-fix PRs will migrate to `.admin/pr.json` and resume MMM app recovery work.
 
 ---
 
