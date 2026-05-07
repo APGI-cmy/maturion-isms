@@ -77,8 +77,8 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 
 **Completion Date**: N/A — Pending Foreman approval  
 **Notes**: Stage 2 initiated per maturion-isms#1540 (v0.1-draft). Upgraded to v0.2-draft per maturion-isms#1550 (PR #1551).
-Upgrades in v0.2-draft: My Work journey (J-23) and screen (S-20/S-21) added; Invitation Acceptance
-screen added; five-state matrix expanded to all primary routes/screens including auth/public screens;
+Upgrades in v0.2-draft: My Work journey (J-23) and My Work screen (Screen 21) added; Invitation
+Acceptance screen (Screen 20) added; five-state matrix expanded to all primary routes/screens including auth/public screens;
 Assignment/Invitation Management added to state matrix; screen-to-data wiring expanded to cover every
 deployment surface map route; route-to-wiring traceability table added (Section 7b); FRS/RLS wording
 corrected (Open Item 3); Vercel-specific wording softened; API/table/edge-function names marked as

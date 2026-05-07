@@ -116,7 +116,7 @@ The following 12 additions must be verified present and correct at handover assu
 
 | # | Addition | Description |
 |---|----------|-------------|
-| A-01 | My Work journey/screen | Full screen definition: purpose, user journey, wiring, state behaviour |
+| A-01 | My Work journey + Screen 21 | Full screen definition: purpose, user journey, wiring, state behaviour |
 | A-02 | Invitation Acceptance screen | Full screen definition: purpose, user journey, wiring, state behaviour |
 | A-03 | Expanded five-state matrix | State matrix expanded to full five states (not just three) |
 | A-04 | Assignment/Invitation Management in state matrix | These interactions explicitly covered in the state matrix |
