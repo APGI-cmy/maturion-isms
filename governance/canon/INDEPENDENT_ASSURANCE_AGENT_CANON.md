@@ -1,6 +1,6 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.8.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.9.0 | **Authority**: CS2
 **Date**: 2026-03-03
 **Amended**: 2026-03-03 — v1.1.0: Added §Proactive Assurance — Pre-Brief Protocol
 **Amended**: 2026-03-04 — v1.2.1: Added §CS2 Direct Review Track
@@ -10,6 +10,7 @@
 **Amended**: 2026-04-17 — v1.6.0: Added §Admin-Ceremony Rejection Triggers — explicit rejection conditions for ceremony-integrity defects (ACR-01 through ACR-08); reinforced non-cleanup-authoring posture relative to ECAP layer; cross-references §4.3e Admin Ceremony Compliance Gate; authority: CS2 — issue: Canonize a 3-layer admin ceremony compliance stack for ECAP, Foreman QP, and IAA.
 **Amended**: 2026-04-19 — v1.7.0: Added ACR-09 through ACR-14 (gate-inventory hardening, post-token normalization, cross-artifact contradiction, carried-forward canonical source parity); added active-bundle scope rule for ACR checks; aligned with governance-repo hardening wave outcomes; authority: CS2 — governance-repo hardening wave.
 **Amended**: 2026-04-21 — v1.8.0: Added ACR-15 (active-wave/task-tracker contradiction) and ACR-16 (active final-state token/session incoherence); extended active-bundle scope rule to include wave task-tracker in bundle definition; aligned with ISMS merged hardening baseline (parity catch-up wave); authority: CS2 — governance-repo ECAP/IAA parity catch-up issue.
+**Amended**: 2026-05-07 — v1.9.0: Added §Product-Facing PR Split Verdict Model — IAA must issue explicit `ADMIN_PASS`/`FUNCTIONAL_PASS`/`VERDICT` split verdict for product-facing T2 PRs; updated §Binary Output Specification to include split verdict fields; defines FULL_FUNCTIONAL_DELIVERY, PARTIAL_FUNCTIONAL_DELIVERY, ADMIN_ONLY verdict classes; prohibits generic product PASS without functional delivery evidence; cross-references FULLY_FUNCTIONAL_DELIVERY_STANDARD.md §12; authority: CS2 — Canon alignment: require full functional delivery for product build PASS.
 
 ---
 
@@ -356,6 +357,24 @@ Independence: CONFIRMED
 Verdict: MERGE PERMITTED
 ```
 
+**For product-facing T2 PRs** (T2 PRs with user-workflow scope), the ASSURANCE-TOKEN MUST additionally include the split verdict block below. Omitting the split verdict block for a product-facing T2 PR is a validity defect — the token does not satisfy the product assurance requirement:
+
+```
+ASSURANCE-TOKEN
+PR: #<number>
+Date: YYYY-MM-DD
+IAA Session: <session-id>
+PR Tier: T2
+Phases Verified: 1-PASS, 2-PASS, 3-PASS, 4-PASS
+FFA Assessment: PASS
+Agent Integrity: <PASS / NOT-REQUIRED>
+Independence: CONFIRMED
+ADMIN_PASS: yes
+FUNCTIONAL_PASS: yes
+VERDICT: FULL_FUNCTIONAL_DELIVERY
+Verdict: MERGE PERMITTED
+```
+
 ### REJECTION-PACKAGE (FAIL)
 
 ```
@@ -381,6 +400,14 @@ Verdict: MERGE BLOCKED
 Remediation Required:
   - <specific gap 1>
   - <specific gap 2>
+```
+
+**For product-facing T2 PRs**, the REJECTION-PACKAGE MUST additionally include the split verdict block:
+
+```
+ADMIN_PASS: yes | no
+FUNCTIONAL_PASS: yes | no | NOT-ASSESSED
+VERDICT: FULL_FUNCTIONAL_DELIVERY | PARTIAL_FUNCTIONAL_DELIVERY | ADMIN_ONLY | FAIL
 ```
 
 ---
@@ -844,6 +871,123 @@ The §4.3e gate (defined in `AGENT_HANDOVER_AUTOMATION.md`) is the **ECAP + Fore
 
 ---
 
+## Product-Facing PR Split Verdict Model (v1.9.0)
+
+**Authority**: CS2 (Johan Ras) | **Added**: v1.9.0 — 2026-05-07
+**Cross-reference**: `governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md` §12
+
+---
+
+### Governing Principle
+
+> **Admin correctness makes a PR admissible. Functional delivery makes a build acceptable. IAA may not confuse the two.**
+
+The IAA MUST treat `ADMIN_PASS` and `FUNCTIONAL_PASS` as **two independent, separately assessed sub-verdicts** for every product-facing T2 PR. A combined single PASS without both sub-verdicts is insufficient and constitutes a validity defect in the token.
+
+---
+
+### What Is a Product-Facing PR
+
+A PR is **product-facing** when it is a T2 PR (per §Risk-Tiered Ceremony Table) AND its scope includes user-workflow delivery: frontend components, user journeys, CTA wiring, dashboard features, onboarding flows, or any behaviour a user directly interacts with.
+
+Infrastructure-only or backend-only T2 PRs (e.g., schema migrations with no user-workflow impact) are **not** product-facing and use the standard ASSURANCE-TOKEN format.
+
+When in doubt, classify as product-facing and apply the split verdict model.
+
+---
+
+### Split Verdict Assessment Protocol
+
+For every product-facing T2 PR, the IAA MUST assess and record both sub-verdicts independently:
+
+#### ADMIN_PASS Assessment
+
+The IAA assesses `ADMIN_PASS` by confirming:
+- Phase 1–4 ceremony artifacts are present, complete, and non-contradictory (see §Five-Phase Delivery Proof Protocol)
+- No ACR-01 through ACR-16 triggers fire
+- No FFA failures on non-functional-delivery dimensions (schema wiring, cross-delivery integration, etc.)
+- Scope declaration matches actual diff
+
+`ADMIN_PASS: yes` if all ceremony and admin requirements are met.
+`ADMIN_PASS: no` if any ceremony or admin requirement is unmet — with specific failure enumerated.
+
+#### FUNCTIONAL_PASS Assessment
+
+The IAA assesses `FUNCTIONAL_PASS` by confirming all FULL_FUNCTIONAL_DELIVERY conditions from `FULLY_FUNCTIONAL_DELIVERY_STANDARD.md §12.2`:
+
+1. The requested user journey can be completed end-to-end.
+2. All visible CTAs perform implemented, wired actions.
+3. Frontend actions map to deployed, operational backend capabilities.
+4. The expected system state is created, updated, or displayed.
+5. Success, loading, and failure states are visible.
+6. Live or preview evidence exists.
+7. No placeholder is presented as complete.
+
+`FUNCTIONAL_PASS: yes` if all seven conditions are met with evidence.
+`FUNCTIONAL_PASS: no` if any condition is unmet — with specific deficiency enumerated.
+`FUNCTIONAL_PASS: NOT-ASSESSED` only if the PR is classified as non-product-facing (and the IAA documents the classification basis).
+
+---
+
+### Verdict Determination Rules
+
+| ADMIN_PASS | FUNCTIONAL_PASS | Required VERDICT |
+|---|---|---|
+| yes | yes | `FULL_FUNCTIONAL_DELIVERY` |
+| yes | no | `PARTIAL_FUNCTIONAL_DELIVERY` |
+| yes | NOT-ASSESSED | `ADMIN_ONLY` |
+| no | yes | `FAIL` |
+| no | no | `FAIL` |
+| no | NOT-ASSESSED | `FAIL` |
+
+#### `FULL_FUNCTIONAL_DELIVERY`
+
+Admin requirements are satisfied AND the requested user-facing workflow works end-to-end. This is the **only verdict** that may unconditionally close a functional product issue.
+
+#### `PARTIAL_FUNCTIONAL_DELIVERY`
+
+Admin requirements may be satisfied. Some product behaviour exists. The requested functional workflow is **not complete**. The IAA must enumerate exactly what is missing. This verdict **cannot close a functional product issue** unless CS2 explicitly accepts the partial scope in writing.
+
+#### `ADMIN_ONLY`
+
+Admin/ceremony requirements are satisfied. Functional delivery was not assessed or is explicitly out of scope for this PR. The IAA must document the basis for this classification. This verdict may not close a functional product issue.
+
+#### `FAIL`
+
+Admin and/or functional delivery requirements are not met. The IAA enumerates all failures with remediation guidance. Merge is blocked.
+
+---
+
+### Prohibited IAA Behaviours for Product-Facing PRs
+
+The following IAA behaviours are **PROHIBITED** and constitute a governance defect in the token or package:
+
+| Prohibited Behaviour | Why Prohibited |
+|---|---|
+| Issuing a single generic PASS without `ADMIN_PASS`/`FUNCTIONAL_PASS`/`VERDICT` fields for a product-facing T2 PR | Split verdict is mandatory — omission hides the functional delivery gap |
+| Treating visible screens or rendered CTAs as functional evidence | Screen rendering ≠ workflow execution |
+| Treating `ADMIN_PASS: yes` as sufficient to close a functional product issue | Admissibility ≠ acceptability |
+| Treating placeholder or unwired CTAs as implemented functionality | A button that exists is not a button that works |
+| Issuing `FUNCTIONAL_PASS: yes` without live or preview evidence | No evidence = no FUNCTIONAL_PASS |
+| Issuing `FULL_FUNCTIONAL_DELIVERY` without confirming all seven FULL_FUNCTIONAL_DELIVERY conditions | Partial satisfaction of conditions = PARTIAL_FUNCTIONAL_DELIVERY at best |
+
+---
+
+### Calibration Reference
+
+See `FULLY_FUNCTIONAL_DELIVERY_STANDARD.md §12.5` for the canonical calibration example (APGI-cmy/maturion-isms#1553).
+
+Correct verdict for that PR:
+```
+ADMIN_PASS: yes
+FUNCTIONAL_PASS: no
+VERDICT: PARTIAL_FUNCTIONAL_DELIVERY
+```
+
+Reason: UI shell rendered; admin artifacts correct. Upload, generation, onboarding, and dashboard workflows were not wired as complete product workflows. No end-to-end user journey could be completed.
+
+---
+
 ## References
 
 - `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0 — Living Agent framework
@@ -857,4 +1001,4 @@ The §4.3e gate (defined in `AGENT_HANDOVER_AUTOMATION.md`) is the **ECAP + Fore
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.8.0 | Effective: 2026-02-24 | Amended: 2026-04-21 (v1.8.0) | Previous: 2026-04-19 (v1.7.0)*
+*Authority: CS2 (Johan Ras) | Version: 1.9.0 | Effective: 2026-02-24 | Amended: 2026-05-07 (v1.9.0) | Previous: 2026-04-21 (v1.8.0)*
