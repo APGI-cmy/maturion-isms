@@ -271,7 +271,22 @@ Critical scope blocker: OVL-PBG-008 — Stage 4 MUST be declared DRAFT_CREATED o
 
 ## TOKEN
 
-*[To be written by IAA at full assurance invocation — IAA-only — not to be pre-populated by Foreman or ceremony admin]*
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: maturion-isms#1555 — PIT Stage 4 TRS (pit-stage4-trs)
+All 14 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-pit-stage4-trs-20260507-R2-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-pit-stage4-trs-20260507-R2-PASS
+Adoption phase: PHASE_B_BLOCKING
+Invocation: R2 — post-remediation re-evaluation
+Date: 2026-05-07
+Checks: 14 total — 14 PASS, 0 FAIL
+OVL-GE-004 re-evaluated: PASS — 112/112 FRS IDs independently grep-verified
+  Sections 5A (PIT-FR-016–021), 6A (PIT-FR-031–035), 17A (PIT-FR-085–086) confirmed present
+═══════════════════════════════════════
+```
 
 ---
 
