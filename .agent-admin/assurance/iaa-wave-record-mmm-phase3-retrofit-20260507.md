@@ -18,7 +18,7 @@
 
 **Trigger**: `action: "PRE-BRIEF"` — Requested by Foreman / CS2 before wave execution.
 
-**ceremony_admin_appointed**: NOT SPECIFIED in wave-current-tasks for this wave. ACR-01 through ACR-16 checks will apply only if a ceremony admin is formally appointed and recorded in wave-current-tasks.md before handover invocation.
+**ceremony_admin_appointed**: NO in wave-current-tasks for this wave. ACR-01 through ACR-16 checks will apply only if a ceremony admin is formally appointed and recorded in wave-current-tasks.md before handover invocation.
 
 ---
 
