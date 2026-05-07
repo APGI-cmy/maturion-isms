@@ -1217,3 +1217,290 @@ small { font-size: 0.875rem; color: var(--color-text-muted); }
   padding-top: var(--space-8);
   border-top: 1px solid var(--color-border);
 }
+
+/* ---------------------------------------------------------
+   24. Frameworks Page
+   --------------------------------------------------------- */
+.frameworks-page {
+  padding: var(--space-8) 0 var(--space-16);
+  flex: 1;
+}
+
+.frameworks-page__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.frameworks-loading {
+  color: var(--color-text-muted);
+  padding: var(--space-8) 0;
+}
+
+/* Empty state */
+.frameworks-empty-state {
+  background-color: var(--color-surface);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-12) var(--space-8);
+  text-align: center;
+  max-width: 560px;
+  margin: var(--space-8) auto;
+}
+
+.frameworks-empty-state__icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-4);
+}
+
+.frameworks-empty-state__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--space-3);
+}
+
+.frameworks-empty-state__body {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-6);
+  line-height: 1.6;
+}
+
+/* Framework list */
+.frameworks-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
+}
+
+.framework-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: var(--shadow-sm);
+}
+
+.framework-item__name {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.framework-item__badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background-color: var(--color-surface-alt);
+  color: var(--color-text-muted);
+}
+
+.framework-item__badge--published {
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.framework-item__badge--draft {
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+/* Info panel */
+.frameworks-info-panel {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-top: var(--space-8);
+  box-shadow: var(--shadow-sm);
+}
+
+.frameworks-info-panel__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--space-3);
+}
+
+.frameworks-info-panel__body {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-5);
+  line-height: 1.6;
+}
+
+.frameworks-info-panel__stats {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.frameworks-info-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background-color: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: var(--space-1) var(--space-4);
+  font-size: 0.875rem;
+}
+
+.frameworks-info-badge__label {
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.frameworks-info-badge__value {
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+/* ---------------------------------------------------------
+   25. Upload Framework Source Page
+   --------------------------------------------------------- */
+.upload-page {
+  padding: var(--space-8) 0 var(--space-16);
+  flex: 1;
+}
+
+.upload-page__back {
+  margin-bottom: var(--space-6);
+}
+
+.upload-page__back-link {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+}
+
+.upload-page__back-link:hover {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+/* Mode cards */
+.upload-page__modes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
+}
+
+.mode-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6);
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.mode-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.mode-card--selected {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent-light);
+  box-shadow: 0 0 0 3px rgba(15,155,142,0.15);
+}
+
+.mode-card__icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.mode-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+}
+
+.mode-card__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.mode-card__desc {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.mode-card__check {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--color-accent);
+  flex-shrink: 0;
+  width: 1.5rem;
+  text-align: center;
+}
+
+/* Actions */
+.upload-page__actions {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  margin-bottom: var(--space-6);
+}
+
+/* Next state panel */
+.upload-page__next-state {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+
+.upload-page__next-state-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.upload-page__next-state-label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--space-1);
+}
+
+.upload-page__next-state-text {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0;
+}
+
+.upload-page__next-state-text--success {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.upload-page__next-state-note {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-top: var(--space-3);
+  margin-bottom: 0;
+}
