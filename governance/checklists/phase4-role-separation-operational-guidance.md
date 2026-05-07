@@ -17,6 +17,7 @@
 | IAA | `.agent-workspace/independent-assurance-agent/knowledge/ecap-three-role-split-checklist.md`; `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` | Same file | Add quick-admin + deep-functional split with full required output template. |
 | Foreman | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`; `governance/templates/execution-ceremony-admin/FOREMAN_ADMIN_READINESS_HANDBACK.template.md` | Same file | Add role orchestration checklist/questions/template and assignment matrix columns. |
 | Cross-cutting | `governance/templates/execution-ceremony-admin/SCOPE_DECLARATION.template.md`; `governance/checklists/execution-ceremony-admin-checklist.md` | Same file | Add current-head, freshness, scope mutation, intent, adjacent impact, limitations, one-time-delivery blocks. |
+| Git / Commit / Push operations | `.agent-admin/scope-declarations/pr-1567.md`; `.admin/prs/pr-*.json` (model reference) | Same file | Add reusable Git/commit/push operating guidance, risk scan, and post-push verification fields required by CS2 clarification. |
 
 ---
 
@@ -162,6 +163,15 @@ ECAP_RISK_SCAN_COMPLETE: yes/no
 HANDOVER_ALLOWED: yes/no
 ADMIN_PACKAGE_SURVIVES_SCRUTINY: yes/no
 GATES_GREEN_AT_CURRENT_HEAD: yes/no
+GIT_BRANCH_VERIFIED: yes/no
+REMOTE_BRANCH_VERIFIED: yes/no
+PUSH_COMPLETED: yes/no
+POST_PUSH_HEAD_SHA: ...
+PR_DIFF_MATCHES_SCOPE: yes/no
+POST_PUSH_SCOPE_STILL_VALID: yes/no
+POST_PUSH_CI_TRIGGERED: yes/no
+POST_PUSH_EVIDENCE_REFRESH_REQUIRED: yes/no
+POST_PUSH_EVIDENCE_REFRESHED: yes/no/not_applicable
 ```
 
 ---
@@ -362,6 +372,15 @@ NO_SELF_CERTIFICATION: yes/no
 ALL_REPORTS_PRESENT: yes/no
 UNRESOLVED_RISKS: ...
 MERGE_OR_HANDOVER_ALLOWED: yes/no
+GIT_BRANCH_VERIFIED: yes/no
+REMOTE_BRANCH_VERIFIED: yes/no
+PUSH_COMPLETED: yes/no
+POST_PUSH_HEAD_SHA: ...
+PR_DIFF_MATCHES_SCOPE: yes/no
+POST_PUSH_SCOPE_STILL_VALID: yes/no
+POST_PUSH_CI_TRIGGERED: yes/no
+POST_PUSH_EVIDENCE_REFRESH_REQUIRED: yes/no
+POST_PUSH_EVIDENCE_REFRESHED: yes/no/not_applicable
 ```
 
 Foreman assignment matrix template (required columns):
@@ -413,7 +432,62 @@ If yes, it is not full functional delivery.
 
 ---
 
-## 11) Required Tier 1 / Tier 3 follow-up assessment
+## 11) Git / Commit / Push operational guidance (Tier 2 reusable checklist)
+
+Reusable Git / Commit / Push checklist:
+- current repository verified;
+- current branch verified;
+- target PR number verified;
+- target issue number verified;
+- pre-change HEAD SHA recorded where required;
+- working tree inspected before editing;
+- changed files reviewed after editing;
+- scope declaration and manifest include every changed file;
+- no unrelated files staged;
+- no generated/temp/cache/log files staged accidentally;
+- staged diff reviewed before commit;
+- commit message references correct issue/PR where appropriate;
+- push target is the PR branch, not `main`;
+- remote branch update confirmed;
+- post-push PR head SHA captured;
+- PR diff on GitHub matches intended scope;
+- CI/gates triggered against the new head;
+- evidence artifacts refreshed if SHA, file count, run ID, or check status changed after push.
+
+Required Git / Push Risk Scan:
+```text
+1. Am I on the correct branch?
+2. Am I pushing to the correct remote branch?
+3. Did I accidentally edit or stage unrelated files?
+4. Did generated files, caches, logs, or local temp files enter the diff?
+5. Did I update scope declaration after adding evidence files?
+6. Did I update the PR admin manifest after the final file set changed?
+7. Did the final commit change the SHA referenced in evidence?
+8. Did the push create a new head SHA after ECAP/IAA/admin evidence was written?
+9. Do any artifacts still reference an older SHA, older file count, older run ID, or older check status?
+10. Did the push actually reach GitHub?
+11. Is the GitHub PR diff the same as the intended local diff?
+12. Did CI start on the new head?
+13. Are there pending or failed gates after the push?
+14. Is handover being claimed before the pushed branch is verified?
+```
+
+Required output fields (where relevant, especially ECAP and Foreman):
+```text
+GIT_BRANCH_VERIFIED: yes/no
+REMOTE_BRANCH_VERIFIED: yes/no
+PUSH_COMPLETED: yes/no
+POST_PUSH_HEAD_SHA: ...
+PR_DIFF_MATCHES_SCOPE: yes/no
+POST_PUSH_SCOPE_STILL_VALID: yes/no
+POST_PUSH_CI_TRIGGERED: yes/no
+POST_PUSH_EVIDENCE_REFRESH_REQUIRED: yes/no
+POST_PUSH_EVIDENCE_REFRESHED: yes/no/not_applicable
+```
+
+---
+
+## 12) Required Tier 1 / Tier 3 follow-up assessment
 
 Conclusion (required format): **Follow-up required, with proposed issue title, repository, and scope.**
 
@@ -428,4 +502,4 @@ Conclusion (required format): **Follow-up required, with proposed issue title, r
 
 ---
 
-*Version: 1.1.0 | Tier 2 operational guidance only | Compatible with and queued behind APGI-cmy/maturion-isms#1565*
+*Version: 1.2.0 | Tier 2 operational guidance only | Compatible with and queued behind APGI-cmy/maturion-isms#1565*
