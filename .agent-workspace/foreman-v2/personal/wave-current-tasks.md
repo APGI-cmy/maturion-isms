@@ -1,14 +1,15 @@
-# Wave Current Tasks — pit-stage1-cs2-approval-stage2-initiation
+# Wave Current Tasks — pit-stage2-ux-wiring-upgrade-20260506
 
-**Wave**: pit-stage1-cs2-approval-stage2-initiation
-**Issue**: maturion-isms#1540 — Foreman: Approve PIT Stage 1 App Description, align tracker, and initiate Stage 2
-**Branch**: copilot/approve-pit-stage-1-app-description
-**PR**: maturion-isms#1541
+**Wave**: pit-stage2-ux-wiring-upgrade-20260506
+**Issue**: maturion-isms#1550 — Foreman: Upgrade PIT Stage 2 UX Workflow & Wiring Spec to gate-ready completeness
+**Branch**: copilot/upgrade-pit-stage-2-ux-workflow
+**PR**: maturion-isms#1551
 **Date**: 2026-05-06
 **Agent**: foreman-v2-agent
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-stage1-cs2-approval-stage2-initiation-20260506.md
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-stage2-ux-wiring-upgrade-20260506.md
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-pit-stage2-ux-wiring-upgrade-20260506.md
 **Category**: PRE_BUILD_STAGE_MODEL
-**Final State**: COMPLETE
+**Final State**: IN_PROGRESS
 
 ---
 
