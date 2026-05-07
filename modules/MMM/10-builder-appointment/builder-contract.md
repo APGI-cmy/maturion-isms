@@ -116,6 +116,52 @@ inputs for Stage 12 build execution.
 
 ---
 
+## Wave Role Assignment Matrix (Mandatory)
+
+*Added: Phase 3 retrofit — maturion-isms#1564 (2026-05-07)*
+
+### The Rule
+
+Every MMM build wave MUST have all five roles explicitly assigned before build begins. No
+role may be left as 'TBD' or assumed to be covered by another role. This stops everyone
+assuming someone else checked the workflow.
+
+### Role Assignment Matrix
+
+| Role | Responsibility | Must Be Assigned To | Cannot Be Left As |
+|---|---|---|---|
+| Builder | Implement the wave scope; complete all FFD affirmations; deliver evidence pack | A named builder agent (api-builder, ui-builder, schema-builder, integration-builder) | TBD / assumed / shared |
+| QA | Execute QA-to-Red Domain 12 tests for this wave's scope; confirm all CTAs pass | qa-builder | TBD / assumed / shared |
+| Integration | Verify integration client compliance; confirm no ad-hoc fetch() calls; update CTA/API matrix | integration-builder | TBD / assumed / shared |
+| ECAP Gate Execution | Execute Phase 4 ECAP gate; generate ECAP reconciliation summary | execution-ceremony-admin-agent | TBD / assumed / builder |
+| IAA Final Functional Assurance | Execute independent delivery verification per Stage 10 FDM mandate | independent-assurance-agent | TBD / assumed / foreman |
+
+### Per-Wave Assignment Template
+
+Must be filled in for every wave:
+
+```
+Wave: [wave-name]
+Issue: maturion-isms#[N]
+Date: [YYYY-MM-DD]
+
+Builder: [agent name] — [confirmed / pending]
+QA: [agent name] — [confirmed / pending]
+Integration: [agent name] — [confirmed / pending]
+ECAP: execution-ceremony-admin-agent — [confirmed / pending]
+IAA: independent-assurance-agent — [confirmed / pending]
+
+All five roles confirmed: [ ] YES / [ ] NO (HANDOVER BLOCKER if NO)
+```
+
+### Origin
+
+This requirement was added in response to PR maturion-isms#1553. The root cause analysis
+identified that the integration and QA roles were assumed rather than explicitly assigned,
+leading to dead CTAs being missed in review.
+
+---
+
 ## Section 3 — Formal Builder Appointments
 
 ### 3.1 — schema-builder (B1)

@@ -1,87 +1,60 @@
-# Wave Current Tasks — pit-stage2-verification-stage3-frs
+# Wave Current Tasks — mmm-phase3-retrofit-20260507
 
-**Wave**: pit-stage2-verification-stage3-frs
-**Issue**: maturion-isms#1548 — Foreman: Finalise PIT Stage 2 tracker state and implement Stage 3 FRS
-**Branch**: copilot/finalise-pit-stage-2-tracker
-**PR**: maturion-isms#1549
-**Date**: 2026-05-06
+**Wave**: mmm-phase3-retrofit-20260507
+**Issue**: maturion-isms#1564 — MMM Phase 3: retrofit all 12 pre-build artifacts for full functional delivery
+**Branch**: copilot/retrofit-mmm-pre-build-artifacts
+**PR**: maturion-isms#1565
+**Date**: 2026-05-07
 **Agent**: foreman-v2-agent
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-stage2-verification-stage3-frs-20260506.md
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-pit-stage2-verification-stage3-frs-20260506.md
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-phase3-retrofit-20260507.md
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-phase3-retrofit-20260507.md
 **Category**: PRE_BUILD_STAGE_MODEL
-**Final State**: IN_PROGRESS
+**Final State**: COMPLETE
+ceremony_admin_appointed: NO
 
 ---
 
 ## Task Breakdown
 
-Verify Stage 2 UX Workflow & Wiring Spec completeness against 13 criteria from maturion-isms#1549. Update BUILD_PROGRESS_TRACKER.md to reflect Stage 2 status accurately. If Stage 2 is complete enough, create Stage 3 FRS at `modules/pit/02-frs/functional-requirements.md`.
+Retrofit all 12 MMM pre-build artifact stages with full-functional-delivery governance standard additions, as directed by CS2 issue #1564. This is a pure documentation retrofit wave — no code changes. The retrofit absorbs the lessons from PR #1553 (functional delivery failure) into the governance pre-build artifacts so future builds cannot pass a visual shell as functional delivery.
 
 ## Active Tasks
 
 | # | Task | Status | Artifact Path |
 |---|------|--------|---------------|
-| T-1 | Verify Stage 2 UX Workflow & Wiring Spec completeness (13 criteria) | 🟢 DONE | `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` |
-| T-2 | Update BUILD_PROGRESS_TRACKER.md (Stage 2 → STAGE_2_COMPLETE_FOREMAN_REVIEWED, Stage 3 → DRAFT_CREATED) | 🟢 DONE | `modules/pit/BUILD_PROGRESS_TRACKER.md` |
-| T-3 | Create Stage 3 FRS | 🟢 DONE | `modules/pit/02-frs/functional-requirements.md` |
-| T-4 | Governance ceremony artifacts | 🟢 DONE | `.admin/prs/pr-1549.json`, `.agent-admin/scope-declarations/pr-1549.md` |
-| T-5 | PREHANDOVER proof | 🟢 DONE | `.agent-workspace/foreman-v2/memory/PREHANDOVER-pit-stage2-verification-stage3-frs-20260506.md` |
-| T-6 | Session memory | 🟢 DONE | `.agent-workspace/foreman-v2/memory/session-pit-stage2-verification-stage3-frs-20260506.md` |
+| T-01 | Stage 1 — Add Functional Delivery Definition section | ✅ COMPLETE | `modules/MMM/00-app-description/MMM_app_description.md` |
+| T-02 | Stage 2 — Add CTA/API/Data Contract Matrix | ✅ COMPLETE | `modules/MMM/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` |
+| T-03 | Stage 3 — Add live-action acceptance requirements | ✅ COMPLETE | `modules/MMM/02-frs/functional-requirements.md` |
+| T-04 | Stage 4 — Add no-dead-API technical requirements | ✅ COMPLETE | `modules/MMM/03-trs/technical-requirements-specification.md` |
+| T-05 | Stage 5 — Add typed integration client law + route-capability map | ✅ COMPLETE | `modules/MMM/04-architecture/architecture.md` |
+| T-06 | Stage 6 — Add CTA-click + backend-verified RED tests | ✅ COMPLETE | `modules/MMM/05-qa-to-red/qa-to-red-catalog.md` |
+| T-07 | Stage 7 — Add full-functional-delivery gate | ✅ COMPLETE | `modules/MMM/06-pbfag/pbfag-checklist.md` |
+| T-08 | Stage 8 — Add functional completion criteria requirements | ✅ COMPLETE | `modules/MMM/07-implementation-plan/implementation-plan.md` |
+| T-09 | Stage 9 — Add anti-placeholder builder confirmations | ✅ COMPLETE | `modules/MMM/08-builder-checklist/builder-checklist.md` |
+| T-10 | Stage 10 — Add IAA-as-delivery-assurance mandate | ✅ COMPLETE | `modules/MMM/09-iaa-pre-brief/iaa-pre-brief.md` |
+| T-11 | Stage 11 — Add role assignment matrix | ✅ COMPLETE | `modules/MMM/10-builder-appointment/builder-contract.md` |
+| T-12 | Stage 12 — Create Functional Delivery Evidence Pack standard | ✅ COMPLETE | `modules/MMM/11-build/wave-execution-standard.md` (new) |
+| T-13 | Change-Propagation Audit (OVL-PBG-014 — MANDATORY) | ✅ COMPLETE | `modules/MMM/06-pbfag/change-propagation-audit.md` |
+| T-14 | UPDATE BUILD_PROGRESS_TRACKER.md | ✅ COMPLETE | `modules/MMM/BUILD_PROGRESS_TRACKER.md` |
+| T-15 | Governance ceremony artifacts | ✅ COMPLETE | `.admin/prs/pr-1565.json`, `.agent-admin/scope-declarations/pr-1565.md` |
 
 ---
 
-## Pre-Build Stage Gates (Stage 2 → Stage 3 transition)
+## Pre-Build Gate Status (Documentation Wave)
 
 | Gate | Status |
 |------|--------|
-| Stage 2 UX Workflow & Wiring Spec: all 13 criteria verified | ✅ COMPLETE |
-| Stage 2 tracker status updated to STAGE_2_COMPLETE_FOREMAN_REVIEWED | ✅ COMPLETE |
-| Stage 3 FRS created with derivation from Stage 1 + Stage 2 | ✅ COMPLETE |
-| BUILD_PROGRESS_TRACKER aligned | ✅ COMPLETE |
+| CS2 wave-start authorization (issue opened by CS2) | ✅ CONFIRMED |
+| IAA pre-brief invoked and wave record committed | ✅ COMPLETE — SHA 4099e40 |
+| No governance canon changes (out of scope per #1564) | ✅ CONFIRMED |
+| No code changes in scope | ✅ CONFIRMED |
+| No CI changes in scope | ✅ CONFIRMED |
 
 ---
 
-## Pre-Build Gate Status
+## Phase Status
 
 **Phase 1**: COMPLETE
 **Phase 2**: COMPLETE
-**Phase 3**: IN_PROGRESS
-**Phase 4**: PENDING IAA
----
-
-## Task Breakdown
-
-Record CS2/Johan Ras formal approval of the PIT Stage 1 App Description (issued as Draft per PR #1535, maturion-isms#1534). Update both App Description copies from Draft to Authoritative/Approved. Align BUILD_PROGRESS_TRACKER.md. Initiate Stage 2 UX Workflow & Wiring Spec if Stage 1 approval and tracker alignment gates are clean.
-
-## Active Tasks — FINAL STATE (all complete)
-
-| # | Task | Status | Artifact Path |
-|---|------|--------|---------------|
-| T-1 | Update Stage 1 approval status in authoritative App Description | ✅ COMPLETE | `docs/governance/PIT_APP_DESCRIPTION.md` |
-| T-2 | Update Stage 1 approval status in module-stage copy | ✅ COMPLETE | `modules/pit/00-app-description/app-description.md` |
-| T-3 | Update BUILD_PROGRESS_TRACKER.md (Stage 1 approved, Stage 2 active, Build Auth NOT CLEARED) | ✅ COMPLETE | `modules/pit/BUILD_PROGRESS_TRACKER.md` |
-| T-4 | Update app-description-checklist to reflect Authoritative approval | ✅ COMPLETE | `.agent-admin/evidence/app-description-checklist/pit-20260506.md` |
-| T-5 | Create Stage 2 UX Workflow & Wiring Spec | ✅ COMPLETE | `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` |
-| T-6 | Update .admin/pr.json for PR #1541 / issue #1540 | ✅ COMPLETE | `.admin/pr.json` |
-| T-7 | Create scope declaration for PR #1541 | ✅ COMPLETE | `.agent-admin/scope-declarations/pr-1541.md` |
-
----
-
-## Pre-Build Stage Gates (Stage 1 → Stage 2 transition)
-
-| Gate | Status |
-|------|--------|
-| Stage 1 App Description: Draft filed | ✅ COMPLETE (PR #1535) |
-| CS2 approval of Stage 1 | ✅ CONFIRMED (issue #1540 CS2 directive) |
-| Stage 1 Approval recorded in both files | ✅ COMPLETE |
-| BUILD_PROGRESS_TRACKER aligned | ✅ COMPLETE |
-| Stage 2 initiated | ✅ COMPLETE |
-
----
-
-## Pre-Build Gate Status
-
-**Phase 1**: COMPLETE
-**Phase 2**: COMPLETE
-**Phase 3**: COMPLETE (QP PASS)
-**Phase 4**: COMPLETE
+**Phase 3**: COMPLETE — mat-specialist delivered all 12 stage retrofits
+**Phase 4**: COMPLETE — PR #1565 committed and governance ceremony artifacts in place
