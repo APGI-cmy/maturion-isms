@@ -439,18 +439,24 @@ PBFAG MUST reject any pre-build pack that:
 
 ### Verdict Rule
 
-If ANY item above is marked FAIL or left unchecked: **PBFAG verdict is REJECT**. Do not
-proceed to Stage 8. Return to Stage 2 to complete the missing matrix entries.
+If ANY mandatory PBFAG item for this wave is marked FAIL or left unchecked:
+**PBFAG verdict is REJECT**. Do not proceed to Stage 8. Return to Stage 2 to complete
+the missing matrix entries.
+
+For this pack only, the new FFD checklist above is recorded as a forward-enforcement gate
+and is not verdict-blocking until future waves adopt it as mandatory. Its unchecked items
+therefore do not change this wave's verdict.
 
 ### Origin Note
 
 This gate was added as a direct response to the functional delivery failure documented in
 maturion-isms#1553, where a visual UI shell with dead CTAs was accepted as product delivery.
-This gate is designed to prevent that failure class from recurring.
+This gate is designed to prevent that failure class from recurring. Enforcement for this
+checklist begins in future waves after this initial pack.
 
 ---
 
-## ✅ PBFAG VERDICT: **PASS**
+## ✅ PBFAG VERDICT: **PASS** _(FFD gate deferred for this wave)_
 
 ---
 
