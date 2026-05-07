@@ -72,5 +72,5 @@ Applicable overlay: [KNOWLEDGE_GOVERNANCE]
 ## TOKEN
 
 ```text
-PHASE_B_BLOCKING_TOKEN: PENDING
+PHASE_B_BLOCKING_TOKEN: phase-b-blocking-phase4-tier2-role-guidance-1566-20260507
 ```
