@@ -2,7 +2,7 @@
   "version": "1.0.0",
   "last_updated": "2026-05-07",
   "total_canons": 201,
-  "generation_timestamp": "2026-05-07T09:55:55Z",
+  "generation_timestamp": "2026-05-07T12:34:45Z",
   "canons": [
     {
       "filename": "ACTIVATION_STATE_MODEL.md",
@@ -974,14 +974,14 @@
     },
     {
       "filename": "FULLY_FUNCTIONAL_DELIVERY_STANDARD.md",
-      "version": "1.0.0",
-      "file_hash": "7a71beefcc7eab51f99cb8d0865585cf4a6450304e9cf1ae07dfa4deb731d69c",
-      "effective_date": "2026-02-16",
+      "version": "2.0.0",
+      "file_hash": "019fbac7587291d8827b3cc1bdf409cfcb1e23ab69c314ff6ada4ca11145c871",
+      "effective_date": "2026-05-07",
       "description": "This standard establishes explicit definitions and enforcement mechanisms for \"fully functional\" delivery across design, implementation, and deployment phases.",
       "type": "canon",
       "path": "governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "7a71beefcc7eab51f99cb8d0865585cf4a6450304e9cf1ae07dfa4deb731d69c"
+      "file_hash_sha256": "019fbac7587291d8827b3cc1bdf409cfcb1e23ab69c314ff6ada4ca11145c871"
     },
     {
       "filename": "GATE_PREDICTIVE_COMPLIANCE_ANALYSIS.md",
@@ -1041,13 +1041,13 @@
     {
       "filename": "GOVERNANCE_CANON_MANIFEST.md",
       "version": "1.0.0",
-      "file_hash": "4a56c52cf142f2860b27309252fc41764145065fb4df1c0ed6427026d09ac64a",
+      "file_hash": "457bfdf4aac5ba88e1e5df57d5c4e4eb8292473d356fea71b27ff4ed365cacae",
       "effective_date": "2026-01-05",
       "description": "This manifest is the **single authoritative index** of all canonical governance standards in the maturion-foreman-governance repository.",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "4a56c52cf142f2860b27309252fc41764145065fb4df1c0ed6427026d09ac64a"
+      "file_hash_sha256": "457bfdf4aac5ba88e1e5df57d5c4e4eb8292473d356fea71b27ff4ed365cacae"
     },
     {
       "filename": "GOVERNANCE_COMPLETENESS_MODEL.md",
@@ -1238,14 +1238,14 @@
     },
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-      "version": "1.8.0 | **Authority**: CS2",
-      "file_hash": "29a06ca7ad9c95f1dfca5eb94f8fb5493b6c215d21d872a78d75045184753b78",
+      "version": "1.9.0 | **Authority**: CS2",
+      "file_hash": "87f3b17cc51a0ccc11bf236057b2e03ed99765bd6c5aae1434a3953697a8ce3f",
       "effective_date": "unknown",
       "description": "Canonical governance document: INDEPENDENT_ASSURANCE_AGENT_CANON",
       "type": "canon",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "29a06ca7ad9c95f1dfca5eb94f8fb5493b6c215d21d872a78d75045184753b78"
+      "file_hash_sha256": "87f3b17cc51a0ccc11bf236057b2e03ed99765bd6c5aae1434a3953697a8ce3f"
     },
     {
       "filename": "INITIALIZATION_COMPLETENESS_GATE.md",
@@ -1480,14 +1480,14 @@
     },
     {
       "filename": "MMM_SIMPLE_PR_ADMIN_MODEL.md",
-      "version": "1.2.0",
-      "file_hash": "6c050cb0cbb6d9ed205693893ae9cf597cbcbdd8c1d30ec99ffb18dff35697e4",
+      "version": "1.1.0",
+      "file_hash": "4620b6d57d93fed8467772ac0d40c5f1663c42c190b6035c089b747689b7c251",
       "effective_date": "2026-05-04",
       "description": "Canonical governance document: MMM_SIMPLE_PR_ADMIN_MODEL",
       "type": "canon",
       "path": "governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "6c050cb0cbb6d9ed205693893ae9cf597cbcbdd8c1d30ec99ffb18dff35697e4"
+      "file_hash_sha256": "4620b6d57d93fed8467772ac0d40c5f1663c42c190b6035c089b747689b7c251"
     },
     {
       "filename": "MULTI_EMBODIMENT_ORCHESTRATION_MODEL.md",
