@@ -91,7 +91,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 **Key Artifacts**:
 - [x] `functional-requirements.md` — Stage 3 FRS v0.1-draft, derived from App Description v1.0 + UX Workflow & Wiring Spec v0.2-draft
 - [x] Derivation statements from both upstream artifacts included
-- [x] Numbered functional requirements (PIT-FR-001 through PIT-FR-109) — testable, phrased as "The system shall..."
+- [x] Numbered functional requirements (PIT-FR-001 through PIT-FR-112) — testable, phrased as "The system shall..."
 - [x] Auth/onboarding, all primary screens, 5 UI states, project hierarchy, timeline, evidence, assignment, watchdog, reporting, audit, QA dashboard, AIMC, cross-module integrations covered
 - [x] Acceptance criteria for every requirement or requirement group
 - [x] Traceability matrix (App Description → Stage 2 → FRS requirement ID → future stage placeholder)
@@ -274,7 +274,8 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 - [x] Stage 1 App Description: CS2_APPROVED_AUTHORITATIVE (2026-05-06)
 - [x] Stage 2 UX Workflow & Wiring Spec: STAGE_2_COMPLETE_FOREMAN_REVIEWED (maturion-isms#1548) — pending CS2 approval
 - [x] Stage 3 FRS: DRAFT_CREATED (maturion-isms#1548) — pending CS2 approval
-- [ ] Traceability chain: App Description ✅ → UX Workflow (FOREMAN_REVIEWED) → FRS (DRAFT_CREATED) → TRS → Architecture (gate-pass pending)- [x] Stage 1 approval obtained — Johan Ras / CS2 approved 2026-05-06 (ref: maturion-isms#1540)
+- [ ] Traceability chain: App Description ✅ → UX Workflow (FOREMAN_REVIEWED) → FRS (DRAFT_CREATED) → TRS → Architecture (gate-pass pending)
+- [x] Stage 1 approval obtained — Johan Ras / CS2 approved 2026-05-06 (ref: maturion-isms#1540)
 - [x] Build Authorization: NOT CLEARED — implementation blocked until Stages 3–11 complete
 - [x] Evidence artifacts created for Stage 1 (checklist at `.agent-admin/evidence/app-description-checklist/pit-20260506.md`)
 - [x] Stage 2 completion evidence: `.agent-admin/evidence/stage2-completion-checklist/pit-stage2-20260506.md`

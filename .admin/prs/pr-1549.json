@@ -25,7 +25,7 @@
     "modules/pit/BUILD_PROGRESS_TRACKER.md Stage 3 status is DRAFT_CREATED",
     "modules/pit/BUILD_PROGRESS_TRACKER.md Build Authorization is NOT CLEARED",
     "modules/pit/02-frs/functional-requirements.md exists with derivation statements from App Description v1.0 and UX Workflow & Wiring Spec",
-    "modules/pit/02-frs/functional-requirements.md contains numbered functional requirements (PIT-FR-001 through PIT-FR-105)",
+    "modules/pit/02-frs/functional-requirements.md contains numbered functional requirements (PIT-FR-001 through PIT-FR-112)",
     ".agent-admin/evidence/stage2-completion-checklist/pit-stage2-20260506.md result is PASS (all 13 criteria satisfied)",
     "IAA ASSURANCE-TOKEN received and committed to wave record",
     "Scope declaration matches actual diff"
