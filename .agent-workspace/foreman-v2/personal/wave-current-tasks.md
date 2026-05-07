@@ -14,9 +14,9 @@ iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-phase4-tier2-role-guid
 
 | # | Task | Builder | Status | PR / Evidence |
 |---|------|---------|--------|---------------|
-| 1 | Tier 2 inventory + preservation/conflict map for role-separation guidance | governance-liaison-isms-agent | 🔴 PENDING | maturion-isms#1566 |
-| 2 | Tier 2 guidance/template updates for Admin Ceremony, ECAP, Builder QA, IAA, Foreman and cross-cutting rules | governance-liaison-isms-agent | 🔴 PENDING | maturion-isms#1566 |
-| 3 | Tier 1/Tier 3 follow-up impact assessment + queued-behind-#1565 note | governance-liaison-isms-agent | 🔴 PENDING | maturion-isms#1566 |
+| 1 | Tier 2 inventory + preservation/conflict map for role-separation guidance | governance-liaison-isms-agent | 🟢 DONE | governance/checklists/phase4-role-separation-operational-guidance.md |
+| 2 | Tier 2 guidance/template updates for Admin Ceremony, ECAP, Builder QA, IAA, Foreman and cross-cutting rules | governance-liaison-isms-agent | 🟢 DONE | governance/checklists/phase4-role-separation-operational-guidance.md |
+| 3 | Tier 1/Tier 3 follow-up impact assessment + queued-behind-#1565 note | governance-liaison-isms-agent | 🟢 DONE | .agent-admin/scope-declarations/pr-1567.md |
 
 ---
 
@@ -24,13 +24,13 @@ iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-phase4-tier2-role-guid
 
 | PR # | Token | Date |
 |------|-------|------|
-| — | PENDING | — |
+| 1567 | phase-b-blocking-phase4-tier2-role-guidance-1566-20260507 | 2026-05-07 |
 
 ---
 
 ## Wave Completion Gate
 
-- [ ] All tasks above show 🟢 DONE
+- [x] All tasks above show 🟢 DONE
 - [ ] Session memory written
-- [ ] PREHANDOVER proof committed
+- [x] PREHANDOVER proof committed
 - [ ] CS2 notified for merge approval
