@@ -2,8 +2,8 @@
 
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
-**Last Updated**: 2026-05-06  
-**Updated By**: foreman-v2-agent (wave: pit-stage2-verification-stage3-frs — maturion-isms#1548; incorporating Stage 2 v0.2-draft upgrade from maturion-isms#1550 PR #1551)
+**Last Updated**: 2026-05-07
+**Updated By**: foreman-v2-agent (wave: pit-stage4-trs — maturion-isms#1554)
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
 > **Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
@@ -103,16 +103,16 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 ---
 
 ### Stage 4: Technical Requirements Specification (TRS)
-**Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/03-trs/`  
+**Status**: [x] DRAFT_CREATED — pending upstream CS2 approvals (Stage 2 and Stage 3, ref: maturion-isms#1548)
+**Location**: `modules/pit/03-trs/`
 **Key Artifacts**:
-- [ ] `technical-requirements-specification.md` — Technical constraints, performance requirements, integration requirements
-- [ ] `frs-to-trs-traceability.md` — Traceability matrix linking FRS to TRS
-- [ ] Tool validation and quality gate definitions
-- [ ] TRS approved by designated authority
+- [x] `technical-requirements-specification.md` — Technical constraints, performance requirements, integration requirements, AIMC contracts, RLS design, table definitions, Edge Function contracts (PIT-TR-001 to PIT-TR-115)
+- [x] `frs-to-trs-traceability.md` — Traceability matrix linking all 112 FRS requirements and 10 NF placeholders to TRS requirements across 28 domains
+- [x] Tool validation and quality gate definitions — included in `technical-requirements-specification.md` (Section 25, PIT-TR-100 to PIT-TR-107)
+- [ ] TRS approved by designated authority — **BLOCKED**: pending CS2 approval of Stage 3 FRS and Stage 2 UX Spec (maturion-isms#1548)
 
-**Completion Date**: N/A  
-**Notes**: Not started. Mapped from old Stage 1.5.
+**Completion Date**: N/A — Draft created 2026-05-07, pending upstream CS2 approvals
+**Notes**: TRS v0.1-draft created per maturion-isms#1554 (wave: pit-stage4-trs). Derived from `docs/governance/PIT_APP_DESCRIPTION.md` v1.0, `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.2-draft, and `modules/pit/02-frs/functional-requirements.md` v0.1-draft. 115 technical requirements (PIT-TR-001 through PIT-TR-115) covering runtime baseline, frontend architecture, routing, auth/session, RBAC, data model (21 canonical tables), RLS design, API/Edge Functions (8 functions), AIMC (4 capabilities), notifications, evidence storage, Gantt, reporting, audit log, QA dashboard, performance, security, observability, error handling, deployment/secrets, tool validation, and MMM controls L-001–L-008. FRS-to-TRS traceability covers all 112 FRS requirements, 10 NF placeholders, and 8 MMM controls. Stage 4 approval is BLOCKED until Stage 3 and Stage 2 are CS2-approved. Stage 5 Architecture remains blocked. Build Authorization remains NOT CLEARED.
 
 ---
 
@@ -245,13 +245,13 @@ artifacts, not core PIT module build deliverables. Mapped from old Stage 5.
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 3 ACTIVE — FRS Draft Created (maturion-isms#1548); Stage 2 FOREMAN_REVIEWED pending CS2 approval  
-**Overall Progress**: ~30% complete (Stage 1 App Description approved; Stage 2 Foreman-reviewed pending CS2; Stage 3 FRS draft created; Architecture substantially IN_PROGRESS)  
-**Blockers**: None for Stage 3 review. Stage 4 TRS blocked until Stage 3 FRS is approved by CS2. Build Authorization NOT CLEARED — implementation blocked until Stages 3–11 completed and gate-passed.  
+**Current Stage**: Stage 4 ACTIVE — TRS Draft Created (maturion-isms#1554); Stage 3 FRS DRAFT_CREATED pending CS2 approval; Stage 2 FOREMAN_REVIEWED pending CS2 approval
+**Overall Progress**: ~35% complete (Stage 1 App Description approved; Stage 2 Foreman-reviewed pending CS2; Stage 3 FRS draft created pending CS2; Stage 4 TRS draft created pending upstream CS2 approvals; Architecture substantially IN_PROGRESS)
+**Blockers**: Stage 4 TRS approval BLOCKED until Stage 2 UX Spec and Stage 3 FRS are CS2-approved (maturion-isms#1548). Stage 5 Architecture gate-pass BLOCKED until Stage 4 TRS is approved. Build Authorization NOT CLEARED — implementation blocked until Stages 4–11 completed and gate-passed.
 **Next Steps**:
-1. CS2 review and approval of Stage 2 UX Workflow & Wiring Spec
-2. CS2 review and approval of Stage 3 FRS
-3. Complete Stage 4 (TRS) building on FRS
+1. CS2 review and approval of Stage 2 UX Workflow & Wiring Spec (maturion-isms#1548)
+2. CS2 review and approval of Stage 3 FRS (maturion-isms#1548)
+3. CS2 review and approval of Stage 4 TRS (maturion-isms#1554) — after upstream approvals
 4. Formally gate-pass Stage 5 (Architecture — rich content already exists, needs upstream approvals first)
 5. Complete Stages 6–11 before Build Authorization can be requested
 **MMM-Derived Learning Controls (Carry-Forward)**:
@@ -274,7 +274,8 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 - [x] Stage 1 App Description: CS2_APPROVED_AUTHORITATIVE (2026-05-06)
 - [x] Stage 2 UX Workflow & Wiring Spec: STAGE_2_COMPLETE_FOREMAN_REVIEWED (maturion-isms#1548) — pending CS2 approval
 - [x] Stage 3 FRS: DRAFT_CREATED (maturion-isms#1548) — pending CS2 approval
-- [ ] Traceability chain: App Description ✅ → UX Workflow (FOREMAN_REVIEWED) → FRS (DRAFT_CREATED) → TRS → Architecture (gate-pass pending)
+- [x] Stage 4 TRS: DRAFT_CREATED (maturion-isms#1554) — pending upstream CS2 approvals (Stage 2 and Stage 3)
+- [ ] Traceability chain: App Description ✅ → UX Workflow (FOREMAN_REVIEWED) → FRS (DRAFT_CREATED) → TRS (DRAFT_CREATED) → Architecture (gate-pass pending)
 - [x] Stage 1 approval obtained — Johan Ras / CS2 approved 2026-05-06 (ref: maturion-isms#1540)
 - [x] Build Authorization: NOT CLEARED — implementation blocked until Stages 3–11 complete
 - [x] Evidence artifacts created for Stage 1 (checklist at `.agent-admin/evidence/app-description-checklist/pit-20260506.md`)
