@@ -7,13 +7,13 @@
 | Module | PIT |
 | Application Name | Project Implementation Tracker |
 | Artifact Type | Stage 2 — UX Workflow & Wiring Spec |
-| Version | v0.1-draft |
-| Status | Draft |
+| Version | v0.2-draft |
+| Status | Draft — Pending Foreman Review |
 | Approval Status | Pending Foreman review |
 | Derived From | `docs/governance/PIT_APP_DESCRIPTION.md` v1.0 (CS2 Approved 2026-05-06) |
 | Author | pit-specialist (delegated by foreman-v2-agent) |
 | Date | 2026-05-06 |
-| Issue | maturion-isms#1540 |
+| Issue | maturion-isms#1540; maturion-isms#1550 |
 | Pre-Build Authority | `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 |
 
 ---
@@ -229,7 +229,7 @@ All auth routes must be in QA-to-Red before implementation begins.
 4. If the route is protected and user is authenticated but lacks permission → Journey 9 (access-denied).
 5. If the route does not exist → 404 Not Found screen.
 
-**Deployment requirement**: Vercel `vercel.json` must include a rewrite rule: `{ "source": "/(.*)", "destination": "/index.html" }`.
+**Deployment infrastructure requirement**: The deployment platform must serve `index.html` for all non-asset routes (SPA fallback). If Vercel is the approved deployment target, `vercel.json` must include a rewrite rule: `{ "source": "/(.*)", "destination": "/index.html" }`. The deployment target for PIT is not yet formally confirmed; this requirement applies to whichever platform is approved.
 
 ---
 
@@ -465,6 +465,26 @@ All auth routes must be in QA-to-Red before implementation begins.
 
 **Tables touched**: `organisations`, `organisation_settings`, `roles`, `role_assignments`, `task_cluster_templates`, `notification_templates`, `integration_configs`  
 **Role required**: `pit_admin` or `org_admin`
+
+---
+
+### Journey 23 — View and Manage My Work (Personal Task List)
+
+**Start**: Authenticated user navigates to My Work screen.  
+**Goal**: User sees all tasks assigned to them, can filter/sort, update status, and link to evidence.  
+**Steps**:
+1. User navigates to `/my-work` from sidebar.
+2. PIT loads all tasks assigned to the current user (across all projects/orgs they are a member of).
+3. Tasks displayed in a list/card view with context: project name, milestone, deliverable, due date, priority, status, evidence-required indicator.
+4. User can filter by: due soon (next 7 days), overdue, by project, by status.
+5. User can update task status/progress directly from this view (inline update or quick modal).
+6. User can click a task row to open full Task Management page (Journey detail view).
+7. User can click evidence icon on a task to go directly to Evidence Upload screen.
+8. If no tasks assigned: empty state with encouraging message.
+
+**Auth required**: Yes  
+**Tables**: `tasks`, `deliverables`, `milestones`, `projects`  
+**RLS**: Filtered to current user's assigned tasks only
 
 ---
 
@@ -837,6 +857,44 @@ All auth routes must be in QA-to-Red before implementation begins.
 
 ---
 
+### Screen 20 — Invitation Acceptance Screen
+
+**Purpose**: Accept an invitation link received by email. Handles token validation, new user account creation, and existing user acceptance.  
+**Key UI Components**:
+- Token validation loading state (spinner while validating token via Edge Function)
+- Valid invitation state: shows org name, inviter name, role to be assigned
+- Expired/invalid token state: error message + "Request a new invitation" CTA
+- New user path: account creation form (full name, password, confirm password)
+- Existing user path: "Accept invitation to join [Org Name]" confirmation button
+- Success state: confirmation message + redirect countdown to onboarding/dashboard
+- Error/retry state: "Something went wrong" + retry link  
+**Entry points**: Email invitation link → `/invite/[token]`  
+**Navigation from this screen**:
+- → Onboarding screen (new user on success)
+- → Portfolio Dashboard (existing user on accept success)
+- → Landing screen (on decline or invalid token)
+
+---
+
+### Screen 21 — My Work / Personal Task View Screen
+
+**Purpose**: Personal task list for the current user — all tasks assigned to them across all projects.  
+**Key UI Components**:
+- Task list/cards with context (project, milestone, deliverable, due date, status badge, priority indicator)
+- Filter bar: All / Due Soon (next 7 days) / Overdue / By Project / By Status
+- Quick status/progress update controls (inline or modal)
+- Evidence-required indicator on tasks that require evidence
+- "Upload Evidence" quick-action button per task (where evidence required)
+- Empty state: "No tasks assigned to you yet." with helpful explanation
+- "Go to Project" link per task row  
+**Entry points**: Sidebar "My Work" nav item; direct URL `/my-work`  
+**Navigation from this screen**:
+- → Task Management page (click task row)
+- → Evidence Upload screen (evidence icon/button)
+- → Implementation page / project (Go to Project link)
+
+---
+
 ## Section 3: Implementation Page Top Indicators
 
 The Implementation Page (Screen 6) must display the following seven summary indicators at the top of the page in a persistent indicator row. These indicators give the project manager immediate situational awareness without scrolling.
@@ -956,6 +1014,37 @@ Every primary page MUST implement all five required UI states. Below is the spec
 | Audit Log | Skeleton table rows | "No audit events found for this filter." | "You don't have permission to view the audit log." | "Failed to load audit log. Retry" | Full paginated audit log |
 | QA Dashboard | Spinner | "No QA data available." | "You don't have permission to view the QA dashboard." | "Failed to load QA data. Retry" | Full QA metrics |
 | Admin / Settings | Skeleton settings forms | N/A | "You don't have permission to access settings." | "Failed to load settings. Retry" | Full settings forms |
+| Invitation Acceptance | Spinner while validating token | N/A | N/A (token-based, not role-based) | "Invalid or expired invitation. Request a new invitation." + CTA | Valid state: shows org name, inviter, role; new-user form (sub-state within Data); existing-user accept button |
+| My Work | Skeleton task cards | "No tasks assigned to you yet." with helpful explanation | "You don't have permission to view your task list." | "Failed to load your tasks. Retry" | Full personal task list with filters |
+| Assignment / Invitation Management | Skeleton team member rows | "No team members yet. Add your first team member." + CTA | "You don't have permission to manage this project team." | "Failed to load team. Retry" | Full team list with pending invitations |
+
+---
+
+### Auth/Public Screen State Matrix
+
+Auth and public screens (pre-login flows) use the following equivalent six-state model in place of the data-page five-state model. The six states are:
+
+| State | Description |
+|---|---|
+| **Idle** | Form empty; ready for user input. Submit button enabled (or disabled until required fields filled). |
+| **Submitting / Loading** | Spinner shown on submit button; form fields disabled; no double-submit possible. |
+| **Validation Error** | Inline field errors shown (e.g., "Invalid email format", "Passwords do not match"). Toast may also fire. |
+| **Success / Confirmation** | Success message or automatic redirect shown (e.g., "Check your email", countdown redirect). |
+| **System Error / Unavailable** | Server error or network failure message: "Something went wrong. Please try again." Retry available. |
+| **Auth Redirect** | If a valid session already exists, the screen redirects away before rendering (e.g., `/login` redirects to `/dashboard` if already logged in). |
+
+| Screen | Idle | Submitting | Validation Error | Success / Confirmation | System Error | Auth Redirect |
+|---|---|---|---|---|---|---|
+| Landing / Public Entry | Static page renders; CTAs visible | N/A | N/A | N/A | N/A | If authenticated → `/dashboard` |
+| Login | Form empty; "Sign In" enabled | Spinner on "Sign In"; form disabled | Inline "Invalid email or password" error | Redirect to `/dashboard` (or intended URL) | "Something went wrong. Please try again." | If already authenticated → `/dashboard` |
+| Signup | Form empty | Spinner on "Create Account"; form disabled | Inline field errors (email format, password strength, duplicate) | "Check your email to verify your account" banner | "Something went wrong. Please try again." | If already authenticated → `/dashboard` |
+| Forgot Password | Email field empty | Spinner on "Send Reset Link"; field disabled | Inline "Please enter a valid email" | "Check your email for a reset link" (shown regardless of result — no email enumeration) | System error shown only for 5xx/network failures (not for unrecognised email) | If already authenticated → `/dashboard` |
+| Reset Password | Password fields empty | Spinner on "Set New Password"; fields disabled | Inline "Passwords do not match" or "Password too weak" | Redirect to Login with success toast | "Something went wrong. Please try again." + retry | N/A (token-gated, not session-gated) |
+| Invitation Acceptance | Token validating (spinner) → form ready after validation | Spinner on accept/submit; form disabled | Inline errors (password requirements, missing fields) | "Invitation accepted! Redirecting…" + countdown | "Something went wrong. Please try again." + retry link | Existing-user path: session must be present for JWT-based accept |
+| Onboarding | Multi-step form at Step 1 | Spinner on "Next" / "Complete"; step disabled | Inline field errors per step | "Profile saved!" toast between steps; final → redirect to `/dashboard` | "Failed to save. Please try again." | N/A (post-login flow; session required) |
+| 404 Not Found | Static 404 page displayed | N/A | N/A | N/A | N/A | N/A |
+
+> **Note on 404 Not Found**: This is a static screen with no data states. Its states are: Idle (page displayed with message and "Go Home" CTA), N/A for all loading/empty/permission states. The "Go Home" CTA is always visible regardless of auth state.
 
 ---
 
@@ -1116,6 +1205,8 @@ Each breadcrumb segment is a clickable link.
 
 ## Section 7: Screen-to-Data Wiring
 
+> **Candidate Names Notice**: API / Edge Function names, table/entity names, and storage bucket names in this Stage 2 document are proposed UX-wiring candidate names. They are not confirmed canonical names. All names must be confirmed, renamed, or superseded in Stage 3 FRS, Stage 4 TRS, and Stage 5 Architecture before implementation. Examples of candidate names in this document include (but are not limited to): `create_project`, `validate_invitation`, `accept_invitation`, `generate_report`, `evidence_items`, `task_dependencies`, `pit-evidence`, `/api/aimc/pit/*` endpoint paths.
+
 | UI Component / User Action | API / Edge Function Candidate | Table / Entity Touched | Auth / RLS Context | Audit Event | Evidence / QA Verification Expectation |
 |---|---|---|---|---|---|
 | Landing screen load | None (static) | None | None | None | Page renders without auth; redirects if session exists |
@@ -1123,9 +1214,10 @@ Each breadcrumb segment is a clickable link.
 | Signup form submit | `supabase.auth.signUp` | `auth.users` | None | `auth.sign_up` (Supabase managed) | Email verification sent; confirmation state shown |
 | Invitation token validate | `validate_invitation` Edge Function | `invitations` | Service-role (token-scoped) | None | Invalid/expired token shows error; valid token shows acceptance form |
 | Invitation accept | `accept_invitation` Edge Function | `invitations`, `organisation_members`, `auth.users` | Service-role | `invitation_accepted` | User added to org; redirected to onboarding |
-| Forgot password submit | `supabase.auth.resetPasswordForEmail` | `auth.users` | None | None | "Check email" confirmation shown regardless of result |
-| Reset password submit | `supabase.auth.updateUser` | `auth.users` | Recovery token | None | Redirect to login with success toast; token error shows retry |
+| Forgot password submit | `supabase.auth.resetPasswordForEmail` | `auth.users` | None | None | "Check your email" confirmation shown regardless of result (no email enumeration — never reveal whether email exists); system error shown only for network/5xx failures |
+| Reset password submit / token expired | `supabase.auth.updateUser` | `auth.users` | Recovery token | None | Success: redirect to login with success toast; expired token: "Link expired. Request a new reset link." shown with link back to Forgot Password |
 | Profile update (onboarding) | `update_user_profile` Edge Function or direct Supabase RPC | `users` | JWT (own user only) | `user_profile_updated` | Profile saved; user proceeds to next onboarding step |
+| Onboarding completion | `complete_onboarding` Edge Function or Supabase update | `users`, `onboarding_status` | JWT (own user) | `onboarding_completed` | Onboarding marked complete; user redirected to Portfolio Dashboard |
 | Portfolio Dashboard load | `list_projects` Edge Function or Supabase query | `projects`, `project_members`, `milestones`, `tasks` | JWT + RLS (user's org + role) | None | Project cards render with correct data; all 5 states handled |
 | New Project CTA click | (Opens modal; no API until submit) | None | `project_creator` or `org_admin` role check | None | "New Project" button hidden if role insufficient |
 | Project Creation submit | `create_project` Edge Function | `projects`, `project_members`, `source_links` | JWT + `project_creator` or `org_admin` | `project_created` | Project created; redirected to Implementation page; appears in Portfolio |
@@ -1149,6 +1241,61 @@ Each breadcrumb segment is a clickable link.
 | User invite (from team management) | `send_invitation` Edge Function | `invitations`, `notifications` | JWT + `org_admin` | `invitation_sent` | Invitation email sent; pending invitation shown in team list |
 | Notification bell open | Supabase query | `notifications` filtered by `user_id` | JWT (own notifications only) | None | Unread notifications shown; mark-as-read available |
 | Sign out | `supabase.auth.signOut` | `auth.sessions` | JWT | None | Session cleared; redirected to Landing screen |
+| My Work screen load | `list_my_tasks` Edge Function or Supabase query | `tasks`, `deliverables`, `milestones`, `projects` | JWT (own tasks only via RLS) | None | All 5 states handled; only current user's assigned tasks returned |
+| My Work filter apply | Client-side filter OR `list_my_tasks?filter=overdue` | `tasks`, `deliverables`, `milestones`, `projects` | JWT (own tasks only via RLS) | None | Filter reduces displayed tasks immediately |
+| My Work task status update (inline) | Supabase update or `update_task_status` Edge Function | `tasks`, `status_logs` | JWT + `task_owner` | `task_status_updated` | Same as main task status update wiring |
+| My Work evidence action | Navigate to Evidence Upload (no separate API call) | — | — | — | Direct navigation to `/tasks/[tid]/evidence` |
+| 404 Not Found screen | No API (static render) | None | None | None | Non-existent route renders 404; SPA fallback serves index.html; React Router renders 404 component |
+| Assignment / Invitation Management screen load | `list_project_team` Edge Function or Supabase query | `project_members`, `invitations`, `users` | JWT + `project_leader` or above | None | Team list and pending invitations rendered; all 5 states handled |
+| Assignment / Invitation Management role update | Supabase update or `update_member_role` Edge Function | `project_members` | JWT + `project_leader` or above | `member_role_updated` | Role updated; confirmation toast; team list refreshed |
+| Admin / Roles screen load | Supabase query | `roles`, `role_assignments` | JWT + `org_admin` | None | Role list renders; create/edit/delete available |
+| Admin / Integrations screen load | Supabase query | `integration_configs` | JWT + `pit_admin` or `org_admin` | None | Integration config renders; save updates settings |
+| Admin / Notifications screen load | Supabase query | `notification_templates` | JWT + `pit_admin` or `org_admin` | None | Templates render; edit/save functional |
+| Admin / Task Cluster Templates load | Supabase query | `task_cluster_templates` | JWT + `pit_admin` or `org_admin` | None | Template list renders |
+| Task Cluster Template create | Supabase insert or `create_task_cluster_template` | `task_cluster_templates` | JWT + `pit_admin` or `org_admin` | `template_created` | Template created; list refreshed |
+| Task Cluster Template edit/delete | Supabase update/delete | `task_cluster_templates` | JWT + `pit_admin` or `org_admin` | `template_updated` / `template_deleted` | Template updated/deleted; list refreshed |
+| QA Dashboard load | `get_qa_metrics` Edge Function or Supabase query | `qa_test_runs`, `qa_metrics` (or external CI data source) | JWT + `cs2_admin` | None | QA metrics rendered; test history visible |
+| SPA fallback verification | No API — deployment infrastructure concern | None | None | None | All non-asset routes serve index.html; React Router handles 404; verified via deployment wave evidence |
+| Route-level permission-denied handling | ProtectedRoute component check | None | JWT claim / RLS | None | User redirected to Access-Denied screen (Journey 9) on permission failure; no API call needed |
+| Invitation Acceptance — token validate | `validate_invitation` Edge Function | `invitations` | Service-role (token-scoped) | None | Loading state while validating; valid shows form; invalid/expired shows error |
+| Invitation Acceptance — new user submit | `accept_invitation` + `supabase.auth.signUp` | `invitations`, `organisation_members`, `auth.users` | Service-role | `invitation_accepted` | Account created; user added to org; redirect to onboarding |
+| Invitation Acceptance — existing user accept | `accept_invitation` Edge Function | `invitations`, `organisation_members` | JWT (existing session) | `invitation_accepted` | User added to org; redirect to dashboard |
+
+---
+
+### Section 7b: Route-to-Wiring Traceability
+
+The following table provides a compact cross-reference from each deployment route to the screen, journeys, key wiring rows, and deployment evidence expectations.
+
+| Route | Screen | Journey(s) | Key Wiring Row(s) | Deployment Evidence |
+|---|---|---|---|---|
+| `/` | Landing | J-1 | Landing screen load (static) | Page loads without auth; Sign In/Sign Up CTAs present |
+| `/login` | Login | J-2 | Login form submit | Login succeeds → /dashboard; invalid credentials → inline error |
+| `/signup` | Signup | J-3 | Signup form submit | Email verification sent; duplicate email error shown |
+| `/forgot-password` | Forgot Password | J-5 | Forgot password submit | Confirmation shown; email sent |
+| `/reset-password` | Reset Password | J-6 | Reset password submit | Success → login; expired token → error + retry |
+| `/invite/[token]` | Invitation Acceptance | J-4 | Token validate, new user accept, existing user accept | Valid token shows form; acceptance links user to org |
+| `/onboarding` | Onboarding | J-10 | Profile update, onboarding completion | All 4 steps navigable; completion → dashboard |
+| `/dashboard` | Portfolio Dashboard | J-11 | Portfolio Dashboard load, New Project CTA | Projects render; RLS scope correct; New Project visible for permitted roles |
+| `/projects/[id]` | Implementation Page | J-11–J-17 | Project detail load, top indicators, add milestone/deliverable/task | Hierarchy renders; all 7 indicators correct; CRUD functional |
+| `/projects/[id]/timeline` | Timeline / Gantt | J-18 | Timeline load, milestone/deliverable date update | Gantt renders; date drag updates dates |
+| `/projects/[id]/milestones` | Milestone Management | J-12 | Milestone list load, add deliverable | Milestones list renders; Add Deliverable functional |
+| `/projects/[id]/milestones/[mid]/deliverables/[did]` | Deliverable Management | J-13, J-14 | Deliverable detail load, add task | Deliverable renders; tasks list renders; Add Task functional |
+| `/projects/[id]/tasks/[tid]` | Task Management | J-14–J-17 | Task detail load, status update, evidence section | Task detail renders; status update functional; evidence section visible |
+| `/projects/[id]/team` | Assignment / Invitation Management | J-15 | Team load, role update, invite send | Team list renders; invite sends email; role update saves |
+| `/tasks/[tid]/evidence` | Evidence Upload & Review | J-16, J-17 | Evidence upload, approve, return | File upload stores to Supabase Storage; approve/return functional |
+| `/watchdog` | Watchdog Dashboard | J-19 | Watchdog load, escalation action | Flagged items render; escalate/reassign/acknowledge actions save |
+| `/reports` | Reports & Exports | J-20 | Report generate | Report generated; download triggered; format options work |
+| `/audit-log` | Audit Log | J-21 | Audit log load | Entries render; filtering works; CSV export works |
+| `/qa-dashboard` | QA Dashboard | (admin/ops) | QA metrics load | Metrics render; test history visible |
+| `/admin` | Admin Settings (root) | J-22 | Admin settings load | Settings root renders; sub-navigation works |
+| `/admin/users` | Admin — User Management | J-22 | User list load, invite, role assign | User list renders; invite sends; role saves |
+| `/admin/roles` | Admin — Role Management | J-22 | Role list load, create/edit | Role list renders; creation saves |
+| `/admin/integrations` | Admin — Integrations | J-22 | Integration config load | Integration config renders; save updates |
+| `/admin/notifications` | Admin — Notifications | J-22 | Notification templates load | Templates render; edit/save functional |
+| `/admin/task-clusters` | Admin — Task Cluster Templates | J-22 | Template list load, create/edit/delete | Template list renders; CRUD functional |
+| `/my-work` | My Work | J-23 | My Work load, filter, status update, evidence action | Personal tasks render; filters work; status update saves |
+| `/*` (404) | 404 Not Found | J-8 (SPA fallback) | SPA fallback (static) | Non-existent route shows 404 page; "Go Home" link works |
 
 ---
 
@@ -1257,7 +1404,7 @@ Every route in PIT must be covered by deployment wave evidence. The following ma
 | `/*` (unmatched) | 404 Not Found | No | None | Wave: non-existent route shows 404 page; "Go Home" link works |
 
 **Deployment Infrastructure Requirement** (from L-006):
-- `vercel.json` must include SPA fallback rewrite rule for all non-asset routes.
+- Deployment platform must provide SPA fallback: serve `index.html` for all non-asset routes. If Vercel is the approved deployment target, `vercel.json` must include the required rewrite rule. The deployment target for PIT has not been formally confirmed; this requirement applies to the approved platform.
 - Supabase Storage bucket `pit-evidence` must be created and RLS policies applied before deployment wave.
 - All AIMC Edge Function endpoints must be deployed and tested before AI touchpoints are live.
 
@@ -1285,14 +1432,15 @@ The following items are open or require resolution before Stage 3 (FRS) can proc
 ### Open Item 3 — Multi-Organisation Portfolio Scope
 
 **Item**: The App Description specifies cross-organisation visibility for Org Super Admins. The Portfolio Dashboard spec in this document addresses multi-org switching but the full data scoping requirements for cross-org reports and audit logs need FRS specification.  
-**Stage 3 action**: FRS must define RLS policies for cross-org scenarios.
+**Stage 3 action**: FRS must define functional access and visibility requirements for cross-organisation scenarios. TRS/Architecture must translate those requirements into RLS policy design.
 
 ---
 
 ### Open Item 4 — AIMC Endpoint Configuration
 
 **Item**: The AIMC Gateway endpoint paths (`/api/aimc/pit/...`) are specified in this document but depend on the AIMC module's routing configuration. The exact endpoint paths may change pending AIMC integration spec.  
-**Stage 3 action**: FRS/TRS must confirm AIMC endpoint paths with the AIMC module owner before Stage 6 QA-to-Red.
+**Stage 3 action**: FRS must confirm AIMC capability names and functional touchpoints (what AI capabilities PIT requires, expressed as functional requirements — not endpoint paths).
+Before Stage 4 / QA-to-Red: confirm exact AIMC endpoint paths and routing contract with AIMC module owner. Exact endpoint path confirmation is a TRS/Architecture concern, not an FRS blocker.
 
 ---
 
@@ -1327,17 +1475,35 @@ The following items are open or require resolution before Stage 3 (FRS) can proc
 
 ### Stage 3 Prerequisite Checklist
 
-Before Stage 3 (FRS) can commence, the following must be true:
+The following items must be true before Stage 3 (FRS) can commence. Status is declared for each:
 
-- [ ] This Stage 2 document has been reviewed and approved by Foreman
-- [ ] Open Item 1 (signup configuration) resolved by CS2
-- [ ] All auth routes (Journey 1–9) confirmed by CS2/Foreman as complete
-- [ ] All 5 UI states confirmed for all primary screens
-- [ ] All 7 top indicators confirmed for Implementation Page
-- [ ] Deployment surface map confirmed as complete (no routes missing)
-- [ ] AIMC gateway endpoint paths confirmed with AIMC module owner
-- [ ] Improvement register updated with any design oversights discovered during Stage 2 (L-008)
+| # | Prerequisite | Status | Classification |
+|---|---|---|---|
+| P-01 | This Stage 2 document reviewed and approved by Foreman | 🔄 PENDING — Foreman approval required (this PR) | **Blocks Stage 3** |
+| P-02 | Open Item 1: Invitation-only vs. open signup configuration resolved by CS2 | 🔄 PENDING — awaiting CS2 decision | **Blocks Stage 3** — FRS cannot specify default without CS2 decision |
+| P-03 | All auth routes (Journey 1–9 + Journey 23) confirmed as complete by Foreman | ✅ RESOLVED — Journeys 1–9 confirmed in this upgrade; Journey 23 (My Work) added | Resolved by this PR |
+| P-04 | All 5 UI states confirmed for all primary screens | ✅ RESOLVED — Section 4 expanded in this upgrade to include all screens | Resolved by this PR |
+| P-05 | All 7 top indicators confirmed for Implementation Page | ✅ RESOLVED — Section 3 defines all 7 indicators completely | Resolved in v0.1-draft; confirmed |
+| P-06 | Deployment surface map confirmed as complete (no routes missing) | ✅ RESOLVED — Section 9 reviewed and complete in this upgrade including /my-work, /404, all admin sub-routes | Resolved by this PR |
+| P-07 | AIMC gateway endpoint paths confirmed with AIMC module owner | 🔄 DEFERRED — Functional touchpoints confirmed (Section 8); exact endpoint paths deferred to Stage 4/TRS per A-10 | Deferred to Stage 4 / QA-to-Red |
+| P-08 | Improvement register updated with design oversights from Stage 2 (L-008) | 🔄 DEFERRED — No new oversights requiring register entry discovered in this upgrade; register remains current | Deferred to Stage 3 (FRS author to update register if new gaps found) |
 
 ---
 
-**End of PIT UX Workflow & Wiring Spec v0.1-draft**
+## Section 11: Stage 2 Completion / Gate Status
+
+| Field | Value |
+|---|---|
+| **Stage 2 Status** | Pending Foreman review and approval |
+| **Stage 2 Completeness** | Upgrade complete (v0.2-draft) — pending Foreman approval |
+| **Open Items Requiring CS2 Resolution** | Open Item 1 (signup configuration default) — blocks Stage 3 FRS |
+| **Open Items Deferred to Stage 3** | Open Item 2 (task dependency full spec), Open Item 3 (cross-org access/visibility), Open Item 7 (task cluster template schema), Open Item 8 (upstream integration wiring) |
+| **Open Items Deferred to Stage 4/TRS** | Open Item 4 (AIMC endpoint paths), Open Item 5 (email notification provider), Open Item 6 (report generation library) |
+| **Stage 3 Readiness** | Not cleared — Stage 3 cannot commence until P-01 (Foreman approval) and P-02 (CS2 decision on signup config) are resolved |
+| **Build Authorization** | **NOT CLEARED** — implementation remains blocked until Stages 2–11 completed and gate-passed |
+| **Tracker Action** | Do not mark Stage 2 complete in BUILD_PROGRESS_TRACKER.md until Foreman approves this document |
+| **Approval Required From** | Foreman (this PR) and CS2 for P-02 |
+
+---
+
+**End of PIT UX Workflow & Wiring Spec v0.2-draft**

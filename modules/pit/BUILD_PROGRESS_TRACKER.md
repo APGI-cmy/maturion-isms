@@ -2,8 +2,8 @@
 
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
-**Last Updated**: 2026-05-06  
-**Updated By**: foreman-v2-agent (wave: pit-stage1-cs2-approval-stage2-initiation — maturion-isms#1540)
+**Last Updated**: 2026-05-06 (Stage 2 v0.2-draft upgrade per maturion-isms#1550, PR #1551)  
+**Updated By**: foreman-v2-agent (wave: pit-stage2-ux-wiring-upgrade-20260506 — maturion-isms#1550)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
@@ -67,21 +67,26 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 ---
 
 ### Stage 2: UX Workflow & Wiring Spec
-**Status**: [x] ACTIVE — INITIATED (maturion-isms#1540)  
+**Status**: [x] ACTIVE — UPGRADED TO v0.2-DRAFT (maturion-isms#1550) — Pending Foreman Approval  
 **Location**: `modules/pit/01-ux-workflow-wiring-spec/`  
 **Key Artifacts**:
-- [ ] `ux-workflow-wiring-spec.md` — Complete user journey maps, screen interactions, data flows, wiring
-- [ ] All primary and secondary user paths documented
-- [ ] Explicit wiring between UI elements, API endpoints, schema tables, and reporting outputs
-- [ ] Approved by Foreman and client/user representative
+- [x] `ux-workflow-wiring-spec.md` — v0.2-draft: Complete user journey maps (23 journeys), screen definitions (21 screens), data flows, wiring, route-to-wiring traceability — **Pending Foreman review and approval**
+- [x] All primary and secondary user paths documented (including My Work Journey 23, Invitation Acceptance Screen 20, auth/public screen states)
+- [x] Explicit wiring between UI elements, API endpoint candidates, schema table candidates, and reporting outputs (Section 7 + Section 7b traceability)
+- [ ] Approved by Foreman — **PENDING** (this PR)
 
-**Completion Date**: N/A — In progress  
-**Notes**: Stage 2 initiated per maturion-isms#1540 following CS2 approval of Stage 1.
-Stage 2 artifact: `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md`.
-Stage 2 inherits all MMM carry-forward requirements from app-description.md § MMM Lessons
-Promoted Into PIT: auth/onboarding routes (L-004), UI state definitions (L-003),
-Implementation page top indicators, app shell/navigation, and deployment surface map (L-006).
-All 5 UI states required per L-003 for every primary page.
+**Completion Date**: N/A — Pending Foreman approval  
+**Notes**: Stage 2 initiated per maturion-isms#1540 (v0.1-draft). Upgraded to v0.2-draft per maturion-isms#1550 (PR #1551).
+Upgrades in v0.2-draft: My Work journey (J-23) and My Work screen (Screen 21) added; Invitation
+Acceptance screen (Screen 20) added; five-state matrix expanded to all primary routes/screens including auth/public screens;
+Assignment/Invitation Management added to state matrix; screen-to-data wiring expanded to cover every
+deployment surface map route; route-to-wiring traceability table added (Section 7b); FRS/RLS wording
+corrected (Open Item 3); Vercel-specific wording softened; API/table/edge-function names marked as
+candidates; AIMC endpoint prerequisite rebalanced; Stage 3 prerequisites formally deferred with explicit
+status (P-01–P-08); Stage 2 Completion / Gate Status section added (Section 11).
+**Stage 3 BLOCKED**: Cannot commence until Foreman approves this document (P-01) AND CS2 resolves
+Open Item 1 signup configuration (P-02).
+All 5 UI states required per L-003 for every primary page — CONFIRMED in v0.2-draft.
 
 ---
 
@@ -242,15 +247,16 @@ artifacts, not core PIT module build deliverables. Mapped from old Stage 5.
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 2 ACTIVE — UX Workflow & Wiring Spec initiated (maturion-isms#1540)  
-**Overall Progress**: ~20% complete (Stage 1 App Description approved; Stage 2 initiated; Architecture substantially IN_PROGRESS)  
-**Blockers**: None for Stage 2. Build Authorization NOT CLEARED — implementation blocked until Stages 2–11 completed and gate-passed.  
+**Current Stage**: Stage 2 ACTIVE — UX Workflow & Wiring Spec v0.2-draft upgraded (maturion-isms#1550, PR #1551) — **Pending Foreman Approval**  
+**Overall Progress**: ~22% complete (Stage 1 App Description approved; Stage 2 v0.2-draft in review; Architecture substantially IN_PROGRESS)  
+**Blockers**: Stage 3 blocked — awaiting Foreman approval of Stage 2 (P-01) and CS2 decision on signup configuration (P-02 / Open Item 1).  
 **Next Steps**:
-1. Complete Stage 2 (UX Workflow & Wiring Spec) — `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md`
-2. Complete Stage 3 (FRS) building on App Description + UX Workflow
-3. Complete Stage 4 (TRS)
-4. Formally gate-pass Stage 5 (Architecture — rich content already exists, needs approval)
-5. Complete Stages 6–11 before Build Authorization can be requested
+1. Foreman approves Stage 2 document (this PR)
+2. CS2 resolves Open Item 1 (invitation-only vs. open signup default)
+3. Complete Stage 3 (FRS) building on App Description + UX Workflow v0.2-draft
+4. Complete Stage 4 (TRS)
+5. Formally gate-pass Stage 5 (Architecture — rich content already exists, needs approval)
+6. Complete Stages 6–11 before Build Authorization can be requested
 
 **MMM-Derived Learning Controls (Carry-Forward)**:
 PIT carries forward 8 build-process improvement controls from the MMM module build. These are
@@ -270,12 +276,14 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 ## Governance Compliance
 
 - [x] Stage 1 App Description: CS2_APPROVED_AUTHORITATIVE (2026-05-06)
-- [x] Stage 2 UX Workflow & Wiring Spec: INITIATED (maturion-isms#1540)
-- [ ] Traceability chain: App Description ✅ → UX Workflow (in progress) → FRS → TRS → Architecture (gate-pass pending)
+- [x] Stage 2 UX Workflow & Wiring Spec: UPGRADED to v0.2-draft (maturion-isms#1550) — PENDING FOREMAN APPROVAL
+- [ ] Stage 2 UX Workflow & Wiring Spec: Foreman approval — PENDING (this PR)
+- [ ] Traceability chain: App Description ✅ → UX Workflow v0.2-draft (pending approval) → FRS → TRS → Architecture (gate-pass pending)
 - [x] Stage 1 approval obtained — Johan Ras / CS2 approved 2026-05-06 (ref: maturion-isms#1540)
 - [x] Build Authorization: NOT CLEARED — implementation blocked until Stages 2–11 complete
 - [x] Evidence artifacts created for Stage 1 (checklist at `.agent-admin/evidence/app-description-checklist/pit-20260506.md`)
 - [x] Module manifest updated (module_name corrected to "PIT (Project Implementation Tracker)")
+- [x] Stage 2 upgrade checklist evidence at `.agent-admin/evidence/stage2-upgrade-checklist/pit-stage2-20260506.md`
 
 ---
 
