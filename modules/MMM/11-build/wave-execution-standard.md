@@ -11,7 +11,7 @@
 - **Version**: 1.0.0
 - **Date**: 2026-05-07
 - **Owner**: CS2 (Johan Ras / @APGI-cmy)
-- **Produced By**: foreman-v2-agent (wave mmm-phase3-retrofit-20260507)
+- **Produced By**: mat-specialist (delegated by foreman-v2-agent; wave mmm-phase3-retrofit-20260507)
 - **Issue**: maturion-isms#1564 (Phase 3 retrofit)
 - **Governing Wave Record**: `.agent-admin/assurance/iaa-wave-record-mmm-phase3-retrofit-20260507.md`
 
