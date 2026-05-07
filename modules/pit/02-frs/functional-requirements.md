@@ -15,12 +15,12 @@
 | Status | Draft — For CS2 review and approval |
 | Approval Status | Pending CS2 approval |
 | Derived From (Stage 1) | `docs/governance/PIT_APP_DESCRIPTION.md` v1.0 (CS2 Approved 2026-05-06, ref: maturion-isms#1540) |
-| Derived From (Stage 2) | `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.1-draft |
+| Derived From (Stage 2) | `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.2-draft |
 | Author | foreman-v2-agent (POLC-Orchestration mode) |
 | Date | 2026-05-06 |
-| Issue | maturion-isms#1549 |
+| Issue | maturion-isms#1548 |
 | Pre-Build Authority | `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 |
-| Upstream Authority (Stage 2) | `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.1-draft — Foreman-reviewed 2026-05-06 (maturion-isms#1549) |
+| Upstream Authority (Stage 2) | `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.2-draft — Foreman-reviewed 2026-05-06 (maturion-isms#1548) |
 
 > **Governance Note:** This document establishes the formal functional requirement baseline
 > for all downstream PIT artifacts: TRS (Stage 4), Architecture gate-pass (Stage 5),
@@ -36,7 +36,7 @@ This Functional Requirements Specification (FRS) formalizes the complete set of 
 functional requirements for PIT — Project Implementation Tracker, derived from:
 
 1. **Stage 1** — `docs/governance/PIT_APP_DESCRIPTION.md` v1.0 (CS2 Approved, §AD references below)
-2. **Stage 2** — `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.1-draft (§UX references below)
+2. **Stage 2** — `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.2-draft (§UX references below)
 
 ### Change-Propagation Obligation
 
@@ -69,8 +69,8 @@ Acceptance criteria follow each requirement inline.
 ### 1.3 Traceability Completeness Statement
 
 All App Description sections (§AD-01 through §AD-24) are traced in this FRS.
-All 22 user journeys (§UX-J-01 through §UX-J-22) in the UX Wiring Spec are traced.
-All 19 screens (§UX-S-01 through §UX-S-19) are traced.
+All 23 user journeys (§UX-J-01 through §UX-J-23) in the UX Wiring Spec are traced.
+All 21 screens (§UX-S-01 through §UX-S-21) are traced.
 
 ---
 
@@ -135,7 +135,7 @@ The system shall support the following user roles in order of authority:
 | `project_creator` | Create new projects; may not manage existing projects outside their scope |
 | `viewer` | Read-only access to projects they are a member of |
 
-**Acceptance**: Given a user with role `viewer`, when they attempt to add a milestone, then the system blocks the action and shows the permission-denied state. Role hierarchy is enforced by Supabase RLS policies.
+**Acceptance**: Given a user with role `viewer`, when they attempt to add a milestone, then the system blocks the action and shows the permission-denied state. Role hierarchy enforcement is functionally validated by attempting the action with insufficient permissions and observing the denied outcome (access control implementation deferred to TRS).
 **Derived from**: §AD-08, §UX-J-09, §UX-SEC-5.3
 
 ### PIT-FR-002 — Role-Based Navigation Visibility
@@ -160,7 +160,7 @@ The system shall redirect an authenticated user arriving at the public landing r
 
 ### PIT-FR-004 — Login Credential Validation
 
-The system shall authenticate users via email and password using Supabase Auth `signInWithPassword`. On failure, the system shall display an inline error message at the form level. The system shall not disclose whether the failure is due to an unknown email or wrong password.
+The system shall authenticate users via email and password through the authentication service. On failure, the system shall display an inline error message at the form level. The system shall not disclose whether the failure is due to an unknown email or wrong password.
 
 **Acceptance**: Given invalid credentials, when login is submitted, then an inline error appears without revealing which field is wrong; no redirect occurs.
 **Derived from**: §UX-J-02; §UX-S-02
@@ -174,7 +174,7 @@ The system shall redirect a user who was intercepted by a protected-route guard 
 
 ### PIT-FR-006 — Signup Flow
 
-The system shall allow new users to create an account with email, password, and full name via Supabase Auth `signUp`. The system shall send an email verification before granting access.
+The system shall allow new users to create an account with email, password, and full name via the authentication service. The system shall send an email verification before granting access.
 
 **Acceptance**: After submitting the signup form, a "Check your email" confirmation state is shown; the user cannot access protected routes until email is verified.
 **Derived from**: §UX-J-03; §UX-S-03
@@ -193,7 +193,7 @@ The system shall support an organisation-level setting (`invite_only`) that, whe
 The system shall validate invitation tokens received via URL (`/invite/[token]`) using the `validate_invitation` Edge Function. Expired or invalid tokens shall display an error with an option to request a new invitation.
 
 **Acceptance**: Given an expired invitation token, when the user navigates to `/invite/[token]`, then an error message is shown with a "Request new invitation" option.
-**Derived from**: §UX-J-04; §UX-S-01
+**Derived from**: §UX-J-04; §UX-S-20
 
 ### PIT-FR-009 — Invitation Acceptance — New User Path
 
@@ -211,14 +211,14 @@ The system shall allow an existing user to accept an invitation by confirming a 
 
 ### PIT-FR-011 — Forgot Password Flow
 
-The system shall allow unauthenticated users to initiate a password reset by entering their email address. The system shall send a reset link via Supabase Auth `resetPasswordForEmail`. The system shall display a "Check your email" confirmation regardless of whether the email is registered (no enumeration).
+The system shall allow unauthenticated users to initiate a password reset by entering their email address. The system shall send a reset link via the authentication service. The system shall display a "Check your email" confirmation regardless of whether the email is registered (no enumeration).
 
 **Acceptance**: Whether or not the email exists in the system, the user sees "Check your email" after submission. A reset email is sent only if the email exists.
 **Derived from**: §UX-J-05; §UX-S-19
 
 ### PIT-FR-012 — Password Reset Flow
 
-The system shall allow users arriving via a valid password reset link to set a new password using Supabase Auth `updateUser`. On success, the user shall be redirected to the Login screen with a success toast. On token expiry, an error message with a retry link shall be shown.
+The system shall allow users arriving via a valid password reset link to set a new password via the authentication service. On success, the user shall be redirected to the Login screen with a success toast. On token expiry, an error message with a retry link shall be shown.
 
 **Acceptance**: Given a valid reset token, new password is accepted and saved; user redirected to login with success toast. Given an expired token, an error with "Try Again" link is shown.
 **Derived from**: §UX-J-06; §UX-S-19
@@ -232,7 +232,7 @@ The system shall intercept all unauthenticated requests to protected routes, sto
 
 ### PIT-FR-014 — SPA Fallback Route
 
-The deployment infrastructure shall serve `index.html` for all non-asset paths (SPA fallback). The `vercel.json` shall include a rewrite rule `{ "source": "/(.*)", "destination": "/index.html" }`.
+The deployment infrastructure shall serve `index.html` for all non-asset paths (SPA fallback). If Vercel is the approved deployment target, a `vercel.json` rewrite rule (`{ "source": "/(.*)", "destination": "/index.html" }`) shall be configured to achieve this; for other deployment platforms, an equivalent SPA fallback mechanism shall be used. The deployment target for PIT is not yet formally confirmed.
 
 **Acceptance**: Navigating directly to `/projects/123` in a browser (bypassing client-side routing) renders the correct React component.
 **Derived from**: §UX-J-08; §UX-SEC-9
@@ -243,6 +243,19 @@ The system shall guide new users through a four-step onboarding process: (1) pro
 
 **Acceptance**: A new user completing email verification is directed to onboarding; all four steps are navigable; "Skip" skips orientation; completion redirects to Portfolio Dashboard.
 **Derived from**: §UX-J-10; §UX-S-04
+
+### PIT-FR-110 — Invitation Acceptance Screen
+
+The system shall display a dedicated Invitation Acceptance screen at `/invite/[token]` with the following states:
+- **Validating**: loading/spinner state while the token is validated server-side.
+- **New user path**: if the token is valid and the email is not yet registered, a password-creation form is displayed showing the inviting organisation name, inviter name, and assigned role. On submission the user's account is created and they are redirected to Onboarding (see PIT-FR-009).
+- **Existing user path**: if the token is valid and the user already has an account, a confirmation prompt is displayed showing the organisation and role. On accept the user is added to the organisation and redirected to the Portfolio Dashboard (see PIT-FR-010).
+- **Error state**: if the token is expired or invalid, an error message and "Request new invitation" CTA are displayed.
+
+The screen shall handle all five UI states (loading, error/empty, permission context, network error, valid data) as defined in PIT-FR-016.
+
+**Acceptance**: Given a valid new-user invitation token, the screen shows organisation context and a password-creation form; given a valid existing-user token, a confirmation prompt is shown; given an expired token, an error with retry CTA is shown.
+**Derived from**: §UX-J-04; §UX-S-20
 
 ---
 
@@ -258,7 +271,7 @@ The system shall implement all five required UI states on every primary page:
 |---|---|---|
 | **1 — Loading** | Data fetch in progress | Skeleton loaders or spinner in content area; navigation persistent |
 | **2 — Empty Data** | Fetch successful, zero records | Illustration/icon, descriptive message, contextual CTA |
-| **3 — Permission Denied** | 403 / RLS blocks data | "You don't have permission" message; CTA to safe destination; no sensitive data shown |
+| **3 — Permission Denied** | 403 / permission denied | "You don't have permission" message; CTA to safe destination; no sensitive data shown |
 | **4 — Network / Server Error** | Network failure or 500 | "Something went wrong" message with retry button; visually distinct from permission-denied |
 | **5 — Data** | Fetch successful, data present | Full rendered page with all interactions available |
 
@@ -323,7 +336,7 @@ The system shall wrap the entire authenticated application shell in a `Notificat
 
 ### PIT-FR-023 — Real-Time In-App Notification Delivery
 
-The system shall deliver in-app notifications via Supabase Realtime subscription on the `notifications` table filtered by the current user's ID. Notifications shall appear without page reload.
+The system shall deliver in-app notifications via a real-time data subscription mechanism, filtered to the current user's notifications. Notifications shall appear without page reload. (Real-time transport implementation deferred to TRS.)
 
 **Acceptance**: When another user assigns a task to the current user, the notification bell badge updates in real time.
 **Derived from**: §UX-SEC-5.4
@@ -654,9 +667,9 @@ The system shall allow `project_leader` or above to assign roles to team members
 
 ### PIT-FR-062 — Evidence Upload
 
-The system shall allow `task_owner` users to upload evidence files (local file selection or drag-and-drop) or submit a URL/note as evidence for a task. Files shall be uploaded to Supabase Storage bucket `pit-evidence`. A row shall be inserted into the `evidence_items` table linking to the task.
+The system shall allow `task_owner` users to upload evidence files (local file selection or drag-and-drop) or submit a URL/note as evidence for a task. Files shall be uploaded to the configured file storage service (storage provider and bucket configuration deferred to TRS). A row shall be inserted into the `evidence_items` table linking to the task.
 
-**Acceptance**: Uploading a PDF to a task inserts a record in `evidence_items` with `status = pending` and stores the file in `pit-evidence` bucket.
+**Acceptance**: Uploading a PDF to a task inserts a record in `evidence_items` with `status = pending` and stores the file in the configured file storage service.
 **Derived from**: §UX-J-16; §UX-S-13
 
 ### PIT-FR-063 — Evidence Submission Notification to Reviewers
@@ -830,7 +843,7 @@ The system shall generate reports server-side via the `generate_report` Edge Fun
 
 ### PIT-FR-084 — Report History
 
-The system shall optionally store generated reports in Supabase Storage and display a report history list on the Reports screen with download links for previous reports.
+The system shall optionally store generated reports in the configured file storage service and display a report history list on the Reports screen with download links for previous reports.
 
 **Acceptance**: After generating a report, it appears in the "Previous Reports" list with a download button.
 **Derived from**: §UX-S-15
@@ -1039,7 +1052,7 @@ The system shall provide an Integration Settings screen in Admin (`/admin/integr
 
 ### PIT-FR-103 — Complete Route Coverage
 
-The system shall implement all 27 routes defined in §UX-SEC-9 (Deployment Surface Map). Each route shall be registered in the React Router configuration and in the Supabase/Vercel deployment configuration.
+The system shall implement all 27 routes defined in §UX-SEC-9 (Deployment Surface Map). Each route shall be registered in the React Router configuration and in the deployment configuration.
 
 **Acceptance**: Every route in §UX-SEC-9 is registered in the application and returns a correctly rendered component (not a 404) in the deployed environment.
 **Derived from**: §UX-SEC-9; L-006
@@ -1051,16 +1064,40 @@ The system shall display a dedicated 404 Not Found page for any route not matchi
 **Acceptance**: Navigating to `/this-does-not-exist` renders a 404 page with a "Go Home" link.
 **Derived from**: §UX-SEC-9; §UX-J-08
 
-### PIT-FR-105 — Supabase Storage Bucket Provisioning
+### PIT-FR-105 — Evidence File Storage Provisioning
 
-The system shall require the Supabase Storage bucket `pit-evidence` to be created with appropriate RLS policies before any deployment wave that includes evidence upload functionality. The bucket creation and RLS policy application shall be documented in the deployment contract.
+The deployment contract shall require that a dedicated file storage location for evidence uploads is created and access-controlled before any deployment wave that includes evidence upload functionality. The storage provider, bucket/container naming, and access policy implementation are deferred to TRS and the deployment contract.
 
-**Acceptance**: The `pit-evidence` bucket exists and files uploaded to it by task owners are only accessible to project members and admins.
+**Acceptance**: Evidence files uploaded by task owners are only accessible to project members and admins; the storage location is not publicly readable.
 **Derived from**: §UX-SEC-9; L-006
 
 ---
 
-## 27. Non-Functional Placeholders (TRS-Only)
+## 27. My Work / Personal Task View Requirements
+
+*Derived from: §AD-06, §UX-J-23, §UX-S-21*
+
+### PIT-FR-111 — My Work Screen
+
+The system shall provide a personal task view screen at `/my-work`, accessible to all authenticated users. The screen shall display all tasks assigned to the current user across all projects, showing for each task: project name, milestone name, deliverable name, task name, status badge, due date, and a priority indicator. The screen shall support all five UI states per PIT-FR-016.
+
+**Acceptance**: Navigating to `/my-work` renders only the tasks assigned to the currently authenticated user; tasks assigned to other users are not shown; an empty state with a helpful explanation is displayed when no tasks are assigned.
+**Derived from**: §UX-J-23; §UX-S-21
+
+### PIT-FR-112 — My Work Filter and Task Actions
+
+The My Work screen shall provide:
+- (a) filter controls for task status (overdue, due-soon, in-progress, completed), due date range, and project;
+- (b) inline status update per task row that saves without a full page navigation;
+- (c) a navigation link from each task row to the full Task Management page (`/projects/[id]/tasks/[tid]`);
+- (d) a direct evidence upload shortcut per task row navigating to the evidence upload screen (`/tasks/[tid]/evidence`).
+
+**Acceptance**: Applying the "overdue" filter shows only tasks with a past due date; inline status update saves without navigating away; clicking a task name navigates to the full task page; clicking the evidence icon navigates to the evidence upload screen for that task.
+**Derived from**: §UX-J-23; §UX-S-21
+
+---
+
+## 28. Non-Functional Placeholders (TRS-Only)
 
 The following items are intentionally deferred to Stage 4 (TRS) and Stage 5 (Architecture). They are listed here as reminders only and must not be allowed to replace the functional requirements above.
 
@@ -1079,7 +1116,7 @@ The following items are intentionally deferred to Stage 4 (TRS) and Stage 5 (Arc
 
 ---
 
-## 28. Acceptance Criteria Summary
+## 29. Acceptance Criteria Summary
 
 Each functional requirement above includes inline acceptance criteria in the format:
 
@@ -1089,11 +1126,11 @@ Stage 6 QA-to-Red shall derive test cases directly from these acceptance criteri
 
 ---
 
-## 29. Traceability Matrix
+## 30. Traceability Matrix
 
 | App Description Section | Stage 2 Journey/Screen/Section | FRS Requirement IDs | Future Stage Placeholder |
 |--------------------------|-------------------------------|---------------------|--------------------------|
-| §AD-06 (User Flows) | §UX-J-01 through §UX-J-10 | PIT-FR-003 through PIT-FR-015 | TRS §auth; QA-to-Red auth suite |
+| §AD-06 (User Flows) | §UX-J-01 through §UX-J-10; §UX-S-20 | PIT-FR-003 through PIT-FR-015, PIT-FR-110 | TRS §auth; QA-to-Red auth suite |
 | §AD-11 (5-State UI) | §UX-SEC-4 | PIT-FR-016, PIT-FR-017 | QA-to-Red 5-state suite |
 | §AD-11 (App Shell) | §UX-SEC-5 | PIT-FR-018 through PIT-FR-021 | Architecture §shell; QA-to-Red shell suite |
 | §AD-13 (Notifications) | §UX-SEC-5.4 | PIT-FR-022 through PIT-FR-026 | TRS §notifications; QA-to-Red notification suite |
@@ -1113,19 +1150,20 @@ Stage 6 QA-to-Red shall derive test cases directly from these acceptance criteri
 | §AD-14 (AIMC) | §UX-SEC-8 | PIT-FR-095 through PIT-FR-099 | TRS §aimc; QA-to-Red AIMC suite |
 | §AD-15 (Integrations) | §UX-SEC-10 OI-8; §UX-J-11 | PIT-FR-100 through PIT-FR-102 | Architecture §integrations; QA-to-Red integration suite |
 | §AD-16 (Deployment) | §UX-SEC-9 | PIT-FR-103 through PIT-FR-105 | Architecture §deployment; Stage 7 PBFAG |
+| §AD-06 (My Work) | §UX-J-23, §UX-S-21 | PIT-FR-111, PIT-FR-112 | QA-to-Red my-work suite |
 | §AD-01–§AD-05 (Identity) | — | PIT-FR-001, PIT-FR-002 | Architecture §roles |
 
 **FRS Coverage Totals**:
-- Functional Requirements: PIT-FR-001 through PIT-FR-105, PIT-FR-106 through PIT-FR-109 (109 requirements)
-- Acceptance Criteria: 1 per requirement (109 inline acceptance criteria)
+- Functional Requirements: PIT-FR-001 through PIT-FR-105, PIT-FR-106 through PIT-FR-112 (112 requirements)
+- Acceptance Criteria: 1 per requirement (112 inline acceptance criteria)
 - Non-Functional Placeholders: NF-001 through NF-010 (10 deferred to TRS/Architecture)
 - App Description Sections Traced: §AD-01 through §AD-24 — COMPLETE
-- UX Journeys Traced: §UX-J-01 through §UX-J-22 — COMPLETE
-- UX Screens Traced: §UX-S-01 through §UX-S-19 — COMPLETE
+- UX Journeys Traced: §UX-J-01 through §UX-J-23 — COMPLETE
+- UX Screens Traced: §UX-S-01 through §UX-S-21 — COMPLETE
 
 ---
 
-## 30. Open Questions / Assumptions
+## 31. Open Questions / Assumptions
 
 The following assumptions are made in this FRS. Items marked [CS2] require CS2 decision before Stage 4 (TRS) proceeds. Items marked [ARCH] are deferred to Architecture.
 
@@ -1142,7 +1180,7 @@ The following assumptions are made in this FRS. Items marked [CS2] require CS2 d
 
 ---
 
-## 31. Stage 4 (TRS) Readiness Statement
+## 32. Stage 4 (TRS) Readiness Statement
 
 This FRS is sufficiently complete to derive the TRS. The following conditions must be met before Stage 4 begins:
 

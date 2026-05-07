@@ -3,7 +3,7 @@
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
 **Last Updated**: 2026-05-06  
-**Updated By**: foreman-v2-agent (wave: pit-stage2-verification-stage3-frs — maturion-isms#1549)
+**Updated By**: foreman-v2-agent (wave: pit-stage2-verification-stage3-frs — maturion-isms#1548)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
@@ -67,11 +67,11 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 ---
 
 ### Stage 2: UX Workflow & Wiring Spec
-**Status**: [x] STAGE_2_COMPLETE_FOREMAN_REVIEWED — pending CS2 approval (maturion-isms#1549)  
+**Status**: [x] STAGE_2_COMPLETE_FOREMAN_REVIEWED — pending CS2 approval (maturion-isms#1548)  
 **Location**: `modules/pit/01-ux-workflow-wiring-spec/`  
 **Key Artifacts**:
-- [x] `ux-workflow-wiring-spec.md` — Complete user journey maps, screen interactions, data flows, wiring (v0.1-draft)
-- [x] All primary and secondary user paths documented (22 journeys including all auth flows)
+- [x] `ux-workflow-wiring-spec.md` — Complete user journey maps, screen interactions, data flows, wiring (v0.2-draft)
+- [x] All primary and secondary user paths documented (23 journeys including all auth flows, My Work journey, and Invitation Acceptance)
 - [x] Explicit wiring between UI elements, API endpoints, schema tables, and reporting outputs (Section 7 wiring table)
 - [x] All 5 UI states for every primary page (Section 4 state matrix)
 - [x] All 7 Implementation Page top indicators (Section 3)
@@ -79,28 +79,28 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [x] Timeline creator interactions and date-alignment expectations (Section 6)
 - [x] AIMC-only AI touchpoints documented (Section 8)
 - [x] Deployment surface map (Section 9)
-- [ ] Approved by CS2 (pending review — maturion-isms#1549)
+- [ ] Approved by CS2 (pending review — maturion-isms#1548)
 
 **Completion Date**: N/A — Foreman-reviewed 2026-05-06, pending CS2 approval  
 **Stage 2 Completion Evidence**: `.agent-admin/evidence/stage2-completion-checklist/pit-stage2-20260506.md`  
-**Notes**: Stage 2 UX Workflow & Wiring Spec v0.1-draft satisfies all 13 completion criteria per maturion-isms#1549 verification. All required sections present: derivation statement, L-001–L-008 carry-forward, 22 user journeys, 19 screens, 5-state UI matrix, 7 top indicators, app shell, timeline wiring, screen-to-data wiring table, AIMC touchpoints, deployment surface map. 8 open items in Section 10 are assigned as Stage 3 FRS resolution actions. Build Authorization remains NOT CLEARED.
+**Notes**: Stage 2 UX Workflow & Wiring Spec v0.2-draft satisfies all 13 completion criteria per maturion-isms#1548 verification. All required sections present: derivation statement, L-001–L-008 carry-forward, 23 user journeys (including My Work and Invitation Acceptance), 21 screens, 5-state UI matrix, 7 top indicators, app shell, timeline wiring, screen-to-data wiring table, AIMC touchpoints, deployment surface map. Open items from Stage 2 Section 10 are resolved in Stage 3 FRS. Build Authorization remains NOT CLEARED.
 
 ---
 
 ### Stage 3: Functional Requirements Specification (FRS)
-**Status**: [x] DRAFT_CREATED — pending CS2 approval (maturion-isms#1549)  
+**Status**: [x] DRAFT_CREATED — pending CS2 approval (maturion-isms#1548)  
 **Location**: `modules/pit/02-frs/`  
 **Key Artifacts**:
-- [x] `functional-requirements.md` — Stage 3 FRS v0.1-draft, derived from App Description v1.0 + UX Workflow & Wiring Spec v0.1-draft
+- [x] `functional-requirements.md` — Stage 3 FRS v0.1-draft, derived from App Description v1.0 + UX Workflow & Wiring Spec v0.2-draft
 - [x] Derivation statements from both upstream artifacts included
 - [x] Numbered functional requirements (PIT-FR-001 through PIT-FR-109) — testable, phrased as "The system shall..."
 - [x] Auth/onboarding, all primary screens, 5 UI states, project hierarchy, timeline, evidence, assignment, watchdog, reporting, audit, QA dashboard, AIMC, cross-module integrations covered
 - [x] Acceptance criteria for every requirement or requirement group
 - [x] Traceability matrix (App Description → Stage 2 → FRS requirement ID → future stage placeholder)
-- [ ] Approved by CS2 (pending review — maturion-isms#1549)
+- [ ] Approved by CS2 (pending review — maturion-isms#1548)
 
 **Completion Date**: N/A — Draft created 2026-05-06, pending CS2 approval  
-**Notes**: FRS v0.1-draft created per maturion-isms#1549. Derived from docs/governance/PIT_APP_DESCRIPTION.md v1.0 and modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md v0.1-draft. Open items from Stage 2 Section 10 are resolved in FRS. Stage 4 TRS remains blocked until Stage 3 FRS is approved by CS2. Build Authorization remains NOT CLEARED.
+**Notes**: FRS v0.1-draft created per maturion-isms#1548. Derived from docs/governance/PIT_APP_DESCRIPTION.md v1.0 and modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md v0.2-draft. 112 functional requirements (PIT-FR-001 through PIT-FR-105, PIT-FR-106 through PIT-FR-112) with acceptance criteria and traceability matrix covering 23 journeys and 21 screens. Traceability updated to v0.2 baseline. Open items from Stage 2 Section 10 are resolved in FRS. Stage 4 TRS remains blocked until Stage 3 FRS is approved by CS2. Build Authorization remains NOT CLEARED.
 
 ---
 
@@ -247,7 +247,7 @@ artifacts, not core PIT module build deliverables. Mapped from old Stage 5.
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 3 ACTIVE — FRS Draft Created (maturion-isms#1549); Stage 2 FOREMAN_REVIEWED pending CS2 approval  
+**Current Stage**: Stage 3 ACTIVE — FRS Draft Created (maturion-isms#1548); Stage 2 FOREMAN_REVIEWED pending CS2 approval  
 **Overall Progress**: ~30% complete (Stage 1 App Description approved; Stage 2 Foreman-reviewed pending CS2; Stage 3 FRS draft created; Architecture substantially IN_PROGRESS)  
 **Blockers**: None for Stage 3 review. Stage 4 TRS blocked until Stage 3 FRS is approved by CS2. Build Authorization NOT CLEARED — implementation blocked until Stages 3–11 completed and gate-passed.  
 **Next Steps**:
@@ -275,8 +275,8 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 ## Governance Compliance
 
 - [x] Stage 1 App Description: CS2_APPROVED_AUTHORITATIVE (2026-05-06)
-- [x] Stage 2 UX Workflow & Wiring Spec: STAGE_2_COMPLETE_FOREMAN_REVIEWED (maturion-isms#1549) — pending CS2 approval
-- [x] Stage 3 FRS: DRAFT_CREATED (maturion-isms#1549) — pending CS2 approval
+- [x] Stage 2 UX Workflow & Wiring Spec: STAGE_2_COMPLETE_FOREMAN_REVIEWED (maturion-isms#1548) — pending CS2 approval
+- [x] Stage 3 FRS: DRAFT_CREATED (maturion-isms#1548) — pending CS2 approval
 - [ ] Traceability chain: App Description ✅ → UX Workflow (FOREMAN_REVIEWED) → FRS (DRAFT_CREATED) → TRS → Architecture (gate-pass pending)
 - [x] Stage 1 approval obtained — Johan Ras / CS2 approved 2026-05-06 (ref: maturion-isms#1540)
 - [x] Build Authorization: NOT CLEARED — implementation blocked until Stages 3–11 complete
@@ -289,9 +289,9 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 
 ## Notes and Observations
 
-**Stage 2 Foreman-Reviewed (2026-05-06)**: All 13 Stage 2 completion criteria verified per maturion-isms#1549. UX Workflow & Wiring Spec v0.1-draft satisfies all requirements: derivation statement, L-001–L-008 carry-forward, 22 user journeys including all auth flows, 19 primary screens, 5-state UI matrix, 7 top indicators, app shell, timeline wiring, screen-to-data wiring table, AIMC touchpoints, deployment surface map. Status: STAGE_2_COMPLETE_FOREMAN_REVIEWED pending CS2 approval.
+**Stage 2 Foreman-Reviewed (2026-05-06)**: All 13 Stage 2 completion criteria verified per maturion-isms#1548. UX Workflow & Wiring Spec v0.2-draft satisfies all requirements: derivation statement, L-001–L-008 carry-forward, 23 user journeys including all auth flows, My Work and Invitation Acceptance, 21 primary screens, 5-state UI matrix, 7 top indicators, app shell, timeline wiring, screen-to-data wiring table, AIMC touchpoints, deployment surface map. Status: STAGE_2_COMPLETE_FOREMAN_REVIEWED pending CS2 approval.
 
-**Stage 3 FRS Draft Created (2026-05-06)**: Stage 3 FRS v0.1-draft created per maturion-isms#1549. Derived from App Description v1.0 and UX Workflow & Wiring Spec v0.1-draft. 109 functional requirements (PIT-FR-001 through PIT-FR-105, PIT-FR-106 through PIT-FR-109) with acceptance criteria and traceability matrix. PIT-FR-106–109 add admin sub-screen coverage (Role Management, Notification Templates, Task Cluster Templates, Invitation Settings). PIT-FR-088 updated to include `cs2_admin` in audit export permission. PIT-FR-101 updated to use `cs2_admin` for cross-org visibility (aligned with role hierarchy). Status: DRAFT_CREATED pending CS2 approval. Stage 4 TRS remains blocked until Stage 3 FRS is approved.
+**Stage 3 FRS Draft Created (2026-05-06)**: Stage 3 FRS v0.1-draft created per maturion-isms#1548. Derived from App Description v1.0 and UX Workflow & Wiring Spec v0.2-draft. 112 functional requirements (PIT-FR-001 through PIT-FR-112) with acceptance criteria and traceability matrix. PIT-FR-106–109 add admin sub-screen coverage (Role Management, Notification Templates, Task Cluster Templates, Invitation Settings). PIT-FR-110 adds Invitation Acceptance screen (§UX-S-20). PIT-FR-111–112 add My Work screen and task actions (§UX-J-23, §UX-S-21). PIT-FR-088 updated to include `cs2_admin` in audit export permission. PIT-FR-101 updated to use `cs2_admin` for cross-org visibility. Prescriptive Supabase/RLS/Vercel wording softened to functional outcomes; implementation details deferred to TRS. Status: DRAFT_CREATED pending CS2 approval. Stage 4 TRS remains blocked until Stage 3 FRS is approved.
 
 **Stage 1 App Description Filed (2026-05-06)**: App Description v1.0-draft created per
 maturion-isms#1534 delegation from Foreman to pit-specialist. Module name corrected from
