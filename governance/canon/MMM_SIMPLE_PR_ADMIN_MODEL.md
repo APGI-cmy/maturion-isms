@@ -1,10 +1,11 @@
 # MMM Simple PR Admin Model
 
-**Version**: 1.1.0  
+**Version**: 1.2.0  
 **Authority**: APGI-cmy/maturion-foreman-governance#1361 — Simplify MMM governance: replace legacy ceremony with single PR admin manifest  
 **Status**: ACTIVE  
 **Effective Date**: 2026-05-04  
 **Amended**: 2026-05-06—v1.1.0: Added `execution_model` field to schema and Check 13 enforcement per POLC_EXECUTION_MODEL_CANON.md; authority: CS2 — Canon alignment: require explicit execution_model for implementation PRs.  
+**Amended**: 2026-05-07 — v1.2.0: Expanded governance-control path coverage to include `governance/**` (all sub-paths) and `.agent-admin/**`; aligned with ISMS-side validator parity (PR #1529); updated Tier 1/2 policy bindings for single-source-of-truth and manifest-era product-fix simplification.  
 **Reference Failure Case**: `maturion-isms` PR #1515 — closed unmerged after a fix/fail governance loop
 
 ---
@@ -226,7 +227,24 @@ These may remain as historical artifacts but new MMM product-fix PRs do not need
 
 The `requires_iaa` and `requires_ecap` fields in `.admin/pr.json` are the only authoritative signals. The default values (from the type table above) are a starting point — the manifest overrides them.
 
-### 4. Stop-loss rule
+### 4. Governance-control classification parity
+
+Any PR touching the following governance-control paths **must** have `requires_iaa=true` and `requires_ecap=true` in `.admin/pr.json`:
+
+- `.github/workflows/**`
+- `.github/scripts/**`
+- `.github/agents/**`
+- `governance/**` (all sub-paths)
+- `.agent-admin/**`
+- Any `*.agent.md` file (agent contracts)
+
+This is consistent with the ISMS-side validator behaviour (PR #1529). A `product-fix` or `test-only` PR that inadvertently crosses into these paths cannot be treated as a low-ceremony PR — it becomes a governance-change.
+
+### 5. CI is confirmatory, not discovery
+
+CI gates confirm evidence already collected by agents. CI does not replace or substitute for agent evidence collection. An agent must not claim gate parity purely from an expected CI run without first collecting the required evidence.
+
+### 6. Stop-loss rule
 
 If a governance PR fails more than 3 fix cycles after first review, close it and restart smaller. This is to avoid another PR #1515-style loop.
 
@@ -244,6 +262,17 @@ The validator script `.github/scripts/validate-simple-pr-admin.sh`:
 - Validates `type` is one of the accepted values
 - Validates `risk` is one of `low`, `medium`, `high`
 - Fails if governance-control files are changed and `requires_iaa`/`requires_ecap` are not `true`
+
+**Governance-control file patterns** (triggers requires_iaa/requires_ecap enforcement):
+
+```
+.github/workflows/
+.github/scripts/
+.github/agents/
+governance/           (all sub-paths: canon/, templates/, policies/, checklists/, etc.)
+.agent-admin/
+*.agent.md files (agent contracts)
+```
 - Fails if `merge_authority` is missing or not `CS2`
 - **Fails if implementation files are in scope and `execution_model` is missing** (Check 13)
 - Fails if `execution_model` is present but is not one of the accepted values
