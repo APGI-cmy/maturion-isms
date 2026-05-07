@@ -1,0 +1,29 @@
+{
+  "pr": 1563,
+  "issue": 1561,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1547.json",
+    ".admin/prs/pr-1549.json",
+    ".admin/prs/pr-1551.json",
+    ".admin/prs/pr-1553.json",
+    ".admin/prs/pr-1563.json",
+    ".agent-admin/assurance/iaa-wave-record-layer-down-2026-05-07-77a8297b-20260507.md",
+    ".agent-admin/scope-declarations/pr-1563.md",
+    ".github/scripts/validate-simple-pr-admin.sh",
+    ".github/scripts/validate-simple-pr-admin.test.sh",
+    ".github/workflows/mmm-pr-admin-regression.yml",
+    "governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json",
+    "governance/alignment/ISSUE_1561_AGENT_CONTRACT_IMPACT_ASSESSMENT.md"
+  ],
+  "risk": "high",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": [
+    "Local command: PR_NUMBER=1563 .github/scripts/enforce-scope-declaration-policy.sh PASS",
+    "Local command: bash .github/scripts/validate-simple-pr-admin.test.sh PASS",
+    "Local command: PR_NUMBER=1563 .github/scripts/validate-simple-pr-admin.sh PASS"
+  ],
+  "merge_authority": "CS2"
+}

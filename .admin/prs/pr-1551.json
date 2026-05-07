@@ -36,5 +36,8 @@
     "modules/pit/BUILD_PROGRESS_TRACKER.md Stage 2 status reflects upgrade state",
     "modules/pit/BUILD_PROGRESS_TRACKER.md Build Authorization is NOT CLEARED"
   ],
-  "merge_authority": "CS2"
+  "merge_authority": "CS2",
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2",
+  "implementing_agent": "pit-specialist"
 }
