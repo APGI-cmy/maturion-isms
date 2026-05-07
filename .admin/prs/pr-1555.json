@@ -17,7 +17,7 @@
   ],
   "risk": "medium",
   "requires_iaa": true,
-  "requires_ecap": false,
+  "requires_ecap": true,
   "evidence_required": [
     "modules/pit/03-trs/technical-requirements-specification.md exists with numbered TRS requirements (PIT-TR-NNN)",
     "modules/pit/03-trs/technical-requirements-specification.md contains derivation statements from App Description v1.0, UX Wiring Spec v0.2-draft, and FRS v0.1-draft",
