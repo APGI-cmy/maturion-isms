@@ -15,6 +15,7 @@ APPROVED_ARTIFACT_PATHS:
 - .agent-workspace/foreman-v2/memory/session-issue1552-frameworks-ui-delegation-20260507.md
 - .agent-workspace/foreman-v2/personal/scope-declaration-wave-issue1552-frameworks-ui-20260507.md
 - .agent-admin/scope-declarations/pr-1553.md
+- .agent-admin/assurance/iaa-token-pr-1553-frameworks-ui-20260507.md
 - .admin/prs/pr-1553.json
 - apps/mmm/src/index.css
 - apps/mmm/src/pages/FrameworkListPage.tsx

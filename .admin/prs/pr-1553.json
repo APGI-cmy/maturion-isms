@@ -6,6 +6,7 @@
   "scope": [
     ".admin/prs/pr-1553.json",
     ".agent-admin/scope-declarations/pr-1553.md",
+    ".agent-admin/assurance/iaa-token-pr-1553-frameworks-ui-20260507.md",
     "apps/mmm/src/index.css",
     "apps/mmm/src/pages/FrameworkListPage.tsx",
     "apps/mmm/src/pages/FrameworkUploadPage.tsx",
