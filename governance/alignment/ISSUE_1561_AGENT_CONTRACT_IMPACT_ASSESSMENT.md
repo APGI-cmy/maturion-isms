@@ -30,3 +30,24 @@ Applied:
 Not required:
 - Any update to `.github/agents/*`
 - Any canonical policy rewrite in this repository (canon files already aligned)
+
+## Explicit Tier 2 / Admin-Template Review Evidence (CS2 clarification)
+
+### Artifacts reviewed (no change required)
+- `governance/checklists/execution-ceremony-admin-checklist.md`
+- `governance/checklists/liaison-mini-ceremony-checklist.md`
+- `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md`
+- `governance/templates/execution-ceremony-admin/README.md`
+- `governance/templates/iaa-wave-record.template.md`
+- `governance/templates/PREHANDOVER_PROOF_TEMPLATE.md`
+
+### Why no Tier 2 text update was required for issue #1561
+1. Issue #1561 introduces enforcement on PR admin manifest shape (`execution_model` and companion fields) at validator + CI surfaces.
+2. The reviewed Tier 2 artifacts above define ceremony/process evidence structure, not PR manifest schema fields.
+3. Schema authority for manifest keys is already centralized in `governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md`; duplicating schema definitions across Tier 2 ceremony templates would create drift risk.
+
+### Where future agents should learn `execution_model` fields
+- Canonical schema and allowed values: `governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md`
+- Executable enforcement rules: `.github/scripts/validate-simple-pr-admin.sh` (CHECK 13)
+- Regression examples (valid/invalid cases): `.github/scripts/validate-simple-pr-admin.test.sh` (T20–T28)
+- In-repo fixture examples: `.admin/prs/pr-1547.json`, `.admin/prs/pr-1549.json`, `.admin/prs/pr-1551.json`, `.admin/prs/pr-1553.json`
