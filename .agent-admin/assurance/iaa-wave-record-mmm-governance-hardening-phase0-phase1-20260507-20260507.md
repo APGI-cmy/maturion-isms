@@ -2,7 +2,7 @@
 
 **Wave**: mmm-governance-hardening-phase0-phase1-20260507  
 **Branch**: copilot/mmm-governance-hardening-phase-0-freeze  
-**Issue**: maturion-isms#1552  
+**Issue**: maturion-isms#1559  
 **Date**: 2026-05-07  
 **Invocation**: PRE-BRIEF (Phase 0)
 
