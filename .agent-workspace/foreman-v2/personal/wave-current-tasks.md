@@ -39,7 +39,7 @@ Implement PIT Stage 4 TRS — Technical Requirements Specification. Stage 3 FRS 
 | Stage 4 TRS created as DRAFT_CREATED | ⬜ PENDING |
 | FRS-to-TRS traceability created | ⬜ PENDING |
 | BUILD_PROGRESS_TRACKER updated | ⬜ PENDING |
-| Stage 4 approval: BLOCKED until Stage 3 CS2 approval | ✅ NOTED |
+| Stage 4 approval: BLOCKED until Stages 2 and 3 are CS2-approved | ✅ NOTED |
 | Build Authorization: NOT CLEARED | ✅ MAINTAINED |
 
 ---
