@@ -1,0 +1,39 @@
+{
+  "pr": 1557,
+  "issue": 1556,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1557.json",
+    ".agent-admin/assurance/iaa-wave-record-pit-stage3-frs-hardening-20260507.md",
+    ".agent-admin/scope-declarations/pr-1557.md",
+    ".agent-workspace/foreman-v2/memory/PREHANDOVER-session-pit-stage3-frs-hardening-20260507.md",
+    ".agent-workspace/foreman-v2/memory/session-pit-stage3-frs-hardening-20260507.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    "modules/pit/02-frs/functional-requirements.md",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": [
+    "modules/pit/02-frs/functional-requirements.md version is v0.2-hardened",
+    "modules/pit/02-frs/functional-requirements.md contains PIT-FR-001 through PIT-FR-123 (123 requirements)",
+    "modules/pit/02-frs/functional-requirements.md contains PIT-FR-113 permission negative-path contract",
+    "modules/pit/02-frs/functional-requirements.md contains PIT-FR-114 progress roll-up method",
+    "modules/pit/02-frs/functional-requirements.md contains PIT-FR-121 lifecycle removal semantics",
+    "modules/pit/02-frs/functional-requirements.md contains PIT-FR-122 accessibility outcomes",
+    "modules/pit/02-frs/functional-requirements.md contains PIT-FR-123 bulk operations non-scope",
+    "modules/pit/02-frs/functional-requirements.md section 1.5 contains domain requirement index",
+    "modules/pit/02-frs/functional-requirements.md section 3.1 contains role-scope matrix",
+    "modules/pit/02-frs/functional-requirements.md section 29 contains RAG central table",
+    "modules/pit/02-frs/functional-requirements.md section 33 contains build-completeness guardrails",
+    "modules/pit/02-frs/functional-requirements.md section 34 contains QA-to-Red derivation requirements",
+    "modules/pit/02-frs/functional-requirements.md Appendix A contains route coverage for all 27 routes",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md Stage 3 status is DRAFT_HARDENED",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md Build Authorization is NOT CLEARED",
+    "IAA ASSURANCE-TOKEN received and committed to wave record",
+    "Scope declaration matches actual diff"
+  ],
+  "merge_authority": "CS2"
+}
