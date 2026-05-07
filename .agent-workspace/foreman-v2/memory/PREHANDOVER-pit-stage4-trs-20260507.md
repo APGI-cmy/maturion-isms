@@ -109,3 +109,21 @@ Authorization source: Issue maturion-isms#1554 opened by CS2 and assigned to for
 `iaa_audit_token: PENDING — IAA final assurance invocation required`
 
 > IAA invocation is required per AGENT_HANDOVER_AUTOMATION.md §4.3b. The PREHANDOVER proof is read-only post-commit. The IAA token will be appended to `.agent-admin/assurance/iaa-wave-record-pit-stage4-trs-20260507.md` ## TOKEN section upon IAA pass.
+
+---
+
+## Ripple / Cross-Agent Assessment
+
+**IAA REJECTION-PACKAGE R1 received — 2026-05-07**
+
+Finding: FINDING-001 — OVL-GE-004 / CORE-020 / A-039
+Missing traceability rows: PIT-FR-016 to PIT-FR-021 (App Shell / Five-State UI), PIT-FR-031 to PIT-FR-035 (Project Creation — MAJOR GROUP), PIT-FR-085 and PIT-FR-086 (Filter Bar).
+Derivation Completeness Summary overstated as "agent claim" (A-039).
+
+**Remediation applied (this commit):**
+- Section 5A added to traceability matrix: App Shell / Five-State UI (PIT-FR-016 to PIT-FR-021)
+- Section 6A added to traceability matrix: Project Creation and Management (PIT-FR-031 to PIT-FR-035)
+- Section 17A added to traceability matrix: Implementation Page Filter Bar (PIT-FR-085, PIT-FR-086)
+- Derivation Completeness Summary updated with coverage note and domain count corrected to 31
+
+IAA re-invocation pending for ASSURANCE-TOKEN.

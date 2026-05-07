@@ -86,6 +86,19 @@
 
 ---
 
+### 5A. App Shell, Five-State UI, and Navigation Cross-Cutting (PIT-FR-016 to PIT-FR-021)
+
+| FRS Group | FRS ID(s) | TRS ID(s) | Technical Domain | Future Architecture Component | Future QA-to-Red Test Placeholder |
+|---|---|---|---|---|---|
+| Five UI states (every primary post-login page) | PIT-FR-016 | PIT-TR-091, PIT-TR-110 | Universal five-state UI contract (L-003) | All page components implementing the 5-state pattern | Test: all five states verified on every primary page |
+| App shell persistence across all states | PIT-FR-017 | PIT-TR-092, PIT-TR-109, PIT-TR-009 | Root layout + app shell in all five states (L-002) | Root layout component + sidebar + top nav | Test: app shell renders in loading, empty, permission-denied, error, and data states |
+| Sidebar navigation | PIT-FR-018 | PIT-TR-024, PIT-TR-006 | Role-gated sidebar + root layout | Sidebar component + role context | Integration: sidebar renders role-appropriate items |
+| Top navigation bar | PIT-FR-019 | PIT-TR-006, PIT-TR-034 | Root layout + notification bell | Top nav component | Integration: top nav renders with notification bell |
+| Page header / breadcrumb | PIT-FR-020 | PIT-TR-006 | Page header component | Page header component | Integration: breadcrumb reflects current route |
+| Secondary navigation tabs | PIT-FR-021 | PIT-TR-006, PIT-TR-091 | Tab navigation component | Tab nav component | Integration: tabs render on pages with sub-sections |
+
+---
+
 ### 6. Portfolio Dashboard
 
 | FRS Group | FRS ID(s) | TRS ID(s) | Technical Domain | Future Architecture Component | Future QA-to-Red Test Placeholder |
@@ -95,6 +108,18 @@
 | Dashboard filtering | PIT-FR-029 | PIT-TR-078, PIT-TR-038 | Filtered API query, org-scoped | Filter component + API query | Integration: filter by division returns correct projects |
 | Watchdog alert banner | PIT-FR-030 | PIT-TR-027 (`watchdog_flags`) | Watchdog flags query | Watchdog banner component | Integration: banner shows when flags exist |
 | Portfolio AI analysis | PIT-FR-097 | PIT-TR-052, PIT-TR-053, PIT-TR-054 | AIMC pit.portfolio-risk-analysis proxy | `pit-portfolio-risk` Edge Function | Integration: AI insights card renders; no status auto-change |
+
+---
+
+### 6A. Project Creation and Management (PIT-FR-031 to PIT-FR-035)
+
+| FRS Group | FRS ID(s) | TRS ID(s) | Technical Domain | Future Architecture Component | Future QA-to-Red Test Placeholder |
+|---|---|---|---|---|---|
+| Project creation modal / wizard | PIT-FR-031 | PIT-TR-029, PIT-TR-047, PIT-TR-049 | `projects` table + write RLS + project creation API | Project creation modal component | Integration: create project → appears in portfolio dashboard |
+| Project type classification | PIT-FR-032 | PIT-TR-029 (`projects.type`: `project \| operational \| improvement`) | `projects.type` field in data model | Project type selector component | Unit: valid project types accepted; invalid types rejected |
+| Project type sub-classification | PIT-FR-033 | PIT-TR-029 (`projects.quick_win_type`: `quick_win \| medium_term \| long_term`) | `projects.quick_win_type` field in data model | Project sub-type selector | Unit: quick_win_type values validated |
+| Project leader assignment and source link | PIT-FR-034 | PIT-TR-029 (`projects.project_leader_id`), PIT-TR-036 (`source_links`), PIT-TR-023 | Leader assignment + source_links table | Project wizard leader picker + source link selector | Integration: project leader assigned → role entry created; source link stored |
+| Project editing (post-creation updates) | PIT-FR-035 | PIT-TR-029, PIT-TR-047, PIT-TR-049 | Project update API + write RLS | Project settings / edit screen | Integration: edit project name/dates → change persists; audit log entry created |
 
 ---
 
@@ -204,6 +229,15 @@
 | Evidence return | PIT-FR-065 | PIT-TR-063, PIT-TR-049 | `evidence_items.status = returned` + comment | Evidence return API | Integration: return requires comment; submitter notified |
 | Evidence auto-advance | PIT-FR-066 | PIT-TR-063, PIT-TR-032 | `evidence_required` flag check on completion | Task completion guard | Integration: approved evidence → task completion unblocked |
 | Evidence preview | PIT-FR-067 | PIT-TR-062 | Signed URL + inline preview | Evidence viewer component | Integration: PDF shows inline; docx shows download link |
+
+---
+
+### 17A. Implementation Page Filter Bar (PIT-FR-085, PIT-FR-086)
+
+| FRS Group | FRS ID(s) | TRS ID(s) | Technical Domain | Future Architecture Component | Future QA-to-Red Test Placeholder |
+|---|---|---|---|---|---|
+| Filter bar — implementation page | PIT-FR-085 | PIT-TR-091, PIT-TR-042 | Frontend filter state + org-scoped API queries | Filter bar component on implementation page | Integration: filter by status / owner narrows the task/deliverable list |
+| Persistent filter state | PIT-FR-086 | PIT-TR-091 | Frontend state management (React state or URL params) | Filter state persistence component | Integration: filter survives intra-page navigation; reset clears all filters |
 
 ---
 
@@ -360,14 +394,16 @@
 
 | Coverage Category | Count | Status |
 |---|---|---|
-| FRS functional requirements traced | 112 of 112 (PIT-FR-001 to PIT-FR-112) | COMPLETE |
+| FRS functional requirements traced | 112 of 112 (PIT-FR-001 to PIT-FR-112, individually verified across 31 matrix sections) | COMPLETE |
 | NF placeholders resolved in TRS | 10 of 10 (NF-001 to NF-010) | COMPLETE |
 | MMM controls carried forward | 8 of 8 (L-001 to L-008) | COMPLETE |
 | TRS requirements created | PIT-TR-001 to PIT-TR-115 | COMPLETE |
-| Traceability domains covered | 28 domains | COMPLETE |
+| Traceability domains covered | 31 domains (including App Shell/5-State, Project Creation, and Filter Bar sub-sections) | COMPLETE |
 | Stage 2 v0.2 additions traced | My Work (PIT-FR-111, PIT-FR-112); Invitation Acceptance (PIT-FR-110) | COMPLETE |
 | AIMC touchpoints traced | 4 touchpoints (PIT-FR-095 to PIT-FR-099) | COMPLETE |
 | Deployment surface traced | All 27 routes (PIT-FR-103 to PIT-FR-105) | COMPLETE |
+
+**Coverage Note:** Every PIT-FR-NNN identifier appears in at least one explicit table row in this matrix. Cross-cutting requirements (PIT-FR-016 to PIT-FR-021: App Shell / Five-State UI) are captured in Section 5A. Project creation requirements (PIT-FR-031 to PIT-FR-035) are captured in Section 6A. Implementation page filter bar requirements (PIT-FR-085, PIT-FR-086) are captured in Section 17A.
 
 ---
 
