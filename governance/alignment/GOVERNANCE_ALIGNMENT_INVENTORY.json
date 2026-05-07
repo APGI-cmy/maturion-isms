@@ -7,7 +7,7 @@
   "last_ripple_commit": "77a8297bc2408bbc1c224083fd6028affb052107",
   "last_ripple_timestamp": "2026-05-07T11:00:00Z",
   "alignment_summary": {
-    "total_artifacts": 55,
+    "total_artifacts": 56,
     "aligned": 46,
     "drifted": 0,
     "missing": 0,
@@ -158,10 +158,10 @@
       "canonical_version": "1.8.0",
       "local_version": "1.8.0",
       "canonical_hash_sha256": "29a06ca7ad9c95f1dfca5eb94f8fb5493b6c215d21d872a78d75045184753b78",
-      "local_hash_sha256": "29a06ca7ad9c95f1dfca5eb94f8fb5493b6c215d21d872a78d75045184753b78",
+      "local_hash_sha256": "87f3b17cc51a0ccc11bf236057b2e03ed99765bd6c5aae1434a3953697a8ce3f",
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
-      "last_verified": "2026-04-29T07:34:56Z",
+      "last_verified": "2026-05-07T14:14:54Z",
       "change_note": "v1.8.0: Corrected version from erroneous 1.10.0 to actual file version 1.8.0; canonical hash corrected to match actual file (29a06ca7...). Layered down via CI ripple PR #1510 (canonical commit 2ba1d6a3cf9c97dd67fff483ca04a90549cba293)."
     },
     {
@@ -182,10 +182,10 @@
       "canonical_version": "1.0.0",
       "local_version": "1.0.0",
       "canonical_hash_sha256": "4a56c52cf142f2860b27309252fc41764145065fb4df1c0ed6427026d09ac64a",
-      "local_hash_sha256": "4a56c52cf142f2860b27309252fc41764145065fb4df1c0ed6427026d09ac64a",
+      "local_hash_sha256": "457bfdf4aac5ba88e1e5df57d5c4e4eb8292473d356fea71b27ff4ed365cacae",
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
-      "last_verified": "2026-04-17T08:32:08Z",
+      "last_verified": "2026-05-07T14:14:54Z",
       "change_note": "v1.0.0 (content update): Added §3.15 AIMC Platform Models (2 new canon files); totals 93→95 (issue #1343). Hash updated via ripple PR #1393 (canonical commit a9283eaf)."
     },
     {
@@ -669,6 +669,18 @@
       "layer_down_status": "PUBLIC_API",
       "last_verified": "2026-05-07T11:00:00Z",
       "change_note": "v1.0.0 aligned to canonical commit 77a8297bc2408bbc1c224083fd6028affb052107; execution_model authority for implementation PR classification."
+    },
+    {
+      "filename": "FULLY_FUNCTIONAL_DELIVERY_STANDARD.md",
+      "path": "governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md",
+      "canonical_version": "TBD",
+      "local_version": "TBD",
+      "canonical_hash_sha256": "TBD",
+      "local_hash_sha256": "019fbac7587291d8827b3cc1bdf409cfcb1e23ab69c314ff6ada4ca11145c871",
+      "alignment_status": "PENDING_REVIEW",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-05-07T14:14:54Z",
+      "change_note": "Auto-added by ripple-integration inventory update step"
     }
   ],
   "metadata": {
