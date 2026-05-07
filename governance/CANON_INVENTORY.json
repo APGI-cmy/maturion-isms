@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-05-04",
-  "total_canons": 200,
-  "generation_timestamp": "2026-05-04T14:55:00Z",
+  "last_updated": "2026-05-06",
+  "total_canons": 201,
+  "generation_timestamp": "2026-05-06T16:30:00Z",
   "canons": [
     {
       "filename": "ACTIVATION_STATE_MODEL.md",
@@ -1480,14 +1480,14 @@
     },
     {
       "filename": "MMM_SIMPLE_PR_ADMIN_MODEL.md",
-      "version": "1.2.0",
-      "file_hash": "69f5382abb983bab003ae5d3036213858c83acc9407acf927e5aad0ea94bf936",
+      "version": "1.1.0",
+      "file_hash": "4620b6d57d93fed8467772ac0d40c5f1663c42c190b6035c089b747689b7c251",
       "effective_date": "2026-05-04",
-      "description": "Canonical governance document: MMM_SIMPLE_PR_ADMIN_MODEL",
+      "description": "Canonical governance document: MMM_SIMPLE_PR_ADMIN_MODEL \u2014 defines .admin/pr.json schema including execution_model requirement for implementation PRs",
       "type": "canon",
       "path": "governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md",
-      "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "69f5382abb983bab003ae5d3036213858c83acc9407acf927e5aad0ea94bf936"
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "4620b6d57d93fed8467772ac0d40c5f1663c42c190b6035c089b747689b7c251"
     },
     {
       "filename": "MULTI_EMBODIMENT_ORCHESTRATION_MODEL.md",
@@ -1565,6 +1565,17 @@
       "path": "governance/canon/PLATFORM_READINESS_FOR_GOVERNED_BUILD_EXECUTION.md",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "c3837f94ce8b65e749bcff3acfc94690b77f1d8d6879355557c7b0bc55b8852b"
+    },
+    {
+      "filename": "POLC_EXECUTION_MODEL_CANON.md",
+      "version": "1.0.0",
+      "file_hash": "3e4294c8549d814a51f4b35e6d85a3f1bf588b82d2c44a333547a55f01bf5db6",
+      "effective_date": "2026-05-06",
+      "description": "Canonical requirement that any PR changing implementation files must declare an explicit execution_model (builder-governed, foreman-orchestrated, or cs2-hotfix-override) to remove POLC role ambiguity.",
+      "type": "canon",
+      "path": "governance/canon/POLC_EXECUTION_MODEL_CANON.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "3e4294c8549d814a51f4b35e6d85a3f1bf588b82d2c44a333547a55f01bf5db6"
     },
     {
       "filename": "POST_MORTEM_PROTOCOL.md",
