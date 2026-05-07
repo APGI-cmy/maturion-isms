@@ -652,10 +652,10 @@
       "canonical_version": "1.1.0",
       "local_version": "1.1.0",
       "canonical_hash_sha256": "4620b6d57d93fed8467772ac0d40c5f1663c42c190b6035c089b747689b7c251",
-      "local_hash_sha256": "4620b6d57d93fed8467772ac0d40c5f1663c42c190b6035c089b747689b7c251",
+      "local_hash_sha256": "6c050cb0cbb6d9ed205693893ae9cf597cbcbdd8c1d30ec99ffb18dff35697e4",
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
-      "last_verified": "2026-05-07T11:00:00Z",
+      "last_verified": "2026-05-07T13:54:42Z",
       "change_note": "v1.1.0 aligned to canonical commit 77a8297bc2408bbc1c224083fd6028affb052107; execution_model schema + Check 13 semantics enforced via validator and regression coverage."
     },
     {
