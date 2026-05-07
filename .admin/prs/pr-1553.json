@@ -2,13 +2,19 @@
   "pr": 1553,
   "issue": 1552,
   "type": "product-fix",
-  "owner": "Copilot",
+  "owner": "ui-builder",
   "scope": [
-    "apps/mmm/**"
+    ".admin/prs/pr-1553.json",
+    ".agent-admin/scope-declarations/pr-1553.md",
+    "apps/mmm/src/index.css",
+    "apps/mmm/src/pages/FrameworkListPage.tsx",
+    "apps/mmm/src/pages/FrameworkUploadPage.tsx",
+    ".agent-workspace/foreman-v2/memory/session-issue1552-frameworks-ui-delegation-20260507.md",
+    ".agent-workspace/foreman-v2/personal/scope-declaration-wave-issue1552-frameworks-ui-20260507.md"
   ],
   "risk": "medium",
-  "requires_iaa": false,
-  "requires_ecap": false,
+  "requires_iaa": true,
+  "requires_ecap": true,
   "evidence_required": [
     "Frameworks page screenshot from deployed preview or live URL",
     "Framework Source upload page screenshot from deployed preview or live URL",
