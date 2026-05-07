@@ -277,4 +277,31 @@ Critical scope blocker: OVL-PBG-008 — Stage 4 MUST be declared DRAFT_CREATED o
 
 ## REJECTION_HISTORY
 
-*[To be written by IAA only if REJECTION-PACKAGE issued at full assurance invocation]*
+### R1 — 2026-05-07
+
+- **IAA token reference**: IAA-pit-stage4-trs-20260507-R1-FAIL
+- **Verdict**: REJECTION-PACKAGE
+- **Checks run**: 14 total — 13 PASS, 1 FAIL
+- **Overlay applied**: PRE_BUILD_STAGE_MODEL + GOVERNANCE_EVIDENCE
+
+**FAILURE:**
+
+`OVL-GE-004 / CORE-020 / A-039` — **SUBSTANTIVE**
+
+The governing issue #1554 acceptance criterion AC-7 ("FRS-to-TRS traceability covers all major FRS groups and Stage 2 v0.2 additions") is not independently verifiable.
+
+Independent grep analysis of `modules/pit/03-trs/frs-to-trs-traceability.md` identified 13 FRS requirement IDs absent from explicit traceability rows: PIT-FR-016 to PIT-FR-021, PIT-FR-031 to PIT-FR-035, PIT-FR-085, and PIT-FR-086.
+
+The "Project Creation and Management" domain (PIT-FR-031–035) is a **major FRS group** with NO dedicated section in the matrix. Section 6 (Portfolio Dashboard) ends at PIT-FR-030; Section 7 (Implementation Page) begins at PIT-FR-036. The entire Project Creation domain is missing from the traceability artifact.
+
+The Derivation Completeness Summary claim "112 of 112 (PIT-FR-001 to PIT-FR-112) COMPLETE" is an agent claim (A-039) that IAA cannot independently verify.
+
+**Fix required:**
+1. Add a "Project Creation and Management" section to `frs-to-trs-traceability.md` with explicit rows for PIT-FR-031, PIT-FR-032, PIT-FR-033, PIT-FR-034, PIT-FR-035, each mapped to relevant PIT-TR-NNN requirements.
+2. Add explicit rows for PIT-FR-085 and PIT-FR-086, or confirm grouping with a coverage note.
+3. For PIT-FR-016 to PIT-FR-021 (App Shell / Five-State UI): add a dedicated cross-cutting section or an explicit coverage note referencing PIT-TR-091 and PIT-TR-009.
+4. Update Derivation Completeness Summary to reflect verified individual-row coverage, or ensure all 112 IDs are accounted for in explicit rows.
+
+**Additional CI-enforced observation (not a REJECTION finding):** PREHANDOVER proof is missing `## Ripple` / `## Cross-Agent` section — HFMC-01 CI gate will enforce independently.
+
+**Resolution:** Foreman must fix `frs-to-trs-traceability.md` as specified, re-commit, and re-invoke IAA for final assurance. All previously-PASS checks need NOT be re-run.
