@@ -19,5 +19,8 @@ Anti-regression obligations: [NO — FUNCTIONAL-BEHAVIOUR-REGISTRY.md applies to
 ## TOKEN
 
 PHASE_B_BLOCKING_TOKEN: PENDING_PRE_BRIEF  
+**PR**: PENDING  
+**Issue**: maturion-isms#1559  
+**Reviewed SHA**: CURRENT_HEAD  
 Token status: NOT_ISSUED  
 Issued by: independent-assurance-agent (Phase 4 only)
