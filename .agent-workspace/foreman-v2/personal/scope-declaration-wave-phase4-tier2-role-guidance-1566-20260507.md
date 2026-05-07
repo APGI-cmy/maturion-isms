@@ -3,7 +3,7 @@
 **Foreman**: foreman-v2-agent v2.15.0
 **Wave**: phase4-tier2-role-guidance-1566-20260507
 **Issue**: maturion-isms#1566
-**PR**: #PENDING
+**PR**: 1567
 **Date**: 2026-05-07
 **Schema Version**: SCOPE_DECLARATION_SCHEMA.md §5.7
 
