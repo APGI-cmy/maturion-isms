@@ -74,6 +74,16 @@ prebrief_tasks_count: 5
 iaa_category: PRE_BUILD_STAGE_MODEL
 iaa_gate: MANDATORY (PHASE_B_BLOCKING)
 
+## IAA Full Assurance Verdict
+
+iaa_audit_token: IAA-session-iaa-pit-stage3-frs-hardening-20260507-PASS
+iaa_verdict: ASSURANCE-TOKEN (PASS)
+iaa_token_committed_sha: 58f7c55
+iaa_token_location: .agent-admin/assurance/iaa-wave-record-pit-stage3-frs-hardening-20260507.md ## TOKEN
+iaa_checks_passed: 22/22 (all 19 issue AC + 3 governance criteria)
+iaa_merge_gate_parity: PASS
+iaa_build_authorization_confirmed: NOT CLEARED
+
 ## Suggestions for Improvement
 
 Continuous improvement note: The FRS v0.2-hardened now has 123 requirements and is substantially more complete. However, the Role Management screen (PIT-FR-106) route (`/admin/roles`) and Invitation Settings section (PIT-FR-109) path remain ambiguous — they are listed in Appendix A with a TRS note. This should be resolved early in Stage 4 TRS to prevent route registration ambiguity. Also: the `evidence_required` flag at the deliverable level (per PIT-FR-052 clarification) needs TRS to define the `deliverable_evidence_items` table or confirm whether deliverable-level evidence uses a shared `evidence_items` table with a discriminator column. Recommend flagging this as A-011 in the FRS open assumptions for Stage 4 attention.

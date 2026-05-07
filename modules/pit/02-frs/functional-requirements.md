@@ -735,7 +735,9 @@ The system shall allow the task owner to set a progress percentage (0–100%) on
 **Acceptance**: Setting task progress to 75% updates the Implementation Page Indicator 7 (overall progress) in real time or on next load.
 **Derived from**: §UX-S-11; §UX-SEC-3, Indicator 7
 
-### PIT-FR-056 — Task Dependency ManagementThe system shall support task-to-task dependencies (Task A cannot start before Task B is complete). Dependencies shall be stored in a `task_dependencies` table and rendered as arrow connections on the Gantt chart when dependency display is enabled.
+### PIT-FR-056 — Task Dependency Management
+
+The system shall support task-to-task dependencies (Task A cannot start before Task B is complete). Dependencies shall be stored in a `task_dependencies` table and rendered as arrow connections on the Gantt chart when dependency display is enabled.
 
 Circular dependency detection is required: if Task A depends on Task B and Task B depends on Task A, the system shall reject the dependency creation with a clear error.
 
