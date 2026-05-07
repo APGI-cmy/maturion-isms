@@ -810,6 +810,53 @@ Conditions:    At Stage 11 builder appointment, the following must be confirmed:
 
 ---
 
+## Builder Functional Delivery Affirmations (FFD Section — Mandatory)
+
+*Added: Phase 3 retrofit — maturion-isms#1564 (2026-05-07)*
+
+All 10 affirmations must be ticked and the builder sign-off completed before the wave may
+proceed to QA review. Incomplete affirmations are a handover blocker.
+
+```
+Builder Functional Delivery Affirmations
+
+I affirm the following before submitting this wave for handover:
+
+[ ] I understand the full user workflow for the scope of this wave. I can describe
+    what the user does, what the backend does, and what state changes result.
+
+[ ] I understand which backend function (Edge Function / Vercel route) each CTA in
+    this wave uses. I have confirmed each target exists and is deployed.
+
+[ ] I will not leave dead buttons. Every CTA in the UI I deliver will call a real
+    backend target. If a CTA's backend is not ready, I will not render the CTA.
+
+[ ] I will not call non-existent routes. Every API call in my code has a deployed
+    handler. I have verified this by checking the route manifest.
+
+[ ] I will not label a visual shell as functional delivery. If the UI renders but the
+    backend is not wired, my wave is incomplete. I will declare this explicitly rather
+    than claim completion.
+
+[ ] I have used the typed integration client (mmmApiClient or equivalent) for all
+    frontend→backend calls. I have not introduced ad-hoc fetch() calls to /api/ paths.
+
+[ ] I have included screenshots of every new user-facing screen in my wave evidence pack.
+
+[ ] I have run the QA-to-Red tests for Domain 12 (CTA/API Verification) and confirmed
+    they now pass for my wave scope.
+
+[ ] I have updated the CTA/API/Data Contract Matrix in Stage 2 with any new CTAs
+    introduced in this wave.
+
+[ ] I understand that PR maturion-isms#1553 represents the failure class these
+    affirmations are designed to prevent. I will not repeat that failure.
+
+Builder: ____________________  Wave: ____________________  Date: ____________________
+```
+
+---
+
 ## Section 7: Summary and Stage 9 Gate
 
 ### 7.1 Builder Verdict Summary Table
