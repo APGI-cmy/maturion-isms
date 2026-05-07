@@ -13,7 +13,9 @@
     ".agent-workspace/foreman-v2/personal/scope-declaration-wave-pit-stage4-trs.md",
     "modules/pit/03-trs/technical-requirements-specification.md",
     "modules/pit/03-trs/frs-to-trs-traceability.md",
-    "modules/pit/BUILD_PROGRESS_TRACKER.md"
+    "modules/pit/BUILD_PROGRESS_TRACKER.md",
+    ".agent-workspace/independent-assurance-agent/memory/session-pit-stage4-trs-20260507.md",
+    ".agent-workspace/independent-assurance-agent/memory/session-pit-stage4-trs-20260507-R2.md"
   ],
   "risk": "medium",
   "requires_iaa": true,
