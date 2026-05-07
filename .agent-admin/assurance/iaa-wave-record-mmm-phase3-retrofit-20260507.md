@@ -197,7 +197,7 @@ The producing agent must deliver ALL of the following before invoking IAA for fi
 Qualifying tasks: T-01 through T-12 (12 stage retrofits) + T-13 (Change-Propagation Audit) + T-14 (tracker update) + T-15 (ceremony pack) = 15 tasks
 Applicable overlay: PRE_BUILD_STAGE_MODEL — OVL-PBG-001 through OVL-PBG-017 + Universal Ceremony Gate CERT-001 through CERT-004
 Anti-regression obligations: NO — no code changes; FUNCTIONAL-BEHAVIOUR-REGISTRY NBR checks do not apply (A-034: BUILD/AAWP_MAT PRs only)
-ceremony_admin_appointed: NOT SPECIFIED — ACR-01 through ACR-16 deferred until appointment status confirmed in wave-current-tasks.md
+ceremony_admin_appointed: NO — ACR-01 through ACR-16 not triggered because no ceremony admin is appointed for this wave.
 Key scope blocker: SB-001 — Change-Propagation Audit (OVL-PBG-014) REQUIRED before merge
 ```
 
