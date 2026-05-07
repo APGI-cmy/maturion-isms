@@ -408,7 +408,7 @@ The only non-defect advisory items are:
 
 ### FQ-10: Is the PBFAG verdict PASS or FAIL?
 
-## Part F — Full Functional Delivery Gate (FFD Gate)
+## Full Functional Delivery Gate (FFD Gate)
 
 *Added: Phase 3 retrofit — maturion-isms#1564 (2026-05-07)*
 
