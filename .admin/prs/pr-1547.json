@@ -20,5 +20,7 @@
     "Direct /frameworks route no longer returns Vercel 404",
     "Direct /frameworks/upload route no longer returns Vercel 404"
   ],
-  "merge_authority": "CS2"
+  "merge_authority": "CS2",
+  "execution_model": "builder-governed",
+  "implementing_agent": "ui-builder"
 }
