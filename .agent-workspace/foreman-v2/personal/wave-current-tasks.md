@@ -1,13 +1,13 @@
-# Wave Current Tasks — pit-stage2-verification-stage3-frs
+# Wave Current Tasks — pit-stage4-trs
 
-**Wave**: pit-stage2-verification-stage3-frs
-**Issue**: maturion-isms#1548 — Foreman: Finalise PIT Stage 2 tracker state and implement Stage 3 FRS
-**Branch**: copilot/finalise-pit-stage-2-tracker
-**PR**: maturion-isms#1549
-**Date**: 2026-05-06
+**Wave**: pit-stage4-trs
+**Issue**: maturion-isms#1554 — Foreman: Implement PIT Stage 4 TRS and update tracker
+**Branch**: copilot/implement-pit-stage-4-trs
+**PR**: maturion-isms#1555
+**Date**: 2026-05-07
 **Agent**: foreman-v2-agent
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-stage2-verification-stage3-frs-20260506.md
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-pit-stage2-verification-stage3-frs-20260506.md
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-stage4-trs-20260507.md
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-pit-stage4-trs-20260507.md
 **Category**: PRE_BUILD_STAGE_MODEL
 **Final State**: IN_PROGRESS
 
@@ -15,7 +15,41 @@ iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-pit-stage2-verificatio
 
 ## Task Breakdown
 
-Verify Stage 2 UX Workflow & Wiring Spec completeness against 13 criteria from maturion-isms#1549. Update BUILD_PROGRESS_TRACKER.md to reflect Stage 2 status accurately. If Stage 2 is complete enough, create Stage 3 FRS at `modules/pit/02-frs/functional-requirements.md`.
+Implement PIT Stage 4 TRS — Technical Requirements Specification. Stage 3 FRS is DRAFT_CREATED pending CS2 approval (maturion-isms#1548). Stage 4 TRS is therefore created as DRAFT_CREATED only.
+
+## Active Tasks
+
+| # | Task | Status | Artifact Path |
+|---|------|--------|---------------|
+| T-1 | Verify Stage 3 FRS state | 🟢 DONE | `modules/pit/02-frs/functional-requirements.md` — DRAFT_CREATED |
+| T-2 | Create Stage 4 TRS document | 🟡 IN_PROGRESS | `modules/pit/03-trs/technical-requirements-specification.md` |
+| T-3 | Create FRS-to-TRS traceability | 🟡 IN_PROGRESS | `modules/pit/03-trs/frs-to-trs-traceability.md` |
+| T-4 | Update BUILD_PROGRESS_TRACKER.md (Stage 4 → DRAFT_CREATED) | ⬜ PENDING | `modules/pit/BUILD_PROGRESS_TRACKER.md` |
+| T-5 | Governance ceremony artifacts | ⬜ PENDING | `.admin/prs/pr-1555.json`, `.agent-admin/scope-declarations/pr-1555.md` |
+| T-6 | PREHANDOVER proof | ⬜ PENDING | `.agent-workspace/foreman-v2/memory/PREHANDOVER-pit-stage4-trs-20260507.md` |
+| T-7 | Session memory | ⬜ PENDING | `.agent-workspace/foreman-v2/memory/session-pit-stage4-trs-20260507.md` |
+
+---
+
+## Pre-Build Stage Gates (Stage 4 TRS)
+
+| Gate | Status |
+|------|--------|
+| Stage 3 FRS state verified | ✅ COMPLETE — DRAFT_CREATED pending CS2 |
+| Stage 4 TRS created as DRAFT_CREATED | ⬜ PENDING |
+| FRS-to-TRS traceability created | ⬜ PENDING |
+| BUILD_PROGRESS_TRACKER updated | ⬜ PENDING |
+| Stage 4 approval: BLOCKED until Stage 3 CS2 approval | ✅ NOTED |
+| Build Authorization: NOT CLEARED | ✅ MAINTAINED |
+
+---
+
+## Pre-Build Gate Status
+
+**Phase 1**: COMPLETE
+**Phase 2**: COMPLETE
+**Phase 3**: IN_PROGRESS
+**Phase 4**: PENDING IAA
 
 ## Active Tasks
 
