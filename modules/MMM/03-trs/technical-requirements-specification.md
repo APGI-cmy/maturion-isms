@@ -1299,6 +1299,50 @@ reconnection). Full offline-first deferred to future enhancement wave.
 
 ---
 
+## TR-FD: Full Functional Delivery Technical Requirements
+
+*Added: Phase 3 retrofit — maturion-isms#1564 (2026-05-07)*
+
+### TR-FD-001 — No Dead API Calls
+
+Every frontend component that calls an API endpoint MUST have a verified, deployed backend
+handler for that endpoint. Dead calls (calls to non-existent or unimplemented routes) are a
+technical requirement violation. PR review must confirm backend deployment before UI merge is
+approved.
+
+### TR-FD-002 — Edge Function / Vercel Route Ownership
+
+Every MMM API route MUST be owned by an identified Edge Function or Vercel serverless route.
+Route ownership must be declared in the implementation plan for every wave. Orphaned routes
+(frontend calls without backend owner) are prohibited.
+
+### TR-FD-003 — Typed Frontend API Client
+
+All MMM frontend → backend calls MUST go through a typed integration client (`mmmApiClient`
+or equivalent). Ad-hoc `fetch()` calls to `/api/...` paths from UI components are prohibited.
+The integration client must be the single source of truth for all API contracts.
+
+### TR-FD-004 — Live Backend Contract Verification
+
+Every API endpoint called by the MMM frontend MUST have a corresponding integration test that
+verifies: (a) the endpoint exists, (b) it accepts the declared request shape, (c) it returns
+the declared response shape, and (d) it handles invalid input with a typed error response.
+
+### TR-FD-005 — User-Visible Error Handling
+
+Every backend call from the MMM frontend MUST have a visible error state in the UI. Silent
+failures are prohibited. Network errors, backend errors, and validation errors must all show
+a user-readable message. Loading states must be visible. Empty states must not be confused
+with error states.
+
+### TR-FD-006 — Runtime Evidence
+
+For every wave, the implementation plan must include a section declaring: which backend calls
+are new, which are existing, and for each new call — the Edge Function path, the Vercel route
+name, and a smoke test URL. This runtime evidence is part of wave handover.
+
+---
+
 ## 14. Acceptance Criteria Verification
 
 | Criterion | Status |
@@ -1316,7 +1360,6 @@ reconnection). Full offline-first deferred to future enhancement wave.
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
-**Version**: 0.1.0  
-**Stage**: 4 — TRS (Pre-Build Specification)  
+**Version**: 0.2.0    
 **Issue**: maturion-isms#1372  
 **Next stage**: Stage 5 — Architecture gate-pass (resolves OQ-002, OQ-003)

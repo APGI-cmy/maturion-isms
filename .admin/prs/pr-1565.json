@@ -1,0 +1,14 @@
+{
+  "pr_number": 1565,
+  "issue": 1564,
+  "branch": "copilot/retrofit-mmm-pre-build-artifacts",
+  "type": "GOVERNANCE_DOCUMENTATION",
+  "scope": "MMM Phase 3 retrofit — 12 pre-build artifacts + 2 new files + governance ceremony",
+  "requires_iaa": true,
+  "requires_ecap": false,
+  "execution_model": "foreman-orchestrated",
+  "foreman_session": "mmm-phase3-retrofit-20260507",
+  "wave_record": ".agent-admin/assurance/iaa-wave-record-mmm-phase3-retrofit-20260507.md",
+  "description": "Retrofit all 12 MMM pre-build artifacts to absorb full-functional-delivery governance standard. Adds Functional Delivery Definition, CTA/API matrix, live-action acceptance criteria, typed integration client law, CTA-verification RED tests, FFD PBFAG gate, wave completion standard, anti-placeholder builder affirmations, IAA delivery mandate, role assignment matrix, and Functional Delivery Evidence Pack requirement.",
+  "status": "in_progress"
+}

@@ -8,7 +8,7 @@
 - **Module**: MMM — Maturity Model Management
 - **Artifact Type**: App Description (Upstream Authority)
 - **Status**: Approved
-- **Version**: v0.5.0
+- **Version**: v0.6.0
 - **Owner**: Johan Ras
 - **Authority**: Johan Ras / CS2
 - **Applies To**: MMM module within the Maturion ecosystem
@@ -1906,6 +1906,37 @@ The following require confirmation during FRS/TRS derivation:
 9. Which dashboard elements are MVP and which are staged?
 10. Which approval/escalation variants require phase-based rollout?
 11. Which one-time-build governance sections are mandatory at MVP enforcement level versus mandatory as downstream FRS/TRS derived controls?
+
+---
+
+## Functional Delivery Definition
+
+The App Description is not satisfied by screens alone. Each described capability must define:
+user outcome, system state, backend dependency, and completion evidence.
+
+### Capability-to-Functional-Delivery Map
+
+| Capability | User Outcome | System State | Backend Dependency | Completion Evidence |
+|---|---|---|---|---|
+| Maturity roadmap configuration | User has configured their org's maturity goals | `maturity_roadmap` record created with framework_id | `mmm-org-create`, `mmm-framework-init` | Roadmap visible in dashboard with configured domains |
+| Domain/MPS/Criteria management | User can view/edit the full hierarchy | `domains`, `mps`, `criteria` tables populated | `mmm-framework-init` | Hierarchy renders with correct counts |
+| Evidence attachment | User can attach evidence to a criterion | `evidence` record created with criterion_id | `mmm-evidence-create` | Evidence appears in criterion view |
+| Level descriptors | User can see what each maturity level means | `level_descriptors` records linked to framework | `mmm-framework-init` | Descriptors visible on criterion cards |
+| AI support | User can request AI analysis | AI request logged and response returned | `mmm-ai-framework-generate` or AIMC | AI response renders in UI |
+| Approval loops | Framework changes trigger approval workflow | `approval_requests` record created | `mmm-framework-approve` | Approval status shown; approver receives notification |
+| Publishing | Org admin can publish live maturity position | `published_frameworks` record created | `mmm-publish-framework` | Dashboard shows published status |
+| Live dashboard | User sees real-time maturity position | Aggregate scores calculated from evidence | `mmm-qiw-status` | Dashboard renders with domain scores |
+
+This definition applies to every downstream FRS, TRS, QA, and implementation artifact derived
+from this document. A capability is not delivered until the user can perform the action live,
+not merely see the UI control.
+
+### Failure Class Reference — maturion-isms#1553
+
+The functional delivery failure recorded in maturion-isms#1553 (dead CTA, no backend route,
+visual shell accepted as product delivery) constitutes the failure class this Functional
+Delivery Definition is designed to prevent. This definition MUST be enforced at every
+pre-build and post-build gate.
 
 ---
 

@@ -408,6 +408,48 @@ The only non-defect advisory items are:
 
 ### FQ-10: Is the PBFAG verdict PASS or FAIL?
 
+## Part F — Full Functional Delivery Gate (FFD Gate)
+
+*Added: Phase 3 retrofit — maturion-isms#1564 (2026-05-07)*
+
+### The Gate Question
+
+"If the builders implemented exactly this pre-build pack, would CS2 receive a complete
+functional workflow, not merely screens or admin-complete evidence?"
+
+### The Rejection Rule
+
+PBFAG MUST reject any pre-build pack that:
+
+- **(a)** contains a CTA without a declared backend target in the CTA/API/Data Contract Matrix
+- **(b)** omits the Route-to-Capability map for the wave scope
+- **(c)** does not declare which Edge Functions or Vercel routes will handle each new API call
+- **(d)** does not confirm the typed integration client is used for all new frontend→backend calls
+
+### FFD Checklist
+
+| Check | Required Evidence | Status |
+|---|---|---|
+| CTA/API/Data Contract Matrix present and complete for this wave's scope | Matrix in Stage 2 UX Wiring Spec; all new CTAs registered | [ ] PASS / [ ] FAIL |
+| Every new CTA has a declared backend capability | Matrix review: zero rows with null Backend Capability | [ ] PASS / [ ] FAIL |
+| Route-to-Capability map updated for new journey areas | Stage 5 Architecture map reviewed; new routes declared | [ ] PASS / [ ] FAIL |
+| Integration client compliance confirmed | Builder Checklist §FFD affirmed; no ad-hoc fetch() calls planned | [ ] PASS / [ ] FAIL |
+| QA-to-Red includes tests for new CTAs (not just route renders) | Stage 6 catalog includes T-MMM-S6-FD-001 through FD-006 coverage for new scope | [ ] PASS / [ ] FAIL |
+| OC-009 golden path is not broken by this wave's changes | Golden path test T-MMM-S6-FD-006 still passes (or is updated for new scope) | [ ] PASS / [ ] FAIL |
+
+### Verdict Rule
+
+If ANY item above is marked FAIL or left unchecked: **PBFAG verdict is REJECT**. Do not
+proceed to Stage 8. Return to Stage 2 to complete the missing matrix entries.
+
+### Origin Note
+
+This gate was added as a direct response to the functional delivery failure documented in
+maturion-isms#1553, where a visual UI shell with dead CTAs was accepted as product delivery.
+This gate is designed to prevent that failure class from recurring.
+
+---
+
 ## ✅ PBFAG VERDICT: **PASS**
 
 ---
