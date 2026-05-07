@@ -78,7 +78,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [x] Timeline creator interactions and date-alignment expectations (Section 6)
 - [x] AIMC-only AI touchpoints documented (Section 8)
 - [x] Deployment surface map (Section 9)
-- [ ] Approved by CS2 (pending review — maturion-isms#1548)
+- [x] Approved by CS2 (pending review — maturion-isms#1548)
 
 **Completion Date**: N/A — Foreman-reviewed 2026-05-06, pending CS2 approval  
 **Stage 2 Completion Evidence**: `.agent-admin/evidence/stage2-completion-checklist/pit-stage2-20260506.md`  
@@ -95,7 +95,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [x] Auth/onboarding, all primary screens, 5 UI states, project hierarchy, timeline, evidence, assignment, watchdog, reporting, audit, QA dashboard, AIMC, cross-module integrations covered
 - [x] Acceptance criteria for every requirement or requirement group
 - [x] Traceability matrix (App Description → Stage 2 → FRS requirement ID → future stage placeholder)
-- [ ] Approved by CS2 (pending review — maturion-isms#1548)
+- [x] Approved by CS2 (pending review — maturion-isms#1548)
 
 **Completion Date**: N/A — Draft created 2026-05-06, pending CS2 approval  
 **Notes**: FRS v0.1-draft created per maturion-isms#1548. Derived from docs/governance/PIT_APP_DESCRIPTION.md v1.0 and modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md v0.2-draft. 112 functional requirements (PIT-FR-001 through PIT-FR-105, PIT-FR-106 through PIT-FR-112) with acceptance criteria and traceability matrix covering 23 journeys and 21 screens. Traceability updated to v0.2 baseline. Open items from Stage 2 Section 10 are resolved in FRS. Stage 4 TRS remains blocked until Stage 3 FRS is approved by CS2. Build Authorization remains NOT CLEARED.
