@@ -1,13 +1,13 @@
-# Wave Current Tasks — pit-stage2-verification-stage3-frs
+# Wave Current Tasks — pit-stage3-frs-hardening
 
-**Wave**: pit-stage2-verification-stage3-frs
-**Issue**: maturion-isms#1548 — Foreman: Finalise PIT Stage 2 tracker state and implement Stage 3 FRS
-**Branch**: copilot/finalise-pit-stage-2-tracker
-**PR**: maturion-isms#1549
-**Date**: 2026-05-06
-**Agent**: foreman-v2-agent
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-stage2-verification-stage3-frs-20260506.md
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-pit-stage2-verification-stage3-frs-20260506.md
+**Wave**: pit-stage3-frs-hardening
+**Issue**: maturion-isms#1556 — Foreman: Harden PIT Stage 3 FRS for one-time build readiness
+**Branch**: copilot/harden-pit-stage-3-frs
+**PR**: maturion-isms#1557
+**Date**: 2026-05-07
+**Agent**: foreman-v2-agent v6.2.0
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-stage3-frs-hardening-20260507.md
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-pit-stage3-frs-hardening-20260507.md
 **Category**: PRE_BUILD_STAGE_MODEL
 **Final State**: IN_PROGRESS
 
