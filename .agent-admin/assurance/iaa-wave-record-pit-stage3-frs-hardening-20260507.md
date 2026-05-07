@@ -218,8 +218,26 @@ The PREHANDOVER proof for this wave MUST include the following sections. Absent 
 
 ## TOKEN
 
-*[To be appended by IAA after full-assurance invocation. DO NOT pre-fill.]*
-`PHASE_B_BLOCKING_TOKEN: [pending IAA invocation]`
+**IAA Full-Assurance Verdict**: ASSURANCE-TOKEN
+**Invocation date**: 2026-05-07
+**PR reviewed**: maturion-isms#1557 — "Foreman: Harden PIT Stage 3 FRS for one-time build readiness"
+**Session reference**: session-iaa-pit-stage3-frs-hardening-20260507
+
+```
+PHASE_B_BLOCKING_TOKEN: IAA-session-iaa-pit-stage3-frs-hardening-20260507-PASS
+```
+
+**Checks executed**: 9 substance checks (CORE-020, CORE-021, CORE-026, CORE-027, OVL-PBG-001, OVL-PBG-002, OVL-PBG-004, OVL-PBG-006, OVL-PBG-008, OVL-PBG-009 advisory, OVL-PBG-014, OVL-GE-001, OVL-GE-002, OVL-GE-003, OVL-GE-004)
+**Result**: 9 blocking checks PASS ✅ | 0 FAIL | 8 N/A (no build wave, no builder delegation, no deployment)
+**Advisory**: OVL-PBG-009 — PIT `02-frs/` directory number (02) does not match canonical stage number (3). Known legacy numbering. No action required.
+**Adoption phase**: PHASE_B_BLOCKING — hard gate ACTIVE
+**Build Authorization verified**: NOT CLEARED (confirmed in FRS §38, BUILD_PROGRESS_TRACKER, and PREHANDOVER §1)
+**No implementation code in diff**: CONFIRMED (A-041 diff-first — 8 governance files only)
+**Acceptance-criteria**: 22 criteria (19 FRS hardening + 3 governance) — all mapped to hard diff evidence (CORE-026 / A-039 PASS)
+**Independent Risk Challenge**: COMPLETED (CORE-027 / A-042 — 5 questions answered; production-owner judgment: ACCEPT)
+**Merge permitted**: Subject to CS2 approval (Johan Ras / @APGI-cmy)
+
+**IAA Token Reference**: IAA-session-iaa-pit-stage3-frs-hardening-20260507-PASS
 
 ---
 
