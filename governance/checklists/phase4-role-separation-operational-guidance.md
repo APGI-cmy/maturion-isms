@@ -2,7 +2,7 @@
 
 **Type**: Tier 2 operational guidance  
 **Issue Anchor**: maturion-isms#1566 + CS2 clarification comment  
-**Queue / Dependency**: Explicitly queued behind `APGI-cmy/maturion-isms#1565` (or earlier only with CS2 authorization).  
+**Queue / Dependency**: Explicitly queued behind `APGI-cmy/maturion-isms#1565`; work may proceed before `#1565` is completed only with explicit CS2 authorization.  
 **Conflict Precedence Rule**: Tier 1 > Tier 2. If Tier 3 session instructions conflict with Tier 1 or Tier 2, stop and escalate.
 
 ---
