@@ -1407,4 +1407,4 @@
 ---
 
 *End of MMM Stage 6 — QA-to-Red Catalog*
-*Total: 176 tests | 80 FRs covered | 66 TRs covered (all key TRs) | 17 Journeys covered*
+*Total: 182 tests | 80 FRs covered | 66 TRs covered (all key TRs) | 17 Journeys covered*
