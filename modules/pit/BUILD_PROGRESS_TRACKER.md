@@ -3,8 +3,7 @@
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
 **Last Updated**: 2026-05-06  
-**Updated By**: foreman-v2-agent (wave: pit-stage2-verification-stage3-frs — maturion-isms#1548)
-
+**Updated By**: foreman-v2-agent (wave: pit-stage2-verification-stage3-frs — maturion-isms#1548; incorporating Stage 2 v0.2-draft upgrade from maturion-isms#1550 PR #1551)
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
 > **Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
@@ -84,7 +83,6 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 **Completion Date**: N/A — Foreman-reviewed 2026-05-06, pending CS2 approval  
 **Stage 2 Completion Evidence**: `.agent-admin/evidence/stage2-completion-checklist/pit-stage2-20260506.md`  
 **Notes**: Stage 2 UX Workflow & Wiring Spec v0.2-draft satisfies all 13 completion criteria per maturion-isms#1548 verification. All required sections present: derivation statement, L-001–L-008 carry-forward, 23 user journeys (including My Work and Invitation Acceptance), 21 screens, 5-state UI matrix, 7 top indicators, app shell, timeline wiring, screen-to-data wiring table, AIMC touchpoints, deployment surface map. Open items from Stage 2 Section 10 are resolved in Stage 3 FRS. Build Authorization remains NOT CLEARED.
-
 ---
 
 ### Stage 3: Functional Requirements Specification (FRS)
@@ -256,7 +254,6 @@ artifacts, not core PIT module build deliverables. Mapped from old Stage 5.
 3. Complete Stage 4 (TRS) building on FRS
 4. Formally gate-pass Stage 5 (Architecture — rich content already exists, needs upstream approvals first)
 5. Complete Stages 6–11 before Build Authorization can be requested
-
 **MMM-Derived Learning Controls (Carry-Forward)**:
 PIT carries forward 8 build-process improvement controls from the MMM module build. These are
 documented in the App Description (§ MMM Lessons Promoted Into PIT) and the improvement register:
@@ -277,13 +274,13 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 - [x] Stage 1 App Description: CS2_APPROVED_AUTHORITATIVE (2026-05-06)
 - [x] Stage 2 UX Workflow & Wiring Spec: STAGE_2_COMPLETE_FOREMAN_REVIEWED (maturion-isms#1548) — pending CS2 approval
 - [x] Stage 3 FRS: DRAFT_CREATED (maturion-isms#1548) — pending CS2 approval
-- [ ] Traceability chain: App Description ✅ → UX Workflow (FOREMAN_REVIEWED) → FRS (DRAFT_CREATED) → TRS → Architecture (gate-pass pending)
-- [x] Stage 1 approval obtained — Johan Ras / CS2 approved 2026-05-06 (ref: maturion-isms#1540)
+- [ ] Traceability chain: App Description ✅ → UX Workflow (FOREMAN_REVIEWED) → FRS (DRAFT_CREATED) → TRS → Architecture (gate-pass pending)- [x] Stage 1 approval obtained — Johan Ras / CS2 approved 2026-05-06 (ref: maturion-isms#1540)
 - [x] Build Authorization: NOT CLEARED — implementation blocked until Stages 3–11 complete
 - [x] Evidence artifacts created for Stage 1 (checklist at `.agent-admin/evidence/app-description-checklist/pit-20260506.md`)
 - [x] Stage 2 completion evidence: `.agent-admin/evidence/stage2-completion-checklist/pit-stage2-20260506.md`
 - [x] Stage 3 FRS artifact created: `modules/pit/02-frs/functional-requirements.md`
 - [x] Module manifest updated (module_name corrected to "PIT (Project Implementation Tracker)")
+- [x] Stage 2 upgrade checklist evidence at `.agent-admin/evidence/stage2-upgrade-checklist/pit-stage2-20260506.md`
 
 ---
 

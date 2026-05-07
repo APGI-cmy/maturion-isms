@@ -1,7 +1,7 @@
 # Wave Current Tasks — pit-stage2-verification-stage3-frs
 
 **Wave**: pit-stage2-verification-stage3-frs
-**Issue**: maturion-isms#1549 — Foreman: Finalise PIT Stage 2 tracker state and implement Stage 3 FRS
+**Issue**: maturion-isms#1548 — Foreman: Finalise PIT Stage 2 tracker state and implement Stage 3 FRS
 **Branch**: copilot/finalise-pit-stage-2-tracker
 **PR**: maturion-isms#1549
 **Date**: 2026-05-06
@@ -47,7 +47,6 @@ Verify Stage 2 UX Workflow & Wiring Spec completeness against 13 criteria from m
 **Phase 2**: COMPLETE
 **Phase 3**: IN_PROGRESS
 **Phase 4**: PENDING IAA
-
 ---
 
 ## Task Breakdown
