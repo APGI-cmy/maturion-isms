@@ -1,0 +1,37 @@
+{
+  "pr": 1555,
+  "issue": 1554,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1555.json",
+    ".agent-admin/assurance/iaa-wave-record-pit-stage4-trs-20260507.md",
+    ".agent-admin/scope-declarations/pr-1555.md",
+    ".agent-workspace/foreman-v2/memory/PREHANDOVER-pit-stage4-trs-20260507.md",
+    ".agent-workspace/foreman-v2/memory/session-pit-stage4-trs-20260507.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    ".agent-workspace/foreman-v2/personal/scope-declaration-wave-pit-stage4-trs.md",
+    "modules/pit/03-trs/technical-requirements-specification.md",
+    "modules/pit/03-trs/frs-to-trs-traceability.md",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md",
+    ".agent-workspace/independent-assurance-agent/memory/session-pit-stage4-trs-20260507.md",
+    ".agent-workspace/independent-assurance-agent/memory/session-pit-stage4-trs-20260507-R2.md"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": [
+    "modules/pit/03-trs/technical-requirements-specification.md exists with numbered TRS requirements (PIT-TR-NNN)",
+    "modules/pit/03-trs/technical-requirements-specification.md contains derivation statements from App Description v1.0, UX Wiring Spec v0.2-draft, and FRS v0.1-draft",
+    "modules/pit/03-trs/frs-to-trs-traceability.md exists and maps FRS requirement IDs to TRS requirement IDs",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md Stage 4 status is DRAFT_CREATED (not overstated)",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md Stage 5 Architecture remains blocked until Stage 4 TRS approved",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md Build Authorization is NOT CLEARED",
+    "IAA ASSURANCE-TOKEN received and committed to wave record",
+    "Scope declaration matches actual diff"
+  ],
+  "merge_authority": "CS2",
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2",
+  "implementing_agent": "pit-specialist"
+}
