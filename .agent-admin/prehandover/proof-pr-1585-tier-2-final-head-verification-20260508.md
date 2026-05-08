@@ -32,3 +32,12 @@ iaa_audit_token: PENDING
 handover_allowed: no
 handover_state: STOP_AND_FIX — ECAP evidence committed for protected-path change; IAA token pending
 ```
+
+## Ripple/Cross-Agent Assessment
+
+| Agent / System | Change Scope Assessed | Impact Conclusion |
+|---|---|---|
+| Foreman / ECAP / IAA / producing agents | Tier 2 handover guidance for final current-head verification | IMPACTED — final verification must be non-mutating and performed after final push; SHA-only evidence-refresh commits are not valid final verification. |
+| Product runtime / MMM app | Product code, Supabase schema, and runtime paths | NO IMPACT — this PR changes governance guidance and admin evidence only; no product runtime or schema files changed. |
+
+**Downstream ripple conclusion**: IMPACTED for governance agents only; NO IMPACT for product runtime.
