@@ -16,14 +16,14 @@ ecap_verdict: PASS
 
 ---
 
-CURRENT_HEAD_SHA: 22c7320160a65d23ca01b6477b82857b6be13c55  
+CURRENT_HEAD_SHA: 944f9bedbec762094c7c9d46a47ca117cf1fdb97  
 protected_paths_changed:
 - governance/checklists/phase4-role-separation-operational-guidance.md
 - governance/templates/iaa-wave-record.template.md
 scope_declaration_ref: .agent-admin/scope-declarations/pr-1580.md  
 ecap_bundle_ref: .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1580-ecap-admin-ceremony-20260508.md  
 iaa_artifact_ref: .agent-admin/assurance/iaa-wave-record-layer-down-2026-05-07-4e200025-20260508.md  
-handover_allowed: yes  
+handover_allowed: no  
 ecap_waiver_ref: none
 
 ## Ripple/Cross-Agent Assessment
