@@ -8,6 +8,7 @@
 **CS2 Authorization**: issue #1583 opened by @APGI-cmy and assigned to Copilot/@APGI-cmy
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-pre-handover-checkpoint-hardening-20260508-20260508.md
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pre-handover-checkpoint-hardening-20260508-20260508.md
+ceremony_admin_appointed: NO — only required after QP PASS in Phase 4
 
 ---
 
