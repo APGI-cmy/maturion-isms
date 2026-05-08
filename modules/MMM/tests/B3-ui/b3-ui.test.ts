@@ -105,18 +105,20 @@ describe('T-MMM-S6-004: SignUpPage.tsx uses supabase auth signUp', () => {
   });
 });
 
-// ─── T-MMM-S6-005: OnboardingPage.tsx calls /api/organisations ──────────────
-describe('T-MMM-S6-005: OnboardingPage.tsx calls /api/organisations', () => {
+// ─── T-MMM-S6-005: OnboardingPage.tsx calls mmm-org-create capability ─────────
+describe('T-MMM-S6-005: OnboardingPage.tsx calls mmm-org-create capability', () => {
   it('file exists', () => {
     expect(fileExists('apps/mmm/src/pages/OnboardingPage.tsx')).toBe(true);
   });
-  it('calls /api/organisations endpoint', () => {
+  it('invokes mmm-org-create via Supabase functions', () => {
     const src = readFile('apps/mmm/src/pages/OnboardingPage.tsx');
-    expect(src).toContain('/api/organisations');
+    expect(src).toContain("supabase.functions.invoke('mmm-org-create',");
   });
-  it('uses POST method', () => {
+  it('renders visible mutation failure state with actionable retry message', () => {
     const src = readFile('apps/mmm/src/pages/OnboardingPage.tsx');
-    expect(src).toContain("method: 'POST'");
+    expect(src).toContain('mutation.isError');
+    expect(src).toContain('role="alert"');
+    expect(src).toContain('Please review your details and try again.');
   });
 });
 
@@ -136,6 +138,16 @@ describe('T-MMM-S6-006: FrameworkOriginPage.tsx has 3 radio options (VERBATIM/GE
   it('contains HYBRID option', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkOriginPage.tsx');
     expect(src).toContain('HYBRID');
+  });
+  it('invokes mmm-framework-init via Supabase functions', () => {
+    const src = readFile('apps/mmm/src/pages/FrameworkOriginPage.tsx');
+    expect(src).toContain("supabase.functions.invoke('mmm-framework-init',");
+  });
+  it('renders visible mutation failure state with actionable retry message', () => {
+    const src = readFile('apps/mmm/src/pages/FrameworkOriginPage.tsx');
+    expect(src).toContain('mutation.isError');
+    expect(src).toContain('role="alert"');
+    expect(src).toContain('Please try again.');
   });
 });
 
@@ -294,9 +306,14 @@ describe('T-MMM-S6-016: freeAssessmentStore.ts has setResult and reset actions',
 
 // ─── T-MMM-S6-017: mmm-org-create has HTTP 403 for missing JWT (NBR-002) ─────
 describe('T-MMM-S6-017: mmm-org-create has HTTP 403 for missing JWT (NBR-002)', () => {
-  it('uses validateJWT', () => {
+  it('validates JWT via supabase.auth.getUser', () => {
     const src = readFile('supabase/functions/mmm-org-create/index.ts');
-    expect(src).toContain('validateJWT');
+    expect(src).toContain('supabase.auth.getUser');
+  });
+  it('reads bearer token from Authorization header', () => {
+    const src = readFile('supabase/functions/mmm-org-create/index.ts');
+    expect(src).toContain("Authorization");
+    expect(src).toContain("Bearer ");
   });
   it('has NBR-002 comment', () => {
     const src = readFile('supabase/functions/mmm-org-create/index.ts');
@@ -304,8 +321,7 @@ describe('T-MMM-S6-017: mmm-org-create has HTTP 403 for missing JWT (NBR-002)', 
   });
   it('throws 401/403 on invalid JWT', () => {
     const src = readFile('supabase/functions/mmm-org-create/index.ts');
-    // validateJWT from mmm-auth throws 401/403 on failure
-    expect(src).toContain('validateJWT');
+    expect(src).toContain('Invalid or expired JWT');
   });
 });
 
