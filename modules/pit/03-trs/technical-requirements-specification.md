@@ -19,12 +19,12 @@
 | Derived From (Stage 3) | `modules/pit/02-frs/functional-requirements.md` **v0.2-hardened** (hardened 2026-05-07, ref: maturion-isms#1556; pending CS2 approval) |
 | Author | foreman-v2-agent (POLC-Orchestration mode) |
 | Date | 2026-05-07; updated 2026-05-08 (retrofit wave maturion-isms#1575 / PR #1576) |
-| Issue | maturion-isms#1554 (original); maturion-isms#1575 (retrofit — PIT-TR-116 to PIT-TR-123 added) |
+| Issue | maturion-isms#1554 (original); maturion-isms#1575 (retrofit — PIT-TR-116 to PIT-TR-126 added) |
 | Pre-Build Authority | `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 |
 
 > **Governance Note:** This TRS is a draft artifact. It may not be declared complete, approved, or gate-passed until Stage 3 FRS and Stage 2 UX Workflow & Wiring Spec are approved by CS2. Stage 5 Architecture remains blocked until Stage 4 TRS is approved. Build Authorization remains NOT CLEARED. This TRS does not authorise code implementation, builder appointment, schema migration, or deployment.
 
-> **Retrofit Note (maturion-isms#1575):** This TRS was updated in the PIT pre-build functional delivery retrofit wave (PR #1576) to propagate PIT-FR-113 through PIT-FR-123 from FRS v0.2-hardened into new technical requirements PIT-TR-116 through PIT-TR-123. The stale Issue #1556 dependency notice has been resolved: Section 31 of this document now contains the technical requirements derived from FRS v0.2-hardened additions. The derivation source is now listed as FRS v0.2-hardened (pending CS2 approval) rather than v0.1-draft.
+> **Retrofit Note (maturion-isms#1575):** This TRS was updated in the PIT pre-build functional delivery retrofit wave (PR #1576) to propagate PIT-FR-113 through PIT-FR-123 from FRS v0.2-hardened into new technical requirements PIT-TR-116 through PIT-TR-126. The stale Issue #1556 dependency notice has been resolved: Section 31 of this document now contains the technical requirements derived from FRS v0.2-hardened additions. The derivation source is now listed as FRS v0.2-hardened (pending CS2 approval) rather than v0.1-draft.
 
 ---
 
@@ -1075,7 +1075,7 @@ This section contains technical requirements derived from PIT-FR-113 through PIT
 
 For every role-gated route, API endpoint, and data operation, both a positive-path (allowed) and negative-path (denied) enforcement mechanism must be implemented:
 
-1. **RLS layer**: Every relevant table must have RLS policies that enforce the access boundary at the database level. A `SELECT`, `INSERT`, `UPDATE`, or `DELETE` on a row that the authenticated user does not own or does not have role access to must be denied silently at the RLS layer.
+1. **RLS layer**: Every relevant table must have RLS policies that enforce the access boundary at the database level. For unauthorised access, `SELECT` must return no rows, while `INSERT`, `UPDATE`, and `DELETE` must be blocked so no data mutation occurs (the API/DB response may surface a permission error depending on operation and API layer).
 2. **API/Edge Function layer**: Every Edge Function that performs a gated operation must verify the caller's role before execution and return `{ error: "permission_denied" }` with HTTP 403 if the check fails.
 3. **Frontend layer**: When a user navigates to a route they are not authorised to access, the route component must render the permission-denied UI state (PIT-TR-025). The frontend must not expose data from the 403 response.
 4. **QA-to-Red coverage**: At least one denied-path test must exist for every role boundary. Denied-path tests must verify that the API returns 403, that the UI renders the permission-denied state, and that no protected data appears in the DOM.
@@ -1088,12 +1088,12 @@ For every role-gated route, API endpoint, and data operation, both a positive-pa
 
 Project, milestone, and deliverable progress percentages must be computed server-side as follows:
 
-1. **Task-level**: Progress = (count of tasks with `status IN ('completed', 'verified')`) / (count of all tasks in deliverable) × 100, rounded to nearest integer.
-2. **Deliverable-level**: Progress = average of task-level progress for all tasks in the deliverable.
-3. **Milestone-level**: Progress = average of deliverable-level progress for all deliverables in the milestone.
-4. **Project-level**: Progress = average of milestone-level progress for all milestones in the project.
+1. **Task-level**: Task progress is the explicit task progress percentage (0–100%) maintained per PIT-FR-055.
+2. **Deliverable-level**: Progress = arithmetic mean of non-cancelled child task progress percentages.
+3. **Milestone-level**: Progress = arithmetic mean of non-cancelled child deliverable progress percentages.
+4. **Project-level**: Progress = arithmetic mean of non-cancelled child milestone progress percentages.
 5. **RAG thresholds** (from FRS §29): Green ≥ 80%, Amber 60–79%, Red < 60%. RAG status must be stored as a computed field or derived at query time.
-6. Computation must be triggered on every `tasks.status`, `deliverables.status`, or `milestones.status` update via database trigger or Edge Function.
+6. Computation must be triggered on every update that can affect roll-up percentages (including task progress %, cancellation state, and relevant status changes) via database trigger or Edge Function.
 7. The progress computation logic must be testable in isolation (unit-testable pure function or Edge Function).
 
 **Derived from**: PIT-FR-114; PIT-TR-035 to PIT-TR-037

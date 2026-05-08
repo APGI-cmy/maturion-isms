@@ -35,11 +35,11 @@
   "evidence_required": [
     "modules/pit/BUILD_PROGRESS_TRACKER.md Stage 6-12 entries contain functional-delivery guardrails per maturion-isms#1575",
     "modules/pit/03-trs/technical-requirements-specification.md Status Header references FRS v0.2-hardened derivation",
-    "modules/pit/03-trs/technical-requirements-specification.md Section 31 contains PIT-TR-116 through PIT-TR-123 for PIT-FR-113 to PIT-FR-123",
+    "modules/pit/03-trs/technical-requirements-specification.md Section 31 contains PIT-TR-116 through PIT-TR-126 for PIT-FR-113 to PIT-FR-123",
     "modules/pit/03-trs/frs-to-trs-traceability.md updated to reference FRS v0.2-hardened and covers all 123 FRS requirements",
     "modules/pit/_readiness/functional-delivery-retrofit-checklist.md exists and covers Stages 1-12",
     "modules/pit/_readiness/pit-functional-delivery-gap-register.md exists and records identified gaps",
-    "BUILD_PROGRESS_TRACKER.md Stage 4 notes updated to reflect FRS v0.2-hardened propagation complete for TR-116-123",
+    "BUILD_PROGRESS_TRACKER.md Stage 4 notes updated to reflect FRS v0.2-hardened propagation complete for TR-116-126",
     "BUILD_PROGRESS_TRACKER.md Stage 5 notes updated with full reconciliation requirements checklist",
     "Build Authorization remains NOT CLEARED throughout all updated artifacts",
     "IAA pre-brief wave record committed at .agent-admin/assurance/iaa-wave-record-pit-prebuilt-retrofit-20260508.md",
