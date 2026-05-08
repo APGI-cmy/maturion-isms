@@ -2,7 +2,7 @@
 
 **Wave**: mmm-p4-wire-framework-flows  
 **Branch**: copilot/mm-p4-wire-framework-flows  
-**Issue**: unknown-number — "MMM P4: Wire live Framework onboarding, upload, AI generation, and dashboard flows to deployed Edge Functions"  
+**Issue**: #1577 — "MMM P4: Wire live Framework onboarding, upload, AI generation, and dashboard flows to deployed Edge Functions"  
 **Agent**: independent-assurance-agent  
 **Mode**: PRE-BRIEF (PHASE 0 only)
 

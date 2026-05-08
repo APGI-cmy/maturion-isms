@@ -424,12 +424,12 @@ describe('T-MMM-S6-048: apps/mmm/index.html exists', () => {
 describe('T-MMM-S6-049: FrameworkUploadPage calls correct capabilities per mode', () => {
   it('Mode A calls mmm-upload-framework-source', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkUploadPage.tsx');
-    expect(src).toContain("supabase.functions.invoke('mmm-upload-framework-source'");
+    expect(src).toContain("supabase.functions.invoke('mmm-upload-framework-source',");
   });
   it('Mode B calls mmm-ai-framework-generate', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkUploadPage.tsx');
     expect(src).toContain("mode==='B'");
-    expect(src).toContain("supabase.functions.invoke('mmm-ai-framework-generate'");
+    expect(src).toContain("supabase.functions.invoke('mmm-ai-framework-generate',");
   });
   it('Mode C calls mmm-ai-framework-generate with hybrid payload', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkUploadPage.tsx');

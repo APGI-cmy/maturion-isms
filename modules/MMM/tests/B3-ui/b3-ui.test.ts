@@ -112,7 +112,7 @@ describe('T-MMM-S6-005: OnboardingPage.tsx calls mmm-org-create capability', () 
   });
   it('invokes mmm-org-create via Supabase functions', () => {
     const src = readFile('apps/mmm/src/pages/OnboardingPage.tsx');
-    expect(src).toContain("supabase.functions.invoke('mmm-org-create'");
+    expect(src).toContain("supabase.functions.invoke('mmm-org-create',");
   });
   it('renders visible mutation failure state with actionable retry message', () => {
     const src = readFile('apps/mmm/src/pages/OnboardingPage.tsx');
@@ -141,7 +141,7 @@ describe('T-MMM-S6-006: FrameworkOriginPage.tsx has 3 radio options (VERBATIM/GE
   });
   it('invokes mmm-framework-init via Supabase functions', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkOriginPage.tsx');
-    expect(src).toContain("supabase.functions.invoke('mmm-framework-init'");
+    expect(src).toContain("supabase.functions.invoke('mmm-framework-init',");
   });
   it('renders visible mutation failure state with actionable retry message', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkOriginPage.tsx');

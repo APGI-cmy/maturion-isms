@@ -150,9 +150,7 @@ export default function FrameworkUploadPage() {
                     Next step: {selectedMode.description}
                   </p>
                   <p className="upload-page__next-state-note">
-                    We couldn&rsquo;t complete this framework action right now (
-                    {mutation.error instanceof Error ? mutation.error.message : 'action failed'}
-                    ). Please try again or{' '}
+                    We couldn&rsquo;t complete this framework action right now. Please try again or{' '}
                     <Link to="/frameworks">Return to Frameworks</Link>.
                   </p>
                 </div>
