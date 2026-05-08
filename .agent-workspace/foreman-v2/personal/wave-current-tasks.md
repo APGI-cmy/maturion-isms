@@ -14,10 +14,10 @@ iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-layer-down-governance-
 
 | # | Task | Builder | Status | PR / Evidence |
 |---|------|---------|--------|---------------|
-| 1 | Sync changed canonical artifacts (MMM model + ECAP templates) | governance-liaison-isms-agent | 🟡 TODO | governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md; governance/templates/execution-ceremony-admin/* |
-| 2 | Validator + regression parity assessment for governance-control paths | governance-liaison-isms-agent | 🟡 TODO | .github/scripts/validate-simple-pr-admin.sh(.test.sh) |
-| 3 | Alignment inventory update and impact assessments | governance-liaison-isms-agent | 🟡 TODO | governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json |
-| 4 | Agent contract impact assessment (.github/agents/*) | governance-liaison-isms-agent | 🟡 TODO | governance/alignment/ISSUE_LAYER_DOWN_20260507_F1E8A82A_AGENT_CONTRACT_IMPACT_ASSESSMENT.md |
+| 1 | Sync changed canonical artifacts (MMM model + ECAP templates) | governance-liaison-isms-agent | 🟢 DONE | governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md; governance/templates/execution-ceremony-admin/* |
+| 2 | Validator + regression parity assessment for governance-control paths | governance-liaison-isms-agent | 🟢 DONE | .github/scripts/validate-simple-pr-admin.sh(.test.sh) |
+| 3 | Alignment inventory update and impact assessments | governance-liaison-isms-agent | 🟢 DONE | governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json; governance/alignment/ALIGNMENT_ASSESSMENT_f1e8a82a.md |
+| 4 | Agent contract impact assessment (.github/agents/*) | governance-liaison-isms-agent | 🟢 DONE | governance/alignment/ALIGNMENT_ASSESSMENT_f1e8a82a.md |
 
 ---
 

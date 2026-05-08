@@ -21,7 +21,46 @@ These templates minimize freeform authorship and maximize deterministic field co
 
 ---
 
-## Usage Rules
+## Manifest-Era PR Routing
+
+**Authority**: `governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md` v1.2.0
+
+Starting with the MMM simplified governance model, PRs use `.admin/pr.json` as the single source of truth for all metadata. Ceremony templates must only be generated for PRs that require them.
+
+| PR Type | `requires_iaa` | `requires_ecap` | Ceremony Required |
+|---------|---------------|----------------|------------------|
+| `product-fix` / `test-only` | `false` | `false` | **None** — legacy ceremony frozen. Use `.admin/pr.json` only. |
+| `product-fix` crossing governance-control paths | auto-`true` | auto-`true` | **Full ceremony** — governance-control scope overrides type default. |
+| `deployment-change` | depends on manifest | `false` | Partial — per manifest `evidence_required`. |
+| `governance-change` / `agent-contract-change` | `true` | `true` | **Full ceremony** — all templates apply. |
+
+**Governance-control paths** (any PR touching these requires full ceremony regardless of `type`):
+- `.github/workflows/**`, `.github/scripts/**`, `.github/agents/**`
+- `governance/**` (all sub-paths)
+- `.agent-admin/**`
+- Any `*.agent.md` file
+
+**Do NOT generate ceremony templates for low-ceremony product-fix PRs.** Agents should not be instructed to produce `PREHANDOVER.template.md`, `ECAP_RECONCILIATION_SUMMARY.template.md`, or session memory artifacts for MMM `product-fix` PRs where `requires_iaa=false`.
+
+---
+
+## Evidence discipline (remains mandatory)
+
+Simplification does not erase evidence discipline. For all governed PRs:
+- The `evidence_required` array in `.admin/pr.json` is the binding evidence specification.
+- For PRs with `requires_iaa=true`, evidence is validated by IAA before merge.
+- For low-ceremony product-fix PRs, evidence is declared in the manifest and validated by the CI gate only.
+- CI is **confirmatory** — it confirms evidence already collected. It does not replace agent evidence collection.
+
+---
+
+## Scope declarations
+
+Per-PR scope declarations are immutable files at `.agent-admin/scope-declarations/pr-<PR_NUMBER>.md`.
+
+The global `governance/scope-declaration.md` is **deprecated** for per-PR use. Do not reference it as an authoritative scope source in any ceremony artifact. Use `.agent-admin/scope-declarations/pr-<PR_NUMBER>.md` instead.
+
+---
 
 1. **Never submit a template with unfilled placeholders.** Every `<placeholder>` and `[bracket value]` must be replaced with a real value before committing.
 2. **PREHANDOVER proof is immutable once committed.** Use `CORRECTION_ADDENDUM.template.md` + a new PREHANDOVER proof for any correction cycle.
@@ -56,4 +95,4 @@ The `ECAP_RECONCILIATION_SUMMARY.template.md` satisfies the Tier 3 per-wave proo
 
 ---
 
-*Version: 1.0.0 | Effective: 2026-04-17 | Authority: CS2 (Johan Ras)*
+*Version: 1.1.0 | Effective: 2026-05-07 | Authority: CS2 (Johan Ras) | Aligned with MMM_SIMPLE_PR_ADMIN_MODEL.md v1.2.0*
